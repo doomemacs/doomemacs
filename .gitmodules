@@ -1,0 +1,3 @@
+[submodule "snippets"]
+	path = snippets
+	url = https://github.com/hlissner/emacs-snippets
