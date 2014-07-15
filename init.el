@@ -41,9 +41,7 @@
       core-keymaps       ; Global & local keybindings for all modes
 
       ;; Editor essentials
-      ; mod-snippets     ; Snippet templates
-      ; mod-git          ; GIT tools/settings
-      ; mod-writer       ; Setup/settings for non-code writing
+      mod-git            ; GIT tools/settings
       ; mod-shell        ; Goodies for running shell in emacs
       ; mod-webdev       ; Webdev tools (sass, js, etc)
       ; mod-gamedev      ; Gamedev tools (C++, love2D, html5)
