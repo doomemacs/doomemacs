@@ -1,12 +1,14 @@
 (require-packages
- '(magit
+ '(git-commit-mode
+   git-rebase-mode
    gitconfig-mode
    gitignore-mode
-   git-gutter
+   git-gutter-fringe
    ))
 
-(git-gutter:linum-setup)
-(global-git-gutter-mode +1)
+(global-git-gutter-mode t)
+(setq git-gutter-fr:side 'right-fringe)
+;; (diminish 'git-gutter-mode)
 
 ;;
 (provide 'mod-git)
