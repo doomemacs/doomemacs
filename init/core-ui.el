@@ -20,6 +20,11 @@
 (if (fboundp 'fringe-mode)
     (fringe-mode 4))
 
+;; Dynamic linum with +1 padding
+(defadvice linum-update-window (around linum-dynamic activate)
+  (let* ((w (length (number-to-string (count-lines (point-min) (point-max)))))
+         (linum-format (concat "%" (number-to-string (+ w 1)) "d "))) ad-do-it))
+
 
 ;;;; GUI Settings ;;;;;;;;;;;;;;;;;;;;;
 

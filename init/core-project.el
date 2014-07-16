@@ -1,11 +1,12 @@
 (require-packages
-  '(ido-ubiquitous  ; enhances ido-everywhere
-    projectile      ; project search (like ctrlp)
-    helm            ; augments search of, well, anything
-    grizzl          ; better searching engine for projectile
-    ag              ; the_silver_searcher support
-    sr-speedbar     ; Speedbar, w/o the separate frame
-    flx-ido         ; Enhances ido's flex matching
+  '(ido-ubiquitous     ; enhances ido-everywhere
+    projectile         ; project search (like ctrlp)
+    helm               ; augments search of, well, anything
+    grizzl             ; better searching engine for projectile
+    ag                 ; the_silver_searcher support
+    sr-speedbar        ; speedbar, w/o the separate frame
+    flx-ido            ; enhances ido's flex matching
+    ido-vertical-mode  ; vertical listing for ido completion
     ))
 
 ;;#dired
@@ -31,6 +32,7 @@
 (set-keymap-parent ido-buffer-completion-map   ido-common-completion-map)
 
 (ido-mode 1)
+(ido-vertical-mode 1)
 (ido-everywhere 1)
 (flx-ido-mode 1)
 (setq ido-use-faces nil
@@ -41,6 +43,15 @@
       ido-create-new-buffer 'always
       ido-enable-tramp-completion t
       ido-enable-last-directory-history t)
+
+(defadvice completion--file-name-table (after ignoring-backups-f-n-completion activate)
+    "Filter out results when they match `completion-ignored-extensions'."
+    (let ((res ad-return-value))
+        (if (and (listp res)
+                (stringp (car res))
+                (cdr res))                 ; length > 1, don't ignore sole match
+        (setq ad-return-value
+                (completion-pcm--filename-try-filter res)))))
 
 ;;#projectile
 (setq projectile-completion-system 'grizzl

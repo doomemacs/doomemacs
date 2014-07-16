@@ -2,7 +2,7 @@
 (if (is-osx) (progn
 
     ;; Ignore .DS_Store files with ido mode
-    (add-to-list 'ido-ignore-files "\\.DS_Store")
+    (add-to-list 'completion-ignored-extensions ".DS_Store")
 
     (if window-system (progn
         (setq ns-use-native-fullscreen nil)
@@ -45,6 +45,9 @@
            (imap (kbd "<s-left>") 'move-beginning-of-line)
            (imap (kbd "<s-right>") 'move-end-of-line)
            (imap (kbd "<s-backspace>") 'backward-kill-line)
+
+           ;; Fixes delete
+           (imap (kbd "<kp-delete>") 'delete-char)
            )
 ))
 

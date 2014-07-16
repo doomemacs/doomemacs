@@ -43,18 +43,18 @@
 ;; package for it.
 ;;
 ;; TODO: Rewrite this
-(defun associate-mode (ext mode)
+(defun associate-mode (mode ext &optional env-pkg)
   (let* ((mode_name (symbol-name mode))
-         (env_mode_name (concat "env-" mode_name ".el"))
-         (mode_path (expand-file-name env_mode_name my-modules-dir)))
+         (env_mode_name (major-mode-module-name))
+         (mode_path (major-mode-module-path)))
 
-    (condition-case nil
-        (init-package mode t)
-        (error nil))
+    (condition-case nil (init-package mode t) (error nil))
 
     (autoload mode mode_name)
-    (if (file-exists-p mode_path)
-        (autoload mode env_mode_name)))
+    (if env-pkg 
+      (require-package env-pkg)
+      (if (file-exists-p mode_path) (require-package (intern env_mode_name)))
+      ))
 
   (if (typep ext 'list)
     (dolist (e ext)

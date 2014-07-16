@@ -1,10 +1,12 @@
-;;;; core.el - Emacs for the jaded Vimmer
+;;
+;; [Emacs for the jaded vimmer]
 ;;
 ;; Author: Henrik Lissner <henrik@lissner>
 ;; URL: https://github.com/hlissner/emacs.d
 ;;
 ;; These settings set up a very vim-like experience, with some of emacs goodness
 ;; squeezed in between the cracks.
+;;
 
 (cd "~")                    ; Default directory, instead of /
 (setq load-prefer-newer t)  ; Always load newest byte code
@@ -36,8 +38,8 @@
       core-packages      ; package init & management
       core-ui            ; Look and behavior of the emacs UI
       core-editor        ; Text/code editor settings and behavior
-      core-project       ; Project navigation settings & packages
       core-osx           ; OSX-specific settings & functions
+      core-project       ; Project navigation settings & packages
       core-keymaps       ; Global & local keybindings for all modes
 
       ;; Editor essentials
@@ -51,10 +53,11 @@
 
 ;;;; Modes ;;;;;;;;;;;;;;;;;;;;;;;;
 
-; (associate-mode '(".rb" "RakeFile") 'ruby-mode)
-; (associate-mode '(".md" ".markdown") 'markdown-mode)
-; (associate-mode ".lua" 'lua-mode)
-; (associate-mode ".scss" 'scss-mode)
-; (associate-mode ".yml" 'yaml-mode)
-; (associate-mode '(".js" ".json") 'js2-mode)
-; (associate-mode ".py" 'python-mode)
+(associate-mode 'ruby-mode      '(".rb" "RakeFile"))
+(associate-mode 'markdown-mode  '(".md" ".markdown"))
+(associate-mode 'scss-mode      ".scss")
+;; (associate-mode 'lua-mode ".lua")
+;; (associate-mode 'yaml-mode ".yml")
+;; (associate-mode 'js2-mode '(".js" ".json"))
+;; (associate-mode 'python-mode ".py")
+;; (associate-mode 'web-mode '(".html" ".htm" ".phtml" ".tpl" ".tpl.php" ".erb"))

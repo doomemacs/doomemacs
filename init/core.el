@@ -1,6 +1,7 @@
 (require 'cl)
 
 ;; Emacs under-the-hood
+(setq redisplay-dont-pause t)
 (prefer-coding-system 'utf-8)
 (setq-default gc-cons-threshold 50000000) ; avoid garbage collection (default is only 400k)
 (setq make-backup-files         nil)      ; Don't want any backup files
@@ -17,6 +18,11 @@
 ; window layout undo/redo, keymaps in init-evil.el
 (when (fboundp 'winner-mode) (winner-mode 1))
 (setq linum-delay t)
+
+(defadvice save-buffers-kill-emacs (around no-query-kill-emacs activate)
+  "Prevent annoying \"Active processes exist\" query when you quit Emacs."
+  (flet ((process-list ())) ad-do-it))
+
 
 ;;;; My personal minor mode ;;;;;;;;
 
@@ -37,13 +43,23 @@
     (abort-recursive-edit)))
 
 ;; File navigation defuns
-(defun my-conf-edit ()
+(defun my-init ()
   (interactive)
   (find-file (expand-file-name "init.el" my-dir)))
 
-(defun my-conf-find ()
+(defun my-init-find ()
   (interactive)
   (projectile-find-file-in-directory my-dir))
+
+;; Open the modules/env-{major-mode-name}.el file
+(defun open-major-mode-conf ()
+  (interactive)
+  (let ((path (major-mode-module-path)))
+    (if (file-exists-p path)
+      (find-file path)
+      (progn
+        (find-file path)
+        (message (concat "Mode (" (major-mode-name) ") doesn't have a module! Creating it..."))))))
 
 ;;
 (defun copy-to-end-of-line ()
@@ -59,22 +75,37 @@
   (sr-speedbar-toggle)
   (sr-speedbar-refresh-turn-off))
 
+(defun major-mode-name ()
+  (symbol-name major-mode))
+(defun major-mode-module-name ()
+  (concat "env-" (major-mode-name)))
+(defun major-mode-module-path ()
+  (expand-file-name (concat (major-mode-module-name) ".el") my-modules-dir))
+
 
 ;;;; Macros ;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Vimmish keymapping shortcuts
-(defmacro gmap (key command)   `(global-set-key ,key ,command))
-(defmacro nmap (key command)   `(define-key evil-normal-state-map ,key ,command))
-(defmacro vmap (key command)   `(define-key evil-visual-state-map ,key ,command))
-(defmacro imap (key command)   `(define-key evil-insert-state-map ,key ,command))
-(defmacro ichmap (key command) `(key-chord-define evil-insert-state-map ,key ,command))
-(defmacro cmap (ex function)   `(evil-ex-define-cmd ,ex ,function))
+(defmacro nmap (&rest body)
+  `(evil-define-key 'normal my-mode-map ,@body))
+(defmacro vmap (&rest body)
+  `(evil-define-key 'visual my-mode-map ,@body))
+(defmacro imap (&rest body)
+  `(evil-define-key 'insert my-mode-map ,@body))
+
+;; Global mapping
+(defmacro gmap (key command)
+  `(global-set-key ,key ,command))
+;; insert-mode key-chord mapping
+(defmacro ichmap (key command)
+  `(key-chord-define evil-insert-state-map ,key ,command))
+;; defines ex commands
+(defmacro cmap (ex function)
+  `(evil-ex-define-cmd ,ex ,function))
 
 ;; This one's unique for my own special mappings
 (defmacro map (key command)
   `(define-key my-mode-map ,key ,command))
-(defmacro emap (mode key command)
-  `(evil-define-key ,mode my-mode-map ,key ,command))
 
 (defmacro is-osx () '(eq system-type 'darwin))
 
