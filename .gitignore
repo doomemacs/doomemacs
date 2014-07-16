@@ -1,8 +1,9 @@
-vendor/**
-!vendor/.gitkeep
+vendor/
+tmp/
+eshell/
 
 # compiled files
-*.elc
-*.lib
-*.fas
-*.dat
+**/*.elc
+**/*.lib
+**/*.fas
+**/*.dat
