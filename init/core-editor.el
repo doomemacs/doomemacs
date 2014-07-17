@@ -87,10 +87,6 @@
 (autopair-global-mode)
 (setq autopair-blink nil)
 
-;;;#smartparens
-; (require 'smartparens-config)
-; (smartparens-global-mode t)
-
 ;;;#anzu
 (global-anzu-mode)
 
@@ -119,7 +115,7 @@
 (setq recentf-max-menu-items 25)
 
 ;;;#yasnippet
-(yas-global-mode -1)
+(yas-global-mode t)
 
 
 ;;
