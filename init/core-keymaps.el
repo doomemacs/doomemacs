@@ -175,6 +175,7 @@
 
 ;; (cmap "e[dit]" 'find-file)
 ;; (cmap "n[ew]" ')
+(cmap "retab" 'indent-region)
 
 
 ;;;; Keymap fixes ;;;;;;;;;;;;;;;

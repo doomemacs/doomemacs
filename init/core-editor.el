@@ -15,7 +15,7 @@
     yasnippet               ; snippets: expand with tab
     rainbow-delimiters      ; colored matching parenthesis
     rainbow-mode            ; highlight color codes
-    highlight-indentation   ; visual indentation guides
+    ;; highlight-indentation   ; visual indentation guides
     saveplace               ; restore cursor position on buffer load
     volatile-highlights     ; temporarily highlight changes on undo/yank
     anzu                    ; display current + total matches searching
@@ -34,8 +34,8 @@
 (setq blink-matching-paren nil)     ; disable blink-matching-paren
 (setq-default
   tab-width             4           ; set tab width to 4 for all buffers
-  indent-tabs-mode      nil         ; always replace tabs with spaces
-  tab-always-indent     nil)
+  indent-tabs-mode      t           ; always replace tabs with spaces
+  tab-always-indent     t)
 
 ;; do not soft-wrap lines
 (setq-default truncate-lines t)
@@ -43,7 +43,7 @@
 
 ;; Prettify code-related major modes
 (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
-(add-hook 'prog-mode-hook #'highlight-indentation-mode)
+;; (add-hook 'prog-mode-hook #'highlight-indentation-mode)
 
 ;; Remove trailing whitespace
 (add-hook 'before-save-hook 'delete-trailing-whitespace)

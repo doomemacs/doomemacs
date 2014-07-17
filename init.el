@@ -37,24 +37,24 @@
 ;;;;;;;;;;;;;;;;;;;;;;;
 
 (dolist (module '(
-      core               ; Emacs core settings
-      core-packages      ; Package init & management
-      core-ui            ; Look and behavior of the emacs UI
-      core-editor        ; Text/code editor settings and behavior
-      core-osx           ; OSX-specific settings & functions
-      core-project       ; Project navigation settings & packages
+	core               ; Emacs core settings
+	core-packages      ; Package init & management
+	core-ui            ; Look and behavior of the emacs UI
+	core-editor        ; Text/code editor settings and behavior
+	core-osx           ; OSX-specific settings & functions
+	core-project       ; Project navigation settings & packages
 
-      ;; Editor essentials
-      mod-ac             ; Auto-complete engine & settings
-      mod-git            ; GIT tools/settings
-      mod-fly            ; Syntax and spell checkers
-      ; mod-webdev         ; Webdev tools (sass, js, etc)
-      ; mod-gamedev        ; Gamedev tools (C++, love2D, html5)
-      ; mod-shell          ; Goodies for ansi-term
+	;; Editor essentials
+	mod-ac             ; Auto-complete engine & settings
+	mod-git            ; GIT tools/settings
+	mod-fly            ; Syntax and spell checkers
+	; mod-webdev         ; Webdev tools (sass, js, etc)
+	; mod-gamedev        ; Gamedev tools (C++, love2D, html5)
+	; mod-shell          ; Goodies for ansi-term
 
-      ;; Must be last!
-      core-keymaps       ; Global & local keybindings for all modes
-      ))
+	;; Must be last!
+	core-keymaps       ; Global & local keybindings for all modes
+	))
   (require module))
 
 
@@ -66,6 +66,9 @@
 (associate-mode 'org-mode       '(".org" ".gtd") t)
 (associate-mode 'js2-mode       '(".js" ".json"))
 (associate-mode 'web-mode       '(".html" ".htm" ".phtml" ".tpl" ".tpl.php" ".erb"))
-; (associate-mode 'lua-mode ".lua")
-;; (associate-mode 'yaml-mode ".yml")
-;; (associate-mode 'python-mode ".py")
+(associate-mode 'lua-mode       '(".lua"))
+(associate-mode 'yaml-mode      '(".yml"))
+(associate-mode 'python-mode    '(".py"))
+(associate-mode 'c++-mode       '(".h") t)
+
+;;

@@ -15,8 +15,9 @@
       (diminish 'volatile-highlights-mode)
       (diminish 'undo-tree-mode)
       (diminish 'auto-complete-mode)
-      (diminish 'highlight-indentation-mode)
       (diminish 'flyspell-mode " ?")
+	  (diminish 'projectile-mode)
+	  (diminish 'yas-minor-mode)
       ))
 
 ;; Sane scroll settings
