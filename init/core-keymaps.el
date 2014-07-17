@@ -1,5 +1,6 @@
 ;; Global keymaps ;;;;;;;;;;;;;;;
 
+(gmap (kbd "<C-escape>") 'open-scratch-buffer)
 (gmap (kbd "M-x") 'smex)
 (gmap (kbd "M-X") 'smex-major-mode-commands)
 (gmap (kbd "C-x C-p") 'package-list-packages)
@@ -45,8 +46,6 @@
   ";"       'helm-imenu
   ","       'ido-switch-buffer
   "="       'align-regexp
-  "x"       'kill-this-buffer
-  "X"       'kill-buffer-and-window
 )
 
 (nmap
@@ -57,9 +56,13 @@
   "k"       'evil-previous-visual-line
 
   "X"       'evil-destroy           ; Delete without yanking
-  "Y"       'copy-to-end-of-line    ; nnoremap Y y$
-  "zz"      'kill-this-buffer       ; Close buffer
 
+  ; copy to end of line
+  "Y"       (lambda()
+              (interactive)
+              (evil-yank (point) (point-at-eol)))
+
+  "zz"      'kill-this-buffer       ; Close buffer
   "]b"      'previous-buffer
   "[b"      'next-buffer
 
@@ -106,13 +109,16 @@
 ;; Rotate-text (see elisp/rotate-text.el)
 (nmap (kbd "RET") 'rotate-word-at-point)
 (vmap (kbd "RET") 'rotate-region)
+;; (imap (kbd "RET") 'comment-indent-new-line)
+;; Disable return for auto-completion, since tab does the trick
+(define-key ac-completing-map (kbd "RET") nil)
+(imap (kbd "<C-return>") 'indent-new-comment-line)
 
 ;; Enable TAB to do matchit
 (evil-define-key 'normal evil-matchit-mode-map (kbd "TAB") 'evilmi-jump-items)
 
 ;; Easy escape from insert mode
 (ichmap "jj" 'evil-normal-state)
-
 
 ;;;; Org-Mode ;;;;;;;;;;;;;;;;;;;
 
@@ -142,33 +148,33 @@
 
 ;; normal & insert state shortcuts.
 (mapc (lambda (state)
-        (evil-define-key state evil-org-mode-map
-          (kbd "M-l") 'org-metaright
-          (kbd "M-h") 'org-metaleft
-          (kbd "M-k") 'org-metaup
-          (kbd "M-j") 'org-metadown
-          (kbd "M-L") 'org-shiftmetaright
-          (kbd "M-H") 'org-shiftmetaleft
-          (kbd "M-K") 'org-shiftmetaup
-          (kbd "M-J") 'org-shiftmetadown
-          (kbd "M-o") '(lambda () (interactive)
-                         (evil-org-eol-call
-                          '(lambda()
-                             (org-insert-heading)
-                             (org-metaright))))
-          (kbd "M-t") '(lambda () (interactive)
-                         (evil-org-eol-call
-                          '(lambda()
-                             (org-insert-todo-heading nil)
-                             (org-metaright))))
-          ))
-      '(normal insert))
+    (evil-define-key state evil-org-mode-map
+      (kbd "M-l") 'org-metaright
+      (kbd "M-h") 'org-metaleft
+      (kbd "M-k") 'org-metaup
+      (kbd "M-j") 'org-metadown
+      (kbd "M-L") 'org-shiftmetaright
+      (kbd "M-H") 'org-shiftmetaleft
+      (kbd "M-K") 'org-shiftmetaup
+      (kbd "M-J") 'org-shiftmetadown
+      (kbd "M-o") '(lambda () (interactive)
+                     (evil-org-eol-call
+                      '(lambda()
+                         (org-insert-heading)
+                         (org-metaright))))
+      (kbd "M-t") '(lambda () (interactive)
+                     (evil-org-eol-call
+                      '(lambda()
+                         (org-insert-todo-heading nil)
+                         (org-metaright))))
+      ))
+  '(normal insert))
 
 
 ;;;; Ex Commands ;;;;;;;;;;;;;;;;
 
-; (cmap "e[dit]" 'find-file)
-(cmap "git" 'magit-status)
+;; (cmap "e[dit]" 'find-file)
+;; (cmap "n[ew]" ')
 
 
 ;;;; Keymap fixes ;;;;;;;;;;;;;;;
@@ -187,15 +193,17 @@
 (global-set-key [escape] 'evil-exit-emacs-state)
 ;; Close help window with escape
 (define-key global-map [escape] 'quit-window)
-(define-key ag-mode-map [escape] 'quit-window)
 
 ;; Restore bash-esque C-w/C-a/C-e in insert mode and the minibuffer
 (mapc (lambda (map)
-    (define-key map (kbd "C-w") 'backward-kill-word)
+    ;; (define-key map (kbd "C-w") 'evil-delete-backward-word)
     (define-key map (kbd "C-a") 'move-beginning-of-line)
     (define-key map (kbd "C-e") 'move-end-of-line)
     (define-key map (kbd "C-u") 'backward-kill-line))
       (list minibuffer-local-map evil-insert-state-map))
+
+(define-key evil-insert-state-map (kbd "C-w") 'backward-kill-word)
+(define-key minibuffer-local-map (kbd "C-w") 'ido-delete-backward-word-updir)
 
 (add-hook 'ido-setup-hook '(lambda ()
     ;; take that "Text is read-only" and stick it where emacs don't shine!
@@ -207,8 +215,7 @@
 
     ;; Auto-complete on tab/space (why is it called ido-exit-minibuffer?)
     (define-key ido-completion-map " " 'ido-exit-minibuffer)
-    ;; TAB, by default, inserts a literal \t ಠ_ಠ
-    (define-key ido-completion-map (kbd "TAB") 'ido-exit-minibuffer)))
+    ))
 
 ;;
 (provide 'core-keymaps)

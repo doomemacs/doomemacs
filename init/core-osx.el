@@ -2,13 +2,14 @@
 (if (is-osx) (progn
 
     ;; Ignore .DS_Store files with ido mode
-    (add-to-list 'completion-ignored-extensions ".DS_Store")
+    (add-to-list 'ido-ignore-files ".DS_Store")
 
     (if window-system (progn
         (setq ns-use-native-fullscreen nil)
         (global-set-key (kbd "s-<f12>") 'toggle-frame-fullscreen)
 
         (x-focus-frame nil)
+
         ;; Don't open files from the workspace in a new frame
         (setq ns-pop-up-frames nil)
     ))
@@ -23,22 +24,23 @@
       (interactive)
       (open-file-with (buffer-file-name) appName))
 
-    (defun send-to-transmit () (open-with "Transmit"))
-    (defun send-to-launchbar () (open-with "LaunchBar"))
+    (defun send-to-transmit ()      (open-with "Transmit"))
+    (defun send-to-launchbar ()     (open-with "LaunchBar"))
     (defun send-dir-to-launchbar () (open-file-with default-directory "LaunchBar"))
-    (defun send-dir-to-finder () (open-file-with default-directory "Finder"))
-    (defun open-in-terminal () (ansi-term "/bin/zsh"))
+    (defun send-dir-to-finder ()    (open-file-with default-directory "Finder"))
+    ;; (defun open-in-terminal () (ansi-term "/bin/zsh"))
 
     (after 'evil
            (gmap (kbd "s-/") 'evilnc-comment-or-uncomment-lines)
-           (gmap (kbd "s-w") 'evil-window-delete)
+           (gmap (kbd "s-w") 'kill-buffer)
+           (gmap (kbd "s-w") 'kill-buffer-and-window)
 
            ;; Fast scrolling
-           (nmap (kbd "s-j") "jjjjj")
-           (nmap (kbd "s-k") "kkkkk")
+           (nmap (kbd "s-j") "5j")
+           (nmap (kbd "s-k") "5k")
 
            ;; Newlines from insert mode
-           (imap (kbd "<s-return>") 'evil-open-below)
+           ;; (imap (kbd "<s-return>") 'evil-open-below)
            (imap (kbd "<S-s-return>") 'evil-open-above)
 
            ;; Fix OSX text navigation shortcuts

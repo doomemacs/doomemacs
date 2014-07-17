@@ -17,11 +17,13 @@
 
 ; window layout undo/redo, keymaps in init-evil.el
 (when (fboundp 'winner-mode) (winner-mode 1))
-(setq linum-delay t)
 
-(defadvice save-buffers-kill-emacs (around no-query-kill-emacs activate)
-  "Prevent annoying \"Active processes exist\" query when you quit Emacs."
-  (flet ((process-list ())) ad-do-it))
+;; Prevent prompts when trying to close window. If I'm closing the window,
+;; I likely want it to close!
+(defadvice save-buffers-kill-emacs (around no-y-or-n activate)
+  (flet ((yes-or-no-p (&rest args) t)
+         (y-or-n-p (&rest args) t))
+    ad-do-it))
 
 
 ;;;; My personal minor mode ;;;;;;;;
@@ -51,6 +53,12 @@
   (interactive)
   (projectile-find-file-in-directory my-dir))
 
+(defun open-scratch-buffer ()
+  (interactive)
+  (switch-to-buffer (get-buffer-create "*scratch*"))
+  (text-mode))
+
+
 ;; Open the modules/env-{major-mode-name}.el file
 (defun open-major-mode-conf ()
   (interactive)
@@ -62,10 +70,6 @@
         (message (concat "Mode (" (major-mode-name) ") doesn't have a module! Creating it..."))))))
 
 ;;
-(defun copy-to-end-of-line ()
-  (interactive)
-  (evil-yank (point) (point-at-eol)))
-
 (defun backward-kill-line ()
   (interactive)
   (evil-delete (point-at-bol) (point)))
@@ -112,8 +116,7 @@
 
 ;;;; Defuns ;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun linum-on () (linum-mode 0))
-(defun linum-off () (linum-mode 0))
+(defun no-linum () (linum-mode 0))
 
 
 ;;

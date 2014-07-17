@@ -44,21 +44,15 @@
       ido-enable-tramp-completion t
       ido-enable-last-directory-history t)
 
-(defadvice completion--file-name-table (after ignoring-backups-f-n-completion activate)
-    "Filter out results when they match `completion-ignored-extensions'."
-    (let ((res ad-return-value))
-        (if (and (listp res)
-                (stringp (car res))
-                (cdr res))                 ; length > 1, don't ignore sole match
-        (setq ad-return-value
-                (completion-pcm--filename-try-filter res)))))
-
 ;;#projectile
 (setq projectile-completion-system 'grizzl
       projectile-enable-caching t)
 
 ;;#sr-speedbar
 (setq speedbar-use-images nil)
+
+(add-to-list 'ido-ignore-buffers "\\`\\*[^s].*\\*")
+(add-to-list 'ido-ignore-files "\\`.DS_Store\\'")
 
 ;;
 (provide 'core-project)

@@ -40,21 +40,16 @@
     (if (not dont_load) (require package)))
 
 ;; Associate an extension with a mode, and install the necessary
-;; package for it.
-;;
-;; TODO: Rewrite this
-(defun associate-mode (mode ext &optional env-pkg)
+;; package(s) for it. Also look for a modules/env-*.el modefile for
+;; extra configuration.
+(defun associate-mode (mode ext &optional only-load-env)
   (let* ((mode_name (symbol-name mode))
-         (env_mode_name (major-mode-module-name))
-         (mode_path (major-mode-module-path)))
+         (env_mode_name (concat "env-" mode_name))
+         (mode_path (expand-file-name (concat env_mode_name ".el") my-modules-dir)))
 
-    (condition-case nil (init-package mode t) (error nil))
-
-    (autoload mode mode_name)
-    (if env-pkg 
-      (require-package env-pkg)
-      (if (file-exists-p mode_path) (require-package (intern env_mode_name)))
-      ))
+    (unless only-load-env (require-package mode))
+    (if (file-exists-p mode_path)
+        (require-package (intern env_mode_name))))
 
   (if (typep ext 'list)
     (dolist (e ext)

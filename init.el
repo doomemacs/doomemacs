@@ -1,5 +1,4 @@
-;;
-;; [Emacs for the jaded vimmer]
+;;; Emacs for the jaded vimmer
 ;;
 ;; Author: Henrik Lissner <henrik@lissner>
 ;; URL: https://github.com/hlissner/emacs.d
@@ -7,9 +6,13 @@
 ;; These settings set up a very vim-like experience, with some of emacs goodness
 ;; squeezed in between the cracks.
 ;;
+;;; Code:
 
 (cd "~")                    ; Default directory, instead of /
-(setq load-prefer-newer t)  ; Always load newest byte code
+;; (setq debug-on-error t)
+
+;; Append homebrew's bin to emac's PATH
+(setq exec-path (append exec-path '("/usr/local/bin")))
 
 ;; Global vars
 (defvar my-dir (file-name-directory load-file-name))
@@ -35,18 +38,22 @@
 
 (dolist (module '(
       core               ; Emacs core settings
-      core-packages      ; package init & management
+      core-packages      ; Package init & management
       core-ui            ; Look and behavior of the emacs UI
       core-editor        ; Text/code editor settings and behavior
       core-osx           ; OSX-specific settings & functions
       core-project       ; Project navigation settings & packages
-      core-keymaps       ; Global & local keybindings for all modes
 
       ;; Editor essentials
+      mod-ac             ; Auto-complete engine & settings
       mod-git            ; GIT tools/settings
-      ; mod-shell        ; Goodies for running shell in emacs
-      ; mod-webdev       ; Webdev tools (sass, js, etc)
-      ; mod-gamedev      ; Gamedev tools (C++, love2D, html5)
+      mod-fly            ; Syntax and spell checkers
+      ; mod-webdev         ; Webdev tools (sass, js, etc)
+      ; mod-gamedev        ; Gamedev tools (C++, love2D, html5)
+      ; mod-shell          ; Goodies for ansi-term
+
+      ;; Must be last!
+      core-keymaps       ; Global & local keybindings for all modes
       ))
   (require module))
 
@@ -54,10 +61,11 @@
 ;;;; Modes ;;;;;;;;;;;;;;;;;;;;;;;;
 
 (associate-mode 'ruby-mode      '(".rb" "RakeFile"))
-(associate-mode 'markdown-mode  '(".md" ".markdown"))
-(associate-mode 'scss-mode      ".scss")
-;; (associate-mode 'lua-mode ".lua")
+(associate-mode 'markdown-mode  '(".md" ".markdown" "README"))
+(associate-mode 'scss-mode      '(".scss"))
+(associate-mode 'org-mode       '(".org" ".gtd") t)
+(associate-mode 'js2-mode       '(".js" ".json"))
+(associate-mode 'web-mode       '(".html" ".htm" ".phtml" ".tpl" ".tpl.php" ".erb"))
+; (associate-mode 'lua-mode ".lua")
 ;; (associate-mode 'yaml-mode ".yml")
-;; (associate-mode 'js2-mode '(".js" ".json"))
 ;; (associate-mode 'python-mode ".py")
-;; (associate-mode 'web-mode '(".html" ".htm" ".phtml" ".tpl" ".tpl.php" ".erb"))
