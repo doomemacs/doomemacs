@@ -45,6 +45,7 @@
       ido-enable-last-directory-history t)
 
 ;;#projectile
+(projectile-global-mode)
 (setq projectile-completion-system 'grizzl
       projectile-enable-caching t)
 
