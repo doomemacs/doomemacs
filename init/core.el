@@ -76,8 +76,7 @@
 
 (defun toggle-sidebar ()
   (interactive)
-  (sr-speedbar-toggle)
-  (sr-speedbar-refresh-turn-off))
+  (project-explorer-open))
 
 (defun major-mode-name ()
   (symbol-name major-mode))
@@ -96,6 +95,8 @@
   `(evil-define-key 'visual my-mode-map ,@body))
 (defmacro imap (&rest body)
   `(evil-define-key 'insert my-mode-map ,@body))
+(defmacro emap (&rest body)
+  `(evil-define-key 'emacs my-mode-map ,@body))
 
 ;; Global mapping
 (defmacro gmap (key command)

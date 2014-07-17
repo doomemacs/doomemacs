@@ -42,7 +42,7 @@
   "M"       'open-major-mode-conf
   "g"       'magit-status
   "/"       'imenu
-  "\\"      'toggle-speedbar
+  "\\"      'toggle-sidebar
   ";"       'helm-imenu
   ","       'ido-switch-buffer
   "="       'align-regexp
@@ -216,6 +216,12 @@
     ;; Auto-complete on tab/space (why is it called ido-exit-minibuffer?)
     (define-key ido-completion-map " " 'ido-exit-minibuffer)
     ))
+
+;; Preserve buffer-movement in emacs mode
+(emap (kbd "C-w h") 'evil-window-left)
+(emap (kbd "C-w l") 'evil-window-right)
+(emap (kbd "C-w j") 'evil-window-down)
+(emap (kbd "C-w k") 'evil-window-up)
 
 ;;
 (provide 'core-keymaps)

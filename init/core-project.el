@@ -4,9 +4,9 @@
     helm               ; augments search of, well, anything
     grizzl             ; better searching engine for projectile
     ag                 ; the_silver_searcher support
-    sr-speedbar        ; speedbar, w/o the separate frame
     flx-ido            ; enhances ido's flex matching
     ido-vertical-mode  ; vertical listing for ido completion
+    project-explorer   ; sidebar for navigation project files
     ))
 
 ;;#dired
@@ -49,11 +49,14 @@
 (setq projectile-completion-system 'grizzl
       projectile-enable-caching t)
 
-;;#sr-speedbar
-(setq speedbar-use-images nil)
-
 (add-to-list 'ido-ignore-buffers "\\`\\*[^s].*\\*")
 (add-to-list 'ido-ignore-files "\\`.DS_Store\\'")
+
+;;#project-explorer
+(setq pe/width 24)
+(evil-set-initial-state 'project-explorer-mode 'emacs)
+(add-hook 'project-explorer-mode-hook
+          (lambda() (no-linum)))
 
 ;;
 (provide 'core-project)
