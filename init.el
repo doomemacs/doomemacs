@@ -60,7 +60,7 @@
 
 ;;;; Modes ;;;;;;;;;;;;;;;;;;;;;;;;
 
-(associate-mode 'ruby-mode      '(".rb" "RakeFile"))
+(associate-mode 'ruby-mode      '(".rb" ".rake" "RakeFile"))
 (associate-mode 'markdown-mode  '(".md" ".markdown" "README"))
 (associate-mode 'scss-mode      '(".scss"))
 (associate-mode 'org-mode       '(".org" ".gtd") t)
