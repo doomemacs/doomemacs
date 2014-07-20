@@ -7,7 +7,10 @@
     flx-ido            ; enhances ido's flex matching
     ido-vertical-mode  ; vertical listing for ido completion
     project-explorer   ; sidebar for navigation project files
+	dired+
     ))
+
+(diminish 'projectile-mode)
 
 ;;#dired
 (setq dired-recursive-deletes 'always
@@ -35,6 +38,7 @@
 (ido-vertical-mode 1)
 (ido-everywhere 1)
 (flx-ido-mode 1)
+(add-to-list 'ido-ignore-files "\\`.DS_Store\\'")
 (setq ido-use-faces nil
       ido-confirm-unique-completion t
       ido-case-fold t
@@ -48,9 +52,6 @@
 (projectile-global-mode)
 (setq projectile-completion-system 'grizzl
       projectile-enable-caching t)
-
-(add-to-list 'ido-ignore-buffers "\\`\\*[^s].*\\*")
-(add-to-list 'ido-ignore-files "\\`.DS_Store\\'")
 
 ;;#project-explorer
 (setq pe/width 24)

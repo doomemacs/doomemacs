@@ -7,19 +7,6 @@
 (fset 'yes-or-no-p 'y-or-n-p)       ; y/n instead of yes/no
 (global-linum-mode t)               ; line numbers for everybody!
 
-;; Shrink mode-line
-(add-hook 'emacs-startup-hook
-    (lambda()
-      (diminish 'autopair-mode)
-      (diminish 'anzu-mode)
-      (diminish 'volatile-highlights-mode)
-      (diminish 'undo-tree-mode)
-      (diminish 'auto-complete-mode)
-      (diminish 'flyspell-mode " ?")
-	  (diminish 'projectile-mode)
-	  (diminish 'yas-minor-mode)
-      ))
-
 ;; Sane scroll settings
 (setq scroll-margin 3
       scroll-conservatively 100000
@@ -44,6 +31,11 @@
 (setq uniquify-ignore-buffers-re "^\\*") ; don't muck with special buffers
 
 
+;; Modeline settings
+
+
+
+
 ;;;; GUI Settings ;;;;;;;;;;;;;;;;;;;;;
 
 (add-to-list 'default-frame-alist `(font . ,my-font))
@@ -51,15 +43,13 @@
 (add-to-list 'default-frame-alist '(height . 75))
 (add-to-list 'default-frame-alist '(alpha 98 95))   ; *slightly* transparent window
 
-(if window-system (progn
-    (tool-bar-mode -1)
-    (scroll-bar-mode -1)
+;; Use system clipboard
+(setq ring-bell-function 'ignore)
 
-    ; Use system clipboard
-    (setq x-select-enable-clipboard t)
-    ; (setq-default line-spacing 1)
-    (setq ring-bell-function 'ignore)
-) (menu-bar-mode -1))
+(if (functionp 'tool-bar-mode) (tool-bar-mode -1))
+(if (functionp 'scroll-bar-mode) (scroll-bar-mode -1))
+(if (functionp 'menu-bar-mode) (menu-bar-mode -1))
+
 
 ;;
 (provide 'core-ui)

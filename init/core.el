@@ -15,8 +15,34 @@
 ;; Always revert buffers if the files were changed
 (global-auto-revert-mode 1)
 
-; window layout undo/redo, keymaps in init-evil.el
+;; window layout undo/redo, keymaps in init-evil.el
 (when (fboundp 'winner-mode) (winner-mode 1))
+
+(defun kill-other-buffers ()
+  (interactive)
+    (mapc 'kill-buffer (cdr (buffer-list (current-buffer)))))
+
+(defun kill-all-buffers ()
+  (interactive)
+  (mapc 'kill-buffer (buffer-list)))
+
+;;;; Advice ;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; I do it this way because hooking mc/keyboard-quit to insert mode's exit
+;; hook breaks multiple-cursors!
+(defadvice keyboard-quit (around mc-and-keyboard-quit activate)
+  (mc/keyboard-quit)
+  ad-do-it)
+
+;; Make next/previous-buffer skip special buffers
+(defadvice next-buffer (after avoid-messages-buffer-in-next-buffer)
+  "Advice around `next-buffer' to avoid going into the *Messages* buffer."
+  (when (string= "*Messages*" (buffer-name))
+    (next-buffer)))
+(defadvice previous-buffer (after avoid-messages-buffer-in-previous-buffer)
+  "Advice around `previous-buffer' to avoid going into the *Messages* buffer."
+  (when (string= "*Messages*" (buffer-name))
+    (previous-buffer)))
 
 ;; Prevent prompts when trying to close window. If I'm closing the window,
 ;; I likely want it to close!
@@ -24,6 +50,7 @@
   (flet ((yes-or-no-p (&rest args) t)
          (y-or-n-p (&rest args) t))
     ad-do-it))
+
 
 
 ;;;; My personal minor mode ;;;;;;;;
@@ -58,13 +85,12 @@
   (switch-to-buffer (get-buffer-create "*scratch*"))
   (text-mode))
 
-
-;; Open the modules/env-{major-mode-name}.el file
+;; Open the modules/env-{major-mode-name}.el file, if it exists
 (defun open-major-mode-conf ()
   (interactive)
   (let ((path (major-mode-module-path)))
     (if (file-exists-p path)
-      (find-file path)
+		(find-file path)
       (progn
         (find-file path)
         (message (concat "Mode (" (major-mode-name) ") doesn't have a module! Creating it..."))))))

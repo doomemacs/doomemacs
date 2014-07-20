@@ -1,18 +1,27 @@
 ;; OSX-specific functionality
-(if (is-osx) (progn
+(when (is-osx)
+
+	;; GNU Emacs won't respect the login shell's PATH on mac, it seems,
+	;; this is necessary to fix the problem! (Thanks to lunaryorn @
+	;; <https://github.com/flycheck/flycheck/issues/438#issuecomment-49543748>)
+	(require-package 'exec-path-from-shell)
+	(exec-path-from-shell-initialize)
 
     ;; Ignore .DS_Store files with ido mode
     (add-to-list 'ido-ignore-files ".DS_Store")
 
-    (if window-system (progn
-        (setq ns-use-native-fullscreen nil)
-        (global-set-key (kbd "s-<f12>") 'toggle-frame-fullscreen)
+	;; Use a shared clipboard
+	(add-hook 'before-make-frame-hook
+			  (lambda() (setq x-select-enable-clipboard t)))
 
-        (x-focus-frame nil)
+	(when window-system
+	  ;; Curse you Lion-esque fullscreen mode!
+	  (setq ns-use-native-fullscreen nil)
+	  (gmap (kbd "s-<f12>") 'toggle-frame-fullscreen)
 
-        ;; Don't open files from the workspace in a new frame
-        (setq ns-pop-up-frames nil)
-    ))
+	  ;; Don't open files from the workspace in a new frame
+	  (setq ns-pop-up-frames nil)
+	  )
 
     ;; Send current file to OSX apps
     (defun open-file-with (path &optional appName)
@@ -24,34 +33,11 @@
       (interactive)
       (open-file-with (buffer-file-name) appName))
 
-    (defun send-to-transmit ()      (open-with "Transmit"))
-    (defun send-to-launchbar ()     (open-with "LaunchBar"))
-    (defun send-dir-to-launchbar () (open-file-with default-directory "LaunchBar"))
-    (defun send-dir-to-finder ()    (open-file-with default-directory "Finder"))
-    ;; (defun open-in-terminal () (ansi-term "/bin/zsh"))
-
-    (after 'evil
-           (gmap (kbd "s-/") 'evilnc-comment-or-uncomment-lines)
-           (gmap (kbd "s-w") 'kill-buffer)
-           (gmap (kbd "s-w") 'kill-buffer-and-window)
-
-           ;; Fast scrolling
-           (nmap (kbd "s-j") "5j")
-           (nmap (kbd "s-k") "5k")
-
-           ;; Newlines from insert mode
-           ;; (imap (kbd "<s-return>") 'evil-open-below)
-           (imap (kbd "<S-s-return>") 'evil-open-above)
-
-           ;; Fix OSX text navigation shortcuts
-           (imap (kbd "<s-left>") 'move-beginning-of-line)
-           (imap (kbd "<s-right>") 'move-end-of-line)
-           (imap (kbd "<s-backspace>") 'backward-kill-line)
-
-           ;; Fixes delete
-           (imap (kbd "<kp-delete>") 'delete-char)
-           )
-))
+    (defun send-to-transmit ()      (interactive) (open-with "Transmit"))
+    (defun send-to-launchbar ()     (interactive) (open-with "LaunchBar"))
+    (defun send-dir-to-launchbar () (interactive) (open-file-with default-directory "LaunchBar"))
+    (defun send-dir-to-finder ()    (interactive) (open-file-with default-directory "Finder"))
+)
 
 ;;
 (provide 'core-osx)

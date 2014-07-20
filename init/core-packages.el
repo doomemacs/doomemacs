@@ -47,14 +47,18 @@
          (env_mode_name (concat "env-" mode_name))
          (mode_path (expand-file-name (concat env_mode_name ".el") my-modules-dir)))
 
-    (unless only-load-env (require-package mode))
+    (unless only-load-env (autoload mode mode_name))
     (if (file-exists-p mode_path)
-        (require-package (intern env_mode_name))))
+		(eval-after-load mode
+		  `(require (intern ,env_mode_name)))
+		;; (autoload mode env_mode_name)
+		;; (require-package (intern env_mode_name))
+	  ))
 
   (if (typep ext 'list)
-    (dolist (e ext)
-      (add-to-list 'auto-mode-alist `(,(format "\\%s\\'" e) . ,mode)))
-    (add-to-list 'auto-mode-alist `(,(format "\\%s\\'" ext) . ,mode))))
+	  (dolist (e ext)
+		(add-to-list 'auto-mode-alist `(,e . ,mode)))
+	(add-to-list 'auto-mode-alist `(,ext . ,mode))))
 
 ;;
 (provide 'core-packages)

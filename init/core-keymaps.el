@@ -1,63 +1,90 @@
 ;; Global keymaps ;;;;;;;;;;;;;;;
 
 (gmap (kbd "<C-escape>") 'open-scratch-buffer)
-(gmap (kbd "M-x") 'smex)
-(gmap (kbd "M-X") 'smex-major-mode-commands)
-(gmap (kbd "C-x C-p") 'package-list-packages)
+(gmap (kbd "M-x")		 'smex)
+(gmap (kbd "M-X")		 'smex-major-mode-commands)
+(gmap (kbd "C-c p")		 'package-list-packages)
 
-(if (is-osx) (progn
-    (gmap (kbd "s-+")   'text-scale-increase)
-    (gmap (kbd "s--")   'text-scale-decrease)
-
-    (map  (kbd "C-c o")  'send-dir-to-finder)
-    (map  (kbd "C-c u")  'send-to-transmit)
-    (map  (kbd "C-c l")  'send-to-launchbar)
-    (map  (kbd "C-c L")  'send-dir-to-launchbar)
+(when (is-osx)
+    (map  (kbd "C-c o")   'send-dir-to-finder)
+    (map  (kbd "C-c u")   'send-to-transmit)
+    (map  (kbd "C-c l")   'send-to-launchbar)
+    (map  (kbd "C-c L")   'send-dir-to-launchbar)
+    (map  (kbd "C-c t")   (lambda() (interactive) (shell)))
+	(map  (kbd "C-s-RET") 'send-to-iterm)
 
     ;; Evaluating elisp
     (nmap (kbd "C-c x") 'eval-buffer)
     (vmap (kbd "C-c x") 'eval-region)
-))
 
-(map (kbd "C-c t") (lambda() (interactive) (eshell t)))    ; open in terminal
-(map (kbd "C-c g") 'magit-status)
+	(when window-system
+	  (gmap (kbd "s-+")	'text-scale-increase)
+	  (gmap (kbd "s--")	'text-scale-decrease)
 
-(map (kbd "s-o") 'ido-find-file)
-(map (kbd "s-p") 'projectile-switch-project)
-(map (kbd "s-f") 'projectile-find-file)
-(map (kbd "s-F") 'projectile-ag)
-(map (kbd "s-R") 'projectile-recentf)
+	  (gmap (kbd "s-/") 'evilnc-comment-or-uncomment-lines)
+	  (gmap (kbd "s-w") 'kill-buffer-and-window)
+
+	  ;; Faster scrolling
+	  (nmap (kbd "s-j") "5j")
+	  (nmap (kbd "s-k") "5k")
+
+	  ;; Newlines from insert mode
+	  (imap (kbd "<s-return>")		'evil-open-below)
+	  (imap (kbd "<S-s-return>")	'evil-open-above)
+
+	  ;; Fix OSX text navigation shortcuts
+	  (imap (kbd "<s-left>")		'move-beginning-of-line)
+	  (imap (kbd "<s-right>")		'move-end-of-line)
+	  (imap (kbd "<s-backspace>")	'backward-kill-line)
+
+	  ;; Fixes delete
+	  (imap (kbd "<kp-delete>")		'delete-char)
+
+	  ;; Leader alternatives
+	  (map 	(kbd "s-f") 	'projectile-find-file)
+	  (map 	(kbd "s-F") 	'projectile-ag)
+	  (map 	(kbd "s-r") 	'helm-recentf)
+	  (map 	(kbd "s-R") 	'projectile-recentf)
+	  (map 	(kbd "s-o") 	'ido-find-file)
+	  (map 	(kbd "s-O") 	'open-major-mode-conf)
+	  (map 	(kbd "s-d") 	'mc/mark-next-like-this)
+	  (map 	(kbd "s-D") 	'mc/mark-all-like-this)
+	)
+)
 
 
 ;; Local keymaps ;;;;;;;;;;;;;;;;
 
 (evil-leader/set-leader ",")
 (evil-leader/set-key
+  "`"       'open-major-mode-conf
+  "d" 		'mc/mark-next-like-this
+  "D"		'mc/mark-all-like-this
   "e"       'ido-find-file
   "E"       'my-init
-  "p"       'projectile-switch-project
   "f"       'projectile-find-file
   "F"       'projectile-ag
-  "r"       'projectile-recentf
-  "M"       'open-major-mode-conf
-  "g"       'magit-status
-  "/"       'imenu
+  "r"       'helm-recentf 					; recent GLOBAL files
+  "R"       'projectile-recentf				; recent PROJECT files
+  "p"       'projectile-switch-project
+  "/"       'evilnc-comment-or-uncomment-lines
   "\\"      'toggle-sidebar
   ";"       'helm-imenu
   ","       'ido-switch-buffer
   "="       'align-regexp
+  "X"       'kill-other-buffers
 )
 
 (nmap
-  ";"       'evil-ex
+  ";"       'evil-ex		; Remap ; to : - SPC and shift-SPC replace ; and ,
 
-  ; Moving rows rather than lines (in case of wrapping)
+  ;; Moving rows rather than lines (in case of wrapping)
   "j"       'evil-next-visual-line'
   "k"       'evil-previous-visual-line
 
   "X"       'evil-destroy           ; Delete without yanking
 
-  ; copy to end of line
+  ;; copy to end of line
   "Y"       (lambda()
               (interactive)
               (evil-yank (point) (point-at-eol)))
@@ -66,19 +93,13 @@
   "]b"      'previous-buffer
   "[b"      'next-buffer
 
-  ; winner-mode: window layout undo/redo (see init-core.el)
+  ;; winner-mode: window layout undo/redo (see init-core.el)
   (kbd "C-w u")     'winner-undo
   (kbd "C-w C-r")   'winner-redo
 
-  ; Increment/decrement number under cursor
+  ;; Increment/decrement number under cursor
   (kbd "<C-tab>")    'evil-numbers/inc-at-pt
   (kbd "<S-C-tab>")  'evil-numbers/dec-at-pt
-
-  ; Map split navigation with arrow keys
-  (kbd "<up>")       'windmove-up
-  (kbd "<down>")     'windmove-down
-  (kbd "<left>")     'windmove-left
-  (kbd "<right>")    'windmove-right
 )
 
 (vmap
@@ -180,6 +201,8 @@
 
 ;;;; Keymap fixes ;;;;;;;;;;;;;;;
 
+(imap (kbd "s-j") '(lambda() (interactive) (evil-join-line) (evil-indent-line)))
+
 ;; Make ESC quit all the things
 (nmap [escape] 'keyboard-quit)
 (vmap [escape] 'keyboard-quit)
@@ -223,6 +246,8 @@
 (emap (kbd "C-w l") 'evil-window-right)
 (emap (kbd "C-w j") 'evil-window-down)
 (emap (kbd "C-w k") 'evil-window-up)
+(emap (kbd "s-j") "5j")
+(emap (kbd "s-k") "5k")
 
 ;;
 (provide 'core-keymaps)
