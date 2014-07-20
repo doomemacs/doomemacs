@@ -7,7 +7,9 @@
 ;;;; Auto-completion ;;;;;;;;;;;;;;
 
 (ac-config-default)
-(ac-linum-workaround)         ; Fix line number flux bug
+(ac-linum-workaround)         	; Fix line number flux bug
+(diminish 'auto-complete-mode)	; Hide mode-line entry
+(define-key ac-completing-map [return] nil)
 
 (add-hook 'prog-mode-hook 'enable-path-completion)
 (setq ac-auto-show-menu nil     ; Suggestions box must be invoked manually (see core-keymaps.el)

@@ -72,11 +72,13 @@
   ";"       'helm-imenu
   ","       'ido-switch-buffer
   "="       'align-regexp
-  "X"       'kill-other-buffers
+  "x"       'kill-other-buffers
+  "X"       'kill-all-buffers
 )
 
 (nmap
-  ";"       'evil-ex		; Remap ; to : - SPC and shift-SPC replace ; and ,
+  ";"       'evil-ex				; Remap ; to : - SPC and shift-SPC replace ; and ,
+  ":"       'eval-expression		; Elisp command
 
   ;; Moving rows rather than lines (in case of wrapping)
   "j"       'evil-next-visual-line'
@@ -128,8 +130,8 @@
 (vmap "gc"  'evilnc-comment-or-uncomment-lines)
 
 ;; Rotate-text (see elisp/rotate-text.el)
-(nmap (kbd "RET") 'rotate-word-at-point)
-(vmap (kbd "RET") 'rotate-region)
+(nmap "!" 'rotate-word-at-point)
+(vmap "!" 'rotate-region)
 ;; (imap (kbd "RET") 'comment-indent-new-line)
 ;; Disable return for auto-completion, since tab does the trick
 (define-key ac-completing-map (kbd "RET") nil)

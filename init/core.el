@@ -20,11 +20,15 @@
 
 (defun kill-other-buffers ()
   (interactive)
-    (mapc 'kill-buffer (cdr (buffer-list (current-buffer)))))
+  (mapc 'kill-buffer (cdr (buffer-list (current-buffer))))
+  (message "All other buffers killed")
+  )
 
 (defun kill-all-buffers ()
   (interactive)
-  (mapc 'kill-buffer (buffer-list)))
+  (mapc 'kill-buffer (buffer-list))
+  (message "All buffers killed")
+  )
 
 ;;;; Advice ;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -50,7 +54,6 @@
   (flet ((yes-or-no-p (&rest args) t)
          (y-or-n-p (&rest args) t))
     ad-do-it))
-
 
 
 ;;;; My personal minor mode ;;;;;;;;
@@ -110,6 +113,8 @@
   (concat "env-" (major-mode-name)))
 (defun major-mode-module-path ()
   (expand-file-name (concat (major-mode-module-name) ".el") my-modules-dir))
+
+;; TODO: Write better eval-and-replace
 
 
 ;;;; Macros ;;;;;;;;;;;;;;;;;;;;;;;;

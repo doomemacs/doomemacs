@@ -1,8 +1,8 @@
 (require-package 'evil)
-(evil-mode nil)
 
 ;; Has to be done this way to ensure special buffers have evil,
 ;; evil-leader, and all the various keymaps enabled.
+(evil-mode nil)
 (add-hook 'after-init-hook (lambda() (evil-mode 1)))
 
 ;; Now we can carry on with the rest...
@@ -34,13 +34,13 @@
 ;;;; Editor behavior ;;;;;;;;;;;;;;;;
 
 (setq initial-scratch-buffer nil)   ; empty scratch buffer
-(kill-buffer "*scratch*")
+(associate-mode 'text-mode 			'("\\`\\*Messages\\*\\'") t)
 
 (electric-indent-mode +1) 			; auto-indent on RET
 (global-hl-line-mode +1)            ; highlight the line
 (setq-default
   tab-width             4           ; set tab width to 4 for all buffers
-  indent-tabs-mode      t           ; always replace tabs with spaces
+  indent-tabs-mode      t           ; use tabs, not spaces
   tab-always-indent     nil)
 
 ;; do not soft-wrap lines
