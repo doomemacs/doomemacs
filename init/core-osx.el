@@ -14,6 +14,7 @@
 	(add-hook 'before-make-frame-hook
 			  (lambda() (setq x-select-enable-clipboard t)))
 
+	;; TODO: Make server-friendly
 	(when window-system
 	  ;; Curse you Lion-esque fullscreen mode!
 	  (setq ns-use-native-fullscreen nil)

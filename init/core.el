@@ -1,4 +1,4 @@
-(require 'cl)
+;; (require 'cl)
 
 ;; Emacs under-the-hood
 (setq redisplay-dont-pause t)
@@ -140,8 +140,8 @@
   `(evil-ex-define-cmd ,ex ,function))
 
 ;; This one's unique for my own special mappings
-(defmacro map (key command)
-  `(define-key my-mode-map ,key ,command))
+;; (defmacro map (key command)
+;;   `(define-key my-mode-map ,key ,command))
 
 (defmacro is-osx () '(eq system-type 'darwin))
 

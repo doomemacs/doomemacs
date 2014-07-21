@@ -3,26 +3,26 @@
 (gmap (kbd "<C-escape>") 'open-scratch-buffer)
 (gmap (kbd "M-x")		 'smex)
 (gmap (kbd "M-X")		 'smex-major-mode-commands)
-(gmap (kbd "C-c p")		 'package-list-packages)
+(gmap (kbd "C-c C-p")	 'package-list-packages)
 
 (when (is-osx)
-    (map  (kbd "C-c o")   'send-dir-to-finder)
-    (map  (kbd "C-c u")   'send-to-transmit)
-    (map  (kbd "C-c l")   'send-to-launchbar)
-    (map  (kbd "C-c L")   'send-dir-to-launchbar)
-    (map  (kbd "C-c t")   (lambda() (interactive) (shell)))
-	(map  (kbd "C-s-RET") 'send-to-iterm)
+    (nmap (kbd "C-c o")   'send-dir-to-finder)
+    (nmap (kbd "C-c u")   'send-to-transmit)
+    (nmap (kbd "C-c l")   'send-to-launchbar)
+    (nmap (kbd "C-c L")   'send-dir-to-launchbar)
+    (nmap (kbd "C-c t")   (lambda() (interactive) (shell)))
+	(nmap (kbd "C-s-RET") 'send-to-iterm)
 
     ;; Evaluating elisp
-    (nmap (kbd "C-c x") 'eval-buffer)
-    (vmap (kbd "C-c x") 'eval-region)
+    (nmap (kbd "C-c x")   'eval-buffer)
+    (vmap (kbd "C-c x")   'eval-region)
 
 	(when window-system
-	  (gmap (kbd "s-+")	'text-scale-increase)
-	  (gmap (kbd "s--")	'text-scale-decrease)
+	  (gmap (kbd "s-+")	  'text-scale-increase)
+	  (gmap (kbd "s--")	  'text-scale-decrease)
 
-	  (gmap (kbd "s-/") 'evilnc-comment-or-uncomment-lines)
-	  (gmap (kbd "s-w") 'kill-buffer-and-window)
+	  (gmap (kbd "s-/")   'evilnc-comment-or-uncomment-lines)
+	  (gmap (kbd "s-w")   'kill-buffer-and-window)
 
 	  ;; Faster scrolling
 	  (nmap (kbd "s-j") "5j")
@@ -41,14 +41,14 @@
 	  (imap (kbd "<kp-delete>")		'delete-char)
 
 	  ;; Leader alternatives
-	  (map 	(kbd "s-f") 	'projectile-find-file)
-	  (map 	(kbd "s-F") 	'projectile-ag)
-	  (map 	(kbd "s-r") 	'helm-recentf)
-	  (map 	(kbd "s-R") 	'projectile-recentf)
-	  (map 	(kbd "s-o") 	'ido-find-file)
-	  (map 	(kbd "s-O") 	'open-major-mode-conf)
-	  (map 	(kbd "s-d") 	'mc/mark-next-like-this)
-	  (map 	(kbd "s-D") 	'mc/mark-all-like-this)
+	  (nmap (kbd "s-f") 	'projectile-find-file)
+	  (nmap (kbd "s-F") 	'projectile-ag)
+	  (nmap (kbd "s-r") 	'helm-recentf)
+	  (nmap (kbd "s-R") 	'projectile-recentf)
+	  (nmap (kbd "s-o") 	'ido-find-file)
+	  (nmap (kbd "s-O") 	'open-major-mode-conf)
+	  (nmap (kbd "s-d") 	'mc/mark-next-like-this)
+	  (nmap (kbd "s-D") 	'mc/mark-all-like-this)
 	)
 )
 
@@ -119,12 +119,6 @@
               (evil-visual-restore))
   )
 
-(imap
-  ; Auto-completion
-  (kbd "C-SPC") 'ac-fuzzy-complete
-  (kbd "C-S-SPC") 'ac-quick-help
-)
-
 ;; Commenting lines
 (nmap "gcc" 'evilnc-comment-or-uncomment-lines)
 (vmap "gc"  'evilnc-comment-or-uncomment-lines)
@@ -134,7 +128,6 @@
 (vmap "!" 'rotate-region)
 ;; (imap (kbd "RET") 'comment-indent-new-line)
 ;; Disable return for auto-completion, since tab does the trick
-(define-key ac-completing-map (kbd "RET") nil)
 (imap (kbd "<C-return>") 'indent-new-comment-line)
 
 ;; Enable TAB to do matchit

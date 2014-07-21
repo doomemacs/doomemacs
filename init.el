@@ -11,8 +11,8 @@
 (cd "~") ; Default directory, instead of /
 ;; (setq debug-on-error t)
 
-(server-mode t)
-(unless (server-running-p) (server-start))
+;; (server-mode t)
+;; (unless (server-running-p) (server-start))
 
 ;; Global vars
 (defvar my-dir (file-name-directory load-file-name))

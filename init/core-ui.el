@@ -33,7 +33,7 @@
 
 ;; Modeline settings
 
-
+;; TODO: Customize modeline
 
 
 ;;;; GUI Settings ;;;;;;;;;;;;;;;;;;;;;
@@ -46,9 +46,9 @@
 ;; Use system clipboard
 (setq ring-bell-function 'ignore)
 
-(if (functionp 'tool-bar-mode) (tool-bar-mode -1))
-(if (functionp 'scroll-bar-mode) (scroll-bar-mode -1))
-(if (functionp 'menu-bar-mode) (menu-bar-mode -1))
+(when (functionp 'tool-bar-mode) (tool-bar-mode -1))
+(when (functionp 'scroll-bar-mode) (scroll-bar-mode -1))
+(when (functionp 'menu-bar-mode) (menu-bar-mode -1))
 
 
 ;;

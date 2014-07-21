@@ -28,6 +28,7 @@
    key-chord               ; for mapping key chords in insert mode
    multiple-cursors		   ; cursors, of the numerous variety
    ediff
+   deferred
    ))
 
 
