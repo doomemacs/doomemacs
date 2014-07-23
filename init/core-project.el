@@ -48,6 +48,8 @@
       ido-enable-tramp-completion t
       ido-enable-last-directory-history t)
 
+;; (add-to-list 'ido-ubiquitous-default-function-overrides '(disable exact "evil-ex"))
+
 ;;; Filters ido-matches setting acronynm matches in front of the results
 (defadvice ido-set-matches-1 (after ido-smex-acronym-matches activate)
   (if (and (fboundp 'smex-already-running) (smex-already-running)

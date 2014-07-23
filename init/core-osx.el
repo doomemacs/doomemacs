@@ -14,15 +14,10 @@
 	(add-hook 'before-make-frame-hook
 			  (lambda() (setq x-select-enable-clipboard t)))
 
-	;; TODO: Make server-friendly
-	(when window-system
-	  ;; Curse you Lion-esque fullscreen mode!
-	  (setq ns-use-native-fullscreen nil)
-	  (gmap (kbd "s-<f12>") 'toggle-frame-fullscreen)
-
-	  ;; Don't open files from the workspace in a new frame
-	  (setq ns-pop-up-frames nil)
-	  )
+    ;; Curse you Lion-esque fullscreen mode!
+    (setq ns-use-native-fullscreen nil)
+    ;; Don't open files from the workspace in a new frame
+    (setq ns-pop-up-frames nil)
 
     ;; Send current file to OSX apps
     (defun open-file-with (path &optional appName)

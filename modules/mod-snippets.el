@@ -15,7 +15,6 @@
 (require-package 'yasnippet)
 
 ;;;#yasnippet
-;; (yas-global-mode t)
 (associate-mode 'snippet-mode '("emacs.+/snippets/") t)
 (add-hook 'prog-mode-hook
           '(lambda ()

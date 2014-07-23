@@ -22,38 +22,35 @@
 
 ;; Check if a package is installed; if load is t, load it too.
 ;; Works for packages bundled with emacs too!
-(defun require-package (package &optional dont_load)
+(defun require-package (package)
+  (message "=> require-package(%s)" package)
   (unless (require package nil 'noerror)
-    (init-package package dont_load)))
-
-;; List version of require-package
-(defun require-packages (packages &optional dont_load)
-  (dolist (pkg packages) (require-package pkg dont_load)))
-
-;; Install the package if it isn't already, and require it, unless
-;; told others.
-(defun init-package (package &optional dont_load)
     (unless (package-installed-p package)
         (unless (assoc package package-archive-contents)
             (package-refresh-contents))
-        (package-install package))
-    (if (not dont_load) (require package)))
+        (package-install package)))
+  (require package))
+
+;; List version of require-package
+(defun require-packages (packages)
+  (mapc 'require-package packages))
 
 ;; Associate an extension with a mode, and install the necessary
 ;; package(s) for it. Also look for a modules/env-*.el modefile for
 ;; extra configuration.
 (defun associate-mode (mode ext &optional only-load-env)
-  (let* ((mode_name (symbol-name mode))
-         (env_mode_name (concat "env-" mode_name))
-         (mode_path (expand-file-name (concat env_mode_name ".el") my-modules-dir)))
+  (let* ((mode-name (symbol-name mode))
+         (env-mode-name (concat "env-" mode-name))
+         (mode-path (expand-file-name (concat env-mode-name ".el") my-modules-dir)))
 
-    (unless only-load-env (autoload mode mode_name))
-    (if (file-exists-p mode_path)
-		(eval-after-load mode
-		  `(require (intern ,env_mode_name)))
-		;; (autoload mode env_mode_name)
-		;; (require-package (intern env_mode_name))
-	  ))
+    (message "=> Init %s" mode-name)
+    ;; (unless only-load-env (autoload mode mode-name))
+    (unless only-load-env (require-package mode))
+    (when (file-exists-p mode-path)
+		(message "=> Loaded %s" env-mode-name)
+		(require (intern env-mode-name))
+		)
+	)
 
   (if (typep ext 'list)
 	  (dolist (e ext)

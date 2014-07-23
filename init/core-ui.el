@@ -1,5 +1,6 @@
 (require-packages
- '(uniquify                ; unique buffer names for identical filenames
+ '(
+   ;; uniquify                ; unique buffer names for identical filenames
    diminish                ; shrinks/removes modeline elements
    ))
 
@@ -24,23 +25,24 @@
   (let* ((w (length (number-to-string (count-lines (point-min) (point-max)))))
          (linum-format (concat "%" (number-to-string (+ w 1)) "d" (if window-system "" " ")))) ad-do-it))
 
-;;;#uniquify
-(setq uniquify-buffer-name-style 'forward)
-(setq uniquify-separator "/")
-(setq uniquify-after-kill-buffer-p t)    ; rename after killing uniquified
-(setq uniquify-ignore-buffers-re "^\\*") ; don't muck with special buffers
+;; Show full path in window title
+(setq frame-title-format
+      '(:eval (if (buffer-file-name) (abbreviate-file-name (buffer-file-name)) "%b")))
 
+;;;#uniquify
+;; (setq uniquify-buffer-name-style 'forward)
+;; (setq uniquify-separator "/")
+;; (setq uniquify-after-kill-buffer-p t)    ; rename after killing uniquified
+;; (setq uniquify-ignore-buffers-re "^\\*") ; don't muck with special buffers
 
 ;; Modeline settings
 
-;; TODO: Customize modeline
+;; TODO: Customize modeline!
 
 
 ;;;; GUI Settings ;;;;;;;;;;;;;;;;;;;;;
 
 (add-to-list 'default-frame-alist `(font . ,my-font))
-(add-to-list 'default-frame-alist '(width . 100))
-(add-to-list 'default-frame-alist '(height . 75))
 (add-to-list 'default-frame-alist '(alpha 98 95))   ; *slightly* transparent window
 
 ;; Use system clipboard

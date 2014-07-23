@@ -20,6 +20,7 @@
 	(when window-system
 	  (gmap (kbd "s-+")	  'text-scale-increase)
 	  (gmap (kbd "s--")	  'text-scale-decrease)
+      (gmap (kbd "s-<f12>") 'toggle-frame-fullscreen)
 
 	  (gmap (kbd "s-/")   'evilnc-comment-or-uncomment-lines)
 	  (gmap (kbd "s-w")   'kill-buffer-and-window)
@@ -119,6 +120,12 @@
               (evil-visual-restore))
   )
 
+(imap
+  (kbd "s-j")         'evil-join
+  (kbd "M-SPC")       'expand-space
+  (kbd "<C-return>")  'indent-new-comment-line
+  )
+
 ;; Commenting lines
 (nmap "gcc" 'evilnc-comment-or-uncomment-lines)
 (vmap "gc"  'evilnc-comment-or-uncomment-lines)
@@ -126,9 +133,6 @@
 ;; Rotate-text (see elisp/rotate-text.el)
 (nmap "!" 'rotate-word-at-point)
 (vmap "!" 'rotate-region)
-;; (imap (kbd "RET") 'comment-indent-new-line)
-;; Disable return for auto-completion, since tab does the trick
-(imap (kbd "<C-return>") 'indent-new-comment-line)
 
 ;; Enable TAB to do matchit
 (evil-define-key 'normal evil-matchit-mode-map (kbd "TAB") 'evilmi-jump-items)
@@ -189,14 +193,11 @@
 
 ;;;; Ex Commands ;;;;;;;;;;;;;;;;
 
-;; (cmap "e[dit]" 'find-file)
-;; (cmap "n[ew]" ')
-(cmap "retab" 'indent-region)
+(cmap "retab" 'indent-region) 			; TODO: Implement proper retab defun
+(cmap "msg" 'view-echo-area-messages)
 
 
 ;;;; Keymap fixes ;;;;;;;;;;;;;;;
-
-(imap (kbd "s-j") '(lambda() (interactive) (evil-join-line) (evil-indent-line)))
 
 ;; Make ESC quit all the things
 (nmap [escape] 'keyboard-quit)
@@ -213,13 +214,12 @@
 ;; Close help window with escape
 (define-key global-map [escape] 'quit-window)
 
-;; Restore bash-esque C-w/C-a/C-e in insert mode and the minibuffer
+;; Restore bash-esque keymaps in insert mode and the minibuffer
 (mapc (lambda (map)
-    ;; (define-key map (kbd "C-w") 'evil-delete-backward-word)
     (define-key map (kbd "C-a") 'move-beginning-of-line)
     (define-key map (kbd "C-e") 'move-end-of-line)
     (define-key map (kbd "C-u") 'backward-kill-line))
-      (list minibuffer-local-map evil-insert-state-map))
+      (list minibuffer-local-map minibuffer-local-ns-map evil-insert-state-map))
 
 (define-key evil-insert-state-map (kbd "C-w") 'backward-kill-word)
 (define-key minibuffer-local-map (kbd "C-w") 'ido-delete-backward-word-updir)

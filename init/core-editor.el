@@ -35,13 +35,12 @@
 ;;;; Editor behavior ;;;;;;;;;;;;;;;;
 
 (setq initial-scratch-buffer nil)   ; empty scratch buffer
-(associate-mode 'text-mode 			'("\\`\\*Messages\\*\\'") t)
 
 (electric-indent-mode +1) 			; auto-indent on RET
 (global-hl-line-mode +1)            ; highlight the line
 (setq-default
   tab-width             4           ; set tab width to 4 for all buffers
-  indent-tabs-mode      t           ; use tabs, not spaces
+  indent-tabs-mode      nil         ; use tabs, not spaces
   tab-always-indent     nil)
 
 ;; do not soft-wrap lines
@@ -128,7 +127,6 @@
 (add-to-list 'recentf-exclude "\\.ido\\.last\\'")
 (add-to-list 'recentf-exclude "\\.revive\\'")
 (setq recentf-auto-cleanup 'never)
-
 
 ;;
 (provide 'core-editor)

@@ -30,7 +30,7 @@
 
 ;; Font & color scheme
 (load-theme 'brin t)
-(defvar my-font "Ubuntu Mono-15")
+(defvar my-font "Inconsolata-14")
 
 ;;;;;;;;;;;;;;;;;;;;;;;
 ;; Bootstrap
@@ -69,7 +69,7 @@
 (associate-mode 'markdown-mode		'("\\.md\\'" "\\.markdown\\'" "/README"))
 (associate-mode 'scss-mode	  		'("\\.scss\\'"))
 (associate-mode 'org-mode	   		'("\\.org\\'" "\\.gtd\\'") t)
-(associate-mode 'js-mode		 	'("\\.js\\'") t)
+(associate-mode 'js-mode		    '("\\.js\\'") t)
 (associate-mode 'json-mode			'("\\.json\\'" "\\.jshintrc\\'"))
 (associate-mode 'web-mode	   		'("\\.\\(p\\)?htm\\(l\\)?\\'" "\\.tpl\\(\\.php\\)?\\'" "\\.erb\\'"))
 (associate-mode 'lua-mode	   		'("\\.lua\\'"))

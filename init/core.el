@@ -103,6 +103,14 @@
   (interactive)
   (evil-delete (point-at-bol) (point)))
 
+(defun expand-space ()
+  (interactive)
+  (save-excursion (insert " ")))
+(defun expand-backspace ()
+  (interactive)
+  (save-excursion (delete-char 1))
+  (delete-backward-char 1))
+
 (defun toggle-sidebar ()
   (interactive)
   (project-explorer-open))
