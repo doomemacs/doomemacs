@@ -1,6 +1,9 @@
 vendor/
 tmp/
 eshell/
+auto-save-list/
+.python-environments/
+.mc-lists.el
 
 # compiled files
 **/*.elc
