@@ -11,8 +11,8 @@
 (cd "~") ; Default directory, instead of /
 ;; (setq debug-on-error t)
 
-;; (server-mode t)
-;; (unless (server-running-p) (server-start))
+(server-mode t)
+(unless (server-running-p) (server-start))
 
 ;; Global vars
 (defvar my-dir (file-name-directory load-file-name))
@@ -78,5 +78,13 @@
 (associate-mode 'python-mode		'("\\.py\\'"))
 (associate-mode 'c++-mode	   		'("\\.h\\'") t)
 (associate-mode 'shell-script-mode  '("\\.zsh\\(rc\\|env\\)?\\'") t)
+
+;; Specific mode-configs: DON'T NEED TO REQUIRE THESE.
+;; They're here for your gf-ing convenience.
+; modules/env-js-mode.el
+; modules/env-ruby-mode.el
+; modules/env-python-mode.el
+; modules/env-lua-mode.el
+; modules/env-python-mode.el
 
 ;;
