@@ -4,15 +4,12 @@
 (setq tern-ac-on-dot nil)
 
 ;; replace auto-complete with tern-ac-complete only in js-mode
-(add-hook 'change-major-mode-hook
-		  (lambda () (evil-define-key 'insert ac-mode-map (kbd "C-SPC") 'auto-complete)))
 (add-hook 'js-mode-hook
 		  (lambda ()
 			(evil-define-key 'insert ac-mode-map (kbd "C-SPC") 'tern-ac-complete)
 			(tern-mode t)
 			(tern-ac-setup)
 			))
-
 
 ;; Let flycheck handle parse errors
 ;; (setq-default js2-show-parse-errors nil)
