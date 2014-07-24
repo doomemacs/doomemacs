@@ -1,3 +1,6 @@
 [submodule "snippets"]
 	path = snippets
 	url = https://github.com/hlissner/emacs-snippets
+[submodule "elisp/emacs-neotree"]
+	path = elisp/emacs-neotree
+	url = https://github.com/jaypei/emacs-neotree

@@ -6,7 +6,7 @@
     ag                 ; the_silver_searcher support
     flx-ido            ; enhances ido's flex matching
     ido-vertical-mode  ; vertical listing for ido completion
-    project-explorer   ; sidebar for navigation project files
+    ;; project-explorer   ; sidebar for navigation project files
 	dired+
     ))
 
@@ -85,10 +85,14 @@
       projectile-enable-caching t)
 
 ;;#project-explorer
-(setq pe/width 24)
-(evil-set-initial-state 'project-explorer-mode 'emacs)
-(add-hook 'project-explorer-mode-hook
-          (lambda() (no-linum)))
+;; (setq pe/width 24)
+;; (evil-set-initial-state 'project-explorer-mode 'emacs)
+;; (add-hook 'project-explorer-mode-hook
+;;           (lambda() (no-linum)))
+
+;;#neotree
+(add-to-list 'load-path "/some/path/neotree")
+(require 'neotree)
 
 ;;
 (provide 'core-project)
