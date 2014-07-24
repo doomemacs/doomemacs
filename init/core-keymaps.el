@@ -44,8 +44,8 @@
 	  ;; Leader alternatives
 	  (nmap (kbd "s-f") 	'projectile-find-file)
 	  (nmap (kbd "s-F") 	'projectile-ag)
-	  (nmap (kbd "s-r") 	'helm-recentf)
-	  (nmap (kbd "s-R") 	'projectile-recentf)
+	  (nmap (kbd "s-m") 	'helm-recentf)
+	  (nmap (kbd "s-M") 	'projectile-recentf)
 	  (nmap (kbd "s-o") 	'ido-find-file)
 	  (nmap (kbd "s-O") 	'open-major-mode-conf)
 	  (nmap (kbd "s-d") 	'mc/mark-next-like-this)
@@ -65,11 +65,12 @@
   "E"       'my-init
   "f"       'projectile-find-file
   "F"       'projectile-ag
-  "r"       'helm-recentf 					; recent GLOBAL files
-  "R"       'projectile-recentf				; recent PROJECT files
+  "m"       'helm-recentf 					; recent GLOBAL files
+  "M"       'projectile-recentf				; recent PROJECT files
   "p"       'projectile-switch-project
   "/"       'evilnc-comment-or-uncomment-lines
-  "\\"      'toggle-sidebar
+  "\\"      'neotree-show
+  "|"       'neotree-hide
   ";"       'helm-imenu
   ","       'ido-switch-buffer
   "="       'align-regexp

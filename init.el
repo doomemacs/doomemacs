@@ -50,6 +50,7 @@
 	mod-snippets		; Snippet engine
 	mod-git				; GIT tools/settings
 	mod-fly				; Syntax and spell checkers
+    mod-emmet           ; Zen-coding for HTML+CSS
 	; mod-webdev		; Webdev tools (sass, js, etc)
 	; mod-gamedev		; Gamedev tools (C++, love2D, html5)
 	; mod-shell			; Terminal emulator settings
