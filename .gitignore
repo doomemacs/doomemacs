@@ -6,6 +6,7 @@ auto-save-list/
 .mc-lists.el
 
 # compiled files
+**/.*
 **/*.elc
 **/*.lib
 **/*.fas

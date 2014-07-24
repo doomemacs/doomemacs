@@ -76,6 +76,8 @@
 (evil-define-operator evil-destroy (beg end type register yank-handler)
     (evil-delete beg end type ?_ yank-handler))
 
+(evil-set-initial-state 'comint-mode 'insert)
+
 ;; Enable registers in ex-mode
 (define-key evil-ex-completion-map (kbd "C-r") #'evil-ex-paste-from-register)
 

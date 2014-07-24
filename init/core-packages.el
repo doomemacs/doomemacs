@@ -43,11 +43,11 @@
          (env-mode-name (concat "env-" mode-name))
          (mode-path (expand-file-name (concat env-mode-name ".el") my-modules-dir)))
 
-    (message "=> Init %s" mode-name)
+    (message "=> associate mode(%s)" mode-name)
     ;; (unless only-load-env (autoload mode mode-name))
     (unless only-load-env (require-package mode))
     (when (file-exists-p mode-path)
-		(message "=> Loaded %s" env-mode-name)
+		(message "==> has extra-conf (%s)" env-mode-name)
 		(require (intern env-mode-name))
 		)
 	)
