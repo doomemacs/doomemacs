@@ -3,13 +3,14 @@
    auto-complete-config    ; its default config
    ))
 
-(setq ac-auto-show-menu nil     ; Suggestions box must be invoked manually (see core-keymaps.el)
-      ac-use-menu-map t         ; Enable ac-menu-map map when menu is open
-      ac-us-quick-help nil      ; Don't show tooltips unless invoked (see core-keymaps.el)
-      ac-fuzzy-cursor-color nil)
+;; (setq ac-auto-start 2)
+;; (setq ac-auto-show-menu nil     ; Suggestions box must be invoked manually (see core-keymaps.el)
+;;       ac-use-menu-map t         ; Enable ac-menu-map map when menu is open
+;;       ac-us-quick-help nil      ; Don't show tooltips unless invoked (see core-keymaps.el)
+;;       ac-fuzzy-cursor-color nil)
 
-;; Keep auto-complete quiet until it's needed (see core-keymaps.el)
-(setq ac-auto-start 2)
+;; Keep auto-complete quiet until it's needed
+(setq ac-auto-start nil)
 
 (ac-config-default)
 (ac-linum-workaround)         	; Fix line number flux bug
