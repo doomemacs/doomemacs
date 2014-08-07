@@ -1,56 +1,73 @@
 ;; Global keymaps ;;;;;;;;;;;;;;;
 
-(gmap (kbd "<C-escape>") 'open-scratch-buffer)
-(gmap (kbd "M-x")		 'smex)
-(gmap (kbd "M-X")		 'smex-major-mode-commands)
-(gmap (kbd "C-c C-p")	 'package-list-packages)
+(global-set-key (kbd "<C-escape>") 'my/open-scratch)
+(global-set-key (kbd "C-c C-p")	 'package-list-packages)
 
-(when (is-osx)
-    (nmap (kbd "C-c o")   'send-dir-to-finder)
-    (nmap (kbd "C-c u")   'send-to-transmit)
-    (nmap (kbd "C-c l")   'send-to-launchbar)
-    (nmap (kbd "C-c L")   'send-dir-to-launchbar)
-    (nmap (kbd "C-c t")   (lambda() (interactive) (shell)))
-	(nmap (kbd "C-s-RET") 'send-to-iterm)
+(when is-mac
+  ;; Send current file to OSX apps
+  (defun open-file-with (path &optional appName)
+    (if (not (string= "" appName))
+        (setq appName (concat "-a " appName ".app")))
+    (shell-command (concat "open " appName " " path)))
 
-    ;; Evaluating elisp
-    (nmap (kbd "C-c x")   'eval-buffer)
-    (vmap (kbd "C-c x")   'eval-region)
+  (defun open-with (appName)
+    (interactive)
+    (open-file-with (buffer-file-name) appName))
 
-	(when window-system
-	  (gmap (kbd "s-+")	  'text-scale-increase)
-	  (gmap (kbd "s--")	  'text-scale-decrease)
-      (gmap (kbd "s-<f12>") 'toggle-frame-fullscreen)
+  (defun send-to-transmit ()      (interactive) (open-with "Transmit"))
+  (defun send-to-launchbar ()     (interactive) (open-with "LaunchBar"))
+  (defun send-dir-to-launchbar () (interactive) (open-file-with default-directory "LaunchBar"))
+  (defun send-dir-to-finder ()    (interactive) (open-file-with default-directory "Finder"))
 
-	  (gmap (kbd "s-/")   'evilnc-comment-or-uncomment-lines)
-	  (gmap (kbd "s-w")   'kill-buffer-and-window)
+  (nmap my/mode-map
+        (kbd "C-c o")   'send-dir-to-finder
+        (kbd "C-c u")   'send-to-transmit
+        (kbd "C-c l")   'send-to-launchbar
+        (kbd "C-c L")   'send-dir-to-launchbar
+        ;; TODO: Open in tmux
+        (kbd "C-c t")   (lambda() (interactive) (shell))
+        )
 
-	  ;; Faster scrolling
-	  (nmap (kbd "s-j") "5j")
-	  (nmap (kbd "s-k") "5k")
+  ;; Evaluating elisp
+  (nmap my/mode-map (kbd "C-c x")   'eval-buffer)
+  (vmap my/mode-map (kbd "C-c x")   'eval-region)
 
-	  ;; Newlines from insert mode
-	  (imap (kbd "<s-return>")		'evil-open-below)
-	  (imap (kbd "<S-s-return>")	'evil-open-above)
+  (when window-system
+    (global-set-key (kbd "s-+")	  'text-scale-increase)
+    (global-set-key (kbd "s--")	  'text-scale-decrease)
+    (global-set-key (kbd "s-/")   'evilnc-comment-or-uncomment-lines)
+    (global-set-key (kbd "s-w")   'kill-buffer-and-window)
+    (global-set-key (kbd "s-<f12>") 'toggle-frame-fullscreen)
 
-	  ;; Fix OSX text navigation shortcuts
-	  (imap (kbd "<s-left>")		'move-beginning-of-line)
-	  (imap (kbd "<s-right>")		'move-end-of-line)
-	  (imap (kbd "<s-backspace>")	'backward-kill-line)
+    (nmap my/mode-map
+          ;; Faster scrolling
+          (kbd "s-j") "5j"
+          (kbd "s-k") "5k"
 
-	  ;; Fixes delete
-	  (imap (kbd "<kp-delete>")		'delete-char)
+          ;; Leader alternatives
+          (kbd "s-f") 	'projectile-find-file
+          (kbd "s-F") 	'projectile-ag
+          (kbd "s-m") 	'helm-recentf
+          (kbd "s-M") 	'projectile-recentf
+          (kbd "s-o") 	'ido-find-file
+          (kbd "s-O") 	'open-major-mode-conf
+          (kbd "s-d") 	'mc/mark-next-like-this
+          (kbd "s-D") 	'mc/mark-previous-like-this
+          (kbd "C-s-d") 'mc/mark-all-like-this)
 
-	  ;; Leader alternatives
-	  (nmap (kbd "s-f") 	'projectile-find-file)
-	  (nmap (kbd "s-F") 	'projectile-ag)
-	  (nmap (kbd "s-m") 	'helm-recentf)
-	  (nmap (kbd "s-M") 	'projectile-recentf)
-	  (nmap (kbd "s-o") 	'ido-find-file)
-	  (nmap (kbd "s-O") 	'open-major-mode-conf)
-	  (nmap (kbd "s-d") 	'mc/mark-next-like-this)
-	  (nmap (kbd "s-D") 	'mc/mark-all-like-this)
-	)
+    ;; Newlines from insert mode
+    (imap my/mode-map
+          (kbd "<s-return>")    'evil-open-below
+          (kbd "<S-s-return>")  'evil-open-above
+
+          ;; Fix OSX text navigation shortcuts
+          (kbd "<s-left>")		'move-beginning-of-line
+          (kbd "<s-right>")		'move-end-of-line
+          (kbd "<s-backspace>")	'backward-kill-line
+
+          ;; Fixes delete
+          (kbd "<kp-delete>")   'delete-char)
+    )
 )
 
 
@@ -58,11 +75,11 @@
 
 (evil-leader/set-leader ",")
 (evil-leader/set-key
-  "`"       'open-major-mode-conf
+  "`"       'my/notes
   "d" 		'mc/mark-next-like-this
   "D"		'mc/mark-all-like-this
   "e"       'ido-find-file
-  "E"       'my-init
+  "E"       'my/initfiles
   "f"       'projectile-find-file
   "F"       'projectile-ag
   "m"       'helm-recentf 					; recent GLOBAL files
@@ -76,14 +93,15 @@
   "="       'align-regexp
   "x"       'kill-other-buffers
   "X"       'kill-all-buffers
+  (kbd "RET") 'org-capture
 )
 
-(nmap
-  ";"       'evil-ex				; Remap ; to : - SPC and shift-SPC replace ; and ,
-  ":"       'eval-expression		; Elisp command
+(nmap my/mode-map
+  ";"           'evil-ex            ; Remap ; to : - SPC and shift-SPC replace ; and ,
+  (kbd "C-;")   'eval-expression    ; Elisp command
 
   ;; Moving rows rather than lines (in case of wrapping)
-  "j"       'evil-next-visual-line'
+  "j"       'evil-next-visual-line
   "k"       'evil-previous-visual-line
 
   "X"       'evil-destroy           ; Delete without yanking
@@ -106,7 +124,7 @@
   (kbd "<S-C-tab>")  'evil-numbers/dec-at-pt
 )
 
-(vmap
+(vmap my/mode-map
   ; vnoremap < <gv
   "<"       (lambda ()
               (interactive)
@@ -121,88 +139,47 @@
               (evil-visual-restore))
   )
 
-(imap
+(imap my/mode-map
   (kbd "s-j")         'evil-join
   (kbd "M-SPC")       'expand-space
   (kbd "<C-return>")  'indent-new-comment-line
   )
 
 ;; Commenting lines
-(nmap "gcc" 'evilnc-comment-or-uncomment-lines)
-(vmap "gc"  'evilnc-comment-or-uncomment-lines)
+(nmap my/mode-map "gcc" 'evilnc-comment-or-uncomment-lines)
+(vmap my/mode-map "gc"  'evilnc-comment-or-uncomment-lines)
 
 ;; Rotate-text (see elisp/rotate-text.el)
-(nmap "!" 'rotate-word-at-point)
-(vmap "!" 'rotate-region)
+(nmap my/mode-map "!" 'rotate-word-at-point)
+(vmap my/mode-map "!" 'rotate-region)
 
 ;; Enable TAB to do matchit
-(evil-define-key 'normal evil-matchit-mode-map (kbd "TAB") 'evilmi-jump-items)
+(nmap evil-matchit-mode-map (kbd "TAB") 'evilmi-jump-items)
 
 ;; Easy escape from insert mode
 (ichmap "jj" 'evil-normal-state)
 
-;;;; Org-Mode ;;;;;;;;;;;;;;;;;;;
-
-(evil-define-key 'normal evil-org-mode-map
-  "gh"      'outline-up-heading
-  "gj"      (if (fboundp 'org-forward-same-level) ;to be backward compatible with older org version
-                'org-forward-same-level
-              'org-forward-heading-same-level)
-  "gk"      (if (fboundp 'org-backward-same-level)
-                'org-backward-same-level
-              'org-backward-heading-same-level)
-  "gl"      'outline-next-visible-heading
-  "t"       'org-todo
-  "T"       '(lambda () (interactive) (evil-org-eol-call (lambda() (org-insert-todo-heading nil))))
-  "H"       'org-beginning-of-line
-  "L"       'org-end-of-line
-  ";t"      'org-show-todo-tree
-  "o"       '(lambda () (interactive) (evil-org-eol-call 'always-insert-item))
-  "O"       '(lambda () (interactive) (evil-org-eol-call 'org-insert-heading))
-  "$"       'org-end-of-line
-  "^"       'org-beginning-of-line
-  "<"       'org-metaleft
-  ">"       'org-metaright
-  ";a"      'org-agenda
-  "-"       'org-cycle-list-bullet
-  (kbd "TAB") 'org-cycle)
-
-;; normal & insert state shortcuts.
-(mapc (lambda (state)
-    (evil-define-key state evil-org-mode-map
-      (kbd "M-l") 'org-metaright
-      (kbd "M-h") 'org-metaleft
-      (kbd "M-k") 'org-metaup
-      (kbd "M-j") 'org-metadown
-      (kbd "M-L") 'org-shiftmetaright
-      (kbd "M-H") 'org-shiftmetaleft
-      (kbd "M-K") 'org-shiftmetaup
-      (kbd "M-J") 'org-shiftmetadown
-      (kbd "M-o") '(lambda () (interactive)
-                     (evil-org-eol-call
-                      '(lambda()
-                         (org-insert-heading)
-                         (org-metaright))))
-      (kbd "M-t") '(lambda () (interactive)
-                     (evil-org-eol-call
-                      '(lambda()
-                         (org-insert-todo-heading nil)
-                         (org-metaright))))
-      ))
-  '(normal insert))
+;; Preserve buffer-movement in emacs mode
+(emap my/mode-map
+  (kbd "C-w h") 'evil-window-left
+  (kbd "C-w l") 'evil-window-right
+  (kbd "C-w j") 'evil-window-down
+  (kbd "C-w k") 'evil-window-up
+  (kbd "s-j") "5j"
+  (kbd "s-k") "5k")
 
 
 ;;;; Ex Commands ;;;;;;;;;;;;;;;;
 
-(cmap "retab" 'indent-region) 			; TODO: Implement proper retab defun
-(cmap "msg" 'view-echo-area-messages)
+(evil-ex-define-cmd "retab" 'untabify) ; TODO: Implement proper retab defun
+(evil-ex-define-cmd "msg" 'view-echo-area-messages)
 
 
 ;;;; Keymap fixes ;;;;;;;;;;;;;;;
 
 ;; Make ESC quit all the things
-(nmap [escape] 'keyboard-quit)
-(vmap [escape] 'keyboard-quit)
+(nmap my/mode-map [escape] 'keyboard-quit)
+(vmap my/mode-map [escape] 'keyboard-quit)
 (mapc (lambda (map)
     (define-key map [escape] 'minibuffer-quit))
       (list
@@ -237,13 +214,31 @@
     (define-key ido-completion-map " " 'ido-exit-minibuffer)
     ))
 
-;; Preserve buffer-movement in emacs mode
-(emap (kbd "C-w h") 'evil-window-left)
-(emap (kbd "C-w l") 'evil-window-right)
-(emap (kbd "C-w j") 'evil-window-down)
-(emap (kbd "C-w k") 'evil-window-up)
-(emap (kbd "s-j") "5j")
-(emap (kbd "s-k") "5k")
+
+;;
+(defun backward-kill-line ()
+  (interactive)
+  (evil-delete (point-at-bol) (point)))
+
+(defun minibuffer-quit ()
+  "Abort recursive edit.
+        In Delete Selection mode, if the mark is active, just deactivate it;
+        then it takes a second \\[keyboard-quit] to abort the minibuffer."
+  (interactive)
+  (if (and delete-selection-mode transient-mark-mode mark-active)
+      (setq deactivate-mark t)
+    (when (get-buffer "*Completions*") (delete-windows-on "*Completions*"))
+    (abort-recursive-edit)))
+
+(defun kill-other-buffers ()
+  (interactive)
+  (mapc 'kill-buffer (cdr (buffer-list (current-buffer))))
+  (message "All other buffers killed"))
+
+(defun kill-all-buffers ()
+  (interactive)
+  (mapc 'kill-buffer (buffer-list))
+  (message "All buffers killed"))
 
 ;;
 (provide 'core-keymaps)

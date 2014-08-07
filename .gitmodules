@@ -4,3 +4,6 @@
 [submodule "elisp/emacs-neotree"]
 	path = elisp/emacs-neotree
 	url = https://github.com/jaypei/emacs-neotree
+[submodule "elisp/use-package"]
+	path = elisp/use-package
+	url = https://github.com/jwiegley/use-package

@@ -1,7 +1,8 @@
 ;; From <http://www.emacswiki.org/emacs/RotateText>
 
-(defvar rotate-text-rotations 
+(defvar rotate-text-rotations
   '(("true" "false")
+    ("True" "False")
     ("yes" "no")
     ("left" "right" "top" "bottom")
     ("width" "height"))

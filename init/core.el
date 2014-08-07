@@ -1,42 +1,52 @@
-;; (require 'cl)
+;; Setup theme
+(add-to-list 'custom-theme-load-path my/themes-dir)
+(load-theme my/theme t)
 
 ;; Emacs under-the-hood
-(setq redisplay-dont-pause t)
 (prefer-coding-system 'utf-8)
-(setq-default gc-cons-threshold 50000000) ; avoid garbage collection (default is only 400k)
-(setq make-backup-files         nil)      ; Don't want any backup files
-(setq auto-save-list-file-name  nil)      ; Don't want any .saves files
-(setq auto-save-default         nil)      ; Don't want any auto saving
+(setq redisplay-dont-pause t)
+(setq-default gc-cons-threshold 50000000) ; avoid garbage collection (default is 400k)
+(setq make-backup-files         nil       ; Don't want any backup files
+      auto-save-list-file-name  nil       ; Don't want any .saves files
+      auto-save-default         nil)      ; Don't want any auto saving
+(fset 'yes-or-no-p 'y-or-n-p)       ; y/n instead of yes/no
+(setq inhibit-startup-screen t)     ; don't show EMACs start screen
 
 ;; If I ever enable bkacups/autosaves, then change where they go
-(setq backup-directory-alist `((".*" . ,my-tmp-dir)))
-(setq auto-save-file-name-transforms `((".*" ,my-tmp-dir t)))
+(setq backup-directory-alist `((".*" . ,my/tmp-dir)))
+(setq auto-save-file-name-transforms `((".*" ,my/tmp-dir t)))
 
 ;; Always revert buffers if the files were changed
 (global-auto-revert-mode 1)
 
-;; window layout undo/redo, keymaps in init-evil.el
+;; window layout undo/redo, keymaps in core-keymaps.el
 (when (fboundp 'winner-mode) (winner-mode 1))
 
-(defun kill-other-buffers ()
-  (interactive)
-  (mapc 'kill-buffer (cdr (buffer-list (current-buffer))))
-  (message "All other buffers killed")
-  )
+(defconst is-mac
+  (eq system-type 'darwin)
+  "Is this running on OS X?")
+(defconst is-linux
+  (eq system-type 'gnu/linux)
+  "Is this running on Linux?")
 
-(defun kill-all-buffers ()
-  (interactive)
-  (mapc 'kill-buffer (buffer-list))
-  (message "All buffers killed")
-  )
+;;;; Macros ;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Vimmish keymapping shortcuts
+(defmacro nmap (map &rest body)
+  `(evil-define-key 'normal ,map ,@body))
+(defmacro vmap (map &rest body)
+  `(evil-define-key 'visual ,map ,@body))
+(defmacro imap (map &rest body)
+  `(evil-define-key 'insert ,map ,@body))
+(defmacro emap (map &rest body)
+  `(evil-define-key 'emacs ,map ,@body))
+
+;; insert-mode key-chord mapping
+(defmacro ichmap (key command)
+  `(key-chord-define evil-insert-state-map ,key ,command))
+
 
 ;;;; Advice ;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; I do it this way because hooking mc/keyboard-quit to insert mode's exit
-;; hook breaks multiple-cursors!
-(defadvice keyboard-quit (around mc-and-keyboard-quit activate)
-  (mc/keyboard-quit)
-  ad-do-it)
 
 ;; Make next/previous-buffer skip special buffers
 (defadvice next-buffer (after avoid-messages-buffer-in-next-buffer)
@@ -50,114 +60,64 @@
 
 ;; Prevent prompts when trying to close window. If I'm closing the window,
 ;; I likely want it to close!
-(defadvice save-buffers-kill-emacs (around no-y-or-n activate)
-  (flet ((yes-or-no-p (&rest args) t)
-         (y-or-n-p (&rest args) t))
-    ad-do-it))
+(when window-system
+  (defadvice save-buffers-kill-emacs (around no-y-or-n activate)
+    (flet ((yes-or-no-p (&rest args) t)
+           (y-or-n-p (&rest args) t))
+      ad-do-it)))
+
+;; Prevent GUI dialog boxes, they make emacs hang
+(defadvice yes-or-no-p (around prevent-dialog activate)
+  (let ((use-dialog-box nil)) ad-do-it))
+(defadvice y-or-n-p (around prevent-dialog-yorn activate)
+  (let ((use-dialog-box nil)) ad-do-it))
 
 
 ;;;; My personal minor mode ;;;;;;;;
 
-(defvar my-mode-map (make-sparse-keymap))
-(define-minor-mode my-mode :keymap my-mode-map)
+(defvar my/mode-map (make-sparse-keymap))
+(define-minor-mode my/mode :keymap my/mode-map :global t)
 
 
 ;;;; Commands ;;;;;;;;;;;;;;;;;;;;;;
 
-(defun minibuffer-quit ()
-  "Abort recursive edit.
-        In Delete Selection mode, if the mark is active, just deactivate it;
-        then it takes a second \\[keyboard-quit] to abort the minibuffer."
-  (interactive)
-  (if (and delete-selection-mode transient-mark-mode mark-active)
-      (setq deactivate-mark t)
-    (when (get-buffer "*Completions*") (delete-windows-on "*Completions*"))
-    (abort-recursive-edit)))
-
 ;; File navigation defuns
-(defun my-init ()
+(defun my/initfiles ()
   (interactive)
-  (find-file (expand-file-name "init.el" my-dir)))
+  (ido-find-file-in-dir my/dir))
 
-(defun my-init-find ()
-  (interactive)
-  (projectile-find-file-in-directory my-dir))
-
-(defun open-scratch-buffer ()
+(defun my/open-scratch ()
   (interactive)
   (switch-to-buffer (get-buffer-create "*scratch*"))
   (text-mode))
 
-;; Open the modules/env-{major-mode-name}.el file, if it exists
-(defun open-major-mode-conf ()
-  (interactive)
-  (let ((path (major-mode-module-path)))
-    (if (file-exists-p path)
-		(find-file path)
-      (progn
-        (find-file path)
-        (message (concat "Mode (" (major-mode-name) ") doesn't have a module! Creating it..."))))))
-
-;;
-(defun backward-kill-line ()
-  (interactive)
-  (evil-delete (point-at-bol) (point)))
-
-(defun expand-space ()
+(defun my/expand-space ()
   (interactive)
   (save-excursion (insert " ")))
-(defun expand-backspace ()
+
+(defun my/expand-backspace ()
   (interactive)
   (save-excursion (delete-char 1))
   (delete-backward-char 1))
 
-(defun toggle-sidebar ()
+(defun my/enable-hard-wrap()
   (interactive)
-  (project-explorer-open))
+  (auto-fill-mode 1))
 
-(defun major-mode-name ()
-  (symbol-name major-mode))
-(defun major-mode-module-name ()
-  (concat "env-" (major-mode-name)))
-(defun major-mode-module-path ()
-  (expand-file-name (concat (major-mode-module-name) ".el") my-modules-dir))
-
-;; TODO: Write better eval-and-replace
+(defun my/byte-recompile ()
+  (interactive)
+  (byte-recompile-file (expand-file-name "init.el" my/dir))
+  (byte-recompile-directory my/init-dir 0)
+  (byte-recompile-directory my/elisp-dir 0))
 
 
-;;;; Macros ;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; Load the rest ;;;;;;;;;;;;;;;;;;
 
-;; Vimmish keymapping shortcuts
-(defmacro nmap (&rest body)
-  `(evil-define-key 'normal my-mode-map ,@body))
-(defmacro vmap (&rest body)
-  `(evil-define-key 'visual my-mode-map ,@body))
-(defmacro imap (&rest body)
-  `(evil-define-key 'insert my-mode-map ,@body))
-(defmacro emap (&rest body)
-  `(evil-define-key 'emacs my-mode-map ,@body))
-
-;; Global mapping
-(defmacro gmap (key command)
-  `(global-set-key ,key ,command))
-;; insert-mode key-chord mapping
-(defmacro ichmap (key command)
-  `(key-chord-define evil-insert-state-map ,key ,command))
-;; defines ex commands
-(defmacro cmap (ex function)
-  `(evil-ex-define-cmd ,ex ,function))
-
-;; This one's unique for my own special mappings
-;; (defmacro map (key command)
-;;   `(define-key my-mode-map ,key ,command))
-
-(defmacro is-osx () '(eq system-type 'darwin))
-
-
-;;;; Defuns ;;;;;;;;;;;;;;;;;;;;;;;
-
-(defun no-linum () (linum-mode 0))
-
+(require 'core-packages)
+(require 'core-ui)
+(require 'core-editor)
+(use-package core-osx :if is-mac)
+(add-hook 'after-init-hook (lambda() (require 'core-keymaps)))
 
 ;;
 (provide 'core)
