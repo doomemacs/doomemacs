@@ -4,6 +4,7 @@ eshell/
 auto-save-list/
 .python-environments/
 .mc-lists.el
+bookmarks
 
 # compiled files
 **/.*
