@@ -32,7 +32,7 @@
 (mapc 'require
   '(core                ; Just the... bear necessities...
 
-	;; Modules to improve on emacs' heresy
+    ;; Modules to improve on emacs' heresy
     init-project        ; Project navigation tools & settings
     init-ac             ; Auto-complete engine & settings
     init-snippets       ; Snippet engine
@@ -43,6 +43,8 @@
     mod-org             ; Org-mode: personal gtd/notes
     mod-dev             ; Generic environment for all programming
     mod-webdev          ; Environment for webdev (SCSS, PHP, Rails, Jekyll)
-    mod-gamedev         ; Environment for gamedev (C++, Lua, HTML5, etc)
-    mod-eclim           ; Integration into eclipse (for Java)
-	))
+    mod-love            ; Love.app gamedev
+    mod-cpp             ; C++ gamedev
+    ;; mod-eclim           ; Integration into eclipse (for Java)
+    ;; mod-csharp          ; Emacs as a Csharp IDE
+    ))
