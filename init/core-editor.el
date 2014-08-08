@@ -113,7 +113,7 @@
            (setq save-place-file (expand-file-name "saveplace" my/tmp-dir))))
 
 (use-package savehist
-    :idle
+    :init
     (progn (setq savehist-additional-variables
                  ;; search entries
                  '(search ring regexp-search-ring)
