@@ -9,7 +9,7 @@
 ;;; Code:
 
 (cd "~")                 ; Default directory, instead of /
-(setq skip-installs t)   ; Don't check packages (for slightly speedier startup)
+(setq skip-installs nil)   ; Don't check packages (for slightly speedier startup)
 ;; (setq use-package-verbose t)
 
 (server-mode t)
