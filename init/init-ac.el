@@ -1,14 +1,13 @@
 (my/install-package 'auto-complete)
 
+(defun my/ac-path-completion-enable()
+  (add-to-list 'ac-sources 'ac-source-filename)
+  (add-to-list 'ac-sources 'ac-source-files-in-current-dir))
+
 (use-package auto-complete
   :diminish auto-complete-mode
-  :idle
+  :init
   (progn (require 'auto-complete-config)
-
-         (add-hook 'prog-mode-hook
-                   (lambda()
-                     (add-to-list 'ac-sources 'ac-source-filename)
-                     (add-to-list 'ac-sources 'ac-source-files-in-current-dir)))
 
          ;; Use more vim-like keymappings
          (add-hook 'change-major-mode-hook
