@@ -1,36 +1,28 @@
-(mapc 'my/install-package
-  '(ido-ubiquitous          ; enhances ido-everywhere
-    ido-vertical-mode       ; vertical listing for ido completion
-    flx-ido                 ; enhances ido's flex matching
-    projectile              ; project search (like ctrlp)
-    helm                    ; augments search of, well, anything
-    grizzl                  ; better searching engine for projectile
-    ag                      ; the_silver_searcher support
-    dired+
-    ))
 
-(setq dired-recursive-deletes 'always
-      dired-recursive-copies 'always
+(add-hook 'dired-load-hook
+          (lambda()
+            (use-package dired+ :ensure t :config
+              (setq dired-recursive-deletes 'always
+                    dired-recursive-copies 'always
 
-      ;; if there is a dired buffer displayed in the next window, use its
-      ;; current subdir, instead of the current subdir of this dired buffer
-      dired-dwim-target t)
+                    ;; if there is a dired buffer displayed in the next window, use its
+                    ;; current subdir, instead of the current subdir of this dired buffer
+                    dired-dwim-target t))))
 
-(add-hook 'dired-load-hook (lambda() (use-package dired+)))
-
-(use-package ag :defer t)
-(use-package helm :defer t)
+(use-package ag :ensure t :defer t)
+(use-package helm :ensure t :defer t)
+(use-package grizzl :ensure t :defer t)
 (use-package neotree :commands (neotree-show neotree-hide neotree-toggle))
 
-(use-package projectile
-    :diminish projectile-mode
-    :config
-    (progn (projectile-global-mode)
-           (setq projectile-completion-system 'grizzl
-                 projectile-enable-caching t)))
+(use-package projectile :ensure t
+  :diminish projectile-mode
+  :config
+  (progn (projectile-global-mode)
+         (setq projectile-completion-system 'grizzl
+               projectile-enable-caching t)))
 
 (use-package ido
-  :init
+  :pre-load
   (progn
     ;; ido remaps its keys every time it's invoked, this screws with
     ;; custom mappings. So we've gotta neuter ido.
@@ -47,14 +39,14 @@
     (set-keymap-parent ido-buffer-completion-map   ido-common-completion-map))
   :config
   (progn
-    (use-package ido-ubiquitous)
-    (use-package ido-vertical-mode)
-
     (ido-mode 1)
-    (ido-vertical-mode 1)
+
+    (use-package ido-ubiquitous :ensure t)
+    (use-package ido-vertical-mode :ensure t :config (ido-vertical-mode 1))
+
     (ido-everywhere 1)
 
-    (use-package flx-ido :init (flx-ido-mode 1))
+    (use-package flx-ido :ensure t :config (flx-ido-mode 1))
 
     (add-to-list 'ido-ignore-files "\\`.DS_Store\\'")
     (setq ido-use-faces nil

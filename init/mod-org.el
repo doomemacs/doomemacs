@@ -1,5 +1,3 @@
-(mapc 'my/install-package '(org))
-
 ;; Ex-commands
 (evil-ex-define-cmd "gtd" 'open-gtd)
 (evil-ex-define-cmd "notes" 'open-notes)
@@ -18,18 +16,8 @@
   (funcall fun)
   (evil-append nil))
 
-(defun my/gtd()
-  "Load up my notes folder in dropbox"
-  (interactive)
-  (find-file "~/Dropbox/notes/gtd.org"))
-
-(defun my/notes()
-  "Load up my notes folder in dropbox"
-  (interactive)
-  (ido-find-file-in-dir "~/Dropbox/notes"))
-
 ;;
-(use-package org
+(use-package org :ensure t
   :mode ("\\.org\\'" . org-mode)
   :init
   (progn
@@ -48,7 +36,7 @@
     (setq org-hide-leading-stars t)
     (setq org-export-backends '(ascii html latex md))
     (setq org-todo-keywords
-          '((sequence "TODO" "DOING" "VERIFY" "WAITING" "|" "DONE" "DELEGATED")))
+          '((sequence "TODO" "DOING" "VERIFY" "WAITING" "|" "DONE" "DELEGATED" "CANCELLED")))
 
     (setq org-tag-alist '(("@work" . ?b)
                           ("@home" . ?h)
@@ -59,7 +47,7 @@
                           ("@phone" . ?p)
                           ("@reading" . ?r)
                           ("@computer" . ?l)
-                          ("quantified" . ?q)
+                          ("projects" . ?q)
                           ("lowenergy" . ?0)
                           ("highenergy" . ?1)))
 
@@ -74,6 +62,20 @@
             ("e" "Excerpt" entry (file (concat org-directory "/excerpts.org")) "* %?")
             ))
 
+    (setq org-agenda-custom-commands
+          '(("x" agenda)
+            ("y" agenda*)
+            ("w" todo "WAITING")
+            ("W" todo-tree "WAITING")
+            ("tp" tags "+Projects")
+            ("tg" tags-todo "+gamedev")
+            ("tw" tags-tree "+webdev")
+            ("f" occur-tree "\\<FIXME\\>")
+            ("h" . "HOME+Name tags searches") ; description for "h" prefix
+            ("hl" tags "+home+Lisa")
+            ("hp" tags "+home+Peter")
+            ("hk" tags "+home+Kim")))
+
     (define-minor-mode evil-org-mode
       "Buffer local minor mode for evil-org"
       :init-value nil
@@ -82,6 +84,9 @@
       :group 'evil-org)
 
     ;; Keymaps
+    ;; (emap org-agenda-mode-map
+    ;;       ...)
+
     (imap evil-org-mode-map
           (kbd "<s-return>") 'org-insert-heading-after-current)
 
@@ -90,11 +95,14 @@
           )
 
     (nmap evil-org-mode-map
+          ",l" 'org-insert-link
+          ",s" 'org-schedule
           ",a" 'org-attach
           ",A" 'org-agenda
           ",t" 'org-todo
           ",T" 'org-show-todo-tree
           ",\\" 'org-match-sparse-tree
+          ",+" 'org-align-all-tags
           "gh" 'outline-up-heading
           "gj" (if (fboundp 'org-forward-same-level) ;to be backward compatible with older org version
                    'org-forward-same-level
@@ -112,7 +120,9 @@
           "<" 'org-metaleft
           ">" 'org-metaright
           "-" 'org-cycle-list-bullet
+          (kbd "RET") (lambda() (interactive) (org-insert-heading-after-current) (evil-insert-state))
           (kbd "SPC") 'org-todo
+          (kbd "M-SPC") (lambda() (interactive) (org-todo "DONE"))
           (kbd "TAB") 'org-cycle
           )
 

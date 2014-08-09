@@ -1,6 +1,4 @@
-(my/install-package 'yasnippet)
-
-(use-package yasnippet
+(use-package yasnippet :ensure t
     :diminish (yas-minor-mode . " $")
     :mode (("emacs.+/snippets/" . snippet-mode))
     :pre-load (progn

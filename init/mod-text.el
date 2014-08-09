@@ -1,8 +1,6 @@
-(mapc 'my/install-package '(markdown-mode))
-
 (add-hook 'text-mode-hook 'my/enable-hard-wrap)
 
-(use-package markdown-mode
+(use-package markdown-mode :ensure t
   :mode (("\\.md\\'" . markdown-mode)
          ("/README\\'" . markdown-mode))
   :init

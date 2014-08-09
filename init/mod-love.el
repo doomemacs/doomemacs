@@ -1,7 +1,4 @@
-
-(mapc 'my/install-package '(lua-mode))
-
-(use-package lua-mode
+(use-package lua-mode :ensure t
   :mode "\\.lua\\'"
   :interpreter "lua"
   :init
@@ -14,7 +11,7 @@
       :group lua)
 
     (define-key love-mode-map (kbd "s-b")
-        (lambda() (interactive) (shell-command (concat "open -a love.app " default-directory))))
+      (λ (shell-command (concat "open -a love.app " default-directory))))
 
     (add-hook 'lua-mode-hook
         (lambda()

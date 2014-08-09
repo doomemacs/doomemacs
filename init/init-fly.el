@@ -1,6 +1,4 @@
-(mapc 'my/install-package '(flycheck flyspell))
-
-(use-package flycheck
+(use-package flycheck :ensure t
     :commands global-flycheck-mode
     :diminish (flycheck-mode . " !")
     :init (add-hook 'after-init-hook #'global-flycheck-mode)
@@ -11,7 +9,7 @@
       (setq flycheck-indication-mode 'right-fringe)
       (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc))))
 
-(use-package flyspell
+(use-package flyspell :ensure t
     :commands flyspell-mode
     :diminish (flyspell-mode . " @")
     :config

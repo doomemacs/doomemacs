@@ -1,4 +1,4 @@
-vendor/
+elpa/
 tmp/
 eshell/
 auto-save-list/

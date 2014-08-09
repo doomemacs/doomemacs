@@ -2,31 +2,36 @@
 ;; (require 'cl)
 
 ;; Package management bootstrap
-(setq package-user-dir (expand-file-name "vendor" my/dir))
-(setq package-enable-at-startup nil)
-(setq package-archives '(("melpa" . "http://melpa.milkbox.net/packages/")
-                         ("org" . "http://orgmode.org/elpa/")
-                         ("marmalade" . "http://marmalade-repo.org/packages/")
-                         ("gnu" . "http://elpa.gnu.org/packages/")))
+(setq package-enable-at-startup nil
+      package-archives
+      '(("melpa" . "http://melpa.milkbox.net/packages/")
+        ("org" . "http://orgmode.org/elpa/")
+        ("marmalade" . "http://marmalade-repo.org/packages/")
+        ("gnu" . "http://elpa.gnu.org/packages/"))
+      package-archive-exclude-alist
+      '(("melpa" org-trello)
+        ("melpa" org)
+        ("marmalade" org)
+        ("gnu" org))
+      )
 
 (let ((default-directory my/elisp-dir))
     (normal-top-level-add-to-load-path '("."))
     (normal-top-level-add-subdirs-to-load-path))
 
-(package-initialize)
+(eval-and-compile
+  (package-initialize)
+  (require 'use-package))
 
 ;; Check if a package is installed; if load is t, load it too.
 ;; Works for packages bundled with emacs too!
 (defun my/install-package (package)
-  (unless skip-installs
     (message "=> checking: %s" package)
     (unless (package-installed-p package)
-      (unless (assoc package package-archive-contents)
-        (package-refresh-contents))
       (message "=> installing: %s" package)
-      (package-install package))))
+      (package-install package)))
 
-(require 'use-package)
+(use-package diminish :ensure t)
 
 ;;
 (provide 'core-packages)

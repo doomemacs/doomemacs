@@ -6,8 +6,8 @@
 ;; Don't open files from the workspace in a new frame
 (setq ns-pop-up-frames nil)
 
-(my/install-package 'exec-path-from-shell)    ; fix emacs PATH on OSX
-(use-package exec-path-from-shell
+;; fix emacs PATH on OSX
+(use-package exec-path-from-shell :ensure t
   :if window-system
   :init (exec-path-from-shell-initialize))
 

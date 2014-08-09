@@ -4,33 +4,18 @@
 (global-set-key (kbd "C-c C-p")	 'package-list-packages)
 
 (when is-mac
-  ;; Send current file to OSX apps
-  (defun open-file-with (path &optional appName)
-    (if (not (string= "" appName))
-        (setq appName (concat "-a " appName ".app")))
-    (shell-command (concat "open " appName " " path)))
-
-  (defun open-with (appName)
-    (interactive)
-    (open-file-with (buffer-file-name) appName))
-
-  (defun send-to-transmit ()      (interactive) (open-with "Transmit"))
-  (defun send-to-launchbar ()     (interactive) (open-with "LaunchBar"))
-  (defun send-dir-to-launchbar () (interactive) (open-file-with default-directory "LaunchBar"))
-  (defun send-dir-to-finder ()    (interactive) (open-file-with default-directory "Finder"))
-
   (nmap my/mode-map
         (kbd "C-c o")   'send-dir-to-finder
         (kbd "C-c u")   'send-to-transmit
         (kbd "C-c l")   'send-to-launchbar
         (kbd "C-c L")   'send-dir-to-launchbar
         ;; TODO: Open in tmux
-        (kbd "C-c t")   (lambda() (interactive) (shell))
+        ;; (kbd "C-c t")   (λ (shell))
         )
 
   ;; Evaluating elisp
-  (nmap my/mode-map (kbd "C-c x")   'eval-buffer)
-  (vmap my/mode-map (kbd "C-c x")   'eval-region)
+  (nmap my/mode-map (kbd "C-c x") 'eval-buffer)
+  (vmap my/mode-map (kbd "C-c x") 'eval-region)
 
   (when window-system
     (global-set-key (kbd "s-+")	  'text-scale-increase)
@@ -91,8 +76,8 @@
   ";"       'helm-imenu
   ","       'ido-switch-buffer
   "="       'align-regexp
-  "x"       'kill-other-buffers
-  "X"       'kill-all-buffers
+  "x"       'my/kill-other-buffers
+  "X"       'my/kill-all-buffers
   (kbd "RET") 'org-capture
 )
 
@@ -107,9 +92,7 @@
   "X"       'evil-destroy           ; Delete without yanking
 
   ;; copy to end of line
-  "Y"       (lambda()
-              (interactive)
-              (evil-yank (point) (point-at-eol)))
+  "Y"       (λ (evil-yank (point) (point-at-eol)))
 
   "zz"      'kill-this-buffer       ; Close buffer
   "]b"      'previous-buffer
@@ -126,15 +109,11 @@
 
 (vmap my/mode-map
   ; vnoremap < <gv
-  "<"       (lambda ()
-              (interactive)
-              (evil-shift-left (region-beginning) (region-end))
+  "<"      (λ (evil-shift-left (region-beginning) (region-end))
               (evil-normal-state)
               (evil-visual-restore))
   ; vnoremap > >gv
-  ">"       (lambda ()
-              (interactive)
-              (evil-shift-right (region-beginning) (region-end))
+  ">"      (λ (evil-shift-right (region-beginning) (region-end))
               (evil-normal-state)
               (evil-visual-restore))
   )
@@ -161,12 +140,16 @@
 
 ;; Preserve buffer-movement in emacs mode
 (emap my/mode-map
-  (kbd "C-w h") 'evil-window-left
-  (kbd "C-w l") 'evil-window-right
-  (kbd "C-w j") 'evil-window-down
-  (kbd "C-w k") 'evil-window-up
-  (kbd "s-j") "5j"
-  (kbd "s-k") "5k")
+      "j" 'evil-next-line
+      "k" 'evil-previous-line
+
+      (kbd "C-w h") 'evil-window-left
+      (kbd "C-w l") 'evil-window-right
+      (kbd "C-w j") 'evil-window-down
+      (kbd "C-w k") 'evil-window-up
+
+      (kbd "s-j") "5j"
+      (kbd "s-k") "5k")
 
 
 ;;;; Ex Commands ;;;;;;;;;;;;;;;;
@@ -229,16 +212,6 @@
       (setq deactivate-mark t)
     (when (get-buffer "*Completions*") (delete-windows-on "*Completions*"))
     (abort-recursive-edit)))
-
-(defun kill-other-buffers ()
-  (interactive)
-  (mapc 'kill-buffer (cdr (buffer-list (current-buffer))))
-  (message "All other buffers killed"))
-
-(defun kill-all-buffers ()
-  (interactive)
-  (mapc 'kill-buffer (buffer-list))
-  (message "All buffers killed"))
 
 ;;
 (provide 'core-keymaps)

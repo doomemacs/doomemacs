@@ -1,10 +1,4 @@
-(my/install-package 'diminish)
 (global-linum-mode t)   ; line numbers for everybody!
-
-;; Sane scroll settings
-(setq scroll-margin 3
-      scroll-conservatively 100000
-      scroll-preserve-screen-position 1)
 
 ;; Show line/col-no in mode-line
 (line-number-mode t)
