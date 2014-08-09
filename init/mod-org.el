@@ -151,7 +151,9 @@
               ))
           '(normal insert))
 
+    ;; Make sure certain keybindings work
     (add-hook 'org-mode-hook (lambda() (evil-mode nil) (evil-mode 1)))
+
     (add-hook 'org-mode-hook 'evil-org-mode)
     (add-hook 'org-mode-hook 'flyspell-mode)
     (add-hook 'org-mode-hook 'my/enable-hard-wrap))
