@@ -7,16 +7,18 @@
         ;; BEFORE we include yasnippet.
         (defvar yas-minor-mode-map
           (let ((map (make-sparse-keymap)))
-            (evil-define-key 'insert map [(tab)]     'yas-expand)
-            (evil-define-key 'insert map (kbd "TAB") 'yas-expand)
-            (evil-define-key 'insert map "\C-c&\C-s" 'yas-insert-snippet)
-            (evil-define-key 'insert map "\C-c&\C-n" 'yas-new-snippet)
-            (evil-define-key 'insert map "\C-c&\C-v" 'yas-visit-snippet-file)
+            (imap map [(tab)]     'yas-expand)
+            (imap map (kbd "TAB") 'yas-expand)
             map)))
     :config
     (progn
       ;; Only load personal snippets
       (setq yas-snippet-dirs `(,my/snippets-dir))
+      (setq yas-prompt-functions '(yas-ido-prompt yas-no-prompt))
+
+      (imap yas-minor-mode-map (kbd "C-c C-s") 'yas-insert-snippet)
+      (define-key yas-minor-mode-map (kbd "C-c C-n") 'yas-new-snippet)
+      (define-key yas-minor-mode-map (kbd "C-c C-v") 'yas-visit-snippet-file)
 
       (yas-reload-all))
     :init
