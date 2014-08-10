@@ -26,6 +26,8 @@
       initial-major-mode 'text-mode
       initial-scratch-message nil)
 
+(setq require-final-newline nil)
+
 (setq-default use-dialog-box nil)
 (setq-default enable-recursive-minibuffers nil)
 (setq-default visible-bell nil)

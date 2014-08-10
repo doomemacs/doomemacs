@@ -1,4 +1,17 @@
+(add-to-list 'auto-mode-alist '("\\.plist\\'" . nxml-mode))
+
+(use-package dash-at-point :ensure t
+  :commands (dash-at-point dash-at-point-with-docset)
+  :if is-mac
+  :config
+  (progn
+    (add-to-list 'dash-at-point-mode-alist '(ruby-mode . "rb"))
+    (add-to-list 'dash-at-point-mode-alist '(python-mode . "py2"))
+    )
+  )
+
 (use-package yaml-mode :ensure t :mode "\\.yaml\\'")
+
 (use-package json-mode :ensure t
   :mode (("\\.json\\'" . json-mode)
          ("\\.jshintrc\\'" . json-mode)))
@@ -33,8 +46,6 @@
   :interpreter "ruby"
   :config
   (progn
-    (my/setup-run-code ruby-mode-map "ruby")
-
     (require 'ruby-mode-indent-fix)
     (setq ruby-indent-level 4)
     (setq ruby-deep-indent-paren nil)
@@ -47,13 +58,16 @@
 
     (use-package rbenv :ensure t)
     (use-package inf-ruby :ensure t
-      :config
-      (evil-set-initial-state 'inf-ruby-mode 'insert)
-      :init
-      (add-to-list 'ac-modes 'inf-ruby-mode))
+      :config (evil-set-initial-state 'inf-ruby-mode 'insert)
+      :init (add-to-list 'ac-modes 'inf-ruby-mode))
     (use-package ac-inf-ruby :ensure t
-      :init
-      (add-hook 'inf-ruby-mode-hook 'ac-inf-ruby-enable))))
+      :init (add-hook 'inf-ruby-mode-hook 'ac-inf-ruby-enable))
+
+    ;;
+    (my/setup-run-code ruby-mode-map "ruby")
+    (nmap ruby-mode-map "gd" 'rsense-jump-to-definition)
+    ))
+
 
 ;;
 (provide 'mod-dev)

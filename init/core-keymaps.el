@@ -36,9 +36,10 @@
           (kbd "s-M") 	'projectile-recentf
           (kbd "s-o") 	'ido-find-file
           (kbd "s-O") 	'open-major-mode-conf
-          (kbd "s-d") 	'mc/mark-next-like-this
-          (kbd "s-D") 	'mc/mark-previous-like-this
-          (kbd "C-s-d") 'mc/mark-all-like-this)
+          (kbd "s-'") 	'mc/mark-next-like-this
+          (kbd "s-\"") 	'mc/mark-previous-like-this
+          (kbd "C-s-'") 'mc/mark-all-like-this
+          (kbd "s-d")   'dash-at-point)
 
     ;; Newlines from insert mode
     (imap my/mode-map
@@ -61,8 +62,8 @@
 (evil-leader/set-leader ",")
 (evil-leader/set-key
   "`"       'my/notes
-  "d" 		'mc/mark-next-like-this
-  "D"		'mc/mark-all-like-this
+  "'" 		'mc/mark-next-like-this
+  "\""		'mc/mark-all-like-this
   "e"       'ido-find-file
   "E"       'my/initfiles
   "f"       'projectile-find-file
@@ -124,6 +125,20 @@
   (kbd "<C-return>")  'indent-new-comment-line
   )
 
+(emap my/mode-map
+  ;; Preserve buffer-movement in emacs mode
+  "j" 'evil-next-line
+  "k" 'evil-previous-line
+
+  (kbd "C-w h") 'evil-window-left
+  (kbd "C-w l") 'evil-window-right
+  (kbd "C-w j") 'evil-window-down
+  (kbd "C-w k") 'evil-window-up
+
+  (kbd "s-j") "5j"
+  (kbd "s-k") "5k"
+  )
+
 ;; Commenting lines
 (nmap my/mode-map "gcc" 'evilnc-comment-or-uncomment-lines)
 (vmap my/mode-map "gc"  'evilnc-comment-or-uncomment-lines)
@@ -138,19 +153,9 @@
 ;; Easy escape from insert mode
 (ichmap "jj" 'evil-normal-state)
 
-;; Preserve buffer-movement in emacs mode
-(emap my/mode-map
-      "j" 'evil-next-line
-      "k" 'evil-previous-line
-
-      (kbd "C-w h") 'evil-window-left
-      (kbd "C-w l") 'evil-window-right
-      (kbd "C-w j") 'evil-window-down
-      (kbd "C-w k") 'evil-window-up
-
-      (kbd "s-j") "5j"
-      (kbd "s-k") "5k")
-
+(nmap emacs-lisp-mode-map "gd"
+      (λ (let ((func (function-called-at-point)))
+           (if func (find-function func)))))
 
 ;;;; Ex Commands ;;;;;;;;;;;;;;;;
 
