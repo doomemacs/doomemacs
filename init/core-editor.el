@@ -1,27 +1,4 @@
-;; (mapc 'my/install-package
-;;   '(evil
-;;     evil-leader
-;;     evil-nerd-commenter     ; auto commenting made easy
-;;     evil-matchit            ; jumping between block delimiters
-;;     evil-surround           ; surround-with delimiters
-;;     evil-numbers            ; increment/decrement numbers
-;;     evil-exchange           ; exchanging two text objects (gx/gX)
-;;     evil-space              ; mimics ; and , for f, F, t, T w/ space
-;;     evil-visualstar         ; visual-based * and #
-;;     autopair                ; delimiter auto-closing
-;;     rainbow-delimiters      ; colored matching parenthesis
-;;     saveplace               ; restore cursor position on buffer load
-;;     anzu                    ; display current + total matches searching
-;;     smex                    ; less M-x cruft
-;;     recentf                 ; access to list of recent files
-;;     key-chord               ; for mapping key chords in insert mode
-;;     multiple-cursors	    ; cursors, of the numerous variety
-;;     ediff
-;;     deferred
-;;     ))
-
 ;;;; Editor behavior ;;;;;;;;;;;;;;;;
-
 (setq initial-scratch-buffer nil)   ; empty scratch buffer
 (electric-indent-mode +1) 			; auto-indent on RET
 (global-hl-line-mode +1)            ; highlight the line
@@ -36,9 +13,7 @@
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
 
-
 ;;;; Plugins ;;;;;;;;;;;;;;;;;;;;;;;;
-
 (use-package deferred :ensure t :defer t)
 (use-package ediff :ensure t :defer t)
 
@@ -87,14 +62,11 @@
 (use-package rainbow-mode :ensure t :defer t)
 (use-package rainbow-delimiters :ensure t
   :commands rainbow-delimiters-mode
-  :init
-  (add-hook 'prog-mode-hook 'rainbow-delimiters-mode))
+  :init (add-hook 'prog-mode-hook 'rainbow-delimiters-mode))
 
 (use-package rotate-text :commands (rotate-word-at-point rotate-region))
 
-
 ;;;; Init plugins ;;;;;;;;;;;;;;;;;;;
-
 (use-package autopair :ensure t
   :diminish autopair-mode
   :init
