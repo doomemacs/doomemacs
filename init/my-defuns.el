@@ -19,28 +19,34 @@
 ;;;; Commands ;;;;;;;;;;;;;;;;;;;;;;
 ;; File navigation defuns
 (defun my/initfiles ()
+  "Do an ido-find in ~/.emacs.d"
   (interactive)
   (ido-find-file-in-dir my/dir))
 
 (defun my/open-scratch ()
+  "Open a blank scratch buffer"
   (interactive)
   (switch-to-buffer (get-buffer-create "*scratch*"))
   (text-mode))
 
 (defun my/expand-space ()
+  "Insert a space ahead of the cursor"
   (interactive)
   (save-excursion (insert " ")))
 
 (defun my/expand-backspace ()
+  "Add a space before and ahead of the cursor"
   (interactive)
   (save-excursion (delete-char 1))
   (delete-backward-char 1))
 
 (defun my/enable-hard-wrap()
+  "Enable hard line wrapping"
   (interactive)
   (auto-fill-mode 1))
 
 (defun my/byte-recompile ()
+  "Byte compile init.el, ~/.emacs.d/init/* and ~/.emacs.d/elisp/*"
   (interactive)
   (byte-recompile-file (expand-file-name "init.el" my/dir))
   (byte-recompile-directory my/init-dir 0)
@@ -52,11 +58,13 @@
   (ido-find-file-in-dir "~/Dropbox/notes"))
 
 (defun my/kill-all-buffers ()
+  "Kill all buffers, even the one you're in"
   (interactive)
   (mapc 'kill-buffer (buffer-list))
   (message "All buffers killed"))
 
 (defun my/kill-other-buffers ()
+  "Kill all buffers but the one you're in"
   (interactive)
   (mapc 'kill-buffer (cdr (buffer-list (current-buffer))))
   (message "All other buffers killed"))
@@ -73,6 +81,8 @@
   (setq ac-sources (append '(ac-source-filename ac-source-files-in-current-dir) ac-sources)))
 
 (defun my/setup-run-code(mode interpreter)
+  "Set up s-r to run code using a specified interpreter and print the
+output in the echo area"
   (interactive)
   (nmap mode (kbd "s-r")
         (λ (shell-command-on-region (point-min) (point-max) interpreter)))

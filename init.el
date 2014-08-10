@@ -16,22 +16,22 @@
 (when window-system (desktop-save-mode 1))
 
 ;; Global vars
-(defconst my/dir (file-name-directory load-file-name))
-(defconst my/init-dir (expand-file-name "init" my/dir))
-(defconst my/themes-dir (expand-file-name "themes" my/dir))
-(defconst my/elisp-dir (expand-file-name "elisp" my/dir))
-(defconst my/tmp-dir (expand-file-name "tmp" my/dir))
-(defconst my/snippets-dir (expand-file-name "snippets" my/dir))
+(defconst  my/dir           (file-name-directory load-file-name))
+(defconst  my/init-dir      (expand-file-name "init" my/dir))
+(defconst  my/themes-dir    (expand-file-name "themes" my/dir))
+(defconst  my/elisp-dir     (expand-file-name "elisp" my/dir))
+(defconst  my/tmp-dir       (expand-file-name "tmp" my/dir))
+(defconst  my/snippets-dir  (expand-file-name "snippets" my/dir))
 
-(defconst my/theme 'brin)
-(defconst my/font "Inconsolata-14")
+(defconst my/theme  'brin)
+(defconst my/font   "Inconsolata-14")
 
 (add-to-list 'load-path my/init-dir)
 
 (mapc 'require
   '(core                ; Just the... bear necessities...
 
-    my-defuns
+    my-defuns           ; Personal functions
 
     ;; Modules to improve on emacs' heresy
     init-project        ; Project navigation tools & settings
