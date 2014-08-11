@@ -48,18 +48,19 @@
                           ("@reading" . ?r)
                           ("@computer" . ?l)
                           ("projects" . ?q)
-                          ("lowenergy" . ?0)
-                          ("highenergy" . ?1)))
+                          ("easy" . ?0)
+                          ("hard" . ?1)))
 
     (setq org-capture-templates
           '(("t" "TODO" entry (file+headline (concat org-directory "/gtd.org") "Inbox") "* TODO %? %u")
             ("T" "TODO Someday" entry (file+headline (concat org-directory "/gtd.org") "Someday") "* TODO %? %u :someday:")
-            ("i" "Invoice" entry (file+headline (concat org-directory "/invoices.org") "Invoices") "** TODO %?")
+            ("c" "Changelog" entry (file+headline (concat default-directory "/CHANGELOG.org") "Unsorted") "** %u %? :unsorted:" :prepend t)
+            ("i" "Invoice" entry (file+headline (concat org-directory "/invoices.org") "Invoices") "** TODO %?" :prepend t)
             ("n" "Note" entry (file+datetree (concat org-directory "/notes.org")) "** %?")
             ("b" "Blog" entry (file+datetree (concat org-directory "/blog.org")) "** %?")
             ("j" "Journal" entry (file+datetree (concat org-directory "/journal.org")) "** %?%^g\n%?\nAdded: %U")
-            ("v" "Vocab" entry (file (concat org-directory "/vocab.org")) "* %?")
-            ("e" "Excerpt" entry (file (concat org-directory "/excerpts.org")) "* %?")
+            ("v" "Vocab" entry (file (concat org-directory "/vocab.org")) "* %?" :prepend t)
+            ("e" "Excerpt" entry (file (concat org-directory "/excerpts.org")) "* %?" :prepend t)
             ))
 
     (setq org-agenda-custom-commands
@@ -67,14 +68,10 @@
             ("y" agenda*)
             ("w" todo "WAITING")
             ("W" todo-tree "WAITING")
+            ("to" todo)
             ("tp" tags "+Projects")
             ("tg" tags-todo "+gamedev")
-            ("tw" tags-tree "+webdev")
-            ("f" occur-tree "\\<FIXME\\>")
-            ("h" . "HOME+Name tags searches") ; description for "h" prefix
-            ("hl" tags "+home+Lisa")
-            ("hp" tags "+home+Peter")
-            ("hk" tags "+home+Kim")))
+            ("tw" tags-tree "+webdev")))
 
     (define-minor-mode evil-org-mode
       "Buffer local minor mode for evil-org"
@@ -151,7 +148,7 @@
               ))
           '(normal insert))
 
-    ;; Make sure certain keybindings work
+    ;; Reset evil to ensure certain evil keybindings are prioritized
     (add-hook 'org-mode-hook (lambda() (evil-mode nil) (evil-mode 1)))
 
     (add-hook 'org-mode-hook 'evil-org-mode)
