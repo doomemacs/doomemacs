@@ -1,17 +1,16 @@
 ;; Global keymaps ;;;;;;;;;;;;;;;
-
 (global-set-key (kbd "<C-escape>") 'my/open-scratch)
 (global-set-key (kbd "C-c C-p")	 'package-list-packages)
+(global-set-key (kbd "M-x")	 'smex)
+(global-set-key (kbd "M-X")	 'smex-major-mode-commands)
 
 (when is-mac
+  ;; TODO: Open in tmux
   (nmap my/mode-map
         (kbd "C-c o")   'send-dir-to-finder
         (kbd "C-c u")   'send-to-transmit
         (kbd "C-c l")   'send-to-launchbar
-        (kbd "C-c L")   'send-dir-to-launchbar
-        ;; TODO: Open in tmux
-        ;; (kbd "C-c t")   (λ (shell))
-        )
+        (kbd "C-c L")   'send-dir-to-launchbar)
 
   ;; Evaluating elisp
   (nmap my/mode-map (kbd "C-c x") 'eval-buffer)
@@ -52,13 +51,10 @@
           (kbd "<s-backspace>")	'backward-kill-line
 
           ;; Fixes delete
-          (kbd "<kp-delete>")   'delete-char)
-    )
-)
+          (kbd "<kp-delete>")   'delete-char)))
 
 
 ;; Local keymaps ;;;;;;;;;;;;;;;;
-
 (evil-leader/set-leader ",")
 (evil-leader/set-key
   "`"       'my/notes
@@ -66,6 +62,7 @@
   "\""		'mc/mark-all-like-this
   "e"       'ido-find-file
   "E"       'my/initfiles
+  "d"       'dash-at-point
   "f"       'projectile-find-file
   "F"       'projectile-ag
   "m"       'helm-recentf 					; recent GLOBAL files
@@ -79,8 +76,7 @@
   "="       'align-regexp
   "x"       'my/kill-other-buffers
   "X"       'my/kill-all-buffers
-  (kbd "RET") 'org-capture
-)
+  (kbd "RET") 'org-capture)
 
 (nmap my/mode-map
   ";"           'evil-ex            ; Remap ; to : - SPC and shift-SPC replace ; and ,
@@ -105,8 +101,7 @@
 
   ;; Increment/decrement number under cursor
   (kbd "<C-tab>")    'evil-numbers/inc-at-pt
-  (kbd "<S-C-tab>")  'evil-numbers/dec-at-pt
-)
+  (kbd "<S-C-tab>")  'evil-numbers/dec-at-pt)
 
 (vmap my/mode-map
   ; vnoremap < <gv
@@ -116,14 +111,12 @@
   ; vnoremap > >gv
   ">"      (λ (evil-shift-right (region-beginning) (region-end))
               (evil-normal-state)
-              (evil-visual-restore))
-  )
+              (evil-visual-restore)))
 
 (imap my/mode-map
   (kbd "s-j")         'evil-join
   (kbd "M-SPC")       'expand-space
-  (kbd "<C-return>")  'indent-new-comment-line
-  )
+  (kbd "<C-return>")  'indent-new-comment-line)
 
 (emap my/mode-map
   ;; Preserve buffer-movement in emacs mode
@@ -136,8 +129,7 @@
   (kbd "C-w k") 'evil-window-up
 
   (kbd "s-j") "5j"
-  (kbd "s-k") "5k"
-  )
+  (kbd "s-k") "5k")
 
 ;; Commenting lines
 (nmap my/mode-map "gcc" 'evilnc-comment-or-uncomment-lines)
@@ -158,13 +150,12 @@
            (if func (find-function func)))))
 
 ;;;; Ex Commands ;;;;;;;;;;;;;;;;
-
 (evil-ex-define-cmd "retab" 'untabify) ; TODO: Implement proper retab defun
 (evil-ex-define-cmd "msg" 'view-echo-area-messages)
-
+(evil-ex-define-cmd "gtd" 'open-gtd)
+(evil-ex-define-cmd "notes" 'open-notes)
 
 ;;;; Keymap fixes ;;;;;;;;;;;;;;;
-
 ;; Make ESC quit all the things
 (nmap my/mode-map [escape] 'keyboard-quit)
 (vmap my/mode-map [escape] 'keyboard-quit)
@@ -199,9 +190,7 @@
     (define-key ido-completion-map "\C-b" 'ido-prev-match)
 
     ;; Auto-complete on tab/space (why is it called ido-exit-minibuffer?)
-    (define-key ido-completion-map " " 'ido-exit-minibuffer)
-    ))
-
+    (define-key ido-completion-map " " 'ido-exit-minibuffer)))
 
 ;;
 (defun backward-kill-line ()

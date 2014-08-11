@@ -6,9 +6,7 @@
   :config
   (progn
     (add-to-list 'dash-at-point-mode-alist '(ruby-mode . "rb"))
-    (add-to-list 'dash-at-point-mode-alist '(python-mode . "py2"))
-    )
-  )
+    (add-to-list 'dash-at-point-mode-alist '(python-mode . "py2"))))
 
 (use-package yaml-mode :ensure t :mode "\\.yaml\\'")
 
@@ -35,9 +33,7 @@
     (define-key python-mode-map [backspace] nil)
     (my/setup-run-code python-mode-map "python"))
   :init
-  (add-hook 'python-mode-hook 'jedi:ac-setup)
-  ;; (evil-define-key 'insert ac-mode-map (kbd "C-SPC") 'jedi:complete)
-  )
+  (add-hook 'python-mode-hook 'jedi:ac-setup))
 
 (use-package ruby-mode
   :mode (("\\.rb\\'" . ruby-mode)
@@ -65,8 +61,7 @@
 
     ;;
     (my/setup-run-code ruby-mode-map "ruby")
-    (nmap ruby-mode-map "gd" 'rsense-jump-to-definition)
-    ))
+    (nmap ruby-mode-map "gd" 'rsense-jump-to-definition)))
 
 
 ;;

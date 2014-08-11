@@ -1,7 +1,3 @@
-;; Ex-commands
-(evil-ex-define-cmd "gtd" 'open-gtd)
-(evil-ex-define-cmd "notes" 'open-notes)
-
 ;; Defuns
 (defun my/org-insert-list-item ()
   "Force insertion of org item"
@@ -22,7 +18,7 @@
   :init
   (progn
     (setq org-directory "~/Dropbox/notes")
-    (setq org-default-notes-file (concat org-directory "/notes.org"))
+    (setq org-default-notes-file "~/Dropbox/notes/notes.org")
     (setq org-archive-location "~/Dropbox/notes/archives.org")
     (setq org-agenda-files '("~/Dropbox/notes/gtd.org"
                              "~/Dropbox/notes/notes.org"
@@ -46,22 +42,20 @@
                           ("@coding" . ?c)
                           ("@phone" . ?p)
                           ("@reading" . ?r)
-                          ("@computer" . ?l)
                           ("projects" . ?q)
                           ("easy" . ?0)
                           ("hard" . ?1)))
 
     (setq org-capture-templates
-          '(("t" "TODO" entry (file+headline (concat org-directory "/gtd.org") "Inbox") "* TODO %? %u")
-            ("T" "TODO Someday" entry (file+headline (concat org-directory "/gtd.org") "Someday") "* TODO %? %u :someday:")
-            ("c" "Changelog" entry (file+headline (concat default-directory "/CHANGELOG.org") "Unsorted") "** %u %? :unsorted:" :prepend t)
-            ("i" "Invoice" entry (file+headline (concat org-directory "/invoices.org") "Invoices") "** TODO %?" :prepend t)
-            ("n" "Note" entry (file+datetree (concat org-directory "/notes.org")) "** %?")
-            ("b" "Blog" entry (file+datetree (concat org-directory "/blog.org")) "** %?")
-            ("j" "Journal" entry (file+datetree (concat org-directory "/journal.org")) "** %?%^g\n%?\nAdded: %U")
-            ("v" "Vocab" entry (file (concat org-directory "/vocab.org")) "* %?" :prepend t)
-            ("e" "Excerpt" entry (file (concat org-directory "/excerpts.org")) "* %?" :prepend t)
-            ))
+          '(("t" "TODO" entry (file+headline "~/Dropbox/notes/gtd.org" "Inbox") "* TODO %? %u")
+            ("T" "TODO Someday" entry (file+headline "~/Dropbox/notes/gtd.org" "Someday") "* TODO %? %u :someday:")
+            ("c" "Changelog" entry (file+headline (concat (projectile-project-root) "/CHANGELOG.org") "Unsorted") "** %u %? :unsorted:" :prepend t)
+            ("i" "Invoice" entry (file+headline "~/Dropbox/notes/invoices.org" "Invoices") "** TODO %?" :prepend t)
+            ("n" "Note" entry (file+datetree org-default-notes-file) "** %?")
+            ("b" "Blog" entry (file+datetree "~/Dropbox/notes/blog.org") "** %?")
+            ("j" "Journal" entry (file+datetree "~/Dropbox/notes/journal.org") "** %?%^g\n%?\nAdded: %U")
+            ("v" "Vocab" entry (file "~/Dropbox/notes/vocab.org") "* %?" :prepend t)
+            ("e" "Excerpt" entry (file "~/Dropbox/notes/excerpts.org") "* %?" :prepend t)))
 
     (setq org-agenda-custom-commands
           '(("x" agenda)
@@ -88,8 +82,7 @@
           (kbd "<s-return>") 'org-insert-heading-after-current)
 
     (vmap evil-org-mode-map
-          ",l" 'org-insert-link
-          )
+          ",l" 'org-insert-link)
 
     (nmap evil-org-mode-map
           ",l" 'org-insert-link
@@ -120,8 +113,7 @@
           (kbd "RET") (lambda() (interactive) (org-insert-heading-after-current) (evil-insert-state))
           (kbd "SPC") 'org-todo
           (kbd "M-SPC") (lambda() (interactive) (org-todo "DONE"))
-          (kbd "TAB") 'org-cycle
-          )
+          (kbd "TAB") 'org-cycle)
 
     ;; normal & insert state shortcuts.
     (mapc (lambda (state)

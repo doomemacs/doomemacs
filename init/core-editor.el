@@ -84,8 +84,8 @@
   (progn (key-chord-mode 1)
          (setq key-chord-two-keys-delay 0.5)))
 
-(use-package saveplace :ensure t
-  :idle
+(use-package saveplace
+  :init
   (progn (setq-default save-place t)
          (setq save-place-file (expand-file-name "saveplace" my/tmp-dir))))
 
@@ -110,8 +110,7 @@
       (mc/keyboard-quit) ad-do-it)))
 
 (use-package smex :ensure t
-  :bind (("M-x" . smex)
-         ("M-X" . smex-major-mode-commands))
+  :commands (smex smex-major-mode-commands)
   :config
   (progn (smex-initialize)
          ;; Hook up smex to auto-update, rather than update on every run
