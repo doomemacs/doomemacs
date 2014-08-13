@@ -15,12 +15,12 @@
 (unless (server-running-p) (server-start))
 
 ;; Global vars
-(defconst  my/dir           (file-name-directory load-file-name))
-(defconst  my/init-dir      (expand-file-name "init" my/dir))
-(defconst  my/themes-dir    (expand-file-name "themes" my/dir))
-(defconst  my/elisp-dir     (expand-file-name "elisp" my/dir))
-(defconst  my/tmp-dir       (expand-file-name "tmp" my/dir))
-(defconst  my/snippets-dir  (expand-file-name "snippets" my/dir))
+(defconst my/dir           (file-name-directory load-file-name))
+(defconst my/init-dir      (expand-file-name "init" my/dir))
+(defconst my/themes-dir    (expand-file-name "themes" my/dir))
+(defconst my/elisp-dir     (expand-file-name "elisp" my/dir))
+(defconst my/tmp-dir       (expand-file-name "tmp" my/dir))
+(defconst my/snippets-dir  (expand-file-name "snippets" my/dir))
 
 (defconst my/theme  'brin)
 (defconst my/font   "Inconsolata-14")
