@@ -60,12 +60,14 @@
 (defun my/kill-all-buffers ()
   "Kill all buffers, even the one you're in"
   (interactive)
+  (delete-other-windows)
   (mapc 'kill-buffer (buffer-list))
   (message "All buffers killed"))
 
 (defun my/kill-other-buffers ()
   "Kill all buffers but the one you're in"
   (interactive)
+  (delete-other-windows)
   (mapc 'kill-buffer (cdr (buffer-list (current-buffer))))
   (message "All other buffers killed"))
 
