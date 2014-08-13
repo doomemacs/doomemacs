@@ -10,7 +10,7 @@
 ;; Line numbers with +1 left-padding
 (defadvice linum-update-window (around linum-dynamic activate)
   (let* ((w (length (number-to-string (count-lines (point-min) (point-max)))))
-         (linum-format (concat "%" (number-to-string (+ w 1)) "d" (if window-system "" " ")))) ad-do-it))
+         (linum-format (concat "%" (number-to-string (+ w 1)) "d" " "))) ad-do-it))
 
 ;; Show full path in window title
 (setq frame-title-format
@@ -18,7 +18,6 @@
 
 
 ;;;; GUI Settings ;;;;;;;;;;;;;;;;;;;;;
-
 (setq ring-bell-function 'ignore)
 (add-to-list 'default-frame-alist `(font . ,my/font))
 (add-to-list 'default-frame-alist '(alpha 98 95))   ; *slightly* transparent window
