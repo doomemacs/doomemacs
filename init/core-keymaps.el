@@ -111,8 +111,8 @@
   (kbd "C-w C-r")   'winner-redo
 
   ;; Increment/decrement number under cursor
-  (kbd "<C-tab>")    'evil-numbers/inc-at-pt
-  (kbd "<S-C-tab>")  'evil-numbers/dec-at-pt)
+  (kbd "C--")  'evil-numbers/inc-at-pt
+  (kbd "C-+")  'evil-numbers/dec-at-pt)
 
 (vmap my/mode-map
   ; vnoremap < <gv
