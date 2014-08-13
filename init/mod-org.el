@@ -34,6 +34,13 @@
     (setq org-todo-keywords
           '((sequence "TODO" "DOING" "VERIFY" "WAITING" "|" "DONE" "DELEGATED" "CANCELLED")))
 
+    (org-babel-do-load-languages 'org-babel-load-languages
+          '((python . t)
+            (ruby . t)
+            (sh . t)
+            (matlab . t)
+            (latex . t)))
+
     (setq org-tag-alist '(("@work" . ?b)
                           ("@home" . ?h)
                           ("@writing" . ?w)
@@ -110,9 +117,9 @@
           "<" 'org-metaleft
           ">" 'org-metaright
           "-" 'org-cycle-list-bullet
-          (kbd "RET") (lambda() (interactive) (org-insert-heading-after-current) (evil-insert-state))
+          (kbd "RET") (λ (org-insert-heading-after-current) (evil-insert-state))
           (kbd "SPC") 'org-todo
-          (kbd "M-SPC") (lambda() (interactive) (org-todo "DONE"))
+          (kbd "M-SPC") (λ (org-todo "DONE"))
           (kbd "TAB") 'org-cycle)
 
     ;; normal & insert state shortcuts.
