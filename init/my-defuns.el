@@ -48,9 +48,9 @@
 (defun my/byte-recompile ()
   "Byte compile init.el, ~/.emacs.d/init/* and ~/.emacs.d/elisp/*"
   (interactive)
-  (byte-recompile-file (expand-file-name "init.el" my/dir))
-  (byte-recompile-directory my/init-dir 0)
-  (byte-recompile-directory my/elisp-dir 0))
+  (byte-recompile-file (expand-file-name "init.el" my/dir) t)
+  (byte-recompile-directory my/init-dir 0 t)
+  (byte-recompile-directory my/elisp-dir 0 t))
 
 (defun my/notes()
   "Load up my notes folder in dropbox"
