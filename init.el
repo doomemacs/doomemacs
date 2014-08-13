@@ -13,7 +13,6 @@
 
 (server-mode t)
 (unless (server-running-p) (server-start))
-(when window-system (desktop-save-mode 1))
 
 ;; Global vars
 (defconst  my/dir           (file-name-directory load-file-name))
@@ -48,4 +47,5 @@
     mod-cpp             ; C++ gamedev
     mod-eclim           ; Integration into eclipse (for Java)
     mod-csharp          ; Emacs as a Csharp/Unity IDE
+    mod-collab          ; For collab programming
     ))
