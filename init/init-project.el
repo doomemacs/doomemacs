@@ -10,7 +10,7 @@
                     dired-dwim-target t))))
 
 (use-package ag :ensure t :defer t)
-(use-package helm :ensure t :defer t)
+;; (use-package helm :ensure t :defer t)
 (use-package grizzl :ensure t :defer t)
 (use-package neotree :commands (neotree-show neotree-hide neotree-toggle))
 

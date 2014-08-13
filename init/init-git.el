@@ -32,11 +32,11 @@
     (custom-set-variables '(git-gutter:lighter " !"))
     (custom-set-variables '(git-gutter:verbosity 0))
 
-    (set-face-foreground 'git-gutter-fr:modified "#555555")
+    (set-face-foreground 'git-gutter-fr:modified "#444444")
     (set-face-background 'git-gutter-fr:modified "#444444")
-    (set-face-foreground 'git-gutter-fr:deleted "#995555")
+    (set-face-foreground 'git-gutter-fr:deleted "#884444")
     (set-face-background 'git-gutter-fr:deleted "#884444")
-    (set-face-foreground 'git-gutter-fr:added "#559955")
+    (set-face-foreground 'git-gutter-fr:added "#448844")
     (set-face-background 'git-gutter-fr:added "#448844")
     ))
 

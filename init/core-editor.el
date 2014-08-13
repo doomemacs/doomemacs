@@ -15,49 +15,50 @@
 
 ;;;; Plugins ;;;;;;;;;;;;;;;;;;;;;;;;
 (use-package deferred :ensure t :defer t)
+(use-package helm :ensure t :defer t)
 (use-package ediff :ensure t :defer t)
 
 (use-package evil :ensure t
-    :diminish undo-tree-mode
-    :config
-    (progn
-      ;; (setq evil-want-C-i-jump t)
-      ;; (setq evil-want-C-u-scroll t)
+  :diminish undo-tree-mode
+  :config
+  (progn
+    ;; (setq evil-want-C-i-jump t)
+    ;; (setq evil-want-C-u-scroll t)
 
-      (evil-mode 1)
+    (evil-mode 1)
 
-      (use-package evil-leader :ensure t)
-      (use-package evil-nerd-commenter :ensure t)
-      (use-package evil-matchit :ensure t)
-      (use-package evil-surround :ensure t)
-      (use-package evil-numbers :ensure t)
-      (use-package evil-exchange :ensure t)
-      (use-package evil-space :ensure t)
-      (use-package evil-visualstar :ensure t)
-      (use-package evil-ex-registers)
+    (use-package evil-leader :ensure t)
+    (use-package evil-nerd-commenter :ensure t)
+    (use-package evil-matchit :ensure t)
+    (use-package evil-surround :ensure t)
+    (use-package evil-numbers :ensure t)
+    (use-package evil-exchange :ensure t)
+    (use-package evil-space :ensure t)
+    (use-package evil-visualstar :ensure t)
+    (use-package evil-ex-registers)
 
-      ;; To get evil-leader mappings to work in the messages buffer...
-      (kill-buffer "*Messages*")
+    ;; To get evil-leader mappings to work in the messages buffer...
+    (kill-buffer "*Messages*")
 
-      (setq evil-leader/in-all-states t)
+    (setq evil-leader/in-all-states t)
 
-      (global-evil-leader-mode 1)
-      (global-evil-matchit-mode  1)
-      (global-evil-surround-mode 1)
+    (global-evil-leader-mode 1)
+    (global-evil-matchit-mode  1)
+    (global-evil-surround-mode 1)
 
-      (evil-exchange-install)
+    (evil-exchange-install)
 
-      (evil-space-setup "t" ";" ",")    ; Repeat t with space
-      (evil-space-setup "f" ";" ",")    ; Repeat f with space
-      (evil-space-setup "T" "," ";")    ; Repeat T with space
-      (evil-space-setup "F" "," ";")    ; Repeat F with space
-      (evil-define-operator evil-destroy (beg end type register yank-handler)
-        (evil-delete beg end type ?_ yank-handler))
+    (evil-space-setup "t" ";" ",")    ; Repeat t with space
+    (evil-space-setup "f" ";" ",")    ; Repeat f with space
+    (evil-space-setup "T" "," ";")    ; Repeat T with space
+    (evil-space-setup "F" "," ";")    ; Repeat F with space
+    (evil-define-operator evil-destroy (beg end type register yank-handler)
+      (evil-delete beg end type ?_ yank-handler))
 
-      (evil-set-initial-state 'comint-mode 'insert)
+    (evil-set-initial-state 'comint-mode 'insert)
 
-      ;; Enable registers in ex-mode
-      (define-key evil-ex-completion-map (kbd "C-r") #'evil-ex-paste-from-register)))
+    ;; Enable registers in ex-mode
+    (define-key evil-ex-completion-map (kbd "C-r") #'evil-ex-paste-from-register)))
 
 (use-package rainbow-mode :ensure t :defer t)
 (use-package rainbow-delimiters :ensure t
@@ -119,12 +120,11 @@
          (add-hook 'after-load-functions 'smex-update-after-load)))
 
 (use-package recentf :ensure t
-  :commands recentf-mode
-  :idle
+  :init
   (progn (recentf-mode 1)
          (add-to-list 'recentf-exclude "\\.ido\\.last\\'")
          (add-to-list 'recentf-exclude "\\.revive\\'")
-         (setq recentf-max-menu-items 10)
+         (setq recentf-max-menu-items 0)
          (setq recentf-auto-cleanup 'never)))
 
 ;;

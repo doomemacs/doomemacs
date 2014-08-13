@@ -10,17 +10,20 @@
         (kbd "C-c o")   'send-dir-to-finder
         (kbd "C-c u")   'send-to-transmit
         (kbd "C-c l")   'send-to-launchbar
-        (kbd "C-c L")   'send-dir-to-launchbar)
+        (kbd "C-c L")   'send-dir-to-launchbar
+        (kbd "C-c t")   'my/tmux-chdir
+        (kbd "C-c T")   (λ (my/tmux-chdir (projectile-project-root)))
+        )
 
   ;; Evaluating elisp
   (nmap my/mode-map (kbd "C-c x") 'eval-buffer)
   (vmap my/mode-map (kbd "C-c x") 'eval-region)
 
   (when window-system
-    (global-set-key (kbd "s-+")	  'text-scale-increase)
+    (global-set-key (kbd "s-=")	  'text-scale-increase)
     (global-set-key (kbd "s--")	  'text-scale-decrease)
     (global-set-key (kbd "s-/")   'evilnc-comment-or-uncomment-lines)
-    (global-set-key (kbd "s-w")   'kill-buffer-and-window)
+    (global-set-key (kbd "s-w")   'evil-window-delete)
     (global-set-key (kbd "s-<f12>") 'toggle-frame-fullscreen)
 
     (nmap my/mode-map
@@ -31,7 +34,7 @@
           ;; Leader alternatives
           (kbd "s-f") 	'projectile-find-file
           (kbd "s-F") 	'projectile-ag
-          (kbd "s-m") 	'helm-recentf
+          (kbd "s-m") 	'my/recentf-ido-find-file
           (kbd "s-M") 	'projectile-recentf
           (kbd "s-o") 	'ido-find-file
           (kbd "s-O") 	'open-major-mode-conf
@@ -65,13 +68,17 @@
   "d"       'dash-at-point
   "f"       'projectile-find-file
   "F"       'projectile-ag
-  "m"       'helm-recentf 					; recent GLOBAL files
+  "g"       'git-gutter:stage-hunk
+  "G"       'git-gutter:revert-hunk
+  ;; "m"       'helm-recentf 					; recent GLOBAL files
+  "m"       'my/recentf-ido-find-file	    ; recent GLOBAL files
   "M"       'projectile-recentf				; recent PROJECT files
   "p"       'projectile-switch-project
   "/"       'evilnc-comment-or-uncomment-lines
   "\\"      'neotree-show
   "|"       'neotree-hide
   ";"       'helm-imenu
+  ":"       'my/ido-goto-symbol
   ","       'ido-switch-buffer
   "="       'align-regexp
   "x"       'my/kill-other-buffers
@@ -94,6 +101,10 @@
   "zz"      'kill-this-buffer       ; Close buffer
   "]b"      'previous-buffer
   "[b"      'next-buffer
+  "]e"      'next-error
+  "[e"      'previous-error
+  "]g"      'git-gutter:next-hunk
+  "[g"      'git-gutter:previous-hunk
 
   ;; winner-mode: window layout undo/redo (see init-core.el)
   (kbd "C-w u")     'winner-undo

@@ -71,6 +71,61 @@
 
 (defun my/kill-non-project-buffers ()) ; TODO Implement this
 
+(defun my/recentf-ido-find-file ()
+  "Find a recent file using ido."
+  (interactive)
+  (let ((file (ido-completing-read "Choose recent file: " recentf-list nil t)))
+    (when file
+      (find-file file))))
+
+(defun my/ido-goto-symbol (&optional symbol-list)
+      "Refresh imenu and jump to a place in the buffer using Ido."
+      (interactive)
+      (unless (featurep 'imenu)
+        (require 'imenu nil t))
+      (cond
+       ((not symbol-list)
+        (let ((ido-mode ido-mode)
+              (ido-enable-flex-matching
+               (if (boundp 'ido-enable-flex-matching)
+                   ido-enable-flex-matching t))
+              name-and-pos symbol-names position)
+          (unless ido-mode
+            (ido-mode 1)
+            (setq ido-enable-flex-matching t))
+          (while (progn
+                   (imenu--cleanup)
+                   (setq imenu--index-alist nil)
+                   (my/ido-goto-symbol (imenu--make-index-alist))
+                   (setq selected-symbol
+                         (ido-completing-read "Symbol? " symbol-names))
+                   (string= (car imenu--rescan-item) selected-symbol)))
+          (unless (and (boundp 'mark-active) mark-active)
+            (push-mark nil t nil))
+          (setq position (cdr (assoc selected-symbol name-and-pos)))
+          (cond
+           ((overlayp position)
+            (goto-char (overlay-start position)))
+           (t
+            (goto-char position)))))
+       ((listp symbol-list)
+        (dolist (symbol symbol-list)
+          (let (name position)
+            (cond
+             ((and (listp symbol) (imenu--subalist-p symbol))
+              (my/ido-goto-symbol symbol))
+             ((listp symbol)
+              (setq name (car symbol))
+              (setq position (cdr symbol)))
+             ((stringp symbol)
+              (setq name symbol)
+              (setq position
+                    (get-text-property 1 'org-imenu-marker symbol))))
+            (unless (or (null position) (null name)
+                        (string= (car imenu--rescan-item) name))
+              (add-to-list 'symbol-names name)
+              (add-to-list 'name-and-pos (cons name position))))))))
+
 ;;;; Ac-setup Defuns ;;;;;;;;;;;;;;
 (defun my/ac-ruby-setup()
   "Set up RSense and ac-sources"
@@ -85,9 +140,20 @@
 output in the echo area"
   (interactive)
   (nmap mode (kbd "s-r")
-        (λ (shell-command-on-region (point-min) (point-max) interpreter)))
+        `(lambda() (interactive) (shell-command-on-region (point-min) (point-max) ,interpreter)))
   (vmap mode (kbd "s-r")
-        (λ (shell-command-on-region (region-beginning) (region-end) interpreter))))
+        `(lambda() (interactive) (shell-command-on-region (region-beginning) (region-end) ,interpreter))))
+
+;;;; Tmux defuns ;;;;;;;;;;;;;;;;;
+(defun my/tmux-send(command)
+  (interactive "sRun command: ")
+  (shell-command (concat "tmux send-keys C-u " (shell-quote-argument command) " Enter"))
+  (message "Tmux: Command sent!"))
+
+(defun my/tmux-chdir(dir)
+  (interactive "DDirectory: ")
+  (shell-command (concat "tmux send-keys C-u \"cd " dir "\" Enter"))
+  (message "Tmux: Directory changed!"))
 
 ;;;; Mac-specific Defuns ;;;;;;;;;
 (when is-mac
