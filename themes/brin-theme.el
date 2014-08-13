@@ -28,12 +28,15 @@
 
   (custom-theme-set-variables
     'brin
-    '(linum-format " %1d "))
+    ;; '(linum-format " %1d ")
+    )
 
   (let ((background       "#1f1f1f")
+        ;; (gutters          "#262E34")
         (gutters          "#1f252a")
         (gutter-fg        "#55616A")
         (gutters-active   "#2e363c")
+        (linum            "#1e262c")
         ; (background     "#11141c")
         ; (gutters        "#343d46")
         ; (gutter-fg      "#65737e")
@@ -67,7 +70,7 @@
    `(region			      ((t (:background ,selection) )))
    `(cursor			      ((t (:background ,white) )))
    `(fringe			      ((t (:background ,background :foreground ,white) )))
-   `(linum			      ((t (:background ,background :foreground ,gutter-fg) )))
+   `(linum			      ((t (:background ,linum :foreground ,gutter-fg) )))
 
    `(vertical-border	  ((t (:foreground ,gutters-active) )))
 
