@@ -10,9 +10,9 @@
                     dired-dwim-target t))))
 
 (use-package ag :ensure t :defer t)
-;; (use-package helm :ensure t :defer t)
+(use-package helm :ensure t :defer t)
 (use-package grizzl :ensure t :defer t)
-(use-package neotree :commands (neotree-show neotree-hide neotree-toggle))
+(use-package neotree :ensure t :commands (neotree-show neotree-hide neotree-toggle))
 
 (use-package projectile :ensure t
   :diminish projectile-mode
@@ -22,7 +22,7 @@
                projectile-enable-caching t)))
 
 (use-package ido
-  :pre-load
+  :init
   (progn
     ;; ido remaps its keys every time it's invoked, this screws with
     ;; custom mappings. So we've gotta neuter ido.

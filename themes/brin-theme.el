@@ -26,10 +26,7 @@
 
 (deftheme brin "Space Grey theme for Emacs")
 
-  (custom-theme-set-variables
-    'brin
-    ;; '(linum-format " %1d ")
-    )
+  (custom-theme-set-variables 'brin)
 
   (let ((background       "#1f1f1f")
         ;; (gutters          "#262E34")
@@ -85,6 +82,8 @@
    `(highlight-indentation-face		              ((t (:background ,gutters) )))
    `(highlight-indentation-current-column-face    ((t (:background ,gutters-active) )))
 
+   `(flyspell-incorrect   ((t (:underline "#ff5555" :inherit unspecified))))
+
 ;; Font lock faces
 ;; *****************************************************************************************
 
@@ -102,11 +101,6 @@
 ;; *****************************************************************************************
 
    )
-
-;;;###autoload
-(when (and (boundp 'custom-theme-load-path) load-file-name)
-  (add-to-list 'custom-theme-load-path
-               (file-name-as-directory (file-name-directory load-file-name))))
 
 ;; *****************************************************************************************
 

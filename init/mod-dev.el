@@ -1,3 +1,5 @@
+(add-hook 'prog-mode-hook 'my/enable-comment-hard-wrap)
+
 (add-to-list 'auto-mode-alist '("\\.plist\\'" . nxml-mode))
 
 (use-package dash-at-point :ensure t
@@ -8,7 +10,11 @@
     (add-to-list 'dash-at-point-mode-alist '(ruby-mode . "rb"))
     (add-to-list 'dash-at-point-mode-alist '(python-mode . "py2"))))
 
-(use-package yaml-mode :ensure t :mode "\\.yaml\\'")
+(use-package yaml-mode :ensure t
+  :defer t
+  :config
+  (defun my/setup-yaml-mode () (setq tab-width 2))
+  (add-hook 'yaml-mode-hook 'my/setup-yaml-mode))
 
 (use-package json-mode :ensure t
   :mode (("\\.json\\'" . json-mode)
@@ -62,7 +68,6 @@
     ;;
     (my/setup-run-code ruby-mode-map "ruby")
     (nmap ruby-mode-map "gd" 'rsense-jump-to-definition)))
-
 
 ;;
 (provide 'mod-dev)

@@ -1,7 +1,16 @@
 ;;;; Editor behavior ;;;;;;;;;;;;;;;;
-(setq initial-scratch-buffer nil)   ; empty scratch buffer
-(electric-indent-mode +1) 			; auto-indent on RET
-(global-hl-line-mode +1)            ; highlight the line
+;; (electric-indent-mode +1) 			; auto-indent on RET
+;; (defun disable-electric-indent-mode ()
+;;   (set (make-local-variable 'electric-indent-mode) nil)
+;;   (setq-local tab-always-indent t))
+
+;; ;; Only enable electric-mode in programming languages
+;; (add-hook 'text-mode-hook 'disable-electric-indent-mode)
+;; (add-hook 'org-mode-hook 'disable-electric-indent-mode)
+;; (add-hook 'markdown-mode-hook 'disable-electric-indent-mode)
+
+;; (global-hl-line-mode +1)            ; highlight the line
+(blink-cursor-mode -1)
 (setq-default
   tab-width             4           ; set tab width to 4 for all buffers
   indent-tabs-mode      nil         ; use tabs, not spaces
@@ -28,13 +37,13 @@
     (evil-mode 1)
 
     (use-package evil-leader :ensure t)
-    (use-package evil-nerd-commenter :ensure t)
     (use-package evil-matchit :ensure t)
     (use-package evil-surround :ensure t)
     (use-package evil-numbers :ensure t)
     (use-package evil-exchange :ensure t)
     (use-package evil-space :ensure t)
     (use-package evil-visualstar :ensure t)
+    (use-package evil-nerd-commenter :ensure t)
     (use-package evil-ex-registers)
 
     ;; To get evil-leader mappings to work in the messages buffer...

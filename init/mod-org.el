@@ -12,6 +12,9 @@
   (funcall fun)
   (evil-append nil))
 
+(defun my/org-surround (delim)
+  (insert delim) (save-excursion (insert delim)))
+
 ;;
 (use-package org :ensure t
   :mode ("\\.org\\'" . org-mode)
@@ -19,12 +22,14 @@
   (progn
     (setq org-directory "~/Dropbox/notes")
     (setq org-default-notes-file "~/Dropbox/notes/notes.org")
-    (setq org-archive-location "~/Dropbox/notes/archives.org")
+    (setq org-mobile-inbox-for-pull "~/Dropbox/notes/notes.org")
+    (setq org-mobile-directory "~/Dropbox/Apps/MobileOrg")
     (setq org-agenda-files '("~/Dropbox/notes/gtd.org"
                              "~/Dropbox/notes/notes.org"
                              "~/Dropbox/notes/blog.org"
                              "~/Dropbox/notes/invoices.org"
                              "~/Dropbox/notes/journal.org"
+                             "~/Dropbox/notes/trivia.org"
                              "~/Dropbox/notes/vocab.org"
                              "~/Dropbox/notes/excerpts.org"))
 
@@ -32,7 +37,9 @@
     (setq org-hide-leading-stars t)
     (setq org-export-backends '(ascii html latex md))
     (setq org-todo-keywords
-          '((sequence "TODO" "DOING" "VERIFY" "WAITING" "|" "DONE" "DELEGATED" "CANCELLED")))
+          '((sequence "TODO(t)" "|" "DONE(d)")
+            (sequence "STARTED(s)" "VERIFY(v)" "WAITING(w)")
+            (sequence "|" "CANCELLED(c)")))
 
     (org-babel-do-load-languages 'org-babel-load-languages
           '((python . t)
@@ -61,8 +68,10 @@
             ("n" "Note" entry (file+datetree org-default-notes-file) "** %?")
             ("b" "Blog" entry (file+datetree "~/Dropbox/notes/blog.org") "** %?")
             ("j" "Journal" entry (file+datetree "~/Dropbox/notes/journal.org") "** %?%^g\n%?\nAdded: %U")
-            ("v" "Vocab" entry (file "~/Dropbox/notes/vocab.org") "* %?" :prepend t)
-            ("e" "Excerpt" entry (file "~/Dropbox/notes/excerpts.org") "* %?" :prepend t)))
+            ("a" "Trivia" entry (file "~/Dropbox/notes/trivia.org") "* %u %?" :prepend t)
+            ("s" "Writing Scraps" entry (file "~/Dropbox/notes/writing.org") "* %u %?" :prepend t)
+            ("v" "Vocab" entry (file "~/Dropbox/notes/vocab.org") "* %u %?" :prepend t)
+            ("e" "Excerpt" entry (file "~/Dropbox/notes/excerpts.org") "* %u %?" :prepend t)))
 
     (setq org-agenda-custom-commands
           '(("x" agenda)
@@ -85,31 +94,45 @@
     ;; (emap org-agenda-mode-map
     ;;       ...)
 
+    ;; Formatting shortcuts
+    ;; Bold
+    (vmap evil-org-mode-map (kbd "s-b") "s*")
+    (imap evil-org-mode-map (kbd "s-b") (λ (my/org-surround "*")))
+    ;; Italics
+    (vmap evil-org-mode-map (kbd "s-i") "s/")
+    (imap evil-org-mode-map (kbd "s-i") (λ (my/org-surround "/")))
+    ;; Underline
+    (imap evil-org-mode-map (kbd "s-u") (λ (my/org-surround "_")))
+    ;; Strikethrough
+    (imap evil-org-mode-map (kbd "s-`") (λ (my/org-surround "+")))
+
     (imap evil-org-mode-map
           (kbd "<s-return>") 'org-insert-heading-after-current)
 
-    (vmap evil-org-mode-map
+    (nvmap evil-org-mode-map
           ",l" 'org-insert-link)
 
+    ;; (vmap evil-org-mode-map
+    ;;       ",l" 'org-insert-link)
+
     (nmap evil-org-mode-map
-          ",l" 'org-insert-link
+          ",d" 'org-time-stamp
+          ",D" 'org-time-stamp-inactive
           ",s" 'org-schedule
           ",a" 'org-attach
-          ",A" 'org-agenda
+          ",A" 'org-attach-open
           ",t" 'org-todo
           ",T" 'org-show-todo-tree
-          ",\\" 'org-match-sparse-tree
+          ",/" 'org-match-sparse-tree
+          ",?" 'org-tags-view
           ",+" 'org-align-all-tags
+          ",r" 'org-refile
           "gh" 'outline-up-heading
-          "gj" (if (fboundp 'org-forward-same-level) ;to be backward compatible with older org version
-                   'org-forward-same-level
-                 'org-forward-heading-same-level)
-          "gk" (if (fboundp 'org-backward-same-level)
-                   'org-backward-same-level
-                 'org-backward-heading-same-level)
+          "gj" 'org-forward-heading-same-level
+          "gk" 'org-backward-heading-same-level
           "gl" 'outline-next-visible-heading
           "go" 'org-open-at-point
-          "gr" 'org-refile
+          "ga" 'org-agenda
           "H" 'org-beginning-of-line
           "L" 'org-end-of-line
           "$" 'org-end-of-line
@@ -117,9 +140,9 @@
           "<" 'org-metaleft
           ">" 'org-metaright
           "-" 'org-cycle-list-bullet
-          (kbd "RET") (λ (org-insert-heading-after-current) (evil-insert-state))
-          (kbd "SPC") 'org-todo
-          (kbd "M-SPC") (λ (org-todo "DONE"))
+          (kbd ", SPC") 'org-archive-subtree
+          (kbd "<s-return>") (λ (org-insert-heading-after-current) (evil-insert-state))
+          (kbd "RET") (λ (org-todo 'done))
           (kbd "TAB") 'org-cycle)
 
     ;; normal & insert state shortcuts.
@@ -134,7 +157,7 @@
               (kbd "M-H") 'org-shiftmetaleft
               (kbd "M-K") 'org-shiftmetaup
               (kbd "M-J") 'org-shiftmetadown
-              (kbd "M-o") '(lambda () (interactive)
+              (kbd "<M-return>") '(lambda () (interactive)
                              (my/org-eol-call
                               '(lambda()
                                  (org-insert-heading)

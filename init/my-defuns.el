@@ -11,6 +11,9 @@
   `(evil-define-key 'insert ,map ,@body))
 (defmacro emap (map &rest body)
   `(evil-define-key 'emacs ,map ,@body))
+(defmacro nvmap (map &rest body)
+  `(evil-define-key 'normal ,map ,@body)
+  `(evil-define-key 'visual ,map ,@body))
 
 ;; insert-mode key-chord mapping
 (defmacro ichmap (key command)
@@ -28,22 +31,6 @@
   (interactive)
   (switch-to-buffer (get-buffer-create "*scratch*"))
   (text-mode))
-
-(defun my/expand-space ()
-  "Insert a space ahead of the cursor"
-  (interactive)
-  (save-excursion (insert " ")))
-
-(defun my/expand-backspace ()
-  "Add a space before and ahead of the cursor"
-  (interactive)
-  (save-excursion (delete-char 1))
-  (delete-backward-char 1))
-
-(defun my/enable-hard-wrap()
-  "Enable hard line wrapping"
-  (interactive)
-  (auto-fill-mode 1))
 
 (defun my/byte-recompile ()
   "Byte compile init.el, ~/.emacs.d/init/* and ~/.emacs.d/elisp/*"
@@ -71,7 +58,12 @@
   (mapc 'kill-buffer (cdr (buffer-list (current-buffer))))
   (message "All other buffers killed"))
 
-(defun my/kill-non-project-buffers ()) ; TODO Implement this
+(defun my/kill-dired-buffers ()
+	 (interactive)
+	 (mapc (lambda (buffer)
+           (when (eq 'dired-mode (buffer-local-value 'major-mode buffer))
+             (kill-buffer buffer)))
+         (buffer-list)))
 
 (defun my/recentf-ido-find-file ()
   "Find a recent file using ido."
@@ -128,7 +120,16 @@
               (add-to-list 'symbol-names name)
               (add-to-list 'name-and-pos (cons name position))))))))
 
-;;;; Ac-setup Defuns ;;;;;;;;;;;;;;
+;;;; Hooks ;;;;;;;;;;;;;;;;;;;;;;;;
+(defun my/enable-hard-wrap()
+  (auto-fill-mode 1)
+  (diminish 'auto-fill-function))
+
+(defun my/enable-comment-hard-wrap ()
+  (set (make-local-variable 'comment-auto-fill-only-comments) t)
+  (auto-fill-mode 1)
+  (diminish 'auto-fill-function))
+
 (defun my/ac-ruby-setup()
   "Set up RSense and ac-sources"
   (setq ac-sources (append '(ac-source-rsense ac-source-yasnippet) ac-sources)))
@@ -140,34 +141,54 @@
 (defun my/setup-run-code(mode interpreter)
   "Set up s-r to run code using a specified interpreter and print the
 output in the echo area"
-  (interactive)
-  (nmap mode (kbd "s-r")
-        `(lambda() (interactive) (shell-command-on-region (point-min) (point-max) ,interpreter)))
-  (vmap mode (kbd "s-r")
+  (nmap mode (kbd ",r")
+        `(lambda()
+           (interactive)
+           (if (file-exists-p (buffer-file-name))
+               (shell-command (concat ,interpreter " " (buffer-file-name)))
+             (shell-command-on-region (point-min) (point-max) ,interpreter))))
+  (vmap mode (kbd ",r")
         `(lambda() (interactive) (shell-command-on-region (region-beginning) (region-end) ,interpreter))))
 
 ;;;; Tmux defuns ;;;;;;;;;;;;;;;;;
-(defun my/tmux-send(command)
-  (interactive "sRun command: ")
-  (shell-command (concat "tmux send-keys C-u " (shell-quote-argument command) " Enter"))
+(defun my/tmux-run (command)
+  "Run command in tmux"
+  (interactive
+   (list
+    (read-shell-command "Tmux command: " nil nil
+                        (let ((filename (cond (buffer-file-name)
+                                              ((eq major-mode 'dired-mode)
+                                               (dired-get-filename nil t)))))
+                          (and filename (file-relative-name filename))))))
+
+  (shell-command (concat "/usr/local/bin/tmux send-keys C-u " (shell-quote-argument command) " Enter"))
+  ;; (call-process "/usr/local/bin/tmux" nil nil nil "C-u" "send-keys" command "C-m")
   (message "Tmux: Command sent!"))
 
+(defun my/tmux-paste (command)
+  (interactive "sSend to Tmux: ")
+  (shell-command (concat "/usr/local/bin/tmux send-keys " command))
+  (message "Tmux: Text pasted!"))
+
 (defun my/tmux-chdir(dir)
+  "CD into a new directory in tmux"
   (interactive "DDirectory: ")
-  (shell-command (concat "tmux send-keys C-u \"cd " dir "\" Enter"))
+  (my/tmux-run (concat "cd " (shell-quote-argument dir)))
   (message "Tmux: Directory changed!"))
 
 ;;;; Mac-specific Defuns ;;;;;;;;;
 (when is-mac
   ;; Send current file to OSX apps
   (defun open-file-with (path &optional appName)
-    (if (not (string= "" appName))
+    (if (and appName
+             (stringp appName)
+             (not (string= "" appName)))
         (setq appName (concat "-a " appName ".app")))
-    (shell-command (concat "open " appName " " path)))
+    (shell-command (concat "open " appName " " (shell-quote-argument path))))
 
   (defun open-with (appName)
-    (interactive)
-    (open-file-with (buffer-file-name) appName))
+    (interactive "sApp name: ")
+    (open-file-with buffer-file-name appName))
 
   (defun send-to-transmit ()      (interactive) (open-with "Transmit"))
   (defun send-to-launchbar ()     (interactive) (open-with "LaunchBar"))

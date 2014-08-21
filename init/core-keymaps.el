@@ -12,28 +12,30 @@
         (kbd "C-c l")   'send-to-launchbar
         (kbd "C-c L")   'send-dir-to-launchbar
         (kbd "C-c t")   'my/tmux-chdir
-        (kbd "C-c T")   (λ (my/tmux-chdir (projectile-project-root)))
-        )
+        (kbd "C-c T")   (λ (my/tmux-chdir (projectile-project-root))))
 
   ;; Evaluating elisp
   (nmap my/mode-map (kbd "C-c x") 'eval-buffer)
   (vmap my/mode-map (kbd "C-c x") 'eval-region)
 
   (when window-system
-    (global-set-key (kbd "s-=")	  'text-scale-increase)
-    (global-set-key (kbd "s--")	  'text-scale-decrease)
-    (global-set-key (kbd "s-/")   'evilnc-comment-or-uncomment-lines)
-    (global-set-key (kbd "s-w")   'evil-window-delete)
+    (global-set-key (kbd "s-=")	    'text-scale-increase)
+    (global-set-key (kbd "s--")	    'text-scale-decrease)
+    (global-set-key (kbd "s-w")     'evil-window-delete)
+    (global-set-key (kbd "s-/")     'evilnc-comment-or-uncomment-lines)
     (global-set-key (kbd "s-<f12>") 'toggle-frame-fullscreen)
 
-    (nmap my/mode-map
-          ;; Faster scrolling
-          (kbd "s-j") "5j"
-          (kbd "s-k") "5k"
+    ;; Faster scrolling
+    (mapc (lambda(map)
+            (evil-define-key map my/mode-map (kbd "s-j") "5j")
+            (evil-define-key map my/mode-map (kbd "s-k") "5k"))
+          '(emacs normal visual))
 
+    (nmap my/mode-map
           ;; Leader alternatives
           (kbd "s-f") 	'projectile-find-file
           (kbd "s-F") 	'projectile-ag
+          (kbd "s-p") 	'projectile-switch-project
           (kbd "s-m") 	'my/recentf-ido-find-file
           (kbd "s-M") 	'projectile-recentf
           (kbd "s-o") 	'ido-find-file
@@ -43,8 +45,8 @@
           (kbd "C-s-'") 'mc/mark-all-like-this
           (kbd "s-d")   'dash-at-point)
 
-    ;; Newlines from insert mode
     (imap my/mode-map
+          ;; Textmate-esque insert-line before/after
           (kbd "<s-return>")    'evil-open-below
           (kbd "<S-s-return>")  'evil-open-above
 
@@ -56,106 +58,114 @@
           ;; Fixes delete
           (kbd "<kp-delete>")   'delete-char)))
 
-
 ;; Local keymaps ;;;;;;;;;;;;;;;;
 (evil-leader/set-leader ",")
 (evil-leader/set-key
-  "`"       'my/notes
-  "'" 		'mc/mark-next-like-this
-  "\""		'mc/mark-all-like-this
-  "e"       'ido-find-file
-  "E"       'my/initfiles
-  "d"       'dash-at-point
-  "f"       'projectile-find-file
-  "F"       'projectile-ag
-  "g"       'git-gutter:stage-hunk
-  "G"       'git-gutter:revert-hunk
-  ;; "m"       'helm-recentf 					; recent GLOBAL files
-  "m"       'my/recentf-ido-find-file	    ; recent GLOBAL files
-  "M"       'projectile-recentf				; recent PROJECT files
-  "p"       'projectile-switch-project
-  "/"       'evilnc-comment-or-uncomment-lines
-  "\\"      'neotree-show
-  "|"       'neotree-hide
-  ";"       'helm-imenu
-  ":"       'my/ido-goto-symbol
-  ","       'ido-switch-buffer
-  "="       'align-regexp
-  "x"       'my/kill-other-buffers
-  "X"       'my/kill-all-buffers
-  (kbd "RET") 'org-capture)
+      "`"       'my/notes
+      "'" 		'mc/mark-next-like-this
+      "\""		'mc/mark-all-like-this
+      "e"       'ido-find-file
+      "E"       'my/initfiles
+      "d"       'dash-at-point
+      "f"       'projectile-find-file
+      "F"       'projectile-ag
+      "g"       'git-gutter:stage-hunk
+      "G"       'git-gutter:revert-hunk
+      "m"       'my/recentf-ido-find-file	    ; recent GLOBAL files
+      "M"       'projectile-recentf				; recent PROJECT files
+      "p"       'projectile-switch-project
+      "\\"      'neotree-show
+      "|"       'neotree-hide
+      ";"       'helm-imenu
+      ":"       'my/ido-goto-symbol
+      ","       'ido-switch-buffer
+      "="       'align-regexp
+      "x"       'my/kill-other-buffers
+      "X"       'my/kill-all-buffers
+      (kbd "RET") 'org-capture)
+
+;; Remap ; to : - SPC and shift-SPC replace ; and , - have to use
+;; define-key instead of n/vmap for this one to register.
+(define-key evil-normal-state-map ";" 'evil-ex)
+(define-key evil-visual-state-map ";" 'evil-ex)
 
 (nmap my/mode-map
-  ";"           'evil-ex            ; Remap ; to : - SPC and shift-SPC replace ; and ,
-  (kbd "C-;")   'eval-expression    ; Elisp command
+      (kbd "C-;")   'eval-expression    ; Elisp command
+      (kbd "s-;")   'my/tmux-run
+      (kbd "s-:")   'my/tmux-paste
 
-  ;; Moving rows rather than lines (in case of wrapping)
-  "j"       'evil-next-visual-line
-  "k"       'evil-previous-visual-line
+      ;; Moving rows rather than lines (in case of wrapping)
+      "j"       'evil-next-visual-line
+      "k"       'evil-previous-visual-line
 
-  "X"       'evil-destroy           ; Delete without yanking
+      "X"       'evil-destroy           ; Delete without yanking
 
-  ;; copy to end of line
-  "Y"       (λ (evil-yank (point) (point-at-eol)))
+      ;; behave like D and C; yank to end of line
+      "Y"       (λ (evil-yank (point) (point-at-eol)))
 
-  "zz"      'kill-this-buffer       ; Close buffer
-  "]b"      'previous-buffer
-  "[b"      'next-buffer
-  "]e"      'next-error
-  "[e"      'previous-error
-  "]g"      'git-gutter:next-hunk
-  "[g"      'git-gutter:previous-hunk
+      "zz"      'kill-this-buffer       ; Close buffer
+      "]b"      'previous-buffer
+      "[b"      'next-buffer
+      "]e"      'next-error
+      "[e"      'previous-error
+      "]h"      'git-gutter:next-hunk
+      "[h"      'git-gutter:previous-hunk
 
-  ;; winner-mode: window layout undo/redo (see init-core.el)
-  (kbd "C-w u")     'winner-undo
-  (kbd "C-w C-r")   'winner-redo
+      ;; winner-mode: window layout undo/redo (see init-core.el)
+      (kbd "C-w u")     'winner-undo
+      (kbd "C-w C-r")   'winner-redo
 
-  ;; Increment/decrement number under cursor
-  (kbd "C--")  'evil-numbers/inc-at-pt
-  (kbd "C-+")  'evil-numbers/dec-at-pt)
+      ;; Increment/decrement number under cursor
+      (kbd "C--")  'evil-numbers/inc-at-pt
+      (kbd "C-+")  'evil-numbers/dec-at-pt)
 
 (vmap my/mode-map
-  ; vnoremap < <gv
-  "<"      (λ (evil-shift-left (region-beginning) (region-end))
-              (evil-normal-state)
-              (evil-visual-restore))
-  ; vnoremap > >gv
-  ">"      (λ (evil-shift-right (region-beginning) (region-end))
-              (evil-normal-state)
-              (evil-visual-restore)))
+      ;; vnoremap < <gv
+      "<"      (λ (evil-shift-left (region-beginning) (region-end))
+                  (evil-normal-state)
+                  (evil-visual-restore))
+      ;; vnoremap > >gv
+      ">"      (λ (evil-shift-right (region-beginning) (region-end))
+                  (evil-normal-state)
+                  (evil-visual-restore)))
 
 (imap my/mode-map
-  (kbd "s-j")         'evil-join
-  (kbd "M-SPC")       'expand-space
-  (kbd "<C-return>")  'indent-new-comment-line)
+      ;; Make DEL act like expandtab in vim
+      (kbd "DEL")           'backward-delete-whitespace-to-column
+      ;; Join lines from insert mode
+      (kbd "<M-kp-delete>") 'evil-join
+
+      ;; Newline magic
+      (kbd "RET")           'newline-and-indent
+      (kbd "M-RET")         (kbd "RET DEL")
+      (kbd "<C-return>")    'indent-new-comment-line
+
+      ;; Textmate-esque indent shift left/right
+      (kbd "s-[")           (λ (evil-shift-left (point-at-bol) (point-at-eol)))
+      (kbd "s-]")           (λ (evil-shift-right (point-at-bol) (point-at-eol)))
+      (kbd "<backtab>")     (kbd "S-["))
 
 (emap my/mode-map
-  ;; Preserve buffer-movement in emacs mode
-  "j" 'evil-next-line
-  "k" 'evil-previous-line
+      ;; Preserve buffer-movement in emacs mode
+      "j" 'evil-next-line
+      "k" 'evil-previous-line
 
-  (kbd "C-w h") 'evil-window-left
-  (kbd "C-w l") 'evil-window-right
-  (kbd "C-w j") 'evil-window-down
-  (kbd "C-w k") 'evil-window-up
-
-  (kbd "s-j") "5j"
-  (kbd "s-k") "5k")
-
-;; Commenting lines
-(nmap my/mode-map "gcc" 'evilnc-comment-or-uncomment-lines)
-(vmap my/mode-map "gc"  'evilnc-comment-or-uncomment-lines)
+      (kbd "C-w h") 'evil-window-left
+      (kbd "C-w l") 'evil-window-right
+      (kbd "C-w j") 'evil-window-down
+      (kbd "C-w k") 'evil-window-up)
 
 ;; Rotate-text (see elisp/rotate-text.el)
 (nmap my/mode-map "!" 'rotate-word-at-point)
 (vmap my/mode-map "!" 'rotate-region)
 
-;; Enable TAB to do matchit
-(nmap evil-matchit-mode-map (kbd "TAB") 'evilmi-jump-items)
-
 ;; Easy escape from insert mode
 (ichmap "jj" 'evil-normal-state)
 
+;; Enable TAB to do matchit
+(nmap evil-matchit-mode-map (kbd "TAB") 'evilmi-jump-items)
+
+;; Real go-to-definition for elisp
 (nmap emacs-lisp-mode-map "gd"
       (λ (let ((func (function-called-at-point)))
            (if func (find-function func)))))
@@ -168,16 +178,14 @@
 
 ;;;; Keymap fixes ;;;;;;;;;;;;;;;
 ;; Make ESC quit all the things
-(nmap my/mode-map [escape] 'keyboard-quit)
-(vmap my/mode-map [escape] 'keyboard-quit)
+(nvmap my/mode-map [escape] 'keyboard-quit)
 (mapc (lambda (map)
     (define-key map [escape] 'minibuffer-quit))
-      (list
-        minibuffer-local-map
-        minibuffer-local-ns-map
-        minibuffer-local-completion-map
-        minibuffer-local-must-match-map
-        minibuffer-local-isearch-map))
+      (list minibuffer-local-map
+            minibuffer-local-ns-map
+            minibuffer-local-completion-map
+            minibuffer-local-must-match-map
+            minibuffer-local-isearch-map))
 (global-set-key [escape] 'evil-exit-emacs-state)
 ;; Close help window with escape
 (define-key global-map [escape] 'quit-window)
@@ -196,9 +204,7 @@
     ;; take that "Text is read-only" and stick it where emacs don't shine!
     (define-key ido-completion-map (kbd "<backspace>") 'ido-delete-backward-updir)
     (define-key ido-completion-map "\C-n" 'ido-next-match)
-    (define-key ido-completion-map "\C-f" 'ido-next-match)
     (define-key ido-completion-map "\C-p" 'ido-prev-match)
-    (define-key ido-completion-map "\C-b" 'ido-prev-match)
 
     ;; Auto-complete on tab/space (why is it called ido-exit-minibuffer?)
     (define-key ido-completion-map " " 'ido-exit-minibuffer)))
@@ -217,6 +223,22 @@
       (setq deactivate-mark t)
     (when (get-buffer "*Completions*") (delete-windows-on "*Completions*"))
     (abort-recursive-edit)))
+
+;; Mimic expandtab in vim
+(defun backward-delete-whitespace-to-column ()
+  "delete back to the previous column of whitespace, or as much whitespace as possible,
+or just one char if that's not possible"
+  (interactive)
+  (if indent-tabs-mode
+      (call-interactively 'backward-delete-char-untabify)
+    (let ((movement (% (current-column) tab-width))
+          (p (point)))
+      (when (= movement 0) (setq movement tab-width))
+      (save-match-data
+        (if (string-match "\\w*\\(\\s-+\\)$" (buffer-substring-no-properties (- p movement) p))
+            (backward-delete-char-untabify (- (match-end 1) (match-beginning 1)))
+        (call-interactively 'backward-delete-char-untabify))))))
+
 
 ;;
 (provide 'core-keymaps)

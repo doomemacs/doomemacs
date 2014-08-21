@@ -17,5 +17,17 @@
          ("\\.frag\\'" . glsl-mode)
          ("\\.geom\\'" . glsl-mode)))
 
+(define-minor-mode cocos2d-mode
+  "Buffer local minor mode for Cocos2D-x"
+  :init-value nil
+  :lighter " C2D"
+  :keymap (make-sparse-keymap))
+
+(defun cocoa2d-mode-maybe()
+  (let ((root (projectile-project-root)))
+    (if (or (string-match "[.-]cocos2d/" root)
+            (file-exists-p (concat root ".cocos2d-mode")))
+        (cocos-mode t))))
+
 ;;
 (provide 'mod-cpp)

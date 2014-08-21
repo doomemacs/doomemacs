@@ -25,6 +25,7 @@
     (progn
       (add-hook 'prog-mode-hook 'yas-minor-mode)
       (add-hook 'snippet-mode-hook 'yas-minor-mode)
+      (add-hook 'markdown-mode-hook 'yas-minor-mode)
       (add-hook 'org-mode-hook 'yas-minor-mode)))
 
 ;;

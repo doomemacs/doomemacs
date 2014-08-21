@@ -47,5 +47,5 @@
     mod-cpp             ; C++ gamedev
     mod-eclim           ; Integration into eclipse (for Java)
     mod-csharp          ; Emacs as a Csharp/Unity IDE
-    mod-collab          ; For collab programming
+    ;; mod-collab          ; For collab programming
     ))

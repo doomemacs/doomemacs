@@ -35,8 +35,7 @@
     (define-key ac-completing-map [return] nil)
 
     ;; Tell ido not to care about case
-    (setq completion-ignore-case t)
-    ))
+    (setq completion-ignore-case t)))
 
 ;;
 (provide 'init-ac)

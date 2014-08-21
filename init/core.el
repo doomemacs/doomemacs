@@ -24,7 +24,8 @@
       inhibit-startup-buffer-menu t
       inhibit-startup-echo-area-message t
       initial-major-mode 'text-mode
-      initial-scratch-message nil)
+      initial-scratch-message nil
+      initial-scratch-buffer nil)   ; empty scratch buffer
 
 (setq require-final-newline nil)
 
@@ -40,23 +41,17 @@
 ;; window layout undo/redo, keymaps in core-keymaps.el
 (when (fboundp 'winner-mode) (winner-mode 1))
 
-(defconst is-mac
-  (eq system-type 'darwin)
-  "Is this running on OS X?")
-(defconst is-linux
-  (eq system-type 'gnu/linux)
-  "Is this running on Linux?")
+(defconst is-mac (eq system-type 'darwin))
+(defconst is-linux (eq system-type 'gnu/linux))
 
 ;;;; Advice ;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Make next/previous-buffer skip special buffers
 (defadvice next-buffer (after avoid-messages-buffer-in-next-buffer)
   "Advice around `next-buffer' to avoid going into the *Messages* buffer."
-  (when (string= "*Messages*" (buffer-name))
-    (next-buffer)))
+  (when (string-match "\\`\\*.+\\*\\'" (buffer-name)) (next-buffer)))
 (defadvice previous-buffer (after avoid-messages-buffer-in-previous-buffer)
   "Advice around `previous-buffer' to avoid going into the *Messages* buffer."
-  (when (string= "*Messages*" (buffer-name))
-    (previous-buffer)))
+  (when (string-match "\\`\\*.+\\*\\'" (buffer-name)) (previous-buffer)))
 
 ;;;; My personal minor mode ;;;;;;;;
 (defvar my/mode-map (make-sparse-keymap))
@@ -66,7 +61,7 @@
 (require 'core-packages)
 (require 'core-ui)
 (require 'core-editor)
-(when is-mac (require 'core-osx))
+(if is-mac (require 'core-osx))
 
 (add-hook 'after-init-hook (lambda() (require 'core-keymaps)))
 
