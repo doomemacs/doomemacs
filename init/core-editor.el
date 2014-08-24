@@ -69,7 +69,7 @@
     ;; Enable registers in ex-mode
     (define-key evil-ex-completion-map (kbd "C-r") #'evil-ex-paste-from-register)))
 
-(use-package rainbow-mode :ensure t :defer t)
+;; (use-package rainbow-mode :ensure t :defer t)
 (use-package rainbow-delimiters :ensure t
   :commands rainbow-delimiters-mode
   :init (add-hook 'prog-mode-hook 'rainbow-delimiters-mode))
