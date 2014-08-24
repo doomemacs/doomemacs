@@ -4,7 +4,10 @@
 
 (use-package scss-mode :ensure t
   :mode "\\.scss\\'"
-  :config (add-hook 'scss-mode-hook 'ac-css-mode-setup))
+  :config
+  (progn
+    (setq scss-compile-at-save nil)
+    (add-hook 'scss-mode-hook 'ac-css-mode-setup)))
 
 (use-package haml-mode :ensure t :mode "\\.haml\\'")
 
