@@ -143,7 +143,7 @@
       ;; Textmate-esque indent shift left/right
       (kbd "s-[")           (λ (evil-shift-left (point-at-bol) (point-at-eol)))
       (kbd "s-]")           (λ (evil-shift-right (point-at-bol) (point-at-eol)))
-      (kbd "<backtab>")     (kbd "S-["))
+      (kbd "<backtab>")     (kbd "s-["))
 
 (emap my/mode-map
       ;; Preserve buffer-movement in emacs mode
