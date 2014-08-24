@@ -12,8 +12,8 @@
 (defmacro emap (map &rest body)
   `(evil-define-key 'emacs ,map ,@body))
 (defmacro nvmap (map &rest body)
-  `(evil-define-key 'normal ,map ,@body)
-  `(evil-define-key 'visual ,map ,@body))
+  `(progn (evil-define-key 'normal ,map ,@body)
+          (evil-define-key 'visual ,map ,@body)))
 
 ;; insert-mode key-chord mapping
 (defmacro ichmap (key command)
