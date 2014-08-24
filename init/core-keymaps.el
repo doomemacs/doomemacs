@@ -175,6 +175,7 @@
 (evil-ex-define-cmd "msg" 'view-echo-area-messages)
 (evil-ex-define-cmd "gtd" 'open-gtd)
 (evil-ex-define-cmd "notes" 'open-notes)
+(evil-ex-define-cmd "tcd" (λ (my/tmux-chdir (projectile-project-root))))
 
 ;;;; Keymap fixes ;;;;;;;;;;;;;;;
 ;; Make ESC quit all the things
