@@ -30,19 +30,23 @@
     (setq web-mode-ac-sources-alist
           '(("css" . (ac-source-css-property))))
 
-    (setq web-mode-markup-indent-offset 4)
-    (setq web-mode-css-indent-offset 4)
-    (setq web-mode-code-indent-offset 4)
+    (setq web-mode-markup-indent-offset 4
+          web-mode-css-indent-offset 4
+          web-mode-code-indent-offset 4)
 
-    (nvmap web-mode-map "]a" 'web-mode-attribute-next)
-    (nvmap web-mode-map "]t" 'web-mode-tag-next)
-    (nvmap web-mode-map "[t" 'web-mode-tag-previous)
-    (nvmap web-mode-map "]T" 'web-mode-element-child)
-    (nvmap web-mode-map "[T" 'web-mode-element-parent)
-    (nmap web-mode-map "zf" 'web-mode-fold-or-unfold)
-    (nmap web-mode-map ",t" 'web-mode-element-rename)
+    (nvmap web-mode-map
+           "]a" 'web-mode-attribute-next
+           "]t" 'web-mode-tag-next
+           "[t" 'web-mode-tag-previous
+           "]T" 'web-mode-element-child
+           "[T" 'web-mode-element-parent)
+
+    (nmap web-mode-map
+          "zf" 'web-mode-fold-or-unfold
+          ",ct" 'web-mode-element-rename)
 
     (define-key web-mode-map (kbd "s-/") 'web-mode-comment-or-uncomment)
+
     (add-hook 'web-mode-hook 'jekyll-mode-maybe)))
 
 (use-package tern :ensure t
@@ -58,17 +62,13 @@
     (lambda ()
       (tern-mode t)
       (tern-ac-setup)
-      (imap js-mode-map (kbd "C-SPC") 'tern-ac-complete)
-      )))
+      (imap js-mode-map (kbd "C-SPC") 'tern-ac-complete
+      ))))
 
 (use-package emmet-mode :ensure t
   :defer t
   :config
-  (progn
-    (imap emmet-mode-keymap (kbd "s-e") 'emmet-expand-yas)
-    (imap emmet-mode-keymap (kbd "s-E") 'emmet-expand-line)
-
-    (setq emmet-move-cursor-between-quotes t))
+  (setq emmet-move-cursor-between-quotes t)
   :init
   (progn
     (add-hook 'scss-mode-hook   'emmet-mode)

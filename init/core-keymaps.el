@@ -25,6 +25,10 @@
     (global-set-key (kbd "s-/")     'evilnc-comment-or-uncomment-lines)
     (global-set-key (kbd "s-<f12>") 'toggle-frame-fullscreen)
 
+    (global-set-key (kbd "C-;")   'eval-expression)
+    (global-set-key (kbd "s-;")   'my/tmux-run)
+    (global-set-key (kbd "s-:")   'my/tmux-paste)
+
     ;; Faster scrolling
     (mapc (lambda(map)
             (evil-define-key map my/mode-map (kbd "s-j") "5j")
@@ -33,17 +37,16 @@
 
     (nmap my/mode-map
           ;; Leader alternatives
-          (kbd "s-f") 	'projectile-find-file
+          (kbd "s-t") 	'projectile-find-file
           (kbd "s-F") 	'projectile-ag
           (kbd "s-p") 	'projectile-switch-project
           (kbd "s-m") 	'my/recentf-ido-find-file
           (kbd "s-M") 	'projectile-recentf
           (kbd "s-o") 	'ido-find-file
-          (kbd "s-O") 	'open-major-mode-conf
+          (kbd "s-d") 	'dash-at-point
           (kbd "s-'") 	'mc/mark-next-like-this
           (kbd "s-\"") 	'mc/mark-previous-like-this
-          (kbd "C-s-'") 'mc/mark-all-like-this
-          (kbd "s-d")   'dash-at-point)
+          (kbd "C-s-'") 'mc/mark-all-like-this)
 
     (imap my/mode-map
           ;; Textmate-esque insert-line before/after
@@ -56,19 +59,19 @@
           (kbd "<s-backspace>")	'backward-kill-line
 
           ;; Fixes delete
-          (kbd "<kp-delete>")   'delete-char)))
+          (kbd "<kp-delete>")   'delete-char)
+
+    (imap emmet-mode-keymap
+          (kbd "s-e") 'emmet-expand-yas
+          (kbd "s-E") 'emmet-expand-line)))
 
 ;; Local keymaps ;;;;;;;;;;;;;;;;
 (evil-leader/set-leader ",")
 (evil-leader/set-key
-      "`"       'my/notes
       "'" 		'mc/mark-next-like-this
       "\""		'mc/mark-all-like-this
       "e"       'ido-find-file
       "E"       'my/initfiles
-      "d"       'dash-at-point
-      "f"       'projectile-find-file
-      "F"       'projectile-ag
       "g"       'git-gutter:stage-hunk
       "G"       'git-gutter:revert-hunk
       "m"       'my/recentf-ido-find-file	    ; recent GLOBAL files
@@ -79,9 +82,8 @@
       ";"       'helm-imenu
       ":"       'my/ido-goto-symbol
       ","       'ido-switch-buffer
+      "."       'projectile-find-file
       "="       'align-regexp
-      "x"       'my/kill-other-buffers
-      "X"       'my/kill-all-buffers
       (kbd "RET") 'org-capture)
 
 ;; Remap ; to : - SPC and shift-SPC replace ; and , - have to use
@@ -90,10 +92,6 @@
 (define-key evil-visual-state-map ";" 'evil-ex)
 
 (nmap my/mode-map
-      (kbd "C-;")   'eval-expression    ; Elisp command
-      (kbd "s-;")   'my/tmux-run
-      (kbd "s-:")   'my/tmux-paste
-
       ;; Moving rows rather than lines (in case of wrapping)
       "j"       'evil-next-visual-line
       "k"       'evil-previous-visual-line
@@ -174,12 +172,14 @@
 (evil-ex-define-cmd "retab" 'untabify) ; TODO: Implement proper retab defun
 (evil-ex-define-cmd "msg" 'view-echo-area-messages)
 (evil-ex-define-cmd "gtd" 'open-gtd)
-(evil-ex-define-cmd "notes" 'open-notes)
+(evil-ex-define-cmd "n[otes]" 'my/notes)
 (evil-ex-define-cmd "tcd" (λ (my/tmux-chdir (projectile-project-root))))
+(evil-ex-define-cmd "ag" 'projectile-ag)
+(evil-ex-define-cmd "el" 'my/initfiles)
+(evil-ex-define-cmd "ba" (lambda(bang) (interactive) (if bang (my/kill-all-buffers) (my/kill-other-buffers))))
 
 ;;;; Keymap fixes ;;;;;;;;;;;;;;;
 ;; Make ESC quit all the things
-(nvmap my/mode-map [escape] 'keyboard-quit)
 (mapc (lambda (map)
     (define-key map [escape] 'minibuffer-quit))
       (list minibuffer-local-map
@@ -187,9 +187,9 @@
             minibuffer-local-completion-map
             minibuffer-local-must-match-map
             minibuffer-local-isearch-map))
-(global-set-key [escape] 'evil-exit-emacs-state)
+(define-key evil-emacs-state-map [escape] 'evil-exit-emacs-state)
 ;; Close help window with escape
-(define-key global-map [escape] 'quit-window)
+(define-key help-mode-map [escape] 'kill-buffer-and-window)
 
 ;; Restore bash-esque keymaps in insert mode and the minibuffer
 (mapc (lambda (map)
@@ -197,7 +197,6 @@
     (define-key map (kbd "C-e") 'move-end-of-line)
     (define-key map (kbd "C-u") 'backward-kill-line))
       (list minibuffer-local-map minibuffer-local-ns-map evil-insert-state-map))
-
 (define-key evil-insert-state-map (kbd "C-w") 'backward-kill-word)
 (define-key minibuffer-local-map (kbd "C-w") 'ido-delete-backward-word-updir)
 
@@ -211,10 +210,6 @@
     (define-key ido-completion-map " " 'ido-exit-minibuffer)))
 
 ;;
-(defun backward-kill-line ()
-  (interactive)
-  (evil-delete (point-at-bol) (point)))
-
 (defun minibuffer-quit ()
   "Abort recursive edit.
         In Delete Selection mode, if the mark is active, just deactivate it;
@@ -224,6 +219,10 @@
       (setq deactivate-mark t)
     (when (get-buffer "*Completions*") (delete-windows-on "*Completions*"))
     (abort-recursive-edit)))
+
+(defun backward-kill-line ()
+  (interactive)
+  (evil-delete (point-at-bol) (point)))
 
 ;; Mimic expandtab in vim
 (defun backward-delete-whitespace-to-column ()
@@ -239,7 +238,6 @@ or just one char if that's not possible"
         (if (string-match "\\w*\\(\\s-+\\)$" (buffer-substring-no-properties (- p movement) p))
             (backward-delete-char-untabify (- (match-end 1) (match-beginning 1)))
         (call-interactively 'backward-delete-char-untabify))))))
-
 
 ;;
 (provide 'core-keymaps)

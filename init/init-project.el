@@ -9,7 +9,10 @@
                     ;; current subdir, instead of the current subdir of this dired buffer
                     dired-dwim-target t))))
 
-(use-package ag :ensure t :defer t)
+(use-package ag :ensure t :defer t
+  :config
+  (define-key ag-mode-map [escape] 'kill-buffer-and-window))
+
 (use-package helm :ensure t :defer t)
 (use-package grizzl :ensure t :defer t)
 (use-package neotree :ensure t :commands (neotree-show neotree-hide neotree-toggle))
