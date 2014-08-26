@@ -15,11 +15,34 @@
 (defun my/org-surround (delim)
   (insert delim) (save-excursion (insert delim)))
 
+(defun set-buffer-file-format-to-opml ()
+  (when (string-match "\.opml$" (buffer-file-name))
+    (setq buffer-file-format '(opml))))
+
+(defun opml-encode (begin end buffer)
+  "Export Org mode buffer to OPML."
+  (let ((org-export-show-temporary-export-buffer nil)
+        (name "*OPML Export Buffer*"))
+    (org-export-to-buffer 'opml name)
+    (erase-buffer)
+    (insert-buffer-substring (get-buffer name))
+    (point-max)))
+
 ;;
 (use-package org :ensure t
-  :mode ("\\.org\\'" . org-mode)
+  :mode (("\\.org\\'" . org-mode)
+         ("\\.opml\\'" . org-mode))
+  :config
+  (load-library "ox-opml")
   :init
   (progn
+    (setq org-export-backends '(ascii html latex md opml))
+    (add-hook 'find-file-hooks 'set-buffer-file-format-to-opml)
+    (add-to-list 'auto-mode-alist '("\\.opml$" . org-mode))
+    (add-to-list 'format-alist '(opml "Outline Processor Markup Language"
+                                      "<[?]xml version=\"1.0\"[^>]*[?]>[\n]?.*[\n]?.*[\n]?<opml version=\"[1|2].0\">"
+                                      "~/.emacs.d/elisp/org-opml/opml2org.py" opml-encode t))
+
     (setq org-directory "~/Dropbox/notes")
     (setq org-default-notes-file "~/Dropbox/notes/notes.org")
     (setq org-mobile-inbox-for-pull "~/Dropbox/notes/notes.org")
@@ -35,7 +58,6 @@
 
     (setq org-completion-use-ido t)
     (setq org-hide-leading-stars t)
-    (setq org-export-backends '(ascii html latex md))
     (setq org-todo-keywords
           '((sequence "TODO(t)" "|" "DONE(d)")
             (sequence "STARTED(s)" "VERIFY(v)" "WAITING(w)")

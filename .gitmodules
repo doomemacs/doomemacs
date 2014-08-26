@@ -7,3 +7,6 @@
 [submodule "elisp/use-package"]
 	path = elisp/use-package
 	url = https://github.com/jwiegley/use-package
+[submodule "elisp/org-opml"]
+	path = elisp/org-opml
+	url = https://github.com/edavis/org-opml.git
