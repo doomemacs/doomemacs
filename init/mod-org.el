@@ -43,22 +43,16 @@
                                       "<[?]xml version=\"1.0\"[^>]*[?]>[\n]?.*[\n]?.*[\n]?<opml version=\"[1|2].0\">"
                                       "~/.emacs.d/elisp/org-opml/opml2org.py" opml-encode t))
 
-    (setq org-directory "~/Dropbox/notes")
-    (setq org-default-notes-file "~/Dropbox/notes/notes.org")
-    (setq org-mobile-inbox-for-pull "~/Dropbox/notes/notes.org")
-    (setq org-mobile-directory "~/Dropbox/Apps/MobileOrg")
-    (setq org-agenda-files '("~/Dropbox/notes/gtd.org"
-                             "~/Dropbox/notes/notes.org"
-                             "~/Dropbox/notes/blog.org"
-                             "~/Dropbox/notes/invoices.org"
-                             "~/Dropbox/notes/journal.org"
-                             "~/Dropbox/notes/trivia.org"
-                             "~/Dropbox/notes/vocab.org"
-                             "~/Dropbox/notes/excerpts.org"))
+    (setq org-directory "~/Dropbox/notes"
+          org-default-notes-file "~/Dropbox/notes/notes.org"
+          org-mobile-inbox-for-pull "~/Dropbox/notes/notes.org"
+          org-mobile-directory "~/Dropbox/Apps/MobileOrg"
+          org-agenda-files '("~/Dropbox/notes")
+          org-src-tab-acts-natively t)
 
-    (setq org-completion-use-ido t)
-    (setq org-hide-leading-stars t)
-    (setq org-todo-keywords
+    (setq org-completion-use-ido t
+          org-hide-leading-stars t
+          org-todo-keywords
           '((sequence "TODO(t)" "|" "DONE(d)")
             (sequence "STARTED(s)" "VERIFY(v)" "WAITING(w)")
             (sequence "|" "CANCELLED(c)")))
