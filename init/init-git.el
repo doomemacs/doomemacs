@@ -40,7 +40,5 @@
     (set-face-background 'git-gutter-fr:added "#448844")
     ))
 
-
-
 ;;
 (provide 'init-git)

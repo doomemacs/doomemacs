@@ -30,75 +30,8 @@
 
 ;;
 (use-package org :ensure t
-  :mode (("\\.org\\'" . org-mode)
-         ("\\.opml\\'" . org-mode))
-  :config
-  (load-library "ox-opml")
   :init
   (progn
-    (setq org-export-backends '(ascii html latex md opml))
-    (add-hook 'find-file-hooks 'set-buffer-file-format-to-opml)
-    (add-to-list 'auto-mode-alist '("\\.opml$" . org-mode))
-    (add-to-list 'format-alist '(opml "Outline Processor Markup Language"
-                                      "<[?]xml version=\"1.0\"[^>]*[?]>[\n]?.*[\n]?.*[\n]?<opml version=\"[1|2].0\">"
-                                      "~/.emacs.d/elisp/org-opml/opml2org.py" opml-encode t))
-
-    (setq org-directory "~/Dropbox/notes"
-          org-default-notes-file "~/Dropbox/notes/notes.org"
-          org-mobile-inbox-for-pull "~/Dropbox/notes/notes.org"
-          org-mobile-directory "~/Dropbox/Apps/MobileOrg"
-          org-agenda-files '("~/Dropbox/notes")
-          org-src-tab-acts-natively t)
-
-    (setq org-completion-use-ido t
-          org-hide-leading-stars t
-          org-todo-keywords
-          '((sequence "TODO(t)" "|" "DONE(d)")
-            (sequence "STARTED(s)" "VERIFY(v)" "WAITING(w)")
-            (sequence "|" "CANCELLED(c)")))
-
-    (org-babel-do-load-languages 'org-babel-load-languages
-          '((python . t)
-            (ruby . t)
-            (sh . t)
-            (matlab . t)
-            (latex . t)))
-
-    (setq org-tag-alist '(("@work" . ?b)
-                          ("@home" . ?h)
-                          ("@writing" . ?w)
-                          ("@errands" . ?e)
-                          ("@drawing" . ?d)
-                          ("@coding" . ?c)
-                          ("@phone" . ?p)
-                          ("@reading" . ?r)
-                          ("projects" . ?q)
-                          ("easy" . ?0)
-                          ("hard" . ?1)))
-
-    (setq org-capture-templates
-          '(("t" "TODO" entry (file+headline "~/Dropbox/notes/gtd.org" "Inbox") "* TODO %? %u")
-            ("T" "TODO Someday" entry (file+headline "~/Dropbox/notes/gtd.org" "Someday") "* TODO %? %u :someday:")
-            ("c" "Changelog" entry (file+headline (concat (projectile-project-root) "/CHANGELOG.org") "Unsorted") "** %u %? :unsorted:" :prepend t)
-            ("i" "Invoice" entry (file+headline "~/Dropbox/notes/invoices.org" "Invoices") "** TODO %?" :prepend t)
-            ("n" "Note" entry (file+datetree org-default-notes-file) "** %?")
-            ("b" "Blog" entry (file+datetree "~/Dropbox/notes/blog.org") "** %?")
-            ("j" "Journal" entry (file+datetree "~/Dropbox/notes/journal.org") "** %?%^g\n%?\nAdded: %U")
-            ("a" "Trivia" entry (file "~/Dropbox/notes/trivia.org") "* %u %?" :prepend t)
-            ("s" "Writing Scraps" entry (file "~/Dropbox/notes/writing.org") "* %u %?" :prepend t)
-            ("v" "Vocab" entry (file "~/Dropbox/notes/vocab.org") "* %u %?" :prepend t)
-            ("e" "Excerpt" entry (file "~/Dropbox/notes/excerpts.org") "* %u %?" :prepend t)))
-
-    (setq org-agenda-custom-commands
-          '(("x" agenda)
-            ("y" agenda*)
-            ("w" todo "WAITING")
-            ("W" todo-tree "WAITING")
-            ("to" todo)
-            ("tp" tags "+Projects")
-            ("tg" tags-todo "+gamedev")
-            ("tw" tags-tree "+webdev")))
-
     (define-minor-mode evil-org-mode
       "Buffer local minor mode for evil-org"
       :init-value nil
@@ -106,30 +39,28 @@
       :keymap (make-sparse-keymap) ; defines evil-org-mode-map
       :group 'evil-org)
 
-    ;; Keymaps
-    ;; (emap org-agenda-mode-map
-    ;;       ...)
+    ;; Reset evil to ensure certain evil keybindings are prioritized
+    ;; (add-hook 'org-mode-hook (lambda() (evil-mode nil) (evil-mode 1)))
+    (add-hook 'org-mode-hook 'evil-org-mode)
+    (add-hook 'org-mode-hook 'flyspell-mode)
+    (add-hook 'org-mode-hook 'my/enable-hard-wrap)
+
+    (load-library "ox-opml")
 
     ;; Formatting shortcuts
-    ;; Bold
-    (vmap evil-org-mode-map (kbd "s-b") "s*")
-    (imap evil-org-mode-map (kbd "s-b") (λ (my/org-surround "*")))
-    ;; Italics
-    (vmap evil-org-mode-map (kbd "s-i") "s/")
-    (imap evil-org-mode-map (kbd "s-i") (λ (my/org-surround "/")))
-    ;; Underline
-    (imap evil-org-mode-map (kbd "s-u") (λ (my/org-surround "_")))
-    ;; Strikethrough
-    (imap evil-org-mode-map (kbd "s-`") (λ (my/org-surround "+")))
-
+    (vmap evil-org-mode-map
+          (kbd "s-b") "s*"          ; bold
+          (kbd "s-i") "s/")         ; italics
     (imap evil-org-mode-map
+          (kbd "s-b") (λ (my/org-surround "*"))     ; bold
+          (kbd "s-u") (λ (my/org-surround "_"))     ; underline
+          (kbd "s-i") (λ (my/org-surround "/"))     ; italics
+          (kbd "s-`") (λ (my/org-surround "+"))     ; strikethrough
+
           (kbd "<s-return>") 'org-insert-heading-after-current)
 
     (nvmap evil-org-mode-map
-          ",l" 'org-insert-link)
-
-    ;; (vmap evil-org-mode-map
-    ;;       ",l" 'org-insert-link)
+           ",l" 'org-insert-link)
 
     (nmap evil-org-mode-map
           ",d" 'org-time-stamp
@@ -174,10 +105,10 @@
               (kbd "M-K") 'org-shiftmetaup
               (kbd "M-J") 'org-shiftmetadown
               (kbd "<M-return>") '(lambda () (interactive)
-                             (my/org-eol-call
-                              '(lambda()
-                                 (org-insert-heading)
-                                 (org-metaright))))
+                                    (my/org-eol-call
+                                     '(lambda()
+                                        (org-insert-heading)
+                                        (org-metaright))))
               (kbd "M-t") '(lambda () (interactive)
                              (my/org-eol-call
                               '(lambda()
@@ -186,13 +117,69 @@
               ))
           '(normal insert))
 
-    ;; Reset evil to ensure certain evil keybindings are prioritized
-    (add-hook 'org-mode-hook (lambda() (evil-mode nil) (evil-mode 1)))
+    (setq org-export-backends '(ascii html latex md opml))
+    (add-hook 'find-file-hooks 'set-buffer-file-format-to-opml)
+    (add-to-list 'auto-mode-alist '("\\.opml$" . org-mode))
+    (add-to-list 'format-alist '(opml "Outline Processor Markup Language"
+                                      "<[?]xml version=\"1.0\"[^>]*[?]>[\n]?.*[\n]?.*[\n]?<opml version=\"[1|2].0\">"
+                                      "~/.emacs.d/elisp/org-opml/opml2org.py" opml-encode t))
 
-    (add-hook 'org-mode-hook 'evil-org-mode)
-    (add-hook 'org-mode-hook 'flyspell-mode)
-    (add-hook 'org-mode-hook 'my/enable-hard-wrap))
-)
+    (setq org-directory "~/Dropbox/notes"
+          org-default-notes-file "~/Dropbox/notes/notes.org"
+          org-mobile-inbox-for-pull "~/Dropbox/notes/notes.org"
+          org-mobile-directory "~/Dropbox/Apps/MobileOrg"
+          org-agenda-files '("~/Dropbox/notes")
+          org-src-tab-acts-natively t)
+
+    (setq org-completion-use-ido t
+          org-hide-leading-stars t
+          org-todo-keywords
+          '((sequence "TODO(t)" "|" "DONE(d)")
+            (sequence "STARTED(s)" "VERIFY(v)" "WAITING(w)")
+            (sequence "|" "CANCELLED(c)")))
+
+    (org-babel-do-load-languages 'org-babel-load-languages
+                                 '((python . t)
+                                   (ruby . t)
+                                   (sh . t)
+                                   (matlab . t)
+                                   (latex . t)))
+
+    (setq org-tag-alist '(("@work" . ?b)
+                          ("@home" . ?h)
+                          ("@writing" . ?w)
+                          ("@errands" . ?e)
+                          ("@drawing" . ?d)
+                          ("@coding" . ?c)
+                          ("@phone" . ?p)
+                          ("@reading" . ?r)
+                          ("projects" . ?q)
+                          ("easy" . ?0)
+                          ("hard" . ?1)))
+
+    (setq org-capture-templates
+          '(("t" "TODO" entry (file+headline "~/Dropbox/notes/gtd.org" "Inbox") "* TODO %? %u")
+            ("T" "TODO Someday" entry (file+headline "~/Dropbox/notes/gtd.org" "Someday") "* TODO %? %u :someday:")
+            ("c" "Changelog" entry (file+headline (concat (projectile-project-root) "/CHANGELOG.org") "Unsorted") "** %u %? :unsorted:" :prepend t)
+            ("i" "Invoice" entry (file+headline "~/Dropbox/notes/invoices.org" "Invoices") "** TODO %?" :prepend t)
+            ("n" "Note" entry (file+datetree org-default-notes-file) "** %?")
+            ("b" "Blog" entry (file+datetree "~/Dropbox/notes/blog.org") "** %?")
+            ("j" "Journal" entry (file+datetree "~/Dropbox/notes/journal.org") "** %?%^g\n%?\nAdded: %U")
+            ("a" "Trivia" entry (file "~/Dropbox/notes/trivia.org") "* %u %?" :prepend t)
+            ("s" "Writing Scraps" entry (file "~/Dropbox/notes/writing.org") "* %u %?" :prepend t)
+            ("v" "Vocab" entry (file "~/Dropbox/notes/vocab.org") "* %u %?" :prepend t)
+            ("e" "Excerpt" entry (file "~/Dropbox/notes/excerpts.org") "* %u %?" :prepend t)))
+
+    (setq org-agenda-custom-commands
+          '(("x" agenda)
+            ("y" agenda*)
+            ("w" todo "WAITING")
+            ("W" todo-tree "WAITING")
+            ("to" todo)
+            ("tp" tags "+Projects")
+            ("tg" tags-todo "+gamedev")
+            ("tw" tags-tree "+webdev")))
+  ))
 
 ;;
 (provide 'mod-org)
