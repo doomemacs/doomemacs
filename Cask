@@ -69,6 +69,7 @@
 (depends-on "yaml-mode")
 (depends-on "markdown-mode")
 (depends-on "glsl-mode")
+(depends-on "go-mode" :git "https://github.com/dominikh/go-mode.el")
 
 (depends-on "tern")
 (depends-on "tern-auto-complete")

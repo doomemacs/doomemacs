@@ -70,5 +70,11 @@
     (my/setup-run-code ruby-mode-map "ruby")
     (nmap ruby-mode-map "gd" 'rsense-jump-to-definition)))
 
+(use-package go-mode
+  :mode "\\.go\\'"
+  :interpreter "go"
+  :init
+  (require 'go-autocomplete))
+
 ;;
 (provide 'mod-dev)
