@@ -7,8 +7,8 @@
 (setq ns-pop-up-frames nil)
 
 ;; fix emacs PATH on OSX
-(use-package exec-path-from-shell :ensure t
-  :if window-system
+(use-package exec-path-from-shell
+  :if (memq window-system '(mac ns))
   :init (exec-path-from-shell-initialize))
 
 ;;

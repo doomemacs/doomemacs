@@ -1,6 +1,6 @@
 (add-hook 'text-mode-hook 'my/enable-hard-wrap)
 
-(use-package markdown-mode :ensure t
+(use-package markdown-mode
   :mode (("\\.md\\'" . markdown-mode)
          ("/README\\'" . markdown-mode))
   :config

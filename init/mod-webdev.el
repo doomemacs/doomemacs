@@ -1,17 +1,17 @@
-(use-package rainbow-mode :ensure t
+(use-package rainbow-mode
   :defer t
   :init (add-hook 'scss-mode 'rainbow-mode))
 
-(use-package scss-mode :ensure t
+(use-package scss-mode
   :mode "\\.scss\\'"
   :config
   (progn
     (setq scss-compile-at-save nil)
     (add-hook 'scss-mode-hook 'ac-css-mode-setup)))
 
-(use-package haml-mode :ensure t :mode "\\.haml\\'")
+(use-package haml-mode :mode "\\.haml\\'")
 
-(use-package php-mode :ensure t
+(use-package php-mode
   :mode (("\\.php\\'" . php-mode)
          ("\\.inc\\'" . php-mode))
   :interpreter "php"
@@ -20,7 +20,7 @@
     (my/setup-run-code php-mode-map "php")
     (setq php-template-compatibility nil)))
 
-(use-package web-mode :ensure t
+(use-package web-mode
   :mode (("\\.\\(p\\)?htm\\(l\\)?\\'" . web-mode)
          ("\\.tpl\\(\\.php\\)?\\'" . web-mode)
          ("\\.erb\\'" . web-mode)
@@ -49,12 +49,12 @@
 
     (add-hook 'web-mode-hook 'jekyll-mode-maybe)))
 
-(use-package tern :ensure t
+(use-package tern
   :commands tern-mode
   :config
   (progn
     (my/setup-run-code js-mode-map "node")
-    (use-package tern-auto-complete :ensure t
+    (use-package tern-auto-complete
       :config (setq tern-ac-on-dot nil)))
   :init
   ;; replace auto-complete with tern-ac-complete only in js-mode
@@ -65,7 +65,7 @@
       (imap js-mode-map (kbd "C-SPC") 'tern-ac-complete
       ))))
 
-(use-package emmet-mode :ensure t
+(use-package emmet-mode
   :defer t
   :config
   (setq emmet-move-cursor-between-quotes t)

@@ -16,7 +16,6 @@
 (setq frame-title-format
       '(:eval (if (buffer-file-name) (abbreviate-file-name (buffer-file-name)) "%b")))
 
-
 ;;;; GUI Settings ;;;;;;;;;;;;;;;;;;;;;
 (setq ring-bell-function 'ignore)
 (add-to-list 'default-frame-alist `(font . ,my/font))

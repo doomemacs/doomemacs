@@ -1,4 +1,4 @@
-(use-package lua-mode :ensure t
+(use-package lua-mode
   :mode "\\.lua\\'"
   :interpreter "lua"
   :config

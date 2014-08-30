@@ -1,16 +1,6 @@
 ;;;; Editor behavior ;;;;;;;;;;;;;;;;
-;; (electric-indent-mode +1) 			; auto-indent on RET
-;; (defun disable-electric-indent-mode ()
-;;   (set (make-local-variable 'electric-indent-mode) nil)
-;;   (setq-local tab-always-indent t))
-
-;; ;; Only enable electric-mode in programming languages
-;; (add-hook 'text-mode-hook 'disable-electric-indent-mode)
-;; (add-hook 'org-mode-hook 'disable-electric-indent-mode)
-;; (add-hook 'markdown-mode-hook 'disable-electric-indent-mode)
-
-;; (global-hl-line-mode +1)            ; highlight the line
 (blink-cursor-mode -1)
+
 (setq-default
   tab-width             4           ; set tab width to 4 for all buffers
   indent-tabs-mode      nil         ; use tabs, not spaces
@@ -22,36 +12,41 @@
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
 
-;;;; Plugins ;;;;;;;;;;;;;;;;;;;;;;;;
-(use-package deferred :ensure t :defer t)
-(use-package helm :ensure t :defer t)
-(use-package ediff :ensure t :defer t)
+;; All this just to show errant tab characters
+(add-hook 'font-lock-mode-hook
+ (function
+  (lambda ()
+    (setq font-lock-keywords
+     (append font-lock-keywords
+      '(("\r" (0 'my-carriage-return-face t))
+        ("\t" (0 'my-tab-face t))))))))
+(setq whitespace-style (quote (face trailing tab-mark)))
+(setq whitespace-display-mappings '((tab-mark 9 [?> 9] [92 9])))
+(add-hook 'find-file-hook 'whitespace-mode)
 
-(use-package evil :ensure t
+;;;; Plugins ;;;;;;;;;;;;;;;;;;;;;;;;
+(use-package highlight-indentation
+  :init
+  (add-hook 'prog-mode-hook 'highlight-indentation-mode))
+
+(use-package evil
   :diminish undo-tree-mode
   :config
   (progn
-    ;; (setq evil-want-C-i-jump t)
-    ;; (setq evil-want-C-u-scroll t)
-
     (evil-mode 1)
 
-    (use-package evil-leader :ensure t)
-    (use-package evil-matchit :ensure t)
-    (use-package evil-surround :ensure t)
-    (use-package evil-numbers :ensure t)
-    (use-package evil-exchange :ensure t)
-    (use-package evil-space :ensure t)
-    (use-package evil-visualstar :ensure t)
-    (use-package evil-nerd-commenter :ensure t)
+    (use-package evil-matchit)
+    (use-package evil-surround)
+    (use-package evil-numbers)
+    (use-package evil-exchange)
+    (use-package evil-space)
+    (use-package evil-visualstar)
+    (use-package evil-nerd-commenter)
     (use-package evil-ex-registers)
 
     ;; To get evil-leader mappings to work in the messages buffer...
     (kill-buffer "*Messages*")
 
-    (setq evil-leader/in-all-states t)
-
-    (global-evil-leader-mode 1)
     (global-evil-matchit-mode  1)
     (global-evil-surround-mode 1)
 
@@ -69,15 +64,15 @@
     ;; Enable registers in ex-mode
     (define-key evil-ex-completion-map (kbd "C-r") #'evil-ex-paste-from-register)))
 
-;; (use-package rainbow-mode :ensure t :defer t)
-(use-package rainbow-delimiters :ensure t
+(use-package rainbow-delimiters
   :commands rainbow-delimiters-mode
   :init (add-hook 'prog-mode-hook 'rainbow-delimiters-mode))
 
-(use-package rotate-text :commands (rotate-word-at-point rotate-region))
+(use-package rotate-text
+  :commands (rotate-word-at-point rotate-region))
 
 ;;;; Init plugins ;;;;;;;;;;;;;;;;;;;
-(use-package autopair :ensure t
+(use-package autopair
   :diminish autopair-mode
   :init
   (progn (autopair-global-mode)
@@ -85,11 +80,13 @@
          ;; disable blink-matching-paren
          (setq blink-matching-paren nil)))
 
-(use-package anzu :ensure t
+(use-package anzu
   :diminish anzu-mode
   :init (global-anzu-mode))
 
-(use-package key-chord :ensure t
+(use-package expand-region)
+
+(use-package key-chord
   :init
   (progn (key-chord-mode 1)
          (setq key-chord-two-keys-delay 0.5)))
@@ -110,7 +107,7 @@
                savehist-file (expand-file-name "savehist" my/tmp-dir))
          (savehist-mode 1)))
 
-(use-package multiple-cursors :ensure t
+(use-package multiple-cursors
   :commands (mc/mark-next-like-this mc/mark-previous-like-this mc/mark-all-like-this)
   :config
   (progn
@@ -119,7 +116,7 @@
     (defadvice keyboard-quit (around mc-and-keyboard-quit activate)
       (mc/keyboard-quit) ad-do-it)))
 
-(use-package smex :ensure t
+(use-package smex
   :commands (smex smex-major-mode-commands)
   :config
   (progn (smex-initialize)
@@ -128,7 +125,7 @@
            (when (boundp 'smex-cache) (smex-update)))
          (add-hook 'after-load-functions 'smex-update-after-load)))
 
-(use-package recentf :ensure t
+(use-package recentf
   :init
   (progn (recentf-mode 1)
          (add-to-list 'recentf-exclude "\\.ido\\.last\\'")

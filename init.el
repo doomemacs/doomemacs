@@ -3,16 +3,20 @@
 ;; Author: Henrik Lissner <henrik@lissner>
 ;; URL: https://github.com/hlissner/emacs.d
 ;;
-;; These settings set up a very vim-like experience, with some of emacs goodness
-;; squeezed into the cracks.
+;; These settings set up a vim-like experience, with some of emacs
+;; goodness squeezed into the cracks.
 ;;
 ;;; Code:
 
 (cd "~")                 ; Default directory, instead of /
 ;; (setq use-package-verbose t)
 
-(server-mode t)
-(unless (server-running-p) (server-start))
+(require 'cask)
+(cask-initialize)
+
+(when window-system
+  (server-mode t)
+  (unless (server-running-p) (server-start)))
 
 ;; Global vars
 (defconst my/dir           (file-name-directory load-file-name))
@@ -24,6 +28,7 @@
 
 (defconst my/theme  'brin)
 (defconst my/font   "Inconsolata-14")
+;; (defconst my/font   "Ubuntu-Mono-16")
 
 (add-to-list 'load-path my/init-dir)
 

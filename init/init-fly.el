@@ -1,4 +1,4 @@
-(use-package flycheck :ensure t
+(use-package flycheck
     :init (add-hook 'after-init-hook #'global-flycheck-mode)
     :config
     (progn
@@ -7,7 +7,7 @@
       (setq flycheck-indication-mode 'right-fringe)
       (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc))))
 
-(use-package flyspell :ensure t
+(use-package flyspell
     :commands flyspell-mode
     :diminish (flyspell-mode . " @")
     :config

@@ -13,6 +13,7 @@
       auto-save-default         nil)      ; Don't want any auto saving
 (fset 'yes-or-no-p 'y-or-n-p)       ; y/n instead of yes/no
 (setq confirm-kill-emacs nil)
+(setq echo-keystrokes 0.02)
 
 ;; Sane scroll settings
 (setq scroll-margin 3

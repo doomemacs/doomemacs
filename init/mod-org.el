@@ -29,7 +29,7 @@
     (point-max)))
 
 ;;
-(use-package org :ensure t
+(use-package org
   :init
   (progn
     (define-minor-mode evil-org-mode
@@ -40,7 +40,7 @@
       :group 'evil-org)
 
     ;; Reset evil to ensure certain evil keybindings are prioritized
-    ;; (add-hook 'org-mode-hook (lambda() (evil-mode nil) (evil-mode 1)))
+    (add-hook 'org-mode-hook (lambda() (evil-mode nil) (evil-mode 1)))
     (add-hook 'org-mode-hook 'evil-org-mode)
     (add-hook 'org-mode-hook 'flyspell-mode)
     (add-hook 'org-mode-hook 'my/enable-hard-wrap)

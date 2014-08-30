@@ -1,7 +1,7 @@
 
 (add-hook 'dired-load-hook
           (lambda()
-            (use-package dired+ :ensure t :config
+            (use-package dired+ :config
               (setq dired-recursive-deletes 'always
                     dired-recursive-copies 'always
 
@@ -9,15 +9,15 @@
                     ;; current subdir, instead of the current subdir of this dired buffer
                     dired-dwim-target t))))
 
-(use-package ag :ensure t :defer t
+(use-package ag :defer t
   :config
   (define-key ag-mode-map [escape] 'kill-buffer-and-window))
 
-(use-package helm :ensure t :defer t)
-(use-package grizzl :ensure t :defer t)
-(use-package neotree :ensure t :commands (neotree-show neotree-hide neotree-toggle))
+(use-package helm :defer t)
+(use-package grizzl :defer t)
+(use-package neotree :commands (neotree-show neotree-hide neotree-toggle))
 
-(use-package projectile :ensure t
+(use-package projectile
   :diminish projectile-mode
   :config
   (progn (projectile-global-mode)
@@ -42,14 +42,15 @@
     (set-keymap-parent ido-buffer-completion-map   ido-common-completion-map))
   :config
   (progn
+    (use-package ido-ubiquitous)
+    (use-package ido-vertical-mode)
+    (use-package flx-ido)
+
     (ido-mode 1)
-
-    (use-package ido-ubiquitous :ensure t)
-    (use-package ido-vertical-mode :ensure t :config (ido-vertical-mode 1))
-
+    (ido-vertical-mode 1)
     (ido-everywhere 1)
-
-    (use-package flx-ido :ensure t :config (flx-ido-mode 1))
+    (ido-ubiquitous-mode 1)
+    (flx-ido-mode 1)
 
     (add-to-list 'ido-ignore-files "\\`.DS_Store\\'")
     (setq ido-use-faces nil
@@ -60,37 +61,7 @@
           ido-create-new-buffer 'always
           ido-enable-tramp-completion t
           ido-enable-last-directory-history t)
-
-    ;; (add-to-list 'ido-ubiquitous-default-function-overrides '(disable exact "evil-ex"))
-
-    ;; Filters ido-matches setting acronynm matches in front of the results
-    (defadvice ido-set-matches-1 (after ido-smex-acronym-matches activate)
-      (if (and (fboundp 'smex-already-running) (smex-already-running)
-               (> (length ido-text) 1))
-          (let ((regex (concat "^" (mapconcat 'char-to-string ido-text "[^-]*-")))
-                (acronym-matches (list))
-                (remove-regexes '("-menu-")))
-            ;; Creating the list of the results to be set as first
-            (dolist (item items)
-              (if (string-match (concat regex "[^-]*$") item) ;; strict match
-                  (add-to-list 'acronym-matches item)
-                (if (string-match regex item) ;; appending relaxed match
-                    (add-to-list 'acronym-matches item t))))
-
-            ;; Filtering ad-return-value
-            (dolist (to_remove remove-regexes)
-              (setq ad-return-value
-                    (delete-if (lambda (item)
-                                 (string-match to_remove item))
-                               ad-return-value)))
-
-            ;; Creating resulting list
-            (setq ad-return-value
-                  (append acronym-matches
-                          ad-return-value))
-
-            (delete-dups ad-return-value)
-            (reverse ad-return-value))))))
+    ))
 
 ;;
 (provide 'init-project)

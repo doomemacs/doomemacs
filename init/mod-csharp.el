@@ -1,6 +1,6 @@
 ;; TODO Make more Unity-friendly
 
-(use-package omnisharp :ensure t :defer t
+(use-package omnisharp :defer t
   :config
   (progn
     ;; (setq flycheck-idle-change-delay 2)
@@ -9,7 +9,7 @@
 (use-package shaderlab-mode :defer t
   :mode "\\.shader")
 
-(use-package csharp-mode :ensure t
+(use-package csharp-mode
   :mode "\\.cs\\'"
   :config
   (progn

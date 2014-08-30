@@ -44,6 +44,7 @@
           (kbd "s-M") 	'projectile-recentf
           (kbd "s-o") 	'ido-find-file
           (kbd "s-d") 	'dash-at-point
+
           (kbd "s-'") 	'mc/mark-next-like-this
           (kbd "s-\"") 	'mc/mark-previous-like-this
           (kbd "C-s-'") 'mc/mark-all-like-this)
@@ -66,25 +67,25 @@
           (kbd "s-E") 'emmet-expand-line)))
 
 ;; Local keymaps ;;;;;;;;;;;;;;;;
-(evil-leader/set-leader ",")
-(evil-leader/set-key
-      "'" 		'mc/mark-next-like-this
-      "\""		'mc/mark-all-like-this
-      "e"       'ido-find-file
-      "E"       'my/initfiles
-      "g"       'git-gutter:stage-hunk
-      "G"       'git-gutter:revert-hunk
-      "m"       'my/recentf-ido-find-file	    ; recent GLOBAL files
-      "M"       'projectile-recentf				; recent PROJECT files
-      "p"       'projectile-switch-project
-      "\\"      'neotree-show
-      "|"       'neotree-hide
-      ";"       'helm-imenu
-      ":"       'my/ido-goto-symbol
-      ","       'ido-switch-buffer
-      "."       'projectile-find-file
-      "="       'align-regexp
-      (kbd "RET") 'org-capture)
+(nmap my/mode-map
+      ",'"       'mc/mark-next-like-this
+      ",\""      'mc/mark-all-like-this
+
+      ",e"       'ido-find-file
+      ",E"       'my/initfiles
+      ",g"       'git-gutter:stage-hunk
+      ",G"       'git-gutter:revert-hunk
+      ",m"       'my/recentf-ido-find-file	    ; recent GLOBAL files
+      ",M"       'projectile-recentf				; recent PROJECT files
+      ",p"       'projectile-switch-project
+      ",\\"      'neotree-show
+      ",|"       'neotree-hide
+      ",;"       'helm-imenu
+      ",:"       'my/ido-goto-symbol
+      ",,"       'ido-switch-buffer
+      ",."       'projectile-find-file
+      ",="       'align-regexp
+      (kbd ", RET") 'org-capture)
 
 ;; Remap ; to : - SPC and shift-SPC replace ; and , - have to use
 ;; define-key instead of n/vmap for this one to register.
@@ -125,7 +126,10 @@
       ;; vnoremap > >gv
       ">"      (λ (evil-shift-right (region-beginning) (region-end))
                   (evil-normal-state)
-                  (evil-visual-restore)))
+                  (evil-visual-restore))
+
+      "+"      'er/expand-region
+      "_"      'er/contract-region)
 
 (imap my/mode-map
       ;; Make DEL act like expandtab in vim
@@ -188,8 +192,9 @@
             minibuffer-local-must-match-map
             minibuffer-local-isearch-map))
 (define-key evil-emacs-state-map [escape] 'evil-exit-emacs-state)
-;; Close help window with escape
+;; Close help/compilation windows with escape
 (define-key help-mode-map [escape] 'kill-buffer-and-window)
+(define-key compilation-mode-map [escape] 'kill-buffer-and-window)
 
 ;; Restore bash-esque keymaps in insert mode and the minibuffer
 (mapc (lambda (map)

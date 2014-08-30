@@ -1,4 +1,4 @@
-(use-package eclim :ensure emacs-eclim
+(use-package eclim
   :commands (eclim-mode global-eclim-mode)
   :init
   (progn
@@ -18,8 +18,7 @@
 
     (setq help-at-pt-display-when-idle t)
     (setq help-at-pt-timer-delay 0.1)
-    (help-at-pt-set-timer)
-    ))
+    (help-at-pt-set-timer)))
 
 ;;
 (provide 'mod-eclim)

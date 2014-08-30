@@ -2,7 +2,7 @@
 
 (add-to-list 'auto-mode-alist '("\\.plist\\'" . nxml-mode))
 
-(use-package dash-at-point :ensure t
+(use-package dash-at-point
   :commands (dash-at-point dash-at-point-with-docset)
   :if is-mac
   :config
@@ -10,22 +10,22 @@
     (add-to-list 'dash-at-point-mode-alist '(ruby-mode . "rb"))
     (add-to-list 'dash-at-point-mode-alist '(python-mode . "py2"))))
 
-(use-package yaml-mode :ensure t
+(use-package yaml-mode
   :defer t
   :config
   (defun my/setup-yaml-mode () (setq tab-width 2))
   (add-hook 'yaml-mode-hook 'my/setup-yaml-mode))
 
-(use-package json-mode :ensure t
+(use-package json-mode
   :mode (("\\.json\\'" . json-mode)
          ("\\.jshintrc\\'" . json-mode)))
 
-(use-package python :ensure python-mode
+(use-package python
   :mode ("\\.py\\'" . python-mode)
   :interpreter ("python" . python-mode)
   :config
   (progn
-    (use-package jedi :ensure t
+    (use-package jedi
       :init
       (if (not (file-directory-p "~/.emacs.d/.python-environments/default/"))
           (jedi:install-server)))
@@ -52,17 +52,18 @@
     (setq ruby-indent-level 4)
     (setq ruby-deep-indent-paren nil)
 
+    ;; Remember to install rsense w/ homebrew!
     (setq rsense-home "/usr/local/Cellar/rsense/0.3/libexec")
     (when (file-directory-p rsense-home)
       (add-to-list 'load-path (concat rsense-home "/etc"))
       (require 'rsense)
       (add-hook 'ruby-mode-hook 'my/ac-ruby-setup))
 
-    (use-package rbenv :ensure t)
-    (use-package inf-ruby :ensure t
+    (use-package rbenv)
+    (use-package inf-ruby
       :config (evil-set-initial-state 'inf-ruby-mode 'insert)
       :init (add-to-list 'ac-modes 'inf-ruby-mode))
-    (use-package ac-inf-ruby :ensure t
+    (use-package ac-inf-ruby
       :init (add-hook 'inf-ruby-mode-hook 'ac-inf-ruby-enable))
 
     ;;

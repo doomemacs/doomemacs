@@ -1,4 +1,4 @@
-(use-package auto-complete :ensure t
+(use-package auto-complete
   :diminish auto-complete-mode
   :init
   (progn
@@ -25,6 +25,7 @@
     (add-to-list 'ac-dictionary-files "~/.emacs.d/ac-dict/global")
     (add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
 
+    (imap ac-mode-map (kbd "C-x C-f") 'ac-complete-filename)
     (imap ac-mode-map (kbd "C-SPC") 'auto-complete)
     ;; (imap ac-mode-map (kbd "C-S-SPC") 'auto-complete)
     (define-key ac-completing-map (kbd "<tab>") 'ac-expand)
