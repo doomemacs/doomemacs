@@ -13,6 +13,7 @@
 (depends-on "use-package")
 
 ;; Editing
+(depends-on "dired+")
 (depends-on "autopair")
 (depends-on "expand-region")
 (depends-on "flycheck")
