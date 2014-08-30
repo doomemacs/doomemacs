@@ -62,24 +62,24 @@
 ;; Default colors
 ;; *****************************************************************************************
 
-   `(default			  ((t (:foreground ,text :background ,background) )))
+   `(default              ((t (:foreground ,text :background ,background) )))
    `(hl-line              ((t (:background ,lineHighlight) )))
-   `(region			      ((t (:background ,selection) )))
-   `(cursor			      ((t (:background ,white) )))
-   `(fringe			      ((t (:background ,background :foreground ,white) )))
-   `(linum			      ((t (:background ,linum :foreground ,gutter-fg) )))
+   `(region               ((t (:background ,selection) )))
+   `(cursor               ((t (:background ,white) )))
+   `(fringe               ((t (:background ,background :foreground ,white) )))
+   `(linum                ((t (:background ,linum :foreground ,gutter-fg) )))
 
-   `(vertical-border	  ((t (:foreground ,gutters-active) )))
+   `(vertical-border      ((t (:foreground ,gutters-active) )))
 
-   `(mode-line			  ((t (:foreground ,white
+   `(mode-line            ((t (:foreground ,white
                                :background ,gutters-active
                                :box (:line-width 3 :color ,gutters-active) ))))
 
-   `(mode-line-inactive	  ((t (:foreground ,gutter-fg
+   `(mode-line-inactive       ((t (:foreground ,gutter-fg
                                :background ,gutters
                                :box (:line-width 3 :color ,gutters) ))))
 
-   `(highlight-indentation-face		              ((t (:background ,gutters) )))
+   `(highlight-indentation-face                   ((t (:background ,linum) )))
    `(highlight-indentation-current-column-face    ((t (:background ,gutters-active) )))
 
    `(flyspell-incorrect   ((t (:underline "#ff5555" :inherit unspecified))))
@@ -96,7 +96,10 @@
    `(font-lock-comment-face           ((t (:foreground ,comments))))
    `(font-lock-comment-delimiter-face ((t (:foreground ,comments))))
    `(font-lock-function-name-face     ((t (:foreground ,functions))))
-   `(font-lock-doc-string-face        ((t (:foreground ,strings)))))
+   `(font-lock-doc-string-face        ((t (:foreground ,strings))))
+
+   `(my-carriage-return-face        ((t (:foreground "#555555"))))
+   `(my-tab-face                    ((t (:foreground "#555555")))))
 
 ;; *****************************************************************************************
 
