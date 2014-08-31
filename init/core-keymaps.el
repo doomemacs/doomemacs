@@ -173,14 +173,14 @@
            (if func (find-function func)))))
 
 ;;;; Ex Commands ;;;;;;;;;;;;;;;;
-(evil-ex-define-cmd "retab" 'untabify) ; TODO: Implement proper retab defun
-(evil-ex-define-cmd "msg" 'view-echo-area-messages)
-(evil-ex-define-cmd "gtd" 'open-gtd)
-(evil-ex-define-cmd "n[otes]" 'my/notes)
-(evil-ex-define-cmd "tcd" (λ (my/tmux-chdir (projectile-project-root))))
-(evil-ex-define-cmd "ag" 'projectile-ag)
-(evil-ex-define-cmd "el" 'my/initfiles)
-(evil-ex-define-cmd "ba" (lambda(bang) (interactive) (if bang (my/kill-all-buffers) (my/kill-other-buffers))))
+(evil-ex-define-cmd "retab"    'untabify) ; TODO: Implement proper retab defun
+(evil-ex-define-cmd "msg"      'view-echo-area-messages)
+(evil-ex-define-cmd "gtd"      'open-gtd)
+(evil-ex-define-cmd "n[otes]"  'my/notes)
+(evil-ex-define-cmd "tcd"      (λ (my/tmux-chdir (projectile-project-root))))
+(evil-ex-define-cmd "ag"       'projectile-ag)
+(evil-ex-define-cmd "el"       'my/initfiles)
+(evil-ex-define-cmd "bx"       (λ (my/kill-all-buffers)))
 
 ;;;; Keymap fixes ;;;;;;;;;;;;;;;
 ;; Make ESC quit all the things
