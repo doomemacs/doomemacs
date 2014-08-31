@@ -48,9 +48,9 @@
   :interpreter "ruby"
   :config
   (progn
-    (require 'ruby-mode-indent-fix)
-    (setq ruby-indent-level 4)
+    (setq ruby-indent-level 2)
     (setq ruby-deep-indent-paren nil)
+    (require 'ruby-mode-indent-fix)
 
     ;; Remember to install rsense w/ homebrew!
     (setq rsense-home "/usr/local/Cellar/rsense/0.3/libexec")
@@ -66,9 +66,17 @@
     (use-package ac-inf-ruby
       :init (add-hook 'inf-ruby-mode-hook 'ac-inf-ruby-enable))
 
-    ;;
+    (setq evilmi-ruby-match-tags
+          '((("unless" "if") ("elsif" "else") ("end"))
+            ("begin" ("rescue" "ensure") "end")
+            ("case" ("when" "else") ("end"))
+            (("task" "namespace" "class" "def" "while" "do" "module" "for" "until") () ("end"))
+            ))
+
     (my/setup-run-code ruby-mode-map "ruby")
-    (nmap ruby-mode-map "gd" 'rsense-jump-to-definition)))
+    (nmap ruby-mode-map "gd" 'rsense-jump-to-definition))
+  :init
+  (add-hook 'ruby-mode-hook (lambda() (setq tab-width 2))))
 
 (use-package go-mode
   :mode "\\.go\\'"
