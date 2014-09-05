@@ -32,7 +32,8 @@ afterwards, kill line to column 1."
 whitespace as possible, or just one char (using `autopair-backspace')
 if that's not possible."
   (interactive)
-  (if indent-tabs-mode
+  (if (or indent-tabs-mode
+          (= (point-at-bol) (point)))
       (call-interactively 'backward-delete-char)
     (let ((movement (% (current-column) tab-width))
           (p (point)))
