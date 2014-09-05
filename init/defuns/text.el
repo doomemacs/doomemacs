@@ -1,3 +1,4 @@
+;;; Library Defuns ;;;;;;;;;;;;;;;;;;;;;
 (defun my/surrounded-p ()
   (and (looking-back "[[{(]\s*")
        (looking-at-p "\s*[]})]"))
@@ -11,8 +12,7 @@
 (defun my/get-line ()
   (buffer-substring (line-beginning-position) (line-end-position)))
 
-;;;
-
+;;; Text Defuns ;;;;;;;;;;;;;;;;;;;;;;;;
 (defun my.backward-kill-to-bol ()
   (interactive)
   (evil-delete (point-at-bol) (point)))
@@ -28,8 +28,9 @@ afterwards, kill line to column 1."
 
 ;; Mimic expandtab in vim
 (defun my.backward-delete-whitespace-to-column ()
-  "delete back to the previous column of whitespace, or as much whitespace as possible,
-or just one char if that's not possible. If it's at the beginning of the line, join with the previous line."
+  "Delete back to the previous column of whitespace, or as much
+whitespace as possible, or just one char (using `autopair-backspace')
+if that's not possible."
   (interactive)
   (if indent-tabs-mode
       (call-interactively 'backward-delete-char)
@@ -43,18 +44,25 @@ or just one char if that's not possible. If it's at the beginning of the line, j
 
 ;; TODO Make inflate/deflate smarter
 (defun my.inflate-space-maybe ()
+  "Checks if point is surrounded by {} [] () delimiters and adds a
+space on either side of the point if so."
   (interactive)
   (if (my/surrounded-p)
       (progn (insert " ") (save-excursion (insert " ")))
     (insert " ")))
 
 (defun my.deflate-space-maybe ()
+  "Checks if point is surrounded by {} [] () delimiters, and deletes
+spaces on either side of the point if so. Resorts to
+`my.backward-delete-whitespace-to-column' otherwise."
   (interactive)
   (if (my/surrounded-p)
       (progn (delete-char -1) (save-excursion (delete-char 1)))
     (my.backward-delete-whitespace-to-column)))
 
 (defun my.dumb-indent ()
+  "Inserts a tab character (or spaces x tab-width). Checks if the
+auto-complete window is open."
   (interactive)
   (when (not (ac-menu-live-p))
     (let ((indent-mode indent-tabs-mode))
@@ -70,9 +78,9 @@ indent the next line."
       (evil-ret-and-indent))))
 
 (defun my.minibuffer-quit ()
-  "Abort recursive edit.
-        In Delete Selection mode, if the mark is active, just deactivate it;
-        then it takes a second \\[keyboard-quit] to abort the minibuffer."
+  "Abort recursive edit. In Delete Selection mode, if the mark is
+active, just deactivate it; then it takes a second \\[keyboard-quit]
+to abort the minibuffer."
   (interactive)
   (if (and delete-selection-mode transient-mark-mode mark-active)
       (setq deactivate-mark t)
