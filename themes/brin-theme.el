@@ -99,7 +99,8 @@
    `(font-lock-doc-string-face        ((t (:foreground ,strings))))
 
    `(my-carriage-return-face        ((t (:foreground "#555555"))))
-   `(my-tab-face                    ((t (:foreground "#555555")))))
+   `(my-tab-face                    ((t (:foreground "#555555"))))
+   `(trailing-whitespace            ((t (:background "#884444")))))
 
 ;; *****************************************************************************************
 
