@@ -13,6 +13,7 @@
 (add-to-list 'auto-mode-alist '("zsh\\(env\\|rc\\)?\\'" . shell-script-mode))
 (add-to-list 'auto-mode-alist '("z\\(profile\\|login\\|logout\\)?\\'" . shell-script-mode))
 (add-to-list 'auto-mode-alist '("zsh/" . shell-script-mode))
+(add-to-list 'auto-mode-alist '("\\.applescript$" . applescript-mode))
 
 (add-hook 'text-mode-hook 'enable-hard-wrap)
 (add-hook 'prog-mode-hook 'enable-comment-hard-wrap)

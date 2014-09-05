@@ -95,3 +95,5 @@
 (depends-on "git-rebase-mode")
 (depends-on "gitconfig-mode")
 (depends-on "gitignore-mode")
+
+(depends-on "applescript-mode")
