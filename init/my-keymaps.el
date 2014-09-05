@@ -244,6 +244,7 @@
 ;; Close help/compilation windows with escape
 (define-key help-mode-map [escape] 'kill-buffer-and-window)
 (define-key compilation-mode-map [escape] 'kill-buffer-and-window)
+(evil-define-key 'emacs debugger-mode-map [remap evil-exit-emacs-state] 'kill-buffer-and-window)
 
 ;; Restore bash-esque keymaps in insert mode
 (imap my-mode-map
