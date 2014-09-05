@@ -13,6 +13,7 @@
 (depends-on "use-package")
 
 ;; Editing
+(depends-on "shut-up")
 (depends-on "dired+")
 (depends-on "autopair")
 (depends-on "expand-region")
@@ -25,13 +26,16 @@
 (depends-on "key-chord")
 (depends-on "saveplace")
 (depends-on "yasnippet")
-(depends-on "highlight-indentation" :git "https://github.com/hlissner/Highlight-Indentation-for-Emacs")
-(depends-on "git-gutter-fringe")
+(depends-on "git-gutter")
 (depends-on "popwin")
 (depends-on "dash-at-point")
 (depends-on "auto-complete")
 (depends-on "auto-complete-clang")
 (depends-on "auto-complete-c-headers")
+(depends-on "ace-jump-mode")
+(depends-on "highlight-indentation" :git "https://github.com/hlissner/Highlight-Indentation-for-Emacs")
+(depends-on "gist")
+;;(depends-on "smart-tabs-mode")
 
 ;; Eeeevil
 (depends-on "evil")
@@ -76,10 +80,12 @@
 (depends-on "tern-auto-complete")
 
 (depends-on "rbenv")
+(depends-on "rspec-mode")
 (depends-on "inf-ruby")
 (depends-on "ac-inf-ruby")
 
 (depends-on "jedi")
+(depends-on "pyenv" :git "https://github.com/cyberved/pyenv.el")
 
 (depends-on "omnisharp")
 (depends-on "csharp-mode")
