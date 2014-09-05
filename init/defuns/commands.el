@@ -173,12 +173,12 @@
       (my:tmux-paste command)
     (my:tmux-run command)))
 
-(evil-define-operator my:ex:scratch-buffer (beg end type &optional bang)
+(evil-define-operator my:ex:scratch-buffer (beg end &optional bang)
   :motion nil
   :move-point nil
   :type line
   :repeat nil
-  (interactive "<R><!>")
+  (interactive "<r><!>")
   (let ((text nil)
         (mode major-mode)
         (text-empty-p nil))
@@ -192,6 +192,23 @@
         (switch-to-buffer (get-buffer-create "*scratch*"))
         (if text (insert text))
         (funcall mode)))))
+
+(evil-define-operator my:ex:retab (beg end)
+  :motion nil
+  :move-point nil
+  :type line
+  :repeat nil
+  "Akin to vim's :retab, this changes all tabs-to-spaces or
+spaces-to-tabs, depending on `indent-tab-mode'. Untested."
+  (interactive "<r>")
+  (let ((b beg)
+        (e end))
+    (unless (and b e)
+      (setq b (point-min))
+      (setq e (point-max)))
+    (if indent-tabs-mode
+        (tabify b e)
+      (untabify b e))))
 
 (evil-define-command my:ex:byte-compile-all (&optional bang) :repeat nil
   (interactive "<!>")

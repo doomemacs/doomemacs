@@ -203,7 +203,7 @@
 (evil-ex-define-cmd "snip[pets]"  'my:ex:snippets)
 (evil-ex-define-cmd "mru"         'my:ex:mru)
 
-(evil-ex-define-cmd "retab"       'untabify) ; TODO: Implement proper retab defun
+(evil-ex-define-cmd "retab"       'my:ex:retab)
 (evil-ex-define-cmd "ag"          'my:ex:ag-search)
 (evil-ex-define-cmd "agr"         'my:ex:ag-regex-search)
 (evil-ex-define-cmd "x"           'my:ex:scratch-buffer)
