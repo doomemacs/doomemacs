@@ -60,7 +60,8 @@
     ;; Remember to install rsense w/ homebrew!
     (enable-ruby-rsense)
     (use-package ac-inf-ruby
-      :init (add-hook 'inf-ruby-mode-hook 'ac-inf-ruby-enable))
+      :init
+      (add-hook 'inf-ruby-mode-hook 'ac-inf-ruby-enable))
 
 	;;; Formatting
     (setq ruby-indent-level 2)
@@ -75,13 +76,13 @@
             (("task" "namespace" "class" "def" "while" "do" "module" "for" "until") () ("end"))
             ))
 
-    (evil-define-text-object ruby-mode-string-interp-inner (count &optional beg end type)
-        "Select a string hash block in a string: #{|...|}"
-        (evil-regexp-range count beg end type "#{" "}" t))
-    (evil-define-text-object ruby-mode-string-interp-outer (count &optional beg end type)
-        "Select a string hash block in a string, including the delimiters: |#{...}|"
-        (evil-regexp-range count beg end type "[#$]{" "}"))
-    (evil-define-key 'motion ruby-mode-map "")
+    ;; (evil-define-text-object ruby-mode-string-interp-inner (count &optional beg end type)
+    ;;     "Select a string hash block in a string: #{|...|}"
+    ;;     (evil-regexp-range count beg end type "#{" "}" t))
+    ;; (evil-define-text-object ruby-mode-string-interp-outer (count &optional beg end type)
+    ;;     "Select a string hash block in a string, including the delimiters: |#{...}|"
+    ;;     (evil-regexp-range count beg end type "[#$]{" "}"))
+    ;; (evil-define-key 'motion ruby-mode-map "")
 
 	;;; Keybindings
     (nmap ruby-mode-map "gd" 'rsense-jump-to-definition)
