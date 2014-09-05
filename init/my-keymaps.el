@@ -145,14 +145,15 @@
       "_"      'er/contract-region)
 
 
+(define-key evil-motion-state-map (kbd "RET") 'evil-ret-and-indent)
 (imap my-mode-map
       ;; Join lines from insert mode
       (kbd "<M-kp-delete>") 'evil-join
 
       ;; Newline magic
-      (kbd "<return>")      'my.newline-and-indent
-      (kbd "<C-return>")    'evil-ret-and-indent
-      (kbd "<M-return>")    (kbd "<return> DEL")      ; newline and dedent
+      [remap autopair-newline] 'my.newline-and-indent
+      (kbd "<C-return>")       'evil-ret-and-indent
+      (kbd "<M-return>")       (kbd "<return> DEL") ; newline and dedent
 
       ;; Textmate-esque indent shift left/right
       (kbd "s-[")           (kbd "C-o m l C-o I DEL C-o ` l")

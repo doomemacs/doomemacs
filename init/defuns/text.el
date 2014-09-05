@@ -65,18 +65,18 @@ spaces on either side of the point if so. Resorts to
   "Inserts a tab character (or spaces x tab-width). Checks if the
 auto-complete window is open."
   (interactive)
-  (when (not (ac-menu-live-p))
-    (let ((indent-mode indent-tabs-mode))
-      (insert (if indent-mode "\t" (make-string tab-width ? ))))))
+  (let ((indent-mode indent-tabs-mode))
+    (insert (if indent-mode "\t" (make-string tab-width ? )))))
 
 (defun my.newline-and-indent ()
   "Newline and indent; if in a comment, auto-comment and properly
 indent the next line."
   (interactive)
-  (let ((in-comment (evil-in-comment-p)))
-    (if in-comment
-        (indent-new-comment-line)
-      (evil-ret-and-indent))))
+  (when (not (ac-menu-live-p))
+    (let ((in-comment (evil-in-comment-p)))
+      (if in-comment
+          (indent-new-comment-line)
+        (progn (autopair-newline) (indent-according-to-mode))))))
 
 (defun my.minibuffer-quit ()
   "Abort recursive edit. In Delete Selection mode, if the mark is
