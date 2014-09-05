@@ -1,3 +1,5 @@
+(provide 'init-snippets)
+
 (use-package yasnippet
     :diminish (yas-minor-mode . " $")
     :mode (("emacs.+/snippets/" . snippet-mode))
@@ -13,12 +15,10 @@
     :config
     (progn
       ;; Only load personal snippets
-      (setq yas-snippet-dirs `(,my/snippets-dir))
+      (setq yas-snippet-dirs `(,*snippets-dir))
       (setq yas-prompt-functions '(yas-ido-prompt yas-no-prompt))
 
-      (imap yas-minor-mode-map (kbd "C-c C-s") 'yas-insert-snippet)
-      (define-key yas-minor-mode-map (kbd "C-c C-n") 'yas-new-snippet)
-      (define-key yas-minor-mode-map (kbd "C-c C-v") 'yas-visit-snippet-file)
+      (define-key yas-keymap (kbd "DEL") 'my/yas-clear-field)
 
       (yas-reload-all))
     :init
@@ -28,5 +28,14 @@
       (add-hook 'markdown-mode-hook 'yas-minor-mode)
       (add-hook 'org-mode-hook 'yas-minor-mode)))
 
-;;
-(provide 'init-snippets)
+(defun my/yas-clear-field (&optional field)
+  (interactive)
+  (let ((field (or field
+                   (and yas--active-field-overlay
+                        (overlay-buffer yas--active-field-overlay)
+                        (overlay-get yas--active-field-overlay 'yas--field)))))
+    (cond ((and field
+                (not (yas--field-modified-p field))
+                (eq (point) (marker-position (yas--field-start field))))
+           (yas--skip-and-clear field))
+          (t (delete-char -1)))))

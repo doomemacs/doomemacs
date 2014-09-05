@@ -1,3 +1,5 @@
+(provide 'init-org)
+
 ;; Defuns
 (defun my/org-insert-list-item ()
   "Force insertion of org item"
@@ -43,9 +45,9 @@
     (add-hook 'org-mode-hook (lambda() (evil-mode nil) (evil-mode 1)))
     (add-hook 'org-mode-hook 'evil-org-mode)
     (add-hook 'org-mode-hook 'flyspell-mode)
-    (add-hook 'org-mode-hook 'my/enable-hard-wrap)
+    (add-hook 'org-mode-hook 'enable-hard-wrap)
 
-    (load-library "ox-opml")
+    (shut-up (load-library "ox-opml"))
 
     ;; Formatting shortcuts
     (vmap evil-org-mode-map
@@ -158,17 +160,17 @@
                           ("hard" . ?1)))
 
     (setq org-capture-templates
-          '(("t" "TODO" entry (file+headline "~/Dropbox/notes/gtd.org" "Inbox") "* TODO %? %u")
-            ("T" "TODO Someday" entry (file+headline "~/Dropbox/notes/gtd.org" "Someday") "* TODO %? %u :someday:")
-            ("c" "Changelog" entry (file+headline (concat (projectile-project-root) "/CHANGELOG.org") "Unsorted") "** %u %? :unsorted:" :prepend t)
-            ("i" "Invoice" entry (file+headline "~/Dropbox/notes/invoices.org" "Invoices") "** TODO %?" :prepend t)
-            ("n" "Note" entry (file+datetree org-default-notes-file) "** %?")
-            ("b" "Blog" entry (file+datetree "~/Dropbox/notes/blog.org") "** %?")
-            ("j" "Journal" entry (file+datetree "~/Dropbox/notes/journal.org") "** %?%^g\n%?\nAdded: %U")
-            ("a" "Trivia" entry (file "~/Dropbox/notes/trivia.org") "* %u %?" :prepend t)
-            ("s" "Writing Scraps" entry (file "~/Dropbox/notes/writing.org") "* %u %?" :prepend t)
-            ("v" "Vocab" entry (file "~/Dropbox/notes/vocab.org") "* %u %?" :prepend t)
-            ("e" "Excerpt" entry (file "~/Dropbox/notes/excerpts.org") "* %u %?" :prepend t)))
+          '(("t" "TODO" entry (file+headline "~/Dropbox/notes/gtd.org" "Inbox") "* TODO %? %u\n%i")
+            ("T" "TODO Someday" entry (file+headline "~/Dropbox/notes/gtd.org" "Someday") "* TODO %? %u :someday:\n%i")
+            ("c" "Changelog" entry (file+headline (concat (projectile-project-root) "/CHANGELOG.org") "Unsorted") "** %u %? :unsorted:\n%i" :prepend t)
+            ("i" "Invoice" entry (file+headline "~/Dropbox/notes/invoices.org" "Invoices") "** TODO %?\n%i" :prepend t)
+            ("n" "Note" entry (file+datetree org-default-notes-file) "** %?\n%i")
+            ("b" "Blog" entry (file+datetree "~/Dropbox/notes/blog.org") "** %i%?")
+            ("j" "Journal" entry (file+datetree "~/Dropbox/notes/journal.org") "** %?%^g\nAdded: %U\n%i")
+            ("a" "Trivia" entry (file "~/Dropbox/notes/trivia.org") "* %u %?\n%i" :prepend t)
+            ("s" "Writing Scraps" entry (file "~/Dropbox/notes/writing.org") "* %u %?\n%i" :prepend t)
+            ("v" "Vocab" entry (file "~/Dropbox/notes/vocab.org") "* %u %?\n%i" :prepend t)
+            ("e" "Excerpt" entry (file "~/Dropbox/notes/excerpts.org") "* %u %?\n%i" :prepend t)))
 
     (setq org-agenda-custom-commands
           '(("x" agenda)
@@ -180,6 +182,3 @@
             ("tg" tags-todo "+gamedev")
             ("tw" tags-tree "+webdev")))
   ))
-
-;;
-(provide 'mod-org)

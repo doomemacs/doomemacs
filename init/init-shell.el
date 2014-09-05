@@ -1,3 +1,4 @@
+(provide 'init-shell)
 
 (setq shell-file-name "zsh")
 (setq comint-process-echoes t)
@@ -20,9 +21,4 @@
 	(local-unset-key [tab])
 
     (evil-define-key 'normal shell-mode-map "j" nil)
-    (evil-define-key 'normal shell-mode-map "k" nil)
-))
-
-
-;;
-(provide 'mod-shell)
+    (evil-define-key 'normal shell-mode-map "k" nil)))

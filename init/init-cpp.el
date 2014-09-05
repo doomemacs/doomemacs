@@ -1,3 +1,5 @@
+(provide 'init-cpp)
+
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
 (add-hook 'c-mode-common-hook
     (lambda()
@@ -23,11 +25,4 @@
   :lighter " C2D"
   :keymap (make-sparse-keymap))
 
-(defun cocoa2d-mode-maybe()
-  (let ((root (projectile-project-root)))
-    (if (or (string-match "[.-]cocos2d/" root)
-            (file-exists-p (concat root ".cocos2d-mode")))
-        (cocos-mode t))))
-
-;;
-(provide 'mod-cpp)
+(associate-mode "[.-]c2d/" cocoa2d-mode t)

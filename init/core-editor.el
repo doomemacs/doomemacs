@@ -1,34 +1,24 @@
+(provide 'core-editor)
+
 ;;;; Editor behavior ;;;;;;;;;;;;;;;;
-(blink-cursor-mode -1)
+(setq sentence-end-double-space nil)
+(setq require-final-newline t)
 
-(setq-default
-  tab-width             4           ; set tab width to 4 for all buffers
-  indent-tabs-mode      nil         ; use tabs, not spaces
-  tab-always-indent     nil)
-;; do not soft-wrap lines
-(setq-default truncate-lines t)
-(setq truncate-partial-width-windows nil)
-;; Remove trailing whitespace
+(setq-default tab-width 4)
+(setq-default indent-tabs-mode nil)
+(setq-default tab-always-indent nil)
+
+;;;; Modes 'n hooks ;;;;;;;;;;;;;;;;;
+(add-to-list 'auto-mode-alist '("\\.plist\\'" . nxml-mode))
+(add-to-list 'auto-mode-alist '("zsh\\(env\\|rc\\)?\\'" . shell-script-mode))
+(add-to-list 'auto-mode-alist '("z\\(profile\\|login\\|logout\\)?\\'" . shell-script-mode))
+(add-to-list 'auto-mode-alist '("zsh/" . shell-script-mode))
+
+(add-hook 'text-mode-hook 'enable-hard-wrap)
+(add-hook 'prog-mode-hook 'enable-comment-hard-wrap)
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
-(setq ediff-window-setup-function 'ediff-setup-windows-plain)
 
-;; All this just to show errant tab characters
-(add-hook 'font-lock-mode-hook
- (function
-  (lambda ()
-    (setq font-lock-keywords
-     (append font-lock-keywords
-      '(("\r" (0 'my-carriage-return-face t))
-        ("\t" (0 'my-tab-face t))))))))
-(setq whitespace-style (quote (face trailing tab-mark)))
-(setq whitespace-display-mappings '((tab-mark 9 [?> 9] [92 9])))
-(add-hook 'find-file-hook 'whitespace-mode)
-
-;;;; Plugins ;;;;;;;;;;;;;;;;;;;;;;;;
-(use-package highlight-indentation
-  :init
-  (add-hook 'prog-mode-hook 'highlight-indentation-mode))
-
+;;;; Evil-mode ;;;;;;;;;;;;;;;;;;;;;;;
 (use-package evil
   :diminish undo-tree-mode
   :config
@@ -44,9 +34,6 @@
     (use-package evil-nerd-commenter)
     (use-package evil-ex-registers)
 
-    ;; To get evil-leader mappings to work in the messages buffer...
-    (kill-buffer "*Messages*")
-
     (global-evil-matchit-mode  1)
     (global-evil-surround-mode 1)
 
@@ -59,19 +46,21 @@
     (evil-define-operator evil-destroy (beg end type register yank-handler)
       (evil-delete beg end type ?_ yank-handler))
 
+    ;; Enable half-cursor blink when using ace-jump
+    (defadvice evil-ace-jump-char-mode (around evil-ace-jump-char-mode-operator-mode activate)
+      (evil-half-cursor) ad-do-it)
+    (defadvice evil-ace-jump-word-mode (around evil-ace-jump-word-mode-operator-mode activate)
+      (evil-half-cursor) ad-do-it)
+
     (evil-set-initial-state 'comint-mode 'insert)
 
     ;; Enable registers in ex-mode
-    (define-key evil-ex-completion-map (kbd "C-r") #'evil-ex-paste-from-register)))
+    (define-key evil-ex-completion-map (kbd "C-r") #'evil-ex-paste-from-register)
+    ))
 
-(use-package rainbow-delimiters
-  :commands rainbow-delimiters-mode
-  :init (add-hook 'prog-mode-hook 'rainbow-delimiters-mode))
+;;;; Editing plugins ;;;;;;;;;;;;;;;;;;;
+(use-package expand-region)
 
-(use-package rotate-text
-  :commands (rotate-word-at-point rotate-region))
-
-;;;; Init plugins ;;;;;;;;;;;;;;;;;;;
 (use-package autopair
   :diminish autopair-mode
   :init
@@ -84,29 +73,6 @@
   :diminish anzu-mode
   :init (global-anzu-mode))
 
-(use-package expand-region)
-
-(use-package key-chord
-  :init
-  (progn (key-chord-mode 1)
-         (setq key-chord-two-keys-delay 0.5)))
-
-(use-package saveplace
-  :init
-  (progn (setq-default save-place t)
-         (setq save-place-file (expand-file-name "saveplace" my/tmp-dir))))
-
-(use-package savehist
-  :init
-  (progn (setq savehist-additional-variables
-               ;; search entries
-               '(search ring regexp-search-ring)
-               ;; save every 5 minutes
-               savehist-autosave-interval 300
-               ;; keep the home clean
-               savehist-file (expand-file-name "savehist" my/tmp-dir))
-         (savehist-mode 1)))
-
 (use-package multiple-cursors
   :commands (mc/mark-next-like-this mc/mark-previous-like-this mc/mark-all-like-this)
   :config
@@ -115,6 +81,12 @@
     ;; hook breaks multiple-cursors!
     (defadvice keyboard-quit (around mc-and-keyboard-quit activate)
       (mc/keyboard-quit) ad-do-it)))
+
+;;;; Utility plugins ;;;;;;;;;;;;;;;;;;
+(use-package key-chord
+  :init
+  (progn (key-chord-mode 1)
+         (setq key-chord-two-keys-delay 0.5)))
 
 (use-package smex
   :commands (smex smex-major-mode-commands)
@@ -125,13 +97,17 @@
            (when (boundp 'smex-cache) (smex-update)))
          (add-hook 'after-load-functions 'smex-update-after-load)))
 
+(use-package uniquify
+  :config
+  (setq uniquify-buffer-name-style 'forward))
+
 (use-package recentf
   :init
   (progn (recentf-mode 1)
-         (add-to-list 'recentf-exclude "\\.ido\\.last\\'")
-         (add-to-list 'recentf-exclude "\\.revive\\'")
-         (setq recentf-max-menu-items 0)
-         (setq recentf-auto-cleanup 'never)))
-
-;;
-(provide 'core-editor)
+         (setq recentf-max-menu-items 0
+               recentf-max-saved-items 75
+               recent5-auto-cleanup 'never
+               recentf-exclude '("/tmp/"
+                                 "/ssh:"
+                                 "\\.ido\\.last\\'"
+                                 "\\.revive\\'"))))

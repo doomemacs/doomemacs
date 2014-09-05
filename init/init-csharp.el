@@ -1,3 +1,5 @@
+(provide 'init-csharp)
+
 ;; TODO Make more Unity-friendly
 
 (use-package omnisharp :defer t
@@ -19,5 +21,3 @@
   (progn
     (setq csharp-want-imenu nil)
     (add-hook 'csharp-mode-hook (lambda() (omnisharp-mode t) (flycheck-mode t)))))
-
-(provide 'mod-csharp)

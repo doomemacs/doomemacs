@@ -1,3 +1,10 @@
+(provide 'init-ac)
+
+(defun ac-add-files()
+  "Set up filepath completion sources"
+  (setq ac-sources (append '(ac-source-filename ac-source-files-in-current-dir) ac-sources)))
+
+;;
 (use-package auto-complete
   :diminish auto-complete-mode
   :init
@@ -14,7 +21,7 @@
     (setq-default ac-sources '(ac-source-abbrev ac-source-dictionary ac-source-words-in-same-mode-buffers))
     (add-hook 'emacs-lisp-mode-hook 'ac-emacs-lisp-mode-setup)
     (add-hook 'css-mode-hook 'ac-css-mode-setup)
-    (add-hook 'shell-script-mode-hook 'my/ac-files-setup)
+    (add-hook 'shell-script-mode-hook 'ac-add-files)
     ;; (add-hook 'auto-complete-mode-hook 'ac-common-setup)
     (global-auto-complete-mode t)
 
@@ -22,8 +29,8 @@
     (ac-linum-workaround))
   :config
   (progn
-    (add-to-list 'ac-dictionary-files "~/.emacs.d/ac-dict/global")
-    (add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
+    (add-to-list 'ac-dictionary-files (expand-file-name "global" *ac-dicts-dir))
+    (add-to-list 'ac-dictionary-directories *ac-dicts-dir)
 
     (imap ac-mode-map (kbd "C-x C-f") 'ac-complete-filename)
     (imap ac-mode-map (kbd "C-SPC") 'auto-complete)
@@ -33,10 +40,7 @@
     (define-key ac-completing-map (kbd "C-p") 'ac-previous)
     (define-key ac-completing-map (kbd "<F1>") 'ac-quick-help)
     (define-key ac-completing-map (kbd "ESC") 'ac-stop)
-    (define-key ac-completing-map [return] nil)
+    (define-key ac-completing-map (kbd "RET") 'ac-complete)
 
     ;; Tell ido not to care about case
     (setq completion-ignore-case t)))
-
-;;
-(provide 'init-ac)

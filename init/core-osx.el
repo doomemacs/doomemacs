@@ -1,3 +1,4 @@
+(provide 'core-osx)
 
 ;; Use a shared clipboard
 (setq x-select-enable-clipboard t)
@@ -10,6 +11,3 @@
 (use-package exec-path-from-shell
   :if (memq window-system '(mac ns))
   :init (exec-path-from-shell-initialize))
-
-;;
-(provide 'core-osx)

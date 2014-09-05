@@ -1,3 +1,5 @@
+(provide 'init-git)
+
 (use-package git-commit-mode
   :mode (("/COMMIT_EDITMSG\\'" . git-commit-mode)
          ("/NOTES_EDITMSG\\'" . git-commit-mode)
@@ -22,6 +24,7 @@
 
 (use-package git-gutter-fringe
   :diminish git-gutter-mode
+  :disabled t
   :init
   (progn
     (global-git-gutter-mode t)
@@ -40,5 +43,11 @@
     (set-face-background 'git-gutter-fr:added "#448844")
     ))
 
-;;
-(provide 'init-git)
+(use-package git-gutter
+  :diminish git-gutter-mode
+  :init
+  (global-git-gutter-mode t)
+  :config
+  (progn
+    (custom-set-variables '(git-gutter:lighter " !"))
+    (custom-set-variables '(git-gutter:verbosity 0))))

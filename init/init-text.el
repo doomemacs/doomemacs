@@ -1,4 +1,4 @@
-(add-hook 'text-mode-hook 'my/enable-hard-wrap)
+(provide 'init-text)
 
 (use-package markdown-mode
   :mode (("\\.md\\'" . markdown-mode)
@@ -24,9 +24,7 @@
       (define-key map (kbd "s-*") 'markdown-insert-list-item)
       (define-key map (kbd "s-b") 'markdown-insert-bold)
       (define-key map (kbd "s-i") 'markdown-insert-italic)
-      (define-key map (kbd "s-`") 'markdown-insert-del)
-      )
-    ))
+      (define-key map (kbd "s-`") 'markdown-insert-del))))
 
 (defvar markdown-regex-del "\\(^\\|[^\\]\\)\\(\\(~\\{2\\}\\)\\([^ \n	\\]\\|[^ \n	]\\(?:.\\|\n[^\n]\\)*?[^\\ ]\\)\\(\\3\\)\\)")
 (defun markdown-insert-del ()
@@ -47,6 +45,3 @@ insert bold delimiters and place the cursor in between them."
       (if (thing-at-point-looking-at markdown-regex-del)
           (markdown-unwrap-thing-at-point nil 2 4)
         (markdown-wrap-or-insert delim delim 'word nil nil)))))
-
-;;
-(provide 'mod-text)
