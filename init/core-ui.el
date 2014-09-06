@@ -25,6 +25,7 @@
 ;; do not soft-wrap lines
 (setq-default truncate-lines t)
 (setq truncate-partial-width-windows nil)
+(add-hook 'help-mode-hook (lambda() (setq truncate-lines nil)))
 
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
 
