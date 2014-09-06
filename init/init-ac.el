@@ -31,6 +31,7 @@
   (progn
     (add-to-list 'ac-dictionary-files (expand-file-name "global" *ac-dicts-dir))
     (add-to-list 'ac-dictionary-directories *ac-dicts-dir)
+    (add-to-list 'ac-modes 'nxml-mode)
 
     (imap ac-mode-map (kbd "C-x C-f") 'ac-complete-filename)
     (imap ac-mode-map (kbd "C-SPC") 'auto-complete)
