@@ -23,69 +23,47 @@
   :interpreter "ruby"
   :config
   (progn
-	;;; Ruby tools
-    (use-package rbenv
-      :init
-      (progn
-        (setq rbenv-show-active-ruby-in-modeline nil)
-
-        (global-rbenv-mode)
-        (add-hook 'ruby-mode-hook 'rbenv-use-corresponding)))
-
     (use-package inf-ruby
       :config
-      (evil-set-initial-state 'inf-ruby-mode 'insert)
+      (progn
+        (evil-set-initial-state 'inf-ruby-mode 'insert)
+        (use-package ac-inf-ruby)
+        (add-hook 'inf-ruby-mode-hook 'ac-inf-ruby-enable))
       :init
       (add-to-list 'ac-modes 'inf-ruby-mode))
 
     (use-package rspec-mode
       :defer t
-      :config
-      (progn
-        (nmap rspec-mode-verifiable-keymap
-              ",tr" 'rspec-rerun
-              ",ta" 'rspec-verify-all
-              ",ts" 'rspec-verify-single
-              ",tv" 'rspec-verify)
-
-        (nmap rspec-dired-mode-keymap
-              ",tv" 'rspec-dired-verify
-              ",ts" 'rspec-dired-verify-single
-              ",ta" 'rspec-verify-all
-              ",tr" 'rspec-rerun))
+      :pre-load
+      (defvar evilmi-ruby-match-tags
+        '((("unless" "if") ("elsif" "else") "end")
+          ("begin" ("rescue" "ensure") "end")
+          ("case" ("when" "else") "end")
+          (("class" "def" "while" "do" "module" "for" "until") () "end")
+          ;; Rake
+          (("task" "namespace") () "end")
+          ))
       :init
-      (associate-mode "_spec\\.rb\\'" rspec-mode t))
+      (associate-minor-mode "_spec\\.rb\\'" rspec-mode))
 
 	;;; Auto-completion
     ;; Remember to install rsense w/ homebrew!
     (enable-ruby-rsense)
-    (use-package ac-inf-ruby
-      :init
-      (add-hook 'inf-ruby-mode-hook 'ac-inf-ruby-enable))
+
+    (add-hook! 'ruby-mode-hook
+               (setq my-switch-to-repl-func 'ruby-switch-to-inf
+                     my-send-region-to-repl-func 'ruby-send-region
+                     my-run-code-interpreter "ruby"))
 
 	;;; Formatting
     (setq ruby-indent-level 2)
-    (setq ruby-deep-indent-paren nil)
-	(add-hook 'ruby-mode-hook 'enable-tab-width-2)
-    (require 'ruby-mode-indent-fix)
+    (setq ruby-deep-indent-paren t)
+	(add-hook 'ruby-mode-hook 'enable-tab-width-2)))
 
-    (setq evilmi-ruby-match-tags
-          '((("unless" "if") ("elsif" "else") ("end"))
-            ("begin" ("rescue" "ensure") "end")
-            ("case" ("when" "else") ("end"))
-            (("task" "namespace" "class" "def" "while" "do" "module" "for" "until") () ("end"))
-            ))
-
-    ;; (evil-define-text-object ruby-mode-string-interp-inner (count &optional beg end type)
-    ;;     "Select a string hash block in a string: #{|...|}"
-    ;;     (evil-regexp-range count beg end type "#{" "}" t))
-    ;; (evil-define-text-object ruby-mode-string-interp-outer (count &optional beg end type)
-    ;;     "Select a string hash block in a string, including the delimiters: |#{...}|"
-    ;;     (evil-regexp-range count beg end type "[#$]{" "}"))
-    ;; (evil-define-key 'motion ruby-mode-map "")
-
-	;;; Keybindings
-    (nmap ruby-mode-map "gd" 'rsense-jump-to-definition)
-
-    (run-code-with "ruby" ruby-mode-map)
-    ))
+(add-hook! 'find-file-hook
+           (let ((rake-path
+                  (f--traverse-upwards (f--exists? "Rakefile" it))))
+             (when rake-path
+               (use-package rake-mode)
+               (rake-mode t)
+               (rake-mode/visit-rakefile (expand-file-name "Rakefile" rake-path) t))))

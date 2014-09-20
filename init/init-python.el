@@ -3,47 +3,31 @@
 (use-package python
   :mode ("\\.py\\'" . python-mode)
   :interpreter ("python" . python-mode)
+  :init
+  (setq python-indent-offset 4)
   :config
   (progn
-    (use-package pyenv
-      :init
-      (progn
-        (setq pyenv-show-active-python-in-modeline nil)
+    (use-package jedi)
 
-        (global-pyenv-mode)
-        (add-hook 'python-mode-hook 'pyenv-use-corresponding)))
+    (unless (file-directory-p "~/.emacs.d/.python-environments/default/")
+        (jedi:install-server))
 
-    (use-package jedi
-      :init
-      (if (not (file-directory-p "~/.emacs.d/.python-environments/default/"))
-          (jedi:install-server))
-	  (add-hook 'python-mode-hook 'jedi:ac-setup))
+    (add-hook 'python-mode-hook 'jedi:ac-setup)
+    (setq python-shell-interpreter "ipython")
 
-    ;; Let autopair work with triple-quotes
-    (setq autopair-handle-action-fns
-          (list #'autopair-default-handle-action
-                #'autopair-python-triple-quote-action))
+    ;; Dont' remap DEL please...
+    (defmap python-mode-map (kbd "DEL") nil)
 
 	;;; Keybindings
-    (run-code-with "python" python-mode-map)
-    ;; (nmap python-mode-map (kbd ",r") 'python-shell-send-buffer)
-    ;; (vmap python-mode-map (kbd ",r") 'python-shell-send-region)
+    (add-hook! 'python-mode-hook
+               (setq my-switch-to-repl-func 'python-shell-switch-to-shell
+                     my-send-region-to-repl-func 'python-shell-send-region
+                     my-run-code-interpreter "python"))
 
-    ;; Don't remap backspace. Leave it to autopair, please.
-    (define-key python-mode-map [backspace] nil)
-
-    (use-package nose :commands (nose-mode)
-      :config
-      (setq nose-mode-map (make-sparse-keymap))
-      (nmap nose-mode-map
-            ",tr" 'nosetests-again
-            ",ta" 'nosetests-all
-            ",ts" 'nosetests-one
-            ",tv" 'nosetests-module
-            ",tA" 'nosetests-pdb-all
-            ",tO" 'nosetests-pdb-one
-            ",tV" 'nosetests-pdb-module)
+    (use-package nose
+      :commands (nose-mode)
       :init
-      (associate-mode "/test_.+\\.py\\'" nose-mode)
-      ;; (add-to-list 'auto-minor-mode-alist '("/test_.+\\.py\\'" . nose-mode)))
-    )))
+      (progn
+        ;; Reset nose keymap, we'll set new ones in my-keymaps.el
+        (defvar nose-mode-map (make-sparse-keymap))
+        (associate-minor-mode "/test_.+\\.py\\'" nose-mode)))))

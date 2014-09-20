@@ -2,45 +2,92 @@
 (defmacro λ (&rest body)
   `(lambda () (interactive) ,@body))
 
+(defmacro associate-mode (match mode)
+  `(add-to-list 'auto-mode-alist '(,match . ,mode)))
+
+(defmacro associate-minor-mode (match minor-mode)
+  `(add-to-list 'auto-minor-mode-alist '(,match . ,minor-mode)))
+
+(defmacro add-hook! (hook &rest body)
+  `(add-hook ,hook (lambda() ,@body)))
+
+;; Backwards compatibility
+(unless (fboundp 'with-eval-after-load)
+  (defmacro with-eval-after-load (file &rest body)
+    `(eval-after-load ,file
+       `(funcall (function ,(lambda () ,@body))))))
+
+(defmacro after (feature &rest forms)
+  `(,(if (or (not (boundp 'byte-compile-current-file))
+             (not byte-compile-current-file)
+             (if (symbolp feature)
+                 (require feature nil :no-error)
+               (load feature :no-message :no-error)))
+         'progn
+       (message "after: cannot find %s" feature)
+       'with-no-warnings)
+    (with-eval-after-load ',feature ,@forms)))
+
 ;; vimmish keymapping shortcuts
+(defalias 'exmap 'evil-ex-define-cmd)
+(defmacro ichmap (key command)
+  `(key-chord-define evil-insert-state-map ,key ,command))
+(defmacro defmap (map &rest body)
+  `(evil-define-key nil ,map ,@body))
+
 (defmacro nmap (map &rest body)
-  (macroexpand `(evil-define-key 'normal ,map ,@body)))
+  `(evil-define-key 'normal ,map ,@body))
 (defmacro vmap (map &rest body)
-  (macroexpand `(evil-define-key 'visual ,map ,@body)))
+  `(evil-define-key 'visual ,map ,@body))
 (defmacro imap (map &rest body)
-  (macroexpand `(evil-define-key 'insert ,map ,@body)))
+  `(evil-define-key 'insert ,map ,@body))
 (defmacro emap (map &rest body)
-  (macroexpand `(evil-define-key 'emacs ,map ,@body)))
+  `(evil-define-key 'emacs ,map ,@body))
+(defmacro gmap (map &rest body)
+  `(evil-define-key 'god ,map ,@body))
+(defmacro mmap (&rest body)
+  `(evil-define-key 'motion ,map ,@body))
+(defmacro omap (&rest body)
+  `(evil-define-key 'operator ,map ,@body))
 (defmacro nvmap (map &rest body)
-  (macroexpand-all
+  (macroexpand
    `(progn (nmap ,map ,@body)
            (vmap ,map ,@body))))
 
-;; insert-mode key-chord mapping
-(defmacro ichmap (key command)
-  `(key-chord-define evil-insert-state-map ,key ,command))
+(defmacro nmap! (&rest body)
+  `(evil-define-key 'normal my-mode-map ,@body))
+(defmacro vmap! (&rest body)
+  `(evil-define-key 'visual my-mode-map ,@body))
+(defmacro imap! (&rest body)
+  `(evil-define-key 'insert my-mode-map ,@body))
+(defmacro emap! (&rest body)
+  `(evil-define-key 'emacs my-mode-map ,@body))
+(defmacro gmap! (&rest body)
+  `(evil-define-key 'god my-mode-map ,@body))
+(defmacro mmap! (&rest body)
+  `(evil-define-key 'motion my-mode-map ,@body))
+(defmacro omap! (&rest body)
+  `(evil-define-key 'operator my-mode-map ,@body))
+(defmacro nvmap! (&rest body)
+  (macroexpand
+   `(progn (nmap! ,@body)
+           (vmap! ,@body))))
 
-(defmacro associate-mode (match mode &optional minor-mode-p)
-  (let ((mode-alist (if minor-mode-p 'auto-minor-mode-alist 'auto-mode-alist)))
-    `(add-to-list ',mode-alist '(,match . ,mode))))
-
-
-;;;; Defuns ;;;;;;;;;;;;;;;;;;;;;;;;
-(defun run-code-with (interpreter mode-map)
-  "Set up ,r (and s-r on macs) to run code using a specified
-interpreter and print the output in the echo area"
-  (nmap mode-map (kbd ",r")
-        `(lambda()
-           (interactive)
-           (if (and (not (buffer-modified-p))
-                    (file-exists-p (buffer-file-name)))
-               (shell-command (concat ,interpreter " " (buffer-file-name)))
-             (shell-command-on-region (point-min) (point-max) ,interpreter))))
-  (vmap mode-map (kbd ",r")
-        `(lambda()
-           (interactive)
-           (shell-command-on-region (region-beginning) (region-end) ,interpreter)))
-
-  (when is-mac
-    (nmap mode-map (kbd "s-r") ",r")
-    (vmap mode-map (kbd "s-r") ",r")))
+(defmacro -nmap (&rest body)
+  `(evil-define-key nil evil-normal-state-map ,@body))
+(defmacro -vmap (&rest body)
+  `(evil-define-key nil evil-visual-state-map ,@body))
+(defmacro -imap (&rest body)
+  `(evil-define-key nil evil-insert-state-map ,@body))
+(defmacro -emap (&rest body)
+  `(evil-define-key nil evil-emacs-state-map ,@body))
+(defmacro -gmap (&rest body)
+  `(evil-define-key nil evil-god-state-map ,@body))
+(defmacro -mmap (&rest body)
+  `(evil-define-key nil evil-motion-state-map ,@body))
+(defmacro -omap (&rest body)
+  `(evil-define-key nil evil-operator-state-map ,@body))
+(defmacro -nvmap (&rest body)
+  (macroexpand
+   `(progn (-nmap ,@body)
+           (-vmap ,@body))))

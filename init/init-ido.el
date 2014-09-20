@@ -2,17 +2,16 @@
 
 ;; ido remaps its keys every time it's invoked, this screws with
 ;; custom mappings. So we've gotta neuter ido.
-(defun ido-init-completion-maps ())
+;; (defun ido-init-completion-maps ())
+;; (setq ido-common-completion-map   (make-sparse-keymap)
+;;       ido-file-dir-completion-map (make-sparse-keymap)
+;;       ido-file-completion-map     (make-sparse-keymap)
+;;       ido-buffer-completion-map   (make-sparse-keymap))
 
-(setq ido-common-completion-map   (make-sparse-keymap))
-(setq ido-file-dir-completion-map (make-sparse-keymap))
-(setq ido-file-completion-map     (make-sparse-keymap))
-(setq ido-buffer-completion-map   (make-sparse-keymap))
-
-(set-keymap-parent ido-common-completion-map   minibuffer-local-map)
-(set-keymap-parent ido-file-dir-completion-map ido-common-completion-map)
-(set-keymap-parent ido-file-completion-map     ido-file-dir-completion-map)
-(set-keymap-parent ido-buffer-completion-map   ido-common-completion-map)
+;; (set-keymap-parent ido-common-completion-map   minibuffer-local-map)
+;; (set-keymap-parent ido-file-dir-completion-map ido-common-completion-map)
+;; (set-keymap-parent ido-file-completion-map     ido-file-dir-completion-map)
+;; (set-keymap-parent ido-buffer-completion-map   ido-common-completion-map)
 
 (use-package ido-ubiquitous)
 (use-package ido-vertical-mode)

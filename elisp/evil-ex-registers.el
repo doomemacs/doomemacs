@@ -54,7 +54,7 @@ Support some registers listed below in addition to
 (defun evil-ex-paste-from-register (&optional register)
   "Paste from REGISTER in command line."
   (interactive)
-  (flet ((evil-get-register (register &optional noerror)
+  (cl-flet ((evil-get-register (register &optional noerror)
            (with-current-buffer evil-ex-current-buffer
              (evil-get-spec-register register noerror))))
     (if (called-interactively-p 'any)

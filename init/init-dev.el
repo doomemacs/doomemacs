@@ -1,6 +1,5 @@
 (provide 'init-dev)
 
-;;; Tools
 (use-package dash-at-point
   :commands (dash-at-point dash-at-point-with-docset)
   :if is-mac
@@ -21,11 +20,13 @@
 (use-package go-mode
   :mode "\\.go\\'"
   :interpreter "go"
-  :init (require 'go-autocomplete))
+  :init
+  (require 'go-autocomplete))
 
 ;;; Config modes
 (use-package yaml-mode :defer t
-  :config (add-hook 'yaml-mode-hook 'enable-tab-width-2))
+  :config
+  (add-hook 'yaml-mode-hook 'enable-tab-width-2))
 
 (use-package json-mode
   :mode (("\\.json\\'" . json-mode)

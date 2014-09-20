@@ -1,10 +1,11 @@
 (provide 'init-love)
 
+(defun my/build-love ()
+  (shell-command (format "open -a love.app %s" (my/project-root))))
+
 (use-package lua-mode
   :mode "\\.lua\\'"
   :interpreter "lua"
-  :config
-  (run-code-with "lua" lua-mode-map)
   :init
   (progn
     (define-minor-mode love-mode
@@ -14,12 +15,9 @@
       :keymap (make-sparse-keymap) ; defines love-mode-map
       :group lua)
 
-    ;; (add-to-list 'auto-minor-mode-alist '("[.-]love/.+\\.lua\\'" . love-mode))
-    (associate-mode "[.-]love/.+\\.lua\\'" love-mode t)
-
-    (nmap love-mode-map (kbd "s-b") ",b")
-    (nmap love-mode-map (kbd ",b")
-          `(lambda()
-             (interactive)
-             (let ((root (if (projectile-project-p) (projectile-project-root) default-directory)))
-               (shell-command (concat "open -a love.app " (projectile-project-root))))))))
+    (add-hook! 'lua-mode-hook
+               (setq my-run-code-interpreter "lua")
+               (when (and (s-matches-p "[\\.-]love/.+\\.lua$" (buffer-file-name))
+                          (f--traverse-upwards (f--exists? "main.lua" it)))
+                 (love-mode t)
+                 (setq my-build-func 'my/build-love)))))

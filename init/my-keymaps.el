@@ -4,24 +4,13 @@
 ;; Global keymaps                     ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(global-set-key (kbd "C-c C-p")    'package-list-packages)
-(global-set-key (kbd "M-x")        'smex)
-(global-set-key (kbd "M-X")        'smex-major-mode-commands)
+(global-set-key (kbd "M-x") 'smex)
+(global-set-key (kbd "M-X") 'smex-major-mode-commands)
+(global-set-key (kbd "C-;") 'eval-expression)
+(global-set-key (kbd "C-j") "5j")
+(global-set-key (kbd "C-k") "5k")
 
 (when is-mac
-  ;; TODO: Open in tmux
-  (nmap my-mode-map
-        (kbd "C-c o")   'send-dir-to-finder
-        (kbd "C-c u")   'send-to-transmit
-        (kbd "C-c l")   'send-to-launchbar
-        (kbd "C-c L")   'send-dir-to-launchbar
-        (kbd "C-c t")   'my:tmux-chdir
-        (kbd "C-c T")   (λ (my:tmux-chdir (projectile-project-root))))
-
-  ;; Evaluating elisp
-  (nmap my-mode-map (kbd "C-c x") 'eval-buffer)
-  (vmap my-mode-map (kbd "C-c x") 'eval-region)
-
   (when window-system
     (global-set-key (kbd "s-=")     'text-scale-increase)
     (global-set-key (kbd "s--")     'text-scale-decrease)
@@ -29,47 +18,22 @@
     (global-set-key (kbd "s-/")     'evilnc-comment-or-uncomment-lines)
     (global-set-key (kbd "s-<f12>") 'toggle-frame-fullscreen)
 
-    (global-set-key (kbd "C-;")   'eval-expression)
-    (global-set-key (kbd "s-;")   'my:tmux-run)
-    (global-set-key (kbd "s-:")   'my:tmux-paste)
-
     ;; Faster scrolling
     (mapc (lambda(map)
-            (evil-define-key map my-mode-map (kbd "s-j") "5j")
-            (evil-define-key map my-mode-map (kbd "s-k") "5k"))
+            (evil-define-key map my-mode-map (kbd "s-j") (kbd "C-j"))
+            (evil-define-key map my-mode-map (kbd "s-k") (kbd "C-k")))
           '(emacs normal visual))
 
-    (nmap my-mode-map
-          ;; Leader alternatives
-          (kbd "s-t")   'projectile-find-file
-          (kbd "s-F")   'projectile-ag
-          (kbd "s-p")   'projectile-switch-project
-          (kbd "s-m")   'my:ex:mru
-          (kbd "s-M")   'projectile-recentf
-          (kbd "s-o")   'ido-find-file
-          (kbd "s-d")   'dash-at-point
+    (nmap!  (kbd "s-t")   'projectile-find-file
+            (kbd "s-p")   'projectile-switch-project
+            (kbd "s-m")   'my:ex:mru
+            (kbd "s-M")   'projectile-recentf
+            (kbd "s-o")   'ido-find-file
+            (kbd "s-d")   'dash-at-point
+            (kbd "s-b")   'my:ex:build)
 
-          (kbd "s-'")   'mc/mark-next-like-this
-          (kbd "s-\"")  'mc/mark-previous-like-this
-          (kbd "C-s-'") 'mc/mark-all-like-this)
-
-    (imap my-mode-map
-          ;; Textmate-esque insert-line before/after
-          (kbd "<s-return>")    'evil-open-below
-          (kbd "<S-s-return>")  'evil-open-above
-
-          ;; Fix OSX text navigation shortcuts
-          (kbd "<s-left>")      'evil-first-non-blank
-          (kbd "<s-right>")     'move-end-of-line
-          (kbd "<s-backspace>") 'my.backward-kill-to-bol-and-indent
-
-          ;; Fixes delete
-          (kbd "<kp-delete>")   'delete-char)
-
-    (imap emmet-mode-keymap
-          (kbd "s-e") 'emmet-expand-yas
-          (kbd "s-E") 'emmet-expand-line)))
-
+    (nvmap! (kbd "s-r")   ",r"
+            (kbd "s-R")   ",R")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Local keymaps                      ;;
@@ -77,110 +41,117 @@
 
 ;; Remap ; to : - SPC and shift-SPC replace ; and , - have to use
 ;; define-key instead of n/vmap for this one to register.
-(define-key evil-normal-state-map ";" 'evil-ex)
-(define-key evil-visual-state-map ";" 'evil-ex)
+(-nvmap ";" 'evil-ex)
+(-nvmap "X" 'evil-exchange)
 
-(nvmap my-mode-map
-      "gc" 'evil-ace-jump-char-mode
-      "gw" 'evil-ace-jump-word-mode        ; overwrites evil-fill
-      "gl" 'evil-ace-jump-line-mode)
+;;;; <Leader> ;;;;;;;;;;;;;;;;;;;;;;;;;;
+(nmap!  ",r"   'my:run-code-buffer
+        ",R"   'my:switch-to-repl
+        ",b"   'my:build
+        ",a"   'projectile-find-other-file
+        ",e"   'ido-find-file
+        ",E"   'my:ex:init-files
+        ",m"   'my:ex:mru                ; recent GLOBAL files
+        ",M"   'projectile-recentf       ; recent PROJECT files
+        ",p"   'projectile-switch-project
+        ",g"   'git-gutter+-show-hunk
+        ",;"   'helm-imenu
+        ",:"   'my:goto-symbol
+        ",,"   'ido-switch-buffer
+        ",."   'projectile-find-file)
 
-(nmap my-mode-map
-      ;; Leader maps
-      ",'"       'mc/mark-next-like-this
-      ",\""      'mc/mark-all-like-this
+(vmap!  ",r"   'my:run-code-region
+        ",R"   'my:send-region-to-repl)
 
-      ",e"       'ido-find-file
-      ",E"       'my:ex:init-files
-      ",m"       'my:ex:mru                ; recent GLOBAL files
-      ",M"       'projectile-recentf       ; recent PROJECT files
-      ",p"       'projectile-switch-project
-      ",\\"      'neotree-show
-      ",|"       'neotree-hide
-      ",;"       'helm-imenu
-      ",:"       'my:ido-goto-symbol
-      ",,"       'ido-switch-buffer
-      ",."       'projectile-find-file
-      ",="       'align-regexp
+(nvmap! ",x"   'my:ex:scratch-buffer
+        ",X"   'my:ex:org-capture
+        ",="   'align-regexp)
 
-      ;; Moving rows rather than lines (in case of wrapping)
-      "j"        'evil-next-visual-line
-      "k"        'evil-previous-visual-line
+;;;; <localleader> ;;;;;;;;;;;;;;;;;;;;;
+(-nmap  "\\"   'evil-execute-in-god-state)
+(gmap!  ":"    'linum-mode
+        "\\"   'neotree-show
+        "|"    'neotree-hide
 
-      "X"        'evil-destroy           ; Delete without yanking
+        "oo"   'my:send-dir-to-finder
+        "ou"   'my:send-to-transmit
+        "ol"   'my:send-to-launchbar
+        "oL"   'my:send-dir-to-launchbar
 
-      ;; behave  like D and C; yank to end of line
-      "Y"        (λ (evil-yank (point) (point-at-eol)))
+        ;; tmux: cd (default-directory)
+        "ot"   (λ (my:ex:tmux-chdir nil t))
+        ;; tmux: cd [project root]
+        "oT"   'my:ex:tmux-chdir)
 
-      "zz"       'kill-this-buffer       ; Close buffer
-      "]b"       'next-buffer
-      "[b"       'previous-buffer
-      "]e"       'next-error
-      "[e"       'previous-error
-      "]h"       'git-gutter:next-hunk
-      "[h"       'git-gutter:previous-hunk
+;;;; Keybindings ;;;;;;;;;;;;;;;;;;;;;;;
+(nvmap! "gc"   'evil-ace-jump-char-mode
+        "gw"   'evil-ace-jump-word-mode  ; overwrites evil-fill
+        "gl"   'evil-ace-jump-line-mode
 
-      ;; For quickly capturing notes and todos
-      (kbd ", RET")     'org-capture
+        "]\\"  'er/expand-region
+        "[\\"  'er/contract-region
 
-      ;; winner-mode: window layout undo/redo (see init-core.el)
-      (kbd "C-w u")     'winner-undo
-      (kbd "C-w C-r")   'winner-redo
+        "]g"   'git-gutter+-stage-hunks
+        "[g"   'git-gutter+-revert-hunks)
 
-      ;; Increment/decrement number under cursor
-      (kbd "C--")  'evil-numbers/inc-at-pt
-      (kbd "C-+")  'evil-numbers/dec-at-pt)
+(nmap!  ;; Moving rows rather than lines (in case of wrapping)
+        "j"    'evil-next-visual-line
+        "k"    'evil-previous-visual-line
 
-(vmap my-mode-map
-      ;; vnoremap < <gv
-      "<"      (λ (evil-shift-left (region-beginning) (region-end))
-                  (evil-normal-state)
-                  (evil-visual-restore))
-      ;; vnoremap > >gv
-      ">"      (λ (evil-shift-right (region-beginning) (region-end))
-                  (evil-normal-state)
-                  (evil-visual-restore))
+        ;; behave  like D and C; yank to end of line
+        "Y"    (λ (evil-yank (point) (point-at-eol)))
 
-      "+"      'er/expand-region
-      "_"      'er/contract-region)
+        "zz"   'kill-this-buffer
+        "zx"   'bury-buffer
 
+        "]b"   'next-buffer
+        "[b"   'previous-buffer
+        "]e"   'next-error
+        "[e"   'previous-error
+        "]h"   'git-gutter+-next-hunk
+        "[h"   'git-gutter+-previous-hunk
 
-(define-key evil-motion-state-map (kbd "RET") 'evil-ret-and-indent)
-(imap my-mode-map
-      ;; Join lines from insert mode
-      (kbd "<M-kp-delete>") 'evil-join
+        ;; winner-mode: window layout undo/redo (see init-core.el)
+        (kbd "C-w u")     'winner-undo
+        (kbd "C-w C-r")   'winner-redo
 
-      ;; Newline magic
-      [remap autopair-newline] 'my.newline-and-indent
-      (kbd "<C-return>")       'evil-ret-and-indent
-      (kbd "<M-return>")       (kbd "<return> DEL") ; newline and dedent
+        ;; Increment/decrement number under cursor
+        (kbd "C--")       'evil-numbers/inc-at-pt
+        (kbd "C-+")       'evil-numbers/dec-at-pt)
 
-      ;; Textmate-esque indent shift left/right
-      (kbd "s-[")           (kbd "C-o m l C-o I DEL C-o ` l")
-      (kbd "s-]")           (λ (evil-shift-right (point-at-bol) (point-at-eol)))
-      (kbd "<backtab>")     (kbd "s-["))
+(vmap!  ;; vnoremap < <gv
+        "<"    (λ (evil-shift-left (region-beginning) (region-end))
+                    (evil-normal-state)
+                    (evil-visual-restore))
+        ;; vnoremap > >gv
+        ">"    (λ (evil-shift-right (region-beginning) (region-end))
+                    (evil-normal-state)
+                    (evil-visual-restore)))
 
-(emap my-mode-map
-      ;; Preserve buffer-movement in emacs mode
-      "j" 'evil-next-line
-      "k" 'evil-previous-line
-      ";" 'linum-mode
+(imap!  ;; Join lines from insert mode
+        (kbd "<M-kp-delete>") 'evil-join
 
-      "o" 'send-dir-to-finder
-      "u" 'send-to-transmit
-      "l" 'send-to-launchbar
-      "L" 'send-dir-to-launchbar
-      "t" 'my:tmux-chdir
-      "T" (λ (my:tmux-chdir (projectile-project-root)))
+        ;; Newline magic
+        (kbd "<C-return>")    'evil-ret-and-indent
+        (kbd "<M-return>")    (kbd "<return> DEL") ; newline and dedent
 
-      (kbd "C-w h") 'evil-window-left
-      (kbd "C-w l") 'evil-window-right
-      (kbd "C-w j") 'evil-window-down
-      (kbd "C-w k") 'evil-window-up)
+        ;; Textmate-esque indent shift left/right
+        (kbd "s-[")           (kbd "C-o m l C-o I DEL C-o ` l")
+        (kbd "s-]")           (λ (evil-shift-right (point-at-bol) (point-at-eol)))
+        (kbd "<backtab>")     (kbd "s-["))
+
+(emap!  ;; Preserve buffer-movement in emacs mode
+        "\C-j"        'evil-next-line
+        "\C-k"        'evil-previous-line
+
+        (kbd "C-w h") 'evil-window-left
+        (kbd "C-w l") 'evil-window-right
+        (kbd "C-w j") 'evil-window-down
+        (kbd "C-w k") 'evil-window-up)
 
 ;; Rotate-text (see elisp/rotate-text.el)
-(nmap my-mode-map "!" 'rotate-word-at-point)
-(vmap my-mode-map "!" 'rotate-region)
+(nmap!  "!" 'rotate-word-at-point)
+(vmap!  "!" 'rotate-region)
 
 ;; Easy escape from insert mode
 (ichmap "jj" 'evil-normal-state)
@@ -188,85 +159,215 @@
 ;; Enable TAB to do matchit
 (nmap evil-matchit-mode-map (kbd "TAB") 'evilmi-jump-items)
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Plugin/mode keymaps                ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ;; Real go-to-definition for elisp
 (nmap emacs-lisp-mode-map "gd"
       (λ (let ((func (function-called-at-point)))
            (if func (find-function func)))))
 
+(after ag
+       (defmap ag-mode-map
+               [escape] 'ag-kill-buffers
+               "h"      nil))
+
+(after auto-complete
+       (imap ac-mode-map
+             (kbd "C-x C-f")   'ac-complete-filename
+             (kbd "C-SPC")     'auto-complete)
+
+       (defmap ac-completing-map
+             (kbd "<tab>") 'ac-complete
+             (kbd "C-n") 'ac-next
+             (kbd "C-p") 'ac-previous
+             (kbd "<F1>") 'ac-quick-help
+             (kbd "ESC") 'ac-stop
+             (kbd "RET") 'ac-complete))
+
+(after emmet-mode
+       (imap emmet-mode-keymap
+             (kbd "s-e") 'emmet-expand-yas
+             (kbd "s-E") 'emmet-expand-line))
+
+(after js-mode
+       (imap js-mode-map [remap auto-complete] 'tern-ac-complete))
+
+(after markdown-mode
+       (let ((map markdown-mode-map))
+         (nvmap map
+                (kbd ",i") 'markdown-insert-image
+                (kbd ",l") 'markdown-insert-link
+                (kbd ",L") 'markdown-insert-reference-link-dwim)
+
+         (nmap map
+               "[p" 'markdown-promote
+               "]p" 'markdown-demote)
+
+         (imap map (kbd "M--") 'markdown-insert-hr)
+
+         (defmap map
+           (kbd "<backspace>")  nil
+           (kbd "<M-left>")     nil
+           (kbd "<M-right>")    nil
+
+           (kbd "s-*") 'markdown-insert-list-item
+           (kbd "s-b") 'markdown-insert-bold
+           (kbd "s-i") 'markdown-insert-italic
+           (kbd "s-`") 'markdown-insert-del)))
+
+(after multiple-cursors
+       (imap mc/keymap
+             (kbd "s-'")   'mc/mark-next-like-this
+             (kbd "s-\"")  'mc/mark-previous-like-this
+             (kbd "C-s-'") 'mc/mark-all-like-this)
+
+       (vmap mc/keymap
+             (kbd "s-'")   'mc/mark-next-like-this
+             (kbd "s-\"")  'mc/mark-previous-like-this
+             (kbd "C-s-'") 'mc/mark-all-like-this))
+
+(after nose
+       (nmap nose-mode-map
+             ",tr" 'nosetests-again
+             ",ta" 'nosetests-all
+             ",ts" 'nosetests-one
+             ",tv" 'nosetests-module
+             ",tA" 'nosetests-pdb-all
+             ",tO" 'nosetests-pdb-one
+             ",tV" 'nosetests-pdb-module))
+
+(after org
+       ;; normal & insert state shortcuts.
+       ;; (mapc (lambda (state)
+       ;;         (evil-define-key state evil-org-mode-map
+       ;;           (kbd "M--") 'my/org-insert-list-item
+       ;;           (kbd "M-l") 'org-metaright
+       ;;           (kbd "M-h") 'org-metaleft
+       ;;           (kbd "M-k") 'org-metaup
+       ;;           (kbd "M-j") 'org-metadown
+       ;;           (kbd "M-L") 'org-shiftmetaright
+       ;;           (kbd "M-H") 'org-shiftmetaleft
+       ;;           (kbd "M-K") 'org-shiftmetaup
+       ;;           (kbd "M-J") 'org-shiftmetadown
+       ;;           (kbd "<M-return>") '(lambda () (interactive)
+       ;;                                 (my/org-eol-call
+       ;;                                  '(lambda()
+       ;;                                     (org-insert-heading)
+       ;;                                     (org-metaright))))
+       ;;           (kbd "M-t") '(lambda () (interactive)
+       ;;                          (my/org-eol-call
+       ;;                           '(lambda()
+       ;;                              (org-insert-todo-heading nil)
+       ;;                              (org-metaright))))
+       ;;           ))
+       ;;       '(normal insert))
+
+       ;; Formatting shortcuts
+
+       (imap evil-org-mode-map
+             (kbd "s-b") (λ (my/org-surround "*"))     ; bold
+             (kbd "s-u") (λ (my/org-surround "_"))     ; underline
+             (kbd "s-i") (λ (my/org-surround "/"))     ; italics
+             (kbd "s-`") (λ (my/org-surround "+"))     ; strikethrough
+
+             (kbd "<s-return>") 'org-insert-heading-after-current)
+
+       (nvmap evil-org-mode-map
+              ",l" 'org-insert-link)
+
+       (vmap evil-org-mode-map
+             (kbd "s-b") "s*"          ; bold
+             (kbd "s-i") "s/")         ; italics
+
+       (nmap evil-org-mode-map
+             ",d" 'org-time-stamp
+             ",D" 'org-time-stamp-inactive
+             ",s" 'org-schedule
+             ",a" 'org-attach
+             ",A" 'org-attach-open
+             ",t" 'org-todo
+             ",T" 'org-show-todo-tree
+             ",/" 'org-match-sparse-tree
+             ",?" 'org-tags-view
+             ",+" 'org-align-all-tags
+             ",r" 'org-refile
+             "gh" 'outline-up-heading
+             "gj" 'org-forward-heading-same-level
+             "gk" 'org-backward-heading-same-level
+             "gl" 'outline-next-visible-heading
+             "go" 'org-open-at-point
+             "ga" 'org-agenda
+             "H" 'org-beginning-of-line
+             "L" 'org-end-of-line
+             "$" 'org-end-of-line
+             "^" 'org-beginning-of-line
+             "<" 'org-metaleft
+             ">" 'org-metaright
+             "-" 'org-cycle-list-bullet
+             (kbd ", SPC") 'org-archive-subtree
+             (kbd "<s-return>") (λ (org-insert-heading-after-current) (evil-insert-state))
+             (kbd "RET") (λ (org-todo 'done))
+             (kbd "TAB") 'org-cycle))
+
+(after ruby-mode
+       (nmap ruby-mode-map "gd" 'rsense-jump-to-definition))
+
+(after rspec-mode
+       (nmap rspec-mode-verifiable-keymap
+             ",tr" 'rspec-rerun
+             ",ta" 'rspec-verify-all
+             ",ts" 'rspec-verify-single
+             ",tv" 'rspec-verify)
+       (nmap rspec-dired-mode-keymap
+             ",tv" 'rspec-dired-verify
+             ",ts" 'rspec-dired-verify-single
+             ",ta" 'rspec-verify-all
+             ",tr" 'rspec-rerun))
+
+(after web-mode
+       (defmap web-mode-map (kbd "s-/") 'web-mode-comment-or-uncomment)
+
+       (nvmap web-mode-map
+              "]a" 'web-mode-attribute-next
+              "]t" 'web-mode-tag-next
+              "[t" 'web-mode-tag-previous
+              "]T" 'web-mode-element-child
+              "[T" 'web-mode-element-parent)
+
+       (nmap web-mode-map
+             "zf" 'web-mode-fold-or-unfold
+             ",t" 'web-mode-element-rename))
+
+(after re-builder
+       (nmap reb-mode-map
+             ",r" 'reb-enter-subexp-mode
+             ",b" 'reb-copy
+             ",i" 'reb-change-syntax
+             "\C-n" 'reb-next-match
+             "\C-p" 'reb-prev-match))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Ex Commands                        ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(evil-ex-define-cmd "msg"         'my:ex:msg-buffer)
-(evil-ex-define-cmd "recompile"   'my:ex:byte-compile-all)
-(evil-ex-define-cmd "n[otes]"     'my:ex:notes)
-(evil-ex-define-cmd "ini"         'my:ex:init-files)
-(evil-ex-define-cmd "snip[pets]"  'my:ex:snippets)
-(evil-ex-define-cmd "mru"         'my:ex:mru)
 
-(evil-ex-define-cmd "retab"       'my:ex:retab)
-(evil-ex-define-cmd "ag"          'my:ex:ag-search)
-(evil-ex-define-cmd "agr"         'my:ex:ag-regex-search)
-(evil-ex-define-cmd "x"           'my:ex:scratch-buffer)
+(exmap "msg"         'my:ex:msg-buffer)
+(exmap "recompile"   'my:ex:byte-compile-all)
+(exmap "n[otes]"     'my:ex:notes)
+(exmap "ini"         'my:ex:init-files)
+(exmap "snip[pets]"  'my:ex:snippets)
+(exmap "mru"         'my:ex:mru)
 
-(evil-ex-define-cmd "bx"          'my:ex:kill-buffers)
-(evil-ex-define-cmd "tcd"         'my:ex:tmux-chdir)
-(evil-ex-define-cmd "tmux"        'my:ex:tmux-send)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Keymap fixes                       ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; Restores "dumb" indentation to the tab key. This rustles a lot of
-;; peoples' jimmies, apparently, but it's how I like it.
-(imap my-mode-map (kbd "<tab>") 'my.dumb-indent)
-;; Except for lisp
-(imap lisp-mode-map (kbd "<tab>") 'indent-for-tab-command)
-(imap emacs-lisp-mode-map (kbd "<tab>") 'indent-for-tab-command)
-
-;; Highjacks the backspace and space to:
-;;   a) expand spaces between delimiters intelligently: (|) -> ( | )
-;;   b) the reverse of A: ( | ) -> (|)
-;;   c) And allow backspace to delete indentation blocks intelligently
-(define-key evil-insert-state-map
-  [remap autopair-backspace] 'my.deflate-space-maybe)
-(define-key evil-insert-state-map
-  (kbd "SPC") 'my.inflate-space-maybe)
-
-;; Make ESC quit all the things
-(mapc (lambda (map)
-    (define-key map [escape] 'my.minibuffer-quit))
-      (list minibuffer-local-map
-            minibuffer-local-ns-map
-            minibuffer-local-completion-map
-            minibuffer-local-must-match-map
-            minibuffer-local-isearch-map))
-(define-key evil-emacs-state-map [escape] 'evil-exit-emacs-state)
-;; Close help/compilation windows with escape
-(define-key help-mode-map [escape] 'kill-buffer-and-window)
-(define-key compilation-mode-map [escape] 'kill-buffer-and-window)
-(evil-define-key 'emacs debugger-mode-map [remap evil-exit-emacs-state] 'kill-buffer-and-window)
-
-;; Restore bash-esque keymaps in insert mode
-(imap my-mode-map
-      (kbd "C-a") 'evil-move-beginning-of-line
-      (kbd "C-e") 'evil-move-end-of-line
-      (kbd "C-u") 'my.backward-kill-to-bol-and-indent)
-
-;; And the minibuffer
-(mapc (lambda (map)
-    (define-key map (kbd "C-a") 'move-beginning-of-line)
-    (define-key map (kbd "C-e") 'move-end-of-line)
-    (define-key map (kbd "C-u") 'my.backward-kill-to-bol))
-      (list minibuffer-local-map minibuffer-local-ns-map))
-(define-key evil-insert-state-map (kbd "C-w") 'backward-kill-word)
-(define-key minibuffer-local-map (kbd "C-w") 'ido-delete-backward-word-updir)
-
-(add-hook 'ido-setup-hook '(lambda ()
-    ;; take that "Text is read-only" and stick it where emacs don't shine!
-    (define-key ido-completion-map (kbd "<backspace>") 'ido-delete-backward-updir)
-    (define-key ido-completion-map "\C-n" 'ido-next-match)
-    (define-key ido-completion-map "\C-p" 'ido-prev-match)
-
-    ;; Auto-complete on tab/space (why is it called ido-exit-minibuffer?)
-    (define-key ido-completion-map " " 'ido-exit-minibuffer)))
+(exmap "retab"       'my:ex:retab)
+(exmap "ag"          'my:ex:ag-search)
+(exmap "agr"         'my:ex:ag-regex-search)
+(exmap "x"           'my:ex:scratch-buffer)
+(exmap "a"           'projectile-find-other-file)
+(exmap "bx"          'my:ex:kill-buffers)
+(exmap "tcd"         'my:ex:tmux-chdir)
+(exmap "t[mux]"      'my:ex:tmux-send)
+(exmap "build"       'my:ex:build)
+(exmap "re[gex]"     're-builder)

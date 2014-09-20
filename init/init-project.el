@@ -1,14 +1,16 @@
 (provide 'init-project)
 
-(add-hook 'dired-load-hook
-          (lambda()
-            (use-package dired+ :config
-              (setq dired-recursive-deletes 'always
-                    dired-recursive-copies 'always
+(add-hook! 'dired-load-hook
+           (use-package dired+)
+           (setq dired-recursive-deletes 'always
+                 dired-recursive-copies 'always
 
-                    ;; if there is a dired buffer displayed in the next window, use its
-                    ;; current subdir, instead of the current subdir of this dired buffer
-                    dired-dwim-target t))))
+                 ;; if there is a dired buffer displayed in the next window, use its
+                 ;; current subdir, instead of the current subdir of this dired buffer
+                 dired-dwim-target t))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package helm :defer t)
 (use-package grizzl :defer t)
@@ -22,14 +24,13 @@
   :config
   (progn (projectile-global-mode)
          (setq projectile-completion-system 'grizzl
-               projectile-enable-caching t)))
+               projectile-enable-caching t
+               projectile-cache-file (concat *tmp-dir "projectile.cache")
+               projectile-known-projects-file (concat *tmp-dir "projectile-bookmarks.eld"))))
 
 (use-package ag
   :commands (ag ag-search ag-regexp)
   :config
-  (progn
-    (setq ag-reuse-window t)
-    (setq ag-reuse-buffers t)
-    (setq ag-highlight-search t)
-    (define-key ag-mode-map [escape] 'ag-kill-buffers)
-    (define-key ag-mode-map "h" nil)))
+  (setq ag-reuse-window t
+        ag-reuse-buffers t
+        ag-highlight-search t))

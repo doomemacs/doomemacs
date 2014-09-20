@@ -55,9 +55,6 @@
 
 (eval-when-compile (require 'cl))
 
-(require 'autopair)
-
-
 (defvar ruby--paren-closings-regex
   "[])}\"']"
   "regex matching closing paren or string delimiter.")
@@ -83,7 +80,7 @@ note: `ruby-deep-indent-paren' has to be enabled for this to work."
       (save-excursion
         (back-to-indentation)
         (let ((state (syntax-ppss)))
-          (when (and (or (memq (autopair-find-pair (char-after)) ruby-deep-indent-paren)
+          (when (and (or (memq (sp-get-pair (char-after)) ruby-deep-indent-paren)
                          (and (eq (char-after) ?\})
                               (eq 'brace (ruby--point-in-braced-proc))))
                      (not (zerop (car state))))

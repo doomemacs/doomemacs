@@ -41,7 +41,7 @@
         (builtin          "#d08770")
         (foreground       "#c0c5ce")
         (invisibles       "#65737e")
-        (lineHighlight    "#242428")
+        (lineHighlight    "#353539")
         (selection        "#4f5b66")
         (text             "#c0c5ce")
         (comments         "#65737e")

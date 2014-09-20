@@ -13,29 +13,27 @@
 (depends-on "use-package")
 
 ;; Editing
+(depends-on "smart-mode-line")
 (depends-on "shut-up")
 (depends-on "dired+")
-(depends-on "autopair")
 (depends-on "expand-region")
 (depends-on "flycheck")
 (depends-on "flyspell")
 (depends-on "multiple-cursors")
 (depends-on "rainbow-delimiters")
-(depends-on "autopair")
+(depends-on "smartparens")
 (depends-on "anzu")
 (depends-on "key-chord")
 (depends-on "saveplace")
 (depends-on "yasnippet")
-(depends-on "git-gutter")
+(depends-on "git-gutter-fringe+")
 (depends-on "popwin")
 (depends-on "dash-at-point")
 (depends-on "auto-complete")
 (depends-on "auto-complete-clang")
 (depends-on "auto-complete-c-headers")
 (depends-on "ace-jump-mode")
-(depends-on "highlight-indentation" :git "https://github.com/hlissner/Highlight-Indentation-for-Emacs")
-(depends-on "gist")
-;;(depends-on "smart-tabs-mode")
+;; (depends-on "gist")
 
 ;; Eeeevil
 (depends-on "evil")
@@ -46,6 +44,10 @@
 (depends-on "evil-space")
 (depends-on "evil-visualstar")
 (depends-on "evil-nerd-commenter")
+(depends-on "evil-indent-textobject")
+(depends-on "evil-jumper")
+(depends-on "evil-god-state")
+(depends-on "god-mode")
 
 ;; Project management
 (depends-on "projectile")
@@ -79,13 +81,11 @@
 (depends-on "tern")
 (depends-on "tern-auto-complete")
 
-(depends-on "rbenv")
 (depends-on "rspec-mode")
 (depends-on "inf-ruby")
 (depends-on "ac-inf-ruby")
 
 (depends-on "jedi")
-(depends-on "pyenv" :git "https://github.com/cyberved/pyenv.el")
 
 (depends-on "omnisharp")
 (depends-on "csharp-mode")

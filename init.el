@@ -3,62 +3,67 @@
 ;; Author: Henrik Lissner <henrik@lissner>
 ;; URL: https://github.com/hlissner/emacs.d
 ;;
-;; These settings set up a vim-like experience, with some of emacs
-;; goodness squeezed into the cracks.
+;; My emacs.d, which sets out to rustle emacs users' jimmies by making
+;; emacs as vim-like as possible.
 ;;
 ;;; Code:
 
-(cd "~")                 ; Default directory, instead of /
-;; (setq use-package-verbose t)
+;; instead of /
+(cd "~")
+;; (setq use-package-verbose t) ; for debug purposes
 
 (require 'cask)
 (cask-initialize)
 
-(when window-system
-  (server-mode t)
-  (unless (server-running-p) (server-start)))
-
-;; Global vars
 (defconst *dir           (file-name-directory load-file-name))
-(defconst *init-dir      (expand-file-name "init" *dir))
-(defconst *themes-dir    (expand-file-name "themes" *dir))
-(defconst *elisp-dir     (expand-file-name "elisp" *dir))
-(defconst *snippets-dir  (expand-file-name "snippets" *dir))
-(defconst *ac-dicts-dir  (expand-file-name "ac-dict" *dir))
+(defconst *init-dir      (concat *dir "init/"))
+(defconst *themes-dir    (concat *dir "themes/"))
+(defconst *elisp-dir     (concat *dir "elisp/"))
+(defconst *snippets-dir  (concat *dir "snippets/"))
+(defconst *ac-dicts-dir  (concat *dir "ac-dict"))
+(defconst *tmp-dir       "/tmp/emacs/")
 
 (defconst *theme  'brin)
 (defconst *font   "Inconsolata-16")
-;; (defconst my/font   "Ubuntu-Mono-15")
 
 (add-to-list 'load-path *init-dir)
 
+;; Just the... bear necessities...
 (mapc 'require
-  '(core                ; Just the... bear necessities...
+  '(core
+    my-defuns               ; Personal library
 
-    ;;; These are implicitly loaded from core.el, leave them commented!
-    ;; core-editor      ; Internal config for global editor behavior
-    ;; core-ui          ; User interface layout & behavior
-    ;; core-osx         ; Mac-specific config
-    ;; my-keymaps       ; My keybindings (loaded on after-init-hook)
+    ;; Tailoring emacs
+    core-editor             ; Internal config for global editor behavior
+    core-ui                 ; User interface layout & behavior
+    core-osx                ; Mac-specific config
 
-    my-defuns           ; Personal functions
+    ;; Plugins & modules
+    init-ido                ; Ido setup
+    init-project            ; Project navigation tools & settings
+    init-ac                 ; Auto-complete engine & settings
+    init-snippets           ; Snippet engine
+    init-git                ; GIT tools/settings
+    init-fly                ; Syntax & spell checker
 
-    ;; Modules to improve on emacs' heresy
-    init-ido            ; Ido setup
-    init-project        ; Project navigation tools & settings
-    init-ac             ; Auto-complete engine & settings
-    init-snippets       ; Snippet engine
-    init-git            ; GIT tools/settings
-    init-fly            ; Syntax and spell checker
-    init-text           ; Plain text editing (markdown, text)
-    init-org            ; Org-mode: personal gtd/notes
-    init-dev            ; Generic environment for all programming
+    ;; Modes & environments
+    init-text               ; Plain text editing (markdown, text)
+    init-org                ; Org-mode: personal gtd/notes
+    init-dev                ; Generic dev tools & environment for all programming
     init-ruby
     init-python
-    init-webdev         ; Environment for webdev (SCSS, PHP, Rails, Jekyll)
-    init-love           ; Love.app gamedev
-    init-cpp            ; C++ gamedev
-    init-eclim          ; Integration into eclipse (for Java)
-    init-csharp         ; Emacs as a Csharp/Unity IDE
-    ;; init-collab         ; For collab programming
+    init-webdev             ; Environment for webdev (SCSS, PHP, Rails, Jekyll)
+    init-love               ; Love.app gamedev
+    init-cpp                ; C++ gamedev
+    init-eclim              ; Integration into eclipse (for Java)
+    init-csharp             ; Emacs as a Csharp/Unity IDE
+
+    my-settings             ; Any other custom settings
+    my-commands             ; Interactive defuns & evil operators/commands
+    my-keymaps              ; My keybindings
     ))
+
+(require 'server)
+(unless (server-running-p) (server-start))
+
+;; I've created a monster!
