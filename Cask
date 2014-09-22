@@ -26,14 +26,13 @@
 (depends-on "key-chord")
 (depends-on "saveplace")
 (depends-on "yasnippet")
-(depends-on "git-gutter-fringe+")
+(depends-on "git-gutter")
 (depends-on "popwin")
 (depends-on "dash-at-point")
 (depends-on "auto-complete")
 (depends-on "auto-complete-clang")
 (depends-on "auto-complete-c-headers")
 (depends-on "ace-jump-mode")
-;; (depends-on "gist")
 
 ;; Eeeevil
 (depends-on "evil")
