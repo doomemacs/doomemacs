@@ -200,7 +200,7 @@ returns nil."
        "\C-u" 'my.backward-kill-to-bol-and-indent
 
        ;; Fix osx keymappings
-       (kbd "<s-left>")      'evil-move-beginning-of-line
+       (kbd "<s-left>")      'my.move-to-bol
        (kbd "<s-right>")     'my.move-to-eol
        (kbd "<s-backspace>") 'my.backward-kill-to-bol-and-indent
 
