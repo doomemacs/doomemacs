@@ -42,7 +42,8 @@
 (depends-on "evil-exchange")
 (depends-on "evil-space")
 (depends-on "evil-visualstar")
-(depends-on "evil-nerd-commenter")
+;; evil-nerd-commenter chokes if it's installed via cask for some reason...
+;;(depends-on "evil-nerd-commenter")
 (depends-on "evil-indent-textobject")
 (depends-on "evil-jumper")
 (depends-on "evil-god-state")
