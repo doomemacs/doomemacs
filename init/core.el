@@ -19,7 +19,6 @@
               enable-recursive-minibuffers nil
               redisplay-dont-pause t
               confirm-kill-emacs nil
-              vc-follow-symlinks nil
               compilation-scroll-output t)
 
 ;; Show keystrokes
