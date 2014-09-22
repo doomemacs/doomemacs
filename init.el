@@ -56,14 +56,14 @@
     init-love               ; Love.app gamedev
     init-cpp                ; C++ gamedev
     init-eclim              ; Integration into eclipse (for Java)
-    init-csharp             ; Emacs as a Csharp/Unity IDE
+    ;; init-csharp             ; Emacs as a Csharp/Unity IDE
 
     my-settings             ; Any other custom settings
     my-commands             ; Interactive defuns & evil operators/commands
     my-keymaps              ; My keybindings
     ))
 
-(require 'server)
-(unless (server-running-p) (server-start))
+;; (require 'server)
+;; (unless (server-running-p) (server-start))
 
 ;; I've created a monster!

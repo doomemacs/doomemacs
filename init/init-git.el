@@ -21,7 +21,7 @@
          ("/\\.git/info/exclude\\'" . gitignore-mode)
          ("/git/ignore\\'" . gitignore-mode)))
 
-(use-package git-gutter+
-  :diminish git-gutter+-mode
+(use-package git-gutter
+  :diminish git-gutter-mode
   :init
-  (global-git-gutter+-mode 1))
+  (global-git-gutter-mode 1))

@@ -1,12 +1,5 @@
 (provide 'init-ruby)
 
-(defun enable-ruby-rsense ()
-  (setq rsense-home "/usr/local/Cellar/rsense/0.3/libexec")
-  (when (file-directory-p rsense-home)
-    (add-to-list 'load-path (concat rsense-home "/etc"))
-    (require 'rsense)
-    (add-hook 'ruby-mode-hook 'ac-add-ruby-rsense)))
-
 (defun ac-add-ruby-rsense ()
   (setq ac-sources (append '(ac-source-rsense ac-source-yasnippet) ac-sources)))
 
@@ -48,7 +41,11 @@
 
 	;;; Auto-completion
     ;; Remember to install rsense w/ homebrew!
-    (enable-ruby-rsense)
+    (setq rsense-home "/usr/local/Cellar/rsense/0.3/libexec")
+    (when (file-directory-p rsense-home)
+      (add-to-list 'load-path (concat rsense-home "/etc"))
+      (require 'rsense)
+      (add-hook 'ruby-mode-hook 'ac-add-ruby-rsense))
 
     (add-hook! 'ruby-mode-hook
                (setq my-switch-to-repl-func 'ruby-switch-to-inf
