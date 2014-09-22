@@ -20,8 +20,8 @@
 
     ;; Faster scrolling
     (mapc (lambda(map)
-            (evil-define-key map my-mode-map (kbd "s-j") (kbd "C-j"))
-            (evil-define-key map my-mode-map (kbd "s-k") (kbd "C-k")))
+            (evil-define-key map my-mode-map (kbd "s-j") "5j")
+            (evil-define-key map my-mode-map (kbd "s-k") "5k"))
           '(emacs normal visual))
 
     (nmap!  (kbd "s-t")   'projectile-find-file
@@ -266,6 +266,9 @@
        ;;       '(normal insert))
 
        ;; Formatting shortcuts
+
+       (define-key org-mode-map (kbd "C-j") nil)
+       (define-key org-mode-map (kbd "C-k") nil)
 
        (imap evil-org-mode-map
              (kbd "s-b") (λ (my/org-surround "*"))     ; bold
