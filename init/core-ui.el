@@ -44,24 +44,27 @@
 (add-to-list 'default-frame-alist `(font . ,*font))
 (add-to-list 'default-frame-alist '(alpha 98 95))   ; *slightly* transparent window
 
-(when (functionp 'tool-bar-mode) (tool-bar-mode -1))
 (when (functionp 'scroll-bar-mode) (scroll-bar-mode -1))
+(when (functionp 'tool-bar-mode) (tool-bar-mode -1))
 (when (functionp 'menu-bar-mode) (menu-bar-mode -1))
 
 ;;;; Modeline ;;;;;;;;;;;;;;;;;;;;;;;;;;
 (use-package smart-mode-line
   :config
   (mapc (lambda(mode) (add-to-list 'rm-excluded-modes mode))
-        '(" Rake"
-          " SP"
+        '(" SP"
           " Fill"
+          " yas"
+          " Fly"
+          " EvilOrg"
           ))
   :init
   (progn
     (setq sml/no-confirm-load-theme t
-          sml/mode-width      'right
+          sml/mode-width      'full
           sml/show-remote     nil
           sml/encoding-format nil)
+    (add-to-list 'sml/replacer-regexp-list '("^:DB:projects/" "PR:") t)
 
     (sml/setup)
     (sml/apply-theme 'respectful)))
