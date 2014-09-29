@@ -57,10 +57,10 @@
     (setq ruby-deep-indent-paren t)
 	(add-hook 'ruby-mode-hook 'enable-tab-width-2)))
 
-(add-hook! 'find-file-hook
-           (let ((rake-path
-                  (f--traverse-upwards (f--exists? "Rakefile" it))))
-             (when rake-path
-               (use-package rake-mode)
-               (rake-mode t)
-               (rake-mode/visit-rakefile (expand-file-name "Rakefile" rake-path) t))))
+;; (add-hook! 'find-file-hook
+;;            (let ((rake-path
+;;                   (f--traverse-upwards (f--exists? "Rakefile" it))))
+;;              (when rake-path
+;;                (use-package rake-mode)
+;;                (rake-mode t)
+;;                (rake-mode/visit-rakefile (expand-file-name "Rakefile" rake-path) t))))
