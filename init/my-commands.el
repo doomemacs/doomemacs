@@ -202,7 +202,7 @@ to abort the minibuffer."
   :move-point nil
   :type inclusive
   :repeat nil
-  (interactive "<r><!>")
+  (interactive "<r>")
   (let ((mode major-mode)
         (text (when (and beg end) (buffer-substring beg end))))
     (if text

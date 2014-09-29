@@ -1,7 +1,6 @@
 (provide 'init-snippets)
 
 (use-package yasnippet
-    :diminish (yas-minor-mode . " $")
     :mode (("emacs.+/snippets/" . snippet-mode))
     :pre-load
     (progn

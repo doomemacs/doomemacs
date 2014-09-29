@@ -20,4 +20,4 @@
   :init
   (progn
     (setq csharp-want-imenu nil)
-    (add-hook 'csharp-mode-hook (lambda() (omnisharp-mode t) (flycheck-mode t)))))
+    (add-hook! 'csharp-mode-hook (omnisharp-mode t) (flycheck-mode t))))

@@ -6,7 +6,7 @@
 
 (global-set-key (kbd "M-x") 'smex)
 (global-set-key (kbd "M-X") 'smex-major-mode-commands)
-(global-set-key (kbd "C-;") 'eval-expression)
+(global-set-key (kbd "C-:") 'eval-expression)
 (global-set-key (kbd "C-j") "5j")
 (global-set-key (kbd "C-k") "5k")
 
@@ -63,9 +63,7 @@
 (vmap!  ",r"   'my:run-code-region
         ",R"   'my:send-region-to-repl)
 
-(nvmap! ",x"   'my:ex:scratch-buffer
-        ",X"   'my:ex:org-capture
-        ",="   'align-regexp)
+(nvmap! ",="   'align-regexp)
 
 ;;;; <localleader> ;;;;;;;;;;;;;;;;;;;;;
 (-nmap  "\\"   'evil-execute-in-god-state)
@@ -240,43 +238,17 @@
              ",tV" 'nosetests-pdb-module))
 
 (after org
-       ;; normal & insert state shortcuts.
-       ;; (mapc (lambda (state)
-       ;;         (evil-define-key state evil-org-mode-map
-       ;;           (kbd "M--") 'my/org-insert-list-item
-       ;;           (kbd "M-l") 'org-metaright
-       ;;           (kbd "M-h") 'org-metaleft
-       ;;           (kbd "M-k") 'org-metaup
-       ;;           (kbd "M-j") 'org-metadown
-       ;;           (kbd "M-L") 'org-shiftmetaright
-       ;;           (kbd "M-H") 'org-shiftmetaleft
-       ;;           (kbd "M-K") 'org-shiftmetaup
-       ;;           (kbd "M-J") 'org-shiftmetadown
-       ;;           (kbd "<M-return>") '(lambda () (interactive)
-       ;;                                 (my/org-eol-call
-       ;;                                  '(lambda()
-       ;;                                     (org-insert-heading)
-       ;;                                     (org-metaright))))
-       ;;           (kbd "M-t") '(lambda () (interactive)
-       ;;                          (my/org-eol-call
-       ;;                           '(lambda()
-       ;;                              (org-insert-todo-heading nil)
-       ;;                              (org-metaright))))
-       ;;           ))
-       ;;       '(normal insert))
-
-       ;; Formatting shortcuts
-
+       (define-key org-mode-map (kbd "RET") nil)
        (define-key org-mode-map (kbd "C-j") nil)
        (define-key org-mode-map (kbd "C-k") nil)
 
+       ;; Formatting shortcuts
        (imap evil-org-mode-map
              (kbd "s-b") (λ (my/org-surround "*"))     ; bold
              (kbd "s-u") (λ (my/org-surround "_"))     ; underline
              (kbd "s-i") (λ (my/org-surround "/"))     ; italics
              (kbd "s-`") (λ (my/org-surround "+"))     ; strikethrough
-
-             (kbd "<s-return>") 'org-insert-heading-after-current)
+             )
 
        (nvmap evil-org-mode-map
               ",l" 'org-insert-link)
@@ -311,8 +283,9 @@
              ">" 'org-metaright
              "-" 'org-cycle-list-bullet
              (kbd ", SPC") 'org-archive-subtree
+             (kbd "<S-s-return>") (λ (evil-move-beginning-of-line) (org-insert-heading) (evil-insert-state))
              (kbd "<s-return>") (λ (org-insert-heading-after-current) (evil-insert-state))
-             (kbd "RET") (λ (org-todo 'done))
+             (kbd "RET") (λ (if (org-entry-is-todo-p) (org-todo 'done)))
              (kbd "TAB") 'org-cycle))
 
 (after ruby-mode
@@ -368,6 +341,7 @@
 (exmap "ag"          'my:ex:ag-search)
 (exmap "agr"         'my:ex:ag-regex-search)
 (exmap "x"           'my:ex:scratch-buffer)
+(exmap "X"           'my:ex:org-capture)
 (exmap "a"           'projectile-find-other-file)
 (exmap "bx"          'my:ex:kill-buffers)
 (exmap "tcd"         'my:ex:tmux-chdir)

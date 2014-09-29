@@ -50,6 +50,8 @@
   (progn
     (evil-mode 1)
 
+    (add-hook! 'find-file-hook (setq evil-shift-width tab-width))
+
     (setq evil-search-module 'evil-search)
     (setq evil-magic 'very-magic)
     ;; Color-coded state cursors
@@ -87,9 +89,11 @@
         (defun my.evil-surround-escaped-pair ()
           "Evil-surround function to allow escaped delimiters. e.g. \"...\""
           (let* ((input (format "\\%s" (char-to-string (read-char "\\")))))
-            (cons input input)))
-        (setq-default evil-surround-pairs-alist (cons '(?\\ . my.evil-surround-escaped-pair) evil-surround-pairs-alist))
-        ))
+            ;; Type \\ to simply surround in single backslashes
+            (if (= input "\\\\")
+                (cons "\\" "\\")
+              (cons input input))))
+        (setq-default evil-surround-pairs-alist (cons '(?\\ . my.evil-surround-escaped-pair) evil-surround-pairs-alist))))
 
     (use-package god-mode)
     (use-package evil-god-state :diminish god-local-mode)
@@ -108,7 +112,7 @@
       (evil-half-cursor))
 
     ;; Exit evil-exchange mode with <Esc> (silently) -- and close
-    ;; minibuffer remotely if it happens to be open
+    ;; minibuffer remotely if it happens to be left open
     (defadvice evil-force-normal-state (before evil-esc-quit-exchange activate)
       (shut-up (evil-exchange-cancel)
                (if (minibufferp)
@@ -186,7 +190,8 @@ returns nil."
 ;; Highjacks backspace and space to:
 ;;   a) expand spaces between delimiters intelligently: (|) -> ( | )
 ;;   b) the reverse of A: ( | ) -> (|)
-;;   c) And allow backspace to delete indented blocks intelligently
+;;   c) allow backspace to delete indented blocks intelligently
+;;   d) and not do any of this magic when inside a string
 (-imap (kbd "SPC")                              'my.inflate-space-maybe
        [remap backward-delete-char-untabify]    'my.deflate-space-maybe
        [remap delete-backward-char]             'my.deflate-space-maybe
@@ -246,12 +251,15 @@ returns nil."
     (setq sp-autowrap-region nil            ; let evil-surround handle this
           sp-highlight-pair-overlay nil
           sp-show-pair-delay 0
-          sp-autoescape-string-quote t)
+          sp-autoescape-string-quote nil)
 
     (sp-pair "{" nil :post-handlers '(("||\n[i]" "RET")))
     (sp-pair "[" nil :post-handlers '(("||\n[i]" "RET")))
-    (sp-local-pair 'emacs-lisp-mode "[" nil :post-handlers '(("|" "RET")))
+    (sp-with-modes '(emacs-lisp-mode lisp-mode)
+      (sp-local-pair "[" nil :post-handlers '(("|" "RET"))))
 
+    (sp-pair "[" nil :unless '(sp-point-before-word-p))
+    (sp-pair "(" nil :unless '(sp-point-before-word-p))
     (sp-pair "\"" nil :unless '(sp-point-after-word-p sp-point-before-word-p))
     (sp-pair "'" nil :unless '(sp-point-after-word-p sp-point-before-word-p))
 

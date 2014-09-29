@@ -39,11 +39,9 @@ already there, move it to the true bol."
   "Delete back to the previous column of whitespace, or as much
 whitespace as possible, or just one char if that's not possible."
   (interactive)
-  (cond ;; If in a string (workaround for smartparen bug)
+  (cond ;; If in a string
         ((sp-point-in-string)
-         (if (sp-point-in-empty-sexp)
-             (call-interactively 'sp-backward-delete-char)
-           (call-interactively 'backward-delete-char-untabify)))
+         (call-interactively 'backward-delete-char-untabify))
         ;; If using tabs (or at bol), just delete normally
         ((or indent-tabs-mode
              (= (point-at-bol) (point)))
@@ -99,7 +97,7 @@ spaces on either side of the point if so. Resorts to
   "Newline and indent; if in a comment, auto-comment and properly
 indent the next line."
   (interactive)
-  (cond ((in-string-p)
+  (cond ((sp-point-in-string)
          (evil-ret))
         ((evil-in-comment-p)
          (indent-new-comment-line))
