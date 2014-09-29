@@ -5,6 +5,7 @@ auto-save-list/
 .python-environments/
 .mc-lists.el
 bookmarks
+recentf
 
 # compiled files
 **/.*
