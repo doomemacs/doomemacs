@@ -7,10 +7,10 @@
   (progn
     (require 'auto-complete-config)
 
-    (setq ac-auto-start nil
+    (setq ac-auto-start t
           ac-auto-show-menu t        ; Suggestions box must be invoked manually (see core-keymaps.el)
           ac-use-menu-map t          ; Enable ac-menu-map map when menu is open
-          ac-use-quick-help nil       ; Don't show tooltips unless invoked (see core-keymaps.el)
+          ac-use-quick-help t        ; Don't show tooltips unless invoked (see core-keymaps.el)
           ac-use-fuzzy nil
           ac-candidate-limit 25)
     (setq ac-comphist-file (concat *tmp-dir "ac-comphist.dat"))

@@ -165,7 +165,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Real go-to-definition for elisp
-(nmap emacs-lisp-mode-map "gd"
+(mmap emacs-lisp-mode-map "gd"
       (λ (let ((func (function-called-at-point)))
            (if func (find-function func)))))
 
@@ -183,7 +183,7 @@
              (kbd "<tab>") 'ac-complete
              (kbd "C-n") 'ac-next
              (kbd "C-p") 'ac-previous
-             (kbd "<F1>") 'ac-quick-help
+             (kbd "S-C-SPC") 'ac-quick-help
              (kbd "ESC") 'ac-stop
              (kbd "RET") 'ac-complete))
 

@@ -5,13 +5,9 @@
          ("/README\\'" . markdown-mode))
   :pre-load
   (progn
+    ;; Implement strike-through formatting
     (defvar markdown-regex-del "\\(^\\|[^\\]\\)\\(\\(~\\{2\\}\\)\\([^ \n	\\]\\|[^ \n	]\\(?:.\\|\n[^\n]\\)*?[^\\ ]\\)\\(\\3\\)\\)")
     (defun markdown-insert-del ()
-      "Insert markup to make a region or word bold.
-            If there is an active region, make the region bold.  If the point
-            is at a non-bold word, make the word bold.  If the point is at a
-            bold word or phrase, remove the bold markup.  Otherwise, simply
-            insert bold delimiters and place the cursor in between them."
       (interactive)
       (let ((delim "~~"))
         (if (markdown-use-region-p)
