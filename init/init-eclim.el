@@ -4,8 +4,8 @@
   :commands (eclim-mode global-eclim-mode)
   :init
   (progn
-    (setq eclim-eclipse-dirs '("~/.opt/eclipse")
-          eclim-executable "~/.opt/eclipse/eclim")
+    (setq eclim-eclipse-dirs '("/Applications/eclipse")
+          eclim-executable "/Applications/eclipse/eclim")
     (add-hook 'java-mode-hook 'eclim-mode))
   :config
   (progn
