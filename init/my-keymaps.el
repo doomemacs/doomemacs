@@ -130,6 +130,8 @@
         (kbd "<M-kp-delete>") 'evil-join
 
         ;; Newline magic
+        (kbd "<S-backspace>") 'backward-delete-char
+        (kbd "<backspace>")   'backward-delete-char-untabify
         (kbd "<C-return>")    'evil-ret-and-indent
         (kbd "<M-return>")    (kbd "<return> DEL") ; newline and dedent
 

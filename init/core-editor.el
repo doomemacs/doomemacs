@@ -194,7 +194,6 @@ returns nil."
 ;;   d) and not do any of this magic when inside a string
 (-imap (kbd "SPC")                              'my.inflate-space-maybe
        [remap backward-delete-char-untabify]    'my.deflate-space-maybe
-       [remap delete-backward-char]             'my.deflate-space-maybe
        [remap newline]                          'my.newline-and-indent
 
        ;; Smarter move-to-beginning-of-line
