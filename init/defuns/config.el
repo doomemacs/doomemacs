@@ -45,9 +45,9 @@
   `(evil-define-key 'emacs ,map ,@body))
 (defmacro gmap (map &rest body)
   `(evil-define-key 'god ,map ,@body))
-(defmacro mmap (&rest body)
+(defmacro mmap (map &rest body)
   `(evil-define-key 'motion ,map ,@body))
-(defmacro omap (&rest body)
+(defmacro omap (map &rest body)
   `(evil-define-key 'operator ,map ,@body))
 (defmacro nvmap (map &rest body)
   (macroexpand
