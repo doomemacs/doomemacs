@@ -115,6 +115,7 @@ to abort the minibuffer."
                      (cdr (buffer-list (current-buffer)))
                    (buffer-list))))
     (delete-other-windows)
+    (tags-reset-tags-tables)
     (mapc 'kill-buffer buffers)))
 
 (evil-define-command my:ex:init-files (&optional bang) :repeat nil

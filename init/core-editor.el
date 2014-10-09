@@ -40,8 +40,6 @@
 (add-hook 'text-mode-hook 'enable-hard-wrap)
 (add-hook 'prog-mode-hook 'enable-comment-hard-wrap)
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
-;; Autosave buffers on focus-out (emacs 24.4 only)
-(add-hook! 'focus-out-hook (save-some-buffers t))
 
 ;;;; Evil-mode ;;;;;;;;;;;;;;;;;;;;;;;
 (use-package evil
@@ -292,7 +290,7 @@ returns nil."
          (setq recentf-max-menu-items 0
                recentf-max-saved-items 100
                recentf-auto-cleanup 'never
-               recentf-exclude '("/tmp/" "/ssh:" "\\.ido\\.last\\'" "\\.revive\\'"))))
+               recentf-exclude '("/tmp/" "/ssh:" "\\.ido\\.last\\'" "\\.revive\\'", "TAGS", "GEMTAGS"))))
 
 (use-package re-builder
   :defer t

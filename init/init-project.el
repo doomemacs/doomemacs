@@ -24,9 +24,7 @@
   :config
   (progn (projectile-global-mode)
          (setq projectile-completion-system 'grizzl
-               projectile-enable-caching t
-               projectile-cache-file (concat *tmp-dir "projectile.cache")
-               projectile-known-projects-file (concat *tmp-dir "projectile-bookmarks.eld"))))
+               projectile-enable-caching t)))
 
 (use-package ag
   :commands (ag ag-search ag-regexp)

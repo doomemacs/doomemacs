@@ -240,9 +240,33 @@
              ",tV" 'nosetests-pdb-module))
 
 (after org
+       (imap org-mode-map [remap my.inflate-space-maybe] 'self-insert-command)
        (define-key org-mode-map (kbd "RET") nil)
        (define-key org-mode-map (kbd "C-j") nil)
        (define-key org-mode-map (kbd "C-k") nil)
+
+       (mapc (lambda (state)
+               (evil-define-key state evil-org-mode-map
+                 (kbd "M-l") 'org-metaright
+                 (kbd "M-h") 'org-metaleft
+                 (kbd "M-k") 'org-metaup
+                 (kbd "M-j") 'org-metadown
+                 (kbd "M-L") 'org-shiftmetaright
+                 (kbd "M-H") 'org-shiftmetaleft
+                 (kbd "M-K") 'org-shiftmetaup
+                 (kbd "M-J") 'org-shiftmetadown
+                 (kbd "M-o") '(lambda () (interactive)
+                                (evil-org-eol-call
+                                 '(lambda()
+                                    (org-insert-heading)
+                                    (org-metaright))))
+                 (kbd "M-t") '(lambda () (interactive)
+                                (evil-org-eol-call
+                                 '(lambda()
+                                    (org-insert-todo-heading nil)
+                                    (org-metaright))))
+                 ))
+             '(normal insert))
 
        ;; Formatting shortcuts
        (imap evil-org-mode-map
@@ -250,6 +274,9 @@
              (kbd "s-u") (λ (my/org-surround "_"))     ; underline
              (kbd "s-i") (λ (my/org-surround "/"))     ; italics
              (kbd "s-`") (λ (my/org-surround "+"))     ; strikethrough
+
+             (kbd "<S-s-return>") (λ (evil-move-beginning-of-line) (org-insert-heading))
+             (kbd "<s-return>") (λ (org-insert-heading-after-current))
              )
 
        (nvmap evil-org-mode-map
@@ -267,7 +294,7 @@
              ",A" 'org-attach-open
              ",t" 'org-todo
              ",T" 'org-show-todo-tree
-             ",/" 'org-match-sparse-tree
+             ",/" 'org-sparse-tree
              ",?" 'org-tags-view
              ",+" 'org-align-all-tags
              ",r" 'org-refile
@@ -277,6 +304,7 @@
              "gl" 'outline-next-visible-heading
              "go" 'org-open-at-point
              "ga" 'org-agenda
+             "gt" 'org-show-todo-tree
              "H" 'org-beginning-of-line
              "L" 'org-end-of-line
              "$" 'org-end-of-line
@@ -288,7 +316,8 @@
              (kbd "<S-s-return>") (λ (evil-move-beginning-of-line) (org-insert-heading) (evil-insert-state))
              (kbd "<s-return>") (λ (org-insert-heading-after-current) (evil-insert-state))
              (kbd "RET") (λ (if (org-entry-is-todo-p) (org-todo 'done)))
-             (kbd "TAB") 'org-cycle))
+             (kbd "TAB") 'org-cycle)
+       )
 
 (after ruby-mode
        (nmap ruby-mode-map "gd" 'rsense-jump-to-definition))

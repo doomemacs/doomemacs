@@ -48,6 +48,10 @@
 
 (shut-up (load-library "ox-opml"))
 
+;; Remove occur highlights on ESC in normal mode
+(defadvice evil-force-normal-state (before evil-esc-org-remove-highlights activate)
+  (org-remove-occur-highlights))
+
 (setq org-export-backends '(ascii html latex md opml))
 (add-hook 'find-file-hooks 'set-buffer-file-format-to-opml)
 (add-to-list 'auto-mode-alist '("\\.opml$" . org-mode))
@@ -66,7 +70,7 @@
       org-hide-leading-stars t
       org-todo-keywords
       '((sequence "TODO(t)" "|" "DONE(d)")
-        (sequence "STARTED(s)" "VERIFY(v)" "WAITING(w)")
+        (sequence "DOING(s)" "PENDING(p)")
         (sequence "|" "CANCELLED(c)")))
 
 (org-babel-do-load-languages 'org-babel-load-languages

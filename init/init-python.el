@@ -15,10 +15,9 @@
     (add-hook 'python-mode-hook 'jedi:ac-setup)
     (setq python-shell-interpreter "ipython")
 
-    ;; Dont' remap DEL please...
+    ;; Interferes with smartparens
     (defmap python-mode-map (kbd "DEL") nil)
 
-	;;; Keybindings
     (add-hook! 'python-mode-hook
                (setq my-switch-to-repl-func 'python-shell-switch-to-shell
                      my-send-region-to-repl-func 'python-shell-send-region

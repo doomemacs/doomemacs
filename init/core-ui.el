@@ -57,6 +57,7 @@
           " yas"
           " Fly"
           " EvilOrg"
+          " Abbrev"
           ))
   :init
   (progn
