@@ -24,7 +24,7 @@
 (defconst *tmp-dir       "/tmp/emacs/")
 
 (defconst *theme  'brin)
-(defconst *font   "Inconsolata-16")
+(defconst *font   "Inconsolata-14")
 
 (add-to-list 'load-path *init-dir)
 
@@ -45,6 +45,7 @@
     init-snippets           ; Snippet engine
     init-git                ; GIT tools/settings
     init-fly                ; Syntax & spell checker
+    init-etags
 
     ;; Modes & environments
     init-text               ; Plain text editing (markdown, text)
