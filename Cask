@@ -33,6 +33,7 @@
 (depends-on "auto-complete-clang")
 (depends-on "auto-complete-c-headers")
 (depends-on "ace-jump-mode")
+(depends-on "ac-etags")
 
 ;; Eeeevil
 (depends-on "evil")
@@ -76,6 +77,7 @@
 (depends-on "yaml-mode")
 (depends-on "markdown-mode")
 (depends-on "glsl-mode")
+(depends-on "haxe-mode")
 (depends-on "go-mode" :git "https://github.com/dominikh/go-mode.el")
 
 (depends-on "tern")
