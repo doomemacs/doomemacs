@@ -16,15 +16,13 @@
 (use-package grizzl :defer t)
 
 (use-package neotree
-  :commands
-  (neotree-show neotree-hide neotree-toggle))
+  :commands (neotree-show neotree-hide neotree-toggle))
 
 (use-package projectile
   :diminish projectile-mode
   :config
   (progn (projectile-global-mode)
-         (setq projectile-completion-system 'grizzl
-               projectile-enable-caching t)))
+         (setq projectile-completion-system 'grizzl)))
 
 (use-package ag
   :commands (ag ag-search ag-regexp)

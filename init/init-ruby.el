@@ -9,6 +9,7 @@
          ("\\.ru$" . ruby-mode)
          ("\\.rake$" . ruby-mode)
          ("\\.gemspec$" . ruby-mode)
+         ("\\.?pryrc$" . ruby-mode)
          ("Gemfile$" . ruby-mode)
          ("Capfile$" . ruby-mode)
          ("Vagrantfile$" . ruby-mode)
