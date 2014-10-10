@@ -89,7 +89,7 @@
 
 (depends-on "jedi")
 
-(depends-on "omnisharp")
+;;(depends-on "omnisharp")
 (depends-on "csharp-mode")
 (depends-on "emacs-eclim")
 
@@ -99,3 +99,4 @@
 (depends-on "gitignore-mode")
 
 (depends-on "applescript-mode")
+(depends-on "cmake-mode")

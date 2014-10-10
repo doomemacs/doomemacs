@@ -1,5 +1,9 @@
 (provide 'init-cpp)
 
+(use-package cmake-mode
+  :mode "CMakeLists\\.txt$"
+  :config (add-to-list 'ac-modes 'cmake-mode))
+
 (setq-default c-basic-offset 4
               c-default-style "linux"
               c-tab-always-indent nil)
@@ -117,6 +121,7 @@
             0                           ; no additional indent
           ad-do-it)))                   ; default behavior
 
+;; Shaders
 (use-package glsl-mode
   :mode (("\\.glsl\\'" . glsl-mode)
          ("\\.vert\\'" . glsl-mode)
