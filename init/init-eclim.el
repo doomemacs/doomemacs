@@ -16,7 +16,7 @@
     (use-package eclimd)
 
     (require 'ac-emacs-eclim-source)
-    (ac-emacs-eclim-java-setup)
+    (add-hook 'java-mode-hook 'ac-emacs-eclim-java-setup)
 
     (setq help-at-pt-display-when-idle t)
     (setq help-at-pt-timer-delay 0.1)
