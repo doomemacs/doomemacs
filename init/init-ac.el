@@ -7,7 +7,7 @@
   (progn
     (require 'auto-complete-config)
 
-    (setq ac-auto-start t
+    (setq ac-auto-start nil
           ac-auto-show-menu t        ; Suggestions box must be invoked manually (see core-keymaps.el)
           ac-use-menu-map t          ; Enable ac-menu-map map when menu is open
           ac-use-quick-help t        ; Don't show tooltips unless invoked (see core-keymaps.el)
