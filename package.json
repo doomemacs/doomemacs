@@ -1,0 +1,10 @@
+{
+    "name": "Emacs.d",
+    "preferGlobal": true,
+    "dependencies": {
+        "jshint": "*",
+        "jsonlint": "*",
+        "js-beautify": "*",
+        "jsctags": "git://github.com/ramitos/jsctags.git"
+    }
+}
