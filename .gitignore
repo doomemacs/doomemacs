@@ -1,16 +1,14 @@
-elpa/
-tmp/
 eshell/
-auto-save-list/
-.python-environments/
-.mc-lists.el
-bookmarks
-recentf
+tmp
+.*
 
 # compiled files
-**/.*
-**/*.elc
-**/*.lib
-**/*.fas
-**/*.dat
-**/*.eld
+.*
+*.elc
+*.lib
+*.fas
+*.dat
+*.eld
+
+*.cache
+*.log
