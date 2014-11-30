@@ -12,7 +12,7 @@
 ;; (use-package csharp-mode
 ;;   :mode "\\.cs$"
 ;;   :config
-;;   (imap csharp-mode-map (kbd "C-SPC") 'omnisharp-auto-complete))
+;;   (bind 'insert csharp-mode-map (kbd "C-SPC") 'omnisharp-auto-complete))
 ;;   :init
 ;;   (add-hook! 'csharp-mode-hook (omnisharp-mode t) (flycheck-mode t)))
 

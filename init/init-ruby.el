@@ -1,8 +1,5 @@
 (provide 'init-ruby)
 
-(defun ac-add-ruby-rsense ()
-  (setq ac-sources (append '(ac-source-rsense ac-source-yasnippet) ac-sources)))
-
 ;;
 (use-package ruby-mode
   :mode (("\\.rb$" . ruby-mode)
@@ -17,14 +14,18 @@
   :interpreter "ruby"
   :config
   (progn
+    (define-minor-mode rake-mode
+      "Buffer local minor mode for rake files"
+      :lighter " Rake")
+
     (use-package inf-ruby
       :config
       (progn
         (evil-set-initial-state 'inf-ruby-mode 'insert)
-        (use-package ac-inf-ruby)
-        (add-hook 'inf-ruby-mode-hook 'ac-inf-ruby-enable))
-      :init
-      (add-to-list 'ac-modes 'inf-ruby-mode))
+        ;; (use-package ac-inf-ruby)
+        ;; (add-hook 'inf-ruby-mode-hook 'ac-inf-ruby-enable)
+
+        (push '(inf-ruby-mode :position bottom :stick t) popwin:special-display-config)))
 
     (use-package rspec-mode
       :defer t
@@ -38,15 +39,34 @@
           (("task" "namespace") () "end")
           ))
       :init
-      (associate-minor-mode "_spec\\.rb\\'" rspec-mode))
+      (progn (associate-minor-mode "\\(/spec_helper\\|_spec\\)\\.rb$" rspec-mode)
+             (associate-minor-mode "/\\.rspec$" rspec-mode)
+             (associate-minor-mode "/\\.rake$" rake-mode)
+             (associate-mode "/\\.rspec$" text-mode))
+      :config
+      (progn (bind 'normal rspec-mode-verifiable-keymap
+                   ",tr" 'rspec-rerun
+                   ",ta" 'rspec-verify-all
+                   ",ts" 'rspec-verify-single
+                   ",tv" 'rspec-verify)
+             (bind 'normal rspec-dired-mode-keymap
+                   ",tv" 'rspec-dired-verify
+                   ",ts" 'rspec-dired-verify-single
+                   ",ta" 'rspec-verify-all
+                   ",tr" 'rspec-rerun)))
 
-	;;; Auto-completion
-    ;; Remember to install rsense w/ homebrew!
-    (setq rsense-home "/usr/local/Cellar/rsense/0.3/libexec")
-    (when (file-directory-p rsense-home)
-      (add-to-list 'load-path (concat rsense-home "/etc"))
-      (require 'rsense)
-      (add-hook 'ruby-mode-hook 'ac-add-ruby-rsense))
+    (use-package robe
+      :config
+      (progn
+        (add-hook! 'after-save-hook
+                   (when (and (eq major-mode 'ruby-mode)
+                              (bound-and-true-p robe-running))
+                     (ruby-load-file (buffer-file-name))))
+        (add-hook! 'ruby-mode-hook
+                   (robe-mode 1)
+                   (ac-robe-setup)
+                   (unless robe-running (robe-start 1))
+                   (ruby-load-file (buffer-file-name)))))
 
     (add-hook! 'ruby-mode-hook
                (setq my-switch-to-repl-func 'ruby-switch-to-inf
@@ -57,11 +77,3 @@
     (setq ruby-indent-level 2)
     (setq ruby-deep-indent-paren t)
 	(add-hook 'ruby-mode-hook 'enable-tab-width-2)))
-
-;; (add-hook! 'find-file-hook
-;;            (let ((rake-path
-;;                   (f--traverse-upwards (f--exists? "Rakefile" it))))
-;;              (when rake-path
-;;                (use-package rake-mode)
-;;                (rake-mode t)
-;;                (rake-mode/visit-rakefile (expand-file-name "Rakefile" rake-path) t))))

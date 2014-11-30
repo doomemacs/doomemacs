@@ -1,3 +1,5 @@
+(provide 'my-coderunner)
+
 ;; Variables
 (defvar my-run-code-interpreter      nil)
 (defvar my-run-code-func             'my/run-code-shell)
@@ -27,6 +29,7 @@
       (shell-command-on-region beg end my-run-code-interpreter)
     (message "No interpreter set for %s. See `my-run-code-interpreter'" (symbol-name major-mode))))
 
+;;
 (defun my:switch-to-repl ()
   (interactive)
   (if (functionp my-switch-to-repl-func)

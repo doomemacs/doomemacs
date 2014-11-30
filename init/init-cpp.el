@@ -38,7 +38,7 @@
            (c-toggle-auto-newline -1)
 
            ;; DEL mapping interferes with smartparens and my.deflate-maybe
-           (defmap c-mode-map (kbd "DEL") nil)
+           (bind c-mode-map (kbd "DEL") nil)
 
            (c-set-offset 'substatement-open '0) ; brackets should be at same indentation level as the statements they open
            (c-set-offset 'inline-open '+)

@@ -40,10 +40,10 @@
   :keymap (make-sparse-keymap) ; defines evil-org-mode-map
   :group 'evil-org)
 
-;; Reset evil to ensure certain evil keybindings are prioritized
 (add-hook 'org-mode-hook 'evil-org-mode)
-(add-hook 'org-mode-hook 'flyspell-mode)
-(add-hook 'org-mode-hook 'enable-hard-wrap)
+(add-hook 'org-mode-hook 'turn-on-auto-fill)
+
+;; Reset evil to ensure evil-org-mode's maps work
 (add-hook! 'org-mode-hook (evil-mode nil) (evil-mode 1))
 
 (shut-up (load-library "ox-opml"))
@@ -114,3 +114,82 @@
         ("tp" tags "+Projects")
         ("tg" tags-todo "+gamedev")
         ("tw" tags-tree "+webdev")))
+
+
+;; Keymaps
+(bind 'insert org-mode-map [remap my.inflate-space-maybe] 'self-insert-command)
+(bind org-mode-map (kbd "RET") nil
+                     (kbd "C-j") nil
+                     (kbd "C-k") nil)
+
+(mapc (lambda (state)
+        (evil-define-key state evil-org-mode-map
+          (kbd "M-l") 'org-metaright
+          (kbd "M-h") 'org-metaleft
+          (kbd "M-k") 'org-metaup
+          (kbd "M-j") 'org-metadown
+          (kbd "M-L") 'org-shiftmetaright
+          (kbd "M-H") 'org-shiftmetaleft
+          (kbd "M-K") 'org-shiftmetaup
+          (kbd "M-J") 'org-shiftmetadown
+          (kbd "M-o") '(lambda () (interactive)
+                         (evil-org-eol-call
+                          '(lambda()
+                             (org-insert-heading)
+                             (org-metaright))))
+          (kbd "M-t") '(lambda () (interactive)
+                         (evil-org-eol-call
+                          '(lambda()
+                             (org-insert-todo-heading nil)
+                             (org-metaright))))
+          ))
+      '(normal insert))
+
+;; Formatting shortcuts
+(bind 'insert evil-org-mode-map
+      (kbd "s-b") (λ (my/org-surround "*"))     ; bold
+      (kbd "s-u") (λ (my/org-surround "_"))     ; underline
+      (kbd "s-i") (λ (my/org-surround "/"))     ; italics
+      (kbd "s-`") (λ (my/org-surround "+"))     ; strikethrough
+
+      (kbd "<S-s-return>") (λ (evil-move-beginning-of-line) (org-insert-heading))
+      (kbd "<s-return>") (λ (org-insert-heading-after-current)))
+
+(bind '(normal visual) evil-org-mode-map
+       ",l" 'org-insert-link)
+
+(bind 'visual evil-org-mode-map
+      (kbd "s-b") "s*"          ; bold
+      (kbd "s-i") "s/")         ; italics
+
+(bind 'normal evil-org-mode-map
+      ",d" 'org-time-stamp
+      ",D" 'org-time-stamp-inactive
+      ",s" 'org-schedule
+      ",a" 'org-attach
+      ",A" 'org-attach-open
+      ",t" 'org-todo
+      ",T" 'org-show-todo-tree
+      ",/" 'org-sparse-tree
+      ",?" 'org-tags-view
+      ",+" 'org-align-all-tags
+      ",r" 'org-refile
+      "gh" 'outline-up-heading
+      "gj" 'org-forward-heading-same-level
+      "gk" 'org-backward-heading-same-level
+      "gl" 'outline-next-visible-heading
+      "go" 'org-open-at-point
+      "ga" 'org-agenda
+      "gt" 'org-show-todo-tree
+      "H" 'org-beginning-of-line
+      "L" 'org-end-of-line
+      "$" 'org-end-of-line
+      "^" 'org-beginning-of-line
+      "<" 'org-metaleft
+      ">" 'org-metaright
+      "-" 'org-cycle-list-bullet
+      (kbd ", SPC") 'org-archive-subtree
+      (kbd "<S-s-return>") (λ (evil-move-beginning-of-line) (org-insert-heading) (evil-insert-state))
+      (kbd "<s-return>") (λ (org-insert-heading-after-current) (evil-insert-state))
+      (kbd "RET") (λ (if (org-entry-is-todo-p) (org-todo 'done)))
+      (kbd "TAB") 'org-cycle)

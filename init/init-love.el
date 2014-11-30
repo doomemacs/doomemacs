@@ -4,7 +4,7 @@
   (shell-command (format "open -a love.app %s" (my/project-root))))
 
 (use-package lua-mode
-  :mode "\\.lua\\'"
+  :mode "\\.lua$"
   :interpreter "lua"
   :init
   (progn
@@ -12,8 +12,7 @@
       "Buffer local minor mode for Love2D"
       :init-value nil
       :lighter " <3"
-      :keymap (make-sparse-keymap) ; defines love-mode-map
-      :group lua)
+      :keymap (make-sparse-keymap))
 
     (add-hook! 'lua-mode-hook
                (setq my-run-code-interpreter "lua")

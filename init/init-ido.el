@@ -23,7 +23,6 @@
 (ido-ubiquitous-mode 1)
 (flx-ido-mode 1)
 
-(add-to-list 'ido-ignore-files "\\`.DS_Store\\'")
 (setq ido-use-faces nil
       ido-confirm-unique-completion t
       ido-case-fold t
@@ -31,4 +30,11 @@
       ido-enable-flex-matching t
       ido-create-new-buffer 'always
       ido-enable-tramp-completion t
-      ido-enable-last-directory-history t)
+      ido-enable-last-directory-history t
+      ido-save-directory-list-file (concat *tmp-dir "ido.last"))
+
+(add-to-list 'ido-ignore-files "\\`.DS_Store$")
+(setq ido-ignore-buffers
+      '("\\` " "^\\*ESS\\*" "^\\*Messages\\*" "^\\*Help\\*" "^\\*Buffer"
+        "^\\*.*Completions\\*$" "^\\*Ediff" "^\\*tramp" "^\\*cvs-"
+        "_region_" " output\\*$" "^TAGS$" "^\*Ido"))

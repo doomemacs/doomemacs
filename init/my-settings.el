@@ -6,7 +6,10 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(git-gutter:lighter " !")
- )
+ ;; Make brin theme safe
+ '(custom-safe-themes
+   (quote
+    ("7fa3f2865322ee4e3fcf061efcf020465d691aed02e6756191fbf1cfb8648ccf" default))))
 
 (set-face-background 'show-paren-match-face "#1f1f1f")
 (set-face-foreground 'show-paren-match-face "orange")
