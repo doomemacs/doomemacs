@@ -13,7 +13,6 @@
 (depends-on "fuzzy")
 (depends-on "use-package")
 (depends-on "smex")
-(depends-on "auto-async-byte-compile")
 
 ;; Editing
 (depends-on "smooth-scrolling")
@@ -41,6 +40,7 @@
 (depends-on "ace-window")
 (depends-on "smart-forward")
 (depends-on "regex-tool")
+(depends-on "pcre2el")
 (depends-on "perspective")
 (depends-on "persp-projectile")
 ;;(depends-on "multiple-cursors")
@@ -69,6 +69,7 @@
 (depends-on "helm-ag")
 (depends-on "helm-css-scss")
 (depends-on "helm-projectile")
+(depends-on "helm-swoop")
 (depends-on "neotree")
 (depends-on "ido-ubiquitous")
 (depends-on "ido-vertical-mode")
