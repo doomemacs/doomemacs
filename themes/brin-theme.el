@@ -58,9 +58,7 @@
 
         (git-modified     "#B4924E")
         (git-added        "#91E331")
-        ;; (git-added        "#55811D")
-        (git-deleted      "#A12121")
-        )
+        (git-deleted      "#A12121"))
 
   (custom-theme-set-faces
    'brin
@@ -92,7 +90,7 @@
 
    `(flyspell-incorrect   ((t (:underline "#ff5555" :inherit unspecified))))
 
-   `(helm-source-header       ((t (:background ,gutters-active :foreground ,strings :weight bold :height 1.0))))
+   `(helm-source-header   ((t (:background ,gutters-active :foreground ,strings :weight bold :height 1.0))))
    `(helm-selection       ((t (:background ,selection))))
 
 ;; Font lock faces
