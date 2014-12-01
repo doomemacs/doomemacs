@@ -312,7 +312,7 @@ See also `shaderlab-font-lock-extra-types'.")
 						  (setq cur-indent (current-indentation))
 						  (setq looking-for-line nil))
 						 ((not (looking-at regexp-empty-line))
-						  (setq cur-indent (- (current-indentation) default-tab-width))
+						  (setq cur-indent (- (current-indentation) tab-width))
 						  (setq looking-for-line nil))))))
 						 
 			 (when (< cur-indent 0) ; We can't indent past the left margin
@@ -329,7 +329,7 @@ See also `shaderlab-font-lock-extra-types'.")
 						  (setq not-indented nil))
 						 ((looking-at regexp-opening-brace) ; This hint indicates that we need to indent an extra level
 						  ;(message "Found opening brace at %s" (what-line))
-						  (setq cur-indent (+ (current-indentation) default-tab-width)) ; Do the actual indenting
+						  (setq cur-indent (+ (current-indentation) tab-width)) ; Do the actual indenting
 						  (setq not-indented nil))
 						 ((bobp)
 						   (setq not-indented nil)))))))
