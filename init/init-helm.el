@@ -39,7 +39,7 @@
           :move-point nil
           :type inclusive
           :repeat nil
-          (message "%s" bang)
+          (interactive "<r><!><a>")
           (let* ((helm-ag-default-directory (my--project-root pwd-p))
                  (header-name (format "Search in %s" helm-ag-default-directory))
                  (input "")
