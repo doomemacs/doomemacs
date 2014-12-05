@@ -1,13 +1,17 @@
 ;; From <http://www.emacswiki.org/emacs/RotateText>
 
+(provide 'rotate-text)
+
 (defvar rotate-text-rotations
   '(("true" "false")
     ("True" "False")
     ("yes" "no")
+    ("t" "nil")
     ("left" "right" "top" "bottom")
-    ("width" "height"))
-  "List of text rotation sets.")
+    ("left" "right" "top" "bottom")
+    ("width" "height")))
 
+;;;###autoload
 (defun rotate-region (beg end)
   "Rotate all matches in `rotate-text-rotations' between point and mark."
   (interactive "r")
@@ -75,6 +79,7 @@ Example:
 		(rotate-flatten-list (cdr list-of-lists)))
       (list list-of-lists))))
 
+;;;###autoload
 (defun rotate-word-at-point ()
   "Rotate word at point based on sets in `rotate-text-rotations'."
   (interactive)
@@ -86,5 +91,3 @@ Example:
         (rotate-region beg end)
         (goto-char (if (> opoint end) end opoint))))))
 
-
-(provide 'rotate-text)

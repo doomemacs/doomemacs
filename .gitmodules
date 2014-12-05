@@ -10,6 +10,3 @@
 [submodule "elisp/org-opml"]
 	path = elisp/org-opml
 	url = https://github.com/edavis/org-opml.git
-[submodule "elisp/evil-nerd-commenter"]
-	path = elisp/evil-nerd-commenter
-	url = https://github.com/redguardtoo/evil-nerd-commenter
