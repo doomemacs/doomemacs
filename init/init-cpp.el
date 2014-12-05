@@ -19,9 +19,9 @@
           "/System/Library/Frameworks"
           "/Library/Frameworks"))
 
-  (after flycheck (setq flycheck-clang-include-path my/clang-includes))
-  (after auto-complete
-         (setq ac-clang-flags (mapcar (lambda (item)(concat "-I" item)) my/clang-includes)))
+  (after "flycheck" (setq flycheck-clang-include-path my/clang-includes))
+  (after "auto-complete"
+         (setq ac-clang-flags (mapcar (lambda (item) (concat "-I" item)) my/clang-includes)))
   )
 
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))

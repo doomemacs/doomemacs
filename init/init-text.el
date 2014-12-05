@@ -4,8 +4,8 @@
 (add-hook 'prog-mode-hook 'enable-comment-hard-wrap)
 
 (use-package markdown-mode
-  :mode (("\\.md\\'" . markdown-mode)
-         ("/README\\'" . markdown-mode))
+  :mode (("\\.md$"   . markdown-mode)
+         ("/README$" . markdown-mode))
   :pre-load
   (progn
     ;; Implement strike-through formatting

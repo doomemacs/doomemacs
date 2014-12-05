@@ -6,74 +6,81 @@
 ;; My emacs.d, which sets out to rustle emacs users' jimmies by making
 ;; emacs as vim-like as possible.
 ;;
+;;; Description:
+;;
+;; Naming conventions:
+;;    * my--<defun-name>  ; interal defuns, meant for use via elisp
+;;    * my-<defun-name>   ; interactive command, can be used via M-x
+;;    * my.<defun-name>   ; commands with buffer side-effects (for keybinds)
+;;    * my:<defun-name>   ; defuns meant to be used from Ex mode
+;;    * my/<defun-name>   ; defuns meant to be used from Ex mode
+;;    * *<defun/var-name> ; for altering the visual state
+;;
+;;
 ;;; Code:
 
-;; instead of /
-(cd "~")
-(setq use-package-verbose t) ; for debug purposes
+(defconst *debug-mode nil)
 
-(require 'cask)
-(cask-initialize)
+(defconst my-dir           user-emacs-directory)
+(defconst my-init-dir      (concat my-dir "init/"))
+(defconst my-elisp-dir     (concat my-dir "elisp/"))
+(defconst my-themes-dir    (concat my-dir "themes/"))
+(defconst my-snippets-dir  (concat my-dir "snippets/"))
+(defconst my-ac-dicts-dir  (concat my-dir "ac-dict/"))
+(defconst my-tmp-dir       (concat my-dir ".cache/"))
 
-(setq user-mail-address "henrik@lissner.net")
+(defconst *dark-theme   'brin)
+(defconst *light-theme  'github) ; wtb better light theme...
 
-(defconst *dir           (file-name-directory load-file-name))
-(defconst *init-dir      (concat *dir "init/"))
-(defconst *themes-dir    (concat *dir "themes/"))
-(defconst *elisp-dir     (concat *dir "elisp/"))
-(defconst *snippets-dir  (concat *dir "snippets/"))
-(defconst *ac-dicts-dir  (concat *dir "ac-dict/"))
-(defconst *tmp-dir       (concat *dir "tmp/"))
+(defconst *default-font "Ubuntu Mono")
+(defconst *default-font-size (if (eq system-name "ganymede.local") 12 14))
 
-(defconst *theme  'brin)
-(defconst *font
-  (if (string-equal system-name "ganymede.local")
-      "Ubuntu Mono-12"      ; Use smaller font on my laptop
-    "Ubuntu Mono-14"))      ; And larger font everywhere else
+(defconst *presentation-font *default-font)
+(defconst *presentation-font-size 18)
 
-(add-to-list 'load-path *init-dir)
+(add-to-list 'load-path my-init-dir)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Just the... bear necessities...
-(mapc 'require
+(defconst my-modules
+  ;; ls -1 init/{init,my}* | xargs basename | sed -e 's/\..*$//'
   '(core
-    core-defuns             ; Defun library
-    core-editor             ; Global editor behavior (w/ evil)
-    core-ui                 ; User interface layout & behavior
-    core-osx                ; Mac-specific config
 
-    ;; Essential plugins & modules
-    init-ido                ; Ido setup
-    init-project            ; Project nav+search tools (projectile, helm, ag)
-    init-snippets           ; Snippet engine
-    init-git                ; GIT tools/settings
-    init-fly                ; Syntax & spell checker
-    init-auto-complete      ; Auto-complete engine
-    init-auto-insert        ; File auto-insert templates
-    init-cscope             ; Global code indexing
-
-    ;; Modes & environments
-    init-text               ; Plain text editing (markdown, text)
-    init-sh                 ; Shell script editing (sh, zsh)
-    init-org                ; Org-mode: personal gtd/notes
-    init-dev                ; Generic dev tools & environment for all programming
-    init-ruby
+    ;; init-auto-complete
+    init-company
+    init-auto-insert
+    ;; init-cpp
+    ;; init-cscope
+    ;; init-csharp
+    init-dev
+    init-elisp
+    ;; init-eshell
+    init-fly
+    init-git
+    ;; init-go
+    init-helm
+    init-ido
+    init-java
+    init-lua
+    init-org
+    init-project            ; project management settings & tools
+    init-projectile
     init-python
-    ;;init-php
-    init-webdev             ; Environment for webdev (SCSS, PHP, Rails, Javascript)
-    init-love               ; Love.app gamedev
-    init-cpp                ; C++ gamedev
-    init-java               ; Java-specific settings (including eclim)
-    ;; init-go                 ; Go-lang
-    ;; init-swift              ; iOS/Mac dev environment for swift
-    ;; init-csharp             ; Emacs as a Csharp/Unity IDE
+    init-regex
+    init-ruby
+    init-sh
+    ;; init-swift
+    init-text
+    init-tmux
+    init-webdev
+    init-yasnippet
 
-    ;; My homebaked packages
-    my-commands             ; Ex commands & evil operators/commands
-    my-coderunner           ; Code/REPL runners
-
-    ;; Personal settings (must be last!)
-    my-settings             ; Any other custom settings
-    my-keymaps              ; My keybindings
+    my-bindings
+    my-settings
     ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Load them in
+(setq after-init-hook '((lambda() (mapc 'require my-modules))))
 
 ;; I've created a monster!

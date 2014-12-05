@@ -1,5 +1,5 @@
 eshell/
-tmp
+init/autoload.el
 .*
 
 # compiled files

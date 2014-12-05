@@ -31,7 +31,7 @@
     (point-max)))
 
 ;;
-(use-package org)
+(require 'org)
 
 (define-minor-mode evil-org-mode
   "Buffer local minor mode for evil-org"

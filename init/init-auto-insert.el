@@ -1,15 +1,18 @@
 (provide 'init-auto-insert)
 
-(use-package autoinsert)
-;; (setq auto-insert-directory "%/.emacs.d/templates/")
-(setq auto-insert-query nil)    ; Don't prompt before insertion
-(setq auto-insert-alist (list))    ; Don't prompt before insertion
-(auto-insert-mode 1)
+(use-package autoinsert
+  :init (auto-insert-mode 1)
+  :config
+  (progn
+    ;; (setq auto-insert-directory "%/.emacs.d/templates/")
+    (setq auto-insert-query nil)    ; Don't prompt before insertion
+    (setq auto-insert-alist '())))
 
-(after yasnippet
+(after "yasnippet"
     (defun template (file-regexp uuid mode &optional project-only)
-      (define-auto-insert file-regexp `(lambda () (template-insert ,uuid ',mode ,project-only))))
-    (defun template-insert (uuid mode &optional project-only)
+      (define-auto-insert file-regexp `(lambda () (my--template-insert ,uuid ',mode ,project-only))))
+
+    (defun my--template-insert (uuid mode &optional project-only)
       "Expand snippet template in MODE by its UUID"
       (unless (and project-only
                    (not (projectile-project-p)))
@@ -50,7 +53,7 @@
     ;; ;; (template "\\.php$"                                           "%%"               'php-mode)
 
     ;; ;; ;; Markdown
-    ;; (template "/README\\.md$"                                        "%README.md%"      'markdown-mode)
+    (template "/README\\.md$"                                        "%README.md%"      'markdown-mode)
     ;; ;; (template "/_posts/.+\\.md$"                                  "%jekyll-post"     'markdown-mode)
     ;; ;; (template "/_layouts/.+\\.html$"                              "%jekyll-layout%"  'web-mode)
 

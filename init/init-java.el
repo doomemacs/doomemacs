@@ -15,16 +15,24 @@
     (use-package eclim-project)
     (use-package eclimd)
 
-    (require 'ac-emacs-eclim-source)
-    (add-hook! 'java-mode-hook
-               (setq ac-sources '(ac-source-emacs-eclim ac-source-yasnippet ac-source-abbrev ac-source-dictionary ac-source-words-in-same-mode-buffers)))
-
     (setq help-at-pt-display-when-idle t)
     (setq help-at-pt-timer-delay 0.1)
     (help-at-pt-set-timer)
 
+    (after "company"
+      (use-package company-emacs-eclim
+        :init (company-emacs-eclim-setup)))
+
+    (after "auto-complete"
+      (add-hook! 'java-mode-hook
+                 (setq ac-sources '(ac-source-emacs-eclim
+                                    ac-source-yasnippet
+                                    ac-source-abbrev
+                                    ac-source-dictionary
+                                    ac-source-words-in-same-mode-buffers))))
+
     (bind 'motion java-mode-map "gd" 'eclim-java-find-declaration)))
 
-(use-package groovy-mode :mode "\\.gradle$"
-  :config
-  (add-to-list 'ac-modes 'groovy-mode))
+(use-package groovy-mode
+  :mode "\\.gradle$"
+  :config (after "auto-complete" (add-to-list 'ac-modes 'groovy-mode)))

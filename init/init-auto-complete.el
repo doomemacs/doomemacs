@@ -3,6 +3,7 @@
 (setq tags-case-fold-search nil)
 
 (use-package auto-complete
+  :disabled t
   :init
   (progn
     (require 'auto-complete-config)
@@ -13,7 +14,7 @@
           ac-use-quick-help t        ; Don't show tooltips unless invoked (see core-keymaps.el)
           ac-use-fuzzy t
           ac-candidate-limit 25)
-    (setq ac-comphist-file (concat *tmp-dir "ac-comphist.dat"))
+    (setq ac-comphist-file (concat my-tmp-dir "ac-comphist.dat"))
 
     (setq-default ac-sources '(ac-source-yasnippet ac-source-abbrev ac-source-dictionary ac-source-words-in-same-mode-buffers))
 
@@ -31,11 +32,13 @@
 
     (global-auto-complete-mode t)
 
-    (add-to-list 'ac-dictionary-files (expand-file-name "global" *ac-dicts-dir))
-    (add-to-list 'ac-dictionary-directories *ac-dicts-dir)
+    (add-to-list 'ac-dictionary-files (expand-file-name "global" my-ac-dicts-dir))
+    (add-to-list 'ac-dictionary-directories my-ac-dicts-dir)
+
+    (push '("*Popup Help*" :position bottom :height 0.35 :noselect t) popwin:special-display-config)
 
     ;; Tell ido not to care about case
-    (setq completion-ignore-case t)
+    ;; (setq completion-ignore-case t)
 
     (bind 'insert ac-mode-map
           (kbd "C-x C-k")   'ac-complete-dictionary
@@ -48,13 +51,13 @@
           (kbd "C-SPC")     'auto-complete)
 
     (bind ac-completing-map
-            (kbd "<tab>")  'ac-complete
-            (kbd "C-n")    'ac-next
-            (kbd "C-p")    'ac-previous
-            (kbd "<f1>")   'ac-quick-help
-            (kbd "C-<f1>") 'ac-help
-            (kbd "ESC")    'ac-stop
-            (kbd "RET")    'ac-complete)
+          (kbd "<tab>")      'ac-complete
+          (kbd "C-n")        'ac-next
+          (kbd "C-p")        'ac-previous
+          (kbd "S-C-<SPC>")  'ac-quick-help
+          (kbd "C-<SPC>")    'ac-help
+          (kbd "<ESC>")      'ac-stop
+          (kbd "<RET>")      'ac-complete)
 
     (use-package ac-etags
       :commands (ac-complete-etags)

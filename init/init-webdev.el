@@ -2,29 +2,15 @@
 
 (use-package rainbow-mode
   :defer t
-  :init
-  (progn
-    (add-hook 'scss-mode-hook 'rainbow-mode)
-    (add-hook 'sass-mode-hook 'rainbow-mode)))
-
-(use-package sass-mode
-  :mode "\\.sass$"
-  :init (add-hook 'sass-mode-hook 'enable-tab-width-2)
-  :config
-  (progn
-    (add-hook 'sass-mode-hook 'ac-css-mode-setup)
-
-    (add-to-list 'ac-modes 'sass-mode)
-    (setq-default css-indent-offset 2)))
+  :init (add-hook 'scss-mode-hook 'rainbow-mode))
 
 (use-package scss-mode
   :mode "\\.scss$"
-  :init (add-hook 'scss-mode-hook 'enable-tab-width-2)
   :config
   (progn
+    (add-hook 'scss-mode-hook 'enable-tab-width-2)
     (add-hook 'scss-mode-hook 'ac-css-mode-setup)
 
-    (add-to-list 'ac-modes 'scss-mode)
     (setq-default css-indent-offset 2)
     (setq scss-compile-at-save nil)
 
@@ -42,8 +28,7 @@
   (progn
     (add-hook 'web-mode-hook 'enable-tab-width-2)
 
-    (setq web-mode-ac-sources-alist
-          '(("css" . (ac-source-css-property)))
+    (setq web-mode-ac-sources-alist '(("css" . (ac-source-css-property)))
           web-mode-markup-indent-offset  2
           web-mode-code-indent-offset    2
           web-mode-css-indent-offset     2
@@ -56,12 +41,12 @@
           "zf" 'web-mode-fold-or-unfold
           ",t" 'web-mode-element-rename)
     (bind '(normal visual) web-mode-map
-           "gQ" 'web-beautify-html
-           "]a" 'web-mode-attribute-next
-           "]t" 'web-mode-tag-next
-           "[t" 'web-mode-tag-previous
-           "]T" 'web-mode-element-child
-           "[T" 'web-mode-element-parent)))
+          "gQ" 'web-beautify-html
+          "]a" 'web-mode-attribute-next
+          "]t" 'web-mode-tag-next
+          "[t" 'web-mode-tag-previous
+          "]T" 'web-mode-element-child
+          "[T" 'web-mode-element-parent)))
 
 (use-package emmet-mode
   :defer t
@@ -87,36 +72,48 @@
     (add-hook! 'php-mode-hook (setq my-run-code-interpreter "php"))
     (setq php-template-compatibility nil)))
 
-;;; Javascript
-(use-package tern
-  :commands tern-mode
-  :config
-  (progn
-    (require 'tern-auto-complete)
-
-    (setq tern-ac-on-dot nil)))
-
 (use-package js2-mode :mode "\\.js$"
   :config
   (progn
-    (use-package js2-refactor
-      :config
-      ;; TODO Set up keymaps
-      )
     (setq-default js2-show-parse-errors nil)
-    (setq-default js2-global-externs '("module" "require" "buster" "sinon" "assert" "refute" "setTimeout" "clearTimeout" "setInterval" "clearInterval" "location" "__dirname" "console" "JSON" "jQuery" "$"
+    (setq-default js2-global-externs '("module" "require" "buster" "sinon" "assert"
+                                       "refute" "setTimeout" "clearTimeout"
+                                       "setInterval" "clearInterval" "location"
+                                       "__dirname" "console" "JSON" "jQuery" "$"
                                        ;; Launchbar API
                                        "LaunchBar" "File" "Action" "HTTP" "include"))
 
-    (bind 'insert js2-mode-map [remap auto-complete] 'tern-ac-complete)
-    (bind 'motion js2-mode-map "gd" 'tern-find-definition)
-    (bind '(normal visual) js2-mode-map "gQ" 'web-beautify-js))
+    (bind '(normal visual) js2-mode-map "gQ" 'web-beautify-js)
 
-  ;; replace auto-complete with tern-ac-complete only in js-mode
-  :init (add-hook! 'js2-mode-hook
-                   (tern-mode t)
-                   (tern-ac-setup)
-                   (setq my-run-code-interpreter "node")))
+    (use-package js2-refactor
+      ;; :config
+      ;; TODO Set up keymaps
+      )
+
+    (use-package tern
+      :commands tern-mode
+      ;; replace auto-complete with tern-ac-complete only in js-mode
+      :init (add-hook! 'js2-mode-hook
+                       (tern-mode t)
+                       (tern-ac-setup)
+                       (setq my-run-code-interpreter "node"))
+      :config
+      (progn
+        (after "auto-complete"
+               (require 'tern-auto-complete)
+               (setq tern-ac-on-dot nil)
+               (bind 'insert js2-mode-map
+                     [remap auto-complete] 'tern-ac-complete)
+               (bind 'motion js2-mode-map
+                     "gd" 'tern-find-definition))
+
+        (after "company-tern"
+               (add-to-list 'company-backends 'company-tern)
+               ;; (setq company-tern-meta-as-single-line t)
+               ;; (setq company-tern-property-marker "")
+               ;; (setq company-tooltip-align-annotations t)
+               )))))
+
 
 (use-package web-beautify
   :commands (web-beautify-js web-beautify-css web-beautify-html)

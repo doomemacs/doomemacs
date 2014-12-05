@@ -13,9 +13,9 @@
 ;; (set-keymap-parent ido-file-completion-map     ido-file-dir-completion-map)
 ;; (set-keymap-parent ido-buffer-completion-map   ido-common-completion-map)
 
-(use-package ido-ubiquitous)
-(use-package ido-vertical-mode)
-(use-package flx-ido)
+(require 'ido-ubiquitous)
+(require 'ido-vertical-mode)
+(require 'flx-ido)
 
 (ido-mode 1)
 (ido-vertical-mode 1)
@@ -31,7 +31,7 @@
       ido-create-new-buffer 'always
       ido-enable-tramp-completion t
       ido-enable-last-directory-history t
-      ido-save-directory-list-file (concat *tmp-dir "ido.last"))
+      ido-save-directory-list-file (concat my-tmp-dir "ido.last"))
 
 (add-to-list 'ido-ignore-files "\\`.DS_Store$")
 (setq ido-ignore-buffers

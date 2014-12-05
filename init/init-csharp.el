@@ -1,12 +1,18 @@
 (provide 'init-csharp)
 
-;; (use-package omnisharp :defer t
-;;   :config
-;;   (progn
-;;     (setq omnisharp-server-executable-path "~/Dropbox/projects/lib/Omnisharp/server/OmniSharp/bin/Debug/OmniSharp.exe")
-;;     (use-package company
-;;       :config
-;;       (add-to-list 'company-backends 'company-omnisharp))))
+(use-package omnisharp :defer t
+  :config
+  (progn
+    (setq omnisharp-server-executable-path "~/Dropbox/projects/lib/Omnisharp/server/OmniSharp/bin/Debug/OmniSharp.exe")
+
+    (bind 'normal omnisharp-mdoe-map
+          "gd" 'omnisharp-go-to-definition
+          "")
+
+    (after "company"
+      (company--backend-on 'csharpmode 'company-omnisharp)
+      (add-hook 'csharp-mode-hook 'eldoc-mode))
+    ))
 
 (use-package csharp-mode :mode "\\.cs$")
 ;; (use-package csharp-mode

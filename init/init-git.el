@@ -1,6 +1,6 @@
 (provide 'init-git)
 
-(use-package git-commit-mode
+(use-package git-commit-mode            ;
   :mode (("/COMMIT_EDITMSG\\'"       . git-commit-mode)
          ("/NOTES_EDITMSG\\'"        . git-commit-mode)
          ("/MERGE_MSG\\'"            . git-commit-mode)
@@ -19,12 +19,27 @@
   :mode (("/\\.gitignore\\'"         . gitignore-mode)
          ("/\\.git/info/exclude\\'"  . gitignore-mode)
          ("/git/ignore\\'"           . gitignore-mode)))
-
+;;
 (use-package git-gutter-fringe+
   :init (global-git-gutter+-mode +1)
   :config
   (progn
+    (evil-ex-define-cmd "gstage"   'git-gutter+-stage-hunks)
+    (evil-ex-define-cmd "grevert"  'git-gutter+-revert-hunks)
+    (evil-ex-define-cmd "gdiff"    'git-gutter+-show-hunk)
+
     (fringe-helper-define 'git-gutter-fr+-added nil
+      "X......."
+      "X......."
+      "X......."
+      "X......."
+      "X......."
+      "X......."
+      "X......."
+      "X......."
+      "X......."
+      "X......."
+      "X......."
       "X......."
       "X......."
       "X......."
@@ -54,6 +69,17 @@
       "........"
       "........"
       "........"
+      "........"
+      "........"
+      "........"
+      "........"
+      "........"
+      "........"
+      "........"
+      "........"
+      "........"
+      "........"
+      "........"
       "........")
 
     (fringe-helper-define 'git-gutter-fr+-modified nil
@@ -70,4 +96,18 @@
       "X......."
       "X......."
       "X......."
+      "X......."
+      "X......."
+      "X......."
+      "X......."
+      "X......."
+      "X......."
+      "X......."
+      "X......."
+      "X......."
+      "X......."
+      "X......."
       "X.......")))
+
+(evil-set-initial-state 'git-commit-mode 'insert)
+(evil-set-initial-state 'git-rebase-mode 'insert)
