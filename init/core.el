@@ -166,11 +166,22 @@
 
 
   ;;;; Behavior adjustments ;;;;;;;;;;;;;;;;
-  ;; Skip special buffers on next/previous-buffer
+  ;; Skip special buffers on next/previous-buffer or kill-this-buffer
   (defadvice next-buffer (after void-messages-buffer-in-next-buffer activate)
-    (when (string-match "\\`\\*.+\\*\\'" (buffer-name)) (next-buffer)))
+    (let ((buffer-name (buffer-name)))
+      (when (and (string-match-p "\\`\\(\\*.+\\*\\|TAGS\\)$" buffer-name)
+                 (not (string-match-p "\\`\\*scratch*" buffer-name)))
+        (next-buffer))))
   (defadvice previous-buffer (after avoid-messages-buffer-in-previous-buffer activate)
-    (when (string-match "\\`\\*.+\\*\\'" (buffer-name)) (previous-buffer)))
+    (let ((buffer-name (buffer-name)))
+      (when (and (string-match-p "\\`\\(\\*.+\\*\\|TAGS\\)$" buffer-name)
+                 (not (string-match-p "\\`\\*scratch*" buffer-name)))
+        (previous-buffer))))
+  (defadvice kill-this-buffer (after kill-this-buffer-no-switch-to-special-buffers activate)
+    (let ((buffer-name (buffer-name)))
+      (if (and (string-match-p "^\\*.+\\*" buffer-name)
+               (not (string-match-p "^\\*scratch\\*" buffer-name)))
+          (previous-buffer))))
   ;; Don't kill the scratch buffer, just empty and bury it
   (defadvice kill-this-buffer (around kill-this-buffer-or-empty-scratch activate)
     (if (string-match-p "^\\*scratch\\*" (buffer-name))
