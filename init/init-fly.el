@@ -18,19 +18,19 @@
 
     (evil-initial-state 'flycheck-error-list-mode 'emacs)
 
-    (evil-ex-define-cmd "er[rors]" 'flycheck-list-errors)
+    (evil-ex-define-cmd "er[rors]" (λ (flycheck-buffer) (flycheck-list-errors)))
 
-    (defun my/evil-flycheck-buffer ()
+    (defun my--evil-flycheck-buffer ()
       (if (and (featurep 'flycheck) flycheck-mode)
           (flycheck-buffer)))
 
     ;; Check buffer when normal mode is entered
-    (add-hook 'evil-normal-state-entry-hook 'my/evil-flycheck-buffer)
+    (add-hook 'evil-normal-state-entry-hook 'my--evil-flycheck-buffer)
     ;; And on ESC in normal mode.
     (defadvice evil-force-normal-state (after evil-esc-flycheck-buffer activate)
-      (my/evil-flycheck-buffer))
+      (my--evil-flycheck-buffer))
 
-    (push '("^\\*Flycheck.*\\*$" :regexp t :position bottom :height 0.25)
+    (push '("^\\*Flycheck.*\\*$" :regexp t :position bottom :height 0.25 :noselect t)
           popwin:special-display-config)))
 
 (use-package flyspell :commands flyspell-mode)
