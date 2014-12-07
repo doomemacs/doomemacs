@@ -41,20 +41,14 @@
       (setq-default company-backends '(company-capf (company-yasnippet company-keywords)))
       (make-variable-buffer-local 'company-backends)
 
-      (defun company--backend-on (hook backends)
-        (add-hook hook `(lambda() (setq company-backends (append '((,backends company-yasnippet company-capf)) company-backends)))))
+      (defun company--backend-on (hook &rest backends)
+        (add-hook hook
+                  `(lambda()
+                     (setq company-backends
+                           (append '((,@backends company-yasnippet)) company-backends)))))
 
-      (company--backend-on 'scss-mode-hook 'company-css)
       (company--backend-on 'nxml-mode-hook 'company-nxml)
-      (company--backend-on 'js2-mode-hook 'company-tern)
       (company--backend-on 'emacs-lisp-mode-hook 'company-elisp)
-
-      (company--backend-on 'ruby-mode-hook 'company-robe)
-      (company--backend-on 'inf-ruby-mode-hook 'company-inf-ruby)
-
-      (company--backend-on 'python-mode-hook 'company-anaconda)
-      (add-hook 'python-mode-hook 'anaconda-mode)
-      (add-hook 'python-mode-hook 'eldoc-mode)
 
       ;; Rewrite evil-complete to use company-dabbrev
       (setq company-dabbrev-code-other-buffers t)
