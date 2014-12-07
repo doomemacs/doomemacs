@@ -10,9 +10,13 @@
 
 (add-hook 'after-save-hook 'remove-elc-on-save)
 (add-hook 'emacs-lisp-mode-hook 'turn-on-eldoc-mode)
-(add-hook! 'emacs-lisp-mode-hook
-           (setq my-run-code-func 'eval-buffer
-                 my-run-code-region-func 'eval-region))
+
+(evil-define-operator my:elisp-eval (beg end)
+  :move-point nil
+  (interactive "<r>")
+  (cond ((and beg end)
+         (eval-region beg end))
+        (t (eval-buffer))))
 
 ;; Real go-to-definition for elisp
 (bind 'motion emacs-lisp-mode-map "gd"
@@ -23,3 +27,5 @@
 (bind 'motion emacs-lisp-mode-map "gD"
       (λ (let ((func (function-called-at-point)))
            (if func (find-function-other-window func)))))
+
+(bind 'motion emacs-lisp-mode-map "g r" 'my:elisp-eval)
