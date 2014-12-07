@@ -27,8 +27,8 @@
 ;;;###autoload
 (defun toggle-transparency ()
   (interactive)
-  (if (/= (frame-parameter nil 'alpha) 100)
-      (set-frame-parameter nil 'alpha 100)
+  (if (/= (frame-parameter nil 'alpha) 96)
+      (set-frame-parameter nil 'alpha 96)
     (set-frame-parameter nil 'alpha 0)))
 
 ;;;###autoload

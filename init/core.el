@@ -232,7 +232,6 @@ the checking happens for all pairs in auto-minor-mode-alist"
       ;; Hook up smex to auto-update, rather than update on every run
       (defun smex-update-after-load (unused)
         (when (boundp 'smex-cache) (smex-update)))
-
       (add-hook 'after-load-functions 'smex-update-after-load)))
 
   (use-package popwin
@@ -258,10 +257,6 @@ the checking happens for all pairs in auto-minor-mode-alist"
         (if (popwin:popup-window-live-p)
             (popwin:close-popup-window)
           (popwin:popup-last-buffer)))))
-
-  ;; (require 'key-chord)
-  ;; (key-chord-mode 1)
-  ;; (setq key-chord-two-keys-delay 0.2)
 
 
   ;;;; Start the party ;;;;;;;;;;;;;;;;;;;

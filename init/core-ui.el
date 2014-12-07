@@ -4,7 +4,7 @@
 ;;;; Load Theme ;;;;;;;;;;;;;;;;;;;;;;;;
 (when window-system
   ;; No transparency!
-  (set-frame-parameter nil 'alpha 100)
+  (set-frame-parameter nil 'alpha 96)
 
   (unless (member *default-font (font-family-list))
     (error "Font %s isn't installed" *default-font))

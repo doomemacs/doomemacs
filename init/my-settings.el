@@ -92,7 +92,6 @@
             minibuffer-local-must-match-map
             minibuffer-local-isearch-map) [escape] 'my--minibuffer-quit)
 (bind 'emacs [escape] 'my--minibuffer-quit)
-
 (bind 'god [escape] 'evil-god-state-bail)
 (bind 'normal evil-command-window-mode-map [escape] 'kill-buffer-and-window)
 (bind evil-ex-map [escape] 'my--minibuffer-quit)
@@ -119,7 +118,6 @@
          (funcall buffer-quit-function))
         ((string-match "^ \\*" (buffer-name (current-buffer)))
          (bury-buffer))))
-
 
 (defun my-emacs-is-not-kill ()
   (interactive)
