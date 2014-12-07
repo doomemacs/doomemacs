@@ -61,6 +61,22 @@
                   ((keymapp -state)
                    (define-key -state -key -def)))))))))
 
+(after "evil"
+  (evil-define-command my--maybe-exit-insert-mode ()
+    "Exits insert mode using jk without the momentary pause caused by
+key-chord-define."
+    :repeat change
+    (interactive)
+    (let ((modified (buffer-modified-p)))
+      (insert "j")
+      (let ((evt (read-event nil nil 0.4)))
+        (cond
+         ((null evt) (message ""))
+         ((and (integerp evt) (char-equal evt ?k))
+          (delete-char -1)
+          (set-buffer-modified-p modified)
+          (push 'escape unread-command-events))
+         (t (setq unread-command-events (append unread-command-events (list evt)))))))))
 
 ;; Hooks ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defun enable-comment-hard-wrap ()

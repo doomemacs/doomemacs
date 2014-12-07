@@ -7,8 +7,7 @@
 (bind (kbd "M-x")      'smex
       (kbd "M-X")      'smex-major-mode-commands
       (kbd "C-;")      'eval-expression
-      ;; (kbd "C-`")      'popwin:toggle-eshell-window
-      (kbd "C-~")      'popwin:toggle-popup-window
+      (kbd "C-`")      'popwin:toggle-popup-window
 
       (kbd "s-=")      'text-scale-increase
       (kbd "s--")      'text-scale-decrease
@@ -16,22 +15,11 @@
       (kbd "s-/")      'evilnc-comment-or-uncomment-lines)
 
 ;; Faster scrolling
-(bind '(normal visual) my-mode-map
+(bind 'motion my-mode-map
       (kbd "s-j")      "6j"
-      (kbd "s-k")      "6k"
-      (kbd "s-b")      'my:build
-      (kbd "s-f")      'helm-swoop
-      (kbd "s-F")      'helm-do-ag)
+      (kbd "s-k")      "6k")
 
 (bind 'normal my-mode-map
-      (kbd "s-r")      'my-run-code-buffer
-      (kbd "s-R")      'my-switch-to-repl
-      (kbd "s-t")      'helm-projectile-find-file
-      (kbd "s-T")      'helm-semantic-or-imenu
-      (kbd "s-p")      'helm-projectile-switch-project
-      (kbd "s-P")      'persp-switch
-      (kbd "s-m")      ",m"
-      (kbd "s-M")      ",M"
       (kbd "s-o")      'ido-find-file
       (kbd "s-d")      'dash-at-point)
 
@@ -46,7 +34,7 @@
 
 (bind '(normal visual) my-mode-map
       "\\"    'evil-execute-in-god-state ; localleader
-      ;; ";"     'evil-ex ; Remap ; to : - SPC and shift-SPC replace ; and ,
+      ";"     'evil-ex
       "X"     'evil-exchange
 
       "g SPC" (λ (call-interactively
@@ -83,30 +71,10 @@
       ", <"   'helm-mini
       ", ]"   'helm-etags-select
       ", /"   'helm-projectile-find-file
-      ", ."   'helm-resume)
+      ", ."   'helm-resume
 
-(bind 'god my-mode-map
-      ;; <localleader>
-      "\\"   'neotree-toggle
-      ":"    'linum-mode
-      "="    'toggle-transparency
-
-      "]"    'next-buffer
-      "["    'previous-buffer
-
-      "o f"  'my-send-dir-to-finder
-      "o u"  'my-send-to-transmit
-      "o l"  'my-send-to-launchbar
-      "o L"  'my-send-dir-to-launchbar
-
-      ;; tmux: cd (default-directory)
-      "o t"  (λ (my:tmux-chdir nil t))
-      ;; tmux: cd [project root]
-      "o T"  'my:tmux-chdir)
-
-(bind 'normal my-mode-map
       ;; behave  like D and C; yank to end of line
-      "Y"    (λ (evil-yank (point) (point-at-eol)))
+      "Y"     (λ (evil-yank (point) (point-at-eol)))
 
       "z x"       'kill-this-buffer
       "Z X"       'bury-buffer
@@ -137,6 +105,28 @@
                 (evil-normal-state)
                 (evil-visual-restore)))
 
+(bind 'god my-mode-map
+      ;; <localleader>
+      "\\"   'neotree-toggle
+      ":"    'linum-mode
+      "="    'toggle-transparency
+      "e"    'evil-emacs-state
+
+      "]"    'next-buffer
+      "["    'previous-buffer
+
+      "o f"  'my-send-dir-to-finder
+      "o u"  'my-send-to-transmit
+      "o l"  'my-send-to-launchbar
+      "o L"  'my-send-dir-to-launchbar
+
+      ;; tmux: cd (default-directory)
+      "o t"  (λ (my:tmux-chdir nil t))
+      ;; tmux: cd [project root]
+      "o T"  'my:tmux-chdir)
+
+(bind 'emacs [escape] 'evil-normal-state)
+
 (bind 'insert my-mode-map
       "<M-kp-delete>" (λ (evil-forward-word) (evil-delete-backward-word))
 
@@ -151,30 +141,18 @@
       "s-]"           (λ (evil-shift-right (point-at-bol) (point-at-eol)))
       "<backtab>"     (kbd "s-["))
 
-;; (bind 'emacs
-;;       ;; Preserve buffer-movement in emacs mode
-;;       "C-j"        'evil-next-line
-;;       "C-k"        'evil-previous-line
-
-;;       "C-w h" 'evil-window-left
-;;       "C-w l" 'evil-window-right
-;;       "C-w j" 'evil-window-down
-;;       "C-w k" 'evil-window-up)
+;; Enable TAB to do matchit
+(bind '(normal visual) evil-matchit-mode-map [tab] 'evilmi-jump-items)
 
 ;; Rotate-text (see elisp/rotate-text.el)
 (bind 'normal my-mode-map "!" 'rotate-word-at-point)
 (bind 'visual my-mode-map "!" 'rotate-region)
 
-;; Easy escape from insert mode
-;; (ibind "jk" 'evil-normal-state)
-
-;; Enable TAB to do matchit
-(bind '(normal visual) evil-matchit-mode-map [tab] 'evilmi-jump-items)
-
 ;; Additional operators
-(bind 'normal my-mode-map "g r" 'my:run-code)            ; code eval
-(bind 'normal my-mode-map "g R" 'my:send-region-to-repl) ; eval in repl
-(bind 'normal my-mode-map "g x" 'my-scratch-buffer)      ; send to scratch buffer
+(bind 'motion my-mode-map "g x" 'my-scratch-buffer) ; send to scratch buffer
+
+;; Easy escape from insert mode (more responsive than using key-chord-define)
+(bind 'insert "j" #'my--maybe-exit-insert-mode)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
