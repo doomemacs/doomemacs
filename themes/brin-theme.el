@@ -116,6 +116,9 @@
    `(git-gutter+-added                 ((t (:foreground ,git-added))))
    `(git-gutter+-deleted               ((t (:foreground ,git-deleted))))
 
+   `(rainbow-delimiters-unmatched-face ((t (:inherit 'error))))
+   `(rainbow-delimiters-depth-1-face   ((t (:foreground "#CCCCCC" :weight bold :bold t))))
+
 ;; js2-mode
 ;; *****************************************************************************************
 
