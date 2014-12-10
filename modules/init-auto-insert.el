@@ -1,5 +1,3 @@
-(provide 'init-auto-insert)
-
 (use-package autoinsert
   :init (auto-insert-mode 1)
   :config
@@ -81,5 +79,9 @@
     ;; ;; (template "\\.gradle$"                                        "%%"               'groovy-mode)
 
     ;; ;; ;; Elisp
-    (template "\\.emacs\\.d/init/.+\\.el$"                              "%initfile%"       'emacs-lisp-mode)
+    (template "\\.emacs\\.d/.+\\.el$"                              "%initfile%"       'emacs-lisp-mode)
     (template "\\.emacs\\.d/snippets/.+$"                               "%%"               'snippet-mode))
+
+
+(provide 'init-auto-insert)
+;;; init-auto-insert.el ends here

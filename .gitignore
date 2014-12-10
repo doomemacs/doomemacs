@@ -1,5 +1,13 @@
 eshell/
 init/autoload.el
+auto-save-list
+recentf
+savehist
+saveplace
+places
+semanticdb
+ede-projects.el
+tramp
 
 # compiled files
 .*

@@ -38,14 +38,13 @@
                                         company-preview-if-just-one-frontend)))
 
     (progn ; backends
-      (setq-default company-backends '(company-capf (company-yasnippet company-keywords)))
-      (make-variable-buffer-local 'company-backends)
+      (setq-default company-backends '((company-capf company-yasnippet) (company-dictionary company-keywords)))
 
       (defun company--backend-on (hook &rest backends)
         (add-hook hook
                   `(lambda()
-                     (setq company-backends
-                           (append '((,@backends company-yasnippet)) company-backends)))))
+                     (set (make-local-variable 'company-backends)
+                          (append '((,@backends company-yasnippet)) company-backends)))))
 
       (company--backend-on 'nxml-mode-hook 'company-nxml)
       (company--backend-on 'emacs-lisp-mode-hook 'company-elisp)
@@ -56,20 +55,44 @@
 
       (setq evil-complete-next-func
             (lambda(arg)
-              (if company-candidates
-                  (call-interactively 'company-select-next)
-                (call-interactively 'company-dabbrev))))
+              (call-interactively 'company-dabbrev)
+              (if (eq company-candidates-length 1)
+                (company-complete))))
 
       (setq evil-complete-previous-func
             (lambda (arg)
               (let ((company-selection-wrap-around t))
                 (call-interactively 'company-dabbrev)
-                (call-interactively 'company-select-previous))))
+                (if (eq company-candidates-length 1)
+                    (company-complete)
+                  (call-interactively 'company-select-previous)))))
+
+      ;; Simulates ac-source-dictionary (without global dictionary)
+      (defconst my-dicts-dir (concat my-dir "dict/"))
+      (defvar company-dictionary-alist '())
+
+      (defun company-dictionary (command &optional arg &rest ignored)
+        "`company-mode' back-end for programming language keywords."
+        (interactive (list 'interactive))
+        (unless company-dictionary-alist
+          (dolist (file (f-files my-dicts-dir))
+            (add-to-list 'company-dictionary-alist `(,(intern (f-base file)) ,@(s-split "\n" (f-read file) t)))))
+        (cl-case command
+          (interactive (company-begin-backend 'company-dictionary))
+          (prefix (and (assq major-mode company-dictionary-alist)
+                       (or (company-grab-symbol) 'stop)))
+          (candidates
+           (let ((completion-ignore-case nil)
+                 (symbols (cdr (assq major-mode company-dictionary-alist))))
+             (all-completions arg (if (consp symbols)
+                                      symbols
+                                    (cdr (assq symbols company-dictionary-alist))))))
+          (sorted t)))
 
     (progn ; keybinds
       (bind 'insert company-mode-map
             "C-SPC"     'company-complete-common
-            "C-x C-k"   'company-keywords
+            "C-x C-k"   'company-dictionary
             "C-x C-f"   'company-files
             "C-x C-]"   'company-etags
             "C-x s"     'company-ispell

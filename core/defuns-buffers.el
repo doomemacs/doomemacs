@@ -12,20 +12,27 @@
 
 ;; Killing Buffers ;;;;;;;;;;;;;;;;;;;;;
 ;; Buffer defuns
-(defvar my-cleanup-buffers-alist '("^ \\*"
-                                  "^\\*Backtrace\\*$"
-                                  "^\\*Warnings\\*$"
-                                  "^\\*Compile-Log\\*$"
-                                  "^\\*Ediff.*\\*$"
-                                  help-mode
-                                  dired-mode
-                                  reb-mode)
+(defvar my-cleanup-buffers-list '("^ \\*"
+                                   "^\\*Backtrace\\*$"
+                                   "^\\*Warnings\\*$"
+                                   "^\\*Compile-Log\\*$"
+                                   "^\\*Ediff.*\\*$"
+                                   help-mode
+                                   dired-mode
+                                   reb-mode)
   "A list of buffer name regexps or major-mode symbols. If buried buffers
   match/have that mode active, `cleanup-buffers' will kill them.")
 
+(defvar my-cleanup-processes-alist '(("pry" . ruby-mode)
+                                     ("irb" . ruby-mode)
+                                     ("ipython" . python-mode))
+  "An alist of (process-name . major-mode), that `my-cleanup-processes' checks
+before killing processes. If there are no buffers with matching major-modes, it
+gets killed.")
+
 ;;;###autoload
 (defun my--cleanup-buffers-add (regexp)
-  (add-to-list 'my-cleanup-buffers-alist regexp))
+  (add-to-list 'my-cleanup-buffers-list regexp))
 
 ;;;###autoload
 (defun my-cleanup-buffers ()
@@ -41,11 +48,30 @@
                                        (s-matches? pred (buffer-name b)))
                                       ((symbolp pred)
                                        (eq (buffer-local-value 'major-mode b) pred))))
-                              my-cleanup-buffers-alist)))
+                              my-cleanup-buffers-list)))
                    kill-list))
 
     (message "Cleaned up %s buffers" (length kill-list))
-    (mapc 'kill-buffer kill-list)))
+    (mapc 'kill-buffer kill-list)
+
+    (my-cleanup-processes)))
+
+;;;###autoload
+(defun my-cleanup-processes ()
+  (interactive)
+  (let ((buffer-list (buffer-list)))
+    (dolist (p (process-list))
+      (let* ((process-name (process-name p))
+             (assoc (assoc process-name my-cleanup-processes-alist)))
+        (when (and assoc
+                   (not (string= process-name "server"))
+                   (process-live-p p)
+                   (not (-any? (lambda (b)
+                                 (let ((mode (buffer-local-value 'major-mode b)))
+                                   (eq mode (cdr assoc))))
+                               buffer-list)))
+          (message "Cleanup: killing %s" process-name)
+          (delete-process p))))))
 
 ;;;###autoload
 (defun my-kill-matching-buffers (regexp &optional buffer-list)

@@ -13,9 +13,8 @@
   (evil-define-command ex:tmux-run (&optional command bang)
     "Sends input to tmux. Use `bang' to append to tmux"
     (interactive "<tmux><!>")
-    (my--tmux-send (concat (unless bang "C-u ")
-                          (shell-quote-argument command)
-                          (unless bang " Enter")))
+    (my--tmux-send (format (if bang "C-u %s Enter" "%s")
+                           (shell-quote-argument command)))
     (when (evil-ex-p)
       (message "[Tmux] %s" command)))
 

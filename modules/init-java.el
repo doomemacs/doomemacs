@@ -36,3 +36,8 @@
 (use-package groovy-mode
   :mode "\\.gradle$"
   :config (after "auto-complete" (add-to-list 'ac-modes 'groovy-mode)))
+
+(use-package java-mode
+  :config
+  (sp-with-modes '(java-mode)
+    (sp-local-pair "/**" "*/" :post-handlers '(("* ||\n[i]" "RET")))))

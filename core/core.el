@@ -222,11 +222,11 @@ the checking happens for all pairs in auto-minor-mode-alist"
   ;; Generate autoloads if necessary
   (defun my-update-autoloads (&optional forcep)
     (interactive)
-    (setq generated-autoload-file (concat my-init-dir "autoload.el"))
+    (setq generated-autoload-file (concat my-core-dir "autoloads.el"))
     (when (or forcep (not (file-exists-p generated-autoload-file)))
       (if forcep (delete-file generated-autoload-file))
-      (update-directory-autoloads my-init-dir my-elisp-dir))
-    (require 'autoload))
+      (update-directory-autoloads my-core-dir my-modules-dir my-personal-dir my-elisp-dir))
+    (require 'autoloads))
 
   (my-update-autoloads)
 

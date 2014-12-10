@@ -12,6 +12,8 @@
 (depends-on "fuzzy")
 (depends-on "use-package")
 (depends-on "smex")
+(depends-on "floobits")
+(depends-on "pos-tip")
 
 ;; OSX
 (depends-on "exec-path-from-shell")
@@ -47,18 +49,22 @@
 ;; Auto-completion
 (depends-on "company")
 (depends-on "company-c-headers")
+;;(depends-on "company-cmake")
 (depends-on "company-tern")
-;; (depends-on "company-anaconda")
+(depends-on "company-anaconda")
 (depends-on "company-inf-ruby")
-;;(depends-on "auto-complete")
-;;(depends-on "auto-complete-clang")
-;;(depends-on "auto-complete-c-headers")
-;;(depends-on "ac-etags")
-;;(depends-on "ac-ispell")
-;;(depends-on "tern-auto-complete")
-;;(depends-on "ac-inf-ruby")
-;;(depends-on "jedi")
+(depends-on "company-irony")
+(depends-on "irony-mode" :git "https://github.com/Sarcasm/irony-mode")
 
+(depends-on "auto-complete")
+(depends-on "auto-complete-clang")
+(depends-on "auto-complete-c-headers")
+(depends-on "ac-etags")
+(depends-on "ac-ispell")
+(depends-on "ac-anaconda")
+(depends-on "tern-auto-complete")
+(depends-on "ac-inf-ruby")
+(depends-on "jedi")
 
 ;; Eeeevil
 (depends-on "god-mode")
@@ -72,6 +78,9 @@
 (depends-on "evil-indent-textobject")
 (depends-on "evil-jumper")
 (depends-on "evil-god-state")
+(depends-on "evil-escape")
+;;(depends-on "evil-snipe" :git "https://github.com/hlissner/evil-snipe")
+;;(depends-on "evil-noautochdir" :git "https://github.com/gbarta/evil-noautochdir")
 ;; evil-nerd-commenter chokes if it's installed via cask for some reason...
 (depends-on "evil-nerd-commenter")
 
@@ -120,11 +129,13 @@
 (depends-on "js2-mode")
 (depends-on "js2-refactor")
 
+(depends-on "enh-ruby-mode")
+(depends-on "ruby-refactor")
 (depends-on "rspec-mode")
 (depends-on "inf-ruby")
 (depends-on "robe")
 
-;; (depends-on "anaconda")
+(depends-on "anaconda")
 
 (depends-on "omnisharp")
 (depends-on "csharp-mode")

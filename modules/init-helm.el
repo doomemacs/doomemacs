@@ -42,8 +42,8 @@
                 (progn
                   (helm-attrset 'search-this-file nil helm-ag-source)
                   (setq helm-ag--last-query
-                        (concat "ag " (unless bang "-Q") " --nogroup --nocolor -- '"
-                                (s-replace "'" "" search) "'")))
+                        (concat "ag " (unless bang "-Q") " --nogroup --nocolor -- "
+                                (shell-quote-argument search))))
               (helm-ag-save-current-context)
               (if (and beg end)
                   (setq input (buffer-substring-no-properties beg end))))

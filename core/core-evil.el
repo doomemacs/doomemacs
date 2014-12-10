@@ -8,6 +8,7 @@
         evil-magic                'very-magic
         evil-want-C-u-scroll      t  ; enable C-u for scrolling
         evil-ex-visual-char-range t  ; column range for ex commands
+        evil-ex-search-vim-style-regexp t
 
         ;; Color-coded state cursors
         evil-normal-state-cursor  '("white" box)
@@ -24,14 +25,20 @@
     (evil-mode)
     ;; Always ensure evil-shift-width is consistent with tab-width
     (add-hook! 'find-file-hook (setq evil-shift-width tab-width))
-    ;; highlight matching delimiters (only in insert mode)
+
+    ;; highlight matching delimiters where it's important
+    (defun show-paren-mode-off () (show-paren-mode -1))
     (add-hook 'evil-insert-state-entry-hook 'show-paren-mode)
-    (add-hook 'evil-insert-state-exit-hook (λ (show-paren-mode -1)))
+    (add-hook 'evil-insert-state-exit-hook 'show-paren-mode-off)
+    (add-hook 'evil-visual-state-entry-hook 'show-paren-mode)
+    (add-hook 'evil-visual-state-exit-hook 'show-paren-mode-off)
+    (add-hook 'evil-motion-state-entry-hook 'show-paren-mode)
+    (add-hook 'evil-motion-state-exit-hook 'show-paren-mode-off)
+    (add-hook 'evil-operator-state-entry-hook 'show-paren-mode)
+    (add-hook 'evil-operator-state-exit-hook 'show-paren-mode-off)
+
     ;; Disable highlights on insert-mode
     (add-hook 'evil-insert-state-entry-hook 'evil-ex-nohighlight)
-
-    ;; Evil command window
-    ;;(my/cleanup-buffers-add "^\\*Command Line\\*$")
 
     ;; modes to map to different default states
     (dolist (mode-map '((cider-repl-mode . emacs)
@@ -59,7 +66,18 @@
 
       (use-package evil-matchit :init (global-evil-matchit-mode 1))
 
-      (use-package evil-surround :init (global-evil-surround-mode 1))
+      (use-package evil-snipe
+        :disabled t
+        :init (global-evil-snipe-mode 1)
+        :config
+        (progn
+          (evil-snipe-override-surround)
+          (setq evil-snipe-search-highlight t)
+          (setq evil-snipe-search-incremental-highlight t)))
+
+      (use-package evil-surround
+        :init (global-evil-surround-mode 1)
+        :config (evil-define-key 'visual evil-surround-mode-map (kbd "S") 'evil-surround-region))
 
       (use-package evil-nerd-commenter
         :pre-load (setq evilnc-hotkey-comment-operator "gc"))
@@ -72,7 +90,8 @@
                 evil-jumper-auto-save-interval 3600)
           (define-key evil-motion-state-map (kbd "H-i") 'evil-jumper/forward)))
 
-      (use-package ace-window)
+      (use-package ace-window
+        :config (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
 
       (use-package evil-visualstar))
 
@@ -100,12 +119,15 @@
         (evil-half-cursor))
       (defadvice evil-ace-jump-word-mode (before evil-ace-jump-word-mode-op activate)
         (evil-half-cursor))
-      (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
-      ;; (setq ace-jump-mode-move-keys
-      ;;       (nconc (loop for i from ?a to ?z collect i)
-      ;;              (loop for i from ?A to ?Z collect i))
 
       ;; https://github.com/winterTTr/ace-jump-mode/issues/23
+      (evil-define-motion evil-ace-jump-two-chars-mode (count)
+        :type exclusive
+        :repeat abort
+        (evil-without-repeat
+          (evil-enclose-ace-jump-for-motion
+            (call-interactively 'ace-jump-two-chars-mode))))
+
       (defun ace-jump-two-chars-mode (&optional query-char query-char-2)
         "AceJump two chars mode"
         (interactive)
@@ -127,7 +149,12 @@
       (defadvice evil-window-split (after evil-window-split-jump activate)
         (evil-window-down 1))
       (defadvice evil-window-vsplit (after evil-window-vsplit-jump activate)
-        (evil-window-right 1)))
+        (evil-window-right 1))
+
+      (defadvice undo-tree-load-history-hook (around undo-tree-load-history-shut-up activate)
+        (shut-up ad-do-it))
+      (defadvice undo-tree-save-history-hook (around undo-tree-save-history-shut-up activate)
+        (shut-up ad-do-it)))
 
     (progn ; extensions
       (defun evil-visual-line-state-p ()
@@ -183,11 +210,9 @@
                                           "\\1" file-name t)))
         file-name))
 
-    ;; (evil-ex-define-cmd "r[esize]" 'my:resize-window)
-
     (progn ; ex-commands
+      (evil-ex-define-cmd "pres[ent]" 'toggle-theme)
       (evil-ex-define-cmd "full[scr]" 'toggle-frame-fullscreen)
-      (evil-ex-define-cmd "present" 'toggle-theme)
       (evil-ex-define-cmd "k[ill]" 'kill-this-buffer)      ; Kill current buffer
       (evil-ex-define-cmd "k[ill]o" 'cleanup-buffers)      ; Kill current project buffers
 
@@ -212,7 +237,7 @@
         :repeat nil
         (interactive "<!>")
         (if bang
-            (ido-find-file-in-dir my-init-dir)
+            (ido-find-file-in-dir my-modules-dir)
           (ido-find-file-in-dir my-dir)))
 
       (evil-ex-define-cmd "n[otes]" 'my:notes)
@@ -336,15 +361,6 @@ provided."
             (tabify beg end)
           (untabify beg end)))
 
-      (evil-ex-define-cmd "run" 'my:run-code)
-      (evil-define-operator my:run-code (beg end)
-        :move-point nil
-        (interactive "<r>")
-        (cond ((and beg end)
-               (my-run-code-region beg end))
-              (t
-               (my-run-code-buffer))))
-
       (evil-ex-define-cmd "sq[uint]" 'my:narrow-indirect)  ; Narrow buffer to selection
       (evil-define-operator my:narrow-indirect (beg end)
         "Indirectly narrow the region from BEG to END."
@@ -353,15 +369,4 @@ provided."
         :repeat nil
         (interactive "<r>")
         (evil-normal-state)
-        (narrow-to-region-indirect beg end))
-
-      (evil-define-operator my:send-region-to-repl (beg end &optional bang)
-        :motion nil
-        :move-point nil
-        :type exclusive
-        :repeat nil
-        (interactive "<r><!>")
-        (cond ((and beg end)
-               (my-send-region-to-repl beg end))
-              (t
-               (my-switch-to-repl)))))))
+        (narrow-to-region-indirect beg end)))))

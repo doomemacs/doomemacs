@@ -1,7 +1,7 @@
 (provide 'init-yasnippet)
 
 (use-package yasnippet
-  :mode (("emacs\\.d/.+/snippets/" . snippet-mode))
+  :mode (("emacs\\.d/snippets/.+$" . snippet-mode))
   :pre-load
   (defvar yas-minor-mode-map
     ;; Fix yasnippet keymaps so they only work in insert mode
@@ -81,6 +81,12 @@
 
     ;; Snippet helpers
     (defvaralias '% 'yas-selected-text)
+    ;; Shorthand defun to surround text with newlines if more than one line.
+    (defun !%! ()
+      (when %
+        (if (> (s-count-lines %) 1)
+            (concat "\n" % "\n")
+          (s-trim %))))
     ;; Shorthand defun for snippets: prepends a newline to `yas-selected-text'
     ;; IF it contains more than one line.
     (defun !% ()
@@ -116,7 +122,8 @@
         (cond ((and field
                     (not (yas--field-modified-p field))
                     (eq (point) (marker-position (yas--field-start field))))
-               (yas--skip-and-clear field))
+               (yas--skip-and-clear field)
+               (yas-next-field 1))
               (t (delete-char -1)))))
 
     ;; keybinds
@@ -125,4 +132,4 @@
           "C-a"        'my/yas-goto-start-of-field
           "<s-right>"  'my/yas-goto-end-of-field
           "<s-left>"   'my/yas-goto-start-of-field
-          "DEL"        'my/yas-clear-field)))
+          [backspace]  'my/yas-clear-field)))

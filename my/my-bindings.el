@@ -154,6 +154,8 @@
 ;; Easy escape from insert mode (more responsive than using key-chord-define)
 (bind 'insert "j" #'my--maybe-exit-insert-mode)
 
+(bind 'insert "C-g" 'evil-normal-state)
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Plugin/mode keymaps                ;;

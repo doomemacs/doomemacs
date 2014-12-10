@@ -12,8 +12,10 @@
       :keymap (make-sparse-keymap))
     (associate-minor-mode "[\\.-]love/.+\\.lua$" 'love-mode)
 
+    (add-hook 'lua-mode-hook 'enable-tab-width-2)
+    (add-hook! 'lua-mode-hook (setq lua-indent-level tab-width))
+
+
     (defun my--build-love ()
       (shell-command (format "open -a love.app %s" (my--project-root))))
-
-    (add-hook! 'lua-mode-hook (setq my-run-code-interpreter "lua"))
-    (add-hook! 'love-mode-hook (setq my-build-func 'my/build-love))))
+    ))
