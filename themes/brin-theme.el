@@ -111,6 +111,7 @@
    `(trailing-whitespace               ((t (:background "#884444"))))
    `(whitespace-tab                    ((t (:foreground "#444444"))))
    `(whitespace-newline                ((t (:foreground "#444444"))))
+   `(whitespace-trailing               ((t (:background "#553333"))))
 
    `(git-gutter+-modified              ((t (:foreground ,git-modified))))
    `(git-gutter+-added                 ((t (:foreground ,git-added))))
@@ -129,6 +130,10 @@
 ;; *****************************************************************************************
 
    `(persp-selected-face               ((t (:foreground ,builtin))))
+
+
+   `(org-level-1                      ((t (:inherit outline-1 :bold t :foreground ,git-added))))
+   `(org-level-2                      ((t (:inherit outline-2 :bold t :foreground ,variables))))
 
    ))
 
