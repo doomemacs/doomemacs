@@ -1,15 +1,15 @@
 (provide 'init-ruby)
 
-(use-package ruby-mode
-  :mode (("\\.rb$" . ruby-mode)
-         ("\\.ru$" . ruby-mode)
-         ("\\.rake$" . ruby-mode)
-         ("\\.gemspec$" . ruby-mode)
-         ("\\.?pryrc$" . ruby-mode)
-         ("Gemfile$" . ruby-mode)
-         ("Capfile$" . ruby-mode)
-         ("Vagrantfile$" . ruby-mode)
-         ("Rakefile$" . ruby-mode))
+(use-package enh-ruby-mode
+  :mode (("\\.rb$" . enh-ruby-mode)
+         ("\\.ru$" . enh-ruby-mode)
+         ("\\.rake$" . enh-ruby-mode)
+         ("\\.gemspec$" . enh-ruby-mode)
+         ("\\.?pryrc$" . enh-ruby-mode)
+         ("Gemfile$" . enh-ruby-mode)
+         ("Capfile$" . enh-ruby-mode)
+         ("Vagrantfile$" . enh-ruby-mode)
+         ("Rakefile$" . enh-ruby-mode))
   :interpreter "ruby"
   :init
   (progn
@@ -19,38 +19,40 @@
     (associate-mode "/\\.rspec$" 'text-mode))
   :config
   (progn
+    (message "Ruby loaded!")
 	;;; Formatting
     (setq ruby-indent-level 2)
     (setq ruby-deep-indent-paren t)
+    (setq enh-ruby-check-syntax nil)
 
-	(add-hook 'ruby-mode-hook 'enable-tab-width-2)
+	(add-hook 'enh-ruby-mode-hook 'enable-tab-width-2)
 
-    (define-key ruby-mode-map [?\n] nil)
+    (define-key enh-ruby-mode-map [?\n] nil)
 
     (after "emr"
       (use-package ruby-refactor)
       (emr-declare-command 'ruby-refactor-extract-to-method
         :title "extract method"
-        :modes 'ruby-mode
+        :modes 'enh-ruby-mode
         :predicate (lambda () (use-region-p)))
 
       (emr-declare-command 'ruby-refactor-extract-local-variable
         :title "extract local variable"
-        :modes 'ruby-mode
+        :modes 'enh-ruby-mode
         :predicate (lambda () (use-region-p)))
 
       (emr-declare-command 'ruby-refactor-extract-constant
         :title "extract constant"
-        :modes 'ruby-mode
+        :modes 'enh-ruby-mode
         :predicate (lambda () (use-region-p)))
 
       (emr-declare-command 'ruby-refactor-add-parameter
         :title "add parameter"
-        :modes 'ruby-mode)
+        :modes 'enh-ruby-mode)
 
       (emr-declare-command 'ruby-refactor-extract-to-let
         :title "extract to let"
-        :modes 'ruby-mode
+        :modes 'enh-ruby-mode
         :predicate (lambda () (use-region-p))))
 
     (define-minor-mode rake-mode
@@ -61,12 +63,12 @@
       :commands (inf-ruby inf-ruby-console-auto)
       :config
       (progn
-        (evil-set-initial-state 'inf-ruby-mode 'insert)
-        (push '(inf-ruby-mode :position bottom :stick t) popwin:special-display-config)
+        (evil-set-initial-state 'inf-enh-ruby-mode 'insert)
+        (push '(inf-enh-ruby-mode :position bottom :stick t) popwin:special-display-config)
 
         (after "company"
           (use-package company-inf-ruby
-            :config (company--backend-on 'inf-ruby-mode-hook 'company-inf-ruby)))))
+            :config (company--backend-on 'inf-enh-ruby-mode-hook 'company-inf-ruby)))))
 
     (use-package rspec-mode
       :defer t
@@ -92,18 +94,20 @@
       (progn
         (after "company"
           (use-package company-robe
-            :config (company--backend-on 'ruby-mode-hook 'company-robe)))
+            :config (company--backend-on 'enh-ruby-mode-hook 'company-robe)))
 
-        (add-hook! 'ruby-mode-hook
-          (robe-mode 1)
-          ;; (after "auto-complete" (ac-robe-setup))
-          (unless robe-running (robe-start 1))
-          (my--ruby-load-file buffer-file-name))
+        (add-hook! 'enh-ruby-mode-hook
+          (unless (f-ext? (buffer-file-name) "org") ;; in case of org-mode
+            (robe-mode 1)
+            ;; (after "auto-complete" (ac-robe-setup))
+            (my--ruby-load-file buffer-file-name)))
 
         (defun my--ruby-load-file (&optional file)
           (let ((file (or file buffer-file-name)))
-            (when (and (eq major-mode 'ruby-mode)
-                       (bound-and-true-p robe-running)
+            (when (and (eq major-mode 'enh-ruby-mode)
+                       (featurep 'robe)
+                       (not (string= (f-base file) "Gemfile"))
                        (file-exists-p buffer-file-name))
-              (ruby-load-file file))))
+              (unless robe-running (robe-start 1))
+              (when robe-running (ruby-load-file file)))))
         (add-hook 'after-save-hook 'my--ruby-load-file)))))

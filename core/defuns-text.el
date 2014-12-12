@@ -66,7 +66,7 @@ whitespace as possible, or just one char if that's not possible."
                (if (string-match "\\w*\\(\\s-+\\)$"
                                  (buffer-substring-no-properties (- p movement) p))
                    (backward-delete-char (- (match-end 1) (match-beginning 1)))
-                 (call-interactively 'backward-delete-char-untabify)))))))
+                 (backward-delete-char-untabify 1)))))))
 
 ;;;###autoload
 (defun my.dumb-indent ()

@@ -34,7 +34,7 @@
     ;; ;; ;; Ruby
     (template "/spec_helper\\.rb$"                                      "%helper%"         'rspec-mode t)
     (template "_spec\\.rb$"                                             "%%"               'rspec-mode t)
-    (template "/\\.rspec$"                                              "%.rspec%"         'rspec-mode t)
+    (template "/\\.rspec$"                                              "%.rspec%"         'rspec-mode)
     (template "/Rakefile$"                                              "%Rakefile%"       'ruby-mode t)
     (template "/Gemfile$"                                               "%Gemfile%"        'ruby-mode t)
     ;; (template "\\.gemspec$"                                          "%.gemspec%"       'ruby-mode t)

@@ -17,35 +17,38 @@
     (evil-ex-define-cmd "a" 'helm-projectile-find-other-file)
     (evil-ex-define-cmd "proj[ect]" 'helm-projectile-switch-project)
     (evil-ex-define-cmd "ag" 'my:helm-ag-search)
+    (evil-ex-define-cmd "agr" 'my:helm-ag-regex-search)
     (evil-ex-define-cmd "ag[cw]d" 'my:helm-ag-search-cwd)
+    (evil-ex-define-cmd "agr[cw]d" 'my:helm-ag-regex-search-cwd)
     (evil-ex-define-cmd "sw[oop]" 'my:helm-swoop)
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
     (use-package helm-ag
-      :commands (my:helm-ag-search my:helm-ag-search-cwd helm-ag helm-do-ag my:helm-ag-search)
+      :commands (my:helm-ag-search
+                 my:helm-ag-search-cwd
+                 my:helm-ag-regex-search
+                 my:helm-ag-regex-search-cwd
+                 helm-ag helm-do-ag)
       :config
       (progn
         ;; Ex-mode interface for `helm-ag'. If `bang', then `search' is interpreted as
         ;; regexp.
-        (evil-define-operator my:helm-ag-search (beg end &optional bang search pwd-p)
-          :motion nil
-          :move-point nil
+        (evil-define-operator my:helm-ag-search (beg end &optional search hidden-files-p pwd-p regex-p)
           :type inclusive
           :repeat nil
-          (interactive "<r><!><a>")
+          (interactive "<r><a><!>")
           (let* ((helm-ag-default-directory (my--project-root pwd-p))
-                 (header-name (format "Search in %s" helm-ag-default-directory))
+                 (helm-ag-command-option (concat (unless regex-p "-Q ")
+                                                 (if hidden-files-p "--hidden ")))
                  (input "")
-                 (helm-ag--last-input ""))
+                 (header-name (format "Search in %s" helm-ag-default-directory)))
             (if search
                 (progn
                   (helm-attrset 'search-this-file nil helm-ag-source)
-                  (setq helm-ag--last-query
-                        (concat "ag " (unless bang "-Q") " --nogroup --nocolor -- "
-                                (shell-quote-argument search))))
+                  (setq helm-ag--last-query search))
               (helm-ag-save-current-context)
-              (if (and beg end)
+              (if (and beg end (/= beg (1- end)))
                   (setq input (buffer-substring-no-properties beg end))))
             (helm-attrset 'name header-name helm-ag-source)
             (helm :sources (if search (helm-ag--select-source) '(helm-source-do-ag))
@@ -53,15 +56,25 @@
                   :input input
                   :prompt helm-global-prompt)))
 
-        ;; Ex-mode interface for `helm-do-ag'. If `bang', then `search' is interpreted
-        ;; as regexp
-        (evil-define-operator my:helm-ag-search-cwd (beg end &optional bang search)
-          :motion nil
-          :move-point nil
+        (evil-define-operator my:helm-ag-regex-search (beg end &optional bang search)
           :type inclusive
           :repeat nil
           (interactive "<r><!><a>")
-          (my:helm-ag-search beg end search bang t))))
+          (my:helm-ag-search beg end search bang nil t))
+
+        ;; Ex-mode interface for `helm-do-ag'. If `bang', then `search' is interpreted
+        ;; as regexp
+        (evil-define-operator my:helm-ag-search-cwd (beg end &optional search bang)
+          :type inclusive
+          :repeat nil
+          (interactive "<r><a><!>")
+          (my:helm-ag-search beg end search bang t nil))))
+
+        (evil-define-operator my:helm-ag-regex-search-cwd (beg end &optional search bang)
+          :type inclusive
+          :repeat nil
+          (interactive "<r><a><!>")
+          (my:helm-ag-search beg end search bang t t))))
 
     (use-package helm-css-scss ; https://github.com/ShingoFukuyama/helm-css-scss
       :commands (helm-css-scss

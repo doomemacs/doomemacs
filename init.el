@@ -17,13 +17,12 @@
 ;;
 ;;; Code:
 
-(defconst *debug-mode nil)
+(defconst DEBUG-MODE nil)
 
 (defconst my-dir           user-emacs-directory)
 (defconst my-core-dir      (concat my-dir "core/"))
-(defconst my-modules-dir   (concat my-dir "modules/"))
-(defconst my-personal-dir  (concat my-dir "my/"))
-(defconst my-elisp-dir     (concat my-dir "lib/"))
+(defconst my-modules-dir   (concat my-dir "init/"))
+(defconst my-elisp-dir     (concat my-dir "elisp/"))
 (defconst my-themes-dir    (concat my-dir "themes/"))
 (defconst my-snippets-dir  (concat my-dir "snippets/"))
 (defconst my-tmp-dir       (concat my-dir ".cache/"))
@@ -34,12 +33,11 @@
 (defconst *default-font "Ubuntu Mono")
 (defconst *default-font-size (if (eq system-name "ganymede.local") 12 14))
 
-(defconst *presentation-font *default-font)
-(defconst *presentation-font-size 18)
+(defconst *presentation-font "Panic Sans")
+(defconst *presentation-font-size 22)
 
 (add-to-list 'load-path my-core-dir)
 (add-to-list 'load-path my-modules-dir)
-(add-to-list 'load-path my-personal-dir)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Just the... bear necessities...
@@ -51,6 +49,7 @@
     init-auto-insert       ; for the lazy typis
     init-company           ; see above
     init-cc                ; C/C++/Obj-C madness
+    ;; init-d              ; D - It's C, but better!
     ;; init-cscope
     ;; init-csharp
     init-dev               ; general dev tools/settings
@@ -77,6 +76,7 @@
     init-swift             ; ever wanted to name a variable an emoticon?
     init-text              ; I got nothing...
     init-tmux
+    ;; init-rust
     init-web
     init-yasnippet         ; type for me
 

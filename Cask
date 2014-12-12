@@ -56,15 +56,15 @@
 (depends-on "company-irony")
 (depends-on "irony-mode" :git "https://github.com/Sarcasm/irony-mode")
 
-(depends-on "auto-complete")
-(depends-on "auto-complete-clang")
-(depends-on "auto-complete-c-headers")
-(depends-on "ac-etags")
-(depends-on "ac-ispell")
-(depends-on "ac-anaconda")
-(depends-on "tern-auto-complete")
-(depends-on "ac-inf-ruby")
-(depends-on "jedi")
+; (depends-on "auto-complete")
+; (depends-on "auto-complete-clang")
+; (depends-on "auto-complete-c-headers")
+; (depends-on "ac-etags")
+; (depends-on "ac-ispell")
+; (depends-on "ac-anaconda")
+; (depends-on "tern-auto-complete")
+; (depends-on "ac-inf-ruby")
+; (depends-on "jedi")
 
 ;; Eeeevil
 (depends-on "god-mode")
@@ -104,6 +104,7 @@
 ;; Modes/mode-specific
 (depends-on "org-plus-contrib")
 (depends-on "org-opml" :git "https://github.com/edavis/org-opml")
+;(depends-on "org-present")
 
 (depends-on "rainbow-mode")
 (depends-on "lua-mode")
@@ -135,7 +136,7 @@
 (depends-on "inf-ruby")
 (depends-on "robe")
 
-(depends-on "anaconda")
+(depends-on "anaconda-mode")
 
 (depends-on "omnisharp")
 (depends-on "csharp-mode")
@@ -148,3 +149,6 @@
 
 (depends-on "applescript-mode")
 (depends-on "cmake-mode")
+
+(depends-on "rust-mode")
+(depends-on "d-mode")

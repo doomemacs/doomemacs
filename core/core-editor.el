@@ -1,7 +1,4 @@
 ;; Global editor behavior (+ evil)
-(provide 'core-editor)
-
-;;;; Editing plugins ;;;;;;;;;;;;;;;;;;;
 (use-package expand-region
   :commands (er/expand-region er/contract-region))
 
@@ -18,7 +15,7 @@
     (setq sp-autowrap-region nil            ; let evil-surround handle this
           sp-highlight-pair-overlay nil
           sp-show-pair-delay 0
-          sp-autoescape-string-quote nil)
+          sp-autoescape-string-quote t)
 
     ;; Handle newlines
     (sp-pair "{" nil :post-handlers '(("||\n[i]" "RET")))
@@ -36,3 +33,7 @@
     (after "yasnippet"
       (defadvice yas-expand (before advice-for-yas-expand activate)
         (sp-remove-active-pair-overlay)))))
+
+
+(provide 'core-editor)
+;;; core-editor.el ends here

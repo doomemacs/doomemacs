@@ -56,22 +56,22 @@
       "[ \\"  'er/contract-region)
 
 (bind 'normal my-mode-map
+      ", ,"   'helm-projectile-switch-to-buffer
+      ", ."   'helm-resume
+      ", /"   'helm-projectile-find-file
+      ", ;"   'helm-semantic-or-imenu
+      ", <"   'helm-mini
+      ", E"   'my:init-files
+      ", M"   'helm-projectile-recentf ; recent PROJECT files
+      ", ]"   'helm-etags-select
       ", a"   'helm-projectile-find-other-file
       ", e"   'ido-find-file
-      ", E"   'my:init-files
       ", f"   'helm-projectile-find-file-dwim
       ", g"   'git-gutter+-show-hunk
       ", h"   'helm-apropos
       ", m"   'helm-recentf
-      ", M"   'helm-projectile-recentf ; recent PROJECT files
       ", p"   'helm-projectile-switch-project
       ", y"   'helm-show-kill-ring
-      ", ;"   'helm-semantic-or-imenu
-      ", ,"   'helm-projectile-switch-to-buffer
-      ", <"   'helm-mini
-      ", ]"   'helm-etags-select
-      ", /"   'helm-projectile-find-file
-      ", ."   'helm-resume
 
       ;; behave  like D and C; yank to end of line
       "Y"     (λ (evil-yank (point) (point-at-eol)))

@@ -24,26 +24,29 @@
               (markdown-unwrap-thing-at-point nil 2 4)
             (markdown-wrap-or-insert delim delim 'word nil nil))))))
   :config
-  (let ((map markdown-mode-map))
-    (bind '(normal visual) map
-          ",i" 'markdown-insert-image
-          ",l" 'markdown-insert-link
-          ",L" 'markdown-insert-reference-link-dwim
-          ",b" 'markdown-preview)
+  (progn
+    (sp-local-pair 'markdown-mode "*" "*" :unless '(sp-point-after-bol-p sp-point-before-same-p sp-point-after-same-p))
 
-    (bind 'normal map
-          "[p" 'markdown-promote
-          "]p" 'markdown-demote)
+    (let ((map markdown-mode-map))
+      (bind '(normal visual) map
+            ",i" 'markdown-insert-image
+            ",l" 'markdown-insert-link
+            ",L" 'markdown-insert-reference-link-dwim
+            ",b" 'markdown-preview)
 
-    (bind 'insert map
-          (kbd "M--") 'markdown-insert-hr)
+      (bind 'normal map
+            "[p" 'markdown-promote
+            "]p" 'markdown-demote)
 
-    (bind map
-          (kbd "<backspace>")  nil
-          (kbd "<M-left>")     nil
-          (kbd "<M-right>")    nil
+      (bind 'insert map
+            (kbd "M--") 'markdown-insert-hr)
 
-          (kbd "s-*") 'markdown-insert-list-item
-          (kbd "s-b") 'markdown-insert-bold
-          (kbd "s-i") 'markdown-insert-italic
-          (kbd "s-`") 'markdown-insert-del)))
+      (bind map
+            (kbd "<backspace>")  nil
+            (kbd "<M-left>")     nil
+            (kbd "<M-right>")    nil
+
+            (kbd "s-*") 'markdown-insert-list-item
+            (kbd "s-b") 'markdown-insert-bold
+            (kbd "s-i") 'markdown-insert-italic
+            (kbd "s-`") 'markdown-insert-del))))

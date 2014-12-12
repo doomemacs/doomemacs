@@ -1,5 +1,3 @@
-(provide 'core)
-
 (cd "~") ; instead of /
 
 (require 'cask)
@@ -18,10 +16,10 @@
    (make-directory my-tmp-dir-autosave t))
 
 (setq load-prefer-newer t)
-(setq debug-on-quit *debug-mode)
+(setq debug-on-quit DEBUG-MODE)
 
 (require 'shut-up)
-(setq shut-up-ignore *debug-mode)
+(setq shut-up-ignore DEBUG-MODE)
 (when noninteractive (shut-up-silence-emacs)) ; http://youtu.be/Z6woIRLnbmE
 
 (shut-up
@@ -48,7 +46,7 @@
 
   ;;; Show tab characters
   ;; (global-whitespace-mode 1)
-  (setq whitespace-style '(face tabs tab-mark) ; needs to be re-set in every buffer
+  (setq whitespace-style '(trailing face tabs tab-mark) ; needs to be re-set in every buffer
         whitespace-display-mappings
         '((tab-mark   ?\t   [?| ?\t] [?\\ ?\t])
           (newline-mark 10 [36 10])))         ; for whitespace-newline-mode
@@ -147,7 +145,6 @@
   (setq-default tab-width 4)
 
   (setq delete-trailing-lines nil)
-  (add-hook 'before-save-hook 'delete-trailing-whitespace)
   (add-hook 'makefile-mode-hook 'indent-tabs-mode) ; Use normal tabs in makefiles
   ;; Make sure scratch buffer is always "in a project"
   (add-hook 'find-file-hook
@@ -217,7 +214,8 @@ the checking happens for all pairs in auto-minor-mode-alist"
   ;;;; Utility plugins ;;;;;;;;;;;;;;;;;;
   (require 'defuns)       ; all the defuns
   (require 'use-package)  ; Package management bootstrap
-  (setq use-package-verbose *debug-mode)
+  (setq use-package-verbose DEBUG-MODE)
+  ;;(require 'hide-mode-line)
 
   ;; Generate autoloads if necessary
   (defun my-update-autoloads (&optional forcep)
@@ -225,7 +223,7 @@ the checking happens for all pairs in auto-minor-mode-alist"
     (setq generated-autoload-file (concat my-core-dir "autoloads.el"))
     (when (or forcep (not (file-exists-p generated-autoload-file)))
       (if forcep (delete-file generated-autoload-file))
-      (update-directory-autoloads my-core-dir my-modules-dir my-personal-dir my-elisp-dir))
+      (update-directory-autoloads my-core-dir my-modules-dir my-elisp-dir))
     (require 'autoloads))
 
   (my-update-autoloads)
@@ -258,6 +256,7 @@ the checking happens for all pairs in auto-minor-mode-alist"
       (push '("*Compile-Log*" :height 0.3 :position bottom :noselect t) popwin:special-display-config)
       (push '(" *undo-tree*" :width 0.3 :position right) popwin:special-display-config)
       (push '("^\\*scratch\\*.*" :regexp t :stick t) popwin:special-display-config)
+      (push '(image-mode) popwin:special-display-config)
 
       (after "evil"
         (evil-ex-define-cmd "l[ast]" 'popwin:popup-last-buffer)
@@ -279,3 +278,7 @@ the checking happens for all pairs in auto-minor-mode-alist"
   (require 'server)
   (unless (server-running-p)
     (server-start)))
+
+
+(provide 'core)
+;;; core.el ends here

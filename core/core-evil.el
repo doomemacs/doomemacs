@@ -211,10 +211,11 @@
         file-name))
 
     (progn ; ex-commands
-      (evil-ex-define-cmd "pres[ent]" 'toggle-theme)
+      (evil-ex-define-cmd "pres[ent]" 'toggle-presentation-mode)
+      (evil-ex-define-cmd "togglet[heme]" 'toggle-theme)
       (evil-ex-define-cmd "full[scr]" 'toggle-frame-fullscreen)
       (evil-ex-define-cmd "k[ill]" 'kill-this-buffer)      ; Kill current buffer
-      (evil-ex-define-cmd "k[ill]o" 'cleanup-buffers)      ; Kill current project buffers
+      (evil-ex-define-cmd "k[ill]o" 'my-cleanup-buffers)   ; Kill current project buffers
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -231,6 +232,13 @@
             (projectile-kill-buffers)
           (mapc 'kill-buffer (buffer-list)))
         (delete-other-windows))
+
+      (evil-ex-define-cmd "k[ill]buried" 'my:kill-buried-buffers)    ; Kill all buffers (bang = project buffers only)
+      (evil-define-command my:kill-buried-buffers (&optional bang)
+        :repeat nil
+        (interactive "<!>")
+        (mapc 'kill-buffer
+              (my-living-buffer-list (if bang (projectile-project-buffers) (buffer-list)))))
 
       (evil-ex-define-cmd "ini" 'my:init-files)
       (evil-define-command my:init-files (&optional bang)
@@ -253,12 +261,6 @@
         (if bang
             (byte-recompile-directory (concat my-dir ".cask") 0 t)
           (byte-recompile-directory my-dir 0 t)))
-
-      (evil-ex-define-cmd "build" 'my:build)
-      (evil-define-command my:build (arguments &optional bang)
-        :repeat t
-        (interactive "<a><!>")
-        (my-build arguments))
 
       (evil-ex-define-cmd "cd" 'my:cd)
       (evil-define-command my:cd (dir)
@@ -369,4 +371,4 @@ provided."
         :repeat nil
         (interactive "<r>")
         (evil-normal-state)
-        (narrow-to-region-indirect beg end)))))
+        (my-narrow-to-region-indirect beg end)))))

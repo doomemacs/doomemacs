@@ -9,6 +9,25 @@
       (narrow-to-region start end))
     (switch-to-buffer buf)))
 
+;;;###autoload
+(defun my--set-region-read-only (begin end)
+  "See http://stackoverflow.com/questions/7410125"
+  (let ((modified (buffer-modified-p)))
+    (add-text-properties begin end '(read-only t))
+    (set-buffer-modified-p modified)))
+
+;;;###autoload
+(defun my--set-region-writeable (begin end)
+  "See http://stackoverflow.com/questions/7410125"
+  (let ((modified (buffer-modified-p))
+        (inhibit-read-only t))
+    (remove-text-properties begin end '(read-only t))
+    (set-buffer-modified-p modified)))
+
+;;;###autoload
+(defun my-living-buffer-list (&optional buffer-list)
+  (-remove 'get-buffer-window (or buffer-list (buffer-list))))
+
 
 ;; Killing Buffers ;;;;;;;;;;;;;;;;;;;;;
 ;; Buffer defuns
@@ -18,6 +37,7 @@
                                    "^\\*Compile-Log\\*$"
                                    "^\\*Ediff.*\\*$"
                                    help-mode
+                                   image-mode
                                    dired-mode
                                    reb-mode)
   "A list of buffer name regexps or major-mode symbols. If buried buffers

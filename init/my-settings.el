@@ -23,9 +23,11 @@
 (set-register ?. "~/.dotfiles/")
 (set-register ?d "~/Dropbox/Projects/")
 (set-register ?@ "~/.emacs.d/init.el")
-(set-register ?% "~/.emacs.d/init.el")
 
 (add-hook 'help-mode-hook 'visual-line-mode)
+(add-hook! 'before-save-hook
+  (unless (eq major-mode 'org-mode)
+    (delete-trailing-whitespace)))
 
 ;; Performance checks
 (add-hook! 'find-file-hook

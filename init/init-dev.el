@@ -14,8 +14,7 @@
   (progn
     (add-hook 'emacs-lisp-mode-hook 'rainbow-delimiters-mode)
     (add-hook 'js2-mode-hook 'rainbow-delimiters-mode)
-    (add-hook 'scss-mode-hook 'rainbow-delimiters-mode)
-    (add-hook 'ruby-mode-hook 'rainbow-delimiters-mode)))
+    (add-hook 'scss-mode-hook 'rainbow-delimiters-mode)))
 
 ;;; Config modes
 (use-package yaml-mode
@@ -33,9 +32,13 @@
     (after "evil" (evil-ex-define-cmd "ref[actor]" 'emr-show-refactor-menu))))
 
 ;; todo's
-(use-package hl-todo :init (add-hook 'find-file-hook 'hl-todo-mode))
+(use-package hl-todo
+  :init (add-hook! 'after-init-hook (add-hook 'find-file-hook 'hl-todo-mode)))
 (use-package helm-todo :commands my:helm-todo-search)
 (evil-ex-define-cmd "todo" 'my:helm-todo)
+
+;; (require 'evil-snipe)
+;; (global-evil-snipe-mode 1)
 
 
 (provide 'init-dev)
