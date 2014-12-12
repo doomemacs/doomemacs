@@ -1,5 +1,3 @@
-(provide 'init-eshell)
-
 ;; (evil-set-initial-state 'eshell-mode 'emacs)
 
 ;; (push '("*eshell*" :position left :width 80 :stick t) popwin:special-display-config)
@@ -46,3 +44,7 @@
 
 ;; ;; em-prompt
 ;; (setq eshell-prompt-function 'my-eshell-prompt)
+
+
+(provide 'init-eshell)
+;;; init-eshell.el ends here

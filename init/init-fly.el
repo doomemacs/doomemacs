@@ -1,5 +1,3 @@
-(provide 'init-fly)
-
 (use-package flycheck
   :defer t
   :init (add-hook 'prog-mode-hook 'flycheck-mode)
@@ -34,3 +32,7 @@
           popwin:special-display-config)))
 
 (use-package flyspell :commands flyspell-mode)
+
+
+(provide 'init-fly)
+;;; init-fly.el ends here

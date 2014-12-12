@@ -1,5 +1,3 @@
-(provide 'init-text)
-
 (add-hook 'text-mode-hook 'turn-on-auto-fill)
 (add-hook 'prog-mode-hook 'enable-comment-hard-wrap)
 
@@ -50,3 +48,7 @@
             (kbd "s-b") 'markdown-insert-bold
             (kbd "s-i") 'markdown-insert-italic
             (kbd "s-`") 'markdown-insert-del))))
+
+
+(provide 'init-text)
+;;; init-text.el ends here

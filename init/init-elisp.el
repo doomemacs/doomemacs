@@ -1,5 +1,3 @@
-(provide 'init-elisp)
-
 (defun remove-elc-on-save ()
   "If you're saving an elisp file, likely the .elc is no longer valid."
   (make-local-variable 'after-save-hook)
@@ -29,3 +27,7 @@
            (if func (find-function-other-window func)))))
 
 (bind 'motion emacs-lisp-mode-map "g r" 'my:elisp-eval)
+
+
+(provide 'init-elisp)
+;;; init-elisp.el ends here

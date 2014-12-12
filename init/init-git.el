@@ -1,5 +1,3 @@
-(provide 'init-git)
-
 (use-package git-commit-mode            ;
   :mode (("/COMMIT_EDITMSG\\'"       . git-commit-mode)
          ("/NOTES_EDITMSG\\'"        . git-commit-mode)
@@ -111,3 +109,7 @@
 
 (evil-set-initial-state 'git-commit-mode 'insert)
 (evil-set-initial-state 'git-rebase-mode 'insert)
+
+
+(provide 'init-git)
+;;; init-git.el ends here

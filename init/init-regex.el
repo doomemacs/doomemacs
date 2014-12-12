@@ -1,5 +1,3 @@
-(provide 'init-regex)
-
 (use-package re-builder
   :defer t
   :config
@@ -27,3 +25,7 @@
     (after "re-builder" (setq reb-re-syntax 'pcre))
     (after "popwin"
       (push '("* Regexp Explain *" :position top :height 0.35) popwin:special-display-config))))
+
+
+(provide 'init-regex)
+;;; init-regex.el ends here

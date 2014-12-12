@@ -126,5 +126,6 @@
 (if is-mac (global-set-key (kbd "s-q") 'my-emacs-is-not-kill))
 
 
+
 (provide 'my-settings)
 ;;; my-settings.el ends here

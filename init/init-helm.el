@@ -1,5 +1,3 @@
-(provide 'init-helm)
-
 (use-package helm
   :config
   (progn ; helm settings
@@ -210,3 +208,7 @@
           "C-u"        'helm-delete-minibuffer-contents
           "C-r"        'evil-ex-paste-from-register ; Evil registers in helm! Glorious!
           [escape]     'helm-keyboard-quit)))
+
+
+(provide 'init-helm)
+;;; init-helm.el ends here

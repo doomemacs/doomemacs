@@ -1,5 +1,3 @@
-(provide 'init-tmux)
-
 (defun my--tmux-send (command)
   (shell-command (format "tmux send-keys %s" command)))
 
@@ -32,3 +30,6 @@
       (when (evil-ex-p)
         (message "[Tmux] cd %s" dir)))))
 
+
+(provide 'init-tmux)
+;;; init-tmux.el ends here

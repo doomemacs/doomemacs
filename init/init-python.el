@@ -1,5 +1,3 @@
-(provide 'init-python)
-
 (use-package python
   :mode ("\\.py\\'" . python-mode)
   :interpreter ("python" . python-mode)
@@ -96,3 +94,7 @@
             ",tA" 'nosetests-pdb-all
             ",tO" 'nosetests-pdb-one
             ",tV" 'nosetests-pdb-module))))
+
+
+(provide 'init-python)
+;;; init-python.el ends here

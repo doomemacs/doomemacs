@@ -1,5 +1,3 @@
-(provide 'init-sh)
-
 (after "popwin"
   (push '("*ansi-term*" :position bottom :height 0.45 :stick t) popwin:special-display-config)
   (push '("*terminal*" :position bottom :height 0.45 :stick t) popwin:special-display-config)
@@ -20,3 +18,7 @@
          (string= (buffer-name buf) "*Shell Command Output*")
          (with-current-buffer buf
            (ansi-color-apply-on-region (point-min) (point-max))))))
+
+
+(provide 'init-sh)
+;;; init-sh.el ends here

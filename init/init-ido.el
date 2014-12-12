@@ -1,5 +1,3 @@
-(provide 'init-ido)
-
 ;; ido remaps its keys every time it's invoked, this screws with
 ;; custom mappings. So we've gotta neuter ido.
 ;; (defun ido-init-completion-maps ())
@@ -38,3 +36,7 @@
       '("\\` " "^\\*ESS\\*" "^\\*Messages\\*" "^\\*Help\\*" "^\\*Buffer"
         "^\\*.*Completions\\*$" "^\\*Ediff" "^\\*tramp" "^\\*cvs-"
         "_region_" " output\\*$" "^TAGS$" "^\*Ido"))
+
+
+(provide 'init-ido)
+;;; init-ido.el ends here

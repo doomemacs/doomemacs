@@ -1,5 +1,3 @@
-(provide 'init-ruby)
-
 (use-package enh-ruby-mode
   :mode (("\\.rb$" . enh-ruby-mode)
          ("\\.ru$" . enh-ruby-mode)
@@ -111,3 +109,7 @@
               (unless robe-running (robe-start 1))
               (when robe-running (ruby-load-file file)))))
         (add-hook 'after-save-hook 'my--ruby-load-file)))))
+
+
+(provide 'init-ruby)
+;;; init-ruby.el ends here

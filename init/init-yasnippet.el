@@ -1,5 +1,3 @@
-(provide 'init-yasnippet)
-
 (use-package yasnippet
   :mode (("emacs\\.d/snippets/.+$" . snippet-mode))
   :pre-load
@@ -133,3 +131,7 @@
           "<s-right>"  'my/yas-goto-end-of-field
           "<s-left>"   'my/yas-goto-start-of-field
           [backspace]  'my/yas-clear-field)))
+
+
+(provide 'init-yasnippet)
+;;; init-yasnippet.el ends here

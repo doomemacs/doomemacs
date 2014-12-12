@@ -1,5 +1,3 @@
-(provide 'init-csharp)
-
 (use-package omnisharp :defer t
   :config
   (progn
@@ -26,3 +24,6 @@
 (use-package shaderlab-mode :mode "\\.shader$")
 
 ;; TODO Make more Unity-friendly
+
+(provide 'init-csharp)
+;;; init-csharp.el ends here

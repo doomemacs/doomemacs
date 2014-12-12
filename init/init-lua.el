@@ -1,5 +1,3 @@
-(provide 'init-lua)
-
 (use-package lua-mode
   :mode "\\.lua$"
   :interpreter "lua"
@@ -19,3 +17,7 @@
     (defun my--build-love ()
       (shell-command (format "open -a love.app %s" (my--project-root))))
     ))
+
+
+(provide 'init-lua)
+;;; init-lua.el ends here

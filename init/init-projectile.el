@@ -1,5 +1,3 @@
-(provide 'init-projectile)
-
 (use-package projectile
   :pre-load
   (setq-default projectile-cache-file (concat my-tmp-dir "projectile.cache")
@@ -27,3 +25,7 @@
     (after "perspective"
       (defvar persp-modestring-dividers '("" " |" ","))
       (use-package persp-projectile))))
+
+
+(provide 'init-projectile)
+;;; init-projectile.el ends here

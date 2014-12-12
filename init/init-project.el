@@ -1,6 +1,4 @@
 ;; Project nav+search tools (projectile, helm, ag)
-(provide 'init-project)
-
 (use-package neotree
   :commands (neotree-show neotree-hide neotree-toggle)
   :config
@@ -39,3 +37,7 @@
 
          (add-hook! 'dired-mode-hook
            (use-package 'dired+ :config (toggle-diredp-find-file-reuse-dir 1)))))
+
+
+(provide 'init-project)
+;;; init-project.el ends here

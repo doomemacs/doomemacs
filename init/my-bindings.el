@@ -1,5 +1,3 @@
-(provide 'my-bindings)
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Global keymaps                     ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -172,3 +170,7 @@
         "[[" 'help-go-back))
 
 (evil-make-overriding-map my-mode-map nil)
+
+
+(provide 'my-bindings)
+;;; my-bindings.el ends here

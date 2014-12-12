@@ -1,5 +1,3 @@
-(provide 'init-company)
-
 (use-package company
   :init
   (global-company-mode 1)
@@ -128,3 +126,7 @@
       (after "helm-company"
              (bind company-mode-map   "<C-return>" 'helm-company)
              (bind company-active-map "<C-return>" 'helm-company))))))
+
+
+(provide 'init-company)
+;;; init-company.el ends here
