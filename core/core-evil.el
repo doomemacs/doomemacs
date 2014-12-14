@@ -5,6 +5,7 @@
   :pre-load
   (setq evil-want-visual-char-semi-exclusive t
         evil-search-module        'evil-search
+        evil-search-wrap          nil
         evil-magic                'very-magic
         evil-want-C-u-scroll      t  ; enable C-u for scrolling
         evil-ex-visual-char-range t  ; column range for ex commands
@@ -76,8 +77,7 @@
           (setq evil-snipe-search-incremental-highlight t)))
 
       (use-package evil-surround
-        :init (global-evil-surround-mode 1)
-        :config (evil-define-key 'visual evil-surround-mode-map (kbd "S") 'evil-surround-region))
+        :init (global-evil-surround-mode 1))
 
       (use-package evil-nerd-commenter
         :pre-load (setq evilnc-hotkey-comment-operator "gc"))
@@ -89,6 +89,15 @@
           (setq evil-jumper-auto-center t
                 evil-jumper-auto-save-interval 3600)
           (define-key evil-motion-state-map (kbd "H-i") 'evil-jumper/forward)))
+
+      (use-package evil-snipe
+        :init (global-evil-snipe-mode)
+        :config
+        (progn
+          (bind 'visual "z" 'evil-snipe-f)
+          (bind 'visual "Z" 'evil-snipe-F)
+          (setq evil-snipe-enable-highlight t
+                evil-snipe-enable-incremental-highlight t)))
 
       (use-package ace-window
         :config (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
