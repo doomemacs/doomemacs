@@ -86,6 +86,7 @@
                  "\C-w"               'ido-delete-backward-word-updir))
 
 ;; Make ESC quit all the things
+(bind minibuffer-inactive-mode-map [escape] (λ (other-window 1)))
 (bind (list minibuffer-local-map
             minibuffer-local-ns-map
             minibuffer-local-completion-map

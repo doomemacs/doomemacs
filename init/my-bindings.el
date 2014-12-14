@@ -103,10 +103,21 @@
                 (evil-normal-state)
                 (evil-visual-restore)))
 
+
+(defun my--enable-linum ()
+  (interactive)
+  (linum-mode 1)
+  (add-hook 'pre-command-hook 'my--disable-linum))
+
+(defun my--disable-linum ()
+  (interactive)
+  (linum-mode 0)
+  (remove-hook 'pre-command-hook 'my--disable-linum))
+
 (bind 'god my-mode-map
       ;; <localleader>
       "\\"   'neotree-toggle
-      ":"    'linum-mode
+      ";"    'linum-mode
       "="    'toggle-transparency
       "e"    'evil-emacs-state
 

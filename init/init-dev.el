@@ -32,8 +32,7 @@
     (after "evil" (evil-ex-define-cmd "ref[actor]" 'emr-show-refactor-menu))))
 
 ;; todo's
-(use-package hl-todo
-  :init (add-hook! 'after-init-hook (add-hook 'find-file-hook 'hl-todo-mode)))
+(use-package hl-todo :init (add-hook 'find-file-hook 'hl-todo-mode))
 (use-package helm-todo :commands my:helm-todo-search)
 (evil-ex-define-cmd "todo" 'my:helm-todo)
 

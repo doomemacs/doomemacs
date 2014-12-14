@@ -66,7 +66,7 @@
           :type inclusive
           :repeat nil
           (interactive "<r><a><!>")
-          (my:helm-ag-search beg end search bang t nil))))
+          (my:helm-ag-search beg end search bang t nil))
 
         (evil-define-operator my:helm-ag-regex-search-cwd (beg end &optional search bang)
           :type inclusive
