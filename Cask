@@ -79,7 +79,7 @@
 (depends-on "evil-jumper")
 (depends-on "evil-god-state")
 (depends-on "evil-escape")
-(depends-on "evil-snipe" :git "https://github.com/hlissner/evil-snipe")
+(depends-on "evil-snipe")
 ;;(depends-on "evil-noautochdir" :git "https://github.com/gbarta/evil-noautochdir")
 ;; evil-nerd-commenter chokes if it's installed via cask for some reason...
 (depends-on "evil-nerd-commenter")
