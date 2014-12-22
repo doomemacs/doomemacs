@@ -1,12 +1,11 @@
 EMACS=emacs
 
-all: clean compile
+all: clean autoloads
 
 clean:
-	@rm -rf init.elc init/*.elc elisp/*.elc
-	@rm -rf auto-save-list recentf places ido.last async-bytecomp.log
+	@rm -rf init.elc init/*.elc elisp/*.elc core/*.elc
+	@rm -rf auto-save-list recentf places ido.last async-bytecomp.log elpa
 
-compile:
-	${EMACS} -Q --batch -L . -f batch-byte-compile init.el init/*.el elisp/*.el
-	@rm -rf init/autoload.*
-	${EMACS} -Q --batch -L . -f update-directory-autoloads init elisp
+autoloads:
+	@rm -rf core/autoloads.el
+	@cask exec ${EMACS} -Q --batch --eval '(progn (setq generated-autoload-file "~/.emacs.d/core/autoloads.el") (update-directory-autoloads "~/.emacs.d/init" "~/.emacs.d/core" "~/.emacs.d/elisp"))'
