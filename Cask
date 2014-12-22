@@ -23,7 +23,7 @@
 (depends-on "shut-up")
 (depends-on "popwin")
 (depends-on "saveplace")
-;; (depends-on "key-chord")
+;;(depends-on "key-chord")
 
 ;; Editing
 (depends-on "smart-mode-line")
@@ -36,8 +36,8 @@
 (depends-on "yasnippet")
 (depends-on "git-gutter-fringe+")
 (depends-on "ace-jump-mode")
-;; (depends-on "ace-window")
-;; (depends-on "regex-tool")
+;;(depends-on "ace-window")
+;;(depends-on "regex-tool")
 (depends-on "pcre2el")
 (depends-on "emr")
 ;;(depends-on "smart-forward")
@@ -53,18 +53,16 @@
 (depends-on "company-tern")
 (depends-on "company-anaconda")
 (depends-on "company-inf-ruby")
-(depends-on "company-irony")
-(depends-on "irony-mode" :git "https://github.com/Sarcasm/irony-mode")
 
-; (depends-on "auto-complete")
-; (depends-on "auto-complete-clang")
-; (depends-on "auto-complete-c-headers")
-; (depends-on "ac-etags")
-; (depends-on "ac-ispell")
-; (depends-on "ac-anaconda")
-; (depends-on "tern-auto-complete")
-; (depends-on "ac-inf-ruby")
-; (depends-on "jedi")
+;;(depends-on "auto-complete")
+;;(depends-on "auto-complete-clang")
+;;(depends-on "auto-complete-c-headers")
+;;(depends-on "ac-etags")
+;;(depends-on "ac-ispell")
+;;(depends-on "ac-anaconda")
+;;(depends-on "tern-auto-complete")
+;;(depends-on "ac-inf-ruby")
+;;(depends-on "jedi")
 
 ;; Eeeevil
 (depends-on "god-mode")
@@ -78,11 +76,9 @@
 (depends-on "evil-indent-textobject")
 (depends-on "evil-jumper")
 (depends-on "evil-god-state")
-(depends-on "evil-escape")
-(depends-on "evil-snipe")
-;;(depends-on "evil-noautochdir" :git "https://github.com/gbarta/evil-noautochdir")
-;; evil-nerd-commenter chokes if it's installed via cask for some reason...
 (depends-on "evil-nerd-commenter")
+;;(depends-on "evil-snipe")
+;; evil-nerd-commenter chokes if it's installed via cask for some reason...
 
 ;; Project management
 (depends-on "projectile")
@@ -108,7 +104,6 @@
 
 (depends-on "rainbow-mode")
 (depends-on "lua-mode")
-(depends-on "php-mode")
 (depends-on "haml-mode")
 (depends-on "scss-mode")
 (depends-on "sass-mode")
@@ -121,6 +116,10 @@
 (depends-on "swift-mode")
 ;; (depends-on "haxe-mode")
 ;; (depends-on "go-mode" :git "https://github.com/dominikh/go-mode.el")
+
+(depends-on "php-mode")
+(depends-on "php-refactor-mode")
+(depends-on "php-extras" :git "https://github.com/arnested/php-extras")
 
 (depends-on "web-mode")
 (depends-on "emmet-mode")
