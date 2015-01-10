@@ -1,5 +1,4 @@
 ;; Mac-specific settings
-(provide 'core-osx)
 
 ;; Use a shared clipboard
 (setq x-select-enable-clipboard t)
@@ -7,8 +6,6 @@
 (setq ns-use-native-fullscreen nil)
 ;; Don't open files from the workspace in a new frame
 (setq ns-pop-up-frames nil)
-
-;; (setq ns-auto-hide-menu-bar t)
 
 ;; fix emacs PATH on OSX (GUI only)
 (use-package exec-path-from-shell
@@ -47,7 +44,5 @@
 (defun my-send-dir-to-finder ()
   (interactive) (my--open-file-with default-directory "Finder"))
 
-(defun my-osx-psuedo-fullscreen ()
-  (interactive)
-  (set-frame-position nil 0 0)
-  (set-frame-size nil 362 112))
+
+(provide 'core-osx)

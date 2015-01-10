@@ -6,7 +6,7 @@
   (setq evil-want-visual-char-semi-exclusive t
         evil-search-module        'evil-search
         evil-search-wrap          nil
-        evil-magic                'very-magic
+        evil-magic                'magic
         evil-want-C-u-scroll      t  ; enable C-u for scrolling
         evil-ex-visual-char-range t  ; column range for ex commands
         evil-ex-search-vim-style-regexp t
@@ -15,7 +15,6 @@
         evil-normal-state-cursor  '("white" box)
         evil-emacs-state-cursor   '("cyan" bar)
         evil-insert-state-cursor  '("white" bar)
-        evil-god-state-cursor     '("orange" box)
         evil-visual-state-cursor  'hollow
 
         ace-jump-mode-scope     'window
@@ -50,12 +49,11 @@
       (evil-set-initial-state `,(car mode-map) `,(cdr mode-map)))
 
     (progn ; evil plugins
-      (use-package evil-space :init (evil-space-default-setup))
-
       (use-package evil-exchange
         :config
         (defadvice evil-force-normal-state (before evil-esc-quit-exchange activate)
-          (shut-up (evil-exchange-cancel))))
+          (when evil-exchange--overlays
+            (evil-exchange-cancel))))
 
       (use-package evil-ex-registers)
 
@@ -63,18 +61,7 @@
 
       (use-package evil-numbers)
 
-      (use-package evil-god-state)
-
       (use-package evil-matchit :init (global-evil-matchit-mode 1))
-
-      (use-package evil-snipe
-        :disabled t
-        :init (global-evil-snipe-mode 1)
-        :config
-        (progn
-          (evil-snipe-override-surround)
-          (setq evil-snipe-search-highlight t)
-          (setq evil-snipe-search-incremental-highlight t)))
 
       (use-package evil-surround
         :init (global-evil-surround-mode 1))
@@ -94,10 +81,10 @@
         :init (global-evil-snipe-mode)
         :config
         (progn
-          (bind 'visual "z" 'evil-snipe-f)
-          (bind 'visual "Z" 'evil-snipe-F)
-          (setq evil-snipe-enable-highlight t
-                evil-snipe-enable-incremental-highlight t)))
+          (evil-snipe-replace-evil)
+          ;; (evil-snipe-enable-sS)
+          (bind 'visual "z" 'evil-snipe-s)
+          (bind 'visual "Z" 'evil-snipe-S)))
 
       (use-package ace-window
         :config (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
@@ -220,20 +207,31 @@
         file-name))
 
     (progn ; ex-commands
+      (evil-ex-define-cmd "echo" 'my:echo)
       (evil-ex-define-cmd "pres[ent]" 'toggle-presentation-mode)
       (evil-ex-define-cmd "togglet[heme]" 'toggle-theme)
       (evil-ex-define-cmd "full[scr]" 'toggle-frame-fullscreen)
       (evil-ex-define-cmd "k[ill]" 'kill-this-buffer)      ; Kill current buffer
       (evil-ex-define-cmd "k[ill]o" 'my-cleanup-buffers)   ; Kill current project buffers
+      (evil-ex-define-cmd "k[ill]all" 'my:kill-buffers)    ; Kill all buffers (bang = project buffers only)
+      (evil-ex-define-cmd "k[ill]buried" 'my:kill-buried-buffers)    ; Kill all buffers (bang = project buffers only)
+      (evil-ex-define-cmd "ini" 'my:init-files)
+      (evil-ex-define-cmd "n[otes]" 'my:notes)
+      (evil-ex-define-cmd "recompile" 'my:byte-compile)
+      (evil-ex-define-cmd "cd" 'my:cd)
+      (evil-ex-define-cmd "en[ew]" 'my:create-file)
+      (evil-ex-define-cmd "ren[ame]" 'my:rename-this-file) ; Rename file . Bang: Delete old one
+      (evil-ex-define-cmd "al[ign]" 'my:align)
+      (evil-ex-define-cmd "retab" 'my:retab)
+      (evil-ex-define-cmd "sq[uint]" 'my:narrow-indirect)  ; Narrow buffer to selection
+      (evil-ex-define-cmd "x" 'my:scratch-buffer)
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-      (evil-ex-define-cmd "echo" 'my:echo)
       (evil-define-command my:echo (&optional output)
         (interactive "<a>")
         (message "%s" output))
 
-      (evil-ex-define-cmd "k[ill]all" 'my:kill-buffers)    ; Kill all buffers (bang = project buffers only)
       (evil-define-command my:kill-buffers (&optional bang)
         :repeat nil
         (interactive "<!>")
@@ -242,14 +240,12 @@
           (mapc 'kill-buffer (buffer-list)))
         (delete-other-windows))
 
-      (evil-ex-define-cmd "k[ill]buried" 'my:kill-buried-buffers)    ; Kill all buffers (bang = project buffers only)
       (evil-define-command my:kill-buried-buffers (&optional bang)
         :repeat nil
         (interactive "<!>")
         (mapc 'kill-buffer
               (my-living-buffer-list (if bang (projectile-project-buffers) (buffer-list)))))
 
-      (evil-ex-define-cmd "ini" 'my:init-files)
       (evil-define-command my:init-files (&optional bang)
         :repeat nil
         (interactive "<!>")
@@ -257,13 +253,11 @@
             (ido-find-file-in-dir my-modules-dir)
           (ido-find-file-in-dir my-dir)))
 
-      (evil-ex-define-cmd "n[otes]" 'my:notes)
       (evil-define-command my:notes ()
         :repeat nil
         (interactive)
         (ido-find-file-in-dir org-directory))
 
-      (evil-ex-define-cmd "recompile" 'my:byte-compile)
       (evil-define-command my:byte-compile (&optional bang)
         :repeat nil
         (interactive "<!>")
@@ -271,14 +265,12 @@
             (byte-recompile-directory (concat my-dir ".cask") 0 t)
           (byte-recompile-directory my-dir 0 t)))
 
-      (evil-ex-define-cmd "cd" 'my:cd)
       (evil-define-command my:cd (dir)
         :repeat nil
         (interactive "<f>")
         (cd (if (zerop (length dir)) "~" dir)))
 
       (defun --save-exit() (save-buffer) (kill-buffer) (remove-hook 'yas-after-exit-snippet-hook '--save-exit))
-      (evil-ex-define-cmd "en[ew]" 'my:create-file)
       (evil-define-command my:create-file (path &optional bang)
         "Deploy files (and their associated templates) quickly. Will prompt
 you to fill in each snippet field before buffer closes unless BANG is
@@ -297,7 +289,6 @@ provided."
                 (if bang (--save-exit)))
             (error "Directory doesn't exist: %s" dir))))
 
-      (evil-ex-define-cmd "ren[ame]" 'my:rename-this-file) ; Rename file . Bang: Delete old one
       (evil-define-command my:rename-this-file (new-name &optional bang)
         "Renames current buffer and file it is visiting. Replaces %, # and other
   variables (see `evil-ex-replace-special-filenames')"
@@ -323,7 +314,6 @@ provided."
                 (message "File '%s' successfully renamed to '%s'"
                          name (file-name-nondirectory new-name)))))))
 
-      (evil-ex-define-cmd "x" 'my:scratch-buffer)
       (evil-define-operator my:scratch-buffer (beg end &optional bang)
         "Send a selection to the scratch buffer. If BANG, then send it to org-capture
   instead."
@@ -349,7 +339,6 @@ provided."
                 (if text (insert text))
                 (funcall mode))))))
 
-      (evil-ex-define-cmd "al[ign]" 'my:align)
       (evil-define-command my:align (beg end &optional regexp bang)
         :repeat nil
         (interactive "<r><a><!>")
@@ -357,7 +346,6 @@ provided."
           (align-regexp beg end
                         (concat "\\(\\s-*\\)" (rxt-pcre-to-elisp regexp)) 1 1)))
 
-      (evil-ex-define-cmd "retab" 'my:retab)
       (evil-define-operator my:retab (beg end)
         "Akin to vim's :retab, this changes all tabs-to-spaces or spaces-to-tabs,
   depending on `indent-tab-mode'. Untested."
@@ -372,7 +360,6 @@ provided."
             (tabify beg end)
           (untabify beg end)))
 
-      (evil-ex-define-cmd "sq[uint]" 'my:narrow-indirect)  ; Narrow buffer to selection
       (evil-define-operator my:narrow-indirect (beg end)
         "Indirectly narrow the region from BEG to END."
         :move-point nil

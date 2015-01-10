@@ -1,10 +1,14 @@
-(cd "~") ; instead of /
+(defconst is-mac   (eq system-type 'darwin))
+(defconst is-linux (eq system-type 'gnu/linux))
 
+(when is-linux (add-to-list 'load-path "~/.cask"))
 (require 'cask)
 (cask-initialize)
 
-(defconst is-mac   (eq system-type 'darwin))
-(defconst is-linux (eq system-type 'gnu/linux))
+(cd "~") ; instead of /
+
+(require 'use-package)  ; Package management bootstrap
+(setq use-package-verbose DEBUG-MODE)
 
 ;; Make sure undo/backup folders exist
 (defconst my-tmp-dir-undo     (expand-file-name "undo" my-tmp-dir))
@@ -42,7 +46,7 @@
   (set-selection-coding-system 'utf-8)  ; please
   (prefer-coding-system 'utf-8)         ; with sugar on top
 
-  (fset 'yes-or-no-p 'y-or-n-p)            ; y/n instead of yes/no
+  (fset 'yes-or-no-p 'y-or-n-p)         ; y/n instead of yes/no
 
   ;;; Show tab characters
   ;; (global-whitespace-mode 1)
@@ -114,24 +118,28 @@
   (setq-default undo-tree-history-directory-alist `(("." . ,my-tmp-dir-undo)))
   ;;;; Save history across sessions
   (setq savehist-additional-variables '(search ring regexp-search-ring))
-  (setq savehist-file (f-expand "savehist" my-tmp-dir)) ; keep the home clean
+  (setq savehist-file (concat my-tmp-dir "savehist")) ; keep the home clean
   (savehist-mode 1)
 
   ;; Save cursor location across sessions
-  (require 'saveplace)
-  (setq save-place-file (f-expand "saveplace" my-tmp-dir))
-  (add-hook 'find-file-hook ; activate save-place for files that exist
-            (lambda()
-              (if (file-exists-p buffer-file-name)
-                  (setq save-place t))))
+  (use-package saveplace
+    :init
+    (add-hook 'find-file-hook ; activate save-place for files that exist
+      (lambda()
+        (if (file-exists-p buffer-file-name)
+            (setq save-place t))))
+    :config
+    (setq save-place-file (concat my-tmp-dir "saveplace")))
 
-  (require 'recentf)
-  (setq recentf-max-menu-items 0)
-  (setq recentf-max-saved-items 1000)
-  (setq recentf-auto-cleanup 'never)
-  (setq recentf-save-file (concat my-tmp-dir "recentf"))
-  (setq recentf-exclude '("/tmp/" "/ssh:" "\\.?ido\\.last\\'" "\\.revive\\'", "/TAGS\\'"))
-  (recentf-mode 1)
+  (use-package recentf
+    :config
+    (progn
+      (setq recentf-max-menu-items 0)
+      (setq recentf-max-saved-items 1000)
+      (setq recentf-auto-cleanup 'never)
+      (setq recentf-save-file (concat my-tmp-dir "recentf"))
+      (setq recentf-exclude '("/tmp/" "/ssh:" "\\.?ido\\.last\\'" "\\.revive\\'", "/TAGS\\'"))
+      (recentf-mode 1)))
 
   ;; What we do every night, Pinkie...
   (defun display-startup-echo-area-message ()
@@ -144,19 +152,21 @@
   (setq-default tab-always-indent nil)
   (setq-default tab-width 4)
 
+  (setq require-final-newline t)
+
   (setq delete-trailing-lines nil)
   (add-hook 'makefile-mode-hook 'indent-tabs-mode) ; Use normal tabs in makefiles
   ;; Make sure scratch buffer is always "in a project"
   (add-hook 'find-file-hook
-            (lambda()
-              (let ((buffer (get-buffer "*scratch*"))
-                    (pwd (my--project-root)))
-                (when (buffer-live-p buffer)
-                  (save-window-excursion
-                    (switch-to-buffer buffer)
-                    (unless (eq (my--project-root) pwd)
-                      (cd pwd)
-                      (rename-buffer (format "*scratch* (%s)" (file-name-base (directory-file-name pwd))))))))))
+    (lambda()
+      (let ((buffer (get-buffer "*scratch*"))
+            (pwd (my--project-root)))
+        (when (buffer-live-p buffer)
+          (save-window-excursion
+            (switch-to-buffer buffer)
+            (unless (eq (my--project-root) pwd)
+              (cd pwd)
+              (rename-buffer (format "*scratch* (%s)" (file-name-base (directory-file-name pwd))))))))))
 
   ;; My own minor mode!
   (define-minor-mode my-mode :global t :keymap (make-sparse-keymap))
@@ -186,52 +196,9 @@
       ad-do-it))
 
 
-  ;;;; Automatic minor modes ;;;;;;;;;;;;;;;
-  (defvar auto-minor-mode-alist ()
-    "Alist of filename patterns vs correpsonding minor mode functions,
-see `auto-mode-alist' All elements of this alist are checked, meaning
-you can enable multiple minor modes for the same regexp.")
-  (defun enable-minor-mode-based-on-extension ()
-    "check file name against auto-minor-mode-alist to enable minor modes
-the checking happens for all pairs in auto-minor-mode-alist"
-    (when buffer-file-name
-      (let ((name buffer-file-name)
-            (remote-id (file-remote-p buffer-file-name))
-            (alist auto-minor-mode-alist))
-        ;; Remove backup-suffixes from file name.
-        (setq name (file-name-sans-versions name))
-        ;; Remove remote file name identification.
-        (when (and (stringp remote-id)
-                   (string-match-p (regexp-quote remote-id) name))
-          (setq name (substring name (match-end 0))))
-        (while (and alist (caar alist) (cdar alist))
-          (if (string-match (caar alist) name)
-              (funcall (cdar alist) 1))
-          (setq alist (cdr alist))))))
-  (add-hook 'find-file-hook 'enable-minor-mode-based-on-extension)
-
-
   ;;;; Utility plugins ;;;;;;;;;;;;;;;;;;
-  (require 'defuns)       ; all the defuns
-  (require 'use-package)  ; Package management bootstrap
-  (setq use-package-verbose DEBUG-MODE)
-  ;;(require 'hide-mode-line)
-
-  ;; Generate autoloads if necessary
-  (defun my-update-autoloads (&optional forcep)
-    (interactive)
-    (setq generated-autoload-file (concat my-core-dir "autoloads.el"))
-    (when (or forcep (not (file-exists-p generated-autoload-file)))
-      (if forcep (delete-file generated-autoload-file))
-      (update-directory-autoloads my-core-dir my-modules-dir my-elisp-dir))
-    (require 'autoloads))
-
-  (my-update-autoloads)
-
-  ;; Add elisp dirs to load-path
-  (let ((default-directory my-elisp-dir))
-    (normal-top-level-add-to-load-path '("."))
-    (normal-top-level-add-subdirs-to-load-path))
+  (require 'defuns)
+  (require 'autoloads) ; use make autoloads to generate autoloads file
 
   (use-package smex
     :commands (smex smex-major-mode-commands)
@@ -271,13 +238,16 @@ the checking happens for all pairs in auto-minor-mode-alist"
 
   ;;;; Start the party ;;;;;;;;;;;;;;;;;;;
   (if is-mac (require 'core-osx))
+  ;; (if is-linux (require 'core-linux))
+
   (require 'core-ui)
   (require 'core-evil)
   (require 'core-editor)
 
-  (require 'server)
-  (unless (server-running-p)
-    (server-start)))
+  (use-package server
+    :config
+    (unless (server-running-p)
+      (server-start))))
 
 
 (provide 'core)

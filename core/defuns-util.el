@@ -12,14 +12,6 @@
   (defmacro f--exists? (file dir)
     `(f-exists? (expand-file-name ,file ,dir))))
 
-;;;###autoload
-(after "projectile"
-  (defun my--project-root (&optional force-pwd)
-    (if (and (not force-pwd)
-             (projectile-project-p))
-        (projectile-project-root)
-      default-directory)))
-
 ;; Misc Defuns ;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;###autoload
 (defun what-face (pos)

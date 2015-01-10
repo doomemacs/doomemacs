@@ -1,4 +1,4 @@
-;; Global editor behavior (+ evil)
+;; Global editor behavior
 (use-package expand-region
   :commands (er/expand-region er/contract-region))
 

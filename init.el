@@ -38,54 +38,56 @@
 
 (add-to-list 'load-path my-core-dir)
 (add-to-list 'load-path my-modules-dir)
+(add-to-list 'load-path my-elisp-dir)
+
+;; Add elisp dirs to load-path
+(let ((default-directory my-elisp-dir))
+  (normal-top-level-add-subdirs-to-load-path))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Just the... bear necessities...
-(defconst my-modules
-  ;; ls -1 init/{init,my}* | xargs basename | sed -e 's/\..*$//'
-  '(core
+(mapc 'require
+      ;; ls init/{init,my}* | xargs basename | sed -e 's/\..*$//'
+      '(core
 
-    ;; init-auto-complete
-    init-auto-insert       ; for the lazy typis
-    init-company           ; see above
-    init-cc                ; C/C++/Obj-C madness
-    ;; init-d              ; D - It's C, but better!
-    ;; init-cscope
-    ;; init-csharp
-    init-dev               ; general dev tools/settings
-    init-elisp             ; emacs lisp
-    ;; init-eshell
-    init-floobits          ; when I'm feeling lonely
-    init-fly               ; fly(check|spell)
-    init-git               ; git-gutter + modes
-    ;; init-go
-    init-helm              ; when you forget where you put your constellation
-    init-ido               ; when you forget where you put your keys
-    init-java              ; the mascot language of carpal tunnel syndome
-    init-js                ; alert("Oh, sure dude, I know java")
-    init-lua               ; zero-based indices? Zero-based indices.
-    init-org               ; for fearless leader (who is organized)
-    init-php               ; making php less painful to work with
-    init-project           ; project tools - dired, perspective, neotree
-    init-projectile        ; when you forget where you put your house
-    init-python            ; beautiful is better than ugly
-    init-regex             ; /^[^\s](meaning)[^\n]*life/
-    init-ruby              ; I frakking love ruby
-    init-scss              ; @include magic;
-    init-sh                ; #!/bin/bash_your_head_in
-    init-swift             ; ever wanted to name a variable an emoticon?
-    init-text              ; I got nothing...
-    init-tmux
-    ;; init-rust
-    init-web
-    init-yasnippet         ; type for me
+        ;; init-auto-complete
+        init-auto-insert       ; for the lazy typis
+        init-company           ; see above
+        init-cc                ; C/C++/Obj-C madness
+        ;; init-d              ; D - It's C, but better!
+        ;; init-cscope
+        init-csharp
+        init-dev               ; general dev tools/settings
+        init-lisp              ; all things lisp; elisp, clojure
+        ;; init-erlang
+        ;; init-eshell
+        ;; init-floobits       ; when I'm feeling lonely
+        init-fly               ; fly(check|spell)
+        init-git               ; git-gutter + modes
+        ;; init-go
+        init-helm              ; when you forget where you put your constellation
+        init-ido               ; when you forget where you put your keys
+        init-java              ; the poster child for carpal tunnel syndome
+        init-js                ; alert("not java, javascript!")
+        init-lua               ; zero-based indices? Zero-based indices.
+        ;; init-org               ; for fearless leader (who is organized)
+        init-php               ; making php less painful to work with
+        init-project           ; project tools - dired, perspective, neotree
+        init-projectile        ; when you forget where you put your house
+        init-python            ; beautiful is better than ugly
+        init-regex             ; /^[^\s](meaning)[^\n]*/
+        init-ruby              ; <3
+        init-scss              ; @include magic;
+        init-sh                ; #!/bin/bash_your_head_in
+        init-swift             ; yay, emoji variables!
+        init-text              ; I got nothing...
+        init-tmux
+        ;; init-rust
+        init-web
+        init-yasnippet         ; type for me
 
-    my-bindings
-    my-settings
-    ))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Load them in
-(setq after-init-hook '((lambda() (mapc 'require my-modules))))
+        my-bindings
+        my-settings
+        ))
 
 ;; I've created a monster!
