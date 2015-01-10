@@ -1,3 +1,10 @@
+(use-package web-beautify
+  :commands (web-beautify-js web-beautify-css web-beautify-html)
+  :init
+  (after "css-mode"
+    (add-hook! 'css-mode-hook (setenv "jsbeautify_indent_size" "2"))
+    (bind 'motion css-mode-map "gQ" 'web-beautify-css)))
+
 (use-package web-mode
   :mode (("\\.\\(p\\)?htm\\(l\\)?$" . web-mode)
          ("\\.tpl\\(\\.php\\)?$" . web-mode)
@@ -14,6 +21,10 @@
           web-mode-style-padding         2
           web-mode-script-padding        2
           web-mode-block-padding         2)
+
+    (after "web-beautify"
+      (add-hook! 'web-mode-hook  (setenv "jsbeautify_indent_size" "4"))
+      (bind 'motion web-mode-map "gQ" 'web-beautify-html))
 
     (bind web-mode-map (kbd "s-/") 'web-mode-comment-or-uncomment)
     (bind 'normal  web-mode-map
@@ -42,22 +53,6 @@
     (bind 'insert emmet-mode-keymap
           (kbd "s-e") 'emmet-expand-yas
           (kbd "s-E") 'emmet-expand-line)))
-
-(use-package web-beautify
-  :commands (web-beautify-js web-beautify-css web-beautify-html)
-  :config
-  (progn
-    (after "scss-mode"
-      (add-hook! 'scss-mode-hook (setenv "jsbeautify_indent_size" "2"))
-      (bind 'motion scss-mode-map "gQ" 'web-beautify-css))
-
-    (after "web-mode"
-      (add-hook! 'web-mode-hook  (setenv "jsbeautify_indent_size" "4"))
-      (bind 'motion web-mode-map "gQ" 'web-beautify-html))
-
-    (after "js2-mode"
-      (add-hook! 'js2-mode-hook (setenv "jsbeautify_indent_size" "4"))
-      (bind 'motion js2-mode-map "gQ" 'web-beautify-js))))
 
 
 (provide 'init-web)

@@ -3,6 +3,7 @@
   :interpreter "node"
   :config
   (progn
+    (setq js2-skip-preprocessor-directives t)
     (setq-default js2-show-parse-errors nil)
     (setq-default js2-global-externs '("module" "require" "buster" "sinon" "assert"
                                        "refute" "setTimeout" "clearTimeout"
@@ -11,11 +12,14 @@
                                        ;; Launchbar API
                                        "LaunchBar" "File" "Action" "HTTP" "include"))
 
+    (after "web-beautify"
+      (add-hook! 'js2-mode-hook (setenv "jsbeautify_indent_size" "4"))
+      (bind 'motion js2-mode-map "gQ" 'web-beautify-js))
+
     (after "emr" (use-package js2-refactor))
 
     (use-package tern
       :commands tern-mode
-      ;; replace auto-complete with tern-ac-complete only in js-mode
       :init
       (progn
         (add-hook 'js2-mode-hook 'tern-mode)
@@ -40,9 +44,8 @@
             ))))))
 
 (use-package json-mode
-  :mode (("\\.json\\'" . json-mode)
-         ("\\.jshintrc\\'" . json-mode)))
-
+  :mode (("\\.json$" . json-mode)
+         ("\\.jshintrc$" . json-mode)))
 
 
 (provide 'init-js)
