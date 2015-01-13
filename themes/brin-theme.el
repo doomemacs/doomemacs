@@ -21,9 +21,6 @@
 ;; Modified by Henrik Lissner <http://github.com/hlissner/emacs.d>
 ;;
 
-(unless (>= 24 emacs-major-version)
-  (error "requires Emacs 24 or later."))
-
 (deftheme brin "Space Grey theme for Emacs")
 
   (custom-theme-set-variables 'brin)
