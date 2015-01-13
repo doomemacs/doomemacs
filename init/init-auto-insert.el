@@ -7,8 +7,8 @@
     (setq auto-insert-alist '())))
 
 (after "yasnippet"
-    (defun template (file-regexp uuid mode &optional project-only)
-      (define-auto-insert file-regexp `(lambda () (my--template-insert ,uuid ',mode ,project-only))))
+    (defmacro template (file-regexp uuid mode &optional project-only)
+      `(define-auto-insert ,file-regexp '(lambda () (my--template-insert ,uuid ,mode ,project-only))))
 
     (defun my--template-insert (uuid mode &optional project-only)
       "Expand snippet template in MODE by its UUID"
@@ -23,8 +23,8 @@
 
     ;; C/C++
     (template "/Makefile$"                                              "%%"               'makefile-gmake-mode)
-    (template "/main\\.\\([Cc]\\|cc\\|cpp\\)$"                          "%main.cpp%"       'c++-mode)
-    (template "/win32_\\.\\([Cc]\\|cc\\|cpp\\)$"                        "%winmain.cpp%"    'c++-mode)
+    (template "/main\\.\\(cc\\|cpp\\)$"                                 "%main.cpp%"       'c++-mode)
+    (template "/win32_\\.\\(cc\\|cpp\\)$"                               "%winmain.cpp%"    'c++-mode)
     (template "\\.\\([Hh]\\|hpp\\)$"                                    "%.h%"             'c++-mode)
     (template "\\.\\([Cc]\\|cc\\|cpp\\)$"                               "%.cpp%"           'c++-mode)
 
@@ -51,7 +51,7 @@
     ;; ;; (template "\\.php$"                                           "%%"               'php-mode)
 
     ;; ;; ;; Markdown
-    (template "/README\\.md$"                                        "%README.md%"      'markdown-mode)
+    (template "/README\\.md$"                                           "%README.md%"      'markdown-mode)
     ;; ;; (template "/_posts/.+\\.md$"                                  "%jekyll-post"     'markdown-mode)
     ;; ;; (template "/_layouts/.+\\.html$"                              "%jekyll-layout%"  'web-mode)
 
