@@ -1,6 +1,7 @@
 (use-package d-mode
   :disabled t
-  :modes "\\.d$")
+  :mode "\\.d$")
+
 
 (provide 'init-d)
 ;;; init-d.el ends here

@@ -42,10 +42,10 @@
         (add-hook hook
                   `(lambda()
                      (set (make-local-variable 'company-backends)
-                          (append '((,@backends company-yasnippet)) company-backends)))))
+                          (append '((,@backends)) company-backends)))))
 
-      (company--backend-on 'nxml-mode-hook 'company-nxml)
-      (company--backend-on 'emacs-lisp-mode-hook 'company-elisp)
+      (company--backend-on 'nxml-mode-hook 'company-nxml 'company-yasnippet)
+      (company--backend-on 'emacs-lisp-mode-hook 'company-elisp 'company-yasnippet)
 
       ;; Rewrite evil-complete to use company-dabbrev
       (setq company-dabbrev-code-other-buffers t)

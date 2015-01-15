@@ -1,16 +1,15 @@
-(use-package omnisharp :defer t
+(use-package omnisharp
+  :defer t
   :config
   (progn
     (setq omnisharp-server-executable-path "~/Dropbox/projects/lib/Omnisharp/server/OmniSharp/bin/Debug/OmniSharp.exe")
 
-    (bind 'normal omnisharp-mdoe-map
-          "gd" 'omnisharp-go-to-definition
-          "")
+    (bind 'normal omnisharp-mode-map
+          "gd" 'omnisharp-go-to-definition)
 
     (after "company"
-      (company--backend-on 'csharpmode 'company-omnisharp)
-      (add-hook 'csharp-mode-hook 'eldoc-mode))
-    ))
+      (company--backend-on 'csharp-mode-hook 'company-omnisharp)
+      (add-hook 'csharp-mode-hook 'turn-on-eldoc-mode))))
 
 (use-package csharp-mode :mode "\\.cs$")
 ;; (use-package csharp-mode
@@ -24,6 +23,7 @@
 (use-package shaderlab-mode :mode "\\.shader$")
 
 ;; TODO Make more Unity-friendly
+
 
 (provide 'init-csharp)
 ;;; init-csharp.el ends here

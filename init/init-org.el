@@ -6,6 +6,7 @@
     (add-hook 'org-mode-hook 'enable-tab-width-2)
     (add-hook 'org-mode-hook 'evil-org-mode)
     (add-hook 'org-mode-hook 'turn-on-auto-fill)
+    (add-hook 'org-mode-hook 'org-toggle-pretty-entities)
 
     ;; Reset evil to ensure evil-org-mode's maps work
     (add-hook! 'org-mode-hook (evil-mode nil) (evil-mode 1))
@@ -29,6 +30,7 @@
           org-hide-leading-stars t
           org-hierarchical-todo-statistics t
           org-checkbox-hierarchical-statistics t
+          org-tags-column -87
           org-log-done t
           org-todo-keywords
           '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
@@ -50,9 +52,9 @@
 
     (setq org-capture-templates
           '(("t" "TODO" entry (file+headline "~/Dropbox/notes/todo.org" "Inbox") "* TODO %? %u\n%i")
-            ("T" "TODO Someday" entry (file+headline "~/Dropbox/notes/todo.org" "Someday") "* TODO %? %u :someday:\n%i")
+            ("T" "Project TODO" entry (file+headline (concat (projectile-project-root) "/TODO.org") "Unsorted") "** %u %?\n%i" :prepend t)
             ("c" "Changelog" entry (file+headline (concat (projectile-project-root) "/CHANGELOG.org") "Unsorted") "** %u %? :unsorted:\n%i" :prepend t)
-            ("n" "Note" entry (file org-default-notes-file) "** %T %?\n%i" :prepend t)
+            ("n" "Note" entry (file+headline org-default-notes-file "Unfiled") "** %T %?\n%i" :prepend t)
             ("j" "Journal" entry (file+datetree "~/Dropbox/notes/journal.org") "** %?%^g\nAdded: %U\n%i")
             ("a" "Trivia" entry (file "~/Dropbox/notes/trivia.org") "* %u %?\n%i" :prepend t)
             ("s" "Writing Scraps" entry (file "~/Dropbox/notes/writing.org") "* %u %?\n%i" :prepend t)
@@ -199,7 +201,7 @@
       (bind 'insert evil-org-mode-map
             "C-e"           'org-end-of-line
             "C-a"           'org-beginning-of-line)
-      (bind '(insert normal)
+      (bind '(insert normal) evil-org-mode-map
             "<s-left>"      'org-beginning-of-line
             "<s-right>"     'org-end-of-line
             "<s-up>"        'org-up-element

@@ -1,5 +1,5 @@
 (use-package rust-mode
-  :modes "\\.rs$"
+  :mode "\\.rs$"
   :config
   (after "company"
     (let ((racer-dir (concat my-elisp-dir "racer/")))

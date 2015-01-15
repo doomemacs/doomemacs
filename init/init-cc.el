@@ -6,7 +6,7 @@
     (after "auto-complete" (add-to-list 'ac-modes 'cmake-mode))
     (after "company"
       (use-package company-cmake
-        :config (company--backend-on 'cmake-mode-hook 'company-cmake)))))
+        :config (company--backend-on 'cmake-mode-hook 'company-cmake 'company-yasnippet)))))
 
 ;; Shaders
 (use-package glsl-mode
@@ -16,22 +16,15 @@
          ("\\.geom\\'" . glsl-mode)))
 
 (use-package cc-mode
-  :defer t
+  :commands (c-mode c++-mode objc-mode java-mode)
   :init
   (progn
-    (associate-minor-mode "\\.h$" 'c++-mode)
-    (associate-minor-mode "\\.mm$" 'objc-mode))
-
-    ;; (add-hook 'c-mode-hook 'irony-mode)
-    ;; (add-hook 'c++-mode-hook 'irony-mode)
-    ;; (add-hook 'objc-mode-hook 'irony-mode)
-
-    ;; (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
+    (associate-mode "\\.h$" 'c++-mode)
+    (associate-mode "\\.mm$" 'objc-mode))
   :config
   (progn
-    (setq-default c-basic-offset 4
-                  c-default-style "linux"
-                  c-tab-always-indent nil)
+    (setq c-basic-offset 4
+          c-tab-always-indent nil)
 
     (when is-mac
       (setq my--clang-includes
@@ -66,26 +59,31 @@
                      . objc-mode))
       (after "flycheck" (add-hook! 'objc-mode-hook (use-package flycheck-objc))))
 
-    (after "auto-complete"
-      (when is-mac (setq ac-clang-flags (my--clang-includes-flags)))
-      (add-hook! 'c-mode-common-hook
-        (use-package auto-complete-clang)
-        (use-package auto-complete-c-headers)
-        (setq ac-sources
-              '(ac-source-clang
-                ac-source-c-headers
-                ac-source-yasnippet
-                ac-source-words-in-same-mode-buffers))))
+    ;; (use-package ycmd
+    ;;   :init (add-hook 'c++-mode-hook 'ycmd-mode)
+    ;;   :config
+    ;;   (progn
+    ;;     (setq ycmd-global-config (f-full "~/.ycm_extra_conf.py"))
+    ;;     (setq ycmd-server-command `("/usr/local/bin/python" ,(f-full "~/.emacs.d/ext/YouCompleteMe/third_party/ycmd/ycmd/")))
+    ;;     (use-package company-ycmd
+    ;;       :init (company--backend-on 'c++-mode-hook 'company-ycmd))))
+
+    ;; (after "auto-complete"
+    ;;   (when is-mac (setq ac-clang-flags (my--clang-includes-flags)))
+    ;;   (add-hook! 'c-mode-common-hook
+    ;;     (use-package auto-complete-clang)
+    ;;     (use-package auto-complete-c-headers)
+    ;;     (setq ac-sources
+    ;;           '(ac-source-clang
+    ;;             ac-source-c-headers
+    ;;             ac-source-yasnippet
+    ;;             ac-source-words-in-same-mode-buffers))))
 
     (after "company"
-      (use-package company-irony
-        :config
-        (progn
-          (use-package company-c-headers
-            :config (setq company-c-headers-path-system (my--clang-includes)))
-          (company--backend-on 'c-mode-hook 'company-clang 'company-c-headers)
-          (company--backend-on 'c++-mode-hook 'company-clang 'company-c-headers)
-          (company--backend-on 'objc-mode-hook 'company-xcode 'company-c-headers))))
+      ;; TODO Clang is *really* slow in larger projects, maybe replace it with irony-mode or ycmd?
+      (company--backend-on 'c-mode-hook 'company-c-headers 'company-clang)
+      (company--backend-on 'c++-mode-hook 'company-c-headers 'company-clang)
+      (company--backend-on 'objc-mode-hook 'company-c-headers 'company-xcode))
 
     (add-hook! 'c-mode-common-hook
       (c-toggle-electric-state -1)
@@ -116,46 +114,45 @@
     (global-font-lock-mode t)
     (setq font-lock-maximum-decoration t)
 
-    (add-hook 'c++-mode-hook
-              '(lambda()
-                 ;; We could place some regexes into `c-mode-common-hook', but
-                 ;; note that their evaluation order matters.
-                 (font-lock-add-keywords
-                  nil '(;; complete some fundamental keywords
-                        ("\\<\\(void\\|unsigned\\|signed\\|char\\|short\\|bool\\|int\\|long\\|float\\|double\\)\\>" . font-lock-keyword-face)
-                        ;; namespace names and tags - these are rendered as constants by cc-mode
-                        ("\\<\\(\\w+::\\)" . font-lock-function-name-face)
-                        ;;  new C++11 keywords
-                        ("\\<\\(alignof\\|alignas\\|constexpr\\|decltype\\|noexcept\\|nullptr\\|static_assert\\|thread_local\\|override\\|final\\)\\>" . font-lock-keyword-face)
-                        ("\\<\\(char16_t\\|char32_t\\)\\>" . font-lock-keyword-face)
-                        ;; PREPROCESSOR_CONSTANT, PREPROCESSORCONSTANT
-                        ("\\<[A-Z]*_[A-Z_]+\\>" . font-lock-constant-face)
-                        ("\\<[A-Z]\\{3,\\}\\>"  . font-lock-constant-face)
-                        ;; hexadecimal numbers
-                        ("\\<0[xX][0-9A-Fa-f]+\\>" . font-lock-constant-face)
-                        ;; integer/float/scientific numbers
-                        ("\\<[\\-+]*[0-9]*\\.?[0-9]+\\([ulUL]+\\|[eE][\\-+]?[0-9]+\\)?\\>" . font-lock-constant-face)
-                        ;; c++11 string literals
-                        ;;       L"wide string"
-                        ;;       L"wide string with UNICODE codepoint: \u2018"
-                        ;;       u8"UTF-8 string", u"UTF-16 string", U"UTF-32 string"
-                        ("\\<\\([LuU8]+\\)\".*?\"" 1 font-lock-keyword-face)
-                        ;;       R"(user-defined literal)"
-                        ;;       R"( a "quot'd" string )"
-                        ;;       R"delimiter(The String Data" )delimiter"
-                        ;;       R"delimiter((a-z))delimiter" is equivalent to "(a-z)"
-                        ("\\(\\<[uU8]*R\"[^\\s-\\\\()]\\{0,16\\}(\\)" 1 font-lock-keyword-face t) ; start delimiter
-                        (   "\\<[uU8]*R\"[^\\s-\\\\()]\\{0,16\\}(\\(.*?\\))[^\\s-\\\\()]\\{0,16\\}\"" 1 font-lock-string-face t)  ; actual string
-                        (   "\\<[uU8]*R\"[^\\s-\\\\()]\\{0,16\\}(.*?\\()[^\\s-\\\\()]\\{0,16\\}\"\\)" 1 font-lock-keyword-face t) ; end delimiter
+    (add-hook! 'c++-mode-hook
+      ;; We could place some regexes into `c-mode-common-hook', but
+      ;; note that their evaluation order matters.
+      (font-lock-add-keywords
+       nil '(;; complete some fundamental keywords
+             ("\\<\\(void\\|unsigned\\|signed\\|char\\|short\\|bool\\|int\\|long\\|float\\|double\\)\\>" . font-lock-keyword-face)
+             ;; namespace names and tags - these are rendered as constants by cc-mode
+             ("\\<\\(\\w+::\\)" . font-lock-function-name-face)
+             ;;  new C++11 keywords
+             ("\\<\\(alignof\\|alignas\\|constexpr\\|decltype\\|noexcept\\|nullptr\\|static_assert\\|thread_local\\|override\\|final\\)\\>" . font-lock-keyword-face)
+             ("\\<\\(char16_t\\|char32_t\\)\\>" . font-lock-keyword-face)
+             ;; PREPROCESSOR_CONSTANT, PREPROCESSORCONSTANT
+             ("\\<[A-Z]*_[A-Z_]+\\>" . font-lock-constant-face)
+             ("\\<[A-Z]\\{3,\\}\\>"  . font-lock-constant-face)
+             ;; hexadecimal numbers
+             ("\\<0[xX][0-9A-Fa-f]+\\>" . font-lock-constant-face)
+             ;; integer/float/scientific numbers
+             ("\\<[\\-+]*[0-9]*\\.?[0-9]+\\([ulUL]+\\|[eE][\\-+]?[0-9]+\\)?\\>" . font-lock-constant-face)
+             ;; c++11 string literals
+             ;;       L"wide string"
+             ;;       L"wide string with UNICODE codepoint: \u2018"
+             ;;       u8"UTF-8 string", u"UTF-16 string", U"UTF-32 string"
+             ("\\<\\([LuU8]+\\)\".*?\"" 1 font-lock-keyword-face)
+             ;;       R"(user-defined literal)"
+             ;;       R"( a "quot'd" string )"
+             ;;       R"delimiter(The String Data" )delimiter"
+             ;;       R"delimiter((a-z))delimiter" is equivalent to "(a-z)"
+             ("\\(\\<[uU8]*R\"[^\\s-\\\\()]\\{0,16\\}(\\)" 1 font-lock-keyword-face t) ; start delimiter
+             (   "\\<[uU8]*R\"[^\\s-\\\\()]\\{0,16\\}(\\(.*?\\))[^\\s-\\\\()]\\{0,16\\}\"" 1 font-lock-string-face t)  ; actual string
+             (   "\\<[uU8]*R\"[^\\s-\\\\()]\\{0,16\\}(.*?\\()[^\\s-\\\\()]\\{0,16\\}\"\\)" 1 font-lock-keyword-face t) ; end delimiter
 
-                        ;; user-defined types (rather project-specific)
-                        ("\\<[A-Za-z_]+[A-Za-z_0-9]*_\\(type\\|ptr\\)\\>" . font-lock-type-face)
-                        ("\\<\\(xstring\\|xchar\\)\\>" . font-lock-type-face)
-                        ))
-                 ) t)
+             ;; user-defined types (rather project-specific)
+             ("\\<[A-Za-z_]+[A-Za-z_0-9]*_\\(type\\|ptr\\)\\>" . font-lock-type-face)
+             ("\\<\\(xstring\\|xchar\\)\\>" . font-lock-type-face)
+             ))
+       t)
 
     ;; Fix enum and C++11 lambda indentation
-    (defadvice c-lineup-arglist (around my activate)
+    (defadvice c-lineup-arglist (around c-lineup-arglist-indent-fix activate)
       "Improve indentation of continued C++11 lambda function opened as argument."
       (setq ad-return-value
             (if (and (equal major-mode 'c++-mode)

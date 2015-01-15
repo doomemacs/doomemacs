@@ -1,3 +1,5 @@
+;;; init.tmux.el - settings for interacting with tmux
+
 (defun my--tmux-send (command)
   (shell-command (format "tmux send-keys %s" command)))
 

@@ -93,6 +93,9 @@
             (concat "\n" %)
           (s-trim %))))
 
+    ;; Trim selection; do no further processing
+    (defun %1 () (s-trim %))
+
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
     ;; Inter-field navigation
