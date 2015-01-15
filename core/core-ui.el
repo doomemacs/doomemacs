@@ -7,6 +7,9 @@
   (set-frame-parameter nil 'alpha 96)
 
   (unless (member *default-font (font-family-list))
+    (defconst *default-font *alt-font))
+
+  (unless (member *default-font (font-family-list))
     (error "Font %s isn't installed" *default-font))
 
   (let ((font-str (concat *default-font "-" (number-to-string *default-font-size))))
@@ -81,7 +84,7 @@
   (progn
     (setq sml/no-confirm-load-theme t
           sml/mode-width      'full
-          sml/extra-filler    (if window-system 1 0)
+          sml/extra-filler    (if window-system -1 0)
           sml/show-remote     nil
           sml/modified-char   "*"
           sml/encoding-format nil)
