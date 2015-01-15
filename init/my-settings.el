@@ -23,9 +23,7 @@
 (set-register ?@ "~/.emacs.d/init.el")
 
 (add-hook 'help-mode-hook 'visual-line-mode)
-(add-hook! 'before-save-hook
-  (unless (eq major-mode 'org-mode)
-    (delete-trailing-whitespace)))
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
 
 ;; Performance checks
 (add-hook! 'find-file-hook
@@ -86,16 +84,17 @@
                  "\C-w"               'ido-delete-backward-word-updir))
 
 ;; Make ESC quit all the things
-(bind minibuffer-inactive-mode-map [escape] (λ (other-window 1)))
+;; (bind minibuffer-inactive-mode-map [escape] (λ (other-window 1)))
 (bind (list minibuffer-local-map
             minibuffer-local-ns-map
             minibuffer-local-completion-map
             minibuffer-local-must-match-map
-            minibuffer-local-isearch-map) [escape] 'my--minibuffer-quit)
+            minibuffer-local-isearch-map)
+      [escape] 'my--minibuffer-quit)
 (bind 'emacs [escape] 'my--minibuffer-quit)
 (bind 'god [escape] 'evil-god-state-bail)
 (bind 'normal evil-command-window-mode-map [escape] 'kill-buffer-and-window)
-(bind evil-ex-map [escape] 'my--minibuffer-quit)
+;; (bind evil-ex-map [escape] 'my--minibuffer-quit)
 
 (bind (list evil-ex-search-keymap minibuffer-local-map)
       "\C-w" 'evil-delete-backward-word)

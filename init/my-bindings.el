@@ -31,7 +31,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (bind '(normal visual) my-mode-map
-      "\\"    'evil-execute-in-god-state ; localleader
       ";"     'evil-ex
       "X"     'evil-exchange
 
@@ -54,6 +53,7 @@
       "[ \\"  'er/contract-region)
 
 (bind 'normal my-mode-map
+      ;; <leader>
       ", ,"   'helm-projectile-switch-to-buffer
       ", ."   'helm-resume
       ", /"   'helm-projectile-find-file
@@ -70,6 +70,25 @@
       ", m"   'helm-recentf
       ", p"   'helm-projectile-switch-project
       ", y"   'helm-show-kill-ring
+
+      ;; <localleader>
+      "\\ \\"   'neotree-toggle
+      "\\ ;"    'linum-mode
+      "\\ ="    'toggle-transparency
+      "\\ e"    'evil-emacs-state
+
+      "\\ ]"    'next-buffer
+      "\\ ["    'previous-buffer
+
+      "\\ o f"  'my-send-dir-to-finder
+      "\\ o u"  'my-send-to-transmit
+      "\\ o l"  'my-send-to-launchbar
+      "\\ o L"  'my-send-dir-to-launchbar
+
+      ;; tmux: cd (default-directory)
+      "\\ o t"  (λ (ex:tmux-chdir nil t))
+      ;; tmux: cd [project root]
+      "\\ o T"  'ex:tmux-chdir
 
       ;; behave  like D and C; yank to end of line
       "Y"     (λ (evil-yank (point) (point-at-eol)))
@@ -114,26 +133,6 @@
   (linum-mode 0)
   (remove-hook 'pre-command-hook 'my--disable-linum))
 
-(bind 'god my-mode-map
-      ;; <localleader>
-      "\\"   'neotree-toggle
-      ";"    'linum-mode
-      "="    'toggle-transparency
-      "e"    'evil-emacs-state
-
-      "]"    'next-buffer
-      "["    'previous-buffer
-
-      "o f"  'my-send-dir-to-finder
-      "o u"  'my-send-to-transmit
-      "o l"  'my-send-to-launchbar
-      "o L"  'my-send-dir-to-launchbar
-
-      ;; tmux: cd (default-directory)
-      "o t"  (λ (my:tmux-chdir nil t))
-      ;; tmux: cd [project root]
-      "o T"  'my:tmux-chdir)
-
 (bind 'emacs [escape] 'evil-normal-state)
 
 (bind 'insert my-mode-map
@@ -161,7 +160,7 @@
 (bind 'motion my-mode-map "g x" 'my-scratch-buffer) ; send to scratch buffer
 
 ;; Easy escape from insert mode (more responsive than using key-chord-define)
-(bind 'insert "j" #'my--maybe-exit-insert-mode)
+(bind 'insert "j" 'my--maybe-exit-insert-mode)
 
 (bind 'insert "C-g" 'evil-normal-state)
 
