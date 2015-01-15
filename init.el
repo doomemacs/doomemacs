@@ -30,8 +30,9 @@
 (defconst *dark-theme   'brin)
 (defconst *light-theme  'github) ; wtb better light theme...
 
-(defconst *default-font "Ubuntu Mono")
-(defconst *default-font-size (if (eq system-name "ganymede.local") 12 14))
+(defconst *default-font "Terminus (TTF)")
+(defconst *default-font-size (if (eq system-name "ganymede.local") 9 12))
+(defconst *alt-font "Terminus")
 
 (defconst *presentation-font "Panic Sans")
 (defconst *presentation-font-size 22)
@@ -70,7 +71,7 @@
         init-java              ; the poster child for carpal tunnel syndome
         init-js                ; alert("not java, javascript!")
         init-lua               ; zero-based indices? Zero-based indices.
-        ;; init-org               ; for fearless leader (who is organized)
+        ;; init-org            ; for fearless leader (who is organized)
         init-php               ; making php less painful to work with
         init-project           ; project tools - dired, perspective, neotree
         init-projectile        ; when you forget where you put your house
@@ -78,6 +79,7 @@
         init-regex             ; /^[^\s](meaning)[^\n]*/
         init-ruby              ; <3
         init-scss              ; @include magic;
+        init-smalltalk         ;
         init-sh                ; #!/bin/bash_your_head_in
         init-swift             ; yay, emoji variables!
         init-text              ; I got nothing...
