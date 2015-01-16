@@ -74,11 +74,13 @@
 
    `(mode-line            ((t (:foreground ,white
                                :background ,gutters-active
-                               :box (:line-width 3 :color ,gutters-active) ))))
+                               :box (:line-width 3 :color ,gutters-active)
+                               ))))
 
    `(mode-line-inactive       ((t (:foreground ,gutter-fg
                                :background ,background
-                               :box (:line-width 3 :color ,gutters) ))))
+                               :box (:line-width 3 :color ,gutters)
+                               ))))
 
    `(mode-line-modified-face           ((t (:foreground ,builtin))))
 
@@ -128,9 +130,11 @@
 
    `(persp-selected-face               ((t (:foreground ,builtin))))
 
-
    `(org-level-1                      ((t (:inherit outline-1 :bold t :foreground ,git-added))))
    `(org-level-2                      ((t (:inherit outline-2 :bold t :foreground ,variables))))
+
+   `(evil-snipe-first-match-face      ((t (:background "orange" :foreground "black" :underline nil))))
+   `(evil-snipe-matches-face          ((t (:foreground "orange" :background "gray20" :underline t))))
 
    ))
 
