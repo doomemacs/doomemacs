@@ -77,7 +77,7 @@
 (depends-on "evil-jumper")
 (depends-on "evil-god-state")
 (depends-on "evil-nerd-commenter")
-;;(depends-on "evil-snipe")
+(depends-on "evil-snipe")
 ;; evil-nerd-commenter chokes if it's installed via cask for some reason...
 
 ;; Project management
