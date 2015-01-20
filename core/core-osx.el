@@ -7,8 +7,6 @@
 ;; Don't open files from the workspace in a new frame
 (setq ns-pop-up-frames nil)
 
-(setq ns-antialias-text nil)
-
 ;; fix emacs PATH on OSX (GUI only)
 (use-package exec-path-from-shell
   :if (memq window-system '(mac ns))

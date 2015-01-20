@@ -30,12 +30,8 @@
 (defconst *dark-theme   'brin)
 (defconst *light-theme  'github) ; wtb better light theme...
 
-(defconst *default-font "Terminus (TTF)")
-(defconst *default-font-size (if (eq system-name "ganymede.local") 9 12))
-(defconst *alt-font "Terminus")
-
-(defconst *presentation-font "Panic Sans")
-(defconst *presentation-font-size 22)
+(defconst *fonts `(("Terminus (TTF)" ,(if (eq system-name "ganymede.local") 9 12) nil)
+                   ("Inconsolata" 22 t)))
 
 (add-to-list 'load-path my-core-dir)
 (add-to-list 'load-path my-modules-dir)

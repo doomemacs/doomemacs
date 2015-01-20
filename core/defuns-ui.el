@@ -1,7 +1,7 @@
 (eval-when-compile (require 'cl))
 
 (defvar my/dark-theme-p t)
-(defvar my/presentation-mode-p nil)
+(defvar my/cycle-font-i 0)
 
 ;;;###autoload
 (defun load-dark-theme()
@@ -39,9 +39,14 @@
     (load-dark-theme)))
 
 ;;;###autoload
-(defun toggle-presentation-mode ()
+(defun cycle-font ()
   (interactive)
-  (if my/presentation-mode-p
-      (load-font *default-font *default-font-size)
-    (load-font *presentation-font *presentation-font-size))
-  (setq my/presentation-mode-p (not my/presentation-mode-p)))
+  (if (>= my/cycle-font-i (1- (length *fonts)))
+      (setq my/cycle-font-i 0)
+    (cl-incf my/cycle-font-i))
+  (let* ((font (nth my/cycle-font-i *fonts))
+         (font-name (nth 0 font))
+         (font-size (nth 1 font))
+         (font-aa (nth 2 font)))
+    (load-font font-name font-size)
+    (setq ns-antialias-text font-aa)))
