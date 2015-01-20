@@ -4,7 +4,6 @@
 (when window-system
   ;; No transparency!
   (set-frame-parameter nil 'alpha '(94 70))
-
   (let* ((font (nth 0 *fonts))
          (font-name (nth 0 font))
          (font-size (nth 1 font))
@@ -23,7 +22,7 @@
 ;;;; GUI Settings ;;;;;;;;;;;;;;;;;;;;;;
 (tooltip-mode -1)
 (blink-cursor-mode 1)        ; blink cursor
-;; (global-hl-line-mode 1)   ; highlight line
+(global-hl-line-mode 1)   ; highlight line
 
 (setq linum-format " %3d")
 
@@ -51,10 +50,6 @@
   (setq frame-title-format '(buffer-file-name "%f" ("%b")))
   (tooltip-mode -1)
   (blink-cursor-mode 1))
-
-;; Show full path in window title
-;; (setq frame-title-format
-;;       '(:eval (if (buffer-file-name) (abbreviate-file-name (buffer-file-name)) "%b")))
 
 
 ;;;; Modeline ;;;;;;;;;;;;;;;;;;;;;;;;;;

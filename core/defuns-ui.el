@@ -40,6 +40,7 @@
 
 ;;;###autoload
 (defun cycle-font ()
+  "Cycle between fonts specified in *fonts in init.el"
   (interactive)
   (if (>= my/cycle-font-i (1- (length *fonts)))
       (setq my/cycle-font-i 0)

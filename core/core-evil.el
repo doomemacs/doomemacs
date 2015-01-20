@@ -208,7 +208,7 @@
 
     (progn ; ex-commands
       (evil-ex-define-cmd "echo" 'my:echo)
-      (evil-ex-define-cmd "pres[ent]" 'toggle-presentation-mode)
+      (evil-ex-define-cmd "cycle" 'cycle-font)
       (evil-ex-define-cmd "togglet[heme]" 'toggle-theme)
       (evil-ex-define-cmd "full[scr]" 'toggle-frame-fullscreen)
       (evil-ex-define-cmd "k[ill]" 'kill-this-buffer)      ; Kill current buffer
