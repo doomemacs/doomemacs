@@ -2,18 +2,9 @@
 
 ;;;; Load Theme ;;;;;;;;;;;;;;;;;;;;;;;;
 (when window-system
-  ;; No transparency!
   (set-frame-parameter nil 'alpha '(94 70))
-  (let* ((font (nth 0 *fonts))
-         (font-name (nth 0 font))
-         (font-size (nth 1 font))
-         (font-aa (nth 2 font)))
-    (unless (member font-name (font-family-list))
-      (error "Font %s isn't installed" font-name))
-    (let ((font-str (concat font-name "-" (number-to-string font-size))))
-      (setq ns-antialias-text font-aa)
-      (add-to-list 'default-frame-alist `(font . ,font-str))
-      (add-to-list 'initial-frame-alist `(font . ,font-str)))))
+  ;; Load font
+  (cycle-font 0))
 
 (add-to-list 'custom-theme-load-path my-themes-dir)
 (load-dark-theme)

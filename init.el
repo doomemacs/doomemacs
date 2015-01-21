@@ -31,6 +31,7 @@
 (defconst *light-theme  'github) ; wtb better light theme...
 
 (defconst *fonts `(("Terminus (TTF)" ,(if (eq system-name "ganymede.local") 9 12) nil)
+                   ("Ubuntu Mono" 16 t)
                    ("Inconsolata" 22 t)))
 
 (add-to-list 'load-path my-core-dir)
