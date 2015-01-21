@@ -6,15 +6,13 @@
     (add-hook 'org-mode-hook 'enable-tab-width-2)
     (add-hook 'org-mode-hook 'evil-org-mode)
     (add-hook 'org-mode-hook 'turn-on-auto-fill)
-    (add-hook 'org-mode-hook 'org-toggle-pretty-entities)
+    (add-hook 'org-mode-hook 'iimage-mode)
 
     ;; Reset evil to ensure evil-org-mode's maps work
     (add-hook! 'org-mode-hook (evil-mode nil) (evil-mode 1))
 
     (setq org-directory "~/Dropbox/notes"
           org-default-notes-file "~/Dropbox/notes/notes.org"
-          org-mobile-inbox-for-pull "~/Dropbox/notes/notes.org"
-          org-mobile-directory "~/Dropbox/Apps/MobileOrg"
           org-agenda-files '("~/Dropbox/notes"
                              "~/Dropbox/notes/projects"
                              "~/Dropbox/notes/projects/dev"
@@ -22,7 +20,9 @@
                              "~/Dropbox/notes/projects/webdev")
           org-archive-location "~/Dropbox/notes/archive/%s.org::"
           org-confirm-babel-evaluate nil
-          org-src-tab-acts-natively t)
+          org-src-tab-acts-natively t
+          org-image-actual-width 300
+          org-startup-with-inline-images t)
 
     (setq org-completion-use-ido t
           org-hidden-keywords '(title)
@@ -73,6 +73,10 @@
   :config
   (progn
     (message "Org-mode loaded")
+
+    (setq iimage-mode-image-regex-alist
+                  '(("\\(`?file://\\|\\[\\[\\|<\\|`\\)?\\([-+./_0-9a-zA-Z]+\\.\\(GIF\\|JP\\(?:E?G\\)\\|P\\(?:BM\\|GM\\|N[GM]\\|PM\\)\\|SVG\\|TIFF?\\|X\\(?:[BP]M\\)\\|gif\\|jp\\(?:e?g\\)\\|p\\(?:bm\\|gm\\|n[gm]\\|pm\\)\\|svg\\|tiff?\\|x\\(?:[bp]m\\)\\)\\)\\(\\]\\]\\|>\\|'\\)?" . 2)
+                    ("<\\(http://.+\\.\\(GIF\\|JP\\(?:E?G\\)\\|P\\(?:BM\\|GM\\|N[GM]\\|PM\\)\\|SVG\\|TIFF?\\|X\\(?:[BP]M\\)\\|gif\\|jp\\(?:e?g\\)\\|p\\(?:bm\\|gm\\|n[gm]\\|pm\\)\\|svg\\|tiff?\\|x\\(?:[bp]m\\)\\)\\)>" . 1)))
 
     (push '("\\*Org.+\\*" :regexp t :width 0.3 :position bottom) popwin:special-display-config)
 
@@ -252,7 +256,7 @@
             "g i" (λ (if (> (length org-inline-image-overlays) 0)
                          (org-remove-inline-images)
                        (org-display-inline-images nil t (line-beginning-position) (line-end-position))))
-            "g a" 'org-agenda
+            "g a" 'org-attach
             "g t" 'org-show-todo-tree
             "$" 'org-end-of-line
             "^" 'org-beginning-of-line
@@ -273,24 +277,37 @@
     (evil-ex-define-cmd "o[rg]refile" 'org-refile)
     (evil-ex-define-cmd "o[rg]archive" 'org-archive-subtree)
     (evil-ex-define-cmd "o[rg]agenda" 'org-agenda)
-    (evil-ex-define-cmd "o[rg]attach" 'my:org-attach)
     (evil-ex-define-cmd "o[rg]todo" 'org-show-todo-tree)
     (evil-ex-define-cmd "o[rg]link" 'org-link)
     (evil-ex-define-cmd "o[rg]align" 'org-align-all-tags)
-    (evil-define-command my:org-attach (&optional filename bang)
+
+    (evil-ex-define-cmd "o[rg]image" 'my:org-insert-image)
+
+    (evil-define-command my:org-insert-image-url (&optional image-url)
+      :repeat nil
+      (interactive "<f><!>")
+      (unless image-url
+        (user-error "You must specify an image URL to insert"))
+      (let ((dest (f-join org-directory "images/" (concat (format-time-string "%Y%m%d-") (f-filename filename)))))
+        (shell-command (format "wget '%s' -O '%s'" image-url dest))
+        (insert (format "<%s>" (f-relative dest (f-dirname (buffer-file-name)))))
+        (indent-according-to-mode)))
+
+    (evil-define-command my:org-insert-image (&optional filename bang)
       :repeat nil
       (interactive "<f><!>")
       (if bang
-          (org-attach)
+          (my:org-insert-image-url filename)
         (unless filename
           (user-error "You must specify a file to attach"))
         (unless (file-exists-p filename)
           (user-error "File %s does not exist" filename))
-        (let ((dest (f-join org-directory "data/" (concat (format-time-string "%Y%m%d-") (f-filename filename)))))
+        (let ((dest (f-join org-directory "images/" (concat (format-time-string "%Y%m%d-") (f-filename filename)))))
           (when (f-exists? dest)
             (user-error "File %s already exists at destination!"))
           (copy-file filename dest)
-          (insert (format "[[file:%s]]" (f-relative dest (f-dirname (buffer-file-name))))))))))
+          (insert (format "<file:%s>" (f-relative dest (f-dirname (buffer-file-name)))))
+          (indent-according-to-mode))))))
 
 
 (provide 'init-org)

@@ -68,7 +68,7 @@
         init-java              ; the poster child for carpal tunnel syndome
         init-js                ; alert("not java, javascript!")
         init-lua               ; zero-based indices? Zero-based indices.
-        ;; init-org            ; for fearless leader (who is organized)
+        init-org               ; for fearless leader (who is organized)
         init-php               ; making php less painful to work with
         init-project           ; project tools - dired, perspective, neotree
         init-projectile        ; when you forget where you put your house
