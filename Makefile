@@ -2,6 +2,9 @@ EMACS=emacs
 
 all: clean autoloads
 
+update:
+	cask update
+
 clean:
 	@rm -rf init.elc init/*.elc elisp/*.elc core/*.elc
 	@rm -rf auto-save-list recentf places ido.last async-bytecomp.log elpa
