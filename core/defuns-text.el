@@ -110,14 +110,14 @@ spaces on either side of the point if so. Resorts to
 
 ;;;###autoload
 (defun my.newline-and-indent ()
-  "Newline and indent; if in a comment, auto-comment and properly
-indent the next line."
   (interactive)
-  (cond ((sp-point-in-string)
-         (evil-ret))
-        ((evil-in-comment-p)
-         (if (eq major-mode 'js2-mode)
-             (js2-line-break)
-           (call-interactively 'indent-new-comment-line)))
-        (t
-         (evil-ret-and-indent))))
+  (cond
+   ((sp-point-in-string)
+    (newline))
+   ((sp-point-in-comment)
+    (if (eq major-mode 'js2-mode)
+        (js2-line-break)
+      (indent-new-comment-line)))
+   (t
+    (newline-and-indent)
+    (ignore-errors (indent-sexp)))))
