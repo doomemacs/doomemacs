@@ -1,6 +1,6 @@
 EMACS=emacs
 
-all: clean autoloads
+all: update
 
 update:
 	cask update
