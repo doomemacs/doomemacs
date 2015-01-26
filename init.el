@@ -27,12 +27,12 @@
 (defconst my-snippets-dir  (concat my-dir "snippets/"))
 (defconst my-tmp-dir       (concat my-dir ".cache/"))
 
-(defconst *dark-theme   'brin)
+(defconst *dark-theme   'v0)
 (defconst *light-theme  'github) ; wtb better light theme...
 
-(defconst *fonts `(("Terminus (TTF)" ,(if (eq system-name "ganymede.local") 9 12) nil)
-                   ("Ubuntu Mono" 16 t)
-                   ("Inconsolata" 22 t)))
+(defconst *fonts `(("Terminus (TTF)" 12 nil 0.1)
+                   ("Ubuntu Mono" 16 t 0)
+                   ("Inconsolata" 22 t 0)))
 
 (add-to-list 'load-path my-core-dir)
 (add-to-list 'load-path my-modules-dir)
@@ -63,8 +63,8 @@
         init-fly               ; fly(check|spell)
         init-git               ; git-gutter + modes
         ;; init-go
-        init-helm              ; when you forget where you put your constellation
-        init-ido               ; when you forget where you put your keys
+        init-helm              ; a search engine for your life
+        init-ido               ; a search engine for your car keys
         init-java              ; the poster child for carpal tunnel syndome
         init-js                ; alert("not java, javascript!")
         init-lua               ; zero-based indices? Zero-based indices.
@@ -76,12 +76,13 @@
         init-regex             ; /^[^\s](meaning)[^\n]*/
         init-ruby              ; <3
         init-scss              ; @include magic;
-        init-smalltalk         ;
+        init-smalltalk         ; nice weather we're having
         init-sh                ; #!/bin/bash_your_head_in
         init-swift             ; yay, emoji variables!
         init-text              ; I got nothing...
         init-tmux
         ;; init-rust
+        ;; init-vala
         init-web
         init-yasnippet         ; type for me
 

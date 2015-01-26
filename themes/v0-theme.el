@@ -13,20 +13,20 @@
 
 ;; *****************************************************************************************
 ;;
-;; Brin :- An Emacs port of the Space Grey ST2 theme
+;; v0 :- A dark Emacs theme inspired by Space Grey ST2 theme
 ;;
 ;; *****************************************************************************************
 
 ;;
-;; Modified by Henrik Lissner <http://github.com/hlissner/emacs.d>
+;; By Henrik Lissner <http://github.com/hlissner/emacs.d>
 ;;
 
-(deftheme brin "Space Grey theme for Emacs")
+(deftheme v0 "V-NOUGHT dark theme for Emacs 24+")
 
-  (custom-theme-set-variables 'brin)
+  (custom-theme-set-variables 'v0)
 
   (let ((background       "#222222")
-        ;; (gutters          "#262E34")
+        ;; (gutters       "#262E34")
         (gutters          "#1f252a")
         (gutter-fg        "#55616A")
         (gutters-active   "#2e363c")
@@ -58,7 +58,7 @@
         (git-deleted      "#A12121"))
 
   (custom-theme-set-faces
-   'brin
+   'v0
 
 ;; Default colors
 ;; *****************************************************************************************
@@ -141,7 +141,7 @@
 
 ;; *****************************************************************************************
 
-(provide-theme 'brin)
+(provide-theme 'v0)
 
 ;; Local Variables:
 ;; no-byte-compile: t
