@@ -226,10 +226,10 @@
             (kbd "s-i") (λ (my/org-surround "/"))     ; italics
             (kbd "s-`") (λ (my/org-surround "+")))    ; strikethrough
       (bind 'visual evil-org-mode-map
-            (kbd "s-b") "s*"
-            (kbd "s-u") "s_"
-            (kbd "s-i") "s/"
-            (kbd "s-`") "s+")
+            (kbd "s-b") "S*"
+            (kbd "s-u") "S_"
+            (kbd "s-i") "S/"
+            (kbd "s-`") "S+")
 
       (bind '(normal visual) evil-org-mode-map
             ", l" 'org-insert-link)
