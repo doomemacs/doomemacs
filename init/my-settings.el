@@ -46,13 +46,11 @@
 (bind 'insert lisp-mode-map        [remap my.dumb-indent] 'indent-for-tab-command)
 (bind 'insert emacs-lisp-mode-map  [remap my.dumb-indent] 'indent-for-tab-command)
 
-;; Highjacks backspace and space to:
-;;   a) expand spaces between delimiters intelligently: (|) -> ( | )
-;;   b) the reverse of A: ( | ) -> (|)
-;;   c) allow backspace to delete indented blocks intelligently
-;;   d) and not do any of this magic when inside a string
+;; Highjacks backspace to:
+;;   a) deletes spaces on either side of the cursor, if present ( | ) -> (|)
+;;   b) allow backspace to delete space-indented blocks intelligently
+;;   c) and not do any of this magic when inside a string
 (bind 'insert
-      (kbd "SPC")                              'my.inflate-space-maybe
       [remap backward-delete-char-untabify]    'my.deflate-space-maybe
       [remap newline]                          'my.newline-and-indent
 
@@ -64,8 +62,9 @@
       "\C-u" 'my.backward-kill-to-bol-and-indent
 
       ;; Fixes delete
-      (kbd "<kp-delete>")   'delete-char
+      (kbd "<kp-delete>")   'delete-char)
 
+(bind '(insert normal)
       ;; Textmate-esque insert-line before/after
       (kbd "<s-return>")    'evil-open-below
       (kbd "<S-s-return>")  'evil-open-above)
@@ -100,7 +99,6 @@
       "\C-w" 'evil-delete-backward-word)
 (bind minibuffer-local-map
       "\C-u" 'evil-delete-whole-line)
-;; Close help/compilation windows with escape
 
 ;; Redefine to get rid of that silly delete-other-windows nonsense
 (defun keyboard-escape-quit ()

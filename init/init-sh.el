@@ -6,8 +6,8 @@
 (my--cleanup-buffers-add "^\\*Shell Command Output\\*$")
 (my--cleanup-buffers-add "^\\*Async Shell Command\\*$")
 
-;; Make shell scrips executable on save. Good!
-(add-hook 'after-save-hook 'executable-make-buffer-file-executable-if-script-p)
+;; Make shell scrips executable on save?
+;; (add-hook 'after-save-hook 'executable-make-buffer-file-executable-if-script-p)
 
 ;; Color in *Shell Command Output*
 (require 'ansi-color)

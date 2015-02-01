@@ -207,7 +207,6 @@
         file-name))
 
     (progn ; ex-commands
-      (evil-ex-define-cmd "echo" 'my:echo)
       (evil-ex-define-cmd "cycle" 'cycle-font)
       (evil-ex-define-cmd "togglet[heme]" 'toggle-theme)
       (evil-ex-define-cmd "full[scr]" 'toggle-frame-fullscreen)
@@ -227,10 +226,6 @@
       (evil-ex-define-cmd "x" 'my:scratch-buffer)
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-      (evil-define-command my:echo (&optional output)
-        (interactive "<a>")
-        (message "%s" output))
 
       (evil-define-command my:kill-buffers (&optional bang)
         :repeat nil

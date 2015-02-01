@@ -13,7 +13,7 @@
 ;;;; GUI Settings ;;;;;;;;;;;;;;;;;;;;;;
 (tooltip-mode -1)
 (blink-cursor-mode 1)        ; blink cursor
-(global-hl-line-mode 1)   ; highlight line
+;; (global-hl-line-mode 1)   ; highlight line
 
 (setq linum-format " %3d")
 

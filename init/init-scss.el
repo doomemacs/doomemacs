@@ -4,7 +4,6 @@
   (progn
     ;; Syntax coloring breaks on consecutive loads for some reason. This fixes that:
     (add-hook 'scss-mode-hook 'css-mode)
-
     (add-hook 'scss-mode-hook 'enable-tab-width-2)
 
     (setq-default css-indent-offset 2)

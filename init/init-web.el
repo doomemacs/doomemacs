@@ -23,7 +23,7 @@
           web-mode-block-padding         2)
 
     (after "web-beautify"
-      (add-hook! 'web-mode-hook  (setenv "jsbeautify_indent_size" "4"))
+      (add-hook! 'web-mode-hook (setenv "jsbeautify_indent_size" "4"))
       (bind 'motion web-mode-map "gQ" 'web-beautify-html))
 
     (bind web-mode-map (kbd "s-/") 'web-mode-comment-or-uncomment)
