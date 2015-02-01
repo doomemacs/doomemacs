@@ -15,20 +15,19 @@
     (setq sp-autowrap-region nil            ; let evil-surround handle this
           sp-highlight-pair-overlay nil
           sp-show-pair-delay 0
-          sp-autoescape-string-quote t)
+          sp-autoescape-string-quote nil)
 
-    ;; Handle newlines
-    (sp-pair "{" nil :post-handlers '(("||\n[i]" "RET")))
-    (sp-pair "[" nil :post-handlers '(("||\n[i]" "RET")))
-    (sp-with-modes '(emacs-lisp-mode lisp-mode)
-      (sp-local-pair "[" nil :post-handlers '(("|" "RET"))))
+    ;; Handle newlines + spaces
+    (sp-pair "{" "}" :post-handlers '(("||\n[i]" "RET") ("| " "SPC")) :unless '(sp-point-before-word-p sp-point-before-same-p))
+    (sp-pair "(" ")" :post-handlers '(("||\n[i]" "RET") ("| " "SPC")) :unless '(sp-point-before-word-p sp-point-before-same-p))
 
     ;; Auto-close more conservatively
-    (sp-pair "[" nil :unless '(sp-point-before-word-p sp-point-before-same-p))
-    (sp-pair "(" nil :unless '(sp-point-before-word-p sp-point-before-same-p))
+    (sp-pair "[" nil  :unless '(sp-point-before-word-p sp-point-before-same-p))
+    (sp-pair "'" nil  :unless '(sp-point-after-word-p sp-point-before-word-p sp-point-before-same-p))
     (sp-pair "\"" nil :unless '(sp-point-after-word-p sp-point-before-word-p sp-point-before-same-p))
-    (sp-pair "'" nil :unless '(sp-point-after-word-p sp-point-before-word-p sp-point-before-same-p))
-    (sp-pair "\"" nil :unless '(sp-point-after-word-p sp-point-before-word-p sp-point-before-same-p))
+
+    (sp-with-modes '(json-mode js2-mode ruby-mode enh-ruby-mode python-mode)
+      (sp-local-pair "[" "]" :post-handlers '(:add "| " "SPC")))
 
     (after "yasnippet"
       (defadvice yas-expand (before advice-for-yas-expand activate)
