@@ -18,7 +18,7 @@
                              "~/Dropbox/notes/projects/dev"
                              "~/Dropbox/notes/projects/gamedev"
                              "~/Dropbox/notes/projects/webdev")
-          org-archive-location "~/Dropbox/notes/archive/%s.org::"
+          org-archive-location "~/Dropbox/notes/archive/%s::"
           org-confirm-babel-evaluate nil
           org-src-tab-acts-natively t
           org-image-actual-width 300
@@ -257,6 +257,7 @@
                          (org-remove-inline-images)
                        (org-display-inline-images nil t (line-beginning-position) (line-end-position))))
             "g a" 'org-attach
+            "g A" 'org-agenda
             "g t" 'org-show-todo-tree
             "$" 'org-end-of-line
             "^" 'org-beginning-of-line
