@@ -18,8 +18,8 @@
           sp-autoescape-string-quote nil)
 
     ;; Handle newlines + spaces
-    (sp-pair "{" "}" :post-handlers '(("||\n[i]" "RET") ("| " "SPC")) :unless '(sp-point-before-word-p sp-point-before-same-p))
-    (sp-pair "(" ")" :post-handlers '(("||\n[i]" "RET") ("| " "SPC")) :unless '(sp-point-before-word-p sp-point-before-same-p))
+    (sp-pair "{" "}" :post-handlers '(("||\n[i]" "RET") ("| " " ")) :unless '(sp-point-before-word-p sp-point-before-same-p))
+    (sp-pair "(" ")" :post-handlers '(("||\n[i]" "RET") ("| " " ")) :unless '(sp-point-before-word-p sp-point-before-same-p))
 
     ;; Auto-close more conservatively
     (sp-pair "[" nil  :unless '(sp-point-before-word-p sp-point-before-same-p))
@@ -27,7 +27,7 @@
     (sp-pair "\"" nil :unless '(sp-point-after-word-p sp-point-before-word-p sp-point-before-same-p))
 
     (sp-with-modes '(json-mode js2-mode ruby-mode enh-ruby-mode python-mode)
-      (sp-local-pair "[" "]" :post-handlers '(:add "| " "SPC")))
+      (sp-local-pair "[" nil :post-handlers '(("||\n[i]" "RET"))))
 
     (after "yasnippet"
       (defadvice yas-expand (before advice-for-yas-expand activate)
