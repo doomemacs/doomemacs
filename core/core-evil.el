@@ -207,8 +207,6 @@
         file-name))
 
     (progn ; ex-commands
-      (evil-ex-define-cmd "cycle" 'cycle-font)
-      (evil-ex-define-cmd "togglet[heme]" 'toggle-theme)
       (evil-ex-define-cmd "full[scr]" 'toggle-frame-fullscreen)
       (evil-ex-define-cmd "k[ill]" 'kill-this-buffer)      ; Kill current buffer
       (evil-ex-define-cmd "k[ill]o" 'my-cleanup-buffers)   ; Kill current project buffers

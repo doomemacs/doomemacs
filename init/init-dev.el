@@ -31,14 +31,6 @@
 
     (after "evil" (evil-ex-define-cmd "ref[actor]" 'emr-show-refactor-menu))))
 
-;; todo's
-(use-package hl-todo :init (add-hook 'find-file-hook 'hl-todo-mode))
-(use-package helm-todo :commands my:helm-todo-search)
-(evil-ex-define-cmd "todo" 'my:helm-todo)
-
-;; (require 'evil-snipe)
-;; (global-evil-snipe-mode 1)
-
 
 (provide 'init-dev)
 ;;; init-dev.el ends here
