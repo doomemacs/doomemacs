@@ -1,3 +1,4 @@
+;; For GNU-Smalltalk
 (use-package smalltalk-mode :mode "\\.g?st$")
 
 (provide 'init-smalltalk)

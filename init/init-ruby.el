@@ -17,7 +17,6 @@
     (associate-mode "/\\.rspec$" 'text-mode))
   :config
   (progn
-    (message "Ruby loaded!")
 	;;; Formatting
     (setq ruby-indent-level 2)
     (setq ruby-deep-indent-paren t)

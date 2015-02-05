@@ -6,7 +6,6 @@
     (bind 'motion css-mode-map "gQ" 'web-beautify-css)))
 
 (use-package web-mode
-  :commands web-mode
   :mode (("\\.\\(p\\)?htm\\(l\\)?$" . web-mode)
          ("\\.tpl\\(\\.php\\)?$" . web-mode)
          ("\\.erb$" . web-mode)
