@@ -29,6 +29,9 @@
     (sp-with-modes '(json-mode js2-mode ruby-mode enh-ruby-mode python-mode)
       (sp-local-pair "[" nil :post-handlers '(("||\n[i]" "RET"))))
 
+    ;; Let web-mode handle autopairing
+    (sp-local-pair 'web-mode "<" nil :actions nil)
+
     (after "yasnippet"
       (defadvice yas-expand (before advice-for-yas-expand activate)
         (sp-remove-active-pair-overlay)))))
