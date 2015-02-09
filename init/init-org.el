@@ -256,6 +256,7 @@
             "g i" (λ (if (> (length org-inline-image-overlays) 0)
                          (org-remove-inline-images)
                        (org-display-inline-images nil t (line-beginning-position) (line-end-position))))
+            "g Q" 'org-fill-paragraph
             "g a" 'org-attach
             "g A" 'org-agenda
             "g t" 'org-show-todo-tree
