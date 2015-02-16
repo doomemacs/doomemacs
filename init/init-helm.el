@@ -23,11 +23,6 @@
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
     (use-package helm-ag
-      :commands (my:helm-ag-search
-                 my:helm-ag-search-cwd
-                 my:helm-ag-regex-search
-                 my:helm-ag-regex-search-cwd
-                 helm-ag helm-do-ag)
       :config
       (progn
         ;; Ex-mode interface for `helm-ag'. If `bang', then `search' is interpreted as
