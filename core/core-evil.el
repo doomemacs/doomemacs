@@ -82,6 +82,7 @@
         :config
         (progn
           (evil-snipe-replace-evil)
+          (setq evil-snipe-smart-case t)
           ;; (evil-snipe-enable-sS)
           (bind 'visual "z" 'evil-snipe-s)
           (bind 'visual "Z" 'evil-snipe-S)))
