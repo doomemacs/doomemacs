@@ -61,7 +61,8 @@
 
       (use-package evil-numbers)
 
-      (use-package evil-matchit :init (global-evil-matchit-mode 1))
+      (use-package evil-matchit
+        :init (global-evil-matchit-mode 1))
 
       (use-package evil-surround
         :init (global-evil-surround-mode 1))
@@ -81,9 +82,15 @@
         :init (global-evil-snipe-mode)
         :config
         (progn
-          (evil-snipe-replace-evil)
           (setq evil-snipe-smart-case t)
-          ;; (evil-snipe-enable-sS)
+          (setq evil-snipe-override-evil t)
+          (setq evil-snipe-scope 'visible)
+          (setq evil-snipe-repeat-scope 'whole-visible)
+
+          (setq-default evil-snipe-symbol-groups
+                '((?\[ "[[{(]")
+                  (?\] "[]})]")))
+
           (bind 'visual "z" 'evil-snipe-s)
           (bind 'visual "Z" 'evil-snipe-S)))
 
