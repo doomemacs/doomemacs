@@ -42,6 +42,7 @@
 (let ((default-directory my-elisp-dir))
   (normal-top-level-add-subdirs-to-load-path))
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Just the... bear necessities...
 (mapc 'require
@@ -85,6 +86,7 @@
         ;; init-vala
         init-web
         init-yasnippet         ; type for me
+        init-youtube           ; tools for youtube vids
 
         my-bindings
         my-settings
