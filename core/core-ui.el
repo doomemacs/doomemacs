@@ -2,7 +2,7 @@
 
 ;;;; Load Theme ;;;;;;;;;;;;;;;;;;;;;;;;
 (when window-system
-  (set-frame-parameter nil 'alpha '(98 70))
+  (set-frame-parameter nil 'alpha '(98 90))
   ;; Load font
   (cycle-font 0))
 
