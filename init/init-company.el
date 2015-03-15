@@ -42,7 +42,7 @@
         (add-hook hook
                   `(lambda()
                      (set (make-local-variable 'company-backends)
-                          (append '((,@backends)) company-backends)))))
+                          (append '((,@backends company-dictionary)) company-backends)))))
 
       (company--backend-on 'nxml-mode-hook 'company-nxml 'company-yasnippet)
       (company--backend-on 'emacs-lisp-mode-hook 'company-elisp 'company-yasnippet)
