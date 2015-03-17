@@ -32,6 +32,7 @@ goto
 if
 inline
 int
+internal
 long
 mutable
 namespace
