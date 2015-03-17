@@ -7,7 +7,7 @@
 
 (cd "~") ; instead of /
 
-(require 'use-package)  ; Package management bootstrap
+(eval-when-compile (require 'use-package))  ; Package management bootstrap
 (setq use-package-verbose DEBUG-MODE)
 
 ;; Make sure undo/backup folders exist
@@ -211,9 +211,9 @@
       (add-hook 'after-load-functions 'smex-update-after-load)))
 
   (use-package popwin
-    :init (popwin-mode 1)
     :config
     (progn ; popwin config
+      (popwin-mode 1)
       (setq popwin:popup-window-height 0.45)
 
       (push '(diff-mode :position bottom :stick t) popwin:special-display-config)

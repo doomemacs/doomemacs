@@ -69,7 +69,7 @@
 
     (use-package rspec-mode
       :defer t
-      :pre-load
+      :init
       (progn
         (defvar rspec-mode-verifiable-map (make-sparse-keymap))
         (defvar evilmi-ruby-match-tags

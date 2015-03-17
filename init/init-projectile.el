@@ -1,13 +1,13 @@
 (use-package projectile
-  :pre-load
+  :init
   (setq-default projectile-cache-file (concat my-tmp-dir "projectile.cache")
                 projectile-known-projects-file (concat my-tmp-dir "projectile.projects")
                 projectile-enable-caching t
                 projectile-indexing-method 'alien)
-  :init
-  (projectile-global-mode +1)
   :config
   (progn
+    (projectile-global-mode +1)
+
     (add-to-list 'projectile-globally-ignored-files "ido.last")
     (add-to-list 'projectile-globally-ignored-directories "assets")
     (add-to-list 'projectile-other-file-alist '("scss" "css"))

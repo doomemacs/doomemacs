@@ -2,26 +2,26 @@
 
 ;;;; Eeeeeeevil ;;;;;;;;;;;;;;;;;;;;;;;;
 (use-package evil
-  :pre-load
-  (setq evil-want-visual-char-semi-exclusive t
-        evil-search-module        'evil-search
-        evil-search-wrap          nil
-        evil-magic                'magic
-        evil-want-C-u-scroll      t  ; enable C-u for scrolling
-        evil-ex-visual-char-range t  ; column range for ex commands
-        evil-ex-search-vim-style-regexp t
-
-        ;; Color-coded state cursors
-        evil-normal-state-cursor  '("white" box)
-        evil-emacs-state-cursor   '("cyan" bar)
-        evil-insert-state-cursor  '("white" bar)
-        evil-visual-state-cursor  'hollow
-
-        ace-jump-mode-scope     'window
-        ace-jump-mode-move-keys (nconc (loop for i from ?a to ?z collect i)
-                                       (loop for i from ?A to ?Z collect i)))
   :config
   (progn
+    (setq evil-want-visual-char-semi-exclusive t
+          evil-search-module        'evil-search
+          evil-search-wrap          nil
+          evil-magic                'magic
+          evil-want-C-u-scroll      t  ; enable C-u for scrolling
+          evil-ex-visual-char-range t  ; column range for ex commands
+          evil-ex-search-vim-style-regexp t
+
+          ;; Color-coded state cursors
+          evil-normal-state-cursor  '("white" box)
+          evil-emacs-state-cursor   '("cyan" bar)
+          evil-insert-state-cursor  '("white" bar)
+          evil-visual-state-cursor  'hollow
+
+          ace-jump-mode-scope     'window
+          ace-jump-mode-move-keys (nconc (loop for i from ?a to ?z collect i)
+                                         (loop for i from ?A to ?Z collect i)))
+
     (evil-mode)
     ;; Always ensure evil-shift-width is consistent with tab-width
     (add-hook! 'find-file-hook (setq evil-shift-width tab-width))
@@ -62,16 +62,16 @@
       (use-package evil-numbers)
 
       (use-package evil-matchit
-        :init (global-evil-matchit-mode 1))
+        :config (global-evil-matchit-mode 1))
 
       (use-package evil-surround
-        :init (global-evil-surround-mode 1))
+        :config (global-evil-surround-mode 1))
 
       (use-package evil-nerd-commenter
-        :pre-load (setq evilnc-hotkey-comment-operator "gc"))
+        :init (setq evilnc-hotkey-comment-operator "gc"))
 
       (use-package evil-jumper
-        :pre-load (setq evil-jumper-file (expand-file-name "jumplist" my-tmp-dir))
+        :init (setq evil-jumper-file (expand-file-name "jumplist" my-tmp-dir))
         :config
         (progn
           (setq evil-jumper-auto-center t
@@ -79,13 +79,14 @@
           (define-key evil-motion-state-map (kbd "H-i") 'evil-jumper/forward)))
 
       (use-package evil-snipe
-        :init (global-evil-snipe-mode)
         :config
         (progn
+          (global-evil-snipe-mode +1)
+
           (setq evil-snipe-smart-case t)
           (setq evil-snipe-override-evil t)
           (setq evil-snipe-scope 'visible)
-          (setq evil-snipe-repeat-scope 'whole-visible)
+          (setq evil-snipe-repeat-scope 'buffer)
 
           (setq-default evil-snipe-symbol-groups
                 '((?\[ "[[{(]")
@@ -93,9 +94,6 @@
 
           (bind 'visual "z" 'evil-snipe-s)
           (bind 'visual "Z" 'evil-snipe-S)))
-
-      (use-package ace-window
-        :config (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
 
       (use-package evil-visualstar))
 

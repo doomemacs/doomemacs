@@ -1,16 +1,16 @@
 (use-package flycheck
   :defer t
-  :pre-load
-  (setq-default flycheck-indication-mode 'right-fringe
-                ;; Removed checks on idle/change for snappiness
-                flycheck-check-syntax-automatically '(save mode-enabled)
-                flycheck-disabled-checkers '(emacs-lisp-checkdoc emacs-lisp make))
   :init
-  (dolist (hook '(ruby-mode-hook
-                  python-mode-hook
-                  shell-mode-hook
-                  ))
-    (add-hook hook 'flycheck-mode))
+  (progn
+    (setq-default flycheck-indication-mode 'right-fringe
+                  ;; Removed checks on idle/change for snappiness
+                  flycheck-check-syntax-automatically '(save mode-enabled)
+                  flycheck-disabled-checkers '(emacs-lisp-checkdoc emacs-lisp make))
+    (dolist (hook '(ruby-mode-hook
+                    python-mode-hook
+                    shell-mode-hook
+                    ))
+      (add-hook hook 'flycheck-mode)))
   :config
   (progn ; flycheck settings
     (my--cleanup-buffers-add "^\\*Flycheck.*\\*$")
