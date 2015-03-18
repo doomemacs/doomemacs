@@ -27,9 +27,11 @@
 ;;;###autoload
 (defun toggle-transparency ()
   (interactive)
-  (if (/= (frame-parameter nil 'alpha) 96)
-      (set-frame-parameter nil 'alpha 96)
-    (set-frame-parameter nil 'alpha 0)))
+  (let* ((alpha (frame-parameter nil 'alpha))
+         (alpha-val (if (listp alpha) (car alpha) alpha)))
+    (if (/= alpha-val 97)
+        (set-frame-parameter nil 'alpha 97)
+      (set-frame-parameter nil 'alpha 0))))
 
 ;;;###autoload
 (defun toggle-theme ()
