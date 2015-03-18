@@ -34,15 +34,7 @@
       ";"     'evil-ex
       "X"     'evil-exchange
 
-      "g SPC" (λ (call-interactively
-                  (if (evil-visual-line-state-p)
-                      'evil-ace-jump-line-mode
-                    'evil-ace-jump-char-mode)))
-      "g w"   'evil-ace-jump-word-mode  ; overwrites evil-fill
-      "g l"   'evil-ace-jump-line-mode
-      "g s"   'evil-ace-jump-two-chars-mode
-      "g t"   'ace-window
-      "g T"   (λ (ace-window 4))
+      "g l"   (λ (linum-mode 1) (evil-ex "") (linum-mode -1))
 
       "] e"   'next-error
       "[ e"   'previous-error
@@ -121,17 +113,6 @@
       ">"    (λ (evil-shift-right (region-beginning) (region-end))
                 (evil-normal-state)
                 (evil-visual-restore)))
-
-
-(defun my--enable-linum ()
-  (interactive)
-  (linum-mode 1)
-  (add-hook 'pre-command-hook 'my--disable-linum))
-
-(defun my--disable-linum ()
-  (interactive)
-  (linum-mode 0)
-  (remove-hook 'pre-command-hook 'my--disable-linum))
 
 (bind 'emacs [escape] 'evil-normal-state)
 

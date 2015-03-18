@@ -16,11 +16,7 @@
           evil-normal-state-cursor  '("white" box)
           evil-emacs-state-cursor   '("cyan" bar)
           evil-insert-state-cursor  '("white" bar)
-          evil-visual-state-cursor  'hollow
-
-          ace-jump-mode-scope     'window
-          ace-jump-mode-move-keys (nconc (loop for i from ?a to ?z collect i)
-                                         (loop for i from ?A to ?Z collect i)))
+          evil-visual-state-cursor  'hollow)
 
     (evil-mode)
     ;; Always ensure evil-shift-width is consistent with tab-width
@@ -115,37 +111,6 @@
       (after "popwin"
         (defadvice evil-force-normal-state (before evil-esc-quit-popwin activate)
           (shut-up (popwin:close-popup-window))))
-
-      ;; Ace-Jump: Enable half-cursor blink when using ace-jump
-      (defadvice evil-ace-jump-char-mode (before evil-ace-jump-char-mode-op activate)
-        (evil-half-cursor))
-      (defadvice evil-ace-jump-word-mode (before evil-ace-jump-word-mode-op activate)
-        (evil-half-cursor))
-
-      ;; https://github.com/winterTTr/ace-jump-mode/issues/23
-      (evil-define-motion evil-ace-jump-two-chars-mode (count)
-        :type exclusive
-        :repeat abort
-        (evil-without-repeat
-          (evil-enclose-ace-jump-for-motion
-            (call-interactively 'ace-jump-two-chars-mode))))
-
-      (defun ace-jump-two-chars-mode (&optional query-char query-char-2)
-        "AceJump two chars mode"
-        (interactive)
-
-        (evil-half-cursor)
-        (setq query-char (or query-char (read-char ">")))
-        (setq query-char-2 (or query-char-2 (read-char (concat ">" (string query-char)))))
-
-        (if (eq (ace-jump-char-category query-char) 'other)
-            (error "[AceJump] Non-printable character"))
-
-        ;; others : digit , alpha, punc
-        (setq ace-jump-query-char query-char)
-        (setq ace-jump-current-mode 'ace-jump-char-mode)
-        (ace-jump-do (regexp-quote (concat (char-to-string query-char)
-                                           (char-to-string query-char-2)))))
 
       ;; Jump to new splits
       (defadvice evil-window-split (after evil-window-split-jump activate)
