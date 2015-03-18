@@ -72,10 +72,12 @@
       "\\ ]"    'next-buffer
       "\\ ["    'previous-buffer
 
-      "\\ o f"  'my-send-dir-to-finder
-      "\\ o u"  'my-send-to-transmit
-      "\\ o l"  'my-send-to-launchbar
-      "\\ o L"  'my-send-dir-to-launchbar
+      "\\ o f"  (λ (my-send-dir-to-finder default-directory))
+      "\\ o F"  'my-send-dir-to-finder
+      "\\ o u"  (λ (my-send-to-transmit buffer-file-name))
+      "\\ o U"  'my-send-to-transmit
+      "\\ o l"  (λ (my-send-to-launchbar buffer-file-name))
+      "\\ o L"  'my-send-to-launchbar
 
       ;; tmux: cd (default-directory)
       "\\ o t"  (λ (ex:tmux-chdir nil t))

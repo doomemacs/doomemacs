@@ -28,21 +28,25 @@
       (setq appName (concat "-a " appName ".app")))
   (shell-command (concat "open " appName " " (shell-quote-argument path))))
 
-(defun my-open-with (appName)
+(defun my-open-with (appName file)
   (interactive "sApp name: ")
-  (my--open-file-with buffer-file-name appName))
+  (my--open-file-with file appName))
 
-(defun my-send-to-transmit ()
-  (interactive) (my-open-with "Transmit"))
+(defun my-send-to-transmit (file)
+  (interactive "f")
+  (my-open-with "Transmit" file))
 
-(defun my-send-to-launchbar ()
-  (interactive) (my-open-with "LaunchBar"))
+(defun my-send-to-launchbar (file)
+  (interactive "f")
+  (my-open-with "LaunchBar" file))
 
-(defun my-send-dir-to-launchbar ()
-  (interactive) (my--open-file-with default-directory "LaunchBar"))
+(defun my-send-dir-to-launchbar (dir)
+  (interactive "D")
+  (my--open-file-with dir "LaunchBar"))
 
-(defun my-send-dir-to-finder ()
-  (interactive) (my--open-file-with default-directory "Finder"))
+(defun my-send-dir-to-finder (dir)
+  (interactive "D")
+  (my--open-file-with dir "Finder"))
 
 
 (provide 'core-osx)
