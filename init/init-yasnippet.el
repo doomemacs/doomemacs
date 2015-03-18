@@ -1,22 +1,23 @@
 (use-package yasnippet
   :mode (("emacs\\.d/snippets/.+$" . snippet-mode))
   :init
-  (defvar yas-minor-mode-map
+  (progn
+    (defvar yas-minor-mode-map
       ;; Fix yasnippet keymaps so they only work in insert mode
       (let ((map (make-sparse-keymap)))
-      (bind 'insert map [(tab)] 'yas-expand)
-      (bind 'insert map (kbd "TAB") 'yas-expand)
-      (bind 'visual map (kbd "<backtab>") 'yas-insert-snippet)
-      map))
-  :config
-  (progn
+        (bind 'insert map [(tab)] 'yas-expand)
+        (bind 'insert map (kbd "TAB") 'yas-expand)
+        (bind 'visual map (kbd "<backtab>") 'yas-insert-snippet)
+        map))
+
     (add-hook 'snippet-mode-hook 'disable-final-newline)
     (add-hook 'snippet-mode-hook 'yas-minor-mode)
     (add-hook 'text-mode-hook 'yas-minor-mode)
     (add-hook 'prog-mode-hook 'yas-minor-mode)
     ;; (add-hook 'markdown-mode-hook 'yas-minor-mode)
-    (add-hook 'org-mode-hook 'yas-minor-mode)
-
+    (add-hook 'org-mode-hook 'yas-minor-mode))
+  :config
+  (progn
     (setq yas-verbosity 0)
     (setq yas-indent-line 'auto)
     (setq yas-also-auto-indent-first-line t)

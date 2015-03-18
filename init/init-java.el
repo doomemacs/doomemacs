@@ -1,12 +1,11 @@
 (use-package eclim
   :commands (eclim-mode global-eclim-mode)
-  :init
+  :config
   (progn
     (setq eclim-eclipse-dirs '("/Applications/eclipse")
           eclim-executable "/Applications/eclipse/eclim")
-    (add-hook 'java-mode-hook 'eclim-mode))
-  :config
-  (progn
+    (add-hook 'java-mode-hook 'eclim-mode)
+
     ;; (use-package eclim-ant)
     ;; (use-package eclim-maven)
     (use-package eclim-problems)

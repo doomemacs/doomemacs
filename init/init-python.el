@@ -60,10 +60,6 @@
                                        (not (use-region-p))
                                        (not (sp-point-in-string-or-comment))))))
 
-        (after "auto-complete"
-          (use-package ac-anaconda
-            :init (add-hook 'python-mode-hook 'ac-anaconda-setup)))
-
         (after "company"
           (use-package company-anaconda
             :config (company--backend-on 'python-mode-hook 'company-anaconda)))))
