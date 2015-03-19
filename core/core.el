@@ -2,13 +2,9 @@
 (defconst is-linux (eq system-type 'gnu/linux))
 
 (when is-linux (add-to-list 'load-path "~/.cask"))
-(require 'cask)
-(cask-initialize)
+(setq use-package-verbose DEBUG-MODE)
 
 (cd "~") ; instead of /
-
-(eval-when-compile (require 'use-package))  ; Package management bootstrap
-(setq use-package-verbose DEBUG-MODE)
 
 ;; Make sure undo/backup folders exist
 (defconst my-tmp-dir-undo     (expand-file-name "undo" my-tmp-dir))

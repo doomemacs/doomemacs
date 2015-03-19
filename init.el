@@ -16,8 +16,12 @@
 ;;    * *<defun/var-name> ; for altering the visual state
 ;;
 ;;; Code:
-
 (defconst DEBUG-MODE nil)
+
+(require 'cask)
+(cask-initialize)
+
+(eval-when-compile (require 'use-package)) 
 
 (defconst my-dir           user-emacs-directory)
 (defconst my-core-dir      (concat my-dir "core/"))
@@ -41,7 +45,6 @@
 ;; Add elisp dirs to load-path
 (let ((default-directory my-elisp-dir))
   (normal-top-level-add-subdirs-to-load-path))
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Just the... bear necessities...
