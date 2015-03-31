@@ -47,6 +47,14 @@
   :mode (("\\.json$" . json-mode)
          ("\\.jshintrc$" . json-mode)))
 
+;; For UnityScript
+(use-package unityjs-mode
+  :mode "/Assets/*.js$"
+  :config
+  (add-hook! 'unityjs-mode-hook
+             (enable-tab-width-2)
+             (setq js-indent-level 2))
+
 
 (provide 'init-js)
 ;;; init-js.el ends here
