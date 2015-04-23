@@ -40,7 +40,7 @@
 ;;(depends-on "regex-tool")
 (depends-on "pcre2el")
 (depends-on "emr")
-;;(depends-on "smart-forward")
+(depends-on "smart-forward")
 ;;(depends-on "multiple-cursors")
 ;;(depends-on "git-gutter")
 ;;(depends-on "anzu")
