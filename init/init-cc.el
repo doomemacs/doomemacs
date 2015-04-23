@@ -44,7 +44,7 @@
         (setq flycheck-clang-language-standard "c++11"
               flycheck-clang-standard-library "libc++"
               flycheck-c/c++-clang-executable "clang++"
-              ;; flycheck-clang-include-path (my--clang-includes)
+              flycheck-clang-include-path (my--clang-includes)
               ))
       (after "flycheck"
         (add-hook 'c++-mode-hook 'my--setup-c++-mode-flycheck)))
@@ -64,7 +64,16 @@
       (company--backend-on 'c++-mode-hook 'company-c-headers 'company-clang)
       (company--backend-on 'objc-mode-hook 'company-c-headers 'company-xcode))
 
-    (add-hook! 'c-mode-common-hook
+    (defun my-c-lineup-inclass (langelem)
+      (let ((inclass (assoc 'inclass c-syntactic-context)))
+        (save-excursion
+          (goto-char (c-langelem-pos inclass))
+          (if (or (looking-at "struct")
+                  (looking-at "typedef struct"))
+              '+
+            '++))))
+
+    (defun my-c/c++-settings ()
       (c-toggle-electric-state -1)
       (c-toggle-auto-newline -1)
       (c-set-offset 'substatement-open '0) ; brackets should be at same indentation level as the statements they open
@@ -73,10 +82,13 @@
       (c-set-offset 'brace-list-open '+)   ; all "opens" should be indented by the c-indent-level
       (c-set-offset 'case-label '+)        ; indent case labels by c-indent-level, too
       (c-set-offset 'access-label '-)
-      (c-set-offset 'inclass '++)
+      (c-set-offset 'inclass 'my-c-lineup-inclass)
 
       ;; DEL mapping interferes with smartparens and my.deflate-maybe
       (bind c-mode-map (kbd "DEL") nil))
+
+    (add-hook 'c-mode-hook 'my-c/c++-settings)
+    (add-hook 'c++-mode-hook 'my-c/c++-settings)
 
     ;; C++11 syntax support (until cc-mode is updated)
     (require 'font-lock)
