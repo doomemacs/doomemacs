@@ -2,7 +2,8 @@
   :defer t
   :config
   (progn
-    (setq omnisharp-server-executable-path "~/Dropbox/projects/lib/Omnisharp/server/OmniSharp/bin/Debug/OmniSharp.exe")
+    (setq omnisharp-server-executable-path
+          "~/Dropbox/projects/lib/Omnisharp/server/OmniSharp/bin/Debug/OmniSharp.exe")
 
     (bind 'normal omnisharp-mode-map
           "gd" 'omnisharp-go-to-definition)
@@ -11,19 +12,12 @@
       (company--backend-on 'csharp-mode-hook 'company-omnisharp)
       (add-hook 'csharp-mode-hook 'turn-on-eldoc-mode))))
 
-(use-package csharp-mode :mode "\\.cs$")
-;; (use-package csharp-mode
-;;   :mode "\\.cs$"
-;;   :config
-;;   (bind 'insert csharp-mode-map (kbd "C-SPC") 'omnisharp-auto-complete))
-;;   :init
-;;   (add-hook! 'csharp-mode-hook (omnisharp-mode t) (flycheck-mode t)))
+(use-package csharp-mode :mode "\\.cs$"
+  :config
+  (after "flycheck" (add-hook 'csharp-mode-hook 'flycheck-mode)))
 
 ;; unity shaders
 (use-package shaderlab-mode :mode "\\.shader$")
-
-;; TODO Make more Unity-friendly
-
 
 (provide 'init-csharp)
 ;;; init-csharp.el ends here

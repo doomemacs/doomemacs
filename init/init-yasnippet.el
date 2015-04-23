@@ -115,7 +115,15 @@
           (goto-char position))))
 
     ;; Prevents Yas from stepping on my toes when I use backspace
-    (defun my/yas-clear-field (&optional field)
+    (defun my/yas-backspace (&optional field)
+      (interactive)
+      (let ((field (or field (and yas--active-field-overlay
+                                  (overlay-buffer yas--active-field-overlay)
+                                  (overlay-get yas--active-field-overlay 'yas--field)))))
+        (cond ((eq (point) (marker-position (yas--field-start field))) nil)
+              (t (delete-char -1)))))
+
+    (defun my/yas-delete (&optional field)
       (interactive)
       (let ((field (or field (and yas--active-field-overlay
                                   (overlay-buffer yas--active-field-overlay)
@@ -125,15 +133,28 @@
                     (eq (point) (marker-position (yas--field-start field))))
                (yas--skip-and-clear field)
                (yas-next-field 1))
-              (t (delete-char -1)))))
+              ((eq (point) (marker-position (yas--field-end field))) nil)
+              (t (delete-char 1)))))
+
+    (defun my/yas-clear-to-sof (&optional field)
+      (interactive)
+      (let* ((field (or field (and yas--active-field-overlay
+                                   (overlay-buffer yas--active-field-overlay)
+                                   (overlay-get yas--active-field-overlay 'yas--field))))
+             (sof (marker-position (yas--field-start field))))
+        (when (and field (> (point) sof))
+          (delete-region sof (point)))))
 
     ;; keybinds
     (bind yas-keymap
           "C-e"        'my/yas-goto-end-of-field
           "C-a"        'my/yas-goto-start-of-field
-          "<s-right>"  'my/yas-goto-end-of-field
-          "<s-left>"   'my/yas-goto-start-of-field
-          [backspace]  'my/yas-clear-field)))
+          "<M-right>"  'my/yas-goto-end-of-field
+          "<M-left>"   'my/yas-goto-start-of-field
+          "<M-backspace>" 'my/yas-clear-to-sof
+
+          [backspace]  'my/yas-backspace
+          "<delete>" 'my/yas-delete)))
 
 
 (provide 'init-yasnippet)

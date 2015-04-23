@@ -36,47 +36,7 @@
 
 
 ;;;; Keymap Fixes ;;;;;;;;;;;;;;;;;;;;;;
-;; This section is dedicated to keymaps that "fix" certain keys so
-;; that they behave more like vim (or how I like it).
-
-;; Restores "dumb" indentation to the tab key. This rustles a lot of
-;; peoples' jimmies, apparently, but it's how I like it.
-(bind 'insert (kbd "TAB") 'my.dumb-indent)
-;; Except for lisp
-(bind 'insert lisp-mode-map        [remap my.dumb-indent] 'indent-for-tab-command)
-(bind 'insert emacs-lisp-mode-map  [remap my.dumb-indent] 'indent-for-tab-command)
-
-;; Highjacks backspace to:
-;;   a) deletes spaces on either side of the cursor, if present ( | ) -> (|)
-;;   b) allow backspace to delete space-indented blocks intelligently
-;;   c) and not do any of this magic when inside a string
-(bind 'insert
-      [remap backward-delete-char-untabify]    'my.deflate-space-maybe
-      [remap newline]                          'my.newline-and-indent
-
-      ;; Smarter move-to-beginning-of-line
-      [remap move-beginning-of-line]           'my.move-to-bol
-
-      ;; Restore bash-esque keymaps in insert mode; C-w and C-a already exist
-      "\C-e" 'my.move-to-eol
-      "\C-u" 'my.backward-kill-to-bol-and-indent
-
-      ;; Fixes delete
-      (kbd "<kp-delete>")   'delete-char)
-
-(bind '(insert normal)
-      ;; Textmate-esque insert-line before/after
-      (kbd "<s-return>")    'evil-open-below
-      (kbd "<S-s-return>")  'evil-open-above)
-
-;; Fix osx keymappings and then some
-(bind 'insert
-      (kbd "<s-left>")      'my.move-to-bol
-      (kbd "<s-right>")     'my.move-to-eol
-      (kbd "<s-up>")        'beginning-of-buffer
-      (kbd "<s-down>")      'end-of-buffer
-      (kbd "<s-backspace>") 'my.backward-kill-to-bol-and-indent)
-
+;; Implements some helpful keymappings for emacs sub-modes
 (add-hook! 'ido-setup-hook
            (bind ido-completion-map
                  (kbd "<backspace>")  'ido-delete-backward-updir
@@ -91,7 +51,6 @@
             minibuffer-local-isearch-map)
       [escape] 'my--minibuffer-quit)
 (bind 'emacs [escape] 'my--minibuffer-quit)
-(bind 'god [escape] 'evil-god-state-bail)
 (bind 'normal evil-command-window-mode-map [escape] 'kill-buffer-and-window)
 ;; (bind evil-ex-map [escape] 'my--minibuffer-quit)
 
@@ -121,7 +80,7 @@
   (interactive)
   (message "Gee, I dunno Brain..."))
 
-(if is-mac (global-set-key (kbd "s-q") 'my-emacs-is-not-kill))
+(if is-mac (global-set-key (kbd "M-q") 'my-emacs-is-not-kill))
 
 
 (provide 'my-settings)

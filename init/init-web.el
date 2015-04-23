@@ -52,6 +52,7 @@
   :defer t
   :init
   (progn
+    (add-hook 'css-mode-hook    'emmet-mode)
     (add-hook 'scss-mode-hook   'emmet-mode)
     (add-hook 'web-mode-hook    'emmet-mode)
     (add-hook 'html-mode-hook   'emmet-mode)

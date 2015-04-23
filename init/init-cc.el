@@ -1,5 +1,4 @@
 (use-package cmake-mode
-  :disabled t
   :mode "CMakeLists\\.txt$"
   :config
   (progn
@@ -59,26 +58,6 @@
                      . objc-mode))
       (after "flycheck" (add-hook! 'objc-mode-hook (use-package flycheck-objc))))
 
-    ;; (use-package ycmd
-    ;;   :init (add-hook 'c++-mode-hook 'ycmd-mode)
-    ;;   :config
-    ;;   (progn
-    ;;     (setq ycmd-global-config (f-full "~/.ycm_extra_conf.py"))
-    ;;     (setq ycmd-server-command `("/usr/local/bin/python" ,(f-full "~/.emacs.d/ext/YouCompleteMe/third_party/ycmd/ycmd/")))
-    ;;     (use-package company-ycmd
-    ;;       :init (company--backend-on 'c++-mode-hook 'company-ycmd))))
-
-    ;; (after "auto-complete"
-    ;;   (when is-mac (setq ac-clang-flags (my--clang-includes-flags)))
-    ;;   (add-hook! 'c-mode-common-hook
-    ;;     (use-package auto-complete-clang)
-    ;;     (use-package auto-complete-c-headers)
-    ;;     (setq ac-sources
-    ;;           '(ac-source-clang
-    ;;             ac-source-c-headers
-    ;;             ac-source-yasnippet
-    ;;             ac-source-words-in-same-mode-buffers))))
-
     (after "company"
       ;; TODO Clang is *really* slow in larger projects, maybe replace it with irony-mode or ycmd?
       (company--backend-on 'c-mode-hook 'company-c-headers 'company-clang)
@@ -93,6 +72,8 @@
       (c-set-offset 'block-open '+)
       (c-set-offset 'brace-list-open '+)   ; all "opens" should be indented by the c-indent-level
       (c-set-offset 'case-label '+)        ; indent case labels by c-indent-level, too
+      (c-set-offset 'access-label '-)
+      (c-set-offset 'inclass '++)
 
       ;; DEL mapping interferes with smartparens and my.deflate-maybe
       (bind c-mode-map (kbd "DEL") nil))
@@ -148,8 +129,7 @@
              ;; user-defined types (rather project-specific)
              ("\\<[A-Za-z_]+[A-Za-z_0-9]*_\\(type\\|ptr\\)\\>" . font-lock-type-face)
              ("\\<\\(xstring\\|xchar\\)\\>" . font-lock-type-face)
-             ))
-       t)
+             )) t)
 
     ;; Fix enum and C++11 lambda indentation
     (defadvice c-lineup-arglist (around c-lineup-arglist-indent-fix activate)

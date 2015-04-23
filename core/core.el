@@ -29,7 +29,7 @@
   (auto-compression-mode t)    ; Transparently open compressed files
   (global-font-lock-mode t)    ; Enable syntax highlighting for older emacs
   (global-auto-revert-mode 1)  ; revert buffers for changed files
-  (electric-indent-mode -1)    ; In case of emacs 24.4
+  (electric-indent-mode -1)    ; In case of emacs >24.4
 
   ;;; window layout undo/redo
   (winner-mode 1)
@@ -145,7 +145,7 @@
   ;;;; Editor behavior ;;;;;;;;;;;;;;;;
   ;; spaces instead of tabs
   (setq-default indent-tabs-mode nil)     ; spaces instead of tabs
-  (setq-default tab-always-indent nil)
+  (setq-default tab-always-indent t)
   (setq-default tab-width 4)
 
   (setq require-final-newline t)

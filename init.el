@@ -18,11 +18,6 @@
 ;;; Code:
 (defconst DEBUG-MODE nil)
 
-(require 'cask)
-(cask-initialize)
-
-(eval-when-compile (require 'use-package)) 
-
 (defconst my-dir           user-emacs-directory)
 (defconst my-core-dir      (concat my-dir "core/"))
 (defconst my-modules-dir   (concat my-dir "init/"))
@@ -34,9 +29,9 @@
 (defconst *dark-theme   'v0)
 (defconst *light-theme  'github) ; wtb better light theme...
 
-(defconst *fonts `(("Terminus (TTF)" 12 nil 0.1)
-                   ("Ubuntu Mono" 16 t 0)
-                   ("Inconsolata" 22 t 0)))
+(defconst *fonts `(,(font-spec :family "Terminus (TTF)" :size 12 :antialias nil)
+                   ,(font-spec :family "Ubuntu Mono"    :size 16 :antialias t)
+                   ,(font-spec :family "Inconsolata"    :size 22 :antialias t)))
 
 (add-to-list 'load-path my-core-dir)
 (add-to-list 'load-path my-modules-dir)
@@ -47,7 +42,11 @@
   (normal-top-level-add-subdirs-to-load-path))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Just the... bear necessities...
+
+(require 'cask)
+(cask-initialize)
+
+(eval-when-compile (require 'use-package))
 (mapc 'require
       ;; ls init/{init,my}* | xargs basename | sed -e 's/\..*$//'
       '(core
@@ -55,27 +54,28 @@
         ;; init-auto-complete
         init-auto-insert       ; for the lazy typis
         init-company           ; see above
+        init-dev               ; general dev tools/settings
+        ;; init-floobits       ; when I'm feeling lonely
+        init-fly               ; fly(check|spell)
+        init-git               ; git-gutter + modes
+        init-helm              ; a search engine for your life
+        init-ido               ; a search engine for your car keys
+        init-project           ; project tools - dired, perspective, neotree
+        init-projectile        ; when you forget where you put your house
+
         init-cc                ; C/C++/Obj-C madness
         ;; init-d              ; D - It's C, but better!
         ;; init-cscope
         init-csharp
-        init-dev               ; general dev tools/settings
         init-lisp              ; all things lisp; elisp, clojure
         ;; init-erlang
         ;; init-eshell
-        ;; init-floobits       ; when I'm feeling lonely
-        init-fly               ; fly(check|spell)
-        init-git               ; git-gutter + modes
         ;; init-go
-        init-helm              ; a search engine for your life
-        init-ido               ; a search engine for your car keys
         init-java              ; the poster child for carpal tunnel syndome
         init-js                ; alert("not java, javascript!")
         init-lua               ; zero-based indices? Zero-based indices.
         init-org               ; for fearless leader (who is organized)
         init-php               ; making php less painful to work with
-        init-project           ; project tools - dired, perspective, neotree
-        init-projectile        ; when you forget where you put your house
         init-python            ; beautiful is better than ugly
         init-regex             ; /^[^\s](meaning)[^\n]*/
         init-ruby              ; <3
@@ -93,6 +93,7 @@
 
         my-bindings
         my-settings
+        my-defuns
         ))
 
 ;; I've created a monster!

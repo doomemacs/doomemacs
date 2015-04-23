@@ -2,28 +2,25 @@
 ;; Global keymaps                     ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(bind (kbd "M-x")      'smex
-      (kbd "M-X")      'smex-major-mode-commands
+(bind (kbd "≈")        'smex
+      (kbd "˛")        'smex-major-mode-commands
       (kbd "C-;")      'eval-expression
       (kbd "C-`")      'popwin:toggle-popup-window
 
-      (kbd "s-=")      'text-scale-increase
-      (kbd "s--")      'text-scale-decrease
-      (kbd "s-w")      'evil-window-delete
-      (kbd "s-/")      'evilnc-comment-or-uncomment-lines)
+      (kbd "M-=")      'text-scale-increase
+      (kbd "M--")      'text-scale-decrease
+      (kbd "M-w")      'evil-window-delete
+      (kbd "M-/")      'evilnc-comment-or-uncomment-lines
+      (kbd "M-s")      'save-buffer)
 
 ;; Faster scrolling
 (bind 'motion my-mode-map
-      (kbd "s-j")      "6j"
-      (kbd "s-k")      "6k")
+      (kbd "M-j")      "6j"
+      (kbd "M-k")      "6k")
 
 (bind 'normal my-mode-map
-      (kbd "s-o")      'ido-find-file
-      (kbd "s-d")      'dash-at-point)
-
-(bind 'visual my-mode-map
-      (kbd "s-r")      'my-run-code-region
-      (kbd "s-R")      'my-send-region-to-repl)
+      (kbd "M-o")      'ido-find-file
+      (kbd "M-d")      'dash-at-point)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -119,17 +116,17 @@
 (bind 'emacs [escape] 'evil-normal-state)
 
 (bind 'insert my-mode-map
-      "<M-kp-delete>" (λ (evil-forward-word) (evil-delete-backward-word))
+      "<A-backspace>" 'evil-delete-backward-word
+      "<A-delete>"    (λ (evil-forward-word) (evil-delete-backward-word))
 
       ;; Newline magic
       "<backspace>"   'backward-delete-char-untabify
-      "<S-backspace>" 'backward-delete-char
+      "<M-backspace>" 'my.backward-kill-to-bol-and-indent
       "<C-return>"    'evil-ret-and-indent
-      "<M-return>"    (kbd "<return> DEL") ; newline and dedent
 
       ;; Textmate-esque indent shift left/right
-      "s-["           (kbd "C-o m l C-o I DEL C-o ` l")
-      "s-]"           (λ (evil-shift-right (point-at-bol) (point-at-eol)))
+      "M-["           (kbd "C-o m l C-o I DEL C-o ` l")
+      "M-]"           (λ (evil-shift-right (point-at-bol) (point-at-eol)))
       "<backtab>"     (kbd "s-["))
 
 ;; Enable TAB to do matchit
@@ -163,6 +160,59 @@
         "[[" 'help-go-back))
 
 (evil-make-overriding-map my-mode-map nil)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Keymap fixes                       ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; This section is dedicated to keymaps that "fix" certain keys so
+;; that they behave more like vim (or how I like it).
+
+;; Restores "dumb" indentation to the tab key. This rustles a lot of
+;; peoples' jimmies, apparently, but it's how I like it.
+(bind 'insert "<tab>" 'my.dumb-indent)
+(bind 'insert "<A-tab>" 'indent-for-tab-command)
+
+;; Except for lisp
+(bind 'insert lisp-mode-map        [remap my.dumb-indent] 'indent-for-tab-command)
+(bind 'insert emacs-lisp-mode-map  [remap my.dumb-indent] 'indent-for-tab-command)
+
+;; Highjacks space/backspace to:
+;;   a) delete spaces on either side of the cursor, if present ( | ) -> (|)
+;;   b) allow backspace to delete space-indented blocks intelligently
+;;   c) and not do any of this magic when inside a string
+(bind 'insert
+      "SPC"                                  'my.inflate-space-maybe
+      [remap backward-delete-char-untabify]  'my.deflate-space-maybe
+      [remap newline]                        'my.newline-and-indent
+
+      ;; Smarter move-to-beginning-of-line
+      [remap move-beginning-of-line]         'my.move-to-bol
+
+      ;; Restore bash-esque keymaps in insert mode; C-w and C-a already exist
+      "\C-e" 'my.move-to-eol
+      "\C-u" 'my.backward-kill-to-bol-and-indent
+
+      ;; Fixes delete
+      (kbd "<kp-delete>")   'delete-char)
+
+(bind '(insert normal)
+      ;; Textmate-esque insert-line before/after
+      (kbd "<M-return>")    'evil-open-below
+      (kbd "<S-M-return>")  'evil-open-above)
+
+;; Fix osx keymappings and then some
+(use-package smart-forward
+  :config
+  (bind 'insert
+        (kbd "<M-left>")      'smart-backward
+        (kbd "<M-right>")     'smart-forward
+        ;; (kbd "<M-up>")        'beginning-of-buffer
+        (kbd "<M-up>")        'smart-up
+        (kbd "<M-down>")      'smart-down
+        (kbd "<M-backspace>") 'my.backward-kill-to-bol-and-indent))
+
 
 
 (provide 'my-bindings)

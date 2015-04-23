@@ -193,23 +193,23 @@
             "C-k" nil)
 
       (bind '(normal insert) evil-org-mode-map
-            "M-l" 'org-metaright
-            "M-h" 'org-metaleft
-            "M-k" 'org-metaup
-            "M-j" 'org-metadown
-            "M-L" 'org-shiftmetaright
-            "M-H" 'org-shiftmetaleft
-            "M-K" 'org-shiftmetaup
-            "M-J" 'org-shiftmetadown)
+            "¬" 'org-metaright       ; M-j
+            "˙" 'org-metaleft        ; M-h
+            "˚" 'org-metaup          ; M-k
+            "Δ" 'org-metadown        ; M-j
+            "Ò" 'org-shiftmetaright  ; M-L
+            "Ó" 'org-shiftmetaleft   ; M-H
+            "" 'org-shiftmetaup     ; M-K
+            "Ô" 'org-shiftmetadown)  ; M-J
 
       (bind 'insert evil-org-mode-map
             "C-e"           'org-end-of-line
             "C-a"           'org-beginning-of-line)
       (bind '(insert normal) evil-org-mode-map
-            "<s-left>"      'org-beginning-of-line
-            "<s-right>"     'org-end-of-line
-            "<s-up>"        'org-up-element
-            "<s-down>"      'org-down-element)
+            "<M-left>"      'org-beginning-of-line
+            "<M-right>"     'org-end-of-line
+            "<M-up>"        'org-up-element
+            "<M-down>"      'org-down-element)
 
       ;; Formatting shortcuts
       (defun my/org-surround (delim)
@@ -217,19 +217,19 @@
 
       (bind 'insert evil-org-mode-map
             ;; Add new header line before this line
-            (kbd "<S-s-return>") 'my--org-insert-item-before
+            (kbd "<S-M-return>") 'my--org-insert-item-before
             ;; Add new header line after this line
-            (kbd "<s-return>") 'my--org-insert-item-after
+            (kbd "<M-return>") 'my--org-insert-item-after
 
-            (kbd "s-b") (λ (my/org-surround "*"))     ; bold
-            (kbd "s-u") (λ (my/org-surround "_"))     ; underline
-            (kbd "s-i") (λ (my/org-surround "/"))     ; italics
-            (kbd "s-`") (λ (my/org-surround "+")))    ; strikethrough
+            (kbd "M-b") (λ (my/org-surround "*"))     ; bold
+            (kbd "M-u") (λ (my/org-surround "_"))     ; underline
+            (kbd "M-i") (λ (my/org-surround "/"))     ; italics
+            (kbd "M-`") (λ (my/org-surround "+")))    ; strikethrough
       (bind 'visual evil-org-mode-map
-            (kbd "s-b") "S*"
-            (kbd "s-u") "S_"
-            (kbd "s-i") "S/"
-            (kbd "s-`") "S+")
+            (kbd "M-b") "S*"
+            (kbd "M-u") "S_"
+            (kbd "M-i") "S/"
+            (kbd "M-`") "S+")
 
       (bind '(normal visual) evil-org-mode-map
             ", l" 'org-insert-link)
@@ -267,8 +267,8 @@
             "-" 'org-cycle-list-bullet
             ", SPC" 'my--toggle-checkbox
             ", <return>" 'org-archive-subtree
-            "<S-s-return>" 'my--org-insert-item-before
-            "<s-return>" 'my--org-insert-item-after
+            "<S-M-return>" 'my--org-insert-item-before
+            "<M-return>" 'my--org-insert-item-after
             "RET" (λ (cond ((org-at-item-checkbox-p)
                             (org-toggle-checkbox))
                            ((org-entry-is-todo-p)

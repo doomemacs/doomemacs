@@ -51,9 +51,11 @@
 (use-package unityjs-mode
   :mode "/Assets/*.js$"
   :config
-  (add-hook! 'unityjs-mode-hook
-             (enable-tab-width-2)
-             (setq js-indent-level 2)))
+  (progn
+    (add-hook 'unityjs-mode-hook 'flycheck-mode)
+    (add-hook! 'unityjs-mode-hook
+               (enable-tab-width-2)
+               (setq js-indent-level 2))))
 
 
 (provide 'init-js)

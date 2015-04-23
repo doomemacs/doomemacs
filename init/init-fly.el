@@ -5,10 +5,15 @@
     (setq-default flycheck-indication-mode 'right-fringe
                   ;; Removed checks on idle/change for snappiness
                   flycheck-check-syntax-automatically '(save mode-enabled)
-                  flycheck-disabled-checkers '(emacs-lisp-checkdoc emacs-lisp make))
+                  flycheck-disabled-checkers '(emacs-lisp-checkdoc make))
     (dolist (hook '(ruby-mode-hook
                     python-mode-hook
+                    php-mode-hook
+                    lua-mode-hook
                     shell-mode-hook
+                    scss-mode-hook
+                    c++-mode-hook
+                    c-mode-hook
                     ))
       (add-hook hook 'flycheck-mode)))
   :config
