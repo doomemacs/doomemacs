@@ -127,7 +127,7 @@
       ;; Textmate-esque indent shift left/right
       "M-["           (kbd "C-o m l C-o I DEL C-o ` l")
       "M-]"           (λ (evil-shift-right (point-at-bol) (point-at-eol)))
-      "<backtab>"     (kbd "s-["))
+      "<backtab>"     (kbd "M-["))
 
 ;; Enable TAB to do matchit
 (bind '(normal visual) evil-matchit-mode-map [tab] 'evilmi-jump-items)
@@ -206,12 +206,12 @@
 (use-package smart-forward
   :config
   (bind 'insert
-        (kbd "<M-left>")      'smart-backward
-        (kbd "<M-right>")     'smart-forward
+        (kbd "<M-left>")      'my.move-to-bol
+        (kbd "<M-right>")     'my.move-to-eol
+        (kbd "<M-backspace>") 'my.backward-kill-to-bol-and-indent
         ;; (kbd "<M-up>")        'beginning-of-buffer
         (kbd "<M-up>")        'smart-up
-        (kbd "<M-down>")      'smart-down
-        (kbd "<M-backspace>") 'my.backward-kill-to-bol-and-indent))
+        (kbd "<M-down>")      'smart-down))
 
 
 

@@ -37,7 +37,7 @@
       (add-hook! 'web-mode-hook (setenv "jsbeautify_indent_size" "4"))
       (bind 'motion web-mode-map "gQ" 'web-beautify-html))
 
-    (bind web-mode-map (kbd "s-/") 'web-mode-comment-or-uncomment)
+    (bind web-mode-map (kbd "M-/") 'web-mode-comment-or-uncomment)
     (bind 'normal  web-mode-map
           "zf" 'web-mode-fold-or-unfold
           ",t" 'web-mode-element-rename)
@@ -52,7 +52,6 @@
   :defer t
   :init
   (progn
-    (add-hook 'css-mode-hook    'emmet-mode)
     (add-hook 'scss-mode-hook   'emmet-mode)
     (add-hook 'web-mode-hook    'emmet-mode)
     (add-hook 'html-mode-hook   'emmet-mode)
@@ -63,8 +62,8 @@
     (setq emmet-move-cursor-between-quotes t)
 
     (bind 'insert emmet-mode-keymap
-          (kbd "s-e") 'emmet-expand-yas
-          (kbd "s-E") 'emmet-expand-line)))
+          (kbd "M-e") 'emmet-expand-yas
+          (kbd "M-E") 'emmet-expand-line)))
 
 
 (provide 'init-web)

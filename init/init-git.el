@@ -11,7 +11,7 @@
 (use-package gitconfig-mode
   :mode (("/\\.?git/?config\\'"      . gitconfig-mode)
          ("/\\.gitmodules\\'"        . gitconfig-mode))
-  :config (add-hook 'gitconfig-mode-hook 'flyspell-mode))
+  :init (add-hook 'gitconfig-mode-hook 'flyspell-mode))
 
 (use-package gitignore-mode
   :mode (("/\\.gitignore\\'"         . gitignore-mode)
@@ -19,44 +19,49 @@
          ("/git/ignore\\'"           . gitignore-mode)))
 ;;
 (use-package git-gutter-fringe+
-  :init (global-git-gutter+-mode +1)
   :config
   (progn
+    (global-git-gutter+-mode +1)
+
+    ;; Fixes "git-gutter+-process-diff: Wrong number of arguments: nil" error
+    (defadvice git-gutter+-process-diff (before git-gutter+-process-diff-advice activate)
+      (ad-set-arg 0 (file-truename (ad-get-arg 0))))
+
     (evil-ex-define-cmd "gstage"   'git-gutter+-stage-hunks)
     (evil-ex-define-cmd "grevert"  'git-gutter+-revert-hunks)
     (evil-ex-define-cmd "gdiff"    'git-gutter+-show-hunk)
 
     (fringe-helper-define 'git-gutter-fr+-added nil
-      "X......."
-      "X......."
-      "X......."
-      "X......."
-      "X......."
-      "X......."
-      "X......."
-      "X......."
-      "X......."
-      "X......."
-      "X......."
-      "X......."
-      "X......."
-      "X......."
-      "X......."
-      "X......."
-      "X......."
-      "X......."
-      "X......."
-      "X......."
-      "X......."
-      "X......."
-      "X......."
-      "X......."
-      "X.......")
+      "XX......"
+      "XX......"
+      "XX......"
+      "XX......"
+      "XX......"
+      "XX......"
+      "XX......"
+      "XX......"
+      "XX......"
+      "XX......"
+      "XX......"
+      "XX......"
+      "XX......"
+      "XX......"
+      "XX......"
+      "XX......"
+      "XX......"
+      "XX......"
+      "XX......"
+      "XX......"
+      "XX......"
+      "XX......"
+      "XX......"
+      "XX......"
+      "XX......")
 
     (fringe-helper-define 'git-gutter-fr+-deleted nil
-      "X......."
+      "XX......"
       "XXXXXXXX"
-      "X......."
+      "XX......"
       "........"
       "........"
       "........"
@@ -81,31 +86,31 @@
       "........")
 
     (fringe-helper-define 'git-gutter-fr+-modified nil
-      "X......."
-      "X......."
-      "X......."
-      "X......."
-      "X......."
-      "X......."
-      "X......."
-      "X......."
-      "X......."
-      "X......."
-      "X......."
-      "X......."
-      "X......."
-      "X......."
-      "X......."
-      "X......."
-      "X......."
-      "X......."
-      "X......."
-      "X......."
-      "X......."
-      "X......."
-      "X......."
-      "X......."
-      "X.......")))
+      "XX......"
+      "XX......"
+      "XX......"
+      "XX......"
+      "XX......"
+      "XX......"
+      "XX......"
+      "XX......"
+      "XX......"
+      "XX......"
+      "XX......"
+      "XX......"
+      "XX......"
+      "XX......"
+      "XX......"
+      "XX......"
+      "XX......"
+      "XX......"
+      "XX......"
+      "XX......"
+      "XX......"
+      "XX......"
+      "XX......"
+      "XX......"
+      "XX......")))
 
 (evil-set-initial-state 'git-commit-mode 'insert)
 (evil-set-initial-state 'git-rebase-mode 'insert)
