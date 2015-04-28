@@ -151,10 +151,11 @@
           "C-a"        'my/yas-goto-start-of-field
           "<M-right>"  'my/yas-goto-end-of-field
           "<M-left>"   'my/yas-goto-start-of-field
+          "<S-tab>"    'yas-prev-field
           "<M-backspace>" 'my/yas-clear-to-sof
 
           [backspace]  'my/yas-backspace
-          "<delete>" 'my/yas-delete)))
+          "<delete>"   'my/yas-delete)))
 
 
 (provide 'init-yasnippet)

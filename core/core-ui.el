@@ -13,7 +13,7 @@
 ;;;; GUI Settings ;;;;;;;;;;;;;;;;;;;;;;
 (tooltip-mode -1)
 (blink-cursor-mode 1)        ; blink cursor
-;; (global-hl-line-mode 1)   ; highlight line
+(global-hl-line-mode 1)      ; highlight line
 
 (setq linum-format " %3d")
 
@@ -37,11 +37,7 @@
 (when (functionp 'menu-bar-mode)   (menu-bar-mode -1))      ; no menubar
 (when (fboundp 'fringe-mode) (fringe-mode '(5 . 10)))       ; no nonsense
 
-(when window-system
-  (setq frame-title-format '(buffer-file-name "%f" ("%b")))
-  (tooltip-mode -1)
-  (blink-cursor-mode 1))
-
+(when window-system (setq frame-title-format '(buffer-file-name "%f" ("%b"))))
 
 ;;;; Modeline ;;;;;;;;;;;;;;;;;;;;;;;;;;
 (use-package uniquify
