@@ -30,7 +30,7 @@
 (defconst *light-theme  'github) ; wtb better light theme...
 
 (defconst *fonts `(,(font-spec :family "Terminus (TTF)" :size 12 :antialias nil)
-                   ,(font-spec :family "Ubuntu Mono"    :size 16 :antialias t)
+                   ,(font-spec :family "Ubuntu Mono"    :size 14 :antialias t)
                    ,(font-spec :family "Inconsolata"    :size 22 :antialias t)))
 
 (add-to-list 'load-path my-core-dir)
@@ -74,7 +74,7 @@
         init-java              ; the poster child for carpal tunnel syndome
         init-js                ; alert("not java, javascript!")
         init-lua               ; zero-based indices? Zero-based indices.
-        init-org               ; for fearless leader (who is organized)
+        ;; init-org               ; for fearless leader (who is organized)
         init-php               ; making php less painful to work with
         init-python            ; beautiful is better than ugly
         init-regex             ; /^[^\s](meaning)[^\n]*/

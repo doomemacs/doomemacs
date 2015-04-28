@@ -22,6 +22,7 @@
     (associate-mode "\\.mm$" 'objc-mode))
   :config
   (progn
+    ;; Settings ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     (setq c-basic-offset 4
           c-tab-always-indent nil)
 
@@ -38,25 +39,6 @@
       (defun my--clang-includes () my--clang-includes)
       (defun my--clang-includes-flags ()
         (mapcar (lambda (item) (concat "-I" item)) my--clang-includes)))
-
-    (progn ; C++
-      (defun my--setup-c++-mode-flycheck ()
-        (setq flycheck-clang-language-standard "c++11"
-              flycheck-clang-standard-library "libc++"
-              flycheck-c/c++-clang-executable "clang++"
-              flycheck-clang-include-path (my--clang-includes)
-              ))
-      (after "flycheck"
-        (add-hook 'c++-mode-hook 'my--setup-c++-mode-flycheck)))
-
-    (progn ; Obj-C
-      (add-to-list 'magic-mode-alist
-                   `(,(lambda ()
-                        (and (string= (file-name-extension buffer-file-name) "h")
-                             (re-search-forward "@\\<interface\\>"
-                                                magic-mode-regexp-match-limit t)))
-                     . objc-mode))
-      (after "flycheck" (add-hook! 'objc-mode-hook (use-package flycheck-objc))))
 
     (after "company"
       ;; TODO Clang is *really* slow in larger projects, maybe replace it with irony-mode or ycmd?
@@ -89,6 +71,22 @@
 
     (add-hook 'c-mode-hook 'my-c/c++-settings)
     (add-hook 'c++-mode-hook 'my-c/c++-settings)
+    (after "flycheck"
+      (add-hook! 'c++-mode-hook
+                 (setq flycheck-clang-language-standard "c++11"
+                       flycheck-clang-standard-library "libc++"
+                       flycheck-c/c++-clang-executable "clang++"
+                       flycheck-clang-include-path (my--clang-includes))))
+
+    (progn ; Obj-C
+      (add-to-list 'magic-mode-alist
+                   `(,(lambda ()
+                        (and (string= (file-name-extension buffer-file-name) "h")
+                             (re-search-forward "@\\<interface\\>"
+                                                magic-mode-regexp-match-limit t)))
+                     . objc-mode))
+      (after "flycheck" (add-hook! 'objc-mode-hook (use-package flycheck-objc))))
+
 
     ;; C++11 syntax support (until cc-mode is updated)
     (require 'font-lock)
@@ -156,6 +154,13 @@
                          (looking-at ".*[(,][ \t]*\\[[^]]*\\][ \t]*[({][^}]*$"))))
                 0                           ; no additional indent
               ad-do-it)))                   ; default behavior
+
+
+    ;; Tools/defuns ;;;;;;;;;;;;;;;;;;;;;;;;
+
+    (push '("*compilation*" :height 0.5 :position bottom :noselect t) popwin:special-display-config)
+
+    (add-hook! 'c++-mode-hook (setq my-make-command "make %s"))
     ))
 
 

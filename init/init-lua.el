@@ -13,9 +13,7 @@
     (add-hook 'lua-mode-hook 'enable-tab-width-2)
     (add-hook! 'lua-mode-hook (setq lua-indent-level tab-width))
 
-    (defun love-run ()
-      (interactive)
-      (shell-command (format "open -a love.app %s" (my--project-root))))))
+    (add-hook! 'love-mode-hook (setq my-build-command (format "open -a love.app %s" (my--project-root))))))
 
 
 (provide 'init-lua)
