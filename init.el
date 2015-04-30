@@ -70,7 +70,7 @@
         init-lisp              ; all things lisp; elisp, clojure
         ;; init-erlang
         ;; init-eshell
-        ;; init-go
+        init-go
         init-java              ; the poster child for carpal tunnel syndome
         init-js                ; alert("not java, javascript!")
         init-lua               ; zero-based indices? Zero-based indices.
