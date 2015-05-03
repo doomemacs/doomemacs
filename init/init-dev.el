@@ -31,8 +31,12 @@
 
     (after "evil" (evil-ex-define-cmd "ref[actor]" 'emr-show-refactor-menu))))
 
-(bind my-mode-map
-      "M-b" 'my:build)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Code building
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(bind my-mode-map "M-b" 'my:build)
 
 (defvar my-build-command "make %s")
 (make-variable-buffer-local 'my-build-command)
@@ -49,8 +53,33 @@ If ARG is nil this function calls `recompile', otherwise it calls
                      (f-exists? (f-expand "Makefile" path)))
                    default-directory)))
     (if makepath
-        (compile (format "cd '%s' && %s" makepath (format my-make-command (or arg ""))))
+        (compile (format "cd '%s' && %s" makepath (format my-build-command (or arg ""))))
       (error "Could not find Makefile"))))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Code running
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(evil-define-operator my:eval-region (beg end)
+  :keep-visual t
+  :move-point nil
+  (interactive "<r>")
+  (let ((interp (-my-get-interpreter)))
+    (when interp (shell-command-on-region beg end interp))))
+
+(evil-define-command my:eval-buffer ()
+  (interactive)
+  (let ((interp (-my-get-interpreter)))
+    (when interp (shell-command-on-region (point-min) (point-max) interp))))
+
+(bind 'motion "gr"   'my:eval-region
+              "M-r"  'my:eval-region)
+(bind 'normal "gR"   'my:eval-buffer
+              "M-R"  'my:eval-buffer)
+
+(defun -my-get-interpreter ()
+  (car (--first (eq (cdr it) major-mode) interpreter-mode-alist)))
 
 (provide 'init-dev)
 ;;; init-dev.el ends here
