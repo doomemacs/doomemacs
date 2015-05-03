@@ -2,16 +2,15 @@
 ;; Global keymaps                     ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(bind (kbd "≈")        'smex
-      (kbd "˛")        'smex-major-mode-commands
+(bind (kbd "A-x")      'smex
+      (kbd "A-X")      'smex-major-mode-commands
       (kbd "C-;")      'eval-expression
       (kbd "C-`")      'popwin:toggle-popup-window
 
       (kbd "M-=")      'text-scale-increase
       (kbd "M--")      'text-scale-decrease
       (kbd "M-w")      'evil-window-delete
-      (kbd "M-/")      'evilnc-comment-or-uncomment-lines
-      (kbd "M-s")      'save-buffer)
+      (kbd "M-/")      'evilnc-comment-or-uncomment-lines)
 
 ;; Faster scrolling
 (bind 'motion my-mode-map
@@ -96,6 +95,15 @@
       "C-w u"     'winner-undo
       "C-w C-u"   'winner-undo
       "C-w C-r"   'winner-redo
+
+      ;; buffer navigation
+      "C-h"       'evil-window-left
+      "C-j"       'evil-window-down
+      "C-k"       'evil-window-up
+      "C-l"       'evil-window-right
+
+      ;; restore help key
+      "M-h"       'help-command
 
       ;; Increment/decrement number under cursor
       "C-="       'evil-numbers/inc-at-pt
@@ -191,8 +199,8 @@
       [remap move-beginning-of-line]         'my.move-to-bol
 
       ;; Restore bash-esque keymaps in insert mode; C-w and C-a already exist
-      "\C-e" 'my.move-to-eol
-      "\C-u" 'my.backward-kill-to-bol-and-indent
+      "C-e" 'my.move-to-eol
+      "C-u" 'my.backward-kill-to-bol-and-indent
 
       ;; Fixes delete
       (kbd "<kp-delete>")   'delete-char)

@@ -7,6 +7,17 @@
 ;; Don't open files from the workspace in a new frame
 (setq ns-pop-up-frames nil)
 
+;; Prefixes: Command = M, Alt = A
+(setq mac-command-modifier 'meta)
+(setq mac-option-modifier 'alt)
+
+;; Restore text nav keys
+(bind (kbd "<A-left>") 'backward-word
+      (kbd "<A-right>") 'forward-word
+      (kbd "M-a") 'mark-whole-buffer
+      (kbd "M-v") 'evil-paste-after
+      (kbd "M-s") 'save-buffer)
+
 ;; fix emacs PATH on OSX (GUI only)
 (use-package exec-path-from-shell
   :if (memq window-system '(mac ns))
