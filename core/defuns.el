@@ -115,6 +115,9 @@ key-chord-define."
 (defun enable-tab-width-2 ()
   (setq tab-width 2 evil-shift-width 2))
 
+(defun enable-tab-width-4 ()
+  (setq tab-width 4 evil-shift-width 4))
+
 (defun disable-final-newline ()
   (set (make-local-variable 'require-final-newline) nil))
 

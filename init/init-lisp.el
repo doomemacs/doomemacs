@@ -26,7 +26,7 @@
       (λ (let ((func (function-called-at-point)))
            (if func (find-function-other-window func)))))
 
-(bind 'motion emacs-lisp-mode-map "g r" 'my:elisp-eval)
+(bind 'motion emacs-lisp-mode-map "gr" 'my:elisp-eval)
 
 ;; TODO Add clojure support
 ;; TODO Add scheme support

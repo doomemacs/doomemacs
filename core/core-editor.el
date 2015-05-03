@@ -6,9 +6,10 @@
   :commands (rotate-word-at-point rotate-region))
 
 (use-package smartparens
-  :init (require 'smartparens-config)
   :config
   (progn
+    (require 'smartparens-config)
+
     (smartparens-global-mode 1)
 
     (setq blink-matching-paren t)
