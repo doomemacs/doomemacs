@@ -97,13 +97,12 @@
       "C-w C-r"   'winner-redo
 
       ;; buffer navigation
-      "C-h"       'evil-window-left
-      "C-j"       'evil-window-down
-      "C-k"       'evil-window-up
-      "C-l"       'evil-window-right
-
+      ;; "C-h"       'evil-window-left
+      ;; "C-j"       'evil-window-down
+      ;; "C-k"       'evil-window-up
+      ;; "C-l"       'evil-window-right
       ;; restore help key
-      "M-h"       'help-command
+      ;; "M-h"       'help-command
 
       ;; Increment/decrement number under cursor
       "C-="       'evil-numbers/inc-at-pt
