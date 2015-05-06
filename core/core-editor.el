@@ -30,10 +30,12 @@
     (sp-with-modes '(json-mode js2-mode ruby-mode enh-ruby-mode python-mode)
       (sp-local-pair "[" nil :post-handlers '(("||\n[i]" "RET"))))
 
+    (sp-with-modes '(java-mode c++-mode c-mode)
+      (sp-local-pair "/**" "*/" :post-handlers '(("* ||\n[i]" "RET"))))
+
     (after "yasnippet"
       (defadvice yas-expand (before advice-for-yas-expand activate)
         (sp-remove-active-pair-overlay)))))
-
 
 (provide 'core-editor)
 ;;; core-editor.el ends here

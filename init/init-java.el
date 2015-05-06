@@ -34,9 +34,5 @@
   :mode "\\.gradle$"
   :config (after "auto-complete" (add-to-list 'ac-modes 'groovy-mode)))
 
-(sp-with-modes '(java-mode)
-    (sp-local-pair "/**" "*/" :post-handlers '(("* ||\n[i]" "RET"))))
-
-
 (provide 'init-java)
 ;;; init-java.el ends here
