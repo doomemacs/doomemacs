@@ -11,33 +11,24 @@
                           (kbd "TAB") 'neotree-enter
                           (kbd "RET") 'neotree-enter))))
 
-(use-package perspective
-  :init (persp-mode 1)
-  :config
-  (progn
-    (defun my-kill-persp ()
-      (interactive)
-      (persp-kill (persp-name persp-curr)))
 
-    (evil-ex-define-cmd "k[ill]persp" 'my-kill-persp)))
+;; (use-package dired
+;;   :disabled t
+;;   :config
+;;   (progn
+;;     (setq dired-recursive-deletes 'always
+;;           dired-recursive-copies 'always
+;;           dired-auto-revert-buffer t
 
-(use-package dired
-  :disabled t
-  :config
-  (progn
-    (setq dired-recursive-deletes 'always
-          dired-recursive-copies 'always
-          dired-auto-revert-buffer t
+;;           ;; if there is a dired buffer displayed in the next
+;;           ;; window, use its current subdir, instead of the
+;;           ;; current subdir of this dired buffer
+;;           dired-dwim-target t)
 
-          ;; if there is a dired buffer displayed in the next
-          ;; window, use its current subdir, instead of the
-          ;; current subdir of this dired buffer
-          dired-dwim-target t)
+;;     (push '(dired-mode :position bottom :height 0.5 :stick t) popwin:special-display-config)
 
-    (push '(dired-mode :position bottom :height 0.5 :stick t) popwin:special-display-config)
-
-    (add-hook! 'dired-mode-hook
-      (use-package 'dired+ :config (toggle-diredp-find-file-reuse-dir 1)))))
+;;     (add-hook! 'dired-mode-hook
+;;       (use-package 'dired+ :config (toggle-diredp-find-file-reuse-dir 1)))))
 
 
 (provide 'init-project)

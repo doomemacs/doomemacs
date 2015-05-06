@@ -88,6 +88,7 @@
         ;; init-rust
         ;; init-vala
         init-web
+        init-workgroups
         init-yasnippet         ; type for me
         init-youtube           ; tools for youtube vids
 
