@@ -67,9 +67,9 @@
       "oL"  'my-send-to-launchbar
 
       ;; tmux: cd (default-directory)
-      "ot"  (λ (ex:tmux-chdir nil t))
+      "ot"  (λ (my:tmux-chdir nil t))
       ;; tmux: cd [project root]
-      "oT"  'ex:tmux-chdir
+      "oT"  'my:tmux-chdir
 
       "]"    'next-buffer
       "["    'previous-buffer
