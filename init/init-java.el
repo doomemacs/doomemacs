@@ -40,9 +40,7 @@
              (when (f-exists? (concat (my--project-root) "AndroidManifest.xml"))
                (android-mode +1))))
 
-(use-package groovy-mode
-  :mode "\\.gradle$"
-  :config (after "auto-complete" (add-to-list 'ac-modes 'groovy-mode)))
+(use-package groovy-mode :mode "\\.gradle$")
 
 (provide 'init-java)
 ;;; init-java.el ends here
