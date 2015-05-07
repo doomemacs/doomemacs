@@ -14,13 +14,14 @@
     (add-hook 'snippet-mode-hook 'yas-minor-mode)
     (add-hook 'text-mode-hook 'yas-minor-mode)
     (add-hook 'prog-mode-hook 'yas-minor-mode)
+    (add-hook 'emacs-lisp-mode-hook 'yas-minor-mode)
     ;; (add-hook 'markdown-mode-hook 'yas-minor-mode)
     (add-hook 'org-mode-hook 'yas-minor-mode))
   :config
   (progn
     (setq yas-verbosity 0)
     (setq yas-indent-line 'auto)
-    (setq yas-also-auto-indent-first-line t)
+    (setq yas-also-auto-indent-first-line nil)
     (setq yas-wrap-around-region nil)
     ;; Only load personal snippets
     (setq yas-snippet-dirs `(,my-snippets-dir))
@@ -61,7 +62,6 @@
       (add-hook! 'yas-after-exit-snippet-hook
                  (setq-local yas-selected-text nil))
 
-      (evil-ex-define-cmd "snip[pets]" 'ex:snippets)
       (evil-define-operator ex:snippets (beg end &optional name)
         :motion nil
         :move-point nil

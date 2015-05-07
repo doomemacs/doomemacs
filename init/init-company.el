@@ -1,8 +1,8 @@
 (use-package company
-  :init
-  (global-company-mode 1)
   :config
   (progn
+    (global-company-mode 1)
+
     (setq company-idle-delay nil)
     (setq company-minimum-prefix-length 1)
     (setq company-show-numbers nil)
@@ -101,8 +101,8 @@
                              (call-interactively 'company-dabbrev-code)
                              (company-select-previous-or-abort))))
 
+      (define-key company-active-map "C-w" nil)
       (bind company-active-map
-            "C-w"        nil
             "C-o"        'company-search-kill-others
             "C-n"        'company-select-next-or-abort
             "C-p"        'company-select-previous-or-abort

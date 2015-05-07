@@ -37,7 +37,11 @@
 (when (functionp 'menu-bar-mode)   (menu-bar-mode -1))      ; no menubar
 (when (fboundp 'fringe-mode) (fringe-mode '(5 . 10)))       ; no nonsense
 
-(when window-system (setq frame-title-format '(buffer-file-name "%f" ("%b"))))
+(when window-system
+  (setq frame-title-format '(buffer-file-name "%f" ("%b")))
+  (if (string-equal (system-name) "io")
+      (set-frame-size (selected-frame) 326 119)))
+
 
 ;;;; Modeline ;;;;;;;;;;;;;;;;;;;;;;;;;;
 (use-package uniquify
@@ -51,16 +55,18 @@
         (mapconcat 'identity
                    '(" SP"
                      " Fill"
-                     " yas"
-                     " Fly"
                      " EvilOrg"
                      " Abbrev"
+                     " snipe"
+                     " company"
+                     " Anaconda"
                      " WS"
                      " GitGutter"
                      " Undo-Tree"
                      " Projectile\\[.+\\]"
                      " hs"
                      " ElDoc"
+                     " wg"
                      ) "\\|"))
   :init
   (progn

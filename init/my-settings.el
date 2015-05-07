@@ -44,18 +44,19 @@
 
 ;; Make ESC quit all the things
 ;; (bind minibuffer-inactive-mode-map [escape] (λ (other-window 1)))
-(bind (list minibuffer-local-map
-            minibuffer-local-ns-map
-            minibuffer-local-completion-map
-            minibuffer-local-must-match-map
-            minibuffer-local-isearch-map)
-      [escape] 'my--minibuffer-quit)
+(dolist (map (list minibuffer-local-map
+                   minibuffer-local-ns-map
+                   minibuffer-local-completion-map
+                   minibuffer-local-must-match-map
+                   minibuffer-local-isearch-map))
+  (bind map [escape] 'my--minibuffer-quit))
 (bind 'emacs [escape] 'my--minibuffer-quit)
 (bind 'normal evil-command-window-mode-map [escape] 'kill-buffer-and-window)
 ;; (bind evil-ex-map [escape] 'my--minibuffer-quit)
 
-(bind (list evil-ex-search-keymap minibuffer-local-map)
-      "\C-w" 'evil-delete-backward-word)
+(dolist (map (list evil-ex-search-keymap minibuffer-local-map))
+  (bind map "\C-w" 'evil-delete-backward-word))
+
 (bind minibuffer-local-map
       "\C-u" 'evil-delete-whole-line)
 

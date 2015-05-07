@@ -12,14 +12,6 @@
 
     (my--cleanup-buffers-add "^\\*[Hh]elm.*\\*$")
 
-    (evil-ex-define-cmd "a" 'helm-projectile-find-other-file)
-    (evil-ex-define-cmd "proj[ect]" 'helm-projectile-switch-project)
-    (evil-ex-define-cmd "ag" 'my:helm-ag-search)
-    (evil-ex-define-cmd "agr" 'my:helm-ag-regex-search)
-    (evil-ex-define-cmd "ag[cw]d" 'my:helm-ag-search-cwd)
-    (evil-ex-define-cmd "agr[cw]d" 'my:helm-ag-regex-search-cwd)
-    (evil-ex-define-cmd "sw[oop]" 'my:helm-swoop)
-
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
     (use-package helm-ag
@@ -192,7 +184,6 @@
 
       ;; Ex-mode interface for `helm-recentf' and `helm-projectile-recentf'. If
       ;; `bang', then `search' is interpreted as regexp
-      (evil-ex-define-cmd "rec[ent]" 'my:helm-recentf)
       (evil-define-command my:helm-recentf (&optional bang)
         :repeat nil
         (interactive "<!>")

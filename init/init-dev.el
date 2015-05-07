@@ -1,3 +1,7 @@
+(use-package hl-todo
+  :defer t
+  :init (add-hook 'after-change-major-mode-hook 'hl-todo-mode))
+
 (use-package dash-at-point
   :if is-mac
   :commands (dash-at-point dash-at-point-with-docset))
@@ -23,26 +27,18 @@
 
 (use-package emr
   :commands (emr-initialize emr-show-refactor-menu)
-  :init (add-hook 'prog-mode-hook 'emr-initialize)
-  :config
-  (progn
-    (bind 'normal "gR" 'emr-show-refactor-menu)
-    (bind popup-menu-keymap [escape] 'keyboard-quit)
-
-    (after "evil" (evil-ex-define-cmd "ref[actor]" 'emr-show-refactor-menu))))
+  :init     (add-hook 'prog-mode-hook 'emr-initialize)
+  :config   (bind popup-menu-keymap [escape] 'keyboard-quit))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Code building
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(bind my-mode-map "M-b" 'my:build)
-
 (defvar my-build-command "make %s")
 (make-variable-buffer-local 'my-build-command)
 (add-hook! 'enh-ruby-mode-hook (setq my-build-command "rake %s"))
 
-(evil-ex-define-cmd "ma[ke]" 'my:build)
 (evil-define-command my:build (arg)
   "Call a build command in the current directory.
 If ARG is nil this function calls `recompile', otherwise it calls
@@ -65,20 +61,21 @@ If ARG is nil this function calls `recompile', otherwise it calls
   :keep-visual t
   :move-point nil
   (interactive "<r>")
-  (let ((interp (-my-get-interpreter)))
-    (when interp (shell-command-on-region beg end interp))))
+  (cond ((eq major-mode 'emacs-lisp-mode)
+         (eval-region beg end))
+        (t
+         (let ((interp (my--get-interpreter)))
+           (when interp (shell-command-on-region beg end interp))))))
 
 (evil-define-command my:eval-buffer ()
   (interactive)
-  (let ((interp (-my-get-interpreter)))
-    (when interp (shell-command-on-region (point-min) (point-max) interp))))
+  (cond ((eq major-mode 'emacs-lisp-mode)
+         (eval-buffer))
+        (t
+         (let ((interp (my--get-interpreter)))
+           (when interp (shell-command-on-region (point-min) (point-max) interp))))))
 
-(bind 'motion "gr"   'my:eval-region
-              "M-r"  'my:eval-region)
-(bind 'normal "gR"   'my:eval-buffer
-              "M-R"  'my:eval-buffer)
-
-(defun -my-get-interpreter ()
+(defun my--get-interpreter ()
   (car (--first (eq (cdr it) major-mode) interpreter-mode-alist)))
 
 (provide 'init-dev)

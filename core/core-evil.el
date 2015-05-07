@@ -5,7 +5,7 @@
   :config
   (progn
     (setq evil-want-visual-char-semi-exclusive t
-          evil-search-module        'evil-search
+          evil-search-module        'isearch
           evil-search-wrap          nil
           evil-magic                'magic
           evil-want-C-u-scroll      t  ; enable C-u for scrolling
@@ -83,15 +83,21 @@
           (setq evil-snipe-override-evil t)
           (setq evil-snipe-scope 'visible)
           (setq evil-snipe-repeat-scope 'buffer)
-
+          (setq evil-snipe-override-evil-repeat-keys nil)
           (setq-default evil-snipe-symbol-groups
                 '((?\[ "[[{(]")
                   (?\] "[]})]")))
 
-          (bind 'visual "z" 'evil-snipe-s)
-          (bind 'visual "Z" 'evil-snipe-S)))
+          (bind 'motion
+                "C-;" 'evil-snipe-repeat
+                "C-," 'evil-snipe-repeat-reverse
 
-      (use-package evil-visualstar))
+                'visual
+                "z" 'evil-snipe-s
+                "Z" 'evil-snipe-S)))
+
+      (use-package evil-visualstar
+        :config (global-evil-visualstar-mode 1)))
 
     (bind evil-ex-completion-map
           "C-r"           #'evil-ex-paste-from-register   ; registers in ex-mode
@@ -178,24 +184,6 @@
         file-name))
 
     (progn ; ex-commands
-      (evil-ex-define-cmd "full[scr]" 'toggle-frame-fullscreen)
-      (evil-ex-define-cmd "k[ill]" 'kill-this-buffer)      ; Kill current buffer
-      (evil-ex-define-cmd "k[ill]o" 'my-cleanup-buffers)   ; Kill current project buffers
-      (evil-ex-define-cmd "k[ill]all" 'my:kill-buffers)    ; Kill all buffers (bang = project buffers only)
-      (evil-ex-define-cmd "k[ill]buried" 'my:kill-buried-buffers)    ; Kill all buffers (bang = project buffers only)
-      (evil-ex-define-cmd "ini" 'my:init-files)
-      (evil-ex-define-cmd "n[otes]" 'my:notes)
-      (evil-ex-define-cmd "recompile" 'my:byte-compile)
-      (evil-ex-define-cmd "cd" 'my:cd)
-      (evil-ex-define-cmd "en[ew]" 'my:create-file)
-      (evil-ex-define-cmd "ren[ame]" 'my:rename-this-file) ; Rename file . Bang: Delete old one
-      (evil-ex-define-cmd "al[ign]" 'my:align)
-      (evil-ex-define-cmd "retab" 'my:retab)
-      (evil-ex-define-cmd "sq[uint]" 'my:narrow-indirect)  ; Narrow buffer to selection
-      (evil-ex-define-cmd "x" 'my:scratch-buffer)
-
-    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
       (evil-define-command my:kill-buffers (&optional bang)
         :repeat nil
         (interactive "<!>")
@@ -278,7 +266,7 @@ provided."
                 (message "File '%s' successfully renamed to '%s'"
                          name (file-name-nondirectory new-name)))))))
 
-      (evil-define-operator my:scratch-buffer (beg end &optional bang)
+      (evil-define-operator my:scratch-buffer (&optional beg end bang)
         "Send a selection to the scratch buffer. If BANG, then send it to org-capture
   instead."
         :move-point nil

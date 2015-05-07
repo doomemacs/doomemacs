@@ -61,34 +61,31 @@ the checking happens for all pairs in auto-minor-mode-alist"
 
 
 ;; Keybindings ;;;;;;;;;;;;;;;;;;;;;;;;;
-(defun bind (state &rest keys)
-  (let ((state-list state)
-        (is-global (or (stringp state)
-                       (vectorp state)))
-        keymap)
-    (if is-global
-        (setq keys (-insert-at 0 state keys))
-      (progn
-        (if (keymapp (car keys))
-            (setq keymap (pop keys)))
-        (if (or (keymapp state)
-                (not (listp state)))
-            (setq state-list (list state)))))
+(defun bind (&rest keys)
+  (let (state-list keymap key def)
     (while keys
-      (let ((-key (pop keys))
-            (-def (pop keys)))
-        (if (stringp -key)
-            (setq -key (kbd -key)))
-        (if is-global
-            (global-set-key -key -def)
-          (dolist (-state state-list)
-            (cond ((evil-state-p -state)
-                   (define-key
-                     (if keymap
-                         (evil-get-auxiliary-keymap keymap -state t)
-                       (evil-state-property -state :keymap t)) -key -def))
-                  ((keymapp -state)
-                   (define-key -state -key -def)))))))))
+      (setq key (pop keys))
+      (cond ((keymapp key)
+             (setq keymap key))
+            ((or (evil-state-p key)
+                 (and (listp key) (evil-state-p (car key))))
+             (setq state-list key))
+            (t
+             (if (stringp key)
+                 (setq key (kbd key)))
+             (setq def (pop keys))
+             (when (null def)
+               (user-error "No definition for '%s' keybinding" key))
+             (if (null state-list)
+                 (if (null keymap)
+                     (global-set-key key def)
+                   (define-key keymap key def))
+               (unless (listp state-list)
+                 (setq state-list (list state-list)))
+               (dolist (state state-list)
+                 (define-key (if keymap
+                                 (evil-get-auxiliary-keymap keymap state t)
+                               (evil-state-property state :keymap t)) key def))))))))
 
 (after "evil"
   (evil-define-command my--maybe-exit-insert-mode ()

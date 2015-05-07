@@ -9,8 +9,7 @@
     :ex-arg shell
     (list (when (evil-ex-p) (evil-ex-file-arg))))
 
-  (evil-ex-define-cmd "t" 'ex:tmux-run)
-  (evil-define-command ex:tmux-run (&optional command bang)
+  (evil-define-command my:tmux-run (&optional command bang)
     "Sends input to tmux. Use `bang' to append to tmux"
     (interactive "<tmux><!>")
     (my--tmux-send (format (if bang "C-u %s Enter" "%s")
@@ -18,8 +17,7 @@
     (when (evil-ex-p)
       (message "[Tmux] %s" command)))
 
-  (evil-ex-define-cmd "tcd" 'ex:tmux-chdir)
-  (evil-define-command ex:tmux-chdir (&optional path bang)
+  (evil-define-command my:tmux-chdir (&optional path bang)
     "CDs in tmux using `my--project-root'"
     (interactive "<f><!>")
     (let ((dir (shell-quote-argument

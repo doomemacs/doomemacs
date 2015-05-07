@@ -1,3 +1,14 @@
+(defun my-java-project-package ()
+  (if (eq major-mode 'java-mode)
+    (s-chop-suffix "." (s-replace "/" "." (f-dirname (f-relative (buffer-file-name)
+                                                                 (concat (my--project-root) "src/")))))
+    ""))
+
+(defun my-java-class-name ()
+  (if (eq major-mode 'java-mode)
+      (f-no-ext (f-base (buffer-file-name)))
+    ""))
+
 (use-package eclim
   :commands (eclim-mode global-eclim-mode)
   :config
@@ -18,17 +29,16 @@
 
     (after "company"
       (use-package company-emacs-eclim
-        :init (company-emacs-eclim-setup)))
-
-    (after "auto-complete"
-      (add-hook! 'java-mode-hook
-                 (setq ac-sources '(ac-source-emacs-eclim
-                                    ac-source-yasnippet
-                                    ac-source-abbrev
-                                    ac-source-dictionary
-                                    ac-source-words-in-same-mode-buffers))))
+        :config (company-emacs-eclim-setup)))
 
     (bind 'motion java-mode-map "gd" 'eclim-java-find-declaration)))
+
+(use-package android-mode
+  :defer t
+  :init
+  (add-hook! 'java-mode-hook
+             (when (f-exists? (concat (my--project-root) "AndroidManifest.xml"))
+               (android-mode +1))))
 
 (use-package groovy-mode
   :mode "\\.gradle$"

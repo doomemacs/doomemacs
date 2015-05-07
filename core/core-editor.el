@@ -30,8 +30,15 @@
     (sp-with-modes '(json-mode js2-mode ruby-mode enh-ruby-mode python-mode)
       (sp-local-pair "[" nil :post-handlers '(("||\n[i]" "RET"))))
 
-    (sp-with-modes '(java-mode c++-mode c-mode)
-      (sp-local-pair "/**" "*/" :post-handlers '(("* ||\n[i]" "RET"))))
+    (sp-with-modes '(c-mode c++-mode objc-mode java-mode scss-mode css-mode php-mode)
+      (sp-local-pair "/* " " */" :post-handlers '(("||\n[i]" "RET")))
+      (sp-local-pair "/**" "*/" :post-handlers '(("||\n[i]" "RET"))))
+
+    (sp-with-modes '(objc-mode scss-mode css-mode)
+      (sp-local-pair "/*\n" "\n */" :post-handlers '(("||[i]" "RET"))))
+
+    (sp-with-modes '(c-mode c++-mode php-mode java-mode)
+      (sp-local-pair "/*" "" :post-handlers '((" ||\n[i]*/" "RET"))))
 
     (after "yasnippet"
       (defadvice yas-expand (before advice-for-yas-expand activate)

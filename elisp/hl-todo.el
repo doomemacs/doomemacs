@@ -60,19 +60,9 @@ This is used by `global-hl-todo-mode'."
 (defvar hl-todo-keywords nil)
 
 (defcustom hl-todo-keyword-faces
-  '(("HOLD" . "#d0bf8f")
-    ("TODO" . "#cc9393")
-    ("NEXT" . "#dca3a3")
-    ("THEM" . "#dc8cc3")
-    ("PROG" . "#7cb8bb")
-    ("OKAY" . "#7cb8bb")
-    ("DONT" . "#5f7f5f")
-    ("FAIL" . "#8c5353")
-    ("DONE" . "#afd8af")
-    ("FIXME" . "#cc9393")
-    ("XXX"   . "#cc9393")
-    ("XXXX"  . "#cc9393")
-    ("???"   . "#cc9393"))
+  '(("\\(\\bTODO\\((.*)\\)?:?\\)" . "#cc9393")
+    ("\\(\\bNOTE\\((.*)\\)?:?\\)" . "#d0bf8f")
+    ("\\(\\bFIXME\\((.*)\\)?:?\\)" . "#cc9393"))
   "Faces used to highlight specific TODO keywords."
   :group 'hl-todo
   :type '(repeat (cons (string :tag "Keyword")

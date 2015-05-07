@@ -1,5 +1,7 @@
-(defconst is-mac   (eq system-type 'darwin))
-(defconst is-linux (eq system-type 'gnu/linux))
+(defconst is-mac     (eq system-type 'darwin))
+(defconst is-linux   (eq system-type 'gnu/linux))
+(defconst is-windows (or (eq system-type 'ms-dos)
+                         (eq system-type 'windows-nt)))
 
 (when is-linux (add-to-list 'load-path "~/.cask"))
 (setq use-package-verbose DEBUG-MODE)
@@ -153,19 +155,16 @@
   (setq delete-trailing-lines nil)
   (add-hook 'makefile-mode-hook 'indent-tabs-mode) ; Use normal tabs in makefiles
   ;; Make sure scratch buffer is always "in a project"
-  (add-hook 'find-file-hook
-    (lambda()
-      (let ((buffer (get-buffer "*scratch*"))
-            (pwd (my--project-root)))
-        (when (buffer-live-p buffer)
-          (save-window-excursion
-            (switch-to-buffer buffer)
-            (unless (eq (my--project-root) pwd)
-              (cd pwd)
-              (rename-buffer (format "*scratch* (%s)" (file-name-base (directory-file-name pwd))))))))))
-
-  ;; My own minor mode!
-  (define-minor-mode my-mode :global t :keymap (make-sparse-keymap))
+  (defun set-project-scratch-buffer ()
+    (let ((buffer (get-buffer "*scratch*"))
+          (pwd (my--project-root)))
+      (when (buffer-live-p buffer)
+        (save-window-excursion
+          (switch-to-buffer buffer)
+          (unless (eq (my--project-root) pwd)
+            (cd pwd)
+            (rename-buffer (format "*scratch* (%s)" (file-name-nondirectory (directory-file-name pwd)))))))))
+  (add-hook 'find-file-hook 'set-project-scratch-buffer)
 
 
   ;;;; Behavior adjustments ;;;;;;;;;;;;;;;;
@@ -235,10 +234,7 @@
   ;;;; Start the party ;;;;;;;;;;;;;;;;;;;
   (if is-mac (require 'core-osx))
   ;; (if is-linux (require 'core-linux))
-
-  (require 'core-ui)
-  (require 'core-evil)
-  (require 'core-editor)
+  ;; (if is-windows (require 'core-windows))
 
   (use-package server
     :config

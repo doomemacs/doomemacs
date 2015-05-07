@@ -27,10 +27,6 @@
     (defadvice git-gutter+-process-diff (before git-gutter+-process-diff-advice activate)
       (ad-set-arg 0 (file-truename (ad-get-arg 0))))
 
-    (evil-ex-define-cmd "gstage"   'git-gutter+-stage-hunks)
-    (evil-ex-define-cmd "grevert"  'git-gutter+-revert-hunks)
-    (evil-ex-define-cmd "gdiff"    'git-gutter+-show-hunk)
-
     (fringe-helper-define 'git-gutter-fr+-added nil
       "XX......"
       "XX......"

@@ -275,16 +275,6 @@
                             (org-todo 'done))))
             [tab] 'org-cycle))
 
-    (evil-ex-define-cmd "o[rg]edit" 'org-edit-special)
-    (evil-ex-define-cmd "o[rg]refile" 'org-refile)
-    (evil-ex-define-cmd "o[rg]archive" 'org-archive-subtree)
-    (evil-ex-define-cmd "o[rg]agenda" 'org-agenda)
-    (evil-ex-define-cmd "o[rg]todo" 'org-show-todo-tree)
-    (evil-ex-define-cmd "o[rg]link" 'org-link)
-    (evil-ex-define-cmd "o[rg]align" 'org-align-all-tags)
-
-    (evil-ex-define-cmd "o[rg]image" 'my:org-insert-image)
-
     (evil-define-command my:org-insert-image-url (&optional image-url)
       :repeat nil
       (interactive "<f><!>")

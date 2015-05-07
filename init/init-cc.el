@@ -67,7 +67,7 @@
       (c-set-offset 'inclass 'my-c-lineup-inclass)
 
       ;; DEL mapping interferes with smartparens and my.deflate-maybe
-      (bind c-mode-map (kbd "DEL") nil))
+      (define-key c-mode-map (kbd "DEL") nil))
 
     (add-hook 'c-mode-hook 'my-c/c++-settings)
     (add-hook 'c++-mode-hook 'my-c/c++-settings)

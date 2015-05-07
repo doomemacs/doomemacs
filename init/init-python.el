@@ -1,14 +1,15 @@
 (use-package python
   :mode ("\\.py\\'" . python-mode)
   :interpreter ("python" . python-mode)
-  :init (setq python-indent-offset 4)
+  :init (add-hook 'python-mode-hook 'enable-tab-width-4)
   :config
   (progn
+    (setq python-indent-offset 4)
     (setq python-environment-directory my-tmp-dir)
     (setq python-shell-interpreter "ipython")
 
-    ;; Interferes with smartparens
-    (bind python-mode-map (kbd "DEL") nil)
+    ;; interferes with smartparens
+    (define-key python-mode-map (kbd "DEL") nil)
 
     (use-package anaconda-mode
       :init
@@ -63,16 +64,6 @@
         (after "company"
           (use-package company-anaconda
             :config (company--backend-on 'python-mode-hook 'company-anaconda)))))
-
-    (use-package jedi
-      :disabled t
-      :config
-      (progn
-        (unless (file-directory-p python-environment-directory)
-          (jedi:install-server))
-        (add-hook 'python-mode-hook 'jedi:ac-setup)
-
-        (bind 'motion python-mode-map "gd" 'jedi:goto-definition)))
 
     (use-package nose
       :commands nose-mode

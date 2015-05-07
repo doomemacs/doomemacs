@@ -15,7 +15,6 @@
 
     (after "evil"
       (evil-set-initial-state 'reb-mode 'insert)
-      (evil-ex-define-cmd "re[gex]" 'my:regex)
       ;; Either a) converts selected (or entered-in) pcre regex into elisp
       ;; regex, OR b) opens up re-builder.
       (evil-define-operator my:regex (beg end type &optional regexstr bang)

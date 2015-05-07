@@ -87,8 +87,9 @@
 (depends-on "ido-ubiquitous")
 (depends-on "ido-vertical-mode")
 (depends-on "flx-ido")
-(depends-on "perspective")
-(depends-on "persp-projectile")
+(depends-on "workgroups2")
+;;(depends-on "persp-mode")
+;;(depends-on "persp-projectile")
 (depends-on "xcscope")
 ;;(depends-on "grizzl")
 
@@ -111,6 +112,7 @@
 (depends-on "swift-mode")
 ;; (depends-on "haxe-mode")
 ;; (depends-on "go-mode" :git "https://github.com/dominikh/go-mode.el")
+(depends-on "go-mode")
 
 (depends-on "php-mode")
 (depends-on "php-refactor-mode")
@@ -146,3 +148,4 @@
 
 (depends-on "rust-mode")
 (depends-on "d-mode")
+(depends-on "android-mode")

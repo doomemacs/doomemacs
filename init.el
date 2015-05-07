@@ -50,6 +50,9 @@
 (mapc 'require
       ;; ls init/{init,my}* | xargs basename | sed -e 's/\..*$//'
       '(core
+        core-ui                ; aesthetics
+        core-evil              ; evil-mode and its plugins
+        core-editor            ; expand-region, rotate-text, smartparens
 
         ;; init-auto-complete
         init-auto-insert       ; for the lazy typis
@@ -74,7 +77,7 @@
         init-java              ; the poster child for carpal tunnel syndome
         init-js                ; alert("not java, javascript!")
         init-lua               ; zero-based indices? Zero-based indices.
-        ;; init-org               ; for fearless leader (who is organized)
+        ;; init-org               ; for fearless [organized] leader
         init-php               ; making php less painful to work with
         init-python            ; beautiful is better than ugly
         init-regex             ; /^[^\s](meaning)[^\n]*/
@@ -92,9 +95,10 @@
         init-yasnippet         ; type for me
         init-youtube           ; tools for youtube vids
 
-        my-bindings
-        my-settings
         my-defuns
+        my-bindings
+        my-commands
+        my-settings
         ))
 
 ;; I've created a monster!

@@ -2,113 +2,104 @@
 ;; Global keymaps                     ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(bind (kbd "A-x")      'smex
-      (kbd "A-X")      'smex-major-mode-commands
-      (kbd "C-;")      'eval-expression
-      (kbd "C-`")      'popwin:toggle-popup-window
+(bind "A-x"      'smex
+      "A-X"      'smex-major-mode-commands
+      "A-;"      'eval-expression
+      "C-`"      'popwin:toggle-popup-window
+      "M-="      'text-scale-increase
+      "M--"      'text-scale-decrease
+      "M-w"      'evil-window-delete
+      "M-/"      'evilnc-comment-or-uncomment-lines
+      "M-b"      'my:build)
 
-      (kbd "M-=")      'text-scale-increase
-      (kbd "M--")      'text-scale-decrease
-      (kbd "M-w")      'evil-window-delete
-      (kbd "M-/")      'evilnc-comment-or-uncomment-lines)
+(bind 'motion
+      ;; Faster scrolling
+      "M-j"  "6j"
+      "M-k"  "6k"
+      "M-r"  'my:eval-region
 
-;; Faster scrolling
-(bind 'motion my-mode-map
-      (kbd "M-j")      "6j"
-      (kbd "M-k")      "6k")
-
-(bind 'normal my-mode-map
-      (kbd "M-o")      'ido-find-file
-      (kbd "M-d")      'dash-at-point)
+      'normal
+      "M-o"  'ido-find-file
+      "M-d"  'dash-at-point
+      "M-R"  'my:eval-buffer)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Local keymaps                      ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(bind '(normal visual) my-mode-map
-      ";"     'evil-ex
-      "X"     'evil-exchange
+(define-prefix-command 'my-leader-map)
+(define-prefix-command 'my-localleader-map)
 
-      "g l"   (λ (linum-mode 1) (evil-ex "") (linum-mode -1))
+(bind '(normal motion visual) ";" 'evil-ex)
 
-      "] e"   'next-error
-      "[ e"   'previous-error
-      "] g"   'git-gutter+-next-hunk
-      "[ g"   'git-gutter+-previous-hunk
+;; <leader>
+(bind my-leader-map
+      ","   'helm-projectile-switch-to-buffer
+      "."   'helm-resume
+      "/"   'helm-projectile-find-file
+      ";"   'helm-semantic-or-imenu
+      "<"   'helm-mini
+      "E"   'my:init-files
+      "M"   'helm-projectile-recentf ; recent PROJECT files
+      "]"   'helm-etags-select
+      "a"   'helm-projectile-find-other-file
+      "e"   'ido-find-file
+      "g"   'git-gutter+-show-hunk
+      "h"   'helm-apropos
+      "m"   'helm-recentf
+      "p"   'helm-projectile-switch-project
+      "y"   'helm-show-kill-ring
+      "r"   'emr-show-refactor-menu)   ; init-dev.el
 
-      "] \\"  'er/expand-region
-      "[ \\"  'er/contract-region)
+;; <localleader>
+(bind my-localleader-map
+      "\\" 'neotree-toggle
+      ";"  'linum-mode
+      "="  'toggle-transparency
+      "E"  'evil-emacs-state
 
-(bind 'normal my-mode-map
-      ;; <leader>
-      ", ,"   'helm-projectile-switch-to-buffer
-      ", ."   'helm-resume
-      ", /"   'helm-projectile-find-file
-      ", ;"   'helm-semantic-or-imenu
-      ", <"   'helm-mini
-      ", E"   'my:init-files
-      ", M"   'helm-projectile-recentf ; recent PROJECT files
-      ", ]"   'helm-etags-select
-      ", a"   'helm-projectile-find-other-file
-      ", e"   'ido-find-file
-      ", f"   'helm-projectile-find-file-dwim
-      ", g"   'git-gutter+-show-hunk
-      ", h"   'helm-apropos
-      ", m"   'helm-recentf
-      ", p"   'helm-projectile-switch-project
-      ", y"   'helm-show-kill-ring
-
-      ;; <localleader>
-      "\\ \\"   'neotree-toggle
-      "\\ ;"    'linum-mode
-      "\\ ="    'toggle-transparency
-      "\\ e"    'evil-emacs-state
-
-      "\\ ]"    'next-buffer
-      "\\ ["    'previous-buffer
-
-      "\\ o f"  (λ (my-send-dir-to-finder default-directory))
-      "\\ o F"  'my-send-dir-to-finder
-      "\\ o u"  (λ (my-send-to-transmit buffer-file-name))
-      "\\ o U"  'my-send-to-transmit
-      "\\ o l"  (λ (my-send-to-launchbar buffer-file-name))
-      "\\ o L"  'my-send-to-launchbar
+      "of"  (λ (my-send-dir-to-finder default-directory))
+      "oF"  'my-send-dir-to-finder
+      "ou"  (λ (my-send-to-transmit buffer-file-name))
+      "oU"  'my-send-to-transmit
+      "ol"  (λ (my-send-to-launchbar buffer-file-name))
+      "oL"  'my-send-to-launchbar
 
       ;; tmux: cd (default-directory)
-      "\\ o t"  (λ (ex:tmux-chdir nil t))
+      "ot"  (λ (ex:tmux-chdir nil t))
       ;; tmux: cd [project root]
-      "\\ o T"  'ex:tmux-chdir
+      "oT"  'ex:tmux-chdir
+
+      "]"    'next-buffer
+      "["    'previous-buffer
+
+      "g"    'git-gutter+-show-hunk
+      "e"    (λ (flycheck-buffer) (flycheck-list-errors))
+      "p"    'helm-show-kill-ring
+      "b"    'helm-projectile-switch-to-buffer
+      "w"    'helm-wg)
+
+
+(bind 'normal
+      ","    'my-leader-map
+      "\\"   'my-localleader-map
 
       ;; behave  like D and C; yank to end of line
-      "Y"     (λ (evil-yank (point) (point-at-eol)))
-
-      "z x"       'kill-this-buffer
-      "Z X"       'bury-buffer
-
-      "] b"       'next-buffer
-      "[ b"       'previous-buffer
-      "] p"       'persp-next
-      "[ p"       'persp-prev
-
-      ;; winner-mode: window layout undo/redo (see init-core.el)
-      "C-w u"     'winner-undo
-      "C-w C-u"   'winner-undo
-      "C-w C-r"   'winner-redo
-
-      ;; buffer navigation
-      ;; "C-h"       'evil-window-left
-      ;; "C-j"       'evil-window-down
-      ;; "C-k"       'evil-window-up
-      ;; "C-l"       'evil-window-right
-      ;; restore help key
-      ;; "M-h"       'help-command
+      "Y"       (λ (evil-yank (point) (point-at-eol)))
+      "zx"     'kill-this-buffer
+      "ZX"     'bury-buffer
+      "]b"     'next-buffer
+      "[b"     'previous-buffer
+      "]w"     'wg-switch-to-workgroup-right
+      "[w"     'wg-switch-to-workgroup-left
 
       ;; Increment/decrement number under cursor
-      "C-="       'evil-numbers/inc-at-pt
-      "C--"       'evil-numbers/dec-at-pt)
+      "g="       'evil-numbers/inc-at-pt
+      "g-"       'evil-numbers/dec-at-pt
+      "gR"       'my:eval-buffer  ; init-dev.el
 
-(bind 'visual my-mode-map
+      'visual
       ", ="   'align-regexp
 
       ;; vnoremap < <gv
@@ -118,11 +109,25 @@
       ;; vnoremap > >gv
       ">"    (λ (evil-shift-right (region-beginning) (region-end))
                 (evil-normal-state)
-                (evil-visual-restore)))
+                (evil-visual-restore))
 
-(bind 'emacs [escape] 'evil-normal-state)
+      'motion
+      "X"    'evil-exchange
 
-(bind 'insert my-mode-map
+      "]g"   'git-gutter+-next-hunk
+      "[g"   'git-gutter+-previous-hunk
+
+      "]e"   'next-error
+      "[e"   'previous-error
+
+      "]\\"  'er/expand-region
+      "[\\"  'er/contract-region
+
+      "gl"   (λ (linum-mode 1) (evil-ex "") (linum-mode -1))
+      "gx"   'my-scratch-buffer    ; send to scratch buffer
+      "gr"   'my:eval-region       ; init-dev.el
+
+      'insert
       "<A-backspace>" 'evil-delete-backward-word
       "<A-delete>"    (λ (evil-forward-word) (evil-delete-backward-word))
 
@@ -134,39 +139,35 @@
       ;; Textmate-esque indent shift left/right
       "M-["           (kbd "C-o m l C-o I DEL C-o ` l")
       "M-]"           (λ (evil-shift-right (point-at-bol) (point-at-eol)))
-      "<backtab>"     (kbd "M-["))
+      "<backtab>"     (kbd "M-[")
+
+      ;; Easy escape from insert mode (more responsive than using key-chord-define)
+      "j"      'my--maybe-exit-insert-mode
+      "C-g"    'evil-normal-state
+
+      ;; Rotate-text (see elisp/rotate-text.el)
+      'normal "!" 'rotate-word-at-point
+      'visual "!" 'rotate-region
+
+      'emacs
+      [escape]  'evil-normal-state)
 
 ;; Enable TAB to do matchit
-(bind '(normal visual) evil-matchit-mode-map [tab] 'evilmi-jump-items)
+(bind 'motion evil-matchit-mode-map [tab] 'evilmi-jump-items)
 
-;; Rotate-text (see elisp/rotate-text.el)
-(bind 'normal my-mode-map "!" 'rotate-word-at-point)
-(bind 'visual my-mode-map "!" 'rotate-region)
-
-;; Additional operators
-(bind 'motion my-mode-map "g x" 'my-scratch-buffer) ; send to scratch buffer
-
-;; Easy escape from insert mode (more responsive than using key-chord-define)
-(bind 'insert "j" 'my--maybe-exit-insert-mode)
-
-(bind 'insert "C-g" 'evil-normal-state)
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Plugin/mode keymaps                ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(bind evil-window-map
+      ;; winner-mode: window layout undo/redo (see init-core.el)
+      "u"     'winner-undo
+      "C-u"   'winner-undo
+      "C-r"   'winner-redo)
 
 ;; Peek at file from dired
 (bind dired-mode-map "o" (λ (popwin:find-file (dired-get-file-for-visit))))
-
-;; Evil registers ;;;;;;;;;;;;;;;;;;;;;;
 
 (after "help-mode"
   (bind 'normal help-mode-map
         "]]" 'help-go-forward
         "[[" 'help-go-back))
-
-(evil-make-overriding-map my-mode-map nil)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -209,17 +210,26 @@
       (kbd "<M-return>")    'evil-open-below
       (kbd "<S-M-return>")  'evil-open-above)
 
+(when is-mac
+  ;; Restore text nav keys
+  (bind (kbd "<A-left>") 'backward-word
+        (kbd "<A-right>") 'forward-word
+        (kbd "<M-backspace>") 'my.backward-kill-to-bol-and-indent
+        (kbd "M-a") 'mark-whole-buffer
+        (kbd "M-c") 'evil-yank
+        (kbd "M-v") 'evil-paste-after
+        (kbd "M-s") 'save-buffer))
+
 ;; Fix osx keymappings and then some
 (use-package smart-forward
   :config
   (bind 'insert
-        (kbd "<M-left>")      'my.move-to-bol
-        (kbd "<M-right>")     'my.move-to-eol
-        (kbd "<M-backspace>") 'my.backward-kill-to-bol-and-indent
-        ;; (kbd "<M-up>")        'beginning-of-buffer
-        (kbd "<M-up>")        'smart-up
-        (kbd "<M-down>")      'smart-down))
-
+        "<M-left>"   'my.move-to-bol
+        "<M-right>"  'my.move-to-eol
+        "<M-up>"     'beginning-of-buffer
+        "<M-down>"   'end-of-buffer
+        "<A-up>"     'smart-up
+        "<A-down>"   'smart-down))
 
 
 (provide 'my-bindings)

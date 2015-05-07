@@ -75,7 +75,7 @@
     ;; (template "\\.lua$"                                           "%%"               'lua-mode)
 
     ;; ;; Java
-    ;; (template "/src/.+/.+\\.java$                                 "%%"               'java-mode)
+    (template "/src/.+/.+\\.java$"                                   "%%"               'java-mode)
     ;; (template "\\.gradle$"                                        "%%"               'groovy-mode)
 
     ;; ;; Elisp

@@ -20,11 +20,7 @@
          (add-hook 'find-file-hook
                    (lambda ()
                      (when (string-match-p ,project-name (projectile-project-name))
-                       ,@body)))))
-
-    (after "perspective"
-      (defvar persp-modestring-dividers '("" " |" ","))
-      (use-package persp-projectile))))
+                       ,@body)))))))
 
 
 (provide 'init-projectile)
