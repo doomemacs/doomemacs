@@ -11,4 +11,4 @@ clean:
 
 autoloads:
 	@rm -rf core/autoloads.el
-	@cask exec ${EMACS} -Q --batch --eval '(progn (setq generated-autoload-file "~/.emacs.d/core/autoloads.el") (update-directory-autoloads "~/.emacs.d/init" "~/.emacs.d/core" "~/.emacs.d/elisp"))'
+	@cask exec ${EMACS} -Q --batch --eval '(progn (setq generated-autoload-file "~/.emacs.d/core/autoloads.el") (update-directory-autoloads "~/.emacs.d/init" "~/.emacs.d/core" "~/.emacs.d/contrib"))'

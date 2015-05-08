@@ -21,7 +21,7 @@
 (defconst my-dir           user-emacs-directory)
 (defconst my-core-dir      (concat my-dir "core/"))
 (defconst my-modules-dir   (concat my-dir "init/"))
-(defconst my-elisp-dir     (concat my-dir "elisp/"))
+(defconst my-contrib-dir   (concat my-dir "contrib/"))
 (defconst my-themes-dir    (concat my-dir "themes/"))
 (defconst my-snippets-dir  (concat my-dir "snippets/"))
 (defconst my-tmp-dir       (concat my-dir ".cache/"))
@@ -35,10 +35,10 @@
 
 (add-to-list 'load-path my-core-dir)
 (add-to-list 'load-path my-modules-dir)
-(add-to-list 'load-path my-elisp-dir)
+(add-to-list 'load-path my-contrib-dir)
 
 ;; Add elisp dirs to load-path
-(let ((default-directory my-elisp-dir))
+(let ((default-directory my-contrib-dir))
   (normal-top-level-add-subdirs-to-load-path))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
