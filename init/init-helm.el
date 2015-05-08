@@ -12,6 +12,14 @@
 
     (my--cleanup-buffers-add "^\\*[Hh]elm.*\\*$")
 
+    ;; disable popwin-mode in an active Helm session It should be disabled
+    ;; otherwise it will conflict with other window opened by Helm persistent
+    ;; action, such as *Help* window.
+    (add-hook! 'helm-after-initialize-hook (popwin-mode -1))
+
+    ;;  Restore popwin-mode after a Helm session finishes.
+    (add-hook! 'helm-cleanup-hook (popwin-mode 1))
+
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
     (use-package helm-ag
@@ -23,7 +31,7 @@
           :type inclusive
           :repeat nil
           (interactive "<r><a><!>")
-          (let* ((helm-ag-default-directory (my--project-root pwd-p))
+          (let* ((helm-ag-default-directory (if pwd-p default-directory (project-root)))
                  (helm-ag-command-option (concat (unless regex-p "-Q ")
                                                  (if hidden-files-p "--hidden ")))
                  (input "")
@@ -32,7 +40,6 @@
                 (progn
                   (helm-attrset 'search-this-file nil helm-ag-source)
                   (setq helm-ag--last-query search))
-              (helm-ag-save-current-context)
               (if (and beg end (/= beg (1- end)))
                   (setq input (buffer-substring-no-properties beg end))))
             (helm-attrset 'name header-name helm-ag-source)

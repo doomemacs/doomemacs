@@ -52,10 +52,9 @@
     ;; create a new workgroup for the new project.
     (after "projectile"
       (defun my-projectile-workgroup-switch-project ()
-        (let ((workgroup-name (file-name-nondirectory (directory-file-name (my--project-root)))))
+        (let ((workgroup-name (file-name-nondirectory (directory-file-name (project-root)))))
           (wg-create-workgroup workgroup-name t)
           (helm-projectile-find-file)))
-
       (setq projectile-switch-project-action 'my-projectile-workgroup-switch-project))
 
     (workgroups-mode 1)))

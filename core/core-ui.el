@@ -3,8 +3,7 @@
 ;;;; Load Theme ;;;;;;;;;;;;;;;;;;;;;;;;
 (when window-system
   (set-frame-parameter nil 'alpha '(96 86))
-  ;; Load font
-  (cycle-font 0))
+  (cycle-font 0))   ; Load font
 
 (add-to-list 'custom-theme-load-path my-themes-dir)
 (load-dark-theme)
@@ -12,7 +11,7 @@
 
 ;;;; GUI Settings ;;;;;;;;;;;;;;;;;;;;;;
 (tooltip-mode -1)
-(blink-cursor-mode 1)        ; blink cursor
+(blink-cursor-mode -1)        ; blink cursor
 (global-hl-line-mode 1)      ; highlight line
 
 (setq linum-format " %3d")
@@ -25,6 +24,7 @@
 (setq-default visible-bell nil)   ; silence of the bells
 (setq-default use-dialog-box nil) ; avoid GUI
 (setq-default redisplay-dont-pause t)
+(setq window-combination-resize t)
 
 ;; do not soft-wrap lines
 (setq-default truncate-lines t)
@@ -44,10 +44,14 @@
 
 
 ;;;; Modeline ;;;;;;;;;;;;;;;;;;;;;;;;;;
+(use-package vim-empty-lines-mode
+  :config (global-vim-empty-lines-mode +1))
+
 (use-package uniquify
-  :config (setq uniquify-buffer-name-style 'post-forward
-                uniquify-separator ":"
-                uniquify-ignore-buffers-re "^\\*"))
+  :config
+  (setq uniquify-buffer-name-style 'post-forward-angle-brackets
+        uniquify-separator ":"
+        uniquify-ignore-buffers-re "^\\*"))
 
 (use-package smart-mode-line
   :config
@@ -67,6 +71,9 @@
                      " hs"
                      " ElDoc"
                      " wg"
+                     " ~"
+                     " s-/"
+                     " yas"
                      ) "\\|"))
   :init
   (progn

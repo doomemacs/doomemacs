@@ -42,14 +42,6 @@
                  (kbd "<backspace>")  'ido-delete-backward-updir
                  "\C-w"               'ido-delete-backward-word-updir))
 
-;; Make ESC quit all the things
-;; (bind minibuffer-inactive-mode-map [escape] (λ (other-window 1)))
-(dolist (map (list minibuffer-local-map
-                   minibuffer-local-ns-map
-                   minibuffer-local-completion-map
-                   minibuffer-local-must-match-map
-                   minibuffer-local-isearch-map))
-  (bind map [escape] 'my--minibuffer-quit))
 (bind 'emacs [escape] 'my--minibuffer-quit)
 (bind 'normal evil-command-window-mode-map [escape] 'kill-buffer-and-window)
 ;; (bind evil-ex-map [escape] 'my--minibuffer-quit)
@@ -61,27 +53,23 @@
       "\C-u" 'evil-delete-whole-line)
 
 ;; Redefine to get rid of that silly delete-other-windows nonsense
-(defun keyboard-escape-quit ()
-  (interactive)
-  (cond ((eq last-command 'mode-exited) nil)
-        ((region-active-p)
-         (deactivate-mark))
-        ((> (minibuffer-depth) 0)
-         (abort-recursive-edit))
-        (current-prefix-arg
-         nil)
-        ((> (recursion-depth) 0)
-         (exit-recursive-edit))
-        (buffer-quit-function
-         (funcall buffer-quit-function))
-        ((string-match "^ \\*" (buffer-name (current-buffer)))
-         (bury-buffer))))
+;; (defun keyboard-escape-quit ()
+;;   (interactive)
+;;   (cond ((eq last-command 'mode-exited) nil)
+;;         ((region-active-p)
+;;          (deactivate-mark))
+;;         ((> (minibuffer-depth) 0)
+;;          (abort-recursive-edit))
+;;         (current-prefix-arg
+;;          nil)
+;;         ((> (recursion-depth) 0)
+;;          (exit-recursive-edit))
+;;         (buffer-quit-function
+;;          (funcall buffer-quit-function))
+;;         ((string-match "^ \\*" (buffer-name (current-buffer)))
+;;          (bury-buffer))))
 
-(defun my-emacs-is-not-kill ()
-  (interactive)
-  (message "Gee, I dunno Brain..."))
-
-(if is-mac (global-set-key (kbd "M-q") 'my-emacs-is-not-kill))
+(if is-mac (global-set-key (kbd "M-q") (λ (message "Gee, I dunno Brain..."))))
 
 
 (provide 'my-settings)

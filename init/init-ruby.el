@@ -23,6 +23,7 @@
     (setq enh-ruby-check-syntax nil)
 
 	(add-hook 'enh-ruby-mode-hook 'enable-tab-width-2)
+    (add-hook! 'enh-ruby-mode-hook (set-build-command "rake %s" "Rakefile"))
 
     (define-key enh-ruby-mode-map [?\n] nil)
 
@@ -54,7 +55,8 @@
 
     (define-minor-mode rake-mode
       "Buffer local minor mode for rake files"
-      :lighter " Rake")
+      :lighter " Rake"
+      (my--init-yas-mode 'rake-mode))
 
     (use-package inf-ruby
       :commands (inf-ruby inf-ruby-console-auto)

@@ -14,6 +14,7 @@
 (depends-on "smex")
 (depends-on "floobits")
 (depends-on "pos-tip")
+(depends-on "vim-empty-lines-mode")
 
 ;; OSX
 (depends-on "exec-path-from-shell")
@@ -35,7 +36,7 @@
 (depends-on "smartparens")
 (depends-on "yasnippet")
 (depends-on "git-gutter-fringe+")
-(depends-on "ace-jump-mode")
+;; (depends-on "ace-jump-mode")
 (depends-on "pcre2el")
 (depends-on "emr")
 (depends-on "smart-forward")
@@ -60,8 +61,10 @@
 ;;(depends-on "jedi")
 
 ;; Eeeevil
-(depends-on "god-mode")
+;;(depends-on "god-mode")
 (depends-on "evil")
+(depends-on "evil-search-highlight-persist")
+(depends-on "evil-commentary")
 (depends-on "evil-matchit")
 (depends-on "evil-surround")
 (depends-on "evil-numbers")
@@ -71,7 +74,7 @@
 (depends-on "evil-indent-textobject")
 (depends-on "evil-jumper")
 (depends-on "evil-god-state")
-(depends-on "evil-nerd-commenter")
+;;(depends-on "evil-nerd-commenter")
 (depends-on "evil-snipe")
 ;; evil-nerd-commenter chokes if it's installed via cask for some reason...
 

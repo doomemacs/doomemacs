@@ -7,13 +7,15 @@
       "Buffer local minor mode for Love2D"
       :init-value nil
       :lighter " <3"
-      :keymap (make-sparse-keymap))
-    (associate-minor-mode "[\\.-]love/.+\\.lua$" 'love-mode)
+      :keymap (make-sparse-keymap)
+      (my--init-yas-mode 'love-mode))
+    (add-hook! 'lua-mode-hook
+               (setq lua-indent-level tab-width)
+               (set-build-command "open -a love.app '%s'" "main.lua")
+               (when (project-has-files "main.lua")
+                 (love-mode +1)))
 
-    (add-hook 'lua-mode-hook 'enable-tab-width-2)
-    (add-hook! 'lua-mode-hook (setq lua-indent-level tab-width))
-
-    (add-hook! 'love-mode-hook (setq my-build-command (format "open -a love.app %s" (my--project-root))))))
+    (add-hook 'lua-mode-hook 'enable-tab-width-2)))
 
 
 (provide 'init-lua)

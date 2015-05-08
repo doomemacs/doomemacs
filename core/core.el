@@ -1,7 +1,6 @@
 (defconst is-mac     (eq system-type 'darwin))
 (defconst is-linux   (eq system-type 'gnu/linux))
-(defconst is-windows (or (eq system-type 'ms-dos)
-                         (eq system-type 'windows-nt)))
+(defconst is-windows (eq system-type 'windows-nt))
 
 (when is-linux (add-to-list 'load-path "~/.cask"))
 (setq use-package-verbose DEBUG-MODE)
@@ -34,8 +33,10 @@
   (electric-indent-mode -1)    ; In case of emacs >24.4
 
   ;;; window layout undo/redo
+  (setq winner-boring-buffers '("*Completions*" "*Compile-Log*" "*inferior-lisp*"
+                                "*Fuzzy Completions*" "*Apropos*" "*Help*" "*cvs*"
+                                "*Buffer List*" "*Ibuffer*" "*esh command on file*"))
   (winner-mode 1)
-  (setq winner-boring-buffers '("*Completions*" "*Help*"))
 
   ;;; UTF-8 please
   (setq locale-coding-system 'utf-8)    ; pretty
@@ -59,8 +60,8 @@
 
   (setq-default fill-column 80)
 
-  ;; minibufferception? Nay!
-  (setq-default enable-recursive-minibuffers nil)
+  ;; minibufferception? Yay!
+  (setq-default enable-recursive-minibuffers t)
 
   ;; Sane scroll settings
   (setq scroll-margin 5)
@@ -100,6 +101,19 @@
   ;; Fixes C-i's synonymity with TAB
   (keyboard-translate ?\C-i ?\H-i)
 
+  ;; Save clipboard contents into kill-ring before replace them
+  (setq save-interprogram-paste-before-kill t)
+
+  ;; don't let the cursor go into minibuffer prompt
+  ;; Tip taken from Xah Lee: http://ergoemacs.org/emacs/emacs_stop_cursor_enter_prompt.html
+  (setq minibuffer-prompt-properties
+        '(read-only t point-entered minibuffer-avoid-prompt face minibuffer-prompt))
+
+  ;; remove annoying ellipsis when printing sexp in message buffer
+  (setq eval-expression-print-length nil
+        eval-expression-print-level nil)
+
+
   ;;;; Backup ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;; Disable all backups (that's what git/dropbox are for)
   (setq bookmark-save-flag        t)
@@ -114,30 +128,27 @@
   ;; Remember undo history
   (setq-default undo-tree-auto-save-history t)
   (setq-default undo-tree-history-directory-alist `(("." . ,my-tmp-dir-undo)))
-  ;;;; Save history across sessions
-  (setq savehist-additional-variables '(search ring regexp-search-ring))
-  (setq savehist-file (concat my-tmp-dir "savehist")) ; keep the home clean
+
+  ;; Save history across sessions
+  (require 'savehist)
+  (setq savehist-file (concat my-tmp-dir "savehist")  ; keep the home clean
+        savehist-additional-variables '(kill-ring mark-ring global-mark-ring search-ring regexp-search-ring extended-command-history)
+        history-length 1000)
   (savehist-mode 1)
 
   ;; Save cursor location across sessions
-  (use-package saveplace
-    :init
-    (add-hook 'find-file-hook ; activate save-place for files that exist
-      (lambda()
-        (if (file-exists-p buffer-file-name)
-            (setq save-place t))))
-    :config
-    (setq save-place-file (concat my-tmp-dir "saveplace")))
+  (require 'saveplace)
+  (setq-default save-place-file (concat my-tmp-dir "saveplace"))
+  ;; activate save-place only for files that exist
+  (add-hook 'find-file-hook (lambda() (if (file-exists-p buffer-file-name) (setq save-place t))))
 
-  (use-package recentf
-    :config
-    (progn
-      (setq recentf-max-menu-items 0)
-      (setq recentf-max-saved-items 1000)
-      (setq recentf-auto-cleanup 'never)
-      (setq recentf-save-file (concat my-tmp-dir "recentf"))
-      (setq recentf-exclude '("/tmp/" "/ssh:" "\\.?ido\\.last\\'" "\\.revive\\'", "/TAGS\\'"))
-      (recentf-mode 1)))
+  (require 'recentf)
+  (setq recentf-save-file (concat my-tmp-dir "recentf"))
+  (setq recentf-exclude '("/tmp/" "/ssh:" "\\.?ido\\.last\\'" "\\.revive\\'", "/TAGS\\'"))
+  (setq recentf-max-menu-items 0)
+  (setq recentf-max-saved-items 1000)
+  (setq recentf-auto-cleanup 'never)
+  (recentf-mode 1)
 
   ;; What we do every night, Pinkie...
   (defun display-startup-echo-area-message ()
@@ -154,41 +165,75 @@
 
   (setq delete-trailing-lines nil)
   (add-hook 'makefile-mode-hook 'indent-tabs-mode) ; Use normal tabs in makefiles
+
+  ;; Automatic minor modes ;;;;;;;;;;;
+  (require 'f)
+  (defvar project-root-files '(".git" ".hg" ".svn" "README" "README.md"))
+  (defun project-root (&optional strict-p)
+    "Get the path to the root of your project. Uses `project-root-files' to
+determine if a directory is a project."
+    (catch 'found
+      (f-traverse-upwards
+       (lambda (path)
+         (let ((path (file-truename path))
+               (home (file-truename "~")))
+           (if (f-equal? home path)
+               (throw 'found (if strict-p nil default-directory))
+             (dolist (file project-root-files)
+               (when (f-exists? (expand-file-name file path))
+                 (throw 'found path)))))) default-directory)
+      default-directory))
+
+  (defun project-has-files (&rest files)
+    "Return non-nil if `file' exists in the project root."
+    (let ((root (project-root))
+          found-p file)
+      (while (and files (not found-p))
+        (setq file (pop files))
+        (setq found-p (f-exists? (project-path-to file root))))
+      found-p))
+
+  (defun project-path-to (file &optional root)
+    (let ((root (or root (project-root))))
+      (expand-file-name file root)))
+
+  (defun project-name ()
+    (file-name-nondirectory (directory-file-name (project-root))))
+
+  (defvar auto-minor-mode-alist ()
+    "Alist of filename patterns vs correpsonding minor mode functions,
+see `auto-mode-alist' All elements of this alist are checked, meaning
+you can enable multiple minor modes for the same regexp.")
+  (defun enable-minor-mode-based-on-path ()
+    "check file name against auto-minor-mode-alist to enable minor modes
+the checking happens for all pairs in auto-minor-mode-alist"
+    (when buffer-file-name
+      (let ((name buffer-file-name)
+            (remote-id (file-remote-p buffer-file-name))
+            (alist auto-minor-mode-alist))
+        ;; Remove backup-suffixes from file name.
+        (setq name (file-name-sans-versions name))
+        ;; Remove remote file name identification.
+        (when (and (stringp remote-id)
+                   (string-match-p (regexp-quote remote-id) name))
+          (setq name (substring name (match-end 0))))
+        (while (and alist (caar alist) (cdar alist))
+          (if (string-match (caar alist) name)
+              (funcall (cdar alist) 1))
+          (setq alist (cdr alist))))))
+  (add-hook 'find-file-hook 'enable-minor-mode-based-on-path)
+
   ;; Make sure scratch buffer is always "in a project"
-  (defun set-project-scratch-buffer ()
-    (let ((buffer (get-buffer "*scratch*"))
-          (pwd (my--project-root)))
-      (when (buffer-live-p buffer)
-        (save-window-excursion
-          (switch-to-buffer buffer)
-          (unless (eq (my--project-root) pwd)
-            (cd pwd)
-            (rename-buffer (format "*scratch* (%s)" (file-name-nondirectory (directory-file-name pwd)))))))))
-  (add-hook 'find-file-hook 'set-project-scratch-buffer)
-
-
-  ;;;; Behavior adjustments ;;;;;;;;;;;;;;;;
-  ;; Skip special buffers on next/previous-buffer or kill-this-buffer
-  (defadvice next-buffer (after void-messages-buffer-in-next-buffer activate)
-    (let ((buffer-name (buffer-name)))
-      (when (and (string-match-p "\\`\\(\\*.+\\*\\|TAGS\\)$" buffer-name)
-                 (not (string-match-p "\\`\\*scratch*" buffer-name)))
-        (next-buffer))))
-  (defadvice previous-buffer (after avoid-messages-buffer-in-previous-buffer activate)
-    (let ((buffer-name (buffer-name)))
-      (when (and (string-match-p "\\`\\(\\*.+\\*\\|TAGS\\)$" buffer-name)
-                 (not (string-match-p "\\`\\*scratch*" buffer-name)))
-        (previous-buffer))))
-  (defadvice kill-this-buffer (after kill-this-buffer-no-switch-to-special-buffers activate)
-    (let ((buffer-name (buffer-name)))
-      (if (and (string-match-p "^\\*.+\\*" buffer-name)
-               (not (string-match-p "^\\*scratch\\*" buffer-name)))
-          (previous-buffer))))
-  ;; Don't kill the scratch buffer, just empty and bury it
-  (defadvice kill-this-buffer (around kill-this-buffer-or-empty-scratch activate)
-    (if (string-match-p "^\\*scratch\\*" (buffer-name))
-        (bury-buffer)
-      ad-do-it))
+  (defun project-create-scratch-buffer ()
+    (let* ((scratch-buffer (get-buffer-create "*scratch*"))
+           (project-name (project-name))
+           (root (project-root)))
+      (save-window-excursion
+        (switch-to-buffer scratch-buffer)
+        (erase-buffer)
+        (cd root)
+        (insert ";; Project: " project-name "\n\n"))))
+  (add-hook 'find-file-hook 'project-create-scratch-buffer)
 
 
   ;;;; Utility plugins ;;;;;;;;;;;;;;;;;;
@@ -220,26 +265,20 @@
       (push '("^\\*scratch\\*.*" :regexp t :stick t) popwin:special-display-config)
       (push '(image-mode) popwin:special-display-config)
 
-      (after "evil"
-        (evil-ex-define-cmd "l[ast]" 'popwin:popup-last-buffer)
-        (evil-ex-define-cmd "m[sg]" 'popwin:messages))
-
       (defun popwin:toggle-popup-window ()
         (interactive)
         (if (popwin:popup-window-live-p)
             (popwin:close-popup-window)
           (popwin:popup-last-buffer)))))
 
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-  ;;;; Start the party ;;;;;;;;;;;;;;;;;;;
-  (if is-mac (require 'core-osx))
-  ;; (if is-linux (require 'core-linux))
-  ;; (if is-windows (require 'core-windows))
+  (cond (is-mac (require 'core-osx))
+        (is-linux (require 'core-linux))
+        (is-windows (require 'core-windows)))
 
-  (use-package server
-    :config
-    (unless (server-running-p)
-      (server-start))))
+  (require 'server)
+  (unless (server-running-p) (server-start)))
 
 
 (provide 'core)

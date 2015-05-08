@@ -1,21 +1,24 @@
 (defalias 'exmap 'evil-ex-define-cmd)
 
-(exmap "full[scr]"       'toggle-frame-fullscreen)
+(exmap "l[ast]"          'popwin:popup-last-buffer)
+(exmap "m[sg]"           'popwin:messages)
+
+(exmap "full[scr]"       'toggle-fullscreen)
 (exmap "ini"             'my:init-files)
 (exmap "n[otes]"         'my:notes)
 (exmap "recompile"       'my:byte-compile)
 (exmap "cd"              'my:cd)
 (exmap "en[ew]"          'my:create-file)
-(exmap "ren[ame]"        'my:rename-this-file) ; Rename file . Bang: Delete old one
+(exmap "ren[ame]"        'my:rename-this-file) ; rename [NEWNAME]  # rename file
 (exmap "al[ign]"         'my:align)
 (exmap "retab"           'my:retab)
 (exmap "sq[uint]"        'my:narrow-indirect)  ; Narrow buffer to selection
 (exmap "x"               'my:scratch-buffer)
 
-(exmap "k[ill]"          'kill-this-buffer)      ; Kill current buffer
-(exmap "k[ill]o"         'my-cleanup-buffers)   ; Kill current project buffers
-(exmap "k[ill]all"       'my:kill-buffers)    ; Kill all buffers (bang = project buffers only)
-(exmap "k[ill]buried"    'my:kill-buried-buffers)    ; Kill all buffers (bang = project buffers only)
+(exmap "k[ill]"          'kill-this-buffer)        ; Kill current buffer
+(exmap "k[ill]o"         'my-cleanup-buffers)      ; Kill current project buffers
+(exmap "k[ill]all"       'my:kill-buffers)         ; Kill all buffers (bang = project buffers only)
+(exmap "k[ill]buried"    'my:kill-buried-buffers)  ; Kill all buffers (bang = project buffers only)
 
 (exmap "ma[ke]"          'my:build)
 

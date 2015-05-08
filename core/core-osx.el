@@ -25,32 +25,12 @@
     (unless (featurep 'ns) ad-do-it)))
 
 ;; Send current file to OSX apps
-(defun my--open-file-with (path &optional appName)
-  (if (and appName
-           (stringp appName)
-           (not (string= "" appName)))
-      (setq appName (concat "-a " appName ".app")))
-  (shell-command (concat "open " appName " " (shell-quote-argument path))))
-
-(defun my-open-with (appName file)
-  (interactive "sApp name: ")
-  (my--open-file-with file appName))
-
-(defun my-send-to-transmit (file)
-  (interactive "f")
-  (my-open-with "Transmit" file))
-
-(defun my-send-to-launchbar (file)
-  (interactive "f")
-  (my-open-with "LaunchBar" file))
-
-(defun my-send-dir-to-launchbar (dir)
-  (interactive "D")
-  (my--open-file-with dir "LaunchBar"))
-
-(defun my-send-dir-to-finder (dir)
-  (interactive "D")
-  (my--open-file-with dir "Finder"))
+(defun my-open-with (&optional app-name path)
+  (interactive)
+  (let ((app-name (if app-name (concat "-p " app-name)))
+        (path (or path (if (eq major-mode 'dired-mode) (dired-get-file-for-visit) (buffer-file-name)))))
+    (shell-command (concat "open " app-name " " (shell-quote-argument path)))))
 
 
 (provide 'core-osx)
+;;; core-osx.el ends here

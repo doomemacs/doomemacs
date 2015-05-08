@@ -1,7 +1,7 @@
 (defun my-java-project-package ()
   (if (eq major-mode 'java-mode)
     (s-chop-suffix "." (s-replace "/" "." (f-dirname (f-relative (buffer-file-name)
-                                                                 (concat (my--project-root) "src/")))))
+                                                                 (concat (project-root) "src/")))))
     ""))
 
 (defun my-java-class-name ()
@@ -37,7 +37,7 @@
   :defer t
   :init
   (add-hook! 'java-mode-hook
-             (when (f-exists? (concat (my--project-root) "AndroidManifest.xml"))
+             (when (project-has-files "AndroidManifest.xml")
                (android-mode +1))))
 
 (use-package groovy-mode :mode "\\.gradle$")

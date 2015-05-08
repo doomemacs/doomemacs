@@ -1,11 +1,4 @@
 
-(defmacro -defreplace (name search replace)
-  `(evil-define-operator ,(make-symbol (concat "replace:" (symbol-name name))) (beg end)
-    :type inclusive
-    :repeat nil
-    (interactive "<r>")
-    (replace-regexp ,search ,replace t beg end)))
-
 ;;;; HTML ;;;;
 ;; Replace smart quotes and other MS Word verbiage into plain text
 (defun replace:plain-textify (beg end)

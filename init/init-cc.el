@@ -159,8 +159,6 @@
     ;; Tools/defuns ;;;;;;;;;;;;;;;;;;;;;;;;
 
     (push '("*compilation*" :height 0.5 :position bottom :noselect t) popwin:special-display-config)
-
-    (add-hook! 'c++-mode-hook (setq my-make-command "make %s"))
     ))
 
 

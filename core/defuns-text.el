@@ -57,16 +57,21 @@ whitespace as possible, or just one char if that's not possible."
         ((or indent-tabs-mode
              (= (point-at-bol) (point)))
          (call-interactively 'backward-delete-char))
-        ;; Otherwise, delete up to the nearest tab column
-        (t (let ((movement (% (current-column) tab-width))
-                 (p (point)))
-             (when (= movement 0)
-               (setq movement tab-width))
-             (save-match-data
-               (if (string-match "\\w*\\(\\s-+\\)$"
-                                 (buffer-substring-no-properties (- p movement) p))
-                   (backward-delete-char (- (match-end 1) (match-beginning 1)))
-                 (backward-delete-char-untabify 1)))))))
+        ;; Delete up to the nearest tab column IF only whitespace between point
+        ;; and bol.
+        ((looking-back "^[\\t ]*" (point-at-bol))
+         (let ((movement (% (current-column) tab-width))
+               (p (point)))
+           (when (= movement 0)
+             (setq movement tab-width))
+           (save-match-data
+             (if (string-match "\\w*\\(\\s-+\\)$"
+                               (buffer-substring-no-properties (- p movement) p))
+                 (backward-delete-char (- (match-end 1) (match-beginning 1)))
+               (backward-delete-char-untabify 1)))))
+        ;; Otherwise do a regular delete
+        (t
+         (backward-delete-char-untabify 1))))
 
 ;;;###autoload
 (defun my.dumb-indent ()

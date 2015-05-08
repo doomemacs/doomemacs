@@ -100,3 +100,36 @@ gets killed.")
           (if (s-matches? regexp (buffer-name b))
               (kill-buffer b)))
         (if buffer-list buffer-list (buffer-list))))
+
+;; From spacemacs <https://github.com/syl20bnr/spacemacs/blob/master/spacemacs/funcs.el>
+;;;###autoload
+(defun my-next-real-buffer ()
+  "Switch to the next buffer and avoid special buffers."
+  (interactive)
+  (switch-to-next-buffer)
+  (let ((i 0))
+    (while (and (< i 100) (string-equal "*" (substring (buffer-name) 0 1)))
+      (1+ i)
+      (switch-to-next-buffer))))
+
+;;;###autoload
+(defun my-previous-real-buffer ()
+  "Switch to the previous buffer and avoid special buffers."
+  (interactive)
+  (switch-to-prev-buffer)
+  (let ((i 0))
+    (while (and (< i 100) (string-equal "*" (substring (buffer-name) 0 1)))
+      (1+ i)
+      (switch-to-prev-buffer))))
+
+;;;###autoload
+(defun my-kill-real-buffer ()
+  "Kill buffer (but only bury scratch buffer)"
+  (interactive)
+  (let ((bname (buffer-name)))
+    (cond ((string-match-p "^\\*scratch\\*" bname)
+           (erase-buffer)
+           (bury-buffer))
+          ((string-equal "*" (substring bname 0 1))
+           (previous-buffer))
+          (t (kill-this-buffer)))))

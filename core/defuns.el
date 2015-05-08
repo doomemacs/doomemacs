@@ -1,41 +1,29 @@
 ;; Convenience ;;;;;;;;;;;;;;;;;;;;;
 (defun associate-mode (match mode)
+  "Associate a major mode with a filepath through `auto-mode-alist'"
   (add-to-list 'auto-mode-alist (cons match mode)))
 
 (defun associate-minor-mode (match mode)
+  "Associate a minor mode with a filepath through `auto-minor-mode-alist'"
   (add-to-list 'auto-minor-mode-alist (cons match mode)))
 
-;; Automatic minor modes ;;;;;;;;;;;
-(defvar auto-minor-mode-alist ()
-  "Alist of filename patterns vs correpsonding minor mode functions,
-see `auto-mode-alist' All elements of this alist are checked, meaning
-you can enable multiple minor modes for the same regexp.")
-(defun enable-minor-mode-based-on-extension ()
-  "check file name against auto-minor-mode-alist to enable minor modes
-the checking happens for all pairs in auto-minor-mode-alist"
-  (when buffer-file-name
-    (let ((name buffer-file-name)
-          (remote-id (file-remote-p buffer-file-name))
-          (alist auto-minor-mode-alist))
-      ;; Remove backup-suffixes from file name.
-      (setq name (file-name-sans-versions name))
-      ;; Remove remote file name identification.
-      (when (and (stringp remote-id)
-                 (string-match-p (regexp-quote remote-id) name))
-        (setq name (substring name (match-end 0))))
-      (while (and alist (caar alist) (cdar alist))
-        (if (string-match (caar alist) name)
-            (funcall (cdar alist) 1))
-        (setq alist (cdr alist))))))
-(add-hook 'find-file-hook 'enable-minor-mode-based-on-extension)
-
 (defmacro λ (&rest body)
+  "A shortcut for: `(lambda () (interactive) ,@body)"
   `(lambda () (interactive) ,@body))
 
+(defun add-hooks (hooks funs)
+  "Add multiple hooks to multiple funs."
+  (let ((funs (if (listp funs) funs (list funs)))
+        (hooks (if (listp hooks) hooks (list hooks))))
+    (dolist (hook hooks)
+      (dolist (fun funs)
+        (add-hook hook fun)))))
+
 (defmacro add-hook! (hook &rest body)
+  "A shortcut macro for `add-hook' that auto-wraps `body' in a lambda"
   `(add-hook ,hook (lambda() ,@body)))
 
-;; Backwards compatibility
+;; Backwards compatible `with-eval-after-load'
 (unless (fboundp 'with-eval-after-load)
   (defmacro with-eval-after-load (file &rest body)
     `(eval-after-load ,file
@@ -52,13 +40,6 @@ the checking happens for all pairs in auto-minor-mode-alist"
        'with-no-warnings)
     (with-eval-after-load ',feature ,@forms)))
 
-(after "projectile"
-  (defun my--project-root (&optional force-pwd)
-    (if (and (not force-pwd)
-             (projectile-project-p))
-        (projectile-project-root)
-      default-directory)))
-
 
 ;; Keybindings ;;;;;;;;;;;;;;;;;;;;;;;;;
 (defun bind (&rest keys)
@@ -73,9 +54,9 @@ the checking happens for all pairs in auto-minor-mode-alist"
             (t
              (if (stringp key)
                  (setq key (kbd key)))
-             (setq def (pop keys))
-             (when (null def)
+             (when (eq (length keys) 0)
                (user-error "No definition for '%s' keybinding" key))
+             (setq def (pop keys))
              (if (null state-list)
                  (if (null keymap)
                      (global-set-key key def)
@@ -118,12 +99,17 @@ key-chord-define."
 (defun disable-final-newline ()
   (set (make-local-variable 'require-final-newline) nil))
 
-(defun load-init-files ()
-  ;; (mapc 'require io-modules)
-  (dolist (module my-modules)
-    (message "%s" (symbol-name module))
-    (with-demoted-errors "#### ERROR: %s"
-      (require module))))
+
+;; Font Defuns ;;;;;;;;;;;;;;;;;;;;;;;;;
+(defun cycle-font (&optional i)
+  "Cycle between fonts specified in *fonts in init.el"
+  (interactive)
+  (if (numberp i)
+      (setq my/cycle-font-i i)
+    (if (>= my/cycle-font-i (1- (length *fonts)))
+        (setq my/cycle-font-i 0)
+      (cl-incf my/cycle-font-i)))
+  (set-frame-font (nth my/cycle-font-i *fonts)))
 
 
 ;;;; Global Defuns ;;;;;;;;;;;;;;;;;;;;;
@@ -137,6 +123,40 @@ to abort the minibuffer."
     (when (get-buffer "*Completions*")
       (delete-windows-on "*Completions*"))
     (abort-recursive-edit)))
+
+(defun my--line-at-click ()
+  "Determine the line number at click"
+  (save-excursion
+    (let ((click-y (cddr (mouse-position)))
+          (debug-on-error t)
+          (line-move-visual t))
+      (goto-char (window-start))
+      (next-line (1- click-y))
+      (1+ (line-number-at-pos)))))
+
+(defun my-select-linum (event)
+  "Set point as *linum-mdown-line*"
+  (interactive "e")
+  (mouse-select-window event)
+  (goto-line (my--line-at-click))
+  (evil-visual-line)
+  (setq *linum-mdown-line*
+        (line-number-at-pos)))
+
+(defun my-select-block ()
+  "Select the current block of text between blank lines."
+  (interactive)
+  (let (p1 p2)
+    (progn
+      (if (re-search-backward "\n[ \t]*\n" nil "move")
+          (progn (re-search-forward "\n[ \t]*\n")
+                 (setq p1 (point)))
+        (setq p1 (point)))
+      (if (re-search-forward "\n[ \t]*\n" nil "move")
+          (progn (re-search-backward "\n[ \t]*\n")
+                 (setq p2 (point)))
+        (setq p2 (point))))
+    (set-mark p1)))
 
 
 (provide 'defuns)

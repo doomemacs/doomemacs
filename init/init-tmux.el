@@ -18,14 +18,14 @@
       (message "[Tmux] %s" command)))
 
   (evil-define-command my:tmux-chdir (&optional path bang)
-    "CDs in tmux using `my--project-root'"
+    "CDs in tmux using `project-root'"
     (interactive "<f><!>")
     (let ((dir (shell-quote-argument
                 (if (and path (not (s-blank? path)))
                     (if (file-directory-p path)
                         (file-truename path)
                       (error "Directory doesn't exist %s" path))
-                  (my--project-root bang)))))
+                  (if bang default-directory (project-root))))))
       (my--tmux-send (format "C-u cd Space %s Enter" (shell-quote-argument dir)))
       (when (evil-ex-p)
         (message "[Tmux] cd %s" dir)))))

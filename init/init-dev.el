@@ -35,21 +35,23 @@
 ;; Code building
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defvar my-build-command "make %s")
+(defvar my-build-command '("make %s" . "Makefile"))
 (make-variable-buffer-local 'my-build-command)
-(add-hook! 'enh-ruby-mode-hook (setq my-build-command "rake %s"))
+
+(defun set-build-command (command &optional file)
+  (setq my-build-command (command . file)))
 
 (evil-define-command my:build (arg)
   "Call a build command in the current directory.
 If ARG is nil this function calls `recompile', otherwise it calls
 `compile' passing ARG as build command."
   (interactive "<sh>")
-  (let ((makepath (f-traverse-upwards
-                   (lambda (path)
-                     (f-exists? (f-expand "Makefile" path)))
-                   default-directory)))
-    (if makepath
-        (compile (format "cd '%s' && %s" makepath (format my-build-command (or arg ""))))
+  (when (null my-build-command)
+    (user-error "No build command was set"))
+  (let ((build-file (cdr my-build-command))
+        (build-cmd (car my-build-command)))
+    (if (project-has-files build-file)
+        (compile (format "cd '%s' && %s" build-file (format build-cmd (or arg ""))))
       (error "Could not find Makefile"))))
 
 

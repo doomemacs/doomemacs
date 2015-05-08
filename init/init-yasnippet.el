@@ -14,7 +14,6 @@
     (add-hook 'snippet-mode-hook 'yas-minor-mode)
     (add-hook 'text-mode-hook 'yas-minor-mode)
     (add-hook 'prog-mode-hook 'yas-minor-mode)
-    (add-hook 'emacs-lisp-mode-hook 'yas-minor-mode)
     ;; (add-hook 'markdown-mode-hook 'yas-minor-mode)
     (add-hook 'org-mode-hook 'yas-minor-mode))
   :config
@@ -145,13 +144,21 @@
         (when (and field (> (point) sof))
           (delete-region sof (point)))))
 
+    (defun my--init-yas-mode (&rest modes)
+      ;; Yasnippet 0.8.1+
+      (when (boundp 'yas-extra-modes)
+        (if (symbol-value mode)
+            (dolist (mode modes)
+              (yas-activate-extra-mode mode))
+          (setq yas-extra-modes (delq mode yas-extra-modes)))))
+
     ;; keybinds
     (bind yas-keymap
-          "C-e"        'my/yas-goto-end-of-field
-          "C-a"        'my/yas-goto-start-of-field
-          "<M-right>"  'my/yas-goto-end-of-field
-          "<M-left>"   'my/yas-goto-start-of-field
-          "<S-tab>"    'yas-prev-field
+          "C-e"           'my/yas-goto-end-of-field
+          "C-a"           'my/yas-goto-start-of-field
+          "<M-right>"     'my/yas-goto-end-of-field
+          "<M-left>"      'my/yas-goto-start-of-field
+          "<S-tab>"       'yas-prev-field
           "<M-backspace>" 'my/yas-clear-to-sof
 
           [backspace]  'my/yas-backspace

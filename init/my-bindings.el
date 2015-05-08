@@ -44,41 +44,45 @@
       "M"   'helm-projectile-recentf ; recent PROJECT files
       "]"   'helm-etags-select
       "a"   'helm-projectile-find-other-file
+      "b"   'my:build
       "e"   'ido-find-file
       "g"   'git-gutter+-show-hunk
       "h"   'helm-apropos
       "m"   'helm-recentf
       "p"   'helm-projectile-switch-project
-      "y"   'helm-show-kill-ring
-      "r"   'emr-show-refactor-menu)   ; init-dev.el
+      "qq"  'evil-save-and-quit
+      "QQ"  'evil-quit-all
+      "r"   'emr-show-refactor-menu   ; init-dev.el
+      "y"   'helm-show-kill-ring)
 
 ;; <localleader>
 (bind my-localleader-map
-      "\\" 'neotree-toggle
-      ";"  'linum-mode
-      "="  'toggle-transparency
-      "E"  'evil-emacs-state
+      "\\"  'neotree-toggle
+      ";"   'linum-mode
+      "="   'toggle-transparency
+      "E"   'evil-emacs-state
 
-      "of"  (λ (my-send-dir-to-finder default-directory))
-      "oF"  'my-send-dir-to-finder
-      "ou"  (λ (my-send-to-transmit buffer-file-name))
-      "oU"  'my-send-to-transmit
-      "ol"  (λ (my-send-to-launchbar buffer-file-name))
-      "oL"  'my-send-to-launchbar
+      "oo"  'my-open-with
+      "of"  (λ (my-open-with "Finder" default-directory))
+      "oF"  (λ (my-open-with "Finder" (project-root)))
+      "ou"  (λ (my-open-with "Transmit"))
+      "oU"  (λ (my-open-with "Transmit" default-directory))
+      "ol"  (λ (my-open-with "LaunchBar"))
+      "oL"  (λ (my-open-with "LaunchBar" default-directory))
 
       ;; tmux: cd (default-directory)
       "ot"  (λ (my:tmux-chdir nil t))
       ;; tmux: cd [project root]
       "oT"  'my:tmux-chdir
 
-      "]"    'next-buffer
-      "["    'previous-buffer
+      "]"   'next-buffer
+      "["   'previous-buffer
 
-      "g"    'git-gutter+-show-hunk
-      "e"    (λ (flycheck-buffer) (flycheck-list-errors))
-      "p"    'helm-show-kill-ring
-      "b"    'helm-projectile-switch-to-buffer
-      "w"    'helm-wg)
+      "g"   'git-gutter+-show-hunk
+      "e"   (λ (flycheck-buffer) (flycheck-list-errors))
+      "p"   'helm-show-kill-ring
+      "b"   'helm-projectile-switch-to-buffer
+      "w"   'helm-wg)
 
 
 (bind 'normal
@@ -87,10 +91,10 @@
 
       ;; behave  like D and C; yank to end of line
       "Y"       (λ (evil-yank (point) (point-at-eol)))
-      "zx"     'kill-this-buffer
+      "zx"     'my-kill-real-buffer
       "ZX"     'bury-buffer
-      "]b"     'next-buffer
-      "[b"     'previous-buffer
+      "]b"     'my-next-real-buffer
+      "[b"     'my-previous-real-buffer
       "]w"     'wg-switch-to-workgroup-right
       "[w"     'wg-switch-to-workgroup-left
 
@@ -117,8 +121,8 @@
       "]g"   'git-gutter+-next-hunk
       "[g"   'git-gutter+-previous-hunk
 
-      "]e"   'next-error
-      "[e"   'previous-error
+      "]e"   (λ (call-interactively (if flycheck-mode 'flycheck-next-error 'next-error)))
+      "[e"   (λ (call-interactively (if flycheck-mode 'flycheck-previous-error 'previous-error)))
 
       "]\\"  'er/expand-region
       "[\\"  'er/contract-region
@@ -169,6 +173,38 @@
         "]]" 'help-go-forward
         "[[" 'help-go-back))
 
+(bind '(insert normal)
+      ;; Textmate-esque insert-line before/after
+      (kbd "<M-return>")    'evil-open-below
+      (kbd "<S-M-return>")  'evil-open-above)
+
+(when is-mac
+  ;; Restore text nav keys
+  (bind (kbd "<A-left>") 'backward-word
+        (kbd "<A-right>") 'forward-word
+        (kbd "<M-backspace>") 'my.backward-kill-to-bol-and-indent
+        (kbd "M-a") 'mark-whole-buffer
+        (kbd "M-c") 'evil-yank
+        (kbd "M-v") 'evil-paste-after
+        (kbd "M-s") 'save-buffer))
+
+;; Fix osx keymappings and then some
+(use-package smart-forward
+  :config
+  (bind 'insert
+        "<M-left>"   'my.move-to-bol
+        "<M-right>"  'my.move-to-eol
+        "<M-up>"     'beginning-of-buffer
+        "<M-down>"   'end-of-buffer
+        "<A-up>"     'smart-up
+        "<A-down>"   'smart-down))
+
+;; Line selection via linum
+(bind "<left-margin> <down-mouse-1>"    'my-select-linum
+      "<left-margin> <mouse-1>"         'my-select-linum
+      "<left-margin> <drag-mouse-1>"    'my-select-linum
+      "<left-margin> <double-mouse-1>"  'my-select-block)
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Keymap fixes                       ;;
@@ -205,32 +241,18 @@
       ;; Fixes delete
       (kbd "<kp-delete>")   'delete-char)
 
-(bind '(insert normal)
-      ;; Textmate-esque insert-line before/after
-      (kbd "<M-return>")    'evil-open-below
-      (kbd "<S-M-return>")  'evil-open-above)
+;; Make ESC quit all the things
+(dolist (map (list minibuffer-local-map
+                   minibuffer-local-ns-map
+                   minibuffer-local-completion-map
+                   minibuffer-local-must-match-map
+                   minibuffer-local-isearch-map))
+  (bind map "<escape>" 'keyboard-escape-quit))
 
-(when is-mac
-  ;; Restore text nav keys
-  (bind (kbd "<A-left>") 'backward-word
-        (kbd "<A-right>") 'forward-word
-        (kbd "<M-backspace>") 'my.backward-kill-to-bol-and-indent
-        (kbd "M-a") 'mark-whole-buffer
-        (kbd "M-c") 'evil-yank
-        (kbd "M-v") 'evil-paste-after
-        (kbd "M-s") 'save-buffer))
+(dolist (map (list evil-ex-search-keymap minibuffer-local-map))
+  (bind map "\C-w" 'evil-delete-backward-word))
 
-;; Fix osx keymappings and then some
-(use-package smart-forward
-  :config
-  (bind 'insert
-        "<M-left>"   'my.move-to-bol
-        "<M-right>"  'my.move-to-eol
-        "<M-up>"     'beginning-of-buffer
-        "<M-down>"   'end-of-buffer
-        "<A-up>"     'smart-up
-        "<A-down>"   'smart-down))
-
+(global-unset-key (kbd "<drag-mouse-1>"))
 
 (provide 'my-bindings)
 ;;; my-bindings.el ends here

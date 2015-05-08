@@ -65,6 +65,17 @@
           (kbd "M-e") 'emmet-expand-yas
           (kbd "M-E") 'emmet-expand-line)))
 
+(define-minor-mode jekyll-mode
+  :init-value nil
+  :lighter " :{"
+  :keymap (make-sparse-keymap)
+  (my--init-yas-mode 'jekyll-mode))
+(associate-minor-mode "/_\\(layouts\\|posts\\)/.+$" 'jekyll-mode)
+(add-hooks '(web-mode-hook scss-mode-hook html-mode-hook markdown-mode markdown-mode-hook)
+           (lambda ()
+             (when (project-has-files "_config.yml" "_layouts")
+               (jekyll-mode 1))))
+
 
 (provide 'init-web)
 ;;; init-web.el ends here

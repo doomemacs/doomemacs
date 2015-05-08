@@ -1,16 +1,9 @@
 
 ;; String Defuns ;;;;;;;;;;;;;;;;;;;;;;;
 ;;;###autoload
-(after "s"
-  (defun s-count-lines (s)
-    "Get number of lines in a string"
-    (length (s-lines s))))
-
-;; File Defuns ;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;###autoload
-(after "f"
-  (defmacro f--exists? (file dir)
-    `(f-exists? (expand-file-name ,file ,dir))))
+(defun s-count-lines (s)
+  "Get number of lines in a string"
+  (length (s-lines s)))
 
 ;; Misc Defuns ;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;###autoload
@@ -32,3 +25,10 @@
    (minor-mode-key-binding key)
    (local-key-binding key)
    (global-key-binding key)))
+
+;;;###autoload
+(defun echo (msg &rest args)
+  "Display MSG in echo-area without logging it in *Messages* buffer."
+  (interactive)
+  (let ((message-log-max nil))
+    (apply 'message msg args)))

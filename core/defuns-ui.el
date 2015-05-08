@@ -30,12 +30,8 @@
     (load-dark-theme)))
 
 ;;;###autoload
-(defun cycle-font (&optional i)
-  "Cycle between fonts specified in *fonts in init.el"
+(defun toggle-fullscreen ()
   (interactive)
-  (if (numberp i)
-      (setq my/cycle-font-i i)
-    (if (>= my/cycle-font-i (1- (length *fonts)))
-        (setq my/cycle-font-i 0)
-      (cl-incf my/cycle-font-i)))
-  (set-frame-font (nth my/cycle-font-i *fonts)))
+  (set-frame-parameter nil 'fullscreen
+                       (when (not (frame-parameter nil 'fullscreen)) 'fullboth)))
+

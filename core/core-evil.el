@@ -18,20 +18,21 @@
           evil-insert-state-cursor  '("white" bar)
           evil-visual-state-cursor  'hollow)
 
-    (evil-mode)
+    (evil-mode 1)
+
     ;; Always ensure evil-shift-width is consistent with tab-width
-    (add-hook! 'find-file-hook (setq evil-shift-width tab-width))
+    (add-hook! 'after-change-major-mode-hook (setq evil-shift-width tab-width))
 
     ;; highlight matching delimiters where it's important
     (defun show-paren-mode-off () (show-paren-mode -1))
-    (add-hook 'evil-insert-state-entry-hook 'show-paren-mode)
-    (add-hook 'evil-insert-state-exit-hook 'show-paren-mode-off)
-    (add-hook 'evil-visual-state-entry-hook 'show-paren-mode)
-    (add-hook 'evil-visual-state-exit-hook 'show-paren-mode-off)
-    (add-hook 'evil-motion-state-entry-hook 'show-paren-mode)
-    (add-hook 'evil-motion-state-exit-hook 'show-paren-mode-off)
-    (add-hook 'evil-operator-state-entry-hook 'show-paren-mode)
-    (add-hook 'evil-operator-state-exit-hook 'show-paren-mode-off)
+    (add-hook 'evil-insert-state-entry-hook    'show-paren-mode)
+    (add-hook 'evil-insert-state-exit-hook     'show-paren-mode-off)
+    (add-hook 'evil-visual-state-entry-hook    'show-paren-mode)
+    (add-hook 'evil-visual-state-exit-hook     'show-paren-mode-off)
+    (add-hook 'evil-motion-state-entry-hook    'show-paren-mode)
+    (add-hook 'evil-motion-state-exit-hook     'show-paren-mode-off)
+    (add-hook 'evil-operator-state-entry-hook  'show-paren-mode)
+    (add-hook 'evil-operator-state-exit-hook   'show-paren-mode-off)
 
     ;; Disable highlights on insert-mode
     (add-hook 'evil-insert-state-entry-hook 'evil-ex-nohighlight)
@@ -45,26 +46,24 @@
       (evil-set-initial-state `,(car mode-map) `,(cdr mode-map)))
 
     (progn ; evil plugins
-      (use-package evil-exchange
-        :config
-        (defadvice evil-force-normal-state (before evil-esc-quit-exchange activate)
-          (when evil-exchange--overlays
-            (evil-exchange-cancel))))
-
       (use-package evil-ex-registers)
-
       (use-package evil-indent-textobject)    ; vii/vai/vaI
-
       (use-package evil-numbers)
+      (use-package evil-matchit :config (global-evil-matchit-mode 1))
+      (use-package evil-surround :config (global-evil-surround-mode 1))
+      (use-package evil-visualstar :config (global-evil-visualstar-mode 1))
 
-      (use-package evil-matchit
-        :config (global-evil-matchit-mode 1))
+      (use-package evil-commentary
+        :config (evil-commentary-mode 1))
 
-      (use-package evil-surround
-        :config (global-evil-surround-mode 1))
-
-      (use-package evil-nerd-commenter
-        :init (setq evilnc-hotkey-comment-operator "gc"))
+      ;; (use-package evil-nerd-commenter
+      ;;   :commands (evilnc-comment-operator
+      ;;              evilnc-comment-or-uncomment-lines
+      ;;              evilnc-toggle-invert-comment-line-by-line
+      ;;              evilnc-comment-or-uncomment-paragraphs
+      ;;              evilnc-quick-comment-or-uncomment-to-the-line
+      ;;              evilnc-copy-and-comment-lines)
+      ;;   :init (setq evilnc-hotkey-comment-operator "gc"))
 
       (use-package evil-jumper
         :init (setq evil-jumper-file (expand-file-name "jumplist" my-tmp-dir))
@@ -74,6 +73,18 @@
                 evil-jumper-auto-save-interval 3600)
           (define-key evil-motion-state-map (kbd "H-i") 'evil-jumper/forward)))
 
+      (use-package evil-exchange
+        :config
+        (defadvice evil-force-normal-state (before evil-esc-quit-exchange activate)
+          (when evil-exchange--overlays
+            (evil-exchange-cancel))))
+
+      (use-package evil-search-highlight-persist
+        :config
+        (progn
+          (global-evil-search-highlight-persist t)
+          (set-face-attribute 'evil-search-highlight-persist-highlight-face nil :inherit 'evil-ex-lazy-highlight)))
+
       (use-package evil-snipe
         :config
         (progn
@@ -81,7 +92,7 @@
 
           (setq evil-snipe-smart-case t)
           (setq evil-snipe-override-evil t)
-          (setq evil-snipe-scope 'visible)
+          (setq evil-snipe-scope 'line)
           (setq evil-snipe-repeat-scope 'buffer)
           (setq evil-snipe-override-evil-repeat-keys nil)
           (setq-default evil-snipe-symbol-groups
@@ -94,10 +105,7 @@
 
                 'visual
                 "z" 'evil-snipe-s
-                "Z" 'evil-snipe-S)))
-
-      (use-package evil-visualstar
-        :config (global-evil-visualstar-mode 1)))
+                "Z" 'evil-snipe-S))))
 
     (bind evil-ex-completion-map
           "C-r"           #'evil-ex-paste-from-register   ; registers in ex-mode
@@ -108,7 +116,7 @@
 
     (progn ; evil hacks
       (defadvice evil-force-normal-state (before evil-esc-quit activate)
-        (shut-up (evil-ex-nohighlight)        ; turn off highlights
+        (shut-up (evil-search-highlight-persist-remove-all) ; turn off highlights
                  ;; Exit minibuffer is alive
                  (if (minibuffer-window-active-p (minibuffer-window))
                      (my--minibuffer-quit))))
@@ -151,7 +159,7 @@
           (setq file-name
                 ;; %:p:h => the project root (or current directory otherwise)
                 (replace-regexp-in-string "\\(^\\|[^\\\\]\\)\\(%:p\\)"
-                                          (my--project-root) file-name t t 2))
+                                          (project-root) file-name t t 2))
           (setq file-name
                 ;; %:p => the project root (or current directory otherwise)
                 (replace-regexp-in-string "\\(^\\|[^\\\\]\\)\\(%:d\\)"
@@ -241,11 +249,11 @@ provided."
                 (if bang (--save-exit)))
             (error "Directory doesn't exist: %s" dir))))
 
-      (evil-define-command my:rename-this-file (new-name &optional bang)
+      (evil-define-command my:rename-this-file (new-name)
         "Renames current buffer and file it is visiting. Replaces %, # and other
   variables (see `evil-ex-replace-special-filenames')"
         :repeat nil
-        (interactive "<f><!>")
+        (interactive "<f>")
         (let ((name (buffer-name))
               (filename (buffer-file-name)))
           (if (not (and filename (file-exists-p filename)))
@@ -261,8 +269,6 @@ provided."
                 (set-visited-file-name new-name)
                 (set-buffer-modified-p nil)
                 (save-place-forget-unreadable-files)
-                (when bang
-                  (delete-file filename))
                 (message "File '%s' successfully renamed to '%s'"
                          name (file-name-nondirectory new-name)))))))
 

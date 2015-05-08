@@ -6,16 +6,15 @@
                 flycheck-disabled-checkers '(emacs-lisp-checkdoc make))
   :config
   (progn ; flycheck settings
-    (dolist (hook '(ruby-mode-hook
-                    python-mode-hook
-                    php-mode-hook
-                    lua-mode-hook
-                    shell-mode-hook
-                    scss-mode-hook
-                    c++-mode-hook
-                    c-mode-hook
-                    ))
-      (add-hook hook 'flycheck-mode))
+    (add-hooks '(ruby-mode-hook
+                 python-mode-hook
+                 php-mode-hook
+                 lua-mode-hook
+                 shell-mode-hook
+                 scss-mode-hook
+                 c++-mode-hook
+                 c-mode-hook)
+               'flycheck-mode)
 
     (my--cleanup-buffers-add "^\\*Flycheck.*\\*$")
 
