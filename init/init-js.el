@@ -61,7 +61,7 @@
   :lighter " lb6"
   :keymap (make-sparse-keymap)
   (my--init-yas-mode 'lb6-mode))
-(associate-minor-mode "/Contents/\\(Scripts\\|Resources\\)/.*$" 'lb6-mode)
+(associate-minor-mode "\\.lb\\(action\\|ext\\)/.*$" 'lb6-mode)
 
 (provide 'init-js)
 ;;; init-js.el ends here

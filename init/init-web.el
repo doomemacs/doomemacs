@@ -14,8 +14,7 @@
   (progn
     (add-hook 'web-mode-hook 'enable-tab-width-2)
 
-    (setq web-mode-ac-sources-alist '(("css" . (ac-source-css-property)))
-          web-mode-markup-indent-offset  2
+    (setq web-mode-markup-indent-offset  2
           web-mode-code-indent-offset    2
           web-mode-css-indent-offset     2
           web-mode-style-padding         2
@@ -43,6 +42,7 @@
           ",t" 'web-mode-element-rename)
     (bind '(normal visual) web-mode-map
           "]a" 'web-mode-attribute-next
+          "[a" 'web-mode-attribute-previous
           "]t" 'web-mode-tag-next
           "[t" 'web-mode-tag-previous
           "]T" 'web-mode-element-child
@@ -60,21 +60,29 @@
   :config
   (progn
     (setq emmet-move-cursor-between-quotes t)
-
     (bind 'insert emmet-mode-keymap
-          (kbd "M-e") 'emmet-expand-yas
-          (kbd "M-E") 'emmet-expand-line)))
+          "M-e" 'emmet-expand-yas
+          "M-E" 'emmet-expand-line)))
 
 (define-minor-mode jekyll-mode
   :init-value nil
   :lighter " :{"
   :keymap (make-sparse-keymap)
   (my--init-yas-mode 'jekyll-mode))
+(defun jekyll-mode-enable-maybe ()
+  (when (project-has-files '("_config.yml" "_layouts"))
+    (jekyll-mode 1)))
 (associate-minor-mode "/_\\(layouts\\|posts\\)/.+$" 'jekyll-mode)
 (add-hooks '(web-mode-hook scss-mode-hook html-mode-hook markdown-mode markdown-mode-hook)
-           (lambda ()
-             (when (project-has-files "_config.yml" "_layouts")
-               (jekyll-mode 1))))
+           'jekyll-mode-enable-maybe)
+
+(define-minor-mode wordpress-mode
+  :init-value nil
+  :lighter " wp"
+  :keymap (make-sparse-keymap)
+  (my--init-yas-mode 'wordpress-mode))
+(associate-minor-mode "/wp-\\(content\\|admin\\|includes\\)/.+$" 'wordpress-mode)
+(associate-minor-mode "/wp-.+\\.php$" 'wordpress-mode)
 
 
 (provide 'init-web)

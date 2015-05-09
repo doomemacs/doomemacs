@@ -24,7 +24,7 @@
 (setq-default visible-bell nil)   ; silence of the bells
 (setq-default use-dialog-box nil) ; avoid GUI
 (setq-default redisplay-dont-pause t)
-(setq window-combination-resize t)
+;; (setq window-combination-resize nil)
 
 ;; do not soft-wrap lines
 (setq-default truncate-lines t)
@@ -73,7 +73,9 @@
                      " wg"
                      " ~"
                      " s-/"
-                     " yas"
+                     ;; " yas"
+                     " emr"
+                     " Refactor"
                      ) "\\|"))
   :init
   (progn

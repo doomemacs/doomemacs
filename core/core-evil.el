@@ -5,7 +5,7 @@
   :config
   (progn
     (setq evil-want-visual-char-semi-exclusive t
-          evil-search-module        'isearch
+          evil-search-module        'evil-search
           evil-search-wrap          nil
           evil-magic                'magic
           evil-want-C-u-scroll      t  ; enable C-u for scrolling
@@ -22,6 +22,7 @@
 
     ;; Always ensure evil-shift-width is consistent with tab-width
     (add-hook! 'after-change-major-mode-hook (setq evil-shift-width tab-width))
+    (add-hook 'prog-mode-hook 'hs-minor-mode)
 
     ;; highlight matching delimiters where it's important
     (defun show-paren-mode-off () (show-paren-mode -1))
@@ -49,21 +50,12 @@
       (use-package evil-ex-registers)
       (use-package evil-indent-textobject)    ; vii/vai/vaI
       (use-package evil-numbers)
-      (use-package evil-matchit :config (global-evil-matchit-mode 1))
-      (use-package evil-surround :config (global-evil-surround-mode 1))
-      (use-package evil-visualstar :config (global-evil-visualstar-mode 1))
-
-      (use-package evil-commentary
-        :config (evil-commentary-mode 1))
-
-      ;; (use-package evil-nerd-commenter
-      ;;   :commands (evilnc-comment-operator
-      ;;              evilnc-comment-or-uncomment-lines
-      ;;              evilnc-toggle-invert-comment-line-by-line
-      ;;              evilnc-comment-or-uncomment-paragraphs
-      ;;              evilnc-quick-comment-or-uncomment-to-the-line
-      ;;              evilnc-copy-and-comment-lines)
-      ;;   :init (setq evilnc-hotkey-comment-operator "gc"))
+      (use-package evil-matchit     :config (global-evil-matchit-mode 1))
+      (use-package evil-surround    :config (global-evil-surround-mode 1))
+      (use-package evil-commentary  :config (evil-commentary-mode 1))
+      (use-package evil-search-highlight-persist
+        :config
+        (global-evil-search-highlight-persist t))
 
       (use-package evil-jumper
         :init (setq evil-jumper-file (expand-file-name "jumplist" my-tmp-dir))
@@ -79,17 +71,23 @@
           (when evil-exchange--overlays
             (evil-exchange-cancel))))
 
-      (use-package evil-search-highlight-persist
+      (use-package evil-visualstar
         :config
         (progn
-          (global-evil-search-highlight-persist t)
-          (set-face-attribute 'evil-search-highlight-persist-highlight-face nil :inherit 'evil-ex-lazy-highlight)))
+          ;; I cut this down because the original visualstar wouldn't remember
+          ;; the last search if evil-search-module was 'evil-search.
+          (defun evil-visualstar/begin-search (beg end direction)
+            (when (evil-visual-state-p)
+              (evil-exit-visual-state)
+              (let ((selection (regexp-quote (buffer-substring-no-properties beg end))))
+                (setq isearch-forward direction)
+                (evil-search selection direction t))))
+          (global-evil-visualstar-mode 1)))
 
       (use-package evil-snipe
         :config
         (progn
           (global-evil-snipe-mode +1)
-
           (setq evil-snipe-smart-case t)
           (setq evil-snipe-override-evil t)
           (setq evil-snipe-scope 'line)
@@ -117,25 +115,20 @@
     (progn ; evil hacks
       (defadvice evil-force-normal-state (before evil-esc-quit activate)
         (shut-up (evil-search-highlight-persist-remove-all) ; turn off highlights
+                 (evil-ex-nohighlight)
                  ;; Exit minibuffer is alive
                  (if (minibuffer-window-active-p (minibuffer-window))
                      (my--minibuffer-quit))))
 
       ;; Popwin: close popup window, if any
-      (after "popwin"
-        (defadvice evil-force-normal-state (before evil-esc-quit-popwin activate)
-          (shut-up (popwin:close-popup-window))))
+      (defadvice evil-force-normal-state (before evil-esc-quit-popwin activate)
+        (shut-up (popwin:close-popup-window)))
 
       ;; Jump to new splits
       (defadvice evil-window-split (after evil-window-split-jump activate)
         (evil-window-down 1))
       (defadvice evil-window-vsplit (after evil-window-vsplit-jump activate)
-        (evil-window-right 1))
-
-      (defadvice undo-tree-load-history-hook (around undo-tree-load-history-shut-up activate)
-        (shut-up ad-do-it))
-      (defadvice undo-tree-save-history-hook (around undo-tree-save-history-shut-up activate)
-        (shut-up ad-do-it)))
+        (evil-window-right 1)))
 
     (progn ; extensions
       (defun evil-visual-line-state-p ()
@@ -195,7 +188,7 @@
       (evil-define-command my:kill-buffers (&optional bang)
         :repeat nil
         (interactive "<!>")
-        (if (and bang (projectile-project-p))
+        (if (and (not bang) (projectile-project-p))
             (projectile-kill-buffers)
           (mapc 'kill-buffer (buffer-list)))
         (delete-other-windows))

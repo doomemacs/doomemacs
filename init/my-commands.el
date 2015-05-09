@@ -44,7 +44,7 @@
   (exmap "rec[ent]"      'my:helm-recentf))
 
 (after "yasnippet"
-  (exmap "snip[pets]"    'ex:snippets))
+  (exmap "snip[pets]"    'my:snippets))
 
 (after "emr"
   (exmap "ref[actor]"    'emr-show-refactor-menu))

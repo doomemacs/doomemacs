@@ -46,7 +46,7 @@
 (require 'cask)
 (cask-initialize)
 
-(eval-when-compile (require 'use-package))
+(require 'use-package)
 (mapc 'require
       ;; ls init/{init,my}* | xargs basename | sed -e 's/\..*$//'
       '(core
@@ -61,10 +61,9 @@
         ;; init-floobits       ; when I'm feeling lonely
         init-fly               ; fly(check|spell)
         init-git               ; git-gutter + modes
-        init-helm              ; a search engine for your life
         init-ido               ; a search engine for your car keys
+        init-helm              ; a search engine for your life
         init-project           ; project tools - dired, perspective, neotree
-        init-projectile        ; when you forget where you put your house
 
         init-cc                ; C/C++/Obj-C madness
         ;; init-d              ; D - It's C, but better!
@@ -76,7 +75,7 @@
         init-go
         init-java              ; the poster child for carpal tunnel syndome
         init-js                ; alert("not java, javascript!")
-        init-lua               ; zero-based indices? Zero-based indices.
+        init-lua               ; one-based indices? One-based indices.
         ;; init-org               ; for fearless [organized] leader
         init-php               ; making php less painful to work with
         init-python            ; beautiful is better than ugly

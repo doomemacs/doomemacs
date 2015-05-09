@@ -4,12 +4,13 @@
 
 (bind "A-x"      'smex
       "A-X"      'smex-major-mode-commands
+      "A-M-x"    'helm-M-x
       "A-;"      'eval-expression
       "C-`"      'popwin:toggle-popup-window
       "M-="      'text-scale-increase
       "M--"      'text-scale-decrease
       "M-w"      'evil-window-delete
-      "M-/"      'evilnc-comment-or-uncomment-lines
+      "M-/"      'evil-commentary-line
       "M-b"      'my:build)
 
 (bind 'motion
@@ -20,6 +21,7 @@
 
       'normal
       "M-o"  'ido-find-file
+      "M-O"  'my-ido-find-project-file
       "M-d"  'dash-at-point
       "M-R"  'my:eval-buffer)
 
@@ -36,24 +38,34 @@
 ;; <leader>
 (bind my-leader-map
       ","   'helm-projectile-switch-to-buffer
-      "."   'helm-resume
+      "."   'ido-find-file
+      ">"   'my-ido-find-project-file
       "/"   'helm-projectile-find-file
       ";"   'helm-semantic-or-imenu
       "<"   'helm-mini
-      "E"   'my:init-files
       "M"   'helm-projectile-recentf ; recent PROJECT files
       "]"   'helm-etags-select
       "a"   'helm-projectile-find-other-file
-      "b"   'my:build
-      "e"   'ido-find-file
+      "E"   'my:init-files
       "g"   'git-gutter+-show-hunk
       "h"   'helm-apropos
       "m"   'helm-recentf
       "p"   'helm-projectile-switch-project
+      "r"   'emr-show-refactor-menu   ; init-dev.el
       "qq"  'evil-save-and-quit
       "QQ"  'evil-quit-all
-      "r"   'emr-show-refactor-menu   ; init-dev.el
-      "y"   'helm-show-kill-ring)
+
+      "oo"  'my-open-with
+      "of"  (λ (my-open-with "Finder.app" default-directory))
+      "oF"  (λ (my-open-with "Finder.app" (project-root)))
+      "ou"  (λ (my-open-with "Transmit"))
+      "oU"  (λ (my-open-with "Transmit" default-directory))
+      "ol"  (λ (my-open-with "LaunchBar"))
+      "oL"  (λ (my-open-with "LaunchBar" default-directory))
+      ;; tmux: cd (default-directory)
+      "ot"  (λ (my:tmux-chdir nil t))
+      ;; tmux: cd [project root]
+      "oT"  'my:tmux-chdir)
 
 ;; <localleader>
 (bind my-localleader-map
@@ -61,19 +73,6 @@
       ";"   'linum-mode
       "="   'toggle-transparency
       "E"   'evil-emacs-state
-
-      "oo"  'my-open-with
-      "of"  (λ (my-open-with "Finder" default-directory))
-      "oF"  (λ (my-open-with "Finder" (project-root)))
-      "ou"  (λ (my-open-with "Transmit"))
-      "oU"  (λ (my-open-with "Transmit" default-directory))
-      "ol"  (λ (my-open-with "LaunchBar"))
-      "oL"  (λ (my-open-with "LaunchBar" default-directory))
-
-      ;; tmux: cd (default-directory)
-      "ot"  (λ (my:tmux-chdir nil t))
-      ;; tmux: cd [project root]
-      "oT"  'my:tmux-chdir
 
       "]"   'next-buffer
       "["   'previous-buffer
@@ -115,9 +114,9 @@
                 (evil-normal-state)
                 (evil-visual-restore))
 
-      'motion
-      "X"    'evil-exchange
+      'normal "X" 'evil-exchange
 
+      'motion
       "]g"   'git-gutter+-next-hunk
       "[g"   'git-gutter+-previous-hunk
 
@@ -180,13 +179,13 @@
 
 (when is-mac
   ;; Restore text nav keys
-  (bind (kbd "<A-left>") 'backward-word
-        (kbd "<A-right>") 'forward-word
-        (kbd "<M-backspace>") 'my.backward-kill-to-bol-and-indent
-        (kbd "M-a") 'mark-whole-buffer
-        (kbd "M-c") 'evil-yank
-        (kbd "M-v") 'evil-paste-after
-        (kbd "M-s") 'save-buffer))
+  (bind "<A-left>" 'backward-word
+        "<A-right>" 'forward-word
+        "<M-backspace>" 'my.backward-kill-to-bol-and-indent
+        "M-a" 'mark-whole-buffer
+        "M-c" 'evil-yank
+        "M-s" 'save-buffer
+        "M-v" 'yank))
 
 ;; Fix osx keymappings and then some
 (use-package smart-forward

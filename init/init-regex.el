@@ -50,9 +50,7 @@
   (progn
     (bind 'normal rxt-help-mode-map [escape] 'kill-buffer-and-window)
 
-    (after "re-builder" (setq reb-re-syntax 'pcre))
-    (after "popwin"
-      (push '("* Regexp Explain *" :position top :height 0.35) popwin:special-display-config))))
+    (after "re-builder" (setq reb-re-syntax 'pcre))))
 
 
 (provide 'init-regex)

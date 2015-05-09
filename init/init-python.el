@@ -23,10 +23,6 @@
         (bind 'motion anaconda-mode-map "gd" 'anaconda-mode-goto-definitions)
         (bind 'normal anaconda-nav-mode-map [escape] 'anaconda-nav-quit)
 
-        (push '("*anaconda-doc*" :position bottom :height 15 :noselect t) popwin:special-display-config)
-        (push '("*anaconda-nav*" :position bottom :height 15 :stick t) popwin:special-display-config)
-        (push '("^\\*Python.+\\*$" :regexp t :position bottom :height 20 :noselect t) popwin:special-display-config)
-
         ;; Delete the window on escape or C-g
         (defadvice anaconda-mode-doc-buffer (after anaconda-doc-buffer-escape-to-close activate)
           (with-current-buffer (get-buffer "*anaconda-doc*")

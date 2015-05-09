@@ -1,8 +1,3 @@
-(after "popwin"
-  (push '("*ansi-term*" :position bottom :height 0.45 :stick t) popwin:special-display-config)
-  (push '("*terminal*" :position bottom :height 0.45 :stick t) popwin:special-display-config)
-  (push '("*Async Shell Command*" :position bottom) popwin:special-display-config))
-
 (my--cleanup-buffers-add "^\\*Shell Command Output\\*$")
 (my--cleanup-buffers-add "^\\*Async Shell Command\\*$")
 

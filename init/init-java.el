@@ -10,6 +10,7 @@
     ""))
 
 (use-package eclim
+  :disabled t
   :commands (eclim-mode global-eclim-mode)
   :config
   (progn
@@ -36,9 +37,12 @@
 (use-package android-mode
   :defer t
   :init
+  (add-hook 'android-mode-hook (set-build-command "./gradlew %s" "build.gradle"))
   (add-hook! 'java-mode-hook
-             (when (project-has-files "AndroidManifest.xml")
-               (android-mode +1))))
+             (let ((root (project-root)))
+               (when (or (project-has-files "AndroidManifest.xml" root)
+                         (project-has-files "src/main/AndroidManifest.xml" root))
+                 (android-mode +1)))))
 
 (use-package groovy-mode :mode "\\.gradle$")
 

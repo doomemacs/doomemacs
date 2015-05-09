@@ -97,7 +97,7 @@ gets killed.")
 (defun my-kill-matching-buffers (regexp &optional buffer-list)
   (interactive)
   (mapc (lambda (b)
-          (if (s-matches? regexp (buffer-name b))
+          (if (string-match-p regexp (buffer-name b))
               (kill-buffer b)))
         (if buffer-list buffer-list (buffer-list))))
 

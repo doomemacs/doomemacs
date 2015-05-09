@@ -102,7 +102,7 @@
   (keyboard-translate ?\C-i ?\H-i)
 
   ;; Save clipboard contents into kill-ring before replace them
-  (setq save-interprogram-paste-before-kill t)
+  (setq save-interprogram-paste-before-kill nil)
 
   ;; don't let the cursor go into minibuffer prompt
   ;; Tip taken from Xah Lee: http://ergoemacs.org/emacs/emacs_stop_cursor_enter_prompt.html
@@ -132,7 +132,12 @@
   ;; Save history across sessions
   (require 'savehist)
   (setq savehist-file (concat my-tmp-dir "savehist")  ; keep the home clean
-        savehist-additional-variables '(kill-ring mark-ring global-mark-ring search-ring regexp-search-ring extended-command-history)
+        savehist-additional-variables '(kill-ring
+                                        mark-ring
+                                        global-mark-ring
+                                        search-ring
+                                        regexp-search-ring
+                                        extended-command-history)
         history-length 1000)
   (savehist-mode 1)
 
@@ -162,7 +167,6 @@
   (setq-default tab-width 4)
 
   (setq require-final-newline t)
-
   (setq delete-trailing-lines nil)
   (add-hook 'makefile-mode-hook 'indent-tabs-mode) ; Use normal tabs in makefiles
 
@@ -184,9 +188,10 @@ determine if a directory is a project."
                  (throw 'found path)))))) default-directory)
       default-directory))
 
-  (defun project-has-files (&rest files)
+  (defun project-has-files (files &optional root)
     "Return non-nil if `file' exists in the project root."
-    (let ((root (project-root))
+    (let ((root (or root (project-root)))
+          (files (if (listp files) files (list files)))
           found-p file)
       (while (and files (not found-p))
         (setq file (pop files))
@@ -228,11 +233,15 @@ the checking happens for all pairs in auto-minor-mode-alist"
     (let* ((scratch-buffer (get-buffer-create "*scratch*"))
            (project-name (project-name))
            (root (project-root)))
+      (mapc (lambda (b)
+              (if (string-match-p "\\*scratch\\* (.+)" (buffer-name b))
+                  (kill-buffer b)))
+            (buffer-list))
       (save-window-excursion
         (switch-to-buffer scratch-buffer)
         (erase-buffer)
         (cd root)
-        (insert ";; Project: " project-name "\n\n"))))
+        (rename-buffer (format "*scratch* (%s)" project-name)))))
   (add-hook 'find-file-hook 'project-create-scratch-buffer)
 
 
@@ -255,7 +264,26 @@ the checking happens for all pairs in auto-minor-mode-alist"
     (progn ; popwin config
       (popwin-mode 1)
       (setq popwin:popup-window-height 0.45)
+      ;; (setq display-buffer-function 'popwin:display-buffer)
 
+      (push '("\\`\\*helm.*?\\*\\'" :regexp t :position bottom :height 15) popwin:special-display-config)
+
+      (push '("^\\*Flycheck.*\\*$" :regexp t :position bottom :height 0.25 :noselect t) popwin:special-display-config)
+      (push '(inf-enh-ruby-mode :position bottom :stick t) popwin:special-display-config)
+      (push '(snippet-mode :position bottom :stick t) popwin:special-display-config)
+
+      (push '("*ansi-term*" :position bottom :height 0.45 :stick t) popwin:special-display-config)
+      (push '("*terminal*" :position bottom :height 0.45 :stick t) popwin:special-display-config)
+      (push '("*Async Shell Command*" :position bottom) popwin:special-display-config)
+
+      (push '("* Regexp Explain *" :position top :height 0.35) popwin:special-display-config)
+
+      (push '("*anaconda-doc*" :position bottom :height 15 :noselect t) popwin:special-display-config)
+      (push '("*anaconda-nav*" :position bottom :height 15 :stick t) popwin:special-display-config)
+      (push '("^\\*Python.+\\*$" :regexp t :position bottom :height 20 :noselect t) popwin:special-display-config)
+
+      (push '(help-mode :height 0.5 :position bottom :stick t) popwin:special-display-config)
+      (push '(compilation-mode :height 0.5 :position bottom :noselect t) popwin:special-display-config)
       (push '(diff-mode :position bottom :stick t) popwin:special-display-config)
       (push '("*Backtrace*") popwin:special-display-config)
       (push '("*Warnings*") popwin:special-display-config)
@@ -273,9 +301,9 @@ the checking happens for all pairs in auto-minor-mode-alist"
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-  (cond (is-mac (require 'core-osx))
-        (is-linux (require 'core-linux))
-        (is-windows (require 'core-windows)))
+  (cond (is-mac      (require 'core-osx))
+        (is-linux    (require 'core-linux))
+        (is-windows  (require 'core-windows)))
 
   (require 'server)
   (unless (server-running-p) (server-start)))

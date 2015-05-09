@@ -1,5 +1,6 @@
 (use-package yasnippet
   :mode (("emacs\\.d/snippets/.+$" . snippet-mode))
+  :demand t
   :init
   (progn
     (defvar yas-minor-mode-map
@@ -10,12 +11,11 @@
         (bind 'visual map (kbd "<backtab>") 'yas-insert-snippet)
         map))
 
-    (add-hook 'snippet-mode-hook 'disable-final-newline)
-    (add-hook 'snippet-mode-hook 'yas-minor-mode)
-    (add-hook 'text-mode-hook 'yas-minor-mode)
-    (add-hook 'prog-mode-hook 'yas-minor-mode)
-    ;; (add-hook 'markdown-mode-hook 'yas-minor-mode)
-    (add-hook 'org-mode-hook 'yas-minor-mode))
+    ;; (add-hook 'snippet-mode-hook 'yas-minor-mode-on)
+    ;; (add-hook 'text-mode-hook 'yas-minor-mode-on)
+    ;; (add-hook 'prog-mode-hook 'yas-minor-mode-on)
+    ;; (add-hook 'org-mode-hook 'yas-minor-mode-on))
+    (add-hook 'snippet-mode-hook 'disable-final-newline))
   :config
   (progn
     (setq yas-verbosity 0)
@@ -26,53 +26,50 @@
     (setq yas-snippet-dirs `(,my-snippets-dir))
     (setq yas-prompt-functions '(yas-ido-prompt yas-no-prompt))
 
-    (push '(snippet-mode :position bottom :stick t) popwin:special-display-config)
-
+    (yas-global-mode 1)
     (yas-reload-all)
 
-    (after "auto-complete"
-      (defadvice ac-expand (before advice-for-ac-expand activate)
-        (when (yas-expand) (ac-stop))))
+    (after "helm"
+      (add-to-list 'yas-dont-activate 'helm-alive-p))
 
-    (after "evil"
-      ;; Exit snippets on ESC in normal mode
-      (defadvice evil-force-normal-state (before evil-esc-quit-yasnippet activate)
-        (yas-exit-all-snippets))
-      ;; Once you're in normal mode, you're out
-      (add-hook 'evil-normal-state-entry-hook 'yas-abort-snippet)
+    ;; Exit snippets on ESC in normal mode
+    (defadvice evil-force-normal-state (before evil-esc-quit-yasnippet activate)
+      (yas-exit-all-snippets))
+    ;; Once you're in normal mode, you're out
+    (add-hook 'evil-normal-state-entry-hook 'yas-abort-snippet)
 
-      ;; Fixes: evil's visual-line mode gobbles up the newline on the right.
-      ;; This prevents that by essentially doing (1- (region-end)).
-      (defadvice yas-expand-snippet (around yas-expand-snippet-visual-line activate)
-        (if (evil-visual-line-state-p)
-            (ad-set-arg 2 (1- (ad-get-arg 2)))) ad-do-it)
+    ;; Fixes: evil's visual-line mode gobbles up the newline on the right.
+    ;; This prevents that by essentially doing (1- (region-end)).
+    (defadvice yas-expand-snippet (around yas-expand-snippet-visual-line activate)
+      (if (evil-visual-line-state-p)
+          (ad-set-arg 2 (1- (ad-get-arg 2)))) ad-do-it)
 
-      ;; Fixes: visual-line includes indentation before the selection. This
-      ;; strips it out.
-      (add-hook! 'yas-before-expand-snippet-hook
-                 (if (evil-visual-line-state-p)
-                     (setq-local yas-selected-text
-                                 (replace-regexp-in-string
-                                  "\\(^ *\\|\n? $\\)" ""
-                                  (buffer-substring-no-properties (region-beginning)
-                                                                  (1- (region-end)))))))
-      ;; Previous hook causes yas-selected-text to persist between expansions.
-      ;; This little hack gets around it.
-      (add-hook! 'yas-after-exit-snippet-hook
-                 (setq-local yas-selected-text nil))
+    ;; Fixes: visual-line includes indentation before the selection. This
+    ;; strips it out.
+    (add-hook! 'yas-before-expand-snippet-hook
+               (if (evil-visual-line-state-p)
+                   (setq-local yas-selected-text
+                               (replace-regexp-in-string
+                                "\\(^ *\\|\n? $\\)" ""
+                                (buffer-substring-no-properties (region-beginning)
+                                                                (1- (region-end)))))))
+    ;; Previous hook causes yas-selected-text to persist between expansions.
+    ;; This little hack gets around it.
+    (add-hook! 'yas-after-exit-snippet-hook
+               (setq-local yas-selected-text nil))
 
-      (evil-define-operator ex:snippets (beg end &optional name)
-        :motion nil
-        :move-point nil
-        :type exclusive
-        :repeat nil
-        (interactive "<r><a>")
-        (if (and beg end)
-            (yas-insert-snippet)
-          (if name
-              (popwin:find-file (concat my-snippets-dir
-                                        (symbol-name major-mode) "/" name))
-            (yas-visit-snippet-file)))))
+    (evil-define-operator my:snippets (beg end &optional name)
+      :motion nil
+      :move-point nil
+      :type exclusive
+      :repeat nil
+      (interactive "<r><a>")
+      (if (and beg end)
+          (yas-insert-snippet)
+        (if name
+            (popwin:find-file (concat my-snippets-dir
+                                      (symbol-name major-mode) "/" name))
+          (yas-visit-snippet-file))))
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

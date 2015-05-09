@@ -11,6 +11,11 @@
                           (kbd "TAB") 'neotree-enter
                           (kbd "RET") 'neotree-enter))))
 
+(defun my-ido-find-project-file ()
+  (interactive)
+  (let ((default-directory (project-root)))
+    (ido-find-file)))
+
 
 ;; (use-package dired
 ;;   :disabled t

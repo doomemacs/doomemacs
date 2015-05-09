@@ -154,11 +154,6 @@
                          (looking-at ".*[(,][ \t]*\\[[^]]*\\][ \t]*[({][^}]*$"))))
                 0                           ; no additional indent
               ad-do-it)))                   ; default behavior
-
-
-    ;; Tools/defuns ;;;;;;;;;;;;;;;;;;;;;;;;
-
-    (push '("*compilation*" :height 0.5 :position bottom :noselect t) popwin:special-display-config)
     ))
 
 

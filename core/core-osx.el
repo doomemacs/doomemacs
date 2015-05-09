@@ -27,8 +27,9 @@
 ;; Send current file to OSX apps
 (defun my-open-with (&optional app-name path)
   (interactive)
-  (let ((app-name (if app-name (concat "-p " app-name)))
+  (let ((app-name (if app-name (concat "-a " app-name)))
         (path (or path (if (eq major-mode 'dired-mode) (dired-get-file-for-visit) (buffer-file-name)))))
+    (message "Trying: %s" (concat "open " app-name " " (shell-quote-argument path)))
     (shell-command (concat "open " app-name " " (shell-quote-argument path)))))
 
 

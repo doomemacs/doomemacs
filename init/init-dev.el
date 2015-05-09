@@ -39,7 +39,9 @@
 (make-variable-buffer-local 'my-build-command)
 
 (defun set-build-command (command &optional file)
-  (setq my-build-command (command . file)))
+  (when (or (null file)
+            (project-has-files file))
+    (setq my-build-command `(,command . ,file))))
 
 (evil-define-command my:build (arg)
   "Call a build command in the current directory.

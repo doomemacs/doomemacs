@@ -63,7 +63,6 @@
       :config
       (progn
         (evil-set-initial-state 'inf-enh-ruby-mode 'insert)
-        (push '(inf-enh-ruby-mode :position bottom :stick t) popwin:special-display-config)
 
         (after "company"
           (use-package company-inf-ruby
@@ -95,11 +94,10 @@
           (use-package company-robe
             :config (company--backend-on 'enh-ruby-mode-hook 'company-robe)))
 
-        (add-hook! 'enh-ruby-mode-hook
-          (unless (f-ext? (buffer-file-name) "org") ;; in case of org-mode
-            (robe-mode 1)
-            ;; (after "auto-complete" (ac-robe-setup))
-            (my--ruby-load-file buffer-file-name)))
+        ;; (add-hook! 'enh-ruby-mode-hook
+        ;;   (unless (f-ext? (buffer-file-name) "org") ;; in case of org-mode
+        ;;     (robe-mode 1)
+        ;;     (my--ruby-load-file buffer-file-name)))
 
         (defun my--ruby-load-file (&optional file)
           (let ((file (or file buffer-file-name)))

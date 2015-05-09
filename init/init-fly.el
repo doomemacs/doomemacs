@@ -32,10 +32,7 @@
     (add-hook 'evil-normal-state-entry-hook 'my--evil-flycheck-buffer)
     ;; And on ESC in normal mode.
     (defadvice evil-force-normal-state (after evil-esc-flycheck-buffer activate)
-      (my--evil-flycheck-buffer))
-
-    (push '("^\\*Flycheck.*\\*$" :regexp t :position bottom :height 0.25 :noselect t)
-          popwin:special-display-config)))
+      (my--evil-flycheck-buffer))))
 
 (use-package flyspell :commands flyspell-mode)
 

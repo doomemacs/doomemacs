@@ -17,6 +17,10 @@
 (set-face-background 'show-paren-match nil)
 (set-face-foreground 'show-paren-match "orange")
 (set-face-attribute 'show-paren-match nil :weight 'extra-bold)
+(let ((face 'evil-search-highlight-persist-highlight-face))
+  (set-face-attribute face nil :inherit 'isearch-lazy-highlight-face)
+  (set-face-foreground face nil)
+  (set-face-background face nil))
 
 (set-register ?. "~/.dotfiles/")
 (set-register ?d "~/Dropbox/Projects/")
