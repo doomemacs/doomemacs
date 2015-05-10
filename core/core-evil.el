@@ -128,7 +128,13 @@
       (defadvice evil-window-split (after evil-window-split-jump activate)
         (evil-window-down 1))
       (defadvice evil-window-vsplit (after evil-window-vsplit-jump activate)
-        (evil-window-right 1)))
+        (evil-window-right 1))
+
+      ;; Shut up undo-tree's constant complaining
+      (defadvice undo-tree-load-history-hook (around undo-tree-load-history-shut-up activate)
+        (shut-up ad-do-it))
+      (defadvice undo-tree-save-history-hook (around undo-tree-save-history-shut-up activate)
+        (shut-up ad-do-it))))
 
     (progn ; extensions
       (defun evil-visual-line-state-p ()
