@@ -33,7 +33,7 @@
         (linum            "#1e262c")
         ; (background     "#11141c")
         ; (gutters        "#343d46")
-        ; (gutter-fg      "#65737e")
+        (gutter-light     "#434f58")
         ; (gutters-active "#4f5b66")
         (builtin          "#d08770")
         (foreground       "#c0c5ce")
@@ -73,13 +73,13 @@
    `(vertical-border      ((t (:foreground ,gutters-active) )))
 
    `(mode-line            ((t (:foreground ,white
-                               :background ,gutters-active
-                               :box (:line-width 3 :color ,gutters-active)
+                               :background ,gutter-light
+                               :box (:line-width 3 :color ,gutter-light)
                                ))))
 
    `(mode-line-inactive       ((t (:foreground ,gutter-fg
-                               :background ,background
-                               :box (:line-width 3 :color ,gutters)
+                               :background ,gutters-active
+                               :box (:line-width 3 :color ,gutters-active)
                                ))))
 
    `(mode-line-modified-face           ((t (:foreground ,builtin))))
