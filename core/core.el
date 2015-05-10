@@ -133,7 +133,6 @@
   (require 'savehist)
   (setq savehist-file (concat my-tmp-dir "savehist")  ; keep the home clean
         savehist-additional-variables '(kill-ring
-                                        mark-ring
                                         global-mark-ring
                                         search-ring
                                         regexp-search-ring
@@ -168,9 +167,9 @@
 
   (setq require-final-newline t)
   (setq delete-trailing-lines nil)
-  (add-hook 'makefile-mode-hook 'indent-tabs-mode) ; Use normal tabs in makefiles
+  (add-hook 'makefile-mode-hook (lambda () (setq indent-tabs-mode t))) ; Use normal tabs in makefiles
 
-  ;; Automatic minor modes ;;;;;;;;;;;
+  ;; Project defuns ;;;;;;;;;;;;;;;;;;;;;;
   (require 'f)
   (defvar project-root-files '(".git" ".hg" ".svn" "README" "README.md"))
   (defun project-root (&optional strict-p)
@@ -205,6 +204,29 @@ determine if a directory is a project."
   (defun project-name ()
     (file-name-nondirectory (directory-file-name (project-root))))
 
+  (defun project-p ()
+    (not (null (project-root t))))
+
+  ;; Make sure scratch buffer is always "in a project"
+  (defvar project-scratch-buffer nil)
+  (defun project-create-scratch-buffer ()
+    (let* ((scratch-buffer (get-buffer-create "*scratch*"))
+           (project-name (project-name))
+           (root (project-root)))
+      (mapc (lambda (b)
+              (if (string-match-p "\\*scratch\\* (.+)" (buffer-name b))
+                  (kill-buffer b)))
+            (buffer-list))
+      (save-window-excursion
+        (switch-to-buffer scratch-buffer)
+        (setq project-scratch-buffer scratch-buffer)
+        (erase-buffer)
+        (cd root)
+        (rename-buffer (format "*scratch* (%s)" project-name)))))
+  (add-hook 'find-file-hook 'project-create-scratch-buffer)
+
+
+  ;; Automatic minor modes ;;;;;;;;;;;
   (defvar auto-minor-mode-alist ()
     "Alist of filename patterns vs correpsonding minor mode functions,
 see `auto-mode-alist' All elements of this alist are checked, meaning
@@ -227,22 +249,6 @@ the checking happens for all pairs in auto-minor-mode-alist"
               (funcall (cdar alist) 1))
           (setq alist (cdr alist))))))
   (add-hook 'find-file-hook 'enable-minor-mode-based-on-path)
-
-  ;; Make sure scratch buffer is always "in a project"
-  (defun project-create-scratch-buffer ()
-    (let* ((scratch-buffer (get-buffer-create "*scratch*"))
-           (project-name (project-name))
-           (root (project-root)))
-      (mapc (lambda (b)
-              (if (string-match-p "\\*scratch\\* (.+)" (buffer-name b))
-                  (kill-buffer b)))
-            (buffer-list))
-      (save-window-excursion
-        (switch-to-buffer scratch-buffer)
-        (erase-buffer)
-        (cd root)
-        (rename-buffer (format "*scratch* (%s)" project-name)))))
-  (add-hook 'find-file-hook 'project-create-scratch-buffer)
 
 
   ;;;; Utility plugins ;;;;;;;;;;;;;;;;;;
