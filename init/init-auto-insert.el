@@ -7,81 +7,83 @@
     (setq auto-insert-alist '())))
 
 (after "yasnippet"
-    (defmacro template (file-regexp uuid mode &optional project-only)
-      `(define-auto-insert ,file-regexp '(lambda () (my--template-insert ,uuid ,mode ,project-only))))
+    (defun add-template (regexp-or-major-mode uuid yas-mode &optional project-only)
+      (define-auto-insert regexp-or-major-mode
+        `(lambda () (insert-template ,uuid ',yas-mode ,project-only))))
 
-    (defun my--template-insert (uuid mode &optional project-only)
+    (defun insert-template (uuid mode &optional project-only)
       "Expand snippet template in MODE by its UUID"
-      (unless (and project-only
-                   (not (projectile-project-p)))
-        (yas-expand-snippet
-         (yas--template-content
-          (yas--get-template-by-uuid mode uuid)) (point-min) (point-max))
-        (evil-insert-state)))
+      (unless (or (and project-only (not (project-p)))
+                  (not (or (eq major-mode mode)
+                           (symbol-value mode))))
+        (insert uuid)
+        (yas-expand-from-trigger-key)
+        (if (string-equal uuid (string-trim (buffer-string)))
+            (erase-buffer)
+          (evil-insert-state 1))))
 
-    (template "/\\.gitignore$"                                        "%%"               'gitignore-mode)
+    (add-template "/\\.gitignore$"                                        "%%"               'gitignore-mode)
 
     ;; C/C++
-    (template "/Makefile$"                                            "%%"               'makefile-gmake-mode)
-    (template "/main\\.\\(cc\\|cpp\\)$"                               "%main.cpp%"       'c++-mode)
-    (template "/win32_\\.\\(cc\\|cpp\\)$"                             "%winmain.cpp%"    'c++-mode)
-    (template "\\.\\([Hh]\\|hpp\\)$"                                  "%.h%"             'c++-mode)
-    (template "\\.\\([Cc]\\|cc\\|cpp\\)$"                             "%.cpp%"           'c++-mode)
+    (add-template "/Makefile$"                                            "%%"               'makefile-gmake-mode)
+    (add-template "/main\\.\\(cc\\|cpp\\)$"                               "%main.cpp%"       'c++-mode)
+    (add-template "/win32_\\.\\(cc\\|cpp\\)$"                             "%winmain.cpp%"    'c++-mode)
+    (add-template "\\.\\([Hh]\\|hpp\\)$"                                  "%.h%"             'c++-mode)
+    (add-template "\\.\\([Cc]\\|cc\\|cpp\\)$"                             "%.cpp%"           'c++-mode)
 
     ;; Shell scripts
-    (template "\\.z?sh$"                                              "%%"               'sh-mode)
+    (add-template "\\.z?sh$"                                              "%%"               'sh-mode)
 
     ;; Ruby
-    (template "/spec_helper\\.rb$"                                    "%helper%"         'rspec-mode t)
-    (template "_spec\\.rb$"                                           "%%"               'rspec-mode t)
-    (template "/\\.rspec$"                                            "%.rspec%"         'rspec-mode)
-    (template "/Rakefile$"                                            "%Rakefile%"       'ruby-mode t)
-    (template "/Gemfile$"                                             "%Gemfile%"        'ruby-mode t)
-    ;; (template "\\.gemspec$"                                        "%.gemspec%"       'ruby-mode t)
-    (template "/lib/.+\\.rb$"                                         "%module%"         'ruby-mode t)
-    (template "\\.rb$"                                                "%%"               'ruby-mode)
+    (add-template "/spec_helper\\.rb$"                                    "%helper%"         'rspec-mode t)
+    (add-template "_spec\\.rb$"                                           "%%"               'rspec-mode t)
+    (add-template "/\\.rspec$"                                            "%.rspec%"         'rspec-mode)
+    (add-template "/Rakefile$"                                            "%Rakefile%"       'ruby-mode t)
+    (add-template "/Gemfile$"                                             "%Gemfile%"        'ruby-mode t)
+    ;; (add-template "\\.gemspec$"                                        "%.gemspec%"       'ruby-mode t)
+    (add-template "/lib/.+\\.rb$"                                         "%module%"         'ruby-mode t)
+    (add-template "\\.rb$"                                                "%%"               'ruby-mode)
 
     ;; ;; Python
-    ;; (template "tests?/test_.+\\.py$"                              "%%"               'nose-mode)
-    ;; (template "/setup\\.py$"                                      "%setup%"          'python-mode)
-    (template "\\.py$"                                                  "%%"               'python-mode)
+    ;; (add-template "tests?/test_.+\\.py$"                              "%%"               'nose-mode)
+    ;; (add-template "/setup\\.py$"                                      "%setup%"          'python-mode)
+    (add-template "\\.py$"                                                  "%%"            'python-mode)
 
     ;; ;; PHP
-    ;; (template "\\.class\\.php$"                                   "%class%"          'php-mode)
-    ;; (template "\\.php$"                                           "%%"               'php-mode)
+    ;; (add-template "\\.class\\.php$"                                   "%class%"          'php-mode)
+    ;; (add-template "\\.php$"                                           "%%"               'php-mode)
 
     ;; ;; Markdown
-    (template "/README\\.md$"                                        "%README.md%"      'markdown-mode)
-    ;; (template "/_posts/.+\\.md$"                                  "%jekyll-post"     'markdown-mode)
-    ;; (template "/_layouts/.+\\.html$"                              "%jekyll-layout%"  'web-mode)
+    (add-template "/README\\.md$"                                        "%README.md%"      'markdown-mode)
+    ;; (add-template "/_posts/.+\\.md$"                                  "%jekyll-post"     'markdown-mode)
+    ;; (add-template "/_layouts/.+\\.html$"                              "%jekyll-layout%"  'web-mode)
 
     ;; ;; Javascript
-    ;; (template "\\.lbaction/Contents/Info.plist$"                  "%lb6%"            'nxml-mode)
-    ;; (template "\\.lbaction/.+/\\(default\\|suggestions\\)\\.js$"  "%lb6%"            'js-mode)
-    ;; (template "/package\\.json$"                                  "%package.json%"   'json-mode)
-    ;; (template "\\.\\(json\\|jshintrc\\)$"                         "%%"               'json-mode)
+    ;; (add-template "\\.lbaction/Contents/Info.plist$"                  "%lb6%"            'nxml-mode)
+    ;; (add-template "\\.lbaction/.+/\\(default\\|suggestions\\)\\.js$"  "%lb6%"            'js-mode)
+    ;; (add-template "/package\\.json$"                                  "%package.json%"   'json-mode)
+    ;; (add-template "\\.\\(json\\|jshintrc\\)$"                         "%%"               'json-mode)
 
     ;; ;; SCSS
-    ;; (template "/master\\.scss$"                                   "%master%"         'scss-mode)
-    ;; (template "/normalize\\.scss$"                                "%normalize%"      'scss-mode)
-    ;; (template "\\.scss$"                                          "%%"               'scss-mode)
+    ;; (add-template "/master\\.scss$"                                   "%master%"         'scss-mode)
+    ;; (add-template "/normalize\\.scss$"                                "%normalize%"      'scss-mode)
+    ;; (add-template "\\.scss$"                                          "%%"               'scss-mode)
 
     ;; ;; HTML
-    ;; (template "\\.html$"                                          "%%"               'web-mode)
+    ;; (add-template "\\.html$"                                          "%%"               'web-mode)
 
      ;; Lua
-    ;; (template "\\.love/main\\.lua$"                               "%love.main%"      'lua-mode)
-    ;; (template "\\.love/conf\\.lua$"                               "%love.conf%"      'lua-mode)
-    ;; (template "\\.lua$"                                           "%%"               'lua-mode)
+    ;; (add-template "\\.love/main\\.lua$"                               "%love.main%"      'lua-mode)
+    (add-template "/conf\\.lua$"                                         "%love.conf%"      'love-mode)
+    ;; (add-template "\\.lua$"                                           "%%"               'lua-mode)
 
     ;; ;; Java
-    (template "/src/.+/.+\\.java$"                                   "%%"               'java-mode)
-    ;; (template "\\.gradle$"                                        "%%"               'groovy-mode)
+    (add-template "/src/.+/.+\\.java$"                                   "%%"               'java-mode)
+    (add-template "/build\\.gradle$"                                     "%gradle%"         'android-mode)
 
     ;; ;; Elisp
-    (template "\\.emacs\\.d/.+\\.el$"                                "%initfile%"       'emacs-lisp-mode)
-    (template "\\.emacs\\.d/snippets/.+$"                            "%%"               'snippet-mode))
-
+    (add-template "\\.emacs\\.d/.+\\.el$"                                "%initfile%"       'emacs-lisp-mode)
+    (add-template "\\.emacs\\.d/snippets/.+$"                            "%%"               'snippet-mode))
 
 (provide 'init-auto-insert)
 ;;; init-auto-insert.el ends here
