@@ -49,6 +49,7 @@
 (depends-on "company-tern")
 (depends-on "company-anaconda")
 (depends-on "company-inf-ruby")
+(depends-on "company-statistics")
 
 ;;(depends-on "auto-complete")
 ;;(depends-on "auto-complete-clang")

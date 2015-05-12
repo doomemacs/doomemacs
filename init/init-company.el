@@ -29,6 +29,7 @@
     ;; Sort candidates by
     (add-to-list 'company-transformers 'company-sort-by-occurrence)
     ;; (add-to-list 'company-transformers 'company-sort-by-backend-importance)
+    (use-package company-statistics :config (company-statistics-mode))
 
     (progn ; frontends
       (setq-default company-frontends '(company-pseudo-tooltip-unless-just-one-frontend
@@ -95,7 +96,7 @@
             "C-x C-]"   'company-etags
             "C-x s"     'company-ispell
             "C-x C-s"   'company-yasnippet
-            "C-x C-o"   'company-complete
+            "C-x C-o"   'company-semantic
             "C-x C-n"   'company-dabbrev-code
             "C-x C-p"   (λ (let ((company-selection-wrap-around t))
                              (call-interactively 'company-dabbrev-code)
@@ -120,12 +121,8 @@
             "C-p"        'company-search-repeat-backward
             [escape]     'company-abort)
 
-      ;; (bind company-filter-map
-      ;;       [escape]     'company-filterd)
-
-      (after "helm-company"
-             (bind company-mode-map   "<C-return>" 'helm-company)
-             (bind company-active-map "<C-return>" 'helm-company))))))
+      (bind company-mode-map   "<C-return>" 'helm-company)
+      (bind company-active-map "<C-return>" 'helm-company)))))
 
 
 (provide 'init-company)
