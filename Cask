@@ -24,7 +24,6 @@
 (depends-on "shut-up")
 (depends-on "popwin")
 (depends-on "saveplace")
-;;(depends-on "key-chord")
 
 ;; Editing
 (depends-on "smart-mode-line")
@@ -51,18 +50,7 @@
 (depends-on "company-inf-ruby")
 (depends-on "company-statistics")
 
-;;(depends-on "auto-complete")
-;;(depends-on "auto-complete-clang")
-;;(depends-on "auto-complete-c-headers")
-;;(depends-on "ac-etags")
-;;(depends-on "ac-ispell")
-;;(depends-on "ac-anaconda")
-;;(depends-on "tern-auto-complete")
-;;(depends-on "ac-inf-ruby")
-;;(depends-on "jedi")
-
 ;; Eeeevil
-;;(depends-on "god-mode")
 (depends-on "evil")
 (depends-on "evil-search-highlight-persist")
 (depends-on "evil-commentary")
@@ -92,10 +80,7 @@
 (depends-on "ido-vertical-mode")
 (depends-on "flx-ido")
 (depends-on "workgroups2")
-;;(depends-on "persp-mode")
-;;(depends-on "persp-projectile")
 (depends-on "xcscope")
-;;(depends-on "grizzl")
 
 ;; Modes/mode-specific
 (depends-on "org-plus-contrib")
@@ -115,7 +100,6 @@
 (depends-on "groovy-mode")
 (depends-on "swift-mode")
 ;; (depends-on "haxe-mode")
-;; (depends-on "go-mode" :git "https://github.com/dominikh/go-mode.el")
 (depends-on "go-mode")
 
 (depends-on "php-mode")
