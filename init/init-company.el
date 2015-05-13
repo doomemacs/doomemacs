@@ -2,18 +2,15 @@
   :config
   (progn
     (global-company-mode 1)
-
-    (setq company-idle-delay nil)
-    (setq company-minimum-prefix-length 1)
-    (setq company-show-numbers nil)
-    (setq company-tooltip-limit 20)
-
-    (setq company-dabbrev-downcase nil)
-    (setq company-dabbrev-ignore-case nil)
-    (setq company-tooltip-align-annotations t)
-    (setq company-require-match 'never)
-
-    (setq company-global-modes
+    (setq company-idle-delay nil
+          company-minimum-prefix-length 1
+          company-show-numbers nil
+          company-tooltip-limit 20
+          company-dabbrev-downcase nil
+          company-dabbrev-ignore-case nil
+          company-tooltip-align-annotations t
+          company-require-match 'never
+          company-global-modes
           '(not eshell-mode comint-mode org-mode erc-mode message-mode help-mode))
 
     (require 'color)
@@ -29,7 +26,11 @@
     ;; Sort candidates by
     (add-to-list 'company-transformers 'company-sort-by-occurrence)
     ;; (add-to-list 'company-transformers 'company-sort-by-backend-importance)
-    (use-package company-statistics :config (company-statistics-mode))
+    (use-package company-statistics
+      :config
+      (progn
+        (setq company-statistics-file (expand-file-name "company-statistics-cache.el" my-tmp-dir))
+        (company-statistics-mode)))
 
     (progn ; frontends
       (setq-default company-frontends '(company-pseudo-tooltip-unless-just-one-frontend
@@ -43,7 +44,7 @@
         (add-hook hook
                   `(lambda()
                      (set (make-local-variable 'company-backends)
-                          (append '((,@backends company-dictionary)) company-backends)))))
+                          (append '((,@backends company-semantic)) company-backends)))))
 
       (company--backend-on 'nxml-mode-hook 'company-nxml 'company-yasnippet)
       (company--backend-on 'emacs-lisp-mode-hook 'company-elisp 'company-yasnippet)
@@ -51,13 +52,11 @@
       ;; Rewrite evil-complete to use company-dabbrev
       (setq company-dabbrev-code-other-buffers t)
       (setq company-dabbrev-code-buffers nil)
-
       (setq evil-complete-next-func
             (lambda(arg)
               (call-interactively 'company-dabbrev)
               (if (eq company-candidates-length 1)
                 (company-complete))))
-
       (setq evil-complete-previous-func
             (lambda (arg)
               (let ((company-selection-wrap-around t))
@@ -69,24 +68,31 @@
       ;; Simulates ac-source-dictionary (without global dictionary)
       (defconst my-dicts-dir (concat my-dir "dict/"))
       (defvar company-dictionary-alist '())
-
+      (defvar company-dictionary-major-minor-modes '())
+      (defun company-dictionary-active-minor-modes ()
+        (-filter (lambda (mode) (symbol-value mode)) company-dictionary-major-minor-modes))
+      (defun company-dictionary-assemble ()
+        (let ((minor-modes (company-dictionary-active-minor-modes))
+              (dicts (cdr (assq major-mode company-dictionary-alist))))
+          (dolist (mode minor-modes)
+            (setq dicts (append dicts (cdr (assq mode company-dictionary-alist)))))
+          dicts))
+      (defun company-dictionary-init ()
+        (dolist (file (f-files my-dicts-dir))
+          (add-to-list 'company-dictionary-alist `(,(intern (f-base file)) ,@(s-split "\n" (f-read file) t)))))
       (defun company-dictionary (command &optional arg &rest ignored)
-        "`company-mode' back-end for programming language keywords."
+        "`company-mode' back-end for user-provided dictionaries."
         (interactive (list 'interactive))
-        (unless company-dictionary-alist
-          (dolist (file (f-files my-dicts-dir))
-            (add-to-list 'company-dictionary-alist `(,(intern (f-base file)) ,@(s-split "\n" (f-read file) t)))))
-        (cl-case command
-          (interactive (company-begin-backend 'company-dictionary))
-          (prefix (and (assq major-mode company-dictionary-alist)
-                       (or (company-grab-symbol) 'stop)))
-          (candidates
-           (let ((completion-ignore-case nil)
-                 (symbols (cdr (assq major-mode company-dictionary-alist))))
-             (all-completions arg (if (consp symbols)
-                                      symbols
-                                    (cdr (assq symbols company-dictionary-alist))))))
-          (sorted t)))
+        (unless company-dictionary-alist (company-dictionary-init))
+        (let ((dict (company-dictionary-assemble)))
+          (cl-case command
+            (interactive (company-begin-backend 'company-dictionary))
+            (prefix (and dict (or (company-grab-symbol) 'stop)))
+            (candidates
+             (let ((completion-ignore-case nil)
+                   (symbols dict))
+               (all-completions arg symbols)))
+            (sorted t))))
 
     (progn ; keybinds
       (bind 'insert company-mode-map
