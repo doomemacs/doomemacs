@@ -26,12 +26,12 @@
 (defconst my-snippets-dir  (concat my-dir "snippets/"))
 (defconst my-tmp-dir       (concat my-dir ".cache/"))
 
-(defconst *dark-theme   'v0)
-(defconst *light-theme  'github) ; wtb better light theme...
-
+(defconst *dark-theme  'v0)
+(defconst *light-theme 'github) ; wtb better light theme...
 (defconst *fonts `(,(font-spec :family "Terminus (TTF)" :size 12 :antialias nil)
-                   ,(font-spec :family "Ubuntu Mono"    :size 14 :antialias t)
-                   ,(font-spec :family "Inconsolata"    :size 22 :antialias t)))
+                   ,(font-spec :family "Inconsolata"    :size 14 :antialias t)
+                   ,(font-spec :family "Ubuntu Mono"    :size 20 :antialias t)
+                   ))
 
 (add-to-list 'load-path my-core-dir)
 (add-to-list 'load-path my-modules-dir)

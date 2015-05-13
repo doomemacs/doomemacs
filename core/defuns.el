@@ -109,7 +109,9 @@ key-chord-define."
     (if (>= my/cycle-font-i (1- (length *fonts)))
         (setq my/cycle-font-i 0)
       (cl-incf my/cycle-font-i)))
-  (set-frame-font (nth my/cycle-font-i *fonts)))
+  (let ((font (nth my/cycle-font-i *fonts)))
+    (message "Changing font to %s" (nth 1 (font-face-attributes font)))
+    (set-frame-font font)))
 
 
 ;;;; Global Defuns ;;;;;;;;;;;;;;;;;;;;;
