@@ -134,7 +134,7 @@
       (defadvice undo-tree-load-history-hook (around undo-tree-load-history-shut-up activate)
         (shut-up ad-do-it))
       (defadvice undo-tree-save-history-hook (around undo-tree-save-history-shut-up activate)
-        (shut-up ad-do-it))))
+        (shut-up ad-do-it)))
 
     (progn ; extensions
       (defun evil-visual-line-state-p ()
@@ -197,7 +197,8 @@
         (if (and (not bang) (projectile-project-p))
             (projectile-kill-buffers)
           (mapc 'kill-buffer (buffer-list)))
-        (delete-other-windows))
+        (delete-other-windows)
+        (switch-to-buffer (if (buffer-live-p project-scratch-buffer) project-scratch-buffer (get-buffer-create "*scratch*"))))
 
       (evil-define-command my:kill-buried-buffers (&optional bang)
         :repeat nil
