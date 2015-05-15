@@ -1,3 +1,8 @@
+love.keyboard.isDown
+love.draw
+love.update
+love.conf
+love.load
 draw
 focus
 joystickpressed

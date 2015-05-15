@@ -62,13 +62,13 @@ If ARG is nil this function calls `recompile', otherwise it calls
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (evil-define-operator my:eval-region (beg end)
-  :keep-visual t
   :move-point nil
   (interactive "<r>")
   (cond ((eq major-mode 'emacs-lisp-mode)
          (eval-region beg end))
         (t
-         (let ((interp (my--get-interpreter)))
+         (let ((interp (my--get-interpreter))
+               (max-mini-window-height 1))
            (when interp (shell-command-on-region beg end interp))))))
 
 (evil-define-command my:eval-buffer ()
@@ -76,7 +76,8 @@ If ARG is nil this function calls `recompile', otherwise it calls
   (cond ((eq major-mode 'emacs-lisp-mode)
          (eval-buffer))
         (t
-         (let ((interp (my--get-interpreter)))
+         (let ((interp (my--get-interpreter))
+               (max-mini-window-height 1))
            (when interp (shell-command-on-region (point-min) (point-max) interp))))))
 
 (defun my--get-interpreter ()

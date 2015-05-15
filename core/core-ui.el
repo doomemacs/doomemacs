@@ -42,6 +42,10 @@
   (if (string-equal (system-name) "io")
       (set-frame-size (selected-frame) 326 119)))
 
+(defadvice save-buffers-kill-emacs (around no-query-kill-emacs activate)
+  "Prevent annoying \"Active processes exist\" query when you quit Emacs."
+  (flet ((process-list ())) ad-do-it))
+
 
 ;;;; Modeline ;;;;;;;;;;;;;;;;;;;;;;;;;;
 (use-package vim-empty-lines-mode

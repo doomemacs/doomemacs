@@ -30,6 +30,8 @@
                  helm-css-scss-multi
                  helm-css-scss-insert-close-comment))
 
+    (use-package helm-company :commands (helm-company))
+
     ;; Ex-mode interface for `helm-ag'. If `bang', then `search' is interpreted as
     ;; regexp.
     (evil-define-operator my:helm-ag-search (beg end &optional search hidden-files-p pwd-p regex-p)
@@ -100,31 +102,11 @@
         (add-to-list 'projectile-globally-ignored-directories "assets")
         (add-to-list 'projectile-other-file-alist '("scss" "css"))
         (add-to-list 'projectile-other-file-alist '("css" "scss"))
-        (use-package helm-projectile)
 
         ;; Don't show the project name in the prompts; I already know.
-        (defun projectile-prepend-project-name (string) (format helm-global-prompt string))
+        (defun projectile-prepend-project-name (string) helm-global-prompt)
 
-        ;; All this for a smaller prompt (it was redundant with helm headers)
-        (defmacro helm-projectile-command (command source prompt)
-          `(defun ,(intern (concat "helm-projectile-" command)) (&optional arg)
-             (interactive "P")
-             (if (projectile-project-p)
-                 (projectile-maybe-invalidate-cache arg))
-             (let ((helm-ff-transformer-show-only-basename nil)
-                   ;; for consistency, we should just let Projectile take care of ignored files
-                   (helm-boring-file-regexp-list nil))
-               (helm :sources ,source
-                     :buffer "*helm projectile*"
-                     :prompt helm-global-prompt))))
-
-        (helm-projectile-command "switch-project" 'helm-source-projectile-projects helm-global-prompt)
-        (helm-projectile-command "find-file" helm-source-projectile-files-and-dired-list helm-global-prompt)
-        (helm-projectile-command "find-file-in-known-projects" 'helm-source-projectile-files-in-all-projects-list helm-global-prompt)
-        (helm-projectile-command "find-file-dwim" 'helm-source-projectile-files-dwim-list helm-global-prompt)
-        (helm-projectile-command "find-dir" helm-source-projectile-directories-and-dired-list helm-global-prompt)
-        (helm-projectile-command "recentf" 'helm-source-projectile-recentf-list helm-global-prompt)
-        (helm-projectile-command "switch-to-buffer" 'helm-source-projectile-buffers-list helm-global-prompt)))
+        (use-package helm-projectile)))
 
     (progn ; helm hacks
       ;; No persistent header

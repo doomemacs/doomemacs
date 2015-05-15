@@ -143,11 +143,12 @@
 
     (defun my--init-yas-mode (&rest modes)
       ;; Yasnippet 0.8.1+
-      (when (boundp 'yas-extra-modes)
-        (if (symbol-value mode)
-            (dolist (mode modes)
-              (yas-activate-extra-mode mode))
-          (setq yas-extra-modes (delq mode yas-extra-modes)))))
+      (after "yasnippet"
+             (when (boundp 'yas-extra-modes)
+               (dolist (mode modes)
+                 (if (symbol-value mode)
+                   (yas-activate-extra-mode mode)
+                   (setq yas-extra-modes (delq mode yas-extra-modes)))))))
 
     ;; keybinds
     (bind yas-keymap

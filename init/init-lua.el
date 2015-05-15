@@ -15,6 +15,8 @@
                (when (project-has-files "main.lua")
                  (love-mode +1)))
 
+    (after "company" (add-to-list 'company-dictionary-major-minor-modes 'love-mode))
+
     (add-hook 'lua-mode-hook 'enable-tab-width-2)))
 
 

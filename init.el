@@ -63,7 +63,7 @@
         init-git               ; git-gutter + modes
         init-ido               ; a search engine for your car keys
         init-helm              ; a search engine for your life
-        init-project           ; project tools - dired, perspective, neotree
+        init-project           ; project tools: dired, neotree
 
         init-cc                ; C/C++/Obj-C madness
         ;; init-d              ; D - It's C, but better!

@@ -37,12 +37,12 @@
 
 ;; <leader>
 (bind my-leader-map
-      ","   'helm-projectile-switch-to-buffer
+      ","   (λ (if (projectile-project-p) (helm-projectile-switch-to-buffer) (helm-buffers-list)))
+      "<"   'helm-buffers-list
       "."   'ido-find-file
       ">"   'my-ido-find-project-file
       "/"   'helm-projectile-find-file
       ";"   'helm-semantic-or-imenu
-      "<"   'helm-mini
       "M"   'helm-projectile-recentf ; recent PROJECT files
       "]"   'helm-etags-select
       "a"   'helm-projectile-find-other-file
@@ -80,7 +80,7 @@
       "g"   'git-gutter+-show-hunk
       "e"   (λ (flycheck-buffer) (flycheck-list-errors))
       "p"   'helm-show-kill-ring
-      "b"   'helm-projectile-switch-to-buffer
+      "b"   'helm-bookmarks
       "w"   'helm-wg)
 
 

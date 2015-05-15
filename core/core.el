@@ -30,7 +30,8 @@
   (auto-compression-mode t)    ; Transparently open compressed files
   (global-font-lock-mode t)    ; Enable syntax highlighting for older emacs
   (global-auto-revert-mode 1)  ; revert buffers for changed files
-  (electric-indent-mode -1)    ; In case of emacs >24.4
+  (electric-indent-mode 1)
+  (setq electric-indent-chars '(?  ?: ?{))
 
   ;;; window layout undo/redo
   (setq winner-boring-buffers '("*Completions*" "*Compile-Log*" "*inferior-lisp*"
@@ -38,13 +39,15 @@
                                 "*Buffer List*" "*Ibuffer*" "*esh command on file*"))
   (winner-mode 1)
 
+  (setq semanticdb-default-save-directory (expand-file-name "semanticdb" my-tmp-dir))
+  (semantic-mode 1)
+
   ;;; UTF-8 please
   (setq locale-coding-system 'utf-8)    ; pretty
   (set-terminal-coding-system 'utf-8)   ; pretty
   (set-keyboard-coding-system 'utf-8)   ; pretty
   (set-selection-coding-system 'utf-8)  ; please
   (prefer-coding-system 'utf-8)         ; with sugar on top
-
   (fset 'yes-or-no-p 'y-or-n-p)         ; y/n instead of yes/no
 
   ;;; Show tab characters
@@ -90,8 +93,6 @@
 
   (setq sentence-end-double-space nil)      ; sentences end with periods. Period.
 
-  (setq eval-expression-print-level nil)
-
   (setq show-paren-delay 0)
 
   (setq ediff-diff-options "-w")
@@ -101,7 +102,7 @@
   ;; Fixes C-i's synonymity with TAB
   (keyboard-translate ?\C-i ?\H-i)
 
-  ;; Save clipboard contents into kill-ring before replace them
+  ;; Don't save clipboard contents into kill-ring before replacing them
   (setq save-interprogram-paste-before-kill nil)
 
   ;; don't let the cursor go into minibuffer prompt
@@ -120,7 +121,7 @@
   (setq bookmark-default-file     (expand-file-name "bookmarks" my-tmp-dir))
   (setq auto-save-default         nil)
   (setq auto-save-list-file-name  (expand-file-name ".auto-save" my-tmp-dir-autosave))
-  (setq auto-save-file-name-transforms  `((".*" ,my-tmp-dir-autosave t)))
+  (setq auto-save-file-name-transforms `((".*" ,my-tmp-dir-autosave t)))
   ;; In case I want to reactivate backup files
   (setq make-backup-files         nil)
   (setq create-lockfiles          nil)
@@ -152,6 +153,7 @@
   (setq recentf-max-menu-items 0)
   (setq recentf-max-saved-items 1000)
   (setq recentf-auto-cleanup 'never)
+  (add-hook 'kill-emacs-hook 'recentf-cleanup)
   (recentf-mode 1)
 
   ;; What we do every night, Pinkie...
@@ -171,7 +173,10 @@
 
   ;; Project defuns ;;;;;;;;;;;;;;;;;;;;;;
   (require 'f)
-  (defvar project-root-files '(".git" ".hg" ".svn" "README" "README.md"))
+
+  (defvar project-root-files '(".git" ".hg" ".svn" ".project" "local.properties" "project.properties")
+    "A list of files that count as 'project files', which determine whether a
+    folder is the root of a project or not.")
   (defun project-root (&optional strict-p)
     "Get the path to the root of your project. Uses `project-root-files' to
 determine if a directory is a project."
@@ -277,10 +282,12 @@ the checking happens for all pairs in auto-minor-mode-alist"
       (push '("^\\*Flycheck.*\\*$" :regexp t :position bottom :height 0.25 :noselect t) popwin:special-display-config)
       (push '(inf-enh-ruby-mode :position bottom :stick t) popwin:special-display-config)
       (push '(snippet-mode :position bottom :stick t) popwin:special-display-config)
+      (push '("^\\*eclim.*\\*" :regexp t :position bottom :height 0.25) popwin:special-display-config)
 
       (push '("*ansi-term*" :position bottom :height 0.45 :stick t) popwin:special-display-config)
       (push '("*terminal*" :position bottom :height 0.45 :stick t) popwin:special-display-config)
       (push '("*Async Shell Command*" :position bottom) popwin:special-display-config)
+      (push '("*Shell Command Output*" :position bottom :stick t :height 15) popwin:special-display-config)
 
       (push '("* Regexp Explain *" :position top :height 0.35) popwin:special-display-config)
 

@@ -42,7 +42,7 @@
         (selection        "#4f5b66")
         (text             "#c0c5ce")
         (comments         "#65737e")
-        (punctuation      "#c0c5ce")
+        (punctuation      "#8fa1b3")
         (delimiters       "#c0c5ce")
         (operators        "#c0c5ce")
         (keywords         "#b48ead")

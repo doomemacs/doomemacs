@@ -4,7 +4,7 @@
   :init (add-hook 'python-mode-hook 'enable-tab-width-4)
   :config
   (progn
-    (setq python-indent-offset 4)
+    (setq-default python-indent-offset 4)
     (setq python-environment-directory my-tmp-dir)
     (setq python-shell-interpreter "ipython")
 

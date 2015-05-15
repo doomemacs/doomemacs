@@ -75,6 +75,7 @@
 (associate-minor-mode "/_\\(layouts\\|posts\\)/.+$" 'jekyll-mode)
 (add-hooks '(web-mode-hook scss-mode-hook html-mode-hook markdown-mode markdown-mode-hook)
            'jekyll-mode-enable-maybe)
+(after "company" (add-to-list 'company-dictionary-major-minor-modes 'jekyll-mode))
 
 (define-minor-mode wordpress-mode
   :init-value nil
@@ -83,6 +84,7 @@
   (my--init-yas-mode 'wordpress-mode))
 (associate-minor-mode "/wp-\\(content\\|admin\\|includes\\)/.+$" 'wordpress-mode)
 (associate-minor-mode "/wp-.+\\.php$" 'wordpress-mode)
+(after "company" (add-to-list 'company-dictionary-major-minor-modes 'wordpress-mode))
 
 
 (provide 'init-web)

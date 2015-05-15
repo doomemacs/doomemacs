@@ -1,7 +1,7 @@
 (defun my-java-project-package ()
   (if (eq major-mode 'java-mode)
     (s-chop-suffix "." (s-replace "/" "." (f-dirname (f-relative (buffer-file-name)
-                                                                 (concat (project-root) "src/")))))
+                                                                 (concat (project-root) "/src/")))))
     ""))
 
 (defun my-java-class-name ()
@@ -10,14 +10,15 @@
     ""))
 
 (use-package eclim
-  :disabled t
   :commands (eclim-mode global-eclim-mode)
-  :config
+  :init
   (progn
     (setq eclim-eclipse-dirs '("/Applications/eclipse")
           eclim-executable "/Applications/eclipse/eclim")
-    (add-hook 'java-mode-hook 'eclim-mode)
-
+    (when (f-exists? eclim-executable)
+      (add-hook 'java-mode-hook 'eclim-mode)))
+  :config
+  (progn
     ;; (use-package eclim-ant)
     ;; (use-package eclim-maven)
     (use-package eclim-problems)
@@ -28,23 +29,33 @@
     (setq help-at-pt-timer-delay 0.1)
     (help-at-pt-set-timer)
 
+    (push "*eclim: problems*" winner-boring-buffers)
+
     (after "company"
       (use-package company-emacs-eclim
         :config (company-emacs-eclim-setup)))
 
     (bind 'motion java-mode-map "gd" 'eclim-java-find-declaration)))
 
+(use-package groovy-mode :mode "\\.gradle$")
+
 (use-package android-mode
   :defer t
   :init
-  (add-hook 'android-mode-hook (set-build-command "./gradlew %s" "build.gradle"))
-  (add-hook! 'java-mode-hook
-             (let ((root (project-root)))
-               (when (or (project-has-files "AndroidManifest.xml" root)
-                         (project-has-files "src/main/AndroidManifest.xml" root))
-                 (android-mode +1)))))
+  (progn
+    (defun my-android-mode-enable-maybe ()
+      (let ((root (project-root)))
+        (when (or (project-has-files "local.properties" root)
+                  (project-has-files "AndroidManifest.xml" root)
+                  (project-has-files "src/main/AndroidManifest.xml" root))
+          (android-mode +1)
+          (set-build-command "./gradlew %s" "build.gradle"))))
+    (after "company" (add-to-list 'company-dictionary-major-minor-modes 'android-mode))
+    (add-hook 'java-mode-hook    'my-android-mode-enable-maybe)
+    (add-hook 'groovy-mode-hook  'my-android-mode-enable-maybe)
+    (add-hook 'nxml-mode-hook    'my-android-mode-enable-maybe)
+    (add-hook! 'android-mode-hook (my--init-yas-mode 'android-mode))))
 
-(use-package groovy-mode :mode "\\.gradle$")
 
 (provide 'init-java)
 ;;; init-java.el ends here

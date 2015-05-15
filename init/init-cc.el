@@ -2,7 +2,6 @@
   :mode "CMakeLists\\.txt$"
   :config
   (progn
-    (after "auto-complete" (add-to-list 'ac-modes 'cmake-mode))
     (after "company"
       (use-package company-cmake
         :config (company--backend-on 'cmake-mode-hook 'company-cmake 'company-yasnippet)))))
