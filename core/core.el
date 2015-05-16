@@ -16,7 +16,7 @@
    (make-directory my-tmp-dir-backup t)
    (make-directory my-tmp-dir-autosave t))
 
-(setq load-prefer-newer t)
+;; (setq load-prefer-newer t)
 (setq debug-on-quit DEBUG-MODE)
 
 (require 'shut-up)
@@ -133,12 +133,12 @@
   ;; Save history across sessions
   (require 'savehist)
   (setq savehist-file (concat my-tmp-dir "savehist")  ; keep the home clean
+        history-length 1000
         savehist-additional-variables '(kill-ring
                                         global-mark-ring
                                         search-ring
                                         regexp-search-ring
-                                        extended-command-history)
-        history-length 1000)
+                                        extended-command-history))
   (savehist-mode 1)
 
   ;; Save cursor location across sessions
