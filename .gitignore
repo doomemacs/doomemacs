@@ -8,6 +8,7 @@ places
 semanticdb
 ede-projects.el
 tramp
+smex-items
 
 # compiled files
 .*
