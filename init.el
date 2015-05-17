@@ -16,35 +16,31 @@
 ;;    * *<defun/var-name> ; for altering the visual state
 ;;
 ;;; Code:
-(defconst DEBUG-MODE nil)
+(defvar DEBUG-MODE nil)
 
-(defconst my-dir           user-emacs-directory)
-(defconst my-core-dir      (concat my-dir "core/"))
-(defconst my-modules-dir   (concat my-dir "init/"))
-(defconst my-contrib-dir   (concat my-dir "contrib/"))
-(defconst my-themes-dir    (concat my-dir "themes/"))
-(defconst my-snippets-dir  (concat my-dir "snippets/"))
-(defconst my-tmp-dir       (concat my-dir ".cache/"))
+(defvar my-dir           user-emacs-directory)
+(defvar my-core-dir      (concat my-dir "core/"))
+(defvar my-modules-dir   (concat my-dir "init/"))
+(defvar my-contrib-dir   (concat my-dir "contrib/"))
+(defvar my-themes-dir    (concat my-dir "themes/"))
+(defvar my-snippets-dir  (concat my-dir "snippets/"))
+(defvar my-tmp-dir       (concat my-dir ".cache/"))
 
-(defconst *dark-theme  'v0)
-(defconst *light-theme 'github) ; wtb better light theme...
-(defconst *fonts `(,(font-spec :family "Terminus (TTF)" :size 12 :antialias nil)
-                   ,(font-spec :family "Inconsolata"    :size 14 :antialias t)
-                   ,(font-spec :family "Ubuntu Mono"    :size 20 :antialias t)
-                   ))
+(defvar *dark-theme  'v0)
+(defvar *light-theme 'github) ; wtb better light theme...
+(defvar *fonts `(,(font-spec :family "Terminus (TTF)" :size 12 :antialias nil)
+                 ,(font-spec :family "Inconsolata"    :size 14 :antialias t)
+                 ,(font-spec :family "Ubuntu Mono"    :size 20 :antialias t)
+                 ))
 
-(add-to-list 'load-path my-core-dir)
-(add-to-list 'load-path my-modules-dir)
-(add-to-list 'load-path my-contrib-dir)
-
-;; Add elisp dirs to load-path
+(push my-core-dir    load-path)
+(push my-modules-dir load-path)
+(push my-contrib-dir load-path)
+;; Add elisp and cask dirs to load-path
 (let ((default-directory my-contrib-dir))
   (normal-top-level-add-subdirs-to-load-path))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(require 'cask)
-(cask-initialize)
+(let ((default-directory (expand-file-name (concat ".cask/" emacs-version "/elpa/") my-dir)))
+  (normal-top-level-add-subdirs-to-load-path))
 
 (require 'use-package)
 (mapc 'require
@@ -58,7 +54,6 @@
         init-auto-insert       ; for the lazy typis
         init-company           ; see above
         init-dev               ; general dev tools/settings
-        ;; init-floobits       ; when I'm feeling lonely
         init-fly               ; fly(check|spell)
         init-git               ; git-gutter + modes
         init-ido               ; a search engine for your car keys
