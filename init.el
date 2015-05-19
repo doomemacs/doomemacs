@@ -53,7 +53,6 @@
         ;; init-auto-complete
         init-auto-insert       ; for the lazy typis
         init-company           ; see above
-        init-dev               ; general dev tools/settings
         init-fly               ; fly(check|spell)
         init-git               ; git-gutter + modes
         init-ido               ; a search engine for your car keys
@@ -64,7 +63,6 @@
         ;; init-d              ; D - It's C, but better!
         ;; init-cscope
         init-csharp
-        init-lisp              ; all things lisp; elisp, clojure
         ;; init-erlang
         ;; init-eshell
         init-go
