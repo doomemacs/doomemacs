@@ -1,7 +1,7 @@
 (use-package workgroups2
   :config
   (progn
-    (setq wg-session-file "~/.emacs.d/workgroups/.default")
+    (setq wg-session-file "~/.emacs.workgroup")
     (setq wg-workgroup-directory "~/.emacs.d/workgroups/")
     (setq wg-first-wg-name "main")
 

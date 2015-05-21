@@ -25,6 +25,17 @@
 (exmap "t"               'my:tmux-run)
 (exmap "tcd"             'my:tmux-chdir)
 
+(exmap "a"             'helm-projectile-find-other-file)
+(exmap "proj[ect]"     'helm-projectile-switch-project)
+(exmap "ag"            'my:helm-ag-search)
+(exmap "agr"           'my:helm-ag-regex-search)
+(exmap "ag[cw]d"       'my:helm-ag-search-cwd)
+(exmap "agr[cw]d"      'my:helm-ag-regex-search-cwd)
+(exmap "sw[oop]"       'my:helm-swoop)
+(exmap "rec[ent]"      'my:helm-recentf)
+(exmap "snip[pets]"    'my:snippets)
+(exmap "ref[actor]"    'emr-show-refactor-menu)
+
 (after "flycheck"
   (exmap "er[rors]"      (λ (flycheck-buffer) (flycheck-list-errors))))
 
@@ -32,22 +43,6 @@
   (exmap "gstage"        'git-gutter+-stage-hunks)
   (exmap "grevert"       'git-gutter+-revert-hunks)
   (exmap "gdiff"         'git-gutter+-show-hunk))
-
-(after "helm"
-  (exmap "a"             'helm-projectile-find-other-file)
-  (exmap "proj[ect]"     'helm-projectile-switch-project)
-  (exmap "ag"            'my:helm-ag-search)
-  (exmap "agr"           'my:helm-ag-regex-search)
-  (exmap "ag[cw]d"       'my:helm-ag-search-cwd)
-  (exmap "agr[cw]d"      'my:helm-ag-regex-search-cwd)
-  (exmap "sw[oop]"       'my:helm-swoop)
-  (exmap "rec[ent]"      'my:helm-recentf))
-
-(after "yasnippet"
-  (exmap "snip[pets]"    'my:snippets))
-
-(after "emr"
-  (exmap "ref[actor]"    'emr-show-refactor-menu))
 
 (after "re-builder"
   (exmap "re[gex]"       'my:regex))

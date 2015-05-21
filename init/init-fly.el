@@ -1,20 +1,21 @@
 (use-package flycheck
+  :commands (flycheck-mode flycheck-list-errors)
   :init
-  (setq-default flycheck-indication-mode 'right-fringe
-                ;; Removed checks on idle/change for snappiness
-                flycheck-check-syntax-automatically '(save mode-enabled idle-change)
-                flycheck-disabled-checkers '(emacs-lisp-checkdoc make))
+  (add-hooks '(ruby-mode-hook
+               python-mode-hook
+               php-mode-hook
+               lua-mode-hook
+               shell-mode-hook
+               scss-mode-hook
+               c++-mode-hook
+               c-mode-hook)
+             'flycheck-mode)
   :config
   (progn ; flycheck settings
-    (add-hooks '(ruby-mode-hook
-                 python-mode-hook
-                 php-mode-hook
-                 lua-mode-hook
-                 shell-mode-hook
-                 scss-mode-hook
-                 c++-mode-hook
-                 c-mode-hook)
-               'flycheck-mode)
+    (setq-default flycheck-indication-mode 'right-fringe
+                  ;; Removed checks on idle/change for snappiness
+                  flycheck-check-syntax-automatically '(save mode-enabled idle-change)
+                  flycheck-disabled-checkers '(emacs-lisp-checkdoc make))
 
     (my--cleanup-buffers-add "^\\*Flycheck.*\\*$")
 

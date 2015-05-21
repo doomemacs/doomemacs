@@ -45,6 +45,7 @@ java.sql
 java.text
 java.text.spi
 java.util
+java.util
 java.util.concurrent
 java.util.concurrent.atomic
 java.util.concurrent.locks

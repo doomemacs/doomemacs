@@ -1,36 +1,37 @@
 (use-package yasnippet
+  :defer t
+  :commands (yas-minor-mode yas-minor-mode-on my--init-yas-mode my:snippets)
   :mode (("emacs\\.d/snippets/.+$" . snippet-mode))
-  :demand t
   :init
   (progn
     (defvar yas-minor-mode-map
-      ;; Fix yasnippet keymaps so they only work in insert mode
       (let ((map (make-sparse-keymap)))
         (bind 'insert map [(tab)] 'yas-expand)
-        (bind 'insert map (kbd "TAB") 'yas-expand)
-        (bind 'visual map (kbd "<backtab>") 'yas-insert-snippet)
+        (bind 'visual map "<backtab>" 'yas-insert-snippet)
         map))
 
-    ;; (add-hook 'snippet-mode-hook 'yas-minor-mode-on)
-    ;; (add-hook 'text-mode-hook 'yas-minor-mode-on)
-    ;; (add-hook 'prog-mode-hook 'yas-minor-mode-on)
-    ;; (add-hook 'org-mode-hook 'yas-minor-mode-on))
+    (add-hook 'snippet-mode-hook 'yas-minor-mode-on)
+    (add-hook 'text-mode-hook 'yas-minor-mode-on)
+    (add-hook 'prog-mode-hook 'yas-minor-mode-on)
+    (add-hook 'org-mode-hook 'yas-minor-mode-on)
     (add-hook 'snippet-mode-hook 'disable-final-newline))
   :config
   (progn
+    (bind 'insert [(tab)] nil)
+    (bind 'visual "<backtab>" nil)
+
     (setq yas-verbosity 0)
     (setq yas-indent-line 'auto)
-    (setq yas-also-auto-indent-first-line nil)
+    (setq yas-also-auto-indent-first-line t)
     (setq yas-wrap-around-region nil)
+
     ;; Only load personal snippets
     (setq yas-snippet-dirs `(,my-snippets-dir))
     (setq yas-prompt-functions '(yas-ido-prompt yas-no-prompt))
 
-    (yas-global-mode 1)
     (yas-reload-all)
 
-    (after "helm"
-      (add-to-list 'yas-dont-activate 'helm-alive-p))
+    (after "helm" (add-to-list 'yas-dont-activate 'helm-alive-p))
 
     ;; Exit snippets on ESC in normal mode
     (defadvice evil-force-normal-state (before evil-esc-quit-yasnippet activate)
@@ -55,8 +56,7 @@
                                                                 (1- (region-end)))))))
     ;; Previous hook causes yas-selected-text to persist between expansions.
     ;; This little hack gets around it.
-    (add-hook! 'yas-after-exit-snippet-hook
-               (setq-local yas-selected-text nil))
+    (add-hook! 'yas-after-exit-snippet-hook (setq-local yas-selected-text nil))
 
     (evil-define-operator my:snippets (beg end &optional name)
       :motion nil
@@ -67,8 +67,7 @@
       (if (and beg end)
           (yas-insert-snippet)
         (if name
-            (popwin:find-file (concat my-snippets-dir
-                                      (symbol-name major-mode) "/" name))
+            (popwin:find-file (concat my-snippets-dir (symbol-name major-mode) "/" name))
           (yas-visit-snippet-file))))
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

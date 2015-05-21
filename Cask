@@ -12,9 +12,9 @@
 (depends-on "fuzzy")
 (depends-on "use-package")
 (depends-on "smex")
-(depends-on "floobits")
 (depends-on "pos-tip")
-(depends-on "vim-empty-lines-mode")
+;;(depends-on "vim-empty-lines-mode")
+(depends-on "hlinum" :git "https://github.com/tom-tan/hlinum-mode")
 
 ;; OSX
 (depends-on "exec-path-from-shell")
@@ -63,9 +63,7 @@
 (depends-on "evil-indent-textobject")
 (depends-on "evil-jumper")
 (depends-on "evil-god-state")
-;;(depends-on "evil-nerd-commenter")
 (depends-on "evil-snipe")
-;; evil-nerd-commenter chokes if it's installed via cask for some reason...
 
 ;; Project management
 (depends-on "projectile")

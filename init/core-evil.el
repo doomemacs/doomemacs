@@ -1,5 +1,3 @@
-(provide 'core-evil)
-
 ;;;; Eeeeeeevil ;;;;;;;;;;;;;;;;;;;;;;;;
 (use-package evil
   :config
@@ -22,6 +20,7 @@
 
     ;; Always ensure evil-shift-width is consistent with tab-width
     (add-hook! 'after-change-major-mode-hook (setq evil-shift-width tab-width))
+    ;; Fix code folding
     (add-hook 'prog-mode-hook 'hs-minor-mode)
 
     ;; highlight matching delimiters where it's important
@@ -46,16 +45,39 @@
                         (term-mode . emacs)))
       (evil-set-initial-state `,(car mode-map) `,(cdr mode-map)))
 
+    ;; predicate for visual line mode
+    (defun evil-visual-line-state-p ()
+      "Returns non-nil if in visual-line mode, nil otherwise."
+      (and (evil-visual-state-p)
+           (eq (evil-visual-type) 'line)))
+
+
     (progn ; evil plugins
-      (use-package evil-ex-registers)
       (use-package evil-indent-textobject)    ; vii/vai/vaI
-      (use-package evil-numbers)
-      (use-package evil-matchit     :config (global-evil-matchit-mode 1))
-      (use-package evil-surround    :config (global-evil-surround-mode 1))
-      (use-package evil-commentary  :config (evil-commentary-mode 1))
+
+      ;; (use-package evil-ex-registers)
+      (use-package evil-surround
+        :commands (evil-surround-edit
+                   evil-Surround-edit
+                   evil-surround-region)
+        :config (global-evil-surround-mode 1))
+
+      (use-package evil-numbers
+        :commands (evil-numbers/inc-at-pt
+                   evil-numbers/dec-at-pt))
+
+      (use-package evil-matchit
+        :commands (evilmi-jump-items)
+        :config   (global-evil-matchit-mode 1))
+
       (use-package evil-search-highlight-persist
-        :config
-        (global-evil-search-highlight-persist t))
+        :config   (global-evil-search-highlight-persist t))
+
+      (use-package evil-commentary
+        :commands (evil-commentary
+                   evil-commentary-yank
+                   evil-commentary-line)
+        :config   (evil-commentary-mode 1))
 
       (use-package evil-jumper
         :init (setq evil-jumper-file (expand-file-name "jumplist" my-tmp-dir))
@@ -66,12 +88,16 @@
           (define-key evil-motion-state-map (kbd "H-i") 'evil-jumper/forward)))
 
       (use-package evil-exchange
+        :commands (evil-exchange)
         :config
         (defadvice evil-force-normal-state (before evil-esc-quit-exchange activate)
           (when evil-exchange--overlays
             (evil-exchange-cancel))))
 
       (use-package evil-visualstar
+        :commands (evil-visualstar/begin-search
+                   evil-visualstar/begin-search-forward
+                   evil-visualstar/begin-search-backward)
         :config
         (progn
           ;; I cut this down because the original visualstar wouldn't remember
@@ -88,22 +114,17 @@
         :config
         (progn
           (global-evil-snipe-mode +1)
-          (setq evil-snipe-smart-case t)
-          (setq evil-snipe-override-evil t)
-          (setq evil-snipe-scope 'line)
-          (setq evil-snipe-repeat-scope 'buffer)
-          (setq evil-snipe-override-evil-repeat-keys nil)
+          (setq evil-snipe-smart-case t
+                evil-snipe-override-evil t
+                evil-snipe-scope 'line
+                evil-snipe-repeat-scope 'buffer
+                evil-snipe-override-evil-repeat-keys nil)
           (setq-default evil-snipe-symbol-groups
                 '((?\[ "[[{(]")
                   (?\] "[]})]")))
-
           (bind 'motion
                 "C-;" 'evil-snipe-repeat
-                "C-," 'evil-snipe-repeat-reverse
-
-                'visual
-                "z" 'evil-snipe-s
-                "Z" 'evil-snipe-S))))
+                "C-," 'evil-snipe-repeat-reverse))))
 
     (bind evil-ex-completion-map
           "C-r"           #'evil-ex-paste-from-register   ; registers in ex-mode
@@ -128,67 +149,7 @@
       (defadvice evil-window-split (after evil-window-split-jump activate)
         (evil-window-down 1))
       (defadvice evil-window-vsplit (after evil-window-vsplit-jump activate)
-        (evil-window-right 1))
-
-      ;; Shut up undo-tree's constant complaining
-      (defadvice undo-tree-load-history-hook (around undo-tree-load-history-shut-up activate)
-        (shut-up ad-do-it))
-      (defadvice undo-tree-save-history-hook (around undo-tree-save-history-shut-up activate)
-        (shut-up ad-do-it)))
-
-    (progn ; extensions
-      (defun evil-visual-line-state-p ()
-        "Returns non-nil if in visual-line mode, nil otherwise."
-        (and (evil-visual-state-p)
-             (eq (evil-visual-type) 'line)))
-
-      (defun evil-ex-replace-special-filenames (file-name)
-        "Replace special symbols in FILE-NAME.
-
-    % => full path to file (/project/src/thing.c)
-    # => alternative file path (/project/include/thing.h)
-    %:p => path to project root (/project/)
-    %:d => path to current directory (/project/src/)
-    %:e => the file's extension (c)
-    %:r => the full path without its extension (/project/src/thing)
-    %:t => the file's basename (thing.c)"
-        (let ((current-fname (buffer-file-name))
-              (alternate-fname (and (other-buffer)
-                                    (buffer-file-name (other-buffer)))))
-          (setq file-name
-                ;; %:p:h => the project root (or current directory otherwise)
-                (replace-regexp-in-string "\\(^\\|[^\\\\]\\)\\(%:p\\)"
-                                          (project-root) file-name t t 2))
-          (setq file-name
-                ;; %:p => the project root (or current directory otherwise)
-                (replace-regexp-in-string "\\(^\\|[^\\\\]\\)\\(%:d\\)"
-                                          default-directory file-name t t 2))
-          (when current-fname
-            (setq file-name
-                  ;; %:e => ext
-                  (replace-regexp-in-string "\\(^\\|[^\\\\]\\)\\(%:e\\)"
-                                            (f-ext current-fname) file-name t t 2))
-            (setq file-name
-                  ;; %:r => filename
-                  (replace-regexp-in-string "\\(^\\|[^\\\\]\\)\\(%:r\\)"
-                                            (f-no-ext current-fname) file-name t t 2))
-            (setq file-name
-                  ;; %:t => filename.ext
-                  (replace-regexp-in-string "\\(^\\|[^\\\\]\\)\\(%:t\\)"
-                                            (f-base current-fname) file-name t t 2))
-            (setq file-name
-                  ;; % => file path for current frame
-                  (replace-regexp-in-string "\\(^\\|[^\\\\]\\)\\(%\\)"
-                                            current-fname file-name t t 2)))
-          (when alternate-fname
-            (setq file-name
-                  ;; # => file path for alternative frame
-                  (replace-regexp-in-string "\\(^\\|[^\\\\]\\)\\(#\\)"
-                                            alternate-fname file-name t t 2)))
-          (setq file-name
-                (replace-regexp-in-string "\\\\\\([#%]\\)"
-                                          "\\1" file-name t)))
-        file-name))
+        (evil-window-right 1)))
 
     (progn ; ex-commands
       (evil-define-command my:kill-buffers (&optional bang)
@@ -221,9 +182,11 @@
       (evil-define-command my:byte-compile (&optional bang)
         :repeat nil
         (interactive "<!>")
-        (if bang
-            (byte-recompile-directory (concat my-dir ".cask") 0 t)
-          (byte-recompile-directory my-dir 0 t)))
+        (byte-recompile-file (expand-file-name "init.el" my-dir) bang 0)
+        (dolist (file (append (f-glob "core*.el" my-modules-dir)
+                              (f-glob "defuns*.el" my-modules-dir)
+                              (f-glob "my*.el" my-modules-dir)))
+          (byte-recompile-file file bang 0)))
 
       (evil-define-command my:cd (dir)
         :repeat nil
@@ -326,3 +289,6 @@ provided."
         (interactive "<r>")
         (evil-normal-state)
         (my-narrow-to-region-indirect beg end)))))
+
+
+(provide 'core-evil)

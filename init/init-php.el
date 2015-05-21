@@ -10,7 +10,10 @@
 
     ;; TODO Tie into emr
     (use-package php-refactor-mode
-      :config (add-hook 'php-mode-hook 'php-refactor-mode))))
+      :config
+      (progn
+        (add-hook 'php-mode-hook 'emr-initialize)
+        (add-hook 'php-mode-hook 'php-refactor-mode)))))
 
 
 (provide 'init-php)

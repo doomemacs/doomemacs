@@ -1,5 +1,5 @@
 eshell/
-core/autoloads.el
+init/autoloads.el
 auto-save-list
 recentf
 savehist

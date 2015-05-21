@@ -16,8 +16,8 @@
 (ido-everywhere 1)
 
 (use-package ido-vertical-mode  :config (ido-vertical-mode 1))
-(use-package ido-ubiquitous     :config (ido-ubiquitous-mode 1))
 (use-package flx-ido            :config (flx-ido-mode 1))
+(use-package ido-ubiquitous     :config (ido-ubiquitous-mode 1))
 
 (setq ido-use-faces nil
       ido-confirm-unique-completion t
@@ -49,6 +49,18 @@
    (delq nil (mapcar
               (lambda (x) (and (char-equal (string-to-char x) ?.) x))
               ido-temp-list))))
+
+;; Press ~ to go to $HOME in ido
+(add-hook 'ido-setup-hook
+ (lambda ()
+   ;; Go straight home
+   (define-key ido-file-completion-map
+     (kbd "~")
+     (lambda ()
+       (interactive)
+       (if (looking-back "/")
+           (insert "~/")
+         (call-interactively 'self-insert-command))))))
 
 
 (provide 'init-ido)

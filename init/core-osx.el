@@ -12,9 +12,8 @@
 (setq mac-option-modifier 'alt)
 
 ;; fix emacs PATH on OSX (GUI only)
-(use-package exec-path-from-shell
-  :if (memq window-system '(mac ns))
-  :init (exec-path-from-shell-initialize))
+(require 'exec-path-from-shell)
+(exec-path-from-shell-initialize)
 
 (after "evil"
   ;; On OSX, stop copying each visual state move to the clipboard:

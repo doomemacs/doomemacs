@@ -1,13 +1,15 @@
 (use-package python
   :mode ("\\.py\\'" . python-mode)
   :interpreter ("python" . python-mode)
-  :init (add-hook 'python-mode-hook 'enable-tab-width-4)
+  :init
+  (progn
+    (add-hook 'python-mode-hook 'enable-tab-width-4)
+    (add-hook 'python-mode-hook 'emr-initialize))
   :config
   (progn
     (setq-default python-indent-offset 4)
     (setq python-environment-directory my-tmp-dir)
     (setq python-shell-interpreter "ipython")
-
     ;; interferes with smartparens
     (define-key python-mode-map (kbd "DEL") nil)
 

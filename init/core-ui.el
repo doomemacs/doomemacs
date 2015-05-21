@@ -10,11 +10,26 @@
 
 
 ;;;; GUI Settings ;;;;;;;;;;;;;;;;;;;;;;
-(tooltip-mode -1)
-(blink-cursor-mode -1)        ; blink cursor
-(global-hl-line-mode 1)      ; highlight line
+(when window-system
+  (scroll-bar-mode -1)    ; no scrollbar
+  (tool-bar-mode -1)      ; no toolbar
+  (menu-bar-mode -1))     ; no menubar
 
-(setq linum-format " %3d")
+(tooltip-mode -1)
+(blink-cursor-mode 1)        ; blink cursor
+(global-hl-line-mode -1)     ; highlight line
+
+;; Highlight curent line number
+(use-package hlinum
+  :config
+  (progn
+    (hlinum-activate)
+    ;; A little excessive
+    (remove-hook 'pre-command-hook 'hlinum-unhighlight-current-line)))
+
+;; Line numbers
+(setq linum-format " %4d ")
+(add-hooks '(text-mode-hook prog-mode-hook) 'linum-mode)
 
 ;; Multiple cursors across buffers cause a strange redraw delay for
 ;; some things, like auto-complete or evil-mode's cursor color
@@ -24,18 +39,12 @@
 (setq-default visible-bell nil)   ; silence of the bells
 (setq-default use-dialog-box nil) ; avoid GUI
 (setq-default redisplay-dont-pause t)
-;; (setq window-combination-resize nil)
 
 ;; do not soft-wrap lines
 (setq-default truncate-lines t)
 (setq-default truncate-partial-width-windows nil)
 (setq-default indicate-buffer-boundaries nil)
 (setq-default indicate-empty-lines nil)
-
-(when (functionp 'scroll-bar-mode) (scroll-bar-mode -1))    ; no scrollbar
-(when (functionp 'tool-bar-mode)   (tool-bar-mode -1))      ; no toolbar
-(when (functionp 'menu-bar-mode)   (menu-bar-mode -1))      ; no menubar
-(when (fboundp 'fringe-mode) (fringe-mode '(5 . 10)))       ; no nonsense
 
 (when window-system
   (setq frame-title-format '(buffer-file-name "%f" ("%b")))
@@ -46,10 +55,13 @@
   "Prevent annoying \"Active processes exist\" query when you quit Emacs."
   (flet ((process-list ())) ad-do-it))
 
+;; [pedantry intensifies]
+(rename-mode-name emacs-lisp-mode "Elisp")
+
 
 ;;;; Modeline ;;;;;;;;;;;;;;;;;;;;;;;;;;
-(use-package vim-empty-lines-mode
-  :config (global-vim-empty-lines-mode +1))
+;; (use-package vim-empty-lines-mode
+;;   :config (global-vim-empty-lines-mode +1))
 
 (use-package uniquify
   :config
@@ -58,30 +70,29 @@
         uniquify-ignore-buffers-re "^\\*"))
 
 (use-package smart-mode-line
-  :config
-  (setq rm-blacklist
-        (mapconcat 'identity
-                   '(" SP"
-                     " Fill"
-                     " EvilOrg"
-                     " Abbrev"
-                     " snipe"
-                     " company"
-                     " Anaconda"
-                     " WS"
-                     " GitGutter"
-                     " Undo-Tree"
-                     " Projectile\\[.+\\]"
-                     " hs"
-                     " ElDoc"
-                     " wg"
-                     " ~"
-                     " s-/"
-                     ;; " yas"
-                     " emr"
-                     " Refactor"
-                     ) "\\|"))
   :init
+  (defvar rm-blacklist
+    (mapconcat 'identity
+               '(" SP"
+                 " Fill"
+                 " EvilOrg"
+                 " Abbrev"
+                 " snipe"
+                 " company"
+                 " Anaconda"
+                 " WS"
+                 " GitGutter"
+                 " Undo-Tree"
+                 " Projectile\\[.+\\]"
+                 " hs"
+                 " ElDoc"
+                 " wg"
+                 " ~"
+                 " s-/"
+                 " emr"
+                 " Refactor"
+                 ) "\\|"))
+  :config
   (progn
     (setq sml/no-confirm-load-theme t
           sml/mode-width      'full

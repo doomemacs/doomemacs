@@ -25,21 +25,18 @@
 
     ;; Sort candidates by
     (add-to-list 'company-transformers 'company-sort-by-occurrence)
-    ;; (add-to-list 'company-transformers 'company-sort-by-backend-importance)
     (use-package company-statistics
       :config
       (progn
         (setq company-statistics-file (expand-file-name "company-statistics-cache.el" my-tmp-dir))
         (company-statistics-mode)))
 
-    (progn ; frontends
-      (setq-default company-frontends '(company-pseudo-tooltip-unless-just-one-frontend
-                                        company-echo-metadata-frontend
-                                        company-preview-if-just-one-frontend)))
+    ;; frontends
+    (setq-default company-frontends '(company-pseudo-tooltip-unless-just-one-frontend
+                                      company-echo-metadata-frontend
+                                      company-preview-if-just-one-frontend))
 
     (progn ; backends
-      (setq-default company-backends '((company-capf company-yasnippet) (company-dictionary company-keywords)))
-
       (defun company--backend-on (hook &rest backends)
         (add-hook hook
                   `(lambda()
@@ -70,7 +67,7 @@
       (defvar company-dictionary-alist '())
       (defvar company-dictionary-major-minor-modes '())
       (defun company-dictionary-active-minor-modes ()
-        (-filter (lambda (mode) (symbol-value mode)) company-dictionary-major-minor-modes))
+        (-filter (lambda (mode) (when (boundp mode) (symbol-value mode))) company-dictionary-major-minor-modes))
       (defun company-dictionary-assemble ()
         (let ((minor-modes (company-dictionary-active-minor-modes))
               (dicts (cdr (assq major-mode company-dictionary-alist))))
@@ -94,20 +91,9 @@
                (all-completions arg symbols)))
             (sorted t))))
 
-    (progn ; keybinds
-      (bind 'insert company-mode-map
-            "C-SPC"     'company-complete-common
-            "C-x C-k"   'company-dictionary
-            "C-x C-f"   'company-files
-            "C-x C-]"   'company-etags
-            "C-x s"     'company-ispell
-            "C-x C-s"   'company-yasnippet
-            "C-x C-o"   'company-semantic
-            "C-x C-n"   'company-dabbrev-code
-            "C-x C-p"   (λ (let ((company-selection-wrap-around t))
-                             (call-interactively 'company-dabbrev-code)
-                             (company-select-previous-or-abort))))
+      (setq-default company-backends '((company-capf company-yasnippet) (company-dictionary company-keywords)))
 
+    (progn ; keybinds
       (define-key company-active-map "C-w" nil)
       (bind company-active-map
             "C-o"        'company-search-kill-others
@@ -127,7 +113,6 @@
             "C-p"        'company-search-repeat-backward
             [escape]     'company-abort)
 
-      (bind company-mode-map   "<C-return>" 'helm-company)
       (bind company-active-map "<C-return>" 'helm-company)))))
 
 

@@ -13,6 +13,12 @@
       (goto-char 2))
     (add-hook 'reb-mode-hook 'my--reb-cleanup)
 
+    (use-package pcre2el
+      :config
+      (progn
+        (bind 'normal rxt-help-mode-map [escape] 'kill-buffer-and-window)
+        (setq reb-re-syntax 'pcre)))
+
     (after "evil"
       (evil-set-initial-state 'reb-mode 'insert)
       ;; Either a) converts selected (or entered-in) pcre regex into elisp
@@ -44,13 +50,6 @@
                    (message "Copied regex to kill ring: %s" newregex)))
                 (t
                  (re-builder))))))))
-
-(use-package pcre2el
-  :config
-  (progn
-    (bind 'normal rxt-help-mode-map [escape] 'kill-buffer-and-window)
-
-    (after "re-builder" (setq reb-re-syntax 'pcre))))
 
 
 (provide 'init-regex)

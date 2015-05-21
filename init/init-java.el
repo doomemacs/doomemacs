@@ -41,8 +41,25 @@
 
 (use-package android-mode
   :defer t
+  :commands android-mode
   :init
   (progn
+    (defun android-mode-is-layout-file ()
+      (and android-mode
+           (eq major-mode 'nxml-mode)
+           (string-equal (file-name-base (directory-file-name default-directory)) "layout")))
+    (defun android-mode-in-tags (&rest tags)
+      (-contains? tags (android-mode-tag-name)))
+    (defun android-mode-tag-name ()
+      (save-excursion
+        (let (beg end)
+          (nxml-backward-up-element)
+          (evil-forward-word-begin)
+          (setq beg (point))
+          (evil-forward-WORD-end)
+          (setq end (1+ (point)))
+          (buffer-substring-no-properties beg end))))
+
     (defun my-android-mode-enable-maybe ()
       (let ((root (project-root)))
         (when (or (project-has-files "local.properties" root)

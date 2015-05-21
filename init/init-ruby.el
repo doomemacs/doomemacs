@@ -4,10 +4,10 @@
          ("\\.rake$"      . enh-ruby-mode)
          ("\\.gemspec$"   . enh-ruby-mode)
          ("\\.?pryrc$"    . enh-ruby-mode)
-         ("/Gemfile$"      . enh-ruby-mode)
-         ("/Capfile$"      . enh-ruby-mode)
-         ("/Vagrantfile$"  . enh-ruby-mode)
-         ("/Rakefile$"     . enh-ruby-mode))
+         ("/Gemfile$"     . enh-ruby-mode)
+         ("/Capfile$"     . enh-ruby-mode)
+         ("/Vagrantfile$" . enh-ruby-mode)
+         ("/Rakefile$"    . enh-ruby-mode))
   :interpreter "ruby"
   :config
   (progn
@@ -23,27 +23,31 @@
     ;; Don't interfere with my custom RET behavior
     (define-key enh-ruby-mode-map [?\n] nil)
 
-    (after "emr"
-      (use-package ruby-refactor)
-      (emr-declare-command 'ruby-refactor-extract-to-method
-        :title "extract method"
-        :modes 'enh-ruby-mode
-        :predicate (lambda () (use-region-p)))
-      (emr-declare-command 'ruby-refactor-extract-local-variable
-        :title "extract local variable"
-        :modes 'enh-ruby-mode
-        :predicate (lambda () (use-region-p)))
-      (emr-declare-command 'ruby-refactor-extract-constant
-        :title "extract constant"
-        :modes 'enh-ruby-mode
-        :predicate (lambda () (use-region-p)))
-      (emr-declare-command 'ruby-refactor-add-parameter
-        :title "add parameter"
-        :modes 'enh-ruby-mode)
-      (emr-declare-command 'ruby-refactor-extract-to-let
-        :title "extract to let"
-        :modes 'enh-ruby-mode
-        :predicate (lambda () (use-region-p))))
+    (use-package ruby-refactor
+      :init
+      (add-hook 'enh-ruby-mode-hook 'emr-initialize)
+      :config
+      (after "emr"
+        (emr-declare-command 'ruby-refactor-extract-to-method
+          :title "extract method"
+          :modes 'enh-ruby-mode
+          :predicate (lambda () (use-region-p)))
+        (emr-declare-command 'ruby-refactor-extract-local-variable
+          :title "extract local variable"
+          :modes 'enh-ruby-mode
+          :predicate (lambda () (use-region-p)))
+        (emr-declare-command 'ruby-refactor-extract-constant
+          :title "extract constant"
+          :modes 'enh-ruby-mode
+          :predicate (lambda () (use-region-p)))
+        (emr-declare-command 'ruby-refactor-add-parameter
+          :title "add parameter"
+          :modes 'enh-ruby-mode)
+        (emr-declare-command 'ruby-refactor-extract-to-let
+          :title "extract to let"
+          :modes 'enh-ruby-mode
+          :predicate (lambda () (use-region-p)))))
+
 
     ;; Rakefiles ;;;;;;;;;;;;;;;;;;;;;;;;;;;
     (define-minor-mode rake-mode

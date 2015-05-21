@@ -119,6 +119,8 @@
    `(rainbow-delimiters-unmatched-face ((t (:inherit 'error))))
    `(rainbow-delimiters-depth-1-face   ((t (:foreground "#CCCCCC" :weight bold :bold t))))
 
+   `(linum-highlight-face              ((t (:background ,gutters-active))))
+
 ;; js2-mode
 ;; *****************************************************************************************
 

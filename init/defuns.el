@@ -40,6 +40,10 @@
        'with-no-warnings)
     (with-eval-after-load ',feature ,@forms)))
 
+(defmacro rename-mode-name (mode new-name)
+  `(defadvice ,mode (after rename-modeline activate)
+     (setq mode-name ,new-name)))
+
 
 ;; Keybindings ;;;;;;;;;;;;;;;;;;;;;;;;;
 (defun bind (&rest keys)

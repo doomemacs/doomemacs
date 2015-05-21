@@ -16,41 +16,37 @@
 ;;    * *<defun/var-name> ; for altering the visual state
 ;;
 ;;; Code:
-(defvar DEBUG-MODE nil)
+(defconst DEBUG-MODE nil)
 
-(defvar my-dir           user-emacs-directory)
-(defvar my-core-dir      (concat my-dir "core/"))
-(defvar my-modules-dir   (concat my-dir "init/"))
-(defvar my-contrib-dir   (concat my-dir "contrib/"))
-(defvar my-themes-dir    (concat my-dir "themes/"))
-(defvar my-snippets-dir  (concat my-dir "snippets/"))
-(defvar my-tmp-dir       (concat my-dir ".cache/"))
+(defconst my-dir           user-emacs-directory)
+(defconst my-modules-dir   (concat my-dir "init/"))
+(defconst my-contrib-dir   (concat my-dir "contrib/"))
+(defconst my-themes-dir    (concat my-dir "themes/"))
+(defconst my-snippets-dir  (concat my-dir "snippets/"))
+(defconst my-tmp-dir       (concat my-dir ".cache/"))
 
-(defvar *dark-theme  'v0)
-(defvar *light-theme 'github) ; wtb better light theme...
-(defvar *fonts `(,(font-spec :family "Terminus (TTF)" :size 12 :antialias nil)
-                 ,(font-spec :family "Inconsolata"    :size 14 :antialias t)
-                 ,(font-spec :family "Ubuntu Mono"    :size 20 :antialias t)
-                 ))
+(defconst *dark-theme  'v0)
+(defconst *light-theme 'github) ; wtb better light theme...
+(defconst *fonts `(,(font-spec :family "Terminus (TTF)" :size 12 :antialias nil)
+                   ,(font-spec :family "Inconsolata"    :size 14 :antialias t)
+                   ,(font-spec :family "Ubuntu Mono"    :size 20 :antialias t)
+                   ))
 
-(push my-core-dir    load-path)
 (push my-modules-dir load-path)
 (push my-contrib-dir load-path)
-;; Add elisp and cask dirs to load-path
-(let ((default-directory my-contrib-dir))
-  (normal-top-level-add-subdirs-to-load-path))
+;; Add cask dirs to load-path
 (let ((default-directory (expand-file-name (concat ".cask/" emacs-version "/elpa/") my-dir)))
   (normal-top-level-add-subdirs-to-load-path))
 
+;;;; Load Packages ;;;;;;;;;;;;;;;;;;;;;
 (require 'use-package)
 (mapc 'require
       ;; ls init/{init,my}* | xargs basename | sed -e 's/\..*$//'
       '(core
         core-ui                ; aesthetics
         core-evil              ; evil-mode and its plugins
-        core-editor            ; expand-region, rotate-text, smartparens
+        core-editor            ; completing the editor
 
-        ;; init-auto-complete
         init-auto-insert       ; for the lazy typis
         init-company           ; see above
         init-fly               ; fly(check|spell)
@@ -60,10 +56,8 @@
         init-project           ; project tools: dired, neotree
 
         init-cc                ; C/C++/Obj-C madness
-        ;; init-d              ; D - It's C, but better!
         ;; init-cscope
         init-csharp
-        ;; init-erlang
         ;; init-eshell
         init-go
         init-java              ; the poster child for carpal tunnel syndome
@@ -75,17 +69,15 @@
         init-regex             ; /^[^\s](meaning)[^\n]*/
         init-ruby              ; <3
         init-scss              ; @include magic;
-        init-smalltalk         ; nice weather we're having
         init-sh                ; #!/bin/bash_your_head_in
         init-swift             ; yay, emoji variables!
         init-text              ; I got nothing...
         init-tmux
         ;; init-rust
-        ;; init-vala
+        ;; init-R
         init-web
         init-workgroups
         init-yasnippet         ; type for me
-        init-youtube           ; tools for youtube vids
 
         my-defuns
         my-bindings

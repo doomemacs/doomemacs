@@ -25,6 +25,17 @@
       "M-d"  'dash-at-point
       "M-R"  'my:eval-buffer)
 
+(when is-mac
+  ;; Restore text nav keys
+  (bind "<A-left>" 'backward-word
+        "<A-right>" 'forward-word
+        "<M-backspace>" 'my.backward-kill-to-bol-and-indent
+        "A-SPC" 'just-one-space
+        "M-a" 'mark-whole-buffer
+        "M-c" 'evil-yank
+        "M-s" 'save-buffer
+        "M-v" 'yank))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Local keymaps                      ;;
@@ -40,20 +51,20 @@
       ","   (λ (if (projectile-project-p) (helm-projectile-switch-to-buffer) (helm-buffers-list)))
       "<"   'helm-buffers-list
       "."   'ido-find-file
-      ">"   'my-ido-find-project-file
+      ">"   (λ (let ((default-directory (project-root))) (ido-find-file)))
       "/"   'helm-projectile-find-file
       ";"   'helm-semantic-or-imenu
-      "M"   'helm-projectile-recentf ; recent PROJECT files
       "]"   'helm-etags-select
       "a"   'helm-projectile-find-other-file
       "E"   'my:init-files
       "g"   'git-gutter+-show-hunk
       "h"   'helm-apropos
       "m"   'helm-recentf
+      "M"   'helm-projectile-recentf ; recent PROJECT files
       "p"   'helm-projectile-switch-project
       "r"   'emr-show-refactor-menu   ; init-dev.el
       "qq"  'evil-save-and-quit
-      "QQ"  'evil-quit-all
+      "QQ"  (λ (my:kill-buffers t) (evil-quit-all))
 
       "oo"  'my-open-with
       "of"  (λ (my-open-with "Finder.app" default-directory))
@@ -69,7 +80,8 @@
 
 ;; <localleader>
 (bind my-localleader-map
-      "\\"  'neotree-toggle
+      "\\"  'my-neotree-toggle
+      "."   'my-neotree-find
       ";"   'linum-mode
       "="   'toggle-transparency
       "E"   'evil-emacs-state
@@ -85,22 +97,24 @@
 
 
 (bind 'normal
-      ","    'my-leader-map
-      "\\"   'my-localleader-map
+      ","      'my-leader-map
+      "\\"     'my-localleader-map
 
       ;; behave  like D and C; yank to end of line
-      "Y"       (λ (evil-yank (point) (point-at-eol)))
-      "zx"     'my-kill-real-buffer
-      "ZX"     'bury-buffer
-      "]b"     'my-next-real-buffer
-      "[b"     'my-previous-real-buffer
-      "]w"     'wg-switch-to-workgroup-right
-      "[w"     'wg-switch-to-workgroup-left
+      "Y"    (λ (evil-yank (point) (point-at-eol)))
+      "zx"   'my-kill-real-buffer
+      "ZX"   'bury-buffer
+      "]b"   'my-next-real-buffer
+      "[b"   'my-previous-real-buffer
+      "]w"   'wg-switch-to-workgroup-right
+      "[w"   'wg-switch-to-workgroup-left
 
       ;; Increment/decrement number under cursor
-      "g="       'evil-numbers/inc-at-pt
-      "g-"       'evil-numbers/dec-at-pt
-      "gR"       'my:eval-buffer  ; init-dev.el
+      "g="   'evil-numbers/inc-at-pt
+      "g-"   'evil-numbers/dec-at-pt
+      "gR"   'my:eval-buffer  ; init-dev.el
+      "gc"   'evil-commentary
+      "gy"   'evil-commentary-yank
 
       'visual
       ", ="   'align-regexp
@@ -117,6 +131,9 @@
       'normal "X" 'evil-exchange
 
       'motion
+      "%"    'evilmi-jump-items
+      [tab]  'evilmi-jump-items    ; alias for %
+
       "]g"   'git-gutter+-next-hunk
       "[g"   'git-gutter+-previous-hunk
 
@@ -148,6 +165,29 @@
       "j"      'my--maybe-exit-insert-mode
       "C-g"    'evil-normal-state
 
+      ;; Company-mode
+      "C-SPC"     'company-complete-common
+      "C-x C-k"   'company-dictionary
+      "C-x C-f"   'company-files
+      "C-x C-]"   'company-etags
+      "C-x s"     'company-ispell
+      "C-x C-s"   'company-yasnippet
+      "C-x C-o"   'company-semantic
+      "C-x C-n"   'company-dabbrev-code
+      "C-x C-p"   (λ (let ((company-selection-wrap-around t))
+                       (call-interactively 'company-dabbrev-code)
+                       (company-select-previous-or-abort)))
+
+      'operator
+      "s"   'evil-surround-edit
+      "S"   'evil-Surround-edit
+
+      'visual
+      "z"   'evil-snipe-s
+      "Z"   'evil-snipe-S
+
+      "S"   'evil-surround-region
+
       ;; Rotate-text (see elisp/rotate-text.el)
       'normal "!" 'rotate-word-at-point
       'visual "!" 'rotate-region
@@ -155,17 +195,21 @@
       'emacs
       [escape]  'evil-normal-state)
 
-;; Enable TAB to do matchit
-(bind 'motion evil-matchit-mode-map [tab] 'evilmi-jump-items)
-
 (bind evil-window-map
-      ;; winner-mode: window layout undo/redo (see init-core.el)
+      ;; winner-mode: window layout undo/redo (see core.el)
       "u"     'winner-undo
       "C-u"   'winner-undo
       "C-r"   'winner-redo)
 
+;; Real go-to-definition for elisp
+(bind 'motion emacs-lisp-mode-map
+      "gd" (λ (let ((func (function-called-at-point)))
+                (if func (find-function func))))
+      "gD" (λ (let ((func (function-called-at-point)))
+                (if func (find-function-other-window func)))))
+
 ;; Peek at file from dired
-(bind dired-mode-map "o" (λ (popwin:find-file (dired-get-file-for-visit))))
+;; (bind dired-mode-map "o" (λ (popwin:find-file (dired-get-file-for-visit))))
 
 (after "help-mode"
   (bind 'normal help-mode-map
@@ -177,26 +221,14 @@
       (kbd "<M-return>")    'evil-open-below
       (kbd "<S-M-return>")  'evil-open-above)
 
-(when is-mac
-  ;; Restore text nav keys
-  (bind "<A-left>" 'backward-word
-        "<A-right>" 'forward-word
-        "<M-backspace>" 'my.backward-kill-to-bol-and-indent
-        "M-a" 'mark-whole-buffer
-        "M-c" 'evil-yank
-        "M-s" 'save-buffer
-        "M-v" 'yank))
-
 ;; Fix osx keymappings and then some
-(use-package smart-forward
-  :config
-  (bind 'insert
-        "<M-left>"   'my.move-to-bol
-        "<M-right>"  'my.move-to-eol
-        "<M-up>"     'beginning-of-buffer
-        "<M-down>"   'end-of-buffer
-        "<A-up>"     'smart-up
-        "<A-down>"   'smart-down))
+(bind 'insert
+      "<M-left>"   'my.move-to-bol
+      "<M-right>"  'my.move-to-eol
+      "<M-up>"     'beginning-of-buffer
+      "<M-down>"   'end-of-buffer
+      "<A-up>"     'smart-up
+      "<A-down>"   'smart-down)
 
 ;; Line selection via linum
 (bind "<left-margin> <down-mouse-1>"    'my-select-linum
@@ -204,6 +236,9 @@
       "<left-margin> <drag-mouse-1>"    'my-select-linum
       "<left-margin> <double-mouse-1>"  'my-select-block)
 
+(bind 'visual
+      "*" 'evil-visualstar/begin-search-forward
+      "#" 'evil-visualstar/begin-search-backward)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Keymap fixes                       ;;
@@ -217,7 +252,7 @@
 (bind 'insert "<tab>" 'my.dumb-indent)
 (bind 'insert "<A-tab>" 'indent-for-tab-command)
 
-;; Except for lisp
+;; No dumb-tab for lisp
 (bind 'insert lisp-mode-map        [remap my.dumb-indent] 'indent-for-tab-command)
 (bind 'insert emacs-lisp-mode-map  [remap my.dumb-indent] 'indent-for-tab-command)
 
@@ -246,7 +281,25 @@
                    minibuffer-local-completion-map
                    minibuffer-local-must-match-map
                    minibuffer-local-isearch-map))
-  (bind map "<escape>" 'keyboard-escape-quit))
+  (bind map [escape] 'my--minibuffer-quit))
+(bind 'emacs [escape] 'my--minibuffer-quit)
+
+;; Redefine to get rid of that silly delete-other-windows nonsense
+(defun keyboard-escape-quit ()
+  (interactive)
+  (cond ((eq last-command 'mode-exited) nil)
+        ((region-active-p)
+         (deactivate-mark))
+        ((> (minibuffer-depth) 0)
+         (abort-recursive-edit))
+        (current-prefix-arg
+         nil)
+        ((> (recursion-depth) 0)
+         (exit-recursive-edit))
+        (buffer-quit-function
+         (funcall buffer-quit-function))
+        ((string-match "^ \\*" (buffer-name (current-buffer)))
+         (bury-buffer))))
 
 (dolist (map (list evil-ex-search-keymap minibuffer-local-map))
   (bind map "\C-w" 'evil-delete-backward-word))

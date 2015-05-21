@@ -64,10 +64,8 @@
       (c-set-offset 'case-label '+)        ; indent case labels by c-indent-level, too
       (c-set-offset 'access-label '-)
       (c-set-offset 'inclass 'my-c-lineup-inclass)
-
       ;; DEL mapping interferes with smartparens and my.deflate-maybe
       (define-key c-mode-map (kbd "DEL") nil))
-
     (add-hook 'c-mode-hook 'my-c/c++-settings)
     (add-hook 'c++-mode-hook 'my-c/c++-settings)
     (after "flycheck"
