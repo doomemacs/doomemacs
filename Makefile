@@ -2,8 +2,11 @@ EMACS=emacs
 
 all: update
 
-update:
+update: install autoloads
 	cask update
+
+install:
+	cask install
 
 clean:
 	@rm -rf init.elc init/*.elc contrib/*.elc
