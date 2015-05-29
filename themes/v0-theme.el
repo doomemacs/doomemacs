@@ -25,20 +25,21 @@
 
   (custom-theme-set-variables 'v0)
 
-  (let ((background       "#222222")
+  (let (;; (background       "#222222")
+        (background       "#2b303b")
         ;; (gutters       "#262E34")
         (gutters          "#1f252a")
         (gutter-fg        "#55616A")
-        (gutters-active   "#2e363c")
+        ;; (gutters-active   "#2e363c")
+        (gutters-active   "#1c1f26")
         (linum            "#1e262c")
-        ; (background     "#11141c")
-        ; (gutters        "#343d46")
-        (gutter-light     "#434f58")
-        ; (gutters-active "#4f5b66")
+        ;; (gutter-light     "#434f58")
+        (gutter-light     "#232830")
         (builtin          "#d08770")
         (foreground       "#c0c5ce")
         (invisibles       "#65737e")
-        (lineHighlight    "#353539")
+        ;; (line-hl          "#353539")
+        (line-hl          "#343d46")
         (selection        "#4f5b66")
         (text             "#c0c5ce")
         (comments         "#65737e")
@@ -52,10 +53,12 @@
         (strings          "#a3be8c")
         (constants        "#d08770")
         (white            "#ffffff")
+        (highlight        "orange")
+        (dim-highlight    "#556779")
 
-        (git-modified     "#B4924E")
-        (git-added        "#91E331")
-        (git-deleted      "#A12121"))
+        (git-modified     "#55616A")
+        (git-added        "#436b3b")
+        (git-deleted      "#714243"))
 
   (custom-theme-set-faces
    'v0
@@ -64,28 +67,28 @@
 ;; *****************************************************************************************
 
    `(default              ((t (:foreground ,text :background ,background) )))
-   `(hl-line              ((t (:background ,lineHighlight) )))
+   `(hl-line              ((t (:background ,line-hl) )))
    `(region               ((t (:background ,selection) )))
    `(cursor               ((t (:background ,white) )))
    `(fringe               ((t (:background ,background :foreground ,white) )))
-   `(linum                ((t (:background ,background :foreground ,gutter-fg) )))
+   `(linum                ((t (:background ,background :foreground ,gutter-fg :weight normal) )))
 
-   `(vertical-border      ((t (:foreground ,gutters-active) )))
+   `(vertical-border      ((t (:foreground "#000000") )))
 
    `(mode-line            ((t (:foreground ,white
                                :background ,gutter-light
                                :box (:line-width 3 :color ,gutter-light)
                                ))))
 
-   `(mode-line-inactive       ((t (:foreground ,gutter-fg
+   `(mode-line-inactive   ((t (:foreground ,gutter-fg
                                :background ,gutters-active
                                :box (:line-width 3 :color ,gutters-active)
                                ))))
 
    `(mode-line-modified-face           ((t (:foreground ,builtin))))
 
-   ;; `(highlight-indentation-face                   ((t (:background ,linum) )))
-   ;; `(highlight-indentation-current-column-face    ((t (:background ,gutters-active) )))
+   `(sml/folder           ((t nil)))
+   `(sml/modified         ((t (:foreground ,highlight))))
 
    `(flyspell-incorrect   ((t (:underline "#ff5555" :inherit unspecified))))
 
@@ -94,6 +97,8 @@
 
 ;; Font lock faces
 ;; *****************************************************************************************
+
+   `(linum-highlight-face              ((t (:foreground ,text :background ,line-hl :inherit linum))))
 
    `(font-lock-keyword-face            ((t (:foreground ,keywords))))
    `(font-lock-type-face               ((t (:foreground ,punctuation))))
@@ -112,14 +117,16 @@
    `(whitespace-newline                ((t (:foreground "#444444"))))
    `(whitespace-trailing               ((t (:background "#553333"))))
 
-   `(git-gutter+-modified              ((t (:foreground ,git-modified))))
-   `(git-gutter+-added                 ((t (:foreground ,git-added))))
-   `(git-gutter+-deleted               ((t (:foreground ,git-deleted))))
+   `(git-gutter+-modified              ((t (:foreground ,git-modified :background nil))))
+   `(git-gutter+-added                 ((t (:foreground ,git-added :background nil))))
+   `(git-gutter+-deleted               ((t (:foreground ,git-deleted :background nil))))
+
+   `(diff-hl-change                    ((t (:background ,git-modified))))
+   `(diff-hl-delete                    ((t (:background ,git-deleted))))
+   `(diff-hl-insert                    ((t (:background ,git-added))))
 
    `(rainbow-delimiters-unmatched-face ((t (:inherit 'error))))
    `(rainbow-delimiters-depth-1-face   ((t (:foreground "#CCCCCC" :weight bold :bold t))))
-
-   `(linum-highlight-face              ((t (:background ,gutters-active))))
 
 ;; js2-mode
 ;; *****************************************************************************************
@@ -135,8 +142,10 @@
    `(org-level-1                      ((t (:inherit outline-1 :bold t :foreground ,git-added))))
    `(org-level-2                      ((t (:inherit outline-2 :bold t :foreground ,variables))))
 
-   `(evil-snipe-first-match-face      ((t (:background "orange" :foreground "black" :underline nil))))
-   `(evil-snipe-matches-face          ((t (:foreground "orange" :background "gray20" :underline t))))
+   `(evil-snipe-first-match-face      ((t (:background ,highlight :foreground "black" :underline nil))))
+   `(evil-snipe-matches-face          ((t (:foreground ,highlight :background "gray20" :underline t))))
+   `(isearch                          ((t (:foreground "black" :background ,highlight :inverse-video nil))))
+   `(isearch-lazy-highlight-face      ((t (:foreground ,text :background ,dim-highlight))))
 
    ))
 

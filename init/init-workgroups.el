@@ -1,15 +1,15 @@
 (use-package workgroups2
+  :diminish workgroups-mode
   :config
   (progn
-    (setq wg-session-file "~/.emacs.workgroup")
-    (setq wg-workgroup-directory "~/.emacs.d/workgroups/")
-    (setq wg-first-wg-name "main")
-
-    (setq wg-session-load-on-start t)
-
-    ;; What to do on Emacs exit / workgroups-mode exit?
-    (setq wg-emacs-exit-save-behavior           'save)      ; Options: 'save 'ask nil
-    (setq wg-workgroups-mode-exit-save-behavior 'save)      ; Options: 'save 'ask nil
+    (setq wg-session-file "~/.emacs.workgroup"
+          wg-workgroup-directory "~/.emacs.d/workgroups/"
+          wg-first-wg-name "main"
+          wg-session-load-on-start t
+          wg-mode-line-display-on nil
+          ;; What to do on Emacs exit / workgroups-mode exit?
+          wg-emacs-exit-save-behavior           'save       ; Options: 'save 'ask nil
+          wg-workgroups-mode-exit-save-behavior 'save)      ; Options: 'save 'ask nil
 
     (evil-define-command my:save-session (&optional bang session-name)
       (interactive "<!><a>")

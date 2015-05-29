@@ -104,20 +104,6 @@ key-chord-define."
   (set (make-local-variable 'require-final-newline) nil))
 
 
-;; Font Defuns ;;;;;;;;;;;;;;;;;;;;;;;;;
-(defun cycle-font (&optional i)
-  "Cycle between fonts specified in *fonts in init.el"
-  (interactive)
-  (if (numberp i)
-      (setq my/cycle-font-i i)
-    (if (>= my/cycle-font-i (1- (length *fonts)))
-        (setq my/cycle-font-i 0)
-      (cl-incf my/cycle-font-i)))
-  (let ((font (nth my/cycle-font-i *fonts)))
-    (message "Changing font to %s" (nth 1 (font-face-attributes font)))
-    (set-frame-font font)))
-
-
 ;;;; Global Defuns ;;;;;;;;;;;;;;;;;;;;;
 (defun my--minibuffer-quit ()
   "Abort recursive edit. In Delete Selection mode, if the mark is

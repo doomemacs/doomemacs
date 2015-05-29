@@ -1,3 +1,10 @@
+;; Ex-mode interface for `helm-recentf' and `helm-projectile-recentf'. If
+;; `bang', then `search' is interpreted as regexp
+(evil-define-command my:helm-recentf (&optional bang)
+  :repeat nil
+  (interactive "<!>")
+  (if bang (helm-recentf) (helm-projectile-recentf)))
+
 (use-package projectile
   :commands (projectile-ack
              projectile-ag
@@ -25,6 +32,7 @@
              helm-projectile-recentf
              helm-projectile-find-other-file
              helm-projectile-switch-project)
+  :diminish projectile-mode
   :config
   (progn
     (setq-default projectile-enable-caching t)
@@ -37,9 +45,10 @@
     (add-to-list 'projectile-globally-ignored-directories "assets")
     (add-to-list 'projectile-other-file-alist '("scss" "css"))
     (add-to-list 'projectile-other-file-alist '("css" "scss"))
-    (projectile-global-mode +1)
 
     (use-package helm-projectile)
+    (projectile-global-mode +1)
+
     ;; Don't show the project name in the prompts; I already know.
     (defun projectile-prepend-project-name (string) helm-global-prompt)))
 
@@ -50,11 +59,9 @@
              helm-semantic-or-imenu
              helm-etags-select
              helm-apropos
-             helm-recentf
              helm-show-kill-ring
              helm-bookmarks
-             helm-wg
-             my:helm-recentf)
+             helm-wg)
   :init
   (evil-set-initial-state 'helm-mode 'emacs)
   :config
@@ -82,20 +89,10 @@
 
     (my--cleanup-buffers-add "^\\*[Hh]elm.*\\*$")
 
-    (require 'helm-files)
-
     (progn ; helm hacks
       ;; No persistent header
       (defadvice helm-display-mode-line (after undisplay-header activate)
         (setq header-line-format nil))
-
-      ;; Reconfigured `helm-recentf' to use `helm', instead of `helm-other-buffer'
-      (defun helm-recentf ()
-        (interactive)
-        (let ((helm-ff-transformer-show-only-basename nil))
-          (helm :sources '(helm-source-recentf)
-                :buffer "*helm recentf*"
-                :prompt helm-global-prompt)))
 
       ;; Hide the mode-line in helm (<3 minimalism)
       (defun helm-display-mode-line (source &optional force)
@@ -117,19 +114,23 @@
                   (propertize (concat " " hlstr hlend) 'face 'helm-header))))
         (when force (force-mode-line-update))))
 
-    (progn ; evil
-      ;; Ex-mode interface for `helm-recentf' and `helm-projectile-recentf'. If
-      ;; `bang', then `search' is interpreted as regexp
-      (evil-define-command my:helm-recentf (&optional bang)
-        :repeat nil
-        (interactive "<!>")
-        (if bang (helm-recentf) (helm-projectile-recentf))))
-
     (bind helm-map
           "C-w"        'evil-delete-backward-word
           "C-u"        'helm-delete-minibuffer-contents
           "C-r"        'evil-ex-paste-from-register ; Evil registers in helm! Glorious!
           [escape]     'helm-keyboard-quit)))
+
+(use-package helm-files
+  :commands (helm-recentf)
+  :config
+  (progn
+    ;; Reconfigured `helm-recentf' to use `helm', instead of `helm-other-buffer'
+    (defun helm-recentf ()
+      (interactive)
+      (let ((helm-ff-transformer-show-only-basename nil))
+        (helm :sources '(helm-source-recentf)
+              :buffer "*helm recentf*"
+              :prompt helm-global-prompt)))))
 
 (use-package helm-ag
   :commands (helm-ag
@@ -189,9 +190,7 @@
   (progn
     (setq helm-swoop-use-line-number-face t
           helm-swoop-split-with-multiple-windows t
-          helm-swoop-speed-or-color t
-          ;; helm-swoop-split-window-function 'popwin:popup-buffer
-          )
+          helm-swoop-speed-or-color t)
 
     ;; Ex-mode interface for `helm-swoop', `helm-multi-swoop-all' (if `bang'), or
     ;; `helm-css-scss' and `helm-css-scss-multi' (if `bang') if major-mode is

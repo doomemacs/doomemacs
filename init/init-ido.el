@@ -30,6 +30,7 @@
       ido-save-directory-list-file (concat my-tmp-dir "ido.last"))
 
 (add-to-list 'ido-ignore-files "\\`.DS_Store$")
+(add-to-list 'ido-ignore-files "Icon\\?$")
 (setq ido-ignore-buffers
       '("\\` " "^\\*ESS\\*" "^\\*Messages\\*" "^\\*Help\\*" "^\\*Buffer"
         "^\\*.*Completions\\*$" "^\\*Ediff" "^\\*tramp" "^\\*cvs-"

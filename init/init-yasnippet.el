@@ -1,5 +1,5 @@
 (use-package yasnippet
-  :defer t
+  :diminish (yas-minor-mode . " @")
   :commands (yas-minor-mode yas-minor-mode-on my--init-yas-mode my:snippets)
   :mode (("emacs\\.d/snippets/.+$" . snippet-mode))
   :init
@@ -13,6 +13,7 @@
     (add-hook 'snippet-mode-hook 'yas-minor-mode-on)
     (add-hook 'text-mode-hook 'yas-minor-mode-on)
     (add-hook 'prog-mode-hook 'yas-minor-mode-on)
+    (add-hook 'js2-mode-hook 'yas-minor-mode-on)
     (add-hook 'org-mode-hook 'yas-minor-mode-on)
     (add-hook 'snippet-mode-hook 'disable-final-newline))
   :config

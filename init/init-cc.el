@@ -23,21 +23,15 @@
   (progn
     ;; Settings ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     (setq c-basic-offset 4
-          c-tab-always-indent nil)
+          c-tab-always-indent nil
+          c-electric-flag nil)
 
     (when is-mac
-      (setq my--clang-includes
-            '("/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1"
-              "/usr/local/include"
-              "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/6.0/include"
-              "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"
-              "/usr/include"
-              "/System/Library/Frameworks"
-              "/Library/Frameworks"))
-
-      (defun my--clang-includes () my--clang-includes)
-      (defun my--clang-includes-flags ()
-        (mapcar (lambda (item) (concat "-I" item)) my--clang-includes)))
+      (after "flycheck"
+        (setq flycheck-clang-language-standard "c++11"
+              flycheck-clang-standard-library "libc++"
+              flycheck-c/c++-clang-executable "clang++"
+              flycheck-clang-include-path '("/usr/local/include"))))
 
     (after "company"
       ;; TODO Clang is *really* slow in larger projects, maybe replace it with irony-mode or ycmd?
@@ -68,12 +62,6 @@
       (define-key c-mode-map (kbd "DEL") nil))
     (add-hook 'c-mode-hook 'my-c/c++-settings)
     (add-hook 'c++-mode-hook 'my-c/c++-settings)
-    (after "flycheck"
-      (add-hook! 'c++-mode-hook
-                 (setq flycheck-clang-language-standard "c++11"
-                       flycheck-clang-standard-library "libc++"
-                       flycheck-c/c++-clang-executable "clang++"
-                       flycheck-clang-include-path (my--clang-includes))))
 
     (progn ; Obj-C
       (add-to-list 'magic-mode-alist

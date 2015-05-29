@@ -1,14 +1,16 @@
 ;;;; Eeeeeeevil ;;;;;;;;;;;;;;;;;;;;;;;;
 (use-package evil
+  :diminish undo-tree-mode
   :config
   (progn
-    (setq evil-want-visual-char-semi-exclusive t
+    (setq evil-want-visual-char-semi-exclusive nil
           evil-search-module        'evil-search
           evil-search-wrap          nil
           evil-magic                'magic
           evil-want-C-u-scroll      t  ; enable C-u for scrolling
           evil-ex-visual-char-range t  ; column range for ex commands
           evil-ex-search-vim-style-regexp t
+          evil-ex-interactive-search-highlight 'selected-window
 
           ;; Color-coded state cursors
           evil-normal-state-cursor  '("white" box)
@@ -19,9 +21,9 @@
     (evil-mode 1)
 
     ;; Always ensure evil-shift-width is consistent with tab-width
-    (add-hook! 'after-change-major-mode-hook (setq evil-shift-width tab-width))
+    (add-hook! 'evil-local-mode-hook (setq evil-shift-width tab-width))
     ;; Fix code folding
-    (add-hook 'prog-mode-hook 'hs-minor-mode)
+    (add-hook! 'prog-mode-hook (hs-minor-mode 1) (diminish 'hs-minor-mode))
 
     ;; highlight matching delimiters where it's important
     (defun show-paren-mode-off () (show-paren-mode -1))
@@ -74,6 +76,7 @@
         :config   (global-evil-search-highlight-persist t))
 
       (use-package evil-commentary
+        :diminish evil-commentary-mode
         :commands (evil-commentary
                    evil-commentary-yank
                    evil-commentary-line)
@@ -82,10 +85,8 @@
       (use-package evil-jumper
         :init (setq evil-jumper-file (expand-file-name "jumplist" my-tmp-dir))
         :config
-        (progn
-          (setq evil-jumper-auto-center t
-                evil-jumper-auto-save-interval 3600)
-          (define-key evil-motion-state-map (kbd "H-i") 'evil-jumper/forward)))
+        (setq evil-jumper-auto-center t
+              evil-jumper-auto-save-interval 3600))
 
       (use-package evil-exchange
         :commands (evil-exchange)
@@ -111,6 +112,7 @@
           (global-evil-visualstar-mode 1)))
 
       (use-package evil-snipe
+        :diminish evil-snipe-mode
         :config
         (progn
           (global-evil-snipe-mode +1)
@@ -167,16 +169,15 @@
         (mapc 'kill-buffer
               (my-living-buffer-list (if bang (projectile-project-buffers) (buffer-list)))))
 
-      (evil-define-command my:init-files (&optional bang)
-        :repeat nil
+      (evil-define-command my:init-files (&optional bang) :repeat nil
         (interactive "<!>")
         (if bang
             (ido-find-file-in-dir my-modules-dir)
           (ido-find-file-in-dir my-dir)))
 
-      (evil-define-command my:notes ()
-        :repeat nil
+      (evil-define-command my:notes () :repeat nil
         (interactive)
+        (require 'org)
         (ido-find-file-in-dir org-directory))
 
       (evil-define-command my:byte-compile (&optional bang)

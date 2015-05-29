@@ -12,8 +12,10 @@
 (setq mac-option-modifier 'alt)
 
 ;; fix emacs PATH on OSX (GUI only)
-(require 'exec-path-from-shell)
-(exec-path-from-shell-initialize)
+(use-package exec-path-from-shell
+  :config (exec-path-from-shell-initialize))
+
+(use-package applescript-mode :mode "\\.applescript$")
 
 (after "evil"
   ;; On OSX, stop copying each visual state move to the clipboard:
@@ -26,10 +28,10 @@
 ;; Send current file to OSX apps
 (defun my-open-with (&optional app-name path)
   (interactive)
-  (let ((app-name (if app-name (concat "-a " app-name)))
-        (path (or path (if (eq major-mode 'dired-mode) (dired-get-file-for-visit) (buffer-file-name)))))
-    (message "Trying: %s" (concat "open " app-name " " (shell-quote-argument path)))
-    (shell-command (concat "open " app-name " " (shell-quote-argument path)))))
+  (let* ((path (f-full (s-replace "'" "\\'" (or path (if (eq major-mode 'dired-mode) (dired-get-file-for-visit) (buffer-file-name))))))
+         (command (concat "open " (when app-name (concat "-a " (shell-quote-argument app-name))) " '" path "'")))
+    (message "Trying: %s" command)
+    (shell-command command)))
 
 
 (provide 'core-osx)

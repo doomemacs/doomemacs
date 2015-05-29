@@ -18,8 +18,9 @@
       (progn
         (add-hook 'python-mode-hook 'anaconda-mode)
         (add-hook 'python-mode-hook 'eldoc-mode)
-        (add-hook! 'anaconda-mode-hook
-          (process-buffer (python-shell-get-or-create-process python-shell-interpreter t nil))))
+        ;; (add-hook! 'anaconda-mode-hook
+        ;;   (process-buffer (python-shell-get-or-create-process python-shell-interpreter t nil)))
+        )
       :config
       (progn
         (bind 'motion anaconda-mode-map "gd" 'anaconda-mode-goto-definitions)

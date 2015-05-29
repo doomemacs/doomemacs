@@ -18,12 +18,12 @@
 
     (after "emr" (use-package js2-refactor))
 
+    (rename-mode-name js2-mode "Javascript2")
+
     (use-package tern
+      :diminish (tern-mode . "tern")
       :commands tern-mode
-      :init
-      (progn
-        (add-hook 'js2-mode-hook 'tern-mode)
-        (after "auto-complete" (add-hook 'js2-mode-hook 'tern-ac-setup)))
+      :init (add-hook 'js2-mode-hook 'tern-mode)
       :config
       (after "company"
         (use-package company-tern

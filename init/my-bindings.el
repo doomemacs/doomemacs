@@ -22,7 +22,7 @@
       'normal
       "M-o"  'ido-find-file
       "M-O"  'my-ido-find-project-file
-      "M-d"  'dash-at-point
+      "<f1>" 'dash-at-point
       "M-R"  'my:eval-buffer)
 
 (when is-mac
@@ -59,14 +59,17 @@
       "E"   'my:init-files
       "g"   'git-gutter+-show-hunk
       "h"   'helm-apropos
+      "n"   'my:notes
       "m"   'helm-recentf
       "M"   'helm-projectile-recentf ; recent PROJECT files
       "p"   'helm-projectile-switch-project
       "r"   'emr-show-refactor-menu   ; init-dev.el
+      "x"   'my:org-capture
       "qq"  'evil-save-and-quit
       "QQ"  (λ (my:kill-buffers t) (evil-quit-all))
 
       "oo"  'my-open-with
+      "ob"  (λ (my-open-with "Google Chrome"))
       "of"  (λ (my-open-with "Finder.app" default-directory))
       "oF"  (λ (my-open-with "Finder.app" (project-root)))
       "ou"  (λ (my-open-with "Transmit"))
@@ -82,7 +85,7 @@
 (bind my-localleader-map
       "\\"  'my-neotree-toggle
       "."   'my-neotree-find
-      ";"   'linum-mode
+      ";"   'nlinum-toggle
       "="   'toggle-transparency
       "E"   'evil-emacs-state
 
@@ -97,8 +100,8 @@
 
 
 (bind 'normal
-      ","      'my-leader-map
-      "\\"     'my-localleader-map
+      ","    'my-leader-map
+      "\\"   'my-localleader-map
 
       ;; behave  like D and C; yank to end of line
       "Y"    (λ (evil-yank (point) (point-at-eol)))
@@ -117,7 +120,7 @@
       "gy"   'evil-commentary-yank
 
       'visual
-      ", ="   'align-regexp
+      ",="   'align-regexp
 
       ;; vnoremap < <gv
       "<"    (λ (evil-shift-left (region-beginning) (region-end))
@@ -127,8 +130,6 @@
       ">"    (λ (evil-shift-right (region-beginning) (region-end))
                 (evil-normal-state)
                 (evil-visual-restore))
-
-      'normal "X" 'evil-exchange
 
       'motion
       "%"    'evilmi-jump-items
@@ -140,12 +141,14 @@
       "]e"   (λ (call-interactively (if flycheck-mode 'flycheck-next-error 'next-error)))
       "[e"   (λ (call-interactively (if flycheck-mode 'flycheck-previous-error 'previous-error)))
 
-      "]\\"  'er/expand-region
-      "[\\"  'er/contract-region
+      "C-="  'er/expand-region
+      "C--"  'er/contract-region
 
-      "gl"   (λ (linum-mode 1) (evil-ex "") (linum-mode -1))
-      "gx"   'my-scratch-buffer    ; send to scratch buffer
+      ;; "gl"   (λ (nlinum-enable) (evil-ex "") (nlinum-disable))
+      "gx"   'evil-exchange
       "gr"   'my:eval-region       ; init-dev.el
+      "g]"   'smart-down
+      "g["   'smart-up
 
       'insert
       "<A-backspace>" 'evil-delete-backward-word
@@ -213,6 +216,10 @@
 
 (after "help-mode"
   (bind 'normal help-mode-map
+        "<escape>" (λ (kill-buffer)
+                      (if (eq popwin:popup-buffer (current-buffer))
+                          (popwin:close-popup-window)
+                        (evil-window-delete)))
         "]]" 'help-go-forward
         "[[" 'help-go-back))
 
@@ -301,10 +308,6 @@
         ((string-match "^ \\*" (buffer-name (current-buffer)))
          (bury-buffer))))
 
-(dolist (map (list evil-ex-search-keymap minibuffer-local-map))
-  (bind map "\C-w" 'evil-delete-backward-word))
-
-(global-unset-key (kbd "<drag-mouse-1>"))
 
 (provide 'my-bindings)
 ;;; my-bindings.el ends here

@@ -13,7 +13,8 @@
 (depends-on "use-package")
 (depends-on "smex")
 (depends-on "pos-tip")
-;;(depends-on "vim-empty-lines-mode")
+(depends-on "nlinum")
+(depends-on "vim-empty-lines-mode")
 (depends-on "hlinum" :git "https://github.com/tom-tan/hlinum-mode")
 
 ;; OSX
@@ -34,7 +35,8 @@
 (depends-on "rainbow-delimiters")
 (depends-on "smartparens")
 (depends-on "yasnippet")
-(depends-on "git-gutter-fringe+")
+(depends-on "diff-hl")
+;; (depends-on "git-gutter-fringe+")
 ;; (depends-on "ace-jump-mode")
 (depends-on "pcre2el")
 (depends-on "emr")
@@ -73,7 +75,7 @@
 (depends-on "helm-projectile")
 (depends-on "helm-swoop")
 (depends-on "helm-company")
-(depends-on "neotree")
+(depends-on "neotree" :git "https://github.com/jeffplang/emacs-neotree")
 (depends-on "ido-ubiquitous")
 (depends-on "ido-vertical-mode")
 (depends-on "flx-ido")

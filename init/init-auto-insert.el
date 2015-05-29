@@ -18,7 +18,7 @@
                            (symbol-value mode))))
         (insert uuid)
         (yas-expand-from-trigger-key)
-        (if (string-equal uuid (string-trim (buffer-string)))
+        (if (string-equal uuid (s-trim (buffer-string)))
             (erase-buffer)
           (evil-insert-state 1))))
 
@@ -59,8 +59,8 @@
     ;; (add-template "/_layouts/.+\\.html$"                              "%jekyll-layout%"  'web-mode)
 
     ;; ;; Javascript
-    ;; (add-template "\\.lbaction/Contents/Info.plist$"                  "%lb6%"            'nxml-mode)
-    ;; (add-template "\\.lbaction/.+/\\(default\\|suggestions\\)\\.js$"  "%lb6%"            'js-mode)
+    (add-template "\\.lbaction/Contents/Info.plist$"                     "%Info.plst%"      'lb6-mode)
+    (add-template "\\.lbaction/.+/\\(default\\|suggestions\\)\\.js$"     "%default.js%"     'lb6-mode)
     ;; (add-template "/package\\.json$"                                  "%package.json%"   'json-mode)
     ;; (add-template "\\.\\(json\\|jshintrc\\)$"                         "%%"               'json-mode)
 
@@ -84,6 +84,7 @@
     ;; ;; Elisp
     (add-template "\\.emacs\\.d/.+\\.el$"                                "%initfile%"       'emacs-lisp-mode)
     (add-template "\\.emacs\\.d/snippets/.+$"                            "%%"               'snippet-mode))
+
 
 (provide 'init-auto-insert)
 ;;; init-auto-insert.el ends here

@@ -1,4 +1,5 @@
 (use-package company
+  :diminish company-mode
   :config
   (progn
     (global-company-mode 1)

@@ -1,11 +1,13 @@
 ;; Global editor behavior
-(electric-indent-mode 1)
+(electric-indent-mode -1)
 (setq electric-indent-chars '(?  ?: ?{))
-(add-hook! 'org-mode-hook (electric-indent-mode -1))
+(add-hook 'python-mode-hook 'electric-indent-local-mode)
 
 (add-hook 'emacs-lisp-mode-hook 'turn-on-eldoc-mode)
+(add-hook! 'eldoc-mode-hook (diminish 'eldoc-mode " ?"))
 
 (setq-default fill-column 80)
+(diminish 'auto-fill-function)
 ;; Sane scroll settings
 (setq scroll-margin 5)
 (setq scroll-conservatively 9999)
@@ -42,9 +44,15 @@
   (set-face-foreground face nil)
   (set-face-background face nil))
 
+(diminish 'isearch-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(use-package anzu
+  :diminish anzu-mode
+  :config (global-anzu-mode +1))
+
 (use-package smartparens
+  :diminish smartparens-mode
   :config
   (progn
     (require 'smartparens-config)
@@ -72,6 +80,10 @@
       (sp-local-pair "/* " " */" :post-handlers '(("||\n[i]" "RET")))
       (sp-local-pair "/**" "*/" :post-handlers '(("||\n[i]" "RET"))))
 
+    ;; Support for generics
+    (sp-with-modes '(c-mode c++-mode objc-mode java-mode)
+      (sp-local-pair "<" ">" :when '(sp-point-after-word-p) :unless '(sp-point-before-same-p)))
+
     (sp-with-modes '(objc-mode scss-mode css-mode)
       (sp-local-pair "/*\n" "\n */" :post-handlers '(("||[i]" "RET"))))
 
@@ -89,7 +101,7 @@
   :commands (smart-up smart-down smart-left smart-right))
 
 (use-package expand-region
-  :commands (er/expand-region er/contract-region))
+  :commands (er/expand-region er/contract-region er/mark-symbol er/mark-word))
 
 (use-package hl-todo
   :commands hl-todo-mode

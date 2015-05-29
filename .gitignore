@@ -18,5 +18,5 @@ smex-items
 *.dat
 *.eld
 
-*.cache
+*.cache-*
 *.log

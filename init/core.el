@@ -1,8 +1,3 @@
-(when (functionp 'scroll-bar-mode) (scroll-bar-mode -1))    ; no scrollbar
-(when (functionp 'tool-bar-mode)   (tool-bar-mode -1))      ; no toolbar
-(when (functionp 'menu-bar-mode)   (menu-bar-mode -1))      ; no menubar
-(when (fboundp 'fringe-mode) (fringe-mode '(4 . 10)))       ; no nonsense
-
 (defconst is-mac     (eq system-type 'darwin))
 (defconst is-linux   (eq system-type 'gnu/linux))
 (defconst is-windows (eq system-type 'windows-nt))
@@ -33,12 +28,10 @@
 ;; (setq load-prefer-newer t)
 (setq debug-on-quit DEBUG-MODE)
 
-  ;;;; Sane defaults ;;;;;;;;;;;;;;;;;;;;;;;
-(line-number-mode 1)         ; hide line no in modeline
-(column-number-mode 1)       ; hide col no in modeline
+;;;; Sane defaults ;;;;;;;;;;;;;;;;;;;;;;;
 (auto-compression-mode t)    ; Transparently open compressed files
 (global-font-lock-mode t)    ; Enable syntax highlighting for older emacs
-(global-auto-revert-mode 1)  ; revert buffers for changed files
+;; (global-auto-revert-mode 1)  ; revert buffers for changed files
 
   ;;; window layout undo/redo
 (setq winner-boring-buffers '("*Completions*" "*Compile-Log*" "*inferior-lisp*"
@@ -51,8 +44,8 @@
   :init (add-hook 'prog-mode-hook 'semantic-mode)
   :config
   (progn
-    (semantic-mode 1)
-    (setq semanticdb-default-save-directory (expand-file-name "semanticdb" my-tmp-dir))))
+    (setq semanticdb-default-save-directory (expand-file-name "semanticdb" my-tmp-dir))
+    (semantic-mode 1)))
 
 ;;; UTF-8 please
 (setq locale-coding-system 'utf-8)    ; pretty
@@ -81,26 +74,23 @@
 
 (setq ring-bell-function 'ignore)
 
-(setq inhibit-startup-screen t)           ; don't show EMACs start screen
-(setq inhibit-splash-screen t)
-(setq inhibit-startup-buffer-menu t)
+(setq inhibit-startup-screen t              ; don't show EMACs start screen
+      inhibit-splash-screen t
+      inhibit-startup-buffer-menu t
 
-(setq initial-major-mode 'text-mode)      ; initial scratch buffer mode
-(setq initial-scratch-message nil)
-(setq initial-scratch-buffer nil)         ; empty scratch buffer
+      initial-major-mode 'fundamental-mode  ; initial scratch buffer mode
+      initial-scratch-message nil
+      initial-scratch-buffer nil            ; empty scratch buffer
 
-(setq compilation-always-kill t)
-(setq compilation-ask-about-save nil)
-(setq compilation-scroll-output t)
+      compilation-always-kill t
+      compilation-ask-about-save nil
+      compilation-scroll-output t)
 
 (setq sentence-end-double-space nil)      ; sentences end with periods. Period.
 
-(setq ediff-diff-options "-w")
-(setq ediff-split-window-function 'split-window-horizontally)  ; side-by-side diffs
-(setq ediff-window-setup-function 'ediff-setup-windows-plain) ; no extra frames
-
-;; Fixes C-i's synonymity with TAB
-(keyboard-translate ?\C-i ?\H-i)
+(setq ediff-diff-options "-w"
+      ediff-split-window-function 'split-window-horizontally   ; side-by-side diffs
+      ediff-window-setup-function 'ediff-setup-windows-plain) ; no extra frames
 
 ;; Don't save clipboard contents into kill-ring before replacing them
 (setq save-interprogram-paste-before-kill nil)
@@ -118,7 +108,7 @@
 (use-package savehist
   :config
   (progn
-    (setq savehist-file (concat my-tmp-dir "savehist")  ; keep the home clean
+    (setq savehist-file (expand-file-name "savehist" my-tmp-dir)  ; keep the home clean
           history-length 1000
           savehist-additional-variables '(kill-ring
                                           global-mark-ring
@@ -131,7 +121,7 @@
 (use-package saveplace
   :config
   (progn
-    (setq-default save-place-file (concat my-tmp-dir "saveplace"))
+    (setq-default save-place-file (expand-file-name "saveplace" my-tmp-dir))
     ;; activate save-place only for files that exist
     (add-hook! 'find-file-hook (if (file-exists-p buffer-file-name) (setq save-place t)))))
 
@@ -139,10 +129,10 @@
   :config
   (progn
     (add-hook 'kill-emacs-hook 'recentf-cleanup)
-    (setq recentf-save-file (concat my-tmp-dir "recentf")
+    (setq recentf-save-file (expand-file-name "recentf" my-tmp-dir)
           recentf-exclude '("/tmp/" "/ssh:" "\\.?ido\\.last$" "\\.revive$" "/TAGS$" "/\\.cache/.+" "emacs\\.d/workgroups/.+$" ".emacs.workgroup")
           recentf-max-menu-items 0
-          recentf-max-saved-items 1000
+          recentf-max-saved-items 250
           recentf-auto-cleanup 'never)
     (recentf-mode 1)))
 
@@ -320,38 +310,32 @@ the checking happens for all pairs in auto-minor-mode-alist"
   (progn ; popwin config
     (popwin-mode 1)
     (setq popwin:popup-window-height 0.45)
-    ;; (setq display-buffer-function 'popwin:display-buffer)
-
-    (push '("\\`\\*helm.*?\\*\\'" :regexp t :position bottom :height 15) popwin:special-display-config)
-
-    (push '("^\\*Flycheck.*\\*$" :regexp t :position bottom :height 0.25 :noselect t) popwin:special-display-config)
-    (push '(inf-enh-ruby-mode :position bottom :stick t) popwin:special-display-config)
-    (push '(snippet-mode :position bottom :stick t) popwin:special-display-config)
-    (push '("^\\*eclim.*\\*" :regexp t :position bottom :height 0.25) popwin:special-display-config)
-
-    (push '("*ansi-term*" :position bottom :height 0.45 :stick t) popwin:special-display-config)
-    (push '("*terminal*" :position bottom :height 0.45 :stick t) popwin:special-display-config)
-    (push '("*Async Shell Command*" :position bottom) popwin:special-display-config)
-    (push '("*Shell Command Output*" :position bottom :stick t :height 15) popwin:special-display-config)
-
-    (push '("* Regexp Explain *" :position top :height 0.35) popwin:special-display-config)
-
-    (push '("*anaconda-doc*" :position bottom :height 15 :noselect t) popwin:special-display-config)
-    (push '("*anaconda-nav*" :position bottom :height 15 :stick t) popwin:special-display-config)
-    (push '("^\\*Python.+\\*$" :regexp t :position bottom :height 20 :noselect t) popwin:special-display-config)
-
-    (push '(help-mode :height 0.5 :position bottom :stick t) popwin:special-display-config)
-    (push '(compilation-mode :height 0.5 :position bottom :noselect t) popwin:special-display-config)
-    (push '(diff-mode :position bottom :stick t) popwin:special-display-config)
-    (push '("*Backtrace*") popwin:special-display-config)
-    (push '("*Warnings*") popwin:special-display-config)
-    (push '("*Process List*") popwin:special-display-config)
-    (push '("*Compile-Log*" :height 0.3 :position bottom :noselect t) popwin:special-display-config)
-    (push '(" *undo-tree*" :width 0.3 :position right) popwin:special-display-config)
-    (push '("^\\*scratch\\*.*" :regexp t :stick t) popwin:special-display-config)
-    (push '(image-mode) popwin:special-display-config)
-
-    (push '("*NeoTree*" :position left :width 22 :stick t) popwin:special-display-config)
+    (setq popwin:special-display-config
+          (append '(("\\`\\*helm.*?\\*\\'" :regexp t :position bottom :height 15)
+                    ("^\\*Flycheck.*\\*$" :regexp t :position bottom :height 0.25 :noselect t)
+                    (inf-enh-ruby-mode :position bottom :stick t)
+                    (snippet-mode :position bottom :stick t)
+                    ("^\\*eclim.*\\*" :regexp t :position bottom :height 0.25)
+                    ("*ansi-term*" :position bottom :height 0.45 :stick t)
+                    ("*terminal*" :position bottom :height 0.45 :stick t)
+                    ("*Async Shell Command*" :position bottom)
+                    ("*Shell Command Output*" :position bottom :stick t :height 15)
+                    ("* Regexp Explain *" :position top :height 0.35)
+                    ("*anaconda-doc*" :position bottom :height 15 :noselect t)
+                    ("*anaconda-nav*" :position bottom :height 15 :stick t)
+                    ("^\\*Python.+\\*$" :regexp t :position bottom :height 20 :noselect t)
+                    (help-mode :height 25 :position bottom :stick t)
+                    (compilation-mode :height 0.5 :position bottom :noselect t)
+                    (diff-mode :position bottom :stick t)
+                    ("*Backtrace*")
+                    ("*Warnings*")
+                    ("*Process List*")
+                    ("*Compile-Log*" :height 0.3 :position bottom :noselect t)
+                    (" *undo-tree*" :width 0.3 :position right)
+                    ("^\\*scratch\\*.*" :regexp t :stick t)
+                    (image-mode)
+                    ("*NeoTree*" :position left :width 22 :stick t))
+                  popwin:special-display-config))
 
     (defun popwin:toggle-popup-window ()
       (interactive)
