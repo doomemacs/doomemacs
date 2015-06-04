@@ -1,29 +1,30 @@
 (use-package re-builder
-  :defer t
+  :commands (re-builder reb-mode-buffer-p)
   :config
   (progn
-    (bind 'normal reb-mode-map
+    (bind :normal :map reb-mode-map
+          "C-g"        'reb-quit
           [escape]     'reb-quit
-          (kbd "C-g")  'reb-quit
           [backtab]    'reb-change-syntax)
 
-    (defun my--reb-cleanup ()
+    (defun narf|reb-cleanup ()
       (replace-regexp "^[ \n]*" "" nil (point-min) (point-max))
       (text-scale-set 1.5)
       (goto-char 2))
-    (add-hook 'reb-mode-hook 'my--reb-cleanup)
+    (add-hook 'reb-mode-hook 'narf|reb-cleanup)
 
     (use-package pcre2el
+      :functions (rxt--re-builder-switch-pcre-mode)
       :config
       (progn
-        (bind 'normal rxt-help-mode-map [escape] 'kill-buffer-and-window)
+        (bind :normal :map rxt-help-mode-map [escape] 'kill-buffer-and-window)
         (setq reb-re-syntax 'pcre)))
 
     (after "evil"
       (evil-set-initial-state 'reb-mode 'insert)
       ;; Either a) converts selected (or entered-in) pcre regex into elisp
       ;; regex, OR b) opens up re-builder.
-      (evil-define-operator my:regex (beg end type &optional regexstr bang)
+      (evil-define-operator narf::regex (beg end type &optional regexstr bang)
         :move-point nil
         :type inclusive
         :repeat nil
@@ -48,8 +49,7 @@
                      (setq newregex (s-replace "\\" "\\\\" newregex)))
                    (kill-new newregex)
                    (message "Copied regex to kill ring: %s" newregex)))
-                (t
-                 (re-builder))))))))
+                (t (re-builder))))))))
 
 
 (provide 'init-regex)

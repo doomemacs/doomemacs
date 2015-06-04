@@ -1,63 +1,40 @@
 (use-package workgroups2
-  :diminish workgroups-mode
+  :init
+  (setq wg-session-file          (expand-file-name "wg-default" TMP-DIR)
+        wg-workgroup-directory   (expand-file-name "workgroups" TMP-DIR)
+        wg-first-wg-name         "main"
+        wg-session-load-on-start t
+        wg-mode-line-display-on  nil
+        ;; What to do on Emacs exit / workgroups-mode exit?
+        wg-emacs-exit-save-behavior           'save       ; Options: 'save 'ask nil
+        wg-workgroups-mode-exit-save-behavior 'save)
   :config
   (progn
-    (setq wg-session-file "~/.emacs.workgroup"
-          wg-workgroup-directory "~/.emacs.d/workgroups/"
-          wg-first-wg-name "main"
-          wg-session-load-on-start t
-          wg-mode-line-display-on nil
-          ;; What to do on Emacs exit / workgroups-mode exit?
-          wg-emacs-exit-save-behavior           'save       ; Options: 'save 'ask nil
-          wg-workgroups-mode-exit-save-behavior 'save)      ; Options: 'save 'ask nil
-
-    (evil-define-command my:save-session (&optional bang session-name)
-      (interactive "<!><a>")
-      (if session-name
-          (wg-save-session-as (concat wg-workgroup-directory session-name) (not bang))
-        (wg-save-session)))
-
-    (evil-define-command my:load-session (&optional bang session-name)
-      (interactive "<!><a>")
-      (wg-open-session (if session-name
-                           (concat wg-workgroup-directory session-name)
-                         wg-session-file)))
-
-    (evil-define-command my:new-workgroup (bang name)
-      (interactive "<!><a>")
-      (unless name
-        (user-error "No name specified for new workgroup"))
-      (if bang
-          (wg-clone-workgroup (wg-current-workgroup) name)
-        (wg-create-workgroup name t)))
-
-    (evil-define-command my:rename-workgroup (new-name)
-      (interactive "<a>")
-      (wg-rename-workgroup new-name))
-
     (after "helm"
-      (defun my-wg-switch-to-workgroup (name)
+      (defun narf/helm-switch-to-workgroup (name)
         (wg-switch-to-workgroup (wg-get-workgroup name)))
-
-      (defun helm-wg ()
-        (interactive)
-        (helm :sources '(helm-source-wg)))
-
-      (defvar helm-source-wg
-            '((name . "Workgroups")
+      (defvar narf/helm-source-wg
+            '((name       . "Workgroups")
               (candidates . wg-workgroup-names)
-              (action . my-wg-switch-to-workgroup))))
+              (action     . narf/helm-switch-to-workgroup)))
+      (defun narf:helm-wg ()
+        (interactive)
+        (helm :sources '(helm-source-wg))))
 
     ;; Turns projectile switch-project interface (or helm's interface to it)
     ;; create a new workgroup for the new project.
     (after "projectile"
-      (defun my-projectile-workgroup-switch-project ()
-        (let ((workgroup-name (file-name-nondirectory (directory-file-name (project-root)))))
+      (defun narf/wg-projectile-switch-project ()
+        (let ((workgroup-name (file-name-nondirectory (directory-file-name (narf/project-root)))))
           (wg-create-workgroup workgroup-name t)
           (helm-projectile-find-file)))
-      (setq projectile-switch-project-action 'my-projectile-workgroup-switch-project))
+      (setq projectile-switch-project-action 'narf/wg-projectile-switch-project))
 
-    (workgroups-mode 1)))
+    ;; Initialize!
+    (defun narf|init-workgroups ()
+      (workgroups-mode +1)
+      (diminish 'workgroups-mode))
+    (add-hook 'after-init-hook 'narf|init-workgroups)))
 
 
 (provide 'init-workgroups)

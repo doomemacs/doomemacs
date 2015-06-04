@@ -7,4 +7,5 @@
 
 (add-hook 'ruby-mode-hook (function cscope-minor-mode))
 
+
 (provide 'init-cscope)

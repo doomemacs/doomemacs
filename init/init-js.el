@@ -14,29 +14,24 @@
 
     (after "web-beautify"
       (add-hook! 'js2-mode-hook (setenv "jsbeautify_indent_size" "4"))
-      (bind 'motion js2-mode-map "gQ" 'web-beautify-js))
+      (bind :motion :map js2-mode-map "gQ" 'web-beautify-js))
 
     (after "emr" (use-package js2-refactor))
 
-    (rename-mode-name js2-mode "Javascript2")
+    ;; [pedantry intensifies]
+    (defadvice js2-mode (after js2-mode-rename-modeline activate)
+      (setq mode-name "Javascript2"))
 
     (use-package tern
       :diminish (tern-mode . "tern")
       :commands tern-mode
-      :init (add-hook 'js2-mode-hook 'tern-mode)
+      :init
+      (add-hook 'js2-mode-hook 'tern-mode)
       :config
       (after "company"
         (use-package company-tern
           :config
-          (company--backend-on 'js2-mode-hook 'company-tern)
-          ;; (setq company-tern-meta-as-single-line t)
-          ;; (setq company-tern-property-marker "")
-          ;; (setq company-tooltip-align-annotations t)
-          )))))
-
-(use-package json-mode
-  :mode (("\\.json$" . json-mode)
-         ("\\.jshintrc$" . json-mode)))
+          (narf/add-company-backend js2-mode (company-tern)))))))
 
 ;; For UnityScript
 (use-package unityjs-mode
@@ -45,14 +40,18 @@
   (progn
     (add-hook 'unityjs-mode-hook 'flycheck-mode)
     (add-hook! 'unityjs-mode-hook
-               (enable-tab-width-2)
+               (narf|enable-tab-width-2)
                (setq js-indent-level 2))))
 
+;; For launchbar script development
 (define-minor-mode lb6-mode
-  :lighter " lb6"
-  :keymap (make-sparse-keymap)
-  (my--init-yas-mode 'lb6-mode))
+  "Launchbar development mode."
+  :init-value nil
+  :lighter    "lb6"
+  :keymap     (make-sparse-keymap)
+  (narf/init-yas-mode 'lb6-mode))
 (associate-minor-mode "\\.lb\\(action\\|ext\\)/.*$" 'lb6-mode)
+
 
 (provide 'init-js)
 ;;; init-js.el ends here

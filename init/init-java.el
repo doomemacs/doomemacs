@@ -1,21 +1,22 @@
-(defun my-java-project-package ()
+(defun narf/java-project-package ()
   (if (eq major-mode 'java-mode)
     (s-chop-suffix "." (s-replace "/" "." (f-dirname (f-relative (buffer-file-name)
-                                                                 (concat (project-root) "/src/")))))
+                                                                 (concat (narf/project-root) "/src/")))))
     ""))
 
-(defun my-java-class-name ()
+(defun narf/java-class-name ()
   (if (eq major-mode 'java-mode)
       (f-no-ext (f-base (buffer-file-name)))
     ""))
 
 (use-package eclim
+  :functions (eclim--project-dir eclim--project-name)
   :commands (eclim-mode global-eclim-mode)
   :init
   (progn
     (setq eclim-eclipse-dirs '("/Applications/eclipse")
-          eclim-executable "/Applications/eclipse/eclim")
-    (when (f-exists? eclim-executable)
+          eclim-executable     "/Applications/eclipse/eclim")
+    (when (file-exists-p eclim-executable)
       (add-hook 'java-mode-hook 'eclim-mode)))
   :config
   (progn
@@ -35,21 +36,21 @@
       (use-package company-emacs-eclim
         :config (company-emacs-eclim-setup)))
 
-    (bind 'motion java-mode-map "gd" 'eclim-java-find-declaration)))
-
-(use-package groovy-mode :mode "\\.gradle$")
+    (bind :motion :map java-mode-map "gd" 'eclim-java-find-declaration)))
 
 (use-package android-mode
-  :defer t
   :commands android-mode
   :init
   (progn
+    ;; yasnippet defuns
     (defun android-mode-is-layout-file ()
       (and android-mode
            (eq major-mode 'nxml-mode)
            (string-equal (file-name-base (directory-file-name default-directory)) "layout")))
+
     (defun android-mode-in-tags (&rest tags)
       (-contains? tags (android-mode-tag-name)))
+
     (defun android-mode-tag-name ()
       (save-excursion
         (let (beg end)
@@ -60,18 +61,23 @@
           (setq end (1+ (point)))
           (buffer-substring-no-properties beg end))))
 
-    (defun my-android-mode-enable-maybe ()
-      (let ((root (project-root)))
-        (when (or (project-has-files "local.properties" root)
-                  (project-has-files "AndroidManifest.xml" root)
-                  (project-has-files "src/main/AndroidManifest.xml" root))
+    (defun narf|android-mode-enable-maybe ()
+      (let ((root (narf/project-root)))
+        (when (or (narf/project-has-files "local.properties" root)
+                  (narf/project-has-files "AndroidManifest.xml" root)
+                  (narf/project-has-files "src/main/AndroidManifest.xml" root))
           (android-mode +1)
-          (set-build-command "./gradlew %s" "build.gradle"))))
+          (narf/set-build-command "./gradlew %s" "build.gradle"))))
+
     (after "company" (add-to-list 'company-dictionary-major-minor-modes 'android-mode))
-    (add-hook 'java-mode-hook    'my-android-mode-enable-maybe)
-    (add-hook 'groovy-mode-hook  'my-android-mode-enable-maybe)
-    (add-hook 'nxml-mode-hook    'my-android-mode-enable-maybe)
-    (add-hook! 'android-mode-hook (my--init-yas-mode 'android-mode))))
+    (add-hook 'java-mode-hook     'narf|android-mode-enable-maybe)
+    (add-hook 'groovy-mode-hook   'narf|android-mode-enable-maybe)
+    (add-hook 'nxml-mode-hook     'narf|android-mode-enable-maybe)
+    (add-hook! 'android-mode-hook (narf/init-yas-mode 'android-mode))))
+
+(use-package groovy-mode
+  :functions (is-groovy-mode)
+  :mode "\\.gradle$")
 
 
 (provide 'init-java)

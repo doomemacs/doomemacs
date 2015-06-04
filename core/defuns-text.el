@@ -1,16 +1,16 @@
 ;;;###autoload
-(defun my--point-at-bol-non-blank()
+(defun narf--point-at-bol-non-blank()
   (save-excursion (evil-first-non-blank) (point)))
 
 ;;;###autoload
-(defun my--surrounded-p ()
+(defun narf/surrounded-p ()
   (and (looking-back "[[{(]\\(\s+\\|\n\\)?\\(\s\\|\t\\)*")
        (let* ((whitespace (match-string 1))
               (match-str (concat whitespace (match-string 2) "[])}]")))
          (looking-at-p match-str))))
 
 ;;;###autoload
-(defun my.backward-kill-to-bol-and-indent ()
+(defun narf:backward-kill-to-bol-and-indent ()
   "Kill line to the first non-blank character. If invoked again
 afterwards, kill line to column 1."
   (interactive)
@@ -20,12 +20,12 @@ afterwards, kill line to column 1."
         (indent-according-to-mode))))
 
 ;;;###autoload
-(defun my.move-to-bol ()
+(defun narf:move-to-bol ()
   "Moves cursor to the first non-blank character on the line. If
 already there, move it to the true bol."
   (interactive)
   (evil-save-goal-column
-    (let ((point-at-bol (my--point-at-bol-non-blank))
+    (let ((point-at-bol (narf--point-at-bol-non-blank))
           (point (point)))
       (if (= point-at-bol point)
           (evil-move-beginning-of-line)
@@ -33,20 +33,20 @@ already there, move it to the true bol."
           (evil-first-non-blank))))))
 
 ;;;###autoload
-(defun my.move-to-eol ()
+(defun narf:move-to-eol ()
   (interactive)
   (evil-save-goal-column
     (let ((old-point (point)))
       (when (comment-search-forward (point-at-eol) t)
         (goto-char (match-beginning 0))
-        (skip-syntax-backward " ^<*" (my--point-at-bol-non-blank))
+        (skip-syntax-backward " ^<*" (narf--point-at-bol-non-blank))
 
         (if (eq old-point (point)) ;
             (evil-move-end-of-line))))))
 
 ;; Mimic expandtab in vim
 ;;;###autoload
-(defun my.backward-delete-whitespace-to-column ()
+(defun narf:backward-delete-whitespace-to-column ()
   "Delete back to the previous column of whitespace, or as much
 whitespace as possible, or just one char if that's not possible."
   (interactive)
@@ -67,14 +67,13 @@ whitespace as possible, or just one char if that's not possible."
            (save-match-data
              (if (string-match "\\w*\\(\\s-+\\)$"
                                (buffer-substring-no-properties (- p movement) p))
-                 (backward-delete-char (- (match-end 1) (match-beginning 1)))
+                 (sp-backward-delete-char (- (match-end 1) (match-beginning 1)))
                (backward-delete-char-untabify 1)))))
         ;; Otherwise do a regular delete
-        (t
-         (backward-delete-char-untabify 1))))
+        (t (backward-delete-char-untabify 1))))
 
 ;;;###autoload
-(defun my.dumb-indent ()
+(defun narf:dumb-indent ()
   "Inserts a tab character (or spaces x tab-width). Checks if the
 auto-complete window is open."
   (interactive)
@@ -85,36 +84,36 @@ auto-complete window is open."
       (insert (s-repeat spaces " ")))))
 
 ;;;###autoload
-(defun my.inflate-space-maybe ()
+(defun narf:inflate-space-maybe ()
   "Checks if point is surrounded by {} [] () delimiters and adds a
 space on either side of the point if so."
   (interactive)
-  (if (my--surrounded-p)
+  (if (narf/surrounded-p)
       (progn (call-interactively 'self-insert-command)
              (save-excursion (call-interactively 'self-insert-command)))
     (call-interactively 'self-insert-command)))
 
 ;;;###autoload
-(defun my.deflate-space-maybe ()
+(defun narf:deflate-space-maybe ()
   "Checks if point is surrounded by {} [] () delimiters, and deletes
 spaces on either side of the point if so. Resorts to
-`my.backward-delete-whitespace-to-column' otherwise."
+`narf:backward-delete-whitespace-to-column' otherwise."
   (interactive)
   (save-match-data
-    (if (my--surrounded-p)
+    (if (narf/surrounded-p)
         (let ((whitespace-match (match-string 1)))
           (cond ((not whitespace-match)
-                 (call-interactively 'delete-backward-char))
+                 (call-interactively 'sp-backward-delete-char))
                 ((string-match "\n" whitespace-match)
                  (evil-delete (point-at-bol) (point))
                  (delete-char -1)
                  (save-excursion (delete-char 1)))
                 (t
                  (just-one-space 0))))
-      (my.backward-delete-whitespace-to-column))))
+      (narf:backward-delete-whitespace-to-column))))
 
 ;;;###autoload
-(defun my.newline-and-indent ()
+(defun narf:newline-and-indent ()
   (interactive)
   (cond
    ((sp-point-in-string)
@@ -130,3 +129,7 @@ spaces on either side of the point if so. Resorts to
            (indent-according-to-mode))
           (t (indent-new-comment-line))))
    (t (newline-and-indent))))
+
+
+(provide 'defuns-text)
+;;; defuns-text.el ends here

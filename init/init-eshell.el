@@ -3,13 +3,13 @@
 ;; (push '("*eshell*" :position left :width 80 :stick t) popwin:special-display-config)
 
 ;; ;; eshell
-;; (setq eshell-directory-name (concat my-tmp-dir "eshell"))
+;; (setq eshell-directory-name (concat TMP-DIR "eshell"))
 ;; (setq eshell-scroll-to-bottom-on-input 'all)
 ;; (setq eshell-buffer-shorthand t)
 
 
 ;; ;; em-alias
-;; (setq eshell-aliases-file (concat my-tmp-dir ".eshell-aliases"))
+;; (setq eshell-aliases-file (concat TMP-DIR ".eshell-aliases"))
 
 
 ;; ;; em-glob

@@ -3,11 +3,11 @@
   :interpreter "go"
   :config
   (progn
-    (bind 'normal go-mode-map "gd" 'godef-jump)
+    (bind normal :map go-mode-map "gd" 'godef-jump)
 
     (use-package company-go
       :config
-      (company--backend-on 'go-mode-hook 'company-go 'company-yasnippet))))
+      (narf/add-company-backend go-mode (company-go company-yasnippet)))))
 
 
 (provide 'init-go)

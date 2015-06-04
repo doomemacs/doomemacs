@@ -9,16 +9,18 @@
          ("/Vagrantfile$" . enh-ruby-mode)
          ("/Rakefile$"    . enh-ruby-mode))
   :interpreter "ruby"
+  :init
+  (progn
+	(add-hook 'enh-ruby-mode-hook 'narf|enable-tab-width-2)
+    (add-hook! 'enh-ruby-mode-hook (set-build-command "rake %s" "Rakefile")))
   :config
   (progn
 	;;; Formatting
-    (setq ruby-indent-level 2)
-    (setq ruby-deep-indent-paren t)
-    (setq enh-ruby-check-syntax nil)
+    (setq ruby-indent-level      2
+          ruby-deep-indent-paren t
+          enh-ruby-check-syntax  nil)
 
     (associate-mode "/\\.rspec$" 'text-mode)
-	(add-hook 'enh-ruby-mode-hook 'enable-tab-width-2)
-    (add-hook! 'enh-ruby-mode-hook (set-build-command "rake %s" "Rakefile"))
 
     ;; Don't interfere with my custom RET behavior
     (define-key enh-ruby-mode-map [?\n] nil)
@@ -53,7 +55,7 @@
     (define-minor-mode rake-mode
       "Buffer local minor mode for rake files"
       :lighter " Rake" :keymap (make-sparse-keymap)
-      (my--init-yas-mode 'rake-mode))
+      (narf/init-yas-mode 'rake-mode))
     (associate-minor-mode "/\\(Rakefile\\|\\.rake\\)$" 'rake-mode)
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -61,7 +63,7 @@
     (define-minor-mode vagrant-mode
       "Buffer local minor mode for vagrant files"
       :lighter " Va" :keymap (make-sparse-keymap)
-      (my--init-yas-mode 'vagrant-mode))
+      (narf/yas-init-mode 'vagrant-mode))
     (associate-minor-mode "/Vagrantfile$" 'vagrant-mode)
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -71,7 +73,7 @@
       :init
       (progn
         (associate-minor-mode "\\(/spec_helper\\|_spec\\)\\.rb$" 'rspec-mode)
-        (associate-minor-mode "/\\.rspec$" 'rspec-mode)
+        (associate-minor-mode "/\\.rspec$"                       'rspec-mode)
 
         (defvar rspec-mode-verifiable-map (make-sparse-keymap))
         (defvar evilmi-ruby-match-tags
@@ -82,7 +84,7 @@
             ;; Rake
             (("task" "namespace") () "end"))))
       :config
-      (bind 'normal
+      (bind :normal
             ",tr" 'rspec-rerun
             ",ta" 'rspec-verify-all
             ",ts" 'rspec-verify-single
@@ -96,16 +98,17 @@
         (evil-set-initial-state 'inf-enh-ruby-mode 'insert)
         (after "company"
           (use-package company-inf-ruby
-            :config (company--backend-on 'inf-enh-ruby-mode-hook 'company-inf-ruby)))))
+            :config (narf/add-company-backend inf-enh-ruby-mode (company-inf-ruby))))))
 
     (use-package robe
+      :functions (robe-mode robe-start ruby-load-file)
       :config
       (progn
         (after "company"
           (use-package company-robe
-            :config (company--backend-on 'enh-ruby-mode-hook 'company-robe)))
+            :config (narf/add-company-backend enh-ruby-mode (company-robe))))
 
-        (defun my-enable-robe-maybe ()
+        (defun narf|enable-robe-maybe ()
           (let ((file (buffer-file-name)))
             ;; Don't run in gemfiles, capfiles or vagrantfiles
             (unless (or (string-equal (f-filename file) "Gemfile")
@@ -113,10 +116,10 @@
                         (string-equal (f-filename file) "Vagrantfile")
                         (f-ext? file "org")) ;; or org-mode
               (robe-mode 1)
-              (my--ruby-load-file file))))
-        (add-hook 'enh-ruby-mode-hook 'my-enable-robe-maybe)
+              (narf|ruby-load-file file))))
+        (add-hook 'enh-ruby-mode-hook 'narf|enable-robe-maybe)
 
-        (defun my--ruby-load-file (&optional file)
+        (defun narf|ruby-load-file (&optional file)
           (let ((file (or file buffer-file-name)))
             (when (and (eq major-mode 'enh-ruby-mode)
                        (featurep 'robe)
@@ -124,7 +127,7 @@
                        (file-exists-p buffer-file-name))
               (unless robe-running (robe-start 1))
               (when robe-running (ruby-load-file file)))))
-        (add-hook 'after-save-hook 'my--ruby-load-file)))))
+        (add-hook 'after-save-hook 'narf|ruby-load-file)))))
 
 
 (provide 'init-ruby)

@@ -6,7 +6,8 @@
     (add-hook 'php-mode-hook 'turn-on-eldoc-mode)
 
     (use-package php-extras
-      :config (company--backend-on 'php-mode-hook 'php-extras-company))
+      :config
+      (narf/add-company-backend php-mode (php-extras-company)))
 
     ;; TODO Tie into emr
     (use-package php-refactor-mode

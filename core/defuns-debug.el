@@ -1,10 +1,3 @@
-
-;; String Defuns ;;;;;;;;;;;;;;;;;;;;;;;
-;;;###autoload
-(defun s-count-lines (s)
-  "Get number of lines in a string"
-  (length (s-lines s)))
-
 ;; Misc Defuns ;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;###autoload
 (defun what-face (pos)
@@ -26,9 +19,12 @@
    (local-key-binding key)
    (global-key-binding key)))
 
-;;;###autoload
-(defun echo (msg &rest args)
+;;;###autoload (autoload 'narf::echo "defuns-debug")
+(evil-define-command narf::echo (message)
   "Display MSG in echo-area without logging it in *Messages* buffer."
-  (interactive)
-  (let ((message-log-max nil))
-    (apply 'message msg args)))
+  (interactive "<a>")
+  (let (message-log-max)
+    (message "%s" message)))
+
+
+(provide 'defuns-debug)

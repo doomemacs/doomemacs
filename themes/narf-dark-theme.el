@@ -50,12 +50,12 @@
 
    `(mode-line                ((t (:foreground ,white
                                            :background ,gutter-light
-                                           :box (:line-width 3 :color ,gutter-light)
+                                           ;;:box (:line-width 0 :color ,gutter-light)
                                            ))))
 
    `(mode-line-inactive       ((t (:foreground ,gutter-fg
                                            :background ,gutters-active
-                                           :box (:line-width 3 :color ,gutters-active)
+                                           ;;:box (:line-width 0 :color ,gutters-active)
                                            ))))
 
    `(mode-line-modified-face  ((t (:foreground ,builtin))))

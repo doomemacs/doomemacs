@@ -1,16 +1,23 @@
 (use-package org
+  :defines  (org-directory)
+  :functions (org-bookmark-jump-unhide outline-next-heading org-end-of-subtree
+              outline-flag-region org-remove-inline-images org-display-inline-images
+              org-at-item-checkbox-p org-toggle-checkbox org-entry-is-todo-p org-todo
+              org-format-outline-path org-get-outline-path)
   :commands (org-capture
-             org-capture-string
-             my:org-capture)
-  :mode (("\\.org$" . org-mode)
+             org-capture-string)
+  :mode (("\\.org$"  . org-mode)
          ("\\.opml$" . org-mode))
   :init
   (progn
-    (add-hook 'org-mode-hook 'enable-tab-width-2)
-    (add-hook 'org-mode-hook 'turn-on-auto-fill)
-    (add-hook 'org-mode-hook 'iimage-mode)
-    (add-hook 'org-mode-hook 'org-indent-mode)
-    (add-hook 'org-mode-hook 'evil-org-mode)
+    (define-minor-mode evil-org-mode
+      "Evil-mode bindings for org-mode."
+      :init-value nil
+      :lighter    "!"
+      :keymap     (make-sparse-keymap) ; defines evil-org-mode-map
+      :group      'evil-org)
+
+    (add-to-hook 'org-mode-hook '(narf|enable-tab-width-2 'narf|enable-hard-wrap 'iimage-mode 'org-indent-mode 'evil-org-mode))
     (add-hook! 'org-mode-hook (hl-line-mode -1)))
   :config
   (progn
@@ -20,8 +27,8 @@
     (setq org-directory "~/Dropbox/notes")
     (setq org-project-directory (expand-file-name "projects" org-directory)    ; custom variable
           org-default-notes-file (expand-file-name "notes.org" org-directory)
-          org-agenda-files (append (list org-directory)
-                                   (f-entries org-project-directory (lambda (path) (f-ext? path "org")) t))
+          org-agenda-files (f-entries org-directory (lambda (path) (and (f-ext? path "org")
+                                                                        (not (f-same? path (f-expand "inbox.org" org-directory))))) t)
           org-archive-location (concat org-directory "/archive/%s::")
           org-confirm-babel-evaluate nil
           org-src-tab-acts-natively t
@@ -58,16 +65,11 @@
                           ("@writing" . ?w)
                           ("@projects" . ?r)))
 
-    (defun project-org-filename (cat)
-      (interactive (list (completing-read "Choose category:"
-                                          (mapcar 'f-filename (f-directories org-project-directory)))))
-      (expand-file-name (concat (f-filename (project-root)) ".org")
-                        (expand-file-name cat org-project-directory)))
     (setq org-capture-templates
           '(("t" "TODO" entry (file+headline "~/Dropbox/notes/todo.org" "Inbox") "* TODO %? %u\n%i")
-            ("T" "Project TODO" entry (file+headline (project-org-filename) "Tasks") "** TODO %?\n%i" :prepend t)
-            ("N" "Project Note" entry (file+headline (project-org-filename) "Notes") "** %u %?\n%i")
-            ("c" "Changelog" entry (file+datetree (project-org-filename)) "** %<%H:%M>: %? :unsorted:\n%i" :prepend t)
+            ("T" "Project TODO" entry (file+headline (narf/project-org-filename) "Tasks") "** TODO %?\n%i" :prepend t)
+            ("N" "Project Note" entry (file+headline (narf/project-org-filename) "Notes") "** %u %?\n%i")
+            ("c" "Changelog" entry (file+datetree (narf/project-org-filename)) "** %<%H:%M>: %? :unsorted:\n%i" :prepend t)
             ("n" "Note" entry (file+datetree org-default-notes-file) "** %<%H:%M>: %?\n%i" :prepend t)
             ("j" "Journal" entry (file+datetree "~/Dropbox/notes/journal.org") "** %?%^g\nAdded: %U\n%i")
             ("a" "Trivia" entry (file "~/Dropbox/notes/trivia.org") "* %u %?\n%i" :prepend t)
@@ -88,14 +90,7 @@
                                    (latex . t)))
 
     ;; Remove occur highlights on ESC in normal mode
-    (defadvice evil-force-normal-state (before evil-esc-org-remove-highlights activate)
-      (org-remove-occur-highlights))
-
-    (define-minor-mode evil-org-mode
-      :init-value nil
-      :lighter " !"
-      :keymap (make-sparse-keymap) ; defines evil-org-mode-map
-      :group 'evil-org)
+    (advice-add 'evil-force-normal-state :before 'org-remove-occur-highlights)
 
     ;; (progn ; opml support
     ;;   (defun set-buffer-file-format-to-opml ()
@@ -118,49 +113,6 @@
     ;;   (shut-up (load-library "ox-opml")))
 
     (progn ; key bindings
-      (defun my--org-in-list-p ()
-        (and (save-excursion (search-backward-regexp "^ *\\([0-9]+[\.)]\\|[-*+]\\) " (line-beginning-position) t))
-             (org-in-item-p)))
-      (defun my--org-insert-item-after ()
-        "Inserts a new heading or item, depending on the context."
-        (interactive)
-        (org-end-of-line)
-        (cond ((org-at-item-checkbox-p)
-               (org-insert-heading)
-               (insert "[ ] "))
-              ((my--org-in-list-p)
-               (org-insert-heading))
-              ((org-on-heading-p)
-               (org-insert-heading-after-current))
-              (t
-               (org-insert-heading-after-current)
-               (delete-char 1)))
-        (evil-insert-state))
-
-      ;; TODO Check if this and -forward can be combined
-      (defun my--org-insert-item-before ()
-        "Inserts a new heading or item, depending on the context."
-        (interactive)
-        (evil-first-non-blank)
-        (cond ((org-at-item-checkbox-p)
-               (org-insert-heading)
-               (insert "[ ] "))
-              ((my--org-in-list-p)
-               (org-insert-heading))
-              (t (org-insert-heading)))
-        (evil-insert-state))
-
-      (defun my--toggle-checkbox ()
-        (interactive)
-        (save-excursion
-          (org-end-of-line)
-          (cond ((org-in-item-p)
-                 (if (search-backward-regexp "\\[[ +-]\\]" (line-beginning-position) t)
-                     (delete-char 4)
-                   (org-beginning-of-line)))
-                (t (org-insert-heading)))
-          (insert "[ ] ")))
-
       ;; Hide properties PERMANENTLY
       (defun org-cycle-hide-drawers (state)
         "Re-hide all drawers after a visibility state change."
@@ -197,14 +149,14 @@
                                            ("tg" tags-todo "+gamedev")
                                            ("tw" tags-tree "+webdev"))))
 
-      (bind 'insert org-mode-map [remap my.inflate-space-maybe] 'self-insert-command)
-
-      (bind org-mode-map
+      (bind :map org-mode-map
             "RET" nil
             "C-j" nil
-            "C-k" nil)
+            "C-k" nil
 
-      (bind '(normal insert) evil-org-mode-map
+            :insert [remap narf:inflate-space-maybe] 'self-insert-command
+
+            :normal :insert :map evil-org-mode-map
             "A-l" 'org-metaright       ; M-j
             "A-h" 'org-metaleft        ; M-h
             "A-k" 'org-metaup          ; M-k
@@ -212,45 +164,37 @@
             "A-l" 'org-shiftmetaright  ; M-L
             "A-h" 'org-shiftmetaleft   ; M-H
             "A-k" 'org-shiftmetaup     ; M-K
-            "A-j" 'org-shiftmetadown)  ; M-J
+            "A-j" 'org-shiftmetadown  ; M-J
 
-      (bind 'insert evil-org-mode-map
-            "C-e"           'org-end-of-line
-            "C-a"           'org-beginning-of-line)
-      (bind '(insert normal) evil-org-mode-map
             "<M-left>"      'org-beginning-of-line
             "<M-right>"     'org-end-of-line
             "<M-up>"        'org-up-element
-            "<M-down>"      'org-down-element)
+            "<M-down>"      'org-down-element
 
-      ;; Formatting shortcuts
-      (defun my/org-surround (delim)
-        (insert delim) (save-excursion (insert delim)))
-
-      (bind evil-org-mode-map
+            ",;"  'helm-org-in-buffer-headings
             "M-a" 'mark-whole-buffer
+            ", l" 'org-insert-link
 
-            'insert
+            :insert
+            "C-e"           'org-end-of-line
+            "C-a"           'org-beginning-of-line
             ;; Add new header line before this line
-            "<S-M-return>" 'my--org-insert-item-before
+            "<S-M-return>" 'narf/org-insert-item-before
             ;; Add new header line after this line
-            "<M-return>"   'my--org-insert-item-after
+            "<M-return>"   'narf/org-insert-item-after
 
-            "M-b" (λ (my/org-surround "*"))     ; bold
-            "M-u" (λ (my/org-surround "_"))     ; underline
-            "M-i" (λ (my/org-surround "/"))     ; italics
-            "M-`" (λ (my/org-surround "+"))     ; strikethrough
+            "M-b" (λ (narf/org-surround "*"))     ; bold
+            "M-u" (λ (narf/org-surround "_"))     ; underline
+            "M-i" (λ (narf/org-surround "/"))     ; italics
+            "M-`" (λ (narf/org-surround "+"))     ; strikethrough
 
-            'visual
+            :visual
             "M-b" "S*"
             "M-u" "S_"
             "M-i" "S/"
             "M-`" "S+"
 
-            '(normal visual)
-            ", l" 'org-insert-link
-
-            'normal
+            :normal
             ",=" 'org-align-all-tags
             ",/" 'org-sparse-tree
             ",?" 'org-tags-view
@@ -283,10 +227,10 @@
             "<" 'org-metaleft
             ">" 'org-metaright
             "-" 'org-cycle-list-bullet
-            ",SPC" 'my--toggle-checkbox
+            ",SPC" 'narf/org-toggle-checkbox
             ",<return>" 'org-archive-subtree
-            "<S-M-return>" 'my--org-insert-item-before
-            "<M-return>" 'my--org-insert-item-after
+            "<S-M-return>" 'narf/org-insert-item-before
+            "<M-return>" 'narf/org-insert-item-after
             "RET" (λ (cond ((org-at-item-checkbox-p)
                             (org-toggle-checkbox))
                            ((org-entry-is-todo-p)
@@ -294,49 +238,12 @@
             [tab] 'org-cycle)
 
       (after "org-agenda"
-        (bind 'emacs org-agenda-mode-map
+        (bind :emacs :map org-agenda-mode-map
               "<escape>" 'org-agenda-Quit
               "C-j" 'org-agenda-next-item
               "C-k" 'org-agenda-previous-item
               "C-n" 'org-agenda-next-item
-              "C-p" 'org-agenda-previous-item)))
-
-    (evil-define-operator my:org-capture (&optional beg end)
-      "Send a selection to org-capture."
-      :move-point nil
-      :type inclusive
-      (interactive "<r><!>")
-      (let ((text (when (and (evil-visual-state-p) beg end)
-                    (buffer-substring beg end))))
-        (if text
-            (org-capture-string text)
-          (org-capture))))
-
-    (evil-define-command my:org-insert-image-url (&optional image-url)
-      :repeat nil
-      (interactive "<f><!>")
-      (unless image-url
-        (user-error "You must specify an image URL to insert"))
-      (let ((dest (f-join org-directory "images/" (concat (format-time-string "%Y%m%d-") (f-filename filename)))))
-        (shell-command (format "wget '%s' -O '%s'" image-url dest))
-        (insert (format "<%s>" (f-relative dest (f-dirname (buffer-file-name)))))
-        (indent-according-to-mode)))
-
-    (evil-define-command my:org-insert-image (&optional filename bang)
-      :repeat nil
-      (interactive "<f><!>")
-      (if bang
-          (my:org-insert-image-url filename)
-        (unless filename
-          (user-error "You must specify a file to attach"))
-        (unless (file-exists-p filename)
-          (user-error "File %s does not exist" filename))
-        (let ((dest (f-join org-directory "images/" (concat (format-time-string "%Y%m%d-") (f-filename filename)))))
-          (when (f-exists? dest)
-            (user-error "File %s already exists at destination!"))
-          (copy-file filename dest)
-          (insert (format "<file:%s>" (f-relative dest (f-dirname (buffer-file-name)))))
-          (indent-according-to-mode))))))
+              "C-p" 'org-agenda-previous-item)))))
 
 
 (provide 'init-org)

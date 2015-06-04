@@ -1,5 +1,5 @@
-(my--cleanup-buffers-add "^\\*Shell Command Output\\*$")
-(my--cleanup-buffers-add "^\\*Async Shell Command\\*$")
+(narf/add-throwaway-buffer "^\\*Shell Command Output\\*$")
+(narf/add-throwaway-buffer "^\\*Async Shell Command\\*$")
 
 ;; Make shell scrips executable on save?
 ;; (add-hook 'after-save-hook 'executable-make-buffer-file-executable-if-script-p)

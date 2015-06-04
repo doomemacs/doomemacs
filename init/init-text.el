@@ -1,9 +1,11 @@
-(add-hook 'text-mode-hook 'turn-on-auto-fill)
-(add-hook 'prog-mode-hook 'enable-comment-hard-wrap)
+(add-hook 'text-mode-hook 'narf|enable-hard-wrap)
+(add-hook 'prog-mode-hook 'narf|enable-comment-hard-wrap)
 
 (use-package markdown-mode
   :mode (("\\.md$"   . markdown-mode)
          ("/README$" . markdown-mode))
+  :functions (markdown-use-region-p markdown-unwrap-things-in-region
+              markdown-wrap-or-insert markdown-unwrap-thing-at-point)
   :init
   ;; Implement strike-through formatting
   (defvar markdown-regex-del "\\(^\\|[^\\]\\)\\(\\(~\\{2\\}\\)\\([^ \n	\\]\\|[^ \n	]\\(?:.\\|\n[^\n]\\)*?[^\\ ]\\)\\(\\3\\)\\)")
@@ -22,31 +24,32 @@
           (if (thing-at-point-looking-at markdown-regex-del)
               (markdown-unwrap-thing-at-point nil 2 4)
             (markdown-wrap-or-insert delim delim 'word nil nil)))))
-    (sp-local-pair 'markdown-mode "*" "*" :unless '(sp-point-after-bol-p sp-point-before-same-p sp-point-after-same-p))
 
-    (let ((map markdown-mode-map))
-      (bind '(normal visual) map
-            ",i" 'markdown-insert-image
-            ",l" 'markdown-insert-link
-            ",L" 'markdown-insert-reference-link-dwim
-            ",b" 'markdown-preview)
+    (sp-local-pair 'markdown-mode "*" "*"
+                   :unless '(sp-point-after-bol-p sp-point-before-same-p sp-point-after-same-p))
 
-      (bind 'normal map
-            "[p" 'markdown-promote
-            "]p" 'markdown-demote)
+    (bind :map markdown-mode-map
+          "<backspace>"  nil
+          "<M-left>"     nil
+          "<M-right>"    nil
 
-      (bind 'insert map
-            (kbd "M--") 'markdown-insert-hr)
+          "M-*"  'markdown-insert-list-item
+          "M-b"  'markdown-insert-bold
+          "M-i"  'markdown-insert-italic
+          "M-`"  'markdown-insert-del
 
-      (bind map
-            (kbd "<backspace>")  nil
-            (kbd "<M-left>")     nil
-            (kbd "<M-right>")    nil
+          :normal :visual
+          ",i"   'markdown-insert-image
+          ",l"   'markdown-insert-link
+          ",L"   'markdown-insert-reference-link-dwim
+          ",b"   'markdown-preview
 
-            (kbd "M-*") 'markdown-insert-list-item
-            (kbd "M-b") 'markdown-insert-bold
-            (kbd "M-i") 'markdown-insert-italic
-            (kbd "M-`") 'markdown-insert-del))))
+          :normal
+          "[p"   'markdown-promote
+          "]p"   'markdown-demote
+
+          :insert
+          "M--"  'markdown-insert-hr)))
 
 
 (provide 'init-text)

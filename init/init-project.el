@@ -1,21 +1,33 @@
 ;; Project nav+search tools (projectile, helm, ag)
 (use-package neotree
-  :commands (neotree-show neotree-hide neotree-toggle neo-global--window-exists-p neotree-dir neotree-find)
+  :functions (neo-buffer--unlock-width neo-buffer--lock-width
+              projectile-current-project-dirs projectile-file-cached-p
+              projectile-purge-file-from-cache neo-buffer--insert-with-face
+              neo-global--get-buffer)
+  :commands (neotree-show
+             neotree-hide
+             neotree-toggle
+             neo-global--window-exists-p
+             neotree-dir
+             neotree-find)
   :init
   (progn
-    (defun my-neotree-open (&optional dir)
+    (defun narf:neotree-open (&optional dir)
       (interactive)
-      (neotree-dir (or dir (project-root))))
-    (defun my-neotree-toggle ()
+      (neotree-dir (or dir (narf/project-root))))
+
+    (defun narf:neotree-toggle ()
       (interactive)
       (if (neo-global--window-exists-p)
           (neotree-hide)
-        (my-neotree-open)))
-    (defun my-neotree-find ()
+        (narf:neotree-open)))
+
+    (defun narf:neotree-find ()
       (interactive)
-      (save-excursion (my-neotree-open))
+      (save-excursion (narf:neotree-open))
       (neotree-find))
-    (add-hook 'neotree-mode-hook 'my-neotree-keymap))
+
+    (add-hook 'neotree-mode-hook 'narf|init-neotree-keymap))
   :config
   (progn
     (setq neo-create-file-auto-open t
@@ -31,14 +43,15 @@
           ;; frame.
           neo-modern-sidebar t)
 
-    ;; Custom ascii theme
-    (defun neo-buffer--insert-fold-symbol (name)
+    ;; Redefinition for custom ascii theme
+    (defun narf/neo-buffer-fold-symbol (name)
       (let ((n-insert-symbol (lambda (n)
                                (neo-buffer--insert-with-face
                                 n 'neo-expand-btn-face))))
         (or (and (equal name 'open)  (funcall n-insert-symbol "- "))
             (and (equal name 'close) (funcall n-insert-symbol "> "))
             (and (equal name 'leaf)  (funcall n-insert-symbol "  ")))))
+    (advice-add 'neo-buffer--insert-fold-symbol :override 'narf/neo-buffer-fold-symbol)
 
     ;; Close neotree on window changes, to prevent ensuing mindbuggery
     (add-hook! 'window-configuration-change-hook
@@ -49,8 +62,8 @@
     (after "projectile"
       (setq projectile-switch-project-action 'neotree-projectile-action))
     (add-to-list 'evil-motion-state-modes 'neotree-mode)
-    (defun my-neotree-keymap ()
-      (bind evil-motion-state-local-map
+    (defun narf|init-neotree-keymap ()
+      (bind :map evil-motion-state-local-map
             "ESC"  'neotree-hide
             "\\\\" 'neotree-hide
             "RET" 'neotree-enter

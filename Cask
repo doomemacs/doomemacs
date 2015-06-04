@@ -17,6 +17,9 @@
 (depends-on "vim-empty-lines-mode")
 (depends-on "hlinum" :git "https://github.com/tom-tan/hlinum-mode")
 
+;; Themes
+(depends-on "solarized-theme")
+
 ;; OSX
 (depends-on "exec-path-from-shell")
 (depends-on "dash-at-point")
@@ -36,12 +39,15 @@
 (depends-on "smartparens")
 (depends-on "yasnippet")
 (depends-on "diff-hl")
-;; (depends-on "git-gutter-fringe+")
-;; (depends-on "ace-jump-mode")
+(depends-on "ace-jump-mode")
+(depends-on "ace-window")
+(depends-on "ace-link")
 (depends-on "pcre2el")
 (depends-on "emr")
 (depends-on "smart-forward")
 (depends-on "anzu")
+(depends-on "iedit")
+(depends-on "quickrun")
 
 ;; Auto-completion
 (depends-on "company")
@@ -57,15 +63,16 @@
 (depends-on "evil-search-highlight-persist")
 (depends-on "evil-commentary")
 (depends-on "evil-matchit")
-(depends-on "evil-surround")
 (depends-on "evil-numbers")
 (depends-on "evil-exchange")
-(depends-on "evil-space")
 (depends-on "evil-visualstar")
 (depends-on "evil-indent-textobject")
 (depends-on "evil-jumper")
-(depends-on "evil-god-state")
+(depends-on "evil-iedit-state")
+(depends-on "evil-anzu")
 (depends-on "evil-snipe")
+(depends-on "evil-surround")
+(depends-on "evil-space")
 
 ;; Project management
 (depends-on "projectile")
@@ -75,6 +82,7 @@
 (depends-on "helm-projectile")
 (depends-on "helm-swoop")
 (depends-on "helm-company")
+(depends-on "helm-c-yasnippet")
 (depends-on "neotree" :git "https://github.com/jeffplang/emacs-neotree")
 (depends-on "ido-ubiquitous")
 (depends-on "ido-vertical-mode")
@@ -137,3 +145,8 @@
 (depends-on "rust-mode")
 (depends-on "d-mode")
 (depends-on "android-mode")
+
+(depends-on "vimrc-mode")
+
+;(depends-on "osh")
+;(depends-on "sonic-pi" :git "https://github.com/repl-electric/sonic-pi.el")

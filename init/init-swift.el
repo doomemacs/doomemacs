@@ -3,7 +3,7 @@
   :config
   (progn
     (after "flycheck" (add-to-list 'flycheck-cehckers 'swift))
-    (after "company" (company--backend-on 'swift-mode-hook 'company-xcode))))
+    (after "company" (narf/add-company-backend swift-mode (company-xcode)))))
 
 ;; TODO Set up emacs task runners for fruitstrap
 
