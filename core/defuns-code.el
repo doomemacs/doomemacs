@@ -51,7 +51,7 @@ If ARG is nil this function calls `recompile', otherwise it calls
                  (insert out)
                  (beginning-of-buffer)
                  (read-only-mode 1)
-                 (popwin:popup-buffer buf :height lines))))))
+                 (popwin:popup-buffer buf :height (if (> lines 25) 25 (1+ lines))))))))
         (t (quickrun-region beg end))))
 
 ;;;###autoload (autoload 'narf::eval-buffer "defuns-code")

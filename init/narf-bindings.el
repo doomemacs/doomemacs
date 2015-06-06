@@ -29,7 +29,7 @@
 
       "M-R"  'narf::eval-buffer)
 
-;; Restore text nav keys
+;; restore text nav keys
 (bind :if IS-MAC
       "<A-left>"       'backward-word
       "<A-right>"      'forward-word
@@ -162,6 +162,9 @@
                      (hs-toggle-hiding)
                    (call-interactively 'evilmi-jump-items)))
 
+      "j"    'evil-next-line
+      "k"    'evil-previous-line
+
       "]g"    'diff-hl-next-hunk
       "[g"    'diff-hl-previous-hunk
 
@@ -264,10 +267,6 @@
       "C-p"        'company-search-repeat-backward
       [escape]     'company-abort
       "C-w"        nil)
-
-(bind :map evil-snipe-override-mode-map
-      "C-;" 'evil-snipe-repeat
-      "C-," 'evil-snipe-repeat-reverse)
 
 ;; TODO: Swap helm's C-z and Tab
 

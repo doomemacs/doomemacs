@@ -14,11 +14,11 @@
   (defmacro narf/init-load-path ()
     "Collect and verify `load-path'. Compile me!"
     (let (paths '())
-      (dolist (dir (append (directory-files CONTRIB-DIR t "^[^.]" t)
-                           (directory-files ELPA-DIR t "^[^.]" t)))
+      (dolist (dir (append (directory-files ELPA-DIR t "^[^.]" t)
+                           (directory-files CONTRIB-DIR t "^[^.]" t)))
         (when (file-directory-p dir)
           (push dir paths)))
-      `(setq load-path ',(append (list CORE-DIR MODULES-DIR CONTRIB-DIR)
+      `(setq load-path ',(append (list CORE-DIR CONTRIB-DIR MODULES-DIR)
                                  (if (listp load-path) load-path (list load-path))
                                  paths))))
 
@@ -32,7 +32,7 @@
 
 (setq custom-theme-directory THEMES-DIR)
 (setq use-package-verbose DEBUG-MODE)
-(setq use-package-expand-minimally (not DEBUG-MODE))
+;;(setq use-package-expand-minimally (not DEBUG-MODE))
 (eval-when-compile (require 'use-package))
 (require 'diminish)
 

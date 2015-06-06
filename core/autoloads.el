@@ -164,7 +164,7 @@ Rotate word at point based on sets in `rotate-text-rotations'.
 ;;;***
 
 ;;;### (autoloads nil "defuns-buffers" "defuns-buffers.el" (21869
-;;;;;;  35086 0 0))
+;;;;;;  43589 0 0))
 ;;; Generated autoloads from defuns-buffers.el
 
 (autoload 'narf:narrow-to-region-indirect "defuns-buffers" "\
@@ -240,7 +240,7 @@ Kill buffer (but only bury scratch buffer)
 
 ;;;***
 
-;;;### (autoloads nil "defuns-code" "defuns-code.el" (21869 24069
+;;;### (autoloads nil "defuns-code" "defuns-code.el" (21871 23781
 ;;;;;;  0 0))
 ;;; Generated autoloads from defuns-code.el
 
@@ -283,7 +283,7 @@ Tells you the name of the face (point) is on.
 
 ;;;***
 
-;;;### (autoloads nil "defuns-edit" "defuns-edit.el" (21866 40579
+;;;### (autoloads nil "defuns-edit" "defuns-edit.el" (21869 43444
 ;;;;;;  0 0))
 ;;; Generated autoloads from defuns-edit.el
 
@@ -317,7 +317,7 @@ Link with anchor
 
 ;;;***
 
-;;;### (autoloads nil "defuns-extern" "defuns-extern.el" (21866 18425
+;;;### (autoloads nil "defuns-extern" "defuns-extern.el" (21869 43359
 ;;;;;;  0 0))
 ;;; Generated autoloads from defuns-extern.el
 
@@ -351,7 +351,7 @@ Select the current block of text between blank lines.
 
 ;;;***
 
-;;;### (autoloads nil "defuns-org" "defuns-org.el" (21866 45401 0
+;;;### (autoloads nil "defuns-org" "defuns-org.el" (21869 43512 0
 ;;;;;;  0))
 ;;; Generated autoloads from defuns-org.el
 
@@ -389,7 +389,7 @@ Inserts a new heading or item, depending on the context.
 
 ;;;***
 
-;;;### (autoloads nil "defuns-search" "defuns-search.el" (21866 51196
+;;;### (autoloads nil "defuns-search" "defuns-search.el" (21869 45131
 ;;;;;;  0 0))
 ;;; Generated autoloads from defuns-search.el
 
@@ -506,19 +506,19 @@ spaces on either side of the point if so. Resorts to
 ;;;;;;  "../contrib/ruby-mode-indent-fix.el" "../contrib/shaderlab-mode.el"
 ;;;;;;  "../contrib/unityjs-mode.el" "../init/autoloads.el" "../init/init-auto-insert.el"
 ;;;;;;  "../init/init-cc.el" "../init/init-cscope.el" "../init/init-csharp.el"
-;;;;;;  "../init/init-eshell.el" "../init/init-fly.el" "../init/init-go.el"
-;;;;;;  "../init/init-helm.el" "../init/init-ido.el" "../init/init-java.el"
-;;;;;;  "../init/init-js.el" "../init/init-lisp.el" "../init/init-lua.el"
-;;;;;;  "../init/init-org.el" "../init/init-php.el" "../init/init-project.el"
-;;;;;;  "../init/init-python.el" "../init/init-r.el" "../init/init-regex.el"
-;;;;;;  "../init/init-ruby.el" "../init/init-rust.el" "../init/init-scss.el"
-;;;;;;  "../init/init-sh.el" "../init/init-swift.el" "../init/init-text.el"
-;;;;;;  "../init/init-vc.el" "../init/init-vim.el" "../init/init-web.el"
-;;;;;;  "../init/init-workgroups.el" "../init/init-yasnippet.el"
+;;;;;;  "../init/init-data.el" "../init/init-eshell.el" "../init/init-fly.el"
+;;;;;;  "../init/init-go.el" "../init/init-helm.el" "../init/init-ido.el"
+;;;;;;  "../init/init-java.el" "../init/init-js.el" "../init/init-lisp.el"
+;;;;;;  "../init/init-lua.el" "../init/init-org.el" "../init/init-php.el"
+;;;;;;  "../init/init-project.el" "../init/init-python.el" "../init/init-r.el"
+;;;;;;  "../init/init-regex.el" "../init/init-ruby.el" "../init/init-rust.el"
+;;;;;;  "../init/init-scss.el" "../init/init-sh.el" "../init/init-swift.el"
+;;;;;;  "../init/init-text.el" "../init/init-vc.el" "../init/init-vim.el"
+;;;;;;  "../init/init-web.el" "../init/init-workgroups.el" "../init/init-yasnippet.el"
 ;;;;;;  "../init/narf-bindings.el" "../init/narf-commands.el" "../init/narf-settings.el"
 ;;;;;;  "benchmark.el" "core-company.el" "core-editor.el" "core-evil.el"
 ;;;;;;  "core-linux.el" "core-osx.el" "core-splash.el" "core-ui.el"
-;;;;;;  "core.el" "defuns.el" "startup.el") (21869 35551 604587 0))
+;;;;;;  "core.el" "defuns.el" "startup.el") (21873 3804 549513 0))
 
 ;;;***
 

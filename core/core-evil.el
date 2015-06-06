@@ -34,7 +34,6 @@
         (interactive "P")
         (if count (hs-hide-level count) (evil-close-folds))))
 
-    (evil-select-search-module 'evil-search-module 'evil-search)
     (setq evil-magic                t
           evil-want-C-u-scroll      t  ; enable C-u for scrolling
           evil-ex-visual-char-range t  ; column range for ex commands
@@ -50,8 +49,9 @@
           evil-visual-state-cursor  '("white" hollow)
           evil-iedit-state-cursor   '("orange" box))
 
-    (add-to-list 'evil-overriding-maps 'narf-mode-map)
+    (add-to-list 'evil-overriding-maps '(narf-mode-map))
     (evil-mode 1)
+    (evil-select-search-module 'evil-search-module 'evil-search)
 
     (defadvice evil-ex-hl-do-update-highlight (around evil-ex-hl-shut-up activate)
       (ignore-errors ad-do-it))
@@ -98,10 +98,11 @@
               "za" 'iedit-toggle-unmatched-lines-visible
 
               visual "SPC" (λ (if (iedit-current-occurrence-string)
-                                  (progn
+                                  (let ((current-prefix-arg '(4)))
+                                    (iedit-done)
+                                    (call-interactively 'iedit-mode)
                                     (save-excursion (iedit-restrict-region (region-beginning) (region-end)))
-                                    (evil-previous-line)
-                                    (evil-iedit-state/iedit-mode))
+                                    (evil-previous-line))
                                 (call-interactively 'evil-ret))))))
 
 
@@ -185,70 +186,54 @@
 
       (use-package evil-visualstar
         :commands (global-evil-visualstar-mode
-                   evil-visualstar/begin-search
                    evil-visualstar/begin-search-forward
                    evil-visualstar/begin-search-backward)
         :config
-        (progn
-          ;; I cut this down because the original visualstar wouldn't remember
-          ;; the last search if evil-search-module was 'evil-search.
-          (defun narf/evil-visualstar/begin-search (beg end direction)
-            (when (evil-visual-state-p)
-              (evil-exit-visual-state)
-              (let ((selection (regexp-quote (buffer-substring-no-properties beg end))))
-                (setq isearch-forward direction)
-                (evil-search selection direction t))))
-          (advice-add 'evil-visualstar/begin-search :override 'narf/evil-visualstar/begin-search)
-          (global-evil-visualstar-mode 1)))
+        (global-evil-visualstar-mode 1))
 
       (use-package evil-snipe
         :diminish evil-snipe-mode
+        :init
+        (setq evil-snipe-smart-case   t
+              evil-snipe-scope        'line
+              evil-snipe-repeat-scope 'buffer
+              evil-snipe-symbol-groups '((?\[ "[[{(]")
+                                         (?\] "[]})]")))
         :config
         (progn
-          (setq evil-snipe-smart-case t
-                evil-snipe-scope 'line
-                evil-snipe-repeat-scope 'buffer
-                evil-snipe-override-evil-repeat-keys nil)
-
-          (setq-default evil-snipe-symbol-groups
-                        '((?\[ "[[{(]")
-                          (?\] "[]})]")))
-
           (evil-snipe-mode 1)
-          (evil-snipe-override-mode 1)))
+          (evil-snipe-override-mode 1)
+
+          (bind motion :map evil-snipe-mode-map
+                "C-;" 'evil-snipe-repeat
+                "C-," 'evil-snipe-repeat-reverse)))
 
       (use-package evil-space
-        :disabled t
         :diminish (evil-space-mode . "_")
         :config
         (progn
-          (add-to-list 'evil-overriding-maps 'evil-space-mode-map)
+          (evil-space-mode 1)
 
           (evil-space-setup "/" "n" "N")
-          (evil-space-setup "?" "N" "n")
+          (evil-space-setup "?" "n" "N")
+
+          (after "evil-snipe"
+            (evil-space-setup evil-snipe-f evil-snipe-repeat evil-snipe-repeat-reverse)
+            (evil-space-setup evil-snipe-F evil-snipe-repeat evil-snipe-repeat-reverse)
+            (evil-space-setup evil-snipe-t evil-snipe-repeat evil-snipe-repeat-reverse)
+            (evil-space-setup evil-snipe-T evil-snipe-repeat evil-snipe-repeat-reverse)
+            (evil-space-setup evil-snipe-s evil-snipe-repeat evil-snipe-repeat-reverse)
+            (evil-space-setup evil-snipe-S evil-snipe-repeat evil-snipe-repeat-reverse))
 
           (after "evil-numbers"
             (let ((map (evil-get-auxiliary-keymap narf-mode-map 'normal)))
               (evil-space-setup "g=" "g=" "g-" map)
               (evil-space-setup "g-" "g-" "g=" map)))
 
-          (after "evil-snipe"
-            (let ((map (evil-get-auxiliary-keymap evil-snipe-override-mode-map 'motion)))
-              (evil-space-setup "t" "C-;" "C-," map)
-              (evil-space-setup "f" "C-;" "C-," map)
-              (evil-space-setup "T" "C-," "C-;" map)
-              (evil-space-setup "F" "C-," "C-;" map))
-            (let ((map (evil-get-auxiliary-keymap evil-snipe-mode-map 'motion)))
-              (evil-space-setup "s" "C-;" "C-," map)
-              (evil-space-setup "S" "C-," "C-;" map)))
-
           (after "evil-visualstar"
             (let ((map (evil-get-auxiliary-keymap evil-visualstar-mode-map 'visual)))
-              (message "VISUALSTAR")
-              (evil-space-setup "*" "n" "N" map)
-              (evil-space-setup "#" "n" "N" map)))
-
-          (evil-space-mode))))
+              (evil-space-setup "*" "*" "#" map)
+              (evil-space-setup "#" "#" "*" map))))))
 
     (progn ; evil hacks
       (defadvice evil-force-normal-state (before evil-esc-quit activate)

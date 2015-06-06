@@ -1,5 +1,5 @@
 eshell/
-init/autoloads.el
+core/autoloads.el
 auto-save-list
 recentf
 savehist
@@ -9,6 +9,7 @@ semanticdb
 ede-projects.el
 tramp
 smex-items
+elpa
 
 # compiled files
 .*

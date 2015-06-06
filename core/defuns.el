@@ -58,7 +58,7 @@
 
   (defmacro add-hook! (hook &rest body)
     "A shortcut macro for `add-hook' that auto-wraps `body' in a lambda"
-    (declare (indent defun))
+    (declare (indent 1))
     `(add-hook ,hook (lambda() ,@body)))
 
   ;; Keybindings ;;;;;;;;;;;;;;;;;;;;;;;;;

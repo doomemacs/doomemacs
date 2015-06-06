@@ -48,6 +48,7 @@
 (depends-on "anzu")
 (depends-on "iedit")
 (depends-on "quickrun")
+(depends-on "goto-last-change")
 
 ;; Auto-completion
 (depends-on "company")

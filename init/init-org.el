@@ -1,5 +1,12 @@
+(define-minor-mode evil-org-mode
+  "Evil-mode bindings for org-mode."
+  :init-value nil
+  :lighter    "!"
+  :keymap     (make-sparse-keymap) ; defines evil-org-mode-map
+  :group      'evil-org)
+
 (use-package org
-  :defines  (org-directory)
+  :defines   (org-directory)
   :functions (org-bookmark-jump-unhide outline-next-heading org-end-of-subtree
               outline-flag-region org-remove-inline-images org-display-inline-images
               org-at-item-checkbox-p org-toggle-checkbox org-entry-is-todo-p org-todo
@@ -10,14 +17,11 @@
          ("\\.opml$" . org-mode))
   :init
   (progn
-    (define-minor-mode evil-org-mode
-      "Evil-mode bindings for org-mode."
-      :init-value nil
-      :lighter    "!"
-      :keymap     (make-sparse-keymap) ; defines evil-org-mode-map
-      :group      'evil-org)
-
-    (add-to-hook 'org-mode-hook '(narf|enable-tab-width-2 'narf|enable-hard-wrap 'iimage-mode 'org-indent-mode 'evil-org-mode))
+    (add-hook 'org-mode-hook 'narf|enable-tab-width-2)
+    (add-hook 'org-mode-hook 'narf|enable-hard-wrap)
+    (add-hook 'org-mode-hook 'iimage-mode)
+    (add-hook 'org-mode-hook 'org-indent-mode)
+    (add-hook 'org-mode-hook 'evil-org-mode)
     (add-hook! 'org-mode-hook (hl-line-mode -1)))
   :config
   (progn
@@ -154,9 +158,10 @@
             "C-j" nil
             "C-k" nil
 
-            :insert [remap narf:inflate-space-maybe] 'self-insert-command
+            insert [remap narf:inflate-space-maybe] 'self-insert-command
 
-            :normal :insert :map evil-org-mode-map
+            normal insert
+            :map evil-org-mode-map
             "A-l" 'org-metaright       ; M-j
             "A-h" 'org-metaleft        ; M-h
             "A-k" 'org-metaup          ; M-k
@@ -175,7 +180,7 @@
             "M-a" 'mark-whole-buffer
             ", l" 'org-insert-link
 
-            :insert
+            insert
             "C-e"           'org-end-of-line
             "C-a"           'org-beginning-of-line
             ;; Add new header line before this line
@@ -188,13 +193,13 @@
             "M-i" (λ (narf/org-surround "/"))     ; italics
             "M-`" (λ (narf/org-surround "+"))     ; strikethrough
 
-            :visual
+            visual
             "M-b" "S*"
             "M-u" "S_"
             "M-i" "S/"
             "M-`" "S+"
 
-            :normal
+            normal
             ",=" 'org-align-all-tags
             ",/" 'org-sparse-tree
             ",?" 'org-tags-view
@@ -238,7 +243,7 @@
             [tab] 'org-cycle)
 
       (after "org-agenda"
-        (bind :emacs :map org-agenda-mode-map
+        (bind emacs :map org-agenda-mode-map
               "<escape>" 'org-agenda-Quit
               "C-j" 'org-agenda-next-item
               "C-k" 'org-agenda-previous-item

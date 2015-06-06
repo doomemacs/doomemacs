@@ -33,11 +33,11 @@
 (after "isearch" (diminish 'isearch-mode))
 
 ;; Fix code folding
-(defun narf|init-hs-minor-mode-maybe ()
-  (unless (bound-and-true-p hs-minor-mode)
-    (hs-minor-mode 1)
-    (diminish 'hs-minor-mode)))
-(add-hook 'prog-mode-hook 'narf|init-hs-minor-mode-maybe)
+;; (defun narf|init-hs-minor-mode-maybe ()
+;;   (unless (bound-and-true-p hs-minor-mode)
+;;     (hs-minor-mode 1)
+;;     (diminish 'hs-minor-mode)))
+;; (add-hook 'prog-mode-hook 'narf|init-hs-minor-mode-maybe)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
