@@ -264,7 +264,7 @@ provided."
   :repeat nil
   (interactive "<!>")
   (mapc 'kill-buffer
-        (narf:living-buffer-list (if bang (projectile-project-buffers) (buffer-list)))))
+        (narf/living-buffer-list (if bang (projectile-project-buffers) (buffer-list)))))
 
 ;;;###autoload (autoload 'narf::kill-buffers "defuns-buffers")
 (evil-define-command narf::kill-buffers (&optional bang)
