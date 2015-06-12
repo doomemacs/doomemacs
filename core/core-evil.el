@@ -57,13 +57,14 @@
       (ignore-errors ad-do-it))
 
     ;; modes to map to different default states
-    (dolist (mode-map '((cider-repl-mode . emacs)
-                        (comint-mode . emacs)
-                        (fundamental-mode . normal)
-                        (help-mode . normal)
-                        (term-mode . emacs)
-                        (message-mode . normal)
-                        (compilation-mode . normal)))
+    (dolist (mode-map '((cider-repl-mode   . emacs)
+                        (comint-mode       . emacs)
+                        (term-mode         . emacs)
+                        (fundamental-mode  . normal)
+                        (help-mode         . normal)
+                        (message-mode      . normal)
+                        (compilation-mode  . normal)
+                        (text-mode         . normal)))
       (evil-set-initial-state `,(car mode-map) `,(cdr mode-map)))
 
     ;; Ace Jump
@@ -210,6 +211,7 @@
 
       (use-package evil-space
         :diminish (evil-space-mode . "_")
+        :init (setq evil-space-auto-setup nil)
         :config
         (progn
           (evil-space-mode 1)
@@ -217,7 +219,7 @@
           (evil-space-setup "/" "n" "N")
           (evil-space-setup "?" "n" "N")
 
-          (after "evil-snipe"
+          (after evil-snipe
             (evil-space-setup evil-snipe-f evil-snipe-repeat evil-snipe-repeat-reverse)
             (evil-space-setup evil-snipe-F evil-snipe-repeat evil-snipe-repeat-reverse)
             (evil-space-setup evil-snipe-t evil-snipe-repeat evil-snipe-repeat-reverse)
@@ -225,15 +227,14 @@
             (evil-space-setup evil-snipe-s evil-snipe-repeat evil-snipe-repeat-reverse)
             (evil-space-setup evil-snipe-S evil-snipe-repeat evil-snipe-repeat-reverse))
 
-          (after "evil-numbers"
+          (after evil-numbers
             (let ((map (evil-get-auxiliary-keymap narf-mode-map 'normal)))
               (evil-space-setup "g=" "g=" "g-" map)
               (evil-space-setup "g-" "g-" "g=" map)))
 
-          (after "evil-visualstar"
-            (let ((map (evil-get-auxiliary-keymap evil-visualstar-mode-map 'visual)))
-              (evil-space-setup "*" "*" "#" map)
-              (evil-space-setup "#" "#" "*" map))))))
+          (after evil-visualstar
+            (evil-space-setup evil-visualstar/begin-search-forward "n" "N")
+            (evil-space-setup evil-visualstar/begin-search-backward "n" "N")))))
 
     (progn ; evil hacks
       (defadvice evil-force-normal-state (before evil-esc-quit activate)

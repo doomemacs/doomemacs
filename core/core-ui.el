@@ -131,9 +131,9 @@
     ;; Hide evil state indicator
     (after "evil" (setq evil-mode-line-format nil))
 
-    (setq-default mode-line-misc-info
-      '((which-func-mode ("" which-func-format ""))
-        (global-mode-string ("" global-mode-string ""))))
+    ;; (setq-default mode-line-misc-info
+    ;;   '((which-func-mode ("" which-func-format ""))
+    ;;     (global-mode-string ("" global-mode-string ""))))
 
     (sml/setup)
     (sml/apply-theme 'respectful)
