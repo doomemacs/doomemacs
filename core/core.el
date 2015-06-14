@@ -2,63 +2,33 @@
 ;;
 ;;; Naming conventions:
 ;;
-;;   narf-*       A public variable/constant or function
-;;   narf--*      A private variable or function (non-interactive)
-;;   narf/*       An autoloaded interactive function
-;;   narf:*       An ex command
-;;   narf|*       A hook
-;;   @*           Macro call
+;;   narf-...     A public variable/constant or function
+;;   narf--...    An internal variable or function (non-interactive)
+;;   narf/...     An autoloaded interactive function
+;;   narf:...     An ex command
+;;   narf|...     A hook
+;;   narf*...     An advising function
+;;   ...!         Macro
 ;;
 ;;; Bootstrap:
 
-(fset '! 'eval-when-compile)
-
-(defconst narf-emacs-dir     user-emacs-directory)
-(defconst narf-core-dir      (! (concat narf-emacs-dir "core/")))
-(defconst narf-modules-dir   (! (concat narf-emacs-dir "modules/")))
-(defconst narf-contrib-dir   (! (concat narf-emacs-dir "contrib/")))
-(defconst narf-private-dir   (! (concat narf-emacs-dir "private/")))
-(defconst narf-elpa-dir      (! (concat narf-emacs-dir ".cask/" emacs-version "/elpa/")))
-(defconst narf-temp-dir      (concat narf-private-dir "cache/" (system-name) "/"))
-(defconst narf-snippet-dirs  (! (list (concat narf-private-dir "snippets/")
-                                      (concat narf-private-dir "templates/"))))
-
-(! (defun --subdirs (path)
-     (let ((result '())
-           (paths (ignore-errors (directory-files path t "^[^.]" t))))
-       (dolist (file paths)
-         (when (file-directory-p file)
-           (add-to-list 'result file)))
-       result)))
-
-;; Scan various folders to populate the load-dirs
-(setq custom-theme-load-path
-      (! (append (--subdirs (concat narf-private-dir "themes/"))
-                 custom-theme-load-path)))
-(setq load-path
-      (! (setq load-path (append (list narf-core-dir narf-contrib-dir narf-modules-dir narf-private-dir)
-                                 (list (concat narf-core-dir "defuns"))
-                                 load-path
-                                 (--subdirs narf-contrib-dir)
-                                 (--subdirs narf-contrib-dir)))
-         (require 'cask)
-         (cask-initialize)
-         load-path))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; (require 'benchmark)    ; records load times in `require-times'; also see `list-times'
-(require 'autoloads nil t) ; generate autoloads with `make autoloads`
+(message "> Autoloads? %s" (if (require 'autoloads nil t) "Yes" "No"))
 (require 'core-vars)
 (require 'core-defuns)
+(require 'diminish)
+
+;; NARF!
+(define-minor-mode narf-mode "Narf, yoink, poit."
+  :global t
+  :init-value t
+  :lighter "NARF"
+  :keymap (make-sparse-keymap))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (! (require 's)
    (require 'dash)
    (require 'f)
-
-   (add-to-list 'load-path (concat narf-core-dir "macros/"))
 
    (setq use-package-verbose narf-debug-mode)
    ;; (setq use-package-expand-minimally (not narf-debug-mode))
@@ -69,11 +39,20 @@
            (-insert-at (-find-index (lambda (key) (eq key after)) use-package-keywords)
                        keyword use-package-keywords)))
 
+   (progn ; remap :bind to bind! macro instead of bind-keys
+     ;; (defun use-package-handler/:bind
+     ;;     (name-symbol keyword arg rest state &optional override)
+     ;;   (let ((commands (mapcar #'cdr arg)))
+     ;;     (use-package-concat
+     ;;      (use-package-process-keywords name-symbol
+     ;;        (use-package-sort-keywords
+     ;;         (use-package-plist-maybe-put rest :defer t))
+     ;;        (use-package-plist-append state :commands commands))
+     ;;      `((ignore (,bind! ,@arg))))))
+     )
+
    (progn ; add :after to use-package
      (use-package--add-keyword :after :load-path)
-     (setq use-package-keywords
-           (-insert-at (--find-index (eq it :load-path) use-package-keywords)
-                       :after use-package-keywords))
 
      (defalias 'use-package-normalize/:after 'use-package-normalize-symlist)
 
@@ -83,29 +62,19 @@
              body
            (use-package-concat
             (use-package-process-keywords name-symbol
-             (use-package-sort-keywords (use-package-plist-maybe-put rest :defer t)) state)
+              (use-package-sort-keywords (use-package-plist-maybe-put rest :defer t)) state)
             (apply #'nconc
                    (mapcar (lambda (feature)
-                             `(,(macroexpand `(@after ,feature (require ',name-symbol)))))
+                             `(,(macroexpand `(after! ,feature (require ',name-symbol)))))
                            (delete-dups arg))))))))
 
-   (progn ; add :map for in-house key binding macro
-     (use-package--add-keyword :map :bind)
-
-     (defalias 'use-package-normalize/:map 'use-package-normalize-forms)
-
-     ;; TODO: Write :map
-     (defun use-package-handler/:map (name-symbol keyword arg rest state)
-       (use-package-process-keywords name-symbol rest state))
-     )
-   )
-(require 'diminish)
+   ;; Make any folders needed
+   (dolist (file '("" "undo" "backup"))
+     (let ((path (concat narf-temp-dir file)))
+       (unless (file-exists-p path)
+         (make-directory path t)))))
 
 ;; Emacs configuration ;;;;;;;;;;;;;;;;;
-
-(defconst IS-MAC     (eq system-type 'darwin))
-(defconst IS-LINUX   (eq system-type 'gnu/linux))
-(defconst IS-WINDOWS (eq system-type 'windows-nt))
 
 ;;; UTF-8 please
 (setq locale-coding-system    'utf-8)   ; pretty
@@ -168,16 +137,10 @@
  undo-tree-auto-save-history t
  undo-tree-history-directory-alist `(("." . ,(! (concat narf-temp-dir "undo/")))))
 
-;; Make any folders needed
-(! (dolist (file '("" "undo" "backup"))
-     (let ((path (concat narf-temp-dir file)))
-       (unless (file-exists-p path)
-         (make-directory path t)))))
-
 ;; Save cursor location across sessions. Only save for files that exist.
 (require 'saveplace)
 (setq save-place-file (! (concat narf-temp-dir "saveplace")))
-(@add-hook find-file (if (file-exists-p (buffer-file-name)) (setq save-place t)))
+(add-hook! find-file (if (file-exists-p (buffer-file-name)) (setq save-place t)))
 
 ;; Save history across sessions
 (require 'savehist)
@@ -204,32 +167,7 @@
 
 (use-package popwin :config (popwin-mode 1))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(cond (IS-MAC      (require 'core-os-osx))
-      (IS-LINUX    (require 'core-os-linux))
-      (IS-WINDOWS  (require 'core-os-win32)))
-
-(require 'core-ui)
-(require 'core-evil)
-;; (require 'core-editor)
-;; (require 'core-completion)
-;; (require 'core-syntax-checker)
-;; (require 'core-snippets)
-;; (require 'core-templates)
-;; (require 'core-project)
-;; (require 'core-vcs)
-;; (require 'core-sessions)
-;; (require 'core-quickrun)
-
-;; (@add-hook after-init
-;;   (use-package my-bindings)
-;;   (use-package my-commands))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 (use-package server :config (unless (server-running-p) (server-start)))
-
 
 (provide 'core)
 ;;; core.el ends here
