@@ -2,9 +2,9 @@
 ;;
 ;; Author:  Henrik Lissner <henrik@lissner.net>
 ;; URL:     https://github.com/hlissner/emacs.d
-;; Version: 0.0.0001
+;; Version: 0.1.0
 ;;
-;;; Are you pondering what i'm pondering, Pinky?
+;;; Are you pondering what I'm pondering, Pinky?
 ;;
 ;;                           ,,,        !/:.
 ;;                          /::\".      !!:::
@@ -42,11 +42,11 @@
 
 (defconst narf-debug-mode nil)
 
-(defconst narf-default-font  '(:family "terminus (ttf)" :size 12 :antialias nil))
 (defconst narf-default-theme  (if window-system 'narf-dark 'wombat))
+(defconst narf-default-font  '(:family "terminus (ttf)" :size 12 :antialias nil))
+(defconst narf-big-font      '(:family "Inconsolata" :size 18 :antialias t))
 
-(setq user-emacs-directory "~/Dropbox/Projects/dev/narf-emacs/")
-(load (concat user-emacs-directory "core/core.el"))
+(load (concat user-emacs-directory "init-load-path.el"))
 (mapc 'require
       '())
       ;; (;; Settings for specific modes or tools
@@ -83,5 +83,7 @@
 (require 'local nil t)
 (message ">>> Loaded in %s" (emacs-init-time))
 
+(defun display-startup-echo-area-message ()
+  (message ">>> Loaded in %s" (emacs-init-time)))
 
 ;;; I think so Brain...
