@@ -80,12 +80,7 @@
 (depends-on "gitconfig-mode")
 (depends-on "gitignore-mode")
 
-;; Sessions --- core/core-sessions.el
-(depends-on "workgroups2")
-
-;;;; MODULES ;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; Helm -- module-helm.el
+;; Helm -- core/core-helm.el
 (depends-on "projectile")
 (depends-on "helm")
 (depends-on "helm-ag")
@@ -94,6 +89,72 @@
 (depends-on "helm-swoop")
 (depends-on "helm-company")
 (depends-on "helm-c-yasnippet")
+
+;; Quickrun -- core/core-quickrun.el
+(depends-on "quickrun")
+
+;; Workgroups --- core/core-workgroups.el
+(depends-on "workgroups2")
+
+;;;; MODULES ;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(depends-on "rainbow-mode")
+(depends-on "lua-mode")
+;; Text
+(depends-on "markdown-mode")
+;; Webdev
+(depends-on "haml-mode")
+(depends-on "scss-mode")
+(depends-on "sass-mode")
+(depends-on "sws-mode")
+(depends-on "web-mode")
+(depends-on "emmet-mode")
+(depends-on "web-beautify")
+;; JS
+(depends-on "js2-mode")
+(depends-on "js2-refactor")
+(depends-on "tern")
+;; Data
+(depends-on "json-mode")
+(depends-on "yaml-mode")
+;; PHP
+(depends-on "php-mode")
+(depends-on "php-refactor-mode")
+(depends-on "php-extras" :git "https://github.com/arnested/php-extras")
+;; Ruby
+(depends-on "enh-ruby-mode")
+(depends-on "ruby-refactor")
+(depends-on "rspec-mode")
+(depends-on "inf-ruby")
+(depends-on "robe")
+;; Python
+(depends-on "anaconda-mode")
+(depends-on "nose")
+;; C#
+(depends-on "csharp-mode")
+(depends-on "omnisharp")
+;; Java
+(depends-on "emacs-eclim")
+(depends-on "groovy-mode")
+(depends-on "android-mode")
+;; C/C++
+(depends-on "cmake-mode")
+(depends-on "glsl-mode")
+;; Sonic pi
+(depends-on "osc")
+(depends-on "sonic-pi" :git "https://github.com/repl-electric/sonic-pi.el")
+;; Org
+(depends-on "org-plus-contrib")
+;;(depends-on "org-opml" :git "https://github.com/edavis/org-opml")
+;; Other
+(depends-on "go-mode")
+(depends-on "swift-mode")
+(depends-on "vimrc-mode")
+
+;; (depends-on "haxe-mode")
+;; (depends-on "rust-mode")
+;; (depends-on "d-mode")
+
 
 ;; OTHER
 ;;(depends-on "shaderlab-mode" :git "https://bitbucket.org/bbbscarter/emacs-shaderlab-mode")
