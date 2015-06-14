@@ -1,7 +1,7 @@
 #!emacs --script
 
 (setq user-emacs-directory (concat (file-name-directory load-file-name) "../"))
-(load (concat (file-name-directory load-file-name) "../init-load-path.el"))
+(load (concat user-emacs-directory "init-load-path.el"))
 
 (require 'f)
 (setq generated-autoload-file (concat narf-core-dir "autoloads.el"))
