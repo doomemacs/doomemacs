@@ -1,72 +1,67 @@
 ;;; my-commands.el
 
-(! (require 'core-defuns))
+(defalias 'exmap 'evil-ex-define-cmd)
 
-(@exmap "settr[im]"       'narf:toggle-delete-trailing-whitespace)
-
-(@exmap "l[ast]"          'popwin:popup-last-buffer)
-(@exmap "m[sg]"           'popwin:messages)
-
-(@exmap "bcomp[ile]"      'narf:byte-compile)
-(@exmap "acomp[ile]"      'narf:autoload-compile)
-
-(@exmap "echo"            'narf:echo)
-(@exmap "full[scr]"       'narf/toggle-fullscreen)
-(@exmap "ini"             'narf:initfiles)
-(@exmap "cd"              'narf:cd)
-(@exmap "en[ew]"          'narf:create-file)
-(@exmap "ren[ame]"        'narf:rename-this-file)          ; rename [NEWNAME]  # rename file
-(@exmap "del[ete]"        'narf:delete-this-file)          ; delete[!]
-(@exmap "al[ign]"         'narf:align)
-(@exmap "retab"           'narf:retab)
-(@exmap "na[rrow]"        'narf:narrow-indirect-or-widen)  ; Narrow buffer to selection
-(@exmap "x"               'narf:scratch-buffer)
-(@exmap "k[ill]"          'kill-this-buffer)                ; Kill current buffer
-(@exmap "k[ill]o"         'narf:cleanup-buffers)            ; Kill current project buffers
-(@exmap "k[ill]all"       'narf:kill-buffers)              ; Kill all buffers (bang = project buffers only)
-(@exmap "k[ill]buried"    'narf:kill-buried-buffers)       ; Kill all buffers (bang = project buffers only)
-(@exmap "ma[ke]"          'narf:build)
-(@exmap "t"               'narf:tmux-run)
-(@exmap "tcd"             'narf:tmux-chdir)
-(@exmap "a"               'helm-projectile-find-other-file)
-(@exmap "proj[ect]"       'helm-projectile-switch-project)
-(@exmap "ag"              'narf:ag-search)
-(@exmap "agr"             'narf:ag-regex-search)
-(@exmap "ag[cw]d"         'narf:ag-search-cwd)
-(@exmap "agr[cw]d"        'narf:ag-regex-search-cwd)
-(@exmap "sw[oop]"         'narf:swoop)
-(@exmap "rec[ent]"        'narf:recentf)
-(@exmap "ref[actor]"      'emr-show-refactor-menu)
-(@exmap "snip[pets]"      'narf::snippets)                  ; snip[!]
-(@exmap "cap[ture]"       'helm-org-capture-templates)
-(@exmap "n[otes]"         'helm-org-agenda-files-headings)
-(after "flycheck"
-  (@exmap "er[rors]"      (λ (flycheck-buffer) (flycheck-list-errors))))
-(after "re-builder"
-  (@exmap "re[gex]"       'narf::regex))
-(after "org"
-  (@exmap "o[rg]edit"     'org-edit-special)
-  (@exmap "o[rg]refile"   'org-refile)
-  (@exmap "o[rg]archive"  'org-archive-subtree)
-  (@exmap "o[rg]agenda"   'org-agenda)
-  (@exmap "o[rg]todo"     'org-show-todo-tree)
-  (@exmap "o[rg]link"     'org-link)
-  (@exmap "o[rg]align"    'org-align-all-tags))
-(after "workgroups2"
-  (@exmap "sl[oad]"       'narf:load-session)
-  (@exmap "ss[ave]"       'narf:save-session)
-  (@exmap "wg"            (λ (message (wg-workgroup-list-display))))
-  (@exmap "wnew"          'narf:new-workgroup)
-  (@exmap "wre[name]"     'narf:rename-workgroup)
-  (@exmap "wn[ext]"       'wg-switch-to-workgroup-right)
-  (@exmap "wp[rev]"       'wg-switch-to-workgroup-left)
-  (@exmap "wl[ast]"       'wg-switch-to-previous-workgroup)
-  (@exmap "k[ill]w"       'wg-kill-workgroup)
-  (@exmap "k[ill]ow"      (λ (let (workgroup (wg-current-workgroup))
-                              (dolist (w (wg-workgroup-list))
-                                (unless (wg-current-workgroup-p w)
-                                  (wg-kill-workgroup w)))))))
-
+(exmap "a"               'helm-projectile-find-other-file)
+(exmap "acomp[ile]"      'narf:compile-autoloads)
+(exmap "ag"              'narf:helm-search)
+(exmap "ag[cw]d"         'narf:helm-search-cwd)
+(exmap "agr"             'narf:helm-regex-search)
+(exmap "agr[cw]d"        'narf:helm-regex-search-cwd)
+(exmap "al[ign]"         'narf:whitespace-align)
+(exmap "bcomp[ile]"      'narf:compile-el)
+(exmap "cap[ture]"       'helm-org-capture-templates)
+(exmap "cd"              'narf:cd)
+(exmap "echo"            'narf:echo)
+(exmap "en[ew]"          'narf:file-create)
+(exmap "full[scr]"       'narf:toggle-fullscreen)
+(exmap "ini"             'narf:ido-find-file-in-emacsd)
+(exmap "k[ill]"          'kill-this-buffer)         ; Kill current buffer
+(exmap "k[ill]all"       'narf:kill-all-buffers)    ; Kill all buffers (bang = in project)
+(exmap "k[ill]buried"    'narf:kill-buried-buffers) ; Kill all buried buffers (bang = in project)
+(exmap "k[ill]o"         'narf:kill-unreal-buffers)
+(exmap "l[ast]"          'popwin:popup-last-buffer)
+(exmap "m[sg]"           'popwin:messages)
+(exmap "ma[ke]"          'narf:build)
+(exmap "mv"              'narf:file-move)
+(exmap "n[otes]"         'narf:org-search-files-or-headers)
+(exmap "na[rrow]"        'narf:narrow)  ; Narrow buffer to selection
+(exmap "proj[ect]"       'helm-projectile-switch-project)
+(exmap "rec[ent]"        'narf:helm-recentf)
+(exmap "ref[actor]"      'emr-show-refactor-menu)
+(exmap "retab"           'narf:whitespace-retab)
+(exmap "rm"              'narf:file-delete)          ; rm[!]
+(exmap "settr[im]"       'narf:toggle-delete-trailing-whitespace)
+(exmap "snip[pets]"      'narf:yas-snippets)         ; snip[!]
+(exmap "sw[oop]"         'narf:helm-swoop)
+(exmap "t"               'narf:tmux-run)
+(exmap "tcd"             'narf:tmux-chdir)
+(exmap "tsnip[pets]"     'narf:yas-file-templates)   ; temp[!]
+;; (exmap "term"            'narf:term-init)
+(exmap "x"               'narf:scratch-buffer)
+(after! flycheck
+  (exmap "er[rors]"      (λ (flycheck-buffer) (flycheck-list-errors))))
+(after! re-builder
+  (exmap "re[gex]"       'narf:regex))  ; TODO: Implement this
+(after! org
+  (exmap "o[rg]edit"     'org-edit-special)
+  (exmap "o[rg]refile"   'org-refile)
+  (exmap "o[rg]archive"  'org-archive-subtree)
+  (exmap "o[rg]agenda"   'org-agenda)
+  (exmap "o[rg]todo"     'org-show-todo-tree)
+  (exmap "o[rg]link"     'org-link)
+  (exmap "o[rg]align"    'org-align-all-tags))
+(after! workgroups2
+  (exmap "sl[oad]"       'narf:load-session)
+  (exmap "ss[ave]"       'narf:save-session)
+  (exmap "wg"            (λ (message (wg-workgroup-list-display))))
+  (exmap "tabnew"        'narf:workgroup-new)
+  (exmap "tabre[name]"   'narf:workgroup-rename)
+  (exmap "tabn[ext]"     'wg-switch-to-workgroup-right)
+  (exmap "tabp[rev]"     'wg-switch-to-workgroup-left)
+  (exmap "tabl[ast]"     'wg-switch-to-previous-workgroup)
+  (exmap "k[ill]w"       'wg-kill-workgroup)
+  (exmap "k[ill]ow"      'narf:kill-other-workgroups))
 
 (provide 'my-commands)
 ;;; my-commands.el ends here
