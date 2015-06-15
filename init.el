@@ -48,40 +48,53 @@
 
 (load (concat user-emacs-directory "init-load-path.el"))
 (mapc 'require
-      '())
-      ;; (;; Settings for specific modes or tools
-       ;;  init-cc             ; c/c++/obj-c madness
-       ;;  ;; init-cscope
-       ;;  ;; init-csharp      ; unity, mono and xamarin
-       ;;  init-data           ; dbs 'n data formats
-       ;;  ;; init-eshell
-       ;;  ;; init-go
-       ;;  init-java           ; the poster child for carpal tunnel syndome
-       ;;  init-js             ; alert("not java, javascript!")
-       ;;  init-lisp           ; elisp, clisp and clojure
-       ;;  init-lua            ; one-based indices? one-based indices.
-       ;;  init-org            ; for fearless [organized] leader
-       ;;  init-php            ; making php less painful to work with
-       ;;  init-python         ; beautiful is better than ugly
-       ;;  init-regex          ; /^[^\s](meaning)[^\n]*/
-       ;;  init-ruby           ; <3
-       ;;  init-scss           ; @include magic;
-       ;;  init-sh             ; #!/bin/bash_your_head_in
-       ;;  ;; init-sonicpi     ; the funk soul brotha
-       ;;  ;; init-swift       ; yay, emoji variabless!
-       ;;  init-text           ; i got nothing...
-       ;;  ;; init-rust
-       ;;  ;; init-r           ; for science!
-       ;;  init-vim            ; the confessional
-       ;;  init-web            ; for the 2.0'er
+      `(;; benchmark ; records load times in `require-times'; see `list-times'
+        core ; core/core.el
 
-       ;;  bindings
-       ;;  commands
-       ;;  )
-;; )
+        ,(cond (IS-MAC      'core-os-osx)
+               (IS-LINUX    'core-os-linux)
+               (IS-WINDOWS  'core-os-win32))
 
-(require 'local nil t)
-(message ">>> Loaded in %s" (emacs-init-time))
+        core-ui              ; draw me like one of your French editors
+        core-evil            ; come to the dark side, we have cookies
+        core-editor          ; filling the editor-shaped hole in the emacs OS
+        core-company         ; for the lazy typist
+        core-yasnippet       ; for the lazier typist
+        core-auto-insert     ; for the laziest typist
+        core-flycheck        ; remember that semicolon you forgot?
+        core-project         ; whose project am I in?
+        core-vcs             ; version control is a programmer's best friend
+        core-helm            ; a search engine for life and love
+        core-quickrun        ; run code, run.
+        core-workgroups      ; cure Emacs alzheimers
+
+        module-cc            ; c/c++/obj-c madness
+        module-csharp        ; unity, mono and xamarin
+        module-data          ; dbs 'n data formats
+        module-eshell        ; eshell
+        module-go
+        module-java          ; the poster child for carpal tunnel syndome
+        module-js            ; alert("not java, javascript!")
+        module-elisp         ;
+        module-lua           ; one-based indices? one-based indices.
+        module-lb6           ; LaunchBar 6 development
+        module-org           ; for fearless [organized] leader
+        module-php           ; making php less painful to work with
+        module-python        ; beautiful is better than ugly
+        module-regex         ; /^[^\s](meaning)[^\n]*/
+        module-ruby          ; <3
+        module-sass          ; @include magic;
+        module-sonicpi       ; the funk soul brotha
+        module-swift         ; yay, emoji variabless!
+        module-markdown      ; markdown
+        ;; module-rust
+        ;; module-r          ; for science!
+        module-vim           ; the confessional
+        module-web           ; for the 2.0'er
+
+        my-bindings
+        my-commands
+        ))
 
 (defun display-startup-echo-area-message ()
   (message ">>> Loaded in %s" (emacs-init-time)))
