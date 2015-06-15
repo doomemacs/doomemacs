@@ -1,6 +1,6 @@
 # NARF Emacs
 
-![Screenshot](screenshots/01.png)
+![Screenshot](assets/screenshots/01.png)
 
 > What we do every night, Pinky...
 
