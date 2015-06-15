@@ -38,7 +38,7 @@ make compile  # optionally byte-compiles everything
 
 ## Features
 
-A summary of what to expect can be found in these three files:
+A summary of what to expect can be found in these four files:
 
 ```
 ./Cask                     # what packages are used (and where)
