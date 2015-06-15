@@ -7,6 +7,5 @@
       (narf|nlinum-disable)
     (narf|nlinum-enable)))
 
-
 (provide 'defuns-nlinum)
 ;;; defuns-nlinum.el ends here

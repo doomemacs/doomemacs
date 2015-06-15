@@ -4,6 +4,5 @@
   (interactive)
   (error "Not yet implemented"))
 
-
 (provide 'core-os-linux)
 ;;; core-os-linux.el ends here

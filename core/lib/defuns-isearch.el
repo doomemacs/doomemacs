@@ -1,3 +1,4 @@
+;;; defuns-isearch.el
 
 ;;;###autoload
 (defun narf/isearch-delete-word ()
@@ -28,7 +29,6 @@
 (defun narf/isearch-paste-from-clipboard ()
   (interactive)
   (narf:isearch-paste-from-register ?+))
-
 
 (provide 'defuns-isearch)
 ;;; defuns-isearch.el ends here

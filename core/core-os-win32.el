@@ -4,6 +4,5 @@
   (interactive)
   (error "Not yet implemented"))
 
-
 (provide 'core-os-win32)
 ;;; core-os-win32.el ends here

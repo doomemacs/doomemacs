@@ -65,7 +65,7 @@
               (use-package-sort-keywords (use-package-plist-maybe-put rest :defer t)) state)
             (apply #'nconc
                    (mapcar (lambda (feature)
-                             `(,(macroexpand `(after! ,feature (require ',name-symbol)))))
+                             `((after! ,feature (require ',name-symbol))))
                            (delete-dups arg))))))))
 
    ;; Make any folders needed

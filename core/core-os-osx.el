@@ -31,7 +31,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(@after evil
+(after! evil
   (when (featurep 'ns)
     ;; On OSX, stop copying each visual state move to the clipboard:
     ;; https://bitbucket.org/lyro/evil/issue/336/osx-visual-state-copies-the-region-on
@@ -40,14 +40,13 @@
     (defadvice evil-visual-update-x-selection (around clobber-x-select-text activate)
       (unless (featurep 'ns) ad-do-it))))
 
-;; Send current file to OSX apps
 (defun narf-open-with (&optional app-name path)
+  "Send PATH to APP-NAME on OSX."
   (interactive)
   (let* ((path (f-full (s-replace "'" "\\'" (or path (if (eq major-mode 'dired-mode) (dired-get-file-for-visit) (buffer-file-name))))))
          (command (concat "open " (when app-name (concat "-a " (shell-quote-argument app-name))) " '" path "'")))
     (message "Running: %s" command)
     (shell-command command)))
-
 
 (provide 'core-os-osx)
 ;;; core-os-osx.el ends here

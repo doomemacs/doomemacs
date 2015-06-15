@@ -1,9 +1,22 @@
 ;;; core-ui.el --- interface settings
+;; see lib/ui-defuns.el
 
-(when (fboundp 'fringe-mode) (fringe-mode '(2 . 8)))
-(when window-system ; more informative window title
+;; This is kept separate so it can jumpstart emacs; this prevents the unstyled
+;; flash of emacs pre-makeover.
+(load-theme narf-default-theme t)
+(when window-system
+  (set-frame-font (apply #'font-spec narf-default-font))
+  (scroll-bar-mode -1)        ; no scrollbar
+  (tool-bar-mode -1)          ; no toolbar
+  (menu-bar-mode -1)          ; no menubar
+
+  (pcase (system-name)
+    ("io"            (set-frame-size (selected-frame) 326 119))
+    ("ganymede.home" (set-frame-size (selected-frame) 318 83)))
+
+  (fringe-mode '(2 . 8))
+  ;; more informative window title
   (setq frame-title-format '(buffer-file-name "%f" ("%b"))))
-
 
 ;; theme and GUI elements are loaded in init.el early
 (setq show-paren-delay 0)
@@ -27,17 +40,14 @@
  indicate-empty-lines            nil
  fringes-outside-margins         t)     ; fringes on the other side of line numbers
 
-(@add-hook after-init
+(add-hook! after-init
   (defadvice save-buffers-kill-emacs (around no-query-kill-emacs activate)
     "Prevent annoying \"Active processes exist\" query when you quit Emacs."
     (flet ((process-list ())) ad-do-it)))
 
-
-;;;; Line numbers ;;;;;;;;;;;;;;;;;;;;;;
-
-(use-package nlinum
+(use-package nlinum ; line numbers
+  :defer t
   :defines nlinum--width
-  :commands nlinum-mode
   :preface
   (defface linum '((t (:inherit default)))
     "Face for line numbers" :group 'nlinum-mode)
@@ -55,7 +65,7 @@
              (str (nth 1 disp)))
         (put-text-property 0 (length str) 'face 'linum str)
         (setq narf--hl-nlinum-overlay nil
-              narf--hl-nlinum-line    nil))))
+              narf--hl-nlinum-line nil))))
 
   (defun narf|nlinum-hl-line (&optional line)
     (let ((line-no (or line (line-number-at-pos (point)))))
@@ -89,17 +99,14 @@
     (remove-hook 'post-command-hook 'narf|nlinum-hl-line)
     (narf|nlinum-unhl-line))
 
-  (@add-hook text-mode 'narf|nlinum-enable)
-  (@add-hook prog-mode 'narf|nlinum-enable)
-  (@add-hook org-mode  'narf|nlinum-disable)
+  (add-hook! text-mode 'narf|nlinum-enable)
+  (add-hook! prog-mode 'narf|nlinum-enable)
+  (add-hook! org-mode  'narf|nlinum-disable)
   ;; Preset width nlinum
-  (@add-hook nlinum-mode
+  (add-hook! nlinum-mode
     (setq nlinum--width (length (number-to-string (count-lines (point-min) (point-max)))))))
 
-
-;;;; Modeline ;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(use-package smart-mode-line
+(use-package smart-mode-line ; customized modeline
   :init (setq-default
          sml/no-confirm-load-theme t
          sml/mode-width            'full
@@ -116,13 +123,10 @@
          sml/replacer-regexp-list '(("^~/Dropbox/Projects/" "PROJECTS:")
                                     ("^~/.emacs.d/" "EMACS.D:")
                                     ("^~/Dropbox/notes/" "NOTES:")
-                                    ("^/usr/local/Cellar/" "HOMEBREW:"))
-         mode-line-misc-info
-         '((which-func-mode ("" which-func-format ""))
-           (global-mode-string ("" global-mode-string ""))))
+                                    ("^/usr/local/Cellar/" "HOMEBREW:")))
   :config
   ;; Hide evil state indicator
-  (@after evil (setq evil-mode-line-format nil))
+  (after! evil (setq evil-mode-line-format nil))
 
   (sml/setup)
   (sml/apply-theme 'respectful)
@@ -175,14 +179,14 @@
            (-3 (:propertize (:eval sml/position-percentage-format)
                             face sml/position-percentage help-echo "Buffer Relative Position\nmouse-1: Display Line and Column Mode Menu")))))
 
-  (@after anzu ; Add small gap for anzu
+  (after! anzu ; Add small gap for anzu
     (defun narf--anzu-update-mode-line (here total)
       (concat (anzu--update-mode-line-default here total) " "))
     (setq anzu-mode-line-update-function 'narf--anzu-update-mode-line))
 
   ;; Rearrange and cleanup
   (setq-default mode-line-format
-                '("%e "
+                '("%e"
                   mode-line-mule-info
                   mode-line-client
                   ;; mode-line-remote
@@ -195,7 +199,6 @@
                   mode-line-end-spaces
                   " "
                   ":" mode-line-position)))
-
 
 (provide 'core-ui)
 ;;; core-ui.el ends here
