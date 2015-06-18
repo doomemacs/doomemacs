@@ -10,9 +10,7 @@
   (tool-bar-mode -1)          ; no toolbar
   (menu-bar-mode -1)          ; no menubar
 
-  (pcase (system-name)
-    ("io"            (set-frame-size (selected-frame) 326 119))
-    ("ganymede.home" (set-frame-size (selected-frame) 318 83)))
+  (set-frame-parameter nil 'fullscreen (unless (frame-parameter nil 'fullscreen) 'fullboth))
 
   (fringe-mode '(2 . 8))
   ;; more informative window title
