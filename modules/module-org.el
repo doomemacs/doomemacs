@@ -136,8 +136,8 @@
            :ni "<M-up>"        'org-up-element
            :ni "<M-down>"      'org-down-element
 
-           :ni ", ;" 'helm-org-in-buffer-headings
-           :ni ", l" 'org-insert-link
+           :n ", ;" 'helm-org-in-buffer-headings
+           :n ", l" 'org-insert-link
            :ni "M-a" 'mark-whole-buffer
 
            :i "C-e"          'org-end-of-line
@@ -168,10 +168,10 @@
            :n ",s" 'org-schedule
            :n ",t" 'org-todo
            :n "gr" 'org-babel-execute-src-block-maybe
-           :n "gh" 'outline-up-heading
-           :n "gj" 'org-forward-heading-same-level
-           :n "gk" 'org-backward-heading-same-level
-           :n "gl" 'outline-next-visible-heading
+           :m "gh" 'outline-up-heading
+           :m "gj" 'org-forward-heading-same-level
+           :m "gk" 'org-backward-heading-same-level
+           :m "gl" 'outline-next-visible-heading
            :n "go"   'org-open-at-point
            :n "gO"   'org-attach-open
            :n "gC-o" 'org-attach-reveal
@@ -182,10 +182,10 @@
            :n "ga" 'org-attach
            :n "gA" 'org-agenda
            :n "gt" 'org-show-todo-tree
-           :n "]l" 'org-next-link
-           :n "[l" 'org-previous-link
-           :n "$" 'org-end-of-line
-           :n "^" 'org-beginning-of-line
+           :m "]l" 'org-next-link
+           :m "[l" 'org-previous-link
+           :m "$" 'org-end-of-line
+           :m "^" 'org-beginning-of-line
            :n "<" 'org-metaleft
            :n ">" 'org-metaright
            :n "-" 'org-cycle-list-bullet
