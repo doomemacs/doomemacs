@@ -54,8 +54,8 @@
 ;; Modes 'n hooks ;;;;;;;;;;;;;;;;;;;
 
 (associate! text-mode           :match "/LICENSE[^/]*$")
-(associate! sh-mode             :match "z\\(profile\\|login\\|logout\\)?$")
-(associate! sh-mode             :match "zsh/")
+(associate! sh-mode             :match "/\\.?z\\(profile\\|login\\|logout\\|shrc\\|shenv\\)?$")
+(associate! sh-mode             :match "/\\.?zsh/")
 (associate! applescript-mode    :match "\\.applescript$")
 (associate! emacs-lisp-mode     :match "Cask$")
 (associate! emacs-lisp-mode     :match "\\.el\\.gz$")
@@ -150,7 +150,8 @@
 (use-package expand-region
   :commands (er/expand-region er/contract-region er/mark-symbol er/mark-word))
 
-(use-package goto-last-change :commands goto-last-change)
+(use-package goto-last-change
+  :commands goto-last-change)
 
 (use-package hl-todo
   :commands hl-todo-mode
