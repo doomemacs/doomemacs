@@ -1,6 +1,5 @@
 #!emacs --script
 
-(setq user-emacs-directory (concat (file-name-directory load-file-name) "../"))
 (load (concat user-emacs-directory "init-load-path.el"))
 
 (require 'f)
