@@ -199,5 +199,16 @@ left, create a scratch buffer."
   (interactive "<f>")
   (cd (if (zerop (length dir)) "~" dir)))
 
+;;;###autoload
+(defun narf/kill-all-buffers-do-not-remember ()
+  (interactive)
+  (let ((confirm-kill-emacs nil))
+    (mapc 'kill-buffer (buffer-list))
+    (kill-this-buffer)
+    (delete-other-windows)
+    (wg-save-session t)
+    (save-buffers-kill-terminal)))
+
+
 (provide 'defuns-buffers)
 ;;; defuns-buffers.el ends here
