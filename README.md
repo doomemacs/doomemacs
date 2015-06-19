@@ -6,10 +6,11 @@
 
 This is emacs for the stubborn vimmer, megalomaniac mouse and/or masochists
 alike. It has been configured first: to emulate vim as best it can, and second:
-to surpass it in any way possible; all this is built on top of
-[Evil-mode](https://gitorious.org/evil/pages/Home), a vim emulator for emacs.
+to surpass it in any way possible. Narf uses
+[Evil-mode](https://gitorious.org/evil/pages/Home), a vim-emulator for emacs, to
+accomplish this.
 
-This has only been tested on Emacs 24.5 on OSX. YMMV.
+This has only seen testing on Emacs 24.5 in OSX. YMMV.
 
 Any contributions or suggestions are welcome. The world won't take over itself.
 
