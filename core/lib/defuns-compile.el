@@ -1,6 +1,6 @@
 ;;; defuns-compile.el
 
-(! (require 'f))
+(eval-when-compile (require 'f))
 
 (defun narf--compile-important-dirs ()
   (append (list narf-core-dir narf-contrib-dir)

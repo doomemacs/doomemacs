@@ -160,7 +160,6 @@ spaces on either side of the point if so. Resorts to
   (if (memq 'delete-trailing-whitespace before-save-hook)
       (progn (message "Remove trailing whitespace: OFF")
              (remove-hook 'before-save-hook 'delete-trailing-whitespace))
-
     (message "Remove trailing whitespace: ON")
     (add-hook 'before-save-hook 'delete-trailing-whitespace)))
 
