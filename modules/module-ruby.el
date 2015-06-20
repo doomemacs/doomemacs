@@ -1,5 +1,8 @@
 ;;; module-ruby.el
 
+;; Silence the byte-compiler
+(eval-when-compile (require 'defuns-quickrun))
+
 (use-package enh-ruby-mode
   :mode (("\\.rb$"        . enh-ruby-mode)
          ("\\.ru$"        . enh-ruby-mode)
@@ -56,7 +59,7 @@
     :lighter " Rake" :keymap (make-sparse-keymap)
     (add-yas-minor-mode! 'rake-mode))
   (associate! rake-mode :match "/\\(Rakefile\\|\\.rake\\)$")
-    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
   ;; Vagrantfiles ;;;;;;;;;;;;;;;;;;;;;;;;
   (define-minor-mode vagrant-mode
@@ -64,7 +67,7 @@
     :lighter " Va" :keymap (make-sparse-keymap)
     (add-yas-minor-mode! 'vagrant-mode))
   (associate! vagrant-mode :match "/Vagrantfile$")
-    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
   ;; Rspec files ;;;;;;;;;;;;;;;;;;;;;;;;;
   (use-package rspec-mode
@@ -87,7 +90,8 @@
              :n "ta" 'rspec-verify-all
              :n "ts" 'rspec-verify-single
              :n "tv" 'rspec-verify)))
-    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
   (use-package inf-ruby
     :commands (inf-ruby inf-ruby-console-auto)
@@ -103,7 +107,7 @@
     (add-hook! after-save 'narf|ruby-load-file)
     (add-hook! enh-ruby-mode 'narf|enable-robe-maybe)
 
-    (after! "company"
+    (after! company
       (require 'company-robe)
       (add-company-backend! enh-ruby-mode (robe)))))
 
