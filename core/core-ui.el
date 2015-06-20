@@ -14,7 +14,7 @@
   (tool-bar-mode -1)          ; no toolbar
   (menu-bar-mode -1)          ; no menubar
 
-  (set-frame-parameter nil 'fullscreen (unless (frame-parameter nil 'fullscreen) 'fullboth))
+  (set-frame-parameter nil 'fullscreen 'fullboth)
 
   (fringe-mode '(2 . 8))
   ;; more informative window title
