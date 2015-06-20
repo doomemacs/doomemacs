@@ -2,7 +2,7 @@ EMACS=emacs
 
 all: update
 
-update:
+update: autoloads
 	git pull
 	@cask install
 	@cask update
