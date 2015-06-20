@@ -25,6 +25,8 @@
   (add-to-list 'ido-ignore-files "Icon\\?$")
   (add-hook! ido-setup
     (bind! :map (ido-completion-map ido-file-completion-map)
+           "C-n" 'ido-next-match
+           "C-p" 'ido-prev-match
            "C-w" 'ido-delete-backward-word-updir))
 
   (ido-mode 1)
