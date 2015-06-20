@@ -14,9 +14,9 @@
 
  "M-x"   'smex
  "M-X"   'smex-major-mode-commands
- "M-A-x" 'helm-M-x
+ "M-:"   'helm-M-x
  "M-;"   'eval-expression
- "C-`"   'popwin:toggle-popup-window
+ "C-`"   'narf/popwin-toggle
  "M-="   'text-scale-increase
  "M--"   'text-scale-increase
  "M-w"   'evil-window-delete
@@ -74,13 +74,7 @@
    :v "="   'align-regexp
 
    :n "qq"  'evil-save-and-quit
-   :n "QQ"  (λ (let ((confirm-kill-emacs nil))
-                 (narf:kill-all-buffers t)
-                 (save-buffers-kill-terminal)))
-
-   ;; insert lines in-place)
-   :n "jj"  (λ (save-excursion (evil-insert-newline-below)))
-   :n "kk"  (λ (save-excursion (evil-insert-newline-above)))
+   :n "QQ"  'narf/kill-all-buffers-do-not-remember
 
    :n "oo"  'narf-open-with
    :n "ob"  (λ (narf-open-with "Google Chrome"))
@@ -311,8 +305,11 @@
        :i "A-e"      'evil-forward-word-end
 
        ;; Textmate-esque insert-line before/after
-       :ni "<M-return>"    'evil-open-below
-       :ni "<S-M-return>"  'evil-open-above
+       :i "<M-return>"    'evil-open-below
+       :i "<S-M-return>"  'evil-open-above
+       ;; insert lines in-place)
+       :n "<M-return>"    (λ (save-excursion (evil-insert-newline-below)))
+       :n "<S-M-return>"  (λ (save-excursion (evil-insert-newline-above)))
 
        ;; Make ESC quit all the things
        :e [escape] 'narf-minibuffer-quit
