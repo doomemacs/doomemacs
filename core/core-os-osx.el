@@ -11,7 +11,7 @@
       mac-option-modifier  'alt)
 
 ;; fix emacs PATH on OSX (GUI only)
-(when window-system
+(add-hook! 'after-make-window-system-frame-hooks
   (setenv "SHELL" "/usr/local/bin/zsh")
   (setenv "EMACS" "1") ; make sure the world knows
 

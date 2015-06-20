@@ -26,53 +26,68 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(! (require 's)
-   (require 'dash)
-   (require 'f)
+(eval-when-compile
+  (require 's)
+  (require 'dash)
+  (require 'f)
 
-   (setq use-package-verbose narf-debug-mode)
-   ;; (setq use-package-expand-minimally (not narf-debug-mode))
-   (require 'use-package)
+  (setq use-package-verbose narf-debug-mode)
+  ;; (setq use-package-expand-minimally (not narf-debug-mode))
+  (require 'use-package)
 
-   (defun use-package--add-keyword (keyword after)
-     (setq use-package-keywords
-           (-insert-at (-find-index (lambda (key) (eq key after)) use-package-keywords)
-                       keyword use-package-keywords)))
+  (defun use-package--add-keyword (keyword after)
+    (setq use-package-keywords
+          (-insert-at (-find-index (lambda (key) (eq key after)) use-package-keywords)
+                      keyword use-package-keywords)))
 
-   (progn ; remap :bind to bind! macro instead of bind-keys
-     ;; (defun use-package-handler/:bind
-     ;;     (name-symbol keyword arg rest state &optional override)
-     ;;   (let ((commands (mapcar #'cdr arg)))
-     ;;     (use-package-concat
-     ;;      (use-package-process-keywords name-symbol
-     ;;        (use-package-sort-keywords
-     ;;         (use-package-plist-maybe-put rest :defer t))
-     ;;        (use-package-plist-append state :commands commands))
-     ;;      `((ignore (,bind! ,@arg))))))
-     )
+  (progn ; remap :bind to bind! macro instead of bind-keys
+    ;; (defun use-package-handler/:bind
+    ;;     (name-symbol keyword arg rest state &optional override)
+    ;;   (let ((commands (mapcar #'cdr arg)))
+    ;;     (use-package-concat
+    ;;      (use-package-process-keywords name-symbol
+    ;;        (use-package-sort-keywords
+    ;;         (use-package-plist-maybe-put rest :defer t))
+    ;;        (use-package-plist-append state :commands commands))
+    ;;      `((ignore (,bind! ,@arg))))))
+    )
 
-   (progn ; add :after to use-package
-     (use-package--add-keyword :after :load-path)
+  (progn ; add :after to use-package
+    (use-package--add-keyword :after :load-path)
 
-     (defalias 'use-package-normalize/:after 'use-package-normalize-symlist)
+    (defalias 'use-package-normalize/:after 'use-package-normalize-symlist)
 
-     (defun use-package-handler/:after (name-symbol keyword arg rest state)
-       (let ((body (use-package-process-keywords name-symbol rest state)))
-         (if (null arg)
-             body
-           (use-package-concat
-            (use-package-process-keywords name-symbol
-              (use-package-sort-keywords (use-package-plist-maybe-put rest :defer t)) state)
-            (apply #'nconc
-                   (mapcar (lambda (feature)
-                             `((after! ,feature (require ',name-symbol))))
-                           (delete-dups arg))))))))
+    (defun use-package-handler/:after (name-symbol keyword arg rest state)
+      (let ((body (use-package-process-keywords name-symbol rest state)))
+        (if (null arg)
+            body
+          (use-package-concat
+           (use-package-process-keywords name-symbol
+             (use-package-sort-keywords (use-package-plist-maybe-put rest :defer t)) state)
+           (apply #'nconc
+                  (mapcar (lambda (feature)
+                            `((after! ,feature (require ',name-symbol))))
+                          (delete-dups arg))))))))
 
-   ;; Make any folders needed
-   (dolist (file '("" "undo" "backup"))
-     (let ((path (concat narf-temp-dir file)))
-       (unless (file-exists-p path)
-         (make-directory path t)))))
+  ;; Make any folders needed
+  (dolist (file '("" "undo" "backup"))
+    (let ((path (concat narf-temp-dir file)))
+      (unless (file-exists-p path)
+        (make-directory path t)))))
+
+(defvar after-make-console-frame-hooks '()
+  "Hooks to run after creating a new TTY frame")
+(defvar after-make-window-system-frame-hooks '()
+  "Hooks to run after creating a new window-system frame")
+(defun run-after-make-frame-hooks (frame)
+  "Selectively run either `after-make-console-frame-hooks' or
+`after-make-window-system-frame-hooks'"
+  (select-frame frame)
+  (run-hooks (if window-system
+                 'after-make-window-system-frame-hooks
+               'after-make-console-frame-hooks)))
+(add-hook 'after-make-frame-functions 'run-after-make-frame-hooks)
+(add-hook! after-init (run-after-make-frame-hooks (selected-frame)))
 
 ;; Emacs configuration ;;;;;;;;;;;;;;;;;
 

@@ -3,8 +3,12 @@
 
 ;; This is kept separate so it can jumpstart emacs; this prevents the unstyled
 ;; flash of emacs pre-makeover.
-(load-theme narf-default-theme t)
-(when window-system
+(add-hook! 'after-make-console-frame-hooks
+  (load-theme narf-term-theme t)
+  (menu-bar-mode -1))         ; no menubar
+
+(add-hook! 'after-make-window-system-frame-hooks
+  (load-theme narf-default-theme t)
   (set-frame-font (apply #'font-spec narf-default-font))
   (scroll-bar-mode -1)        ; no scrollbar
   (tool-bar-mode -1)          ; no toolbar
