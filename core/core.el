@@ -12,7 +12,10 @@
 ;;
 ;;; Bootstrap:
 
-(message "> Autoloads? %s" (if (require 'autoloads nil t) "Yes" "No"))
+(unless (require 'autoloads nil t)
+  (load (concat narf-emacs-dir "scripts/generate-autoloads.el"))
+  (require 'autoloads))
+
 (require 'core-vars)
 (require 'core-defuns)
 (require 'diminish)
