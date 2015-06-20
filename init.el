@@ -1,18 +1,19 @@
-;;; NARF! Emacs for the jaded vimmer
+;;; init.el --- NARF bootstrap
 ;;
-;; Author: Henrik Lissner <henrik@lissner>
-;; URL: https://github.com/hlissner/emacs.d
+;; Author:  Henrik Lissner <henrik@lissner.net>
+;; URL:     https://github.com/hlissner/emacs.d
+;; Version: 0.1.0
 ;;
-;;; Narf!
+;;; Are you pondering what I'm pondering, Pinky?
 ;;
 ;;                           ,,,        !/:.
 ;;                          /::\".      !!:::
 ;;                          :::::\".  ," \:,::
 ;;                          ::::::\ ". ,","\::.
-;;                          \:::::":\ "/""V' :'
+;;                          \:::::":\ "/""v' :'
 ;;                           !::::\   !    \ \   __
 ;;                            "::::\  \     ! \.&&&&,
-;;                               ," __ ",  CD,&&&&&&'
+;;                               ," __ ",  cd,&&&&&&'
 ;;                               \    ". "" / \&&&"                       _,---
 ;;                                 "",__\_        /                    _,:":::::
 ;;                               _," ,""  ,-,__,/":,_                ,",":::::::
@@ -22,73 +23,81 @@
 ;;                      /  ,"_!:::::::/,       ,"              _,,--,  /::::::/
 ;;                    /   "" _,"\:::::::'     !              ,"      ){:::::/
 ;;                   !    _,"    \ "",         \,"""-,____,"__,,,"_," _/
-;;                    ""T"       \\   \          "-,_(*)&&&&(*)," \ ."
+;;                    ""t"       \\   \          "-,_(*)&&&&(*)," \ ."
 ;;                     /          \",  !            ,   \   ! -    )
 ;;                     !          \  ""             !    !==!"-,__,'
 ;;                     !           \                 """_""""`, ", /"_
-;;                     \       ,   .L                 /" "     ", \! ,_/
+;;                     \       ,   .l                 /" "     ", \! ,_/
 ;;                      ),     \   / \                \/       ,, /! !
 ;;                    ,::\      \,"   \                !        \/ ! !
 ;;                _,::::" )     )\  ,"  ___            \ -,_,  ,"",! !
 ;;         __,,,::::""   ,"   ,":::,-:::--:"           __\_!__/_""-,_!
 ;;   ,,:::"""""""      ,:_,""__...._"""::::""       /:::::" ""::::::
-;;  (:._              L::::::::::::\\/               ""          ""
+;;  (:._              l::::::::::::\\/               ""          ""
 ;;    """"--,,,---              """"
 ;;
-;;; Code:
-(defconst DEBUG-MODE nil)
+;; These mice are not part of GNU Emacs.
+;;
+;;; License: GPLv3
 
-(defconst DEFAULT-FONT  (font-spec :family "Terminus (TTF)" :size 12 :antialias nil))
-(defconst DEFAULT-THEME 'narf-dark) ; for GUI client
-(defconst TERM-THEME    'wombat)    ; for <256 color terminals
+(defconst narf-debug-mode nil)
 
-(load (concat user-emacs-directory "core/startup.el"))
-(narf/init
- '(core                ; yoink @ core.el
-   core-ui             ; aesthetics
-   core-evil           ; evil-mode and its plugins
-   core-editor         ; completing the editor
-   core-company        ; for the lazy typist
+(defconst narf-default-theme  'narf-dark)
+(defconst narf-term-theme     'wombat)
+(defconst narf-default-font  '(:family "terminus (ttf)" :size 12 :antialias nil))
+(defconst narf-big-font      '(:family "Inconsolata" :size 18 :antialias t))
 
-   init-auto-insert    ; see above
-   init-fly            ; fly(check|spell)
-   init-vc             ; version control gutter + git modes
-   init-ido            ; a search engine for your car keys
-   init-helm           ; a search engine for your life
-   init-project        ; dired, neotree
+(load (concat user-emacs-directory "init-load-path.el"))
+(mapc 'require
+      `(;; benchmark ; records load times in `require-times'; see `list-times'
+        core ; core/core.el
 
-   init-cc             ; C/C++/Obj-C madness
-   ;; init-cscope
-   ;; init-csharp      ; unity, mono and xamarin
-   init-data           ; DBs 'n data formats
-   ;; init-eshell
-   ;; init-go
-   init-java           ; the poster child for carpal tunnel syndome
-   init-js             ; alert("not java, javascript!")
-   init-lisp           ; elisp, clisp and clojure
-   init-lua            ; one-based indices? One-based indices.
-   init-org            ; for fearless [organized] leader
-   init-php            ; making php less painful to work with
-   init-python         ; beautiful is better than ugly
-   init-regex          ; /^[^\s](meaning)[^\n]*/
-   init-ruby           ; <3
-   init-scss           ; @include magic;
-   init-sh             ; #!/bin/bash_your_head_in
+        ,(cond (IS-MAC      'core-os-osx)
+               (IS-LINUX    'core-os-linux)
+               (IS-WINDOWS  'core-os-win32))
 
-   ;; init-sonicpi          ;
-   ;; init-swift       ; yay, emoji variabless!
-   init-text           ; I got nothing...
-   ;; init-rust
-   ;; init-r           ; for science!
-   init-vim            ; the confessional
-   init-web            ; for the 2.0'er
-   init-workgroups     ; session management I can understand
-   init-yasnippet      ; type for me
+        core-ui              ; draw me like one of your French editors
+        core-evil            ; come to the dark side, we have cookies
+        core-editor          ; filling the editor-shaped hole in the emacs OS
+        core-company         ; for the lazy typist
+        core-yasnippet       ; for the lazier typist
+        core-auto-insert     ; for the laziest typist
+        core-flycheck        ; remember that semicolon you forgot?
+        core-project         ; whose project am I in?
+        core-vcs             ; version control is a programmer's best friend
+        core-helm            ; a search engine for life and love
+        core-quickrun        ; run code, run.
+        core-workgroups      ; cure Emacs alzheimers
 
-   narf-bindings
-   narf-commands
-   narf-settings
-   ))
+        module-cc            ; c/c++/obj-c madness
+        module-csharp        ; unity, mono and xamarin
+        module-data          ; dbs 'n data formats
+        module-eshell        ; eshell
+        module-go
+        module-java          ; the poster child for carpal tunnel syndome
+        module-js            ; alert("not java, javascript!")
+        module-elisp         ;
+        module-lua           ; one-based indices? one-based indices.
+        module-lb6           ; LaunchBar 6 development
+        module-org           ; for fearless [organized] leader
+        module-php           ; making php less painful to work with
+        module-python        ; beautiful is better than ugly
+        module-regex         ; /^[^\s](meaning)[^\n]*/
+        module-ruby          ; <3
+        module-sass          ; @include magic;
+        module-sonicpi       ; the funk soul brotha
+        module-swift         ; yay, emoji variabless!
+        module-markdown      ; markdown
+        ;; module-rust
+        ;; module-r          ; for science!
+        module-vim           ; the confessional
+        module-web           ; for the 2.0'er
 
+        my-bindings
+        my-commands
+        ))
 
-;;; Are you pondering what I'm pondering Pinky?
+(defun display-startup-echo-area-message ()
+  (message ">>> Loaded in %s" (emacs-init-time)))
+
+;;; I think so Brain...

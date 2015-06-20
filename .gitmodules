@@ -13,3 +13,6 @@
 [submodule "elisp/racer"]
 	path = elisp/racer
 	url = https://github.com/phildawes/racer
+[submodule "private/snippets"]
+	path = private/snippets
+	url = git://github.com/hlissner/emacs-snippets.git

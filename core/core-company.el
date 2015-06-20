@@ -1,95 +1,51 @@
+;;; core-company.el --- auto completion backend (Company-mode)
+;; see lib/company-macros.el
+
+(eval-when-compile (require 'core))
+
 (use-package company
   :diminish (company-mode . "=")
+  :commands global-company-mode
   :init
-  (progn
-    (defvar company-dictionary-alist '())
-    (defvar company-dictionary-major-minor-modes '())
-    (defvar company-dictionary-dir (concat BASE-DIR "dict/")))
-
-    (after "abbrev" (diminish 'abbrev-mode "A"))
+  (after! abbrev (diminish 'abbrev-mode "A"))
+  (setq company-idle-delay nil
+        company-minimum-prefix-length 1
+        company-show-numbers nil
+        company-tooltip-limit 20
+        company-dabbrev-downcase nil
+        company-dabbrev-ignore-case nil
+        company-tooltip-align-annotations t
+        company-require-match 'never
+        company-global-modes '(not eshell-mode comint-mode org-mode erc-mode
+                                   message-mode help-mode)
+        company-frontends '(company-pseudo-tooltip-unless-just-one-frontend
+                            company-echo-metadata-frontend
+                            company-preview-if-just-one-frontend)
+        company-dict-dir (concat narf-private-dir "dict/"))
+  (add-hook! after-init 'global-company-mode)
   :config
-  (progn
-    (global-company-mode +1)
-    (setq company-idle-delay nil
-          company-minimum-prefix-length 1
-          company-show-numbers nil
-          company-tooltip-limit 20
-          company-dabbrev-downcase nil
-          company-dabbrev-ignore-case nil
-          company-tooltip-align-annotations t
-          company-require-match 'never
-          company-global-modes
-          '(not eshell-mode comint-mode org-mode erc-mode message-mode help-mode))
+  ;; (use-package company-dict :defer t)
+  ;; (setq-default company-backends (append '(company-dict company-keywords) company-backends))
 
-    ;; sort candidates by
-    (setq-default company-frontends
-                  '(company-pseudo-tooltip-unless-just-one-frontend
-                    company-echo-metadata-frontend
-                    company-preview-if-just-one-frontend))
+  (setq-default company-backends (append '(company-keywords) company-backends))
+  ;; TODO: Investigate yasnippet
+  (after! yasnippet
+    (setq-default company-backends (append '(company-capf company-yasnippet) company-backends)))
+  (add-to-list 'company-transformers 'company-sort-by-occurrence)
 
-    (progn ; Rewrite evil-complete to use company-dabbrev
-      (setq company-dabbrev-code-other-buffers t)
-      (setq company-dabbrev-code-buffers nil)
-      (setq evil-complete-next-func
-            (lambda(arg)
-              (call-interactively 'company-dabbrev)
-              (if (eq company-candidates-length 1)
-                  (company-complete))))
-      (setq evil-complete-previous-func
-            (lambda (arg)
-              (let ((company-selection-wrap-around t))
-                (call-interactively 'company-dabbrev)
-                (if (eq company-candidates-length 1)
-                    (company-complete)
-                  (call-interactively 'company-select-previous))))))
+  (add-company-backend! nxml-mode       (nxml yasnippet))
+  (add-company-backend! emacs-lisp-mode (elisp yasnippet))
 
-    (progn ; backends
-      (setq-default company-backends (append '(company-dictionary company-keywords) company-backends))
-      (add-to-list 'company-transformers 'company-sort-by-occurrence)
-      (after "yasnippet"
-        (setq-default company-backends (append '(company-capf company-yasnippet) company-backends)))
+  ;; Rewrite evil-complete to use company-dabbrev
+  (setq company-dabbrev-code-other-buffers t
+        company-dabbrev-code-buffers       nil
+        evil-complete-next-func           'narf/company-evil-complete-next
+        evil-complete-previous-func       'narf/company-evil-complete-previous)
 
-      (defmacro narf/add-company-backend (hook backends)
-        "Register a company backend for a mode."
-        (let ((def-name (intern (format "narf--init-%s" hook))))
-          `(progn
-             (defun ,def-name ()
-               (set (make-local-variable 'company-backends)
-                    (append '((,@backends company-semantic)) company-backends)))
-             (add-hook ',(intern (format "%s-hook" hook)) ',def-name))))
-      (narf/add-company-backend nxml-mode       (company-nxml company-yasnippet))
-      (narf/add-company-backend emacs-lisp-mode (company-elisp company-yasnippet))
-
-
-      ;; Simulates ac-source-dictionary (without global dictionary)
-      (defun company-dictionary (command &optional arg &rest ignored)
-        "`company-mode' back-end for user-provided dictionaries."
-        (interactive (list 'interactive))
-        (unless company-dictionary-alist
-          ;; initialize dictionary
-          (dolist (file (f-files company-dictionary-dir))
-            (add-to-list 'company-dictionary-alist `(,(intern (f-base file)) ,@(s-split "\n" (f-read file) t)))))
-        (let ((dict (let ((minor-modes (-filter (lambda (mode) (when (boundp mode) (symbol-value mode)))
-                                                company-dictionary-major-minor-modes))
-                          (dicts (cdr (assq major-mode company-dictionary-alist))))
-                      (dolist (mode minor-modes)
-                        (setq dicts (append dicts (cdr (assq mode company-dictionary-alist)))))
-                      dicts)))
-          (cl-case command
-            (interactive (company-begin-backend 'company-dictionary))
-            (prefix (and dict (or (company-grab-symbol) 'stop)))
-            (candidates
-             (let ((completion-ignore-case nil)
-                   (symbols dict))
-               (all-completions arg symbols)))
-            (sorted t)))))
-
-    (use-package company-statistics
-      :config
-      (shut-up
-        (setq company-statistics-file (expand-file-name "company-statistics-cache.el" TMP-DIR))
-        (company-statistics-mode)))))
-
+  (shut-up!
+    (setq company-statistics-file (! (concat narf-temp-dir "company-statistics-cache.el")))
+    (require 'company-statistics)
+    (company-statistics-mode)))
 
 (provide 'core-company)
 ;;; core-company.el ends here
