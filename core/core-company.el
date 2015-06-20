@@ -5,9 +5,7 @@
 
 (use-package company
   :diminish (company-mode . "=")
-  :commands (company-complete-common company-files company-tags
-             company-ispell company-yasnippet company-semantic
-             company-dabbrev-code)
+  :commands global-company-mode
   :init
   (after! abbrev (diminish 'abbrev-mode "A"))
   (setq company-idle-delay nil
@@ -24,9 +22,8 @@
                             company-echo-metadata-frontend
                             company-preview-if-just-one-frontend)
         company-dict-dir (concat narf-private-dir "dict/"))
+  (add-hook! after-init 'global-company-mode)
   :config
-  (global-company-mode +1)
-
   ;; (use-package company-dict :defer t)
   ;; (setq-default company-backends (append '(company-dict company-keywords) company-backends))
 

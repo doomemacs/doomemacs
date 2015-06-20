@@ -9,6 +9,7 @@
 (defconst narf-private-dir   (! (concat narf-emacs-dir "private/")))
 (defconst narf-elpa-dir      (! (concat narf-emacs-dir ".cask/" emacs-version "/elpa/")))
 (defconst narf-temp-dir      (! (concat narf-private-dir "cache/" (system-name) "/")))
+(defconst narf-script-dir    (! (concat narf-emacs-dir "scripts/")))
 (defconst narf-snippet-dirs  (! (list (concat narf-private-dir "snippets/")
                                       (concat narf-private-dir "templates/"))))
 

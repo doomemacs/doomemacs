@@ -24,7 +24,7 @@
   (add-to-list 'ido-ignore-files "\\`.DS_Store$")
   (add-to-list 'ido-ignore-files "Icon\\?$")
   (add-hook! ido-setup
-    (bind! :map (ido-completion-map ido-file-completion-map)
+    (bind! :map (ido-common-completion-map ido-completion-map ido-file-completion-map)
            "C-n" 'ido-next-match
            "C-p" 'ido-prev-match
            "C-w" 'ido-delete-backward-word-updir))

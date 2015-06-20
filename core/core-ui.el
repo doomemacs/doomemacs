@@ -122,8 +122,8 @@
          sml/pre-modes-separator       " : "
          sml/pre-minor-modes-separator " "
          sml/pos-minor-modes-separator ": "
-         sml/replacer-regexp-list '(("^~/Dropbox/Projects/" "PROJECTS:")
-                                    ("^~/.emacs.d/" "EMACS.D:")
+         sml/replacer-regexp-list '(("^~/.emacs.d/" "EMACS.D:")
+                                    ("^~/Dropbox/Projects/" "PROJECTS:")
                                     ("^~/Dropbox/notes/" "NOTES:")
                                     ("^/usr/local/Cellar/" "HOMEBREW:")))
   :config

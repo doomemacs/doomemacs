@@ -1,6 +1,7 @@
 ;;; defuns-quickrun.el
 
 ;;;; Code building ;;;;;;;;;;;;;;;;;;;;;;
+;;;###autoload
 (defvar narf--build-command '("make %s" . "Makefile"))
 (make-variable-buffer-local 'narf--build-command)
 

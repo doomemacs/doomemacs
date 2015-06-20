@@ -34,7 +34,7 @@
   (require 'dash)
   (require 'f)
 
-  (setq use-package-verbose narf-debug-mode)
+  (defvar use-package-verbose narf-debug-mode)
   ;; (setq use-package-expand-minimally (not narf-debug-mode))
   (require 'use-package)
 
@@ -185,7 +185,11 @@
 
 (use-package popwin :config (popwin-mode 1))
 
-(use-package server :config (unless (server-running-p) (server-start)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(require 'server)
+(unless (server-running-p)
+  (server-start))
 
 (provide 'core)
 ;;; core.el ends here
