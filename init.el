@@ -42,7 +42,8 @@
 
 (defconst narf-debug-mode nil)
 
-(defconst narf-default-theme  (if window-system 'narf-dark 'wombat))
+(defconst narf-default-theme  'narf-dark)
+(defconst narf-term-theme     'wombat)
 (defconst narf-default-font  '(:family "terminus (ttf)" :size 12 :antialias nil))
 (defconst narf-big-font      '(:family "Inconsolata" :size 18 :antialias t))
 

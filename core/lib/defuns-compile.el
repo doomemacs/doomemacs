@@ -6,7 +6,6 @@
   (append (list narf-core-dir narf-contrib-dir)
           (list (concat narf-modules-dir "lib/")
                 (concat narf-core-dir "lib/"))
-          (f-directories narf-contrib-dir)
           (list narf-modules-dir narf-private-dir)))
 
 ;;;###autoload

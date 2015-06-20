@@ -50,7 +50,7 @@ If ARG is nil this function calls `recompile', otherwise it calls
                  (setq-local scroll-margin 0)
                  (erase-buffer)
                  (insert out)
-                 (beginning-of-buffer)
+                 (goto-char (point-min))
                  (read-only-mode 1)
                  (popwin:popup-buffer buf :height (if (> lines 25) 25 (1+ lines))))))))
         (t (quickrun-region beg end))))
