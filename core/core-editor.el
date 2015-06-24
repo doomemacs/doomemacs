@@ -105,43 +105,16 @@
   (defadvice undo-tree-save-history-hook (around undo-tree-save-history-shut-up activate)
     (shut-up! ad-do-it)))
 
-(use-package ace-jump-mode
-  :functions (ace-jump-char-category ace-jump-do)
-  :commands  (ace-jump-line-mode ace-jump-char-mode
-              ace-jump-word-mode ace-jump-two-chars-mode)
-  :init (setq ace-jump-mode-scope 'window
-              ace-jump-mode-gray-background t)
-  :config
-  (defun ace-jump-two-chars-mode (&optional query-char query-char-2)
-    "AceJump two chars mode"
-    (interactive)
-
-    (evil-half-cursor)
-    (setq query-char (or query-char (read-char ">")))
-    (setq query-char-2 (or query-char-2 (read-char (concat ">" (string query-char)))))
-    (if (eq (ace-jump-char-category query-char) 'other)
-        (error "[AceJump] Non-printable character"))
-
-    ;; others : digit , alpha, punc
-    (setq ace-jump-query-char query-char)
-    (setq ace-jump-current-mode 'ace-jump-char-mode)
-    (ace-jump-do (regexp-quote (concat (char-to-string query-char)
-                                       (char-to-string query-char-2))))))
-
-(use-package ace-link
-  :commands (ace-link-info ace-link-help ace-link-compilation ace-link-custom ace-link-org)
-  :init
-  (bind!
-   (:after help-mode :map help-mode-map         :m "go" 'ace-link-help)
-   (:after compile   :map compilation-mode-map  :m "go" 'ace-link-compilation)
-   (:after info      :map Info-mode-map         :m "go" 'ace-link-info)
-   (:after org       :map org-mode-map          :m "go" 'ace-link-org)))
+(use-package avy
+  :commands (avy-goto-char-2 avy-goto-line)
+  :config (setq avy-all-windows nil
+                avy-background t))
 
 (use-package ace-window
   :commands ace-window
   :config (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)
                 aw-scope 'frame
-                aw-background nil))
+                aw-background t))
 
 ;; (use-package emr
 ;;   :commands (emr-initialize emr-show-refactor-menu emr-declare-command)
