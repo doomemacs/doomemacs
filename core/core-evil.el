@@ -143,22 +143,7 @@ See `https://bitbucket.org/lyro/evil/issue/527'"
 
 (use-package evil-snipe
   :diminish evil-snipe-mode
-  :commands (evil-snipe-s evil-snipe-S
-             evil-snipe-x evil-snipe-X
-             evil-snipe-f evil-snipe-F
-             evil-snipe-t evil-snipe-T
-             evil-snipe-repeat evil-snipe-repeat-reverse)
   :init
-  (bind! :m "s" 'evil-snipe-s
-         :m "S" 'evil-snipe-S
-         :m "f" 'evil-snipe-f
-         :m "F" 'evil-snipe-F
-         :m "t" 'evil-snipe-t
-         :m "T" 'evil-snipe-T
-         :o "z" 'evil-snipe-s
-         :o "Z" 'evil-snipe-S
-         :o "x" 'evil-snipe-x
-         :o "X" 'evil-snipe-X)
   (define-key evil-normal-state-map "s" nil)
   (define-key evil-normal-state-map "S" nil)
   :config

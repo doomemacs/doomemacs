@@ -38,7 +38,6 @@
 
   ;; Rewrite evil-complete to use company-dabbrev
   (setq company-dabbrev-code-other-buffers t
-        company-dabbrev-code-buffers       nil
         evil-complete-next-func           'narf/company-evil-complete-next
         evil-complete-previous-func       'narf/company-evil-complete-previous)
 

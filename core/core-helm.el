@@ -23,7 +23,6 @@
         helm-split-window-preferred-function 'narf/helm-split-window)
   :config
   (require 'helm-ag)
-  (require 'helm-grep)
 
   (evil-set-initial-state 'helm-mode 'emacs)
 
@@ -48,6 +47,18 @@
          [escape]     'helm-keyboard-quit)
 
   (advice-add 'helm-display-mode-line :override 'narf*helm-hide-modeline))
+
+(use-package helm-ag
+  :commands (helm-ag
+             helm-ag-mode
+             helm-do-ag
+             helm-do-ag-this-file
+             helm-do-ag-project-root
+             helm-do-ag-buffers
+             helm-ag-project-root
+             helm-ag-pop-stack
+             helm-ag-buffers
+             helm-ag-clear-stack))
 
 (use-package helm-org
   :commands (helm-org-in-buffer-headings
