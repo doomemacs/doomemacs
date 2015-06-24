@@ -79,22 +79,9 @@ See `https://bitbucket.org/lyro/evil/issue/527'"
     ;; Hide keystroke display while isearch is active
     (add-hook! isearch-mode     (setq echo-keystrokes 0))
     (add-hook! isearch-mode-end (setq echo-keystrokes 0.02))
-    (bind! :map isearch-mode-map
-           "C-r" nil
-
-           "C-r %" (λ (narf/isearch-paste-from-register ?%))
-           "C-r #" (λ (narf/isearch-paste-from-register ?#))
-           "C-r /" (λ (narf/isearch-paste-from-register ?/))
-           "C-r :" (λ (narf/isearch-paste-from-register ?:))
-           "C-r ." (λ (narf/isearch-paste-from-register ?.))
-           "C-r -" (λ (narf/isearch-paste-from-register ?-))
-           "C-r _" (λ (narf/isearch-paste-from-register ?_))
-           "C-r =" (λ (narf/isearch-paste-from-register ?=))
-           "C-r +" 'narf/isearch-paste-from-clipboard
-
-           "C-w"   'narf/isearch-delete-word
-           "C-u"   'narf/isearch-delete-line
-           "M-v"   'narf/isearch-paste-from-clipboard)))
+    (bind! :map evil-ex-search-keymap
+           "C-w"   'evil-delete-backward-word
+           "C-u"   'evil-delete-whole-line)))
 
 ;; evil plugins
 (use-package evil-anzu)
