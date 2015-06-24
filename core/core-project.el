@@ -3,9 +3,6 @@
 (use-package ido
   :defines (flx-ido-mode ido-ubiquitous-debug-mode ido-context-switch-command ido-temp-list)
   :functions (ido-to-end)
-  :commands (ido-mode ido-everywhere ido-vertical-mode
-             flx-ido-mode ido-ubiquitous-mode ido-find-file
-             ido-find-file-in-dir)
   :init
   (setq ido-ignore-buffers
         '("\\` " "^\\*ESS\\*" "^\\*Messages\\*" "^\\*Help\\*" "^\\*Buffer"
@@ -23,23 +20,21 @@
   :config
   (add-to-list 'ido-ignore-files "\\`.DS_Store$")
   (add-to-list 'ido-ignore-files "Icon\\?$")
+
+  (ido-mode 1)
+  (ido-everywhere 1)
+  (require 'ido-ubiquitous)
+  (ido-ubiquitous-mode 1)
+
   (add-hook! ido-setup
+    (require 'ido-vertical-mode)
+    (ido-vertical-mode 1)
+    (require 'flx-ido)
+    (flx-ido-mode 1)
     (bind! :map (ido-common-completion-map ido-completion-map ido-file-completion-map)
            "C-n" 'ido-next-match
            "C-p" 'ido-prev-match
            "C-w" 'ido-delete-backward-word-updir))
-
-  (ido-mode 1)
-  (ido-everywhere 1)
-
-  (require 'ido-vertical-mode)
-  (ido-vertical-mode 1)
-
-  (require 'flx-ido)
-  (flx-ido-mode 1)
-
-  (require 'ido-ubiquitous)
-  (ido-ubiquitous-mode 1)
 
   (advice-add 'ido-sort-mtime :override 'narf*ido-sort-mtime)
   (add-hook! (ido-make-file-list ido-make-dir-list) 'narf*ido-sort-mtime)
