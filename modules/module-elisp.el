@@ -8,7 +8,7 @@
   (setq mode-name "Elisp"))
 
 (defun narf-elisp-auto-compile ()
-  (when (narf/is-compilable-p)
+  (when (narf/is-recompilable-p)
     (narf:compile-el)))
 
 (add-hook! emacs-lisp-mode
