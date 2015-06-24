@@ -1,0 +1,12 @@
+# `(progn
+     (setq-local pkgs (s-split "/" (s-chop-prefix (concat (my/project-root) "lib/") (f-no-ext buffer-file-name)) t))
+     (setq-local pkgs-p (eq (length pkgs) 1))
+     (setq-local pkg-module (s-replace " " "::" (s-titleized-words (if pkgs-p (-first-item pkgs) (s-join " " (-butlast pkgs))))))
+
+     (concat "lib/" (f-filename buffer-file-name)))`
+
+module `pkg-module`
+`(when pkgs-p "  VERSION='0.0.1'\n\n")``(concat "  class " (if pkgs-p "<< self" (s-capitalize (-last-item pkgs))))`
+    `%`${0:# Code here}
+  end
+end

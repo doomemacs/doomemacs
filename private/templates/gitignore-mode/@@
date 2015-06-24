@@ -1,0 +1,24 @@
+.DS_Store
+.idea
+*.log
+tmp/
+
+`(let ((type-ignore (yas-choose-value '("(none)" "python" "ruby" "java" "js"))))
+    (s-join "\n"
+       (cond ((s-equals? type-ignore "python")
+              '("*.py[cod]"
+                "*.egg"
+                "build"
+                "htmlcov"))
+             ((s-equals? type-ignore "ruby")
+             '(".ruby-version"
+               ".bundle"
+               "vendor"
+               "Gemfile.lock"
+               "coverage"))
+             ((s-equals? type-ignore "java")
+             '("*.class"
+               "build"))
+             ((s-equals? type-ignore "js")
+             '("*.tern-port"))
+             )))`

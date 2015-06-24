@@ -1,4 +1,4 @@
-;;; `(f-filename buffer-file-name)` --- ${1:description}
+;;; `(f-filename buffer-file-name)`${1: --- ${2:description}}
 
 $0
 

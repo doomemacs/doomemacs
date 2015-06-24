@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# group: file templates
+# --
+# ${1:Document Title}
+
+$0
