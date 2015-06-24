@@ -10,6 +10,7 @@ ede-projects.el
 tramp
 smex-items
 elpa
+private/cache/*
 
 # compiled files
 .*
