@@ -38,9 +38,8 @@
 (depends-on "evil-plugins" :git "https://github.com/tarao/evil-plugins")
 
 ;; Editor --- core/core-editor.el
-(depends-on "ace-jump-mode")
-(depends-on "ace-link")
 (depends-on "ace-window")
+(depends-on "avy")
 (depends-on "emr")
 (depends-on "expand-region")
 (depends-on "goto-last-change")
