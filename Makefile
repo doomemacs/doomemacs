@@ -6,6 +6,7 @@ update: autoloads
 	@git pull
 	@cask install
 	@cask update
+	@emacs -Q --batch -f batch-byte-compile init-load-path.el
 
 clean: clean-extras
 	@rm -f *.elc {core,modules,private,contrib}/*.elc {core,modules}/lib/*.elc
