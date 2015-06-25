@@ -3,7 +3,8 @@
 (use-package php-mode
   :mode "\\.\\(php\\|inc\\)$"
   :init
-  (setq php-template-compatibility nil)
+  (setq php-template-compatibility nil
+        php-extras-eldoc-functions-file (concat narf-temp-dir "php-extras-eldoc-functions"))
   :config
   (require 'php-extras)
   (add-company-backend! php-mode '(php-extras-company))
