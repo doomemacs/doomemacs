@@ -6,7 +6,6 @@
              helm-show-kill-ring
              helm-bookmarks
              helm-wg
-             helm-ag
              helm-alive-p
              helm-attrset)
   :init
@@ -66,7 +65,9 @@
              helm-org-capture-templates))
 
 (use-package helm-files
-  :commands helm-recentf
+  :commands (helm-recentf
+             helm-buffers
+             helm-buffers-list)
   :config
   (defun helm-recentf ()
     "Reconfigured `helm-recentf' to use `helm', instead of `helm-other-buffer'"
@@ -129,7 +130,6 @@
   (require 'projectile))
 
 ;; (use-package helm-c-yasnippet :commands helm-yas-visit-snippet-file)
-(use-package helm-buffers     :commands helm-buffers-list)
 (use-package helm-semantic    :commands helm-semantic-or-imenu)
 (use-package helm-elisp       :commands helm-apropos)
 (use-package helm-command     :commands helm-M-x)

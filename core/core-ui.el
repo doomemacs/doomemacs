@@ -95,9 +95,6 @@
     (remove-hook 'post-command-hook 'narf|nlinum-hl-line)
     (narf|nlinum-unhl-line))
 
-  (add-hook! text-mode 'narf|nlinum-enable)
-  (add-hook! prog-mode 'narf|nlinum-enable)
-  (add-hook! org-mode  'narf|nlinum-disable)
   ;; Preset width nlinum
   (add-hook! nlinum-mode
     (setq nlinum--width (length (number-to-string (count-lines (point-min) (point-max)))))))
