@@ -183,7 +183,6 @@
  ;; Textmate-esque indent shift left/right
  :i "M-["           "C-o m l C-o I DEL C-o ` l"
  :i "M-]"           (λ (evil-shift-right (point-at-bol) (point-at-eol)))
- :i "<backtab>"     "M-["
 
  ;; escape from insert mode (more responsive than using key-chord-define)
  :ir  "j"    'narf:exit-mode-maybe
@@ -201,6 +200,7 @@
    "u"       'winner-undo
    "C-u"     'winner-undo
    "C-r"     'winner-redo
+   "C-h"     'evil-window-left     ; don't accidentally invoke help
 
    "C-w"     'ace-window
    "C-S-w"   (λ (ace-window 4))    ; swap windows
