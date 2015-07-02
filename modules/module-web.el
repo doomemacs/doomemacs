@@ -7,6 +7,11 @@
     (add-hook! css-mode (setenv "jsbeautify_indent_size" "2"))
     (bind! :map css-mode-map :m "gQ" 'web-beautify-css)))
 
+(use-package jade-mode
+  :mode "\\.jade$"
+  :init (add-hook! jade-mode 'narf|enable-tab-width-2)
+  :config (require 'sws-mode))
+
 (use-package web-mode
   :mode (("\\.\\(p\\)?htm\\(l\\)?$"         . web-mode)
          ("\\.tpl\\(\\.php\\)?$"            . web-mode)

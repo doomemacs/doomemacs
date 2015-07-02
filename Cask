@@ -106,6 +106,7 @@
 (depends-on "scss-mode")
 (depends-on "sass-mode")
 (depends-on "sws-mode")
+(depends-on "jade-mode")
 (depends-on "web-mode")
 (depends-on "emmet-mode")
 (depends-on "web-beautify")
