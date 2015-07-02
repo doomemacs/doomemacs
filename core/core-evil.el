@@ -25,7 +25,7 @@
         evil-want-C-u-scroll      t  ; enable C-u for scrolling
         evil-ex-visual-char-range t  ; column range for ex commands
         evil-want-fine-undo       nil
-        evil-want-visual-char-semi-exclusive nil
+        evil-want-visual-char-semi-exclusive t
         evil-ex-search-vim-style-regexp t
         evil-ex-interactive-search-highlight 'selected-window
 
@@ -45,7 +45,7 @@
     "Silence 'Error running timer `evil-ex-hl-do-update-highlight': (error
 \"Invalid use of `\\' in replacement text\") errors.
 
-See `https://bitbucket.org/lyro/evil/issue/527'"
+See https://bitbucket.org/lyro/evil/issue/527"
     (ignore-errors ad-do-it))
 
   ;; modes to map to different default states
