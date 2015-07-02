@@ -22,6 +22,7 @@
   (after! company (add-company-backend! scss-mode (css))))
 
 (use-package rainbow-mode
+  :diminish rainbow-mode
   :defer t
   :init (add-hook! scss-mode 'rainbow-mode))
 
