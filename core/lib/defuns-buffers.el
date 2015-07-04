@@ -78,7 +78,7 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
   "Kill all buried, unreal buffers in current frame. See `narf-unreal-buffers'"
   (interactive)
   (let* ((real-buffers (narf/get-real-buffers))
-         (kill-list (--filter (not (memq it real-buffers)) narf/get-buried-buffers)))
+         (kill-list (--filter (not (memq it real-buffers)) (narf/get-buried-buffers))))
     (message "Cleaned up %s buffers" (length kill-list))
     (mapc 'kill-buffer kill-list)
     (narf:kill-process-buffers)))

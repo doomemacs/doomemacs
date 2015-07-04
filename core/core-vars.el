@@ -5,12 +5,6 @@
   :group 'convenience
   :prefix 'narf-)
 
-(defcustom narf-leader-key "," "The prefix for leader keybindings."
-  :group 'narf :type 'string)
-
-(defcustom narf-localleader-key "\\" "The prefix for localleader keybindings."
-  :group 'narf)
-
 
 ;; Buffers/Files ;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -31,6 +25,7 @@ enable multiple minor modes for the same regexp.")
                               "^\\*eval\\*$"
                               "^\\*Shell Command Output\\*$"
                               "^\\*Async Shell Command\\*$"
+                              "^\\*WoMan-Log\\*$"
                               help-mode
                               image-mode
                               dired-mode
@@ -46,7 +41,7 @@ buffer to display.")
 (defvar narf-ignore-buffers '("*Completions*" "*Compile-Log*" "*inferior-lisp*"
                               "*Fuzzy Completions*" "*Apropos*" "*Help*" "*cvs*"
                               "*Buffer List*" "*Ibuffer*" "*esh command on file*"
-                              "*helm*")
+                              "*helm*" "*WoMan-Log*")
   "List of buffer names to ignore when using `winner-undo', or `winner-redo'")
 
 (defvar narf-cleanup-processes-alist '(("pry" . ruby-mode)
