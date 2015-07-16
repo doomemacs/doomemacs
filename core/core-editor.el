@@ -90,6 +90,7 @@
 (electric-indent-mode -1)
 
 ;; window config undo/redo
+(setq winner-dont-bind-my-keys t)
 (winner-mode 1)
 (add-hook! after-init (setq winner-boring-buffers narf-ignore-buffers))
 
