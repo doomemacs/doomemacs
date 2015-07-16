@@ -85,8 +85,7 @@
         module-regex         ; /^[^\s](meaning)[^\n]*/
         module-ruby          ; <3
         module-sass          ; @include magic;
-        module-sonicpi       ; the funk soul brotha
-        module-swift         ; yay, emoji variabless!
+        module-swift         ; yay, emoji variables!
         module-markdown      ; markdown
         ;; module-rust
         ;; module-r          ; for science!

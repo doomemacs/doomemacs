@@ -140,9 +140,6 @@
 ;; C/C++
 (depends-on "cmake-mode")
 (depends-on "glsl-mode")
-;; Sonic pi
-(depends-on "osc")
-(depends-on "sonic-pi" :git "https://github.com/repl-electric/sonic-pi.el")
 ;; Org
 (depends-on "org-plus-contrib")
 ;;(depends-on "org-opml" :git "https://github.com/edavis/org-opml")
