@@ -70,7 +70,7 @@
 (depends-on "flx-ido")
 (depends-on "ido-ubiquitous")
 (depends-on "ido-vertical-mode")
-(depends-on "neotree" :git "https://github.com/jeffplang/emacs-neotree")
+(depends-on "neotree")
 
 ;; VCS --- core/core-vcs.el
 (depends-on "diff-hl")
