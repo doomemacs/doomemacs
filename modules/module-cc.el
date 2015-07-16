@@ -65,20 +65,18 @@
     (add-hook! c++-mode 'narf|init-c++-C11-highlights)
 
     ;; Fix enum and C++11 lambda indentation
-    (advice-add 'c-lineup-arglist :around 'narf*c-lineup-arglist)
-    ;; (defadvice c-lineup-arglist (around c-lineup-arglist-indent-fix activate)
-    ;;   "Improve indentation of continued C++11 lambda function opened as argument."
-    ;;   (setq ad-return-value
-    ;;         (if (and (equal major-mode 'c++-mode)
-    ;;                  (ignore-errors
-    ;;                    (save-excursion
-    ;;                      (goto-char (c-langelem-pos langelem))
-    ;;                      ;; Detect "[...](" or "[...]{". preceded by "," or "(",
-    ;;                      ;;   and with unclosed brace.
-    ;;                      (looking-at ".*[(,][ \t]*\\[[^]]*\\][ \t]*[({][^}]*$"))))
-    ;;             0                           ; no additional indent
-    ;;           ad-do-it)))
-    )
+    (defadvice c-lineup-arglist (around c-lineup-arglist-indent-fix activate)
+      "Improve indentation of continued C++11 lambda function opened as argument."
+      (setq ad-return-value
+            (if (and (equal major-mode 'c++-mode)
+                     (ignore-errors
+                       (save-excursion
+                         (goto-char (c-langelem-pos langelem))
+                         ;; Detect "[...](" or "[...]{". preceded by "," or "(",
+                         ;;   and with unclosed brace.
+                         (looking-at ".*[(,][ \t]*\\[[^]]*\\][ \t]*[({][^}]*$"))))
+                0                           ; no additional indent
+              ad-do-it))))
 
   (progn ; Obj-C
     (add-to-list 'magic-mode-alist
