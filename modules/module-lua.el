@@ -16,11 +16,10 @@
 (define-minor-mode love-mode
   "Buffer local minor mode for Love2D"
   :init-value nil
-  :lighter " <3"
-  :keymap (make-sparse-keymap)
-  (add-yas-minor-mode! 'love-mode))
-
-(associate! love-mode :files ("main.lua"))
+  :lighter " ♥"
+  :keymap (make-sparse-keymap))
+(add-yas-minor-mode! 'love-mode)
+(associate! love-mode :files ("main.lua") :in (lua-mode))
 (build-for! love-mode "open -a love.app '%s'" "main.lua")
 
 (provide 'module-lua)
