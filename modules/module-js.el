@@ -34,10 +34,10 @@
     (add-company-backend! js2-mode (tern))))
 
 (use-package unityjs-mode
-  :mode "/Assets/*.js$"
+  :mode "/Assets/.*\\.js$"
   :config
-  (add-hook! unityjs-mode 'flycheck-mode)
   (add-hook! unityjs-mode
+    (flycheck-mode 1)
     (narf|enable-tab-width-2)
     (setq js-indent-level 2)))
 

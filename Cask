@@ -152,7 +152,6 @@
 ;; (depends-on "rust-mode")
 ;; (depends-on "d-mode")
 
-
 ;; OTHER
-;;(depends-on "shaderlab-mode" :git "https://bitbucket.org/bbbscarter/emacs-shaderlab-mode")
-;;(depends-on "unityjs-mode" :git "https://github.com/naruse/EmacsUnityScript")
+(depends-on "shaderlab-mode" :git "https://bitbucket.org/bbbscarter/emacs-shaderlab-mode")
+(depends-on "unityjs-mode" :git "https://github.com/naruse/EmacsUnityScript")
