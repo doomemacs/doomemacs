@@ -1,6 +1,7 @@
 ;;; module-eshell.el
 
 (use-package eshell
+  :when IS-WINDOWS
   :defer t
   :init
   (evil-set-initial-state 'eshell-mode 'normal)
