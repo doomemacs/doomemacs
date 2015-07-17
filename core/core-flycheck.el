@@ -19,7 +19,6 @@
               c++-mode
               c-mode) 'flycheck-mode)
   :config
-  ;; TODO: Implement this
   (add-unreal-buffer! "^\\*Flycheck.*\\*$")
 
   (bind! :map flycheck-error-list-mode-map

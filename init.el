@@ -72,8 +72,8 @@
         module-cc            ; c/c++/obj-c madness
         module-csharp        ; unity, mono and xamarin
         module-data          ; dbs 'n data formats
-        module-eshell        ; eshell
-        module-go
+        module-eshell        ; eshell (on windows)
+        module-go            ; a hipster dialect
         module-java          ; the poster child for carpal tunnel syndome
         module-js            ; alert("not java, javascript!")
         module-elisp         ;

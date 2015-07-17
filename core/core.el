@@ -156,7 +156,7 @@
 (require 'recentf)
 (setq recentf-save-file (! (concat narf-temp-dir "recentf"))
       recentf-exclude '("/tmp/" "/ssh:" "\\.?ido\\.last$" "\\.revive$" "/TAGS$"
-                        "/\\.cache/.+" "emacs\\.d/workgroups/.+$" ".emacs.workgroup"
+                        "emacs\\.d/private/cache/.+" "emacs\\.d/workgroups/.+$" "wg-default"
                         "/company-statistics-cache.el$")
       recentf-max-menu-items 0
       recentf-max-saved-items 250

@@ -20,12 +20,14 @@ enable multiple minor modes for the same regexp.")
                               "^\\*Backtrace\\*$"
                               "^\\*Warnings\\*$"
                               "^\\*Compile-Log\\*$"
+                              "^\\*compilation\\*$"
                               "^\\*Ediff.*\\*$"
                               "^\\*helm.*\\*$"
                               "^\\*eval\\*$"
                               "^\\*Shell Command Output\\*$"
                               "^\\*Async Shell Command\\*$"
                               "^\\*WoMan-Log\\*$"
+                              "^\\*Completions\\*$"
                               help-mode
                               image-mode
                               dired-mode
@@ -41,7 +43,7 @@ buffer to display.")
 (defvar narf-ignore-buffers '("*Completions*" "*Compile-Log*" "*inferior-lisp*"
                               "*Fuzzy Completions*" "*Apropos*" "*Help*" "*cvs*"
                               "*Buffer List*" "*Ibuffer*" "*esh command on file*"
-                              "*helm*" "*WoMan-Log*")
+                              "*helm*" "*WoMan-Log*" "*compilation*")
   "List of buffer names to ignore when using `winner-undo', or `winner-redo'")
 
 (defvar narf-cleanup-processes-alist '(("pry" . ruby-mode)

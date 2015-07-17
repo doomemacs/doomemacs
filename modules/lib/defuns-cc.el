@@ -24,20 +24,6 @@
   (define-key c-mode-map (kbd "DEL") nil))
 
 ;;;###autoload
-(defun narf*c-lineup-arglist ()
-  "Improve indentation of continued C++11 lambda function opened as argument."
-  (setq ad-return-value
-        (if (and (equal major-mode 'c++-mode)
-                 (ignore-errors
-                   (save-excursion
-                     (goto-char (c-langelem-pos langelem))
-                     ;; Detect "[...](" or "[...]{". preceded by "," or "(",
-                     ;;   and with unclosed brace.
-                     (looking-at ".*[(,][ \t]*\\[[^]]*\\][ \t]*[({][^}]*$"))))
-            0                           ; no additional indent
-          ad-do-it)))
-
-;;;###autoload
 (defun narf|init-c++-C11-highlights ()
   ;; We could place some regexes into `c-mode-common-hook', but
   ;; note that their evaluation order matters.
