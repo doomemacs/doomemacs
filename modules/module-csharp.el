@@ -7,12 +7,16 @@
 
 (use-package omnisharp
   :after csharp-mode
+  :init (add-hook! csharp-mode 'omnisharp-mode)
   :config
   (setq omnisharp-server-executable-path
-        "~/Dropbox/projects/lib/Omnisharp/server/OmniSharp/bin/Debug/OmniSharp.exe")
+        "~/Dropbox/projects/lib/Omnisharp/server/OmniSharp/bin/Debug/OmniSharp.exe"
+        omnisharp-auto-complete-want-documentation nil)
 
   (bind! :map omnisharp-mode-map
-         :n "gd" 'omnisharp-go-to-definition)
+         :n "gd" 'omnisharp-go-to-definition
+         :n "\\u" 'omnisharp-find-usages
+         :n "\\i" 'omnisharp-find-implementations)
 
   (after! company
     (add-company-backend! csharp-mode (omnisharp))
