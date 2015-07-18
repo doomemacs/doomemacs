@@ -50,19 +50,32 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
     (narf/previous-real-buffer)))
 
 ;;;###autoload
+(defun narf/get-all-buffers ()
+  "Get all buffers across all workgroups. Depends on
+`wg-mess-with-buffer-list'."
+  (wg-buffer-list-emacs))
+
+;;;###autoload
+(defun narf/get-buffers ()
+  "Get all buffers in the current workgroup. Depends on
+`wg-mess-with-buffer-list'."
+  (buffer-list))
+
+;;;###autoload
 (defun narf/get-visible-buffers (&optional buffer-list)
   "Get a list of buffers that are not buried (i.e. visible)"
-  (-remove #'get-buffer-window (or buffer-list (buffer-list))))
+  (-remove #'get-buffer-window (or buffer-list (narf/get-buffers))))
 
 ;;;###autoload
 (defun narf/get-buried-buffers (&optional buffer-list)
   "Get a list of buffers that are buried (i.e. not visible)"
-  (-filter #'get-buffer-window (or buffer-list (buffer-list))))
+  (-filter #'get-buffer-window (or buffer-list (narf/get-buffers))))
 
 ;;;###autoload
 (defun narf/get-matching-buffers (pattern &optional buffer-list)
   "Get a list of buffers that match the pattern"
-  (--filter (string-match-p pattern (buffer-name it)) (or buffer-list (buffer-list))))
+  (--filter (string-match-p pattern (buffer-name it))
+            (or buffer-list (narf/get-buffers))))
 
 ;;;###autoload
 (defun narf/get-real-buffers(&optional buffer-list)
@@ -71,14 +84,16 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
                               (string-match-p it (buffer-name buffer))
                             (eq (buffer-local-value 'major-mode buffer) it))
                           narf-unreal-buffers)))
-            (or buffer-list (buffer-list))))
+            (or buffer-list (narf/get-buffers))))
 
 ;;;###autoload
 (defun narf:kill-unreal-buffers ()
   "Kill all buried, unreal buffers in current frame. See `narf-unreal-buffers'"
   (interactive)
-  (let* ((real-buffers (narf/get-real-buffers))
-         (kill-list (--filter (not (memq it real-buffers)) (narf/get-buried-buffers))))
+  (let* ((all-buffers (narf/get-all-buffers))
+         (real-buffers (narf/get-real-buffers all-buffers))
+         (kill-list (--filter (not (memq it real-buffers))
+                              (narf/get-buried-buffers all-buffers))))
     (message "Cleaned up %s buffers" (length kill-list))
     (mapc 'kill-buffer kill-list)
     (narf:kill-process-buffers)))
@@ -87,7 +102,7 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
 (defun narf:kill-process-buffers ()
   "Kill all buffers that represent running processes and aren't visible."
   (interactive)
-  (let ((buffer-list (buffer-list)))
+  (let ((buffer-list (narf/get-buffers)))
     (dolist (p (process-list))
       (let* ((process-name (process-name p))
              (assoc (assoc process-name narf-cleanup-processes-alist)))
@@ -106,7 +121,7 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
   (mapc (lambda (b)
           (if (string-match-p regexp (buffer-name b))
               (kill-buffer b)))
-        (if buffer-list buffer-list (buffer-list))))
+        (if buffer-list buffer-list (narf/get-buffers))))
 
 ;;;###autoload
 (defun narf/cycle-real-buffers (&optional n)
@@ -135,7 +150,7 @@ left, create a scratch buffer."
                      (eq (buffer-local-value 'major-mode buffer) it))
                    narf-unreal-buffers)))))
 
-;; From spacemacs <https://github.com/syl20bnr/spacemacs/blob/master/spacemacs/funcs.el>
+;; Inspired by spacemacs <https://github.com/syl20bnr/spacemacs/blob/master/spacemacs/funcs.el>
 ;;;###autoload
 (defun narf/next-real-buffer ()
   "Switch to the next buffer and avoid special buffers."
@@ -154,7 +169,7 @@ left, create a scratch buffer."
   (interactive "<!>")
   (narf:kill-buried-buffers)
   (mapc 'kill-buffer
-        (narf/get-buried-buffers (if bang (projectile-project-buffers) (buffer-list)))))
+        (narf/get-buried-buffers (if bang (projectile-project-buffers) (narf/get-buffers)))))
 
 ;;;###autoload (autoload 'narf:kill-all-buffers "defuns-buffers" nil t)
 (evil-define-command narf:kill-all-buffers (&optional bang)
@@ -163,7 +178,7 @@ left, create a scratch buffer."
   (interactive "<!>")
   (if (and (not bang) (projectile-project-p))
       (projectile-kill-buffers)
-    (mapc 'kill-buffer (buffer-list)))
+    (mapc 'kill-buffer (narf/get-buffers)))
   (delete-other-windows)
   (unless (narf/real-buffer-p)
     (narf/previous-real-buffer)))
