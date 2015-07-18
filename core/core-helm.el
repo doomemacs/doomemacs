@@ -1,13 +1,6 @@
 ;;; core-helm.el
 
 (use-package helm
-  :commands (helm
-             helm-etags-select
-             helm-show-kill-ring
-             helm-bookmarks
-             helm-wg
-             helm-alive-p
-             helm-attrset)
   :init
   (defvar helm-global-prompt ">>> ")
   (setq helm-quick-update t
@@ -21,8 +14,6 @@
         helm-split-window-default-side 'other
         helm-split-window-preferred-function 'narf/helm-split-window)
   :config
-  (require 'helm-ag)
-
   (evil-set-initial-state 'helm-mode 'emacs)
 
   (add-popwin-rule! "\\`\\*helm.*?\\*\\'" :regexp t :position bottom :height 15)
