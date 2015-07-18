@@ -17,6 +17,12 @@
     (add-hook! scss-mode (setenv "jsbeautify_indent_size" "2"))
     (bind! :map scss-mode-map :m "gQ" 'web-beautify-css))
 
+  (after! emr
+    (emr-declare-command 'narf/scss-toggle-inline-or-block
+      :title "toggle inline/block"
+      :modes 'scss-mode
+      :predicate (lambda () (not (use-region-p)))))
+
   (after! company (add-company-backend! scss-mode (css))))
 
 (use-package rainbow-mode
