@@ -117,9 +117,9 @@
                 aw-scope 'frame
                 aw-background t))
 
-;; (use-package emr
-;;   :commands (emr-initialize emr-show-refactor-menu emr-declare-command)
-;;   :bind (:map popup-menu-keymap [escape] 'keyboard-quit))
+(use-package emr
+  :commands (emr-initialize emr-show-refactor-menu emr-declare-command)
+  :config (bind! :map popup-menu-keymap [escape] 'keyboard-quit))
 
 (use-package expand-region
   :commands (er/expand-region er/contract-region er/mark-symbol er/mark-word))
