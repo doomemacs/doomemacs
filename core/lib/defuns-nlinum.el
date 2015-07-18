@@ -3,7 +3,7 @@
 ;;;###autoload
 (defun narf/nlinum-toggle ()
   (interactive)
-  (if nlinum-mode
+  (if (bound-and-true-p nlinum-mode)
       (narf|nlinum-disable)
     (narf|nlinum-enable)))
 
