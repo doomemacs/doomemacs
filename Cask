@@ -49,6 +49,7 @@
 (depends-on "smart-forward")
 (depends-on "smartparens")
 (depends-on "smex")
+(depends-on "highlight-indentation" :git "https://github.com/antonj/Highlight-Indentation-for-Emacs")
 
 ;; Completion --- core/core-company.el
 (depends-on "company")
@@ -153,5 +154,5 @@
 ;; (depends-on "d-mode")
 
 ;; OTHER
-(depends-on "shaderlab-mode" :git "https://bitbucket.org/bbbscarter/emacs-shaderlab-mode")
+;; (depends-on "shaderlab-mode" :git "https://bitbucket.org/bbbscarter/emacs-shaderlab-mode")
 (depends-on "unityjs-mode" :git "https://github.com/naruse/EmacsUnityScript")
