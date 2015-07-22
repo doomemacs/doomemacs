@@ -24,7 +24,6 @@
 (define-minor-mode narf-mode "Narf, yoink, poit."
   :global t
   :init-value t
-  :lighter "NARF"
   :keymap (make-sparse-keymap))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
