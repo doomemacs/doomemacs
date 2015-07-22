@@ -20,9 +20,10 @@
 
  shift-select-mode       nil
 
- whitespace-style '(trailing face tabs tab-mark)
+ tabify-regexp "^\t* [ \t]+"
+ whitespace-style '(face trailing tabs tab-mark newline newline-mark)
  whitespace-display-mappings
- '((tab-mark   ?\t   [?| ?\t] [?\\ ?\t])
+ '((tab-mark   ?\t   [?\u2502 ?\t] [?\\ ?\t])
    (newline-mark 10 [36 10]))
 
  truncate-lines                  t      ; do not soft-wrap lines
@@ -88,6 +89,9 @@
 (global-font-lock-mode t)      ; Enable syntax highlighting for older emacs
 (global-auto-revert-mode 1)    ; revert buffers for changed files
 (electric-indent-mode -1)
+
+;; (add-hook! prog-mode 'whitespace-mode)
+;; (add-hook! emacs-lisp-mode 'whitespace-mode)
 
 ;; window config undo/redo
 (setq winner-dont-bind-my-keys t)

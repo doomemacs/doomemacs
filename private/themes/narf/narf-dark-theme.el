@@ -84,8 +84,8 @@
    `(font-lock-doc-face                ((t (:foreground ,comments))))
 
    `(trailing-whitespace               ((t (:background "#884444"))))
-   `(whitespace-tab                    ((t (:foreground "#444444"))))
-   `(whitespace-newline                ((t (:foreground "#444444"))))
+   `(whitespace-tab                    ((t (:foreground ,line-hl))))
+   `(whitespace-newline                ((t (:foreground ,line-hl))))
    `(whitespace-trailing               ((t (:background "#553333"))))
 
    `(highlight-indentation-face                 ((t (:background "#2f3641"))))
