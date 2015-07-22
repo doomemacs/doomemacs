@@ -79,7 +79,7 @@
         module-elisp         ;
         module-lua           ; one-based indices? one-based indices.
         module-lb6           ; LaunchBar 6 development
-        ;; module-org        ; for fearless [organized] leader
+        module-org           ; for fearless [organized] leader
         module-php           ; making php less painful to work with
         module-python        ; beautiful is better than ugly
         module-regex         ; /^[^\s](meaning)[^\n]*/
