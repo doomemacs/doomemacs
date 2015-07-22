@@ -40,10 +40,14 @@
     (add-hook! web-mode (setenv "jsbeautify_indent_size" "4"))
     (bind! :map web-mode-map :m "gQ" 'web-beautify-html))
 
+  (after! nlinum
+    ;; Fix blank line numbers after unfolding
+    (advice-add 'web-mode-fold-or-unfold :after 'nlinum--flush))
+
   (bind! :map web-mode-map
          "M-/" 'web-mode-comment-or-uncomment
 
-         :n  "zf" 'web-mode-fold-or-unfold
+         :n  "za" 'web-mode-fold-or-unfold
          :n  ",t" 'web-mode-element-rename
 
          :nv "]a" 'web-mode-attribute-next
