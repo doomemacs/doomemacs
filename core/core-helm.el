@@ -16,7 +16,7 @@
   :config
   (evil-set-initial-state 'helm-mode 'emacs)
 
-  (add-popwin-rule! "\\`\\*helm.*?\\*\\'" :regexp t :position bottom :height 15)
+  (add-popwin-rule! "^\\*[Hh]elm.*?\\*\\'" :regexp t :position bottom :height 15)
   (add-unreal-buffer! "^\\*[Hh]elm.*\\*$")
   (after! winner
     ;; Tell winner-mode to ignore helm buffers
@@ -25,10 +25,11 @@
                        "*helm imenu*"
                        "*helm company*"
                        "*helm buffers*"
-                       ;; "*helm tags*"
+                       "*helm "
+                       "*Helm Css SCSS*"
                        "*helm-ag*"
                        "*Helm Swoop*"))
-      (push bufname winner-boring-buffers)))
+      (push bufname narf-ignore-buffers)))
 
   (bind! :map helm-map
          "C-w"        'evil-delete-backward-word
@@ -36,6 +37,7 @@
          "C-r"        'evil-ex-paste-from-register ; Evil registers in helm! Glorious!
          [escape]     'helm-keyboard-quit)
 
+  ;; Hide mode-line in helm windows
   (advice-add 'helm-display-mode-line :override 'narf*helm-hide-modeline))
 
 (use-package helm-ag
@@ -71,7 +73,10 @@
 (use-package helm-css-scss ; https://github.com/ShingoFukuyama/helm-css-scss
   :commands (helm-css-scss
              helm-css-scss-multi
-             helm-css-scss-insert-close-comment))
+             helm-css-scss-insert-close-comment)
+  :config
+  (setq helm-css-scss-split-direction 'split-window-vertically
+        helm-css-scss-split-with-multiple-windows t))
 
 (use-package helm-swoop    ; https://github.com/ShingoFukuyama/helm-swoop
   :defines  (helm-swoop-last-prefix-number)
@@ -121,10 +126,10 @@
   (require 'projectile))
 
 ;; (use-package helm-c-yasnippet :commands helm-yas-visit-snippet-file)
-(use-package helm-semantic    :commands helm-semantic-or-imenu)
-(use-package helm-elisp       :commands helm-apropos)
-(use-package helm-command     :commands helm-M-x)
-(use-package helm-company     :defer t)
+(use-package helm-semantic :commands helm-semantic-or-imenu)
+(use-package helm-elisp    :commands helm-apropos)
+(use-package helm-command  :commands helm-M-x)
+(use-package helm-company  :defer t)
 
 (provide 'core-helm)
 ;;; core-helm.el ends here
