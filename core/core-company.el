@@ -4,7 +4,7 @@
 (eval-when-compile (require 'core))
 
 (use-package company
-  :diminish (company-mode . "=")
+  :diminish company-mode
   :commands global-company-mode
   :init
   (after! abbrev (diminish 'abbrev-mode "A"))
