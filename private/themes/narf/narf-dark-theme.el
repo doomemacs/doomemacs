@@ -88,6 +88,9 @@
    `(whitespace-newline                ((t (:foreground "#444444"))))
    `(whitespace-trailing               ((t (:background "#553333"))))
 
+   `(highlight-indentation-face                 ((t (:background "#2f3641"))))
+   `(highlight-indentation-current-column-face  ((t (:background ,gutter-light))))
+
    `(git-gutter+-modified              ((t (:foreground ,git-modified :background nil))))
    `(git-gutter+-added                 ((t (:foreground ,git-added :background nil))))
    `(git-gutter+-deleted               ((t (:foreground ,git-deleted :background nil))))
