@@ -59,6 +59,7 @@
 
 (use-package emmet-mode
   :defer t
+  :diminish emmet-mode
   :init (add-hook! (scss-mode web-mode html-mode haml-mode nxml-mode) 'emmet-mode)
   :config
   (setq emmet-move-cursor-between-quotes t)
