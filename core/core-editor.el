@@ -142,7 +142,13 @@
 
 (use-package hideshow
   :commands (hs-minor-mode hs-toggle-hiding hs-already-hidden-p)
-  :diminish hs-minor-mode)
+  :diminish hs-minor-mode
+  :init
+  (after! evil
+    (defun narf-load-hs-minor-mode ()
+      (advice-remove 'evil-toggle-fold 'narf-load-hs-minor-mode)
+      (hs-minor-mode 1))
+    (advice-add 'evil-toggle-fold :before 'narf-load-hs-minor-mode)))
 
 (use-package rainbow-delimiters
   :commands rainbow-delimiters-mode
