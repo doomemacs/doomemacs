@@ -171,9 +171,11 @@
   (setq blink-matching-paren t
         sp-autowrap-region nil          ; let evil-surround handle this
         sp-highlight-pair-overlay nil
+        sp-autoescape-string-quote nil
         sp-show-pair-delay 0)
 
   (require 'smartparens-config)
+  (electric-pair-mode 1) ;; fixes skip quotes issue (for now)
 
   ;; Handle newlines + spaces
   (sp-pair "{" "}"
