@@ -75,13 +75,14 @@ whitespace as possible, or just one char if that's not possible."
         (t (backward-delete-char-untabify 1))))
 
 ;;;###autoload
-(defun narf/dumb-indent ()
+(defun narf/dumb-indent (&optional smart)
   "Inserts a tab character (or spaces x tab-width). Checks if the
 auto-complete window is open."
   (interactive)
-  (if indent-tabs-mode
-      (insert "\t")
-    (let* ((movement (% (current-column) tab-width))
+  (if (or (and smart (looking-back "^[\s\t]*"))
+          indent-tabs-mode)
+	  (insert "\t")
+	(let* ((movement (% (current-column) tab-width))
            (spaces (if (zerop movement) tab-width (- tab-width movement))))
       (insert (s-repeat spaces " ")))))
 
