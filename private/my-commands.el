@@ -24,7 +24,7 @@
 (exmap "m[sg]"           'popwin:messages)
 (exmap "ma[ke]"          'narf:build)
 (exmap "mv"              'narf:file-move)
-(exmap "n[otes]"         'narf:org-search-files-or-headers)
+;; (exmap "n[otes]"         'narf:org-search-files-or-headers)
 (exmap "na[rrow]"        'narf:narrow)  ; Narrow buffer to selection
 (exmap "proj[ect]"       'helm-projectile-switch-project)
 (exmap "rec[ent]"        'narf:helm-recentf)
@@ -33,7 +33,7 @@
 (exmap "rm"              'narf:file-delete)          ; rm[!]
 (exmap "settr[im]"       'narf:toggle-delete-trailing-whitespace)
 (exmap "snip[pets]"      'narf:yas-snippets)         ; snip[!]
-(exmap "sw[oop]"         'narf:helm-swoop)
+(exmap "fi[nd]"          'narf:helm-swoop)
 (exmap "t"               'narf:tmux-run)
 (exmap "tcd"             'narf:tmux-chdir)
 (exmap "tsnip[pets]"     'narf:yas-file-templates)   ; temp[!]
