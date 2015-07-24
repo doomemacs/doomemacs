@@ -103,8 +103,8 @@
     (narf|nlinum-unhl-line))
 
   ;; Preset width nlinum
-  (add-hook! (text-mode prog-mode) 'narf|nlinum-enable)
-  ;; (add-hook! org-mode 'narf|nlinum-enable)
+  (add-hook! (text-mode prog-mode scss-mode web-mode) 'narf|nlinum-enable)
+  (add-hook! org-mode 'narf|nlinum-disable)
   (add-hook! nlinum-mode
     (setq nlinum--width (length (number-to-string (count-lines (point-min) (point-max)))))))
 
