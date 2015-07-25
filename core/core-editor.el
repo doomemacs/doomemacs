@@ -63,18 +63,16 @@
 (associate! makefile-gmake-mode :match "/Makefile$")
 (associate! nxml-mode           :match "\\.plist$")
 
-(add-hook! help-mode       'visual-line-mode)
-(add-hook! python-mode     'electric-indent-local-mode)
-(add-hook! makefile-mode   'narf|enable-tabs) ; Use normal tabs in makefiles
-(add-hook! before-save     'delete-trailing-whitespace)
-
-(add-hook! eldoc-mode (diminish 'eldoc-mode " ?"))
+(add-hook! help-mode     'visual-line-mode)
+(add-hook! python-mode   'electric-indent-local-mode)
+(add-hook! makefile-mode 'narf|enable-tabs) ; Use normal tabs in makefiles
+(add-hook! before-save   'delete-trailing-whitespace)
+(add-hook! eldoc-mode    (diminish 'eldoc-mode " ?"))
 
 ;; Line wrapping
 (add-hook! text-mode 'narf|enable-hard-wrap)
 (add-hook! prog-mode 'narf|enable-comment-hard-wrap)
 (add-hook! auto-fill-mode (diminish 'auto-fill-function))
-
 ;; If file is oversized...
 (add-hook! find-file
   (when (> (buffer-size) (* 1024 1024))
@@ -175,7 +173,6 @@
         sp-show-pair-delay 0)
 
   (require 'smartparens-config)
-  (electric-pair-mode 1) ;; fixes skip quotes issue (for now)
 
   ;; Handle newlines + spaces
   (sp-pair "{" "}"
@@ -184,10 +181,14 @@
   (sp-pair "(" ")"
            :post-handlers '(("||\n[i]" "RET") ("| " " "))
            :unless '(sp-point-before-word-p sp-point-before-same-p))
+
   ;; Auto-close more conservatively
   (sp-pair "[" nil  :unless '(sp-point-before-word-p sp-point-before-same-p))
   (sp-pair "'" nil  :unless '(sp-point-after-word-p sp-point-before-word-p sp-point-before-same-p))
   (sp-pair "\"" nil :unless '(sp-point-after-word-p sp-point-before-word-p sp-point-before-same-p))
+  (sp-local-pair 'markdown-mode "```" "```" :post-handlers '(("||\n[i]" "RET")))
+  (sp-with-modes '(enh-ruby-mode python-mode shell-script-mode markdown-mode org-mode)
+    (sp-local-pair "`" nil :unless '(sp-point-after-word-p sp-point-before-word-p sp-point-before-same-p)))
   (sp-with-modes '(json-mode js2-mode ruby-mode enh-ruby-mode python-mode)
     (sp-local-pair "[" nil :post-handlers '(("||\n[i]" "RET"))))
   (sp-with-modes '(c-mode c++-mode objc-mode java-mode scss-mode css-mode php-mode)
