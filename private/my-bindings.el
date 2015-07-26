@@ -65,13 +65,13 @@
    :n "a"   'helm-projectile-find-other-file
    :n "E"   'narf:ido-find-file-in-emacsd
    :n "h"   'helm-apropos
-   :n "n"   'narf/ido-find-org-file
-   :n "N"   'narf:org-search-files-or-headers
+   ;; :n "n"   'narf/ido-find-org-file
+   ;; :n "N"   'narf:org-search-files-or-headers
    :n "m"   'narf/ido-recentf
    :n "M"   'helm-projectile-recentf  ; recent PROJECT files
    :n "p"   'helm-projectile-switch-project
-   :n "r"   'emr-show-refactor-menu
    :v "="   'align-regexp
+   :nv "r"  'emr-show-refactor-menu
 
    :n "qq"  'evil-save-and-quit
    :n "QQ"  'narf/kill-all-buffers-do-not-remember
@@ -201,6 +201,9 @@
    "C-u"     'winner-undo
    "C-r"     'winner-redo
    "C-h"     'evil-window-left     ; don't accidentally invoke help
+   "C-j"     'evil-window-down     ; don't accidentally invoke help
+   "C-k"     'evil-window-up       ; don't accidentally invoke help
+   "C-l"     'evil-window-right    ; don't accidentally invoke help
 
    "C-w"     'ace-window
    "C-S-w"   (λ (ace-window 4))    ; swap windows
