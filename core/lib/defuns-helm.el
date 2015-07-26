@@ -18,7 +18,7 @@
   (setq header-line-format nil))
 
 ;;;###autoload
-(defun narf/helm-split-window (window)
+(defun narf/helm-split-window (&optional window)
   "Minimalistic split-fn; leaves popwin to handle helm buffers."
   (if (one-window-p t)
       (let ((helm-full-frame t))
@@ -107,9 +107,7 @@
 (evil-define-command narf:helm-swoop (&optional search bang)
   :repeat nil
   (interactive "<a><!>")
-  (if (eq major-mode 'scss-mode)
-      (if bang (helm-css-scss-multi search) (helm-css-scss search))
-    (if bang (helm-multi-swoop-all search) (helm-swoop :$query search))))
+  (if bang (helm-multi-swoop-all search) (helm-swoop :$query search)))
 
 (provide 'defuns-helm)
 ;;; defuns-helm.el ends here
