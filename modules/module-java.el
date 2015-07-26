@@ -37,7 +37,7 @@
 
 (use-package groovy-mode
   :functions (is-groovy-mode)
-  :mode "\\.gradle$")
+  :mode ("\\.gradle$" "\\.gvy$" "\\.groovy$"))
 
 (provide 'module-java)
 ;;; module-java.el ends here
