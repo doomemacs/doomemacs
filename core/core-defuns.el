@@ -104,11 +104,11 @@ Examples:
 
 (after! evil
   ;; Register keywords for proper indentation (see `bind!')
-  (put ':prefix 'lisp-indent-function 'defun)
-  (put ':map 'lisp-indent-function 'defun)
-  (put ':after 'lisp-indent-function 'defun)
-  (put ':when 'lisp-indent-function 'defun)
-  (put ':unless 'lisp-indent-function 'defun)
+  (put ':prefix  'lisp-indent-function 'defun)
+  (put ':map     'lisp-indent-function 'defun)
+  (put ':after   'lisp-indent-function 'defun)
+  (put ':when    'lisp-indent-function 'defun)
+  (put ':unless  'lisp-indent-function 'defun)
 
   (defmacro bind! (&rest rest)
     (let ((i 0)
@@ -204,7 +204,8 @@ Examples:
   (turn-on-auto-fill))
 
 (defun narf|enable-tab-width-2 ()
-  (setq tab-width 2 evil-shift-width 2))
+  (setq tab-width 2 evil-shift-width 2)
+  (highlight-indentation-set-offset 2))
 
 (defun narf|enable-tab-width-4 ()
   (setq tab-width 4 evil-shift-width 4))

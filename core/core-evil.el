@@ -63,7 +63,6 @@ See https://bitbucket.org/lyro/evil/issue/527"
     (defadvice evil-force-normal-state (before evil-esc-quit activate)
       (ignore-errors
         (popwin:close-popup-window)                 ; close popups, if any
-        (evil-search-highlight-persist-remove-all)  ; turn off highlights
         (evil-ex-nohighlight)
         ;; Exit minibuffer if alive
         (if (minibuffer-window-active-p (minibuffer-window))
@@ -100,7 +99,7 @@ See https://bitbucket.org/lyro/evil/issue/527"
 (use-package evil-exchange
   :commands evil-exchange
   :config
-  (advice-add 'evil-force-normal :after 'narf*evil-exchange-off))
+  (advice-add 'evil-force-normal-state :after 'narf*evil-exchange-off))
 
 (use-package evil-iedit-state
   :functions (iedit-current-occurrence-string iedit-restrict-region)
@@ -139,7 +138,9 @@ See https://bitbucket.org/lyro/evil/issue/527"
              evil-numbers/dec-at-pt))
 
 (use-package evil-search-highlight-persist
-  :config (global-evil-search-highlight-persist t))
+  :config
+  (global-evil-search-highlight-persist t)
+  (advice-add 'evil-force-normal-state :after 'evil-search-highlight-persist-remove-all))
 
 (use-package evil-snipe
   :diminish evil-snipe-mode

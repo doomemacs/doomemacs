@@ -15,20 +15,7 @@
 `auto-mode-alist'. All elements of this alist are checked, meaning you can
 enable multiple minor modes for the same regexp.")
 
-(defvar narf-unreal-buffers '("^ \\*"
-                              "^\\*scratch\\*"
-                              "^\\*Backtrace\\*$"
-                              "^\\*Warnings\\*$"
-                              "^\\*Compile-Log\\*$"
-                              "^\\*compilation\\*$"
-                              "^\\*Ediff.*\\*$"
-                              "^\\*helm.*\\*$"
-                              "^\\*eval\\*$"
-                              "^\\*Shell Command Output\\*$"
-                              "^\\*Async Shell Command\\*$"
-                              "^\\*WoMan-Log\\*$"
-                              "^\\*Completions\\*$"
-                              help-mode
+(defvar narf-unreal-buffers '("^ ?\\*.+\\*"
                               image-mode
                               dired-mode
                               reb-mode
@@ -43,7 +30,8 @@ buffer to display.")
 (defvar narf-ignore-buffers '("*Completions*" "*Compile-Log*" "*inferior-lisp*"
                               "*Fuzzy Completions*" "*Apropos*" "*Help*" "*cvs*"
                               "*Buffer List*" "*Ibuffer*" "*esh command on file*"
-                              "*helm*" "*WoMan-Log*" "*compilation*")
+                              "*helm*" "*WoMan-Log*" "*compilation*" "*use-package*"
+                              "*quickrun*")
   "List of buffer names to ignore when using `winner-undo', or `winner-redo'")
 
 (defvar narf-cleanup-processes-alist '(("pry" . ruby-mode)
