@@ -33,10 +33,10 @@
   (progn ; C/C++ Settings
     (when IS-MAC
       (after! flycheck
-        (setq flycheck-clang-language-standard "c++11"
-              flycheck-clang-standard-library  "libc++"
-              flycheck-c/c++-clang-executable  "clang++"
-              flycheck-clang-include-path      '("/usr/local/include"))))
+        (setq-default flycheck-clang-language-standard "c++11"
+                      flycheck-clang-standard-library  "libc++"
+                      flycheck-c/c++-clang-executable  "clang++"
+                      flycheck-clang-include-path      '("/usr/local/include"))))
 
     (after! company
       ;; TODO Clang is *really* slow in larger projects, maybe replace it with
