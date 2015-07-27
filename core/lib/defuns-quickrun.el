@@ -22,7 +22,7 @@ If ARG is nil this function calls `recompile', otherwise it calls
   (let ((build-file (cdr narf--build-command))
         (build-cmd (car narf--build-command)))
     (if (narf/project-has-files build-file)
-        (compile (format "cd '%s' && %s" build-file (format build-cmd (or arg ""))))
+        (compile (format "cd '%s' && %s" (narf/project-root) (format build-cmd (or arg ""))))
       (error "Could not find Makefile"))))
 
 ;;;; Code running ;;;;;;;;;;;;;;;;;;;;;;
