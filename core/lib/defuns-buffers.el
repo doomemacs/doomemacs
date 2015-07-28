@@ -68,7 +68,7 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
 ;;;###autoload
 (defun narf/get-buried-buffers (&optional buffer-list)
   "Get a list of buffers that are buried (i.e. not visible)"
-  (-filter #'get-buffer-window (or buffer-list (narf/get-buffers))))
+  (--filter (not (get-buffer-window it)) (or buffer-list (narf/get-buffers))))
 
 ;;;###autoload
 (defun narf/get-matching-buffers (pattern &optional buffer-list)
@@ -78,7 +78,7 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
 
 ;;;###autoload
 (defun narf/get-real-buffers (&optional buffer-list)
-  (-filter 'narf/real-buffer-p (or buffer-list (narf/get-buffers))))
+  (-filter #'narf/real-buffer-p (or buffer-list (narf/get-buffers))))
 
 ;;;###autoload
 (defun narf:kill-unreal-buffers ()
@@ -167,9 +167,9 @@ left, create a scratch buffer."
 (evil-define-command narf:kill-buried-buffers (&optional bang)
   :repeat nil
   (interactive "<!>")
-  (narf:kill-buried-buffers)
-  (mapc 'kill-buffer
-        (narf/get-buried-buffers (if bang (projectile-project-buffers) (narf/get-buffers)))))
+  (let ((buffers (narf/get-buried-buffers (if bang (projectile-project-buffers) (narf/get-buffers)))))
+    (message "Cleaned up %s buffers" (length buffers))
+    (mapc 'kill-buffer buffers)))
 
 ;;;###autoload (autoload 'narf:kill-all-buffers "defuns-buffers" nil t)
 (evil-define-command narf:kill-all-buffers (&optional bang)
