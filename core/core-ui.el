@@ -7,14 +7,10 @@
   (scroll-bar-mode -1)        ; no scrollbar
   (tool-bar-mode -1)          ; no toolbar
   (menu-bar-mode -1)          ; no menubar
-
   (set-frame-parameter nil 'fullscreen 'fullboth)
-
   (fringe-mode '(2 . 8))
-  ;; more informative window title
   (setq frame-title-format '(buffer-file-name "%f" ("%b"))))
 
-;; theme and GUI elements are loaded in init.el early
 (setq show-paren-delay 0)
 
 (global-hl-line-mode  1)    ; do highlight line
@@ -24,11 +20,12 @@
 (size-indication-mode 1)    ; do show file size
 (tooltip-mode        -1)    ; don't show tooltips
 
-;; Multiple cursors across buffers cause a strange redraw delay for
-;; some things, like auto-complete or evil-mode's cursor color
-;; switching.
 (setq-default
+ ;; Multiple cursors across buffers cause a strange redraw delay for
+ ;; some things, like auto-complete or evil-mode's cursor color
+ ;; switching.
  cursor-in-non-selected-windows  nil
+
  visible-bell                    nil    ; silence of the bells
  use-dialog-box                  nil    ; avoid GUI
  redisplay-dont-pause            t
@@ -40,6 +37,8 @@
   (defadvice save-buffers-kill-emacs (around no-query-kill-emacs activate)
     "Prevent annoying \"Active processes exist\" query when you quit Emacs."
     (flet ((process-list ())) ad-do-it)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package highlight-indentation
   :diminish highlight-indentation-mode
@@ -112,27 +111,22 @@
   :init (setq-default
          sml/no-confirm-load-theme t
          sml/mode-width            'full
-         sml/extra-filler          -7
+         sml/extra-filler          -6
          sml/show-remote           nil
          sml/encoding-format       nil
          sml/modified-char         "*"
          sml/numbers-separator     "/"
-         sml/line-number-format    "%3l"
-         sml/col-number-format     "%2c"
-         sml/pre-modes-separator       " : "
+         sml/line-number-format    "%l"
+         sml/col-number-format     "%c"
+         sml/position-percentage-format "%P"
+         sml/pre-modes-separator       " ["
          sml/pre-minor-modes-separator " "
-         sml/pos-minor-modes-separator ": "
+         sml/pos-minor-modes-separator "] "
          sml/replacer-regexp-list '(("^~/.emacs.d/" "EMACS.D:")
                                     ("^~/Dropbox/Projects/" "PROJECTS:")
                                     ("^~/Dropbox/notes/" "NOTES:")
                                     ("^/usr/local/Cellar/" "HOMEBREW:")))
   :config
-  ;; Hide evil state indicator
-  (after! evil (setq evil-mode-line-format nil))
-
-  (sml/setup)
-  (sml/apply-theme 'respectful)
-
   ;; Hack modeline to be more vim-like, and right-aligned
   (defun sml/generate-minor-modes ()
     (if sml/simplified
@@ -171,20 +165,22 @@
               (propertize sml/pos-minor-modes-separator 'face
                           'font-lock-comment-delimiter-face)))))
 
-  ;; Remove extra spaces in format lists
-  (pop mode-line-modes)
-  (nbutlast mode-line-modes)
-
-  ;; Remove spacing in mode-line position so we can put it elsewhere
-  (setq mode-line-position
-        '((sml/position-percentage-format
-           (-3 (:propertize (:eval sml/position-percentage-format)
-                            face sml/position-percentage help-echo "Buffer Relative Position\nmouse-1: Display Line and Column Mode Menu")))))
-
-  (after! anzu ; Add small gap for anzu
+  ;; Hide evil state indicator
+  (after! evil (setq evil-mode-line-format nil))
+  ;; Add small gap for anzu display
+  (after! anzu
     (defun narf--anzu-update-mode-line (here total)
       (concat (anzu--update-mode-line-default here total) " "))
     (setq anzu-mode-line-update-function 'narf--anzu-update-mode-line))
+  (sml/setup)
+  (sml/apply-theme 'respectful)
+  ;; Remove extra spaces in format lists
+  (pop mode-line-modes)
+  (nbutlast mode-line-modes)
+  ;; Remove spacing in mode-line position so we can put it elsewhere
+  (setq mode-line-position
+        '(":" (sml/position-percentage-format
+               (-3 (:propertize (:eval sml/position-percentage-format) face sml/position-percentage)))))
 
   ;; Rearrange and cleanup
   (setq-default mode-line-format
@@ -200,7 +196,7 @@
                   mode-line-front-space
                   mode-line-end-spaces
                   " "
-                  ":" mode-line-position)))
+                  mode-line-position)))
 
 (provide 'core-ui)
 ;;; core-ui.el ends here
