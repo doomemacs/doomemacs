@@ -25,7 +25,7 @@
     (setq mode-name "JS2")))
 
 (use-package tern
-  :diminish (tern-mode . "tern")
+  :diminish tern-mode
   :commands tern-mode
   :init (add-hook! js2-mode 'tern-mode)
   :config

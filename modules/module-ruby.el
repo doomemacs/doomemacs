@@ -32,6 +32,10 @@
     :init (add-hook! enh-ruby-mode 'emr-initialize)
     :config
     (after! emr
+      (emr-declare-command 'ruby-toggle-block
+                           :title "toggle block"
+                           :modes 'enh-ruby-mode
+                           :predicate (lambda () (not (use-region-p))))
       (emr-declare-command 'ruby-refactor-extract-to-method
                            :title "extract method"
                            :modes 'enh-ruby-mode
