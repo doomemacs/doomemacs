@@ -69,6 +69,14 @@
 (add-hook! before-save   'delete-trailing-whitespace)
 (add-hook! eldoc-mode    (diminish 'eldoc-mode " ?"))
 
+(defadvice delete-trailing-whitespace (around delete-trailing-whitespace-ignore-line activate)
+  "Don't delete trailing whitespace on current line, if in insert mode."
+  (let ((spaces (current-column))
+        (first-col (1+ (save-excursion (evil-first-non-blank) (current-column)))))
+    ad-do-it
+    (when (= spaces first-col)
+      (insert (make-string (abs spaces) ? )))))
+
 ;; Line wrapping
 (add-hook! text-mode 'narf|enable-hard-wrap)
 (add-hook! prog-mode 'narf|enable-comment-hard-wrap)
