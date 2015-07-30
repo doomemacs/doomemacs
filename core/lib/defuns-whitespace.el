@@ -130,7 +130,9 @@ spaces on either side of the point if so. Resorts to
                 (insert "* ")
                 (indent-according-to-mode))
                (t (indent-new-comment-line))))
-        (t (newline-and-indent))))
+        (t
+         (newline nil t)
+         (indent-according-to-mode))))
 
 ;;;###autoload (autoload 'narf:whitespace-retab "defuns-whitespace" nil t)
 (evil-define-operator narf:whitespace-retab (beg end)
