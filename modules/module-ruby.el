@@ -3,59 +3,57 @@
 ;; Silence the byte-compiler
 (eval-when-compile (require 'defuns-quickrun))
 
-(use-package enh-ruby-mode
-  :mode (("\\.rb$"        . enh-ruby-mode)
-         ("\\.ru$"        . enh-ruby-mode)
-         ("\\.rake$"      . enh-ruby-mode)
-         ("\\.gemspec$"   . enh-ruby-mode)
-         ("\\.?pryrc$"    . enh-ruby-mode)
-         ("/Gemfile$"     . enh-ruby-mode)
-         ("/Capfile$"     . enh-ruby-mode)
-         ("/Vagrantfile$" . enh-ruby-mode)
-         ("/Rakefile$"    . enh-ruby-mode))
+(use-package ruby-mode
+  :mode (("\\.rb$"        . ruby-mode)
+         ("\\.ru$"        . ruby-mode)
+         ("\\.rake$"      . ruby-mode)
+         ("\\.gemspec$"   . ruby-mode)
+         ("\\.?pryrc$"    . ruby-mode)
+         ("/Gemfile$"     . ruby-mode)
+         ("/Capfile$"     . ruby-mode)
+         ("/Vagrantfile$" . ruby-mode)
+         ("/Rakefile$"    . ruby-mode))
   :interpreter "ruby"
   :init
-  (add-hook! enh-ruby-mode 'narf|enable-tab-width-2)
-  (build-for! enh-ruby-mode "rake %s" "Rakefile")
+  (add-hook! ruby-mode 'narf|enable-tab-width-2)
+  (build-for! ruby-mode "rake %s" "Rakefile")
   :config
 	;;; Formatting
   (setq ruby-indent-level      2
-        ruby-deep-indent-paren t
-        enh-ruby-check-syntax  nil)
+        ruby-deep-indent-paren t)
 
   (associate! text-mode :match "/\\.rspec$")
 
   ;; Don't interfere with my custom RET behavior
-  (define-key enh-ruby-mode-map [?\n] nil)
+  (define-key ruby-mode-map [?\n] nil)
 
   (use-package ruby-refactor
-    :init (add-hook! enh-ruby-mode 'emr-initialize)
+    :init (add-hook! ruby-mode 'emr-initialize)
     :config
     (after! emr
       (emr-declare-command 'ruby-toggle-block
                            :title "toggle block"
-                           :modes 'enh-ruby-mode
+                           :modes 'ruby-mode
                            :predicate (lambda () (not (use-region-p))))
       (emr-declare-command 'ruby-refactor-extract-to-method
                            :title "extract method"
-                           :modes 'enh-ruby-mode
+                           :modes 'ruby-mode
                            :predicate (lambda () (use-region-p)))
       (emr-declare-command 'ruby-refactor-extract-local-variable
                            :title "extract local variable"
-                           :modes 'enh-ruby-mode
+                           :modes 'ruby-mode
                            :predicate (lambda () (use-region-p)))
       (emr-declare-command 'ruby-refactor-extract-constant
                            :title "extract constant"
-                           :modes 'enh-ruby-mode
+                           :modes 'ruby-mode
                            :predicate (lambda () (use-region-p)))
       (emr-declare-command 'ruby-refactor-add-parameter
                            :title "add parameter"
-                           :modes 'enh-ruby-mode)
+                           :modes 'ruby-mode)
       (emr-declare-command 'ruby-refactor-extract-to-let
                            :title "extract to let"
-                           :modes 'enh-ruby-mode
+                           :modes 'ruby-mode
                            :predicate (lambda () (use-region-p)))))
-
 
   ;; Rakefiles ;;;;;;;;;;;;;;;;;;;;;;;;;;;
   (define-minor-mode rake-mode
@@ -100,20 +98,20 @@
   (use-package inf-ruby
     :commands (inf-ruby inf-ruby-console-auto)
     :config
-    (evil-set-initial-state 'inf-enh-ruby-mode 'insert)
+    (evil-set-initial-state 'inf-ruby-mode 'insert)
     (after! company
       (require 'company-inf-ruby)
-      (add-company-backend! inf-enh-ruby-mode (inf-ruby))))
+      (add-company-backend! inf-ruby-mode (inf-ruby))))
 
   (use-package robe
     :functions (robe-mode robe-start ruby-load-file)
     :config
     (add-hook! after-save 'narf|ruby-load-file)
-    (add-hook! enh-ruby-mode 'narf|enable-robe-maybe)
+    (add-hook! ruby-mode 'narf|enable-robe-maybe)
 
     (after! company
       (require 'company-robe)
-      (add-company-backend! enh-ruby-mode (robe)))))
+      (add-company-backend! ruby-mode (robe)))))
 
 (provide 'module-ruby)
 ;;; module-ruby.el ends here
