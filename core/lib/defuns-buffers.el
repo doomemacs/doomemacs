@@ -14,6 +14,7 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
 
 ;;;###autoload
 (defun narf:widen ()
+  "Undo narrowing (see `narf:narrow')"
   (interactive)
   (when (buffer-narrowed-p)
     (widen)))
@@ -34,7 +35,7 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
     (set-buffer-modified-p modified)))
 
 
-;; Killing Life and Death ;;;;;;;;;;;;;;
+;; Buffer Life and Death ;;;;;;;;;;;;;;;
 
 ;;;###autoload
 (defun narf:kill-real-buffer ()
@@ -112,10 +113,13 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
 ;;;###autoload
 (defun narf:kill-matching-buffers (regexp &optional buffer-list)
   (interactive)
-  (mapc (lambda (b)
-          (if (string-match-p regexp (buffer-name b))
-              (kill-buffer b)))
-        (if buffer-list buffer-list (narf/get-buffers))))
+  (let ((i 0))
+    (mapc (lambda (b)
+            (when (string-match-p regexp (buffer-name b))
+              (kill-buffer b)
+              (setq i (1+ i))))
+          (if buffer-list buffer-list (narf/get-buffers)))
+    (message "Killed %s matches" i)))
 
 ;;;###autoload
 (defun narf/cycle-real-buffers (&optional n scratch-default)
@@ -132,8 +136,7 @@ left, create a scratch buffer."
       (let ((current-buffer (current-buffer)))
         (cond ((eq current-buffer start-buffer)
                (if scratch-default
-                   (switch-to-buffer "*scratch*")
-                 (user-error "No other buffers"))
+                   (switch-to-buffer "*scratch*"))
                (setq continue nil))
               ((not (memq current-buffer real-buffers))
                (funcall move-func))
@@ -165,6 +168,7 @@ left, create a scratch buffer."
 
 ;;;###autoload (autoload 'narf:kill-buried-buffers "defuns-buffers" nil t)
 (evil-define-command narf:kill-buried-buffers (&optional bang)
+  "Kill buried buffers and report how many it found."
   :repeat nil
   (interactive "<!>")
   (let ((buffers (narf/get-buried-buffers (if bang (projectile-project-buffers) (narf/get-buffers)))))
@@ -210,12 +214,14 @@ left, create a scratch buffer."
 
 ;;;###autoload (autoload 'narf:cd "defuns-buffers" nil t)
 (evil-define-command narf:cd (dir)
+  "Ex-command alias for `cd'"
   :repeat nil
   (interactive "<f>")
   (cd (if (zerop (length dir)) "~" dir)))
 
 ;;;###autoload
 (defun narf/kill-all-buffers-do-not-remember ()
+  "Kill all buffers so that workgroups2 will forget its current session."
   (interactive)
   (let ((confirm-kill-emacs nil))
     (mapc 'kill-buffer (buffer-list))
