@@ -51,14 +51,14 @@
    `(vertical-border          ((t (:foreground "#000000") )))
 
    `(mode-line                ((t (:foreground ,white
-                                           :background ,gutter-light
-                                           :box (:line-width 3 :color ,gutter-light)
-                                           ))))
+                                   :background ,gutter-light
+                                   :box (:line-width 3 :color ,gutter-light)
+                                   ))))
 
    `(mode-line-inactive       ((t (:foreground ,gutter-fg
-                                           :background ,gutters-active
-                                           :box (:line-width 3 :color ,gutters-active)
-                                           ))))
+                                   :background ,gutters-active
+                                   :box (:line-width 3 :color ,gutters-active)
+                                   ))))
 
    `(mode-line-modified-face  ((t (:foreground ,builtin))))
 
