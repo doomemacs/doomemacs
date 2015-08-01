@@ -71,11 +71,11 @@
 
 (defadvice delete-trailing-whitespace (around delete-trailing-whitespace-ignore-line activate)
   "Don't delete trailing whitespace on current line, if in insert mode."
-  (let ((spaces (current-column))
-        (first-col (1+ (save-excursion (evil-first-non-blank) (current-column)))))
+  (let ((spaces (1- (current-column)))
+        (linestr (buffer-substring-no-properties (line-beginning-position) (line-end-position))))
     ad-do-it
-    (when (= spaces first-col)
-      (insert (make-string (abs spaces) ? )))))
+    (when (string-match-p "^[\s\t]*$" linestr)
+      (insert linestr))))
 
 ;; Line wrapping
 (add-hook! text-mode 'narf|enable-hard-wrap)

@@ -157,14 +157,5 @@ spaces on either side of the point if so. Resorts to
     (align-regexp beg end
                   (concat "\\(\\s-*\\)" (rxt-pcre-to-elisp regexp)) 1 1)))
 
-;;;###autoload
-(defun narf:toggle-delete-trailing-whitespace ()
-  (interactive)
-  (if (memq 'delete-trailing-whitespace before-save-hook)
-      (progn (message "Remove trailing whitespace: OFF")
-             (remove-hook 'before-save-hook 'delete-trailing-whitespace))
-    (message "Remove trailing whitespace: ON")
-    (add-hook 'before-save-hook 'delete-trailing-whitespace)))
-
 (provide 'defuns-whitespace)
 ;;; defuns-whitespace.el ends here
