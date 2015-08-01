@@ -235,13 +235,11 @@
      [tab]        'company-complete
      "<backtab>"  'company-select-previous
      [escape]     'company-abort
-     "<C-return>" 'helm-company
-     :unset "C-w")
+     "<C-return>" 'helm-company)
    (:map company-search-map
      "C-n"        'company-search-repeat-forward
      "C-p"        'company-search-repeat-backward
-     [escape]     'company-abort
-     :unset "C-w"))
+     [escape]     'company-abort))
 
  (:after help-mode
    (:map help-mode-map

@@ -41,6 +41,8 @@
         evil-complete-next-func           'narf/company-evil-complete-next
         evil-complete-previous-func       'narf/company-evil-complete-previous)
 
+  (define-key company-active-map (kbd "C-w") nil)
+
   (shut-up!
     (setq company-statistics-file (! (concat narf-temp-dir "company-statistics-cache.el")))
     (require 'company-statistics)
