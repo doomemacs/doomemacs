@@ -21,7 +21,7 @@ If ARG is nil this function calls `recompile', otherwise it calls
     (user-error "No build command was set"))
   (let ((build-file (cdr narf--build-command))
         (build-cmd (car narf--build-command)))
-    (if (narf/project-has-files build-file)
+    (if (or (null build-file) (narf/project-has-files build-file))
         (compile (format "cd '%s' && %s" (narf/project-root) (format build-cmd (or arg ""))))
       (error "Could not find Makefile"))))
 
