@@ -14,6 +14,7 @@
   (setq scss-compile-at-save nil)
   :config
   (bind! :map scss-mode-map
+         :n "M-r" 'narf/web-refresh-browser
          :n ",;" 'helm-css-scss
          :n ",:" 'helm-css-scss-multi)
 

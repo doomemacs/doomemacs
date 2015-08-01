@@ -50,7 +50,7 @@
          :n  "za" 'web-mode-fold-or-unfold
          :n  ",t" 'web-mode-element-rename
 
-         :n  "M-r" (λ (call-process-shell-command "osascript -e 'tell application \"Google Chrome\" to tell the active tab of its first window to reload' &" nil 0))
+         :n  "M-r" 'narf/web-refresh-browser
 
          :nv "]a" 'web-mode-attribute-next
          :nv "[a" 'web-mode-attribute-previous
