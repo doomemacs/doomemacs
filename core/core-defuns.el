@@ -116,7 +116,7 @@ Examples:
           first-set
           prefix
           internal
-          (default-keymaps '(narf-mode-map))
+          (default-keymaps '((current-global-map)))
           (keymaps (if (boundp 'keymaps) keymaps))
           (states  (if (boundp 'states) states '()))
           (forms '())
