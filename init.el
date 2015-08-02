@@ -88,7 +88,7 @@
         module-swift         ; yay, emoji variables!
         module-markdown      ; markdown
         ;; module-rust
-        ;; module-r          ; for science!
+        module-r             ; for science!
         module-vim           ; the confessional
         module-web           ; for the 2.0'er
 
