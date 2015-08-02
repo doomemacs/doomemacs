@@ -204,8 +204,7 @@ Examples:
   (turn-on-auto-fill))
 
 (defun narf|enable-tab-width-2 ()
-  (setq tab-width 2 evil-shift-width 2)
-  (highlight-indentation-set-offset 2))
+  (setq tab-width 2 evil-shift-width 2))
 
 (defun narf|enable-tab-width-4 ()
   (setq tab-width 4 evil-shift-width 4))

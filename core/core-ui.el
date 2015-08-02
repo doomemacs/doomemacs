@@ -40,13 +40,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(use-package highlight-indentation
-  :diminish highlight-indentation-mode
-  :config
-  (add-hook! (prog-mode scss-mode)
-    (unless (eq major-mode 'emacs-lisp-mode)
-      (highlight-indentation-mode 1))))
-
 (use-package nlinum ; line numbers
   :defer t
   :defines nlinum--width

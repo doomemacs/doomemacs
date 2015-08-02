@@ -96,9 +96,6 @@
 (global-auto-revert-mode 1)    ; revert buffers for changed files
 (electric-indent-mode -1)
 
-;; (add-hook! prog-mode 'whitespace-mode)
-;; (add-hook! emacs-lisp-mode 'whitespace-mode)
-
 ;; window config undo/redo
 (setq winner-dont-bind-my-keys t)
 (winner-mode 1)
@@ -168,11 +165,6 @@
 (use-package smartparens
   :diminish smartparens-mode
   :functions sp-insert-pair
-  :commands (smartparens-global-mode
-             sp-pair
-             sp-local-pair
-             sp-point-in-string-or-comment)
-  :init (add-hook! evil-insert-state-entry (unless smartparens-global-mode (smartparens-global-mode 1)))
   :config
   (setq blink-matching-paren t
         sp-autowrap-region nil          ; let evil-surround handle this
@@ -180,15 +172,14 @@
         sp-autoescape-string-quote nil
         sp-show-pair-delay 0)
 
+  (smartparens-global-mode 1)
   (require 'smartparens-config)
 
   ;; Handle newlines + spaces
-  (sp-pair "{" "}"
-           :post-handlers '(("||\n[i]" "RET") ("| " " "))
-           :unless '(sp-point-before-word-p sp-point-before-same-p))
-  (sp-pair "(" ")"
-           :post-handlers '(("||\n[i]" "RET") ("| " " "))
-           :unless '(sp-point-before-word-p sp-point-before-same-p))
+  (sp-pair "{" "}" :post-handlers '(("||\n[i]" "RET") ("| " " "))
+                   :unless '(sp-point-before-word-p sp-point-before-same-p))
+  (sp-pair "(" ")" :post-handlers '(("||\n[i]" "RET") ("| " " "))
+                   :unless '(sp-point-before-word-p sp-point-before-same-p))
 
   ;; Auto-close more conservatively
   (sp-pair "[" nil  :unless '(sp-point-before-word-p sp-point-before-same-p))
@@ -216,7 +207,6 @@
   :commands (smex smex-major-mode-commands smex-initialize smex-update)
   :init (setq smex-save-file (! (concat narf-temp-dir "smex-items")))
   :config (smex-initialize)
-
   ;; Hook up smex to auto-update, rather than update on every run
   (defun smex-update-after-load (unused)
     (when (boundp 'smex-cache) (smex-update)))
