@@ -102,7 +102,8 @@
    :n "e"   (λ (call-interactively 'flycheck-buffer) (flycheck-list-errors))
    :n "p"   'helm-show-kill-ring
    :n "b"   'helm-bookmarks
-   :n "w"   'helm-wg)
+   :n "w"   'narf:helm-wg
+   :n "W"   (λ (message (wg-workgroup-list-display))))
 
  :n "Y" "y$"
 
