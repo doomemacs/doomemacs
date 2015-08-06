@@ -18,9 +18,7 @@
 (evil-define-command narf:compile-el (&optional bang)
   :repeat nil
   (interactive "<!>")
-  (byte-recompile-file (f-expand "init.el" narf-emacs-dir) nil 0)
   (byte-recompile-file (f-expand "init-load-path.el" narf-emacs-dir) nil 0)
-  (byte-recompile-file (f-expand "core.el" narf-core-dir) t 0)
   (if (and (eq major-mode 'emacs-lisp-mode) (not bang))
       (byte-recompile-file (buffer-file-name) t 0)
     (load (concat narf-script-dir "byte-compile.el"))))

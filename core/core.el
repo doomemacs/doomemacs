@@ -140,11 +140,6 @@
  undo-tree-auto-save-history t
  undo-tree-history-directory-alist `(("." . ,(! (concat narf-temp-dir "undo/")))))
 
-;; Save cursor location across sessions. Only save for files that exist.
-(require 'saveplace)
-(setq save-place-file (! (concat narf-temp-dir "saveplace")))
-(add-hook! find-file (if (file-exists-p (buffer-file-name)) (setq save-place t)))
-
 ;; Save history across sessions
 (require 'savehist)
 (setq savehist-file (! (concat narf-temp-dir "savehist"))
@@ -162,19 +157,27 @@
       recentf-auto-cleanup 600)
 (recentf-mode 1)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Save cursor location across sessions. Only save for files that exist.
+(use-package saveplace
+  :defer t
+  :config (setq save-place-file (! (concat narf-temp-dir "saveplace")))
+  :init
+  (add-hook! find-file
+    (if (file-exists-p (buffer-file-name))
+        (require 'saveplace)
+        (setq save-place t))))
+
+(use-package popwin :config (popwin-mode 1))
 
 (use-package help-fns+ ; Improved help commands
   :commands (describe-buffer describe-command describe-file
              describe-keymap describe-option describe-option-of-type))
 
-(use-package popwin :config (popwin-mode 1))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(require 'server)
-(unless (server-running-p)
-  (server-start))
+(use-package server
+  :defer 1
+  :config
+  (unless (server-running-p)
+    (server-start)))
 
 (provide 'core)
 ;;; core.el ends here
