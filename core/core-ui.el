@@ -50,7 +50,7 @@
     "Face for line highlights" :group 'nlinum-mode)
   (defvar narf--hl-nlinum-overlay nil)
   (defvar narf--hl-nlinum-line    nil)
-  (defvar nlinum-format " %3d  ")
+  (defvar nlinum-format " %3d ")
   :init
   ;; Highlight line number
   (defun narf|nlinum-unhl-line ()
