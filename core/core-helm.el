@@ -1,6 +1,12 @@
 ;;; core-helm.el
 
 (use-package helm
+  :commands (helm
+             helm-etags-select
+             helm-show-kill-ring
+             helm-bookmarks
+             helm-alive-p
+             helm-attrset)
   :init
   (defvar helm-global-prompt ">>> ")
   (setq helm-quick-update t
@@ -120,10 +126,7 @@
              helm-projectile-find-file
              helm-projectile-recentf
              helm-projectile-find-other-file
-             helm-projectile-switch-project)
-  :config
-  (require 'helm)
-  (require 'projectile))
+             helm-projectile-switch-project))
 
 ;; (use-package helm-c-yasnippet :commands helm-yas-visit-snippet-file)
 (use-package helm-semantic :commands helm-semantic-or-imenu)

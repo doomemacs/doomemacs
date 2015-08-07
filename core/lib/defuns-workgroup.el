@@ -7,6 +7,7 @@
 ;;;###autoload
 (defun narf:helm-wg ()
   (interactive)
+  (require 'helm)
   (helm :sources '(narf/helm-source-wg)))
 
 ;;;###autoload
