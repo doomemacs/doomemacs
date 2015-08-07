@@ -12,7 +12,7 @@
 (evil-define-command narf:tmux-run (&optional command bang)
   "Sends input to tmux. Use `bang' to append to tmux"
   (interactive "<tmux><!>")
-  (nerf/tmux-send (format (if bang "C-u %s Enter" "%s")
+  (narf--tmux-send (format (if bang "C-u %s Enter" "%s")
                           (shell-quote-argument command)))
   (when (evil-ex-p)
     (message "[Tmux] %s" command)))
@@ -27,7 +27,7 @@
                       (file-truename path)
                     (error "Directory doesn't exist %s" path))
                 (if bang default-directory (narf/project-root))))))
-    (nerf/tmux-send (format "C-u cd Space %s Enter" (shell-quote-argument dir)))
+    (narf--tmux-send (format "C-u cd Space %s Enter" (shell-quote-argument dir)))
     (when (evil-ex-p)
       (message "[Tmux] cd %s" dir))))
 
