@@ -33,9 +33,7 @@
   (progn ; C/C++ Settings
     (when IS-MAC
       (after! flycheck
-        (setq-default flycheck-clang-language-standard "c++11"
-                      flycheck-clang-standard-library  "libc++"
-                      flycheck-c/c++-clang-executable  "clang++"
+        (setq-default flycheck-c/c++-clang-executable  "clang++"
                       flycheck-clang-include-path      '("/usr/local/include"))))
 
     (after! company
@@ -45,8 +43,9 @@
       (add-company-backend! c++-mode  (c-headers clang))
       (add-company-backend! objc-mode (c-headers xcode)))
 
-    (add-hook! c-mode   'narf|init-c/c++-settings)
-    (add-hook! c++-mode 'narf|init-c/c++-settings)
+    (add-hook! (c-mode c++-mode) 'narf|init-c/c++-settings)
+    (add-hook! c++-mode (setq flycheck-clang-language-standard "c++11"
+                              flycheck-clang-standard-library  "libc++"))
 
     ;; C++11 syntax support (until cc-mode is updated)
     (require 'font-lock)
