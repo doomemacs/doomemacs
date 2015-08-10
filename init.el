@@ -42,12 +42,15 @@
 
 (defconst narf-debug-mode nil)
 
-(defconst narf-default-theme  'narf-dark)
-(defconst narf-term-theme     'wombat)
-(defconst narf-default-font  '(:family "terminus (ttf)" :size 12 :antialias nil))
-(defconst narf-big-font      '(:family "Inconsolata" :size 18 :antialias t))
+(scroll-bar-mode -1)        ; no scrollbar
+(tool-bar-mode -1)          ; no toolbar
+(menu-bar-mode -1)          ; no menubar
+
+(set-frame-font (font-spec :family "terminus (ttf)" :size 12 :antialias nil))
+(set-frame-parameter nil 'fullscreen 'fullboth)
 
 (load (concat user-emacs-directory "init-load-path.el"))
+(load-theme (if window-system 'narf-dark 'wombat) t)
 (mapc 'require
       `(;; benchmark ; records load times in `require-times'; see `list-times'
         core ; core/core.el
@@ -79,7 +82,7 @@
         module-elisp         ;
         module-lua           ; one-based indices? one-based indices.
         module-lb6           ; LaunchBar 6 development
-        module-org           ; for fearless [organized] leader
+        ;; module-org        ; for fearless [organized] leader
         module-php           ; making php less painful to work with
         module-python        ; beautiful is better than ugly
         module-regex         ; /^[^\s](meaning)[^\n]*/

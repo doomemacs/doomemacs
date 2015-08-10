@@ -1,15 +1,10 @@
 ;;; core-ui.el --- interface settings
 ;; see lib/ui-defuns.el
 
-(load-theme (if window-system narf-default-theme narf-term-theme) t)
 (when window-system
-  (set-frame-font (apply #'font-spec narf-default-font))
-  (scroll-bar-mode -1)        ; no scrollbar
-  (tool-bar-mode -1)          ; no toolbar
-  (menu-bar-mode -1)          ; no menubar
-  (set-frame-parameter nil 'fullscreen 'fullboth)
   (fringe-mode '(2 . 8))
-  (setq frame-title-format '(buffer-file-name "%f" ("%b"))))
+  ;; (setq frame-title-format '(buffer-file-name "%f" ("%b")))
+  )
 
 (setq show-paren-delay 0)
 
@@ -32,11 +27,6 @@
  indicate-buffer-boundaries      nil
  indicate-empty-lines            nil
  fringes-outside-margins         t)     ; fringes on the other side of line numbers
-
-(add-hook! after-init
-  (defadvice save-buffers-kill-emacs (around no-query-kill-emacs activate)
-    "Prevent annoying \"Active processes exist\" query when you quit Emacs."
-    (flet ((process-list ())) ad-do-it)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
