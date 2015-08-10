@@ -17,7 +17,8 @@
   (add-template! "/main\\.\\(cc\\|cpp\\)$"         "@@main.cpp"       'c++-mode)
   (add-template! "/win32_\\.\\(cc\\|cpp\\)$"       "@@winmain.cpp"    'c++-mode)
   (add-template! "\\.\\([Hh]\\|hpp\\)$"            "@@.h"             'c++-mode)
-  (add-template! "\\.\\([Cc]\\|cc\\|cpp\\)$"       "@@.cpp"           'c++-mode)
+  (add-template! "\\.\\(cc\\|cpp\\)$"              "@@.cpp"           'c++-mode)
+  (add-template! "\\.c$"                           "@@.c"             'c-mode)
 
   ;; Shell scripts
   (add-template! "\\.z?sh$"                        "@@"               'sh-mode)
