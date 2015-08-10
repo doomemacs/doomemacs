@@ -5,16 +5,10 @@
 /**
  * @file
  * @author  `user-full-name` <`user-mail-address`>
- * @version ${1:0.1}
- *
- * @section DESCRIPTION
- *
- * ${2:Some description of this file}
+ * @version 0.1
  */
 
 #include <iostream>
-#include <string>
-#include <vector>
 
 using namespace std;
 
