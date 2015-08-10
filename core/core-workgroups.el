@@ -2,6 +2,7 @@
 ;; see lib/workgroup-defuns.el
 
 (use-package workgroups2
+  :when window-system
   :init
   (setq wg-session-file          (! (expand-file-name "wg-default" narf-temp-dir))
         wg-workgroup-directory   (! (expand-file-name "workgroups" narf-temp-dir))
