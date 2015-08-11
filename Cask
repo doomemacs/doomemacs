@@ -137,6 +137,7 @@
 (depends-on "emacs-eclim")
 (depends-on "groovy-mode")
 (depends-on "android-mode")
+(depends-on "scala-mode2" :git "https://github.com/hvesalai/scala-mode2")
 ;; C/C++
 (depends-on "cmake-mode")
 (depends-on "glsl-mode")
@@ -147,6 +148,7 @@
 (depends-on "go-mode")
 (depends-on "swift-mode")
 (depends-on "vimrc-mode")
+(depends-on "nand2tetris" :git "https://github.com/CestDiego/nand2tetris.el")
 
 ;; (depends-on "haxe-mode")
 ;; (depends-on "rust-mode")
