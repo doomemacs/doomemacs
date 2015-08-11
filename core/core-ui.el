@@ -3,8 +3,7 @@
 
 (when window-system
   (fringe-mode '(2 . 8))
-  ;; (setq frame-title-format '(buffer-file-name "%f" ("%b")))
-  )
+  (setq frame-title-format '(buffer-file-name "%f" ("%b"))))
 
 (setq show-paren-delay 0)
 
