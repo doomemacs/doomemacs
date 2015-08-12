@@ -42,12 +42,14 @@
 
 (defconst narf-debug-mode nil)
 
-(scroll-bar-mode -1)        ; no scrollbar
-(tool-bar-mode -1)          ; no toolbar
-(menu-bar-mode -1)          ; no menubar
+(setq user-mail-address "henrik@lissner.net")
+
+(scroll-bar-mode -1) ; no scrollbar
+(tool-bar-mode   -1) ; no toolbar
+(menu-bar-mode   -1) ; no menubar
 
 (set-frame-font (font-spec :family "terminus (ttf)" :size 12 :antialias nil))
-(set-frame-parameter nil 'fullscreen 'fullboth)
+;; (set-frame-parameter nil 'fullscreen 'fullboth)
 
 (load (concat user-emacs-directory "init-load-path.el"))
 (load-theme (if window-system 'narf-dark 'wombat) t)
