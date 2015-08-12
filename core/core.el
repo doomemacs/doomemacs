@@ -100,6 +100,7 @@
  inhibit-startup-echo-area-message  "hlissner"  ; username shuts up emacs
  initial-major-mode                'text-mode   ; initial scratch buffer mode
  initial-scratch-message            nil
+ major-mode                        'text-mode
 
  compilation-always-kill            t
  compilation-ask-about-save         nil
