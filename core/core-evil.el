@@ -147,14 +147,15 @@ See https://bitbucket.org/lyro/evil/issue/527"
   :init
   (define-key evil-normal-state-map "s" nil)
   (define-key evil-normal-state-map "S" nil)
-  :config
   (setq-default
    evil-snipe-smart-case t
+   evil-snipe-repeat-keys nil ;; using evil-space for repeating
    evil-snipe-scope 'line
    evil-snipe-repeat-scope 'buffer
    evil-snipe-override-evil-repeat-keys nil
    evil-snipe-symbol-groups '((?\[ "[[{(]")
                               (?\] "[]})]")))
+  :config
   (evil-snipe-mode 1)
   (evil-snipe-override-mode 1))
 
