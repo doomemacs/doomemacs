@@ -44,24 +44,9 @@
       (add-company-backend! objc-mode (c-headers xcode)))
 
     (add-hook! (c-mode c++-mode) 'narf|init-c/c++-settings)
+    (add-hook! c++-mode 'narf|init-c++-C11-highlights)
     (add-hook! c++-mode (setq flycheck-clang-language-standard "c++11"
                               flycheck-clang-standard-library  "libc++"))
-
-    ;; C++11 syntax support (until cc-mode is updated)
-    (require 'font-lock)
-    (defun --copy-face (new-face face)
-      "Define NEW-FACE from existing FACE."
-      (copy-face face new-face)
-      (eval `(defvar ,new-face nil))
-      (set new-face new-face))
-    ;; labels, case, public, private, protected, namespace-tags
-    (--copy-face 'font-lock-label-face 'font-lock-keyword-face)
-    ;; comment markups such as Javadoc-tags
-    (--copy-face 'font-lock-doc-markup-face 'font-lock-doc-face)
-    ;; comment markups
-    (--copy-face 'font-lock-doc-string-face 'font-lock-comment-face)
-    (setq font-lock-maximum-decoration t)
-    (add-hook! c++-mode 'narf|init-c++-C11-highlights)
 
     ;; Fix enum and C++11 lambda indentation
     (defadvice c-lineup-arglist (around c-lineup-arglist-indent-fix activate)

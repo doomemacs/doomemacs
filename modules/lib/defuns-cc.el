@@ -23,8 +23,24 @@
   ;; DEL mapping interferes with smartparens and my custom DEL binding
   (define-key c-mode-map (kbd "DEL") nil))
 
+(defun narf--copy-face (new-face face)
+  "Define NEW-FACE from existing FACE."
+  (copy-face face new-face)
+  (eval `(defvar ,new-face nil))
+  (set new-face new-face))
+
 ;;;###autoload
 (defun narf|init-c++-C11-highlights ()
+  ;; C++11 syntax support (until cc-mode is updated)
+  (require 'font-lock)
+  ;; labels, case, public, private, protected, namespace-tags
+  (narf--copy-face 'font-lock-label-face 'font-lock-keyword-face)
+  ;; comment markups such as Javadoc-tags
+  (narf--copy-face 'font-lock-doc-markup-face 'font-lock-doc-face)
+  ;; comment markups
+  (narf--copy-face 'font-lock-doc-string-face 'font-lock-comment-face)
+  (setq font-lock-maximum-decoration t)
+
   ;; We could place some regexes into `c-mode-common-hook', but
   ;; note that their evaluation order matters.
   (font-lock-add-keywords
