@@ -4,15 +4,8 @@
 (eval-when-compile (require 'defuns-quickrun))
 
 (use-package ruby-mode
-  :mode (("\\.rb$"        . ruby-mode)
-         ("\\.ru$"        . ruby-mode)
-         ("\\.rake$"      . ruby-mode)
-         ("\\.gemspec$"   . ruby-mode)
-         ("\\.?pryrc$"    . ruby-mode)
-         ("/Gemfile$"     . ruby-mode)
-         ("/Capfile$"     . ruby-mode)
-         ("/Vagrantfile$" . ruby-mode)
-         ("/Rakefile$"    . ruby-mode))
+  :mode ("\\.r[bu]$" "\\.rake$" "\\.gemspec$" "\\.?pryrc$"
+         "/\\(Gem\\|Cap\\|Vagrant\\|Rake\\)file$")
   :interpreter "ruby"
   :init
   (add-hook! ruby-mode 'narf|enable-tab-width-2)

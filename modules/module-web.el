@@ -13,10 +13,7 @@
   :config (require 'sws-mode))
 
 (use-package web-mode
-  :mode (("\\.\\(p\\)?htm\\(l\\)?$"         . web-mode)
-         ("\\.tpl\\(\\.php\\)?$"            . web-mode)
-         ("\\.erb$"                         . web-mode)
-         ("wp-content/themes/.+/.+\\.php$"  . web-mode))
+  :mode ("\\.\\(p\\)?htm\\(l\\)?$" "\\.tpl\\(\\.php\\)?$" "\\.erb$" "wp-content/themes/.+/.+\\.php$")
   :init
   (add-hook! web-mode 'narf|enable-tab-width-2)
   (setq web-mode-markup-indent-offset  2
