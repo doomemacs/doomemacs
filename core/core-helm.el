@@ -132,7 +132,6 @@
 (use-package helm-semantic :commands helm-semantic-or-imenu)
 (use-package helm-elisp    :commands helm-apropos)
 (use-package helm-command  :commands helm-M-x)
-(use-package helm-company  :defer t)
 
 (provide 'core-helm)
 ;;; core-helm.el ends here
