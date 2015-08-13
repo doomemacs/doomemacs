@@ -4,8 +4,10 @@
 (eval-when-compile (require 'core))
 
 (use-package company
-  :diminish company-mode
-  :commands global-company-mode
+  :diminish (company-mode . "=")
+  :commands (global-company-mode company-complete-common company-dict
+             company-files company-tags company-ispell company-yasnippet
+             company-semantic company-dabbrev-code)
   :init
   (after! abbrev (diminish 'abbrev-mode "A"))
   (setq company-idle-delay nil
@@ -22,7 +24,7 @@
                             company-echo-metadata-frontend
                             company-preview-if-just-one-frontend)
         company-dict-dir (concat narf-private-dir "dict/"))
-  (add-hook! after-init 'global-company-mode)
+  ;; (add-hook! after-init 'global-company-mode)
   :config
   ;; (use-package company-dict :defer t)
   ;; (setq-default company-backends (append '(company-dict company-keywords) company-backends))
@@ -46,7 +48,10 @@
   (shut-up!
     (setq company-statistics-file (! (concat narf-temp-dir "company-statistics-cache.el")))
     (require 'company-statistics)
-    (company-statistics-mode)))
+    (company-statistics-mode))
+
+  (global-company-mode +1))
+
 
 (provide 'core-company)
 ;;; core-company.el ends here
