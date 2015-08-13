@@ -24,10 +24,10 @@
 (exmap "m[sg]"           'popwin:messages)
 (exmap "ma[ke]"          'narf:build)
 (exmap "mv"              'narf:file-move)
-;; (exmap "n[otes]"         'narf:org-search-files-or-headers)
 (exmap "na[rrow]"        'narf:narrow)  ; Narrow buffer to selection
 (exmap "proj[ect]"       'helm-projectile-switch-project)
 (exmap "rec[ent]"        'narf:helm-recentf)
+(exmap "re[gex]"         'narf:regex)
 (exmap "ref[actor]"      'emr-show-refactor-menu)
 (exmap "retab"           'narf:whitespace-retab)
 (exmap "rm"              'narf:file-delete)          ; rm[!]
@@ -36,13 +36,11 @@
 (exmap "fi[nd]"          'narf:helm-swoop)
 (exmap "t"               'narf:tmux-run)
 (exmap "tcd"             'narf:tmux-chdir)
-(exmap "tsnip[pets]"     'narf:yas-file-templates)   ; temp[!]
+(exmap "tsnip[pets]"     'narf:yas-file-templates)   ; tsnip[!]
 ;; (exmap "term"            'narf:term-init)
 (exmap "x"               'narf:scratch-buffer)
 (after! flycheck
   (exmap "er[rors]"      (λ (flycheck-buffer) (flycheck-list-errors))))
-(after! re-builder
-  (exmap "re[gex]"       'narf:regex))  ; TODO: Implement this
 (after! org
   (exmap "o[rg]edit"     'org-edit-special)
   (exmap "o[rg]refile"   'org-refile)

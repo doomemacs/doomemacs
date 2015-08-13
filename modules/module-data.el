@@ -4,9 +4,7 @@
   :mode "\\.ya?ml$"
   :init (add-hook! yaml-mode 'narf|enable-tab-width-2))
 
-(use-package json-mode
-  :mode (("\\.json$" . json-mode)
-         ("\\.jshintrc$" . json-mode)))
+(use-package json-mode :mode "\\.js\\(on\\|hintrc\\)$")
 
 ;; TODO: Db client
 

@@ -12,12 +12,10 @@
   :config
   (add-hook! reb-mode 'narf|reb-cleanup)
   (evil-set-initial-state 'reb-mode 'insert)
-
   (bind! :map reb-mode-map
          :n "C-g"        'reb-quit
          :n [escape]     'reb-quit
          :n [backtab]    'reb-change-syntax))
-
 
 (provide 'module-regex)
 ;;; module-regex.el ends here

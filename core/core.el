@@ -158,6 +158,9 @@
       recentf-auto-cleanup 600)
 (recentf-mode 1)
 
+(require 'popwin)
+(popwin-mode 1)
+
 ;; Save cursor location across sessions. Only save for files that exist.
 (use-package saveplace
   :defer t
@@ -167,8 +170,6 @@
     (if (file-exists-p (buffer-file-name))
         (require 'saveplace)
         (setq save-place t))))
-
-(use-package popwin :config (popwin-mode 1))
 
 (use-package help-fns+ ; Improved help commands
   :commands (describe-buffer describe-command describe-file

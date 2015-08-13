@@ -6,9 +6,9 @@
   :commands    python-mode
   :init
   (add-hook! python-mode '(narf|enable-tab-width-4 emr-initialize))
-  (setq python-indent-offset 4)
-  (setq python-environment-directory narf-temp-dir)
-  (setq python-shell-interpreter "ipython")
+  (setq python-indent-offset 4
+        python-environment-directory narf-temp-dir
+        python-shell-interpreter "ipython")
   :config
   (define-key python-mode-map (kbd "DEL") nil)) ; interferes with smartparens
 

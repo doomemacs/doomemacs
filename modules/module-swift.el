@@ -4,7 +4,7 @@
   :mode "\\.swift$"
   :config
   (after! flycheck (add-to-list 'flycheck-checkers 'swift))
-  (after! company (add-company-backend! swift-mode (xcode))))
+  (after! company  (add-company-backend! swift-mode (xcode))))
 
 ;; TODO Set up emacs task runners for fruitstrap
 

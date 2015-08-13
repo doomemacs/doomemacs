@@ -8,8 +8,7 @@
 (use-package scss-mode
   :mode "\\.scss$"
   :init
-  (add-hook! scss-mode 'narf|enable-tab-width-2)
-  (add-hook! scss-mode 'hs-minor-mode)
+  (add-hook! scss-mode '(narf|enable-tab-width-2 hs-minor-mode))
   (setq-default css-indent-offset 2)
   (setq scss-compile-at-save nil)
   :config

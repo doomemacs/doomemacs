@@ -37,10 +37,10 @@
 
 (use-package groovy-mode
   :functions (is-groovy-mode)
-  :mode "\\.\\(gradle\\|gvy\\|groovy\\)$")
+  :mode "\\.g\\(radle\\|vy\\|roovy\\)$")
 
 (use-package scala-mode2
-  :mode ("\\.\\(scala\\|sbt\\)$" . scala-mode))
+  :mode ("\\.s\\(cala\\|bt\\)$" . scala-mode))
 
 (provide 'module-java)
 ;;; module-java.el ends here
