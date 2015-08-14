@@ -34,7 +34,8 @@
     (bind! :map (ido-common-completion-map ido-completion-map ido-file-completion-map)
            "C-n" 'ido-next-match
            "C-p" 'ido-prev-match
-           "C-w" 'ido-delete-backward-word-updir))
+           "C-w" 'ido-delete-backward-word-updir
+           "C-u" 'ido-up-directory))
 
   (advice-add 'ido-sort-mtime :override 'narf*ido-sort-mtime)
   (add-hook! (ido-make-file-list ido-make-dir-list) 'narf*ido-sort-mtime)
