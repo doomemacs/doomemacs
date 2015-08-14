@@ -198,10 +198,7 @@ left, create a scratch buffer."
         (text (when (and (evil-visual-state-p) beg end)
                 (buffer-substring beg end))))
     (if bang
-        ;; use org-capture with bang
-        (if text
-            (org-capture-string text)
-          (org-capture))
+        (switch-to-buffer "*scratch*")
       ;; or scratch buffer by default
       (let* ((project-dir (narf/project-root t))
              (buffer-name "*scratch*"))
@@ -229,7 +226,6 @@ left, create a scratch buffer."
     (delete-other-windows)
     (wg-save-session t)
     (save-buffers-kill-terminal)))
-
 
 (provide 'defuns-buffers)
 ;;; defuns-buffers.el ends here
