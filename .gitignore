@@ -1,19 +1,16 @@
+.cask/
+.mc-lists.el
+.org-id-locations
 eshell/
 core/autoloads.el
 auto-save-list
-recentf
-savehist
-saveplace
-places
 semanticdb
 ede-projects.el
 tramp
 smex-items
-elpa
 private/cache/*
 
 # compiled files
-.*
 *.elc
 *.lib
 *.fas
