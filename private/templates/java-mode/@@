@@ -1,9 +1,9 @@
 # -*- mode: snippet -*-
 # name: Java file template
 # --
-package `(narf/java-project-package)`;
+package `(yas-java-project-package)`;
 
-public class `(narf/java-class-name)` $1
+public class `(yas-java-class-name)` $1
 {
     $0
 }

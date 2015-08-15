@@ -1,18 +1,5 @@
 ;;; defuns-java.el ---
 
-;;;###autoload
-(defun narf/java-project-package ()
-  (if (eq major-mode 'java-mode)
-    (s-chop-suffix "." (s-replace "/" "." (f-dirname (f-relative (buffer-file-name)
-                                                                 (concat (narf/project-root) "/src/")))))
-    ""))
-
-;;;###autoload
-(defun narf/java-class-name ()
-  (if (eq major-mode 'java-mode)
-      (f-no-ext (f-base (buffer-file-name)))
-    ""))
-
 ;; yasnippet defuns
 ;;;###autoload
 (defun narf/java-android-mode-is-layout-file ()
