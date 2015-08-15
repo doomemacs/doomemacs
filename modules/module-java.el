@@ -9,12 +9,11 @@
   (when (file-exists-p eclim-executable)
     (add-hook! java-mode 'eclim-mode))
   :config
-  ;; (use-package eclim-ant)
-  ;; (use-package eclim-maven)
+  ;; (require 'eclim-ant)
+  ;; (require 'eclim-maven)
   (require 'eclim-problems)
   (require 'eclim-project)
   (require 'eclimd)
-
   (setq help-at-pt-display-when-idle t)
   (setq help-at-pt-timer-delay 0.1)
   (help-at-pt-set-timer)
