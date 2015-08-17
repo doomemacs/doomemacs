@@ -74,8 +74,6 @@
 
 ;; VCS --- core/core-vcs.el
 (depends-on "diff-hl")
-(depends-on "git-commit-mode")
-(depends-on "git-rebase-mode")
 (depends-on "gitconfig-mode")
 (depends-on "gitignore-mode")
 
@@ -148,7 +146,6 @@
 (depends-on "go-mode")
 (depends-on "swift-mode")
 (depends-on "vimrc-mode")
-(depends-on "nand2tetris" :git "https://github.com/CestDiego/nand2tetris.el")
 
 ;; (depends-on "haxe-mode")
 ;; (depends-on "rust-mode")

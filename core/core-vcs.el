@@ -1,19 +1,5 @@
 ;;; core-vcs.el --- version control awareness
 
-(use-package git-commit-mode            ;
-  :mode ("/COMMIT_EDITMSG$"
-         "/NOTES_EDITMSG$"
-         "/MERGE_MSG$"
-         "/TAG_EDITMSG$"
-         "/PULLREQ_EDITMSG$")
-  :config
-  (evil-set-initial-state 'git-commit-mode 'insert))
-
-(use-package git-rebase-mode
-  :mode "/git-rebase-todo$"
-  :config
-  (evil-set-initial-state 'git-rebase-mode 'insert))
-
 (use-package gitconfig-mode
   :mode ("/\\.?git/?config$" "/\\.gitmodules$")
   :init (add-hook 'gitconfig-mode-hook 'flyspell-mode))
