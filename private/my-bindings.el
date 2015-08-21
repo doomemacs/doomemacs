@@ -51,7 +51,7 @@
  ;; Local keymaps                      ;;
  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
- :nmv ";" 'evil-ex
+ :m ";" 'evil-ex
 
  (:prefix "," ; <leader>
    :n ","   (λ (if (narf/project-p) (helm-projectile-switch-to-buffer) (helm-buffers-list)))
@@ -135,7 +135,6 @@
  :n "gr"  'narf:eval-region
  :v "gR"  'narf:eval-region-and-replace
  :m "gl"  'avy-goto-line
- :m "gs"  'avy-goto-char-2
  :m "g]"  'smart-down
  :m "g["  'smart-up
 

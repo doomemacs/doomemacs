@@ -133,6 +133,27 @@ See https://bitbucket.org/lyro/evil/issue/527"
   :commands (evilmi-jump-items global-evil-matchit-mode)
   :config   (global-evil-matchit-mode 1))
 
+(use-package evil-easymotion
+  :config
+  (evilem-default-keybindings "g SPC")
+  (evilem-define (kbd "g s") 'evil-snipe-repeat
+    (lambda ()
+      (save-excursion
+        (ignore-errors
+          (call-interactively #'evil-snipe-s))))
+    nil
+    ((evil-snipe-enable-highlight)
+     (evil-snipe-enable-incremental-highlight)))
+
+  (evilem-define (kbd "g S") 'evil-snipe-repeat-reverse
+    (lambda ()
+      (save-excursion
+        (ignore-errors
+          (call-interactively #'evil-snipe-s))))
+    nil
+    ((evil-snipe-enable-highlight)
+     (evil-snipe-enable-incremental-highlight))))
+
 (use-package evil-numbers
   :commands (evil-numbers/inc-at-pt
              evil-numbers/dec-at-pt))
