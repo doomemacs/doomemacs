@@ -175,11 +175,9 @@
   :commands (describe-buffer describe-command describe-file
              describe-keymap describe-option describe-option-of-type))
 
-(use-package server
-  :defer 1
-  :config
-  (unless (server-running-p)
-    (server-start)))
+(require 'server)
+(unless (server-running-p)
+  (server-start))
 
 (add-hook! after-init
   (defadvice save-buffers-kill-emacs (around no-query-kill-emacs activate)

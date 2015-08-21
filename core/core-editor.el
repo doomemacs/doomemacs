@@ -49,7 +49,6 @@
 
 ;; Modes 'n hooks ;;;;;;;;;;;;;;;;;;;
 
-(associate! text-mode           :match "/LICENSE[^/]*$")
 (associate! sh-mode             :match "/\\.?z\\(profile\\|login\\|logout\\|shrc\\|shenv\\)?$")
 (associate! sh-mode             :match "/\\.?zsh/")
 (associate! applescript-mode    :match "\\.applescript$")
