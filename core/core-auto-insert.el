@@ -27,11 +27,11 @@
   (add-template! "/\\.rspec$"                      "@@.rspec"         'rspec-mode)
   (add-template! "/spec_helper\\.rb$"              "@@helper"         'rspec-mode t)
   (add-template! "_spec\\.rb$"                     "@@"               'rspec-mode t)
-  (add-template! "/Rakefile$"                      "@@Rakefile"       'ruby-mode t)
-  (add-template! "/Gemfile$"                       "@@Gemfile"        'ruby-mode t)
-  (add-template! "\\.gemspec$"                     "@@.gemspec"       'ruby-mode t)
-  (add-template! "/lib/.+\\.rb$"                   "@@module"         'ruby-mode t)
-  (add-template! "\\.rb$"                          "@@"               'ruby-mode)
+  (add-template! "/Rakefile$"                      "@@Rakefile"       'enh-ruby-mode t)
+  (add-template! "/Gemfile$"                       "@@Gemfile"        'enh-ruby-mode t)
+  (add-template! "\\.gemspec$"                     "@@.gemspec"       'enh-ruby-mode t)
+  (add-template! "/lib/.+\\.rb$"                   "@@module"         'enh-ruby-mode t)
+  (add-template! "\\.rb$"                          "@@"               'enh-ruby-mode)
 
   ;; Python
   ;; (add-template! "tests?/test_.+\\.py$"         "@@"               'nose-mode)
