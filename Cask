@@ -141,7 +141,7 @@
 (depends-on "cmake-mode")
 (depends-on "glsl-mode")
 ;; Org
-(depends-on "org-plus-contrib")
+;;(depends-on "org-plus-contrib")
 ;;(depends-on "org-opml" :git "https://github.com/edavis/org-opml")
 ;; Other
 (depends-on "go-mode")

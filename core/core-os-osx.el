@@ -4,13 +4,14 @@
 
 ;; Use a shared clipboard
 (setq x-select-enable-clipboard t
+      ;; Prefixes: Command = M, Alt = A
+      mac-command-modifier 'meta
+      mac-option-modifier  'alt
+      ;;; NOTE These mean nothing to railwaycat's emacs-mac build on OSX
       ;; Curse Lion and its sudden but inevitable fullscreen mode!
       ns-use-native-fullscreen nil
       ;; Don't open files from the workspace in a new frame
-      ns-pop-up-frames nil
-      ;; Prefixes: Command = M, Alt = A
-      mac-command-modifier 'meta
-      mac-option-modifier  'alt)
+      ns-pop-up-frames nil)
 
 ;; fix emacs PATH on OSX (GUI only)
 (when window-system
