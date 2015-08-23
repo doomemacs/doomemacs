@@ -23,16 +23,6 @@
         web-mode-script-padding        2
         web-mode-block-padding         2)
   :config
-  (after! smartparens
-    (add-hook! web-mode (setq web-mode-enable-auto-pairing nil))
-
-    (defun sp-web-mode-is-code-context (id action context)
-      (when (and (eq action 'insert)
-                 (not (or (get-text-property (point) 'part-side)
-                          (get-text-property (point) 'block-side))))
-        t))
-    (sp-local-pair 'web-mode "<" nil :when '(sp-web-mode-is-code-context)))
-
   (after! web-beautify
     (add-hook! web-mode (setenv "jsbeautify_indent_size" "4"))
     (bind! :map web-mode-map :m "gQ" 'web-beautify-html))

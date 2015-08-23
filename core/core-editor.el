@@ -195,7 +195,16 @@
     (sp-local-pair "/*" "" :post-handlers '((" ||\n[i]*/" "RET"))))
 
   (after! yasnippet
-    (advice-add 'yas-expand :before 'sp-remove-active-pair-overlay)))
+    (advice-add 'yas-expand :before 'sp-remove-active-pair-overlay))
+
+  (after! web-mode
+    (add-hook! web-mode (setq web-mode-enable-auto-pairing nil))
+    (defun sp-web-mode-is-code-context (id action context)
+      (when (and (eq action 'insert)
+                 (not (or (get-text-property (point) 'part-side)
+                          (get-text-property (point) 'block-side))))
+        t))
+    (sp-local-pair 'web-mode "<" nil :when '(sp-web-mode-is-code-context))))
 
 (use-package smex
   :commands (smex smex-major-mode-commands smex-initialize smex-update)
