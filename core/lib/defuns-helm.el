@@ -75,7 +75,7 @@
       (if (and beg end (/= beg (1- end)))
           (setq input (buffer-substring-no-properties beg end))))
     (helm-attrset 'name header-name helm-ag-source)
-    (helm :sources (if search (helm-ag--select-source) '(helm-source-do-ag))
+    (helm :sources (if search helm-ag-source '(helm-source-do-ag))
           :buffer "*helm-ag*"
           :input input
           :prompt helm-global-prompt)))
