@@ -8,7 +8,7 @@ semanticdb
 ede-projects.el
 tramp
 smex-items
-private/cache/*
+private/cache/
 
 # compiled files
 *.elc
