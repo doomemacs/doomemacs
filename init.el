@@ -76,6 +76,7 @@
         core-workgroups      ; cure Emacs alzheimers
 
         module-cc            ; c/c++/obj-c madness
+        module-crystal       ; ruby at the speed of c
         module-csharp        ; unity, mono and xamarin
         module-data          ; dbs 'n data formats
         module-eshell        ; eshell (on windows)

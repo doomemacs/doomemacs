@@ -147,6 +147,7 @@
 (depends-on "go-mode")
 (depends-on "swift-mode")
 (depends-on "vimrc-mode")
+(depends-on "crystal-mode" :git "https://github.com/jpellerin/emacs-crystal-mode/")
 
 ;; (depends-on "haxe-mode")
 ;; (depends-on "rust-mode")
