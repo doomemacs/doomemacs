@@ -76,30 +76,23 @@
   :after emr
   :init (add-hook! ruby-mode 'emr-initialize)
   :config
-  (emr-declare-command 'ruby-toggle-block
-    :title "toggle block"
-    :modes 'enh-ruby-mode
-    :predicate (lambda () (not (use-region-p))))
-  (emr-declare-command 'ruby-refactor-extract-to-method
-    :title "extract method"
-    :modes 'enh-ruby-mode
-    :predicate (lambda () (use-region-p)))
-  (emr-declare-command 'ruby-refactor-extract-local-variable
-    :title "extract local variable"
-    :modes 'enh-ruby-mode
-    :predicate (lambda () (use-region-p)))
-  (emr-declare-command 'ruby-refactor-extract-constant
-    :title "extract constant"
-    :modes 'enh-ruby-mode
-    :predicate (lambda () (use-region-p)))
-  (emr-declare-command 'ruby-refactor-add-parameter
-    :title "add parameter"
-    :modes 'enh-ruby-mode
-    :predicate (lambda () (not (use-region-p))))
-  (emr-declare-command 'ruby-refactor-extract-to-let
-    :title "extract to let"
-    :modes 'enh-ruby-mode
-    :predicate (lambda () (use-region-p))))
+  (mapc (lambda (x)
+          (let ((command-name (car x))
+                (title (cadr x))
+                (region-p (caddr x))
+                predicate)
+            (setq predicate (cond ((eq region-p 'both) nil)
+                                  (t (if region-p
+                                         (lambda () (use-region-p))
+                                       (lambda () (not (use-region-p)))))))
+            (emr-declare-command (intern (format "ruby-%s" (symbol-name command-name)))
+              :title title :modes 'ruby-mode :predicate predicate)))
+        '((toggle-block                     "toggle block"            nil)
+          (refactor-extract-to-method       "extract method"          t)
+          (refactor-extract-local-variable  "extract local variable"  t)
+          (refactor-extract-constant        "extract constant"        t)
+          (refactor-add-parameter           "add parameter"           nil)
+          (refactor-extract-to-let          "extract to let"          t))))
 
 (provide 'module-ruby)
 ;;; module-ruby.el ends here
