@@ -3,20 +3,20 @@
 ;; Silence the byte-compiler
 (eval-when-compile (require 'defuns-quickrun))
 
-(use-package enh-ruby-mode
+(use-package ruby-mode
   :mode ("\\.r[bu]$" "\\.rake$" "\\.gemspec$" "\\.?pryrc$"
          "/\\(Gem\\|Cap\\|Vagrant\\|Rake\\)file$")
   :interpreter "ruby"
   :init
-  (add-hook! enh-ruby-mode 'narf|enable-tab-width-2)
-  (build-for! enh-ruby-mode "rake %s" "Rakefile")
+  (add-hook! ruby-mode 'narf|enable-tab-width-2)
+  (build-for! ruby-mode "rake %s" "Rakefile")
   :config
   ;; Formatting
   (setq ruby-indent-level      2
         ruby-deep-indent-paren t)
 
   ;; Don't interfere with my custom RET behavior
-  (define-key enh-ruby-mode-map [?\n] nil)
+  (define-key ruby-mode-map [?\n] nil)
 
   ;; Rakefiles ;;;;;;;;;;;;;;;;;;;;;;;;;;;
   (define-minor-mode rake-mode
@@ -57,24 +57,24 @@
 (use-package inf-ruby
   :commands (inf-ruby inf-ruby-console-auto)
   :config
-  (evil-set-initial-state 'inf-enh-ruby-mode 'insert)
+  (evil-set-initial-state 'inf-ruby-mode 'insert)
   (after! company
     (require 'company-inf-ruby)
-    (add-company-backend! inf-enh-ruby-mode (inf-ruby))))
+    (add-company-backend! inf-ruby-mode (inf-ruby))))
 
 (use-package robe
   :commands (robe-mode robe-start ruby-load-file)
   :init
   (add-hook! after-save 'narf|ruby-load-file)
-  (add-hook! enh-ruby-mode 'narf|enable-robe-maybe)
+  (add-hook! ruby-mode 'narf|enable-robe-maybe)
   :config
   (after! company
     (require 'company-robe)
-    (add-company-backend! enh-ruby-mode (robe))))
+    (add-company-backend! ruby-mode (robe))))
 
 (use-package ruby-refactor
   :after emr
-  :init (add-hook! enh-ruby-mode 'emr-initialize)
+  :init (add-hook! ruby-mode 'emr-initialize)
   :config
   (emr-declare-command 'ruby-toggle-block
     :title "toggle block"
