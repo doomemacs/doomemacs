@@ -62,7 +62,12 @@
 
   ;; [pedantry intensifies]
   (defadvice js2-mode (after js2-mode-rename-modeline activate)
-    (setq mode-name "JS2")))
+    (setq mode-name "JS2"))
+
+  (define-minor-mode nodejs-mode
+    :lighter " Node" :keymap (make-sparse-keymap)
+    (add-yas-minor-mode! 'nodejs-mode))
+  (associate! nodejs-mode :files ("package.json") :in (js2-mode)))
 
 (use-package tern
   :diminish tern-mode
