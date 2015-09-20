@@ -4,7 +4,7 @@
 (eval-when-compile (require 'defuns-quickrun))
 
 (use-package ruby-mode
-  :mode ("\\.r[bu]$" "\\.rake$" "\\.gemspec$" "\\.?pryrc$"
+  :mode ("\\.rb$" "\\.rake$" "\\.gemspec$" "\\.?pryrc$"
          "/\\(Gem\\|Cap\\|Vagrant\\|Rake\\)file$")
   :interpreter "ruby"
   :init
