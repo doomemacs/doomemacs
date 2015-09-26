@@ -12,6 +12,7 @@
 
   (add-hook! (ruby-mode
               python-mode
+              go-mode
               php-mode
               lua-mode
               shell-mode
