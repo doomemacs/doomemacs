@@ -132,6 +132,9 @@
 ;; C#
 (depends-on "csharp-mode")
 (depends-on "omnisharp")
+;; Golang
+(depends-on "go-mode")
+(depends-on "go-eldoc")
 ;; Java
 (depends-on "emacs-eclim")
 (depends-on "groovy-mode")
@@ -144,7 +147,6 @@
 ;;(depends-on "org-plus-contrib")
 ;;(depends-on "org-opml" :git "https://github.com/edavis/org-opml")
 ;; Other
-(depends-on "go-mode")
 (depends-on "swift-mode")
 (depends-on "vimrc-mode")
 (depends-on "crystal-mode" :git "https://github.com/jpellerin/emacs-crystal-mode/")
