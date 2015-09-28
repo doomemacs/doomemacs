@@ -2,7 +2,7 @@
 ;; see lib/ui-defuns.el
 
 (when window-system
-  (fringe-mode '(2 . 8))
+  (fringe-mode '(1 . 8))
   (setq frame-title-format '(buffer-file-name "%f" ("%b"))))
 
 (setq show-paren-delay 0)
@@ -98,8 +98,6 @@
    powerline-height 18)
   :config
   (require 'spaceline-segments)
-
-  ;; (defface powerline-border '((t (:background "#05051e"))) "")
 
   (spaceline-define-segment narf-buffer-path
     "Name of buffer."

@@ -59,6 +59,7 @@
   (exmap "tabn[ext]"     'wg-switch-to-workgroup-right)
   (exmap "tabp[rev]"     'wg-switch-to-workgroup-left)
   (exmap "tabl[ast]"     'wg-switch-to-previous-workgroup)
+  (exmap "tabc[lose]"    'wg-kill-workgroup)
   (exmap "k[ill]w"       'wg-kill-workgroup)
   (exmap "k[ill]ow"      'narf:kill-other-workgroups))
 

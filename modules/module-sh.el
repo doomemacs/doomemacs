@@ -1,7 +1,7 @@
 ;;; module-sh.el --- description
 
 ;; [pedantry intensifies]
-(after! sh-mode
+(after! sh-script
   (defadvice sh-mode (after sh-mode-rename-modeline activate)
     (setq mode-name "Sh"))
 

@@ -5,8 +5,7 @@
 
 (custom-theme-set-variables 'narf-dark)
 
-(let (;; (background       "#2b303b")
-      (background       "#232837")
+(let ((background       "#232837")
       (gutters          "#05051e")
       (gutter-fg        "#55616A")
       (gutters-active   "#2b303f")
@@ -16,7 +15,6 @@
       (foreground       "#c0c5ce")
       (invisibles       "#65737e")
       (line-hl          "#2b303f")
-      ;; (line-hl          "#343d46")
       (selection        "#4f5b66")
       (text             "#c0c5ce")
       (comments         "#65737e")
@@ -57,7 +55,7 @@
    `(mode-line-modified-face  ((t (:foreground ,builtin))))
    `(powerline-active1        ((t (:background "#343A4D"))))
    `(powerline-active2        ((t (:background "#3B435C"))))
-   `(powerline-inactive2      ((t (:background ,gutters-active))))
+   `(powerline-inactive1      ((t (:background ,gutters-active))))
    `(powerline-inactive2      ((t (:background ,gutters-active))))
 
    ;; Font lock faces
@@ -80,6 +78,32 @@
    `(whitespace-newline                ((t (:foreground "#343d46"))))
    `(whitespace-trailing               ((t (:background "#553333"))))
 
+   ;; lang-specific
+   ;; *****************************************************************************************
+
+   `(js2-function-param                ((t (:foreground ,variables))))
+   `(js2-jsdoc-tag                     ((t (:foreground ,comments :weight bold :bold t))))
+
+   `(org-level-1                      ((t (:inherit outline-1 :bold t :foreground ,constants))))
+   `(org-level-2                      ((t (:inherit outline-2 :bold t :foreground ,variables))))
+
+   ;; company-mode
+   ;; *****************************************************************************************
+
+   `(company-tooltip                   ((t (:inherit default :background "#3e4555"))))
+   `(company-tooltip-selection         ((t (:inherit font-lock-function-name-face))))
+   `(company-tooltip-common            ((t (:inherit font-lock-constant-face))))
+   `(company-scrollbar-bg              ((t (:background "#4b5367"))))
+   `(company-scrollbar-fg              ((t (:background "#353b49"))))
+   `(company-search                    ((t (:background "#4b5367"))))
+
+   ;; *****************************************************************************************
+
+   `(flyspell-incorrect       ((t (:underline "#ff5555" :inherit unspecified))))
+
+   `(helm-source-header       ((t (:background ,gutters-active :foreground ,strings :weight bold :height 1.0))))
+   `(helm-selection           ((t (:background ,selection))))
+
    `(highlight-indentation-face                 ((t (:background "#2f3641"))))
    `(highlight-indentation-current-column-face  ((t (:background ,gutter-light))))
 
@@ -94,36 +118,13 @@
    `(rainbow-delimiters-unmatched-face ((t (:inherit 'error))))
    `(rainbow-delimiters-depth-1-face   ((t (:foreground "#CCCCCC" :weight bold :bold t))))
 
-   ;; js2-mode
-   ;; *****************************************************************************************
-
-   `(js2-function-param                ((t (:foreground ,variables))))
-   `(js2-jsdoc-tag                     ((t (:foreground ,comments :weight bold :bold t))))
-
-   ;; company-mode
-   ;; *****************************************************************************************
-
-   `(company-tooltip                   ((t (:inherit default :background "#3e4555"))))
-   `(company-tooltip-selection         ((t (:inherit font-lock-function-name-face))))
-   `(company-tooltip-common            ((t (:inherit font-lock-constant-face))))
-   `(company-scrollbar-bg              ((t (:background "#4b5367"))))
-   `(company-scrollbar-fg              ((t (:background "#353b49"))))
-   `(company-search                    ((t (:background "#4b5367"))))
-
-   ;; *****************************************************************************************
-
-   `(persp-selected-face               ((t (:foreground ,builtin))))
-
-   `(org-level-1                      ((t (:inherit outline-1 :bold t :foreground ,constants))))
-   `(org-level-2                      ((t (:inherit outline-2 :bold t :foreground ,variables))))
-
    `(show-paren-match                 ((t (:background nil :foreground ,highlight :weight ultra-bold))))
 
    `(evil-snipe-first-match-face      ((t (:background ,highlight :foreground "black"))))
    `(evil-snipe-matches-face          ((t (:foreground ,highlight :background ,dim-highlight))))
+   `(evil-search-highlight-persist-highlight-face ((t (:inherit isearch-lazy-highlight-face))))
    `(isearch                          ((t (:foreground "black" :background ,highlight :inverse-video nil))))
    `(isearch-lazy-highlight-face      ((t (:foreground ,text :background ,dim-highlight))))
-   `(evil-search-highlight-persist-highlight-face ((t (:inherit isearch-lazy-highlight-face))))
 
    ))
 
