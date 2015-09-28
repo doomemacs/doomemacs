@@ -89,96 +89,30 @@
   (add-hook! nlinum-mode
     (setq nlinum--width (length (number-to-string (count-lines (point-min) (point-max)))))))
 
-(use-package smart-mode-line ; customized modeline
-  :init (setq-default
-         sml/no-confirm-load-theme t
-         sml/mode-width            'full
-         sml/extra-filler          -6
-         sml/show-remote           nil
-         sml/encoding-format       nil
-         sml/modified-char         "*"
-         sml/numbers-separator     "/"
-         sml/line-number-format    "%l"
-         sml/col-number-format     "%c"
-         sml/position-percentage-format "%P"
-         sml/pre-modes-separator       " ["
-         sml/pre-minor-modes-separator " "
-         sml/pos-minor-modes-separator "] "
-         sml/replacer-regexp-list '(("^~/.emacs.d/" "EMACS.D:")
-                                    ("^~/Dropbox/Projects/" "PROJECTS:")
-                                    ("^~/Dropbox/notes/" "NOTES:")
-                                    ("^/usr/local/Cellar/" "HOMEBREW:")))
-  :config
-  ;; Hack modeline to be more vim-like, and right-aligned
-  (defun sml/generate-minor-modes ()
-    (if sml/simplified
-        ""
-      (let* ((nameList (rm--mode-list-as-string-list))
-             (last nil)
-             (concatList (mapconcat (lambda (mode)
-                                      (setq mode (s-trim mode))
-                                      (if (> (length mode) 1)
-                                          (prog1 (concat (if last " ") mode " ")
-                                            (setq last nil))
-                                        (prog1 mode
-                                          (setq last t))))
-                                    nameList ""))
-             (size (sml/fill-width-available))
-             (finalNameList concatList)
-             needs-removing filling)
-        (when (and sml/shorten-modes (> (length finalNameList) size))
-          (setq needs-removing
-                (1+ (sml/count-occurrences-starting-at
-                     " " finalNameList
-                     (- size (string-width sml/full-mode-string))))))
-        (when needs-removing
-          (setcdr (last nameList (1+ needs-removing))
-                  (list t sml/propertized-full-mode-string)))
-        (unless sml/shorten-modes
-          (add-to-list 'nameList sml/propertized-shorten-mode-string t))
-        (setq filling (- size (+ (length (format-mode-line concatList)) (length mode-name) (length vc-mode))))
-        (setq filling (make-string (max 0 filling) sml/fill-char))
-        (list (propertize filling 'face 'sml/modes)
-              (propertize (or vc-mode "") 'face 'sml/vc)
-              (propertize sml/pre-modes-separator 'face 'font-lock-comment-delimiter-face)
-              (propertize mode-name)
-              'sml/pre-minor-modes-separator
-              concatList
-              (propertize sml/pos-minor-modes-separator 'face
-                          'font-lock-comment-delimiter-face)))))
+;; Mode-line ;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-  ;; Hide evil state indicator
-  (after! evil (setq evil-mode-line-format nil))
-  ;; Add small gap for anzu display
-  (after! anzu
-    (defun narf--anzu-update-mode-line (here total)
-      (concat (anzu--update-mode-line-default here total) " "))
-    (setq anzu-mode-line-update-function 'narf--anzu-update-mode-line))
-  (sml/setup)
-  (sml/apply-theme 'respectful)
-  ;; Remove extra spaces in format lists
-  (pop mode-line-modes)
-  (nbutlast mode-line-modes)
-  ;; Remove spacing in mode-line position so we can put it elsewhere
-  (setq mode-line-position
-        '(":" (sml/position-percentage-format
-               (-3 (:propertize (:eval sml/position-percentage-format) face sml/position-percentage)))))
-
-  ;; Rearrange and cleanup
-  (setq-default mode-line-format
-                '("%e"
-                  mode-line-mule-info
-                  mode-line-client
-                  ;; mode-line-remote
-                  mode-line-frame-identification
-                  mode-line-buffer-identification
-                  mode-line-modified
-                  mode-line-misc-info
-                  mode-line-modes
-                  mode-line-front-space
-                  mode-line-end-spaces
-                  " "
-                  mode-line-position)))
+(setq-default powerline-default-separator nil)
+(require 'spaceline-segments)
+(spaceline-install
+ ;; Left side
+ '((buffer-size)
+   (buffer-id remote-host buffer-modified)
+   ((flycheck-error flycheck-warning flycheck-info)
+    :when active)
+   (version-control :when active))
+ ;; Right side
+ `((battery :when active)
+   selection-info
+   major-mode
+   (((minor-modes :separator spaceline-minor-modes-separator)
+     process)
+    :when active)
+   (buffer-encoding-abbrev
+    point-position
+    line-column)
+   (global :when active)
+   buffer-position
+   hud))
 
 (provide 'core-ui)
 ;;; core-ui.el ends here

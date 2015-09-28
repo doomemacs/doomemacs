@@ -19,6 +19,7 @@
 ;; UI --- core/core-ui.el
 (depends-on "nlinum")
 (depends-on "smart-mode-line")
+(depends-on "spaceline" :git "https://github.com/TheBB/spaceline")
 
 ;; Evil --- core/core-evil.el
 (depends-on "evil")
