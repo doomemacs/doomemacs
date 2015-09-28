@@ -113,7 +113,8 @@
                                        (let ((l (length path))) (substring path (- l max-length) l))))
                         path)))
                 (powerline-buffer-id)))
-            (if (buffer-modified-p) (propertize "*" 'font-lock-face '(:inherit mode-line :foreground "orange")))
+            (if (buffer-modified-p)
+                (propertize "*" 'font-lock-face '(:inherit other-face :foreground "orange")))
             " ")
     :tight-right t)
 
@@ -141,6 +142,11 @@
     (replace-regexp-in-string (regexp-quote (symbol-name (vc-deduce-backend))) "" (s-trim (powerline-vc)) t t)
     :when (powerline-vc))
 
+  (spaceline-define-segment narf-hud
+    "A HUD that shows which part of the buffer is currently visible."
+    (powerline-hud highlight-face default-face)
+    :tight t)
+
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
   (spaceline-install
@@ -150,13 +156,12 @@
       :when active)
      (narf-vc :face other-face :when active))
    ;; Right side
-   '((battery :when active)
-     selection-info
+   '(selection-info
      narf-buffer-encoding-abbrev
      (major-mode (minor-modes process :when active))
      (global :when active)
      (narf-line-column narf-buffer-position :face powerline-border)
-     hud)))
+     narf-hud)))
 
 (provide 'core-ui)
 ;;; core-ui.el ends here
