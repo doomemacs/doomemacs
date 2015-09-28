@@ -18,7 +18,6 @@
 
 ;; UI --- core/core-ui.el
 (depends-on "nlinum")
-(depends-on "smart-mode-line")
 (depends-on "spaceline" :git "https://github.com/TheBB/spaceline")
 
 ;; Evil --- core/core-evil.el
@@ -157,6 +156,5 @@
 (depends-on "rust-mode")
 ;; (depends-on "d-mode")
 
-;; OTHER
 ;; (depends-on "shaderlab-mode" :git "https://bitbucket.org/bbbscarter/emacs-shaderlab-mode")
 (depends-on "unityjs-mode" :git "https://github.com/naruse/EmacsUnityScript")
