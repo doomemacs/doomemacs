@@ -30,6 +30,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package nlinum ; line numbers
+  :disabled t
   :defer t
   :defines nlinum--width
   :preface
