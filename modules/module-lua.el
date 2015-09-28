@@ -7,9 +7,8 @@
   (setq-default lua-indent-level tab-width)
   ;; (after! company-dict
   ;;   (add-to-list 'company-dict-minor-mode-alist 'love-mode))
-  (add-hook! lua-mode
-    (narf|enable-tab-width-2)
-    (setq lua-indent-level 2)))
+  (add-hook! lua-mode '(narf|enable-tab-width-2 flycheck-mode))
+  (add-hook! lua-mode (setq lua-indent-level 2)))
 
 (define-minor-mode love-mode
   "Buffer local minor mode for Love2D"

@@ -8,7 +8,7 @@
          "/\\(Gem\\|Cap\\|Vagrant\\|Rake\\)file$")
   :interpreter "ruby"
   :init
-  (add-hook! ruby-mode 'narf|enable-tab-width-2)
+  (add-hook! ruby-mode '(narf|enable-tab-width-2 flycheck-mode))
   (build-for! ruby-mode "rake %s" "Rakefile")
   :config
   ;; Formatting

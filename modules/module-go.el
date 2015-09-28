@@ -3,7 +3,8 @@
 (use-package go-mode
   :mode "\\.go$"
   :interpreter "go"
-  :init (add-hook! go-mode 'emr-initialize)
+  :init
+  (add-hook! go-mode '(emr-initialize flycheck-mode))
   :config
   (bind! :map go-mode-map
          :n "gd" 'godef-jump

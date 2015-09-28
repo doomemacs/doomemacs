@@ -5,7 +5,7 @@
   :interpreter ("python"   . python-mode)
   :commands    python-mode
   :init
-  (add-hook! python-mode '(narf|enable-tab-width-4 emr-initialize))
+  (add-hook! python-mode '(narf|enable-tab-width-4 emr-initialize flycheck-mode))
   (setq python-indent-offset 4
         python-environment-directory narf-temp-dir
         python-shell-interpreter "ipython")

@@ -25,6 +25,7 @@
   :init
   (associate! c++-mode  :match "\\.h$")
   (associate! objc-mode :match "\\.mm$")
+  (add-hook! (c-mode c++-mode) 'flycheck-mode)
   :config
   (setq c-basic-offset 4
         c-tab-always-indent nil

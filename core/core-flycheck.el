@@ -9,16 +9,6 @@
         ;; Removed checks on idle/change for snappiness
         flycheck-check-syntax-automatically '(save mode-enabled idle-change)
         flycheck-disabled-checkers '(emacs-lisp-checkdoc make))
-
-  (add-hook! (ruby-mode
-              python-mode
-              go-mode
-              php-mode
-              lua-mode
-              shell-mode
-              scss-mode
-              c++-mode
-              c-mode) 'flycheck-mode)
   :config
   (add-unreal-buffer! "^\\*Flycheck.*\\*$")
 

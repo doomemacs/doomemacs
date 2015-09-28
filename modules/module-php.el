@@ -3,6 +3,7 @@
 (use-package php-mode
   :mode "\\.\\(php\\|inc\\)$"
   :init
+  (add-hook! php-mode 'flycheck-mode)
   (setq php-template-compatibility nil
         php-extras-eldoc-functions-file (concat narf-temp-dir "php-extras-eldoc-functions"))
   :config
