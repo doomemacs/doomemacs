@@ -47,10 +47,11 @@
 (scroll-bar-mode -1) ; no scrollbar
 (tool-bar-mode   -1) ; no toolbar
 (menu-bar-mode   -1) ; no menubar
-
-;;(set-frame-font (font-spec :family "terminus (ttf)" :size 12 :antialias nil))
-(set-frame-font (font-spec :family "Ubuntu Mono" :size 14 :antialias t))
-(set-frame-parameter nil 'fullscreen 'fullboth)
+(when window-system
+  (set-frame-font (if (> (display-pixel-width) 1280)
+                      (font-spec :family "Ubuntu Mono" :size 14 :antialias t)
+                    (font-spec :family "terminus (ttf)" :size 12 :antialias nil)))
+  (set-frame-parameter nil 'fullscreen 'fullboth))
 
 (load (concat user-emacs-directory "init-load-path.el"))
 (load-theme (if window-system 'narf-dark 'wombat) t)
