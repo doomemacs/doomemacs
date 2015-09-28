@@ -33,9 +33,7 @@
 
       (git-modified     "#55616A")
       (git-added        "#436b3b")
-      (git-deleted      "#714243")
-
-      (dark-bg          "#05051e"))
+      (git-deleted      "#714243"))
 
   (custom-theme-set-faces
    'narf-dark
