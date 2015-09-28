@@ -92,6 +92,7 @@
         module-regex         ; /^[^\s](meaning)[^\n]*/
         module-ruby          ; <3
         module-sass          ; @include magic;
+        module-sh            ; she sells Z-shells by the C shore
         module-swift         ; yay, emoji variables!
         module-markdown      ; markdown
         ;; module-rust
