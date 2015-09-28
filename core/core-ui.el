@@ -11,8 +11,8 @@
 (blink-cursor-mode    1)    ; do blink cursor
 (line-number-mode     1)    ; do show line no in modeline
 (column-number-mode   1)    ; do show col no in modeline
-(size-indication-mode 1)    ; do show file size
 (tooltip-mode        -1)    ; don't show tooltips
+;; (size-indication-mode 1)    ; do show file size
 
 (setq-default
  ;; Multiple cursors across buffers cause a strange redraw delay for
@@ -113,15 +113,9 @@
                                        (let ((l (length path))) (substring path (- l max-length) l))))
                         path)))
                 (powerline-buffer-id)))
-            (if (buffer-modified-p) (propertize "*" 'font-lock-face '(:inherit powerline-active1 :foreground "orange")))
+            (if (buffer-modified-p) (propertize "*" 'font-lock-face '(:inherit mode-line :foreground "orange")))
             " ")
     :tight-right t)
-
-  (spaceline-define-segment narf-buffer-modified
-    "Buffer modified marker."
-    (if (buffer-modified-p) "*")
-    :face highlight-face
-    :tight t)
 
   (spaceline-define-segment narf-buffer-encoding-abbrev
     "The line ending convention used in the buffer."
