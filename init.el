@@ -42,8 +42,6 @@
 
 (defconst narf-debug-mode nil)
 
-(setq user-mail-address "henrik@lissner.net")
-
 (scroll-bar-mode -1) ; no scrollbar
 (tool-bar-mode   -1) ; no toolbar
 (menu-bar-mode   -1) ; no menubar
