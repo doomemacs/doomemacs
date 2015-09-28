@@ -25,6 +25,7 @@
 (exmap "ma[ke]"          'narf:build)
 (exmap "mv"              'narf:file-move)
 (exmap "na[rrow]"        'narf:narrow)  ; Narrow buffer to selection
+(exmap "wi[den]"         'narf:widen)   ; Widen narrowed buffer
 (exmap "proj[ect]"       'helm-projectile-switch-project)
 (exmap "rec[ent]"        'narf:helm-recentf)
 (exmap "re[gex]"         'narf:regex)

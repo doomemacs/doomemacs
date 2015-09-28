@@ -44,6 +44,7 @@
 (depends-on "avy")
 (depends-on "emr")
 (depends-on "expand-region")
+(depends-on "fancy-narrow")
 (depends-on "goto-last-change")
 (depends-on "hl-todo" :git "https://github.com/tarsius/hl-todo")
 (depends-on "rainbow-delimiters")

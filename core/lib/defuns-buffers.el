@@ -1,23 +1,33 @@
 ;;; defuns-buffers.el
 
-;;;###autoload
-(defun narf:narrow (start end)
-  "Restrict editing in this buffer to the current region, indirectly.
+;;;###autoload (autoload 'narf:narrow "defuns-buffers" nil t)
+(evil-define-operator narf:narrow (&optional beg end bang)
+  "Restrict editing in this buffer to the current region, indirectly. With BANG,
+clone the buffer and hard-narrow the selection. Otherwise use fancy-narrow. If
+mark isn't active, then widen the buffer (if narrowed).
 
 Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
-  (interactive "r")
-  (deactivate-mark)
-  (let ((buf (clone-indirect-buffer nil nil)))
-    (with-current-buffer buf
-      (narrow-to-region start end))
-    (switch-to-buffer buf)))
+  (interactive "<r><!>")
+  (if (region-active-p)
+      (if bang
+          (progn
+            (deactivate-mark)
+            (let ((buf (clone-indirect-buffer nil nil)))
+              (with-current-buffer buf
+                (narrow-to-region start end))
+              (switch-to-buffer buf)))
+        (fancy-narrow-to-region beg end))
+    (narf:widen)))
 
 ;;;###autoload
 (defun narf:widen ()
-  "Undo narrowing (see `narf:narrow')"
+  "Widen a buffer that has been narrowed with `narrow-to-region' or
+`fancy-narrow-to-region'"
   (interactive)
   (when (buffer-narrowed-p)
-    (widen)))
+    (widen))
+  (when (and (featurep 'fancy-narrow) fancy-narrow--beginning fancy-narrow--end)
+    (fancy-widen)))
 
 ;;;###autoload
 (defun narf/set-read-only-region (begin end)

@@ -125,6 +125,9 @@
 (use-package expand-region
   :commands (er/expand-region er/contract-region er/mark-symbol er/mark-word))
 
+(use-package fancy-narrow
+  :commands (fancy-narrow-to-region fancy-widen))
+
 (use-package goto-last-change
   :commands goto-last-change)
 
