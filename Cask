@@ -153,7 +153,7 @@
 (depends-on "crystal-mode" :git "https://github.com/jpellerin/emacs-crystal-mode/")
 
 ;; (depends-on "haxe-mode")
-;; (depends-on "rust-mode")
+(depends-on "rust-mode")
 ;; (depends-on "d-mode")
 
 ;; OTHER
