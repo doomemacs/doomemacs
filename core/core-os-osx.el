@@ -11,7 +11,9 @@
       ;; Curse Lion and its sudden but inevitable fullscreen mode!
       ns-use-native-fullscreen nil
       ;; Don't open files from the workspace in a new frame
-      ns-pop-up-frames nil)
+      ns-pop-up-frames nil
+      ;; smooth scrolling is slow
+      mac-mouse-wheel-smooth-scroll nil)
 
 ;; fix emacs PATH on OSX (GUI only)
 (when window-system
