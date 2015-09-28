@@ -10,7 +10,7 @@
   :init (add-hook! csharp-mode 'omnisharp-mode)
   :config
   (setq omnisharp-server-executable-path
-        "~/Dropbox/projects/lib/Omnisharp/server/OmniSharp/bin/Debug/OmniSharp.exe"
+        "~/Dropbox/lib/Omnisharp/server/OmniSharp/bin/Debug/OmniSharp.exe"
         omnisharp-auto-complete-want-documentation nil)
 
   (bind! :map omnisharp-mode-map
