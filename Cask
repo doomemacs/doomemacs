@@ -36,7 +36,7 @@
 (depends-on "evil-surround")
 (depends-on "evil-visualstar")
 (depends-on "evil-plugins" :git "https://github.com/tarao/evil-plugins")
-(depends-on "evil-easymotion")
+(depends-on "evil-easymotion" :git "https://github.com/PythonNut/evil-easymotion")
 
 ;; Editor --- core/core-editor.el
 (depends-on "ace-window")
