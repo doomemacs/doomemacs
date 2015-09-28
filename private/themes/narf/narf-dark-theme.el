@@ -35,7 +35,9 @@
 
       (git-modified     "#55616A")
       (git-added        "#436b3b")
-      (git-deleted      "#714243"))
+      (git-deleted      "#714243")
+
+      (dark-bg          "#05051e"))
 
   (custom-theme-set-faces
    'narf-dark
@@ -50,25 +52,13 @@
 
    `(vertical-border          ((t (:foreground "#000000") )))
 
-   `(mode-line                ((t (:foreground ,white
-                                   :background ,gutter-light
-                                   :box (:line-width 3 :color ,gutter-light)
-                                   ))))
-
-   `(mode-line-inactive       ((t (:foreground ,gutter-fg
-                                   :background ,gutters-active
-                                   :box (:line-width 3 :color ,gutters-active)
-                                   ))))
-
+   `(mode-line                ((t (:foreground ,white     :background ,gutter-light))))
+   `(mode-line-inactive       ((t (:foreground ,gutter-fg :background ,gutters-active))))
    `(mode-line-modified-face  ((t (:foreground ,builtin))))
-
-   `(sml/folder               ((t nil)))
-   `(sml/modified             ((t (:foreground ,highlight))))
-
-   `(flyspell-incorrect       ((t (:underline "#ff5555" :inherit unspecified))))
-
-   `(helm-source-header       ((t (:background ,gutters-active :foreground ,strings :weight bold :height 1.0))))
-   `(helm-selection           ((t (:background ,selection))))
+   `(powerline-active1        ((t (:background "#343A4D"))))
+   `(powerline-active2        ((t (:background "#3B435C"))))
+   `(powerline-inactive2      ((t (:background ,gutters-active))))
+   `(powerline-inactive2      ((t (:background ,gutters-active))))
 
    ;; Font lock faces
    `(linum-highlight-face              ((t (:foreground ,text :background ,line-hl :inherit linum))))

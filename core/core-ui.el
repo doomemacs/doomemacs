@@ -91,28 +91,80 @@
 
 ;; Mode-line ;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(setq-default powerline-default-separator nil)
-(require 'spaceline-segments)
-(spaceline-install
- ;; Left side
- '((buffer-size)
-   (buffer-id remote-host buffer-modified)
-   ((flycheck-error flycheck-warning flycheck-info)
-    :when active)
-   (version-control :when active))
- ;; Right side
- `((battery :when active)
-   selection-info
-   major-mode
-   (((minor-modes :separator spaceline-minor-modes-separator)
-     process)
-    :when active)
-   (buffer-encoding-abbrev
-    point-position
-    line-column)
-   (global :when active)
-   buffer-position
-   hud))
+(use-package spaceline-segments
+  :init
+  (setq-default
+   powerline-default-separator 'wave
+   powerline-height 18)
+  :config
+  (require 'spaceline-segments)
+
+  ;; (defface powerline-border '((t (:background "#05051e"))) "")
+
+  (spaceline-define-segment narf-buffer-path
+    "Name of buffer."
+    (concat (let ((buffer-path (buffer-file-name)))
+              (if (and buffer-path (file-exists-p buffer-path))
+                  (progn
+                    (setq buffer-path (abbreviate-file-name buffer-path))
+                    (let ((path (file-relative-name buffer-path (file-name-directory (narf/project-root))))
+                          (max-length (/ (window-width) 2)))
+                      (if (> (length path) max-length)
+                          (concat "…" (replace-regexp-in-string
+                                       "^.*?/" "/"
+                                       (let ((l (length path))) (substring path (- l max-length) l))))
+                        path)))
+                (powerline-buffer-id)))
+            (if (buffer-modified-p) (propertize "*" 'font-lock-face '(:inherit powerline-active1 :foreground "orange")))
+            " ")
+    :tight-right t)
+
+  (spaceline-define-segment narf-buffer-modified
+    "Buffer modified marker."
+    (if (buffer-modified-p) "*")
+    :face highlight-face
+    :tight t)
+
+  (spaceline-define-segment narf-buffer-encoding-abbrev
+    "The line ending convention used in the buffer."
+    (let ((buf-coding (format "%s" buffer-file-coding-system)))
+      (if (string-match "\\(dos\\|unix\\|mac\\)" buf-coding)
+          (match-string 1 buf-coding)
+        buf-coding))
+    :when (not (string-match "unix" (symbol-name buffer-file-coding-system))))
+
+  (spaceline-define-segment narf-line-column
+    "The current line and column numbers."
+    "%l/%c")
+
+  (spaceline-define-segment narf-buffer-position
+    "A more vim-like buffer position."
+    (let ((perc (/ (window-end) 0.01 (point-max))))
+      (cond ((eq (window-start) 1) ":Top")
+            ((>= perc 100) ":Bot")
+            (t (format ":%d%%%%" perc)))))
+
+  (spaceline-define-segment narf-vc
+    "Version control info"
+    (replace-regexp-in-string (regexp-quote (symbol-name (vc-deduce-backend))) "" (s-trim (powerline-vc)) t t)
+    :when (powerline-vc))
+
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  (spaceline-install
+   ;; Left side
+   '(((narf-buffer-path :face other-face) remote-host)
+     ((flycheck-error flycheck-warning flycheck-info)
+      :when active)
+     (narf-vc :face other-face :when active))
+   ;; Right side
+   '((battery :when active)
+     selection-info
+     narf-buffer-encoding-abbrev
+     (major-mode (minor-modes process :when active))
+     (global :when active)
+     (narf-line-column narf-buffer-position :face powerline-border)
+     hud)))
 
 (provide 'core-ui)
 ;;; core-ui.el ends here
