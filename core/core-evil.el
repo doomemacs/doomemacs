@@ -3,20 +3,8 @@
 
 (use-package evil
   :init
-  ;; highlight matching delimiters where it's important
-  (defun show-paren-mode-off () (show-paren-mode -1))
-  (add-hook! evil-insert-state-entry    'show-paren-mode)
-  (add-hook! evil-insert-state-exit     'show-paren-mode-off)
-  (add-hook! evil-visual-state-entry    'show-paren-mode)
-  (add-hook! evil-visual-state-exit     'show-paren-mode-off)
-  (add-hook! evil-motion-state-entry    'show-paren-mode)
-  (add-hook! evil-motion-state-exit     'show-paren-mode-off)
-  (add-hook! evil-operator-state-entry  'show-paren-mode)
-  (add-hook! evil-operator-state-exit   'show-paren-mode-off)
-
   ;; Disable highlights on insert-mode
   (add-hook! evil-insert-state-entry 'evil-ex-nohighlight)
-
   (add-hook! undo-tree-mode (diminish 'undo-tree-mode))
   ;; Always ensure evil-shift-width is consistent with tab-width
   (add-hook! evil-local-mode (setq evil-shift-width tab-width))
@@ -41,22 +29,13 @@
 
   (bind! :map evil-command-window-mode-map :n [escape] 'kill-buffer-and-window)
 
-  (defadvice evil-ex-hl-do-update-highlight (around evil-ex-hl-shut-up activate)
-    "Silence 'Error running timer `evil-ex-hl-do-update-highlight': (error
-\"Invalid use of `\\' in replacement text\") errors.
-
-See https://bitbucket.org/lyro/evil/issue/527"
-    (ignore-errors ad-do-it))
-
   ;; modes to map to different default states
   (dolist (mode-map '((cider-repl-mode   . emacs)
                       (comint-mode       . emacs)
                       (term-mode         . emacs)
-                      (fundamental-mode  . motion)
                       (help-mode         . normal)
                       (message-mode      . normal)
-                      (compilation-mode  . normal)
-                      (text-mode         . normal)))
+                      (compilation-mode  . normal)))
     (evil-set-initial-state `,(car mode-map) `,(cdr mode-map)))
 
   (progn ; evil hacks
@@ -74,13 +53,13 @@ See https://bitbucket.org/lyro/evil/issue/527"
     (defadvice evil-window-vsplit (after evil-window-vsplit-jump activate)
       (evil-window-right 1))
 
-    ;; Restore vimmish ex-mode keymaps to isearch
+    ;; Restore vimmish ex-mode keymaps in isearch
     ;; Hide keystroke display while isearch is active
     (add-hook! isearch-mode     (setq echo-keystrokes 0))
     (add-hook! isearch-mode-end (setq echo-keystrokes 0.02))
     (bind! :map evil-ex-search-keymap
-           "C-w"   'evil-delete-backward-word
-           "C-u"   'evil-delete-whole-line)))
+           "C-w" 'evil-delete-backward-word
+           "C-u" 'evil-delete-whole-line)))
 
 ;; evil plugins
 (use-package evil-anzu)
@@ -105,13 +84,14 @@ See https://bitbucket.org/lyro/evil/issue/527"
   :functions (iedit-current-occurrence-string iedit-restrict-region)
   :commands (evil-iedit-state evil-iedit-state/iedit-mode)
   :config
-  (bind! :map evil-iedit-state-map ; Don't interfere with evil-snipe
-         "s"   nil
-         "S"   nil
-         "V"   'evil-visual-line
-         "C"   'evil-iedit-state/substitute  ; instead of s/S
-         "za"  'iedit-toggle-unmatched-lines-visible)
-  (bind! :v "SPC" 'narf:iedit-restrict-to-region))
+  (bind!
+   :v "SPC" 'narf:iedit-restrict-to-region
+   (:map evil-iedit-state-map ; Don't interfere with evil-snipe
+     "s"   nil
+     "S"   nil
+     "V"   'evil-visual-line
+     "C"   'evil-iedit-state/substitute  ; instead of s/S
+     "za"  'iedit-toggle-unmatched-lines-visible)))
 
 (use-package evil-indent-textobject
   :commands (evil-indent-i-indent
@@ -166,14 +146,12 @@ See https://bitbucket.org/lyro/evil/issue/527"
 (use-package evil-snipe
   :diminish evil-snipe-mode
   :init
-  (define-key evil-normal-state-map "s" nil)
-  (define-key evil-normal-state-map "S" nil)
   (setq-default
    evil-snipe-smart-case t
-   evil-snipe-repeat-keys nil ;; using evil-space for repeating
+   evil-snipe-repeat-keys nil ; using evil-space to repeat
    evil-snipe-scope 'line
    evil-snipe-repeat-scope 'buffer
-   evil-snipe-override-evil-repeat-keys nil
+   evil-snipe-override-evil-repeat-keys nil ; causes problems with remapped ;
    evil-snipe-symbol-groups '((?\[ "[[{(]")
                               (?\] "[]})]")))
   :config
