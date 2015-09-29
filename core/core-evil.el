@@ -105,13 +105,13 @@ See https://bitbucket.org/lyro/evil/issue/527"
   :functions (iedit-current-occurrence-string iedit-restrict-region)
   :commands (evil-iedit-state evil-iedit-state/iedit-mode)
   :config
-  (bind! ; Don't interfere with evil-snipe
-   :I :unset "s"
-   :I :unset "S"
-   :I "V"   'evil-visual-line
-   :I "C"   'evil-iedit-state/substitute  ; instead of s/S
-   :I "za"  'iedit-toggle-unmatched-lines-visible
-   :v "SPC" 'narf:iedit-restrict-to-region))
+  (bind! :map evil-iedit-state-map ; Don't interfere with evil-snipe
+         "s"   nil
+         "S"   nil
+         "V"   'evil-visual-line
+         "C"   'evil-iedit-state/substitute  ; instead of s/S
+         "za"  'iedit-toggle-unmatched-lines-visible)
+  (bind! :v "SPC" 'narf:iedit-restrict-to-region))
 
 (use-package evil-indent-textobject
   :commands (evil-indent-i-indent
@@ -190,12 +190,8 @@ See https://bitbucket.org/lyro/evil/issue/527"
   (evil-space-setup "?" "N" "n")
 
   (after! evil-snipe
-    (evil-space-setup 'evil-snipe-f 'evil-snipe-repeat 'evil-snipe-repeat-reverse)
-    (evil-space-setup 'evil-snipe-F 'evil-snipe-repeat 'evil-snipe-repeat-reverse)
-    (evil-space-setup 'evil-snipe-t 'evil-snipe-repeat 'evil-snipe-repeat-reverse)
-    (evil-space-setup 'evil-snipe-T 'evil-snipe-repeat 'evil-snipe-repeat-reverse)
-    (evil-space-setup 'evil-snipe-s 'evil-snipe-repeat 'evil-snipe-repeat-reverse)
-    (evil-space-setup 'evil-snipe-S 'evil-snipe-repeat 'evil-snipe-repeat-reverse))
+    (mapc (lambda (x) (evil-space-setup x 'evil-snipe-repeat 'evil-snipe-repeat-reverse))
+          '(evil-snipe-f evil-snipe-F evil-snipe-t evil-snipe-T evil-snipe-s evil-snipe-S)))
 
   (after! evil-visualstar
     (evil-space-setup 'evil-visualstar/begin-search-forward "n" "N")

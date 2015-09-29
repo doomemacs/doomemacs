@@ -115,7 +115,7 @@
                         path)))
                 (powerline-buffer-id)))
             (if (buffer-modified-p)
-                (propertize "*" 'font-lock-face '(:inherit other-face :foreground "orange")))
+                (propertize "*" 'font-lock-face `(:inherit ,other-face :foreground "orange")))
             " ")
     :tight-right t)
 

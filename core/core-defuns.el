@@ -126,8 +126,7 @@ Examples:
                        ("e" . emacs)
                        ("o" . operator)
                        ("m" . motion)
-                       ("r" . replace)
-                       ("I" . iedit))))
+                       ("r" . replace))))
       (unless keymaps
         (setq keymaps default-keymaps))
       (while rest
@@ -178,12 +177,9 @@ Examples:
                       out-forms)
                   (dolist (keymap keymaps)
                     (if (not states)
-                        ;; (add-to-list 'out-forms `(define-key ,keymap ,key ,def) t)
                         (add-to-list 'out-forms `(evil-define-key nil ,keymap ,key ,def) t)
                       (dolist (state states)
                         (add-to-list 'out-forms `(evil-define-key ',state ,keymap ,key ,def) t))))
-                  ;; (add-to-list 'out-forms `(define-key (evil-get-auxiliary-keymap ,keymap ',state) ,key ,def) t))))
-
                   (setq prefix  (if (eq first-key :prefix) first-value))
                   (setq keymaps (if (eq first-key :map) first-value default-keymaps))
                   (setq states '())
