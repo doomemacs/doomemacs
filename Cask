@@ -18,6 +18,7 @@
 
 ;; UI --- core/core-ui.el
 (depends-on "nlinum")
+(depends-on "fill-column-indicator")
 (depends-on "spaceline" :git "https://github.com/TheBB/spaceline")
 
 ;; Evil --- core/core-evil.el

@@ -29,6 +29,12 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(use-package fill-column-indicator
+  :config
+  (setq fci-rule-color "#2b303f")
+  (setq-default fill-column 80)
+  (add-hook! text-mode 'fci-mode))
+
 (use-package nlinum ; line numbers
   :disabled t
   :defer t
