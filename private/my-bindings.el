@@ -23,9 +23,17 @@
  "M-/"   'evil-commentary-line
  "M-b"   'narf:build
  "M-t"   'helm-projectile-find-file
+ "C-\\"  'narf-switch-to-iterm
 
- :m "M-j"  "6j"
- :m "M-k"  "6k"
+ ;; Simpler window navigation
+ "C-j"  'evil-window-down
+ "C-k"  'evil-window-up
+ "C-h"  'evil-window-left
+ "C-l"  'evil-window-right
+
+ :m "M-j"  'narf-multi-next-line
+ :m "M-k"  'narf-multi-previous-line
+
  :n "M-r"  'narf:eval-buffer
  :v "M-r"  'narf:eval-region
  :n "M-d"  'dash-at-point
@@ -88,11 +96,13 @@
    :n "oT"  'narf:tmux-chdir)
 
  (:prefix "\\" ; <localleader>
-   :n "\\"  'narf/neotree-toggle
+   :n "="   'narf/neotree-toggle
    :n "."   'narf/neotree-find
    :n ";"   'narf/nlinum-toggle
-   :n "="   'toggle-transparency
+   :n "-"   'toggle-transparency
    :n "E"   'evil-emacs-state
+   :n "\\"  'narf-switch-to-iterm
+   :n "|"   'narf-switch-to-iterm-and-cd
 
    :n "]"   'next-buffer
    :n "["   'previous-buffer

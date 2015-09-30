@@ -17,15 +17,15 @@
     (hs-minor-mode 1))
   (if count (hs-hide-level count) (evil-close-folds)))
 
-;;;; Ace Jump ;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; https://github.com/winterTTr/ace-jump-mode/issues/23
-;;;###autoload (autoload 'narf:evil-ace-jump-two-chars "defuns-evil" nil t)
-(evil-define-motion narf/evil-ace-jump-two-chars (count)
-  :type exclusive
-  :repeat abort
-  (evil-without-repeat
-    (evil-enclose-ace-jump-for-motion
-      (call-interactively 'ace-jump-two-chars-mode))))
+;;;###autoload (autoload 'narf-multi-next-line "defuns-evil" nil t)
+(evil-define-motion narf-multi-next-line (count)
+  "Move down 6 lines"
+  :type line (evil-line-move 6))
+
+;;;###autoload (autoload 'narf-multi-previous-line "defuns-evil" nil t)
+(evil-define-motion narf-multi-previous-line (count)
+  "Move up 6 lines"
+  :type line (evil-line-move -6))
 
 ;;;###autoload
 (defun narf/evil-visual-line-state-p ()

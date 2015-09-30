@@ -54,5 +54,14 @@
     (message "Running: %s" command)
     (shell-command command)))
 
+(defun narf-switch-to-iterm ()
+  (interactive)
+  (shell-command "osascript -e 'tell application \"iTerm2\" to activate'" nil))
+
+(defun narf-switch-to-iterm-and-cd ()
+  (interactive)
+  (narf:tmux-chdir nil t)
+  (shell-command "osascript -e 'tell application \"iTerm2\" to activate'" nil))
+
 (provide 'core-os-osx)
 ;;; core-os-osx.el ends here
