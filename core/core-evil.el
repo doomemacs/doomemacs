@@ -84,14 +84,14 @@
   :functions (iedit-current-occurrence-string iedit-restrict-region)
   :commands (evil-iedit-state evil-iedit-state/iedit-mode)
   :config
-  (bind!
-   :v "SPC" 'narf:iedit-restrict-to-region
-   (:map evil-iedit-state-map ; Don't interfere with evil-snipe
-     "s"   nil
-     "S"   nil
-     "V"   'evil-visual-line
-     "C"   'evil-iedit-state/substitute  ; instead of s/S
-     "za"  'iedit-toggle-unmatched-lines-visible)))
+  (bind! :v "SPC" 'narf:iedit-restrict-to-region
+         (:map evil-iedit-state-map
+           ;; Don't interfere with evil-snipe
+           "s"   nil
+           "S"   nil
+           "V"   'evil-visual-line
+           "C"   'evil-iedit-state/substitute  ; instead of s/S
+           "za"  'iedit-toggle-unmatched-lines-visible)))
 
 (use-package evil-indent-textobject
   :commands (evil-indent-i-indent
@@ -135,8 +135,7 @@
      (evil-snipe-enable-incremental-highlight))))
 
 (use-package evil-numbers
-  :commands (evil-numbers/inc-at-pt
-             evil-numbers/dec-at-pt))
+  :commands (evil-numbers/inc-at-pt evil-numbers/dec-at-pt))
 
 (use-package evil-search-highlight-persist
   :config
@@ -168,8 +167,12 @@
   (evil-space-setup "?" "N" "n")
 
   (after! evil-snipe
-    (mapc (lambda (x) (evil-space-setup x 'evil-snipe-repeat 'evil-snipe-repeat-reverse))
-          '(evil-snipe-f evil-snipe-F evil-snipe-t evil-snipe-T evil-snipe-s evil-snipe-S)))
+    (evil-space-setup 'evil-snipe-f 'evil-snipe-repeat 'evil-snipe-repeat-reverse)
+    (evil-space-setup 'evil-snipe-F 'evil-snipe-repeat 'evil-snipe-repeat-reverse)
+    (evil-space-setup 'evil-snipe-t 'evil-snipe-repeat 'evil-snipe-repeat-reverse)
+    (evil-space-setup 'evil-snipe-T 'evil-snipe-repeat 'evil-snipe-repeat-reverse)
+    (evil-space-setup 'evil-snipe-s 'evil-snipe-repeat 'evil-snipe-repeat-reverse)
+    (evil-space-setup 'evil-snipe-S 'evil-snipe-repeat 'evil-snipe-repeat-reverse))
 
   (after! evil-visualstar
     (evil-space-setup 'evil-visualstar/begin-search-forward "n" "N")

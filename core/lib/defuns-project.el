@@ -14,7 +14,7 @@ determine if a directory is a project."
              (dolist (file narf-project-root-files)
                (when (file-exists-p (expand-file-name file path))
                  (throw 'found path)))))) default-directory)
-    default-directory)))
+      default-directory)))
 
 ;;;###autoload
 (defun narf/project-has-files (files &optional root)

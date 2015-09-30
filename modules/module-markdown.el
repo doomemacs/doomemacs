@@ -8,6 +8,8 @@
               markdown-unwrap-things-in-region
               markdown-wrap-or-insert
               markdown-unwrap-thing-at-point)
+  :init
+  (add-hook! markdown-mode 'narf|enable-hard-wrap)
   :config
   (bind! :map markdown-mode-map
          "<backspace>"  nil

@@ -5,14 +5,16 @@
   (fringe-mode '(1 . 8))
   (setq frame-title-format '(buffer-file-name "%f" ("%b"))))
 
-(setq show-paren-delay 0)
+;; Highlight matching parens
+(setq show-paren-delay 0.05)
+(show-paren-mode 1)
 
-(global-hl-line-mode  1)    ; do highlight line
-(blink-cursor-mode    1)    ; do blink cursor
-(line-number-mode     1)    ; do show line no in modeline
-(column-number-mode   1)    ; do show col no in modeline
-(tooltip-mode        -1)    ; don't show tooltips
-;; (size-indication-mode 1)    ; do show file size
+(global-hl-line-mode   1)    ; do highlight line
+(blink-cursor-mode     1)    ; do blink cursor
+(line-number-mode      1)    ; do show line no in modeline
+(column-number-mode    1)    ; do show col no in modeline
+(tooltip-mode         -1)    ; don't show tooltips
+(size-indication-mode -1)
 
 (setq-default
  ;; Multiple cursors across buffers cause a strange redraw delay for
@@ -36,7 +38,6 @@
   (add-hook! text-mode 'fci-mode))
 
 (use-package nlinum ; line numbers
-  :disabled t
   :defer t
   :defines nlinum--width
   :preface
@@ -48,8 +49,8 @@
   (defvar narf--hl-nlinum-line    nil)
   (defvar nlinum-format " %3d ")
   :init
-  ;; Highlight line number
   (defun narf|nlinum-unhl-line ()
+    "Highlight line number"
     (when narf--hl-nlinum-overlay
       (let* ((ov narf--hl-nlinum-overlay)
              (disp (get-text-property 0 'display (overlay-get ov 'before-string)))
@@ -59,6 +60,7 @@
               narf--hl-nlinum-line nil))))
 
   (defun narf|nlinum-hl-line (&optional line)
+    "Unhighlight line number"
     (let ((line-no (or line (line-number-at-pos (point)))))
       (when (and nlinum-mode (not (eq line-no narf--hl-nlinum-line)))
         (let* ((pbol (if line (save-excursion (goto-char (point-min))
@@ -83,8 +85,7 @@
 
   (defun narf|nlinum-enable ()
     (nlinum-mode +1)
-    (add-hook 'post-command-hook 'narf|nlinum-hl-line))
-
+    (add-hook! post-command 'narf|nlinum-hl-line))
   (defun narf|nlinum-disable ()
     (nlinum-mode -1)
     (remove-hook 'post-command-hook 'narf|nlinum-hl-line)
@@ -99,27 +100,40 @@
 ;; Mode-line ;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package spaceline-segments
-  :init
+  :config
   (setq-default
    powerline-default-separator 'wave
    powerline-height 18)
-  :config
   (require 'spaceline-segments)
 
+  ;; Modeline caches
+  (defvar narf--spaceline-file-path nil)
+  (make-variable-buffer-local 'narf--spaceline-file-path)
+
+  (defvar narf--spaceline-vc nil)
+  (make-variable-buffer-local 'narf--spaceline-vc)
+  (add-hook! before-save (setq narf--spaceline-vc nil))
+
+  ;; Custom modeline segments
   (spaceline-define-segment narf-buffer-path
     "Name of buffer."
-    (concat (let ((buffer-path (buffer-file-name)))
-              (if (and buffer-path (file-exists-p buffer-path))
-                  (progn
-                    (setq buffer-path (abbreviate-file-name buffer-path))
-                    (let ((path (file-relative-name buffer-path (file-name-directory (narf/project-root))))
-                          (max-length (/ (window-width) 2)))
-                      (if (> (length path) max-length)
-                          (concat "…" (replace-regexp-in-string
-                                       "^.*?/" "/"
-                                       (let ((l (length path))) (substring path (- l max-length) l))))
-                        path)))
-                (powerline-buffer-id)))
+    (concat (or narf--spaceline-file-path
+                (setq narf--spaceline-file-path
+                      (let ((buffer-path (buffer-file-name)))
+                        (if (and buffer-path (file-exists-p buffer-path))
+                            (progn
+                              (let* ((max-length (/ (window-width) 2))
+                                     (project-path (narf/project-root))
+                                     (path (file-relative-name
+                                            buffer-path (file-name-directory (if (string-match "/+\\'" project-path)
+                                                                                 (replace-match "" t t project-path)
+                                                                               project-path)))))
+                                (if (> (length path) max-length)
+                                    (concat "…" (replace-regexp-in-string
+                                                 "^.*?/" "/"
+                                                 (let ((l (length path))) (substring path (- l max-length) l))))
+                                  path)))
+                          (powerline-buffer-id)))))
             (if (buffer-modified-p)
                 (propertize "*" 'font-lock-face `(:inherit ,other-face :foreground "orange")))
             " ")
@@ -127,15 +141,11 @@
 
   (spaceline-define-segment narf-buffer-encoding-abbrev
     "The line ending convention used in the buffer."
-    (let ((buf-coding (format "%s" buffer-file-coding-system)))
+    (let ((buf-coding (symbol-name buffer-file-coding-system)))
       (if (string-match "\\(dos\\|unix\\|mac\\)" buf-coding)
           (match-string 1 buf-coding)
         buf-coding))
-    :when (not (string-match "unix" (symbol-name buffer-file-coding-system))))
-
-  (spaceline-define-segment narf-line-column
-    "The current line and column numbers."
-    "%l/%c")
+    :when (not (string-match-p "unix" (symbol-name buffer-file-coding-system))))
 
   (spaceline-define-segment narf-buffer-position
     "A more vim-like buffer position."
@@ -146,7 +156,9 @@
 
   (spaceline-define-segment narf-vc
     "Version control info"
-    (replace-regexp-in-string (regexp-quote (symbol-name (vc-deduce-backend))) "" (s-trim (powerline-vc)) t t)
+    (or narf--spaceline-vc
+        (replace-regexp-in-string (regexp-quote (symbol-name (vc-deduce-backend)))
+                                  "" (s-trim (powerline-vc)) t t))
     :when (powerline-vc))
 
   (spaceline-define-segment narf-hud
@@ -154,20 +166,18 @@
     (powerline-hud highlight-face default-face)
     :tight t)
 
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+  ;; Initialize modeline
   (spaceline-install
    ;; Left side
    '(((narf-buffer-path :face other-face) remote-host)
-     ((flycheck-error flycheck-warning flycheck-info)
-      :when active)
+     ((flycheck-error flycheck-warning flycheck-info) :when active)
      (narf-vc :face other-face :when active))
    ;; Right side
    '(selection-info
      narf-buffer-encoding-abbrev
-     (major-mode (minor-modes process :when active))
+     (major-mode (minor-modes :separator " ") process :when active)
      (global :when active)
-     (narf-line-column narf-buffer-position :face powerline-border)
+     narf-buffer-position
      narf-hud)))
 
 (provide 'core-ui)

@@ -13,7 +13,7 @@
 
  ;; Sane scroll settings
  scroll-margin           0
- scroll-conservatively   9999
+ scroll-conservatively   101
  scroll-preserve-screen-position t
  shift-select-mode       nil
  tabify-regexp "^\t* [ \t]+"
@@ -22,10 +22,16 @@
  '((tab-mark   ?\t   [?> ?\t])
    (newline-mark 10 [36 10]))
  truncate-lines                  t      ; do not soft-wrap lines
- truncate-partial-width-windows  nil)
+ truncate-partial-width-windows  nil
+ jit-lock-stealth-time 1)
 
 
 ;; Automatic minor modes ;;;;;;;;;;;
+
+(defvar narf-auto-minor-mode-alist '()
+  "Alist of filename patterns vs corresponding minor mode functions, see
+`auto-mode-alist'. All elements of this alist are checked, meaning you can
+enable multiple minor modes for the same regexp.")
 
 (defun narf|enable-minor-mode-maybe ()
   "Check file name against `narf-auto-minor-mode-alist'."
@@ -62,6 +68,9 @@
 (add-hook! makefile-mode 'narf|enable-tabs) ; Use normal tabs in makefiles
 (add-hook! before-save   'delete-trailing-whitespace)
 (add-hook! eldoc-mode    (diminish 'eldoc-mode " ?"))
+;; Line wrapping
+(add-hook! prog-mode     'narf|enable-comment-hard-wrap)
+(add-hook! auto-fill-mode (diminish 'auto-fill-function))
 
 (defadvice delete-trailing-whitespace (around delete-trailing-whitespace-ignore-line activate)
   "Don't delete trailing whitespace on current line, if in insert mode."
@@ -71,10 +80,6 @@
     (when (string-match-p "^[\s\t]*$" linestr)
       (insert linestr))))
 
-;; Line wrapping
-(add-hook! text-mode 'narf|enable-hard-wrap)
-(add-hook! prog-mode 'narf|enable-comment-hard-wrap)
-(add-hook! auto-fill-mode (diminish 'auto-fill-function))
 ;; If file is oversized...
 (add-hook! find-file
   (when (> (buffer-size) (* 1024 1024))
@@ -87,7 +92,7 @@
 
 ;; (global-whitespace-mode 1)  ; Show whitespace
 (global-font-lock-mode t)      ; Enable syntax highlighting for older emacs
-(global-auto-revert-mode 1)    ; revert buffers for changed files
+(global-auto-revert-mode -1)   ; revert buffers for changed files
 (electric-indent-mode -1)
 
 ;; window config undo/redo

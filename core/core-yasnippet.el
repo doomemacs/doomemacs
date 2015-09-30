@@ -3,7 +3,7 @@
 ;; see lib/yasnippet-macros.el
 
 (use-package yasnippet
-  :mode (("emacs\\.d/snippets/.+$" . snippet-mode))
+  :mode ("emacs\\.d/private/\\(snippets\\|templates\\)/.+$" . snippet-mode)
   :diminish (yas-minor-mode . "Y")
   :commands (yas-minor-mode
              yas-minor-mode-on

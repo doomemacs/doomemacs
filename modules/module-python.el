@@ -42,34 +42,19 @@
     (add-company-backend! python-mode (anaconda)))
 
   (after! emr
-    (emr-declare-command
-     'anaconda-mode-view-doc
-     :title "view documentation"
-     :modes 'python-mode
-     :predicate (lambda () (and (anaconda-mode-running-p)
-                                (not (use-region-p))
-                                (not (sp-point-in-string-or-comment)))))
-    (emr-declare-command
-     'anaconda-mode-goto-assignments
-     :title "go to assignments"
-     :modes 'python-mode
-     :predicate (lambda () (and (anaconda-mode-running-p)
-                                (not (use-region-p))
-                                (not (sp-point-in-string-or-comment)))))
-    (emr-declare-command
-     'anaconda-mode-goto-definitions
-     :title "go to definition"
-     :modes 'python-mode
-     :predicate (lambda () (and (anaconda-mode-running-p)
-                                (not (use-region-p))
-                                (not (sp-point-in-string-or-comment)))))
-    (emr-declare-command
-     'anaconda-mode-usages
-     :title "show usages"
-     :modes 'python-mode
-     :predicate (lambda () (and (anaconda-mode-running-p)
-                                (not (use-region-p))
-                                (not (sp-point-in-string-or-comment)))))))
+    (mapc (lambda (x)
+            (let ((command-name (car x))
+                  (title (cadr x))
+                  (region-p (caddr x))
+                  predicate)
+              (setq predicate (lambda () (and (anaconda-mode-running-p)
+                                              (not (use-region-p))
+                                              (not (sp-point-in-string-or-comment)))))
+              (emr-declare-command (intern (format "anaconda-mode-%s" (symbol-name command-name)))
+                :title title :modes 'python-mode :predicate predicate)))
+          '((view-doc          "view documentation" t)
+            (goto-assignments  "go to assignments"  t)
+            (usages            "show usages"        nil)))))
 
 (provide 'module-python)
 ;;; module-python.el ends here

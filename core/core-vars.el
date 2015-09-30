@@ -10,11 +10,6 @@
 
 (defconst narf--splash-buffer-name "*narf*")
 
-(defvar narf-auto-minor-mode-alist '()
-  "Alist of filename patterns vs corresponding minor mode functions, see
-`auto-mode-alist'. All elements of this alist are checked, meaning you can
-enable multiple minor modes for the same regexp.")
-
 (defvar narf-unreal-buffers '("^ ?\\*.+\\*"
                               image-mode
                               dired-mode
@@ -49,7 +44,6 @@ gets killed.")
     "mix.exs")
   "A list of files that count as 'project files', which determine whether a
     folder is the root of a project or not.")
-
 
 (provide 'core-vars)
 ;;; core-vars.el ends here
