@@ -54,6 +54,16 @@
    "M-Z"            'redo
    "C-M-f"          'narf:toggle-fullscreen)
 
+ :m "M-1" (λ (narf:switch-to-workgroup-at-index 0))
+ :m "M-2" (λ (narf:switch-to-workgroup-at-index 1))
+ :m "M-3" (λ (narf:switch-to-workgroup-at-index 2))
+ :m "M-4" (λ (narf:switch-to-workgroup-at-index 3))
+ :m "M-5" (λ (narf:switch-to-workgroup-at-index 4))
+ :m "M-6" (λ (narf:switch-to-workgroup-at-index 5))
+ :m "M-7" (λ (narf:switch-to-workgroup-at-index 6))
+ :m "M-8" (λ (narf:switch-to-workgroup-at-index 7))
+ :m "M-9" (λ (narf:switch-to-workgroup-at-index 8))
+
 
  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
  ;; Local keymaps                      ;;
@@ -147,6 +157,9 @@
  :m "gl"  'avy-goto-line
  :m "g]"  'smart-down
  :m "g["  'smart-up
+
+ :m "gt"  'narf:switch-to-workgroup-right
+ :m "gT"  'narf:switch-to-workgroup-left
 
  :v "."   'evil-repeat
 

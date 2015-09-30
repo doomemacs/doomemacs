@@ -53,5 +53,39 @@
       (unless (wg-current-workgroup-p w)
         (wg-kill-workgroup w)))))
 
+;;;###autoload
+(defun narf:workgroup-display ()
+  (interactive)
+  (when (wg-current-session t)
+    (message (wg-display-internal
+              (lambda (workgroup index)
+                (if (not workgroup) wg-nowg-string
+                  (wg-element-display
+                   workgroup
+                   (format "%d %s" index (wg-workgroup-name workgroup))
+                   'wg-current-workgroup-p
+                   'wg-previous-workgroup-p)))
+              (wg-workgroup-list)))))
+
+;;;###autoload (autoload 'narf:switch-to-workgroup-left "defuns-workgroup" nil t)
+(evil-define-command narf:switch-to-workgroup-left (count)
+  (interactive "<c>")
+  (if count
+      (wg-switch-to-workgroup-at-index (1- count))
+    (wg-switch-to-workgroup-left)))
+
+;;;###autoload (autoload 'narf:switch-to-workgroup-right "defuns-workgroup" nil t)
+(evil-define-command narf:switch-to-workgroup-right (count)
+  (interactive "<c>")
+  (if count
+      (wg-switch-to-workgroup-at-index (1- count))
+    (wg-switch-to-workgroup-right)))
+
+;;;###autoload
+(defun narf:switch-to-workgroup-at-index (index)
+  (interactive)
+  (wg-switch-to-workgroup-at-index index)
+  (narf:workgroup-display))
+
 (provide 'defuns-workgroup)
 ;;; defuns-workgroup.el ends here

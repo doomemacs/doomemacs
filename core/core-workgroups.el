@@ -12,7 +12,13 @@
         wg-mess-with-buffer-list t
         ;; What to do on Emacs exit / workgroups-mode exit?
         wg-emacs-exit-save-behavior           'save       ; Options: 'save 'ask nil
-        wg-workgroups-mode-exit-save-behavior 'save)
+        wg-workgroups-mode-exit-save-behavior 'save
+
+        wg-list-display-decor-divider         " : "
+        wg-list-display-decor-current-left    "["
+        wg-list-display-decor-current-right   "]"
+        wg-list-display-decor-previous-left   ""
+        wg-list-display-decor-previous-right  "")
   :config
   (defvar narf/helm-source-wg
     '((name       . "Workgroups")
