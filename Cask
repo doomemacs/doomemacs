@@ -146,15 +146,21 @@
 (depends-on "cmake-mode")
 (depends-on "glsl-mode")
 ;; Org
-;;(depends-on "org-plus-contrib")
-;;(depends-on "org-opml" :git "https://github.com/edavis/org-opml")
+;; (depends-on "org-plus-contrib")
+;; (depends-on "org-opml" :git "https://github.com/edavis/org-opml")
+;; (depends-on "org-bullets")
+;; (depends-on "org-tree-slide")
+;; Rust
+(depends-on "rust-mode")
+(depends-on "company-racer")
+(depends-on "racer")
+(depends-on "flycheck-rust")
 ;; Other
 (depends-on "swift-mode")
 (depends-on "vimrc-mode")
 (depends-on "crystal-mode" :git "https://github.com/jpellerin/emacs-crystal-mode/")
 
 ;; (depends-on "haxe-mode")
-(depends-on "rust-mode")
 ;; (depends-on "d-mode")
 
 ;; (depends-on "shaderlab-mode" :git "https://bitbucket.org/bbbscarter/emacs-shaderlab-mode")
