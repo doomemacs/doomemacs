@@ -10,9 +10,10 @@
   (bind! :map go-mode-map
          :n "gd" 'godef-jump
          :n "gD" 'godef-describe
-         :n "tr" 'narf:go-test-run-all
-         :n "ta" 'narf:go-test-run-all
-         :n "ts" 'narf:go-test-run-package)
+         (:prefix ","
+           :n "tr" 'narf:go-test-run-all
+           :n "ta" 'narf:go-test-run-all
+           :n "ts" 'narf:go-test-run-package))
 
   (mapc (lambda (x)
           (let ((command-name (car x))
