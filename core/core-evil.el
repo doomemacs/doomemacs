@@ -116,6 +116,8 @@
 (use-package evil-easymotion
   :config
   (evilem-default-keybindings "g SPC")
+  (evilem-define (kbd "g SPC n") 'evil-ex-search-next)
+  (evilem-define (kbd "g SPC N") 'evil-ex-search-previous)
   (evilem-define (kbd "g s") 'evil-snipe-repeat
     (lambda ()
       (save-excursion
