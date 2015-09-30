@@ -82,28 +82,6 @@ normal mode if there are no fields."
       (delete-region sof (point)))))
 
 ;; Snippet helpers ;;;;;;;;;;;;;;;;;;;;;
-;;;###autoload
-(defun !%! ()
-  "Snippet function. Shorthand defun to surround text with newlines if more
-than one line."
-  (when %
-    (if (> (length (s-lines %)) 1)
-        (concat "\n" % "\n")
-      (s-trim %))))
-
-;;;###autoload
-(defun !% ()
-  "Snippet function. Shorthand defun for snippets: prepends a newline to
-  `yas-selected-text' IF it contains more than one line."
-  (when %
-    (if (> (length (s-lines %)) 1)
-        (concat "\n" %)
-      (s-trim %))))
-;;;###autoload
-(defun %1 ()
-  "Trim selection; do no further processing."
-  (s-trim %))
-
 ;;;###autoload (autoload 'narf:yas-snippets "defuns-yasnippet" nil t)
 (evil-define-command narf:yas-snippets (&optional bang)
   (interactive "<!>")
