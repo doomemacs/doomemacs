@@ -54,6 +54,7 @@ provided."
     (set-visited-file-name new-path)
     (set-buffer-modified-p nil)
     (save-place-forget-unreadable-files)
+    (setq narf--spaceline-file-path nil)
     (message "File '%s' successfully renamed to '%s'"
              (f-relative old-path project-root) (f-relative new-path project-root))))
 
