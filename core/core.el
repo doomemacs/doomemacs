@@ -128,5 +128,12 @@
     "Prevent annoying \"Active processes exist\" query when you quit Emacs."
     (flet ((process-list ())) ad-do-it)))
 
+(defun narf-init ()
+  (defun display-startup-echo-area-message ()
+    (message ">>> Loaded in %s" (emacs-init-time)))
+  (require 'server)
+  (unless (server-running-p)
+    (server-start)))
+
 (provide 'core)
 ;;; core.el ends here

@@ -99,13 +99,8 @@
 
           my-bindings
           my-commands
-          )))
+          ))
 
-(defun display-startup-echo-area-message ()
-  (message ">>> Loaded in %s" (emacs-init-time)))
-
-(require 'server)
-(unless (server-running-p)
-  (server-start))
+  (narf-init))
 
 ;;; I think so Brain...
