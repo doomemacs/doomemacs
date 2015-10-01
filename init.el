@@ -48,7 +48,9 @@
   (tool-bar-mode -1)   ; no toolbar
   (menu-bar-mode -1)   ; no menubar
 
-  (set-frame-font (font-spec :family "terminus (ttf)" :size 12 :antialias nil))
+  (defconst narf-default-font (font-spec :family "terminus (ttf)" :size 12 :antialias nil))
+  (defconst narf-big-font     (font-spec :family "Ubuntu Mono" :size 18 :antialias t))
+
   (load (concat user-emacs-directory "init-load-path.el"))
   (load-theme (if window-system 'narf-dark 'brin) t)
   (set-frame-parameter nil 'fullscreen 'fullboth)

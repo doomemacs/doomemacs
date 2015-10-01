@@ -20,10 +20,23 @@
 ;;;###autoload
 (defun narf:toggle-big-mode ()
   (interactive)
-  (if narf--big-mode
-      (set-frame-font (apply #'font-spec narf-default-font))
-    (set-frame-font (apply #'font-spec narf-big-font)))
+  (if narf--big-mode narf/default-font (narf/big-font))
   (setq narf--big-mode (not narf--big-mode)))
+
+;;;###autoload
+(defun narf/reset-theme ()
+  (interactive)
+  (load-theme 'narf-dark t t))
+
+;;;###autoload
+(defun narf/default-font ()
+  (interactive)
+  (set-frame-font narf-default-font))
+
+;;;###autoload
+(defun narf/big-font ()
+  (interactive)
+  (set-frame-font narf-big-font))
 
 (provide 'defuns-ui)
 ;;; defuns-ui.el ends here
