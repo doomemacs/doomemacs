@@ -5,7 +5,7 @@
 ;;   narf-...     A public variable/constant or function
 ;;   narf--...    An internal variable or function (non-interactive)
 ;;   narf/...     An autoloaded interactive function
-;;   narf:...     An ex command OR keybind function
+;;   narf:...     An ex command
 ;;   narf|...     A hook
 ;;   narf*...     An advising function
 ;;   ...!         Macro
@@ -13,6 +13,7 @@
 ;;;
 
 (setq-default
+ ad-redefinition-action            'accept      ; silence the advised function warnings
  compilation-always-kill            t
  compilation-ask-about-save         nil
  compilation-scroll-output          t
