@@ -26,6 +26,7 @@
 (exmap "mv"              'narf:file-move)
 (exmap "na[rrow]"        'narf:narrow)  ; Narrow buffer to selection
 (exmap "wi[den]"         'narf:widen)   ; Widen narrowed buffer
+(exmap "pop"             'narf/popwin-toggle)
 (exmap "proj[ect]"       'helm-projectile-switch-project)
 (exmap "rec[ent]"        'narf:helm-recentf)
 (exmap "re[gex]"         'narf:regex)
@@ -53,7 +54,7 @@
 (after! workgroups2
   (exmap "sl[oad]"       'narf:load-session)
   (exmap "ss[ave]"       'narf:save-session)
-  (exmap "wg"            (λ (message (wg-workgroup-list-display))))
+  (exmap "wg"            'narf:workgroup-display)
   (exmap "tabnew"        'narf:workgroup-new)
   (exmap "tabre[name]"   'narf:workgroup-rename)
   (exmap "tabn[ext]"     'wg-switch-to-workgroup-right)
