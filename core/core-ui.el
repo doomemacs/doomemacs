@@ -3,6 +3,7 @@
 
 (when window-system
   (fringe-mode '(1 . 8))
+  (set-frame-font narf-default-font)
   (setq frame-title-format '(buffer-file-name "%f" ("%b"))))
 
 ;; Highlight matching parens
@@ -17,6 +18,7 @@
 (size-indication-mode -1)
 
 (setq-default
+ line-spacing 1
  ;; Multiple cursors across buffers cause a strange redraw delay for
  ;; some things, like auto-complete or evil-mode's cursor color
  ;; switching.
@@ -104,39 +106,47 @@
   (setq-default
    powerline-default-separator 'wave
    powerline-height 18)
-  (require 'spaceline-segments)
 
-  ;; Modeline caches
+  ;; Modeline cache
   (defvar narf--spaceline-file-path nil)
   (make-variable-buffer-local 'narf--spaceline-file-path)
+  (add-hook! focus-in (setq narf--spaceline-file-path nil))
 
-  (defvar narf--spaceline-vc nil)
-  (make-variable-buffer-local 'narf--spaceline-vc)
-  (add-hook! before-save (setq narf--spaceline-vc nil))
+  (defface mode-line-is-modified nil "Face for mode-line modified symbol")
+  (defface mode-line-buffer-path nil "Face for mode-line buffer directory")
 
   ;; Custom modeline segments
   (spaceline-define-segment narf-buffer-path
-    "Name of buffer."
-    (concat (or narf--spaceline-file-path
-                (setq narf--spaceline-file-path
-                      (let ((buffer-path (buffer-file-name)))
-                        (if (and buffer-path (file-exists-p buffer-path))
-                            (progn
-                              (let* ((max-length (/ (window-width) 2))
-                                     (project-path (narf/project-root))
-                                     (path (file-relative-name
-                                            buffer-path (file-name-directory (if (string-match "/+\\'" project-path)
-                                                                                 (replace-match "" t t project-path)
-                                                                               project-path)))))
-                                (if (> (length path) max-length)
-                                    (concat "…" (replace-regexp-in-string
-                                                 "^.*?/" "/"
-                                                 (let ((l (length path))) (substring path (- l max-length) l))))
-                                  path)))
-                          (powerline-buffer-id)))))
+    "Base filename of buffer."
+    (concat (file-name-nondirectory buffer-file-name)
             (if (buffer-modified-p)
-                (propertize "*" 'font-lock-face `(:inherit ,other-face :foreground "orange")))
+                (propertize "*" 'face 'mode-line-is-modified))
             " ")
+    :tight t)
+
+  (spaceline-define-segment narf-buffer-dir
+    "Buffer file directory."
+    (propertize
+     (or narf--spaceline-file-path
+         (setq narf--spaceline-file-path
+               (if (and buffer-file-name (file-exists-p buffer-file-name))
+                   (progn
+                     (let* ((max-length (/ (window-width) 2))
+                            (project-path (narf/project-root))
+                            (path (file-name-directory
+                                   (file-relative-name buffer-file-name
+                                                       (file-name-directory (if (string-match "/+\\'" project-path)
+                                                                                (replace-match "" t t project-path)
+                                                                              project-path))))))
+                       (if (> (length path) max-length)
+                           (concat "…" (replace-regexp-in-string
+                                        "^.*?/" "/"
+                                        (let ((l (length path))) (substring path (- l max-length) l))))
+                         path)))
+                 (powerline-buffer-id))))
+     'face (if (powerline-selected-window-active)
+               'mode-line-buffer-path
+             'mode-line-inactive))
     :tight-right t)
 
   (spaceline-define-segment narf-buffer-encoding-abbrev
@@ -156,24 +166,40 @@
 
   (spaceline-define-segment narf-vc
     "Version control info"
-    (or narf--spaceline-vc
-        (replace-regexp-in-string (regexp-quote (symbol-name (vc-deduce-backend)))
-                                  "" (s-trim (powerline-vc)) t t))
-    :when (powerline-vc))
+    (let ((vc (vc-working-revision buffer-file-name)))
+      (when vc
+        (format "%s %s%s" (char-to-string #xe0a0) vc
+                (case (vc-state buffer-file-name) ('edited "+") ('conflict "!!!") (t "")))))
+    :when (and active vc-mode))
 
   (spaceline-define-segment narf-hud
     "A HUD that shows which part of the buffer is currently visible."
     (powerline-hud highlight-face default-face)
     :tight t)
 
+  ;; Display version string
+  (defvar narf--env-version nil)
+  (defvar narf--env-command nil)
+  (make-variable-buffer-local 'narf--env-version)
+  (make-variable-buffer-local 'narf--env-command)
+
+  (spaceline-define-segment narf-env-version
+    "A HUD that shows which part of the buffer is currently visible."
+    (unless narf--env-version
+      (narf|spaceline-env-update))
+    narf--env-version
+    :when (and narf--env-version (memq major-mode '(ruby-mode enh-ruby-mode python-mode))))
+
   ;; Initialize modeline
   (spaceline-install
    ;; Left side
-   '(((narf-buffer-path :face other-face) remote-host)
-     ((flycheck-error flycheck-warning flycheck-info) :when active)
-     (narf-vc :face other-face :when active))
+   '((narf-buffer-dir :face other-face)
+     (narf-buffer-path remote-host)
+     (narf-vc)
+     ((flycheck-error flycheck-warning flycheck-info) :face other-face :when active))
    ;; Right side
    '(selection-info
+     narf-env-version
      narf-buffer-encoding-abbrev
      (major-mode (minor-modes :separator " ") process :when active)
      (global :when active)

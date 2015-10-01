@@ -9,8 +9,9 @@
   :interpreter "ruby"
   :init
   (add-hook! ruby-mode '(narf|enable-tab-width-2 flycheck-mode))
-  (build-for! ruby-mode "rake %s" "Rakefile")
   :config
+  (define-builder! ruby-mode "rake %s" "Rakefile")
+  (define-env-command! ruby-mode "rbenv version | cut -d' ' -f1")
   ;; Formatting
   (setq ruby-indent-level      2
         ruby-deep-indent-paren t)

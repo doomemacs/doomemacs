@@ -11,7 +11,7 @@
 (use-package rust-mode
   :mode "\\.rs$"
   :config
-  (build-for! rust-mode "cargo run" "Cargo.toml")
+  (define-builder! rust-mode "cargo run" "Cargo.toml")
   (use-package flycheck-rust
     :config (add-hook! rust-mode 'flycheck-mode))
 

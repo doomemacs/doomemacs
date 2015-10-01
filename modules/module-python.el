@@ -10,6 +10,7 @@
         python-environment-directory narf-temp-dir
         python-shell-interpreter "ipython")
   :config
+  (define-env-command! python-mode "pyenv version | cut -d' ' -f1")
   (define-key python-mode-map (kbd "DEL") nil)) ; interferes with smartparens
 
 (use-package nose
@@ -28,6 +29,7 @@
            :n "tV" 'nosetests-pdb-module)))
 
 (use-package anaconda-mode
+  :diminish anaconda-mode
   :defines (anaconda-mode-map anaconda-nav-mode-map)
   :functions (anaconda-mode-running-p)
   :init (add-hook! python-mode '(anaconda-mode eldoc-mode))

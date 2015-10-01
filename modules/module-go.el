@@ -5,8 +5,8 @@
   :interpreter "go"
   :init
   (add-hook! go-mode '(emr-initialize flycheck-mode))
-  (build-for! go-mode "go build")
   :config
+  (define-builder! go-mode "go build")
   (bind! :map go-mode-map
          :n "gd" 'godef-jump
          :n "gD" 'godef-describe

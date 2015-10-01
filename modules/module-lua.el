@@ -17,7 +17,7 @@
   :keymap (make-sparse-keymap)
   (add-yas-minor-mode! 'love-mode))
 (associate! love-mode :files ("main.lua") :in (lua-mode))
-(build-for! love-mode "open -a love.app '%s'" "main.lua")
+(define-builder! love-mode "open -a love.app '%s'" "main.lua")
 
 (provide 'module-lua)
 ;;; module-lua.el ends here
