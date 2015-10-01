@@ -5,125 +5,138 @@
 
 (custom-theme-set-variables 'narf-dark)
 
-(let ((background       "#232837")
-      (gutters          "#05051e")
-      (gutter-fg        "#55616A")
-      (gutters-active   "#2b303f")
-      (gutter-light     "#191e28")
-      (linum            "#1e262c")
-      (builtin          "#d08770")
-      (foreground       "#c0c5ce")
-      (invisibles       "#65737e")
-      (line-hl          "#2b303f")
-      (selection        "#4f5b66")
-      (text             "#c0c5ce")
-      (comments         "#65737e")
-      (punctuation      "#8fa1b3")
-      (delimiters       "#c0c5ce")
-      (operators        "#c0c5ce")
-      (keywords         "#b48ead")
-      (variables        "#CBECFF")
-      (functions        "#8fa1b3")
-      (methods          "#8fa1b3")
-      (strings          "#a3be8c")
-      (constants        "#d08770")
-      (white            "#ffffff")
-      (highlight        "orange")
-      (dim-highlight    "#556779")
+(let* ((class '((class color) (min-colors 89)))
+       (white            "#ffffff")
+       (off-white        "#eaeadb")
 
-      (git-modified     "#55616A")
-      (git-added        "#436b3b")
-      (git-deleted      "#714243"))
+       (background       "#242836")
+       (foreground       "#cccada")
+       (subtle           "#aab6c7")
+       (vsubtle          "#556172")
+       (highlight        "orange")
+       (error-highlight  "#55ffff")
+
+       (vertical-bar     "#000000")
+       (current-line     "#2c354c")
+       (selection        "#445f7f")
+       (search-fg        "#000000")
+       (search           "#cccccc")
+       (search-rest      "#545060")
+       (linum-bg         "#55616A")
+       (linum-fg         background)
+       (linum-highlight  foreground)
+
+       (builtin          "#d08770")
+       (comments         "#55626e")
+       (constants        "#d08770")
+       (delimiters       "#c0c5ce")
+       (functions        "#8fa1b3")
+       (keywords         "#b48ead")
+       (methods          "#8fa1b3")
+       (operators        "#c0c5ce")
+       (punctuation      "#8fa1b3")
+       (strings          "#a3be8c")
+       (variables        "#CBECFF")
+
+       (modeline-bg-main "#191e28")
+       (modeline-bg-light "#363c4d")
+       (modeline-bg-lighter "#3f475d")
+       (modeline-bg-inactive  "#2b303f")
+
+       (vc-modified      "#55616A")
+       (vc-added         "#436b3b")
+       (vc-deleted       "#714243")
+
+       (dim-highlight    "#3f4b56"))
 
   (custom-theme-set-faces
    'narf-dark
 
-   ;; Default colors
-   `(default                  ((t (:foreground ,text :background ,background) )))
-   `(hl-line                  ((t (:background ,line-hl) )))
-   `(region                   ((t (:background ,selection) )))
-   `(cursor                   ((t (:background ,white) )))
-   `(fringe                   ((t (:background ,background :foreground ,white) )))
-   `(linum                    ((t (:background ,background :foreground ,gutter-fg :weight normal) )))
+   ;; Text
+   `(default                  ((,class (:foreground ,foreground :background ,background) )))
+   `(fringe                   ((,class (:background ,background :foreground ,foreground) )))
+   `(cursor                   ((,class (:background ,white) )))
+   `(hl-line                  ((,class (:background ,current-line) )))
+   `(region                   ((,class (:background ,selection) )))
 
-   `(vertical-border          ((t (:foreground "#000000") )))
-
-   `(mode-line                ((t (:foreground ,white     :background ,gutter-light))))
-   `(mode-line-inactive       ((t (:foreground ,gutter-fg :background ,gutters-active))))
-   `(mode-line-modified-face  ((t (:foreground ,builtin))))
-   `(powerline-active1        ((t (:background "#343A4D"))))
-   `(powerline-active2        ((t (:background "#3B435C"))))
-   `(powerline-inactive1      ((t (:background ,gutters-active))))
-   `(powerline-inactive2      ((t (:background ,gutters-active))))
-
-   ;; Font lock faces
-   `(linum-highlight-face              ((t (:foreground ,text :background ,line-hl :inherit linum))))
-
-   `(font-lock-keyword-face            ((t (:foreground ,keywords))))
-   `(font-lock-type-face               ((t (:foreground ,punctuation))))
-   `(font-lock-constant-face           ((t (:foreground ,constants))))
-   `(font-lock-variable-name-face      ((t (:foreground ,variables))))
-   `(font-lock-builtin-face            ((t (:foreground ,builtin))))
-   `(font-lock-string-face             ((t (:foreground ,strings))))
-   `(font-lock-comment-face            ((t (:foreground ,comments))))
-   `(font-lock-comment-delimiter-face  ((t (:foreground ,comments))))
-   `(font-lock-function-name-face      ((t (:foreground ,functions))))
-   `(font-lock-doc-string-face         ((t (:foreground ,comments))))
-   `(font-lock-doc-face                ((t (:foreground ,comments))))
+   `(font-lock-builtin-face            ((,class (:foreground ,builtin))))
+   `(font-lock-comment-delimiter-face  ((,class (:foreground ,comments))))
+   `(font-lock-comment-face            ((,class (:foreground ,comments))))
+   `(font-lock-constant-face           ((,class (:foreground ,constants))))
+   `(font-lock-doc-face                ((,class (:foreground ,comments))))
+   `(font-lock-doc-string-face         ((,class (:foreground ,comments))))
+   `(font-lock-function-name-face      ((,class (:foreground ,functions))))
+   `(font-lock-keyword-face            ((,class (:foreground ,keywords))))
+   ;; `(font-lock-negation-char-face      ((,class ())))
+   ;; `(font-lock-preprocessor-char-face      ((,class ())))
+   ;; `(font-lock-regexp-grouping-backslash      ((,class ())))
+   ;; `(font-lock-regexp-grouping-construct      ((,class ())))
+   `(font-lock-string-face             ((,class (:foreground ,strings))))
+   `(font-lock-type-face               ((,class (:foreground ,punctuation))))
+   `(font-lock-variable-name-face      ((,class (:foreground ,variables))))
+   ;; `(font-lock-warning-face      ((,class ())))
 
    `(trailing-whitespace               ((t (:background "#884444"))))
    `(whitespace-tab                    ((t (:foreground "#343d46"))))
    `(whitespace-newline                ((t (:foreground "#343d46"))))
    `(whitespace-trailing               ((t (:background "#553333"))))
 
+   ;; GUI
+   `(vertical-border          ((,class (:foreground ,vertical-bar) )))
+
+   `(linum                    ((,class (:background ,linum-fg :foreground ,linum-bg) )))
+   `(linum-highlight-face     ((,class (:foreground ,linum-highlight :background ,current-line))))
+   `(show-paren-match         ((,class (:foreground ,highlight :weight ultra-bold))))
+
+   `(mode-line                ((,class (:foreground ,off-white :background ,modeline-bg-main))))
+   `(powerline-active1        ((,class (:foreground ,subtle    :background ,modeline-bg-light))))
+   `(powerline-active2        ((,class (:foreground ,subtle    :background ,modeline-bg-lighter))))
+   `(mode-line-inactive       ((,class (:foreground ,vsubtle   :background ,modeline-bg-inactive))))
+   `(powerline-inactive1      ((,class (:foreground ,vsubtle   :background ,modeline-bg-inactive))))
+   `(powerline-inactive2      ((,class (:foreground ,vsubtle   :background ,modeline-bg-inactive))))
+   `(mode-line-is-modified    ((,class (:foreground ,highlight))))
+   `(mode-line-buffer-path    ((,class (:foreground ,subtle))))
+
+   ;; company-mode
+   `(company-tooltip                   ((,class (:inherit default :background "#3e4555"))))
+   `(company-tooltip-selection         ((,class (:inherit font-lock-function-name-face))))
+   `(company-tooltip-common            ((,class (:inherit font-lock-constant-face))))
+   `(company-scrollbar-bg              ((,class (:background "#4b5367"))))
+   `(company-scrollbar-fg              ((,class (:background "#353b49"))))
+   `(company-search                    ((,class (:background "#4b5367"))))
+
+   ;; VCS
+   `(diff-hl-change                                ((,class (:background ,vc-modified))))
+   `(diff-hl-delete                                ((,class (:background ,vc-deleted))))
+   `(diff-hl-insert                                ((,class (:background ,vc-added))))
+   `(git-gutter+-modified                          ((,class (:foreground ,vc-modified :background nil))))
+   `(git-gutter+-added                             ((,class (:foreground ,vc-added :background nil))))
+   `(git-gutter+-deleted                           ((,class (:foreground ,vc-deleted :background nil))))
+
+   ;; Rainbow delimiters
+   `(rainbow-delimiters-depth-1-face               ((,class (:foreground "#CCCCDD" :weight bold :bold t))))
+   `(rainbow-delimiters-unmatched-face             ((,class (:foreground "#FFFFFF" :background "#EF6C00"))))
+
+   `(isearch                                       ((,class (:foreground ,search-fg :background ,search))))
+   `(isearch-lazy-highlight-face                   ((,class (:foreground ,foreground :background ,search-rest))))
+   `(evil-snipe-first-match-face                   ((,class (:foreground ,search-fg :background ,highlight))))
+   `(evil-snipe-matches-face                       ((,class (:foreground ,highlight :underline t))))
+   `(evil-search-highlight-persist-highlight-face  ((,class (:background ,search-rest))))
+
+   `(flyspell-incorrect        ((,class (:underline ,error-highlight :inherit unspecified))))
+
+   `(helm-source-header        ((,class (:background ,modeline-bg-light :foreground ,strings :weight bold :height 1.0))))
+   `(helm-selection            ((,class (:background ,modeline-bg-lighter))))
+
    ;; lang-specific
    ;; *****************************************************************************************
 
+   ;; js2-mode
    `(js2-function-param                ((t (:foreground ,variables))))
    `(js2-jsdoc-tag                     ((t (:foreground ,comments :weight bold :bold t))))
-
+   ;; org-mode
    `(org-level-1                      ((t (:inherit outline-1 :bold t :foreground ,constants))))
    `(org-level-2                      ((t (:inherit outline-2 :bold t :foreground ,variables))))
-
-   ;; company-mode
-   ;; *****************************************************************************************
-
-   `(company-tooltip                   ((t (:inherit default :background "#3e4555"))))
-   `(company-tooltip-selection         ((t (:inherit font-lock-function-name-face))))
-   `(company-tooltip-common            ((t (:inherit font-lock-constant-face))))
-   `(company-scrollbar-bg              ((t (:background "#4b5367"))))
-   `(company-scrollbar-fg              ((t (:background "#353b49"))))
-   `(company-search                    ((t (:background "#4b5367"))))
-
-   ;; *****************************************************************************************
-
-   `(flyspell-incorrect       ((t (:underline "#ff5555" :inherit unspecified))))
-
-   `(helm-source-header       ((t (:background ,gutters-active :foreground ,strings :weight bold :height 1.0))))
-   `(helm-selection           ((t (:background ,selection))))
-
-   `(highlight-indentation-face                 ((t (:background "#2f3641"))))
-   `(highlight-indentation-current-column-face  ((t (:background ,gutter-light))))
-
-   `(git-gutter+-modified              ((t (:foreground ,git-modified :background nil))))
-   `(git-gutter+-added                 ((t (:foreground ,git-added :background nil))))
-   `(git-gutter+-deleted               ((t (:foreground ,git-deleted :background nil))))
-
-   `(diff-hl-change                    ((t (:background ,git-modified))))
-   `(diff-hl-delete                    ((t (:background ,git-deleted))))
-   `(diff-hl-insert                    ((t (:background ,git-added))))
-
-   `(rainbow-delimiters-unmatched-face ((t (:inherit 'error))))
-   `(rainbow-delimiters-depth-1-face   ((t (:foreground "#CCCCCC" :weight bold :bold t))))
-
-   `(show-paren-match                 ((t (:background nil :foreground ,highlight :weight ultra-bold))))
-
-   `(evil-snipe-first-match-face      ((t (:background ,highlight :foreground "black"))))
-   `(evil-snipe-matches-face          ((t (:foreground ,highlight :background ,dim-highlight))))
-   `(evil-search-highlight-persist-highlight-face ((t (:inherit isearch-lazy-highlight-face))))
-   `(isearch                          ((t (:foreground "black" :background ,highlight :inverse-video nil))))
-   `(isearch-lazy-highlight-face      ((t (:foreground ,text :background ,dim-highlight))))
-
    ))
 
 
