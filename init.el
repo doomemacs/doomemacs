@@ -2,7 +2,7 @@
 ;;
 ;; Author:  Henrik Lissner <henrik@lissner.net>
 ;; URL:     https://github.com/hlissner/emacs.d
-;; Version: 0.1.0
+;; Version: 0.2.0
 ;;
 ;;; Are you pondering what I'm pondering, Pinky?
 ;;
@@ -75,10 +75,10 @@
 
           module-cc            ; c/c++/obj-c madness
           ;; module-crystal    ; ruby at the speed of c
-          ;; module-csharp     ; unity, mono and xamarin
+          module-csharp        ; unity, .NET, and mono shenanigans
           module-data          ; dbs 'n data formats
           module-elisp         ; drowning in parentheses
-          module-eshell        ; eshell (on windows)
+          ;; module-eshell     ; eshell (on windows)
           module-go            ; a hipster dialect
           module-java          ; the poster child for carpal tunnel syndome
           module-js            ; alert("not java, javascript!")
