@@ -48,18 +48,6 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
 ;; Buffer Life and Death ;;;;;;;;;;;;;;;
 
 ;;;###autoload
-(defun narf:kill-real-buffer ()
-  "Kill buffer (but only bury scratch buffer), then switch to a real buffer."
-  (interactive)
-  (let ((bname (buffer-name)))
-    (cond ((string-match-p "^\\*scratch\\*" bname)
-           (erase-buffer))
-          ((string-equal "*" (substring bname 0 1)))
-          (t (kill-this-buffer))))
-  (unless (narf/real-buffer-p (current-buffer))
-    (narf/previous-real-buffer)))
-
-;;;###autoload
 (defun narf/get-all-buffers ()
   "Get all buffers across all workgroups. Depends on
 `wg-mess-with-buffer-list'."
@@ -90,6 +78,17 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
 ;;;###autoload
 (defun narf/get-real-buffers (&optional buffer-list)
   (-filter #'narf/real-buffer-p (or buffer-list (narf/get-buffers))))
+
+;;;###autoload
+(defun narf:kill-real-buffer ()
+  "Kill buffer (but only bury scratch buffer), then switch to a real buffer."
+  (interactive)
+  (let ((bname (buffer-name)))
+    (cond ((string-match-p "^\\*scratch\\*" bname)
+           (erase-buffer))
+          (t (kill-this-buffer))))
+  (unless (narf/real-buffer-p (current-buffer))
+    (narf/previous-real-buffer)))
 
 ;;;###autoload
 (defun narf:kill-unreal-buffers ()
@@ -135,24 +134,29 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
 (defun narf/cycle-real-buffers (&optional n scratch-default)
   "Switch to the previous buffer and avoid special buffers. If there's nothing
 left, create a scratch buffer."
-  (let ((start-buffer (current-buffer))
-        (move-func (if (< n 0) 'switch-to-next-buffer 'switch-to-prev-buffer))
-        (real-buffers (narf/get-real-buffers))
-        (max 25)
-        (i 0)
-        (continue t))
-    (funcall move-func)
-    (while (and continue (< i max))
-      (let ((current-buffer (current-buffer)))
-        (cond ((eq current-buffer start-buffer)
-               (if scratch-default
-                   (switch-to-buffer "*scratch*"))
-               (setq continue nil))
-              ((not (memq current-buffer real-buffers))
-               (funcall move-func))
-              (t
-               (setq continue nil))))
-      (cl-incf i))))
+  (let* ((start-buffer (current-buffer))
+         (move-func (if (< n 0) 'switch-to-next-buffer 'switch-to-prev-buffer))
+         (real-buffers (narf/get-real-buffers))
+         (realc (length real-buffers))
+         (max 25)
+         (i 0)
+         (continue t))
+    (if (or (= realc 0)
+            (and (= realc 1) (eq (car real-buffers) (current-buffer))))
+        (progn (switch-to-buffer "*scratch*")
+               (message "Nowhere to go"))
+      (funcall move-func)
+      (while (and continue (< i max))
+        (let ((current-buffer (current-buffer)))
+          (cond ((eq current-buffer start-buffer)
+                 (if scratch-default
+                     (switch-to-buffer "*scratch*"))
+                 (setq continue nil))
+                ((not (memq current-buffer real-buffers))
+                 (funcall move-func))
+                (t
+                 (setq continue nil))))
+        (cl-incf i)))))
 
 ;;;###autoload
 (defun narf/real-buffer-p (&optional buffer-or-name)
