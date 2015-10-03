@@ -7,7 +7,7 @@
   (setq frame-title-format '(buffer-file-name "%f" ("%b"))))
 
 ;; Highlight matching parens
-(setq show-paren-delay 0.05)
+(setq show-paren-delay 0.075)
 (show-paren-mode 1)
 
 (global-hl-line-mode   1)    ; do highlight line
