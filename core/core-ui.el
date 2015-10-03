@@ -118,10 +118,12 @@
   ;; Custom modeline segments
   (spaceline-define-segment narf-buffer-path
     "Base filename of buffer."
-    (concat (file-name-nondirectory buffer-file-name)
-            (if (buffer-modified-p)
-                (propertize "*" 'face 'mode-line-is-modified))
-            " ")
+    (if buffer-file-name
+        (concat (file-name-nondirectory buffer-file-name)
+                (if (buffer-modified-p)
+                    (propertize "*" 'face 'mode-line-is-modified))
+                " ")
+      (powerline-buffer-id))
     :tight t)
 
   (spaceline-define-segment narf-buffer-dir
@@ -129,24 +131,23 @@
     (propertize
      (or narf--spaceline-file-path
          (setq narf--spaceline-file-path
-               (if (and buffer-file-name (file-exists-p buffer-file-name))
-                   (progn
-                     (let* ((max-length (/ (window-width) 2))
-                            (project-path (narf/project-root))
-                            (path (file-name-directory
-                                   (file-relative-name buffer-file-name
-                                                       (file-name-directory (if (string-match "/+\\'" project-path)
-                                                                                (replace-match "" t t project-path)
-                                                                              project-path))))))
-                       (if (> (length path) max-length)
-                           (concat "…" (replace-regexp-in-string
-                                        "^.*?/" "/"
-                                        (let ((l (length path))) (substring path (- l max-length) l))))
-                         path)))
-                 (powerline-buffer-id))))
+               (let* ((max-length (/ (window-width) 2))
+                      (project-path (narf/project-root))
+                      (path (file-name-directory
+                             (file-relative-name buffer-file-name
+                                                 (file-name-directory (if (string-match "/+\\'" project-path)
+                                                                          (replace-match "" t t project-path)
+                                                                        project-path)))))
+                      (path-len (length path)))
+                 (if (> path-len max-length)
+                     (concat "…" (replace-regexp-in-string
+                                  "^.*?/" "/"
+                                  (substring path (- path-len max-length) path-len)))
+                   path))))
      'face (if (powerline-selected-window-active)
                'mode-line-buffer-path
              'mode-line-inactive))
+    :when buffer-file-name
     :tight-right t)
 
   (spaceline-define-segment narf-buffer-encoding-abbrev
