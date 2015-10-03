@@ -74,12 +74,12 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
 ;;;###autoload
 (defun narf/get-visible-buffers (&optional buffer-list)
   "Get a list of buffers that are not buried (i.e. visible)"
-  (-remove #'get-buffer-window (or buffer-list (narf/get-buffers))))
+  (-filter #'get-buffer-window (or buffer-list (narf/get-buffers))))
 
 ;;;###autoload
 (defun narf/get-buried-buffers (&optional buffer-list)
   "Get a list of buffers that are buried (i.e. not visible)"
-  (--filter (not (get-buffer-window it)) (or buffer-list (narf/get-buffers))))
+  (-remove 'get-buffer-window (or buffer-list (narf/get-buffers))))
 
 ;;;###autoload
 (defun narf/get-matching-buffers (pattern &optional buffer-list)
