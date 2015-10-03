@@ -119,7 +119,7 @@
                 (if (buffer-modified-p)
                     (propertize "*" 'face 'mode-line-is-modified))
                 " ")
-      (powerline-buffer-id))
+      (format " %s " (powerline-buffer-id)))
     :tight t)
 
   (spaceline-define-segment narf-buffer-dir
