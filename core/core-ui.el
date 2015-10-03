@@ -165,9 +165,10 @@
     "Version control info"
     (let ((vc (vc-working-revision buffer-file-name)))
       (when vc
-        (format "%s %s%s" (char-to-string #xe0a0) vc
+        (format " %s %s%s " (char-to-string #xe0a0) vc
                 (case (vc-state buffer-file-name) ('edited "+") ('conflict "!!!") (t "")))))
-    :when (and active vc-mode))
+    :when (and active vc-mode)
+    :tight t)
 
   (spaceline-define-segment narf-hud
     "A HUD that shows which part of the buffer is currently visible."
@@ -192,13 +193,16 @@
    ;; Left side
    '((narf-buffer-dir :face other-face)
      (narf-buffer-path remote-host)
-     (narf-vc)
-     ((flycheck-error flycheck-warning flycheck-info) :face other-face :when active))
+     narf-vc
+     ((flycheck-error flycheck-warning flycheck-info) :when active))
    ;; Right side
    '(selection-info
      narf-env-version
      narf-buffer-encoding-abbrev
-     (major-mode (minor-modes :separator " ") process :when active)
+     ((" " :tight t)
+      major-mode
+      (minor-modes :separator " ")
+      process :when active)
      (global :when active)
      narf-buffer-position
      narf-hud)))
