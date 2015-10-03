@@ -40,17 +40,24 @@
   (add-hook! text-mode 'fci-mode))
 
 (use-package nlinum ; line numbers
-  :defer t
-  :defines nlinum--width
   :preface
-  (defface linum '((t (:inherit default)))
-    "Face for line numbers" :group 'nlinum-mode)
-  (defface linum-highlight-face '((t (:inherit linum)))
-    "Face for line highlights" :group 'nlinum-mode)
   (defvar narf--hl-nlinum-overlay nil)
   (defvar narf--hl-nlinum-line    nil)
   (defvar nlinum-format " %3d ")
   :init
+  (defface linum-highlight-face '((t (:inherit linum))) "Face for line highlights")
+  (defun narf|nlinum-enable ()
+    (nlinum-mode +1)
+    (add-hook! post-command 'narf|nlinum-hl-line))
+  (defun narf|nlinum-disable ()
+    (nlinum-mode -1)
+    (remove-hook 'post-command-hook 'narf|nlinum-hl-line)
+    (narf|nlinum-unhl-line))
+
+  ;; Preset width nlinum
+  (add-hook! (text-mode prog-mode scss-mode web-mode) 'narf|nlinum-enable)
+  (add-hook! org-mode 'narf|nlinum-disable)
+  :config
   (defun narf|nlinum-unhl-line ()
     "Highlight line number"
     (when narf--hl-nlinum-overlay
@@ -85,17 +92,6 @@
                 (setq narf--hl-nlinum-overlay ov
                       narf--hl-nlinum-line line-no))))))))
 
-  (defun narf|nlinum-enable ()
-    (nlinum-mode +1)
-    (add-hook! post-command 'narf|nlinum-hl-line))
-  (defun narf|nlinum-disable ()
-    (nlinum-mode -1)
-    (remove-hook 'post-command-hook 'narf|nlinum-hl-line)
-    (narf|nlinum-unhl-line))
-
-  ;; Preset width nlinum
-  (add-hook! (text-mode prog-mode scss-mode web-mode) 'narf|nlinum-enable)
-  (add-hook! org-mode 'narf|nlinum-disable)
   (add-hook! nlinum-mode
     (setq nlinum--width (length (number-to-string (count-lines (point-min) (point-max)))))))
 
