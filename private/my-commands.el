@@ -36,10 +36,10 @@
 (exmap "settr[im]"       'narf:toggle-delete-trailing-whitespace)
 (exmap "snip[pets]"      'narf:yas-snippets)         ; snip[!]
 (exmap "fi[nd]"          'narf:helm-swoop)
-(exmap "t"               'narf:tmux-run)
+(exmap "t[mux]"          'narf:tmux-run)
 (exmap "tcd"             'narf:tmux-chdir)
 (exmap "tsnip[pets]"     'narf:yas-file-templates)   ; tsnip[!]
-;; (exmap "term"            'narf:term-init)
+(exmap "term"            'narf-switch-to-iterm)
 (exmap "x"               'narf:scratch-buffer)
 (after! flycheck
   (exmap "er[rors]"      (λ (flycheck-buffer) (flycheck-list-errors))))

@@ -16,9 +16,8 @@
  "M-X"   'smex-major-mode-commands
  "M-:"   'helm-M-x
  "M-;"   'eval-expression
- "C-`"   'narf/popwin-toggle
  "M-="   'text-scale-increase
- "M--"   'text-scale-increase
+ "M--"   'text-scale-decrease
  "M-w"   'evil-window-delete
  "M-/"   'evil-commentary-line
  "M-b"   'narf:build
@@ -40,7 +39,21 @@
  :n "M-o"  'narf/ido-find-file
  :n "M-O"  'narf/ido-find-project-file
 
+ :m "M-1" (λ (narf:switch-to-workgroup-at-index 0))
+ :m "M-2" (λ (narf:switch-to-workgroup-at-index 1))
+ :m "M-3" (λ (narf:switch-to-workgroup-at-index 2))
+ :m "M-4" (λ (narf:switch-to-workgroup-at-index 3))
+ :m "M-5" (λ (narf:switch-to-workgroup-at-index 4))
+ :m "M-6" (λ (narf:switch-to-workgroup-at-index 5))
+ :m "M-7" (λ (narf:switch-to-workgroup-at-index 6))
+ :m "M-8" (λ (narf:switch-to-workgroup-at-index 7))
+ :m "M-9" (λ (narf:switch-to-workgroup-at-index 8))
+
  (:when IS-MAC
+   ;; Textmate-esque indent shift left/right
+   :i "M-["           "C-o m l C-o I DEL C-o ` l"
+   :i "M-]"           (λ (evil-shift-right (point-at-bol) (point-at-eol)))
+
    "<A-left>"       'backward-word
    "<A-right>"      'forward-word
    "<M-backspace>"  'narf/backward-kill-to-bol-and-indent
@@ -54,16 +67,6 @@
    "M-Z"            'redo
    "C-M-f"          'narf:toggle-fullscreen)
 
- :m "M-1" (λ (narf:switch-to-workgroup-at-index 0))
- :m "M-2" (λ (narf:switch-to-workgroup-at-index 1))
- :m "M-3" (λ (narf:switch-to-workgroup-at-index 2))
- :m "M-4" (λ (narf:switch-to-workgroup-at-index 3))
- :m "M-5" (λ (narf:switch-to-workgroup-at-index 4))
- :m "M-6" (λ (narf:switch-to-workgroup-at-index 5))
- :m "M-7" (λ (narf:switch-to-workgroup-at-index 6))
- :m "M-8" (λ (narf:switch-to-workgroup-at-index 7))
- :m "M-9" (λ (narf:switch-to-workgroup-at-index 8))
-
 
  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
  ;; Local keymaps                      ;;
@@ -71,7 +74,8 @@
 
  :m ";" 'evil-ex
 
- (:prefix "," ; <leader>
+ ;; <leader>
+ (:prefix ","
    :n ","   (λ (if (narf/project-p) (helm-projectile-switch-to-buffer) (helm-buffers-list)))
    :n "<"   'helm-buffers-list
    :n "."   'narf/ido-find-file
@@ -105,27 +109,32 @@
    :n "ot"  (λ (narf:tmux-chdir nil t))
    :n "oT"  'narf:tmux-chdir)
 
- (:prefix "\\" ; <localleader>
-   :n "="   'narf/neotree-toggle
+ ;; <localleader>
+ (:prefix "\\"
+   :n "\\"  'narf-switch-to-iterm
+   :n "|"   'narf/neotree-toggle
    :n "."   'narf/neotree-find
    :n ";"   'narf/nlinum-toggle
    :n "-"   'toggle-transparency
    :n "E"   'evil-emacs-state
-   :n "\\"  'narf-switch-to-iterm
-   :n "|"   'narf-switch-to-iterm-and-cd
 
    :n "]"   'next-buffer
    :n "["   'previous-buffer
 
+   :n "c"   'narf/reset-theme
    :n "s"   (λ (narf:yas-snippets t))        ; ido snippets dir
    :n "g"   'diff-hl-diff-goto-hunk
    :n "e"   (λ (call-interactively 'flycheck-buffer) (flycheck-list-errors))
    :n "p"   'helm-show-kill-ring
    :n "b"   'helm-bookmarks
    :n "w"   'narf:helm-wg
-   :n "W"   (λ (message (wg-workgroup-list-display))))
+   :n "W"   'narf:workgroup-display)
 
  :n "Y" "y$"
+
+ ;; Don't move cursor on indent
+ :n "="   (λ (save-excursion (call-interactively 'evil-indent)))
+ :v "="   'evil-indent
 
  :n "zr"  'narf/evil-open-folds
  :n "zm"  'narf/evil-close-folds
@@ -134,16 +143,15 @@
 
  :n "]b"  'narf/next-real-buffer
  :n "[b"  'narf/previous-real-buffer
- :n "]w"  'wg-switch-to-workgroup-right
- :n "[w"  'wg-switch-to-workgroup-left
  :m "]g"  'diff-hl-next-hunk
  :m "[g"  'diff-hl-previous-hunk
  :m "]e"  'narf/flycheck-next-error
  :m "[e"  'narf/flycheck-previous-error
-
- ;; Don't move cursor on indent
- :n "="   (λ (save-excursion (call-interactively 'evil-indent)))
- :v "="   'evil-indent
+ ;; Switch workgroups
+ :n "]w"  'wg-switch-to-workgroup-right
+ :n "[w"  'wg-switch-to-workgroup-left
+ :m "gt"  'narf:switch-to-workgroup-right
+ :m "gT"  'narf:switch-to-workgroup-left
 
  ;; Increment/decrement number under cursor
  :n "g="  'evil-numbers/inc-at-pt
@@ -157,9 +165,6 @@
  :m "gl"  'avy-goto-line
  :m "g]"  'smart-down
  :m "g["  'smart-up
-
- :m "gt"  'narf:switch-to-workgroup-right
- :m "gT"  'narf:switch-to-workgroup-left
 
  :v "."   'evil-repeat
 
@@ -202,10 +207,6 @@
  :i "<backspace>"   'backward-delete-char-untabify
  :i "<M-backspace>" 'narf/backward-kill-to-bol-and-indent
  :i "<C-return>"    'evil-ret-and-indent
-
- ;; Textmate-esque indent shift left/right
- :i "M-["           "C-o m l C-o I DEL C-o ` l"
- :i "M-]"           (λ (evil-shift-right (point-at-bol) (point-at-eol)))
 
  ;; escape from insert mode (more responsive than using key-chord-define)
  :ir  "j"    'narf:exit-mode-maybe
@@ -344,13 +345,7 @@
               minibuffer-local-isearch-map)
          [escape] 'narf-minibuffer-quit)
 
-       :map read-expression-map "C-w" 'evil-delete-backward-word
-
-       ;; Line selection via linum
-       "<left-margin> <down-mouse-1>"    'narf/mouse-select-line
-       "<left-margin> <mouse-1>"         'narf/mouse-select-line
-       "<left-margin> <drag-mouse-1>"    'narf/mouse-select-line
-       "<left-margin> <double-mouse-1>"  'narf/mouse-select-block)
+       :map read-expression-map "C-w" 'evil-delete-backward-word)
 
 ;; Disable the global drag-mouse map; clicking in new buffers often sends evil
 ;; into visual mode, which is UN...ACCEPTAABBLLLEEEE!
