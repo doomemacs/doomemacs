@@ -20,6 +20,7 @@
 (depends-on "nlinum")
 (depends-on "fill-column-indicator")
 (depends-on "spaceline" :git "https://github.com/TheBB/spaceline")
+(depends-on "yascroll")
 
 ;; Evil --- core/core-evil.el
 (depends-on "evil")

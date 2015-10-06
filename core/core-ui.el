@@ -2,7 +2,7 @@
 ;; see lib/ui-defuns.el
 
 (when window-system
-  (fringe-mode '(1 . 8))
+  (fringe-mode '(2 . 4))
   (set-frame-font narf-default-font)
   (setq frame-title-format '(buffer-file-name "%f" ("%b"))))
 
@@ -32,6 +32,21 @@
  fringes-outside-margins         t)     ; fringes on the other side of line numbers
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(use-package yascroll
+  :config
+  (defun yascroll:compute-thumb-size (window-lines buffer-lines)
+    "Return the proper size (height) of scroll bar thumb."
+    (let ((window-lines (* window-lines 0.91)))
+      (if (zerop buffer-lines)
+          1
+        (max 1 (floor (min (* (/ (float window-lines) buffer-lines) window-lines) buffer-lines))))))
+
+  (setq yascroll:scroll-bar 'right-fringe
+        yascroll:delay-to-hide nil)
+  (add-to-list 'yascroll:enabled-window-systems 'mac)
+  (defadvice yascroll:before-change (around always-show-bar activate) ())
+  (global-yascroll-bar-mode 1))
 
 (use-package fill-column-indicator
   :config
@@ -183,10 +198,15 @@
 
   (spaceline-define-segment narf-env-version
     "A HUD that shows which part of the buffer is currently visible."
-    (unless narf--env-version
+    (when (and narf--env-command (not narf--env-version))
       (narf|spaceline-env-update))
     narf--env-version
     :when (and narf--env-version (memq major-mode '(ruby-mode enh-ruby-mode python-mode))))
+
+  (spaceline-define-segment narf-hud
+    "A HUD that shows which part of the buffer is currently visible."
+    (powerline-hud highlight-face default-face 1)
+    :tight t)
 
   ;; Initialize modeline
   (spaceline-install
@@ -205,7 +225,8 @@
       process :when active)
      (global :when active)
      narf-buffer-position
-     narf-hud)))
+     narf-hud
+     )))
 
 (provide 'core-ui)
 ;;; core-ui.el ends here
