@@ -1,18 +1,3 @@
-[submodule "snippets"]
-	path = snippets
-	url = https://github.com/hlissner/emacs-snippets
-[submodule "elisp/emacs-neotree"]
-	path = elisp/emacs-neotree
-	url = https://github.com/jaypei/emacs-neotree
-[submodule "elisp/use-package"]
-	path = elisp/use-package
-	url = https://github.com/jwiegley/use-package
-[submodule "elisp/org-opml"]
-	path = elisp/org-opml
-	url = https://github.com/edavis/org-opml.git
-[submodule "elisp/racer"]
-	path = elisp/racer
-	url = https://github.com/phildawes/racer
 [submodule "private/snippets"]
 	path = private/snippets
 	url = git://github.com/hlissner/emacs-snippets.git
