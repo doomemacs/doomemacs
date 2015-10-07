@@ -8,8 +8,6 @@
 
 ;; Buffers/Files ;;;;;;;;;;;;;;;;;;;;;;;
 
-(defconst narf--splash-buffer-name "*narf*")
-
 (defvar narf-unreal-buffers '("^ ?\\*.+\\*"
                               image-mode
                               dired-mode

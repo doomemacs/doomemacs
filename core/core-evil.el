@@ -44,7 +44,7 @@
   (progn ; evil hacks
     (defadvice evil-force-normal-state (before evil-esc-quit activate)
       (ignore-errors
-        (popwin:close-popup-window)                 ; close popups, if any
+        (popwin:close-popup-window) ; close popups, if any
         (evil-ex-nohighlight)
         ;; Exit minibuffer if alive
         (if (minibuffer-window-active-p (minibuffer-window))
@@ -112,10 +112,12 @@
         evil-jumper-auto-save-interval 3600))
 
 (use-package evil-matchit
+  :defer 1
   :commands (evilmi-jump-items global-evil-matchit-mode)
   :config   (global-evil-matchit-mode 1))
 
 (use-package evil-easymotion
+  :defer 1
   :config
   (evilem-default-keybindings "g SPC")
   (evilem-define (kbd "g SPC n") 'evil-ex-search-next)
@@ -162,6 +164,7 @@
   (evil-snipe-override-mode 1))
 
 (use-package evil-space
+  :defer 1
   :diminish (evil-space-mode . "_")
   :init (setq evil-space-auto-setup nil)
   :config

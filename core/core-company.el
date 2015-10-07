@@ -24,7 +24,6 @@
                             company-echo-metadata-frontend
                             company-preview-if-just-one-frontend)
         company-dict-dir (concat narf-private-dir "dict/"))
-  ;; (add-hook! after-init 'global-company-mode)
   :config
   ;; (use-package company-dict :defer t)
   ;; (setq-default company-backends (append '(company-dict company-keywords) company-backends))

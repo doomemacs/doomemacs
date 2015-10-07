@@ -49,11 +49,11 @@
  ;; In case I want to reactivate backup files
  make-backup-files                  nil
  create-lockfiles                   nil
- backup-directory-alist            `((".*" . ,(! (concat narf-temp-dir "backup/"))))
+ backup-directory-alist            `((".*" . ,(concat narf-temp-dir "backup/")))
 
  ;; Remember undo history
  undo-tree-auto-save-history t
- undo-tree-history-directory-alist `(("." . ,(! (concat narf-temp-dir "undo/")))))
+ undo-tree-history-directory-alist `(("." . ,(concat narf-temp-dir "undo/"))))
 
 ;;; UTF-8 please
 (setq locale-coding-system    'utf-8)   ; pretty
@@ -73,15 +73,11 @@
 (require 'core-defuns)
 (require 'diminish)
 
-;; NARF!
-(define-minor-mode narf-mode "Narf, yoink, poit."
-  :global t :init-value t :keymap (make-sparse-keymap))
-
 (eval-when-compile
-  (defvar use-package-verbose narf-debug-mode)
   (require 'dash)
   (require 'use-package)
   (require 'defuns-use-package)
+  (setq use-package-verbose narf-debug-mode)
 
   ;; Make any folders needed
   (dolist (file '("" "undo" "backup"))
@@ -90,31 +86,27 @@
         (make-directory path t)))))
 
 ;; Save history across sessions
-(use-package savehist
-  :config
-  (setq savehist-file (! (concat narf-temp-dir "savehist"))
-        savehist-additional-variables
-        '(kill-ring global-mark-ring search-ring regexp-search-ring extended-command-history))
-  (savehist-mode 1))
+(require 'savehist)
+(setq savehist-file (concat narf-temp-dir "savehist")
+      savehist-additional-variables
+      '(kill-ring global-mark-ring search-ring regexp-search-ring extended-command-history))
+(savehist-mode 1)
 
-(use-package recentf
-  :config
-  (setq recentf-save-file (! (concat narf-temp-dir "recentf"))
-        recentf-exclude '("/tmp/" "/ssh:" "\\.?ido\\.last$" "\\.revive$" "/TAGS$"
-                          "emacs\\.d/private/cache/.+" "emacs\\.d/workgroups/.+$" "wg-default"
-                          "/company-statistics-cache.el$")
-        recentf-max-menu-items 0
-        recentf-max-saved-items 250
-        recentf-auto-cleanup 600)
-  (recentf-mode 1))
+(require 'recentf)
+(setq recentf-save-file (concat narf-temp-dir "recentf")
+      recentf-exclude '("/tmp/" "/ssh:" "\\.?ido\\.last$" "\\.revive$" "/TAGS$"
+                        "emacs\\.d/private/cache/.+" "emacs\\.d/workgroups/.+$" "wg-default"
+                        "/company-statistics-cache.el$")
+      recentf-max-menu-items 0
+      recentf-max-saved-items 250
+      recentf-auto-cleanup 600)
+(recentf-mode 1)
 
-(use-package popwin :config (popwin-mode 1))
-
-;; Save cursor location across sessions. Only save for files that exist.
 (use-package saveplace
   :defer t
-  :config (setq save-place-file (! (concat narf-temp-dir "saveplace")))
+  :config (setq save-place-file (concat narf-temp-dir "saveplace"))
   :init
+  ;; Save cursor location across sessions. Only save for files that exist.
   (add-hook! find-file
     (if (file-exists-p (buffer-file-name))
         (require 'saveplace)
@@ -124,12 +116,10 @@
   :commands (describe-buffer describe-command describe-file
              describe-keymap describe-option describe-option-of-type))
 
-(add-hook! after-init
+(defun narf-init ()
   (defadvice save-buffers-kill-emacs (around no-query-kill-emacs activate)
     "Prevent annoying \"Active processes exist\" query when you quit Emacs."
-    (flet ((process-list ())) ad-do-it)))
-
-(defun narf-init ()
+    (flet ((process-list ())) ad-do-it))
   (defun display-startup-echo-area-message ()
     (message ">>> Loaded in %s" (emacs-init-time)))
   (require 'server)
