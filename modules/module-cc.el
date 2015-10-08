@@ -8,10 +8,7 @@
     (add-company-backend! cmake-mode (cmake yasnippet))))
 
 (use-package glsl-mode
-  :mode (("\\.glsl\\'" . glsl-mode)
-         ("\\.vert\\'" . glsl-mode)
-         ("\\.frag\\'" . glsl-mode)
-         ("\\.geom\\'" . glsl-mode)))
+  :mode ("\\.glsl\\'" "\\.vert\\'" "\\.frag\\'" "\\.geom\\'"))
 
 (use-package cc-mode
   :defines (c-syntactic-context)
@@ -23,9 +20,8 @@
               c-backward-sws c-determine-limit c-beginning-of-decl-1)
   :commands (c-mode c++-mode objc-mode java-mode)
   :init
-  (associate! c++-mode  :match "\\.h$")
   (associate! objc-mode :match "\\.mm$")
-  (add-hook! (c-mode c++-mode) 'flycheck-mode)
+  (add-hook! (c-mode c++-mode) '(flycheck-mode 'narf|init-c/c++-settings))
   :config
   (setq c-basic-offset 4
         c-tab-always-indent nil
@@ -44,7 +40,6 @@
       (add-company-backend! c++-mode  (c-headers clang))
       (add-company-backend! objc-mode (c-headers xcode)))
 
-    (add-hook! (c-mode c++-mode) 'narf|init-c/c++-settings)
     (add-hook! c++-mode 'narf|init-c++-C11-highlights)
     (add-hook! c++-mode (setq flycheck-clang-language-standard "c++11"
                               flycheck-clang-standard-library  "libc++"))

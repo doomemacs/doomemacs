@@ -5,13 +5,18 @@
   :mode "\\.cs$"
   :init (add-hook! csharp-mode 'flycheck-mode))
 
+;; unity shaders
+(use-package shaderlab-mode :mode "\\.shader$")
+
 (use-package omnisharp
   :after csharp-mode
-  :init (add-hook! csharp-mode '(emr-initialize omnisharp-mode))
-  :config
-  (setq omnisharp-server-executable-path
-        "~/Dropbox/lib/omnisharp-server/OmniSharp/bin/Debug/OmniSharp.exe"
+  :preface
+  (setq omnisharp-server-executable-path "~/Dropbox/lib/omnisharp-server/OmniSharp/bin/Debug/OmniSharp.exe"
         omnisharp-auto-complete-want-documentation nil)
+  :if (file-exists-p omnisharp-server-executable-path)
+  :init
+  (add-hook! csharp-mode '(emr-initialize omnisharp-mode))
+  :config
 
   (bind! :map omnisharp-mode-map
          :n "gd" 'omnisharp-go-to-definition
@@ -44,9 +49,6 @@
           (show-last-auto-complete-result              "last auto complete result")
           (show-overloads-at-point                     "show overloads at point")
           (recompile                                   "recompile"))))
-
-;; unity shaders
-(use-package shaderlab-mode :mode "\\.shader$")
 
 (provide 'module-csharp)
 ;;; module-csharp.el ends here

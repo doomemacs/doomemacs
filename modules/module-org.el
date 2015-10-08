@@ -1,5 +1,7 @@
 ;;; module-org.el
 
+(defvar org-directory "~/Dropbox/notes/")
+
 (define-minor-mode evil-org-mode
   "Evil-mode bindings for org-mode."
   :init-value nil
@@ -8,7 +10,6 @@
   :group      'evil-org)
 
 (use-package org
-  :defines   (org-directory)
   :functions (org-bookmark-jump-unhide outline-next-heading org-end-of-subtree
               outline-flag-region org-remove-inline-images org-display-inline-images
               org-at-item-checkbox-p org-toggle-checkbox org-entry-is-todo-p org-todo
@@ -31,7 +32,6 @@
     (after! org-indent (diminish 'org-indent-mode))
     (after! iimage     (diminish 'iimage-mode))
 
-    (setq org-directory "~/Dropbox/notes/")
     (setq org-project-directory  (! (concat org-directory "projects")) ; not an org var
           org-default-notes-file (! (concat org-directory "notes.org"))
           org-agenda-files (f-entries org-directory 'narf--org-all-files t)
@@ -139,9 +139,9 @@
 
              :i "C-e"          'org-end-of-line
              :i "C-a"          'org-beginning-of-line
-             :i ;; Add new header line before this line
+             ;; Add new header line before this line
              :i "<S-M-return>" 'narf/org-insert-item-before
-             :i ;; Add new header line after this line
+             ;; Add new header line after this line
              :i "<M-return>"   'narf/org-insert-item-after
 
              :i "M-b" (λ (narf/org-surround "*"))     ; bold
@@ -154,19 +154,19 @@
              :v "M-i" "S/"
              :v "M-`" "S+"
 
-             (:prefix ","
-               :n "=" 'org-align-all-tags
-               :n "/" 'org-sparse-tree
-               :n "?" 'org-tags-view
-               :n "a" 'org-attach
-               :n "D" 'org-time-stamp-inactive
-               :n "T" 'org-show-todo-tree
-               :n "d" 'org-time-stamp
-               :n "r" 'org-refile
-               :n "s" 'org-schedule
-               :n "t" 'org-todo
-               :n "SPC" 'narf/org-toggle-checkbox
-               :n "<return>" 'org-archive-subtree)
+             :n ",=" 'org-align-all-tags
+             :n ",/" 'org-sparse-tree
+             :n ",?" 'org-tags-view
+             :n ",a" 'org-attach
+             :n ",D" 'org-time-stamp-inactive
+             :n ",T" 'org-show-todo-tree
+             :n ",d" 'org-time-stamp
+             :n ",r" 'org-refile
+             :n ",s" 'org-schedule
+             :n ",t" 'org-todo
+             :n ",SPC" 'narf/org-toggle-checkbox
+             :n ",<return>" 'org-archive-subtree
+
              :n "gr" 'org-babel-execute-src-block-maybe
              :m "gh" 'outline-up-heading
              :m "gj" 'org-forward-heading-same-level
