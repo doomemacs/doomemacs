@@ -34,10 +34,12 @@
                        "*helm "
                        "*Helm Css SCSS*"
                        "*helm-ag*"
+                       "*helm-ag-edit*"
                        "*Helm Swoop*"))
-      (push bufname narf-ignore-buffers)))
+      (push bufname winner-boring-buffers)))
 
   (bind! :map helm-map
+         "<backtab>"  'helm-ag-edit
          "C-w"        'evil-delete-backward-word
          "C-u"        'helm-delete-minibuffer-contents
          "C-r"        'evil-ex-paste-from-register ; Evil registers in helm! Glorious!
@@ -56,7 +58,57 @@
              helm-ag-project-root
              helm-ag-pop-stack
              helm-ag-buffers
-             helm-ag-clear-stack))
+             helm-ag-clear-stack)
+  :config
+  (defadvice helm-ag--edit-abort (around helm-ag-edit-abort-popwin-compat activate)
+    (cl-letf (((symbol-function 'select-window) 'ignore)) ad-do-it))
+  (defadvice helm-ag--edit-commit (around helm-ag-edit-commit-popwin-compat activate)
+    (cl-letf (((symbol-function 'select-window) 'ignore)) ad-do-it))
+
+  ;; I remove any attempt to kill the helm-ag window, because popwin handles it.
+  (defun helm-ag--edit (_candidate)
+    (let ((default-directory helm-ag--default-directory))
+      (with-current-buffer (get-buffer-create "*helm-ag-edit*")
+        (erase-buffer)
+        (setq-local helm-ag--default-directory helm-ag--default-directory)
+        (let (buf-content)
+          (with-current-buffer (get-buffer "*helm-ag*")
+            (goto-char (point-min))
+            (forward-line 1)
+            (let* ((body-start (point))
+                   (marked-lines (cl-loop for ov in (overlays-in body-start (point-max))
+                                          when (eq 'helm-visible-mark (overlay-get ov 'face))
+                                          return (helm-marked-candidates))))
+              (if (not marked-lines)
+                  (setq buf-content (buffer-substring-no-properties
+                                     body-start (point-max)))
+                (setq buf-content (concat (mapconcat 'identity marked-lines "\n") "\n")))))
+          (insert buf-content)
+          (add-text-properties (point-min) (point-max)
+                               '(read-only t rear-nonsticky t front-sticky t))
+          (let ((inhibit-read-only t))
+            (setq header-line-format
+                  (format "[%s] C-c C-c: Commit, C-c C-k: Abort"
+                          (abbreviate-file-name helm-ag--default-directory)))
+            (goto-char (point-min))
+            (while (re-search-forward "^\\(\\(?:[^:]+:\\)\\{1,2\\}\\)\\(.*\\)$" nil t)
+              (let ((file-line-begin (match-beginning 1))
+                    (file-line-end (match-end 1))
+                    (body-begin (match-beginning 2))
+                    (body-end (match-end 2)))
+                (add-text-properties file-line-begin file-line-end
+                                     '(face font-lock-function-name-face
+                                            intangible t))
+                (remove-text-properties body-begin body-end '(read-only t))
+                (set-text-properties body-end (1+ body-end)
+                                     '(read-only t rear-nonsticky t))))))))
+    (popwin:display-buffer (get-buffer "*helm-ag-edit*"))
+    ;; (other-window 1)
+    ;; (switch-to-buffer (get-buffer "*helm-ag-edit*"))
+    (goto-char (point-min))
+    (setq next-error-function 'compilation-next-error-function)
+    (setq-local compilation-locs (make-hash-table :test 'equal :weakness 'value))
+    (use-local-map helm-ag-edit-map)))
 
 (use-package helm-org
   :commands (helm-org-in-buffer-headings
