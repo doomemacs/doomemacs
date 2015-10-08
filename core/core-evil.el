@@ -8,7 +8,9 @@
   (add-hook! evil-normal-state-exit (setq show-paren-delay 0))
   ;; Disable highlights on insert-mode
   (add-hook! evil-insert-state-entry 'evil-ex-nohighlight)
-  (add-hook! undo-tree-mode (diminish 'undo-tree-mode))
+  ;; Prevents "matches )" messages in minibuffer
+  (add-hook! evil-insert-state-entry (setq-default blink-matching-paren t))
+  (add-hook! evil-insert-state-exit  (setq-default blink-matching-paren nil))
   ;; Always ensure evil-shift-width is consistent with tab-width
   (add-hook! evil-local-mode (setq evil-shift-width tab-width))
   :config

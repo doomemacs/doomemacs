@@ -18,6 +18,7 @@
 (size-indication-mode -1)
 
 (setq-default
+ blink-matching-paren nil
  line-spacing 1
  ;; Multiple cursors across buffers cause a strange redraw delay for
  ;; some things, like auto-complete or evil-mode's cursor color
