@@ -2,7 +2,7 @@
 ;; see lib/ui-defuns.el
 
 (when window-system
-  (fringe-mode '(2 . 4))
+  (fringe-mode '(3 . 2))
   (set-frame-font narf-default-font)
   (setq frame-title-format '(buffer-file-name "%f" ("%b"))))
 
@@ -12,10 +12,11 @@
 
 (global-hl-line-mode   1)    ; do highlight line
 (blink-cursor-mode     1)    ; do blink cursor
-(line-number-mode      1)    ; do show line no in modeline
-(column-number-mode    1)    ; do show col no in modeline
 (tooltip-mode         -1)    ; don't show tooltips
 (size-indication-mode -1)
+;; Let spaceline handle these
+(line-number-mode     -1)
+(column-number-mode   -1)
 
 (setq-default
  blink-matching-paren nil
@@ -34,26 +35,57 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(use-package popwin
+  :config
+  (mapc (lambda (rule) (push rule popwin:special-display-config))
+        '(("*quickrun*" :position bottom :height 15)
+          ("*scratch*" :position bottom :height 20 :stick t :dedicated t)
+          ("*helm-ag-edit*" :position bottom :height 20 :stick t)
+          ("^\\*[Hh]elm.*?\\*\\'" :regexp t :position bottom :height 15)
+          ("*eshell*" :position left :width 80 :stick t :dedicated t)))
+  (popwin-mode 1))
+
 (use-package yascroll
   :config
+  (add-hook! evil-insert-state-exit 'yascroll:update-scroll-bar)
+
+  (defun yascroll:show-scroll-bar ()
+    "Show scroll bar in BUFFER."
+    (interactive)
+    (yascroll:hide-scroll-bar)
+    (let ((window-lines (window-height))
+          (buffer-lines (count-lines (point-min) (point-max))))
+      (when (< window-lines buffer-lines)
+        (let* ((scroll-top (count-lines (point-min) (window-start)))
+               (thumb-window-line (yascroll:compute-thumb-window-line window-lines buffer-lines scroll-top))
+               (thumb-buffer-line (+ scroll-top thumb-window-line))
+               (thumb-size (yascroll:compute-thumb-size window-lines buffer-lines))
+               (make-thumb-overlay 'yascroll:make-thumb-overlay-right-fringe))
+          (when (<= thumb-buffer-line buffer-lines)
+            (yascroll:make-thumb-overlays make-thumb-overlay
+                                          thumb-window-line
+                                          thumb-size))))))
+
   (defun yascroll:compute-thumb-size (window-lines buffer-lines)
     "Return the proper size (height) of scroll bar thumb."
-    (let ((window-lines (* window-lines 0.91)))
+    (let ((window-lines (* window-lines 0.93)))
       (if (zerop buffer-lines)
           1
-        (max 1 (floor (min (* (/ (float window-lines) buffer-lines) window-lines) buffer-lines))))))
+        (max 1 (floor (* (/ window-lines buffer-lines) window-lines))))))
 
   (setq yascroll:scroll-bar 'right-fringe
         yascroll:delay-to-hide nil)
   (add-to-list 'yascroll:enabled-window-systems 'mac)
-  (defadvice yascroll:before-change (around always-show-bar activate) ())
+  (defun yascroll:before-change (beg end))
   (global-yascroll-bar-mode 1))
 
 (use-package fill-column-indicator
-  :config
-  (setq fci-rule-color "#2b303f")
+  :commands fci-mode
+  :init
   (setq-default fill-column 80)
-  (add-hook! text-mode 'fci-mode))
+  (add-hook! (markdown-mode org-mode) 'fci-mode)
+  :config
+  (setq fci-rule-color "#2b303f"))
 
 (use-package nlinum ; line numbers
   :preface
@@ -186,11 +218,6 @@
     :when (and active vc-mode)
     :tight t)
 
-  (spaceline-define-segment narf-hud
-    "A HUD that shows which part of the buffer is currently visible."
-    (powerline-hud highlight-face default-face)
-    :tight t)
-
   ;; Display version string
   (defvar narf--env-version nil)
   (defvar narf--env-command nil)
@@ -209,6 +236,11 @@
     (powerline-hud highlight-face default-face 1)
     :tight t)
 
+  (spaceline-define-segment narf-line-column
+  "The current line and column numbers."
+  "%l/%c"
+  :when active)
+
   ;; Initialize modeline
   (spaceline-install
    ;; Left side
@@ -225,8 +257,8 @@
       (minor-modes :separator " ")
       process :when active)
      (global :when active)
-     narf-buffer-position
-     narf-hud
+     (narf-line-column narf-buffer-position)
+     ;; narf-hud
      )))
 
 (provide 'core-ui)
