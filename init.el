@@ -2,7 +2,7 @@
 ;;
 ;; Author:  Henrik Lissner <henrik@lissner.net>
 ;; URL:     https://github.com/hlissner/emacs.d
-;; Version: 0.2.0
+;; Version: 0.3.0
 ;;
 ;;; Are you pondering what I'm pondering, Pinky?
 ;;
@@ -50,9 +50,8 @@
 
   (defconst narf-default-font (font-spec :family "terminus (ttf)" :size 12 :antialias nil))
   (defconst narf-big-font     (font-spec :family "Ubuntu Mono" :size 18 :antialias t))
-
   (load (concat user-emacs-directory "init-load-path.el"))
-  (load-theme (if window-system 'narf-dark 'brin) t)
+  (load-theme (if window-system 'narf-dark 'wombat) t)
   (set-frame-parameter nil 'fullscreen 'fullboth)
   (mapc 'require
         `(core ; core/core.el
@@ -90,8 +89,7 @@
           module-python        ; beautiful is better than ugly
           module-regex         ; /^[^\s](meaning)[^\n]*/
           module-ruby          ; <3
-          module-rust
-          module-sass          ; @include magic;
+          module-rust          ; Fe2O3
           module-sh            ; she sells Z-shells by the C shore
           module-swift         ; yay, emoji variables!
           module-vim           ; the confessional
