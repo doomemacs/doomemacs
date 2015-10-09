@@ -162,6 +162,8 @@ enable multiple minor modes for the same regexp.")
   :init (add-hook! (emacs-lisp-mode js2-mode scss-mode) 'rainbow-delimiters-mode)
   :config (setq rainbow-delimiters-outermost-only-face-count 1))
 
+(use-package rainbow-mode  :defer t)
+
 (use-package rotate-text   :commands (rotate-word-at-point rotate-region))
 
 (use-package smart-forward :commands (smart-up smart-down smart-left smart-right))
