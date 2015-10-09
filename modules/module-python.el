@@ -10,7 +10,7 @@
         python-environment-directory narf-temp-dir
         python-shell-interpreter "ipython")
   :config
-  (define-env-command! python-mode "pyenv version | cut -d' ' -f1")
+  (define-env-command! python-mode "python --version | cut -d' ' -f2")
   (define-key python-mode-map (kbd "DEL") nil)) ; interferes with smartparens
 
 (use-package nose
