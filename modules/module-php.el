@@ -14,5 +14,7 @@
   (require 'php-refactor-mode)
   (add-hook! php-mode '(turn-on-eldoc-mode emr-initialize php-refactor-mode)))
 
+(use-package hack-mode :mode "\\.hh$")
+
 (provide 'module-php)
 ;;; module-php.el ends here
