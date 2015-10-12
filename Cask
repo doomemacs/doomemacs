@@ -49,8 +49,8 @@
 (depends-on "fancy-narrow")
 (depends-on "goto-last-change")
 (depends-on "hl-todo" :git "https://github.com/tarsius/hl-todo")
-(depends-on "rainbow-mode")
 (depends-on "rainbow-delimiters")
+(depends-on "rainbow-mode")
 (depends-on "rotate-text" :git "https://github.com/debug-ito/rotate-text.el")
 (depends-on "smart-forward")
 (depends-on "smartparens")
@@ -58,11 +58,11 @@
 
 ;; Completion --- core/core-company.el
 (depends-on "company")
-(depends-on "company-c-headers")
-(depends-on "company-tern")
 (depends-on "company-anaconda")
+(depends-on "company-c-headers")
 (depends-on "company-inf-ruby")
 (depends-on "company-statistics")
+(depends-on "company-tern")
 
 ;; Yasnippet --- core/core-yasnippet.el
 (depends-on "yasnippet")
@@ -83,14 +83,14 @@
 (depends-on "gitignore-mode")
 
 ;; Helm -- core/core-helm.el
-(depends-on "projectile")
 (depends-on "helm")
 (depends-on "helm-ag")
+(depends-on "helm-c-yasnippet")
+(depends-on "helm-company")
 (depends-on "helm-css-scss")
 (depends-on "helm-projectile")
 (depends-on "helm-swoop")
-(depends-on "helm-company")
-(depends-on "helm-c-yasnippet")
+(depends-on "projectile")
 
 ;; Quickrun -- core/core-quickrun.el
 (depends-on "quickrun")
@@ -121,9 +121,9 @@
 (depends-on "go-eldoc")
 
 ;; Java -- modules/module-java.el
+(depends-on "android-mode")
 (depends-on "emacs-eclim")
 (depends-on "groovy-mode")
-(depends-on "android-mode")
 (depends-on "scala-mode2" :git "https://github.com/hvesalai/scala-mode2")
 
 ;; JS -- modules/module-js.el
