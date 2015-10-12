@@ -5,7 +5,7 @@
   :init
   ;; Speed up show-paren outside of normal mode (where my motions are minimal)
   (add-hook! evil-normal-state-entry (setq show-paren-delay 0.075))
-  (add-hook! evil-normal-state-exit (setq show-paren-delay 0))
+  (add-hook! evil-normal-state-exit  (setq show-paren-delay 0))
   ;; Disable highlights on insert-mode
   (add-hook! evil-insert-state-entry 'evil-ex-nohighlight)
   ;; Prevents "matches )" messages in minibuffer

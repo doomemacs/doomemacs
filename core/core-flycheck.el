@@ -5,7 +5,7 @@
   :functions (flycheck-buffer)
   :commands (flycheck-mode flycheck-list-errors)
   :init
-  (setq flycheck-indication-mode 'right-fringe
+  (setq flycheck-indication-mode nil
         ;; Removed checks on idle/change for snappiness
         flycheck-check-syntax-automatically '(save mode-enabled idle-change)
         flycheck-disabled-checkers '(emacs-lisp-checkdoc make))

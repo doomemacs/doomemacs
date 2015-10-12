@@ -13,6 +13,7 @@
         ;; What to do on Emacs exit / workgroups-mode exit?
         wg-emacs-exit-save-behavior           'save       ; Options: 'save 'ask nil
         wg-workgroups-mode-exit-save-behavior 'save
+        wg-log-level 0
 
         wg-list-display-decor-divider         " : "
         wg-list-display-decor-current-left    "["

@@ -26,6 +26,8 @@
  ;; switching.
  cursor-in-non-selected-windows  nil
 
+ uniquify-buffer-name-style      nil
+
  visible-bell                    nil    ; silence of the bells
  use-dialog-box                  nil    ; avoid GUI
  redisplay-dont-pause            t
@@ -258,7 +260,6 @@
       process :when active)
      (global :when active)
      (narf-line-column narf-buffer-position)
-     ;; narf-hud
      )))
 
 (provide 'core-ui)

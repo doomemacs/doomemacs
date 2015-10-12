@@ -6,7 +6,7 @@
   :init (add-hook! csharp-mode 'flycheck-mode))
 
 ;; unity shaders
-(use-package shaderlab-mode :mode "\\.shader$")
+(use-package shader-mode :mode "\\.shader$")
 
 (use-package omnisharp
   :after csharp-mode
