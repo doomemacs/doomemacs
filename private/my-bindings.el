@@ -22,7 +22,8 @@
  "M-/"   'evil-commentary-line
  "M-b"   'narf:build
  "M-t"   'helm-projectile-find-file
- "C-\\"  'narf-switch-to-iterm
+ "A-`"   'narf-switch-to-iterm
+ "C-`"   'narf/popwin-toggle
 
  ;; Simpler window navigation
  "C-j"  'evil-window-down
@@ -346,6 +347,9 @@
          [escape] 'narf-minibuffer-quit)
 
        :map read-expression-map "C-w" 'evil-delete-backward-word)
+
+(bind! :i "A-o" (λ (insert "ø"))
+       :i "A-O" (λ (insert "Ø")))
 
 ;; Disable the global drag-mouse map; clicking in new buffers often sends evil
 ;; into visual mode, which is UN...ACCEPTAABBLLLEEEE!
