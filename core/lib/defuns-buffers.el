@@ -87,8 +87,11 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
     (cond ((string-match-p "^\\*scratch\\*" bname)
            (erase-buffer))
           (t (kill-this-buffer))))
-  (unless (narf/real-buffer-p (current-buffer))
-    (narf/previous-real-buffer)))
+  (if (and (eq (current-buffer) popwin:popup-buffer)
+           (popwin:popup-window-live-p))
+      (popwin:close-popup-window)
+    (unless (narf/real-buffer-p (current-buffer))
+      (narf/previous-real-buffer))))
 
 ;;;###autoload
 (defun narf:kill-unreal-buffers ()
