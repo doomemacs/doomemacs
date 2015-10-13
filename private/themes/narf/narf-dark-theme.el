@@ -13,6 +13,7 @@
        (foreground       "#cccada")
        (subtle           "#aab6c7")
        (vsubtle          "#556172")
+       (vvsubtle         "#354152")
        (highlight        "orange")
        (error-highlight  "#55ffff")
 
@@ -38,7 +39,7 @@
        (strings          "#a3be8c")
        (variables        "#CBECFF")
 
-       (modeline-bg-main "#191e28")
+       (modeline-bg-main "#171c26")
        (modeline-bg-light "#363c4d")
        (modeline-bg-lighter "#3f475d")
        (modeline-bg-inactive  "#2b303f")
@@ -82,20 +83,22 @@
    `(whitespace-trailing               ((t (:background "#553333"))))
 
    ;; GUI
-   `(vertical-border          ((,class (:foreground ,vertical-bar) )))
+   `(vertical-border           ((,class (:foreground ,vertical-bar) )))
 
-   `(linum                    ((,class (:background ,linum-fg :foreground ,linum-bg) )))
-   `(linum-highlight-face     ((,class (:foreground ,linum-highlight :background ,current-line))))
-   `(show-paren-match         ((,class (:foreground ,highlight :weight ultra-bold))))
+   `(linum                     ((,class (:background ,linum-fg :foreground ,linum-bg) )))
+   `(linum-highlight-face      ((,class (:foreground ,linum-highlight :background ,current-line))))
+   `(show-paren-match          ((,class (:foreground ,highlight :weight ultra-bold))))
 
-   `(mode-line                ((,class (:foreground ,off-white :background ,modeline-bg-main))))
-   `(powerline-active1        ((,class (:foreground ,subtle    :background ,modeline-bg-light))))
-   `(powerline-active2        ((,class (:foreground ,subtle    :background ,modeline-bg-lighter))))
-   `(mode-line-inactive       ((,class (:foreground ,vsubtle   :background ,modeline-bg-inactive))))
-   `(powerline-inactive1      ((,class (:foreground ,vsubtle   :background ,modeline-bg-inactive))))
-   `(powerline-inactive2      ((,class (:foreground ,vsubtle   :background ,modeline-bg-inactive))))
-   `(mode-line-is-modified    ((,class (:foreground ,highlight))))
-   `(mode-line-buffer-path    ((,class (:foreground ,subtle))))
+   `(mode-line                 ((,class (:foreground ,subtle :background ,modeline-bg-main))))
+   `(powerline-active1         ((,class (:foreground ,subtle :background ,modeline-bg-light))))
+   `(powerline-active2         ((,class (:foreground ,subtle :background ,modeline-bg-lighter))))
+   `(mode-line-is-modified     ((,class (:foreground ,highlight))))
+   `(mode-line-buffer-file     ((,class (:foreground ,off-white))))
+   `(mode-line-buffer-dir      ((,class (:foreground ,subtle))))
+
+   `(mode-line-inactive        ((,class (:foreground ,vsubtle :background ,modeline-bg-inactive))))
+   `(powerline-inactive1       ((,class (:foreground ,vsubtle :background ,modeline-bg-inactive))))
+   `(powerline-inactive2       ((,class (:foreground ,vsubtle :background ,modeline-bg-inactive))))
 
    ;; company-mode
    `(company-tooltip                   ((,class (:inherit default :background "#3e4555"))))
@@ -127,6 +130,8 @@
 
    `(helm-source-header        ((,class (:background ,modeline-bg-light :foreground ,strings :weight bold :height 1.0))))
    `(helm-selection            ((,class (:background ,modeline-bg-lighter))))
+
+   `(yascroll:thumb-fringe            ((,class (:background ,vvsubtle :foreground ,vvsubtle))))
 
    ;; lang-specific
    ;; *****************************************************************************************
