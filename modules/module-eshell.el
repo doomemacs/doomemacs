@@ -5,8 +5,6 @@
   :defer t
   :init
   (evil-set-initial-state 'eshell-mode 'normal)
-  (add-popwin-rule! "*eshell*" :position left :width 80 :stick t :dedicated t)
-
   (setq eshell-directory-name (! (concat narf-temp-dir "eshell"))
         eshell-scroll-to-bottom-on-input 'all
         eshell-buffer-shorthand t

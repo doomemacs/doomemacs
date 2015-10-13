@@ -10,8 +10,6 @@
         flycheck-check-syntax-automatically '(save mode-enabled idle-change)
         flycheck-disabled-checkers '(emacs-lisp-checkdoc make))
   :config
-  (add-unreal-buffer! "^\\*Flycheck.*\\*$")
-
   (bind! :map flycheck-error-list-mode-map
          :n [escape] 'kill-this-buffer
          :n "q"      'kill-this-buffer)

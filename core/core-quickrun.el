@@ -9,8 +9,6 @@
              quickrun-replace-region
              helm-quickrun)
   :config
-  (add-popwin-rule! "*quickrun*" :position bottom :height 15)
-  (add-unreal-buffer! "\\`\\*quickrun\\*\\'")
   (add-to-list 'quickrun-file-alist '("\\.gvy$" . "groovy")))
 
 (provide 'core-quickrun)

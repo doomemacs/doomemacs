@@ -22,10 +22,7 @@
   :config
   (evil-set-initial-state 'helm-mode 'emacs)
 
-  (add-popwin-rule! "^\\*[Hh]elm.*?\\*\\'" :regexp t :position bottom :height 15)
-  (add-unreal-buffer! "^\\*[Hh]elm.*\\*$")
   (after! winner
-    ;; Tell winner-mode to ignore helm buffers
     (dolist (bufname '("*helm recentf*"
                        "*helm projectile*"
                        "*helm imenu*"
