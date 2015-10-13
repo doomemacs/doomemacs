@@ -6,9 +6,10 @@
   (setq ido-temp-list
         (sort ido-temp-list
               (lambda (a b)
-                (time-less-p
-                 (sixth (file-attributes (concat ido-current-directory b)))
-                 (sixth (file-attributes (concat ido-current-directory a)))))))
+                (ignore-errors
+                  (time-less-p
+                   (sixth (file-attributes (concat ido-current-directory b)))
+                   (sixth (file-attributes (concat ido-current-directory a))))))))
   (ido-to-end  ;; move . files to end (again)
    (delq nil (mapcar
               (lambda (x) (and (char-equal (string-to-char x) ?.) x))
