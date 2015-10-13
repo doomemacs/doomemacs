@@ -21,6 +21,7 @@
         evil-want-visual-char-semi-exclusive t
         evil-ex-search-vim-style-regexp t
         evil-ex-interactive-search-highlight 'selected-window
+        evil-echo-state nil
 
         ;; Color-coded state cursors
         evil-normal-state-cursor  '("white" box)
