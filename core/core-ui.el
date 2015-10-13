@@ -2,7 +2,7 @@
 ;; see lib/ui-defuns.el
 
 (when window-system
-  (fringe-mode '(3 . 2))
+  (fringe-mode '(2 . 3))
   (set-frame-font narf-default-font)
   (setq frame-title-format '(buffer-file-name "%f" ("%b"))))
 
@@ -44,7 +44,9 @@
           ("*scratch*" :position bottom :height 20 :stick t :dedicated t)
           ("*helm-ag-edit*" :position bottom :height 20 :stick t)
           ("^\\*[Hh]elm.*?\\*\\'" :regexp t :position bottom :height 15)
-          ("*eshell*" :position left :width 80 :stick t :dedicated t)))
+          ("*eshell*" :position left :width 80 :stick t :dedicated t)
+          ("*Apropos*" :position bottom :height 40 :stick t :dedicated t)
+          ("*Backtrace*" :position bottom :height 15 :stick t)))
   (popwin-mode 1))
 
 (use-package yascroll
@@ -159,42 +161,48 @@
   (add-hook! focus-in (setq narf--spaceline-file-path nil))
 
   (defface mode-line-is-modified nil "Face for mode-line modified symbol")
-  (defface mode-line-buffer-path nil "Face for mode-line buffer directory")
+  (defface mode-line-buffer-file nil "Face for mode-line buffer file path")
+  (defface mode-line-buffer-dir nil "Face for mode-line buffer dirname")
 
   ;; Custom modeline segments
   (spaceline-define-segment narf-buffer-path
-    "Base filename of buffer."
-    (if buffer-file-name
-        (concat (file-name-nondirectory buffer-file-name)
-                (if (buffer-modified-p)
-                    (propertize "*" 'face 'mode-line-is-modified))
-                " ")
-      (format " %s " (powerline-buffer-id)))
-    :tight t)
-
-  (spaceline-define-segment narf-buffer-dir
-    "Buffer file directory."
-    (propertize
-     (or narf--spaceline-file-path
-         (setq narf--spaceline-file-path
-               (let* ((max-length (/ (window-width) 2))
-                      (project-path (narf/project-root))
-                      (path (file-name-directory
-                             (file-relative-name buffer-file-name
-                                                 (file-name-directory (if (string-match "/+\\'" project-path)
-                                                                          (replace-match "" t t project-path)
-                                                                        project-path)))))
-                      (path-len (length path)))
-                 (if (> path-len max-length)
-                     (concat "…" (replace-regexp-in-string
-                                  "^.*?/" "/"
-                                  (substring path (- path-len max-length) path-len)))
-                   path))))
-     'face (if (powerline-selected-window-active)
-               'mode-line-buffer-path
-             'mode-line-inactive))
-    :when buffer-file-name
+    "Buffer file path."
+    (let ((buffer (propertize "%b" 'face
+                              (if (powerline-selected-window-active)
+                                  'mode-line-buffer-file
+                                'mode-line-inactive))))
+      (concat (if buffer-file-name
+                  (concat (propertize
+                           (let* ((max-length (/ (window-width) 2))
+                                  (project-path (let ((p (narf/project-root)))
+                                                  (if (string-match "/+\\'" p)
+                                                      (replace-match "" t t p)
+                                                    p)))
+                                  (path (f-dirname (f-relative buffer-file-truename (f-dirname project-path))))
+                                  (path-len (length path)))
+                             (if (> path-len max-length)
+                                 (concat "…" (replace-regexp-in-string
+                                              "^.*?/" "/"
+                                              (substring path (- path-len max-length) path-len)))
+                               path))
+                           'face (if (powerline-selected-window-active)
+                                     'mode-line-buffer-dir
+                                   'mode-line-inactive)
+                           )
+                          buffer
+                          (if (and buffer-file-name (buffer-modified-p))
+                              (propertize "%+" 'face 'mode-line-is-modified)))
+                buffer)
+              " "))
+    ;; Causes right side of this segment to be square
+    :face line-face
     :tight-right t)
+
+  (spaceline-define-segment narf-buffer-project-name
+    "The project name."
+    (file-name-nondirectory (f-expand (narf/project-root)))
+    :when (and (not (derived-mode-p 'special-mode))
+               (string-match-p "^ ?\\*" (buffer-name))))
 
   (spaceline-define-segment narf-buffer-encoding-abbrev
     "The line ending convention used in the buffer."
@@ -218,6 +226,7 @@
         (format " %s %s%s " (char-to-string #xe0a0) vc
                 (case (vc-state buffer-file-name) ('edited "+") ('conflict "!!!") (t "")))))
     :when (and active vc-mode)
+    :face other-face
     :tight t)
 
   ;; Display version string
@@ -240,23 +249,28 @@
 
   (spaceline-define-segment narf-line-column
   "The current line and column numbers."
-  "%l/%c"
-  :when active)
+  "%l/%c")
+
+  (spaceline-define-segment narf-evil-state
+    "The current evil state.  Requires `evil-mode' to be enabled."
+    (concat (substring (evil-state-property evil-state :tag t) 2 3) " ")
+  :when (and active (bound-and-true-p evil-local-mode))
+  :tight-right t)
 
   ;; Initialize modeline
   (spaceline-install
    ;; Left side
-   '((narf-buffer-dir :face other-face)
-     (narf-buffer-path remote-host)
+   '((narf-buffer-path remote-host)
      narf-vc
+     narf-buffer-project-name
      ((flycheck-error flycheck-warning flycheck-info) :when active))
    ;; Right side
    '(selection-info
+     anzu
      narf-env-version
      narf-buffer-encoding-abbrev
      ((" " :tight t)
-      major-mode
-      (minor-modes :separator " ")
+      major-mode (minor-modes :separator " ")
       process :when active)
      (global :when active)
      (narf-line-column narf-buffer-position)
