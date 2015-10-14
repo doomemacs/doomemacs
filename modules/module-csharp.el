@@ -26,7 +26,7 @@
            :n "ta" (λ (omnisharp-unit-test "all"))))
 
   (after! company
-    (add-company-backend! csharp-mode (omnisharp))
+    (define-company-backend! csharp-mode (omnisharp))
     (add-hook! csharp-mode 'turn-on-eldoc-mode))
 
   (mapc (lambda (x)

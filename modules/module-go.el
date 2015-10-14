@@ -34,7 +34,7 @@
 
   (use-package company-go
     :config
-    (add-company-backend! go-mode (go yasnippet))))
+    (define-company-backend! go-mode (go yasnippet))))
 
 (provide 'module-go)
 ;;; module-go.el ends here

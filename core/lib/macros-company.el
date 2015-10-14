@@ -2,7 +2,7 @@
 ;; for ../core-company.el
 
 ;;;###autoload
-(defmacro add-company-backend! (hook backends)
+(defmacro define-company-backend! (hook backends)
   "Register a company backend for a mode."
   (let ((def-name (intern (format "narf--init-company-%s" hook)))
         (quoted (eq (car-safe backends) 'quote)))

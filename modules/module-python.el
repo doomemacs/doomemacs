@@ -41,7 +41,7 @@
 
   (after! company
     (require 'company-anaconda)
-    (add-company-backend! python-mode (anaconda)))
+    (define-company-backend! python-mode (anaconda)))
 
   (after! emr
     (mapc (lambda (x)

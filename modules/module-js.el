@@ -76,7 +76,7 @@
   :config
   (after! company
     (require 'company-tern)
-    (add-company-backend! js2-mode (tern))))
+    (define-company-backend! js2-mode (tern))))
 
 (use-package unityjs-mode
   :mode "/Assets/.*\\.js$"

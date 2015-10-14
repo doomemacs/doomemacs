@@ -5,7 +5,7 @@
 (use-package sass-mode
   :mode "\\.sass$"
   :config
-  (after! company (add-company-backend! sass-mode (css))))
+  (after! company (define-company-backend! sass-mode (css))))
 
 (use-package scss-mode
   :mode "\\.scss$"
@@ -29,7 +29,7 @@
       :modes 'scss-mode
       :predicate (lambda () (not (use-region-p)))))
 
-  (after! company (add-company-backend! scss-mode (css))))
+  (after! company (define-company-backend! scss-mode (css))))
 
 (use-package web-beautify
   :commands (web-beautify-js web-beautify-css web-beautify-html)

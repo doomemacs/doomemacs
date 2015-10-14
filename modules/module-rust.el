@@ -17,13 +17,14 @@
     :config (add-hook! rust-mode 'flycheck-mode))
 
   (use-package racer
+    :if (! (file-exists-p "/usr/local/bin/racer"))
     :config
-    (bind! :m "gd" 'racer-find-definition)
     (setq racer-cmd "/usr/local/bin/racer"
           racer-rust-src-path "~/Dropbox/lib/rust/src/")
+    (bind! :m "gd" 'racer-find-definition)
 
     (add-hook! rust-mode '(racer-mode eldoc-mode flycheck-rust-setup))
-    (add-company-backend! rust-mode (racer))))
+    (define-company-backend! rust-mode (racer))))
 
 (provide 'module-rust)
 ;;; module-rust.el ends here

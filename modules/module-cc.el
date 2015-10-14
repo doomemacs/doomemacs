@@ -5,7 +5,7 @@
   :config
   (after! company
     (require 'company-cmake)
-    (add-company-backend! cmake-mode (cmake yasnippet))))
+    (define-company-backend! cmake-mode (cmake yasnippet))))
 
 (use-package glsl-mode
   :mode ("\\.glsl\\'" "\\.vert\\'" "\\.frag\\'" "\\.geom\\'"))
@@ -36,9 +36,9 @@
     (after! company
       ;; TODO Clang is *really* slow in larger projects, maybe replace it with
       ;; irony-mode or ycmd?
-      (add-company-backend! c-mode    (c-headers clang))
-      (add-company-backend! c++-mode  (c-headers clang))
-      (add-company-backend! objc-mode (c-headers xcode)))
+      (define-company-backend! c-mode    (c-headers clang))
+      (define-company-backend! c++-mode  (c-headers clang))
+      (define-company-backend! objc-mode (c-headers xcode)))
 
     (add-hook! c++-mode 'narf|init-c++-C11-highlights)
     (add-hook! c++-mode (setq flycheck-clang-language-standard "c++11"

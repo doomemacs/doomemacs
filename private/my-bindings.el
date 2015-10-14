@@ -256,8 +256,8 @@
      "C-S-h"      'company-show-location
      "C-S-s"      'company-search-candidates
      "C-s"        'company-filter-candidates
-     "C-SPC"      'company-complete-common
-     [tab]        'company-complete
+     "C-SPC"      'company-complete-common-or-cycle
+     [tab]        'narf/company-complete-common-or-complete-full
      "<backtab>"  'company-select-previous
      [escape]     'company-abort
      "<C-return>" 'helm-company)

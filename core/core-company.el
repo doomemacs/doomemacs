@@ -23,19 +23,24 @@
         company-frontends '(company-pseudo-tooltip-unless-just-one-frontend
                             company-echo-metadata-frontend
                             company-preview-if-just-one-frontend)
+        company-backends '((company-capf
+                            company-yasnippet
+                            company-dabbrev-code
+                            company-files
+                            company-keywords)
+                           company-dabbrev)
         company-dict-dir (concat narf-private-dir "dict/"))
   :config
-  ;; (use-package company-dict :defer t)
-  ;; (setq-default company-backends (append '(company-dict company-keywords) company-backends))
-
+  (add-to-list 'company-transformers 'company-sort-by-occurrence)
   (setq-default company-backends (append '(company-keywords) company-backends))
-  ;; TODO: Investigate yasnippet
   (after! yasnippet
     (setq-default company-backends (append '(company-capf company-yasnippet) company-backends)))
-  (add-to-list 'company-transformers 'company-sort-by-occurrence)
 
-  (add-company-backend! nxml-mode       (nxml yasnippet))
-  (add-company-backend! emacs-lisp-mode (elisp yasnippet))
+  (define-company-backend! nxml-mode       (nxml yasnippet))
+  (define-company-backend! emacs-lisp-mode (elisp yasnippet))
+
+  ;; (use-package company-dict :defer t)
+  ;; (setq-default company-backends (append '(company-dict company-keywords) company-backends))
 
   ;; Rewrite evil-complete to use company-dabbrev
   (setq company-dabbrev-code-other-buffers t
@@ -50,7 +55,6 @@
     (company-statistics-mode))
 
   (global-company-mode +1))
-
 
 (provide 'core-company)
 ;;; core-company.el ends here

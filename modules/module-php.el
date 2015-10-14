@@ -8,7 +8,7 @@
         php-extras-eldoc-functions-file (concat narf-temp-dir "php-extras-eldoc-functions"))
   :config
   (require 'php-extras)
-  (add-company-backend! php-mode '(php-extras-company))
+  (define-company-backend! php-mode '(php-extras-company))
 
   ;; TODO Tie into emr
   (require 'php-refactor-mode)

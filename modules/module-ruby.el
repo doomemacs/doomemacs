@@ -61,7 +61,7 @@
   (evil-set-initial-state 'inf-ruby-mode 'insert)
   (after! company
     (require 'company-inf-ruby)
-    (add-company-backend! inf-ruby-mode (inf-ruby))))
+    (define-company-backend! inf-ruby-mode (inf-ruby))))
 
 (use-package robe
   :commands (robe-mode robe-start ruby-load-file)
@@ -71,7 +71,7 @@
   :config
   (after! company
     (require 'company-robe)
-    (add-company-backend! ruby-mode (robe))))
+    (define-company-backend! ruby-mode (robe))))
 
 (use-package ruby-refactor
   :after emr
