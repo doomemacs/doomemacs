@@ -2,8 +2,7 @@
 ;; Related to: lib/defuns-flycheck.el
 
 (use-package flycheck
-  :functions (flycheck-buffer)
-  :commands (flycheck-mode flycheck-list-errors)
+  :commands (flycheck-mode flycheck-list-errors flycheck-buffer)
   :init
   (setq flycheck-indication-mode nil
         ;; Removed checks on idle/change for snappiness

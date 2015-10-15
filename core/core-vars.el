@@ -43,8 +43,5 @@ gets killed.")
   "A list of files that count as 'project files', which determine whether a
     folder is the root of a project or not.")
 
-(defcustom narf-big-font (font-spec :family "Ubuntu Mono" :size 18 :antialias t)
-  "Font to switch to in big mode")
-
 (provide 'core-vars)
 ;;; core-vars.el ends here

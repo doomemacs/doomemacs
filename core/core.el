@@ -86,21 +86,41 @@
         (make-directory path t)))))
 
 ;; Save history across sessions
-(require 'savehist)
-(setq savehist-file (concat narf-temp-dir "savehist")
-      savehist-additional-variables
-      '(kill-ring global-mark-ring search-ring regexp-search-ring extended-command-history))
-(savehist-mode 1)
+(use-package savehist
+  :config
+  (setq savehist-file (concat narf-temp-dir "savehist")
+        savehist-save-minibuffer-history t
+        savehist-additional-variables
+        '(kill-ring search-ring regexp-search-ring))
+  (savehist-mode 1)
 
-(require 'recentf)
-(setq recentf-save-file (concat narf-temp-dir "recentf")
-      recentf-exclude '("/tmp/" "/ssh:" "\\.?ido\\.last$" "\\.revive$" "/TAGS$"
-                        "emacs\\.d/private/cache/.+" "emacs\\.d/workgroups/.+$" "wg-default"
-                        "/company-statistics-cache.el$")
-      recentf-max-menu-items 0
-      recentf-max-saved-items 250
-      recentf-auto-cleanup 600)
-(recentf-mode 1)
+  ;; text properties severely bloat the history so delete them (courtesy of PythonNut)
+  (defun unpropertize-savehist ()
+    (mapc (lambda (list)
+            (with-demoted-errors
+                (when (boundp list)
+                  (set list (mapcar #'substring-no-properties (eval list))))))
+          '(kill-ring
+            minibuffer-history
+            helm-grep-history
+            helm-ff-history
+            file-name-history
+            read-expression-history
+            extended-command-history
+            evil-ex-history)))
+  (add-hook 'kill-emacs-hook #'unpropertize-savehist)
+  (add-hook 'savehist-save-hook #'unpropertize-savehist))
+
+(use-package recentf
+  :config
+  (setq recentf-save-file (concat narf-temp-dir "recentf")
+        recentf-exclude '("/tmp/" "/ssh:" "\\.?ido\\.last$" "\\.revive$" "/TAGS$"
+                          "emacs\\.d/private/cache/.+" "emacs\\.d/workgroups/.+$" "wg-default"
+                          "/company-statistics-cache.el$")
+        recentf-max-menu-items 0
+        recentf-max-saved-items 250
+        recentf-auto-cleanup 600)
+  (recentf-mode 1))
 
 (use-package saveplace
   :defer t

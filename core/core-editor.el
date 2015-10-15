@@ -107,6 +107,8 @@ enable multiple minor modes for the same regexp.")
   :defer t
   :diminish undo-tree-mode
   :config
+  (defalias 'redo #'undo-tree-redo)
+  (defalias 'undo #'undo-tree-undo)
   ;; Shut up undo-tree's constant complaining: http://youtu.be/Z6woIRLnbmE
   ;; (defadvice undo-tree-load-history-hook (around undo-tree-load-history-shut-up activate)
   ;;   (shut-up! ad-do-it))
@@ -137,32 +139,6 @@ enable multiple minor modes for the same regexp.")
 
 (use-package goto-last-change
   :commands goto-last-change)
-
-(use-package hl-todo
-  :commands hl-todo-mode
-  :init
-  (add-hook! prog-mode 'hl-todo-mode)
-  (defvar hl-todo-keyword-faces
-    '(("TODO" . "#cc9393")
-      ("NOTE" . "#d0bf8f")
-      ("FIXME" . "#cc9393"))))
-
-(use-package hideshow
-  :commands (hs-minor-mode hs-toggle-hiding hs-already-hidden-p)
-  :diminish hs-minor-mode
-  :init
-  (after! evil
-    (defun narf-load-hs-minor-mode ()
-      (advice-remove 'evil-toggle-fold 'narf-load-hs-minor-mode)
-      (hs-minor-mode 1))
-    (advice-add 'evil-toggle-fold :before 'narf-load-hs-minor-mode)))
-
-(use-package rainbow-delimiters
-  :commands rainbow-delimiters-mode
-  :init (add-hook! (emacs-lisp-mode js2-mode scss-mode) 'rainbow-delimiters-mode)
-  :config (setq rainbow-delimiters-outermost-only-face-count 1))
-
-(use-package rainbow-mode  :defer t)
 
 (use-package rotate-text   :commands (rotate-word-at-point rotate-region))
 

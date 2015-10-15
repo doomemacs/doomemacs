@@ -3,21 +3,27 @@
 
 (use-package evil
   :init
-  ;; Speed up show-paren outside of normal mode (where my motions are minimal)
-  (add-hook! evil-normal-state-entry (setq show-paren-delay 0.075))
-  (add-hook! evil-normal-state-exit  (setq show-paren-delay 0))
-  ;; Disable highlights on insert-mode
-  (add-hook! evil-insert-state-entry 'evil-ex-nohighlight)
-  ;; Prevents "matches )" messages in minibuffer
-  (add-hook! evil-insert-state-entry (setq-default blink-matching-paren t))
-  (add-hook! evil-insert-state-exit  (setq-default blink-matching-paren nil))
+  ;; highlight matching delimiters where it's important
+  (defun show-paren-mode-off () (show-paren-mode -1))
+  (add-hook! evil-insert-state-entry    'show-paren-mode)
+  (add-hook! evil-insert-state-exit     'show-paren-mode-off)
+  (add-hook! evil-visual-state-entry    'show-paren-mode)
+  (add-hook! evil-visual-state-exit     'show-paren-mode-off)
+  (add-hook! evil-motion-state-entry    'show-paren-mode)
+  (add-hook! evil-motion-state-exit     'show-paren-mode-off)
+  (add-hook! evil-operator-state-entry  'show-paren-mode)
+  (add-hook! evil-operator-state-exit   'show-paren-mode-off)
+
   ;; Always ensure evil-shift-width is consistent with tab-width
   (add-hook! evil-local-mode (setq evil-shift-width tab-width))
+  ;; Disable highlights on insert-mode
+  (add-hook! evil-insert-state-entry 'evil-ex-nohighlight)
+
   :config
-  (setq evil-magic                t
-        evil-want-C-u-scroll      t  ; enable C-u for scrolling
+  (setq evil-magic t
+        evil-want-C-u-scroll t       ; enable C-u for scrolling
         evil-ex-visual-char-range t  ; column range for ex commands
-        evil-want-fine-undo       nil
+        evil-want-fine-undo nil
         evil-want-visual-char-semi-exclusive t
         evil-ex-search-vim-style-regexp t
         evil-ex-interactive-search-highlight 'selected-window
@@ -67,7 +73,15 @@
            "C-u" 'evil-delete-whole-line)))
 
 ;; evil plugins
-(use-package evil-anzu)
+(use-package evil-anzu
+  :config (setq anzu-cons-mode-line-p nil))
+
+(use-package evil-args
+  :commands (evil-inner-arg evil-outer-arg evil-forward-arg evil-backward-arg evil-jump-out-args)
+  :init
+  (define-key evil-inner-text-objects-map "a" #'evil-inner-arg)
+  (define-key evil-outer-text-objects-map "a" #'evil-outer-arg)
+  (define-key evil-normal-state-map "K" #'evil-jump-out-args))
 
 (use-package evil-commentary
   :diminish evil-commentary-mode
@@ -115,9 +129,12 @@
         evil-jumper-auto-save-interval 3600))
 
 (use-package evil-matchit
-  :defer 1
-  :commands (evilmi-jump-items global-evil-matchit-mode)
-  :config   (global-evil-matchit-mode 1))
+  :commands (evilmi-jump-items evilmi-text-object global-evil-matchit-mode)
+  :config (global-evil-matchit-mode 1)
+  :init
+  (define-key evil-normal-state-map "%" #'evilmi-jump-items)
+  (define-key evil-inner-text-objects-map "%" #'evilmi-text-object)
+  (define-key evil-outer-text-objects-map "%" #'evilmi-text-object))
 
 (use-package evil-easymotion
   :defer 1
@@ -153,15 +170,24 @@
 
 (use-package evil-snipe
   :diminish evil-snipe-mode
+  :commands (evil-snipe-f evil-snipe-F evil-snipe-t evil-snipe-T evil-snipe-s evil-snipe-S evil-snipe-x evil-snipe-X)
   :init
   (setq-default
    evil-snipe-smart-case t
    evil-snipe-repeat-keys nil ; using evil-space to repeat
    evil-snipe-scope 'line
-   evil-snipe-repeat-scope 'buffer
+   evil-snipe-repeat-scope 'visible
    evil-snipe-override-evil-repeat-keys nil ; causes problems with remapped ;
    evil-snipe-symbol-groups '((?\[ "[[{(]")
                               (?\] "[]})]")))
+  (bind! :m "f" 'evil-snipe-f
+         :m "F" 'evil-snipe-F
+         :m "t" 'evil-snipe-t
+         :m "T" 'evil-snipe-T
+         :m "s" 'evil-snipe-s
+         :m "S" 'evil-snipe-S
+         :o "x" 'evil-snipe-x
+         :o "X" 'evil-snipe-X)
   :config
   (evil-snipe-mode 1)
   (evil-snipe-override-mode 1))

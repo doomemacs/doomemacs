@@ -8,7 +8,6 @@
 (depends-on "s")
 (depends-on "f")
 (depends-on "use-package")
-(depends-on "popwin")
 (depends-on "help-fns+")
 (depends-on "esup")
 
@@ -18,14 +17,19 @@
 (depends-on "applescript-mode")
 
 ;; UI --- core/core-ui.el
-(depends-on "nlinum")
+(depends-on "hl-todo" :git "https://github.com/tarsius/hl-todo")
+(depends-on "rainbow-delimiters")
+(depends-on "rainbow-mode")
+(depends-on "popwin")
 (depends-on "fill-column-indicator")
+(depends-on "volatile-highlights")
+(depends-on "nlinum")
 (depends-on "spaceline" :git "https://github.com/TheBB/spaceline")
-(depends-on "yascroll")
 
 ;; Evil --- core/core-evil.el
 (depends-on "evil")
 (depends-on "evil-anzu")
+(depends-on "evil-args")
 (depends-on "evil-commentary")
 (depends-on "evil-exchange")
 (depends-on "evil-iedit-state")
@@ -48,9 +52,6 @@
 (depends-on "expand-region")
 (depends-on "fancy-narrow")
 (depends-on "goto-last-change")
-(depends-on "hl-todo" :git "https://github.com/tarsius/hl-todo")
-(depends-on "rainbow-delimiters")
-(depends-on "rainbow-mode")
 (depends-on "rotate-text" :git "https://github.com/debug-ito/rotate-text.el")
 (depends-on "smart-forward")
 (depends-on "smartparens")

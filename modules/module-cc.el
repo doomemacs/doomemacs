@@ -31,7 +31,11 @@
     (when IS-MAC
       (after! flycheck
         (setq-default flycheck-c/c++-clang-executable  "clang++"
-                      flycheck-clang-include-path      '("/usr/local/include"))))
+                      flycheck-clang-include-path      '("/usr/local/include"))
+
+        (add-hook! c-mode (setq flycheck-clang-language-standard "C11"))
+        (add-hook! c++-mode (setq flycheck-clang-language-standard "c++11"
+                                  flycheck-clang-standard-library  "libc++"))))
 
     (after! company
       ;; TODO Clang is *really* slow in larger projects, maybe replace it with
@@ -41,8 +45,6 @@
       (define-company-backend! objc-mode (c-headers xcode)))
 
     (add-hook! c++-mode 'narf|init-c++-C11-highlights)
-    (add-hook! c++-mode (setq flycheck-clang-language-standard "c++11"
-                              flycheck-clang-standard-library  "libc++"))
 
     ;; Fix enum and C++11 lambda indentation
     (defadvice c-lineup-arglist (around c-lineup-arglist-indent-fix activate)

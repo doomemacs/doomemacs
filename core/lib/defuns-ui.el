@@ -20,7 +20,7 @@
 ;;;###autoload
 (defun narf:toggle-big-mode ()
   (interactive)
-  (if narf--big-mode narf/default-font (narf/big-font))
+  (set-frame-font (if narf--big-mode narf-default-font narf-big-font))
   (setq narf--big-mode (not narf--big-mode)))
 
 ;;;###autoload

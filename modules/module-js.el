@@ -65,7 +65,7 @@
     (setq mode-name "JS2"))
 
   (define-minor-mode nodejs-mode
-    :lighter " Node" :keymap (make-sparse-keymap)
+    :lighter " node" :keymap (make-sparse-keymap)
     (add-yas-minor-mode! 'nodejs-mode))
   (associate! nodejs-mode :files ("package.json") :in (js2-mode)))
 
