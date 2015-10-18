@@ -1,10 +1,12 @@
 ;;; module-data.el --- dbs 'n data formats
 
-(use-package yaml-mode
-  :mode "\\.ya?ml$"
-  :init (add-hook! yaml-mode 'narf|enable-tab-width-2))
+(add-hook! (yaml-mode toml-mode) 'narf|enable-tab-width-2)
+
+(use-package yaml-mode :mode "\\.ya?ml$")
 
 (use-package json-mode :mode "\\.js\\(on\\|hintrc\\)$")
+
+(use-package toml-mode :mode "\\.toml$")
 
 ;; TODO: Db client
 

@@ -116,6 +116,7 @@
 ;; Data -- modules/module-data.el
 (depends-on "json-mode")
 (depends-on "yaml-mode")
+(depends-on "toml-mode")
 
 ;; Golang -- modules/module-go.el
 (depends-on "go-mode")
