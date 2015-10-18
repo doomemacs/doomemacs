@@ -64,6 +64,10 @@
     (defadvice evil-window-vsplit (after evil-window-vsplit-jump activate)
       (evil-window-right 1))
 
+    ;; Fix disruptive errors w/ hidden buffers caused by popwin
+    (defadvice evil-ex-hl-do-update-highlight (around evil-ex-hidden-buffer-ignore-errors activate)
+      (ignore-errors ad-do-it))
+
     ;; Restore vimmish ex-mode keymaps in isearch
     ;; Hide keystroke display while isearch is active
     (add-hook! isearch-mode     (setq echo-keystrokes 0))
