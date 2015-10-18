@@ -77,6 +77,7 @@
     (helm-attrset 'name header-name helm-ag-source)
     (helm :sources (if search helm-ag-source '(helm-source-do-ag))
           :buffer "*helm-ag*"
+          :keymap helm-ag-map
           :input input
           :prompt helm-global-prompt)))
 
