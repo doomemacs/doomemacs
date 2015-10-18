@@ -133,6 +133,9 @@
 (depends-on "js2-refactor")
 (depends-on "tern")
 (depends-on "unityjs-mode" :git "https://github.com/naruse/EmacsUnityScript")
+(depends-on "typescript-mode")
+(depends-on "tide")
+(depends-on "coffee-mode")
 
 ;; Lua -- modules/module-lua.el
 (depends-on "lua-mode")
