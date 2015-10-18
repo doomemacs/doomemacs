@@ -1,26 +1,50 @@
 ;;; core-helm.el
 
 (use-package helm
-  :commands (helm
-             helm-etags-select
-             helm-show-kill-ring
-             helm-bookmarks
-             helm-alive-p
-             helm-attrset)
   :init
   (defvar helm-global-prompt ">>> ")
   (setq helm-quick-update t
-        helm-idle-delay 0.05
-        helm-input-idle-delay 0.05
         helm-reuse-last-window-split-state t
+
         helm-buffers-fuzzy-matching t
-        helm-candidate-number-limit 40
+
+        helm-ff-auto-update-initial-value t
+        helm-find-files-doc-header nil
+
+        helm-candidate-number-limit 30
         helm-bookmark-show-location t
         ;; let popwin handle this
         helm-split-window-default-side 'other
         helm-split-window-preferred-function 'narf/helm-split-window)
   :config
   (evil-set-initial-state 'helm-mode 'emacs)
+
+  (helm-adaptive-mode 1)
+
+  ;; Rewrite prompt for all helm windows
+  (defun helm (&rest plist)
+    (let ((fn (cond ((or (and helm-alive-p (plist-get plist :allow-nest))
+                         (and helm-alive-p (memq 'allow-nest plist)))
+                     #'helm-nest)
+                    ((keywordp (car plist))
+                     #'helm)
+                    (t #'helm-internal))))
+      (if (and helm-alive-p (eq fn #'helm))
+          (if (helm-alive-p)
+              (error "Error: Trying to run helm within a running helm session")
+            (with-helm-buffer
+              (prog1
+                  (message "Aborting an helm session running in background")
+                ;; `helm-alive-p' will be reset in unwind-protect forms.
+                (helm-keyboard-quit))))
+        (if (keywordp (car plist))
+            (progn
+              (setq helm--local-variables
+                    (append helm--local-variables
+                            (helm-parse-keys plist)))
+              (apply fn (mapcar (lambda (key) (if (eq key :prompt) helm-global-prompt (plist-get plist key)))
+                                helm-argument-keys)))
+          (apply fn plist)))))
 
   (after! winner
     (dolist (bufname '("*helm recentf*"
@@ -35,15 +59,43 @@
                        "*Helm Swoop*"))
       (push bufname winner-boring-buffers)))
 
-  (bind! :map helm-map
-         "<backtab>"  'helm-ag-edit
-         "C-w"        'evil-delete-backward-word
-         "C-u"        'helm-delete-minibuffer-contents
-         "C-r"        'evil-ex-paste-from-register ; Evil registers in helm! Glorious!
-         [escape]     'helm-keyboard-quit)
+  (bind! (:map (helm-map helm-find-files-map)
+           "C-w"        'evil-delete-backward-word
+           "C-r"        'evil-ex-paste-from-register ; Evil registers in helm! Glorious!
+           [escape]     'helm-keyboard-quit)
+         (:map helm-ag-map
+           "<backtab>"  'helm-ag-edit)
+         (:map helm-ag-edit-map
+           "<escape>"   'helm-ag--edit-abort
+           :n "zx"      'helm-ag--edit-abort)
+         (:map helm-map
+           "C-u"        'helm-delete-minibuffer-contents))
 
   ;; Hide mode-line in helm windows
   (advice-add 'helm-display-mode-line :override 'narf*helm-hide-modeline))
+
+(use-package projectile
+  :diminish projectile-mode
+  :config
+  (add-hook! kill-emacs 'narf|projectile-invalidate-cache-maybe)
+
+  (setq-default projectile-enable-caching t)
+  (setq projectile-sort-order 'recentf
+        projectile-cache-file (concat narf-temp-dir "projectile.cache")
+        projectile-known-projects-file (concat narf-temp-dir "projectile.projects")
+        projectile-indexing-method 'alien
+        projectile-project-root-files narf-project-root-files)
+
+  (add-to-list 'projectile-globally-ignored-files "ido.last")
+  (add-to-list 'projectile-globally-ignored-directories "assets")
+  (add-to-list 'projectile-other-file-alist '("scss" "css"))
+  (add-to-list 'projectile-other-file-alist '("css" "scss"))
+
+  (projectile-global-mode +1)
+
+  (advice-add 'projectile-prepend-project-name :override 'narf*projectile-replace-prompt)
+
+  (require 'helm-projectile))
 
 (use-package helm-ag
   :commands (helm-ag
@@ -140,42 +192,6 @@
   (setq helm-swoop-use-line-number-face t
         helm-swoop-split-with-multiple-windows t
         helm-swoop-speed-or-color t))
-
-(use-package projectile
-  :diminish projectile-mode
-  :commands (projectile-ack projectile-ag projectile-compile-project projectile-dired
-             projectile-grep projectile-find-dir projectile-find-file projectile-find-tag
-             projectile-find-test-file projectile-invalidate-cache projectile-kill-buffers
-             projectile-multi-occur projectile-project-root projectile-recentf
-             projectile-regenerate-tags projectile-replace
-             projectile-run-async-shell-command-in-root projectile-run-shell-command-in-root
-             projectile-switch-project projectile-switch-to-buffer projectile-vc
-             projectile-project-p projectile-global-mode)
-  :config
-  (add-hook! kill-emacs 'narf|projectile-invalidate-cache-maybe)
-
-  (setq-default projectile-enable-caching t)
-  (setq projectile-sort-order 'recentf
-        projectile-cache-file (! (concat narf-temp-dir "projectile.cache"))
-        projectile-known-projects-file (! (concat narf-temp-dir "projectile.projects"))
-        projectile-indexing-method 'alien
-        projectile-project-root-files narf-project-root-files)
-
-  (add-to-list 'projectile-globally-ignored-files "ido.last")
-  (add-to-list 'projectile-globally-ignored-directories "assets")
-  (add-to-list 'projectile-other-file-alist '("scss" "css"))
-  (add-to-list 'projectile-other-file-alist '("css" "scss"))
-
-  (projectile-global-mode +1)
-
-  (advice-add 'projectile-prepend-project-name :override 'narf*projectile-replace-prompt))
-
-(use-package helm-projectile
-  :commands (helm-projectile-switch-to-buffer
-             helm-projectile-find-file
-             helm-projectile-recentf
-             helm-projectile-find-other-file
-             helm-projectile-switch-project))
 
 ;; (use-package helm-c-yasnippet :commands helm-yas-visit-snippet-file)
 (use-package helm-semantic :commands helm-semantic-or-imenu)
