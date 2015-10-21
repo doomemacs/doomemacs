@@ -21,7 +21,6 @@
 (depends-on "rainbow-delimiters")
 (depends-on "rainbow-mode")
 (depends-on "popwin")
-(depends-on "fill-column-indicator")
 (depends-on "volatile-highlights")
 (depends-on "nlinum")
 (depends-on "spaceline" :git "https://github.com/TheBB/spaceline")

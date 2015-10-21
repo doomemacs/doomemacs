@@ -87,14 +87,6 @@
           ("*Backtrace*" :position bottom :height 15 :stick t)))
   (popwin-mode 1))
 
-(use-package fill-column-indicator
-  :commands fci-mode
-  :init
-  (setq-default fill-column 80)
-  (add-hook! (markdown-mode org-mode) 'fci-mode)
-  :config
-  (setq fci-rule-color "#2b303f"))
-
 (use-package volatile-highlights
   :diminish volatile-highlights-mode
   :config
