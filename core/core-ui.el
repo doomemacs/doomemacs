@@ -111,17 +111,18 @@
   (defvar nlinum-format " %3d ")
   :init
   (defface linum-highlight-face '((t (:inherit linum))) "Face for line highlights")
+
   (defun narf|nlinum-enable ()
     (nlinum-mode +1)
     (add-hook! post-command 'narf|nlinum-hl-line))
+
   (defun narf|nlinum-disable ()
     (nlinum-mode -1)
     (remove-hook 'post-command-hook 'narf|nlinum-hl-line)
     (narf|nlinum-unhl-line))
 
   ;; Preset width nlinum
-  (add-hook! (text-mode prog-mode scss-mode web-mode) 'narf|nlinum-enable)
-  (add-hook! org-mode 'narf|nlinum-disable)
+  (add-hook! (markdown-mode prog-mode scss-mode web-mode) 'narf|nlinum-enable)
   :config
   (defun narf|nlinum-unhl-line ()
     "Highlight line number"
