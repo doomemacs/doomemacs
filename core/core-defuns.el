@@ -28,6 +28,11 @@ during compilation."
        'with-no-warnings)
     (with-eval-after-load ',feature ,@forms)))
 
+(defmacro in! (dir &rest forms)
+  (declare (indent defun))
+  `(let ((default-directory ,dir))
+     ,@forms))
+
 (defmacro add-hook! (hook &rest func-or-forms)
   "A convenience macro for `add-hook'.
 

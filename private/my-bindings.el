@@ -77,27 +77,27 @@
 
  ;; <leader>
  (:prefix ","
-   :n ","   (λ (if (narf/project-p) (helm-projectile-switch-to-buffer) (helm-buffers-list)))
-   :n "<"   'helm-buffers-list
-   :n "."   'narf/ido-find-file
-   :n ">"   'narf/ido-find-file-other-window
-   :n "/"   'helm-projectile-find-file
-   :n ";"   'helm-semantic-or-imenu
+   :nv ","   (λ (if (narf/project-p) (helm-projectile-switch-to-buffer) (helm-buffers-list)))
+   :nv "<"   'helm-mini
+   :nv "."   'helm-find-files
+   :nv ">"   'helm-projectile-find-file-in-known-projects
+   :nv "/"   'helm-projectile-find-file
+   :nv ";"   'helm-semantic-or-imenu
+   :nv ":"   'helm-imenu-in-all-buffers
 
-   :n "]"   'helm-etags-select
-   :n "a"   'helm-projectile-find-other-file
-   :n "E"   'narf:ido-find-file-in-emacsd
-   :n "h"   'helm-apropos
-   ;; :n "n"   'narf/ido-find-org-file
-   ;; :n "N"   'narf:org-search-files-or-headers
-   :n "m"   'narf/ido-recentf
-   :n "M"   'helm-projectile-recentf  ; recent PROJECT files
-   :n "p"   'helm-projectile-switch-project
-   :v "="   'align-regexp
-   :nv "r"  'emr-show-refactor-menu
+   :nv "]"   'helm-etags-select
+   :nv "a"   'helm-projectile-find-other-file
+   :nv "E"   (λ (in! narf-emacs-dir (helm-projectile-find-file)))
+   :nv "n"   'narf/ido-find-org-file
+   :nv "N"   'narf:org-search-files-or-headers
+   :nv "m"   'helm-recentf
+   :nv "M"   'helm-projectile-recentf  ; recent PROJECT files
+   :nv "p"   'helm-projectile-switch-project
+   :v  "="   'align-regexp
+   :nv "r"   'emr-show-refactor-menu
 
-   :n "qq"  'evil-save-and-quit
-   :n "QQ"  'narf/kill-all-buffers-do-not-remember
+   :nv "qq"  'evil-save-and-quit
+   :nv "QQ"  'narf/kill-all-buffers-do-not-remember
 
    :n "oo"  'narf-open-with
    :n "ob"  (λ (narf-open-with "Google Chrome"))

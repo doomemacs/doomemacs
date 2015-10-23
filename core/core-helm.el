@@ -3,23 +3,26 @@
 (use-package helm
   :init
   (defvar helm-global-prompt ">>> ")
-  (setq helm-quick-update t
-        helm-reuse-last-window-split-state t
+  (setq-default
+   helm-quick-update t
+   helm-reuse-last-window-split-state t
 
-        helm-buffers-fuzzy-matching t
+   helm-buffers-fuzzy-matching t
+   helm-apropos-fuzzy-match t
+   helm-M-x-fuzzy-match t
+   helm-recentf-fuzzy-match t
+   ;; helm-mode-fuzzy-match t
 
-        helm-ff-auto-update-initial-value t
-        helm-find-files-doc-header nil
+   helm-ff-auto-update-initial-value nil
+   helm-find-files-doc-header nil
 
-        helm-candidate-number-limit 30
-        helm-bookmark-show-location t
-        ;; let popwin handle this
-        helm-split-window-default-side 'other
-        helm-split-window-preferred-function 'narf/helm-split-window)
+   helm-candidate-number-limit 30
+   helm-bookmark-show-location t
+   ;; let popwin handle this
+   helm-split-window-default-side 'other
+   helm-split-window-preferred-function 'narf/helm-split-window)
   :config
   (evil-set-initial-state 'helm-mode 'emacs)
-
-  (helm-adaptive-mode 1)
 
   ;; Rewrite prompt for all helm windows
   (defun helm (&rest plist)
@@ -59,10 +62,14 @@
                        "*Helm Swoop*"))
       (push bufname winner-boring-buffers)))
 
-  (bind! (:map (helm-map helm-find-files-map)
+  (bind! (:map (helm-map helm-generic-files-map helm-find-files-map)
            "C-w"        'evil-delete-backward-word
            "C-r"        'evil-ex-paste-from-register ; Evil registers in helm! Glorious!
            [escape]     'helm-keyboard-quit)
+         (:map helm-find-files-map
+           "C-w"        'helm-find-files-up-one-level
+           "TAB"        'helm-execute-persistent-action
+           "/"          'helm-execute-persistent-action)
          (:map helm-ag-map
            "<backtab>"  'helm-ag-edit)
          (:map helm-ag-edit-map
@@ -76,6 +83,12 @@
 
 (use-package projectile
   :diminish projectile-mode
+  ;; :commands (helm-projectile-find-file
+  ;;            helm-projectile-find-file-in-known-projects
+  ;;            helm-projectile-find-other-file
+  ;;            helm-projectile-switch-to-buffer
+  ;;            helm-projectile-switch-project
+  ;;            helm-projectile-recentf)
   :config
   (add-hook! kill-emacs 'narf|projectile-invalidate-cache-maybe)
 
@@ -167,15 +180,7 @@
 (use-package helm-files
   :commands (helm-recentf
              helm-buffers
-             helm-buffers-list)
-  :config
-  (defun helm-recentf ()
-    "Reconfigured `helm-recentf' to use `helm', instead of `helm-other-buffer'"
-    (interactive)
-    (let ((helm-ff-transformer-show-only-basename nil))
-      (helm :sources '(helm-source-recentf)
-            :buffer "*helm recentf*"
-            :prompt helm-global-prompt))))
+             helm-buffers-list))
 
 (use-package helm-css-scss ; https://github.com/ShingoFukuyama/helm-css-scss
   :commands (helm-css-scss
@@ -197,6 +202,7 @@
 (use-package helm-semantic :commands helm-semantic-or-imenu)
 (use-package helm-elisp    :commands helm-apropos)
 (use-package helm-command  :commands helm-M-x)
+(use-package helm-descbinds :config (helm-descbinds-mode 1))
 
 (provide 'core-helm)
 ;;; core-helm.el ends here
