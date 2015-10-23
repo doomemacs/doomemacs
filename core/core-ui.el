@@ -77,7 +77,7 @@
   :config
   (setq popwin:popup-window-height 25)
   (mapc (lambda (rule) (push rule popwin:special-display-config))
-        '(("*quickrun*" :position bottom :height 15)
+        '(("*quickrun*" :position bottom :height 10 :stick t)
           ("*scratch*" :position bottom :height 20 :stick t :dedicated t)
           ("*helm-ag-edit*" :position bottom :height 20 :stick t)
           (help-mode :position bottom :height 15 :stick t)
