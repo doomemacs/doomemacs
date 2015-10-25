@@ -75,6 +75,32 @@
     (bind! :map evil-ex-search-keymap
            "C-w" 'evil-delete-backward-word
            "C-u" 'evil-delete-whole-line)))
+    ;; Repeat motions with SPC/S-SPC
+    (defmacro narf-space-setup! (command next-func prev-func)
+      `(defadvice ,command
+           (before ,(intern (format "narf-space--%s" (symbol-name command))) activate)
+         (define-key evil-motion-state-map (kbd "SPC") ',next-func)
+         (define-key evil-motion-state-map (kbd "S-SPC") ',prev-func)))
+
+    (after! evil-snipe
+      (narf-space-setup! evil-snipe-f evil-snipe-repeat evil-snipe-repeat-reverse)
+      (narf-space-setup! evil-snipe-F evil-snipe-repeat evil-snipe-repeat-reverse)
+      (narf-space-setup! evil-snipe-t evil-snipe-repeat evil-snipe-repeat-reverse)
+      (narf-space-setup! evil-snipe-T evil-snipe-repeat evil-snipe-repeat-reverse)
+      (narf-space-setup! evil-snipe-s evil-snipe-repeat evil-snipe-repeat-reverse)
+      (narf-space-setup! evil-snipe-S evil-snipe-repeat evil-snipe-repeat-reverse)
+      (narf-space-setup! evil-snipe-x evil-snipe-repeat evil-snipe-repeat-reverse)
+      (narf-space-setup! evil-snipe-X evil-snipe-repeat evil-snipe-repeat-reverse))
+
+    (after! evil-visualstar
+      (narf-space-setup! evil-visualstar/begin-search-forward evil-ex-search-next evil-ex-search-previous)
+      (narf-space-setup! evil-visualstar/begin-search-backward evil-ex-search-previous evil-ex-search-next))
+
+    (narf-space-setup! evil-ex-search-next evil-ex-search-next evil-ex-search-previous)
+    (narf-space-setup! evil-ex-search-previous evil-ex-search-next evil-ex-search-previous)
+
+    (narf-space-setup! evil-ex-search-forward evil-ex-search-next evil-ex-search-previous)
+    (narf-space-setup! evil-ex-search-backward evil-ex-search-next evil-ex-search-previous)))
 
 ;; evil plugins
 (use-package evil-anzu
@@ -195,28 +221,6 @@
   :config
   (evil-snipe-mode 1)
   (evil-snipe-override-mode 1))
-
-(use-package evil-space
-  :defer 1
-  :diminish (evil-space-mode . "_")
-  :init (setq evil-space-auto-setup nil)
-  :config
-  (evil-space-mode 1)
-
-  (evil-space-setup "/" "n" "N")
-  (evil-space-setup "?" "N" "n")
-
-  (after! evil-snipe
-    (evil-space-setup 'evil-snipe-f 'evil-snipe-repeat 'evil-snipe-repeat-reverse)
-    (evil-space-setup 'evil-snipe-F 'evil-snipe-repeat 'evil-snipe-repeat-reverse)
-    (evil-space-setup 'evil-snipe-t 'evil-snipe-repeat 'evil-snipe-repeat-reverse)
-    (evil-space-setup 'evil-snipe-T 'evil-snipe-repeat 'evil-snipe-repeat-reverse)
-    (evil-space-setup 'evil-snipe-s 'evil-snipe-repeat 'evil-snipe-repeat-reverse)
-    (evil-space-setup 'evil-snipe-S 'evil-snipe-repeat 'evil-snipe-repeat-reverse))
-
-  (after! evil-visualstar
-    (evil-space-setup 'evil-visualstar/begin-search-forward "n" "N")
-    (evil-space-setup 'evil-visualstar/begin-search-backward "n" "N")))
 
 (use-package evil-surround
   :commands (global-evil-surround-mode
