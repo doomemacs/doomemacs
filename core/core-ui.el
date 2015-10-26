@@ -2,23 +2,23 @@
 ;; see lib/ui-defuns.el
 
 (when window-system
+  (fringe-mode '(2 . 3))
   (set-frame-font narf-default-font)
   (setq frame-title-format '(buffer-file-name "%f" ("%b")))
-  (fringe-mode '(2 . 3)))
+  (setq initial-frame-alist '((width . 120) (height . 80))))
+(unless window-system
+  (menu-bar-mode -1))
 
 ;; Highlight matching parens
 (setq show-paren-delay 0.075)
 
 (global-hl-line-mode   1)    ; do highlight line
-(blink-cursor-mode     1)    ; do blink cursor
+(blink-cursor-mode    -1)    ; do blink cursor
 (tooltip-mode         -1)    ; don't show tooltips
-(size-indication-mode -1)
-;; Let spaceline handle these
-(line-number-mode     -1)
-(column-number-mode   -1)
 
 (setq-default
  blink-matching-paren nil
+
  ;; Multiple cursors across buffers cause a strange redraw delay for
  ;; some things, like auto-complete or evil-mode's cursor color
  ;; switching.
@@ -28,10 +28,14 @@
 
  visible-bell                    nil    ; silence of the bells
  use-dialog-box                  nil    ; avoid GUI
- redisplay-dont-pause            t
+ redisplay-dont-pause            nil
  indicate-buffer-boundaries      nil
  indicate-empty-lines            nil
  fringes-outside-margins         t      ; fringes on the other side of line numbers
+ left-margin 1
+
+ jit-lock-defer-time 0
+ jit-lock-stealth-time 3
 
  resize-mini-windows t)
 
@@ -49,7 +53,7 @@
 (use-package hl-todo
   :commands hl-todo-mode
   :init
-  (add-hook! prog-mode 'hl-todo-mode)
+  (add-hook! (prog-mode puml-mode) 'hl-todo-mode)
   (defvar hl-todo-keyword-faces
     '(("TODO" . "#cc9393")
       ("NOTE" . "#d0bf8f")
@@ -99,12 +103,11 @@
   (vhl/install-extension 'my-evil-highlights)
 
   (vhl/define-extension 'my-undo-tree-highlights
-    'undo-tree-undo
-    'undo-tree-redo)
+    'undo-tree-undo 'undo-tree-redo)
   (vhl/install-extension 'my-undo-tree-highlights)
   (volatile-highlights-mode t))
 
-(use-package nlinum ; line numbers
+(use-package nlinum
   :preface
   (defvar narf--hl-nlinum-overlay nil)
   (defvar narf--hl-nlinum-line    nil)
@@ -151,7 +154,8 @@
                  (ov (-first (lambda (item) (overlay-get item 'nlinum)) overlays)))
             (when ov
               (narf|nlinum-unhl-line)
-              (let* ((disp (get-text-property 0 'display (overlay-get ov 'before-string)))
+              (let* ((disp (get-text-property 0 'display
+                                              (overlay-get ov 'before-string)))
                      (str (nth 1 disp)))
                 (put-text-property 0 (length str) 'face 'linum-highlight-face str)
                 (put-text-property 0 (length str) 'face 'linum-highlight-face str)
@@ -159,7 +163,9 @@
                       narf--hl-nlinum-line line-no))))))))
 
   (add-hook! nlinum-mode
-    (setq nlinum--width (length (number-to-string (count-lines (point-min) (point-max)))))))
+    (setq nlinum--width
+          (length (int-to-string (count-lines (point-min) (point-max)))))))
+
 
 ;; Mode-line ;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
