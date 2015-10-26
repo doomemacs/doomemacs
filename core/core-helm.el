@@ -83,17 +83,12 @@
 
 (use-package projectile
   :diminish projectile-mode
-  ;; :commands (helm-projectile-find-file
-  ;;            helm-projectile-find-file-in-known-projects
-  ;;            helm-projectile-find-other-file
-  ;;            helm-projectile-switch-to-buffer
-  ;;            helm-projectile-switch-project
-  ;;            helm-projectile-recentf)
   :config
   (add-hook! kill-emacs 'narf|projectile-invalidate-cache-maybe)
 
   (setq-default projectile-enable-caching t)
   (setq projectile-sort-order 'recentf
+        projectile-require-project-root nil
         projectile-cache-file (concat narf-temp-dir "projectile.cache")
         projectile-known-projects-file (concat narf-temp-dir "projectile.projects")
         projectile-indexing-method 'alien
@@ -202,7 +197,7 @@
 (use-package helm-semantic :commands helm-semantic-or-imenu)
 (use-package helm-elisp    :commands helm-apropos)
 (use-package helm-command  :commands helm-M-x)
-(use-package helm-descbinds :config (helm-descbinds-mode 1))
+(use-package helm-descbinds :command helm-descbinds)
 
 (provide 'core-helm)
 ;;; core-helm.el ends here
