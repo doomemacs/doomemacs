@@ -16,13 +16,14 @@
         ido-create-new-buffer 'always
         ido-enable-tramp-completion t
         ido-enable-last-directory-history t
-        ido-save-directory-list-file (! (concat narf-temp-dir "ido.last")))
+        ido-save-directory-list-file (concat narf-temp-dir "ido.last"))
   :config
   (add-to-list 'ido-ignore-files "\\`.DS_Store$")
   (add-to-list 'ido-ignore-files "Icon\\?$")
 
   (ido-mode 1)
   (ido-everywhere 1)
+
   (require 'ido-ubiquitous)
   (ido-ubiquitous-mode 1)
 

@@ -19,10 +19,10 @@
 (when window-system
   (setenv "SHELL" "/usr/local/bin/zsh")
   (setenv "EMACS" "1") ; make sure the world knows
-
-  (setq exec-path (! (require 'exec-path-from-shell)
-                     (exec-path-from-shell-initialize)
-                     exec-path)))
+  (setq exec-path (eval-when-compile
+                    (require 'exec-path-from-shell)
+                    (exec-path-from-shell-initialize)
+                    exec-path)))
 
 ;; OSX Related Plugins ;;;;;;;;;;;;;;;;;
 

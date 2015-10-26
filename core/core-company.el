@@ -50,7 +50,7 @@
   (define-key company-active-map (kbd "C-w") nil)
 
   (shut-up!
-    (setq company-statistics-file (! (concat narf-temp-dir "company-statistics-cache.el")))
+    (setq company-statistics-file (concat narf-temp-dir "company-stats-cache.el"))
     (require 'company-statistics)
     (company-statistics-mode))
 
