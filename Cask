@@ -63,12 +63,16 @@
 (depends-on "company-statistics")
 (depends-on "company-tern")
 
+;; Collab --- core/core-collab.el
+(depends-on "impatient-mode")
+
 ;; Yasnippet --- core/core-yasnippet.el
 (depends-on "yasnippet")
 
 ;; Flycheck --- core/core-flycheck.el
 (depends-on "flycheck")
 (depends-on "flyspell")
+
 ;; ...
 ;; Project --- core/core-project.el
 (depends-on "flx-ido")
@@ -80,6 +84,7 @@
 (depends-on "diff-hl")
 (depends-on "gitconfig-mode")
 (depends-on "gitignore-mode")
+(depends-on "github-browse-file")
 
 ;; Helm -- core/core-helm.el
 (depends-on "helm")
@@ -89,6 +94,7 @@
 (depends-on "helm-css-scss")
 (depends-on "helm-projectile")
 (depends-on "helm-swoop")
+(depends-on "helm-descbinds")
 (depends-on "projectile")
 
 ;; Quickrun -- core/core-quickrun.el
@@ -144,6 +150,9 @@
 ;; Org -- modules/module-org.el
 (depends-on "org-plus-contrib")
 (depends-on "org-opml" :git "https://github.com/edavis/org-opml")
+
+;; PHP -- modules/module-php.el
+(depends-on "puml-mode")
 
 ;; PHP -- modules/module-php.el
 (depends-on "php-mode")
