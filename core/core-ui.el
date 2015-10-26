@@ -175,56 +175,36 @@
    powerline-default-separator nil
    powerline-height 18)
 
-  ;; Modeline cache
-  (defvar narf--spaceline-file-path nil)
-  (make-variable-buffer-local 'narf--spaceline-file-path)
-  (add-hook! focus-in (setq narf--spaceline-file-path nil))
-
   (defface mode-line-is-modified nil "Face for mode-line modified symbol")
   (defface mode-line-buffer-file nil "Face for mode-line buffer file path")
-  (defface mode-line-buffer-dir nil "Face for mode-line buffer dirname")
+  (defface mode-line-buffer-dir  nil "Face for mode-line buffer dirname")
 
   ;; Custom modeline segments
   (spaceline-define-segment narf-buffer-path
-    "Buffer file path."
-    (let ((buffer (propertize "%b" 'face
-                              (if (powerline-selected-window-active)
-                                  'mode-line-buffer-file
-                                'mode-line-inactive))))
-      (if buffer-file-name
-          (concat (propertize
-                   (or narf--spaceline-file-path
-                       (setq narf--spaceline-file-path
-                             (let* ((max-length (/ (window-width) 2))
-                                    (project-path (let ((p (narf/project-root)))
-                                                    (if (string-match "/+\\'" p)
-                                                        (replace-match "" t t p)
-                                                      p)))
-                                    (path (f-dirname (f-relative buffer-file-truename (f-dirname project-path))))
-                                    (path-len (length path)))
-                               (if (> path-len max-length)
-                                   (concat "…" (replace-regexp-in-string
-                                                "^.*?/" "/"
-                                                (substring path (- path-len max-length) path-len)))
-                                 path))))
-                   'face (if (powerline-selected-window-active)
-                             'mode-line-buffer-dir
-                           'mode-line-inactive))
-                  buffer
-                  (when buffer-file-name
-                    (propertize
-                     (concat
-                      (when (buffer-modified-p) "[+]")
-                      (when buffer-read-only "[RO]")
-                      (unless (file-exists-p buffer-file-name) "[!]"))
-                     'face (if active 'mode-line-is-modified 'mode-line-inactive))))
-        buffer)))
+    (if buffer-file-name
+        (let* ((project-path (let (projectile-require-project-root) (projectile-project-root)))
+               (buffer-path (file-relative-name buffer-file-name project-path))
+               (max-length (/ (window-width) 2))
+               (path-len (length buffer-path)))
+          (concat (file-name-nondirectory (directory-file-name project-path))
+                  "/"
+                  (if (> path-len max-length)
+                      (concat "…" (replace-regexp-in-string
+                                   "^.*?/" "/"
+                                   (substring buffer-path (- path-len max-length) path-len)))
+                    buffer-path)))
+      "%b")
+    :face (if active 'mode-line-buffer-file 'mode-line-inactive)
+    :tight-right t)
 
-  (spaceline-define-segment narf-buffer-project-name
-    "The project name."
-    (file-name-nondirectory (f-expand (narf/project-root)))
-    :when (and (not (derived-mode-p 'special-mode))
-               (string-match-p "^ ?\\*" (buffer-name))))
+  (spaceline-define-segment narf-buffer-modified
+    (concat
+     (if (and buffer-file-name (buffer-modified-p)) "[+]")
+     (if buffer-read-only "[RO]")
+     (if (and buffer-file-name (not (file-exists-p buffer-file-name))) "[!]"))
+    :face mode-line-is-modified
+    :when (not (string-match-p "^\\s*\\*" (buffer-name)))
+    :tight t)
 
   (spaceline-define-segment narf-buffer-encoding-abbrev
     "The line ending convention used in the buffer."
@@ -240,16 +220,18 @@
     (let ((perc (/ (window-end) 0.01 (point-max))))
       (cond ((eq (window-start) 1) ":Top")
             ((>= perc 100) ":Bot")
-            (t (format ":%d%%%%" perc)))))
+            (t (format ":%d%%%%" perc))))
+    :tight-right t)
 
   (spaceline-define-segment narf-vc
     "Version control info"
     (let ((vc (vc-working-revision buffer-file-name)))
       (when vc
-        (format " %s %s%s " (char-to-string #xe0a0) vc
-                (case (vc-state buffer-file-name) ('edited "+") ('conflict "!!!") (t "")))))
-    :when (and active vc-mode)
-    :tight t)
+        (format "%s%s" vc (case (vc-state buffer-file-name)
+                            ('edited "+")
+                            ('conflict "!!!")
+                            (t "")))))
+    :when (and active vc-mode))
 
   ;; Display version string
   (defvar narf--env-version nil)
@@ -267,7 +249,7 @@
   (spaceline-define-segment narf-hud
     "A HUD that shows which part of the buffer is currently visible."
     (powerline-hud highlight-face default-face 1)
-    :tight t)
+    :tight-right t)
 
   (spaceline-define-segment narf-anzu
     "Show the current match number and the total number of matches.  Requires anzu
@@ -275,28 +257,32 @@ to be enabled."
     (let ((here anzu--current-position)
           (total anzu--total-matched))
       (when anzu--state
-        (cl-case anzu--state
-          (search (format "%s/%d%s"
-                          (anzu--format-here-position here total)
-                          total (if anzu--overflow-p "+" "")))
-          (replace-query (format "%d replace" total))
-          (replace (format "%d/%d" here total)))))
-    :when (and active (bound-and-true-p anzu--state)))
+        (concat
+         (propertize
+          (cl-case anzu--state
+            (search (format " %s/%d%s "
+                            (anzu--format-here-position here total)
+                            total (if anzu--overflow-p "+" "")))
+            (replace-query (format " %d replace " total))
+            (replace (format " %d/%d " here total)))
+          'face highlight-face)
+         " ")))
+    :when (and active (bound-and-true-p anzu--state))
+    :tight t)
 
   ;; Initialize modeline
   (spaceline-install
    ;; Left side
-   '((narf-anzu :face highlight-face)
+   '(narf-anzu
      (narf-buffer-path remote-host)
+     narf-buffer-modified
      narf-vc
-     narf-buffer-project-name
      ((flycheck-error flycheck-warning flycheck-info) :when active))
    ;; Right side
    '((selection-info :face highlight-face)
      narf-env-version
      narf-buffer-encoding-abbrev
-     ((" " :tight t)
-      major-mode (minor-modes :tight t :separator " ")
+     (major-mode (minor-modes :tight t :separator "")
       process :when active)
      (global :when active)
      ("%l/%c" narf-buffer-position)
