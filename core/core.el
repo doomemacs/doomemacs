@@ -73,11 +73,9 @@
 (require 'core-defuns)
 (require 'diminish)
 
+(autoload 'use-package "use-package" "" nil 'macro)
 (eval-when-compile
-  (require 'dash)
-  (require 'use-package)
-  (require 'defuns-use-package)
-  (setq use-package-verbose narf-debug-mode)
+  (setq use-package-verbose nil)
 
   ;; Make any folders needed
   (dolist (file '("" "undo" "backup"))

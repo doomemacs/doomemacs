@@ -1,7 +1,7 @@
 ;;; core-auto-insert.el --- file templates
 
 (use-package autoinsert
-  :after yasnippet
+  :defer t
   :init
   (setq auto-insert-query nil)    ; Don't prompt before insertion
   (setq auto-insert-alist '())

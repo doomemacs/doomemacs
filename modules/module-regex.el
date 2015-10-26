@@ -1,15 +1,14 @@
 ;;; module-regex.el
 
-(use-package pcre2el
-  :functions (rxt--re-builder-switch-pcre-mode)
-  :after re-builder
-  :config
-  (setq reb-re-syntax 'pcre)
-  (bind! :map rxt-help-mode-map :n [escape] 'kill-buffer-and-window))
-
 (use-package re-builder
   :commands (re-builder reb-mode-buffer-p)
   :config
+  (use-package pcre2el
+    :functions (rxt--re-builder-switch-pcre-mode)
+    :config
+    (setq reb-re-syntax 'pcre)
+    (bind! :map rxt-help-mode-map :n [escape] 'kill-buffer-and-window))
+
   (add-hook! reb-mode 'narf|reb-cleanup)
   (evil-set-initial-state 'reb-mode 'insert)
   (bind! :map reb-mode-map

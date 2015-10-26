@@ -33,6 +33,7 @@
       map))
   :config
   (after! helm (add-to-list 'yas-dont-activate 'helm-alive-p))
+  (require 'autoinsert)
 
   (yas-reload-all)
 

@@ -19,9 +19,9 @@
     (bind! :map js2-mode-map :m "gQ" 'web-beautify-js))
 
   (use-package js2-refactor
-    :after emr
     :init (add-hook! js2-mode 'emr-initialize)
     :config
+    (require 'emr)
     (mapc (lambda (x)
             (let ((command-name (car x))
                   (title (cadr x))

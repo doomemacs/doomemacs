@@ -74,9 +74,9 @@
     (define-company-backend! ruby-mode (robe))))
 
 (use-package ruby-refactor
-  :after emr
   :init (add-hook! ruby-mode 'emr-initialize)
   :config
+  (require 'emr)
   (mapc (lambda (x)
           (let ((command-name (car x))
                 (title (cadr x))

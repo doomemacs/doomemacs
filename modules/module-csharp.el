@@ -9,7 +9,6 @@
 (use-package shader-mode :mode "\\.shader$")
 
 (use-package omnisharp
-  :after csharp-mode
   :preface
   (setq omnisharp-server-executable-path "~/Dropbox/lib/omnisharp-server/OmniSharp/bin/Debug/OmniSharp.exe"
         omnisharp-auto-complete-want-documentation nil)
