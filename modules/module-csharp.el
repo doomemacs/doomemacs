@@ -10,6 +10,7 @@
 (use-package shader-mode :mode "\\.shader$")
 
 (use-package omnisharp
+  :defer t
   :preface
   (setq omnisharp-server-executable-path "~/Dropbox/lib/omnisharp-server/OmniSharp/bin/Debug/OmniSharp.exe"
         omnisharp-auto-complete-want-documentation nil)
@@ -17,18 +18,17 @@
   :init
   (add-hook! csharp-mode '(emr-initialize omnisharp-mode))
   :config
-
-  (bind! :map omnisharp-mode-map
-         :n "gd" 'omnisharp-go-to-definition
-         (:prefix ","
-           :n "tr" (λ (omnisharp-unit-test "fixture"))
-           :n "ts" (λ (omnisharp-unit-test "single"))
-           :n "ta" (λ (omnisharp-unit-test "all"))))
+  (evil-define-key 'normal omnisharp-mode-map
+    (kbd "gd")  'omnisharp-go-to-definition
+    (kbd ",tr") (λ (omnisharp-unit-test "fixture"))
+    (kbd ",ts") (λ (omnisharp-unit-test "single"))
+    (kbd ",ta") (λ (omnisharp-unit-test "all")))
 
   (after! company
     (define-company-backend! csharp-mode (omnisharp))
     (add-hook! csharp-mode 'turn-on-eldoc-mode))
 
+  ;; Map all refactor commands (see emr)
   (mapc (lambda (x)
           (let ((command-name (car x))
                 (title (cadr x)))
