@@ -211,24 +211,28 @@
 
 (use-package evil-snipe
   :diminish evil-snipe-mode
-  :commands (evil-snipe-f evil-snipe-F evil-snipe-t evil-snipe-T evil-snipe-s evil-snipe-S evil-snipe-x evil-snipe-X)
+  :commands (evil-snipe-f evil-snipe-F evil-snipe-t evil-snipe-T evil-snipe-s evil-snipe-S evil-snipe-x evil-snipe-X )
   :init
   (setq-default
    evil-snipe-smart-case t
-   evil-snipe-repeat-keys nil ; using evil-space to repeat
+   evil-snipe-repeat-keys nil ; using space to repeat
    evil-snipe-scope 'line
    evil-snipe-repeat-scope 'visible
    evil-snipe-override-evil-repeat-keys nil ; causes problems with remapped ;
    evil-snipe-symbol-groups '((?\[ "[[{(]")
-                              (?\] "[]})]")))
-  (bind! :m "f" 'evil-snipe-f
-         :m "F" 'evil-snipe-F
-         :m "t" 'evil-snipe-t
-         :m "T" 'evil-snipe-T
-         :m "s" 'evil-snipe-s
-         :m "S" 'evil-snipe-S
-         :o "x" 'evil-snipe-x
-         :o "X" 'evil-snipe-X)
+                              (?\] "[]})]")
+                              (?\; "[;:]")))
+
+  (define-key evil-normal-state-map (kbd "s") nil)
+  (define-key evil-normal-state-map (kbd "S") nil)
+  (define-key evil-motion-state-map (kbd "s") 'evil-snipe-s)
+  (define-key evil-motion-state-map (kbd "S") 'evil-snipe-S)
+  (define-key evil-motion-state-map (kbd "f") 'evil-snipe-f)
+  (define-key evil-motion-state-map (kbd "F") 'evil-snipe-F)
+  (define-key evil-motion-state-map (kbd "t") 'evil-snipe-t)
+  (define-key evil-motion-state-map (kbd "T") 'evil-snipe-T)
+  (define-key evil-operator-state-map (kbd "z") 'evil-snipe-s)
+  (define-key evil-operator-state-map (kbd "Z") 'evil-snipe-S)
   :config
   (evil-snipe-mode 1)
   (evil-snipe-override-mode 1))
