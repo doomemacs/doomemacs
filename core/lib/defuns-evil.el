@@ -62,5 +62,18 @@
       (cons (format format (car pair))
             (format format (cdr pair)))))
 
+;;;###autoload (autoload 'narf/evil-macro-on-all-lines "defuns-evil" nil t)
+(evil-define-operator narf/evil-macro-on-all-lines (beg end &optional arg)
+  "Apply macro to each line. Courtesy of PythonNut/emacs-config"
+  (evil-with-state
+    (evil-normal-state)
+    (goto-char end)
+    (evil-visual-state)
+    (goto-char beg)
+    (evil-ex-normal (region-beginning) (region-end)
+      (concat "@"
+        (single-key-description
+          (read-char "What macro?"))))))
+
 (provide 'defuns-evil)
 ;;; defuns-evil.el ends here

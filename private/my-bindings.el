@@ -12,9 +12,9 @@
  ;; Global keymaps                     ;;
  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+ "A-x"   'execute-extended-command
  "M-x"   'smex
  "M-X"   'smex-major-mode-commands
- "M-:"   'helm-M-x
  "M-;"   'eval-expression
  "M-="   'text-scale-increase
  "M--"   'text-scale-decrease
@@ -52,7 +52,7 @@
 
  (:when IS-MAC
    ;; Textmate-esque indent shift left/right
-   :i "M-["           "C-o m l C-o I DEL C-o ` l"
+   :i "M-["           (kbd "C-o m l C-o I DEL C-o ` l")
    :i "M-]"           (λ (evil-shift-right (point-at-bol) (point-at-eol)))
 
    "<A-left>"       'backward-word
@@ -112,12 +112,11 @@
 
  ;; <localleader>
  (:prefix "\\"
-   :n "\\"  'narf-switch-to-iterm
-   :n "|"   'narf/neotree-toggle
-   :n "."   'narf/neotree-find
-   :n ";"   'narf/nlinum-toggle
-   :n "-"   'toggle-transparency
-   :n "E"   'evil-emacs-state
+   :nv "\\"  'narf-switch-to-iterm
+   :nv "|"   'narf/neotree-toggle
+   :nv "."   'narf/neotree-find
+   :nv ";"   'narf/nlinum-toggle
+   :nv "E"   'evil-emacs-state
 
    :n "]"   'next-buffer
    :n "["   'previous-buffer
@@ -157,6 +156,7 @@
  ;; Increment/decrement number under cursor
  :n "g="  'evil-numbers/inc-at-pt
  :n "g-"  'evil-numbers/dec-at-pt
+
  :n "gR"  'narf:eval-buffer
  :n "gc"  'evil-commentary
  :n "gy"  'evil-commentary-yank
@@ -166,6 +166,7 @@
  :m "gl"  'avy-goto-line
  :m "g]"  'smart-down
  :m "g["  'smart-up
+ :no "g@" 'narf/evil-macro-on-all-lines
 
  :v "."   'evil-repeat
 
@@ -196,9 +197,12 @@
 
  ;; aliases for %
  :m "%"   'evilmi-jump-items
- :m [tab] (λ (if (ignore-errors (hs-already-hidden-p))
-                 (hs-toggle-hiding)
-               (call-interactively 'evilmi-jump-items)))
+ :m [tab] (λ (cond ((eq major-mode 'org-mode)
+                    (org-cycle))
+                   (t
+                    (if (ignore-errors (hs-already-hidden-p))
+                        (hs-toggle-hiding)
+                      (call-interactively 'evilmi-jump-items)))))
 
  ;; Restore osx text objects
  :i "<A-backspace>" 'evil-delete-backward-word
