@@ -101,7 +101,7 @@
 
   (projectile-global-mode +1)
 
-  (advice-add 'projectile-prepend-project-name :override 'narf*projectile-replace-prompt)
+  ;; (advice-add 'projectile-prepend-project-name :override 'narf*projectile-replace-prompt)
 
   (require 'helm-projectile))
 

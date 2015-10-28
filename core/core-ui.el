@@ -127,8 +127,7 @@
     (remove-hook 'post-command-hook 'narf|nlinum-hl-line)
     (narf|nlinum-unhl-line))
 
-  ;; Preset width nlinum
-  (add-hook! (markdown-mode prog-mode scss-mode web-mode) 'narf|nlinum-enable)
+  ;; (add-hook! (markdown-mode prog-mode scss-mode web-mode) 'narf|nlinum-enable)
   :config
   (defun narf|nlinum-unhl-line ()
     "Highlight line number"
