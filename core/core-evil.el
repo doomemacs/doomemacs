@@ -70,6 +70,13 @@
     (defadvice evil-ex-hl-do-update-highlight (around evil-ex-hidden-buffer-ignore-errors activate)
       (ignore-errors ad-do-it))
 
+    ;; buffer-local ex commands, thanks to: http://emacs.stackexchange.com/questions/13186
+    (defun evil-ex-define-cmd-local (cmd function)
+      "Locally binds the function FUNCTION to the command CMD."
+      (unless (local-variable-p 'evil-ex-commands)
+        (setq-local evil-ex-commands (copy-alist evil-ex-commands)))
+      (evil-ex-define-cmd cmd function))
+
     ;; Restore vimmish ex-mode keymaps in isearch
     ;; Hide keystroke display while isearch is active
     (add-hook! isearch-mode     (setq echo-keystrokes 0))
