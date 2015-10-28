@@ -1,6 +1,7 @@
 ;;; my-commands.el
 
 (defalias 'exmap 'evil-ex-define-cmd)
+(defalias 'exmap! 'evil-ex-define-cmd-local)
 
 (exmap "a"               'helm-projectile-find-other-file)
 (exmap "acomp[ile]"      'narf:compile-autoloads)
@@ -44,19 +45,11 @@
 (exmap "x"               'narf:scratch-buffer)
 (after! flycheck
   (exmap "er[rors]"      (λ (flycheck-buffer) (flycheck-list-errors))))
-(after! org
-  (exmap "o[rg]edit"     'org-edit-special)
-  (exmap "o[rg]refile"   'org-refile)
-  (exmap "o[rg]archive"  'org-archive-subtree)
-  (exmap "o[rg]agenda"   'org-agenda)
-  (exmap "o[rg]todo"     'org-show-todo-tree)
-  (exmap "o[rg]link"     'org-link)
-  (exmap "o[rg]align"    'org-align-all-tags))
 (after! workgroups2
   (exmap "sl[oad]"       'narf:load-session)
   (exmap "ss[ave]"       'narf:save-session)
-  (exmap "wg"            'narf:workgroup-display)
-  (exmap "tabnew"        'narf:workgroup-new)
+  (exmap "tab"           'narf:workgroup-display)
+  (exmap "t[ab]new"      'narf:workgroup-new)
   (exmap "tabre[name]"   'narf:workgroup-rename)
   (exmap "tabn[ext]"     'wg-switch-to-workgroup-right)
   (exmap "tabp[rev]"     'wg-switch-to-workgroup-left)
