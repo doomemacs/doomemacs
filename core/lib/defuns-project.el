@@ -4,17 +4,24 @@
 (defun narf/project-root (&optional strict-p)
   "Get the path to the root of your project. Uses `narf-project-root-files' to
 determine if a directory is a project."
-  (let ((home (file-truename "~")))
-    (catch 'found
-      (f-traverse-upwards
-       (lambda (path)
-         (let ((path (file-truename path)))
-           (if (file-equal-p home path)
-               (throw 'found (if strict-p nil default-directory))
-             (dolist (file narf-project-root-files)
-               (when (file-exists-p (expand-file-name file path))
-                 (throw 'found path)))))) default-directory)
-      default-directory)))
+  (let (projectile-require-project-root strict-p) (projectile-project-root))
+  ;; (let ((home (file-truename "~"))
+  ;;       (path default-directory))
+  ;;   (unless (file-name-absolute-p path)
+  ;;     (setq path (expand-file-name path)))
+  ;;   (catch 'found
+  ;;     (ignore-errors
+  ;;       (f-traverse-upwards
+  ;;        (lambda (path)
+  ;;          (let ((path (file-truename path)))
+  ;;            (if (file-equal-p home path)
+  ;;                (throw 'found (if strict-p nil default-directory))
+  ;;              (dolist (file narf-project-root-files)
+  ;;                (when (file-exists-p (expand-file-name file path))
+  ;;                  (throw 'found path))))))
+  ;;        path))
+  ;;     default-directory))
+  )
 
 ;;;###autoload
 (defun narf/project-has-files (files &optional root)
