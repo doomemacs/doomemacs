@@ -1,4 +1,6 @@
-(eval-when-compile (require 'cl-lib))
+(eval-when-compile
+  (require 'cl-lib)
+  (require 'dash))
 
 ;; Backwards compatible `with-eval-after-load'
 (unless (fboundp 'with-eval-after-load)
@@ -161,7 +163,7 @@ Examples:
                            (if (assoc letter state-map)
                                (add-to-list 'states (cdr (assoc letter state-map)))
                              (user-error "Invalid mode prefix %s in key %s" letter key)))
-                         (s-split "" (substring (symbol-name key) 1) t))
+                         (split-string (substring (symbol-name key) 1) "" t))
                    (unless states
                      (user-error "Unrecognized keyword %s" key)) nil)))
 

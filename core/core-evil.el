@@ -39,7 +39,7 @@
   (evil-mode 1)
   (evil-select-search-module 'evil-search-module 'evil-search)
 
-  (bind! :map evil-command-window-mode-map :n [escape] 'kill-buffer-and-window)
+  (evil-define-key 'normal evil-command-window-mode-map [escape] 'kill-buffer-and-window)
 
   ;; modes to map to different default states
   (dolist (mode-map '((cider-repl-mode   . emacs)
@@ -51,9 +51,11 @@
     (evil-set-initial-state `,(car mode-map) `,(cdr mode-map)))
 
   (progn ; evil hacks
-    (defadvice evil-force-normal-state (before evil-esc-quit activate)
+    (defadvice evil-force-normal-state (after evil-esc-quit activate)
       (ignore-errors
-        (popwin:close-popup-window) ; close popups, if any
+        (when (popwin:popup-window-live-p)
+          (popwin:close-popup-window))
+         ; close popups, if any
         (evil-ex-nohighlight)
         ;; Exit minibuffer if alive
         (if (minibuffer-window-active-p (minibuffer-window))
@@ -72,9 +74,10 @@
     ;; Hide keystroke display while isearch is active
     (add-hook! isearch-mode     (setq echo-keystrokes 0))
     (add-hook! isearch-mode-end (setq echo-keystrokes 0.02))
-    (bind! :map evil-ex-search-keymap
-           "C-w" 'evil-delete-backward-word
-           "C-u" 'evil-delete-whole-line)))
+    (let ((map evil-ex-search-keymap))
+      (define-key map (kbd "C-w") 'evil-delete-backward-word)
+      (define-key map (kbd "C-u") 'evil-delete-whole-line))
+
     ;; Repeat motions with SPC/S-SPC
     (defmacro narf-space-setup! (command next-func prev-func)
       `(defadvice ,command
@@ -133,28 +136,29 @@
   :functions (iedit-current-occurrence-string iedit-restrict-region)
   :commands (evil-iedit-state evil-iedit-state/iedit-mode)
   :config
-  (bind! :v "SPC" 'narf:iedit-restrict-to-region
-         (:map evil-iedit-state-map
-           ;; Don't interfere with evil-snipe
-           "s"   nil
-           "S"   nil
-           "V"   'evil-visual-line
-           "C"   'evil-iedit-state/substitute  ; instead of s/S
-           "za"  'iedit-toggle-unmatched-lines-visible)))
+  (define-key evil-visual-state-map (kbd "SPC") 'narf:iedit-restrict-to-region)
+  (let ((map evil-iedit-state-map))
+    ;; Don't interfere with evil-snipe
+    (define-key map "s" nil)
+    (define-key map "S" nil)
+
+    (define-key map (kbd "V")  'evil-visual-line)
+    (define-key map (kbd "C")  'evil-iedit-state/substitute) ; instead of s/S
+    (define-key map (kbd "za") 'iedit-toggle-unmatched-lines-visible)))
 
 (use-package evil-indent-textobject
   :commands (evil-indent-i-indent
              evil-indent-a-indent
              evil-indent-a-indent-lines)
   :init
-  (bind! :map evil-inner-text-objects-map
-         "i" 'evil-indent-i-indent
-         "i" 'evil-indent-a-indent
-         "I" 'evil-indent-a-indent-lines))
+  (let ((map evil-inner-text-objects-map))
+    (define-key map "i" 'evil-indent-i-indent)
+    (define-key map "i" 'evil-indent-a-indent)
+    (define-key map "I" 'evil-indent-a-indent-lines)))
 
 (use-package evil-jumper
   :init
-  (setq evil-jumper-file (! (concat narf-temp-dir "jumplist"))
+  (setq evil-jumper-file (concat narf-temp-dir "jumplist")
         evil-jumper-auto-center t
         evil-jumper-auto-save-interval 3600))
 

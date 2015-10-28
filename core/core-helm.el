@@ -197,7 +197,7 @@
 (use-package helm-semantic :commands helm-semantic-or-imenu)
 (use-package helm-elisp    :commands helm-apropos)
 (use-package helm-command  :commands helm-M-x)
-(use-package helm-descbinds :command helm-descbinds)
+(use-package helm-descbinds :commands helm-descbinds)
 
 (provide 'core-helm)
 ;;; core-helm.el ends here

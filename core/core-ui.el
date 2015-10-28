@@ -2,7 +2,7 @@
 ;; see lib/ui-defuns.el
 
 (when window-system
-  (fringe-mode '(2 . 3))
+  (fringe-mode '(3 . 3))
   (set-frame-font narf-default-font)
   (setq frame-title-format '(buffer-file-name "%f" ("%b")))
   (setq initial-frame-alist '((width . 120) (height . 80))))
@@ -88,7 +88,9 @@
           ("^\\*[Hh]elm.*?\\*\\'" :regexp t :position bottom :height 15)
           ("*eshell*" :position left :width 80 :stick t :dedicated t)
           ("*Apropos*" :position bottom :height 40 :stick t :dedicated t)
-          ("*Backtrace*" :position bottom :height 15 :stick t)))
+          ("*Backtrace*" :position bottom :height 15 :stick t)
+          ("^\\*Org-Babel.*\\*$" :regexp t :position bottom :height 15)
+          ))
   (popwin-mode 1))
 
 (use-package volatile-highlights
@@ -108,6 +110,7 @@
   (volatile-highlights-mode t))
 
 (use-package nlinum
+  :commands nlinum-mode
   :preface
   (defvar narf--hl-nlinum-overlay nil)
   (defvar narf--hl-nlinum-line    nil)
@@ -147,8 +150,9 @@
                        (point-at-bol)))
                (peol (1+ pbol)))
           ;; Handle EOF case
-          (when (>= peol (point-max))
-            (setq peol (point-max)))
+          (let ((max (point-max)))
+            (when (>= peol max)
+              (setq peol max)))
           (jit-lock-fontify-now pbol peol)
           (let* ((overlays (overlays-in pbol peol))
                  (ov (-first (lambda (item) (overlay-get item 'nlinum)) overlays)))

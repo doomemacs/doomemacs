@@ -34,13 +34,15 @@
   (add-to-list 'company-transformers 'company-sort-by-occurrence)
   (setq-default company-backends (append '(company-keywords) company-backends))
   (after! yasnippet
-    (setq-default company-backends (append '(company-capf company-yasnippet) company-backends)))
+    (setq-default company-backends
+                  (append '(company-capf company-yasnippet) company-backends)))
 
   (define-company-backend! nxml-mode       (nxml yasnippet))
   (define-company-backend! emacs-lisp-mode (elisp yasnippet))
 
   ;; (use-package company-dict :defer t)
-  ;; (setq-default company-backends (append '(company-dict company-keywords) company-backends))
+  ;; (setq-default company-backends
+  ;;               (append '(company-dict company-keywords) company-backends))
 
   ;; Rewrite evil-complete to use company-dabbrev
   (setq company-dabbrev-code-other-buffers t

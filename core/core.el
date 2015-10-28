@@ -42,9 +42,9 @@
 
  ;; Disable all backups (that's what git/dropbox are for)
  bookmark-save-flag                 t
- bookmark-default-file              (! (concat narf-temp-dir "bookmarks"))
+ bookmark-default-file              (concat narf-temp-dir "bookmarks")
  auto-save-default                  nil
- auto-save-list-file-name           (! (concat narf-temp-dir "autosave"))
+ auto-save-list-file-name           (concat narf-temp-dir "autosave")
 
  ;; In case I want to reactivate backup files
  make-backup-files                  nil
@@ -84,62 +84,44 @@
         (make-directory path t)))))
 
 ;; Save history across sessions
-(use-package savehist
-  :config
-  (setq savehist-file (concat narf-temp-dir "savehist")
-        savehist-save-minibuffer-history t
-        savehist-additional-variables
-        '(kill-ring search-ring regexp-search-ring))
-  (savehist-mode 1)
+(require 'savehist)
+(setq savehist-file (concat narf-temp-dir "savehist")
+      savehist-save-minibuffer-history t
+      savehist-additional-variables
+      '(kill-ring search-ring regexp-search-ring))
+(savehist-mode 1)
 
-  ;; text properties severely bloat the history so delete them (courtesy of PythonNut)
-  (defun unpropertize-savehist ()
-    (mapc (lambda (list)
-            (with-demoted-errors
-                (when (boundp list)
-                  (set list (mapcar #'substring-no-properties (eval list))))))
-          '(kill-ring
-            minibuffer-history
-            helm-grep-history
-            helm-ff-history
-            file-name-history
-            read-expression-history
-            extended-command-history
-            evil-ex-history)))
-  (add-hook 'kill-emacs-hook #'unpropertize-savehist)
-  (add-hook 'savehist-save-hook #'unpropertize-savehist))
+;; text properties severely bloat the history so delete them (courtesy of PythonNut)
+(defun unpropertize-savehist ()
+  (mapc (lambda (list)
+          (with-demoted-errors
+              (when (boundp list)
+                (set list (mapcar #'substring-no-properties (eval list))))))
+        '(kill-ring minibuffer-history helm-grep-history helm-ff-history file-name-history
+          read-expression-history extended-command-history evil-ex-history)))
+(add-hook 'kill-emacs-hook    #'unpropertize-savehist)
+(add-hook 'savehist-save-hook #'unpropertize-savehist)
 
-(use-package recentf
-  :config
-  (setq recentf-save-file (concat narf-temp-dir "recentf")
-        recentf-exclude '("/tmp/" "/ssh:" "\\.?ido\\.last$" "\\.revive$" "/TAGS$"
-                          "emacs\\.d/private/cache/.+" "emacs\\.d/workgroups/.+$" "wg-default"
-                          "/company-statistics-cache.el$")
-        recentf-max-menu-items 0
-        recentf-max-saved-items 250
-        recentf-auto-cleanup 600)
-  (recentf-mode 1))
+(require 'recentf)
+(setq recentf-save-file (concat narf-temp-dir "recentf")
+      recentf-exclude '("/tmp/" "/ssh:" "\\.?ido\\.last$" "\\.revive$" "/TAGS$"
+                        "emacs\\.d/private/cache/.+" "emacs\\.d/workgroups/.+$" "wg-default"
+                        "/company-statistics-cache.el$")
+      recentf-max-menu-items 0
+      recentf-max-saved-items 250
+      recentf-auto-cleanup 600)
+(recentf-mode 1)
 
-(use-package saveplace
-  :defer t
-  :config (setq save-place-file (concat narf-temp-dir "saveplace"))
-  :init
-  ;; Save cursor location across sessions. Only save for files that exist.
-  (add-hook! find-file
-    (if (file-exists-p (buffer-file-name))
-        (require 'saveplace)
-        (setq save-place t))))
-
-(use-package help-fns+ ; Improved help commands
-  :commands (describe-buffer describe-command describe-file
-             describe-keymap describe-option describe-option-of-type))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun narf-init ()
   (defadvice save-buffers-kill-emacs (around no-query-kill-emacs activate)
     "Prevent annoying \"Active processes exist\" query when you quit Emacs."
-    (flet ((process-list ())) ad-do-it))
+    (cl-flet ((process-list ())) ad-do-it))
+
   (defun display-startup-echo-area-message ()
     (message ">>> Loaded in %s" (emacs-init-time)))
+
   (require 'server)
   (unless (server-running-p)
     (server-start)))

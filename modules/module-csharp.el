@@ -3,7 +3,8 @@
 (use-package csharp-mode
   :functions (csharp-log)
   :mode "\\.cs$"
-  :init (add-hook! csharp-mode 'flycheck-mode))
+  :init (add-hook! csharp-mode 'flycheck-mode)
+  :config (require 'omnisharp))
 
 ;; unity shaders
 (use-package shader-mode :mode "\\.shader$")

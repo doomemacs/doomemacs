@@ -15,6 +15,7 @@
  scroll-margin           0
  scroll-conservatively   101
  scroll-preserve-screen-position t
+
  shift-select-mode       nil
  tabify-regexp "^\t* [ \t]+"
  whitespace-style '(face tabs tab-mark newline newline-mark)
@@ -22,8 +23,7 @@
  '((tab-mark   ?\t   [?> ?\t])
    (newline-mark 10 [36 10]))
  truncate-lines                  t      ; do not soft-wrap lines
- truncate-partial-width-windows  nil
- jit-lock-stealth-time 1)
+ truncate-partial-width-windows  nil)
 
 
 ;; Automatic minor modes ;;;;;;;;;;;
@@ -92,7 +92,7 @@ enable multiple minor modes for the same regexp.")
 
 ;; (global-whitespace-mode 1)  ; Show whitespace
 (global-font-lock-mode t)      ; Enable syntax highlighting for older emacs
-(global-auto-revert-mode 1)    ; revert buffers for changed files
+;; (global-auto-revert-mode -1); revert buffers for changed files
 (electric-indent-mode -1)
 
 ;; window config undo/redo
@@ -110,11 +110,10 @@ enable multiple minor modes for the same regexp.")
   (defalias 'redo #'undo-tree-redo)
   (defalias 'undo #'undo-tree-undo)
   ;; Shut up undo-tree's constant complaining: http://youtu.be/Z6woIRLnbmE
-  ;; (defadvice undo-tree-load-history-hook (around undo-tree-load-history-shut-up activate)
-  ;;   (shut-up! ad-do-it))
-  ;; (defadvice undo-tree-save-history-hook (around undo-tree-save-history-shut-up activate)
-  ;;   (shut-up! ad-do-it))
-  )
+  (defadvice undo-tree-load-history-hook (around undo-tree-load-history-shut-up activate)
+    (shut-up! ad-do-it))
+  (defadvice undo-tree-save-history-hook (around undo-tree-save-history-shut-up activate)
+    (shut-up! ad-do-it)))
 
 (use-package avy
   :commands (avy-goto-char-2 avy-goto-line)
@@ -129,7 +128,7 @@ enable multiple minor modes for the same regexp.")
 
 (use-package emr
   :commands (emr-initialize emr-show-refactor-menu emr-declare-command)
-  :config (bind! :map popup-menu-keymap [escape] 'keyboard-quit))
+  :config (define-key popup-menu-keymap [escape] 'keyboard-quit))
 
 (use-package expand-region
   :commands (er/expand-region er/contract-region er/mark-symbol er/mark-word))
@@ -150,7 +149,7 @@ enable multiple minor modes for the same regexp.")
   :config
   (setq sp-autowrap-region nil          ; let evil-surround handle this
         sp-highlight-pair-overlay nil
-        sp-autoescape-string-quote nil
+        sp-cancel-autoskip-on-backward-movement t
         sp-show-pair-delay 0)
 
   (smartparens-global-mode 1)
@@ -201,6 +200,20 @@ enable multiple minor modes for the same regexp.")
   (defun smex-update-after-load (unused)
     (when (boundp 'smex-cache) (smex-update)))
   (add-hook 'after-load-functions 'smex-update-after-load))
+
+(use-package help-fns+ ; Improved help commands
+  :commands (describe-buffer describe-command describe-file
+             describe-keymap describe-option describe-option-of-type))
+
+(use-package saveplace
+  :defer t
+  :config (setq save-place-file (concat narf-temp-dir "saveplace"))
+  :init
+  ;; Save cursor location across sessions. Only save for files that exist.
+  (add-hook! find-file
+    (when (file-exists-p (buffer-file-name))
+      (require 'saveplace)
+      (setq save-place t))))
 
 (provide 'core-editor)
 ;;; core-editor.el ends here
