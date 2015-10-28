@@ -31,9 +31,9 @@
 
         ;; Color-coded state cursors
         evil-normal-state-cursor  '("white" box)
-        evil-emacs-state-cursor   '("cyan" bar)
+        evil-emacs-state-cursor   '("green" bar)
         evil-insert-state-cursor  '("white" bar)
-        evil-visual-state-cursor  '("white" hollow)
+        evil-visual-state-cursor  '("cyan" hollow)
         evil-iedit-state-cursor   '("orange" box))
 
   (evil-mode 1)
