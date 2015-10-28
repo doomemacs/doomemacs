@@ -202,21 +202,19 @@
 
   (spaceline-define-segment narf-buffer-modified
     (concat
-     (if (and buffer-file-name (buffer-modified-p)) "[+]")
-     (if buffer-read-only "[RO]")
-     (if (and buffer-file-name (not (file-exists-p buffer-file-name))) "[!]"))
+     (when buffer-file-name
+       (concat
+        (when (buffer-modified-p) "[+]")
+        (unless (file-exists-p buffer-file-name) "[!]")))
+     (if buffer-read-only "[RO]"))
     :face mode-line-is-modified
-    :when (not (string-match-p "^\\s*\\*" (buffer-name)))
+    :when (not (string-prefix-p "*" (buffer-name)))
     :tight t)
 
   (spaceline-define-segment narf-buffer-encoding-abbrev
     "The line ending convention used in the buffer."
-    (let ((buf-coding (symbol-name buffer-file-coding-system)))
-      (if (string-match "\\(dos\\|unix\\|mac\\)" buf-coding)
-          (match-string 1 buf-coding)
-        buf-coding))
-    :when (and buffer-file-name
-               (not (string-match-p "unix" (symbol-name buffer-file-coding-system)))))
+    (symbol-name buffer-file-coding-system)
+    :when (not (string-prefix-p "utf-8" (symbol-name buffer-file-coding-system))))
 
   (spaceline-define-segment narf-buffer-position
     "A more vim-like buffer position."
@@ -260,17 +258,14 @@ to be enabled."
     (let ((here anzu--current-position)
           (total anzu--total-matched))
       (when anzu--state
-        (concat
-         (propertize
-          (cl-case anzu--state
-            (search (format " %s/%d%s "
-                            (anzu--format-here-position here total)
-                            total (if anzu--overflow-p "+" "")))
-            (replace-query (format " %d replace " total))
-            (replace (format " %d/%d " here total)))
-          'face highlight-face)
-         " ")))
+        (cl-case anzu--state
+          (search (format " %s/%d%s "
+                          (anzu--format-here-position here total)
+                          total (if anzu--overflow-p "+" "")))
+          (replace-query (format " %d replace " total))
+          (replace (format " %d/%d " here total)))))
     :when (and active (bound-and-true-p anzu--state))
+    :face highlight-face
     :tight t)
 
   ;; Initialize modeline
