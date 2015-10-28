@@ -30,13 +30,6 @@
        (org-in-item-p)))
 
 ;;;###autoload
-(defun narf/project-org-filename (cat)
-  (interactive (list (completing-read "Choose category:"
-                                      (mapcar 'f-filename (f-directories org-project-directory)))))
-  (expand-file-name (concat (file-name-nondirectory (directory-file-name (narf/project-root))) ".org")
-                    (expand-file-name cat org-project-directory)))
-
-;;;###autoload
 (defun narf/org-insert-item-after ()
   "Inserts a new heading or item, depending on the context."
   (interactive)
@@ -119,6 +112,103 @@
   (if bang
       (ido-find-file-in-dir org-directory)
     (call-interactively 'helm-org-agenda-files-headings)))
+
+;;;###autoload
+(defun narf:org-list-attachments ()
+  "Find files in org-attachment directory"
+  (interactive)
+  (let* ((enable-recursive-minibuffers t)
+         (files (find-lisp-find-files org-attach-directory "."))
+         (file-assoc-list
+          (mapcar (lambda (x)
+                    (cons (file-name-nondirectory x)
+                          x))
+                  files))
+         (filename-list
+          (remove-duplicates (mapcar #'car file-assoc-list)
+                             :test #'string=))
+         (filename (ido-completing-read "Org attachments: " filename-list nil t))
+         (longname (cdr (assoc filename file-assoc-list))))
+    (ido-set-current-directory
+     (if (file-directory-p longname)
+         longname
+       (file-name-directory longname)))
+    (setq ido-exit 'refresh
+          ido-text-init ido-text
+          ido-rotate-temp t)
+    (exit-minibuffer)))
+
+;;;###autoload
+(defun narf/org-word-count (beg end &optional count-footnotes?)
+  "Report the number of words in the Org mode buffer or selected region.
+Ignores:
+- comments
+- tables
+- source code blocks (#+BEGIN_SRC ... #+END_SRC, and inline blocks)
+- hyperlinks (but does count words in hyperlink descriptions)
+- tags, priorities, and TODO keywords in headers
+- sections tagged as 'not for export'.
+
+The text of footnote definitions is ignored, unless the optional argument
+COUNT-FOOTNOTES? is non-nil."
+  (interactive "r")
+  (unless mark-active
+    (setf beg (point-min)
+          end (point-max)))
+  (let ((wc 0))
+    (save-excursion
+      (goto-char beg)
+      (while (< (point) end)
+        (cond
+         ;; Ignore comments.
+         ((or (org-at-comment-p) (org-at-table-p))
+          nil)
+         ;; Ignore hyperlinks. But if link has a description, count
+         ;; the words within the description.
+         ((looking-at org-bracket-link-analytic-regexp)
+          (when (match-string-no-properties 5)
+            (let ((desc (match-string-no-properties 5)))
+              (save-match-data
+                (incf wc (length (remove "" (org-split-string
+                                             desc "\\W")))))))
+          (goto-char (match-end 0)))
+         ((looking-at org-any-link-re)
+          (goto-char (match-end 0)))
+         ;; Ignore source code blocks.
+         ((org-between-regexps-p "^#\\+BEGIN_SRC\\W" "^#\\+END_SRC\\W")
+          nil)
+         ;; Ignore inline source blocks, counting them as 1 word.
+         ((save-excursion
+            (backward-char)
+            (looking-at org-babel-inline-src-block-regexp))
+          (goto-char (match-end 0))
+          (setf wc (+ 2 wc)))
+         ;; Ignore footnotes.
+         ((and (not count-footnotes?)
+               (or (org-footnote-at-definition-p)
+                   (org-footnote-at-reference-p)))
+          nil)
+         (t
+          (let ((contexts (org-context)))
+            (cond
+             ;; Ignore tags and TODO keywords, etc.
+             ((or (assoc :todo-keyword contexts)
+                  (assoc :priority contexts)
+                  (assoc :keyword contexts)
+                  (assoc :checkbox contexts))
+              nil)
+             ;; Ignore sections marked with tags that are
+             ;; excluded from export.
+             ((assoc :tags contexts)
+              (if (intersection (org-get-tags-at) org-export-exclude-tags
+                                :test 'equal)
+                  (org-forward-same-level 1)
+                nil))
+             (t
+              (incf wc))))))
+        (re-search-forward "\\w+\\W*")))
+    (message (format "%d words in %s." wc
+                     (if mark-active "region" "buffer")))))
 
 (provide 'defuns-org)
 ;;; defuns-org.el ends here
