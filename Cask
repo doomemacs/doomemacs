@@ -54,6 +54,7 @@
 (depends-on "smart-forward")
 (depends-on "smartparens")
 (depends-on "smex")
+(depends-on "writeroom-mode")
 
 ;; Completion --- core/core-company.el
 (depends-on "company")
