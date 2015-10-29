@@ -214,7 +214,7 @@
   (spaceline-define-segment narf-buffer-encoding-abbrev
     "The line ending convention used in the buffer."
     (symbol-name buffer-file-coding-system)
-    :when (not (string-prefix-p "utf-8" (symbol-name buffer-file-coding-system))))
+    :when (not (string-match-p "utf-8" (symbol-name buffer-file-coding-system))))
 
   (spaceline-define-segment narf-buffer-position
     "A more vim-like buffer position."
