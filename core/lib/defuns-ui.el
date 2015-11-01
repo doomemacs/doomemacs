@@ -11,10 +11,12 @@
       (set-frame-parameter nil 'alpha 0))))
 
 ;;;###autoload
-(defun narf:toggle-fullscreen ()
-  (interactive)
-  (set-frame-parameter nil 'fullscreen
-                       (when (not (frame-parameter nil 'fullscreen)) 'fullboth)))
+(evil-define-command narf:toggle-fullscreen (&optional bang)
+  (interactive "<!>")
+  (if bang
+      (writeroom-mode (if writeroom-mode -1 1))
+    (set-frame-parameter nil 'fullscreen
+                         (when (not (frame-parameter nil 'fullscreen)) 'fullboth))))
 
 (defvar narf--big-mode nil)
 ;;;###autoload
