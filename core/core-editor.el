@@ -63,13 +63,12 @@ enable multiple minor modes for the same regexp.")
 (associate! makefile-gmake-mode :match "/Makefile$")
 (associate! nxml-mode           :match "\\.plist$")
 
-(add-hook! help-mode     'visual-line-mode)
-(add-hook! python-mode   'electric-indent-local-mode)
-(add-hook! makefile-mode 'narf|enable-tabs) ; Use normal tabs in makefiles
-(add-hook! before-save   'delete-trailing-whitespace)
-(add-hook! eldoc-mode    (diminish 'eldoc-mode " ?"))
-;; Line wrapping
-(add-hook! prog-mode     'narf|enable-comment-hard-wrap)
+(add-hook! help-mode      'visual-line-mode)
+(add-hook! python-mode    'electric-indent-local-mode)
+(add-hook! makefile-mode  'narf|enable-tabs) ; Use normal tabs in makefiles
+(add-hook! before-save    'delete-trailing-whitespace)
+(add-hook! eldoc-mode     (diminish 'eldoc-mode " ?"))
+(add-hook! prog-mode      'narf|enable-comment-hard-wrap)
 (add-hook! auto-fill-mode (diminish 'auto-fill-function))
 
 (defadvice delete-trailing-whitespace (around delete-trailing-whitespace-ignore-line activate)
