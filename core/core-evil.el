@@ -210,7 +210,7 @@
   (advice-add 'evil-force-normal-state :after 'evil-search-highlight-persist-remove-all))
 
 (use-package evil-snipe
-  :diminish evil-snipe-mode
+  :diminish evil-snipe-local-mode
   :commands (evil-snipe-f evil-snipe-F evil-snipe-t evil-snipe-T evil-snipe-s evil-snipe-S evil-snipe-x evil-snipe-X )
   :init
   (setq-default
