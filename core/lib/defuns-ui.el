@@ -10,7 +10,7 @@
         (set-frame-parameter nil 'alpha 100)
       (set-frame-parameter nil 'alpha 0))))
 
-;;;###autoload
+;;;###autoload (autoload 'narf:toggle-fullscreen "defuns-ui" nil t)
 (evil-define-command narf:toggle-fullscreen (&optional bang)
   (interactive "<!>")
   (if bang
