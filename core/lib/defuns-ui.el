@@ -28,7 +28,7 @@
 ;;;###autoload
 (defun narf/reset-theme ()
   (interactive)
-  (load-theme narf-theme t))
+  (load-theme (if window-system narf-theme narf-term-theme) t))
 
 ;;;###autoload
 (defun narf/default-font ()

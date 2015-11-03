@@ -41,6 +41,7 @@
 ;;; License: GPLv3
 
 (defconst narf-theme        'narf-dark)
+(defconst narf-term-theme   'wombat)
 (defconst narf-default-font (font-spec :family "DejaVu Sans Mono" :size 12))
 (defconst narf-big-font     (font-spec :family "Ubuntu Mono"      :size 18))
 
@@ -50,7 +51,7 @@
 ;; prematurely optimize for faster startup
 (let (file-name-handler-alist)
   (load (concat user-emacs-directory "init-load-path.el"))
-  (load-theme narf-theme t)
+  (load-theme (if window-system narf-theme narf-term-theme) t)
 
   (mapc 'require
         `(core ; core/core.el
