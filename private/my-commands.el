@@ -48,6 +48,7 @@
 (after! workgroups2
   (exmap "sl[oad]"       'narf:load-session)
   (exmap "ss[ave]"       'narf:save-session)
+  (exmap "wg"            'narf:workgroup-display)
   (exmap "tab"           'narf:workgroup-display)
   (exmap "t[ab]new"      'narf:workgroup-new)
   (exmap "tabre[name]"   'narf:workgroup-rename)

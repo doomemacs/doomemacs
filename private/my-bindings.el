@@ -112,11 +112,11 @@
 
  ;; <localleader>
  (:prefix "\\"
-   :nv "\\"  'narf-switch-to-iterm
-   :nv "|"   'narf/neotree-toggle
-   :nv "."   'narf/neotree-find
-   :nv ";"   'narf/nlinum-toggle
-   :nv "E"   'evil-emacs-state
+   :nv "\\" 'narf/neotree-toggle
+   :nv "|"  'narf-switch-to-iterm
+   :nv "."  'narf/neotree-find
+   :nv ";"  'narf/nlinum-toggle
+   :nv "E"  'evil-emacs-state
 
    :n "]"   'next-buffer
    :n "["   'previous-buffer

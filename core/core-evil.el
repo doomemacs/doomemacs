@@ -210,7 +210,7 @@
 
 (use-package evil-snipe
   :diminish evil-snipe-local-mode
-  :commands (evil-snipe-f evil-snipe-F evil-snipe-t evil-snipe-T evil-snipe-s evil-snipe-S evil-snipe-x evil-snipe-X )
+  :commands (evil-snipe-f evil-snipe-F evil-snipe-t evil-snipe-T evil-snipe-s evil-snipe-S evil-snipe-x evil-snipe-X)
   :init
   (setq-default
    evil-snipe-smart-case t
@@ -244,7 +244,7 @@
   :config
   (global-evil-surround-mode 1)
   ;; Escaped surround characters
-  (push '(?\\ . narf/evil-surround-escaped) evil-surround-pairs-alist))
+  (setq-default surround-pairs-alist (cons '(?\\ . narf/evil-surround-escaped) evil-surround-pairs-alist)))
 
 (use-package evil-visualstar
   :commands (global-evil-visualstar-mode
