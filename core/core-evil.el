@@ -244,7 +244,7 @@
   :config
   (global-evil-surround-mode 1)
   ;; Escaped surround characters
-  (setq-default surround-pairs-alist (cons '(?\\ . narf/evil-surround-escaped) evil-surround-pairs-alist)))
+  (setq-default evil-surround-pairs-alist (cons '(?\\ . narf/evil-surround-escaped) evil-surround-pairs-alist)))
 
 (use-package evil-visualstar
   :commands (global-evil-visualstar-mode
