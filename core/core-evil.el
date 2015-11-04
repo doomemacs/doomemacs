@@ -120,8 +120,7 @@
   :commands (evil-inner-arg evil-outer-arg evil-forward-arg evil-backward-arg evil-jump-out-args)
   :init
   (define-key evil-inner-text-objects-map "a" #'evil-inner-arg)
-  (define-key evil-outer-text-objects-map "a" #'evil-outer-arg)
-  (define-key evil-normal-state-map "K" #'evil-jump-out-args))
+  (define-key evil-outer-text-objects-map "a" #'evil-outer-arg))
 
 (use-package evil-commentary
   :diminish evil-commentary-mode

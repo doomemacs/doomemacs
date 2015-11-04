@@ -131,6 +131,7 @@
    :n "W"   'narf:workgroup-display)
 
  :n "Y" "y$"
+ :n "K" 'smart-up
 
  ;; Don't move cursor on indent
  :n "="   (λ (save-excursion (call-interactively 'evil-indent)))
@@ -164,8 +165,8 @@
  :n "gr"  'narf:eval-region
  :v "gR"  'narf:eval-region-and-replace
  :m "gl"  'avy-goto-line
- :m "g]"  'smart-down
- :m "g["  'smart-up
+ :m "g]"  'smart-right
+ :m "g["  'smart-left
  :no "g@" 'narf/evil-macro-on-all-lines
 
  :v "."   'evil-repeat
