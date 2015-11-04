@@ -57,7 +57,8 @@
 (defun narf:workgroup-display ()
   (interactive)
   (when (wg-current-session t)
-    (message (wg-display-internal
+    (message "%s"
+             (wg-display-internal
               (lambda (workgroup index)
                 (if (not workgroup) wg-nowg-string
                   (wg-element-display
@@ -72,14 +73,16 @@
   (interactive "<c>")
   (if count
       (wg-switch-to-workgroup-at-index (1- count))
-    (wg-switch-to-workgroup-left)))
+    (wg-switch-to-workgroup-left))
+  (narf:workgroup-display))
 
 ;;;###autoload (autoload 'narf:switch-to-workgroup-right "defuns-workgroup" nil t)
 (evil-define-command narf:switch-to-workgroup-right (count)
   (interactive "<c>")
   (if count
       (wg-switch-to-workgroup-at-index (1- count))
-    (wg-switch-to-workgroup-right)))
+    (wg-switch-to-workgroup-right))
+  (narf:workgroup-display))
 
 ;;;###autoload
 (defun narf:switch-to-workgroup-at-index (index)

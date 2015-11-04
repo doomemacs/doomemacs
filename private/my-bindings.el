@@ -24,6 +24,13 @@
  "M-t"   'helm-projectile-find-file
  "A-`"   'narf-switch-to-iterm
  "C-`"   'narf/popwin-toggle
+ "M-n"   (λ (switch-to-buffer (generate-new-buffer "*new*")))
+
+ ;; Disable nlinum to fix elusive "invalid face linum" bug
+ "M-N"   (λ (let ((nlinum-p (and (featurep 'nlinum) global-nlinum-mode)))
+              (if nlinum-p (global-nlinum-mode -1))
+              (new-frame)
+              (if nlinum-p (global-nlinum-mode 1))))
 
  ;; Simpler window navigation
  "C-j"  'evil-window-down
@@ -149,8 +156,8 @@
  :m "]e"  'narf/flycheck-next-error
  :m "[e"  'narf/flycheck-previous-error
  ;; Switch workgroups
- :n "]w"  'wg-switch-to-workgroup-right
- :n "[w"  'wg-switch-to-workgroup-left
+ :n "]w"  'narf:switch-to-workgroup-right
+ :n "[w"  'narf:switch-to-workgroup-left
  :m "gt"  'narf:switch-to-workgroup-right
  :m "gT"  'narf:switch-to-workgroup-left
 
