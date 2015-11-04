@@ -17,6 +17,7 @@
 (exmap "en[ew]"          'narf:file-create)
 (exmap "full[scr]"       'narf:toggle-fullscreen)
 (exmap "gith[ub]"        'narf:github-browse-file)
+(exmap "http"            'httpd-start)
 (exmap "ini"             'narf:ido-find-file-in-emacsd)
 (exmap "k[ill]"          'kill-this-buffer)         ; Kill current buffer
 (exmap "k[ill]all"       'narf:kill-all-buffers)    ; Kill all buffers (bang = in project)
