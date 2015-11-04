@@ -12,9 +12,9 @@
 ;; Highlight matching parens
 (setq show-paren-delay 0.075)
 
-(global-hl-line-mode   1)    ; do highlight line
-(blink-cursor-mode    -1)    ; do blink cursor
-(tooltip-mode         -1)    ; don't show tooltips
+;; (global-hl-line-mode 1)   ; don't highlight line
+(blink-cursor-mode     1)    ; do blink cursor
+(tooltip-mode         -1)    ; show tooltips in echo area
 
 (setq-default
  blink-matching-paren nil
@@ -32,7 +32,6 @@
  indicate-buffer-boundaries      nil
  indicate-empty-lines            nil
  fringes-outside-margins         t      ; fringes on the other side of line numbers
- left-margin 1
 
  jit-lock-defer-time 0
  jit-lock-stealth-time 3
@@ -40,9 +39,9 @@
  resize-mini-windows t)
 
 ;; hl-line-mode breaks minibuffer in TTY
-(add-hook! minibuffer-setup
-  (make-variable-buffer-local 'global-hl-line-mode)
-  (setq global-hl-line-mode nil))
+;; (add-hook! minibuffer-setup
+;;   (make-variable-buffer-local 'global-hl-line-mode)
+;;   (setq global-hl-line-mode nil))
 
 ;; Hide modeline in help windows
 (add-hook! help-mode (setq-local mode-line-format nil))
@@ -70,8 +69,8 @@
     (advice-add 'evil-toggle-fold :before 'narf-load-hs-minor-mode)))
 
 (use-package rainbow-delimiters
+  :if (display-graphic-p)
   :commands rainbow-delimiters-mode
-  :when (display-graphic-p)
   :init (add-hook! (emacs-lisp-mode js2-mode scss-mode) 'rainbow-delimiters-mode)
   :config (setq rainbow-delimiters-outermost-only-face-count 1))
 
@@ -90,6 +89,7 @@
           ("*Apropos*" :position bottom :height 40 :stick t :dedicated t)
           ("*Backtrace*" :position bottom :height 15 :stick t)
           ("^\\*Org-Babel.*\\*$" :regexp t :position bottom :height 15)
+          ("^\\*Org .*\\*$" :regexp t :position bottom :height 15)
           ))
   (popwin-mode 1))
 
@@ -114,7 +114,7 @@
   :preface
   (defvar narf--hl-nlinum-overlay nil)
   (defvar narf--hl-nlinum-line    nil)
-  (defvar nlinum-format " %3d ")
+  (defvar nlinum-format " %4d  ")
   :init
   (defface linum-highlight-face '((t (:inherit linum))) "Face for line highlights")
 
@@ -127,7 +127,7 @@
     (remove-hook 'post-command-hook 'narf|nlinum-hl-line)
     (narf|nlinum-unhl-line))
 
-  ;; (add-hook! (markdown-mode prog-mode scss-mode web-mode) 'narf|nlinum-enable)
+  (add-hook! (markdown-mode prog-mode scss-mode web-mode) 'narf|nlinum-enable)
   :config
   (defun narf|nlinum-unhl-line ()
     "Highlight line number"
@@ -214,7 +214,7 @@
   (spaceline-define-segment narf-buffer-encoding-abbrev
     "The line ending convention used in the buffer."
     (symbol-name buffer-file-coding-system)
-    :when (not (string-match-p "utf-8" (symbol-name buffer-file-coding-system))))
+    :when (not (string-match-p "\\(utf-8\\|undecided\\)" (symbol-name buffer-file-coding-system))))
 
   (spaceline-define-segment narf-buffer-position
     "A more vim-like buffer position."
@@ -280,7 +280,8 @@ to be enabled."
    '((selection-info :face highlight-face)
      narf-env-version
      narf-buffer-encoding-abbrev
-     (major-mode (minor-modes :tight t :separator "")
+     ((major-mode :face (if active 'mode-line-buffer-file 'mode-line-inactive))
+      (minor-modes :tight t :separator "")
       process :when active)
      (global :when active)
      ("%l/%c" narf-buffer-position)
