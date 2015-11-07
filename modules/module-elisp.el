@@ -15,6 +15,17 @@
   ;; (add-hook 'before-save-hook 'delete-trailing-whitespace nil t)
   (add-hook 'after-save-hook 'narf-elisp-auto-compile nil t))
 
+;; Highlight extra NARF keywords
+(let ((new-keywords '("add-hook!"
+                      "bind!"
+                      "after!"
+                      "λ"
+                      "in!"
+                      )))
+  (font-lock-add-keywords 'emacs-lisp-mode
+                          `((,(concat "(\\s-*" (regexp-opt new-keywords 'paren) "\\_>")
+                             1 font-lock-keyword-face)) 'append))
+
 ;; Real go-to-definition for elisp
 (bind! :map emacs-lisp-mode-map
        :m "gd" 'narf/elisp-find-function-at-pt
