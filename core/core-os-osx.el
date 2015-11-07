@@ -13,7 +13,10 @@
       ;; Don't open files from the workspace in a new frame
       ns-pop-up-frames nil
       ;; smooth scrolling is slow
-      mac-mouse-wheel-smooth-scroll nil)
+      mac-mouse-wheel-smooth-scroll nil
+
+      mouse-wheel-scroll-amount '(2 ((shift) . 6))  ;; one line at a time
+      mouse-wheel-progressive-speed nil)            ;; don't accelerate scrolling
 
 ;; fix emacs PATH on OSX (GUI only)
 (when window-system

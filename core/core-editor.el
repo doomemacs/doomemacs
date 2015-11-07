@@ -13,7 +13,7 @@
 
  ;; Sane scroll settings
  scroll-margin           0
- scroll-conservatively   101
+ scroll-conservatively   1001
  scroll-preserve-screen-position t
 
  shift-select-mode       nil
