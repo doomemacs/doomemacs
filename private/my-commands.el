@@ -13,6 +13,7 @@
 (exmap "bcomp[ile]"      'narf:compile-el)
 (exmap "cap[ture]"       'helm-org-capture-templates)
 (exmap "cd"              'narf:cd)
+(exmap "dash"            'dash-at-point)
 (exmap "echo"            'narf:echo)
 (exmap "en[ew]"          'narf:file-create)
 (exmap "full[scr]"       'narf:toggle-fullscreen)
