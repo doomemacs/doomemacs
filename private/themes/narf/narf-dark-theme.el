@@ -97,14 +97,18 @@
    `(linum-highlight-face      ((,class (:inherit linum :background ,current-line :foreground ,linum-highlight))))
    `(show-paren-match          ((,class (:foreground ,highlight :weight ultra-bold))))
 
-   `(mode-line                 ((,class (:foreground ,subtle :background ,modeline-bg-light))))
+   `(mode-line                 ((,class (:foreground ,subtle :background ,modeline-bg-light
+                                                     :box (:line-width 2 :color ,modeline-bg-light)
+                                                     ))))
    `(powerline-active1         ((,class (:foreground ,subtle :background ,modeline-bg-light))))
    `(powerline-active2         ((,class (:foreground ,subtle :background ,modeline-bg-light))))
    `(mode-line-is-modified     ((,class (:foreground ,highlight))))
    `(mode-line-buffer-file     ((,class (:foreground ,off-white))))
    `(mode-line-buffer-dir      ((,class (:foreground ,subtle))))
 
-   `(mode-line-inactive        ((,class (:foreground ,vsubtle :background ,modeline-bg-inactive))))
+   `(mode-line-inactive        ((,class (:foreground ,vsubtle :background ,modeline-bg-inactive
+                                                     :box (:line-width 2 :color ,modeline-bg-inactive)
+                                                     ))))
    `(powerline-inactive1       ((,class (:foreground ,vsubtle :background ,modeline-bg-inactive))))
    `(powerline-inactive2       ((,class (:foreground ,vsubtle :background ,modeline-bg-inactive))))
 

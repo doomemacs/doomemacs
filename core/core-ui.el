@@ -177,10 +177,15 @@
 ;; Mode-line ;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package spaceline-segments
+  :init
+  (defvar narf--env-version nil)
+  (defvar narf--env-command nil)
+  (make-variable-buffer-local 'narf--env-version)
+  (make-variable-buffer-local 'narf--env-command)
   :config
   (setq-default
    powerline-default-separator nil
-   powerline-height 18)
+   powerline-height 20)
 
   (defface mode-line-is-modified nil "Face for mode-line modified symbol")
   (defface mode-line-buffer-file nil "Face for mode-line buffer file path")
@@ -202,7 +207,7 @@
                     buffer-path)))
       "%b")
     :face (if active 'mode-line-buffer-file 'mode-line-inactive)
-    :tight-right t)
+    :tight t)
 
   (spaceline-define-segment narf-buffer-modified
     (concat
@@ -238,12 +243,6 @@
                             (t "")))))
     :when (and active vc-mode))
 
-  ;; Display version string
-  (defvar narf--env-version nil)
-  (defvar narf--env-command nil)
-  (make-variable-buffer-local 'narf--env-version)
-  (make-variable-buffer-local 'narf--env-command)
-
   (spaceline-define-segment narf-env-version
     "A HUD that shows which part of the buffer is currently visible."
     (when (and narf--env-command (not narf--env-version))
@@ -262,14 +261,17 @@ to be enabled."
     (let ((here anzu--current-position)
           (total anzu--total-matched))
       (when anzu--state
-        (cl-case anzu--state
-          (search (format " %s/%d%s "
-                          (anzu--format-here-position here total)
-                          total (if anzu--overflow-p "+" "")))
-          (replace-query (format " %d replace " total))
-          (replace (format " %d/%d " here total)))))
+        (concat
+         (propertize
+          (cl-case anzu--state
+            (search (format " %s/%d%s "
+                            (anzu--format-here-position here total)
+                            total (if anzu--overflow-p "+" "")))
+            (replace-query (format " %d replace " total))
+            (replace (format " %d/%d " here total)))
+          'face highlight-face)
+         " ")))
     :when (and active (bound-and-true-p anzu--state))
-    :face highlight-face
     :tight t)
 
   ;; Initialize modeline
@@ -284,12 +286,11 @@ to be enabled."
    '((selection-info :face highlight-face)
      narf-env-version
      narf-buffer-encoding-abbrev
-     ((major-mode :face (if active 'mode-line-buffer-file 'mode-line-inactive))
+     ((major-mode :face (if active 'mode-line-buffer-file 'mode-line-inactive) :tight t)
       (minor-modes :tight t :separator "")
       process :when active)
      (global :when active)
-     ("%l/%c" narf-buffer-position)
-     narf-hud
+     ("%l·%c" narf-buffer-position)
      )))
 
 (provide 'core-ui)
