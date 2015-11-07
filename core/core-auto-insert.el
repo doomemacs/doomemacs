@@ -29,7 +29,7 @@
   (add-template! "\\.go$"                          "__.go"            'go-mode)
 
   ;; HTML
-  (add-template! "\\.html$"                        "___html"           'web-mode)
+  (add-template! "\\.html$"                        "__.html"           'web-mode)
 
   ;; java
   (add-template! "/src/.+/.+\\.java$"              "__"               'java-mode)
