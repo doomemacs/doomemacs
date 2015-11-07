@@ -12,9 +12,13 @@
 ;; Highlight matching parens
 (setq show-paren-delay 0.075)
 
-;; (global-hl-line-mode 1)   ; don't highlight line
 (blink-cursor-mode     1)    ; do blink cursor
 (tooltip-mode         -1)    ; show tooltips in echo area
+
+;; Highlight line
+(add-hook! prog-mode 'hl-line-mode)
+(add-hook! puml-mode 'hl-line-mode)
+(add-hook! markdown-mode 'hl-line-mode)
 
 (setq-default
  blink-matching-paren nil
