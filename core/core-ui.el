@@ -227,10 +227,16 @@
 
   (spaceline-define-segment narf-buffer-position
     "A more vim-like buffer position."
-    (let ((perc (/ (window-end) 0.01 (point-max))))
-      (cond ((eq (window-start) 1) ":Top")
-            ((>= perc 100) ":Bot")
-            (t (format ":%d%%%%" perc))))
+    (let ((start (window-start))
+          (end (window-end))
+          (pend (point-max)))
+      (if (and (eq start 1)
+               (eq end pend))
+          ":All"
+        (let ((perc (/ end 0.01 pend)))
+          (cond ((eq start 1) ":Top")
+                ((>= perc 100) ":Bot")
+                (t (format ":%d%%%%" perc))))))
     :tight-right t)
 
   (spaceline-define-segment narf-vc
