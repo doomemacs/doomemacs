@@ -50,17 +50,17 @@
 ;; Hide modeline in help windows
 (add-hook! help-mode (setq-local mode-line-format nil))
 
+;; Highlight TODO/FIXME/NOTE tags
+(defface narf-todo-face  '((t (:inherit font-lock-warning-face))) "Face for TODOs")
+(defface narf-fixme-face '((t (:inherit font-lock-warning-face))) "Face for FIXMEs")
+(defface narf-note-face  '((t (:inherit font-lock-warning-face))) "Face for NOTEs")
+(add-hook! (prog-mode emacs-lisp-mode)
+  (font-lock-add-keywords nil '(("\\<\\(TODO\\((.+)\\)?:?\\)"  1 'narf-todo-face prepend)))
+  (font-lock-add-keywords nil '(("\\<\\(FIXME\\((.+)\\)?:?\\)" 1 'narf-fixme-face prepend)))
+  (font-lock-add-keywords nil '(("\\<\\(NOTE\\((.+)\\)?:?\\)"  1 'narf-note-face prepend))))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(use-package hl-todo
-  :commands hl-todo-mode
-  :init
-  (add-hook! (prog-mode puml-mode) 'hl-todo-mode)
-  (defvar hl-todo-keyword-faces
-    '(("TODO" . "#cc9393")
-      ("NOTE" . "#d0bf8f")
-      ("FIXME" . "#cc9393"))))
 
 (use-package hideshow
   :commands (hs-minor-mode hs-toggle-hiding hs-already-hidden-p)
