@@ -306,6 +306,11 @@
    "<s-right>"      'move-beginning-of-line
    "<s-backspace>"  'evil-delete-whole-line))
 
+;; Line-wise mouse selection on margin
+(global-set-key (kbd "<left-margin> <down-mouse-1>") 'narf/mouse-drag-line)
+(global-set-key (kbd "<left-margin> <mouse-1>")      'narf/mouse-select-line)
+(global-set-key (kbd "<left-margin> <drag-mouse-1>") 'narf/mouse-select-line)
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Keymap fixes                       ;;

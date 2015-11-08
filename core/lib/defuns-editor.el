@@ -1,57 +1,43 @@
 ;;; defuns-editor.el
 ;; for ../core-editor.el
 
-;; A hacky attempt to replace ace-jump line mode that incrementally shows where
-;; you will land as you type the line number.
-(defun narf--goto-line (line)
-  (let ((lines (count-lines (point-min) (point-max))))
-    (if (and (<= line (1+ lines))
-             (> line 0))
-        (narf/nlinum-hl-line line)
-      (narf/nlinum-hl-line))))
+(defvar *linum-mdown-line* nil)
+
+(defun narf--line-at-click ()
+  (save-excursion
+    (let ((click-y (cdr (cdr (mouse-position))))
+          (line-move-visual-store line-move-visual))
+      (setq line-move-visual t)
+      (goto-char (window-start))
+      (next-line (1- click-y))
+      (setq line-move-visual line-move-visual-store)
+      ;; If you are using tabbar substitute the next line with
+      ;; (line-number-at-pos))))
+      (1+ (line-number-at-pos)))))
 
 ;;;###autoload
-(defun narf/editor-goto-line ()
+(defun narf/mouse-drag-line ()
   (interactive)
-  (let ((keys '())
-        (orig-point (point))
-        (echo-keystrokes 0))
-    (evil-save-echo-area
-      (catch 'abort
-        (while t
-          (let* ((keystr (concat keys))
-                 (key (read-event (concat ":" keystr))))
-            (cond ((eq key 'escape)
-                   (message "%s" key)
-                   (throw 'abort t))
-                  ((eq key 'return)
-                   (when keys
-                     (goto-line (string-to-number keystr)))
-                   (throw 'abort t))
-                  ((eq key 'backspace)
-                   (let ((key-len (length keys)))
-                     (if (= key-len 0)
-                         (throw 'abort t)
-                       (if (> key-len 1)
-                           (progn
-                             (nbutlast keys)
-                             (narf--goto-line (string-to-number (concat keys))))
-                         (setq keys '())
-                         (narf/nlinum-hl-line)))))
-                  ((and (characterp key)
-                        (s-numeric? (char-to-string key)))
-                   (setq keys (append keys (list key)))
-                   (narf--goto-line (string-to-number (concat keys))))
-                  (t
-                   (if (or (char-equal key ?\C-n)
-                           (char-equal key ?\C-j))
-                       (progn
-                         (setq keys (number-to-string (1+ (string-to-number (concat keys)))))
-                         (narf--goto-line (string-to-number (concat keys))))
-                     (when (or (char-equal key ?\C-p)
-                               (char-equal key ?\C-k))
-                       (setq keys (number-to-string (1- (string-to-number (concat keys)))))
-                       (narf--goto-line (string-to-number (concat keys)))))))))))))
+  (goto-line (narf--line-at-click))
+  (set-mark (point))
+  (setq *linum-mdown-line* (line-number-at-pos)))
+
+;;;###autoload
+(defun narf/mouse-select-line ()
+  (interactive)
+  (when *linum-mdown-line*
+    (let (mu-line)
+      (setq mu-line (narf--line-at-click))
+      (goto-line linum-mdown-line*)
+      (if (> mu-line *linum-mdown-line*)
+          (progn
+            (set-mark (point))
+            (goto-line mu-line)
+            (end-of-line))
+        (set-mark (line-end-position))
+        (goto-line mu-line)
+        (beginning-of-line))
+      (setq *linum-mdown* nil))))
 
 (provide 'defuns-editor)
 ;;; defuns-editor.el ends here
