@@ -28,6 +28,8 @@
       (candidates . wg-workgroup-names)
       (action     . narf/wg-helm-switch-to-workgroup)))
 
+  (defvar narf-wg-frames '())
+
   (after! projectile
     ;; Turns projectile switch-project interface (or helm's interface to it)
     ;; create a new workgroup for the new project.

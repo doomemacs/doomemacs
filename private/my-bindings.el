@@ -18,19 +18,31 @@
  "M-;"   'eval-expression
  "M-="   'text-scale-increase
  "M--"   'text-scale-decrease
- "M-w"   'evil-window-delete
  "M-/"   'evil-commentary-line
  "M-b"   'narf:build
  "M-t"   'helm-projectile-find-file
  "A-`"   'narf-switch-to-iterm
  "C-`"   'narf/popwin-toggle
- "M-n"   (λ (switch-to-buffer (generate-new-buffer "*new*")))
 
- ;; Disable nlinum to fix elusive "invalid face linum" bug
- "M-N"   (λ (let ((nlinum-p (and (featurep 'nlinum) global-nlinum-mode)))
-              (if nlinum-p (global-nlinum-mode -1))
-              (new-frame)
-              (if nlinum-p (global-nlinum-mode 1))))
+ "M-w"   'evil-window-delete
+ "M-W"   (λ (let ((data (assq (selected-frame) narf-wg-frames)))
+              (if data
+                  (progn (wg-delete-workgroup (wg-get-workgroup (cdr data)))
+                         (delete-frame (car data)))
+                (delete-frame))))
+
+ "M-n"   (λ (switch-to-buffer (generate-new-buffer "*new*")))
+ "M-N"   (λ (let ((nlinum-p (and (featurep 'nlinum)
+                                 (memq 'nlinum--setup-window window-configuration-change-hook))))
+              ;; Disable nlinum to fix elusive "invalid face linum" bug
+              (remove-hook 'window-configuration-change-hook 'nlinum--setup-window t)
+              (let ((frame (new-frame))
+                    (frame-name (format "*new-%s*" (length narf-wg-frames))))
+                (with-selected-frame frame
+                  (wg-create-workgroup frame-name t)
+                  (add-to-list 'narf-wg-frames (cons frame frame-name))))
+              (when nlinum-p
+                (add-hook 'window-configuration-change-hook 'nlinum--setup-window nil t))))
 
  ;; Simpler window navigation
  "C-j"  'evil-window-down

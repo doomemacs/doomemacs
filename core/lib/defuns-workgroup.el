@@ -32,6 +32,7 @@
 
 ;;;###autoload (autoload 'narf:workgroup-new "defuns-workgroup" nil t)
 (evil-define-command narf:workgroup-new (bang name)
+  "Create a new workgroup. If BANG, clone the current one to it."
   (interactive "<!><a>")
   (unless name
     (user-error "No name specified for new workgroup"))
@@ -43,6 +44,18 @@
 (evil-define-command narf:workgroup-rename (new-name)
   (interactive "<a>")
   (wg-rename-workgroup new-name))
+
+;;;###autoload (autoload 'narf:workgroup-delete "defuns-workgroup" nil t)
+(evil-define-command narf:workgroup-delete (bang &optional name)
+  (interactive "<!><a>")
+  (let ((wg-name name))
+    (when (or bang (eq name ""))
+      (setq wg-name (wg-read-workgroup-name)))
+    (let ((wg (wg-get-workgroup name)))
+      (if (eq wg (wg-current-workgroup))
+          (wg-kill-workgroup)
+        (wg-delete-workgroup wg))
+      (message "Deleted workgroup: %s" name))))
 
 ;;;###autoload
 (defun narf:kill-other-workgroups ()
@@ -63,7 +76,7 @@
                 (if (not workgroup) wg-nowg-string
                   (wg-element-display
                    workgroup
-                   (format "%d %s" index (wg-workgroup-name workgroup))
+                   (format "%d %s" (1+ index) (wg-workgroup-name workgroup))
                    'wg-current-workgroup-p
                    'wg-previous-workgroup-p)))
               (wg-workgroup-list)))))
