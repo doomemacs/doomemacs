@@ -34,9 +34,10 @@
 (use-package dash-at-point
   :commands (dash-at-point dash-at-point-with-docset)
   :config
-  (add-to-list 'dash-at-point-mode-alist
-               '(java-mode . "java,droid,javafx,grails,groovy,playjava,spring,cvj,processing,javadoc"))
-  (add-to-list 'dash-at-point-mode-alist `(scss-mode . ,(cdr (assoc 'sass-mode dash-at-point-mode-alist)))))
+  (mapc (lambda (r) (add-to-list 'dash-at-point-mode-alist r))
+        `((java-mode . "java,droid,javafx,grails,groovy,playjava,spring,cvj,processing,javadoc")
+          (scss-mode . ,(cdr (assoc 'sass-mode dash-at-point-mode-alist)))
+          )))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
