@@ -14,43 +14,39 @@
       (set-fringe-bitmap-face 'tilde 'font-lock-comment-face))
   (menu-bar-mode -1))
 
-;; Highlight matching parens
-(setq show-paren-delay 0.075)
-
 (blink-cursor-mode     1)    ; do blink cursor
 (tooltip-mode         -1)    ; show tooltips in echo area
 
 ;; Highlight line
-(add-hook! prog-mode 'hl-line-mode)
-(add-hook! puml-mode 'hl-line-mode)
-(add-hook! markdown-mode 'hl-line-mode)
+(add-hook! (prog-mode puml-mode markdown-mode) 'hl-line-mode)
+;; hl-line-mode breaks minibuffer in TTY
+;; (add-hook! minibuffer-setup
+;;   (make-variable-buffer-local 'global-hl-line-mode)
+;;   (setq global-hl-line-mode nil))
 
 (setq-default
  blink-matching-paren nil
+ show-paren-delay 0.075
 
  ;; Multiple cursors across buffers cause a strange redraw delay for
  ;; some things, like auto-complete or evil-mode's cursor color
  ;; switching.
  cursor-in-non-selected-windows  nil
+ highlight-nonselected-windows nil
 
  uniquify-buffer-name-style      nil
 
  visible-bell                    nil    ; silence of the bells
  use-dialog-box                  nil    ; avoid GUI
- redisplay-dont-pause            nil
+ redisplay-dont-pause            t
  indicate-buffer-boundaries      nil
  indicate-empty-lines            nil
  fringes-outside-margins         t      ; fringes on the other side of line numbers
 
  jit-lock-defer-time 0
- jit-lock-stealth-time 3
+ jit-lock-stealth-time 1
 
  resize-mini-windows t)
-
-;; hl-line-mode breaks minibuffer in TTY
-;; (add-hook! minibuffer-setup
-;;   (make-variable-buffer-local 'global-hl-line-mode)
-;;   (setq global-hl-line-mode nil))
 
 ;; Hide modeline in help windows
 (add-hook! help-mode (setq-local mode-line-format nil))
@@ -78,41 +74,34 @@
     (advice-add 'evil-toggle-fold :before 'narf-load-hs-minor-mode)))
 
 (use-package rainbow-delimiters
-  :if (display-graphic-p)
   :commands rainbow-delimiters-mode
   :init (add-hook! (emacs-lisp-mode js2-mode scss-mode) 'rainbow-delimiters-mode)
-  :config (setq rainbow-delimiters-outermost-only-face-count 1))
+  :config (setq rainbow-delimiters-max-face-count 4))
 
-(use-package rainbow-mode :defer t)
+(use-package rainbow-mode :defer t
+  :init (add-hook! rainbow-mode (hl-line-mode (if rainbow-mode -1 1))))
 
 (use-package popwin
   :config
-  (setq popwin:popup-window-height 25)
+  (setq popwin:popup-window-height 20)
   (mapc (lambda (rule) (push rule popwin:special-display-config))
-        '(("*quickrun*" :position bottom :height 10 :stick t)
-          ("*scratch*" :position bottom :height 20 :stick t :dedicated t)
-          ("*helm-ag-edit*" :position bottom :height 20 :stick t)
-          (help-mode :position bottom :height 15 :stick t)
-          ("^\\*[Hh]elm.*?\\*\\'" :regexp t :position bottom :height 15)
-          ("*eshell*" :position left :width 80 :stick t :dedicated t)
-          ("*Apropos*" :position bottom :height 40 :stick t :dedicated t)
-          ("*Backtrace*" :position bottom :height 15 :stick t)
-          ("^\\*Org-Babel.*\\*$" :regexp t :position bottom :height 15)
-          ("^\\*Org .*\\*$" :regexp t :position bottom :height 15)
+        '(("*eshell*"                        :position left   :width 80  :stick t :dedicated t)
+          ("*scratch*"                       :position bottom :height 20 :stick t :dedicated t)
+          ("*Apropos*"                       :position bottom :height 40 :stick t :dedicated t)
+          ("*quickrun*"                      :position bottom :height 10 :stick t)
+          ("*helm-ag-edit*"                  :position bottom :height 20 :stick t)
+          (help-mode                         :position bottom :height 15 :stick t)
+          ("*Backtrace*"                     :position bottom :height 15 :stick t)
+          ("^\\*[Hh]elm.*?\\*\\'"  :regexp t :position bottom :height 15)
+          ("^\\*Org-Babel.*\\*$"   :regexp t :position bottom :height 15)
+          ("^\\*Org .*\\*$"        :regexp t :position bottom :height 15)
+          ("^\\*CPU-Profiler-Report .+\\*$"  :regexp t :position bottom :height 0.35)
           ))
   (popwin-mode 1))
 
 (use-package volatile-highlights
   :diminish volatile-highlights-mode
   :config
-  (vhl/define-extension 'my-evil-highlights
-    'evil-yank
-    'evil-paste-pop-proxy
-    'evil-paste-pop-next
-    'evil-paste-after
-    'evil-paste-before)
-  (vhl/install-extension 'my-evil-highlights)
-
   (vhl/define-extension 'my-undo-tree-highlights
     'undo-tree-undo 'undo-tree-redo)
   (vhl/install-extension 'my-undo-tree-highlights)
@@ -122,14 +111,13 @@
   :commands nlinum-mode
   :preface
   (defvar narf--hl-nlinum-overlay nil)
-  (defvar narf--hl-nlinum-line    nil)
-  (defvar nlinum-format " %4d  ")
-  :init
+  (defvar narf--hl-nlinum-line nil)
+  (defvar nlinum-format " %4d ")
   (defface linum-highlight-face '((t (:inherit linum))) "Face for line highlights")
-
+  :init
   (defun narf|nlinum-enable ()
     (nlinum-mode +1)
-    (add-hook! post-command 'narf|nlinum-hl-line))
+    (add-hook 'post-command-hook 'narf|nlinum-hl-line))
 
   (defun narf|nlinum-disable ()
     (nlinum-mode -1)
@@ -166,10 +154,7 @@
                  (ov (-first (lambda (item) (overlay-get item 'nlinum)) overlays)))
             (when ov
               (narf|nlinum-unhl-line)
-              (let* ((disp (get-text-property 0 'display
-                                              (overlay-get ov 'before-string)))
-                     (str (nth 1 disp)))
-                (put-text-property 0 (length str) 'face 'linum-highlight-face str)
+              (let ((str (nth 1 (get-text-property 0 'display (overlay-get ov 'before-string)))))
                 (put-text-property 0 (length str) 'face 'linum-highlight-face str)
                 (setq narf--hl-nlinum-overlay ov
                       narf--hl-nlinum-line line-no))))))))
@@ -190,11 +175,10 @@
   :config
   (setq-default
    powerline-default-separator nil
-   powerline-height 20)
+   powerline-height 18)
 
   (defface mode-line-is-modified nil "Face for mode-line modified symbol")
   (defface mode-line-buffer-file nil "Face for mode-line buffer file path")
-  (defface mode-line-buffer-dir  nil "Face for mode-line buffer dirname")
 
   ;; Custom modeline segments
   (spaceline-define-segment narf-buffer-path
@@ -223,6 +207,7 @@
      (if buffer-read-only "[RO]"))
     :face mode-line-is-modified
     :when (not (string-prefix-p "*" (buffer-name)))
+    :skip-alternate t
     :tight t)
 
   (spaceline-define-segment narf-buffer-encoding-abbrev
@@ -252,6 +237,7 @@
                             ('edited "+")
                             ('conflict "!!!")
                             (t "")))))
+    :face other-face
     :when (and active vc-mode))
 
   (spaceline-define-segment narf-env-version
@@ -297,11 +283,12 @@ to be enabled."
    '((selection-info :face highlight-face)
      narf-env-version
      narf-buffer-encoding-abbrev
-     ((major-mode :face (if active 'mode-line-buffer-file 'mode-line-inactive) :tight t)
+     ((major-mode :tight-right t)
       (minor-modes :tight t :separator "")
       process :when active)
      (global :when active)
      ("%l·%c" narf-buffer-position)
+     narf-hud
      )))
 
 (provide 'core-ui)
