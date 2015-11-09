@@ -1,12 +1,17 @@
 ;;; core-ui.el --- interface settings
 ;; see lib/ui-defuns.el
 
-(when window-system
-  (fringe-mode '(3 . 3))
-  (set-frame-font narf-default-font)
-  (setq frame-title-format '(buffer-file-name "%f" ("%b")))
-  (setq initial-frame-alist '((width . 120) (height . 80))))
-(unless window-system
+(if window-system
+    (progn
+      (fringe-mode '(3 . 6))
+      (setq frame-title-format '(buffer-file-name "%f" ("%b")))
+      (setq initial-frame-alist '((width . 120) (height . 80)))
+      (set-face-attribute 'default t :font narf-default-font)
+
+      (setq-default indicate-empty-lines t)
+      (define-fringe-bitmap 'tilde [0 0 0 113 219 142 0 0] nil nil 'center)
+      (setcdr (assq 'empty-line fringe-indicator-alist) 'tilde)
+      (set-fringe-bitmap-face 'tilde 'font-lock-comment-face))
   (menu-bar-mode -1))
 
 ;; Highlight matching parens
