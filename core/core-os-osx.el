@@ -7,16 +7,17 @@
       ;; Prefixes: Command = M, Alt = A
       mac-command-modifier 'meta
       mac-option-modifier  'alt
+
+      ;; sane trackpad/mouse scroll settings
+      mac-mouse-wheel-smooth-scroll nil
+      mouse-wheel-scroll-amount '(8 ((shift) . 2))  ;; one line at a time
+      mouse-wheel-progressive-speed nil               ;; don't accelerate scrolling
+
       ;;; NOTE These mean nothing to railwaycat's emacs-mac build on OSX
       ;; Curse Lion and its sudden but inevitable fullscreen mode!
       ns-use-native-fullscreen nil
       ;; Don't open files from the workspace in a new frame
-      ns-pop-up-frames nil
-      ;; smooth scrolling is slow
-      mac-mouse-wheel-smooth-scroll nil
-
-      mouse-wheel-scroll-amount '(2 ((shift) . 6))  ;; one line at a time
-      mouse-wheel-progressive-speed nil)            ;; don't accelerate scrolling
+      ns-pop-up-frames nil)
 
 ;; fix emacs PATH on OSX (GUI only)
 (when window-system
