@@ -12,18 +12,19 @@
     (narf:compile-el)))
 
 (add-hook! emacs-lisp-mode
-  ;; (add-hook 'before-save-hook 'delete-trailing-whitespace nil t)
+  (add-hook 'before-save-hook 'delete-trailing-whitespace nil t)
   (add-hook 'after-save-hook 'narf-elisp-auto-compile nil t))
 
 ;; Highlight extra NARF keywords
-(let ((new-keywords '("add-hook!"
-                      "bind!"
-                      "after!"
-                      "λ"
-                      "in!"
-                      )))
+(let ((keywords '("add-hook!"
+                  "bind!"
+                  "after!"
+                  "λ"
+                  "in!"
+                  "define-company-backend!"
+                  )))
   (font-lock-add-keywords 'emacs-lisp-mode
-                          `((,(concat "(\\s-*" (regexp-opt new-keywords 'paren) "\\_>")
+                          `((,(concat "(\\s-*" (regexp-opt keywords 'paren) "\\_>")
                              1 font-lock-keyword-face)) 'append))
 
 ;; Real go-to-definition for elisp

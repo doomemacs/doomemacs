@@ -18,7 +18,6 @@
   (add-hook! evil-local-mode (setq evil-shift-width tab-width))
   ;; Disable highlights on insert-mode
   (add-hook! evil-insert-state-entry 'evil-ex-nohighlight)
-
   :config
   (setq evil-magic t
         evil-want-C-u-scroll t       ; enable C-u for scrolling
@@ -30,11 +29,11 @@
         evil-echo-state nil
 
         ;; Color-coded state cursors
-        evil-normal-state-cursor  '("white" box)
-        evil-emacs-state-cursor   '("green" bar)
-        evil-insert-state-cursor  '("white" bar)
-        evil-visual-state-cursor  '("cyan" hollow)
-        evil-iedit-state-cursor   '("orange" box))
+        evil-normal-state-cursor  'box
+        evil-emacs-state-cursor   'bar
+        evil-insert-state-cursor  'bar
+        evil-visual-state-cursor  'hollow
+        evil-iedit-state-cursor   'box)
 
   (evil-mode 1)
   (evil-select-search-module 'evil-search-module 'evil-search)
@@ -82,8 +81,8 @@
     (add-hook! isearch-mode     (setq echo-keystrokes 0))
     (add-hook! isearch-mode-end (setq echo-keystrokes 0.02))
     (let ((map evil-ex-search-keymap))
-      (define-key map (kbd "C-w") 'evil-delete-backward-word)
-      (define-key map (kbd "C-u") 'evil-delete-whole-line))
+      (define-key map "\C-w" 'evil-delete-backward-word)
+      (define-key map "\C-u" 'evil-delete-whole-line))
 
     ;; Repeat motions with SPC/S-SPC
     (defmacro narf-space-setup! (command next-func prev-func)
@@ -148,19 +147,25 @@
     (define-key map "s" nil)
     (define-key map "S" nil)
 
-    (define-key map (kbd "V")  'evil-visual-line)
-    (define-key map (kbd "C")  'evil-iedit-state/substitute) ; instead of s/S
-    (define-key map (kbd "za") 'iedit-toggle-unmatched-lines-visible)))
+    (define-key map "V"  'evil-visual-line)
+    (define-key map "C"  'evil-iedit-state/substitute) ; instead of s/S
+    (define-key map "za" 'iedit-toggle-unmatched-lines-visible)))
 
-(use-package evil-indent-textobject
-  :commands (evil-indent-i-indent
-             evil-indent-a-indent
-             evil-indent-a-indent-lines)
-  :init
-  (let ((map evil-inner-text-objects-map))
-    (define-key map "i" 'evil-indent-i-indent)
-    (define-key map "i" 'evil-indent-a-indent)
-    (define-key map "I" 'evil-indent-a-indent-lines)))
+(use-package evil-indent-plus
+  :commands
+  (evil-indent-plus-i-indent
+   evil-indent-plus-a-indent
+   evil-indent-plus-i-indent-up
+   evil-indent-plus-a-indent-up
+   evil-indent-plus-i-indent-up-down
+   evil-indent-plus-a-indent-up-down)
+  :config
+  (define-key evil-inner-text-objects-map "i" 'evil-indent-plus-i-indent)
+  (define-key evil-outer-text-objects-map "i" 'evil-indent-plus-a-indent)
+  (define-key evil-inner-text-objects-map "I" 'evil-indent-plus-i-indent-up)
+  (define-key evil-outer-text-objects-map "I" 'evil-indent-plus-a-indent-up)
+  (define-key evil-inner-text-objects-map "J" 'evil-indent-plus-i-indent-up-down)
+  (define-key evil-outer-text-objects-map "J" 'evil-indent-plus-a-indent-up-down))
 
 (use-package evil-jumper
   :init
@@ -182,7 +187,7 @@
   (evilem-default-keybindings "g SPC")
   (evilem-define (kbd "g SPC n") 'evil-ex-search-next)
   (evilem-define (kbd "g SPC N") 'evil-ex-search-previous)
-  (evilem-define (kbd "g s") 'evil-snipe-repeat
+  (evilem-define "gs" 'evil-snipe-repeat
     (lambda ()
       (save-excursion
         (ignore-errors
@@ -191,7 +196,7 @@
     ((evil-snipe-enable-highlight)
      (evil-snipe-enable-incremental-highlight)))
 
-  (evilem-define (kbd "g S") 'evil-snipe-repeat-reverse
+  (evilem-define "gS" 'evil-snipe-repeat-reverse
     (lambda ()
       (save-excursion
         (ignore-errors
@@ -202,6 +207,12 @@
 
 (use-package evil-numbers
   :commands (evil-numbers/inc-at-pt evil-numbers/dec-at-pt))
+
+(use-package evil-textobj-anyblock
+  :commands (evil-textobj-anyblock-inner-block evil-textobj-anyblock-a-block)
+  :init
+  (define-key evil-inner-text-objects-map "b" 'evil-textobj-anyblock-inner-block)
+  (define-key evil-outer-text-objects-map "b" 'evil-textobj-anyblock-a-block))
 
 (use-package evil-search-highlight-persist
   :config
@@ -244,7 +255,9 @@
   :config
   (global-evil-surround-mode 1)
   ;; Escaped surround characters
-  (setq-default evil-surround-pairs-alist (cons '(?\\ . narf/evil-surround-escaped) evil-surround-pairs-alist)))
+  (setq-default evil-surround-pairs-alist
+                (cons '(?\\ . narf/evil-surround-escaped)
+                      evil-surround-pairs-alist)))
 
 (use-package evil-visualstar
   :commands (global-evil-visualstar-mode

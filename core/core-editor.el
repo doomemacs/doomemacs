@@ -204,7 +204,8 @@ enable multiple minor modes for the same regexp.")
   :commands (describe-buffer describe-command describe-file
              describe-keymap describe-option describe-option-of-type))
 
-(use-package writeroom-mode :defer t
+(use-package writeroom-mode
+  :defer t
   :config
   (setq writeroom-restore-window-config t
         writeroom-width 120))

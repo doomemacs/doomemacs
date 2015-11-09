@@ -22,7 +22,7 @@
  ediff-diff-options                 "-w"
  ediff-split-window-function       'split-window-horizontally   ; side-by-side diffs
  ediff-window-setup-function       'ediff-setup-windows-plain   ; no extra frames
- enable-recursive-minibuffers       t           ; minibufferception
+ enable-recursive-minibuffers       nil         ; no minibufferception
  history-length                     1000
  inhibit-startup-echo-area-message  "hlissner"  ; username shuts up emacs
  inhibit-startup-screen             t           ; don't show emacs start screen
