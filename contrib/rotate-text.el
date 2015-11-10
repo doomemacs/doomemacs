@@ -8,7 +8,6 @@
     ("yes" "no")
     ("t" "nil")
     ("left" "right" "top" "bottom")
-    ("left" "right" "top" "bottom")
     ("width" "height")))
 
 ;;;###autoload
