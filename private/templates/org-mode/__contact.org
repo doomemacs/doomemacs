@@ -1,0 +1,14 @@
+#+TITLE:${1:Firstname Lastname}
+Created `(format-time-string "<%Y-%m-%d>")`
+
+| Contact | ${2:Firstname Lastname}  |
+| Email   | ${3:email@address.com} ([[mailto:$2][email]]) |
+| Address | ${4:PO Box 5, 2920}             |
+| City    | ${5:Charlottenlund}             |
+| Country | ${6:Denmark}                    |
+
+* Projects [/]
+** $7 [/]
+* Invoices [/]
+** TODO ${0:YYMM-0000 1,000 USD}
+* Notes

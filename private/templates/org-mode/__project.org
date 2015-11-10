@@ -1,0 +1,10 @@
+#+TITLE:${1:Project Name}
+Created `(format-time-string "<%Y-%m-%d>")`
+
+| Contact | [[contact:$2][${2:Contact Name}]] |
+
+${3:...}
+
+* Tasks [/]
+* Timeframe
+* Notes
