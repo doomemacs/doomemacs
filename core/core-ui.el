@@ -10,21 +10,10 @@
       (set-frame-font narf-default-font)
       (set-face-attribute 'default t :font narf-default-font)
 
-      (setq-default indicate-empty-lines t)
       (define-fringe-bitmap 'tilde [0 0 0 113 219 142 0 0] nil nil 'center)
       (setcdr (assq 'empty-line fringe-indicator-alist) 'tilde)
       (set-fringe-bitmap-face 'tilde 'font-lock-comment-face))
   (menu-bar-mode -1))
-
-(blink-cursor-mode     1)    ; do blink cursor
-(tooltip-mode         -1)    ; show tooltips in echo area
-
-;; Highlight line
-(add-hook! (prog-mode puml-mode markdown-mode) 'hl-line-mode)
-;; hl-line-mode breaks minibuffer in TTY
-;; (add-hook! minibuffer-setup
-;;   (make-variable-buffer-local 'global-hl-line-mode)
-;;   (setq global-hl-line-mode nil))
 
 (setq-default
  blink-matching-paren nil
@@ -37,23 +26,42 @@
  highlight-nonselected-windows nil
 
  uniquify-buffer-name-style      nil
-
- visible-bell                    nil    ; silence of the bells
- use-dialog-box                  nil    ; avoid GUI
+ visible-bell                    nil  ; silence of the bells
+ use-dialog-box                  nil  ; always avoid GUI
  redisplay-dont-pause            t
  indicate-buffer-boundaries      nil
- indicate-empty-lines            nil
- fringes-outside-margins         t      ; fringes on the other side of line numbers
+ indicate-empty-lines            t
+ fringes-outside-margins         t
+ hl-line-sticky-flag             nil
 
  jit-lock-defer-time 0
  jit-lock-stealth-time 1
 
  resize-mini-windows t)
 
-;; Hide modeline in help windows
+(blink-cursor-mode  1)    ; do blink cursor
+(tooltip-mode      -1)    ; show tooltips in echo area
+
+;; Highlight line
+(add-hook! (prog-mode puml-mode markdown-mode) 'hl-line-mode)
+
+;; Disable line highlight in visual mode
+(defvar narf--hl-line-mode nil)
+(make-variable-buffer-local 'narf--hl-line-mode)
+
+(defun narf|hl-line-on ()
+  (when narf--hl-line-mode (hl-line-mode +1)))
+(defun narf|hl-line-off ()
+  (when narf--hl-line-mode (hl-line-mode -1)))
+
+(add-hook! hl-line-mode (if hl-line-mode (setq narf--hl-line-mode t)))
+(add-hook! evil-visual-state-entry 'narf|hl-line-off)
+(add-hook! evil-visual-state-exit  'narf|hl-line-on)
+
+;; Hide modeline in help windows ;;;;;;;
 (add-hook! help-mode (setq-local mode-line-format nil))
 
-;; Highlight TODO/FIXME/NOTE tags
+;; Highlight TODO/FIXME/NOTE tags ;;;;;;
 (defface narf-todo-face  '((t (:inherit font-lock-warning-face))) "Face for TODOs")
 (defface narf-fixme-face '((t (:inherit font-lock-warning-face))) "Face for FIXMEs")
 (defface narf-note-face  '((t (:inherit font-lock-warning-face))) "Face for NOTEs")
@@ -122,7 +130,7 @@
   :preface
   (defvar narf--hl-nlinum-overlay nil)
   (defvar narf--hl-nlinum-line nil)
-  (defvar nlinum-format " %4d ")
+  (defvar nlinum-format " %4d  ")
   (defface linum-highlight-face '((t (:inherit linum))) "Face for line highlights")
   :init
   (defun narf|nlinum-enable ()
@@ -134,7 +142,9 @@
     (remove-hook 'post-command-hook 'narf|nlinum-hl-line)
     (narf|nlinum-unhl-line))
 
-  (add-hook! (markdown-mode prog-mode scss-mode web-mode) 'narf|nlinum-enable)
+  (add-hook!
+    (markdown-mode prog-mode scss-mode web-mode)
+    'narf|nlinum-enable)
   :config
   (defun narf|nlinum-unhl-line ()
     "Highlight line number"
