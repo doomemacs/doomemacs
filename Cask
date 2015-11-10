@@ -167,6 +167,9 @@
 (depends-on "anaconda-mode")
 (depends-on "nose")
 
+;; Ruby -- modules/module-regex.el
+(depends-on "pcre2el")
+
 ;; Ruby -- modules/module-ruby.el
 (depends-on "enh-ruby-mode")
 (depends-on "ruby-refactor")
