@@ -107,7 +107,9 @@
 
 ;; evil plugins
 (use-package evil-anzu
-  :config (setq anzu-cons-mode-line-p nil))
+  :config (setq anzu-cons-mode-line-p nil
+                anzu-minimum-input-length 2
+                anzu-search-threshold 100))
 
 (use-package evil-args
   :commands (evil-inner-arg evil-outer-arg evil-forward-arg evil-backward-arg evil-jump-out-args)
@@ -210,6 +212,7 @@
 
 (use-package evil-search-highlight-persist
   :config
+  (setq evil-search-highlight-string-min-len 2)
   (global-evil-search-highlight-persist t)
   (advice-add 'evil-force-normal-state :after 'evil-search-highlight-persist-remove-all))
 
