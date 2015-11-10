@@ -3,7 +3,7 @@
 ;;;###autoload
 (defun narf|reb-cleanup ()
   (replace-regexp "^[ \n]*" "" nil (point-min) (point-max))
-  (text-scale-set 1.5)
+  (text-scale-set 2)
   (goto-char 2))
 
 ;;;###autoload (autoload 'narf:regex "defuns-regex" nil t)
