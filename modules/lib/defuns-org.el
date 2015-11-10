@@ -210,5 +210,98 @@ COUNT-FOOTNOTES? is non-nil."
     (message (format "%d words in %s." wc
                      (if mark-active "region" "buffer")))))
 
+;;;###autoload (autoload 'narf:org-attach "defuns-org" nil t)
+(evil-define-command narf:org-attach (&optional link)
+  (interactive "<a>")
+  (require 'org-attach)
+  (let ((path ".attach")
+        (new-name (concat (int-to-string (truncate (float-time))) "-" (f-filename link)))
+        new-path)
+    (unless (file-exists-p path)
+      (make-directory path))
+    (when path
+      (setq new-path (format "%s/%s" path new-name))
+      (cond ((string-match-p "^https?://" link)
+             (url-copy-file link new-path))
+            (t (copy-file link new-path)))
+      (insert (format "[[./%s]]" (abbreviate-file-name new-path))))))
+
+;;;###autoload
+(defun narf/org-remove-link ()
+  "Replace an org link by its description or if empty its address"
+  (interactive)
+  (if (org-in-regexp org-bracket-link-regexp 1)
+      (let ((remove (list (match-beginning 0) (match-end 0)))
+            (description (if (match-end 3)
+                             (org-match-string-no-properties 3)
+                           (org-match-string-no-properties 1))))
+        (apply 'delete-region remove)
+        (insert description))))
+
+;;;###autoload
+(defun narf/org-table-next-row ()
+  (interactive)
+  (if (org-at-table-p) (org-table-next-row) (org-down-element)))
+
+;;;###autoload
+(defun narf/org-table-previous-row ()
+  (interactive)
+  (if (org-at-table-p) (narf--org-table-previous-row) (org-up-element)))
+
+;;;###autoload
+(defun narf/org-table-next-field ()
+  (interactive)
+  (if (org-at-table-p) (org-table-next-field) (org-end-of-line)))
+
+;;;###autoload
+(defun narf/org-table-previous-field ()
+  (interactive)
+  (if (org-at-table-p) (org-table-previous-field) (org-beginning-of-line)))
+
+
+;;;###autoload
+(defun narf/org-table-append-row-or-shift-right ()
+  (interactive)
+  (org-shiftmetaright)
+  (when (org-at-table-p) (org-metaright)))
+
+;;;###autoload
+(defun narf/org-table-prepend-row-or-shift-left ()
+  (interactive)
+  (if (org-at-table-p)
+      (org-shiftmetaright)
+    (org-shiftmetaleft)))
+
+;;;###autoload
+(defun narf/org-table-append-field-or-shift-down ()
+  (interactive)
+  (org-shiftmetadown)
+  (when (org-at-table-p) (org-metadown)))
+
+;;;###autoload
+(defun narf/org-table-prepend-field-or-shift-up ()
+  (interactive)
+  (if (org-at-table-p)
+      (org-shiftmetadown)
+    (org-shiftmetaup)))
+
+(defun narf--org-table-previous-row ()
+  "Go to the previous row (same column) in the current table. Before doing so,
+re-align the table if necessary. (Necessary because org-mode has a
+`org-table-next-row', but not `org-table-previous-row')"
+  (interactive)
+  (org-table-maybe-eval-formula)
+  (org-table-maybe-recalculate-line)
+  (if (and org-table-automatic-realign
+           org-table-may-need-update)
+      (org-table-align))
+  (let ((col (org-table-current-column)))
+    (beginning-of-line 0)
+    (when (or (not (org-at-table-p)) (org-at-table-hline-p))
+      (beginning-of-line))
+    (org-table-goto-column col)
+    (skip-chars-backward "^|\n\r")
+    (when (org-looking-at-p " ") (forward-char))))
+
 (provide 'defuns-org)
 ;;; defuns-org.el ends here
