@@ -71,10 +71,13 @@ enable multiple minor modes for the same regexp.")
 (add-hook! prog-mode      'narf|enable-comment-hard-wrap)
 (add-hook! auto-fill-mode (diminish 'auto-fill-function))
 
-(defadvice delete-trailing-whitespace (around delete-trailing-whitespace-ignore-line activate)
+(defadvice delete-trailing-whitespace
+    (around delete-trailing-whitespace-ignore-line activate)
   "Don't delete trailing whitespace on current line, if in insert mode."
   (let ((spaces (1- (current-column)))
-        (linestr (buffer-substring-no-properties (line-beginning-position) (line-end-position))))
+        (linestr (buffer-substring-no-properties
+                  (line-beginning-position)
+                  (line-end-position))))
     ad-do-it
     (when (string-match-p "^[\s\t]*$" linestr)
       (insert linestr))))
@@ -90,9 +93,9 @@ enable multiple minor modes for the same regexp.")
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; (global-whitespace-mode 1)  ; Show whitespace
-(global-font-lock-mode t)      ; Enable syntax highlighting for older emacs
 ;; (global-auto-revert-mode -1); revert buffers for changed files
-(electric-indent-mode -1)
+(global-font-lock-mode t)      ; Enable syntax highlighting for older emacs
+(electric-indent-mode -1)      ; on by default
 
 ;; window config undo/redo
 (setq winner-dont-bind-my-keys t)
@@ -109,9 +112,11 @@ enable multiple minor modes for the same regexp.")
   (defalias 'redo #'undo-tree-redo)
   (defalias 'undo #'undo-tree-undo)
   ;; Shut up undo-tree's constant complaining: http://youtu.be/Z6woIRLnbmE
-  (defadvice undo-tree-load-history-hook (around undo-tree-load-history-shut-up activate)
+  (defadvice undo-tree-load-history-hook
+      (around undo-tree-load-history-shut-up activate)
     (shut-up! ad-do-it))
-  (defadvice undo-tree-save-history-hook (around undo-tree-save-history-shut-up activate)
+  (defadvice undo-tree-save-history-hook
+      (around undo-tree-save-history-shut-up activate)
     (shut-up! ad-do-it)))
 
 (use-package avy
@@ -138,7 +143,7 @@ enable multiple minor modes for the same regexp.")
 (use-package goto-last-change
   :commands goto-last-change)
 
-(use-package rotate-text   :commands (rotate-word-at-point rotate-region))
+(use-package rotate-text :commands (rotate-word-at-point rotate-region))
 
 (use-package smart-forward :commands (smart-up smart-down smart-left smart-right))
 
@@ -203,12 +208,6 @@ enable multiple minor modes for the same regexp.")
 (use-package help-fns+ ; Improved help commands
   :commands (describe-buffer describe-command describe-file
              describe-keymap describe-option describe-option-of-type))
-
-(use-package writeroom-mode
-  :defer t
-  :config
-  (setq writeroom-restore-window-config t
-        writeroom-width 120))
 
 (use-package saveplace
   :defer t

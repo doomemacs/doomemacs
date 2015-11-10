@@ -6,6 +6,8 @@
       (fringe-mode '(3 . 6))
       (setq frame-title-format '(buffer-file-name "%f" ("%b")))
       (setq initial-frame-alist '((width . 120) (height . 80)))
+
+      (set-frame-font narf-default-font)
       (set-face-attribute 'default t :font narf-default-font)
 
       (setq-default indicate-empty-lines t)
@@ -62,6 +64,14 @@
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(use-package writeroom-mode
+  :defer t
+  :config
+  (setq-default
+   writeroom-restore-window-config t
+   writeroom-fullscreen-effect nil
+   writeroom-width 110))
 
 (use-package hideshow
   :commands (hs-minor-mode hs-toggle-hiding hs-already-hidden-p)

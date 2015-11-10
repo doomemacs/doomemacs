@@ -59,12 +59,6 @@
         ;; Exit minibuffer if alive
         (if (minibuffer-window-active-p (minibuffer-window))
             (narf/minibuffer-quit))))
-    ;; Jump to new splits
-    (defadvice evil-window-split (after evil-window-split-jump activate)
-      (evil-window-down 1))
-    (defadvice evil-window-vsplit (after evil-window-vsplit-jump activate)
-      (evil-window-right 1))
-
     ;; Fix disruptive errors w/ hidden buffers caused by popwin
     (defadvice evil-ex-hl-do-update-highlight (around evil-ex-hidden-buffer-ignore-errors activate)
       (ignore-errors ad-do-it))
@@ -211,8 +205,8 @@
 (use-package evil-textobj-anyblock
   :commands (evil-textobj-anyblock-inner-block evil-textobj-anyblock-a-block)
   :init
-  (define-key evil-inner-text-objects-map "b" 'evil-textobj-anyblock-inner-block)
-  (define-key evil-outer-text-objects-map "b" 'evil-textobj-anyblock-a-block))
+  (define-key evil-inner-text-objects-map "B" 'evil-textobj-anyblock-inner-block)
+  (define-key evil-outer-text-objects-map "B" 'evil-textobj-anyblock-a-block))
 
 (use-package evil-search-highlight-persist
   :config
