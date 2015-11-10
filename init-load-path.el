@@ -1,6 +1,6 @@
 ;;; init-load-path.el
 
-(setq gc-cons-threshold 84857600)
+(setq gc-cons-threshold 169715200)
 
 (eval-and-compile
   (defconst narf-emacs-dir     user-emacs-directory)

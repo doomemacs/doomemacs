@@ -3,7 +3,9 @@
 
 ;;;###autoload
 (defmacro add-template! (regexp-or-major-mode uuid yas-mode &optional project-only)
-  `(define-auto-insert ,regexp-or-major-mode
+  `(define-auto-insert ,(if (stringp regexp-or-major-mode)
+                            regexp-or-major-mode
+                          (eval regexp-or-major-mode))
      (lambda ()
        (unless (or (and ,project-only (not (narf/project-p)))
                    (not (or (eq major-mode ,yas-mode)

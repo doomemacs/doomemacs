@@ -50,8 +50,8 @@
  "C-h"  'evil-window-left
  "C-l"  'evil-window-right
 
- :m "M-j"  'narf-multi-next-line
- :m "M-k"  'narf-multi-previous-line
+ :m "M-j"  'narf/multi-next-line
+ :m "M-k"  'narf/multi-previous-line
 
  :n "M-r"  'narf:eval-buffer
  :v "M-r"  'narf:eval-region
@@ -97,7 +97,7 @@
  ;; <leader>
  (:prefix ","
    :nv ","   (λ (if (narf/project-p) (helm-projectile-switch-to-buffer) (helm-buffers-list)))
-   :nv "<"   'helm-mini
+   :nv "<"   'helm-buffers-list
    :nv "."   'helm-find-files
    :nv ">"   'helm-projectile-find-file-in-known-projects
    :nv "/"   'helm-projectile-find-file
@@ -118,16 +118,16 @@
    :nv "qq"  'evil-save-and-quit
    :nv "QQ"  'narf/kill-all-buffers-do-not-remember
 
-   :n "oo"  'narf-open-with
-   :n "ob"  (λ (narf-open-with "Google Chrome"))
-   :n "of"  (λ (narf-open-with "Finder.app" default-directory))
-   :n "oF"  (λ (narf-open-with "Finder.app" (narf/project-root)))
-   :n "ou"  (λ (narf-open-with "Transmit"))
-   :n "oU"  (λ (narf-open-with "Transmit" default-directory))
-   :n "ol"  (λ (narf-open-with "LaunchBar"))
-   :n "oL"  (λ (narf-open-with "LaunchBar" default-directory))
-   :n "ot"  (λ (narf:tmux-chdir nil t))
-   :n "oT"  'narf:tmux-chdir)
+   :n  "oo"  'narf-open-with
+   :n  "ob"  (λ (narf-open-with "Google Chrome"))
+   :n  "of"  (λ (narf-open-with "Finder.app" default-directory))
+   :n  "oF"  (λ (narf-open-with "Finder.app" (narf/project-root)))
+   :n  "ou"  (λ (narf-open-with "Transmit"))
+   :n  "oU"  (λ (narf-open-with "Transmit" default-directory))
+   :n  "ol"  (λ (narf-open-with "LaunchBar"))
+   :n  "oL"  (λ (narf-open-with "LaunchBar" default-directory))
+   :n  "ot"  (λ (narf:tmux-chdir nil t))
+   :n  "oT"  'narf:tmux-chdir)
 
  ;; <localleader>
  (:prefix "\\"
@@ -219,10 +219,9 @@
  :m "%"   'evilmi-jump-items
  :m [tab] (λ (cond ((eq major-mode 'org-mode)
                     (org-cycle))
-                   (t
-                    (if (ignore-errors (hs-already-hidden-p))
-                        (hs-toggle-hiding)
-                      (call-interactively 'evilmi-jump-items)))))
+                   (t (if (ignore-errors (hs-already-hidden-p))
+                          (hs-toggle-hiding)
+                        (call-interactively 'evilmi-jump-items)))))
 
  ;; Restore osx text objects
  :i "<A-backspace>" 'evil-delete-backward-word
@@ -247,6 +246,11 @@
 
  (:map evil-window-map ; prefix "C-w"
    "u"       'winner-undo
+
+   ;; Jump to new splits
+   "s"       'narf/evil-window-split
+   "v"       'narf/evil-window-vsplit
+
    "C-u"     'winner-undo
    "C-r"     'winner-redo
    "C-h"     'evil-window-left     ; don't accidentally invoke help
@@ -276,7 +280,7 @@
      "C-o"        'company-search-kill-others
      "C-n"        'company-select-next-or-abort
      "C-p"        'company-select-previous-or-abort
-     "C-h"        'company-show-doc-buffer
+     "C-h"        'company-quickhelp-manual-begin
      "C-S-h"      'company-show-location
      "C-S-s"      'company-search-candidates
      "C-s"        'company-filter-candidates
@@ -311,6 +315,10 @@
 (global-set-key (kbd "<left-margin> <mouse-1>")      'narf/mouse-select-line)
 (global-set-key (kbd "<left-margin> <drag-mouse-1>") 'narf/mouse-select-line)
 
+;; Horizontal Scrolling
+(global-set-key (kbd "<wheel-right>") (λ (evil-scroll-column-right 2)))
+(global-set-key (kbd "<wheel-left>")  (λ (evil-scroll-column-left 2)))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Keymap fixes                       ;;
@@ -321,8 +329,8 @@
 
 ;; Restores "dumb" indentation to the tab key. This rustles a lot of
 ;; peoples' jimmies, apparently, but it's how I like it.
-(bind! :i "<tab>"   'narf/dumb-indent
-       :i "<C-tab>" 'indent-for-tab-command
+(bind! :i "<tab"   'narf/dumb-indent
+       :i "<C-tab" 'indent-for-tab-command
 
        ;; No dumb-tab for lisp
        :i :map lisp-mode-map        [remap narf/dumb-indent] 'indent-for-tab-command
@@ -378,7 +386,10 @@
        :map read-expression-map "C-w" 'evil-delete-backward-word)
 
 (bind! :i "A-o" (λ (insert "ø"))
-       :i "A-O" (λ (insert "Ø")))
+       :i "A-O" (λ (insert "Ø"))
+
+       :i "A--" (λ (insert "–"))
+       :i "A-_" (λ (insert "—")))
 
 ;; Disable the global drag-mouse map; clicking in new buffers often sends evil
 ;; into visual mode, which is UN...ACCEPTAABBLLLEEEE!

@@ -17,13 +17,13 @@
     (hs-minor-mode 1))
   (if count (hs-hide-level count) (evil-close-folds)))
 
-;;;###autoload (autoload 'narf-multi-next-line "defuns-evil" nil t)
-(evil-define-motion narf-multi-next-line (count)
+;;;###autoload (autoload 'narf/multi-next-line "defuns-evil" nil t)
+(evil-define-motion narf/multi-next-line (count)
   "Move down 6 lines"
   :type line (evil-line-move 6))
 
-;;;###autoload (autoload 'narf-multi-previous-line "defuns-evil" nil t)
-(evil-define-motion narf-multi-previous-line (count)
+;;;###autoload (autoload 'narf/multi-previous-line "defuns-evil" nil t)
+(evil-define-motion narf/multi-previous-line (count)
   "Move up 6 lines"
   :type line (evil-line-move -6))
 
@@ -52,15 +52,21 @@
 ;;;###autoload
 (defun narf/evil-surround-escaped ()
   "Escaped surround characters."
-    (let* ((char (string (read-char "\\")))
-           (pair (cond ((string-match "[]})[{(]" char)
-                        (let ((-pair (cdr (assoc (string-to-char char) evil-surround-pairs-alist))))
-                          `(,(car -pair) . ,(cdr -pair))))
-                       (t
-                        `(,char . ,char))))
-           (format (if (sp-point-in-string) "\\\\%s" "\\%s")))
-      (cons (format format (car pair))
-            (format format (cdr pair)))))
+  (let* ((char (string (read-char "\\")))
+         (pair (cond ((string-match-p "[]})[{(]" char)
+                      (let ((-pair (cdr (assoc (string-to-char char) evil-surround-pairs-alist))))
+                        `(,(car -pair) . ,(cdr -pair))))
+                     (t
+                      `(,char . ,char))))
+         (format (if (sp-point-in-string) "\\\\%s" "\\%s")))
+    (cons (format format (car pair))
+          (format format (cdr pair)))))
+
+;;;###autoload
+(defun narf/evil-surround-latex ()
+  "LaTeX commands"
+  (let* ((command (read-string "\\")))
+    (cons (format "\\%s{" command) "}")))
 
 ;;;###autoload (autoload 'narf/evil-macro-on-all-lines "defuns-evil" nil t)
 (evil-define-operator narf/evil-macro-on-all-lines (beg end &optional arg)
@@ -74,6 +80,18 @@
       (concat "@"
         (single-key-description
           (read-char "What macro?"))))))
+
+;;;###autoload
+(defun narf/evil-window-split ()
+  (interactive)
+  (call-interactively 'evil-window-split)
+  (evil-window-down 1))
+
+;;;###autoload
+(defun narf/evil-window-vsplit ()
+  (interactive)
+  (call-interactively 'evil-window-vsplit)
+  (evil-window-right 1))
 
 (provide 'defuns-evil)
 ;;; defuns-evil.el ends here

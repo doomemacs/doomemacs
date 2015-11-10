@@ -16,6 +16,9 @@
  scroll-conservatively   1001
  scroll-preserve-screen-position t
 
+ hscroll-step 5
+ hscroll-margin 6
+
  shift-select-mode       nil
  tabify-regexp "^\t* [ \t]+"
  whitespace-style '(face tabs tab-mark newline newline-mark)

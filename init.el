@@ -2,7 +2,7 @@
 ;;
 ;; Author:  Henrik Lissner <henrik@lissner.net>
 ;; URL:     https://github.com/hlissner/emacs.d
-;; Version: 0.4.0
+;; Version: 0.5.0
 ;;
 ;;; Are you pondering what I'm pondering, Pinky?
 ;;
@@ -41,9 +41,8 @@
 ;;; License: GPLv3
 
 (defconst narf-theme        'narf-dark)
-(defconst narf-term-theme   'wombat)
-(defconst narf-default-font (font-spec :family "DejaVu Sans Mono" :size 12))
-(defconst narf-big-font     (font-spec :family "Ubuntu Mono"      :size 18))
+(defconst narf-default-font (font-spec :family "DejaVu Sans Mono" :size 12 :antialias t))
+(defconst narf-big-font     (font-spec :family "Inconsolata" :size 20 :antialias t))
 
 (scroll-bar-mode -1)  ; no scrollbar
 (tool-bar-mode   -1)  ; no toolbar
@@ -51,7 +50,7 @@
 ;; prematurely optimize for faster startup
 (let (file-name-handler-alist)
   (load (concat user-emacs-directory "init-load-path.el"))
-  (load-theme (if window-system narf-theme narf-term-theme) t)
+  (load-theme narf-theme t)
 
   (mapc 'require
         `(core ; core/core.el
@@ -78,7 +77,7 @@
           module-collab        ; wonewy, I'm so wonewy~
           module-data          ; dbs 'n data formats
           module-elisp         ; drowning in parentheses
-          module-eshell        ; eshell (on windows)
+          ;; module-eshell     ; eshell (on windows)
           module-go            ; a hipster dialect
           module-java          ; the poster child for carpal tunnel syndome
           module-js            ; alert("not java, javascript!")

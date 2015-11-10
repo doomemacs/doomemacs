@@ -27,6 +27,9 @@
                           `((,(concat "(\\s-*" (regexp-opt keywords 'paren) "\\_>")
                              1 font-lock-keyword-face)) 'append))
 
+(font-lock-add-keywords
+ 'emacs-lisp-mode `(("\\(lambda\\)" (0 (narf/show-as ?λ)))))
+
 ;; Real go-to-definition for elisp
 (bind! :map emacs-lisp-mode-map
        :m "gd" 'narf/elisp-find-function-at-pt

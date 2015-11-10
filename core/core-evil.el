@@ -230,16 +230,16 @@
                               (?\] "[]})]")
                               (?\; "[;:]")))
 
-  (define-key evil-normal-state-map (kbd "s") nil)
-  (define-key evil-normal-state-map (kbd "S") nil)
-  (define-key evil-motion-state-map (kbd "s") 'evil-snipe-s)
-  (define-key evil-motion-state-map (kbd "S") 'evil-snipe-S)
-  (define-key evil-motion-state-map (kbd "f") 'evil-snipe-f)
-  (define-key evil-motion-state-map (kbd "F") 'evil-snipe-F)
-  (define-key evil-motion-state-map (kbd "t") 'evil-snipe-t)
-  (define-key evil-motion-state-map (kbd "T") 'evil-snipe-T)
-  (define-key evil-operator-state-map (kbd "z") 'evil-snipe-s)
-  (define-key evil-operator-state-map (kbd "Z") 'evil-snipe-S)
+  (define-key evil-normal-state-map "s" nil)
+  (define-key evil-normal-state-map "S" nil)
+  (define-key evil-motion-state-map "s" 'evil-snipe-s)
+  (define-key evil-motion-state-map "S" 'evil-snipe-S)
+  (define-key evil-motion-state-map "f" 'evil-snipe-f)
+  (define-key evil-motion-state-map "F" 'evil-snipe-F)
+  (define-key evil-motion-state-map "t" 'evil-snipe-t)
+  (define-key evil-motion-state-map "T" 'evil-snipe-T)
+  (define-key evil-operator-state-map "z" 'evil-snipe-s)
+  (define-key evil-operator-state-map "Z" 'evil-snipe-S)
   :config
   (evil-snipe-mode 1)
   (evil-snipe-override-mode 1))
@@ -251,6 +251,19 @@
              evil-surround-region)
   :config
   (global-evil-surround-mode 1)
+
+  (add-hook! org-mode
+    (mapc (lambda (p) (add-to-list 'evil-surround-pairs-alist p))
+          '((?l . narf/evil-surround-latex))))
+
+  (add-hook! emacs-lisp-mode
+    (setq evil-surround-pairs-alist
+          (cons '(?\` . ("`" . "*")) evil-surround-pairs-alist)))
+
+  (add-hook! python-mode
+    (setq evil-surround-pairs-alist
+          (cons '(?d . ("\"\"\"" . "\"\"\"")) evil-surround-pairs-alist)))
+
   ;; Escaped surround characters
   (setq-default evil-surround-pairs-alist
                 (cons '(?\\ . narf/evil-surround-escaped)

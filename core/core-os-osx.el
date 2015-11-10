@@ -9,9 +9,11 @@
       mac-option-modifier  'alt
 
       ;; sane trackpad/mouse scroll settings
+      mac-redisplay-dont-reset-vscroll t
       mac-mouse-wheel-smooth-scroll nil
       mouse-wheel-scroll-amount '(8 ((shift) . 2))  ;; one line at a time
-      mouse-wheel-progressive-speed nil               ;; don't accelerate scrolling
+      mouse-wheel-progressive-speed nil             ;; don't accelerate scrolling
+
 
       ;;; NOTE These mean nothing to railwaycat's emacs-mac build on OSX
       ;; Curse Lion and its sudden but inevitable fullscreen mode!
@@ -42,8 +44,8 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(after! evil
-  (when (featurep 'ns)
+(when (featurep 'ns)
+  (after! evil
     ;; On OSX, stop copying each visual state move to the clipboard:
     ;; https://bitbucket.org/lyro/evil/issue/336/osx-visual-state-copies-the-region-on
     ;; Most of this code grokked from:
