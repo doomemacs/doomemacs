@@ -153,6 +153,7 @@
 (depends-on "org-plus-contrib")
 (depends-on "org-opml" :git "https://github.com/edavis/org-opml")
 (depends-on "company-math")
+(depends-on "ob-http")
 
 ;; PHP -- modules/module-php.el
 (depends-on "puml-mode")
