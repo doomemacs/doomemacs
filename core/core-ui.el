@@ -70,6 +70,37 @@
   (font-lock-add-keywords nil '(("\\<\\(FIXME\\((.+)\\)?:?\\)" 1 'narf-fixme-face prepend)))
   (font-lock-add-keywords nil '(("\\<\\(NOTE\\((.+)\\)?:?\\)"  1 'narf-note-face prepend))))
 
+;; Prettify code folding in emacs ;;;;;;
+(define-fringe-bitmap 'hs-marker [0 0 8 8 62 8 8 0])
+(defface hs-face '((t (:background "#ff8")))
+  "Face to hightlight the ... area of hidden regions"
+  :group 'hideshow)
+(defface hs-fringe-face '((t (:foreground "#888")))
+  "Face used to highlight the fringe on folded regions"
+  :group 'hideshow)
+
+(defun display-code-line-counts (ov)
+  (when (eq 'code (overlay-get ov 'hs))
+    (let* ((marker-string "*fringe-dummy*")
+           (marker-length (length marker-string))
+           (display-string (format " ... "
+                                   (count-lines (overlay-start ov)
+                                                (overlay-end ov)))))
+      (put-text-property 0 marker-length 'display (list 'right-fringe 'hs-marker 'hs-fringe-face) marker-string)
+      (put-text-property 0 (length display-string) 'face 'hs-face display-string)
+      (overlay-put ov 'before-string marker-string)
+      (overlay-put ov 'display display-string))))
+(setq hs-set-up-overlay 'display-code-line-counts)
+
+;; Fade out when unfocused ;;;;;;;;;;;;;
+(defun narf|focus-in-alpha ()
+  (set-frame-parameter nil 'alpha 100))
+(defun narf|focus-out-alpha ()
+  (set-frame-parameter nil 'alpha 90))
+
+(add-hook! focus-in  'narf|focus-in-alpha)
+(add-hook! focus-out 'narf|focus-out-alpha)
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -84,11 +115,12 @@
 (use-package hideshow
   :commands (hs-minor-mode hs-toggle-hiding hs-already-hidden-p)
   :diminish hs-minor-mode
+  :config (setq hs-isearch-open t)
   :init
   (after! evil
     (defun narf-load-hs-minor-mode ()
-      (advice-remove 'evil-toggle-fold 'narf-load-hs-minor-mode)
-      (hs-minor-mode 1))
+      (hs-minor-mode 1)
+      (advice-remove 'evil-toggle-fold 'narf-load-hs-minor-mode))
     (advice-add 'evil-toggle-fold :before 'narf-load-hs-minor-mode)))
 
 (use-package rainbow-delimiters
