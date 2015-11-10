@@ -9,7 +9,7 @@
 (depends-on "f")
 (depends-on "use-package")
 (depends-on "help-fns+")
-(depends-on "esup")
+; (depends-on "esup")
 
 ;; OSX --- core/core-os-osx.el
 (depends-on "exec-path-from-shell")
@@ -17,7 +17,7 @@
 (depends-on "applescript-mode")
 
 ;; UI --- core/core-ui.el
-(depends-on "hl-todo" :git "https://github.com/tarsius/hl-todo")
+(depends-on "yascroll" :git "https://github.com/m2ym/yascroll-el")
 (depends-on "rainbow-delimiters")
 (depends-on "rainbow-mode")
 (depends-on "popwin")
@@ -32,7 +32,8 @@
 (depends-on "evil-commentary")
 (depends-on "evil-exchange")
 (depends-on "evil-iedit-state")
-(depends-on "evil-indent-textobject")
+(depends-on "evil-indent-plus" :git "https://github.com/TheBB/evil-indent-plus")
+(depends-on "evil-textobj-anyblock")
 (depends-on "evil-jumper")
 (depends-on "evil-matchit")
 (depends-on "evil-numbers")
@@ -58,10 +59,11 @@
 
 ;; Completion --- core/core-company.el
 (depends-on "company")
+(depends-on "company-statistics")
+(depends-on "company-quickhelp")
 (depends-on "company-anaconda")
 (depends-on "company-c-headers")
 (depends-on "company-inf-ruby")
-(depends-on "company-statistics")
 (depends-on "company-tern")
 
 ;; Collab --- core/core-collab.el
@@ -74,7 +76,6 @@
 (depends-on "flycheck")
 (depends-on "flyspell")
 
-;; ...
 ;; Project --- core/core-project.el
 (depends-on "flx-ido")
 (depends-on "ido-ubiquitous")
@@ -151,6 +152,7 @@
 ;; Org -- modules/module-org.el
 (depends-on "org-plus-contrib")
 (depends-on "org-opml" :git "https://github.com/edavis/org-opml")
+(depends-on "company-math")
 
 ;; PHP -- modules/module-php.el
 (depends-on "puml-mode")
