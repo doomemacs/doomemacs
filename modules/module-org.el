@@ -271,45 +271,12 @@
 
   ;; Add element delimiter text-objects so we can use evil-surround to
   ;; manipulate them.
-  (evil-define-text-object evil-inner-org-bold-element (count &optional beg end type)
-    :extend-selection nil (evil-select-quote ?* beg end type count))
-  (evil-define-text-object evil-a-org-bold-element (count &optional beg end type)
-    :extend-selection nil (evil-select-quote ?* beg end type count t))
-
-  (evil-define-text-object evil-inner-org-italic-element (count &optional beg end type)
-    :extend-selection nil (evil-select-quote ?/ beg end type count))
-  (evil-define-text-object evil-a-org-italic-element (count &optional beg end type)
-    :extend-selection nil (evil-select-quote ?/ beg end type count t))
-
-  (evil-define-text-object evil-inner-org-underline-element (count &optional beg end type)
-    :extend-selection nil (evil-select-quote ?_ beg end type count))
-  (evil-define-text-object evil-a-org-underline-element (count &optional beg end type)
-    :extend-selection nil (evil-select-quote ?_ beg end type count t))
-
-  (evil-define-text-object evil-inner-org-code-element (count &optional beg end type)
-    :extend-selection nil (evil-select-quote ?= beg end type count))
-  (evil-define-text-object evil-a-org-code-element (count &optional beg end type)
-    :extend-selection nil (evil-select-quote ?= beg end type count t))
-
-  (evil-define-text-object evil-inner-org-verbatim-element (count &optional beg end type)
-    :extend-selection nil (evil-select-quote ?~ beg end type count))
-  (evil-define-text-object evil-a-org-verbatim-element (count &optional beg end type)
-    :extend-selection nil (evil-select-quote ?~ beg end type count t))
-
-  (define-key evil-outer-text-objects-map "*" 'evil-a-org-bold-element)
-  (define-key evil-inner-text-objects-map "*" 'evil-inner-org-bold-element)
-
-  (define-key evil-outer-text-objects-map "/" 'evil-a-org-italic-element)
-  (define-key evil-inner-text-objects-map "/" 'evil-inner-org-italic-element)
-
-  (define-key evil-outer-text-objects-map "_" 'evil-a-org-underline-element)
-  (define-key evil-inner-text-objects-map "_" 'evil-inner-org-underline-element)
-
-  (define-key evil-outer-text-objects-map "=" 'evil-a-org-code-element)
-  (define-key evil-inner-text-objects-map "=" 'evil-inner-org-code-element)
-
-  (define-key evil-outer-text-objects-map "~" 'evil-a-org-verbatim-element)
-  (define-key evil-inner-text-objects-map "~" 'evil-inner-org-verbatim-element)
+  (define-text-object! "$" "\\$" "\\$")
+  (define-text-object! "*" "\\*" "\\*")
+  (define-text-object! "/" "/" "/")
+  (define-text-object! "_" "_" "_")
+  (define-text-object! "=" "=" "=")
+  (define-text-object! "~" "~" "~")
 
   ;; Keybinds
   (bind! (:map org-mode-map

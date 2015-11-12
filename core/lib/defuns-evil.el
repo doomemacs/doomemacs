@@ -93,5 +93,17 @@
   (call-interactively 'evil-window-vsplit)
   (evil-window-right 1))
 
+;;;###autoload
+(defmacro define-text-object! (key start-regex end-regex)
+  (let ((inner-name (make-symbol "narf--inner-name"))
+        (outer-name (make-symbol "narf--outer-name")))
+    `(progn
+       (evil-define-text-object ,inner-name (count &optional beg end type)
+         (evil-select-paren ,start-regex ,end-regex beg end type count nil))
+       (evil-define-text-object ,outer-name (count &optional beg end type)
+         (evil-select-paren ,start-regex ,end-regex beg end type count t))
+       (define-key evil-inner-text-objects-map ,key (quote ,inner-name))
+       (define-key evil-outer-text-objects-map ,key (quote ,outer-name)))))
+
 (provide 'defuns-evil)
 ;;; defuns-evil.el ends here
