@@ -142,6 +142,7 @@
           ("*helm-ag-edit*"                  :position bottom :height 20 :stick t)
           (help-mode                         :position bottom :height 15 :stick t)
           ("*Backtrace*"                     :position bottom :height 15 :stick t)
+          ("*Flycheck errors*"               :position bottom :height 15 :stick t)
           ("^\\*[Hh]elm.*?\\*\\'"  :regexp t :position bottom :height 15)
           ("^\\*Org-Babel.*\\*$"   :regexp t :position bottom :height 15)
           ("^\\*Org .*\\*$"        :regexp t :position bottom :height 15)

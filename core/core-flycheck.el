@@ -4,14 +4,17 @@
 (use-package flycheck
   :commands (flycheck-mode flycheck-list-errors flycheck-buffer)
   :init
-  (setq flycheck-indication-mode nil
+  (setq flycheck-indication-mode 'right-fringe
         ;; Removed checks on idle/change for snappiness
-        flycheck-check-syntax-automatically '(save mode-enabled idle-change)
+        flycheck-check-syntax-automatically '(save mode-enabled)
         flycheck-disabled-checkers '(emacs-lisp-checkdoc make))
   :config
   (bind! :map flycheck-error-list-mode-map
          :n [escape] 'kill-this-buffer
-         :n "q"      'kill-this-buffer)
+         :n "q"      'kill-this-buffer
+         :n "C-n"    'flycheck-error-list-next-error
+         :n "C-p"    'flycheck-error-list-previous-error
+         :n "RET"    'flycheck-error-list-goto-error)
 
   (evil-initial-state 'flycheck-error-list-mode 'emacs)
 
