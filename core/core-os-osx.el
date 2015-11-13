@@ -44,14 +44,13 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(when (featurep 'ns)
-  (after! evil
-    ;; On OSX, stop copying each visual state move to the clipboard:
-    ;; https://bitbucket.org/lyro/evil/issue/336/osx-visual-state-copies-the-region-on
-    ;; Most of this code grokked from:
-    ;; http://stackoverflow.com/questions/15873346/elisp-rename-macro
-    (defadvice evil-visual-update-x-selection (around clobber-x-select-text activate)
-      (unless (featurep 'ns) ad-do-it))))
+(after! evil
+  ;; On OSX, stop copying each visual state move to the clipboard:
+  ;; https://bitbucket.org/lyro/evil/issue/336/osx-visual-state-copies-the-region-on
+  ;; Most of this code grokked from:
+  ;; http://stackoverflow.com/questions/15873346/elisp-rename-macro
+  (defadvice evil-visual-update-x-selection (around clobber-x-select-text activate)
+    (unless (or (featurep 'mac) (featurep 'ns)) ad-do-it)))
 
 (defun narf-open-with (&optional app-name path)
   "Send PATH to APP-NAME on OSX."
