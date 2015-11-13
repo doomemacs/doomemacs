@@ -55,19 +55,25 @@
 (defun narf-open-with (&optional app-name path)
   "Send PATH to APP-NAME on OSX."
   (interactive)
-  (let* ((path (f-full (s-replace "'" "\\'" (or path (if (eq major-mode 'dired-mode) (dired-get-file-for-visit) (buffer-file-name))))))
-         (command (concat "open " (when app-name (concat "-a " (shell-quote-argument app-name))) " '" path "'")))
+  (let* ((path (f-full (s-replace "'" "\\'"
+                                  (or path (if (eq major-mode 'dired-mode)
+                                               (dired-get-file-for-visit)
+                                             (buffer-file-name))))))
+         (command (format "open %s"
+                          (if app-name
+                              (format "-a %s" (shell-quote-argument app-name))
+                            (format "'%s'" path)))))
     (message "Running: %s" command)
     (shell-command command)))
 
 (defun narf-switch-to-iterm ()
   (interactive)
-  (shell-command "osascript -e 'tell application \"iTerm2\" to activate'" nil))
+  (do-applescript "tell application \"iTerm2\" to activate"))
 
 (defun narf-switch-to-iterm-and-cd ()
   (interactive)
   (narf:tmux-chdir nil t)
-  (shell-command "osascript -e 'tell application \"iTerm2\" to activate'" nil))
+  (narf-switch-to-iterm))
 
 (provide 'core-os-osx)
 ;;; core-os-osx.el ends here
