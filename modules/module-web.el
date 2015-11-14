@@ -80,10 +80,13 @@
 (use-package emmet-mode
   :defer t
   :diminish emmet-mode
-  :init (add-hook! (scss-mode web-mode html-mode haml-mode nxml-mode) 'emmet-mode)
+  :init
+  (add-hook! (scss-mode web-mode html-mode haml-mode nxml-mode) 'emmet-mode)
+  (defvar emmet-mode-keymap (make-sparse-keymap))
   :config
   (setq emmet-move-cursor-between-quotes t)
   (bind! :map emmet-mode-keymap
+         :v "M-e" 'emmet-wrap-with-markup
          :i "M-e" 'emmet-expand-yas
          :i "M-E" 'emmet-expand-line))
 

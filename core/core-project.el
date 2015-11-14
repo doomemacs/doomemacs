@@ -32,7 +32,9 @@
     (ido-vertical-mode 1)
     (require 'flx-ido)
     (flx-ido-mode 1)
-    (bind! :map (ido-common-completion-map ido-completion-map ido-file-completion-map)
+    (bind! :map (ido-common-completion-map
+                 ido-completion-map
+                 ido-file-completion-map)
            "C-n" 'ido-next-match
            "C-p" 'ido-prev-match
            "C-w" 'ido-delete-backward-word-updir
@@ -84,6 +86,10 @@
 
   (add-hook! neotree-mode 'narf|neotree-init-keymap)
   (add-hook! window-configuration-change 'narf|neotree-close-on-window-change)
+
+  (when neo-persist-show
+    (add-hook! 'popwin:before-popup-hook (setq neo-persist-show nil))
+    (add-hook! 'popwin:after-popup-hook  (setq neo-persist-show t)))
 
   (evil-set-initial-state 'neotree-mode 'motion)
   (after! projectile

@@ -28,7 +28,7 @@
   (when *linum-mdown-line*
     (let (mu-line)
       (setq mu-line (narf--line-at-click))
-      (goto-line linum-mdown-line*)
+      (goto-line *linum-mdown-line*)
       (if (> mu-line *linum-mdown-line*)
           (progn
             (set-mark (point))
@@ -37,7 +37,7 @@
         (set-mark (line-end-position))
         (goto-line mu-line)
         (beginning-of-line))
-      (setq *linum-mdown* nil))))
+      (setq *linum-mdown-line* nil))))
 
 (provide 'defuns-editor)
 ;;; defuns-editor.el ends here

@@ -96,7 +96,7 @@ enable multiple minor modes for the same regexp.")
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; (global-whitespace-mode 1)  ; Show whitespace
-;; (global-auto-revert-mode -1); revert buffers for changed files
+(global-auto-revert-mode 1)    ; revert buffers for changed files
 (global-font-lock-mode t)      ; Enable syntax highlighting for older emacs
 (electric-indent-mode -1)      ; on by default
 

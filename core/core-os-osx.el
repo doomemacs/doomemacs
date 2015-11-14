@@ -11,9 +11,8 @@
       ;; sane trackpad/mouse scroll settings
       mac-redisplay-dont-reset-vscroll t
       mac-mouse-wheel-smooth-scroll nil
-      mouse-wheel-scroll-amount '(8 ((shift) . 2))  ;; one line at a time
+      mouse-wheel-scroll-amount '(6 ((shift) . 2))  ;; one line at a time
       mouse-wheel-progressive-speed nil             ;; don't accelerate scrolling
-
 
       ;;; NOTE These mean nothing to railwaycat's emacs-mac build on OSX
       ;; Curse Lion and its sudden but inevitable fullscreen mode!

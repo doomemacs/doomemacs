@@ -1,13 +1,5 @@
 ;;; module-rust.el
 
-;; NOTE Install instructions
-;; brew install rust
-;; git clone https://github.com/phildawes/racer.git ~
-;; cd ~/racer
-;; cargo build --release
-;; mv ~/racer/release/racer /usr/local/bin
-;; rm -rf ~/racer
-
 (use-package rust-mode
   :mode "\\.rs$"
   :config

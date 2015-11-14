@@ -60,11 +60,6 @@
 ;; Completion --- core/core-company.el
 (depends-on "company")
 (depends-on "company-statistics")
-(depends-on "company-quickhelp")
-(depends-on "company-anaconda")
-(depends-on "company-c-headers")
-(depends-on "company-inf-ruby")
-(depends-on "company-tern")
 
 ;; Collab --- core/core-collab.el
 (depends-on "impatient-mode")
@@ -110,6 +105,7 @@
 ;; C/C++ -- modules/module-cc.el
 (depends-on "cmake-mode")
 (depends-on "glsl-mode")
+(depends-on "company-c-headers")
 
 ;; Crystal -- modules/module-crystal.el
 (depends-on "crystal-mode" :git "https://github.com/jpellerin/emacs-crystal-mode")
@@ -142,6 +138,7 @@
 (depends-on "typescript-mode")
 (depends-on "tide")
 (depends-on "coffee-mode")
+(depends-on "company-tern")
 
 ;; Lua -- modules/module-lua.el
 (depends-on "lua-mode")
@@ -155,7 +152,7 @@
 (depends-on "company-math")
 (depends-on "ob-http")
 
-;; PHP -- modules/module-php.el
+;; PlantUML -- modules/module-plantuml.el
 (depends-on "puml-mode")
 
 ;; PHP -- modules/module-php.el
@@ -180,6 +177,7 @@
 (depends-on "rspec-mode")
 (depends-on "inf-ruby")
 (depends-on "robe")
+(depends-on "company-inf-ruby")
 
 ;; Rust -- modules/module-rust.el
 (depends-on "rust-mode")
