@@ -1,20 +1,6 @@
 ;;; core-ui.el --- interface settings
 ;; see lib/ui-defuns.el
 
-(if window-system
-    (progn
-      (fringe-mode '(3 . 6))
-      (setq frame-title-format '(buffer-file-name "%f" ("%b")))
-      (setq initial-frame-alist '((width . 120) (height . 80)))
-
-      (set-frame-font narf-default-font)
-      (set-face-attribute 'default t :font narf-default-font)
-
-      (define-fringe-bitmap 'tilde [0 0 0 113 219 142 0 0] nil nil 'center)
-      (setcdr (assq 'empty-line fringe-indicator-alist) 'tilde)
-      (set-fringe-bitmap-face 'tilde 'font-lock-comment-face))
-  (menu-bar-mode -1))
-
 (setq-default
  blink-matching-paren nil
  show-paren-delay 0.075
@@ -32,14 +18,29 @@
  indicate-buffer-boundaries      nil
  indicate-empty-lines            t
  fringes-outside-margins         t
- hl-line-sticky-flag             nil
+ hl-line-sticky-flag             nil  ; only highlight in one window
 
  jit-lock-defer-time 0
- jit-lock-stealth-time 1
+ jit-lock-stealth-time nil
 
  resize-mini-windows t)
 
-(blink-cursor-mode  1)    ; do blink cursor
+(defvar narf-fringe-size 6)
+(if window-system
+    (progn
+      (fringe-mode narf-fringe-size)
+      (setq frame-title-format '(buffer-file-name "%f" ("%b")))
+      (setq initial-frame-alist '((width . 120) (height . 80)))
+
+      (set-frame-font narf-default-font)
+      (set-face-attribute 'default t :font narf-default-font)
+
+      (define-fringe-bitmap 'tilde [64 168 16] nil nil 'center)
+      (setcdr (assq 'empty-line fringe-indicator-alist) 'tilde)
+      (set-fringe-bitmap-face 'tilde 'font-lock-comment-face))
+  (menu-bar-mode -1))
+
+(blink-cursor-mode -1)    ; do blink cursor
 (tooltip-mode      -1)    ; show tooltips in echo area
 
 ;; Highlight line
@@ -71,7 +72,7 @@
   (font-lock-add-keywords nil '(("\\<\\(NOTE\\((.+)\\)?:?\\)"  1 'narf-note-face prepend))))
 
 ;; Prettify code folding in emacs ;;;;;;
-(define-fringe-bitmap 'hs-marker [0 0 8 8 62 8 8 0])
+(define-fringe-bitmap 'hs-marker [16 48 112 240 112 48 16] nil nil 'center)
 (defface hs-face '((t (:background "#ff8")))
   "Face to hightlight the ... area of hidden regions"
   :group 'hideshow)
@@ -79,24 +80,24 @@
   "Face used to highlight the fringe on folded regions"
   :group 'hideshow)
 
-(defun display-code-line-counts (ov)
-  (when (eq 'code (overlay-get ov 'hs))
-    (let* ((marker-string "*fringe-dummy*")
-           (marker-length (length marker-string))
-           (display-string (format " ... "
-                                   (count-lines (overlay-start ov)
-                                                (overlay-end ov)))))
-      (put-text-property 0 marker-length 'display (list 'right-fringe 'hs-marker 'hs-fringe-face) marker-string)
-      (put-text-property 0 (length display-string) 'face 'hs-face display-string)
-      (overlay-put ov 'before-string marker-string)
-      (overlay-put ov 'display display-string))))
-(setq hs-set-up-overlay 'display-code-line-counts)
+(setq hs-set-up-overlay
+      (lambda (ov)
+        (when (eq 'code (overlay-get ov 'hs))
+          (let* ((marker-string "*fringe-dummy*")
+                 (marker-length (length marker-string))
+                 (display-string (format " ... " (count-lines (overlay-start ov)
+                                                              (overlay-end ov)))))
+            (put-text-property 0 marker-length 'display
+                               (list 'right-fringe 'hs-marker 'hs-fringe-face) marker-string)
+            (put-text-property 0 (length display-string) 'face 'hs-face display-string)
+            (overlay-put ov 'before-string marker-string)
+            (overlay-put ov 'display display-string)))))
 
 ;; Fade out when unfocused ;;;;;;;;;;;;;
 (defun narf|focus-in-alpha ()
   (set-frame-parameter nil 'alpha 100))
 (defun narf|focus-out-alpha ()
-  (set-frame-parameter nil 'alpha 90))
+  (set-frame-parameter nil 'alpha 80))
 
 (add-hook! focus-in  'narf|focus-in-alpha)
 (add-hook! focus-out 'narf|focus-out-alpha)
@@ -135,14 +136,16 @@
   :config
   (setq popwin:popup-window-height 20)
   (mapc (lambda (rule) (push rule popwin:special-display-config))
-        '(("*eshell*"                        :position left   :width 80  :stick t :dedicated t)
-          ("*scratch*"                       :position bottom :height 20 :stick t :dedicated t)
-          ("*Apropos*"                       :position bottom :height 40 :stick t :dedicated t)
-          ("*quickrun*"                      :position bottom :height 10 :stick t)
-          ("*helm-ag-edit*"                  :position bottom :height 20 :stick t)
-          (help-mode                         :position bottom :height 15 :stick t)
-          ("*Backtrace*"                     :position bottom :height 15 :stick t)
-          ("*Flycheck errors*"               :position bottom :height 15 :stick t)
+        '(("*eshell*"     :position left   :width 80  :stick t :dedicated t)
+          ("*scratch*"    :position bottom :height 20 :stick t :dedicated t)
+          ("*Apropos*"    :position bottom :height 40 :stick t :dedicated t)
+          ("*quickrun*"            :position bottom :height 10 :stick t)
+          ("*helm-ag-edit*"        :position bottom :height 20 :stick t)
+          (help-mode               :position bottom :height 15 :stick t :noselect t)
+          ("*Backtrace*"           :position bottom :height 15 :stick t)
+          ("*Flycheck errors*"     :position bottom :height 15 :stick t)
+          (org-src-mode            :position bottom :height 25 :stick t)
+          (org-agenda-mode         :position bottom :height 25 :stick t)
           ("^\\*[Hh]elm.*?\\*\\'"  :regexp t :position bottom :height 15)
           ("^\\*Org-Babel.*\\*$"   :regexp t :position bottom :height 15)
           ("^\\*Org .*\\*$"        :regexp t :position bottom :height 15)
@@ -156,6 +159,9 @@
   (vhl/define-extension 'my-undo-tree-highlights
     'undo-tree-undo 'undo-tree-redo)
   (vhl/install-extension 'my-undo-tree-highlights)
+  (vhl/define-extension 'my-yank-highlights
+    'evil-yank 'evil-paste-after 'evil-paste-before 'evil-paste-pop)
+  (vhl/install-extension 'my-yank-highlights)
   (volatile-highlights-mode t))
 
 (use-package nlinum
@@ -163,12 +169,12 @@
   :preface
   (defvar narf--hl-nlinum-overlay nil)
   (defvar narf--hl-nlinum-line nil)
-  (defvar nlinum-format " %4d  ")
+  (defvar nlinum-format " %4d ")
   (defface linum-highlight-face '((t (:inherit linum))) "Face for line highlights")
   :init
   (defun narf|nlinum-enable ()
     (nlinum-mode +1)
-    (add-hook 'post-command-hook 'narf|nlinum-hl-line))
+    (add-hook 'post-command-hook 'narf|nlinum-hl-line t))
 
   (defun narf|nlinum-disable ()
     (nlinum-mode -1)
@@ -180,7 +186,7 @@
     'narf|nlinum-enable)
   :config
   (defun narf|nlinum-unhl-line ()
-    "Highlight line number"
+    "Unhighlight line number"
     (when narf--hl-nlinum-overlay
       (let* ((ov narf--hl-nlinum-overlay)
              (disp (get-text-property 0 'display (overlay-get ov 'before-string)))
@@ -190,13 +196,13 @@
               narf--hl-nlinum-line nil))))
 
   (defun narf|nlinum-hl-line (&optional line)
-    "Unhighlight line number"
-    (let ((line-no (or line (line-number-at-pos (point)))))
+    "Highlight line number"
+    (let ((line-no (or line (string-to-number (format-mode-line "%l")))))
       (when (and nlinum-mode (not (eq line-no narf--hl-nlinum-line)))
         (let* ((pbol (if line (save-excursion (goto-char (point-min))
                                               (forward-line line-no)
                                               (point-at-bol))
-                       (point-at-bol)))
+                       (line-beginning-position)))
                (peol (1+ pbol)))
           ;; Handle EOF case
           (let ((max (point-max)))
