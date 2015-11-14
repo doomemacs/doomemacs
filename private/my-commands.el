@@ -19,19 +19,19 @@
 (exmap "en[ew]"          'narf:file-create)
 (exmap "full[scr]"       'narf:toggle-fullscreen)
 (exmap "fullw[rite]"     'narf:toggle-write-mode)
-(exmap "gith[ub]"        'narf:github-browse-file)
+(exmap "bl[ame]"         'narf:github-browse-file)
 (exmap "http"            'httpd-start)
 (exmap "ini"             'narf:ido-find-file-in-emacsd)
-(exmap "k[ill]"          'kill-this-buffer)         ; Kill current buffer
-(exmap "k[ill]all"       'narf:kill-all-buffers)    ; Kill all buffers (bang = in project)
-(exmap "k[ill]buried"    'narf:kill-buried-buffers) ; Kill all buried buffers (bang = in project)
+(exmap "k[ill]"          'kill-this-buffer)          ; Kill current buffer
+(exmap "k[ill]all"       'narf:kill-all-buffers)     ; Kill all buffers (bang = in project)
+(exmap "k[ill]buried"    'narf:kill-buried-buffers)  ; Kill all buried buffers (bang = in project)
 (exmap "k[ill]o"         'narf:kill-unreal-buffers)
 (exmap "l[ast]"          'popwin:popup-last-buffer)
 (exmap "m[sg]"           'popwin:messages)
 (exmap "ma[ke]"          'narf:build)
 (exmap "mv"              'narf:file-move)
-(exmap "na[rrow]"        'narf:narrow)  ; Narrow buffer to selection
-(exmap "wi[den]"         'narf:widen)   ; Widen narrowed buffer
+(exmap "na[rrow]"        'narf:narrow)               ; Narrow buffer to selection
+(exmap "wi[den]"         'narf:widen)                ; Widen narrowed buffer
 (exmap "pop"             'narf/popwin-toggle)
 (exmap "proj[ect]"       'helm-projectile-switch-project)
 (exmap "rec[ent]"        'narf:helm-recentf)
