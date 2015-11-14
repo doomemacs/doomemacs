@@ -234,7 +234,7 @@
   :config
   (setq-default
    powerline-default-separator nil
-   powerline-height 18)
+   powerline-height 19)
 
   (defface mode-line-is-modified nil "Face for mode-line modified symbol")
   (defface mode-line-buffer-file nil "Face for mode-line buffer file path")
@@ -255,7 +255,8 @@
                     buffer-path)))
       "%b")
     :face (if active 'mode-line-buffer-file 'mode-line-inactive)
-    :tight t)
+    :skip-alternate t
+    :tight-right t)
 
   (spaceline-define-segment narf-buffer-modified
     (concat
@@ -272,7 +273,8 @@
   (spaceline-define-segment narf-buffer-encoding-abbrev
     "The line ending convention used in the buffer."
     (symbol-name buffer-file-coding-system)
-    :when (not (string-match-p "\\(utf-8\\|undecided\\)" (symbol-name buffer-file-coding-system))))
+    :when (not (string-match-p "\\(utf-8\\|undecided\\)"
+                               (symbol-name buffer-file-coding-system))))
 
   (spaceline-define-segment narf-buffer-position
     "A more vim-like buffer position."
@@ -286,18 +288,18 @@
           (cond ((eq start 1) ":Top")
                 ((>= perc 100) ":Bot")
                 (t (format ":%d%%%%" perc))))))
-    :tight-right t)
+    :tight t)
 
   (spaceline-define-segment narf-vc
     "Version control info"
-    (let ((vc (vc-working-revision buffer-file-name)))
-      (when vc
-        (format "%s%s" vc (case (vc-state buffer-file-name)
-                            ('edited "+")
-                            ('conflict "!!!")
-                            (t "")))))
+    (concat (downcase vc-mode)
+            (case (vc-state buffer-file-name)
+              ('edited "+")
+              ('conflict "!!!")
+              (t "")))
+    :when (and active vc-mode)
     :face other-face
-    :when (and active vc-mode))
+    :tight t)
 
   (spaceline-define-segment narf-env-version
     "A HUD that shows which part of the buffer is currently visible."
@@ -308,42 +310,79 @@
 
   (spaceline-define-segment narf-hud
     "A HUD that shows which part of the buffer is currently visible."
-    (powerline-hud highlight-face default-face 1)
+    (powerline-hud highlight-face other-face 1)
+    :face other-face
     :tight-right t)
 
   (spaceline-define-segment narf-anzu
-    "Show the current match number and the total number of matches.  Requires anzu
-to be enabled."
+    "Show the current match number and the total number of matches. Requires
+anzu to be enabled."
     (let ((here anzu--current-position)
           (total anzu--total-matched))
       (when anzu--state
-        (concat
-         (propertize
-          (cl-case anzu--state
-            (search (format " %s/%d%s "
-                            (anzu--format-here-position here total)
-                            total (if anzu--overflow-p "+" "")))
-            (replace-query (format " %d replace " total))
-            (replace (format " %d/%d " here total)))
-          'face highlight-face)
-         " ")))
+        (propertize
+         (cl-case anzu--state
+           (search (format " %s/%d%s "
+                           (anzu--format-here-position here total)
+                           total (if anzu--overflow-p "+" "")))
+           (replace-query (format " %d replace " total))
+           (replace (format " %d/%d " here total)))
+         'face highlight-face)))
     :when (and active (bound-and-true-p anzu--state))
+    :skip-alternate t
     :tight t)
+
+  ;; TODO mode-line-iedit-face default face
+  (defface mode-line-iedit-face nil "")
+  (spaceline-define-segment narf-iedit
+    "Show the number of matches and what match you're on (or after). Requires
+iedit."
+    (let ((this-oc (iedit-find-current-occurrence-overlay))
+          (length  (or (ignore-errors (length iedit-occurrences-overlays)) 0)))
+      (if (zerop (iedit-occurrence-string-length))
+          "..."
+        (format "%s/%s"
+                (save-excursion
+                  (unless this-oc
+                    (iedit-prev-occurrence)
+                    (setq this-oc (iedit-find-current-occurrence-overlay)))
+                  (if this-oc
+                      (- length (-elem-index this-oc iedit-occurrences-overlays))
+                    "-"))
+                (int-to-string length))))
+    :face (if active 'mode-line-iedit-face 'mode-line-inactive)
+    :skip-alternate t
+    :when (and (featurep 'iedit) (> (length iedit-occurrences-overlays) 0)))
+
+  ;; TODO mode-line-substitute-face default face
+  (defface mode-line-substitute-face nil "")
+  ;; TODO This is very hackish; refactor?
+  (spaceline-define-segment narf-evil-substitute
+    "Show number of :s matches in real time."
+    (let ((highlights (cdar evil-ex-active-highlights-alist)))
+      (format "%s" (length (elt highlights (1- (length highlights))))))
+    :face (if active 'mode-line-substitute-face 'mode-line-inactive)
+    :skip-alternate t
+    :when (and (evil-ex-p) (string-equal evil-ex-cmd "s")))
+
+  (spaceline-define-segment narf-major-mode
+    (concat "[" mode-name "]")
+    :skip-alternate t)
 
   ;; Initialize modeline
   (spaceline-install
    ;; Left side
-   '(narf-anzu
+   '(narf-anzu narf-iedit narf-evil-substitute
      (narf-buffer-path remote-host)
      narf-buffer-modified
      narf-vc
      ((flycheck-error flycheck-warning flycheck-info) :when active))
    ;; Right side
-   '((selection-info :face highlight-face)
+   '((selection-info :face highlight-face :skip-alternate t)
      narf-env-version
-     narf-buffer-encoding-abbrev
-     ((major-mode :tight-right t)
-      (minor-modes :tight t :separator "")
+     narf-buffer-encoding-
+     (narf-major-mode
+      (minor-modes :separator " " :tight t)
       process :when active)
      (global :when active)
      ("%l·%c" narf-buffer-position)
