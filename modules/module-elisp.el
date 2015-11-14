@@ -22,6 +22,7 @@
                   "λ"
                   "in!"
                   "define-company-backend!"
+                  "define-text-object!"
                   )))
   (font-lock-add-keywords 'emacs-lisp-mode
                           `((,(concat "(\\s-*" (regexp-opt keywords 'paren) "\\_>")
