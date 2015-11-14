@@ -11,11 +11,11 @@
   :init
   (after! abbrev (diminish 'abbrev-mode "A"))
   (setq company-idle-delay nil
-        company-minimum-prefix-length 1
-        company-show-numbers nil
-        company-tooltip-limit 20
+        company-minimum-prefix-length 2
+        company-tooltip-limit 10
         company-dabbrev-downcase nil
         company-dabbrev-ignore-case nil
+        company-dabbrev-code-other-buffers t
         company-tooltip-align-annotations t
         company-require-match 'never
         company-global-modes '(not eshell-mode comint-mode erc-mode message-mode help-mode)
@@ -31,11 +31,9 @@
 
   :config
   (require 'company-statistics)
-  (require 'company-quickhelp)
-  (setq company-quickhelp-delay nil
-        ;; Rewrite evil-complete to use company-dabbrev
-        company-dabbrev-code-other-buffers t
-        evil-complete-next-func      'narf/company-evil-complete-next
+
+  ;; Rewrite evil-complete to use company-dabbrev
+  (setq evil-complete-next-func      'narf/company-evil-complete-next
         evil-complete-previous-func  'narf/company-evil-complete-previous)
 
   ;; TODO Restore company-dict
@@ -50,8 +48,7 @@
   (define-key company-active-map "\C-w" nil)
 
   (global-company-mode +1)
-  (company-statistics-mode +1)
-  (company-quickhelp-mode 1))
+  (company-statistics-mode +1))
 
 (provide 'core-company)
 ;;; core-company.el ends here
