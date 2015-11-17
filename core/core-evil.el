@@ -27,6 +27,7 @@
         evil-ex-search-vim-style-regexp t
         evil-ex-interactive-search-highlight 'selected-window
         evil-echo-state nil
+        evil-ex-substitute-global t
 
         ;; Color-coded state cursors
         evil-normal-state-cursor  'box
@@ -40,6 +41,12 @@
 
   (evil-define-key 'normal evil-command-window-mode-map [escape] 'kill-buffer-and-window)
 
+  ;; Monkey-patch an error triggered randomly during column-selection; is caused
+  ;; by `extract-rectangle-line' receiving a float.
+  (defun narf*evil-extract-rectangle-line-fix (args)
+    (mapcar (lambda (i) (if (numberp i) (truncate i) i)) args))
+  (advice-add 'extract-rectangle-line :filter-args 'narf*evil-extract-rectangle-line-fix)
+
   ;; modes to map to different default states
   (dolist (mode-map '((cider-repl-mode   . emacs)
                       (comint-mode       . emacs)
@@ -51,14 +58,14 @@
 
   (progn ; evil hacks
     (defadvice evil-force-normal-state (after evil-esc-quit activate)
+      "Close popwin windows, disable search highlights and quit the minibuffer if open."
+      (when (popwin:popup-window-live-p)
+        (popwin:close-popup-window))
       (ignore-errors
-        (when (popwin:popup-window-live-p)
-          (popwin:close-popup-window))
-         ; close popups, if any
-        (evil-ex-nohighlight)
-        ;; Exit minibuffer if alive
-        (if (minibuffer-window-active-p (minibuffer-window))
-            (narf/minibuffer-quit))))
+        (evil-ex-nohighlight))
+      (when (minibuffer-window-active-p (minibuffer-window))
+        (narf-minibuffer-quit)))
+
     ;; Fix disruptive errors w/ hidden buffers caused by popwin
     (defadvice evil-ex-hl-do-update-highlight (around evil-ex-hidden-buffer-ignore-errors activate)
       (ignore-errors ad-do-it))
@@ -70,12 +77,11 @@
         (setq-local evil-ex-commands (copy-alist evil-ex-commands)))
       (evil-ex-define-cmd cmd function))
 
-    ;; Restore vimmish ex-mode keymaps in isearch
     ;; Hide keystroke display while isearch is active
     (add-hook! isearch-mode     (setq echo-keystrokes 0))
     (add-hook! isearch-mode-end (setq echo-keystrokes 0.02))
     (let ((map evil-ex-search-keymap))
-      (define-key map "\C-w" 'evil-delete-backward-word)
+      (define-key map "\C-w" 'backward-kill-word)
       (define-key map "\C-u" 'evil-delete-whole-line))
 
     ;; Repeat motions with SPC/S-SPC
@@ -108,8 +114,7 @@
 ;; evil plugins
 (use-package evil-anzu
   :config (setq anzu-cons-mode-line-p nil
-                anzu-minimum-input-length 2
-                anzu-search-threshold 100))
+                anzu-minimum-input-length 2))
 
 (use-package evil-args
   :commands (evil-inner-arg evil-outer-arg evil-forward-arg evil-backward-arg evil-jump-out-args)
@@ -134,6 +139,7 @@
   (advice-add 'evil-force-normal-state :after 'narf*evil-exchange-off))
 
 (use-package evil-iedit-state
+  :diminish iedit-mode
   :functions (iedit-current-occurrence-string iedit-restrict-region)
   :commands (evil-iedit-state evil-iedit-state/iedit-mode)
   :config
@@ -212,13 +218,15 @@
 
 (use-package evil-search-highlight-persist
   :config
-  (setq evil-search-highlight-string-min-len 2)
   (global-evil-search-highlight-persist t)
   (advice-add 'evil-force-normal-state :after 'evil-search-highlight-persist-remove-all))
 
 (use-package evil-snipe
   :diminish evil-snipe-local-mode
-  :commands (evil-snipe-f evil-snipe-F evil-snipe-t evil-snipe-T evil-snipe-s evil-snipe-S evil-snipe-x evil-snipe-X)
+  ;; :commands (evil-snipe-f evil-snipe-F
+  ;;            evil-snipe-t evil-snipe-T
+  ;;            evil-snipe-s evil-snipe-S
+  ;;            evil-snipe-x evil-snipe-X)
   :init
   (setq-default
    evil-snipe-smart-case t
@@ -230,16 +238,16 @@
                               (?\] "[]})]")
                               (?\; "[;:]")))
 
-  (define-key evil-normal-state-map "s" nil)
-  (define-key evil-normal-state-map "S" nil)
-  (define-key evil-motion-state-map "s" 'evil-snipe-s)
-  (define-key evil-motion-state-map "S" 'evil-snipe-S)
-  (define-key evil-motion-state-map "f" 'evil-snipe-f)
-  (define-key evil-motion-state-map "F" 'evil-snipe-F)
-  (define-key evil-motion-state-map "t" 'evil-snipe-t)
-  (define-key evil-motion-state-map "T" 'evil-snipe-T)
-  (define-key evil-operator-state-map "z" 'evil-snipe-s)
-  (define-key evil-operator-state-map "Z" 'evil-snipe-S)
+  ;; (define-key evil-normal-state-map "s" nil)
+  ;; (define-key evil-normal-state-map "S" nil)
+  ;; (define-key evil-motion-state-map "s" 'evil-snipe-s)
+  ;; (define-key evil-motion-state-map "S" 'evil-snipe-S)
+  ;; (define-key evil-motion-state-map "f" 'evil-snipe-f)
+  ;; (define-key evil-motion-state-map "F" 'evil-snipe-F)
+  ;; (define-key evil-motion-state-map "t" 'evil-snipe-t)
+  ;; (define-key evil-motion-state-map "T" 'evil-snipe-T)
+  ;; (define-key evil-operator-state-map "z" 'evil-snipe-s)
+  ;; (define-key evil-operator-state-map "Z" 'evil-snipe-S)
   :config
   (evil-snipe-mode 1)
   (evil-snipe-override-mode 1))
