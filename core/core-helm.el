@@ -23,6 +23,7 @@
    helm-split-window-preferred-function 'narf/helm-split-window)
   :config
   (evil-set-initial-state 'helm-mode 'emacs)
+  (require 'helm-files)
 
   ;; Rewrite prompt for all helm windows
   (defun helm (&rest plist)
@@ -62,8 +63,8 @@
                        "*Helm Swoop*"))
       (push bufname winner-boring-buffers)))
 
-  (bind! (:map (helm-map helm-generic-files-map helm-find-files-map)
-           "C-w"        'evil-delete-backward-word
+  (bind! (:map (helm-map helm-generic-files-map helm-find-files-map helm-swoop-map helm-projectile-find-file-map)
+           "C-w"        'backward-kill-word
            "C-r"        'evil-ex-paste-from-register ; Evil registers in helm! Glorious!
            [escape]     'helm-keyboard-quit)
          (:map helm-find-files-map
@@ -172,11 +173,6 @@
              helm-org-agenda-files-headings
              helm-org-capture-templates))
 
-(use-package helm-files
-  :commands (helm-recentf
-             helm-buffers
-             helm-buffers-list))
-
 (use-package helm-css-scss ; https://github.com/ShingoFukuyama/helm-css-scss
   :commands (helm-css-scss
              helm-css-scss-multi
@@ -191,7 +187,9 @@
   :config
   (setq helm-swoop-use-line-number-face t
         helm-swoop-split-with-multiple-windows t
-        helm-swoop-speed-or-color t))
+        helm-swoop-candidate-number-limit 200
+        helm-swoop-speed-or-color t
+        helm-swoop-pre-input-function (lambda () "")))
 
 ;; (use-package helm-c-yasnippet :commands helm-yas-visit-snippet-file)
 (use-package helm-semantic :commands helm-semantic-or-imenu)
