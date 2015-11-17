@@ -118,7 +118,8 @@
              persistent-soft-exists-p
              persistent-soft-flush
              persistent-soft-location-readable
-             persistent-soft-location-destroy))
+             persistent-soft-location-destroy)
+  :config (setq pcache-directory (concat narf-temp-dir "pcache/")))
 
 (use-package async
   :commands (async-start
