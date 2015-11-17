@@ -10,8 +10,23 @@
          "/git/ignore$"))
 
 (use-package diff-hl
-  :init (setq diff-hl-draw-borders nil)
-  :config (global-diff-hl-mode +1))
+  :init
+  (setq diff-hl-draw-borders nil
+        diff-hl-fringe-bmp-function 'narf-diff-hl-fringe-bmp)
+  :config
+  (defun narf-diff-hl-fringe-bmp (type _pos)
+    (if (eq type 'delete)
+        'narf--diff-hl-bitmap-del
+      'narf--diff-hl-bitmap))
+
+  (define-fringe-bitmap 'narf--diff-hl-bitmap
+    [240 240 240 240 240 240 240 240 240 240 240 240 240 240]
+    nil nil 'center)
+  (define-fringe-bitmap 'narf--diff-hl-bitmap-del
+    [248 240 224 192 128 0 0 0 0 0 0 0 0 0]
+    nil nil 'center)
+
+  (global-diff-hl-mode 1))
 
 (use-package github-browse-file
   :commands (narf:github-browse-file github-browse-file github-browse-file-blame)
