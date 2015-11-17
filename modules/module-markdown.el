@@ -11,27 +11,32 @@
   :init
   (add-hook! markdown-mode 'narf|enable-hard-wrap)
   :config
-  (bind! :map markdown-mode-map
-         "<backspace>"  nil
-         "<M-left>"     nil
-         "<M-right>"    nil
+  (add-hook! markdown-mode
+    (exmap! "preview"  'narf/markdown-preview)
+    (exmap! "export"   'narf:org-export))
+  (bind! (:map markdown-mode-map
+           "<backspace>"  nil
+           "<M-left>"     nil
+           "<M-right>"    nil
 
-         "M-*"  'markdown-insert-list-item
-         "M-b"  'markdown-insert-bold
-         "M-i"  'markdown-insert-italic
-         "M-`"  'narf/markdown-insert-del
+           ;; Assumes you have a markdown renderer plugin in chrome
+           :nv "M-r"  (λ (narf-open-with "Google Chrome"))
 
-         (:prefix "," ; <leader>
-           :nv "i"   'markdown-insert-image
-           :nv "l"   'markdown-insert-link
-           :nv "L"   'markdown-insert-reference-link-dwim
-           :nv "b"   'markdown-preview)
+           "M-*"  'markdown-insert-list-item
+           "M-b"  'markdown-insert-bold
+           "M-i"  'markdown-insert-italic
+           "M-`"  'narf/markdown-insert-del
 
-         ;; TODO: Make context sensitive
-         :n "[p"   'markdown-promote
-         :n "]p"   'markdown-demote
+           :nv ",i"   'markdown-insert-image
+           :nv ",l"   'markdown-insert-link
+           :nv ",L"   'markdown-insert-reference-link-dwim
+           :nv ",b"   'markdown-preview
 
-         :i "M--"  'markdown-insert-hr))
+           ;; TODO: Make context sensitive
+           :n "[p"   'markdown-promote
+           :n "]p"   'markdown-demote
+
+           :i "M--"  'markdown-insert-hr)))
 
 ;; TODO: Test previewing capability
 

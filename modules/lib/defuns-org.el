@@ -226,6 +226,17 @@ COUNT-FOOTNOTES? is non-nil."
             (t (copy-file link new-path)))
       (insert (format "[[./%s]]" (abbreviate-file-name new-path))))))
 
+;;;###autoload (autoload 'narf:org-export "defuns-org" nil t)
+(evil-define-command narf:org-export (dest)
+  (interactive "<a>")
+  (let ((path (if (string-match-p "^[/~]" dest)
+                  dest
+                (expand-file-name dest default-directory))))
+    (shell-command
+     (format "/usr/local/bin/pandoc '%s' -o '%s'"
+             (buffer-file-name) path))
+    (message "Done! Exported to: %s" path)))
+
 ;;;###autoload
 (defun narf/org-remove-link ()
   "Replace an org link by its description or if empty its address"
