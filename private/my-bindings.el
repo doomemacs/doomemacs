@@ -12,25 +12,28 @@
  ;; Global keymaps                     ;;
  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
- "A-x"   'execute-extended-command
  "M-x"   'smex
  "M-X"   'smex-major-mode-commands
  "M-;"   'eval-expression
- "M-="   'text-scale-increase
- "M--"   'text-scale-decrease
  "M-/"   'evil-commentary-line
+
+ "A-x"   'smex
+ "A-X"   'smex-major-mode-commands
+ "A-;"   'eval-expression
+ "A-/"   'evil-commentary-line
+
+ (:when window-system
+   "M-="   'text-scale-increase
+   "M--"   'text-scale-decrease)
+
  "M-b"   'narf:build
  "M-t"   'helm-projectile-find-file
  "A-`"   'narf-switch-to-iterm
  "C-`"   'narf/popwin-toggle
+ "<f9>"  'what-face
 
  "M-w"   'evil-window-delete
- "M-W"   (λ (let ((data (assq (selected-frame) narf-wg-frames)))
-              (if data
-                  (progn (wg-delete-workgroup (wg-get-workgroup (cdr data)))
-                         (delete-frame (car data)))
-                (delete-frame))))
-
+ "M-W"   'delete-frame
  "M-n"   (λ (switch-to-buffer (generate-new-buffer "*new*")))
  "M-N"   (λ (let ((nlinum-p (and (featurep 'nlinum)
                                  (memq 'nlinum--setup-window window-configuration-change-hook))))
@@ -68,8 +71,22 @@
  :m "M-7" (λ (narf:switch-to-workgroup-at-index 6))
  :m "M-8" (λ (narf:switch-to-workgroup-at-index 7))
  :m "M-9" (λ (narf:switch-to-workgroup-at-index 8))
+ :m "M-0" (λ (text-scale-set 0))
 
  (:when IS-MAC
+   ;; Add animated transitions to OSX emacs
+   "M-w"   (λ (if window-system
+                  (mac-start-animation (get-buffer-window) :type 'fade-out :duration 0.25))
+              (call-interactively 'evil-window-delete))
+   "M-W"   (λ (let ((data (assq (selected-frame) narf-wg-frames)))
+                (if data
+                    (progn (wg-delete-workgroup (wg-get-workgroup (cdr data)))
+                           (delete-frame (car data)))
+                  (delete-frame))))
+   "M-n"   (λ (if window-system
+                  (mac-start-animation (get-buffer-window) :type 'fade-out :duration 0.25))
+              (switch-to-buffer (generate-new-buffer "*new*")))
+
    ;; Textmate-esque indent shift left/right
    :i "M-["           (kbd "C-o m l C-o I DEL C-o ` l")
    :i "M-]"           (λ (evil-shift-right (point-at-bol) (point-at-eol)))
@@ -107,7 +124,7 @@
    :nv "]"   'helm-etags-select
    :nv "a"   'helm-projectile-find-other-file
    :nv "E"   (λ (in! narf-emacs-dir (helm-projectile-find-file)))
-   :nv "n"   'narf/ido-find-org-file
+   :nv "n"   (λ (in! org-directory (helm-projectile-find-file)))
    :nv "N"   'narf:org-search-files-or-headers
    :nv "m"   'helm-recentf
    :nv "M"   'helm-projectile-recentf  ; recent PROJECT files
@@ -137,19 +154,19 @@
    :nv ";"  'narf/nlinum-toggle
    :nv "E"  'evil-emacs-state
 
-   :n "]"   'next-buffer
-   :n "["   'previous-buffer
+   :n  "]"  'next-buffer
+   :n  "["  'previous-buffer
 
-   :n "c"   'narf/reset-theme
-   :n "s"   (λ (narf:yas-snippets t))        ; ido snippets dir
-   :n "g"   'diff-hl-diff-goto-hunk
-   :n "e"   (λ (call-interactively 'flycheck-buffer) (flycheck-list-errors))
-   :n "p"   'helm-show-kill-ring
-   :n "b"   'helm-bookmarks
-   :n "w"   'narf:helm-wg
-   :n "W"   'narf:workgroup-display)
+   :n  "c"  'narf/reset-theme
+   :n  "s"  (λ (narf:yas-snippets t))        ; ido snippets dir
+   :n  "g"  'diff-hl-diff-goto-hunk
+   :n  "e"  (λ (call-interactively 'flycheck-buffer) (flycheck-list-errors))
+   :n  "p"  'helm-show-kill-ring
+   :n  "b"  'helm-bookmarks
+   :n  "w"  'narf:helm-wg
+   :n  "W"  'narf:workgroup-display)
 
- :n "Y" "y$"
+ ;; :n "Y" "y$"
  :n "K" 'smart-up
 
  ;; Don't move cursor on indent
@@ -159,7 +176,7 @@
  :n "zr"  'narf/evil-open-folds
  :n "zm"  'narf/evil-close-folds
  :n "zx"  'narf:kill-real-buffer
- :n "zX"  'bury-buffer
+ :n "ZX"  'bury-buffer
 
  :n "]b"  'narf/next-real-buffer
  :n "[b"  'narf/previous-real-buffer
@@ -179,7 +196,6 @@
 
  :n "gR"  'narf:eval-buffer
  :n "gc"  'evil-commentary
- :n "gy"  'evil-commentary-yank
  :n "gx"  'evil-exchange
  :n "gr"  'narf:eval-region
  :v "gR"  'narf:eval-region-and-replace
@@ -208,6 +224,7 @@
 
  ;; paste from recent yank register; which isn't overwritten by deletes or
  ;; other operations.
+ :n "Y"   "y$"
  :v "P"   "\"0p"
 
  :v "S"   'evil-surround-region
@@ -284,9 +301,9 @@
  (:after company
    (:map company-active-map
      "C-o"        'company-search-kill-others
-     "C-n"        'company-select-next-or-abort
-     "C-p"        'company-select-previous-or-abort
-     "C-h"        'company-quickhelp-manual-begin
+     "C-n"        'company-select-next
+     "C-p"        'company-select-previous
+     "C-h"        'company-show-doc-buffer
      "C-S-h"      'company-show-location
      "C-S-s"      'company-search-candidates
      "C-s"        'company-filter-candidates
@@ -321,10 +338,6 @@
 (global-set-key (kbd "<left-margin> <mouse-1>")      'narf/mouse-select-line)
 (global-set-key (kbd "<left-margin> <drag-mouse-1>") 'narf/mouse-select-line)
 
-;; Horizontal Scrolling
-(global-set-key (kbd "<wheel-right>") (λ (evil-scroll-column-right 2)))
-(global-set-key (kbd "<wheel-left>")  (λ (evil-scroll-column-left 2)))
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Keymap fixes                       ;;
@@ -335,8 +348,8 @@
 
 ;; Restores "dumb" indentation to the tab key. This rustles a lot of
 ;; peoples' jimmies, apparently, but it's how I like it.
-(bind! :i "<tab"   'narf/dumb-indent
-       :i "<C-tab" 'indent-for-tab-command
+(bind! :i "<tab>"   'narf/dumb-indent
+       :i "<C-tab>" 'indent-for-tab-command
 
        ;; No dumb-tab for lisp
        :i :map lisp-mode-map        [remap narf/dumb-indent] 'indent-for-tab-command
@@ -389,7 +402,7 @@
               minibuffer-local-isearch-map)
          [escape] 'narf-minibuffer-quit)
 
-       :map read-expression-map "C-w" 'evil-delete-backward-word)
+       :map read-expression-map "C-w" 'backward-kill-word)
 
 (bind! :i "A-o" (λ (insert "ø"))
        :i "A-O" (λ (insert "Ø"))
