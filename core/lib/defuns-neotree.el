@@ -32,9 +32,9 @@
   (let ((n-insert-symbol (lambda (n)
                            (neo-buffer--insert-with-face
                             n 'neo-expand-btn-face))))
-    (or (and (equal name 'open)  (funcall n-insert-symbol "- "))
-        (and (equal name 'close) (funcall n-insert-symbol "> "))
-        (and (equal name 'leaf)  (funcall n-insert-symbol "  ")))))
+    (or (and (eq name 'open)  (funcall n-insert-symbol "- "))
+        (and (eq name 'close) (funcall n-insert-symbol "+ "))
+        (and (eq name 'leaf)  (funcall n-insert-symbol "  ")))))
 
 (provide 'defuns-neotree)
 ;;; defuns-neotree.el ends here
