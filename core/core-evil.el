@@ -109,7 +109,61 @@
     (narf-space-setup! evil-ex-search-previous evil-ex-search-next evil-ex-search-previous)
 
     (narf-space-setup! evil-ex-search-forward evil-ex-search-next evil-ex-search-previous)
-    (narf-space-setup! evil-ex-search-backward evil-ex-search-next evil-ex-search-previous)))
+    (narf-space-setup! evil-ex-search-backward evil-ex-search-next evil-ex-search-previous)
+
+    ;; A monkey patch to add several substitutions to evil-mode's ex commandline
+    ;; other than % and #...
+    ;;
+    ;;   % => full path to file (/project/src/thing.c)
+    ;;   # => alternative file path (/project/include/thing.h)
+    ;;   %:p => path to project root (/project/)
+    ;;   %:d => path to current directory (/project/src/)
+    ;;   %:e => the file's extension (c)
+    ;;   %:r => the full path without its extension (/project/src/thing)
+    ;;   %:t => the file's basename (thing.c)
+    ;;
+    ;; Requires projectile (https://github.com/bbatsov/projectile) for
+    ;; project-awareness, and f.el (https://github.com/rejeep/f.el) for file
+    ;; functions.
+    (defun evil-ex-replace-special-filenames (file-name)
+      "Replace special symbols in FILE-NAME."
+      (let ((current-fname (buffer-file-name))
+            (alternate-fname (and (other-buffer)
+                                  (buffer-file-name (other-buffer)))))
+        (setq file-name
+              ;; %:p:h => the project root (or current directory otherwise)
+              (replace-regexp-in-string "\\(^\\|[^\\\\]\\)\\(%:p\\)"
+                                        (projectile-project-root) file-name t t 2))
+        (setq file-name
+              ;; %:p => the project root (or current directory otherwise)
+              (replace-regexp-in-string "\\(^\\|[^\\\\]\\)\\(%:d\\)"
+                                        default-directory file-name t t 2))
+        (when current-fname
+          (setq file-name
+                ;; %:e => ext
+                (replace-regexp-in-string "\\(^\\|[^\\\\]\\)\\(%:e\\)"
+                                          (f-ext current-fname) file-name t t 2))
+          (setq file-name
+                ;; %:r => filename
+                (replace-regexp-in-string "\\(^\\|[^\\\\]\\)\\(%:r\\)"
+                                          (f-no-ext current-fname) file-name t t 2))
+          (setq file-name
+                ;; %:t => filename.ext
+                (replace-regexp-in-string "\\(^\\|[^\\\\]\\)\\(%:t\\)"
+                                          (f-base current-fname) file-name t t 2))
+          (setq file-name
+                ;; % => file path for current frame
+                (replace-regexp-in-string "\\(^\\|[^\\\\]\\)\\(%\\)"
+                                          current-fname file-name t t 2)))
+        (when alternate-fname
+          (setq file-name
+                ;; # => file path for alternative frame
+                (replace-regexp-in-string "\\(^\\|[^\\\\]\\)\\(#\\)"
+                                          alternate-fname file-name t t 2)))
+        (setq file-name
+              (replace-regexp-in-string "\\\\\\([#%]\\)"
+                                        "\\1" file-name t)))
+      file-name)))
 
 ;; evil plugins
 (use-package evil-anzu
