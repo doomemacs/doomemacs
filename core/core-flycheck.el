@@ -2,6 +2,7 @@
 ;; Related to: lib/defuns-flycheck.el
 
 (use-package flycheck
+  :diminish flycheck-mode
   :commands (flycheck-mode flycheck-list-errors flycheck-buffer)
   :init
   (setq flycheck-indication-mode 'right-fringe
@@ -14,6 +15,8 @@
          :n "q"      'kill-this-buffer
          :n "C-n"    'flycheck-error-list-next-error
          :n "C-p"    'flycheck-error-list-previous-error
+         :n "j"      'flycheck-error-list-next-error
+         :n "k"      'flycheck-error-list-previous-error
          :n "RET"    'flycheck-error-list-goto-error)
 
   (evil-initial-state 'flycheck-error-list-mode 'emacs)
