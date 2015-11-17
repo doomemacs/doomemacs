@@ -245,14 +245,20 @@
  :e [escape] 'evil-normal-state
 
  (:map evil-window-map ; prefix "C-w"
-   "u"       'winner-undo
+   "u"       'narf/undo-window-change
 
    ;; Jump to new splits
    "s"       'narf/evil-window-split
    "v"       'narf/evil-window-vsplit
 
-   "C-u"     'winner-undo
-   "C-r"     'winner-redo
+   ;; Move window in one step
+   "H"       'narf/evil-window-move-left
+   "J"       'narf/evil-window-move-down
+   "K"       'narf/evil-window-move-up
+   "L"       'narf/evil-window-move-right
+
+   "C-u"     'narf/undo-window-change
+   "C-r"     'narf/redo-window-change
    "C-h"     'evil-window-left     ; don't accidentally invoke help
    "C-j"     'evil-window-down     ; don't accidentally invoke help
    "C-k"     'evil-window-up       ; don't accidentally invoke help
