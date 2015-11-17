@@ -6,9 +6,19 @@
   (add-hook! php-mode 'flycheck-mode)
   (setq php-template-compatibility nil
         php-extras-eldoc-functions-file (concat narf-temp-dir "php-extras-eldoc-functions"))
+
   :config
   (require 'php-extras)
   (define-company-backend! php-mode '(php-extras-company))
+
+  (unless (file-exists-p (concat php-extras-eldoc-functions-file ".el"))
+    (async-start `(lambda ()
+                    ,(async-inject-variables "\\`\\(load-path\\|php-extras-eldoc-functions-file\\)$")
+                    (require 'php-extras-gen-eldoc)
+                    (php-extras-generate-eldoc-1 t))
+                 (lambda (_)
+                   (load (concat php-extras-eldoc-functions-file ".el"))
+                   (message "PHP eldoc updated!"))))
 
   ;; TODO Tie into emr
   (require 'php-refactor-mode)
