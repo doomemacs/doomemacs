@@ -45,6 +45,9 @@
 (exmap "tsnip[pets]"     'narf:yas-file-templates)   ; tsnip[!]
 (exmap "x"               'narf:scratch-buffer)
 
+(exmap "t[mux]"          'narf:send-to-tmux)
+(exmap "tcd"             (λ (narf:send-to-tmux (format "cd '%s'" default-directory))))
+
 (after! flycheck
   (exmap "er[rors]"      (λ (flycheck-buffer) (flycheck-list-errors))))
 
@@ -61,16 +64,6 @@
   (exmap "tabq[uit]"     'narf:workgroup-delete)
   (exmap "k[ill]w"       'wg-kill-workgroup)
   (exmap "k[ill]ow"      'narf:kill-other-workgroups))
-
-(cond (IS-MAC
-       (exmap "t[erm]" 'narf:send-to-iterm)
-       (exmap "tcd" (λ (narf:send-to-iterm (format "cd '%s'" default-directory)))))
-      (IS-LINUX
-       (exmap "t[mux]" 'narf:send-to-tmux)
-       (exmap "tcd" (λ (narf:send-to-tmux (format "cd '%s'" default-directory)))))
-      (IS-WINDOWS
-       ;; TODO Eshell integration
-       ))
 
 (provide 'my-commands)
 ;;; my-commands.el ends here

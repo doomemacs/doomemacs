@@ -76,12 +76,5 @@
   (narf:tmux-chdir nil t)
   (narf-switch-to-iterm))
 
-(defun narf-send-to-iterm (command &optional dont-run)
-  (when dont-run
-    (setq command (concat command " ")))
-  (do-applescript
-   (format "tell app \"iTerm\" to tell current session of current tab of first window to write text \"%s\""
-           (s-replace "\"" "\\\"" command))))
-
 (provide 'core-os-osx)
 ;;; core-os-osx.el ends here
