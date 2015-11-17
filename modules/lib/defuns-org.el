@@ -40,7 +40,7 @@
         ((narf--org-in-list-p)
          (org-insert-heading))
         ((org-on-heading-p)
-         (org-insert-heading-after-current))
+         (org-insert-heading-respect-content))
         (t
          (org-insert-heading-after-current)
          (delete-char 1)))
@@ -72,38 +72,34 @@
           (t (org-insert-heading)))
     (insert "[ ] ")))
 
+;;;###autoload
+(defun narf/org-execute-at-point ()
+  (interactive)
+  (cond ((org-at-item-checkbox-p)
+         (org-toggle-checkbox))
+        ((org-entry-is-todo-p)
+         (org-todo 'done))
+        ((org-table-p)
+         (org-table-align))
+        ((org-babel-lob-get-info)
+         (org-babel-lob-execute-maybe))
+        ((org-in-src-block-p)
+         (org-babel-execute-src-block))
+        ((org-inside-LaTeX-fragment-p)
+         (org-toggle-latex-fragment))
+        (t (org-toggle-inline-images))))
+
+;;;###autoload
+(defun narf/org-toggle-inline-images-at-point ()
+  (interactive)
+  (if (> (length org-inline-image-overlays) 0)
+      (org-remove-inline-images)
+    (org-display-inline-images nil t (line-beginning-position) (line-end-position))))
+
 ;; Formatting shortcuts
 ;;;###autoload
 (defun narf/org-surround (delim)
   (insert delim) (save-excursion (insert delim)))
-
-;;;###autoload (autoload 'narf:org-insert-image-url "defuns-org" nil t)
-(evil-define-command narf:org-insert-image-url (&optional image-url)
-  :repeat nil
-  (interactive "<f>")
-  (unless image-url
-    (user-error "You must specify an image URL to insert"))
-  (let ((dest (f-join org-directory "images/" (concat (format-time-string "%Y%m%d-") (f-filename image-url)))))
-    (shell-command (format "wget '%s' -O '%s'" image-url dest))
-    (insert (format "<%s>" (f-relative dest (f-dirname (buffer-file-name)))))
-    (indent-according-to-mode)))
-
-;;;###autoload (autoload 'narf:org-insert-image "defuns-org" nil t)
-(evil-define-command narf:org-insert-image (&optional filename bang)
-  :repeat nil
-  (interactive "<f><!>")
-  (if bang
-      (narf:org-insert-image-url filename)
-    (unless filename
-      (user-error "You must specify a file to attach"))
-    (unless (file-exists-p filename)
-      (user-error "File %s does not exist" filename))
-    (let ((dest (f-join org-directory "images/" (concat (format-time-string "%Y%m%d-") (f-filename filename)))))
-      (when (file-exists-p dest)
-        (user-error "File %s already exists at destination!"))
-      (copy-file filename dest)
-      (insert (format "<file:%s>" (f-relative dest (f-dirname (buffer-file-name)))))
-      (indent-according-to-mode))))
 
 ;;;###autoload (autoload 'narf:org-search-files-or-headers "defuns-org" nil t)
 (evil-define-command narf:org-search-files-or-headers (&optional bang)
@@ -313,6 +309,18 @@ re-align the table if necessary. (Necessary because org-mode has a
     (org-table-goto-column col)
     (skip-chars-backward "^|\n\r")
     (when (org-looking-at-p " ") (forward-char))))
+
+;;;###autoload
+(defun narf/org-replace-link-by-link-description ()
+  "Replace an org link by its description or if empty its address"
+  (interactive)
+  (if (org-in-regexp org-bracket-link-regexp 1)
+      (let ((remove (list (match-beginning 0) (match-end 0)))
+            (description (if (match-end 3)
+                             (org-match-string-no-properties 3)
+                           (org-match-string-no-properties 1))))
+        (apply 'delete-region remove)
+        (insert description))))
 
 (provide 'defuns-org)
 ;;; defuns-org.el ends here
