@@ -51,6 +51,8 @@
   (defadvice evil-visual-update-x-selection (around clobber-x-select-text activate)
     (unless (or (featurep 'mac) (featurep 'ns)) ad-do-it)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defun narf-open-with (&optional app-name path)
   "Send PATH to APP-NAME on OSX."
   (interactive)
@@ -60,19 +62,26 @@
                                              (buffer-file-name))))))
          (command (format "open %s"
                           (if app-name
-                              (format "-a %s" (shell-quote-argument app-name))
+                              (format "-a %s %s" (shell-quote-argument app-name) path)
                             (format "'%s'" path)))))
     (message "Running: %s" command)
     (shell-command command)))
 
 (defun narf-switch-to-iterm ()
   (interactive)
-  (do-applescript "tell application \"iTerm2\" to activate"))
+  (do-applescript "tell application \"iTerm\" to activate"))
 
 (defun narf-switch-to-iterm-and-cd ()
   (interactive)
   (narf:tmux-chdir nil t)
   (narf-switch-to-iterm))
+
+(defun narf-send-to-iterm (command &optional dont-run)
+  (when dont-run
+    (setq command (concat command " ")))
+  (do-applescript
+   (format "tell app \"iTerm\" to tell current session of current tab of first window to write text \"%s\""
+           (s-replace "\"" "\\\"" command))))
 
 (provide 'core-os-osx)
 ;;; core-os-osx.el ends here

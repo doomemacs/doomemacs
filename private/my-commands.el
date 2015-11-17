@@ -42,13 +42,12 @@
 (exmap "settr[im]"       'narf:toggle-delete-trailing-whitespace)
 (exmap "snip[pets]"      'narf:yas-snippets)         ; snip[!]
 (exmap "fi[nd]"          'narf:helm-swoop)
-(exmap "t[mux]"          'narf:tmux-run)
-(exmap "tcd"             'narf:tmux-chdir)
 (exmap "tsnip[pets]"     'narf:yas-file-templates)   ; tsnip[!]
-(exmap "term"            'narf-switch-to-iterm)
 (exmap "x"               'narf:scratch-buffer)
+
 (after! flycheck
   (exmap "er[rors]"      (λ (flycheck-buffer) (flycheck-list-errors))))
+
 (after! workgroups2
   (exmap "sl[oad]"       'narf:load-session)
   (exmap "ss[ave]"       'narf:save-session)
@@ -62,6 +61,16 @@
   (exmap "tabq[uit]"     'narf:workgroup-delete)
   (exmap "k[ill]w"       'wg-kill-workgroup)
   (exmap "k[ill]ow"      'narf:kill-other-workgroups))
+
+(cond (IS-MAC
+       (exmap "t[erm]" 'narf:send-to-iterm)
+       (exmap "tcd" (λ (narf:send-to-iterm (format "cd '%s'" default-directory)))))
+      (IS-LINUX
+       (exmap "t[mux]" 'narf:send-to-tmux)
+       (exmap "tcd" (λ (narf:send-to-tmux (format "cd '%s'" default-directory)))))
+      (IS-WINDOWS
+       ;; TODO Eshell integration
+       ))
 
 (provide 'my-commands)
 ;;; my-commands.el ends here
