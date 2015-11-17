@@ -112,6 +112,21 @@
       recentf-auto-cleanup 600)
 (recentf-mode 1)
 
+(use-package persistent-soft
+  :commands (persistent-soft-store
+             persistent-soft-fetch
+             persistent-soft-exists-p
+             persistent-soft-flush
+             persistent-soft-location-readable
+             persistent-soft-location-destroy))
+
+(use-package async
+  :commands (async-start
+             async-start-process
+             async-get
+             async-wait
+             async-inject-variables))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun narf-init ()
@@ -120,11 +135,20 @@
     (cl-flet ((process-list ())) ad-do-it))
 
   (defun display-startup-echo-area-message ()
-    (message ">>> Loaded in %s" (emacs-init-time)))
+    (after! workgroups2
+      (let ((wg-list (if (wg-current-session t)
+                         (wg-display-internal
+                          (lambda (workgroup index)
+                            (if (not workgroup) wg-nowg-string
+                              (wg-element-display
+                               workgroup
+                               (format "%d %s" (1+ index) (wg-workgroup-name workgroup))
+                               'wg-current-workgroup-p
+                               'wg-previous-workgroup-p)))
+                          (wg-workgroup-list)) "")))
+        (message ">>> Loaded in %s. %s" (emacs-init-time) wg-list))))
 
-  (require 'server)
-  (unless (server-running-p)
-    (server-start)))
+  (add-hook 'after-init-hook 'server-start t))
 
 (provide 'core)
 ;;; core.el ends here

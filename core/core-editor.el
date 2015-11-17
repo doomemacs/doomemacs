@@ -10,6 +10,10 @@
  require-final-newline   t
  delete-trailing-lines   nil
  fill-column             80
+ word-wrap t
+ truncate-lines                  t
+ truncate-partial-width-windows  50
+ line-spacing 0
 
  ;; Sane scroll settings
  scroll-margin           0
@@ -24,9 +28,7 @@
  whitespace-style '(face tabs tab-mark newline newline-mark)
  whitespace-display-mappings
  '((tab-mark   ?\t   [?> ?\t])
-   (newline-mark 10 [36 10]))
- truncate-lines                  t      ; do not soft-wrap lines
- truncate-partial-width-windows  nil)
+   (newline-mark 10 [36 10])))
 
 
 ;; Automatic minor modes ;;;;;;;;;;;
