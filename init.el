@@ -41,14 +41,14 @@
 ;;; License: GPLv3
 
 (defconst narf-theme        'narf-dark)
-(defconst narf-default-font (font-spec :family "DejaVu Sans Mono" :size 12 :antialias t))
-(defconst narf-big-font     (font-spec :family "Inconsolata" :size 20 :antialias t))
-
-(scroll-bar-mode -1)  ; no scrollbar
-(tool-bar-mode   -1)  ; no toolbar
+(defconst narf-default-font (font-spec :family "DejaVu Sans Mono" :size 12))
+(defconst narf-big-font     (font-spec :family "Inconsolata"      :size 20))
 
 ;; prematurely optimize for faster startup
 (let (file-name-handler-alist)
+  (scroll-bar-mode -1)  ; no scrollbar
+  (tool-bar-mode   -1)  ; no toolbar
+
   (load (concat user-emacs-directory "init-load-path.el"))
   (load-theme narf-theme t)
 
