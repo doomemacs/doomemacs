@@ -1,0 +1,18 @@
+#+TITLE:${1:1234-5678}
+#+begin_src yaml
+created: `(format-time-string "%Y-%m-%d")`
+issued:  `(format-time-string "%Y-%m-%d")`
+currency: ${2:CAD|USD|GBP|DKK}
+contact:  ${3:email address}
+
+items:
+  - title: "$4"
+    body: "$5"
+    qty: ${6:1}
+    amount: ${7:1200.00}
+
+comments: "$0"
+#+end_src
+
+* Notes
+* Attachments [0/0]

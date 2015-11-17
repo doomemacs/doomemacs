@@ -1,9 +1,10 @@
 #+TITLE:${1:Project Name}
-Created `(format-time-string "<%Y-%m-%d>")`
+#+begin_src yaml
+created: `(format-time-string "%Y-%m-%d")`
+contact: ${2:Contact id}
+#+end_src
 
-| Contact | [[contact:$2][${2:Contact Name}]] |
-
-${3:...}
+${3:Summary of project.}
 
 * Tasks [/]
 * Timeframe
