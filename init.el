@@ -95,6 +95,7 @@
           module-swift         ; yay, emoji variables!
           module-vim           ; my mistress
           module-web           ; for the 2.0'er
+          module-writing       ; emacs for writing papers or fiction
 
           my-bindings
           my-commands

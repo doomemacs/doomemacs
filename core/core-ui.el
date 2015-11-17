@@ -105,17 +105,7 @@
 (add-hook! focus-in  'narf|focus-in-alpha)
 (add-hook! focus-out 'narf|focus-out-alpha)
 
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(use-package writeroom-mode
-  :defer t
-  :config
-  (setq-default
-   writeroom-restore-window-config t
-   writeroom-fullscreen-effect nil
-   writeroom-width 110))
-
+;; Plugins ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (use-package hideshow
   :commands (hs-minor-mode hs-toggle-hiding hs-already-hidden-p)
   :diminish hs-minor-mode
@@ -172,7 +162,7 @@
   :preface
   (defvar narf--hl-nlinum-overlay nil)
   (defvar narf--hl-nlinum-line nil)
-  (defvar nlinum-format " %4d ")
+  (defvar nlinum-format " %4d  ")
   (defface linum-highlight-face '((t (:inherit linum))) "Face for line highlights")
   :init
   (defun narf|nlinum-enable ()
