@@ -67,7 +67,9 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
 ;;;###autoload
 (defun narf/get-buried-buffers (&optional buffer-list)
   "Get a list of buffers that are buried (i.e. not visible)"
-  (-remove 'get-buffer-window (or buffer-list (narf/get-buffers))))
+  (let* ((buffers (or buffer-list (narf/get-buffers)))
+         (old-len (length buffers)))
+    (-remove 'get-buffer-window buffers)))
 
 ;;;###autoload
 (defun narf/get-matching-buffers (pattern &optional buffer-list)
@@ -86,7 +88,10 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
   (let ((bname (buffer-name)))
     (cond ((string-match-p "^\\*scratch\\*" bname)
            (erase-buffer))
-          (t (kill-this-buffer))))
+          (t
+           (when window-system
+             (mac-start-animation (get-buffer-window) :type 'fade-out :duration 0.3))
+           (kill-this-buffer))))
   (if (and (eq (current-buffer) popwin:popup-buffer)
            (popwin:popup-window-live-p))
       (popwin:close-popup-window)
@@ -101,15 +106,16 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
          (real-buffers (narf/get-real-buffers all-buffers))
          (kill-list (--filter (not (memq it real-buffers))
                               (narf/get-buried-buffers all-buffers))))
-    (message "Cleaned up %s buffers" (length kill-list))
     (mapc 'kill-buffer kill-list)
-    (narf:kill-process-buffers)))
+    (narf:kill-process-buffers)
+    (message "Cleaned up %s buffers" (length kill-list))))
 
 ;;;###autoload
 (defun narf:kill-process-buffers ()
   "Kill all buffers that represent running processes and aren't visible."
   (interactive)
-  (let ((buffer-list (narf/get-buffers)))
+  (let ((buffer-list (narf/get-buffers))
+        (killed-processes 0))
     (dolist (p (process-list))
       (let* ((process-name (process-name p))
              (assoc (assoc process-name narf-cleanup-processes-alist)))
@@ -119,8 +125,9 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
                    (not (--any? (let ((mode (buffer-local-value 'major-mode it)))
                                   (eq mode (cdr assoc)))
                                 buffer-list)))
-          (message "Cleanup: killing %s" process-name)
-          (delete-process p))))))
+          (delete-process p)
+          (incf killed-processes))))
+    (message "Cleaned up %s processes" killed-processes)))
 
 ;;;###autoload
 (defun narf:kill-matching-buffers (regexp &optional buffer-list)
@@ -188,9 +195,10 @@ left, create a scratch buffer."
   "Kill buried buffers and report how many it found."
   :repeat nil
   (interactive "<!>")
-  (let ((buffers (narf/get-buried-buffers (if bang (projectile-project-buffers) (narf/get-buffers)))))
-    (message "Cleaned up %s buffers" (length buffers))
-    (mapc 'kill-buffer buffers)))
+  (let ((buffers (narf/get-buried-buffers (if bang (projectile-project-buffers) (narf/get-buffers))))
+        (affected 0))
+    (mapc (lambda (b) (when (kill-buffer b) (incf affected))) buffers)
+    (message "Cleaned up %s buffers" affected)))
 
 ;;;###autoload (autoload 'narf:kill-all-buffers "defuns-buffers" nil t)
 (evil-define-command narf:kill-all-buffers (&optional bang)

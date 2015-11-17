@@ -100,8 +100,13 @@
 ;;;###autoload
 (defun narf:switch-to-workgroup-at-index (index)
   (interactive)
-  (wg-switch-to-workgroup-at-index index)
-  (narf:workgroup-display))
+  (narf:workgroup-display)
+  (let ((wgs (wg-workgroup-list-or-error)))
+    (unless (eq (nth index wgs) (wg-current-workgroup t))
+      (when (and IS-MAC window-system)
+        (mac-start-animation (window-frame (get-buffer-window)) :type 'fade-out :duration 0.75))
+      (wg-switch-to-workgroup-at-index index)
+      (narf:workgroup-display))))
 
 (provide 'defuns-workgroup)
 ;;; defuns-workgroup.el ends here
