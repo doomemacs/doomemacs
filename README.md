@@ -4,13 +4,13 @@
 
 > What we do every night, Pinky...
 
-This is Emacs for stubborn vimmers and megalomaniac mice alike. Its goals are:
+This is Emacs for stubborn vimmers and megalomaniacal mice alike. Its goals are:
 first, to emulate vim as best it can, and second, surpass it in any possible
 way. Narf uses [Evil-mode](https://gitorious.org/evil/pages/Home) to emulate
 vim, Cask to manage plugins, and a slew of jury-rigged neckbeard shenanigans to
-to keep my mountain dew cool.
+keep my mountain dew cool.
 
-It is tailored for the Emacs 24.5+ OSX users and sub-sub-sub-basement dwellers.
+It is tailored for OSX users running Emacs 24.5+.
 
 Any contributions or suggestions are welcome. The world won't take over itself.
 

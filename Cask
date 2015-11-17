@@ -9,6 +9,8 @@
 (depends-on "f")
 (depends-on "use-package")
 (depends-on "help-fns+")
+(depends-on "persistent-soft")
+(depends-on "async" :git "https://github.com/jwiegley/emacs-async")
 ; (depends-on "esup")
 
 ;; OSX --- core/core-os-osx.el
@@ -117,7 +119,7 @@
 
 ;; Data -- modules/module-data.el
 (depends-on "json-mode")
-(depends-on "yaml-mode")
+(depends-on "yaml-mode" :git "https://github.com/antalk2/yaml-mode")
 (depends-on "toml-mode")
 
 ;; Golang -- modules/module-go.el
@@ -151,6 +153,7 @@
 (depends-on "org-opml" :git "https://github.com/edavis/org-opml")
 (depends-on "company-math")
 (depends-on "ob-http")
+(depends-on "org-download")
 
 ;; PlantUML -- modules/module-plantuml.el
 (depends-on "puml-mode")
