@@ -7,14 +7,14 @@
   :keymap     (make-sparse-keymap) ; defines evil-org-mode-map
   :group      'evil-org)
 
-(defvar org-directory "~/Dropbox/org/")
-(defvar org-directory-contacts (concat org-directory "work/contacts/"))
-(defvar org-directory-projects (concat org-directory "work/projects/"))
-(defvar org-directory-invoices (concat org-directory "work/invoices/"))
+(defvar org-directory (concat narf-dropbox-dir "org/"))
+(defvar org-directory-contacts (expand-file-name "work/contacts/" org-directory))
+(defvar org-directory-projects (expand-file-name "work/projects/" org-directory))
+(defvar org-directory-invoices (expand-file-name "work/invoices/" org-directory))
 
 (add-hook! org-load 'narf|org-init)
 (add-hook! org-mode 'evil-org-mode)
-(add-hook! org-mode '(narf|enable-tab-width-2 narf|enable-hard-wrap))
+(add-hook! org-mode 'narf|enable-hard-wrap)
 
 ;; Fixes when saveplace places the point in a folded position
 (defun narf|org-restore-point ()
@@ -27,7 +27,6 @@
 
 ;; Realign tables and tags on save
 (defun narf|org-realign ()
-  (org-table-map-tables 'org-table-align 'quietly)
   (org-align-all-tags))
 (defun narf|org-update ()
   (org-update-statistics-cookies t))
@@ -40,12 +39,7 @@
 (defun narf@org-vars ()
   (setq org-default-notes-file (concat org-directory "notes.org")
         org-agenda-files
-        (eval-when-compile
-          (f-entries org-directory
-                     (lambda (path)
-                       (and (f-ext? path "org")
-                            (not (f-same? path (f-expand "inbox.org" org-directory)))))
-                     t))
+        (f-entries org-directory (lambda (path) (f-ext? path "org")) t)
 
         org-archive-location (concat org-directory "/archive/%s::")
         org-attach-directory ".attach/"
@@ -60,7 +54,7 @@
         org-special-ctrl-a/e t
         org-hierarchical-todo-statistics t
         org-checkbox-hierarchical-statistics nil
-        org-tags-column -87
+        org-tags-column 0
         org-loop-over-headlines-in-active-region t
         org-footnote-auto-label 'plain
         org-log-done t
@@ -92,30 +86,60 @@
   (add-to-list 'org-link-frame-setup '(file . find-file)))
 
 (defun narf@org-ex ()
-  (exmap! "oe[dit]"  'org-edit-special)
+  (exmap! "src"      'org-edit-special)
   (exmap! "refile"   'org-refile)
   (exmap! "archive"  'org-archive-subtree)
   (exmap! "agenda"   'org-agenda)
   (exmap! "todo"     'org-show-todo-tree)
   (exmap! "link"     'org-link)
   (exmap! "wc"       'narf/org-word-count)
-  (exmap! "at[tach]" 'narf:org-attach))
+  (exmap! "at[tach]" 'narf:org-attach)
+  (exmap! "export"   'narf:org-export)
+
+  ;; TODO
+  ;; (exmap! "newc[ontact]" 'narf:org-new-contact)
+  ;; (exmap! "newp[roject]" 'narf:org-new-project)
+  ;; (exmap! "newi[nvoice]" 'narf:org-new-invoice)
+  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun narf@org-babel ()
   (setq org-confirm-babel-evaluate nil   ; you don't need my permission
         org-src-fontify-natively t       ; make code pretty
+        org-src-preserve-indentation t
         org-src-tab-acts-natively t)
+
+  (defun narf-refresh-babel-lob ()
+    (async-start `(lambda ()
+                    ,(async-inject-variables "\\`\\(org-directory\\|load-path$\\)")
+                    (require 'org)
+                    (require 'f)
+                    (setq org-babel-library-of-babel nil)
+                    (mapc (lambda (f) (org-babel-lob-ingest f))
+                          (f-entries ,org-directory (lambda (path) (f-ext? path "org")) t))
+                    org-babel-library-of-babel)
+                 (lambda (lib)
+                   ;; (persistent-soft-store 'org-babel-library lib "org")
+                   (message "Library of babel updated!")
+                   (setq org-babel-library-of-babel lib))))
+  (setq org-babel-library-of-babel (narf-refresh-babel-lob))
+  (add-hook! org-mode
+    (add-hook 'after-save-hook (lambda () (shut-up! (org-babel-lob-ingest (buffer-file-name)))) t t))
 
   (require 'ob-http)
   (require 'ob-rust)
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((python . t) (ruby . t) (sh . t) (js . t) (css . t)
-     (plantuml . t) (emacs-lisp . t) (matlab . t)
+     (plantuml . t) (emacs-lisp . t) (matlab . t) (R . t)
      (latex . t) (calc . t)
      (http . t) (rust . t)))
+
+  (defadvice org-edit-src-code (around set-buffer-file-name activate compile)
+    (let ((file-name (buffer-file-name))) ;; (1)
+      ad-do-it                            ;; (2)
+      (setq buffer-file-name file-name))) ;; (3)
 
   (add-to-list 'org-src-lang-modes '("rust" . rust))
   (add-to-list 'org-src-lang-modes '("puml" . puml))
@@ -125,8 +149,7 @@
   (setq-default
    org-latex-preview-ltxpng-directory (concat narf-temp-dir "ltxpng/")
    org-latex-create-formula-image-program 'dvipng
-   org-startup-with-latex-preview nil
-   org-highlight-latex-and-related nil
+   org-startup-with-latex-preview t
    org-highlight-latex-and-related '(latex))
 
   (require 'company-math)
@@ -139,7 +162,7 @@
      company-dabbrev-code
      company-keywords))
 
-  (plist-put org-format-latex-options :scale 1.65))
+  (plist-put org-format-latex-options :scale 1.1))
 
 (defun narf@org-looks ()
   (setq org-image-actual-width nil
@@ -149,48 +172,96 @@
         org-pretty-entities-include-sub-superscripts t
         org-use-sub-superscripts '{}
         org-fontify-whole-heading-line nil
+        org-fontify-done-headline t
+        org-fontify-quote-and-verse-blocks t
+        org-ellipsis 'hs-face
+        org-indent-indentation-per-level 3
+        org-list-indent-offset 4
+        org-cycle-separator-lines 1
         org-hide-emphasis-markers t
         org-hide-leading-stars t)
 
+  (add-hook! org-mode (setq truncate-lines nil))
+
+  (let ((ext-regexp (regexp-opt '("GIF" "JPG" "JPEG" "SVG" "TIF" "TIFF" "BMP" "XPM"
+                                  "gif" "jpg" "jpeg" "svg" "tif" "tiff" "bmp" "xpm"))))
+    (setq iimage-mode-image-regex-alist
+          `((,(concat "\\(`?file://\\|\\[\\[\\|<\\|`\\)?\\([-+./_0-9a-zA-Z]+\\."
+                      ext-regexp "\\)\\(\\]\\]\\|>\\|'\\)?") . 2)
+            (,(concat "<\\(http://.+\\." ext-regexp "\\)>") . 1))))
+
   (add-hook! org-mode
-    (setq truncate-lines nil
-          word-wrap t))
-
-  (after! org-indent (diminish 'org-indent-mode))
-  (after! iimage     (diminish 'iimage-mode))
-  (setq iimage-mode-image-regex-alist
-        '(("\\(`?file://\\|\\[\\[\\|<\\|`\\)?\\([-+./_0-9a-zA-Z]+\\.\\(GIF\\|JP\\(?:E?G\\)\\|P\\(?:BM\\|GM\\|N[GM]\\|PM\\)\\|SVG\\|TIFF?\\|X\\(?:[BP]M\\)\\|gif\\|jp\\(?:e?g\\)\\|p\\(?:bm\\|gm\\|n[gm]\\|pm\\)\\|svg\\|tiff?\\|x\\(?:[bp]m\\)\\)\\)\\(\\]\\]\\|>\\|'\\)?" . 2)
-          ("<\\(http://.+\\.\\(GIF\\|JP\\(?:E?G\\)\\|P\\(?:BM\\|GM\\|N[GM]\\|PM\\)\\|SVG\\|TIFF?\\|X\\(?:[BP]M\\)\\|gif\\|jp\\(?:e?g\\)\\|p\\(?:bm\\|gm\\|n[gm]\\|pm\\)\\|svg\\|tiff?\\|x\\(?:[bp]m\\)\\)\\)>" . 1)))
-
-  (when IS-MAC
-    ;; Display images with quicklook on OSX
-    (add-to-list 'org-file-apps '("\\.\\(jpe?g\\|png\\|gif\\|pdf\\)\\'" . "qlmanage -p %s")))
-
-  (add-hook! org-mode (setq line-spacing '0.1))
-  ;; (add-hook! org-mode (text-scale-set 1))
+    (setq line-spacing '0.2)
+    (variable-pitch-mode 1)
+    (text-scale-set 0.5)
+    (setq tab-width 3 evil-shift-width 3))
 
   (require 'org-bullets)
-  (setq org-bullets-bullet-list '("▪" "•" "◦" "*" ))
+  (setq org-bullets-bullet-list '("✸" "•" "◦" "•" "◦" "•" "◦"))
   (add-hook! org-mode 'org-bullets-mode)
 
-  (defun narf--not-in-org-src-block (beg end)
-    (notany (lambda (overlay)
-              (eq (overlay-get overlay 'face) 'org-block-background))
-            (overlays-in beg end)))
+  ;; Restore org-block-background face (removed in official org)
+  (defface org-block-background '((t ()))
+    "Face used for the source block background.")
+  (defun narf--adjoin-to-list-or-symbol (element list-or-symbol)
+    (let ((list (if (not (listp list-or-symbol))
+                    (list list-or-symbol)
+                  list-or-symbol)))
+      (require 'cl-lib)
+      (cl-adjoin element list)))
+  (set-face-attribute 'org-block-background nil :inherit
+                      (narf--adjoin-to-list-or-symbol
+                       'fixed-pitch
+                       (face-attribute 'org-block-background :inherit)))
 
+  ;; Prettify symbols, blocks and TODOs
+  (defface org-todo-high '((t ())) "Face for high-priority todo")
+  (defface org-todo-vhigh '((t ())) "Face for very high-priority todo")
+  (defface org-item-checkbox '((t ())) "Face for checkbox list lines")
+  (defface org-item-checkbox-checked '((t ())) "Face for checked checkbox list lines")
+  (defface org-whitespace '((t ())) "Face for spaces")
   (font-lock-add-keywords
-   'org-mode `(("\\(#\\+begin_src\\>\\)"
+   'org-mode `(("^ *\\(#\\+begin_src\\>\\)"
                 (0 (narf/show-as ?#)))
-               ("\\(#\\+end_src\\>\\)"
+               ("^ *\\(#\\+end_src\\>\\)"
                 (0 (narf/show-as ?#)))
                ("\\(#\\+begin_quote\\>\\)"
-                (0 (narf/show-as ?➤)))
+                (0 (narf/show-as ?\")))
                ("\\(#\\+end_quote\\>\\)"
-                (0 (narf/show-as ?➤)))
-               ("\\([-+] \\[X\\]\\)"
+                (0 (narf/show-as ?\")))
+
+               ;; TODO Optimize these
+               ;; Hide TODO tags
+               ("\\([-+] \\[X\\]\\|\\* DONE\\) \\([^$:\n\r]+\\)"
                 (0 (narf/show-as ?☑)))
-               ("\\([-+] \\[ \\]\\)"
-                (0 (narf/show-as ?☐))))))
+               ("\\([-+] \\[ \\]\\|\\* TODO\\) \\([^$:\n\r]+\\)"
+                (0 (narf/show-as ?☐)))
+
+               ("\\([-+] \\[ \\] \\([^$:\n\r]+\\)\\)"
+                (1 'org-item-checkbox))
+               ("\\([-+] \\[X\\] \\([^$:\n\r]+\\)\\)"
+                (1 'org-item-checkbox-checked))
+
+               ;; Color code TODOs with !'s to denote priority
+               ("\\(\\* TODO ?!! \\([^$:\n\r]+\\)\\)"
+                (1 'org-todo-vhigh))
+               ("\\(\\* TODO ?! \\([^$:\n\r]+\\)\\)"
+                (1 'org-todo-high))
+
+               (,(concat
+                  "\\(\\*\\) "
+                  (regexp-opt '("LEAD" "NEXT" "ACTIVE" "PENDING" "CANCELLED") t)
+                  " ")
+                (1 (narf/show-as ?☐)))
+
+               ("\\(\\([-+]\\)\\( \\)+[^$\n\r]+\\)"
+                (2 'org-code)
+                (3 'org-whitespace))
+               ("^ +\\(\\*\\) "
+                (1 (narf/show-as ?◦)))
+               ("^ +"
+                (0 'org-whitespace))
+               )))
 
 (defun narf@org-plantuml ()
   (setq org-plantuml-jar-path puml-plantuml-jar-path)
@@ -199,26 +270,32 @@
                  '(:cmdline . "-config ~/.plantuml"))))
 
 (defun narf@org-links ()
-  (defun narf--org-file2title (file)
-    (s-replace " " "_" (downcase file)))
-  (defun narf-org-link-trello (url)
-    (browse-url (format "https://trello.com/%s" (url-encode-url url))))
-  (defun narf-org-link-contact (id)
-    (org-open-file (format "%swork/contacts/%s.org" org-directory (narf--org-file2title id)) t))
-  (defun narf-org-link-invoice (id)
-    (org-open-file (format "%swork/invoices/%s.yml" org-directory (narf--org-file2title id)) t))
-  (defun narf-org-link-project (id)
-    (org-open-file (format "%swork/projects/%s.org" org-directory (narf--org-file2title id)) t))
+  (defun narf--org-id-to-file (id dir &optional pattern)
+    (let* ((glob (f-glob (format (concat "%s" (or pattern "%s-*.org")) dir id)))
+           (glob-len (length glob)))
+      (when (zerop glob-len)
+        (user-error "Could not find file with that ID"))
+      (car glob)))
 
-  (org-add-link-type "trello"  'narf-org-link-trello)
+  (defun narf-org-link-contact (id)
+    (org-open-file (narf--org-id-to-file id org-directory-contacts) t))
+  (defun narf-org-link-project (id)
+    (org-open-file (narf--org-id-to-file id org-directory-projects) t))
+  (defun narf-org-link-invoice (id)
+    (org-open-file (narf--org-id-to-file id org-directory-invoices "%s.org") t))
+
   (org-add-link-type "contact" 'narf-org-link-contact)
   (org-add-link-type "project" 'narf-org-link-project)
   (org-add-link-type "invoice" 'narf-org-link-invoice)
 
   (defun narf-org-complete (type)
     (let ((default-directory (symbol-value (intern (format "org-directory-%ss" type)))))
-      (let ((file (org-iread-file-name ">>> ")))
-        (format "%s:%s" type (capitalize (s-replace "_" " " (f-base file)))))))
+      (let* ((file (org-iread-file-name ">>> "))
+             (match (s-match "^\\([0-9]+\\)[-.]" (f-filename file))))
+        (unless match
+          (user-error "Invalid file ID"))
+        (format "%s:%s" type (cadr match)))))
+
   (defun org-contact-complete-link ()
     (narf-org-complete "contact"))
   (defun org-project-complete-link ()
@@ -229,6 +306,18 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun narf|org-init ()
+  (after! org-indent (diminish 'org-indent-mode))
+
+  (use-package org-download
+    :config
+    (setq-default org-download-image-dir ".attach/"
+                  org-download-screenshot-method "screencapture -i %s"))
+
+  (when IS-MAC
+    ;; Reveal files in finder
+    (defvar org-file-apps '(("\\.org$" . emacs)
+                            (t . "open `dirname \"%s\"`"))))
+
   (after! autoinsert
     (add-template! (format "%s.\\.org$" org-directory-contacts) "__contact.org"  'org-mode)
     (add-template! (format "%s.\\.org$" org-directory-projects) "__projects.org" 'org-mode)
@@ -243,31 +332,33 @@
   (narf@org-links)
   (narf@org-plantuml)
   (add-hook! org-mode 'narf@org-ex)
+  (add-hook! evil-insert-state-exit 'narf|org-update)
 
-  ;; Align table, if in table when exiting insert mode
-  (defun narf|org-realign-table ()
-    (when (org-table-p)
-      (org-table-align)))
-  (add-hook! org-mode
-    (add-hook 'evil-insert-state-exit-hook 'narf|org-realign-table t t))
+  (use-package deft
+    :commands (deft narf/deft-journal narf/deft-contacts narf/deft-invoices narf/deft-projects)
+    :config
+    (setq deft-directory org-directory
+          deft-recursive t
+          deft-separator " :: ")
+
+    (defun narf/deft-projects ()
+      (interactive)
+      (let ((deft-directory org-directory-projects))
+        (deft)))
+
+    (defun narf/deft-contacts ()
+      (interactive)
+      (let ((deft-directory org-directory-contacts))
+        (deft))))
 
   (require 'org-agenda)
   (setq org-agenda-restore-windows-after-quit t
         org-agenda-custom-commands
         '(("x" agenda)
           ("y" agenda*)
-          ("w" todo "WAITING")
-          ("W" todo-tree "WAITING")
-          ("to" todo)
-          ("tp" tags "+Projects")
-          ("tg" tags-todo "+gamedev")
-          ("tw" tags-tree "+webdev")))
-
-  (defun narf-project-org-filename (cat)
-    (interactive (list (completing-read "Choose category:"
-                                        (mapcar 'f-filename (f-directories org-project-directory)))))
-    (expand-file-name (concat (file-name-nondirectory (directory-file-name (narf/project-root))) ".org")
-                      (expand-file-name cat org-project-directory)))
+          ("l" todo "LEAD")
+          ("t" todo)
+          ("c" tags "+class")))
 
   ;; Add element delimiter text-objects so we can use evil-surround to
   ;; manipulate them.
@@ -279,135 +370,121 @@
   (define-text-object! "~" "~" "~")
 
   ;; Keybinds
-  (bind! (:map org-mode-map
-           "RET" nil
-           "C-j" nil
-           "C-k" nil
+  (bind!
+   (:map org-mode-map
+     "RET" nil
+     "C-j" nil
+     "C-k" nil
 
-           :i [remap narf/inflate-space-maybe] 'org-self-insert-command
-           :i "RET" 'org-return-indent)
+     :i [remap narf/inflate-space-maybe] 'org-self-insert-command
+     :i "RET" 'org-return-indent)
 
-         (:map evil-org-mode-map
-           :ni "A-l" 'org-metaright       ; M-j
-           :ni "A-h" 'org-metaleft        ; M-h
-           :ni "A-k" 'org-metaup          ; M-k
-           :ni "A-j" 'org-metadown        ; M-j
+   (:map evil-org-mode-map
+     :ni "A-l" 'org-metaright
+     :ni "A-h" 'org-metaleft
+     :ni "A-k" 'org-metaup
+     :ni "A-j" 'org-metadown
+     ;; Expand tables (or shiftmeta move)
+     :ni "A-L" 'narf/org-table-append-row-or-shift-right
+     :ni "A-H" 'narf/org-table-prepend-row-or-shift-left
+     :ni "A-K" 'narf/org-table-prepend-field-or-shift-up
+     :ni "A-J" 'narf/org-table-append-field-or-shift-down
 
-           ;; Expand tables (or shiftmeta move)
-           :ni "A-L" 'narf/org-table-append-row-or-shift-right
-           :ni "A-H" 'narf/org-table-prepend-row-or-shift-left
-           :ni "A-K" 'narf/org-table-prepend-field-or-shift-up
-           :ni "A-J" 'narf/org-table-append-field-or-shift-down
+     :i  "C-L" 'narf/org-table-next-field
+     :i  "C-H" 'narf/org-table-previous-field
+     :i  "C-K" 'narf/org-table-previous-row
+     :i  "C-J" 'narf/org-table-next-row
 
-           :i  "C-L"  'narf/org-table-next-field
-           :i  "C-H"  'narf/org-table-previous-field
-           :i  "C-K"  'narf/org-table-previous-row
-           :i  "C-J"  'narf/org-table-next-row
+     :i  "C-e" 'org-end-of-line
+     :i  "C-a" 'org-beginning-of-line
 
-           :nv "j" 'evil-next-visual-line
-           :nv "k" 'evil-previous-visual-line
+     :nv "j"   'evil-next-visual-line
+     :nv "k"   'evil-previous-visual-line
 
-           :ni "M-a" 'mark-whole-buffer
+     :i  "M-a" (λ (evil-visual-state) (org-mark-element))
+     :n  "M-a" 'org-mark-element
+     :v  "M-a" 'mark-whole-buffer
 
-           :n  "gr" 'org-babel-execute-src-block-maybe
+     :i  "<M-return>"   'narf/org-insert-item-after
+     :i  "<S-M-return>" 'narf/org-insert-item-before
 
-           :i  "C-e"          'org-end-of-line
-           :i  "C-a"          'org-beginning-of-line
-           ;;  Add new header line before this line
-           :i  "<S-M-return>" 'narf/org-insert-item-before
-           ;;  Add new header line after this line
-           :i  "<M-return>"   'narf/org-insert-item-after
+     :i  "M-b" (λ (narf/org-surround "*")) ; bold
+     :i  "M-u" (λ (narf/org-surround "_")) ; underline
+     :i  "M-i" (λ (narf/org-surround "/")) ; italics
+     :i  "M-`" (λ (narf/org-surround "+")) ; strikethrough
 
-           :i  "M-b" (λ (narf/org-surround "*"))     ; bold
-           :i  "M-u" (λ (narf/org-surround "_"))     ; underline
-           :i  "M-i" (λ (narf/org-surround "/"))     ; italics
-           :i  "M-`" (λ (narf/org-surround "+"))     ; strikethrough
+     :v  "M-b" "S*"
+     :v  "M-u" "S_"
+     :v  "M-i" "S/"
+     :v  "M-`" "S+"
 
-           :v  "M-b" "S*"
-           :v  "M-u" "S_"
-           :v  "M-i" "S/"
-           :v  "M-`" "S+"
+     :n  ",;" 'helm-org-in-buffer-headings
+     :nv ",l" 'org-insert-link
+     :nv ",L" 'narf/org-replace-link-by-link-description
+     :n  ",=" 'org-align-all-tags
+     :n  ",f" 'org-sparse-tree
+     :n  ",?" 'org-tags-view
+     :n  ",a" 'org-attach
+     :n  ",A" 'org-agenda
+     :n  ",D" 'org-time-stamp-inactive
+     :n  ",i" 'narf/org-toggle-inline-images-at-point
+     :n  ",t" 'org-todo
+     :n  ",T" 'org-show-todo-tree
+     :n  ",d" 'org-time-stamp
+     :n  ",r" 'org-refile
+     :n  ",s" 'org-schedule
+     :n  ",SPC" 'narf/org-toggle-checkbox
+     :n  ",<return>" 'org-archive-subtree
 
-           :i  "M-b" (λ (if (org-element-bold-parser) (evil-surround-delete ?\*) (insert "**") (backward-char)))
-           :i  "M-u" (λ (if (org-element-bold-parser) (evil-surround-delete ?\_) (insert "__") (backward-char)))
-           :i  "M-i" (λ (if (org-element-bold-parser) (evil-surround-delete ?\/) (insert "//") (backward-char)))
-           :i  "M-`" (λ (if (org-element-bold-parser) (evil-surround-delete ?\+) (insert "++") (backward-char)))
+     :n "za" 'org-cycle
+     :n "zA" 'org-shifttab
+     :n "zm" 'hide-body
+     :n "zr" 'show-all
+     :n "zo" 'show-subtree
+     :n "zO" 'show-all
+     :n "zc" 'hide-subtree
+     :n "zC" 'hide-all
 
-           :n  ",;" 'helm-org-in-buffer-headings
-           :nv ",l" 'org-insert-link
-           :n  ",=" 'org-align-all-tags
-           :n  ",f" 'org-sparse-tree
-           :n  ",?" 'org-tags-view
-           :n  ",a" 'org-attach
-           :n  ",D" 'org-time-stamp-inactive
-           :n  ",T" 'org-show-todo-tree
-           :n  ",d" 'org-time-stamp
-           :n  ",r" 'org-refile
-           :n  ",s" 'org-schedule
-           :n  ",t" 'org-todo
-           :n  ",SPC" 'narf/org-toggle-checkbox
-           :n  ",<return>" 'org-archive-subtree
+     :m  "]]" (λ (call-interactively 'org-forward-heading-same-level) (org-beginning-of-line))
+     :m  "[[" (λ (call-interactively 'org-backward-heading-same-level) (org-beginning-of-line))
+     :m  "]l" 'org-next-link
+     :m  "[l" 'org-previous-link
 
-           :n "za" 'org-cycle
-           :n "zA" 'org-shifttab
-           :n "zm" 'hide-body
-           :n "zr" 'show-all
-           :n "zo" 'show-subtree
-           :n "zO" 'show-all
-           :n "zc" 'hide-subtree
-           :n "zC" 'hide-all
+     :n  "RET" 'narf/org-execute-at-point
 
-           :n  "gr" (λ (cond ((org-table-p)
-                              (org-table-align))
-                             ((org-in-src-block-p)
-                              (org-babel-execute-src-block))
-                             ((org-inside-LaTeX-fragment-p)
-                              (org-toggle-latex-fragment))
-                             (t (org-toggle-inline-images))))
-           :m  "gh" 'outline-up-heading
-           :m  "gj" (λ (hide-subtree) (call-interactively 'org-forward-heading-same-level) (show-children))
-           :m  "gk" (λ (hide-subtree) (call-interactively 'org-backward-heading-same-level) (show-children))
-           ;;  :m "gk" 'org-backward-heading-same-level
-           :m  "gl" (λ (call-interactively 'outline-next-visible-heading) (show-children))
+     :m  "gh"  'outline-up-heading
+     :m  "gj"  (λ (hide-subtree) (call-interactively 'org-forward-heading-same-level)  (show-children))
+     :m  "gk"  (λ (hide-subtree) (call-interactively 'org-backward-heading-same-level) (show-children))
+     :m  "gl"  (λ (call-interactively 'outline-next-visible-heading) (show-children))
 
-           :n  "go" 'org-open-at-point
-           :n  "gO" (λ (let ((org-link-frame-setup (append '((file . find-file-other-window)) org-link-frame-setup)))
-                         (call-interactively 'org-open-at-point)))
+     :n  "go"  'org-open-at-point
+     :n  "gO"  (λ (let ((org-link-frame-setup (append '((file . find-file-other-window)) org-link-frame-setup))
+                        (org-file-apps '(("\\.org$" . emacs)
+                                         (t . "qlmanage -p \"%s\""))))
+                    (call-interactively 'org-open-at-point)))
 
-           :n  "ga" 'org-attach
-           :n  "gC-o" 'org-attach-reveal
-           :n  "gI" (λ (if (> (length org-inline-image-overlays) 0)
-                           (org-remove-inline-images)
-                         (org-display-inline-images nil t (line-beginning-position) (line-end-position))))
-           :n  "gQ" 'org-fill-paragraph
-           :n  "gA" 'org-agenda
-           :n  "gt" 'org-show-todo-tree
-           :m  "]l" 'org-next-link
-           :m  "[l" 'org-previous-link
-           :m  "$" 'org-end-of-line
-           :m  "^" 'org-beginning-of-line
-           :n  "<" 'org-metaleft
-           :n  ">" 'org-metaright
-           :v  "<" (λ (org-metaleft)  (evil-visual-restore))
-           :v  ">" (λ (org-metaright) (evil-visual-restore))
-           :n  "-" 'org-cycle-list-bullet
-           :n  "<S-M-return>" 'narf/org-insert-item-before
-           :n  "<M-return>"   'narf/org-insert-item-after
-           :n  "RET" (λ (cond ((org-at-item-checkbox-p)
-                               (org-toggle-checkbox))
-                              ((org-entry-is-todo-p)
-                               (org-todo 'done))))
-           :n  [tab] 'org-cycle)
+     :n  "gQ" 'org-fill-paragraph
+     :m  "$" 'org-end-of-line
+     :m  "^" 'org-beginning-of-line
+     :n  "<" 'org-metaleft
+     :n  ">" 'org-metaright
+     :v  "<" (λ (org-metaleft)  (evil-visual-restore))
+     :v  ">" (λ (org-metaright) (evil-visual-restore))
+     :n  "-" 'org-cycle-list-bullet
+     :n  "<S-M-return>" 'narf/org-insert-item-before
+     :n  "<M-return>"   'narf/org-insert-item-after
+     :n  [tab] 'org-cycle)
 
-         (:after org-agenda
-           (:map org-agenda-mode-map
-             :e "<escape>" 'org-agenda-Quit
-             :e "C-j" 'org-agenda-next-item
-             :e "C-k" 'org-agenda-previous-item
-             :e "C-n" 'org-agenda-next-item
-             :e "C-p" 'org-agenda-previous-item)))
+   (:after org-agenda
+     (:map org-agenda-mode-map
+       :e "<escape>" 'org-agenda-Quit
+       :e "C-j" 'org-agenda-next-item
+       :e "C-k" 'org-agenda-previous-item
+       :e "C-n" 'org-agenda-next-item
+       :e "C-p" 'org-agenda-previous-item)))
 
   (progn ;; Org hacks
+    ;; Redefining this function so it doesn't open that "links" help buffer
     (defun org-insert-link (&optional complete-file link-location default-description)
       (interactive "P")
       (let* ((wcf (current-window-configuration))
@@ -510,7 +587,105 @@
                            (read-string "Description: " desc)))))
         (unless (string-match "\\S-" desc) (setq desc nil))
         (if remove (apply 'delete-region remove))
-        (insert (org-make-link-string link desc))))))
+        (insert (org-make-link-string link desc))))
+
+    (defun org-fontify-meta-lines-and-blocks-1 (limit)
+      "Fontify #+ lines and blocks."
+      (let ((case-fold-search t))
+        (if (re-search-forward
+             "^\\([ \t]*#\\(\\(\\+[a-zA-Z]+:?\\| \\|$\\)\\(_\\([a-zA-Z]+\\)\\)?\\)[ \t]*\\(\\([^ \t\n]*\\)[ \t]*\\(.*\\)\\)\\)"
+             limit t)
+            (let ((beg (match-beginning 0))
+                  (block-start (match-end 0))
+                  (block-end nil)
+                  (lang (match-string 7))
+                  (beg1 (line-beginning-position 2))
+                  (dc1 (downcase (match-string 2)))
+                  (dc3 (downcase (match-string 3)))
+                  end end1 quoting block-type ovl)
+              (cond
+               ((and (match-end 4) (equal dc3 "+begin"))
+                ;; Truly a block
+                (setq block-type (downcase (match-string 5))
+                      quoting (member block-type org-protecting-blocks))
+                (when (re-search-forward
+                       (concat "^[ \t]*#\\+end" (match-string 4) "\\>.*")
+                       nil t)  ;; on purpose, we look further than LIMIT
+                  (setq end (min (point-max) (match-end 0))
+                        end1 (min (point-max) (1- (match-beginning 0))))
+                  (setq block-end (match-beginning 0))
+                  (when quoting
+                    (org-remove-flyspell-overlays-in beg1 end1)
+                    (remove-text-properties beg end
+                                            '(display t invisible t intangible t)))
+                  (add-text-properties
+                   beg end '(font-lock-fontified t font-lock-multiline t))
+                  (add-text-properties beg beg1 '(face org-meta-line))
+                  (org-remove-flyspell-overlays-in beg beg1)
+                  (add-text-properties	; For end_src
+                   end1 (min (point-max) (1+ end)) '(face org-meta-line))
+                  (org-remove-flyspell-overlays-in end1 end)
+                  (cond
+                   ((and lang (not (string= lang "")) org-src-fontify-natively)
+                    (org-src-font-lock-fontify-block lang block-start block-end)
+                    ;; remove old background overlays
+                    (mapc (lambda (ov)
+                            (if (eq (overlay-get ov 'face) 'org-block-background)
+                                (delete-overlay ov)))
+                          (overlays-at (/ (+ beg1 block-end) 2)))
+                    ;; add a background overlay
+                    (setq ovl (make-overlay beg1 block-end))
+                    (overlay-put ovl 'face 'org-block-background)
+                    (overlay-put ovl 'evaporate t)) ; make it go away when empty
+                   ;; (add-text-properties beg1 block-end '(src-block t)))
+                   (quoting
+                    (add-text-properties beg1 (min (point-max) (1+ end1))
+                                         '(face org-block))) ; end of source block
+                   ((not org-fontify-quote-and-verse-blocks))
+                   ((string= block-type "quote")
+                    (add-text-properties beg1 (min (point-max) (1+ end1)) '(face org-quote)))
+                   ((string= block-type "verse")
+                    (add-text-properties beg1 (min (point-max) (1+ end1)) '(face org-verse))))
+                  (add-text-properties beg beg1 '(face org-block-begin-line))
+                  (add-text-properties (min (point-max) (1+ end)) (min (point-max) (1+ end1))
+                                       '(face org-block-end-line))
+                  t))
+               ((member dc1 '("+title:" "+author:" "+email:" "+date:"))
+                (org-remove-flyspell-overlays-in
+                 (match-beginning 0)
+                 (if (equal "+title:" dc1) (match-end 2) (match-end 0)))
+                (add-text-properties
+                 beg (match-end 3)
+                 (if (member (intern (substring dc1 1 -1)) org-hidden-keywords)
+                     '(font-lock-fontified t invisible t)
+                   '(font-lock-fontified t face org-document-info-keyword)))
+                (add-text-properties
+                 (match-beginning 6) (min (point-max) (1+ (match-end 6)))
+                 (if (string-equal dc1 "+title:")
+                     '(font-lock-fontified t face org-document-title)
+                   '(font-lock-fontified t face org-document-info))))
+               ((equal dc1 "+caption:")
+                (org-remove-flyspell-overlays-in (match-end 2) (match-end 0))
+                (remove-text-properties (match-beginning 0) (match-end 0)
+                                        '(display t invisible t intangible t))
+                (add-text-properties (match-beginning 1) (match-end 3)
+                                     '(font-lock-fontified t face org-meta-line))
+                (add-text-properties (match-beginning 6) (+ (match-end 6) 1)
+                                     '(font-lock-fontified t face org-block))
+                t)
+               ((member dc3 '(" " ""))
+                (org-remove-flyspell-overlays-in beg (match-end 0))
+                (add-text-properties
+                 beg (match-end 0)
+                 '(font-lock-fontified t face font-lock-comment-face)))
+               (t ;; just any other in-buffer setting, but not indented
+                (org-remove-flyspell-overlays-in (match-beginning 0) (match-end 0))
+                (remove-text-properties (match-beginning 0) (match-end 0)
+                                        '(display t invisible t intangible t))
+                (add-text-properties beg (match-end 0)
+                                     '(font-lock-fontified t face org-meta-line))
+                t))))))
+    ))
 
 (provide 'module-org)
 ;;; module-org.el ends here

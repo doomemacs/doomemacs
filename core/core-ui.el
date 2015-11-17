@@ -40,7 +40,10 @@
       (set-fringe-bitmap-face 'tilde 'font-lock-comment-face))
   (menu-bar-mode -1))
 
-(blink-cursor-mode -1)    ; do blink cursor
+(mapc (lambda (x) (set-fontset-font "fontset-default" `(,x . ,x) "DejaVu Sans" nil 'prepend))
+      '(?☑ ?☐))
+
+(blink-cursor-mode  1)    ; do blink cursor
 (tooltip-mode      -1)    ; show tooltips in echo area
 
 ;; Highlight line
@@ -145,7 +148,7 @@
           ("*Backtrace*"           :position bottom :height 15 :stick t)
           ("*Flycheck errors*"     :position bottom :height 15 :stick t)
           (org-src-mode            :position bottom :height 25 :stick t)
-          (org-agenda-mode         :position bottom :height 25 :stick t)
+          (org-agenda-mode         :position bottom :height 0.4 :stick t)
           ("^\\*[Hh]elm.*?\\*\\'"  :regexp t :position bottom :height 15)
           ("^\\*Org-Babel.*\\*$"   :regexp t :position bottom :height 15)
           ("^\\*Org .*\\*$"        :regexp t :position bottom :height 15)
