@@ -348,8 +348,8 @@ iedit."
     :when (and (featurep 'iedit) (> (length iedit-occurrences-overlays) 0)))
 
   ;; TODO mode-line-substitute-face default face
-  (defface mode-line-substitute-face nil "")
   ;; TODO This is very hackish; refactor?
+  (defface mode-line-substitute-face nil "")
   (spaceline-define-segment narf-evil-substitute
     "Show number of :s matches in real time."
     (let ((highlights (cdar evil-ex-active-highlights-alist)))
