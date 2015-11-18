@@ -72,16 +72,47 @@
                         ("@projects" . ?r))
 
         org-capture-templates
-        '(("t" "TODO" entry (file+headline "~/Dropbox/notes/gtd.org" "Inbox") "** TODO %? %u\n%i")
-          ("T" "Project TODO" entry (file+headline (narf/project-org-filename) "Tasks") "** TODO %?\n%i" :prepend t)
-          ("N" "Project Note" entry (file+headline (narf/project-org-filename) "Notes") "** %u %?\n%i")
-          ("c" "Changelog" entry (file+datetree (narf/project-org-filename)) "** %<%H:%M>: %? :unsorted:\n%i" :prepend t)
-          ("n" "Note" entry (file+datetree org-default-notes-file) "** %<%H:%M>: %?\n%i" :prepend t)
-          ("j" "Journal" entry (file+datetree "~/Dropbox/notes/journal.org") "** %?%^g\nAdded: %U\n%i")
-          ("a" "Trivia" entry (file "~/Dropbox/notes/trivia.org") "* %u %?\n%i" :prepend t)
-          ("s" "Writing Scraps" entry (file "~/Dropbox/notes/writing.org") "* %u %?\n%i" :prepend t)
-          ("v" "Vocab" entry (file (concat org-directory "notes/vocab.org")) "* %?\n%i" :prepend t)
-          ("e" "Excerpt" entry (file (concat org-directory "notes/excerpts.org")) "* %u %?\n%i" :prepend t)))
+        '(("t" "TODO" entry
+           (file+headline (concat org-directory "gtd.org") "Inbox")
+           "** TODO %? %u")
+
+          ;; TODO Select file from org files
+          ;; ("T" "Specific TODO" entry
+          ;;  (function narf/-org-capture-choose)
+          ;;  "** TODO %?\n%i" :prepend t)
+
+          ;; ("c" "Changelog" entry
+          ;;  (function narf/-org-capture-changelog)
+          ;;  "** %<%H:%M>: %? :unsorted:\n%i" :prepend t)
+
+          ("j" "Journal" entry
+           (file+datetree (concat org-directory "personal/journal.org"))
+           "** %<%H:%M>: %?\n%i" :prepend t)
+
+          ;; TODO Select file from notes folder
+          ;; ("n" "Notes" entry
+          ;;  (file "~/Dropbox/notes/trivia.org")
+          ;;  "* %u %?\n%i" :prepend t)
+
+          ("s" "Writing Scraps" entry
+           (file+headline (concat org-directory "writing/scraps.org") "Unsorted")
+           "* %t %?\n%i" :prepend t)
+
+          ;; TODO Sort word under correct header
+          ("v" "Vocab" entry
+           (file+headline (concat org-directory "notes/vocab.org") "Unsorted")
+           "** %i%?\n")
+
+          ("e" "Excerpt" entry
+           (file+headline (concat org-directory "notes/excerpts.org") "Unsorted")
+           "** %u %?\n%i" :prepend t)
+
+          ("q" "Quote" item
+           (file (concat org-directory "notes/quotes.org"))
+           "+ %i\n  *Source: ...*\n  : @tags" :prepend t)
+          )
+
+        )
 
   (add-to-list 'org-link-frame-setup '(file . find-file)))
 
