@@ -188,10 +188,10 @@
     (math-symbols-latex
      math-symbols-unicode
      latex-commands
-     company-capf
-     company-yasnippet
-     company-dabbrev-code
-     company-keywords))
+     capf
+     yasnippet
+     dabbrev-code
+     keywords))
 
   (plist-put org-format-latex-options :scale 1.1))
 
