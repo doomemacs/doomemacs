@@ -182,13 +182,13 @@ left, create a scratch buffer."
 (defun narf/next-real-buffer ()
   "Switch to the next buffer and avoid special buffers."
   (interactive)
-  (narf/cycle-real-buffers +1))
+  (narf/cycle-real-buffers -1))
 
 ;;;###autoload
 (defun narf/previous-real-buffer ()
   "Switch to the previous buffer and avoid special buffers."
   (interactive)
-  (narf/cycle-real-buffers -1))
+  (narf/cycle-real-buffers +1))
 
 ;;;###autoload (autoload 'narf:kill-buried-buffers "defuns-buffers" nil t)
 (evil-define-command narf:kill-buried-buffers (&optional bang)
