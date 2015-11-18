@@ -42,8 +42,7 @@
    writeroom-restore-window-config t
    writeroom-fullscreen-effect nil
    writeroom-extra-line-spacing 10
-   writeroom-width 110))
-
+   writeroom-width 125))
 
 ;;; LaTeX
 

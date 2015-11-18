@@ -70,9 +70,9 @@
 (defface narf-fixme-face '((t (:inherit font-lock-warning-face))) "Face for FIXMEs")
 (defface narf-note-face  '((t (:inherit font-lock-warning-face))) "Face for NOTEs")
 (add-hook! (prog-mode emacs-lisp-mode)
-  (font-lock-add-keywords nil '(("\\<\\(TODO\\((.+)\\)?:?\\)"  1 'narf-todo-face prepend)))
-  (font-lock-add-keywords nil '(("\\<\\(FIXME\\((.+)\\)?:?\\)" 1 'narf-fixme-face prepend)))
-  (font-lock-add-keywords nil '(("\\<\\(NOTE\\((.+)\\)?:?\\)"  1 'narf-note-face prepend))))
+  (font-lock-add-keywords nil '(("\\<\\(TODO\\((.+)\\)?:?\\)"  1 'narf-todo-face prepend)
+                                ("\\<\\(FIXME\\((.+)\\)?:?\\)" 1 'narf-fixme-face prepend)
+                                ("\\<\\(NOTE\\((.+)\\)?:?\\)"  1 'narf-note-face prepend))))
 
 ;; Prettify code folding in emacs ;;;;;;
 (define-fringe-bitmap 'hs-marker [16 48 112 240 112 48 16] nil nil 'center)
@@ -97,13 +97,8 @@
             (overlay-put ov 'display display-string)))))
 
 ;; Fade out when unfocused ;;;;;;;;;;;;;
-(defun narf|focus-in-alpha ()
-  (set-frame-parameter nil 'alpha 100))
-(defun narf|focus-out-alpha ()
-  (set-frame-parameter nil 'alpha 80))
-
-(add-hook! focus-in  'narf|focus-in-alpha)
-(add-hook! focus-out 'narf|focus-out-alpha)
+(add-hook! focus-in  (set-frame-parameter nil 'alpha 100))
+(add-hook! focus-out (set-frame-parameter nil 'alpha 80))
 
 ;; Plugins ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (use-package hideshow
@@ -123,7 +118,10 @@
   :config (setq rainbow-delimiters-max-face-count 4))
 
 (use-package rainbow-mode :defer t
-  :init (add-hook! rainbow-mode (hl-line-mode (if rainbow-mode -1 1))))
+  :init
+  (add-hook! rainbow-mode
+    (when narf--hl-line-mode
+      (hl-line-mode (if rainbow-mode -1 1)))))
 
 (use-package popwin
   :config
@@ -373,7 +371,7 @@ iedit."
    ;; Right side
    '((selection-info :face highlight-face :skip-alternate t)
      narf-env-version
-     narf-buffer-encoding-
+     narf-buffer-encoding-abbrev
      (narf-major-mode
       (minor-modes :separator " " :tight t)
       process :when active)

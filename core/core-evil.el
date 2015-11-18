@@ -168,8 +168,9 @@
 
 ;; evil plugins
 (use-package evil-anzu
-  :config (setq anzu-cons-mode-line-p nil
-                anzu-minimum-input-length 2))
+  :config
+  (setq anzu-cons-mode-line-p nil
+        anzu-minimum-input-length 2))
 
 (use-package evil-args
   :commands (evil-inner-arg evil-outer-arg evil-forward-arg evil-backward-arg evil-jump-out-args)
