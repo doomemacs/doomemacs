@@ -158,14 +158,12 @@
   (add-hook! org-mode
     (add-hook 'after-save-hook (lambda () (shut-up! (org-babel-lob-ingest (buffer-file-name)))) t t))
 
-  (require 'ob-http)
-  (require 'ob-rust)
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((python . t) (ruby . t) (sh . t) (js . t) (css . t)
      (plantuml . t) (emacs-lisp . t) (matlab . t) (R . t)
      (latex . t) (calc . t)
-     (http . t) (rust . t)))
+     (http . t) (rust . t) (go . t)))
 
   (defadvice org-edit-src-code (around set-buffer-file-name activate compile)
     (let ((file-name (buffer-file-name))) ;; (1)

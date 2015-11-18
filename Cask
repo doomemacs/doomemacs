@@ -153,6 +153,7 @@
 (depends-on "org-opml" :git "https://github.com/edavis/org-opml")
 (depends-on "company-math")
 (depends-on "ob-http")
+(depends-on "ob-go" :git "https://github.com/pope/ob-go")
 (depends-on "org-download")
 
 ;; PlantUML -- modules/module-plantuml.el
