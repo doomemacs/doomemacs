@@ -29,6 +29,7 @@ If ARG is nil this function calls `recompile', otherwise it calls
 ;;;###autoload (autoload 'narf:eval-buffer "defuns-quickrun" nil t)
 (evil-define-command narf:eval-buffer ()
   :move-point nil
+  :repeat nil
   (interactive)
   (cond ((eq major-mode 'emacs-lisp-mode)
          (narf:eval-region (point-min) (point-max)))
@@ -37,6 +38,7 @@ If ARG is nil this function calls `recompile', otherwise it calls
 ;;;###autoload (autoload 'narf:eval-region "defuns-quickrun" nil t)
 (evil-define-operator narf:eval-region (beg end)
   :move-point nil
+  :repeat nil
   (interactive "<r>")
   (cond ((eq major-mode 'emacs-lisp-mode)
          (let* ((pp-escape-newlines nil)

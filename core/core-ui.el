@@ -21,7 +21,7 @@
  hl-line-sticky-flag             nil  ; only highlight in one window
 
  jit-lock-defer-time 0
- jit-lock-stealth-time nil
+ jit-lock-stealth-time 1
 
  resize-mini-windows t)
 
@@ -345,15 +345,15 @@ iedit."
                 (int-to-string length))))
     :face (if active 'mode-line-iedit-face 'mode-line-inactive)
     :skip-alternate t
-    :when (and (featurep 'iedit) (> (length iedit-occurrences-overlays) 0)))
+    :when (and (featurep 'evil-iedit-state) evil-iedit-state-minor-mode))
 
   ;; TODO mode-line-substitute-face default face
-  ;; TODO This is very hackish; refactor?
   (defface mode-line-substitute-face nil "")
+  ;; TODO This is very hackish; refactor?
   (spaceline-define-segment narf-evil-substitute
     "Show number of :s matches in real time."
     (let ((highlights (cdar evil-ex-active-highlights-alist)))
-      (format "%s" (length (elt highlights (1- (length highlights))))))
+      (format "%s matches" (length (elt highlights (1- (length highlights))))))
     :face (if active 'mode-line-substitute-face 'mode-line-inactive)
     :skip-alternate t
     :when (and (evil-ex-p) (string-equal evil-ex-cmd "s")))

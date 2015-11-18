@@ -51,6 +51,7 @@
   (dolist (mode-map '((cider-repl-mode   . emacs)
                       (comint-mode       . emacs)
                       (term-mode         . emacs)
+                      (Info-mode         . emacs)
                       (help-mode         . normal)
                       (message-mode      . normal)
                       (compilation-mode  . normal)))
