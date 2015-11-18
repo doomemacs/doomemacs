@@ -207,7 +207,6 @@
         org-fontify-quote-and-verse-blocks t
         org-ellipsis 'hs-face
         org-indent-indentation-per-level 3
-        org-list-indent-offset 4
         org-cycle-separator-lines 1
         org-hide-emphasis-markers t
         org-hide-leading-stars t)
@@ -431,6 +430,7 @@
 
      :nv "j"   'evil-next-visual-line
      :nv "k"   'evil-previous-visual-line
+     :v  "<S-tab>" 'narf/yas-insert-snippet
 
      :i  "M-a" (λ (evil-visual-state) (org-mark-element))
      :n  "M-a" 'org-mark-element
