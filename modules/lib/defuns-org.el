@@ -75,19 +75,43 @@
 ;;;###autoload
 (defun narf/org-execute-at-point ()
   (interactive)
-  (cond ((org-at-item-checkbox-p)
-         (org-toggle-checkbox))
-        ((org-entry-is-todo-p)
-         (org-todo 'done))
-        ((org-table-p)
-         (org-table-align))
-        ((org-babel-lob-get-info)
-         (org-babel-lob-execute-maybe))
-        ((org-in-src-block-p)
-         (org-babel-execute-src-block))
-        ((org-inside-LaTeX-fragment-p)
-         (org-toggle-latex-fragment))
-        (t (org-toggle-inline-images))))
+  (let* ((context (org-element-lineage
+                   (org-element-context)
+                   '(table table-row clock comment comment-block footnote-definition
+                     footnote-reference headline inlinetask keyword link
+                     latex-fragment src-block item plain-list timestamp babel-call)
+                   t))
+         (type (org-element-type context))
+         (value (org-element-property :value context)))
+    (cond
+     ((memq type '(table table-row))
+      (if (org-element-property :tblfm (org-element-property :parent context))
+          (org-table-recalculate t)
+        (org-table-align)))
+
+     ((and (memq type '(item))
+           (org-element-property :checkbox context))
+      (org-toggle-checkbox))
+
+     ((and (memq type '(headline))
+           (org-element-property :todo-type context))
+      (if (eq (org-element-property :todo-type context) 'done)
+          (org-todo 'todo)
+        (org-todo 'done)))
+
+     ((memq type '(babel-call))
+      (org-babel-lob-execute-maybe))
+
+     ((memq type '(src-block))
+      (org-babel-execute-src-block))
+
+     ((memq type '(latex-fragment))
+      (org-toggle-latex-fragment))
+
+     ((memq type '(link))
+      (org-open-at-point))
+
+     (t (org-toggle-inline-images)))))
 
 ;;;###autoload
 (defun narf/org-toggle-inline-images-at-point ()
