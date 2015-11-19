@@ -101,6 +101,15 @@
 (add-hook! focus-out (set-frame-parameter nil 'alpha 80))
 
 ;; Plugins ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(use-package yascroll
+  :commands (yascroll-bar-mode)
+  :config
+  (add-to-list 'yascroll:enabled-window-systems 'mac)
+  (setq yascroll:scroll-bar 'right-fringe
+        yascroll:delay-to-hide nil)
+
+  (defun yascroll:before-change (beg end)))
+
 (use-package hideshow
   :commands (hs-minor-mode hs-toggle-hiding hs-already-hidden-p)
   :diminish hs-minor-mode
@@ -205,7 +214,8 @@
   :config
   (setq-default
    powerline-default-separator nil
-   powerline-height 19)
+   powerline-height 19
+   spaceline-highlight-face-func 'spaceline-highlight-face-evil-state)
 
   (defface mode-line-is-modified nil "Face for mode-line modified symbol")
   (defface mode-line-buffer-file nil "Face for mode-line buffer file path")
@@ -285,56 +295,54 @@
     :face other-face
     :tight-right t)
 
+  (defface mode-line-count-face nil "")
+  (make-variable-buffer-local 'anzu--state)
   (spaceline-define-segment narf-anzu
     "Show the current match number and the total number of matches. Requires
 anzu to be enabled."
     (let ((here anzu--current-position)
           (total anzu--total-matched))
-      (when anzu--state
-        (propertize
-         (cl-case anzu--state
-           (search (format " %s/%d%s "
-                           (anzu--format-here-position here total)
-                           total (if anzu--overflow-p "+" "")))
-           (replace-query (format " %d replace " total))
-           (replace (format " %d/%d " here total)))
-         'face highlight-face)))
-    :when (and active (bound-and-true-p anzu--state))
+      (format " %s/%d%s "
+              (anzu--format-here-position here total)
+              total (if anzu--overflow-p "+" "")))
+    :face (if active 'mode-line-count-face 'mode-line-inactive)
+    :when (evil-ex-hl-active-p 'evil-ex-search)
     :skip-alternate t
     :tight t)
 
   ;; TODO mode-line-iedit-face default face
-  (defface mode-line-iedit-face nil "")
   (spaceline-define-segment narf-iedit
     "Show the number of matches and what match you're on (or after). Requires
 iedit."
     (let ((this-oc (iedit-find-current-occurrence-overlay))
           (length  (or (ignore-errors (length iedit-occurrences-overlays)) 0)))
-      (if (zerop (iedit-occurrence-string-length))
-          "..."
-        (format "%s/%s"
-                (save-excursion
-                  (unless this-oc
-                    (iedit-prev-occurrence)
-                    (setq this-oc (iedit-find-current-occurrence-overlay)))
-                  (if this-oc
-                      (- length (-elem-index this-oc iedit-occurrences-overlays))
-                    "-"))
-                (int-to-string length))))
-    :face (if active 'mode-line-iedit-face 'mode-line-inactive)
+      (format "%s/%s"
+              (save-excursion
+                (unless this-oc
+                  (iedit-prev-occurrence)
+                  (setq this-oc (iedit-find-current-occurrence-overlay)))
+                (if this-oc
+                    ;; NOTE: Not terribly reliable
+                    (- length (-elem-index this-oc iedit-occurrences-overlays))
+                  "-"))
+              length))
+    :face (if active 'mode-line-count-face 'mode-line-inactive)
     :skip-alternate t
-    :when (and (featurep 'evil-iedit-state) evil-iedit-state-minor-mode))
+    :when (bound-and-true-p iedit-mode))
 
   ;; TODO mode-line-substitute-face default face
   (defface mode-line-substitute-face nil "")
   ;; TODO This is very hackish; refactor?
   (spaceline-define-segment narf-evil-substitute
     "Show number of :s matches in real time."
-    (let ((highlights (cdar evil-ex-active-highlights-alist)))
-      (format "%s matches" (length (elt highlights (1- (length highlights))))))
-    :face (if active 'mode-line-substitute-face 'mode-line-inactive)
+    (let ((range (if evil-ex-range
+                     (cons (car evil-ex-range) (cadr evil-ex-range))
+                   (cons (line-beginning-position) (line-end-position))))
+          (pattern (car (evil-delimited-arguments evil-ex-argument 2))))
+      (format "%s matches" (count-matches pattern (car range) (cdr range)) evil-ex-argument))
+    :face (if active 'mode-line-count-face 'mode-line-inactive)
     :skip-alternate t
-    :when (and (evil-ex-p) (string-equal evil-ex-cmd "s")))
+    :when (and (evil-ex-p) (evil-ex-hl-active-p 'evil-ex-substitute)))
 
   (spaceline-define-segment narf-major-mode
     (concat "[" mode-name "]")
@@ -343,7 +351,8 @@ iedit."
   ;; Initialize modeline
   (spaceline-install
    ;; Left side
-   '(narf-anzu narf-iedit narf-evil-substitute
+   '((evil-state :face highlight-face :when active :skip-alternate t)
+     narf-anzu narf-iedit narf-evil-substitute
      (narf-buffer-path remote-host)
      narf-buffer-modified
      narf-vc
