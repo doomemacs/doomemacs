@@ -18,14 +18,6 @@
   (setq header-line-format nil))
 
 ;;;###autoload
-(defun narf/helm-split-window (&optional window)
-  "Minimalistic split-fn; leaves popwin to handle helm buffers."
-  (if (one-window-p t)
-      (let ((helm-full-frame t))
-        (selected-window))
-    (other-window-for-scrolling)))
-
-;;;###autoload
 (defun narf/helm-get-org-candidates-in-file (filename min-depth max-depth &optional fontify nofname)
   (with-current-buffer (pcase filename
                          ((pred bufferp) filename)

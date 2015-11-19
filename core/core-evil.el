@@ -29,6 +29,15 @@
         evil-echo-state nil
         evil-ex-substitute-global t
 
+        evil-normal-state-tag "N"
+        evil-insert-state-tag "I"
+        evil-motion-state-tag "M"
+        evil-replace-state-tag "R"
+        evil-emacs-state-tag "E"
+        evil-visual-state-tag "V"
+        evil-operator-state-tag "O"
+        evil-iedit-state-tag "X"
+
         ;; Color-coded state cursors
         evil-normal-state-cursor  'box
         evil-emacs-state-cursor   'bar
@@ -59,17 +68,13 @@
 
   (progn ; evil hacks
     (defadvice evil-force-normal-state (after evil-esc-quit activate)
-      "Close popwin windows, disable search highlights and quit the minibuffer if open."
-      (when (popwin:popup-window-live-p)
-        (popwin:close-popup-window))
+      "Close popups, disable search highlights and quit the minibuffer if open."
+      (unless (bound-and-true-p org-src-mode)
+        (narf/popup-close))
       (ignore-errors
         (evil-ex-nohighlight))
       (when (minibuffer-window-active-p (minibuffer-window))
         (narf-minibuffer-quit)))
-
-    ;; Fix disruptive errors w/ hidden buffers caused by popwin
-    (defadvice evil-ex-hl-do-update-highlight (around evil-ex-hidden-buffer-ignore-errors activate)
-      (ignore-errors ad-do-it))
 
     ;; buffer-local ex commands, thanks to: http://emacs.stackexchange.com/questions/13186
     (defun evil-ex-define-cmd-local (cmd function)
@@ -170,7 +175,8 @@
 (use-package evil-anzu
   :config
   (setq anzu-cons-mode-line-p nil
-        anzu-minimum-input-length 2))
+        anzu-minimum-input-length 2
+        anzu-search-threshold 500))
 
 (use-package evil-args
   :commands (evil-inner-arg evil-outer-arg evil-forward-arg evil-backward-arg evil-jump-out-args)

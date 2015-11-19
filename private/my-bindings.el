@@ -29,7 +29,7 @@
  "M-b"   'narf:build
  "M-t"   'helm-projectile-find-file
  "A-`"   'narf-switch-to-iterm
- "C-`"   'narf/popwin-toggle
+ "C-`"   'narf/popup-toggle
  "<f9>"  'what-face
 
  "M-w"   'evil-window-delete
@@ -322,8 +322,8 @@
      :n "]]" 'help-go-forward
      :n "[[" 'help-go-back
      :n "<escape>" (λ (kill-buffer)
-                      (if (eq popwin:popup-buffer (current-buffer))
-                          (popwin:close-popup-window)
+                      (if (narf/popup-p (current-buffer))
+                          (narf/popup-close)
                         (evil-window-delete)))))
 
  (:map evil-ex-completion-map

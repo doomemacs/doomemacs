@@ -4,7 +4,7 @@
 (use-package workgroups2
   :when window-system
   :init
-  (setq split-height-threshold 10
+  (setq split-height-threshold 8
 
         wg-session-file          (expand-file-name "wg-default" narf-temp-dir)
         wg-workgroup-directory   (expand-file-name "workgroups" narf-temp-dir)

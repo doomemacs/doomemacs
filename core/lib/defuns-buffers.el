@@ -92,9 +92,8 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
            (when window-system
              (mac-start-animation (get-buffer-window) :type 'fade-out :duration 0.3))
            (kill-this-buffer))))
-  (if (and (eq (current-buffer) popwin:popup-buffer)
-           (popwin:popup-window-live-p))
-      (popwin:close-popup-window)
+  (if (narf/popup-p (current-buffer))
+      (narf/popup-close)
     (unless (narf/real-buffer-p (current-buffer))
       (narf/previous-real-buffer))))
 
@@ -227,7 +226,7 @@ left, create a scratch buffer."
       ;; or scratch buffer by default
       (let* ((project-dir (narf/project-root t))
              (buffer-name "*scratch*"))
-        (popwin:popup-buffer (get-buffer-create buffer-name))
+        (narf/popup-open (get-buffer-create buffer-name))
         (when (eq (get-buffer buffer-name) (current-buffer))
           (when project-dir
             (cd project-dir))

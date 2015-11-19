@@ -87,10 +87,6 @@
   (add-hook! neotree-mode 'narf|neotree-init-keymap)
   (add-hook! window-configuration-change 'narf|neotree-close-on-window-change)
 
-  (when neo-persist-show
-    (add-hook! 'popwin:before-popup-hook (setq neo-persist-show nil))
-    (add-hook! 'popwin:after-popup-hook  (setq neo-persist-show t)))
-
   (evil-set-initial-state 'neotree-mode 'motion)
   (after! projectile
     (setq projectile-switch-project-action 'neotree-projectile-action))

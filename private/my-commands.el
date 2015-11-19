@@ -26,13 +26,13 @@
 (exmap "k[ill]all"       'narf:kill-all-buffers)     ; Kill all buffers (bang = in project)
 (exmap "k[ill]buried"    'narf:kill-buried-buffers)  ; Kill all buried buffers (bang = in project)
 (exmap "k[ill]o"         'narf:kill-unreal-buffers)
-(exmap "l[ast]"          'popwin:popup-last-buffer)
-(exmap "m[sg]"           'popwin:messages)
+(exmap "l[ast]"          'narf:popup-last-buffer)
+(exmap "m[sg]"           'narf:popup-messages)
 (exmap "ma[ke]"          'narf:build)
 (exmap "mv"              'narf:file-move)
 (exmap "na[rrow]"        'narf:narrow)               ; Narrow buffer to selection
 (exmap "wi[den]"         'narf:widen)                ; Widen narrowed buffer
-(exmap "pop"             'narf/popwin-toggle)
+(exmap "pop"             'narf/popup-toggle)
 (exmap "proj[ect]"       'helm-projectile-switch-project)
 (exmap "rec[ent]"        'narf:helm-recentf)
 (exmap "re[gex]"         'narf:regex)

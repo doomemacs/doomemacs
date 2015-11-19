@@ -58,6 +58,7 @@
                  (IS-LINUX    'core-os-linux)
                  (IS-WINDOWS  'core-os-win32))
 
+          core-popup           ; popup library and setup
           core-ui              ; draw me like one of your French editors
           core-evil            ; come to the dark side, we have cookies
           core-editor          ; filling the editor-shaped hole in the emacs OS
@@ -72,12 +73,10 @@
           core-workgroups      ; cure Emacs alzheimers
 
           module-cc            ; c/c++/obj-c madness
-          ;; module-crystal    ; ruby at the speed of c
           module-csharp        ; unity, .NET, and mono shenanigans
           module-collab        ; wonewy, I'm so wonewy~
           module-data          ; dbs 'n data formats
           module-elisp         ; drowning in parentheses
-          ;; module-eshell     ; eshell (on windows)
           module-go            ; a hipster dialect
           module-java          ; the poster child for carpal tunnel syndome
           module-js            ; alert("not java, javascript!")
@@ -96,6 +95,10 @@
           module-vim           ; my mistress
           module-web           ; for the 2.0'er
           module-writing       ; emacs for writing papers or fiction
+
+          ;;; Experimental
+          ;; module-crystal    ; ruby at the speed of c
+          ;; module-eshell     ; eshell (on windows)
 
           my-bindings
           my-commands

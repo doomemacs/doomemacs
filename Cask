@@ -18,11 +18,13 @@
 (depends-on "dash-at-point")
 (depends-on "applescript-mode")
 
+;; Popups --- core/core-popup.el
+(depends-on "popwin")
+
 ;; UI --- core/core-ui.el
 (depends-on "yascroll" :git "https://github.com/m2ym/yascroll-el")
 (depends-on "rainbow-delimiters")
 (depends-on "rainbow-mode")
-(depends-on "popwin")
 (depends-on "volatile-highlights")
 (depends-on "nlinum")
 (depends-on "spaceline" :git "https://github.com/TheBB/spaceline")
