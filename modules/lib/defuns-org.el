@@ -1,81 +1,69 @@
 ;;; defuns-org.el
 
 ;;;###autoload
-(defun narf/org-cycle-hide-drawers (state)
-  "Re-hide all drawers after a visibility state change. Hides properties permanently."
-  (when (and (derived-mode-p 'org-mode)
-             (not (memq state '(overview folded contents))))
-    (save-excursion
-      (let* ((globalp (memq state '(contents all)))
-             (beg (if globalp (point-min) (point)))
-             (end (if globalp (point-max)
-                    (if (eq state 'children)
-                        (save-excursion (outline-next-heading) (point))
-                      (org-end-of-subtree t)))))
-        (goto-char beg)
-        (while (re-search-forward org-drawer-regexp end t)
-          (save-excursion
-            (beginning-of-line 1)
-            (backward-char 1)
-            (let ((b (point)))
-              (if (re-search-forward
-                   "^[ \t]*:END:"
-                   (save-excursion (outline-next-heading) (point)) t)
-                  (outline-flag-region b (point-at-eol) t)
-                (user-error ":END: line missing at position %s" b)))))))))
-
-(defun narf--org-in-list-p ()
-  (and (save-excursion (search-backward-regexp "^ *\\([0-9]+[\.)]\\|[-*+]\\) "
-                                               (line-beginning-position) t))
-       (org-in-item-p)))
-
-;;;###autoload
-(defun narf/org-insert-item-after ()
+(defun narf/org-insert-item (direction)
   "Inserts a new heading or item, depending on the context."
   (interactive)
-  (org-end-of-line)
-  (cond ((org-at-item-checkbox-p)
-         (org-insert-heading)
-         (insert "[ ] "))
-        ((narf--org-in-list-p)
-         (org-insert-heading))
-        ((org-on-heading-p)
-         (org-insert-heading-respect-content))
-        (t
-         (org-insert-heading-after-current)
-         (delete-char 1)))
-  (evil-insert-state))
-
-;; TODO Check if this and -forward can be combined
-;;;###autoload
-(defun narf/org-insert-item-before ()
-  "Inserts a new heading or item, depending on the context."
-  (interactive)
-  (evil-first-non-blank)
-  (cond ((org-at-item-checkbox-p)
-         (org-insert-heading)
-         (insert "[ ] "))
-        ((narf--org-in-list-p)
-         (org-insert-heading))
-        (t (org-insert-heading)))
-  (evil-insert-state))
+  (let* ((context (org-element-lineage
+                   (org-element-context)
+                   '(table table-row headline inlinetask
+                     item plain-list)
+                   t))
+         (type (org-element-type context)))
+    (cond ((eq type 'item)
+           (cl-case direction
+             ('below
+              (org-end-of-line)
+              (org-insert-heading))
+             ('above
+              (evil-first-non-blank)
+              (org-insert-heading)))
+           (when (org-element-property :checkbox context)
+             (insert "[ ] ")))
+          ((memq type '(table table-row))
+           (cl-case direction
+             ('below
+              (org-table-insert-row))
+             ('above
+              (narf/org-table-prepend-row-or-shift-up))))
+          (t
+           (org-back-to-heading)
+           (let ((first-p (org-first-sibling-p))
+                 (orig-char (point)))
+             (cl-case direction
+               ('below
+                (org-insert-heading-after-current)
+                (unless first-p
+                  (save-excursion
+                    (goto-char orig-char)
+                    (evil-insert-newline-above)))
+                (save-excursion
+                  (evil-insert-newline-below)))
+               ('above
+                (save-excursion
+                  (evil-insert-newline-below))
+                (unless first-p
+                  (save-excursion
+                    (evil-insert-newline-above))))))))
+    (evil-append-line 1)))
 
 ;;;###autoload
 (defun narf/org-toggle-checkbox ()
   (interactive)
-  (save-excursion
-    (org-end-of-line)
-    (cond ((org-in-item-p)
-           (if (search-backward-regexp "\\[[ +-]\\]" (line-beginning-position) t)
-               (delete-char 4)
-             (org-beginning-of-line)))
-          (t (org-insert-heading)))
-    (insert "[ ] ")))
+  (let ((context (org-element-lineage (org-element-context) '(item) t)))
+    (when context
+      (org-end-of-line)
+      (org-beginning-of-line)
+      (if (org-element-property :checkbox context)
+          (when (search-backward-regexp "\\[[ +-]\\]" (line-beginning-position) t)
+            (delete-char 4))
+        (insert "[ ] ")))))
 
 ;;;###autoload
-(defun narf/org-execute-at-point ()
+(defun narf/org-dwim-at-point ()
   (interactive)
-  (let* ((context (org-element-lineage
+  (let* ((scroll-pt (window-start))
+         (context (org-element-lineage
                    (org-element-context)
                    '(table table-row clock comment comment-block footnote-definition
                      footnote-reference headline inlinetask keyword link
@@ -95,9 +83,15 @@
 
      ((and (memq type '(headline))
            (org-element-property :todo-type context))
-      (if (eq (org-element-property :todo-type context) 'done)
-          (org-todo 'todo)
-        (org-todo 'done)))
+      (org-todo
+       (if (eq (org-element-property :todo-type context) 'done) 'todo 'done)))
+
+     ((memq type '(headline))
+      (org-remove-latex-fragment-image-overlays
+       (save-excursion (org-beginning-of-line) (point))
+       (save-excursion (org-end-of-subtree) (point)))
+      (org-map-entries 'org-toggle-latex-fragment t 'tree)
+      (narf/org-refresh-inline-images))
 
      ((memq type '(babel-call))
       (org-babel-lob-execute-maybe))
@@ -111,14 +105,18 @@
      ((memq type '(link))
       (org-open-at-point))
 
-     (t (org-toggle-inline-images)))))
+     (t (narf/org-refresh-inline-images)))
+    (set-window-start nil scroll-pt)))
 
 ;;;###autoload
-(defun narf/org-toggle-inline-images-at-point ()
+(defun narf/org-refresh-inline-images ()
   (interactive)
   (if (> (length org-inline-image-overlays) 0)
       (org-remove-inline-images)
-    (org-display-inline-images nil t (line-beginning-position) (line-end-position))))
+    (org-display-inline-images
+     nil t
+     (save-excursion (org-back-to-heading) (point))
+     (save-excursion (org-end-of-subtree) (point)))))
 
 ;; Formatting shortcuts
 ;;;###autoload
@@ -291,26 +289,26 @@ COUNT-FOOTNOTES? is non-nil."
 
 
 ;;;###autoload
-(defun narf/org-table-append-row-or-shift-right ()
+(defun narf/org-table-append-field-or-shift-right ()
   (interactive)
   (org-shiftmetaright)
   (when (org-at-table-p) (org-metaright)))
 
 ;;;###autoload
-(defun narf/org-table-prepend-row-or-shift-left ()
+(defun narf/org-table-prepend-field-or-shift-left ()
   (interactive)
   (if (org-at-table-p)
       (org-shiftmetaright)
     (org-shiftmetaleft)))
 
 ;;;###autoload
-(defun narf/org-table-append-field-or-shift-down ()
+(defun narf/org-table-append-row-or-shift-down ()
   (interactive)
   (org-shiftmetadown)
   (when (org-at-table-p) (org-metadown)))
 
 ;;;###autoload
-(defun narf/org-table-prepend-field-or-shift-up ()
+(defun narf/org-table-prepend-row-or-shift-up ()
   (interactive)
   (if (org-at-table-p)
       (org-shiftmetadown)
