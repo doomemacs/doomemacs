@@ -1,0 +1,163 @@
+;;; core-popup.el --- hacks for better popwin integration
+
+(use-package popwin
+  :init
+  :config
+  (setq popwin:popup-window-height 20)
+  (mapc (lambda (rule) (push rule popwin:special-display-config))
+        '(("*eshell*"     :position left   :width 80  :stick t :dedicated t)
+          ("*scratch*"    :position bottom :height 20 :stick t :dedicated t)
+          ("*Apropos*"    :position bottom :height 40 :stick t :dedicated t)
+          ("*quickrun*"            :position bottom :height 15 :stick t)
+          ("*helm-ag-edit*"        :position bottom :height 20 :stick t)
+          (help-mode               :position bottom :height 15 :stick t :noselect t)
+          (debugger-mode           :position bottom :height 15)
+          (org-src-mode            :position bottom :height 0.5 :stick t)
+          (org-agenda-mode         :position bottom :height 0.4 :stick t)
+          ("*Backtrace*"           :position bottom :height 15 :stick t)
+          ("*Flycheck errors*"     :position bottom :height 15 :stick t)
+          ("^\\*[Hh]elm.*?\\*\\'"  :regexp t :position bottom :height 15)
+          ("^\\*Org-Babel.*\\*$"   :regexp t :position bottom :height 15)
+          ;; ("^\\*Org .*\\*$"        :regexp t :position bottom :height 15 :stick t)
+          ("*Agenda Commands*"     :position bottom :height 0.5)
+          ("*Org todo*"            :position bottom :height 5)
+          ("*Org Links*"           :position bottom :height 2)
+          ("^\\*CPU-Profiler-Report .+\\*$"  :regexp t :position bottom :height 0.35)
+          ))
+
+  (popwin-mode 1)
+
+  (after! evil
+    ;; Fix disruptive errors w/ hidden buffers caused by popwin
+    (defadvice evil-ex-hl-do-update-highlight (around evil-ex-hidden-buffer-ignore-errors activate)
+      (ignore-errors ad-do-it)))
+
+  (after! neotree
+    (when neo-persist-show
+      (add-hook! 'popwin:before-popup-hook (setq neo-persist-show nil))
+      (add-hook! 'popwin:after-popup-hook  (setq neo-persist-show t))))
+
+  (after! quickrun
+    (defun narf*quickrun-close-popwin (&optional _ _ _ _)
+      (when (get-buffer quickrun/buffer-name)
+        (quickrun/kill-quickrun-buffer)
+        (popwin:close-popup-window-if-necessary)))
+
+    (defun quickrun/pop-to-buffer (buf cb)
+      (popwin:pop-to-buffer buf)
+      (with-current-buffer buf
+        (evil-resize-window 5)
+        (funcall cb)
+        (yascroll-bar-mode +1)
+        (setq mode-line-format nil)))
+
+    (defun narf/quickrun-after-run ()
+      (with-selected-window popwin:popup-window
+        (let* ((lines (count-lines (point-min) (point-max)))
+               (act-lines (max 5 (min 40 (count-lines (point-min) (point-max))))))
+          (evil-resize-window act-lines)
+          (goto-char (point-min)))))
+    (add-hook! quickrun-after-run 'narf/quickrun-after-run)
+
+    (advice-add 'quickrun :before 'narf*quickrun-close-popwin)
+    (advice-add 'quickrun-region :before 'narf*quickrun-close-popwin))
+
+  (add-hook! org-load
+    (defun org-src-switch-to-buffer (buffer context)
+      (popwin:popup-buffer (get-buffer buffer) :height 0.5))
+
+    (defun org-switch-to-buffer-other-window (&rest args)
+      (mapc (lambda (b)
+              (popwin:popup-buffer (if (bufferp b) b (get-buffer-create b)) :height 0.5))
+            args)))
+
+  (after! helm
+    (defun narf/helm-split-window (&optional window)
+      "Minimalistic split-fn; leaves popwin to handle helm buffers."
+      (if (one-window-p t)
+          (let ((helm-full-frame t))
+            (selected-window))
+        (other-window-for-scrolling)))
+
+    (setq helm-split-window-default-side 'other
+          helm-split-window-preferred-function 'narf/helm-split-window)
+
+    (defadvice helm-ag--edit-abort (around helm-ag-edit-abort-popwin-compat activate)
+      (cl-letf (((symbol-function 'select-window) 'ignore)) ad-do-it))
+    (defadvice helm-ag--edit-commit (around helm-ag-edit-commit-popwin-compat activate)
+      (cl-letf (((symbol-function 'select-window) 'ignore)) ad-do-it))
+
+    ;; I remove any attempt to kill the helm-ag window, because popwin handles it.
+    (defun helm-ag--edit (_candidate)
+      (let ((default-directory helm-ag--default-directory))
+        (with-current-buffer (get-buffer-create "*helm-ag-edit*")
+          (erase-buffer)
+          (setq-local helm-ag--default-directory helm-ag--default-directory)
+          (let (buf-content)
+            (with-current-buffer (get-buffer "*helm-ag*")
+              (goto-char (point-min))
+              (forward-line 1)
+              (let* ((body-start (point))
+                     (marked-lines (cl-loop for ov in (overlays-in body-start (point-max))
+                                            when (eq 'helm-visible-mark (overlay-get ov 'face))
+                                            return (helm-marked-candidates))))
+                (if (not marked-lines)
+                    (setq buf-content (buffer-substring-no-properties
+                                       body-start (point-max)))
+                  (setq buf-content (concat (mapconcat 'identity marked-lines "\n") "\n")))))
+            (insert buf-content)
+            (add-text-properties (point-min) (point-max)
+                                 '(read-only t rear-nonsticky t front-sticky t))
+            (let ((inhibit-read-only t))
+              (setq header-line-format
+                    (format "[%s] C-c C-c: Commit, C-c C-k: Abort"
+                            (abbreviate-file-name helm-ag--default-directory)))
+              (goto-char (point-min))
+              (while (re-search-forward "^\\(\\(?:[^:]+:\\)\\{1,2\\}\\)\\(.*\\)$" nil t)
+                (let ((file-line-begin (match-beginning 1))
+                      (file-line-end (match-end 1))
+                      (body-begin (match-beginning 2))
+                      (body-end (match-end 2)))
+                  (add-text-properties file-line-begin file-line-end
+                                       '(face font-lock-function-name-face
+                                              intangible t))
+                  (remove-text-properties body-begin body-end '(read-only t))
+                  (set-text-properties body-end (1+ body-end)
+                                       '(read-only t rear-nonsticky t))))))))
+      (popwin:display-buffer (get-buffer "*helm-ag-edit*"))
+      ;; (other-window 1)
+      ;; (switch-to-buffer (get-buffer "*helm-ag-edit*"))
+      (goto-char (point-min))
+      (setq next-error-function 'compilation-next-error-function)
+      (setq-local compilation-locs (make-hash-table :test 'equal :weakness 'value))
+      (use-local-map helm-ag-edit-map)))
+
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  (defun narf/popup-p (&optional buffer)
+    (and (popwin:popup-window-live-p)
+         (if buffer (eq buffer popwin:popup-buffer) t)))
+
+  (defun narf/popup-close ()
+    (when (popwin:popup-window-live-p)
+      (popwin:close-popup-window t)))
+
+  (defun narf/popup-open (buffer &optional height)
+    (popwin:popup-buffer buffer))
+
+  (defun narf/popup-toggle ()
+    (interactive)
+    (if (popwin:popup-window-live-p)
+        (popwin:close-popup-window)
+      (popwin:popup-last-buffer)))
+
+  (defun narf:popup-last-buffer ()
+    (interactive)
+    (popwin:popup-last-buffer))
+
+  (defun narf:popup-messages ()
+    (interactive)
+    (popwin:messages)))
+
+(provide 'core-popup)
+;;; core-popup.el ends here

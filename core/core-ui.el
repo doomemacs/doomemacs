@@ -123,27 +123,6 @@
     (when narf--hl-line-mode
       (hl-line-mode (if rainbow-mode -1 1)))))
 
-(use-package popwin
-  :config
-  (setq popwin:popup-window-height 20)
-  (mapc (lambda (rule) (push rule popwin:special-display-config))
-        '(("*eshell*"     :position left   :width 80  :stick t :dedicated t)
-          ("*scratch*"    :position bottom :height 20 :stick t :dedicated t)
-          ("*Apropos*"    :position bottom :height 40 :stick t :dedicated t)
-          ("*quickrun*"            :position bottom :height 10 :stick t)
-          ("*helm-ag-edit*"        :position bottom :height 20 :stick t)
-          (help-mode               :position bottom :height 15 :stick t :noselect t)
-          ("*Backtrace*"           :position bottom :height 15 :stick t)
-          ("*Flycheck errors*"     :position bottom :height 15 :stick t)
-          (org-src-mode            :position bottom :height 25 :stick t)
-          (org-agenda-mode         :position bottom :height 0.4 :stick t)
-          ("^\\*[Hh]elm.*?\\*\\'"  :regexp t :position bottom :height 15)
-          ("^\\*Org-Babel.*\\*$"   :regexp t :position bottom :height 15)
-          ("^\\*Org .*\\*$"        :regexp t :position bottom :height 15)
-          ("^\\*CPU-Profiler-Report .+\\*$"  :regexp t :position bottom :height 0.35)
-          ))
-  (popwin-mode 1))
-
 (use-package volatile-highlights
   :diminish volatile-highlights-mode
   :config
@@ -162,6 +141,7 @@
   (defvar narf--hl-nlinum-line nil)
   (defvar nlinum-format " %4d  ")
   (defface linum-highlight-face '((t (:inherit linum))) "Face for line highlights")
+  (setq linum-format "%3d ")
   :init
   (defun narf|nlinum-enable ()
     (nlinum-mode +1)
