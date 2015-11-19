@@ -76,5 +76,12 @@
   (narf:tmux-chdir nil t)
   (narf-switch-to-iterm))
 
+;;;
+
+(defun narf-org-init-for-osx ()
+  ;; Reveal files in finder
+  (defvar org-file-apps '(("\\.org$" . emacs)
+                          (t . "open `dirname \"%s\"`"))))
+
 (provide 'core-os-osx)
 ;;; core-os-osx.el ends here

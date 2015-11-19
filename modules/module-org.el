@@ -13,26 +13,6 @@
 (defvar org-directory-invoices (expand-file-name "work/invoices/" org-directory))
 
 (add-hook! org-load 'narf|org-init)
-(add-hook! org-mode 'evil-org-mode)
-(add-hook! org-mode 'narf|enable-hard-wrap)
-
-;; Fixes when saveplace places the point in a folded position
-(defun narf|org-restore-point ()
-  (when (outline-invisible-p)
-    (ignore-errors
-      (save-excursion
-        (outline-previous-visible-heading 1)
-        (org-show-subtree)))))
-(add-hook! org-mode 'narf|org-restore-point)
-
-;; Realign tables and tags on save
-(defun narf|org-realign ()
-  (org-align-all-tags))
-(defun narf|org-update ()
-  (org-update-statistics-cookies t))
-(add-hook! org-mode
-  (add-hook 'before-save-hook 'narf|org-realign nil t)
-  (add-hook 'before-save-hook 'narf|org-update nil t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -58,7 +38,7 @@
         org-loop-over-headlines-in-active-region t
         org-footnote-auto-label 'plain
         org-log-done t
-        org-agenda-window-setup 'current-window
+        org-agenda-window-setup 'other-window
         org-src-window-setup 'current-window
         org-startup-folded 'content
         org-todo-keywords '((sequence "TODO(t)" "|" "DONE(d)")
@@ -110,30 +90,24 @@
           ("q" "Quote" item
            (file (concat org-directory "notes/quotes.org"))
            "+ %i\n  *Source: ...*\n  : @tags" :prepend t)
-          )
+          ))
 
-        )
+  (defvar org-agenda-restore-windows-after-quit t)
+  (defvar org-agenda-custom-commands
+    '(("x" agenda)
+      ("y" agenda*)
+      ("l" todo "LEAD")
+      ("t" todo)
+      ("c" tags "+class")))
+
+  (let ((ext-regexp (regexp-opt '("GIF" "JPG" "JPEG" "SVG" "TIF" "TIFF" "BMP" "XPM"
+                                  "gif" "jpg" "jpeg" "svg" "tif" "tiff" "bmp" "xpm"))))
+    (setq iimage-mode-image-regex-alist
+          `((,(concat "\\(`?file://\\|\\[\\[\\|<\\|`\\)?\\([-+./_0-9a-zA-Z]+\\."
+                      ext-regexp "\\)\\(\\]\\]\\|>\\|'\\)?") . 2)
+            (,(concat "<\\(http://.+\\." ext-regexp "\\)>") . 1))))
 
   (add-to-list 'org-link-frame-setup '(file . find-file)))
-
-(defun narf@org-ex ()
-  (exmap! "src"      'org-edit-special)
-  (exmap! "refile"   'org-refile)
-  (exmap! "archive"  'org-archive-subtree)
-  (exmap! "agenda"   'org-agenda)
-  (exmap! "todo"     'org-show-todo-tree)
-  (exmap! "link"     'org-link)
-  (exmap! "wc"       'narf/org-word-count)
-  (exmap! "at[tach]" 'narf:org-attach)
-  (exmap! "export"   'narf:org-export)
-
-  ;; TODO
-  ;; (exmap! "newc[ontact]" 'narf:org-new-contact)
-  ;; (exmap! "newp[roject]" 'narf:org-new-project)
-  ;; (exmap! "newi[nvoice]" 'narf:org-new-invoice)
-  )
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun narf@org-babel ()
   (setq org-confirm-babel-evaluate nil   ; you don't need my permission
@@ -142,18 +116,19 @@
         org-src-tab-acts-natively t)
 
   (defun narf-refresh-babel-lob ()
-    (async-start `(lambda ()
-                    ,(async-inject-variables "\\`\\(org-directory\\|load-path$\\)")
-                    (require 'org)
-                    (require 'f)
-                    (setq org-babel-library-of-babel nil)
-                    (mapc (lambda (f) (org-babel-lob-ingest f))
-                          (f-entries ,org-directory (lambda (path) (f-ext? path "org")) t))
-                    org-babel-library-of-babel)
-                 (lambda (lib)
-                   ;; (persistent-soft-store 'org-babel-library lib "org")
-                   (message "Library of babel updated!")
-                   (setq org-babel-library-of-babel lib))))
+    (async-start
+     `(lambda ()
+        ,(async-inject-variables "\\`\\(org-directory\\|load-path$\\)")
+        (require 'org)
+        (require 'f)
+        (setq org-babel-library-of-babel nil)
+        (mapc (lambda (f) (org-babel-lob-ingest f))
+              (f-entries ,org-directory (lambda (path) (f-ext? path "org")) t))
+        org-babel-library-of-babel)
+     (lambda (lib)
+       ;; (persistent-soft-store 'org-babel-library lib "org")
+       (message "Library of babel updated!")
+       (setq org-babel-library-of-babel lib))))
   (setq org-babel-library-of-babel (narf-refresh-babel-lob))
   (add-hook! org-mode
     (add-hook 'after-save-hook (lambda () (shut-up! (org-babel-lob-ingest (buffer-file-name)))) t t))
@@ -165,12 +140,19 @@
      (latex . t) (calc . t)
      (http . t) (rust . t) (go . t)))
 
-  (defadvice org-edit-src-code (around set-buffer-file-name activate compile)
-    (let ((file-name (buffer-file-name))) ;; (1)
-      ad-do-it                            ;; (2)
-      (setq buffer-file-name file-name))) ;; (3)
+  (setq org-plantuml-jar-path puml-plantuml-jar-path)
+  (when (file-exists-p "~/.plantuml")
+    (add-to-list 'org-babel-default-header-args:plantuml
+                 '(:cmdline . "-config ~/.plantuml")))
 
-  (add-to-list 'org-src-lang-modes '("rust" . rust))
+  (defadvice org-edit-src-code (around set-buffer-file-name activate compile)
+    "Assign a proper filename to the edit-src buffer, so plugins like quickrun
+will function properly."
+    (let ((file-name (buffer-file-name)))
+      ad-do-it
+      (setq buffer-file-name file-name)))
+
+  ;; Add plantuml syntax highlighting support
   (add-to-list 'org-src-lang-modes '("puml" . puml))
   (add-to-list 'org-src-lang-modes '("plantuml" . puml)))
 
@@ -180,16 +162,6 @@
    org-latex-create-formula-image-program 'dvipng
    org-startup-with-latex-preview t
    org-highlight-latex-and-related '(latex))
-
-  (require 'company-math)
-  (define-company-backend! org-mode
-    (math-symbols-latex
-     math-symbols-unicode
-     latex-commands
-     capf
-     yasnippet
-     dabbrev-code
-     keywords))
 
   (plist-put org-format-latex-options :scale 1.1))
 
@@ -204,29 +176,11 @@
         org-fontify-done-headline t
         org-fontify-quote-and-verse-blocks t
         org-ellipsis 'hs-face
-        org-indent-indentation-per-level 3
-        org-cycle-separator-lines 1
+        org-indent-indentation-per-level 2
+        org-cycle-separator-lines 2
         org-hide-emphasis-markers t
-        org-hide-leading-stars t)
-
-  (add-hook! org-mode (setq truncate-lines nil))
-
-  (let ((ext-regexp (regexp-opt '("GIF" "JPG" "JPEG" "SVG" "TIF" "TIFF" "BMP" "XPM"
-                                  "gif" "jpg" "jpeg" "svg" "tif" "tiff" "bmp" "xpm"))))
-    (setq iimage-mode-image-regex-alist
-          `((,(concat "\\(`?file://\\|\\[\\[\\|<\\|`\\)?\\([-+./_0-9a-zA-Z]+\\."
-                      ext-regexp "\\)\\(\\]\\]\\|>\\|'\\)?") . 2)
-            (,(concat "<\\(http://.+\\." ext-regexp "\\)>") . 1))))
-
-  (add-hook! org-mode
-    (setq line-spacing '0.2)
-    (variable-pitch-mode 1)
-    (text-scale-set 0.5)
-    (setq tab-width 3 evil-shift-width 3))
-
-  (require 'org-bullets)
-  (setq org-bullets-bullet-list '("✸" "•" "◦" "•" "◦" "•" "◦"))
-  (add-hook! org-mode 'org-bullets-mode)
+        org-hide-leading-stars t
+        org-bullets-bullet-list '("✸" "•" "◦" "•" "◦" "•" "◦"))
 
   ;; Restore org-block-background face (removed in official org)
   (defface org-block-background '((t ()))
@@ -245,157 +199,159 @@
   ;; Prettify symbols, blocks and TODOs
   (defface org-todo-high '((t ())) "Face for high-priority todo")
   (defface org-todo-vhigh '((t ())) "Face for very high-priority todo")
-  (defface org-item-checkbox '((t ())) "Face for checkbox list lines")
-  (defface org-item-checkbox-checked '((t ())) "Face for checked checkbox list lines")
+  ;; (defface org-item-checkbox '((t ())) "Face for checkbox list lines")
+  ;; (defface org-item-checkbox-checked '((t ())) "Face for checked checkbox list lines")
   (defface org-whitespace '((t ())) "Face for spaces")
   (font-lock-add-keywords
    'org-mode `(("^ *\\(#\\+begin_src\\>\\)"
-                (0 (narf/show-as ?#)))
+                (1 (narf/show-as ?#)))
                ("^ *\\(#\\+end_src\\>\\)"
-                (0 (narf/show-as ?#)))
+                (1 (narf/show-as ?#)))
                ("\\(#\\+begin_quote\\>\\)"
-                (0 (narf/show-as ?\")))
+                (1 (narf/show-as ?\")))
                ("\\(#\\+end_quote\\>\\)"
-                (0 (narf/show-as ?\")))
+                (1 (narf/show-as ?\")))
 
-               ;; TODO Optimize these
                ;; Hide TODO tags
-               ("\\([-+] \\[X\\]\\|\\* DONE\\) \\([^$:\n\r]+\\)"
-                (0 (narf/show-as ?☑)))
-               ("\\([-+] \\[ \\]\\|\\* TODO\\) \\([^$:\n\r]+\\)"
-                (0 (narf/show-as ?☐)))
+               ("\\(\\* DONE\\) \\([^$:\n\r]+\\)"
+                (1 (narf/show-as ?☑))
+                (2 'org-headline-done))
+               ("\\(\\* TODO\\) [^$:\n\r]+"
+                (1 (narf/show-as ?☐)))
 
-               ("\\([-+] \\[ \\] \\([^$:\n\r]+\\)\\)"
-                (1 'org-item-checkbox))
-               ("\\([-+] \\[X\\] \\([^$:\n\r]+\\)\\)"
-                (1 'org-item-checkbox-checked))
+               ("[-+*] \\(\\[ \\]\\) "
+                (1 (narf/show-as ?☐)))
+               ("[-+*] \\(\\[X\\]\\) \\([^$:\n\r]+\\)"
+                (1 (narf/show-as ?☑))
+                (2 'org-headline-done))
+
+               ;; ("\\([-+] \\(\\[ \\]\\) \\([^$:\n\r]+\\)\\)"
+               ;;  (2 'org-item-checkbox))
+               ;; ("\\([-+] \\(\\[X\\]\\) \\([^$:\n\r]+\\)\\)"
+               ;;  (2 'org-item-checkbox-checked))
 
                ;; Color code TODOs with !'s to denote priority
-               ("\\(\\* TODO ?!! \\([^$:\n\r]+\\)\\)"
-                (1 'org-todo-vhigh))
-               ("\\(\\* TODO ?! \\([^$:\n\r]+\\)\\)"
-                (1 'org-todo-high))
+               ("\\* TODO\\( !\\)! [^$:\n\r]+"
+                (0 'org-todo-vhigh)
+                (1 (narf/show-as ?!)))
+               ("\\* TODO\\( !\\) [^$:\n\r]+"
+                (0 'org-todo-high)
+                (1 (narf/show-as ?!)))
 
+               ;; Show checkbox for other todo states (but don't hide the label)
                (,(concat
                   "\\(\\*\\) "
                   (regexp-opt '("LEAD" "NEXT" "ACTIVE" "PENDING" "CANCELLED") t)
                   " ")
                 (1 (narf/show-as ?☐)))
 
-               ("^ *\\(\\([-+]\\)\\( \\)+[^$\n\r]+\\)"
-                (2 'org-code)
-                (3 'org-whitespace))
+               ("^ *\\([-+]\\)\\( \\)+[^$\n\r]+"
+                (1 'org-code)
+                ;; (2 'org-whitespace)
+                )
                ("^ +\\(\\*\\) "
                 (1 (narf/show-as ?◦)))
-               ("^ +"
-                (0 'org-whitespace))
+               ;; ("^ +"
+               ;;  (0 'org-whitespace))
                )))
-
-(defun narf@org-plantuml ()
-  (setq org-plantuml-jar-path puml-plantuml-jar-path)
-  (when (file-exists-p "~/.plantuml")
-    (add-to-list 'org-babel-default-header-args:plantuml
-                 '(:cmdline . "-config ~/.plantuml"))))
-
-(defun narf@org-links ()
-  (defun narf--org-id-to-file (id dir &optional pattern)
-    (let* ((glob (f-glob (format (concat "%s" (or pattern "%s-*.org")) dir id)))
-           (glob-len (length glob)))
-      (when (zerop glob-len)
-        (user-error "Could not find file with that ID"))
-      (car glob)))
-
-  (defun narf-org-link-contact (id)
-    (org-open-file (narf--org-id-to-file id org-directory-contacts) t))
-  (defun narf-org-link-project (id)
-    (org-open-file (narf--org-id-to-file id org-directory-projects) t))
-  (defun narf-org-link-invoice (id)
-    (org-open-file (narf--org-id-to-file id org-directory-invoices "%s.org") t))
-
-  (org-add-link-type "contact" 'narf-org-link-contact)
-  (org-add-link-type "project" 'narf-org-link-project)
-  (org-add-link-type "invoice" 'narf-org-link-invoice)
-
-  (defun narf-org-complete (type)
-    (let ((default-directory (symbol-value (intern (format "org-directory-%ss" type)))))
-      (let* ((file (org-iread-file-name ">>> "))
-             (match (s-match "^\\([0-9]+\\)[-.]" (f-filename file))))
-        (unless match
-          (user-error "Invalid file ID"))
-        (format "%s:%s" type (cadr match)))))
-
-  (defun org-contact-complete-link ()
-    (narf-org-complete "contact"))
-  (defun org-project-complete-link ()
-    (narf-org-complete "project"))
-  (defun org-invoice-complete-link ()
-    (narf-org-complete "invoice")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defun narf|org-hook ()
+  (evil-org-mode +1)
+  (org-bullets-mode +1)
+  (org-indent-mode +1)
+  ;; (text-scale-set 0.5)
+
+  (diminish 'org-indent-mode)
+
+  (narf|enable-tab-width-2)
+  (setq truncate-lines nil)
+  (setq line-spacing '0.2)
+  ;; (variable-pitch-mode 1)
+
+  ;; Allow cursor beyond eol so we can reach around hidden emphasis markers
+  (set (make-local-variable 'evil-move-beyond-eol) t)
+
+  (defun narf|org-update-statistics-cookies () (org-update-statistics-cookies t))
+  (add-hook 'before-save-hook 'narf|org-update-statistics-cookies nil t)
+  (add-hook 'evil-insert-state-exit-hook 'narf|org-update-statistics-cookies nil t)
+
+  ;; If saveplace places the point in a folded position, unfold it on load
+  (when (outline-invisible-p)
+    (ignore-errors
+      (save-excursion
+        (outline-previous-visible-heading 1)
+        (org-show-subtree))))
+
+  ;; Custom Ex Commands
+  (exmap! "src"      'org-edit-special)
+  (exmap! "refile"   'org-refile)
+  (exmap! "archive"  'org-archive-subtree)
+  (exmap! "agenda"   'org-agenda)
+  (exmap! "todo"     'org-show-todo-tree)
+  (exmap! "link"     'org-link)
+  (exmap! "wc"       'narf/org-word-count)
+  (exmap! "at[tach]" 'narf:org-attach)
+  (exmap! "export"   'narf:org-export)
+
+  ;; TODO
+  ;; (exmap! "newc[ontact]" 'narf:org-new-contact)
+  ;; (exmap! "newp[roject]" 'narf:org-new-project)
+  ;; (exmap! "newi[nvoice]" 'narf:org-new-invoice)
+  )
+
 (defun narf|org-init ()
-  (after! org-indent (diminish 'org-indent-mode))
-
-  (use-package org-download
-    :config
-    (setq-default org-download-image-dir ".attach/"
-                  org-download-screenshot-method "screencapture -i %s"))
-
-  (when IS-MAC
-    ;; Reveal files in finder
-    (defvar org-file-apps '(("\\.org$" . emacs)
-                            (t . "open `dirname \"%s\"`"))))
-
-  (after! autoinsert
-    (add-template! (format "%s.\\.org$" org-directory-contacts) "__contact.org"  'org-mode)
-    (add-template! (format "%s.\\.org$" org-directory-projects) "__projects.org" 'org-mode)
-    (add-template! (format "%s.\\.yml$" org-directory-invoices) "__invoices.org" 'org-mode))
-
-  (advice-add 'evil-force-normal-state :before 'org-remove-occur-highlights)
-
   (narf@org-vars)
   (narf@org-babel)
   (narf@org-latex)
   (narf@org-looks)
-  (narf@org-links)
-  (narf@org-plantuml)
-  (add-hook! org-mode 'narf@org-ex)
-  (add-hook! evil-insert-state-exit 'narf|org-update)
 
-  (use-package deft
-    :commands (deft narf/deft-journal narf/deft-contacts narf/deft-invoices narf/deft-projects)
+  (add-hook 'org-mode-hook 'narf|org-hook)
+
+  (org-add-link-type "contact" 'narf/org-link-contact)
+  (org-add-link-type "project" 'narf/org-link-project)
+  (org-add-link-type "invoice" 'narf/org-link-invoice)
+
+  ;;; Evil integration
+  (progn
+    (advice-add 'evil-force-normal-state :before 'org-remove-occur-highlights)
+    ;; Add element delimiter text-objects so we can use evil-surround to
+    ;; manipulate them.
+    (define-text-object! "$" "\\$" "\\$")
+    (define-text-object! "*" "\\*" "\\*")
+    (define-text-object! "/" "/" "/")
+    (define-text-object! "_" "_" "_")
+    (define-text-object! "=" "=" "=")
+    (define-text-object! "~" "~" "~"))
+
+  ;;; File templates
+  (after! autoinsert
+    (add-template! (format "%s.+\\.org$" org-directory-contacts) "__contact.org"  'org-mode)
+    (add-template! (format "%s.+\\.org$" org-directory-projects) "__projects.org" 'org-mode)
+    (add-template! (format "%s.+\\.org$" org-directory-invoices) "__invoices.org" 'org-mode))
+
+  ;;; Plugins
+  (require 'org-download)
+  (setq org-download-image-dir ".attach/"
+        org-download-screenshot-method "screencapture -i %s")
+
+  (use-package deft :defer t
     :config
     (setq deft-directory org-directory
           deft-recursive t
-          deft-separator " :: ")
+          deft-separator " :: "))
 
-    (defun narf/deft-projects ()
-      (interactive)
-      (let ((deft-directory org-directory-projects))
-        (deft)))
-
-    (defun narf/deft-contacts ()
-      (interactive)
-      (let ((deft-directory org-directory-contacts))
-        (deft))))
-
-  (require 'org-agenda)
-  (setq org-agenda-restore-windows-after-quit t
-        org-agenda-custom-commands
-        '(("x" agenda)
-          ("y" agenda*)
-          ("l" todo "LEAD")
-          ("t" todo)
-          ("c" tags "+class")))
-
-  ;; Add element delimiter text-objects so we can use evil-surround to
-  ;; manipulate them.
-  (define-text-object! "$" "\\$" "\\$")
-  (define-text-object! "*" "\\*" "\\*")
-  (define-text-object! "/" "/" "/")
-  (define-text-object! "_" "_" "_")
-  (define-text-object! "=" "=" "=")
-  (define-text-object! "~" "~" "~")
+  ;;; Auto-completion
+  (require 'company-math)
+  (define-company-backend! org-mode
+    (math-symbols-latex
+     math-symbols-unicode
+     latex-commands
+     capf
+     yasnippet
+     dabbrev-code
+     keywords))
 
   (define-key org-mode-map (kbd "RET") nil)
   (define-key org-mode-map (kbd "C-j") nil)
@@ -432,8 +388,8 @@
            :n  "M-a" 'org-mark-element
            :v  "M-a" 'mark-whole-buffer
 
-           :i  "<M-return>"   (λ (narf/org-insert-item 'below))
-           :i  "<S-M-return>" (λ (narf/org-insert-item 'above))
+           :ni "<M-return>"   (λ (narf/org-insert-item 'below))
+           :ni "<S-M-return>" (λ (narf/org-insert-item 'above))
 
            :i  "M-b" (λ (narf/org-surround "*")) ; bold
            :i  "M-u" (λ (narf/org-surround "_")) ; underline
@@ -452,6 +408,7 @@
            :n  ",=" 'org-align-all-tags
            :n  ",f" 'org-sparse-tree
            :n  ",?" 'org-tags-view
+           :n  ",e" 'org-edit-special
            :n  ",a" 'org-attach
            :n  ",A" 'org-agenda
            :n  ",D" 'org-time-stamp-inactive
@@ -481,8 +438,8 @@
            :n  "RET" 'narf/org-dwim-at-point
 
            :m  "gh"  'outline-up-heading
-           :m  "gj"  (λ (hide-subtree) (call-interactively 'org-forward-heading-same-level)  (show-children))
-           :m  "gk"  (λ (hide-subtree) (call-interactively 'org-backward-heading-same-level) (show-children))
+           :m  "gj"  'org-forward-heading-same-level
+           :m  "gk"  'org-backward-heading-same-level
            :m  "gl"  (λ (call-interactively 'outline-next-visible-heading) (show-children))
 
            :n  "go"  'org-open-at-point
@@ -499,9 +456,10 @@
            :v  "<" (λ (org-metaleft)  (evil-visual-restore))
            :v  ">" (λ (org-metaright) (evil-visual-restore))
            :n  "-" 'org-cycle-list-bullet
-           :n  "<S-M-return>" 'narf/org-insert-item-before
-           :n  "<M-return>"   'narf/org-insert-item-after
            :n  [tab] 'org-cycle)
+
+         (:map org-src-mode-map
+           :n  "<escape>" (λ (message "Exited") (org-edit-src-exit)))
 
          (:after org-agenda
            (:map org-agenda-mode-map
@@ -511,113 +469,12 @@
              :e "C-n" 'org-agenda-next-item
              :e "C-p" 'org-agenda-previous-item)))
 
+    ;;; OS-Specific
+  (cond (IS-MAC (narf-org-init-for-osx))
+        (IS-LINUX nil)
+        (IS-WINDOWS nil))
 
   (progn ;; Org hacks
-    ;; Redefining this function so it doesn't open that "links" help buffer
-    (defun org-insert-link (&optional complete-file link-location default-description)
-      (interactive "P")
-      (let* ((wcf (current-window-configuration))
-             (origbuf (current-buffer))
-             (region (if (org-region-active-p) (buffer-substring (region-beginning) (region-end))))
-             (remove (and region (list (region-beginning) (region-end))))
-             (desc region)
-             tmphist ; byte-compile incorrectly complains about this
-             (link link-location)
-             (abbrevs org-link-abbrev-alist-local)
-             entry file all-prefixes auto-desc)
-        (cond
-         (link-location) ; specified by arg, just use it.
-         ((org-in-regexp org-bracket-link-regexp 1)
-          ;; We do have a link at point, and we are going to edit it.
-          (setq remove (list (match-beginning 0) (match-end 0)))
-          (setq desc (if (match-end 3) (org-match-string-no-properties 3)))
-          (setq link (read-string "Link: "
-                                  (org-link-unescape
-                                   (org-match-string-no-properties 1)))))
-         ((or (org-in-regexp org-angle-link-re)
-              (org-in-regexp org-plain-link-re))
-          ;; Convert to bracket link
-          (setq remove (list (match-beginning 0) (match-end 0))
-                link (read-string "Link: " (org-remove-angle-brackets (match-string 0)))))
-         ((member complete-file '((4) (16)))
-          ;; Completing read for file names.
-          (setq link (org-file-complete-link complete-file)))
-         (t (org-link-fontify-links-to-this-file)
-            (setq tmphist (append (mapcar 'car org-stored-links) org-insert-link-history))
-            (setq all-prefixes (append (mapcar 'car abbrevs)
-                                       (mapcar 'car org-link-abbrev-alist)
-                                       org-link-types))
-            (unwind-protect
-                (progn (setq link (org-completing-read
-                                   "Link: " (append (mapcar (lambda (x) (concat x ":")) all-prefixes)
-                                                    (mapcar 'car org-stored-links))
-                                   nil nil nil 'tmphist (caar org-stored-links)))
-                       (if (not (string-match "\\S-" link))
-                           (user-error "No link selected"))
-                       (mapc (lambda(l)
-                               (when (equal link (cadr l)) (setq link (car l) auto-desc t)))
-                             org-stored-links)
-                       (if (or (member link all-prefixes)
-                               (and (equal ":" (substring link -1))
-                                    (member (substring link 0 -1) all-prefixes)
-                                    (setq link (substring link 0 -1))))
-                           (setq link (with-current-buffer origbuf
-                                        (org-link-try-special-completion link)))))
-              (set-window-configuration wcf))
-            (setq entry (assoc link org-stored-links))
-            (or entry (push link org-insert-link-history))
-            (setq desc (or desc (nth 1 entry)))))
-        (if (funcall (if (equal complete-file '(64)) 'not 'identity)
-                     (not org-keep-stored-link-after-insertion))
-            (setq org-stored-links (delq (assoc link org-stored-links)
-                                         org-stored-links)))
-        (if (and (string-match org-plain-link-re link)
-                 (not (string-match org-ts-regexp link)))
-            (setq link (org-remove-angle-brackets link)))
-        (when (and buffer-file-name
-                   (string-match "^file:\\(.+?\\)::\\(.+\\)" link))
-          (let* ((path (match-string 1 link))
-                 (case-fold-search nil)
-                 (search (match-string 2 link)))
-            (save-match-data
-              (if (equal (file-truename buffer-file-name) (file-truename path))
-                  (setq link search)))))
-        (when (string-match "^\\(file:\\|docview:\\)\\(.*\\)" link)
-          (let* ((type (match-string 1 link))
-                 (path (match-string 2 link))
-                 (origpath path)
-                 (case-fold-search nil))
-            (cond ((or (eq org-link-file-path-type 'absolute)
-                       (equal complete-file '(16)))
-                   (setq path (abbreviate-file-name (expand-file-name path))))
-                  ((eq org-link-file-path-type 'noabbrev)
-                   (setq path (expand-file-name path)))
-                  ((eq org-link-file-path-type 'relative)
-                   (setq path (file-relative-name path)))
-                  (t (save-match-data
-                       (if (string-match (concat "^" (regexp-quote (expand-file-name
-                                                                    (file-name-as-directory default-directory))))
-                                         (expand-file-name path))
-                           (setq path (substring (expand-file-name path) (match-end 0)))
-                         (setq path (abbreviate-file-name (expand-file-name path)))))))
-            (setq link (concat type path))
-            (if (equal desc origpath)
-                (setq desc path))))
-        (if org-make-link-description-function
-            (setq desc
-                  (or (condition-case nil
-                          (funcall org-make-link-description-function link desc)
-                        (error (progn (message "Can't get link description from `%s'"
-                                               (symbol-name org-make-link-description-function))
-                                      (sit-for 2) nil)))
-                      (read-string "Description: " default-description)))
-          (if default-description (setq desc default-description)
-            (setq desc (or (and auto-desc desc)
-                           (read-string "Description: " desc)))))
-        (unless (string-match "\\S-" desc) (setq desc nil))
-        (if remove (apply 'delete-region remove))
-        (insert (org-make-link-string link desc))))
-
     (defun org-fontify-meta-lines-and-blocks-1 (limit)
       "Fontify #+ lines and blocks."
       (let ((case-fold-search t))
