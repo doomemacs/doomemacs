@@ -2,13 +2,9 @@
 ;; for ../core-flycheck.el
 
 ;;;###autoload
-(defun narf*fly-shorter-status (result)
-  (format "[%s]" (replace-regexp-in-string " FlyC:?" "" result)))
-
-;;;###autoload
 (defun narf*flycheck-buffer ()
-  (if (and (featurep 'flycheck) flycheck-mode)
-      (flycheck-buffer)))
+  (when (and (featurep 'flycheck) flycheck-mode)
+    (flycheck-buffer)))
 
 ;;;###autoload
 (defun narf/flycheck-next-error ()

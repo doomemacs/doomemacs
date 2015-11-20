@@ -24,8 +24,7 @@
   ;; Check buffer when normal mode is entered
   (add-hook! evil-normal-state-entry 'narf*flycheck-buffer)
   ;; And on ESC in normal mode.
-  (advice-add 'evil-force-normal-state :after 'narf*flycheck-buffer)
-  (advice-add 'flycheck-mode-line-status-text :filter-return 'narf*fly-shorter-status))
+  (advice-add 'evil-force-normal-state :after 'narf*flycheck-buffer))
 
 (use-package flyspell :commands flyspell-mode)
 
