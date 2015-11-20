@@ -49,11 +49,11 @@
       ;; Rake
       (("task" "namespace") () "end")))
   :config
-  (bind! (:prefix ","
-           :n "tr" 'rspec-rerun
-           :n "ta" 'rspec-verify-all
-           :n "ts" 'rspec-verify-single
-           :n "tv" 'rspec-verify)))
+  (bind! (:map rspec-mode-map
+           :n ",tr" 'rspec-rerun
+           :n ",ta" 'rspec-verify-all
+           :n ",ts" 'rspec-verify-single
+           :n ",tv" 'rspec-verify)))
 
 (use-package inf-ruby
   :commands (inf-ruby inf-ruby-console-auto)
@@ -67,8 +67,9 @@
   :diminish "R"
   :commands (robe-mode robe-start ruby-load-file)
   :init
-  (add-hook! after-save 'narf|ruby-load-file)
-  (add-hook! ruby-mode 'narf|enable-robe-maybe)
+  (add-hook! ruby-mode
+    (narf|ruby-load-file)
+    (add-hook 'after-save-hook 'narf|ruby-load-file nil t))
   :config
   (after! company
     (require 'company-robe)

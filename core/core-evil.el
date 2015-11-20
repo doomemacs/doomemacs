@@ -29,16 +29,8 @@
         evil-echo-state nil
         evil-ex-substitute-global t
 
-        evil-normal-state-tag "N"
-        evil-insert-state-tag "I"
-        evil-motion-state-tag "M"
-        evil-replace-state-tag "R"
-        evil-emacs-state-tag "E"
-        evil-visual-state-tag "V"
-        evil-operator-state-tag "O"
-        evil-iedit-state-tag "X"
-
         ;; Color-coded state cursors
+        evil-default-cursor "orange"
         evil-normal-state-cursor  'box
         evil-emacs-state-cursor   'bar
         evil-insert-state-cursor  'bar
@@ -76,7 +68,8 @@
       (when (minibuffer-window-active-p (minibuffer-window))
         (narf-minibuffer-quit)))
 
-    ;; buffer-local ex commands, thanks to: http://emacs.stackexchange.com/questions/13186
+    ;; buffer-local ex commands, thanks to:
+    ;; http://emacs.stackexchange.com/questions/13186
     (defun evil-ex-define-cmd-local (cmd function)
       "Locally binds the function FUNCTION to the command CMD."
       (unless (local-variable-p 'evil-ex-commands)
@@ -285,10 +278,6 @@
 
 (use-package evil-snipe
   :diminish evil-snipe-local-mode
-  ;; :commands (evil-snipe-f evil-snipe-F
-  ;;            evil-snipe-t evil-snipe-T
-  ;;            evil-snipe-s evil-snipe-S
-  ;;            evil-snipe-x evil-snipe-X)
   :init
   (setq-default
    evil-snipe-smart-case t
@@ -299,17 +288,6 @@
    evil-snipe-symbol-groups '((?\[ "[[{(]")
                               (?\] "[]})]")
                               (?\; "[;:]")))
-
-  ;; (define-key evil-normal-state-map "s" nil)
-  ;; (define-key evil-normal-state-map "S" nil)
-  ;; (define-key evil-motion-state-map "s" 'evil-snipe-s)
-  ;; (define-key evil-motion-state-map "S" 'evil-snipe-S)
-  ;; (define-key evil-motion-state-map "f" 'evil-snipe-f)
-  ;; (define-key evil-motion-state-map "F" 'evil-snipe-F)
-  ;; (define-key evil-motion-state-map "t" 'evil-snipe-t)
-  ;; (define-key evil-motion-state-map "T" 'evil-snipe-T)
-  ;; (define-key evil-operator-state-map "z" 'evil-snipe-s)
-  ;; (define-key evil-operator-state-map "Z" 'evil-snipe-S)
   :config
   (evil-snipe-mode 1)
   (evil-snipe-override-mode 1))

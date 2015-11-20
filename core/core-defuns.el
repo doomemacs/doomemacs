@@ -212,6 +212,9 @@ Examples:
 (defun narf|enable-tab-width-4 ()
   (setq tab-width 4 evil-shift-width 4))
 
+(defun narf|enable-tab-width-8 ()
+  (setq tab-width 8 evil-shift-width 8))
+
 (defun narf|disable-final-newline ()
   (set (make-local-variable 'require-final-newline) nil))
 

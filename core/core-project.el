@@ -16,6 +16,7 @@
         ido-create-new-buffer 'always
         ido-enable-tramp-completion t
         ido-enable-last-directory-history t
+        ido-cr+-max-items 10000
         ido-save-directory-list-file (concat narf-temp-dir "ido.last"))
   :config
   (add-to-list 'ido-ignore-files "\\`.DS_Store$")

@@ -11,9 +11,14 @@
   (when (narf/is-recompilable-p)
     (narf:compile-el)))
 
+(add-hook! emacs-lisp-mode 'narf|enable-tab-width-8)
 (add-hook! emacs-lisp-mode
   (add-hook 'before-save-hook 'delete-trailing-whitespace nil t)
-  (add-hook 'after-save-hook 'narf-elisp-auto-compile nil t))
+  (add-hook 'after-save-hook 'narf-elisp-auto-compile nil t)
+
+  (add-to-list 'imenu-generic-expression
+               '("Package"
+                 "\\(^\\s-*(use-package +\\)\\(\\_<.+\\_>\\)" 2)))
 
 ;; Highlight extra NARF keywords
 (let ((keywords '("add-hook!"
