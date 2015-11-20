@@ -172,7 +172,6 @@
 ;; Python -- modules/module-python.el
 (depends-on "anaconda-mode")
 (depends-on "nose")
-(depends-on "company-jedi")
 
 ;; Ruby -- modules/module-regex.el
 (depends-on "pcre2el")
