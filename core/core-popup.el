@@ -3,20 +3,19 @@
 (use-package popwin
   :init
   :config
-  (setq popwin:popup-window-height 20)
+  (setq popwin:popup-window-height 0.3)
   (mapc (lambda (rule) (push rule popwin:special-display-config))
-        '(("*eshell*"     :position left   :width 80  :stick t :dedicated t)
-          ("*scratch*"    :position bottom :height 20 :stick t :dedicated t)
-          ("*Apropos*"    :position bottom :height 40 :stick t :dedicated t)
-          ("*quickrun*"            :position bottom :height 15 :stick t)
-          ("*helm-ag-edit*"        :position bottom :height 20 :stick t)
-          (help-mode               :position bottom :height 15 :stick t :noselect t)
+        '(("*Help*"                :position bottom :height 0.25 :stick t)
           (debugger-mode           :position bottom :height 15)
           (org-src-mode            :position bottom :height 0.5 :stick t)
           (org-agenda-mode         :position bottom :height 0.4 :stick t)
+          ("*evil-registers*"      :position bottom :height 0.3 :stick t)
+          ("*scratch*"             :position bottom :height 20 :stick t)
+          ("*Apropos*"             :position bottom :height 40 :stick t)
+          ("*quickrun*"            :position bottom :height 15 :stick t)
           ("*Backtrace*"           :position bottom :height 15 :stick t)
           ("*Flycheck errors*"     :position bottom :height 15 :stick t)
-          ("^\\*[Hh]elm.*?\\*\\'"  :regexp t :position bottom :height 15)
+          ("^\\*[Hh]elm.*?\\*\\'"  :regexp t :position bottom :height 0.2)
           ("^\\*Org-Babel.*\\*$"   :regexp t :position bottom :height 15)
           ;; ("^\\*Org .*\\*$"        :regexp t :position bottom :height 15 :stick t)
           ("*Agenda Commands*"     :position bottom :height 0.5)
@@ -62,22 +61,10 @@
     (advice-add 'quickrun :before 'narf*quickrun-close-popwin)
     (advice-add 'quickrun-region :before 'narf*quickrun-close-popwin))
 
-  (add-hook! org-load
-    (defun org-src-switch-to-buffer (buffer context)
-      (popwin:popup-buffer (get-buffer buffer) :height 0.5))
-
-    (defun org-switch-to-buffer-other-window (&rest args)
-      (mapc (lambda (b)
-              (popwin:popup-buffer (if (bufferp b) b (get-buffer-create b)) :height 0.5))
-            args)))
-
   (after! helm
     (defun narf/helm-split-window (&optional window)
       "Minimalistic split-fn; leaves popwin to handle helm buffers."
-      (if (one-window-p t)
-          (let ((helm-full-frame t))
-            (selected-window))
-        (other-window-for-scrolling)))
+      popwin:popup-window)
 
     (setq helm-split-window-default-side 'other
           helm-split-window-preferred-function 'narf/helm-split-window)
@@ -131,6 +118,15 @@
       (setq next-error-function 'compilation-next-error-function)
       (setq-local compilation-locs (make-hash-table :test 'equal :weakness 'value))
       (use-local-map helm-ag-edit-map)))
+
+  (add-hook! org-load
+    ;; (defun org-src-switch-to-buffer (buffer context)
+    ;;   (popwin:popup-buffer (get-buffer buffer) :height 0.5))
+
+    (defun org-switch-to-buffer-other-window (&rest args)
+      (mapc (lambda (b)
+              (popwin:popup-buffer (if (bufferp b) b (get-buffer-create b)) :height 0.5))
+            args)))
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
