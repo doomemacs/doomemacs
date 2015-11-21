@@ -1,52 +1,33 @@
 ;;; core-helm.el
 
 (use-package helm
+  :diminish helm-mode
   :init
-  (defvar helm-global-prompt ">>> ")
+  (defvar helm-global-prompt "> ")
   (setq-default
    helm-quick-update t
    helm-reuse-last-window-split-state t
 
    helm-buffers-fuzzy-matching t
-   helm-apropos-fuzzy-match t
+   helm-apropos-fuzzy-match nil
    helm-M-x-fuzzy-match t
    helm-recentf-fuzzy-match t
    ;; helm-mode-fuzzy-match t
 
+   helm-display-header-line nil
    helm-ff-auto-update-initial-value nil
+   helm-ff-skip-boring-files t
    helm-find-files-doc-header nil
+   helm-move-to-line-cycle-in-source t
 
    helm-candidate-number-limit 30
    helm-bookmark-show-location t)
-  
+
   :config
-  (evil-set-initial-state 'helm-mode 'emacs)
   (require 'helm-files)
 
-  ;; Rewrite prompt for all helm windows
-  (defun helm (&rest plist)
-    (let ((fn (cond ((or (and helm-alive-p (plist-get plist :allow-nest))
-                         (and helm-alive-p (memq 'allow-nest plist)))
-                     #'helm-nest)
-                    ((keywordp (car plist))
-                     #'helm)
-                    (t #'helm-internal))))
-      (if (and helm-alive-p (eq fn #'helm))
-          (if (helm-alive-p)
-              (error "Error: Trying to run helm within a running helm session")
-            (with-helm-buffer
-              (prog1
-                  (message "Aborting an helm session running in background")
-                ;; `helm-alive-p' will be reset in unwind-protect forms.
-                (helm-keyboard-quit))))
-        (if (keywordp (car plist))
-            (progn
-              (setq helm--local-variables
-                    (append helm--local-variables
-                            (helm-parse-keys plist)))
-              (apply fn (mapcar (lambda (key) (if (eq key :prompt) helm-global-prompt (plist-get plist key)))
-                                helm-argument-keys)))
-          (apply fn plist)))))
+  (mapc (lambda (r) (add-to-list 'helm-boring-file-regexp-list r))
+        (list "\\.projects$" "\\.DS_Store$"))
 
   (after! winner
     (dolist (bufname '("*helm recentf*"
@@ -77,8 +58,29 @@
          (:map helm-map
            "C-u"        'helm-delete-minibuffer-contents))
 
+  ;;; Helm hacks
+  (defun narf*helm-toggle-header-line ()
+    (if (= (length helm-sources) 1)
+        (set-face-attribute 'helm-source-header nil :height 0.1)
+      (set-face-attribute 'helm-source-header nil :height 1.0)))
+
+  (defun narf*helm-hide-modeline (source &optional force)
+    (setq mode-line-format nil)
+    (setq header-line-format nil))
+
+  (defun narf*helm-replace-prompt (plist)
+    (if (keywordp (car plist))
+        (setq plist (plist-put plist :prompt helm-global-prompt))
+      (setcar (nthcdr 2 plist) helm-global-prompt))
+    plist)
+
+  (add-hook 'helm-before-initialize-hook 'narf*helm-toggle-header-line)
+  ;; A simpler prompt: see `helm-global-prompt'
+  (advice-add 'helm :filter-args 'narf*helm-replace-prompt)
   ;; Hide mode-line in helm windows
-  (advice-add 'helm-display-mode-line :override 'narf*helm-hide-modeline))
+  (advice-add 'helm-display-mode-line :override 'narf*helm-hide-modeline)
+
+  (helm-mode 1))
 
 (use-package projectile
   :diminish projectile-mode
