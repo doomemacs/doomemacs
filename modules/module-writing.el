@@ -7,42 +7,49 @@
 (defun narf|refresh-visual-fill-col ()
   (visual-fill-column-mode +1))
 
+(defvar writing-mode-theme 'solarized-light)
 (defvar writing-mode--last-mode-line mode-line-format)
+(defvar writing-mode--last-indicator-list fringe-indicator-alist)
 (define-minor-mode writing-mode "Mode for writing research papers or fiction."
   :lighter "swrite"
   :keymap (make-sparse-keymap)
   (let* ((mode-p writing-mode)
          (on-off (if mode-p +1 -1)))
     (visual-fill-column-mode on-off)
+    (visual-line-mode on-off)
     (variable-pitch-mode on-off)
     (text-scale-set (if mode-p 2 0))
-    (scroll-bar-mode on-off)
-    (fringe-mode (if mode-p 0 narf-fringe-size))
-    (if mode-p
-        (narf/load-theme 'solarized-light)
-      (narf/reset-theme))
+    (fringe-mode (if mode-p '6 narf-fringe-size))
 
-    (setq line-spacing (if mode-p '3 (default-value 'line-spacing)))
+    ;; (when writing-mode-theme
+    ;;   (if mode-p
+    ;;       (narf/load-theme writing-mode-theme)
+    ;;     (narf/reset-theme)))
+
+    (setq line-spacing (if mode-p '4 (default-value 'line-spacing)))
     (if (eq major-mode 'org-mode)
         (org-indent-mode (if mode-p -1 1))
-      (setq truncate-lines (if mode-p nil (default-value 'truncate-lines))))
+      ;; (setq truncate-lines (if mode-p nil (default-value 'truncate-lines)))
+      )
 
-    (setq mode-line-format (if mode-p nil writing-mode--last-mode-line))
+    (setq mode-line-format
+          (if mode-p
+              '("%e" (:eval (spaceline--prepare
+                             '(narf-anzu narf-iedit narf-evil-substitute
+                               (narf-buffer-path remote-host)
+                               narf-buffer-modified
+                               helm-number
+                               helm-follow
+                               helm-prefix-argument)
+                             '((selection-info :face highlight-face :skip-alternate t)
+                               narf-hud
+                               ))))
+            writing-mode--last-mode-line))
 
     (when IS-MAC
       (setq ;; sane trackpad/mouse scroll settings
        mac-mouse-wheel-smooth-scroll mode-p
        mouse-wheel-progressive-speed mode-p))))
-
-
-(use-package writeroom-mode
-  :defer t
-  :config
-  (setq-default
-   writeroom-restore-window-config t
-   writeroom-fullscreen-effect nil
-   writeroom-extra-line-spacing 10
-   writeroom-width 125))
 
 ;;; LaTeX
 
