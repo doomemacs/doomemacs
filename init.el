@@ -2,7 +2,7 @@
 ;;
 ;; Author:  Henrik Lissner <henrik@lissner.net>
 ;; URL:     https://github.com/hlissner/emacs.d
-;; Version: 0.5.0
+;; Version: 0.6.0
 ;;
 ;;; Are you pondering what I'm pondering, Pinky?
 ;;
@@ -58,7 +58,7 @@
                  (IS-LINUX    'core-os-linux)
                  (IS-WINDOWS  'core-os-win32))
 
-          core-popup           ; popup library and setup
+          core-popup           ; taming stray windows
           core-ui              ; draw me like one of your French editors
           core-evil            ; come to the dark side, we have cookies
           core-editor          ; filling the editor-shaped hole in the emacs OS
@@ -79,7 +79,7 @@
           module-elisp         ; drowning in parentheses
           module-go            ; a hipster dialect
           module-java          ; the poster child for carpal tunnel syndome
-          module-js            ; alert("not java, javascript!")
+          module-js            ; all(hope(abandon(ye(who(enter(here))))))
           module-lb6           ; LaunchBar 6 development
           module-lua           ; one-based indices? one-based indices.
           module-markdown      ; markdown
@@ -94,11 +94,11 @@
           module-swift         ; yay, emoji variables!
           module-vim           ; my mistress
           module-web           ; for the 2.0'er
-          module-writing       ; emacs for writing papers or fiction
+          module-writing       ; yes, I write papers and fiction in emacs
 
           ;;; Experimental
           ;; module-crystal    ; ruby at the speed of c
-          ;; module-eshell     ; eshell (on windows)
+          ;; module-eshell     ; for inferior OSes *cough*windows
 
           my-bindings
           my-commands
