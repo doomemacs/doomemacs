@@ -304,7 +304,7 @@ anzu to be enabled."
               (anzu--format-here-position here total)
               total (if anzu--overflow-p "+" "")))
     :face (if active 'mode-line-count-face 'mode-line-inactive)
-    :when (evil-ex-hl-active-p 'evil-ex-search)
+    :when (and (> anzu--total-matched 0) (evil-ex-hl-active-p 'evil-ex-search))
     :skip-alternate t
     :tight t)
 
@@ -336,8 +336,10 @@ iedit."
     (let ((range (if evil-ex-range
                      (cons (car evil-ex-range) (cadr evil-ex-range))
                    (cons (line-beginning-position) (line-end-position))))
-          (pattern (car (evil-delimited-arguments evil-ex-argument 2))))
-      (format "%s matches" (count-matches pattern (car range) (cdr range)) evil-ex-argument))
+          (pattern (car-safe (evil-delimited-arguments evil-ex-argument 2))))
+      (if pattern
+          (format "%s matches" (count-matches pattern (car range) (cdr range)) evil-ex-argument)
+        " ... "))
     :face (if active 'mode-line-count-face 'mode-line-inactive)
     :skip-alternate t
     :when (and (evil-ex-p) (evil-ex-hl-active-p 'evil-ex-substitute)))
@@ -349,8 +351,7 @@ iedit."
   ;; Initialize modeline
   (spaceline-install
    ;; Left side
-   '((evil-state :face highlight-face :when active :skip-alternate t)
-     narf-anzu narf-iedit narf-evil-substitute
+   '(narf-anzu narf-iedit narf-evil-substitute
      (narf-buffer-path remote-host)
      narf-buffer-modified
      narf-vc
