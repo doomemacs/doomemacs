@@ -108,5 +108,15 @@
       (wg-switch-to-workgroup-at-index index)
       (narf:workgroup-display))))
 
+;;;###autoload
+(defun narf/undo-window-change ()
+  (interactive)
+  (call-interactively (if (wg-current-workgroup t) 'wg-undo-wconfig-change 'winner-undo)))
+
+;;;###autoload
+(defun narf/redo-window-change ()
+  (interactive)
+  (call-interactively (if (wg-current-workgroup t) 'wg-redo-wconfig-change 'winner-redo)))
+
 (provide 'defuns-workgroup)
 ;;; defuns-workgroup.el ends here

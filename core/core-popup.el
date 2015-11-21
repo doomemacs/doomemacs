@@ -16,7 +16,7 @@
           ("*Backtrace*"           :position bottom :height 15 :stick t)
           ("*Flycheck errors*"     :position bottom :height 15 :stick t)
           ("^\\*[Hh]elm.*?\\*\\'"  :regexp t :position bottom :height 0.2)
-          ("^\\*Org-Babel.*\\*$"   :regexp t :position bottom :height 15)
+          ("^\\*Org-Babel.*\\*$"   :regexp t :position bottom :height 15 :tail t)
           ;; ("^\\*Org .*\\*$"        :regexp t :position bottom :height 15 :stick t)
           ("*Agenda Commands*"     :position bottom :height 0.5)
           ("*Org todo*"            :position bottom :height 5)
@@ -47,7 +47,7 @@
       (with-current-buffer buf
         (evil-resize-window 5)
         (funcall cb)
-        (yascroll-bar-mode +1)
+        ;; (yascroll-bar-mode +1)
         (setq mode-line-format nil)))
 
     (defun narf/quickrun-after-run ()

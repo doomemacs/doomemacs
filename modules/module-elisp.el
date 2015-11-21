@@ -28,6 +28,7 @@
                   "in!"
                   "define-company-backend!"
                   "define-text-object!"
+                  "define-builder!"
                   )))
   (font-lock-add-keywords 'emacs-lisp-mode
                           `((,(concat "(\\s-*" (regexp-opt keywords 'paren) "\\_>")

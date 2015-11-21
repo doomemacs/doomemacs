@@ -45,10 +45,11 @@
   (bind! (:map (helm-map helm-generic-files-map helm-find-files-map helm-swoop-map helm-projectile-find-file-map)
            "C-w"        'backward-kill-word
            "C-r"        'evil-ex-paste-from-register ; Evil registers in helm! Glorious!
+           "<escape>"   'helm-keyboard-quit
            [escape]     'helm-keyboard-quit)
          (:map helm-find-files-map
            "C-w"        'helm-find-files-up-one-level
-           "TAB"        'helm-execute-persistent-action
+           ;; "TAB"        'helm-execute-persistent-action
            "/"          'helm-execute-persistent-action)
          (:map helm-ag-map
            "<backtab>"  'helm-ag-edit)
@@ -56,11 +57,13 @@
            "<escape>"   'helm-ag--edit-abort
            :n "zx"      'helm-ag--edit-abort)
          (:map helm-map
+           "C-S-n"        'helm-next-source
+           "C-S-p"        'helm-previous-source
            "C-u"        'helm-delete-minibuffer-contents))
 
   ;;; Helm hacks
-  (defun narf*helm-toggle-header-line ()
-    (if (= (length helm-sources) 1)
+  (defun narf*helm-hide-source-header-maybe ()
+    (if (<= (length helm-sources) 1)
         (set-face-attribute 'helm-source-header nil :height 0.1)
       (set-face-attribute 'helm-source-header nil :height 1.0)))
 
@@ -74,7 +77,8 @@
       (setcar (nthcdr 2 plist) helm-global-prompt))
     plist)
 
-  (add-hook 'helm-before-initialize-hook 'narf*helm-toggle-header-line)
+  ;; Shrink source headers if there is only one source
+  (add-hook 'helm-before-initialize-hook 'narf*helm-hide-source-header-maybe)
   ;; A simpler prompt: see `helm-global-prompt'
   (advice-add 'helm :filter-args 'narf*helm-replace-prompt)
   ;; Hide mode-line in helm windows
@@ -101,8 +105,6 @@
   (add-to-list 'projectile-other-file-alist '("css" "scss"))
 
   (projectile-global-mode +1)
-
-  ;; (advice-add 'projectile-prepend-project-name :override 'narf*projectile-replace-prompt)
 
   (require 'helm-projectile))
 

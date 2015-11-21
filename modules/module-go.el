@@ -4,11 +4,13 @@
   :mode "\\.go$"
   :interpreter "go"
   :init
-  (add-hook! go-mode '(emr-initialize flycheck-mode narf|enable-tabs narf|enable-tab-width-4))
+  (add-hook! go-mode '(emr-initialize
+                       narf|flycheck-enable-maybe
+                       narf|enable-tabs
+                       narf|enable-tab-width-4))
   :config
   (define-builder! go-mode "go build")
 
-  ;; emr support
   (after! emr
     (mapc (lambda (x)
             (let ((command-name (car x))

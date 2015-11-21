@@ -7,17 +7,6 @@
     (projectile-invalidate-cache nil)))
 
 ;;;###autoload
-(defun narf*projectile-replace-prompt (&optional string)
-  "Don't show the project name in the prompts; I already know."
-  helm-global-prompt)
-
-;;;###autoload
-(defun narf*helm-hide-modeline (source &optional force)
-  "No persistent header."
-  (setq mode-line-format nil)
-  (setq header-line-format nil))
-
-;;;###autoload
 (defun narf/helm-get-org-candidates-in-file (filename min-depth max-depth &optional fontify nofname)
   (with-current-buffer (pcase filename
                          ((pred bufferp) filename)
@@ -70,8 +59,7 @@
     (helm :sources (if search helm-ag-source '(helm-source-do-ag))
           :buffer "*helm-ag*"
           :keymap helm-ag-map
-          :input input
-          :prompt helm-global-prompt)))
+          :input input)))
 
 ;;;###autoload (autoload 'narf:helm-regex-search "defuns-helm" nil t)
 (evil-define-operator narf:helm-regex-search (beg end &optional search bang)

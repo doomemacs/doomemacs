@@ -14,7 +14,7 @@
       mouse-wheel-scroll-amount '(6 ((shift) . 2))  ;; one line at a time
       mouse-wheel-progressive-speed nil             ;; don't accelerate scrolling
 
-      ;;; NOTE These mean nothing to railwaycat's emacs-mac build on OSX
+      ;;; NOTE Meaningless to railwaycat's emacs-mac build
       ;; Curse Lion and its sudden but inevitable fullscreen mode!
       ns-use-native-fullscreen nil
       ;; Don't open files from the workspace in a new frame
@@ -73,10 +73,8 @@
 
 (defun narf-switch-to-iterm-and-cd ()
   (interactive)
-  (narf:tmux-chdir nil t)
+  (narf:send-to-tmux (format "cd %s" (shell-quote-argument default-directory)))
   (narf-switch-to-iterm))
-
-;;;
 
 (defun narf-org-init-for-osx ()
   ;; Reveal files in finder

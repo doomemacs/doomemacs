@@ -10,16 +10,15 @@
         flycheck-check-syntax-automatically '(save mode-enabled)
         flycheck-disabled-checkers '(emacs-lisp-checkdoc make))
   :config
-  (bind! :map flycheck-error-list-mode-map
-         :n [escape] 'kill-this-buffer
-         :n "q"      'kill-this-buffer
-         :n "C-n"    'flycheck-error-list-next-error
-         :n "C-p"    'flycheck-error-list-previous-error
-         :n "j"      'flycheck-error-list-next-error
-         :n "k"      'flycheck-error-list-previous-error
-         :n "RET"    'flycheck-error-list-goto-error)
-
   (evil-initial-state 'flycheck-error-list-mode 'emacs)
+  (bind! (:map flycheck-error-list-mode-map
+           :n [escape] 'kill-this-buffer
+           :n "q"      'kill-this-buffer
+           :n "C-n"    'flycheck-error-list-next-error
+           :n "C-p"    'flycheck-error-list-previous-error
+           :n "j"      'flycheck-error-list-next-error
+           :n "k"      'flycheck-error-list-previous-error
+           :n "RET"    'flycheck-error-list-goto-error))
 
   ;; Check buffer when normal mode is entered
   (add-hook! evil-normal-state-entry 'narf*flycheck-buffer)

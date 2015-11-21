@@ -198,6 +198,7 @@
   :functions (iedit-current-occurrence-string iedit-restrict-region)
   :commands (evil-iedit-state evil-iedit-state/iedit-mode)
   :config
+  (define-key evil-iedit-state-map (kbd "<escape>") 'evil-iedit-state/quit-iedit-mode)
   (define-key evil-visual-state-map (kbd "SPC") 'narf:iedit-restrict-to-region)
   (let ((map evil-iedit-state-map))
     ;; Don't interfere with evil-snipe

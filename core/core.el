@@ -119,7 +119,7 @@
              persistent-soft-flush
              persistent-soft-location-readable
              persistent-soft-location-destroy)
-  :config (setq pcache-directory (concat narf-temp-dir "pcache/")))
+  :init (defvar pcache-directory (concat narf-temp-dir "pcache/")))
 
 (use-package async
   :commands (async-start
@@ -147,9 +147,11 @@
                                'wg-current-workgroup-p
                                'wg-previous-workgroup-p)))
                           (wg-workgroup-list)) "")))
-        (message ">>> Loaded in %s. %s" (emacs-init-time) wg-list))))
+        (message "> Loaded in %s. %s" (emacs-init-time) wg-list))))
 
-  (add-hook 'after-init-hook 'server-start t))
+  (require 'server)
+  (unless (server-running-p)
+    (server-start)))
 
 (provide 'core)
 ;;; core.el ends here
