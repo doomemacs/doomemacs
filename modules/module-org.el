@@ -7,10 +7,10 @@
   :keymap     (make-sparse-keymap) ; defines evil-org-mode-map
   :group      'evil-org)
 
-(defvar org-directory (concat narf-dropbox-dir "org/"))
-(defvar org-directory-contacts (expand-file-name "work/contacts/" org-directory))
-(defvar org-directory-projects (expand-file-name "work/projects/" org-directory))
-(defvar org-directory-invoices (expand-file-name "work/invoices/" org-directory))
+(defvar org-directory (expand-file-name "org/" narf-dropbox-dir))
+(defvar org-directory-contacts (expand-file-name "my/contacts/" org-directory))
+(defvar org-directory-projects (expand-file-name "my/projects/" org-directory))
+(defvar org-directory-invoices (expand-file-name "my/invoices/" org-directory))
 
 (add-hook! org-load 'narf|org-init)
 
@@ -53,7 +53,7 @@
 
         org-capture-templates
         '(("t" "TODO" entry
-           (file+headline (concat org-directory "gtd.org") "Inbox")
+           (file+headline (concat org-directory "todo.org") "Inbox")
            "** TODO %? %u")
 
           ;; TODO Select file from org files
@@ -66,13 +66,13 @@
           ;;  "** %<%H:%M>: %? :unsorted:\n%i" :prepend t)
 
           ("j" "Journal" entry
-           (file+datetree (concat org-directory "personal/journal.org"))
+           (file+datetree (concat org-directory "journal.org"))
            "** %<%H:%M>: %?\n%i" :prepend t)
 
           ;; TODO Select file from notes folder
-          ;; ("n" "Notes" entry
-          ;;  (file "~/Dropbox/notes/trivia.org")
-          ;;  "* %u %?\n%i" :prepend t)
+          ("n" "Notes" entry
+           (file+headline (concat org-directory "notes.org") "Inbox")
+           "* %u %?\n%i" :prepend t)
 
           ("s" "Writing Scraps" entry
            (file+headline (concat org-directory "writing/scraps.org") "Unsorted")
@@ -202,6 +202,7 @@ will function properly."
   ;; (defface org-item-checkbox '((t ())) "Face for checkbox list lines")
   ;; (defface org-item-checkbox-checked '((t ())) "Face for checked checkbox list lines")
   (defface org-whitespace '((t ())) "Face for spaces")
+  (defface org-list-bullet '((t ())) "Face for list bullets")
   (font-lock-add-keywords
    'org-mode `(("^ *\\(#\\+begin_src\\>\\)"
                 (1 (narf/show-as ?#)))
@@ -213,10 +214,10 @@ will function properly."
                 (1 (narf/show-as ?\")))
 
                ;; Hide TODO tags
-               ("\\(\\* DONE\\) \\([^$:\n\r]+\\)"
+               ("^\\**\\(\\* DONE\\) \\([^$:\n\r]+\\)"
                 (1 (narf/show-as ?☑))
                 (2 'org-headline-done))
-               ("\\(\\* TODO\\) [^$:\n\r]+"
+               ("^\\**\\(\\* TODO\\) "
                 (1 (narf/show-as ?☐)))
 
                ("[-+*] \\(\\[ \\]\\) "
@@ -225,18 +226,11 @@ will function properly."
                 (1 (narf/show-as ?☑))
                 (2 'org-headline-done))
 
-               ;; ("\\([-+] \\(\\[ \\]\\) \\([^$:\n\r]+\\)\\)"
-               ;;  (2 'org-item-checkbox))
-               ;; ("\\([-+] \\(\\[X\\]\\) \\([^$:\n\r]+\\)\\)"
-               ;;  (2 'org-item-checkbox-checked))
-
                ;; Color code TODOs with !'s to denote priority
-               ("\\* TODO\\( !\\)! [^$:\n\r]+"
-                (0 'org-todo-vhigh)
-                (1 (narf/show-as ?!)))
-               ("\\* TODO\\( !\\) [^$:\n\r]+"
-                (0 'org-todo-high)
-                (1 (narf/show-as ?!)))
+               ("\\* TODO .* !!$"
+                (0 'org-todo-vhigh))
+               ("\\* TODO .* !$"
+                (0 'org-todo-high))
 
                ;; Show checkbox for other todo states (but don't hide the label)
                (,(concat
@@ -245,14 +239,12 @@ will function properly."
                   " ")
                 (1 (narf/show-as ?☐)))
 
-               ("^ *\\([-+]\\)\\( \\)+[^$\n\r]+"
-                (1 'org-code)
-                ;; (2 'org-whitespace)
-                )
+               ("^ *\\([-+]\\|[0-9]+[).]\\)\\( \\)+[^$\n\r]+"
+                (1 'org-list-bullet))
                ("^ +\\(\\*\\) "
                 (1 (narf/show-as ?◦)))
-               ;; ("^ +"
-               ;;  (0 'org-whitespace))
+               ("^ +"
+                (0 'org-whitespace))
                )))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -261,17 +253,14 @@ will function properly."
   (evil-org-mode +1)
   (org-bullets-mode +1)
   (org-indent-mode +1)
-  ;; (text-scale-set 0.5)
+  (text-scale-set 1)
 
   (diminish 'org-indent-mode)
 
   (narf|enable-tab-width-2)
   (setq truncate-lines nil)
   (setq line-spacing '0.2)
-  ;; (variable-pitch-mode 1)
-
-  ;; Allow cursor beyond eol so we can reach around hidden emphasis markers
-  (set (make-local-variable 'evil-move-beyond-eol) t)
+  (variable-pitch-mode 1)
 
   (defun narf|org-update-statistics-cookies () (org-update-statistics-cookies t))
   (add-hook 'before-save-hook 'narf|org-update-statistics-cookies nil t)
@@ -312,6 +301,28 @@ will function properly."
   (org-add-link-type "contact" 'narf/org-link-contact)
   (org-add-link-type "project" 'narf/org-link-project)
   (org-add-link-type "invoice" 'narf/org-link-invoice)
+
+  (add-to-list 'recentf-exclude (expand-file-name "%s.+\\.org$" org-directory))
+  (after! helm
+    (mapc (lambda (r) (add-to-list 'helm-boring-file-regexp-list r))
+          (list "\\.attach$" "\\.Rhistory$")))
+
+  (after! winner
+    (dolist (bufname '("*Org todo*"
+                       "*Org Links*"
+                       "*Agenda Commands*"))
+      (push bufname winner-boring-buffers)))
+
+  ;; fix some org-mode + yasnippet conflicts:
+  (defun yas/org-very-safe-expand ()
+    (let ((yas/fallback-behavior 'return-nil)) (yas/expand)))
+
+  (add-hook 'org-mode-hook
+            (lambda ()
+              (make-variable-buffer-local 'yas/trigger-key)
+              (setq yas/trigger-key [tab])
+              (add-to-list 'org-tab-first-hook 'yas/org-very-safe-expand)
+              (define-key yas/keymap [tab] 'yas-next-field)))
 
   ;;; Evil integration
   (progn

@@ -27,24 +27,14 @@
              ('above
               (narf/org-table-prepend-row-or-shift-up))))
           (t
-           (org-back-to-heading)
-           (let ((first-p (org-first-sibling-p))
-                 (orig-char (point)))
-             (cl-case direction
-               ('below
-                (org-insert-heading-after-current)
-                (unless first-p
-                  (save-excursion
-                    (goto-char orig-char)
-                    (evil-insert-newline-above)))
-                (save-excursion
-                  (evil-insert-newline-below)))
-               ('above
-                (save-excursion
-                  (evil-insert-newline-below))
-                (unless first-p
-                  (save-excursion
-                    (evil-insert-newline-above))))))))
+           (cl-case direction
+             ('below
+              (org-insert-heading-after-current))
+             ('above
+              (org-back-to-heading)
+              (org-insert-heading)))
+           (when (org-element-property :todo-type context)
+             (org-todo 'todo))))
     (evil-append-line 1)))
 
 ;;;###autoload
@@ -250,10 +240,11 @@ COUNT-FOOTNOTES? is non-nil."
   (let ((path (if (string-match-p "^[/~]" dest)
                   dest
                 (expand-file-name dest default-directory))))
-    (shell-command
-     (format "/usr/local/bin/pandoc '%s' -o '%s'"
-             (buffer-file-name) path))
-    (message "Done! Exported to: %s" path)))
+    (if (shell-command
+         (format "/usr/local/bin/pandoc '%s' -o '%s'"
+                 (buffer-file-name) path))
+        (message "Done! Exported to: %s" path)
+      (user-error "Export failed"))))
 
 ;;;###autoload
 (defun narf/org-remove-link ()
