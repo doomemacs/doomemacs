@@ -155,6 +155,7 @@
 (depends-on "ob-http")
 (depends-on "ob-go" :git "https://github.com/pope/ob-go")
 (depends-on "org-download")
+(depends-on "helm-deft" :git "https://github.com/dfeich/helm-deft")
 
 ;; PlantUML -- modules/module-plantuml.el
 (depends-on "puml-mode")

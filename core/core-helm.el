@@ -149,5 +149,7 @@
 (use-package helm-command  :commands helm-M-x)
 (use-package helm-descbinds :commands helm-descbinds)
 
+(use-package helm-deft :defer t)
+
 (provide 'core-helm)
 ;;; core-helm.el ends here

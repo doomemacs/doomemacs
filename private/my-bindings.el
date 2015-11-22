@@ -124,8 +124,6 @@
    :nv "]"   'helm-etags-select
    :nv "a"   'helm-projectile-find-other-file
    :nv "E"   (λ (in! narf-emacs-dir (helm-projectile-find-file)))
-   :nv "n"   (λ (in! org-directory (helm-projectile-find-file)))
-   :nv "N"   'narf:org-search-files-or-headers
    :nv "m"   'helm-recentf
    :nv "M"   'helm-projectile-recentf  ; recent PROJECT files
    :nv "p"   'helm-projectile-switch-project
@@ -144,7 +142,15 @@
    :n  "ol"  (λ (narf-open-with "LaunchBar"))
    :n  "oL"  (λ (narf-open-with "LaunchBar" default-directory))
    :n  "ot"  (λ (narf:tmux-chdir nil t))
-   :n  "oT"  'narf:tmux-chdir)
+   :n  "oT"  'narf:tmux-chdir
+
+   ;; Org
+   :nv "n."  (λ (in! org-directory (let ((helm-ff-skip-boring-files t)) (helm-find-files-1 org-directory))))
+   :nv "n/"  'narf/helm-org-search
+   :nv "np"  'narf/helm-org-projects
+   :nv "nc"  'narf/helm-org-contacts
+   :nv "ni"  'narf/helm-org-invoices
+   :nv "nw"  'narf/helm-org-writing)
 
  ;; <localleader>
  (:prefix "\\"

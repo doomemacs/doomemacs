@@ -39,23 +39,21 @@
 
 ;;; Deft
 ;;;###autoload
-(defun narf/deft-projects ()
+(defun narf/helm-org-projects ()
   (interactive)
-  (require 'deft)
-  (let ((deft-directory org-directory-projects))
-    (deft)))
-
+  (narf/helm-org-search org-directory-projects))
 ;;;###autoload
-(defun narf/deft-contact ()
+(defun narf/helm-org-contacts ()
   (interactive)
-  (require 'deft)
-  (let ((deft-directory org-directory-contacts))
-    (deft)))
-
+  (narf/helm-org-search org-directory-contacts))
 ;;;###autoload
-(defun narf/deft-invoices ())
+(defun narf/helm-org-invoices ()
+  (interactive)
+  (narf/helm-org-search org-directory-invoices))
 ;;;###autoload
-(defun narf/deft-writing ())
+(defun narf/helm-org-writing ()
+  (interactive)
+  (narf/helm-org-search (expand-file-name "writing/" org-directory)))
 
 (provide 'defuns-org-custom)
 ;;; defuns-org-custom.el ends here
