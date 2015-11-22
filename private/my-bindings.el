@@ -12,19 +12,18 @@
  ;; Global keymaps                     ;;
  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
- "M-x"   'smex
- "M-X"   'smex-major-mode-commands
+ "M-x"   'helm-M-x
  "M-;"   'eval-expression
  "M-/"   'evil-commentary-line
 
- "A-x"   'smex
- "A-X"   'smex-major-mode-commands
+ "A-x"   'helm-M-x
  "A-;"   'eval-expression
  "A-/"   'evil-commentary-line
 
  (:when window-system
-   "M-="   'text-scale-increase
-   "M--"   'text-scale-decrease)
+   "M-0" (λ (text-scale-set 0))
+   "M-=" 'text-scale-increase
+   "M--" 'text-scale-decrease)
 
  "M-b"   'narf:build
  "M-t"   'helm-projectile-find-file
@@ -58,22 +57,22 @@
 
  :n "M-r"  'narf:eval-buffer
  :v "M-r"  'narf:eval-region
- :n "M-d"  'dash-at-point
  :n "M-o"  'narf/ido-find-file
  :n "M-O"  'narf/ido-find-project-file
 
- :m "M-1" (λ (narf:switch-to-workgroup-at-index 0))
- :m "M-2" (λ (narf:switch-to-workgroup-at-index 1))
- :m "M-3" (λ (narf:switch-to-workgroup-at-index 2))
- :m "M-4" (λ (narf:switch-to-workgroup-at-index 3))
- :m "M-5" (λ (narf:switch-to-workgroup-at-index 4))
- :m "M-6" (λ (narf:switch-to-workgroup-at-index 5))
- :m "M-7" (λ (narf:switch-to-workgroup-at-index 6))
- :m "M-8" (λ (narf:switch-to-workgroup-at-index 7))
- :m "M-9" (λ (narf:switch-to-workgroup-at-index 8))
- :m "M-0" (λ (text-scale-set 0))
+ :m "M-1"  (λ (narf:switch-to-workgroup-at-index 0))
+ :m "M-2"  (λ (narf:switch-to-workgroup-at-index 1))
+ :m "M-3"  (λ (narf:switch-to-workgroup-at-index 2))
+ :m "M-4"  (λ (narf:switch-to-workgroup-at-index 3))
+ :m "M-5"  (λ (narf:switch-to-workgroup-at-index 4))
+ :m "M-6"  (λ (narf:switch-to-workgroup-at-index 5))
+ :m "M-7"  (λ (narf:switch-to-workgroup-at-index 6))
+ :m "M-8"  (λ (narf:switch-to-workgroup-at-index 7))
+ :m "M-9"  (λ (narf:switch-to-workgroup-at-index 8))
 
  (:when IS-MAC
+   :ni "M-d"  'dash-at-point
+
    ;; Add animated transitions to OSX emacs
    "M-w"   (λ (if window-system
                   (mac-start-animation (get-buffer-window) :type 'fade-out :duration 0.25))
@@ -172,8 +171,7 @@
    :n  "w"  'narf:helm-wg
    :n  "W"  'narf:workgroup-display)
 
- ;; :n "Y" "y$"
- :n "K" 'smart-up
+ :n "K"   'smart-up
 
  ;; Don't move cursor on indent
  :n "="   (λ (save-excursion (call-interactively 'evil-indent)))
@@ -254,6 +252,7 @@
  :i "<backspace>"   'backward-delete-char-untabify
  :i "<M-backspace>" 'narf/backward-kill-to-bol-and-indent
  :i "<C-return>"    'evil-ret-and-indent
+ :i "<C-SPC>"       (λ (insert ", "))
 
  ;; escape from insert mode (more responsive than using key-chord-define)
  :ir  "j"    'narf:exit-mode-maybe
@@ -331,6 +330,9 @@
                       (if (narf/popup-p (current-buffer))
                           (narf/popup-close)
                         (evil-window-delete)))))
+
+ (:map view-mode-map
+   "<escape>" 'View-quit-all)
 
  (:map evil-ex-completion-map
    "C-r"            'evil-ex-paste-from-register   ; registers in ex-mode
@@ -419,6 +421,12 @@
 ;; Disable the global drag-mouse map; clicking in new buffers often sends evil
 ;; into visual mode, which is UN...ACCEPTAABBLLLEEEE!
 (global-unset-key (kbd "<drag-mouse-1>"))
+
+(define-key help-map "e" 'narf:popup-messages)
+
+;; Remove slow/annoying help subsections
+(define-key help-map "h" nil)
+(define-key help-map "g" nil)
 
 (provide 'my-bindings)
 ;;; my-bindings.el ends here
