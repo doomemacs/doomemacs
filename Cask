@@ -11,7 +11,7 @@
 (depends-on "help-fns+")
 (depends-on "persistent-soft")
 (depends-on "async" :git "https://github.com/jwiegley/emacs-async")
-; (depends-on "esup")
+(depends-on "esup")
 
 ;; OSX --- core/core-os-osx.el
 (depends-on "exec-path-from-shell")
@@ -171,6 +171,7 @@
 ;; Python -- modules/module-python.el
 (depends-on "anaconda-mode")
 (depends-on "nose")
+(depends-on "company-anaconda")
 
 ;; Ruby -- modules/module-regex.el
 (depends-on "pcre2el")
