@@ -40,6 +40,8 @@
 ;;
 ;;; License: GPLv3
 
+(setq gc-cons-threshold 169715200)
+
 (defconst narf-theme        'narf-dark)
 (defconst narf-default-font (font-spec :family "DejaVu Sans Mono" :size 12))
 (defconst narf-big-font     (font-spec :family "Inconsolata"      :size 20))

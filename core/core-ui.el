@@ -20,7 +20,7 @@
  fringes-outside-margins         t
  hl-line-sticky-flag             nil  ; only highlight in one window
 
- jit-lock-defer-time 0
+ jit-lock-defer-time nil
  jit-lock-stealth-time 1
 
  resize-mini-windows t)

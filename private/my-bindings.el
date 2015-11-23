@@ -171,7 +171,7 @@
    :n  "w"  'narf:helm-wg
    :n  "W"  'narf:workgroup-display)
 
- :n "K"   'smart-up
+ :nv "K"   'smart-up
 
  ;; Don't move cursor on indent
  :n "="   (λ (save-excursion (call-interactively 'evil-indent)))
