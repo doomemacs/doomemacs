@@ -1,6 +1,10 @@
 ;;; init-load-path.el
 
-(setq gc-cons-threshold 169715200)
+(setq-default
+ byte-compile-warnings nil
+ ;; stop package.el from being annoying. NARF relies entirely on Cask.
+ package--init-file-ensured t
+ package-enable-at-startup nil)
 
 (eval-and-compile
   (defconst narf-emacs-dir     user-emacs-directory)
