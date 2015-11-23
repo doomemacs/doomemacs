@@ -188,6 +188,8 @@ enable multiple minor modes for the same regexp.")
     (sp-local-pair "/*\n" "\n */" :post-handlers '(("||[i]" "RET"))))
   (sp-with-modes '(c-mode c++-mode php-mode java-mode)
     (sp-local-pair "/*" "" :post-handlers '((" ||\n[i]*/" "RET"))))
+  (sp-with-modes '(org-mode)
+    (sp-local-pair "{" nil))
 
   (after! yasnippet
     (advice-add 'yas-expand :before 'sp-remove-active-pair-overlay))

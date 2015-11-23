@@ -145,7 +145,7 @@
 
    ;; Org
    :nv "n."  (λ (in! org-directory (let ((helm-ff-skip-boring-files t)) (helm-find-files-1 org-directory))))
-   :nv "n/"  'narf/helm-org-search
+   :nv "n/"  'narf/helm-org-index
    :nv "np"  'narf/helm-org-projects
    :nv "nc"  'narf/helm-org-contacts
    :nv "ni"  'narf/helm-org-invoices

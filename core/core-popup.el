@@ -17,9 +17,9 @@
           ("*Flycheck errors*"     :position bottom :height 15 :stick t)
           ("^\\*[Hh]elm.*?\\*\\'"  :regexp t :position bottom :height 0.2)
           ("^\\*Org-Babel.*\\*$"   :regexp t :position bottom :height 15 :tail t)
-          ;; ("^\\*Org .*\\*$"        :regexp t :position bottom :height 15 :stick t)
+          ;; ("^\\*org .*\\*$"        :regexp t :position bottom :height 15 :stick t)
           ("*Agenda Commands*"     :position bottom :height 0.5)
-          ("*Org todo*"            :position bottom :height 5)
+          (" *Org todo*"            :position bottom :height 5)
           ("*Org Links*"           :position bottom :height 2)
           ("^\\*CPU-Profiler-Report .+\\*$"  :regexp t :position bottom :height 0.35)
           ))
@@ -125,7 +125,8 @@
 
     (defun org-switch-to-buffer-other-window (&rest args)
       (mapc (lambda (b)
-              (popwin:popup-buffer (if (bufferp b) b (get-buffer-create b)) :height 0.5))
+              (let ((buf (if (stringp b) (get-buffer-create b) b)))
+                (popwin:pop-to-buffer buf t t)))
             args)))
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

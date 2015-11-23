@@ -27,6 +27,7 @@
         ;; org-mobile-inbox-for-pull (concat org-directory "inbox.org")
         ;; org-mobile-directory "~/Dropbox/Apps/MobileOrg"
 
+        org-default-priority ?C
         org-catch-invisible-edits nil
         org-confirm-elisp-link-function nil
         org-completion-use-ido t
@@ -116,27 +117,30 @@
         org-src-tab-acts-natively t)
 
   (defun narf-refresh-babel-lob ()
-    (async-start
-     `(lambda ()
-        ,(async-inject-variables "\\`\\(org-directory\\|load-path$\\)")
-        (require 'org)
-        (require 'f)
-        (setq org-babel-library-of-babel nil)
-        (mapc (lambda (f) (org-babel-lob-ingest f))
-              (f-entries ,org-directory (lambda (path) (f-ext? path "org")) t))
-        org-babel-library-of-babel)
-     (lambda (lib)
-       ;; (persistent-soft-store 'org-babel-library lib "org")
-       (message "Library of babel updated!")
-       (setq org-babel-library-of-babel lib))))
+    (let ((files (f-entries org-directory (lambda (path) (f-ext? path "org")) t)))
+      (async-start
+       `(lambda ()
+          ,(async-inject-variables "\\`\\(org-directory\\|load-path$\\)")
+          (require 'org)
+          (setq org-babel-library-of-babel nil)
+          (mapc (lambda (f) (org-babel-lob-ingest f)) (list ,@files))
+          org-babel-library-of-babel)
+       (lambda (lib)
+         ;; (persistent-soft-store 'org-babel-library lib "org")
+         (message "Library of babel updated!")
+         (setq org-babel-library-of-babel lib)))))
   (setq org-babel-library-of-babel (narf-refresh-babel-lob))
   (add-hook! org-mode
-    (add-hook 'after-save-hook (lambda () (shut-up! (org-babel-lob-ingest (buffer-file-name)))) t t))
+    (add-hook 'after-save-hook
+              (lambda ()
+                (when (file-exists-p buffer-file-name)
+                  (shut-up! (org-babel-lob-ingest buffer-file-name))))
+              t t))
 
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((python . t) (ruby . t) (sh . t) (js . t) (css . t)
-     (plantuml . t) (emacs-lisp . t) (matlab . t) (R . t)
+     (plantuml . t) (emacs-lisp . t) (matlab . t)
      (latex . t) (calc . t)
      (http . t) (rust . t) (go . t)))
 
@@ -180,7 +184,12 @@ will function properly."
         org-cycle-separator-lines 2
         org-hide-emphasis-markers t
         org-hide-leading-stars t
-        org-bullets-bullet-list '("✸" "•" "◦" "•" "◦" "•" "◦"))
+        org-bullets-bullet-list '("✸" "•" "◦" "•" "◦" "•" "◦")
+
+        org-priority-faces
+        '((?A . org-todo-vhigh)
+          (?B . org-todo-high)))
+
 
   ;; Restore org-block-background face (removed in official org)
   (defface org-block-background '((t ()))
@@ -197,6 +206,7 @@ will function properly."
                        (face-attribute 'org-block-background :inherit)))
 
   ;; Prettify symbols, blocks and TODOs
+  (defface org-headline-todo '((t ())) "Face for todo headlines")
   (defface org-todo-high '((t ())) "Face for high-priority todo")
   (defface org-todo-vhigh '((t ())) "Face for very high-priority todo")
   ;; (defface org-item-checkbox '((t ())) "Face for checkbox list lines")
@@ -214,23 +224,23 @@ will function properly."
                 (1 (narf/show-as ?\")))
 
                ;; Hide TODO tags
-               ("^\\**\\(\\* DONE\\) \\([^$:\n\r]+\\)"
+               ("^\\**\\(\\* DONE\\) \\([^$\n\r]+\\)"
                 (1 (narf/show-as ?☑))
                 (2 'org-headline-done))
-               ("^\\**\\(\\* TODO\\) "
+               ("^\\**\\(\\* TODO\\) \\([^$\n\r]+\\)?"
                 (1 (narf/show-as ?☐)))
+
+               ;; Unbold-ify todos
+               (,(concat "^\\**\\(\\* "
+                         (regexp-opt '("TODO" "LEAD" "NEXT" "ACTIVE" "PENDING" "CANCELLED"))
+                         "\\)\\( [^$\n\r]*\\)?")
+                (2 'org-headline-todo))
 
                ("[-+*] \\(\\[ \\]\\) "
                 (1 (narf/show-as ?☐)))
-               ("[-+*] \\(\\[X\\]\\) \\([^$:\n\r]+\\)"
+               ("[-+*] \\(\\[X\\]\\) \\([^$\n\r]+\\)"
                 (1 (narf/show-as ?☑))
                 (2 'org-headline-done))
-
-               ;; Color code TODOs with !'s to denote priority
-               ("\\* TODO .* !!$"
-                (0 'org-todo-vhigh))
-               ("\\* TODO .* !$"
-                (0 'org-todo-high))
 
                ;; Show checkbox for other todo states (but don't hide the label)
                (,(concat
@@ -344,25 +354,21 @@ will function properly."
 
   ;;; Plugins
   (require 'org-download)
-  (setq org-download-image-dir ".attach/"
-        org-download-screenshot-method "screencapture -i %s")
-
-  (use-package deft :defer t
-    :config
-    (setq deft-directory org-directory
-          deft-recursive t
-          deft-separator " :: "))
+  (setq-default
+   org-download-image-dir ".attach/"
+   org-download-screenshot-method "screencapture -i %s")
 
   ;;; Auto-completion
-  (require 'company-math)
-  (define-company-backend! org-mode
-    (math-symbols-latex
-     math-symbols-unicode
-     latex-commands
-     capf
-     yasnippet
-     dabbrev-code
-     keywords))
+  (after! company
+    (require 'company-math)
+    (define-company-backend! org-mode
+      (math-symbols-latex
+       math-symbols-unicode
+       latex-commands
+       capf
+       yasnippet
+       dabbrev-code
+       keywords)))
 
   (define-key org-mode-map (kbd "RET") nil)
   (define-key org-mode-map (kbd "C-j") nil)

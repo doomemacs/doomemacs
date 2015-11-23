@@ -90,19 +90,5 @@
   (interactive "<a><!>")
   (if bang (helm-multi-swoop-all search) (helm-swoop :$query search)))
 
-;;;###autoload
-(defun narf/helm-org-search (&optional directory)
-  (interactive)
-  (require 'helm-ag)
-  (require 'helm-deft)
-  (let ((dir (or directory org-directory)))
-    (let ((helm-deft-dir-list `(,dir))
-          (default-directory dir)
-          (helm-ag--default-directory dir))
-      (helm :sources `(,(if directory
-                            'helm-source-deft-fn
-                          'helm-source-projectile-files-list)
-                       helm-source-do-ag)))))
-
 (provide 'defuns-helm)
 ;;; defuns-helm.el ends here
