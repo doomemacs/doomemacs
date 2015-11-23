@@ -9,11 +9,15 @@
   (defconst narf-contrib-dir   (concat narf-emacs-dir "contrib/"))
   (defconst narf-private-dir   (concat narf-emacs-dir "private/"))
   (defconst narf-elpa-dir      (concat narf-emacs-dir ".cask/" emacs-version "/elpa/"))
-  (defconst narf-temp-dir      (concat narf-private-dir "cache/" (system-name) "/"))
+
   (defconst narf-script-dir    (concat narf-emacs-dir "scripts/"))
   (defconst narf-dropbox-dir   "~/Dropbox/")
   (defconst narf-snippet-dirs  (list (concat narf-private-dir "snippets/")
-                                     (concat narf-private-dir "templates/"))))
+                                     (concat narf-private-dir "templates/")))
+  (defconst narf-temp-dir
+    (format "%scache/%s/%s.%s/"
+            narf-private-dir (system-name)
+            emacs-major-version emacs-minor-version)))
 
 (eval-when-compile
   (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/cask")
