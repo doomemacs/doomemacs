@@ -1,4 +1,4 @@
-;;; defuns-elisp.el
+;;; defuns-lisp.el
 
 ;;;###autoload
 (defun narf/elisp-find-function-at-pt ()
@@ -12,5 +12,5 @@
   (let ((func (function-called-at-point)))
     (if func (find-function-other-window func))))
 
-(provide 'defuns-elisp)
-;;; defuns-elisp.el ends here
+(provide 'defuns-lisp)
+;;; defuns-lisp.el ends here

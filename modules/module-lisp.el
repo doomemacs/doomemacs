@@ -1,4 +1,4 @@
-;;; module-elisp --- all things emacs lisp
+;;; module-lisp --- all things lisp
 ;; see lib/elisp-defuns.el
 
 (add-hook! emacs-lisp-mode 'turn-on-eldoc-mode)
@@ -18,21 +18,21 @@
 
   (add-to-list 'imenu-generic-expression
                '("Package"
-                 "\\(^\\s-*(use-package +\\)\\(\\_<.+\\_>\\)" 2)))
+                 "\\(^\\s-*(use-package +\\)\\(\\_<.+\\_>\\)" 2))
 
-;; Highlight extra NARF keywords
-(let ((keywords '("add-hook!"
-                  "bind!"
-                  "after!"
-                  "λ"
-                  "in!"
-                  "define-company-backend!"
-                  "define-text-object!"
-                  "define-builder!"
-                  )))
-  (font-lock-add-keywords 'emacs-lisp-mode
-                          `((,(concat "(\\s-*" (regexp-opt keywords 'paren) "\\_>")
-                             1 font-lock-keyword-face)) 'append))
+  ;; Highlight extra NARF keywords
+  (let ((keywords '("add-hook!"
+                    "bind!"
+                    "after!"
+                    "λ"
+                    "in!"
+                    "define-company-backend!"
+                    "define-text-object!"
+                    "define-builder!"
+                    )))
+    (font-lock-add-keywords 'emacs-lisp-mode
+                            `((,(concat "(\\s-*" (regexp-opt keywords 'paren) "\\_>")
+                               1 font-lock-keyword-face)) 'append)))
 
 (font-lock-add-keywords
  'emacs-lisp-mode `(("\\(lambda\\)" (0 (narf/show-as ?λ)))))
@@ -42,5 +42,9 @@
        :m "gd" 'narf/elisp-find-function-at-pt
        :m "gD" 'narf/elisp-find-function-at-pt-other-window)
 
-(provide 'module-elisp)
+(use-package slime :defer t
+  :config
+  (setq inferior-lisp-program "clisp"))
+
+(provide 'module-lisp)
 ;;; module-elisp.el ends here

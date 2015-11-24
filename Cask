@@ -122,6 +122,9 @@
 (depends-on "yaml-mode" :git "https://github.com/antalk2/yaml-mode")
 (depends-on "toml-mode")
 
+;; Lisp -- modules/module-lisp.el
+(depends-on "slime")
+
 ;; Golang -- modules/module-go.el
 (depends-on "go-mode")
 (depends-on "go-eldoc")

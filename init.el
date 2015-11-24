@@ -78,7 +78,7 @@
           module-csharp        ; unity, .NET, and mono shenanigans
           module-collab        ; wonewy, I'm so wonewy~
           module-data          ; dbs 'n data formats
-          module-elisp         ; drowning in parentheses
+          module-lisp          ; drowning in parentheses
           module-go            ; a hipster dialect
           module-java          ; the poster child for carpal tunnel syndome
           module-js            ; all(hope(abandon(ye(who(enter(here))))))
