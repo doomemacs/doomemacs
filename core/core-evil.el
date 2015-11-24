@@ -58,6 +58,10 @@
                       (compilation-mode  . normal)))
     (evil-set-initial-state `,(car mode-map) `,(cdr mode-map)))
 
+  ;; Switch to normal mode before switching windows
+  (defun narf*evil-back-to-normal () (evil-normal-state))
+  (advice-add 'select-window :before 'narf*evil-back-to-normal)
+
   (progn ; evil hacks
     (defadvice evil-force-normal-state (after evil-esc-quit activate)
       "Close popups, disable search highlights and quit the minibuffer if open."
