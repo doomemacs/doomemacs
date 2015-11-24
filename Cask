@@ -1,6 +1,6 @@
 (source melpa)
 (source org)
-(source marmalade)
+(source "marmalade" "https://marmalade-repo.org/packages/")
 (source gnu)
 
 ;; Core --- core/core.el
@@ -10,7 +10,7 @@
 (depends-on "use-package")
 (depends-on "help-fns+")
 (depends-on "persistent-soft")
-(depends-on "async" :git "https://github.com/jwiegley/emacs-async")
+(depends-on "async")
 (depends-on "esup")
 
 ;; OSX --- core/core-os-osx.el
@@ -149,13 +149,12 @@
 (depends-on "markdown-mode")
 
 ;; Org -- modules/module-org.el
+(depends-on "company-math")
 (depends-on "org-plus-contrib")
 (depends-on "org-opml" :git "https://github.com/edavis/org-opml")
-(depends-on "company-math")
+(depends-on "org-download")
 (depends-on "ob-http")
 (depends-on "ob-go" :git "https://github.com/pope/ob-go")
-(depends-on "org-download")
-(depends-on "helm-deft" :git "https://github.com/dfeich/helm-deft")
 
 ;; PlantUML -- modules/module-plantuml.el
 (depends-on "puml-mode")
