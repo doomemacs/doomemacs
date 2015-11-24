@@ -88,10 +88,7 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
   (let ((bname (buffer-name)))
     (cond ((string-match-p "^\\*scratch\\*" bname)
            (erase-buffer))
-          (t
-           (when window-system
-             (mac-start-animation (get-buffer-window) :type 'fade-out :duration 0.3))
-           (kill-this-buffer))))
+          (t (kill-this-buffer))))
   (if (narf/popup-p (current-buffer))
       (narf/popup-close)
     (unless (narf/real-buffer-p (current-buffer))
