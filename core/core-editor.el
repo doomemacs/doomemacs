@@ -25,7 +25,7 @@
 
  shift-select-mode       nil
  tabify-regexp "^\t* [ \t]+"
- whitespace-style '(face tabs tab-mark newline newline-mark)
+ whitespace-style '(face tabs tab-mark)
  whitespace-display-mappings
  '((tab-mark   ?\t   [?> ?\t])
    (newline-mark 10 [36 10])))
@@ -89,6 +89,8 @@ details on NORECORD.")
 (add-hook! prog-mode      'narf|enable-comment-hard-wrap)
 (add-hook! auto-fill-mode (diminish 'auto-fill-function))
 (add-hook! special-mode   (setq truncate-lines nil))
+(add-hook! change-major-mode-hook
+  (when indent-tabs-mode (whitespace-mode +1)))
 
 (defadvice delete-trailing-whitespace
     (around delete-trailing-whitespace-ignore-line activate)
