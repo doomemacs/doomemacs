@@ -74,17 +74,13 @@
    :ni "M-d"  'dash-at-point
 
    ;; Add animated transitions to OSX emacs
-   "M-w"   (λ (if window-system
-                  (mac-start-animation (get-buffer-window) :type 'fade-out :duration 0.25))
-              (call-interactively 'evil-window-delete))
+   "M-w"   'evil-window-delete
    "M-W"   (λ (let ((data (assq (selected-frame) narf-wg-frames)))
                 (if data
                     (progn (wg-delete-workgroup (wg-get-workgroup (cdr data)))
                            (delete-frame (car data)))
                   (delete-frame))))
-   "M-n"   (λ (if window-system
-                  (mac-start-animation (get-buffer-window) :type 'fade-out :duration 0.25))
-              (switch-to-buffer (generate-new-buffer "*new*")))
+   "M-n"   (λ (switch-to-buffer (generate-new-buffer "*new*")))
 
    ;; Textmate-esque indent shift left/right
    :i "M-["           (kbd "C-o m l C-o I DEL C-o ` l")

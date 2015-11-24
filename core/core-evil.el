@@ -59,8 +59,9 @@
     (evil-set-initial-state `,(car mode-map) `,(cdr mode-map)))
 
   ;; Switch to normal mode before switching windows
-  (defun narf*evil-back-to-normal () (evil-normal-state))
-  (advice-add 'select-window :before 'narf*evil-back-to-normal)
+  (defun narf|evil-back-to-normal (&rest _)
+    (when (eq evil-state 'insert) (evil-normal-state)))
+  (add-hook! narf.window-switch 'narf|evil-back-to-normal)
 
   (progn ; evil hacks
     (defadvice evil-force-normal-state (after evil-esc-quit activate)

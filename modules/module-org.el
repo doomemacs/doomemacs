@@ -209,8 +209,6 @@ will function properly."
   (defface org-headline-todo '((t ())) "Face for todo headlines")
   (defface org-todo-high '((t ())) "Face for high-priority todo")
   (defface org-todo-vhigh '((t ())) "Face for very high-priority todo")
-  ;; (defface org-item-checkbox '((t ())) "Face for checkbox list lines")
-  ;; (defface org-item-checkbox-checked '((t ())) "Face for checked checkbox list lines")
   (defface org-whitespace '((t ())) "Face for spaces")
   (defface org-list-bullet '((t ())) "Face for list bullets")
   (font-lock-add-keywords
