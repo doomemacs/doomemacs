@@ -75,6 +75,7 @@ enable multiple minor modes for the same regexp.")
 (add-hook! eldoc-mode     (diminish 'eldoc-mode " ?"))
 (add-hook! prog-mode      'narf|enable-comment-hard-wrap)
 (add-hook! auto-fill-mode (diminish 'auto-fill-function))
+(add-hook! special-mode   (setq truncate-lines nil))
 
 (defadvice delete-trailing-whitespace
     (around delete-trailing-whitespace-ignore-line activate)
