@@ -235,9 +235,11 @@ will function properly."
                 (2 'org-headline-todo))
 
                ("[-+*] \\(\\[ \\]\\) "
-                (1 (narf/show-as ?☐)))
+                (1 'org-whitespace))
+               ("[-+*] \\(\\[-\\]\\) "
+                (1 'org-whitespace))
                ("[-+*] \\(\\[X\\]\\) \\([^$\n\r]+\\)"
-                (1 (narf/show-as ?☑))
+                (1 'org-whitespace)
                 (2 'org-headline-done))
 
                ;; Show checkbox for other todo states (but don't hide the label)
