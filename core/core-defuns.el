@@ -243,8 +243,8 @@ to abort the minibuffer."
   (let (message-log-max)
     (if (and delete-selection-mode transient-mark-mode mark-active)
         (setq deactivate-mark t)
-      (when (get-buffer "*Completions*")
-        (delete-windows-on "*Completions*"))
+      ;; (when (get-buffer "*Completions*")
+      ;;   (delete-windows-on "*Completions*"))
       (abort-recursive-edit))))
 
 (after! evil

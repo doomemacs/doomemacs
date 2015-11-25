@@ -351,7 +351,8 @@ iedit."
   ;; Initialize modeline
   (spaceline-install
    ;; Left side
-   '(narf-anzu narf-iedit narf-evil-substitute
+   '((evil-state :face highlight-face :when active)
+     narf-anzu narf-iedit narf-evil-substitute
      (narf-buffer-path remote-host)
      narf-buffer-modified
      narf-vc

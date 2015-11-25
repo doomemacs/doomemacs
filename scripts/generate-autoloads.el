@@ -7,6 +7,9 @@
 (when (f-exists? generated-autoload-file)
   (delete-file generated-autoload-file))
 
-(apply #'update-directory-autoloads (list (concat narf-core-dir "lib")
-                                          (concat narf-modules-dir "lib")
-                                          narf-contrib-dir))
+(let ((dirs (list (concat narf-core-dir "lib")
+                  (concat narf-modules-dir "lib")
+                  narf-contrib-dir)))
+  (apply #'update-directory-autoloads dirs)
+  (message "Scanned: %s" dirs))
+

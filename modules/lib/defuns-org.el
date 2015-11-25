@@ -113,39 +113,6 @@
 (defun narf/org-surround (delim)
   (insert delim) (save-excursion (insert delim)))
 
-;;;###autoload (autoload 'narf:org-search-files-or-headers "defuns-org" nil t)
-(evil-define-command narf:org-search-files-or-headers (&optional bang)
-  (interactive "<!>")
-  (require 'org)
-  (if bang
-      (ido-find-file-in-dir org-directory)
-    (call-interactively 'helm-org-agenda-files-headings)))
-
-;;;###autoload
-(defun narf:org-list-attachments ()
-  "Find files in org-attachment directory"
-  (interactive)
-  (let* ((enable-recursive-minibuffers t)
-         (files (find-lisp-find-files org-attach-directory "."))
-         (file-assoc-list
-          (mapcar (lambda (x)
-                    (cons (file-name-nondirectory x)
-                          x))
-                  files))
-         (filename-list
-          (remove-duplicates (mapcar #'car file-assoc-list)
-                             :test #'string=))
-         (filename (ido-completing-read "Org attachments: " filename-list nil t))
-         (longname (cdr (assoc filename file-assoc-list))))
-    (ido-set-current-directory
-     (if (file-directory-p longname)
-         longname
-       (file-name-directory longname)))
-    (setq ido-exit 'refresh
-          ido-text-init ido-text
-          ido-rotate-temp t)
-    (exit-minibuffer)))
-
 ;;;###autoload
 (defun narf/org-word-count (beg end &optional count-footnotes?)
   "Report the number of words in the Org mode buffer or selected region.
@@ -217,22 +184,6 @@ COUNT-FOOTNOTES? is non-nil."
         (re-search-forward "\\w+\\W*")))
     (message (format "%d words in %s." wc
                      (if mark-active "region" "buffer")))))
-
-;;;###autoload (autoload 'narf:org-attach "defuns-org" nil t)
-(evil-define-command narf:org-attach (&optional link)
-  (interactive "<a>")
-  (require 'org-attach)
-  (let ((path ".attach")
-        (new-name (concat (int-to-string (truncate (float-time))) "-" (f-filename link)))
-        new-path)
-    (unless (file-exists-p path)
-      (make-directory path))
-    (when path
-      (setq new-path (format "%s/%s" path new-name))
-      (cond ((string-match-p "^https?://" link)
-             (url-copy-file link new-path))
-            (t (copy-file link new-path)))
-      (insert (format "[[./%s]]" (abbreviate-file-name new-path))))))
 
 ;;;###autoload (autoload 'narf:org-export "defuns-org" nil t)
 (evil-define-command narf:org-export (dest)
@@ -324,16 +275,14 @@ re-align the table if necessary. (Necessary because org-mode has a
     (when (org-looking-at-p " ") (forward-char))))
 
 ;;;###autoload
-(defun narf/org-replace-link-by-link-description ()
-  "Replace an org link by its description or if empty its address"
-  (interactive)
-  (if (org-in-regexp org-bracket-link-regexp 1)
-      (let ((remove (list (match-beginning 0) (match-end 0)))
-            (description (if (match-end 3)
-                             (org-match-string-no-properties 3)
-                           (org-match-string-no-properties 1))))
-        (apply 'delete-region remove)
-        (insert description))))
+(defun narf/-org-capture-changelog ()
+  ;; TODO
+  )
+
+;;;###autoload
+(defun narf/-org-capture-choose ()
+  ;; TODO
+  )
 
 (provide 'defuns-org)
 ;;; defuns-org.el ends here

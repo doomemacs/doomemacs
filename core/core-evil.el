@@ -29,10 +29,19 @@
         evil-echo-state nil
         evil-ex-substitute-global t
 
+        evil-normal-state-tag    "N"
+        evil-insert-state-tag    "I"
+        evil-visual-state-tag    "V"
+        evil-emacs-state-tag     "E"
+        evil-operator-state-tag  "O"
+        evil-motion-state-tag    "M"
+        evil-replace-state-tag   "R"
+        evil-iedit-state-tag     "R+"
+
         ;; Color-coded state cursors
         evil-default-cursor "orange"
         evil-normal-state-cursor  'box
-        evil-emacs-state-cursor   'bar
+        evil-emacs-state-cursor   '("cyan" box)
         evil-insert-state-cursor  'bar
         evil-visual-state-cursor  'hollow
         evil-iedit-state-cursor   'box)
@@ -49,13 +58,20 @@
   (advice-add 'extract-rectangle-line :filter-args 'narf*evil-extract-rectangle-line-fix)
 
   ;; modes to map to different default states
-  (dolist (mode-map '((cider-repl-mode   . emacs)
-                      (comint-mode       . emacs)
-                      (term-mode         . emacs)
-                      (Info-mode         . emacs)
-                      (help-mode         . normal)
-                      (message-mode      . normal)
-                      (compilation-mode  . normal)))
+  (dolist (mode-map '((cider-repl-mode           . emacs)
+                      (comint-mode               . emacs)
+                      (term-mode                 . emacs)
+                      (Info-mode                 . emacs)
+                      (view-mode                 . emacs)
+                      (help-mode                 . normal)
+                      (message-mode              . normal)
+                      (compilation-mode          . normal)
+                      (inferior-emacs-lisp-mode  . emacs)
+                      (calendar-mode             . emacs)
+                      (Man-mode                  . emacs)
+                      (grep-mode                 . emacs)
+                      (image-mode                . emacs)
+                      ))
     (evil-set-initial-state `,(car mode-map) `,(cdr mode-map)))
 
   ;; Switch to normal mode before switching windows
@@ -232,9 +248,9 @@
 
 (use-package evil-jumper
   :init
-  (setq evil-jumper-file (concat narf-temp-dir "jumplist")
-        evil-jumper-auto-center t
-        evil-jumper-auto-save-interval 3600))
+  (setq evil-jumper-auto-center nil
+        evil-jumper-auto-save-interval 3600)
+  :config (global-evil-jumper-mode +1))
 
 (use-package evil-matchit
   :commands (evilmi-jump-items evilmi-text-object global-evil-matchit-mode)

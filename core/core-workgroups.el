@@ -33,6 +33,8 @@
     ;; Create a new workgroup on switch-project
     (setq projectile-switch-project-action 'narf/wg-projectile-switch-project))
 
+  (add-hook! wg-before-switch-to-workgroup 'popwin:close-popup-window)
+
   ;; Initialize!
   (add-hook! after-init
     (workgroups-mode 1)

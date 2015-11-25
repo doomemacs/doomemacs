@@ -23,7 +23,7 @@
  hscroll-step 5
  hscroll-margin 6
 
- shift-select-mode       nil
+ shift-select-mode       t
  tabify-regexp "^\t* [ \t]+"
  whitespace-style '(face tabs tab-mark)
  whitespace-display-mappings
@@ -219,28 +219,13 @@ details on NORECORD.")
         t))
     (sp-local-pair 'web-mode "<" nil :when '(sp-web-mode-is-code-context))))
 
-;; (use-package smex
-;;   :commands (smex smex-major-mode-commands smex-initialize smex-update)
-;;   :init (setq smex-save-file (concat narf-temp-dir "smex-items"))
-;;   :config (smex-initialize)
-;;   ;; Hook up smex to auto-update, rather than update on every run
-;;   (defun smex-update-after-load (unused)
-;;     (when (boundp 'smex-cache) (smex-update)))
-;;   (add-hook 'after-load-functions 'smex-update-after-load))
-
 (use-package help-fns+ ; Improved help commands
   :commands (describe-buffer describe-command describe-file
              describe-keymap describe-option describe-option-of-type))
 
-(use-package saveplace
-  :defer t
-  :config (setq save-place-file (concat narf-temp-dir "saveplace"))
-  :init
-  ;; Save cursor location across sessions. Only save for files that exist.
-  (add-hook! find-file
-    (when (file-exists-p (buffer-file-name))
-      (require 'saveplace)
-      (setq save-place t))))
+(require 'saveplace)
+(setq save-place-file (concat narf-temp-dir "saveplace"))
+(save-place-mode +1)
 
 (provide 'core-editor)
 ;;; core-editor.el ends here

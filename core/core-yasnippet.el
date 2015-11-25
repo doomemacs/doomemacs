@@ -52,6 +52,7 @@
          "<S-tab>"       'yas-prev-field
          "<M-backspace>" 'narf/yas-clear-to-sof
 
+         "<escape>"      'evil-normal-state
          [backspace]     'narf/yas-backspace
          "<delete>"      'narf/yas-delete)
 
@@ -69,7 +70,8 @@
   ;; right due to an off-by-one issue.
   (defadvice yas-expand-snippet (around yas-expand-snippet-visual-line activate)
     (when (narf/evil-visual-line-state-p)
-      (ad-set-arg 2 (1- (ad-get-arg 2)))) ad-do-it))
+      (ad-set-arg 2 (1- (ad-get-arg 2)))) ad-do-it)
+  )
 
 (provide 'core-yasnippet)
 ;;; core-yasnippet.el ends here

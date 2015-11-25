@@ -22,6 +22,8 @@
           (" *Org todo*"            :position bottom :height 5)
           ("*Org Links*"           :position bottom :height 2)
           ("^\\*CPU-Profiler-Report .+\\*$"  :regexp t :position bottom :height 0.35)
+          ("*ruby*" :position bottom :height 0.3 :stick t)
+          ("*ielm*" :position bottom :height 0.3 :stick t)
           ))
 
   (popwin-mode 1)

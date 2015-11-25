@@ -40,6 +40,7 @@
         org-footnote-auto-label 'plain
         org-log-done t
         org-agenda-window-setup 'other-window
+        org-agenda-skip-unavailable-files t
         org-src-window-setup 'current-window
         org-startup-folded 'content
         org-todo-keywords '((sequence "TODO(t)" "|" "DONE(d)")
@@ -141,7 +142,7 @@
    'org-babel-load-languages
    '((python . t) (ruby . t) (sh . t) (js . t) (css . t)
      (plantuml . t) (emacs-lisp . t) (matlab . t)
-     (latex . t) (calc . t)
+     (latex . t) (calc . t) (lisp . t)
      (http . t) (rust . t) (go . t)))
 
   (setq org-plantuml-jar-path puml-plantuml-jar-path)
@@ -272,7 +273,10 @@ will function properly."
   (setq line-spacing '0.2)
   (variable-pitch-mode 1)
 
-  (defun narf|org-update-statistics-cookies () (org-update-statistics-cookies t))
+  (defun narf|org-update-statistics-cookies ()
+    (when (file-exists-p buffer-file-name)
+      (org-update-statistics-cookies t)))
+
   (add-hook 'before-save-hook 'narf|org-update-statistics-cookies nil t)
   (add-hook 'evil-insert-state-exit-hook 'narf|org-update-statistics-cookies nil t)
 
@@ -308,9 +312,9 @@ will function properly."
 
   (add-hook 'org-mode-hook 'narf|org-hook)
 
-  (org-add-link-type "contact" 'narf/org-link-contact)
-  (org-add-link-type "project" 'narf/org-link-project)
-  (org-add-link-type "invoice" 'narf/org-link-invoice)
+  (org-add-link-type "contact" 'narf/org-crm-link-contact)
+  (org-add-link-type "project" 'narf/org-crm-link-project)
+  (org-add-link-type "invoice" 'narf/org-crm-link-invoice)
 
   (add-to-list 'recentf-exclude (expand-file-name "%s.+\\.org$" org-directory))
   (after! helm
@@ -346,17 +350,16 @@ will function properly."
     (define-text-object! "=" "=" "=")
     (define-text-object! "~" "~" "~"))
 
-  ;;; File templates
-  (after! autoinsert
-    (add-template! (format "%s.+\\.org$" org-directory-contacts) "__contact.org"  'org-mode)
-    (add-template! (format "%s.+\\.org$" org-directory-projects) "__projects.org" 'org-mode)
-    (add-template! (format "%s.+\\.org$" org-directory-invoices) "__invoices.org" 'org-mode))
-
   ;;; Plugins
   (require 'org-download)
   (setq-default
-   org-download-image-dir ".attach/"
+   org-download-image-dir ".attach"
+   org-download-heading-lvl nil
+   org-download-timestamp "_%Y%m%d_%H%M%S"
    org-download-screenshot-method "screencapture -i %s")
+
+  (defun org-download--dir-2 ()
+    (f-base (buffer-file-name)))
 
   ;;; Auto-completion
   (after! company
@@ -426,8 +429,7 @@ will function properly."
            :n  ",f" 'org-sparse-tree
            :n  ",?" 'org-tags-view
            :n  ",e" 'org-edit-special
-           :n  ",a" 'org-attach
-           :n  ",A" 'org-agenda
+           :n  ",a" 'org-agenda
            :n  ",D" 'org-time-stamp-inactive
            :n  ",i" 'narf/org-toggle-inline-images-at-point
            :n  ",t" 'org-todo
@@ -435,6 +437,7 @@ will function properly."
            :n  ",d" 'org-time-stamp
            :n  ",r" 'org-refile
            :n  ",s" 'org-schedule
+           :n  ",oa" 'narf/org-reveal-attachments
            :n  ", SPC" 'narf/org-toggle-checkbox
            :n  ", RET" 'org-archive-subtree
 
@@ -462,7 +465,7 @@ will function properly."
            :n  "go"  'org-open-at-point
            :n  "gO"  (λ (let ((org-link-frame-setup (append '((file . find-file-other-window)) org-link-frame-setup))
                               (org-file-apps '(("\\.org$" . emacs)
-                                               (t . "qlmanage -p \"%s\""))))
+                                               (t . "open \"%s\""))))
                           (call-interactively 'org-open-at-point)))
 
            :n  "gQ" 'org-fill-paragraph

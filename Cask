@@ -98,6 +98,7 @@
 
 ;; Quickrun -- core/core-quickrun.el
 (depends-on "quickrun")
+(depends-on "repl-toggle")
 
 ;; Workgroups --- core/core-workgroups.el
 (depends-on "workgroups2")
@@ -144,6 +145,7 @@
 (depends-on "tide")
 (depends-on "coffee-mode")
 (depends-on "company-tern")
+(depends-on "nodejs-repl")
 
 ;; Lua -- modules/module-lua.el
 (depends-on "lua-mode")
@@ -169,6 +171,7 @@
 (depends-on "hack-mode"
   :git "https://github.com/facebook/hhvm"
   :files ("hphp/hack/editor-plugins/emacs/*.el"))
+(depends-on "php-boris")
 
 ;; Python -- modules/module-python.el
 (depends-on "anaconda-mode")

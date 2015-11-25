@@ -29,6 +29,7 @@
  "M-t"   'helm-projectile-find-file
  "A-`"   'narf-switch-to-iterm
  "C-`"   'narf/popup-toggle
+ "C-~"   'rtog/toggle-repl
  "<f9>"  'what-face
 
  "M-w"   'evil-window-delete
@@ -202,7 +203,8 @@
  :m "gl"  'avy-goto-line
  :m "g]"  'smart-right
  :m "g["  'smart-left
- :no "g@" 'narf/evil-macro-on-all-lines
+ :v "@"   'narf/evil-macro-on-all-lines
+ :n "g@"  'narf/evil-macro-on-all-lines
 
  :v "."   'evil-repeat
 

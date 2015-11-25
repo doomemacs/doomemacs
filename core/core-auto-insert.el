@@ -3,85 +3,93 @@
 (use-package autoinsert
   :defer t
   :init
-  (setq auto-insert-query nil)    ; Don't prompt before insertion
-  (setq auto-insert-alist '())
+  (setq auto-insert-query nil    ; Don't prompt before insertion
+        auto-insert-alist '())
   :config
   (auto-insert-mode 1)
 
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  (defun auto-insert-template (rule)
+    (define-auto-insert
+      (nth 0 rule)
+      (vector `(lambda () (narf/auto-insert-snippet ,(nth 1 rule) ',(nth 2 rule) ,(nth 3 rule))))))
 
-  (add-template! "/\\.gitignore$"                  "__"               'gitignore-mode)
+  (mapc 'auto-insert-template
+        `(;; General
+          ("/\\.gitignore$"                  "__"               gitignore-mode)
 
-  ;; C/C++
-  (add-template! "/Makefile$"                      "__"               'makefile-gmake-mode)
-  (add-template! "/main\\.\\(cc\\|cpp\\)$"         "__main.cpp"       'c++-mode)
-  (add-template! "/win32_\\.\\(cc\\|cpp\\)$"       "__winmain.cpp"    'c++-mode)
-  (add-template! "\\.\\([Hh]\\|hpp\\)$"            "__.h"             'c++-mode)
-  (add-template! "\\.\\(cc\\|cpp\\)$"              "__.cpp"           'c++-mode)
-  (add-template! "\\.c$"                           "__.c"             'c-mode)
+          ;; C/C++
+          ("/Makefile$"                      "__"               makefile-gmake-mode)
+          ("/main\\.\\(cc\\|cpp\\)$"         "__main.cpp"       c++-mode)
+          ("/win32_\\.\\(cc\\|cpp\\)$"       "__winmain.cpp"    c++-mode)
+          ("\\.\\([Hh]\\|hpp\\)$"            "__.h"             c++-mode)
+          ("\\.\\(cc\\|cpp\\)$"              "__.cpp"           c++-mode)
+          ("\\.c$"                           "__.c"             c-mode)
 
-  ;; Elisp
-  (add-template! "\\.emacs\\.d/.+\\.el$"           "__initfile"       'emacs-lisp-mode)
-  (add-template! "\\.emacs\\.d/private/\\(snippets\\|templates\\)/.+$" "__" 'snippet-mode)
+          ;; Elisp
+          ("\\.emacs\\.d/.+\\.el$"           "__initfile"       emacs-lisp-mode)
+          ("\\.emacs\\.d/private/\\(snippets\\|templates\\)/.+$" "__" snippet-mode)
 
-  ;; Go
-  (add-template! "/main\\.go$"                     "__main.go"        'go-mode t)
-  (add-template! "\\.go$"                          "__.go"            'go-mode)
+          ;; Go
+          ("/main\\.go$"                     "__main.go"        go-mode t)
+          ("\\.go$"                          "__.go"            go-mode)
 
-  ;; HTML
-  (add-template! "\\.html$"                        "__.html"           'web-mode)
+          ;; HTML
+          ("\\.html$"                        "__.html"           web-mode)
 
-  ;; java
-  (add-template! "/src/.+/.+\\.java$"              "__"               'java-mode)
-  (add-template! "/main\\.java$"                   "__main"           'java-mode)
-  (add-template! "/build\\.gradle$"                "__build.gradle"   'android-mode)
+          ;; java
+          ("/src/.+/.+\\.java$"              "__"               java-mode)
+          ("/main\\.java$"                   "__main"           java-mode)
+          ("/build\\.gradle$"                "__build.gradle"   android-mode)
 
-  ;; Javascript
-  (add-template! "\\.lbaction/.+/Info.plist$"                       "__Info.plst"  'lb6-mode)
-  (add-template! "\\.lbaction/.+/\\(default\\|suggestions\\)\\.js$" "__default.js" 'lb6-mode)
-  (add-template! "/package\\.json$"                "__package.json"   'json-mode)
-  (add-template! "\\.\\(json\\|jshintrc\\)$"       "__"               'json-mode)
+          ;; Javascript
+          ("\\.lbaction/.+/Info.plist$"                       "__Info.plst"  lb6-mode)
+          ("\\.lbaction/.+/\\(default\\|suggestions\\)\\.js$" "__default.js" lb6-mode)
+          ("/package\\.json$"                "__package.json"   json-mode)
+          ("\\.\\(json\\|jshintrc\\)$"       "__"               json-mode)
 
-  ;; Lua
-  (add-template! "/main\\.lua$"                    "__main.lua"       'love-mode)
-  (add-template! "/conf\\.lua$"                    "__conf.lua"       'love-mode)
+          ;; Lua
+          ("/main\\.lua$"                    "__main.lua"       love-mode)
+          ("/conf\\.lua$"                    "__conf.lua"       love-mode)
 
-  ;; Markdown
-  (add-template! "\\.md$"                          "__"               'markdown-mode)
-  (add-template! "/_posts/.+\\.md$"                "__jekyll-post"    'markdown-mode)
-  (add-template! "/_layouts/.+\\.html$"            "__jekyll-layout.html" 'web-mode)
+          ;; Markdown
+          ("\\.md$"                          "__"               markdown-mode)
 
-  ;; PHP
-  (add-template! "\\.class\\.php$"                 "__.class.php"     'php-mode)
-  (add-template! "\\.php$"                         "__"               'php-mode)
+          ;; Org
+          (,(format "%s.+\\.org$" org-directory-contacts) "__contact.org"  org-mode)
+          (,(format "%s.+\\.org$" org-directory-projects) "__projects.org" org-mode)
+          (,(format "%s.+\\.org$" org-directory-invoices) "__invoices.org" org-mode)
 
-  ;; Python
-  ;; (add-template! "tests?/test_.+\\.py$"         "__"               'nose-mode)
-  ;; (add-template! "/setup\\.py$"                 "__setup.py"       'python-mode)
-  (add-template! "\\.py$"                          "__"               'python-mode)
+          ;; PHP
+          ("\\.class\\.php$"                 "__.class.php"     php-mode)
+          ("\\.php$"                         "__"               php-mode)
 
-  ;; Ruby
-  (add-template! "/\\.rspec$"                      "__.rspec"         'rspec-mode)
-  (add-template! "/spec_helper\\.rb$"              "__helper"         'rspec-mode t)
-  (add-template! "_spec\\.rb$"                     "__"               'rspec-mode t)
-  (add-template! "/Rakefile$"                      "__Rakefile"       'enh-ruby-mode t)
-  (add-template! "/Gemfile$"                       "__Gemfile"        'enh-ruby-mode t)
-  (add-template! "\\.gemspec$"                     "__.gemspec"       'enh-ruby-mode t)
-  (add-template! "/lib/.+\\.rb$"                   "__module"         'enh-ruby-mode t)
-  (add-template! "\\.rb$"                          "__"               'enh-ruby-mode)
+          ;; Python
+          ;;"tests?/test_.+\\.py$"         "__"               nose-mode)
+          ;;"/setup\\.py$"                 "__setup.py"       python-mode)
+          ("\\.py$"                          "__"               python-mode)
 
-  ;; Rust
-  (add-template! "/Cargo.toml$"                    "__Cargo.toml"     'rust-mode)
-  (add-template! "/main\\.rs$"                     "__main.rs"        'rust-mode)
+          ;; Ruby
+          ("/\\.rspec$"                      "__.rspec"         rspec-mode)
+          ("/spec_helper\\.rb$"              "__helper"         rspec-mode t)
+          ("_spec\\.rb$"                     "__"               rspec-mode t)
+          ("/Rakefile$"                      "__Rakefile"       enh-ruby-mode t)
+          ("/Gemfile$"                       "__Gemfile"        enh-ruby-mode t)
+          ("\\.gemspec$"                     "__.gemspec"       enh-ruby-mode t)
+          ("/lib/.+\\.rb$"                   "__module"         enh-ruby-mode t)
+          ("\\.rb$"                          "__"               enh-ruby-mode)
 
-  ;; SCSS
-  (add-template! "/master\\.scss$"                 "__master.scss"    'scss-mode)
-  (add-template! "/normalize\\.scss$"              "__normalize.scss" 'scss-mode)
-  (add-template! "\\.scss$"                        "__"               'scss-mode)
+          ;; Rust
+          ("/Cargo.toml$"                    "__Cargo.toml"     rust-mode)
+          ("/main\\.rs$"                     "__main.rs"        rust-mode)
 
-  ;; Shell scripts
-  (add-template! "\\.z?sh$"                        "__"               'sh-mode)
-  )
+          ;; SCSS
+          ("/master\\.scss$"                 "__master.scss"    scss-mode)
+          ("/normalize\\.scss$"              "__normalize.scss" scss-mode)
+          ("\\.scss$"                        "__"               scss-mode)
+
+          ;; Shell scripts
+          ("\\.z?sh$"                        "__"               sh-mode)
+          )))
 
 (provide 'core-auto-insert)
 ;;; core-auto-insert.el ends here

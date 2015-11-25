@@ -84,7 +84,10 @@
   ;; Hide mode-line in helm windows
   (advice-add 'helm-display-mode-line :override 'narf*helm-hide-modeline)
 
-  (helm-mode 1))
+  (helm-mode 1)
+
+  ;; Don't override evil-ex's completion
+  (setq completion-in-region-function helm--old-completion-in-region-function))
 
 (use-package projectile
   :diminish projectile-mode

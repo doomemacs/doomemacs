@@ -3,16 +3,14 @@
 
 ;;;###autoload
 (defun narf|yas-before-expand ()
-  "Switch to insert mode when expanding a template via backtab, or go back to
-normal mode if there are no fields."
-  ;; Strip out the shitespace before a line selection.
+  "Strip out the shitespace before a line selection."
   (when (narf/evil-visual-line-state-p)
-    (setq yas-selected-text
-          (replace-regexp-in-string
-           "\\(^ *\\|\n? $\\)" ""
-           (buffer-substring-no-properties (region-beginning)
-                                           (1- (region-end))))))
-  (evil-insert-state +1))
+    (setq-local
+     yas-selected-text
+     (replace-regexp-in-string
+      "\\(^ *\\|\n? $\\)" ""
+      (buffer-substring-no-properties (region-beginning)
+                                      (1- (region-end)))))))
 
 ;;;###autoload
 (defun narf|yas-after-expand ()
@@ -26,7 +24,10 @@ normal mode if there are no fields."
 normal mode if there are no fields."
   (interactive)
   (yas-insert-snippet)
-  (evil-insert-state +1))
+  (let* ((snippet (first (yas--snippets-at-point)))
+         (fields (yas--snippet-fields snippet)))
+    (evil-insert-state +1)
+    (when fields (evil-change-state 'normal))))
 
 ;;;###autoload
 (defun narf/yas-goto-start-of-field ()

@@ -24,6 +24,8 @@
   (require 'php-refactor-mode)
   (add-hook! php-mode '(turn-on-eldoc-mode emr-initialize php-refactor-mode)))
 
+(use-package php-boris :defer t)
+
 (use-package hack-mode :mode "\\.hh$")
 
 (provide 'module-php)

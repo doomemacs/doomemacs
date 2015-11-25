@@ -5,10 +5,10 @@
 
 (exmap "a"               'helm-projectile-find-other-file)
 (exmap "acomp[ile]"      'narf:compile-autoloads)
-(exmap "ag"              'narf:helm-search)
-(exmap "ag[cw]d"         'narf:helm-search-cwd)
-(exmap "agr"             'narf:helm-regex-search)
-(exmap "agr[cw]d"        'narf:helm-regex-search-cwd)
+(exmap "ag"              'narf:helm-ag-search)
+(exmap "ag[cw]d"         'narf:helm-ag-search-cwd)
+(exmap "agr"             'narf:helm-ag-regex-search)
+(exmap "agr[cw]d"        'narf:helm-ag-regex-search-cwd)
 (exmap "al[ign]"         'narf:whitespace-align)
 (exmap "bcomp[ile]"      'narf:compile-el)
 (exmap "big"             'narf:toggle-big-mode)
@@ -44,6 +44,7 @@
 (exmap "fi[nd]"          'narf:helm-swoop)
 (exmap "tsnip[pets]"     'narf:yas-file-templates)   ; tsnip[!]
 (exmap "x"               'narf:scratch-buffer)
+(exmap "@"               'narf/evil-macro-on-all-lines)
 
 (exmap "t[mux]"          'narf:send-to-tmux)
 (exmap "tcd"             (λ (narf:send-to-tmux (format "cd '%s'" default-directory))))

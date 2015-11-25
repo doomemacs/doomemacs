@@ -106,5 +106,7 @@
    coffee-tab-width 2
    coffee-indent-like-python-mode t))
 
+(use-package nodejs-repl :defer t)
+
 (provide 'module-js)
 ;;; module-js.el ends here

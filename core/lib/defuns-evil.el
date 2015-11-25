@@ -69,24 +69,25 @@
     (cons (format "\\%s{" command) "}")))
 
 ;;;###autoload (autoload 'narf/evil-macro-on-all-lines "defuns-evil" nil t)
-(evil-define-operator narf/evil-macro-on-all-lines (beg end &optional arg)
-  "Apply macro to each line. Courtesy of PythonNut/emacs-config"
-  (evil-with-state
-    (evil-normal-state)
-    (goto-char end)
-    (evil-visual-state)
-    (goto-char beg)
-    (evil-ex-normal (region-beginning) (region-end)
-      (concat "@"
-        (single-key-description
-          (read-char "What macro?"))))))
+(evil-define-operator narf/evil-macro-on-all-lines (beg end &optional macro)
+  "Apply macro to each line."
+  :motion nil
+  :move-point nil
+  (interactive "<r><a>")
+  (unless (and beg end)
+    (setq beg (region-beginning)
+          end (region-end)))
+  (evil-ex-normal beg end
+                  (concat "@"
+                          (single-key-description
+                           (or macro (read-char "@-"))))))
 
 ;;;###autoload
 (defmacro define-text-object! (key start-regex end-regex)
   (let ((inner-name (make-symbol "narf--inner-name"))
         (outer-name (make-symbol "narf--outer-name")))
     `(progn
-       (evil-define-text-object ,inner-name (count &optional beg end type)
+       (evil-define-text-object ,"inner"-name (count &optional beg end type)
          (evil-select-paren ,start-regex ,end-regex beg end type count nil))
        (evil-define-text-object ,outer-name (count &optional beg end type)
          (evil-select-paren ,start-regex ,end-regex beg end type count t))
