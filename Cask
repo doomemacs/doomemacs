@@ -129,6 +129,7 @@
 ;; Golang -- modules/module-go.el
 (depends-on "go-mode")
 (depends-on "go-eldoc")
+(depends-on "company-go")
 
 ;; Java -- modules/module-java.el
 (depends-on "android-mode")
