@@ -65,7 +65,7 @@
                                              (buffer-file-name))))))
          (command (format "open %s"
                           (if app-name
-                              (format "-a %s %s" (shell-quote-argument app-name) path)
+                              (format "-a %s '%s'" (shell-quote-argument app-name) path)
                             (format "'%s'" path)))))
     (message "Running: %s" command)
     (shell-command command)))
