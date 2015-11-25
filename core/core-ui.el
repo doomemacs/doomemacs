@@ -121,7 +121,7 @@
 
 (use-package rainbow-delimiters
   :commands rainbow-delimiters-mode
-  :init (add-hook! (emacs-lisp-mode js2-mode scss-mode) 'rainbow-delimiters-mode)
+  :init (add-hook! (emacs-lisp-mode lisp-mode js2-mode scss-mode) 'rainbow-delimiters-mode)
   :config (setq rainbow-delimiters-max-face-count 4))
 
 (use-package rainbow-mode :defer t
