@@ -20,6 +20,9 @@
    helm-find-files-doc-header nil
    helm-move-to-line-cycle-in-source t
 
+   ;; Don't override evil-ex's completion
+   helm-mode-handle-completion-in-region nil
+
    helm-candidate-number-limit 30
    helm-bookmark-show-location t)
 
@@ -84,10 +87,7 @@
   ;; Hide mode-line in helm windows
   (advice-add 'helm-display-mode-line :override 'narf*helm-hide-modeline)
 
-  (helm-mode 1)
-
-  ;; Don't override evil-ex's completion
-  (setq completion-in-region-function helm--old-completion-in-region-function))
+  (helm-mode 1))
 
 (use-package projectile
   :diminish projectile-mode
