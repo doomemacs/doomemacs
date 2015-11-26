@@ -75,6 +75,12 @@
           :buffer "*helm-deft*")))
 
 ;;;###autoload
+(defun narf/helm-org ()
+  (interactive)
+  (let ((default-directory org-directory))
+    (helm-projectile-find-file)))
+
+;;;###autoload
 (defun narf/helm-org-crm-projects ()
   (interactive)
   (narf--helm-org org-directory-projects))
