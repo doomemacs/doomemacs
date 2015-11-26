@@ -142,8 +142,29 @@
    'org-babel-load-languages
    '((python . t) (ruby . t) (sh . t) (js . t) (css . t)
      (plantuml . t) (emacs-lisp . t) (matlab . t)
-     (latex . t) (calc . t) (lisp . t)
+     (latex . t) (calc . t) (lisp . t) (lilypond . t)
      (http . t) (rust . t) (go . t)))
+
+  (setq org-babel-lilypond-gen-png t)
+  ;; Ensure lilypond doesn't print out entire pages for previews
+  (defvar org-babel-lilypond-prologue
+    "\\paper { indent = 0\\mm line-width = 180\\mm oddHeaderMarkup = \"\" evenHeaderMarkup = \"\" oddFooterMarkup = \"\" evenFooterMarkup = \"\" }")
+  (defun org-babel-lilypond-get-header-args (mode)
+    (cond (mode
+           `((:tangle . "yes")
+             (:noweb . "yes")
+             (:results . "silent")
+             (:cache . "yes")
+             (:comments . "yes")
+             (:prologue . ,org-babel-lilypond-prologue)))
+          (t
+           `((:results . "file")
+             (:exports . "results")
+             (:prologue . ,org-babel-lilypond-prologue)))))
+  (setq org-babel-default-header-args:lilypond
+        '((:results . "file")
+          (:exports . "results")
+          (:prologue . ,org-babel-lilypond-prologue)))
 
   (setq org-plantuml-jar-path puml-plantuml-jar-path)
   (when (file-exists-p "~/.plantuml")
