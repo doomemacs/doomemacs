@@ -212,6 +212,7 @@ will function properly."
   (defface org-todo-vhigh '((t ())) "Face for very high-priority todo")
   (defface org-whitespace '((t ())) "Face for spaces")
   (defface org-list-bullet '((t ())) "Face for list bullets")
+  (defface org-todo-checkbox '((t ())) "Face for list bullets")
   (font-lock-add-keywords
    'org-mode `(("^ *\\(#\\+begin_src\\>\\)"
                 (1 (narf/show-as ?#)))
@@ -225,9 +226,11 @@ will function properly."
                ;; Hide TODO tags
                ("^\\**\\(\\* DONE\\) \\([^$\n\r]+\\)"
                 (1 (narf/show-as ?☑))
+                (1 'org-todo-checkbox)
                 (2 'org-headline-done))
                ("^\\**\\(\\* TODO\\) \\([^$\n\r]+\\)?"
-                (1 (narf/show-as ?☐)))
+                (1 (narf/show-as ?☐))
+                (1 'org-todo-checkbox))
 
                ;; Unbold-ify todos
                (,(concat "^\\**\\(\\* "
@@ -235,12 +238,12 @@ will function properly."
                          "\\)\\( [^$\n\r]*\\)?")
                 (2 'org-headline-todo))
 
-               ("[-+*] \\(\\[ \\]\\) "
-                (1 'org-whitespace))
-               ("[-+*] \\(\\[-\\]\\) "
-                (1 'org-whitespace))
+               ;; ("[-+*] \\(\\[ \\]\\) "
+               ;;  (1 'org-whitespace))
+               ;; ("[-+*] \\(\\[-\\]\\) "
+               ;;  (1 'org-whitespace))
                ("[-+*] \\(\\[X\\]\\) \\([^$\n\r]+\\)"
-                (1 'org-whitespace)
+                ;; (1 'org-whitespace)
                 (2 'org-headline-done))
 
                ;; Show checkbox for other todo states (but don't hide the label)
@@ -254,8 +257,8 @@ will function properly."
                 (1 'org-list-bullet))
                ("^ +\\(\\*\\) "
                 (1 (narf/show-as ?◦)))
-               ("^ +"
-                (0 'org-whitespace))
+               ;; ("^ +"
+               ;;  (0 'org-whitespace))
                )))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -271,7 +274,6 @@ will function properly."
   (narf|enable-tab-width-2)
   (setq truncate-lines nil)
   (setq line-spacing '0.2)
-  (variable-pitch-mode 1)
 
   (defun narf|org-update-statistics-cookies ()
     (when (file-exists-p buffer-file-name)
