@@ -27,7 +27,7 @@ normal mode if there are no fields."
   (let* ((snippet (first (yas--snippets-at-point)))
          (fields (yas--snippet-fields snippet)))
     (evil-insert-state +1)
-    (when fields (evil-change-state 'normal))))
+    (unless fields (evil-change-state 'normal))))
 
 ;;;###autoload
 (defun narf/yas-goto-start-of-field ()
