@@ -260,19 +260,19 @@
 
    ;; org-mode
    `(variable-pitch  ((,c (:font "DejaVu Sans" :height 1.0))))
-   `(fixed-pitch     ((,c (:font "DejaVu Sans Mono" :height 1.0))))
+   ;; `(fixed-pitch     ((,c (:font "DejaVu Sans Mono" :height 1.0))))
    `(org-tag         ((,c (:foreground ,grey-1))))
    ;; `(org-ellipsis    ((,c (:inherit hs-face))))
 
-   `(org-table                  ((,c (:inherit fixed-pitch :foreground ,cyan))))
+   `(org-table                  ((,c (:foreground ,cyan))))
    `(org-quote                  ((,c (:slant italic :foreground ,grey :background ,current-line))))
-   `(org-document-info          ((,c (:inherit fixed-pitch :foreground ,orange))))
-   `(org-document-info-keyword  ((,c (:inherit fixed-pitch :foreground ,grey-1))))
-   `(org-meta-line              ((,c (:inherit fixed-pitch :background ,current-line :foreground ,vsubtle))))
-   `(org-block-begin-line       ((,c (:inherit fixed-pitch :background ,current-line :foreground ,vsubtle))))
+   `(org-document-info          ((,c (:foreground ,orange))))
+   `(org-document-info-keyword  ((,c (:foreground ,grey-1))))
+   `(org-meta-line              ((,c (:background ,current-line :foreground ,vsubtle))))
+   `(org-block-begin-line       ((,c (:background ,current-line :foreground ,vsubtle))))
    `(org-block-end-line         ((,c (:inherit org-block-begin-line))))
 
-   `(org-document-title   ((,c (:foreground ,cyan :height 1.30 :bold t))))
+   `(org-document-title   ((,c (:inherit variable-pitch :foreground ,cyan :height 1.30 :bold t))))
    `(org-level-1          ((,c (:foreground ,orange :bold t))))
    `(org-level-2          ((,c (:foreground ,dark-cyan :bold t))))
    `(org-level-3          ((,c (:foreground ,cyan :bold t))))
@@ -283,14 +283,14 @@
    ;; `(org-level-8          ((,c ())))
    ;;`(org-checkbox         ((,class (:box (:line-width 1 :style released-button)))))
 
-   `(org-code             ((,c (:inherit fixed-pitch :foreground ,orange))))
-   `(org-verbatim         ((,c (:inherit fixed-pitch :foreground ,green))))
-   `(org-formula          ((,c (:inherit fixed-pitch :foreground ,cyan))))
+   `(org-code             ((,c (:foreground ,orange))))
+   `(org-verbatim         ((,c (:foreground ,green))))
+   `(org-formula          ((,c (:foreground ,cyan))))
    `(org-list-dt          ((,c (:foreground ,cyan :bold t))))
-   `(org-footnote         ((,c (:inherit fixed-pitch :foreground ,orange))))
+   `(org-footnote         ((,c (:foreground ,orange))))
 
    `(org-link             ((,c (:underline t :foreground ,yellow :bold inherit))))
-   `(org-date             ((,c (:inherit fixed-pitch :foreground ,violet))))
+   `(org-date             ((,c (:foreground ,violet))))
    `(org-todo             ((,c (:foreground ,yellow :bold inherit))))
    `(org-done             ((,c (:foreground ,green :bold inherit))))
    `(org-headline-done    ((,c (:foreground ,grey-.5 :strike-through t :bold nil))))
@@ -300,12 +300,14 @@
 
    ;; NARF custom org faces
    `(org-headline-todo    ((,c (:foreground ,dark-cyan :bold nil))))
-   `(org-block            ((,c (:inherit fixed-pitch :background ,current-line))))
-   `(org-block-background ((,c (:inherit fixed-pitch :background ,current-line))))
+   `(org-block            ((,c (:background ,current-line))))
+   `(org-block-background ((,c (:background ,current-line))))
    `(org-todo-high        ((,c (:foreground ,orange :bold inherit))))
    `(org-todo-vhigh       ((,c (:foreground ,magenta :bold inherit))))
    `(org-list-bullet      ((,c (:foreground ,orange :bold t))))
    `(org-whitespace       ((,c (:inherit fixed-pitch))))
+   `(org-todo-checkbox    ((,c (:inherit variable-pitch))))
+
    ))
 
 
