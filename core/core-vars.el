@@ -23,8 +23,18 @@ buffer to display.")
 (defvar narf-ignore-buffers '("*Completions*" "*Compile-Log*" "*inferior-lisp*"
                               "*Fuzzy Completions*" "*Apropos*" "*Help*" "*cvs*"
                               "*Buffer List*" "*Ibuffer*" "*esh command on file*"
-                              "*helm*" "*WoMan-Log*" "*compilation*" "*use-package*"
-                              "*quickrun*")
+                              "*WoMan-Log*" "*compilation*" "*use-package*"
+                              "*quickrun*" "*eclim: problems*" "*Flycheck errors*"
+                              ;; Helm
+                              "*helm*" "*helm recentf*" "*helm projectile*" "*helm imenu*"
+                              "*helm company*" "*helm buffers*" "*Helm Css SCSS*"
+                              "*helm-ag*" "*helm-ag-edit*" "*Helm Swoop*"
+                              "*helm M-x*" "*helm mini*" "*Helm Completions*"
+                              "*Helm Find Files*" "*helm mu*" "*helm mu contacts*"
+                              "*helm-mode-describe-variable*" "*helm-mode-describe-function*"
+                              ;; Org
+                              "*Org todo*" "*Org Links*" "*Agenda Commands*"
+                              )
   "List of buffer names to ignore when using `winner-undo', or `winner-redo'")
 
 (defvar narf-cleanup-processes-alist '(("pry" . ruby-mode)

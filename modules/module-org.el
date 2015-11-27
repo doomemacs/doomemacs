@@ -344,12 +344,6 @@ will function properly."
     (mapc (lambda (r) (add-to-list 'helm-boring-file-regexp-list r))
           (list "\\.attach$" "\\.Rhistory$")))
 
-  (after! winner
-    (dolist (bufname '("*Org todo*"
-                       "*Org Links*"
-                       "*Agenda Commands*"))
-      (push bufname winner-boring-buffers)))
-
   ;; fix some org-mode + yasnippet conflicts:
   (defun yas/org-very-safe-expand ()
     (let ((yas-fallback-behavior 'return-nil)) (yas-expand)))

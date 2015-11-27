@@ -32,19 +32,6 @@
   (mapc (lambda (r) (add-to-list 'helm-boring-file-regexp-list r))
         (list "\\.projects$" "\\.DS_Store$"))
 
-  (after! winner
-    (dolist (bufname '("*helm recentf*"
-                       "*helm projectile*"
-                       "*helm imenu*"
-                       "*helm company*"
-                       "*helm buffers*"
-                       "*helm "
-                       "*Helm Css SCSS*"
-                       "*helm-ag*"
-                       "*helm-ag-edit*"
-                       "*Helm Swoop*"))
-      (push bufname winner-boring-buffers)))
-
   (bind! (:map (helm-map helm-generic-files-map helm-find-files-map helm-swoop-map helm-projectile-find-file-map)
            "C-w"        'backward-kill-word
            "C-r"        'evil-ex-paste-from-register ; Evil registers in helm! Glorious!

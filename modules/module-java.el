@@ -18,8 +18,6 @@
   (setq help-at-pt-timer-delay 0.1)
   (help-at-pt-set-timer)
 
-  (push "*eclim: problems*" winner-boring-buffers)
-
   (after! company
     (use-package company-emacs-eclim
       :functions company-emacs-eclim-setup
