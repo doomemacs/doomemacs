@@ -30,6 +30,10 @@
  '((tab-mark   ?\t   [?> ?\t])
    (newline-mark 10 [36 10])))
 
+(require 'saveplace)
+(setq save-place-file (concat narf-temp-dir "saveplace")
+      save-place t)
+
 
 ;; Automatic minor modes ;;;;;;;;;;;
 
@@ -56,19 +60,6 @@ enable multiple minor modes for the same regexp.")
         (setq alist (cdr alist))))))
 
 (add-hook! find-file 'narf|enable-minor-mode-maybe)
-
-
-;; Hook for window switching ;;;;;;;
-
-(defvar narf.window-switch-hook '()
-  "Hooks run before switching windows. Hooks take two arguments (one is
-optional): WINDOW and NORECORD. WINDOW is the window being switched to. Use
-`current-buffer' to get the buffer being switched from. See `select-window' for
-details on NORECORD.")
-
-(defun narf*run-window-switch-hooks (window &optional norecord)
-  (run-hook-with-args 'narf.window-switch-hook window norecord))
-(advice-add 'select-window :before 'narf*run-window-switch-hooks)
 
 
 ;; Modes 'n hooks ;;;;;;;;;;;;;;;;;;;
@@ -105,7 +96,7 @@ details on NORECORD.")
 
 ;; If file is oversized...
 (add-hook! find-file
-  (when (> (buffer-size) (* 1024 1024))
+  (when (> (buffer-size) 1048576)
     (setq buffer-read-only t)
     (buffer-disable-undo)
     (fundamental-mode)
@@ -114,25 +105,24 @@ details on NORECORD.")
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; (global-whitespace-mode 1)  ; Show whitespace
+;; (global-font-lock-mode t)   ; Enable syntax highlighting for older emacs
 (global-auto-revert-mode 1)    ; revert buffers for changed files
-(global-font-lock-mode t)      ; Enable syntax highlighting for older emacs
 (electric-indent-mode -1)      ; on by default
 
 ;; window config undo/redo
 (setq winner-dont-bind-my-keys t)
 (winner-mode 1)
-(add-hook! after-init (setq winner-boring-buffers narf-ignore-buffers))
+(add-hook! after-init
+  (setq winner-boring-buffers narf-ignore-buffers))
 
 
 ;; Plugins ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package undo-tree
-  :defer t
   :diminish undo-tree-mode
   :config
   (defalias 'redo #'undo-tree-redo)
   (defalias 'undo #'undo-tree-undo)
-  ;; Shut up undo-tree's constant complaining: http://youtu.be/Z6woIRLnbmE
   (defadvice undo-tree-load-history-hook
       (around undo-tree-load-history-shut-up activate)
     (shut-up! ad-do-it))
@@ -157,9 +147,6 @@ details on NORECORD.")
 
 (use-package expand-region
   :commands (er/expand-region er/contract-region er/mark-symbol er/mark-word))
-
-(use-package fancy-narrow
-  :commands (fancy-narrow-to-region fancy-widen))
 
 (use-package goto-last-change
   :commands goto-last-change)
@@ -222,10 +209,6 @@ details on NORECORD.")
 (use-package help-fns+ ; Improved help commands
   :commands (describe-buffer describe-command describe-file
              describe-keymap describe-option describe-option-of-type))
-
-(require 'saveplace)
-(setq save-place-file (concat narf-temp-dir "saveplace"))
-(save-place-mode +1)
 
 (provide 'core-editor)
 ;;; core-editor.el ends here

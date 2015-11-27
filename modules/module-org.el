@@ -185,9 +185,12 @@ will function properly."
 (defun narf@org-latex ()
   (setq-default
    org-latex-preview-ltxpng-directory (concat narf-temp-dir "ltxpng/")
+   org-latex-remove-logfiles t
    org-latex-create-formula-image-program 'dvipng
    org-startup-with-latex-preview t
-   org-highlight-latex-and-related '(latex))
+   org-highlight-latex-and-related '(latex)
+   org-latex-packages-alist
+   '(("" "gauss" t)))
 
   (plist-put org-format-latex-options :scale 1.1))
 
@@ -234,7 +237,7 @@ will function properly."
   (defface org-headline-todo '((t ())) "Face for todo headlines")
   (defface org-todo-high '((t ())) "Face for high-priority todo")
   (defface org-todo-vhigh '((t ())) "Face for very high-priority todo")
-  (defface org-whitespace '((t ())) "Face for spaces")
+  ;; (defface org-whitespace '((t ())) "Face for spaces")
   (defface org-list-bullet '((t ())) "Face for list bullets")
   (defface org-todo-checkbox '((t ())) "Face for list bullets")
   (font-lock-add-keywords
@@ -242,9 +245,9 @@ will function properly."
                 (1 (narf/show-as ?#)))
                ("^ *\\(#\\+end_src\\>\\)"
                 (1 (narf/show-as ?#)))
-               ("\\(#\\+begin_quote\\>\\)"
+               ("^ *\\(#\\+begin_quote\\>\\)"
                 (1 (narf/show-as ?\")))
-               ("\\(#\\+end_quote\\>\\)"
+               ("^ *\\(#\\+end_quote\\>\\)"
                 (1 (narf/show-as ?\")))
 
                ;; Hide TODO tags
@@ -291,7 +294,7 @@ will function properly."
   (evil-org-mode +1)
   (org-bullets-mode +1)
   (org-indent-mode +1)
-  (text-scale-set 1)
+  ;; (text-scale-set 1)
 
   (diminish 'org-indent-mode)
 
@@ -456,7 +459,7 @@ will function properly."
            :n  ",d" 'org-time-stamp
            :n  ",r" 'org-refile
            :n  ",s" 'org-schedule
-           :n  ",oa" 'narf/org-reveal-attachments
+           :n  ",oa" 'narf/org-attachment-reveal
            :n  ", SPC" 'narf/org-toggle-checkbox
            :n  ", RET" 'org-archive-subtree
 

@@ -1,6 +1,11 @@
+; (source "melpa", "https://melpa.org/packages/")
+; (source "marmalade" "https://marmalade-repo.org/packages/")
+; (source "org", "http://orgmode.org/elpa/")
+; (source "gnu", "https://elpa.gnu.org")
+
 (source melpa)
+(source marmalade)
 (source org)
-(source "marmalade" "https://marmalade-repo.org/packages/")
 (source gnu)
 
 ;; Core --- core/core.el

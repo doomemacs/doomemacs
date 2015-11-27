@@ -6,28 +6,6 @@
   (when (narf/project-p)
     (projectile-invalidate-cache nil)))
 
-;;;###autoload
-(defun narf/helm-get-org-candidates-in-file (filename min-depth max-depth &optional fontify nofname)
-  (with-current-buffer (pcase filename
-                         ((pred bufferp) filename)
-                         ((pred stringp) (find-file-noselect filename)))
-    (and fontify (jit-lock-fontify-now))
-    (let ((match-fn (if fontify 'match-string 'match-string-no-properties)))
-      (save-excursion
-        (goto-char (point-min))
-        (cl-loop with width = (window-width)
-                 while (re-search-forward org-complex-heading-regexp nil t)
-                 if (let ((num-stars (length (match-string-no-properties 1))))
-                      (and (>= num-stars min-depth) (<= num-stars max-depth)))
-                 collect `(,(let ((heading (funcall match-fn 4))
-                                  (file (unless nofname
-                                          (concat (f-no-ext (f-relative filename org-directory)) ":")))
-                                  (level (length (match-string-no-properties 1))))
-                              (org-format-outline-path
-                               (append (org-get-outline-path t level heading)
-                                       (list heading)) width file))
-                           . ,(point-marker)))))))
-
 ;;;###autoload (autoload 'narf:helm-recentf "defuns-helm" nil t)
 (evil-define-command narf:helm-recentf (&optional bang)
   "Ex-mode interface for `helm-recentf' and `helm-projectile-recentf'. If
