@@ -31,6 +31,7 @@
 (exmap "ma[ke]"          'narf:build)
 (exmap "mv"              'narf:file-move)
 (exmap "na[rrow]"        'narf:narrow)               ; Narrow buffer to selection
+(exmap "org"             (λ (in! org-directory (call-interactively 'narf:helm-ag-search))))
 (exmap "wi[den]"         'narf:widen)                ; Widen narrowed buffer
 (exmap "pop"             'narf/popup-toggle)
 (exmap "proj[ect]"       'helm-projectile-switch-project)
