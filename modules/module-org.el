@@ -207,6 +207,9 @@ will function properly."
         org-hide-emphasis-markers t
         org-hide-leading-stars t
         org-bullets-bullet-list '("✸" "•" "◦" "•" "◦" "•" "◦")
+        org-entities-user
+        '(("flat" "\\flat" nil "" "" "266D" "♭")
+          ("sharp" "\\sharp" nil "" "" "266F" "♯"))
 
         org-priority-faces
         '((?A . org-todo-vhigh)
