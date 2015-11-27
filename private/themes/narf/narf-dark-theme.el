@@ -260,7 +260,7 @@
 
    ;; org-mode
    `(variable-pitch  ((,c (:font "DejaVu Sans" :height 1.0))))
-   ;; `(fixed-pitch     ((,c (:font "DejaVu Sans Mono" :height 1.0))))
+   `(fixed-pitch     ((,c (:font "DejaVu Sans Mono" :height 1.0))))
    `(org-tag         ((,c (:foreground ,grey-1))))
    ;; `(org-ellipsis    ((,c (:inherit hs-face))))
 
@@ -273,12 +273,12 @@
    `(org-block-end-line         ((,c (:inherit org-block-begin-line))))
 
    `(org-document-title   ((,c (:inherit variable-pitch :foreground ,cyan :height 1.30 :bold t))))
-   `(org-level-1          ((,c (:foreground ,orange :bold t))))
-   `(org-level-2          ((,c (:foreground ,dark-cyan :bold t))))
-   `(org-level-3          ((,c (:foreground ,cyan :bold t))))
-   `(org-level-4          ((,c (:foreground ,green :bold t))))
-   `(org-level-5          ((,c (:foreground ,cyan))))
-   `(org-level-6          ((,c (:foreground ,blue+2))))
+   `(org-level-1          ((,c (:inherit variable-pitch :foreground ,orange :bold t))))
+   `(org-level-2          ((,c (:inherit variable-pitch :foreground ,dark-cyan :bold t))))
+   `(org-level-3          ((,c (:inherit variable-pitch :foreground ,cyan :bold t))))
+   `(org-level-4          ((,c (:inherit variable-pitch :foreground ,green :bold t))))
+   `(org-level-5          ((,c (:inherit variable-pitch :foreground ,cyan))))
+   `(org-level-6          ((,c (:inherit variable-pitch :foreground ,blue+2))))
    ;; `(org-level-7          ((,c ())))
    ;; `(org-level-8          ((,c ())))
    ;;`(org-checkbox         ((,class (:box (:line-width 1 :style released-button)))))
