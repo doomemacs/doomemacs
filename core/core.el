@@ -129,17 +129,6 @@
              async-wait
              async-inject-variables))
 
-;; Custom Hooks ;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defvar narf.window-switch-hook '()
-  "Hooks run before switching windows. Hooks take two arguments (one is
-optional): WINDOW and NORECORD. WINDOW is the window being switched to. Use
-`current-buffer' to get the buffer being switched from. See `select-window' for
-details on NORECORD.")
-(defun narf*run-window-switch-hooks (window &optional norecord)
-  (run-hook-with-args 'narf.window-switch-hook window norecord))
-(advice-add 'select-window :before 'narf*run-window-switch-hooks)
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun narf-init ()
