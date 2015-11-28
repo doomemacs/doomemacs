@@ -123,6 +123,7 @@ enable multiple minor modes for the same regexp.")
   :config
   (defalias 'redo #'undo-tree-redo)
   (defalias 'undo #'undo-tree-undo)
+  ;; http://youtu.be/Z6woIRLnbmE
   (defadvice undo-tree-load-history-hook
       (around undo-tree-load-history-shut-up activate)
     (shut-up! ad-do-it))
