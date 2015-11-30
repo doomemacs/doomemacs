@@ -27,5 +27,22 @@
           (call-interactively #'company-complete-selection)
           (call-interactively #'company-complete))))))
 
+(defun narf--company-whole-lines ()
+  (split-string
+   (replace-regexp-in-string
+    "^[\t\s]+" ""
+    (concat (buffer-substring-no-properties (point-min) (line-beginning-position))
+            (buffer-substring-no-properties (line-end-position) (point-max))))
+   "\\(\r\n\\|[\n\r]\\)" t))
+
+;;;###autoload
+(defun narf/company-whole-lines (command &optional arg &rest ignored)
+  (interactive (list 'interactive))
+  (let ((lines (narf--company-whole-lines)))
+    (cl-case command
+      (interactive (company-begin-backend 'narf/company-whole-lines))
+      (prefix (company-grab-line "^[\t\s]*\\(.+\\)" 1))
+      (candidates (all-completions arg lines)))))
+
 (provide 'defuns-company)
 ;;; defuns-company.el ends here
