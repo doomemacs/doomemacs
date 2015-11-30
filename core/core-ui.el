@@ -23,21 +23,32 @@
  jit-lock-defer-time nil
  jit-lock-stealth-time 1
 
- resize-mini-windows t)
+ split-width-threshold nil
+ split-height-threshold 30
+
+ resize-mini-windows 'grow-only
+
+ fringe-indicator-alist (delq (assoc 'continuation fringe-indicator-alist) fringe-indicator-alist))
 
 (defvar narf-fringe-size 6)
 (if window-system
     (progn
       (fringe-mode narf-fringe-size)
       (setq frame-title-format '(buffer-file-name "%f" ("%b")))
-      (setq initial-frame-alist '((width . 120) (height . 80)))
 
       (set-frame-font narf-default-font)
       (set-face-attribute 'default t :font narf-default-font)
 
       (define-fringe-bitmap 'tilde [64 168 16] nil nil 'center)
       (setcdr (assq 'empty-line fringe-indicator-alist) 'tilde)
-      (set-fringe-bitmap-face 'tilde 'font-lock-comment-face))
+      (set-fringe-bitmap-face 'tilde 'font-lock-comment-face)
+
+      (set-window-fringes (minibuffer-window) 0 0 nil)
+      (defun narf|minibuffer-setup ()
+        (make-local-variable 'face-remapping-alist)
+        (set-window-fringes (selected-window) 0 0 nil)
+        (add-to-list 'face-remapping-alist '(default mode-line-inactive)))
+      (add-hook! minibuffer-setup 'narf|minibuffer-setup))
   (menu-bar-mode -1))
 
 (mapc (lambda (x) (set-fontset-font "fontset-default" `(,x . ,x) "DejaVu Sans" nil 'prepend))
@@ -45,6 +56,8 @@
 
 (blink-cursor-mode  1)    ; do blink cursor
 (tooltip-mode      -1)    ; show tooltips in echo area
+(when (featurep 'eldoc)
+  (global-eldoc-mode -1)) ; on by default in Emacs 25?
 
 ;; Highlight line
 (add-hook! (prog-mode puml-mode markdown-mode) 'hl-line-mode)
@@ -76,9 +89,11 @@
 
 ;; Fade out when unfocused ;;;;;;;;;;;;;
 (add-hook! focus-in  (set-frame-parameter nil 'alpha 100))
-(add-hook! focus-out (set-frame-parameter nil 'alpha 80))
+(add-hook! focus-out (set-frame-parameter nil 'alpha 90))
 
 ;; Plugins ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(use-package visual-fill-column :defer t)
+
 (use-package yascroll
   :commands (yascroll-bar-mode)
   :config
@@ -146,7 +161,7 @@
   :preface
   (defvar narf--hl-nlinum-overlay nil)
   (defvar narf--hl-nlinum-line nil)
-  (defvar nlinum-format " %4d  ")
+  (defvar nlinum-format "%5d ")
   (defface linum-highlight-face '((t (:inherit linum))) "Face for line highlights")
   (setq linum-format "%3d ")
   :init
@@ -351,14 +366,13 @@ iedit."
   ;; Initialize modeline
   (spaceline-install
    ;; Left side
-   '((evil-state :face highlight-face :when active)
-     narf-anzu narf-iedit narf-evil-substitute
+   '(narf-anzu narf-iedit narf-evil-substitute
      (narf-buffer-path remote-host)
      narf-buffer-modified
      narf-vc
      ((flycheck-error flycheck-warning flycheck-info) :when active))
    ;; Right side
-   '((selection-info :face highlight-face :skip-alternate t)
+   '((selection-info :face highlight-face :skip-alternate t :when active)
      narf-env-version
      narf-buffer-encoding-abbrev
      (narf-major-mode
