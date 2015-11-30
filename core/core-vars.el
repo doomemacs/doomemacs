@@ -5,6 +5,10 @@
   :group 'convenience
   :prefix 'narf-)
 
+;; TODO Make these defcustom's
+
+(defvar narf-leader-prefix "," "Prefix key for <leader> maps")
+(defvar narf-localleader-prefix "\\" "Prefix key for <localleader> maps")
 
 ;; Buffers/Files ;;;;;;;;;;;;;;;;;;;;;;;
 
