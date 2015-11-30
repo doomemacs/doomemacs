@@ -23,8 +23,8 @@
         yas-snippet-dirs `(,@narf-snippet-dirs)
         yas-prompt-functions '(yas-ido-prompt yas-no-prompt))
 
-  (bind! :i [(tab)] 'yas-expand
-         :v "<backtab>" 'narf/yas-insert-snippet)
+  (map! :i [(tab)] 'yas-expand
+        :v "<backtab>" 'narf/yas-insert-snippet)
 
   (defvar yas-minor-mode-map
     (let ((map (make-sparse-keymap)))
@@ -40,21 +40,21 @@
   ;; Simpler `yas-selected-text' alias for templates
   (defvaralias '% 'yas-selected-text)
   ;; Undo global maps
-  (bind! :i [(tab)]     nil
-         :v "<backtab>" nil)
+  (map! :i [(tab)]     nil
+        :v "<backtab>" nil)
 
   ;; keybinds
-  (bind! :map yas-keymap
-         "C-e"           'narf/yas-goto-end-of-field
-         "C-a"           'narf/yas-goto-start-of-field
-         "<M-right>"     'narf/yas-goto-end-of-field
-         "<M-left>"      'narf/yas-goto-start-of-field
-         "<S-tab>"       'yas-prev-field
-         "<M-backspace>" 'narf/yas-clear-to-sof
+  (map! :map yas-keymap
+        "C-e"           'narf/yas-goto-end-of-field
+        "C-a"           'narf/yas-goto-start-of-field
+        "<M-right>"     'narf/yas-goto-end-of-field
+        "<M-left>"      'narf/yas-goto-start-of-field
+        "<S-tab>"       'yas-prev-field
+        "<M-backspace>" 'narf/yas-clear-to-sof
 
-         "<escape>"      'evil-normal-state
-         [backspace]     'narf/yas-backspace
-         "<delete>"      'narf/yas-delete)
+        "<escape>"      'evil-normal-state
+        [backspace]     'narf/yas-backspace
+        "<delete>"      'narf/yas-delete)
 
   ;; Once you're in normal mode, you're out
   (add-hook! evil-normal-state-entry 'yas-abort-snippet)

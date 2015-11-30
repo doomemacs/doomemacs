@@ -23,7 +23,7 @@
       :functions company-emacs-eclim-setup
       :config (company-emacs-eclim-setup)))
 
-  (bind! :map java-mode-map :m "gd" 'eclim-java-find-declaration))
+  (map! :map java-mode-map :m "gd" 'eclim-java-find-declaration))
 
 (use-package android-mode
   :commands android-mode

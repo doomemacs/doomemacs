@@ -14,7 +14,9 @@
     :config
     (setq racer-cmd "/usr/local/bin/racer"
           racer-rust-src-path "~/Dropbox/lib/rust/src/")
-    (bind! :map rust-mode-map :m "gd" 'racer-find-definition)
+    (map! :map rust-mode-map :m "gd" 'racer-find-definition)
+
+    ;; TODO Unit test keybinds
 
     (add-hook! rust-mode '(racer-mode eldoc-mode flycheck-rust-setup))
     (define-company-backend! rust-mode (racer))))

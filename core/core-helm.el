@@ -32,24 +32,24 @@
   (mapc (lambda (r) (add-to-list 'helm-boring-file-regexp-list r))
         (list "\\.projects$" "\\.DS_Store$"))
 
-  (bind! (:map (helm-map helm-generic-files-map helm-find-files-map helm-swoop-map helm-projectile-find-file-map)
-           "C-w"        'backward-kill-word
-           "C-r"        'evil-ex-paste-from-register ; Evil registers in helm! Glorious!
-           "<escape>"   'helm-keyboard-quit
-           [escape]     'helm-keyboard-quit)
-         (:map helm-find-files-map
-           "C-w"        'helm-find-files-up-one-level
-           ;; "TAB"        'helm-execute-persistent-action
-           "/"          'helm-execute-persistent-action)
-         (:map helm-ag-map
-           "<backtab>"  'helm-ag-edit)
-         (:map helm-ag-edit-map
-           "<escape>"   'helm-ag--edit-abort
-           :n "zx"      'helm-ag--edit-abort)
-         (:map helm-map
-           "C-S-n"        'helm-next-source
-           "C-S-p"        'helm-previous-source
-           "C-u"        'helm-delete-minibuffer-contents))
+  (map! (:map (helm-map helm-generic-files-map helm-find-files-map helm-swoop-map helm-projectile-find-file-map)
+          "C-w"        'backward-kill-word
+          "C-r"        'evil-ex-paste-from-register ; Evil registers in helm! Glorious!
+          "<escape>"   'helm-keyboard-quit
+          [escape]     'helm-keyboard-quit)
+        (:map helm-find-files-map
+          "C-w"        'helm-find-files-up-one-level
+          ;; "TAB"        'helm-execute-persistent-action
+          "/"          'helm-execute-persistent-action)
+        (:map helm-ag-map
+          "<backtab>"  'helm-ag-edit)
+        (:map helm-ag-edit-map
+          "<escape>"   'helm-ag--edit-abort
+          :n "zx"      'helm-ag--edit-abort)
+        (:map helm-map
+          "C-S-n"        'helm-next-source
+          "C-S-p"        'helm-previous-source
+          "C-u"        'helm-delete-minibuffer-contents))
 
   ;;; Helm hacks
   (defun narf*helm-hide-source-header-maybe ()

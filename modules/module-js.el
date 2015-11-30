@@ -16,7 +16,7 @@
 
   (after! web-beautify
     (add-hook! js2-mode (setenv "jsbeautify_indent_size" "4"))
-    (bind! :map js2-mode-map :m "gQ" 'web-beautify-js))
+    (map! :map js2-mode-map :m "gQ" 'web-beautify-js))
 
   (use-package js2-refactor
     :init (add-hook! js2-mode 'emr-initialize)

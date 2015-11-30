@@ -110,54 +110,52 @@ Examples:
                      `((add-hook 'find-file-hook ',hook-name))))))))))
 
 (after! evil
-  ;; Register keywords for proper indentation (see `bind!')
-  (put ':prefix  'lisp-indent-function 'defun)
-  (put ':map     'lisp-indent-function 'defun)
-  (put ':after   'lisp-indent-function 'defun)
-  (put ':when    'lisp-indent-function 'defun)
-  (put ':unless  'lisp-indent-function 'defun)
+  ;; Register keywords for proper indentation (see `map!')
+  (put ':prefix      'lisp-indent-function 'defun)
+  (put ':map         'lisp-indent-function 'defun)
+  (put ':after       'lisp-indent-function 'defun)
+  (put ':when        'lisp-indent-function 'defun)
+  (put ':unless      'lisp-indent-function 'defun)
+  (put ':leader      'lisp-indent-function 'defun)
+  (put ':localleader 'lisp-indent-function 'defun)
 
-  (defmacro bind! (&rest rest)
+  (defmacro map! (&rest rest)
     (let ((i 0)
-          key def
-          first-set
-          prefix
-          internal
-          (default-keymaps '((current-global-map)))
-          (keymaps (if (boundp 'keymaps) keymaps))
-          (states  (if (boundp 'states) states '()))
           (forms '())
+          (keymaps (if (boundp 'keymaps) keymaps))
+          (default-keymaps '((current-global-map)))
           (state-map '(("n" . normal)
                        ("v" . visual)
                        ("i" . insert)
                        ("e" . emacs)
                        ("o" . operator)
                        ("m" . motion)
-                       ("r" . replace))))
+                       ("r" . replace)))
+          key def prefix states)
       (unless keymaps
         (setq keymaps default-keymaps))
       (while rest
         (setq key (pop rest))
         (add-to-list
          'forms
-         (cond ((eq key '-) nil) ; skip this
-
-               ((listp key) ; it's a sub exp
-                `((bind! ,@key)))
+         (cond ((listp key) ; it's a sub exp
+                `(,(macroexpand `(map! ,@key))))
 
                ((keywordp key)
+                (when (memq key '(:leader :localleader))
+                  (push (pcase key
+                          (:leader narf-leader-prefix)
+                          (:localleader narf-localleader-prefix))
+                        rest)
+                  (setq key :prefix))
                 (pcase key
                   ;; TODO: Data checks
-                  (:prefix      (setq prefix (kbd (pop rest)))
-                    (if (= i 0) (setq first-set `(:prefix . ,prefix)))
-                    nil)
-                  (:map         (setq keymaps (-list (pop rest)))
-                    (if (= i 0) (setq first-set `(:map . ,keymaps)))
-                    nil)
-                  (:unset       `((bind! ,(kbd (pop rest)) nil)))
-                  (:after       (prog1 `((after! ,(pop rest)   (bind! ,@rest))) (setq rest '())))
-                  (:when        (prog1 `((if ,(pop rest)       (bind! ,@rest))) (setq rest '())))
-                  (:unless      (prog1 `((if (not ,(pop rest)) (bind! ,@rest))) (setq rest '())))
+                  (:prefix      (setq prefix (kbd (pop rest))) nil)
+                  (:map         (setq keymaps (-list (pop rest))) nil)
+                  (:unset      `(,(macroexpand `(map! ,(kbd (pop rest)) nil))))
+                  (:after       (prog1 `((after! ,(pop rest)   ,(macroexpand `(map! ,@rest)))) (setq rest '())))
+                  (:when        (prog1 `((if ,(pop rest)       ,(macroexpand `(map! ,@rest)))) (setq rest '())))
+                  (:unless      (prog1 `((if (not ,(pop rest)) ,(macroexpand `(map! ,@rest)))) (setq rest '())))
                   (otherwise ; might be a state prefix
                    (mapc (lambda (letter)
                            (if (assoc letter state-map)
@@ -179,16 +177,12 @@ Examples:
                 (unless (> (length rest) 0)
                   (user-error "Map has no definition for %s" key))
                 (setq def (pop rest))
-                (let ((first-key (car first-set))
-                      (first-value (cdr first-set))
-                      out-forms)
+                (let (out-forms)
                   (dolist (keymap keymaps)
                     (if (not states)
                         (add-to-list 'out-forms `(evil-define-key nil ,keymap ,key ,def) t)
                       (dolist (state states)
                         (add-to-list 'out-forms `(evil-define-key ',state ,keymap ,key ,def) t))))
-                  (setq prefix  (if (eq first-key :prefix) first-value))
-                  (setq keymaps (if (eq first-key :map) first-value default-keymaps))
                   (setq states '())
                   out-forms))
 

@@ -36,14 +36,14 @@
     :config
     (define-company-backend! go-mode (go yasnippet)))
 
-  (bind!
-   (:map go-mode-map
-     :n "gd" 'godef-jump
-     :n "gD" 'godef-describe
-     :n ",i" 'helm-go-package
-     :n ",tr" 'narf:go-test-run-all
-     :n ",ta" 'narf:go-test-run-all
-     :n ",ts" 'narf:go-test-run-package)))
+  (map! :map go-mode-map
+        :n "gd" 'godef-jump
+        :n "gD" 'godef-describe
+        (:localleader
+         :n "p" 'helm-go-package
+         :n "tr" 'narf:go-test-run-all
+         :n "ta" 'narf:go-test-run-all
+         :n "ts" 'narf:go-test-run-package)))
 
 (provide 'module-go)
 ;;; module-go.el ends here

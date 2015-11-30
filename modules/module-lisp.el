@@ -22,7 +22,7 @@
 
   ;; Highlight extra NARF keywords
   (let ((keywords '("add-hook!"
-                    "bind!"
+                    "map!"
                     "after!"
                     "λ"
                     "in!"
@@ -38,9 +38,9 @@
  'emacs-lisp-mode `(("\\(lambda\\)" (0 (narf/show-as ?λ)))))
 
 ;; Real go-to-definition for elisp
-(bind! :map emacs-lisp-mode-map
-       :m "gd" 'narf/elisp-find-function-at-pt
-       :m "gD" 'narf/elisp-find-function-at-pt-other-window)
+(map! :map emacs-lisp-mode-map
+      :m "gd" 'narf/elisp-find-function-at-pt
+      :m "gD" 'narf/elisp-find-function-at-pt-other-window)
 
 (use-package slime :defer t
   :config

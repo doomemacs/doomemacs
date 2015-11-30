@@ -18,11 +18,12 @@
   :init
   (add-hook! csharp-mode '(emr-initialize omnisharp-mode))
   :config
-  (evil-define-key 'normal omnisharp-mode-map
-    (kbd "gd")  'omnisharp-go-to-definition
-    (kbd ",tr") (λ (omnisharp-unit-test "fixture"))
-    (kbd ",ts") (λ (omnisharp-unit-test "single"))
-    (kbd ",ta") (λ (omnisharp-unit-test "all")))
+  (map! :map omnisharp-mode-map
+        "gd" 'omnisharp-go-to-definition
+        (:prefix "\\"
+          "tr" (λ (omnisharp-unit-test "fixture"))
+          "ts" (λ (omnisharp-unit-test "single"))
+          "ta" (λ (omnisharp-unit-test "all"))))
 
   (after! company
     (define-company-backend! csharp-mode (omnisharp))

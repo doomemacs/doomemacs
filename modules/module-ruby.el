@@ -49,11 +49,12 @@
       ;; Rake
       (("task" "namespace") () "end")))
   :config
-  (bind! (:map rspec-mode-map
-           :n ",tr" 'rspec-rerun
-           :n ",ta" 'rspec-verify-all
-           :n ",ts" 'rspec-verify-single
-           :n ",tv" 'rspec-verify)))
+  (map! :map rspec-mode-map
+        (:localleader
+         :n "tr" 'rspec-rerun
+         :n "ta" 'rspec-verify-all
+         :n "ts" 'rspec-verify-single
+         :n "tv" 'rspec-verify)))
 
 (use-package inf-ruby
   :commands (inf-ruby inf-ruby-console-auto)

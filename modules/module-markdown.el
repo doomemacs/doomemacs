@@ -14,29 +14,30 @@
   (add-hook! markdown-mode
     (exmap! "preview"  'narf/markdown-preview)
     (exmap! "export"   'narf:org-export))
-  (bind! (:map markdown-mode-map
-           "<backspace>"  nil
-           "<M-left>"     nil
-           "<M-right>"    nil
+  (map! (:map markdown-mode-map
+          "<backspace>"  nil
+          "<M-left>"     nil
+          "<M-right>"    nil
 
-           ;; Assumes you have a markdown renderer plugin in chrome
-           :nv "M-r"  (λ (narf-open-with "Google Chrome"))
+          ;; Assumes you have a markdown renderer plugin in chrome
+          :nv "M-r"  (λ (narf-open-with "Google Chrome"))
 
-           "M-*"  'markdown-insert-list-item
-           "M-b"  'markdown-insert-bold
-           "M-i"  'markdown-insert-italic
-           "M-`"  'narf/markdown-insert-del
+          "M-*"  'markdown-insert-list-item
+          "M-b"  'markdown-insert-bold
+          "M-i"  'markdown-insert-italic
+          "M-`"  'narf/markdown-insert-del
 
-           :nv ",i"   'markdown-insert-image
-           :nv ",l"   'markdown-insert-link
-           :nv ",L"   'markdown-insert-reference-link-dwim
-           :nv ",b"   'markdown-preview
+          (:localleader
+           :nv "i"   'markdown-insert-image
+           :nv "l"   'markdown-insert-link
+           :nv "L"   'markdown-insert-reference-link-dwim
+           :nv "b"   'markdown-preview)
 
-           ;; TODO: Make context sensitive
-           :n "[p"   'markdown-promote
-           :n "]p"   'markdown-demote
+          ;; TODO: Make context sensitive
+          :n "[p"   'markdown-promote
+          :n "]p"   'markdown-demote
 
-           :i "M--"  'markdown-insert-hr)))
+          :i "M--"  'markdown-insert-hr)))
 
 ;; TODO: Test previewing capability
 

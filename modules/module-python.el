@@ -22,14 +22,15 @@
     :init
     (associate! nose-mode :pattern "/test_.+\\.py\\'")
     :config
-    (bind! :map nose-mode-map
-           :n ",tr" 'nosetests-again
-           :n ",ta" 'nosetests-all
-           :n ",ts" 'nosetests-one
-           :n ",tv" 'nosetests-module
-           :n ",tA" 'nosetests-pdb-all
-           :n ",tO" 'nosetests-pdb-one
-           :n ",tV" 'nosetests-pdb-module))
+    (map! :map nose-mode-map
+          (:localleader
+           :n "tr" 'nosetests-again
+           :n "ta" 'nosetests-all
+           :n "ts" 'nosetests-one
+           :n "tv" 'nosetests-module
+           :n "tA" 'nosetests-pdb-all
+           :n "tO" 'nosetests-pdb-one
+           :n "tV" 'nosetests-pdb-module)))
 
   (use-package anaconda-mode
     :diminish anaconda-mode
@@ -39,8 +40,8 @@
     (add-hook! python-mode '(anaconda-mode eldoc-mode))
     (setq anaconda-mode-installation-directory (concat narf-temp-dir "anaconda/"))
     :config
-    (bind! :map anaconda-mode-map     :m "gd"     'anaconda-mode-goto-definitions)
-    (bind! :map anaconda-nav-mode-map :n [escape] 'anaconda-nav-quit)
+    (map! :map anaconda-mode-map     :m "gd"     'anaconda-mode-goto-definitions)
+    (map! :map anaconda-nav-mode-map :n [escape] 'anaconda-nav-quit)
 
     (advice-add 'anaconda-mode-doc-buffer :after 'narf*anaconda-mode-doc-buffer)
 

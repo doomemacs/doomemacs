@@ -14,14 +14,15 @@
   (setq-default css-indent-offset 2)
   (setq scss-compile-at-save nil)
   :config
-  (bind! :map scss-mode-map
-         :n "M-r" 'narf/web-refresh-browser
-         :n ",;" 'helm-css-scss
-         :n ",:" 'helm-css-scss-multi)
+  (map! :map scss-mode-map
+        :n "M-r" 'narf/web-refresh-browser
+        (:leader
+         :n ";" 'helm-css-scss
+         :n ":" 'helm-css-scss-multi))
 
   (after! web-beautify
     (add-hook! scss-mode (setenv "jsbeautify_indent_size" "2"))
-    (bind! :map scss-mode-map :m "gQ" 'web-beautify-css))
+    (map! :map scss-mode-map :m "gQ" 'web-beautify-css))
 
   (after! emr
     (emr-declare-command 'narf/scss-toggle-inline-or-block
@@ -36,7 +37,7 @@
   :init
   (after! css-mode
     (add-hook! css-mode (setenv "jsbeautify_indent_size" "2"))
-    (bind! :map css-mode-map :m "gQ" 'web-beautify-css)))
+    (map! :map css-mode-map :m "gQ" 'web-beautify-css)))
 
 (use-package jade-mode
   :mode "\\.jade$"
@@ -56,26 +57,26 @@
   :config
   (after! web-beautify
     (add-hook! web-mode (setenv "jsbeautify_indent_size" "4"))
-    (bind! :map web-mode-map :m "gQ" 'web-beautify-html))
+    (map! :map web-mode-map :m "gQ" 'web-beautify-html))
 
   (after! nlinum
     ;; Fix blank line numbers after unfolding
     (advice-add 'web-mode-fold-or-unfold :after 'nlinum--flush))
 
-  (bind! :map web-mode-map
-         "M-/" 'web-mode-comment-or-uncomment
+  (map! :map web-mode-map
+        "M-/" 'web-mode-comment-or-uncomment
 
-         :n  "za" 'web-mode-fold-or-unfold
-         :n  ",t" 'web-mode-element-rename
+        :n  "za" 'web-mode-fold-or-unfold
+        (:localleader :n "t" 'web-mode-element-rename)
 
-         :n  "M-r" 'narf/web-refresh-browser
+        :n  "M-r" 'narf/web-refresh-browser
 
-         :nv "]a" 'web-mode-attribute-next
-         :nv "[a" 'web-mode-attribute-previous
-         :nv "]t" 'web-mode-tag-next
-         :nv "[t" 'web-mode-tag-previous
-         :nv "]T" 'web-mode-element-child
-         :nv "[T" 'web-mode-element-parent))
+        :nv "]a" 'web-mode-attribute-next
+        :nv "[a" 'web-mode-attribute-previous
+        :nv "]t" 'web-mode-tag-next
+        :nv "[t" 'web-mode-tag-previous
+        :nv "]T" 'web-mode-element-child
+        :nv "[T" 'web-mode-element-parent))
 
 (use-package emmet-mode
   :defer t
@@ -85,10 +86,10 @@
   (defvar emmet-mode-keymap (make-sparse-keymap))
   :config
   (setq emmet-move-cursor-between-quotes t)
-  (bind! :map emmet-mode-keymap
-         :v "M-e" 'emmet-wrap-with-markup
-         :i "M-e" 'emmet-expand-yas
-         :i "M-E" 'emmet-expand-line))
+  (map! :map emmet-mode-keymap
+        :v "M-e" 'emmet-wrap-with-markup
+        :i "M-e" 'emmet-expand-yas
+        :i "M-E" 'emmet-expand-line))
 
 (define-minor-mode jekyll-mode
   "Jekyll development mode."

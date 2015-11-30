@@ -33,13 +33,13 @@
     (ido-vertical-mode 1)
     (require 'flx-ido)
     (flx-ido-mode 1)
-    (bind! :map (ido-common-completion-map
-                 ido-completion-map
-                 ido-file-completion-map)
-           "C-n" 'ido-next-match
-           "C-p" 'ido-prev-match
-           "C-w" 'ido-delete-backward-word-updir
-           "C-u" 'ido-up-directory))
+    (map! :map (ido-common-completion-map
+                ido-completion-map
+                ido-file-completion-map)
+          "C-n" 'ido-next-match
+          "C-p" 'ido-prev-match
+          "C-w" 'ido-delete-backward-word-updir
+          "C-u" 'ido-up-directory))
 
   (advice-add 'ido-sort-mtime :override 'narf*ido-sort-mtime)
   (add-hook! (ido-make-file-list ido-make-dir-list) 'narf*ido-sort-mtime)
@@ -68,22 +68,22 @@
         neo-modern-sidebar t)
   :config
   (defun narf|neotree-init-keymap ()
-    (bind! :map evil-motion-state-local-map
-           "ESC"  'neotree-hide
-           "\\\\" 'neotree-hide
-           "RET" 'neotree-enter
-           "J"   'neotree-select-next-sibling-node
-           "K"   'neotree-select-previous-sibling-node
-           "H"   'neotree-select-up-node
-           "L"   'neotree-select-down-node
-           "v"   'neotree-enter-vertical-split
-           "s"   'neotree-enter-horizontal-split
-           "c"   'neotree-create-node
-           "d"   'neotree-delete-node
-           "g"   'neotree-refresh
-           "q"   'neotree-hide
-           "r"   'neotree-rename-node
-           "R"   'neotree-change-root))
+    (map! :map evil-motion-state-local-map
+          "ESC"  'neotree-hide
+          "\\\\" 'neotree-hide
+          "RET" 'neotree-enter
+          "J"   'neotree-select-next-sibling-node
+          "K"   'neotree-select-previous-sibling-node
+          "H"   'neotree-select-up-node
+          "L"   'neotree-select-down-node
+          "v"   'neotree-enter-vertical-split
+          "s"   'neotree-enter-horizontal-split
+          "c"   'neotree-create-node
+          "d"   'neotree-delete-node
+          "g"   'neotree-refresh
+          "q"   'neotree-hide
+          "r"   'neotree-rename-node
+          "R"   'neotree-change-root))
 
   (add-hook! neotree-mode 'narf|neotree-init-keymap)
   (add-hook! window-configuration-change 'narf|neotree-close-on-window-change)

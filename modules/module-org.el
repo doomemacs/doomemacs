@@ -399,117 +399,128 @@ will function properly."
   (define-key org-mode-map (kbd "C-j") nil)
   (define-key org-mode-map (kbd "C-k") nil)
   ;; Keybinds
-  (bind! (:map org-mode-map
-           :i [remap narf/inflate-space-maybe] 'org-self-insert-command
-           :i "RET" 'org-return-indent)
+  (map! (:map org-mode-map
+          :i [remap narf/inflate-space-maybe] 'org-self-insert-command
+          :i "RET" 'org-return-indent)
 
-         (:map evil-org-mode-map
-           :ni "A-l" 'org-metaright
-           :ni "A-h" 'org-metaleft
-           :ni "A-k" 'org-metaup
-           :ni "A-j" 'org-metadown
-           ;; Expand tables (or shiftmeta move)
-           :ni "A-L" 'narf/org-table-append-field-or-shift-right
-           :ni "A-H" 'narf/org-table-prepend-field-or-shift-left
-           :ni "A-K" 'narf/org-table-prepend-row-or-shift-up
-           :ni "A-J" 'narf/org-table-append-row-or-shift-down
+        (:map evil-org-mode-map
+          :ni "A-l" 'org-metaright
+          :ni "A-h" 'org-metaleft
+          :ni "A-k" 'org-metaup
+          :ni "A-j" 'org-metadown
+          ;; Expand tables (or shiftmeta move)
+          :ni "A-L" 'narf/org-table-append-field-or-shift-right
+          :ni "A-H" 'narf/org-table-prepend-field-or-shift-left
+          :ni "A-K" 'narf/org-table-prepend-row-or-shift-up
+          :ni "A-J" 'narf/org-table-append-row-or-shift-down
 
-           :i  "C-L" 'narf/org-table-next-field
-           :i  "C-H" 'narf/org-table-previous-field
-           :i  "C-K" 'narf/org-table-previous-row
-           :i  "C-J" 'narf/org-table-next-row
+          :i  "C-L" 'narf/org-table-next-field
+          :i  "C-H" 'narf/org-table-previous-field
+          :i  "C-K" 'narf/org-table-previous-row
+          :i  "C-J" 'narf/org-table-next-row
 
-           :i  "C-e" 'org-end-of-line
-           :i  "C-a" 'org-beginning-of-line
+          :i  "C-e" 'org-end-of-line
+          :i  "C-a" 'org-beginning-of-line
 
-           :nv "j"   'evil-next-visual-line
-           :nv "k"   'evil-previous-visual-line
-           :v  "<S-tab>" 'narf/yas-insert-snippet
+          :nv "j"   'evil-next-visual-line
+          :nv "k"   'evil-previous-visual-line
+          :v  "<S-tab>" 'narf/yas-insert-snippet
 
-           :i  "M-a" (λ (evil-visual-state) (org-mark-element))
-           :n  "M-a" 'org-mark-element
-           :v  "M-a" 'mark-whole-buffer
+          :i  "M-a" (λ (evil-visual-state) (org-mark-element))
+          :n  "M-a" 'org-mark-element
+          :v  "M-a" 'mark-whole-buffer
 
-           :ni "<M-return>"   (λ (narf/org-insert-item 'below))
-           :ni "<S-M-return>" (λ (narf/org-insert-item 'above))
+          :ni "<M-return>"   (λ (narf/org-insert-item 'below))
+          :ni "<S-M-return>" (λ (narf/org-insert-item 'above))
 
-           :i  "M-b" (λ (narf/org-surround "*")) ; bold
-           :i  "M-u" (λ (narf/org-surround "_")) ; underline
-           :i  "M-i" (λ (narf/org-surround "/")) ; italics
-           :i  "M-`" (λ (narf/org-surround "+")) ; strikethrough
+          :i  "M-b" (λ (narf/org-surround "*")) ; bold
+          :i  "M-u" (λ (narf/org-surround "_")) ; underline
+          :i  "M-i" (λ (narf/org-surround "/")) ; italics
+          :i  "M-`" (λ (narf/org-surround "+")) ; strikethrough
 
-           :v  "M-b" "S*"
-           :v  "M-u" "S_"
-           :v  "M-i" "S/"
-           :v  "M-`" "S+"
+          :v  "M-b" "S*"
+          :v  "M-u" "S_"
+          :v  "M-i" "S/"
+          :v  "M-`" "S+"
 
-           :n  ",;" 'helm-org-in-buffer-headings
-           :nv ",l" 'org-insert-link
-           :n  ",L" 'org-store-link
-           ;; TODO narf/org-replace-link-by-link-description
-           :n  ",=" 'org-align-all-tags
-           :n  ",f" 'org-sparse-tree
-           :n  ",?" 'org-tags-view
-           :n  ",e" 'org-edit-special
-           :n  ",a" 'org-agenda
-           :n  ",D" 'org-time-stamp-inactive
-           :n  ",i" 'narf/org-toggle-inline-images-at-point
-           :n  ",t" 'org-todo
-           :n  ",T" 'org-show-todo-tree
-           :n  ",d" 'org-time-stamp
-           :n  ",r" 'org-refile
-           :n  ",s" 'org-schedule
-           :n  ",oa" 'narf/org-attachment-reveal
-           :n  ", SPC" 'narf/org-toggle-checkbox
-           :n  ", RET" 'org-archive-subtree
+          (:leader
+           :n ";" 'helm-org-in-buffer-headings
+           :n "oa" 'narf/org-attachment-reveal
+           )
 
-           :n "za" 'org-cycle
-           :n "zA" 'org-shifttab
-           :n "zm" 'hide-body
-           :n "zr" 'show-all
-           :n "zo" 'show-subtree
-           :n "zO" 'show-all
-           :n "zc" 'hide-subtree
-           :n "zC" 'hide-all
+          (:localleader
+           :n  "/"  'org-sparse-tree
+           :n  "?"  'org-tags-view
 
-           :m  "]]" (λ (call-interactively 'org-forward-heading-same-level) (org-beginning-of-line))
-           :m  "[[" (λ (call-interactively 'org-backward-heading-same-level) (org-beginning-of-line))
-           :m  "]l" 'org-next-link
-           :m  "[l" 'org-previous-link
+           :n  "n"  (λ (if (buffer-narrowed-p) (widen) (org-narrow-to-subtree)))
+           :n  "e"  'org-edit-special
+           :n  "="  'org-align-all-tags
+           :nv "l"  'org-insert-link
+           :n  "L"  'org-store-link
+           :n  "x"  'narf/org-remove-link
+           :n  "w"  'writing-mode
+           :n  "SPC" 'narf/org-toggle-checkbox
+           :n  "RET" 'org-archive-subtree
 
-           :n  "RET" 'narf/org-dwim-at-point
+           :n  "a"  'org-agenda
+           :n  "A"  'narf:org-attachment-list
 
-           :m  "gh"  'outline-up-heading
-           :m  "gj"  'org-forward-heading-same-level
-           :m  "gk"  'org-backward-heading-same-level
-           :m  "gl"  (λ (call-interactively 'outline-next-visible-heading) (show-children))
+           :n  "d"  'org-time-stamp
+           :n  "D"  'org-time-stamp-inactive
+           :n  "i"  'narf/org-toggle-inline-images-at-point
+           :n  "t"  (λ (org-todo (if (org-entry-is-todo-p) 'none 'todo)))
+           :n  "T"  'org-todo
+           :n  "r"  'org-refile
+           :n  "s"  'org-schedule
+           )
 
-           :n  "go"  'org-open-at-point
-           :n  "gO"  (λ (let ((org-link-frame-setup (append '((file . find-file-other-window)) org-link-frame-setup))
-                              (org-file-apps '(("\\.org$" . emacs)
-                                               (t . "open \"%s\""))))
-                          (call-interactively 'org-open-at-point)))
+          :n  "za"  'org-cycle
+          :n  "zA"  'org-shifttab
+          :n  "zm"  'hide-body
+          :n  "zr"  'show-all
+          :n  "zo"  'show-subtree
+          :n  "zO"  'show-all
+          :n  "zc"  'hide-subtree
+          :n  "zC"  'hide-all
 
-           :n  "gQ" 'org-fill-paragraph
-           :m  "$" 'org-end-of-line
-           :m  "^" 'org-beginning-of-line
-           :n  "<" 'org-metaleft
-           :n  ">" 'org-metaright
-           :v  "<" (λ (org-metaleft)  (evil-visual-restore))
-           :v  ">" (λ (org-metaright) (evil-visual-restore))
-           :n  "-" 'org-cycle-list-bullet
-           :n  [tab] 'org-cycle)
+          :m  "]]"  (λ (call-interactively 'org-forward-heading-same-level) (org-beginning-of-line))
+          :m  "[["  (λ (call-interactively 'org-backward-heading-same-level) (org-beginning-of-line))
+          :m  "]l"  'org-next-link
+          :m  "[l"  'org-previous-link
 
-         (:map org-src-mode-map
-           :n  "<escape>" (λ (message "Exited") (org-edit-src-exit)))
+          :n  "RET" 'narf/org-dwim-at-point
 
-         (:after org-agenda
-           (:map org-agenda-mode-map
-             :e "<escape>" 'org-agenda-Quit
-             :e "C-j" 'org-agenda-next-item
-             :e "C-k" 'org-agenda-previous-item
-             :e "C-n" 'org-agenda-next-item
-             :e "C-p" 'org-agenda-previous-item)))
+          :m  "gh"  'outline-up-heading
+          :m  "gj"  'org-forward-heading-same-level
+          :m  "gk"  'org-backward-heading-same-level
+          :m  "gl"  (λ (call-interactively 'outline-next-visible-heading) (show-children))
+
+          :n  "go"  'org-open-at-point
+          :n  "gO"  (λ (let ((org-link-frame-setup (append '((file . find-file-other-window)) org-link-frame-setup))
+                             (org-file-apps '(("\\.org$" . emacs)
+                                              (t . "open \"%s\""))))
+                         (call-interactively 'org-open-at-point)))
+
+          :n  "gQ"  'org-fill-paragraph
+          :m  "$"   'org-end-of-line
+          :m  "^"   'org-beginning-of-line
+          :n  "<"   'org-metaleft
+          :n  ">"   'org-metaright
+          :v  "<"   (λ (org-metaleft)  (evil-visual-restore))
+          :v  ">"   (λ (org-metaright) (evil-visual-restore))
+          :n  "-"   'org-cycle-list-bullet
+          :n  [tab] 'org-cycle)
+
+        (:map org-src-mode-map
+          :n  "<escape>" (λ (message "Exited") (org-edit-src-exit)))
+
+        (:after org-agenda
+          (:map org-agenda-mode-map
+            :e "<escape>" 'org-agenda-Quit
+            :e "C-j" 'org-agenda-next-item
+            :e "C-k" 'org-agenda-previous-item
+            :e "C-n" 'org-agenda-next-item
+            :e "C-p" 'org-agenda-previous-item)))
 
     ;;; OS-Specific
   (cond (IS-MAC (narf-org-init-for-osx))

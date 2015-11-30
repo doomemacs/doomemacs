@@ -26,13 +26,13 @@
   ;; em-prompt
   (setq eshell-prompt-function 'narf/eshell-prompt)
 
-  (bind! :map eshell-mode-map
-         :n "i" 'narf/eshell-evil-prepend-maybe
-         :n "I" 'narf/eshell-evil-prepend
-         :n "a" 'narf/eshell-evil-append-maybe
-         :n "A" 'narf/eshell-evil-append
-         :n "r" 'narf/eshell-evil-replace-maybe
-         :n "R" 'narf/eshell-evil-replace-state-maybe))
+  (map! :map eshell-mode-map
+        :n "i" 'narf/eshell-evil-prepend-maybe
+        :n "I" 'narf/eshell-evil-prepend
+        :n "a" 'narf/eshell-evil-append-maybe
+        :n "A" 'narf/eshell-evil-append
+        :n "r" 'narf/eshell-evil-replace-maybe
+        :n "R" 'narf/eshell-evil-replace-state-maybe))
 
 (provide 'module-eshell)
 ;;; module-eshell.el ends here
