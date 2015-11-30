@@ -50,6 +50,10 @@
 (exmap "t[mux]"          'narf:send-to-tmux)
 (exmap "tcd"             (λ (narf:send-to-tmux (format "cd '%s'" default-directory))))
 
+(exmap "cont[act]"       'narf:org-crm-contact)
+(exmap "proj[ect]"       'narf:org-crm-project)
+(exmap "invo[ice]"       'narf:org-crm-invoice)
+
 (after! flycheck
   (exmap "er[rors]"      (λ (flycheck-buffer) (flycheck-list-errors))))
 

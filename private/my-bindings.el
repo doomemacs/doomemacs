@@ -141,9 +141,9 @@
   ;; Org notes
   :nv "x."  (λ (in! org-directory (let ((helm-ff-skip-boring-files t)) (helm-find-files-1 org-directory))))
   :nv "x/"  'narf/helm-org
-  :nv "xp"  'narf/helm-org-projects
-  :nv "xc"  'narf/helm-org-contacts
-  :nv "xi"  'narf/helm-org-invoices
+  :nv "xp"  'narf/helm-org-crm-projects
+  :nv "xc"  'narf/helm-org-crm-contacts
+  :nv "xi"  'narf/helm-org-crm-invoices
   :nv "xw"  'narf/helm-org-writing)
 
  (:localleader

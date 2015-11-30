@@ -326,11 +326,6 @@ will function properly."
   (exmap! "wc"       'narf/org-word-count)
   (exmap! "at[tach]" 'narf:org-attach)
   (exmap! "export"   'narf:org-export)
-
-  ;; TODO
-  ;; (exmap! "newc[ontact]" 'narf:org-new-contact)
-  ;; (exmap! "newp[roject]" 'narf:org-new-project)
-  ;; (exmap! "newi[nvoice]" 'narf:org-new-invoice)
   )
 
 (defun narf|org-init ()
@@ -472,6 +467,10 @@ will function properly."
            :n  "T"  'org-todo
            :n  "r"  'org-refile
            :n  "s"  'org-schedule
+
+           :n  "op" 'narf/org-open-project-at-pt
+           :n  "oc" 'narf/org-open-contact-at-pt
+           :n  "oi" 'narf/org-open-invoice-at-pt
            )
 
           :n  "za"  'org-cycle
@@ -589,7 +588,12 @@ will function properly."
                   (add-text-properties (min (point-max) (1+ end)) (min (point-max) (1+ end1))
                                        '(face org-block-end-line))
                   t))
-               ((member dc1 '("+title:" "+author:" "+email:" "+date:"))
+               ((string-match-p
+                 (format "^\\+%s+:$"
+                         (regexp-opt '("title" "author" "email" "date" "address" "location" "contact"
+                                       "project" "country" "city" "created" "issued" "paid" "currency")))
+                                        dc1)
+                ;; (member dc1 '("+title:" "+author:" "+email:" "+date:" "+address:" "+location:" "+contact:" "+project:"))
                 (org-remove-flyspell-overlays-in
                  (match-beginning 0)
                  (if (equal "+title:" dc1) (match-end 2) (match-end 0)))
