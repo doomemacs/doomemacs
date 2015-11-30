@@ -20,7 +20,10 @@
       (cond ((string-match-p "^https?://" link)
              (url-copy-file link new-path))
             (t (copy-file link new-path)))
-      (insert (format "[[./%s]]" (f-relative new-path default-directory))))))
+      (let ((relpath (f-relative new-path default-directory)))
+        (if (evil-visual-state-p)
+            (org-insert-link nil (format "./%s" relpath) (buffer-substring-no-properties (region-beginning) (region-end)))
+          (insert (format "[[./%s]]" relpath)))))))
 
 ;;;###autoload (autoload 'narf:org-attachment-list "defuns-org-attach" nil t)
 (evil-define-command narf:org-attachment-list (&optional bang)
