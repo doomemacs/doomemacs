@@ -33,6 +33,8 @@
 (require 'saveplace)
 (setq save-place-file (concat narf-temp-dir "saveplace")
       save-place t)
+(when (>= emacs-major-version 25)
+  (save-place-mode +1))
 
 
 ;; Automatic minor modes ;;;;;;;;;;;
@@ -193,8 +195,8 @@ enable multiple minor modes for the same regexp.")
   (sp-with-modes '(c-mode c++-mode php-mode java-mode)
     (sp-local-pair "/*" "" :post-handlers '((" ||\n[i]*/" "RET"))))
   (sp-with-modes '(org-mode)
-    (sp-local-pair "\\[ " " \\]")
-    (sp-local-pair "\\( " " \\)")
+    (sp-local-pair "\\[" "\\]")
+    (sp-local-pair "\\(" "\\)")
     (sp-local-pair "$$" "$$")
     (sp-local-pair "{" nil))
 
