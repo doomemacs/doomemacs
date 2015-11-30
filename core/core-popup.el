@@ -12,16 +12,20 @@
           ("*evil-registers*"      :position bottom :height 0.3 :stick t)
           ("*scratch*"             :position bottom :height 20 :stick t)
           ("*Apropos*"             :position bottom :height 40 :stick t)
-          ("*quickrun*"            :position bottom :height 15 :stick t)
           ("*Backtrace*"           :position bottom :height 15 :stick t)
+          ("^\\*CPU-Profiler-Report .+\\*$"  :regexp t :position bottom :height 0.35)
           ("*Flycheck errors*"     :position bottom :height 15 :stick t)
+          ("*quickrun*"            :position bottom :height 15 :stick t)
+          ;; Helm
           ("^\\*[Hh]elm.*?\\*\\'"  :regexp t :position bottom :height 0.2)
+          ("*helm-mode-find-file-at-point*"  :position bottom :height 10)
+          ("*helm-mode-ffap*"      :position bottom :height 10)
+
+          ;; Org
           ("^\\*Org-Babel.*\\*$"   :regexp t :position bottom :height 15 :tail t)
-          ;; ("^\\*org .*\\*$"        :regexp t :position bottom :height 15 :stick t)
           ("*Agenda Commands*"     :position bottom :height 0.5)
           (" *Org todo*"            :position bottom :height 5)
           ("*Org Links*"           :position bottom :height 2)
-          ("^\\*CPU-Profiler-Report .+\\*$"  :regexp t :position bottom :height 0.35)
           ("*ruby*" :position bottom :height 0.3 :stick t)
           ("*ielm*" :position bottom :height 0.3 :stick t)
           ))
@@ -49,7 +53,6 @@
       (with-current-buffer buf
         (evil-resize-window 5)
         (funcall cb)
-        ;; (yascroll-bar-mode +1)
         (setq mode-line-format nil)))
 
     (defun narf/quickrun-after-run ()
@@ -68,8 +71,9 @@
       "Minimalistic split-fn; leaves popwin to handle helm buffers."
       popwin:popup-window)
 
-    (setq helm-split-window-default-side 'other
-          helm-split-window-preferred-function 'narf/helm-split-window)
+    (setq-default
+     helm-split-window-preferred-function 'narf/helm-split-window
+     helm-display-function 'popwin:pop-to-buffer)
 
     (defadvice helm-ag--edit-abort (around helm-ag-edit-abort-popwin-compat activate)
       (cl-letf (((symbol-function 'select-window) 'ignore)) ad-do-it))
