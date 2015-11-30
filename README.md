@@ -10,7 +10,7 @@ way. Narf uses [Evil-mode](https://gitorious.org/evil/pages/Home) to emulate
 vim, Cask to manage plugins, and a slew of jury-rigged neckbeard shenanigans to
 keep my mountain dew cool.
 
-It is tailored for OSX users running Emacs 24.5+.
+It is tailored for OSX users running Emacs **24.5+**
 
 Any contributions or suggestions are welcome. The world won't take over itself.
 
@@ -18,7 +18,7 @@ Any contributions or suggestions are welcome. The world won't take over itself.
 
 ```
 brew install cask
-brew install railwaycat/emacsmacport/emacs-mac --HEAD --use-git-head --with-imagemagick --with-modern-icon
+brew install emacs --devel --with-imagemagick --with-librsvg --with-cocoa
 git clone --recursive https://github.com/hlissner/emacs.d ~/.emacs.d
 cd ~/.emacs.d
 make          # installs plugins via cask and generates autoloads
