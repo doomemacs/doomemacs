@@ -27,7 +27,7 @@
 ;;;###autoload
 (defun narf/reset-theme ()
   (interactive)
-  (narf/load-theme 'narf-dark))
+  (narf/load-theme narf-theme))
 
 ;;;###autoload
 (defun narf/load-theme (theme)

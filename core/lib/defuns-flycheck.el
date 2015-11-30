@@ -28,5 +28,12 @@
        'flycheck-previous-error
      'previous-error)))
 
+;;;###autoload
+(defun narf/flycheck-errors ()
+  (interactive)
+  (when (bound-and-true-p flycheck-mode)
+    (flycheck-buffer)
+    (flycheck-list-errors)))
+
 (provide 'defuns-flycheck)
 ;;; defuns-flycheck.el ends here

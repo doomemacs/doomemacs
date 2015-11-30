@@ -51,6 +51,35 @@ evil-window-move-* (e.g. `evil-window-move-far-left')"
       (select-window that-window))))
 
 ;;;###autoload
+(defun narf/new-buffer ()
+  (interactive)
+  (switch-to-buffer (generate-new-buffer "*new*")))
+
+;;;###autoload
+(defun narf/new-frame ()
+  (interactive)
+  (let ((nlinum-p (and (featurep 'nlinum)
+                       (memq 'nlinum--setup-window window-configuration-change-hook))))
+    ;; Disable nlinum to fix elusive "invalid face linum" bug
+    (remove-hook 'window-configuration-change-hook 'nlinum--setup-window t)
+    (let ((frame (new-frame))
+          (frame-name (format "*new-%s*" (length narf-wg-frames))))
+      (with-selected-frame frame
+        (wg-create-workgroup frame-name t)
+        (add-to-list 'narf-wg-frames (cons frame frame-name))))
+    (when nlinum-p
+      (add-hook 'window-configuration-change-hook 'nlinum--setup-window nil t))))
+
+;;;###autoload
+(defun narf/close-frame ()
+  (interactive)
+  (let ((data (assq (selected-frame) narf-wg-frames)))
+    (if data
+        (progn (wg-delete-workgroup (wg-get-workgroup (cdr data)))
+               (delete-frame (car data)))
+      (delete-frame))))
+
+;;;###autoload
 (defun narf/evil-window-move-left ()
   "See `narf--evil-window-move'"
   (interactive)

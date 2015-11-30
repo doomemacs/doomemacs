@@ -15,7 +15,9 @@
                                                  (yas--get-snippet-tables mode)))))
                      (if template (yas--template-content template) nil))))
       (when (and is-yasnippet-on snippet)
-        (yas-expand-snippet snippet)))))
+        (yas-expand-snippet snippet)
+        (when (and (featurep 'evil) evil-mode)
+          (evil-initialize-state 'insert))))))
 
 (provide 'defuns-auto-insert)
 ;;; defuns-auto-insert.el ends here

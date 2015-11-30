@@ -16,7 +16,8 @@
 ;;;###autoload
 (defun narf/neotree-find ()
   (interactive)
-  (save-excursion (narf/neotree-open))
+  (unless (neo-global--window-exists-p)
+    (save-excursion (narf/neotree-open)))
   (neotree-find))
 
 ;;;###autoload
