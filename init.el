@@ -40,14 +40,14 @@
 ;;
 ;;; License: GPLv3
 
-(setq gc-cons-threshold 169715200)
-
 (defconst narf-theme        'narf-dark)
-(defconst narf-default-font (font-spec :family "DejaVu Sans Mono" :size 12))
-(defconst narf-big-font     (font-spec :family "Inconsolata"      :size 20))
+(defconst narf-default-font (font-spec :family "Hack" :size 12))
+(defconst narf-writing-font (font-spec :family "Hack" :size 14))
+(defconst narf-big-font     (font-spec :family "Inconsolata" :size 20))
 
 ;; prematurely optimize for faster startup
-(let (file-name-handler-alist)
+(let (file-name-handler-alist
+      (gc-cons-threshold 169715200))
   (scroll-bar-mode -1)  ; no scrollbar
   (tool-bar-mode   -1)  ; no toolbar
 

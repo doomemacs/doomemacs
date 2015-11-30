@@ -152,9 +152,7 @@
 
   (require 'server)
   (unless (server-running-p)
-    (server-start))
-
-  (add-hook! after-init (setq gc-cons-threshold 850000)))
+    (server-start)))
 
 (provide 'core)
 ;;; core.el ends here
