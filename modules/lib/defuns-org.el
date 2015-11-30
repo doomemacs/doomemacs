@@ -57,7 +57,7 @@
                    (org-element-context)
                    '(table table-row clock comment comment-block footnote-definition
                      footnote-reference headline inlinetask keyword link
-                     latex-fragment src-block item plain-list timestamp babel-call)
+                     latex-fragment src-block inline-src-block item plain-list timestamp babel-call)
                    t))
          (type (org-element-type context))
          (value (org-element-property :value context)))
@@ -86,7 +86,7 @@
      ((memq type '(babel-call))
       (org-babel-lob-execute-maybe))
 
-     ((memq type '(src-block))
+     ((memq type '(src-block inline-src-block))
       (org-babel-execute-src-block))
 
      ((memq type '(latex-fragment))
