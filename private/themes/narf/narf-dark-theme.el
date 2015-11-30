@@ -23,7 +23,7 @@
        (white-1        "#EAEADB")
        (yellow         "#E2C770")
        (orange         "#FD971F")
-       (red            "#e74c3c")
+       (red            "#E74C3C")
        (magenta        "#F92672")
        (violet         "#9C91E4")
        (blue           "#268BD2")
@@ -31,12 +31,12 @@
        (cyan           "#66D9EF")
        (green          "#B6E63E")
        (green-3        "#86B20E")
-       (dark-cyan      "#8fa1b3")
+       (dark-cyan      "#8FA1B3")
        (light-cyan     "#CBECFF")
 
-       (search-bg      magenta)
+       (search-bg      green)
        (search-fg      black)
-       (search-rest-bg orange)
+       (search-rest-bg violet)
        (search-rest-fg black)
        (highlight      orange)
        (vertical-bar   grey-2)
@@ -88,7 +88,7 @@
    ;; `(secondary-selection          ((,c (:background ,orange))))
    ;; `(lazy-highlight               ((,c (:background ,orange))))
    ;; `(match                        ((,c (:background ,magenta))))
-   `(scroll-bar                      ((,c (:background ,green))))
+   `(minibuffer-prompt               ((,c (:foreground ,orange))))
 
    `(error                           ((,c (:foreground ,red    :bold t))))
    `(warning                         ((,c (:foreground ,yellow :bold t))))
@@ -129,9 +129,10 @@
 
    `(vertical-border                ((,c (:foreground ,vertical-bar :background ,vertical-bar))))
 
-   `(linum                          ((,c (:foreground ,linum-fg :bold nil :height 0.9))))
-   `(linum-highlight-face           ((,c (:inherit linum :foreground ,linum-hl-fg))))
-   `(show-paren-match               ((,c (:foreground ,highlight :bold t :inverse-video t))))
+   ;; `(linum                          ((,c (:foreground ,linum-fg :bold nil :height 0.9))))
+   `(linum                          ((,c (:foreground ,linum-fg :bold nil :height 0.8))))
+   `(linum-highlight-face           ((,c (:inherit linum :bold t :foreground ,linum-hl-fg))))
+   `(show-paren-match               ((,c (:foreground ,magenta :bold t :inverse-video t))))
 
    ;; Modeline
    `(mode-line                      ((,c (:foreground ,modeline-fg          :background ,modeline-bg))))
@@ -199,9 +200,9 @@
    `(diff-hl-change              ((,c (:foreground ,vc-modified))))
    `(diff-hl-delete              ((,c (:foreground ,vc-deleted))))
    `(diff-hl-insert              ((,c (:foreground ,vc-added))))
-   ;; `(git-gutter+-modified                 ((,c (:foreground ,vc-modified :background nil))))
-   ;; `(git-gutter+-added                    ((,c (:foreground ,vc-added :background nil))))
-   ;; `(git-gutter+-deleted                  ((,c (:foreground ,vc-deleted :background nil))))
+   `(git-gutter+-modified        ((,c (:foreground ,vc-modified :background nil))))
+   `(git-gutter+-added           ((,c (:foreground ,vc-added :background nil))))
+   `(git-gutter+-deleted         ((,c (:foreground ,vc-deleted :background nil))))
 
    ;; Rainbow delimiters
    `(rainbow-delimiters-depth-1-face   ((,c (:foreground ,magenta :bold t))))
@@ -261,26 +262,27 @@
    ;; org-mode
    `(variable-pitch  ((,c (:font "DejaVu Sans" :height 1.0))))
    `(fixed-pitch     ((,c (:font "DejaVu Sans Mono" :height 1.0))))
-   `(org-tag         ((,c (:foreground ,grey-1))))
+   `(org-tag         ((,c (:foreground ,grey-1 :bold nil))))
    ;; `(org-ellipsis    ((,c (:inherit hs-face))))
 
    `(org-table                  ((,c (:foreground ,cyan))))
    `(org-quote                  ((,c (:slant italic :foreground ,grey :background ,current-line))))
    `(org-document-info          ((,c (:foreground ,orange))))
    `(org-document-info-keyword  ((,c (:foreground ,grey-1))))
-   `(org-meta-line              ((,c (:background ,current-line :foreground ,vsubtle))))
+   `(org-meta-line              ((,c (:foreground ,vsubtle))))
    `(org-block-begin-line       ((,c (:background ,current-line :foreground ,vsubtle))))
    `(org-block-end-line         ((,c (:inherit org-block-begin-line))))
+   `(org-archived   ((,c (:foreground ,grey-.5))))
 
-   `(org-document-title   ((,c (:inherit variable-pitch :foreground ,cyan :height 1.30 :bold t))))
-   `(org-level-1          ((,c (:inherit variable-pitch :foreground ,orange :bold t))))
-   `(org-level-2          ((,c (:inherit variable-pitch :foreground ,dark-cyan :bold t))))
-   `(org-level-3          ((,c (:inherit variable-pitch :foreground ,cyan :bold t))))
-   `(org-level-4          ((,c (:inherit variable-pitch :foreground ,green :bold t))))
-   `(org-level-5          ((,c (:inherit variable-pitch :foreground ,cyan))))
-   `(org-level-6          ((,c (:inherit variable-pitch :foreground ,blue+2))))
-   ;; `(org-level-7          ((,c ())))
-   ;; `(org-level-8          ((,c ())))
+   `(org-document-title   ((,c (:foreground ,cyan :height 1.30 :bold t))))
+   `(org-level-1          ((,c (:foreground ,orange :bold t))))
+   `(org-level-2          ((,c (:foreground ,dark-cyan :bold t))))
+   `(org-level-3          ((,c (:foreground ,violet :bold t))))
+   `(org-level-4          ((,c (:foreground ,green :bold t))))
+   `(org-level-5          ((,c (:foreground ,yellow))))
+   `(org-level-6          ((,c (:foreground ,blue+2))))
+   ;;`(org-level-7          ((,c ())))
+   ;;`(org-level-8          ((,c ())))
    ;;`(org-checkbox         ((,class (:box (:line-width 1 :style released-button)))))
 
    `(org-code             ((,c (:foreground ,orange))))
@@ -299,7 +301,7 @@
    `(org-checkbox-statistics-done ((,c (:inherit org-done))))
 
    ;; NARF custom org faces
-   `(org-headline-todo    ((,c (:foreground ,dark-cyan :bold nil))))
+   `(org-headline-todo    ((,c (:bold nil))))
    `(org-block            ((,c (:background ,current-line))))
    `(org-block-background ((,c (:background ,current-line))))
    `(org-todo-high        ((,c (:foreground ,orange :bold inherit))))
