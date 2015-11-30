@@ -7,9 +7,8 @@
 (defun narf|refresh-visual-fill-col ()
   (visual-fill-column-mode +1))
 
-(defvar writing-mode-theme 'solarized-light)
 (defvar writing-mode--last-mode-line mode-line-format)
-(defvar writing-mode--last-indicator-list fringe-indicator-alist)
+(defvar writing-mode--last-line-spacing line-spacing)
 (define-minor-mode writing-mode "Mode for writing research papers or fiction."
   :lighter "swrite"
   :keymap (make-sparse-keymap)
@@ -17,20 +16,13 @@
          (on-off (if mode-p +1 -1)))
     (visual-fill-column-mode on-off)
     (visual-line-mode on-off)
-    (variable-pitch-mode on-off)
+    ;; (variable-pitch-mode on-off)
     (text-scale-set (if mode-p 2 0))
-    (fringe-mode (if mode-p '6 narf-fringe-size))
 
-    ;; (when writing-mode-theme
-    ;;   (if mode-p
-    ;;       (narf/load-theme writing-mode-theme)
-    ;;     (narf/reset-theme)))
-
-    (setq line-spacing (if mode-p '4 (default-value 'line-spacing)))
-    (if (eq major-mode 'org-mode)
-        (org-indent-mode (if mode-p -1 1))
-      ;; (setq truncate-lines (if mode-p nil (default-value 'truncate-lines)))
-      )
+    (if mode-p (setq writing-mode--last-line-spacing line-spacing))
+    (setq line-spacing (if mode-p '4 writing-mode--last-line-spacing))
+    ;; (when (eq major-mode 'org-mode)
+    ;;   (org-indent-mode (if mode-p -1 1)))
 
     (setq mode-line-format
           (if mode-p
@@ -38,9 +30,7 @@
                              '(narf-anzu narf-iedit narf-evil-substitute
                                (narf-buffer-path remote-host)
                                narf-buffer-modified
-                               helm-number
-                               helm-follow
-                               helm-prefix-argument)
+                               "✎")
                              '((selection-info :face highlight-face :skip-alternate t)
                                narf-hud
                                ))))
