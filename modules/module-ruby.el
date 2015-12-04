@@ -19,6 +19,29 @@
   ;; Don't interfere with my custom RET behavior
   (define-key ruby-mode-map [?\n] nil)
 
+  (use-package ruby-refactor
+    :init (add-hook! ruby-mode 'emr-initialize)
+    :config
+    (require 'emr)
+    (mapc (lambda (x)
+            (let ((command-name (car x))
+                  (title (cadr x))
+                  (region-p (caddr x))
+                  predicate)
+              (setq predicate (cond ((eq region-p 'both) nil)
+                                    (t (if region-p
+                                           (lambda () (use-region-p))
+                                         (lambda () (not (use-region-p)))))))
+              (emr-declare-command (intern (format "ruby-%s" (symbol-name command-name)))
+                :title title :modes 'ruby-mode :predicate predicate)))
+          '((toggle-block                     "toggle block"            nil)
+            (refactor-extract-to-method       "extract method"          t)
+            (refactor-extract-local-variable  "extract local variable"  t)
+            (refactor-extract-constant        "extract constant"        t)
+            (refactor-add-parameter           "add parameter"           nil)
+            (refactor-extract-to-let          "extract to let"          t)
+            (refactor-convert-post-conditional "convert post conditional" t))))
+
   ;; Rakefiles ;;;;;;;;;;;;;;;;;;;;;;;;;;;
   (define-minor-mode rake-mode
     "Buffer local minor mode for rake files"
@@ -75,28 +98,6 @@
   (after! company
     (require 'company-robe)
     (define-company-backend! ruby-mode (robe))))
-
-(use-package ruby-refactor
-  :init (add-hook! ruby-mode 'emr-initialize)
-  :config
-  (require 'emr)
-  (mapc (lambda (x)
-          (let ((command-name (car x))
-                (title (cadr x))
-                (region-p (caddr x))
-                predicate)
-            (setq predicate (cond ((eq region-p 'both) nil)
-                                  (t (if region-p
-                                         (lambda () (use-region-p))
-                                       (lambda () (not (use-region-p)))))))
-            (emr-declare-command (intern (format "ruby-%s" (symbol-name command-name)))
-              :title title :modes 'ruby-mode :predicate predicate)))
-        '((toggle-block                     "toggle block"            nil)
-          (refactor-extract-to-method       "extract method"          t)
-          (refactor-extract-local-variable  "extract local variable"  t)
-          (refactor-extract-constant        "extract constant"        t)
-          (refactor-add-parameter           "add parameter"           nil)
-          (refactor-extract-to-let          "extract to let"          t))))
 
 (provide 'module-ruby)
 ;;; module-ruby.el ends here
