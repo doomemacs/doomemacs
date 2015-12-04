@@ -84,6 +84,13 @@
       (when (minibuffer-window-active-p (minibuffer-window))
         (narf-minibuffer-quit)))
 
+    ;; Monkey-patch an error triggered randomly during column-selection caused
+    ;; by `extract-rectangle-line' receiving a float:
+    ;;   evil-move-to-column: Wrong type argument: wholenump, 12.0
+    (defun narf*evil-extract-rectangle-line-fix (args)
+      (mapcar (lambda (i) (if (numberp i) (truncate i) i)) args))
+    (advice-add 'extract-rectangle-line :filter-args 'narf*evil-extract-rectangle-line-fix)
+
     ;; buffer-local ex commands, thanks to:
     ;; http://emacs.stackexchange.com/questions/13186
     (defun evil-ex-define-cmd-local (cmd function)
