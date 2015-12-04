@@ -47,7 +47,6 @@
                             (sequence "LEAD(l)" "NEXT(n)" "ACTIVE(a)" "PENDING(p)" "|" "CANCELLED(c)"))
         org-blank-before-new-entry '((heading . nil)
                                      (plain-list-item . auto))
-        org-export-backends '(ascii html latex md opml)
 
         org-tag-alist '(("@home" . ?h)
                         ("@daily" . ?d)
@@ -110,6 +109,19 @@
             (,(concat "<\\(http://.+\\." ext-regexp "\\)>") . 1))))
 
   (add-to-list 'org-link-frame-setup '(file . find-file)))
+
+(defun narf@org-export ()
+  (defvar narf-org-export-directory (concat org-directory ".export"))
+  (require 'ox-pandoc)
+  (setq org-export-backends '(ascii html latex md opml)
+        org-export-with-toc nil)
+
+  ;; Export to a central directory (why isn't this easier?)
+  (defun narf*org-export-output-file-name (args)
+    (unless (nth 2 args)
+      (setq args (append args (list narf-org-export-directory))))
+    args)
+  (advice-add 'org-export-output-file-name :filter-args 'narf*org-export-output-file-name))
 
 (defun narf@org-babel ()
   (setq org-confirm-babel-evaluate nil   ; you don't need my permission
@@ -333,6 +345,7 @@ will function properly."
   (narf@org-babel)
   (narf@org-latex)
   (narf@org-looks)
+  (narf@org-export)
 
   (add-hook 'org-mode-hook 'narf|org-hook)
 
