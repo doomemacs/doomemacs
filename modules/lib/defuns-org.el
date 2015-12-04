@@ -111,7 +111,14 @@
 ;; Formatting shortcuts
 ;;;###autoload
 (defun narf/org-surround (delim)
-  (insert delim) (save-excursion (insert delim)))
+  (if (region-active-p)
+      (save-excursion
+        (goto-char (region-beginning))
+        (insert delim)
+        (goto-char (region-end))
+        (insert delim))
+    (insert delim)
+    (save-excursion (insert delim))))
 
 ;;;###autoload
 (defun narf/org-word-count (beg end &optional count-footnotes?)
