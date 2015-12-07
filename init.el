@@ -85,6 +85,7 @@
           module-lb6           ; LaunchBar 6 development
           module-lua           ; one-based indices? one-based indices.
           module-markdown      ; markdown
+          module-nim           ; look out Abraham
           module-org           ; for fearless [organized] leader
           module-plantuml      ; to help show how right I am
           module-php           ; making php less painful to work with
