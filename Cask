@@ -160,6 +160,10 @@
 ;; Markdown -- modules/module-markdown.el
 (depends-on "markdown-mode")
 
+;; Nim -- modules/module-nim.el
+(depends-on "nim-mode")
+(depends-on "flycheck-nim")
+
 ;; Org -- modules/module-org.el
 (depends-on "company-math")
 (depends-on "org-plus-contrib")
