@@ -74,6 +74,14 @@
                       ))
     (evil-set-initial-state `,(car mode-map) `,(cdr mode-map)))
 
+  ;; Shortcuts for the evil expression register
+  (defmacro $= (str &rest args)
+    `(calc-eval (format ,str ,@args)))
+  (defmacro $r (char)
+    `(evil-get-register ,char))
+  (defmacro $expand (path)
+    `(evil-ex-replace-special-filenames ,path))
+
   (progn ; evil hacks
     (defadvice evil-force-normal-state (after evil-esc-quit activate)
       "Close popups, disable search highlights and quit the minibuffer if open."
@@ -206,10 +214,6 @@
              evil-commentary-yank
              evil-commentary-line)
   :config (evil-commentary-mode 1))
-
-(use-package evil-ex-registers
-  :commands (evil-get-spec-register
-             evil-ex-paste-from-register))
 
 (use-package evil-exchange
   :commands evil-exchange

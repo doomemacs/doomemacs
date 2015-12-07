@@ -34,7 +34,7 @@
 
   (map! (:map (helm-map helm-generic-files-map helm-find-files-map helm-swoop-map helm-projectile-find-file-map)
           "C-w"        'backward-kill-word
-          "C-r"        'evil-ex-paste-from-register ; Evil registers in helm! Glorious!
+          "C-r"        'evil-paste-from-register ; Evil registers in helm! Glorious!
           "<escape>"   'helm-keyboard-quit
           [escape]     'helm-keyboard-quit)
         (:map helm-find-files-map
