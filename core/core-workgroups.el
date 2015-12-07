@@ -36,8 +36,7 @@
     (setq projectile-switch-project-action 'narf/wg-projectile-switch-project))
 
   ;; Don't remember popwin windows
-  (add-hook! kill-emacs 'popwin:close-popup-window)
-  (add-hook! wg-before-switch-to-workgroup 'popwin:close-popup-window)
+  (add-hook! (kill-emacs wg-before-switch-to-workgroup) 'popwin:close-popup-window)
 
   ;; Initialize!
   (add-hook! after-init

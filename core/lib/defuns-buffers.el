@@ -51,7 +51,9 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
 (defun narf/get-all-buffers ()
   "Get all buffers across all workgroups. Depends on
 `wg-mess-with-buffer-list'."
-  (wg-buffer-list-emacs))
+  (if (and (featurep 'workgroups2) workgroups-mode)
+      (wg-buffer-list-emacs)
+    (buffer-list)))
 
 ;;;###autoload
 (defun narf/get-buffers ()
