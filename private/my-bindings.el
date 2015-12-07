@@ -310,12 +310,7 @@
  (:map view-mode-map
    "<escape>" 'View-quit-all)
 
- (:map evil-ex-completion-map
-   "C-r"            'evil-ex-paste-from-register   ; registers in ex-mode
-   "C-a"            'move-beginning-of-line
-   "<s-left>"       'move-beginning-of-line
-   "<s-right>"      'move-beginning-of-line
-   "<s-backspace>"  'evil-delete-whole-line))
+ (:map evil-ex-completion-map "C-a" 'move-beginning-of-line))
 
 ;; Line-wise mouse selection on margin
 (global-set-key (kbd "<left-margin> <down-mouse-1>") 'narf/mouse-drag-line)
@@ -384,7 +379,8 @@
              minibuffer-local-completion-map
              minibuffer-local-must-match-map
              minibuffer-local-isearch-map)
-        [escape] 'narf-minibuffer-quit)
+        [escape] 'narf-minibuffer-quit
+        "C-r" 'evil-paste-from-register)
 
       :map read-expression-map "C-w" 'backward-kill-word)
 
