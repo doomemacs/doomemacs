@@ -31,8 +31,10 @@
           ("*Agenda Commands*"     :position bottom :height 0.5)
           (" *Org todo*"            :position bottom :height 5)
           ("*Org Links*"           :position bottom :height 2)
-          ("*ruby*" :position bottom :height 0.3 :stick t)
-          ("*ielm*" :position bottom :height 0.3 :stick t)
+
+          ;; REPLs
+          ((lambda (buffer) (with-current-buffer buffer (derived-mode-p 'comint-mode)))
+           :position bottom :height 0.2 :stick t)
           ))
 
   (popwin-mode 1)
@@ -147,8 +149,15 @@
          (if buffer (eq buffer popwin:popup-buffer) t)))
 
   (defun narf/popup-close ()
-    (when (popwin:popup-window-live-p)
-      (popwin:close-popup-window t)))
+    (let ((popup-p (popwin:popup-window-live-p))
+          (comint-p (derived-mode-p 'comint-mode)))
+      (when comint-p
+        (when (eq rtog/--last-buffer (current-buffer))
+          (setq rtog/--last-buffer nil
+                narf-repl-buffer nil))
+        (kill-this-buffer))
+      (when popup-p
+        (popwin:close-popup-window t))))
 
   (defun narf/popup-open (buffer &optional height)
     (popwin:popup-buffer buffer))
