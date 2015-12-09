@@ -16,6 +16,11 @@
           ("^\\*CPU-Profiler-Report .+\\*$"  :regexp t :position bottom :height 0.35)
           ("*Flycheck errors*"     :position bottom :height 15 :stick t)
           ("*quickrun*"            :position bottom :height 15 :stick t)
+          ("*minor-modes*"         :position bottom :height 0.5 :stick t)
+
+          ;; vcs
+          ("\\*git-gutter.+\\*" :regexp t :position bottom :height 30 :stick t)
+
           ;; Helm
           ("^\\*[Hh]elm.*?\\*\\'"  :regexp t :position bottom :height 0.2)
           ("*helm-mode-find-file-at-point*"  :position bottom :height 10)

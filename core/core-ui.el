@@ -8,27 +8,29 @@
  ;; Multiple cursors across buffers cause a strange redraw delay for
  ;; some things, like auto-complete or evil-mode's cursor color
  ;; switching.
- cursor-in-non-selected-windows  nil
- highlight-nonselected-windows nil
+ cursor-in-non-selected-windows nil
+ highlight-nonselected-windows  nil
 
- uniquify-buffer-name-style      nil
- visible-bell                    nil  ; silence of the bells
- use-dialog-box                  nil  ; always avoid GUI
- redisplay-dont-pause            t
- indicate-buffer-boundaries      nil
- indicate-empty-lines            t
- fringes-outside-margins         t
- hl-line-sticky-flag             nil  ; only highlight in one window
+ ;; Custom mode-line solves duplicate buffer names
+ uniquify-buffer-name-style     nil
+ visible-bell                   nil  ; silence of the bells
+ use-dialog-box                 nil  ; always avoid GUI
+ redisplay-dont-pause           t
+ indicate-buffer-boundaries     nil
+ indicate-empty-lines           t
+ fringes-outside-margins        t
+ hl-line-sticky-flag            nil  ; only highlight in one window
 
- jit-lock-defer-time nil
- jit-lock-stealth-time 1
+ jit-lock-defer-time            nil
+ jit-lock-stealth-time          1
 
- split-width-threshold nil
- split-height-threshold 30
+ split-width-threshold          nil
+ split-height-threshold         30
 
- resize-mini-windows 'grow-only
+ resize-mini-windows            'grow-only
 
- fringe-indicator-alist (delq (assoc 'continuation fringe-indicator-alist) fringe-indicator-alist))
+ fringe-indicator-alist (delq (assoc 'continuation fringe-indicator-alist)
+                              fringe-indicator-alist))
 
 (defvar narf-fringe-size 6)
 (if window-system
@@ -45,8 +47,8 @@
 
       (set-window-fringes (minibuffer-window) 0 0 nil)
       (defun narf|minibuffer-setup ()
-        (make-local-variable 'face-remapping-alist)
         (set-window-fringes (selected-window) 0 0 nil)
+        (make-local-variable 'face-remapping-alist)
         (add-to-list 'face-remapping-alist '(default mode-line-inactive)))
       (add-hook! minibuffer-setup 'narf|minibuffer-setup))
   (menu-bar-mode -1))
@@ -66,10 +68,8 @@
 (defvar narf--hl-line-mode nil)
 (make-variable-buffer-local 'narf--hl-line-mode)
 
-(defun narf|hl-line-on ()
-  (when narf--hl-line-mode (hl-line-mode +1)))
-(defun narf|hl-line-off ()
-  (when narf--hl-line-mode (hl-line-mode -1)))
+(defun narf|hl-line-on ()  (if narf--hl-line-mode (hl-line-mode +1)))
+(defun narf|hl-line-off () (if narf--hl-line-mode (hl-line-mode -1)))
 
 (add-hook! hl-line-mode (if hl-line-mode (setq narf--hl-line-mode t)))
 (add-hook! evil-visual-state-entry 'narf|hl-line-off)

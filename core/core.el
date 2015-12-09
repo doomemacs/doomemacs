@@ -8,7 +8,7 @@
 ;;   narf:...     An ex command
 ;;   narf|...     A hook
 ;;   narf*...     An advising function
-;;   narf....     Custom hooks
+;;   narf....     Custom prefix commands
 ;;   ...!         Macro
 ;;
 ;;;

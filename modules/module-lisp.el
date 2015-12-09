@@ -19,21 +19,7 @@
 
   (add-to-list 'imenu-generic-expression
                '("Package"
-                 "\\(^\\s-*(use-package +\\)\\(\\_<.+\\_>\\)" 2))
-
-  ;; Highlight extra NARF keywords
-  (let ((keywords '("add-hook!"
-                    "map!"
-                    "after!"
-                    "λ"
-                    "in!"
-                    "define-company-backend!"
-                    "define-text-object!"
-                    "define-builder!"
-                    )))
-    (font-lock-add-keywords 'emacs-lisp-mode
-                            `((,(concat "(\\s-*" (regexp-opt keywords 'paren) "\\_>")
-                               1 font-lock-keyword-face)) 'append)))
+                 "\\(^\\s-*(use-package +\\)\\(\\_<.+\\_>\\)" 2)))
 
 (font-lock-add-keywords
  'emacs-lisp-mode `(("\\(lambda\\)" (0 (narf/show-as ?λ)))))

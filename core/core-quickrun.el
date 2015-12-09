@@ -10,9 +10,7 @@
              helm-quickrun)
   :config
   (setq quickrun-focus-p t)
-  (add-hook! quickrun/mode 'linum-mode)
-  (add-hook! quickrun/mode 'yascroll-bar-mode)
-
+  (add-hook! quickrun/mode '(linum-mode yascroll-bar-mode))
   (add-to-list 'quickrun-file-alist '("\\.gvy$" . "groovy")))
 
 (use-package repl-toggle

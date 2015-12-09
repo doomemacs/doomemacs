@@ -2,7 +2,7 @@
 
 (defvar biblio-directory (concat narf-dropbox-dir "docs/biblio/") "docstring")
 
-(setq-default visual-fill-column-center-text t)
+(setq-default visual-fill-column-center-text nil)
 
 (defun narf|refresh-visual-fill-col ()
   (visual-fill-column-mode +1))
@@ -55,7 +55,6 @@
 (add-hook! LaTeX-mode 'turn-on-auto-fill)
 
 (use-package reftex
-  :diminish reftex-mode
   :config
   (add-hook 'latex-mode-hook 'turn-on-reftex)
   (add-hook 'LaTeX-mode-hook 'turn-on-reftex)

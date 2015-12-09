@@ -66,7 +66,6 @@
                       (help-mode                 . normal)
                       (message-mode              . normal)
                       (compilation-mode          . normal)
-                      (inferior-emacs-lisp-mode  . emacs)
                       (calendar-mode             . emacs)
                       (Man-mode                  . emacs)
                       (grep-mode                 . emacs)

@@ -60,6 +60,7 @@
                  (IS-LINUX    'core-os-linux)
                  (IS-WINDOWS  'core-os-win32))
 
+          ;;; The heart of NARF
           core-popup           ; taming stray windows
           core-ui              ; draw me like one of your French editors
           core-evil            ; come to the dark side, we have cookies
@@ -74,6 +75,7 @@
           core-quickrun        ; run code, run.
           core-workgroups      ; cure Emacs alzheimers
 
+          ;;; Extras
           module-cc            ; c/c++/obj-c madness
           module-csharp        ; unity, .NET, and mono shenanigans
           module-collab        ; wonewy, I'm so wonewy~
