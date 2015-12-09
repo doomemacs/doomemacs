@@ -68,5 +68,26 @@
   (interactive "<a><!>")
   (if bang (helm-multi-swoop-all search) (helm-swoop :$query search)))
 
+;;;###autoload
+(defun narf/helm-projectile-in-emacsd ()
+  (interactive)
+  (in! narf-emacs-dir (helm-projectile-find-file)))
+
+;;;###autoload
+(defun narf/helm-buffers-dwim (&optional all-p)
+  "Displays open buffers in current project. If ALL-P, then show all open
+buffers."
+  (if (and (not all-p) (narf/project-p))
+      (helm-projectile-switch-to-buffer)
+    (helm-buffers-list)))
+
+;;;###autoload
+(defun narf/helm-org-find-files ()
+  (interactive)
+  (in! org-directory
+    (let ((helm-ff-skip-boring-files t))
+      (helm-find-files-1 org-directory))))
+
+
 (provide 'defuns-helm)
 ;;; defuns-helm.el ends here
