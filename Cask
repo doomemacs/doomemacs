@@ -211,6 +211,7 @@
 
 ;; Swift -- modules/module-swift.el
 (depends-on "swift-mode")
+(depends-on "company-sourcekit" :git "https://github.com/nathankot/company-sourcekit")
 
 ;; Vim -- modules/module-vim.el
 (depends-on "vimrc-mode")
