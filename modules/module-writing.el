@@ -1,12 +1,23 @@
 ;;; module-writing.el
 
-(defvar biblio-directory (concat narf-dropbox-dir "docs/biblio/") "docstring")
+;; From <https://github.com/joostkremers/visual-fill-column/pull/6>
+(advice-add 'split-window :around #'visual-fill-column--disable-on-split-window)
+(defun visual-fill-column--disable-on-split-window (fn window &rest args)
+  "Undo the effects of `visual-fill-column-mode' for splitting window."
+  (if (and (or (not window) (window-live-p window))
+           (buffer-local-value 'visual-fill-column-mode
+                               (window-buffer (or window (selected-window)))))
+    (let ((inhibit-redisplay t))
+      (set-window-fringes (or window (selected-window)) nil)
+      (set-window-margins (or window (selected-window)) 0 0)
+      (unwind-protect (apply fn window args)
+        (save-selected-window
+          (when window (select-window window 'norecord))
+          (visual-fill-column--adjust-window))))
+    (apply fn window args)))
 
+;;;
 (setq-default visual-fill-column-center-text nil)
-
-(defun narf|refresh-visual-fill-col ()
-  (visual-fill-column-mode +1))
-
 (defvar writing-mode--last-mode-line mode-line-format)
 (defvar writing-mode--last-line-spacing line-spacing)
 (define-minor-mode writing-mode "Mode for writing research papers or fiction."
@@ -16,13 +27,9 @@
          (on-off (if mode-p +1 -1)))
     (visual-fill-column-mode on-off)
     (visual-line-mode on-off)
-    ;; (variable-pitch-mode on-off)
-    (text-scale-set (if mode-p 2 0))
 
     (if mode-p (setq writing-mode--last-line-spacing line-spacing))
     (setq line-spacing (if mode-p '4 writing-mode--last-line-spacing))
-    ;; (when (eq major-mode 'org-mode)
-    ;;   (org-indent-mode (if mode-p -1 1)))
 
     (setq mode-line-format
           (if mode-p
@@ -68,6 +75,7 @@
 
 ;; NOTE: http://bibdesk.sourceforge.net/
 
+(defvar biblio-directory (concat narf-dropbox-dir "docs/biblio/") "docstring")
 (use-package helm-bibtex
   :defer t
   :config
