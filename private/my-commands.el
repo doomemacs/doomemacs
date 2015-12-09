@@ -47,7 +47,10 @@
 (exmap "@"               'narf/evil-macro-on-all-lines)
 
 (exmap "t[mux]"          'narf:send-to-tmux)
-(exmap "tcd"             (λ (narf:send-to-tmux (format "cd '%s'" default-directory))))
+(exmap "t[mux]w"         'narf/tmux-new-window)
+(exmap "t[mux]s"         'narf/tmux-split-window)
+(exmap "t[mux]v"         (λ (narf/tmux-split-window t)))
+(exmap "tcd"             'narf:tmux-cd)
 
 (exmap "cont[act]"       'narf:org-crm-contact)
 (exmap "proj[ect]"       'narf:org-crm-project)
