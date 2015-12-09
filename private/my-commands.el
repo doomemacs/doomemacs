@@ -19,7 +19,6 @@
 (exmap "en[ew]"          'narf:file-create)
 (exmap "full[scr]"       'narf:toggle-fullscreen)
 (exmap "fullw[rite]"     'narf:toggle-write-mode)
-(exmap "bl[ame]"         'narf:github-browse-file)
 (exmap "http"            'httpd-start)
 (exmap "ini"             'narf:ido-find-file-in-emacsd)
 (exmap "k[ill]"          'kill-this-buffer)          ; Kill current buffer
@@ -53,6 +52,9 @@
 (exmap "cont[act]"       'narf:org-crm-contact)
 (exmap "proj[ect]"       'narf:org-crm-project)
 (exmap "invo[ice]"       'narf:org-crm-invoice)
+
+;; GIT
+(exmap "bl[ame]"         'narf:github-browse-file)
 
 (after! flycheck
   (exmap "er[rors]"      (λ (flycheck-buffer) (flycheck-list-errors))))

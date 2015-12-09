@@ -87,7 +87,8 @@
 (depends-on "neotree")
 
 ;; VCS --- core/core-vcs.el
-(depends-on "diff-hl")
+;; (depends-on "diff-hl")
+(depends-on "git-gutter-fringe")
 (depends-on "gitconfig-mode")
 (depends-on "gitignore-mode")
 (depends-on "github-browse-file")
