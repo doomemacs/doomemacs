@@ -131,7 +131,8 @@ Examples:
                        ("o" . operator)
                        ("m" . motion)
                        ("r" . replace)))
-          key def prefix states)
+          (prefix (if (boundp 'prefix) prefix))
+          key def states)
       (unless keymaps
         (setq keymaps default-keymaps))
       (while rest
@@ -150,7 +151,7 @@ Examples:
                   (setq key :prefix))
                 (pcase key
                   ;; TODO: Data checks
-                  (:prefix      (setq prefix (kbd (pop rest))) nil)
+                  (:prefix      (setq prefix (concat prefix (kbd (pop rest)))) nil)
                   (:map         (setq keymaps (-list (pop rest))) nil)
                   (:unset      `(,(macroexpand `(map! ,(kbd (pop rest)) nil))))
                   (:after       (prog1 `((after! ,(pop rest)   ,(macroexpand `(map! ,@rest)))) (setq rest '())))
