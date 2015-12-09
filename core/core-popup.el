@@ -33,7 +33,7 @@
           ("*Org Links*"           :position bottom :height 2)
 
           ;; REPLs
-          ((lambda (buffer) (with-current-buffer buffer (derived-mode-p 'comint-mode)))
+          ((lambda (buffer) (with-current-buffer buffer (bound-and-true-p repl-toggle-mode)))
            :position bottom :height 0.2 :stick t)
           ))
 
