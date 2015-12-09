@@ -71,11 +71,25 @@
     (message "Running: %s" command)
     (shell-command command)))
 
-(defun narf-switch-to-iterm ()
+(defmacro open-with! (id &optional app dir)
+  `(defun ,(intern (format "os-%s" id)) ()
+     (interactive)
+     (narf-open-with ,app ,dir)))
+
+(open-with! open-in-default-program)
+(open-with! open-in-browser "Google Chrome")
+(open-with! reveal "Finder" default-directory)
+(open-with! reveal-project "Finder" (narf/project-root))
+(open-with! upload "Transmit")
+(open-with! upload-folder "Transmit" default-directory)
+(open-with! send-to-launchbar "LaunchBar")
+(open-with! send-project-to-launchbar "LaunchBar" (narf/project-root))
+
+(defun os-switch-to-term ()
   (interactive)
   (do-applescript "tell application \"iTerm\" to activate"))
 
-(defun narf-switch-to-iterm-and-cd ()
+(defun os-switch-to-term-and-cd ()
   (interactive)
   (narf:send-to-tmux (format "cd %s" (shell-quote-argument default-directory)))
   (narf-switch-to-iterm))
