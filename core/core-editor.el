@@ -212,5 +212,12 @@ enable multiple minor modes for the same regexp.")
   :commands (describe-buffer describe-command describe-file
              describe-keymap describe-option describe-option-of-type))
 
+(use-package guide-key
+  :config
+  (setq guide-key/guide-key-sequence '("," "\\")
+        guide-key/recursive-key-sequence-flag t
+        guide-key/popup-window-position 'bottom)
+  (guide-key-mode 1))  ; Enable guide-key-mode
+
 (provide 'core-editor)
 ;;; core-editor.el ends here
