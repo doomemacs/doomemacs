@@ -1,7 +1,6 @@
 ;;; core-helm.el
 
 (use-package helm
-  :diminish helm-mode
   :init
   (defvar helm-global-prompt "> ")
   (setq-default
@@ -77,7 +76,6 @@
   (helm-mode 1))
 
 (use-package projectile
-  :diminish projectile-mode
   :config
   (add-hook! kill-emacs 'narf|projectile-invalidate-cache-maybe)
 

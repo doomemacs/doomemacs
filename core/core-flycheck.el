@@ -2,7 +2,6 @@
 ;; Related to: lib/defuns-flycheck.el
 
 (use-package flycheck
-  :diminish flycheck-mode
   :commands (flycheck-mode flycheck-list-errors flycheck-buffer)
   :init
   (setq flycheck-indication-mode 'right-fringe

@@ -4,7 +4,6 @@
 
 (use-package yasnippet
   :mode ("emacs\\.d/private/\\(snippets\\|templates\\)/.+$" . snippet-mode)
-  :diminish (yas-minor-mode . "Y")
   :commands (yas-minor-mode
              yas-minor-mode-on
              yas-expand

@@ -39,9 +39,7 @@
   (add-hook! (kill-emacs wg-before-switch-to-workgroup) 'popwin:close-popup-window)
 
   ;; Initialize!
-  (add-hook! after-init
-    (workgroups-mode 1)
-    (diminish 'workgroups-mode)))
+  (add-hook! after-init 'workgroups-mode))
 
 (provide 'core-workgroups)
 ;;; core-workgroups.el ends here

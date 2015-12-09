@@ -72,7 +72,7 @@
   (require 'autoloads))
 (require 'core-vars)
 (require 'core-defuns)
-(require 'diminish)
+;; (require 'diminish)
 
 (autoload 'use-package "use-package" "" nil 'macro)
 (eval-when-compile

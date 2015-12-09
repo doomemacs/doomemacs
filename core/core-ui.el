@@ -103,7 +103,6 @@
 
 (use-package hideshow
   :commands (hs-minor-mode hs-toggle-hiding hs-already-hidden-p)
-  :diminish hs-minor-mode
   :config (setq hs-isearch-open t)
   :init
   (after! evil
@@ -146,7 +145,6 @@
       (hl-line-mode (if rainbow-mode -1 1)))))
 
 (use-package volatile-highlights
-  :diminish volatile-highlights-mode
   :config
   (vhl/define-extension 'my-undo-tree-highlights
     'undo-tree-undo 'undo-tree-redo)
@@ -376,7 +374,7 @@ iedit."
      narf-env-version
      narf-buffer-encoding-abbrev
      (narf-major-mode
-      (minor-modes :separator " " :tight t)
+      ;; (minor-modes :separator " " :tight t)
       process :when active)
      (global :when active)
      ("%l·%c" narf-buffer-position)

@@ -72,7 +72,6 @@
   (associate! nodejs-mode :files ("package.json") :in (js2-mode)))
 
 (use-package tern
-  :diminish tern-mode
   :commands tern-mode
   :init (add-hook! js2-mode 'tern-mode)
   :config

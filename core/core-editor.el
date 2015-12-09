@@ -78,9 +78,7 @@ enable multiple minor modes for the same regexp.")
 (add-hook! python-mode    'electric-indent-local-mode)
 (add-hook! makefile-mode  'narf|enable-tabs) ; Use normal tabs in makefiles
 (add-hook! before-save    'delete-trailing-whitespace)
-(add-hook! eldoc-mode     (diminish 'eldoc-mode " ?"))
 (add-hook! prog-mode      'narf|enable-comment-hard-wrap)
-(add-hook! auto-fill-mode (diminish 'auto-fill-function))
 (add-hook! special-mode   (setq truncate-lines nil))
 (add-hook! change-major-mode-hook
   (when indent-tabs-mode (whitespace-mode +1)))
@@ -121,7 +119,6 @@ enable multiple minor modes for the same regexp.")
 ;; Plugins ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package undo-tree
-  :diminish undo-tree-mode
   :config
   (defalias 'redo #'undo-tree-redo)
   (defalias 'undo #'undo-tree-undo)
@@ -159,7 +156,6 @@ enable multiple minor modes for the same regexp.")
 (use-package smart-forward :commands (smart-up smart-down smart-left smart-right))
 
 (use-package smartparens
-  :diminish smartparens-mode
   :functions sp-insert-pair
   :config
   (setq sp-autowrap-region nil          ; let evil-surround handle this

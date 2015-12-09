@@ -37,7 +37,6 @@
            :n "tV" 'nosetests-pdb-module)))
 
   (use-package anaconda-mode
-    :diminish anaconda-mode
     :defines (anaconda-mode-map anaconda-nav-mode-map)
     :functions (anaconda-mode-running-p)
     :init

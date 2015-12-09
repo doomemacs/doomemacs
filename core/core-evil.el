@@ -209,7 +209,6 @@
   (define-key evil-outer-text-objects-map "a" #'evil-outer-arg))
 
 (use-package evil-commentary
-  :diminish evil-commentary-mode
   :commands (evil-commentary
              evil-commentary-yank
              evil-commentary-line)
@@ -221,7 +220,6 @@
   (advice-add 'evil-force-normal-state :after 'narf*evil-exchange-off))
 
 (use-package evil-iedit-state
-  :diminish iedit-mode
   :functions (iedit-current-occurrence-string iedit-restrict-region)
   :commands (evil-iedit-state evil-iedit-state/iedit-mode)
   :config
@@ -305,7 +303,6 @@
   (advice-add 'evil-force-normal-state :after 'evil-search-highlight-persist-remove-all))
 
 (use-package evil-snipe
-  :diminish evil-snipe-local-mode
   :init
   (setq-default
    evil-snipe-smart-case t

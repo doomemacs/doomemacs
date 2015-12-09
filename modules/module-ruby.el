@@ -88,7 +88,6 @@
     (define-company-backend! inf-ruby-mode (inf-ruby))))
 
 (use-package robe
-  :diminish "R"
   :commands (robe-mode robe-start ruby-load-file)
   :init
   (add-hook! ruby-mode
