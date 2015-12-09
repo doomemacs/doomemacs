@@ -24,12 +24,15 @@
  "M-="  'text-scale-increase
  "M--"  'text-scale-decrease
 
+ ;; debug
+ "<f9>" 'what-face
+
  "M-b"  'narf:build
  "M-t"  'helm-projectile-find-file
- "<f9>" 'what-face
  "A-`"  'narf-switch-to-iterm
- "C-`"  'narf/popup-toggle
+ "C-`"  'popwin:messages
  "C-~"  'rtog/toggle-repl
+ "M-`"  'narf/popup-toggle
 
  "M-w"  'evil-window-delete
  "M-W"  'delete-frame
@@ -41,6 +44,9 @@
  "C-k"  'evil-window-up
  "C-h"  'evil-window-left
  "C-l"  'evil-window-right
+
+ "C-<escape>" 'evil-emacs-state
+ :e "C-<escape>" 'evil-normal-state
 
  :m "M-j"  'narf/multi-next-line
  :m "M-k"  'narf/multi-previous-line
@@ -91,133 +97,152 @@
 
  :m ";" 'evil-ex
  (:leader
-  :nv ","   (λ (if (narf/project-p) (helm-projectile-switch-to-buffer) (helm-buffers-list)))
-  :nv "<"   'helm-buffers-list
-  :nv "."   'helm-find-files
-  :nv ">"   'helm-projectile-find-file-in-known-projects
-  :nv "/"   'helm-projectile-find-file
-  :nv ";"   'helm-semantic-or-imenu
-  :nv ":"   'helm-imenu-in-all-buffers
-  :nv "]"   'helm-etags-select
-  :nv "a"   'helm-projectile-find-other-file
-  :nv "E"  (λ (in! narf-emacs-dir (helm-projectile-find-file)))
-  :nv "m"   'helm-recentf
-  :nv "M"   'helm-projectile-recentf  ; recent PROJECT files
-  :nv "P"   'helm-projectile-switch-project
-  :v  "="   'align-regexp
-  :nv "r"   'emr-show-refactor-menu
-  :n  "R"   'narf/reset-theme
+   :nv ","  'narf/helm-buffers-dwim
+   :nv "<"  'helm-buffers-list
+   :nv "."  'helm-find-files
+   :nv ">"  'helm-projectile-find-file-in-known-projects
+   :nv "/"  'helm-projectile-find-file
+   :nv ";"  'helm-semantic-or-imenu
+   :nv ":"  'helm-imenu-in-all-buffers
+   :nv "]"  'helm-etags-select
+   :nv "a"  'helm-projectile-find-other-file
+   :nv "E"  'narf/helm-projectile-in-emacsd
+   :nv "m"  'helm-recentf
+   :nv "M"  'helm-projectile-recentf  ; recent PROJECT files
+   :nv "P"  'helm-projectile-switch-project
+   :v  "="  'align-regexp
 
-  :n  "s"  (λ (narf:yas-snippets t))        ; ido snippets dir
-  :n  "h"  'diff-hl-diff-goto-hunk
-  :n  "e"  'narf/flycheck-errors
-  :nv "p"  'helm-show-kill-ring
+   :n  "h"  'help-command
+   :nv "p"  'helm-show-kill-ring
+   :n  "R"  'narf/reset-theme
+   :n  "e"  'narf/flycheck-errors
+   :n  "s"  'yas-visit-snippet-file
+   :n  "S"  'narf/yas-find-file
+   :n  "d"  'narf/vcs-show-hunk
 
-  :n  "b"  'helm-bookmarks
-  :n  "w"  'narf:workgroup-display
-  :n  "W"  'narf:helm-wg
+   :n  "b"  'helm-bookmarks
+   :n  "w"  'narf:workgroup-display
+   :n  "W"  'narf:helm-wg
 
-  :nv "n"  'narf/neotree-toggle
-  :nv "N"  'narf/neotree-find
-  :nv "t"  'narf-switch-to-iterm
-  :nv "l"  'narf/nlinum-toggle
-  :nv "\\"  'evil-emacs-state
+   :n  "n"  'narf/neotree-toggle
+   :n  "N"  'narf/neotree-find
+   :nv "l"  'narf/nlinum-toggle
 
-  :nv "qq"  'evil-save-and-quit
-  :nv "QQ"  'narf/kill-all-buffers-do-not-remember
+   :nv "qq" 'evil-save-and-quit
+   :nv "QQ" 'narf/kill-all-buffers-do-not-remember
 
-  ;; Open with O/S
-  :n  "oo"  'narf-open-with
-  :n  "ob"  (λ (narf-open-with "Google Chrome"))
-  :n  "of"  (λ (narf-open-with "Finder.app" default-directory))
-  :n  "oF"  (λ (narf-open-with "Finder.app" (narf/project-root)))
-  :n  "ou"  (λ (narf-open-with "Transmit"))
-  :n  "oU"  (λ (narf-open-with "Transmit" default-directory))
-  :n  "ol"  (λ (narf-open-with "LaunchBar"))
-  :n  "oL"  (λ (narf-open-with "LaunchBar" default-directory))
-  :n  "ot"  (λ (narf:tmux-chdir nil t))
-  :n  "oT"  'narf:tmux-chdir
+   ;; Tmux
+   (:prefix "t"
+     :n  "." 'narf/tmux-cd-to-here
+     :n  "/" 'narf/tmux-cd-to-project
+     :n  "s" 'narf/tmux-split-window
+     :n  "v" 'narf/tmux-vsplit-window
+     :n  "c" 'narf/tmux-new-window
+     :v  "r" 'narf:tmux)
 
-  ;; Org notes
-  :nv "x."  (λ (in! org-directory (let ((helm-ff-skip-boring-files t)) (helm-find-files-1 org-directory))))
-  :nv "x/"  'narf/helm-org
-  :nv "xp"  'narf/helm-org-crm-projects
-  :nv "xc"  'narf/helm-org-crm-contacts
-  :nv "xi"  'narf/helm-org-crm-invoices
-  :nv "xw"  'narf/helm-org-writing)
+   ;; Open with O/S
+   :n "O" 'os-reveal
+   (:prefix "o"
+     :n  "o" 'os-open-in-default-program
+     :n  "p" 'os-reveal-project
+     :n  "b" 'os-open-in-chrome
+     :n  "u" 'os-upload
+     :n  "U" 'os-upload-folder
+     :n  "l" 'os-send-to-launchbar
+     :n  "L" 'os-send-project-to-launchbar
+     :n  "t" 'os-switch-to-term
+     :n  "T" 'os-switch-to-term-and-cd)
+
+   ;; Org notes
+   :n "X" 'narf/org-open-notes
+   (:prefix "x"
+     :n  "." 'narf/helm-org-find-files
+     :n  "/" 'narf/helm-org
+     :n  "p" 'narf/helm-org-crm-projects
+     :n  "c" 'narf/helm-org-crm-contacts
+     :n  "i" 'narf/helm-org-crm-invoices
+     :n  "w" 'narf/helm-org-writing))
 
  (:localleader
-  :n  "\\" 'narf/neotree-toggle
-  :n  "."  'narf/neotree-find)
+   :n  "b" 'narf:build
+   :n  "R" 'narf:repl
+   :v  "R" 'narf:repl-eval
+   :v  "r" 'narf:eval-region
+   (:prefix "r"
+     :n  "e" 'emr-show-refactor-menu
+     :n  "r" 'narf:eval-buffer
+     :n  "b" 'narf:build)
+
+   ;; :n "t" unit tests prefix
+   )
 
  :nv "K"  'smart-up
 
  ;; Don't move cursor on indent
- :n "="   (λ (save-excursion (call-interactively 'evil-indent)))
- :v "="   'evil-indent
+ :n  "="  (λ (save-excursion (call-interactively 'evil-indent)))
+ :v  "="  'evil-indent
 
- :n "zr"  'narf/evil-open-folds
- :n "zm"  'narf/evil-close-folds
- :n "zx"  'narf:kill-real-buffer
- :n "ZX"  'bury-buffer
+ :n  "zr" 'narf/evil-open-folds
+ :n  "zm" 'narf/evil-close-folds
+ :n  "zx" 'narf:kill-real-buffer
+ :n  "ZX" 'bury-buffer
 
- :n "]b"  'narf/next-real-buffer
- :n "[b"  'narf/previous-real-buffer
- :m "]g"  'diff-hl-next-hunk
- :m "[g"  'diff-hl-previous-hunk
- :m "]e"  'narf/flycheck-next-error
- :m "[e"  'narf/flycheck-previous-error
+ :n  "]b" 'narf/next-real-buffer
+ :n  "[b" 'narf/previous-real-buffer
+ :m  "]d" 'narf/vcs-next-hunk
+ :m  "[d" 'narf/vcs-prev-hunk
+ :m  "]e" 'narf/flycheck-next-error
+ :m  "[e" 'narf/flycheck-previous-error
  ;; Switch workgroups
- :n "]w"  'narf:switch-to-workgroup-right
- :n "[w"  'narf:switch-to-workgroup-left
- :m "gt"  'narf:switch-to-workgroup-right
- :m "gT"  'narf:switch-to-workgroup-left
+ :n  "]w" 'narf:switch-to-workgroup-right
+ :n  "[w" 'narf:switch-to-workgroup-left
+ :m  "gt" 'narf:switch-to-workgroup-right
+ :m  "gT" 'narf:switch-to-workgroup-left
 
  ;; Increment/decrement number under cursor
- :n "g="  'evil-numbers/inc-at-pt
- :n "g-"  'evil-numbers/dec-at-pt
+ :n  "g=" 'evil-numbers/inc-at-pt
+ :n  "g-" 'evil-numbers/dec-at-pt
 
- :n "gc"  'evil-commentary
- :n "gx"  'evil-exchange
- :n "gr"  'narf:eval-region
- :n "gR"  'narf:eval-buffer
- :v "gR"  'narf:eval-region-and-replace
- :m "gl"  'avy-goto-line
- :m "g]"  'smart-right
- :m "g["  'smart-left
- :v "@"   'narf/evil-macro-on-all-lines
- :n "g@"  'narf/evil-macro-on-all-lines
+ :n  "gc" 'evil-commentary
+ :n  "gx" 'evil-exchange
+ :n  "gr" 'narf:eval-region
+ :n  "gR" 'narf:eval-buffer
+ :v  "gR" 'narf:eval-region-and-replace
+ :m  "g]" 'smart-right
+ :m  "g[" 'smart-left
+ :v  "@"  'narf/evil-macro-on-all-lines
+ :n  "g@" 'narf/evil-macro-on-all-lines
 
- :v "."   'evil-repeat
+ :v  "."  'evil-repeat
 
  ;; vnoremap < <gv
- :v "<"   (λ (evil-shift-left (region-beginning) (region-end))
+ :v  "<"  (λ (evil-shift-left (region-beginning) (region-end))
              (evil-normal-state)
              (evil-visual-restore))
  ;; vnoremap > >gv
- :v ">"   (λ (evil-shift-right (region-beginning) (region-end))
+ :v  ">"  (λ (evil-shift-right (region-beginning) (region-end))
              (evil-normal-state)
              (evil-visual-restore))
 
  ;; undo/redo for regions
- :nv "u"    'undo-tree-undo
- :nv "C-r"  'undo-tree-redo
+ ;; :nv "u"   'undo-tree-undo
+ ;; :nv "C-r" 'undo-tree-redo
 
- :v "*"   'evil-visualstar/begin-search-forward
- :v "#"   'evil-visualstar/begin-search-backward
+ :v  "*"   'evil-visualstar/begin-search-forward
+ :v  "#"   'evil-visualstar/begin-search-backward
 
  ;; paste from recent yank register; which isn't overwritten by deletes or
  ;; other operations.
- :n "Y"   "y$"
- :v "P"   "\"0p"
+ :n  "Y"   "y$"
+ :v  "P"   "\"0p"
 
- :v "S"   'evil-surround-region
- :v "R"   'evil-iedit-state/iedit-mode  ; edit all instances of marked region
- :v "v"   'er/expand-region
- :v "V"   'er/contract-region
+ :v  "S"   'evil-surround-region
+ :v  "R"   'evil-iedit-state/iedit-mode  ; edit all instances of marked region
+ :v  "v"   'er/expand-region
+ :v  "V"   'er/contract-region
 
  ;; aliases for %
- :m "%"   'evilmi-jump-items
+ :m  "%"   'evilmi-jump-items
  :m [tab] (λ (cond ((eq major-mode 'org-mode)
                     (org-cycle))
                    (t (if (ignore-errors (hs-already-hidden-p))
@@ -225,21 +250,21 @@
                         (call-interactively 'evilmi-jump-items)))))
 
  ;; Textmate-esque newlines
- :i "<backspace>"   'backward-delete-char-untabify
- :i "<M-backspace>" 'narf/backward-kill-to-bol-and-indent
- :i "<C-return>"    'evil-ret-and-indent
+ :i  "<backspace>"   'backward-delete-char-untabify
+ :i  "<M-backspace>" 'narf/backward-kill-to-bol-and-indent
+ :i  "<C-return>"    'evil-ret-and-indent
 
  ;; escape from insert mode (more responsive than using key-chord-define)
  :ir  "j"    'narf:exit-mode-maybe
  :ir  "J"    'narf:exit-mode-maybe
  :irv "C-g"  'evil-normal-state
 
- :o "s"      'evil-surround-edit
- :o "S"      'evil-Surround-edit
+ :o  "s"     'evil-surround-edit
+ :o  "S"     'evil-Surround-edit
 
- :n "!"      'rotate-word-at-point
- :v "!"      'rotate-region
- :e "<escape>" 'evil-normal-state
+ :n  "!"     'rotate-word-at-point
+ :v  "!"     'rotate-region
+ :e  "<escape>" 'evil-normal-state
 
  (:map evil-window-map ; prefix "C-w"
    "u"       'narf/undo-window-change
@@ -267,17 +292,18 @@
 
  ;; Vim omni-complete emulation
  :i "C-SPC"     'company-complete-common
- :i "C-x C-l"   'narf/company-whole-lines
- :i "C-x C-k"   'company-dict
- :i "C-x C-f"   'company-files
- :i "C-x C-]"   'company-tags
- :i "C-x s"     'company-ispell
- :i "C-x C-s"   'company-yasnippet
- :i "C-x C-o"   'company-semantic
- :i "C-x C-n"   'company-dabbrev-code
- :i "C-x C-p"   (λ (let ((company-selection-wrap-around t))
-                     (call-interactively 'company-dabbrev-code)
-                     (company-select-previous-or-abort)))
+ (:prefix "C-x"
+   :i "C-l"   'narf/company-whole-lines
+   :i "C-k"   'company-dict
+   :i "C-f"   'company-files
+   :i "C-]"   'company-tags
+   :i "s"     'company-ispell
+   :i "C-s"   'company-yasnippet
+   :i "C-o"   'company-semantic
+   :i "C-n"   'company-dabbrev-code
+   :i "C-p"   (λ (let ((company-selection-wrap-around t))
+                   (call-interactively 'company-dabbrev-code)
+                   (company-select-previous-or-abort))))
 
  (:after company
    (:map company-active-map
@@ -299,18 +325,18 @@
      [escape]     'company-search-abort))
 
  (:after help-mode
+   (:map help-map
+     "e" 'narf:popup-messages
+     ;; Remove slow/annoying help subsections
+     "h" nil
+     "g" nil)
    (:map help-mode-map
      :n "]]" 'help-go-forward
      :n "[[" 'help-go-back
      :n "<escape>" (λ (kill-buffer)
                       (if (narf/popup-p (current-buffer))
                           (narf/popup-close)
-                        (evil-window-delete)))))
-
- (:map view-mode-map
-   "<escape>" 'View-quit-all)
-
- (:map evil-ex-completion-map "C-a" 'move-beginning-of-line))
+                        (evil-window-delete))))))
 
 ;; Line-wise mouse selection on margin
 (global-set-key (kbd "<left-margin> <down-mouse-1>") 'narf/mouse-drag-line)
@@ -331,8 +357,8 @@
       :i "<C-tab>" 'indent-for-tab-command
 
       ;; No dumb-tab for lisp
-      :i :map lisp-mode-map        [remap narf/dumb-indent] 'indent-for-tab-command
-      :i :map emacs-lisp-mode-map  [remap narf/dumb-indent] 'indent-for-tab-command
+      (:map lisp-mode-map        :i [remap narf/dumb-indent] 'indent-for-tab-command)
+      (:map emacs-lisp-mode-map  :i [remap narf/dumb-indent] 'indent-for-tab-command)
 
       ;; Highjacks space/backspace to:
       ;;   a) delete spaces on either side of the cursor, if present ( | ) -> (|)
@@ -373,7 +399,7 @@
       :n "<S-M-return>"  (λ (save-excursion (evil-insert-newline-above)))
 
       ;; Make ESC quit all the things
-      :e [escape] 'narf-minibuffer-quit
+      :e [escape] 'evil-normal-state
       (:map (minibuffer-local-map
              minibuffer-local-ns-map
              minibuffer-local-completion-map
@@ -382,23 +408,18 @@
         [escape] 'narf-minibuffer-quit
         "C-r" 'evil-paste-from-register)
 
-      :map read-expression-map "C-w" 'backward-kill-word)
+      (:map read-expression-map "C-w" 'backward-kill-word)
 
+      (:map view-mode-map "<escape>" 'View-quit-all)
+
+      (:map evil-ex-completion-map "C-a" 'move-beginning-of-line))
+
+;; Common unicode characters
 (map! :i "A-o" (λ (insert "ø"))
       :i "A-O" (λ (insert "Ø"))
 
       :i "A--" (λ (insert "–"))
       :i "A-_" (λ (insert "—")))
-
-;; Disable the global drag-mouse map; clicking in new buffers often sends evil
-;; into visual mode, which is UN...ACCEPTAABBLLLEEEE!
-(global-unset-key (kbd "<drag-mouse-1>"))
-
-(define-key help-map "e" 'narf:popup-messages)
-
-;; Remove slow/annoying help subsections
-(define-key help-map "h" nil)
-(define-key help-map "g" nil)
 
 (provide 'my-bindings)
 ;;; my-bindings.el ends here
