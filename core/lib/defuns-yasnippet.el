@@ -83,17 +83,11 @@ normal mode if there are no fields."
       (delete-region sof (point)))))
 
 ;; Snippet helpers ;;;;;;;;;;;;;;;;;;;;;
-;;;###autoload (autoload 'narf:yas-snippets "defuns-yasnippet" nil t)
-(evil-define-command narf:yas-snippets (&optional bang)
-  (interactive "<!>")
-  (if bang
-      (narf/ido-find-file (car narf-snippet-dirs))
-    (yas-visit-snippet-file)))
-
 ;;;###autoload
-(defun narf:yas-file-templates ()
+(defun narf/yas-find-file ()
+  "Browse through snippets folder"
   (interactive)
-  (narf/ido-find-file (cdr narf-snippet-dirs)))
+  (narf/ido-find-file (car narf-snippet-dirs)))
 
 (provide 'defuns-yasnippet)
 ;;; nlinum-defuns.el ends here
