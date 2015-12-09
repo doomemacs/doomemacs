@@ -1,6 +1,7 @@
 ;;; module-lisp --- all things lisp
 ;; see lib/elisp-defuns.el
 
+(define-repl! emacs-lisp-mode ielm)
 (add-hook! emacs-lisp-mode 'turn-on-eldoc-mode)
 
 ;; [pedantry intensifies]

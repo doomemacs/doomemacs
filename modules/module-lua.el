@@ -4,11 +4,16 @@
   :mode "\\.lua$"
   :interpreter "lua"
   :init
+  (define-repl! lua-mode narf-inf-lua)
   (setq-default lua-indent-level tab-width)
   ;; (after! company-dict
   ;;   (add-to-list 'company-dict-minor-mode-alist 'love-mode))
   (add-hook! lua-mode '(narf|enable-tab-width-2 flycheck-mode))
-  (add-hook! lua-mode (setq lua-indent-level 2)))
+  (add-hook! lua-mode (setq lua-indent-level 2))
+
+  (defun narf-inf-lua ()
+    (lua-start-process "lua" "lua")
+    (pop-to-buffer lua-process-buffer)))
 
 (define-minor-mode love-mode
   "Buffer local minor mode for Love2D"

@@ -9,5 +9,9 @@ additional check to make sure they exist in the project root."
                (narf/project-has-files ,build-file))
        (setq narf--build-command '(,command . ,build-file)))))
 
+;;;###autoload
+(defmacro define-repl! (mode command)
+    `(push '(,mode . ,command) rtog/mode-repl-alist))
+
 (provide 'macros-quickrun)
 ;;; macros-quickrun.el ends here

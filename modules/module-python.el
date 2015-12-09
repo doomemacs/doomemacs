@@ -12,6 +12,10 @@
    python-shell-interpreter "ipython")
   :config
   (define-env-command! python-mode "python --version | cut -d' ' -f2")
+  (define-repl! python-mode narf-inf-python)
+
+  (defun narf-inf-python ()
+    (run-python python-shell-interpreter t t))
 
   ;; interferes with smartparens
   (define-key python-mode-map (kbd "DEL") nil)

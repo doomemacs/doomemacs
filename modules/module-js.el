@@ -3,6 +3,8 @@
 (use-package js2-mode
   :mode "\\.js$"
   :interpreter "node"
+  :init
+  (define-repl! js2-mode nodejs-repl)
   :config
   (setq-default
    js2-skip-preprocessor-directives t

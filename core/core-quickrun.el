@@ -17,16 +17,11 @@
 
 (use-package repl-toggle
   :commands (rtog/toggle-repl rtog/add-repl)
-  :config
+  :init
   (setq rtog/goto-buffer-fun 'popwin:pop-to-buffer
-        rtog/mode-repl-alist
-        '((php-mode . php-boris)
-          (python-mode . run-python)
-          (lua-mode . run-lua)
-          (emacs-lisp-mode . ielm)
-          (ruby-mode . inf-ruby)
-          (js2-mode . nodejs-repl)))
-  )
+        rtog/mode-repl-alist '())
+
+  (add-hook! repl-toggle-mode (evil-initialize-state 'emacs)))
 
 (provide 'core-quickrun)
 ;;; core-quickrun.el ends here

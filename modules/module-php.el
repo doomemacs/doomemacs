@@ -24,7 +24,12 @@
   (require 'php-refactor-mode)
   (add-hook! php-mode '(turn-on-eldoc-mode emr-initialize php-refactor-mode)))
 
-(use-package php-boris :defer t)
+(use-package php-boris :defer t
+  :init
+  (define-repl! php-mode php-boris)
+  :config
+  (evil-set-initial-state 'php-boris-mode 'emacs)
+  (setq php-boris-command "~/.dotfiles/scripts/run-boris"))
 
 (use-package hack-mode :mode "\\.hh$")
 
