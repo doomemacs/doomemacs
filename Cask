@@ -64,6 +64,7 @@
 (depends-on "rotate-text" :git "https://github.com/debug-ito/rotate-text.el")
 (depends-on "smart-forward")
 (depends-on "smartparens")
+(depends-on "guide-key")
 
 ;; Completion --- core/core-company.el
 (depends-on "company")
@@ -104,7 +105,7 @@
 
 ;; Quickrun -- core/core-quickrun.el
 (depends-on "quickrun")
-(depends-on "repl-toggle")
+(depends-on "repl-toggle" :git "https://github.com/hlissner/repl-toggle")
 
 ;; Workgroups --- core/core-workgroups.el
 (depends-on "workgroups2")
@@ -166,9 +167,10 @@
 
 ;; Org -- modules/module-org.el
 (depends-on "company-math")
+(depends-on "ox-pandoc")
 (depends-on "org-plus-contrib")
-(depends-on "org-opml" :git "https://github.com/edavis/org-opml")
 (depends-on "org-download")
+(depends-on "org-opml" :git "https://github.com/edavis/org-opml")
 (depends-on "ob-http")
 (depends-on "ob-go" :git "https://github.com/pope/ob-go")
 
