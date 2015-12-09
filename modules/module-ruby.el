@@ -81,8 +81,10 @@
 
 (use-package inf-ruby
   :commands (inf-ruby inf-ruby-console-auto)
+  :init
+  (define-repl! ruby-mode inf-ruby)
   :config
-  (evil-set-initial-state 'inf-ruby-mode 'insert)
+  (evil-set-initial-state 'inf-ruby-mode 'emacs)
   (after! company
     (require 'company-inf-ruby)
     (define-company-backend! inf-ruby-mode (inf-ruby))))
