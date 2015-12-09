@@ -9,25 +9,13 @@ mark isn't active, then widen the buffer (if narrowed).
 Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
   (interactive "<r><!>")
   (if (region-active-p)
-      (if bang
-          (progn
-            (deactivate-mark)
-            (let ((buf (clone-indirect-buffer nil nil)))
-              (with-current-buffer buf
-                (narrow-to-region start end))
-              (switch-to-buffer buf)))
-        (fancy-narrow-to-region beg end))
-    (narf:widen)))
-
-;;;###autoload
-(defun narf:widen ()
-  "Widen a buffer that has been narrowed with `narrow-to-region' or
-`fancy-narrow-to-region'"
-  (interactive)
-  (when (buffer-narrowed-p)
-    (widen))
-  (when (and (featurep 'fancy-narrow) fancy-narrow--beginning fancy-narrow--end)
-    (fancy-widen)))
+      (progn
+        (deactivate-mark)
+        (let ((buf (clone-indirect-buffer nil nil)))
+          (with-current-buffer buf
+            (narrow-to-region start end))
+          (switch-to-buffer buf)))
+    (widen)))
 
 ;;;###autoload
 (defun narf/set-read-only-region (begin end)
