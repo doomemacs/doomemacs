@@ -17,6 +17,7 @@
 (exmap "dash"            'dash-at-point)
 (exmap "echo"            'narf:echo)
 (exmap "en[ew]"          'narf:file-create)
+(exmap "fi[nd]"          'narf:helm-swoop)
 (exmap "full[scr]"       'narf:toggle-fullscreen)
 (exmap "fullw[rite]"     'narf:toggle-write-mode)
 (exmap "http"            'httpd-start)
@@ -30,9 +31,8 @@
 (exmap "ma[ke]"          'narf:build)
 (exmap "mv"              'narf:file-move)
 (exmap "na[rrow]"        'narf:narrow)               ; Narrow buffer to selection
-(exmap "org"             (λ (in! org-directory (call-interactively 'narf:helm-ag-search))))
-(exmap "wi[den]"         'narf:widen)                ; Widen narrowed buffer
-(exmap "pop"             'narf/popup-toggle)
+(exmap "org"             'narf/helm-org)
+(exmap "repl"            'narf:repl)
 (exmap "proj[ect]"       'helm-projectile-switch-project)
 (exmap "rec[ent]"        'narf:helm-recentf)
 (exmap "re[gex]"         'narf:regex)
@@ -41,7 +41,6 @@
 (exmap "rm"              'narf:file-delete)          ; rm[!]
 (exmap "settr[im]"       'narf:toggle-delete-trailing-whitespace)
 (exmap "snip[pets]"      'narf:yas-snippets)         ; snip[!]
-(exmap "fi[nd]"          'narf:helm-swoop)
 (exmap "tsnip[pets]"     'narf:yas-file-templates)   ; tsnip[!]
 (exmap "x"               'narf:scratch-buffer)
 (exmap "@"               'narf/evil-macro-on-all-lines)
