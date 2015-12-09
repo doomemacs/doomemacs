@@ -23,6 +23,24 @@
    (local-key-binding key)
    (global-key-binding key)))
 
+;;;###autoload
+(defun what-major-mode ()
+  (interactive)
+  (message "Mode: %s" major-mode))
+
+;;;###autoload
+(defun what-minor-modes ()
+  (interactive)
+  (let ((buf (get-buffer-create "*minor-modes*")))
+    (with-current-buffer buf
+      (insert "Active minor modes:\n + ")
+      (insert (s-join "\n + " (-filter
+                               (lambda (k) (and k (not (string= k ""))))
+                               (mapcar (lambda (mm) (symbol-name (car mm)))
+                                       minor-mode-alist)))))
+    (popwin:pop-to-buffer buf)))
+
+
 ;;;###autoload (autoload 'narf:echo "defuns-debug" nil t)
 (evil-define-command narf:echo (bang message)
   "Display MSG in echo-area without logging it in *Messages* buffer."
