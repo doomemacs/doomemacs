@@ -11,7 +11,7 @@ additional check to make sure they exist in the project root."
 
 ;;;###autoload
 (defmacro define-repl! (mode command)
-    `(push '(,mode . ,command) rtog/mode-repl-alist))
+  `(push '(,mode . ,command) rtog/mode-repl-alist))
 
 (provide 'macros-quickrun)
 ;;; macros-quickrun.el ends here
