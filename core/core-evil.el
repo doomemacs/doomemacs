@@ -52,10 +52,10 @@
   (evil-define-key 'normal evil-command-window-mode-map [escape] 'kill-buffer-and-window)
 
   ;; Monkey-patch an error triggered randomly during column-selection; is caused
-  ;; by `extract-rectangle-line' receiving a float.
-  (defun narf*evil-extract-rectangle-line-fix (args)
+  ;; by `evil-move-to-column' receiving a float.
+  (defun narf*evil-move-to-column-fix (args)
     (mapcar (lambda (i) (if (numberp i) (truncate i) i)) args))
-  (advice-add 'extract-rectangle-line :filter-args 'narf*evil-extract-rectangle-line-fix)
+  (advice-add 'evil-move-to-column :filter-args 'narf*evil-move-to-column-fix)
 
   ;; modes to map to different default states
   (dolist (mode-map '((cider-repl-mode           . emacs)
@@ -249,11 +249,11 @@
   (define-key evil-inner-text-objects-map "J" 'evil-indent-plus-i-indent-up-down)
   (define-key evil-outer-text-objects-map "J" 'evil-indent-plus-a-indent-up-down))
 
-;; (use-package evil-jumper
-;;   :init
-;;   (setq evil-jumper-auto-center nil
-;;         evil-jumper-auto-save-interval 3600)
-;;   :config (global-evil-jumper-mode +1))
+(use-package evil-jumper
+  :init
+  (setq evil-jumper-auto-center nil
+        evil-jumper-auto-save-interval 3600)
+  :config (global-evil-jumper-mode +1))
 
 (use-package evil-matchit
   :commands (evilmi-jump-items evilmi-text-object global-evil-matchit-mode)
