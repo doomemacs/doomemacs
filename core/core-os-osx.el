@@ -4,6 +4,7 @@
 
 ;; Use a shared clipboard
 (setq x-select-enable-clipboard t
+      select-enable-clipboard t
       ;; Prefixes: Command = M, Alt = A
       mac-command-modifier 'meta
       mac-option-modifier  'alt
@@ -11,7 +12,7 @@
       ;; sane trackpad/mouse scroll settings
       mac-redisplay-dont-reset-vscroll t
       mac-mouse-wheel-smooth-scroll nil
-      mouse-wheel-scroll-amount '(6 ((shift) . 2))  ;; one line at a time
+      mouse-wheel-scroll-amount '(5 ((shift) . 2))  ;; one line at a time
       mouse-wheel-progressive-speed nil             ;; don't accelerate scrolling
 
       ;;; NOTE Meaningless to railwaycat's emacs-mac build
