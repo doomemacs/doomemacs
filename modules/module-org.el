@@ -306,9 +306,7 @@ will function properly."
   (evil-org-mode +1)
   (org-bullets-mode +1)
   (org-indent-mode +1)
-  ;; (text-scale-set 1)
-
-  (diminish 'org-indent-mode)
+  (text-scale-set 1)
 
   (narf|enable-tab-width-2)
   (setq truncate-lines nil)
