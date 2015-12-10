@@ -1,14 +1,15 @@
 .cask/
+eshell/
+private/cache/
+var/
+core/autoloads.el
 .mc-lists.el
 .org-id-locations
-eshell/
-core/autoloads.el
 auto-save-list
 semanticdb
 ede-projects.el
 tramp
 smex-items
-private/cache/
 
 # compiled files
 *.elc
