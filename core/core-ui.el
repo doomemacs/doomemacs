@@ -173,7 +173,7 @@
     (narf|nlinum-unhl-line))
 
   (add-hook!
-    (markdown-mode prog-mode scss-mode web-mode)
+    (markdown-mode prog-mode scss-mode web-mode conf-mode)
     'narf|nlinum-enable)
   :config
   (defun narf|nlinum-unhl-line ()

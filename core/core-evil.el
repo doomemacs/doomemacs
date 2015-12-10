@@ -51,12 +51,6 @@
 
   (evil-define-key 'normal evil-command-window-mode-map [escape] 'kill-buffer-and-window)
 
-  ;; Monkey-patch an error triggered randomly during column-selection; is caused
-  ;; by `evil-move-to-column' receiving a float.
-  (defun narf*evil-move-to-column-fix (args)
-    (mapcar (lambda (i) (if (numberp i) (truncate i) i)) args))
-  (advice-add 'evil-move-to-column :filter-args 'narf*evil-move-to-column-fix)
-
   ;; modes to map to different default states
   (dolist (mode-map '((cider-repl-mode           . emacs)
                       (comint-mode               . emacs)
@@ -92,11 +86,11 @@
         (narf-minibuffer-quit)))
 
     ;; Monkey-patch an error triggered randomly during column-selection caused
-    ;; by `extract-rectangle-line' receiving a float:
+    ;; by `evil-move-to-column' receiving a float:
     ;;   evil-move-to-column: Wrong type argument: wholenump, 12.0
-    (defun narf*evil-extract-rectangle-line-fix (args)
+    (defun narf*evil-move-to-column-fix (args)
       (mapcar (lambda (i) (if (numberp i) (truncate i) i)) args))
-    (advice-add 'extract-rectangle-line :filter-args 'narf*evil-extract-rectangle-line-fix)
+    (advice-add 'evil-move-to-column :filter-args 'narf*evil-move-to-column-fix)
 
     ;; buffer-local ex commands, thanks to:
     ;; http://emacs.stackexchange.com/questions/13186

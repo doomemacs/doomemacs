@@ -1,7 +1,8 @@
 ;;; module-writing.el
 
 ;; From <https://github.com/joostkremers/visual-fill-column/pull/6>
-(advice-add 'split-window :around #'visual-fill-column--disable-on-split-window)
+(after! visual-fill-column
+  (advice-add 'split-window :around #'visual-fill-column--disable-on-split-window))
 (defun visual-fill-column--disable-on-split-window (fn window &rest args)
   "Undo the effects of `visual-fill-column-mode' for splitting window."
   (if (and (or (not window) (window-live-p window))
@@ -61,6 +62,7 @@
 (add-hook! latex-mode 'turn-on-auto-fill)
 (add-hook! LaTeX-mode 'turn-on-auto-fill)
 
+(defvar biblio-directory (concat narf-dropbox-dir "docs/biblio/") "docstring")
 (use-package reftex
   :config
   (add-hook 'latex-mode-hook 'turn-on-reftex)
@@ -75,7 +77,6 @@
 
 ;; NOTE: http://bibdesk.sourceforge.net/
 
-(defvar biblio-directory (concat narf-dropbox-dir "docs/biblio/") "docstring")
 (use-package helm-bibtex
   :defer t
   :config

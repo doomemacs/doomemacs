@@ -2,7 +2,7 @@
 
 (use-package gitconfig-mode
   :mode ("/\\.?git/?config$" "/\\.gitmodules$")
-  :init (add-hook 'gitconfig-mode-hook 'flyspell-mode))
+  :init (add-hook! gitconfig-mode 'flyspell-mode))
 
 (use-package gitignore-mode
   :mode ("/\\.gitignore$"

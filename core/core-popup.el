@@ -7,19 +7,17 @@
   (mapc (lambda (rule) (push rule popwin:special-display-config))
         '(("*Help*"                :position bottom :height 0.25 :stick t)
           (debugger-mode           :position bottom :height 15)
-          (org-src-mode            :position bottom :height 0.5 :stick t)
-          (org-agenda-mode         :position bottom :height 0.4 :stick t)
           ("*evil-registers*"      :position bottom :height 0.3 :stick t)
           ("*scratch*"             :position bottom :height 20 :stick t)
           ("*Apropos*"             :position bottom :height 40 :stick t)
           ("*Backtrace*"           :position bottom :height 15 :stick t)
-          ("^\\*CPU-Profiler-Report .+\\*$"  :regexp t :position bottom :height 0.35)
           ("*Flycheck errors*"     :position bottom :height 15 :stick t)
           ("*quickrun*"            :position bottom :height 15 :stick t)
           ("*minor-modes*"         :position bottom :height 0.5 :stick t)
+          ("^\\*CPU-Profiler-Report .+\\*$"  :regexp t :position bottom :height 0.35)
 
           ;; vcs
-          ("\\*git-gutter.+\\*" :regexp t :position bottom :height 30 :stick t)
+          ("\\*git-gutter.+\\*"    :regexp t :position bottom :height 30 :stick t)
 
           ;; Helm
           ("^\\*[Hh]elm.*?\\*\\'"  :regexp t :position bottom :height 0.2)
@@ -27,9 +25,11 @@
           ("*helm-mode-ffap*"      :position bottom :height 10)
 
           ;; Org
+          (org-src-mode            :position bottom :height 0.5 :stick t)
+          (org-agenda-mode         :position bottom :height 0.4 :stick t)
           ("^\\*Org-Babel.*\\*$"   :regexp t :position bottom :height 15 :tail t)
           ("*Agenda Commands*"     :position bottom :height 0.5)
-          (" *Org todo*"            :position bottom :height 5)
+          (" *Org todo*"           :position bottom :height 5)
           ("*Org Links*"           :position bottom :height 2)
 
           ;; REPLs

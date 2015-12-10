@@ -9,11 +9,11 @@
  tab-width               4
  require-final-newline   t
  delete-trailing-lines   nil
- fill-column             80
- word-wrap t
+ fill-column             90
+ line-spacing            0
+ word-wrap               t
  truncate-lines                  t
  truncate-partial-width-windows  50
- line-spacing 0
 
  ;; Sane scroll settings
  scroll-margin           0
@@ -66,20 +66,18 @@ enable multiple minor modes for the same regexp.")
 
 ;; Modes 'n hooks ;;;;;;;;;;;;;;;;;;;
 
-(associate! sh-mode             :match "/\\.?z\\(profile\\|login\\|logout\\|shrc\\|shenv\\)?$")
-(associate! sh-mode             :match "/\\.?zsh/")
+(associate! sh-mode             :match "/\\.?z\\(sh/?\\|profile\\|login\\|logout\\|shrc\\|shenv\\)$")
 (associate! applescript-mode    :match "\\.applescript$")
-(associate! emacs-lisp-mode     :match "Cask$")
-(associate! emacs-lisp-mode     :match "\\.el\\.gz$")
+(associate! emacs-lisp-mode     :match "\\(/Cask\\|\\.\\(el\\|gz\\)\\)$")
 (associate! makefile-gmake-mode :match "/Makefile$")
 (associate! nxml-mode           :match "\\.plist$")
 
 (add-hook! help-mode      'visual-line-mode)
-(add-hook! python-mode    'electric-indent-local-mode)
 (add-hook! makefile-mode  'narf|enable-tabs) ; Use normal tabs in makefiles
-(add-hook! before-save    'delete-trailing-whitespace)
 (add-hook! prog-mode      'narf|enable-comment-hard-wrap)
 (add-hook! special-mode   (setq truncate-lines nil))
+(add-hook! before-save    'delete-trailing-whitespace)
+(add-hook! python-mode    'electric-indent-local-mode)
 (add-hook! change-major-mode-hook
   (when indent-tabs-mode (whitespace-mode +1)))
 

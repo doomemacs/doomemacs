@@ -55,9 +55,9 @@
           ("\\.md$"                          "__"               markdown-mode)
 
           ;; Org
-          (,(format "%s.+\\.org$" org-directory-contacts) "__contact.org"  org-mode)
-          (,(format "%s.+\\.org$" org-directory-projects) "__projects.org" org-mode)
-          (,(format "%s.+\\.org$" org-directory-invoices) "__invoices.org" org-mode)
+          (,(format "%s.+\\.org$" (f-relative org-directory-contacts org-directory)) "__contact.org"  org-mode)
+          (,(format "%s.+\\.org$" (f-relative org-directory-projects org-directory)) "__projects.org" org-mode)
+          (,(format "%s.+\\.org$" (f-relative org-directory-invoices org-directory)) "__invoices.org" org-mode)
 
           ;; PHP
           ("\\.class\\.php$"                 "__.class.php"     php-mode)

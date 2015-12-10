@@ -106,7 +106,6 @@
    :nv ":"  'helm-imenu-in-all-buffers
    :nv "]"  'helm-etags-select
    :nv "a"  'helm-projectile-find-other-file
-   :nv "E"  'narf/helm-projectile-in-emacsd
    :nv "m"  'helm-recentf
    :nv "M"  'helm-projectile-recentf  ; recent PROJECT files
    :nv "P"  'helm-projectile-switch-project
@@ -130,6 +129,9 @@
 
    :nv "qq" 'evil-save-and-quit
    :nv "QQ" 'narf/kill-all-buffers-do-not-remember
+
+   :nv "E"  'narf/helm-find-in-emacsd
+   :nv "\\" 'narf/helm-find-in-dotfiles
 
    ;; Tmux
    (:prefix "t"

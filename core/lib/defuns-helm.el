@@ -69,9 +69,14 @@
   (if bang (helm-multi-swoop-all search) (helm-swoop :$query search)))
 
 ;;;###autoload
-(defun narf/helm-projectile-in-emacsd ()
+(defun narf/helm-find-in-emacsd ()
   (interactive)
   (in! narf-emacs-dir (helm-projectile-find-file)))
+
+;;;###autoload
+(defun narf/helm-find-in-dotfiles ()
+  (interactive)
+  (in! (expand-file-name ".dotfiles" "~") (helm-projectile-find-file)))
 
 ;;;###autoload
 (defun narf/helm-buffers-dwim (&optional all-p)
