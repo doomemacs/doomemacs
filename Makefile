@@ -10,7 +10,7 @@ update: autoloads
 	@cask outdated 2>&1 | sed 's/^/  /'
 	@cask update --verbose 2>&1 | sed 's/^/  /'
 	@echo "Compiling certain scripts"
-	@emacs -Q --batch -f batch-byte-compile init.el init-load-path.el core/core.el core/core-os-osx.el contrib/*.el 2>&1 | sed 's/^/  /'
+	@emacs -Q --batch -f batch-byte-compile init-load-path.el core/core.el core/core-os-osx.el contrib/*.el 2>&1 | sed 's/^/  /'
 
 clean: clean-extras clean-elc
 
