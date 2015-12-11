@@ -42,6 +42,11 @@
   (tmux (concat "tmux split-window" (if vertical " -h"))))
 
 ;;;###autoload
+(defun narf/tmux-vsplit-window ()
+  (interactive)
+  (narf/tmux-split-window t))
+
+;;;###autoload
 (defun narf/tmux-cd-to-here (&optional dir)
   (interactive)
   (tmux (format "cd '%s'" (or dir default-directory))))
