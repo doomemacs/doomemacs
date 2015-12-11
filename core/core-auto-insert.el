@@ -13,6 +13,12 @@
       (nth 0 rule)
       (vector `(lambda () (narf/auto-insert-snippet ,(nth 1 rule) ',(nth 2 rule) ,(nth 3 rule))))))
 
+  (after! org-mode
+    (mapc 'auto-insert-template'
+          '((,(format "%s.+\\.org$" (f-relative org-directory-contacts org-directory)) "__contact.org"  org-mode)
+            (,(format "%s.+\\.org$" (f-relative org-directory-projects org-directory)) "__projects.org" org-mode)
+            (,(format "%s.+\\.org$" (f-relative org-directory-invoices org-directory)) "__invoices.org" org-mode))))
+
   (mapc 'auto-insert-template
         `(;; General
           ("/\\.gitignore$"                  "__"               gitignore-mode)
@@ -53,11 +59,6 @@
 
           ;; Markdown
           ("\\.md$"                          "__"               markdown-mode)
-
-          ;; Org
-          (,(format "%s.+\\.org$" (f-relative org-directory-contacts org-directory)) "__contact.org"  org-mode)
-          (,(format "%s.+\\.org$" (f-relative org-directory-projects org-directory)) "__projects.org" org-mode)
-          (,(format "%s.+\\.org$" (f-relative org-directory-invoices org-directory)) "__invoices.org" org-mode)
 
           ;; PHP
           ("\\.class\\.php$"                 "__.class.php"     php-mode)
