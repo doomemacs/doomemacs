@@ -22,7 +22,7 @@
   (setq evil-magic t
         evil-want-C-u-scroll t       ; enable C-u for scrolling
         evil-ex-visual-char-range t  ; column range for ex commands
-        evil-want-fine-undo nil
+        evil-want-fine-undo 'fine
         evil-want-visual-char-semi-exclusive t
         evil-ex-search-vim-style-regexp t
         evil-ex-interactive-search-highlight 'selected-window
