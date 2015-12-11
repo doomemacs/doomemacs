@@ -28,34 +28,40 @@
   (interactive "<!><a>")
   (wg-open-session (if session-name
                        (concat wg-workgroup-directory session-name)
-                     wg-session-file)))
+                     wg-session-file))
+  (narf/workgroup-display t))
 
 ;;;###autoload (autoload 'narf:workgroup-new "defuns-workgroup" nil t)
-(evil-define-command narf:workgroup-new (bang name)
+(evil-define-command narf:workgroup-new (bang name &optional silent)
   "Create a new workgroup. If BANG, clone the current one to it."
   (interactive "<!><a>")
   (unless name
-    (user-error "No name specified for new workgroup"))
+    (setq name (format "#%s" (length (wg-workgroup-list)))))
   (if bang
       (wg-clone-workgroup (wg-current-workgroup) name)
-    (wg-create-workgroup name t)))
+    (wg-create-workgroup name t))
+  (unless silent
+    (narf/workgroup-display (wg-previous-workgroup))))
 
 ;;;###autoload (autoload 'narf:workgroup-rename "defuns-workgroup" nil t)
 (evil-define-command narf:workgroup-rename (new-name)
   (interactive "<a>")
-  (wg-rename-workgroup new-name))
+  (let ((wg (wg-current-workgroup)))
+    (wg-rename-workgroup new-name wg)
+    (add-to-list 'narf-wg-names wg)))
 
 ;;;###autoload (autoload 'narf:workgroup-delete "defuns-workgroup" nil t)
-(evil-define-command narf:workgroup-delete (bang &optional name)
+(evil-define-command narf:workgroup-delete (&optional bang name)
   (interactive "<!><a>")
-  (let ((wg-name name))
-    (when (or bang (eq name ""))
+  (let* ((current-wg (wg-current-workgroup))
+         (wg-name (or name (wg-workgroup-name current-wg))))
+    (when bang
       (setq wg-name (wg-read-workgroup-name)))
     (let ((wg (wg-get-workgroup name)))
-      (if (eq wg (wg-current-workgroup))
+      (if (eq wg current-wg)
           (wg-kill-workgroup)
         (wg-delete-workgroup wg))
-      (message "Deleted workgroup: %s" name))))
+      (message "%s [Deleted %s]" (narf/workgroup-display nil t) wg-name))))
 
 ;;;###autoload
 (defun narf:kill-other-workgroups ()
@@ -67,19 +73,33 @@
         (wg-kill-workgroup w)))))
 
 ;;;###autoload
-(defun narf:workgroup-display ()
+(defun narf/workgroup-display (&optional suppress-update return-p)
   (interactive)
   (when (wg-current-session t)
-    (message "%s"
-             (wg-display-internal
-              (lambda (workgroup index)
-                (if (not workgroup) wg-nowg-string
-                  (wg-element-display
-                   workgroup
-                   (format "%d %s" (1+ index) (wg-workgroup-name workgroup))
-                   'wg-current-workgroup-p
-                   'wg-previous-workgroup-p)))
-              (wg-workgroup-list)))))
+    (unless (eq suppress-update t)
+      (narf/workgroup-update-names (if (wg-workgroup-p suppress-update) suppress-update)))
+    (let ((output (wg-display-internal
+                   (lambda (workgroup index)
+                     (if (not workgroup) wg-nowg-string
+                       (wg-element-display
+                        workgroup
+                        (format " (%d) %s " (1+ index) (wg-workgroup-name workgroup))
+                        'wg-current-workgroup-p)))
+                   (wg-workgroup-list))))
+      (if return-p
+          output
+        (message "%s" output)))))
+
+;;;###autoload
+(defun narf/workgroup-update-names (&optional wg)
+  (let ((wg (or wg (wg-current-workgroup))))
+    (unless (memq wg narf-wg-names)
+      (ignore-errors
+        (let ((old-name (wg-workgroup-name wg))
+              (base (f-filename (buffer-file-name))))
+          (unless (string= base old-name)
+            (wg-rename-workgroup base wg)))))))
+;; (advice-add 'select-window :after 'narf|workgroup-update-name)
 
 ;;;###autoload (autoload 'narf:switch-to-workgroup-left "defuns-workgroup" nil t)
 (evil-define-command narf:switch-to-workgroup-left (count)
@@ -87,7 +107,7 @@
   (if count
       (wg-switch-to-workgroup-at-index (1- count))
     (wg-switch-to-workgroup-left))
-  (narf:workgroup-display))
+  (narf/workgroup-display (wg-previous-workgroup)))
 
 ;;;###autoload (autoload 'narf:switch-to-workgroup-right "defuns-workgroup" nil t)
 (evil-define-command narf:switch-to-workgroup-right (count)
@@ -95,16 +115,16 @@
   (if count
       (wg-switch-to-workgroup-at-index (1- count))
     (wg-switch-to-workgroup-right))
-  (narf:workgroup-display))
+  (narf/workgroup-display (wg-previous-workgroup)))
 
 ;;;###autoload
 (defun narf:switch-to-workgroup-at-index (index)
   (interactive)
-  (narf:workgroup-display)
+  (narf/workgroup-update-names)
   (let ((wgs (wg-workgroup-list-or-error)))
     (unless (eq (nth index wgs) (wg-current-workgroup t))
-      (wg-switch-to-workgroup-at-index index)
-      (narf:workgroup-display))))
+      (wg-switch-to-workgroup-at-index index)))
+  (narf/workgroup-display t))
 
 ;;;###autoload
 (defun narf/undo-window-change ()
@@ -115,6 +135,17 @@
 (defun narf/redo-window-change ()
   (interactive)
   (call-interactively (if (wg-current-workgroup t) 'wg-redo-wconfig-change 'winner-redo)))
+
+;;;###autoload
+(defun narf/close-window-or-workgroup ()
+  (interactive)
+  (if (and (= (length (window-list)) 1)
+           (> (length (wg-workgroup-list)) 1))
+      (if (string= (wg-workgroup-name (wg-current-workgroup)) wg-first-wg-name)
+          (evil-window-delete)
+        (narf:workgroup-delete))
+    (evil-window-delete)))
+
 
 (provide 'defuns-workgroup)
 ;;; defuns-workgroup.el ends here

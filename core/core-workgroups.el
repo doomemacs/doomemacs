@@ -7,7 +7,7 @@
   (setq-default
    wg-session-file          (expand-file-name "wg-default" narf-temp-dir)
    wg-workgroup-directory   (expand-file-name "workgroups" narf-temp-dir)
-   wg-first-wg-name         "main"
+   wg-first-wg-name         "*untitled*"
    wg-session-load-on-start t
    wg-mode-line-display-on  nil
    wg-mess-with-buffer-list t
@@ -15,9 +15,11 @@
    wg-workgroups-mode-exit-save-behavior 'save
    wg-log-level 0
 
-   wg-list-display-decor-divider         " : "
-   wg-list-display-decor-current-left    "["
-   wg-list-display-decor-current-right   "]"
+   wg-list-display-decor-divider         " "
+   wg-list-display-decor-left-brace      ""
+   wg-list-display-decor-right-brace     ""
+   wg-list-display-decor-current-left    ""
+   wg-list-display-decor-current-right   ""
    wg-list-display-decor-previous-left   ""
    wg-list-display-decor-previous-right  "")
   :config
@@ -30,6 +32,8 @@
       (action     . narf/wg-helm-switch-to-workgroup)))
 
   (defvar narf-wg-frames '())
+  (defvar narf-wg-names '())
+  (add-to-list 'savehist-additional-variables 'narf-wg-names)
 
   (after! projectile
     ;; Create a new workgroup on switch-project

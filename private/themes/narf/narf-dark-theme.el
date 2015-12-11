@@ -168,6 +168,10 @@
    `(reb-match-2                 ((,c (:foreground ,green :inverse-video t))))
    `(reb-match-3                 ((,c (:foreground ,yellow :inverse-video t))))
 
+   ;; workgroups2
+   `(wg-current-workgroup-face   ((,c (:foreground ,black :background ,orange))))
+   `(wg-other-workgroup-face     ((,c (:foreground ,grey-.5 :background ,current-line))))
+
    ;; neotree
    `(neo-root-dir-face           ((,c (:foreground ,cyan))))
    `(neo-file-link-face          ((,c (:foreground ,white))))
