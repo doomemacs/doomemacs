@@ -94,5 +94,43 @@
        (define-key evil-inner-text-objects-map ,key (quote ,inner-name))
        (define-key evil-outer-text-objects-map ,key (quote ,outer-name)))))
 
+;;; Custom argument handlers
+;;;###autoload
+(defun narf/-ex-match-init (name &optional face update-hook)
+  (with-current-buffer evil-ex-current-buffer
+    (cond
+     ((eq flag 'start)
+      (evil-ex-make-hl name
+        :face (or face 'evil-ex-substitute-matches)
+        :update-hook (or update-hook #'evil-ex-pattern-update-ex-info))
+      (setq flag 'update))
+
+     ((eq flag 'stop)
+      (evil-ex-delete-hl name)))))
+
+;;;###autoload
+(defun narf/-ex-buffer-match (arg &optional hl-name flags beg end)
+  (when (and (eq flag 'update)
+             evil-ex-substitute-highlight-all
+             (not (zerop (length arg))))
+    (condition-case lossage
+        (let ((pattern (evil-ex-make-substitute-pattern
+                        (if evil-ex-bang (regexp-quote arg) arg)
+                        (or flags (list))))
+              (range (or (evil-copy-range evil-ex-range)
+                         (evil-range (or beg (line-beginning-position))
+                                     (or end (line-end-position))
+                                     'line
+                                     :expanded t))))
+          (evil-expand-range range)
+          (evil-ex-hl-set-region hl-name
+                                 (evil-range-beginning range)
+                                 (evil-range-end range))
+          (evil-ex-hl-change hl-name pattern))
+      (end-of-file
+       (evil-ex-pattern-update-ex-info nil "incomplete replacement"))
+      (user-error
+       (evil-ex-pattern-update-ex-info nil (format "?%s" lossage))))))
+
 (provide 'defuns-evil)
 ;;; defuns-evil.el ends here

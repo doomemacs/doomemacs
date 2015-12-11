@@ -186,7 +186,37 @@
         (setq file-name
               (replace-regexp-in-string "\\\\\\([#%]\\)"
                                         "\\1" file-name t)))
-      file-name)))
+      file-name))
+
+  ;; Highlight buffer match interactive codes
+  (defvar narf-buffer-match-global evil-ex-substitute-global
+    "Whether or not buffer-match ex completion should add the ?g flag to searches.")
+  (evil-ex-define-argument-type buffer-match
+    :runner
+    (lambda (flag &optional arg)
+      (let ((hl-name 'evil-ex-buffer-match))
+        (with-selected-window (minibuffer-selected-window)
+          (narf/-ex-match-init hl-name)
+          (narf/-ex-buffer-match arg hl-name (list (if narf-buffer-match-global ?g)))))))
+  (evil-define-interactive-code "<//>"
+    "Ex buffer match argument."
+    :ex-arg buffer-match
+    (list (when (evil-ex-p) evil-ex-argument)))
+
+  ;; Make :g[lobal] highlight matches
+  (evil-ex-define-argument-type global-match
+    :runner
+    (lambda (flag &optional arg)
+      (let ((hl-name 'evil-ex-global-match))
+        (with-selected-window (minibuffer-selected-window)
+          (narf/-ex-match-init hl-name)
+          (let ((result (car-safe (evil-ex-parse-global arg))))
+            (narf/-ex-buffer-match result hl-name nil (point-min) (point-max)))))))
+  (evil-define-interactive-code "<g/>"
+    "Ex global argument."
+    :ex-arg global-match
+    (when (evil-ex-p)
+      (evil-ex-parse-global evil-ex-argument))))
 
 ;; evil plugins
 (use-package evil-anzu
