@@ -28,13 +28,13 @@
  "<f9>" 'what-face
 
  "M-b"  'narf:build
- "M-t"  'helm-projectile-find-file
+ "M-t"  'narf:workgroup-new
  "A-`"  'narf-switch-to-iterm
  "C-`"  'popwin:messages
  "C-~"  'rtog/toggle-repl
  "M-`"  'narf/popup-toggle
 
- "M-w"  'evil-window-delete
+ "M-w"  'narf/close-window-or-workgroup
  "M-W"  'delete-frame
  "M-n"  'narf/new-buffer
  "M-N"  'narf/new-frame
@@ -120,7 +120,7 @@
    :n  "d"  'narf/vcs-show-hunk
 
    :n  "b"  'helm-bookmarks
-   :n  "w"  'narf:workgroup-display
+   :n  "w"  'narf/workgroup-display
    :n  "W"  'narf:helm-wg
 
    :n  "n"  'narf/neotree-toggle
