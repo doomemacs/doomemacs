@@ -286,21 +286,31 @@
 
   (spaceline-define-segment narf-vc
     "Version control info"
-    (concat (downcase vc-mode)
-            (case (vc-state buffer-file-name)
-              ('edited "+")
-              ('conflict "!!!")
-              (t "")))
+    (powerline-raw
+     (concat (replace-regexp-in-string
+              (format "^ %s" (vc-backend buffer-file-name))
+              "" vc-mode)
+             (when buffer-file-name
+               (pcase (vc-state (buffer-file-name))
+                 (`up-to-date "")
+                 (`edited "*")
+                 (`added "+")
+                 (`unregistered "?")
+                 (`removed "-")
+                 (`needs-merge "%")
+                 (`needs-update "^")
+                 (`ignored "#")
+                 (_ "_")))))
     :when (and active vc-mode)
     :face other-face
-    :tight t)
+    :tight-right t)
 
   (spaceline-define-segment narf-env-version
     "A HUD that shows which part of the buffer is currently visible."
-    (when (and narf--env-command (not narf--env-version))
-      (narf|spaceline-env-update))
     narf--env-version
-    :when (and narf--env-version (memq major-mode '(ruby-mode enh-ruby-mode python-mode))))
+    :when narf--env-version
+    :skip-alternate t
+    :tight-right t)
 
   (spaceline-define-segment narf-hud
     "A HUD that shows which part of the buffer is currently visible."
@@ -353,14 +363,17 @@ iedit."
                    (cons (line-beginning-position) (line-end-position))))
           (pattern (car-safe (evil-delimited-arguments evil-ex-argument 2))))
       (if pattern
-          (format "%s matches" (count-matches pattern (car range) (cdr range)) evil-ex-argument)
+          (format "%s matches"
+                  (count-matches pattern (car range) (cdr range))
+                  evil-ex-argument)
         " ... "))
     :face (if active 'mode-line-count-face 'mode-line-inactive)
     :skip-alternate t
     :when (and (evil-ex-p) (evil-ex-hl-active-p 'evil-ex-substitute)))
 
   (spaceline-define-segment narf-major-mode
-    (concat "[" mode-name "]")
+    (powerline-raw mode-name)
+    :tight-right t
     :skip-alternate t)
 
   ;; Initialize modeline
@@ -377,7 +390,7 @@ iedit."
      narf-buffer-encoding-abbrev
      (narf-major-mode
       ;; (minor-modes :separator " " :tight t)
-      process :when active)
+      (process :tight t))
      (global :when active)
      ("%l·%c" narf-buffer-position)
      narf-hud
