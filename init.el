@@ -2,7 +2,7 @@
 ;;
 ;; Author:  Henrik Lissner <henrik@lissner.net>
 ;; URL:     https://github.com/hlissner/emacs.d
-;; Version: 0.6.0
+;; Version: 0.7.0
 ;;
 ;;; Are you pondering what I'm pondering, Pinky?
 ;;
@@ -41,7 +41,7 @@
 ;;; License: GPLv3
 
 (defconst narf-theme        'narf-dark)
-(defconst narf-default-font (font-spec :family "Hack" :size 12))
+(defconst narf-default-font (font-spec :family "Terminus (TTF)" :size 12 :antialias nil))
 (defconst narf-writing-font (font-spec :family "Hack" :size 14))
 (defconst narf-big-font     (font-spec :family "Inconsolata" :size 20))
 

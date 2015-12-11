@@ -82,6 +82,7 @@
 (defun narf/helm-buffers-dwim (&optional all-p)
   "Displays open buffers in current project. If ALL-P, then show all open
 buffers."
+  (interactive)
   (if (and (not all-p) (narf/project-p))
       (helm-projectile-switch-to-buffer)
     (helm-buffers-list)))

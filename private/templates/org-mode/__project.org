@@ -1,8 +1,6 @@
 #+TITLE:${1:Project Name}
-#+begin_src yaml
-created: `(format-time-string "%Y-%m-%d")`
-contact: ${2:Contact id}
-#+end_src
+#+DATE:    `(format-time-string "%Y-%m-%d")`
+#+CONTACT: ${2:Contact name/id}
 
 ${3:Summary of project.}
 

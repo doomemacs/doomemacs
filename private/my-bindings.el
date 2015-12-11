@@ -29,6 +29,7 @@
 
  "M-b"  'narf:build
  "M-t"  'narf:workgroup-new
+ "M-T"  'narf/workgroup-display
  "A-`"  'narf-switch-to-iterm
  "C-`"  'popwin:messages
  "C-~"  'rtog/toggle-repl
@@ -117,7 +118,12 @@
    :n  "e"  'narf/flycheck-errors
    :n  "s"  'yas-visit-snippet-file
    :n  "S"  'narf/yas-find-file
-   :n  "d"  'narf/vcs-show-hunk
+   :n  "D"  'vc-annotate
+   (:prefix "d"
+     :n "." 'narf/vcs-show-hunk
+     :n "/" 'vc-diff
+     :n "s" 'narf/vcs-stage-hunk
+     :n "r" 'narf/vcs-revert-hunk)
 
    :n  "b"  'helm-bookmarks
    :n  "w"  'narf/workgroup-display
@@ -147,7 +153,7 @@
    (:prefix "o"
      :n  "o" 'os-open-in-default-program
      :n  "p" 'os-reveal-project
-     :n  "b" 'os-open-in-chrome
+     :n  "b" 'os-open-in-browser
      :n  "u" 'os-upload
      :n  "U" 'os-upload-folder
      :n  "l" 'os-send-to-launchbar

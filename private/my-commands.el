@@ -1,64 +1,72 @@
 ;;; my-commands.el
 
-(defalias 'exmap 'evil-ex-define-cmd)
-(defalias 'exmap! 'evil-ex-define-cmd-local)
-
-(exmap "a"               'helm-projectile-find-other-file)
+;; Emacs utilities
 (exmap "acomp[ile]"      'narf:compile-autoloads)
-(exmap "ag"              'narf:helm-ag-search)
-(exmap "ag[cw]d"         'narf:helm-ag-search-cwd)
-(exmap "agr"             'narf:helm-ag-regex-search)
-(exmap "agr[cw]d"        'narf:helm-ag-regex-search-cwd)
-(exmap "al[ign]"         'narf:align)
-(exmap "wal[ign]"        'narf:whitespace-align)
 (exmap "bcomp[ile]"      'narf:compile-el)
-(exmap "big"             'narf:toggle-big-mode)
-(exmap "cap[ture]"       'helm-org-capture-templates)
-(exmap "cd"              'narf:cd)
-(exmap "dash"            'dash-at-point)
 (exmap "echo"            'narf:echo)
+
+;; Editing
+(exmap "@"               'narf/evil-macro-on-all-lines)
+(exmap "al[ign]"         'narf:align)
 (exmap "en[ew]"          'narf:file-create)
-(exmap "fi[nd]"          'narf:helm-swoop)
-(exmap "full[scr]"       'narf:toggle-fullscreen)
-(exmap "fullw[rite]"     'narf:toggle-write-mode)
+(exmap "na[rrow]"        'narf:narrow)               ; Narrow buffer to selection
+(exmap "ref[actor]"      'emr-show-refactor-menu)
+(exmap "retab"           'narf:whitespace-retab)
+(exmap "settr[im]"       'narf:toggle-delete-trailing-whitespace)
+(exmap "snip[pets]"      'narf:yas-snippets)         ; snip[!]
+(exmap "tsnip[pets]"     'narf:yas-file-templates)   ; tsnip[!]
+(exmap "wal[ign]"        'narf:whitespace-align)
+(exmap "rec[ent]"        'narf:helm-recentf)
+
+;; External resources
+(exmap "dash"            'dash-at-point)
 (exmap "http"            'httpd-start)
-(exmap "ini"             'narf:ido-find-file-in-emacsd)
+(exmap "re[gex]"         'narf:regex)
+(exmap "repl"            'narf:repl)
+(exmap "t[mux]"          'narf:send-to-tmux)
+(exmap "t[mux]s"         'narf/tmux-split-window)
+(exmap "t[mux]v"         (λ (narf/tmux-split-window t)))
+(exmap "t[mux]w"         'narf/tmux-new-window)
+(exmap "tcd"             'narf:tmux-cd)
+(exmap "x"               'narf:scratch-buffer)
+;; GIT
+(exmap "git[hub]"        'narf:github-browse-file)
+
+;; Dealing with buffers
 (exmap "k[ill]"          'kill-this-buffer)          ; Kill current buffer
 (exmap "k[ill]all"       'narf:kill-all-buffers)     ; Kill all buffers (bang = in project)
 (exmap "k[ill]buried"    'narf:kill-buried-buffers)  ; Kill all buried buffers (bang = in project)
 (exmap "k[ill]o"         'narf:kill-unreal-buffers)
 (exmap "l[ast]"          'narf:popup-last-buffer)
 (exmap "m[sg]"           'narf:popup-messages)
+
+;; Project navigation
+(exmap "a"               'helm-projectile-find-other-file)
+(exmap "ag"              'narf:helm-ag-search)
+(exmap "ag[cw]d"         'narf:helm-ag-search-cwd)
+(exmap "agr"             'narf:helm-ag-regex-search)
+(exmap "agr[cw]d"        'narf:helm-ag-regex-search-cwd)
+(exmap "cd"              'narf:cd)
+(exmap "fi[nd]"          'narf:helm-swoop)
+;; Project tools
 (exmap "ma[ke]"          'narf:build)
+;; File operations
 (exmap "mv"              'narf:file-move)
-(exmap "na[rrow]"        'narf:narrow)               ; Narrow buffer to selection
-(exmap "org"             'narf/helm-org)
-(exmap "repl"            'narf:repl)
-(exmap "proj[ect]"       'helm-projectile-switch-project)
-(exmap "rec[ent]"        'narf:helm-recentf)
-(exmap "re[gex]"         'narf:regex)
-(exmap "ref[actor]"      'emr-show-refactor-menu)
-(exmap "retab"           'narf:whitespace-retab)
 (exmap "rm"              'narf:file-delete)          ; rm[!]
-(exmap "settr[im]"       'narf:toggle-delete-trailing-whitespace)
-(exmap "snip[pets]"      'narf:yas-snippets)         ; snip[!]
-(exmap "tsnip[pets]"     'narf:yas-file-templates)   ; tsnip[!]
-(exmap "x"               'narf:scratch-buffer)
-(exmap "@"               'narf/evil-macro-on-all-lines)
 
-(exmap "t[mux]"          'narf:send-to-tmux)
-(exmap "t[mux]w"         'narf/tmux-new-window)
-(exmap "t[mux]s"         'narf/tmux-split-window)
-(exmap "t[mux]v"         (λ (narf/tmux-split-window t)))
-(exmap "tcd"             'narf:tmux-cd)
+;; Presentation/demo
+(exmap "big"             'narf:toggle-big-mode)
+(exmap "full[scr]"       'narf:toggle-fullscreen)
+(exmap "fullw[rite]"     'narf:toggle-write-mode)
 
+;; Org-mode
+(exmap "cap[ture]"       'helm-org-capture-templates)
+(exmap "org"             'narf/helm-org)
 (exmap "cont[act]"       'narf:org-crm-contact)
 (exmap "proj[ect]"       'narf:org-crm-project)
 (exmap "invo[ice]"       'narf:org-crm-invoice)
 
-;; GIT
-(exmap "bl[ame]"         'narf:github-browse-file)
-
+;; Plugins
 (after! flycheck
   (exmap "er[rors]"      (λ (flycheck-buffer) (flycheck-list-errors))))
 

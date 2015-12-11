@@ -19,6 +19,7 @@
   (setq rtog/goto-buffer-fun 'popwin:pop-to-buffer
         rtog/mode-repl-alist '())
 
+  (add-hook! repl-toggle-mode 'yascroll-bar-mode)
   (add-hook! repl-toggle-mode (evil-initialize-state 'emacs)))
 
 (provide 'core-quickrun)

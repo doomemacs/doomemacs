@@ -6,18 +6,20 @@
   (setq popwin:popup-window-height 0.3)
   (mapc (lambda (rule) (push rule popwin:special-display-config))
         '(("*Help*"                :position bottom :height 0.25 :stick t)
-          (debugger-mode           :position bottom :height 15)
+          (debugger-mode           :position bottom :height 15 :dedicated t :stick t)
           ("*evil-registers*"      :position bottom :height 0.3 :stick t)
           ("*scratch*"             :position bottom :height 20 :stick t)
           ("*Apropos*"             :position bottom :height 40 :stick t)
-          ("*Backtrace*"           :position bottom :height 15 :stick t)
+          ("*Backtrace*"           :position bottom :height 15 :dedicated t :stick t)
           ("*Flycheck errors*"     :position bottom :height 15 :stick t)
           ("*quickrun*"            :position bottom :height 15 :stick t)
           ("*minor-modes*"         :position bottom :height 0.5 :stick t)
           ("^\\*CPU-Profiler-Report .+\\*$"  :regexp t :position bottom :height 0.35)
 
           ;; vcs
-          ("\\*git-gutter.+\\*"    :regexp t :position bottom :height 30 :stick t)
+          ("^\\*git-gutter.+\\*$"  :regexp t :position bottom :height 0.4 :stick t)
+          ("*vc-diff*"             :position bottom :height 0.4 :stick t)
+          ("*vc-change-log*"       :position bottom :stick t :noselect t)
 
           ;; Helm
           ("^\\*[Hh]elm.*?\\*\\'"  :regexp t :position bottom :height 0.2)

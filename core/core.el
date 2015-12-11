@@ -138,7 +138,7 @@
 
   (defun display-startup-echo-area-message ()
     (after! workgroups2
-      (message "%s Loaded in %s" (narf/workgroup-display t t) (emacs-init-time))))
+      (message "%sLoaded in %s" (narf/workgroup-display t t) (emacs-init-time))))
 
   (require 'server)
   (unless (server-running-p)

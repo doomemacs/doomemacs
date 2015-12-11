@@ -39,16 +39,5 @@
         (beginning-of-line))
       (setq *linum-mdown-line* nil))))
 
-;;;###autoload (autoload 'narf:align "defuns-editor" nil t)
-(evil-define-operator narf:align (&optional beg end bang pattern)
-  (interactive "<r><!><//>")
-  (align-regexp
-   beg end
-   (concat "\\(\\s-*\\)"
-           (if bang
-               (regexp-quote pattern)
-             (rxt-pcre-to-elisp pattern)))
-   1 1))
-
 (provide 'defuns-editor)
 ;;; defuns-editor.el ends here

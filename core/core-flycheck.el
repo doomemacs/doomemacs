@@ -22,7 +22,27 @@
   ;; Check buffer when normal mode is entered
   (add-hook! evil-normal-state-entry 'narf*flycheck-buffer)
   ;; And on ESC in normal mode.
-  (advice-add 'evil-force-normal-state :after 'narf*flycheck-buffer))
+  (advice-add 'evil-force-normal-state :after 'narf*flycheck-buffer)
+
+  (define-fringe-bitmap 'flycheck-fringe-bitmap-double-arrow
+    [0 0 0 0 8 24 56 120 56 24 8 0 0 0 0]
+    ;; (fringe-helper-convert
+    ;;  "........"
+    ;;  "........"
+    ;;  "........"
+    ;;  "........"
+    ;;  "....X..."
+    ;;  "...XX..."
+    ;;  "..XXX..."
+    ;;  ".XXXX..."
+    ;;  "..XXX..."
+    ;;  "...XX..."
+    ;;  "....X..."
+    ;;  "........"
+    ;;  "........"
+    ;;  "........"
+    ;;  "........")
+    ))
 
 (use-package flyspell :commands flyspell-mode)
 

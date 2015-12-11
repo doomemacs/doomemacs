@@ -14,7 +14,9 @@
 (defun narf/wg-projectile-switch-project ()
   (let ((workgroup-name (file-name-nondirectory (directory-file-name (narf/project-root)))))
     (wg-create-workgroup workgroup-name t)
-    (helm-projectile-find-file)))
+    (helm-projectile-find-file)
+    ;; TODO narf/workgroup-display?
+    ))
 
 ;;;###autoload (autoload 'narf:save-session "defuns-workgroup" nil t)
 (evil-define-command narf:save-session (&optional bang session-name)
@@ -41,14 +43,23 @@
       (wg-clone-workgroup (wg-current-workgroup) name)
     (wg-create-workgroup name t))
   (unless silent
-    (narf/workgroup-display (wg-previous-workgroup))))
+    (narf--workgroup-display (wg-previous-workgroup)
+                             (format "Created %s" name)
+                             'success)))
 
 ;;;###autoload (autoload 'narf:workgroup-rename "defuns-workgroup" nil t)
-(evil-define-command narf:workgroup-rename (new-name)
-  (interactive "<a>")
-  (let ((wg (wg-current-workgroup)))
-    (wg-rename-workgroup new-name wg)
-    (add-to-list 'narf-wg-names wg)))
+(evil-define-command narf:workgroup-rename (bang &optional new-name)
+  (interactive "<!><a>")
+  (let* ((wg (wg-current-workgroup))
+         (wg-uid (wg-workgroup-uid wg))
+         (old-name (wg-workgroup-name wg)))
+    (if bang
+        (setq narf-wg-names (delete wg-uid narf-wg-names))
+      (unless new-name
+        (user-error "You didn't enter in a name"))
+      (wg-rename-workgroup new-name wg)
+      (add-to-list 'narf-wg-names wg-uid)
+      (narf--workgroup-display wg (format "Renamed '%s'->'%s'" old-name new-name) 'success))))
 
 ;;;###autoload (autoload 'narf:workgroup-delete "defuns-workgroup" nil t)
 (evil-define-command narf:workgroup-delete (&optional bang name)
@@ -61,7 +72,7 @@
       (if (eq wg current-wg)
           (wg-kill-workgroup)
         (wg-delete-workgroup wg))
-      (message "%s [Deleted %s]" (narf/workgroup-display nil t) wg-name))))
+      (narf--workgroup-display nil (format "Deleted %s" wg-name) 'success))))
 
 ;;;###autoload
 (defun narf:kill-other-workgroups ()
@@ -71,6 +82,24 @@
     (dolist (w (wg-workgroup-list))
       (unless (wg-current-workgroup-p w)
         (wg-kill-workgroup w)))))
+
+(defun narf--num-to-unicode (num)
+  "Return a nice unicode representation of a single-digit number STR."
+  (cl-case num
+   (1 "➊")
+   (2 "➋")
+   (3 "➌")
+   (4 "➍")
+   (5 "➎")
+   (6 "❻")
+   (7 "➐")
+   (8 "➑")
+   (9 "➒")
+   (0 "➓")))
+
+(defun narf--workgroup-display (&optional suppress-update message message-face)
+  (message "%s%s" (narf/workgroup-display suppress-update t)
+           (propertize message 'face message-face)))
 
 ;;;###autoload
 (defun narf/workgroup-display (&optional suppress-update return-p)
@@ -83,7 +112,7 @@
                      (if (not workgroup) wg-nowg-string
                        (wg-element-display
                         workgroup
-                        (format " (%d) %s " (1+ index) (wg-workgroup-name workgroup))
+                        (format " %s %s " (narf--num-to-unicode (1+ index)) (wg-workgroup-name workgroup))
                         'wg-current-workgroup-p)))
                    (wg-workgroup-list))))
       (if return-p
@@ -99,23 +128,24 @@
               (base (f-filename (buffer-file-name))))
           (unless (string= base old-name)
             (wg-rename-workgroup base wg)))))))
-;; (advice-add 'select-window :after 'narf|workgroup-update-name)
 
 ;;;###autoload (autoload 'narf:switch-to-workgroup-left "defuns-workgroup" nil t)
 (evil-define-command narf:switch-to-workgroup-left (count)
   (interactive "<c>")
+  (narf/workgroup-update-names)
   (if count
       (wg-switch-to-workgroup-at-index (1- count))
     (wg-switch-to-workgroup-left))
-  (narf/workgroup-display (wg-previous-workgroup)))
+  (narf/workgroup-display t))
 
 ;;;###autoload (autoload 'narf:switch-to-workgroup-right "defuns-workgroup" nil t)
 (evil-define-command narf:switch-to-workgroup-right (count)
   (interactive "<c>")
+  (narf/workgroup-update-names)
   (if count
       (wg-switch-to-workgroup-at-index (1- count))
     (wg-switch-to-workgroup-right))
-  (narf/workgroup-display (wg-previous-workgroup)))
+  (narf/workgroup-display t))
 
 ;;;###autoload
 (defun narf:switch-to-workgroup-at-index (index)

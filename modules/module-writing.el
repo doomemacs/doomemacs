@@ -35,10 +35,9 @@
     (setq mode-line-format
           (if mode-p
               '("%e" (:eval (spaceline--prepare
-                             '(narf-anzu narf-iedit narf-evil-substitute
+                             '("[W]" narf-anzu narf-iedit narf-evil-substitute
                                (narf-buffer-path remote-host)
-                               narf-buffer-modified
-                               "✎")
+                               narf-buffer-modified)
                              '((selection-info :face highlight-face :skip-alternate t)
                                narf-hud
                                ))))

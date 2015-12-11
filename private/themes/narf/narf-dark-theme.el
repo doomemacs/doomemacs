@@ -5,7 +5,29 @@
 
 (custom-theme-set-variables 'narf-dark)
 
+;; Color helper functions
+;; Shamelessly *borrowed* from solarized
+(defun --color-name-to-rgb (color &optional frame)
+  (let ((valmax (float (car (color-values "#ffffff")))))
+    (mapcar (lambda (x) (/ x valmax)) (color-values color frame))))
+
+(defun --color-rgb-to-hex  (red green blue)
+  (format "#%02x%02x%02x"
+          (* red 255) (* green 255) (* blue 255)))
+
+(defun --color-blend (color1 color2 alpha)
+  (apply '--color-rgb-to-hex
+         (-zip-with '(lambda (it other)
+                       (+ (* alpha it) (* other (- 1 alpha))))
+                    (--color-name-to-rgb color1)
+                    (--color-name-to-rgb color2))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (let* ((c '((class color)))
+
+       ;; Global bold flag
+       (bold           t)
 
        (bg             "#1E2021")
        (fg             "#D6D6D4")
@@ -57,10 +79,11 @@
        (error-highlight red)
 
        (linum-bg       current-line)
-       (linum-fg       grey-1)
+       (linum-fg       "#383840")
        (linum-hl-fg    orange)
        (linum-hl-bg    current-line)
 
+       (active-minibuffer "#404046")
        (modeline-fg    white)
        (modeline-fg-2  orange)
        (modeline-fg-3  orange)
@@ -90,13 +113,15 @@
    ;; `(match                        ((,c (:background ,magenta))))
    `(minibuffer-prompt               ((,c (:foreground ,orange))))
 
-   `(error                           ((,c (:foreground ,red    :bold t))))
-   `(warning                         ((,c (:foreground ,yellow :bold t))))
-   `(success                         ((,c (:foreground ,green  :bold t))))
+   `(error                           ((,c (:foreground ,red   ))))
+   `(warning                         ((,c (:foreground ,yellow))))
+   `(success                         ((,c (:foreground ,green ))))
 
-   `(spaceline-flycheck-error        ((,c (:bold t :foreground ,red))))
-   `(spaceline-flycheck-warning      ((,c (:bold t :foreground ,yellow))))
-   `(spaceline-flycheck-info         ((,c (:bold t :foreground ,green))))
+   `(spaceline-flycheck-error        ((,c (:underline nil :foreground ,black :background ,red))))
+   `(spaceline-flycheck-warning      ((,c (:underline nil :foreground ,black :background ,yellow))))
+   `(spaceline-flycheck-info         ((,c (:underline nil :foreground ,black :background ,green))))
+   `(flyspell-incorrect              ((,c (:underline (:style wave :color ,error-highlight)
+                                           :inherit unspecified))))
 
    `(hs-face                         ((,c (:foreground ,comments :background ,black))))
    `(hs-fringe-face                  ((,c (:foreground ,orange))))
@@ -129,47 +154,50 @@
 
    `(vertical-border                ((,c (:foreground ,vertical-bar :background ,vertical-bar))))
 
-   ;; `(linum                          ((,c (:foreground ,linum-fg :bold nil :height 0.9))))
-   `(linum                          ((,c (:foreground ,linum-fg :bold nil :height 0.8))))
-   `(linum-highlight-face           ((,c (:inherit linum :bold t :foreground ,linum-hl-fg))))
-   `(show-paren-match               ((,c (:foreground ,magenta :bold t :inverse-video t))))
+   ;; `(linum                          ((,c (:foreground ,linum-fg :bold nil :height 0.8))))
+   `(linum                          ((,c (:foreground ,linum-fg :bold nil))))
+   `(linum-highlight-face           ((,c (:inherit linum :foreground ,linum-hl-fg))))
+   `(show-paren-match               ((,c (:foreground ,magenta :bold ,bold :inverse-video t))))
 
    ;; Modeline
-   `(mode-line                      ((,c (:foreground ,modeline-fg          :background ,modeline-bg))))
-   `(mode-line-inactive             ((,c (:foreground ,modeline-fg-inactive :background ,modeline-bg-inactive))))
-   `(mode-line-is-modified          ((,c (:foreground ,magenta :bold t))))
+   `(narf-minibuffer-active         ((,c (:background ,active-minibuffer))))
+   `(mode-line                      ((,c (:foreground ,modeline-fg          :background ,modeline-bg
+                                          :box (:line-width 2 :color ,modeline-bg)))))
+   `(mode-line-inactive             ((,c (:foreground ,modeline-fg-inactive :background ,modeline-bg-inactive
+                                          :box (:line-width 2 :color ,modeline-bg-inactive)))))
+
+   `(mode-line-is-modified          ((,c (:foreground ,magenta))))
    `(mode-line-buffer-file          ((,c (:foreground ,modeline-fg))))
    `(powerline-active1              ((,c (:foreground ,modeline-fg-2 :background ,modeline-bg-2))))
    `(powerline-active2              ((,c (:foreground ,modeline-fg-3 :background ,modeline-bg-3))))
    `(powerline-inactive1            ((,c (:foreground ,modeline-fg-inactive))))
    `(powerline-inactive2            ((,c (:foreground ,modeline-fg-inactive))))
-   `(spaceline-highlight-face       ((,c (:foreground ,black :background ,highlight :bold t))))
-   `(mode-line-count-face           ((,c (:foreground ,black :background ,magenta :bold t))))
+   `(spaceline-highlight-face       ((,c (:foreground ,black :background ,highlight :bold ,bold))))
+   `(mode-line-count-face           ((,c (:foreground ,black :background ,magenta :bold ,bold))))
 
    ;; Search
    `(isearch                        ((,c (:foreground ,search-fg :background ,search-bg))))
    `(isearch-lazy-highlight-face    ((,c (:foreground ,search-rest-fg :background ,search-rest-bg))))
 
-   `(narf-todo-face                 ((,c (:foreground ,yellow :bold t))))
-   `(narf-fixme-face                ((,c (:foreground ,red :bold t))))
-   `(narf-note-face                 ((,c (:foreground ,cyan :bold t))))
+   `(narf-todo-face                 ((,c (:foreground ,yellow))))
+   `(narf-fixme-face                ((,c (:foreground ,red))))
+   `(narf-note-face                 ((,c (:foreground ,cyan))))
 
-   `(evil-ex-substitute-replacement ((,c (:foreground ,magenta :background ,black :bold t))))
+   `(evil-ex-substitute-replacement ((,c (:foreground ,magenta :background ,black :bold ,bold))))
    `(evil-search-highlight-persist-highlight-face ((,c (:background ,search-rest-bg))))
-
 
    ;; plugin-specific
    ;; *****************************************************************************************
 
    `(yascroll:thumb-fringe       ((,c (:background ,grey-1 :foreground ,grey-1))))
 
-   `(reb-match-0                 ((,c (:foreground ,orange :inverse-video t))))
-   `(reb-match-1                 ((,c (:foreground ,magenta :inverse-video t))))
-   `(reb-match-2                 ((,c (:foreground ,green :inverse-video t))))
-   `(reb-match-3                 ((,c (:foreground ,yellow :inverse-video t))))
+   `(reb-match-0                 ((,c (:foreground ,orange   :inverse-video t))))
+   `(reb-match-1                 ((,c (:foreground ,magenta  :inverse-video t))))
+   `(reb-match-2                 ((,c (:foreground ,green    :inverse-video t))))
+   `(reb-match-3                 ((,c (:foreground ,yellow   :inverse-video t))))
 
    ;; workgroups2
-   `(wg-current-workgroup-face   ((,c (:foreground ,black :background ,orange))))
+   `(wg-current-workgroup-face   ((,c (:foreground ,black   :background ,orange))))
    `(wg-other-workgroup-face     ((,c (:foreground ,grey-.5 :background ,current-line))))
 
    ;; neotree
@@ -204,32 +232,32 @@
    `(diff-hl-change              ((,c (:foreground ,vc-modified))))
    `(diff-hl-delete              ((,c (:foreground ,vc-deleted))))
    `(diff-hl-insert              ((,c (:foreground ,vc-added))))
+   `(git-gutter:modified         ((,c (:foreground ,vc-modified))))
+   `(git-gutter:added            ((,c (:foreground ,vc-added))))
+   `(git-gutter:deleted          ((,c (:foreground ,vc-deleted))))
    `(git-gutter+-modified        ((,c (:foreground ,vc-modified :background nil))))
    `(git-gutter+-added           ((,c (:foreground ,vc-added :background nil))))
    `(git-gutter+-deleted         ((,c (:foreground ,vc-deleted :background nil))))
 
    ;; Rainbow delimiters
-   `(rainbow-delimiters-depth-1-face   ((,c (:foreground ,magenta :bold t))))
+   `(rainbow-delimiters-depth-1-face   ((,c (:foreground ,magenta))))
    `(rainbow-delimiters-depth-2-face   ((,c (:foreground ,orange))))
    `(rainbow-delimiters-depth-3-face   ((,c (:foreground ,yellow))))
    `(rainbow-delimiters-depth-4-face   ((,c (:foreground ,green))))
    `(rainbow-delimiters-depth-5-face   ((,c (:foreground ,cyan))))
    `(rainbow-delimiters-unmatched-face ((,c (:foreground ,red :inverse-video t))))
 
-   `(flyspell-incorrect ((,c (:underline (:style wave :color ,error-highlight) :inherit unspecified))))
-
    ;; Helm
-   `(helm-source-header          ((,c (:background ,current-line :foreground ,grey-1))))
    `(helm-selection              ((,c (:background ,selection))))
+   `(helm-match                  ((,c (:foreground ,magenta))))
+   `(helm-source-header          ((,c (:background ,current-line :foreground ,grey-1))))
    `(helm-swoop-target-line-face ((,c (:foreground ,highlight :inverse-video t))))
-   `(helm-match ((,c (:foreground ,magenta))))
 
-   `(helm-ff-file ((,c (:foreground ,grey))))
-   `(helm-ff-prefix ((,c (:foreground ,magenta))))
-   `(helm-ff-dotted-directory ((,c (:foreground ,grey-1))))
-   `(helm-ff-directory ((,c (:foreground ,orange :bold t))))
-   `(helm-ff-executable ((,c (:foreground ,white :slant italic))))
-
+   `(helm-ff-file              ((,c (:foreground ,grey))))
+   `(helm-ff-prefix            ((,c (:foreground ,magenta))))
+   `(helm-ff-dotted-directory  ((,c (:foreground ,grey-1))))
+   `(helm-ff-directory         ((,c (:foreground ,orange))))
+   `(helm-ff-executable        ((,c (:foreground ,white :slant italic))))
 
    ;; Avy
    `(avy-lead-face-0    ((,c (:background ,orange :foreground ,black))))
@@ -241,11 +269,11 @@
    ;; *****************************************************************************************
    ;; js2-mode
    `(js2-function-param ((,c (:foreground ,variables))))
-   `(js2-jsdoc-tag      ((,c (:foreground ,comments :bold t))))
+   `(js2-jsdoc-tag      ((,c (:foreground ,comments))))
 
    ;; markdown-mode
-   `(markdown-header-face           ((,c (:foreground ,orange :bold t))))
-   `(markdown-header-delimiter-face ((,c (:foreground ,orange :bold t))))
+   `(markdown-header-face           ((,c (:foreground ,orange :bold ,bold))))
+   `(markdown-header-delimiter-face ((,c (:foreground ,orange :bold ,bold))))
    `(markdown-blockquote-face ((,c (:foreground ,blue+2))))
    `(markdown-markup-face ((,c (:foreground ,cyan))))
    `(markdown-inline-face ((,c (:foreground ,cyan))))
@@ -276,13 +304,13 @@
    `(org-meta-line              ((,c (:foreground ,vsubtle))))
    `(org-block-begin-line       ((,c (:background ,current-line :foreground ,vsubtle))))
    `(org-block-end-line         ((,c (:inherit org-block-begin-line))))
-   `(org-archived   ((,c (:foreground ,grey-.5))))
+   `(org-archived               ((,c (:foreground ,grey-.5))))
 
-   `(org-document-title   ((,c (:foreground ,cyan :height 1.30 :bold t))))
-   `(org-level-1          ((,c (:foreground ,orange :bold t))))
-   `(org-level-2          ((,c (:foreground ,dark-cyan :bold t))))
-   `(org-level-3          ((,c (:foreground ,violet :bold t))))
-   `(org-level-4          ((,c (:foreground ,green :bold t))))
+   `(org-document-title   ((,c (:inherit variable-pitch :foreground ,cyan :height 1.30 :bold ,bold))))
+   `(org-level-1          ((,c (:foreground ,orange    :bold ,bold))))
+   `(org-level-2          ((,c (:foreground ,dark-cyan :bold ,bold))))
+   `(org-level-3          ((,c (:foreground ,violet    :bold ,bold))))
+   `(org-level-4          ((,c (:foreground ,green     :bold ,bold))))
    `(org-level-5          ((,c (:foreground ,yellow))))
    `(org-level-6          ((,c (:foreground ,blue+2))))
    ;;`(org-level-7          ((,c ())))
@@ -292,7 +320,7 @@
    `(org-code             ((,c (:foreground ,orange))))
    `(org-verbatim         ((,c (:foreground ,green))))
    `(org-formula          ((,c (:foreground ,cyan))))
-   `(org-list-dt          ((,c (:foreground ,cyan :bold t))))
+   `(org-list-dt          ((,c (:foreground ,cyan :bold ,bold))))
    `(org-footnote         ((,c (:foreground ,orange))))
 
    `(org-link             ((,c (:underline t :foreground ,yellow :bold inherit))))
@@ -310,12 +338,37 @@
    `(org-block-background ((,c (:background ,current-line))))
    `(org-todo-high        ((,c (:foreground ,orange :bold inherit))))
    `(org-todo-vhigh       ((,c (:foreground ,magenta :bold inherit))))
-   `(org-list-bullet      ((,c (:foreground ,orange :bold t))))
+   `(org-list-bullet      ((,c (:foreground ,orange :bold ,bold))))
    `(org-whitespace       ((,c (:inherit fixed-pitch))))
    `(org-todo-checkbox    ((,c (:inherit variable-pitch))))
+   )
 
-   ))
+;; *****************************************************************************************
 
+  (custom-theme-set-variables
+   'narf-dark
+   `(vc-annotate-color-map
+     '((20 .  ,green)
+       (40 .  ,(--color-blend yellow green (/ 1.0 3)))
+       (60 .  ,(--color-blend yellow green (/ 2.0 3)))
+       (80 .  ,yellow)
+       (100 . ,(--color-blend orange yellow (/ 1.0 3)))
+       (120 . ,(--color-blend orange yellow (/ 2.0 3)))
+       (140 . ,orange)
+       (160 . ,(--color-blend magenta orange (/ 1.0 3)))
+       (180 . ,(--color-blend magenta orange (/ 2.0 3)))
+       (200 . ,magenta)
+       (220 . ,(--color-blend red magenta (/ 1.0 3)))
+       (240 . ,(--color-blend red magenta (/ 2.0 3)))
+       (260 . ,red)
+       (280 . ,(--color-blend grey-2 red (/ 1.0 4)))
+       (300 . ,(--color-blend grey-2 red (/ 2.0 4)))
+       (320 . ,(--color-blend grey-2 red (/ 3.0 4)))
+       (340 . ,grey-2)
+       (360 . ,grey-2)))
+   `(vc-annotate-very-old-color nil)
+   `(vc-annotate-background ,black))
+  )
 
 ;; *****************************************************************************************
 

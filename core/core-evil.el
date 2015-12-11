@@ -75,6 +75,17 @@
   (defmacro $expand (path)
     `(evil-ex-replace-special-filenames ,path))
 
+  ;; buffer-local ex commands, thanks to:
+  ;; http://emacs.stackexchange.com/questions/13186
+  (defun evil-ex-define-cmd-local (cmd function)
+    "Locally binds the function FUNCTION to the command CMD."
+    (unless (local-variable-p 'evil-ex-commands)
+      (setq-local evil-ex-commands (copy-alist evil-ex-commands)))
+    (evil-ex-define-cmd cmd function))
+  ;; Shortcuts for `evil-ex-define-cmd'
+  (defalias 'exmap 'evil-ex-define-cmd)
+  (defalias 'exmap! 'evil-ex-define-cmd-local)
+
   (progn ; evil hacks
     (defadvice evil-force-normal-state (after evil-esc-quit activate)
       "Close popups, disable search highlights and quit the minibuffer if open."
@@ -91,14 +102,6 @@
     (defun narf*evil-move-to-column-fix (args)
       (mapcar (lambda (i) (if (numberp i) (truncate i) i)) args))
     (advice-add 'evil-move-to-column :filter-args 'narf*evil-move-to-column-fix)
-
-    ;; buffer-local ex commands, thanks to:
-    ;; http://emacs.stackexchange.com/questions/13186
-    (defun evil-ex-define-cmd-local (cmd function)
-      "Locally binds the function FUNCTION to the command CMD."
-      (unless (local-variable-p 'evil-ex-commands)
-        (setq-local evil-ex-commands (copy-alist evil-ex-commands)))
-      (evil-ex-define-cmd cmd function))
 
     ;; Hide keystroke display while isearch is active
     (add-hook! isearch-mode     (setq echo-keystrokes 0))
@@ -188,35 +191,45 @@
                                         "\\1" file-name t)))
       file-name))
 
-  ;; Highlight buffer match interactive codes
-  (defvar narf-buffer-match-global evil-ex-substitute-global
-    "Whether or not buffer-match ex completion should add the ?g flag to searches.")
-  (evil-ex-define-argument-type buffer-match
-    :runner
-    (lambda (flag &optional arg)
-      (let ((hl-name 'evil-ex-buffer-match))
-        (with-selected-window (minibuffer-selected-window)
-          (narf/-ex-match-init hl-name)
-          (narf/-ex-buffer-match arg hl-name (list (if narf-buffer-match-global ?g)))))))
+  ;; Make :g[lobal] highlight matches
+  (defvar narf-buffer-match-global evil-ex-substitute-global "")
+  (defun narf--ex-buffer-match (flag &optional arg)
+    (let ((hl-name 'evil-ex-buffer-match))
+      (with-selected-window (minibuffer-selected-window)
+        (narf/-ex-match-init hl-name)
+        (narf/-ex-buffer-match arg hl-name (list (if narf-buffer-match-global ?g))))))
+  (defun narf--ex-global-match (flag &optional arg)
+    (let ((hl-name 'evil-ex-global-match))
+      (with-selected-window (minibuffer-selected-window)
+        (narf/-ex-match-init hl-name)
+        (let ((result (car-safe (evil-ex-parse-global arg))))
+          (narf/-ex-buffer-match result hl-name nil (point-min) (point-max))))))
+
+  (evil-ex-define-argument-type buffer-match :runner narf--ex-buffer-match)
+  (evil-ex-define-argument-type global-match :runner narf--ex-global-match)
+
   (evil-define-interactive-code "<//>"
-    "Ex buffer match argument."
     :ex-arg buffer-match
     (list (when (evil-ex-p) evil-ex-argument)))
-
-  ;; Make :g[lobal] highlight matches
-  (evil-ex-define-argument-type global-match
-    :runner
-    (lambda (flag &optional arg)
-      (let ((hl-name 'evil-ex-global-match))
-        (with-selected-window (minibuffer-selected-window)
-          (narf/-ex-match-init hl-name)
-          (let ((result (car-safe (evil-ex-parse-global arg))))
-            (narf/-ex-buffer-match result hl-name nil (point-min) (point-max)))))))
-  (evil-define-interactive-code "<g/>"
-    "Ex global argument."
+  (evil-define-interactive-code "<g//>"
     :ex-arg global-match
-    (when (evil-ex-p)
-      (evil-ex-parse-global evil-ex-argument))))
+    (when (evil-ex-p) (evil-ex-parse-global evil-ex-argument)))
+
+  (evil-define-operator narf:align (&optional beg end bang pattern)
+    (interactive "<r><!><//>")
+    (align-regexp
+     beg end
+     (concat "\\(\\s-*\\)"
+             (if bang
+                 (regexp-quote pattern)
+               (rxt-pcre-to-elisp pattern)))
+     1 1))
+  (evil-define-operator narf:evil-ex-global (beg end pattern command &optional invert)
+    :motion mark-whole-buffer
+    :move-point nil
+    (interactive "<r><g//><!>")
+    (evil-ex-global beg end pattern command invert))
+  (exmap "g[lobal]" 'narf:evil-ex-global))
 
 ;; evil plugins
 (use-package evil-anzu
@@ -246,6 +259,7 @@
   :functions (iedit-current-occurrence-string iedit-restrict-region)
   :commands (evil-iedit-state evil-iedit-state/iedit-mode)
   :config
+  (advice-add 'evil-force-normal-state :after 'evil-iedit-state/quit-iedit-mode)
   (define-key evil-iedit-state-map (kbd "<escape>") 'evil-iedit-state/quit-iedit-mode)
   (define-key evil-visual-state-map (kbd "SPC") 'narf:iedit-restrict-to-region)
   (let ((map evil-iedit-state-map))

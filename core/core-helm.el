@@ -2,7 +2,7 @@
 
 (use-package helm
   :init
-  (defvar helm-global-prompt "> ")
+  (defvar helm-global-prompt ">>> ")
   (setq-default
    helm-quick-update t
    helm-reuse-last-window-split-state t

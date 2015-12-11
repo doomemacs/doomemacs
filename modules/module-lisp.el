@@ -17,9 +17,36 @@
   (add-hook 'before-save-hook 'delete-trailing-whitespace nil t)
   (add-hook 'after-save-hook 'narf-elisp-auto-compile nil t)
 
-  (add-to-list 'imenu-generic-expression
-               '("Package"
-                 "\\(^\\s-*(use-package +\\)\\(\\_<.+\\_>\\)" 2)))
+  (let ((header-face 'font-lock-constant-face))
+    (add-to-list 'imenu-generic-expression
+                 `("Package" "\\(^\\s-*(use-package +\\)\\(\\_<.+\\_>\\)" 2))
+    (add-to-list 'imenu-generic-expression
+                 `("Spaceline Segment" "\\(^\\s-*(spaceline-define-segment +\\)\\(\\_<.+\\_>\\)" 2))))
+
+;; Add new colors to helm-imenu
+(after! helm-imenu
+  (defun helm-imenu-transformer (candidates)
+    (cl-loop for (k . v) in candidates
+             for types = (or (helm-imenu--get-prop k)
+                             (list "Function" k))
+             for bufname = (buffer-name (marker-buffer v))
+             for disp1 = (mapconcat
+                          (lambda (x)
+                            (propertize
+                             x 'face (cond ((string= x "Variables")
+                                            'font-lock-variable-name-face)
+                                           ((string= x "Function")
+                                            'font-lock-function-name-face)
+                                           ((string= x "Types")
+                                            'font-lock-type-face)
+                                           ((string= x "Package")
+                                            'font-lock-negation-char-face)
+                                           ((string= x "Spaceline Segment")
+                                            'font-lock-string-face))))
+                          types helm-imenu-delimiter)
+             for disp = (propertize disp1 'help-echo bufname)
+             collect
+             (cons disp (cons k v)))))
 
 (font-lock-add-keywords
  'emacs-lisp-mode `(("\\(lambda\\)" (0 (narf/show-as ?λ)))))

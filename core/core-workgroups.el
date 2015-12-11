@@ -10,14 +10,14 @@
    wg-first-wg-name         "*untitled*"
    wg-session-load-on-start t
    wg-mode-line-display-on  nil
-   wg-mess-with-buffer-list t
+   wg-mess-with-buffer-list nil
    wg-emacs-exit-save-behavior           'save ; Options: 'save 'ask nil
    wg-workgroups-mode-exit-save-behavior 'save
    wg-log-level 0
 
    wg-list-display-decor-divider         " "
    wg-list-display-decor-left-brace      ""
-   wg-list-display-decor-right-brace     ""
+   wg-list-display-decor-right-brace     "| "
    wg-list-display-decor-current-left    ""
    wg-list-display-decor-current-right   ""
    wg-list-display-decor-previous-left   ""
@@ -31,9 +31,12 @@
       (candidates . wg-workgroup-names)
       (action     . narf/wg-helm-switch-to-workgroup)))
 
+  (add-to-list 'savehist-additional-variables 'narf-wg-names)
   (defvar narf-wg-frames '())
   (defvar narf-wg-names '())
-  (add-to-list 'savehist-additional-variables 'narf-wg-names)
+
+  (unless (file-exists-p wg-workgroup-directory)
+    (mkdir wg-workgroup-directory))
 
   (after! projectile
     ;; Create a new workgroup on switch-project

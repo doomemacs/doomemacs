@@ -11,7 +11,7 @@
    python-environment-directory narf-temp-dir
    python-shell-interpreter "ipython")
   :config
-  (define-env-command! python-mode "python --version | cut -d' ' -f2")
+  (define-env-command! python-mode "python --version 2>&1 | cut -d' ' -f2")
   (define-repl! python-mode narf-inf-python)
 
   (defun narf-inf-python ()

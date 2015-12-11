@@ -22,12 +22,6 @@
   (add-to-list 'ido-ignore-files "\\`.DS_Store$")
   (add-to-list 'ido-ignore-files "Icon\\?$")
 
-  (ido-mode 1)
-  (ido-everywhere 1)
-
-  (require 'ido-ubiquitous)
-  (ido-ubiquitous-mode 1)
-
   (add-hook! ido-setup
     (require 'ido-vertical-mode)
     (ido-vertical-mode 1)

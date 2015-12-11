@@ -12,25 +12,32 @@
 (defvar org-directory-projects (expand-file-name "my/projects/" org-directory))
 (defvar org-directory-invoices (expand-file-name "my/invoices/" org-directory))
 
+(defvar org-default-notes-file (concat org-directory "notes.org"))
+
 (add-hook! org-load 'narf|org-init)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun narf@org-vars ()
-  (setq org-default-notes-file (concat org-directory "notes.org")
-        org-agenda-files
-        (f-entries org-directory (lambda (path) (f-ext? path "org")) t)
+  (setq org-agenda-files
+        (f-entries org-directory (lambda (path) (string-suffix-p ".org" path)) t)
 
         org-archive-location (concat org-directory "/archive/%s::")
         org-attach-directory ".attach/"
 
-        ;; org-mobile-inbox-for-pull (concat org-directory "inbox.org")
+        ;; org-mobile-inbox-for-pull (concat org-directory "notes.org")
         ;; org-mobile-directory "~/Dropbox/Apps/MobileOrg"
+
+        ;; Use helm for refiling
+        org-completion-use-ido nil
+        org-refile-targets '((nil . (:maxlevel . 2)))
+        ;; display full path in refile completion
+        org-refile-use-outline-path t
+        org-outline-path-complete-in-steps nil
 
         org-default-priority ?C
         org-catch-invisible-edits nil
         org-confirm-elisp-link-function nil
-        org-completion-use-ido t
         org-hidden-keywords '(title)
         org-special-ctrl-a/e t
         org-hierarchical-todo-statistics t
@@ -44,7 +51,8 @@
         org-src-window-setup 'current-window
         org-startup-folded 'content
         org-todo-keywords '((sequence "TODO(t)" "|" "DONE(d)")
-                            (sequence "LEAD(l)" "NEXT(n)" "ACTIVE(a)" "PENDING(p)" "|" "CANCELLED(c)"))
+                            (sequence "IDEA(i)" "NEXT(n)" "ACTIVE(a)" "WAITING(w)" "LATER(l)" "|" "CANCELLED(c)")
+                            (sequence "UNSENT(u)" "UNPAID(U)" "|" "PAID(p)"))
         org-blank-before-new-entry '((heading . nil)
                                      (plain-list-item . auto))
 
@@ -54,8 +62,8 @@
 
         org-capture-templates
         '(("t" "TODO" entry
-           (file+headline (concat org-directory "todo.org") "Inbox")
-           "** TODO %? %u")
+           (file+headline (concat org-directory "notes.org") "Unsorted")
+           "*** TODO %? %u")
 
           ;; TODO Select file from org files
           ;; ("T" "Specific TODO" entry
@@ -72,7 +80,7 @@
 
           ;; TODO Select file from notes folder
           ("n" "Notes" entry
-           (file+headline (concat org-directory "notes.org") "Inbox")
+           (file+headline (concat org-directory "notes.org") "Unsorted")
            "* %u %?\n%i" :prepend t)
 
           ("s" "Writing Scraps" entry
@@ -85,11 +93,11 @@
            "** %i%?\n")
 
           ("e" "Excerpt" entry
-           (file+headline (concat org-directory "notes/excerpts.org") "Unsorted")
+           (file+headline (concat org-directory "notes/excerpts.org") "Excerpts")
            "** %u %?\n%i" :prepend t)
 
           ("q" "Quote" item
-           (file (concat org-directory "notes/quotes.org"))
+           (file+headline (concat org-directory "notes/excerpts.org") "Quotes")
            "+ %i\n  *Source: ...*\n  : @tags" :prepend t)
           ))
 
@@ -199,16 +207,18 @@ will function properly."
    org-latex-preview-ltxpng-directory (concat narf-temp-dir "ltxpng/")
    org-latex-remove-logfiles t
    org-latex-create-formula-image-program 'dvipng
-   org-startup-with-latex-preview t
+   org-startup-with-latex-preview nil
    org-highlight-latex-and-related '(latex)
+   org-format-latex-options (plist-put org-format-latex-options :scale 1.4)
+   org-latex-image-default-width nil
    org-latex-packages-alist
-   '(("" "gauss" t)))
-
-  (plist-put org-format-latex-options :scale 1.1))
+   '(("" "gauss" t)
+     ;; ("" "physics" t) TODO Install this
+     )))
 
 (defun narf@org-looks ()
   (setq org-image-actual-width nil
-        org-startup-with-inline-images t
+        org-startup-with-inline-images nil
         org-startup-indented t
         org-pretty-entities t
         org-pretty-entities-include-sub-superscripts t
@@ -221,7 +231,7 @@ will function properly."
         org-cycle-separator-lines 2
         org-hide-emphasis-markers t
         org-hide-leading-stars t
-        org-bullets-bullet-list '("✸" "•" "◦" "•" "◦" "•" "◦")
+        org-bullets-bullet-list '("•" "◦" "•" "◦" "•" "◦")
         org-entities-user
         '(("flat" "\\flat" nil "" "" "266D" "♭")
           ("sharp" "\\sharp" nil "" "" "266F" "♯"))
@@ -230,6 +240,8 @@ will function properly."
         '((?A . org-todo-vhigh)
           (?B . org-todo-high)))
 
+  (add-hook! org-mode
+    (highlight-regexp org-any-link-re 'org-link))
 
   ;; Restore org-block-background face (removed in official org)
   (defface org-block-background '((t ()))
@@ -258,46 +270,32 @@ will function properly."
                ("^ *\\(#\\+end_src\\>\\)"
                 (1 (narf/show-as ?#)))
                ("^ *\\(#\\+begin_quote\\>\\)"
-                (1 (narf/show-as ?\")))
+                (1 (narf/show-as ?>)))
                ("^ *\\(#\\+end_quote\\>\\)"
-                (1 (narf/show-as ?\")))
+                (1 (narf/show-as ?>)))
 
                ;; Hide TODO tags
                ("^\\**\\(\\* DONE\\) \\([^$\n\r]+\\)"
                 (1 (narf/show-as ?☑))
-                (1 'org-todo-checkbox)
                 (2 'org-headline-done))
-               ("^\\**\\(\\* TODO\\) \\([^$\n\r]+\\)?"
-                (1 (narf/show-as ?☐))
-                (1 'org-todo-checkbox))
+               ("^\\**\\(\\* \\(TODO\\|PAID\\)\\) "
+                (1 (narf/show-as ?☐)))
 
-               ;; Unbold-ify todos
-               (,(concat "^\\**\\(\\* "
-                         (regexp-opt '("TODO" "LEAD" "NEXT" "ACTIVE" "PENDING" "CANCELLED"))
-                         "\\)\\( [^$\n\r]*\\)?")
-                (2 'org-headline-todo))
+               ;; ("[-+*] \\(\\[X\\]\\) \\([^$\n\r]+\\)"
+               ;;  (2 'org-headline-done))
 
-               ;; ("[-+*] \\(\\[ \\]\\) "
-               ;;  (1 'org-whitespace))
-               ;; ("[-+*] \\(\\[-\\]\\) "
-               ;;  (1 'org-whitespace))
-               ("[-+*] \\(\\[X\\]\\) \\([^$\n\r]+\\)"
-                ;; (1 'org-whitespace)
-                (2 'org-headline-done))
+               ("[-+*] \\[X\\] \\([^$\n\r]+\\)"
+                (1 'org-headline-done))
 
                ;; Show checkbox for other todo states (but don't hide the label)
                (,(concat
                   "\\(\\*\\) "
-                  (regexp-opt '("LEAD" "NEXT" "ACTIVE" "PENDING" "CANCELLED") t)
+                  (regexp-opt '("IDEA" "NEXT" "ACTIVE" "WAITING" "LATER" "CANCELLED" "UNPAID" "UNSENT") t)
                   " ")
                 (1 (narf/show-as ?☐)))
 
-               ("^ *\\([-+]\\|[0-9]+[).]\\)\\( \\)+[^$\n\r]+"
+               ("^ *\\([-+]\\|[0-9]+[).]\\)\\( \\)+[^$\n\r]"
                 (1 'org-list-bullet))
-               ("^ +\\(\\*\\) "
-                (1 (narf/show-as ?◦)))
-               ;; ("^ +"
-               ;;  (0 'org-whitespace))
                )))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -306,11 +304,15 @@ will function properly."
   (evil-org-mode +1)
   (org-bullets-mode +1)
   (org-indent-mode +1)
-  (text-scale-set 1)
+  ;; (text-scale-set 1)
+
+  ;; Org-specific font. See `narf-writing-font'
+  (setq buffer-face-mode-face `(:family ,(symbol-name (font-get narf-writing-font :family))))
+  (buffer-face-mode +1)
 
   (narf|enable-tab-width-2)
   (setq truncate-lines nil)
-  (setq line-spacing '0.2)
+  (setq line-spacing '2)
 
   (defun narf|org-update-statistics-cookies ()
     (when (file-exists-p buffer-file-name)
@@ -347,11 +349,23 @@ will function properly."
 
   (add-hook 'org-mode-hook 'narf|org-hook)
 
+  ;; Don't track attachments
+  (push (format "/%s.+$" (regexp-quote org-attach-directory)) recentf-exclude)
+
+  ;; Enable encryption
+  (require 'epa-file)
+  (epa-file-enable)
+  (require 'org-crypt)
+  (org-crypt-use-before-save-magic)
+  (setq org-tags-exclude-from-inheritance '("crypt"))
+  (setq org-crypt-key user-mail-address)
+  (setq epa-file-encrypt-to user-mail-address)
+
+  ;; Custom links
   (org-add-link-type "contact" 'narf/org-crm-link-contact)
   (org-add-link-type "project" 'narf/org-crm-link-project)
   (org-add-link-type "invoice" 'narf/org-crm-link-invoice)
 
-  (add-to-list 'recentf-exclude (expand-file-name "%s.+\\.org$" org-directory))
   (after! helm
     (mapc (lambda (r) (add-to-list 'helm-boring-file-regexp-list r))
           (list "\\.attach$" "\\.Rhistory$")))
@@ -364,7 +378,7 @@ will function properly."
     (make-variable-buffer-local 'yas-trigger-key)
     (setq yas/trigger-key [tab])
     (add-to-list 'org-tab-first-hook 'yas/org-very-safe-expand)
-    (define-key yas/keymap [tab] 'yas-next-field))
+    (define-key yas-keymap [tab] 'yas-next-field))
 
   ;;; Evil integration
   (progn
@@ -383,8 +397,10 @@ will function properly."
   (setq-default
    org-download-image-dir ".attach"
    org-download-heading-lvl nil
-   org-download-timestamp "_%Y%m%d_%H%M%S"
-   org-download-screenshot-method "screencapture -i %s")
+   org-download-timestamp "_%Y%m%d_%H%M%S")
+
+  (when IS-MAC
+    (setq org-download-screenshot-method "screencapture -i %s"))
 
   (defun org-download--dir-2 ()
     (f-base (buffer-file-name)))
@@ -465,6 +481,7 @@ will function properly."
            :n  "L"  'org-store-link
            :n  "x"  'narf/org-remove-link
            :n  "w"  'writing-mode
+           :n  "v"  'variable-pitch-mode
            :n  "SPC" 'narf/org-toggle-checkbox
            :n  "RET" 'org-archive-subtree
 
@@ -476,22 +493,25 @@ will function properly."
            :n  "i"  'narf/org-toggle-inline-images-at-point
            :n  "t"  (λ (org-todo (if (org-entry-is-todo-p) 'none 'todo)))
            :n  "T"  'org-todo
-           :n  "r"  'org-refile
            :n  "s"  'org-schedule
+           :n  "r"  'org-refile
+           :n  "R"  (λ (org-metaleft) (org-archive-to-archive-sibling)) ; archive to parent sibling
 
            :n  "op" 'narf/org-open-project-at-pt
            :n  "oc" 'narf/org-open-contact-at-pt
            :n  "oi" 'narf/org-open-invoice-at-pt
            )
 
+          ;; TODO Improve folding bindings
           :n  "za"  'org-cycle
           :n  "zA"  'org-shifttab
-          :n  "zm"  'hide-body
-          :n  "zr"  'show-all
-          :n  "zo"  'show-subtree
-          :n  "zO"  'show-all
-          :n  "zc"  'hide-subtree
-          :n  "zC"  'hide-all
+          :n  "zm"  (λ (outline-hide-sublevels 1))
+          :n  "zr"  'outline-show-all
+          :n  "zo"  'outline-show-subtree
+          :n  "zO"  'outline-show-all
+          :n  "zc"  'outline-hide-subtree
+          :n  "zC"  (λ (outline-hide-sublevels 1))
+          :n  "zd"  (lambda (&optional arg) (interactive "p") (outline-hide-sublevels (or arg 3)))
 
           :m  "]]"  (λ (call-interactively 'org-forward-heading-same-level) (org-beginning-of-line))
           :m  "[["  (λ (call-interactively 'org-backward-heading-same-level) (org-beginning-of-line))
@@ -577,6 +597,7 @@ will function properly."
                   (cond
                    ((and lang (not (string= lang "")) org-src-fontify-natively)
                     (org-src-font-lock-fontify-block lang block-start block-end)
+                   ;;;;;;; EDIT
                     ;; remove old background overlays
                     (mapc (lambda (ov)
                             (if (eq (overlay-get ov 'face) 'org-block-background)
@@ -587,6 +608,7 @@ will function properly."
                     (overlay-put ovl 'face 'org-block-background)
                     (overlay-put ovl 'evaporate t)) ; make it go away when empty
                    ;; (add-text-properties beg1 block-end '(src-block t)))
+                   ;;;;;;; /EDIT
                    (quoting
                     (add-text-properties beg1 (min (point-max) (1+ end1))
                                          '(face org-block))) ; end of source block

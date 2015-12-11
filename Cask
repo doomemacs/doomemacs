@@ -92,6 +92,7 @@
 (depends-on "gitconfig-mode")
 (depends-on "gitignore-mode")
 (depends-on "github-browse-file")
+(depends-on "browse-at-remote")
 
 ;; Helm -- core/core-helm.el
 (depends-on "helm")
