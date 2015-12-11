@@ -138,17 +138,7 @@
 
   (defun display-startup-echo-area-message ()
     (after! workgroups2
-      (let ((wg-list (if (wg-current-session t)
-                         (wg-display-internal
-                          (lambda (workgroup index)
-                            (if (not workgroup) wg-nowg-string
-                              (wg-element-display
-                               workgroup
-                               (format "%d %s" (1+ index) (wg-workgroup-name workgroup))
-                               'wg-current-workgroup-p
-                               'wg-previous-workgroup-p)))
-                          (wg-workgroup-list)) "")))
-        (message "> Loaded in %s. %s" (emacs-init-time) wg-list))))
+      (message "%s Loaded in %s" (narf/workgroup-display t t) (emacs-init-time))))
 
   (require 'server)
   (unless (server-running-p)
