@@ -55,7 +55,7 @@
  backup-directory-alist            `((".*" . ,(concat narf-temp-dir "backup/")))
 
  ;; Remember undo history
- undo-tree-auto-save-history t
+ undo-tree-auto-save-history        t
  undo-tree-history-directory-alist `(("." . ,(concat narf-temp-dir "undo/"))))
 
 ;;; UTF-8 please
@@ -74,7 +74,6 @@
   (require 'autoloads))
 (require 'core-vars)
 (require 'core-defuns)
-;; (require 'diminish)
 
 (autoload 'use-package "use-package" "" nil 'macro)
 (eval-when-compile
@@ -134,6 +133,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun narf-init ()
+  (setq-default
+   gc-cons-threshold 16777216
+   gc-cons-percentage 0.3)
+
   (defadvice save-buffers-kill-emacs (around no-query-kill-emacs activate)
     "Prevent annoying \"Active processes exist\" query when you quit Emacs."
     (cl-flet ((process-list ())) ad-do-it))
