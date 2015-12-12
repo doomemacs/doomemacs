@@ -50,9 +50,13 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
   (wg-workgroup-associated-buffers (wg-current-workgroup)))
 
 ;;;###autoload
+(defun narf/get-visible-windows ()
+  (-map #'get-buffer-window (narf/get-visible-buffers (narf/get-all-buffers))))
+
+;;;###autoload
 (defun narf/get-visible-buffers (&optional buffer-list)
   "Get a list of buffers that are not buried (i.e. visible)"
-  (-filter #'get-buffer-window (or buffer-list (narf/get-buffers))))
+  (-filter #'get-buffer-window (or buffer-list (narf/get-all-buffers))))
 
 ;;;###autoload
 (defun narf/get-buried-buffers (&optional buffer-list)
