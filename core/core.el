@@ -13,9 +13,11 @@
 ;;
 ;;;
 
-(setq-default
- confirm-kill-emacs (lambda (prompt) (y-or-n-p ">> Gee, I dunno Brain... Are you sure?"))
+(when window-system
+  (setq confirm-kill-emacs
+        (lambda (_) (y-or-n-p ">> Gee, I dunno Brain... Are you sure?"))))
 
+(setq-default
  ad-redefinition-action            'accept      ; silence the advised function warnings
  echo-keystrokes                    0.02        ; show me what I type
  history-length                     1000
