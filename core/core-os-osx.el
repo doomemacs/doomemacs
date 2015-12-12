@@ -33,6 +33,15 @@
               (persistent-soft-store 'exec-path-env exec-path "osx")
               exec-path))))
 
+;; Enable mouse support in terminal
+(unless window-system
+  (require 'mouse)
+  (xterm-mouse-mode t)
+  (global-set-key [mouse-4] (λ! (scroll-down 1)))
+  (global-set-key [mouse-5] (λ! (scroll-up 1)))
+  (defun track-mouse (e))
+  (setq mouse-sel-mode t))
+
 ;; OSX Related Plugins ;;;;;;;;;;;;;;;;;
 
 (use-package applescript-mode :mode "\\.applescript$")
@@ -96,8 +105,8 @@
 
 (defun narf-org-init-for-osx ()
   ;; Reveal files in finder
-  (defvar org-file-apps '(("\\.org$" . emacs)
-                          (t . "open `dirname \"%s\"`"))))
+  (setq org-file-apps '(("\\.org$" . emacs)
+                        (t . "open -R \"%s\""))))
 
 (provide 'core-os-osx)
 ;;; core-os-osx.el ends here
