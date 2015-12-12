@@ -7,7 +7,6 @@ update: autoloads
 	@git pull 2>&1 | sed 's/^/  /'
 	@cask install --verbose 2>&1 | sed 's/^/  /'
 	@echo "Updating outdated plugins"
-	@cask outdated 2>&1 | sed 's/^/  /'
 	@cask update --verbose 2>&1 | sed 's/^/  /'
 	@echo "Compiling certain scripts"
 	@emacs -Q --batch -f batch-byte-compile init-load-path.el core/core.el core/core-os-osx.el contrib/*.el 2>&1 | sed 's/^/  /'
