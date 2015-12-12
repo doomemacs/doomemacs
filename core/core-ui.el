@@ -389,8 +389,10 @@ iedit."
     (spaceline-define-segment *major-mode
       (powerline-raw
        (concat
+        (and (/= text-scale-mode-amount 0) (format "(%+d) " text-scale-mode-amount))
         mode-name
-        mode-line-process))
+        mode-line-process
+        ))
       :tight-right t)
 
     (spaceline-define-segment *buffer-size
