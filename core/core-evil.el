@@ -63,7 +63,7 @@
                       (calendar-mode             . emacs)
                       (Man-mode                  . emacs)
                       (grep-mode                 . emacs)
-                      (image-mode                . emacs)
+                      (image-mode                . normal)
                       ))
     (evil-set-initial-state `,(car mode-map) `,(cdr mode-map)))
 
