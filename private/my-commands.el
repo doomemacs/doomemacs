@@ -25,7 +25,7 @@
 (exmap "repl"            'narf:repl)
 (exmap "t[mux]"          'narf:send-to-tmux)
 (exmap "t[mux]s"         'narf/tmux-split-window)
-(exmap "t[mux]v"         (λ (narf/tmux-split-window t)))
+(exmap "t[mux]v"         (λ! (narf/tmux-split-window t)))
 (exmap "t[mux]w"         'narf/tmux-new-window)
 (exmap "tcd"             'narf:tmux-cd)
 (exmap "x"               'narf:scratch-buffer)
@@ -68,7 +68,7 @@
 
 ;; Plugins
 (after! flycheck
-  (exmap "er[rors]"      (λ (flycheck-buffer) (flycheck-list-errors))))
+  (exmap "er[rors]"      (λ! (flycheck-buffer) (flycheck-list-errors))))
 
 (after! workgroups2
   (exmap "sl[oad]"       'narf:load-session)

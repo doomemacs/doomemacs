@@ -448,17 +448,17 @@ will function properly."
           :nv "k"   'evil-previous-visual-line
           :v  "<S-tab>" 'narf/yas-insert-snippet
 
-          :i  "M-a" (λ (evil-visual-state) (org-mark-element))
+          :i  "M-a" (λ! (evil-visual-state) (org-mark-element))
           :n  "M-a" 'org-mark-element
           :v  "M-a" 'mark-whole-buffer
 
-          :ni "<M-return>"   (λ (narf/org-insert-item 'below))
-          :ni "<S-M-return>" (λ (narf/org-insert-item 'above))
+          :ni "<M-return>"   (λ! (narf/org-insert-item 'below))
+          :ni "<S-M-return>" (λ! (narf/org-insert-item 'above))
 
-          :i  "M-b" (λ (narf/org-surround "*")) ; bold
-          :i  "M-u" (λ (narf/org-surround "_")) ; underline
-          :i  "M-i" (λ (narf/org-surround "/")) ; italics
-          :i  "M-`" (λ (narf/org-surround "+")) ; strikethrough
+          :i  "M-b" (λ! (narf/org-surround "*")) ; bold
+          :i  "M-u" (λ! (narf/org-surround "_")) ; underline
+          :i  "M-i" (λ! (narf/org-surround "/")) ; italics
+          :i  "M-`" (λ! (narf/org-surround "+")) ; strikethrough
 
           :v  "M-b" "S*"
           :v  "M-u" "S_"
@@ -474,7 +474,7 @@ will function properly."
            :n  "/"  'org-sparse-tree
            :n  "?"  'org-tags-view
 
-           :n  "n"  (λ (if (buffer-narrowed-p) (widen) (org-narrow-to-subtree)))
+           :n  "n"  (λ! (if (buffer-narrowed-p) (widen) (org-narrow-to-subtree)))
            :n  "e"  'org-edit-special
            :n  "="  'org-align-all-tags
            :nv "l"  'org-insert-link
@@ -491,11 +491,11 @@ will function properly."
            :n  "d"  'org-time-stamp
            :n  "D"  'org-time-stamp-inactive
            :n  "i"  'narf/org-toggle-inline-images-at-point
-           :n  "t"  (λ (org-todo (if (org-entry-is-todo-p) 'none 'todo)))
+           :n  "t"  (λ! (org-todo (if (org-entry-is-todo-p) 'none 'todo)))
            :n  "T"  'org-todo
            :n  "s"  'org-schedule
            :n  "r"  'org-refile
-           :n  "R"  (λ (org-metaleft) (org-archive-to-archive-sibling)) ; archive to parent sibling
+           :n  "R"  (λ! (org-metaleft) (org-archive-to-archive-sibling)) ; archive to parent sibling
 
            :n  "op" 'narf/org-open-project-at-pt
            :n  "oc" 'narf/org-open-contact-at-pt
@@ -505,16 +505,16 @@ will function properly."
           ;; TODO Improve folding bindings
           :n  "za"  'org-cycle
           :n  "zA"  'org-shifttab
-          :n  "zm"  (λ (outline-hide-sublevels 1))
+          :n  "zm"  (λ! (outline-hide-sublevels 1))
           :n  "zr"  'outline-show-all
           :n  "zo"  'outline-show-subtree
           :n  "zO"  'outline-show-all
           :n  "zc"  'outline-hide-subtree
-          :n  "zC"  (λ (outline-hide-sublevels 1))
+          :n  "zC"  (λ! (outline-hide-sublevels 1))
           :n  "zd"  (lambda (&optional arg) (interactive "p") (outline-hide-sublevels (or arg 3)))
 
-          :m  "]]"  (λ (call-interactively 'org-forward-heading-same-level) (org-beginning-of-line))
-          :m  "[["  (λ (call-interactively 'org-backward-heading-same-level) (org-beginning-of-line))
+          :m  "]]"  (λ! (call-interactively 'org-forward-heading-same-level) (org-beginning-of-line))
+          :m  "[["  (λ! (call-interactively 'org-backward-heading-same-level) (org-beginning-of-line))
           :m  "]l"  'org-next-link
           :m  "[l"  'org-previous-link
 
@@ -523,10 +523,10 @@ will function properly."
           :m  "gh"  'outline-up-heading
           :m  "gj"  'org-forward-heading-same-level
           :m  "gk"  'org-backward-heading-same-level
-          :m  "gl"  (λ (call-interactively 'outline-next-visible-heading) (show-children))
+          :m  "gl"  (λ! (call-interactively 'outline-next-visible-heading) (show-children))
 
           :n  "go"  'org-open-at-point
-          :n  "gO"  (λ (let ((org-link-frame-setup (append '((file . find-file-other-window)) org-link-frame-setup))
+          :n  "gO"  (λ! (let ((org-link-frame-setup (append '((file . find-file-other-window)) org-link-frame-setup))
                              (org-file-apps '(("\\.org$" . emacs)
                                               (t . "open \"%s\""))))
                          (call-interactively 'org-open-at-point)))
@@ -536,13 +536,13 @@ will function properly."
           :m  "^"   'org-beginning-of-line
           :n  "<"   'org-metaleft
           :n  ">"   'org-metaright
-          :v  "<"   (λ (org-metaleft)  (evil-visual-restore))
-          :v  ">"   (λ (org-metaright) (evil-visual-restore))
+          :v  "<"   (λ! (org-metaleft)  (evil-visual-restore))
+          :v  ">"   (λ! (org-metaright) (evil-visual-restore))
           :n  "-"   'org-cycle-list-bullet
           :n  [tab] 'org-cycle)
 
         (:map org-src-mode-map
-          :n  "<escape>" (λ (message "Exited") (org-edit-src-exit)))
+          :n  "<escape>" (λ! (message "Exited") (org-edit-src-exit)))
 
         (:after org-agenda
           (:map org-agenda-mode-map

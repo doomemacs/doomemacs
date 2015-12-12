@@ -21,9 +21,9 @@
   (map! :map omnisharp-mode-map
         "gd" 'omnisharp-go-to-definition
         (:prefix "\\"
-          "tr" (λ (omnisharp-unit-test "fixture"))
-          "ts" (λ (omnisharp-unit-test "single"))
-          "ta" (λ (omnisharp-unit-test "all"))))
+          "tr" (λ! (omnisharp-unit-test "fixture"))
+          "ts" (λ! (omnisharp-unit-test "single"))
+          "ta" (λ! (omnisharp-unit-test "all"))))
 
   (after! company
     (define-company-backend! csharp-mode (omnisharp))

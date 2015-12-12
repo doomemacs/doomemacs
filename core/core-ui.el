@@ -60,7 +60,7 @@
       '(?☑ ?☐ ?✍ ?⚠))
 
 (mapc (lambda (x) (set-fontset-font "fontset-default" `(,x . ,x) (font-spec :name "DejaVu Sans" :size 10) nil))
-      '(?➊ ?➋ ?➌ ?➍ ?➎ ?❻ ?➐ ?➑ ?➒ ?➓))
+      '(?➊ ?➋ ?➌ ?➍ ?➎ ?❻ ?➐ ?➑ ?➒ ?➓ ?λ))
 
 (blink-cursor-mode  1)    ; do blink cursor
 (tooltip-mode      -1)    ; show tooltips in echo area

@@ -20,7 +20,7 @@
  "A-;"  'eval-expression
  "A-/"  'evil-commentary-line
 
- "M-0"  (λ (text-scale-set 0))
+ "M-0"  (λ! (text-scale-set 0))
  "M-="  'text-scale-increase
  "M--"  'text-scale-decrease
 
@@ -57,15 +57,15 @@
  :n "M-o"  'narf/ido-find-file
  :n "M-O"  'narf/ido-find-project-file
 
- :m "M-1"  (λ (narf:switch-to-workgroup-at-index 0))
- :m "M-2"  (λ (narf:switch-to-workgroup-at-index 1))
- :m "M-3"  (λ (narf:switch-to-workgroup-at-index 2))
- :m "M-4"  (λ (narf:switch-to-workgroup-at-index 3))
- :m "M-5"  (λ (narf:switch-to-workgroup-at-index 4))
- :m "M-6"  (λ (narf:switch-to-workgroup-at-index 5))
- :m "M-7"  (λ (narf:switch-to-workgroup-at-index 6))
- :m "M-8"  (λ (narf:switch-to-workgroup-at-index 7))
- :m "M-9"  (λ (narf:switch-to-workgroup-at-index 8))
+ :m "M-1"  (λ! (narf:switch-to-workgroup-at-index 0))
+ :m "M-2"  (λ! (narf:switch-to-workgroup-at-index 1))
+ :m "M-3"  (λ! (narf:switch-to-workgroup-at-index 2))
+ :m "M-4"  (λ! (narf:switch-to-workgroup-at-index 3))
+ :m "M-5"  (λ! (narf:switch-to-workgroup-at-index 4))
+ :m "M-6"  (λ! (narf:switch-to-workgroup-at-index 5))
+ :m "M-7"  (λ! (narf:switch-to-workgroup-at-index 6))
+ :m "M-8"  (λ! (narf:switch-to-workgroup-at-index 7))
+ :m "M-9"  (λ! (narf:switch-to-workgroup-at-index 8))
 
  (:when IS-MAC
    "<A-left>"       'backward-word
@@ -85,11 +85,11 @@
 
    ;; Textmate-esque indent shift left/right
    :i "M-["           (kbd "C-o m l C-o I DEL C-o ` l")
-   :i "M-]"           (λ (evil-shift-right (point-at-bol) (point-at-eol)))
+   :i "M-]"           (λ! (evil-shift-right (point-at-bol) (point-at-eol)))
 
    ;; Restore osx text objects
    :i "<A-backspace>" 'evil-delete-backward-word
-   :i "<A-delete>"    (λ (evil-forward-word) (evil-delete-backward-word)))
+   :i "<A-delete>"    (λ! (evil-forward-word) (evil-delete-backward-word)))
 
 
  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -187,7 +187,7 @@
  :nv "K"  'smart-up
 
  ;; Don't move cursor on indent
- :n  "="  (λ (save-excursion (call-interactively 'evil-indent)))
+ :n  "="  (λ! (save-excursion (call-interactively 'evil-indent)))
  :v  "="  'evil-indent
 
  :n  "zr" 'narf/evil-open-folds
@@ -224,13 +224,13 @@
  :v  "."  'evil-repeat
 
  ;; vnoremap < <gv
- :v  "<"  (λ (evil-shift-left (region-beginning) (region-end))
-             (evil-normal-state)
-             (evil-visual-restore))
+ :v  "<"  (λ! (evil-shift-left (region-beginning) (region-end))
+              (evil-normal-state)
+              (evil-visual-restore))
  ;; vnoremap > >gv
- :v  ">"  (λ (evil-shift-right (region-beginning) (region-end))
-             (evil-normal-state)
-             (evil-visual-restore))
+ :v  ">"  (λ! (evil-shift-right (region-beginning) (region-end))
+              (evil-normal-state)
+              (evil-visual-restore))
 
  ;; undo/redo for regions
  ;; :nv "u"   'undo-tree-undo
@@ -251,11 +251,11 @@
 
  ;; aliases for %
  :m  "%"   'evilmi-jump-items
- :m [tab] (λ (cond ((eq major-mode 'org-mode)
-                    (org-cycle))
-                   (t (if (ignore-errors (hs-already-hidden-p))
-                          (hs-toggle-hiding)
-                        (call-interactively 'evilmi-jump-items)))))
+ :m [tab] (λ! (cond ((eq major-mode 'org-mode)
+                     (org-cycle))
+                    (t (if (ignore-errors (hs-already-hidden-p))
+                           (hs-toggle-hiding)
+                         (call-interactively 'evilmi-jump-items)))))
 
  ;; Textmate-esque newlines
  :i  "<backspace>"   'backward-delete-char-untabify
@@ -295,8 +295,8 @@
    "C-l"     'evil-window-right    ; don't accidentally invoke help
 
    "C-w"     'ace-window
-   "C-S-w"   (λ (ace-window 4))    ; swap windows
-   "C-C"     (λ (ace-window 16)))  ; delete windows
+   "C-S-w"   (λ! (ace-window 4))    ; swap windows
+   "C-C"     (λ! (ace-window 16)))  ; delete windows
 
  ;; Vim omni-complete emulation
  :i "C-SPC"     'company-complete-common
@@ -309,9 +309,9 @@
    :i "C-s"   'company-yasnippet
    :i "C-o"   'company-semantic
    :i "C-n"   'company-dabbrev-code
-   :i "C-p"   (λ (let ((company-selection-wrap-around t))
-                   (call-interactively 'company-dabbrev-code)
-                   (company-select-previous-or-abort))))
+   :i "C-p"   (λ! (let ((company-selection-wrap-around t))
+                    (call-interactively 'company-dabbrev-code)
+                    (company-select-previous-or-abort))))
 
  (:after company
    (:map company-active-map
@@ -325,7 +325,7 @@
      "C-SPC"      'company-complete-common-or-cycle
      [tab]        'narf/company-complete-common-or-complete-full
      "<backtab>"  'company-select-previous
-     [escape]     (λ (company-abort) (evil-normal-state 1))
+     [escape]     (λ! (company-abort) (evil-normal-state 1))
      "<C-return>" 'helm-company)
    (:map company-search-map
      "C-n"        'company-search-repeat-forward
@@ -341,10 +341,10 @@
    (:map help-mode-map
      :n "]]" 'help-go-forward
      :n "[[" 'help-go-back
-     :n "<escape>" (λ (kill-buffer)
-                      (if (narf/popup-p (current-buffer))
-                          (narf/popup-close)
-                        (evil-window-delete))))))
+     :n "<escape>" (λ! (kill-buffer)
+                       (if (narf/popup-p (current-buffer))
+                           (narf/popup-close)
+                         (evil-window-delete))))))
 
 ;; Line-wise mouse selection on margin
 (global-set-key (kbd "<left-margin> <down-mouse-1>") 'narf/mouse-drag-line)
@@ -403,8 +403,8 @@
       :i "<M-return>"    'evil-open-below
       :i "<S-M-return>"  'evil-open-above
       ;; insert lines in-place)
-      :n "<M-return>"    (λ (save-excursion (evil-insert-newline-below)))
-      :n "<S-M-return>"  (λ (save-excursion (evil-insert-newline-above)))
+      :n "<M-return>"    (λ! (save-excursion (evil-insert-newline-below)))
+      :n "<S-M-return>"  (λ! (save-excursion (evil-insert-newline-above)))
 
       ;; Make ESC quit all the things
       :e [escape] 'evil-normal-state
@@ -423,11 +423,11 @@
       (:map evil-ex-completion-map "C-a" 'move-beginning-of-line))
 
 ;; Common unicode characters
-(map! :i "A-o" (λ (insert "ø"))
-      :i "A-O" (λ (insert "Ø"))
+(map! :i "A-o" (λ! (insert "ø"))
+      :i "A-O" (λ! (insert "Ø"))
 
-      :i "A--" (λ (insert "–"))
-      :i "A-_" (λ (insert "—")))
+      :i "A--" (λ! (insert "–"))
+      :i "A-_" (λ! (insert "—")))
 
 (provide 'my-bindings)
 ;;; my-bindings.el ends here

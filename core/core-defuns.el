@@ -7,7 +7,7 @@
   (defmacro with-eval-after-load (file &rest body)
     `(eval-after-load ,file (lambda () ,@body))))
 
-(defmacro λ (&rest body)
+(defmacro λ! (&rest body)
   "A shortcut for: `(lambda () (interactive) ,@body)"
   `(lambda () (interactive) ,@body))
 

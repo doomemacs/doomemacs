@@ -20,7 +20,7 @@
           "<M-right>"    nil
 
           ;; Assumes you have a markdown renderer plugin in chrome
-          :nv "M-r"  (λ (narf-open-with "Google Chrome"))
+          :nv "M-r"  (λ! (narf-open-with "Google Chrome"))
 
           "M-*"  'markdown-insert-list-item
           "M-b"  'markdown-insert-bold

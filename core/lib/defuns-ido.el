@@ -19,9 +19,9 @@
 (defun narf|ido-setup-home-keybind ()
   "Go to $HOME with ~"
   (define-key ido-file-completion-map (kbd "~")
-    (λ (if (looking-back "/")
-           (insert "~/")
-         (call-interactively 'self-insert-command)))))
+    (λ! (if (looking-back "/")
+            (insert "~/")
+          (call-interactively 'self-insert-command)))))
 
 ;;;###autoload
 (defun narf/ido-find-file (&optional dir)
