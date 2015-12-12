@@ -65,6 +65,8 @@ just stubborn. Here is a little of what to expect from NARF:
   * **Ex compatibility**: I've given quite a few plugins an Ex interface. For instance,
     `helm-ag` can be used via `:ag [KEYWORDS]`, or `align-regexp` via `:align [regexp]`.
     See [my-commands.el](private/my-commands.el) for others.
+    * **Communicating with Tmux**: using `:t [CMD]` (sends to tmux) and `:tcd` (cd's to
+      default-directory)
   * **Incremental highlighting for `:g[lobal]`**: evil's stock global command does not do
     this (`:align` will also highlight matches).
   * **iedit instead of multiple-cursors**: I've got my eye on
