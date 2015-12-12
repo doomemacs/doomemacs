@@ -102,6 +102,7 @@
     (defun narf*evil-move-to-column-fix (args)
       (mapcar (lambda (i) (if (numberp i) (truncate i) i)) args))
     (advice-add 'evil-move-to-column :filter-args 'narf*evil-move-to-column-fix)
+    (advice-add 'extract-rectangle-line :filter-args 'narf*evil-move-to-column-fix)
 
     ;; Hide keystroke display while isearch is active
     (add-hook! isearch-mode     (setq echo-keystrokes 0))
