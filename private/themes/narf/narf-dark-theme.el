@@ -79,7 +79,7 @@
        (error-highlight red)
 
        (linum-bg       current-line)
-       (linum-fg       "#383840")
+       (linum-fg       "#3F3F48")
        (linum-hl-fg    orange)
        (linum-hl-bg    current-line)
 
