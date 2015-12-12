@@ -157,7 +157,7 @@
    ;; `(linum                          ((,c (:foreground ,linum-fg :bold nil :height 0.8))))
    `(linum                          ((,c (:foreground ,linum-fg :bold nil))))
    `(linum-highlight-face           ((,c (:inherit linum :foreground ,linum-hl-fg))))
-   `(show-paren-match               ((,c (:foreground ,magenta :bold ,bold :inverse-video t))))
+   `(show-paren-match               ((,c (:foreground ,magenta :inverse-video t))))
 
    ;; Modeline
    `(narf-minibuffer-active         ((,c (:background ,active-minibuffer))))
