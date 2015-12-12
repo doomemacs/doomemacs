@@ -51,10 +51,11 @@
           "C-u"        'helm-delete-minibuffer-contents))
 
   ;;; Helm hacks
+  (defvar narf-helm-header-fg (face-attribute 'helm-source-header :foreground) "docstring")
   (defun narf*helm-hide-source-header-maybe ()
     (if (<= (length helm-sources) 1)
-        (set-face-attribute 'helm-source-header nil :height 0.1)
-      (set-face-attribute 'helm-source-header nil :height 1.0)))
+        (set-face-attribute 'helm-source-header nil :height 0.1 :foreground "#111111")
+      (set-face-attribute 'helm-source-header nil :height 1.0 :foreground narf-helm-header-fg)))
 
   (defun narf*helm-hide-modeline (source &optional force)
     (setq mode-line-format nil)
@@ -67,7 +68,7 @@
     plist)
 
   ;; Shrink source headers if there is only one source
-  (add-hook 'helm-before-initialize-hook 'narf*helm-hide-source-header-maybe)
+  (add-hook 'helm-after-initialize-hook 'narf*helm-hide-source-header-maybe)
   ;; A simpler prompt: see `helm-global-prompt'
   (advice-add 'helm :filter-args 'narf*helm-replace-prompt)
   ;; Hide mode-line in helm windows
