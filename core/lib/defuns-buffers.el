@@ -82,7 +82,14 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
   (let ((bname (buffer-name)))
     (cond ((string-match-p "^\\*scratch\\*" bname)
            (erase-buffer))
-          (t (kill-this-buffer))))
+          (t ;; bury duplicate buffers in other windows
+           (let ((this-window (get-buffer-window)))
+             (mapc (lambda (w)
+                     (unless (eq this-window w)
+                       (with-selected-window w (narf/previous-real-buffer))))
+                   (get-buffer-window-list (current-buffer) nil nil)))
+           ;; Then kill
+           (kill-this-buffer))))
   (if (narf/popup-p (current-buffer))
       (narf/popup-close)
     (unless (narf/real-buffer-p (current-buffer))
