@@ -474,8 +474,8 @@ Supports both Emacs and Evil cursor conventions."
   (spaceline-install
    ;; Left side
    '(*macro-recording
-     (*flycheck :fallback *buffer-size)
-     (*anzu *iedit *evil-substitute)
+     (((*anzu *iedit *evil-substitute) *flycheck)
+      :fallback *buffer-size)
      (*buffer-path *remote-host)
      *buffer-modified
      *vc
