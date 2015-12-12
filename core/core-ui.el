@@ -416,10 +416,13 @@ Supports both Emacs and Evil cursor conventions."
                          (and evil (eq 'block evil-visual-selection))))
                (multi-line (or (> lines 1) (eq 'line evil-visual-selection))))
           (cond
-           (rect (format "%dx%d block" lines (if evil cols (1- cols))))
-           (multi-line (format "%d lines" lines))
-           (t (format "%d chars" (if evil chars (1- chars)))))))
-      :when (or mark-active (eq 'visual evil-state))
+           (rect (format "%dx%dB" lines (if evil cols (1- cols))))
+           (multi-line
+            (if (and (eq evil-state 'visual) (eq evil-this-type 'line))
+                (format "%dL" lines)
+              (format "%dC %dL" chars lines)))
+           (t (format "%dC" (if evil chars (1- chars)))))))
+      :when (eq 'visual evil-state)
       :face highlight-face
       :skip-alternate t)
 
