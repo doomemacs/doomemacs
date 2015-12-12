@@ -26,6 +26,7 @@
  idle-update-delay              1
 
  split-width-threshold          nil  ; favor horizontal splits
+ show-help-function             nil  ; hide :help-echo text
 
  ;; Minibuffer resizing
  resize-mini-windows            'grow-only
