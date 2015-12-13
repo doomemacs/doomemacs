@@ -15,7 +15,10 @@
 
 (when window-system
   (setq confirm-kill-emacs
-        (lambda (_) (y-or-n-p ">> Gee, I dunno Brain... Are you sure?"))))
+        (lambda (_)
+          (if (narf/get-real-buffers)
+              (y-or-n-p ">> Gee, I dunno Brain... Are you sure?")
+            t))))
 
 (setq-default
  ad-redefinition-action            'accept      ; silence the advised function warnings
