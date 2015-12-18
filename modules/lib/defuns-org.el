@@ -61,8 +61,9 @@
          (context (org-element-lineage
                    (org-element-context)
                    '(table table-row clock comment comment-block footnote-definition
-                     footnote-reference headline inlinetask keyword link
-                     latex-fragment src-block inline-src-block item plain-list timestamp babel-call)
+                     footnote-reference headline inlinetask keyword link latex-fragment
+                     latex-environment src-block inline-src-block item plain-list
+                     timestamp babel-call)
                    t))
          (type (org-element-type context))
          (value (org-element-property :value context)))
@@ -94,7 +95,7 @@
      ((memq type '(src-block inline-src-block))
       (org-babel-execute-src-block))
 
-     ((memq type '(latex-fragment))
+     ((memq type '(latex-fragment latex-environment))
       (org-toggle-latex-fragment))
 
      ((memq type '(link))
