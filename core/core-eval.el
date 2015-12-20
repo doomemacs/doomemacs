@@ -1,4 +1,4 @@
-;;; core-quickrun.el
+;;; core-eval.el
 
 (use-package quickrun
   :commands (quickrun
@@ -16,11 +16,16 @@
 (use-package repl-toggle
   :commands (rtog/toggle-repl rtog/add-repl)
   :init
-  (setq rtog/goto-buffer-fun 'popwin:pop-to-buffer
-        rtog/mode-repl-alist '())
+  (setq rtog/mode-repl-alist '())
 
-  (add-hook! repl-toggle-mode 'yascroll-bar-mode)
-  (add-hook! repl-toggle-mode (evil-initialize-state 'emacs)))
+  (defun narf|repl-init ()
+    (yascroll-bar-mode +1)
+    (evil-initialize-state 'emacs)
+    (setq mode-line-format nil))
+  (add-hook! repl-toggle-mode 'narf|repl-init)
+  :config
+  (map! :map repl-toggle-mode-map
+        "ESC ESC" 'narf/popup-close))
 
-(provide 'core-quickrun)
-;;; core-quickrun.el ends here
+(provide 'core-eval)
+;;; core-eval.el ends here
