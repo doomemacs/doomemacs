@@ -23,30 +23,36 @@
    wg-list-display-decor-previous-left   ""
    wg-list-display-decor-previous-right  "")
   :config
-  ;; Don't mess with the modeline!
-  (advice-add 'wg-change-modeline :override 'ignore)
-
   (defvar narf/helm-source-wg
     '((name       . "Workgroups")
       (candidates . wg-workgroup-names)
       (action     . narf/wg-helm-switch-to-workgroup)))
 
-  (add-to-list 'savehist-additional-variables 'narf-wg-names)
-  (defvar narf-wg-frames '())
-  (defvar narf-wg-names '())
-
   (unless (file-exists-p wg-workgroup-directory)
     (mkdir wg-workgroup-directory))
+
+  (defvar narf-wg-frames '()
+    "A list of all the frames opened as separate workgroups. See
+lib/defuns-workgroups.el.")
+  (defvar narf-wg-names '()
+    "A list of fixed names for workgroups. If a name is set, workgroup names aren't
+    automatically renamed to the project name.")
+
+  ;; Remember the set names in between sessions
+  (add-to-list 'savehist-additional-variables 'narf-wg-names)
 
   (after! projectile
     ;; Create a new workgroup on switch-project
     (setq projectile-switch-project-action 'narf/wg-projectile-switch-project))
 
-  ;; Don't remember popwin windows
-  (add-hook! (kill-emacs wg-before-switch-to-workgroup) 'popwin:close-popup-window)
+  ;; Save the session every 10 minutes
+  (run-with-timer 0 600 'narf/wg-autosave)
 
-  ;; Initialize!
-  (add-hook! after-init 'workgroups-mode))
+  ;; Don't mess with the modeline!
+  (advice-add 'wg-change-modeline :override 'ignore)
+
+  ;; Don't remember popup windows
+  (add-hook! (kill-emacs) 'narf-popup-close-all))
 
 (provide 'core-workgroups)
 ;;; core-workgroups.el ends here

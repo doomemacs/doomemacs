@@ -9,8 +9,8 @@
              quickrun-replace-region
              helm-quickrun)
   :config
-  (setq quickrun-focus-p t)
-  (add-hook! quickrun/mode '(linum-mode yascroll-bar-mode))
+  (setq quickrun-focus-p nil)
+  (add-hook! quickrun/mode '(linum-mode))
   (add-to-list 'quickrun-file-alist '("\\.gvy$" . "groovy")))
 
 (use-package repl-toggle
@@ -18,14 +18,15 @@
   :init
   (setq rtog/mode-repl-alist '())
 
+  (defvar repl-p nil)
+  (make-variable-buffer-local 'repl-p)
+
   (defun narf|repl-init ()
     (yascroll-bar-mode +1)
     (evil-initialize-state 'emacs)
-    (setq mode-line-format nil))
-  (add-hook! repl-toggle-mode 'narf|repl-init)
-  :config
-  (map! :map repl-toggle-mode-map
-        "ESC ESC" 'narf/popup-close))
+    (setq mode-line-format nil
+          repl-p t))
+  (add-hook! repl-toggle-mode 'narf|repl-init))
 
 (provide 'core-eval)
 ;;; core-eval.el ends here

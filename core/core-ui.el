@@ -491,41 +491,7 @@ Supports both Emacs and Evil cursor conventions."
      (global :when active)
      ("%l/%c" *buffer-position)
      *hud
-     ))
-
-  (spaceline-define-segment helm-id
-  "Number of helm candidates."
-  (buffer-name)
-  :when (bound-and-true-p helm-alive-p)
-  :tight t)
-
-  (spaceline-define-segment helm-number
-  "Number of helm candidates."
-  (format "%d/%s (%s total)"
-          (helm-candidate-number-at-point)
-          (helm-get-candidate-number t)
-          (helm-get-candidate-number))
-  :when (bound-and-true-p helm-alive-p))
-
-(spaceline-define-segment helm-help
-  "Helm keybindings help."
-  (-interleave
-   (mapcar (lambda (s)
-             (propertize (substitute-command-keys s) 'face 'bold))
-           '("\\<helm-map>\\[helm-help]"
-             "\\<helm-map>\\[helm-select-action]"
-             "\\<helm-map>\\[helm-maybe-exit-minibuffer]/F1/F2..."))
-   '("(help)" "(actions)" "(action)"))
-  :when (bound-and-true-p helm-alive-p))
-
-  (defun narf|helm-mode-line (source &optional force)
-    "Set up a custom helm modeline."
-    (setq spaceline--helm-current-source source
-          mode-line-format '("%e" (:eval (spaceline--prepare
-                                          '(helm-number helm-id)
-                                          '(helm-help)))))
-    (when force (force-mode-line-update)))
-  (advice-add 'helm-display-mode-line :after 'narf|helm-mode-line))
+     )))
 
 (provide 'core-ui)
 ;;; core-ui.el ends here

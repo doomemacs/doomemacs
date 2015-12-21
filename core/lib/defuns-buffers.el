@@ -36,22 +36,35 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
 ;; Buffer Life and Death ;;;;;;;;;;;;;;;
 
 ;;;###autoload
-(defun narf/get-all-buffers ()
-  "Get all buffers across all workgroups. Depends on
-`wg-mess-with-buffer-list'."
-  (if (and (featurep 'workgroups2) workgroups-mode wg-mess-with-buffer-list)
-      (wg-buffer-list-emacs)
-    (buffer-list)))
+(defun narf/get-buffers (&optional project-p all-p)
+  "Get all buffers in the current workgroup.
+
+    If PROJECT-P is non-nil, get all buffers in current workgroup
+    If ALL-P is non-nil, get all buffers across all workgroups
+    If both are non-nil, get all project buffers across all workgroups"
+  (let* ((wg (wg-current-workgroup t))
+         (buffers (if (and wg (not all-p))
+                      (wg-workgroup-associated-buffers wg)
+                    (if wg-mess-with-buffer-list
+                        (wg-buffer-list-emacs)
+                      (buffer-list)))))
+
+    (let (project-root)
+      (if (and project-p (setq project-root (narf/project-root t)))
+          (funcall (if (eq project-p 'not) '-remove '-filter)
+                   (lambda (b) (projectile-project-buffer-p b project-root))
+                   buffers)
+        buffers))))
 
 ;;;###autoload
-(defun narf/get-buffers ()
-  "Get all buffers in the current workgroup. Depends on
-`wg-mess-with-buffer-list'."
-  (wg-workgroup-associated-buffers (wg-current-workgroup)))
+(defun narf/get-all-buffers (&optional project-p)
+  "Get all buffers across all workgroups and projects (unless PROJECT-P is non-nil)."
+  (narf/get-buffers project-p t))
 
 ;;;###autoload
-(defun narf/get-visible-windows ()
-  (-map #'get-buffer-window (narf/get-visible-buffers (narf/get-all-buffers))))
+(defun narf/get-visible-windows (&optional buffer-list)
+  (-map #'get-buffer-window
+        (narf/get-visible-buffers (or buffer-list (narf/get-all-buffers)))))
 
 ;;;###autoload
 (defun narf/get-visible-buffers (&optional buffer-list)
@@ -76,7 +89,7 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
   (-filter #'narf/real-buffer-p (or buffer-list (narf/get-buffers))))
 
 ;;;###autoload
-(defun narf:kill-real-buffer ()
+(defun narf/kill-real-buffer ()
   "Kill buffer (but only bury scratch buffer), then switch to a real buffer."
   (interactive)
   (let ((bname (buffer-name)))
@@ -90,13 +103,13 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
                    (get-buffer-window-list (current-buffer) nil nil)))
            ;; Then kill
            (kill-this-buffer))))
-  (if (narf/popup-p (current-buffer))
+  (if (narf/popup-p (selected-window))
       (narf/popup-close)
     (unless (narf/real-buffer-p (current-buffer))
       (narf/previous-real-buffer))))
 
 ;;;###autoload
-(defun narf:kill-unreal-buffers ()
+(defun narf/kill-unreal-buffers ()
   "Kill all buried, unreal buffers in current frame. See `narf-unreal-buffers'"
   (interactive)
   (let* ((all-buffers (narf/get-all-buffers))
@@ -104,11 +117,11 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
          (kill-list (--filter (not (memq it real-buffers))
                               (narf/get-buried-buffers all-buffers))))
     (mapc 'kill-buffer kill-list)
-    (narf:kill-process-buffers)
+    (narf/kill-process-buffers)
     (message "Cleaned up %s buffers" (length kill-list))))
 
 ;;;###autoload
-(defun narf:kill-process-buffers ()
+(defun narf/kill-process-buffers ()
   "Kill all buffers that represent running processes and aren't visible."
   (interactive)
   (let ((buffer-list (narf/get-buffers))
@@ -127,7 +140,7 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
     (message "Cleaned up %s processes" killed-processes)))
 
 ;;;###autoload
-(defun narf:kill-matching-buffers (regexp &optional buffer-list)
+(defun narf/kill-matching-buffers (regexp &optional buffer-list)
   (interactive)
   (let ((i 0))
     (mapc (lambda (b)
@@ -179,40 +192,47 @@ left, create a scratch buffer."
 (defun narf/next-real-buffer ()
   "Switch to the next buffer and avoid special buffers."
   (interactive)
-  (narf/cycle-real-buffers -1))
+  (narf/cycle-real-buffers +1))
 
 ;;;###autoload
 (defun narf/previous-real-buffer ()
   "Switch to the previous buffer and avoid special buffers."
   (interactive)
-  (narf/cycle-real-buffers +1))
+  (narf/cycle-real-buffers -1))
 
-;;;###autoload (autoload 'narf:kill-buried-buffers "defuns-buffers" nil t)
-(evil-define-command narf:kill-buried-buffers (&optional bang)
-  "Kill buried buffers and report how many it found."
-  :repeat nil
-  (interactive "<!>")
-  (let ((buffers (narf/get-buried-buffers (if bang (projectile-project-buffers) (narf/get-buffers))))
+(defun narf--kill-buffers (buffers &optional filter-func)
+  (let ((buffers (if filter-func (funcall filter-func buffers) buffers))
         (affected 0))
     (mapc (lambda (b) (when (kill-buffer b) (incf affected))) buffers)
-    (message "Cleaned up %s buffers" affected)))
+    (unless (narf/real-buffer-p)
+      (narf/previous-real-buffer))
+    (message "Killed %s buffers" affected)))
 
 ;;;###autoload (autoload 'narf:kill-all-buffers "defuns-buffers" nil t)
 (evil-define-command narf:kill-all-buffers (&optional bang)
-  "Kill all project buffers. If BANG, kill *all* buffers."
-  :repeat nil
+  "Kill all project buffers. If BANG, kill *all* buffers (in workgroup)."
   (interactive "<!>")
-  (if (and (not bang) (projectile-project-p))
-      (projectile-kill-buffers)
-    (mapc 'kill-buffer (narf/get-buffers)))
-  (delete-other-windows)
-  (unless (narf/real-buffer-p)
-    (narf/previous-real-buffer)))
+  (narf--kill-buffers (narf/get-buffers (not bang)))
+  (delete-other-windows))
 
-;;;###autoload (autoload 'narf:scratch-buffer "defuns-buffers" nil t)
-(evil-define-operator narf:scratch-buffer (&optional beg end bang)
-  "Send a selection to the scratch buffer. If BANG, then send it to org-capture
-  instead."
+;;;###autoload (autoload 'narf:kill-buried-buffers "defuns-buffers" nil t)
+(evil-define-command narf:kill-buried-buffers (&optional bang)
+  "Kill buried project buffers (in workgroup) and report how many it found. BANG = get all
+buffers regardless of project."
+  (interactive "<!>")
+  (narf-kill-buffers (narf/get-buffers (not bang)) 'narf/get-buried-buffers))
+
+;;;###autoload (autoload 'narf:kill-buried-buffers "defuns-buffers" nil t)
+(evil-define-command narf:kill-matching-buffers (&optional bang pattern)
+  "Kill project buffers matching regex pattern PATTERN. If BANG, then extend search to
+buffers regardless of project."
+  :repeat nil
+  (interactive "<!><a>")
+  (narf-kill-buffers (narf/get-matching-buffers pattern (narf/get-buffers (not bang)))))
+
+;;;###autoload (autoload 'narf:send-to-scratch-or-org "defuns-buffers" nil t)
+(evil-define-operator narf:send-to-scratch-or-org (&optional beg end bang)
+  "Send a selection to the scratch buffer. If BANG, then send it to org-capture instead."
   :move-point nil
   :type inclusive
   (interactive "<r><!>")
@@ -220,16 +240,17 @@ left, create a scratch buffer."
         (text (when (and (evil-visual-state-p) beg end)
                 (buffer-substring beg end))))
     (if bang
-        (switch-to-buffer "*scratch*")
+        (org-capture-string text)
       ;; or scratch buffer by default
       (let* ((project-dir (narf/project-root t))
              (buffer-name "*scratch*"))
-        (narf/popup-open (get-buffer-create buffer-name))
-        (when (eq (get-buffer buffer-name) (current-buffer))
+        (narf/popup-buffer buffer-name)
+        (with-current-buffer buffer-name
           (when project-dir
             (cd project-dir))
           (if text (insert text))
-          (funcall mode))))))
+          (funcall mode))
+        ))))
 
 ;;;###autoload (autoload 'narf:cd "defuns-buffers" nil t)
 (evil-define-command narf:cd (dir)
@@ -240,10 +261,10 @@ left, create a scratch buffer."
 
 ;;;###autoload
 (defun narf/kill-all-buffers-do-not-remember ()
-  "Kill all buffers so that workgroups2 will forget its current session."
+  "Kill all buffers so that workgroups2 will wipe its current session."
   (interactive)
   (let ((confirm-kill-emacs nil))
-    (mapc 'kill-buffer (buffer-list))
+    (mapc 'kill-buffer (narf/get-buffers))
     (kill-this-buffer)
     (delete-other-windows)
     (wg-save-session t)

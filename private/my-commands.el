@@ -33,12 +33,13 @@
 (exmap "git[hub]"        'narf:github-browse-file)
 
 ;; Dealing with buffers
-(exmap "k[ill]"          'kill-this-buffer)          ; Kill current buffer
+(exmap "k[ill]"          'narf/kill-real-buffer)     ; Kill current buffer
 (exmap "k[ill]all"       'narf:kill-all-buffers)     ; Kill all buffers (bang = in project)
 (exmap "k[ill]buried"    'narf:kill-buried-buffers)  ; Kill all buried buffers (bang = in project)
 (exmap "k[ill]o"         'narf:kill-unreal-buffers)
-(exmap "l[ast]"          'narf:popup-last-buffer)
-(exmap "m[sg]"           'narf:popup-messages)
+(exmap "k[ill]match"     'narf:kill-matching-buffers)
+(exmap "l[ast]"          'narf/popup-last-buffer)
+(exmap "m[sg]"           'narf/popup-messages)
 
 ;; Project navigation
 (exmap "a"               'helm-projectile-find-other-file)

@@ -24,7 +24,7 @@
 (depends-on "applescript-mode")
 
 ;; Popups --- core/core-popup.el
-(depends-on "popwin")
+(depends-on "shackle")
 
 ;; UI --- core/core-ui.el
 (depends-on "visual-fill-column")

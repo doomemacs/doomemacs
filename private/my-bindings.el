@@ -30,8 +30,8 @@
  "M-b"  'narf:build
  "M-t"  'narf:workgroup-new
  "M-T"  'narf/workgroup-display
- "A-`"  'narf-switch-to-iterm
- "C-`"  'popwin:messages
+ "A-`"  'os-switch-to-term
+ "C-`"  'narf/popup-messages
  "C-~"  'rtog/toggle-repl
  "M-`"  'narf/popup-toggle
 
@@ -192,11 +192,13 @@
 
  :n  "zr" 'narf/evil-open-folds
  :n  "zm" 'narf/evil-close-folds
- :n  "zx" 'narf:kill-real-buffer
+ :n  "zx" 'narf/kill-real-buffer
  :n  "ZX" 'bury-buffer
 
- :n  "]b" 'narf/next-real-buffer
- :n  "[b" 'narf/previous-real-buffer
+ ;; These are intentionally reversed
+ :n  "]b" 'narf/previous-real-buffer
+ :n  "[b" 'narf/next-real-buffer
+
  :m  "]d" 'narf/vcs-next-hunk
  :m  "[d" 'narf/vcs-prev-hunk
  :m  "]e" 'narf/flycheck-next-error
@@ -334,17 +336,14 @@
 
  (:after help-mode
    (:map help-map
-     "e" 'narf:popup-messages
+     "e" 'narf/popup-messages
      ;; Remove slow/annoying help subsections
      "h" nil
      "g" nil)
    (:map help-mode-map
      :n "]]" 'help-go-forward
      :n "[[" 'help-go-back
-     :n "<escape>" (λ! (kill-buffer)
-                       (if (narf/popup-p (current-buffer))
-                           (narf/popup-close)
-                         (evil-window-delete))))))
+     :n "<escape>" 'narf/popup-close)))
 
 ;; Line-wise mouse selection on margin
 (global-set-key (kbd "<left-margin> <down-mouse-1>") 'narf/mouse-drag-line)
