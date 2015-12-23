@@ -4,6 +4,7 @@
 (exmap "acomp[ile]"      'narf:compile-autoloads)
 (exmap "bcomp[ile]"      'narf:compile-el)
 (exmap "echo"            'narf:echo)
+(exmap "minor"           'what-minor-modes)
 
 ;; Editing
 (exmap "@"               'narf/evil-macro-on-all-lines)
@@ -23,14 +24,12 @@
 (exmap "http"            'httpd-start)
 (exmap "re[gex]"         'narf:regex)
 (exmap "repl"            'narf:repl)
-(exmap "t[mux]"          'narf:send-to-tmux)
-(exmap "t[mux]s"         'narf/tmux-split-window)
-(exmap "t[mux]v"         (λ! (narf/tmux-split-window t)))
+(exmap "t[mux]"          'narf:tmux)
 (exmap "t[mux]w"         'narf/tmux-new-window)
 (exmap "tcd"             'narf:tmux-cd)
-(exmap "x"               'narf:scratch-buffer)
+(exmap "x"               'narf:send-to-scratch-or-org)
 ;; GIT
-(exmap "git[hub]"        'narf:github-browse-file)
+(exmap "br[owse]"        'narf:git-remote-browse)
 
 ;; Dealing with buffers
 (exmap "k[ill]"          'narf/kill-real-buffer)     ; Kill current buffer

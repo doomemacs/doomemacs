@@ -44,7 +44,7 @@
  "C-j"  'evil-window-down
  "C-k"  'evil-window-up
  "C-h"  'evil-window-left
- "C-l"  'evil-window-right
+ "C-l"  'narf/evil-window-right ; switch to tmux if fails
 
  "C-<escape>" 'evil-emacs-state
  :e "C-<escape>" 'evil-normal-state
@@ -74,7 +74,7 @@
    "A-SPC"          'just-one-space
    "M-a"            'mark-whole-buffer
    "M-c"            'evil-yank
-   "M-s"            'save-buffer
+   "M-s"            'evil-write
    "M-v"            'clipboard-yank
    "M-q"            'evil-quit-all
    "M-z"            'undo
@@ -112,6 +112,7 @@
    :nv "P"  'helm-projectile-switch-project
    :v  "="  'align-regexp
 
+   :n  "k"  'narf/helm-descbinds-leader
    :n  "h"  'help-command
    :nv "p"  'helm-show-kill-ring
    :n  "R"  'narf/reset-theme
@@ -129,8 +130,7 @@
    :n  "w"  'narf/workgroup-display
    :n  "W"  'narf:helm-wg
 
-   :n  "n"  'narf/neotree-toggle
-   :n  "N"  'narf/neotree-find
+   :n  "n"  'narf/neotree
    :nv "l"  'narf/nlinum-toggle
 
    :nv "qq" 'evil-save-and-quit
@@ -163,6 +163,7 @@
 
    ;; Org notes
    :n "X" 'narf/org-open-notes
+   :n "T" 'narf/org-open-todo
    (:prefix "x"
      :n  "." 'narf/helm-org-find-files
      :n  "/" 'narf/helm-org
@@ -172,6 +173,7 @@
      :n  "w" 'narf/helm-org-writing))
 
  (:localleader
+   :n  "k" 'narf/helm-descbinds-localleader
    :n  "b" 'narf:build
    :n  "R" 'narf:repl
    :v  "R" 'narf:repl-eval
@@ -213,6 +215,11 @@
  :n  "g=" 'evil-numbers/inc-at-pt
  :n  "g-" 'evil-numbers/dec-at-pt
 
+ :n  "gf" (λ! (helm-mode -1)
+              (call-interactively 'find-file-at-point)
+              (helm-mode 1)) ;; prevents helm
+ ;; :n  "gF" 'evil-numbers/dec-at-pt
+
  :n  "gc" 'evil-commentary
  :n  "gx" 'evil-exchange
  :n  "gr" 'narf:eval-region
@@ -244,7 +251,7 @@
  ;; paste from recent yank register; which isn't overwritten by deletes or
  ;; other operations.
  :n  "Y"   "y$"
- :v  "P"   "\"0p"
+ :v  "C-p"   "\"0p"
 
  :v  "S"   'evil-surround-region
  :v  "R"   'evil-iedit-state/iedit-mode  ; edit all instances of marked region
@@ -274,7 +281,6 @@
 
  :n  "!"     'rotate-word-at-point
  :v  "!"     'rotate-region
- :e  "<escape>" 'evil-normal-state
 
  (:map evil-window-map ; prefix "C-w"
    "u"       'narf/undo-window-change
@@ -291,10 +297,12 @@
 
    "C-u"     'narf/undo-window-change
    "C-r"     'narf/redo-window-change
-   "C-h"     'evil-window-left     ; don't accidentally invoke help
-   "C-j"     'evil-window-down     ; don't accidentally invoke help
-   "C-k"     'evil-window-up       ; don't accidentally invoke help
-   "C-l"     'evil-window-right    ; don't accidentally invoke help
+   "C-h"     'evil-window-left
+   "C-j"     'evil-window-down
+   "C-k"     'evil-window-up
+
+   "l"       'narf/evil-window-right ; Switch to tmux if no window
+   "C-l"     'narf/evil-window-right ; Switch to tmux if no window
 
    "C-w"     'ace-window
    "C-S-w"   (λ! (ace-window 4))    ; swap windows
@@ -360,7 +368,8 @@
 
 ;; Restores "dumb" indentation to the tab key. This rustles a lot of
 ;; peoples' jimmies, apparently, but it's how I like it.
-(map! :i "<tab>"   'narf/dumb-indent
+(map! "C-b" 'backward-word
+      :i "<tab>"   'narf/dumb-indent
       :i "<C-tab>" 'indent-for-tab-command
 
       ;; No dumb-tab for lisp
@@ -406,7 +415,6 @@
       :n "<S-M-return>"  (λ! (save-excursion (evil-insert-newline-above)))
 
       ;; Make ESC quit all the things
-      :e [escape] 'evil-normal-state
       (:map (minibuffer-local-map
              minibuffer-local-ns-map
              minibuffer-local-completion-map
