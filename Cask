@@ -1,10 +1,10 @@
 ; (source "melpa", "https://melpa.org/packages/")
-(source "marmalade" "https://marmalade-repo.org/packages/")
+; (source "marmalade" "https://marmalade-repo.org/packages/")
 ; (source "org", "http://orgmode.org/elpa/")
 ; (source "gnu", "https://elpa.gnu.org")
 
 (source melpa)
-; (source marmalade)
+(source marmalade)
 (source org)
 (source gnu)
 
@@ -64,7 +64,6 @@
 (depends-on "rotate-text" :git "https://github.com/debug-ito/rotate-text.el")
 (depends-on "smart-forward")
 (depends-on "smartparens")
-(depends-on "guide-key")
 
 ;; Completion --- core/core-company.el
 (depends-on "company")
@@ -91,7 +90,6 @@
 (depends-on "git-gutter-fringe")
 (depends-on "gitconfig-mode")
 (depends-on "gitignore-mode")
-(depends-on "github-browse-file")
 (depends-on "browse-at-remote")
 
 ;; Helm -- core/core-helm.el
