@@ -28,6 +28,11 @@
         evil-ex-interactive-search-highlight 'selected-window
         evil-echo-state nil
         evil-ex-substitute-global t
+        evil-insert-skip-empty-lines t
+
+        ;; NOTE: a bug in emacs is causing problems for undoing in evil when
+        ;; `evil-want-fine-undo' is nil or t, so for now it's set to 'fine
+        evil-want-fine-undo 'fine
 
         evil-normal-state-tag    "N"
         evil-insert-state-tag    "I"
@@ -52,18 +57,21 @@
   (evil-define-key 'normal evil-command-window-mode-map [escape] 'kill-buffer-and-window)
 
   ;; modes to map to different default states
-  (dolist (mode-map '((cider-repl-mode           . emacs)
-                      (comint-mode               . emacs)
-                      (term-mode                 . emacs)
-                      (Info-mode                 . emacs)
-                      (view-mode                 . emacs)
-                      (help-mode                 . normal)
-                      (message-mode              . normal)
-                      (compilation-mode          . normal)
-                      (calendar-mode             . emacs)
-                      (Man-mode                  . emacs)
-                      (grep-mode                 . emacs)
-                      (image-mode                . normal)
+  (dolist (mode-map '((compilation-mode       . normal)
+                      (help-mode              . normal)
+                      (message-mode           . normal)
+                      (debugger-mode          . normal)
+                      (profile-report-mode    . emacs)
+
+                      (Info-mode              . emacs)
+                      (view-mode              . emacs)
+                      (comint-mode            . emacs)
+                      (cider-repl-mode        . emacs)
+                      (term-mode              . emacs)
+                      (calendar-mode          . emacs)
+                      (Man-mode               . emacs)
+                      (grep-mode              . emacs)
+                      (image-mode             . normal)
                       ))
     (evil-set-initial-state `,(car mode-map) `,(cdr mode-map)))
 
@@ -89,12 +97,12 @@
   (progn ; evil hacks
     (defadvice evil-force-normal-state (after evil-esc-quit activate)
       "Close popups, disable search highlights and quit the minibuffer if open."
-      (unless (bound-and-true-p org-src-mode)
-        (narf/popup-close))
+      (when (minibuffer-window-active-p (minibuffer-window))
+        (narf-minibuffer-quit))
       (ignore-errors
         (evil-ex-nohighlight))
-      (when (minibuffer-window-active-p (minibuffer-window))
-        (narf-minibuffer-quit)))
+      (unless (bound-and-true-p org-src-mode)
+        (narf/popup-close)))
 
     ;; Monkey-patch an error triggered randomly during column-selection caused
     ;; by `evil-move-to-column' receiving a float:
