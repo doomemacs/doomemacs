@@ -53,7 +53,10 @@
         web-mode-css-indent-offset     2
         web-mode-style-padding         2
         web-mode-script-padding        2
-        web-mode-block-padding         2)
+        web-mode-block-padding         2
+        ;; smartparens handles this
+        web-mode-enable-auto-pairing nil
+        web-mode-enable-auto-quoting nil)
   :config
   (after! web-beautify
     (add-hook! web-mode (setenv "jsbeautify_indent_size" "4"))
