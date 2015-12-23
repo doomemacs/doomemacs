@@ -5,44 +5,45 @@
   (shackle-mode 1)
   (setq shackle-rules
         '(;; Plugins
-          ("*Flycheck errors*"               :align below  :ratio 0.3 :select t)
-          ("\\` ?\\*[hH]elm.*?\\*\\'" :regexp t :align below  :ratio 0.25 :select t)
-          (" *NeoTree*"                      :align left              :select t)
-          ("*evil-registers*"                :align below  :ratio 0.3)
-          ("*quickrun*"                      :align below  :ratio 0.1 :noselect t)
-          ("*eval*"                          :align below  :ratio 0.25)
+          ("\\` ?\\*[hH]elm.*?\\*\\'" :regexp t :align below  :size 0.25 :select t)
+          ("*Flycheck errors*"               :align below  :size 15  :select t)
+          (" *NeoTree*"                      :align left             :select t)
+          ("*evil-registers*"                :align below  :size 0.3)
+          ("*quickrun*"                      :align below  :size 15  :noselect t)
+          ("*eval*"                          :align below  :size 15)
 
           ;; vcs
-          ("^\\*git-gutter.+\\*$"  :regexp t :align below  :ratio 0.4 :noselect t)
-          ("*vc-diff*"                       :align below  :ratio 0.4 :noselect t)
-          ("*vc-change-log*"                 :align below             :select t)
+          ("^\\*git-gutter.+\\*$"  :regexp t :align below  :size 0.4 :noselect t)
+          ("*vc-diff*"                       :align below  :size 0.4 :noselect t)
+          ("*vc-change-log*"                 :align below            :select t)
           (vc-annotate-mode                  :same t)
 
-          ("*Apropos*"                       :align below  :ratio 0.3)
-          ("*minor-modes*"                   :align below  :ratio 0.5 :noselect t)
+          ("*Apropos*"                       :align below  :size 0.3)
+          ("*minor-modes*"                   :align below  :size 0.5 :noselect t)
 
           ;; Org
-          ("^\\*Org Src .+\\*$"    :regexp t :align below  :ratio 0.4 :select t)
-          ("^\\*Org-Babel.*\\*$"   :regexp t :align below  :ratio 0.4)
-          (org-agenda-mode                   :align below  :ratio 0.4)
-          ("*Agenda Commands*"               :align below  :ratio 0.5)
-          (" *Org todo*"                     :align below             :noselect t)
-          ("*Org Links*"                     :align below  :ratio 0.05)
+          ("^\\*Org Src .+\\*$"    :regexp t :align below  :size 0.4 :select t)
+          ("^\\*Org-Babel.*\\*$"   :regexp t :align below  :size 0.4)
+          (org-agenda-mode                   :align below  :size 0.4)
+          ("*Agenda Commands*"               :align below  :size 0.5)
+          (" *Org todo*"                     :align below  :size 3   :noselect t)
+          ("*Org Links*"                     :align below  :size 2)
 
           ;; Emacs
-          ("^\\*.+-Profiler-Report .+\\*$" :regexp t :align below :ratio 0.3)
-          ("*Backtrace*" :align below :ratio 0.25 :noselect t)
-          ("*scratch*"   :align below :ratio 0.3  :select t)
-          ("*Help*"      :align below :ratio 0.25)
-          ("*Messages*"  :align below :ratio 0.35 :select t)
-          (debugger-mode :align below :ratio 0.25 :noselect t)
+          ("^\\*.+-Profiler-Report .+\\*$" :regexp t :align below :size 0.3)
+          ("*Backtrace*" :align below :size 0.25 :noselect t)
+          ("*scratch*"   :align below :size 0.3  :select t)
+          ("*Help*"      :align below :size 15)
+          ("*Messages*"  :align below :size 0.35 :select t)
+          (debugger-mode :align below :size 0.25 :noselect t)
           (compilation-mode :noselect t)
 
           ;; REPLs
           ((:custom (lambda (b &rest _)
-                      (when (string-prefix-p "*" (buffer-name (get-buffer b)))
-                        (with-current-buffer b repl-p))))
-           :popup t :align below :ratio 0.3)
+                      (when (bound-and-true-p repl-p)
+                        (when (string-prefix-p "*" (buffer-name (get-buffer b)))
+                          (with-current-buffer b repl-p)))))
+           :popup t :align below :size 0.3)
 
           ))
 
@@ -215,7 +216,8 @@
 
   (defun narf/popup-messages ()
     (interactive)
-    (narf/popup-buffer "*Messages*")))
+    (narf/popup-buffer "*Messages*")
+    (goto-char (point-max))))
 
 ;; (use-package popwin
 ;;   :disabled t
