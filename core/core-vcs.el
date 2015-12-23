@@ -12,9 +12,13 @@
 (use-package browse-at-remote
   :defer t
   :init
-  (evil-define-command narf:github-browse-file (&optional bang)
-    (interactive "<!>")
-    (browse-at-remote bang)))
+  (evil-define-command narf:git-remote-browse (&optional bang file)
+    "Open the website for the current (or specified) version controlled FILE. If BANG,
+then use hub to do it."
+    (interactive "<!><f>")
+    (if bang
+        (message "Url copied to clipboard: %s" (browse-at-remote/to-clipboard))
+      (browse-at-remote/browse))))
 
 (use-package git-gutter
   :commands (git-gutter-mode narf/vcs-next-hunk narf/vcs-prev-hunk
@@ -42,35 +46,6 @@
 
   (advice-add 'evil-force-normal-state :after 'git-gutter)
   (add-hook! focus-in 'git-gutter:update-all-windows))
-
-(use-package diff-hl
-  :disabled t
-  :init
-  (setq diff-hl-draw-borders nil
-        diff-hl-fringe-bmp-function 'narf-diff-hl-fringe-bmp)
-  :config
-  (defalias 'narf/vcs-next-hunk 'diff-hl-next-hunk)
-  (defalias 'narf/vcs-prev-hunk 'diff-hl-previous-hunk)
-  ;; (defalias 'narf/vcs-show-hunk
-  ;; (defalias 'narf/vcs-stage-hunk ...)
-  (defalias 'narf/vcs-revert-hunk 'diff-hl-revert-hunk)
-
-  (defun narf-diff-hl-fringe-bmp (type _pos)
-    (if (eq type 'delete)
-        'narf--diff-hl-bitmap-del
-      'narf--diff-hl-bitmap))
-
-  (map! :map diff-mode-shared-map
-        :n "RET" 'diff-goto-source)
-
-  (define-fringe-bitmap 'narf--diff-hl-bitmap
-    [240 240 240 240 240 240 240 240 240 240 240 240 240 240]
-    nil nil 'center)
-  (define-fringe-bitmap 'narf--diff-hl-bitmap-del
-    [248 240 224 192 128 0 0 0 0 0 0 0 0 0]
-    nil nil 'center)
-
-  (global-diff-hl-mode 1))
 
 (after! vc-annotate
   (evil-set-initial-state 'vc-annotate-mode 'normal)
