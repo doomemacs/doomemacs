@@ -2,16 +2,17 @@
 
 (use-package helm
   :init
-  (defvar helm-global-prompt ">>> ")
+  (defvar helm-global-prompt "⮁⮁⮁ ")
   (setq-default
    helm-quick-update t
    helm-reuse-last-window-split-state t
 
-   helm-buffers-fuzzy-matching t
+   helm-mode-fuzzy-match nil
+   helm-buffers-fuzzy-matching nil
    helm-apropos-fuzzy-match nil
-   helm-M-x-fuzzy-match t
-   helm-recentf-fuzzy-match t
-   ;; helm-mode-fuzzy-match t
+   helm-M-x-fuzzy-match nil
+   helm-recentf-fuzzy-match nil
+   helm-projectile-fuzzy-match t
 
    helm-display-header-line nil
    helm-ff-auto-update-initial-value nil
@@ -22,7 +23,7 @@
    ;; Don't override evil-ex's completion
    helm-mode-handle-completion-in-region nil
 
-   helm-candidate-number-limit 30
+   helm-candidate-number-limit 50
    helm-bookmark-show-location t)
 
   :config
@@ -34,11 +35,14 @@
   (map! (:map (helm-map helm-generic-files-map helm-find-files-map helm-swoop-map helm-projectile-find-file-map)
           "C-w"        'backward-kill-word
           "C-r"        'evil-paste-from-register ; Evil registers in helm! Glorious!
+          "/"          nil
+          "<left>"     'backward-char
+          "<right>"    'forward-char
           "<escape>"   'helm-keyboard-quit
           [escape]     'helm-keyboard-quit)
         (:map helm-find-files-map
           "C-w"        'helm-find-files-up-one-level
-          ;; "TAB"        'helm-execute-persistent-action
+          "TAB"        'helm-execute-persistent-action
           "/"          'helm-execute-persistent-action)
         (:map helm-ag-map
           "<backtab>"  'helm-ag-edit)
@@ -57,9 +61,9 @@
         (set-face-attribute 'helm-source-header nil :height 0.1 :foreground "#111111")
       (set-face-attribute 'helm-source-header nil :height 1.0 :foreground narf-helm-header-fg)))
 
-  (defun narf*helm-hide-modeline (source &optional force)
-    (setq mode-line-format nil)
-    (setq header-line-format nil))
+  (defun narf*helm-hide-header (source &optional force)
+    (setq header-line-format nil)
+    (setq mode-line-format nil))
 
   (defun narf*helm-replace-prompt (plist)
     (if (keywordp (car plist))
@@ -72,7 +76,7 @@
   ;; A simpler prompt: see `helm-global-prompt'
   (advice-add 'helm :filter-args 'narf*helm-replace-prompt)
   ;; Hide mode-line in helm windows
-  (advice-add 'helm-display-mode-line :override 'narf*helm-hide-modeline)
+  (advice-add 'helm-display-mode-line :override 'narf*helm-hide-header)
 
   (helm-mode 1))
 
@@ -81,8 +85,7 @@
   (add-hook! kill-emacs 'narf|projectile-invalidate-cache-maybe)
 
   (setq-default projectile-enable-caching t)
-  (setq projectile-sort-order 'recentf
-        projectile-require-project-root nil
+  (setq projectile-require-project-root nil
         projectile-cache-file (concat narf-temp-dir "projectile.cache")
         projectile-known-projects-file (concat narf-temp-dir "projectile.projects")
         projectile-indexing-method 'alien
@@ -136,7 +139,24 @@
 (use-package helm-semantic :commands helm-semantic-or-imenu)
 (use-package helm-elisp    :commands helm-apropos)
 (use-package helm-command  :commands helm-M-x)
-(use-package helm-descbinds :commands helm-descbinds)
+
+(use-package helm-descbinds :commands helm-descbinds
+  :config
+  (setq helm-descbinds-window-style 'split-window)
+  (defun narf/helm-descbinds-leader ()
+    (interactive)
+    (narf-helm-descbinds "^,\\ "))
+  (defun narf/helm-descbinds-localleader ()
+    (interactive)
+    (narf-helm-descbinds "^\\\\\\ "))
+
+  (defun narf-helm-descbinds (&optional input buffer)
+    (let ((enable-recursive-minibuffers t))
+      (helm :sources (helm-descbinds-sources (or buffer (current-buffer)))
+            :buffer "*helm-descbinds*"
+            :resume 'noresume
+            :allow-nest t
+            :input input))))
 
 (provide 'core-helm)
 ;;; core-helm.el ends here
