@@ -7,8 +7,7 @@
 ;;;###autoload
 (defun narf/helm-org ()
   (interactive)
-  (let ((default-directory org-directory))
-    (helm-projectile-find-file)))
+  (narf--helm-org org-directory))
 
 ;;;###autoload
 (defun narf/helm-org-crm-projects ()
