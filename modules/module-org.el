@@ -13,6 +13,7 @@
 (defvar org-directory-invoices (expand-file-name "my/invoices/" org-directory))
 
 (defvar org-default-notes-file (concat org-directory "notes.org"))
+(defvar org-default-todo-file  (concat org-directory "todo.org"))
 
 (add-hook! org-load 'narf|org-init)
 
@@ -48,7 +49,6 @@
         org-log-done t
         org-agenda-window-setup 'other-window
         org-agenda-skip-unavailable-files t
-        org-src-window-setup 'current-window
         org-startup-folded 'content
         org-todo-keywords '((sequence "TODO(t)" "|" "DONE(d)")
                             (sequence "IDEA(i)" "NEXT(n)" "ACTIVE(a)" "WAITING(w)" "LATER(l)" "|" "CANCELLED(c)")
@@ -62,7 +62,7 @@
 
         org-capture-templates
         '(("t" "TODO" entry
-           (file+headline (concat org-directory "notes.org") "Unsorted")
+           (file+headline org-default-todo-file "Inbox")
            "*** TODO %? %u")
 
           ;; TODO Select file from org files
@@ -80,7 +80,7 @@
 
           ;; TODO Select file from notes folder
           ("n" "Notes" entry
-           (file+headline (concat org-directory "notes.org") "Unsorted")
+           (file+headline org-default-notes-file "Inbox")
            "* %u %?\n%i" :prepend t)
 
           ("s" "Writing Scraps" entry
@@ -89,15 +89,15 @@
 
           ;; TODO Sort word under correct header
           ("v" "Vocab" entry
-           (file+headline (concat org-directory "notes/vocab.org") "Unsorted")
+           (file+headline (concat org-directory "topics/vocab.org") "Unsorted")
            "** %i%?\n")
 
           ("e" "Excerpt" entry
-           (file+headline (concat org-directory "notes/excerpts.org") "Excerpts")
+           (file+headline (concat org-directory "topics/excerpts.org") "Excerpts")
            "** %u %?\n%i" :prepend t)
 
           ("q" "Quote" item
-           (file+headline (concat org-directory "notes/excerpts.org") "Quotes")
+           (file+headline (concat org-directory "topics/excerpts.org") "Quotes")
            "+ %i\n  *Source: ...*\n  : @tags" :prepend t)
           ))
 
@@ -133,6 +133,7 @@
 
 (defun narf@org-babel ()
   (setq org-confirm-babel-evaluate nil   ; you don't need my permission
+        org-src-window-setup 'current-window
         org-src-fontify-natively t       ; make code pretty
         org-src-preserve-indentation t
         org-src-tab-acts-natively t)
@@ -156,7 +157,9 @@
               (lambda ()
                 (when (file-exists-p buffer-file-name)
                   (shut-up! (org-babel-lob-ingest buffer-file-name))))
-              t t))
+              t t)
+    ;; Restore feedback on save
+    (add-hook 'after-save-hook (lambda () (message "Saved!")) t t))
 
   (org-babel-do-load-languages
    'org-babel-load-languages
@@ -194,9 +197,11 @@
   (defadvice org-edit-src-code (around set-buffer-file-name activate compile)
     "Assign a proper filename to the edit-src buffer, so plugins like quickrun
 will function properly."
-    (let ((file-name (buffer-file-name)))
+    (let ((buffer-name (buffer-name))
+          (file-name (buffer-file-name)))
       ad-do-it
-      (setq buffer-file-name file-name)))
+      (setq buffer-file-name file-name)
+      (message "--%s :: %s" buffer-name (buffer-name))))
 
   ;; Add plantuml syntax highlighting support
   (add-to-list 'org-src-lang-modes '("puml" . puml))
@@ -304,7 +309,12 @@ will function properly."
   (evil-org-mode +1)
   (org-bullets-mode +1)
   (org-indent-mode +1)
-  ;; (text-scale-set 1)
+  (text-scale-set 1)
+
+  ;;; OS-Specific
+  (cond (IS-MAC (narf-org-init-for-osx))
+        (IS-LINUX nil)
+        (IS-WINDOWS nil))
 
   ;; Org-specific font. See `narf-writing-font'
   (setq buffer-face-mode-face `(:family ,(symbol-name (font-get narf-writing-font :family))))
@@ -395,15 +405,18 @@ will function properly."
   ;;; Plugins
   (require 'org-download)
   (setq-default
-   org-download-image-dir ".attach"
+   org-download-image-dir (expand-file-name ".attach" org-directory)
    org-download-heading-lvl nil
    org-download-timestamp "_%Y%m%d_%H%M%S")
 
   (when IS-MAC
     (setq org-download-screenshot-method "screencapture -i %s"))
 
-  (defun org-download--dir-2 ()
-    (f-base (buffer-file-name)))
+  ;; Write download paths relative to current file
+  (defun org-download--dir-2 () nil)
+  (defun narf*org-download--fullname (path)
+    (f-relative path (f-dirname (buffer-file-name))))
+  (advice-add 'org-download--fullname :filter-return 'narf*org-download--fullname)
 
   ;;; Auto-completion
   (after! company
@@ -551,11 +564,6 @@ will function properly."
             :e "C-k" 'org-agenda-previous-item
             :e "C-n" 'org-agenda-next-item
             :e "C-p" 'org-agenda-previous-item)))
-
-    ;;; OS-Specific
-  (cond (IS-MAC (narf-org-init-for-osx))
-        (IS-LINUX nil)
-        (IS-WINDOWS nil))
 
   (progn ;; Org hacks
     (defun org-fontify-meta-lines-and-blocks-1 (limit)
