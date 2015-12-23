@@ -8,13 +8,13 @@
   (let ((filename (file-truename (or filename (buffer-file-name)))))
     (if (not (file-exists-p filename))
         (error "File doesn't exist: %s" filename)
-      (delete-file filename)
-      (when bang
+      (when (or bang (and (not bang) (y-or-n-p (format "Delete %s?" (f-base filename)))))
+        (delete-file filename)
         (kill-this-buffer)
         (unless (narf/real-buffer-p)
-          (narf/previous-real-buffer)))
-      (save-place-forget-unreadable-files)
-      (message "File successfully deleted: %s" filename))))
+          (narf/previous-real-buffer))
+        (save-place-forget-unreadable-files)
+        (message "File successfully deleted: %s" filename)))))
 
 (defun narf--save-exit() (save-buffer) (kill-buffer) (remove-hook 'yas-after-exit-snippet-hook '--save-exit))
 ;;;###autoload (autoload 'narf:file-create "defuns-file" nil t)
