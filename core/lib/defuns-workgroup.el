@@ -102,7 +102,7 @@
            (propertize message 'face message-face)))
 
 ;;;###autoload
-(defun narf/workgroup-display (&optional suppress-update return-p)
+(defun narf/workgroup-display (&optional suppress-update return-p message)
   (interactive)
   (when (wg-current-session t)
     (unless (eq suppress-update t)
@@ -117,7 +117,7 @@
                    (wg-workgroup-list))))
       (if return-p
           output
-        (message "%s" output)))))
+        (message "%s%s" output (or message ""))))))
 
 ;;;###autoload
 (defun narf/workgroup-update-names (&optional wg)
@@ -125,27 +125,30 @@
     (unless (memq wg narf-wg-names)
       (ignore-errors
         (let ((old-name (wg-workgroup-name wg))
-              (base (f-filename (buffer-file-name))))
-          (unless (string= base old-name)
-            (wg-rename-workgroup base wg)))))))
+              (new-name (f-filename (narf/project-root))))
+          (unless (string= new-name old-name)
+            (wg-rename-workgroup new-name wg)))))))
+
+(defun narf--switch-to-workgroup (direction &optional count)
+  (interactive "<c>")
+  (assert (memq direction '(left right)))
+  (condition-case err
+      (progn
+        (if count
+            (wg-switch-to-workgroup-at-index (1- count))
+          (funcall (intern (format "wg-switch-to-workgroup-%s" direction))))
+        (narf/workgroup-display t))
+      (error (narf/workgroup-display t nil (format "Nope! %s" (cadr err))))))
 
 ;;;###autoload (autoload 'narf:switch-to-workgroup-left "defuns-workgroup" nil t)
 (evil-define-command narf:switch-to-workgroup-left (count)
   (interactive "<c>")
-  (narf/workgroup-update-names)
-  (if count
-      (wg-switch-to-workgroup-at-index (1- count))
-    (wg-switch-to-workgroup-left))
-  (narf/workgroup-display t))
+  (narf--switch-to-workgroup 'left))
 
 ;;;###autoload (autoload 'narf:switch-to-workgroup-right "defuns-workgroup" nil t)
 (evil-define-command narf:switch-to-workgroup-right (count)
   (interactive "<c>")
-  (narf/workgroup-update-names)
-  (if count
-      (wg-switch-to-workgroup-at-index (1- count))
-    (wg-switch-to-workgroup-right))
-  (narf/workgroup-display t))
+  (narf--switch-to-workgroup 'right))
 
 ;;;###autoload
 (defun narf:switch-to-workgroup-at-index (index)
@@ -176,6 +179,10 @@
         (narf:workgroup-delete))
     (evil-window-delete)))
 
+;;;###autoload
+(defun narf/wg-autosave ()
+  (when (wg-current-session t)
+    (shut-up! (wg-save-session))))
 
 (provide 'defuns-workgroup)
 ;;; defuns-workgroup.el ends here
