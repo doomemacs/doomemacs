@@ -6,6 +6,11 @@
   (find-file org-default-notes-file))
 
 ;;;###autoload
+(defun narf/org-open-todo ()
+  (interactive)
+  (find-file org-default-todo-file))
+
+;;;###autoload
 (defun narf/org-insert-item (direction)
   "Inserts a new heading or item, depending on the context."
   (interactive)
