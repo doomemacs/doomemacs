@@ -25,9 +25,8 @@
   (advice-add 'evil-force-normal-state :after 'narf*flycheck-buffer)
 
   (define-fringe-bitmap 'flycheck-fringe-bitmap-double-arrow
-    [0 0 0 0 8 24 56 120 56 24 8 0 0 0 0]
+    [0 0 0 8 24 56 120 248 120 56 24 8 0 0 0]
     ;; (fringe-helper-convert
-    ;;  "........"
     ;;  "........"
     ;;  "........"
     ;;  "........"
@@ -35,10 +34,11 @@
     ;;  "...XX..."
     ;;  "..XXX..."
     ;;  ".XXXX..."
+    ;;  "XXXXX..."
+    ;;  ".XXXX..."
     ;;  "..XXX..."
     ;;  "...XX..."
     ;;  "....X..."
-    ;;  "........"
     ;;  "........"
     ;;  "........"
     ;;  "........")
