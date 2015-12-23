@@ -234,7 +234,7 @@
   :config
   (setq-default
    powerline-default-separator nil
-   powerline-height 15
+   powerline-height 19
    spaceline-highlight-face-func 'spaceline-highlight-face-evil-state)
 
   (defface mode-line-is-modified nil "Face for mode-line modified symbol")
@@ -389,7 +389,7 @@ iedit."
     (spaceline-define-segment *major-mode
       (powerline-raw
        (concat
-        (and (/= text-scale-mode-amount 0) (format "(%+d) " text-scale-mode-amount))
+        (and (featurep 'face-remap) (/= text-scale-mode-amount 0) (format "(%+d) " text-scale-mode-amount))
         mode-name
         mode-line-process
         ))
@@ -469,8 +469,7 @@ Supports both Emacs and Evil cursor conventions."
 
     (spaceline-define-segment *hud
       "A HUD that shows which part of the buffer is currently visible."
-      (powerline-hud highlight-face other-face 1)
-      :face other-face
+      (powerline-hud 'spaceline-highlight-face other-face 1)
       :tight-right t))
 
   ;; Initialize modeline
