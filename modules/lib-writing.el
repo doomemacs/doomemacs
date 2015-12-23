@@ -1,4 +1,10 @@
-;;; module-writing.el
+;;; lib-writing.el
+
+;; This library offers the following:
+;;   + Writing-mode: visual-fill-column, larger fonts, fewer disctractions
+;;   + Bibtex integration
+;;   + TODO Pandoc integration
+;;   + TODO A separate emacs configuration dedicated to org-mode
 
 ;; From <https://github.com/joostkremers/visual-fill-column/pull/6>
 (after! visual-fill-column
@@ -92,5 +98,5 @@
         (lambda (fpath) (async-start-process "open-pdf" "/usr/bin/open" nil fpath))))
 
 
-(provide 'module-writing)
-;;; module-writing.el ends here
+(provide 'lib-writing)
+;;; lib-writing.el ends here
