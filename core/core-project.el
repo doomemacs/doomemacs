@@ -49,22 +49,21 @@
   :functions (neo-buffer--unlock-width neo-buffer--lock-width)
   :init
   (setq neo-create-file-auto-open t
+        neo-auto-indent-point t
         neo-mode-line-type 'none
-        neo-persist-show t
+        neo-persist-show nil
         neo-window-width 22
         neo-show-updir-line nil
         neo-auto-indent-point t
-        neo-banner-message nil
-        ;; requires <https://github.com/jeffplang/emacs-neotree> fork of
-        ;; neotree (at least, until the PR is accepted). Causes neotree to
-        ;; open in a vertical split that consumes the entire height of the
-        ;; frame.
-        neo-modern-sidebar t)
+        neo-banner-message nil)
   :config
+  (evil-set-initial-state 'neotree-mode 'motion)
+  (add-hook! neotree-mode 'narf|neotree-init-keymap)
   (defun narf|neotree-init-keymap ()
     (map! :map evil-motion-state-local-map
           "ESC"  'neotree-hide
-          "\\\\" 'neotree-hide
+          "q"   'neotree-hide
+
           "RET" 'neotree-enter
           "J"   'neotree-select-next-sibling-node
           "K"   'neotree-select-previous-sibling-node
@@ -75,17 +74,15 @@
           "c"   'neotree-create-node
           "d"   'neotree-delete-node
           "g"   'neotree-refresh
-          "q"   'neotree-hide
           "r"   'neotree-rename-node
           "R"   'neotree-change-root))
 
-  (add-hook! neotree-mode 'narf|neotree-init-keymap)
-  (add-hook! window-configuration-change 'narf|neotree-close-on-window-change)
+  ;; (add-hook! window-configuration-change 'narf|neotree-close-on-window-change)
 
-  (evil-set-initial-state 'neotree-mode 'motion)
   (after! projectile
     (setq projectile-switch-project-action 'neotree-projectile-action))
 
+  ;; A custom and simple theme for neotree
   (advice-add 'neo-buffer--insert-fold-symbol :override 'narf*neo-buffer-fold-symbol))
 
 (provide 'core-project)

@@ -29,7 +29,7 @@ buffer to display.")
                               "*Buffer List*" "*Ibuffer*" "*esh command on file*"
                               "*WoMan-Log*" "*compilation*" "*use-package*"
                               "*quickrun*" "*eclim: problems*" "*Flycheck errors*"
-                              "*popwin-dummy*"
+                              "*popwin-dummy*" " *NeoTree*"
                               ;; Helm
                               "*helm*" "*helm recentf*" "*helm projectile*" "*helm imenu*"
                               "*helm company*" "*helm buffers*" "*Helm Css SCSS*"
