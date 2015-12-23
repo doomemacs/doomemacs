@@ -19,7 +19,7 @@
                               messages-buffer-mode)
   "A list of regexps or modes whose buffers are considered unreal, and will be
 ignored when using `narf:next-real-buffer' and `narf:previous-real-buffer', and
-killed by `narf:kill-unreal-buffers'.
+killed by `narf/kill-unreal-buffers'.
 
 `narf:kill-this-buffer' will also gloss over these buffers when finding a new
 buffer to display.")

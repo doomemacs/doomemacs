@@ -1,7 +1,5 @@
 ;;; defuns-compile.el
 
-;; (eval-when-compile (require 'core))
-
 ;;;###autoload
 (defun narf/is-recompilable-p ()
   "Does an .elc file exist and is this file in the .emacs.d folder?"

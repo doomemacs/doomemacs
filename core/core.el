@@ -13,6 +13,7 @@
 ;;
 ;;;
 
+;; Ask for confirmation on exit only if there are real buffers left
 (when window-system
   (setq confirm-kill-emacs
         (lambda (_)
@@ -72,13 +73,15 @@
 
 ;; Bootstrap ;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(autoload 'use-package "use-package" "" nil 'macro)
+(require 'dash)
+
 (unless (require 'autoloads nil t)
   (load (concat narf-emacs-dir "scripts/generate-autoloads.el"))
   (require 'autoloads))
 (require 'core-vars)
 (require 'core-defuns)
 
-(autoload 'use-package "use-package" "" nil 'macro)
 (eval-when-compile
   (setq use-package-verbose nil)
 
@@ -132,6 +135,12 @@
              async-get
              async-wait
              async-inject-variables))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(require (cond (IS-MAC      'core-os-osx)
+               (IS-LINUX    'core-os-linux)
+               (IS-WINDOWS  'core-os-win32)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

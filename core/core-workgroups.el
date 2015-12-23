@@ -4,6 +4,7 @@
 (use-package workgroups2
   :when (display-graphic-p)
   :init
+  (add-hook! after-init 'workgroups-mode)
   (setq-default
    wg-session-file          (expand-file-name "wg-default" narf-temp-dir)
    wg-workgroup-directory   (expand-file-name "workgroups" narf-temp-dir)
@@ -52,7 +53,7 @@ lib/defuns-workgroups.el.")
   (advice-add 'wg-change-modeline :override 'ignore)
 
   ;; Don't remember popup windows
-  (add-hook! (kill-emacs) 'narf-popup-close-all))
+  (add-hook! kill-emacs 'narf-popup-close-all))
 
 (provide 'core-workgroups)
 ;;; core-workgroups.el ends here

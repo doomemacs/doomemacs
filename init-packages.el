@@ -10,7 +10,7 @@
 (defconst narf-modules-dir   (concat narf-emacs-dir "modules/"))
 (defconst narf-contrib-dir   (concat narf-emacs-dir "contrib/"))
 (defconst narf-private-dir   (concat narf-emacs-dir "private/"))
-(defconst narf-packages-dir  (concat narf-emacs-dir ".packages/"))
+(defconst narf-packages-dir  (concat narf-emacs-dir ".cask/" emacs-version "/elpa/"))
 
 (defconst narf-script-dir    (concat narf-emacs-dir "scripts/"))
 (defconst narf-dropbox-dir   "~/Dropbox/")
@@ -51,13 +51,10 @@
                                 (list (concat narf-core-dir "lib"))
                                 (list (concat narf-modules-dir "lib"))
                                 (--subdirs narf-contrib-dir)
-                                (--subdirs (concat narf-packages-dir "el-get/"))
+                                (--subdirs narf-packages-dir)
                                 load-path))))
 
 ;;;;;;;;;;;;;;;;
-
-(autoload 'use-package "use-package" "" nil 'macro)
-(require 'dash)
 
 (when (file-exists-p "~/.emacs.local.el")
   (load "~/.emacs.local.el"))

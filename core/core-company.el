@@ -1,8 +1,6 @@
 ;;; core-company.el --- auto completion backend (Company-mode)
 ;; see lib/company-macros.el
 
-(eval-when-compile (require 'core))
-
 (use-package company
   :commands (global-company-mode company-complete-common company-dict
              company-files company-tags company-ispell company-yasnippet
