@@ -51,7 +51,7 @@
   (scroll-bar-mode -1)  ; no scrollbar
   (tool-bar-mode   -1)  ; no toolbar
 
-  (load (concat user-emacs-directory "init-load-path.el"))
+  (load (concat user-emacs-directory "init-packages.el"))
   (load-theme narf-theme t)
 
   (mapc 'require

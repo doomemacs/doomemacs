@@ -1,6 +1,6 @@
 #!emacs --script
 
-(load (concat user-emacs-directory "init.el"))
+(load (concat user-emacs-directory "init-packages.el"))
 
 (require 'bytecomp)
 (byte-recompile-file (expand-file-name "init-load-path.el" narf-emacs-dir) nil 0)
