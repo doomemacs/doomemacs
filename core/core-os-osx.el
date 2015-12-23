@@ -1,7 +1,5 @@
 ;;; core-os-osx.el --- Mac-specific settings
 
-(eval-when-compile (require 'core))
-
 ;; Use a shared clipboard
 (setq x-select-enable-clipboard t
       select-enable-clipboard t

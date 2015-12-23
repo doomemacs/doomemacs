@@ -21,8 +21,6 @@
  fringes-outside-margins        t
  hl-line-sticky-flag            nil  ; only highlight in one window
 
- jit-lock-defer-time            nil
- jit-lock-stealth-time          0.5
  idle-update-delay              1
 
  split-width-threshold          nil  ; favor horizontal splits
@@ -152,6 +150,7 @@
       (hl-line-mode (if rainbow-mode -1 1)))))
 
 (use-package volatile-highlights
+  :when (not EMACS-WRITE)
   :config
   (vhl/define-extension 'my-undo-tree-highlights
     'undo-tree-undo 'undo-tree-redo)

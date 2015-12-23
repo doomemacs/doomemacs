@@ -40,6 +40,8 @@
 ;;
 ;;; License: GPLv3
 
+(defconst EMACS-WRITE nil)
+
 (defconst narf-theme        'narf-dark)
 (defconst narf-default-font (font-spec :family "Terminus (TTF)" :size 12 :antialias nil))
 (defconst narf-writing-font (font-spec :family "Hack" :size 14))
@@ -56,9 +58,6 @@
 
   (mapc 'require
         `(core ; core/core.el
-          ,(cond (IS-MAC      'core-os-osx)
-                 (IS-LINUX    'core-os-linux)
-                 (IS-WINDOWS  'core-os-win32))
 
           ;;; The heart of NARF
           core-popup           ; taming stray windows
@@ -72,16 +71,15 @@
           core-project         ; whose project am I in?
           core-vcs             ; version control is a programmer's best friend
           core-helm            ; a search engine for life and love
-          core-quickrun        ; run code, run.
+          core-eval            ; run code, run.
           core-workgroups      ; cure Emacs alzheimers
 
-          ;;; Extras
+          ;;; Environments
           module-cc            ; c/c++/obj-c madness
           module-csharp        ; unity, .NET, and mono shenanigans
-          module-collab        ; wonewy, I'm so wonewy~
           module-data          ; dbs 'n data formats
           module-lisp          ; drowning in parentheses
-          module-go            ; a hipster dialect
+          module-go            ; the hipster dialect
           module-java          ; the poster child for carpal tunnel syndome
           module-js            ; all(hope(abandon(ye(who(enter(here))))))
           module-lb6           ; LaunchBar 6 development
@@ -99,12 +97,18 @@
           module-swift         ; yay, emoji variables!
           module-vim           ; my mistress
           module-web           ; for the 2.0'er
-          module-writing       ; yes, I write papers and fiction in emacs
-
           ;;; Experimental
           ;; module-crystal    ; ruby at the speed of c
           ;; module-eshell     ; for inferior OSes *cough*windows
 
+          ;;; Specific custom functionality
+          lib-tmux             ; closing the rift between GUI & terminal
+          ;; lib-demo          ; let me demonstrate...
+          ;; lib-writing       ; yes, I write papers and fiction in emacs
+          ;; lib-crm           ; emacs and or-mode based CRM
+          ;; lib-sonicpi       ; for my inner dj
+
+          ;;; Key bindings & ex commands
           my-bindings
           my-commands
           ))
