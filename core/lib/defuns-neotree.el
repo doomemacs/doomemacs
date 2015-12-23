@@ -2,23 +2,17 @@
 ;; for ../core-project.el
 
 ;;;###autoload
-(defun narf/neotree-open (&optional dir)
+(defun narf/neotree ()
+  "Toggle the neotree window"
   (interactive)
-  (neotree-dir (or dir (narf/project-root))))
-
-;;;###autoload
-(defun narf/neotree-toggle ()
-  (interactive)
-  (if (neo-global--window-exists-p)
-      (neotree-hide)
-    (narf/neotree-open)))
-
-;;;###autoload
-(defun narf/neotree-find ()
-  (interactive)
-  (unless (neo-global--window-exists-p)
-    (save-excursion (narf/neotree-open)))
-  (neotree-find))
+  (let ((in-neotree (and (neo-global--window-exists-p)
+                         (window-live-p neo-global--buffer)
+                         (eq (current-buffer) neo-global--buffer))))
+    (if in-neotree
+        (neotree-hide)
+      (unless (neo-global--window-exists-p)
+        (neotree-dir (narf/project-root)))
+      (neotree-find))))
 
 ;;;###autoload
 (defun narf|neotree-close-on-window-change ()
