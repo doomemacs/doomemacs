@@ -40,10 +40,10 @@
 
           ;; REPLs
           ((:custom (lambda (b &rest _)
-                      (when (bound-and-true-p repl-p)
+                      (when (featurep 'repl-toggle)
                         (when (string-prefix-p "*" (buffer-name (get-buffer b)))
                           (with-current-buffer b repl-p)))))
-           :popup t :align below :size 0.3)
+           :popup t :align below :size 12)
 
           ))
 
