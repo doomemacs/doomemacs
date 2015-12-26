@@ -180,8 +180,7 @@
    :v  "r" 'narf:eval-region
    (:prefix "r"
      :n  "e" 'emr-show-refactor-menu
-     :n  "r" 'narf:eval-buffer
-     :n  "b" 'narf:build)
+     :n  "r" 'narf:eval-buffer)
 
    ;; :n "t" unit tests prefix
    )
