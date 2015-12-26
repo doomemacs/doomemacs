@@ -9,17 +9,6 @@
          "/\\.git/info/exclude$"
          "/git/ignore$"))
 
-(use-package browse-at-remote
-  :defer t
-  :init
-  (evil-define-command narf:git-remote-browse (&optional bang file)
-    "Open the website for the current (or specified) version controlled FILE. If BANG,
-then use hub to do it."
-    (interactive "<!><f>")
-    (if bang
-        (message "Url copied to clipboard: %s" (browse-at-remote/to-clipboard))
-      (browse-at-remote/browse))))
-
 (use-package git-gutter
   :commands (git-gutter-mode narf/vcs-next-hunk narf/vcs-prev-hunk
              narf/vcs-show-hunk narf/vcs-stage-hunk narf/vcs-revert-hunk)
@@ -59,6 +48,17 @@ then use hub to do it."
         :n "[[" 'vc-annotate-prev-revision
         :n [tab] 'vc-annotate-toggle-annotation-visibility
         :n "RET" 'vc-annotate-find-revision-at-line))
+
+(evil-define-command narf:git-remote-browse (&optional bang file)
+  "Open the website for the current (or specified) version controlled FILE. If BANG,
+then use hub to do it."
+  (interactive "<!><f>")
+  (let ((url (shell-command-to-string "hub browse -u -- ")))
+    (when url
+      (setq url (concat (s-trim url) "/" (f-relative (buffer-file-name) (narf/project-root)))))
+    (if bang
+        (message "Url copied to clipboard: %s" (kill-new url))
+      (browse-url url))))
 
 (provide 'core-vcs)
 ;;; core-vcs.el ends here
