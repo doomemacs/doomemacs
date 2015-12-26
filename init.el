@@ -78,17 +78,16 @@
           module-cc            ; c/c++/obj-c madness
           module-csharp        ; unity, .NET, and mono shenanigans
           module-data          ; dbs 'n data formats
-          module-lisp          ; drowning in parentheses
           module-go            ; the hipster dialect
           module-java          ; the poster child for carpal tunnel syndome
           module-js            ; all(hope(abandon(ye(who(enter(here))))))
-          module-lb6           ; LaunchBar 6 development
+          module-lisp          ; drowning in parentheses
           module-lua           ; one-based indices? one-based indices.
           module-markdown      ; markdown
           module-nim           ; look out Abraham
           module-org           ; for fearless [organized] leader
-          module-plantuml      ; to help show how right I am
           module-php           ; making php less painful to work with
+          module-plantuml      ; to help show how right I am
           module-python        ; beautiful is better than ugly
           module-regex         ; /^[^\s](meaning)[^\n]*/
           module-ruby          ; <3
@@ -102,6 +101,7 @@
           ;; module-eshell     ; for inferior OSes *cough*windows
 
           ;;; Specific custom functionality
+          lib-plugin           ; plugin dev for various programs
           lib-tmux             ; closing the rift between GUI & terminal
           ;; lib-demo          ; let me demonstrate...
           ;; lib-writing       ; yes, I write papers and fiction in emacs
