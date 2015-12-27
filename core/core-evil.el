@@ -22,7 +22,6 @@
   (setq evil-magic t
         evil-want-C-u-scroll t       ; enable C-u for scrolling
         evil-ex-visual-char-range t  ; column range for ex commands
-        evil-want-fine-undo 'fine
         evil-want-visual-char-semi-exclusive t
         evil-ex-search-vim-style-regexp t
         evil-ex-interactive-search-highlight 'selected-window
@@ -32,6 +31,7 @@
 
         ;; NOTE: a bug in emacs is causing problems for undoing in evil when
         ;; `evil-want-fine-undo' is nil or t, so for now it's set to 'fine
+        ;; See https://bitbucket.org/lyro/evil/issues/594/undo-doesnt-behave-like-vim
         evil-want-fine-undo 'fine
 
         evil-normal-state-tag    "N"
