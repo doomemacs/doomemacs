@@ -6,9 +6,9 @@
   (add-hook! php-mode 'flycheck-mode)
   (setq php-template-compatibility nil
         php-extras-eldoc-functions-file (concat narf-temp-dir "php-extras-eldoc-functions"))
-
   :config
   (require 'php-extras)
+  (defun php-extras-company-setup ()) ;; company will set up itself
   (define-company-backend! php-mode '(php-extras-company))
 
   (unless (file-exists-p (concat php-extras-eldoc-functions-file ".el"))
