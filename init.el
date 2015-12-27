@@ -103,7 +103,7 @@
           ;;; Specific custom functionality
           lib-plugin           ; plugin dev for various programs
           lib-tmux             ; closing the rift between GUI & terminal
-          ;; lib-demo          ; let me demonstrate...
+          lib-demo             ; let me demonstrate...
           ;; lib-writing       ; yes, I write papers and fiction in emacs
           ;; lib-crm           ; emacs and or-mode based CRM
           ;; lib-sonicpi       ; for my inner dj
