@@ -218,11 +218,7 @@ enable multiple minor modes for the same regexp.")
     (sp-local-pair "{{!--" "--}}" :post-handlers '(("||\n[i]" "RET") ("| " "SPC")))
     (sp-local-pair "<%" "%>"      :post-handlers '(("||\n[i]" "RET") ("| " "SPC")))
     (sp-local-pair "{!!" "!!}"    :post-handlers '(("||\n[i]" "RET") ("| " "SPC")))
-    (sp-local-pair "{#" "#}"      :post-handlers '(("||\n[i]" "RET") ("| " "SPC"))))
-
-  ;; (after! yasnippet
-  ;;   (advice-add 'yas-expand :before 'sp-remove-active-pair-overlay))
-  )
+    (sp-local-pair "{#" "#}"      :post-handlers '(("||\n[i]" "RET") ("| " "SPC")))))
 
 (use-package help-fns+ ; Improved help commands
   :commands (describe-buffer describe-command describe-file

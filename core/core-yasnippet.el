@@ -70,7 +70,10 @@
   (defadvice yas-expand-snippet (around yas-expand-snippet-visual-line activate)
     (when (narf/evil-visual-line-state-p)
       (ad-set-arg 2 (1- (ad-get-arg 2)))) ad-do-it)
-  )
+
+  ;; Fix an issue with smartparens' keybindings interfering with yasnippet keybindings.
+  (after! yasnippet
+    (advice-add 'yas-expand :before 'sp-remove-active-pair-overlay)))
 
 (provide 'core-yasnippet)
 ;;; core-yasnippet.el ends here
