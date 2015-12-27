@@ -296,12 +296,6 @@
   (define-key evil-inner-text-objects-map "J" 'evil-indent-plus-i-indent-up-down)
   (define-key evil-outer-text-objects-map "J" 'evil-indent-plus-a-indent-up-down))
 
-(use-package evil-jumper
-  :init
-  (setq evil-jumper-auto-center nil
-        evil-jumper-auto-save-interval 3600)
-  :config (global-evil-jumper-mode +1))
-
 (use-package evil-matchit
   :commands (evilmi-jump-items evilmi-text-object global-evil-matchit-mode)
   :config (global-evil-matchit-mode 1)
