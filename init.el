@@ -111,7 +111,8 @@
           ;;; Key bindings & ex commands
           my-bindings
           my-commands
-          ))
-  (narf-init))
+          )))
+
+(narf-init)
 
 ;;; I think so Brain...
