@@ -71,8 +71,6 @@ enable multiple minor modes for the same regexp.")
 (associate! nxml-mode           :match "\\.plist$")
 
 (add-hook! help-mode      'visual-line-mode)
-(add-hook! makefile-mode  'narf|enable-tabs) ; Use normal tabs in makefiles
-(add-hook! prog-mode      'narf|enable-comment-hard-wrap)
 (add-hook! special-mode   (setq truncate-lines nil))
 (add-hook! before-save    'delete-trailing-whitespace)
 (add-hook! python-mode    'electric-indent-local-mode)
@@ -134,6 +132,9 @@ enable multiple minor modes for the same regexp.")
   :config (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)
                 aw-scope 'frame
                 aw-background t))
+
+(use-package editorconfig
+  :config (editorconfig-mode +1))
 
 (use-package emr
   :commands (emr-initialize emr-show-refactor-menu emr-declare-command)

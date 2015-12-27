@@ -64,6 +64,7 @@
 (depends-on "rotate-text" :git "https://github.com/debug-ito/rotate-text.el")
 (depends-on "smart-forward")
 (depends-on "smartparens")
+(depends-on "editorconfig")
 
 ;; Completion --- core/core-company.el
 (depends-on "company")
