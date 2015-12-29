@@ -28,7 +28,7 @@
 ;;;;;;;;;;;;;;;;
 
 (eval-when-compile
-  (add-to-list 'load-path "/usr/local/bin/cask")
+  (add-to-list 'load-path "/usr/local/Cellar/cask/HEAD")
   (defun --subdirs (path)
     (let ((result '())
           (paths (ignore-errors (directory-files path t "^[^.]" t))))
