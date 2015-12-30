@@ -72,7 +72,7 @@
           core-vcs             ; version control is a programmer's best friend
           core-helm            ; a search engine for life and love
           core-eval            ; run code, run.
-          core-workgroups      ; cure Emacs alzheimers
+          core-workgroups      ; cure Emacs alzheimers + tab emulation
 
           ;;; Environments
           module-cc            ; c/c++/obj-c madness
