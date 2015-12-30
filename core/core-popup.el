@@ -215,7 +215,9 @@
   (defun narf/popup-messages ()
     (interactive)
     (narf/popup-buffer "*Messages*")
-    (goto-char (point-max))))
+    (with-current-buffer "*Messages*"
+      (setq mode-line-format nil)
+      (goto-char (point-max)))))
 
 ;; (use-package popwin
 ;;   :disabled t
