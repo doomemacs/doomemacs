@@ -16,6 +16,16 @@
    wg-workgroups-mode-exit-save-behavior 'save
    wg-log-level 0
 
+   ;; Some of these make workgroup-restoration-on-init unstable. I'd rather trade some
+   ;; convenience for stability.
+   wg-restore-fringes nil
+   wg-restore-margins nil
+   wg-restore-scroll-bars nil
+   wg-restore-frame-position nil
+   wg-restore-remote-buffers nil
+   ;; wg-restore-mark nil
+   ;; wg-restore-point-max nil
+
    wg-list-display-decor-divider         " "
    wg-list-display-decor-left-brace      ""
    wg-list-display-decor-right-brace     "| "
