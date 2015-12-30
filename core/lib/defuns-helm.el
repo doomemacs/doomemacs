@@ -84,7 +84,8 @@
 buffers."
   (interactive)
   (if (and (not all-p) (narf/project-p))
-      (helm-projectile-switch-to-buffer)
+      (cl-letf (((symbol-function 'buffer-list) 'narf/get-buffers))
+        (helm-buffers-list))
     (helm-buffers-list)))
 
 ;;;###autoload
