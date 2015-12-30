@@ -104,6 +104,11 @@
       (unless (bound-and-true-p org-src-mode)
         (narf/popup-close)))
 
+    ;; Fix disruptive errors w/ hidden buffers caused by workgroups killing windows
+    ;; TODO Delete timer on dead windows
+    (defadvice evil-ex-hl-do-update-highlight (around evil-ex-hidden-buffer-ignore-errors activate)
+      (ignore-errors ad-do-it))
+
     ;; Monkey-patch an error triggered randomly during column-selection caused
     ;; by `evil-move-to-column' receiving a float:
     ;;   evil-move-to-column: Wrong type argument: wholenump, 12.0
