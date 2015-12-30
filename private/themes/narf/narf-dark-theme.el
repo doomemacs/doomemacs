@@ -173,8 +173,8 @@
    `(powerline-active2              ((,c (:foreground ,modeline-fg-3 :background ,modeline-bg-3))))
    `(powerline-inactive1            ((,c (:foreground ,modeline-fg-inactive :background ,modeline-bg-inactive))))
    `(powerline-inactive2            ((,c (:foreground ,modeline-fg-inactive :background ,modeline-bg-inactive))))
-   `(spaceline-highlight-face       ((,c (:foreground ,black :background ,highlight :bold ,bold))))
-   `(mode-line-count-face           ((,c (:foreground ,black :background ,magenta :bold ,bold))))
+   `(spaceline-highlight-face       ((,c (:foreground ,black :background ,highlight))))
+   `(mode-line-count-face           ((,c (:foreground ,black :background ,magenta))))
 
    ;; Search
    `(isearch                        ((,c (:foreground ,search-fg :background ,search-bg))))
