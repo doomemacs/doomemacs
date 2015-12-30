@@ -70,19 +70,16 @@
 (after! flycheck
   (exmap "er[rors]"      (λ! (flycheck-buffer) (flycheck-list-errors))))
 
-(after! workgroups2
-  (exmap "sl[oad]"       'narf:load-session)
-  (exmap "ss[ave]"       'narf:save-session)
-  (exmap "wg"            'narf/workgroup-display)
-  (exmap "tab"           'narf/workgroup-display)
-  (exmap "tabn[ew]"      'narf:workgroup-new)
-  (exmap "tabr[ename]"   'narf:workgroup-rename)
-  (exmap "tabn[ext]"     'wg-switch-to-workgroup-right)
-  (exmap "tabp[rev]"     'wg-switch-to-workgroup-left)
-  (exmap "tabl[ast]"     'wg-switch-to-previous-workgroup)
-  (exmap "tabq[uit]"     'narf:workgroup-delete)
-  (exmap "k[ill]w"       'wg-kill-workgroup)
-  (exmap "k[ill]ow"      'narf:kill-other-workgroups))
+(exmap "sl[oad]"       'narf:load-session)
+(exmap "ss[ave]"       'narf:save-session)
+(exmap "tabs"          'narf/tab-display)
+(exmap "tabn[ew]"      'narf:tab-create)
+(exmap "tabr[ename]"   'narf:tab-rename)
+(exmap "tabc[lose]"    'narf:kill-tab)
+(exmap "tabc[lose]o"   'narf:kill-other-tabs)
+(exmap "tabn[ext]"     'narf:switch-to-tab-right)
+(exmap "tabp[rev]"     'narf:switch-to-tab-left)
+(exmap "tabl[ast]"     'narf:switch-to-tab-last)
 
 (provide 'my-commands)
 ;;; my-commands.el ends here

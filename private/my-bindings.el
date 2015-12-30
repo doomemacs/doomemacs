@@ -28,14 +28,14 @@
  "<f9>" 'what-face
 
  "M-b"  'narf:build
- "M-t"  'narf:workgroup-new
- "M-T"  'narf/workgroup-display
+ "M-t"  'narf:tab-create
+ "M-T"  'narf/tab-display
  "A-`"  'os-switch-to-term
  "C-`"  'narf/popup-messages
  "C-~"  'rtog/toggle-repl
  "M-`"  'narf/popup-toggle
 
- "M-w"  'narf/close-window-or-workgroup
+ "M-w"  'narf/close-window-or-tab
  "M-W"  'delete-frame
  "M-n"  'narf/new-buffer
  "M-N"  'narf/new-frame
@@ -57,15 +57,15 @@
  :n "M-o"  'narf/ido-find-file
  :n "M-O"  'narf/ido-find-project-file
 
- :m "M-1"  (λ! (narf:switch-to-workgroup-at-index 0))
- :m "M-2"  (λ! (narf:switch-to-workgroup-at-index 1))
- :m "M-3"  (λ! (narf:switch-to-workgroup-at-index 2))
- :m "M-4"  (λ! (narf:switch-to-workgroup-at-index 3))
- :m "M-5"  (λ! (narf:switch-to-workgroup-at-index 4))
- :m "M-6"  (λ! (narf:switch-to-workgroup-at-index 5))
- :m "M-7"  (λ! (narf:switch-to-workgroup-at-index 6))
- :m "M-8"  (λ! (narf:switch-to-workgroup-at-index 7))
- :m "M-9"  (λ! (narf:switch-to-workgroup-at-index 8))
+ :m "M-1"  (λ! (narf:switch-to-tab 0))
+ :m "M-2"  (λ! (narf:switch-to-tab 1))
+ :m "M-3"  (λ! (narf:switch-to-tab 2))
+ :m "M-4"  (λ! (narf:switch-to-tab 3))
+ :m "M-5"  (λ! (narf:switch-to-tab 4))
+ :m "M-6"  (λ! (narf:switch-to-tab 5))
+ :m "M-7"  (λ! (narf:switch-to-tab 6))
+ :m "M-8"  (λ! (narf:switch-to-tab 7))
+ :m "M-9"  (λ! (narf:switch-to-tab 8))
 
  (:when IS-MAC
    "<A-left>"       'backward-word
@@ -127,8 +127,8 @@
      :n "r" 'narf/vcs-revert-hunk)
 
    :n  "b"  'helm-bookmarks
-   :n  "w"  'narf/workgroup-display
-   :n  "W"  'narf:helm-wg
+   :n  "w"  'narf/tab-display
+   :n  "W"  'narf/helm-tabs
 
    :n  "n"  'narf/neotree
    :nv "l"  'narf/nlinum-toggle
@@ -204,11 +204,11 @@
  :m  "[d" 'narf/vcs-prev-hunk
  :m  "]e" 'narf/flycheck-next-error
  :m  "[e" 'narf/flycheck-previous-error
- ;; Switch workgroups
- :n  "]w" 'narf:switch-to-workgroup-right
- :n  "[w" 'narf:switch-to-workgroup-left
- :m  "gt" 'narf:switch-to-workgroup-right
- :m  "gT" 'narf:switch-to-workgroup-left
+ ;; Switch tabs
+ :n  "]w" 'narf:switch-to-tab-right
+ :n  "[w" 'narf:switch-to-tab-left
+ :m  "gt" 'narf:switch-to-tab-right
+ :m  "gT" 'narf:switch-to-tab-left
 
  ;; Increment/decrement number under cursor
  :n  "g=" 'evil-numbers/inc-at-pt
