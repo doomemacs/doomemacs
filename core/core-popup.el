@@ -5,7 +5,7 @@
   (shackle-mode 1)
   (setq shackle-rules
         '(;; Plugins
-          ("\\` ?\\*[hH]elm.*?\\*\\'" :regexp t :align below  :size 0.25 :select t)
+          ("\\` ?\\*[hH]elm.*?\\*\\'" :regexp t :align below  :size 20 :select t)
           ("*Flycheck errors*"               :align below  :size 15  :select t)
           (" *NeoTree*"                      :align left             :select t)
           ("*evil-registers*"                :align below  :size 0.3)
@@ -26,15 +26,15 @@
           ("^\\*Org-Babel.*\\*$"   :regexp t :align below  :size 0.4)
           (org-agenda-mode                   :align below  :size 0.4)
           ("*Agenda Commands*"               :align below  :size 0.5)
-          (" *Org todo*"                     :align below  :size 3   :noselect t)
-          ("*Org Links*"                     :align below  :size 2)
+          (" *Org todo*"                     :align below  :size 5   :noselect t)
+          ("*Org Links*"                     :align below  :size 5)
 
           ;; Emacs
           ("^\\*.+-Profiler-Report .+\\*$" :regexp t :align below :size 0.3)
           ("*Backtrace*" :align below :size 0.25 :noselect t)
           ("*scratch*"   :align below :size 0.3  :select t)
           ("*Help*"      :align below :size 15)
-          ("*Messages*"  :align below :size 0.35 :select t)
+          ("*Messages*"  :align below :size 20 :select t)
           (debugger-mode :align below :size 0.25 :noselect t)
           (compilation-mode :noselect t)
 
@@ -43,9 +43,7 @@
                       (when (featurep 'repl-toggle)
                         (when (string-prefix-p "*" (buffer-name (get-buffer b)))
                           (with-current-buffer b repl-p)))))
-           :popup t :align below :size 12)
-
-          ))
+           :popup t :align below :size 12)))
 
   (after! helm
     ;; This is a good alternative to either popwin or shackle, specifically for helm. If
@@ -79,14 +77,14 @@
   (after! quickrun
     ;; This allows us to run code several times in a row without having to close the popup
     ;; window and move back to the code buffer.
-    (defun narf*quickrun-close-popwin (&optional _ _ _ _)
+    (defun narf*quickrun-close-popup (&optional _ _ _ _)
       (let* ((buffer (get-buffer quickrun/buffer-name))
              (window (and buffer (get-buffer-window buffer))))
         (when buffer
           (shut-up! (quickrun/kill-running-process))
           (narf/popup-close window nil t))))
-    (advice-add 'quickrun :before 'narf*quickrun-close-popwin)
-    (advice-add 'quickrun-region :before 'narf*quickrun-close-popwin)
+    (advice-add 'quickrun :before 'narf*quickrun-close-popup)
+    (advice-add 'quickrun-region :before 'narf*quickrun-close-popup)
 
     ;; Turns on `yascroll-bar-mode' and `nlinum-mode', and ensures window is scrolled to
     ;; EOF and that the scrollbar is showing.
