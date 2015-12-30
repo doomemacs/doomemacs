@@ -49,16 +49,27 @@
         :n [tab] 'vc-annotate-toggle-annotation-visibility
         :n "RET" 'vc-annotate-find-revision-at-line))
 
-(evil-define-command narf:git-remote-browse (&optional bang file)
-  "Open the website for the current (or specified) version controlled FILE. If BANG,
+(use-package browse-at-remote
+  :commands (browse-at-remote/browse browse-at-remote/to-clipboard)
+  :init
+  (evil-define-command narf:git-remote-browse (&optional bang)
+    "Open the website for the current (or specified) version controlled FILE. If BANG,
 then use hub to do it."
-  (interactive "<!><f>")
-  (let ((url (shell-command-to-string "hub browse -u -- ")))
-    (when url
-      (setq url (concat (s-trim url) "/" (f-relative (buffer-file-name) (narf/project-root)))))
-    (if bang
-        (message "Url copied to clipboard: %s" (kill-new url))
-      (browse-url url))))
+    (interactive "<!>")
+    (let (url)
+      (condition-case err
+          (setq url (browse-at-remote/get-url))
+        (error
+         (setq url (shell-command-to-string "hub browse -u --"))
+         (setq url (if url
+                       (concat (s-trim url) "/" (f-relative (buffer-file-name) (narf/project-root))
+                               (when (use-region-p) (format "#L%s-L%s"
+                                                            (line-number-at-pos (region-beginning))
+                                                            (line-number-at-pos (region-end)))))))))
+      (when url
+        (if bang
+            (message "Url copied to clipboard: %s" (kill-new url))
+          (browse-url url))))))
 
 (provide 'core-vcs)
 ;;; core-vcs.el ends here
