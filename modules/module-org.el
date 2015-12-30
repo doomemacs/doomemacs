@@ -8,9 +8,9 @@
   :group      'evil-org)
 
 (defvar org-directory (expand-file-name "org/" narf-dropbox-dir))
-(defvar org-directory-contacts (expand-file-name "my/contacts/" org-directory))
-(defvar org-directory-projects (expand-file-name "my/projects/" org-directory))
-(defvar org-directory-invoices (expand-file-name "my/invoices/" org-directory))
+(defvar org-directory-contacts (expand-file-name "work/contacts/" org-directory))
+(defvar org-directory-projects (expand-file-name "work/projects/" org-directory))
+(defvar org-directory-invoices (expand-file-name "work/invoices/" org-directory))
 
 (defvar org-default-notes-file (concat org-directory "notes.org"))
 (defvar org-default-todo-file  (concat org-directory "todo.org"))
