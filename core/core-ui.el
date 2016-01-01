@@ -468,7 +468,7 @@ Supports both Emacs and Evil cursor conventions."
 
     (spaceline-define-segment *hud
       "A HUD that shows which part of the buffer is currently visible."
-      (powerline-hud 'spaceline-highlight-face other-face 1)
+      (powerline-hud (if active 'spaceline-highlight-face 'region) line-face 1)
       :tight-right t))
 
   ;; Initialize modeline
