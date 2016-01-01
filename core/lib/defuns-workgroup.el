@@ -181,7 +181,7 @@
 
 ;;;###autoload
 (defun narf/wg-autosave ()
-  (when (wg-current-session t)
+  (when (and (wg-current-session t) (not (minibufferp)))
     (shut-up! (wg-save-session))))
 
 (provide 'defuns-workgroup)
