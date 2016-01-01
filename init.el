@@ -91,7 +91,7 @@
           module-python        ; beautiful is better than ugly
           module-regex         ; /^[^\s](meaning)[^\n]*/
           module-ruby          ; <3
-          module-rust          ; Fe2O3
+          module-rust          ; Fe2O3; for gamedev and great good
           module-sh            ; she sells Z-shells by the C XOR
           module-swift         ; yay, emoji variables!
           module-vim           ; my mistress
@@ -104,9 +104,8 @@
           lib-plugin           ; plugin dev for various programs
           lib-tmux             ; closing the rift between GUI & terminal
           lib-demo             ; let me demonstrate...
-          ;; lib-writing       ; yes, I write papers and fiction in emacs
-          ;; lib-crm           ; emacs and or-mode based CRM
-          ;; lib-sonicpi       ; for my inner dj
+          lib-writing          ; yes, I write papers and fiction in emacs
+          ;; lib-crm           ; emacs and org-mode based CRM
 
           ;;; Key bindings & ex commands
           my-bindings
