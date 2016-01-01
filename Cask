@@ -70,9 +70,6 @@
 (depends-on "company")
 (depends-on "company-statistics")
 
-;; Collab --- core/core-collab.el
-(depends-on "impatient-mode")
-
 ;; Yasnippet --- core/core-yasnippet.el
 (depends-on "yasnippet")
 
@@ -226,5 +223,11 @@
 (depends-on "sass-mode")
 (depends-on "sws-mode")
 
-;; Writing -- modules/module-writing.el
+
+
+;;;; LIBRARIES ;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Collab --- lib-demo.el
+(depends-on "impatient-mode")
+
+;; Writing -- modules/lib-writing.el
 (depends-on "helm-bibtex")
