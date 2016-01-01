@@ -69,10 +69,10 @@ enable multiple minor modes for the same regexp.")
 (associate! emacs-lisp-mode     :match "\\(/Cask\\|\\.\\(el\\|gz\\)\\)$")
 (associate! makefile-gmake-mode :match "/Makefile$")
 (associate! nxml-mode           :match "\\.plist$")
+(associate! conf-mode           :match "/\\.?editorconfig$")
 
 (add-hook! help-mode      'visual-line-mode)
 (add-hook! special-mode   (setq truncate-lines nil))
-(add-hook! before-save    'delete-trailing-whitespace)
 (add-hook! python-mode    'electric-indent-local-mode)
 (add-hook! change-major-mode-hook
   (when indent-tabs-mode (whitespace-mode +1)))
@@ -134,7 +134,10 @@ enable multiple minor modes for the same regexp.")
                 aw-background t))
 
 (use-package editorconfig
-  :config (editorconfig-mode +1))
+  :config
+  ;; Don't affect lisp indentation (just `tab-width')
+  (setq editorconfig-indentation-alist (delq (assq 'emacs-lisp-mode editorconfig-indentation-alist) editorconfig-indentation-alist))
+  (editorconfig-mode +1))
 
 (use-package emr
   :commands (emr-initialize emr-show-refactor-menu emr-declare-command)

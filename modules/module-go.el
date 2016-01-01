@@ -4,10 +4,7 @@
   :mode "\\.go$"
   :interpreter "go"
   :init
-  (add-hook! go-mode '(emr-initialize
-                       narf|flycheck-enable-maybe
-                       narf|enable-tabs
-                       narf|enable-tab-width-4))
+  (add-hook! go-mode '(emr-initialize narf|flycheck-enable-maybe))
   :config
   (define-builder! go-mode "go build")
 

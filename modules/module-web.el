@@ -1,6 +1,6 @@
 ;;; module-web.el
 
-(add-hook! (sass-mode scss-mode) '(rainbow-mode narf|enable-tab-width-2 flycheck-mode))
+(add-hook! (sass-mode scss-mode) '(rainbow-mode flycheck-mode))
 
 (use-package sass-mode
   :mode "\\.sass$"
@@ -41,13 +41,11 @@
 
 (use-package jade-mode
   :mode "\\.jade$"
-  :init (add-hook! jade-mode 'narf|enable-tab-width-2)
   :config (require 'sws-mode))
 
 (use-package web-mode
   :mode ("\\.\\(p\\)?htm\\(l\\)?$" "\\.tpl\\(\\.php\\)?$" "\\.erb$" "wp-content/themes/.+/.+\\.php$")
   :init
-  (add-hook! web-mode 'narf|enable-tab-width-2)
   (setq web-mode-markup-indent-offset  2
         web-mode-code-indent-offset    2
         web-mode-css-indent-offset     2

@@ -12,7 +12,6 @@
              yas-visit-snippet-file)
   :init
   (add-hook! (text-mode prog-mode snippet-mode markdown-mode org-mode) 'yas-minor-mode-on)
-  (add-hook! snippet-mode 'narf|disable-final-newline)
 
   (setq yas-verbosity 0
         yas-indent-line 'auto

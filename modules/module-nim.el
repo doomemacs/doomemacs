@@ -3,7 +3,7 @@
 (use-package nim-mode
   :mode "\\.nim$"
   :init
-  (add-hook! nim-mode '(narf|enable-tab-width-2 flycheck-mode))
+  (add-hook! nim-mode 'flycheck-mode)
   :config
   (require 'flycheck-nim)
   (require 'company-nim)

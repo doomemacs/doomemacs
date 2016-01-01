@@ -201,24 +201,6 @@ Examples:
 (defun narf|enable-hard-wrap ()
   (turn-on-auto-fill))
 
-(defun narf|enable-tab-width-2 ()
-  (setq tab-width 2 evil-shift-width 2))
-
-(defun narf|enable-tab-width-4 ()
-  (setq tab-width 4 evil-shift-width 4))
-
-(defun narf|enable-tab-width-8 ()
-  (setq tab-width 8 evil-shift-width 8))
-
-(defun narf|disable-final-newline ()
-  (set (make-local-variable 'require-final-newline) nil))
-
-(defun narf|enable-tabs ()
-  (setq indent-tabs-mode t))
-
-(defun narf|disable-tabs ()
-  (setq indent-tabs-mode nil))
-
 (defun narf|disable-delete-trailing-whitespace ()
   (remove-hook 'before-save-hook 'delete-trailing-whitespace))
 

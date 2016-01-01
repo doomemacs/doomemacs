@@ -5,11 +5,9 @@
   :interpreter "lua"
   :init
   (define-repl! lua-mode narf-inf-lua)
-  (setq-default lua-indent-level tab-width)
+  (add-hook! lua-mode 'flycheck-mode)
   ;; (after! company-dict
   ;;   (add-to-list 'company-dict-minor-mode-alist 'love-mode))
-  (add-hook! lua-mode '(narf|enable-tab-width-4 flycheck-mode))
-  (add-hook! lua-mode (setq lua-indent-level 4))
 
   (defun narf-inf-lua ()
     (lua-start-process "lua" "lua")

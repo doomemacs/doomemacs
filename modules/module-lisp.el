@@ -12,7 +12,6 @@
   (when (narf/is-recompilable-p)
     (narf:compile-el)))
 
-(add-hook! emacs-lisp-mode 'narf|enable-tab-width-8)
 (add-hook! emacs-lisp-mode
   (add-hook 'before-save-hook 'delete-trailing-whitespace nil t)
   (add-hook 'after-save-hook 'narf-elisp-auto-compile nil t)

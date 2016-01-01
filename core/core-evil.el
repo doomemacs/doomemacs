@@ -14,8 +14,6 @@
   (add-hook! evil-operator-state-entry  'show-paren-mode)
   (add-hook! evil-operator-state-exit   'show-paren-mode-off)
 
-  ;; Always ensure evil-shift-width is consistent with tab-width
-  (add-hook! evil-local-mode (setq evil-shift-width tab-width))
   ;; Disable highlights on insert-mode
   (add-hook! evil-insert-state-entry 'evil-ex-nohighlight)
   :config

@@ -101,10 +101,8 @@
 
 (use-package coffee-mode
   :mode "\\.coffee$"
-  :init (add-hook! coffee-mode 'narf|enable-tab-width-2)
   :config
   (setq-default
-   coffee-tab-width 2
    coffee-indent-like-python-mode t))
 
 (use-package nodejs-repl :defer t)
