@@ -9,6 +9,8 @@
 
 (use-package scss-mode
   :mode "\\.scss$"
+  :preface
+  (require 'css-mode)
   :init
   (add-hook! scss-mode 'hs-minor-mode)
   (setq-default css-indent-offset 2)
