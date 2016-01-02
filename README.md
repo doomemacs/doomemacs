@@ -110,10 +110,10 @@ just stubborn. Here is a little of what to expect from NARF:
 
     Also, switch between them with ⌘-1 through ⌘-9.
 
-  * **Minimalistic mapping macro**: excessive, I know, but I liked how succinct vim
-    keymappings were. I brought a little of that to Emacs by defining `map!`, a macro for
-    defining keybindings in as little space as possible.
-    [See my bindings](private/my-bindings.el) for an example.
+  * **Minimalistic mapping macro**: I liked how concise mapping keys in viml was. I
+    brought a little of that to Emacs by defining `map!`, a macro for defining keybindings
+    in as little space as possible. [See my bindings](private/my-bindings.el) for an
+    example.
   * **Org-mode**: this is an altogether different beast. I've use Org for everything, from
     CRM, to GTD/note-taking, to invoicing, to prototyping code (with org-babel). I've
     installed babel plugins for Rust and Go. I've written #+CALL methods for
