@@ -45,6 +45,8 @@
   :mode "\\.jade$"
   :config (require 'sws-mode))
 
+(use-package slim-mode :mode "\\.slim$")
+
 (use-package web-mode
   :mode ("\\.\\(p\\)?htm\\(l\\)?$" "\\.tpl\\(\\.php\\)?$" "\\.erb$" "wp-content/themes/.+/.+\\.php$")
   :init

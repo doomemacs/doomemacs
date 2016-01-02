@@ -222,7 +222,7 @@
 (depends-on "scss-mode")
 (depends-on "sass-mode")
 (depends-on "sws-mode")
-
+(depends-on "slim-mode")
 
 
 ;;;; LIBRARIES ;;;;;;;;;;;;;;;;;;;;;;;;;
