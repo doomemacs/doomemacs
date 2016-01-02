@@ -78,21 +78,25 @@ just stubborn. Here is a little of what to expect from NARF:
   * **Rudimentary support for extra =expand(...) symbols in evil-ex**: this includes
     `%:[pdert]`, which can be used with ex commands like `:e`, `:w`, or in the expression
     register. This *could* be truer to vim, but I haven't gotten around to it.
-  * **Vim-esque Omni-completion commands**:
+  * **Vim-esque Omni-completion commands**: I've implemented most of the common
+    omni-completion shortcuts:
+
     ```
-    C-x C-l   narf/company-whole-lines
-    C-x C-k   company-dict
-    C-x C-f   company-files
-    C-x C-]   company-tags
-    C-x s     company-ispell
-    C-x C-s   company-yasnippet
-    C-x C-o   company-semantic
-    C-x C-n   company-dabbrev-code
-    C-x C-p   (λ (let ((company-selection-wrap-around t))
-                       (call-interactively 'company-dabbrev-code)
-                       (company-select-previous-or-abort))))
+    C-x C-l   'narf/company-whole-lines
+    C-x C-k   'company-dict
+    C-x C-f   'company-files
+    C-x C-]   'company-tags
+    C-x s     'company-ispell
+    C-x C-s   'company-yasnippet
+    C-x C-o   'company-semantic
+    C-x C-n   'company-dabbrev-code
+    C-x C-p   (lambda (interactive)
+                (let ((company-selection-wrap-around t))
+                  (call-interactively 'company-dabbrev-code)
+                  (company-select-previous-or-abort))))
     ```
-  * **REPLs via popwin**: currently supports python (ipython), ruby (pry), php (boris),
+
+  * **REPLs via popwin**: currently supports python(ipython), ruby (pry), php (boris),
     elisp (ielm), lua, js (nodejs), and the shell. More support later, hopefully for go
     and rust.
   * **Yasnippet + auto-insert = file-templates with editable fields**: _and_ it works with
