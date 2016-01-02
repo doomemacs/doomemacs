@@ -11,6 +11,7 @@
           ("*evil-registers*"                :align below  :size 0.3)
           ("*quickrun*"                      :align below  :size 15  :noselect t)
           ("*eval*"                          :align below  :size 15)
+          ("*esup*"                          :align below  :size 30 :noselect t)
 
           ;; vcs
           ("^\\*git-gutter.+\\*$"  :regexp t :align below  :size 0.4 :noselect t)
