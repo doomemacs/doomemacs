@@ -179,10 +179,22 @@
         (narf:workgroup-delete))
     (evil-window-delete)))
 
+(defvar narf-wg-autosave-interval 600)
+(defvar narf-wg-autosave-timer nil)
+
 ;;;###autoload
 (defun narf/wg-autosave ()
   (when (and (wg-current-session t) (not (minibufferp)))
     (shut-up! (wg-save-session))))
+
+;;;###autoload
+(defun narf|wg-autosave-enable ()
+  (setq narf-wg-autosave-timer (run-with-timer 0 narf-wg-autosave-interval 'narf/wg-autosave)))
+
+;;;###autoload
+(defun narf|wg-autosave-disable ()
+  (cancel-timer narf-wg-autosave-timer)
+  (narf/wg-autosave))
 
 (provide 'defuns-workgroup)
 ;;; defuns-workgroup.el ends here

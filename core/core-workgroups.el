@@ -1,6 +1,11 @@
 ;;; core-workgroups.el
 ;; see lib/workgroup-defuns.el
 
+;; I use workgroups to accomplish two things:
+;;   1. Vim-like tab emulation (type :tabs to see a list of tabs -- maybe I'll add some
+;;      code to make a permanent frame header to display these some day)
+;;   2. Session persistence
+
 (use-package workgroups2
   :when (display-graphic-p)
   :init
@@ -23,7 +28,7 @@
    wg-restore-scroll-bars nil
    wg-restore-frame-position nil
    wg-restore-remote-buffers nil
-   ;; wg-restore-mark nil
+   wg-restore-mark nil
    ;; wg-restore-point-max nil
 
    wg-list-display-decor-divider         " "
@@ -56,8 +61,11 @@ lib/defuns-workgroups.el.")
     ;; Create a new workgroup on switch-project
     (setq projectile-switch-project-action 'narf/wg-projectile-switch-project))
 
-  ;; Save the session every 10 minutes
-  (run-with-timer 0 600 'narf/wg-autosave)
+  ;; Save the session every 20 minutes
+  (defvar narf-wg-autosave-interval 1200)
+  (narf|wg-autosave-enable)
+  (add-hook! focus-out 'narf|wg-autosave-disable)
+  (add-hook! focus-in 'narf|wg-autosave-enable)
 
   ;; Don't mess with the modeline!
   (advice-add 'wg-change-modeline :override 'ignore)
