@@ -103,11 +103,12 @@ just stubborn. Here is a little of what to expect from NARF:
     evil-mode! See [core/core-auto-insert.el](core/core-auto-insert.el) for configuration
     details.
   * **Tab emulation with Workgroups2**: Workgroups2 will display the tabs in the
-    minibuffer when you press <kbd>⌘-S-T</kbd>, use `:wg` or move between "tabs".
+    minibuffer when you press <kbd>⌘-S-T</kbd>, use `:tabs` or move between "tabs". `gt`
+    and `gT` work as well.
 
     ![Workgroups2 tabs emulation](assets/screenshots/wg-tabs.png)
 
-    Switch between them with ⌘-1 through ⌘-9.
+    Also, switch between them with ⌘-1 through ⌘-9.
 
   * **Minimalistic mapping macro**: excessive, I know, but I liked how succinct vim
     keymappings were. I brought a little of that to Emacs by defining `map!`, a macro for
