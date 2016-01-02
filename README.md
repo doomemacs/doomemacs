@@ -59,9 +59,9 @@ just stubborn. Here is a little of what to expect from NARF:
 
 ### Advanced
 
-  * **Popwin compatibility**: I've gone through lengths get popwin to agree with Helm,
-    vc-annotate, quickrun, neotree, org-mode--and more! It works well. It's not perfect,
-    but it's getting there.
+  * **Popup control with Shackle**: I've gone through lengths tame popups with Shackle
+    (popwin was unstable and slow), that includes: Helm, vc-annotate, quickrun, neotree,
+    org-mode--and more! It works well. It's not perfect, but it's getting there.
   * **Ex compatibility**: I've given quite a few plugins an Ex interface. For instance,
     `helm-ag` can be used via `:ag [KEYWORDS]`, or `align-regexp` via `:align [regexp]`.
     See [my-commands.el](private/my-commands.el) for others.
