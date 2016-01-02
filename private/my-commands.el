@@ -66,10 +66,7 @@
 (exmap "proj[ect]"       'narf:org-crm-project)
 (exmap "invo[ice]"       'narf:org-crm-invoice)
 
-;; Plugins
-(after! flycheck
-  (exmap "er[rors]"      (λ! (flycheck-buffer) (flycheck-list-errors))))
-
+;; Sessions/tabs
 (exmap "sl[oad]"       'narf:load-session)
 (exmap "ss[ave]"       'narf:save-session)
 (exmap "tabs"          'narf/tab-display)
@@ -80,6 +77,10 @@
 (exmap "tabn[ext]"     'narf:switch-to-tab-right)
 (exmap "tabp[rev]"     'narf:switch-to-tab-left)
 (exmap "tabl[ast]"     'narf:switch-to-tab-last)
+
+;; Plugins
+(after! flycheck
+  (exmap "er[rors]"      (λ! (flycheck-buffer) (flycheck-list-errors))))
 
 (provide 'my-commands)
 ;;; my-commands.el ends here

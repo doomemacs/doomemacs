@@ -146,7 +146,7 @@
 
 (defun narf-init ()
   (setq-default
-   gc-cons-threshold 16777216
+   gc-cons-threshold 8388608
    gc-cons-percentage 0.3)
 
   (defadvice save-buffers-kill-emacs (around no-query-kill-emacs activate)

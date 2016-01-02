@@ -26,8 +26,8 @@
     (wg-save-session)))
 
 ;;;###autoload (autoload 'narf:load-session "defuns-workgroup" nil t)
-(evil-define-command narf:load-session (&optional bang session-name)
-  (interactive "<!><a>")
+(evil-define-command narf:load-session (&optional session-name)
+  (interactive "<a>")
   (wg-open-session (if session-name
                        (concat wg-workgroup-directory session-name)
                      wg-session-file))
