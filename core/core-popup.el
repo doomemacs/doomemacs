@@ -6,7 +6,7 @@
   (setq shackle-rules
         '(;; Plugins
           ("\\` ?\\*[hH]elm.*?\\*\\'" :regexp t :align below  :size 20 :select t)
-          ("*Flycheck errors*"               :align below  :size 15  :select t)
+          ("*Flycheck errors*"               :align below  :size 15  :noselect t)
           (" *NeoTree*"                      :align left             :select t)
           ("*evil-registers*"                :align below  :size 0.3)
           ("*quickrun*"                      :align below  :size 15  :noselect t)
@@ -34,7 +34,7 @@
           ("^\\*.+-Profiler-Report .+\\*$" :regexp t :align below :size 0.3)
           ("*Backtrace*" :align below :size 0.25 :noselect t)
           ("*scratch*"   :align below :size 0.3  :select t)
-          ("*Help*"      :align below :size 15)
+          ("*Help*"      :align below :size 15 :select t)
           ("*Messages*"  :align below :size 20 :select t)
           (debugger-mode :align below :size 0.25 :noselect t)
           (compilation-mode :noselect t)
@@ -143,6 +143,11 @@
               (let ((buf (if (stringp b) (get-buffer-create b) b)))
                 (pop-to-buffer buf t t)))
             args)))
+
+  (after! flycheck
+    (map! :map flycheck-error-list-mode-map
+          :n "q" 'narf/popup-close
+          :n [escape] 'narf/popup-close))
 
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
