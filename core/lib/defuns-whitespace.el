@@ -79,12 +79,30 @@ whitespace as possible, or just one char if that's not possible."
   "Inserts a tab character (or spaces x tab-width). Checks if the
 auto-complete window is open."
   (interactive)
-  (if (or (and smart (looking-back "^[\s\t]*"))
-          indent-tabs-mode)
-	  (insert "\t")
-	(let* ((movement (% (current-column) tab-width))
+  (if indent-tabs-mode
+      (insert "\t")
+    (let* ((movement (% (current-column) tab-width))
            (spaces (if (zerop movement) tab-width (- tab-width movement))))
       (insert (s-repeat spaces " ")))))
+
+;;;###autoload
+(defun narf/smart-indent ()
+  (interactive)
+  (save-excursion
+    (back-to-indentation)
+    (narf/dumb-indent)))
+
+;;;###autoload
+(defun narf/dumb-dedent ()
+  (interactive)
+  (if indent-tabs-mode
+      (delete-char -1)
+    (save-excursion
+      (unless (looking-back "^[\s\t]*")
+        (evil-first-non-blank))
+      (let* ((movement (% (current-column) tab-width))
+             (spaces (if (zerop movement) tab-width (- tab-width movement))))
+        (delete-char (- spaces))))))
 
 ;;;###autoload
 (defun narf/inflate-space-maybe ()
