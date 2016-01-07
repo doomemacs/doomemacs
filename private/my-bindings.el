@@ -84,8 +84,8 @@
    :ni "M-d"        'dash-at-point
 
    ;; Textmate-esque indent shift left/right
-   :i "M-["           (kbd "C-o m l C-o I DEL C-o ` l")
-   :i "M-]"           (λ! (evil-shift-right (point-at-bol) (point-at-eol)))
+   :i "M-]"   'narf/smart-indent
+   :i "M-["   'narf/dumb-dedent
 
    ;; Restore osx text objects
    :i "<A-backspace>" 'evil-delete-backward-word
@@ -366,8 +366,9 @@
 ;; Restores "dumb" indentation to the tab key. This rustles a lot of
 ;; peoples' jimmies, apparently, but it's how I like it.
 (map! "C-b" 'backward-word
-      :i "<tab>"   'narf/dumb-indent
-      :i "<C-tab>" 'indent-for-tab-command
+      :i "<tab>"     'narf/dumb-indent
+      :i "<backtab>" 'narf/dumb-dedent
+      :i "<C-tab>"   'indent-for-tab-command
 
       ;; No dumb-tab for lisp
       (:map lisp-mode-map        :i [remap narf/dumb-indent] 'indent-for-tab-command)
