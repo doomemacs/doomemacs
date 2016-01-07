@@ -102,7 +102,7 @@
   :keymap (make-sparse-keymap)
   (add-yas-minor-mode! 'jekyll-mode))
 (associate! jekyll-mode
-  :match "/_\\(layouts\\|posts\\)/.+$"
+  :match "/\\(css\\|_\\(layouts\\|posts\\|sass\\)\\)/.+$"
   :files ("config.yml" "_layouts")
   :in (web-mode scss-mode html-mode markdown-mode))
 ;; (after! company-dict (add-to-list 'company-dict-minor-mode-alist 'jekyll-mode))
