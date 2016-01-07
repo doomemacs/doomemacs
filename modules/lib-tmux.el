@@ -66,30 +66,5 @@
 ;; (defun narf/window (direction)
 ;;   )
 
-;;;###autoload (autoload 'narf/evil-window-or-tmux "lib-tmux" nil t)
-(evil-define-command narf/evil-window-or-tmux (count direction)
-  :repeat nil
-  (interactive "p")
-  (let ((start-window (selected-window)))
-    (ignore-errors (funcall (intern (format "evil-window-%s" direction)) count))
-    (when (eq start-window (selected-window))
-      (os-switch-to-term))))
-
-;;;###autoload (autoload 'narf/evil-window-left "lib-tmux" nil t)
-(evil-define-command narf/evil-window-left (count)
-  :repeat nil (interactive "p") (narf/evil-window-or-tmux count 'left))
-
-;;;###autoload (autoload 'narf/evil-window-right "lib-tmux" nil t)
-(evil-define-command narf/evil-window-right (count)
-  :repeat nil (interactive "p") (narf/evil-window-or-tmux count 'right))
-
-;;;###autoload (autoload 'narf/evil-window-up "lib-tmux" nil t)
-(evil-define-command narf/evil-window-up (count)
-  :repeat nil (interactive "p") (narf/evil-window-or-tmux count 'up))
-
-;;;###autoload (autoload 'narf/evil-window-down "lib-tmux" nil t)
-(evil-define-command narf/evil-window-down (count)
-  :repeat nil (interactive "p") (narf/evil-window-or-tmux count 'down))
-
 (provide 'lib-tmux)
 ;;; lib-tmux.el ends here

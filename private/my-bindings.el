@@ -44,7 +44,7 @@
  "C-j"  'evil-window-down
  "C-k"  'evil-window-up
  "C-h"  'evil-window-left
- "C-l"  'narf/evil-window-right ; switch to tmux if fails
+ "C-l"  'evil-window-right ; switch to tmux if fails
 
  "C-<escape>" 'evil-emacs-state
  :e "C-<escape>" 'evil-normal-state
@@ -299,9 +299,7 @@
    "C-h"     'evil-window-left
    "C-j"     'evil-window-down
    "C-k"     'evil-window-up
-
-   "l"       'narf/evil-window-right ; Switch to tmux if no window
-   "C-l"     'narf/evil-window-right ; Switch to tmux if no window
+   "C-l"     'evil-window-right
 
    "C-w"     'ace-window
    "C-S-w"   (λ! (ace-window 4))    ; swap windows
