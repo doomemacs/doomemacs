@@ -13,7 +13,7 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
         (deactivate-mark)
         (let ((buf (clone-indirect-buffer nil nil)))
           (with-current-buffer buf
-            (narrow-to-region start end))
+            (narrow-to-region beg end))
           (switch-to-buffer buf)))
     (widen)))
 
