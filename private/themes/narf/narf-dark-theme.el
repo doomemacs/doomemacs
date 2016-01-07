@@ -275,8 +275,8 @@
    `(js2-jsdoc-tag      ((,c (:foreground ,comments))))
 
    ;; markdown-mode
-   `(markdown-header-face           ((,c (:foreground ,orange :bold ,bold))))
-   `(markdown-header-delimiter-face ((,c (:foreground ,orange :bold ,bold))))
+   `(markdown-header-face           ((,c (:foreground ,orange))))
+   `(markdown-header-delimiter-face ((,c (:foreground ,orange))))
    `(markdown-blockquote-face ((,c (:foreground ,blue+2))))
    `(markdown-markup-face ((,c (:foreground ,cyan))))
    `(markdown-inline-face ((,c (:foreground ,cyan))))
