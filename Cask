@@ -28,12 +28,12 @@
 
 ;; UI --- core/core-ui.el
 (depends-on "visual-fill-column")
-(depends-on "yascroll" :git "https://github.com/m2ym/yascroll-el")
+(depends-on "yascroll")
 (depends-on "rainbow-delimiters")
 (depends-on "rainbow-mode")
 (depends-on "volatile-highlights")
 (depends-on "nlinum")
-(depends-on "spaceline" :git "https://github.com/TheBB/spaceline")
+(depends-on "spaceline")
 
 ;; Evil --- core/core-evil.el
 (depends-on "evil")
@@ -42,7 +42,7 @@
 (depends-on "evil-commentary")
 (depends-on "evil-exchange")
 (depends-on "evil-iedit-state")
-(depends-on "evil-indent-plus" :git "https://github.com/TheBB/evil-indent-plus")
+(depends-on "evil-indent-plus")
 (depends-on "evil-textobj-anyblock")
 (depends-on "evil-jumper")
 (depends-on "evil-matchit")
@@ -51,8 +51,6 @@
 (depends-on "evil-snipe")
 (depends-on "evil-surround")
 (depends-on "evil-visualstar")
-(depends-on "evil-plugins" :git "https://github.com/tarao/evil-plugins")
-(depends-on "evil-easymotion" :git "https://github.com/PythonNut/evil-easymotion")
 
 ;; Editor --- core/core-editor.el
 (depends-on "ace-window")
@@ -78,13 +76,12 @@
 (depends-on "flyspell")
 
 ;; Project --- core/core-project.el
-(depends-on "flx-ido")
-(depends-on "ido-ubiquitous")
-(depends-on "ido-vertical-mode")
+; (depends-on "flx-ido")
+; (depends-on "ido-ubiquitous")
+; (depends-on "ido-vertical-mode")
 (depends-on "neotree")
 
 ;; VCS --- core/core-vcs.el
-;; (depends-on "diff-hl")
 (depends-on "git-gutter-fringe")
 (depends-on "gitconfig-mode")
 (depends-on "gitignore-mode")
@@ -98,12 +95,12 @@
 (depends-on "helm-css-scss")
 (depends-on "helm-projectile")
 (depends-on "helm-swoop")
-(depends-on "helm-descbinds")
+; (depends-on "helm-descbinds")
 (depends-on "projectile")
 
 ;; Quickrun -- core/core-quickrun.el
 (depends-on "quickrun")
-(depends-on "repl-toggle" :git "https://github.com/hlissner/repl-toggle")
+(depends-on "repl-toggle" :git "https://github.com/hlissner/repl-toggle.git")
 
 ;; Workgroups --- core/core-workgroups.el
 (depends-on "workgroups2")
