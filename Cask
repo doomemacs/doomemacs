@@ -76,9 +76,9 @@
 (depends-on "flyspell")
 
 ;; Project --- core/core-project.el
-; (depends-on "flx-ido")
+(depends-on "flx-ido")
 ; (depends-on "ido-ubiquitous")
-; (depends-on "ido-vertical-mode")
+(depends-on "ido-vertical-mode")
 (depends-on "neotree")
 
 ;; VCS --- core/core-vcs.el
@@ -219,7 +219,7 @@
 (depends-on "scss-mode")
 (depends-on "sass-mode")
 (depends-on "sws-mode")
-(depends-on "slim-mode")
+(depends-on "slim-mode" :git "https://github.com/hlissner/emacs-slim")
 
 
 ;;;; LIBRARIES ;;;;;;;;;;;;;;;;;;;;;;;;;
