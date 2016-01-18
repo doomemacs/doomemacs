@@ -320,7 +320,6 @@ will function properly."
   (setq buffer-face-mode-face `(:family ,(symbol-name (font-get narf-writing-font :family))))
   (buffer-face-mode +1)
 
-  (narf|enable-tab-width-2)
   (setq truncate-lines nil)
   (setq line-spacing '2)
 

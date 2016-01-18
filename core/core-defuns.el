@@ -201,9 +201,6 @@ Examples:
 (defun narf|enable-hard-wrap ()
   (turn-on-auto-fill))
 
-(defun narf|disable-delete-trailing-whitespace ()
-  (remove-hook 'before-save-hook 'delete-trailing-whitespace))
-
 (defun narf|update-scratch-buffer-cwd () ; see core-editor.el
   "Make sure scratch buffer is always 'in a project.'"
   (let ((dir (narf/project-root)))

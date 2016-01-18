@@ -41,23 +41,28 @@
     (add-hook! css-mode (setenv "jsbeautify_indent_size" "2"))
     (map! :map css-mode-map :m "gQ" 'web-beautify-css)))
 
-(use-package jade-mode
+(use-package jaded-mode
+  :load-path "/Volumes/hlissner/Dropbox/work/plugins/jaded-mode"
   :mode "\\.jade$"
-  :config (require 'sws-mode))
+  :config
+  (map! :map jaded-mode-map
+        :i [tab] 'narf/dumb-indent
+        :i [backtab] 'narf/dumb-dedent))
 
-(use-package slim-mode :mode "\\.slim$")
+(use-package slim-mode
+  :load-path "~/Dropbox/work/plugins/emacs-slim"
+  :mode "\\.slim$"
+  :config
+  ;; Don't hijack my indentation
+  (map! :map slim-mode-map
+        :i [tab] 'narf/dumb-indent
+        :i [backtab] 'narf/dumb-dedent))
 
 (use-package web-mode
   :mode ("\\.\\(p\\)?htm\\(l\\)?$" "\\.tpl\\(\\.php\\)?$" "\\.erb$" "wp-content/themes/.+/.+\\.php$")
   :init
-  (setq web-mode-markup-indent-offset  2
-        web-mode-code-indent-offset    2
-        web-mode-css-indent-offset     2
-        web-mode-style-padding         2
-        web-mode-script-padding        2
-        web-mode-block-padding         2
-        ;; smartparens handles this
-        web-mode-enable-auto-pairing nil
+  ;; smartparens handles this
+  (setq web-mode-enable-auto-pairing nil
         web-mode-enable-auto-quoting nil)
   :config
   (after! web-beautify

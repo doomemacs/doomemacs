@@ -82,10 +82,7 @@
 (use-package unityjs-mode
   :mode "/Assets/.*\\.js$"
   :config
-  (add-hook! unityjs-mode
-    (flycheck-mode 1)
-    (narf|enable-tab-width-2)
-    (setq js-indent-level 2)))
+  (add-hook! unityjs-mode 'flycheck-mode))
 
 (use-package typescript-mode
   :mode "\\.ts$"
