@@ -169,11 +169,11 @@ enable multiple minor modes for the same regexp.")
   (add-hook 'evil-replace-state-exit-hook 'turn-on-smartparens-mode)
 
   ;; Auto-close more conservatively
-  (sp-pair "{" "}" :post-handlers '(("||\n[i]" "RET") ("| " " "))
+  (sp-pair "{" nil :post-handlers '(("||\n[i]" "RET") ("| " " "))
                    :unless '(sp-point-before-word-p sp-point-before-same-p))
-  (sp-pair "(" ")" :post-handlers '(("||\n[i]" "RET") ("| " " "))
+  (sp-pair "(" nil :post-handlers '(("||\n[i]" "RET") ("| " " "))
                    :unless '(sp-point-before-word-p sp-point-before-same-p))
-  (sp-pair "[" "]" :post-handlers '(("| " " "))
+  (sp-pair "[" nil :post-handlers '(("| " " "))
                    :unless '(sp-point-before-word-p sp-point-before-same-p))
 
   ;; Support for generics/templates
