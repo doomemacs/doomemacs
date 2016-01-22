@@ -171,9 +171,9 @@
         (setq file-name
               ;; %:p:h => the project root (or current directory otherwise)
               (replace-regexp-in-string "\\(^\\|[^\\\\]\\)\\(%:p\\)"
-                                        (projectile-project-root) file-name t t 2))
+                                        (narf/project-root) file-name t t 2))
         (setq file-name
-              ;; %:p => the project root (or current directory otherwise)
+              ;; %:p => the current directory
               (replace-regexp-in-string "\\(^\\|[^\\\\]\\)\\(%:d\\)"
                                         default-directory file-name t t 2))
         (when current-fname
