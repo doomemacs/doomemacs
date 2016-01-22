@@ -270,6 +270,9 @@
 
    ;; lang-specific
    ;; *****************************************************************************************
+   ;; (css|scss)-mode
+   `(css-proprietary-property ((,c (:foreground ,keywords))))
+
    ;; js2-mode
    `(js2-function-param ((,c (:foreground ,variables))))
    `(js2-jsdoc-tag      ((,c (:foreground ,comments))))
