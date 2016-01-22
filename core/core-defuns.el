@@ -92,22 +92,27 @@ Examples:
   (declare (indent 1))
   (let* ((minor-p (assoc mode minor-mode-alist)))
     `(progn
-       (,@(when match
-            `(add-to-list ',(if minor-p 'narf-auto-minor-mode-alist 'auto-mode-alist)
-                          (cons ,match ',mode))))
-       (,@(when files
-            (unless (or (listp files) (stringp files))
-              (user-error "associate! :files expects a string or list of strings"))
-            (let ((hook-name (intern (format "narf--init-mode-%s" mode))))
-              `(progn
-                 (defun ,hook-name ()
-                   (when (and (not ,mode)
-                              (narf/project-has-files ,@(-list files)))
-                     (,mode 1)))
-                 ,@(if (and in (listp in))
-                       (mapcar (lambda (h) `(add-hook ',h ',hook-name))
-                               (mapcar (lambda (m) (intern (format "%s-hook" m))) in))
-                     `((add-hook 'find-file-hook ',hook-name))))))))))
+       (,@(cond ((or files in)
+                 (when (and files (not (or (listp files)
+                                           (stringp files))))
+                   (user-error "associate! :files expects a string or list of strings"))
+                 (let ((hook-name (intern (format "narf--init-mode-%s" mode))))
+                   `(progn
+                      (defun ,hook-name ()
+                        (when (and (if ,match (string-match-p ,match (buffer-file-name)) t)
+                                   (or ,(not files)
+                                       (and (not ,mode)
+                                            (narf/project-has-files ,@(-list files)))))
+                          (,mode 1)))
+                      ,@(if (and in (listp in))
+                            (mapcar (lambda (h) `(add-hook ',h ',hook-name))
+                                    (mapcar (lambda (m) (intern (format "%s-hook" m))) in))
+                          `((add-hook 'find-file-hook ',hook-name))))))
+                (match
+                 `(add-to-list ',(if minor-p 'narf-auto-minor-mode-alist 'auto-mode-alist)
+                               (cons ,match ',mode)))
+                (t (user-error "associate! invalid rules for mode [%s] (in %s) (match %s) (files %s)"
+                               mode in match files)))))))
 
 (after! evil
   ;; Register keywords for proper indentation (see `map!')

@@ -107,9 +107,12 @@
   :keymap (make-sparse-keymap)
   (add-yas-minor-mode! 'jekyll-mode))
 (associate! jekyll-mode
-  :match "/\\(css\\|_\\(layouts\\|posts\\|sass\\)\\)/.+$"
+  :match "/\\(\\(css\\|_\\(layouts\\|posts\\|sass\\)\\)/.+\\|.+.html\\)$"
   :files ("config.yml" "_layouts")
   :in (web-mode scss-mode html-mode markdown-mode))
+(add-hook! jekyll-mode
+  (when (eq major-mode 'web-mode)
+    (web-mode-set-engine "django")))
 ;; (after! company-dict (add-to-list 'company-dict-minor-mode-alist 'jekyll-mode))
 
 (define-minor-mode wordpress-mode
@@ -118,8 +121,9 @@
   :lighter " wp"
   :keymap (make-sparse-keymap)
   (add-yas-minor-mode! 'wordpress-mode))
-(associate! wordpress-mode :match "/wp-\\(content\\|admin\\|includes\\)/.+$")
-(associate! wordpress-mode :match "/wp-.+\\.php$")
+(associate! wordpress-mode
+  :match "/wp-\\(\\(content\\|admin\\|includes\\)/\\)?.+$"
+  :files ("wp-config.php" "wp-content"))
 ;; (after! company-dict (add-to-list 'company-dict-minor-mode-alist 'wordpress-mode))
 
 (provide 'module-web)

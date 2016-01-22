@@ -24,7 +24,7 @@
     :commands nose-mode
     :preface (defvar nose-mode-map (make-sparse-keymap))
     :init
-    (associate! nose-mode :pattern "/test_.+\\.py\\'")
+    (associate! nose-mode :match "/test_.+\\.py\\'")
     :config
     (map! :map nose-mode-map
           (:localleader
