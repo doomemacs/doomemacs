@@ -17,37 +17,38 @@
   ;; Disable highlights on insert-mode
   (add-hook! evil-insert-state-entry 'evil-ex-nohighlight)
   :config
-  (setq evil-magic t
-        evil-want-C-u-scroll t       ; enable C-u for scrolling
-        evil-ex-visual-char-range t  ; column range for ex commands
-        evil-want-visual-char-semi-exclusive t
-        evil-ex-search-vim-style-regexp t
-        evil-ex-interactive-search-highlight 'selected-window
-        evil-echo-state nil
-        evil-ex-substitute-global t
-        evil-insert-skip-empty-lines t
+  (setq-default
+   evil-magic t
+   evil-want-C-u-scroll t       ; enable C-u for scrolling
+   evil-ex-visual-char-range t  ; column range for ex commands
+   evil-want-visual-char-semi-exclusive t
+   evil-ex-search-vim-style-regexp t
+   evil-ex-interactive-search-highlight 'selected-window
+   evil-echo-state nil
+   evil-ex-substitute-global t
+   evil-insert-skip-empty-lines t
 
-        ;; NOTE: a bug in emacs is causing problems for undoing in evil when
-        ;; `evil-want-fine-undo' is nil or t, so for now it's set to 'fine
-        ;; See https://bitbucket.org/lyro/evil/issues/594/undo-doesnt-behave-like-vim
-        evil-want-fine-undo 'fine
+   ;; NOTE: a bug in emacs is causing problems for undoing in evil when
+   ;; `evil-want-fine-undo' is nil or t, so for now it's set to 'fine
+   ;; See https://bitbucket.org/lyro/evil/issues/594/undo-doesnt-behave-like-vim
+   evil-want-fine-undo 'fine
 
-        evil-normal-state-tag    "N"
-        evil-insert-state-tag    "I"
-        evil-visual-state-tag    "V"
-        evil-emacs-state-tag     "E"
-        evil-operator-state-tag  "O"
-        evil-motion-state-tag    "M"
-        evil-replace-state-tag   "R"
-        evil-iedit-state-tag     "R+"
+   evil-normal-state-tag    "N"
+   evil-insert-state-tag    "I"
+   evil-visual-state-tag    "V"
+   evil-emacs-state-tag     "E"
+   evil-operator-state-tag  "O"
+   evil-motion-state-tag    "M"
+   evil-replace-state-tag   "R"
+   evil-iedit-state-tag     "R+"
 
-        ;; Color-coded state cursors
-        evil-default-cursor "orange"
-        evil-normal-state-cursor  'box
-        evil-emacs-state-cursor   '("cyan" box)
-        evil-insert-state-cursor  'bar
-        evil-visual-state-cursor  'hollow
-        evil-iedit-state-cursor   'box)
+   ;; Color-coded state cursors
+   evil-default-cursor "orange"
+   evil-normal-state-cursor  'box
+   evil-emacs-state-cursor   '("cyan" box)
+   evil-insert-state-cursor  'bar
+   evil-visual-state-cursor  'hollow
+   evil-iedit-state-cursor   'box)
 
   (evil-mode 1)
   (evil-select-search-module 'evil-search-module 'evil-search)
