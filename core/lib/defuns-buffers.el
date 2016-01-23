@@ -163,14 +163,17 @@ left, create a scratch buffer."
          (continue t))
     (if (or (= realc 0)
             (and (= realc 1) (eq (car real-buffers) (current-buffer))))
-        (progn (switch-to-buffer "*scratch*")
-               (message "Nowhere to go"))
+        (progn
+          (narf|update-scratch-buffer-cwd)
+          (switch-to-buffer "*scratch*")
+          (message "Nowhere to go"))
       (funcall move-func)
       (while (and continue (< i max))
         (let ((current-buffer (current-buffer)))
           (cond ((eq current-buffer start-buffer)
-                 (if scratch-default
-                     (switch-to-buffer "*scratch*"))
+                 (when scratch-default
+                   (narf|update-scratch-buffer-cwd)
+                   (switch-to-buffer "*scratch*"))
                  (setq continue nil))
                 ((not (memq current-buffer real-buffers))
                  (funcall move-func))
