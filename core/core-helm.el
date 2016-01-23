@@ -93,6 +93,8 @@
 
   (add-to-list 'projectile-globally-ignored-files "ido.last")
   (add-to-list 'projectile-globally-ignored-directories "assets")
+  (add-to-list 'projectile-globally-ignored-directories ".export")
+  (add-to-list 'projectile-globally-ignored-directories ".attach")
   (add-to-list 'projectile-other-file-alist '("scss" "css"))
   (add-to-list 'projectile-other-file-alist '("css" "scss"))
 
