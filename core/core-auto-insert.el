@@ -73,11 +73,11 @@
           ("/\\.rspec$"                      "__.rspec"         rspec-mode)
           ("/spec_helper\\.rb$"              "__helper"         rspec-mode t)
           ("_spec\\.rb$"                     "__"               rspec-mode t)
-          ("/Rakefile$"                      "__Rakefile"       enh-ruby-mode t)
-          ("/Gemfile$"                       "__Gemfile"        enh-ruby-mode t)
-          ("\\.gemspec$"                     "__.gemspec"       enh-ruby-mode t)
-          ("/lib/.+\\.rb$"                   "__module"         enh-ruby-mode t)
-          ("\\.rb$"                          "__"               enh-ruby-mode)
+          ("/Rakefile$"                      "__Rakefile"       ruby-mode t)
+          ("/Gemfile$"                       "__Gemfile"        ruby-mode t)
+          ("\\.gemspec$"                     "__.gemspec"       ruby-mode t)
+          ("/lib/.+\\.rb$"                   "__module"         ruby-mode t)
+          ("\\.rb$"                          "__"               ruby-mode)
 
           ;; Rust
           ("/Cargo.toml$"                    "__Cargo.toml"     rust-mode)
@@ -87,6 +87,9 @@
           ("/master\\.scss$"                 "__master.scss"    scss-mode)
           ("/normalize\\.scss$"              "__normalize.scss" scss-mode)
           ("\\.scss$"                        "__"               scss-mode)
+
+          ;; Slim
+          ("/\\(index\\|main\\)\\.slim$"     "__"               slim-mode)
 
           ;; Shell scripts
           ("\\.z?sh$"                        "__"               sh-mode)
