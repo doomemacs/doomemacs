@@ -8,7 +8,7 @@
 
 (defconst EMACS-WRITE t)
 
-(defconst narf-theme 'narf-light-theme)
+(defconst narf-theme 'narf-light)
 (defconst narf-default-font (font-spec :family "Hack" :size 14))
 (defconst narf-writing-font (font-spec :family "Deja Sans" :size 14))
 (set-frame-font narf-default-font)
@@ -43,11 +43,11 @@
           module-plantuml
 
           ;;; Specific custom functionality
-          ;; lib-demo
-          ;; lib-writing
-          ;; lib-tmux
-          ;; lib-crm
-          ;; lib-sonicpi
+          ;; lib-plugin        ; plugin dev for various programs
+          lib-tmux             ; closing the rift between GUI & terminal
+          lib-demo             ; let me demonstrate...
+          lib-writing          ; yes, I write papers and fiction in emacs
+          ;; lib-crm           ; emacs and org-mode based CRM
 
           ;;; Key bindings & ex commands
           my-bindings
@@ -56,4 +56,5 @@
   (narf-init))
 
 (setq wg-session-file (expand-file-name "wg-org-default" narf-temp-dir))
+(cd org-directory)
 
