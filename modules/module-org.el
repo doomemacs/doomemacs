@@ -26,9 +26,6 @@
         org-archive-location (concat org-directory "/archive/%s::")
         org-attach-directory ".attach/"
 
-        ;; org-mobile-inbox-for-pull (concat org-directory "notes.org")
-        ;; org-mobile-directory "~/Dropbox/Apps/MobileOrg"
-
         ;; Use helm for refiling
         org-completion-use-ido nil
         org-refile-targets '((nil . (:maxlevel . 2)))
@@ -243,7 +240,8 @@ will function properly."
 
         org-priority-faces
         '((?A . org-todo-vhigh)
-          (?B . org-todo-high)))
+          (?B . org-todo-high)
+          (?C . org-todo)))
 
   (add-hook! org-mode
     (highlight-regexp org-any-link-re 'org-link))
@@ -283,11 +281,8 @@ will function properly."
                ("^\\**\\(\\* DONE\\) \\([^$\n\r]+\\)"
                 (1 (narf/show-as ?☑))
                 (2 'org-headline-done))
-               ("^\\**\\(\\* \\(TODO\\|PAID\\)\\) "
+               ("^\\**\\(\\* \\(?:TODO\\|PAID\\)\\) "
                 (1 (narf/show-as ?☐)))
-
-               ;; ("[-+*] \\(\\[X\\]\\) \\([^$\n\r]+\\)"
-               ;;  (2 'org-headline-done))
 
                ("[-+*] \\[X\\] \\([^$\n\r]+\\)"
                 (1 'org-headline-done))
@@ -309,7 +304,7 @@ will function properly."
   (evil-org-mode +1)
   (org-bullets-mode +1)
   (org-indent-mode +1)
-  (text-scale-set 1)
+  ;; (text-scale-set 1)
 
   ;;; OS-Specific
   (cond (IS-MAC (narf-org-init-for-osx))
@@ -346,8 +341,7 @@ will function properly."
   (exmap! "link"     'org-link)
   (exmap! "wc"       'narf/org-word-count)
   (exmap! "at[tach]" 'narf:org-attach)
-  (exmap! "export"   'narf:org-export)
-  )
+  (exmap! "export"   'narf:org-export))
 
 (defun narf|org-init ()
   (narf@org-vars)
