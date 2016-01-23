@@ -112,16 +112,6 @@ enable multiple minor modes for the same regexp.")
 
 ;; Plugins ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(use-package undo-tree
-  :config
-  ;; http://youtu.be/Z6woIRLnbmE
-  (defadvice undo-tree-load-history-hook
-      (around undo-tree-load-history-shut-up activate)
-    (shut-up! ad-do-it))
-  (defadvice undo-tree-save-history-hook
-      (around undo-tree-save-history-shut-up activate)
-    (shut-up! ad-do-it)))
-
 (use-package avy
   :commands (avy-goto-char-2 avy-goto-line)
   :config (setq avy-all-windows nil
