@@ -38,7 +38,7 @@
                                (lambda (k) (and k (not (string= k ""))))
                                (mapcar (lambda (mm) (symbol-name (car mm)))
                                        minor-mode-alist)))))
-    (popwin:pop-to-buffer buf)))
+    (narf/popup-buffer buf)))
 
 
 ;;;###autoload (autoload 'narf:echo "defuns-debug" nil t)
