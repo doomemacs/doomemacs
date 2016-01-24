@@ -9,9 +9,17 @@ update: autoloads
 	@cask install --verbose 2>&1 | sed 's/^/  /'
 	@cask update --verbose 2>&1 | sed 's/^/  /'
 	@echo "Compiling certain scripts"
-	@emacs -Q --batch -f batch-byte-compile init-packages.el core/core.el core/core-os-osx.el contrib/*.el 2>&1 | sed 's/^/  /'
+	@$(EMACS) -Q --batch -f batch-byte-compile init-packages.el core/core.el core/core-os-osx.el contrib/*.el 2>&1 | sed 's/^/  /'
 
 clean: clean-files clean-elc
+
+autoloads:
+	@echo "Generating autoloads"
+	@$(EMACS) --script scripts/generate-autoloads.el 2>&1 | sed 's/^/  /'
+
+compile: autoloads
+	@echo "Byte-compiling .emacs.d"
+	@$(EMACS) --script scripts/byte-compile.el | sed 's/^/  /'
 
 clean-files:
 	@echo "Cleaning derelict emacs files"
@@ -25,11 +33,3 @@ clean-elc:
 clean-wg:
 	@echo "Removing default session"
 	@rm -f "private/cache/`hostname`/`emacs --version | grep -o '2[0-9]\.[0-9]'`/wg-default"
-
-autoloads:
-	@echo "Generating autoloads"
-	@emacs --script scripts/generate-autoloads.el 2>&1 | sed 's/^/  /'
-
-compile: autoloads
-	@echo "Byte-compiling .emacs.d"
-	emacs --script scripts/byte-compile.el | sed 's/^/  /'
