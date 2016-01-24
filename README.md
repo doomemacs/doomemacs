@@ -4,15 +4,11 @@
 
 > What we do every night, Pinky...
 
-This is Emacs for stubborn vimmers and megalomaniacal mice alike. Its goals are:
-first, to emulate vim as best it can, and second, surpass it in any possible
-way. Narf uses [Evil-mode](https://gitorious.org/evil/pages/Home) to emulate
-vim, Cask to manage plugins, and a slew of jury-rigged neckbeard shenanigans to
-keep my mountain dew cool.
+This is the Emacs configuration for stubborn vimmers and megalomaniacal mice alike. It
+strives to emulate vim as best it can, and surpass it in any way possible.
 
-It is tailored for OSX users running Emacs **24.5+**
-
-Any contributions or suggestions are welcome. The world won't take over itself.
+It is tailored to my needs as a software developer, data scientist and writer, running
+OSX and Emacs **25.1+**.
 
 ## Installation
 
@@ -22,21 +18,21 @@ brew install emacs --devel --with-imagemagick --with-librsvg --with-cocoa
 git clone --recursive https://github.com/hlissner/emacs.d ~/.emacs.d
 cd ~/.emacs.d
 make          # installs plugins via cask and generates autoloads
-make compile  # optionally byte-compiles everything
 ```
+
+And to optionally byte-compile everything:
+
+`make compile  # optionally byte-compiles everything`
 
 ## Features
 
-To get a picture of what's in NARF check out:
+To get a picture of what's in here, check out:
 
 * **[The Caskfile](Cask)**: contains a list of all the installed plugins, and to find where
   they're configured.
 * **[init.el](init.el)**: lists all the loaded modules
 * **[private/my-bindings.el](private/my-bindings.el)**: most of the custom keybinds
 * **[private/my-commands.el](private/my-commands.el)**: available custom ex commands
-
-It's true, I've spent _too much time_ fighting Emacs, trying to make it more vim-like. I'm
-just stubborn. Here is a little of what to expect from NARF:
 
 ### Basic
 
@@ -59,20 +55,17 @@ just stubborn. Here is a little of what to expect from NARF:
 
 ### Advanced
 
-  * **Popup control with Shackle**: I've gone through lengths to tame popups in Emacs with
-    Shackle (popwin was unstable and slow), that includes popups made by: Helm,
-    vc-annotate, quickrun, neotree, \*messages\*, org-mode--and more! It works well. It's
-    not perfect, but it's getting there.
+  * **Popup control with Shackle**: I've (mostly) tamed window popups in Emacs with
+    Shackle (popwin was unstable and slow), that includes those made by: Helm,
+    vc-annotate, quickrun, neotree, \*messages\*, org-mode--and others.
   * **Ex compatibility**: I've given quite a few plugins an Ex interface. For instance,
-    `helm-ag` can be used via `:ag [KEYWORDS]`, or `align-regexp` via `:align [regexp]`.
-    See [my-commands.el](private/my-commands.el) for others.
-    * **Communicating with Tmux**: using `:t [CMD]` (sends to tmux) and `:tcd` (cd's to
-      default-directory)
-  * **Incremental highlighting for `:g[lobal]`**: evil's stock global command does not do
-    this (`:align` will also highlight matches).
+    `:t [ARGS]` and `:tcd` for tmux, `:ag [KEYWORDS]` for helm-ag, and `:align [REGEXP]`
+    for align-regexp.
+  * **Incremental highlighting for `:g[lobal]`**: evil's stock global command does not
+    do this (`:align` will also highlight matches).
   * **iedit instead of multiple-cursors**: I've got my eye on
     [evil-mc](https://github.com/gabesoft/evil-mc), but until I jump ship I use
-    **evil-iedit**. To invoke it, hop into visual mode, select a region and press
+    **evil-iedit**. To use it, hop into visual mode, select a region and press
     <kbd>S-r</kbd> (shift-R). Your edits will apply to all highlighted regions. To limit
     iedit's scope: while in iedit mode go into visual, select a range and press
     <kbd>SPC</kbd>.
@@ -97,7 +90,7 @@ just stubborn. Here is a little of what to expect from NARF:
                   (company-select-previous-or-abort))))
     ```
 
-  * **REPLs via popwin**: currently supports python(ipython), ruby (pry), php (boris),
+  * **Popup REPLs**: currently supports python(ipython), ruby (pry), php (boris),
     elisp (ielm), lua, js (nodejs), and the shell. More support later, hopefully for go
     and rust.
   * **Yasnippet + auto-insert = file-templates with editable fields**: _and_ it works with
@@ -109,19 +102,18 @@ just stubborn. Here is a little of what to expect from NARF:
 
     ![Workgroups2 tabs emulation](assets/screenshots/wg-tabs.png)
 
-    Also, switch between them with ⌘-1 through ⌘-9.
+    ⌘-1 - ⌘-9 keybindings work as well.
 
   * **Minimalistic mapping macro**: I liked how concise mapping keys in viml was. I
     brought a little of that to Emacs by defining `map!`, a macro for defining keybindings
     in as little space as possible. [See my bindings](private/my-bindings.el) for an
     example.
-  * **Org-mode**: this is an altogether different beast. I've use Org for everything, from
-    CRM, to GTD/note-taking, to invoicing, to prototyping code (with org-babel). I've
-    installed babel plugins for Rust and Go. I've written #+CALL methods for
-    extracting/compiling information with my CRM org plaintext files. It's set up to
-    display equations with LaTeX, sheet music with lilypond, and diagrams with ditaa or
-    plantuml. There is too much to cover in only one paragraph, and it's constantly
-    evolving.
+  * **Org-mode**: I use Org for everything; CRM, note-taking, invoicing, prototyping
+    code (with org-babel), etc. I've added babel support for Rust and Go. I've written
+    #+CALL methods for extracting/compiling information with my CRM org plaintext files.
+    It's set up to display equations with LaTeX, sheet music with lilypond, and diagrams
+    with ditaa or plantuml. There is too much to cover in only one paragraph, is
+    constantly evolving, and isn't entirely included in this repo.
   * **Modeline improvements**
     * **evil-search/iedit/evil-substitute mode-line integration**: I like how anzu
       displays state about the current search in the mode-line, so I wrote mode-line
