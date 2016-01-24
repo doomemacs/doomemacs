@@ -1,6 +1,6 @@
 # NARF Emacs
 
-![Screenshot](assets/screenshots/01.png)
+![Screenshot](//v0.io/dl/emacs/01.png)
 
 > What we do every night, Pinky...
 
@@ -100,7 +100,7 @@ To get a picture of what's in here, check out:
     minibuffer when you press <kbd>⌘-S-T</kbd>, use `:tabs` or move between "tabs". `gt`
     and `gT` work as well.
 
-    ![Workgroups2 tabs emulation](assets/screenshots/wg-tabs.png)
+    ![Workgroups2 tabs emulation](//v0.io/dl/emacs/wg-tabs.png)
 
     ⌘-1 - ⌘-9 keybindings work as well.
 
@@ -120,16 +120,16 @@ To get a picture of what's in here, check out:
       segments to display matches for evil-search (e.g. `/`/`?` searches), evil-substitute
       (e.g. `%s/foo/bar`) and iedit.
 
-      ![matches count in mode-line](assets/screenshots/ml-search.png)
-      ![substitutions count in mode-line](assets/screenshots/ml-subst.png)
+      ![matches count in mode-line](//v0.io/dl/emacs/ml-search.png)
+      ![substitutions count in mode-line](//v0.io/dl/emacs/ml-subst.png)
     * **Macro-recording indicator**: Displays an indicator that you are recording a macro
       (and what register it's being recorded into).
 
-      ![macro indicator in modeline](assets/screenshots/ml-macro.png)
+      ![macro indicator in modeline](//v0.io/dl/emacs/ml-macro.png)
     * **Show (py|rb)env version in mode-line**: see `define-env-command` on how to set it up
       for other modes. It only displays in their respective major-modes.
 
-      ![py/rb version in modeline](assets/screenshots/ml-version.png)
+      ![py/rb version in modeline](//v0.io/dl/emacs/ml-version.png)
 
 
 ## What about Windo-
