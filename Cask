@@ -206,21 +206,21 @@
 
 ;; Swift -- modules/module-swift.el
 (depends-on "swift-mode")
-(depends-on "company-sourcekit" :git "https://github.com/nathankot/company-sourcekit")
+(depends-on "company-sourcekit")
 
 ;; Vim -- modules/module-vim.el
 (depends-on "vimrc-mode")
 
 ;; Web -- modules/module-web.el
 (depends-on "web-beautify")
-(depends-on "jade-mode")
 (depends-on "web-mode")
 (depends-on "emmet-mode")
 (depends-on "haml-mode")
 (depends-on "scss-mode")
 (depends-on "sass-mode")
 (depends-on "sws-mode")
-(depends-on "slim-mode" :git "https://github.com/hlissner/emacs-slim")
+; (depends-on "jade-mode")
+; (depends-on "slim-mode" :git "https://github.com/hlissner/emacs-slim")
 
 
 ;;;; LIBRARIES ;;;;;;;;;;;;;;;;;;;;;;;;;
