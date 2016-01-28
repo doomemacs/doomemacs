@@ -3,7 +3,9 @@
 (setq-default
  ;; stop package.el from being annoying. NARF relies entirely on Cask.
  package--init-file-ensured t
- package-enable-at-startup nil)
+ package-enable-at-startup nil
+ gc-cons-threshold 8388608
+ gc-cons-percentage 0.3)
 
 (eval-and-compile
   (defconst narf-emacs-dir     user-emacs-directory)
@@ -55,9 +57,28 @@
                                 (--subdirs narf-packages-dir)
                                 load-path))))
 
-;;;;;;;;;;;;;;;;
-
+;; Load local settings, if available
 (when (file-exists-p "~/.emacs.local.el")
   (load "~/.emacs.local.el"))
+
+;; prematurely optimize for faster startup
+(let (file-name-handler-alist
+      (gc-cons-threshold 169715200))
+  (scroll-bar-mode -1)  ; no scrollbar
+  (tool-bar-mode   -1)  ; no toolbar
+  (load-theme narf-theme t)
+  (mapc 'require narf-packages))
+
+(defadvice save-buffers-kill-emacs (around no-query-kill-emacs activate)
+  "Prevent annoying \"Active processes exist\" query when you quit Emacs."
+  (cl-flet ((process-list ())) ad-do-it))
+
+(defun display-startup-echo-area-message ()
+  (after! workgroups2
+    (message "%sLoaded in %s" (narf/tab-display t t) (emacs-init-time))))
+
+(require 'server)
+(unless (server-running-p)
+  (server-start))
 
 ;;; init-packages.el ends here
