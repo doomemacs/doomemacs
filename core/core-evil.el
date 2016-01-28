@@ -28,11 +28,6 @@
    evil-ex-substitute-global t
    evil-insert-skip-empty-lines t
 
-   ;; NOTE: a bug in emacs is causing problems for undoing in evil when
-   ;; `evil-want-fine-undo' is nil or t, so for now it's set to 'fine
-   ;; See https://bitbucket.org/lyro/evil/issues/594/undo-doesnt-behave-like-vim
-   evil-want-fine-undo 'fine
-
    evil-normal-state-tag    "N"
    evil-insert-state-tag    "I"
    evil-visual-state-tag    "V"
@@ -49,6 +44,10 @@
    evil-insert-state-cursor  'bar
    evil-visual-state-cursor  'hollow
    evil-iedit-state-cursor   'box)
+
+  ;; NOTE: a bug in emacs 25 breaks undoing in evil. See
+  ;; https://bitbucket.org/lyro/evil/issues/594/undo-doesnt-behave-like-vim
+  (setq-default evil-want-fine-undo (if (> emacs-major-version 24) 'fine 'no))
 
   (evil-mode 1)
   (evil-select-search-module 'evil-search-module 'evil-search)
