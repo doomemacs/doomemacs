@@ -101,7 +101,7 @@
 
 ;; Quickrun -- core/core-quickrun.el
 (depends-on "quickrun")
-(depends-on "repl-toggle" :git "https://github.com/hlissner/repl-toggle.git")
+(depends-on "repl-toggle" :git "https://github.com/hlissner/repl-toggle")
 
 ;; Workgroups --- core/core-workgroups.el
 (depends-on "workgroups2")
@@ -162,13 +162,13 @@
 (depends-on "flycheck-nim")
 
 ;; Org -- modules/module-org.el
-(depends-on "company-math")
 (depends-on "ox-pandoc")
-(depends-on "org-plus-contrib")
 (depends-on "org-download")
-(depends-on "org-opml" :git "https://github.com/edavis/org-opml")
 (depends-on "ob-http")
 (depends-on "ob-go" :git "https://github.com/pope/ob-go")
+; (depends-on "company-math")
+; (depends-on "org-opml" :git "https://github.com/edavis/org-opml")
+; (depends-on "org-plus-contrib")
 
 ;; PlantUML -- modules/module-plantuml.el
 (depends-on "puml-mode")
@@ -177,7 +177,7 @@
 (depends-on "php-mode")
 (depends-on "php-refactor-mode")
 (depends-on "php-boris")
-(depends-on "php-extras" :git "https://github.com/arnested/php-extras")
+(depends-on "php-extras")
 ;; (depends-on "hack-mode"
 ;;   :git "https://github.com/facebook/hhvm"
 ;;   :files ("hphp/hack/editor-plugins/emacs/*.el"))
