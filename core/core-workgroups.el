@@ -75,14 +75,14 @@ lib/defuns-workgroups.el.")
 
   ;; This helps abstract some of the underlying functions away, just in case I want to
   ;; switch to a different package in the future, like persp-mode, eyebrowse or wconf.
+  (defalias 'narf/tab-display 'narf/workgroup-display)
   (defalias 'narf/helm-tabs 'narf:helm-wg)
   (defalias 'narf/close-window-or-tab 'narf/close-window-or-workgroup)
-  (defalias 'narf:switch-to-tab 'narf:switch-to-workgroup-at-index)
-  (defalias 'narf/tab-display 'narf/workgroup-display)
   (defalias 'narf:tab-create 'narf:workgroup-new)
   (defalias 'narf:tab-rename 'narf:workgroup-rename)
   (defalias 'narf:kill-tab 'narf:workgroup-delete)
   (defalias 'narf:kill-other-tabs  'narf:kill-other-workgroups)
+  (defalias 'narf:switch-to-tab 'narf:switch-to-workgroup-at-index)
   (defalias 'narf:switch-to-tab-left 'wg-switch-to-workgroup-left)
   (defalias 'narf:switch-to-tab-right 'wg-switch-to-workgroup-right)
   (defalias 'narf:switch-to-tab-last 'wg-switch-to-previous-workgroup))
