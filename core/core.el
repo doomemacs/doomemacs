@@ -142,5 +142,19 @@
                (IS-LINUX    'core-os-linux)
                (IS-WINDOWS  'core-os-win32)))
 
+;; Set this up at the end to allow errors to prevent it.
+(add-hook! after-init
+  (defadvice save-buffers-kill-emacs (around no-query-kill-emacs activate)
+    "Prevent annoying \"Active processes exist\" query when you quit Emacs."
+    (cl-flet ((process-list ())) ad-do-it)))
+
+(defun display-startup-echo-area-message ()
+  (after! workgroups2
+    (message "%sLoaded in %s" (narf/tab-display t t) (emacs-init-time))))
+
+(require 'server)
+(unless (server-running-p)
+  (server-start))
+
 (provide 'core)
 ;;; core.el ends here
