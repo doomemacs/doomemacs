@@ -102,5 +102,18 @@ evil-window-move-* (e.g. `evil-window-move-far-left')"
   (interactive)
   (narf--evil-window-move 'right))
 
+;;;###autoload
+(defun narf/window-reorient ()
+  "Reorient all windows that are scrolled to the right."
+  (interactive)
+  (let ((i 0))
+    (mapc (lambda (w)
+            (with-selected-window w
+              (when (> (window-hscroll) 0)
+                (cl-incf i)
+                (evil-beginning-of-line))))
+          (narf/get-visible-windows))
+    (message "Reoriented %s windows" i)))
+
 (provide 'defuns-window)
 ;;; defuns-window.el ends here

@@ -14,11 +14,12 @@
 (defun narf/org-insert-item (direction)
   "Inserts a new heading or item, depending on the context."
   (interactive)
-  (let* ((context (org-element-lineage
-                   (org-element-context)
-                   '(table table-row headline inlinetask
-                     item plain-list)
-                   t))
+  (let* ((context (org-element-context)
+                  ;; (org-element-lineage
+                  ;;  '(table table-row headline inlinetask
+                  ;;    item plain-list)
+                  ;;  t)
+                  )
          (type (org-element-type context)))
     (cond ((eq type 'item)
            (cl-case direction
@@ -63,13 +64,15 @@
 (defun narf/org-dwim-at-point ()
   (interactive)
   (let* ((scroll-pt (window-start))
-         (context (org-element-lineage
-                   (org-element-context)
-                   '(table table-row clock comment comment-block footnote-definition
-                     footnote-reference headline inlinetask keyword link latex-fragment
-                     latex-environment src-block inline-src-block item plain-list
-                     timestamp babel-call)
-                   t))
+         (context (org-element-context)
+          ;; (org-element-lineage
+          ;;          (org-element-context)
+          ;;          '(table table-row clock comment comment-block footnote-definition
+          ;;            footnote-reference headline inlinetask keyword link latex-fragment
+          ;;            latex-environment src-block inline-src-block item plain-list
+          ;;            timestamp babel-call)
+          ;;          t)
+          )
          (type (org-element-type context))
          (value (org-element-property :value context)))
     (cond
@@ -88,11 +91,13 @@
        (if (eq (org-element-property :todo-type context) 'done) 'todo 'done)))
 
      ((memq type '(headline))
-      (org-remove-latex-fragment-image-overlays
-       (save-excursion (org-beginning-of-line) (point))
-       (save-excursion (org-end-of-subtree) (point)))
-      (org-map-entries 'org-toggle-latex-fragment t 'tree)
-      (narf/org-refresh-inline-images))
+      (org-preview-latex-fragment t)
+      ;; (org-remove-latex-fragment-image-overlays
+      ;;  (save-excursion (org-beginning-of-line) (point))
+      ;;  (save-excursion (org-end-of-subtree) (point)))
+      ;; (org-map-entries 'org-toggle-latex-fragment t 'tree)
+      (narf/org-refresh-inline-images)
+      )
 
      ((memq type '(babel-call))
       (org-babel-lob-execute-maybe))
@@ -101,7 +106,7 @@
       (org-babel-execute-src-block))
 
      ((memq type '(latex-fragment latex-environment))
-      (org-toggle-latex-fragment))
+      (org-preview-latex-fragment))
 
      ((memq type '(link))
       (org-open-at-point))

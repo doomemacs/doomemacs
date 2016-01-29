@@ -11,11 +11,12 @@
       (set-frame-parameter nil 'alpha 0))))
 
 ;;;###autoload (autoload 'narf:toggle-fullscreen "defuns-ui" nil t)
-(evil-define-command narf:toggle-fullscreen (&optional bang)
-  (interactive "<!>")
-  (if bang
-      (writeroom-mode (if writeroom-mode -1 1))
-    (set-frame-parameter nil 'fullscreen (if (not (frame-parameter nil 'fullscreen)) 'fullboth))))
+(after! evil
+  (evil-define-command narf:toggle-fullscreen (&optional bang)
+    (interactive "<!>")
+    (if bang
+        (writeroom-mode (if writeroom-mode -1 1))
+      (set-frame-parameter nil 'fullscreen (if (not (frame-parameter nil 'fullscreen)) 'fullboth)))))
 
 (defvar narf--big-mode nil)
 ;;;###autoload
@@ -27,16 +28,23 @@
 ;;;###autoload
 (defun narf/reset-theme ()
   (interactive)
-  (narf/load-theme narf-theme))
+  (narf/load-theme (or narf-current-theme narf-theme)))
 
 ;;;###autoload
-(defun narf/load-theme (theme)
+(defun narf/load-font (font)
   (interactive)
-  (ignore-errors
-    (mapc (lambda (th)
-            (when (custom-theme-enabled-p th) (disable-theme th)))
-          custom-enabled-themes))
-  (load-theme theme t))
+  (set-frame-font font)
+  (setq narf-current-font font))
+
+;;;###autoload
+(defun narf/load-theme (theme &optional suppress-font)
+  (interactive)
+  (when narf-current-theme
+    (disable-theme narf-current-theme))
+  (load-theme theme t)
+  (unless suppress-font
+    (narf/load-font narf-current-font))
+  (setq narf-current-theme theme))
 
 ;;;###autoload
 (defun narf/default-font ()

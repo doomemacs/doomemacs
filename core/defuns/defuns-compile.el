@@ -7,10 +7,9 @@
     ;; TODO Detect init.el and init-load-path.el
     (and (f-exists? (f-expand (concat (f-base file-name) ".elc") (f-dirname file-name)))
          (--any? (f-child-of? file-name it)
-                 (append (list narf-core-dir narf-contrib-dir)
-                         (list (concat narf-modules-dir "lib/")
-                               (concat narf-core-dir "lib/"))
-                         (list narf-modules-dir narf-private-dir))))))
+                 (append (list narf-core-dir narf-modules-dir
+                               narf-core-dir narf-modules-dir
+                               narf-private-dir))))))
 
 ;;;###autoload (autoload 'narf:compile-el "defuns-compile" nil t)
 (evil-define-command narf:compile-el (&optional bang)

@@ -85,6 +85,12 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
             (or buffer-list (narf/get-buffers))))
 
 ;;;###autoload
+(defun narf/get-buffers-in-modes (modes &optional buffer-list)
+  "Get a list of buffers whose major-mode is one of MODES"
+  (--filter (with-current-buffer it (memq major-mode modes))
+            (or buffer-list (narf/get-buffers))))
+
+;;;###autoload
 (defun narf/get-real-buffers (&optional buffer-list)
   (-filter #'narf/real-buffer-p (or buffer-list (narf/get-buffers))))
 
@@ -215,8 +221,9 @@ left, create a scratch buffer."
 (evil-define-command narf:kill-all-buffers (&optional bang)
   "Kill all project buffers. If BANG, kill *all* buffers (in workgroup)."
   (interactive "<!>")
-  (narf--kill-buffers (narf/get-buffers (not bang)))
-  (delete-other-windows))
+  (narf--kill-buffers (narf/get-buffers bang))
+  (when bang
+    (delete-other-windows)))
 
 ;;;###autoload (autoload 'narf:kill-buried-buffers "defuns-buffers" nil t)
 (evil-define-command narf:kill-buried-buffers (&optional bang)
