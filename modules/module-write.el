@@ -19,7 +19,7 @@
 
 (defun write-mode-toggle ()
   (interactive)
-  (let* ((mode-p (or (not arg) write-mode))
+  (let* ((mode-p write-mode)
          (on-off (if mode-p -1 +1)))
     (disable-theme (if mode-p write-mode-theme narf-theme))
     (scroll-bar-mode on-off)
@@ -29,8 +29,8 @@
       (volatile-highlights-mode (not on-off)))
     (when IS-MAC
       ;; sane trackpad/mouse scroll settings
-      (setq mac-mouse-wheel-smooth-scroll on-off
-            mouse-wheel-progressive-speed on-off))
+      (setq mac-mouse-wheel-smooth-scroll (not mode-p)
+            mouse-wheel-progressive-speed (not mode-p)))
     (mapc (lambda (b)
             (with-current-buffer b
               (setq line-spacing (if mode-p write-mode--last-line-spacing '2))
