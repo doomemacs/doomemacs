@@ -58,6 +58,8 @@
 ;; Fix display of certain unicode characters
 (mapc (lambda (x) (set-fontset-font "fontset-default" `(,x . ,x) (font-spec :name "DejaVu Sans") nil 'prepend))
       '(?☑ ?☐ ?✍ ?⚠))
+(mapc (lambda (x) (set-fontset-font "fontset-default" `(,x . ,x) (font-spec :name "DejaVu Sans") nil 'prepend))
+      '(?✸ ?✿ ?★))
 (mapc (lambda (x) (set-fontset-font "fontset-default" `(,x . ,x) (font-spec :name "DejaVu Sans" :size 10) nil))
       '(?➊ ?➋ ?➌ ?➍ ?➎ ?❻ ?➐ ?➑ ?➒ ?➓ ?λ))
 
