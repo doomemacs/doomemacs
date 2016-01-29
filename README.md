@@ -94,8 +94,8 @@ To get a picture of what's in here, check out:
     elisp (ielm), lua, js (nodejs), and the shell. More support later, hopefully for go
     and rust.
   * **Yasnippet + auto-insert = file-templates with editable fields**: _and_ it works with
-    evil-mode! See [core/core-auto-insert.el](core/core-auto-insert.el) for configuration
-    details.
+    evil-mode! See [core/core-file-templates.el](core/core-file-templates.el) for
+    configuration details.
   * **Tab emulation with Workgroups2**: Workgroups2 will display the tabs in the
     minibuffer when you press <kbd>⌘-S-T</kbd>, use `:tabs` or move between "tabs". `gt`
     and `gT` work as well.
