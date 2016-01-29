@@ -40,15 +40,17 @@
 ;;
 ;;; License: GPLv3
 
-(defconst narf-theme         'narf-dark)
-(defconst narf-default-font  (font-spec :family "Terminus (TTF)" :size 12 :antialias nil))
-(defconst narf-big-font      (font-spec :family "Inconsolata" :size 20))
+(defconst narf-theme 'narf-dark)
+(defconst narf-default-font (font-spec :family "Terminus (TTF)" :size 12 :antialias nil))
+
+;; Big-mode settings
+(defconst big-mode-font (font-spec :family "Inconsolata" :size 16))
 
 ;; Write-mode settings
-(defvar write-mode-theme      'narf-write)
-(defvar write-mode-font       (font-spec :family "Hack" :size 12))
-(defvar write-mode-dir        "~/Dropbox/notes")
-(defvar write-mode-biblio-dir "~/Dropbox/docs/biblio")
+(defconst write-mode-theme 'narf-write)
+(defconst write-mode-font (font-spec :family "Hack" :size 12))
+(defconst write-mode-dir "~/Dropbox/notes")
+(defconst write-mode-biblio-dir "~/Dropbox/docs/biblio")
 
 ;;
 (load (concat user-emacs-directory "bootstrap.el"))
@@ -72,7 +74,7 @@
         core-sessions        ; cure Emacs alzheimers + tab emulation
 
         ;; Environments
-        module-apple         ; Applescript, Swift, Launchbar, iOS
+        module-apple         ; Applescript, Swift, Launchbar, iOS, wallet syphons, etc.
         module-cc            ; c/c++/obj-c madness
         module-csharp        ; unity, .NET, and mono shenanigans
         module-go            ; the hipster dialect
@@ -82,11 +84,10 @@
         module-lua           ; one-based indices? one-based indices.
         module-markdown      ; markdown
         module-php           ; making php less painful to work with
-        module-plantuml      ; to help show others how right I am
         module-python        ; beautiful is better than ugly
         module-regex         ; /^[^\s](meaning)[^\n]*/
         module-ruby          ; <3
-        module-rust          ; Fe2O3; for gamedev and great good
+        module-rust          ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
         module-sh            ; she sells Z-shells by the C XOR
         module-tmux          ; closing the rift between GUI & terminal
         module-web           ; for the 2.0'er
