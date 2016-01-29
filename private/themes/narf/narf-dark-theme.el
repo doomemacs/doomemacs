@@ -3,7 +3,7 @@
 
 (deftheme narf-dark "A dark theme for narfy emacs, inspired by Molokai")
 
-(custom-theme-set-variables 'narf-dark)
+;; (custom-theme-set-variables 'narf-dark)
 
 ;; Color helper functions
 ;; Shamelessly *borrowed* from solarized
@@ -298,10 +298,12 @@
    ;; `(markdown-url-face               (:inherit link))
 
    ;; org-mode
-   `(variable-pitch  ((,c (:font "DejaVu Sans" :height 1.0))))
+   `(variable-pitch  ((,c (:font "DejaVu Sans Mono" :height 0.8))))
    `(fixed-pitch     ((,c (:font "DejaVu Sans Mono" :height 1.0))))
    `(org-tag         ((,c (:foreground ,grey-1 :bold nil))))
    ;; `(org-ellipsis    ((,c (:inherit hs-face))))
+
+   `(org-hide        ((,c (:foreground ,bg))))
 
    `(org-table                  ((,c (:foreground ,cyan))))
    `(org-quote                  ((,c (:slant italic :foreground ,grey :background ,current-line))))
@@ -312,7 +314,7 @@
    `(org-block-end-line         ((,c (:inherit org-block-begin-line))))
    `(org-archived               ((,c (:foreground ,grey-.5))))
 
-   `(org-document-title   ((,c (:inherit variable-pitch :foreground ,cyan :height 1.30 :bold ,bold))))
+   `(org-document-title   ((,c (:foreground ,cyan))))
    `(org-level-1          ((,c (:foreground ,orange    :bold ,bold))))
    `(org-level-2          ((,c (:foreground ,dark-cyan :bold ,bold))))
    `(org-level-3          ((,c (:foreground ,violet    :bold ,bold))))

@@ -3,8 +3,6 @@
 
 (deftheme narf-light "A light theme for narfy emacs, inspired by Base 16")
 
-(custom-theme-set-variables 'narf-light)
-
 (let* ((c '((class color)))
 
        (base00 "#2b303b")
@@ -278,7 +276,7 @@
 
    ;; org-mode
    `(variable-pitch  ((,c (:font "DejaVu Sans" :height 1.0))))
-   `(fixed-pitch     ((,c (:font "DejaVu Sans Mono" :height 1.0))))
+   `(fixed-pitch     ((,c (:font "Hack" :height 1.0))))
    `(org-tag         ((,c (:foreground ,grey-1))))
    ;; `(org-ellipsis    ((,c (:inherit hs-face))))
 
