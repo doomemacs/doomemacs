@@ -1,4 +1,4 @@
-;;; core-company.el --- auto completion backend (Company-mode)
+;;; core-completion.el --- auto completion backend (Company-mode)
 ;; see lib/company-macros.el
 
 (use-package company
@@ -45,5 +45,5 @@
   (global-company-mode +1)
   (company-statistics-mode +1))
 
-(provide 'core-company)
-;;; core-company.el ends here
+(provide 'core-completion)
+;;; core-completion.el ends here

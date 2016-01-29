@@ -1,4 +1,4 @@
-;;; core-workgroups.el
+;;; core-sessions.el
 ;; see lib/workgroup-defuns.el
 
 ;; I use workgroups to accomplish two things:
@@ -87,5 +87,5 @@ lib/defuns-workgroups.el.")
   (defalias 'narf:switch-to-tab-right 'wg-switch-to-workgroup-right)
   (defalias 'narf:switch-to-tab-last 'wg-switch-to-previous-workgroup))
 
-(provide 'core-workgroups)
-;;; core-workgroups.el ends here
+(provide 'core-sessions)
+;;; core-sessions.el ends here

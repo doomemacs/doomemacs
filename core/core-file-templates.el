@@ -1,4 +1,4 @@
-;;; core-auto-insert.el --- file templates
+;;; core-file-templates.el --- file templates
 
 (use-package autoinsert
   :defer t
@@ -95,5 +95,5 @@
           ("\\.z?sh$"                        "__"               sh-mode)
           )))
 
-(provide 'core-auto-insert)
-;;; core-auto-insert.el ends here
+(provide 'core-file-templates)
+;;; core-file-templates.el ends here
