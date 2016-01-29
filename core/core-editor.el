@@ -147,7 +147,15 @@ enable multiple minor modes for the same regexp.")
 (use-package goto-last-change
   :commands goto-last-change)
 
-(use-package rotate-text :commands (rotate-word-at-point rotate-region))
+(use-package rotate-text
+  :commands (rotate-text rotate-text-backward)
+  :init
+  (add-hook! (emacs-lisp-mode lisp-mode)
+    (setq rotate-text-local-symbols
+          '(("t" "nil")
+            ("let" "let*")
+            ("when" "unless")
+            ("add-hook" "add-hook!" "remove-hook")))))
 
 (use-package smart-forward :commands (smart-up smart-down smart-left smart-right))
 
