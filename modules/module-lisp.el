@@ -47,10 +47,20 @@
              collect
              (cons disp (cons k v)))))
 
-(font-lock-add-keywords 'emacs-lisp-mode `(("(\\(lambda\\)" (0 (narf/show-as ?λ)))))
-;; Highlight narf macros (macros are already fontified in emacs 25+)
-(when (<= emacs-major-version 24)
-  (font-lock-add-keywords 'emacs-lisp-mode `(("(\\([^!]+!\\) " 1 'font-lock-keyword-face))))
+(font-lock-add-keywords
+ 'emacs-lisp-mode
+ `(("(\\(lambda\\)"
+    (1 (narf/show-as ?λ)))
+   ;; Highlight narf macros (macros are fontified in emacs 25+)
+   (,(concat
+      "(\\("
+      (regexp-opt '("λ" "in" "map" "after" "exmap" "shut-up"
+                    "add-hook" "associate" "open-with" "define-repl"
+                    "define-builder" "narf-space-setup" "define-env-command"
+                    "define-text-object" "add-yas-minor-mode"
+                    "define-company-backend"))
+      "!\\)")
+    (1 font-lock-keyword-face append))))
 
 ;; Real go-to-definition for elisp
 (map! :map emacs-lisp-mode-map
