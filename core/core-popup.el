@@ -61,6 +61,9 @@
     ;; but th left-most buffer.
     (setq-default helm-split-window-in-side-p t))
 
+  (after! helm-swoop
+    (setq helm-swoop-split-window-function (lambda ($buf) (narf/popup-buffer $buf))))
+
   (after! helm-ag
     ;; Helm-ag needs a little coaxing for it to cooperate with shackle. Mostly to prevent
     ;; it from switching between windows and buffers.
