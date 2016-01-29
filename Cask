@@ -165,6 +165,7 @@
 (depends-on "ox-pandoc")
 (depends-on "org-download")
 (depends-on "ob-http")
+(depends-on "org-bullets")
 (depends-on "ob-go" :git "https://github.com/pope/ob-go")
 ; (depends-on "company-math")
 ; (depends-on "org-opml" :git "https://github.com/edavis/org-opml")
