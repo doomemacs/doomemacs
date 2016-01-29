@@ -109,6 +109,14 @@ enable multiple minor modes for the same regexp.")
 (add-hook! after-init
   (setq winner-boring-buffers narf-ignore-buffers))
 
+;; Extra modes ;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(use-package vimrc-mode :mode ("/\\.?g?vimrc$" "\\.vim$" "/\\.vim/rc/.+$"))
+
+;; Data formats
+(use-package yaml-mode :mode "\\.ya?ml$")
+(use-package toml-mode :mode "\\.toml$")
+(use-package json-mode :mode "\\.js\\(on\\|hintrc\\)$")
 
 ;; Plugins ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
