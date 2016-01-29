@@ -24,13 +24,13 @@
   (defalias 'narf/vcs-revert-hunk  'git-gutter:revert-hunk)
 
   (define-fringe-bitmap 'git-gutter-fr:added
-    [240 240 240 240 240 240 240 240 240 240 240 240 240 240]
+    [240 240 240 240 240 240 240 240 240 240 240 240 240 240 240 240 240]
     nil nil 'center)
   (define-fringe-bitmap 'git-gutter-fr:modified
-    [240 240 240 240 240 240 240 240 240 240 240 240 240 240]
+    [240 240 240 240 240 240 240 240 240 240 240 240 240 240 240 240 240]
     nil nil 'center)
   (define-fringe-bitmap 'git-gutter-fr:deleted
-    [0 0 0 128 192 224 240 248]
+    [0 0 0 0 0 0 0 128 192 224 240 248]
     nil nil 'center)
 
   (advice-add 'evil-force-normal-state :after 'git-gutter)
