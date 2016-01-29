@@ -18,6 +18,8 @@
 (exmap "tsnip[pets]"     'narf:yas-file-templates)   ; tsnip[!]
 (exmap "wal[ign]"        'narf:whitespace-align)
 (exmap "rec[ent]"        'narf:helm-recentf)
+(exmap "reo[rient]"      'narf/window-reorient)
+(exmap "cols"            'narf:set-columns)
 
 ;; External resources
 (exmap "dash"            'dash-at-point)
