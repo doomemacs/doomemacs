@@ -42,8 +42,6 @@
 
 ;; OSX Related Plugins ;;;;;;;;;;;;;;;;;
 
-(use-package applescript-mode :mode "\\.applescript$")
-
 (use-package dash-at-point
   :commands (dash-at-point dash-at-point-with-docset)
   :config
