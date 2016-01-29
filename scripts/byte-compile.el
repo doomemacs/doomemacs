@@ -8,10 +8,7 @@
 (byte-recompile-file (expand-file-name "core.el" narf-core-dir) t 0)
 (byte-recompile-file (expand-file-name "core-vars.el" narf-core-dir) t 0)
 (byte-recompile-file (expand-file-name "core-defuns.el" narf-core-dir) t 0)
-(dolist (dir (append (list narf-core-dir narf-contrib-dir)
-                     (list (concat narf-modules-dir "lib/")
-                           (concat narf-core-dir "lib/")
-                           narf-modules-dir)))
+(dolist (dir (list narf-core-dir narf-modules-dir narf-core-dir))
   (byte-recompile-directory dir 0 nil))
 
 (byte-recompile-file (expand-file-name "my-bindings.el" narf-core-dir) t 0)
