@@ -64,15 +64,7 @@
 (defun narf/org-dwim-at-point ()
   (interactive)
   (let* ((scroll-pt (window-start))
-         (context (org-element-context)
-          ;; (org-element-lineage
-          ;;          (org-element-context)
-          ;;          '(table table-row clock comment comment-block footnote-definition
-          ;;            footnote-reference headline inlinetask keyword link latex-fragment
-          ;;            latex-environment src-block inline-src-block item plain-list
-          ;;            timestamp babel-call)
-          ;;          t)
-          )
+         (context (org-element-context))
          (type (org-element-type context))
          (value (org-element-property :value context)))
     (cond
@@ -91,13 +83,8 @@
        (if (eq (org-element-property :todo-type context) 'done) 'todo 'done)))
 
      ((memq type '(headline))
-      (org-preview-latex-fragment t)
-      ;; (org-remove-latex-fragment-image-overlays
-      ;;  (save-excursion (org-beginning-of-line) (point))
-      ;;  (save-excursion (org-end-of-subtree) (point)))
-      ;; (org-map-entries 'org-toggle-latex-fragment t 'tree)
-      (narf/org-refresh-inline-images)
-      )
+      (org-remove-latex-fragment-image-overlays)
+      (org-preview-latex-fragment '(4)))
 
      ((memq type '(babel-call))
       (org-babel-lob-execute-maybe))
