@@ -40,7 +40,7 @@
       (fringe-mode narf-fringe-size)
       (setq frame-title-format '(buffer-file-name "%f" ("%b")))
 
-      (set-frame-font narf-default-font)
+      (narf/load-font narf-default-font)
       (set-face-attribute 'default t :font narf-default-font)
 
       (define-fringe-bitmap 'tilde [64 168 16] nil nil 'center)
