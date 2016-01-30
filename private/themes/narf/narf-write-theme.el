@@ -15,8 +15,8 @@
        (base07 "#f9f9f9")
        (base08 "#bf616a")
        (base0A "#ebcb8b")
-       (base0B "#a3be8c")
-       (base0C "#96b5b4")
+       (base0B "#93ae7c")
+       (base0C "#86a5a4")
        (base0D "#8fa1b3")
        (base0E "#b48ead")
        (base0F "#ab7967")
@@ -84,9 +84,9 @@
        (modeline-bg-3  grey-1)
        (modeline-bg-inactive  grey)
 
-       (vc-modified    grey)
-       (vc-added       green)
-       (vc-deleted     orange))
+       (vc-modified    grey-1)
+       (vc-added       "#B3Ce9c")
+       (vc-deleted     yellow))
 
   (custom-theme-set-faces
    'narf-write
@@ -214,6 +214,9 @@
    `(diff-hl-change              ((,c (:foreground ,vc-modified))))
    `(diff-hl-delete              ((,c (:foreground ,vc-deleted))))
    `(diff-hl-insert              ((,c (:foreground ,vc-added))))
+   `(git-gutter:modified         ((,c (:foreground ,vc-modified))))
+   `(git-gutter:added            ((,c (:foreground ,vc-added))))
+   `(git-gutter:deleted          ((,c (:foreground ,vc-deleted))))
    `(git-gutter+-modified        ((,c (:foreground ,vc-modified :background nil))))
    `(git-gutter+-added           ((,c (:foreground ,vc-added :background nil))))
    `(git-gutter+-deleted         ((,c (:foreground ,vc-deleted :background nil))))
@@ -291,7 +294,7 @@
 
    `(org-document-title   ((,c (:foreground ,red      :bold t :height 1.4))))
    `(org-level-1          ((,c (:foreground ,black    :bold t :height 1.2))))
-   `(org-level-2          ((,c (:foreground "#222222" :bold t :height 1.1))))
+   `(org-level-2          ((,c (:foreground "#222222" :bold t))))
    `(org-level-3          ((,c (:foreground "#444444" :bold t))))
    `(org-level-4          ((,c (:foreground "#444444" :bold t))))
    `(org-level-5          ((,c (:foreground "#444444" :bold t))))
@@ -308,9 +311,9 @@
 
    `(org-link             ((,c (:underline t :foreground ,orange :bold inherit))))
    `(org-date             ((,c (:foreground ,violet))))
-   `(org-todo             ((,c (:foreground ,yellow :bold inherit))))
+   `(org-todo             ((,c (:foreground ,orange :bold inherit))))
    `(org-done             ((,c (:foreground ,green :bold inherit))))
-   `(org-headline-done    ((,c (:foreground ,grey-1 :strike-through t :bold nil))))
+   `(org-headline-done    ((,c (:foreground ,grey-1 :strike-through t :bold t))))
    `(org-special-keyword  ((,c (:foreground ,magenta))))
    `(org-checkbox-statistics-todo ((,c (:inherit org-todo))))
    `(org-checkbox-statistics-done ((,c (:inherit org-done))))
