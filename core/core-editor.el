@@ -233,5 +233,18 @@ enable multiple minor modes for the same regexp.")
   :commands (describe-buffer describe-command describe-file
              describe-keymap describe-option describe-option-of-type))
 
+(use-package re-builder
+  :commands (re-builder reb-mode-buffer-p)
+  :init (add-hook! reb-mode 'narf|reb-cleanup)
+  :config
+  (setq reb-re-syntax 'string)
+  (evil-set-initial-state 'reb-mode 'insert)
+
+  (map! :map rxt-help-mode-map :n [escape] 'kill-buffer-and-window)
+  (map! :map reb-mode-map
+        :n "C-g"        'reb-quit
+        :n [escape]     'reb-quit
+        :n [backtab]    'reb-change-syntax))
+
 (provide 'core-editor)
 ;;; core-editor.el ends here

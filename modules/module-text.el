@@ -1,5 +1,4 @@
-;;; module-markdown.el
-;; see lib/markdown-defuns.el
+;;; module-text.el
 
 (use-package markdown-mode
   :mode (("\\.md$"   . markdown-mode)
@@ -39,7 +38,5 @@
 
           :i "M--"  'markdown-insert-hr)))
 
-;; TODO: Test previewing capability
-
-(provide 'module-markdown)
-;;; module-markdown.el ends here
+(provide 'module-text)
+;;; module-text.el ends here
