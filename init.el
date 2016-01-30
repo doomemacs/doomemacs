@@ -82,13 +82,12 @@
         module-js            ; all(hope(abandon(ye(who(enter(here))))))
         module-lisp          ; drowning in parentheses
         module-lua           ; one-based indices? one-based indices.
-        module-markdown      ; markdown
         module-php           ; making php less painful to work with
         module-python        ; beautiful is better than ugly
-        module-regex         ; /^[^\s](meaning)[^\n]*/
         module-ruby          ; <3
         module-rust          ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
         module-sh            ; she sells Z-shells by the C XOR
+        module-text          ; writing docs for people to ignore
         module-tmux          ; closing the rift between GUI & terminal
         module-web           ; for the 2.0'er
 
