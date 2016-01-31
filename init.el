@@ -103,7 +103,7 @@
         module-write         ; making Emacs fit for writing fiction, papers & notes
 
         ;; Extra Tools
-        module-demo          ; let me demonstrate...
+        module-demo          ; allow me to demonstrate...
 
         ;; Key bindings & ex commands
         my-bindings

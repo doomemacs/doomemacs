@@ -89,7 +89,7 @@
       (setq-local evil-ex-commands (copy-alist evil-ex-commands)))
     (evil-ex-define-cmd cmd function))
   ;; Shortcuts for `evil-ex-define-cmd'
-  (defalias 'exmap 'evil-ex-define-cmd)
+  (defalias 'exmap  'evil-ex-define-cmd)
   (defalias 'exmap! 'evil-ex-define-cmd-local)
 
   (progn ; evil hacks

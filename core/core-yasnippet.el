@@ -74,5 +74,7 @@
   (after! yasnippet
     (advice-add 'yas-expand :before 'sp-remove-active-pair-overlay)))
 
+;; TODO: Add auto-yasnippet
+
 (provide 'core-yasnippet)
 ;;; core-yasnippet.el ends here

@@ -20,8 +20,8 @@
  scroll-conservatively   1001
  scroll-preserve-screen-position t
 
- hscroll-step 5
- hscroll-margin 6
+ hscroll-step 1
+ hscroll-margin 1
 
  shift-select-mode       t
  tabify-regexp "^\t* [ \t]+"
@@ -65,6 +65,7 @@ enable multiple minor modes for the same regexp.")
 
 
 ;; Modes 'n hooks ;;;;;;;;;;;;;;;;;;;
+
 (associate! applescript-mode    :match "\\.applescript$")
 (associate! emacs-lisp-mode     :match "\\(/Cask\\|\\.\\(el\\|gz\\)\\)$")
 (associate! makefile-gmake-mode :match "/Makefile$")
@@ -155,6 +156,7 @@ enable multiple minor modes for the same regexp.")
           '(("t" "nil")
             ("let" "let*")
             ("when" "unless")
+            ("append" "prepend")
             ("add-hook" "add-hook!" "remove-hook")))))
 
 (use-package smart-forward :commands (smart-up smart-down smart-left smart-right))

@@ -10,7 +10,7 @@
     :config (add-hook! rust-mode 'flycheck-mode))
 
   (use-package racer
-    :if (file-exists-p "/usr/local/bin/racer")
+    :when (file-exists-p "/usr/local/bin/racer")
     :config
     (setq racer-cmd "/usr/local/bin/racer"
           racer-rust-src-path "~/Dropbox/lib/rust/src/")

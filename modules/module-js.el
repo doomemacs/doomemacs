@@ -99,8 +99,7 @@
 (use-package coffee-mode
   :mode "\\.coffee$"
   :config
-  (setq-default
-   coffee-indent-like-python-mode t))
+  (setq-default coffee-indent-like-python-mode t))
 
 (use-package nodejs-repl :defer t)
 

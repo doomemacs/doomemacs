@@ -1,9 +1,9 @@
 #!emacs --script
 
-(load (concat user-emacs-directory "init-packages.el"))
+(load (concat user-emacs-directory "bootstrap.el"))
 
 (require 'bytecomp)
-(byte-recompile-file (expand-file-name "init-load-path.el" narf-emacs-dir) nil 0)
+(byte-recompile-file (expand-file-name "bootstrap.el" narf-emacs-dir) nil 0)
 (byte-recompile-file (expand-file-name "init.el" narf-emacs-dir) nil 0)
 (byte-recompile-file (expand-file-name "core.el" narf-core-dir) t 0)
 (byte-recompile-file (expand-file-name "core-vars.el" narf-core-dir) t 0)

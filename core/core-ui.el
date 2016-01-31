@@ -65,8 +65,9 @@
 
 (blink-cursor-mode  1)    ; do blink cursor
 (tooltip-mode      -1)    ; show tooltips in echo area
-(when (featurep 'eldoc)
-  (global-eldoc-mode -1)) ; on by default in Emacs 25?
+;; on by default in Emacs 25
+(when (and (featurep 'eldoc) (>= emacs-major-version 25))
+  (global-eldoc-mode -1))
 
 ;; Highlight line
 (add-hook! (prog-mode puml-mode markdown-mode) 'hl-line-mode)
@@ -152,7 +153,6 @@
       (hl-line-mode (if rainbow-mode -1 1)))))
 
 (use-package volatile-highlights
-  :when (not EMACS-WRITE)
   :config
   (vhl/define-extension 'my-undo-tree-highlights
     'undo-tree-undo 'undo-tree-redo)

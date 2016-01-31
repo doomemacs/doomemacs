@@ -35,8 +35,9 @@
 (unless window-system
   (require 'mouse)
   (xterm-mouse-mode t)
-  (global-set-key [mouse-4] (λ! (scroll-down 1)))
-  (global-set-key [mouse-5] (λ! (scroll-up 1)))
+  (global-set-key [mouse-4] (λ! (scroll-down 4)))
+  (global-set-key [mouse-5] (λ! (scroll-up 4)))
+
   (defun track-mouse (e))
   (setq mouse-sel-mode t))
 

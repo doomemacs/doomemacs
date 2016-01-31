@@ -49,7 +49,7 @@
 (exmap "agr"             'narf:helm-ag-regex-search)
 (exmap "agr[cw]d"        'narf:helm-ag-regex-search-cwd)
 (exmap "cd"              'narf:cd)
-(exmap "fi[nd]"          'narf:helm-swoop)
+(exmap "f[ind]"          'narf:helm-swoop)
 ;; Project tools
 (exmap "ma[ke]"          'narf:build)
 ;; File operations
