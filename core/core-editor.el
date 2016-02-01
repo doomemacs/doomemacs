@@ -119,6 +119,9 @@ enable multiple minor modes for the same regexp.")
 (use-package yaml-mode :mode "\\.ya?ml$")
 (use-package toml-mode :mode "\\.toml$")
 (use-package json-mode :mode "\\.js\\(on\\|hintrc\\)$")
+(use-package dockerfile-mode :mode "/Dockerfile$"
+  :config
+  (define-builder! dockerfile-mode dockerfile-build-buffer "Dockerfile"))
 
 ;; Plugins ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
