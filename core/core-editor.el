@@ -31,8 +31,9 @@
    (newline-mark 10 [36 10])))
 
 (require 'saveplace)
-(setq save-place-file (concat narf-temp-dir "saveplace")
-      save-place t)
+(setq-default
+ save-place-file (concat narf-temp-dir "saveplace")
+ save-place t)
 (when (>= emacs-major-version 25)
   (save-place-mode +1))
 
