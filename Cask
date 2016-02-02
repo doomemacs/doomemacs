@@ -21,7 +21,6 @@
 ;; OSX --- core/core-os-osx.el
 (depends-on "exec-path-from-shell")
 (depends-on "dash-at-point")
-(depends-on "applescript-mode")
 
 ;; Popups --- core/core-popup.el
 (depends-on "shackle")
@@ -56,6 +55,7 @@
 ;; Editor --- core/core-editor.el
 (depends-on "ace-window")
 (depends-on "avy")
+(depends-on "editorconfig")
 (depends-on "emr")
 (depends-on "expand-region")
 (depends-on "fancy-narrow")
@@ -63,7 +63,12 @@
 (depends-on "rotate-text" :git "https://github.com/debug-ito/rotate-text.el")
 (depends-on "smart-forward")
 (depends-on "smartparens")
-(depends-on "editorconfig")
+
+(depends-on "vimrc-mode")
+(depends-on "json-mode")
+(depends-on "toml-mode")
+(depends-on "yaml-mode")
+(depends-on "dockerfile-mode")
 
 ;; Completion --- core/core-company.el
 (depends-on "company")
@@ -101,13 +106,18 @@
 
 ;; Quickrun -- core/core-quickrun.el
 (depends-on "quickrun")
-(depends-on "repl-toggle" :git "https://github.com/hlissner/repl-toggle")
+(depends-on "repl-toggle")
 
 ;; Workgroups --- core/core-workgroups.el
 (depends-on "workgroups2")
 
 
 ;;;; MODULES ;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Apple -- modules/module-apple.el
+(depends-on "applescript-mode")
+(depends-on "swift-mode")
+(depends-on "company-sourcekit")
+
 ;; C/C++ -- modules/module-cc.el
 (depends-on "cmake-mode")
 (depends-on "glsl-mode")
@@ -120,11 +130,6 @@
 (depends-on "csharp-mode")
 (depends-on "omnisharp")
 (depends-on "shader-mode")
-
-;; Data -- modules/module-data.el
-(depends-on "json-mode")
-(depends-on "yaml-mode" :git "https://github.com/antalk2/yaml-mode")
-(depends-on "toml-mode")
 
 ;; Lisp -- modules/module-lisp.el
 (depends-on "slime")
@@ -154,25 +159,9 @@
 ;; Lua -- modules/module-lua.el
 (depends-on "lua-mode")
 
-;; Markdown -- modules/module-markdown.el
-(depends-on "markdown-mode")
-
 ;; Nim -- modules/module-nim.el
 (depends-on "nim-mode")
 (depends-on "flycheck-nim")
-
-;; Org -- modules/module-org.el
-(depends-on "ox-pandoc")
-(depends-on "org-download")
-(depends-on "ob-http")
-(depends-on "org-bullets")
-(depends-on "ob-go" :git "https://github.com/pope/ob-go")
-; (depends-on "company-math")
-; (depends-on "org-opml" :git "https://github.com/edavis/org-opml")
-; (depends-on "org-plus-contrib")
-
-;; PlantUML -- modules/module-plantuml.el
-(depends-on "puml-mode")
 
 ;; PHP -- modules/module-php.el
 (depends-on "php-mode")
@@ -188,9 +177,6 @@
 (depends-on "nose")
 (depends-on "company-anaconda")
 
-;; Ruby -- modules/module-regex.el
-(depends-on "pcre2el")
-
 ;; Ruby -- modules/module-ruby.el
 (depends-on "enh-ruby-mode")
 (depends-on "ruby-refactor")
@@ -205,12 +191,8 @@
 (depends-on "racer")
 (depends-on "flycheck-rust")
 
-;; Swift -- modules/module-swift.el
-(depends-on "swift-mode")
-(depends-on "company-sourcekit")
-
-;; Vim -- modules/module-vim.el
-(depends-on "vimrc-mode")
+;; Text modes -- modules/module-text.el
+(depends-on "markdown-mode")
 
 ;; Web -- modules/module-web.el
 (depends-on "web-beautify")
@@ -219,14 +201,31 @@
 (depends-on "haml-mode")
 (depends-on "scss-mode")
 (depends-on "sass-mode")
-(depends-on "sws-mode")
+; (depends-on "sws-mode")
 ; (depends-on "jade-mode")
 ; (depends-on "slim-mode" :git "https://github.com/hlissner/emacs-slim")
 
 
-;;;; LIBRARIES ;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Collab --- lib-demo.el
-(depends-on "impatient-mode")
+;;;; ORGANIZATIONAL/WRITING ;;;;;;;;;;;;
+;; Org -- modules/module-org.el
+(depends-on "company-math")
+(depends-on "ob-go" :git "https://github.com/pope/ob-go")
+(depends-on "ob-http")
+(depends-on "org-bullets")
+(depends-on "org-download")
+(depends-on "ox-opml" :git "https://github.com/edavis/org-opml")
+(depends-on "ox-pandoc")
+; (depends-on "org-plus-contrib")
 
 ;; Writing -- modules/lib-writing.el
 (depends-on "helm-bibtex")
+
+
+;;;; EXTRA TOOLS ;;;;;;;;;;;;;;;;;;;;;;;
+;; Demo --- module-demo.el
+(depends-on "impatient-mode")
+(depends-on "puml-mode")
+(depends-on "ox-reveal" :git "https://github.com/yjwen/org-reveal")
+(depends-on "htmlize")
+
+
