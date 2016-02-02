@@ -1,5 +1,39 @@
 ;;; core-project.el --- all your (basic) project navigational needs
 
+;;; Dired
+;; Always copy/delete recursively
+(setq dired-recursive-copies (quote always))
+(setq dired-recursive-deletes (quote top))
+
+;; Auto refresh dired, but be quiet about it
+(setq global-auto-revert-non-file-buffers t)
+(setq auto-revert-verbose nil)
+
+(setq dired-omit-mode t)
+
+;; List directories first
+(defun narf|dired-sort ()
+  "Dired sort hook to list directories first."
+  (save-excursion
+    (let (buffer-read-only)
+      (forward-line 2) ;; beyond dir. header
+      (sort-regexp-fields t "^.*$" "[ ]*." (point) (point-max))))
+  (and (featurep 'xemacs)
+       (fboundp 'dired-insert-set-properties)
+       (dired-insert-set-properties (point-min) (point-max)))
+  (set-buffer-modified-p nil))
+(add-hook 'dired-after-readin-hook 'narf|dired-sort)
+
+;; Automatically create missing directories when creating new files
+(defun narf|create-non-existent-directory ()
+  (let ((parent-directory (file-name-directory buffer-file-name)))
+    (when (and (not (file-exists-p parent-directory))
+               (y-or-n-p (format "Directory `%s' does not exist! Create it?" parent-directory)))
+      (make-directory parent-directory t))))
+(add-to-list 'find-file-not-found-functions #'narf|create-non-existent-directory)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (use-package ido
   :defines (flx-ido-mode ido-ubiquitous-debug-mode ido-context-switch-command ido-temp-list)
   :functions (ido-to-end)
