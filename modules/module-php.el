@@ -33,5 +33,15 @@
 
 (use-package hack-mode :mode "\\.hh$")
 
+(define-minor-mode php-laravel-mode
+  ""
+  :init-value nil
+  :lighter " Laravel"
+  :keymap (make-sparse-keymap)
+  (add-yas-minor-mode! 'php-laravel-mode))
+(associate! php-laravel-mode
+  :in (php-mode json-mode yaml-mode web-mode nxml-mode js2-mode scss-mode)
+  :files ("artisan" "server.php"))
+
 (provide 'module-php)
 ;;; module-php.el ends here
