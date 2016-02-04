@@ -2,9 +2,13 @@
 
 ;; This library offers:
 ;;   + impatient-mode: for broadcasting my emacs session
-;;   + TODO integration with reveal.js for presentations
-;;   + TODO "big-mode", for making emacs presentable for screencasts/share
-;;   + TODO quick note/time keeping for live/youtube recordings
+;;   + big-mode: for enlarged text while screencasting
+;;   + integration with reveal.js for presentations
+
+;; Big-mode settings
+(defconst big-mode-font (font-spec :family "Inconsolata" :size 16))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package impatient-mode
   :defer t

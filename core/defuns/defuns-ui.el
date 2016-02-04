@@ -18,13 +18,6 @@
         (writeroom-mode (if writeroom-mode -1 1))
       (set-frame-parameter nil 'fullscreen (if (not (frame-parameter nil 'fullscreen)) 'fullboth)))))
 
-(defvar narf--big-mode nil)
-;;;###autoload
-(defun narf:toggle-big-mode ()
-  (interactive)
-  (set-frame-font (if narf--big-mode narf-default-font narf-big-font))
-  (setq narf--big-mode (not narf--big-mode)))
-
 ;;;###autoload
 (defun narf/reset-theme ()
   (interactive)
@@ -45,16 +38,6 @@
   (unless suppress-font
     (narf/load-font narf-current-font))
   (setq narf-current-theme theme))
-
-;;;###autoload
-(defun narf/default-font ()
-  (interactive)
-  (set-frame-font narf-default-font))
-
-;;;###autoload
-(defun narf/big-font ()
-  (interactive)
-  (set-frame-font narf-big-font))
 
 ;;;###autoload
 (defun narf/show-as (how &optional pred)
