@@ -22,6 +22,8 @@
   (mapc 'auto-insert-template
         `(;; General
           ("/\\.gitignore$"                  "__"               gitignore-mode)
+          ("/Dockerfile$"                    "__"               dockerfile-mode)
+          ("/docker-compose.yml$"            "__"               yaml-mode)
 
           ;; C/C++
           ("/Makefile$"                      "__"               makefile-gmake-mode)
