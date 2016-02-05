@@ -53,9 +53,6 @@
         ido-cr+-max-items 10000
         ido-save-directory-list-file (concat narf-temp-dir "ido.last"))
   :config
-  (add-to-list 'ido-ignore-files "\\`.DS_Store$")
-  (add-to-list 'ido-ignore-files "Icon\\?$")
-
   (add-hook! ido-setup
     (require 'ido-vertical-mode)
     (ido-vertical-mode 1)
@@ -68,6 +65,9 @@
           "C-p" 'ido-prev-match
           "C-w" 'ido-delete-backward-word-updir
           "C-u" 'ido-up-directory))
+
+  (add-to-list 'ido-ignore-files "\\`.DS_Store$")
+  (add-to-list 'ido-ignore-files "Icon\\?$")
 
   (advice-add 'ido-sort-mtime :override 'narf*ido-sort-mtime)
   (add-hook! (ido-make-file-list ido-make-dir-list) 'narf*ido-sort-mtime)

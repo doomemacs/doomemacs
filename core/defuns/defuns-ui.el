@@ -26,7 +26,7 @@
 ;;;###autoload
 (defun narf/load-font (font)
   (interactive)
-  (set-frame-font font)
+  (set-frame-font font t)
   (setq narf-current-font font))
 
 ;;;###autoload

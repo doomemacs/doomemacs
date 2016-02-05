@@ -44,7 +44,7 @@
  "C-j"  'evil-window-down
  "C-k"  'evil-window-up
  "C-h"  'evil-window-left
- "C-l"  'evil-window-right ; switch to tmux if fails
+ "C-l"  'evil-window-right
 
  "C-<escape>" 'evil-emacs-state
  :e "C-<escape>" 'evil-normal-state
@@ -278,8 +278,7 @@
  :o  "s"     'evil-surround-edit
  :o  "S"     'evil-Surround-edit
 
- :n  "!"     'rotate-word-at-point
- :v  "!"     'rotate-region
+ :n  "!"     'rotate-text
 
  (:map evil-window-map ; prefix "C-w"
    "u"       'narf/undo-window-change

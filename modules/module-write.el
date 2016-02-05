@@ -56,8 +56,8 @@
 
 (when (>= emacs-major-version 25)
   ;; From <https://github.com/joostkremers/visual-fill-column/pull/6>
-  ;; Splitting windows while visual-fill-column makes Emacs go crazy. This prevents
-  ;; that by simply disabled VFC before splitting.
+  ;; Splitting windows while visual-fill-column makes Emacs go crazy. This prevents that
+  ;; by simply disabled VFC before splitting.
   (after! visual-fill-column
     (advice-add 'split-window :around #'visual-fill-column--disable-on-split-window))
   (defun visual-fill-column--disable-on-split-window (fn window &rest args)
