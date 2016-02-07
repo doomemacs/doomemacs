@@ -26,6 +26,7 @@
           ("^\\*Org Src .+\\*$"    :regexp t :align below  :size 0.4 :select t)
           ("^\\*Org-Babel.*\\*$"   :regexp t :align below  :size 0.4)
           (org-agenda-mode                   :align below  :size 0.4)
+          ("*Org Agenda*"                    :align below  :size 0.4)
           ("*Agenda Commands*"               :align below  :size 0.5)
           (" *Org todo*"                     :align below  :size 5   :noselect t)
           ("*Org Links*"                     :align below  :size 5)
