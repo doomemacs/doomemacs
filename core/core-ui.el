@@ -26,6 +26,8 @@
  split-width-threshold          nil  ; favor horizontal splits
  show-help-function             nil  ; hide :help-echo text
 
+ bidi-display-reordering        nil
+
  ;; Minibuffer resizing
  resize-mini-windows            'grow-only
  max-mini-window-height         0.3
