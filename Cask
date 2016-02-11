@@ -192,6 +192,9 @@
 (depends-on "racer")
 (depends-on "flycheck-rust")
 
+;; Shell -- modules/module-sh.el
+(depends-on "company-shell" :git "https://github.com/Alexander-Miller/company-shell")
+
 ;; Text modes -- modules/module-text.el
 (depends-on "markdown-mode")
 
