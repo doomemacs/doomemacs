@@ -136,11 +136,11 @@
         helm-swoop-speed-or-color t
         helm-swoop-pre-input-function (lambda () "")))
 
+(use-package helm-describe-modes :defer t)
 ;; (use-package helm-c-yasnippet :commands helm-yas-visit-snippet-file)
 (use-package helm-semantic :commands helm-semantic-or-imenu)
 (use-package helm-elisp    :commands helm-apropos)
 (use-package helm-command  :commands helm-M-x)
-
 (use-package helm-descbinds :commands helm-descbinds
   :config
   (setq helm-descbinds-window-style 'split-window)
