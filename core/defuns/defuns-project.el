@@ -25,13 +25,12 @@ determine if a directory is a project."
 
 ;;;###autoload
 (defun narf/project-has-files (files &optional root)
-  "Return non-nil if `file' exists in the project root."
+  "Return non-nil if FILES exist in the project root."
   (let ((root (or root (narf/project-root)))
         (files (if (listp files) files (list files)))
-        found-p file)
-    (while (and files (not found-p))
-      (setq file (pop files))
-      (setq found-p (file-exists-p (narf/project-path-to file root))))
+        (found-p (if files t)))
+    (while found-p
+      (setq found-p (file-exists-p (narf/project-path-to (pop files) root))))
     found-p))
 
 ;;;###autoload
