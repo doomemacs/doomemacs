@@ -93,8 +93,7 @@ buffers."
   (interactive)
   (in! org-directory
     (let ((helm-ff-skip-boring-files t))
-      (helm-find-files-1 org-directory))))
-
+      (helm-find-files-1 (concat org-directory "/")))))
 
 (provide 'defuns-helm)
 ;;; defuns-helm.el ends here

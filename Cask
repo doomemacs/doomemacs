@@ -219,7 +219,7 @@
 (depends-on "org-download")
 (depends-on "ox-opml" :git "https://github.com/edavis/org-opml")
 (depends-on "ox-pandoc")
-; (depends-on "org-plus-contrib")
+(depends-on "org-plus-contrib")
 
 ;; Writing -- modules/lib-writing.el
 (depends-on "helm-bibtex")

@@ -7,13 +7,13 @@
   :keymap     (make-sparse-keymap) ; defines evil-org-mode-map
   :group      'evil-org)
 
-(defvar org-directory (expand-file-name "org/" narf-dropbox-dir))
-(defvar org-directory-contacts (expand-file-name "work/contacts/" org-directory))
-(defvar org-directory-projects (expand-file-name "work/projects/" org-directory))
-(defvar org-directory-invoices (expand-file-name "work/invoices/" org-directory))
+(defvar org-directory (expand-file-name write-mode-dir))
+(defvar org-directory-contacts (expand-file-name "Work/Contacts/" org-directory))
+(defvar org-directory-projects (expand-file-name "Work/Projects/" org-directory))
+(defvar org-directory-invoices (expand-file-name "Work/Invoices/" org-directory))
+(defvar org-directory-courses (expand-file-name "Courses/" org-directory))
 
-(defvar org-default-notes-file (concat org-directory "notes.org"))
-(defvar org-default-todo-file  (concat org-directory "todo.org"))
+(defvar org-default-notes-file (concat org-directory "/Notes.org"))
 
 (add-hook! org-load 'narf|org-init)
 
@@ -21,7 +21,7 @@
 
 (defun narf@org-vars ()
   (setq org-agenda-files
-        (f-entries org-directory (lambda (path) (string-suffix-p ".org" path)) t)
+        (f-entries org-directory (lambda (path) (string-suffix-p ".org" path)))
 
         org-archive-location (concat org-directory "/archive/%s::")
         org-attach-directory ".attach/"
@@ -46,7 +46,7 @@
         org-log-done t
         org-agenda-window-setup 'other-window
         org-agenda-skip-unavailable-files t
-        org-startup-folded 'content
+        org-startup-folded t
         org-todo-keywords '((sequence "TODO(t)" "|" "DONE(d)")
                             (sequence "IDEA(i)" "NEXT(n)" "ACTIVE(a)" "WAITING(w)" "LATER(l)" "|" "CANCELLED(c)")
                             (sequence "UNSENT(u)" "UNPAID(U)" "|" "PAID(p)"))
@@ -58,33 +58,18 @@
                         ("@projects" . ?r))
 
         org-capture-templates
-        '(("t" "TODO" entry
-           (file+headline org-default-todo-file "Inbox")
-           "*** TODO %? %u")
-
-          ;; TODO Select file from org files
-          ;; ("T" "Specific TODO" entry
-          ;;  (function narf/-org-capture-choose)
-          ;;  "** TODO %?\n%i" :prepend t)
-
-          ;; ("c" "Changelog" entry
-          ;;  (function narf/-org-capture-changelog)
-          ;;  "** %<%H:%M>: %? :unsorted:\n%i" :prepend t)
+        '(("c" "Changelog" entry
+           (file+headline (concat (narf/project-root) "CHANGELOG.org") "Unreleased")
+           "* %?")
 
           ("j" "Journal" entry
            (file+datetree (concat org-directory "journal.org"))
            "** %<%H:%M>: %?\n%i" :prepend t)
 
-          ;; TODO Select file from notes folder
           ("n" "Notes" entry
            (file+headline org-default-notes-file "Inbox")
            "* %u %?\n%i" :prepend t)
 
-          ("s" "Writing Scraps" entry
-           (file+headline (concat org-directory "writing/scraps.org") "Unsorted")
-           "* %t %?\n%i" :prepend t)
-
-          ;; TODO Sort word under correct header
           ("v" "Vocab" entry
            (file+headline (concat org-directory "topics/vocab.org") "Unsorted")
            "** %i%?\n")
@@ -117,7 +102,11 @@
 
 (defun narf@org-export ()
   (defvar narf-org-export-directory (concat org-directory ".export"))
-  (require 'ox-pandoc)
+
+  (unless (featurep 'ox-opml)
+    (load-library "org-opml"))
+  (use-package ox-pandoc)
+
   (setq org-export-backends '(ascii html latex md opml)
         org-export-with-toc nil)
 
@@ -135,20 +124,21 @@
         org-src-preserve-indentation t
         org-src-tab-acts-natively t)
 
-  (defun narf-refresh-babel-lob ()
-    (let ((files (f-entries org-directory (lambda (path) (f-ext? path "org")) t)))
-      (async-start
-       `(lambda ()
-          ,(async-inject-variables "\\`\\(org-directory\\|load-path$\\)")
-          (require 'org)
-          (setq org-babel-library-of-babel nil)
-          (mapc (lambda (f) (org-babel-lob-ingest f)) (list ,@files))
-          org-babel-library-of-babel)
-       (lambda (lib)
-         ;; (persistent-soft-store 'org-babel-library lib "org")
-         (message "Library of babel updated!")
-         (setq org-babel-library-of-babel lib)))))
-  (setq org-babel-library-of-babel (narf-refresh-babel-lob))
+  ;; (defun narf-refresh-babel-lob ()
+  ;;   (let ((files (f-entries org-directory (lambda (path) (f-ext? path "org")) t)))
+  ;;     (async-start
+  ;;      `(lambda ()
+  ;;         ,(async-inject-variables "\\`\\(org-directory\\|load-path$\\)")
+  ;;         (require 'org)
+  ;;         (setq org-babel-library-of-babel nil)
+  ;;         (mapc (lambda (f) (org-babel-lob-ingest f)) (list ,@files))
+  ;;         org-babel-library-of-babel)
+  ;;      (lambda (lib)
+  ;;        ;; (persistent-soft-store 'org-babel-library lib "org")
+  ;;        (message "Library of babel updated!")
+  ;;        (setq org-babel-library-of-babel lib)))))
+  ;; (setq org-babel-library-of-babel (narf-refresh-babel-lob))
+
   (add-hook! org-mode
     (add-hook 'after-save-hook
               (lambda ()
@@ -163,7 +153,9 @@
    '((python . t) (ruby . t) (sh . t) (js . t) (css . t)
      (plantuml . t) (emacs-lisp . t) (matlab . t)
      (latex . t) (calc . t) (lisp . t) (lilypond . t)
-     (http . t) (rust . t) (go . t)))
+     (go . t)
+     (rust . t)))
+     ;; (http . t)
 
   (setq org-babel-lilypond-gen-png t)
   ;; Ensure lilypond doesn't print out entire pages for previews
@@ -207,116 +199,93 @@ will function properly."
 (defun narf@org-latex ()
   (setq-default
    org-latex-preview-ltxpng-directory (concat narf-temp-dir "ltxpng/")
-   org-latex-remove-logfiles t
+   org-latex-remove-logfiles nil
    org-latex-create-formula-image-program 'dvipng
    org-startup-with-latex-preview nil
    org-highlight-latex-and-related '(latex)
-   org-format-latex-options (plist-put org-format-latex-options :scale 1.4)
+   org-format-latex-options (plist-put org-format-latex-options :scale 1.2)
    org-latex-image-default-width nil
    org-latex-packages-alist
-   '(("" "gauss" t)
+   '(;; ("" "gauss" t)
      ;; ("" "physics" t) TODO Install this
      )))
 
 (defun narf@org-looks ()
-  (setq org-image-actual-width nil
-        org-startup-with-inline-images nil
-        org-startup-indented t
-        org-pretty-entities t
-        org-pretty-entities-include-sub-superscripts t
-        org-use-sub-superscripts '{}
-        org-fontify-whole-heading-line nil
-        org-fontify-done-headline t
-        org-fontify-quote-and-verse-blocks t
-        org-ellipsis 'hs-face
-        org-indent-indentation-per-level 2
-        org-cycle-separator-lines 2
-        org-hide-emphasis-markers t
-        org-hide-leading-stars t
-        org-bullets-bullet-list '("•" "◦" "•" "◦" "•" "◦")
-        org-entities-user
-        '(("flat" "\\flat" nil "" "" "266D" "♭")
-          ("sharp" "\\sharp" nil "" "" "266F" "♯"))
-
-        org-priority-faces
-        '((?A . org-todo-vhigh)
-          (?B . org-todo-high)
-          (?C . org-todo)))
+  (setq-default
+   org-image-actual-width nil
+   org-startup-with-inline-images nil
+   org-startup-indented t
+   org-pretty-entities nil
+   org-pretty-entities-include-sub-superscripts t
+   org-use-sub-superscripts '{}
+   org-fontify-whole-heading-line nil
+   org-fontify-done-headline t
+   org-fontify-quote-and-verse-blocks t
+   org-ellipsis 'hs-face
+   org-indent-indentation-per-level 2
+   org-cycle-separator-lines 2
+   org-hide-emphasis-markers t
+   org-hide-leading-stars t
+   org-bullets-bullet-list '("•" "◦" "•" "◦" "•" "◦")
+   org-entities-user
+   '(("flat" "\\flat" nil "" "" "266D" "♭")
+     ("sharp" "\\sharp" nil "" "" "266F" "♯")))
 
   (add-hook! org-mode
     (highlight-regexp org-any-link-re 'org-link))
 
   ;; Restore org-block-background face (removed in official org)
-  (defface org-block-background '((t ()))
-    "Face used for the source block background.")
-  (defun narf--adjoin-to-list-or-symbol (element list-or-symbol)
-    (let ((list (if (not (listp list-or-symbol))
-                    (list list-or-symbol)
-                  list-or-symbol)))
-      (require 'cl-lib)
-      (cl-adjoin element list)))
-  (set-face-attribute 'org-block-background nil :inherit
-                      (narf--adjoin-to-list-or-symbol
-                       'fixed-pitch
-                       (face-attribute 'org-block-background :inherit)))
+  ;; (defface org-block-background '((t ())) "Face used for the source block background.")
+  ;; (defun narf--adjoin-to-list-or-symbol (element list-or-symbol)
+  ;;   (let ((list (if (not (listp list-or-symbol))
+  ;;                   (list list-or-symbol)
+  ;;                 list-or-symbol)))
+  ;;     (require 'cl-lib)
+  ;;     (cl-adjoin element list)))
+  ;; (set-face-attribute 'org-block-background nil :inherit
+  ;;                     (narf--adjoin-to-list-or-symbol
+  ;;                      'fixed-pitch
+  ;;                      (face-attribute 'org-block-background :inherit)))
 
   ;; Prettify symbols, blocks and TODOs
   (defface org-headline-todo '((t ())) "Face for todo headlines")
+  (defface org-headline-done '((t ())) "Face for todo headlines")
   (defface org-todo-high '((t ())) "Face for high-priority todo")
   (defface org-todo-vhigh '((t ())) "Face for very high-priority todo")
   ;; (defface org-whitespace '((t ())) "Face for spaces")
   (defface org-list-bullet '((t ())) "Face for list bullets")
   (defface org-todo-checkbox '((t ())) "Face for list bullets")
-  (font-lock-add-keywords
-   'org-mode `(("^ *\\(#\\+begin_src\\>\\)"
-                (1 (narf/show-as ?#)))
-               ("^ *\\(#\\+end_src\\>\\)"
-                (1 (narf/show-as ?#)))
-               ("^ *\\(#\\+begin_quote\\>\\)"
-                (1 (narf/show-as ?>)))
-               ("^ *\\(#\\+end_quote\\>\\)"
-                (1 (narf/show-as ?>)))
 
-               ;; Hide TODO tags
-               ("^\\**\\(\\* DONE\\) \\([^$\n\r]+\\)"
-                (1 (narf/show-as ?☑))
-                (2 'org-headline-done))
-               ("^\\**\\(\\* \\(?:TODO\\|PAID\\)\\) "
-                (1 (narf/show-as ?☐)))
-
-               ("[-+*] \\[X\\] \\([^$\n\r]+\\)"
-                (1 'org-headline-done))
-
-               ;; Show checkbox for other todo states (but don't hide the label)
-               (,(concat
-                  "\\(\\*\\) "
-                  (regexp-opt '("IDEA" "NEXT" "ACTIVE" "WAITING" "LATER" "CANCELLED" "UNPAID" "UNSENT") t)
-                  " ")
-                (1 (narf/show-as ?☐)))
-
-               ("^ *\\([-+]\\|[0-9]+[).]\\)\\( \\)+[^$\n\r]"
-                (1 'org-list-bullet))
-               )))
+  (defvar narf-org-font-lock-keywords
+    '(("^ *\\([-+]\\|[0-9]+[).]\\)[^$\n\r]"
+       (1 'org-list-bullet))
+      ;; Crossed out finished items
+      ("\\* \\(?:DONE\\|PAID\\) \\([^$\n\r]+\\)"
+       (1 'org-headline-done))
+      ("^ *\\(?:[-+]\\|[0-9]+[).]\\) \\[X\\] \\([^$\n\r]+\\)"
+       (1 'org-headline-done))))
+  (font-lock-add-keywords 'org-mode narf-org-font-lock-keywords))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun narf|org-hook ()
   (evil-org-mode +1)
-  (org-bullets-mode +1)
   (org-indent-mode +1)
-  ;; (text-scale-set 1)
+  (setq line-spacing '1)
+
+  (setq header-line-format mode-line-format
+        mode-line-format '("%e"))
+
+  (visual-line-mode +1)
+  (visual-fill-column-mode +1)
+
+  (when write-mode
+    (org-bullets-mode +1))
 
   ;;; OS-Specific
   (cond (IS-MAC (narf-org-init-for-osx))
         (IS-LINUX nil)
         (IS-WINDOWS nil))
-
-  ;; Org-specific font. See `narf-writing-font'
-  (setq buffer-face-mode-face `(:family ,(symbol-name (font-get narf-writing-font :family))))
-  (buffer-face-mode +1)
-
-  (setq truncate-lines nil)
-  (setq line-spacing '2)
 
   (defun narf|org-update-statistics-cookies ()
     (when (file-exists-p buffer-file-name)
@@ -365,9 +334,12 @@ will function properly."
   (setq epa-file-encrypt-to user-mail-address)
 
   ;; Custom links
-  (org-add-link-type "contact" 'narf/org-crm-link-contact)
-  (org-add-link-type "project" 'narf/org-crm-link-project)
-  (org-add-link-type "invoice" 'narf/org-crm-link-invoice)
+  (define-org-link! project "Work/Projects" 'f-no-ext)
+  (define-org-link! invoice "Work/Invoices" 'f-no-ext)
+  (define-org-link! contact "Work/Contacts" 'f-no-ext)
+  (define-org-link! dev "Personal/Dev")
+  (define-org-link! course "Courses"
+    (lambda (path) (substring path 0 (s-index-of " " path))))
 
   (after! helm
     (mapc (lambda (r) (add-to-list 'helm-boring-file-regexp-list r))
@@ -410,6 +382,8 @@ will function properly."
   (defun narf*org-download--fullname (path)
     (f-relative path (f-dirname (buffer-file-name))))
   (advice-add 'org-download--fullname :filter-return 'narf*org-download--fullname)
+
+  ;; Let org-download also handle PDFs
 
   ;;; Auto-completion
   (after! company
@@ -472,9 +446,8 @@ will function properly."
           :v  "M-`" "S+"
 
           (:leader
-           :n ";" 'helm-org-in-buffer-headings
-           :n "oa" 'narf/org-attachment-reveal
-           )
+           :n ";"  'helm-org-in-buffer-headings
+           :n "oa" 'narf/org-attachment-reveal)
 
           (:localleader
            :n  "/"  'org-sparse-tree
@@ -486,7 +459,7 @@ will function properly."
            :nv "l"  'org-insert-link
            :n  "L"  'org-store-link
            :n  "x"  'narf/org-remove-link
-           :n  "w"  'writing-mode
+           ;; :n  "w"  'writing-mode
            :n  "v"  'variable-pitch-mode
            :n  "SPC" 'narf/org-toggle-checkbox
            :n  "RET" 'org-archive-subtree
@@ -558,111 +531,112 @@ will function properly."
             :e "C-n" 'org-agenda-next-item
             :e "C-p" 'org-agenda-previous-item)))
 
-  (progn ;; Org hacks
-    (defun org-fontify-meta-lines-and-blocks-1 (limit)
-      "Fontify #+ lines and blocks."
-      (let ((case-fold-search t))
-        (if (re-search-forward
-             "^\\([ \t]*#\\(\\(\\+[a-zA-Z]+:?\\| \\|$\\)\\(_\\([a-zA-Z]+\\)\\)?\\)[ \t]*\\(\\([^ \t\n]*\\)[ \t]*\\(.*\\)\\)\\)"
-             limit t)
-            (let ((beg (match-beginning 0))
-                  (block-start (match-end 0))
-                  (block-end nil)
-                  (lang (match-string 7))
-                  (beg1 (line-beginning-position 2))
-                  (dc1 (downcase (match-string 2)))
-                  (dc3 (downcase (match-string 3)))
-                  end end1 quoting block-type ovl)
-              (cond
-               ((and (match-end 4) (equal dc3 "+begin"))
-                ;; Truly a block
-                (setq block-type (downcase (match-string 5))
-                      quoting (member block-type org-protecting-blocks))
-                (when (re-search-forward
-                       (concat "^[ \t]*#\\+end" (match-string 4) "\\>.*")
-                       nil t)  ;; on purpose, we look further than LIMIT
-                  (setq end (min (point-max) (match-end 0))
-                        end1 (min (point-max) (1- (match-beginning 0))))
-                  (setq block-end (match-beginning 0))
-                  (when quoting
-                    (org-remove-flyspell-overlays-in beg1 end1)
-                    (remove-text-properties beg end
-                                            '(display t invisible t intangible t)))
-                  (add-text-properties
-                   beg end '(font-lock-fontified t font-lock-multiline t))
-                  (add-text-properties beg beg1 '(face org-meta-line))
-                  (org-remove-flyspell-overlays-in beg beg1)
-                  (add-text-properties	; For end_src
-                   end1 (min (point-max) (1+ end)) '(face org-meta-line))
-                  (org-remove-flyspell-overlays-in end1 end)
-                  (cond
-                   ((and lang (not (string= lang "")) org-src-fontify-natively)
-                    (org-src-font-lock-fontify-block lang block-start block-end)
-                   ;;;;;;; EDIT
-                    ;; remove old background overlays
-                    (mapc (lambda (ov)
-                            (if (eq (overlay-get ov 'face) 'org-block-background)
-                                (delete-overlay ov)))
-                          (overlays-at (/ (+ beg1 block-end) 2)))
-                    ;; add a background overlay
-                    (setq ovl (make-overlay beg1 block-end))
-                    (overlay-put ovl 'face 'org-block-background)
-                    (overlay-put ovl 'evaporate t)) ; make it go away when empty
-                   ;; (add-text-properties beg1 block-end '(src-block t)))
-                   ;;;;;;; /EDIT
-                   (quoting
-                    (add-text-properties beg1 (min (point-max) (1+ end1))
-                                         '(face org-block))) ; end of source block
-                   ((not org-fontify-quote-and-verse-blocks))
-                   ((string= block-type "quote")
-                    (add-text-properties beg1 (min (point-max) (1+ end1)) '(face org-quote)))
-                   ((string= block-type "verse")
-                    (add-text-properties beg1 (min (point-max) (1+ end1)) '(face org-verse))))
-                  (add-text-properties beg beg1 '(face org-block-begin-line))
-                  (add-text-properties (min (point-max) (1+ end)) (min (point-max) (1+ end1))
-                                       '(face org-block-end-line))
-                  t))
-               ((string-match-p
-                 (format "^\\+%s+:$"
-                         (regexp-opt '("title" "author" "email" "date" "address" "location" "contact"
-                                       "project" "country" "city" "created" "issued" "paid" "currency")))
-                                        dc1)
-                ;; (member dc1 '("+title:" "+author:" "+email:" "+date:" "+address:" "+location:" "+contact:" "+project:"))
-                (org-remove-flyspell-overlays-in
-                 (match-beginning 0)
-                 (if (equal "+title:" dc1) (match-end 2) (match-end 0)))
-                (add-text-properties
-                 beg (match-end 3)
-                 (if (member (intern (substring dc1 1 -1)) org-hidden-keywords)
-                     '(font-lock-fontified t invisible t)
-                   '(font-lock-fontified t face org-document-info-keyword)))
-                (add-text-properties
-                 (match-beginning 6) (min (point-max) (1+ (match-end 6)))
-                 (if (string-equal dc1 "+title:")
-                     '(font-lock-fontified t face org-document-title)
-                   '(font-lock-fontified t face org-document-info))))
-               ((equal dc1 "+caption:")
-                (org-remove-flyspell-overlays-in (match-end 2) (match-end 0))
-                (remove-text-properties (match-beginning 0) (match-end 0)
-                                        '(display t invisible t intangible t))
-                (add-text-properties (match-beginning 1) (match-end 3)
-                                     '(font-lock-fontified t face org-meta-line))
-                (add-text-properties (match-beginning 6) (+ (match-end 6) 1)
-                                     '(font-lock-fontified t face org-block))
-                t)
-               ((member dc3 '(" " ""))
-                (org-remove-flyspell-overlays-in beg (match-end 0))
-                (add-text-properties
-                 beg (match-end 0)
-                 '(font-lock-fontified t face font-lock-comment-face)))
-               (t ;; just any other in-buffer setting, but not indented
-                (org-remove-flyspell-overlays-in (match-beginning 0) (match-end 0))
-                (remove-text-properties (match-beginning 0) (match-end 0)
-                                        '(display t invisible t intangible t))
-                (add-text-properties beg (match-end 0)
-                                     '(font-lock-fontified t face org-meta-line))
-                t))))))
-    ))
+ (progn ;; Org hacks
+   (defun org-fontify-meta-lines-and-blocks-1 (limit)
+     "Fontify #+ lines and blocks."
+     (let ((case-fold-search t))
+       (if (re-search-forward
+            "^\\([ \t]*#\\(\\(\\+[a-zA-Z]+:?\\| \\|$\\)\\(_\\([a-zA-Z]+\\)\\)?\\)[ \t]*\\(\\([^ \t\n]*\\)[ \t]*\\(.*\\)\\)\\)"
+            limit t)
+           (let ((beg (match-beginning 0))
+                 (block-start (match-end 0))
+                 (block-end nil)
+                 (lang (match-string 7))
+                 (beg1 (line-beginning-position 2))
+                 (dc1 (downcase (match-string 2)))
+                 (dc3 (downcase (match-string 3)))
+                 end end1 quoting block-type ovl)
+             (cond
+              ((and (match-end 4) (equal dc3 "+begin"))
+               ;; Truly a block
+               (setq block-type (downcase (match-string 5))
+                     quoting (member block-type org-protecting-blocks))
+               (when (re-search-forward
+                      (concat "^[ \t]*#\\+end" (match-string 4) "\\>.*")
+                      nil t)  ;; on purpose, we look further than LIMIT
+                 (setq end (min (point-max) (match-end 0))
+                       end1 (min (point-max) (1- (match-beginning 0))))
+                 (setq block-end (match-beginning 0))
+                 (when quoting
+                   (org-remove-flyspell-overlays-in beg1 end1)
+                   (remove-text-properties beg end
+                                           '(display t invisible t intangible t)))
+                 (add-text-properties
+                  beg end '(font-lock-fontified t font-lock-multiline t))
+                 (add-text-properties beg beg1 '(face org-meta-line))
+                 (org-remove-flyspell-overlays-in beg beg1)
+                 (add-text-properties	; For end_src
+                  end1 (min (point-max) (1+ end)) '(face org-meta-line))
+                 (org-remove-flyspell-overlays-in end1 end)
+                 (cond
+                  ((and lang (not (string= lang "")) org-src-fontify-natively)
+                   (org-src-font-lock-fontify-block lang block-start block-end)
+                  ;;;;;;; EDIT
+                   ;; remove old background overlays
+                   (mapc (lambda (ov)
+                           (if (eq (overlay-get ov 'face) 'org-block-background)
+                               (delete-overlay ov)))
+                         (overlays-at (/ (+ beg1 block-end) 2)))
+                   ;; add a background overlay
+                   (setq ovl (make-overlay beg1 block-end))
+                   (overlay-put ovl 'face 'org-block-background)
+                   (overlay-put ovl 'evaporate t)) ; make it go away when empty
+                  ;; (add-text-properties beg1 block-end '(src-block t)))
+                  ;;;;;;; /EDIT
+                  (quoting
+                   (add-text-properties beg1 (min (point-max) (1+ end1))
+                                        '(face org-block))) ; end of source block
+                  ((not org-fontify-quote-and-verse-blocks))
+                  ((string= block-type "quote")
+                   (add-text-properties beg1 (min (point-max) (1+ end1)) '(face org-quote)))
+                  ((string= block-type "verse")
+                   (add-text-properties beg1 (min (point-max) (1+ end1)) '(face org-verse))))
+                 (add-text-properties beg beg1 '(face org-block-begin-line))
+                 (add-text-properties (min (point-max) (1+ end)) (min (point-max) (1+ end1))
+                                      '(face org-block-end-line))
+                 t))
+              ((string-match-p
+                (format "^\\+%s+:$"
+                        (regexp-opt '("title" "author" "email" "date" "address" "location" "contact"
+                                      "project" "country" "city" "created" "issued" "paid" "currency")))
+                                       dc1)
+               ;; (member dc1 '("+title:" "+author:" "+email:" "+date:" "+address:" "+location:" "+contact:" "+project:"))
+               (org-remove-flyspell-overlays-in
+                (match-beginning 0)
+                (if (equal "+title:" dc1) (match-end 2) (match-end 0)))
+               (add-text-properties
+                beg (match-end 3)
+                (if (member (intern (substring dc1 1 -1)) org-hidden-keywords)
+                    '(font-lock-fontified t invisible t)
+                  '(font-lock-fontified t face org-document-info-keyword)))
+               (add-text-properties
+                (match-beginning 6) (min (point-max) (1+ (match-end 6)))
+                (if (string-equal dc1 "+title:")
+                    '(font-lock-fontified t face org-document-title)
+                  '(font-lock-fontified t face org-document-info))))
+              ((equal dc1 "+caption:")
+               (org-remove-flyspell-overlays-in (match-end 2) (match-end 0))
+               (remove-text-properties (match-beginning 0) (match-end 0)
+                                       '(display t invisible t intangible t))
+               (add-text-properties (match-beginning 1) (match-end 3)
+                                    '(font-lock-fontified t face org-meta-line))
+               (add-text-properties (match-beginning 6) (+ (match-end 6) 1)
+                                    '(font-lock-fontified t face org-block))
+               t)
+              ((member dc3 '(" " ""))
+               (org-remove-flyspell-overlays-in beg (match-end 0))
+               (add-text-properties
+                beg (match-end 0)
+                '(font-lock-fontified t face font-lock-comment-face)))
+              (t ;; just any other in-buffer setting, but not indented
+               (org-remove-flyspell-overlays-in (match-beginning 0) (match-end 0))
+               (remove-text-properties (match-beginning 0) (match-end 0)
+                                       '(display t invisible t intangible t))
+               (add-text-properties beg (match-end 0)
+                                    '(font-lock-fontified t face org-meta-line))
+               t))))))
+   )
+)
 
 (provide 'module-org)
 ;;; module-org.el ends here

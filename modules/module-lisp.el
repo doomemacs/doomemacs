@@ -58,7 +58,7 @@
                     "add-hook" "associate" "open-with" "define-repl"
                     "define-builder" "narf-space-setup" "define-env-command"
                     "define-text-object" "add-yas-minor-mode"
-                    "define-company-backend"))
+                    "define-org-link!" "define-company-backend"))
       "!\\)")
     (1 font-lock-keyword-face append))))
 

@@ -1,6 +1,14 @@
 ;;; defuns-org.el
 
 ;;;###autoload
+(defun narf/org-get-property (name)
+  (interactive)
+  (save-excursion
+    (goto-char 1)
+    (re-search-forward (format "^#\\+%s:[ \t]*\\([^\n]+\\)" (upcase name)) nil t)
+    (buffer-substring-no-properties (match-beginning 1) (match-end 1))))
+
+;;;###autoload
 (defun narf/org-open-notes ()
   (interactive)
   (find-file org-default-notes-file))

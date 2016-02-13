@@ -1,5 +1,7 @@
 ;;; defuns-org-crm.el --- for my custom org-based CRM
 
+(require 'helm-deft)
+
 (defun narf--helm-org (&optional directory)
   (let ((helm-deft-dir-list `(,(or directory default-directory))))
     (helm-deft)))
@@ -30,33 +32,7 @@
   (let ((narf--helm-org-params '()))
     (narf--helm-org (expand-file-name "writing/" org-directory))))
 
-;;;###autoload
-(defun narf/org-crm-link-contact (id)
-  (org-open-file (narf--org-crm-id-to-path id 'contact) t))
-;;;###autoload
-(defun narf/org-crm-link-project (id)
-  (org-open-file (narf--org-crm-id-to-path id 'project) t))
-;;;###autoload
-(defun narf/org-crm-link-invoice (id)
-  (org-open-file (narf--org-crm-id-to-path id 'invoice) t))
-
-(defun narf--org-complete (type)
-  (let ((default-directory (symbol-value (intern (format "org-directory-%ss" type)))))
-    (let* ((file (org-iread-file-name ">>> "))
-           (match (s-match "^\\([0-9]+\\)[-.]" (f-filename file))))
-      (unless (file-exists-p file)
-        (message "Created %s" file)
-        (write-region "" nil file))
-      (unless match
-        (user-error "Invalid file ID"))
-      (format "%s:%s" type (cadr match)))))
-
-;;;###autoload
-(defun org-contact-complete-link () (narf--org-complete 'contact))
-;;;###autoload
-(defun org-project-complete-link () (narf--org-complete 'project))
-;;;###autoload
-(defun org-invoice-complete-link () (narf--org-complete 'invoice))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun narf--org-crm-assert-type (type)
   (unless (memq type '(project contact invoice))
@@ -67,7 +43,7 @@
   (let* ((prefix
           (replace-regexp-in-string
            "/+$" "" (symbol-value (intern (format "org-directory-%ss" type)))))
-         (last-file (car-safe (sort (f-glob "*.org" prefix) 'string>))))
+         (last-file (car-safe (sort (f-glob "*.org" prefix) 'org-string>))))
     (when last-file
       (let* ((old-id (narf--org-crm-path-to-id last-file type))
              (new-id (format "%04X" (1+ old-id))))
@@ -91,7 +67,12 @@
           (replace-regexp-in-string
            "/+$" "" (symbol-value (intern (format "org-directory-%ss" type))))))
     (car-safe
-     (f-glob (format (if (eq type 'invoice) "*-%04X.org" "%04X*.org")
+     (f-glob (format (cond ((eq type 'invoice)
+                            "*-%04X.org")
+                           ((eq type 'courses)
+                            "%s*.org")
+                           (t
+                            "%04X*.org"))
                      (string-to-number id 16))
              prefix))))
 
