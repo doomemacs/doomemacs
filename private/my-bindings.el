@@ -162,11 +162,10 @@
      :n  "T" 'os-switch-to-term-and-cd)
 
    ;; Org notes
-   :n "X" 'narf/org-open-notes
-   :n "T" 'narf/org-open-todo
    (:prefix "x"
      :n  "." 'narf/helm-org-find-files
      :n  "/" 'narf/helm-org
+     :n  "x" 'narf/org-open-notes
      :n  "p" 'narf/helm-org-crm-projects
      :n  "c" 'narf/helm-org-crm-contacts
      :n  "i" 'narf/helm-org-crm-invoices
