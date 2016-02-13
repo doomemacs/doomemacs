@@ -19,6 +19,11 @@
   :init
   (setq puml-plantuml-jar-path "/usr/local/Cellar/plantuml/8029/plantuml.8029.jar"))
 
+(add-hook! org-load
+  (use-package ox-reveal
+    :config
+    (setq org-reveal-root "https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.2.0/js/reveal.min.js")))
+
 ;;;
 
 (defvar big-mode-font narf-default-font)
