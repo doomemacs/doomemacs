@@ -42,7 +42,7 @@
           ("\\.go$"                          "__.go"            go-mode)
 
           ;; HTML
-          ("\\.html$"                        "__.html"           web-mode)
+          ("\\.html$"                        "__.html"          web-mode)
 
           ;; java
           ("/src/.+/.+\\.java$"              "__"               java-mode)
