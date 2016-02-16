@@ -26,7 +26,12 @@
     (evil-initialize-state 'emacs)
     (setq mode-line-format nil
           repl-p t))
-  (add-hook! repl-toggle-mode 'narf|repl-init))
+  (add-hook! repl-toggle-mode 'narf|repl-init)
+  :config
+  (map! :map repl-toggle-mode-map
+        :i "C-n" 'comint-next-input
+        :i "C-p" 'comint-previous-input)
+  )
 
 (provide 'core-eval)
 ;;; core-eval.el ends here
