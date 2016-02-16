@@ -1,42 +1,91 @@
 ;; module-write.el
 
 ;; This library offers the following:
-;;   + Writing-mode: visual-fill-column, larger fonts, fewer disctractions
+;;   + Write-mode: a mode that turns Emacs into an app for writing notes, papers, or
+;;     fiction: it adds eye-candy to org-mode, switches to a light color theme and
+;;     to a more readable font.
 ;;   + Bibtex integration
-;;   + TODO Pandoc integration
-;;   + TODO A separate emacs configuration dedicated to org-mode
 
-(defvar write-mode nil)
-(defvar write-mode-theme narf-theme)
-(defvar write-mode-font narf-default-font)
-(defvar write-mode-dir nil)
-(defvar write-mode-biblio-dir nil)
+;; Write-mode settings
+(defconst write-mode nil)
+(defconst write-mode-theme 'narf-write)
+(defconst write-mode-font (font-spec :family "Hack" :size 12))
+(defconst write-mode-dir "~/Dropbox/notes")
+(defconst write-mode-biblio-dir "~/Dropbox/docs/biblio")
 
-(defvar write-mode--last-mode-line mode-line-format)
-(defvar write-mode--last-line-spacing line-spacing)
+(defconst write-mode--last-mode-line mode-line-format)
+(defconst write-mode--last-line-spacing line-spacing)
 
-(setq-default visual-fill-column-center-text t)
+(defvar write-mode-org-font-lock-keywords
+  `(;; ("^\\(\\*\\*?\\)\\( \\)"
+    ;;  (1 'font-lock-comment-face t)
+    ;;  (2 'variable-pitch))
+
+    ("^ *\\(\\(?:[-+]\\|[0-9]+[).]\\) \\[ \\]\\)\\( \\)"
+     (1 (narf/show-as ?☐))
+     (2 'variable-pitch append))
+    ("^ *\\(\\(?:[-+]\\|[0-9]+[.)]\\) \\[X\\]\\)\\( \\)"
+     (1 (narf/show-as ?☑))
+     (2 'variable-pitch append))
+
+    ;; Hide TODO tags
+    (,(concat
+       "\\(\\*\\) "
+       (regexp-opt '("IDEA" "NEXT" "ACTIVE" "WAITING" "LATER" "CANCELLED" "UNPAID" "UNSENT"))
+       " ")
+     (1 (narf/show-as ?☐)))
+    ("\\(\\* \\(?:DONE\\|PAID\\)\\)\\( \\)\\([^$\n\r]+\\)"
+     (1 (narf/show-as ?☑))
+     (2 'variable-pitch t)
+     (3 'org-headline-done append))
+    ("\\(\\* TODO\\)\\( \\)"
+     (1 (narf/show-as ?☐))
+     (2 'variable-pitch t))
+
+    ("[-+*] \\[X\\] \\([^$\n\r]+\\)"
+     (1 'org-headline-done))
+
+    ("^ *\\([-+]\\|[0-9]+[).]\\)\\( \\)+[^$\n\r]"
+     (1 'org-list-bullet)
+     (2 'variable-pitch append))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(setq-default visual-fill-column-center-text nil
+              visual-fill-column-width 80)
+
+(defun write-mode|org-hook ()
+  "A hook that runs everytime an org-mode buffer is visited/created while `write-mode' is
+active."
+  (font-lock-add-keywords nil write-mode-org-font-lock-keywords))
 
 (defun write-mode-toggle ()
+  "Enable write-mode, this is not a [global] minor mode because it mixes some frame-local
+functionality with buffer-local ones, which can be buggy in a minor-mode."
   (interactive)
   (let* ((mode-p write-mode)
          (on-off (if mode-p -1 +1)))
-    (disable-theme (if mode-p write-mode-theme narf-theme))
-    (scroll-bar-mode on-off)
-    (narf/load-theme (if mode-p narf-theme write-mode-theme))
+    ;; (disable-theme (if mode-p write-mode-theme narf-theme))
+    ;; (scroll-bar-mode on-off)
+    ;; (narf/load-theme (if mode-p narf-theme write-mode-theme))
     (narf/load-font (if mode-p narf-default-font write-mode-font))
     (when (featurep 'volatile-highlights)
       (volatile-highlights-mode (not on-off)))
     (when IS-MAC
-      ;; sane trackpad/mouse scroll settings
-      (setq mac-mouse-wheel-smooth-scroll (not mode-p)
-            mouse-wheel-progressive-speed (not mode-p)))
+      (setq mouse-wheel-scroll-amount
+            (if mode-p '(5 ((shift) . 2)) '(3 ((shift) . 2)))))
+    (if write-mode
+        (remove-hook 'org-mode-hook 'write-mode|org-hook)
+      (add-hook 'org-mode-hook 'write-mode|org-hook))
     (mapc (lambda (b)
             (with-current-buffer b
               (setq line-spacing (if mode-p write-mode--last-line-spacing '2))
               (when (eq major-mode 'org-mode)
+                (if write-mode
+                    (font-lock-remove-keywords nil write-mode-org-font-lock-keywords)
+                  (write-mode|org-hook))
                 (org-bullets-mode on-off))))
-          (narf/get-visible-buffers (narf/get-buffers-in-modes '(org-mode markdown-mode))))
+          (narf/get-buffers-in-modes '(org-mode markdown-mode)))
     (setq write-mode (not write-mode))))
 
 (evil-define-command narf:set-columns (&optional bang columns)
@@ -44,7 +93,7 @@
   (interactive "<!><a>")
   (if (or (= (length columns) 0) bang)
       (progn
-        (setq visual-fill-column-width nil)
+        (setq visual-fill-column-width 80)
         (when visual-fill-column-mode
           (visual-fill-column-mode -1)))
     (setq columns (string-to-number columns))
