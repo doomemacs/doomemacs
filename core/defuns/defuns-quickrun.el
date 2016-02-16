@@ -22,8 +22,10 @@ If ARG is nil this function calls `recompile', otherwise it calls
   (let ((build-file (cdr narf--build-command))
         (build-cmd (car narf--build-command)))
     (if (or (null build-file) (narf/project-has-files build-file))
-        (compile (format "cd '%s' && %s" (narf/project-root) (format build-cmd (or arg ""))))
-      (error "Could not find Makefile"))))
+        (if (symbolp build-cmd)
+            (call-interactively build-cmd)
+          (compile (format "cd '%s' && %s" (narf/project-root) (format build-cmd (or arg "")))))
+      (error "Could not build!"))))
 
 ;;;; Code running ;;;;;;;;;;;;;;;;;;;;;;
 ;;;###autoload (autoload 'narf:eval-buffer "defuns-quickrun" nil t)
