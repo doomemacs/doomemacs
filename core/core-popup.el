@@ -37,6 +37,7 @@
           ("*scratch*"   :align below :size 0.3  :select t)
           ("*Help*"      :align below :size 15 :select t)
           ("*Messages*"  :align below :size 20 :select t)
+          ("*Completions*" :align below :size 20 :noselect t)
           (debugger-mode :align below :size 0.25 :noselect t)
           (compilation-mode :noselect t)
 
