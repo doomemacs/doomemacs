@@ -112,23 +112,6 @@
     (advice-add 'quickrun/recenter :override 'ignore))
 
 
-  (after! neotree
-    ;; Ever since neotree removed the neo-modern-sidebar option, neotree's buffer-opening
-    ;; behavior can't be controlled externally. This fixes that and is surprisingly
-    ;; stable!
-    (defun neo-global--create-window ()
-      "Create global neotree window."
-      (let ((window nil)
-            (buffer (neo-global--get-buffer t)))
-        (narf/popup-buffer buffer)
-        (setq window
-              (select-window
-               (neo-global--get-position-window neo-window-position)))
-        (neo-window--init window buffer)
-        (neo-global--attach)
-        (neo-global--reset-width)
-        window)))
-
   (after! repl-toggle
     (map! :map repl-toggle-mode-map
           "ESC ESC" 'narf/popup-close))
