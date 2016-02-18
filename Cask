@@ -40,6 +40,7 @@
 (depends-on "evil-args")
 (depends-on "evil-commentary")
 (depends-on "evil-exchange")
+(depends-on "evil-easymotion")
 (depends-on "evil-iedit-state")
 (depends-on "evil-indent-plus")
 (depends-on "evil-textobj-anyblock")
@@ -178,7 +179,6 @@
 (depends-on "company-anaconda")
 
 ;; Ruby -- modules/module-ruby.el
-(depends-on "enh-ruby-mode")
 (depends-on "ruby-refactor")
 (depends-on "rspec-mode")
 (depends-on "inf-ruby")
@@ -205,8 +205,7 @@
 (depends-on "scss-mode")
 (depends-on "sass-mode")
 ; (depends-on "sws-mode")
-; (depends-on "jade-mode")
-; (depends-on "slim-mode" :git "https://github.com/hlissner/emacs-slim")
+(depends-on "jaded-mode" :git "https://github.com/hlissner/emacs-slim")
 
 
 ;;;; ORGANIZATIONAL/WRITING ;;;;;;;;;;;;
