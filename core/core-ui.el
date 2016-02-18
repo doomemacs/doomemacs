@@ -247,8 +247,8 @@
     (spaceline-define-segment *buffer-path
       (if buffer-file-name
           (let* ((project-path (let (projectile-require-project-root) (projectile-project-root)))
-                 (buffer-path (file-relative-name buffer-file-name project-path))
-                 (max-length (/ (window-width) 2))
+                 (buffer-path (f-relative buffer-file-name project-path))
+                 (max-length (truncate (/ (window-width) 1.75)))
                  (path-len (length buffer-path)))
             (concat (file-name-nondirectory (directory-file-name project-path))
                     "/"
@@ -400,6 +400,7 @@ iedit."
 
     (spaceline-define-segment *buffer-size
       (powerline-buffer-size)
+      :when (not (eq major-mode 'org-mode))
       :tight-right t
       :skip-alternate t)
 
