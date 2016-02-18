@@ -36,40 +36,28 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
 ;; Buffer Life and Death ;;;;;;;;;;;;;;;
 
 ;;;###autoload
-(defun narf/get-buffers (&optional project-p all-p)
+(defun narf/get-buffers (&optional project-p)
   "Get all buffers in the current workgroup.
 
     If PROJECT-P is non-nil, get all buffers in current workgroup
-    If ALL-P is non-nil, get all buffers across all workgroups
     If both are non-nil, get all project buffers across all workgroups"
-  (let* ((wg (wg-current-workgroup t))
-         (buffers (if (and wg (not all-p))
-                      (wg-workgroup-associated-buffers wg)
-                    (if wg-mess-with-buffer-list
-                        (wg-buffer-list-emacs)
-                      (buffer-list)))))
-
-    (let (project-root)
-      (if (and project-p (setq project-root (narf/project-root t)))
-          (funcall (if (eq project-p 'not) '-remove '-filter)
-                   (lambda (b) (projectile-project-buffer-p b project-root))
-                   buffers)
-        buffers))))
-
-;;;###autoload
-(defun narf/get-all-buffers (&optional project-p)
-  "Get all buffers across all workgroups and projects (unless PROJECT-P is non-nil)."
-  (narf/get-buffers project-p t))
+  (let ((buffers (buffer-list))
+        project-root)
+    (if (and project-p (setq project-root (narf/project-root t)))
+        (funcall (if (eq project-p 'not) '-remove '-filter)
+                 (lambda (b) (projectile-project-buffer-p b project-root))
+                 buffers)
+      buffers)))
 
 ;;;###autoload
 (defun narf/get-visible-windows (&optional buffer-list)
   (-map #'get-buffer-window
-        (narf/get-visible-buffers (or buffer-list (narf/get-all-buffers)))))
+        (narf/get-visible-buffers (or buffer-list (narf/get-buffers)))))
 
 ;;;###autoload
 (defun narf/get-visible-buffers (&optional buffer-list)
   "Get a list of buffers that are not buried (i.e. visible)"
-  (-filter #'get-buffer-window (or buffer-list (narf/get-all-buffers))))
+  (-filter #'get-buffer-window (or buffer-list (narf/get-buffers))))
 
 ;;;###autoload
 (defun narf/get-buried-buffers (&optional buffer-list)
@@ -118,7 +106,7 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
 (defun narf/kill-unreal-buffers ()
   "Kill all buried, unreal buffers in current frame. See `narf-unreal-buffers'"
   (interactive)
-  (let* ((all-buffers (narf/get-all-buffers))
+  (let* ((all-buffers (narf/get-buffers))
          (real-buffers (narf/get-real-buffers all-buffers))
          (kill-list (--filter (not (memq it real-buffers))
                               (narf/get-buried-buffers all-buffers))))
@@ -221,7 +209,7 @@ left, create a scratch buffer."
 (evil-define-command narf:kill-all-buffers (&optional bang)
   "Kill all project buffers. If BANG, kill *all* buffers (in workgroup)."
   (interactive "<!>")
-  (narf--kill-buffers (narf/get-buffers bang))
+  (narf--kill-buffers (narf/get-buffers (not bang)))
   (when bang
     (delete-other-windows)))
 
