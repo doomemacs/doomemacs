@@ -10,8 +10,10 @@
                          (eq (current-buffer) neo-global--buffer))))
     (if in-neotree
         (neotree-hide)
-      (unless (neo-global--window-exists-p)
-        (neotree-dir (narf/project-root)))
+      (let ((project-root (narf/project-root)))
+        (unless (and (neo-global--window-exists-p)
+                     (f-same? (neo-global--with-window neo-buffer--start-node) project-root))
+          (neotree-dir project-root)))
       (neotree-find))))
 
 ;;;###autoload
