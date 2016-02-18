@@ -19,8 +19,6 @@
           :n "k"      'flycheck-error-list-previous-error
           :n "RET"    'flycheck-error-list-goto-error))
 
-  ;; Check buffer when normal mode is entered
-  (add-hook! evil-normal-state-entry 'narf*flycheck-buffer)
   ;; And on ESC in normal mode.
   (advice-add 'evil-force-normal-state :after 'narf*flycheck-buffer)
 
