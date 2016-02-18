@@ -5,14 +5,14 @@
   :init
   ;; highlight matching delimiters where it's important
   (defun show-paren-mode-off () (show-paren-mode -1))
-  (add-hook! evil-insert-state-entry    'show-paren-mode)
-  (add-hook! evil-insert-state-exit     'show-paren-mode-off)
-  (add-hook! evil-visual-state-entry    'show-paren-mode)
-  (add-hook! evil-visual-state-exit     'show-paren-mode-off)
-  (add-hook! evil-motion-state-entry    'show-paren-mode)
-  (add-hook! evil-motion-state-exit     'show-paren-mode-off)
-  (add-hook! evil-operator-state-entry  'show-paren-mode)
-  (add-hook! evil-operator-state-exit   'show-paren-mode-off)
+  (add-hook 'evil-insert-state-entry-hook    'show-paren-mode)
+  (add-hook 'evil-insert-state-exit-hook     'show-paren-mode-off)
+  (add-hook 'evil-visual-state-entry-hook    'show-paren-mode)
+  (add-hook 'evil-visual-state-exit-hook     'show-paren-mode-off)
+  (add-hook 'evil-motion-state-entry-hook    'show-paren-mode)
+  (add-hook 'evil-motion-state-exit-hook     'show-paren-mode-off)
+  (add-hook 'evil-operator-state-entry-hook  'show-paren-mode)
+  (add-hook 'evil-operator-state-exit-hook   'show-paren-mode-off)
 
   ;; Disable highlights on insert-mode
   (add-hook! evil-insert-state-entry 'evil-ex-nohighlight)
