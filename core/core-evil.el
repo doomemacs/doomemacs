@@ -307,6 +307,30 @@
   (define-key evil-inner-text-objects-map "%" #'evilmi-text-object)
   (define-key evil-outer-text-objects-map "%" #'evilmi-text-object))
 
+(use-package evil-easymotion
+  :defer 1
+  :config
+  (evilem-default-keybindings "g SPC")
+  (evilem-define (kbd "g SPC n") 'evil-ex-search-next)
+  (evilem-define (kbd "g SPC N") 'evil-ex-search-previous)
+  (evilem-define "gs" 'evil-snipe-repeat
+    (lambda ()
+      (save-excursion
+        (ignore-errors
+          (call-interactively #'evil-snipe-s))))
+    nil
+    ((evil-snipe-enable-highlight)
+     (evil-snipe-enable-incremental-highlight)))
+
+  (evilem-define "gS" 'evil-snipe-repeat-reverse
+    (lambda ()
+      (save-excursion
+        (ignore-errors
+          (call-interactively #'evil-snipe-s))))
+    nil
+    ((evil-snipe-enable-highlight)
+     (evil-snipe-enable-incremental-highlight))))
+
 (use-package evil-numbers
   :commands (evil-numbers/inc-at-pt evil-numbers/dec-at-pt))
 
