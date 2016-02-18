@@ -41,16 +41,8 @@
 ;;; License: GPLv3
 
 (defconst narf-theme 'narf-dark)
-(defconst narf-default-font (font-spec :family "Terminus (TTF)" :size 12 :antialias nil))
-
-;; Big-mode settings
-(defconst big-mode-font (font-spec :family "Inconsolata" :size 16))
-
-;; Write-mode settings
-(defconst write-mode-theme 'narf-write)
-(defconst write-mode-font (font-spec :family "Hack" :size 12))
-(defconst write-mode-dir "~/Dropbox/notes")
-(defconst write-mode-biblio-dir "~/Dropbox/docs/biblio")
+(defconst narf-default-font (font-spec :family "Hack" :size 12))
+(setq-default line-spacing 2)
 
 ;;
 (load (concat user-emacs-directory "bootstrap.el"))
