@@ -81,7 +81,7 @@
    "M-Z"            'redo
    "C-M-f"          'narf:toggle-fullscreen
 
-   :ni "M-d"        'dash-at-point
+   :ni "<M-f1>"     'dash-at-point
 
    ;; Textmate-esque indent shift left/right
    :i "M-]"   'narf/smart-indent
@@ -252,9 +252,13 @@
  :v  "C-p"   "\"0p"
 
  :v  "S"   'evil-surround-region
- :v  "R"   'evil-iedit-state/iedit-mode  ; edit all instances of marked region
  :v  "v"   'er/expand-region
  :v  "V"   'er/contract-region
+
+ ;; iedit and my own version of multiple-cursors
+ :v "R"    'evil-iedit-state/iedit-mode  ; edit all instances of marked region
+ :v "M-d"  'narf/mark-and-next
+ :v "M-D"  'narf/mark-and-prev
 
  ;; aliases for %
  :m  "%"   'evilmi-jump-items
