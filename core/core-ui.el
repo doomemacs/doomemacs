@@ -169,7 +169,7 @@
   :preface
   (defvar narf--hl-nlinum-overlay nil)
   (defvar narf--hl-nlinum-line nil)
-  (defvar nlinum-format "%4d ")
+  (defvar nlinum-format "%4d  ")
   (defface linum-highlight-face '((t (:inherit linum))) "Face for line highlights")
   (setq linum-format "%3d ")
   :init
@@ -239,6 +239,8 @@
    powerline-default-separator nil
    powerline-height 19
    spaceline-highlight-face-func 'spaceline-highlight-face-evil-state)
+
+  (add-hook! big-mode (setq-default powerline-height (if big-mode 26 19)))
 
   (defface mode-line-is-modified nil "Face for mode-line modified symbol")
   (defface mode-line-buffer-file nil "Face for mode-line buffer file path")
