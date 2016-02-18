@@ -42,7 +42,6 @@
     (map! :map css-mode-map :m "gQ" 'web-beautify-css)))
 
 (use-package jaded-mode
-  :load-path "/Volumes/hlissner/Dropbox/work/plugins/jaded-mode"
   :mode "\\.jade$"
   :config
   (map! :map jaded-mode-map
