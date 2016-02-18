@@ -33,7 +33,6 @@
         (setq-default flycheck-c/c++-clang-executable  "clang++"
                       flycheck-clang-include-path      '("/usr/local/include"))
 
-        (add-hook! c-mode (setq flycheck-clang-language-standard "C11"))
         (add-hook! c++-mode (setq flycheck-clang-language-standard "c++11"
                                   flycheck-clang-standard-library  "libc++"))))
 
