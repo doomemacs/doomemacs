@@ -172,6 +172,7 @@
 ;;;###autoload
 (defun narf/close-window-or-workgroup ()
   (interactive)
+  (narf/kill-real-buffer)
   (if (and (= (length (window-list)) 1)
            (> (length (wg-workgroup-list)) 1))
       (if (string= (wg-workgroup-name (wg-current-workgroup)) wg-first-wg-name)
