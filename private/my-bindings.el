@@ -213,10 +213,10 @@
  :n  "g=" 'evil-numbers/inc-at-pt
  :n  "g-" 'evil-numbers/dec-at-pt
 
+ ;; NOTE: Helm is too bulky for ffap (which I use for quick file navigation)
  :n  "gf" (λ! (helm-mode -1)
               (call-interactively 'find-file-at-point)
-              (helm-mode 1)) ;; prevents helm
- ;; :n  "gF" 'evil-numbers/dec-at-pt
+              (helm-mode 1))
 
  :n  "gc" 'evil-commentary
  :n  "gx" 'evil-exchange
@@ -239,17 +239,18 @@
               (evil-normal-state)
               (evil-visual-restore))
 
- ;; undo/redo for regions
- ;; :nv "u"   'undo-tree-undo
- ;; :nv "C-r" 'undo-tree-redo
+ ;; undo/redo for regions (NOTE: Buggy!)
+ :nv "u"   'undo-tree-undo
+ :nv "C-r" 'undo-tree-redo
 
  :v  "*"   'evil-visualstar/begin-search-forward
  :v  "#"   'evil-visualstar/begin-search-backward
 
+ :n  "Y"   "y$"
+
  ;; paste from recent yank register; which isn't overwritten by deletes or
  ;; other operations.
- :n  "Y"   "y$"
- :v  "C-p"   "\"0p"
+ :v  "C-p" "\"0p"
 
  :v  "S"   'evil-surround-region
  :v  "v"   'er/expand-region
