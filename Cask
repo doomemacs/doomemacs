@@ -43,7 +43,6 @@
 (depends-on "evil-iedit-state")
 (depends-on "evil-indent-plus")
 (depends-on "evil-textobj-anyblock")
-(depends-on "evil-jumper")
 (depends-on "evil-matchit")
 (depends-on "evil-numbers")
 (depends-on "evil-search-highlight-persist")
