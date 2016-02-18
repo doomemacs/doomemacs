@@ -84,18 +84,14 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
 
 ;;;###autoload
 (defun narf/kill-real-buffer ()
-  "Kill buffer (but only bury scratch buffer), then switch to a real buffer."
+  "Kill buffer (but only bury scratch buffer), then switch to a real buffer. Only buries
+the buffer if it is being displayed in another window."
   (interactive)
-  (let ((bname (buffer-name)))
-    (cond ((string-match-p "^\\*scratch\\*" bname)
-           (erase-buffer))
-          (t ;; bury duplicate buffers in other windows
-           (let ((this-window (get-buffer-window)))
-             (mapc (lambda (w)
-                     (unless (eq this-window w)
-                       (with-selected-window w (narf/previous-real-buffer))))
-                   (get-buffer-window-list (current-buffer) nil nil)))
-           ;; Then kill
+  (cond ((string-match-p "^\\*scratch\\*" (buffer-name))
+         (erase-buffer))
+        (t
+         (if (> (length (get-buffer-window-list (current-buffer) nil nil)) 1)
+             (bury-buffer)
            (kill-this-buffer))))
   (if (narf/popup-p (selected-window))
       (narf/popup-close)
