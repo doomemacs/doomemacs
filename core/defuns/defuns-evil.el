@@ -34,17 +34,6 @@
        (eq (evil-visual-type) 'line)))
 
 ;;;###autoload
-(defun narf:iedit-restrict-to-region ()
-  (interactive)
-  (if (iedit-current-occurrence-string)
-      (let ((current-prefix-arg '(4)))
-        (iedit-done)
-        (call-interactively 'iedit-mode)
-        (save-excursion (iedit-restrict-region (region-beginning) (region-end)))
-        (evil-previous-line))
-    (call-interactively 'evil-ret)))
-
-;;;###autoload
 (defun narf*evil-exchange-off ()
   (when evil-exchange--overlays
     (evil-exchange-cancel)))

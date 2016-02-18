@@ -35,15 +35,13 @@
    evil-operator-state-tag  "O"
    evil-motion-state-tag    "M"
    evil-replace-state-tag   "R"
-   evil-iedit-state-tag     "R+"
 
    ;; Color-coded state cursors
    evil-default-cursor "orange"
    evil-normal-state-cursor  'box
    evil-emacs-state-cursor   '("cyan" box)
    evil-insert-state-cursor  'bar
-   evil-visual-state-cursor  'hollow
-   evil-iedit-state-cursor   'box)
+   evil-visual-state-cursor  'hollow)
 
   ;; NOTE: a bug in emacs 25 breaks undoing in evil. See
   ;; https://bitbucket.org/lyro/evil/issues/594/undo-doesnt-behave-like-vim
@@ -270,14 +268,22 @@
 (use-package evil-iedit-state
   :functions (iedit-current-occurrence-string iedit-restrict-region)
   :commands (evil-iedit-state evil-iedit-state/iedit-mode)
+  :init
+  (defvar iedit-occurrence-keymap-default (make-sparse-keymap))
   :config
+  (setq evil-iedit-state-cursor 'box
+        evil-iedit-state-tag    "R+")
+
   (advice-add 'evil-force-normal-state :after 'evil-iedit-state/quit-iedit-mode)
+
   (define-key evil-iedit-state-map (kbd "<escape>") 'evil-iedit-state/quit-iedit-mode)
   (define-key evil-visual-state-map (kbd "SPC") 'narf:iedit-restrict-to-region)
   (let ((map evil-iedit-state-map))
     ;; Don't interfere with evil-snipe
     (define-key map "s" nil)
     (define-key map "S" nil)
+    (define-key map (kbd "M-d") 'narf/mark-and-next)
+    (define-key map (kbd "M-D") 'narf/mark-and-prev)
 
     (define-key map "V"  'evil-visual-line)
     (define-key map "C"  'evil-iedit-state/substitute) ; instead of s/S
