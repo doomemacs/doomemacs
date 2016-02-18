@@ -124,8 +124,8 @@
                                      :expanded t))))
           (evil-expand-range range)
           (evil-ex-hl-set-region hl-name
-                                 (evil-range-beginning range)
-                                 (evil-range-end range))
+                                 (max (evil-range-beginning range) (window-start))
+                                 (min (evil-range-end range) (window-end)))
           (evil-ex-hl-change hl-name pattern))
       (end-of-file
        (evil-ex-pattern-update-ex-info nil "incomplete replacement"))
