@@ -69,7 +69,14 @@
   (define-minor-mode nodejs-mode
     :lighter " node" :keymap (make-sparse-keymap)
     (add-yas-minor-mode! 'nodejs-mode))
-  (associate! nodejs-mode :files ("package.json") :in (js2-mode)))
+  (associate! nodejs-mode :files ("package.json") :in (js2-mode))
+
+  (define-minor-mode electron-mode
+    :lighter " electron" :keymap (make-sparse-keymap)
+    (add-yas-minor-mode! 'electron-mode))
+  (associate! nodejs-mode
+    :files ("package.json" "app/index.html" "app/main.js")
+    :in (web-mode js2-mode markdown-mode json-mode coffee-mode)))
 
 (use-package tern
   :commands tern-mode
