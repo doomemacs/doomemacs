@@ -90,9 +90,8 @@
         ;;module-pony        ; Dear Princess Compiler
 
         ;; Organizational/Writing
-        module-org           ; for fearless [and organized] leader
-        module-crm           ; emacs and org-mode based CRM
-        module-write         ; making Emacs fit for writing fiction, papers & notes
+        ;;module-write       ; making Emacs fit for writing fiction, papers & notes
+        ;;module-org         ; for fearless [and organized] leader
 
         ;; Extra Tools
         module-demo          ; allow me to demonstrate...
