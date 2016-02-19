@@ -16,10 +16,9 @@
     (when (evil-visual-state-p)
       (setq query (concat (buffer-substring-no-properties (region-beginning) (region-end))
                           " " query)))
-    (when (or (not query) (string-empty-p query))
+    (when (or (not query) (zerop (length query)))
       (setq query (thing-at-point 'symbol)))
     (dash-at-point-run-search query docset)))
-
 
 (provide 'defuns-dash)
 ;;; defuns-dash.el ends here
