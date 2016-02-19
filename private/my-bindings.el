@@ -258,8 +258,8 @@
 
  ;; iedit and my own version of multiple-cursors
  :v "R"    'evil-iedit-state/iedit-mode  ; edit all instances of marked region
- :v "M-d"  'narf/mark-and-next
- :v "M-D"  'narf/mark-and-prev
+ :nv "M-d" 'narf/mark-and-next
+ :nv "M-D" 'narf/mark-and-prev
 
  ;; aliases for %
  :m  "%"   'evilmi-jump-items
