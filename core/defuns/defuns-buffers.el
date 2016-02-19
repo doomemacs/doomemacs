@@ -141,7 +141,7 @@ the buffer if it is being displayed in another window."
     (message "Killed %s matches" i)))
 
 ;;;###autoload
-(defun narf/cycle-real-buffers (&optional n scratch-default)
+(defun narf/cycle-real-buffers (&optional n)
   "Switch to the previous buffer and avoid special buffers. If there's nothing
 left, create a scratch buffer."
   (let* ((start-buffer (current-buffer))
@@ -158,12 +158,12 @@ left, create a scratch buffer."
           (switch-to-buffer "*scratch*")
           (message "Nowhere to go"))
       (funcall move-func)
-      (while (and continue (< i max))
+      (while (and continue )
         (let ((current-buffer (current-buffer)))
-          (cond ((eq current-buffer start-buffer)
-                 (when scratch-default
-                   (narf|update-scratch-buffer-cwd)
-                   (switch-to-buffer "*scratch*"))
+          (cond ((or (eq current-buffer start-buffer)
+                     (>= i max))
+                 (narf|update-scratch-buffer-cwd)
+                 (switch-to-buffer "*scratch*")
                  (setq continue nil))
                 ((not (memq current-buffer real-buffers))
                  (funcall move-func))
