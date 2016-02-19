@@ -46,7 +46,7 @@
                       (when (featurep 'repl-toggle)
                         (when (string-prefix-p "*" (buffer-name (get-buffer b)))
                           (with-current-buffer b repl-p)))))
-           :popup t :align below :size 12)))
+           :popup t :align below :size 16)))
 
   (after! helm
     ;; This is a good alternative to either popwin or shackle, specifically for helm. If
