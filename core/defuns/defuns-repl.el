@@ -6,9 +6,7 @@
   :repeat nil
   (interactive "<!>")
   (if (and narf--repl-buffer (buffer-live-p narf--repl-buffer))
-      (if (popwin:popup-window-live-p)
-          (popwin:select-popup-window)
-        (popwin:pop-to-buffer narf--repl-buffer))
+      (narf/popup-buffer narf--repl-buffer)
     (rtog/toggle-repl (if (use-region-p) 4))
     (setq narf--repl-buffer (current-buffer))))
 
