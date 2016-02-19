@@ -97,8 +97,14 @@
         (narf-minibuffer-quit))
       (ignore-errors
         (evil-ex-nohighlight))
-      (unless (bound-and-true-p org-src-mode)
-        (narf/popup-close)))
+      ;; Close non-repl popups and clean up `narf-popup-windows'
+      (mapc (lambda (w)
+              (if (window-live-p w)
+                  (with-selected-window w
+                    (unless (derived-mode-p 'comint-mode)
+                      (narf/popup-close w)))
+                (setq narf-popup-windows (delq w narf-popup-windows))))
+            narf-popup-windows))
 
     ;; Fix disruptive errors w/ hidden buffers caused by workgroups killing windows
     ;; TODO Delete timer on dead windows
