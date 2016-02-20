@@ -21,7 +21,7 @@
 (exmap "reo[rient]"    'narf/window-reorient)
 
 ;; External resources
-(exmap "dash"          'dash-at-point)
+(exmap "dash"          'narf:dash)
 (exmap "http"          'httpd-start)
 (exmap "re[gex]"       'narf:regex)
 (exmap "repl"          'narf:repl)

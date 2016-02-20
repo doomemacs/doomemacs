@@ -81,7 +81,7 @@
    "M-Z"            'redo
    "C-M-f"          'narf:toggle-fullscreen
 
-   :ni "<M-f1>"     'dash-at-point
+   :ni "<M-f1>"     'narf/dash-at-pt
 
    ;; Textmate-esque indent shift left/right
    :i "M-]"   'narf/smart-indent
