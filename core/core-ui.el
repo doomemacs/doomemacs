@@ -396,13 +396,11 @@ iedit."
        (concat
         (and (featurep 'face-remap) (/= text-scale-mode-amount 0) (format "(%+d) " text-scale-mode-amount))
         mode-name
-        mode-line-process
-        ))
+        (if (stringp mode-line-process) mode-line-process)))
       :tight-right t)
 
     (spaceline-define-segment *buffer-size
       (powerline-buffer-size)
-      :when (not (eq major-mode 'org-mode))
       :tight-right t
       :skip-alternate t)
 
