@@ -206,7 +206,7 @@
 (depends-on "scss-mode")
 (depends-on "sass-mode")
 ; (depends-on "sws-mode")
-(depends-on "jaded-mode" :git "https://github.com/hlissner/emacs-slim")
+(depends-on "jaded-mode" :git "https://github.com/hlissner/jaded-mode")
 
 
 ;;;; ORGANIZATIONAL/WRITING ;;;;;;;;;;;;
