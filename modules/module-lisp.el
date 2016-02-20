@@ -1,8 +1,15 @@
 ;;; module-lisp --- all things lisp
 ;; see lib/elisp-defuns.el
 
-(define-repl! emacs-lisp-mode ielm)
 (add-hook! emacs-lisp-mode 'turn-on-eldoc-mode)
+
+;; Pop-up REPL
+(defun narf-inf-ielm ()
+  (ielm)
+  (let ((buf (current-buffer)))
+    (bury-buffer)
+    (pop-to-buffer buf)))
+(define-repl! emacs-lisp-mode narf-inf-ielm)
 
 ;; [pedantry intensifies]
 (defadvice emacs-lisp-mode (after emacs-lisp-mode-rename-modeline activate)

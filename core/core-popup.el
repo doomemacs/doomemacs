@@ -176,8 +176,7 @@
       (cond ((and (derived-mode-p 'comint-mode)
                   (featurep 'repl-toggle)
                   repl-toggle-mode)
-             (setq rtog/--last-buffer nil
-                   narf-repl-buffer nil))
+             (setq rtog/--last-buffer nil))
             ((eq major-mode 'messages-buffer-mode)
              (bury-buffer)
              (setq dont-kill t)))
