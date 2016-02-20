@@ -27,12 +27,13 @@
   :config
   (require 'company-statistics)
 
-  ;; Rewrite evil-complete to use company-dabbrev
+  ;; Rewrites evil-complete to use company-dabbrev
   (setq evil-complete-next-func      'narf/company-evil-complete-next
         evil-complete-previous-func  'narf/company-evil-complete-previous)
 
-  ;; TODO Restore company-dict
-  ;; (use-package company-dict :defer t)
+  (use-package company-dict :defer t
+    :config
+    (setq company-dict-dir (concat narf-private-dir "dict")))
 
   (add-to-list 'company-transformers 'company-sort-by-occurrence)
   (setq-default company-backends (append '(company-keywords) company-backends))
