@@ -256,11 +256,6 @@
  :v  "v"   'er/expand-region
  :v  "V"   'er/contract-region
 
- ;; iedit and my own version of multiple-cursors
- :v "R"    'evil-iedit-state/iedit-mode  ; edit all instances of marked region
- :nv "M-d" 'narf/mark-and-next
- :nv "M-D" 'narf/mark-and-prev
-
  ;; aliases for %
  :m  "%"   'evilmi-jump-items
  :m [tab] (λ! (cond ((eq major-mode 'org-mode)

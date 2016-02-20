@@ -271,29 +271,27 @@
   :config
   (advice-add 'evil-force-normal-state :after 'narf*evil-exchange-off))
 
-(use-package evil-iedit-state
-  :functions (iedit-current-occurrence-string iedit-restrict-region)
-  :commands (evil-iedit-state evil-iedit-state/iedit-mode)
+(use-package evil-multiedit
+  :commands (evil-multiedit-match-all
+             evil-multiedit-match-and-next
+             evil-multiedit-match-and-prev
+             evil-multiedit-toggle-or-restrict-region
+             evil-multiedit-next
+             evil-multiedit-prev
+             evil-multiedit-abort)
   :init
-  (defvar iedit-occurrence-keymap-default (make-sparse-keymap))
+  (map! :v  "R"   'evil-multiedit-match-all
+        :nv "M-d" 'evil-multiedit-match-and-next
+        :nv "M-D" 'evil-multiedit-match-and-prev)
   :config
-  (setq evil-iedit-state-cursor 'box
-        evil-iedit-state-tag    "R+")
-
-  (advice-add 'evil-force-normal-state :after 'evil-iedit-state/quit-iedit-mode)
-
-  (define-key evil-iedit-state-map (kbd "<escape>") 'evil-iedit-state/quit-iedit-mode)
-  (define-key evil-visual-state-map (kbd "SPC") 'narf:iedit-restrict-to-region)
-  (let ((map evil-iedit-state-map))
-    ;; Don't interfere with evil-snipe
-    (define-key map "s" nil)
-    (define-key map "S" nil)
-    (define-key map (kbd "M-d") 'narf/mark-and-next)
-    (define-key map (kbd "M-D") 'narf/mark-and-prev)
-
-    (define-key map "V"  'evil-visual-line)
-    (define-key map "C"  'evil-iedit-state/substitute) ; instead of s/S
-    (define-key map "za" 'iedit-toggle-unmatched-lines-visible)))
+  (map! :v "RET" 'evil-multiedit-toggle-or-restrict-region
+        (:map evil-multiedit-state-map
+          "RET" 'evil-multiedit-toggle-or-restrict-region
+          "C-n" 'evil-multiedit-next
+          "C-p" 'evil-multiedit-prev)
+        (:map evil-multiedit-insert-state-map
+          "C-n" 'evil-multiedit-next
+          "C-p" 'evil-multiedit-prev)))
 
 (use-package evil-indent-plus
   :commands
