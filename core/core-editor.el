@@ -162,7 +162,9 @@ enable multiple minor modes for the same regexp.")
             ("let" "let*")
             ("when" "unless")
             ("append" "prepend")
-            ("add-hook" "add-hook!" "remove-hook")))))
+            ("add-hook" "add-hook!" "remove-hook"))))
+  :config
+  (add-to-list 'rotate-text-words '("true" "false")))
 
 (use-package smart-forward :commands (smart-up smart-down smart-left smart-right))
 
