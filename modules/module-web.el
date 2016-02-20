@@ -12,6 +12,7 @@
   :preface
   (require 'css-mode)
   :init
+  (define-docset! scss-mode "sass,bourbon")
   (add-hook! scss-mode '(hs-minor-mode narf|hl-line-off))
   (setq-default css-indent-offset 2)
   (setq scss-compile-at-save nil)

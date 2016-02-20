@@ -121,6 +121,7 @@ enable multiple minor modes for the same regexp.")
 (use-package json-mode :mode "\\.js\\(on\\|hintrc\\)$")
 (use-package dockerfile-mode :mode "/Dockerfile$"
   :config
+  (define-docset! dockerfile-mode "docker")
   (define-builder! dockerfile-mode dockerfile-build-buffer "Dockerfile"))
 
 ;; Plugins ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

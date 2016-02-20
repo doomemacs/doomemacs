@@ -57,7 +57,7 @@
       (regexp-opt '("λ" "in" "map" "after" "exmap" "shut-up"
                     "add-hook" "associate" "open-with" "define-repl"
                     "define-builder" "narf-space-setup" "define-env-command"
-                    "define-text-object" "add-yas-minor-mode"
+                    "define-text-object" "add-yas-minor-mode" "define-docset"
                     "define-org-link!" "define-company-backend"))
       "!\\)")
     (1 font-lock-keyword-face append))))

@@ -5,6 +5,7 @@
   :interpreter "node"
   :init
   (define-repl! js2-mode nodejs-repl)
+  (define-docset! js2-mode "js,javascript,nodejs,angularjs")
   :config
   (setq-default
    js2-skip-preprocessor-directives t

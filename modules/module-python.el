@@ -5,6 +5,7 @@
   :interpreter ("python"   . python-mode)
   :commands python-mode
   :init
+  (define-repl! python-mode "py,py3,python")
   (add-hook! python-mode '(emr-initialize narf|flycheck-enable-maybe))
   (setq-default
    python-indent-offset 4

@@ -44,17 +44,10 @@
 ;; OSX Related Plugins ;;;;;;;;;;;;;;;;;
 
 (use-package dash-at-point
-  :commands (dash-at-point dash-at-point-with-docset narf/dash-at-pt narf:dash)
-  :config
-  (defmacro define-dash-docset! (mode docset)
-    `(add-hook! ,mode (setq dash-at-point-docset ,docset)))
-
-  (define-dash-docset! scss-mode "sass")
-  (define-dash-docset! java-mode "java,droid,javafx,grails,groovy,playjava,spring,cvj,processing,javadoc")
-  (define-dash-docset! js2-mode "js,javascript,nodejs,angularjs")
-  (define-dash-docset! python-mode "py,py3,python")
-  (define-dash-docset! php-mode "php,laravel")
-  (define-dash-docset! ruby-mode "rb,ruby,rubygem"))
+  :commands (dash-at-point dash-at-point-with-docset dash-at-point-run-search dash-at-point-guess-docset)
+  :init
+  (defmacro define-docset! (mode docset)
+    `(add-hook! ,mode (setq dash-at-point-docset ,docset))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

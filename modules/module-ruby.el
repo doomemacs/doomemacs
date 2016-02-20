@@ -9,9 +9,10 @@
   :interpreter "ruby"
   :init
   (add-hook! ruby-mode 'flycheck-mode)
-  :config
-  (define-builder! ruby-mode "rake %s" "Rakefile")
+  (define-docset!      ruby-mode "rb,ruby,rubygem")
+  (define-builder!     ruby-mode "rake %s" "Rakefile")
   (define-env-command! ruby-mode "ruby --version | cut -d' ' -f2")
+  :config
   ;; Formatting
   (setq ruby-indent-level      2
         ruby-deep-indent-paren t)
