@@ -1,8 +1,8 @@
-;;; init.el --- NARF bootstrap
+;;; init.el
 ;;
 ;; Author:  Henrik Lissner <henrik@lissner.net>
 ;; URL:     https://github.com/hlissner/emacs.d
-;; Version: 0.8.0
+;; Version: 0.9.0
 ;;
 ;;; Are you pondering what I'm pondering, Pinky?
 ;;
