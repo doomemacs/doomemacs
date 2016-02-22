@@ -9,6 +9,11 @@
         flycheck-check-syntax-automatically '(save mode-enabled)
         flycheck-disabled-checkers '(emacs-lisp-checkdoc make))
   :config
+  (add-hook! emacs-lisp-mode
+    (require 'flycheck-package)
+    (flycheck-package-setup)
+    (flycheck-mode +1))
+
   (evil-initial-state 'flycheck-error-list-mode 'emacs)
   (map! (:map flycheck-error-list-mode-map
           :n [escape] 'kill-this-buffer
