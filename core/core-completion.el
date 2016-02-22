@@ -21,10 +21,15 @@
                             company-yasnippet
                             company-dabbrev-code)
                            company-dabbrev)
-        company-statistics-file (concat narf-temp-dir "company-stats-cache.el"))
+        company-statistics-file (concat narf-temp-dir "company-stats-cache.el")
+        company-quickhelp-delay nil)
 
   :config
   (require 'company-statistics)
+
+  ;; NOTE: pos-tip.el in Emacs 25+ does not work
+  (require 'company-quickhelp)
+  (company-quickhelp-mode +1)
 
   ;; Rewrites evil-complete to use company-dabbrev
   (setq evil-complete-next-func      'narf/company-evil-complete-next
