@@ -49,20 +49,22 @@
       result)))
 
 ;; Scan various folders to populate the load-paths
-(setq custom-theme-load-path
-      (eval-when-compile
-        (append (--subdirs (concat narf-private-dir "themes/"))
-                custom-theme-load-path)))
-
-(setq load-path
-      (eval-when-compile
-        (require 'cask)
-        (cask-initialize)
-        (setq load-path (append (list narf-private-dir)
-                                (--subdirs narf-core-dir t)
-                                (--subdirs narf-modules-dir t)
-                                (--subdirs narf-packages-dir)
-                                load-path))))
+(defun narf/reload ()
+  (interactive)
+  (setq custom-theme-load-path
+        (eval-when-compile
+          (append (--subdirs (concat narf-private-dir "themes/"))
+                  custom-theme-load-path)))
+  (setq load-path
+        (eval-when-compile
+          (require 'cask)
+          (cask-initialize)
+          (setq load-path (append (list narf-private-dir)
+                                  (--subdirs narf-core-dir t)
+                                  (--subdirs narf-modules-dir t)
+                                  (--subdirs narf-packages-dir)
+                                  load-path)))))
+(narf/reload)
 
 (defun narf (packages)
   "Bootstrap NARF emacs and initialize PACKAGES"
@@ -75,7 +77,7 @@
 
     (load-theme narf-theme t)
     (setq narf-current-theme narf-theme)
-    
+
     (mapc 'require packages)))
 
 ;;; bootstrap.el ends here
