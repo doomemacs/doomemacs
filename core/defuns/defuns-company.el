@@ -44,5 +44,11 @@
       (prefix (company-grab-line "^[\t\s]*\\(.+\\)" 1))
       (candidates (all-completions arg lines)))))
 
+;;;###autoload
+(defun narf/company-dict-or-keywords ()
+  (interactive)
+  (let ((company-backends '((company-keywords company-dict))))
+    (call-interactively 'company-complete-common)))
+
 (provide 'defuns-company)
 ;;; defuns-company.el ends here

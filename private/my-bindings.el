@@ -307,7 +307,7 @@
  :i "C-SPC"     'company-complete-common
  (:prefix "C-x"
    :i "C-l"   'narf/company-whole-lines
-   :i "C-k"   'company-dict
+   :i "C-k"   'narf/company-dict-or-keywords
    :i "C-f"   'company-files
    :i "C-]"   'company-tags
    :i "s"     'company-ispell
