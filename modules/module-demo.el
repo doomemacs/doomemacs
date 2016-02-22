@@ -6,7 +6,10 @@
 ;;   + integration with reveal.js for presentations
 
 ;; Big-mode settings
-(defconst big-mode-font (font-spec :family "Inconsolata" :size 16))
+(defconst big-mode-font (font-spec :family "Hack" :size 16))
+(defconst big-mode-line-spacing 0)
+
+(defvar big-mode--line-spacing line-spacing)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -27,7 +30,8 @@
   :init-value nil
   :lighter " BIG"
   :global t
-  (narf/load-font (if big-mode big-mode-font narf-default-font)))
+  (narf/load-font (if big-mode big-mode-font narf-default-font))
+  (setq-default line-spacing (if big-mode big-mode-line-spacing big-mode--line-spacing)))
 
 (provide 'module-demo)
 ;;; module-demo.el ends here
