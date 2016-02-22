@@ -7,12 +7,10 @@
   (setq flycheck-indication-mode 'right-fringe
         ;; Removed checks on idle/change for snappiness
         flycheck-check-syntax-automatically '(save mode-enabled)
-        flycheck-disabled-checkers '(emacs-lisp-checkdoc make))
+        flycheck-disabled-checkers '(emacs-lisp emacs-lisp-checkdoc make))
   :config
-  (add-hook! emacs-lisp-mode
-    (require 'flycheck-package)
-    (flycheck-package-setup)
-    (flycheck-mode +1))
+  (require 'flycheck-package)
+  (flycheck-package-setup)
 
   (evil-initial-state 'flycheck-error-list-mode 'emacs)
   (map! (:map flycheck-error-list-mode-map
