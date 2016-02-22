@@ -81,6 +81,7 @@
 
 ;; Flycheck --- core/core-flycheck.el
 (depends-on "flycheck")
+(depends-on "flycheck-package")
 (depends-on "flyspell")
 
 ;; Project --- core/core-project.el
