@@ -21,8 +21,7 @@
                             company-yasnippet
                             company-dabbrev-code)
                            company-dabbrev)
-        company-statistics-file (concat narf-temp-dir "company-stats-cache.el")
-        company-dict-dir (concat narf-private-dir "dict/"))
+        company-statistics-file (concat narf-temp-dir "company-stats-cache.el"))
 
   :config
   (require 'company-statistics)

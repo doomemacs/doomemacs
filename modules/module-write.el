@@ -51,9 +51,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(setq-default visual-fill-column-center-text nil
-              visual-fill-column-width 80)
-
 (defun write-mode|org-hook ()
   "A hook that runs everytime an org-mode buffer is visited/created while `write-mode' is
 active."

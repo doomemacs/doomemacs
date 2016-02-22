@@ -26,6 +26,8 @@
  split-width-threshold          nil  ; favor horizontal splits
  show-help-function             nil  ; hide :help-echo text
 
+ visual-fill-column-center-text nil
+
  bidi-display-reordering        nil
 
  ;; Minibuffer resizing

@@ -14,11 +14,6 @@
   :defer t
   :commands httpd-start)
 
-(use-package puml-mode
-  :mode "\\.p\\(lant\\)?uml$"
-  :init
-  (setq puml-plantuml-jar-path "/usr/local/Cellar/plantuml/8029/plantuml.8029.jar"))
-
 (add-hook! org-load
   (use-package ox-reveal
     :config

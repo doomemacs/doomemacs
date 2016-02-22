@@ -227,7 +227,6 @@
 ;;;; EXTRA TOOLS ;;;;;;;;;;;;;;;;;;;;;;;
 ;; Demo --- module-demo.el
 (depends-on "impatient-mode")
-(depends-on "puml-mode")
 (depends-on "ox-reveal" :git "https://github.com/yjwen/org-reveal")
 (depends-on "htmlize")
 
