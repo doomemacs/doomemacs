@@ -25,6 +25,10 @@
 
   (let ((header-face 'font-lock-constant-face))
     (add-to-list 'imenu-generic-expression
+                 `("Evil Command" "\\(^\\s-*(evil-define-command +\\)\\(\\_<.+\\_>\\)" 2))
+    (add-to-list 'imenu-generic-expression
+                 `("Evil Operator" "\\(^\\s-*(evil-define-operator +\\)\\(\\_<.+\\_>\\)" 2))
+    (add-to-list 'imenu-generic-expression
                  `("Package" "\\(^\\s-*(use-package +\\)\\(\\_<.+\\_>\\)" 2))
     (add-to-list 'imenu-generic-expression
                  `("Spaceline Segment" "\\(^\\s-*(spaceline-define-segment +\\)\\(\\_<.+\\_>\\)" 2))))
@@ -41,7 +45,8 @@
                             (propertize
                              x 'face (cond ((string= x "Variables")
                                             'font-lock-variable-name-face)
-                                           ((string= x "Function")
+                                           ((or (string= x "Function")
+                                                (string-prefix-p "Evil " x t))
                                             'font-lock-function-name-face)
                                            ((string= x "Types")
                                             'font-lock-type-face)
