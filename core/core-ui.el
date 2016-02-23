@@ -113,38 +113,6 @@
   (setq yascroll:scroll-bar 'left-fringe
         yascroll:delay-to-hide nil))
 
-(use-package hideshow
-  :commands (hs-minor-mode hs-toggle-hiding hs-already-hidden-p)
-  :config (setq hs-isearch-open t)
-  :init
-  (after! evil
-    (defun narf-load-hs-minor-mode ()
-      (hs-minor-mode 1)
-      (advice-remove 'evil-toggle-fold 'narf-load-hs-minor-mode))
-    (advice-add 'evil-toggle-fold :before 'narf-load-hs-minor-mode))
-
-  ;; Prettify code folding in emacs ;;;;;;
-  (define-fringe-bitmap 'hs-marker [16 48 112 240 112 48 16] nil nil 'center)
-  (defface hs-face '((t (:background "#ff8")))
-    "Face to hightlight the ... area of hidden regions"
-    :group 'hideshow)
-  (defface hs-fringe-face '((t (:foreground "#888")))
-    "Face used to highlight the fringe on folded regions"
-    :group 'hideshow)
-
-  (setq hs-set-up-overlay
-        (lambda (ov)
-          (when (eq 'code (overlay-get ov 'hs))
-            (let* ((marker-string "*fringe-dummy*")
-                   (marker-length (length marker-string))
-                   (display-string (format " ... " (count-lines (overlay-start ov)
-                                                                (overlay-end ov)))))
-              (put-text-property 0 marker-length 'display
-                                 (list 'right-fringe 'hs-marker 'hs-fringe-face) marker-string)
-              (put-text-property 0 (length display-string) 'face 'hs-face display-string)
-              (overlay-put ov 'before-string marker-string)
-              (overlay-put ov 'display display-string))))))
-
 (use-package rainbow-delimiters
   :commands rainbow-delimiters-mode
   :init (add-hook! (emacs-lisp-mode lisp-mode js2-mode scss-mode) 'rainbow-delimiters-mode)
