@@ -111,26 +111,6 @@
           "r"   'neotree-rename-node
           "R"   'neotree-change-root))
 
-  (defun neo-buffer--insert-file-entry (node depth)
-    (let ((node-short-name (neo-path--file-short-name node))
-          (vc (when neo-vc-integration (neo-vc-for-node node))))
-      (when (f-ext? node-short-name "org")
-        (setq node-short-name (f-base node-short-name)))
-      (insert-char ?\s (* (- depth 1) 2)) ; indent
-      (when (memq 'char neo-vc-integration)
-        (insert-char (car vc))
-        (insert-char ?\s))
-      (neo-buffer--insert-fold-symbol 'leaf)
-      (insert-button node-short-name
-                     'follow-link t
-                     'face (if (memq 'face neo-vc-integration)
-                               (cdr vc)
-                             neo-file-link-face)
-                     'neo-full-path node
-                     'keymap neotree-file-button-keymap)
-      (neo-buffer--node-list-set nil node)
-      (neo-buffer--newline-and-begin)))
-
   (after! projectile
     (setq projectile-switch-project-action 'neotree-projectile-action))
 
