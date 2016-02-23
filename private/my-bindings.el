@@ -49,14 +49,6 @@
  "C-<escape>" 'evil-emacs-state
  :e "C-<escape>" 'evil-normal-state
 
- :m "M-j"  'narf/multi-next-line
- :m "M-k"  'narf/multi-previous-line
-
- :n "M-r"  'narf:eval-buffer
- :v "M-r"  'narf:eval-region
- :n "M-o"  'narf/ido-find-file
- :n "M-O"  'narf/ido-find-project-file
-
  :m "M-1"  (λ! (narf:switch-to-tab 0))
  :m "M-2"  (λ! (narf:switch-to-tab 1))
  :m "M-3"  (λ! (narf:switch-to-tab 2))
@@ -74,12 +66,19 @@
    "A-SPC"          'just-one-space
    "M-a"            'mark-whole-buffer
    "M-c"            'evil-yank
+   "M-o"            'helm-find-files
+   "M-q"            'evil-quit-all
    "M-s"            'evil-write
    "M-v"            'clipboard-yank
-   "M-q"            'evil-quit-all
    "M-z"            'undo
    "M-Z"            'redo
    "C-M-f"          'narf:toggle-fullscreen
+
+   :m "M-j"  'narf/multi-next-line
+   :m "M-k"  'narf/multi-previous-line
+
+   :n "M-r"  'narf:eval-buffer
+   :v "M-r"  'narf:eval-region
 
    :ni "<M-f1>"     'narf/dash-at-pt
 
@@ -258,11 +257,9 @@
 
  ;; aliases for %
  :m  "%"   'evilmi-jump-items
- :m [tab] (λ! (cond ((eq major-mode 'org-mode)
-                     (org-cycle))
-                    (t (if (ignore-errors (hs-already-hidden-p))
-                           (hs-toggle-hiding)
-                         (call-interactively 'evilmi-jump-items)))))
+ :m [tab] (λ! (if (ignore-errors (hs-already-hidden-p))
+                  (hs-toggle-hiding)
+                (call-interactively 'evilmi-jump-items)))
 
  ;; Textmate-esque newlines
  :i  "<backspace>"   'backward-delete-char-untabify
@@ -358,11 +355,11 @@
 ;; Keymap fixes                       ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; This section is dedicated to keymaps that "fix" certain keys so
-;; that they behave more like vim (or how I like it).
+;; This section is dedicated to bindings that "fix" certain keys so that they behave more
+;; like vim (or how I like it).
 
-;; Restores "dumb" indentation to the tab key. This rustles a lot of
-;; peoples' jimmies, apparently, but it's how I like it.
+;; Restores "dumb" indentation to the tab key. This rustles a lot of peoples' jimmies,
+;; apparently, but it's how I like it.
 (map! "C-b" 'backward-word
       :i "<tab>"     'narf/dumb-indent
       :i "<backtab>" 'narf/dumb-dedent
