@@ -6,7 +6,7 @@
   (setq shackle-rules
         '(;; Plugins
           ("\\` ?\\*[hH]elm.*?\\*\\'" :regexp t :align below  :size 20 :select t)
-          ("*Flycheck errors*"               :align below  :size 15  :noselect t)
+          (" ?\\*Flycheck.+\\*"       :regexp t :align below  :size 15  :noselect t)
           (" *NeoTree*"                      :align left             :select t)
           ("*evil-registers*"                :align below  :size 0.3)
           ("*quickrun*"                      :align below  :size 15  :noselect t)
