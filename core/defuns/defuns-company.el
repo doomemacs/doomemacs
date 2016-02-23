@@ -48,7 +48,15 @@
 (defun narf/company-dict-or-keywords ()
   (interactive)
   (let ((company-backends '((company-keywords company-dict))))
-    (call-interactively 'company-complete-common)))
+    (call-interactively 'company-complete)))
+
+;;;###autoload
+(defun narf/company-complete ()
+  "Bring up the completion popup. If there is only one result, auto-complete it."
+  (interactive)
+  (when (and (company-manual-begin)
+             (= company-candidates-length 1))
+    (company-complete-common)))
 
 (provide 'defuns-company)
 ;;; defuns-company.el ends here

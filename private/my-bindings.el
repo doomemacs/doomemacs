@@ -304,7 +304,7 @@
    "C-C"     (λ! (ace-window 16)))  ; delete windows
 
  ;; Vim omni-complete emulation
- :i "C-SPC"     'company-complete-common
+ :i "C-SPC" 'narf/company-complete
  (:prefix "C-x"
    :i "C-l"   'narf/company-whole-lines
    :i "C-k"   'narf/company-dict-or-keywords
@@ -323,8 +323,8 @@
      "C-o"        'company-search-kill-others
      "C-n"        'company-select-next
      "C-p"        'company-select-previous
-     "C-h"        'company-show-doc-buffer
-     "C-S-h"      'company-show-location
+     "C-h"        'company-quickhelp-manual-begin
+     "C-S-h"      'company-show-doc-buffer
      "C-S-s"      'company-search-candidates
      "C-s"        'company-filter-candidates
      "C-SPC"      'company-complete-common-or-cycle
