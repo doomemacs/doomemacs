@@ -1,7 +1,7 @@
 ;;; module-lisp --- all things lisp
 ;; see lib/elisp-defuns.el
 
-(add-hook! emacs-lisp-mode 'turn-on-eldoc-mode)
+(add-hook! emacs-lisp-mode '(turn-on-eldoc-mode flycheck-mode))
 
 ;; Pop-up REPL
 (defun narf-inf-ielm ()
