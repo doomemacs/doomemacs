@@ -29,8 +29,10 @@
 
   :config
   (map! :map repl-toggle-mode-map
-        :i "C-n" 'comint-next-input
-        :i "C-p" 'comint-previous-input))
+        :ei "C-n" 'comint-next-input
+        :ei "C-p" 'comint-previous-input
+        :ei "<down>" 'comint-next-input
+        :ei "<up>"   'comint-previous-input))
 
 (provide 'core-eval)
 ;;; core-eval.el ends here
