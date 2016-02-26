@@ -41,28 +41,29 @@
             (refactor-extract-constant        "extract constant"        t)
             (refactor-add-parameter           "add parameter"           nil)
             (refactor-extract-to-let          "extract to let"          t)
-            (refactor-convert-post-conditional "convert post conditional" t))))
+            (refactor-convert-post-conditional "convert post conditional" t)))))
 
-  ;; Rakefiles ;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  (define-minor-mode rake-mode
-    "Buffer local minor mode for rake files"
-    :lighter " Rake" :keymap (make-sparse-keymap)
-    (add-yas-minor-mode! 'rake-mode))
-  (associate! rake-mode :match "\\(/Rakefile\\|\\.rake\\)$")
+;; Rakefiles ;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define-minor-mode rake-mode
+  "Buffer local minor mode for rake files"
+  :lighter " Rake" :keymap (make-sparse-keymap)
+  (add-yas-minor-mode! 'rake-mode))
+(associate! rake-mode :match "\\(/Rakefile\\|\\.rake\\)$")
+(associate! rake-mode :files ("Rakefile"))
 
-  ;; Vagrantfiles ;;;;;;;;;;;;;;;;;;;;;;;;
-  (define-minor-mode vagrant-mode
-    "Buffer local minor mode for vagrant files"
-    :lighter " Va" :keymap (make-sparse-keymap)
-    (add-yas-minor-mode! 'vagrant-mode))
-  (associate! vagrant-mode :match "/Vagrantfile$"))
+;; Vagrantfiles ;;;;;;;;;;;;;;;;;;;;;;;;
+(define-minor-mode vagrant-mode
+  "Buffer local minor mode for vagrant files"
+  :lighter " Va" :keymap (make-sparse-keymap)
+  (add-yas-minor-mode! 'vagrant-mode))
+(associate! vagrant-mode :files ("Vagrantfile"))
 
 (use-package rspec-mode
   :defer t
   :mode ("/\\.rspec$" . text-mode)
   :init
-  (associate! rspec-mode :match "\\(/spec_helper\\|_spec\\)\\.rb$")
   (associate! rspec-mode :match "/\\.rspec$")
+  (associate! rspec-mode :in (ruby-mode yaml-mode) :files ("spec/"))
 
   (defvar rspec-mode-verifiable-map (make-sparse-keymap))
   (defvar evilmi-ruby-match-tags
