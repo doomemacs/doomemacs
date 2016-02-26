@@ -41,7 +41,7 @@
 (depends-on "evil-commentary")
 (depends-on "evil-exchange")
 (depends-on "evil-easymotion")
-(depends-on "evil-iedit-state")
+(depends-on "evil-multiedit")
 (depends-on "evil-indent-plus")
 (depends-on "evil-textobj-anyblock")
 (depends-on "evil-matchit")
@@ -205,29 +205,11 @@
 (depends-on "haml-mode")
 (depends-on "scss-mode")
 (depends-on "sass-mode")
-; (depends-on "sws-mode")
 (depends-on "jaded-mode" :git "https://github.com/hlissner/jaded-mode")
-
-
-;;;; ORGANIZATIONAL/WRITING ;;;;;;;;;;;;
-;; Org -- modules/module-org.el
-(depends-on "company-math")
-(depends-on "ob-go" :git "https://github.com/pope/ob-go")
-(depends-on "ob-http")
-(depends-on "org-bullets")
-(depends-on "org-download")
-(depends-on "ox-opml" :git "https://github.com/edavis/org-opml")
-(depends-on "ox-pandoc")
-(depends-on "org-plus-contrib")
-
-;; Writing -- modules/lib-writing.el
-(depends-on "helm-bibtex")
 
 
 ;;;; EXTRA TOOLS ;;;;;;;;;;;;;;;;;;;;;;;
 ;; Demo --- module-demo.el
 (depends-on "impatient-mode")
-(depends-on "ox-reveal" :git "https://github.com/yjwen/org-reveal")
 (depends-on "htmlize")
-
 
