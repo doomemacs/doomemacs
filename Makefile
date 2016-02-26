@@ -13,6 +13,9 @@ update: autoloads
 
 clean: clean-files clean-elc
 
+snippets:
+	[ -d private/snippets ] || git clone https://github.com/hlissner/emacs-snippets private/snippets
+
 autoloads:
 	@echo "Generating autoloads"
 	@$(EMACS) --script scripts/generate-autoloads.el 2>&1 | sed 's/^/  /'

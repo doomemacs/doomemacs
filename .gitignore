@@ -1,6 +1,7 @@
 .cask/
 eshell/
 private/cache/
+private/snippets/
 var/
 core/autoloads.el
 .mc-lists.el
