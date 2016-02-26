@@ -280,9 +280,10 @@
              evil-multiedit-prev
              evil-multiedit-abort)
   :init
-  (map! :v  "R"   'evil-multiedit-match-all
-        :nv "M-d" 'evil-multiedit-match-and-next
-        :nv "M-D" 'evil-multiedit-match-and-prev)
+  (map! :v  "R"     'evil-multiedit-match-all
+        :n  "M-C-D" 'evil-multiedit-restore
+        :nv "M-d"   'evil-multiedit-match-and-next
+        :nv "M-D"   'evil-multiedit-match-and-prev)
   :config
   (map! :v "RET" 'evil-multiedit-toggle-or-restrict-region
         (:map evil-multiedit-state-map
