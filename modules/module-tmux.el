@@ -33,15 +33,18 @@
       (narf/tmux-cd-to-project)
     (narf/tmux-cd-to-here)))
 
+(defvar narf-tmux-last-command nil "The last command sent to tmux")
 ;;;###autoload (autoload 'narf:tmux "module-tmux" nil t)
 (evil-define-operator narf:tmux (&optional command bang)
   "Sends input to tmux. Use `bang' to append to tmux"
   :type inclusive
-  :repeat t
   (interactive "<term><!>")
+  (unless command
+    (setq command narf-tmux-last-command))
   (if (not command)
       (os-switch-to-term)
-    (tmux command bang)
+    (tmux command (not bang))
+    (setq narf-tmux-last-command command)
     (when (evil-ex-p)
       (message "[Tmux] %s" command))))
 
@@ -59,12 +62,6 @@
 (defun narf/tmux-cd-to-project ()
   (interactive)
   (narf/tmux-cd-to-here (narf/project-root)))
-
-;;;;;;;;;;
-
-;; TODO
-;; (defun narf/window (direction)
-;;   )
 
 (provide 'module-tmux)
 ;;; module-tmux.el ends here
