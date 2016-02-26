@@ -101,7 +101,7 @@
 
 ;; Fade out when unfocused ;;;;;;;;;;;;;
 (add-hook! focus-in  (set-frame-parameter nil 'alpha 100))
-(add-hook! focus-out (set-frame-parameter nil 'alpha 60))
+(add-hook! focus-out (set-frame-parameter nil 'alpha 75))
 
 ;; Plugins ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (use-package visual-fill-column :defer t)
@@ -316,7 +316,7 @@ anzu to be enabled."
 iedit."
         (let ((this-oc (iedit-find-current-occurrence-overlay))
               (length  (or (ignore-errors (length iedit-occurrences-overlays)) 0)))
-          (format "%s/%s"
+          (format " %s/%s "
                   (save-excursion
                     (unless this-oc
                       (iedit-prev-occurrence)
@@ -327,6 +327,7 @@ iedit."
                       "-"))
                   length))
         :when (bound-and-true-p iedit-mode)
+        :tight t
         :face (if active 'mode-line-count-face 'mode-line-inactive)
         :skip-alternate t)
 
@@ -338,11 +339,12 @@ iedit."
                        (cons (line-beginning-position) (line-end-position))))
               (pattern (car-safe (evil-delimited-arguments evil-ex-argument 2))))
           (if pattern
-              (format "%s matches"
+              (format " %s matches "
                       (count-matches pattern (car range) (cdr range))
                       evil-ex-argument)
             " ... "))
         :when (and (evil-ex-p) (evil-ex-hl-active-p 'evil-ex-substitute))
+        :tight t
         :face (if active 'mode-line-count-face 'mode-line-inactive)
         :skip-alternate t))
 
@@ -436,7 +438,7 @@ Supports both Emacs and Evil cursor conventions."
         :when (and (bound-and-true-p flycheck-mode)
                    (or flycheck-current-errors
                        (eq 'running flycheck-last-status-change)))
-        :tight-left t
+        :tight t
         :skip-alternate t))
 
     (spaceline-define-segment *hud
@@ -448,7 +450,7 @@ Supports both Emacs and Evil cursor conventions."
   (spaceline-install
    ;; Left side
    '(*macro-recording
-     (((*anzu *iedit *evil-substitute) *flycheck)
+     ((*anzu *iedit *evil-substitute *flycheck)
       :fallback *buffer-size)
      (*buffer-path *remote-host)
      *buffer-modified
