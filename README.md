@@ -73,10 +73,9 @@ To get a picture of what's in here, check out:
     do this (`:align` will also highlight matches).
   * **A multiple cursor implementation using iedit**: I could never get [evil-mc] working,
     and [multiple-cursors] doesn't play nice with evil-mode, so I wrote [evil-multiedit].
-    **evil-multiedit**. To use it, hop into visual mode, select a region and press
-    <kbd>S-r</kbd> (shift-R). Your edits will apply to all highlighted regions. To limit
-    iedit's scope: while in iedit mode go into visual, select a range and press
-    <kbd>SPC</kbd>.
+    To use it, hop into visual mode, select a region and press <kbd>S-r</kbd> (shift-R).
+    Your edits will apply to all highlighted regions. To limit iedit's scope: while in
+    iedit mode go into visual, select a range and press <kbd>SPC</kbd>.
   * **Rudimentary support for extra =expand(...) symbols in evil-ex**: this includes
     `%:[pdert]`, which can be used with ex commands like `:e`, `:w`, or in the expression
     register. This *could* be truer to vim, but I haven't gotten around to it.
