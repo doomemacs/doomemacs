@@ -57,7 +57,7 @@ To get a picture of what's in here, check out:
   * Code folding with **hideshow**; doesn't allow arbitrary folds though
   * Multiple cursors with **[evil-multiedit]**
   * O/S interaction functions, like **os-reveal** and **os-open-in-browser**
-  * Custom TODO, FIxME and NOTE highlighting
+  * Custom TODO, FIXME and NOTE highlighting
   * **big-mode** for presentations and demonstrations
   * Tmux integration with `:t` and `:tcd` ex commands
 
