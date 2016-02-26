@@ -49,36 +49,33 @@
           (push file result)))
       result)))
 
-;; Scan various folders to populate the load-paths
+(defvar narf--load-path load-path)
 (defun narf/reload ()
   (interactive)
-  (setq custom-theme-load-path
-        (eval-when-compile
-          (append (--subdirs (concat narf-private-dir "themes/"))
-                  custom-theme-load-path)))
   (setq load-path
-        (eval-when-compile
-          (require 'cask)
-          (cask-initialize)
-          (setq load-path (append (list narf-private-dir)
-                                  (--subdirs narf-core-dir t)
-                                  (--subdirs narf-modules-dir t)
-                                  (--subdirs narf-packages-dir)
-                                  load-path)))))
-(narf/reload)
+        (progn (require 'cask)
+               (cask-initialize)
+               (append (list narf-private-dir)
+                       (--subdirs narf-core-dir t)
+                       (--subdirs narf-modules-dir t)
+                       (--subdirs narf-packages-dir)
+                       narf--load-path))))
 
 (defun narf (packages)
   "Bootstrap NARF emacs and initialize PACKAGES"
   ;; prematurely optimize for faster startup
   (let (file-name-handler-alist
         (gc-cons-threshold 169715200))
+    ;; Scan various folders to populate the load-paths
+    (setq custom-theme-load-path
+          (append (list (expand-file-name "themes/" narf-private-dir))
+                  custom-theme-load-path)
+          load-path (eval-when-compile (narf/reload)))
     ;; Load local settings, if available
     (when (file-exists-p "~/.emacs.local.el")
       (load "~/.emacs.local.el"))
-
     (load-theme narf-theme t)
     (setq narf-current-theme narf-theme)
-
     (mapc 'require packages)))
 
 ;;; bootstrap.el ends here
