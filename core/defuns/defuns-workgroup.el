@@ -154,10 +154,13 @@
 (defun narf:switch-to-workgroup-at-index (index)
   (interactive)
   (narf/workgroup-update-names)
-  (let ((wgs (wg-workgroup-list-or-error)))
-    (unless (eq (nth index wgs) (wg-current-workgroup t))
-      (wg-switch-to-workgroup-at-index index)))
-  (narf/workgroup-display t))
+  (let ((wg (nth index (wg-workgroup-list-or-error)))
+        msg)
+    (if wg
+        (unless (eq wg (wg-current-workgroup t))
+          (wg-switch-to-workgroup-at-index index))
+      (setq msg (format "No tab #%s" (1+ index))))
+    (narf/workgroup-display t nil msg)))
 
 ;;;###autoload
 (defun narf/undo-window-change ()

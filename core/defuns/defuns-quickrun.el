@@ -20,11 +20,12 @@ If ARG is nil this function calls `recompile', otherwise it calls
   (when (null narf--build-command)
     (user-error "No build command was set"))
   (let ((build-file (cdr narf--build-command))
-        (build-cmd (car narf--build-command)))
-    (if (or (null build-file) (narf/project-has-files build-file))
+        (build-cmd (car narf--build-command))
+        (default-directory (narf/project-root)))
+    (if (or (null build-file) (file-exists-p build-file))
         (if (symbolp build-cmd)
             (call-interactively build-cmd)
-          (compile (format "cd '%s' && %s" (narf/project-root) (format build-cmd (or arg "")))))
+          (compile (format build-cmd (or arg ""))))
       (error "Could not build!"))))
 
 ;;;; Code running ;;;;;;;;;;;;;;;;;;;;;;
