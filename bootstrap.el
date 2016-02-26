@@ -1,22 +1,23 @@
 ;;; bootstrap.el
 
-(defconst narf-emacs-dir     user-emacs-directory)
-(defconst narf-core-dir      (concat narf-emacs-dir "core/"))
-(defconst narf-modules-dir   (concat narf-emacs-dir "modules/"))
-(defconst narf-private-dir   (concat narf-emacs-dir "private/"))
-(defconst narf-packages-dir  (concat narf-emacs-dir ".cask/" emacs-version "/elpa/"))
-(defconst narf-script-dir    (concat narf-emacs-dir "scripts/"))
-(defconst narf-snippet-dirs  (list (concat narf-private-dir "snippets/")
-                                   (concat narf-private-dir "templates/")))
-;; Hostname and emacs version-based elisp temp directories
-(defconst narf-temp-dir
-  (format "%scache/%s/%s.%s/"
-          narf-private-dir (system-name)
-          emacs-major-version emacs-minor-version))
+(eval-and-compile
+  (defconst narf-emacs-dir     user-emacs-directory)
+  (defconst narf-core-dir      (concat narf-emacs-dir "core/"))
+  (defconst narf-modules-dir   (concat narf-emacs-dir "modules/"))
+  (defconst narf-private-dir   (concat narf-emacs-dir "private/"))
+  (defconst narf-packages-dir  (concat narf-emacs-dir ".cask/" emacs-version "/elpa/"))
+  (defconst narf-script-dir    (concat narf-emacs-dir "scripts/"))
+  (defconst narf-snippet-dirs  (list (concat narf-private-dir "snippets/")
+                                     (concat narf-private-dir "templates/")))
+  ;; Hostname and emacs version-based elisp temp directories
+  (defconst narf-temp-dir
+    (format "%scache/%s/%s.%s/"
+            narf-private-dir (system-name)
+            emacs-major-version emacs-minor-version))
 
-(defconst IS-MAC     (eq system-type 'darwin))
-(defconst IS-LINUX   (eq system-type 'gnu/linux))
-(defconst IS-WINDOWS (eq system-type 'windows-nt))
+  (defconst IS-MAC     (eq system-type 'darwin))
+  (defconst IS-LINUX   (eq system-type 'gnu/linux))
+  (defconst IS-WINDOWS (eq system-type 'windows-nt)))
 
 ;; Global settings
 (scroll-bar-mode -1)  ; no scrollbar
