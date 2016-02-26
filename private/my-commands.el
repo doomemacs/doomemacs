@@ -48,7 +48,7 @@
 (exmap "agr"           'narf:helm-ag-regex-search) ; project regex search
 (exmap "agr[cw]d"      'narf:helm-ag-regex-search-cwd) ; current directory regexp search
 (exmap "cd"            'narf:cd)
-(exmap "f[ind]"        'narf:helm-swoop) ; in-file search
+(exmap "se[arch]"      'narf:helm-swoop) ; in-file search
 ;; Project tools
 (exmap "ma[ke]"        'narf:build)
 (exmap "build"         'narf:build)
