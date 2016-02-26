@@ -210,8 +210,6 @@
    powerline-height 19
    spaceline-highlight-face-func 'spaceline-highlight-face-evil-state)
 
-  (add-hook! big-mode (setq-default powerline-height (if big-mode 26 19)))
-
   (defface mode-line-is-modified nil "Face for mode-line modified symbol")
   (defface mode-line-buffer-file nil "Face for mode-line buffer file path")
 

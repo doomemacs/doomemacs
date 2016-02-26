@@ -8,8 +8,7 @@
 ;; Big-mode settings
 (defconst big-mode-font (font-spec :family "Hack" :size 16))
 (defconst big-mode-line-spacing 0)
-
-(defvar big-mode--line-spacing line-spacing)
+(defconst big-mode-modeline-height 26)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -24,12 +23,14 @@
 
 ;;;
 
-(defvar big-mode-font narf-default-font)
+(defvar big-mode--line-spacing line-spacing)
+(defvar big-mode--powerline-height powerline-height)
 
 (define-minor-mode big-mode
   :init-value nil
   :lighter " BIG"
   :global t
+  (setq-default powerline-height (if big-mode big-mode-modeline-height big-mode--powerline-height))
   (narf/load-font (if big-mode big-mode-font narf-default-font))
   (setq-default line-spacing (if big-mode big-mode-line-spacing big-mode--line-spacing)))
 
