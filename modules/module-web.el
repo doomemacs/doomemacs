@@ -49,15 +49,6 @@
         :i [tab] 'narf/dumb-indent
         :i [backtab] 'narf/dumb-dedent))
 
-(use-package slim-mode
-  :load-path "~/Dropbox/work/plugins/emacs-slim"
-  :mode "\\.slim$"
-  :config
-  ;; Don't hijack my indentation
-  (map! :map slim-mode-map
-        :i [tab] 'narf/dumb-indent
-        :i [backtab] 'narf/dumb-dedent))
-
 (use-package web-mode
   :mode ("\\.\\(p\\)?htm\\(l\\)?$" "\\.tpl\\(\\.php\\)?$" "\\.erb$" "wp-content/themes/.+/.+\\.php$")
   :init
