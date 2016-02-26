@@ -2,7 +2,7 @@
 ;;
 ;; Author:  Henrik Lissner <henrik@lissner.net>
 ;; URL:     https://github.com/hlissner/emacs.d
-;; Version: 0.9.0
+;; Version: 0.9.1
 ;;
 ;;; Are you pondering what I'm pondering, Pinky?
 ;;
@@ -42,7 +42,6 @@
 
 (defconst narf-theme 'narf-dark)
 (defconst narf-default-font (font-spec :family "Hack" :size 12))
-(setq-default line-spacing 2)
 
 ;;
 (load (concat user-emacs-directory "bootstrap.el"))
