@@ -92,18 +92,6 @@
   :config
   (add-hook! unityjs-mode 'flycheck-mode))
 
-(use-package typescript-mode
-  :mode "\\.ts$"
-  :config
-  (require 'tide)
-  (defun narf|typescript-setup ()
-    (tide-setup)
-    (flycheck-mode 1)
-    (eldoc-mode 1))
-
-  (add-hook! typescript-mode 'narf|typescript-setup)
-  (add-hook! web-mode (when (string-equal "tsx" (file-name-extension buffer-file-name)) (narf|typescript-setup))))
-
 (use-package coffee-mode
   :mode "\\.coffee$"
   :config
