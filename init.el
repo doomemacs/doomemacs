@@ -90,6 +90,7 @@
 
         ;; Extra Tools
         module-demo          ; allow me to demonstrate...
+        module-ansible
 
         ;; Key bindings & ex commands
         my-bindings
