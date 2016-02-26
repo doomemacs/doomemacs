@@ -6,10 +6,10 @@ update: autoloads
 	@echo "Updating repo"
 	@git pull 2>&1 | sed 's/^/  /'
 	@echo "Updating outdated plugins"
-	@cask install --verbose 2>&1 | sed 's/^/  /'
-	@cask update --verbose 2>&1 | sed 's/^/  /'
+	@cask install 2>&1 | sed 's/^/  /'
+	@cask update 2>&1 | sed 's/^/  /'
 	@echo "Compiling certain scripts"
-	@$(EMACS) -Q --batch -f batch-byte-compile init-packages.el core/core.el core/core-os-osx.el contrib/*.el 2>&1 | sed 's/^/  /'
+	@$(EMACS) -Q --batch -f batch-byte-compile bootstrap.el 2>&1 | sed 's/^/  /'
 
 clean: clean-files clean-elc
 
@@ -23,7 +23,8 @@ compile: autoloads
 
 clean-files:
 	@echo "Cleaning derelict emacs files"
-	@rm -rf auto-save-list recentf places ido.last async-bytecomp.log elpa projectile-bookmarks.eld projectile.cache company-statistics-cache.el tramp smex-items
+	@rm -rf auto-save-list recentf places ido.last async-bytecomp.log elpa tramp
+	@rm -rf projectile-bookmarks.eld projectile.cache company-statistics-cache.el
 	@rm -rf var semanticdb anaconda-mode
 
 clean-elc:
