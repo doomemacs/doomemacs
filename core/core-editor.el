@@ -116,11 +116,11 @@ enable multiple minor modes for the same regexp.")
 ;; Extra modes ;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package vimrc-mode :mode ("/\\.?g?vimrc$" "\\.vim$" "/\\.vim/rc/.+$"))
-
 ;; Data formats
 (use-package yaml-mode :mode "\\.ya?ml$")
 (use-package toml-mode :mode "\\.toml$")
 (use-package json-mode :mode "\\.js\\(on\\|hintrc\\)$")
+;; Configuration formats
 (use-package dockerfile-mode :mode "/Dockerfile$"
   :config
   (define-docset! dockerfile-mode "docker")
