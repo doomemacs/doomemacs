@@ -74,7 +74,13 @@
   (after! yasnippet
     (advice-add 'yas-expand :before 'sp-remove-active-pair-overlay)))
 
-;; TODO: Add auto-yasnippet
+(use-package auto-yasnippet
+  :commands (aya-create aya-expand aya-open-line aya-persist-snippet)
+  :init
+  (map! :i  "<C-tab>" 'aya-expand
+        :nv "<C-tab>" 'aya-create)
+  :config
+  (setq aya-persist-snippets-dir (concat narf-private-dir "auto-snippets/")))
 
 (provide 'core-yasnippet)
 ;;; core-yasnippet.el ends here

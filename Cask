@@ -78,6 +78,7 @@
 
 ;; Yasnippet --- core/core-yasnippet.el
 (depends-on "yasnippet")
+(depends-on "auto-yasnippet")
 
 ;; Flycheck --- core/core-flycheck.el
 (depends-on "flycheck")
