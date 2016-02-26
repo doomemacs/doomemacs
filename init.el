@@ -50,7 +50,7 @@
 (narf '(core ; core/core.el
 
         ;; The heart of NARF
-        core-popup           ; taming stray and sudden windows
+        core-popup           ; taming sudden and inevitable windows
         core-ui              ; draw me like one of your French editors
         core-evil            ; come to the dark side, we have cookies
         core-editor          ; filling the editor-shaped hole in the emacs OS
