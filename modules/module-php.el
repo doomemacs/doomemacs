@@ -23,9 +23,26 @@
                    (load (concat php-extras-eldoc-functions-file ".el"))
                    (message "PHP eldoc updated!"))))
 
-  ;; TODO Tie into emr
-  (require 'php-refactor-mode)
-  (add-hook! php-mode '(turn-on-eldoc-mode emr-initialize php-refactor-mode)))
+  (use-package php-refactor-mode
+    :init
+    (add-hook! php-mode '(turn-on-eldoc-mode emr-initialize php-refactor-mode))
+    :config
+    (require 'emr)
+    (mapc (lambda (x)
+            (let ((command-name (car x))
+                  (title (cadr x))
+                  (region-p (caddr x))
+                  predicate)
+              (setq predicate (cond ((eq region-p 'both) nil)
+                                    (t (if region-p
+                                           (lambda () (use-region-p))
+                                         (lambda () (not (use-region-p)))))))
+              (emr-declare-command (intern (format "php-refactor--%s" (symbol-name command-name)))
+                :title title :modes 'php-mode :predicate predicate)))
+          '((convert-local-to-instance-variable "convert local var to instance var" nil)
+            (optimize-use                       "optimize FQNs in file"   nil)
+            (extract-method                     "extract method"          t)
+            (rename-local-variable              "rename local variable"   nil)))))
 
 ;; PHP Repl
 (use-package php-boris :defer t
