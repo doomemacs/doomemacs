@@ -16,16 +16,8 @@
   :defer t
   :commands httpd-start)
 
-(add-hook! org-load
-  (use-package ox-reveal
-    :config
-    (setq org-reveal-root "https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.2.0/js/reveal.min.js")))
-
-;;;
-
 (defvar big-mode--line-spacing line-spacing)
 (defvar big-mode--powerline-height powerline-height)
-
 (define-minor-mode big-mode
   :init-value nil
   :lighter " BIG"

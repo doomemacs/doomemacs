@@ -14,8 +14,7 @@
   (define-env-command! ruby-mode "ruby --version | cut -d' ' -f2")
   :config
   ;; Formatting
-  (setq ruby-indent-level      2
-        ruby-deep-indent-paren t)
+  (setq ruby-deep-indent-paren t)
 
   ;; Don't interfere with my custom RET behavior
   (define-key ruby-mode-map [?\n] nil)

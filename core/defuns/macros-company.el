@@ -13,8 +13,7 @@
                                      (if quoted
                                          backend
                                        (intern (format "company-%s" backend))))
-                                   (if quoted (cadr backends) backends))
-                         company-semantic company-yasnippet))
+                                   (if quoted (cadr backends) backends))))
                       company-backends)))
        (add-hook ',(intern (format "%s-hook" hook)) ',def-name))))
 

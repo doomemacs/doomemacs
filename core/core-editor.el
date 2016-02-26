@@ -15,6 +15,8 @@
  truncate-lines                  t
  truncate-partial-width-windows  50
 
+ visual-fill-column-center-text nil
+
  ;; Sane scroll settings
  scroll-margin           0
  scroll-conservatively   1001

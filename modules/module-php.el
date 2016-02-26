@@ -13,6 +13,7 @@
   (require 'php-extras)
   (defun php-extras-company-setup ()) ;; company will set up itself
 
+  ;; Generate php-extras documentation and completion asynchronously
   (unless (file-exists-p (concat php-extras-eldoc-functions-file ".el"))
     (async-start `(lambda ()
                     ,(async-inject-variables "\\`\\(load-path\\|php-extras-eldoc-functions-file\\)$")
@@ -26,13 +27,14 @@
   (require 'php-refactor-mode)
   (add-hook! php-mode '(turn-on-eldoc-mode emr-initialize php-refactor-mode)))
 
+;; PHP Repl
 (use-package php-boris :defer t
   :init
   (define-repl! php-mode php-boris)
   :config
-  (evil-set-initial-state 'php-boris-mode 'emacs)
-  (setq php-boris-command "~/.dotfiles/scripts/run-boris"))
+  (evil-set-initial-state 'php-boris-mode 'emacs))
 
+;; Support for Facebook's version of PHP
 (use-package hack-mode :mode "\\.hh$")
 
 (define-minor-mode php-laravel-mode

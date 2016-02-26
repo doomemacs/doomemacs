@@ -39,5 +39,10 @@
         (beginning-of-line))
       (setq *linum-mdown-line* nil))))
 
+;;;###autoload
+(defun narf*load-hs-minor-mode ()
+  (hs-minor-mode 1)
+  (advice-remove 'evil-toggle-fold 'narf-load-hs-minor-mode))
+
 (provide 'defuns-editor)
 ;;; defuns-editor.el ends here

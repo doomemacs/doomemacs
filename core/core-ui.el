@@ -26,8 +26,6 @@
  split-width-threshold          nil  ; favor horizontal splits
  show-help-function             nil  ; hide :help-echo text
 
- visual-fill-column-center-text nil
-
  bidi-display-reordering        nil
 
  ;; Minibuffer resizing
@@ -60,11 +58,13 @@
   (menu-bar-mode -1))
 
 ;; Fix display of certain unicode characters
-(mapc (lambda (x) (set-fontset-font "fontset-default" `(,x . ,x) (font-spec :name "DejaVu Sans") nil 'prepend))
-      '(?☑ ?☐ ?✍ ?⚠))
-(mapc (lambda (x) (set-fontset-font "fontset-default" `(,x . ,x) (font-spec :name "DejaVu Sans") nil 'prepend))
-      '(?✸ ?✿ ?★))
-(mapc (lambda (x) (set-fontset-font "fontset-default" `(,x . ,x) (font-spec :name "DejaVu Sans" :size 10) nil))
+(mapc (lambda (x)
+        (set-fontset-font "fontset-default" `(,x . ,x)
+                          (font-spec :name "DejaVu Sans") nil 'prepend))
+      '(?☑ ?☐ ?✍ ?⚠ ?★))
+(mapc (lambda (x)
+        (set-fontset-font "fontset-default" `(,x . ,x)
+                          (font-spec :name "DejaVu Sans" :size 10) nil))
       '(?➊ ?➋ ?➌ ?➍ ?➎ ?❻ ?➐ ?➑ ?➒ ?➓ ?λ))
 
 (blink-cursor-mode  1)    ; do blink cursor
@@ -74,7 +74,7 @@
   (global-eldoc-mode -1))
 
 ;; Highlight line
-(add-hook! (prog-mode puml-mode markdown-mode) 'hl-line-mode)
+(add-hook! (prog-mode markdown-mode) 'hl-line-mode)
 
 ;; Disable line highlight in visual mode
 (defvar narf--hl-line-mode nil)
@@ -101,7 +101,7 @@
 
 ;; Fade out when unfocused ;;;;;;;;;;;;;
 (add-hook! focus-in  (set-frame-parameter nil 'alpha 100))
-(add-hook! focus-out (set-frame-parameter nil 'alpha 90))
+(add-hook! focus-out (set-frame-parameter nil 'alpha 60))
 
 ;; Plugins ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (use-package visual-fill-column :defer t)
