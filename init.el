@@ -89,10 +89,6 @@
         ;;module-nim         ; look out Abraham
         ;;module-pony        ; Dear Princess Compiler
 
-        ;; Organizational/Writing
-        ;;module-write       ; making Emacs fit for writing fiction, papers & notes
-        ;;module-org         ; for fearless [and organized] leader
-
         ;; Extra Tools
         module-demo          ; allow me to demonstrate...
 

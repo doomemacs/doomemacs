@@ -42,12 +42,6 @@
     (ido-find-file)))
 
 ;;;###autoload
-(defun narf/ido-find-org-file ()
-  (interactive)
-  (let ((default-directory org-directory))
-    (ido-find-file)))
-
-;;;###autoload
 (defun narf/ido-recentf ()
   "Use `ido-completing-read' to \\[find-file] a recent file"
   (interactive)

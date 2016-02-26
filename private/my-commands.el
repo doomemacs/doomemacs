@@ -58,15 +58,6 @@
 ;; Presentation/demo
 (exmap "big"           'big-mode)
 (exmap "full[scr]"     'narf:toggle-fullscreen)
-(exmap "wr[iting]"     'write-mode-toggle)
-
-;; Org-mode
-(exmap "cols"          'narf:set-columns)
-(exmap "org"           'narf/helm-org)
-(exmap "cap[ture]"     'helm-org-capture-templates)
-(exmap "cont[act]"     'narf:org-crm-contact)
-(exmap "proj[ect]"     'narf:org-crm-project)
-(exmap "invo[ice]"     'narf:org-crm-invoice)
 
 ;; Sessions/tabs
 (exmap "sl[oad]"       'narf:load-session)

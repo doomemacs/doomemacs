@@ -88,12 +88,5 @@ buffers."
         (helm-buffers-list))
     (helm-buffers-list)))
 
-;;;###autoload
-(defun narf/helm-org-find-files ()
-  (interactive)
-  (in! org-directory
-    (let ((helm-ff-skip-boring-files t))
-      (helm-find-files-1 (concat org-directory "/")))))
-
 (provide 'defuns-helm)
 ;;; defuns-helm.el ends here
