@@ -232,13 +232,14 @@
     (when (evil-ex-p) (evil-ex-parse-global evil-ex-argument)))
 
   (evil-define-operator narf:align (&optional beg end bang pattern)
+    "Ex interface to `align-regexp'. Accepts vim-style regexps."
     (interactive "<r><!><//>")
     (align-regexp
      beg end
      (concat "\\(\\s-*\\)"
              (if bang
                  (regexp-quote pattern)
-               (rxt-pcre-to-elisp pattern)))
+               (evil-transform-vim-style-regexp pattern)))
      1 1))
   (evil-define-operator narf:evil-ex-global (beg end pattern command &optional invert)
     :motion mark-whole-buffer
