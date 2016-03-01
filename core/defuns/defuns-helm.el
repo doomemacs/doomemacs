@@ -83,9 +83,7 @@
   "Displays open buffers in current project. If ALL-P, then show all open
 buffers."
   (interactive)
-  (if (and (not all-p) (narf/project-p))
-      (cl-letf (((symbol-function 'buffer-list) 'narf/get-buffers))
-        (helm-buffers-list))
+  (let ((narf-helm-force-project-buffers (and (not all-p) (narf/project-p))))
     (helm-buffers-list)))
 
 (provide 'defuns-helm)
