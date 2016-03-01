@@ -209,6 +209,21 @@
 (depends-on "jaded-mode" :git "https://github.com/hlissner/jaded-mode")
 
 
+;;;; ORGANIZATIONAL/WRITING ;;;;;;;;;;;;
+;; Org -- modules/module-org.el
+(depends-on "org-plus-contrib")
+(depends-on "org-bullets")
+(depends-on "ob-go" :git "https://github.com/pope/ob-go")
+(depends-on "ob-http")
+
+;; Org Notebook -- modules/module-org-notebook.el
+(depends-on "org-download")
+(depends-on "ox-pandoc")
+
+;; Writing -- modules/module-write.el
+(depends-on "helm-bibtex")
+
+
 ;;;; EXTRA TOOLS ;;;;;;;;;;;;;;;;;;;;;;;
 ;; Demo --- module-demo.el
 (depends-on "impatient-mode")

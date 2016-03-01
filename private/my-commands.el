@@ -72,6 +72,9 @@
 (exmap "tabp[rev]"     'narf:switch-to-tab-left)
 (exmap "tabl[ast]"     'narf:switch-to-tab-last)
 
+;; Org-mode
+(exmap "att[ach]"      'narf:org-attach)
+
 ;; Plugins
 (after! flycheck
   (exmap "er[rors]"    (λ! (flycheck-buffer) (flycheck-list-errors))))

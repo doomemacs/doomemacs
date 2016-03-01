@@ -88,9 +88,15 @@
         ;;module-nim         ; look out Abraham
         ;;module-pony        ; Dear Princess Compiler
 
+        ;; Organizational/Notes
+        module-org           ; for organized fearless leader
+        module-org-crm       ; org-mode, for keeping tabs on my victims
+        module-org-notebook  ; making org-mode into a modern note-taking solution
+
         ;; Extra Tools
         module-demo          ; allow me to demonstrate...
-        module-ansible
+        module-ansible       ;
+        module-write         ; yes, I write papers and fiction in Emacs
 
         ;; Key bindings & ex commands
         my-bindings

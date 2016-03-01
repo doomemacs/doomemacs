@@ -161,14 +161,12 @@
      :n  "T" 'os-switch-to-term-and-cd)
 
    ;; Org notes
+   :n "X" 'narf/org-start
    (:prefix "x"
-     :n  "." 'narf/helm-org-find-files
-     :n  "/" 'narf/helm-org
-     :n  "x" 'narf/org-open-notes
-     :n  "p" 'narf/helm-org-crm-projects
-     :n  "c" 'narf/helm-org-crm-contacts
-     :n  "i" 'narf/helm-org-crm-invoices
-     :n  "w" 'narf/helm-org-writing))
+     :n "." 'narf/org-find-file
+     :n "/" 'narf/org-find-file-in-notes
+     :n "e" 'narf/org-find-exported-file
+     ))
 
  (:localleader
    :n  "k" 'narf/helm-descbinds-localleader

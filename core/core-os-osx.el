@@ -98,10 +98,10 @@
   (narf:send-to-tmux (format "cd %s" (shell-quote-argument default-directory)))
   (narf-switch-to-iterm))
 
-(defun narf-org-init-for-osx ()
-  ;; Reveal files in finder
-  (setq org-file-apps '(("\\.org$" . emacs)
-                        (t . "open -R \"%s\""))))
+;; Open with external programs
+(require 'openwith)
+(openwith-mode t)
+(setq openwith-associations '(("\\.\\(pdf\\|jpe?g\\|gif\\|docx?\\|pptx?\\|xlsx?\\|zip\\|tar\\(\\.gz\\)?\\|rar\\)$" "open" (file))))
 
 (provide 'core-os-osx)
 ;;; core-os-osx.el ends here

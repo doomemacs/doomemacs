@@ -68,6 +68,7 @@
                       (Man-mode               . emacs)
                       (grep-mode              . emacs)
                       (image-mode             . normal)
+                      (doc-view-mode          . normal)
                       ))
     (evil-set-initial-state `,(car mode-map) `,(cdr mode-map)))
 

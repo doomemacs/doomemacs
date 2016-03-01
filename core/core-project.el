@@ -114,6 +114,14 @@
   (after! projectile
     (setq projectile-switch-project-action 'neotree-projectile-action))
 
+  ;; Shorter file names for org files
+  (defun narf*neo-path--file-short-name (orig-fun &rest args)
+    (let ((file (car args)))
+      (if (f-ext? file "org")
+          (s-replace "-" " " (f-base file))
+        (apply orig-fun args))))
+  (advice-add 'neo-path--file-short-name :around 'narf*neo-path--file-short-name)
+
   ;; A custom and simple theme for neotree
   (advice-add 'neo-buffer--insert-fold-symbol :override 'narf*neo-buffer-fold-symbol))
 

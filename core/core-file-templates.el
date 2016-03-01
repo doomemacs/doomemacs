@@ -19,6 +19,12 @@
           ("/Dockerfile$"                    "__"               dockerfile-mode)
           ("/docker-compose.yml$"            "__"               yaml-mode)
 
+          ;; Org-mode
+          ("\\.org$"                         "__"               org-mode)
+          ("/Work/.+\\.org$"                 "__project.org"    org-mode)
+          ("/Invoices/.+\\.org$"             "__invoice.org"    org-mode)
+          ("/Contacts/.+\\.org$"             "__contact.org"    org-mode)
+
           ;; C/C++
           ("/Makefile$"                      "__"               makefile-gmake-mode)
           ("/main\\.\\(cc\\|cpp\\)$"         "__main.cpp"       c++-mode)
