@@ -48,6 +48,49 @@
                           (with-current-buffer b repl-p)))))
            :popup t :align below :size 16)))
 
+  (after! help-mode
+    ;; So that help buffer links do not open in the help popup, we need to redefine these
+    ;; three button types to use `switch-to-buffer-other-window' rather than
+    ;; `pop-to-buffer'. Instead of lambas these help-functions should be function symbols,
+    ;; so that we could advise those instead of clumsify redefine these button types.
+    (define-button-type 'help-function-def
+      :supertype 'help-xref
+      'help-function (lambda (fun file)
+                       (require 'find-func)
+                       (when (eq file 'C-source)
+                         (setq file (help-C-file-name (indirect-function fun) 'fun)))
+                       (let ((location
+                              (find-function-search-for-symbol fun nil file)))
+                         (switch-to-buffer-other-window (car location))
+                         (if (cdr location)
+                             (goto-char (cdr location))
+                           (message "Unable to find location in file"))))
+      'help-echo (purecopy "mouse-2, RET: find function's definition"))
+
+    (define-button-type 'help-variable-def
+      :supertype 'help-xref
+      'help-function (lambda (var &optional file)
+                       (when (eq file 'C-source)
+                         (setq file (help-C-file-name var 'var)))
+                       (let ((location (find-variable-noselect var file)))
+                         (switch-to-buffer-other-window (car location))
+                         (if (cdr location)
+                             (goto-char (cdr location))
+                           (message "Unable to find location in file"))))
+      'help-echo (purecopy "mouse-2, RET: find variable's definition"))
+
+    (define-button-type 'help-face-def
+      :supertype 'help-xref
+      'help-function (lambda (fun file)
+                       (require 'find-func)
+                       (let ((location
+                              (find-function-search-for-symbol fun 'defface file)))
+                         (switch-to-buffer-other-window (car location))
+                         (if (cdr location)
+                             (goto-char (cdr location))
+                           (message "Unable to find location in file"))))
+      'help-echo (purecopy "mouse-2, RET: find face's definition")))
+
   (after! helm
     ;; This is a good alternative to either popwin or shackle, specifically for helm. If
     ;; either fail me (for the last time), this is where I'll turn.
