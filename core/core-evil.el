@@ -387,7 +387,7 @@
 
   (add-hook! emacs-lisp-mode
     (setq evil-surround-pairs-alist
-          (cons '(?\` . ("`" . "*")) evil-surround-pairs-alist)))
+          (cons '(?\` . ("`" . "'")) evil-surround-pairs-alist)))
 
   (add-hook! python-mode
     (setq evil-surround-pairs-alist

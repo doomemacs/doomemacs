@@ -9,7 +9,6 @@
 (use-package workgroups2
   :when (display-graphic-p)
   :init
-  (add-hook! after-init 'workgroups-mode)
   (setq-default
    wg-session-file          (expand-file-name "wg-default" narf-temp-dir)
    wg-workgroup-directory   (expand-file-name "workgroups" narf-temp-dir)
@@ -44,6 +43,8 @@
       (candidates . wg-workgroup-names)
       (action     . narf/wg-helm-switch-to-workgroup)))
 
+  (add-hook! emacs-startup (workgroups-mode +1))
+  :config
   (unless (file-exists-p wg-workgroup-directory)
     (mkdir wg-workgroup-directory))
 

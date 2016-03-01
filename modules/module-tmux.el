@@ -49,11 +49,6 @@
       (message "[Tmux] %s" command))))
 
 ;;;###autoload
-(defun narf/tmux-new-window ()
-  (interactive)
-  (tmux "tmux new-window" t))
-
-;;;###autoload
 (defun narf/tmux-cd-to-here (&optional dir)
   (interactive)
   (tmux (format "cd '%s'" (or dir default-directory))))

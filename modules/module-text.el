@@ -10,9 +10,6 @@
   :init
   (add-hook! markdown-mode 'narf|enable-hard-wrap)
   :config
-  (add-hook! markdown-mode
-    (exmap! "preview"  'narf/markdown-preview)
-    (exmap! "export"   'narf:org-export))
   (map! (:map markdown-mode-map
           "<backspace>"  nil
           "<M-left>"     nil

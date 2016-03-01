@@ -60,7 +60,7 @@
     ;; Helm tries to clean up after itself, but shackle has already done this. This fixes
     ;; that. To reproduce, add a helm rule in `shackle-rules', open two splits
     ;; side-by-side, move to the buffer on the right and invoke helm. It will close all
-    ;; but th left-most buffer.
+    ;; but the left-most buffer.
     (setq-default helm-split-window-in-side-p t))
 
   (after! helm-swoop
@@ -151,6 +151,7 @@
     (setq narf-popup-windows (delete window narf-popup-windows)))
 
   (defun narf/popup-p (&optional window)
+    "Whether WINDOW is a shackle popup window or not."
     (and narf-popup-windows
          (-any? (lambda (w)
                   (if (window-live-p w) t (narf--popup-remove w) nil))
@@ -160,11 +161,13 @@
            t)))
 
   (defun narf/popup-buffer (buffer &optional plist)
+    "Display BUFFER in a shackle popup."
     (let ((buffer-name (if (stringp buffer) buffer (buffer-name buffer))))
       (shackle-display-buffer (get-buffer-create buffer-name)
                               nil (or plist (shackle-match buffer-name)))))
 
   (defun narf/popup-close (&optional window dont-kill dont-close-all)
+    "Find and close the currently active popup (if available)."
     (interactive)
     (when (not window)
       (if (narf/popup-p (selected-window))
@@ -186,26 +189,29 @@
       (delete-window window)))
 
   (defun narf-popup-close-all (&optional dont-kill-buffers)
+    "Closes all popup windows (and kills the buffers if DONT-KILL-BUFFERS is non-nil)"
     (interactive)
     (mapc (lambda (w) (narf/popup-close w dont-kill-buffers))
           narf-popup-windows)
     (setq narf-popup-windows nil))
 
-  ;;;;;
-
+  ;;
   (defun narf/popup-toggle ()
+    "Toggles the popup window, reopening the last popup (if available)."
     (interactive)
     (if (narf/popup-p)
         (narf/popup-close t)
       (narf/popup-last-buffer)))
 
   (defun narf/popup-last-buffer ()
+    "Pop up the last popup buffer."
     (interactive)
     (if shackle-last-buffer
         (narf/popup-buffer shackle-last-buffer)
       (narf/popup-messages)))
 
   (defun narf/popup-messages ()
+    "Pop up the *Messages* buffer."
     (interactive)
     (narf/popup-buffer "*Messages*")
     (with-current-buffer "*Messages*"

@@ -22,7 +22,7 @@
  scroll-conservatively   1001
  scroll-preserve-screen-position t
 
- hscroll-step 1
+ hscroll-step   1
  hscroll-margin 1
 
  shift-select-mode       t
