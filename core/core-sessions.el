@@ -37,11 +37,6 @@
    wg-list-display-decor-current-right   ""
    wg-list-display-decor-previous-left   ""
    wg-list-display-decor-previous-right  "")
-  :config
-  (defvar narf/helm-source-wg
-    '((name       . "Workgroups")
-      (candidates . wg-workgroup-names)
-      (action     . narf/wg-helm-switch-to-workgroup)))
 
   (add-hook! emacs-startup (workgroups-mode +1))
   :config

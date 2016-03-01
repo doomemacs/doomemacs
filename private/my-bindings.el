@@ -126,10 +126,6 @@
      :n "r" 'narf/vcs-revert-hunk)
 
    :n  "b"  'helm-bookmarks
-   :n  "w"  'narf/tab-display
-   :n  "W"  'narf/helm-tabs
-
-   :n  "n"  'narf/neotree
    :nv "l"  'narf/nlinum-toggle
 
    :nv "qq" 'evil-save-and-quit

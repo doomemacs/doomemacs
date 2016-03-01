@@ -5,12 +5,6 @@
   (wg-switch-to-workgroup (wg-get-workgroup name)))
 
 ;;;###autoload
-(defun narf:helm-wg ()
-  (interactive)
-  (require 'helm)
-  (helm :sources '(narf/helm-source-wg)))
-
-;;;###autoload
 (defun narf/wg-projectile-switch-project ()
   (let ((workgroup-name (file-name-nondirectory (directory-file-name (narf/project-root)))))
     (wg-create-workgroup workgroup-name t)
