@@ -47,19 +47,19 @@
       (dolist (file paths)
         (when (file-directory-p file)
           (push file result)))
-      result)))
+      result))
 
-(defvar narf--load-path load-path)
-(defun narf/reload ()
-  (interactive)
-  (setq load-path
-        (progn (require 'cask)
-               (cask-initialize)
-               (append (list narf-private-dir)
-                       (--subdirs narf-core-dir t)
-                       (--subdirs narf-modules-dir t)
-                       (--subdirs narf-packages-dir)
-                       narf--load-path))))
+  (defvar narf--load-path load-path)
+  (defun narf/reload ()
+    (interactive)
+    (setq load-path
+          (progn (require 'cask)
+                 (cask-initialize)
+                 (append (list narf-private-dir)
+                         (--subdirs narf-core-dir t)
+                         (--subdirs narf-modules-dir t)
+                         (--subdirs narf-packages-dir)
+                         narf--load-path)))))
 
 (defun narf (packages)
   "Bootstrap NARF emacs and initialize PACKAGES"
