@@ -70,7 +70,7 @@
                     "add-hook" "associate" "open-with" "define-repl"
                     "define-builder" "narf-space-setup" "define-env-command"
                     "define-text-object" "add-yas-minor-mode" "define-docset"
-                    "define-org-link!" "define-company-backend"))
+                    "define-org-link!" "define-company-backend" "define-org-section"))
       "!\\)")
     (1 font-lock-keyword-face append))))
 
