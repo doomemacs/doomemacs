@@ -94,25 +94,32 @@
   (evil-set-initial-state 'neotree-mode 'motion)
   (add-hook! neotree-mode 'narf|neotree-init-keymap)
   (defun narf|neotree-init-keymap ()
-    (map! :map evil-motion-state-local-map
-          "ESC"  'neotree-hide
-          "q"   'neotree-hide
+    (map! (:map evil-motion-state-local-map
+            "ESC"    'neotree-hide
+            [escape] 'neotree-hide
+            "q"      'neotree-hide
 
-          "RET" 'neotree-enter
-          "J"   'neotree-select-next-sibling-node
-          "K"   'neotree-select-previous-sibling-node
-          "H"   'neotree-select-up-node
-          "L"   'neotree-select-down-node
-          "v"   'neotree-enter-vertical-split
-          "s"   'neotree-enter-horizontal-split
-          "c"   'neotree-create-node
-          "d"   'neotree-delete-node
-          "g"   'neotree-refresh
-          "r"   'neotree-rename-node
-          "R"   'neotree-change-root))
+            "RET" 'neotree-enter
+            "J"   'neotree-select-next-sibling-node
+            "K"   'neotree-select-previous-sibling-node
+            "H"   'neotree-select-up-node
+            "L"   'neotree-select-down-node
+            "v"   'neotree-enter-vertical-split
+            "s"   'neotree-enter-horizontal-split
+            "c"   'neotree-create-node
+            "d"   'neotree-delete-node
+            "g"   'neotree-refresh
+            "r"   'neotree-rename-node
+            "R"   'neotree-change-root)))
 
   (after! projectile
     (setq projectile-switch-project-action 'neotree-projectile-action))
+
+  ;; Don't ask for confirmation when creating files
+  (defun narf*neotree-create-node (orig-fun &rest args)
+    (cl-letf (((symbol-function 'yes-or-no-p) (lambda (&rest _) t)))
+      (apply orig-fun args)))
+  (advice-add 'neotree-create-node :around 'narf*neotree-create-node)
 
   ;; Shorter file names for org files
   (defun narf*neo-path--file-short-name (orig-fun &rest args)
@@ -121,6 +128,9 @@
           (s-replace "-" " " (f-base file))
         (apply orig-fun args))))
   (advice-add 'neo-path--file-short-name :around 'narf*neo-path--file-short-name)
+
+  (advice-add 'narf--evil-window-move  :before 'narf|neotree-close-on-window-change)
+  (advice-add 'narf--evil-swap-windows :before 'narf|neotree-close-on-window-change)
 
   ;; A custom and simple theme for neotree
   (advice-add 'neo-buffer--insert-fold-symbol :override 'narf*neo-buffer-fold-symbol))
