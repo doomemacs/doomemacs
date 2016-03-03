@@ -23,14 +23,14 @@
    ;; Don't override evil-ex's completion
    helm-mode-handle-completion-in-region nil
 
-   helm-candidate-number-limit 50
+   helm-candidate-number-limit 40
    helm-bookmark-show-location t)
 
   :config
   (require 'helm-files)
 
   (mapc (lambda (r) (add-to-list 'helm-boring-file-regexp-list r))
-        (list "\\.projects$" "\\.DS_Store$"))
+        (list "\\.projects$" "\\.DS_Store$" "\\.cask"))
 
   (map! (:map helm-generic-files-map
           "ESC"        'helm-keyboard-quit)
@@ -98,6 +98,7 @@
         projectile-project-root-files narf-project-root-files)
 
   (add-to-list 'projectile-globally-ignored-files "ido.last")
+  (add-to-list 'projectile-globally-ignored-directories ".cask")
   (add-to-list 'projectile-globally-ignored-directories "assets")
   (add-to-list 'projectile-globally-ignored-directories ".export")
   (add-to-list 'projectile-globally-ignored-directories ".attach")
@@ -143,7 +144,6 @@
         helm-swoop-pre-input-function (lambda () "")))
 
 (use-package helm-describe-modes :defer t)
-;; (use-package helm-c-yasnippet :commands helm-yas-visit-snippet-file)
 (use-package helm-semantic :commands helm-semantic-or-imenu)
 (use-package helm-elisp    :commands helm-apropos)
 (use-package helm-command  :commands helm-M-x)

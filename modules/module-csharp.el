@@ -20,7 +20,7 @@
   :config
   (map! :map omnisharp-mode-map
         "gd" 'omnisharp-go-to-definition
-        (:prefix "\\"
+        (:localleader
           "tr" (λ! (omnisharp-unit-test "fixture"))
           "ts" (λ! (omnisharp-unit-test "single"))
           "ta" (λ! (omnisharp-unit-test "all"))))

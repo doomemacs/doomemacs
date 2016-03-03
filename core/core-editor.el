@@ -1,12 +1,11 @@
 ;;; core-editor.el
-;; see lib/editor-defuns.el
 
-;;;; Editor behavior ;;;;;;;;;;;;;;;;
 (setq-default
  ;; spaces instead of tabs
  indent-tabs-mode        nil
  tab-always-indent       t
  tab-width               4
+
  require-final-newline   t
  delete-trailing-lines   nil
  fill-column             90
@@ -21,11 +20,10 @@
  scroll-margin           0
  scroll-conservatively   1001
  scroll-preserve-screen-position t
-
  hscroll-step   1
  hscroll-margin 1
 
- shift-select-mode       t
+ shift-select-mode t
  tabify-regexp "^\t* [ \t]+"
  whitespace-style '(face tabs tab-mark trailing newline indentation newline-mark)
  whitespace-display-mappings
@@ -40,7 +38,9 @@
   (save-place-mode +1))
 
 
-;; Automatic minor modes ;;;;;;;;;;;
+;;
+;; Automatic minor modes
+;;
 
 (defvar narf-auto-minor-mode-alist '()
   "Alist of filename patterns vs corresponding minor mode functions, see
@@ -67,7 +67,9 @@ enable multiple minor modes for the same regexp.")
 (add-hook! find-file 'narf|enable-minor-mode-maybe)
 
 
-;; Modes 'n hooks ;;;;;;;;;;;;;;;;;;;
+;;
+;; Modes 'n hooks
+;;
 
 (associate! applescript-mode    :match "\\.applescript$")
 (associate! emacs-lisp-mode     :match "\\(/Cask\\|\\.\\(el\\|gz\\)\\)$")
@@ -100,8 +102,7 @@ enable multiple minor modes for the same regexp.")
     (fundamental-mode)
     (visual-line-mode)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+;;
 ;; (global-whitespace-mode 1)  ; Show whitespace
 ;; (global-font-lock-mode t)   ; Enable syntax highlighting for older emacs
 (electric-indent-mode -1)      ; on by default
@@ -113,7 +114,10 @@ enable multiple minor modes for the same regexp.")
 (add-hook! after-init
   (setq winner-boring-buffers narf-ignore-buffers))
 
-;; Extra modes ;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;
+;; Extra modes
+;;
 
 (use-package vimrc-mode :mode ("/\\.?g?vimrc$" "\\.vim$" "/\\.vim/rc/.+$"))
 ;; Data formats
@@ -126,7 +130,10 @@ enable multiple minor modes for the same regexp.")
   (define-docset! dockerfile-mode "docker")
   (define-builder! dockerfile-mode dockerfile-build-buffer "Dockerfile"))
 
-;; Plugins ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;
+;; Plugins
+;;
 
 (use-package avy
   :commands (avy-goto-char-2 avy-goto-line)

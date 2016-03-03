@@ -8,7 +8,10 @@
 (defvar narf-leader-prefix "," "Prefix key for <leader> maps")
 (defvar narf-localleader-prefix "\\" "Prefix key for <localleader> maps")
 
-;; Buffers/Files ;;;;;;;;;;;;;;;;;;;;;;;
+
+;;
+;; Buffers/Files
+;;
 
 (defvar narf-unreal-buffers '("^ ?\\*.+\\*"
                               image-mode
@@ -55,6 +58,13 @@ gets killed.")
     "mix.exs")
   "A list of files that count as 'project files', which determine whether a
     folder is the root of a project or not.")
+
+
+;;
+;; Fringe/margins
+;;
+
+(defvar narf-fringe-size 6 "Default width to use for the fringes.")
 
 (provide 'core-vars)
 ;;; core-vars.el ends here

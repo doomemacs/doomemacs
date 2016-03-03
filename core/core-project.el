@@ -1,6 +1,9 @@
 ;;; core-project.el --- all your (basic) project navigational needs
 
-;;; Dired
+;;
+;; Dired
+;;
+
 ;; Always copy/delete recursively
 (setq dired-recursive-copies (quote always))
 (setq dired-recursive-deletes (quote top))
@@ -32,8 +35,7 @@
       (make-directory parent-directory t))))
 (add-to-list 'find-file-not-found-functions #'narf|create-non-existent-directory)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+;;
 (use-package ido
   :defines (flx-ido-mode ido-ubiquitous-debug-mode ido-context-switch-command ido-temp-list)
   :functions (ido-to-end)
@@ -73,6 +75,7 @@
   (add-hook! (ido-make-file-list ido-make-dir-list) 'narf*ido-sort-mtime)
   (add-hook! ido-setup 'narf|ido-setup-home-keybind))
 
+;;
 (use-package neotree
   :commands (neotree-show
              neotree-hide

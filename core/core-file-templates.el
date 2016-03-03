@@ -1,10 +1,10 @@
-;;; core-file-templates.el --- file templates
+;;; core-file-templates.el
 
 (use-package autoinsert
   :defer t
   :init
-  (setq auto-insert-query nil    ; Don't prompt before insertion
-        auto-insert-alist '())
+  (setq auto-insert-query nil  ; Don't prompt before insertion
+        auto-insert-alist '()) ; Tabula rasa
   :config
   (auto-insert-mode 1)
 

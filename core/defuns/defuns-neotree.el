@@ -17,7 +17,7 @@
       (neotree-find))))
 
 ;;;###autoload
-(defun narf|neotree-close-on-window-change ()
+(defun narf|neotree-close-on-window-change (&rest _)
   "Close neotree to prevent ensuing mindow buggery."
   (unless (and (neo-global--window-exists-p)
                (eq (current-buffer) (neo-global--get-buffer)))

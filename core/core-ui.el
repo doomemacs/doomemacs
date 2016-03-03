@@ -1,5 +1,4 @@
 ;;; core-ui.el --- interface settings
-;; see lib/ui-defuns.el
 
 (setq-default
  blink-matching-paren nil
@@ -10,69 +9,78 @@
  ;; switching.
  cursor-in-non-selected-windows nil
  highlight-nonselected-windows  nil
+ hl-line-sticky-flag            nil  ; only highlight in one window
 
- ;; Custom mode-line solves duplicate buffer names
- uniquify-buffer-name-style     nil
+ uniquify-buffer-name-style     nil  ; my mode-line does this for me
  visible-bell                   nil  ; silence of the bells
  use-dialog-box                 nil  ; always avoid GUI
  redisplay-dont-pause           t
- indicate-buffer-boundaries     nil
+ indicate-buffer-boundaries     t
  indicate-empty-lines           t
  fringes-outside-margins        t
- hl-line-sticky-flag            nil  ; only highlight in one window
-
- idle-update-delay              1
-
+ idle-update-delay              2    ; update a little less often
  split-width-threshold          nil  ; favor horizontal splits
  show-help-function             nil  ; hide :help-echo text
 
+ ;; Disable bidirectional text support for slight performance bonus
  bidi-display-reordering        nil
 
  ;; Minibuffer resizing
  resize-mini-windows            'grow-only
  max-mini-window-height         0.3
 
+ ;; Remove arrow on the right fringe when wrapped
  fringe-indicator-alist (delq (assoc 'continuation fringe-indicator-alist)
                               fringe-indicator-alist))
 
-(defface narf-minibuffer-active  '((t (:inherit mode-line))) "Face for active minibuffer")
-(defvar narf-fringe-size 6)
-(if window-system
-    (progn
-      (fringe-mode narf-fringe-size)
-      (setq frame-title-format '(buffer-file-name "%f" ("%b")))
+(blink-cursor-mode  1)    ; blink cursor
+(tooltip-mode      -1)    ; show tooltips in echo area
 
-      (narf/load-font narf-default-font)
-      (set-face-attribute 'default t :font narf-default-font)
+;; Set up minibuffer and fringe
+(defface narf-minibuffer-active '((t (:inherit mode-line)))
+  "Face for active minibuffer")
 
-      (define-fringe-bitmap 'tilde [64 168 16] nil nil 'center)
-      (setcdr (assq 'empty-line fringe-indicator-alist) 'tilde)
-      (set-fringe-bitmap-face 'tilde 'font-lock-comment-face)
+(if (not window-system)
+    (menu-bar-mode -1)
+  ;; Set fonts
+  (narf/load-font narf-default-font)
+  (set-face-attribute 'default t :font narf-default-font)
 
-      (set-window-fringes (minibuffer-window) 0 0 nil)
-      (defun narf|minibuffer-setup ()
-        (set-window-fringes (selected-window) 0 0 nil)
-        (make-local-variable 'face-remapping-alist)
-        (add-to-list 'face-remapping-alist '(default narf-minibuffer-active)))
-      (add-hook! minibuffer-setup 'narf|minibuffer-setup))
-  (menu-bar-mode -1))
+  ;; Setup fringe
+  (fringe-mode narf-fringe-size)
+  (setq frame-title-format '(buffer-file-name "%f" ("%b")))
+  (set-window-fringes (minibuffer-window) 0 0 nil)
+  ;; Tilde empty-line indicator
+  (define-fringe-bitmap 'tilde [64 168 16] nil nil 'center)
+  (setcdr (assq 'empty-line fringe-indicator-alist) 'tilde)
+  (set-fringe-bitmap-face 'tilde 'font-lock-comment-face)
+
+  ;; Brighter minibuffer when active
+  (defun narf|minibuffer-setup ()
+    (set-window-fringes (selected-window) 0 0 nil)
+    (make-local-variable 'face-remapping-alist)
+    (add-to-list 'face-remapping-alist '(default narf-minibuffer-active)))
+  (add-hook! minibuffer-setup 'narf|minibuffer-setup))
 
 ;; Fix display of certain unicode characters
-(mapc (lambda (x)
-        (set-fontset-font "fontset-default" `(,x . ,x)
-                          (font-spec :name "DejaVu Sans") nil 'prepend))
-      '(?☑ ?☐ ?✍ ?⚠ ?★))
-(mapc (lambda (x)
-        (set-fontset-font "fontset-default" `(,x . ,x)
-                          (font-spec :name "DejaVu Sans" :size 10) nil))
-      '(?➊ ?➋ ?➌ ?➍ ?➎ ?❻ ?➐ ?➑ ?➒ ?➓ ?λ))
-(mapc (lambda (x)
-        (set-fontset-font "fontset-default" `(,x . ,x)
-                          (font-spec :name "FontAwesome" :size 13) nil))
-      '(? ? ? ? ? ? ? ? ?))
+(mapc (lambda (set)
+        (let ((font (car set))
+              (chars  (cadr set))
+              (size  (caddr set)))
+          (mapc (lambda (x) (set-fontset-font
+                        "fontset-default" `(,x . ,x)
+                        (font-spec :name font :size size) nil 'prepend))
+                chars)))
+      '(("DejaVu Sans" (?☑ ?☐ ?✍ ?⚠ ?★ ?λ
+                        ?➊ ?➋ ?➌ ?➍ ?➎ ?❻ ?➐ ?➑ ?➒ ?➓))
+        ;; File attachment symbols (for org-mode)
+        ("FontAwesome" (? ? ? ? ? ? ? ? ?) 13)
+        ;; Math symbols
+        ("Hack"        (?× ?∙ ?÷ ?⌉ ?⌈ ?⌊ ?⌋
+                        ?∩ ?∪ ?⊆ ?⊂ ?⊄ ?⊇ ?⊃ ?⊅
+                        ?⇒ ?⇐ ?⇔ ?↔ ?→ ?≡ ?∴ ?∵ ?⊕ ?∀ ?∃ ?∄ ?∈ ?∉
+                        ?∨ ?∧ ?¬))))
 
-(blink-cursor-mode  1)    ; do blink cursor
-(tooltip-mode      -1)    ; show tooltips in echo area
 ;; on by default in Emacs 25
 (when (and (featurep 'eldoc) (>= emacs-major-version 25))
   (global-eldoc-mode -1))
@@ -91,10 +99,10 @@
 (add-hook! evil-visual-state-entry 'narf|hl-line-off)
 (add-hook! evil-visual-state-exit  'narf|hl-line-on)
 
-;; Hide modeline in help windows ;;;;;;;
+;; Hide modeline in help windows
 (add-hook! help-mode (setq-local mode-line-format nil))
 
-;; Highlight TODO/FIXME/NOTE tags ;;;;;;
+;; Highlight TODO/FIXME/NOTE tags
 (defface narf-todo-face  '((t (:inherit font-lock-warning-face))) "Face for TODOs")
 (defface narf-fixme-face '((t (:inherit font-lock-warning-face))) "Face for FIXMEs")
 (defface narf-note-face  '((t (:inherit font-lock-warning-face))) "Face for NOTEs")
@@ -103,11 +111,15 @@
                                 ("\\<\\(FIXME\\((.+)\\)?:?\\)" 1 'narf-fixme-face prepend)
                                 ("\\<\\(NOTE\\((.+)\\)?:?\\)"  1 'narf-note-face prepend))))
 
-;; Fade out when unfocused ;;;;;;;;;;;;;
+;; Fade out when unfocused
 (add-hook! focus-in  (set-frame-parameter nil 'alpha 100))
 (add-hook! focus-out (set-frame-parameter nil 'alpha 75))
 
-;; Plugins ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;
+;; Plugins
+;;
+
 (use-package visual-fill-column :defer t)
 
 (use-package yascroll

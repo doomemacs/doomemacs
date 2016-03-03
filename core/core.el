@@ -11,15 +11,9 @@
 ;;   narf....     Custom prefix commands
 ;;   ...!         Macro
 ;;
+;;  You will find all autoloaded function in {core,modules}/defuns/defuns-*.el
+;;
 ;;;
-
-;; Ask for confirmation on exit only if there are real buffers left
-(when window-system
-  (setq confirm-kill-emacs
-        (lambda (_)
-          (if (narf/get-real-buffers)
-              (y-or-n-p ">> Gee, I dunno Brain... Are you sure?")
-            t))))
 
 (setq-default
  ad-redefinition-action            'accept      ; silence the advised function warnings
@@ -62,7 +56,7 @@
  undo-tree-auto-save-history        t
  undo-tree-history-directory-alist `(("." . ,(concat narf-temp-dir "undo/"))))
 
-;;; UTF-8 please
+;; UTF-8 please
 (setq locale-coding-system    'utf-8)   ; pretty
 (set-terminal-coding-system   'utf-8)   ; pretty
 (set-keyboard-coding-system   'utf-8)   ; pretty
@@ -70,8 +64,18 @@
 (prefer-coding-system         'utf-8)   ; with sugar on top
 (fset 'yes-or-no-p 'y-or-n-p)           ; y/n instead of yes/no
 
+;; Ask for confirmation on exit only if there are real buffers left
+(when window-system
+  (setq confirm-kill-emacs
+        (lambda (_)
+          (if (narf/get-real-buffers)
+              (y-or-n-p ">> Gee, I dunno Brain... Are you sure?")
+            t))))
 
-;; Bootstrap ;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;
+;; Bootstrap
+;;
 
 (autoload 'use-package "use-package" "" nil 'macro)
 (require 'dash)
@@ -136,21 +140,19 @@
              async-wait
              async-inject-variables))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;;
 (require (cond (IS-MAC      'core-os-osx)
                (IS-LINUX    'core-os-linux)
                (IS-WINDOWS  'core-os-win32)))
 
-;; Set this up at the end to allow errors to prevent it.
+
+;;
+;; Allow errors to stop this from happening
 (add-hook! after-init
   (defadvice save-buffers-kill-emacs (around no-query-kill-emacs activate)
     "Prevent annoying \"Active processes exist\" query when you quit Emacs."
     (cl-flet ((process-list ())) ad-do-it)))
-
-(defun display-startup-echo-area-message ()
-  (after! workgroups2
-    (message "%sLoaded in %s" (narf/tab-display t t) (emacs-init-time))))
 
 (require 'server)
 (unless (server-running-p)

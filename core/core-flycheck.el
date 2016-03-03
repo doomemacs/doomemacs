@@ -1,5 +1,4 @@
 ;;; core-flycheck.el --- check yourself before you shrek yourself
-;; Related to: lib/defuns-flycheck.el
 
 (use-package flycheck
   :commands (flycheck-mode flycheck-list-errors flycheck-buffer)

@@ -1,5 +1,4 @@
 ;;; core-sessions.el
-;; see lib/workgroup-defuns.el
 
 ;; I use workgroups to accomplish two things:
 ;;   1. Vim-like tab emulation (type :tabs to see a list of tabs -- maybe I'll add some

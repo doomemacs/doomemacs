@@ -76,6 +76,9 @@
       (load "~/.emacs.local.el"))
     (load-theme narf-theme t)
     (setq narf-current-theme narf-theme)
-    (mapc 'require packages)))
+    (mapc 'require packages)
+
+    (defun display-startup-echo-area-message ()
+      (message ":: Loaded in %s" (emacs-init-time)))))
 
 ;;; bootstrap.el ends here

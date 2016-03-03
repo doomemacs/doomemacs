@@ -1,5 +1,4 @@
 ;;; core-evil.el --- the root of all evil
-;; see lib/evil-defuns.el
 
 (use-package evil
   :init

@@ -1,5 +1,4 @@
 ;;; core-completion.el --- auto completion backend (Company-mode)
-;; see lib/company-macros.el
 
 (use-package company
   :commands (global-company-mode company-complete company-complete-common company-dict
@@ -25,19 +24,18 @@
         company-quickhelp-delay nil)
 
   :config
-  (require 'company-statistics)
+  (use-package company-statistics)
 
   ;; NOTE: pos-tip.el in Emacs 25+ does not work
-  (require 'company-quickhelp)
-  (company-quickhelp-mode +1)
-
-  ;; Rewrites evil-complete to use company-dabbrev
-  (setq evil-complete-next-func      'narf/company-evil-complete-next
-        evil-complete-previous-func  'narf/company-evil-complete-previous)
+  (use-package company-quickhelp :config (company-quickhelp-mode +1))
 
   (use-package company-dict :defer t
     :config
     (setq company-dict-dir (concat narf-private-dir "dict")))
+
+  ;; Rewrites evil-complete to use company-dabbrev
+  (setq evil-complete-next-func      'narf/company-evil-complete-next
+        evil-complete-previous-func  'narf/company-evil-complete-previous)
 
   (add-to-list 'company-transformers 'company-sort-by-occurrence)
   (setq-default company-backends (append '(company-keywords) company-backends))

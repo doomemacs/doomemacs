@@ -5,7 +5,7 @@
 (defmacro add-yas-minor-mode! (mode)
   "Register minor MODES in yasnippet."
   `(after! yasnippet
-     (when (boundp 'yas-extra-modes)
+     (when (boundp 'yas--extra-modes)
        (add-hook ',(intern (concat (symbol-name (cadr mode)) "-hook"))
                  (lambda ()
                    (if (symbol-value ,mode)
