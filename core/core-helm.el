@@ -12,7 +12,7 @@
    helm-apropos-fuzzy-match nil
    helm-M-x-fuzzy-match nil
    helm-recentf-fuzzy-match nil
-   helm-projectile-fuzzy-match t
+   helm-projectile-fuzzy-match nil
 
    helm-display-header-line nil
    helm-ff-auto-update-initial-value nil
@@ -32,18 +32,20 @@
   (mapc (lambda (r) (add-to-list 'helm-boring-file-regexp-list r))
         (list "\\.projects$" "\\.DS_Store$"))
 
-  (map! (:map (helm-map helm-generic-files-map helm-find-files-map helm-swoop-map helm-projectile-find-file-map)
+  (map! (:map helm-generic-files-map
+          "ESC"        'helm-keyboard-quit)
+        (:map (helm-map helm-generic-files-map helm-find-files-map helm-swoop-map helm-projectile-find-file-map)
           "C-w"        'backward-kill-word
           "C-r"        'evil-paste-from-register ; Evil registers in helm! Glorious!
           "/"          nil
           "<left>"     'backward-char
           "<right>"    'forward-char
           "<escape>"   'helm-keyboard-quit
-          [escape]     'helm-keyboard-quit)
+          [escape]     'helm-keyboard-quit
+          "<tab>"      'helm-execute-persistent-action)
         (:map helm-find-files-map
           "C-w"        'helm-find-files-up-one-level
-          "TAB"        'helm-execute-persistent-action
-          "/"          'helm-execute-persistent-action)
+          "TAB"        'helm-execute-persistent-action)
         (:map helm-ag-map
           "<backtab>"  'helm-ag-edit)
         (:map helm-ag-edit-map
@@ -70,6 +72,10 @@
         (setq plist (plist-put plist :prompt helm-global-prompt))
       (setcar (nthcdr 2 plist) helm-global-prompt))
     plist)
+
+  (defvar narf-helm-force-project-buffers nil)
+  (defun helm*buffer-list (&rest _) (narf/get-buffer-names narf-helm-force-project-buffers))
+  (advice-add 'helm-buffer-list :override 'helm*buffer-list)
 
   ;; Shrink source headers if there is only one source
   (add-hook 'helm-after-initialize-hook 'narf*helm-hide-source-header-maybe)

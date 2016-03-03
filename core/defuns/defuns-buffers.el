@@ -50,6 +50,11 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
       buffers)))
 
 ;;;###autoload
+(defun narf/get-buffer-names (&optional project-p)
+  (mapcar (lambda (b) (buffer-name b))
+          (narf/get-buffers project-p)))
+
+;;;###autoload
 (defun narf/get-visible-windows (&optional buffer-list)
   (-map #'get-buffer-window
         (narf/get-visible-buffers (or buffer-list (narf/get-buffers)))))
