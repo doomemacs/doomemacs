@@ -12,11 +12,9 @@
 
 ;;;###autoload (autoload 'narf:toggle-fullscreen "defuns-ui" nil t)
 (after! evil
-  (evil-define-command narf:toggle-fullscreen (&optional bang)
-    (interactive "<!>")
-    (if bang
-        (writeroom-mode (if writeroom-mode -1 1))
-      (set-frame-parameter nil 'fullscreen (if (not (frame-parameter nil 'fullscreen)) 'fullboth)))))
+  (evil-define-command narf:toggle-fullscreen ()
+    (interactive)
+    (set-frame-parameter nil 'fullscreen (if (not (frame-parameter nil 'fullscreen)) 'fullboth))))
 
 ;;;###autoload
 (defun narf/reset-theme ()
