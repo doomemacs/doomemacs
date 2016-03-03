@@ -297,20 +297,21 @@
           "C-p" 'evil-multiedit-prev)))
 
 (use-package evil-indent-plus
-  :commands
-  (evil-indent-plus-i-indent
-   evil-indent-plus-a-indent
-   evil-indent-plus-i-indent-up
-   evil-indent-plus-a-indent-up
-   evil-indent-plus-i-indent-up-down
-   evil-indent-plus-a-indent-up-down)
-  :config
-  (define-key evil-inner-text-objects-map "i" 'evil-indent-plus-i-indent)
-  (define-key evil-outer-text-objects-map "i" 'evil-indent-plus-a-indent)
-  (define-key evil-inner-text-objects-map "I" 'evil-indent-plus-i-indent-up)
-  (define-key evil-outer-text-objects-map "I" 'evil-indent-plus-a-indent-up)
-  (define-key evil-inner-text-objects-map "J" 'evil-indent-plus-i-indent-up-down)
-  (define-key evil-outer-text-objects-map "J" 'evil-indent-plus-a-indent-up-down))
+  :commands (evil-indent-plus-i-indent
+             evil-indent-plus-a-indent
+             evil-indent-plus-i-indent-up
+             evil-indent-plus-a-indent-up
+             evil-indent-plus-i-indent-up-down
+             evil-indent-plus-a-indent-up-down)
+  :init
+  (map! (:map evil-inner-text-objects-map
+          "i" 'evil-indent-plus-i-indent
+          "I" 'evil-indent-plus-i-indent-up
+          "J" 'evil-indent-plus-i-indent-up-down)
+        (:map evil-outer-text-objects-map
+          "i" 'evil-indent-plus-a-indent
+          "I" 'evil-indent-plus-a-indent-up
+          "J" 'evil-indent-plus-a-indent-up-down)))
 
 (use-package evil-matchit
   :commands (evilmi-jump-items evilmi-text-object global-evil-matchit-mode)
