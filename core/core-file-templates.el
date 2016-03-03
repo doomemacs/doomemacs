@@ -34,6 +34,7 @@
           ("\\.c$"                           "__.c"             c-mode)
 
           ;; Elisp
+          ("-test\\.el$"                     "__"               emacs-ert-mode)
           ("\\.emacs\\.d/.+\\.el$"           "__initfile"       emacs-lisp-mode)
           ("\\.emacs\\.d/private/\\(snippets\\|templates\\)/.+$" "__" snippet-mode)
 

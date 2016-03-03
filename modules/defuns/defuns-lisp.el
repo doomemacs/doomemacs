@@ -12,5 +12,37 @@
   (let ((func (function-called-at-point)))
     (if func (find-function-other-window func))))
 
+(defun narf--ert-pre ()
+  (save-buffer)
+  (eval-buffer))
+
+;;;###autoload
+(defun narf/ert-run-test ()
+  (interactive)
+  (let (case-fold-search)
+    (narf--ert-pre)
+    (aif (thing-at-point 'defun t)
+        (if (string-match "(ert-deftest \\([^ ]+\\)" it)
+            (ert-run-tests-interactively (substring it (match-beginning 1) (match-end 1)))
+          (user-error "Invalid test at point"))
+      (user-error "No test found at point"))))
+
+;;;###autoload
+(defun narf/ert-rerun-test ()
+  (interactive)
+  (let (case-fold-search)
+    (narf--ert-pre)
+    (aif (car-safe ert--selector-history)
+        (ert-run-tests-interactively it)
+      (message "No test found in history, looking for test at point")
+      (narf/ert-run-test))))
+
+;;;###autoload
+(defun narf/ert-run-all-tests ()
+  (interactive)
+  (ert-delete-all-tests)
+  (narf--ert-pre)
+  (ert-run-tests-interactively t))
+
 (provide 'defuns-lisp)
 ;;; defuns-lisp.el ends here
