@@ -2,7 +2,7 @@
 ;; see lib/company-macros.el
 
 (use-package company
-  :commands (global-company-mode company-complete-common company-dict
+  :commands (global-company-mode company-complete company-complete-common company-dict
              company-files company-tags company-ispell company-yasnippet
              company-semantic company-dabbrev-code company-manual-begin)
   :init
