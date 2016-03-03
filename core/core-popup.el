@@ -12,6 +12,7 @@
           ("*quickrun*"                      :align below  :size 15  :noselect t)
           ("*eval*"                          :align below  :size 15)
           ("*esup*"                          :align below  :size 30 :noselect t)
+          ("*ert*"                           :align below  :size 20 :noselect t)
 
           ;; vcs
           ("^\\*git-gutter.+\\*$"  :regexp t :align below  :size 0.4 :noselect t)
@@ -47,6 +48,12 @@
                         (when (string-prefix-p "*" (buffer-name (get-buffer b)))
                           (with-current-buffer b repl-p)))))
            :popup t :align below :size 16)))
+
+  (after! ert
+    (add-hook! 'ert-results-mode-hook (setq mode-line-format nil))
+    (map! (:map ert-results-mode-map
+            [escape]   'quit-window
+            "<escape>" 'quit-window)))
 
   (after! help-mode
     ;; So that help buffer links do not open in the help popup, we need to redefine these
