@@ -92,16 +92,21 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
   "Kill buffer (but only bury scratch buffer), then switch to a real buffer. Only buries
 the buffer if it is being displayed in another window."
   (interactive)
-  (cond ((string-match-p "^\\*scratch\\*" (buffer-name))
-         (erase-buffer))
-        (t
-         (if (> (length (get-buffer-window-list (current-buffer) nil nil)) 1)
-             (bury-buffer)
-           (kill-this-buffer))))
-  (if (narf/popup-p (selected-window))
-      (narf/popup-close)
-    (unless (narf/real-buffer-p (current-buffer))
-      (narf/previous-real-buffer))))
+  (let (new-dir)
+    (cond ((string-match-p "^\\*scratch\\*" (buffer-name))
+           (erase-buffer))
+          (t
+           (setq new-dir (narf/project-root))
+           (if (> (length (get-buffer-window-list (current-buffer) nil nil)) 1)
+               (bury-buffer)
+             (kill-this-buffer))))
+    (if (narf/popup-p (selected-window))
+        (narf/popup-close)
+      (unless (narf/real-buffer-p (current-buffer))
+        (narf/previous-real-buffer)
+        (when (and (string-match-p "^\\*scratch\\*" (buffer-name)) new-dir)
+          (setq header-line-format new-dir)
+          (setq default-directory new-dir))))))
 
 ;;;###autoload
 (defun narf/kill-unreal-buffers ()
