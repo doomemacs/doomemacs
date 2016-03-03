@@ -30,7 +30,7 @@
 (use-package android-mode
   :commands android-mode
   :init
-  ;; (after! company-dict (add-to-list 'company-dict-minor-mode-alist 'android-mode))
+  (after! company-dict (add-to-list 'company-dict-minor-mode-list 'android-mode))
   (add-hook! (java-mode groovy-mode nxml-mode) 'narf|android-mode-enable-maybe)
   (add-hook! android-mode (add-yas-minor-mode! 'android-mode)))
 

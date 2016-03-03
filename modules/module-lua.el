@@ -7,7 +7,7 @@
   (define-repl! lua-mode narf-inf-lua)
   (add-hook! lua-mode 'flycheck-mode)
   (after! company-dict
-    (add-to-list 'company-dict-minor-mode-alist 'love-mode))
+    (add-to-list 'company-dict-minor-mode-list 'love-mode))
 
   (defun narf-inf-lua ()
     (lua-start-process "lua" "lua")

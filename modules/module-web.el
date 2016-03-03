@@ -104,7 +104,7 @@
 (add-hook! jekyll-mode
   (when (eq major-mode 'web-mode)
     (web-mode-set-engine "django")))
-;; (after! company-dict (add-to-list 'company-dict-minor-mode-alist 'jekyll-mode))
+(after! company-dict (add-to-list 'company-dict-minor-mode-list 'jekyll-mode))
 
 (define-minor-mode wordpress-mode
   "Wordpress development mode."
@@ -115,7 +115,7 @@
 (associate! wordpress-mode
   :match "/wp-\\(\\(content\\|admin\\|includes\\)/\\)?.+$"
   :files ("wp-config.php" "wp-content"))
-;; (after! company-dict (add-to-list 'company-dict-minor-mode-alist 'wordpress-mode))
+(after! company-dict (add-to-list 'company-dict-minor-mode-list 'wordpress-mode))
 
 (provide 'module-web)
 ;;; module-web.el ends here
