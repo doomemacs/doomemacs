@@ -1,8 +1,6 @@
 ;;; defuns-workgroup.el
 
 ;;;###autoload
-(defun narf/wg-helm-switch-to-workgroup (name)
-  (wg-switch-to-workgroup (wg-get-workgroup name)))
 
 ;;;###autoload
 (defun narf/wg-projectile-switch-project ()
@@ -27,17 +25,26 @@
                      wg-session-file))
   (narf/workgroup-display t))
 
+;;;###autoload
+(defun narf/clear-sessions ()
+  "Delete all session files."
+  (interactive)
+  (mapc 'delete-file (f-glob (expand-file-name "*" wg-workgroup-directory))))
+
 ;;;###autoload (autoload 'narf:workgroup-new "defuns-workgroup" nil t)
 (evil-define-command narf:workgroup-new (bang name &optional silent)
   "Create a new workgroup. If BANG, clone the current one to it."
   (interactive "<!><a>")
   (unless name
-    (setq name (format "#%s" (length (wg-workgroup-list)))))
-  (if bang
-      (wg-clone-workgroup (wg-current-workgroup) name)
-    (wg-create-workgroup name t))
+    (setq name (format "#%s" (1+ (length (wg-workgroup-list))))))
+  (let ((new-wg (wg-get-workgroup name t)))
+    (when (and new-wg bang)
+      (wg-delete-workgroup new-wg))
+    (setq new-wg (wg-make-and-add-workgroup name t))
+    (add-to-list 'narf-wg-names (wg-workgroup-uid new-wg))
+    (wg-switch-to-workgroup new-wg))
   (unless silent
-    (narf--workgroup-display (wg-previous-workgroup)
+    (narf--workgroup-display (wg-previous-workgroup t)
                              (format "Created %s" name)
                              'success)))
 
@@ -63,6 +70,7 @@
     (when bang
       (setq wg-name (wg-read-workgroup-name)))
     (let ((wg (wg-get-workgroup name)))
+      (setq narf-wg-names (delete (wg-workgroup-uid wg) narf-wg-names))
       (if (eq wg current-wg)
           (wg-kill-workgroup)
         (wg-delete-workgroup wg))

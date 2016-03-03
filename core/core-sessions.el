@@ -11,7 +11,7 @@
   :init
   (setq-default
    wg-session-file          (expand-file-name "wg-default" narf-temp-dir)
-   wg-workgroup-directory   (expand-file-name "workgroups" narf-temp-dir)
+   wg-workgroup-directory   (expand-file-name "workgroups/" narf-temp-dir)
    wg-first-wg-name         "*untitled*"
    wg-session-load-on-start t
    wg-mode-line-display-on  nil
@@ -45,10 +45,10 @@
 
   (defvar narf-wg-frames '()
     "A list of all the frames opened as separate workgroups. See
-lib/defuns-workgroups.el.")
+defuns/defuns-workgroups.el.")
   (defvar narf-wg-names '()
     "A list of fixed names for workgroups. If a name is set, workgroup names aren't
-    automatically renamed to the project name.")
+automatically renamed to the project name.")
 
   ;; Remember the set names in between sessions
   (add-to-list 'savehist-additional-variables 'narf-wg-names)
@@ -60,8 +60,8 @@ lib/defuns-workgroups.el.")
   ;; Save the session every 20 minutes
   (defvar narf-wg-autosave-interval 1200)
   (narf|wg-autosave-enable)
-  (add-hook! focus-out 'narf|wg-autosave-disable)
-  (add-hook! focus-in 'narf|wg-autosave-enable)
+  (add-hook 'focus-out-hook 'narf|wg-autosave-disable)
+  (add-hook 'focus-in-hook  'narf|wg-autosave-enable)
 
   ;; Don't mess with the modeline!
   (advice-add 'wg-change-modeline :override 'ignore)
