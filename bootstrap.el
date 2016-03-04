@@ -30,15 +30,15 @@
  gc-cons-threshold 4388608
  gc-cons-percentage 0.3)
 
-(eval-when-compile
+(eval-and-compile
   ;; Make sure that cask is in the right place
   (unless (eq 0 (call-process "which" nil nil nil "cask"))
     (error "Cask could not be found"))
-  (let ((cask-dir (cond (IS-MAC "/usr/local/Cellar/cask/HEAD")
+  (let ((cask-dir (cond (IS-MAC "/usr/local/share/emacs/site-lisp/cask")
                         (t "~/.cask"))))
     (unless (file-exists-p cask-dir)
       (error "Cask folder not found"))
-    (add-to-list 'load-path cask-dir))
+    (push cask-dir load-path))
 
   ;; Helper for traversing subdirectories recursively
   (defun --subdirs (path &optional include-self)
