@@ -124,7 +124,7 @@
 ;;;###autoload
 (defun narf/workgroup-update-names (&optional wg)
   (let ((wg (or wg (wg-current-workgroup))))
-    (unless (memq wg narf-wg-names)
+    (unless (member (wg-workgroup-uid wg) narf-wg-names)
       (ignore-errors
         (let ((old-name (wg-workgroup-name wg))
               (new-name (f-filename (narf/project-root))))
