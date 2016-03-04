@@ -15,6 +15,7 @@
  truncate-partial-width-windows  50
 
  visual-fill-column-center-text nil
+ confirm-nonexistent-file-or-buffer nil
 
  ;; Sane scroll settings
  scroll-margin           0
