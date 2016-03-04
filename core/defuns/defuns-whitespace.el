@@ -147,7 +147,13 @@ spaces on either side of the point if so. Resorts to
                 (newline-and-indent)
                 (insert "* ")
                 (indent-according-to-mode))
-               (t (indent-new-comment-line))))
+               (t
+                ;; Fix an off-by-one cursor-positioning issue
+                ;; with `indent-new-comment-line'
+                (let ((col (save-excursion (comment-beginning) (current-column))))
+                  (indent-new-comment-line)
+                  (unless (= col (current-column))
+                    (insert " "))))))
         (t
          (newline nil t)
          (indent-according-to-mode))))
