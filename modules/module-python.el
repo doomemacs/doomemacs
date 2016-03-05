@@ -5,7 +5,7 @@
   :interpreter ("python"   . python-mode)
   :commands python-mode
   :init
-  (define-repl! python-mode "py,py3,python")
+  (define-docset! python-mode "py,py3,python")
   (add-hook! python-mode '(emr-initialize narf|flycheck-enable-maybe))
   (setq-default
    python-indent-offset 4
@@ -41,8 +41,10 @@
     :defines (anaconda-mode-map anaconda-nav-mode-map)
     :functions (anaconda-mode-running-p)
     :init
-    (add-hook! python-mode '(anaconda-mode eldoc-mode))
-    (setq anaconda-mode-installation-directory (concat narf-temp-dir "anaconda/"))
+    (add-hook! python-mode '(anaconda-mode anaconda-eldoc-mode eldoc-mode))
+    (setq anaconda-mode-installation-directory (concat narf-temp-dir "anaconda/")
+          anaconda-mode-eldoc-as-single-line t)
+
     :config
     (map! :map anaconda-mode-map     :m "gd"     'anaconda-mode-goto-definitions)
     (map! :map anaconda-nav-mode-map :n [escape] 'anaconda-nav-quit)
