@@ -376,7 +376,7 @@ iedit."
       (powerline-raw
        (concat
         (and (featurep 'face-remap) (/= text-scale-mode-amount 0) (format "(%+d) " text-scale-mode-amount))
-        mode-name
+        (if (stringp mode-name) mode-name (car mode-name))
         (if (stringp mode-line-process) mode-line-process)))
       :tight-right t)
 
