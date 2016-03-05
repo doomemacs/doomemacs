@@ -66,7 +66,10 @@ automatically renamed to the project name.")
   (advice-add 'wg-change-modeline :override 'ignore)
 
   ;; Don't remember popup windows
-  (add-hook! kill-emacs 'narf-popup-close-all)
+  (add-hook! kill-emacs
+    (narf/popup-close-all)
+    (when (and (featurep 'neotree) (neo-global--window-exists-p))
+      (neotree-hide)))
 
   ;; This helps abstract some of the underlying functions away, just in case I want to
   ;; switch to a different package in the future, like persp-mode, eyebrowse or wconf.
