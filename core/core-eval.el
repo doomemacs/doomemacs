@@ -23,8 +23,8 @@
 
   (add-hook! repl-toggle-mode
     (evil-initialize-state 'emacs)
-    (setq mode-line-format nil
-          repl-p t))
+    (narf|hide-mode-line)
+    (setq repl-p t))
 
   :config
   (map! :map repl-toggle-mode-map

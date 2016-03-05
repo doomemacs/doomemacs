@@ -100,7 +100,9 @@
 (add-hook! evil-visual-state-exit  'narf|hl-line-on)
 
 ;; Hide modeline in help windows
-(add-hook! help-mode (setq-local mode-line-format nil))
+(defun narf|hide-mode-line ()
+  (setq-local mode-line-format nil))
+(add-hook! help-mode 'narf|hide-mode-line)
 
 ;; Highlight TODO/FIXME/NOTE tags
 (defface narf-todo-face  '((t (:inherit font-lock-warning-face))) "Face for TODOs")

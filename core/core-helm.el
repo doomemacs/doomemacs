@@ -65,7 +65,7 @@
 
   (defun narf*helm-hide-header (source &optional force)
     (setq header-line-format nil)
-    (setq mode-line-format nil))
+    (narf|hide-mode-line))
 
   (defun narf*helm-replace-prompt (plist)
     (if (keywordp (car plist))

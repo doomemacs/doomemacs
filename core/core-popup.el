@@ -50,7 +50,7 @@
            :popup t :align below :size 16)))
 
   (after! ert
-    (add-hook! 'ert-results-mode-hook (setq mode-line-format nil))
+    (add-hook! 'ert-results-mode-hook 'narf|hide-mode-line)
     (map! (:map ert-results-mode-map
             [escape]   'quit-window
             "<escape>" 'quit-window)))
@@ -147,7 +147,7 @@
       (let ((window (get-buffer-window quickrun/buffer-name)))
         (with-selected-window window
           (narf|nlinum-enable)
-          (setq mode-line-format nil)
+          (narf|hide-mode-line)
           (let* ((lines (count-lines (point-min) (point-max)))
                  (act-lines (max 5 (min 30 lines))))
             (set-window-start window (evil-line-position (+ 2 (- lines act-lines))))
@@ -261,7 +261,7 @@
     (interactive)
     (narf/popup-buffer "*Messages*")
     (with-current-buffer "*Messages*"
-      (setq mode-line-format nil)
+      (narf|hide-mode-line)
       (goto-char (point-max)))))
 
 (provide 'core-popup)
