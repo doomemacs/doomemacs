@@ -32,7 +32,7 @@
   (mapc (lambda (r) (add-to-list 'helm-boring-file-regexp-list r))
         (list "\\.projects$" "\\.DS_Store$" "\\.cask"))
 
-  (map! (:map helm-generic-files-map
+  (map! (:map (helm-generic-files-map helm-projectile-find-file-map)
           "ESC"        'helm-keyboard-quit)
         (:map (helm-map helm-generic-files-map helm-find-files-map helm-swoop-map helm-projectile-find-file-map)
           "C-w"        'backward-kill-word
