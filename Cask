@@ -27,7 +27,6 @@
 
 ;; UI --- core/core-ui.el
 (depends-on "visual-fill-column")
-(depends-on "yascroll")
 (depends-on "rainbow-delimiters")
 (depends-on "rainbow-mode")
 (depends-on "volatile-highlights")

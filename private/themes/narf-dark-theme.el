@@ -190,8 +190,6 @@
    ;; plugin-specific
    ;; *****************************************************************************************
 
-   `(yascroll:thumb-fringe       ((,c (:background ,grey-1 :foreground ,grey-1))))
-
    `(reb-match-0                 ((,c (:foreground ,orange   :inverse-video t))))
    `(reb-match-1                 ((,c (:foreground ,magenta  :inverse-video t))))
    `(reb-match-2                 ((,c (:foreground ,green    :inverse-video t))))

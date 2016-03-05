@@ -142,20 +142,16 @@
     (advice-add 'quickrun :before 'narf*quickrun-close-popup)
     (advice-add 'quickrun-region :before 'narf*quickrun-close-popup)
 
-    ;; Turns on `yascroll-bar-mode' and `nlinum-mode', and ensures window is scrolled to
-    ;; EOF and that the scrollbar is showing.
+    ;; Turns on `nlinum-mode', and ensures window is scrolled to EOF
     (defun narf|quickrun-after-run ()
       (let ((window (get-buffer-window quickrun/buffer-name)))
         (with-selected-window window
-          (yascroll-bar-mode +1)
           (narf|nlinum-enable)
           (setq mode-line-format nil)
           (let* ((lines (count-lines (point-min) (point-max)))
                  (act-lines (max 5 (min 30 lines))))
             (set-window-start window (evil-line-position (+ 2 (- lines act-lines))))
-            (evil-resize-window act-lines)
-            (yascroll:safe-show-scroll-bar) ; scroll-bar starts hidden, but not anymore!
-            ))))
+            (evil-resize-window act-lines)))))
     (add-hook 'quickrun-after-run-hook 'narf|quickrun-after-run)
 
     ;; I let `narf|quickrun-after-run' handle scrolling, so quickrun shouldn't have to!

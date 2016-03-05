@@ -122,13 +122,6 @@
 
 (use-package visual-fill-column :defer t)
 
-(use-package yascroll
-  :commands (yascroll-bar-mode)
-  :config
-  (add-to-list 'yascroll:enabled-window-systems 'mac)
-  (setq yascroll:scroll-bar 'left-fringe
-        yascroll:delay-to-hide nil))
-
 (use-package rainbow-delimiters
   :commands rainbow-delimiters-mode
   :init (add-hook! (emacs-lisp-mode lisp-mode js2-mode scss-mode) 'rainbow-delimiters-mode)

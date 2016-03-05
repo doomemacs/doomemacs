@@ -22,7 +22,6 @@
   (make-variable-buffer-local 'repl-p)
 
   (add-hook! repl-toggle-mode
-    (yascroll-bar-mode +1)
     (evil-initialize-state 'emacs)
     (setq mode-line-format nil
           repl-p t))
