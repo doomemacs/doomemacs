@@ -219,7 +219,7 @@
       (if (narf/popup-p (selected-window))
           (setq window (selected-window))
         (unless dont-close-all
-          (narf-popup-close-all dont-kill))))
+          (narf/popup-close-all dont-kill))))
     (when (and window (window-live-p window))
       ;; REPL buffer
       (cond ((and (derived-mode-p 'comint-mode)
@@ -234,7 +234,7 @@
         (kill-buffer (window-buffer window)))
       (delete-window window)))
 
-  (defun narf-popup-close-all (&optional dont-kill-buffers)
+  (defun narf/popup-close-all (&optional dont-kill-buffers)
     "Closes all popup windows (and kills the buffers if DONT-KILL-BUFFERS is non-nil)"
     (interactive)
     (mapc (lambda (w) (narf/popup-close w dont-kill-buffers))
