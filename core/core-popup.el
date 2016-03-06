@@ -1,5 +1,11 @@
 ;;; core-popup.el --- taming stray windows
 
+;; The following is a whole slew of hackery to get Emacs to treat 'pop-up' windows in a
+;; sane and "modern" way (whatever that means). It goes through great lengths to tame
+;; helm, flycheck, help buffers--*even* the beast that is org-mode.
+;;
+;; Be warned, any of this may break as their respective packages update!
+
 (use-package shackle
   :config
   (shackle-mode 1)
@@ -156,7 +162,6 @@
 
     ;; I let `narf|quickrun-after-run' handle scrolling, so quickrun shouldn't have to!
     (advice-add 'quickrun/recenter :override 'ignore))
-
 
   (after! repl-toggle
     (map! :map repl-toggle-mode-map

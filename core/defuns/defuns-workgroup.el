@@ -1,14 +1,10 @@
 ;;; defuns-workgroup.el
 
 ;;;###autoload
-
-;;;###autoload
 (defun narf/wg-projectile-switch-project ()
   (let ((workgroup-name (file-name-nondirectory (directory-file-name (narf/project-root)))))
     (wg-create-workgroup workgroup-name t)
-    (helm-projectile-find-file)
-    ;; TODO narf/workgroup-display?
-    ))
+    (helm-projectile-find-file)))
 
 ;;;###autoload (autoload 'narf:save-session "defuns-workgroup" nil t)
 (evil-define-command narf:save-session (&optional bang session-name)

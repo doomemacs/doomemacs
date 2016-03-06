@@ -10,8 +10,8 @@
       ;; sane trackpad/mouse scroll settings
       mac-redisplay-dont-reset-vscroll t
       mac-mouse-wheel-smooth-scroll nil
-      mouse-wheel-scroll-amount '(5 ((shift) . 2))  ;; one line at a time
-      mouse-wheel-progressive-speed nil             ;; don't accelerate scrolling
+      mouse-wheel-scroll-amount '(5 ((shift) . 2))  ; one line at a time
+      mouse-wheel-progressive-speed nil             ; don't accelerate scrolling
 
       ;;; NOTE Meaningless to railwaycat's emacs-mac build
       ;; Curse Lion and its sudden but inevitable fullscreen mode!
@@ -41,15 +41,16 @@
   (defun track-mouse (e))
   (setq mouse-sel-mode t))
 
-;; OSX Related Plugins ;;;;;;;;;;;;;;;;;
+
+;;
+;; OSX-related plugins + hacks
+;;
 
 (use-package dash-at-point
   :commands (dash-at-point dash-at-point-with-docset dash-at-point-run-search dash-at-point-guess-docset)
   :init
   (defmacro define-docset! (mode docset)
     `(add-hook! ,mode (setq dash-at-point-docset ,docset))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (after! evil
   ;; On OSX, stop copying each visual state move to the clipboard:
@@ -59,7 +60,10 @@
   (defadvice evil-visual-update-x-selection (around clobber-x-select-text activate)
     (unless (or (featurep 'mac) (featurep 'ns)) ad-do-it)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;
+;; OS-integration
+;;
 
 (defun narf-open-with (&optional app-name path)
   "Send PATH to APP-NAME on OSX."
@@ -99,9 +103,12 @@
   (narf-switch-to-iterm))
 
 ;; Open with external programs
-(require 'openwith)
-(openwith-mode t)
-(setq openwith-associations '(("\\.\\(pdf\\|jpe?g\\|gif\\|docx?\\|pptx?\\|xlsx?\\|zip\\|tar\\(\\.gz\\)?\\|rar\\)$" "open" (file))))
+(use-package openwith
+  :config
+  (openwith-mode t)
+  (setq openwith-associations
+        '(("\\.\\(pdf\\|jpe?g\\|gif\\|docx?\\|pptx?\\|xlsx?\\|zip\\|tar\\(\\.gz\\)?\\|rar\\)$"
+           "open" (file)))))
 
 (provide 'core-os-osx)
 ;;; core-os-osx.el ends here

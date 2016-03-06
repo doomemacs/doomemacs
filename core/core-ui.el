@@ -64,14 +64,14 @@
 
 ;; Fix display of certain unicode characters
 (mapc (lambda (set)
-        (let ((font (car set))
-              (chars  (cadr set))
+        (let ((font  (car set))
+              (chars (cadr set))
               (size  (caddr set)))
           (mapc (lambda (x) (set-fontset-font
                         "fontset-default" `(,x . ,x)
                         (font-spec :name font :size size) nil 'prepend))
                 chars)))
-      '(("DejaVu Sans" (?☑ ?☐ ?✍ ?⚠ ?★ ?λ
+      '(("DejaVu Sans" (?☑ ?☐ ?⚠ ?★ ?λ ?♭ ?♯
                         ?➊ ?➋ ?➌ ?➍ ?➎ ?❻ ?➐ ?➑ ?➒ ?➓))
         ;; File attachment symbols (for org-mode)
         ("FontAwesome" (? ? ? ? ? ? ? ? ?) 13)
@@ -105,9 +105,12 @@
 (add-hook! help-mode 'narf|hide-mode-line)
 
 ;; Highlight TODO/FIXME/NOTE tags
-(defface narf-todo-face  '((t (:inherit font-lock-warning-face))) "Face for TODOs")
-(defface narf-fixme-face '((t (:inherit font-lock-warning-face))) "Face for FIXMEs")
-(defface narf-note-face  '((t (:inherit font-lock-warning-face))) "Face for NOTEs")
+(defface narf-todo-face  '((t (:inherit font-lock-warning-face)))
+  "Face for TODOs")
+(defface narf-fixme-face '((t (:inherit font-lock-warning-face)))
+  "Face for FIXMEs")
+(defface narf-note-face  '((t (:inherit font-lock-warning-face)))
+  "Face for NOTEs")
 (add-hook! (prog-mode emacs-lisp-mode)
   (font-lock-add-keywords nil '(("\\<\\(TODO\\((.+)\\)?:?\\)"  1 'narf-todo-face prepend)
                                 ("\\<\\(FIXME\\((.+)\\)?:?\\)" 1 'narf-fixme-face prepend)
@@ -126,8 +129,11 @@
 
 (use-package rainbow-delimiters
   :commands rainbow-delimiters-mode
-  :init (add-hook! (emacs-lisp-mode lisp-mode js2-mode scss-mode) 'rainbow-delimiters-mode)
-  :config (setq rainbow-delimiters-max-face-count 4))
+  :init
+  (add-hook! (emacs-lisp-mode lisp-mode js2-mode scss-mode)
+    'rainbow-delimiters-mode)
+  :config
+  (setq rainbow-delimiters-max-face-count 4))
 
 (use-package rainbow-mode :defer t
   :init
