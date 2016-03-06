@@ -7,7 +7,7 @@
  ;; Multiple cursors across buffers cause a strange redraw delay for
  ;; some things, like auto-complete or evil-mode's cursor color
  ;; switching.
- cursor-in-non-selected-windows nil
+ cursor-in-non-selected-windows t
  highlight-nonselected-windows  nil
  hl-line-sticky-flag            nil  ; only highlight in one window
 
