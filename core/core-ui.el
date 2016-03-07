@@ -104,7 +104,7 @@
 
 ;; Hide modeline in help windows
 (defun narf|hide-mode-line ()
-  (setq-local mode-line-format nil))
+  (setq mode-line-format nil))
 (add-hook! help-mode 'narf|hide-mode-line)
 
 ;; Highlight TODO/FIXME/NOTE tags
