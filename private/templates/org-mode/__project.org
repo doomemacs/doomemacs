@@ -1,8 +1,8 @@
 #+TITLE:${1:Project Name}
 #+DATE:    `(format-time-string "%Y-%m-%d")`
-#+CONTACT: ${2:Contact name/id}
+#+CONTACT: ${2:Contact name}
 
-${3:Summary of project.}
+$0
 
 * Tasks [/]
 * Timeframe

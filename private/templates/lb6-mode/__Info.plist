@@ -68,7 +68,7 @@
         <string>http://v0.io/launchbar</string>
 
         <key>LBEmail</key>
-        <string>henrik@lissner.net</string>
+        <string>contact@henrik.io</string>
 
         <key>LBTwitter</key>
         <string>@vnought</string>
@@ -89,7 +89,7 @@
         <!-- <string></string> -->
 
         <key>LBUpdateURL</key>
-        <string>https://github.com/hlissner/lb6-${1:$(replace-regexp-in-string "[^a-zA-Z0-9]" "" yas-text)}/blob/master/${2:Name of Action}.lbaction/Contents/Info.plist</string>
+        <string>https://github.com/hlissner/lb6-${2:actions}/blob/master/$1.lbaction/Contents/Info.plist</string>
 
         <key>LBDownloadURL</key>
         <string>https://dl.v0.io/launchbar/$1.lbaction</string>
