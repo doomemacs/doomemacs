@@ -42,6 +42,9 @@
 
 (if (not window-system)
     (menu-bar-mode -1)
+  ;; Auto fullscreen
+  (set-frame-parameter nil 'fullscreen 'fullboth)
+
   ;; Set fonts
   (narf/load-font narf-default-font)
   (set-face-attribute 'default t :font narf-default-font)
