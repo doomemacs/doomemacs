@@ -26,11 +26,10 @@
 (exmap "re[gex]"       'narf:regex) ; open re-builder
 (exmap "repl"          'narf:repl) ; invoke or send to repl
 (exmap "t[mux]"        'narf:tmux) ; send to tmux
-(exmap "t[mux]w"       'narf/tmux-new-window) ; open new window in tmux
 (exmap "tcd"           'narf:tmux-cd) ; cd to default-directory in tmux
 (exmap "x"             'narf:send-to-scratch-or-org)
 ;; GIT
-(exmap "br[owse]"      'narf:git-remote-browse) ; show file in github/gitlab
+(exmap "gbr[owse]"     'narf:git-remote-browse) ; show file in github/gitlab
 
 ;; Dealing with buffers
 (exmap "k[ill]"        'narf/kill-real-buffer)     ; Kill current buffer
@@ -74,6 +73,7 @@
 
 ;; Org-mode
 (exmap "att[ach]"      'narf:org-attach)
+(exmap "link"          'narf:org-link)
 
 ;; Plugins
 (after! flycheck

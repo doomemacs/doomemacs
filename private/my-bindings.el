@@ -80,7 +80,7 @@
    :n "M-r"  'narf:eval-buffer
    :v "M-r"  'narf:eval-region
 
-   :ni "<M-f1>"     'narf/dash-at-pt
+   :ni "<M-f1>" 'narf/dash-at-pt
 
    ;; Textmate-esque indent shift left/right
    :i "M-]"   'narf/smart-indent
@@ -131,6 +131,7 @@
    :nv "qq" 'evil-save-and-quit
    :nv "QQ" 'narf/kill-all-buffers-do-not-remember
 
+   ;; Quick access to my dotfiles and emacs.d
    :nv "E"  'narf/helm-find-in-emacsd
    :nv "\\" 'narf/helm-find-in-dotfiles
 
@@ -138,9 +139,6 @@
    (:prefix "t"
      :n  "." 'narf/tmux-cd-to-here
      :n  "/" 'narf/tmux-cd-to-project
-     :n  "s" 'narf/tmux-split-window
-     :n  "v" 'narf/tmux-vsplit-window
-     :n  "c" 'narf/tmux-new-window
      :v  "r" 'narf:tmux)
 
    ;; Open with O/S
@@ -165,17 +163,15 @@
      ))
 
  (:localleader
-   :n  "k" 'narf/helm-descbinds-localleader
-   :n  "b" 'narf:build
-   :n  "R" 'narf:repl
-   :v  "R" 'narf:repl-eval
-   :v  "r" 'narf:eval-region
+   :n "\\" 'narf/neotree
+   :n "k" 'narf/helm-descbinds-localleader
+   :n "b" 'narf:build
+   :n "R" 'narf:repl
+   :v "R" 'narf:repl-eval
+   :v "r" 'narf:eval-region
    (:prefix "r"
      :n  "e" 'emr-show-refactor-menu
-     :n  "r" 'narf:eval-buffer)
-
-   ;; :n "t" unit tests prefix
-   )
+     :n  "r" 'narf:eval-buffer))
 
  :nv "K"  'smart-up
 
