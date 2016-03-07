@@ -42,7 +42,7 @@
           ("^\\*.+-Profiler-Report .+\\*$" :regexp t :align below :size 0.3)
           ("*Backtrace*" :align below :size 0.25 :noselect t)
           ("*scratch*"   :align below :size 0.3  :select t)
-          ("*Help*"      :align below :size 30 :select t)
+          ("*Help*"      :align below :size 25 :select t)
           ("*Messages*"  :align below :size 20 :select t)
           ("*Completions*" :align below :size 20 :noselect t)
           (debugger-mode :align below :size 0.25 :noselect t)
