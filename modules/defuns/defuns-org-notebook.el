@@ -7,12 +7,16 @@
 ;;;###autoload
 (defun narf/org-start ()
   (interactive)
-  (narf:workgroup-new nil "*ORG*" t)
-  (cd org-directory)
-  (let ((helm-full-frame t))
-    (helm-find-files nil))
-  (save-excursion
-    (neotree-show)))
+  (let ((wg (wg-get-workgroup "*ORG*" t))
+        orig-win)
+    (ignore-errors
+      (if (eq wg (wg-current-workgroup t))
+          (wg-switch-to-workgroup wg)
+        (narf:workgroup-new nil "*ORG*" t)))
+    (setq orig-win (selected-window))
+    (find-file (expand-file-name "Todo.org" org-directory))
+    (narf/neotree)
+    (select-window orig-win t)))
 
 ;;;###autoload
 (defun narf/org-notebook-new ()
@@ -37,8 +41,7 @@
 
 ;;;###autoload
 (defun narf/org-download-dnd (uri action)
-  (if (and (eq major-mode 'org-mode)
-           (not (image-type-from-file-name uri)))
+  (if (eq major-mode 'org-mode)
       (narf:org-attach uri)
     (let ((dnd-protocol-alist
            (rassq-delete-all 'narf/org-download-dnd (copy-alist dnd-protocol-alist))))
@@ -49,8 +52,9 @@
   (interactive "<a>")
   (if uri
       (let* ((rel-path (org-download--fullname uri))
-             (new-path (f-expand rel-path)))
-        (cond ((string-match-p (concat "^" (regexp-opt '("http" "https" "nfs" "ftp" "file")) "://") uri)
+             (new-path (f-expand rel-path))
+             (image-p (image-type-from-file-name uri)))
+        (cond ((string-match-p (concat "^" (regexp-opt '("http" "https" "nfs" "ftp" "file")) ":/") uri)
                (url-copy-file uri new-path))
               (t (copy-file uri new-path)))
         (unless new-path
@@ -59,9 +63,12 @@
             (org-insert-link nil (format "./%s" rel-path)
                              (concat (buffer-substring-no-properties (region-beginning) (region-end))
                                      " " (narf/org-attach-icon rel-path)))
-          (insert (format "%s [[./%s][%s]]"
-                          (narf/org-attach-icon rel-path)
-                          rel-path (f-filename rel-path))))
+
+          (insert (if image-p
+                      (format "[[./%s]]" rel-path)
+                    (format "%s [[./%s][%s]]"
+                            (narf/org-attach-icon rel-path)
+                            rel-path (f-filename rel-path)))))
         (when (string-match-p (regexp-opt '("jpg" "jpeg" "gif" "png")) (f-ext rel-path))
           (org-toggle-inline-images)))
     (let ((attachments (narf-org-attachments)))
@@ -84,23 +91,27 @@
 
 ;;;###autoload
 (defun narf/org-attachments ()
-  (let ((attachments '())
-        element
-        file)
-    (save-excursion
-      (goto-char (point-min))
-      (while (progn (org-next-link) (not org-link-search-failed))
-        (setq element (org-element-lineage (org-element-context) '(link) t))
-        (when element
-          (setq file (expand-file-name (org-element-property :path element)))
-          (when (and (string= (org-element-property :type element) "file")
-                     (string= (concat (f-base (f-dirname file)) "/") org-attach-directory)
-                     (file-exists-p file))
-            (push file attachments)))))
-    (-distinct attachments)))
+  "Retrieves a list of all the attachments pertinent to the currect org-mode buffer."
+  (org-save-outline-visibility nil
+    (let ((attachments '())
+          element
+          file)
+      (when (> (length (f-glob (concat (f-slash org-attach-directory) "*"))) 0)
+        (save-excursion
+          (goto-char (point-min))
+          (while (progn (org-next-link) (not org-link-search-failed))
+            (setq element (org-element-lineage (org-element-context) '(link) t))
+            (when element
+              (setq file (expand-file-name (org-element-property :path element)))
+              (when (and (string= (org-element-property :type element) "file")
+                         (string= (concat (f-base (f-dirname file)) "/") org-attach-directory)
+                         (file-exists-p file))
+                (push file attachments))))))
+      (-distinct attachments))))
 
 ;;;###autoload
 (defun narf/org-cleanup-attachments ()
+  "Deletes any attachments that are no longer present in the org-mode buffer."
   (let* ((attachments (narf/org-attachments))
          (to-delete (-difference narf-org-attachments-list attachments)))
     (mapc (lambda (f)

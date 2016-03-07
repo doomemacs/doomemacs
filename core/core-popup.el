@@ -32,9 +32,9 @@
           ;; Org
           ("^\\*Org Src .+\\*$"    :regexp t :align below  :size 0.4 :select t)
           ("^\\*Org-Babel.*\\*$"   :regexp t :align below  :size 0.4)
-          (org-agenda-mode                   :align below  :size 0.4)
-          ("*Org Agenda*"                    :align below  :size 0.4)
-          ("*Agenda Commands*"               :align below  :size 0.5)
+          ("^\\*Org Agenda.+"      :regexp t :align below  :size 0.4)
+          ("*Calendar*"                      :align below  :size 0.4)
+          (" *Agenda Commands*"              :align below  :size 30)
           (" *Org todo*"                     :align below  :size 5   :noselect t)
           ("*Org Links*"                     :align below  :size 5)
 
@@ -181,7 +181,28 @@
       (mapc (lambda (b)
               (let ((buf (if (stringp b) (get-buffer-create b) b)))
                 (pop-to-buffer buf t t)))
-            args)))
+            args))
+
+    ;; Taming Org-agenda!
+    (defun narf/org-agenda-quit ()
+      "Necessary to finagle org-agenda into shackle popups and behave properly on quit."
+      (interactive)
+      (if org-agenda-columns-active
+          (org-columns-quit)
+        (let ((buf (current-buffer)))
+          (and (not (eq org-agenda-window-setup 'current-window))
+               (not (one-window-p))
+               (delete-window))
+          (kill-buffer buf)
+          (setq org-agenda-archives-mode nil
+                org-agenda-buffer nil))))
+
+    (map! :map org-agenda-mode-map
+          :e "<escape>" 'narf/org-agenda-quit
+          :e "ESC" 'narf/org-agenda-quit
+          :e [escape] 'narf/org-agenda-quit
+          "q" 'narf/org-agenda-quit
+          "Q" 'narf/org-agenda-quit))
 
   (after! flycheck
     (map! :map flycheck-error-list-mode-map

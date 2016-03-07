@@ -59,7 +59,7 @@
 
 ;;
 (defun narf|org-export-init ()
-  (setq org-export-backends '(ascii html latex md opml)
+  (setq org-export-backends '(ascii html latex md)
         org-export-with-toc t
         org-export-with-author t)
 

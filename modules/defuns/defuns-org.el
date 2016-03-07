@@ -27,8 +27,30 @@
     (buffer-substring-no-properties (match-beginning 1) (match-end 1))))
 
 ;;;###autoload
+(defun narf/org-indent ()
+  (interactive)
+  (cond
+   ((and (org-on-heading-p)
+         (looking-back "^\\*+ +" (line-beginning-position)))
+    (ignore-errors
+      (org-demote)))
+   (t (call-interactively 'self-insert-command))))
+
+;;;###autoload
+(defun narf/org-dedent ()
+  (interactive)
+  (cond
+   ((and (org-on-heading-p)
+         (looking-back "^\\*+ +" (line-beginning-position)))
+    (ignore-errors
+      (org-promote)))
+   (t (call-interactively 'self-insert-command))))
+
+;;;###autoload
 (defun narf/org-insert-item (direction)
-  "Inserts a new heading or item, depending on the context."
+  "Inserts a new heading or item, depending on the context. I use this instead of
+`org-insert-item' or `org-insert-heading' because they try to do too much and end up doing
+this otherwise simple task wrong (e.g. whitespace in the wrong places)."
   (interactive)
   (let* ((context (org-element-lineage
                    (org-element-context)
@@ -36,13 +58,15 @@
                    t))
          (type (org-element-type context)))
     (cond ((eq type 'item)
-           (cl-case direction
-             ('below
-              (org-end-of-line)
-              (org-insert-heading))
-             ('above
-              (evil-first-non-blank)
-              (org-insert-heading)))
+           (let ((marker (org-element-property :bullet context)))
+             (cl-case direction
+               ('below
+                (goto-char (line-end-position))
+                (insert (concat "\n" marker)))
+               ('above
+                (goto-char (line-beginning-position))
+                (insert marker)
+                (save-excursion (insert "\n")))))
            (when (org-element-property :checkbox context)
              (insert "[ ] ")))
           ((memq type '(table table-row))
@@ -52,14 +76,31 @@
              ('above
               (narf/org-table-prepend-row-or-shift-up))))
           (t
-           (cl-case direction
-             ('below
-              (org-insert-heading-after-current))
-             ('above
-              (org-back-to-heading)
-              (org-insert-heading)))
-           (when (org-element-property :todo-type context)
-             (org-todo 'todo))))
+           (let ((level (save-excursion
+                          (org-back-to-heading)
+                          (org-element-property
+                           :level (org-element-lineage (org-element-context)
+                                                       '(headline) t)))))
+             (cl-case direction
+               ('below
+                (let ((at-eol (= (point) (1- (line-end-position)))))
+                  (goto-char (line-end-position))
+                  (org-end-of-subtree)
+                  (insert (concat "\n"
+                                  (when (= level 1)
+                                    (if at-eol
+                                        (ignore (cl-incf level))
+                                      "\n"))
+                                  (make-string level ?*)
+                                  " "))))
+               ('above
+                (org-back-to-heading)
+                (org-insert-heading)
+                (when (= level 1)
+                  (save-excursion (evil-open-above 1))
+                  (save-excursion (insert "\n")))))
+             (when (org-element-property :todo-type context)
+               (org-todo 'todo)))))
     (evil-append-line 1)))
 
 ;;;###autoload
@@ -82,6 +123,9 @@
          (type (org-element-type context))
          (value (org-element-property :value context)))
     (cond
+     ((memq type '(planning timestamp))
+      (org-follow-timestamp-link))
+
      ((memq type '(table table-row))
       (if (org-element-property :tblfm (org-element-property :parent context))
           (org-table-recalculate t)
@@ -295,6 +339,13 @@ re-align the table if necessary. (Necessary because org-mode has a
     (org-table-goto-column col)
     (skip-chars-backward "^|\n\r")
     (when (org-looking-at-p " ") (forward-char))))
+
+;;;###autoload (autoload 'narf:org-link "defuns-org" nil t)
+(evil-define-command narf:org-link (link)
+  (interactive "<a>")
+  (let ((beg evil-visual-beginning)
+        (end evil-visual-end))
+    (org-insert-link nil link (when (and beg end) (buffer-substring-no-properties beg end)))))
 
 (provide 'defuns-org)
 ;;; defuns-org.el ends here

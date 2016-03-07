@@ -17,11 +17,7 @@
 
 (defun narf|org-hook ()
   (evil-org-mode +1)
-  (org-indent-mode +1)
   (setq line-spacing 1)
-
-  ;; Highlight plaintext links
-  (highlight-regexp org-any-link-re 'org-link)
 
   ;; If saveplace places the point in a folded position, unfold it on load
   (when (outline-invisible-p)
@@ -32,27 +28,23 @@
 
   (defun narf|org-update ()
     (when (file-exists-p buffer-file-name)
-      (org-update-statistics-cookies t)
-      (org-align-all-tags)))
+      (org-update-statistics-cookies t)))
 
   (add-hook 'before-save-hook 'narf|org-update nil t)
   (add-hook 'evil-insert-state-exit-hook 'narf|org-update nil t))
 
 (defun narf|org-init ()
   (setq-default
-   org-agenda-files
-   (f-entries org-directory (lambda (path) (string-suffix-p ".org" path)))
-
    ;; Appearance
    org-indent-mode-turns-on-hiding-stars t
    org-adapt-indentation nil
    org-blank-before-new-entry '((heading . nil) (plain-list-item . auto))
-   org-bullets-bullet-list '("•" "◦" "•" "◦" "•" "◦")
+   ;; org-bullets-bullet-list '("•" "◦" "•" "◦" "•" "◦")
    org-cycle-separator-lines 1
    org-ellipsis 'hs-face
    org-entities-user '(("flat" "\\flat" nil "" "" "266D" "♭")
                        ("sharp" "\\sharp" nil "" "" "266F" "♯"))
-   org-fontify-done-headline t
+   org-fontify-done-headline nil
    org-fontify-quote-and-verse-blocks t
    org-fontify-whole-heading-line t
    org-footnote-auto-label 'plain
@@ -63,13 +55,13 @@
    org-pretty-entities t
    org-pretty-entities-include-sub-superscripts nil
    org-startup-folded t
-   org-startup-indented nil
+   org-startup-indented t
    org-startup-with-inline-images nil
-   org-tags-column 70
+   org-tags-column 0
    org-use-sub-superscripts '{}
 
    ;; Behavior
-   org-catch-invisible-edits nil
+   org-catch-invisible-edits 'show
    org-checkbox-hierarchical-statistics nil
    org-completion-use-ido nil ; Use helm for refiling
    org-confirm-elisp-link-function nil
@@ -87,10 +79,14 @@
    org-refile-targets '((nil . (:maxlevel . 2))) ; display full path in refile completion
 
    ;; Agenda
-   org-agenda-restore-windows-after-quit t
-   org-agenda-skip-unavailable-files t
-   org-agenda-window-setup 'other-window
-   org-todo-keywords '((sequence "TODO(t)" "|" "DONE(d)")
+   org-agenda-restore-windows-after-quit nil
+   org-agenda-skip-unavailable-files nil
+   org-agenda-window-setup 'other-frame
+   org-agenda-dim-blocked-tasks nil
+   org-agenda-inhibit-startup t
+   org-agenda-files (f-entries org-directory (lambda (path) (f-ext? path "org")))
+   org-todo-keywords '((sequence "[ ](t)" "[-](p)" "|" "[X](d)")
+                       (sequence "TODO(T)" "|" "DONE(D)")
                        (sequence "IDEA(i)" "NEXT(n)" "ACTIVE(a)" "WAITING(w)" "LATER(l)" "|" "CANCELLED(c)"))
 
    ;; Babel
@@ -218,6 +214,8 @@
 
           :i  "C-e" 'org-end-of-line
           :i  "C-a" 'org-beginning-of-line
+          :i  "<tab>"   'narf/org-indent
+          :i  "<S-tab>" 'narf/org-dedent
 
           :nv "j"   'evil-next-visual-line
           :nv "k"   'evil-previous-visual-line
@@ -266,6 +264,7 @@
             :n  "D"  'org-time-stamp-inactive
             :n  "i"  'narf/org-toggle-inline-images-at-point
             :n  "t"  (λ! (org-todo (if (org-entry-is-todo-p) 'none 'todo)))
+            :v  "t"  (λ! (evil-ex-normal evil-visual-beginning evil-visual-end "\\t"))
             :n  "T"  'org-todo
             :n  "s"  'org-schedule
             :n  "r"  'org-refile
