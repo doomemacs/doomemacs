@@ -152,6 +152,8 @@
     (defun narf|quickrun-after-run ()
       (let ((window (get-buffer-window quickrun/buffer-name)))
         (with-selected-window window
+          (make-variable-buffer-local 'nlinum-format)
+          (setq nlinum-format "%3d ")
           (narf|nlinum-enable)
           (narf|hide-mode-line)
           (let* ((lines (count-lines (point-min) (point-max)))
