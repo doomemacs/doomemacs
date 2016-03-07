@@ -32,18 +32,19 @@
   (mapc (lambda (r) (add-to-list 'helm-boring-file-regexp-list r))
         (list "\\.projects$" "\\.DS_Store$" "\\.cask"))
 
-  (map! (:map (helm-generic-files-map helm-projectile-find-file-map)
-          "ESC"        'helm-keyboard-quit)
-        (:map (helm-map helm-generic-files-map helm-find-files-map helm-swoop-map helm-projectile-find-file-map)
-          "C-w"        'backward-kill-word
-          "C-r"        'evil-paste-from-register ; Evil registers in helm! Glorious!
+  (map! (:map (helm-map helm-generic-files-map helm-find-files-map helm-swoop-map helm-projectile-find-file-map)
+          "ESC"        nil
           "/"          nil
           "M-v"        'clipboard-yank
+          "C-w"        'backward-kill-word
+          "C-r"        'evil-paste-from-register ; Evil registers in helm! Glorious!
           "<left>"     'backward-char
           "<right>"    'forward-char
           "<escape>"   'helm-keyboard-quit
           [escape]     'helm-keyboard-quit
           "<tab>"      'helm-execute-persistent-action)
+        (:map (helm-generic-files-map helm-projectile-find-file-map)
+          "ESC"        'helm-keyboard-quit)
         (:map helm-find-files-map
           "C-w"        'helm-find-files-up-one-level
           "TAB"        'helm-execute-persistent-action)
