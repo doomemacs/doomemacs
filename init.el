@@ -79,7 +79,6 @@
         module-rust          ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
         module-sh            ; she sells Z-shells by the C XOR
         module-text          ; writing docs for people to ignore
-        module-tmux          ; closing the rift between GUI & terminal
         module-web           ; for the 2.0'er
 
         ;; Experimental
@@ -94,9 +93,10 @@
         module-org-notebook  ; making org-mode into a modern note-taking solution
 
         ;; Extra Tools
+        module-tmux          ; closing the rift between GUI & terminal
         module-demo          ; allow me to demonstrate...
         module-ansible       ;
-        module-write         ; yes, I write papers and fiction in Emacs
+        module-write         ; for write papers and fiction in Emacs
 
         ;; Key bindings & ex commands
         my-bindings
