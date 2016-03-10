@@ -53,7 +53,7 @@
  backup-directory-alist            `((".*" . ,(concat narf-temp-dir "backup/")))
 
  ;; Remember undo history
- undo-tree-auto-save-history        t
+ undo-tree-auto-save-history        nil
  undo-tree-history-directory-alist `(("." . ,(concat narf-temp-dir "undo/"))))
 
 ;; UTF-8 please
