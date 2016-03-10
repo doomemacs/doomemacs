@@ -26,7 +26,8 @@
 
  shift-select-mode t
  tabify-regexp "^\t* [ \t]+"
- whitespace-style '(face tabs tab-mark trailing newline indentation newline-mark)
+ whitespace-style '(face tabs tab-mark trailing newline newline-mark indentation lines-tail)
+ whitespace-line-column fill-column
  whitespace-display-mappings
  '((tab-mark   ?\t   [?> ?\t])
    (newline-mark 10 [36 10])))
