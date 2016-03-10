@@ -52,7 +52,7 @@
   ;; Setup fringe
   (fringe-mode narf-fringe-size)
   (setq frame-title-format '(buffer-file-name "%f" ("%b")))
-  (set-window-fringes (minibuffer-window) 0 0 nil)
+
   ;; Tilde empty-line indicator
   (define-fringe-bitmap 'tilde [64 168 16] nil nil 'center)
   (setcdr (assq 'empty-line fringe-indicator-alist) 'tilde)
@@ -63,7 +63,8 @@
     (set-window-fringes (selected-window) 0 0 nil)
     (make-local-variable 'face-remapping-alist)
     (add-to-list 'face-remapping-alist '(default narf-minibuffer-active)))
-  (add-hook! minibuffer-setup 'narf|minibuffer-setup))
+  (add-hook! minibuffer-setup 'narf|minibuffer-setup)
+  (add-hook! 'after-init-hook (set-window-fringes (minibuffer-window) 0 0 nil)))
 
 ;; Fix display of certain unicode characters
 (mapc (lambda (set)
