@@ -62,6 +62,9 @@
 (set-keyboard-coding-system   'utf-8)   ; pretty
 (set-selection-coding-system  'utf-8)   ; please
 (prefer-coding-system         'utf-8)   ; with sugar on top
+(set-charset-priority 'unicode)
+(setq default-process-coding-system '(utf-8-unix . utf-8-unix))
+
 (fset 'yes-or-no-p 'y-or-n-p)           ; y/n instead of yes/no
 
 ;; Ask for confirmation on exit only if there are real buffers left
