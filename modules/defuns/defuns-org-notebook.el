@@ -120,5 +120,25 @@
           to-delete)
     (setq narf-org-attachments-list attachments)))
 
+
+;;
+;; Easy searching
+;;
+
+;; Ex-mode interface for `helm-ag'. If `bang', then `search' is interpreted as
+;; regexp.
+;;;###autoload (autoload 'narf:org-helm-ag-search "defuns-org-notebook" nil t)
+(evil-define-operator narf:org-helm-ag-search (beg end &optional search hidden-files-p regex-p)
+  :type inclusive :repeat nil
+  (interactive "<r><a><!>")
+  (in! org-directory
+    (narf:helm-ag-search beg end search bang t t)))
+
+;;;###autoload (autoload 'narf:org-helm-ag-regex-search "defuns-org-notebook" nil t)
+(evil-define-operator narf:org-helm-ag-regex-search (beg end &optional search bang)
+  :type inclusive :repeat nil
+  (interactive "<r><a><!>")
+  (narf:org-helm-ag-search beg end search bang t))
+
 (provide 'defuns-org-notebook)
 ;;; defuns-org-notebook.el ends here

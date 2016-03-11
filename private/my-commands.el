@@ -74,6 +74,9 @@
 ;; Org-mode
 (exmap "att[ach]"      'narf:org-attach)
 (exmap "link"          'narf:org-link)
+;; ag-powered search for org-files
+(exmap "oag"           'narf:org-helm-ag-search)
+(exmap "oagr"          'narf:org-helm-ag-regex-search)
 
 ;; Plugins
 (after! flycheck
