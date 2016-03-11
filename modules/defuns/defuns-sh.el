@@ -1,8 +1,13 @@
 ;;; defuns-sh.el
 
 (defvar sh-extra-font-lock--keywords
-  '((narf/sh-extra-font-lock--match-var-in-double-quoted-string
-     (2 font-lock-variable-name-face prepend))))
+  `((narf/sh-extra-font-lock--match-var-in-double-quoted-string
+     (2 font-lock-variable-name-face prepend))
+    (,(concat
+       "\\<"
+       (regexp-opt '("sudo" "echo" "ls" "sleep" "tee" "cd" "cat" "service"))
+       "\\>")
+     (0 'font-lock-builtin-face))))
 
 ;;;###autoload
 (defun narf/sh-extra-font-lock--is-in-double-quoted-string ()
