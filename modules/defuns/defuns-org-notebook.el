@@ -50,6 +50,8 @@
 ;;;###autoload (autoload 'narf:org-attach "defuns-org-notebook" nil t)
 (evil-define-command narf:org-attach (&optional uri)
   (interactive "<a>")
+  (unless (eq major-mode 'org-mode)
+    (user-error "Not in an org-mode buffer"))
   (if uri
       (let* ((rel-path (org-download--fullname uri))
              (new-path (f-expand rel-path))
@@ -96,7 +98,8 @@
     (let ((attachments '())
           element
           file)
-      (when (> (length (f-glob (concat (f-slash org-attach-directory) "*"))) 0)
+      (when (and (f-dir? org-attach-directory)
+                 (> (length (f-glob (concat (f-slash org-attach-directory) "*"))) 0))
         (save-excursion
           (goto-char (point-min))
           (while (progn (org-next-link) (not org-link-search-failed))

@@ -342,7 +342,10 @@ re-align the table if necessary. (Necessary because org-mode has a
 
 ;;;###autoload (autoload 'narf:org-link "defuns-org" nil t)
 (evil-define-command narf:org-link (link)
+  "Add LINK to the org buffer. If a selection is active, link selection to LINK."
   (interactive "<a>")
+  (unless (eq major-mode 'org-mode)
+    (user-error "Not in an org-mode buffer"))
   (let ((beg evil-visual-beginning)
         (end evil-visual-end))
     (org-insert-link nil link (when (and beg end) (buffer-substring-no-properties beg end)))))
