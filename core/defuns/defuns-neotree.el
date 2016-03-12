@@ -7,14 +7,15 @@
   (interactive)
   (let ((in-neotree (and (neo-global--window-exists-p)
                          (window-live-p neo-global--buffer)
-                         (eq (current-buffer) neo-global--buffer))))
+                         (eq (current-buffer) neo-global--buffer)))
+        (path buffer-file-name))
     (if in-neotree
         (neotree-hide)
       (let ((project-root (narf/project-root)))
         (unless (and (neo-global--window-exists-p)
                      (f-same? (neo-global--with-window neo-buffer--start-node) project-root))
-          (neotree-dir project-root)))
-      (neotree-find))))
+          (neotree-dir project-root))
+        (neotree-find path project-root)))))
 
 ;;;###autoload
 (defun narf|neotree-close-on-window-change (&rest _)
