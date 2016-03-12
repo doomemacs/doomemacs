@@ -44,8 +44,6 @@
 (exmap "a"             'helm-projectile-find-other-file) ; open alternate file
 (exmap "ag"            'narf:helm-ag-search) ; project text search
 (exmap "ag[cw]d"       'narf:helm-ag-search-cwd) ; current directory search
-(exmap "agr"           'narf:helm-ag-regex-search) ; project regex search
-(exmap "agr[cw]d"      'narf:helm-ag-regex-search-cwd) ; current directory regexp search
 (exmap "cd"            'narf:cd)
 (exmap "se[arch]"      'narf:helm-swoop) ; in-file search
 ;; Project tools
@@ -72,11 +70,9 @@
 (exmap "tabl[ast]"     'narf:switch-to-tab-last)
 
 ;; Org-mode
-(exmap "att[ach]"      'narf:org-attach)
 (exmap "link"          'narf:org-link)
-;; ag-powered search for org-files
-(exmap "oag"           'narf:org-helm-ag-search)
-(exmap "oagr"          'narf:org-helm-ag-regex-search)
+(exmap "att[ach]"      'narf:org-attach) ; attach file to org file
+(exmap "org"           'narf:org-helm-search) ; search org notes
 
 ;; Plugins
 (after! flycheck
