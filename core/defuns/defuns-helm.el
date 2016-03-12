@@ -17,14 +17,13 @@
 ;; Ex-mode interface for `helm-ag'. If `bang', then `search' is interpreted as
 ;; regexp.
 ;;;###autoload (autoload 'narf:helm-ag-search "defuns-helm" nil t)
-(evil-define-operator narf:helm-ag-search (beg end &optional search hidden-files-p pwd-p regex-p)
+(evil-define-operator narf:helm-ag-search (beg end search regex-p &optional dir)
   :type inclusive
   :repeat nil
   (interactive "<r><a><!>")
   (require 'helm-ag)
-  (let* ((helm-ag--default-directory (if pwd-p default-directory (concat (narf/project-root) "/")))
-         (helm-ag-command-option (concat (unless regex-p "-Q ")
-                                         (if hidden-files-p "--hidden ")))
+  (let* ((helm-ag--default-directory (or dir (f-slash (narf/project-root))))
+         (helm-ag-command-option (unless regex-p "-Q "))
          (input "")
          (header-name (format "Search in %s" helm-ag--default-directory)))
     (if search
@@ -39,25 +38,13 @@
           :keymap helm-ag-map
           :input input)))
 
-;;;###autoload (autoload 'narf:helm-ag-regex-search "defuns-helm" nil t)
-(evil-define-operator narf:helm-ag-regex-search (beg end &optional search bang)
-  :type inclusive :repeat nil
-  (interactive "<r><a><!>")
-  (narf:helm-ag-search beg end search bang nil t))
-
+;; Ex-mode interface for `helm-do-ag'. If `bang', then `search' is interpreted
+;; as regexp
 ;;;###autoload (autoload 'narf:helm-ag-search-cwd "defuns-helm" nil t)
 (evil-define-operator narf:helm-ag-search-cwd (beg end &optional search bang)
-  ;; Ex-mode interface for `helm-do-ag'. If `bang', then `search' is interpreted
-  ;; as regexp
   :type inclusive :repeat nil
   (interactive "<r><a><!>")
-  (narf:helm-ag-search beg end search bang t nil))
-
-;;;###autoload (autoload 'narf:helm-ag-regex-search-cwd "defuns-helm" nil t)
-(evil-define-operator narf:helm-ag-regex-search-cwd (beg end &optional search bang)
-  :type inclusive :repeat nil
-  (interactive "<r><a><!>")
-  (narf:helm-ag-search beg end search bang t t))
+  (narf:helm-ag-search beg end search bang default-directory))
 
 ;; Ex-mode interface for `helm-swoop', `helm-multi-swoop-all' (if `bang'), or
 ;; `helm-css-scss' and `helm-css-scss-multi' (if `bang') if major-mode is

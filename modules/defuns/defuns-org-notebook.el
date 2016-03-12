@@ -130,18 +130,10 @@
 
 ;; Ex-mode interface for `helm-ag'. If `bang', then `search' is interpreted as
 ;; regexp.
-;;;###autoload (autoload 'narf:org-helm-ag-search "defuns-org-notebook" nil t)
-(evil-define-operator narf:org-helm-ag-search (beg end &optional search hidden-files-p regex-p)
-  :type inclusive :repeat nil
+;;;###autoload (autoload 'narf:org-helm-search "defuns-org-notebook" nil t)
+(evil-define-operator narf:org-helm-search (beg end &optional search bang)
   (interactive "<r><a><!>")
-  (in! org-directory
-    (narf:helm-ag-search beg end search bang t t)))
-
-;;;###autoload (autoload 'narf:org-helm-ag-regex-search "defuns-org-notebook" nil t)
-(evil-define-operator narf:org-helm-ag-regex-search (beg end &optional search bang)
-  :type inclusive :repeat nil
-  (interactive "<r><a><!>")
-  (narf:org-helm-ag-search beg end search bang t))
+  (narf:helm-ag-search beg end (if bang (concat "^\\*+.*" search ".*$") search) t org-directory))
 
 (provide 'defuns-org-notebook)
 ;;; defuns-org-notebook.el ends here
