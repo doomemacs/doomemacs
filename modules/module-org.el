@@ -5,7 +5,7 @@
 (add-hook 'org-load-hook 'narf|org-hacks t)
 (add-hook 'org-mode-hook 'narf|org-hook)
 
-(defvar org-directory (expand-file-name "~/Dropbox/docs/"))
+(defvar org-directory (expand-file-name "~/Dropbox/notes/"))
 
 (define-minor-mode evil-org-mode
   "Evil-mode bindings for org-mode."
@@ -36,12 +36,15 @@
 
 (defun narf|org-init ()
   (setq-default
+   org-export-coding-system 'utf-8
+
    ;; Appearance
    org-indent-mode-turns-on-hiding-stars t
    org-adapt-indentation nil
    org-blank-before-new-entry '((heading . nil) (plain-list-item . auto))
    ;; org-bullets-bullet-list '("•" "◦" "•" "◦" "•" "◦")
    org-cycle-separator-lines 1
+   org-cycle-include-plain-lists t
    org-ellipsis 'hs-face
    org-entities-user '(("flat" "\\flat" nil "" "" "266D" "♭")
                        ("sharp" "\\sharp" nil "" "" "266F" "♯"))
@@ -82,13 +85,14 @@
    ;; Agenda
    org-agenda-restore-windows-after-quit nil
    org-agenda-skip-unavailable-files nil
-   org-agenda-window-setup 'other-frame
    org-agenda-dim-blocked-tasks nil
+   org-agenda-window-setup 'other-frame ; to get org-agenda to behave with shackle...
    org-agenda-inhibit-startup t
    org-agenda-files (f-entries org-directory (lambda (path) (f-ext? path "org")))
    org-todo-keywords '((sequence "[ ](t)" "[-](p)" "|" "[X](d)")
                        (sequence "TODO(T)" "|" "DONE(D)")
                        (sequence "IDEA(i)" "NEXT(n)" "ACTIVE(a)" "WAITING(w)" "LATER(l)" "|" "CANCELLED(c)"))
+
 
    ;; Babel
    org-confirm-babel-evaluate nil   ; you don't need my permission
@@ -96,6 +100,7 @@
    org-src-preserve-indentation t
    org-src-tab-acts-natively t
    org-src-window-setup 'current-window
+   org-edit-src-content-indentation 0
 
    ;; Latex
    org-format-latex-options (plist-put org-format-latex-options :scale 1.3)
@@ -135,7 +140,8 @@
    '((python . t) (ruby . t) (sh . t) (js . t) (css . t)
      (plantuml . t) (emacs-lisp . t) (matlab . t)
      (latex . t) (calc . t) (lisp . t) (lilypond . t)
-     (go . t) (http . t)
+     ;; (go . t)
+     (http . t)
      (rust . t)))
 
   (let ((ext-regexp (regexp-opt '("GIF" "JPG" "JPEG" "SVG" "TIF" "TIFF" "BMP" "XPM"
