@@ -23,6 +23,12 @@ normal mode if there are no fields."
   "Switch to insert mode when expanding a template via backtab, or go back to
 normal mode if there are no fields."
   (interactive)
+  (when (evil-visual-state-p)
+    (let ((end (region-end)))
+      (evil-visual-select
+       (region-beginning)
+       (if (eq evil-this-type 'line) end (1+ end))
+       'inclusive)))
   (yas-insert-snippet)
   (let* ((snippet (first (yas--snippets-at-point)))
          (fields (yas--snippet-fields snippet)))
