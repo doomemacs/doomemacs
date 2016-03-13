@@ -185,8 +185,8 @@
  :n  "ZX" 'bury-buffer
 
  ;; These are intentionally reversed
- :n  "]b" 'narf/previous-real-buffer
- :n  "[b" 'narf/next-real-buffer
+ :n  "]b" 'narf/next-real-buffer
+ :n  "[b" 'narf/previous-real-buffer
 
  :m  "]d" 'narf/vcs-next-hunk
  :m  "[d" 'narf/vcs-prev-hunk
