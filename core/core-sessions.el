@@ -9,25 +9,24 @@
   :when (display-graphic-p)
   :init
   (setq-default
-   wg-session-file          (expand-file-name "wg-default" narf-temp-dir)
+   wg-session-file          (expand-file-name "workgroups/last" narf-temp-dir)
    wg-workgroup-directory   (expand-file-name "workgroups/" narf-temp-dir)
    wg-first-wg-name         "*untitled*"
-   wg-session-load-on-start t
+   wg-session-load-on-start nil
    wg-mode-line-display-on  nil
    wg-mess-with-buffer-list nil
    wg-emacs-exit-save-behavior           'save ; Options: 'save 'ask nil
    wg-workgroups-mode-exit-save-behavior 'save
    wg-log-level 0
 
-   ;; Some of these make workgroup-restoration-on-init unstable. I'd rather trade some
-   ;; convenience for stability.
-   wg-restore-fringes nil
-   wg-restore-margins nil
-   wg-restore-scroll-bars nil
-   wg-restore-frame-position nil
-   wg-restore-remote-buffers nil
-   wg-restore-mark nil
-   ;; wg-restore-point-max nil
+   ;; NOTE: Some of these make workgroup-restoration unstable
+   wg-restore-fringes t
+   wg-restore-margins t
+   wg-restore-scroll-bars t
+   wg-restore-frame-position t
+   wg-restore-remote-buffers t
+   wg-restore-mark t
+   wg-restore-point-max t
 
    wg-list-display-decor-divider         " "
    wg-list-display-decor-left-brace      ""
