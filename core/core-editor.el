@@ -220,7 +220,7 @@ enable multiple minor modes for the same regexp.")
 
   ;; Smartparens interferes with Replace mode
   (add-hook 'evil-replace-state-entry-hook 'turn-off-smartparens-mode)
-  (add-hook 'evil-replace-state-exit-hook 'turn-on-smartparens-mode)
+  (add-hook 'evil-replace-state-exit-hook  'turn-on-smartparens-mode)
 
   ;; Auto-close more conservatively
   (sp-pair "{" nil :post-handlers '(("||\n[i]" "RET") ("| " " "))
@@ -230,20 +230,26 @@ enable multiple minor modes for the same regexp.")
   (sp-pair "[" nil :post-handlers '(("| " " "))
                    :unless '(sp-point-before-word-p sp-point-before-same-p))
 
-  ;; Support for generics/templates
-  (sp-with-modes '(c-mode c++-mode objc-mode java-mode)
-    (sp-local-pair "<" ">" :when '(sp-point-after-word-p) :unless '(sp-point-before-same-p)))
-
-  (sp-local-pair '(sh-mode markdown-mode) "`" "`" :unless '(sp-point-before-word-p sp-point-before-same-p))
-  (sp-local-pair 'markdown-mode "```" "```" :post-handlers '(("||\n[i]" "RET")) :unless '(sp-point-before-word-p sp-point-before-same-p))
-
-  (sp-local-pair '(scss-mode css-mode) "/*" "*/" :post-handlers '(("[d-3]||\n[i]" "RET") ("| " "SPC")))
+  (defun sp-point-in-string-p (id action context)
+    (when (eq action 'insert)
+      (sp-point-in-string)))
 
   (defun sp-insert-yasnippet (id action context)
     (forward-char -1)
     (if (sp-point-after-bol-p id action context)
         (yas-expand-from-trigger-key)
       (forward-char)))
+
+  (defun sp--org-skip-> (ms mb me)
+    (or (and (= (line-beginning-position) mb)
+             (eq ?> (char-after (1+ mb))))
+        (and (= (1+ (line-beginning-position)) me)
+             (eq ?> (char-after me)))))
+
+  (sp-local-pair '(sh-mode markdown-mode) "`" "`" :unless '(sp-point-before-word-p sp-point-before-same-p))
+  (sp-local-pair 'markdown-mode "```" "```" :post-handlers '(("||\n[i]" "RET")) :unless '(sp-point-before-word-p sp-point-before-same-p))
+
+  (sp-local-pair '(scss-mode css-mode) "/*" "*/" :post-handlers '(("[d-3]||\n[i]" "RET") ("| " "SPC")))
 
   (sp-with-modes '(sh-mode)
     (sp-local-pair "case"  "" :when '(("SPC")) :post-handlers '((:add sp-insert-yasnippet)) :actions '(insert))
@@ -259,10 +265,22 @@ enable multiple minor modes for the same regexp.")
     (sp-local-pair "/**" "*/" :post-handlers '(("||\n[i]" "RET") ("||\n[i]" "SPC")))
     (sp-local-pair "/*!" "*/" :post-handlers '(("||\n[i]" "RET") ("[d-1]< | " "SPC"))))
 
+  (defun sp--org-skip-asterisk (ms mb me)
+    (or (and (= (line-beginning-position) mb)
+             (eq 32 (char-after (1+ mb))))
+        (and (= (1+ (line-beginning-position)) me)
+             (eq 32 (char-after me)))))
+
   (sp-with-modes '(org-mode)
+    (sp-local-pair "*" "*" :unless '(sp-point-after-word-p sp-point-at-bol-p) :skip-match 'sp--org-skip-asterisk)
+    (sp-local-pair "_" "_" :unless '(sp-point-before-word-p sp-point-after-word-p))
+    (sp-local-pair "/" "/" :unless '(sp-point-before-word-p sp-point-after-word-p) :post-handlers '(("[d1]" "SPC")))
+    (sp-local-pair "~" "~" :unless '(sp-point-before-word-p sp-point-after-word-p) :post-handlers '(("[d1]" "SPC")))
+    (sp-local-pair "=" "=" :unless '(sp-point-before-word-p sp-point-after-word-p) :post-handlers '(("[d1]" "SPC")))
+
     (sp-local-pair "\\[" "\\]" :post-handlers '(("| " "SPC")))
     (sp-local-pair "\\(" "\\)" :post-handlers '(("| " "SPC")))
-    (sp-local-pair "$$" "$$" :post-handlers '((:add " | ")))
+    (sp-local-pair "$$" "$$" :post-handlers '((:add " | ")) :unless '(sp-point-at-bol-p))
     (sp-local-pair "{" nil))
 
   ;; Markup languages
