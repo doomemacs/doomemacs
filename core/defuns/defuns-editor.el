@@ -44,5 +44,12 @@
   (hs-minor-mode 1)
   (advice-remove 'evil-toggle-fold 'narf-load-hs-minor-mode))
 
+;;;###autoload
+(defun narf/reselect-paste ()
+  (interactive)
+  (evil-goto-mark ?\[)
+  (evil-visual-state)
+  (evil-goto-mark ?\]))
+
 (provide 'defuns-editor)
 ;;; defuns-editor.el ends here

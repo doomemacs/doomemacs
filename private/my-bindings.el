@@ -207,6 +207,7 @@
               (call-interactively 'find-file-at-point)
               (helm-mode 1))
 
+ :n  "gp" 'narf/reselect-paste
  :n  "gc" 'evil-commentary
  :n  "gx" 'evil-exchange
  :n  "gr" 'narf:eval-region
