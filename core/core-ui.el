@@ -142,16 +142,6 @@
     (when narf--hl-line-mode
       (hl-line-mode (if rainbow-mode -1 1)))))
 
-(use-package volatile-highlights
-  :config
-  (vhl/define-extension 'my-undo-tree-highlights
-    'undo-tree-undo 'undo-tree-redo)
-  (vhl/install-extension 'my-undo-tree-highlights)
-  (vhl/define-extension 'my-yank-highlights
-    'evil-yank 'evil-paste-after 'evil-paste-before 'evil-paste-pop)
-  (vhl/install-extension 'my-yank-highlights)
-  (volatile-highlights-mode t))
-
 (use-package nlinum
   :commands nlinum-mode
   :preface

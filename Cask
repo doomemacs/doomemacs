@@ -29,7 +29,6 @@
 (depends-on "visual-fill-column")
 (depends-on "rainbow-delimiters")
 (depends-on "rainbow-mode")
-(depends-on "volatile-highlights")
 (depends-on "nlinum")
 (depends-on "spaceline")
 
