@@ -92,7 +92,8 @@ enable multiple minor modes for the same regexp.")
                   (line-beginning-position)
                   (line-end-position))))
     ad-do-it
-    (when (string-match-p "^[\s\t]*$" linestr)
+    (when (and (evil-insert-state-p)
+               (string-match-p "^[\s\t]*$" linestr))
       (insert linestr))))
 
 ;; If file is oversized...
