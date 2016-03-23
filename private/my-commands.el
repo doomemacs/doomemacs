@@ -9,7 +9,6 @@
 ;; Editing
 (exmap "@"             'narf/evil-macro-on-all-lines) ; run macro on each line
 (exmap "al[ign]"       'narf:align) ; align by regexp
-(exmap "en[ew]"        'narf:file-create) ; open a blank buffer
 (exmap "na[rrow]"      'narf:narrow) ; narrow buffer to selection
 (exmap "ref[actor]"    'emr-show-refactor-menu) ; open emr menu
 (exmap "retab"         'narf:whitespace-retab)
