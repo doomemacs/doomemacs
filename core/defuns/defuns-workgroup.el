@@ -9,6 +9,8 @@
 ;;;###autoload (autoload 'narf:save-session "defuns-workgroup" nil t)
 (evil-define-command narf:save-session (&optional bang session-name)
   (interactive "<!><a>")
+  (unless (wg-current-workgroup t)
+    (wg-create-workgroup wg-first-wg-name))
   (if session-name
       (wg-save-session-as (concat wg-workgroup-directory session-name) (not bang))
     (wg-save-session)))
