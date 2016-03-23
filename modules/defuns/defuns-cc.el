@@ -20,8 +20,24 @@
   (c-set-offset 'case-label '+)        ; indent case labels by c-indent-level, too
   (c-set-offset 'access-label '-)
   (c-set-offset 'inclass 'narf--c-lineup-inclass)
-  ;; DEL mapping interferes with smartparens and my custom DEL binding
-  (define-key c-mode-map (kbd "DEL") nil))
+  (c-set-offset 'arglist-intro '+)
+  (c-set-offset 'arglist-close '0)
+  ;; Certain mappings interfere with smartparens and custom bindings
+  (define-key c-mode-map (kbd "DEL") nil)
+  (define-key c-mode-base-map "#" 'self-insert-command)
+  (define-key c-mode-base-map "{" 'self-insert-command)
+  (define-key c-mode-base-map "}" 'self-insert-command)
+  (define-key c-mode-base-map "/" 'self-insert-command)
+  (define-key c-mode-base-map "*" 'self-insert-command)
+  (define-key c-mode-base-map ";" 'self-insert-command)
+  (define-key c-mode-base-map "," 'self-insert-command)
+  (define-key c-mode-base-map ":" 'self-insert-command)
+  (define-key c-mode-base-map "(" 'self-insert-command)
+  (define-key c-mode-base-map ")" 'self-insert-command)
+
+  (define-key c++-mode-map "}" nil)
+  (define-key c++-mode-map ">" nil)
+  (define-key c++-mode-map "<" nil))
 
 (defun narf--copy-face (new-face face)
   "Define NEW-FACE from existing FACE."
