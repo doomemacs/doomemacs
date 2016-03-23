@@ -61,10 +61,10 @@ automatically renamed to the project name.")
   (add-hook 'focus-out-hook 'narf|wg-autosave-disable)
   (add-hook 'focus-in-hook  'narf|wg-autosave-enable)
 
-  ;; Don't mess with the modeline!
+  ;; Seriously, don't mess with the modeline! `wg-mode-line-display-on' isn't enough
   (advice-add 'wg-change-modeline :override 'ignore)
 
-  ;; Don't remember popup windows
+  ;; Don't remember popup and neotree windows
   (add-hook! kill-emacs
     (narf/popup-close-all)
     (when (and (featurep 'neotree) (neo-global--window-exists-p))

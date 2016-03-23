@@ -145,20 +145,15 @@
 (use-package nlinum
   :commands nlinum-mode
   :preface
+  (defface linum-highlight-face '((t (:inherit linum))) "Face for line highlights")
   (defvar narf--hl-nlinum-overlay nil)
   (defvar narf--hl-nlinum-line nil)
   (defvar nlinum-format "%4d  ")
-  (defface linum-highlight-face '((t (:inherit linum))) "Face for line highlights")
   (setq linum-format "%3d ")
   :init
   (defun narf|nlinum-enable ()
     (nlinum-mode +1)
     (add-hook 'post-command-hook 'narf|nlinum-hl-line t))
-
-  (defun narf|nlinum-disable ()
-    (nlinum-mode -1)
-    (remove-hook 'post-command-hook 'narf|nlinum-hl-line)
-    (narf|nlinum-unhl-line))
 
   (add-hook!
     (markdown-mode prog-mode scss-mode web-mode conf-mode)
@@ -320,8 +315,7 @@ anzu to be enabled."
 
       ;; TODO mode-line-iedit-face default face
       (spaceline-define-segment *iedit
-        "Show the number of matches and what match you're on (or after). Requires
-iedit."
+        "Show the number of matches and what match you're on (or after). Requires iedit."
         (let ((this-oc (iedit-find-current-occurrence-overlay))
               (length  (or (ignore-errors (length iedit-occurrences-overlays)) 0)))
           (format " %s/%s "

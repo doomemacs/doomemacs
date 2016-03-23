@@ -29,7 +29,7 @@
 
 ;;;###autoload (autoload 'narf:workgroup-new "defuns-workgroup" nil t)
 (evil-define-command narf:workgroup-new (bang name &optional silent)
-  "Create a new workgroup. If BANG, clone the current one to it."
+  "Create a new workgroup. If BANG, overwrite any workgroup named NAME."
   (interactive "<!><a>")
   (unless name
     (setq name (format "#%s" (1+ (length (wg-workgroup-list))))))
