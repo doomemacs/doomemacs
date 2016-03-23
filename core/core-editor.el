@@ -73,7 +73,6 @@ enable multiple minor modes for the same regexp.")
 ;; Modes 'n hooks
 ;;
 
-(associate! applescript-mode    :match "\\.applescript$")
 (associate! emacs-lisp-mode     :match "\\(/Cask\\|\\.\\(el\\|gz\\)\\)$")
 (associate! makefile-gmake-mode :match "/Makefile$")
 (associate! nxml-mode           :match "\\.plist$")
