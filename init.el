@@ -40,12 +40,11 @@
 ;;
 ;;; License: GPLv3
 
-(defconst narf-theme 'narf-dark)
-(defconst narf-default-font (font-spec :family "Hack" :size 12))
-
-;;
 (load (concat user-emacs-directory "bootstrap.el"))
 ;;
+
+(defvar narf-default-theme 'narf-dark)
+(defvar narf-default-font (font-spec :family "Hack" :size 12))
 
 (narf '(core ; core/core.el
 

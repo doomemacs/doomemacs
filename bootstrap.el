@@ -74,8 +74,9 @@
     ;; Load local settings, if available
     (when (file-exists-p "~/.emacs.local.el")
       (load "~/.emacs.local.el"))
-    (load-theme narf-theme t)
-    (setq narf-current-theme narf-theme)
+    (load-theme narf-default-theme t)
+    (setq narf-current-theme narf-default-theme
+          narf-current-font narf-default-font)
     (mapc 'require packages)
 
     (defun display-startup-echo-area-message ()

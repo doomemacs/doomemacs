@@ -19,7 +19,7 @@
 ;;;###autoload
 (defun narf/reset-theme ()
   (interactive)
-  (narf/load-theme (or narf-current-theme narf-theme)))
+  (narf/load-theme (or narf-current-theme narf-default-theme)))
 
 ;;;###autoload
 (defun narf/load-font (font)
