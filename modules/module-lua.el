@@ -9,6 +9,10 @@
   (after! company-dict
     (add-to-list 'company-dict-minor-mode-list 'love-mode))
 
+  (add-hook! lua-mode
+    (electric-indent-local-mode +1)
+    (setq narf-electric-indent-words '("else" "end")))
+
   (defun narf-inf-lua ()
     (lua-start-process "lua" "lua")
     (pop-to-buffer lua-process-buffer)))

@@ -16,6 +16,10 @@
   ;; Formatting
   (setq ruby-deep-indent-paren t)
 
+  (add-hook! ruby-mode
+    (electric-indent-local-mode +1)
+    (setq narf-electric-indent-words '("else" "end" "elseif")))
+
   ;; Don't interfere with my custom RET behavior
   (define-key ruby-mode-map [?\n] nil)
 

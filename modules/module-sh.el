@@ -17,7 +17,9 @@
 
   (define-repl! sh-mode narf/inf-shell)
   (add-hook! sh-mode 'flycheck-mode)
-  (add-hook! sh-mode 'electric-indent-local-mode)
+  (add-hook! sh-mode
+    (electric-indent-local-mode +1)
+    (setq narf-electric-indent-words '("else" "elif" "fi" "done")))
 
   (require 'company-shell)
 

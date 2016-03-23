@@ -80,7 +80,6 @@ enable multiple minor modes for the same regexp.")
 
 (add-hook! help-mode      'visual-line-mode)
 (add-hook! special-mode   (setq truncate-lines nil))
-(add-hook! python-mode    'electric-indent-local-mode)
 (add-hook! change-major-mode-hook
   (when indent-tabs-mode (whitespace-mode +1)))
 
@@ -108,6 +107,17 @@ enable multiple minor modes for the same regexp.")
 ;; (global-whitespace-mode 1)  ; Show whitespace
 ;; (global-font-lock-mode t)   ; Enable syntax highlighting for older emacs
 (electric-indent-mode -1)      ; on by default
+(defvar narf-electric-indent-words '())
+(make-variable-buffer-local 'narf-electric-indent-words)
+(setq electric-indent-chars '(?\n ?\^?))
+(defvar narf-electric-indent-p nil)
+(push (lambda (c)
+        (when (eolp)
+          (save-excursion
+            (backward-word)
+            (looking-at-p (concat "\\<" (regexp-opt narf-electric-indent-words))))))
+      electric-indent-functions)
+
 (global-auto-revert-mode 1)    ; revert buffers for changed files
 
 ;; window config undo/redo
