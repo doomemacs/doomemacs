@@ -146,26 +146,11 @@
         helm-swoop-pre-input-function (lambda () "")))
 
 (use-package helm-describe-modes :defer t)
-(use-package helm-semantic :commands helm-semantic-or-imenu)
-(use-package helm-elisp    :commands helm-apropos)
-(use-package helm-command  :commands helm-M-x)
+(use-package helm-semantic  :commands helm-semantic-or-imenu)
+(use-package helm-elisp     :commands helm-apropos)
+(use-package helm-command   :commands helm-M-x)
 (use-package helm-descbinds :commands helm-descbinds
-  :config
-  (setq helm-descbinds-window-style 'split-window)
-  (defun narf/helm-descbinds-leader ()
-    (interactive)
-    (narf-helm-descbinds "^,\\ "))
-  (defun narf/helm-descbinds-localleader ()
-    (interactive)
-    (narf-helm-descbinds "^\\\\\\ "))
-
-  (defun narf-helm-descbinds (&optional input buffer)
-    (let ((enable-recursive-minibuffers t))
-      (helm :sources (helm-descbinds-sources (or buffer (current-buffer)))
-            :buffer "*helm-descbinds*"
-            :resume 'noresume
-            :allow-nest t
-            :input input))))
+  :config (setq helm-descbinds-window-style 'split-window))
 
 (provide 'core-helm)
 ;;; core-helm.el ends here

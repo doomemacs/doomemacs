@@ -73,5 +73,24 @@ buffers."
   (let ((narf-helm-force-project-buffers (and (not all-p) (narf/project-p))))
     (helm-buffers-list)))
 
+;;;###autoload
+(defun narf/helm-descbinds-leader ()
+    (interactive)
+    (narf--helm-descbinds "^,\\ "))
+
+;;;###autoload
+(defun narf/helm-descbinds-localleader ()
+    (interactive)
+    (narf--helm-descbinds "^\\\\\\ "))
+
+(defun narf--helm-descbinds (&optional input buffer)
+  (let ((enable-recursive-minibuffers t))
+    (require 'helm-descbinds)
+    (helm :sources (helm-descbinds-sources (or buffer (current-buffer)))
+          :buffer "*helm-descbinds*"
+          :resume 'noresume
+          :allow-nest t
+          :input input)))
+
 (provide 'defuns-helm)
 ;;; defuns-helm.el ends here
