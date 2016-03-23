@@ -19,6 +19,7 @@
 (exmap "wal[ign]"      'narf:whitespace-align) ; align spaces
 (exmap "rec[ent]"      'narf:helm-recentf) ; show recent files in helm
 (exmap "reo[rient]"    'narf/window-reorient) ; scroll all windows to left
+(exmap "ie[dit]"       'evil-multiedit-ex-match)
 
 ;; External resources
 (exmap "dash"          'narf:dash) ; look up in Dash.app

@@ -279,9 +279,9 @@
              evil-multiedit-toggle-or-restrict-region
              evil-multiedit-next
              evil-multiedit-prev
-             evil-multiedit-abort)
+             evil-multiedit-abort
+             evil-multiedit-ex-match)
   :init
-  (exmap "ie" 'evil-multiedit-ex-match)
   (map! :v  "R"     'evil-multiedit-match-all
         :n  "M-C-D" 'evil-multiedit-restore
         :nv "M-d"   'evil-multiedit-match-and-next
