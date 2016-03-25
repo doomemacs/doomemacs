@@ -103,7 +103,8 @@
    org-edit-src-content-indentation 0
 
    ;; Latex
-   org-format-latex-options (plist-put org-format-latex-options :scale 1.3)
+   narf-org-latex-inline-scale 1.0
+   narf-org-latex-block-scale  1.4
    org-highlight-latex-and-related '(latex)
    org-latex-create-formula-image-program 'dvipng
    org-latex-image-default-width nil
@@ -432,7 +433,118 @@
                                       '(display t invisible t intangible t))
               (add-text-properties beg (match-end 0)
                                    '(font-lock-fontified t face org-meta-line))
-              t)))))))
+              t))))))
+
+  (defun org-format-latex (prefix &optional dir overlays msg forbuffer processing-type)
+    "Modified to render latex at different sizes depending on block vs inline."
+    (when (and overlays (fboundp 'clear-image-cache)) (clear-image-cache))
+    (unless (eq processing-type 'verbatim)
+      (let* ((math-regexp "\\$\\|\\\\[([]\\|^[ \t]*\\\\begin{[A-Za-z0-9*]+}")
+             (cnt 0)
+             checkdir-flag)
+        (goto-char (point-min))
+        ;; Optimize overlay creation: (info "(elisp) Managing Overlays").
+        (when (and overlays (memq processing-type '(dvipng imagemagick)))
+          (overlay-recenter (point-max)))
+        (while (re-search-forward math-regexp nil t)
+          (unless (and overlays
+                       (eq (get-char-property (point) 'org-overlay-type)
+                           'org-latex-overlay))
+            (let* ((context (org-element-context))
+                   (type (org-element-type context))
+                   (contents (org-element-property :value context))
+                   (block-p (or (eq type 'latex-environment)
+                                (string-prefix-p "$$" contents)
+                                (string-prefix-p "\\[" contents)))
+                   (org-format-latex-options
+                    (plist-put org-format-latex-options :scale (if block-p narf-org-latex-block-scale narf-org-latex-inline-scale))))
+              (when (memq type '(latex-environment latex-fragment))
+                (let ((block-type (eq type 'latex-environment))
+                      (value (org-element-property :value context))
+                      (beg (org-element-property :begin context))
+                      (end (save-excursion
+                             (goto-char (org-element-property :end context))
+                             (skip-chars-backward " \r\t\n")
+                             (point))))
+                  (case processing-type
+                    (mathjax
+                     ;; Prepare for MathJax processing.
+                     (if (not (string-match "\\`\\$\\$?" value))
+                         (goto-char end)
+                       (delete-region beg end)
+                       (if (string= (match-string 0 value) "$$")
+                           (insert "\\[" (substring value 2 -2) "\\]")
+                         (insert "\\(" (substring value 1 -1) "\\)"))))
+                    ((dvipng imagemagick)
+                     ;; Process to an image.
+                     (incf cnt)
+                     (goto-char beg)
+                     (let* ((face (face-at-point))
+                            ;; Get the colors from the face at point.
+                            (fg
+                             (let ((color (plist-get org-format-latex-options
+                                                     :foreground)))
+                               (if (and forbuffer (eq color 'auto))
+                                   (face-attribute face :foreground nil 'default)
+                                 color)))
+                            (bg
+                             (let ((color (plist-get org-format-latex-options
+                                                     :background)))
+                               (if (and forbuffer (eq color 'auto))
+                                   (face-attribute face :background nil 'default)
+                                 color)))
+                            (hash (sha1 (prin1-to-string
+                                         (list org-format-latex-header
+                                               org-latex-default-packages-alist
+                                               org-latex-packages-alist
+                                               org-format-latex-options
+                                               forbuffer value fg bg))))
+                            (absprefix (expand-file-name prefix dir))
+                            (linkfile (format "%s_%s.png" prefix hash))
+                            (movefile (format "%s_%s.png" absprefix hash))
+                            (sep (and block-type "\n\n"))
+                            (link (concat sep "[[file:" linkfile "]]" sep))
+                            (options
+                             (org-combine-plists
+                              org-format-latex-options
+                              `(:foreground ,fg :background ,bg))))
+                       (when msg (message msg cnt))
+                       (unless checkdir-flag ; Ensure the directory exists.
+                         (setq checkdir-flag t)
+                         (let ((todir (file-name-directory absprefix)))
+                           (unless (file-directory-p todir)
+                             (make-directory todir t))))
+                       (unless (file-exists-p movefile)
+                         (org-create-formula-image
+                          value movefile options forbuffer processing-type))
+                       (if overlays
+                           (progn
+                             (dolist (o (overlays-in beg end))
+                               (when (eq (overlay-get o 'org-overlay-type)
+                                         'org-latex-overlay)
+                                 (delete-overlay o)))
+                             (org--format-latex-make-overlay beg end movefile)
+                             (goto-char end))
+                         (delete-region beg end)
+                         (insert
+                          (org-add-props link
+                              (list 'org-latex-src
+                                    (replace-regexp-in-string "\"" "" value)
+                                    'org-latex-src-embed-type
+                                    (if block-type 'paragraph 'character)))))))
+                    (mathml
+                     ;; Process to MathML.
+                     (unless (org-format-latex-mathml-available-p)
+                       (user-error "LaTeX to MathML converter not configured"))
+                     (incf cnt)
+                     (when msg (message msg cnt))
+                     (goto-char beg)
+                     (delete-region beg end)
+                     (insert (org-format-latex-as-mathml
+                              value block-type prefix dir)))
+                    (otherwise
+                     (error "Unknown conversion type %s for LaTeX fragments"
+                            processing-type))))))))))))
 
 (provide 'module-org)
 ;;; module-org.el ends here

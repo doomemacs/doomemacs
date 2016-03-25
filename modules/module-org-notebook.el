@@ -17,8 +17,9 @@
 (defvar org-attach-directory      ".attach/")
 
 ;; Tell helm to ignore these directories
-(mapc (lambda (r) (add-to-list 'helm-boring-file-regexp-list r))
-      (list "\\.attach$" "\\.export$"))
+(after! helm
+  (mapc (lambda (r) (add-to-list 'helm-boring-file-regexp-list r))
+        (list "\\.attach$" "\\.export$")))
 
 
 ;;
