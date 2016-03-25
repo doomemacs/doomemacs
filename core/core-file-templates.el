@@ -29,9 +29,10 @@
           ("/Makefile$"                      "__"               makefile-gmake-mode)
           ("/main\\.\\(cc\\|cpp\\)$"         "__main.cpp"       c++-mode)
           ("/win32_\\.\\(cc\\|cpp\\)$"       "__winmain.cpp"    c++-mode)
-          ("\\.\\([Hh]\\|hpp\\)$"            "__.h"             c++-mode)
-          ("\\.\\(cc\\|cpp\\)$"              "__.cpp"           c++-mode)
-          ("\\.c$"                           "__.c"             c-mode)
+          ("\\.h\\(h\\|pp|xx\\)$"            "__hpp"            c++-mode)
+          ("\\.\\(cc\\|cpp\\)$"              "__cpp"            c++-mode)
+          ("\\.h$"                           "__h"              c-mode)
+          ("\\.c$"                           "__c"              c-mode)
 
           ;; Elisp
           ("-test\\.el$"                     "__"               emacs-ert-mode)
