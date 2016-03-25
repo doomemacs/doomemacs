@@ -71,7 +71,7 @@
 ;; Completion --- core/core-company.el
 (depends-on "company")
 (depends-on "company-statistics")
-(depends-on "company-dict" :git "https://github.com/hlissner/emacs-company-dict")
+(depends-on "company-dict")
 (depends-on "company-quickhelp")
 
 ;; Yasnippet --- core/core-yasnippet.el
