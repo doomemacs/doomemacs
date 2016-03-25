@@ -266,7 +266,7 @@ enable multiple minor modes for the same regexp.")
     (sp-local-pair "while" "" :when '(("SPC")) :post-handlers '((:add sp-insert-yasnippet)) :actions '(insert)))
 
   (sp-with-modes '(c-mode c++-mode objc-mode php-mode java-mode)
-    (sp-local-pair "/*" "" :post-handlers '(("||\n[i]*/" "RET") ("| */" "SPC")))
+    (sp-local-pair "/*" "*/" :post-handlers '(("||\n[i]" "RET") ("| " "SPC")))
 
     ;; Doxygen blocks
     (sp-local-pair "/**" "*/" :post-handlers '(("||\n[i]" "RET") ("||\n[i]" "SPC")))
