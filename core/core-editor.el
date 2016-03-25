@@ -103,9 +103,7 @@ enable multiple minor modes for the same regexp.")
     (fundamental-mode)
     (visual-line-mode)))
 
-;;
-;; (global-whitespace-mode 1)  ; Show whitespace
-;; (global-font-lock-mode t)   ; Enable syntax highlighting for older emacs
+;; Smarter electric-indent
 (electric-indent-mode -1)      ; on by default
 (defvar narf-electric-indent-words '())
 (make-variable-buffer-local 'narf-electric-indent-words)
@@ -118,7 +116,12 @@ enable multiple minor modes for the same regexp.")
             (looking-at-p (concat "\\<" (regexp-opt narf-electric-indent-words))))))
       electric-indent-functions)
 
+;;
+;; (global-whitespace-mode -1) ; Show whitespace
 (global-auto-revert-mode 1)    ; revert buffers for changed files
+;; Enable syntax highlighting for older emacs
+(unless (bound-and-true-p global-font-lock-mode)
+  (global-font-lock-mode t))
 
 ;; window config undo/redo
 (setq winner-dont-bind-my-keys t)
@@ -249,12 +252,6 @@ enable multiple minor modes for the same regexp.")
     (if (sp-point-after-bol-p id action context)
         (yas-expand-from-trigger-key)
       (forward-char)))
-
-  (defun sp--org-skip-> (ms mb me)
-    (or (and (= (line-beginning-position) mb)
-             (eq ?> (char-after (1+ mb))))
-        (and (= (1+ (line-beginning-position)) me)
-             (eq ?> (char-after me)))))
 
   (sp-local-pair '(sh-mode markdown-mode) "`" "`" :unless '(sp-point-before-word-p sp-point-before-same-p))
   (sp-local-pair 'markdown-mode "```" "```" :post-handlers '(("||\n[i]" "RET")) :unless '(sp-point-before-word-p sp-point-before-same-p))
