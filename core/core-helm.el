@@ -1,6 +1,33 @@
 ;;; core-helm.el
 
+(use-package projectile
+  :config
+  (add-hook! kill-emacs 'narf|projectile-invalidate-cache-maybe)
+
+  (setq-default projectile-enable-caching t)
+  (setq projectile-require-project-root nil
+        projectile-cache-file (concat narf-temp-dir "projectile.cache")
+        projectile-known-projects-file (concat narf-temp-dir "projectile.projects")
+        projectile-indexing-method 'alien
+        projectile-project-root-files narf-project-root-files)
+
+  (push "ido.last" projectile-globally-ignored-files)
+  (push "assets"   projectile-globally-ignored-directories)
+  (push ".cask"    projectile-globally-ignored-directories)
+  (push ".export"  projectile-globally-ignored-directories)
+  (push ".attach"  projectile-globally-ignored-directories)
+  (push '("scss" "css") projectile-other-file-alist)
+  (push '("css" "scss") projectile-other-file-alist)
+
+  (projectile-global-mode +1)
+
+  (use-package helm-projectile
+    :commands (helm-projectile-find-file
+               helm-projectile-find-dir)))
+
 (use-package helm
+  :defer t
+  :commands (helm helm-mode)
   :init
   (defvar helm-global-prompt ":: ")
   (setq-default
@@ -87,29 +114,6 @@
   (advice-add 'helm-display-mode-line :override 'narf*helm-hide-header)
 
   (helm-mode 1))
-
-(use-package projectile
-  :config
-  (add-hook! kill-emacs 'narf|projectile-invalidate-cache-maybe)
-
-  (setq-default projectile-enable-caching t)
-  (setq projectile-require-project-root nil
-        projectile-cache-file (concat narf-temp-dir "projectile.cache")
-        projectile-known-projects-file (concat narf-temp-dir "projectile.projects")
-        projectile-indexing-method 'alien
-        projectile-project-root-files narf-project-root-files)
-
-  (add-to-list 'projectile-globally-ignored-files "ido.last")
-  (add-to-list 'projectile-globally-ignored-directories ".cask")
-  (add-to-list 'projectile-globally-ignored-directories "assets")
-  (add-to-list 'projectile-globally-ignored-directories ".export")
-  (add-to-list 'projectile-globally-ignored-directories ".attach")
-  (add-to-list 'projectile-other-file-alist '("scss" "css"))
-  (add-to-list 'projectile-other-file-alist '("css" "scss"))
-
-  (projectile-global-mode +1)
-
-  (require 'helm-projectile))
 
 (use-package helm-ag
   :commands (helm-ag
