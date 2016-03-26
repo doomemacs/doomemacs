@@ -26,8 +26,7 @@
                helm-projectile-find-dir)))
 
 (use-package helm
-  :defer t
-  :commands (helm helm-mode)
+  :defer 2
   :init
   (defvar helm-global-prompt ":: ")
   (setq-default
@@ -54,11 +53,6 @@
    helm-bookmark-show-location t)
 
   :config
-  (require 'helm-files)
-
-  (mapc (lambda (r) (add-to-list 'helm-boring-file-regexp-list r))
-        (list "\\.projects$" "\\.DS_Store$" "\\.cask"))
-
   (map! (:map (helm-map helm-generic-files-map helm-find-files-map helm-swoop-map helm-projectile-find-file-map)
           "ESC"        nil
           "/"          nil
@@ -72,17 +66,14 @@
           "<tab>"      'helm-execute-persistent-action)
         (:map (helm-generic-files-map helm-projectile-find-file-map)
           "ESC"        'helm-keyboard-quit)
-        (:map helm-find-files-map
-          "C-w"        'helm-find-files-up-one-level
-          "TAB"        'helm-execute-persistent-action)
         (:map helm-ag-map
           "<backtab>"  'helm-ag-edit)
         (:map helm-ag-edit-map
           "<escape>"   'helm-ag--edit-abort
           :n "zx"      'helm-ag--edit-abort)
         (:map helm-map
-          "C-S-n"        'helm-next-source
-          "C-S-p"        'helm-previous-source
+          "C-S-n"      'helm-next-source
+          "C-S-p"      'helm-previous-source
           "C-u"        'helm-delete-minibuffer-contents))
 
   ;;; Helm hacks
@@ -113,7 +104,18 @@
   ;; Hide mode-line in helm windows
   (advice-add 'helm-display-mode-line :override 'narf*helm-hide-header)
 
+  (require 'helm-mode)
   (helm-mode 1))
+
+(use-package helm-files
+  :commands (helm-browse-project helm-find helm-find-files helm-for-files helm-multi-files helm-recentf)
+  :config
+  (map! (:map helm-find-files-map
+          "C-w" 'helm-find-files-up-one-level
+          "TAB" 'helm-execute-persistent-action))
+
+  (mapc (lambda (r) (add-to-list 'helm-boring-file-regexp-list r))
+        (list "\\.projects$" "\\.DS_Store$" "\\.cask")))
 
 (use-package helm-ag
   :commands (helm-ag
