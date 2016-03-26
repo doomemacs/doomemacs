@@ -2,8 +2,12 @@ EMACS=emacs
 CACHE_DIR="private/cache/`hostname`/`emacs --version | grep -o '2[0-9]\.[0-9]'`"
 REPO_URL="https://github.com/hlissner"
 
-all: update
+all: install autoloads bootstrap.elc
 
+install: autoloads bootstrap.elc
+	@cask install 2>&1
+
+# If you keep emacs open while running this, run narf/reload afterwards
 update: autoloads _update bootstrap.elc
 
 autoloads:
