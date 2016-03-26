@@ -227,6 +227,15 @@ to abort the minibuffer."
       ;;   (delete-windows-on "*Completions*"))
       (abort-recursive-edit))))
 
+(defun narf-reload ()
+    "Reload `load-path', in case you updated cask while emacs was open!"
+    (interactive)
+    (setq load-path (append (list narf-private-dir narf-core-dir narf-modules-dir narf-packages-dir)
+                            (f-directories narf-core-dir nil t)
+                            (f-directories narf-modules-dir nil t)
+                            (f-directories narf-packages-dir)
+                            narf--load-path)))
+
 (after! evil
   (evil-define-command narf:exit-mode-maybe ()
     "Exits insert/replace mode using jk without the momentary pause caused by

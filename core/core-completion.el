@@ -20,7 +20,7 @@
                             company-yasnippet
                             company-dabbrev-code)
                            company-dabbrev)
-        company-statistics-file (concat narf-temp-dir "company-stats-cache.el")
+        company-statistics-file (concat narf-temp-dir "/company-stats-cache.el")
         company-quickhelp-delay nil)
 
   :config

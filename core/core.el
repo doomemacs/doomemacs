@@ -84,7 +84,7 @@
 (require 'dash)
 
 (unless (require 'autoloads nil t)
-  (load (concat narf-emacs-dir "scripts/generate-autoloads.el"))
+  (load (concat narf-emacs-dir "/scripts/generate-autoloads.el"))
   (require 'autoloads))
 (require 'core-vars)
 (require 'core-defuns)
@@ -151,7 +151,7 @@
 
 
 ;;
-;; Allow errors to stop this from happening
+;; We put this on `after-init-hook' Allow errors to stop this from happening
 (add-hook! after-init
   (defadvice save-buffers-kill-emacs (around no-query-kill-emacs activate)
     "Prevent annoying \"Active processes exist\" query when you quit Emacs."

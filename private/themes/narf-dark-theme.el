@@ -1,9 +1,9 @@
 ;; NARF Dark
 ;; By Henrik Lissner <http://github.com/hlissner/emacs.d>
 
-(deftheme narf-dark "A dark theme for narfy emacs, inspired by Molokai")
+(require 'dash)
 
-;; (custom-theme-set-variables 'narf-dark)
+(deftheme narf-dark "A dark theme for narfy emacs, inspired by Molokai")
 
 ;; Color helper functions
 ;; Shamelessly *borrowed* from solarized

@@ -42,6 +42,9 @@
 
 (if (not window-system)
     (menu-bar-mode -1)
+  (scroll-bar-mode -1)  ; no scrollbar
+  (tool-bar-mode   -1)  ; no toolbar
+
   ;; Set fonts
   (narf/load-font narf-default-font)
   (set-face-attribute 'default t :font narf-default-font)
