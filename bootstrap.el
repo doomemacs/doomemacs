@@ -29,13 +29,6 @@
   (defconst IS-LINUX   (eq system-type 'gnu/linux))
   (defconst IS-WINDOWS (eq system-type 'windows-nt))
 
-  ;; Ensure that cask is in the right place
-  ;; (let ((cask-dir (cond (IS-MAC "/usr/local/share/emacs/site-lisp/cask")
-  ;;                       (t "~/.cask"))))
-  ;;   (unless (file-exists-p cask-dir)
-  ;;     (error "Cask folder not found"))
-  ;;   (push cask-dir load-path))
-
   ;; Helper for traversing subdirectories recursively
   (defun --subdirs (path &optional include-self)
     (let ((result (if include-self (list path) (list))))
