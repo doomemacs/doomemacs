@@ -17,10 +17,11 @@
   (defconst narf-private-dir   (concat narf-emacs-dir "/private"))
   (defconst narf-packages-dir  (concat narf-emacs-dir "/.cask/" emacs-version "/elpa"))
   (defconst narf-script-dir    (concat narf-emacs-dir "/scripts"))
+  (defconst narf-ext-dir       (concat narf-emacs-dir "/ext"))
   (defconst narf-snippet-dirs  (list (concat narf-private-dir "/snippets")
                                      (concat narf-private-dir "/templates")))
   ;; Hostname and emacs version-based elisp temp directories
-  (defconst narf-temp-dir      (format "%s/cache/%s/%s.%s/"
+  (defconst narf-temp-dir      (format "%s/cache/%s/%s.%s"
                                        narf-private-dir (system-name)
                                        emacs-major-version emacs-minor-version))
 

@@ -42,7 +42,7 @@
     :functions (anaconda-mode-running-p)
     :init
     (add-hook! python-mode '(anaconda-mode anaconda-eldoc-mode eldoc-mode))
-    (setq anaconda-mode-installation-directory (concat narf-temp-dir "anaconda/")
+    (setq anaconda-mode-installation-directory (concat narf-temp-dir "/anaconda/")
           anaconda-mode-eldoc-as-single-line t)
 
     :config

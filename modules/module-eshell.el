@@ -5,7 +5,7 @@
   :defer t
   :init
   (evil-set-initial-state 'eshell-mode 'normal)
-  (setq eshell-directory-name (concat narf-temp-dir "eshell")
+  (setq eshell-directory-name (concat narf-temp-dir "/eshell")
         eshell-scroll-to-bottom-on-input 'all
         eshell-buffer-shorthand t
 
@@ -14,7 +14,7 @@
         eshell-error-if-no-glob t
 
         ;; em-alias
-        eshell-aliases-file (concat narf-temp-dir ".eshell-aliases"))
+        eshell-aliases-file (concat narf-temp-dir "/.eshell-aliases"))
 
   ;; plan 9 smart shell
   (require 'em-smart)

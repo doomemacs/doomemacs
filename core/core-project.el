@@ -53,7 +53,7 @@
         ido-enable-tramp-completion t
         ido-enable-last-directory-history t
         ido-cr+-max-items 10000
-        ido-save-directory-list-file (concat narf-temp-dir "ido.last"))
+        ido-save-directory-list-file (concat narf-temp-dir "/ido.last"))
   :config
   (add-hook! ido-setup
     (require 'ido-vertical-mode)

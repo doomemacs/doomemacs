@@ -6,8 +6,9 @@
 
   (setq-default projectile-enable-caching t)
   (setq projectile-require-project-root nil
-        projectile-cache-file (concat narf-temp-dir "projectile.cache")
-        projectile-known-projects-file (concat narf-temp-dir "projectile.projects")
+        projectile-enable-caching t
+        projectile-cache-file (concat narf-temp-dir "/projectile.cache")
+        projectile-known-projects-file (concat narf-temp-dir "/projectile.projects")
         projectile-indexing-method 'alien
         projectile-project-root-files narf-project-root-files)
 

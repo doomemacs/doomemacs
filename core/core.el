@@ -43,18 +43,18 @@
  eval-expression-print-level        nil
 
  bookmark-save-flag                 t
- bookmark-default-file              (concat narf-temp-dir "bookmarks")
+ bookmark-default-file              (concat narf-temp-dir "/bookmarks")
 
  ;; Disable all backups (that's what git/dropbox are for)
  auto-save-default                  nil
- auto-save-list-file-name           (concat narf-temp-dir "autosave")
+ auto-save-list-file-name           (concat narf-temp-dir "/autosave")
  make-backup-files                  nil
  create-lockfiles                   nil
- backup-directory-alist            `((".*" . ,(concat narf-temp-dir "backup/")))
+ backup-directory-alist            `((".*" . ,(concat narf-temp-dir "/backup/")))
 
  ;; Remember undo history
  undo-tree-auto-save-history        nil
- undo-tree-history-directory-alist `(("." . ,(concat narf-temp-dir "undo/"))))
+ undo-tree-history-directory-alist `(("." . ,(concat narf-temp-dir "/undo/"))))
 
 ;; UTF-8 please
 (setq locale-coding-system    'utf-8)   ; pretty
@@ -81,8 +81,6 @@
 ;;
 
 (autoload 'use-package "use-package" "" nil 'macro)
-(require 'dash)
-
 (unless (require 'autoloads nil t)
   (load (concat narf-emacs-dir "/scripts/generate-autoloads.el"))
   (require 'autoloads))
@@ -93,14 +91,14 @@
   (setq use-package-verbose nil)
 
   ;; Make any folders needed
-  (dolist (file '("" "undo" "backup"))
+  (dolist (file '("" "/undo" "/backup"))
     (let ((path (concat narf-temp-dir file)))
       (unless (file-exists-p path)
         (make-directory path t)))))
 
 ;; Save history across sessions
 (require 'savehist)
-(setq savehist-file (concat narf-temp-dir "savehist")
+(setq savehist-file (concat narf-temp-dir "/savehist")
       savehist-save-minibuffer-history t
       savehist-additional-variables
       '(kill-ring search-ring regexp-search-ring))
@@ -118,7 +116,7 @@
 (add-hook 'savehist-save-hook #'unpropertize-savehist)
 
 (require 'recentf)
-(setq recentf-save-file (concat narf-temp-dir "recentf")
+(setq recentf-save-file (concat narf-temp-dir "/recentf")
       recentf-exclude '("/tmp/" "/ssh:" "\\.?ido\\.last$" "\\.revive$" "/TAGS$"
                         "emacs\\.d/private/cache/.+" "emacs\\.d/workgroups/.+$" "wg-default"
                         "/company-statistics-cache.el$")
@@ -134,7 +132,7 @@
              persistent-soft-flush
              persistent-soft-location-readable
              persistent-soft-location-destroy)
-  :init (defvar pcache-directory (concat narf-temp-dir "pcache/")))
+  :init (defvar pcache-directory (concat narf-temp-dir "/pcache/")))
 
 (use-package async
   :commands (async-start

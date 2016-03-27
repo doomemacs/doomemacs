@@ -34,7 +34,7 @@
 
 (require 'saveplace)
 (setq-default
- save-place-file (concat narf-temp-dir "saveplace")
+ save-place-file (concat narf-temp-dir "/saveplace")
  save-place t)
 (when (>= emacs-major-version 25)
   (save-place-mode +1))
