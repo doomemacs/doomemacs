@@ -1,4 +1,5 @@
 .cask/
+ext/
 eshell/
 private/cache/
 private/snippets/
