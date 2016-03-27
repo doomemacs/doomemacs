@@ -9,12 +9,12 @@
 ;; unity shaders
 (use-package shader-mode :mode "\\.shader$")
 
+(setq omnisharp-auto-complete-want-documentation nil
+      omnisharp-server-executable-path (concat narf-ext-dir "/OmniSharp.exe"))
+
 (use-package omnisharp
   :defer t
-  :preface
-  (setq omnisharp-server-executable-path "~/Dropbox/lib/omnisharp-server/OmniSharp/bin/Debug/OmniSharp.exe"
-        omnisharp-auto-complete-want-documentation nil)
-  :if (file-exists-p omnisharp-server-executable-path)
+  :when (file-exists-p omnisharp-server-executable-path)
   :init
   (add-hook! csharp-mode '(emr-initialize omnisharp-mode))
   :config
