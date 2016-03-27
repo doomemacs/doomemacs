@@ -25,9 +25,8 @@ clean:
 	@rm -f *.elc {core,modules,private,contrib}/*.elc {core,modules}/defuns/*.elc
 
 reset:
-	@rm -fr $(CACHE_DIR)/{ltxpng,pcache,undo}
-	@mkdir -p $(CACHE_DIR)/{ltxpng,pcache,undo}
-	rm -f "$(CACHE_DIR)/workgroups/*"
+	@find $(CACHE_DIR) -type f -maxdepth 1 -delete
+	@rm -f $(CACHE_DIR)/{workgroups,pcache,ltxpng,backup}/*
 
 
 %.elc: %.el
