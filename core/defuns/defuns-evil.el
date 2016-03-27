@@ -20,12 +20,16 @@
 ;;;###autoload (autoload 'narf/multi-next-line "defuns-evil" nil t)
 (evil-define-motion narf/multi-next-line (count)
   "Move down 6 lines"
-  :type line (evil-line-move 6))
+  :type line
+  (let ((line-move-visual visual-line-mode))
+    (evil-line-move (* 6 (or count 1)))))
 
 ;;;###autoload (autoload 'narf/multi-previous-line "defuns-evil" nil t)
 (evil-define-motion narf/multi-previous-line (count)
   "Move up 6 lines"
-  :type line (evil-line-move -6))
+  :type line
+  (let ((line-move-visual visual-line-mode))
+    (evil-line-move (- (* 6 (or count 1))))))
 
 ;;;###autoload
 (defun narf/evil-visual-line-state-p ()
