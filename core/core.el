@@ -149,15 +149,19 @@
 
 
 ;;
-;; We put this on `after-init-hook' Allow errors to stop this from happening
+;; We add this to `after-init-hook' to allow errors to stop this advice
 (add-hook! after-init
   (defadvice save-buffers-kill-emacs (around no-query-kill-emacs activate)
     "Prevent annoying \"Active processes exist\" query when you quit Emacs."
     (cl-flet ((process-list ())) ad-do-it)))
 
-(require 'server)
-(unless (server-running-p)
-  (server-start))
+(when (display-graphic-p)
+  (require 'server)
+  (unless (server-running-p)
+    (server-start)))
+
+(defun display-startup-echo-area-message ()
+  (message ":: Loaded in %s" (emacs-init-time)))
 
 (provide 'core)
 ;;; core.el ends here

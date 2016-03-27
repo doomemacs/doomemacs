@@ -44,11 +44,12 @@
 
 (defun narf (packages)
   "Bootstrap NARF emacs and initialize PACKAGES"
-  ;; stop package.el from being annoying. NARF relies entirely on Cask.
+  ;; stop package.el from being annoying. I rely solely on Cask.
   (setq-default
    package--init-file-ensured t
    package-enable-at-startup nil
-   gc-cons-threshold 4388608)
+   gc-cons-threshold 4388608
+   gc-cons-percentage 0.2)
 
   ;; prematurely optimize for faster startup
   (let ((gc-cons-threshold  169715200)
@@ -82,9 +83,6 @@
 
     ;; Load 'em up!
     (load-theme narf-current-theme t)
-    (mapc 'require packages)
-
-    (defun display-startup-echo-area-message ()
-      (message ":: Loaded in %s" (emacs-init-time)))))
+    (mapc 'require packages)))
 
 ;;; bootstrap.el ends here

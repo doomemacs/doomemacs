@@ -50,7 +50,11 @@
         :i [backtab] 'narf/dumb-dedent))
 
 (use-package web-mode
-  :mode ("\\.\\(p\\)?htm\\(l\\)?$" "\\.tpl\\(\\.php\\)?$" "\\.erb$" "wp-content/themes/.+/.+\\.php$")
+  :mode ("\\.\\(p\\)?htm\\(l\\)?$"
+         "\\.tpl\\(\\.php\\)?$"
+         "\\.erb$"
+         "wp-content/themes/.+/.+\\.php$"
+         "\\.blade\\.php$")
   :init
   ;; smartparens handles this
   (setq web-mode-enable-auto-pairing nil

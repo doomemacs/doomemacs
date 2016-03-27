@@ -2,7 +2,7 @@
 
 (use-package gitconfig-mode
   :mode ("/\\.?git/?config$" "/\\.gitmodules$")
-  :init (add-hook! gitconfig-mode 'flyspell-mode))
+  :init (add-hook 'gitconfig-mode-hook 'flyspell-mode))
 
 (use-package gitignore-mode
   :mode ("/\\.gitignore$"
@@ -34,7 +34,7 @@
     nil nil 'center)
 
   (advice-add 'evil-force-normal-state :after 'git-gutter)
-  (add-hook! focus-in 'git-gutter:update-all-windows))
+  (add-hook 'focus-in-hook 'git-gutter:update-all-windows))
 
 (after! vc-annotate
   (evil-set-initial-state 'vc-annotate-mode 'normal)

@@ -8,9 +8,10 @@
              quickrun-compile-only
              quickrun-replace-region
              helm-quickrun)
+  :init
+  (add-hook 'quickrun/mode-hook 'linum-mode)
   :config
   (setq quickrun-focus-p nil)
-  (add-hook! quickrun/mode '(linum-mode))
   (add-to-list 'quickrun-file-alist '("\\.gvy$" . "groovy")))
 
 (use-package repl-toggle

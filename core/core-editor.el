@@ -26,8 +26,9 @@
 
  shift-select-mode t
  tabify-regexp "^\t* [ \t]+"
- whitespace-style '(face tabs tab-mark trailing newline newline-mark indentation lines-tail)
  whitespace-line-column fill-column
+ whitespace-style '(face tabs tab-mark newline newline-mark
+                    trailing indentation lines-tail)
  whitespace-display-mappings
  '((tab-mark   ?\t   [?> ?\t])
    (newline-mark 10 [36 10])))
@@ -66,7 +67,7 @@ enable multiple minor modes for the same regexp.")
             (funcall (cdar alist) 1))
         (setq alist (cdr alist))))))
 
-(add-hook! find-file 'narf|enable-minor-mode-maybe)
+(add-hook 'find-file-hook 'narf|enable-minor-mode-maybe)
 
 
 ;;

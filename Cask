@@ -170,9 +170,6 @@
 (depends-on "php-refactor-mode")
 (depends-on "php-boris")
 (depends-on "php-extras")
-;; (depends-on "hack-mode"
-;;   :git "https://github.com/facebook/hhvm"
-;;   :files ("hphp/hack/editor-plugins/emacs/*.el"))
 
 ;; Python -- modules/module-python.el
 (depends-on "anaconda-mode")

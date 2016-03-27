@@ -108,7 +108,7 @@
    org-highlight-latex-and-related '(latex)
    org-latex-create-formula-image-program 'dvipng
    org-latex-image-default-width nil
-   org-latex-preview-ltxpng-directory (concat narf-temp-dir "ltxpng/")
+   org-latex-preview-ltxpng-directory (concat narf-temp-dir "/ltxpng/")
    org-latex-remove-logfiles nil
    org-startup-with-latex-preview nil
    ;; org-latex-packages-alist
