@@ -7,13 +7,13 @@
     (helm-projectile-find-file)))
 
 ;;;###autoload (autoload 'narf:save-session "defuns-workgroup" nil t)
-(evil-define-command narf:save-session (&optional bang session-name)
-  (interactive "<!><a>")
-  (unless (wg-current-workgroup t)
+(evil-define-command narf:save-session (&optional session-name)
+  (interactive "<a>")
+  (unless (wg-workgroup-list)
     (wg-create-workgroup wg-first-wg-name))
-  (if session-name
-      (wg-save-session-as (concat wg-workgroup-directory session-name) (not bang))
-    (wg-save-session)))
+  (wg-save-session-as (if session-name
+                          (concat wg-workgroup-directory session-name)
+                        wg-session-file)))
 
 ;;;###autoload (autoload 'narf:load-session "defuns-workgroup" nil t)
 (evil-define-command narf:load-session (&optional session-name)
@@ -176,7 +176,7 @@
 (defun narf/close-window-or-workgroup ()
   (interactive)
   (narf/kill-real-buffer)
-  (if (and (= (length (window-list)) 1)
+  (if (and (one-window-p t)
            (> (length (wg-workgroup-list)) 1))
       (if (string= (wg-workgroup-name (wg-current-workgroup)) wg-first-wg-name)
           (evil-window-delete)

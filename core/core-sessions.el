@@ -20,13 +20,13 @@
    wg-log-level 0
 
    ;; NOTE: Some of these make workgroup-restoration unstable
-   wg-restore-fringes t
-   wg-restore-margins t
-   wg-restore-scroll-bars t
-   wg-restore-frame-position t
-   wg-restore-remote-buffers t
    wg-restore-mark t
-   wg-restore-point-max t
+   wg-restore-frame-position nil
+   wg-restore-remote-buffers nil
+   wg-restore-scroll-bars nil
+   wg-restore-fringes nil
+   wg-restore-margins nil
+   wg-restore-point-max t ; Throws silent errors if non-nil
 
    wg-list-display-decor-divider         " "
    wg-list-display-decor-left-brace      ""
