@@ -27,6 +27,10 @@
         c-tab-always-indent nil
         c-electric-flag nil)
 
+  (map! (:map c-mode-base-map
+          (:localleader
+            :nv ";" 'narf/append-semicolon)))
+
   (defun narf/sp-point-is-template-p (id action context)
     (and (sp-in-code-p id action context)
          (sp-point-after-word-p id action context)))

@@ -92,6 +92,23 @@
          ("\\<\\(xstring\\|xchar\\)\\>" . font-lock-type-face)
          ) t))
 
+;;;###autoload
+(defun narf/append-semicolon ()
+  "Append a semicolon to the end of this (or each selected) non-empty line."
+  (interactive)
+  (let ((beg (if (evil-visual-state-p) evil-visual-beginning (line-beginning-position)))
+        (end (if (evil-visual-state-p) evil-visual-end (line-end-position))))
+    (save-excursion
+      (goto-char beg)
+      (while (< (point) end)
+        (let ((lend (save-excursion (evil-last-non-blank) (point))))
+          (goto-char (1+ lend))
+          (unless (or (eq (char-before) ?\;)
+                      (= lend (line-beginning-position)))
+            (insert ";")))
+        (forward-line)))
+    (when (evil-visual-state-p)
+      (evil-normal-state))))
 
 (provide 'defuns-cc)
 ;;; defuns-cc.el ends here
