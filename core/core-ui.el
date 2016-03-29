@@ -151,7 +151,7 @@
   (defface linum-highlight-face '((t (:inherit linum))) "Face for line highlights")
   (defvar narf--hl-nlinum-overlay nil)
   (defvar narf--hl-nlinum-line nil)
-  (defvar nlinum-format "%4d  ")
+  (defvar nlinum-format "%4d ")
   (setq linum-format "%3d ")
   :init
   (defun narf|nlinum-enable ()
