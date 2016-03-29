@@ -81,10 +81,8 @@
         module-web           ; for the 2.0'er
 
         ;; Experimental
-        ;;module-crystal     ; ruby at the speed of c
-        ;;module-eshell      ; for inferior OSes *cough*windows
-        ;;module-nim         ; look out Abraham
-        ;;module-pony        ; Dear Princess Compiler
+        ;;module-eshell        ; for inferior OSes *cough*windows
+        ;;module-pony          ; Dear Princess Compiler
 
         ;; Organizational/Notes
         module-org           ; for organized fearless leader
