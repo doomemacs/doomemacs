@@ -45,7 +45,8 @@
            (setq dont-kill t)))
     (narf--popup-remove window)
     (unless dont-kill
-      (kill-buffer (window-buffer window)))
+      (let ((kill-buffer-query-functions (delq 'process-kill-buffer-query-function kill-buffer-query-functions)))
+        (kill-buffer (window-buffer window))))
     (delete-window window)))
 
 ;;;###autoload
