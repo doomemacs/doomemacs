@@ -55,12 +55,6 @@ automatically renamed to the project name.")
     ;; Create a new workgroup on switch-project
     (setq projectile-switch-project-action 'narf/wg-projectile-switch-project))
 
-  ;; Save the session every 20 minutes
-  (defvar narf-wg-autosave-interval 1200)
-  (narf|wg-autosave-enable)
-  (add-hook 'focus-out-hook 'narf|wg-autosave-disable)
-  (add-hook 'focus-in-hook  'narf|wg-autosave-enable)
-
   ;; Seriously, don't mess with the modeline! `wg-mode-line-display-on' isn't enough
   (advice-add 'wg-change-modeline :override 'ignore)
 
