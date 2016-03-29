@@ -2,15 +2,13 @@
 
 (use-package projectile
   :config
-  (add-hook! kill-emacs 'narf|projectile-invalidate-cache-maybe)
-
-  (setq-default projectile-enable-caching t)
   (setq projectile-require-project-root nil
         projectile-enable-caching t
         projectile-cache-file (concat narf-temp-dir "/projectile.cache")
         projectile-known-projects-file (concat narf-temp-dir "/projectile.projects")
         projectile-indexing-method 'alien
-        projectile-project-root-files narf-project-root-files)
+        projectile-project-root-files narf-project-root-files
+        projectile-file-exists-remote-cache-expire nil)
 
   (push "ido.last" projectile-globally-ignored-files)
   (push "assets"   projectile-globally-ignored-directories)
