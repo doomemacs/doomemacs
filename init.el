@@ -66,6 +66,7 @@
         ;; Environments
         module-apple         ; Applescript, Swift, Launchbar, iOS, wallet syphons, etc.
         module-cc            ; c/c++/obj-c madness
+        module-crystal       ; ruby at the speed of c
         module-csharp        ; unity, .NET, and mono shenanigans
         module-go            ; the hipster dialect
         module-java          ; the poster child for carpal tunnel syndome
@@ -74,7 +75,7 @@
         module-lua           ; one-based indices? one-based indices.
         module-php           ; making php less painful to work with
         module-python        ; beautiful is better than ugly
-        module-ruby          ; <3
+        module-ruby          ; 1.step do {|i| p "Ruby is #{i&1==0?'love':'life'}"}
         module-rust          ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
         module-sh            ; she sells Z-shells by the C XOR
         module-text          ; writing docs for people to ignore
@@ -85,15 +86,15 @@
         ;;module-pony          ; Dear Princess Compiler
 
         ;; Organizational/Notes
-        module-org           ; for organized fearless leader
-        module-org-crm       ; org-mode, for keeping tabs on my victims
-        module-org-notebook  ; making org-mode into a modern note-taking solution
+        ;;module-org           ; for organized fearless leader
+        ;;module-org-crm       ; to keep tabs on my victims
+        ;;module-org-notebook  ; #modernizeOrgMode2016
 
         ;; Extra Tools
         module-tmux          ; closing the rift between GUI & terminal
         module-demo          ; allow me to demonstrate...
         module-ansible       ;
-        module-write         ; for write papers and fiction in Emacs
+        ;;module-write       ; for write papers and fiction in Emacs
 
         ;; Key bindings & ex commands
         my-bindings
