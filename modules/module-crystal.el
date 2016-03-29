@@ -3,8 +3,17 @@
 (use-package crystal-mode
   :mode "\\.cr$"
   :interpreter "crystal"
+  :init
+  (after! editorconfig
+    (push '(crystal-mode crystal-indent-level)
+          editorconfig-indentation-alist))
   :config
-  (setq crystal-indent-level 2))
+  (after! quickrun
+    (quickrun-add-command
+     "crystal" '((:command . "crystal")
+                 (:exec . "%c run %s")
+                 (:description . "Run Crystal script"))
+     :mode 'crystal-mode)))
 
 (provide 'module-crystal)
 ;;; module-crystal.el ends here
