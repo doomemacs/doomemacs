@@ -33,8 +33,6 @@
 
   (yas-reload-all)
 
-  ;; Simpler `yas-selected-text' alias for templates
-  (defvaralias '% 'yas-selected-text)
   ;; Undo global maps
   (map! :i [(tab)]     nil
         :v "<backtab>" nil)
@@ -57,13 +55,13 @@
   ;; Strip out the shitespace before a line selection
   (add-hook! yas-before-expand-snippet 'narf|yas-before-expand)
   ;; Previous hook causes yas-selected-text to persist between expansions.
-  ;; This little hack gets around it.
+  ;; This little hack fixes that.
   (add-hook! yas-after-exit-snippet 'narf|yas-after-expand)
 
   ;; Exit snippets on ESC in normal mode
   (advice-add 'evil-force-normal-state :before 'yas-exit-all-snippets)
-  ;; Prevents evil's visual-line from mode gobbling up the newline on the
-  ;; right due to an off-by-one issue.
+  ;; Prevents evil's visual-line from gobbling up the newline on the right due to an
+  ;; off-by-one issue.
   (defadvice yas-expand-snippet (around yas-expand-snippet-visual-line activate)
     (when (narf/evil-visual-line-state-p)
       (ad-set-arg 2 (1- (ad-get-arg 2)))) ad-do-it)
