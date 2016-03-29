@@ -38,13 +38,13 @@
 ;;
 ;; These mice are not part of GNU Emacs.
 ;;
-;;; License: GPLv3
+;;; License: MIT
 
 (load (concat user-emacs-directory "bootstrap.el"))
 ;;
 
-(defvar narf-default-theme 'narf-dark)
-(defvar narf-default-font (font-spec :family "Hack" :size 12))
+(defconst narf-default-theme 'narf-dark)
+(defconst narf-default-font (font-spec :family "Terminus (TTF)" :size 12 :antialias nil))
 
 (narf '(core ; core/core.el
 
