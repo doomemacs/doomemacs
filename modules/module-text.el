@@ -10,6 +10,10 @@
   :init
   (add-hook! markdown-mode 'narf|enable-hard-wrap)
   :config
+  (sp-local-pair 'markdown-mode "```" "```"
+                 :post-handlers '(("||\n[i]" "RET"))
+                 :unless '(sp-point-before-word-p sp-point-before-same-p))
+
   (map! (:map markdown-mode-map
           "<backspace>"  nil
           "<M-left>"     nil

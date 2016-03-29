@@ -194,7 +194,20 @@
     (define-text-object! "/" "/" "/")
     (define-text-object! "_" "_" "_")
     (define-text-object! "=" "=" "=")
-    (define-text-object! "~" "~" "~")))
+    (define-text-object! "~" "~" "~"))
+
+  ;; smartparens config
+  (sp-with-modes '(org-mode)
+    (sp-local-pair "*" "*" :unless '(sp-point-after-word-p sp-point-at-bol-p) :skip-match 'narf/sp-org-skip-asterisk)
+    (sp-local-pair "_" "_" :unless '(sp-point-before-word-p sp-point-after-word-p))
+    (sp-local-pair "/" "/" :unless '(sp-point-before-word-p sp-point-after-word-p) :post-handlers '(("[d1]" "SPC")))
+    (sp-local-pair "~" "~" :unless '(sp-point-before-word-p sp-point-after-word-p) :post-handlers '(("[d1]" "SPC")))
+    (sp-local-pair "=" "=" :unless '(sp-point-before-word-p sp-point-after-word-p) :post-handlers '(("[d1]" "SPC")))
+
+    (sp-local-pair "\\[" "\\]" :post-handlers '(("| " "SPC")))
+    (sp-local-pair "\\(" "\\)" :post-handlers '(("| " "SPC")))
+    (sp-local-pair "$$" "$$"   :post-handlers '((:add " | ")) :unless '(sp-point-at-bol-p))
+    (sp-local-pair "{" nil)))
 
 (defun narf|org-keybinds ()
   (define-key org-mode-map (kbd "RET") nil)

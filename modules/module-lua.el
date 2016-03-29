@@ -4,18 +4,26 @@
   :mode "\\.lua$"
   :interpreter "lua"
   :init
-  (define-repl! lua-mode narf-inf-lua)
+  (define-repl! lua-mode narf/inf-lua)
   (add-hook! lua-mode 'flycheck-mode)
   (after! company-dict
     (add-to-list 'company-dict-minor-mode-list 'love-mode))
-
   (add-hook! lua-mode
     (electric-indent-local-mode +1)
     (setq narf-electric-indent-words '("else" "end")))
+  :config
+  (sp-with-modes '(lua-mode)
+    ;; disable defaults
+    (sp-local-pair "if" nil :actions       :rem)
+    (sp-local-pair "while" nil :actions    :rem)
+    (sp-local-pair "function" nil :actions :rem)
 
-  (defun narf-inf-lua ()
-    (lua-start-process "lua" "lua")
-    (pop-to-buffer lua-process-buffer)))
+    (sp-local-pair "then " " end")
+    (sp-local-pair "do "   " end")
+    (sp-local-pair "then"  "end" :when '(("RET")) :post-handlers '("||\n[i]"))
+    (sp-local-pair "do"    "end" :when '(("RET")) :post-handlers '("||\n[i]"))
+
+    (sp-local-pair "function" "end" :post-handlers '((" |()\n[i]\n" "RET") ("|()  " "SPC")))))
 
 (define-minor-mode love-mode
   "Buffer local minor mode for Love2D"

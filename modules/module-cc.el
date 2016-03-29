@@ -27,6 +27,18 @@
         c-tab-always-indent nil
         c-electric-flag nil)
 
+  (defun narf/sp-point-is-template-p (id action context)
+    (and (sp-in-code-p id action context)
+         (sp-point-after-word-p id action context)))
+
+  (sp-local-pair 'c++-mode "<" ">" :when '(narf/sp-point-is-template-p))
+  (sp-with-modes '(c-mode c++-mode objc-mode java-mode)
+    (sp-local-pair "/*" "*/" :post-handlers '(("||\n[i]" "RET") ("| " "SPC")))
+
+    ;; Doxygen blocks
+    (sp-local-pair "/**" "*/" :post-handlers '(("||\n[i]" "RET") ("||\n[i]" "SPC")))
+    (sp-local-pair "/*!" "*/" :post-handlers '(("||\n[i]" "RET") ("[d-1]< | " "SPC"))))
+
   ;; C/C++ Settings
   (add-hook! (c-mode c++-mode)
     (electric-indent-local-mode +1)

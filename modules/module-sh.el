@@ -24,7 +24,14 @@
   (require 'company-shell)
 
   ;; Fontify variables in strings
-  (add-hook 'sh-mode-hook 'narf|sh-extra-font-lock-activate))
+  (add-hook 'sh-mode-hook 'narf|sh-extra-font-lock-activate)
+
+  (sp-with-modes '(sh-mode)
+    (sp-local-pair "case"  "" :when '(("SPC")) :post-handlers '((:add narf/sp-insert-yasnippet)) :actions '(insert))
+    (sp-local-pair "if"    "" :when '(("SPC")) :post-handlers '((:add narf/sp-insert-yasnippet)) :actions '(insert))
+    (sp-local-pair "for"   "" :when '(("SPC")) :post-handlers '((:add narf/sp-insert-yasnippet)) :actions '(insert))
+    (sp-local-pair "elif"  "" :when '(("SPC")) :post-handlers '((:add narf/sp-insert-yasnippet)) :actions '(insert))
+    (sp-local-pair "while" "" :when '(("SPC")) :post-handlers '((:add narf/sp-insert-yasnippet)) :actions '(insert))))
 
 (provide 'module-sh)
 ;;; module-sh.el ends here

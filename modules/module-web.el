@@ -17,6 +17,8 @@
   (setq-default css-indent-offset 2)
   (setq scss-compile-at-save nil)
   :config
+  (sp-local-pair 'scss-mode "/*" "*/" :post-handlers '(("[d-3]||\n[i]" "RET") ("| " "SPC")))
+
   (map! :map scss-mode-map
         :n "M-r" 'narf/web-refresh-browser
         (:leader
@@ -60,6 +62,12 @@
   (setq web-mode-enable-auto-pairing nil
         web-mode-enable-auto-quoting nil)
   :config
+  (sp-with-modes '(web-mode)
+    (sp-local-pair "{{!--" "--}}" :post-handlers '(("||\n[i]" "RET") ("| " "SPC")))
+    (sp-local-pair "<%" "%>"      :post-handlers '(("||\n[i]" "RET") ("| " "SPC")))
+    (sp-local-pair "{!!" "!!}"    :post-handlers '(("||\n[i]" "RET") ("| " "SPC")))
+    (sp-local-pair "{#" "#}"      :post-handlers '(("||\n[i]" "RET") ("| " "SPC"))))
+
   (after! web-beautify
     (add-hook! web-mode (setenv "jsbeautify_indent_size" "4"))
     (map! :map web-mode-map :m "gQ" 'web-beautify-html))

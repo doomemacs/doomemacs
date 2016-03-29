@@ -23,6 +23,14 @@
                    (load (concat php-extras-eldoc-functions-file ".el"))
                    (message "PHP eldoc updated!"))))
 
+  (sp-with-modes '(php-mode)
+    (sp-local-pair "/*"    "*/"   :post-handlers '(("||\n[i]" "RET") ("| " "SPC")))
+    (sp-local-pair "/**"   "*/"   :post-handlers '(("||\n[i]" "RET") ("||\n[i]" "SPC")))
+    (sp-local-pair "<? "    " ?>" :post-handlers '(("||\n[i]" "RET") ("| " "SPC") ("| " "=")))
+    (sp-local-pair "<?php " " ?>" :post-handlers '(("||\n[i]" "RET") ("| " "SPC")))
+    (sp-local-pair "<?"    "?>"   :when '(("RET")) :post-handlers '("||\n[i]"))
+    (sp-local-pair "<?php" "?>"   :when '(("RET")) :post-handlers '("||\n[i]")))
+
   (use-package php-refactor-mode
     :init
     (add-hook! php-mode '(turn-on-eldoc-mode emr-initialize php-refactor-mode))

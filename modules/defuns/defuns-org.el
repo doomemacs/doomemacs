@@ -350,5 +350,12 @@ re-align the table if necessary. (Necessary because org-mode has a
         (end evil-visual-end))
     (org-insert-link nil link (when (and beg end) (buffer-substring-no-properties beg end)))))
 
+;;;###autoload
+(defun narf/sp-org-skip-asterisk (ms mb me)
+    (or (and (= (line-beginning-position) mb)
+             (eq 32 (char-after (1+ mb))))
+        (and (= (1+ (line-beginning-position)) me)
+             (eq 32 (char-after me)))))
+
 (provide 'defuns-org)
 ;;; defuns-org.el ends here
