@@ -79,7 +79,6 @@ enable multiple minor modes for the same regexp.")
 (associate! nxml-mode           :match "\\.plist$")
 (associate! conf-mode           :match "/\\.?editorconfig$")
 
-(add-hook! help-mode      'visual-line-mode)
 (add-hook! special-mode   (setq truncate-lines nil))
 (add-hook! change-major-mode-hook
   (when indent-tabs-mode (whitespace-mode +1)))
@@ -119,6 +118,7 @@ enable multiple minor modes for the same regexp.")
 
 ;;
 ;; (global-whitespace-mode -1) ; Show whitespace
+(global-visual-line-mode 1)    ; wrap buffers
 (global-auto-revert-mode 1)    ; revert buffers for changed files
 ;; Enable syntax highlighting for older emacs
 (unless (bound-and-true-p global-font-lock-mode)
