@@ -53,10 +53,9 @@
 
 (use-package web-mode
   :mode ("\\.\\(p\\)?htm\\(l\\)?$"
-         "\\.tpl\\(\\.php\\)?$"
+         "\\.\\(tpl\\|blade\\)\\(\\.php\\)?$"
          "\\.erb$"
-         "wp-content/themes/.+/.+\\.php$"
-         "\\.blade\\.php$")
+         "wp-content/themes/.+/.+\\.php$")
   :init
   ;; smartparens handles this
   (setq web-mode-enable-auto-pairing nil
@@ -111,8 +110,8 @@
   (add-yas-minor-mode! 'jekyll-mode))
 (associate! jekyll-mode
   :match "/\\(\\(css\\|_\\(layouts\\|posts\\|sass\\)\\)/.+\\|.+.html\\)$"
-  :files ("config.yml" "_layouts")
-  :in (web-mode scss-mode html-mode markdown-mode))
+  :files ("config.yml" "_layouts/")
+  :in (web-mode scss-mode html-mode markdown-mode yaml-mode))
 (add-hook! jekyll-mode
   (when (eq major-mode 'web-mode)
     (web-mode-set-engine "django")))
@@ -126,7 +125,7 @@
   (add-yas-minor-mode! 'wordpress-mode))
 (associate! wordpress-mode
   :match "/wp-\\(\\(content\\|admin\\|includes\\)/\\)?.+$"
-  :files ("wp-config.php" "wp-content"))
+  :files ("wp-config.php" "wp-content/"))
 (after! company-dict (add-to-list 'company-dict-minor-mode-list 'wordpress-mode))
 
 (provide 'module-web)
