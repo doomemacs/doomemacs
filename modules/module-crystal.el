@@ -11,7 +11,7 @@
   (after! quickrun
     (quickrun-add-command
      "crystal" '((:command . "crystal")
-                 (:exec . "%c run %s")
+                 (:exec . "%c %s")
                  (:description . "Run Crystal script"))
      :mode 'crystal-mode)))
 
