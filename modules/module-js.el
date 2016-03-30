@@ -17,6 +17,10 @@
                         ;; Launchbar API
                         "LaunchBar" "File" "Action" "HTTP" "include" "Lib"))
 
+  (map! :map js2-mode-map
+        (:localleader
+          :n ";" 'narf/append-semicolon))
+
   (after! web-beautify
     (add-hook! js2-mode (setenv "jsbeautify_indent_size" "4"))
     (map! :map js2-mode-map :m "gQ" 'web-beautify-js))

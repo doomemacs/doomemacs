@@ -20,6 +20,8 @@
 
   (map! :map scss-mode-map
         :n "M-r" 'narf/web-refresh-browser
+        (:localleader
+          :n ";" 'narf/append-semicolon)
         (:leader
           :n ";" 'helm-css-scss
           :n ":" 'helm-css-scss-multi))

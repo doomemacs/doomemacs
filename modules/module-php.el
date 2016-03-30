@@ -13,6 +13,10 @@
   (require 'php-extras)
   (defun php-extras-company-setup ()) ;; company will set up itself
 
+  (map! :map php-mode-map
+        (:localleader
+          :n ";" 'narf/append-semicolon))
+
   ;; Generate php-extras documentation and completion asynchronously
   (unless (file-exists-p (concat php-extras-eldoc-functions-file ".el"))
     (async-start `(lambda ()
