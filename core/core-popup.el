@@ -11,6 +11,7 @@
   (shackle-mode 1)
   (setq shackle-rules
         '(;; Plugins
+          ("*helm bookmarks*"                :align below  :size 7 :select t)
           ("\\` ?\\*[hH]elm.*?\\*\\'" :regexp t :align below  :size 20 :select t)
           (" ?\\*Flycheck.+\\*"       :regexp t :align below  :size 15  :noselect t)
           (" *NeoTree*"                      :align left             :select t)
