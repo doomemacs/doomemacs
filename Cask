@@ -143,6 +143,9 @@
 (depends-on "go-eldoc")
 (depends-on "company-go")
 
+;; Haskell -- modules/module-haskell.el
+(depends-on "haskell-mode")
+
 ;; Java -- modules/module-java.el
 (depends-on "android-mode")
 (depends-on "emacs-eclim")
