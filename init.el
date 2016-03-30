@@ -84,7 +84,6 @@
 
         ;; Experimental
         ;;module-eshell        ; for inferior OSes *cough*windows
-        ;;module-pony          ; Dear Princess Compiler
 
         ;; Organizational/Notes
         ;;module-org           ; for organized fearless leader
