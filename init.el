@@ -1,8 +1,8 @@
 ;;; init.el
 ;;
 ;; Author:  Henrik Lissner <henrik@lissner.net>
-;; URL:     https://github.com/hlissner/emacs.d
-;; Version: 0.9.2
+;; URL:     https://github.com/hlissner/.emacs.d
+;; Version: 0.9.5
 ;;
 ;;; Are you pondering what I'm pondering, Pinky?
 ;;
