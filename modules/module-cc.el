@@ -26,6 +26,10 @@
         c-tab-always-indent nil
         c-electric-flag nil)
 
+  ;; TODO Clang is *really* slow in larger projects, maybe replace it with
+  ;; irony-mode or ycmd?
+  (define-company-backend! c-mode-common (c-headers clang xcode))
+
   (map! (:map c-mode-base-map
           (:localleader
             :nv ";" 'narf/append-semicolon)))
@@ -41,10 +45,6 @@
     ;; Doxygen blocks
     (sp-local-pair "/**" "*/" :post-handlers '(("||\n[i]" "RET") ("||\n[i]" "SPC")))
     (sp-local-pair "/*!" "*/" :post-handlers '(("||\n[i]" "RET") ("[d-1]< | " "SPC"))))
-
-  ;; TODO Clang is *really* slow in larger projects, maybe replace it with
-  ;; irony-mode or ycmd?
-  (define-company-backend! c-mode-common (c-headers clang xcode))
 
   ;; C/C++ Settings
   (add-hook! (c-mode c++-mode)
