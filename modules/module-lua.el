@@ -23,7 +23,7 @@
     (sp-local-pair "then"  "end" :when '(("RET")) :post-handlers '("||\n[i]"))
     (sp-local-pair "do"    "end" :when '(("RET")) :post-handlers '("||\n[i]"))
 
-    (sp-local-pair "function" "end" :post-handlers '((" |()\n[i]\n" "RET") ("|()  " "SPC")))))
+    (sp-local-pair "function" " end"  :post-handlers '(("[d-1] |()\n[i]\n[i]" "RET") ("|() " "SPC")))))
 
 (define-minor-mode love-mode
   "Buffer local minor mode for Love2D"

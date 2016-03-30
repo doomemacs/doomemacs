@@ -30,8 +30,9 @@
   (sp-with-modes '(php-mode)
     (sp-local-pair "/*"    "*/"   :post-handlers '(("||\n[i]" "RET") ("| " "SPC")))
     (sp-local-pair "/**"   "*/"   :post-handlers '(("||\n[i]" "RET") ("||\n[i]" "SPC")))
-    (sp-local-pair "<? "    " ?>" :post-handlers '(("||\n[i]" "RET") ("| " "SPC") ("| " "=")))
+    (sp-local-pair "<? "    " ?>" :post-handlers '(("||\n[i]" "RET") ("| " "SPC") ))
     (sp-local-pair "<?php " " ?>" :post-handlers '(("||\n[i]" "RET") ("| " "SPC")))
+    (sp-local-pair "<?="    " ?>")
     (sp-local-pair "<?"    "?>"   :when '(("RET")) :post-handlers '("||\n[i]"))
     (sp-local-pair "<?php" "?>"   :when '(("RET")) :post-handlers '("||\n[i]")))
 
