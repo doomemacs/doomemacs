@@ -44,5 +44,17 @@
   (narf--ert-pre)
   (ert-run-tests-interactively t))
 
+;;;###autoload
+(defun narf/elisp-auto-compile ()
+  (when (narf/is-recompilable-p)
+    (narf:compile-el)))
+
+;;;###autoload
+(defun narf/elisp-inf-ielm ()
+  (ielm)
+  (let ((buf (current-buffer)))
+    (bury-buffer)
+    (pop-to-buffer buf)))
+
 (provide 'defuns-lisp)
 ;;; defuns-lisp.el ends here

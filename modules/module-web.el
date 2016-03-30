@@ -5,7 +5,7 @@
 (use-package sass-mode
   :mode "\\.sass$"
   :config
-  (after! company (define-company-backend! sass-mode (css))))
+  (define-company-backend! sass-mode (css)))
 
 (use-package scss-mode
   :mode "\\.scss$"
@@ -14,7 +14,6 @@
   :init
   (define-docset! scss-mode "sass,bourbon")
   (add-hook! scss-mode '(hs-minor-mode narf|hl-line-off))
-  (setq-default css-indent-offset 2)
   (setq scss-compile-at-save nil)
   :config
   (sp-local-pair 'scss-mode "/*" "*/" :post-handlers '(("[d-3]||\n[i]" "RET") ("| " "SPC")))
@@ -22,8 +21,10 @@
   (map! :map scss-mode-map
         :n "M-r" 'narf/web-refresh-browser
         (:leader
-         :n ";" 'helm-css-scss
-         :n ":" 'helm-css-scss-multi))
+          :n ";" 'helm-css-scss
+          :n ":" 'helm-css-scss-multi))
+
+  (define-company-backend! scss-mode (css))
 
   (after! web-beautify
     (add-hook! scss-mode (setenv "jsbeautify_indent_size" "2"))
@@ -33,9 +34,7 @@
     (emr-declare-command 'narf/scss-toggle-inline-or-block
       :title "toggle inline/block"
       :modes 'scss-mode
-      :predicate (lambda () (not (use-region-p)))))
-
-  (after! company (define-company-backend! scss-mode (css))))
+      :predicate (lambda () (not (use-region-p))))))
 
 (use-package web-beautify
   :commands (web-beautify-js web-beautify-css web-beautify-html)

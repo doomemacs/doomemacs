@@ -12,7 +12,7 @@
   (add-hook 'quickrun/mode-hook 'linum-mode)
   :config
   (setq quickrun-focus-p nil)
-  (add-to-list 'quickrun-file-alist '("\\.gvy$" . "groovy")))
+  (push '("\\.gvy$" . "groovy") quickrun-file-alist))
 
 (use-package repl-toggle
   :commands (rtog/toggle-repl rtog/add-repl)

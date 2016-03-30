@@ -27,7 +27,7 @@
     (use-package helm-go-package :defer t))
 
   (use-package go-eldoc
-    :config (add-hook! go-mode 'go-eldoc-setup))
+    :config (add-hook 'go-mode-hook 'go-eldoc-setup))
 
   (use-package company-go
     :config

@@ -22,7 +22,7 @@
     (map! :map js2-mode-map :m "gQ" 'web-beautify-js))
 
   (use-package js2-refactor
-    :init (add-hook! js2-mode 'emr-initialize)
+    :init (add-hook 'js2-mode-hook 'emr-initialize)
     :config
     (require 'emr)
     (mapc (lambda (x)
@@ -34,7 +34,8 @@
                                     (t (if region-p
                                            (lambda () (use-region-p))
                                          (lambda () (not (use-region-p)))))))
-              (emr-declare-command (intern (format "js2r-%s" (symbol-name command-name)))
+              (emr-declare-command
+                  (intern (format "js2r-%s" (symbol-name command-name)))
                 :title title :modes 'js2-mode :predicate predicate)))
           '((extract-function           "extract function"           t)
             (extract-method             "extract method"             t)

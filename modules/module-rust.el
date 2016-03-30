@@ -10,10 +10,11 @@
     :config (add-hook! rust-mode 'flycheck-mode))
 
   (use-package racer
-    :when (file-exists-p (concat narf-ext-dir "/racer"))
-    :config
+    :preface
     (setq racer-cmd (concat narf-ext-dir "/racer")
           racer-rust-src-path (concat narf-ext-dir "/rust/src/"))
+    :when (file-exists-p racer-cmd)
+    :config
     (map! :map rust-mode-map :m "gd" 'racer-find-definition)
 
     ;; TODO Unit test keybinds

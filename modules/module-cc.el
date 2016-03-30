@@ -3,9 +3,8 @@
 (use-package cmake-mode
   :mode "CMakeLists\\.txt$"
   :config
-  (after! company
-    (require 'company-cmake)
-    (define-company-backend! cmake-mode (cmake yasnippet))))
+  (require 'company-cmake)
+  (define-company-backend! cmake-mode (cmake yasnippet)))
 
 (use-package glsl-mode
   :mode ("\\.glsl\\'" "\\.vert\\'" "\\.frag\\'" "\\.geom\\'"))
@@ -43,6 +42,10 @@
     (sp-local-pair "/**" "*/" :post-handlers '(("||\n[i]" "RET") ("||\n[i]" "SPC")))
     (sp-local-pair "/*!" "*/" :post-handlers '(("||\n[i]" "RET") ("[d-1]< | " "SPC"))))
 
+  ;; TODO Clang is *really* slow in larger projects, maybe replace it with
+  ;; irony-mode or ycmd?
+  (define-company-backend! c-mode-common (c-headers clang xcode))
+
   ;; C/C++ Settings
   (add-hook! (c-mode c++-mode)
     (electric-indent-local-mode +1)
@@ -50,11 +53,10 @@
   (add-hook! c++-mode 'narf|init-c++-C11-highlights)
 
   (when IS-MAC
-    (after! company
-      (setq-default company-c-headers-path-system
-                    (append '("/usr/include/" "/usr/local/include")
-                            (f-directories "/usr/include/c++/")
-                            (f-directories "/usr/local/include/c++/"))))
+    (setq-default company-c-headers-path-system
+                  (append '("/usr/include/" "/usr/local/include")
+                          (f-directories "/usr/include/c++/")
+                          (f-directories "/usr/local/include/c++/")))
     (after! flycheck
       (setq-default flycheck-clang-include-path '("/usr/local/include")
                     flycheck-gcc-include-path   '("/usr/local/include"))))
@@ -62,11 +64,6 @@
   (after! flycheck
     (add-hook! c++-mode (setq flycheck-clang-language-standard "c++11"
                               flycheck-clang-standard-library  "libc++")))
-
-  (after! company
-    ;; TODO Clang is *really* slow in larger projects, maybe replace it with
-    ;; irony-mode or ycmd?
-    (define-company-backend! c-mode-common (c-headers clang xcode)))
 
   ;; Fix enum and C++11 lambda indentation
   (defadvice c-lineup-arglist (around c-lineup-arglist-indent-fix activate)

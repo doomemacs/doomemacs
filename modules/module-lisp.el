@@ -3,24 +3,15 @@
 (add-hook! emacs-lisp-mode '(turn-on-eldoc-mode flycheck-mode))
 
 ;; Pop-up REPL
-(defun narf-inf-ielm ()
-  (ielm)
-  (let ((buf (current-buffer)))
-    (bury-buffer)
-    (pop-to-buffer buf)))
-(define-repl! emacs-lisp-mode narf-inf-ielm)
+(define-repl! emacs-lisp-mode narf/elisp-inf-ielm)
 
-;; [pedantry intensifies]
+;; 'Emacs Lisp' is too long [pedantry intensifies]
 (defadvice emacs-lisp-mode (after emacs-lisp-mode-rename-modeline activate)
   (setq mode-name "Elisp"))
 
-(defun narf-elisp-auto-compile ()
-  (when (narf/is-recompilable-p)
-    (narf:compile-el)))
-
 (add-hook! emacs-lisp-mode
   (add-hook 'before-save-hook 'delete-trailing-whitespace nil t)
-  (add-hook 'after-save-hook 'narf-elisp-auto-compile nil t)
+  (add-hook 'after-save-hook  'narf/elisp-auto-compile nil t)
 
   (let ((header-face 'font-lock-constant-face))
     (add-to-list 'imenu-generic-expression
@@ -59,26 +50,27 @@
              (cons disp (cons k v)))))
 
 (font-lock-add-keywords
- 'emacs-lisp-mode
- `(("(\\(lambda\\)"
-    (1 (narf/show-as ?λ)))
-   ;; Highlight narf macros (macros are fontified in emacs 25+)
-   (,(concat
-      "(\\("
-      (regexp-opt '("λ" "in" "map" "after" "exmap" "shut-up"
-                    "add-hook" "associate" "open-with" "define-repl"
-                    "define-builder" "narf-space-setup" "define-env-command"
-                    "define-text-object" "add-yas-minor-mode" "define-docset"
-                    "define-org-link!" "define-company-backend" "define-org-section"))
-      "!\\)")
-    (1 font-lock-keyword-face append))
-   ;; Ert
-   (,(concat
-      "("
-      (regexp-opt '("ert-deftest") t)
-      " \\([^ ]+\\)")
-    (1 font-lock-keyword-face)
-    (2 font-lock-function-name-face))))
+ 'emacs-lisp-mode `(("(\\(lambda\\)"
+                     (1 (narf/show-as ?λ)))
+                    ;; Highlight narf macros (macros are fontified in emacs 25+)
+                    (,(concat
+                       "(\\("
+                       (regexp-opt '("λ" "in" "map" "after" "exmap" "shut-up" "add-hook"
+                                     "associate" "open-with" "define-repl"
+                                     "define-builder" "narf-space-setup"
+                                     "define-env-command" "define-text-object"
+                                     "add-yas-minor-mode" "define-docset"
+                                     "define-org-link!" "define-company-backend"
+                                     "define-org-section"))
+                       "!\\)")
+                     (1 font-lock-keyword-face append))
+                    ;; Ert
+                    (,(concat
+                       "("
+                       (regexp-opt '("ert-deftest") t)
+                       " \\([^ ]+\\)")
+                     (1 font-lock-keyword-face)
+                     (2 font-lock-function-name-face))))
 
 ;; Real go-to-definition for elisp
 (map! :map emacs-lisp-mode-map

@@ -3,17 +3,16 @@
 (use-package csharp-mode
   :functions (csharp-log)
   :mode "\\.cs$"
-  :init (add-hook! csharp-mode 'flycheck-mode)
-  :config (require 'omnisharp))
+  :init (add-hook 'csharp-mode-hook 'flycheck-mode))
 
 ;; unity shaders
 (use-package shader-mode :mode "\\.shader$")
 
-(setq omnisharp-auto-complete-want-documentation nil
-      omnisharp-server-executable-path (concat narf-ext-dir "/OmniSharp.exe"))
-
 (use-package omnisharp
-  :defer t
+  :commands (omnisharp-mode)
+  :preface
+  (setq omnisharp-auto-complete-want-documentation nil
+        omnisharp-server-executable-path (concat narf-ext-dir "/OmniSharp.exe"))
   :when (file-exists-p omnisharp-server-executable-path)
   :init
   (add-hook! csharp-mode '(emr-initialize omnisharp-mode))
@@ -25,15 +24,15 @@
           "ts" (λ! (omnisharp-unit-test "single"))
           "ta" (λ! (omnisharp-unit-test "all"))))
 
-  (after! company
-    (define-company-backend! csharp-mode (omnisharp))
-    (add-hook! csharp-mode 'turn-on-eldoc-mode))
+  (define-company-backend! csharp-mode (omnisharp))
+  (add-hook! csharp-mode 'turn-on-eldoc-mode)
 
   ;; Map all refactor commands (see emr)
   (mapc (lambda (x)
           (let ((command-name (car x))
                 (title (cadr x)))
-            (emr-declare-command (intern (format "omnisharp-%s" (symbol-name command-name)))
+            (emr-declare-command
+             (intern (format "omnisharp-%s" (symbol-name command-name)))
               :title title :modes 'omnisharp-mode)))
         '((find-usages                                 "find usages")
           (find-implementations                        "find implementations")

@@ -9,22 +9,21 @@
 (associate! sh-mode :match "/\\.?z\\(sh/.*\\|profile\\|login\\|logout\\|shrc\\|shenv\\)$")
 (associate! sh-mode :match "/\\.?bash\\(/.*\\|rc\\|_profile\\)$")
 (after! sh-script
-  ;; [pedantry intensifies]
-  (defadvice sh-mode (after sh-mode-rename-modeline activate)
-    (setq mode-name "sh"))
-
-  (setq sh-indent-after-continuation 'always)
-
-  (define-repl! sh-mode narf/inf-shell)
-  (add-hook! sh-mode 'flycheck-mode)
+  (add-hook 'sh-mode-hook 'flycheck-mode)
+  (add-hook 'sh-mode-hook 'narf|sh-extra-font-lock-activate) ; Fontify variables in strings
   (add-hook! sh-mode
     (electric-indent-local-mode +1)
     (setq narf-electric-indent-words '("else" "elif" "fi" "done")))
 
-  (require 'company-shell)
+  (define-repl! sh-mode narf/inf-shell)
 
-  ;; Fontify variables in strings
-  (add-hook 'sh-mode-hook 'narf|sh-extra-font-lock-activate)
+  (setq sh-indent-after-continuation 'always)
+
+  ;; [pedantry intensifies]
+  (defadvice sh-mode (after sh-mode-rename-modeline activate)
+    (setq mode-name "sh"))
+
+  (require 'company-shell)
 
   (sp-with-modes '(sh-mode)
     (sp-local-pair "case"  "" :when '(("SPC")) :post-handlers '((:add narf/sp-insert-yasnippet)) :actions '(insert))
