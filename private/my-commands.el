@@ -35,7 +35,8 @@
 (exmap "k[ill]"        'narf/kill-real-buffer)     ; Kill current buffer
 (exmap "k[ill]all"     'narf:kill-all-buffers)     ; Kill all buffers (bang = in project)
 (exmap "k[ill]buried"  'narf:kill-buried-buffers)  ; Kill all buried buffers (bang = in project)
-(exmap "k[ill]o"       'narf:kill-unreal-buffers)  ; kill unreal buffers
+(exmap "k[ill]o"       'narf:kill-other-buffers)   ; kill all other buffers
+(exmap "k[ill]unreal"  'narf/kill-unreal-buffers)  ; kill unreal buffers
 (exmap "k[ill]match"   'narf:kill-matching-buffers) ; kill buffers that match regexp
 (exmap "l[ast]"        'narf/popup-last-buffer) ; pop up last popup
 (exmap "m[sg]"         'narf/popup-messages) ; open *messages* in popup

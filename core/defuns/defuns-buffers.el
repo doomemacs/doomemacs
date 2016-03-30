@@ -204,7 +204,7 @@ left, create a scratch buffer."
   (narf/cycle-real-buffers -1))
 
 (defun narf--kill-buffers (buffers &optional filter-func)
-  (let ((buffers (if filter-func (funcall filter-func buffers) buffers))
+  (let ((buffers (if filter-func (-filter filter-func buffers) buffers))
         (affected 0))
     (mapc (lambda (b) (when (kill-buffer b) (incf affected))) buffers)
     (unless (narf/real-buffer-p)
@@ -216,6 +216,15 @@ left, create a scratch buffer."
   "Kill all project buffers. If BANG, kill *all* buffers (in workgroup)."
   (interactive "<!>")
   (narf--kill-buffers (narf/get-buffers (not bang)))
+  (when bang
+    (delete-other-windows)))
+
+;;;###autoload (autoload 'narf:kill-other-buffers "defuns-buffers" nil t)
+(evil-define-command narf:kill-other-buffers (&optional bang)
+  "Kill all other project buffers. If BANG, kill *all* other buffers (in workgroup)."
+  (interactive "<!>")
+  (narf--kill-buffers (narf/get-buffers (not bang))
+                      (lambda (b) (not (eq b (current-buffer)))))
   (when bang
     (delete-other-windows)))
 
