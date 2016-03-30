@@ -215,6 +215,7 @@ enable multiple minor modes for the same regexp.")
             ("let" "let*")
             ("when" "unless")
             ("append" "prepend")
+            ("advice-add" "advice-remove")
             ("add-hook" "add-hook!" "remove-hook"))))
   :config
   (add-to-list 'rotate-text-words '("true" "false")))
