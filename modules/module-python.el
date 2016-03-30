@@ -51,9 +51,8 @@
 
     (advice-add 'anaconda-mode-doc-buffer :after 'narf*anaconda-mode-doc-buffer)
 
-    (after! company
-      (require 'company-anaconda)
-      (define-company-backend! python-mode (anaconda)))
+    (require 'company-anaconda)
+    (define-company-backend! python-mode (anaconda))
     (after! emr
       (mapc (lambda (x)
               (let ((command-name (car x))

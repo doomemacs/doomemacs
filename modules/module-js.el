@@ -88,9 +88,8 @@
   :commands tern-mode
   :init (add-hook! js2-mode 'tern-mode)
   :config
-  (after! company
-    (require 'company-tern)
-    (define-company-backend! js2-mode (tern))))
+  (require 'company-tern)
+  (define-company-backend! js2-mode (tern)))
 
 (use-package unityjs-mode
   :mode "/Assets/.*\\.js$"

@@ -64,9 +64,6 @@
   :config
   (evil-set-initial-state 'php-boris-mode 'emacs))
 
-;; Support for Facebook's version of PHP
-(use-package hack-mode :mode "\\.hh$")
-
 (define-minor-mode php-laravel-mode
   ""
   :init-value nil

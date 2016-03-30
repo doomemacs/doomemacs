@@ -20,10 +20,9 @@
   (setq help-at-pt-timer-delay 0.1)
   (help-at-pt-set-timer)
 
-  (after! company
-    (use-package company-emacs-eclim
-      :functions company-emacs-eclim-setup
-      :config (company-emacs-eclim-setup)))
+  (use-package company-emacs-eclim
+    :functions company-emacs-eclim-setup
+    :config (company-emacs-eclim-setup))
 
   (map! :map java-mode-map :m "gd" 'eclim-java-find-declaration))
 

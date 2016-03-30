@@ -90,9 +90,8 @@
   (define-repl! ruby-mode inf-ruby)
   :config
   (evil-set-initial-state 'inf-ruby-mode 'emacs)
-  (after! company
-    (require 'company-inf-ruby)
-    (define-company-backend! inf-ruby-mode (inf-ruby))))
+  (require 'company-inf-ruby)
+  (define-company-backend! inf-ruby-mode (inf-ruby)))
 
 (use-package robe
   :commands (robe-mode robe-start ruby-load-file)
@@ -101,9 +100,8 @@
     (narf|ruby-load-file)
     (add-hook 'after-save-hook 'narf|ruby-load-file nil t))
   :config
-  (after! company
-    (require 'company-robe)
-    (define-company-backend! ruby-mode (robe))))
+  (require 'company-robe)
+  (define-company-backend! ruby-mode (robe)))
 
 (provide 'module-ruby)
 ;;; module-ruby.el ends here
