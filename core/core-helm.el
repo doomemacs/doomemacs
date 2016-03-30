@@ -128,11 +128,6 @@
              helm-ag-buffers
              helm-ag-clear-stack))
 
-(use-package helm-org
-  :commands (helm-org-in-buffer-headings
-             helm-org-agenda-files-headings
-             helm-org-capture-templates))
-
 (use-package helm-css-scss ; https://github.com/ShingoFukuyama/helm-css-scss
   :commands (helm-css-scss
              helm-css-scss-multi
