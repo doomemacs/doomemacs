@@ -15,6 +15,7 @@
         :n "k" 'evil-previous-line
         :n "h" 'evil-backward-char
         :n "l" 'evil-forward-char
+        ;; FIXME Greedy command buffer always grabs focus
         :m "n" 'realgud:cmd-next
         :m "b" 'realgud:cmd-break
         :m "B" 'realgud:cmd-clear
