@@ -36,8 +36,20 @@
   (define-key c-mode-base-map ")" 'self-insert-command)
 
   (define-key c++-mode-map "}" nil)
-  (define-key c++-mode-map ">" nil)
+  ;; FIXME: fix smartparens
+  ;; (define-key c++-mode-map ">" nil)
+  (map! :map c++-mode-map :i ">" 'narf/autoclose->-maybe)
   (define-key c++-mode-map "<" nil))
+
+;;;###autoload
+(defun narf/autoclose->-maybe ()
+  "For some reason smartparens won't autoskip >'s, this hack does."
+  (interactive)
+  (if (save-excursion
+        (backward-char)
+        (looking-at-p "[^ \t]>"))
+      (forward-char)
+    (call-interactively 'self-insert-command)))
 
 (defun narf--copy-face (new-face face)
   "Define NEW-FACE from existing FACE."
