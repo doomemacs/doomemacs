@@ -61,6 +61,7 @@
         core-vcs             ; remember remember, that commit in November
         core-helm            ; a search engine for life and love
         core-eval            ; run code, run.
+        core-debug           ; emacs as a universal debugger
         core-sessions        ; cure Emacs alzheimers + tab emulation
 
         ;; Environments

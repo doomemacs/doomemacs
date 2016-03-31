@@ -125,5 +125,14 @@
       (user-error
        (evil-ex-pattern-update-ex-info nil (format "?%s" lossage))))))
 
+;;;###autoload
+(defun narf/evil-ex-undefine-cmd (cmd)
+  (if (string-match "^[^][]*\\(\\[\\(.*\\)\\]\\)[^][]*$" cmd)
+      (let ((abbrev (replace-match "" nil t cmd 1))
+            (full (replace-match "\\2" nil nil cmd 1)))
+        (setq evil-ex-commands (delq (assoc full evil-ex-commands) evil-ex-commands))
+        (setq evil-ex-commands (delq (assoc abbrev evil-ex-commands) evil-ex-commands)))
+    (setq evil-ex-commands (delq (assoc cmd evil-ex-commands) evil-ex-commands))))
+
 (provide 'defuns-evil)
 ;;; defuns-evil.el ends here

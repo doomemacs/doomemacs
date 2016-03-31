@@ -10,7 +10,11 @@
   :config
   (shackle-mode 1)
   (setq shackle-rules
-        '(;; Plugins
+        '(;; Debuggers
+          ("\\`\\*\\(g\\|zsh\\|bash\\)db.*?\\*\\'" :regexp t :align below :size 20)
+          ("\\`\\*trepanjs.*?\\*\\'" :regexp t :align below :size 20)
+
+          ;; Plugins
           ("*helm bookmarks*"                :align below  :size 7 :select t)
           ("\\` ?\\*[hH]elm.*?\\*\\'" :regexp t :align below  :size 20 :select t)
           (" ?\\*Flycheck.+\\*"       :regexp t :align below  :size 15  :noselect t)
@@ -209,6 +213,37 @@
           :e [escape] 'narf/org-agenda-quit
           "q" 'narf/org-agenda-quit
           "Q" 'narf/org-agenda-quit))
+
+  (after! realgud
+    ;; This allows realgud debuggers to run in a popup.
+    ;; TODO Find a more elegant advice-based solution
+    ;; FIXME Causes realgud:cmd-* to focus popup on every invocation
+    (defun realgud:run-process(debugger-name script-filename cmd-args minibuffer-history &optional no-reset)
+      (let ((cmd-buf))
+        (setq cmd-buf
+              (apply 'realgud-exec-shell debugger-name script-filename
+                     (car cmd-args) no-reset (cdr cmd-args)))
+        (let ((process (get-buffer-process cmd-buf)))
+          (if (and process (eq 'run (process-status process)))
+              (progn
+                (pop-to-buffer cmd-buf)
+                (define-key evil-emacs-state-local-map (kbd "ESC ESC") 'narf/debug-quit)
+                (realgud:track-set-debugger debugger-name)
+                (realgud-cmdbuf-info-in-debugger?= 't)
+                (realgud-cmdbuf-info-cmd-args= cmd-args)
+                (when cmd-buf
+                  (switch-to-buffer cmd-buf)
+                  (when realgud-cmdbuf-info
+                    (let* ((info realgud-cmdbuf-info)
+                           (cmd-args (realgud-cmdbuf-info-cmd-args info))
+                           (cmd-str  (mapconcat 'identity  cmd-args " ")))
+                      (set minibuffer-history
+                           (list-utils-uniq (cons cmd-str (eval minibuffer-history))))))))
+            ;; else
+            (progn
+              (if cmd-buf (switch-to-buffer cmd-buf))
+              (message "Error running command: %s" (mapconcat 'identity cmd-args " ")))))
+        cmd-buf)))
 
   (after! flycheck
     (map! :map flycheck-error-list-mode-map

@@ -112,7 +112,10 @@
 (depends-on "quickrun")
 (depends-on "repl-toggle")
 
-;; Workgroups --- core/core-workgroups.el
+;; Debugging -- core/core-debug.el
+(depends-on "realgud")
+
+;; Sessions --- core/core-sessions.el
 (depends-on "workgroups2")
 
 

@@ -79,5 +79,8 @@
 (after! flycheck
   (exmap "er[rors]"    (λ! (flycheck-buffer) (flycheck-list-errors))))
 
+;; Debuggers
+(exmap "debug"    'narf:debug)
+
 (provide 'my-commands)
 ;;; my-commands.el ends here
