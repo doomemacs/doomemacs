@@ -22,19 +22,14 @@
         :n "c" 'realgud:cmd-continue)
 
   ;; Temporary Ex commands for the debugger
-  ;; TODO Turn temporary ex commands into macro
-  (defun narf*debug-init (&rest _)
-    (exmap "n[ext]"   'realgud:cmd-next)
-    (exmap "s[tep]"   'realgud:cmd-step)
-    (exmap "b[reak]"  'narf:debug-toggle-breakpoint)
-    (exmap "c[ontinue]" 'realgud:cmd-continue))
-  (defun narf*debug-quit (&rest _)
-    (narf/evil-ex-undefine-cmd "n[ext]")
-    (narf/evil-ex-undefine-cmd "s[tep]")
-    (narf/evil-ex-undefine-cmd "b[reak]")
-    (narf/evil-ex-undefine-cmd "c[ontinue]"))
-  (advice-add 'realgud-cmdbuf-init :after 'narf*debug-init)
-  (advice-add 'realgud:cmd-quit :after 'narf*debug-quit))
+  (define-temp-ex-cmd! narf:def-debug-on narf:def-debug-off
+    ("n[ext]" . realgud:cmd-next)
+    ("s[tep]" . realgud:cmd-step)
+    ("b[reak]" . narf:debug-toggle-breakpoint)
+    ("c[ontinue]" . realgud:cmd-continue))
+
+  (advice-add 'realgud-cmdbuf-init :after 'narf:def-debug-on)
+  (advice-add 'realgud:cmd-quit :after 'narf:def-debug-off))
 
 (provide 'core-debug)
 ;;; core-debug.el ends here

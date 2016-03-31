@@ -61,7 +61,7 @@
                                      "define-env-command" "define-text-object"
                                      "add-yas-minor-mode" "define-docset"
                                      "define-org-link!" "define-company-backend"
-                                     "define-org-section"))
+                                     "define-org-section" "define-temp-ex-cmd"))
                        "!\\)")
                      (1 font-lock-keyword-face append))
                     ;; Ert
