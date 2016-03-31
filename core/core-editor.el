@@ -117,8 +117,8 @@ enable multiple minor modes for the same regexp.")
       electric-indent-functions)
 
 ;;
-;; (global-whitespace-mode -1) ; Show whitespace
-(global-visual-line-mode 1)    ; wrap buffers
+;;(global-whitespace-mode -1)  ; Show whitespace
+;;(global-visual-line-mode -1) ; wrap buffers
 (global-auto-revert-mode 1)    ; revert buffers for changed files
 ;; Enable syntax highlighting for older emacs
 (unless (bound-and-true-p global-font-lock-mode)

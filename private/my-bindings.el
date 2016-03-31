@@ -173,18 +173,6 @@
      :n  "e" 'emr-show-refactor-menu
      :n  "r" 'narf:eval-buffer))
 
- ;; make motions visual line sensitive
- :m "j" 'evil-next-visual-line
- :m "k" 'evil-previous-visual-line
- :m "$" 'evil-end-of-visual-line
- :m "0" 'evil-beginning-of-visual-line
-
- ;; But use normal, non-visual lines for operators
- :o "j" 'evil-next-line
- :o "k" 'evil-previous-line
- :o "$" 'evil-end-of-line
- :o "0" 'evil-beginning-of-line
-
  :nv "K"  'smart-up
 
  ;; Don't move cursor on indent
