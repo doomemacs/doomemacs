@@ -57,7 +57,7 @@
    org-image-actual-width nil
    org-indent-indentation-per-level 2
    org-pretty-entities t
-   org-pretty-entities-include-sub-superscripts nil
+   org-pretty-entities-include-sub-superscripts t
    org-startup-folded t
    org-startup-indented t
    org-startup-with-inline-images nil
@@ -103,8 +103,8 @@
    org-edit-src-content-indentation 0
 
    ;; Latex
-   narf-org-latex-inline-scale 1.0
-   narf-org-latex-block-scale  1.4
+   narf-org-latex-inline-scale 1.2
+   narf-org-latex-block-scale  1.5
    org-highlight-latex-and-related '(latex)
    org-latex-create-formula-image-program 'dvipng
    org-latex-image-default-width nil
