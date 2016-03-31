@@ -167,10 +167,6 @@
 ;; Lua -- modules/module-lua.el
 (depends-on "lua-mode")
 
-;; Nim -- modules/module-nim.el
-(depends-on "nim-mode")
-(depends-on "flycheck-nim")
-
 ;; PHP -- modules/module-php.el
 (depends-on "php-mode")
 (depends-on "php-refactor-mode")
