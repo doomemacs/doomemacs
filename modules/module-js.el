@@ -4,6 +4,9 @@
   :mode "\\.js$"
   :interpreter "node"
   :init
+  (use-package nodejs-repl :defer t :commands (nodejs-repl)
+    :config (evil-set-initial-state 'nodejs-repl-mode 'emacs))
+
   (define-repl! js2-mode nodejs-repl)
   (define-docset! js2-mode "js,javascript,nodejs,angularjs")
   :config
@@ -100,8 +103,6 @@
   :mode "\\.coffee$"
   :config
   (setq-default coffee-indent-like-python-mode t))
-
-(use-package nodejs-repl :defer t)
 
 (provide 'module-js)
 ;;; module-js.el ends here

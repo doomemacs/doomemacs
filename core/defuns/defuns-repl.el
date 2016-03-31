@@ -1,13 +1,17 @@
 ;;; defuns-repl.el
 
 ;;;###autoload  (autoload 'narf:repl "defuns-repl" nil t)
-(evil-define-command narf:repl (&optional bang)
+(evil-define-command narf:repl (&optional bang command)
   :repeat nil
-  (interactive "<!>")
+  (interactive "<!><a>")
   (if (and narf--repl-buffer (buffer-live-p narf--repl-buffer))
       (narf/popup-buffer narf--repl-buffer)
     (rtog/toggle-repl (if (use-region-p) 4))
-    (setq narf--repl-buffer (current-buffer))))
+    (setq narf--repl-buffer (current-buffer))
+    (when command
+      (with-current-buffer narf--repl-buffer
+        (insert command)
+        (unless bang (comint-send-input))))))
 
 ;;;###autoload  (autoload 'narf:repl-eval "defuns-repl" nil t)
 (evil-define-operator narf:repl-eval (&optional beg end bang)

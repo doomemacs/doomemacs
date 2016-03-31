@@ -32,7 +32,7 @@
  "M-T"  'narf/tab-display
  "A-`"  'os-switch-to-term
  "C-`"  'narf/popup-messages
- "C-~"  'rtog/toggle-repl
+ "C-~"  'narf:repl
  "M-`"  'narf/popup-toggle
 
  "M-w"  'narf/close-window-or-tab
