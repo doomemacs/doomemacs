@@ -1,6 +1,5 @@
 ;;; defuns-repl.el
 
-(defvar narf--repl-buffer nil)
 ;;;###autoload  (autoload 'narf:repl "defuns-repl" nil t)
 (evil-define-command narf:repl (&optional bang)
   :repeat nil

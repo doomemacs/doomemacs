@@ -108,7 +108,7 @@
 (depends-on "projectile")
 (depends-on "helm-describe-modes" :git "https://github.com/emacs-helm/helm-describe-modes")
 
-;; Quickrun -- core/core-quickrun.el
+;; Code evaluation/REPLs -- core/core-eval.el
 (depends-on "quickrun")
 (depends-on "repl-toggle")
 

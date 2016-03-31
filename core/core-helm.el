@@ -1,31 +1,7 @@
 ;;; core-helm.el
 
-(use-package projectile
-  :config
-  (setq projectile-require-project-root nil
-        projectile-enable-caching t
-        projectile-cache-file (concat narf-temp-dir "/projectile.cache")
-        projectile-known-projects-file (concat narf-temp-dir "/projectile.projects")
-        projectile-indexing-method 'alien
-        projectile-project-root-files narf-project-root-files
-        projectile-file-exists-remote-cache-expire nil)
-
-  (push "ido.last" projectile-globally-ignored-files)
-  (push "assets"   projectile-globally-ignored-directories)
-  (push ".cask"    projectile-globally-ignored-directories)
-  (push ".export"  projectile-globally-ignored-directories)
-  (push ".attach"  projectile-globally-ignored-directories)
-  (push '("scss" "css") projectile-other-file-alist)
-  (push '("css" "scss") projectile-other-file-alist)
-
-  (projectile-global-mode +1)
-
-  (use-package helm-projectile
-    :commands (helm-projectile-find-file
-               helm-projectile-find-dir)))
-
 (use-package helm
-  :defer 2
+  :commands (helm helm-other-buffer helm-mode)
   :init
   (defvar helm-global-prompt ":: ")
   (setq-default
@@ -48,8 +24,7 @@
    ;; Don't override evil-ex's completion
    helm-mode-handle-completion-in-region nil
 
-   helm-candidate-number-limit 40
-   helm-bookmark-show-location t)
+   helm-candidate-number-limit 40)
 
   :config
   (map! (:map (helm-map helm-generic-files-map helm-find-files-map helm-swoop-map helm-projectile-find-file-map)
@@ -106,12 +81,21 @@
   (require 'helm-mode)
   (helm-mode 1))
 
+(use-package helm-bookmark
+  :commands (helm-bookmarks helm-filtered-bookmarks)
+  :config (setq-default helm-bookmark-show-location t))
+
+(use-package helm-projectile
+  :commands (helm-projectile-find-other-file
+             helm-projectile-find-file
+             helm-projectile-find-dir))
+
 (use-package helm-files
   :commands (helm-browse-project helm-find helm-find-files helm-for-files helm-multi-files helm-recentf)
   :config
-  (map! (:map helm-find-files-map
-          "C-w" 'helm-find-files-up-one-level
-          "TAB" 'helm-execute-persistent-action))
+  (map! :map helm-find-files-map
+        "C-w" 'helm-find-files-up-one-level
+        "TAB" 'helm-execute-persistent-action)
 
   (mapc (lambda (r) (add-to-list 'helm-boring-file-regexp-list r))
         (list "\\.projects$" "\\.DS_Store$" "\\.cask")))
@@ -146,6 +130,7 @@
         helm-swoop-pre-input-function (lambda () "")))
 
 (use-package helm-describe-modes :defer t)
+(use-package helm-ring      :commands helm-show-kill-ring)
 (use-package helm-semantic  :commands helm-semantic-or-imenu)
 (use-package helm-elisp     :commands helm-apropos)
 (use-package helm-command   :commands helm-M-x)

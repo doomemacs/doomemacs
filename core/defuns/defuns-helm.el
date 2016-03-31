@@ -18,6 +18,11 @@
 ;; regexp.
 ;;;###autoload (autoload 'narf:helm-ag-search "defuns-helm" nil t)
 (evil-define-operator narf:helm-ag-search (beg end search regex-p &optional dir)
+  "Preform an helm-ag search with SEARCH. If SEARCH is nil and in visual mode, use the
+selection, otherwise activate live ag searching in helm.
+
+If REGEX-P is non-nil, SEARCH will be treated as a regular expression.
+DIR specifies the default-directory from which ag is run."
   :type inclusive
   :repeat nil
   (interactive "<r><a><!>")

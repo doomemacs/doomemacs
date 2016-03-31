@@ -138,5 +138,25 @@
   ;; A custom and simple theme for neotree
   (advice-add 'neo-buffer--insert-fold-symbol :override 'narf*neo-buffer-fold-symbol))
 
+(use-package projectile
+  :config
+  (setq projectile-require-project-root nil
+        projectile-enable-caching t
+        projectile-cache-file (concat narf-temp-dir "/projectile.cache")
+        projectile-known-projects-file (concat narf-temp-dir "/projectile.projects")
+        projectile-indexing-method 'alien
+        projectile-project-root-files narf-project-root-files
+        projectile-file-exists-remote-cache-expire nil)
+
+  (push "ido.last" projectile-globally-ignored-files)
+  (push "assets"   projectile-globally-ignored-directories)
+  (push ".cask"    projectile-globally-ignored-directories)
+  (push ".export"  projectile-globally-ignored-directories)
+  (push ".attach"  projectile-globally-ignored-directories)
+  (push '("scss" "css") projectile-other-file-alist)
+  (push '("css" "scss") projectile-other-file-alist)
+
+  (projectile-global-mode +1))
+
 (provide 'core-project)
 ;;; core-project.el ends here

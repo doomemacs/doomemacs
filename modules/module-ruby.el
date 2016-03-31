@@ -24,7 +24,7 @@
   (define-key ruby-mode-map [?\n] nil)
 
   (use-package ruby-refactor
-    :init (add-hook! ruby-mode 'emr-initialize)
+    :init (add-hook 'ruby-mode-hook 'emr-initialize)
     :config
     (require 'emr)
     (mapc (lambda (x)

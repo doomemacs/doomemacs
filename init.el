@@ -95,7 +95,7 @@
         module-tmux          ; closing the rift between GUI & terminal
         module-demo          ; allow me to demonstrate...
         module-ansible       ;
-        ;;module-write       ; for write papers and fiction in Emacs
+        ;;module-write       ; for writing papers and fiction in Emacs
 
         ;; Key bindings & ex commands
         my-bindings

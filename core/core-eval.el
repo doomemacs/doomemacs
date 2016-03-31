@@ -19,6 +19,7 @@
   :init
   (setq rtog/mode-repl-alist '())
 
+  (defvar narf--repl-buffer nil)
   (defvar repl-p nil)
   (make-variable-buffer-local 'repl-p)
 
