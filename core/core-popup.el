@@ -13,6 +13,7 @@
         '(;; Debuggers
           ("\\`\\*\\(g\\|zsh\\|bash\\)db.*?\\*\\'" :regexp t :align below :size 20)
           ("\\`\\*trepanjs.*?\\*\\'" :regexp t :align below :size 20)
+          ("\\`\\*\\(debug:\\)haskell\\*\\'" :regexp t :align below :size 20)
 
           ;; Plugins
           ("*helm bookmarks*"                :align below  :size 7 :select t)

@@ -1,19 +1,19 @@
 ;;; module-haskell.el
 
-(use-package haskell-mode
-  :mode "\\.hs$"
-  :config
+(use-package haskell
+  :mode ("\\.hs$" . haskell-mode)
+  :init
   (define-repl! haskell-mode switch-to-haskell)
-
+  (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
+  :config
   ;; haskell-mode complains that this function isn't defined, and it isn't!
-  (defun haskell-mode-after-save-handler ())
+  (defun haskell-mode-after-save-handler ()))
 
-  (use-package inf-haskell
-    :commands (switch-to-haskell)
-    :init (evil-set-initial-state 'inferior-haskell-mode 'emacs)
-    :config
-    (map! :map inf-haskell-mode-map
-          "ESC ESC" 'narf/popup-close)))
+(use-package inf-haskell
+  :commands (inferior-haskell-mode inf-haskell-mode switch-to-haskell)
+  :init (evil-set-initial-state 'inferior-haskell-mode 'emacs)
+  :config
+  (define-key inf-haskell-mode-map (kbd "ESC ESC") 'narf/popup-close))
 
 (provide 'module-haskell)
 ;;; module-haskell.el ends here

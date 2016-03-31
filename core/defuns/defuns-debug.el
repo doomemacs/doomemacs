@@ -56,6 +56,8 @@
           ;; TODO Add python debugging
           ((memq major-mode '(js-mode js2-mode js3-mode))
            (realgud:trepanjs))
+          ((eq major-mode 'haskell-mode)
+           (haskell-debug))
           (t (user-error "No debugger for %s" major-mode)))))
 
 ;;;###autoload (autoload 'narf:debug-toggle-breakpoint "defuns-debug" nil t)
