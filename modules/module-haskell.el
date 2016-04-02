@@ -4,7 +4,7 @@
   :mode ("\\.hs$" . haskell-mode)
   :init
   (define-repl! haskell-mode switch-to-haskell)
-  (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
+  (add-hook! haskell-mode '(interactive-haskell-mode flycheck-mode))
   :config
   ;; haskell-mode complains that this function isn't defined, and it isn't!
   (defun haskell-mode-after-save-handler ()))
