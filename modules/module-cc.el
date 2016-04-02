@@ -56,7 +56,7 @@
     (setq-default company-c-headers-path-system
                   (append '("/usr/include/" "/usr/local/include")
                           (f-directories "/usr/include/c++/")
-                          (f-directories "/usr/local/include/c++/")))
+                          (ignore-errors (f-directories "/usr/local/include/c++/"))))
     (after! flycheck
       (setq-default flycheck-clang-include-path '("/usr/local/include")
                     flycheck-gcc-include-path   '("/usr/local/include"))))
