@@ -3,10 +3,6 @@
 (use-package crystal-mode
   :mode "\\.cr$"
   :interpreter "crystal"
-  :init
-  (after! editorconfig
-    (push '(crystal-mode crystal-indent-level)
-          editorconfig-indentation-alist))
   :config
   (after! quickrun
     (quickrun-add-command
