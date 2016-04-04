@@ -159,8 +159,7 @@
    (:prefix "x"
      :n "." 'narf/org-find-file
      :n "/" 'narf/org-find-file-in-notes
-     :n "e" 'narf/org-find-exported-file
-     ))
+     :n "e" 'narf/org-find-exported-file))
 
  (:localleader
    :n "\\" 'narf/neotree

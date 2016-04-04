@@ -7,7 +7,7 @@
   (define-builder! toml-mode "cargo run" "Cargo.toml")
 
   (use-package flycheck-rust
-    :config (add-hook! rust-mode 'flycheck-mode))
+    :config (add-hook 'rust-mode-hook 'flycheck-mode))
 
   (use-package racer
     :preface

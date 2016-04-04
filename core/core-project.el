@@ -97,23 +97,23 @@
   (evil-set-initial-state 'neotree-mode 'motion)
   (add-hook! neotree-mode 'narf|neotree-init-keymap)
   (defun narf|neotree-init-keymap ()
-    (map! (:map evil-motion-state-local-map
-            "ESC"    'neotree-hide
-            [escape] 'neotree-hide
-            "q"      'neotree-hide
+    (map! :map evil-motion-state-local-map
+          "ESC"    'neotree-hide
+          [escape] 'neotree-hide
+          "q"      'neotree-hide
 
-            "RET" 'neotree-enter
-            "J"   'neotree-select-next-sibling-node
-            "K"   'neotree-select-previous-sibling-node
-            "H"   'neotree-select-up-node
-            "L"   'neotree-select-down-node
-            "v"   'neotree-enter-vertical-split
-            "s"   'neotree-enter-horizontal-split
-            "c"   'neotree-create-node
-            "d"   'neotree-delete-node
-            "g"   'neotree-refresh
-            "r"   'neotree-rename-node
-            "R"   'neotree-change-root)))
+          "RET" 'neotree-enter
+          "J"   'neotree-select-next-sibling-node
+          "K"   'neotree-select-previous-sibling-node
+          "H"   'neotree-select-up-node
+          "L"   'neotree-select-down-node
+          "v"   'neotree-enter-vertical-split
+          "s"   'neotree-enter-horizontal-split
+          "c"   'neotree-create-node
+          "d"   'neotree-delete-node
+          "g"   'neotree-refresh
+          "r"   'neotree-rename-node
+          "R"   'neotree-change-root))
 
   (after! projectile
     (setq projectile-switch-project-action 'neotree-projectile-action))

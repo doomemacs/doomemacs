@@ -223,18 +223,17 @@ to abort the minibuffer."
   (let (message-log-max)
     (if (and delete-selection-mode transient-mark-mode mark-active)
         (setq deactivate-mark t)
-      ;; (when (get-buffer "*Completions*")
-      ;;   (delete-windows-on "*Completions*"))
       (abort-recursive-edit))))
 
 (defun narf-reload ()
-    "Reload `load-path', in case you updated cask while emacs was open!"
-    (interactive)
-    (setq load-path (append (list narf-private-dir narf-core-dir narf-modules-dir narf-packages-dir)
-                            (f-directories narf-core-dir nil t)
-                            (f-directories narf-modules-dir nil t)
-                            (f-directories narf-packages-dir)
-                            narf--load-path)))
+  "Reload `load-path', in case you updated cask while emacs was open!"
+  (interactive)
+  (setq load-path (append (list narf-private-dir narf-core-dir narf-modules-dir narf-packages-dir)
+                          (f-directories narf-core-dir nil t)
+                          (f-directories narf-modules-dir nil t)
+                          (f-directories narf-packages-dir)
+                          (f-directories (expand-file-name "../bootstrap" narf-packages-dir))
+                          narf--load-path)))
 
 (provide 'core-defuns)
 ;;; core-defuns.el ends here
