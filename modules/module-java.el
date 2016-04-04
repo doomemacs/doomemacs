@@ -9,7 +9,7 @@
   (setq eclim-eclipse-dirs '("/Applications/eclipse")
         eclim-executable     "/Applications/eclipse/eclim")
   (when (file-exists-p eclim-executable)
-    (add-hook! java-mode 'eclim-mode))
+    (add-hook 'java-mode-hook 'eclim-mode))
   :config
   ;; (require 'eclim-ant)
   ;; (require 'eclim-maven)
