@@ -122,5 +122,46 @@
         (setq evil-ex-commands (delq (assoc abbrev evil-ex-commands) evil-ex-commands)))
     (setq evil-ex-commands (delq (assoc cmd evil-ex-commands) evil-ex-commands))))
 
+(defvar narf:map-maps '())
+
+;;;###autoload (autoload 'narf:map "defuns-evil" nil t)
+(evil-define-command narf:map (bang input &optional mode)
+  "Map ex commands to keybindings. INPUT should be in the format [KEY] [EX COMMAND]."
+  (interactive "<!><a>")
+  (let* ((parts (s-split-up-to " " input 2 t))
+         (mode (or mode 'normal))
+         (key (kbd (car parts)))
+         (command (s-join " " (cdr parts)))
+         (map (cl-case mode
+                ('normal evil-normal-state-local-map)
+                ('insert evil-insert-state-local-map)
+                ('visual evil-visual-state-local-map)
+                ('motion evil-motion-state-local-map)
+                ('operator evil-operator-state-local-map)))
+         (fn `(lambda () (interactive) (evil-ex-eval ,command))))
+    (if bang
+        (evil-define-key mode nil key fn)
+      (define-key map key fn))))
+
+;;;###autoload (autoload 'narf:nmap "defuns-evil" nil t)
+(evil-define-command narf:nmap (bang input &optional mode)
+  (interactive "<!><a>") (narf:map bang input 'normal))
+
+;;;###autoload (autoload 'narf:imap "defuns-evil" nil t)
+(evil-define-command narf:imap (bang input &optional mode)
+  (interactive "<!><a>") (narf:map bang input 'insert))
+
+;;;###autoload (autoload 'narf:vmap "defuns-evil" nil t)
+(evil-define-command narf:vmap (bang input &optional mode)
+  (interactive "<!><a>") (narf:map bang input 'visual))
+
+;;;###autoload (autoload 'narf:mmap "defuns-evil" nil t)
+(evil-define-command narf:mmap (bang input &optional mode)
+  (interactive "<!><a>") (narf:map bang input 'motion))
+
+;;;###autoload (autoload 'narf:omap "defuns-evil" nil t)
+(evil-define-command narf:omap (bang input &optional mode)
+  (interactive "<!><a>") (narf:map bang input 'operator))
+
 (provide 'defuns-evil)
 ;;; defuns-evil.el ends here

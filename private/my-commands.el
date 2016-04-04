@@ -5,6 +5,12 @@
 (exmap "bcomp[ile]"    'narf:compile-el)
 (exmap "echo"          'narf:echo)
 (exmap "minor"         'helm-describe-modes) ; list minor modes
+;; Quick mapping keys to commands, allows :nmap \m !make
+(exmap "nmap"          'narf:nmap)
+(exmap "imap"          'narf:imap)
+(exmap "vmap"          'narf:vmap)
+(exmap "mmap"          'narf:mmap)
+(exmap "omap"          'narf:omap)
 
 ;; Editing
 (exmap "@"             'narf/evil-macro-on-all-lines) ; run macro on each line
