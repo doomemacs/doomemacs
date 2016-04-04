@@ -236,33 +236,5 @@ to abort the minibuffer."
                             (f-directories narf-packages-dir)
                             narf--load-path)))
 
-(after! evil
-  (evil-define-command narf:exit-mode-maybe ()
-    "Exits insert/replace mode using jk without the momentary pause caused by
-key-chord-define."
-    :repeat nil
-    (interactive)
-    (let ((modified (buffer-modified-p))
-          (buffer-undo-list t))
-      (call-interactively 'self-insert-command)
-      (let ((evt (read-event nil nil 0.4)))
-        (cond
-         ((null evt) (message ""))
-         ((and (integerp evt) (or (char-equal evt ?k)
-                                  (char-equal evt ?K)))
-
-          (if (evil-replace-state-p)
-              (evil-replace-backspace)
-            (delete-char -1))
-          (set-buffer-modified-p modified)
-          (when (and (bound-and-true-p electric-indent-mode)
-                     narf-electric-indent-words
-                     (eolp)
-                     (looking-back (concat "\\<" (regexp-opt narf-electric-indent-words) "\\>")))
-            (indent-according-to-mode))
-          (push 'escape unread-command-events))
-         (t
-          (setq unread-command-events (append unread-command-events (list evt)))))))))
-
 (provide 'core-defuns)
 ;;; core-defuns.el ends here

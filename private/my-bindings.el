@@ -258,8 +258,6 @@
  :i  "<C-return>"    'evil-ret-and-indent
 
  ;; escape from insert mode (more responsive than using key-chord-define)
- :ir  "j"    'narf:exit-mode-maybe
- :ir  "J"    'narf:exit-mode-maybe
  :irv "C-g"  'evil-normal-state
 
  :o  "s"     'evil-surround-edit

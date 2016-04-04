@@ -400,5 +400,10 @@
   :config
   (global-evil-visualstar-mode 1))
 
+(use-package evil-escape
+  :config
+  (setq evil-escape-key-sequence "jk")
+  (evil-escape-mode +1))
+
 (provide 'core-evil)
 ;;; core-evil.el ends here
