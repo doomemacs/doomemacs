@@ -27,7 +27,10 @@
 
   (defconst IS-MAC     (eq system-type 'darwin))
   (defconst IS-LINUX   (eq system-type 'gnu/linux))
-  (defconst IS-WINDOWS (eq system-type 'windows-nt))
+  (defconst IS-WINDOWS (eq system-type 'windows-nt)))
+
+(eval-when-compile
+  (defvar narf--load-path load-path)
 
   ;; Helper for traversing subdirectories recursively
   (defun --subdirs (path &optional include-self)
@@ -57,14 +60,14 @@
         file-name-handler-alist)
 
     ;; Scan various folders to populate the load-paths
-    (defvar narf--load-path load-path)
     (setq load-path
-          (append (list narf-private-dir)
-                  (--subdirs narf-core-dir t)
-                  (--subdirs narf-modules-dir t)
-                  (--subdirs narf-packages-dir)
-                  (--subdirs (expand-file-name "../bootstrap" narf-packages-dir))
-                  narf--load-path)
+          (eval-when-compile
+            (append (list narf-private-dir)
+                    (--subdirs narf-core-dir t)
+                    (--subdirs narf-modules-dir t)
+                    (--subdirs narf-packages-dir)
+                    (--subdirs (expand-file-name "../bootstrap" narf-packages-dir))
+                    narf--load-path))
           custom-theme-load-path
           (append (list (expand-file-name "themes/" narf-private-dir))
                   custom-theme-load-path))
