@@ -14,7 +14,6 @@
         company-frontends '(company-pseudo-tooltip-frontend
                             company-echo-metadata-frontend)
         company-backends '((company-capf
-                            company-yasnippet
                             company-dabbrev-code)
                            company-dabbrev)
         company-statistics-file (concat narf-temp-dir "/company-stats-cache.el")
