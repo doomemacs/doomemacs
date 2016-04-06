@@ -5,7 +5,8 @@
   :interpreter "lua"
   :init
   (define-repl! lua-mode narf/inf-lua)
-  (add-hook! lua-mode 'flycheck-mode)
+  (define-company-backend! lua-mode (yasnippet))
+  (add-hook 'lua-mode-hook 'flycheck-mode)
   (after! company-dict
     (add-to-list 'company-dict-minor-mode-list 'love-mode))
   (add-hook! lua-mode
