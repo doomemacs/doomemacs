@@ -139,9 +139,6 @@
 (depends-on "omnisharp")
 (depends-on "shader-mode")
 
-;; Lisp -- modules/module-lisp.el
-(depends-on "slime")
-
 ;; Golang -- modules/module-go.el
 (depends-on "go-mode")
 (depends-on "go-eldoc")
@@ -164,6 +161,9 @@
 (depends-on "coffee-mode")
 (depends-on "company-tern")
 (depends-on "nodejs-repl")
+
+;; Lisp -- modules/module-lisp.el
+(depends-on "slime")
 
 ;; Lua -- modules/module-lua.el
 (depends-on "lua-mode")

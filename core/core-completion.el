@@ -13,22 +13,15 @@
         company-global-modes '(not eshell-mode comint-mode erc-mode message-mode help-mode)
         company-frontends '(company-pseudo-tooltip-frontend
                             company-echo-metadata-frontend)
-        company-backends '((company-capf
-                            company-dabbrev-code)
-                           company-dabbrev)
-        company-statistics-file (concat narf-temp-dir "/company-stats-cache.el")
-        company-quickhelp-delay nil)
+        company-backends  '((company-capf company-dabbrev-code)
+                            company-dabbrev))
 
   :config
-  ;; NOTE: pos-tip.el in Emacs 25+ does not work
-  (use-package company-quickhelp
-    :config (company-quickhelp-mode +1))
-
   ;; Rewrites evil-complete to use company-dabbrev
   (setq evil-complete-next-func      'narf/company-evil-complete-next
         evil-complete-previous-func  'narf/company-evil-complete-previous)
 
-  (add-to-list 'company-transformers 'company-sort-by-occurrence)
+  (push 'company-sort-by-occurrence company-transformers)
   (setq-default company-backends (append '(company-keywords) company-backends))
 
   (define-company-backend! nxml-mode       (nxml yasnippet))
@@ -38,8 +31,16 @@
 
   (global-company-mode +1)
 
-  (require 'company-statistics)
-  (company-statistics-mode +1))
+  ;; NOTE: pos-tip.el in Emacs 25+ does not work
+  (use-package company-quickhelp
+    :config
+    (company-quickhelp-mode +1)
+    (setq company-quickhelp-delay nil))
+
+  (use-package company-statistics
+    :config
+    (company-statistics-mode +1)
+    (setq company-statistics-file (concat narf-temp-dir "/company-stats-cache.el"))))
 
 (use-package company-dict :defer t
   :config (setq company-dict-dir (concat narf-private-dir "/dict")))

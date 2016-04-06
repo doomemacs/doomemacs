@@ -1,14 +1,13 @@
 ;;; module-text.el
 
 (use-package markdown-mode
-  :mode (("\\.md$"   . markdown-mode)
-         ("/README$" . markdown-mode))
+  :mode ("\\.md$" "/README$")
   :functions (markdown-use-region-p
               markdown-unwrap-things-in-region
               markdown-wrap-or-insert
               markdown-unwrap-thing-at-point)
   :init
-  (add-hook! markdown-mode 'narf|enable-hard-wrap)
+  (add-hook 'markdown-mode-hook 'narf|enable-hard-wrap)
   :config
   (sp-local-pair 'markdown-mode "```" "```"
                  :post-handlers '(("||\n[i]" "RET"))

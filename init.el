@@ -70,7 +70,7 @@
         module-crystal       ; ruby at the speed of c
         module-csharp        ; unity, .NET, and mono shenanigans
         module-go            ; the hipster dialect
-        module-haskell       ; a language that's lazier than me
+        module-haskell       ; a language that's lazier than I am
         module-java          ; the poster child for carpal tunnel syndome
         module-js            ; all(hope(abandon(ye(who(enter(here))))))
         module-lisp          ; drowning in parentheses

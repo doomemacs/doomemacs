@@ -5,7 +5,6 @@
   :config
   (setq company-shell-delete-duplicates t))
 
-(associate! sh-mode :match "/\\.dotfiles/aliases$")
 (associate! sh-mode :match "/\\.?z\\(sh/.*\\|profile\\|login\\|logout\\|shrc\\|shenv\\)$")
 (associate! sh-mode :match "/\\.?bash\\(/.*\\|rc\\|_profile\\)$")
 (after! sh-script

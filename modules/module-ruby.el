@@ -8,7 +8,7 @@
          "/\\(Gem\\|Cap\\|Vagrant\\|Rake\\)file$")
   :interpreter "ruby"
   :init
-  (add-hook! ruby-mode 'flycheck-mode)
+  (add-hook 'ruby-mode-hook 'flycheck-mode)
   (define-docset!      ruby-mode "rb,ruby,rubygem")
   (define-builder!     ruby-mode "rake %s" "Rakefile")
   (define-env-command! ruby-mode "ruby --version | cut -d' ' -f2")

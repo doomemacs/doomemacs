@@ -1,6 +1,4 @@
-(eval-when-compile
-  (require 'cl-lib)
-  (require 'dash))
+(eval-when-compile (require 'cl-lib))
 
 ;; Backwards compatible `with-eval-after-load'
 (unless (fboundp 'with-eval-after-load)

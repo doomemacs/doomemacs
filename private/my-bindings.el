@@ -6,7 +6,7 @@
 
 (eval-when-compile (require 'core-defuns))
 
-;; See `narf-leader-prefix' & `narf-localleader-prefix' in ../core/core-vars.el
+;; See `narf-leader-prefix' & `narf-localleader-prefix' in ../core/core.el
 
 (map!
  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

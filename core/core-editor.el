@@ -33,12 +33,43 @@
  '((tab-mark   ?\t   [?> ?\t])
    (newline-mark 10 [36 10])))
 
+;; Save point across sessions
 (require 'saveplace)
 (setq-default
  save-place-file (concat narf-temp-dir "/saveplace")
  save-place t)
 (when (>= emacs-major-version 25)
   (save-place-mode +1))
+
+;; Save history across sessions
+(require 'savehist)
+(setq savehist-file (concat narf-temp-dir "/savehist")
+      savehist-save-minibuffer-history t
+      savehist-additional-variables
+      '(kill-ring search-ring regexp-search-ring))
+(savehist-mode 1)
+
+;; text properties severely bloat the history so delete them (courtesy of PythonNut)
+(defun unpropertize-savehist ()
+  (mapc (lambda (list)
+          (with-demoted-errors
+              (when (boundp list)
+                (set list (mapcar #'substring-no-properties (eval list))))))
+        '(kill-ring minibuffer-history helm-grep-history helm-ff-history file-name-history
+          read-expression-history extended-command-history evil-ex-history)))
+(add-hook 'kill-emacs-hook    #'unpropertize-savehist)
+(add-hook 'savehist-save-hook #'unpropertize-savehist)
+
+;; Keep track of recently opened files
+(require 'recentf)
+(setq recentf-save-file (concat narf-temp-dir "/recentf")
+      recentf-exclude '("/tmp/" "/ssh:" "\\.?ido\\.last$" "\\.revive$" "/TAGS$"
+                        "emacs\\.d/private/cache/.+" "emacs\\.d/workgroups/.+$" "wg-default"
+                        "/company-statistics-cache.el$")
+      recentf-max-menu-items 0
+      recentf-max-saved-items 250
+      recentf-auto-cleanup 600)
+(recentf-mode 1)
 
 
 ;;

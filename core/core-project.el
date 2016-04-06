@@ -5,12 +5,12 @@
 ;;
 
 ;; Always copy/delete recursively
-(setq dired-recursive-copies (quote always))
-(setq dired-recursive-deletes (quote top))
+(setq dired-recursive-copies (quote always)
+      dired-recursive-deletes (quote top))
 
 ;; Auto refresh dired, but be quiet about it
-(setq global-auto-revert-non-file-buffers t)
-(setq auto-revert-verbose nil)
+(setq global-auto-revert-non-file-buffers t
+      auto-revert-verbose nil)
 
 (setq dired-omit-mode t)
 
@@ -33,7 +33,7 @@
     (when (and (not (file-exists-p parent-directory))
                (y-or-n-p (format "Directory `%s' does not exist! Create it?" parent-directory)))
       (make-directory parent-directory t))))
-(add-to-list 'find-file-not-found-functions #'narf|create-non-existent-directory)
+(push 'narf|create-non-existent-directory find-file-not-found-functions)
 
 ;;
 (use-package ido
@@ -47,13 +47,14 @@
         ido-use-faces nil
         ido-confirm-unique-completion t
         ido-case-fold t
-        ido-enable-tramp-completion nil
-        ido-enable-flex-matching t
         ido-create-new-buffer 'always
-        ido-enable-tramp-completion t
+        ido-enable-flex-matching t
         ido-enable-last-directory-history t
+        ido-enable-tramp-completion nil
+        ido-enable-tramp-completion t
         ido-cr+-max-items 10000
         ido-save-directory-list-file (concat narf-temp-dir "/ido.last"))
+  (add-hook 'ido-setup-hook 'narf|ido-setup-home-keybind)
   :config
   (add-hook! ido-setup
     (add-to-list 'ido-ignore-files "\\`.DS_Store$")
@@ -72,8 +73,7 @@
           "C-w" 'ido-delete-backward-word-updir
           "C-u" 'ido-up-directory))
 
-  (add-hook! (ido-make-file-list ido-make-dir-list) 'narf*ido-sort-mtime)
-  (add-hook! ido-setup 'narf|ido-setup-home-keybind))
+  (add-hook! (ido-make-file-list ido-make-dir-list) 'narf*ido-sort-mtime))
 
 ;;
 (use-package neotree

@@ -14,7 +14,7 @@
   (add-hook 'evil-operator-state-exit-hook   'show-paren-mode-off)
 
   ;; Disable highlights on insert-mode
-  (add-hook! evil-insert-state-entry 'evil-ex-nohighlight)
+  (add-hook 'evil-insert-state-entry-hook 'evil-ex-nohighlight)
   :config
   (setq-default
    evil-magic t
@@ -241,6 +241,7 @@
                  (regexp-quote pattern)
                (evil-transform-vim-style-regexp pattern)))
      1 1))
+
   (evil-define-operator narf:evil-ex-global (beg end pattern command &optional invert)
     :motion mark-whole-buffer
     :move-point nil
@@ -402,7 +403,8 @@
 
 (use-package evil-escape
   :config
-  (setq evil-escape-key-sequence "jk")
+  (setq evil-escape-key-sequence "jk"
+        evil-escape-delay 0.2)
   (evil-escape-mode +1))
 
 (provide 'core-evil)

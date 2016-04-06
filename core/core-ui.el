@@ -7,7 +7,6 @@
  ;;cursor-in-non-selected-windows nil ; no cursors except in active buffer
  highlight-nonselected-windows  nil
  hl-line-sticky-flag            nil  ; only highlight in one window
-
  uniquify-buffer-name-style     nil  ; my mode-line does this for me
  visible-bell                   nil  ; silence of the bells
  use-dialog-box                 nil  ; always avoid GUI
@@ -15,7 +14,6 @@
  indicate-buffer-boundaries     t    ; show indicators where buffer starts/ends
  indicate-empty-lines           t    ; show indicators on empty lines
  fringes-outside-margins        t    ; switches order of fringe and margin
- idle-update-delay              2    ; update a little less often
  split-width-threshold          nil  ; favor horizontal splits
  show-help-function             nil  ; hide :help-echo text
 
@@ -29,6 +27,16 @@
  ;; Remove arrow on the right fringe when wrapped
  fringe-indicator-alist (delq (assoc 'continuation fringe-indicator-alist)
                               fringe-indicator-alist))
+
+(fset 'yes-or-no-p 'y-or-n-p)           ; y/n instead of yes/no
+
+;; Ask for confirmation on exit only if there are real buffers left
+(when window-system
+  (setq confirm-kill-emacs
+        (lambda (_)
+          (if (narf/get-real-buffers)
+              (y-or-n-p ">> Gee, I dunno Brain... Are you sure?")
+            t))))
 
 (blink-cursor-mode  1)    ; blink cursor
 (tooltip-mode      -1)    ; show tooltips in echo area
@@ -98,13 +106,13 @@
 (defun narf|hl-line-off () (if narf--hl-line-mode (hl-line-mode -1)))
 
 (add-hook! hl-line-mode (if hl-line-mode (setq narf--hl-line-mode t)))
-(add-hook! evil-visual-state-entry 'narf|hl-line-off)
-(add-hook! evil-visual-state-exit  'narf|hl-line-on)
+(add-hook 'evil-visual-state-entry-hook 'narf|hl-line-off)
+(add-hook 'evil-visual-state-exit-hook  'narf|hl-line-on)
 
 ;; Hide modeline in help windows
 (defun narf|hide-mode-line ()
   (setq mode-line-format nil))
-(add-hook! help-mode 'narf|hide-mode-line)
+(add-hook 'help-mode-hook 'narf|hide-mode-line)
 
 ;; Highlight TODO/FIXME/NOTE tags
 (defface narf-todo-face  '((t (:inherit font-lock-warning-face)))
@@ -139,6 +147,7 @@
 
 (use-package rainbow-mode :defer t
   :init
+  ;; hl-line-mode and rainbow-mode don't play well together
   (add-hook! rainbow-mode
     (when narf--hl-line-mode
       (hl-line-mode (if rainbow-mode -1 1)))))
