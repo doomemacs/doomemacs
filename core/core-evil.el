@@ -405,7 +405,12 @@
   :config
   (setq evil-escape-key-sequence "jk"
         evil-escape-delay 0.2)
-  (evil-escape-mode +1))
+
+  ;; evil-escape causes noticable lag in linewise motions in visual mode, so only enable
+  ;; it in insert mode.
+  (defun narf|evil-escape-disable () (evil-escape-mode -1))
+  (add-hook 'evil-insert-state-entry-hook 'evil-escape-mode)
+  (add-hook 'evil-insert-state-exit-hook 'narf|evil-escape-disable))
 
 (provide 'core-evil)
 ;;; core-evil.el ends here
