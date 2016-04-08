@@ -68,7 +68,7 @@
    "M-c"            'evil-yank
    "M-o"            'helm-find-files
    "M-q"            'evil-quit-all
-   "M-s"            'evil-write
+   "M-s"            'save-buffer
    "M-v"            'clipboard-yank
    "M-z"            'undo
    "M-Z"            'redo
@@ -297,7 +297,7 @@
    :i "C-]"   'company-tags
    :i "s"     'company-ispell
    :i "C-s"   'company-yasnippet
-   :i "C-o"   'company-semantic
+   :i "C-o"   'company-capf
    :i "C-n"   'company-dabbrev-code
    :i "C-p"   (λ! (let ((company-selection-wrap-around t))
                     (call-interactively 'company-dabbrev-code)
