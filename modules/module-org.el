@@ -18,7 +18,8 @@
 
 (defun narf|org-hook ()
   (evil-org-mode +1)
-  (setq line-spacing 1)
+  (visual-line-mode +1)
+  (setq line-spacing 2)
 
   ;; If saveplace places the point in a folded position, unfold it on load
   (when (outline-invisible-p)
@@ -104,7 +105,7 @@
 
    ;; Latex
    narf-org-latex-inline-scale 1.2
-   narf-org-latex-block-scale  1.5
+   narf-org-latex-block-scale  1.4
    org-highlight-latex-and-related '(latex)
    org-latex-create-formula-image-program 'dvipng
    org-latex-image-default-width nil
