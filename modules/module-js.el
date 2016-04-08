@@ -22,7 +22,7 @@
 
   (map! :map js2-mode-map
         (:localleader
-          :n ";" 'narf/append-semicolon))
+          :nv ";" 'narf/append-semicolon))
 
   (after! web-beautify
     (add-hook! js2-mode (setenv "jsbeautify_indent_size" "4"))

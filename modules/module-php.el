@@ -15,7 +15,7 @@
 
   (map! :map php-mode-map
         (:localleader
-          :n ";" 'narf/append-semicolon))
+          :nv ";" 'narf/append-semicolon))
 
   ;; Generate php-extras documentation and completion asynchronously
   (unless (file-exists-p (concat php-extras-eldoc-functions-file ".el"))
