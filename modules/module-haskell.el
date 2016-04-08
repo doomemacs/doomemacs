@@ -1,7 +1,9 @@
 ;;; module-haskell.el
 
 (use-package haskell
-  :mode ("\\.hs$" . haskell-mode)
+  :mode (("\\.hs$" . haskell-mode)
+         ("\\.ghci$" . ghci-script-mode)
+         ("\\.cabal$" . haskell-cabal-mode))
   :init
   (define-repl! haskell-mode switch-to-haskell)
   (add-hook! haskell-mode '(interactive-haskell-mode flycheck-mode))

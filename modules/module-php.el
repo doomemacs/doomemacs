@@ -6,7 +6,7 @@
   (define-docset! php-mode "php,laravel")
   (define-company-backend! php-mode '(php-extras-company))
 
-  (add-hook! php-mode 'flycheck-mode)
+  (add-hook 'php-mode-hook 'flycheck-mode)
   (setq php-template-compatibility nil
         php-extras-eldoc-functions-file (concat narf-temp-dir "/php-extras-eldoc-functions"))
   :config

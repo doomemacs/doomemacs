@@ -122,5 +122,10 @@
     (when (evil-visual-state-p)
       (evil-normal-state))))
 
+;;;###autoload
+(defun narf/sp-point-is-template-p (id action context)
+  (and (sp-in-code-p id action context)
+       (sp-point-after-word-p id action context)))
+
 (provide 'defuns-cc)
 ;;; defuns-cc.el ends here

@@ -256,6 +256,10 @@
  :i  "<M-backspace>" 'narf/backward-kill-to-bol-and-indent
  :i  "<C-return>"    'evil-ret-and-indent
 
+ ;; Emacsien motions for insert mode
+ :i "C-b" 'backward-word
+ :i "C-f" 'forward-word
+
  ;; escape from insert mode (more responsive than using key-chord-define)
  :irv "C-g"  'evil-normal-state
 
@@ -348,8 +352,7 @@
 
 ;; Restores "dumb" indentation to the tab key. This rustles a lot of peoples' jimmies,
 ;; apparently, but it's how I like it.
-(map! "C-b" 'backward-word
-      :i "<tab>"     'narf/dumb-indent
+(map! :i "<tab>"     'narf/dumb-indent
       :i "<backtab>" 'narf/dumb-dedent
       :i "<C-tab>"   'indent-for-tab-command
 
