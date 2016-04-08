@@ -23,6 +23,18 @@
   ;; Don't interfere with my custom RET behavior
   (define-key ruby-mode-map [?\n] nil)
 
+  (use-package yard-mode :init (add-hook 'ruby-mode-hook 'yard-mode))
+
+  (use-package robe
+    :commands (robe-mode robe-start ruby-load-file company-robe)
+    :init
+    (add-hook! ruby-mode
+      (narf|ruby-load-file)
+      (add-hook 'after-save-hook 'narf|ruby-load-file nil t))
+    :config
+    (require 'company-robe)
+    (define-company-backend! ruby-mode (robe)))
+
   (use-package ruby-refactor
     :init (add-hook 'ruby-mode-hook 'emr-initialize)
     :config
@@ -92,16 +104,6 @@
   (evil-set-initial-state 'inf-ruby-mode 'emacs)
   (require 'company-inf-ruby)
   (define-company-backend! inf-ruby-mode (inf-ruby)))
-
-(use-package robe
-  :commands (robe-mode robe-start ruby-load-file)
-  :init
-  (add-hook! ruby-mode
-    (narf|ruby-load-file)
-    (add-hook 'after-save-hook 'narf|ruby-load-file nil t))
-  :config
-  (require 'company-robe)
-  (define-company-backend! ruby-mode (robe)))
 
 (provide 'module-ruby)
 ;;; module-ruby.el ends here

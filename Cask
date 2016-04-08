@@ -185,6 +185,7 @@
 (depends-on "inf-ruby")
 (depends-on "robe")
 (depends-on "company-inf-ruby")
+(depends-on "yard-mode")
 
 ;; Rust -- modules/module-rust.el
 (depends-on "rust-mode")
