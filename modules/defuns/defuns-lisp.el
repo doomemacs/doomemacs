@@ -46,7 +46,12 @@
 
 ;;;###autoload
 (defun narf/elisp-auto-compile ()
-  (when (narf/is-recompilable-p)
+  (when (let ((file-name (buffer-file-name)))
+          (and (f-exists? (f-expand (concat (f-base file-name) ".elc") (f-dirname file-name)))
+               (--any? (f-child-of? file-name it)
+                       (append (list narf-core-dir narf-modules-dir
+                                     narf-core-dir narf-modules-dir
+                                     narf-private-dir)))))
     (narf:compile-el)))
 
 ;;;###autoload

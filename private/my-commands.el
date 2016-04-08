@@ -1,8 +1,6 @@
 ;;; my-commands.el
 
 ;; Emacs utilities
-(exmap "acomp[ile]"    'narf:compile-autoloads) ; compile autoloads
-(exmap "bcomp[ile]"    'narf:compile-el)
 (exmap "echo"          'narf:echo)
 (exmap "minor"         'helm-describe-modes) ; list minor modes
 ;; Quick mapping keys to commands, allows :nmap \m !make
