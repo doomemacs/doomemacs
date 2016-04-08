@@ -4,10 +4,8 @@ REPO_URL="https://github.com/hlissner"
 
 all: install autoloads bootstrap.elc
 
-install: autoloads bootstrap.elc
-	@cask install 2>&1
-
-# If you keep emacs open while running this, run narf/reload afterwards
+# If you keep emacs open while running either of these, run narf/reload afterwards
+install: autoloads _install bootstrap.elc
 update: autoloads _update bootstrap.elc
 
 autoloads:
@@ -34,5 +32,8 @@ reset:
 
 _update:
 	@cask update 2>&1
+
+_install:
+	@cask install 2>&1
 
 .PHONY: all
