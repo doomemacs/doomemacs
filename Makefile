@@ -9,10 +9,15 @@ install: autoloads _install bootstrap.elc
 update: autoloads _update bootstrap.elc
 
 autoloads:
-	@$(EMACS) --script scripts/generate-autoloads.el 2>&1
+	@$(EMACS) --batch \
+		-l bootstrap.el \
+		-l core/core-defuns.el \
+		--eval '(narf-reload-autoloads)' 2>&1
 
 compile: autoloads bootstrap.elc
-	@$(EMACS) --batch -f batch-byte-compile 2>&1 {core,modules,modules/contrib,private}/*.el {core,modules}/defuns/*.el
+	@$(EMACS) --batch -f batch-byte-compile 2>&1 \
+		{core,modules,modules/contrib,private}/*.el \
+		{core,modules}/defuns/*.el
 
 snippets:
 	@[ -d private/snippets ] || git clone $(REPO_URL)/emacs-snippets private/snippets

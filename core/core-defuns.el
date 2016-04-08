@@ -233,5 +233,17 @@ to abort the minibuffer."
                           (f-directories (expand-file-name "../bootstrap" narf-packages-dir))
                           narf--load-path)))
 
+(defun narf-reload-autoloads ()
+  "Regenerate autoloads for NARF emacs."
+  (interactive)
+  (let ((generated-autoload-file (concat narf-core-dir "/autoloads.el")))
+    (when (file-exists-p generated-autoload-file)
+      (delete-file generated-autoload-file))
+    (mapc (lambda (dir)
+            (update-directory-autoloads (concat dir "/defuns"))
+            (message "Scanned: %s" dir))
+          (list narf-core-dir narf-modules-dir))
+    (message "Done!")))
+
 (provide 'core-defuns)
 ;;; core-defuns.el ends here
