@@ -180,8 +180,8 @@
 (depends-on "php-extras")
 
 ;; Python -- modules/module-python.el
-(depends-on "anaconda-mode")
 (depends-on "nose")
+(depends-on "anaconda-mode")
 (depends-on "company-anaconda")
 
 ;; Ruby -- modules/module-ruby.el

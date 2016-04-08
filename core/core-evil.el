@@ -195,6 +195,7 @@
       file-name))
 
   ;; Make :g[lobal] highlight matches
+  ;; TODO Redo this mess
   (defvar narf-buffer-match-global evil-ex-substitute-global "")
   (defun narf--ex-buffer-match (flag &optional arg)
     (let ((hl-name 'evil-ex-buffer-match))
@@ -394,7 +395,7 @@
         evil-escape-delay 0.2)
 
   ;; evil-escape causes noticable lag in linewise motions in visual mode, so only enable
-  ;; it in insert mode.
+  ;; it in insert mode. (I only need jk for insert mode anyway)
   (defun narf|evil-escape-disable () (evil-escape-mode -1))
   (add-hook 'evil-insert-state-entry-hook 'evil-escape-mode)
   (add-hook 'evil-insert-state-exit-hook 'narf|evil-escape-disable))

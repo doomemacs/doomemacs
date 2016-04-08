@@ -2,26 +2,26 @@
 
 (setq-default
  ;; spaces instead of tabs
- indent-tabs-mode        nil
- tab-always-indent       t
- tab-width               4
+ indent-tabs-mode nil
+ tab-always-indent t
+ tab-width 4
 
- require-final-newline   t
- delete-trailing-lines   nil
- fill-column             90
- line-spacing            0
- word-wrap               t
- truncate-lines                  t
- truncate-partial-width-windows  50
+ require-final-newline t
+ delete-trailing-lines nil
+ fill-column 90
+ line-spacing 0
+ word-wrap t
+ truncate-lines t
+ truncate-partial-width-windows 50
 
  visual-fill-column-center-text nil
  confirm-nonexistent-file-or-buffer nil
 
  ;; Sane scroll settings
- scroll-margin           0
- scroll-conservatively   1001
+ scroll-margin 0
+ scroll-conservatively 1001
  scroll-preserve-screen-position t
- hscroll-step   1
+ hscroll-step 1
  hscroll-margin 1
 
  shift-select-mode t

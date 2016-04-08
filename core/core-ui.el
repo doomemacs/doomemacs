@@ -5,17 +5,25 @@
  show-paren-delay 0.075
 
  ;;cursor-in-non-selected-windows nil ; no cursors except in active buffer
- highlight-nonselected-windows  nil
- hl-line-sticky-flag            nil  ; only highlight in one window
- uniquify-buffer-name-style     nil  ; my mode-line does this for me
- visible-bell                   nil  ; silence of the bells
- use-dialog-box                 nil  ; always avoid GUI
- redisplay-dont-pause           t    ; don't pause display on input
- indicate-buffer-boundaries     t    ; show indicators where buffer starts/ends
- indicate-empty-lines           t    ; show indicators on empty lines
- fringes-outside-margins        t    ; switches order of fringe and margin
- split-width-threshold          nil  ; favor horizontal splits
- show-help-function             nil  ; hide :help-echo text
+ highlight-nonselected-windows nil
+ hl-line-sticky-flag nil ; only highlight in one window
+
+ uniquify-buffer-name-style nil ; my mode-line does this for me
+ visible-bell nil
+ visible-cursor nil
+ x-stretch-cursor t
+ use-dialog-box nil            ; always avoid GUI
+ redisplay-dont-pause t        ; don't pause display on input
+ indicate-buffer-boundaries t  ; show indicators where buffer starts/ends
+ indicate-empty-lines t        ; show indicators on empty lines
+ fringes-outside-margins t     ; switches order of fringe and margin
+ split-width-threshold nil     ; favor horizontal splits
+ show-help-function nil        ; hide :help-echo text
+
+ jit-lock-defer-time 0.04
+ jit-lock-stealth-nice 0.1
+ jit-lock-stealth-time 0.2
+ jit-lock-stealth-verbose nil
 
  ;; Disable bidirectional text support for slight performance bonus
  bidi-display-reordering        nil

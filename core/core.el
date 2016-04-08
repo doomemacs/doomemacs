@@ -16,32 +16,34 @@
 ;;;
 
 (setq-default
- idle-update-delay                  2           ; update a little less often
  ad-redefinition-action            'accept      ; silence the advised function warnings
- echo-keystrokes                    0.02        ; show me what I type
- history-length                     1000
- ring-bell-function                'ignore      ; silence of the bells!
- save-interprogram-paste-before-kill nil
- sentence-end-double-space          nil
- enable-recursive-minibuffers       nil         ; no minibufferception
  compilation-always-kill            t           ; kill compilation process before spawning another
  compilation-ask-about-save         nil         ; save all buffers before compiling
  compilation-scroll-output          t           ; scroll with output while compiling
+ delete-by-moving-to-trash          t
+ echo-keystrokes                    0.02        ; show me what I type
  ediff-diff-options                 "-w"
  ediff-split-window-function       'split-window-horizontally   ; side-by-side diffs
  ediff-window-setup-function       'ediff-setup-windows-plain   ; no extra frames
+ enable-recursive-minibuffers       nil         ; no minibufferception
+ history-length                     1000
+ idle-update-delay                  2           ; update a little less often
  inhibit-startup-echo-area-message  "hlissner"  ; username shuts up emacs
  inhibit-startup-screen             t           ; don't show emacs start screen
- initial-scratch-message            nil
  initial-major-mode                'text-mode   ; initial scratch buffer mode
+ initial-scratch-message            nil
  major-mode                        'text-mode
-
- ;; http://ergoemacs.org/emacs/emacs_stop_cursor_enter_prompt.html
- minibuffer-prompt-properties '(read-only t point-entered minibuffer-avoid-prompt face minibuffer-prompt)
+ ring-bell-function                'ignore      ; silence of the bells!
+ save-interprogram-paste-before-kill nil
+ sentence-end-double-space          nil
 
  ;; remove annoying ellipsis when printing sexp in message buffer
  eval-expression-print-length       nil
  eval-expression-print-level        nil
+
+ ;; http://ergoemacs.org/emacs/emacs_stop_cursor_enter_prompt.html
+ minibuffer-prompt-properties
+ '(read-only t point-entered minibuffer-avoid-prompt face minibuffer-prompt)
 
  bookmark-save-flag                 t
  bookmark-default-file              (concat narf-temp-dir "/bookmarks")
