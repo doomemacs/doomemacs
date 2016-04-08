@@ -2,25 +2,30 @@
 
 (use-package python
   :mode ("\\.py\\'" . python-mode)
-  :interpreter ("python"   . python-mode)
+  :interpreter ("python" . python-mode)
   :commands python-mode
   :init
-  (define-docset! python-mode "py,py3,python")
-  (add-hook! python-mode '(emr-initialize narf|flycheck-enable-maybe))
   (setq-default
    python-environment-directory narf-temp-dir
-   python-shell-interpreter "ipython")
-  :config
+   python-shell-interpreter "ipython"
+   python-shell-interpreter-args "--deep-reload"
+   python-shell-prompt-regexp "In \\[[0-9]+\\]: "
+   python-shell-prompt-block-regexp "\\.\\.\\.\\.: "
+   python-shell-prompt-output-regexp "Out\\[[0-9]+\\]: "
+   python-shell-completion-setup-code
+   "from IPython.core.completerlib import module_completion"
+   python-shell-completion-string-code
+   "';'.join(get_ipython().Completer.all_completions('''%s'''))\n")
+
+  (define-docset! python-mode "py,py3,python")
   (define-env-command! python-mode "python --version 2>&1 | cut -d' ' -f2")
   (define-repl! python-mode narf/inf-python)
+  (add-hook! python-mode '(emr-initialize narf|flycheck-enable-maybe))
 
-  ;; interferes with smartparens
-  (define-key python-mode-map (kbd "DEL") nil)
+  :config
+  (define-key python-mode-map (kbd "DEL") nil) ; interferes with smartparens
 
   (use-package anaconda-mode
-    :defer t
-    :defines (anaconda-mode-map anaconda-nav-mode-map)
-    :functions (anaconda-mode-running-p)
     :init
     (add-hook! python-mode '(anaconda-mode anaconda-eldoc-mode eldoc-mode))
     (setq anaconda-mode-installation-directory (concat narf-temp-dir "/anaconda/")
@@ -54,8 +59,7 @@
 (use-package nose
   :commands nose-mode
   :preface (defvar nose-mode-map (make-sparse-keymap))
-  :init
-  (associate! nose-mode :match "/test_.+\\.py\\'")
+  :init (associate! nose-mode :match "/test_.+\\.py\\'")
   :config
   (map! :map nose-mode-map
         (:localleader
