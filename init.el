@@ -2,7 +2,7 @@
 ;;
 ;; Author:  Henrik Lissner <henrik@lissner.net>
 ;; URL:     https://github.com/hlissner/.emacs.d
-;; Version: 0.9.7
+;; Version: 0.9.8
 ;;
 ;;; Are you pondering what I'm pondering, Pinky?
 ;;
