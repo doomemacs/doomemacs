@@ -179,6 +179,9 @@
 (depends-on "php-boris")
 (depends-on "php-extras")
 
+;; Processing -- modules/module-processing.el
+(depends-on "processing-mode")
+
 ;; Python -- modules/module-python.el
 (depends-on "nose")
 (depends-on "anaconda-mode")

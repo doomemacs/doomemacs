@@ -76,6 +76,7 @@
         module-lisp          ; drowning in parentheses
         module-lua           ; one-based indices? one-based indices.
         module-php           ; making php less painful to work with
+        module-processing    ; pretty prototypes
         module-python        ; beautiful is better than ugly
         module-ruby          ; 1.step do {|i| p "Ruby is #{i&1==0?'love':'life'}"}
         module-rust          ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
