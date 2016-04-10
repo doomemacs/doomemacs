@@ -46,7 +46,7 @@
 
           ;; Emacs
           ("^\\*.+-Profiler-Report .+\\*$" :regexp t :align below :size 0.3)
-          ("*processing-compilation*" :align below :size 15 :noselect t)
+          ("*processing-compilation*" :align below :size 10 :noselect t)
           ("*Backtrace*" :align below :size 0.25 :noselect t)
           ("*scratch*"   :align below :size 0.3  :select t)
           ("*Help*"      :align below :size 21 :select t)
