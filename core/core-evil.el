@@ -315,23 +315,6 @@
   (define-key evil-inner-text-objects-map "%" #'evilmi-text-object)
   (define-key evil-outer-text-objects-map "%" #'evilmi-text-object))
 
-(use-package evil-easymotion
-  :defer 1
-  :config
-  (evilem-default-keybindings "g SPC")
-  (evilem-define (kbd "g SPC n") 'evil-ex-search-next)
-  (evilem-define (kbd "g SPC N") 'evil-ex-search-previous)
-  (evilem-define "gs" 'evil-snipe-repeat
-    :pre-hook (save-excursion (call-interactively #'evil-snipe-s))
-    :bind ((evil-snipe-scope 'buffer)
-           (evil-snipe-enable-highlight)
-           (evil-snipe-enable-incremental-highlight)))
-  (evilem-define "gS" 'evil-snipe-repeat-reverse
-    :pre-hook (save-excursion (call-interactively #'evil-snipe-s))
-    :bind ((evil-snipe-scope 'buffer)
-           (evil-snipe-enable-highlight)
-           (evil-snipe-enable-incremental-highlight))))
-
 (use-package evil-numbers
   :commands (evil-numbers/inc-at-pt evil-numbers/dec-at-pt))
 
@@ -346,6 +329,30 @@
   (global-evil-search-highlight-persist t)
   (advice-add 'evil-force-normal-state :after 'evil-search-highlight-persist-remove-all))
 
+(use-package evil-easymotion
+  :defer 1
+  :init (defvar narf--evil-snipe-repeat-fn)
+  :config
+  (evilem-default-keybindings "g SPC")
+  (evilem-define (kbd "g SPC n") 'evil-ex-search-next)
+  (evilem-define (kbd "g SPC N") 'evil-ex-search-previous)
+  (evilem-define "gs" 'evil-snipe-repeat
+    :pre-hook (save-excursion (call-interactively #'evil-snipe-s))
+    :bind ((evil-snipe-scope 'buffer)
+           (evil-snipe-enable-highlight)
+           (evil-snipe-enable-incremental-highlight)))
+  (evilem-define "gS" 'evil-snipe-repeat-reverse
+    :pre-hook (save-excursion (call-interactively #'evil-snipe-s))
+    :bind ((evil-snipe-scope 'buffer)
+           (evil-snipe-enable-highlight)
+           (evil-snipe-enable-incremental-highlight)))
+
+  (setq narf--evil-snipe-repeat-fn
+        (evilem-create 'evil-snipe-repeat
+                       :bind ((evil-snipe-scope 'whole-buffer)
+                              (evil-snipe-enable-highlight)
+                              (evil-snipe-enable-incremental-highlight)))))
+
 (use-package evil-snipe
   :init
   (setq-default
@@ -359,7 +366,9 @@
                               (?\; "[;:]")))
   :config
   (evil-snipe-mode 1)
-  (evil-snipe-override-mode 1))
+  (evil-snipe-override-mode 1)
+
+  (define-key evil-snipe-parent-transient-map (kbd "C-;") 'narf/evil-snipe-easymotion))
 
 (use-package evil-surround
   :commands (global-evil-surround-mode

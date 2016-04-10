@@ -163,5 +163,11 @@
 (evil-define-command narf:omap (bang input &optional mode)
   (interactive "<!><a>") (narf:map bang input 'operator))
 
+;;;###autoload
+(defun narf/evil-snipe-easymotion ()
+  (interactive)
+  (require 'evil-easymotion)
+  (call-interactively narf--evil-snipe-repeat-fn))
+
 (provide 'defuns-evil)
 ;;; defuns-evil.el ends here
