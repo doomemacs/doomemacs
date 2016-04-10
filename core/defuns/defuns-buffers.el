@@ -233,7 +233,7 @@ left, create a scratch buffer."
   "Kill buried project buffers (in workgroup) and report how many it found. BANG = get all
 buffers regardless of project."
   (interactive "<!>")
-  (narf-kill-buffers (narf/get-buffers (not bang)) 'narf/get-buried-buffers))
+  (narf--kill-buffers (narf/get-buried-buffers (narf/get-buffers (not bang)))))
 
 ;;;###autoload (autoload 'narf:kill-buried-buffers "defuns-buffers" nil t)
 (evil-define-command narf:kill-matching-buffers (&optional bang pattern)
