@@ -272,8 +272,10 @@
    `(css-proprietary-property ((,c (:foreground ,keywords))))
 
    ;; js2-mode
-   `(js2-function-param ((,c (:foreground ,variables))))
-   `(js2-jsdoc-tag      ((,c (:foreground ,comments))))
+   `(js2-function-param  ((,c (:foreground ,variables))))
+   `(js2-function-call   ((,c (:foreground ,functions))))
+   `(js2-object-property ((,c (:foreground ,methods))))
+   `(js2-jsdoc-tag       ((,c (:foreground ,comments))))
 
    ;; markdown-mode
    `(markdown-header-face           ((,c (:foreground ,orange))))
