@@ -106,6 +106,11 @@
                 (setq narf-popup-windows (delq w narf-popup-windows))))
             narf-popup-windows))
 
+    ;; Fix disruptive errors w/ hidden buffers caused by workgroups killing windows
+    ;; TODO Delete timer on dead windows
+    (defadvice evil-ex-hl-do-update-highlight (around evil-ex-hidden-buffer-ignore-errors activate)
+      (ignore-errors ad-do-it))
+
     ;; Hide keystroke display while isearch is active
     (add-hook! isearch-mode     (setq echo-keystrokes 0))
     (add-hook! isearch-mode-end (setq echo-keystrokes 0.02))
