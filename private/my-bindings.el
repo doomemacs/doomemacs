@@ -111,7 +111,6 @@
    :nv "P"  'helm-projectile-switch-project
    :v  "="  'align-regexp
 
-   :n  "k"  'narf/helm-descbinds-leader
    :n  "h"  'help-command
    :nv "p"  'helm-show-kill-ring
    :n  "R"  'narf/reset-theme
@@ -163,7 +162,6 @@
 
  (:localleader
    :n "\\" 'narf/neotree
-   :n "k" 'narf/helm-descbinds-localleader
    :n "b" 'narf:build
    :n "R" 'narf:repl
    :v "R" 'narf:repl-eval

@@ -105,7 +105,6 @@
 (depends-on "helm-css-scss")
 (depends-on "helm-projectile")
 (depends-on "helm-swoop")
-(depends-on "helm-descbinds")
 (depends-on "projectile")
 (depends-on "helm-describe-modes" :git "https://github.com/emacs-helm/helm-describe-modes")
 
