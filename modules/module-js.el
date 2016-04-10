@@ -8,7 +8,12 @@
     :config (evil-set-initial-state 'nodejs-repl-mode 'emacs))
 
   (define-repl! js2-mode nodejs-repl)
-  (define-docset! js2-mode "js,javascript,nodejs,angularjs")
+  (define-docset! js2-mode "js,javascript,nodejs,angularjs,express,jquery,mongoose")
+
+  (add-hook! js2-mode
+    (electric-indent-local-mode +1)
+    (setq electric-indent-chars '(?} ?\) ?.)
+          narf-electric-indent-words '("||" "&&")))
   :config
   (setq-default
    js2-skip-preprocessor-directives t
