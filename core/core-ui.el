@@ -228,7 +228,7 @@
   :config
   (setq-default
    powerline-default-separator nil
-   powerline-height 18
+   powerline-height 20
    spaceline-highlight-face-func 'spaceline-highlight-face-evil-state)
 
   (defface mode-line-is-modified nil "Face for mode-line modified symbol")
