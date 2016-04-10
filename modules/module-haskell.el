@@ -4,10 +4,13 @@
   :mode (("\\.hs$" . haskell-mode)
          ("\\.ghci$" . ghci-script-mode)
          ("\\.cabal$" . haskell-cabal-mode))
+  :interpreter (("runghc" . haskell-mode)
+                ("runhaskell" . haskell-mode))
   :init
   (define-repl! haskell-mode switch-to-haskell)
   (add-hook! haskell-mode '(interactive-haskell-mode flycheck-mode))
   :config
+  (add-to-list 'completion-ignored-extensions ".hi")
   ;; haskell-mode complains that this function isn't defined, and it isn't!
   (defun haskell-mode-after-save-handler ()))
 
