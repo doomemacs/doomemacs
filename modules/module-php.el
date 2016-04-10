@@ -1,7 +1,8 @@
 ;;; module-php.el
 
 (use-package php-mode
-  :mode "\\.\\(php\\|inc\\)$"
+  :mode ("\\.php[s345]?$" "\\.inc$" )
+  :interpreter "php"
   :init
   (define-docset! php-mode "php,laravel")
   (define-company-backend! php-mode '(php-extras-company))
