@@ -4,7 +4,8 @@
   :mode "\\.js$"
   :interpreter "node"
   :init
-  (use-package nodejs-repl :defer t :commands (nodejs-repl)
+  (use-package nodejs-repl
+    :commands (nodejs-repl)
     :config (evil-set-initial-state 'nodejs-repl-mode 'emacs))
 
   (define-repl! js2-mode nodejs-repl)
@@ -25,13 +26,23 @@
                         ;; Launchbar API
                         "LaunchBar" "File" "Action" "HTTP" "include" "Lib"))
 
+  ;; [pedantry intensifies]
+  (defadvice js2-mode (after js2-mode-rename-modeline activate)
+    (setq mode-name "JS2"))
+
   (map! :map js2-mode-map
-        (:localleader
-          :nv ";" 'narf/append-semicolon))
+        (:localleader :nv ";" 'narf/append-semicolon))
 
   (after! web-beautify
-    (add-hook! js2-mode (setenv "jsbeautify_indent_size" "4"))
+    (add-hook! js2-mode (setenv "jsbeautify_indent_size" (int-to-string js2-basic-offset)))
     (map! :map js2-mode-map :m "gQ" 'web-beautify-js))
+
+  (use-package tern
+    :commands tern-mode
+    :init (add-hook 'js2-mode-hook 'tern-mode)
+    :config
+    (require 'company-tern)
+    (define-company-backend! js2-mode (tern)))
 
   (use-package js2-refactor
     :init (add-hook 'js2-mode-hook 'emr-initialize)
@@ -74,11 +85,7 @@
             (log-this                   "log this"                   'both)
             (debug-this                 "debug this"                 'both)
             (forward-slurp              "forward slurp"              nil)
-            (forward-barf               "forward barf"               nil))))
-
-  ;; [pedantry intensifies]
-  (defadvice js2-mode (after js2-mode-rename-modeline activate)
-    (setq mode-name "JS2")))
+            (forward-barf               "forward barf"               nil)))))
 
 (define-minor-mode nodejs-mode
   :lighter " node" :keymap (make-sparse-keymap)
@@ -92,22 +99,13 @@
   :files ("package.json" "app/index.html" "app/main.js")
   :in (web-mode js2-mode markdown-mode json-mode coffee-mode))
 
-(use-package tern
-  :commands tern-mode
-  :init (add-hook! js2-mode 'tern-mode)
-  :config
-  (require 'company-tern)
-  (define-company-backend! js2-mode (tern)))
-
 (use-package unityjs-mode
   :mode "/Assets/.*\\.js$"
-  :config
-  (add-hook! unityjs-mode 'flycheck-mode))
+  :config (add-hook 'unityjs-mode-hook 'flycheck-mode))
 
 (use-package coffee-mode
   :mode "\\.coffee$"
-  :config
-  (setq-default coffee-indent-like-python-mode t))
+  :config (setq-default coffee-indent-like-python-mode t))
 
 (provide 'module-js)
 ;;; module-js.el ends here
