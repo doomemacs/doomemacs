@@ -27,6 +27,7 @@
 
 ;; UI --- core/core-ui.el
 (depends-on "visual-fill-column")
+(depends-on "highlight-indentation" :git "https://github.com/localredhead/Highlight-Indentation-for-Emacs")
 (depends-on "rainbow-delimiters")
 (depends-on "rainbow-mode")
 (depends-on "nlinum")

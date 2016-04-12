@@ -145,6 +145,24 @@
 
 (use-package visual-fill-column :defer t)
 
+(use-package highlight-indentation
+  :commands (highlight-indentation-mode highlight-indentation-current-column-mode)
+  :init
+  (add-hook! (web-mode nxml-mode yaml-mode json-mode scss-mode
+              c-mode-common ruby-mode python-mode lua-mode)
+    'highlight-indentation-mode)
+
+  :config
+  ;; A long-winded method for ensuring whitespace is maintained (so that
+  ;; highlight-indentation-mode can display them consistently)
+  (add-hook! highlight-indentation-mode
+    (if highlight-indentation-mode
+        (progn
+          (narf/add-whitespace)
+          (add-hook 'after-save-hook 'narf/add-whitespace nil t))
+     (remove-hook 'after-save-hook 'narf/add-whitespace t)))
+  (add-hook 'before-save-hook 'delete-trailing-whitespace))
+
 (use-package rainbow-delimiters
   :commands rainbow-delimiters-mode
   :init

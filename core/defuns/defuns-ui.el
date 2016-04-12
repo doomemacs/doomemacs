@@ -46,5 +46,35 @@
       (compose-region beg end how 'decompose-region))
     nil))
 
+;;;###autoload
+(defun narf/add-whitespace (&optional start end)
+  (interactive (progn (barf-if-buffer-read-only)
+                      (if (use-region-p)
+                          (list (region-beginning) (region-end))
+                        (list nil nil))))
+  (save-match-data
+    (save-excursion
+      (let ((end-marker (copy-marker (or end (point-max))))
+            (start (or start (point-min))))
+        (goto-char start)
+        (while (and (re-search-forward "^$" end-marker t) (not (>= (point) end-marker)))
+          (let (line-start line-end)
+            (save-excursion
+              (forward-line -1)
+              (setq line-start (point)
+                    line-end   (save-excursion (back-to-indentation) (point)))
+              (if (and (= line-start line-end)
+                       (/= line-end (line-end-position)))
+                  (progn
+                    (forward-line 2)
+                    (setq line-start (point)
+                          line-end   (save-excursion (back-to-indentation) (point)))
+                    (forward-line -1))
+                (forward-line 1))
+              (insert (make-string (- line-end line-start) 32))))
+          (forward-line 1)))))
+  (set-buffer-modified-p nil)
+  nil)
+
 (provide 'defuns-ui)
 ;;; defuns-ui.el ends here
