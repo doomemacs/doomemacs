@@ -24,8 +24,8 @@
     (when (and region-p beg end)
       (let* ((buf narf--repl-buffer)
              (win (get-buffer-window buf)))
-        (unless (eq buf popwin:popup-buffer)
-          (popwin:pop-to-buffer buf nil t))
+        (unless (eq buf (narf/popup-p (get-buffer-window buf)))
+          (narf/popup-buffer buf))
         (when (and narf--repl-buffer (buffer-live-p narf--repl-buffer))
           (with-current-buffer narf--repl-buffer
             (goto-char (point-max))
