@@ -21,8 +21,8 @@
           (" ?\\*Flycheck.+\\*"       :regexp t :align below  :size 15  :noselect t)
           (" *NeoTree*"                      :align left             :select t)
           ("*evil-registers*"                :align below  :size 0.3)
-          ("*quickrun*"                      :align below  :size 15  :noselect t)
-          ("*eval*"                          :align below  :size 15)
+          ("*quickrun*"                      :align below  :size 10)
+          ("*eval*"                          :align below  :size 12)
           ("*esup*"                          :align below  :size 30 :noselect t)
           ("*ert*"                           :align below  :size 20 :noselect t)
 
@@ -162,18 +162,11 @@
     (defun narf|quickrun-after-run ()
       (let ((window (get-buffer-window quickrun/buffer-name)))
         (with-selected-window window
-          (make-variable-buffer-local 'nlinum-format)
-          (setq nlinum-format "%3d ")
-          (narf|nlinum-enable)
-          (narf|hide-mode-line)
-          (let* ((lines (count-lines (point-min) (point-max)))
-                 (act-lines (max 5 (min 30 lines))))
-            (set-window-start window (evil-line-position (+ 2 (- lines act-lines))))
-            (evil-resize-window act-lines)))))
+          (goto-char (point-min)))))
+    (defun narf|quickrun-hook ()
+      (narf|hide-mode-line))
     (add-hook 'quickrun-after-run-hook 'narf|quickrun-after-run)
-
-    ;; I let `narf|quickrun-after-run' handle scrolling, so quickrun shouldn't have to!
-    (advice-add 'quickrun/recenter :override 'ignore))
+    (add-hook 'quickrun/mode-hook 'narf|quickrun-hook))
 
   (after! repl-toggle
     (map! :map repl-toggle-mode-map

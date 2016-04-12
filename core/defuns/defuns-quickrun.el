@@ -58,6 +58,7 @@ If ARG is nil this function calls `recompile', otherwise it calls
                  (insert out)
                  (goto-char (point-min))
                  (read-only-mode 1)
+                 (narf|hide-mode-line)
                  (narf/popup-buffer buf))))))
         (t (quickrun-region beg end))))
 
