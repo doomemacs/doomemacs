@@ -258,15 +258,11 @@
     (if buffer-file-name
         (let* ((project-path (let (projectile-require-project-root) (projectile-project-root)))
                (buffer-path (f-relative buffer-file-name project-path))
-               (max-length (truncate (/ (window-width) 1.75)))
+               (max-length (truncate (/ (window-width) 2)))
                (path-len (length buffer-path)))
-          (concat (file-name-nondirectory (directory-file-name project-path))
-                  "/"
-                  (if (> path-len max-length)
-                      (concat "…" (replace-regexp-in-string
-                                   "^.*?/" "/"
-                                   (substring buffer-path (- path-len max-length) path-len)))
-                    buffer-path)))
+          (if (> path-len max-length)
+              (f-filename buffer-path)
+            (concat (f-filename project-path) "/" buffer-path)))
       "%b")
     :face (if active 'mode-line-buffer-file 'mode-line-inactive)
     :skip-alternate t
@@ -397,11 +393,6 @@ anzu to be enabled."
       (if (stringp mode-line-process) mode-line-process)))
     :tight-right t)
 
-  (spaceline-define-segment *buffer-size
-    (powerline-buffer-size)
-    :tight-right t
-    :skip-alternate t)
-
   (defun narf--col-at-pos (pos)
     (save-excursion (goto-char pos) (current-column)))
   (spaceline-define-segment *selection-info
@@ -474,25 +465,27 @@ Supports both Emacs and Evil cursor conventions."
     (powerline-hud (if active 'spaceline-highlight-face 'region) line-face 1)
     :tight-right t)
 
+  (defun narf-spaceline-init ()
+    (spaceline-install
+     ;; Left side
+     '(*macro-recording
+       (*anzu *iedit *evil-substitute *flycheck)
+       (*buffer-path *remote-host)
+       *buffer-modified
+       *vc
+       )
+     ;; Right side
+     '(*selection-info
+       *buffer-encoding-abbrev
+       *major-mode
+       *env-version
+       (global :when active)
+       ("%l/%c" *buffer-position)
+       *hud
+       )))
+
   ;; Initialize modeline
-  (spaceline-install
-   ;; Left side
-   '(*macro-recording
-     ((*anzu *iedit *evil-substitute *flycheck)
-      :fallback *buffer-size)
-     (*buffer-path *remote-host)
-     *buffer-modified
-     *vc
-     )
-   ;; Right side
-   '(*selection-info
-     *buffer-encoding-abbrev
-     *major-mode
-     *env-version
-     (global :when active)
-     ("%l/%c" *buffer-position)
-     *hud
-     )))
+  (narf-spaceline-init))
 
 (provide 'core-ui)
 ;;; core-ui.el ends here
