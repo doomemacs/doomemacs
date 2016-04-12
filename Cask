@@ -167,6 +167,9 @@
 (depends-on "company-tern")
 (depends-on "nodejs-repl")
 
+;; Julia -- modules/module-julia.el
+(depends-on "julia-mode")
+
 ;; Lisp -- modules/module-lisp.el
 (depends-on "slime")
 

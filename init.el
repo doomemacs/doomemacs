@@ -73,6 +73,7 @@
         module-haskell       ; a language that's lazier than I am
         module-java          ; the poster child for carpal tunnel syndome
         module-js            ; all(hope(abandon(ye(who(enter(here))))))
+        module-julia         ; MATLAB, but fast
         module-lisp          ; drowning in parentheses
         module-lua           ; one-based indices? one-based indices.
         module-php           ; making php less painful to work with
