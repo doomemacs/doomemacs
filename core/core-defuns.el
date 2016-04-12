@@ -205,11 +205,12 @@ Examples:
 (defun narf|enable-hard-wrap ()
   (turn-on-auto-fill))
 
-(defun narf|update-scratch-buffer-cwd () ; see core-editor.el
+(defun narf|update-scratch-buffer-cwd (&optional dir) ; see core-editor.el
   "Make sure scratch buffer is always 'in a project.'"
-  (let ((dir (narf/project-root)))
+  (let ((dir (or dir (narf/project-root))))
       (with-current-buffer (get-buffer-create "*scratch*")
-        (cd dir))))
+        (setq default-directory dir)
+        (setq header-line-format (concat " ∴ " dir)))))
 
 
 ;;;; Global Defuns ;;;;;;;;;;;;;;;;;;;;;
