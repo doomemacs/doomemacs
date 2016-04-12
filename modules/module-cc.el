@@ -80,11 +80,12 @@
     (define-company-backend! c++-mode (irony))
     (define-company-backend! objc-mode (irony))
 
-    (add-hook! (c-mode c++-mode objc-mode)
-      (flycheck-mode +1)
-      (irony-mode +1)
-      (eldoc-mode +1)
-      (irony-eldoc +1))))
+    (add-hook! c-mode-common-hook
+      (when (memq major-mode '(c-mode c++-mode objc-mode))
+        (flycheck-mode +1)
+        (irony-mode +1)
+        (eldoc-mode +1)
+        (irony-eldoc +1)))))
 
 (provide 'module-cc)
 ;;; module-cc.el ends here
