@@ -243,6 +243,8 @@ to abort the minibuffer."
             (update-directory-autoloads (concat dir "/defuns"))
             (message "Scanned: %s" dir))
           (list narf-core-dir narf-modules-dir))
+    (when (called-interactively-p 'interactive)
+      (require 'autoloads))
     (message "Done!")))
 
 (provide 'core-defuns)
