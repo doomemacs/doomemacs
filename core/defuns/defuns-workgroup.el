@@ -2,25 +2,32 @@
 
 ;;;###autoload
 (defun narf/wg-projectile-switch-project ()
-  (let ((workgroup-name (file-name-nondirectory (directory-file-name (narf/project-root)))))
-    (wg-create-workgroup workgroup-name t)
-    (helm-projectile-find-file)))
+  (narf:workgroup-new nil (file-name-nondirectory (directory-file-name (narf/project-root))) t))
 
 ;;;###autoload (autoload 'narf:save-session "defuns-workgroup" nil t)
-(evil-define-command narf:save-session (&optional session-name)
-  (interactive "<a>")
+(evil-define-command narf:save-session (&optional bang session-name)
+  (interactive "<!><a>")
   (unless (wg-workgroup-list)
     (wg-create-workgroup wg-first-wg-name))
   (wg-save-session-as (if session-name
                           (concat wg-workgroup-directory session-name)
-                        wg-session-file)))
+                        (if bang
+                            (concat wg-workgroup-directory (f-filename (narf/project-root)))
+                          wg-session-file))))
 
 ;;;###autoload (autoload 'narf:load-session "defuns-workgroup" nil t)
-(evil-define-command narf:load-session (&optional session-name)
-  (interactive "<a>")
-  (wg-open-session (if session-name
-                       (concat wg-workgroup-directory session-name)
-                     wg-session-file))
+(evil-define-command narf:load-session (&optional bang session-name)
+  (interactive "<!><a>")
+  (let ((session-file (if session-name
+                          (concat wg-workgroup-directory session-name)
+                        (let ((sess (concat wg-workgroup-directory (f-filename (narf/project-root)))))
+                          (if bang
+                              (when (file-exists-p sess)
+                                sess)
+                            wg-session-file)))))
+    (unless session-file
+      (user-error "No session found"))
+    (wg-open-session session-file))
   (narf/workgroup-display t))
 
 ;;;###autoload
@@ -37,8 +44,9 @@
     (setq name (format "#%s" (1+ (length (wg-workgroup-list))))))
   (let ((new-wg (wg-get-workgroup name t)))
     (when (and new-wg bang)
-      (wg-delete-workgroup new-wg))
-    (setq new-wg (wg-make-and-add-workgroup name t))
+      (wg-delete-workgroup new-wg)
+      (setq new-wg nil))
+    (setq new-wg (or new-wg (wg-make-and-add-workgroup name t)))
     (add-to-list 'narf-wg-names (wg-workgroup-uid new-wg))
     (wg-switch-to-workgroup new-wg))
   (unless silent
