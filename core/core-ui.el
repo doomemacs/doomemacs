@@ -153,7 +153,8 @@
   :config
   (setq rainbow-delimiters-max-face-count 4))
 
-(use-package rainbow-mode :defer t
+(use-package rainbow-mode
+  :commands (rainbow-mode)
   :init
   ;; hl-line-mode and rainbow-mode don't play well together
   (add-hook! rainbow-mode
