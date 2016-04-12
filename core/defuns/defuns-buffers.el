@@ -105,9 +105,7 @@ the buffer if it is being displayed in another window."
         (narf/popup-close)
       (unless (narf/real-buffer-p (current-buffer))
         (narf/previous-real-buffer)
-        (when (and (string-match-p "^\\*scratch\\*" (buffer-name)) new-dir)
-          (setq header-line-format new-dir)
-          (setq default-directory new-dir))))))
+        (narf|update-scratch-buffer-cwd)))))
 
 ;;;###autoload
 (defun narf/kill-unreal-buffers ()
@@ -169,7 +167,7 @@ left, create a scratch buffer."
           (switch-to-buffer "*scratch*")
           (message "Nowhere to go"))
       (funcall move-func)
-      (while (and continue )
+      (while (and continue)
         (let ((current-buffer (current-buffer)))
           (cond ((or (eq current-buffer start-buffer)
                      (>= i max))
