@@ -210,7 +210,7 @@ Examples:
   (let ((dir (or dir (narf/project-root))))
       (with-current-buffer (get-buffer-create "*scratch*")
         (setq default-directory dir)
-        (setq header-line-format (concat " ∴ " dir)))))
+        (setq header-line-format '(:eval (concat " ∴ " default-directory))))))
 
 
 ;;;; Global Defuns ;;;;;;;;;;;;;;;;;;;;;
