@@ -59,8 +59,9 @@
 (use-package nose
   :commands nose-mode
   :preface (defvar nose-mode-map (make-sparse-keymap))
-  :init (associate! nose-mode :match "/test_.+\\.py\\'")
+  :init (associate! nose-mode :match "/test_.+\\.py$" :in (python-mode))
   :config
+  (add-yas-minor-mode! 'nose-mode)
   (map! :map nose-mode-map
         (:localleader
           :n "tr" 'nosetests-again

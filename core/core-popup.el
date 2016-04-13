@@ -22,6 +22,7 @@
           (" *NeoTree*"                      :align left             :select t)
           ("*evil-registers*"                :align below  :size 0.3)
           ("*quickrun*"                      :align below  :size 10)
+          ("*nosetests*"                     :align below  :size 15 :noselect t)
           ("*eval*"                          :align below  :size 12)
           ("*esup*"                          :align below  :size 30 :noselect t)
           ("*ert*"                           :align below  :size 20 :noselect t)
