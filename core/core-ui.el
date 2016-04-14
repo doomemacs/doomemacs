@@ -159,6 +159,7 @@
     (if highlight-indentation-mode
         (progn
           (narf/add-whitespace)
+          (highlight-indentation-set-offset tab-width)
           (add-hook 'after-save-hook 'narf/add-whitespace nil t))
      (remove-hook 'after-save-hook 'narf/add-whitespace t)))
   (add-hook 'before-save-hook 'delete-trailing-whitespace))

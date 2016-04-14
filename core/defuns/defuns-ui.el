@@ -58,20 +58,25 @@
             (start (or start (point-min))))
         (goto-char start)
         (while (and (re-search-forward "^$" end-marker t) (not (>= (point) end-marker)))
-          (let (line-start line-end)
+          (let (line-start line-end
+                next-start next-end)
             (save-excursion
+              ;; Check previous line indent
               (forward-line -1)
               (setq line-start (point)
-                    line-end   (save-excursion (back-to-indentation) (point)))
-              (if (and (= line-start line-end)
-                       (/= line-end (line-end-position)))
-                  (progn
-                    (forward-line 2)
-                    (setq line-start (point)
-                          line-end   (save-excursion (back-to-indentation) (point)))
-                    (forward-line -1))
-                (forward-line 1))
-              (insert (make-string (- line-end line-start) 32))))
+                    line-end (save-excursion (back-to-indentation) (point)))
+              ;; Check next line indent
+              (forward-line 2)
+              (setq next-start (point)
+                    next-end (save-excursion (back-to-indentation) (point)))
+              ;; Back to origin
+              (forward-line -1)
+              ;; Adjust indent
+              (let ((line-indent (- line-end line-start))
+                    (next-indent (- next-end next-start))
+                    indent)
+                (setq indent (min line-indent next-indent))
+                (insert (make-string indent 32)))))
           (forward-line 1)))))
   (set-buffer-modified-p nil)
   nil)
