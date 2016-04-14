@@ -162,6 +162,7 @@
 
  (:localleader
    :n "\\" 'narf/neotree
+   :n "]" 'imenu-list-minor-mode
    :n "b" 'narf:build
    :n "R" 'narf:repl
    :v "R" 'narf:repl-eval

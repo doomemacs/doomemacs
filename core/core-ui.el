@@ -163,6 +163,19 @@
      (remove-hook 'after-save-hook 'narf/add-whitespace t)))
   (add-hook 'before-save-hook 'delete-trailing-whitespace))
 
+(use-package imenu-list
+  :commands (imenu-list-minor-mode)
+  :config
+  (setq imenu-list-mode-line-format nil
+        imenu-list-position 'right
+        imenu-list-size 35)
+
+  (map! :map imenu-list-major-mode-map
+        :n [escape] 'narf/imenu-list-quit
+        :n "RET" 'imenu-list-goto-entry
+        :n "SPC" 'imenu-list-display-entry
+        :n [tab] 'hs-toggle-hiding))
+
 (use-package rainbow-delimiters
   :commands rainbow-delimiters-mode
   :init

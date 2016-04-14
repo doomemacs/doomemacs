@@ -76,5 +76,14 @@
   (set-buffer-modified-p nil)
   nil)
 
+;;;###autoload
+(defun narf/imenu-list-quit ()
+  (interactive)
+  (quit-window)
+  (mapc (lambda (b) (with-current-buffer b
+                 (when imenu-list-minor-mode
+                   (imenu-list-minor-mode -1))))
+        (narf/get-visible-buffers (narf/get-real-buffers))))
+
 (provide 'defuns-ui)
 ;;; defuns-ui.el ends here
