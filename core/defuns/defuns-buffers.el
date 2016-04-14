@@ -42,11 +42,13 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
     If PROJECT-P is non-nil, get all buffers in current workgroup
     If both are non-nil, get all project buffers across all workgroups"
   (let* ((assocbuf (wg-workgroup-associated-buffers nil))
-         (buffers (--filter (memq it assocbuf) (buffer-list)))
+         (buffers (if (wg-current-workgroup t)
+                      (--filter (memq it assocbuf) (buffer-list))
+                    (buffer-list)))
         project-root)
-    (if (and project-p (setq project-root (narf/project-root t)))
+    (aif (and project-p (narf/project-root t))
         (funcall (if (eq project-p 'not) '-remove '-filter)
-                 (lambda (b) (projectile-project-buffer-p b project-root))
+                 (lambda (b) (projectile-project-buffer-p b it))
                  buffers)
       buffers)))
 
