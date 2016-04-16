@@ -37,8 +37,10 @@ reset:
 
 _update:
 	@cask update 2>&1
+	@rm -f bootstrap.elc
 
 _install:
 	@cask install 2>&1
+	@rm -f bootstrap.elc
 
 .PHONY: all
