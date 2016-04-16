@@ -4,7 +4,7 @@
  blink-matching-paren nil ; don't blink matching delimiters--too distracting
  show-paren-delay 0.075
 
- ;;cursor-in-non-selected-windows nil ; no cursors except in active buffer
+ cursor-in-non-selected-windows nil ; no cursors except in active buffer
  highlight-nonselected-windows nil
  hl-line-sticky-flag nil ; only highlight in one window
 
