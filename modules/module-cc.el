@@ -80,7 +80,9 @@
     (define-company-backend! c++-mode (irony))
     (define-company-backend! objc-mode (irony))
 
-    (add-hook! c-mode-common-hook
+    ;; This is necessary because c-mode dervied modes like php-mode may wrongfully trigger
+    ;; these hooks.
+    (add-hook! (c-mode c++-mode ojbc-mode)
       (when (memq major-mode '(c-mode c++-mode objc-mode))
         (flycheck-mode +1)
         (irony-mode +1)
