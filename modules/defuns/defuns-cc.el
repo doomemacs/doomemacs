@@ -11,35 +11,36 @@
 
 ;;;###autoload
 (defun narf|init-c/c++-settings ()
-  (c-toggle-electric-state -1)
-  (c-toggle-auto-newline -1)
-  (c-set-offset 'substatement-open '0) ; brackets should be at same indentation level as the statements they open
-  (c-set-offset 'inline-open '+)
-  (c-set-offset 'block-open '+)
-  (c-set-offset 'brace-list-open '+)   ; all "opens" should be indented by the c-indent-level
-  (c-set-offset 'case-label '+)        ; indent case labels by c-indent-level, too
-  (c-set-offset 'access-label '-)
-  (c-set-offset 'inclass 'narf--c-lineup-inclass)
-  (c-set-offset 'arglist-intro '+)
-  (c-set-offset 'arglist-close '0)
-  ;; Certain mappings interfere with smartparens and custom bindings
-  (define-key c-mode-map (kbd "DEL") nil)
-  (define-key c-mode-base-map "#" 'self-insert-command)
-  (define-key c-mode-base-map "{" 'self-insert-command)
-  (define-key c-mode-base-map "}" 'self-insert-command)
-  (define-key c-mode-base-map "/" 'self-insert-command)
-  (define-key c-mode-base-map "*" 'self-insert-command)
-  (define-key c-mode-base-map ";" 'self-insert-command)
-  (define-key c-mode-base-map "," 'self-insert-command)
-  (define-key c-mode-base-map ":" 'self-insert-command)
-  (define-key c-mode-base-map "(" 'self-insert-command)
-  (define-key c-mode-base-map ")" 'self-insert-command)
+  (when (memq major-mode '(c-mode c++-mode objc-mode))
+    (c-toggle-electric-state -1)
+    (c-toggle-auto-newline -1)
+    (c-set-offset 'substatement-open '0) ; brackets should be at same indentation level as the statements they open
+    (c-set-offset 'inline-open '+)
+    (c-set-offset 'block-open '+)
+    (c-set-offset 'brace-list-open '+)   ; all "opens" should be indented by the c-indent-level
+    (c-set-offset 'case-label '+)        ; indent case labels by c-indent-level, too
+    (c-set-offset 'access-label '-)
+    (c-set-offset 'inclass 'narf--c-lineup-inclass)
+    (c-set-offset 'arglist-intro '+)
+    (c-set-offset 'arglist-close '0)
+    ;; Certain mappings interfere with smartparens and custom bindings
+    (define-key c-mode-map (kbd "DEL") nil)
+    (define-key c-mode-base-map "#" 'self-insert-command)
+    (define-key c-mode-base-map "{" 'self-insert-command)
+    (define-key c-mode-base-map "}" 'self-insert-command)
+    (define-key c-mode-base-map "/" 'self-insert-command)
+    (define-key c-mode-base-map "*" 'self-insert-command)
+    (define-key c-mode-base-map ";" 'self-insert-command)
+    (define-key c-mode-base-map "," 'self-insert-command)
+    (define-key c-mode-base-map ":" 'self-insert-command)
+    (define-key c-mode-base-map "(" 'self-insert-command)
+    (define-key c-mode-base-map ")" 'self-insert-command)
 
-  (define-key c++-mode-map "}" nil)
-  ;; FIXME: fix smartparens
-  ;; (define-key c++-mode-map ">" nil)
-  (map! :map c++-mode-map :i ">" 'narf/autoclose->-maybe)
-  (define-key c++-mode-map "<" nil))
+    (define-key c++-mode-map "}" nil)
+    ;; FIXME: fix smartparens
+    ;; (define-key c++-mode-map ">" nil)
+    (map! :map (c-mode-base-map c++-mode-map) :i ">" 'narf/autoclose->-maybe)
+    (define-key c++-mode-map "<" nil)))
 
 ;;;###autoload
 (defun narf/autoclose->-maybe ()
@@ -126,6 +127,13 @@
 (defun narf/sp-point-is-template-p (id action context)
   (and (sp-in-code-p id action context)
        (sp-point-after-word-p id action context)))
+
+;;;###autoload
+(defun narf/sp-point-after-include-p (id action context)
+  (and (sp-in-code-p id action context)
+       (save-excursion
+         (goto-char (line-beginning-position))
+         (looking-at-p "[ 	]*#include[^<]+"))))
 
 (provide 'defuns-cc)
 ;;; defuns-cc.el ends here

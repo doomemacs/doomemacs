@@ -21,16 +21,17 @@
   :commands (c-mode c++-mode objc-mode java-mode)
   :init
   (associate! objc-mode :match "\\.mm$")
-  (add-hook! (c-mode c++-mode) '(narf|init-c/c++-settings))
+  (add-hook 'c-initialization-hook 'narf|init-c/c++-settings)
+  (add-hook 'c++-mode-hook 'highlight-numbers-mode)
   :config
   (setq c-tab-always-indent nil
         c-electric-flag nil)
 
   (map! (:map c-mode-base-map
-          (:localleader
-            :nv ";" 'narf/append-semicolon)))
+          (:localleader :nv ";" 'narf/append-semicolon)))
 
-  (sp-local-pair 'c++-mode "<" ">" :when '(narf/sp-point-is-template-p))
+  (define-text-object! "<" "<" ">")
+  (sp-local-pair '(c-mode c++-mode) "<" ">" :when '(narf/sp-point-is-template-p narf/sp-point-after-include-p))
   (sp-with-modes '(c-mode c++-mode objc-mode java-mode)
     (sp-local-pair "/*" "*/" :post-handlers '(("||\n[i]" "RET") ("| " "SPC")))
     ;; Doxygen blocks
