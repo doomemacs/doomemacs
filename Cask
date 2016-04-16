@@ -28,6 +28,7 @@
 ;; UI --- core/core-ui.el
 (depends-on "visual-fill-column")
 (depends-on "highlight-indentation" :git "https://github.com/localredhead/Highlight-Indentation-for-Emacs")
+(depends-on "highlight-numbers")
 (depends-on "imenu-list")
 (depends-on "rainbow-delimiters")
 (depends-on "rainbow-mode")
@@ -172,6 +173,7 @@
 (depends-on "julia-mode")
 
 ;; Lisp -- modules/module-lisp.el
+(depends-on "highlight-quoted")
 (depends-on "slime")
 
 ;; Lua -- modules/module-lua.el

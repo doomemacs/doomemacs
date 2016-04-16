@@ -1,9 +1,12 @@
 ;;; module-lisp --- all things lisp
 
-(add-hook! emacs-lisp-mode '(turn-on-eldoc-mode flycheck-mode))
+(add-hook! emacs-lisp-mode
+  '(turn-on-eldoc-mode flycheck-mode highlight-numbers-mode highlight-quoted-mode))
 
 ;; Pop-up REPL
 (define-repl! emacs-lisp-mode narf/elisp-inf-ielm)
+
+(use-package highlight-quoted :commands (highlight-quoted-mode))
 
 ;; 'Emacs Lisp' is too long [pedantry intensifies]
 (defadvice emacs-lisp-mode (after emacs-lisp-mode-rename-modeline activate)

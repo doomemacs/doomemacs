@@ -164,6 +164,8 @@
      (remove-hook 'after-save-hook 'narf/add-whitespace t)))
   (add-hook 'before-save-hook 'delete-trailing-whitespace))
 
+(use-package highlight-numbers :commands (highlight-numbers-mode))
+
 (use-package imenu-list
   :commands (imenu-list-minor-mode)
   :config
