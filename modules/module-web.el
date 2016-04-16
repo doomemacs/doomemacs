@@ -1,32 +1,28 @@
 ;;; module-web.el
 
-(add-hook! (sass-mode scss-mode) '(rainbow-mode flycheck-mode))
+(define-company-backend! sass-mode (css))
+(define-company-backend! scss-mode (css))
+(define-docset! scss-mode "sass,bourbon")
+(add-hook! (sass-mode scss-mode less-css-mode)
+  '(flycheck-mode narf|hl-line-off hs-minor-mode))
 
-(use-package sass-mode
-  :mode "\\.sass$"
-  :config
-  (define-company-backend! sass-mode (css)))
+(use-package less-css-mode :mode "\\.less$")
+
+(use-package sass-mode :mode "\\.sass$")
 
 (use-package scss-mode
   :mode "\\.scss$"
-  :preface
-  (require 'css-mode)
-  :init
-  (define-docset! scss-mode "sass,bourbon")
-  (add-hook! scss-mode '(hs-minor-mode narf|hl-line-off))
-  (setq scss-compile-at-save nil)
+  :preface (require 'css-mode)
+  :init (setq scss-compile-at-save nil)
   :config
   (sp-local-pair 'scss-mode "/*" "*/" :post-handlers '(("[d-3]||\n[i]" "RET") ("| " "SPC")))
 
   (map! :map scss-mode-map
         :n "M-r" 'narf/web-refresh-browser
-        (:localleader
-          :nv ";" 'narf/append-semicolon)
+        (:localleader :nv ";" 'narf/append-semicolon)
         (:leader
           :n ";" 'helm-css-scss
           :n ":" 'helm-css-scss-multi))
-
-  (define-company-backend! scss-mode (css))
 
   (after! web-beautify
     (add-hook! scss-mode (setenv "jsbeautify_indent_size" "2"))
@@ -64,6 +60,7 @@
   :config
   (sp-with-modes '(web-mode)
     (sp-local-pair "{{!--" "--}}" :post-handlers '(("||\n[i]" "RET") ("| " "SPC")))
+    (sp-local-pair "{{--"  "--}}" :post-handlers '(("||\n[i]" "RET") ("| " "SPC")))
     (sp-local-pair "<%" "%>"      :post-handlers '(("||\n[i]" "RET") ("| " "SPC")))
     (sp-local-pair "{!!" "!!}"    :post-handlers '(("||\n[i]" "RET") ("| " "SPC")))
     (sp-local-pair "{#" "#}"      :post-handlers '(("||\n[i]" "RET") ("| " "SPC"))))

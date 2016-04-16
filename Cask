@@ -218,6 +218,7 @@
 (depends-on "web-mode")
 (depends-on "emmet-mode")
 (depends-on "haml-mode")
+(depends-on "less-css-mode")
 (depends-on "scss-mode")
 (depends-on "sass-mode")
 (depends-on "jaded-mode" :git "https://github.com/hlissner/jaded-mode")
