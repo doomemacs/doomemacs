@@ -51,6 +51,10 @@
   (setq-default
    package--init-file-ensured t
    package-enable-at-startup nil
+   package-archives
+   '(("gnu" . "http://elpa.gnu.org/packages/")
+     ("melpa" . "http://melpa.org/packages/")
+     ("org" . "http://orgmode.org/elpa/"))
    gc-cons-threshold 4388608
    gc-cons-percentage 0.2)
 
