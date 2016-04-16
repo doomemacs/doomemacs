@@ -285,6 +285,14 @@
    `(js2-object-property ((,c (:foreground ,methods))))
    `(js2-jsdoc-tag       ((,c (:foreground ,comments))))
 
+   ;; web-mode
+   `(web-mode-doctype-face           ((,c (:foreground ,comments))))
+   `(web-mode-html-tag-face          ((,c (:foreground ,methods))))
+   `(web-mode-html-tag-bracket-face  ((,c (:foreground ,methods))))
+   `(web-mode-html-attr-name-face    ((,c (:foreground ,type))))
+   `(web-mode-block-control-face     ((,c (:foreground ,orange))))
+   ;; `(web-mode-html-tag-bracket-face  ((,c (:foreground ,operators))))
+
    ;; markdown-mode
    `(markdown-header-face           ((,c (:foreground ,orange))))
    `(markdown-header-delimiter-face ((,c (:foreground ,orange))))
