@@ -31,6 +31,8 @@
 
   (global-company-mode +1)
 
+  (use-package company-files :commands (company-files))
+
   ;; NOTE: pos-tip.el in Emacs 25+ does not work
   (use-package company-quickhelp
     :config
