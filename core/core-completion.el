@@ -44,7 +44,8 @@
     (company-statistics-mode +1)
     (setq company-statistics-file (concat narf-temp-dir "/company-stats-cache.el"))))
 
-(use-package company-dict :defer t
+(use-package company-dict
+  :commands (company-dict)
   :config (setq company-dict-dir (concat narf-private-dir "/dict")))
 
 (provide 'core-completion)
