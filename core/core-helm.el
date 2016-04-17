@@ -3,7 +3,7 @@
 (use-package helm
   :commands (helm helm-other-buffer helm-mode)
   :init
-  (defvar helm-global-prompt ":: ")
+  (defvar helm-global-prompt "›")
   (setq-default
    helm-quick-update t
    helm-reuse-last-window-split-state t
@@ -98,7 +98,7 @@
         "TAB" 'helm-execute-persistent-action)
 
   (mapc (lambda (r) (add-to-list 'helm-boring-file-regexp-list r))
-        (list "\\.projects$" "\\.DS_Store$" "\\.cask")))
+        (list "\\.projects$" "\\.DS_Store$")))
 
 (use-package helm-ag
   :commands (helm-ag

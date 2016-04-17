@@ -206,7 +206,7 @@
   :init
   (defun narf|nlinum-enable ()
     (nlinum-mode +1)
-    (add-hook 'post-command-hook 'narf|nlinum-hl-line t))
+    (add-hook 'post-command-hook 'narf|nlinum-hl-line))
 
   (add-hook!
     (markdown-mode prog-mode scss-mode web-mode conf-mode)
@@ -334,7 +334,6 @@ See `define-env-command!' to define one for a mode."
     :skip-alternate t
     :tight-right t)
 
-
   ;; search indicators
   (defface mode-line-count-face nil "")
   (make-variable-buffer-local 'anzu--state)
@@ -390,9 +389,10 @@ anzu to be enabled."
 
   (spaceline-define-segment *macro-recording
     "Show when recording macro"
-    (format "%s ▶" (char-to-string evil-this-macro))
+    (format " %s ▶ " (char-to-string evil-this-macro))
     :when (and active defining-kbd-macro)
     :face highlight-face
+    :tight t
     :skip-alternate t)
 
   (spaceline-define-segment *buffer-encoding-abbrev
@@ -481,11 +481,16 @@ Supports both Emacs and Evil cursor conventions."
     (powerline-hud (if active 'spaceline-highlight-face 'region) line-face 1)
     :tight-right t)
 
+  (spaceline-define-segment *buffer-size
+    (powerline-buffer-size)
+    :tight-right t
+    :skip-alternate t)
+
   (defun narf-spaceline-init ()
     (spaceline-install
      ;; Left side
-     '(*macro-recording
-       (*anzu *iedit *evil-substitute *flycheck)
+     '(((*macro-recording *anzu *iedit *evil-substitute *flycheck)
+        :fallback *buffer-size)
        (*buffer-path *remote-host)
        *buffer-modified
        *vc

@@ -256,9 +256,7 @@
   (define-key evil-outer-text-objects-map "a" #'evil-outer-arg))
 
 (use-package evil-commentary
-  :commands (evil-commentary
-             evil-commentary-yank
-             evil-commentary-line)
+  :commands (evil-commentary evil-commentary-yank evil-commentary-line)
   :config (evil-commentary-mode 1))
 
 (use-package evil-exchange

@@ -15,8 +15,9 @@
   (defun php-extras-company-setup ()) ;; company will set up itself
 
   (map! :map php-mode-map
-        (:localleader
-          :nv ";" 'narf/append-semicolon))
+        (:localleader :nv ";" 'narf/append-semicolon)
+        :n "gd" 'ac-php-find-symbol-at-point
+        :n "gD" 'ac-php-location-stack-back)
 
   ;; Generate php-extras documentation and completion asynchronously
   (unless (file-exists-p (concat php-extras-eldoc-functions-file ".el"))
@@ -38,8 +39,7 @@
     (sp-local-pair "<?php" "?>"   :when '(("RET")) :post-handlers '("||\n[i]")))
 
   (use-package php-refactor-mode
-    :init
-    (add-hook! php-mode '(turn-on-eldoc-mode emr-initialize php-refactor-mode))
+    :init (add-hook! php-mode '(turn-on-eldoc-mode emr-initialize php-refactor-mode))
     :config
     (require 'emr)
     (mapc (lambda (x)
@@ -60,10 +60,8 @@
 
 ;; PHP Repl
 (use-package php-boris :defer t
-  :init
-  (define-repl! php-mode php-boris)
-  :config
-  (evil-set-initial-state 'php-boris-mode 'emacs))
+  :init (define-repl! php-mode php-boris)
+  :config (evil-set-initial-state 'php-boris-mode 'emacs))
 
 (define-minor-mode php-laravel-mode
   ""

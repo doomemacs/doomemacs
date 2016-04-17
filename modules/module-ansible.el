@@ -8,9 +8,8 @@
 (associate! ansible-mode :in (yaml-mode) :files ("roles/"))
 
 (use-package company-ansible
-  :defer t
-  :init
-  (define-company-backend! ansible-mode (ansible)))
+  :commands (company-ansible)
+  :init (define-company-backend! ansible-mode (ansible)))
 
 (provide 'module-ansible)
 ;;; module-ansible.el ends here

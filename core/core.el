@@ -130,6 +130,8 @@ gets killed.")
 ;; Bootstrap
 ;;
 
+(autoload 'awhen "anaphora" "" nil 'macro)
+(autoload 'aif "anaphora" "" nil 'macro)
 (autoload 'use-package "use-package" "" nil 'macro)
 (unless (require 'autoloads nil t)
   (load (concat narf-emacs-dir "/scripts/generate-autoloads.el"))

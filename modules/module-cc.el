@@ -1,4 +1,4 @@
-;;; module-cc.el
+;;; module-cc.el --- C, C++, and Objective-C
 
 (use-package cmake-mode
   :mode "CMakeLists\\.txt$"
@@ -13,11 +13,11 @@
 (use-package cc-mode
   :defines (c-syntactic-context)
   :functions (c-toggle-electric-state c-toggle-auto-newline
-                                      c-skip-comments-and-strings c-forward-sws c-end-of-macro
-                                      c-font-lock-invalid-string csharp-log c-font-lock-declarators
-                                      c-get-lang-constant c-forward-keyword-clause
-                                      c-fontify-recorded-types-and-refs c-forward-type imenu--split
-                                      c-backward-sws c-determine-limit c-beginning-of-decl-1)
+              c-skip-comments-and-strings c-forward-sws c-end-of-macro
+              c-font-lock-invalid-string csharp-log c-font-lock-declarators
+              c-get-lang-constant c-forward-keyword-clause
+              c-fontify-recorded-types-and-refs c-forward-type imenu--split
+              c-backward-sws c-determine-limit c-beginning-of-decl-1)
   :commands (c-mode c++-mode objc-mode java-mode)
   :init
   (associate! objc-mode :match "\\.mm$")
@@ -81,8 +81,7 @@
     (define-company-backend! c++-mode (irony))
     (define-company-backend! objc-mode (irony))
 
-    ;; This is necessary because c-mode dervied modes like php-mode may wrongfully trigger
-    ;; these hooks.
+    ;; some c-mode dervied modes wrongfully trigger these hooks (like php-mode)
     (add-hook! (c-mode c++-mode ojbc-mode)
       (when (memq major-mode '(c-mode c++-mode objc-mode))
         (flycheck-mode +1)

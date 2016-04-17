@@ -30,7 +30,7 @@
  whitespace-style '(face tabs tab-mark newline newline-mark
                     trailing indentation lines-tail)
  whitespace-display-mappings
- '((tab-mark   ?\t   [?> ?\t])
+ '((tab-mark ?\t [?> ?\t])
    (newline-mark 10 [36 10])))
 
 ;; Save point across sessions
@@ -182,16 +182,16 @@ enable multiple minor modes for the same regexp.")
 ;; Plugins
 ;;
 
-(use-package avy
-  :commands (avy-goto-char-2 avy-goto-line)
-  :config (setq avy-all-windows nil
-                avy-background t))
-
 (use-package ace-window
   :commands ace-window
   :config (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)
                 aw-scope 'frame
                 aw-background t))
+
+(use-package avy
+  :commands (avy-goto-char-2 avy-goto-line)
+  :config (setq avy-all-windows nil
+                avy-background t))
 
 (use-package editorconfig
   :config

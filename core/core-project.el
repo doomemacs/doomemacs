@@ -89,13 +89,13 @@
         neo-auto-indent-point t
         neo-mode-line-type 'none
         neo-persist-show nil
-        neo-window-width 27
+        neo-window-width 26
         neo-show-updir-line nil
         neo-auto-indent-point t
         neo-banner-message nil)
   :config
   (evil-set-initial-state 'neotree-mode 'motion)
-  (add-hook! neotree-mode 'narf|neotree-init-keymap)
+  (add-hook 'neotree-mode-hook 'narf|neotree-init-keymap)
   (defun narf|neotree-init-keymap ()
     (map! :map evil-motion-state-local-map
           "ESC"    'neotree-hide

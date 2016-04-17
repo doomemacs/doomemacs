@@ -32,7 +32,7 @@
           anaconda-mode-eldoc-as-single-line t)
 
     :config
-    (map! :map anaconda-mode-map     :m "gd"     'anaconda-mode-goto-definitions)
+    (map! :map anaconda-mode-map     :m "gd"     'anaconda-mode-find-definitions)
     (map! :map anaconda-nav-mode-map :n [escape] 'anaconda-nav-quit)
 
     (advice-add 'anaconda-mode-doc-buffer :after 'narf*anaconda-mode-doc-buffer)
