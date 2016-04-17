@@ -100,31 +100,21 @@
         :i "M-e" 'emmet-expand-yas
         :i "M-E" 'emmet-expand-line))
 
-(define-minor-mode jekyll-mode
-  "Jekyll development mode."
-  :init-value nil
-  :lighter " :{"
-  :keymap (make-sparse-keymap)
-  (add-yas-minor-mode! 'jekyll-mode))
-(associate! jekyll-mode
+;;
+(define-project-type! jekyll ":{"
+  :modes (web-mode scss-mode html-mode markdown-mode yaml-mode)
   :match "/\\(\\(css\\|_\\(layouts\\|posts\\|sass\\)\\)/.+\\|.+.html\\)$"
   :files ("config.yml" "_layouts/")
-  :in (web-mode scss-mode html-mode markdown-mode yaml-mode))
-(add-hook! jekyll-mode
-  (when (eq major-mode 'web-mode)
-    (web-mode-set-engine "django")))
-(after! company-dict (add-to-list 'company-dict-minor-mode-list 'jekyll-mode))
+  (add-hook! it
+    (when (eq major-mode 'web-mode)
+      (web-mode-set-engine "django"))))
 
-(define-minor-mode wordpress-mode
-  "Wordpress development mode."
-  :init-value nil
-  :lighter " wp"
-  :keymap (make-sparse-keymap)
-  (add-yas-minor-mode! 'wordpress-mode))
-(associate! wordpress-mode
+(define-project-type! wordpress "wp"
+  :modes (php-mode web-mode css-mode scss-mode sass-mode)
   :match "/wp-\\(\\(content\\|admin\\|includes\\)/\\)?.+$"
   :files ("wp-config.php" "wp-content/"))
-(after! company-dict (add-to-list 'company-dict-minor-mode-list 'wordpress-mode))
+
+;; TODO Add stylus-mode
 
 (provide 'module-web)
 ;;; module-web.el ends here

@@ -1,11 +1,8 @@
 ;;; module-ansible.el
 
-(after! company-dict
-  (add-to-list 'company-dict-minor-mode-list 'ansible-mode))
-
-(define-minor-mode ansible-mode
-  :lighter " ans" :keymap (make-sparse-keymap))
-(associate! ansible-mode :in (yaml-mode) :files ("roles/"))
+(define-project-type! ansible-mode "ans"
+  :modes (yaml-mode)
+  :files ("roles/"))
 
 (use-package company-ansible
   :commands (company-ansible)

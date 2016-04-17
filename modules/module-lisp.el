@@ -63,8 +63,9 @@
                                      "define-builder" "narf-space-setup"
                                      "define-env-command" "define-text-object"
                                      "add-yas-minor-mode" "define-docset"
-                                     "define-org-link!" "define-company-backend"
-                                     "define-org-section" "define-temp-ex-cmd"))
+                                     "define-org-link" "define-company-backend"
+                                     "define-org-section" "define-temp-ex-cmd"
+                                     "define-project-type"))
                        "!\\)")
                      (1 font-lock-keyword-face append))
                     ;; Ert
@@ -75,26 +76,19 @@
                      (1 font-lock-keyword-face)
                      (2 font-lock-function-name-face))))
 
-;; Real go-to-definition for elisp
-(map! :map emacs-lisp-mode-map
-      :m "gd" 'narf/elisp-find-function-at-pt
-      :m "gD" 'narf/elisp-find-function-at-pt-other-window)
-
-(define-minor-mode emacs-ert-mode
-  "Ert test file minor mode"
-  :lighter " Ert" :keymap (make-sparse-keymap)
-  (add-yas-minor-mode! 'emacs-ert-mode))
-(associate! emacs-ert-mode :match "/test/.+-test\\.el$")
-
-(map! :map emacs-lisp-mode-map
-      (:localleader
-        :n "tr" 'narf/ert-rerun-test
-        :n "ta" 'narf/ert-run-all-tests
-        :n "ts" 'narf/ert-run-test))
-
 (use-package slime :defer t
-  :config
-  (setq inferior-lisp-program "clisp"))
+  :config (setq inferior-lisp-program "clisp"))
+
+;; Real go-to-definition for elisp
+(map! :map emacs-lisp-mode-map :m "gd" 'narf/elisp-find-function-at-pt)
+
+(define-project-type! emacs-ert "ert"
+  :modes (emacs-lisp-mode)
+  :match "/test/.+-test\\.el$"
+  :bind (:localleader
+          :n "tr" 'narf/ert-rerun-test
+          :n "ta" 'narf/ert-run-all-tests
+          :n "ts" 'narf/ert-run-test))
 
 (provide 'module-lisp)
 ;;; module-elisp.el ends here

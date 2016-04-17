@@ -4,10 +4,6 @@
   :mode "\\.js$"
   :interpreter "node"
   :init
-  (use-package nodejs-repl
-    :commands (nodejs-repl)
-    :config (evil-set-initial-state 'nodejs-repl-mode 'emacs))
-
   (define-repl! js2-mode nodejs-repl)
   (define-docset! js2-mode "js,javascript,nodejs,angularjs,express,jquery,mongoose")
 
@@ -87,17 +83,9 @@
             (forward-slurp              "forward slurp"              nil)
             (forward-barf               "forward barf"               nil)))))
 
-(define-minor-mode nodejs-mode
-  :lighter " node" :keymap (make-sparse-keymap)
-  (add-yas-minor-mode! 'nodejs-mode))
-(associate! nodejs-mode :files ("package.json") :in (js2-mode))
-
-(define-minor-mode electron-mode
-  :lighter " electron" :keymap (make-sparse-keymap)
-  (add-yas-minor-mode! 'electron-mode))
-(associate! electron-mode
-  :files ("package.json" "app/index.html" "app/main.js")
-  :in (web-mode js2-mode markdown-mode json-mode coffee-mode))
+(use-package nodejs-repl
+    :commands (nodejs-repl)
+    :config (evil-set-initial-state 'nodejs-repl-mode 'emacs))
 
 (use-package unityjs-mode
   :mode "/Assets/.*\\.js$"
@@ -106,6 +94,21 @@
 (use-package coffee-mode
   :mode "\\.coffee$"
   :config (setq-default coffee-indent-like-python-mode t))
+
+;;
+(define-project-type! nodejs "node"
+  :modes (js2-mode)
+  :files ("package.json"))
+
+
+(define-project-type! electron "electron"
+  :modes (web-mode js-mode js2-mode markdown-mode json-mode coffee-mode scss-mode sass-mode)
+  :files ("package.json" "app/index.html" "app/main.js"))
+;; TODO electron-compile support
+
+;; TODO angular
+;; TODO react
+;; TODO express
 
 (provide 'module-js)
 ;;; module-js.el ends here
