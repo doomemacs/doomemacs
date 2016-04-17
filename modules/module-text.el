@@ -36,7 +36,9 @@
           :n "[p"   'markdown-promote
           :n "]p"   'markdown-demote
 
-          :i "M--"  'markdown-insert-hr)))
+          :i "M--"  'markdown-insert-hr))
+
+  (use-package markdown-toc :commands (markdown-toc-generate-toc)))
 
 (provide 'module-text)
 ;;; module-text.el ends here

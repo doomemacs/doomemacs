@@ -212,6 +212,7 @@
 
 ;; Text modes -- modules/module-text.el
 (depends-on "markdown-mode")
+(depends-on "markdown-toc")
 
 ;; Web -- modules/module-web.el
 (depends-on "web-beautify")
