@@ -6,15 +6,20 @@
 (add-hook! (sass-mode scss-mode less-css-mode)
   '(flycheck-mode narf|hl-line-off hs-minor-mode))
 
-(use-package less-css-mode :mode "\\.less$")
+(push '("css" "scss" "sass" "less") projectile-other-file-alist)
 
-(use-package sass-mode :mode "\\.sass$")
+(use-package less-css-mode :mode "\\.less$"
+  :config (push '("less" "css") projectile-other-file-alist))
+
+(use-package sass-mode :mode "\\.sass$"
+  :config (push '("sass" "css") projectile-other-file-alist))
 
 (use-package scss-mode
   :mode "\\.scss$"
   :preface (require 'css-mode)
   :init (setq scss-compile-at-save nil)
   :config
+  (push '("scss" "css") projectile-other-file-alist)
   (sp-local-pair 'scss-mode "/*" "*/" :post-handlers '(("[d-3]||\n[i]" "RET") ("| " "SPC")))
 
   (map! :map scss-mode-map

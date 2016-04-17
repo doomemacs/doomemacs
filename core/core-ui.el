@@ -190,6 +190,7 @@
 (use-package rainbow-mode
   :commands (rainbow-mode)
   :init
+  (add-hook! (sass-mode scss-mode less-css-mode) 'rainbow-mode)
   ;; hl-line-mode and rainbow-mode don't play well together
   (add-hook! rainbow-mode
     (when narf--hl-line-mode
