@@ -59,12 +59,18 @@
               ad-do-it))))
 
   (progn ;; Obj-C
-    (add-to-list 'magic-mode-alist
-                 `(,(lambda ()
-                      (and (string= (file-name-extension buffer-file-name) "h")
-                           (re-search-forward "@\\<interface\\>"
-                                              magic-mode-regexp-match-limit t)))
-                   . objc-mode)))
+    (push `(,(lambda ()
+               (and (f-ext? buffer-file-name "h")
+                    (re-search-forward "@\\<interface\\>"
+                                       magic-mode-regexp-match-limit t)))
+            . objc-mode)
+          magic-mode-alist)
+
+    (push `(,(lambda ()
+               (and (f-ext? buffer-file-name "h")
+                    (f-exists? (f-swap-ext buffer-file-name "cpp"))))
+            . c++-mode)
+          magic-mode-alist))
 
   (use-package irony
     :config
