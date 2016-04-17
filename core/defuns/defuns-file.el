@@ -60,7 +60,7 @@ provided."
     ;; Move all attachments if in org-mode
     (when (eq major-mode 'org-mode)
       (mapc (lambda (file)
-              (when (file-exists-p file)
+              (when (and (file-exists-p file) (not (f-same? old-path new-path)))
                 (rename-file file (f-expand (f-filename old-path) (f-dirname new-path)) t)))
             (narf/org-attachments)))
     (when (buffer-modified-p)
