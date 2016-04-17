@@ -152,17 +152,21 @@
               c-mode-common ruby-mode python-mode lua-mode)
     'highlight-indentation-mode)
 
-  :config
+  (defun narf/hl-indent-guess-offset ()
+    (when (featurep 'editorconfig)
+      (string-to-int (gethash 'indent_size (editorconfig-get-properties)))))
+  (advice-add 'highlight-indentation-guess-offset :override 'narf/hl-indent-guess-offset)
+
   ;; A long-winded method for ensuring whitespace is maintained (so that
   ;; highlight-indentation-mode can display them consistently)
   (add-hook! highlight-indentation-mode
     (if highlight-indentation-mode
         (progn
           (narf/add-whitespace)
-          (highlight-indentation-set-offset tab-width)
-          (add-hook 'after-save-hook 'narf/add-whitespace nil t))
-     (remove-hook 'after-save-hook 'narf/add-whitespace t)))
-  (add-hook 'before-save-hook 'delete-trailing-whitespace))
+          (add-hook 'after-save-hook 'narf/add-whitespace nil t)
+          (add-hook 'before-save-hook 'delete-trailing-whitespace nil t))
+      (remove-hook 'after-save-hook 'narf/add-whitespace t)
+      (remove-hook 'before-save-hook 'delete-trailing-whitespace t))))
 
 (use-package highlight-numbers :commands (highlight-numbers-mode))
 
