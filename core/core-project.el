@@ -118,26 +118,25 @@
   (after! projectile
     (setq projectile-switch-project-action 'neotree-projectile-action))
 
+  ;; Shorter pwd in neotree
+  (defun narf*neotree-shorten-pwd (node)
+    (list (abbreviate-file-name (car node))))
+  (advice-add 'neo-buffer--insert-root-entry :filter-args 'narf*neotree-shorten-pwd)
+
   ;; Don't ask for confirmation when creating files
   (defun narf*neotree-create-node (orig-fun &rest args)
     (cl-letf (((symbol-function 'yes-or-no-p) (lambda (&rest _) t)))
       (apply orig-fun args)))
   (advice-add 'neotree-create-node :around 'narf*neotree-create-node)
 
-  ;; Shorter file names for org files
-  (defun narf*neo-path--file-short-name (orig-fun &rest args)
-    (let ((file (car args)))
-      (if (f-ext? file "org")
-          (s-replace "-" " " (f-base file))
-        (apply orig-fun args))))
-  (advice-add 'neo-path--file-short-name :around 'narf*neo-path--file-short-name)
-
+  ;; Prevents messing up the neotree buffer on window changes
   (advice-add 'narf--evil-window-move  :before 'narf|neotree-close-on-window-change)
   (advice-add 'narf--evil-swap-windows :before 'narf|neotree-close-on-window-change)
 
   ;; A custom and simple theme for neotree
   (advice-add 'neo-buffer--insert-fold-symbol :override 'narf*neo-buffer-fold-symbol))
 
+;;
 (use-package projectile
   :config
   (setq projectile-require-project-root nil
@@ -148,13 +147,15 @@
         projectile-project-root-files narf-project-root-files
         projectile-file-exists-remote-cache-expire nil)
 
+  ;; Don't cache ignored files!
+  (defun narf*projectile-cache-current-file (orig-fun &rest args)
+    (unless (--any (f-descendant-of? buffer-file-name it) (projectile-ignored-directories))
+      (apply orig-fun args)))
+  (advice-add 'projectile-cache-current-file :around 'narf*projectile-cache-current-file)
+
   (push "ido.last" projectile-globally-ignored-files)
   (push "assets"   projectile-globally-ignored-directories)
   (push ".cask"    projectile-globally-ignored-directories)
-  (push ".export"  projectile-globally-ignored-directories)
-  (push ".attach"  projectile-globally-ignored-directories)
-  (push '("scss" "css") projectile-other-file-alist)
-  (push '("css" "scss") projectile-other-file-alist)
 
   (projectile-global-mode +1))
 
