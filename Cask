@@ -149,6 +149,7 @@
 (depends-on "go-mode")
 (depends-on "go-eldoc")
 (depends-on "company-go")
+(depends-on "gorepl-mode")
 
 ;; Haskell -- modules/module-haskell.el
 (depends-on "haskell-mode")

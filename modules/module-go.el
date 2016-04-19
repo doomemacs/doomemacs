@@ -1,13 +1,16 @@
 ;;; module-go.el
 
+(use-package gorepl-mode :commands (gorepl-run gorepl-run-load-current-file))
+
 (use-package go-mode
   :mode "\\.go$"
   :interpreter "go"
   :init
-  (add-hook! go-mode '(emr-initialize narf|flycheck-enable-maybe))
-  :config
+  (add-hook! go-mode '(emr-initialize flycheck-mode))
   (define-builder! go-mode "go build")
+  (define-repl! go-mode gorepl-run)
 
+  :config
   (after! emr
     (mapc (lambda (x)
             (let ((command-name (car x))
@@ -26,12 +29,11 @@
   (after! helm
     (use-package helm-go-package :defer t))
 
-  (use-package go-eldoc
-    :config (add-hook 'go-mode-hook 'go-eldoc-setup))
+  (require 'go-eldoc)
+  (add-hook 'go-mode-hook 'go-eldoc-setup)
 
-  (use-package company-go
-    :config
-    (define-company-backend! go-mode (go yasnippet)))
+  (require 'company-go)
+  (define-company-backend! go-mode (go yasnippet))
 
   (map! :map go-mode-map
         :n "gd" 'godef-jump
