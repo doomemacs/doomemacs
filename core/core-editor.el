@@ -279,6 +279,7 @@ enable multiple minor modes for the same regexp.")
 
   ;; Auto-close more conservatively
   (sp-pair "'" nil :unless '(sp-point-after-word-p))
+  (sp-pair "\"" nil :unless '(sp-point-before-word-p sp-point-before-same-p))
   (sp-pair "{" nil :post-handlers '(("||\n[i]" "RET") ("| " " "))
                    :unless '(sp-point-before-word-p sp-point-before-same-p))
   (sp-pair "(" nil :post-handlers '(("||\n[i]" "RET") ("| " " "))
