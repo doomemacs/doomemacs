@@ -6,7 +6,6 @@
   (defvar helm-global-prompt "›")
   (setq-default
    helm-quick-update t
-   helm-reuse-last-window-split-state t
 
    ;; Speedier without fuzzy matching
    helm-mode-fuzzy-match nil
@@ -23,7 +22,6 @@
 
    ;; Don't override evil-ex's completion
    helm-mode-handle-completion-in-region nil
-
    helm-candidate-number-limit 40)
 
   :config

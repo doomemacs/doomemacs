@@ -151,7 +151,8 @@
     ;; that. To reproduce, add a helm rule in `shackle-rules', open two splits
     ;; side-by-side, move to the buffer on the right and invoke helm. It will close all
     ;; but the left-most buffer.
-    (setq-default helm-split-window-in-side-p t))
+    (setq-default helm-reuse-last-window-split-state t
+                  helm-split-window-in-side-p t))
 
   (after! helm-swoop
     (setq helm-swoop-split-window-function (lambda ($buf) (narf/popup-buffer $buf))))
