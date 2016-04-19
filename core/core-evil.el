@@ -359,9 +359,9 @@
    evil-snipe-scope 'line
    evil-snipe-repeat-scope 'visible
    evil-snipe-override-evil-repeat-keys nil ; causes problems with remapped ;
-   evil-snipe-symbol-groups '((?\[ "[[{(]")
-                              (?\] "[]})]")
-                              (?\; "[;:]")))
+   evil-snipe-aliases '((?\[ "[[{(]")
+                        (?\] "[]})]")
+                        (?\; "[;:]")))
   :config
   (evil-snipe-mode 1)
   (evil-snipe-override-mode 1)
