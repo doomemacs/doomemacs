@@ -56,6 +56,10 @@
               (find-file         "find assignments"  t)
               (find-references   "show usages"  nil))))))
 
+(use-package pip-requirements
+  :mode ("/requirements.txt$" . pip-requirements-mode)
+  :config (define-company-backend! pip-requirements-mode (capf)))
+
 (use-package nose
   :commands nose-mode
   :preface (defvar nose-mode-map (make-sparse-keymap))

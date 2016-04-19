@@ -192,6 +192,7 @@
 (depends-on "nose")
 (depends-on "anaconda-mode")
 (depends-on "company-anaconda")
+(depends-on "pip-requirements")
 
 ;; Ruby -- modules/module-ruby.el
 (depends-on "ruby-refactor")
