@@ -69,7 +69,7 @@
 
 ;;
 (define-project-type! laravel "laravel"
-  :modes (php-mode json-mode yaml-mode web-mode nxml-mode js2-mode scss-mode)
+  :modes (php-mode yaml-mode web-mode nxml-mode js2-mode scss-mode)
   :files ("artisan" "server.php"))
 
 (provide 'module-php)
