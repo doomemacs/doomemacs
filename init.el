@@ -44,7 +44,7 @@
 ;;
 
 (defconst narf-default-theme 'narf-dark)
-(defconst narf-default-font (font-spec :family "Terminus (TTF)" :size 12 :antialias nil))
+(defconst narf-default-font (font-spec :family "Hack" :size 12))
 
 (narf '(core ; core/core.el
 
