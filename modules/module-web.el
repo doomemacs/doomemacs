@@ -39,13 +39,6 @@
       :modes 'scss-mode
       :predicate (lambda () (not (use-region-p))))))
 
-(use-package web-beautify
-  :commands (web-beautify-js web-beautify-css web-beautify-html)
-  :init
-  (after! css-mode
-    (add-hook! css-mode (setenv "jsbeautify_indent_size" "2"))
-    (map! :map css-mode-map :m "gQ" 'web-beautify-css)))
-
 (use-package jaded-mode
   :mode "\\.jade$"
   :config
@@ -59,20 +52,10 @@
          "\\.erb$"
          "wp-content/themes/.+/.+\\.php$")
   :init
-  ;; smartparens handles this
-  (setq web-mode-enable-auto-pairing nil
-        web-mode-enable-auto-quoting nil)
-  :config
-  (sp-with-modes '(web-mode)
-    (sp-local-pair "{{!--" "--}}" :post-handlers '(("||\n[i]" "RET") ("| " "SPC")))
-    (sp-local-pair "{{--"  "--}}" :post-handlers '(("||\n[i]" "RET") ("| " "SPC")))
-    (sp-local-pair "<%" "%>"      :post-handlers '(("||\n[i]" "RET") ("| " "SPC")))
-    (sp-local-pair "{!!" "!!}"    :post-handlers '(("||\n[i]" "RET") ("| " "SPC")))
-    (sp-local-pair "{#" "#}"      :post-handlers '(("||\n[i]" "RET") ("| " "SPC"))))
+  (add-hook 'web-mode-hook 'turn-off-smartparens-mode)
 
-  (after! web-beautify
-    (add-hook! web-mode (setenv "jsbeautify_indent_size" "4"))
-    (map! :map web-mode-map :m "gQ" 'web-beautify-html))
+  :config
+  (map! :map web-mode-map :i "SPC" 'self-insert-command)
 
   (after! nlinum
     ;; Fix blank line numbers after unfolding
@@ -93,6 +76,16 @@
         :nv "]T" 'web-mode-element-child
         :nv "[T" 'web-mode-element-parent))
 
+;;
+(use-package web-beautify
+  :commands (web-beautify-js web-beautify-css web-beautify-html)
+  :init
+  (add-hook! (web-mode css-mode) (setenv "jsbeautify_indent_size" tab-width))
+  (after! web-mode
+    (map! :map web-mode-map
+          (:after web-mode :m "gQ" 'web-beautify-html)
+          (:after css-mode :m "gQ" 'web-beautify-css))))
+
 (use-package emmet-mode
   :commands (emmet-mode)
   :init
@@ -110,7 +103,7 @@
   :modes (web-mode scss-mode html-mode markdown-mode yaml-mode)
   :match "/\\(\\(css\\|_\\(layouts\\|posts\\|sass\\)\\)/.+\\|.+.html\\)$"
   :files ("config.yml" "_layouts/")
-  (add-hook! it
+  (add-hook! mode
     (when (eq major-mode 'web-mode)
       (web-mode-set-engine "django"))))
 
