@@ -10,9 +10,7 @@
   (define-repl! haskell-mode switch-to-haskell)
   (add-hook! haskell-mode '(interactive-haskell-mode flycheck-mode))
   :config
-  (add-to-list 'completion-ignored-extensions ".hi")
-  ;; haskell-mode complains that this function isn't defined, and it isn't!
-  (defun haskell-mode-after-save-handler ()))
+  (add-to-list 'completion-ignored-extensions ".hi"))
 
 (use-package inf-haskell
   :commands (inferior-haskell-mode inf-haskell-mode switch-to-haskell)
