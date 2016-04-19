@@ -183,13 +183,15 @@
 ;;;###autoload
 (defun narf/close-window-or-workgroup ()
   (interactive)
-  (narf/kill-real-buffer)
-  (if (and (one-window-p t)
-           (> (length (wg-workgroup-list)) 1))
-      (if (string= (wg-workgroup-name (wg-current-workgroup)) wg-first-wg-name)
-          (evil-window-delete)
-        (narf:workgroup-delete))
-    (evil-window-delete)))
+  (if (memq (get-buffer-window) narf-popup-windows)
+      (narf/popup-close)
+    (narf/kill-real-buffer)
+    (if (and (one-window-p t)
+             (> (length (wg-workgroup-list)) 1))
+        (if (string= (wg-workgroup-name (wg-current-workgroup)) wg-first-wg-name)
+            (evil-window-delete)
+          (narf:workgroup-delete))
+      (evil-window-delete))))
 
 (provide 'defuns-workgroup)
 ;;; defuns-workgroup.el ends here
