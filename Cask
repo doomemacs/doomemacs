@@ -136,6 +136,7 @@
 (depends-on "irony-eldoc")
 (depends-on "flycheck-irony")
 (depends-on "company-irony")
+(depends-on "company-irony-c-headers")
 
 ;; Crystal -- modules/module-crystal.el
 (depends-on "crystal-mode" :git "https://github.com/jpellerin/emacs-crystal-mode")

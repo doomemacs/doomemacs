@@ -82,9 +82,10 @@
     (flycheck-irony-setup)
 
     (require 'company-irony)
-    (define-company-backend! c-mode (irony))
-    (define-company-backend! c++-mode (irony))
-    (define-company-backend! objc-mode (irony))
+    (require 'company-irony-c-headers)
+    (define-company-backend! c-mode    (irony-c-headers irony))
+    (define-company-backend! c++-mode  (irony-c-headers irony))
+    (define-company-backend! objc-mode (irony-c-headers irony))
 
     ;; some c-mode dervied modes wrongfully trigger these hooks (like php-mode)
     (add-hook! (c-mode c++-mode ojbc-mode)
