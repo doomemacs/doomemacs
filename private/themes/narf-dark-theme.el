@@ -189,14 +189,16 @@
    ;; plugin-specific
    ;; *****************************************************************************************
 
+   `(indent-guide-face ((,c (:foreground "#2F2F38"))))
+
+   ;; highlight-{quoted,numbers,indentation}-mode
    `(highlight-indentation-face                 ((,c (:background ,current-line))))
    `(highlight-indentation-current-column-face  ((,c (:background ,current-line))))
-   `(indent-guide-face                          ((,c (:foreground "#2F2F38"))))
-
    `(highlight-quoted-symbol     ((,c (:foreground ,yellow))))
    `(highlight-quoted-quote      ((,c (:foreground ,magenta))))
    `(highlight-numbers-number    ((,c (:foreground ,constants))))
 
+   ;; re-builder
    `(reb-match-0                 ((,c (:foreground ,orange   :inverse-video t))))
    `(reb-match-1                 ((,c (:foreground ,magenta  :inverse-video t))))
    `(reb-match-2                 ((,c (:foreground ,green    :inverse-video t))))
@@ -332,11 +334,17 @@
 
    `(org-document-title   ((,c (:foreground ,cyan))))
    `(org-level-1          ((,c (:background ,current-line :foreground ,magenta :bold ,bold))))
-   `(org-level-2          ((,c (                          :foreground ,orange :bold ,bold))))
-   `(org-level-3          ((,c (                          :foreground ,orange :bold ,bold))))
-   `(org-level-4          ((,c (                          :foreground ,orange :bold ,bold))))
-   `(org-level-5          ((,c (                          :foreground ,orange))))
-   `(org-level-6          ((,c (                          :foreground ,orange))))
+   `(org-level-2          ((,c (                          :foreground ,dark-cyan :bold ,bold))))
+   `(org-level-3          ((,c (                          :foreground ,violet    :bold ,bold))))
+   `(org-level-4          ((,c (                          :foreground ,green     :bold ,bold))))
+   `(org-level-5          ((,c (                          :foreground ,yellow))))
+   `(org-level-6          ((,c (                          :foreground ,blue+2))))
+
+   ;; `(org-level-2          ((,c (                          :foreground ,orange :bold ,bold))))
+   ;; `(org-level-3          ((,c (                          :foreground ,orange :bold ,bold))))
+   ;; `(org-level-4          ((,c (                          :foreground ,orange :bold ,bold))))
+   ;; `(org-level-5          ((,c (                          :foreground ,orange))))
+   ;; `(org-level-6          ((,c (                          :foreground ,orange))))
    ;;`(org-level-7          ((,c ())))
    ;;`(org-level-8          ((,c ())))
    ;;`(org-checkbox         ((,class (:box (:line-width 1 :style released-button)))))
