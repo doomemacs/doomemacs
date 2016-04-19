@@ -1,4 +1,4 @@
-;;; module-tmux.el
+;;; extra-tmux.el
 
 ;; This library offers:
 ;;   + TODO An integration/abstraction layer to make it seem like tmux and emacs are one
@@ -26,7 +26,7 @@
   :ex-arg shell
   (list (when (evil-ex-p) (evil-ex-file-arg))))
 
-;;;###autoload (autoload 'narf:tmux-cd "module-tmux" nil t)
+;;;###autoload (autoload 'narf:tmux-cd "extra-tmux" nil t)
 (evil-define-command narf:tmux-cd (&optional bang)
   (interactive "<!>")
   (if bang
@@ -34,7 +34,7 @@
     (narf/tmux-cd-to-here)))
 
 (defvar narf-tmux-last-command nil "The last command sent to tmux")
-;;;###autoload (autoload 'narf:tmux "module-tmux" nil t)
+;;;###autoload (autoload 'narf:tmux "extra-tmux" nil t)
 (evil-define-operator narf:tmux (&optional command bang)
   "Sends input to tmux. Use `bang' to append to tmux"
   :type inclusive
@@ -58,5 +58,5 @@
   (interactive)
   (narf/tmux-cd-to-here (narf/project-root)))
 
-(provide 'module-tmux)
-;;; module-tmux.el ends here
+(provide 'extra-tmux)
+;;; extra-tmux.el ends here

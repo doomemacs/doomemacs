@@ -1,4 +1,4 @@
-;;; module-ansible.el
+;;; extra-ansible.el
 
 (define-project-type! ansible-mode "ans"
   :modes (yaml-mode)
@@ -8,5 +8,5 @@
   :commands (company-ansible)
   :init (define-company-backend! ansible-mode (ansible)))
 
-(provide 'module-ansible)
+(provide 'extra-ansible)
 ;;; module-ansible.el ends here

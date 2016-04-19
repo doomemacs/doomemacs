@@ -1,4 +1,4 @@
-;;; module-demo.el --- for collaboration and demonstrations
+;;; extra-demo.el --- for collaboration and demonstrations
 
 ;; This library offers:
 ;;   + impatient-mode: for broadcasting my emacs session
@@ -26,5 +26,5 @@
   (narf/load-font (if big-mode big-mode-font narf-default-font))
   (setq-default line-spacing (if big-mode big-mode-line-spacing big-mode--line-spacing)))
 
-(provide 'module-demo)
-;;; module-demo.el ends here
+(provide 'extra-demo)
+;;; extra-demo.el ends here
