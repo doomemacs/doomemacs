@@ -163,6 +163,7 @@
 ;; JS -- modules/module-js.el
 (depends-on "js2-mode")
 (depends-on "js2-refactor")
+(depends-on "jsx-mode")
 (depends-on "tern")
 (depends-on "unityjs-mode" :git "https://github.com/naruse/EmacsUnityScript")
 (depends-on "coffee-mode")

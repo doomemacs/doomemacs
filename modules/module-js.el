@@ -83,9 +83,7 @@
             (forward-slurp              "forward slurp"              nil)
             (forward-barf               "forward barf"               nil)))))
 
-(use-package nodejs-repl
-    :commands (nodejs-repl)
-    :config (evil-set-initial-state 'nodejs-repl-mode 'emacs))
+(use-package jsx-mode :mode "\\.jsx$")
 
 (use-package unityjs-mode
   :mode "/Assets/.*\\.js$"
@@ -95,20 +93,29 @@
   :mode "\\.coffee$"
   :config (setq-default coffee-indent-like-python-mode t))
 
+(use-package nodejs-repl
+    :commands (nodejs-repl)
+    :config (evil-set-initial-state 'nodejs-repl-mode 'emacs))
+
 ;;
 (define-project-type! nodejs "node"
-  :modes (js2-mode)
+  :modes (web-mode js-mode js2-mode json-mode coffee-mode scss-mode sass-mode less-css-mode)
   :files ("package.json"))
 
+(define-project-type! angularjs "angular"
+  :modes (web-mode js-mode js2-mode json-mode coffee-mode scss-mode sass-mode less-css-mode)
+  :files ("public/libraries/angular/"))
 
 (define-project-type! electron "electron"
-  :modes (web-mode js-mode js2-mode markdown-mode json-mode coffee-mode scss-mode sass-mode)
-  :files ("package.json" "app/index.html" "app/main.js"))
+  :modes (nodejs-project-mode)
+  :files ("app/index.html" "app/main.js"))
 ;; TODO electron-compile support
 
-;; TODO angular
+(define-project-type! expressjs "express"
+  :modes (nodejs-project-mode)
+  :files ("node_modules/express/"))
+
 ;; TODO react
-;; TODO express
 
 (provide 'module-js)
 ;;; module-js.el ends here
