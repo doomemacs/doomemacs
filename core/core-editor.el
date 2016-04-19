@@ -168,9 +168,18 @@ enable multiple minor modes for the same regexp.")
 
 (use-package vimrc-mode :mode ("/\\.?g?vimrc$" "\\.vim$" "/\\.vim/rc/.+$"))
 ;; Data formats
-(use-package yaml-mode :mode "\\.ya?ml$")
 (use-package toml-mode :mode "\\.toml$")
-(use-package json-mode :mode "\\.js\\(on\\|hintrc\\)$")
+
+(use-package yaml-mode :mode "\\.ya?ml$"
+  :config
+  (add-hook! yaml-mode (setq electric-indent-chars '(?\n ?: ?-))))
+
+(use-package json-mode :mode "\\.js\\(on\\|hintrc\\)$"
+  :config
+  (add-hook! json-mode (setq electric-indent-chars '(?\n ?: ?}))))
+
+(add-hook! (yaml-mode json-mode) 'electric-indent-local-mode)
+
 ;; Configuration formats
 (use-package dockerfile-mode :mode "/Dockerfile$"
   :config
