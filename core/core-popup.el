@@ -66,11 +66,34 @@
   (defvar narf-popup-windows '()
     "A list of windows that have been opened via shackle. Do not touch this!")
 
+  ;; Popup hook
+  (defvar shackle-popup-hook '() "Hook run whenever a popup is opened.")
+  (defun narf|run-popup-hooks (&rest _)
+    (with-current-buffer shackle-last-buffer
+      (run-hooks 'shackle-popup-hook)))
+  (advice-add 'shackle-display-buffer :after 'narf|run-popup-hooks)
+
+  ;; Keep track of popups
+  (defun narf|popup-init ()
+    (add-to-list 'narf-popup-windows (get-buffer-window))
+    (local-set-key [escape escape] 'narf/popup-close)
+    (when (or (bound-and-true-p repl-toggle-mode)
+              (derived-mode-p 'tabulated-list-mode)
+              (memq major-mode '(messages-buffer-mode flycheck-error-list-mode-hook)))
+      (let ((map evil-normal-state-local-map))
+        (define-key map [escape] 'narf/popup-close)
+        (define-key map (kbd "ESC") 'narf/popup-close))))
+  (add-hook! 'shackle-popup-hook '(narf|popup-init narf|hide-mode-line))
+
+
+  ;;
+  ;; Hacks
+  ;;
+
   (after! ert
-    (add-hook! 'ert-results-mode-hook 'narf|hide-mode-line)
-    (map! (:map ert-results-mode-map
-            [escape]   'quit-window
-            "<escape>" 'quit-window)))
+    (map! :map ert-results-mode-map
+          [escape]   'quit-window
+          "<escape>" 'quit-window))
 
   (after! help-mode
     ;; So that help buffer links do not open in the help popup, we need to redefine these
@@ -164,8 +187,6 @@
       (let ((window (get-buffer-window quickrun/buffer-name)))
         (with-selected-window window
           (goto-char (point-min)))))
-    (defun narf|quickrun-hook ()
-      (narf|hide-mode-line))
     (add-hook 'quickrun-after-run-hook 'narf|quickrun-after-run)
     (add-hook 'quickrun/mode-hook 'narf|hide-mode-line))
 
@@ -235,12 +256,7 @@
             (progn
               (if cmd-buf (switch-to-buffer cmd-buf))
               (message "Error running command: %s" (mapconcat 'identity cmd-args " ")))))
-        cmd-buf)))
-
-  (after! flycheck
-    (map! :map flycheck-error-list-mode-map
-          :n "q" 'narf/popup-close
-          :n [escape] 'narf/popup-close)))
+        cmd-buf))))
 
 (provide 'core-popup)
 ;;; core-popup.el ends here

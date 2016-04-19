@@ -25,7 +25,6 @@
 
   (add-hook! repl-toggle-mode
     (evil-initialize-state 'emacs)
-    (narf|hide-mode-line)
     (setq repl-p t))
 
   :config

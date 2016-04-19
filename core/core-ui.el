@@ -138,6 +138,9 @@
 (add-hook! focus-in  (set-frame-parameter nil 'alpha 100))
 (add-hook! focus-out (set-frame-parameter nil 'alpha 85))
 
+;; Hide mode-line in compile window
+(add-hook 'compilation-mode-hook 'narf|hide-mode-line)
+
 
 ;;
 ;; Plugins
