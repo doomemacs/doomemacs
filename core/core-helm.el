@@ -31,6 +31,7 @@
           "M-v"        'clipboard-yank
           "C-w"        'backward-kill-word
           "C-r"        'evil-paste-from-register ; Evil registers in helm! Glorious!
+          "C-b"        'backward-word
           "<left>"     'backward-char
           "<right>"    'forward-char
           "<escape>"   'helm-keyboard-quit
