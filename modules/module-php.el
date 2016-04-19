@@ -1,5 +1,9 @@
 ;;; module-php.el
 
+(use-package hack-mode
+  :mode "\\.hh$"
+  :config (define-company-backend! hack-mode (capf)))
+
 (use-package php-mode
   :mode ("\\.php[s345]?$" "\\.inc$" )
   :interpreter "php"

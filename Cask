@@ -186,6 +186,7 @@
 (depends-on "php-refactor-mode")
 (depends-on "php-boris")
 (depends-on "php-extras")
+(depends-on "hack-mode" :git "https://github.com/beefsack/hack-mode")
 
 ;; Processing -- modules/module-processing.el
 (depends-on "processing-mode")
