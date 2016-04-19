@@ -65,7 +65,6 @@
 (depends-on "rotate-text" :git "https://github.com/debug-ito/rotate-text.el")
 (depends-on "smart-forward")
 (depends-on "smartparens")
-
 (depends-on "vimrc-mode")
 (depends-on "json-mode")
 (depends-on "toml-mode")

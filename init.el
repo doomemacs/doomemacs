@@ -66,7 +66,7 @@
 
         ;; Environments
         module-apple         ; Applescript, Swift, Launchbar, iOS, wallet syphons, etc.
-        module-cc            ; c/c++/obj-c madness
+        module-cc            ; C/C++/obj-c madness
         module-crystal       ; ruby at the speed of c
         module-csharp        ; unity, .NET, and mono shenanigans
         module-go            ; the hipster dialect
@@ -90,16 +90,14 @@
 
         ;; Organizational/Notes
         ;;module-org           ; for organized fearless leader
-        ;;module-org-crm       ; to keep tabs on my victims
-        ;;module-org-notebook  ; #modernizeOrgMode2016
+        ;;module-write         ; for writing papers and fiction in Emacs
 
-        ;; Extra Tools
-        module-tmux          ; closing the rift between GUI & terminal
-        module-demo          ; allow me to demonstrate...
-        module-ansible       ;
-        ;;module-write       ; for writing papers and fiction in Emacs
+        ;; Extra libraries
+        extra-tmux          ; closing the rift between GUI & terminal
+        extra-demo          ; allow me to demonstrate...
+        extra-ansible       ;
 
-        ;; Key bindings & ex commands
+        ;; Customization
         my-bindings
         my-commands
         ))

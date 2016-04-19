@@ -2,12 +2,6 @@
 ;; for ../core-flycheck.el
 
 ;;;###autoload
-(defun narf|flycheck-enable-maybe ()
-  (unless (or (bound-and-true-p org-src-mode)
-              (eq major-mode 'org-mode))
-    (flycheck-mode +1)))
-
-;;;###autoload
 (defun narf*flycheck-buffer ()
   (when (bound-and-true-p flycheck-mode)
     (flycheck-buffer)))

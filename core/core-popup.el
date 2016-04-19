@@ -23,16 +23,14 @@
           ("*evil-registers*"                :align below  :size 0.3)
           ("*quickrun*"                      :align below  :size 10)
           ("*nosetests*"                     :align below  :size 0.4 :noselect t)
-          ("*eval*"                          :align below  :size 12)
           ("*esup*"                          :align below  :size 30 :noselect t)
           ("*ert*"                           :align below  :size 20 :noselect t)
-
           ;; vcs
           ("^\\*git-gutter.+\\*$"  :regexp t :align below  :size 0.4 :noselect t)
           ("*vc-diff*"                       :align below  :size 0.4 :noselect t)
           ("*vc-change-log*"                 :align below            :select t)
           (vc-annotate-mode                  :same t)
-
+          ;; Util
           ("*Apropos*"                       :align below  :size 0.3)
           ("*minor-modes*"                   :align below  :size 0.5 :noselect t)
 
@@ -56,7 +54,9 @@
           (debugger-mode :align below :size 0.25 :noselect t)
           (compilation-mode :noselect t)
 
-          ;; REPLs
+          ;; Custom + REPLs
+          ("*eval*" :align below :size 12)
+          ("^\\*narf.+\\*$" :regexp t :align below :size 12 :noselect t)
           ((:custom (lambda (b &rest _)
                       (when (featurep 'repl-toggle)
                         (when (string-prefix-p "*" (buffer-name (get-buffer b)))
@@ -167,11 +167,7 @@
     (defun narf|quickrun-hook ()
       (narf|hide-mode-line))
     (add-hook 'quickrun-after-run-hook 'narf|quickrun-after-run)
-    (add-hook 'quickrun/mode-hook 'narf|quickrun-hook))
-
-  (after! repl-toggle
-    (map! :map repl-toggle-mode-map
-          "ESC ESC" 'narf/popup-close))
+    (add-hook 'quickrun/mode-hook 'narf|hide-mode-line))
 
   (add-hook! org-load
     ;; This ensures org-src-edit yields control of its buffer to shackle.

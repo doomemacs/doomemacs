@@ -76,6 +76,7 @@
                      (1 font-lock-keyword-face)
                      (2 font-lock-function-name-face))))
 
+;;
 (use-package slime :defer t
   :config (setq inferior-lisp-program "clisp"))
 

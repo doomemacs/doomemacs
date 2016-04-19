@@ -57,7 +57,6 @@
                       (message-mode           . normal)
                       (debugger-mode          . normal)
                       (profile-report-mode    . emacs)
-
                       (Info-mode              . emacs)
                       (view-mode              . emacs)
                       (comint-mode            . emacs)

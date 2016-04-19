@@ -8,6 +8,7 @@
    helm-quick-update t
    helm-reuse-last-window-split-state t
 
+   ;; Speedier without fuzzy matching
    helm-mode-fuzzy-match nil
    helm-buffers-fuzzy-matching nil
    helm-apropos-fuzzy-match nil
@@ -17,7 +18,6 @@
 
    helm-display-header-line nil
    helm-ff-auto-update-initial-value nil
-   helm-ff-skip-boring-files t
    helm-find-files-doc-header nil
    helm-move-to-line-cycle-in-source t
 
@@ -129,7 +129,7 @@
         helm-swoop-speed-or-color t
         helm-swoop-pre-input-function (lambda () "")))
 
-(use-package helm-describe-modes :defer t)
+(use-package helm-describe-modes :commands helm-describe-modes)
 (use-package helm-ring      :commands helm-show-kill-ring)
 (use-package helm-semantic  :commands helm-semantic-or-imenu)
 (use-package helm-elisp     :commands helm-apropos)

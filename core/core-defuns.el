@@ -251,14 +251,7 @@ Examples:
       `(progn ,@(apply #'nconc (delete nil (delete (list nil) forms)))))))
 
 
-;; Hooks ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defun narf|enable-comment-hard-wrap ()
-  (set (make-local-variable 'comment-auto-fill-only-comments) t)
-  (turn-on-auto-fill))
-
-(defun narf|enable-hard-wrap ()
-  (turn-on-auto-fill))
-
+;;
 (defun narf|update-scratch-buffer-cwd (&optional dir) ; see core-editor.el
   "Make sure scratch buffer is always 'in a project.'"
   (let ((dir (or dir (narf/project-root))))

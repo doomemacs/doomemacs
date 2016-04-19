@@ -1,9 +1,5 @@
 ;;; defuns-popups.el
 
-(defun narf*popup-add (&rest _)
-  (add-to-list 'narf-popup-windows (get-buffer-window shackle-last-buffer)))
-(advice-add 'shackle-display-buffer :after 'narf*popup-add)
-
 (defun narf--popup-remove (window)
   (setq narf-popup-windows (delete window narf-popup-windows)))
 

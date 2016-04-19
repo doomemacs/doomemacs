@@ -7,6 +7,7 @@
         ;; Removed checks on idle/change for snappiness
         flycheck-check-syntax-automatically '(save mode-enabled)
         flycheck-disabled-checkers '(emacs-lisp emacs-lisp-checkdoc make))
+
   :config
   (require 'flycheck-package)
   (flycheck-package-setup)

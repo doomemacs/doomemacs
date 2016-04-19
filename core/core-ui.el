@@ -36,7 +36,7 @@
  fringe-indicator-alist (delq (assoc 'continuation fringe-indicator-alist)
                               fringe-indicator-alist))
 
-(fset 'yes-or-no-p 'y-or-n-p)           ; y/n instead of yes/no
+(fset 'yes-or-no-p 'y-or-n-p)  ; y/n instead of yes/no
 
 ;; Ask for confirmation on exit only if there are real buffers left
 (when window-system
@@ -46,8 +46,8 @@
               (y-or-n-p ">> Gee, I dunno Brain... Are you sure?")
             t))))
 
-(blink-cursor-mode  1)    ; blink cursor
-(tooltip-mode      -1)    ; show tooltips in echo area
+(blink-cursor-mode  1)  ; blink cursor
+(tooltip-mode      -1)  ; show tooltips in echo area
 
 ;; set up minibuffer and fringe
 (if (not window-system)
@@ -118,7 +118,7 @@
 (add-hook 'evil-visual-state-exit-hook  'narf|hl-line-on)
 
 ;; Hide modeline in help windows
-(defun narf|hide-mode-line ()
+(defun narf|hide-mode-line (&rest _)
   (setq mode-line-format nil))
 (add-hook 'help-mode-hook 'narf|hide-mode-line)
 
