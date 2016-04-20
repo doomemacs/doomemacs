@@ -179,7 +179,6 @@ Examples:
 
   (defmacro map! (&rest rest)
     (let ((i 0)
-          (forms '())
           (keymaps (if (boundp 'keymaps) keymaps))
           (default-keymaps '((current-global-map)))
           (state-map '(("n" . normal)
@@ -190,13 +189,12 @@ Examples:
                        ("m" . motion)
                        ("r" . replace)))
           (prefix (if (boundp 'prefix) prefix))
-          key def states)
+          key def states forms)
       (unless keymaps
         (setq keymaps default-keymaps))
       (while rest
         (setq key (pop rest))
-        (add-to-list
-         'forms
+        (push
          (cond ((listp key) ; it's a sub exp
                 `(,(macroexpand `(map! ,@key))))
 
@@ -209,12 +207,12 @@ Examples:
                   (setq key :prefix))
                 (pcase key
                   ;; TODO: Data checks
-                  (:prefix      (setq prefix (concat prefix (kbd (pop rest)))) nil)
-                  (:map         (setq keymaps (-list (pop rest))) nil)
-                  (:unset      `(,(macroexpand `(map! ,(kbd (pop rest)) nil))))
-                  (:after       (prog1 `((after! ,(pop rest)   ,(macroexpand `(map! ,@rest)))) (setq rest '())))
-                  (:when        (prog1 `((if ,(pop rest)       ,(macroexpand `(map! ,@rest)))) (setq rest '())))
-                  (:unless      (prog1 `((if (not ,(pop rest)) ,(macroexpand `(map! ,@rest)))) (setq rest '())))
+                  (:prefix  (setq prefix (concat prefix (kbd (pop rest)))) nil)
+                  (:map     (setq keymaps (-list (pop rest))) nil)
+                  (:unset  `(,(macroexpand `(map! ,(kbd (pop rest)) nil))))
+                  (:after   (prog1 `((after! ,(pop rest)   ,(macroexpand `(map! ,@rest)))) (setq rest '())))
+                  (:when    (prog1 `((if ,(pop rest)       ,(macroexpand `(map! ,@rest)))) (setq rest '())))
+                  (:unless  (prog1 `((if (not ,(pop rest)) ,(macroexpand `(map! ,@rest)))) (setq rest '())))
                   (otherwise ; might be a state prefix
                    (mapc (lambda (letter)
                            (if (assoc letter state-map)
@@ -246,9 +244,9 @@ Examples:
                   out-forms))
 
                (t (user-error "Invalid key %s" key)))
-         t)
+         forms)
         (cl-incf i))
-      `(progn ,@(apply #'nconc (delete nil (delete (list nil) forms)))))))
+      `(progn ,@(apply #'nconc (delete nil (delete (list nil) (reverse forms))))))))
 
 
 ;;
