@@ -8,15 +8,13 @@
   (add-hook 'evil-insert-state-exit-hook     'show-paren-mode-off)
   (add-hook 'evil-visual-state-entry-hook    'show-paren-mode)
   (add-hook 'evil-visual-state-exit-hook     'show-paren-mode-off)
-  (add-hook 'evil-motion-state-entry-hook    'show-paren-mode)
-  (add-hook 'evil-motion-state-exit-hook     'show-paren-mode-off)
   (add-hook 'evil-operator-state-entry-hook  'show-paren-mode)
   (add-hook 'evil-operator-state-exit-hook   'show-paren-mode-off)
 
   ;; Disable highlights on insert-mode
   (add-hook 'evil-insert-state-entry-hook 'evil-ex-nohighlight)
   :config
-  (setq-default
+  (setq
    evil-magic t
    evil-want-C-u-scroll t       ; enable C-u for scrolling
    evil-ex-visual-char-range t  ; column range for ex commands
@@ -26,6 +24,7 @@
    evil-echo-state nil
    evil-ex-substitute-global t
    evil-insert-skip-empty-lines t
+   evil-search-module 'evil-search
 
    evil-normal-state-tag    "N"
    evil-insert-state-tag    "I"
@@ -37,25 +36,26 @@
 
    ;; Color-coded state cursors
    evil-default-cursor "orange"
-   evil-normal-state-cursor  'box
-   evil-emacs-state-cursor   '("cyan" box)
-   evil-insert-state-cursor  'bar
-   evil-visual-state-cursor  'hollow)
+   evil-normal-state-cursor 'box
+   evil-emacs-state-cursor  '("cyan" box)
+   evil-insert-state-cursor 'bar
+   evil-visual-state-cursor 'hollow)
 
   ;; NOTE: a bug in emacs 25 breaks undoing in evil. See
   ;; https://bitbucket.org/lyro/evil/issues/594/undo-doesnt-behave-like-vim
   (setq-default evil-want-fine-undo (if (> emacs-major-version 24) 'fine 'no))
 
   (evil-mode 1)
-  (evil-select-search-module 'evil-search-module 'evil-search)
 
-  (evil-define-key 'normal evil-command-window-mode-map [escape] 'kill-buffer-and-window)
+  (map! :map evil-command-window-mode-map :n [escape] 'kill-buffer-and-window)
 
   ;; modes to map to different default states
   (dolist (mode-map '((compilation-mode       . normal)
                       (help-mode              . normal)
                       (message-mode           . normal)
                       (debugger-mode          . normal)
+                      (image-mode             . normal)
+                      (doc-view-mode          . normal)
                       (profile-report-mode    . emacs)
                       (Info-mode              . emacs)
                       (view-mode              . emacs)
@@ -64,33 +64,12 @@
                       (term-mode              . emacs)
                       (calendar-mode          . emacs)
                       (Man-mode               . emacs)
-                      (grep-mode              . emacs)
-                      (image-mode             . normal)
-                      (doc-view-mode          . normal)
-                      ))
+                      (grep-mode              . emacs)))
     (evil-set-initial-state `,(car mode-map) `,(cdr mode-map)))
 
-  ;; Shortcuts for the evil expression register
-  (defmacro $= (str &rest args)
-    `(calc-eval (format ,str ,@args)))
-  (defmacro $r (char)
-    `(evil-get-register ,char))
-  (defmacro $expand (path)
-    `(evil-ex-replace-special-filenames ,path))
-
-  ;; buffer-local ex commands, thanks to:
-  ;; http://emacs.stackexchange.com/questions/13186
-  (defun evil-ex-define-cmd-local (cmd function)
-    "Locally binds the function FUNCTION to the command CMD."
-    (unless (local-variable-p 'evil-ex-commands)
-      (setq-local evil-ex-commands (copy-alist evil-ex-commands)))
-    (evil-ex-define-cmd cmd function))
-  ;; Shortcuts for `evil-ex-define-cmd'
-  (defalias 'exmap  'evil-ex-define-cmd)
-  (defalias 'exmap! 'evil-ex-define-cmd-local)
-
   (progn ; evil hacks
-    (defadvice evil-force-normal-state (after evil-esc-quit activate)
+    (advice-add 'evil-force-normal-state :after 'narf*evil-esc-quit)
+    (defun narf*evil-esc-quit ()
       "Close popups, disable search highlights and quit the minibuffer if open."
       (when (minibuffer-window-active-p (minibuffer-window))
         (abort-recursive-edit))
@@ -106,7 +85,8 @@
                   (narf--popup-remove w)))
               narf-popup-windows)))
 
-    ;; Fix disruptive errors w/ hidden buffers caused by workgroups killing windows
+    ;; Fix harmless (yet disruptive) error reporting w/ hidden buffers caused by
+    ;; workgroups killing windows
     ;; TODO Delete timer on dead windows
     (defadvice evil-ex-hl-do-update-highlight (around evil-ex-hidden-buffer-ignore-errors activate)
       (ignore-errors ad-do-it))
@@ -231,7 +211,7 @@
     :move-point nil
     (interactive "<r><g//><!>")
     (evil-ex-global beg end pattern command invert))
-  (exmap "g[lobal]" 'narf:evil-ex-global))
+  (evil-ex-define-cmd "g[lobal]" 'narf:evil-ex-global))
 
 ;; evil plugins
 (use-package evil-anzu
@@ -270,11 +250,11 @@
         :nv "M-d"   'evil-multiedit-match-and-next
         :nv "M-D"   'evil-multiedit-match-and-prev)
   :config
-  (map! :v "RET" 'evil-multiedit-toggle-or-restrict-region
-        (:map evil-multiedit-state-map
+  (map! (:map evil-multiedit-state-map
           "RET" 'evil-multiedit-toggle-or-restrict-region
           "C-n" 'evil-multiedit-next
-          "C-p" 'evil-multiedit-prev)
+          "C-p" 'evil-multiedit-prev
+          :v "RET" 'evil-multiedit-toggle-or-restrict-region)
         (:map evil-multiedit-insert-state-map
           "C-n" 'evil-multiedit-next
           "C-p" 'evil-multiedit-prev)))
@@ -287,22 +267,22 @@
              evil-indent-plus-i-indent-up-down
              evil-indent-plus-a-indent-up-down)
   :init
-  (map! (:map evil-inner-text-objects-map
-          "i" 'evil-indent-plus-i-indent
-          "I" 'evil-indent-plus-i-indent-up
-          "J" 'evil-indent-plus-i-indent-up-down)
-        (:map evil-outer-text-objects-map
-          "i" 'evil-indent-plus-a-indent
-          "I" 'evil-indent-plus-a-indent-up
-          "J" 'evil-indent-plus-a-indent-up-down)))
+  (map! :map evil-inner-text-objects-map
+        "i" 'evil-indent-plus-i-indent
+        "I" 'evil-indent-plus-i-indent-up
+        "J" 'evil-indent-plus-i-indent-up-down
+        :map evil-outer-text-objects-map
+        "i" 'evil-indent-plus-a-indent
+        "I" 'evil-indent-plus-a-indent-up
+        "J" 'evil-indent-plus-a-indent-up-down))
 
 (use-package evil-matchit
   :commands (evilmi-jump-items evilmi-text-object global-evil-matchit-mode)
   :config (global-evil-matchit-mode 1)
   :init
-  (define-key evil-normal-state-map "%" #'evilmi-jump-items)
-  (define-key evil-inner-text-objects-map "%" #'evilmi-text-object)
-  (define-key evil-outer-text-objects-map "%" #'evilmi-text-object))
+  (map! :n "%" 'evilmi-jump-items
+        :map evil-inner-text-objects-map "%" 'evilmi-text-object
+        :map evil-outer-text-objects-map "%" 'evilmi-text-object))
 
 (use-package evil-numbers
   :commands (evil-numbers/inc-at-pt evil-numbers/dec-at-pt))
@@ -310,8 +290,8 @@
 (use-package evil-textobj-anyblock
   :commands (evil-textobj-anyblock-inner-block evil-textobj-anyblock-a-block)
   :init
-  (define-key evil-inner-text-objects-map "B" 'evil-textobj-anyblock-inner-block)
-  (define-key evil-outer-text-objects-map "B" 'evil-textobj-anyblock-a-block))
+  (map! :map evil-inner-text-objects-map "B" 'evil-textobj-anyblock-inner-block
+        :map evil-outer-text-objects-map "B" 'evil-textobj-anyblock-a-block))
 
 (use-package evil-search-highlight-persist
   :config
@@ -368,16 +348,12 @@
   (global-evil-surround-mode 1)
 
   (add-hook! org-mode
-    (mapc (lambda (p) (add-to-list 'evil-surround-pairs-alist p))
-          '((?l . narf/evil-surround-latex))))
-
+    (push '(?l . narf/evil-surround-latex) evil-surround-pairs-alist))
   (add-hook! emacs-lisp-mode
-    (setq evil-surround-pairs-alist
-          (cons '(?\` . ("`" . "'")) evil-surround-pairs-alist)))
-
+    (push '(?\` . ("`" . "'")) evil-surround-pairs-alist))
   (add-hook! python-mode
-    (setq evil-surround-pairs-alist
-          (cons '(?d . ("\"\"\"" . "\"\"\"")) evil-surround-pairs-alist)))
+    (push '((?d . ("\"\"\"" . "\"\"\"")))
+          evil-surround-pairs-alist))
 
   ;; Escaped surround characters
   (setq-default evil-surround-pairs-alist
@@ -395,7 +371,7 @@
 (use-package evil-escape
   :config
   (setq evil-escape-key-sequence "jk"
-        evil-escape-delay 0.2)
+        evil-escape-delay 0.25)
 
   ;; evil-escape causes noticable lag in linewise motions in visual mode, so only enable
   ;; it in insert mode. (I only need jk for insert mode anyway)

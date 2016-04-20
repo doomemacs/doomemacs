@@ -24,5 +24,19 @@
        (mapc (lambda (cmd) (narf/evil-ex-undefine-cmd (car cmd)))
              ',commands))))
 
+
+;; Shortcuts for the evil expression register
+;;;###autoload
+(defmacro $= (str &rest args)
+  `(calc-eval (format ,str ,@args)))
+
+;;;###autoload
+(defmacro $r (char)
+  `(evil-get-register ,char))
+
+;;;###autoload
+(defmacro $expand (path)
+  `(evil-ex-replace-special-filenames ,path))
+
 (provide 'macros-evil)
 ;;; macros-evil.el ends here
