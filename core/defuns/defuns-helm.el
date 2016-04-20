@@ -1,11 +1,6 @@
 ;;; defuns-helm.el
 ;; see ../core-helm.el
 
-;;;###autoload
-(defun narf|projectile-invalidate-cache-maybe ()
-  (when (narf/project-p)
-    (projectile-invalidate-cache nil)))
-
 ;;;###autoload (autoload 'narf:helm-recentf "defuns-helm" nil t)
 (evil-define-command narf:helm-recentf (&optional bang)
   "Ex-mode interface for `helm-recentf' and `helm-projectile-recentf'. If
@@ -77,25 +72,6 @@ buffers."
   (interactive)
   (let ((narf-helm-force-project-buffers (and (not all-p) (narf/project-p))))
     (helm-buffers-list)))
-
-;;;###autoload
-(defun narf/helm-descbinds-leader ()
-    (interactive)
-    (narf--helm-descbinds "^,\\ "))
-
-;;;###autoload
-(defun narf/helm-descbinds-localleader ()
-    (interactive)
-    (narf--helm-descbinds "^\\\\\\ "))
-
-(defun narf--helm-descbinds (&optional input buffer)
-  (let ((enable-recursive-minibuffers t))
-    (require 'helm-descbinds)
-    (helm :sources (helm-descbinds-sources (or buffer (current-buffer)))
-          :buffer "*helm-descbinds*"
-          :resume 'noresume
-          :allow-nest t
-          :input input)))
 
 (provide 'defuns-helm)
 ;;; defuns-helm.el ends here
