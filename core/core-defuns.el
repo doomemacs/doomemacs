@@ -259,16 +259,6 @@ Examples:
 
 
 ;;;; Global Defuns ;;;;;;;;;;;;;;;;;;;;;
-(defun narf-minibuffer-quit ()
-  "Abort recursive edit. In Delete Selection mode, if the mark is
-active, just deactivate it; then it takes a second \\[keyboard-quit]
-to abort the minibuffer."
-  (interactive)
-  (let (message-log-max)
-    (if (and delete-selection-mode transient-mark-mode mark-active)
-        (setq deactivate-mark t)
-      (abort-recursive-edit))))
-
 (defun narf-reload ()
   "Reload `load-path', in case you updated cask while emacs was open!"
   (interactive)

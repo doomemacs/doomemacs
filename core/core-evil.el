@@ -93,7 +93,7 @@
     (defadvice evil-force-normal-state (after evil-esc-quit activate)
       "Close popups, disable search highlights and quit the minibuffer if open."
       (when (minibuffer-window-active-p (minibuffer-window))
-        (narf-minibuffer-quit))
+        (abort-recursive-edit))
       (ignore-errors
         (evil-ex-nohighlight))
       ;; Close non-repl popups and clean up `narf-popup-windows'

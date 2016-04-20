@@ -403,7 +403,7 @@
              minibuffer-local-completion-map
              minibuffer-local-must-match-map
              minibuffer-local-isearch-map)
-        [escape] 'narf-minibuffer-quit
+        [escape] 'abort-recursive-edit
         "C-r" 'evil-paste-from-register)
 
       (:map read-expression-map "C-w" 'backward-kill-word)
