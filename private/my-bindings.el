@@ -406,11 +406,14 @@
         [escape] 'abort-recursive-edit
         "C-r" 'evil-paste-from-register)
 
-      (:map read-expression-map "C-w" 'backward-kill-word)
+      (:map (evil-ex-search-keymap read-expression-map)
+        "C-w" 'backward-kill-word
+        "C-u" 'backward-kill-sentence
+        "C-b" 'backward-word)
 
-      (:map view-mode-map "<escape>" 'View-quit-all)
+      (:map evil-ex-completion-map "C-a" 'move-beginning-of-line)
 
-      (:map evil-ex-completion-map "C-a" 'move-beginning-of-line))
+      (:map view-mode-map "<escape>" 'View-quit-all))
 
 ;; Common unicode characters
 (map! :i "A-o" (λ! (insert "ø"))
