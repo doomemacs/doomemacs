@@ -114,90 +114,81 @@
     ;; Hide keystroke display while isearch is active
     (add-hook! isearch-mode     (setq echo-keystrokes 0))
     (add-hook! isearch-mode-end (setq echo-keystrokes 0.02))
-    (let ((map evil-ex-search-keymap))
-      (define-key map "\C-w" 'backward-kill-word)
-      (define-key map "\C-u" 'evil-delete-whole-line))
 
     ;; Repeat motions with SPC/S-SPC
-    (defmacro narf-space-setup! (command next-func prev-func)
+    (defmacro define-repeat! (command next-func prev-func)
       `(defadvice ,command
            (before ,(intern (format "narf-space--%s" (symbol-name command))) activate)
          (define-key evil-motion-state-map (kbd "SPC") ',next-func)
          (define-key evil-motion-state-map (kbd "S-SPC") ',prev-func)))
 
     (after! evil-snipe
-      (narf-space-setup! evil-snipe-f evil-snipe-repeat evil-snipe-repeat-reverse)
-      (narf-space-setup! evil-snipe-F evil-snipe-repeat evil-snipe-repeat-reverse)
-      (narf-space-setup! evil-snipe-t evil-snipe-repeat evil-snipe-repeat-reverse)
-      (narf-space-setup! evil-snipe-T evil-snipe-repeat evil-snipe-repeat-reverse)
-      (narf-space-setup! evil-snipe-s evil-snipe-repeat evil-snipe-repeat-reverse)
-      (narf-space-setup! evil-snipe-S evil-snipe-repeat evil-snipe-repeat-reverse)
-      (narf-space-setup! evil-snipe-x evil-snipe-repeat evil-snipe-repeat-reverse)
-      (narf-space-setup! evil-snipe-X evil-snipe-repeat evil-snipe-repeat-reverse))
+      (define-repeat! evil-snipe-f evil-snipe-repeat evil-snipe-repeat-reverse)
+      (define-repeat! evil-snipe-F evil-snipe-repeat evil-snipe-repeat-reverse)
+      (define-repeat! evil-snipe-t evil-snipe-repeat evil-snipe-repeat-reverse)
+      (define-repeat! evil-snipe-T evil-snipe-repeat evil-snipe-repeat-reverse)
+      (define-repeat! evil-snipe-s evil-snipe-repeat evil-snipe-repeat-reverse)
+      (define-repeat! evil-snipe-S evil-snipe-repeat evil-snipe-repeat-reverse)
+      (define-repeat! evil-snipe-x evil-snipe-repeat evil-snipe-repeat-reverse)
+      (define-repeat! evil-snipe-X evil-snipe-repeat evil-snipe-repeat-reverse))
 
     (after! evil-visualstar
-      (narf-space-setup! evil-visualstar/begin-search-forward evil-ex-search-next evil-ex-search-previous)
-      (narf-space-setup! evil-visualstar/begin-search-backward evil-ex-search-previous evil-ex-search-next))
+      (define-repeat! evil-visualstar/begin-search-forward evil-ex-search-next evil-ex-search-previous)
+      (define-repeat! evil-visualstar/begin-search-backward evil-ex-search-previous evil-ex-search-next))
 
-    (narf-space-setup! evil-ex-search-next evil-ex-search-next evil-ex-search-previous)
-    (narf-space-setup! evil-ex-search-previous evil-ex-search-next evil-ex-search-previous)
+    (define-repeat! evil-ex-search-next evil-ex-search-next evil-ex-search-previous)
+    (define-repeat! evil-ex-search-previous evil-ex-search-next evil-ex-search-previous)
+    (define-repeat! evil-ex-search-forward evil-ex-search-next evil-ex-search-previous)
+    (define-repeat! evil-ex-search-backward evil-ex-search-next evil-ex-search-previous)
 
-    (narf-space-setup! evil-ex-search-forward evil-ex-search-next evil-ex-search-previous)
-    (narf-space-setup! evil-ex-search-backward evil-ex-search-next evil-ex-search-previous)
-
-    ;; A monkey patch to add several substitutions to evil-mode's ex commandline
-    ;; other than % and #...
-    ;;
-    ;;   % => full path to file (/project/src/thing.c)
-    ;;   # => alternative file path (/project/include/thing.h)
-    ;;   %:p => path to project root (/project/)
-    ;;   %:d => path to current directory (/project/src/)
-    ;;   %:e => the file's extension (c)
-    ;;   %:r => the full path without its extension (/project/src/thing)
-    ;;   %:t => the file's basename (thing.c)
-    ;;
-    ;; Requires projectile (https://github.com/bbatsov/projectile) for
-    ;; project-awareness, and f.el (https://github.com/rejeep/f.el) for file
-    ;; functions.
+    ;; A monkey patch to add all of vim's file ex substitution flags to evil-mode.
     (defun evil-ex-replace-special-filenames (file-name)
       "Replace special symbols in FILE-NAME."
-      (let ((current-fname (buffer-file-name))
-            (alternate-fname (and (other-buffer)
-                                  (buffer-file-name (other-buffer)))))
-        (setq file-name
-              ;; %:p:h => the project root (or current directory otherwise)
-              (replace-regexp-in-string "\\(^\\|[^\\\\]\\)\\(%:p\\)"
-                                        (narf/project-root) file-name t t 2))
-        (setq file-name
-              ;; %:p => the current directory
-              (replace-regexp-in-string "\\(^\\|[^\\\\]\\)\\(%:d\\)"
-                                        default-directory file-name t t 2))
-        (when current-fname
-          (setq file-name
-                ;; %:e => ext
-                (replace-regexp-in-string "\\(^\\|[^\\\\]\\)\\(%:e\\)"
-                                          (f-ext current-fname) file-name t t 2))
-          (setq file-name
-                ;; %:r => filename
-                (replace-regexp-in-string "\\(^\\|[^\\\\]\\)\\(%:r\\)"
-                                          (f-no-ext current-fname) file-name t t 2))
-          (setq file-name
-                ;; %:t => filename.ext
-                (replace-regexp-in-string "\\(^\\|[^\\\\]\\)\\(%:t\\)"
-                                          (f-base current-fname) file-name t t 2))
-          (setq file-name
-                ;; % => file path for current frame
-                (replace-regexp-in-string "\\(^\\|[^\\\\]\\)\\(%\\)"
-                                          current-fname file-name t t 2)))
-        (when alternate-fname
-          (setq file-name
-                ;; # => file path for alternative frame
-                (replace-regexp-in-string "\\(^\\|[^\\\\]\\)\\(#\\)"
-                                          alternate-fname file-name t t 2)))
-        (setq file-name
-              (replace-regexp-in-string "\\\\\\([#%]\\)"
-                                        "\\1" file-name t)))
-      file-name))
+      (let ((case-fold-search nil)
+            (regexp (concat "\\(?:^\\|[^\\\\]\\)"
+                            "\\([#%@]\\)"
+                            "\\(\\(?::\\(?:[phtreS~.]\\|g?s[^: $]+\\)\\)*\\)")))
+        (dolist (match (s-match-strings-all regexp file-name))
+          (let ((flags (split-string (caddr match) ":" t))
+                (path (file-relative-name
+                       (pcase (cadr match)
+                         ("@" (narf/project-root))
+                         ("%" (buffer-file-name))
+                         ("#" (and (other-buffer) (buffer-file-name (other-buffer)))))
+                       default-directory))
+                flag global)
+            (when path
+              (while flags
+                (setq flag (pop flags))
+                (when (string-suffix-p "\\" flag)
+                  (setq flag (concat flag (pop flags))))
+                (when (string-prefix-p "gs" flag)
+                  (setq global t flag (string-remove-prefix "g" flag)))
+                (setq path
+                      (or (pcase (substring flag 0 1)
+                            ("p" (expand-file-name path))
+                            ("~" (file-relative-name path "~"))
+                            ("." (file-relative-name path default-directory))
+                            ("h" (directory-file-name path))
+                            ("t" (file-name-nondirectory (directory-file-name path)))
+                            ("r" (file-name-sans-extension path))
+                            ("e" (file-name-extension path))
+                            ("s" (let* ((args (evil-delimited-arguments (substring flag 1) 2))
+                                        (pattern (evil-transform-vim-style-regexp (car args)))
+                                        (replace (cadr args)))
+                                   (replace-regexp-in-string
+                                    (if global pattern (concat "\\(" pattern "\\).*\\'"))
+                                    (evil-transform-vim-style-regexp replace) path t t
+                                    (unless global 1))))
+                            ("S" (shell-quote-argument path))
+                            (t path))
+                          "")))
+                (setq file-name
+                      (replace-regexp-in-string (format "\\(?:^\\|[^\\\\]\\)\\(%s\\)"
+                                                        (string-trim-left (car match)))
+                                                path file-name t t 1)))))
+          ;; Clean up
+          (setq file-name (replace-regexp-in-string regexp "\\1" file-name t)))))
 
   ;; Make :g[lobal] highlight matches
   ;; TODO Redo this mess

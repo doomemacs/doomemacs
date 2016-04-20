@@ -96,10 +96,10 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
 the buffer if it is being displayed in another window."
   (interactive)
   (let (new-dir)
-    (if (string-match-p "^\\*scratch\\*" (buffer-name))
+    (if (string-match-p "^\\*scratch\\*" (or (buffer-name) ""))
         (message "Already in the scratch buffer")
       (setq new-dir (narf/project-root))
-      (if (> (length (get-buffer-window-list (current-buffer) nil nil)) 1)
+      (if (> (length (get-buffer-window-list (current-buffer) nil t)) 1)
           (bury-buffer)
         (kill-this-buffer)))
     (if (narf/popup-p (selected-window))
