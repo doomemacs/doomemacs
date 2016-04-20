@@ -1,29 +1,22 @@
 ;;; module-sh.el --- description
 
-(use-package company-shell
-  :defer t
-  :config
-  (setq company-shell-delete-duplicates t))
-
 (associate! sh-mode :match "\\.\\(ba\\|z\\)sh$")
 (associate! sh-mode :match "/\\.?z\\(sh\\(/.*\\|$\\)\\|profile\\|login\\|logout\\|shrc\\|shenv\\)$")
 (associate! sh-mode :match "/\\.?bash\\(/.*\\|rc\\|_profile\\)$")
 (after! sh-script
-  (add-hook 'sh-mode-hook 'flycheck-mode)
-  (add-hook 'sh-mode-hook 'narf|sh-extra-font-lock-activate) ; Fontify variables in strings
-  (add-hook! sh-mode
-    (electric-indent-local-mode +1)
-    (setq narf-electric-indent-words '("else" "elif" "fi" "done")))
-
   (define-repl! sh-mode narf/inf-shell)
 
   (setq sh-indent-after-continuation 'always)
 
-  ;; [pedantry intensifies]
-  (defadvice sh-mode (after sh-mode-rename-modeline activate)
-    (setq mode-name "sh"))
+  (add-hook 'sh-mode-hook 'flycheck-mode)
+  (add-hook 'sh-mode-hook 'narf|sh-extra-font-lock-activate) ; Fontify variables in strings
+  (add-hook! sh-mode (setq mode-name "sh")) ; [pedantry intensifies]
+  (add-hook! sh-mode
+    (electric-indent-local-mode +1)
+    (setq narf-electric-indent-words '("else" "elif" "fi" "done")))
 
   (require 'company-shell)
+  (setq company-shell-delete-duplicates t)
 
   (sp-with-modes '(sh-mode)
     (sp-local-pair "case"  "" :when '(("SPC")) :post-handlers '((:add narf/sp-insert-yasnippet)) :actions '(insert))
