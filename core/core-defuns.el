@@ -96,7 +96,7 @@ Examples:
                (let ((hook-name (intern (format "narf--init-mode-%s" mode))))
                  `(progn
                     (defun ,hook-name ()
-                      (when (and ,(if match `(string-match-p ,match buffer-file-name) t)
+                      (when (and ,(if match `(if buffer-file-name (string-match-p ,match buffer-file-name)) t)
                                  (or ,(not files)
                                      (and (boundp ',mode)
                                           (not ,mode)
