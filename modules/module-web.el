@@ -35,7 +35,6 @@
           :n ":" 'helm-css-scss-multi))
 
   (after! web-beautify
-    (add-hook! scss-mode (setenv "jsbeautify_indent_size" "2"))
     (map! :map scss-mode-map :m "gQ" 'web-beautify-css))
 
   (after! emr
@@ -85,7 +84,8 @@
 (use-package web-beautify
   :commands (web-beautify-js web-beautify-css web-beautify-html)
   :init
-  (add-hook! (web-mode css-mode js2-mode) (setenv "jsbeautify_indent_size" (int-to-string tab-width)))
+  (add-hook! (web-mode css-mode scss-mode sass-mode less-css-mode js2-mode)
+    (setenv "jsbeautify_indent_size" (int-to-string tab-width)))
   (map! (:after web-mode :map web-mode-map :m "gQ" 'web-beautify-html)
         (:after css-mode :map css-mode-map :m "gQ" 'web-beautify-css)
         (:after js2-mode :map js2-mode-map :m "gQ" 'web-beautify-js)))
