@@ -83,7 +83,7 @@
         module-rust          ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
         module-sh            ; she sells Z-shells by the C XOR
         module-text          ; writing docs for people to ignore
-        module-web           ; for the 2.0'er
+        module-web           ; #big-bang::before { content: ""; }
 
         ;; Experimental
         ;;module-eshell        ; for inferior OSes *cough*windows
