@@ -77,6 +77,8 @@
   ;; Hide mode-line in helm windows
   (advice-add 'helm-display-mode-line :override 'narf*helm-hide-header)
 
+  (after! yasnippet (push 'helm-alive-p yas-dont-activate))
+
   (require 'helm-mode)
   (helm-mode 1))
 

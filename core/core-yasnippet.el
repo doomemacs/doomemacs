@@ -9,32 +9,33 @@
              yas-new-snippet
              yas-visit-snippet-file)
   :init
-  (add-hook! (text-mode prog-mode snippet-mode markdown-mode org-mode) 'yas-minor-mode-on)
-
   (setq yas-verbosity 0
         yas-indent-line 'auto
         yas-also-auto-indent-first-line t
         yas-wrap-around-region nil
         ;; Only load personal snippets
-        yas-snippet-dirs `(,@narf-snippet-dirs)
+        yas-snippet-dirs narf-snippet-dirs
         yas-prompt-functions '(yas-ido-prompt yas-no-prompt))
 
   (map! :i [(tab)] 'yas-expand
         :v "<backtab>" 'narf/yas-insert-snippet)
+
+  (add-hook! (text-mode prog-mode snippet-mode markdown-mode org-mode)
+    'yas-minor-mode-on)
 
   (defvar yas-minor-mode-map
     (let ((map (make-sparse-keymap)))
       (evil-define-key 'insert map [(tab)] 'yas-expand)
       (evil-define-key 'visual map (kbd "<backtab>") 'narf/yas-insert-snippet)
       map))
-  :config
-  (after! helm (add-to-list 'yas-dont-activate 'helm-alive-p))
-  (require 'autoinsert)
 
+  :config
   (yas-reload-all)
 
+  (associate! snippet-mode :match "emacs\\.d/private/\\(snippets\\|templates\\)/.+$")
+
   ;; Undo global maps
-  (map! :i [(tab)]     nil
+  (map! :i [(tab)] nil
         :v "<backtab>" nil)
 
   ;; keybinds
@@ -50,25 +51,25 @@
         [backspace]     'narf/yas-backspace
         "<delete>"      'narf/yas-delete)
 
-  ;; Once you're in normal mode, you're out
-  (add-hook! evil-normal-state-entry 'yas-abort-snippet)
-  ;; Strip out the shitespace before a line selection
-  (add-hook! yas-before-expand-snippet 'narf|yas-before-expand)
-  ;; Previous hook causes yas-selected-text to persist between expansions.
-  ;; This little hack fixes that.
-  (add-hook! yas-after-exit-snippet 'narf|yas-after-expand)
-
-  ;; Exit snippets on ESC in normal mode
-  (advice-add 'evil-force-normal-state :before 'yas-exit-all-snippets)
   ;; Prevents evil's visual-line from gobbling up the newline on the right due to an
   ;; off-by-one issue.
   (defadvice yas-expand-snippet (around yas-expand-snippet-visual-line activate)
     (when (narf/evil-visual-line-state-p)
       (ad-set-arg 2 (1- (ad-get-arg 2)))) ad-do-it)
 
+  ;; Once you're in normal mode, you're out
+  (add-hook 'evil-normal-state-entry-hook 'yas-abort-snippet)
+  ;; Strip out the shitespace before a line selection
+  (add-hook 'yas-before-expand-snippet-hook 'narf|yas-before-expand)
+  ;; Previous hook causes yas-selected-text to persist between expansions.
+  ;; This little hack fixes that.
+  (add-hook 'yas-after-exit-snippet-hook 'narf|yas-after-expand)
+
+  ;; Exit snippets on ESC in normal mode
+  (advice-add 'evil-force-normal-state :before 'yas-exit-all-snippets)
+
   ;; Fix an issue with smartparens' keybindings interfering with yasnippet keybindings.
-  (after! yasnippet
-    (advice-add 'yas-expand :before 'sp-remove-active-pair-overlay)))
+  (advice-add 'yas-expand :before 'sp-remove-active-pair-overlay))
 
 (use-package auto-yasnippet
   :commands (aya-create aya-expand aya-open-line aya-persist-snippet)
