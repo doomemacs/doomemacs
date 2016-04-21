@@ -1,6 +1,6 @@
 ;;; bootstrap.el
 
-(eval-when-compile (require 'cl))
+(eval-when-compile (require 'cl-lib))
 
 ;; Shut up byte-compiler!
 (defvar narf-current-theme)
@@ -47,20 +47,12 @@
 
 (defun narf (packages)
   "Bootstrap NARF emacs and initialize PACKAGES"
-  ;; stop package.el from being annoying. I rely solely on Cask.
-  (setq-default
-   package--init-file-ensured t
-   package-enable-at-startup nil
-   package-archives
-   '(("gnu" . "http://elpa.gnu.org/packages/")
-     ("melpa" . "http://melpa.org/packages/")
-     ("org" . "http://orgmode.org/elpa/"))
-   gc-cons-threshold 4388608
-   gc-cons-percentage 0.2)
+  (setq-default gc-cons-threshold 4388608
+                gc-cons-percentage 0.4)
 
   ;; prematurely optimize for faster startup
-  (let ((gc-cons-threshold  169715200)
-        (gc-cons-percentage 0.3)
+  (let ((gc-cons-threshold 339430400)
+        (gc-cons-percentage 0.6)
         file-name-handler-alist)
 
     ;; Scan various folders to populate the load-paths

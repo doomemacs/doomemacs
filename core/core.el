@@ -16,6 +16,14 @@
 ;;;
 
 (setq-default
+ ;; stop package.el from being annoying. I rely solely on Cask.
+ package--init-file-ensured t
+ package-enable-at-startup nil
+ package-archives
+ '(("gnu" . "http://elpa.gnu.org/packages/")
+   ("melpa" . "http://melpa.org/packages/")
+   ("org" . "http://orgmode.org/elpa/"))
+
  ad-redefinition-action            'accept      ; silence the advised function warnings
  compilation-always-kill            t           ; kill compilation process before spawning another
  compilation-ask-about-save         nil         ; save all buffers before compiling
