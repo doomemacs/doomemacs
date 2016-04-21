@@ -489,16 +489,10 @@ Supports both Emacs and Evil cursor conventions."
     (powerline-hud (if active 'spaceline-highlight-face 'region) line-face 1)
     :tight-right t)
 
-  (spaceline-define-segment *buffer-size
-    (powerline-buffer-size)
-    :tight-right t
-    :skip-alternate t)
-
   (defun narf-spaceline-init ()
     (spaceline-install
      ;; Left side
-     '(((*macro-recording *anzu *iedit *evil-substitute *flycheck)
-        :fallback *buffer-size)
+     '((*macro-recording *anzu *iedit *evil-substitute *flycheck)
        (*buffer-path *remote-host)
        *buffer-modified
        *vc
