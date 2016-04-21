@@ -1,6 +1,12 @@
 ;;; defuns-workgroup.el
 
 ;;;###autoload
+(defun narf|wg-cleanup ()
+  (narf/popup-close-all)
+  (when (and (featurep 'neotree) (neo-global--window-exists-p))
+    (neotree-hide)))
+
+;;;###autoload
 (defun narf/wg-projectile-switch-project ()
   (narf:workgroup-new nil (file-name-nondirectory (directory-file-name (narf/project-root))) t))
 
@@ -9,6 +15,7 @@
   (interactive "<!><a>")
   (unless (wg-workgroup-list)
     (wg-create-workgroup wg-first-wg-name))
+  (narf|wg-cleanup)
   (wg-save-session-as (if session-name
                           (concat wg-workgroup-directory session-name)
                         (if bang

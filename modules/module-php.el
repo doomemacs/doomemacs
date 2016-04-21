@@ -45,7 +45,6 @@
   (use-package php-refactor-mode
     :init (add-hook! php-mode '(turn-on-eldoc-mode emr-initialize php-refactor-mode))
     :config
-    (require 'emr)
     (mapc (lambda (x)
             (let ((command-name (car x))
                   (title (cadr x))

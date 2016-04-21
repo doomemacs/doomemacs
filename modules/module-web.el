@@ -80,11 +80,10 @@
 (use-package web-beautify
   :commands (web-beautify-js web-beautify-css web-beautify-html)
   :init
-  (add-hook! (web-mode css-mode) (setenv "jsbeautify_indent_size" tab-width))
-  (after! web-mode
-    (map! :map web-mode-map
-          (:after web-mode :m "gQ" 'web-beautify-html)
-          (:after css-mode :m "gQ" 'web-beautify-css))))
+  (add-hook! (web-mode css-mode js2-mode) (setenv "jsbeautify_indent_size" (int-to-string tab-width)))
+  (map! (:after web-mode :map web-mode-map :m "gQ" 'web-beautify-html)
+        (:after css-mode :map css-mode-map :m "gQ" 'web-beautify-css)
+        (:after js2-mode :map js2-mode-map :m "gQ" 'web-beautify-js)))
 
 (use-package emmet-mode
   :commands (emmet-mode)

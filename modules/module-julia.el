@@ -6,7 +6,7 @@
   :init
   (define-repl! julia-mode narf/julia-repl)
   (evil-set-initial-state 'inferior-julia-mode 'emacs)
-  (add-to-list 'editorconfig-indentation-alist '(julia-mode julia-indent-offset)))
+  (push '(julia-mode julia-indent-offset) editorconfig-indentation-alist))
 
 (provide 'module-julia)
 ;;; module-julia.el ends here

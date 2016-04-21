@@ -10,13 +10,13 @@
   (define-repl! haskell-mode switch-to-haskell)
   (add-hook! haskell-mode '(interactive-haskell-mode flycheck-mode))
   :config
-  (add-to-list 'completion-ignored-extensions ".hi"))
+  (push ".hi" completion-ignored-extensions))
 
 (use-package inf-haskell
   :commands (inferior-haskell-mode inf-haskell-mode switch-to-haskell)
   :init (evil-set-initial-state 'inferior-haskell-mode 'emacs)
   :config
-  (define-key inf-haskell-mode-map (kbd "ESC ESC") 'narf/popup-close))
+  (map! :map inf-haskell-mode-map "ESC ESC" 'narf/popup-close))
 
 (provide 'module-haskell)
 ;;; module-haskell.el ends here

@@ -191,6 +191,14 @@ enable multiple minor modes for the same regexp.")
 ;; Plugins
 ;;
 
+(use-package editorconfig
+  :config
+  ;; Don't affect lisp indentation (only `tab-width')
+  (setq editorconfig-indentation-alist
+        (delq (assq 'emacs-lisp-mode editorconfig-indentation-alist)
+              editorconfig-indentation-alist))
+  (editorconfig-mode +1))
+
 (use-package ace-window
   :commands ace-window
   :config (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)
@@ -202,12 +210,6 @@ enable multiple minor modes for the same regexp.")
   :config (setq avy-all-windows nil
                 avy-background t))
 
-(use-package editorconfig
-  :config
-  ;; Don't affect lisp indentation (just `tab-width')
-  (setq editorconfig-indentation-alist (delq (assq 'emacs-lisp-mode editorconfig-indentation-alist) editorconfig-indentation-alist))
-  (editorconfig-mode +1))
-
 (use-package emr
   :commands (emr-initialize emr-show-refactor-menu emr-declare-command)
   :config (define-key popup-menu-keymap [escape] 'keyboard-quit))
@@ -215,8 +217,7 @@ enable multiple minor modes for the same regexp.")
 (use-package expand-region
   :commands (er/expand-region er/contract-region er/mark-symbol er/mark-word))
 
-(use-package goto-last-change
-  :commands goto-last-change)
+(use-package goto-last-change :commands goto-last-change)
 
 (use-package hideshow
   :commands (hs-minor-mode hs-toggle-hiding hs-already-hidden-p)
@@ -300,13 +301,14 @@ enable multiple minor modes for the same regexp.")
 
 (use-package re-builder
   :commands (re-builder reb-mode-buffer-p)
-  :init (add-hook! reb-mode 'narf|reb-cleanup)
+  :init
+  (add-hook 'reb-mode-hook 'narf|reb-cleanup)
+  (evil-set-initial-state 'reb-mode 'insert)
   :config
   (setq reb-re-syntax 'string)
-  (evil-set-initial-state 'reb-mode 'insert)
-
-  (map! :map rxt-help-mode-map :n [escape] 'kill-buffer-and-window)
-  (map! :map reb-mode-map
+  (map! :map rxt-help-mode-map
+        :n [escape] 'kill-buffer-and-window
+        :map reb-mode-map
         :n "C-g"        'reb-quit
         :n [escape]     'reb-quit
         :n [backtab]    'reb-change-syntax))

@@ -4,13 +4,16 @@
   :mode "\\.js$"
   :interpreter "node"
   :init
+  (add-hook 'js2-mode-hook '(tern-mode emr-initialize))
   (define-repl! js2-mode nodejs-repl)
   (define-docset! js2-mode "js,javascript,nodejs,angularjs,express,jquery,mongoose")
+  (define-company-backend! js2-mode (tern))
 
   (add-hook! js2-mode
     (electric-indent-local-mode +1)
     (setq electric-indent-chars '(?} ?\) ?.)
           narf-electric-indent-words '("||" "&&")))
+
   :config
   (setq-default
    js2-skip-preprocessor-directives t
@@ -22,66 +25,55 @@
                         ;; Launchbar API
                         "LaunchBar" "File" "Action" "HTTP" "include" "Lib"))
 
+  (require 'tern)
+  (require 'company-tern)
+
   ;; [pedantry intensifies]
   (defadvice js2-mode (after js2-mode-rename-modeline activate)
     (setq mode-name "JS2"))
 
-  (map! :map js2-mode-map
-        (:localleader :nv ";" 'narf/append-semicolon))
+  (map! :map js2-mode-map (:localleader :nv ";" 'narf/append-semicolon))
 
-  (after! web-beautify
-    (add-hook! js2-mode (setenv "jsbeautify_indent_size" (int-to-string js2-basic-offset)))
-    (map! :map js2-mode-map :m "gQ" 'web-beautify-js))
-
-  (use-package tern
-    :commands tern-mode
-    :init (add-hook 'js2-mode-hook 'tern-mode)
-    :config
-    (require 'company-tern)
-    (define-company-backend! js2-mode (tern)))
-
-  (use-package js2-refactor
-    :init (add-hook 'js2-mode-hook 'emr-initialize)
-    :config
-    (require 'emr)
-    (mapc (lambda (x)
-            (let ((command-name (car x))
-                  (title (cadr x))
-                  (region-p (caddr x))
-                  predicate)
-              (setq predicate (cond ((eq region-p 'both) nil)
-                                    (t (if region-p
-                                           (lambda () (use-region-p))
-                                         (lambda () (not (use-region-p)))))))
-              (emr-declare-command
-                  (intern (format "js2r-%s" (symbol-name command-name)))
-                :title title :modes 'js2-mode :predicate predicate)))
-          '((extract-function           "extract function"           t)
-            (extract-method             "extract method"             t)
-            (introduce-parameter        "introduce parameter"        t)
-            (localize-parameter         "localize parameter"         nil)
-            (expand-object              "expand object"              nil)
-            (contract-object            "contract object"            nil)
-            (expand-function            "expand function"            nil)
-            (contract-function          "contract function"          nil)
-            (expand-array               "expand array"               nil)
-            (contract-array             "contract array"             nil)
-            (wrap-buffer-in-iife        "wrap buffer in ii function" nil)
-            (inject-global-in-iife      "inject global in ii function" t)
-            (add-to-globals-annotation  "add to globals annotation"  nil)
-            (extract-var                "extract variable"           t)
-            (inline-var                 "inline variable"            t)
-            (rename-var                 "rename variable"            nil)
-            (var-to-this                "var to this"                nil)
-            (arguments-to-object        "arguments to object"        nil)
-            (ternary-to-if              "ternary to if"              nil)
-            (split-var-declaration      "split var declaration"      nil)
-            (split-string               "split string"               nil)
-            (unwrap                     "unwrap"                     t)
-            (log-this                   "log this"                   'both)
-            (debug-this                 "debug this"                 'both)
-            (forward-slurp              "forward slurp"              nil)
-            (forward-barf               "forward barf"               nil)))))
+  (require 'js2-refactor)
+  (require 'emr)
+  (mapc (lambda (x)
+          (let ((command-name (car x))
+                (title (cadr x))
+                (region-p (caddr x))
+                predicate)
+            (setq predicate (cond ((eq region-p 'both) nil)
+                                  (t (if region-p
+                                         (lambda () (use-region-p))
+                                       (lambda () (not (use-region-p)))))))
+            (emr-declare-command
+             (intern (format "js2r-%s" (symbol-name command-name)))
+             :title title :modes 'js2-mode :predicate predicate)))
+        '((extract-function           "extract function"           t)
+          (extract-method             "extract method"             t)
+          (introduce-parameter        "introduce parameter"        t)
+          (localize-parameter         "localize parameter"         nil)
+          (expand-object              "expand object"              nil)
+          (contract-object            "contract object"            nil)
+          (expand-function            "expand function"            nil)
+          (contract-function          "contract function"          nil)
+          (expand-array               "expand array"               nil)
+          (contract-array             "contract array"             nil)
+          (wrap-buffer-in-iife        "wrap buffer in ii function" nil)
+          (inject-global-in-iife      "inject global in ii function" t)
+          (add-to-globals-annotation  "add to globals annotation"  nil)
+          (extract-var                "extract variable"           t)
+          (inline-var                 "inline variable"            t)
+          (rename-var                 "rename variable"            nil)
+          (var-to-this                "var to this"                nil)
+          (arguments-to-object        "arguments to object"        nil)
+          (ternary-to-if              "ternary to if"              nil)
+          (split-var-declaration      "split var declaration"      nil)
+          (split-string               "split string"               nil)
+          (unwrap                     "unwrap"                     t)
+          (log-this                   "log this"                   'both)
+          (debug-this                 "debug this"                 'both)
+          (forward-slurp              "forward slurp"              nil)
+          (forward-barf               "forward barf"               nil))))
 
 (use-package jsx-mode :mode "\\.jsx$")
 

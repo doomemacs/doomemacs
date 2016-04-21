@@ -2,10 +2,6 @@
 
 (use-package markdown-mode
   :mode ("\\.md$" "/README$")
-  :functions (markdown-use-region-p
-              markdown-unwrap-things-in-region
-              markdown-wrap-or-insert
-              markdown-unwrap-thing-at-point)
   :init
   (add-hook 'markdown-mode-hook 'turn-on-auto-fill)
   :config
