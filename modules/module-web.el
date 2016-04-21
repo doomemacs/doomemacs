@@ -6,7 +6,12 @@
 (add-hook! (sass-mode scss-mode less-css-mode)
   '(flycheck-mode narf|hl-line-off hs-minor-mode))
 
-(push '("css" "scss" "sass" "less") projectile-other-file-alist)
+(push '("css" "scss" "sass" "less" "styl") projectile-other-file-alist)
+
+(use-package haml-mode :mode "\\.haml$")
+
+(use-package stylus-mode :mode "\\.styl$"
+  :config (push '("styl" "css") projectile-other-file-alist))
 
 (use-package less-css-mode :mode "\\.less$"
   :config (push '("less" "css") projectile-other-file-alist))

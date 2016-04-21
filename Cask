@@ -223,6 +223,7 @@
 (depends-on "web-mode")
 (depends-on "emmet-mode")
 (depends-on "haml-mode")
+(depends-on "stylus-mode")
 (depends-on "less-css-mode")
 (depends-on "scss-mode")
 (depends-on "sass-mode")
