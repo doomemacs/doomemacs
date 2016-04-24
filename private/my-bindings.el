@@ -205,6 +205,7 @@
               (call-interactively 'find-file-at-point)
               (helm-mode 1))
 
+ :m  "gD" 'narf/find-def
  :n  "gp" 'narf/reselect-paste
  :n  "gc" 'evil-commentary
  :n  "gx" 'evil-exchange
