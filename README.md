@@ -10,7 +10,7 @@ strives to emulate vim as best it can, and surpass it in any way possible.
 
 ```
 brew install cask
-brew install emacs --with-imagemagick
+brew install emacs --with-cocoa --with-imagemagick
 git clone https://github.com/hlissner/.emacs.d ~/.emacs.d
 cd ~/.emacs.d
 make          # installs plugins via cask and generates autoloads
