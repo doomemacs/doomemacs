@@ -291,6 +291,7 @@
    `(web-mode-html-tag-face          ((,c (:foreground ,methods))))
    `(web-mode-html-tag-bracket-face  ((,c (:foreground ,methods))))
    `(web-mode-html-attr-name-face    ((,c (:foreground ,type))))
+   `(web-mode-html-entity-face       ((,c (:foreground ,cyan :italic t))))
    `(web-mode-block-control-face     ((,c (:foreground ,orange))))
    ;; `(web-mode-html-tag-bracket-face  ((,c (:foreground ,operators))))
 
