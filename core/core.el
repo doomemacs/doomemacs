@@ -172,11 +172,6 @@ gets killed.")
              async-wait
              async-inject-variables))
 
-(require (cond (IS-MAC      'core-os-osx)
-               (IS-LINUX    'core-os-linux)
-               (IS-WINDOWS  'core-os-win32)))
-
-
 ;;
 ;; We add this to `after-init-hook' to allow errors to stop this advice
 (add-hook! after-init

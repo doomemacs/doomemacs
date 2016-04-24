@@ -37,7 +37,6 @@
 
 ;;
 (use-package ido
-  :defines (flx-ido-mode ido-ubiquitous-debug-mode ido-context-switch-command ido-temp-list)
   :functions (ido-to-end)
   :init
   (setq ido-ignore-buffers
@@ -57,8 +56,8 @@
   (add-hook 'ido-setup-hook 'narf|ido-setup-home-keybind)
   :config
   (add-hook! ido-setup
-    (add-to-list 'ido-ignore-files "\\`.DS_Store$")
-    (add-to-list 'ido-ignore-files "Icon\\?$")
+    (push "\\`.DS_Store$" ido-ignore-files)
+    (push "Icon\\?$" ido-ignore-files)
     (advice-add 'ido-sort-mtime :override 'narf*ido-sort-mtime)
 
     (require 'ido-vertical-mode)
@@ -83,7 +82,6 @@
              neotree-dir
              neotree-find
              neo-global--window-exists-p)
-  :functions (neo-buffer--unlock-width neo-buffer--lock-width)
   :init
   (setq neo-create-file-auto-open t
         neo-auto-indent-point t
@@ -114,9 +112,6 @@
           "g"   'neotree-refresh
           "r"   'neotree-rename-node
           "R"   'neotree-change-root))
-
-  (after! projectile
-    (setq projectile-switch-project-action 'neotree-projectile-action))
 
   ;; Shorter pwd in neotree
   (defun narf*neotree-shorten-pwd (node)

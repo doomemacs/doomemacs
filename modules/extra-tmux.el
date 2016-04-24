@@ -1,10 +1,8 @@
 ;;; extra-tmux.el
 
 ;; This library offers:
-;;   + TODO An integration/abstraction layer to make it seem like tmux and emacs are one
-;;     program.
-;;   + TODO A way to manage tmux sessions and layouts from emacs; possibly trigger them
-;;     depending on current project.
+;;   + A way of communicating with a tmux instance
+;;   + TODO A way to manage tmuxifier from emacs
 
 ;;;###autoload
 (defun tmux (command &optional modes)

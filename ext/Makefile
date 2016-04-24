@@ -25,7 +25,7 @@ csharp:
 
 js:
 	@echo "Installing js2-mode dependencies"
-	npm -g install web-beautify trepanjs
+	npm -g install trepanjs tern
 
 sh:
 	@echo "Installing zsh/bash dependencies"

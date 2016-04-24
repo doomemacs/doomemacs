@@ -1,12 +1,12 @@
 ;;; defuns-spaceline.el
 
 ;;;###autoload
-(defmacro define-env-command! (mode command)
+(defmacro def-env-command! (mode command)
   "Define a COMMAND for MODE that will set `narf--env-command' when that mode is
 activated, which should return the version number of the current environment. It is used
 by `narf|spaceline-env-update' to display a version number in the modeline. For instance:
 
-  (define-env-command! ruby-mode \"ruby --version | cut -d' ' -f2\")
+  (def-env-command! ruby-mode \"ruby --version | cut -d' ' -f2\")
 
 This will display the ruby version in the modeline in ruby-mode buffers. It is cached the
 first time."

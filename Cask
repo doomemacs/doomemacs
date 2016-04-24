@@ -29,7 +29,6 @@
 (depends-on "visual-fill-column")
 (depends-on "highlight-indentation" :git "https://github.com/localredhead/Highlight-Indentation-for-Emacs")
 (depends-on "highlight-numbers")
-(depends-on "imenu-list")
 (depends-on "rainbow-delimiters")
 (depends-on "rainbow-mode")
 (depends-on "nlinum")
@@ -55,6 +54,8 @@
 (depends-on "evil-escape")
 
 ;; Editor --- core/core-editor.el
+(depends-on "dumb-jump")
+(depends-on "imenu-list")
 (depends-on "ace-window")
 (depends-on "avy")
 (depends-on "editorconfig")
@@ -65,11 +66,6 @@
 (depends-on "rotate-text" :git "https://github.com/debug-ito/rotate-text.el")
 (depends-on "smart-forward")
 (depends-on "smartparens")
-(depends-on "vimrc-mode")
-(depends-on "json-mode")
-(depends-on "toml-mode")
-(depends-on "yaml-mode")
-(depends-on "dockerfile-mode")
 
 ;; Completion --- core/core-company.el
 (depends-on "company")
@@ -110,11 +106,9 @@
 (depends-on "projectile")
 (depends-on "helm-describe-modes" :git "https://github.com/emacs-helm/helm-describe-modes")
 
-;; Code evaluation/REPLs -- core/core-eval.el
+;; Code evaluation/REPLs/debug -- core/core-eval.el
 (depends-on "quickrun")
 (depends-on "repl-toggle")
-
-;; Debugging -- core/core-debug.el
 (depends-on "realgud")
 
 ;; Sessions --- core/core-sessions.el
@@ -128,6 +122,7 @@
 (depends-on "company-sourcekit")
 
 ;; C/C++ -- modules/module-cc.el
+(depends-on "disaster")
 (depends-on "cmake-mode")
 (depends-on "glsl-mode")
 (depends-on "cuda-mode")
@@ -145,6 +140,14 @@
 (depends-on "csharp-mode")
 (depends-on "omnisharp")
 (depends-on "shader-mode")
+
+;; Data -- modules/module-data.el
+(depends-on "vimrc-mode")
+(depends-on "json-mode")
+(depends-on "toml-mode")
+(depends-on "yaml-mode")
+(depends-on "dockerfile-mode")
+(depends-on "company-ansible")
 
 ;; Golang -- modules/module-go.el
 (depends-on "go-mode")
@@ -186,6 +189,7 @@
 (depends-on "php-refactor-mode")
 (depends-on "php-boris")
 (depends-on "php-extras")
+(depends-on "ac-php")
 (depends-on "hack-mode" :git "https://github.com/beefsack/hack-mode")
 
 ;; Processing -- modules/module-processing.el
@@ -219,7 +223,6 @@
 (depends-on "markdown-toc")
 
 ;; Web -- modules/module-web.el
-(depends-on "web-beautify")
 (depends-on "web-mode")
 (depends-on "emmet-mode")
 (depends-on "haml-mode")

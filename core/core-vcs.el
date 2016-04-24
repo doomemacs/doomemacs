@@ -17,12 +17,6 @@
   :config
   (require 'git-gutter-fringe)
 
-  (defalias 'narf/vcs-next-hunk    'git-gutter:next-hunk)
-  (defalias 'narf/vcs-prev-hunk    'git-gutter:previous-hunk)
-  (defalias 'narf/vcs-show-hunk    'git-gutter:popup-hunk)
-  (defalias 'narf/vcs-stage-hunk   'git-gutter:stage-hunk)
-  (defalias 'narf/vcs-revert-hunk  'git-gutter:revert-hunk)
-
   (define-fringe-bitmap 'git-gutter-fr:added
     [240 240 240 240 240 240 240 240 240 240 240 240 240 240 240 240 240 240 240 240]
     nil nil 'center)
@@ -33,8 +27,16 @@
     [0 0 0 0 0 0 0 128 192 224 240 248]
     nil nil 'center)
 
+  ;; Refresh git-gutter on ESC in normal mode
   (advice-add 'evil-force-normal-state :after 'git-gutter)
-  (add-hook 'focus-in-hook 'git-gutter:update-all-windows))
+
+  (add-hook 'focus-in-hook 'git-gutter:update-all-windows)
+
+  (defalias 'narf/vcs-next-hunk    'git-gutter:next-hunk)
+  (defalias 'narf/vcs-prev-hunk    'git-gutter:previous-hunk)
+  (defalias 'narf/vcs-show-hunk    'git-gutter:popup-hunk)
+  (defalias 'narf/vcs-stage-hunk   'git-gutter:stage-hunk)
+  (defalias 'narf/vcs-revert-hunk  'git-gutter:revert-hunk))
 
 (after! vc-annotate
   (evil-set-initial-state 'vc-annotate-mode 'normal)

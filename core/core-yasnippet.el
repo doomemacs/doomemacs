@@ -1,4 +1,4 @@
-;;; core-yasnippet.el --- For the lazy typist
+;;; core-yasnippet.el
 
 (use-package yasnippet
   :mode ("emacs\\.d/private/\\(snippets\\|templates\\)/.+$" . snippet-mode)

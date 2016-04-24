@@ -8,7 +8,11 @@
 
 ;;;###autoload
 (defun narf/wg-projectile-switch-project ()
-  (narf:workgroup-new nil (file-name-nondirectory (directory-file-name (narf/project-root))) t))
+  (let ((project-root (narf/project-root)))
+    (narf:workgroup-new nil (file-name-nondirectory (directory-file-name project-root)) t)
+    (narf|update-scratch-buffer-cwd project-root)
+    (when (featurep 'neotree)
+      (neotree-projectile-action))))
 
 ;;;###autoload (autoload 'narf:save-session "defuns-workgroup" nil t)
 (evil-define-command narf:save-session (&optional bang session-name)

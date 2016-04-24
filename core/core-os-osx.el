@@ -49,7 +49,7 @@
 (use-package dash-at-point
   :commands (dash-at-point dash-at-point-with-docset dash-at-point-run-search dash-at-point-guess-docset)
   :init
-  (defmacro define-docset! (mode docset)
+  (defmacro def-docset! (mode docset)
     `(add-hook! ,mode (setq-local dash-at-point-docset ,docset))))
 
 (after! evil

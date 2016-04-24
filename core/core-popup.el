@@ -79,7 +79,7 @@
     (local-set-key [escape escape] 'narf/popup-close)
     (when (or (bound-and-true-p repl-toggle-mode)
               (derived-mode-p 'tabulated-list-mode)
-              (memq major-mode '(messages-buffer-mode flycheck-error-list-mode-hook)))
+              (memq major-mode '(messages-buffer-mode flycheck-error-list-mode-hook esup-mode)))
       (let ((map evil-normal-state-local-map))
         (define-key map [escape] 'narf/popup-close)
         (define-key map (kbd "ESC") 'narf/popup-close))))
@@ -89,11 +89,6 @@
   ;;
   ;; Hacks
   ;;
-
-  (after! ert
-    (map! :map ert-results-mode-map
-          [escape]   'quit-window
-          "<escape>" 'quit-window))
 
   (after! help-mode
     ;; So that help buffer links do not open in the help popup, we need to redefine these

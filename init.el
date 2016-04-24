@@ -46,56 +46,61 @@
 (defconst narf-default-theme 'narf-dark)
 (defconst narf-default-font (font-spec :family "Hack" :size 12))
 
-(narf '(core ; core/core.el
+(narf `(core ; core/core.el
+
+        ;; OS-specific config
+        ,(cond (IS-MAC      'core-os-osx)
+               (IS-LINUX    'core-os-linux)
+               (IS-WINDOWS  'core-os-win32))
 
         ;; The heart of NARF
-        core-popup           ; taming sudden and inevitable windows
-        core-ui              ; draw me like one of your French editors
-        core-evil            ; come to the dark side, we have cookies
-        core-editor          ; filling the editor-shaped hole in the emacs OS
-        core-completion      ; for the lazy typist
-        core-yasnippet       ; for the lazier typist
-        core-file-templates  ; for the laziest typist
-        core-flycheck        ; code police; tazing you for every semicolon you forget
-        core-project         ; whose project am I in?
-        core-vcs             ; remember remember, that commit in November
-        core-helm            ; a search engine for life and love
-        core-eval            ; run code, run.
-        core-debug           ; emacs as a universal debugger
-        core-sessions        ; cure Emacs alzheimers + tab emulation
+        core-popup          ; taming sudden and inevitable windows
+        core-ui             ; draw me like one of your French editors
+        core-evil           ; come to the dark side, we have cookies
+        core-editor         ; filling the editor-shaped hole in the emacs OS
+        core-company        ; for the lazy typist
+        core-yasnippet      ; for the lazier typist
+        core-file-templates ; for the laziest typist
+        core-flycheck       ; code police; tazing you for every semicolon you forget
+        core-project        ; whose project am I in?
+        core-vcs            ; remember remember, that commit in November
+        core-helm           ; a search engine for life and love
+        core-sessions       ; cure Emacs alzheimers + tab emulation
+        core-eval           ; run code, run; debugging too
 
         ;; Environments
-        module-apple         ; Applescript, Swift, Launchbar, iOS, wallet syphons, etc.
-        module-cc            ; C/C++/obj-c madness
-        module-crystal       ; ruby at the speed of c
-        module-csharp        ; unity, .NET, and mono shenanigans
-        module-go            ; the hipster dialect
-        module-haskell       ; a language that's lazier than I am
-        module-java          ; the poster child for carpal tunnel syndome
-        module-js            ; all(hope(abandon(ye(who(enter(here))))))
-        module-julia         ; MATLAB, but fast
-        module-lisp          ; drowning in parentheses
-        module-lua           ; one-based indices? one-based indices.
-        module-php           ; making php less painful to work with
-        module-processing    ; pretty prototypes
-        module-python        ; beautiful is better than ugly
-        module-ruby          ; 1.step do {|i| p "Ruby is #{i&1==0?'love':'life'}"}
-        module-rust          ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
-        module-sh            ; she sells Z-shells by the C XOR
-        module-text          ; writing docs for people to ignore
-        module-web           ; #big-bang::before { content: ""; }
+        module-apple        ; Applescript, Swift, Launchbar, iOS, wallet syphons, etc.
+        module-cc           ; C/C++/obj-c madness
+        module-crystal      ; ruby at the speed of c
+        module-csharp       ; unity, .NET, and mono shenanigans
+        module-data         ; config and data formats
+        module-go           ; the hipster dialect
+        module-haskell      ; a language that's lazier than I am
+        module-java         ; the poster child for carpal tunnel syndome
+        module-js           ; all(hope(abandon(ye(who(enter(here))))))
+        module-julia        ; MATLAB, but fast
+        module-lisp         ; drowning in parentheses
+        module-lua          ; one-based indices? one-based indices.
+        module-org          ; for organized fearless leader
+        module-php          ; making php less painful to work with
+        module-processing   ; pretty prototypes
+        module-python       ; beautiful is better than ugly
+        module-ruby         ; 1.step do {|i| p "Ruby is #{i&1==0?'love':'life'}"}
+        module-rust         ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
+        module-sh           ; she sells Z-shells by the C XOR
+        module-text         ; writing docs for people to ignore + latex
+        module-web          ; #big-bang::before { content: ""; }
 
         ;; Experimental
-        ;;module-eshell        ; for inferior OSes *cough*windows
-
-        ;; Organizational/Notes
-        ;;module-org           ; for organized fearless leader
-        ;;module-write         ; for writing papers and fiction in Emacs
+        ;;module-eshell       ; for inferior OSes *cough*windows
 
         ;; Extra libraries
-        extra-tmux          ; closing the rift between GUI & terminal
-        extra-demo          ; allow me to demonstrate...
         extra-ansible       ;
+        extra-demo          ; allow me to demonstrate...
+        extra-tags          ; if you liked it you should've generated a tag for it
+        extra-text          ; break in case of word documents from clients
+        extra-tmux          ; closing the rift between GUI & terminal
+        extra-write         ; for writing papers and fiction in Emacs
 
         ;; Customization
         my-bindings

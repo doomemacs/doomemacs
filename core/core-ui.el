@@ -100,7 +100,7 @@
                         ?∨ ?∧ ?¬))))
 
 ;; on by default in Emacs 25; I prefer to enable on a mode-by-mode basis, so disable it
-(when (and (featurep 'eldoc) (>= emacs-major-version 25))
+(when (and (> emacs-major-version 24) (featurep 'eldoc))
   (global-eldoc-mode -1))
 
 ;; line highlighting
@@ -118,8 +118,6 @@
 (add-hook 'evil-visual-state-exit-hook  'narf|hl-line-on)
 
 ;; Hide modeline in help windows
-(defun narf|hide-mode-line (&rest _)
-  (setq mode-line-format nil))
 (add-hook 'help-mode-hook 'narf|hide-mode-line)
 
 ;; Highlight TODO/FIXME/NOTE tags
@@ -151,14 +149,14 @@
 (use-package highlight-indentation
   :commands (highlight-indentation-mode highlight-indentation-current-column-mode)
   :init
-  (add-hook! (web-mode nxml-mode yaml-mode json-mode scss-mode
+  (add-hook! (nxml-mode yaml-mode json-mode scss-mode
               c-mode-common ruby-mode python-mode lua-mode)
     'highlight-indentation-mode)
 
-  (defun narf/hl-indent-guess-offset ()
-    (when (featurep 'editorconfig)
-      (string-to-int (gethash 'indent_size (editorconfig-get-properties)))))
-  (advice-add 'highlight-indentation-guess-offset :override 'narf/hl-indent-guess-offset)
+  (after! editorconfig
+    (defun narf/hl-indent-guess-offset ()
+      (string-to-int (gethash 'indent_size (editorconfig-get-properties))))
+    (advice-add 'highlight-indentation-guess-offset :override 'narf/hl-indent-guess-offset))
 
   ;; A long-winded method for ensuring whitespace is maintained (so that
   ;; highlight-indentation-mode can display them consistently)
@@ -172,19 +170,6 @@
       (remove-hook 'before-save-hook 'delete-trailing-whitespace t))))
 
 (use-package highlight-numbers :commands (highlight-numbers-mode))
-
-(use-package imenu-list
-  :commands (imenu-list-minor-mode)
-  :config
-  (setq imenu-list-mode-line-format nil
-        imenu-list-position 'right
-        imenu-list-size 35)
-
-  (map! :map imenu-list-major-mode-map
-        :n [escape] 'narf/imenu-list-quit
-        :n "RET" 'imenu-list-goto-entry
-        :n "SPC" 'imenu-list-display-entry
-        :n [tab] 'hs-toggle-hiding))
 
 (use-package rainbow-delimiters
   :commands rainbow-delimiters-mode
@@ -335,7 +320,7 @@
 
   (spaceline-define-segment *env-version
     "Shows the environment version of a mode (e.g. pyenv for python or rbenv for ruby).
-See `define-env-command!' to define one for a mode."
+See `def-env-command!' to define one for a mode."
     narf--env-version
     :when narf--env-version
     :face other-face
@@ -358,7 +343,6 @@ anzu to be enabled."
     :skip-alternate t
     :tight t)
 
-  ;; TODO mode-line-iedit-face default face
   (spaceline-define-segment *iedit
     "Show the number of matches and what match you're on (or after). Requires iedit."
     (let ((this-oc (iedit-find-current-occurrence-overlay))

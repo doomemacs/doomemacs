@@ -71,6 +71,10 @@
       recentf-auto-cleanup 600)
 (recentf-mode 1)
 
+;; Let editorconfig handle global whitespace settings
+(require 'editorconfig)
+(editorconfig-mode +1)
+
 
 ;;
 ;; Automatic minor modes
@@ -105,12 +109,9 @@ enable multiple minor modes for the same regexp.")
 ;; Modes 'n hooks
 ;;
 
-(associate! emacs-lisp-mode     :match "\\(/Cask\\|\\.\\(el\\|gz\\)\\)$")
 (associate! makefile-gmake-mode :match "/Makefile$")
-(associate! nxml-mode           :match "\\.plist$")
-(associate! conf-mode           :match "/\\.?editorconfig$")
 
-(add-hook! special-mode   (setq truncate-lines nil))
+(add-hook! special-mode (setq truncate-lines nil))
 (add-hook! change-major-mode-hook
   (when indent-tabs-mode (whitespace-mode +1)))
 
@@ -135,11 +136,11 @@ enable multiple minor modes for the same regexp.")
     (visual-line-mode)))
 
 ;; Smarter electric-indent
-(electric-indent-mode -1)      ; on by default
+(electric-indent-mode -1) ; on by default
+(defvar narf-electric-indent-p nil)
 (defvar narf-electric-indent-words '())
 (make-variable-buffer-local 'narf-electric-indent-words)
 (setq electric-indent-chars '(?\n ?\^?))
-(defvar narf-electric-indent-p nil)
 (push (lambda (c)
         (when (eolp)
           (save-excursion
@@ -163,41 +164,8 @@ enable multiple minor modes for the same regexp.")
 
 
 ;;
-;; Extra modes
-;;
-
-(use-package vimrc-mode :mode ("/\\.?g?vimrc$" "\\.vim$" "/\\.vim/rc/.+$"))
-;; Data formats
-(use-package toml-mode :mode "\\.toml$")
-
-(use-package yaml-mode :mode "\\.ya?ml$"
-  :config
-  (add-hook! yaml-mode (setq electric-indent-chars '(?\n ?: ?-))))
-
-(use-package json-mode :mode "\\.js\\(on\\|hintrc\\)$"
-  :config
-  (add-hook! json-mode (setq electric-indent-chars '(?\n ?: ?}))))
-
-(add-hook! (yaml-mode json-mode) 'electric-indent-local-mode)
-
-;; Configuration formats
-(use-package dockerfile-mode :mode "/Dockerfile$"
-  :config
-  (define-docset! dockerfile-mode "docker")
-  (define-builder! dockerfile-mode dockerfile-build-buffer "Dockerfile"))
-
-
-;;
 ;; Plugins
 ;;
-
-(use-package editorconfig
-  :config
-  ;; Don't affect lisp indentation (only `tab-width')
-  (setq editorconfig-indentation-alist
-        (delq (assq 'emacs-lisp-mode editorconfig-indentation-alist)
-              editorconfig-indentation-alist))
-  (editorconfig-mode +1))
 
 (use-package ace-window
   :commands ace-window
@@ -217,7 +185,17 @@ enable multiple minor modes for the same regexp.")
 (use-package expand-region
   :commands (er/expand-region er/contract-region er/mark-symbol er/mark-word))
 
+(use-package dumb-jump
+  :commands (dumb-jump-go dumb-jump-quick-look dumb-jump-back)
+  :config
+  (setq dumb-jump-default-project narf-emacs-dir)
+  (dumb-jump-mode +1))
+
 (use-package goto-last-change :commands goto-last-change)
+
+(use-package help-fns+ ; Improved help commands
+  :commands (describe-buffer describe-command describe-file
+             describe-keymap describe-option describe-option-of-type))
 
 (use-package hideshow
   :commands (hs-minor-mode hs-toggle-hiding hs-already-hidden-p)
@@ -247,6 +225,33 @@ enable multiple minor modes for the same regexp.")
               (overlay-put ov 'before-string marker-string)
               (overlay-put ov 'display display-string))))))
 
+(use-package imenu-list
+  :commands imenu-list-minor-mode
+  :config
+  (setq imenu-list-mode-line-format nil
+        imenu-list-position 'right
+        imenu-list-size 32)
+
+  (map! :map imenu-list-major-mode-map
+        :n [escape] 'narf/imenu-list-quit
+        :n "RET" 'imenu-list-goto-entry
+        :n "SPC" 'imenu-list-display-entry
+        :n [tab] 'hs-toggle-hiding))
+
+(use-package re-builder
+  :commands (re-builder reb-mode-buffer-p)
+  :init
+  (add-hook 'reb-mode-hook 'narf|reb-cleanup)
+  (evil-set-initial-state 'reb-mode 'insert)
+  :config
+  (setq reb-re-syntax 'string)
+  (map! :map rxt-help-mode-map
+        :n [escape] 'kill-buffer-and-window
+        :map reb-mode-map
+        :n "C-g"        'reb-quit
+        :n [escape]     'reb-quit
+        :n [backtab]    'reb-change-syntax))
+
 (use-package rotate-text
   :commands (rotate-text rotate-text-backward)
   :init
@@ -259,7 +264,7 @@ enable multiple minor modes for the same regexp.")
             ("advice-add" "advice-remove")
             ("add-hook" "add-hook!" "remove-hook"))))
   :config
-  (add-to-list 'rotate-text-words '("true" "false")))
+  (push '("true" "false") rotate-text-words))
 
 (use-package smart-forward :commands (smart-up smart-down smart-left smart-right))
 
@@ -294,24 +299,6 @@ enable multiple minor modes for the same regexp.")
   ;; Markup languages
   (sp-with-modes '(xml-mode nxml-mode php-mode)
     (sp-local-pair "<!--" "-->"   :post-handlers '(("| " "SPC")))))
-
-(use-package help-fns+ ; Improved help commands
-  :commands (describe-buffer describe-command describe-file
-             describe-keymap describe-option describe-option-of-type))
-
-(use-package re-builder
-  :commands (re-builder reb-mode-buffer-p)
-  :init
-  (add-hook 'reb-mode-hook 'narf|reb-cleanup)
-  (evil-set-initial-state 'reb-mode 'insert)
-  :config
-  (setq reb-re-syntax 'string)
-  (map! :map rxt-help-mode-map
-        :n [escape] 'kill-buffer-and-window
-        :map reb-mode-map
-        :n "C-g"        'reb-quit
-        :n [escape]     'reb-quit
-        :n [backtab]    'reb-change-syntax))
 
 (provide 'core-editor)
 ;;; core-editor.el ends here

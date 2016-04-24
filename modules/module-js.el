@@ -4,15 +4,11 @@
   :mode "\\.js$"
   :interpreter "node"
   :init
-  (add-hook 'js2-mode-hook '(tern-mode emr-initialize))
-  (define-repl! js2-mode nodejs-repl)
-  (define-docset! js2-mode "js,javascript,nodejs,angularjs,express,jquery,mongoose")
-  (define-company-backend! js2-mode (tern))
-
-  (add-hook! js2-mode
-    (electric-indent-local-mode +1)
-    (setq electric-indent-chars '(?} ?\) ?.)
-          narf-electric-indent-words '("||" "&&")))
+  (def-repl! js2-mode nodejs-repl)
+  (def-docset! js2-mode "js,javascript,nodejs,angularjs,express,jquery,mongoose")
+  (def-company-backend! js2-mode (tern))
+  (def-electric! js2-mode :chars (?\} ?\) ?.) :words ("||" "&&"))
+  (add-hook! js2-mode '(tern-mode emr-initialize))
 
   :config
   (setq-default
@@ -25,17 +21,21 @@
                         ;; Launchbar API
                         "LaunchBar" "File" "Action" "HTTP" "include" "Lib"))
 
-  (require 'tern)
-  (require 'company-tern)
-
   ;; [pedantry intensifies]
-  (defadvice js2-mode (after js2-mode-rename-modeline activate)
-    (setq mode-name "JS2"))
+  (add-hook! js2-mode (setq mode-name "JS2"))
 
-  (map! :map js2-mode-map (:localleader :nv ";" 'narf/append-semicolon))
+  (map! :map js2-mode-map (:localleader :nv ";" 'narf/append-semicolon)))
 
-  (require 'js2-refactor)
-  (require 'emr)
+(use-package tern
+  :after js2-mode
+  :commands (tern-mode))
+
+(use-package company-tern
+  :after tern)
+
+(use-package js2-refactor
+  :after js2-mode
+  :config
   (mapc (lambda (x)
           (let ((command-name (car x))
                 (title (cadr x))
@@ -46,8 +46,8 @@
                                          (lambda () (use-region-p))
                                        (lambda () (not (use-region-p)))))))
             (emr-declare-command
-             (intern (format "js2r-%s" (symbol-name command-name)))
-             :title title :modes 'js2-mode :predicate predicate)))
+                (intern (format "js2r-%s" (symbol-name command-name)))
+              :title title :modes 'js2-mode :predicate predicate)))
         '((extract-function           "extract function"           t)
           (extract-method             "extract method"             t)
           (introduce-parameter        "introduce parameter"        t)
@@ -75,6 +75,9 @@
           (forward-slurp              "forward slurp"              nil)
           (forward-barf               "forward barf"               nil))))
 
+(use-package nodejs-repl :commands (nodejs-repl))
+
+;;
 (use-package jsx-mode :mode "\\.jsx$")
 
 (use-package unityjs-mode
@@ -85,25 +88,21 @@
   :mode "\\.coffee$"
   :config (setq-default coffee-indent-like-python-mode t))
 
-(use-package nodejs-repl
-    :commands (nodejs-repl)
-    :config (evil-set-initial-state 'nodejs-repl-mode 'emacs))
-
 ;;
-(define-project-type! nodejs "node"
+(def-project-type! nodejs "node"
   :modes (web-mode js-mode js2-mode json-mode coffee-mode scss-mode sass-mode less-css-mode)
   :files ("package.json"))
 
-(define-project-type! angularjs "angular"
+(def-project-type! angularjs "angular"
   :modes (web-mode js-mode js2-mode json-mode coffee-mode scss-mode sass-mode less-css-mode)
   :files ("public/libraries/angular/"))
 
-(define-project-type! electron "electron"
+(def-project-type! electron "electron"
   :modes (nodejs-project-mode)
   :files ("app/index.html" "app/main.js"))
 ;; TODO electron-compile support
 
-(define-project-type! expressjs "express"
+(def-project-type! expressjs "express"
   :modes (nodejs-project-mode)
   :files ("node_modules/express/"))
 

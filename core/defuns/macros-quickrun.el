@@ -1,7 +1,7 @@
 ;;; macros-quickrun.el
 
 ;;;###autoload
-(defmacro define-builder! (mode command &optional build-file)
+(defmacro def-builder! (mode command &optional build-file)
   "Register major/minor MODE with build COMMAND. If FILES are provided, do an
 additional check to make sure they exist in the project root."
   `(add-hook! ,mode
@@ -10,7 +10,7 @@ additional check to make sure they exist in the project root."
        (setq narf--build-command '(,command . ,build-file)))))
 
 ;;;###autoload
-(defmacro define-repl! (mode command)
+(defmacro def-repl! (mode command)
   `(push '(,mode . ,command) rtog/mode-repl-alist))
 
 (provide 'macros-quickrun)

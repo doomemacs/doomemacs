@@ -4,7 +4,7 @@
   (interactive)
   (error "Not yet implemented"))
 
-(defun define-docset! (&rest _)
+(defun def-docset! (&rest _)
   (message "No docset function defined!"))
 
 (provide 'core-os-linux)

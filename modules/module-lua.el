@@ -4,12 +4,11 @@
   :mode "\\.lua$"
   :interpreter "lua"
   :init
-  (define-repl! lua-mode narf/inf-lua)
-  (define-company-backend! lua-mode (yasnippet))
+  (def-company-backend! lua-mode (yasnippet))
+  (def-electric! lua-mode :words ("else" "end"))
+  (def-repl! lua-mode narf/inf-lua)
   (add-hook 'lua-mode-hook 'flycheck-mode)
-  (add-hook! lua-mode
-    (electric-indent-local-mode +1)
-    (setq narf-electric-indent-words '("else" "end")))
+
   :config
   (sp-with-modes '(lua-mode)
     ;; disable defaults
@@ -28,12 +27,12 @@
     (sp-local-pair "function " " end" :unless '(sp-point-after-bol-p))))
 
 ;;
-(define-project-type! love "♥"
+(def-project-type! love "♥"
   :modes (lua-mode markdown-mode json-mode)
   :files ("main.lua" "conf.lua")
   :build ("open -a love.app '%s'" "main.lua"))
 
-(define-project-type! hammerspoon "hammer"
+(def-project-type! hammerspoon "hammer"
   :modes (lua-mode markdown-mode)
   :match "/\\.?hammerspoon/.+\\.lua$"
   :build "open hammerspoon://reload")

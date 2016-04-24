@@ -21,10 +21,6 @@ determine if a directory is a project."
     found-p))
 
 ;;;###autoload
-(defun narf/project-name (&optional root)
-  (file-name-nondirectory (directory-file-name (or root (narf/project-root)))))
-
-;;;###autoload
 (defalias 'narf/project-p 'projectile-project-p)
 
 (provide 'defuns-project)

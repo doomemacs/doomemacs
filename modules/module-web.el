@@ -1,8 +1,8 @@
 ;;; module-web.el
 
-(define-company-backend! sass-mode (css))
-(define-company-backend! scss-mode (css))
-(define-docset! scss-mode "sass,bourbon")
+(def-company-backend! sass-mode (css))
+(def-company-backend! scss-mode (css))
+(def-docset! scss-mode "sass,bourbon")
 (add-hook! (sass-mode scss-mode less-css-mode)
   '(flycheck-mode narf|hl-line-off hs-minor-mode))
 
@@ -34,9 +34,6 @@
           :n ";" 'helm-css-scss
           :n ":" 'helm-css-scss-multi))
 
-  (after! web-beautify
-    (map! :map scss-mode-map :m "gQ" 'web-beautify-css))
-
   (after! emr
     (emr-declare-command 'narf/scss-toggle-inline-or-block
       :title "toggle inline/block"
@@ -44,21 +41,29 @@
       :predicate (lambda () (not (use-region-p))))))
 
 (use-package jaded-mode
+  :load-path "/Volumes/hlissner/Dropbox/work/plugins/jaded-mode"
   :mode "\\.jade$"
   :config
+  (push '("jade" "html") projectile-other-file-alist)
   (map! :map jaded-mode-map
         :i [tab] 'narf/dumb-indent
         :i [backtab] 'narf/dumb-dedent))
 
 (use-package web-mode
-  :mode ("\\.\\(p\\)?htm\\(l\\)?$"
+  :mode ("\\.p?html?$"
          "\\.\\(tpl\\|blade\\)\\(\\.php\\)?$"
          "\\.erb$"
+         "\\.as[cp]x$"
+         "\\.mustache$"
          "wp-content/themes/.+/.+\\.php$")
   :init
   (add-hook 'web-mode-hook 'turn-off-smartparens-mode)
 
   :config
+  (setq web-mode-enable-html-entities-fontification t
+        web-mode-enable-current-column-highlight t)
+  (push '("html" "jade") projectile-other-file-alist)
+
   (map! :map web-mode-map :i "SPC" 'self-insert-command)
 
   (after! nlinum
@@ -67,11 +72,10 @@
 
   (map! :map web-mode-map
         "M-/" 'web-mode-comment-or-uncomment
+        :n  "M-r" 'narf/web-refresh-browser
 
         :n  "za" 'web-mode-fold-or-unfold
         (:localleader :n "t" 'web-mode-element-rename)
-
-        :n  "M-r" 'narf/web-refresh-browser
 
         :nv "]a" 'web-mode-attribute-next
         :nv "[a" 'web-mode-attribute-previous
@@ -81,15 +85,6 @@
         :nv "[T" 'web-mode-element-parent))
 
 ;;
-(use-package web-beautify
-  :commands (web-beautify-js web-beautify-css web-beautify-html)
-  :init
-  (add-hook! (web-mode css-mode scss-mode sass-mode less-css-mode js2-mode)
-    (setenv "jsbeautify_indent_size" (int-to-string tab-width)))
-  (map! (:after web-mode :map web-mode-map :m "gQ" 'web-beautify-html)
-        (:after css-mode :map css-mode-map :m "gQ" 'web-beautify-css)
-        (:after js2-mode :map js2-mode-map :m "gQ" 'web-beautify-js)))
-
 (use-package emmet-mode
   :commands (emmet-mode)
   :init
@@ -103,7 +98,7 @@
         :i "M-E" 'emmet-expand-line))
 
 ;;
-(define-project-type! jekyll ":{"
+(def-project-type! jekyll ":{"
   :modes (web-mode scss-mode html-mode markdown-mode yaml-mode)
   :match "/\\(\\(css\\|_\\(layouts\\|posts\\|sass\\)\\)/.+\\|.+.html\\)$"
   :files ("config.yml" "_layouts/")
@@ -111,7 +106,7 @@
     (when (eq major-mode 'web-mode)
       (web-mode-set-engine "django"))))
 
-(define-project-type! wordpress "wp"
+(def-project-type! wordpress "wp"
   :modes (php-mode web-mode css-mode scss-mode sass-mode)
   :match "/wp-\\(\\(content\\|admin\\|includes\\)/\\)?.+$"
   :files ("wp-config.php" "wp-content/"))

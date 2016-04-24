@@ -1,6 +1,7 @@
 ;;; defuns-popups.el
 
-(defun narf--popup-remove (window)
+;;;###autoload
+(defun narf/popup-remove (window)
   (setq narf-popup-windows (delete window narf-popup-windows)))
 
 ;;;###autoload
@@ -8,7 +9,7 @@
   "Whether WINDOW is a shackle popup window or not."
   (and narf-popup-windows
        (-any? (lambda (w)
-                (if (window-live-p w) t (narf--popup-remove w) nil))
+                (if (window-live-p w) t (narf/popup-remove w) nil))
               narf-popup-windows)
        (if window
            (-any? (lambda (w) (eq window w)) narf-popup-windows)
@@ -39,7 +40,7 @@
           ((eq major-mode 'messages-buffer-mode)
            (bury-buffer)
            (setq dont-kill t)))
-    (narf--popup-remove window)
+    (narf/popup-remove window)
     (unless dont-kill
       (let ((kill-buffer-query-functions (delq 'process-kill-buffer-query-function kill-buffer-query-functions)))
         (kill-buffer (window-buffer window))))

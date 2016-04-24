@@ -13,39 +13,38 @@
 
   ;; Disable highlights on insert-mode
   (add-hook 'evil-insert-state-entry-hook 'evil-ex-nohighlight)
+  (setq evil-magic t
+        evil-want-C-u-scroll t
+        evil-ex-visual-char-range t  ; column range for ex commands
+        evil-want-visual-char-semi-exclusive t
+        evil-ex-search-vim-style-regexp t
+        evil-ex-interactive-search-highlight 'selected-window
+        evil-echo-state nil
+        evil-ex-substitute-global t
+        evil-insert-skip-empty-lines t
+
+        evil-normal-state-tag    "N"
+        evil-insert-state-tag    "I"
+        evil-visual-state-tag    "V"
+        evil-emacs-state-tag     "E"
+        evil-operator-state-tag  "O"
+        evil-motion-state-tag    "M"
+        evil-replace-state-tag   "R"
+
+        ;; Color-coded state cursors
+        evil-default-cursor "orange"
+        evil-normal-state-cursor 'box
+        evil-emacs-state-cursor  '("cyan" box)
+        evil-insert-state-cursor 'bar
+        evil-visual-state-cursor 'hollow
+
+        ;; NOTE: a bug in emacs 25 breaks undoing in evil. See
+        ;; https://bitbucket.org/lyro/evil/issues/594/undo-doesnt-behave-like-vim
+        evil-want-fine-undo (if (> emacs-major-version 24) 'fine))
+
   :config
-  (setq
-   evil-magic t
-   evil-want-C-u-scroll t       ; enable C-u for scrolling
-   evil-ex-visual-char-range t  ; column range for ex commands
-   evil-want-visual-char-semi-exclusive t
-   evil-ex-search-vim-style-regexp t
-   evil-ex-interactive-search-highlight 'selected-window
-   evil-echo-state nil
-   evil-ex-substitute-global t
-   evil-insert-skip-empty-lines t
-   evil-search-module 'evil-search
-
-   evil-normal-state-tag    "N"
-   evil-insert-state-tag    "I"
-   evil-visual-state-tag    "V"
-   evil-emacs-state-tag     "E"
-   evil-operator-state-tag  "O"
-   evil-motion-state-tag    "M"
-   evil-replace-state-tag   "R"
-
-   ;; Color-coded state cursors
-   evil-default-cursor "orange"
-   evil-normal-state-cursor 'box
-   evil-emacs-state-cursor  '("cyan" box)
-   evil-insert-state-cursor 'bar
-   evil-visual-state-cursor 'hollow)
-
-  ;; NOTE: a bug in emacs 25 breaks undoing in evil. See
-  ;; https://bitbucket.org/lyro/evil/issues/594/undo-doesnt-behave-like-vim
-  (setq-default evil-want-fine-undo (if (> emacs-major-version 24) 'fine 'no))
-
   (evil-mode 1)
+  (evil-select-search-module 'evil-search-module 'evil-search)
 
   (map! :map evil-command-window-mode-map :n [escape] 'kill-buffer-and-window)
 
@@ -56,6 +55,7 @@
                       (debugger-mode          . normal)
                       (image-mode             . normal)
                       (doc-view-mode          . normal)
+                      (tabulated-list-mode    . emacs)
                       (profile-report-mode    . emacs)
                       (Info-mode              . emacs)
                       (view-mode              . emacs)
@@ -82,7 +82,7 @@
                     (with-selected-window w
                       (unless (derived-mode-p 'comint-mode)
                         (narf/popup-close w)))
-                  (narf--popup-remove w)))
+                  (narf/popup-remove w)))
               narf-popup-windows)))
 
     ;; Fix harmless (yet disruptive) error reporting w/ hidden buffers caused by
@@ -96,30 +96,30 @@
     (add-hook! isearch-mode-end (setq echo-keystrokes 0.02))
 
     ;; Repeat motions with SPC/S-SPC
-    (defmacro define-repeat! (command next-func prev-func)
+    (defmacro def-repeat! (command next-func prev-func)
       `(defadvice ,command
            (before ,(intern (format "narf-space--%s" (symbol-name command))) activate)
          (define-key evil-motion-state-map (kbd "SPC") ',next-func)
          (define-key evil-motion-state-map (kbd "S-SPC") ',prev-func)))
 
     (after! evil-snipe
-      (define-repeat! evil-snipe-f evil-snipe-repeat evil-snipe-repeat-reverse)
-      (define-repeat! evil-snipe-F evil-snipe-repeat evil-snipe-repeat-reverse)
-      (define-repeat! evil-snipe-t evil-snipe-repeat evil-snipe-repeat-reverse)
-      (define-repeat! evil-snipe-T evil-snipe-repeat evil-snipe-repeat-reverse)
-      (define-repeat! evil-snipe-s evil-snipe-repeat evil-snipe-repeat-reverse)
-      (define-repeat! evil-snipe-S evil-snipe-repeat evil-snipe-repeat-reverse)
-      (define-repeat! evil-snipe-x evil-snipe-repeat evil-snipe-repeat-reverse)
-      (define-repeat! evil-snipe-X evil-snipe-repeat evil-snipe-repeat-reverse))
+      (def-repeat! evil-snipe-f evil-snipe-repeat evil-snipe-repeat-reverse)
+      (def-repeat! evil-snipe-F evil-snipe-repeat evil-snipe-repeat-reverse)
+      (def-repeat! evil-snipe-t evil-snipe-repeat evil-snipe-repeat-reverse)
+      (def-repeat! evil-snipe-T evil-snipe-repeat evil-snipe-repeat-reverse)
+      (def-repeat! evil-snipe-s evil-snipe-repeat evil-snipe-repeat-reverse)
+      (def-repeat! evil-snipe-S evil-snipe-repeat evil-snipe-repeat-reverse)
+      (def-repeat! evil-snipe-x evil-snipe-repeat evil-snipe-repeat-reverse)
+      (def-repeat! evil-snipe-X evil-snipe-repeat evil-snipe-repeat-reverse))
 
     (after! evil-visualstar
-      (define-repeat! evil-visualstar/begin-search-forward evil-ex-search-next evil-ex-search-previous)
-      (define-repeat! evil-visualstar/begin-search-backward evil-ex-search-previous evil-ex-search-next))
+      (def-repeat! evil-visualstar/begin-search-forward evil-ex-search-next evil-ex-search-previous)
+      (def-repeat! evil-visualstar/begin-search-backward evil-ex-search-previous evil-ex-search-next))
 
-    (define-repeat! evil-ex-search-next evil-ex-search-next evil-ex-search-previous)
-    (define-repeat! evil-ex-search-previous evil-ex-search-next evil-ex-search-previous)
-    (define-repeat! evil-ex-search-forward evil-ex-search-next evil-ex-search-previous)
-    (define-repeat! evil-ex-search-backward evil-ex-search-next evil-ex-search-previous)
+    (def-repeat! evil-ex-search-next evil-ex-search-next evil-ex-search-previous)
+    (def-repeat! evil-ex-search-previous evil-ex-search-next evil-ex-search-previous)
+    (def-repeat! evil-ex-search-forward evil-ex-search-next evil-ex-search-previous)
+    (def-repeat! evil-ex-search-backward evil-ex-search-next evil-ex-search-previous)
 
     ;; A monkey patch to add all of vim's file ex substitution flags to evil-mode.
     (defun evil-ex-replace-special-filenames (file-name)
@@ -347,18 +347,17 @@
   :config
   (global-evil-surround-mode 1)
 
+  ;; Escaped surround characters
+  (setq-default evil-surround-pairs-alist
+                (cons '(?\\ . narf/evil-surround-escaped)
+                      evil-surround-pairs-alist))
+
   (add-hook! org-mode
     (push '(?l . narf/evil-surround-latex) evil-surround-pairs-alist))
   (add-hook! emacs-lisp-mode
     (push '(?\` . ("`" . "'")) evil-surround-pairs-alist))
   (add-hook! python-mode
-    (push '((?d . ("\"\"\"" . "\"\"\"")))
-          evil-surround-pairs-alist))
-
-  ;; Escaped surround characters
-  (setq-default evil-surround-pairs-alist
-                (cons '(?\\ . narf/evil-surround-escaped)
-                      evil-surround-pairs-alist)))
+    (push '((?d . ("\"\"\"" . "\"\"\""))) evil-surround-pairs-alist)))
 
 (use-package evil-visualstar
   :commands (global-evil-visualstar-mode
@@ -372,12 +371,13 @@
   :config
   (setq evil-escape-key-sequence "jk"
         evil-escape-delay 0.25)
+  (evil-escape-mode +1)
 
-  ;; evil-escape causes noticable lag in linewise motions in visual mode, so only enable
-  ;; it in insert mode. (I only need jk for insert mode anyway)
+  ;; evil-escape causes noticable lag in linewise motions in visual mode, so disable it in
+  ;; visual mode
   (defun narf|evil-escape-disable () (evil-escape-mode -1))
-  (add-hook 'evil-insert-state-entry-hook 'evil-escape-mode)
-  (add-hook 'evil-insert-state-exit-hook 'narf|evil-escape-disable))
+  (add-hook 'evil-visual-state-entry-hook 'narf|evil-escape-disable)
+  (add-hook 'evil-visual-state-exit-hook 'evil-escape-mode))
 
 (provide 'core-evil)
 ;;; core-evil.el ends here

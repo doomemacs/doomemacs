@@ -9,15 +9,11 @@
         flycheck-disabled-checkers '(emacs-lisp emacs-lisp-checkdoc make))
 
   :config
-  (require 'flycheck-package)
-  (flycheck-package-setup)
+  ;; fixes Unknown defun property `interactive-only' error by compiling flycheck
+  (let ((path (locate-library "flycheck")))
+    (unless (f-ext? path "elc")
+      (byte-compile-file path)))
 
-  (require 'flycheck-pos-tip)
-  (setq flycheck-pos-tip-timeout 10
-        flycheck-display-errors-delay 0.5)
-  (flycheck-pos-tip-mode +1)
-
-  (evil-initial-state 'flycheck-error-list-mode 'emacs)
   (map! :map flycheck-error-list-mode-map
         :n "C-n"    'flycheck-error-list-next-error
         :n "C-p"    'flycheck-error-list-previous-error
@@ -47,6 +43,17 @@
     ;;  "........"
     ;;  "........")
     ))
+
+(use-package flycheck-package
+  :after flycheck
+  :config (flycheck-package-setup))
+
+(use-package flycheck-pos-tip
+  :after flycheck
+  :config
+  (setq flycheck-pos-tip-timeout 10
+        flycheck-display-errors-delay 0.5)
+  (flycheck-pos-tip-mode +1))
 
 (use-package flyspell :commands flyspell-mode)
 

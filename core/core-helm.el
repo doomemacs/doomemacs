@@ -77,10 +77,14 @@
   ;; Hide mode-line in helm windows
   (advice-add 'helm-display-mode-line :override 'narf*helm-hide-header)
 
-  (after! yasnippet (push 'helm-alive-p yas-dont-activate))
+  (after! yasnippet (push 'helm-alive-p yas-dont-activate)))
 
-  (require 'helm-mode)
-  (helm-mode 1))
+(use-package helm-mode
+  :after helm
+  :config (helm-mode 1))
+
+(use-package helm-tags
+  :commands (helm-tags-get-tag-file helm-etags-select))
 
 (use-package helm-bookmark
   :commands (helm-bookmarks helm-filtered-bookmarks)
@@ -88,6 +92,7 @@
 
 (use-package helm-projectile
   :commands (helm-projectile-find-other-file
+             helm-projectile-switch-project
              helm-projectile-find-file
              helm-projectile-find-dir))
 
@@ -131,10 +136,10 @@
         helm-swoop-pre-input-function (lambda () "")))
 
 (use-package helm-describe-modes :commands helm-describe-modes)
-(use-package helm-ring      :commands helm-show-kill-ring)
-(use-package helm-semantic  :commands helm-semantic-or-imenu)
-(use-package helm-elisp     :commands helm-apropos)
-(use-package helm-command   :commands helm-M-x)
+(use-package helm-ring :commands helm-show-kill-ring)
+(use-package helm-semantic :commands helm-semantic-or-imenu)
+(use-package helm-elisp :commands helm-apropos)
+(use-package helm-command :commands helm-M-x)
 
 (provide 'core-helm)
 ;;; core-helm.el ends here

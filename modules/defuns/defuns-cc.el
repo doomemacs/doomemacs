@@ -10,6 +10,19 @@
         '++))))
 
 ;;;###autoload
+(defun narf/c-lineup-arglist (orig-fun &rest args)
+  "Improve indentation of continued C++11 lambda function opened as argument."
+  (if (and (eq major-mode 'c++-mode)
+           (ignore-errors
+             (save-excursion
+               (goto-char (c-langelem-pos langelem))
+               ;; Detect "[...](" or "[...]{". preceded by "," or "(",
+               ;;   and with unclosed brace.
+               (looking-at ".*[(,][ \t]*\\[[^]]*\\][ \t]*[({][^}]*$"))))
+      0                           ; no additional indent
+    (apply orig-fun args)))
+
+;;;###autoload
 (defun narf|init-c/c++-settings ()
   (when (memq major-mode '(c-mode c++-mode objc-mode))
     (c-toggle-electric-state -1)

@@ -1,12 +1,10 @@
 ;;; module-csharp.el
 
 (use-package csharp-mode
-  :functions (csharp-log)
   :mode "\\.cs$"
   :init (add-hook 'csharp-mode-hook 'flycheck-mode))
 
-;; unity shaders
-(use-package shader-mode :mode "\\.shader$")
+(use-package shader-mode :mode "\\.shader$") ; unity shaders
 
 (use-package omnisharp
   :commands (omnisharp-mode)
@@ -15,7 +13,8 @@
         omnisharp-server-executable-path (concat narf-ext-dir "/OmniSharp.exe"))
   :when (file-exists-p omnisharp-server-executable-path)
   :init
-  (add-hook! csharp-mode '(emr-initialize omnisharp-mode))
+  (def-company-backend! csharp-mode (omnisharp))
+  (add-hook! csharp-mode '(turn-on-eldoc-mode emr-initialize omnisharp-mode))
   :config
   (map! :map omnisharp-mode-map
         "gd" 'omnisharp-go-to-definition
@@ -23,9 +22,6 @@
           "tr" (λ! (omnisharp-unit-test "fixture"))
           "ts" (λ! (omnisharp-unit-test "single"))
           "ta" (λ! (omnisharp-unit-test "all"))))
-
-  (define-company-backend! csharp-mode (omnisharp))
-  (add-hook! csharp-mode 'turn-on-eldoc-mode)
 
   ;; Map all refactor commands (see emr)
   (mapc (lambda (x)

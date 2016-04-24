@@ -1,4 +1,4 @@
-;; module-write.el
+;; extra-write.el
 
 ;; This library offers the following:
 ;;   + Write-mode: a mode that turns Emacs into an app for writing notes, papers, or
@@ -14,14 +14,7 @@
 (defconst write-mode--last-mode-line mode-line-format)
 (defconst write-mode--last-line-spacing line-spacing)
 
-;; (defvar write-mode-org-font-lock-keywords
-;;   `(("[-+*] \\[X\\] \\([^$\n\r]+\\)"
-;;      (1 'org-headline-done))
-;;     ("^ *\\([-+]\\|[0-9]+[).]\\)\\( \\)+[^$\n\r]"
-;;      (1 'org-list-bullet))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+;;
 (setq-default visual-fill-column-center-text nil
               visual-fill-column-width 80)
 
@@ -93,43 +86,6 @@ functionality with buffer-local ones, which can be buggy in a minor-mode."
               (visual-fill-column--adjust-window))))
       (apply fn window args))))
 
-;;; LaTeX
-(setq TeX-auto-save t)
-(setq TeX-parse-self t)
-(setq bibtex-dialect 'biblatex)
-(setq bibtex-align-at-equal-sign t)
-(setq bibtex-text-indentation 20)
-(add-hook! bibtex-mode
-  (local-set-key (kbd "C-c \\") 'bibtex-fill-entry)
-  (setq fill-column 140))
-(add-hook! latex-mode 'turn-on-auto-fill)
-(add-hook! LaTeX-mode 'turn-on-auto-fill)
 
-(use-package reftex
-  :config
-  (add-hook 'latex-mode-hook 'turn-on-reftex)
-  (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
-  (setq reftex-plug-into-AUCTeX t
-        reftex-ref-style-default-list '("Cleveref" "Hyperref" "Fancyref")
-        reftex-default-bibliography
-        `(,(expand-file-name "phys.bib" write-mode-biblio-dir))))
-
-;;; Bibtex
-;; NOTE: http://bibdesk.sourceforge.net/
-(use-package helm-bibtex
-  :defer t
-  :config
-  (setq helm-bibtex-bibliography
-        `(,(expand-file-name "phys.bib" write-mode-biblio-dir))
-
-        helm-bibtex-library-path
-        `(,(expand-file-name "phys-pdf" write-mode-biblio-dir))
-
-        helm-bibtex-notes-path (expand-file-name "notes" write-mode-biblio-dir)
-        helm-bibtex-notes-extension ".org"
-
-        helm-bibtex-pdf-open-function
-        (lambda (fpath) (async-start-process "open-pdf" "/usr/bin/open" nil fpath))))
-
-(provide 'module-write)
-;;; module-write.el ends here
+(provide 'extra-write)
+;;; extra-write.el ends here

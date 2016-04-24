@@ -3,7 +3,7 @@
 ;; I use workgroups to accomplish two things:
 ;;   1. Vim-like tab emulation (type :tabs to see a list of tabs -- maybe I'll add some
 ;;      code to make a permanent frame header to display these some day)
-;;   2. Session persistence
+;;   2. Session persistence (with :ss and :sl)
 
 (defvar narf-wg-frames '()
   "A list of all the frames opened as separate workgroups. See
@@ -17,19 +17,19 @@ automatically renamed to the project name.")
   :when (display-graphic-p)
   :init
   (setq-default
-   wg-session-file          (expand-file-name "workgroups/last" narf-temp-dir)
-   wg-workgroup-directory   (expand-file-name "workgroups/" narf-temp-dir)
-   wg-first-wg-name         "*untitled*"
+   wg-session-file (concat narf-temp-dir "/workgroups/last")
+   wg-workgroup-directory (concat narf-temp-dir "/workgroups/")
+   wg-first-wg-name "*untitled*"
    wg-session-load-on-start nil
-   wg-mode-line-display-on  nil
+   wg-mode-line-display-on nil
    wg-mess-with-buffer-list nil
-   wg-emacs-exit-save-behavior           'save ; Options: 'save 'ask nil
+   wg-emacs-exit-save-behavior 'save ; Options: 'save 'ask nil
    wg-workgroups-mode-exit-save-behavior 'save
    wg-log-level 0
 
    ;; NOTE: Some of these make workgroup-restoration unstable
    wg-restore-mark t
-   wg-restore-frame-position nil
+   wg-restore-frame-position t
    wg-restore-remote-buffers nil
    wg-restore-scroll-bars nil
    wg-restore-fringes nil
@@ -46,21 +46,18 @@ automatically renamed to the project name.")
 
   (add-hook 'emacs-startup-hook 'workgroups-mode)
   :config
-  (unless (file-exists-p wg-workgroup-directory)
-    (mkdir wg-workgroup-directory))
-
   ;; Remember the set names in between sessions
-  (add-to-list 'savehist-additional-variables 'narf-wg-names)
-
-  (after! projectile
-    ;; Create a new workgroup on switch-project
-    (setq projectile-switch-project-action 'narf/wg-projectile-switch-project))
+  (push 'narf-wg-names savehist-additional-variables)
 
   ;; `wg-mode-line-display-on' wasn't enough
   (advice-add 'wg-change-modeline :override 'ignore)
 
   ;; Don't remember popup and neotree windows
   (add-hook 'kill-emacs-hook 'narf|wg-cleanup)
+
+  (after! projectile
+    ;; Create a new workgroup on switch-project
+    (setq projectile-switch-project-action 'narf/wg-projectile-switch-project))
 
   ;; This helps abstract some of the underlying functions away, just in case I want to
   ;; switch to a different package in the future, like persp-mode, eyebrowse or wconf.

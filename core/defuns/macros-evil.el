@@ -1,7 +1,7 @@
 ;;; macros-evil.el
 
 ;;;###autoload
-(defmacro define-text-object! (key start-regex end-regex)
+(defmacro def-textobj! (key start-regex end-regex)
   (let ((inner-name (make-symbol "narf--inner-name"))
         (outer-name (make-symbol "narf--outer-name")))
     `(progn
@@ -13,7 +13,7 @@
        (define-key evil-outer-text-objects-map ,key (quote ,outer-name)))))
 
 ;;;###autoload
-(defmacro define-temp-ex-cmd! (cmd-on cmd-off &rest commands)
+(defmacro def-tmp-excmd! (cmd-on cmd-off &rest commands)
   "Creates on-off defuns for a set of ex commands, named CMD-ON and CMD-OFF."
   (declare (indent 2))
   `(progn

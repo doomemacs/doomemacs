@@ -7,14 +7,13 @@
   :interpreter (("runghc" . haskell-mode)
                 ("runhaskell" . haskell-mode))
   :init
-  (define-repl! haskell-mode switch-to-haskell)
+  (def-repl! haskell-mode switch-to-haskell)
   (add-hook! haskell-mode '(interactive-haskell-mode flycheck-mode))
   :config
   (push ".hi" completion-ignored-extensions))
 
 (use-package inf-haskell
   :commands (inferior-haskell-mode inf-haskell-mode switch-to-haskell)
-  :init (evil-set-initial-state 'inferior-haskell-mode 'emacs)
   :config
   (map! :map inf-haskell-mode-map "ESC ESC" 'narf/popup-close))
 

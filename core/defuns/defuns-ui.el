@@ -62,8 +62,7 @@ end file."
               (start (or start (point-min))))
           (goto-char start)
           (while (and (re-search-forward "^$" end-marker t) (not (>= (point) end-marker)))
-            (let (line-start line-end
-                             next-start next-end)
+            (let (line-start line-end next-start next-end)
               (save-excursion
                 ;; Check previous line indent
                 (forward-line -1)
@@ -79,7 +78,7 @@ end file."
                 (let* ((line-indent (- line-end line-start))
                        (next-indent (- next-end next-start))
                        (indent (min line-indent next-indent)))
-                  (insert (make-string indent ? )))))
+                  (insert (make-string (if (zerop indent) 0 (1+ indent)) ? )))))
             (forward-line 1)))))
     (set-buffer-modified-p nil))
   nil)
@@ -92,6 +91,10 @@ end file."
                  (when imenu-list-minor-mode
                    (imenu-list-minor-mode -1))))
         (narf/get-visible-buffers (narf/get-real-buffers))))
+
+;;;###autoload
+(defun narf|hide-mode-line (&rest _)
+  (setq mode-line-format nil))
 
 (provide 'defuns-ui)
 ;;; defuns-ui.el ends here

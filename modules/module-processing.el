@@ -5,7 +5,7 @@
   :commands (processing-mode processing-find-sketch)
   :mode "\\.pde$"
   :init
-  (define-builder! processing-mode processing-sketch-build)
+  (def-builder! processing-mode processing-sketch-build)
   (add-hook 'processing-compilation-mode-hook 'narf|hide-mode-line)
 
   :config
@@ -13,14 +13,6 @@
         processing-application-dir "/Applications/Processing.app"
         processing-sketchbook-dir "~/Dropbox/work/pde"
         processing-output-dir "/tmp")
-
-  (after! quickrun
-    (quickrun-add-command
-     "processing" `((:command . ,processing-location)
-                    (:exec . (lambda () (format "--sketch=%s --output=%s --force --run"
-                                           (narf/project-root) processing-output-dir)))
-                    (:description . "Run Processing sketch"))
-     :mode 'processing-mode))
 
   (map! :map processing-mode-map
         :nv "M-r" 'processing-sketch-run
@@ -31,6 +23,14 @@
           "h" 'processing-open-reference
           "e" 'processing-open-examples
           "o" 'processing-open-sketchbook))
+
+  (after! quickrun
+    (quickrun-add-command
+     "processing" `((:command . ,processing-location)
+                    (:exec . (lambda () (format "--sketch=%s --output=%s --force --run"
+                                           (narf/project-root) processing-output-dir)))
+                    (:description . "Run Processing sketch"))
+     :mode 'processing-mode))
 
   (add-hook! processing-mode
     (setq-local company-backends '((company-keywords
