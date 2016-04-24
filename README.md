@@ -10,8 +10,7 @@ strives to emulate vim as best it can, and surpass it in any way possible.
 
 ```
 brew install cask
-brew tap railwaycat/emacsmacport
-brew install emacs-mac --with-imagemagick --with-modern-icon
+brew install emacs --with-imagemagick
 git clone https://github.com/hlissner/.emacs.d ~/.emacs.d
 cd ~/.emacs.d
 make          # installs plugins via cask and generates autoloads
@@ -39,6 +38,7 @@ To get a picture of what's in here, check out:
 * Pretty line numbers with **nlinum** and neckbearded hackery
 * Syntax checking with **Flycheck**
 * Completion with **company-mode**
+* Nigh-universal code debugging interface with **realgud**
 * Pretty mode-line with **spaceline**
 * Project navigation with **helm** and **neotree**
 * Project search with **ag** and file search with **evil-search** or **helm-swoop**
