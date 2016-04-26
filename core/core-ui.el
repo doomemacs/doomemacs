@@ -240,33 +240,42 @@
                                   (format-mode-line "%l"))))))
 
 
-;; Mode-line ;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; Mode-line
+;;
 
 (use-package spaceline
   :init
-  (defvar narf--env-version nil)
-  (defvar narf--env-command nil)
-  (make-variable-buffer-local 'narf--env-version)
-  (make-variable-buffer-local 'narf--env-command)
-  :config
+  (defvar-local narf--env-version nil)
+  (defvar-local narf--env-command nil)
+  (defvar powerline-height 23)
   (setq-default
    powerline-default-separator nil
-   powerline-height 25
    spaceline-highlight-face-func 'spaceline-highlight-face-evil-state)
 
+  :config
   (defface mode-line-is-modified nil "Face for mode-line modified symbol")
   (defface mode-line-buffer-file nil "Face for mode-line buffer file path")
 
   ;; Custom modeline segments
   (spaceline-define-segment *buffer-path
     (if buffer-file-name
-        (let* ((project-path (let (projectile-require-project-root) (projectile-project-root)))
+        (let* ((project-path (narf/project-root))
                (buffer-path (f-relative buffer-file-name project-path))
-               (max-length (truncate (/ (window-width) 2)))
-               (path-len (length buffer-path)))
-          (if (> path-len max-length)
-              (f-filename buffer-path)
-            (concat (f-filename project-path) "/" buffer-path)))
+               (max-length 40))
+          (concat (projectile-project-name) "/"
+                  (if (> (length buffer-path) max-length)
+                      (let ((path (reverse (split-string buffer-path "/")))
+                            (output ""))
+                        (when (and path (equal "" (car path)))
+                          (setq path (cdr path)))
+                        (while (and path (< (length output) (- max-length 4)))
+                          (setq output (concat (car path) "/" output))
+                          (setq path (cdr path)))
+                        (when path
+                          (setq output (concat "../" output)))
+                        output)
+                    buffer-path)))
       "%b")
     :face (if active 'mode-line-buffer-file 'mode-line-inactive)
     :skip-alternate t
