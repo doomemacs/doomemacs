@@ -1,12 +1,12 @@
 ;;; extra-demo.el --- for collaboration and demonstrations
 
+(defvar powerline-height)
+
 ;; This library offers:
 ;;   + impatient-mode: for broadcasting my emacs session
 ;;   + big-mode: for enlarged text while screencasting
 ;;   + TODO integration with reveal.js for presentations
 ;;   + TODO peer programming collab
-
-(defvar powerline-height)
 
 ;; Big-mode settings
 (defconst big-mode-font (font-spec :family "Hack" :size 16))
@@ -15,8 +15,7 @@
 
 ;;
 (use-package impatient-mode
-  :defer t
-  :commands httpd-start)
+  :commands (httpd-start impatient-mode))
 
 (defvar big-mode--line-spacing line-spacing)
 (defvar big-mode--powerline-height powerline-height)

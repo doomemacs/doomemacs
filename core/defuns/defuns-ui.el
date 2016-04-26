@@ -1,17 +1,24 @@
 ;;; defuns-ui.el
 ;; for ../core-ui.el
 
-;;;###autoload
-(defun narf:toggle-transparency ()
-  (interactive)
-  (let* ((alpha (frame-parameter nil 'alpha))
-         (alpha-val (if (listp alpha) (car alpha) alpha)))
-    (if (/= alpha-val 97)
-        (set-frame-parameter nil 'alpha 100)
-      (set-frame-parameter nil 'alpha 0))))
-
 ;;;###autoload (autoload 'narf:toggle-fullscreen "defuns-ui" nil t)
+;;;###autoload (autoload 'narf:set-columns "defuns-ui" nil t)
 (after! evil
+  (evil-define-command narf:set-columns (&optional bang columns)
+    "Adjusts visual-fill-column-width on the fly."
+    (interactive "<!><a>")
+    (if (or (= (length columns) 0) bang)
+        (progn
+          (setq visual-fill-column-width 80)
+          (when visual-fill-column-mode
+            (visual-fill-column-mode -1)))
+      (setq columns (string-to-number columns))
+      (when (> columns 30)
+        (setq visual-fill-column-width columns)))
+    (if visual-fill-column-mode
+        (visual-fill-column--adjust-window)
+      (visual-fill-column-mode 1)))
+
   (evil-define-command narf:toggle-fullscreen ()
     (interactive)
     (set-frame-parameter nil 'fullscreen (if (not (frame-parameter nil 'fullscreen)) 'fullboth))))

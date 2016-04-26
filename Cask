@@ -244,7 +244,7 @@
 (depends-on "org-download")
 (depends-on "ox-pandoc")
 
-;; Writing -- modules/module-write.el
+;; Writing -- modules/extra-write.el
 (depends-on "helm-bibtex")
 
 

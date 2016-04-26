@@ -57,8 +57,8 @@
   ;; https://bitbucket.org/lyro/evil/issue/336/osx-visual-state-copies-the-region-on
   ;; Most of this code grokked from:
   ;; http://stackoverflow.com/questions/15873346/elisp-rename-macro
-  (defadvice evil-visual-update-x-selection (around clobber-x-select-text activate)
-    (unless (or (featurep 'mac) (featurep 'ns)) ad-do-it)))
+  (when (or (featurep 'mac) (featurep 'ns))
+    (advice-add 'evil-visual-update-x-selection :override 'ignore)))
 
 
 ;;

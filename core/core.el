@@ -34,7 +34,6 @@
  ediff-split-window-function       'split-window-horizontally   ; side-by-side diffs
  ediff-window-setup-function       'ediff-setup-windows-plain   ; no extra frames
  enable-recursive-minibuffers       nil         ; no minibufferception
- history-length                     1000
  idle-update-delay                  2           ; update a little less often
  inhibit-startup-echo-area-message  "hlissner"  ; username shuts up emacs
  inhibit-startup-screen             t           ; don't show emacs start screen
@@ -57,6 +56,8 @@
  bookmark-default-file              (concat narf-temp-dir "/bookmarks")
 
  ;; Disable all backups (that's what git/dropbox are for)
+ history-length                     1000
+ vc-make-backup-files               nil
  auto-save-default                  nil
  auto-save-list-file-name           (concat narf-temp-dir "/autosave")
  make-backup-files                  nil

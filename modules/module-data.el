@@ -4,17 +4,19 @@
 (associate! nxml-mode :match "\\.plist$")
 
 (use-package toml-mode :mode "\\.toml$")
+
 (use-package yaml-mode :mode "\\.ya?ml$"
   :config (def-electric! yaml-mode :chars (?\n ?: ?-)))
+
 (use-package json-mode :mode "\\.js\\(on\\|hintrc\\)$"
   :config (def-electric! json-mode :chars (?\n ?: ?{ ?})))
+
+(use-package vimrc-mode :mode ("/\\.?g?vimrc$" "\\.vim$" "/\\.vim/rc/.+$"))
 
 (use-package dockerfile-mode :mode "/Dockerfile$"
   :config
   (def-docset! dockerfile-mode "docker")
   (def-builder! dockerfile-mode dockerfile-build-buffer "Dockerfile"))
-
-(use-package vimrc-mode :mode ("/\\.?g?vimrc$" "\\.vim$" "/\\.vim/rc/.+$"))
 
 ;;
 (def-project-type! ansible-mode "ans"

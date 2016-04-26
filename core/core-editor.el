@@ -138,8 +138,7 @@ enable multiple minor modes for the same regexp.")
 ;; Smarter electric-indent
 (electric-indent-mode -1) ; on by default
 (defvar narf-electric-indent-p nil)
-(defvar narf-electric-indent-words '())
-(make-variable-buffer-local 'narf-electric-indent-words)
+(defvar-local narf-electric-indent-words '())
 (setq electric-indent-chars '(?\n ?\^?))
 (push (lambda (c)
         (when (eolp)
@@ -269,7 +268,6 @@ enable multiple minor modes for the same regexp.")
 (use-package smart-forward :commands (smart-up smart-down smart-left smart-right))
 
 (use-package smartparens
-  :functions sp-insert-pair
   :config
   (setq sp-autowrap-region nil          ; let evil-surround handle this
         sp-highlight-pair-overlay nil

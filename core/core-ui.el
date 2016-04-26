@@ -20,7 +20,7 @@
  split-width-threshold nil     ; favor horizontal splits
  show-help-function nil        ; hide :help-echo text
 
- jit-lock-defer-time 0.04
+ jit-lock-defer-time nil
  jit-lock-stealth-nice 0.1
  jit-lock-stealth-time 0.2
  jit-lock-stealth-verbose nil
@@ -59,8 +59,8 @@
   (setq frame-title-format '(buffer-file-name "%f" ("%b")))
 
   ;; set fonts
-  (narf/load-font narf-default-font)
-  (set-face-attribute 'default t :font narf-default-font)
+  (set-frame-font (setq narf-current-font narf-default-font) t)
+  (set-face-attribute 'default t :font narf-current-font)
 
   ;; standardize fringe width
   (fringe-mode narf-fringe-size)
@@ -73,31 +73,22 @@
   ;; Brighter minibuffer when active
   (defface narf-minibuffer-active '((t (:inherit mode-line)))
     "Face for active minibuffer")
-  (defun narf|minibuffer-setup ()
+  (add-hook! minibuffer-setup
     (set-window-fringes (selected-window) 0 0 nil)
     (make-local-variable 'face-remapping-alist)
     (add-to-list 'face-remapping-alist '(default narf-minibuffer-active)))
-  (add-hook! minibuffer-setup 'narf|minibuffer-setup)
   (add-hook! 'after-init-hook (set-window-fringes (minibuffer-window) 0 0 nil)))
 
 ;; Try to display unicode characters without upsetting line-hieght (as much as possible)
-(mapc (lambda (set)
-        (let ((font  (car set))
-              (chars (cadr set))
-              (size  (caddr set)))
-          (mapc (lambda (x) (set-fontset-font
-                        "fontset-default" `(,x . ,x)
-                        (font-spec :name font :size size) nil 'prepend))
-                chars)))
-      '(("DejaVu Sans" (?☑ ?☐ ?⚠ ?★ ?λ ?♭ ?♯
-                        ?➊ ?➋ ?➌ ?➍ ?➎ ?❻ ?➐ ?➑ ?➒ ?➓))
-        ;; File attachment symbols (for org-mode)
-        ("FontAwesome" (? ? ? ? ? ? ? ? ?) 13)
-        ;; Certain math symbols
-        ("Hack"        (?× ?∙ ?÷ ?⌉ ?⌈ ?⌊ ?⌋
-                        ?∩ ?∪ ?⊆ ?⊂ ?⊄ ?⊇ ?⊃ ?⊅
-                        ?⇒ ?⇐ ?⇔ ?↔ ?→ ?≡ ?∴ ?∵ ?⊕ ?∀ ?∃ ?∄ ?∈ ?∉
-                        ?∨ ?∧ ?¬))))
+(defun narf-fix-unicode (set)
+  (let ((font  (car set))
+        (chars (cadr set))
+        (size  (caddr set)))
+    (mapc (lambda (x) (set-fontset-font
+                  "fontset-default" `(,x . ,x)
+                  (font-spec :name font :size size) nil 'prepend))
+          chars)))
+(mapc 'narf-fix-unicode '(("DejaVu Sans" (?⚠ ?★ ?λ ?➊ ?➋ ?➌ ?➍ ?➎ ?❻ ?➐ ?➑ ?➒ ?➓))))
 
 ;; on by default in Emacs 25; I prefer to enable on a mode-by-mode basis, so disable it
 (when (and (> emacs-major-version 24) (featurep 'eldoc))
@@ -128,9 +119,10 @@
 (defface narf-note-face  '((t (:inherit font-lock-warning-face)))
   "Face for NOTEs")
 (add-hook! (prog-mode emacs-lisp-mode)
-  (font-lock-add-keywords nil '(("\\<\\(TODO\\((.+)\\)?:?\\)"  1 'narf-todo-face prepend)
-                                ("\\<\\(FIXME\\((.+)\\)?:?\\)" 1 'narf-fixme-face prepend)
-                                ("\\<\\(NOTE\\((.+)\\)?:?\\)"  1 'narf-note-face prepend))))
+  (font-lock-add-keywords
+   nil '(("\\<\\(TODO\\((.+)\\)?:?\\)"  1 'narf-todo-face prepend)
+         ("\\<\\(FIXME\\((.+)\\)?:?\\)" 1 'narf-fixme-face prepend)
+         ("\\<\\(NOTE\\((.+)\\)?:?\\)"  1 'narf-note-face prepend))))
 
 ;; Fade out when unfocused
 (add-hook! focus-in  (set-frame-parameter nil 'alpha 100))
@@ -144,7 +136,10 @@
 ;; Plugins
 ;;
 
-(use-package visual-fill-column :defer t)
+(use-package visual-fill-column :defer t
+  :config
+  (setq-default visual-fill-column-center-text nil
+                visual-fill-column-width fill-column))
 
 (use-package highlight-indentation
   :commands (highlight-indentation-mode highlight-indentation-current-column-mode)
@@ -154,9 +149,9 @@
     'highlight-indentation-mode)
 
   (after! editorconfig
-    (defun narf/hl-indent-guess-offset ()
+    (defun narf*hl-indent-guess-offset ()
       (string-to-int (gethash 'indent_size (editorconfig-get-properties))))
-    (advice-add 'highlight-indentation-guess-offset :override 'narf/hl-indent-guess-offset))
+    (advice-add 'highlight-indentation-guess-offset :override 'narf*hl-indent-guess-offset))
 
   ;; A long-winded method for ensuring whitespace is maintained (so that
   ;; highlight-indentation-mode can display them consistently)
