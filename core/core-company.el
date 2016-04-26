@@ -13,7 +13,7 @@
         company-require-match 'never
         company-global-modes '(not eshell-mode comint-mode erc-mode message-mode help-mode)
         company-frontends '(company-pseudo-tooltip-frontend company-echo-metadata-frontend)
-        company-backends '((company-capf company-dabbrev-code) company-dabbrev)
+        company-backends '(company-capf)
 
         company-quickhelp-delay nil
         company-statistics-file (concat narf-temp-dir "/company-stats-cache.el"))
