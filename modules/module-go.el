@@ -8,6 +8,7 @@
   (def-company-backend! go-mode (go yasnippet))
   (def-repl! go-mode gorepl-run)
   (add-hook! go-mode '(emr-initialize flycheck-mode go-eldoc-setup))
+  (add-hook! go-mode (add-hook 'before-save-hook 'gofmt-before-save))
 
   :config
   (map! :map go-mode-map
