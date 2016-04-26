@@ -63,6 +63,7 @@
 (depends-on "expand-region")
 (depends-on "fancy-narrow")
 (depends-on "goto-last-change")
+(depends-on "miniedit")
 (depends-on "rotate-text" :git "https://github.com/debug-ito/rotate-text.el")
 (depends-on "smart-forward")
 (depends-on "smartparens")

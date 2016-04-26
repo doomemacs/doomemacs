@@ -194,6 +194,15 @@ enable multiple minor modes for the same regexp.")
 
 (use-package goto-last-change :commands goto-last-change)
 
+(use-package miniedit
+  :commands minibuffer-edit
+  :init
+  (map! :map (minibuffer-local-map
+              minibuffer-local-ns-map
+              minibuffer-local-completion-map
+              minibuffer-local-must-match-map)
+        "\M-\C-e" 'miniedit))
+
 (use-package help-fns+ ; Improved help commands
   :commands (describe-buffer describe-command describe-file
              describe-keymap describe-option describe-option-of-type))
