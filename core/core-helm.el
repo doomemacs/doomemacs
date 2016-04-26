@@ -1,6 +1,7 @@
 ;;; core-helm.el
 
 (use-package helm
+  :defer 1
   :commands (helm helm-other-buffer helm-mode)
   :init
   (defvar helm-global-prompt "›")
