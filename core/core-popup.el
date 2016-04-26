@@ -66,23 +66,9 @@
   (defvar narf-popup-windows '()
     "A list of windows that have been opened via shackle. Do not touch this!")
 
-  ;; Popup hook
-  (defvar shackle-popup-hook '() "Hook run whenever a popup is opened.")
-  (defun narf|run-popup-hooks (&rest _)
-    (with-current-buffer shackle-last-buffer
-      (run-hooks 'shackle-popup-hook)))
+  ;; There is no shackle-popup hook, so I hacked one in
   (advice-add 'shackle-display-buffer :after 'narf|run-popup-hooks)
-
   ;; Keep track of popups
-  (defun narf|popup-init ()
-    (add-to-list 'narf-popup-windows (get-buffer-window))
-    (local-set-key [escape escape] 'narf/popup-close)
-    (when (or (bound-and-true-p repl-toggle-mode)
-              (derived-mode-p 'tabulated-list-mode)
-              (memq major-mode '(messages-buffer-mode flycheck-error-list-mode-hook esup-mode)))
-      (let ((map evil-normal-state-local-map))
-        (define-key map [escape] 'narf/popup-close)
-        (define-key map (kbd "ESC") 'narf/popup-close))))
   (add-hook! 'shackle-popup-hook '(narf|popup-init narf|hide-mode-line))
 
 

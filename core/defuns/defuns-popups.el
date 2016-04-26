@@ -79,5 +79,22 @@
       (narf|hide-mode-line)
       (goto-char (point-max))))
 
+;;;###autoload
+(defun narf|popup-init ()
+  (add-to-list 'narf-popup-windows (get-buffer-window))
+  (local-set-key [escape escape] 'narf/popup-close)
+  (when (or (bound-and-true-p repl-toggle-mode)
+            (derived-mode-p 'tabulated-list-mode)
+            (memq major-mode '(messages-buffer-mode flycheck-error-list-mode-hook esup-mode)))
+    (let ((map evil-normal-state-local-map))
+      (define-key map [escape] 'narf/popup-close)
+      (define-key map (kbd "ESC") 'narf/popup-close))))
+
+(defvar shackle-popup-hook '() "Hook run whenever a popup is opened.")
+;;;###autoload
+(defun narf|run-popup-hooks (&rest _)
+  (with-current-buffer shackle-last-buffer
+    (run-hooks 'shackle-popup-hook)))
+
 (provide 'defuns-popups)
 ;;; defuns-popups.el ends here
