@@ -27,10 +27,10 @@
  shift-select-mode t
  tabify-regexp "^\t* [ \t]+"
  whitespace-line-column fill-column
- whitespace-style '(face tabs tab-mark newline newline-mark
+ whitespace-style '(face tabs tab-mark
                     trailing indentation lines-tail)
  whitespace-display-mappings
- '((tab-mark ?\t [?> ?\t])
+ '((tab-mark ?\t [?› ?\t])
    (newline-mark 10 [36 10])))
 
 ;; Save point across sessions
@@ -112,8 +112,10 @@ enable multiple minor modes for the same regexp.")
 (associate! makefile-gmake-mode :match "/Makefile$")
 
 (add-hook! special-mode (setq truncate-lines nil))
-(add-hook! change-major-mode-hook
-  (when indent-tabs-mode (whitespace-mode +1)))
+
+;; So whitespace in tabs indentation mode
+(add-hook 'editorconfig-custom-hooks
+          (lambda (&rest _) (if indent-tabs-mode (whitespace-mode +1))))
 
 (defadvice delete-trailing-whitespace
     (around delete-trailing-whitespace-ignore-line activate)
