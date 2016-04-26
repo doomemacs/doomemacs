@@ -1,6 +1,7 @@
 ;;; core-company.el
 
 (use-package company
+  :defer 1
   :init
   (setq company-idle-delay nil
         company-minimum-prefix-length 2
@@ -30,6 +31,10 @@
   (define-key company-active-map "\C-w" nil)
 
   (global-company-mode +1))
+
+(use-package company-dabbrev :commands company-dabbrev)
+
+(use-package company-dabbrev-code :commands company-dabbrev-code)
 
 (use-package company-quickhelp
   :after company
