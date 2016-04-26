@@ -60,8 +60,7 @@
   (add-hook 'web-mode-hook 'turn-off-smartparens-mode)
 
   :config
-  (setq web-mode-enable-html-entities-fontification t
-        web-mode-enable-current-column-highlight t)
+  (setq web-mode-enable-html-entities-fontification t)
   (push '("html" "jade") projectile-other-file-alist)
 
   (map! :map web-mode-map :i "SPC" 'self-insert-command)
