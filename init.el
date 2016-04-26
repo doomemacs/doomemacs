@@ -46,6 +46,9 @@
 (defconst narf-default-theme 'narf-dark)
 (defconst narf-default-font (font-spec :family "Hack" :size 12))
 
+(setq user-full-name "Henrik Lissner"
+      user-mail-address "henrik@lissner.net")
+
 (narf `(core ; core/core.el
 
         ;; OS-specific config
@@ -61,7 +64,7 @@
         core-company        ; for the lazy typist
         core-yasnippet      ; for the lazier typist
         core-file-templates ; for the laziest typist
-        core-flycheck       ; code police; tazing you for every semicolon you forget
+        core-flycheck       ; get tazed for every semicolon you forget
         core-project        ; whose project am I in?
         core-vcs            ; remember remember, that commit in November
         core-helm           ; a search engine for life and love
@@ -70,7 +73,7 @@
 
         ;; Environments
         module-apple        ; Applescript, Swift, Launchbar, iOS, wallet syphons, etc.
-        module-cc           ; C/C++/obj-c madness
+        module-cc           ; C/C++/Obj-C madness
         module-crystal      ; ruby at the speed of c
         module-csharp       ; unity, .NET, and mono shenanigans
         module-data         ; config and data formats
@@ -95,10 +98,8 @@
         ;;module-eshell       ; for inferior OSes *cough*windows
 
         ;; Extra libraries
-        extra-ansible       ;
         extra-demo          ; allow me to demonstrate...
         extra-tags          ; if you liked it you should've generated a tag for it
-        extra-text          ; break in case of word documents from clients
         extra-tmux          ; closing the rift between GUI & terminal
         extra-write         ; for writing papers and fiction in Emacs
 
