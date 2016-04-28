@@ -197,16 +197,15 @@
 (depends-on "processing-mode")
 
 ;; Python -- modules/module-python.el
-(depends-on "nose")
 (depends-on "anaconda-mode")
 (depends-on "company-anaconda")
+(depends-on "nose")
 (depends-on "pip-requirements")
 
 ;; Ruby -- modules/module-ruby.el
 (depends-on "ruby-refactor")
 (depends-on "rspec-mode")
 (depends-on "inf-ruby")
-(depends-on "robe")
 (depends-on "company-inf-ruby")
 (depends-on "yard-mode")
 
