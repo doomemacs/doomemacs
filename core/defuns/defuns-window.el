@@ -30,9 +30,10 @@ evil-window-move-* (e.g. `evil-window-move-far-left')"
          (this-buffer (current-buffer))
          (that-window (windmove-find-other-window direction nil this-window))
          (that-buffer (window-buffer that-window)))
-    (when (minibufferp that-buffer)
+    (when (or (minibufferp that-buffer)
+              (narf/popup-p that-window))
       (setq that-buffer nil that-window nil))
-    (if (and (not that-window) (not (one-window-p t)))
+    (if (not (or that-window (one-window-p t)))
         (funcall (case direction
                    ('left 'evil-window-move-far-left)
                    ('right 'evil-window-move-far-right)
