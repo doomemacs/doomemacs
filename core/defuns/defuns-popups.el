@@ -16,6 +16,15 @@
          t)))
 
 ;;;###autoload
+(defmacro narf/popup-save (&rest body)
+  `(let ((popup-p (narf/popup-p)))
+     (when popup-p (narf/popup-close-all t))
+     ,@body
+     (when popup-p
+       (save-selected-window
+         (narf/popup-last-buffer)))))
+
+;;;###autoload
 (defun narf/popup-buffer (buffer &optional plist)
   "Display BUFFER in a shackle popup."
   (let ((buffer-name (if (stringp buffer) buffer (buffer-name buffer))))

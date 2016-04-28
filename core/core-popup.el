@@ -68,9 +68,16 @@
 
   ;; There is no shackle-popup hook, so I hacked one in
   (advice-add 'shackle-display-buffer :after 'narf|run-popup-hooks)
-  ;; Keep track of popups
-  (add-hook! 'shackle-popup-hook '(narf|popup-init narf|hide-mode-line))
 
+  (add-hook 'shackle-popup-hook 'narf|popup-init)     ; Keep track of popups
+  (add-hook 'shackle-popup-hook 'narf|hide-mode-line) ; No mode line in popups
+
+  ;; Prevents popups from messaging with windows-moving functions
+  (after! defuns-popup
+    (defun narf*save-popups (orig-fun &rest args)
+      (narf/popup-save (apply orig-fun args)))
+    (advice-add 'narf--evil-window-move  :around 'narf*save-popups)
+    (advice-add 'narf--evil-swap-windows :around 'narf*save-popups))
 
   ;;
   ;; Hacks

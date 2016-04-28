@@ -18,6 +18,15 @@
         (neotree-find path project-root)))))
 
 ;;;###autoload
+(defmacro narf/neotree-save (&rest body)
+  `(let ((neo-p (neo-global--window-exists-p)))
+     (when neo-p (neotree-hide))
+     ,@body
+     (when neo-p
+       (save-selected-window
+         (neotree-show)))))
+
+;;;###autoload
 (defun narf|neotree-close-on-window-change (&rest _)
   "Close neotree to prevent ensuing mindow buggery."
   (unless (and (neo-global--window-exists-p)

@@ -124,9 +124,11 @@
       (apply orig-fun args)))
   (advice-add 'neotree-create-node :around 'narf*neotree-create-node)
 
+  (defun narf*save-neotree (orig-fun &rest args)
+    (narf/neotree-save (apply orig-fun args)))
   ;; Prevents messing up the neotree buffer on window changes
-  (advice-add 'narf--evil-window-move  :before 'narf|neotree-close-on-window-change)
-  (advice-add 'narf--evil-swap-windows :before 'narf|neotree-close-on-window-change)
+  (advice-add 'narf--evil-window-move  :around 'narf*save-neotree)
+  (advice-add 'narf--evil-swap-windows :around 'narf*save-neotree)
 
   ;; A custom and simple theme for neotree
   (advice-add 'neo-buffer--insert-fold-symbol :override 'narf*neo-buffer-fold-symbol))
