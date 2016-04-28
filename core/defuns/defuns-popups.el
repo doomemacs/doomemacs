@@ -75,9 +75,9 @@
 (defun narf/popup-last-buffer ()
   "Pop up the last popup buffer."
   (interactive)
-  (if shackle-last-buffer
-      (narf/popup-buffer shackle-last-buffer)
-    (narf/popup-messages)))
+  (unless shackle-last-buffer
+    (error "No popup to restore"))
+  (narf/popup-buffer shackle-last-buffer))
 
 ;;;###autoload
 (defun narf/popup-messages ()
