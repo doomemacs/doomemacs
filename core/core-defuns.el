@@ -76,10 +76,10 @@ Examples:
          (forms '()))
     (mapc
      (lambda (f) (let ((func (cond ((symbolp f) `(quote ,f))
-                                   (t `(lambda () ,@func-or-forms)))))
-                   (mapc
-                    (lambda (h) (push `(add-hook ',(if quoted h (intern (format "%s-hook" h))) ,func) forms))
-                    (if (listp hook) hook (list hook))))) funcs)
+                              (t `(lambda (&rest _) ,@func-or-forms)))))
+              (mapc
+               (lambda (h) (push `(add-hook ',(if quoted h (intern (format "%s-hook" h))) ,func) forms))
+               (if (listp hook) hook (list hook))))) funcs)
     `(progn ,@forms)))
 
 (cl-defmacro associate! (mode &key minor
