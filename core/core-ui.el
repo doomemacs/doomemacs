@@ -192,48 +192,12 @@
   (defvar nlinum-format "%4d ")
   (setq linum-format "%3d ")
   :init
-  (defun narf|nlinum-enable ()
-    (nlinum-mode +1)
-    (add-hook 'post-command-hook 'narf|nlinum-hl-line))
-
   (add-hook!
     (markdown-mode prog-mode scss-mode web-mode conf-mode)
-    'narf|nlinum-enable)
+    'nlinum-mode)
+  (add-hook! 'nlinum-mode-hook
+    (add-hook 'post-command-hook 'narf|nlinum-hl-line nil t))
   :config
-  (defun narf|nlinum-unhl-line ()
-    "Unhighlight line number"
-    (when narf--hl-nlinum-overlay
-      (let* ((disp (get-text-property
-                    0 'display (overlay-get narf--hl-nlinum-overlay 'before-string)))
-             (str (nth 1 disp)))
-        (put-text-property 0 (length str) 'face 'linum str)
-        (setq narf--hl-nlinum-overlay nil
-              narf--hl-nlinum-line nil)
-        disp)))
-
-  (defun narf|nlinum-hl-line (&optional line)
-    "Highlight line number"
-    (let ((line-no (or line (string-to-number (format-mode-line "%l")))))
-      (when (and nlinum-mode (not (eq line-no narf--hl-nlinum-line)))
-        (let* ((pbol (if line
-                         (save-excursion (goto-char (point-min))
-                                         (forward-line line-no)
-                                         (line-beginning-position))
-                       (line-beginning-position)))
-               (peol (1+ pbol)))
-          ;; Handle EOF case
-          (let ((max (point-max)))
-            (when (>= peol max)
-              (setq peol max)))
-          (jit-lock-fontify-now pbol peol)
-          (let ((ov (-first (lambda (item) (overlay-get item 'nlinum)) (overlays-in pbol peol))))
-            (when ov
-              (narf|nlinum-unhl-line)
-              (let ((str (nth 1 (get-text-property 0 'display (overlay-get ov 'before-string)))))
-                (put-text-property 0 (length str) 'face 'linum-highlight-face str)
-                (setq narf--hl-nlinum-overlay ov
-                      narf--hl-nlinum-line line-no))))))))
-
   (add-hook! nlinum-mode
     (setq nlinum--width
           (length (save-excursion (goto-char (point-max))
