@@ -1,6 +1,5 @@
 ;;; module-data.el
 
-(associate! conf-mode :match "/\\.?editorconfig$")
 (associate! nxml-mode :match "\\.plist$")
 
 (use-package toml-mode :mode "\\.toml$")

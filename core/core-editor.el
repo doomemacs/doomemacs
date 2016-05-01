@@ -72,8 +72,12 @@
 (recentf-mode 1)
 
 ;; Let editorconfig handle global whitespace settings
-(require 'editorconfig)
-(editorconfig-mode +1)
+(use-package editorconfig
+  :config
+  (editorconfig-mode +1)
+  ;; So whitespace in tabs indentation mode
+  (add-hook! 'editorconfig-custom-hooks (if indent-tabs-mode (whitespace-mode +1)))
+  (associate! editorconfig-conf-mode :match "/\\.?editorconfig$"))
 
 
 ;;
@@ -112,10 +116,6 @@ enable multiple minor modes for the same regexp.")
 (associate! makefile-gmake-mode :match "/Makefile$")
 
 (add-hook! special-mode (setq truncate-lines nil))
-
-;; So whitespace in tabs indentation mode
-(add-hook 'editorconfig-custom-hooks
-          (lambda (&rest _) (if indent-tabs-mode (whitespace-mode +1))))
 
 (defadvice delete-trailing-whitespace
     (around delete-trailing-whitespace-ignore-line activate)
