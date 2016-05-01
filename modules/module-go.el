@@ -4,13 +4,13 @@
   :mode "\\.go$"
   :interpreter "go"
   :init
-  (def-builder! go-mode "go build")
-  (def-company-backend! go-mode (go yasnippet))
-  (def-repl! go-mode gorepl-run)
   (add-hook! go-mode '(emr-initialize flycheck-mode go-eldoc-setup))
   (add-hook! go-mode (add-hook 'before-save-hook 'gofmt-before-save))
 
   :config
+  (def-builder! go-mode "go build")
+  (def-company-backend! go-mode (go yasnippet))
+  (def-repl! go-mode gorepl-run)
   (map! :map go-mode-map
         :n "gd" 'godef-jump
         :n "gD" 'godef-describe

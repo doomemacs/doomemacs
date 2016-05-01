@@ -3,9 +3,9 @@
 (associate! sh-mode :match "\\.\\(ba\\|z\\)sh$")
 (associate! sh-mode :match "/\\.?z\\(sh\\(/.*\\|$\\)\\|profile\\|login\\|logout\\|shrc\\|shenv\\)$")
 (associate! sh-mode :match "/\\.?bash\\(/.*\\|rc\\|_profile\\)$")
-(def-electric! sh-mode :words ("else" "elif" "fi" "done"))
 
 (after! sh-script
+  (def-electric! sh-mode :words ("else" "elif" "fi" "done"))
   (def-repl! sh-mode narf/inf-shell)
   (setq sh-indent-after-continuation 'always)
 

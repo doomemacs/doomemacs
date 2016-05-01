@@ -1,8 +1,5 @@
 ;;; module-web.el
 
-(def-company-backend! sass-mode (css))
-(def-company-backend! scss-mode (css))
-(def-docset! scss-mode "sass,bourbon")
 (add-hook! (sass-mode scss-mode less-css-mode)
   '(flycheck-mode narf|hl-line-off hs-minor-mode))
 
@@ -17,13 +14,18 @@
   :config (push '("less" "css") projectile-other-file-alist))
 
 (use-package sass-mode :mode "\\.sass$"
-  :config (push '("sass" "css") projectile-other-file-alist))
+  :config
+  (def-company-backend! sass-mode (css))
+  (def-docset! sass-mode "sass,bourbon")
+  (push '("sass" "css") projectile-other-file-alist))
 
 (use-package scss-mode
   :mode "\\.scss$"
   :preface (require 'css-mode)
   :init (setq scss-compile-at-save nil)
   :config
+  (def-company-backend! scss-mode (css))
+  (def-docset! scss-mode "sass,bourbon")
   (push '("scss" "css") projectile-other-file-alist)
   (sp-local-pair 'scss-mode "/*" "*/" :post-handlers '(("[d-3]||\n[i]" "RET") ("| " "SPC")))
 

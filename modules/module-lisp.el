@@ -1,14 +1,7 @@
 ;;; module-lisp --- all things lisp
 
 (associate! emacs-lisp-mode :match "\\(/Cask\\|\\.\\(el\\|gz\\)\\)$")
-(def-company-backend! emacs-lisp-mode (elisp yasnippet))
-(def-repl! emacs-lisp-mode narf/elisp-inf-ielm)
-
-(add-hook! emacs-lisp-mode
-  '(turn-on-eldoc-mode flycheck-mode highlight-numbers-mode))
-
-;; Real go-to-definition for elisp
-(map! :map emacs-lisp-mode-map :m "gd" 'narf/elisp-find-function-at-pt)
+(add-hook! emacs-lisp-mode '(turn-on-eldoc-mode flycheck-mode highlight-numbers-mode))
 
 (use-package highlight-quoted
   :commands (highlight-quoted-mode)
@@ -17,26 +10,70 @@
 (use-package slime :defer t
   :config (setq inferior-lisp-program "clisp"))
 
-;; Don't affect lisp indentation (only `tab-width')
-(setq editorconfig-indentation-alist
-      (delq (assq 'emacs-lisp-mode editorconfig-indentation-alist)
-            editorconfig-indentation-alist))
+(add-hook 'emacs-lisp-mode-hook 'narf/elisp-init)
+(defun narf/elisp-init ()
+  (def-company-backend! emacs-lisp-mode (elisp yasnippet))
+  (def-repl! emacs-lisp-mode narf/elisp-inf-ielm)
+  (def-rotate! emacs-lisp-mode
+    :symbols (("t" "nil")
+              ("let" "let*")
+              ("when" "unless")
+              ("append" "prepend")
+              ("advice-add" "advice-remove")
+              ("add-hook" "add-hook!" "remove-hook")))
 
-(add-hook! emacs-lisp-mode
+  ;; Don't affect lisp indentation (only `tab-width')
+  (setq editorconfig-indentation-alist
+        (delq (assq 'emacs-lisp-mode editorconfig-indentation-alist)
+              editorconfig-indentation-alist))
+
+  ;; Real go-to-definition for elisp
+  (map! :map emacs-lisp-mode-map :m "gd" 'narf/elisp-find-function-at-pt)
+
+  (font-lock-add-keywords
+   'emacs-lisp-mode `(("(\\(lambda\\)"
+                       (1 (narf/show-as ?λ)))
+                      ;; Highlight narf macros (macros are fontified in emacs 25+)
+                      (,(concat
+                         "(\\(def-"
+                         (regexp-opt '("electric" "project-type" "company-backend"
+                                       "builder" "repl" "textobj" "tmp-excmd" "rotate"
+                                       "repeat" "yas-mode" "env-command" "docset"))
+                         "!\\)")
+                       (1 font-lock-keyword-face append))
+                      (,(concat
+                         "(\\("
+                         (regexp-opt '("λ" "in" "map" "after" "shut-up" "add-hook"
+                                       "associate" "open-with" "define-org-link"
+                                       "define-org-section"))
+                         "!\\)")
+                       (1 font-lock-keyword-face append))
+                      ;; Ert
+                      (,(concat
+                         "("
+                         (regexp-opt '("ert-deftest") t)
+                         " \\([^ ]+\\)")
+                       (1 font-lock-keyword-face)
+                       (2 font-lock-function-name-face))))
+
+  (remove-hook 'emacs-lisp-mode-hook 'narf/elisp-init))
+
+(add-hook 'emacs-lisp-mode-hook 'narf/elisp-hook)
+(defun narf/elisp-hook ()
   (setq mode-name "Elisp") ; [pedantry intensifies]
 
   (add-hook 'before-save-hook 'delete-trailing-whitespace nil t)
   (add-hook 'after-save-hook  'narf/elisp-auto-compile nil t)
 
   (let ((header-face 'font-lock-constant-face))
-    (add-to-list 'imenu-generic-expression
-                 `("Evil Command" "\\(^\\s-*(evil-define-command +\\)\\(\\_<.+\\_>\\)" 2))
-    (add-to-list 'imenu-generic-expression
-                 `("Evil Operator" "\\(^\\s-*(evil-define-operator +\\)\\(\\_<.+\\_>\\)" 2))
-    (add-to-list 'imenu-generic-expression
-                 `("Package" "\\(^\\s-*(use-package +\\)\\(\\_<.+\\_>\\)" 2))
-    (add-to-list 'imenu-generic-expression
-                 `("Spaceline Segment" "\\(^\\s-*(spaceline-define-segment +\\)\\(\\_<.+\\_>\\)" 2))))
+    (push '("Evil Command" "\\(^\\s-*(evil-define-command +\\)\\(\\_<.+\\_>\\)" 2)
+          imenu-generic-expression)
+    (push '("Evil Operator" "\\(^\\s-*(evil-define-operator +\\)\\(\\_<.+\\_>\\)" 2)
+          imenu-generic-expression)
+    (push '("Package" "\\(^\\s-*(use-package +\\)\\(\\_<.+\\_>\\)" 2)
+          imenu-generic-expression)
+    (push '("Spaceline Segment" "\\(^\\s-*(spaceline-define-segment +\\)\\(\\_<.+\\_>\\)" 2)
+          imenu-generic-expression)))
 
 ;; Add new colors to helm-imenu
 (after! helm-imenu
@@ -64,31 +101,6 @@
              collect
              (cons disp (cons k v)))))
 
-(font-lock-add-keywords
- 'emacs-lisp-mode `(("(\\(lambda\\)"
-                     (1 (narf/show-as ?λ)))
-                    ;; Highlight narf macros (macros are fontified in emacs 25+)
-                    (,(concat
-                       "(\\(def-"
-                       (regexp-opt '("electric" "project-type" "company-backend"
-                                     "builder" "repl" "textobj" "tmp-excmd"
-                                     "repeat" "yas-mode" "env-command" "docset"))
-                       "!\\)")
-                     (1 font-lock-keyword-face append))
-                    (,(concat
-                       "(\\("
-                       (regexp-opt '("λ" "in" "map" "after" "shut-up" "add-hook"
-                                     "associate" "open-with" "define-org-link"
-                                     "define-org-section"))
-                       "!\\)")
-                     (1 font-lock-keyword-face append))
-                    ;; Ert
-                    (,(concat
-                       "("
-                       (regexp-opt '("ert-deftest") t)
-                       " \\([^ ]+\\)")
-                     (1 font-lock-keyword-face)
-                     (2 font-lock-function-name-face))))
 
 ;;
 (def-project-type! emacs-ert "ert"

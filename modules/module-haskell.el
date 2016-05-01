@@ -7,9 +7,9 @@
   :interpreter (("runghc" . haskell-mode)
                 ("runhaskell" . haskell-mode))
   :init
-  (def-repl! haskell-mode switch-to-haskell)
   (add-hook! haskell-mode '(interactive-haskell-mode flycheck-mode))
   :config
+  (def-repl! haskell-mode switch-to-haskell)
   (push ".hi" completion-ignored-extensions))
 
 (use-package inf-haskell

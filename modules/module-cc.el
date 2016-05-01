@@ -4,8 +4,6 @@
   :commands (c-mode c++-mode objc-mode java-mode)
   :init
   (associate! objc-mode :match "\\.mm$")
-  (def-electric! (c-mode c++-mode objc-mode) :chars (?\n ?\}))
-  (def-company-backend! (c-mode c++-mode objc-mode) (irony-c-headers irony))
   (add-hook! 'c++-mode-hook '(highlight-numbers-mode narf|init-c++-C11-highlights))
   (add-hook 'c-initialization-hook 'narf|init-c/c++-settings)
 
@@ -24,12 +22,14 @@
         magic-mode-alist)
 
   :config
+  (def-electric! (c-mode c++-mode objc-mode) :chars (?\n ?\}))
+  (def-company-backend! (c-mode c++-mode objc-mode) (irony-c-headers irony))
+
   (setq c-tab-always-indent nil
         c-electric-flag nil)
 
   (map! :map c-mode-base-map (:localleader :nv ";" 'narf/append-semicolon))
 
-  (def-textobj! "<" "<" ">")
   (sp-with-modes '(c-mode c++-mode objc-mode java-mode)
     (sp-local-pair "<" ">" :when '(narf/sp-point-is-template-p narf/sp-point-after-include-p))
     (sp-local-pair "/*" "*/" :post-handlers '(("||\n[i]" "RET") ("| " "SPC")))
@@ -65,7 +65,7 @@
 ;;
 (use-package cmake-mode
   :mode "CMakeLists\\.txt$"
-  :init (def-company-backend! cmake-mode (cmake yasnippet)))
+  :config (def-company-backend! cmake-mode (cmake yasnippet)))
 (use-package company-cmake :after cmake-mode)
 
 (use-package glsl-mode :mode ("\\.glsl\\'" "\\.vert\\'" "\\.frag\\'" "\\.geom\\'"))

@@ -5,10 +5,10 @@
   :commands (processing-mode processing-find-sketch)
   :mode "\\.pde$"
   :init
-  (def-builder! processing-mode processing-sketch-build)
   (add-hook 'processing-compilation-mode-hook 'narf|hide-mode-line)
 
   :config
+  (def-builder! processing-mode processing-sketch-build)
   (setq processing-location "/usr/local/bin/processing-java"
         processing-application-dir "/Applications/Processing.app"
         processing-sketchbook-dir "~/Dropbox/work/pde"

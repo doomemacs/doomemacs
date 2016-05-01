@@ -22,9 +22,9 @@
 (use-package swift-mode
   :mode "\\.swift$"
   :init
-  (def-company-backend! swift-mode (sourcekit yasnippet))
   (add-hook 'swift-mode-hook 'flycheck-mode)
   :config
+  (def-company-backend! swift-mode (sourcekit yasnippet))
   (push 'swift flycheck-checkers))
 
 (use-package company-sourcekit

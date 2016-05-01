@@ -2,10 +2,10 @@
 
 (use-package rust-mode
   :mode "\\.rs$"
-  :init
+  :init (add-hook 'rust-mode-hook 'flycheck-mode)
+  :config
   (def-builder! rust-mode "cargo run" "Cargo.toml")
-  (def-builder! toml-mode "cargo run" "Cargo.toml")
-  (add-hook 'rust-mode-hook 'flycheck-mode))
+  (def-builder! toml-mode "cargo run" "Cargo.toml"))
 
 (use-package flycheck-rust :after rust-mode)
 

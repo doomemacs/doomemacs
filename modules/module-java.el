@@ -29,9 +29,9 @@
 (use-package android-mode
   :commands android-mode
   :init
-  (def-yas-mode! 'android-mode)
   (add-hook! (java-mode groovy-mode nxml-mode) 'narf|android-mode-enable-maybe)
   :config
+  (def-yas-mode! 'android-mode)
   (after! company-dict
     (push 'android-mode company-dict-minor-mode-list)))
 

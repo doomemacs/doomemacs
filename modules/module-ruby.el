@@ -4,16 +4,15 @@
   :mode ("\\.rb$" "\\.rake$" "\\.gemspec$" "\\.?pryrc$"
          "/\\(Gem\\|Cap\\|Vagrant\\|Rake\\)file$")
   :interpreter "ruby"
-  :init
+  :init (add-hook! ruby-mode '(flycheck-mode yard-mode))
+  :config
   (def-builder! ruby-mode "rake %s" "Rakefile")
   (def-company-backend! ruby-mode (dabbrev-code))
   (def-docset! ruby-mode "rb,ruby,rubygem")
   (def-env-command! ruby-mode "ruby --version | cut -d' ' -f2")
   (def-repl! ruby-mode inf-ruby)
   (def-electric! ruby-mode :words ("else" "end" "elseif"))
-  (add-hook! 'ruby-mode-hook '(flycheck-mode yard-mode))
 
-  :config
   (setq ruby-deep-indent-paren t) ; Formatting
 
   ;; Don't interfere with my custom RET behavior
@@ -68,7 +67,7 @@
 
 (use-package inf-ruby
   :commands (inf-ruby inf-ruby-console-auto)
-  :init (def-company-backend! inf-ruby-mode (inf-ruby)))
+  :config (def-company-backend! inf-ruby-mode (inf-ruby)))
 
 (use-package company-inf-ruby :after inf-ruby)
 

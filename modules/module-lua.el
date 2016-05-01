@@ -3,13 +3,11 @@
 (use-package lua-mode
   :mode "\\.lua$"
   :interpreter "lua"
-  :init
+  :init (add-hook 'lua-mode-hook 'flycheck-mode)
+  :config
   (def-company-backend! lua-mode (yasnippet))
   (def-electric! lua-mode :words ("else" "end"))
   (def-repl! lua-mode narf/inf-lua)
-  (add-hook 'lua-mode-hook 'flycheck-mode)
-
-  :config
   (sp-with-modes '(lua-mode)
     ;; disable defaults
     (sp-local-pair "if" nil :actions       :rem)

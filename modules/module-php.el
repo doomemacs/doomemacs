@@ -2,20 +2,21 @@
 
 (use-package hack-mode
   :mode "\\.hh$"
-  :init (def-company-backend! hack-mode (capf)))
+  :config (def-company-backend! hack-mode (capf)))
 
 (use-package php-mode
   :mode ("\\.php[s345]?$" "\\.inc$" )
   :interpreter "php"
   :init
-  (def-repl! php-mode php-boris)
-  (def-docset! php-mode "php,laravel")
-  (def-company-backend! php-mode '(company-ac-php-backend php-extras-company))
   (add-hook 'php-mode-hook 'flycheck-mode)
   (setq php-template-compatibility nil
         php-extras-eldoc-functions-file (concat narf-temp-dir "/php-extras-eldoc-functions"))
 
   :config
+  (def-repl! php-mode php-boris)
+  (def-docset! php-mode "php,laravel")
+  (def-company-backend! php-mode '(company-ac-php-backend php-extras-company))
+
   (map! :map php-mode-map (:localleader :nv ";" 'narf/append-semicolon))
 
   (sp-with-modes '(php-mode)

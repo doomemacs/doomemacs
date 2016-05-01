@@ -13,9 +13,9 @@
         omnisharp-server-executable-path (concat narf-ext-dir "/OmniSharp.exe"))
   :when (file-exists-p omnisharp-server-executable-path)
   :init
-  (def-company-backend! csharp-mode (omnisharp))
   (add-hook! csharp-mode '(turn-on-eldoc-mode emr-initialize omnisharp-mode))
   :config
+  (def-company-backend! csharp-mode (omnisharp))
   (map! :map omnisharp-mode-map
         "gd" 'omnisharp-go-to-definition
         (:localleader

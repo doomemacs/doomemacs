@@ -4,13 +4,13 @@
   :mode "\\.js$"
   :interpreter "node"
   :init
+  (add-hook! js2-mode '(tern-mode emr-initialize))
+
+  :config
   (def-repl! js2-mode nodejs-repl)
   (def-docset! js2-mode "js,javascript,nodejs,angularjs,express,jquery,mongoose")
   (def-company-backend! js2-mode (tern))
   (def-electric! js2-mode :chars (?\} ?\) ?.) :words ("||" "&&"))
-  (add-hook! js2-mode '(tern-mode emr-initialize))
-
-  :config
   (setq-default
    js2-skip-preprocessor-directives t
    js2-show-parse-errors nil

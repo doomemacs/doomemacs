@@ -1,6 +1,8 @@
 ;;; module-data.el
 
 (associate! nxml-mode :match "\\.plist$")
+(after! nxml-mode
+  (def-company-backend! nxml-mode (nxml yasnippet)))
 
 (use-package toml-mode :mode "\\.toml$")
 
@@ -20,11 +22,9 @@
 ;;
 (def-project-type! ansible-mode "ans"
   :modes (yaml-mode)
-  :files ("roles/"))
-
-(use-package company-ansible
-  :commands (company-ansible)
-  :init (def-company-backend! ansible-mode (ansible)))
+  :files ("roles/")
+  (def-company-backend! ansible-mode (ansible)))
+(use-package company-ansible :commands (company-ansible))
 
 (def-project-type! vagrant "vagrant"
   :files ("Vagrantfile"))
