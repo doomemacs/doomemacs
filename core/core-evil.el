@@ -10,6 +10,7 @@
   (add-hook 'evil-visual-state-exit-hook     'show-paren-mode-off)
   (add-hook 'evil-operator-state-entry-hook  'show-paren-mode)
   (add-hook 'evil-operator-state-exit-hook   'show-paren-mode-off)
+  (add-hook 'evil-normal-state-entry-hook    'show-paren-mode-off)
 
   ;; Disable highlights on insert-mode
   (add-hook 'evil-insert-state-entry-hook 'evil-ex-nohighlight)
