@@ -217,8 +217,8 @@
 (use-package evil-anzu
   :config
   (setq anzu-cons-mode-line-p nil
-        anzu-minimum-input-length 2
-        anzu-search-threshold 500))
+        anzu-minimum-input-length 1
+        anzu-search-threshold 250))
 
 (use-package evil-args
   :commands (evil-inner-arg evil-outer-arg evil-forward-arg evil-backward-arg evil-jump-out-args)
