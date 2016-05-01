@@ -35,6 +35,11 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
 
 ;; Buffer Life and Death ;;;;;;;;;;;;;;;
 
+(unless (display-graphic-p)
+  (defalias 'wg-workgroup-associated-buffers 'ignore)
+  (defalias 'wg-current-workgroup 'ignore)
+  (defalias 'wg-save-session 'ignore))
+
 ;;;###autoload
 (defun narf/get-buffers (&optional project-p)
   "Get all buffers in the current workgroup.
