@@ -1,7 +1,6 @@
 ;;; core-company.el
 
 (use-package company
-  :defer 1
   :init
   (setq company-idle-delay nil
         company-minimum-prefix-length 2
@@ -13,7 +12,7 @@
         company-require-match 'never
         company-global-modes '(not eshell-mode comint-mode erc-mode message-mode help-mode)
         company-frontends '(company-pseudo-tooltip-frontend company-echo-metadata-frontend)
-        company-backends '(company-capf)
+        company-backends '((company-capf company-keywords))
 
         company-quickhelp-delay nil
         company-statistics-file (concat narf-temp-dir "/company-stats-cache.el"))
@@ -22,11 +21,7 @@
   ;; Rewrites evil-complete to use company-dabbrev
   (setq evil-complete-next-func     'narf/company-evil-complete-next
         evil-complete-previous-func 'narf/company-evil-complete-previous)
-
   (push 'company-sort-by-occurrence company-transformers)
-  (setq-default company-backends (append '(company-keywords) company-backends))
-
-  (def-company-backend! nxml-mode (nxml yasnippet))
 
   (define-key company-active-map "\C-w" nil)
 
