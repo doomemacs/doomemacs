@@ -26,11 +26,11 @@
  jit-lock-stealth-verbose nil
 
  ;; Disable bidirectional text support for slight performance bonus
- bidi-display-reordering        nil
+ bidi-display-reordering nil
 
  ;; Minibuffer resizing
- resize-mini-windows            'grow-only
- max-mini-window-height         0.3
+ resize-mini-windows 'grow-only
+ max-mini-window-height 0.3
 
  ;; Remove arrow on the right fringe when wrapped
  fringe-indicator-alist (delq (assoc 'continuation fringe-indicator-alist)
@@ -54,23 +54,18 @@
     (menu-bar-mode -1)
   (scroll-bar-mode -1)  ; no scrollbar
   (tool-bar-mode   -1)  ; no toolbar
-
   ;; full filename in frame title
   (setq frame-title-format '(buffer-file-name "%f" ("%b")))
-
   ;; set fonts
   (set-frame-font (setq narf-current-font narf-default-font) t)
   (set-face-attribute 'default t :font narf-current-font)
-
   ;; standardize fringe width
   (fringe-mode narf-fringe-size)
-
   ;; Show tilde in margin on empty lines
   (define-fringe-bitmap 'tilde [64 168 16] nil nil 'center)
   (setcdr (assq 'empty-line fringe-indicator-alist) 'tilde)
   (set-fringe-bitmap-face 'tilde 'font-lock-comment-face)
-
-  ;; Brighter minibuffer when active
+  ;; Brighter minibuffer when active + no fringe in minibuffer
   (defface narf-minibuffer-active '((t (:inherit mode-line)))
     "Face for active minibuffer")
   (add-hook! minibuffer-setup
@@ -94,30 +89,10 @@
 (when (and (> emacs-major-version 24) (featurep 'eldoc))
   (global-eldoc-mode -1))
 
-;; line highlighting
-(add-hook! (prog-mode markdown-mode) 'hl-line-mode)
-
-;; Disable line highlight in visual mode
-(defvar narf--hl-line-mode nil)
-(make-variable-buffer-local 'narf--hl-line-mode)
-
-(defun narf|hl-line-on ()  (if narf--hl-line-mode (hl-line-mode +1)))
-(defun narf|hl-line-off () (if narf--hl-line-mode (hl-line-mode -1)))
-
-(add-hook! hl-line-mode (if hl-line-mode (setq narf--hl-line-mode t)))
-(add-hook 'evil-visual-state-entry-hook 'narf|hl-line-off)
-(add-hook 'evil-visual-state-exit-hook  'narf|hl-line-on)
-
-;; Hide modeline in help windows
-(add-hook 'help-mode-hook 'narf|hide-mode-line)
-
 ;; Highlight TODO/FIXME/NOTE tags
-(defface narf-todo-face  '((t (:inherit font-lock-warning-face)))
-  "Face for TODOs")
-(defface narf-fixme-face '((t (:inherit font-lock-warning-face)))
-  "Face for FIXMEs")
-(defface narf-note-face  '((t (:inherit font-lock-warning-face)))
-  "Face for NOTEs")
+(defface narf-todo-face  '((t (:inherit font-lock-warning-face))) "Face for TODOs")
+(defface narf-fixme-face '((t (:inherit font-lock-warning-face))) "Face for FIXMEs")
+(defface narf-note-face  '((t (:inherit font-lock-warning-face))) "Face for NOTEs")
 (add-hook! (prog-mode emacs-lisp-mode)
   (font-lock-add-keywords
    nil '(("\\<\\(TODO\\((.+)\\)?:?\\)"  1 'narf-todo-face prepend)
@@ -135,6 +110,20 @@
 ;;
 ;; Plugins
 ;;
+
+(use-package hl-line
+  :init
+  (add-hook! (prog-mode markdown-mode) 'hl-line-mode) ; line highlighting
+  :config
+  (defvar-local narf--hl-line-mode nil)
+
+  (defun narf|hl-line-on ()  (if narf--hl-line-mode (hl-line-mode +1)))
+  (defun narf|hl-line-off () (if narf--hl-line-mode (hl-line-mode -1)))
+
+  (add-hook! hl-line-mode (if hl-line-mode (setq narf--hl-line-mode t)))
+  ;; Disable line highlight in visual mode
+  (add-hook 'evil-visual-state-entry-hook 'narf|hl-line-off)
+  (add-hook 'evil-visual-state-exit-hook  'narf|hl-line-on))
 
 (use-package visual-fill-column :defer t
   :config
@@ -278,10 +267,9 @@
 
   (spaceline-define-segment *vc
     "Version control info"
-    (powerline-raw
-     (concat (replace-regexp-in-string
-              (format "^ %s" (vc-backend buffer-file-name))
-              "" vc-mode)))
+    (concat (replace-regexp-in-string
+             (format "^ %s" (vc-backend buffer-file-name))
+             "" vc-mode))
     :when (and active vc-mode)
     :face other-face
     :tight-right t)
@@ -344,29 +332,26 @@ anzu to be enabled."
         " ... "))
     :when (and (evil-ex-p) (evil-ex-hl-active-p 'evil-ex-substitute))
     :tight t
-    :face (if active 'mode-line-count-face 'mode-line-inactive)
-    :skip-alternate t)
+    :face (if active 'mode-line-count-face 'mode-line-inactive))
 
   (spaceline-define-segment *macro-recording
     "Show when recording macro"
     (format " %s ▶ " (char-to-string evil-this-macro))
     :when (and active defining-kbd-macro)
     :face highlight-face
-    :tight t
-    :skip-alternate t)
+    :tight t)
 
   (spaceline-define-segment *buffer-encoding-abbrev
     "The line ending convention used in the buffer."
-    (symbol-name buffer-file-coding-system)
+    (format "%s" buffer-file-coding-system)
     :when (not (string-match-p "\\(utf-8\\|undecided\\)"
                                (symbol-name buffer-file-coding-system))))
 
   (spaceline-define-segment *major-mode
-    (powerline-raw
-     (concat
-      (and (featurep 'face-remap) (/= text-scale-mode-amount 0) (format "(%+d) " text-scale-mode-amount))
-      (if (stringp mode-name) mode-name (car mode-name))
-      (if (stringp mode-line-process) mode-line-process)))
+    (concat
+     (and (featurep 'face-remap) (/= text-scale-mode-amount 0) (format "(%+d) " text-scale-mode-amount))
+     (if (stringp mode-name) mode-name (car mode-name))
+     (if (stringp mode-line-process) mode-line-process))
     :tight-right t)
 
   (defun narf--col-at-pos (pos)
@@ -398,11 +383,10 @@ Supports both Emacs and Evil cursor conventions."
   ;; flycheck
   (defun narf--flycheck-count (state)
     "Return flycheck information for the given error type STATE."
-    (let* ((counts (flycheck-count-errors flycheck-current-errors))
-           (errorp (flycheck-has-current-errors-p state))
-           (running (eq 'running flycheck-last-status-change))
-           (err (cdr (assq state counts))))
-      (when errorp (if running "?" err))))
+    (when (flycheck-has-current-errors-p state)
+      (if (eq 'running flycheck-last-status-change)
+          "?"
+        (cdr-safe (assq state (flycheck-count-errors flycheck-current-errors))))))
 
   (defface spaceline-flycheck-error
     '((t (:foreground "#FC5C94" :distant-foreground "#A20C41")))

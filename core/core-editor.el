@@ -110,11 +110,10 @@ enable multiple minor modes for the same regexp.")
 
 
 ;;
-;; Modes 'n hooks
+;; Modes, hooks 'n hacks
 ;;
 
 (associate! makefile-gmake-mode :match "/Makefile$")
-
 (add-hook! special-mode (setq truncate-lines nil))
 
 (defadvice delete-trailing-whitespace
@@ -137,7 +136,7 @@ enable multiple minor modes for the same regexp.")
     (fundamental-mode)
     (visual-line-mode)))
 
-;; Smarter electric-indent
+;; Smarter electric-indent (see `def-electric!')
 (electric-indent-mode -1) ; on by default
 (defvar narf-electric-indent-p nil)
 (defvar-local narf-electric-indent-words '())
@@ -179,6 +178,12 @@ enable multiple minor modes for the same regexp.")
   :config (setq avy-all-windows nil
                 avy-background t))
 
+(use-package dumb-jump
+  :commands (dumb-jump-go dumb-jump-quick-look dumb-jump-back)
+  :config
+  (setq dumb-jump-default-project narf-emacs-dir)
+  (dumb-jump-mode +1))
+
 (use-package emr
   :commands (emr-initialize emr-show-refactor-menu emr-declare-command)
   :config (define-key popup-menu-keymap [escape] 'keyboard-quit))
@@ -186,22 +191,7 @@ enable multiple minor modes for the same regexp.")
 (use-package expand-region
   :commands (er/expand-region er/contract-region er/mark-symbol er/mark-word))
 
-(use-package dumb-jump
-  :commands (dumb-jump-go dumb-jump-quick-look dumb-jump-back)
-  :config
-  (setq dumb-jump-default-project narf-emacs-dir)
-  (dumb-jump-mode +1))
-
 (use-package goto-last-change :commands goto-last-change)
-
-(use-package miniedit
-  :commands minibuffer-edit
-  :init
-  (map! :map (minibuffer-local-map
-              minibuffer-local-ns-map
-              minibuffer-local-completion-map
-              minibuffer-local-must-match-map)
-        "\M-\C-e" 'miniedit))
 
 (use-package help-fns+ ; Improved help commands
   :commands (describe-buffer describe-command describe-file
@@ -247,6 +237,15 @@ enable multiple minor modes for the same regexp.")
         :n "RET" 'imenu-list-goto-entry
         :n "SPC" 'imenu-list-display-entry
         :n [tab] 'hs-toggle-hiding))
+
+(use-package miniedit
+  :commands minibuffer-edit
+  :init
+  (map! :map (minibuffer-local-map
+              minibuffer-local-ns-map
+              minibuffer-local-completion-map
+              minibuffer-local-must-match-map)
+        "\M-\C-e" 'miniedit))
 
 (use-package re-builder
   :commands (re-builder reb-mode-buffer-p)
@@ -304,8 +303,6 @@ enable multiple minor modes for the same regexp.")
 
   (sp-local-pair 'css-mode "/*" "*/" :post-handlers '(("[d-3]||\n[i]" "RET") ("| " "SPC")))
   (sp-local-pair '(sh-mode markdown-mode) "`" "`" :unless '(sp-point-before-word-p sp-point-before-same-p))
-
-  ;; Markup languages
   (sp-with-modes '(xml-mode nxml-mode php-mode)
     (sp-local-pair "<!--" "-->"   :post-handlers '(("| " "SPC")))))
 

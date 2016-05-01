@@ -46,20 +46,17 @@
 (defun narf/evil-surround-escaped ()
   "Escaped surround characters."
   (let* ((char (string (read-char "\\")))
-         (pair (cond ((string-match-p "[]})[{(]" char)
-                      (let ((-pair (cdr (assoc (string-to-char char) evil-surround-pairs-alist))))
-                        `(,(car -pair) . ,(cdr -pair))))
-                     (t
-                      `(,char . ,char))))
-         (format (if (sp-point-in-string) "\\\\%s" "\\%s")))
-    (cons (format format (car pair))
-          (format format (cdr pair)))))
+         (pair (acond ((cdr-safe (assoc (string-to-char char) evil-surround-pairs-alist))
+                       `(,(car it) . ,(cdr it)))
+                      (t `(,char . ,char))))
+         (text (if (sp-point-in-string) "\\\\%s" "\\%s")))
+    (cons (format text (car pair))
+          (format text (cdr pair)))))
 
 ;;;###autoload
 (defun narf/evil-surround-latex ()
   "LaTeX commands"
-  (let* ((command (read-string "\\")))
-    (cons (format "\\%s{" command) "}")))
+  (cons (format "\\%s{" (read-string "\\")) "}"))
 
 ;;;###autoload (autoload 'narf/evil-macro-on-all-lines "defuns-evil" nil t)
 (evil-define-operator narf/evil-macro-on-all-lines (beg end &optional macro)

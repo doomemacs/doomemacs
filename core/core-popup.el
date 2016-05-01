@@ -1,10 +1,10 @@
 ;;; core-popup.el --- taming stray windows
 
-;; The following is a whole slew of hackery to get Emacs to treat 'pop-up' windows in a
-;; sane and "modern" way (whatever that means). It goes through great lengths to tame
-;; helm, flycheck, help buffers--*even* the beast that is org-mode.
+;; I use a slew of hackery to get Emacs to treat 'pop-up' windows in a sane and "modern"
+;; way (whatever that means). It goes through great lengths to tame helm, flycheck, help
+;; buffers--*even* the beast that is org-mode.
 ;;
-;; Be warned, any of this may break as their respective packages update!
+;; Be warned, an update could break any of this.
 
 (use-package shackle
   :config
@@ -16,9 +16,9 @@
           ("\\`\\*\\(debug:\\)haskell\\*\\'" :regexp t :align below :size 20)
 
           ;; Plugins
-          ("*helm bookmarks*"                :align below  :size 7 :select t)
           ("\\` ?\\*[hH]elm.*?\\*\\'" :regexp t :align below  :size 20 :select t)
           (" ?\\*Flycheck.+\\*"       :regexp t :align below  :size 15  :noselect t)
+          ("*helm bookmarks*"                :align below  :size 7 :select t)
           (" *NeoTree*"                      :align left             :select t)
           ("*evil-registers*"                :align below  :size 0.3)
           ("*quickrun*"                      :align below  :size 10)
