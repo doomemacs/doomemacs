@@ -5,7 +5,7 @@
   :interpreter "lua"
   :init (add-hook 'lua-mode-hook 'flycheck-mode)
   :config
-  (def-company-backend! lua-mode (yasnippet))
+  (def-company-backend! lua-mode (lua yasnippet))
   (def-electric! lua-mode :words ("else" "end"))
   (def-repl! lua-mode narf/inf-lua)
   (sp-with-modes '(lua-mode)
@@ -23,6 +23,13 @@
     (sp-local-pair "function" "end" :when '(sp-point-after-bol-p) :post-handlers '(" |\n[i]"))
     ;; inline functions
     (sp-local-pair "function " " end" :unless '(sp-point-after-bol-p))))
+
+(use-package company-lua :after lua-mode)
+
+(use-package moonscript
+  :mode ("\\.moon$" . moonscript-mode)
+  :config
+  (push '(moonscript-mode moonscript-indent-offset) editorconfig-indentation-alist))
 
 ;;
 (def-project-type! love "♥"

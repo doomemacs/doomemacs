@@ -186,6 +186,8 @@
 
 ;; Lua -- modules/module-lua.el
 (depends-on "lua-mode")
+(depends-on "company-lua")
+(depends-on "moonscript" :git "https://github.com/k2052/moonscript-mode")
 
 ;; PHP -- modules/module-php.el
 (depends-on "php-mode")
