@@ -381,7 +381,9 @@
   ;; visual mode
   (defun narf|evil-escape-disable () (evil-escape-mode -1))
   (add-hook 'evil-visual-state-entry-hook 'narf|evil-escape-disable)
-  (add-hook 'evil-visual-state-exit-hook 'evil-escape-mode))
+  (add-hook 'evil-visual-state-exit-hook 'evil-escape-mode)
+
+  (push 'neotree-mode evil-escape-excluded-major-modes))
 
 (provide 'core-evil)
 ;;; core-evil.el ends here
