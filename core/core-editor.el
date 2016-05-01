@@ -263,17 +263,7 @@ enable multiple minor modes for the same regexp.")
 
 (use-package rotate-text
   :commands (rotate-text rotate-text-backward)
-  :init
-  (add-hook! (emacs-lisp-mode lisp-mode)
-    (setq rotate-text-local-symbols
-          '(("t" "nil")
-            ("let" "let*")
-            ("when" "unless")
-            ("append" "prepend")
-            ("advice-add" "advice-remove")
-            ("add-hook" "add-hook!" "remove-hook"))))
-  :config
-  (push '("true" "false") rotate-text-words))
+  :config (push '("true" "false") rotate-text-words))
 
 (use-package smart-forward :commands (smart-up smart-down smart-left smart-right))
 
