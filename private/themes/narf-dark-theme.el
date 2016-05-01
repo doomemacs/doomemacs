@@ -62,7 +62,8 @@
        (search-rest-fg black)
        (highlight      orange)
        (vertical-bar   grey-2)
-       (current-line   "#262829")
+       (current-line   "#181818")
+       ;; (current-line   "#262829")
        (selection      "#535556")
        (builtin        orange)
        (comments       grey-1)
@@ -117,9 +118,6 @@
    `(warning                         ((,c (:foreground ,yellow))))
    `(success                         ((,c (:foreground ,green ))))
 
-   `(spaceline-flycheck-error        ((,c (:underline nil :foreground ,black :background ,red))))
-   `(spaceline-flycheck-warning      ((,c (:underline nil :foreground ,black :background ,yellow))))
-   `(spaceline-flycheck-info         ((,c (:underline nil :foreground ,black :background ,green))))
    `(flycheck-error                  ((,c (:underline (:style wave :color ,red)    :background ,grey-2))))
    `(flycheck-warning                ((,c (:underline (:style wave :color ,yellow) :background ,grey-2))))
    `(flycheck-info                   ((,c (:underline (:style wave :color ,green)  :background ,grey-2))))
@@ -157,7 +155,7 @@
 
    `(vertical-border                ((,c (:foreground ,vertical-bar :background ,vertical-bar))))
 
-   `(linum                          ((,c (:foreground ,linum-fg :background ,bg :bold nil :height 0.8 :underline nil))))
+   `(linum                          ((,c (:foreground ,linum-fg :background ,bg :bold nil :height 0.8))))
    `(linum-highlight-face           ((,c (:inherit linum :foreground ,linum-hl-fg :background ,current-line))))
    `(show-paren-match               ((,c (:foreground ,magenta :inverse-video t))))
 
@@ -167,13 +165,17 @@
    `(mode-line-inactive             ((,c (:foreground ,modeline-fg-inactive :background ,modeline-bg-inactive))))
 
    `(mode-line-is-modified          ((,c (:foreground ,magenta))))
-   `(mode-line-buffer-file          ((,c (:foreground ,modeline-fg :background nil))))
+   `(mode-line-buffer-file          ((,c (:foreground ,modeline-fg))))
+   `(mode-line-count-face           ((,c (:foreground ,black :background ,magenta))))
+
+   `(spaceline-flycheck-error       ((,c (:underline nil :foreground ,black :background ,red))))
+   `(spaceline-flycheck-warning     ((,c (:underline nil :foreground ,black :background ,yellow))))
+   `(spaceline-flycheck-info        ((,c (:underline nil :foreground ,black :background ,green))))
+   `(spaceline-highlight-face       ((,c (:foreground ,black :background ,highlight))))
    `(powerline-active1              ((,c (:foreground ,modeline-fg-2 :background ,modeline-bg-2))))
    `(powerline-active2              ((,c (:foreground ,modeline-fg-3 :background ,modeline-bg-3))))
    `(powerline-inactive1            ((,c (:foreground ,modeline-fg-inactive :background ,modeline-bg-inactive))))
    `(powerline-inactive2            ((,c (:foreground ,modeline-fg-inactive :background ,modeline-bg-inactive))))
-   `(spaceline-highlight-face       ((,c (:foreground ,black :background ,highlight))))
-   `(mode-line-count-face           ((,c (:foreground ,black :background ,magenta))))
 
    ;; Search
    `(isearch                        ((,c (:foreground ,search-fg :background ,search-bg))))

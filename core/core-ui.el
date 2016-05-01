@@ -211,6 +211,11 @@
   (defface mode-line-buffer-file nil "Face for mode-line buffer file path")
 
   ;; Custom modeline segments
+  (spaceline-define-segment *buffer-size ""
+    "%I"
+    :when buffer-file-name
+    :tight-right t)
+
   (spaceline-define-segment *buffer-path
     (if buffer-file-name
         (let* ((project-path (narf/project-root))
@@ -292,11 +297,10 @@ anzu to be enabled."
     (let ((here anzu--current-position)
           (total anzu--total-matched))
       (format " %s/%d%s "
-              (anzu--format-here-position here total)
-              total (if anzu--overflow-p "+" "")))
+              here total
+              (if anzu--overflow-p "+" "")))
     :face (if active 'mode-line-count-face 'mode-line-inactive)
-    :when (and (> anzu--total-matched 0) (evil-ex-hl-active-p 'evil-ex-search))
-    :skip-alternate t
+    :when (evil-ex-hl-active-p 'evil-ex-search)
     :tight t)
 
   (spaceline-define-segment *iedit
@@ -315,10 +319,8 @@ anzu to be enabled."
               length))
     :when (bound-and-true-p iedit-mode)
     :tight t
-    :face (if active 'mode-line-count-face 'mode-line-inactive)
-    :skip-alternate t)
+    :face (if active 'mode-line-count-face 'mode-line-inactive))
 
-  (defface mode-line-substitute-face nil "")
   (spaceline-define-segment *evil-substitute
     "Show number of :s matches in real time."
     (let ((range (if evil-ex-range
@@ -376,9 +378,8 @@ Supports both Emacs and Evil cursor conventions."
               (format "%dL" lines)
             (format "%dC %dL" chars lines)))
          (t (format "%dC" (if evil chars (1- chars)))))))
-    :when (eq 'visual evil-state)
-    :face highlight-face
-    :skip-alternate t)
+    :when (evil-visual-state-p)
+    :face highlight-face)
 
   ;; flycheck
   (defun narf--flycheck-count (state)
@@ -398,8 +399,8 @@ Supports both Emacs and Evil cursor conventions."
     '((t (:foreground "#8DE6F7" :distant-foreground "#21889B")))
     "Face for flycheck info feedback in the modeline.")
 
-  (defvar narf--flycheck-err-cache nil "")
-  (defvar narf--flycheck-cache nil "")
+  (defvar-local narf--flycheck-err-cache nil "")
+  (defvar-local narf--flycheck-cache nil "")
   (spaceline-define-segment *flycheck
     "Persistent and cached flycheck indicators in the mode-line."
     (or (and (or (eq narf--flycheck-err-cache narf--flycheck-cache)
@@ -417,30 +418,32 @@ Supports both Emacs and Evil cursor conventions."
     :when (and (bound-and-true-p flycheck-mode)
                (or flycheck-current-errors
                    (eq 'running flycheck-last-status-change)))
-    :tight t
-    :skip-alternate t)
+    :tight t)
 
-  (spaceline-define-segment *hud
+  (defvar narf--mode-line-padding (pl/percent-xpm powerline-height 100 0 100 0 1 nil nil))
+  (spaceline-define-segment *pad
     "A HUD that shows which part of the buffer is currently visible."
-    (powerline-hud (if active 'spaceline-highlight-face 'region) line-face 1)
+    narf--mode-line-padding
     :tight-right t)
 
   (defun narf-spaceline-init ()
     (spaceline-install
      ;; Left side
-     '((*macro-recording *anzu *iedit *evil-substitute *flycheck)
+     '(((*macro-recording *anzu *iedit *evil-substitute *flycheck)
+        :skip-alternate t
+        :fallback *buffer-size)
        (*buffer-path *remote-host)
        *buffer-modified
        *vc
        )
      ;; Right side
-     '(*selection-info
+     '((*selection-info :when active)
        *buffer-encoding-abbrev
        *major-mode
        *env-version
        (global :when active)
        ("%l/%c" *buffer-position)
-       *hud
+       *pad
        )))
 
   ;; Initialize modeline
