@@ -124,16 +124,17 @@
 (depends-on "company-sourcekit")
 
 ;; C/C++ -- modules/module-cc.el
-(depends-on "disaster")
-(depends-on "cmake-mode")
-(depends-on "glsl-mode")
-(depends-on "cuda-mode")
-;; (depends-on "company-c-headers")
 (depends-on "irony")
 (depends-on "irony-eldoc")
 (depends-on "flycheck-irony")
 (depends-on "company-irony")
 (depends-on "company-irony-c-headers")
+(depends-on "disaster")
+(depends-on "cmake-mode")
+(depends-on "glsl-mode")
+(depends-on "cuda-mode")
+(depends-on "opencl-mode")
+(depends-on "demangle-mode")
 
 ;; Crystal -- modules/module-crystal.el
 (depends-on "crystal-mode" :git "https://github.com/jpellerin/emacs-crystal-mode")

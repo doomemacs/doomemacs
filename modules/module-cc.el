@@ -66,11 +66,18 @@
 (use-package cmake-mode
   :mode "CMakeLists\\.txt$"
   :config (def-company-backend! cmake-mode (cmake yasnippet)))
+
 (use-package company-cmake :after cmake-mode)
 
 (use-package glsl-mode :mode ("\\.glsl\\'" "\\.vert\\'" "\\.frag\\'" "\\.geom\\'"))
 
 (use-package cuda-mode :mode "\\.cuh?$")
+
+(use-package opencl-mode :mode "\\.cl$")
+
+(use-package demangle-mode
+  :commands demangle-mode
+  :init (add-hook 'llvm-mode-hook 'demangle-mode))
 
 (provide 'module-cc)
 ;;; module-cc.el ends here
