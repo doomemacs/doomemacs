@@ -352,12 +352,16 @@
                 (cons '(?\\ . narf/evil-surround-escaped)
                       evil-surround-pairs-alist))
 
-  (add-hook! org-mode
-    (push '(?l . narf/evil-surround-latex) evil-surround-pairs-alist))
   (add-hook! emacs-lisp-mode
     (push '(?\` . ("`" . "'")) evil-surround-pairs-alist))
   (add-hook! python-mode
     (push '((?d . ("\"\"\"" . "\"\"\""))) evil-surround-pairs-alist)))
+
+(use-package evil-embrace
+  :after evil-surround
+  :config
+  (evil-embrace-enable-evil-surround-integration)
+  (embrace-add-pair-regexp ?\\ "\\[[{(]" "\\[]})]" 'narf/evil-surround-escaped))
 
 (use-package evil-visualstar
   :commands (global-evil-visualstar-mode

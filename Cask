@@ -49,6 +49,7 @@
 (depends-on "evil-search-highlight-persist")
 (depends-on "evil-snipe")
 (depends-on "evil-surround")
+(depends-on "evil-embrace")
 (depends-on "evil-visualstar")
 (depends-on "evil-plugins" :git "https://github.com/tarao/evil-plugins")
 (depends-on "evil-escape")
