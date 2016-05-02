@@ -4,15 +4,13 @@
 ;; Dired
 ;;
 
-;; Always copy/delete recursively
-(setq dired-recursive-copies (quote always)
-      dired-recursive-deletes (quote top))
-
-;; Auto refresh dired, but be quiet about it
-(setq global-auto-revert-non-file-buffers t
+(setq ;; Always copy/delete recursively
+      dired-recursive-copies  'always
+      dired-recursive-deletes 'top
+      ;; Auto refresh dired, but be quiet about it
+      global-auto-revert-non-file-buffers t
       auto-revert-verbose nil)
-
-(setq dired-omit-mode t)
+(add-hook 'dired-mode-hook 'dired-omit-mode)
 
 ;; List directories first
 (defun narf|dired-sort ()
