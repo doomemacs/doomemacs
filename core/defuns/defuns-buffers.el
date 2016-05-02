@@ -221,8 +221,9 @@ left, create a scratch buffer."
   "Kill all project buffers. If BANG, kill *all* buffers (in workgroup)."
   (interactive "<!>")
   (narf--kill-buffers (narf/get-buffers (not bang)))
-  (when bang
-    (delete-other-windows)))
+  (mapc (lambda (w) (when (eq (window-buffer w) (get-buffer "*scratch*"))
+                 (delete-window w)))
+        (narf/get-visible-windows)))
 
 ;;;###autoload (autoload 'narf:kill-other-buffers "defuns-buffers" nil t)
 (evil-define-command narf:kill-other-buffers (&optional bang)
