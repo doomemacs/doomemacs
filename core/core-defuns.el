@@ -155,10 +155,10 @@ Examples:
            (after! company-dict
              (push ',mode company-dict-minor-mode-list))
            ,(when build
-              (when (listp build)
-                (setq build (car-safe (cdr-safe build))))
-              (let ((cmd (or (car-safe build) build))
-                    (file (car-safe (cdr-safe build))))
+              (let ((cmd build) file)
+                (when (and (not (functionp build)) (listp build))
+                  (setq cmd (car-safe (cdr-safe build))
+                        file (cdr-safe (cdr-safe build))))
                 `(def-builder! ,mode ,cmd ,file)))
            ,@body
            (remove-hook ',mode-hook-sym ',mode-init-sym))
