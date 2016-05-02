@@ -21,11 +21,10 @@
 ;; TODO Set up emacs task runners for fruitstrap
 (use-package swift-mode
   :mode "\\.swift$"
-  :init
-  (add-hook 'swift-mode-hook 'flycheck-mode)
+  :init (add-hook 'swift-mode-hook 'flycheck-mode)
   :config
   (def-company-backend! swift-mode (sourcekit yasnippet))
-  (push 'swift flycheck-checkers))
+  (after! flycheck (push 'swift flycheck-checkers)))
 
 (use-package company-sourcekit
   :after swift-mode)
