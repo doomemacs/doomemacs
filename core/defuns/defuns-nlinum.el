@@ -8,6 +8,12 @@
     (narf|nlinum-enable)))
 
 ;;;###autoload
+(defun narf|nlinum-enable ()
+  (nlinum-mode +1)
+  (add-hook 'post-command-hook 'narf|nlinum-hl-line nil t)
+  (narf|nlinum-unhl-line))
+
+;;;###autoload
 (defun narf|nlinum-disable ()
   (nlinum-mode -1)
   (remove-hook 'post-command-hook 'narf|nlinum-hl-line t)

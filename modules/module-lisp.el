@@ -65,15 +65,11 @@
   (add-hook 'before-save-hook 'delete-trailing-whitespace nil t)
   (add-hook 'after-save-hook  'narf/elisp-auto-compile nil t)
 
-  (let ((header-face 'font-lock-constant-face))
-    (push '("Evil Command" "\\(^\\s-*(evil-define-command +\\)\\(\\_<.+\\_>\\)" 2)
-          imenu-generic-expression)
-    (push '("Evil Operator" "\\(^\\s-*(evil-define-operator +\\)\\(\\_<.+\\_>\\)" 2)
-          imenu-generic-expression)
-    (push '("Package" "\\(^\\s-*(use-package +\\)\\(\\_<.+\\_>\\)" 2)
-          imenu-generic-expression)
-    (push '("Spaceline Segment" "\\(^\\s-*(spaceline-define-segment +\\)\\(\\_<.+\\_>\\)" 2)
-          imenu-generic-expression)))
+  (dolist (i '(("Evil Command" "\\(^\\s-*(evil-define-command +\\)\\(\\_<.+\\_>\\)" 2)
+               ("Evil Operator" "\\(^\\s-*(evil-define-operator +\\)\\(\\_<.+\\_>\\)" 2)
+               ("Package" "\\(^\\s-*(use-package +\\)\\(\\_<.+\\_>\\)" 2)
+               ("Spaceline Segment" "\\(^\\s-*(spaceline-define-segment +\\)\\(\\_<.+\\_>\\)" 2)))
+    (push i imenu-generic-expression)))
 
 ;; Add new colors to helm-imenu
 (after! helm-imenu
