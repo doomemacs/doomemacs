@@ -238,15 +238,6 @@ enable multiple minor modes for the same regexp.")
         :n "SPC" 'imenu-list-display-entry
         :n [tab] 'hs-toggle-hiding))
 
-(use-package miniedit
-  :commands minibuffer-edit
-  :init
-  (map! :map (minibuffer-local-map
-              minibuffer-local-ns-map
-              minibuffer-local-completion-map
-              minibuffer-local-must-match-map)
-        "\M-\C-e" 'miniedit))
-
 (use-package re-builder
   :commands (re-builder reb-mode-buffer-p)
   :init
