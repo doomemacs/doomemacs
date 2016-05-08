@@ -92,7 +92,7 @@
        (modeline-bg    grey-2)
        (modeline-bg-2  grey-2)
        (modeline-bg-3  grey-2)
-       (modeline-bg-inactive  black)
+       (modeline-bg-inactive  current-line)
 
        (vc-modified    grey-2)
        (vc-added       green-3)
@@ -164,7 +164,7 @@
    `(mode-line                      ((,c (:foreground ,modeline-fg          :background ,modeline-bg))))
    `(mode-line-inactive             ((,c (:foreground ,modeline-fg-inactive :background ,modeline-bg-inactive))))
 
-   `(mode-line-is-modified          ((,c (:foreground ,magenta))))
+   `(mode-line-is-modified          ((,c (:foreground ,magenta :background nil :bold t))))
    `(mode-line-buffer-file          ((,c (:foreground ,modeline-fg))))
    `(mode-line-count-face           ((,c (:foreground ,black :background ,magenta))))
 
@@ -336,7 +336,7 @@
    `(org-archived               ((,c (:foreground ,grey-.5))))
 
    `(org-document-title   ((,c (:foreground ,cyan))))
-   `(org-level-1          ((,c (:background ,current-line :foreground ,magenta :bold ,bold))))
+   `(org-level-1          ((,c (:background ,current-line :foreground ,magenta   :bold ,bold))))
    `(org-level-2          ((,c (                          :foreground ,dark-cyan :bold ,bold))))
    `(org-level-3          ((,c (                          :foreground ,violet    :bold ,bold))))
    `(org-level-4          ((,c (                          :foreground ,green     :bold ,bold))))

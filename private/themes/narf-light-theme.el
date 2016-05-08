@@ -54,7 +54,7 @@
        (search-rest-fg black)
        (highlight      orange)
        (vertical-bar   grey-2)
-       (current-line   grey)
+       (current-line   base06)
        (selection      "#535556")
        (comments       grey-1)
        (comments-docs  comments)
@@ -133,8 +133,8 @@
    `(font-lock-regexp-grouping-backslash   ((,c (:foreground ,operators))))
    `(font-lock-regexp-grouping-construct   ((,c (:foreground ,operators))))
 
-   `(bold                           ((,c (:weight bold  :foreground ,white))))
-   `(italic                         ((,c (:slant italic :foreground ,subtle))))
+   `(bold                           ((,c (:weight bold  :foreground ,black))))
+   `(italic                         ((,c (:slant italic :foreground ,grey))))
    `(bold-italic                    ((,c (:weight bold  :slant italic :foreground ,white))))
 
    `(trailing-whitespace            ((,c (:background "#884444"))))
@@ -152,14 +152,18 @@
    ;; Modeline
    `(mode-line                      ((,c (:foreground ,modeline-fg          :background ,modeline-bg))))
    `(mode-line-inactive             ((,c (:foreground ,modeline-fg-inactive :background ,modeline-bg-inactive))))
-   `(mode-line-is-modified          ((,c (:foreground ,red :bold t))))
+   `(mode-line-is-modified          ((,c (:foreground ,red :background nil :bold t))))
    `(mode-line-buffer-file          ((,c (:foreground ,modeline-fg))))
+   `(mode-line-count-face           ((,c (:foreground ,black :background ,magenta :bold t))))
    `(powerline-active1              ((,c (:foreground ,modeline-fg-2 :background ,modeline-bg-2))))
    `(powerline-active2              ((,c (:foreground ,modeline-fg-3 :background ,modeline-bg-3))))
-   `(powerline-inactive1            ((,c (:foreground ,modeline-fg-inactive))))
-   `(powerline-inactive2            ((,c (:foreground ,modeline-fg-inactive))))
-   `(spaceline-highlight-face       ((,c (:foreground ,black :background ,highlight :bold t))))
-   `(mode-line-count-face           ((,c (:foreground ,black :background ,magenta :bold t))))
+   `(powerline-inactive1            ((,c (:foreground ,modeline-fg-inactive :background ,modeline-bg-inactive))))
+   `(powerline-inactive2            ((,c (:foreground ,modeline-fg-inactive :background ,modeline-bg-inactive))))
+
+   `(spaceline-flycheck-error       ((,c (:underline nil :foreground ,black :background ,red))))
+   `(spaceline-flycheck-warning     ((,c (:underline nil :foreground ,black :background ,yellow))))
+   `(spaceline-flycheck-info        ((,c (:underline nil :foreground ,black :background ,green))))
+   `(spaceline-highlight-face       ((,c (:foreground ,black :background ,highlight))))
 
    ;; Search
    `(isearch                        ((,c (:foreground ,search-fg :background ,search-bg))))
@@ -183,8 +187,8 @@
 
    ;; neotree
    `(neo-root-dir-face           ((,c (:foreground ,cyan))))
-   `(neo-file-link-face          ((,c (:foreground ,white))))
-   `(neo-dir-link-face           ((,c (:foreground ,orange))))
+   `(neo-file-link-face          ((,c (:foreground ,black))))
+   `(neo-dir-link-face           ((,c (:foreground ,blue))))
    `(neo-expand-btn-face         ((,c (:foreground ,magenta))))
 
    ;; company-mode
@@ -229,11 +233,11 @@
 
    ;; Helm
    `(helm-source-header          ((,c (:background ,current-line :foreground ,grey-1))))
-   `(helm-selection              ((,c (:background ,selection))))
+   `(helm-selection              ((,c (:background ,current-line))))
    `(helm-swoop-target-line-face ((,c (:foreground ,highlight :inverse-video t))))
-   `(helm-match ((,c (:foreground ,magenta))))
+   `(helm-match ((,c (:foreground ,blue))))
 
-   `(helm-ff-file ((,c (:foreground ,grey))))
+   `(helm-ff-file ((,c (:foreground ,black))))
    `(helm-ff-prefix ((,c (:foreground ,magenta))))
    `(helm-ff-dotted-directory ((,c (:foreground ,grey-1))))
    `(helm-ff-directory ((,c (:foreground ,orange :bold t))))
@@ -286,13 +290,13 @@
    `(org-block-begin-line       ((,c (:background ,current-line :foreground ,vsubtle))))
    `(org-block-end-line         ((,c (:inherit org-block-begin-line))))
 
-   `(org-document-title   ((,c (:foreground ,cyan :height 1.30 :bold t))))
-   `(org-level-1          ((,c (:foreground ,orange :bold t))))
-   `(org-level-2          ((,c (:foreground ,dark-cyan :bold t))))
-   `(org-level-3          ((,c (:foreground ,violet :bold t))))
-   `(org-level-4          ((,c (:foreground ,green :bold t))))
-   `(org-level-5          ((,c (:foreground ,yellow))))
-   `(org-level-6          ((,c (:foreground ,blue+2))))
+   `(org-document-title   ((,c (:foreground ,cyan :height 1.2 :bold t))))
+   `(org-level-1          ((,c (:background ,current-line :foreground "#222222" :bold t))))
+   `(org-level-2          ((,c (                          :foreground "#444444" :bold t))))
+   `(org-level-3          ((,c (                          :foreground "#888888" :bold t))))
+   `(org-level-4          ((,c (                          :foreground ,violet   :bold t))))
+   `(org-level-5          ((,c (                          :foreground ,orange))))
+   `(org-level-6          ((,c (                          :foreground ,blue+2))))
    ;;`(org-level-7          ((,c ())))
    ;;`(org-level-8          ((,c ())))
    ;;`(org-checkbox         ((,class (:box (:line-width 1 :style released-button)))))
@@ -303,9 +307,9 @@
    `(org-list-dt          ((,c (:foreground ,cyan :bold t))))
    `(org-footnote         ((,c (:foreground ,orange))))
 
-   `(org-link             ((,c (:underline t :foreground ,yellow :bold inherit))))
+   `(org-link             ((,c (:underline t :foreground ,green :bold inherit))))
    `(org-date             ((,c (:foreground ,violet))))
-   `(org-todo             ((,c (:foreground ,yellow :bold inherit))))
+   `(org-todo             ((,c (:foreground ,orange :bold inherit))))
    `(org-done             ((,c (:foreground ,green :bold inherit))))
    `(org-headline-done    ((,c (:foreground ,grey-1 :strike-through t :bold nil))))
    `(org-special-keyword  ((,c (:foreground ,magenta))))
