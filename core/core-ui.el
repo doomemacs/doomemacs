@@ -1,12 +1,12 @@
-;;; core-ui.el --- interface settings
+;;; core-ui.el --- interface & mode-line config
 
 (setq-default
- blink-matching-paren nil ; don't blink matching delimiters--too distracting
+ blink-matching-paren nil ; don't blink--too distracting
  show-paren-delay 0.075
 
- cursor-in-non-selected-windows nil ; no cursors except in active buffer
+ ;; Keep cursors and highlights in current window only
+ cursor-in-non-selected-windows nil
  highlight-nonselected-windows nil
- hl-line-sticky-flag nil ; only highlight in one window
 
  uniquify-buffer-name-style nil ; my mode-line does this for me
  visible-bell nil
@@ -46,9 +46,7 @@
               (y-or-n-p ">> Gee, I dunno Brain... Are you sure?")
             t))))
 
-(blink-cursor-mode  1)  ; blink cursor
-(tooltip-mode      -1)  ; show tooltips in echo area
-
+(tooltip-mode -1)  ; show tooltips in echo area
 ;; set up minibuffer and fringe
 (if (not window-system)
     (menu-bar-mode -1)
@@ -114,9 +112,11 @@
 
 (use-package hl-line
   :init
-  (add-hook! (prog-mode markdown-mode) 'hl-line-mode) ; line highlighting
+  (add-hook! (prog-mode markdown-mode) 'hl-line-mode)
   :config
   (defvar-local narf--hl-line-mode nil)
+  (setq hl-line-sticky-flag nil
+        global-hl-line-sticky-flag nil)
 
   (defun narf|hl-line-on ()  (if narf--hl-line-mode (hl-line-mode +1)))
   (defun narf|hl-line-off () (if narf--hl-line-mode (hl-line-mode -1)))
@@ -203,56 +203,41 @@
   (defvar-local narf--env-version nil)
   (defvar-local narf--env-command nil)
   (defvar powerline-height 23)
-  (setq-default
-   powerline-default-separator nil
-   spaceline-highlight-face-func 'spaceline-highlight-face-evil-state)
+  (defvar powerline-default-separator nil)
 
   :config
   (defface mode-line-is-modified nil "Face for mode-line modified symbol")
   (defface mode-line-buffer-file nil "Face for mode-line buffer file path")
 
   ;; Custom modeline segments
-  (spaceline-define-segment *buffer-size ""
-    "%I"
-    :when buffer-file-name
-    :tight-right t)
-
   (spaceline-define-segment *buffer-path
     (if buffer-file-name
-        (let* ((project-path (narf/project-root))
-               (buffer-path (f-relative buffer-file-name project-path))
-               (max-length 40))
-          (concat (projectile-project-name) "/"
-                  (if (> (length buffer-path) max-length)
-                      (let ((path (reverse (split-string buffer-path "/")))
-                            (output ""))
-                        (when (and path (equal "" (car path)))
-                          (setq path (cdr path)))
-                        (while (and path (< (length output) (- max-length 4)))
-                          (setq output (concat (car path) "/" output))
-                          (setq path (cdr path)))
-                        (when path
-                          (setq output (concat "../" output)))
-                        output)
-                    buffer-path)))
+        (let ((buffer-path (f-relative buffer-file-name (f-dirname (narf/project-root))))
+              (max-length 50))
+          (if (> (length buffer-path) max-length)
+              (let ((path (reverse (split-string buffer-path "/")))
+                    (output ""))
+                (when (and path (equal "" (car path)))
+                  (setq path (cdr path)))
+                (while (and path (< (length output) (- max-length 4)))
+                  (setq output (concat (car path) "/" output))
+                  (setq path (cdr path)))
+                (when path
+                  (setq output (concat "../" output)))
+                output)
+            buffer-path))
       "%b")
-    :face (if active 'mode-line-buffer-file 'mode-line-inactive)
-    :skip-alternate t
+    :face other-face
     :tight-right t)
 
-  (spaceline-define-segment *remote-host
-    "Hostname for remote buffers."
-    (concat "@" (file-remote-p default-directory 'host))
-    :when (file-remote-p default-directory 'host))
-
   (spaceline-define-segment *buffer-modified
-    (concat
-     (when buffer-file-name
-       (concat
-        (when (buffer-modified-p) "[+]")
-        (unless (file-exists-p buffer-file-name) "[!]")))
-     (if buffer-read-only "[RO]"))
-    :face mode-line-is-modified
+    (propertize
+     (concat (when buffer-file-name
+               (concat
+                (if (buffer-modified-p) "[+]")
+                (if (not (file-exists-p buffer-file-name)) "[!]")))
+             (if buffer-read-only "[RO]"))
+     'face 'mode-line-is-modified)
     :when (not (string-prefix-p "*" (buffer-name)))
     :skip-alternate t
     :tight t)
@@ -266,27 +251,16 @@
                (eq end pend))
           ":All"
         (let ((perc (/ end 0.01 pend)))
-          (cond ((eq start 1) ":Top")
+          (cond ((= start 1) ":Top")
                 ((>= perc 100) ":Bot")
                 (t (format ":%d%%%%" perc))))))
     :tight t)
 
   (spaceline-define-segment *vc
     "Version control info"
-    (concat (replace-regexp-in-string
-             (format "^ %s" (vc-backend buffer-file-name))
-             "" vc-mode))
+    (substring vc-mode (+ 1 (length (symbol-name (vc-backend buffer-file-name)))))
     :when (and active vc-mode)
     :face other-face
-    :tight-right t)
-
-  (spaceline-define-segment *env-version
-    "Shows the environment version of a mode (e.g. pyenv for python or rbenv for ruby).
-See `def-env-command!' to define one for a mode."
-    narf--env-version
-    :when narf--env-version
-    :face other-face
-    :skip-alternate t
     :tight-right t)
 
   ;; search indicators
@@ -351,30 +325,32 @@ anzu to be enabled."
                                (symbol-name buffer-file-coding-system))))
 
   (spaceline-define-segment *major-mode
+    "The major mode, including process, environment and text-scale info."
     (concat
-     (and (featurep 'face-remap) (/= text-scale-mode-amount 0) (format "(%+d) " text-scale-mode-amount))
-     (if (stringp mode-name) mode-name (car mode-name))
-     (if (stringp mode-line-process) mode-line-process))
+     (format "%s" mode-name)
+     (if (stringp mode-line-process) mode-line-process)
+     (if narf--env-version (concat " " narf--env-version))
+     (and (featurep 'face-remap)
+          (/= text-scale-mode-amount 0)
+          (format " (%+d)" text-scale-mode-amount)))
     :tight-right t)
 
-  (defun narf--col-at-pos (pos)
-    (save-excursion (goto-char pos) (current-column)))
   (spaceline-define-segment *selection-info
-    "Information about the size of the current selection, when applicable.
-Supports both Emacs and Evil cursor conventions."
+    "Information about the current selection."
     (let ((reg-beg (region-beginning))
-          (reg-end (region-end)))
-      (let* ((lines (count-lines reg-beg (min (1+ reg-end) (point-max))))
-             (chars (- (1+ reg-end) reg-beg))
-             (cols (1+ (abs (- (narf--col-at-pos reg-end)
-                               (narf--col-at-pos reg-beg)))))
-             (evil (eq 'visual evil-state))
-             (rect (or (bound-and-true-p rectangle-mark-mode)
-                       (and evil (eq 'block evil-visual-selection))))
-             (multi-line (or (> lines 1) (eq 'line evil-visual-selection))))
+          (reg-end (region-end))
+          (evil (eq 'visual evil-state)))
+      (let ((lines (count-lines reg-beg (min (1+ reg-end) (point-max))))
+            (chars (- (1+ reg-end) reg-beg))
+            (cols (1+ (abs (- (evil-column reg-end)
+                              (evil-column reg-beg))))))
         (cond
-         (rect (format "%dx%dB" lines (if evil cols (1- cols))))
-         (multi-line
+         ;; rectangle selection
+         ((or (bound-and-true-p rectangle-mark-mode)
+              (and evil (eq 'block evil-visual-selection)))
+          (format "%dx%dB" lines (if evil cols (1- cols))))
+         ;; line selection
+         ((or (> lines 1) (eq 'line evil-visual-selection))
           (if (and (eq evil-state 'visual) (eq evil-this-type 'line))
               (format "%dL" lines)
             (format "%dC %dL" chars lines)))
@@ -411,11 +387,13 @@ Supports both Emacs and Evil cursor conventions."
              (setq narf--flycheck-cache
                    (let ((fe (narf--flycheck-count 'error))
                          (fw (narf--flycheck-count 'warning))
-                         (fi (narf--flycheck-count 'info)))
+                         ;; (fi (narf--flycheck-count 'info))
+                         )
                      (concat
-                      (when fe (powerline-raw (format " ⚠%s " fe) 'spaceline-flycheck-error))
-                      (when fw (powerline-raw (format " ⚠%s " fw) 'spaceline-flycheck-warning))
-                      (when fi (powerline-raw (format " ⚠%s " fi) 'spaceline-flycheck-info)))))))
+                      (if fe (propertize (format " ⚠%s " fe) 'face (if active 'spaceline-flycheck-error 'mode-line)))
+                      (if fw (propertize (format " ⚠%s " fw) 'face (if active 'spaceline-flycheck-warning 'mode-line)))
+                      ;; (if fi (propertize (format " ⚠%s " fi) 'face 'spaceline-flycheck-info))
+                      )))))
     :when (and (bound-and-true-p flycheck-mode)
                (or flycheck-current-errors
                    (eq 'running flycheck-last-status-change)))
@@ -423,7 +401,7 @@ Supports both Emacs and Evil cursor conventions."
 
   (defvar narf--mode-line-padding (pl/percent-xpm powerline-height 100 0 100 0 1 nil nil))
   (spaceline-define-segment *pad
-    "A HUD that shows which part of the buffer is currently visible."
+    "Padding, to ensure the mode-line is `powerline-height' pixels tall"
     narf--mode-line-padding
     :tight-right t)
 
@@ -432,16 +410,15 @@ Supports both Emacs and Evil cursor conventions."
      ;; Left side
      '(((*macro-recording *anzu *iedit *evil-substitute *flycheck)
         :skip-alternate t
-        :fallback *buffer-size)
-       (*buffer-path *remote-host)
+        :fallback ("%I" :tight-right t))
+       *buffer-path
        *buffer-modified
        *vc
        )
      ;; Right side
      '((*selection-info :when active)
+       (*major-mode *env-version)
        *buffer-encoding-abbrev
-       *major-mode
-       *env-version
        (global :when active)
        ("%l/%c" *buffer-position)
        *pad
