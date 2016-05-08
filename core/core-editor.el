@@ -215,11 +215,10 @@ enable multiple minor modes for the same regexp.")
   (setq hs-set-up-overlay
         (lambda (ov)
           (when (eq 'code (overlay-get ov 'hs))
-            (let* ((marker-string "*fringe-dummy*")
-                   (marker-length (length marker-string))
-                   (display-string (format " ... " (count-lines (overlay-start ov)
-                                                                (overlay-end ov)))))
-              (put-text-property 0 marker-length 'display
+            (let ((marker-string "*")
+                  (display-string (format " ... " (count-lines (overlay-start ov)
+                                                               (overlay-end ov)))))
+              (put-text-property 0 1 'display
                                  (list 'right-fringe 'hs-marker 'hs-fringe-face) marker-string)
               (put-text-property 0 (length display-string) 'face 'hs-face display-string)
               (overlay-put ov 'before-string marker-string)

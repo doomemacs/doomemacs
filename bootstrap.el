@@ -68,20 +68,11 @@
           (append (list (expand-file-name "themes/" narf-private-dir))
                   custom-theme-load-path))
 
-    (require 'f)
-    (require 'dash)
-    (require 's)
-
-    ;; Load local settings, if available
-    (when (file-exists-p "~/.emacs.local.el")
-      (load "~/.emacs.local.el"))
-
-    ;; Global settings
+    ;; Local settings
+    (load "~/.emacs.local.el" t t)
     (setq narf-current-theme narf-default-theme
           narf-current-font  narf-default-font)
-
-    ;; Load 'em up!
-    (load-theme narf-current-theme t)
+    ;; Here we a'go!
     (mapc 'require packages)))
 
 ;;; bootstrap.el ends here

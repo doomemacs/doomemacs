@@ -15,13 +15,13 @@
       (byte-compile-file path)))
 
   (map! :map flycheck-error-list-mode-map
-        :n "C-n"    'flycheck-error-list-next-error
-        :n "C-p"    'flycheck-error-list-previous-error
-        :n "j"      'flycheck-error-list-next-error
-        :n "k"      'flycheck-error-list-previous-error
-        :n "RET"    'flycheck-error-list-goto-error)
+        :n "C-n" 'flycheck-error-list-next-error
+        :n "C-p" 'flycheck-error-list-previous-error
+        :n "j"   'flycheck-error-list-next-error
+        :n "k"   'flycheck-error-list-previous-error
+        :n "RET" 'flycheck-error-list-goto-error)
 
-  ;; And on ESC in normal mode.
+  ;; Flycheck buffer on ESC in normal mode.
   (advice-add 'evil-force-normal-state :after 'narf*flycheck-buffer)
 
   (define-fringe-bitmap 'flycheck-fringe-bitmap-double-arrow

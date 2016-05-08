@@ -36,20 +36,20 @@ automatically renamed to the project name.")
    wg-restore-margins nil
    wg-restore-point-max t ; Throws silent errors if non-nil
 
-   wg-list-display-decor-divider         " "
-   wg-list-display-decor-left-brace      ""
-   wg-list-display-decor-right-brace     "| "
-   wg-list-display-decor-current-left    ""
-   wg-list-display-decor-current-right   ""
-   wg-list-display-decor-previous-left   ""
-   wg-list-display-decor-previous-right  "")
+   wg-list-display-decor-divider " "
+   wg-list-display-decor-left-brace ""
+   wg-list-display-decor-right-brace "| "
+   wg-list-display-decor-current-left ""
+   wg-list-display-decor-current-right ""
+   wg-list-display-decor-previous-left ""
+   wg-list-display-decor-previous-right "")
 
   (add-hook 'emacs-startup-hook 'workgroups-mode)
   :config
   (unless (file-exists-p wg-workgroup-directory)
     (mkdir wg-workgroup-directory))
 
-  ;; Remember the set names in between sessions
+  ;; Remember fixed workgroup names between sessions
   (push 'narf-wg-names savehist-additional-variables)
 
   ;; `wg-mode-line-display-on' wasn't enough
