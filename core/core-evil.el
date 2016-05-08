@@ -346,23 +346,22 @@
              evil-Surround-edit
              evil-surround-region)
   :config
-  (global-evil-surround-mode 1)
-
-  ;; Escaped surround characters
-  (setq-default evil-surround-pairs-alist
-                (cons '(?\\ . narf/evil-surround-escaped)
-                      evil-surround-pairs-alist))
-
-  (add-hook! emacs-lisp-mode
-    (push '(?\` . ("`" . "'")) evil-surround-pairs-alist))
-  (add-hook! python-mode
-    (push '((?d . ("\"\"\"" . "\"\"\""))) evil-surround-pairs-alist)))
+  (global-evil-surround-mode 1))
 
 (use-package evil-embrace
   :after evil-surround
   :config
   (evil-embrace-enable-evil-surround-integration)
-  (embrace-add-pair-regexp ?\\ "\\[[{(]" "\\[]})]" 'narf/evil-surround-escaped))
+  ;; Escaped surround characters
+  (embrace-add-pair-regexp ?\\ "\\[[{(]" "\\[]})]" 'narf/embrace-escaped)
+  (add-hook 'LaTeX-mode-hook 'embrace-LaTeX-mode-hook)
+  (add-hook 'org-mode-hook 'embrace-org-mode-hook)
+  (add-hook! emacs-lisp-mode
+    (embrace-add-pair ?\` "`" "'"))
+  (add-hook! (emacs-lisp-mode lisp-mode)
+    (embrace-add-pair-regexp ?f "([^ ]+ " ")" 'narf/embrace-elisp-fn))
+  (add-hook! (org-mode latex-mode)
+    (embrace-add-pair-regexp ?l "\\[a-z]+{" "}" 'narf/embrace-latex)))
 
 (use-package evil-visualstar
   :commands (global-evil-visualstar-mode

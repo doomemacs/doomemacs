@@ -42,22 +42,6 @@
   (when evil-exchange--overlays
     (evil-exchange-cancel)))
 
-;;;###autoload
-(defun narf/evil-surround-escaped ()
-  "Escaped surround characters."
-  (let* ((char (string (read-char "\\")))
-         (pair (acond ((cdr-safe (assoc (string-to-char char) evil-surround-pairs-alist))
-                       `(,(car it) . ,(cdr it)))
-                      (t `(,char . ,char))))
-         (text (if (sp-point-in-string) "\\\\%s" "\\%s")))
-    (cons (format text (car pair))
-          (format text (cdr pair)))))
-
-;;;###autoload
-(defun narf/evil-surround-latex ()
-  "LaTeX commands"
-  (cons (format "\\%s{" (read-string "\\")) "}"))
-
 ;;;###autoload (autoload 'narf/evil-macro-on-all-lines "defuns-evil" nil t)
 (evil-define-operator narf/evil-macro-on-all-lines (beg end &optional macro)
   "Apply macro to each line."
