@@ -2,7 +2,6 @@
 
 (add-hook 'org-load-hook 'narf|org-init t)
 (add-hook 'org-load-hook 'narf|org-keybinds t)
-(add-hook 'org-load-hook 'narf|org-hacks t)
 (add-hook 'org-mode-hook 'narf|org-hook)
 
 (defvar org-directory (expand-file-name "~/Dropbox/notes/"))
@@ -14,8 +13,10 @@
   :keymap     (make-sparse-keymap) ; defines evil-org-mode-map
   :group      'evil-org)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'module-org-crm)
+(require 'module-org-notebook)
 
+;;
 (defun narf|org-hook ()
   (evil-org-mode +1)
   (visual-line-mode +1)
@@ -43,13 +44,13 @@
    org-indent-mode-turns-on-hiding-stars t
    org-adapt-indentation nil
    org-blank-before-new-entry '((heading . nil) (plain-list-item . auto))
-   ;; org-bullets-bullet-list '("•" "◦" "•" "◦" "•" "◦")
+   ;; org-bullets-bullet-list '("✸" "•" "◦" "•" "◦" "•" "◦")
    org-cycle-separator-lines 1
    org-cycle-include-plain-lists t
    org-ellipsis 'hs-face
    org-entities-user '(("flat" "\\flat" nil "" "" "266D" "♭")
                        ("sharp" "\\sharp" nil "" "" "266F" "♯"))
-   org-fontify-done-headline nil
+   org-fontify-done-headline t
    org-fontify-quote-and-verse-blocks t
    org-fontify-whole-heading-line t
    org-footnote-auto-label 'plain
@@ -104,11 +105,10 @@
    org-edit-src-content-indentation 0
 
    ;; Latex
-   narf-org-latex-inline-scale 1.2
-   narf-org-latex-block-scale  1.4
+   org-format-latex-options (plist-put org-format-latex-options :scale 1.4)
    org-highlight-latex-and-related '(latex)
    org-latex-create-formula-image-program 'dvipng
-   org-latex-image-default-width nil
+   org-latex-image-default-width ".9\\linewidth"
    org-latex-preview-ltxpng-directory (concat narf-temp-dir "/ltxpng/")
    org-latex-remove-logfiles nil
    org-startup-with-latex-preview nil
@@ -117,8 +117,12 @@
    ;;   ("" "physics" t) TODO Install this)
 
    org-capture-templates
-   '(("c" "Changelog" entry
-      (file+headline (concat (narf/project-root) "CHANGELOG.org") "Unreleased")
+   '(;; TODO: New Note (note)
+     ;; TODO: New Task (todo)
+     ;; TODO: New vocabulary word
+
+     ("c" "Changelog" entry
+      (file+headline (f-expand "CHANGELOG.org" (narf/project-root)) "Unreleased")
       "* %?")
 
      ;; ("p" "Project Notes" entry
@@ -129,13 +133,14 @@
      ;;  (file+headline org-default-notes-file "Inbox")
      ;;  "* %u %?\n%i" :prepend t)
 
-     ("n" "Notes" entry
-      (file+headline org-default-notes-file "Inbox")
-      "* %u %?\n%i" :prepend t)
+     ;; ("n" "Notes" entry
+     ;;  (file+headline org-default-notes-file "Inbox")
+     ;;  "* %u %?\n%i" :prepend t)
 
-     ("v" "Vocab" entry
-      (file+headline (concat org-directory "topics/vocab.org") "Unsorted")
-      "** %i%?\n")))
+     ;; ("v" "Vocab" entry
+     ;;  (file+headline (concat org-directory "topics/vocab.org") "Unsorted")
+     ;;  "** %i%?\n")
+     ))
 
   (narf-fix-unicode "DejaVu Sans" '(?♭ ?♯))
   (narf-fix-unicode "Hack" '(?× ?∙ ?÷ ?⌉ ?⌈ ?⌊ ?⌋
@@ -160,19 +165,18 @@
             (,(concat "<\\(http://.+\\." ext-regexp "\\)>") . 1))))
 
   ;; Don't open separate windows
-  (add-to-list 'org-link-frame-setup '(file . find-file))
+  (push '(file . find-file) org-link-frame-setup)
 
   ;; Reveal files in finder
   (setq org-file-apps '(("\\.org$" . emacs) (t . "open -R \"%s\"")))
 
-  ;; Custom faces
+  ;; Fontify checkboxes and dividers
   (defface org-list-bullet '((t ())) "Face for list bullets")
-  (defvar narf-org-font-lock-keywords
-    `(("^ *\\([-+]\\|[0-9]+[).]\\) "
-       (1 'org-list-bullet))
-      ("^ *\\(-----+\\)$"
-       (1 'org-meta-line))))
-  (font-lock-add-keywords 'org-mode narf-org-font-lock-keywords)
+  (font-lock-add-keywords
+   'org-mode '(("^ *\\([-+]\\|[0-9]+[).]\\) "
+                (1 'org-list-bullet))
+               ("^ *\\(-----+\\)$"
+                (1 'org-meta-line))))
 
   ;; Enable encryption
   (require 'epa-file)
@@ -191,25 +195,18 @@
           :test 'equal))
   (pushnew 'org-is-agenda-file recentf-exclude)
 
-  ;; Evil integration
-  (progn
-    (advice-add 'evil-force-normal-state :before 'org-remove-occur-highlights)
-    ;; Add element delimiter text-objects so we can use evil-surround to
-    ;; manipulate them.
-    (define-text-object! "$" "\\$" "\\$")
-    (define-text-object! "*" "\\*" "\\*")
-    (define-text-object! "/" "/" "/")
-    (define-text-object! "_" "_" "_")
-    (define-text-object! "=" "=" "=")
-    (define-text-object! "~" "~" "~"))
+  ;; Remove highlights on ESC
+  (defun narf*org-remove-occur-highlights (&rest args)
+    (when (eq major-mode 'org-mode) (org-remove-occur-highlights)))
+  (advice-add 'evil-force-normal-state :before 'narf*org-remove-occur-highlights)
 
   ;; smartparens config
   (sp-with-modes '(org-mode)
     (sp-local-pair "*" "*" :unless '(sp-point-after-word-p sp-point-at-bol-p) :skip-match 'narf/sp-org-skip-asterisk)
-    (sp-local-pair "_" "_" :unless '(sp-point-before-word-p sp-point-after-word-p))
-    (sp-local-pair "/" "/" :unless '(sp-point-before-word-p sp-point-after-word-p) :post-handlers '(("[d1]" "SPC")))
-    (sp-local-pair "~" "~" :unless '(sp-point-before-word-p sp-point-after-word-p) :post-handlers '(("[d1]" "SPC")))
-    (sp-local-pair "=" "=" :unless '(sp-point-before-word-p sp-point-after-word-p) :post-handlers '(("[d1]" "SPC")))
+    (sp-local-pair "_" "_" :unless '(sp-point-before-word-p sp-point-after-word-p sp-point-before-symbol-p))
+    (sp-local-pair "/" "/" :unless '(sp-point-before-word-p sp-point-after-word-p sp-point-before-symbol-p) :post-handlers '(("[d1]" "SPC")))
+    (sp-local-pair "~" "~" :unless '(sp-point-before-word-p sp-point-after-word-p sp-point-before-symbol-p) :post-handlers '(("[d1]" "SPC")))
+    (sp-local-pair "=" "=" :unless '(sp-point-before-word-p sp-point-after-word-p sp-point-before-symbol-p) :post-handlers '(("[d1]" "SPC")))
 
     (sp-local-pair "\\[" "\\]" :post-handlers '(("| " "SPC")))
     (sp-local-pair "\\(" "\\)" :post-handlers '(("| " "SPC")))
@@ -217,10 +214,10 @@
     (sp-local-pair "{" nil)))
 
 (defun narf|org-keybinds ()
-  (define-key org-mode-map (kbd "RET") nil)
-  (define-key org-mode-map (kbd "C-j") nil)
-  (define-key org-mode-map (kbd "C-k") nil)
   (map! (:map org-mode-map
+          "RET" nil
+          "C-j" nil
+          "C-k" nil
           :i [remap narf/inflate-space-maybe] 'org-self-insert-command
           :i "RET" 'org-return-indent)
 
@@ -289,7 +286,7 @@
             :n  "A"  'narf:org-attachment-list
 
             :n  "d"  'org-time-stamp
-            :n  "D"  'org-time-stamp-inactive
+            :n  "D"  'org-deadline
             :n  "i"  'narf/org-toggle-inline-images-at-point
             :n  "t"  (λ! (org-todo (if (org-entry-is-todo-p) 'none 'todo)))
             :v  "t"  (λ! (evil-ex-normal evil-visual-beginning evil-visual-end "\\t"))
@@ -344,227 +341,11 @@
         (:after org-agenda
           (:map org-agenda-mode-map
             :e "<escape>" 'org-agenda-Quit
+            :e "m"   'org-agenda-month-view
             :e "C-j" 'org-agenda-next-item
             :e "C-k" 'org-agenda-previous-item
             :e "C-n" 'org-agenda-next-item
             :e "C-p" 'org-agenda-previous-item))))
-
-(defun narf|org-hacks ()
-  (defface org-block-background nil "")
-  (defun org-fontify-meta-lines-and-blocks-1 (limit)
-    "Fontify #+ lines and blocks."
-    (let ((case-fold-search t))
-      (if (re-search-forward
-           "^\\([ \t]*#\\(\\(\\+[a-zA-Z]+:?\\| \\|$\\)\\(_\\([a-zA-Z]+\\)\\)?\\)[ \t]*\\(\\([^ \t\n]*\\)[ \t]*\\(.*\\)\\)\\)"
-           limit t)
-          (let ((beg (match-beginning 0))
-                (block-start (match-end 0))
-                (block-end nil)
-                (lang (match-string 7))
-                (beg1 (line-beginning-position 2))
-                (dc1 (downcase (match-string 2)))
-                (dc3 (downcase (match-string 3)))
-                end end1 quoting block-type ovl)
-            (cond
-             ((and (match-end 4) (equal dc3 "+begin"))
-              ;; Truly a block
-              (setq block-type (downcase (match-string 5))
-                    quoting (member block-type org-protecting-blocks))
-              (when (re-search-forward
-                     (concat "^[ \t]*#\\+end" (match-string 4) "\\>.*")
-                     nil t)  ;; on purpose, we look further than LIMIT
-                (setq end (min (point-max) (match-end 0))
-                      end1 (min (point-max) (1- (match-beginning 0))))
-                (setq block-end (match-beginning 0))
-                (when quoting
-                  (org-remove-flyspell-overlays-in beg1 end1)
-                  (remove-text-properties beg end
-                                          '(display t invisible t intangible t)))
-                (add-text-properties
-                 beg end '(font-lock-fontified t font-lock-multiline t))
-                (add-text-properties beg beg1 '(face org-meta-line))
-                (org-remove-flyspell-overlays-in beg beg1)
-                (add-text-properties	; For end_src
-                 end1 (min (point-max) (1+ end)) '(face org-meta-line))
-                (org-remove-flyspell-overlays-in end1 end)
-                (cond
-                 ((and lang (not (string= lang "")) org-src-fontify-natively)
-                  (org-src-font-lock-fontify-block lang block-start block-end)
-                  ;;;;;;; EDIT
-                  ;; remove old background overlays
-                  (mapc (lambda (ov)
-                          (if (eq (overlay-get ov 'face) 'org-block-background)
-                              (delete-overlay ov)))
-                        (overlays-at (/ (+ beg1 block-end) 2)))
-                  ;; add a background overlay
-                  (setq ovl (make-overlay beg1 block-end))
-                  (overlay-put ovl 'face 'org-block-background)
-                  (overlay-put ovl 'evaporate t)) ; make it go away when empty
-                 ;; (add-text-properties beg1 block-end '(src-block t)))
-                  ;;;;;;; /EDIT
-                 (quoting
-                  (add-text-properties beg1 (min (point-max) (1+ end1))
-                                       '(face org-block))) ; end of source block
-                 ((not org-fontify-quote-and-verse-blocks))
-                 ((string= block-type "quote")
-                  (add-text-properties beg1 (min (point-max) (1+ end1)) '(face org-quote)))
-                 ((string= block-type "verse")
-                  (add-text-properties beg1 (min (point-max) (1+ end1)) '(face org-verse))))
-                (add-text-properties beg beg1 '(face org-block-begin-line))
-                (add-text-properties (min (point-max) (1+ end)) (min (point-max) (1+ end1))
-                                     '(face org-block-end-line))
-                t))
-             ((string-match-p
-               (format "^\\+%s+:$"
-                       (regexp-opt '("title" "author" "email" "date" "address" "location" "contact"
-                                     "project" "country" "city" "created" "issued" "paid" "currency")))
-               dc1)
-              ;; (member dc1 '("+title:" "+author:" "+email:" "+date:" "+address:" "+location:" "+contact:" "+project:"))
-              (org-remove-flyspell-overlays-in
-               (match-beginning 0)
-               (if (equal "+title:" dc1) (match-end 2) (match-end 0)))
-              (add-text-properties
-               beg (match-end 3)
-               (if (member (intern (substring dc1 1 -1)) org-hidden-keywords)
-                   '(font-lock-fontified t invisible t)
-                 '(font-lock-fontified t face org-document-info-keyword)))
-              (add-text-properties
-               (match-beginning 6) (min (point-max) (1+ (match-end 6)))
-               (if (string-equal dc1 "+title:")
-                   '(font-lock-fontified t face org-document-title)
-                 '(font-lock-fontified t face org-document-info))))
-             ((equal dc1 "+caption:")
-              (org-remove-flyspell-overlays-in (match-end 2) (match-end 0))
-              (remove-text-properties (match-beginning 0) (match-end 0)
-                                      '(display t invisible t intangible t))
-              (add-text-properties (match-beginning 1) (match-end 3)
-                                   '(font-lock-fontified t face org-meta-line))
-              (add-text-properties (match-beginning 6) (+ (match-end 6) 1)
-                                   '(font-lock-fontified t face org-block))
-              t)
-             ((member dc3 '(" " ""))
-              (org-remove-flyspell-overlays-in beg (match-end 0))
-              (add-text-properties
-               beg (match-end 0)
-               '(font-lock-fontified t face font-lock-comment-face)))
-             (t ;; just any other in-buffer setting, but not indented
-              (org-remove-flyspell-overlays-in (match-beginning 0) (match-end 0))
-              (remove-text-properties (match-beginning 0) (match-end 0)
-                                      '(display t invisible t intangible t))
-              (add-text-properties beg (match-end 0)
-                                   '(font-lock-fontified t face org-meta-line))
-              t))))))
-
-  (defun org-format-latex (prefix &optional dir overlays msg forbuffer processing-type)
-    "Modified to render latex at different sizes depending on block vs inline."
-    (when (and overlays (fboundp 'clear-image-cache)) (clear-image-cache))
-    (unless (eq processing-type 'verbatim)
-      (let* ((math-regexp "\\$\\|\\\\[([]\\|^[ \t]*\\\\begin{[A-Za-z0-9*]+}")
-             (cnt 0)
-             checkdir-flag)
-        (goto-char (point-min))
-        ;; Optimize overlay creation: (info "(elisp) Managing Overlays").
-        (when (and overlays (memq processing-type '(dvipng imagemagick)))
-          (overlay-recenter (point-max)))
-        (while (re-search-forward math-regexp nil t)
-          (unless (and overlays
-                       (eq (get-char-property (point) 'org-overlay-type)
-                           'org-latex-overlay))
-            (let* ((context (org-element-context))
-                   (type (org-element-type context))
-                   (contents (org-element-property :value context))
-                   (block-p (or (eq type 'latex-environment)
-                                (string-prefix-p "$$" contents)
-                                (string-prefix-p "\\[" contents)))
-                   (org-format-latex-options
-                    (plist-put org-format-latex-options :scale (if block-p narf-org-latex-block-scale narf-org-latex-inline-scale))))
-              (when (memq type '(latex-environment latex-fragment))
-                (let ((block-type (eq type 'latex-environment))
-                      (value (org-element-property :value context))
-                      (beg (org-element-property :begin context))
-                      (end (save-excursion
-                             (goto-char (org-element-property :end context))
-                             (skip-chars-backward " \r\t\n")
-                             (point))))
-                  (case processing-type
-                    (mathjax
-                     ;; Prepare for MathJax processing.
-                     (if (not (string-match "\\`\\$\\$?" value))
-                         (goto-char end)
-                       (delete-region beg end)
-                       (if (string= (match-string 0 value) "$$")
-                           (insert "\\[" (substring value 2 -2) "\\]")
-                         (insert "\\(" (substring value 1 -1) "\\)"))))
-                    ((dvipng imagemagick)
-                     ;; Process to an image.
-                     (incf cnt)
-                     (goto-char beg)
-                     (let* ((face (face-at-point))
-                            ;; Get the colors from the face at point.
-                            (fg
-                             (let ((color (plist-get org-format-latex-options
-                                                     :foreground)))
-                               (if (and forbuffer (eq color 'auto))
-                                   (face-attribute face :foreground nil 'default)
-                                 color)))
-                            (bg
-                             (let ((color (plist-get org-format-latex-options
-                                                     :background)))
-                               (if (and forbuffer (eq color 'auto))
-                                   (face-attribute face :background nil 'default)
-                                 color)))
-                            (hash (sha1 (prin1-to-string
-                                         (list org-format-latex-header
-                                               org-latex-default-packages-alist
-                                               org-latex-packages-alist
-                                               org-format-latex-options
-                                               forbuffer value fg bg))))
-                            (absprefix (expand-file-name prefix dir))
-                            (linkfile (format "%s_%s.png" prefix hash))
-                            (movefile (format "%s_%s.png" absprefix hash))
-                            (sep (and block-type "\n\n"))
-                            (link (concat sep "[[file:" linkfile "]]" sep))
-                            (options
-                             (org-combine-plists
-                              org-format-latex-options
-                              `(:foreground ,fg :background ,bg))))
-                       (when msg (message msg cnt))
-                       (unless checkdir-flag ; Ensure the directory exists.
-                         (setq checkdir-flag t)
-                         (let ((todir (file-name-directory absprefix)))
-                           (unless (file-directory-p todir)
-                             (make-directory todir t))))
-                       (unless (file-exists-p movefile)
-                         (org-create-formula-image
-                          value movefile options forbuffer processing-type))
-                       (if overlays
-                           (progn
-                             (dolist (o (overlays-in beg end))
-                               (when (eq (overlay-get o 'org-overlay-type)
-                                         'org-latex-overlay)
-                                 (delete-overlay o)))
-                             (org--format-latex-make-overlay beg end movefile)
-                             (goto-char end))
-                         (delete-region beg end)
-                         (insert
-                          (org-add-props link
-                              (list 'org-latex-src
-                                    (replace-regexp-in-string "\"" "" value)
-                                    'org-latex-src-embed-type
-                                    (if block-type 'paragraph 'character)))))))
-                    (mathml
-                     ;; Process to MathML.
-                     (unless (org-format-latex-mathml-available-p)
-                       (user-error "LaTeX to MathML converter not configured"))
-                     (incf cnt)
-                     (when msg (message msg cnt))
-                     (goto-char beg)
-                     (delete-region beg end)
-                     (insert (org-format-latex-as-mathml
-                              value block-type prefix dir)))
-                    (otherwise
-                     (error "Unknown conversion type %s for LaTeX fragments"
-                            processing-type))))))))))))
 
 (provide 'module-org)
 ;;; module-org.el ends here

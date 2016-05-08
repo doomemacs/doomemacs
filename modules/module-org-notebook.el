@@ -4,17 +4,25 @@
 ;;   + Custom links for class notes
 ;;   + Shortcuts for searching org files
 ;;   + Shortcuts for creating new notes (there's org-capture, but this is suited to my
-;;     workflow).
-;;   + A simpler attachment system with support for drag-and-drop attachments into org.
-;;   + A simpler, pandoc-powered, export system.
+;;     workflow)
+;;   + A simpler attachment system (with auto-deleting support) and drag-and-drop
+;;     for images and documents into org files
+;;   + A pandoc-powered export system
 
 (add-hook 'org-load-hook 'narf|org-notebook-init t)
 (add-hook 'org-load-hook 'narf|org-attach-init t)
 (add-hook 'org-load-hook 'narf|org-export-init t)
 
+(defvar org-directory-notebook (expand-file-name "/notebook/" org-directory))
+(defvar org-default-notes-file (expand-file-name "inbox.org" org-directory))
+
+(defvar org-attach-directory ".attach/")
 (defvar narf-org-export-directory (concat org-directory ".export"))
-(defvar narf-org-quicknote-dir    (concat org-directory "Inbox/"))
-(defvar org-attach-directory      ".attach/")
+(defvar narf-org-quicknote-dir (concat org-directory "Inbox/"))
+
+;; Keep track of attachments
+(defvar-local narf-org-attachments-list '()
+  "A list of attachments for the current buffer")
 
 ;; Tell helm to ignore these directories
 (after! helm
@@ -24,11 +32,10 @@
 
 ;;
 (defun narf|org-notebook-init ()
-  (define-org-section! course "Classes"
-    (lambda (path) (substring path 0 (s-index-of " " path))) "%s*.org")
-
-  (exmap "ocl[ass]" 'narf:org-search-course))
-
+  ;; (define-org-section! course "Classes"
+  ;;   (lambda (path) (substring path 0 (s-index-of " " path))) "%s*.org")
+  ;; (exmap "ocl[ass]" 'narf:org-search-course)
+  (narf-fix-unicode "FontAwesome" '(? ? ? ? ? ? ? ? ?) 13))
 
 ;;
 (defun narf|org-attach-init ()
@@ -60,11 +67,12 @@
 
 ;;
 (defun narf|org-export-init ()
+  "Set up my own exporting system."
   (setq org-export-backends '(ascii html latex md)
         org-export-with-toc t
         org-export-with-author t)
 
-  (use-package ox-pandoc)
+  (require 'ox-pandoc)
   (setq org-pandoc-options '((standalone . t) (mathjax . t) (parse-raw . t)))
 
   ;; Export to a central directory (why isn't this easier?)
