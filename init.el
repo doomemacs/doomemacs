@@ -82,6 +82,7 @@
         module-java         ; the poster child for carpal tunnel syndome
         module-js           ; all(hope(abandon(ye(who(enter(here))))))
         module-julia        ; MATLAB, but fast
+        module-latex        ; for writing papers in Emacs
         module-lisp         ; drowning in parentheses
         module-lua          ; one-based indices? one-based indices.
         module-org          ; for organized fearless leader
@@ -101,7 +102,7 @@
         extra-demo          ; allow me to demonstrate...
         extra-tags          ; if you liked it you should've generated a tag for it
         extra-tmux          ; closing the rift between GUI & terminal
-        extra-write         ; for writing papers and fiction in Emacs
+        extra-write         ; for writing fiction in Emacs
 
         ;; Customization
         my-bindings
