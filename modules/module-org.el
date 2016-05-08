@@ -137,6 +137,12 @@
       (file+headline (concat org-directory "topics/vocab.org") "Unsorted")
       "** %i%?\n")))
 
+  (narf-fix-unicode "DejaVu Sans" '(?♭ ?♯))
+  (narf-fix-unicode "Hack" '(?× ?∙ ?÷ ?⌉ ?⌈ ?⌊ ?⌋
+                             ?∩ ?∪ ?⊆ ?⊂ ?⊄ ?⊇ ?⊃ ?⊅
+                             ?⇒ ?⇐ ?⇔ ?↔ ?→ ?≡ ?∴ ?∵ ?⊕ ?∀ ?∃ ?∄ ?∈ ?∉
+                             ?∨ ?∧ ?¬))
+
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((python . t) (ruby . t) (sh . t) (js . t) (css . t)

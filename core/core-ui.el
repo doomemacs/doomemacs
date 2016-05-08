@@ -74,15 +74,7 @@
   (add-hook! 'after-init-hook (set-window-fringes (minibuffer-window) 0 0 nil)))
 
 ;; Try to display unicode characters without upsetting line-hieght (as much as possible)
-(defun narf-fix-unicode (set)
-  (let ((font  (car set))
-        (chars (cadr set))
-        (size  (caddr set)))
-    (mapc (lambda (x) (set-fontset-font
-                  "fontset-default" `(,x . ,x)
-                  (font-spec :name font :size size) nil 'prepend))
-          chars)))
-(mapc 'narf-fix-unicode '(("DejaVu Sans" (?⚠ ?★ ?λ ?➊ ?➋ ?➌ ?➍ ?➎ ?❻ ?➐ ?➑ ?➒ ?➓))))
+(narf-fix-unicode "DejaVu Sans" '(?⚠ ?★ ?λ ?➊ ?➋ ?➌ ?➍ ?➎ ?❻ ?➐ ?➑ ?➒ ?➓))
 
 ;; on by default in Emacs 25; I prefer to enable on a mode-by-mode basis, so disable it
 (when (and (> emacs-major-version 24) (featurep 'eldoc))

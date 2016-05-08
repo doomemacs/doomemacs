@@ -284,5 +284,14 @@ Examples:
       (require 'autoloads))
     (message "Done!")))
 
+(defun narf-fix-unicode (font chars &optional size)
+  "Display certain unicode characters in a specific font.
+
+e.g. (narf-fix-unicode \"DejaVu Sans\" '(?⚠ ?★ ?λ ?➊ ?➋ ?➌ ?➍ ?➎ ?❻ ?➐ ?➑ ?➒ ?➓))"
+  (mapc (lambda (x) (set-fontset-font
+                "fontset-default" `(,x . ,x)
+                (font-spec :name font :size size) nil 'prepend))
+        chars))
+
 (provide 'core-defuns)
 ;;; core-defuns.el ends here
