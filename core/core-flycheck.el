@@ -49,6 +49,7 @@
   :config (flycheck-package-setup))
 
 (use-package flycheck-pos-tip
+  :when (= emacs-major-version 24)
   :after flycheck
   :config
   (setq flycheck-pos-tip-timeout 10

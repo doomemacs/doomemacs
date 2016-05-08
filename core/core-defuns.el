@@ -252,11 +252,11 @@ Examples:
 (defun narf|update-scratch-buffer-cwd (&optional dir) ; see core-editor.el
   "Make sure scratch buffer is always 'in a project.'"
   (let ((dir (or dir (narf/project-root))))
-      (with-current-buffer (get-buffer-create "*scratch*")
-        (setq default-directory dir)
-        (setq header-line-format
-              '(:eval
-                (concat " ∴ " (abbreviate-file-name default-directory)))))))
+    (with-current-buffer (get-buffer-create "*scratch*")
+      (setq default-directory dir)
+      (setq header-line-format
+            '(:eval
+              (concat " ∴ " (abbreviate-file-name default-directory)))))))
 
 
 ;;;; Global Defuns ;;;;;;;;;;;;;;;;;;;;;
@@ -267,7 +267,7 @@ Examples:
                           (f-directories narf-core-dir nil t)
                           (f-directories narf-modules-dir nil t)
                           (f-directories narf-packages-dir)
-                          (f-directories (expand-file-name "../bootstrap" narf-packages-dir))
+                          (f-directories (f-expand "../bootstrap" narf-packages-dir))
                           narf--load-path)))
 
 (defun narf-reload-autoloads ()
