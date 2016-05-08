@@ -4,7 +4,7 @@
   :commands (c-mode c++-mode objc-mode java-mode)
   :init
   (associate! objc-mode :match "\\.mm$")
-  (add-hook! 'c++-mode-hook '(highlight-numbers-mode narf|init-c++-C11-highlights))
+  (add-hook! c++-mode '(highlight-numbers-mode narf|init-c++-C11-highlights))
   (add-hook 'c-initialization-hook 'narf|init-c/c++-settings)
 
   ;; C++ header files
@@ -44,7 +44,9 @@
   :after cc-mode
   :config
   (setq irony-server-install-prefix (concat narf-temp-dir "/irony/"))
-  (push "-std=c++11" irony-additional-clang-options)
+  (add-hook! c++-mode
+    (make-variable-buffer-local 'irony-additional-clang-options)
+    (push "-std=c++11" irony-additional-clang-options))
 
   (require 'irony-eldoc)
   (require 'company-irony)
