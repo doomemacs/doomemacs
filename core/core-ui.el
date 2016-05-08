@@ -46,6 +46,7 @@
               (y-or-n-p ">> Gee, I dunno Brain... Are you sure?")
             t))))
 
+(load-theme narf-current-theme t)
 (tooltip-mode -1)  ; show tooltips in echo area
 ;; set up minibuffer and fringe
 (if (not window-system)
