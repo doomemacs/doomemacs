@@ -142,7 +142,7 @@ enable multiple minor modes for the same regexp.")
 (defvar-local narf-electric-indent-words '())
 (setq electric-indent-chars '(?\n ?\^?))
 (push (lambda (c)
-        (when (eolp)
+        (when (and (eolp) narf-electric-indent-words)
           (save-excursion
             (backward-word)
             (looking-at-p (concat "\\<" (regexp-opt narf-electric-indent-words))))))
