@@ -205,33 +205,36 @@
   ;; Custom modeline segments
   (spaceline-define-segment *buffer-path
     (if buffer-file-name
-        (let ((buffer-path (f-relative buffer-file-name (f-dirname (narf/project-root))))
-              (max-length 50))
-          (if (> (length buffer-path) max-length)
-              (let ((path (reverse (split-string buffer-path "/")))
-                    (output ""))
-                (when (and path (equal "" (car path)))
-                  (setq path (cdr path)))
-                (while (and path (< (length output) (- max-length 4)))
-                  (setq output (concat (car path) "/" output))
-                  (setq path (cdr path)))
-                (when path
-                  (setq output (concat "../" output)))
-                output)
-            buffer-path))
+        (let ((buffer-path (file-relative-name buffer-file-name (narf/project-root)))
+              (max-length (truncate (/ (window-body-width) 1.75))))
+          (concat (projectile-project-name) "/"
+                  (if (> (length buffer-path) max-length)
+                      (let ((path (reverse (split-string buffer-path "/" t)))
+                            (output ""))
+                        (when (and path (equal "" (car path)))
+                          (setq path (cdr path)))
+                        (while (and path (<= (length output) (- max-length 4)))
+                          (setq output (concat (car path) "/" output))
+                          (setq path (cdr path)))
+                        (when path
+                          (setq output (concat "../" output)))
+                        (when (string-suffix-p "/" output)
+                          (setq output (substring output 0 -1)))
+                        output)
+                    buffer-path)))
       "%b")
     :face other-face
     :tight-right t)
 
   (spaceline-define-segment *buffer-modified
-    (propertize
-     (concat (when buffer-file-name
-               (concat
-                (if (buffer-modified-p) "[+]")
-                (if (not (file-exists-p buffer-file-name)) "[!]")))
-             (if buffer-read-only "[RO]"))
-     'face 'mode-line-is-modified)
-    :when (not (string-prefix-p "*" (buffer-name)))
+    (unless (string-prefix-p "*" (buffer-name))
+      (propertize
+       (concat (when buffer-file-name
+                 (concat
+                  (if (buffer-modified-p) "[+]")
+                  (if (not (file-exists-p buffer-file-name)) "[!]")))
+               (if buffer-read-only "[RO]"))
+       'face 'mode-line-is-modified))
     :skip-alternate t
     :tight t)
 
@@ -247,12 +250,12 @@
           (cond ((= start 1) ":Top")
                 ((>= perc 100) ":Bot")
                 (t (format ":%d%%%%" perc))))))
-    :tight t)
+    :skip-alternate t)
 
   (spaceline-define-segment *vc
     "Version control info"
-    (substring vc-mode (+ 1 (length (symbol-name (vc-backend buffer-file-name)))))
-    :when (and active vc-mode)
+    (when (and active vc-mode)
+      (substring vc-mode (+ 1 (length (symbol-name (vc-backend buffer-file-name))))))
     :face other-face
     :tight-right t)
 
@@ -262,93 +265,96 @@
   (spaceline-define-segment *anzu
     "Show the current match number and the total number of matches. Requires
 anzu to be enabled."
-    (let ((here anzu--current-position)
-          (total anzu--total-matched))
-      (format " %s/%d%s "
-              here total
-              (if anzu--overflow-p "+" "")))
-    :face (if active 'mode-line-count-face 'mode-line-inactive)
-    :when (evil-ex-hl-active-p 'evil-ex-search)
+    (when (evil-ex-hl-active-p 'evil-ex-search)
+      (propertize
+       (let ((here anzu--current-position)
+             (total anzu--total-matched))
+         (format " %s/%d%s "
+                 here total
+                 (if anzu--overflow-p "+" "")))
+       'face (if active 'mode-line-count-face 'mode-line-inactive)))
     :tight t)
 
   (spaceline-define-segment *iedit
     "Show the number of matches and what match you're on (or after). Requires iedit."
-    (let ((this-oc (iedit-find-current-occurrence-overlay))
-          (length  (or (ignore-errors (length iedit-occurrences-overlays)) 0)))
-      (format " %s/%s "
-              (save-excursion
-                (unless this-oc
-                  (iedit-prev-occurrence)
-                  (setq this-oc (iedit-find-current-occurrence-overlay)))
-                (if this-oc
-                    ;; NOTE: Not terribly reliable
-                    (- length (-elem-index this-oc iedit-occurrences-overlays))
-                  "-"))
-              length))
-    :when (bound-and-true-p iedit-mode)
-    :tight t
-    :face (if active 'mode-line-count-face 'mode-line-inactive))
+    (when (bound-and-true-p iedit-mode)
+      (propertize
+       (let ((this-oc (iedit-find-current-occurrence-overlay))
+             (length  (or (ignore-errors (length iedit-occurrences-overlays)) 0)))
+         (format " %s/%s "
+                 (save-excursion
+                   (unless this-oc
+                     (iedit-prev-occurrence)
+                     (setq this-oc (iedit-find-current-occurrence-overlay)))
+                   (if this-oc
+                       ;; NOTE: Not terribly reliable
+                       (- length (-elem-index this-oc iedit-occurrences-overlays))
+                     "-"))
+                 length))
+       'face (if active 'mode-line-count-face 'mode-line-inactive)))
+    :tight t)
 
   (spaceline-define-segment *evil-substitute
     "Show number of :s matches in real time."
-    (let ((range (if evil-ex-range
-                     (cons (car evil-ex-range) (cadr evil-ex-range))
-                   (cons (line-beginning-position) (line-end-position))))
-          (pattern (car-safe (evil-delimited-arguments evil-ex-argument 2))))
-      (if pattern
-          (format " %s matches "
-                  (count-matches pattern (car range) (cdr range))
-                  evil-ex-argument)
-        " ... "))
-    :when (and (evil-ex-p) (evil-ex-hl-active-p 'evil-ex-substitute))
-    :tight t
-    :face (if active 'mode-line-count-face 'mode-line-inactive))
+    (when (and (evil-ex-p) (evil-ex-hl-active-p 'evil-ex-substitute))
+      (propertize
+       (let ((range (if evil-ex-range
+                        (cons (car evil-ex-range) (cadr evil-ex-range))
+                      (cons (line-beginning-position) (line-end-position))))
+             (pattern (car-safe (evil-delimited-arguments evil-ex-argument 2))))
+         (if pattern
+             (format " %s matches "
+                     (count-matches pattern (car range) (cdr range))
+                     evil-ex-argument)
+           " ... "))
+       'face (if active 'mode-line-count-face 'mode-line-inactive)))
+    :tight t)
 
   (spaceline-define-segment *macro-recording
     "Show when recording macro"
-    (format " %s ▶ " (char-to-string evil-this-macro))
-    :when (and active defining-kbd-macro)
-    :face highlight-face
+    (when (and active defining-kbd-macro)
+      (propertize
+       (format " %s ▶ " (char-to-string evil-this-macro))
+       'face highlight-face))
     :tight t)
 
   (spaceline-define-segment *buffer-encoding-abbrev
     "The line ending convention used in the buffer."
-    (format "%s" buffer-file-coding-system)
-    :when (not (string-match-p "\\(utf-8\\|undecided\\)"
-                               (symbol-name buffer-file-coding-system))))
+    (unless (string-match-p "\\(utf-8\\|undecided\\)"
+                            (symbol-name buffer-file-coding-system))
+      (format "%s" buffer-file-coding-system)))
 
   (spaceline-define-segment *major-mode
     "The major mode, including process, environment and text-scale info."
-    (concat
-     (format "%s" mode-name)
-     (if (stringp mode-line-process) mode-line-process)
-     (if narf--env-version (concat " " narf--env-version))
-     (and (featurep 'face-remap)
-          (/= text-scale-mode-amount 0)
-          (format " (%+d)" text-scale-mode-amount)))
+    (concat (format "%s" mode-name)
+            (if (stringp mode-line-process) mode-line-process)
+            (if narf--env-version (concat " " narf--env-version))
+            (and (featurep 'face-remap)
+                 (/= text-scale-mode-amount 0)
+                 (format " (%+d)" text-scale-mode-amount)))
     :tight-right t)
 
   (spaceline-define-segment *selection-info
     "Information about the current selection."
-    (let ((reg-beg (region-beginning))
-          (reg-end (region-end))
-          (evil (eq 'visual evil-state)))
-      (let ((lines (count-lines reg-beg (min (1+ reg-end) (point-max))))
-            (chars (- (1+ reg-end) reg-beg))
-            (cols (1+ (abs (- (evil-column reg-end)
-                              (evil-column reg-beg))))))
-        (cond
-         ;; rectangle selection
-         ((or (bound-and-true-p rectangle-mark-mode)
-              (and evil (eq 'block evil-visual-selection)))
-          (format "%dx%dB" lines (if evil cols (1- cols))))
-         ;; line selection
-         ((or (> lines 1) (eq 'line evil-visual-selection))
-          (if (and (eq evil-state 'visual) (eq evil-this-type 'line))
-              (format "%dL" lines)
-            (format "%dC %dL" chars lines)))
-         (t (format "%dC" (if evil chars (1- chars)))))))
-    :when (evil-visual-state-p)
+    (when (and active (evil-visual-state-p))
+      (let ((reg-beg (region-beginning))
+            (reg-end (region-end))
+            (evil (eq 'visual evil-state)))
+        (let ((lines (count-lines reg-beg (min (1+ reg-end) (point-max))))
+              (chars (- (1+ reg-end) reg-beg))
+              (cols (1+ (abs (- (evil-column reg-end)
+                                (evil-column reg-beg))))))
+          (cond
+           ;; rectangle selection
+           ((or (bound-and-true-p rectangle-mark-mode)
+                (and evil (eq 'block evil-visual-selection)))
+            (format "%dx%dB" lines (if evil cols (1- cols))))
+           ;; line selection
+           ((or (> lines 1) (eq 'line evil-visual-selection))
+            (if (and (eq evil-state 'visual) (eq evil-this-type 'line))
+                (format "%dL" lines)
+              (format "%dC %dL" chars lines)))
+           (t (format "%dC" (if evil chars (1- chars))))))))
     :face highlight-face)
 
   ;; flycheck
@@ -396,29 +402,29 @@ anzu to be enabled."
   (spaceline-define-segment *pad
     "Padding, to ensure the mode-line is `powerline-height' pixels tall"
     narf--mode-line-padding
-    :tight-right t)
+    :tight t)
 
-  (defun narf-spaceline-init ()
-    (spaceline-install
-     ;; Left side
-     '(((*macro-recording *anzu *iedit *evil-substitute *flycheck)
-        :skip-alternate t
-        :fallback ("%I" :tight-right t))
-       *buffer-path
-       *buffer-modified
-       *vc
-       )
-     ;; Right side
-     '((*selection-info :when active)
-       (*major-mode *env-version)
-       *buffer-encoding-abbrev
-       (global :when active)
-       ("%l/%c" *buffer-position)
-       *pad
-       )))
+  (spaceline-compile
+   ;; Left side
+   '(((*macro-recording *anzu *iedit *evil-substitute *flycheck)
+      :skip-alternate t
+      :tight t)
+     *buffer-path
+     *buffer-modified
+     *vc)
+   ;; Right side
+   '(*selection-info
+     *major-mode
+     *env-version
+     *buffer-encoding-abbrev
+     (global :when active)
+     ("%l/%c" :tight t)
+     *buffer-position
+     *pad
+     ))
 
   ;; Initialize modeline
-  (narf-spaceline-init))
+  (setq-default mode-line-format '(:eval (spaceline-ml-main))))
 
 (provide 'core-ui)
 ;;; core-ui.el ends here
