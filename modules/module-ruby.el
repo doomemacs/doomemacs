@@ -4,7 +4,7 @@
   :mode ("\\.rb$" "\\.rake$" "\\.gemspec$" "\\.?pryrc$"
          "/\\(Gem\\|Cap\\|Vagrant\\|Rake\\)file$")
   :interpreter "ruby"
-  :init (add-hook! ruby-mode '(flycheck-mode yard-mode))
+  :init (add-hook 'ruby-mode-hook 'flycheck-mode)
   :config
   (def-builder! ruby-mode "rake %s" "Rakefile")
   (def-company-backend! ruby-mode (dabbrev-code))
@@ -42,7 +42,9 @@
           (refactor-convert-post-conditional "convert post conditional" t))))
 
 ;; Highlight doc comments
-(use-package yard-mode :commands yard-mode)
+(use-package yard-mode
+  :commands yard-mode
+  :init (add-hook 'ruby-mode-hook 'yard-mode))
 
 (use-package rspec-mode
   :mode ("/\\.rspec$" . text-mode)

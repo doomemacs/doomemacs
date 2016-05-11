@@ -62,8 +62,8 @@
   (fringe-mode narf-fringe-size)
   ;; Show tilde in margin on empty lines
   (define-fringe-bitmap 'tilde [64 168 16] nil nil 'center)
-  (setcdr (assq 'empty-line fringe-indicator-alist) 'tilde)
   (set-fringe-bitmap-face 'tilde 'font-lock-comment-face)
+  (setcdr (assq 'empty-line fringe-indicator-alist) 'tilde)
   ;; Brighter minibuffer when active + no fringe in minibuffer
   (defface narf-minibuffer-active '((t (:inherit mode-line)))
     "Face for active minibuffer")
@@ -155,16 +155,13 @@
   (add-hook! (emacs-lisp-mode lisp-mode js2-mode scss-mode c-mode-common)
     'rainbow-delimiters-mode)
   :config
-  (setq rainbow-delimiters-max-face-count 4))
+  (setq rainbow-delimiters-max-face-count 3))
 
 (use-package rainbow-mode
   :commands (rainbow-mode)
   :init
-  (add-hook! (sass-mode scss-mode less-css-mode) 'rainbow-mode)
-  ;; hl-line-mode and rainbow-mode don't play well together
-  (add-hook! rainbow-mode
-    (when narf--hl-line-mode
-      (hl-line-mode (if rainbow-mode -1 1)))))
+  ;; NOTE: hl-line-mode and rainbow-mode don't play well together
+  (add-hook! (sass-mode scss-mode less-css-mode) '(rainbow-mode narf|hl-line-off)))
 
 (use-package nlinum
   :commands nlinum-mode
@@ -405,6 +402,7 @@ anzu to be enabled."
     :tight t)
 
   (spaceline-compile
+   'main
    ;; Left side
    '(((*macro-recording *anzu *iedit *evil-substitute *flycheck)
       :skip-alternate t

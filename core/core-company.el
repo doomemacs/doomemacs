@@ -27,10 +27,7 @@
 
   (global-company-mode +1))
 
-(use-package company-dabbrev :commands company-dabbrev)
-
-(use-package company-dabbrev-code :commands company-dabbrev-code)
-
+;; NOTE: Doesn't look pretty outside of emacs-mac
 (use-package company-quickhelp
   :after company
   :config (company-quickhelp-mode +1))
@@ -38,6 +35,10 @@
 (use-package company-statistics
   :after company
   :config (company-statistics-mode +1))
+
+(use-package company-dabbrev :commands company-dabbrev)
+
+(use-package company-dabbrev-code :commands company-dabbrev-code)
 
 (use-package company-files
   :commands company-files)

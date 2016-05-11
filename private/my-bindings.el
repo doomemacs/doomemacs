@@ -14,10 +14,10 @@
  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
  "M-x"  'helm-M-x
- "M-;"  'eval-expression
- "M-/"  'evil-commentary-line
  "A-x"  'helm-M-x
+ "M-;"  'eval-expression
  "A-;"  'eval-expression
+ "M-/"  'evil-commentary-line
  "A-/"  'evil-commentary-line
 
  "M-0"  (λ! (text-scale-set 0))

@@ -9,10 +9,12 @@
         flycheck-disabled-checkers '(emacs-lisp emacs-lisp-checkdoc make))
 
   :config
-  ;; fixes Unknown defun property `interactive-only' error by compiling flycheck
-  (let ((path (locate-library "flycheck")))
-    (unless (f-ext? path "elc")
-      (byte-compile-file path)))
+  (unless (> emacs-major-version 24)
+    ;; Fixes Unknown defun property `interactive-only' error (in emacs <25) by compiling
+    ;; flycheck source files
+    (let ((path (locate-library "flycheck")))
+      (unless (f-ext? path "elc")
+        (byte-compile-file path))))
 
   (map! :map flycheck-error-list-mode-map
         :n "C-n" 'flycheck-error-list-next-error

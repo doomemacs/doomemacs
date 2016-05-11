@@ -103,7 +103,7 @@ buffer to display.")
                               "*Buffer List*" "*Ibuffer*" "*esh command on file*"
                               "*WoMan-Log*" "*compilation*" "*use-package*"
                               "*quickrun*" "*eclim: problems*" "*Flycheck errors*"
-                              "*popwin-dummy*" " *NeoTree*"
+                              "*popwin-dummy*" "*NeoTree*" " *NeoTree*"
                               ;; Helm
                               "*helm*" "*helm recentf*" "*helm projectile*" "*helm imenu*"
                               "*helm company*" "*helm buffers*" "*Helm Css SCSS*"
@@ -139,6 +139,7 @@ gets killed.")
 ;; Bootstrap
 ;;
 
+(require 'f)
 (autoload 'awhen "anaphora" "" nil 'macro)
 (autoload 'aif "anaphora" "" nil 'macro)
 (autoload 'use-package "use-package" "" nil 'macro)

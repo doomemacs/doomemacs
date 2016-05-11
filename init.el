@@ -101,7 +101,7 @@
         ;; Extra libraries
         extra-demo          ; allow me to demonstrate...
         extra-tags          ; if you liked it you should've generated a tag for it
-        extra-tmux          ; closing the rift between GUI & terminal
+        extra-tmux          ; close the rift between GUI & terminal
         extra-write         ; for writing fiction in Emacs
 
         ;; Customization

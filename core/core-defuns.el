@@ -39,29 +39,15 @@ during compilation."
 HOOK can be one hook or a list of hooks. If the hook(s) are not quoted, -hook is
 appended to them automatically. If they are quoted, they are used verbatim.
 
-FUNC-OR-FORMS can be one quoted symbol, a list of quoted symbols, or a series of
-forms. Forms will be wrapped in one lambda. A list of symbols will expand into a
-series of add-hook calls.
+FUNC-OR-FORMS can be a quoted symbol, a list of quoted symbols, or forms. Forms will be
+wrapped in a lambda. A list of symbols will expand into a series of add-hook calls.
 
 Examples:
     (add-hook! 'some-mode-hook 'enable-something)
-    => (add-hook 'some-mode-hook 'enable-something)
-
     (add-hook! some-mode '(enable-something and-another))
-    => (add-hook 'some-mode-hook 'enable-something)
-       (add-hook 'some-mode-hook 'and-another)
-
     (add-hook! '(one-mode-hook second-mode-hook) 'enable-something)
-    => (add-hook 'one-mode-hook 'enable-something)
-       (add-hook 'second-mode-hook 'enable-something)
-
     (add-hook! (one-mode second-mode) 'enable-something)
-    => (add-hook 'one-mode-hook 'enable-something)
-       (add-hook 'second-mode-hook 'enable-something)
-
-    (add-hook! (one-mode second-mode) (setq v 5) (setq a 2))
-    => (add-hook 'one-mode-hook (lambda () (setq v 5) (setq a 2)))
-       (add-hook 'second-mode-hook (lambda () (setq v 5) (setq a 2)))"
+    (add-hook! (one-mode second-mode) (setq v 5) (setq a 2))"
   (declare (indent defun) (debug t))
   (unless func-or-forms
     (error "add-hook!: FUNC-OR-FORMS is empty"))
@@ -259,7 +245,10 @@ Examples:
               (concat " ∴ " (abbreviate-file-name default-directory)))))))
 
 
-;;;; Global Defuns ;;;;;;;;;;;;;;;;;;;;;
+;;
+;; Global Defuns
+;;
+
 (defun narf-reload ()
   "Reload `load-path', in case you updated cask while emacs was open!"
   (interactive)

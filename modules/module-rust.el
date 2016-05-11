@@ -14,9 +14,8 @@
   :preface
   (setq racer-cmd (concat narf-ext-dir "/racer")
         racer-rust-src-path (concat narf-ext-dir "/rust/src/"))
-  :when (file-exists-p racer-cmd)
-  :init
-  (add-hook! rust-mode '(racer-mode eldoc-mode flycheck-rust-setup))
+  :when (f-exists? racer-cmd)
+  :init (add-hook! rust-mode '(racer-mode eldoc-mode flycheck-rust-setup))
   :config
   ;; TODO Unit test keybinds
   (def-company-backend! rust-mode (racer))

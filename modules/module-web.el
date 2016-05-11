@@ -55,6 +55,7 @@
   :mode ("\\.p?html?$"
          "\\.\\(tpl\\|blade\\)\\(\\.php\\)?$"
          "\\.erb$"
+         "\\.jsp$"
          "\\.as[cp]x$"
          "\\.mustache$"
          "wp-content/themes/.+/.+\\.php$")
@@ -85,7 +86,11 @@
         :nv "]T" 'web-mode-element-child
         :nv "[T" 'web-mode-element-parent))
 
+
 ;;
+;; Tools
+;;
+
 (use-package emmet-mode
   :commands (emmet-mode)
   :init
@@ -98,7 +103,11 @@
         :i "M-e" 'emmet-expand-yas
         :i "M-E" 'emmet-expand-line))
 
+
 ;;
+;; Project types
+;;
+
 (def-project-type! jekyll ":{"
   :modes (web-mode scss-mode html-mode markdown-mode yaml-mode)
   :match "/\\(\\(css\\|_\\(layouts\\|posts\\|sass\\)\\)/.+\\|.+.html\\)$"
@@ -111,8 +120,6 @@
   :modes (php-mode web-mode css-mode scss-mode sass-mode)
   :match "/wp-\\(\\(content\\|admin\\|includes\\)/\\)?.+$"
   :files ("wp-config.php" "wp-content/"))
-
-;; TODO Add stylus-mode
 
 (provide 'module-web)
 ;;; module-web.el ends here

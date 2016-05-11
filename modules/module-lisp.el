@@ -30,37 +30,37 @@
   ;; Real go-to-definition for elisp
   (map! :map emacs-lisp-mode-map :m "gd" 'narf/elisp-find-function-at-pt)
 
-  (font-lock-add-keywords
-   'emacs-lisp-mode `(("(\\(lambda\\)"
-                       (1 (narf/show-as ?λ)))
-                      ;; Highlight narf macros (macros are fontified in emacs 25+)
-                      (,(concat
-                         "(\\(def-"
-                         (regexp-opt '("electric" "project-type" "company-backend"
-                                       "builder" "repl" "textobj" "tmp-excmd" "rotate"
-                                       "repeat" "yas-mode" "env-command" "docset"))
-                         "!\\)")
-                       (1 font-lock-keyword-face append))
-                      (,(concat
-                         "(\\("
-                         (regexp-opt '("λ" "in" "map" "after" "shut-up" "add-hook"
-                                       "associate" "open-with" "define-org-link"
-                                       "define-org-section"))
-                         "!\\)")
-                       (1 font-lock-keyword-face append))
-                      ;; Ert
-                      (,(concat
-                         "("
-                         (regexp-opt '("ert-deftest") t)
-                         " \\([^ ]+\\)")
-                       (1 font-lock-keyword-face)
-                       (2 font-lock-function-name-face))))
-
   (remove-hook 'emacs-lisp-mode-hook 'narf/elisp-init))
 
 (add-hook 'emacs-lisp-mode-hook 'narf/elisp-hook)
 (defun narf/elisp-hook ()
   (setq mode-name "Elisp") ; [pedantry intensifies]
+
+  (font-lock-add-keywords
+   nil `(("(\\(lambda\\)"
+          (1 (narf/show-as ?λ)))
+         ;; Highlight narf macros (macros are fontified in emacs 25+)
+         (,(concat
+            "(\\(def-"
+            (regexp-opt '("electric" "project-type" "company-backend"
+                          "builder" "repl" "textobj" "tmp-excmd" "rotate"
+                          "repeat" "yas-mode" "env-command" "docset"))
+            "!\\)")
+          (1 font-lock-keyword-face append))
+         (,(concat
+            "(\\("
+            (regexp-opt '("λ" "in" "map" "after" "shut-up" "add-hook"
+                          "associate" "open-with" "define-org-link"
+                          "define-org-section"))
+            "!\\)")
+          (1 font-lock-keyword-face append))
+         ;; Ert
+         (,(concat
+            "("
+            (regexp-opt '("ert-deftest") t)
+            " \\([^ ]+\\)")
+          (1 font-lock-keyword-face)
+          (2 font-lock-function-name-face))))
 
   (add-hook 'before-save-hook 'delete-trailing-whitespace nil t)
   (add-hook 'after-save-hook  'narf/elisp-auto-compile nil t)

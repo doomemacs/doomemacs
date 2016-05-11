@@ -111,20 +111,20 @@
           "r"   'neotree-rename-node
           "R"   'neotree-change-root))
 
-  ;; Shorter pwd in neotree
   (defun narf*neotree-shorten-pwd (node)
+    "Shorter pwd in neotree"
     (list (abbreviate-file-name (car node))))
   (advice-add 'neo-buffer--insert-root-entry :filter-args 'narf*neotree-shorten-pwd)
 
-  ;; Don't ask for confirmation when creating files
   (defun narf*neotree-create-node (orig-fun &rest args)
+    "Don't ask for confirmation when creating files"
     (cl-letf (((symbol-function 'yes-or-no-p) (lambda (&rest _) t)))
       (apply orig-fun args)))
   (advice-add 'neotree-create-node :around 'narf*neotree-create-node)
 
   (defun narf*save-neotree (orig-fun &rest args)
+    "Prevents messing up the neotree buffer on window changes"
     (narf/neotree-save (apply orig-fun args)))
-  ;; Prevents messing up the neotree buffer on window changes
   (advice-add 'narf--evil-window-move  :around 'narf*save-neotree)
   (advice-add 'narf--evil-swap-windows :around 'narf*save-neotree)
 

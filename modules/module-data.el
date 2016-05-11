@@ -7,7 +7,7 @@
 (use-package toml-mode :mode "\\.toml$")
 
 (use-package yaml-mode :mode "\\.ya?ml$"
-  :config (def-electric! yaml-mode :chars (?\n ?: ?-)))
+  :config (def-electric! yaml-mode :chars (?\n ?\: ?\-)))
 
 (use-package json-mode :mode "\\.js\\(on\\|hintrc\\)$"
   :config (def-electric! json-mode :chars (?\n ?: ?{ ?})))
