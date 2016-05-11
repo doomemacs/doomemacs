@@ -91,6 +91,7 @@
         module-python       ; beautiful is better than ugly
         module-ruby         ; 1.step do {|i| p "Ruby is #{i&1==0?'love':'life'}"}
         module-rust         ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
+        module-scala        ; Java, but good
         module-sh           ; she sells Z-shells by the C XOR
         module-text         ; writing docs for people to ignore + latex
         module-web          ; #big-bang::before { content: ""; }

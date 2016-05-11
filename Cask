@@ -164,7 +164,6 @@
 (depends-on "android-mode")
 (depends-on "emacs-eclim")
 (depends-on "groovy-mode")
-(depends-on "scala-mode2" :git "https://github.com/hvesalai/scala-mode2")
 
 ;; JS -- modules/module-js.el
 (depends-on "js2-mode")
@@ -217,6 +216,11 @@
 (depends-on "company-racer")
 (depends-on "racer")
 (depends-on "flycheck-rust")
+
+;; Scala -- modules/module-scala.el
+(depends-on "scala-mode2")
+(depends-on "sbt-mode")
+(depends-on "ensime")
 
 ;; Shell -- modules/module-sh.el
 (depends-on "company-shell" :git "https://github.com/Alexander-Miller/company-shell")

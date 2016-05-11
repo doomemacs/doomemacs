@@ -37,7 +37,5 @@
 
 (use-package groovy-mode :mode "\\.g\\(radle\\|vy\\|roovy\\)$")
 
-(use-package scala-mode2 :mode ("\\.s\\(cala\\|bt\\)$" . scala-mode))
-
 (provide 'module-java)
 ;;; module-java.el ends here
