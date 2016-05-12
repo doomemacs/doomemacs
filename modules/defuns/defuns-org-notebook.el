@@ -1,22 +1,9 @@
 ;;; defuns-org-notebook.el
 
-;; Keep track of attachments
-(defvar narf-org-attachments-list '() "A list of attachments for the current buffer")
-(make-variable-buffer-local 'narf-org-attachments-list)
-
 ;;;###autoload
-(defun narf/org-start ()
+(defun narf/org ()
   (interactive)
-  (let ((wg (wg-get-workgroup "*ORG*" t))
-        orig-win)
-    (ignore-errors
-      (if (eq wg (wg-current-workgroup t))
-          (wg-switch-to-workgroup wg)
-        (narf:workgroup-new nil "*ORG*" t)))
-    (setq orig-win (selected-window))
-    (find-file (expand-file-name "Todo.org" org-directory))
-    (narf/neotree)
-    (select-window orig-win t)))
+  (find-file (f-expand "inbox.org" org-directory)))
 
 ;;;###autoload
 (defun narf/org-notebook-new ()

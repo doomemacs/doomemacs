@@ -154,7 +154,7 @@
      :n  "T" 'os-switch-to-term-and-cd)
 
    ;; Org notes
-   :n "X" 'narf/org-start
+   :n "X" 'narf/org
    (:prefix "x"
      :n "." 'narf/org-find-file
      :n "/" 'narf/org-find-file-in-notes
