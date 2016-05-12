@@ -197,63 +197,68 @@
 
   :config
   (defface mode-line-is-modified nil "Face for mode-line modified symbol")
-  (defface mode-line-buffer-file nil "Face for mode-line buffer file path")
+  (defface mode-line-buffer-file nil "Face for mode-line buffer file name")
+  (defface mode-line-buffer-path nil "Face for mode-line buffer file path")
 
   ;; Custom modeline segments
   (spaceline-define-segment *buffer-path
-    (if buffer-file-name
-        (let ((buffer-path (file-relative-name buffer-file-name (narf/project-root)))
-              (max-length (truncate (/ (window-body-width) 1.75))))
-          (concat (projectile-project-name) "/"
-                  (if (> (length buffer-path) max-length)
-                      (let ((path (reverse (split-string buffer-path "/" t)))
-                            (output ""))
-                        (when (and path (equal "" (car path)))
-                          (setq path (cdr path)))
-                        (while (and path (<= (length output) (- max-length 4)))
-                          (setq output (concat (car path) "/" output))
-                          (setq path (cdr path)))
-                        (when path
-                          (setq output (concat "../" output)))
-                        (when (string-suffix-p "/" output)
-                          (setq output (substring output 0 -1)))
-                        output)
-                    buffer-path)))
-      "%b")
-    :face other-face
+    (concat (when buffer-file-name
+              (powerline-raw
+               (f-dirname
+                (let ((buffer-path (file-relative-name buffer-file-name (narf/project-root)))
+                      (max-length (truncate (/ (window-body-width) 1.75))))
+                  (concat (projectile-project-name) "/"
+                          (if (> (length buffer-path) max-length)
+                              (let ((path (reverse (split-string buffer-path "/" t)))
+                                    (output ""))
+                                (when (and path (equal "" (car path)))
+                                  (setq path (cdr path)))
+                                (while (and path (<= (length output) (- max-length 4)))
+                                  (setq output (concat (car path) "/" output))
+                                  (setq path (cdr path)))
+                                (when path
+                                  (setq output (concat "../" output)))
+                                (when (string-suffix-p "/" output)
+                                  (setq output (substring output 0 -1)))
+                                output)
+                            buffer-path))))
+               (if active 'mode-line-buffer-path)))
+            (powerline-raw "%b" (if active 'mode-line-buffer-file)))
     :tight-right t)
 
   (spaceline-define-segment *buffer-modified
     (unless (string-prefix-p "*" (buffer-name))
-      (propertize
+      (powerline-raw
        (concat (when buffer-file-name
                  (concat
                   (if (buffer-modified-p) "[+]")
                   (if (not (file-exists-p buffer-file-name)) "[!]")))
                (if buffer-read-only "[RO]"))
-       'face 'mode-line-is-modified))
+       'mode-line-is-modified))
     :skip-alternate t
     :tight t)
 
   (spaceline-define-segment *buffer-position
     "A more vim-like buffer position."
-    (let ((start (window-start))
-          (end (window-end))
-          (pend (point-max)))
-      (if (and (eq start 1)
-               (eq end pend))
-          ":All"
-        (let ((perc (/ end 0.01 pend)))
-          (cond ((= start 1) ":Top")
-                ((>= perc 100) ":Bot")
-                (t (format ":%d%%%%" perc))))))
-    :skip-alternate t)
+    (concat "%l/%c "
+            (let ((start (window-start))
+                  (end (window-end))
+                  (pend (point-max)))
+              (if (and (eq start 1)
+                       (eq end pend))
+                  ":All"
+                (let ((perc (/ end 0.01 pend)))
+                  (cond ((= start 1) ":Top")
+                        ((>= perc 100) ":Bot")
+                        (t (format ":%d%%%%" perc)))))))
+    :tight-left t)
 
   (spaceline-define-segment *vc
     "Version control info"
     (when (and active vc-mode)
-      (substring vc-mode (+ 1 (length (symbol-name (vc-backend buffer-file-name))))))
-    :face other-face
+      (powerline-raw
+       (substring vc-mode (+ 1 (length (symbol-name (vc-backend buffer-file-name)))))
+       other-face))
     :tight-right t)
 
   ;; search indicators
@@ -263,13 +268,13 @@
     "Show the current match number and the total number of matches. Requires
 anzu to be enabled."
     (when (evil-ex-hl-active-p 'evil-ex-search)
-      (propertize
+      (powerline-raw
        (let ((here anzu--current-position)
              (total anzu--total-matched))
          (format " %s/%d%s "
                  here total
                  (if anzu--overflow-p "+" "")))
-       'face (if active 'mode-line-count-face 'mode-line-inactive)))
+       (if active 'mode-line-count-face 'mode-line-inactive)))
     :tight t)
 
   (spaceline-define-segment *iedit
@@ -294,7 +299,7 @@ anzu to be enabled."
   (spaceline-define-segment *evil-substitute
     "Show number of :s matches in real time."
     (when (and (evil-ex-p) (evil-ex-hl-active-p 'evil-ex-substitute))
-      (propertize
+      (powerline-raw
        (let ((range (if evil-ex-range
                         (cons (car evil-ex-range) (cadr evil-ex-range))
                       (cons (line-beginning-position) (line-end-position))))
@@ -304,15 +309,15 @@ anzu to be enabled."
                      (count-matches pattern (car range) (cdr range))
                      evil-ex-argument)
            " ... "))
-       'face (if active 'mode-line-count-face 'mode-line-inactive)))
+       (if active 'mode-line-count-face 'mode-line-inactive)))
     :tight t)
 
   (spaceline-define-segment *macro-recording
     "Show when recording macro"
     (when (and active defining-kbd-macro)
-      (propertize
+      (powerline-raw
        (format " %s ▶ " (char-to-string evil-this-macro))
-       'face highlight-face))
+       highlight-face))
     :tight t)
 
   (spaceline-define-segment *buffer-encoding-abbrev
@@ -334,25 +339,26 @@ anzu to be enabled."
   (spaceline-define-segment *selection-info
     "Information about the current selection."
     (when (and active (evil-visual-state-p))
-      (let ((reg-beg (region-beginning))
-            (reg-end (region-end))
-            (evil (eq 'visual evil-state)))
-        (let ((lines (count-lines reg-beg (min (1+ reg-end) (point-max))))
-              (chars (- (1+ reg-end) reg-beg))
-              (cols (1+ (abs (- (evil-column reg-end)
-                                (evil-column reg-beg))))))
-          (cond
-           ;; rectangle selection
-           ((or (bound-and-true-p rectangle-mark-mode)
-                (and evil (eq 'block evil-visual-selection)))
-            (format "%dx%dB" lines (if evil cols (1- cols))))
-           ;; line selection
-           ((or (> lines 1) (eq 'line evil-visual-selection))
-            (if (and (eq evil-state 'visual) (eq evil-this-type 'line))
-                (format "%dL" lines)
-              (format "%dC %dL" chars lines)))
-           (t (format "%dC" (if evil chars (1- chars))))))))
-    :face highlight-face)
+      (powerline-raw
+       (let ((reg-beg (region-beginning))
+             (reg-end (region-end))
+             (evil (eq 'visual evil-state)))
+         (let ((lines (count-lines reg-beg (min (1+ reg-end) (point-max))))
+               (chars (- (1+ reg-end) reg-beg))
+               (cols (1+ (abs (- (evil-column reg-end)
+                                 (evil-column reg-beg))))))
+           (cond
+            ;; rectangle selection
+            ((or (bound-and-true-p rectangle-mark-mode)
+                 (and evil (eq 'block evil-visual-selection)))
+             (format "%dx%dB" lines (if evil cols (1- cols))))
+            ;; line selection
+            ((or (> lines 1) (eq 'line evil-visual-selection))
+             (if (and (eq evil-state 'visual) (eq evil-this-type 'line))
+                 (format "%dL" lines)
+               (format "%dC %dL" chars lines)))
+            (t (format "%dC" (if evil chars (1- chars)))))))
+       highlight-face)))
 
   ;; flycheck
   (defun narf--flycheck-count (state)
@@ -376,23 +382,23 @@ anzu to be enabled."
   (defvar-local narf--flycheck-cache nil "")
   (spaceline-define-segment *flycheck
     "Persistent and cached flycheck indicators in the mode-line."
-    (or (and (or (eq narf--flycheck-err-cache narf--flycheck-cache)
-                 (memq flycheck-last-status-change '(running not-checked)))
-             narf--flycheck-cache)
-        (and (setq narf--flycheck-err-cache flycheck-current-errors)
-             (setq narf--flycheck-cache
-                   (let ((fe (narf--flycheck-count 'error))
-                         (fw (narf--flycheck-count 'warning))
-                         ;; (fi (narf--flycheck-count 'info))
-                         )
-                     (concat
-                      (if fe (propertize (format " ⚠%s " fe) 'face (if active 'spaceline-flycheck-error 'mode-line)))
-                      (if fw (propertize (format " ⚠%s " fw) 'face (if active 'spaceline-flycheck-warning 'mode-line)))
-                      ;; (if fi (propertize (format " ⚠%s " fi) 'face 'spaceline-flycheck-info))
-                      )))))
-    :when (and (bound-and-true-p flycheck-mode)
+    (when (and (bound-and-true-p flycheck-mode)
                (or flycheck-current-errors
                    (eq 'running flycheck-last-status-change)))
+      (or (and (or (eq narf--flycheck-err-cache narf--flycheck-cache)
+                   (memq flycheck-last-status-change '(running not-checked)))
+               narf--flycheck-cache)
+          (and (setq narf--flycheck-err-cache flycheck-current-errors)
+               (setq narf--flycheck-cache
+                     (let ((fe (narf--flycheck-count 'error))
+                           (fw (narf--flycheck-count 'warning))
+                           ;; (fi (narf--flycheck-count 'info))
+                           )
+                       (concat
+                        (if fe (propertize (format " ⚠%s " fe) 'face (if active 'spaceline-flycheck-error 'mode-line)))
+                        (if fw (propertize (format " ⚠%s " fw) 'face (if active 'spaceline-flycheck-warning 'mode-line)))
+                        ;; (if fi (propertize (format " ⚠%s " fi) 'face 'spaceline-flycheck-info))
+                        ))))))
     :tight t)
 
   (defvar narf--mode-line-padding (pl/percent-xpm powerline-height 100 0 100 0 1 nil nil))
@@ -416,13 +422,12 @@ anzu to be enabled."
      *env-version
      *buffer-encoding-abbrev
      (global :when active)
-     ("%l/%c" :tight t)
      *buffer-position
      *pad
      ))
 
   ;; Initialize modeline
-  (setq-default mode-line-format '(:eval (spaceline-ml-main))))
+  (setq-default mode-line-format '("%e" (:eval (spaceline-ml-main)))))
 
 (provide 'core-ui)
 ;;; core-ui.el ends here

@@ -165,7 +165,8 @@
    `(mode-line-inactive             ((,c (:foreground ,modeline-fg-inactive :background ,modeline-bg-inactive))))
 
    `(mode-line-is-modified          ((,c (:foreground ,magenta :background nil :bold t))))
-   `(mode-line-buffer-file          ((,c (:foreground ,modeline-fg))))
+   `(mode-line-buffer-file          ((,c (:foreground ,white :bold t))))
+   `(mode-line-buffer-path          ((,c (:foreground ,grey))))
    `(mode-line-count-face           ((,c (:foreground ,black :background ,magenta))))
 
    `(spaceline-flycheck-error       ((,c (:underline nil :foreground ,black :background ,red))))
