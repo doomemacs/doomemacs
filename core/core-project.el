@@ -91,6 +91,17 @@
         neo-banner-message nil)
   :config
   (evil-set-initial-state 'neotree-mode 'motion)
+
+  ;; A custom and simple theme for neotree
+  (advice-add 'neo-buffer--insert-fold-symbol :override 'narf*neo-buffer-fold-symbol)
+  ;; Shorter pwd in neotree
+  (advice-add 'neo-buffer--insert-root-entry :filter-args 'narf*neotree-shorten-pwd)
+  ;; Don't ask for confirmation when creating files
+  (advice-add 'neotree-create-node :around 'narf*neotree-create-node)
+  ;; Prevents messing up the neotree buffer on window changes
+  (advice-add 'narf--evil-window-move  :around 'narf*save-neotree)
+  (advice-add 'narf--evil-swap-windows :around 'narf*save-neotree)
+
   (add-hook 'neotree-mode-hook 'narf|neotree-init-keymap)
   (defun narf|neotree-init-keymap ()
     (map! :map evil-motion-state-local-map
@@ -109,27 +120,7 @@
           "d"   'neotree-delete-node
           "g"   'neotree-refresh
           "r"   'neotree-rename-node
-          "R"   'neotree-change-root))
-
-  (defun narf*neotree-shorten-pwd (node)
-    "Shorter pwd in neotree"
-    (list (abbreviate-file-name (car node))))
-  (advice-add 'neo-buffer--insert-root-entry :filter-args 'narf*neotree-shorten-pwd)
-
-  (defun narf*neotree-create-node (orig-fun &rest args)
-    "Don't ask for confirmation when creating files"
-    (cl-letf (((symbol-function 'yes-or-no-p) (lambda (&rest _) t)))
-      (apply orig-fun args)))
-  (advice-add 'neotree-create-node :around 'narf*neotree-create-node)
-
-  (defun narf*save-neotree (orig-fun &rest args)
-    "Prevents messing up the neotree buffer on window changes"
-    (narf/neotree-save (apply orig-fun args)))
-  (advice-add 'narf--evil-window-move  :around 'narf*save-neotree)
-  (advice-add 'narf--evil-swap-windows :around 'narf*save-neotree)
-
-  ;; A custom and simple theme for neotree
-  (advice-add 'neo-buffer--insert-fold-symbol :override 'narf*neo-buffer-fold-symbol))
+          "R"   'neotree-change-root)))
 
 ;;
 (use-package projectile

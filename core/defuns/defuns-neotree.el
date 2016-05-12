@@ -43,5 +43,21 @@
         (and (eq name 'close) (funcall n-insert-symbol "+ "))
         (and (eq name 'leaf)  (funcall n-insert-symbol "  ")))))
 
+;;;###autoload
+(defun narf*save-neotree (orig-fun &rest args)
+  "Prevents messing up the neotree buffer on window changes"
+  (narf/neotree-save (apply orig-fun args)))
+
+;;;###autoload
+(defun narf*neotree-create-node (orig-fun &rest args)
+  "Don't ask for confirmation when creating files"
+  (cl-letf (((symbol-function 'yes-or-no-p) (lambda (&rest _) t)))
+    (apply orig-fun args)))
+
+;;;###autoload
+(defun narf*neotree-shorten-pwd (node)
+  "Shorter pwd in neotree"
+  (list (abbreviate-file-name (car node))))
+
 (provide 'defuns-neotree)
 ;;; defuns-neotree.el ends here
