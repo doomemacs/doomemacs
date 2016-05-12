@@ -1,46 +1,67 @@
 ;;; module-web.el
 
-(add-hook! (sass-mode scss-mode less-css-mode)
-  '(flycheck-mode narf|hl-line-off hs-minor-mode))
+;;
+;; CSS modes
+;;
 
-(push '("css" "scss" "sass" "less" "styl") projectile-other-file-alist)
+(use-package css-mode
+  :mode "\\.css$"
+  :config
+  (def-company-backend! css-mode (css yasnippet))
+  (push '("css" "scss" "sass" "less" "styl") projectile-other-file-alist))
 
-(use-package haml-mode :mode "\\.haml$")
+(after! emr
+  (emr-declare-command 'narf/css-toggle-inline-or-block
+    :title "toggle inline/block"
+    :modes '(css-mode less-css-mode scss-mode)
+    :predicate (lambda () (not (use-region-p)))))
 
-(use-package stylus-mode :mode "\\.styl$"
+(setq scss-compile-at-save nil
+      scss-sass-options '("--style" "compressed"))
+(add-hook! (scss-mode sass-mode less-css-mode) 'yas-minor-mode-on)
+
+(use-package stylus-mode
+  :mode "\\.styl$"
   :config (push '("styl" "css") projectile-other-file-alist))
 
-(use-package less-css-mode :mode "\\.less$"
+(use-package less-css-mode
+  :mode "\\.less$"
+  :init (add-hook 'less-css-mode 'flycheck-mode)
   :config (push '("less" "css") projectile-other-file-alist))
 
-(use-package sass-mode :mode "\\.sass$"
+(use-package sass-mode
+  :mode "\\.sass$"
+  :init (add-hook 'sass-mode 'flycheck-mode)
   :config
-  (def-company-backend! sass-mode (css))
+  (def-builder! scss-mode narf/sass-build)
+  (def-company-backend! sass-mode (css yasnippet))
   (def-docset! sass-mode "sass,bourbon")
   (push '("sass" "css") projectile-other-file-alist))
 
 (use-package scss-mode
   :mode "\\.scss$"
-  :preface (require 'css-mode)
-  :init (setq scss-compile-at-save nil)
+  :preface (require 'css-mode) ; to fix cascading fontification issue
+  :init (add-hook 'scss-mode 'flycheck-mode)
   :config
-  (def-company-backend! scss-mode (css))
+  (def-builder! scss-mode narf/scss-build)
+  (def-company-backend! scss-mode (css yasnippet))
   (def-docset! scss-mode "sass,bourbon")
   (push '("scss" "css") projectile-other-file-alist)
   (sp-local-pair 'scss-mode "/*" "*/" :post-handlers '(("[d-3]||\n[i]" "RET") ("| " "SPC")))
 
   (map! :map scss-mode-map
-        :n "M-r" 'narf/web-refresh-browser
+        :n "M-R" 'narf/web-refresh-browser
         (:localleader :nv ";" 'narf/append-semicolon)
         (:leader
           :n ";" 'helm-css-scss
-          :n ":" 'helm-css-scss-multi))
+          :n ":" 'helm-css-scss-multi)))
 
-  (after! emr
-    (emr-declare-command 'narf/scss-toggle-inline-or-block
-      :title "toggle inline/block"
-      :modes 'scss-mode
-      :predicate (lambda () (not (use-region-p))))))
+
+;;
+;; Markup modes
+;;
+
+(use-package haml-mode :mode "\\.haml$")
 
 (use-package jaded-mode
   :load-path "/Volumes/hlissner/Dropbox/work/plugins/jaded-mode"
