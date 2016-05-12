@@ -79,7 +79,7 @@
         module-data         ; config and data formats
         module-go           ; the hipster dialect
         module-haskell      ; a language that's lazier than I am
-        module-java         ; the poster child for carpal tunnel syndome
+        module-java         ; the poster child for carpal tunnel syndrome
         module-js           ; all(hope(abandon(ye(who(enter(here))))))
         module-julia        ; MATLAB, but fast
         module-latex        ; for writing papers in Emacs
@@ -93,7 +93,7 @@
         module-rust         ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
         module-scala        ; Java, but good
         module-sh           ; she sells Z-shells by the C XOR
-        module-text         ; writing docs for people to ignore + latex
+        module-text         ; writing docs for people to ignore
         module-web          ; #big-bang::before { content: ""; }
 
         ;; Experimental
@@ -103,7 +103,7 @@
         extra-demo          ; allow me to demonstrate...
         extra-tags          ; if you liked it you should've generated a tag for it
         extra-tmux          ; close the rift between GUI & terminal
-        extra-write         ; for writing fiction in Emacs
+        extra-write         ; Emacs as a word processor
 
         ;; Customization
         my-bindings
