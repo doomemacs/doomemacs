@@ -9,7 +9,7 @@
 (use-package yaml-mode :mode "\\.ya?ml$"
   :config (def-electric! yaml-mode :chars (?\n ?\: ?\-)))
 
-(use-package json-mode :mode "\\.js\\(on\\|hintrc\\)$"
+(use-package json-mode :mode "\\.js[hl]\\(on\\|int\\(rc\\)?\\)$"
   :config (def-electric! json-mode :chars (?\n ?: ?{ ?})))
 
 (use-package vimrc-mode :mode ("/\\.?g?vimrc$" "\\.vim$" "/\\.vim/rc/.+$"))
