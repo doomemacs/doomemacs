@@ -72,19 +72,22 @@
     (advice-add 'evil-force-normal-state :after 'narf*evil-esc-quit)
     (defun narf*evil-esc-quit ()
       "Close popups, disable search highlights and quit the minibuffer if open."
-      (when (minibuffer-window-active-p (minibuffer-window))
-        (abort-recursive-edit))
-      (ignore-errors
-        (evil-ex-nohighlight))
-      ;; Close non-repl popups and clean up `narf-popup-windows'
-      (unless (memq (get-buffer-window) narf-popup-windows)
-        (mapc (lambda (w)
-                (if (window-live-p w)
-                    (with-selected-window w
-                      (unless (derived-mode-p 'comint-mode)
-                        (narf/popup-close w)))
-                  (narf/popup-remove w)))
-              narf-popup-windows)))
+      (let ((minib-p (minibuffer-window-active-p (minibuffer-window)))
+            (evil-hl-p (evil-ex-hl-active-p 'evil-ex-search)))
+        (when minib-p
+          (abort-recursive-edit))
+        (when evil-hl-p
+          (evil-ex-nohighlight))
+        ;; Close non-repl popups and clean up `narf-popup-windows'
+        (unless (or minib-p evil-hl-p
+                    (memq (get-buffer-window) narf-popup-windows))
+          (mapc (lambda (w)
+                  (if (window-live-p w)
+                      (with-selected-window w
+                        (unless (derived-mode-p 'comint-mode)
+                          (narf/popup-close w)))
+                    (narf/popup-remove w)))
+                narf-popup-windows))))
 
     ;; Fix harmless (yet disruptive) error reporting w/ hidden buffers caused by
     ;; workgroups killing windows
