@@ -96,13 +96,6 @@
     (add-hook! isearch-mode     (setq echo-keystrokes 0))
     (add-hook! isearch-mode-end (setq echo-keystrokes 0.02))
 
-    ;; Repeat motions with SPC/S-SPC
-    (defmacro def-repeat! (command next-func prev-func)
-      `(defadvice ,command
-           (before ,(intern (format "narf-space--%s" (symbol-name command))) activate)
-         (define-key evil-motion-state-map (kbd "SPC") ',next-func)
-         (define-key evil-motion-state-map (kbd "S-SPC") ',prev-func)))
-
     (after! evil-snipe
       (def-repeat! evil-snipe-f evil-snipe-repeat evil-snipe-repeat-reverse)
       (def-repeat! evil-snipe-F evil-snipe-repeat evil-snipe-repeat-reverse)

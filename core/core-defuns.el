@@ -231,6 +231,12 @@ Examples:
         (setq i (1+ i)))
       `(progn ,@(apply #'nconc (delete nil (delete (list nil) (reverse forms))))))))
 
+(defmacro def-repeat! (command next-func prev-func)
+  "Repeat motions with SPC/S-SPC"
+  `(defadvice ,command
+       (before ,(intern (format "narf-space--%s" (symbol-name command))) activate)
+     (define-key evil-motion-state-map (kbd "SPC") ',next-func)
+     (define-key evil-motion-state-map (kbd "S-SPC") ',prev-func)))
 
 ;;
 (defun narf|update-scratch-buffer-cwd (&optional dir) ; see core-editor.el

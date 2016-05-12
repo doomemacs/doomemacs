@@ -6,7 +6,7 @@
   "Register a company backend for a mode."
   (let* ((hooks (if (listp hooks) hooks (list hooks)))
          (def-name (intern (format "narf--init-company-%s"
-                                   (s-join "-" (mapcar 'symbol-name hooks)))))
+                                   (mapconcat 'identity (mapcar 'symbol-name hooks) "-"))))
          (quoted (eq (car-safe backends) 'quote)))
     `(progn
        (defun ,def-name ()

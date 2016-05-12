@@ -14,7 +14,7 @@
 
 ;;;###autoload
 (defmacro def-tmp-excmd! (cmd-on cmd-off &rest commands)
-  "Creates on-off defuns for a set of ex commands, named CMD-ON and CMD-OFF."
+  "Creates a toggle for a set of ex commands, named CMD-ON and CMD-OFF."
   (declare (indent 2))
   `(progn
      (defun ,cmd-on (&rest _)
@@ -24,19 +24,15 @@
        (mapc (lambda (cmd) (narf/evil-ex-undefine-cmd (car cmd)))
              ',commands))))
 
-
 ;; Shortcuts for the evil expression register
 ;;;###autoload
-(defmacro $= (str &rest args)
-  `(calc-eval (format ,str ,@args)))
+(defmacro $= (str &rest args) `(calc-eval (format ,str ,@args)))
 
 ;;;###autoload
-(defmacro $r (char)
-  `(evil-get-register ,char))
+(defmacro $r (char) `(evil-get-register ,char))
 
 ;;;###autoload
-(defmacro $expand (path)
-  `(evil-ex-replace-special-filenames ,path))
+(defmacro $expand (path) `(evil-ex-replace-special-filenames ,path))
 
 (provide 'macros-evil)
 ;;; macros-evil.el ends here
