@@ -22,7 +22,7 @@
   :config
   (def-company-backend! python-mode (anaconda))
   (def-docset! python-mode "py,py3,python")
-  (def-env-command! python-mode "python --version 2>&1 | cut -d' ' -f2")
+  (def-version-cmd! python-mode "python --version 2>&1 | cut -d' ' -f2")
   (def-repl! python-mode narf/inf-python)
 
   (define-key python-mode-map (kbd "DEL") nil)) ; interferes with smartparens

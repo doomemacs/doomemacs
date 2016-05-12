@@ -9,7 +9,7 @@
   (def-builder! ruby-mode "rake %s" "Rakefile")
   (def-company-backend! ruby-mode (dabbrev-code))
   (def-docset! ruby-mode "rb,ruby,rubygem")
-  (def-env-command! ruby-mode "ruby --version | cut -d' ' -f2")
+  (def-version-cmd! ruby-mode "ruby --version | cut -d' ' -f2")
   (def-repl! ruby-mode inf-ruby)
   (def-electric! ruby-mode :words ("else" "end" "elseif"))
 

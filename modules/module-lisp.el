@@ -44,7 +44,7 @@
             "(\\(def-"
             (regexp-opt '("electric" "project-type" "company-backend"
                           "builder" "repl" "textobj" "tmp-excmd" "rotate"
-                          "repeat" "yas-mode" "env-command" "docset"))
+                          "repeat" "yas-mode" "version-cmd" "docset"))
             "!\\)")
           (1 font-lock-keyword-face append))
          (,(concat
