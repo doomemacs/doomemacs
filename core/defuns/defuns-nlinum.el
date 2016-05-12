@@ -47,7 +47,7 @@
           (when (>= peol max)
             (setq peol max))
           (jit-lock-fontify-now pbol peol)
-          (let ((ov (-first (lambda (item) (overlay-get item 'nlinum)) (overlays-in pbol peol))))
+          (let ((ov (--first (overlay-get it 'nlinum) (overlays-in pbol peol))))
             (when ov
               (narf|nlinum-unhl-line)
               (let ((str (nth 1 (get-text-property 0 'display (overlay-get ov 'before-string)))))
