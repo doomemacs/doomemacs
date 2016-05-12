@@ -68,7 +68,7 @@
   (defface narf-minibuffer-active '((t (:inherit mode-line)))
     "Face for active minibuffer")
   (add-hook! minibuffer-setup
-    (set-window-fringes (selected-window) 0 0 nil)
+    (set-window-fringes (minibuffer-window) 0 0 nil)
     (make-local-variable 'face-remapping-alist)
     (add-to-list 'face-remapping-alist '(default narf-minibuffer-active)))
   (add-hook! 'after-init-hook (set-window-fringes (minibuffer-window) 0 0 nil)))
