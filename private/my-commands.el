@@ -23,6 +23,7 @@
 (evil-ex-define-cmd "rec[ent]"      'narf:helm-recentf) ; show recent files in helm
 (evil-ex-define-cmd "reo[rient]"    'narf/window-reorient) ; scroll all windows to left
 (evil-ex-define-cmd "ie[dit]"       'evil-multiedit-ex-match)
+(evil-ex-define-cmd "htmle[nt]"     'narf/html-entities) ; encode/decode html entities
 
 ;; External resources
 (evil-ex-define-cmd "dash"          'narf:dash) ; look up in Dash.app
