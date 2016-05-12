@@ -1,5 +1,3 @@
-(eval-when-compile (require 'cl-lib))
-
 ;; Backwards compatible `with-eval-after-load'
 (unless (fboundp 'with-eval-after-load)
   (defmacro with-eval-after-load (file &rest body)
@@ -68,35 +66,35 @@ Examples:
                (if (listp hook) hook (list hook))))) funcs)
     `(progn ,@forms)))
 
-(cl-defmacro associate! (mode &key minor
-                              &key in
-                              &key match
-                              &key files
-                              &allow-other-keys)
+(defmacro associate! (mode &rest rest)
   "Associate a major or minor mode to certain patterns and project files."
   (declare (indent 1))
-  `(progn
-     (,@(cond ((or files in)
-               (when (and files (not (or (listp files) (stringp files))))
-                 (user-error "associate! :files expects a string or list of strings"))
-               (let ((hook-name (intern (format "narf--init-mode-%s" mode))))
-                 `(progn
-                    (defun ,hook-name ()
-                      (when (and ,(if match `(if buffer-file-name (string-match-p ,match buffer-file-name)) t)
-                                 (or ,(not files)
-                                     (and (boundp ',mode)
-                                          (not ,mode)
-                                          (narf/project-has-files ,@(-list files)))))
-                        (,mode 1)))
-                    ,@(if (and in (listp in))
-                          (mapcar (lambda (h) `(add-hook ',h ',hook-name))
-                                  (mapcar (lambda (m) (intern (format "%s-hook" m))) in))
-                        `((add-hook 'find-file-hook ',hook-name))))))
-              (match
-               `(add-to-list ',(if minor 'narf-auto-minor-mode-alist 'auto-mode-alist)
-                             (cons ,match ',mode)))
-              (t (user-error "associate! invalid rules for mode [%s] (in %s) (match %s) (files %s)"
-                             mode in match files))))))
+  (let ((minor (plist-get rest :minor))
+        (in (plist-get rest :in))
+        (match (plist-get rest :match))
+        (files (plist-get rest :files)))
+    `(progn
+       (,@(cond ((or files in)
+                 (when (and files (not (or (listp files) (stringp files))))
+                   (user-error "associate! :files expects a string or list of strings"))
+                 (let ((hook-name (intern (format "narf--init-mode-%s" mode))))
+                   `(progn
+                      (defun ,hook-name ()
+                        (when (and ,(if match `(if buffer-file-name (string-match-p ,match buffer-file-name)) t)
+                                   (or ,(not files)
+                                       (and (boundp ',mode)
+                                            (not ,mode)
+                                            (narf/project-has-files ,@(-list files)))))
+                          (,mode 1)))
+                      ,@(if (and in (listp in))
+                            (mapcar (lambda (h) `(add-hook ',h ',hook-name))
+                                    (mapcar (lambda (m) (intern (format "%s-hook" m))) in))
+                          `((add-hook 'find-file-hook ',hook-name))))))
+                (match
+                 `(add-to-list ',(if minor 'narf-auto-minor-mode-alist 'auto-mode-alist)
+                               (cons ,match ',mode)))
+                (t (user-error "associate! invalid rules for mode [%s] (in %s) (match %s) (files %s)"
+                               mode in match files)))))))
 
 (defmacro def-project-type! (name lighter &rest body)
   "Define a minor mode for a specific framework, library or project type."
@@ -230,7 +228,7 @@ Examples:
 
                (t (user-error "Invalid key %s" key)))
          forms)
-        (cl-incf i))
+        (setq i (1+ i)))
       `(progn ,@(apply #'nconc (delete nil (delete (list nil) (reverse forms))))))))
 
 
