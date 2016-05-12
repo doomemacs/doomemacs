@@ -111,7 +111,7 @@ the buffer if it is being displayed in another window."
         (narf/popup-close)
       (unless (narf/real-buffer-p (current-buffer))
         (narf/previous-real-buffer)
-        (narf|update-scratch-buffer-cwd)))))
+        (narf|update-scratch-buffer-cwd new-dir)))))
 
 ;;;###autoload
 (defun narf/kill-unreal-buffers ()
