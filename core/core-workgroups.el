@@ -1,4 +1,4 @@
-;;; core-sessions.el
+;;; core-workgroups.el
 
 ;; I use workgroups to accomplish two things:
 ;;   1. Vim-like tab emulation (type :tabs to see a list of tabs -- maybe I'll add some
@@ -76,5 +76,5 @@ automatically renamed to the project name.")
   (defalias 'narf:switch-to-tab-right 'wg-switch-to-workgroup-right)
   (defalias 'narf:switch-to-tab-last 'wg-switch-to-previous-workgroup))
 
-(provide 'core-sessions)
-;;; core-sessions.el ends here
+(provide 'core-workgroups)
+;;; core-workgroups.el ends here

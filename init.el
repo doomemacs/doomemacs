@@ -68,8 +68,8 @@
         core-project        ; whose project am I in?
         core-vcs            ; remember remember, that commit in November
         core-helm           ; a search engine for life and love
-        core-sessions       ; cure Emacs alzheimers + tab emulation
-        core-eval           ; run code, run; debugging too
+        core-workgroups     ; cure Emacs alzheimers + tab emulation
+        core-eval           ; run code, run; debug too
 
         ;; Environments
         module-apple        ; Applescript, Swift, Launchbar, iOS, wallet syphons, etc.
