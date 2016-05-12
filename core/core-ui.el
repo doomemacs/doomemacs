@@ -12,13 +12,13 @@
  visible-bell nil
  visible-cursor nil
  x-stretch-cursor t
- use-dialog-box nil            ; always avoid GUI
- redisplay-dont-pause t        ; don't pause display on input
- indicate-buffer-boundaries t  ; show indicators where buffer starts/ends
- indicate-empty-lines t        ; show indicators on empty lines
- fringes-outside-margins t     ; switches order of fringe and margin
- split-width-threshold nil     ; favor horizontal splits
- show-help-function nil        ; hide :help-echo text
+ use-dialog-box nil             ; always avoid GUI
+ redisplay-dont-pause t         ; don't pause display on input
+ indicate-buffer-boundaries nil ; don't show where buffer starts/ends
+ indicate-empty-lines t         ; show empty lines
+ fringes-outside-margins t      ; switches order of fringe and margin
+ split-width-threshold nil      ; favor horizontal splits
+ show-help-function nil         ; hide :help-echo text
 
  jit-lock-defer-time nil
  jit-lock-stealth-nice 0.1
