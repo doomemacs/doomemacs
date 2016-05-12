@@ -19,6 +19,10 @@
   (def-docset! dockerfile-mode "docker")
   (def-builder! dockerfile-mode dockerfile-build-buffer "Dockerfile"))
 
+;; For ROM hacking or debugging
+(use-package hexl-mode
+  :mode ("\\.hex$" "\\.nes$"))
+
 ;;
 (def-project-type! ansible-mode "ans"
   :modes (yaml-mode)
