@@ -105,10 +105,7 @@
   (add-hook 'neotree-mode-hook 'narf|neotree-init-keymap)
   (defun narf|neotree-init-keymap ()
     (map! :map evil-motion-state-local-map
-          "ESC"    'neotree-hide
-          [escape] 'neotree-hide
-          "q"      'neotree-hide
-
+          "q"   'neotree-hide
           "RET" 'neotree-enter
           "J"   'neotree-select-next-sibling-node
           "K"   'neotree-select-previous-sibling-node
