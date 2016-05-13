@@ -6,6 +6,8 @@
 
 (use-package css-mode
   :mode "\\.css$"
+  :init
+  (add-hook! css-mode '(yas-minor-mode-on flycheck-mode))
   :config
   (def-company-backend! css-mode (css yasnippet))
   (push '("css" "scss" "sass" "less" "styl") projectile-other-file-alist))
@@ -16,39 +18,37 @@
     :modes '(css-mode less-css-mode scss-mode)
     :predicate (lambda () (not (use-region-p)))))
 
-(setq scss-compile-at-save nil
-      scss-sass-options '("--style" "compressed"))
-(add-hook! (scss-mode sass-mode less-css-mode) 'yas-minor-mode-on)
+(setq scss-sass-options '("--style" "compressed"))
+
+(sp-with-modes '(scss-mode less-css-mode stylus-mode)
+  (sp-local-pair "/*" "*/"
+                 :post-handlers '(("[d-3]||\n[i]" "RET") ("| " "SPC"))))
 
 (use-package stylus-mode
   :mode "\\.styl$"
+  :init (add-hook! stylus-mode '(yas-minor-mode-on flycheck-mode))
   :config (push '("styl" "css") projectile-other-file-alist))
 
 (use-package less-css-mode
   :mode "\\.less$"
-  :init (add-hook 'less-css-mode 'flycheck-mode)
   :config (push '("less" "css") projectile-other-file-alist))
 
 (use-package sass-mode
   :mode "\\.sass$"
-  :init (add-hook 'sass-mode 'flycheck-mode)
   :config
-  (def-builder! scss-mode narf/sass-build)
+  (def-builder! sass-mode narf/sass-build)
   (def-company-backend! sass-mode (css yasnippet))
   (def-docset! sass-mode "sass,bourbon")
   (push '("sass" "css") projectile-other-file-alist))
 
 (use-package scss-mode
   :mode "\\.scss$"
-  :preface (require 'css-mode) ; to fix cascading fontification issue
-  :init (add-hook 'scss-mode 'flycheck-mode)
   :config
   (def-builder! scss-mode narf/scss-build)
   (def-company-backend! scss-mode (css yasnippet))
   (def-docset! scss-mode "sass,bourbon")
   (push '("scss" "css") projectile-other-file-alist)
-  (sp-local-pair 'scss-mode "/*" "*/" :post-handlers '(("[d-3]||\n[i]" "RET") ("| " "SPC")))
-
+  (setq scss-compile-at-save nil)
   (map! :map scss-mode-map
         :n "M-R" 'narf/web-refresh-browser
         (:localleader :nv ";" 'narf/append-semicolon)
@@ -82,7 +82,6 @@
          "wp-content/themes/.+/.+\\.php$")
   :init
   (add-hook 'web-mode-hook 'turn-off-smartparens-mode)
-
   :config
   (setq web-mode-enable-html-entities-fontification t)
   (push '("html" "jade") projectile-other-file-alist)
