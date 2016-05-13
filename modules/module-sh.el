@@ -1,19 +1,20 @@
-;;; module-sh.el --- description
+;;; module-sh.el
 
-(associate! sh-mode :match "\\.\\(ba\\|z\\)sh$")
-(associate! sh-mode :match "/\\.?z\\(sh\\(/.*\\|$\\)\\|profile\\|login\\|logout\\|shrc\\|shenv\\)$")
-(associate! sh-mode :match "/\\.?bash\\(/.*\\|rc\\|_profile\\)$")
-
-(after! sh-script
+(use-package sh-script
+  :mode ("\\.\\(ba\\|z\\)sh$"
+         "/\\.?z\\(sh\\(/.*\\|$\\)\\|profile\\|log\\(in\\|out\\)\\|sh\\(rc\\|env\\)\\)$"
+         "/\\.?bash\\(/.*\\|rc\\|_profile\\)$")
+  :init
+  (add-hook! sh-mode
+    '(flycheck-mode narf|sh-extra-font-lock-activate))
+  :config
+  (def-company-backend! sh-mode (shell))
   (def-electric! sh-mode :words ("else" "elif" "fi" "done"))
   (def-repl! sh-mode narf/inf-shell)
   (setq sh-indent-after-continuation 'always)
 
-  (add-hook! sh-mode (setq mode-name "sh")) ; [pedantry intensifies]
-  (add-hook! sh-mode
-    '(flycheck-mode
-      ;; Fontify variables in strings
-      narf|sh-extra-font-lock-activate))
+  ;; [pedantry intensifies]
+  (add-hook! sh-mode (setq mode-name "sh"))
 
   (sp-with-modes '(sh-mode)
     (sp-local-pair "case"  "" :when '(("SPC")) :post-handlers '((:add narf/sp-insert-yasnippet)) :actions '(insert))
