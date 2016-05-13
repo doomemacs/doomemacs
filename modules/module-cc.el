@@ -2,23 +2,23 @@
 
 (use-package cc-mode
   :commands (c-mode c++-mode objc-mode java-mode)
+  :mode ("\\.mm" . objc-mode)
   :init
-  (associate! objc-mode :match "\\.mm$")
   (add-hook! c++-mode '(highlight-numbers-mode narf|init-c++-C11-highlights))
   (add-hook 'c-initialization-hook 'narf|init-c/c++-settings)
 
   ;; C++ header files
-  (push `(,(lambda () (and (f-ext? buffer-file-name "h")
-                      (or (f-exists? (f-swap-ext buffer-file-name "cpp"))
-                          (awhen (car-safe (projectile-get-other-files (buffer-file-name) (projectile-current-project-files)))
-                            (f-ext? it "cpp")))))
-          . c++-mode)
+  (push (cons (lambda () (and (f-ext? buffer-file-name "h")
+                         (or (f-exists? (f-swap-ext buffer-file-name "cpp"))
+                             (awhen (car-safe (projectile-get-other-files (buffer-file-name) (projectile-current-project-files)))
+                               (f-ext? it "cpp")))))
+              'c++-mode)
         magic-mode-alist)
 
   ;; Obj-C
-  (push `(,(lambda () (and (f-ext? buffer-file-name "h")
-                      (re-search-forward "@\\<interface\\>" magic-mode-regexp-match-limit t)))
-          . objc-mode)
+  (push (cons (lambda () (and (f-ext? buffer-file-name "h")
+                         (re-search-forward "@\\<interface\\>" magic-mode-regexp-match-limit t)))
+              'objc-mode)
         magic-mode-alist)
 
   :config
@@ -55,7 +55,7 @@
   (flycheck-irony-setup)
 
   ;; some c-mode dervied modes wrongfully trigger these hooks (like php-mode)
-  (add-hook! (c-mode c++-mode ojbc-mode)
+  (add-hook! (c-mode c++-mode objc-mode)
     (when (memq major-mode '(c-mode c++-mode objc-mode))
       (flycheck-mode +1)
       (irony-mode +1)

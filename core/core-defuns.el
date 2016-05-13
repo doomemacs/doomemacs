@@ -59,11 +59,13 @@ Examples:
                   (list func-or-forms)))
          (forms '()))
     (mapc
-     (lambda (f) (let ((func (cond ((symbolp f) `(quote ,f))
-                              (t `(lambda (&rest _) ,@func-or-forms)))))
-              (mapc
-               (lambda (h) (push `(add-hook ',(if quoted h (intern (format "%s-hook" h))) ,func) forms))
-               (if (listp hook) hook (list hook))))) funcs)
+     (lambda (f)
+       (let ((func (cond ((symbolp f) `(quote ,f))
+                         (t `(lambda (&rest _) ,@func-or-forms)))))
+         (mapc
+          (lambda (h)
+            (push `(add-hook ',(if quoted h (intern (format "%s-hook" h))) ,func) forms))
+          (-list hook)))) funcs)
     `(progn ,@forms)))
 
 (defmacro associate! (mode &rest rest)

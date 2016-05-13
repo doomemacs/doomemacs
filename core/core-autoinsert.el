@@ -1,4 +1,4 @@
-;;; core-file-templates.el
+;;; core-autoinsert.el
 
 (use-package autoinsert
   :after yasnippet
@@ -99,5 +99,5 @@
           ("\\.z?sh$"                        "__"               sh-mode)
           )))
 
-(provide 'core-file-templates)
-;;; core-file-templates.el ends here
+(provide 'core-autoinsert)
+;;; core-autoinsert.el ends here

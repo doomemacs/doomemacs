@@ -73,6 +73,11 @@
     (setq narf-current-theme narf-default-theme
           narf-current-font  narf-default-font)
     ;; Here we a'go!
-    (mapc 'require packages)))
+    (mapc 'require packages)
+
+    (when (display-graphic-p)
+      (require 'server)
+      (unless (server-running-p)
+        (server-start)))))
 
 ;;; bootstrap.el ends here

@@ -92,7 +92,8 @@
     ;; Fix harmless (yet disruptive) error reporting w/ hidden buffers caused by
     ;; workgroups killing windows
     ;; TODO Delete timer on dead windows
-    (defadvice evil-ex-hl-do-update-highlight (around evil-ex-hidden-buffer-ignore-errors activate)
+    (defadvice evil-ex-hl-do-update-highlight
+        (around evil-ex-hidden-buffer-ignore-errors activate)
       (ignore-errors ad-do-it))
 
     ;; Hide keystroke display while isearch is active
@@ -110,8 +111,10 @@
       (def-repeat! evil-snipe-X evil-snipe-repeat evil-snipe-repeat-reverse))
 
     (after! evil-visualstar
-      (def-repeat! evil-visualstar/begin-search-forward evil-ex-search-next evil-ex-search-previous)
-      (def-repeat! evil-visualstar/begin-search-backward evil-ex-search-previous evil-ex-search-next))
+      (def-repeat! evil-visualstar/begin-search-forward
+        evil-ex-search-next evil-ex-search-previous)
+      (def-repeat! evil-visualstar/begin-search-backward
+        evil-ex-search-previous evil-ex-search-next))
 
     (def-repeat! evil-ex-search-next evil-ex-search-next evil-ex-search-previous)
     (def-repeat! evil-ex-search-previous evil-ex-search-next evil-ex-search-previous)

@@ -2,16 +2,16 @@
 ;;
 ;;; Naming conventions:
 ;;
-;;   narf-...     A public variable/constant or function
-;;   narf--...    An internal variable or function (non-interactive)
-;;   narf/...     An autoloaded interactive function
-;;   narf:...     An ex command
-;;   narf|...     A hook
-;;   narf*...     An advising function
-;;   narf....     Custom prefix commands
-;;   ...!         Macro
+;;   narf-…     A public variable/constant or function
+;;   narf--…    An internal variable or function (non-interactive)
+;;   narf/…     An autoloaded interactive function
+;;   narf:…     An ex command
+;;   narf|…     A hook
+;;   narf*…     An advising function
+;;   narf.…     Custom prefix commands
+;;   …!         Macro
 ;;
-;;  You will find all autoloaded function in {core,modules}/defuns/defuns-*.el
+;; Autoloaded functions are in {core,modules}/defuns/defuns-*.el
 ;;
 ;;;
 
@@ -95,22 +95,25 @@
 ignored when using `narf:next-real-buffer' and `narf:previous-real-buffer', and
 killed by `narf/kill-unreal-buffers'.
 
-`narf:kill-this-buffer' will also gloss over these buffers when finding a new
+`narf/kill-real-buffer' will also gloss over these buffers when finding a new
 buffer to display.")
 
 (defvar narf-ignore-buffers '("*Completions*" "*Compile-Log*" "*inferior-lisp*"
                               "*Fuzzy Completions*" "*Apropos*" "*Help*" "*cvs*"
-                              "*Buffer List*" "*Ibuffer*" "*esh command on file*"
-                              "*WoMan-Log*" "*compilation*" "*use-package*"
-                              "*quickrun*" "*eclim: problems*" "*Flycheck errors*"
-                              "*popwin-dummy*" "*NeoTree*" " *NeoTree*"
+                              "*Buffer List*" "*Ibuffer*" "*NeoTree*" "
+                              *NeoTree*" "*esh command on file*" "*WoMan-Log*"
+                              "*compilation*" "*use-package*" "*quickrun*"
+                              "*eclim: problems*" "*Flycheck errors*"
+                              "*popwin-dummy*"
                               ;; Helm
-                              "*helm*" "*helm recentf*" "*helm projectile*" "*helm imenu*"
-                              "*helm company*" "*helm buffers*" "*Helm Css SCSS*"
-                              "*helm-ag*" "*helm-ag-edit*" "*Helm Swoop*"
-                              "*helm M-x*" "*helm mini*" "*Helm Completions*"
-                              "*Helm Find Files*" "*helm mu*" "*helm mu contacts*"
-                              "*helm-mode-describe-variable*" "*helm-mode-describe-function*"
+                              "*helm*" "*helm recentf*" "*helm projectile*"
+                              "*helm imenu*" "*helm company*" "*helm buffers*"
+                              "*Helm Css SCSS*" "*helm-ag*" "*helm-ag-edit*"
+                              "*Helm Swoop*" "*helm M-x*" "*helm mini*"
+                              "*Helm Completions*" "*Helm Find Files*"
+                              "*helm mu*" "*helm mu contacts*"
+                              "*helm-mode-describe-variable*"
+                              "*helm-mode-describe-function*"
                               ;; Org
                               "*Org todo*" "*Org Links*" "*Agenda Commands*")
   "List of buffer names to ignore when using `winner-undo', or `winner-redo'")
@@ -129,7 +132,7 @@ gets killed.")
     "gulpfile.js" "Gruntfile.js" "bower.json" "composer.json" "Cargo.toml"
     "mix.exs")
   "A list of files that count as 'project files', which determine whether a
-    folder is the root of a project or not.")
+folder is the root of a project or not.")
 
 ;; Fringe/margins
 (defvar narf-fringe-size 6 "Default width to use for the fringes.")
@@ -180,11 +183,6 @@ gets killed.")
   (defadvice save-buffers-kill-emacs (around no-query-kill-emacs activate)
     "Prevent annoying \"Active processes exist\" query when you quit Emacs."
     (cl-flet ((process-list ())) ad-do-it)))
-
-(when (display-graphic-p)
-  (require 'server)
-  (unless (server-running-p)
-    (server-start)))
 
 (defun display-startup-echo-area-message ()
   (message ":: Loaded in %s" (emacs-init-time)))

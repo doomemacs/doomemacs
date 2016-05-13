@@ -8,7 +8,7 @@
 
  require-final-newline t
  delete-trailing-lines nil
- fill-column 90
+ fill-column 80
  line-spacing 0
  word-wrap t
  truncate-lines t
@@ -55,8 +55,9 @@
           (with-demoted-errors
               (when (boundp list)
                 (set list (mapcar #'substring-no-properties (eval list))))))
-        '(kill-ring minibuffer-history helm-grep-history helm-ff-history file-name-history
-          read-expression-history extended-command-history evil-ex-history)))
+        '(kill-ring minibuffer-history helm-grep-history helm-ff-history
+          file-name-history read-expression-history extended-command-history
+          evil-ex-history)))
 (add-hook 'kill-emacs-hook    #'unpropertize-savehist)
 (add-hook 'savehist-save-hook #'unpropertize-savehist)
 
@@ -64,8 +65,8 @@
 (require 'recentf)
 (setq recentf-save-file (concat narf-temp-dir "/recentf")
       recentf-exclude '("/tmp/" "/ssh:" "\\.?ido\\.last$" "\\.revive$" "/TAGS$"
-                        "emacs\\.d/private/cache/.+" "emacs\\.d/workgroups/.+$" "wg-default"
-                        "/company-statistics-cache.el$")
+                        "emacs\\.d/private/cache/.+" "emacs\\.d/workgroups/.+$"
+                        "wg-default" "/company-statistics-cache.el$")
       recentf-max-menu-items 0
       recentf-max-saved-items 250
       recentf-auto-cleanup 600)
@@ -75,9 +76,10 @@
 (use-package editorconfig
   :config
   (editorconfig-mode +1)
+  (associate! editorconfig-conf-mode :match "/\\.?editorconfig$")
   ;; So whitespace in tabs indentation mode
-  (add-hook! 'editorconfig-custom-hooks (if indent-tabs-mode (whitespace-mode +1)))
-  (associate! editorconfig-conf-mode :match "/\\.?editorconfig$"))
+  (add-hook! 'editorconfig-custom-hooks
+    (if indent-tabs-mode (whitespace-mode +1))))
 
 
 ;;
@@ -145,7 +147,8 @@ enable multiple minor modes for the same regexp.")
         (when (and (eolp) narf-electric-indent-words)
           (save-excursion
             (backward-word)
-            (looking-at-p (concat "\\<" (regexp-opt narf-electric-indent-words))))))
+            (looking-at-p
+             (concat "\\<" (regexp-opt narf-electric-indent-words))))))
       electric-indent-functions)
 
 ;;
@@ -219,8 +222,10 @@ enable multiple minor modes for the same regexp.")
                   (display-string (format " ... " (count-lines (overlay-start ov)
                                                                (overlay-end ov)))))
               (put-text-property 0 1 'display
-                                 (list 'right-fringe 'hs-marker 'hs-fringe-face) marker-string)
-              (put-text-property 0 (length display-string) 'face 'hs-face display-string)
+                                 (list 'right-fringe 'hs-marker 'hs-fringe-face)
+                                 marker-string)
+              (put-text-property 0 (length display-string)
+                                 'face 'hs-face display-string)
               (overlay-put ov 'before-string marker-string)
               (overlay-put ov 'display display-string))))))
 
@@ -255,7 +260,8 @@ enable multiple minor modes for the same regexp.")
   :commands (rotate-text rotate-text-backward)
   :config (push '("true" "false") rotate-text-words))
 
-(use-package smart-forward :commands (smart-up smart-down smart-left smart-right))
+(use-package smart-forward
+  :commands (smart-up smart-down smart-left smart-right))
 
 (use-package smartparens
   :config
@@ -281,8 +287,11 @@ enable multiple minor modes for the same regexp.")
   (sp-pair "[" nil :post-handlers '(("| " " "))
                    :unless '(sp-point-before-word-p sp-point-before-same-p))
 
-  (sp-local-pair 'css-mode "/*" "*/" :post-handlers '(("[d-3]||\n[i]" "RET") ("| " "SPC")))
-  (sp-local-pair '(sh-mode markdown-mode) "`" "`" :unless '(sp-point-before-word-p sp-point-before-same-p))
+  (sp-local-pair
+   'css-mode "/*" "*/" :post-handlers '(("[d-3]||\n[i]" "RET") ("| " "SPC")))
+  (sp-local-pair
+   '(sh-mode markdown-mode) "`" "`"
+   :unless '(sp-point-before-word-p sp-point-before-same-p))
   (sp-with-modes '(xml-mode nxml-mode php-mode)
     (sp-local-pair "<!--" "-->"   :post-handlers '(("| " "SPC")))))
 

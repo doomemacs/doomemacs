@@ -81,9 +81,12 @@
   (global-eldoc-mode -1))
 
 ;; Highlight TODO/FIXME/NOTE tags
-(defface narf-todo-face  '((t (:inherit font-lock-warning-face))) "Face for TODOs")
-(defface narf-fixme-face '((t (:inherit font-lock-warning-face))) "Face for FIXMEs")
-(defface narf-note-face  '((t (:inherit font-lock-warning-face))) "Face for NOTEs")
+(defface narf-todo-face '((t (:inherit font-lock-warning-face)))
+  "Face for TODOs")
+(defface narf-fixme-face '((t (:inherit font-lock-warning-face)))
+  "Face for FIXMEs")
+(defface narf-note-face '((t (:inherit font-lock-warning-face)))
+  "Face for NOTEs")
 (add-hook! (prog-mode emacs-lisp-mode)
   (font-lock-add-keywords
    nil '(("\\<\\(TODO\\((.+)\\)?:?\\)"  1 'narf-todo-face prepend)
@@ -125,16 +128,16 @@
                 visual-fill-column-width fill-column))
 
 (use-package highlight-indentation
-  :commands (highlight-indentation-mode highlight-indentation-current-column-mode)
+  :commands (highlight-indentation-mode
+             highlight-indentation-current-column-mode)
   :init
   (add-hook! (nxml-mode yaml-mode json-mode scss-mode
               c-mode-common ruby-mode python-mode lua-mode)
     'highlight-indentation-mode)
 
   (after! editorconfig
-    (defun narf*hl-indent-guess-offset ()
-      (string-to-int (gethash 'indent_size (editorconfig-get-properties))))
-    (advice-add 'highlight-indentation-guess-offset :override 'narf*hl-indent-guess-offset))
+    (advice-add 'highlight-indentation-guess-offset
+                :override 'narf*hl-indent-guess-offset))
 
   ;; A long-winded method for ensuring whitespace is maintained (so that
   ;; highlight-indentation-mode can display them consistently)
@@ -160,17 +163,19 @@
 (use-package rainbow-mode
   :commands (rainbow-mode)
   :init
-  ;; NOTE: hl-line-mode and rainbow-mode don't play well together
-  (add-hook! (sass-mode scss-mode less-css-mode) '(rainbow-mode narf|hl-line-off)))
+  ;; hl-line-mode and rainbow-mode don't play well together
+  (add-hook! (sass-mode scss-mode less-css-mode)
+    '(rainbow-mode narf|hl-line-off)))
 
 (use-package nlinum
   :commands nlinum-mode
   :preface
-  (defface linum-highlight-face '((t (:inherit linum))) "Face for line highlights")
+  (setq linum-format "%3d ")
+  (defvar nlinum-format "%4d ")
   (defvar narf--hl-nlinum-overlay nil)
   (defvar narf--hl-nlinum-line nil)
-  (defvar nlinum-format "%4d ")
-  (setq linum-format "%3d ")
+  (defface linum-highlight-face '((t (:inherit linum)))
+    "Face for line highlights")
   :init
   (add-hook!
     (markdown-mode prog-mode scss-mode web-mode conf-mode)
@@ -202,27 +207,28 @@
 
   ;; Custom modeline segments
   (spaceline-define-segment *buffer-path
-    (concat (when buffer-file-name
-              (powerline-raw
-               (f-dirname
-                (let ((buffer-path (file-relative-name buffer-file-name (narf/project-root)))
-                      (max-length (truncate (/ (window-body-width) 1.75))))
-                  (concat (projectile-project-name) "/"
-                          (if (> (length buffer-path) max-length)
-                              (let ((path (reverse (split-string buffer-path "/" t)))
-                                    (output ""))
-                                (when (and path (equal "" (car path)))
-                                  (setq path (cdr path)))
-                                (while (and path (<= (length output) (- max-length 4)))
-                                  (setq output (concat (car path) "/" output))
-                                  (setq path (cdr path)))
-                                (when path
-                                  (setq output (concat "../" output)))
-                                (when (string-suffix-p "/" output)
-                                  (setq output (substring output 0 -1)))
-                                output)
-                            buffer-path))))
-               (if active 'mode-line-buffer-path)))
+    (concat
+     (when buffer-file-name
+       (powerline-raw
+        (f-dirname
+         (let ((buffer-path (f-relative buffer-file-name (narf/project-root)))
+               (max-length (truncate (/ (window-body-width) 1.75))))
+           (concat (projectile-project-name) "/"
+                   (if (> (length buffer-path) max-length)
+                       (let ((path (reverse (split-string buffer-path "/" t)))
+                             (output ""))
+                         (when (and path (equal "" (car path)))
+                           (setq path (cdr path)))
+                         (while (and path (<= (length output) (- max-length 4)))
+                           (setq output (concat (car path) "/" output))
+                           (setq path (cdr path)))
+                         (when path
+                           (setq output (concat "../" output)))
+                         (when (string-suffix-p "/" output)
+                           (setq output (substring output 0 -1)))
+                         output)
+                     buffer-path))))
+        (if active 'mode-line-buffer-path)))
             (powerline-raw "%b" (if active 'mode-line-buffer-file)))
     :tight-right t)
 
@@ -257,7 +263,8 @@
     "Version control info"
     (when (and active vc-mode)
       (powerline-raw
-       (substring vc-mode (+ 1 (length (symbol-name (vc-backend buffer-file-name)))))
+       (substring
+        vc-mode (1+ (length (symbol-name (vc-backend buffer-file-name)))))
        other-face))
     :tight-right t)
 
@@ -278,21 +285,23 @@ anzu to be enabled."
     :tight t)
 
   (spaceline-define-segment *iedit
-    "Show the number of matches and what match you're on (or after). Requires iedit."
+    "Show the number of matches and what match you're on (or after). Requires
+iedit."
     (when (bound-and-true-p iedit-mode)
       (propertize
        (let ((this-oc (iedit-find-current-occurrence-overlay))
-             (length  (or (ignore-errors (length iedit-occurrences-overlays)) 0)))
-         (format " %s/%s "
-                 (save-excursion
-                   (unless this-oc
-                     (iedit-prev-occurrence)
-                     (setq this-oc (iedit-find-current-occurrence-overlay)))
-                   (if this-oc
-                       ;; NOTE: Not terribly reliable
-                       (- length (-elem-index this-oc iedit-occurrences-overlays))
-                     "-"))
-                 length))
+             (length (or (ignore-errors (length iedit-occurrences-overlays)) 0)))
+         (format
+          " %s/%s "
+          (save-excursion
+            (unless this-oc
+              (iedit-prev-occurrence)
+              (setq this-oc (iedit-find-current-occurrence-overlay)))
+            (if this-oc
+                ;; NOTE: Not terribly reliable
+                (- length (-elem-index this-oc iedit-occurrences-overlays))
+              "-"))
+          length))
        'face (if active 'mode-line-count-face 'mode-line-inactive)))
     :tight t)
 
@@ -390,18 +399,21 @@ anzu to be enabled."
                narf--flycheck-cache)
           (and (setq narf--flycheck-err-cache flycheck-current-errors)
                (setq narf--flycheck-cache
-                     (let ((fe (narf--flycheck-count 'error))
-                           (fw (narf--flycheck-count 'warning))
-                           ;; (fi (narf--flycheck-count 'info))
-                           )
+                     (let ((fe (narf/-flycheck-count 'error))
+                           (fw (narf/-flycheck-count 'warning)))
                        (concat
-                        (if fe (propertize (format " ⚠%s " fe) 'face (if active 'spaceline-flycheck-error 'mode-line)))
-                        (if fw (propertize (format " ⚠%s " fw) 'face (if active 'spaceline-flycheck-warning 'mode-line)))
-                        ;; (if fi (propertize (format " ⚠%s " fi) 'face 'spaceline-flycheck-info))
-                        ))))))
+                        (if fe (propertize (format " ⚠%s " fe)
+                                           'face (if active
+                                                     'spaceline-flycheck-error
+                                                   'mode-line)))
+                        (if fw (propertize (format " ⚠%s " fw)
+                                           'face (if active
+                                                     'spaceline-flycheck-warning
+                                                   'mode-line)))))))))
     :tight t)
 
-  (defvar narf--mode-line-padding (pl/percent-xpm powerline-height 100 0 100 0 1 nil nil))
+  (defvar narf--mode-line-padding
+    (pl/percent-xpm powerline-height 100 0 100 0 1 nil nil))
   (spaceline-define-segment *pad
     "Padding, to ensure the mode-line is `powerline-height' pixels tall"
     narf--mode-line-padding

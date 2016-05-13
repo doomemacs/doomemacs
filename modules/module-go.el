@@ -6,7 +6,6 @@
   :init
   (add-hook! go-mode '(emr-initialize flycheck-mode go-eldoc-setup))
   (add-hook! go-mode (add-hook 'before-save-hook 'gofmt-before-save))
-
   :config
   (def-builder! go-mode "go build")
   (def-company-backend! go-mode (go yasnippet))
@@ -15,7 +14,7 @@
         :n "gd" 'godef-jump
         :n "gD" 'godef-describe
         (:localleader
-          :n "p" 'helm-go-package
+          :n "p"  'helm-go-package
           :n "tr" 'narf:go-test-run-all
           :n "ta" 'narf:go-test-run-all
           :n "ts" 'narf:go-test-run-package))
