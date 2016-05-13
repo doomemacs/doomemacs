@@ -12,7 +12,7 @@
   (def-repl! go-mode gorepl-run)
   (map! :map go-mode-map
         :n "gd" 'godef-jump
-        :n "gD" 'godef-describe
+        (:leader :n "h" 'godef-describe)
         (:localleader
           :n "p"  'helm-go-package
           :n "tr" 'narf:go-test-run-all
@@ -30,7 +30,7 @@
                                        (lambda () (not (use-region-p)))))))
             (emr-declare-command (intern (symbol-name command-name))
               :title title :modes 'go-mode :predicate predicate)))
-        '((go-remove-unused-imports "Remove unushed imports" nil)
+        '((go-remove-unused-imports "Remove unused imports" nil)
           (gofmt                    "Format code" nil))))
 
 (use-package go-eldoc :after go-mode
