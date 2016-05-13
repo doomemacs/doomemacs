@@ -89,9 +89,9 @@
   "Face for NOTEs")
 (add-hook! (prog-mode emacs-lisp-mode)
   (font-lock-add-keywords
-   nil '(("\\<\\(TODO\\((.+)\\)?:?\\)"  1 'narf-todo-face prepend)
-         ("\\<\\(FIXME\\((.+)\\)?:?\\)" 1 'narf-fixme-face prepend)
-         ("\\<\\(NOTE\\((.+)\\)?:?\\)"  1 'narf-note-face prepend))))
+   nil '(("\\<\\(TODO\\(?:(.*)\\)?:?\\)\\>"  1 'narf-todo-face prepend)
+         ("\\<\\(FIXME\\(?:(.*)\\)?:?\\)\\>" 1 'narf-fixme-face prepend)
+         ("\\<\\(NOTE\\(?:(.*)\\)?:?\\)\\>"  1 'narf-note-face prepend))))
 
 ;; Fade out when unfocused
 (add-hook! focus-in  (set-frame-parameter nil 'alpha 100))
