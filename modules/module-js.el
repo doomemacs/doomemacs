@@ -3,9 +3,7 @@
 (use-package js2-mode
   :mode "\\.js$"
   :interpreter "node"
-  :init
-  (add-hook! js2-mode '(tern-mode emr-initialize))
-
+  :init (add-hook 'js2-mode-hook 'tern-mode)
   :config
   (def-repl! js2-mode nodejs-repl)
   (def-docset! js2-mode "js,javascript,nodejs,angularjs,express,jquery,mongoose")

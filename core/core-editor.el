@@ -188,8 +188,10 @@ enable multiple minor modes for the same regexp.")
   (dumb-jump-mode +1))
 
 (use-package emr
-  :commands (emr-initialize emr-show-refactor-menu emr-declare-command)
-  :config (define-key popup-menu-keymap [escape] 'keyboard-quit))
+  :commands (emr-show-refactor-menu emr-declare-command)
+  :config
+  (emr-initialize)
+  (define-key popup-menu-keymap [escape] 'keyboard-quit))
 
 (use-package expand-region
   :commands (er/expand-region er/contract-region er/mark-symbol er/mark-word))

@@ -4,7 +4,7 @@
   :mode "\\.go$"
   :interpreter "go"
   :init
-  (add-hook! go-mode '(emr-initialize flycheck-mode go-eldoc-setup))
+  (add-hook 'go-mode-hook 'flycheck-mode)
   (add-hook! go-mode (add-hook 'before-save-hook 'gofmt-before-save))
   :config
   (def-builder! go-mode "go build")
@@ -33,7 +33,8 @@
         '((go-remove-unused-imports "Remove unushed imports" nil)
           (gofmt                    "Format code" nil))))
 
-(use-package go-eldoc :after go-mode)
+(use-package go-eldoc :after go-mode
+  :init (add-hook 'go-mode-hook 'go-eldoc-setup))
 
 (use-package company-go :after go-mode)
 

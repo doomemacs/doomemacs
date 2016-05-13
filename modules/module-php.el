@@ -52,7 +52,7 @@
 
 (use-package php-refactor-mode
   :after php-mode
-  :init (add-hook! php-mode '(turn-on-eldoc-mode emr-initialize php-refactor-mode))
+  :init (add-hook! php-mode '(turn-on-eldoc-mode php-refactor-mode))
   :config
   (mapc (lambda (x)
           (let ((command-name (car x))

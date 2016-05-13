@@ -12,8 +12,7 @@
   (setq omnisharp-auto-complete-want-documentation nil
         omnisharp-server-executable-path (concat narf-ext-dir "/OmniSharp.exe"))
   :when (file-exists-p omnisharp-server-executable-path)
-  :init
-  (add-hook! csharp-mode '(turn-on-eldoc-mode emr-initialize omnisharp-mode))
+  :init (add-hook! csharp-mode '(turn-on-eldoc-mode omnisharp-mode))
   :config
   (def-company-backend! csharp-mode (omnisharp))
   (map! :map omnisharp-mode-map

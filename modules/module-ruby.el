@@ -20,7 +20,6 @@
 
 (use-package ruby-refactor
   :after ruby-mode
-  :init (add-hook 'ruby-mode-hook 'emr-initialize)
   :config
   (mapc (lambda (x)
           (let ((command-name (car x))

@@ -42,7 +42,6 @@
 
 (use-package company-anaconda
   :after anaconda-mode
-  :init (add-hook 'anaconda-mode-hook 'emr-initialize)
   :config
   (mapc (lambda (x)
           (let ((command-name (car x))
