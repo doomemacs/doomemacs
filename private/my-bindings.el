@@ -136,22 +136,22 @@
 
    ;; Tmux
    (:prefix "t"
-     :n  "." 'narf/tmux-cd-to-here
-     :n  "/" 'narf/tmux-cd-to-project
-     :v  "r" 'narf:tmux)
+     :n "." 'narf/tmux-cd-to-here
+     :n "/" 'narf/tmux-cd-to-project
+     :v "r" 'narf:tmux)
 
    ;; Open with O/S
    :n "O" 'os-reveal
    (:prefix "o"
-     :n  "o" 'os-open-in-default-program
-     :n  "p" 'os-reveal-project
-     :n  "b" 'os-open-in-browser
-     :n  "u" 'os-upload
-     :n  "U" 'os-upload-folder
-     :n  "l" 'os-send-to-launchbar
-     :n  "L" 'os-send-project-to-launchbar
-     :n  "t" 'os-switch-to-term
-     :n  "T" 'os-switch-to-term-and-cd)
+     :n "o" 'os-open-in-default-program
+     :n "p" 'os-reveal-project
+     :n "b" 'os-open-in-browser
+     :n "u" 'os-upload
+     :n "U" 'os-upload-folder
+     :n "l" 'os-send-to-launchbar
+     :n "L" 'os-send-project-to-launchbar
+     :n "t" 'os-switch-to-term
+     :n "T" 'os-switch-to-term-and-cd)
 
    ;; Org notes
    :n "X" 'narf/org
