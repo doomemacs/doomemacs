@@ -9,5 +9,13 @@
                                     (replace-match "" t t s)
                                   s))))))
 
+;;;###autoload
+(defun narf/-flycheck-count (state)
+  "Return flycheck information for the given error type STATE."
+  (when (flycheck-has-current-errors-p state)
+    (if (eq 'running flycheck-last-status-change)
+        "?"
+      (cdr-safe (assq state (flycheck-count-errors flycheck-current-errors))))))
+
 (provide 'defuns-spaceline)
 ;;; defuns-spaceline.el ends here

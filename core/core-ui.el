@@ -370,13 +370,6 @@ iedit."
        highlight-face)))
 
   ;; flycheck
-  (defun narf--flycheck-count (state)
-    "Return flycheck information for the given error type STATE."
-    (when (flycheck-has-current-errors-p state)
-      (if (eq 'running flycheck-last-status-change)
-          "?"
-        (cdr-safe (assq state (flycheck-count-errors flycheck-current-errors))))))
-
   (defface spaceline-flycheck-error
     '((t (:foreground "#FC5C94" :distant-foreground "#A20C41")))
     "Face for flycheck error feedback in the modeline.")
