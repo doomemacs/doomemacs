@@ -87,7 +87,7 @@
   "Face for FIXMEs")
 (defface narf-note-face '((t (:inherit font-lock-warning-face)))
   "Face for NOTEs")
-(add-hook! (prog-mode emacs-lisp-mode)
+(add-hook! (prog-mode emacs-lisp-mode css-mode)
   (font-lock-add-keywords
    nil '(("\\<\\(TODO\\(?:(.*)\\)?:?\\)\\>"  1 'narf-todo-face prepend)
          ("\\<\\(FIXME\\(?:(.*)\\)?:?\\)\\>" 1 'narf-fixme-face prepend)
