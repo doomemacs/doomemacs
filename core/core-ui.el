@@ -93,10 +93,6 @@
          ("\\<\\(FIXME\\(?:(.*)\\)?:?\\)\\>" 1 'narf-fixme-face prepend)
          ("\\<\\(NOTE\\(?:(.*)\\)?:?\\)\\>"  1 'narf-note-face prepend))))
 
-;; Fade out when unfocused
-(add-hook! focus-in  (set-frame-parameter nil 'alpha 100))
-(add-hook! focus-out (set-frame-parameter nil 'alpha 85))
-
 ;; Hide mode-line in help/compile window
 (add-hook 'help-mode-hook 'narf|hide-mode-line)
 (add-hook 'compilation-mode-hook 'narf|hide-mode-line)
