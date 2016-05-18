@@ -63,12 +63,13 @@
 
 (use-package haml-mode :mode "\\.haml$")
 
-(use-package jaded-mode
-  :load-path "/Volumes/hlissner/Dropbox/work/plugins/jaded-mode"
-  :mode "\\.jade$"
+(use-package pug-mode
+  :load-path "/Volumes/hlissner/Dropbox/work/plugins/pug-mode"
+  :mode ("\\.jade$" "\\.pug$")
   :config
   (push '("jade" "html") projectile-other-file-alist)
-  (map! :map jaded-mode-map
+  (push '("pug" "html")  projectile-other-file-alist)
+  (map! :map pug-mode-map
         :i [tab] 'narf/dumb-indent
         :i [backtab] 'narf/dumb-dedent))
 
@@ -129,7 +130,8 @@
 ;;
 
 (def-project-type! jekyll ":{"
-  :modes (web-mode scss-mode html-mode markdown-mode yaml-mode)
+  :modes (web-mode js-mode js2-mode json-mode coffee-mode scss-mode sass-mode
+          less-css-mode pug-mode)
   :match "/\\(\\(css\\|_\\(layouts\\|posts\\|sass\\)\\)/.+\\|.+.html\\)$"
   :files ("config.yml" "_layouts/")
   (add-hook! mode
