@@ -68,7 +68,8 @@
                         "wg-default" "/company-statistics-cache.el$")
       recentf-max-menu-items 0
       recentf-max-saved-items 250
-      recentf-auto-cleanup 600)
+      recentf-auto-cleanup 600
+      recentf-filename-handlers '(abbreviate-file-name))
 (recentf-mode 1)
 
 ;; Let editorconfig handle global whitespace settings
