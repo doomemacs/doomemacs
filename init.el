@@ -40,6 +40,7 @@
 ;;
 ;;; License: MIT
 
+(defconst emacs-start-time (current-time))
 (load (concat user-emacs-directory "bootstrap.el"))
 ;;
 

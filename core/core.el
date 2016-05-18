@@ -166,14 +166,16 @@ folder is the root of a project or not.")
              async-inject-variables))
 
 ;;
-;; We add this to `after-init-hook' to allow errors to stop this advice
 (add-hook! after-init
+  ;; We add this to `after-init-hook' to allow errors to stop this advice
   (defadvice save-buffers-kill-emacs (around no-query-kill-emacs activate)
     "Prevent annoying \"Active processes exist\" query when you quit Emacs."
-    (cl-flet ((process-list ())) ad-do-it)))
+    (cl-flet ((process-list ())) ad-do-it))
 
-(defun display-startup-echo-area-message ()
-  (message ":: Loaded in %s" (emacs-init-time)))
+  ;; Don't display anything
+  (advice-add 'display-startup-echo-area-message :override 'ignore)
+  (message ":: Loaded in %.3fs"
+           (float-time (time-subtract (current-time) emacs-start-time))))
 
 (provide 'core)
 ;;; core.el ends here
