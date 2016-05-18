@@ -144,12 +144,13 @@ folder is the root of a project or not.")
 
 (require 'f)
 (autoload 'use-package "use-package" "" nil 'macro)
-(autoload 'awhen "anaphora" "" nil 'macro)
-(autoload 'aif "anaphora" "" nil 'macro)
 (unless (require 'autoloads nil t)
   (load (concat narf-emacs-dir "/scripts/generate-autoloads.el"))
   (require 'autoloads))
 (require 'core-defuns)
+
+(use-package anaphora
+  :commands (awhen aif acond awhile))
 
 (use-package persistent-soft
   :commands (persistent-soft-store

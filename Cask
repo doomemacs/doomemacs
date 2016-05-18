@@ -12,6 +12,7 @@
 (depends-on "dash")
 (depends-on "s")
 (depends-on "f")
+(depends-on "anaphora")
 (depends-on "use-package")
 (depends-on "help-fns+")
 (depends-on "persistent-soft")
