@@ -49,17 +49,16 @@
       '(kill-ring search-ring regexp-search-ring))
 (savehist-mode 1)
 
-;; text properties severely bloat the history so delete them (courtesy of PythonNut)
+;; Remove text property cruft from history
 (defun unpropertize-savehist ()
   (mapc (lambda (list)
-          (with-demoted-errors
-              (when (boundp list)
-                (set list (mapcar #'substring-no-properties (eval list))))))
+          (when (boundp list)
+            (set list (mapcar 'substring-no-properties (eval list)))))
         '(kill-ring minibuffer-history helm-grep-history helm-ff-history
           file-name-history read-expression-history extended-command-history
           evil-ex-history)))
-(add-hook 'kill-emacs-hook    #'unpropertize-savehist)
-(add-hook 'savehist-save-hook #'unpropertize-savehist)
+(add-hook 'kill-emacs-hook    'unpropertize-savehist)
+(add-hook 'savehist-save-hook 'unpropertize-savehist)
 
 ;; Keep track of recently opened files
 (require 'recentf)
