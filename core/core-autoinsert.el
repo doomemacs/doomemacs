@@ -8,12 +8,10 @@
   :config
   (auto-insert-mode 1)
 
-  (defun auto-insert-template (rule)
-    (define-auto-insert
-      (nth 0 rule)
-      (vector `(lambda () (narf/auto-insert-snippet ,(nth 1 rule) ',(nth 2 rule) ,(nth 3 rule))))))
-
-  (mapc 'auto-insert-template
+  (mapc (lambda (rule)
+          (define-auto-insert
+            (nth 0 rule)
+            (vector `(lambda () (narf/auto-insert-snippet ,(nth 1 rule) ',(nth 2 rule) ,(nth 3 rule))))))
         `(;; General
           ("/\\.gitignore$"                  "__"               gitignore-mode)
           ("/Dockerfile$"                    "__"               dockerfile-mode)
