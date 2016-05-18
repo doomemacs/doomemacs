@@ -34,41 +34,38 @@
 
   (associate! snippet-mode :match "emacs\\.d/private/\\(snippets\\|templates\\)/.+$")
 
-  ;; Undo global maps
   (map! :i [(tab)] nil
-        :v "<backtab>" nil)
+        :v "<backtab>" nil
 
-  ;; keybinds
-  (map! :map yas-keymap
-        "C-e"           'narf/yas-goto-end-of-field
-        "C-a"           'narf/yas-goto-start-of-field
-        "<M-right>"     'narf/yas-goto-end-of-field
-        "<M-left>"      'narf/yas-goto-start-of-field
-        "<S-tab>"       'yas-prev-field
-        "<M-backspace>" 'narf/yas-clear-to-sof
+        (:map yas-keymap
+          "C-e"           'narf/yas-goto-end-of-field
+          "C-a"           'narf/yas-goto-start-of-field
+          "<M-right>"     'narf/yas-goto-end-of-field
+          "<M-left>"      'narf/yas-goto-start-of-field
+          "<S-tab>"       'yas-prev-field
+          "<M-backspace>" 'narf/yas-clear-to-sof
 
-        "<escape>"      'evil-normal-state
-        [backspace]     'narf/yas-backspace
-        "<delete>"      'narf/yas-delete)
+          "<escape>"      'evil-normal-state
+          [backspace]     'narf/yas-backspace
+          "<delete>"      'narf/yas-delete))
 
-  ;; Prevents evil's visual-line from gobbling up the newline on the right due to an
-  ;; off-by-one issue.
+  ;; Prevents evil's visual-line from gobbling up the newline on the right due
+  ;; to an off-by-one issue.
   (defadvice yas-expand-snippet (around yas-expand-snippet-visual-line activate)
     (when (narf/evil-visual-line-state-p)
       (ad-set-arg 2 (1- (ad-get-arg 2)))) ad-do-it)
 
   ;; Once you're in normal mode, you're out
   (add-hook 'evil-normal-state-entry-hook 'yas-abort-snippet)
-  ;; Strip out the shitespace before a line selection
+  ;; Strip out whitespace before a line selection
   (add-hook 'yas-before-expand-snippet-hook 'narf|yas-before-expand)
-  ;; Previous hook causes yas-selected-text to persist between expansions.
-  ;; This little hack fixes that.
+  ;; Fix previous hook persisting yas-selected-text between expansions
   (add-hook 'yas-after-exit-snippet-hook 'narf|yas-after-expand)
 
   ;; Exit snippets on ESC in normal mode
   (advice-add 'evil-force-normal-state :before 'yas-exit-all-snippets)
 
-  ;; Fix an issue with smartparens' keybindings interfering with yasnippet keybindings.
+  ;; Fix an issue with smartparens interfering with yasnippet keybindings
   (advice-add 'yas-expand :before 'sp-remove-active-pair-overlay))
 
 (use-package auto-yasnippet
