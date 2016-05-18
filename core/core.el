@@ -143,23 +143,13 @@ folder is the root of a project or not.")
 ;;
 
 (require 'f)
+(autoload 'use-package "use-package" "" nil 'macro)
 (autoload 'awhen "anaphora" "" nil 'macro)
 (autoload 'aif "anaphora" "" nil 'macro)
-(autoload 'use-package "use-package" "" nil 'macro)
 (unless (require 'autoloads nil t)
   (load (concat narf-emacs-dir "/scripts/generate-autoloads.el"))
   (require 'autoloads))
 (require 'core-defuns)
-
-(eval-when-compile
-  (setq use-package-verbose nil)
-
-  ;; Make any folders needed
-  (mapc (lambda (dir)
-          (let ((path (concat narf-temp-dir dir)))
-            (unless (file-exists-p path)
-              (make-directory path t))))
-        '("" "/undo" "/backup")))
 
 (use-package persistent-soft
   :commands (persistent-soft-store

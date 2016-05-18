@@ -46,9 +46,6 @@ automatically renamed to the project name.")
 
   (add-hook 'emacs-startup-hook 'workgroups-mode)
   :config
-  (unless (file-exists-p wg-workgroup-directory)
-    (mkdir wg-workgroup-directory))
-
   ;; Remember fixed workgroup names between sessions
   (push 'narf-wg-names savehist-additional-variables)
 
