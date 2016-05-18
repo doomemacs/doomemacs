@@ -72,11 +72,12 @@ Examples:
   "Associate a major or minor mode to certain patterns and project files."
   (declare (indent 1))
   (let ((minor (plist-get rest :minor))
-        (in (plist-get rest :in))
+        (in    (plist-get rest :in))
         (match (plist-get rest :match))
-        (files (plist-get rest :files)))
+        (files (plist-get rest :files))
+        (pred  (plist-get rest :when)))
     `(progn
-       (,@(cond ((or files in)
+       (,@(cond ((or files in pred)
                  (when (and files (not (or (listp files) (stringp files))))
                    (user-error "associate! :files expects a string or list of strings"))
                  (let ((hook-name (intern (format "narf--init-mode-%s" mode))))
@@ -86,7 +87,9 @@ Examples:
                                    (or ,(not files)
                                        (and (boundp ',mode)
                                             (not ,mode)
-                                            (narf/project-has-files ,@(-list files)))))
+                                            (narf/project-has-files ,@(-list files))))
+                                   (or (not ,pred)
+                                       (funcall ,pred buffer-file-name)))
                           (,mode 1)))
                       ,@(if (and in (listp in))
                             (mapcar (lambda (h) `(add-hook ',h ',hook-name))
@@ -107,6 +110,7 @@ Examples:
          (mode-hook-sym (intern (format "%s-hook" mode-name)))
          (mode-init-sym (intern (format "narf--init-project-%s" mode-name))))
     (let ((modes (plist-get body :modes))
+          (pred  (plist-get body :when))
           (match (plist-get body :match))
           (files (plist-get body :files))
           (build (plist-get body :build))
@@ -128,7 +132,8 @@ Examples:
            :minor t
            :in ,modes
            :match ,match
-           :files ,files)
+           :files ,files
+           :when ,pred)
 
          (defun ,mode-init-sym ()
            (after! yasnippet
