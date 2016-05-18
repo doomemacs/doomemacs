@@ -67,6 +67,7 @@
   :load-path "/Volumes/hlissner/Dropbox/work/plugins/pug-mode"
   :mode ("\\.jade$" "\\.pug$")
   :config
+  (def-company-backend! pug-mode (yasnippet))
   (push '("jade" "html") projectile-other-file-alist)
   (push '("pug" "html")  projectile-other-file-alist)
   (map! :map pug-mode-map
@@ -84,6 +85,7 @@
   :init
   (add-hook 'web-mode-hook 'turn-off-smartparens-mode)
   :config
+  (def-company-backend! web-mode (web-html yasnippet))
   (setq web-mode-enable-html-entities-fontification t)
   (push '("html" "jade") projectile-other-file-alist)
 
