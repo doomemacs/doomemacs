@@ -7,7 +7,7 @@
   :config
   (def-repl! js2-mode nodejs-repl)
   (def-docset! js2-mode "js,javascript,nodejs,angularjs,express,jquery,mongoose")
-  (def-company-backend! js2-mode (tern))
+  (def-company-backend! js2-mode (tern yasnippet))
   (def-electric! js2-mode :chars (?\} ?\) ?.) :words ("||" "&&"))
   (setq-default
    js2-skip-preprocessor-directives t
