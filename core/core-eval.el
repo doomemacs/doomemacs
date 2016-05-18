@@ -5,6 +5,10 @@
 ;; + Simple code navigation (using `dump-jump' and `imenu-list')
 ;; + A universal tags config (WIP)
 
+;; remove annoying ellipsis when printing sexp in message buffer
+(setq eval-expression-print-length nil
+      eval-expression-print-level  nil)
+
 (use-package quickrun
   :commands (quickrun
              quickrun-region

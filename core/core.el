@@ -43,10 +43,7 @@
  ring-bell-function                'ignore      ; silence of the bells!
  save-interprogram-paste-before-kill nil
  sentence-end-double-space          nil
-
- ;; remove annoying ellipsis when printing sexp in message buffer
- eval-expression-print-length       nil
- eval-expression-print-level        nil
+ confirm-nonexistent-file-or-buffer nil
 
  ;; http://ergoemacs.org/emacs/emacs_stop_cursor_enter_prompt.html
  minibuffer-prompt-properties
