@@ -21,6 +21,7 @@
 ;; OSX --- core/core-os-osx.el
 (depends-on "exec-path-from-shell")
 (depends-on "dash-at-point")
+(depends-on "openwith")
 
 ;; Popups --- core/core-popup.el
 (depends-on "shackle")
