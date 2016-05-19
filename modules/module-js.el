@@ -86,6 +86,28 @@
   :mode "\\.coffee$"
   :config (setq-default coffee-indent-like-python-mode t))
 
+(use-package typescript-mode
+  :mode "\\.ts$")
+
+(use-package tide
+  :after typescript-mode
+  :config
+  (setq tide-format-options
+        '(:insertSpaceAfterFunctionKeywordForAnonymousFunctions t
+          :placeOpenBraceOnNewLineForFunctions nil))
+  (defun narf|tide-setup ()
+    (tide-setup)
+    (flycheck-mode +1)
+    (eldoc-mode +1))
+  (add-hook 'typescript-mode-hook 'narf|tide-setup)
+  (add-hook! web-mode
+    (when (f-ext? buffer-file-name "tsx")
+      (narf|tide-setup)))
+
+  (map! :map typescript-mode-map
+        :m "gd" 'tide-jump-to-definition
+        (:leader :n "h" 'tide-documentation-at-point)))
+
 ;;
 (def-project-type! nodejs "node"
   :modes (web-mode js-mode js2-mode json-mode coffee-mode scss-mode sass-mode less-css-mode)

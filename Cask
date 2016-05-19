@@ -174,6 +174,8 @@
 (depends-on "tern")
 (depends-on "unityjs-mode" :git "https://github.com/naruse/EmacsUnityScript")
 (depends-on "coffee-mode")
+(depends-on "typescript-mode")
+(depends-on "tide")
 (depends-on "company-tern")
 (depends-on "nodejs-repl")
 
