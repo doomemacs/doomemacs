@@ -86,7 +86,7 @@
   :config
   (def-company-backend! web-mode (web-html yasnippet))
   (setq web-mode-enable-html-entities-fontification t)
-  (push '("html" "jade") projectile-other-file-alist)
+  (push '("html" "jade" "pug" "jsx" "tsx") projectile-other-file-alist)
 
   (map! :map web-mode-map :i "SPC" 'self-insert-command)
 
@@ -140,7 +140,7 @@
       (web-mode-set-engine "django"))))
 
 (def-project-type! wordpress "wp"
-  :modes (php-mode web-mode css-mode scss-mode sass-mode)
+  :modes (php-mode web-mode css-mode haml-mode pug-mode)
   :match "/wp-\\(\\(content\\|admin\\|includes\\)/\\)?.+$"
   :files ("wp-config.php" "wp-content/"))
 

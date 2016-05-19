@@ -235,13 +235,14 @@
 
 ;; Web -- modules/module-web.el
 (depends-on "web-mode")
+(depends-on "company-web")
 (depends-on "emmet-mode")
 (depends-on "haml-mode")
 (depends-on "stylus-mode")
 (depends-on "less-css-mode")
 (depends-on "scss-mode")
 (depends-on "sass-mode")
-(depends-on "jaded-mode" :git "https://github.com/hlissner/jaded-mode")
+(depends-on "pug-mode" :git "https://github.com/hlissner/pug-mode")
 
 
 ;;;; ORGANIZATIONAL/WRITING ;;;;;;;;;;;;
