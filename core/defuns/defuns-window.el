@@ -12,16 +12,8 @@
   (call-interactively 'evil-window-vsplit)
   (evil-window-right 1))
 
-(defun narf--evil-swap-windows (a b)
-  (let ((a-buffer (window-buffer a))
-        (b-buffer (window-buffer b)))
-    (with-selected-window b
-      (switch-to-buffer a-buffer))
-    (with-selected-window a
-      (switch-to-buffer b-buffer))
-    (select-window b)))
-
-(defun narf--evil-window-move (direction)
+;;;###autoload
+(defun narf/evil-window-move (direction)
   "Move current window to the next window in DIRECTION. If there are no windows
 there and there is only one window, split in that direction and place this
 window there. If there are no windows and this isn't the only window, use
@@ -76,32 +68,22 @@ evil-window-move-* (e.g. `evil-window-move-far-left')"
 ;;;###autoload
 (defun narf/close-frame ()
   (interactive)
-  (let ((data (assq (selected-frame) narf-wg-frames)))
-    (if data
-        (progn (wg-delete-workgroup (wg-get-workgroup (cdr data)))
-               (delete-frame (car data)))
-      (delete-frame))))
+  (aif (assq (selected-frame) narf-wg-frames)
+      (progn (wg-delete-workgroup (wg-get-workgroup (cdr it)))
+             (delete-frame (car it)))
+    (delete-frame)))
 
 ;;;###autoload
-(defun narf/evil-window-move-left ()
-  "See `narf--evil-window-move'"
+(defun narf/evil-window-resize (direction &optional count)
   (interactive)
-  (narf--evil-window-move 'left))
-;;;###autoload
-(defun narf/evil-window-move-down ()
-  "See `narf--evil-window-move'"
-  (interactive)
-  (narf--evil-window-move 'down))
-;;;###autoload
-(defun narf/evil-window-move-up ()
-  "See `narf--evil-window-move'"
-  (interactive)
-  (narf--evil-window-move 'up))
-;;;###autoload
-(defun narf/evil-window-move-right ()
-  "See `narf--evil-window-move'"
-  (interactive)
-  (narf--evil-window-move 'right))
+  (let ((count (or count 1))
+        (next-window (window-in-direction direction)))
+    (when (or (not next-window) (not (narf/real-buffer-p (window-buffer next-window))))
+      (setq count (- count)))
+    (cond ((memq direction '(left right))
+           (evil-window-increase-width count))
+          ((memq direction '(above below))
+           (evil-window-increase-height count)))))
 
 ;;;###autoload
 (defun narf/window-reorient ()

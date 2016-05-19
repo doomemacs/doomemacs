@@ -46,6 +46,11 @@
  "C-h"  'evil-window-left
  "C-l"  'evil-window-right
 
+ "A-j"  (λ! (narf/evil-window-resize 'below))
+ "A-k"  (λ! (narf/evil-window-resize 'above))
+ "A-h"  (λ! (narf/evil-window-resize 'left))
+ "A-l"  (λ! (narf/evil-window-resize 'right))
+
  "C-<escape>" 'evil-emacs-state
  :e "C-<escape>" 'evil-normal-state
 
@@ -276,10 +281,10 @@
    "v"       'narf/evil-window-vsplit
 
    ;; Move window in one step
-   "H"       'narf/evil-window-move-left
-   "J"       'narf/evil-window-move-down
-   "K"       'narf/evil-window-move-up
-   "L"       'narf/evil-window-move-right
+   "H"       (λ! (narf/evil-window-move 'left))
+   "J"       (λ! (narf/evil-window-move 'down))
+   "K"       (λ! (narf/evil-window-move 'up))
+   "L"       (λ! (narf/evil-window-move 'right))
 
    "C-u"     'narf/undo-window-change
    "C-r"     'narf/redo-window-change

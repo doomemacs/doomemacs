@@ -99,8 +99,7 @@
   ;; Don't ask for confirmation when creating files
   (advice-add 'neotree-create-node :around 'narf*neotree-create-node)
   ;; Prevents messing up the neotree buffer on window changes
-  (advice-add 'narf--evil-window-move  :around 'narf*save-neotree)
-  (advice-add 'narf--evil-swap-windows :around 'narf*save-neotree)
+  (advice-add 'narf/evil-window-move :around 'narf*save-neotree)
 
   (add-hook 'neotree-mode-hook 'narf|neotree-init-keymap)
   (defun narf|neotree-init-keymap ()
