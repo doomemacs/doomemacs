@@ -53,6 +53,7 @@
           ("\\.lbaction/.+/Info.plist$"                       "__Info.plst"  lb6-mode)
           ("\\.lbaction/.+/\\(default\\|suggestions\\)\\.js$" "__default.js" lb6-mode)
           ("/package\\.json$"                "__package.json"   json-mode)
+          ("/bower\\.json$"                  "__bower.json"     json-mode)
           ("\\.\\(json\\|jshintrc\\)$"       "__"               json-mode)
 
           ;; Lua
