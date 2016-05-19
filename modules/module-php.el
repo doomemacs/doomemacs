@@ -63,6 +63,15 @@
           (extract-method                     "extract method"          t)
           (rename-local-variable              "rename local variable"   nil))))
 
+(use-package phpunit
+  :commands (phpunit-current-test phpunit-current-class phpunit-current-project)
+  :config
+  (map! :map php-mode-map
+        (:localleader
+          :n "tr" 'phpunit-current-project
+          :n "ta" 'phpunit-current-class
+          :n "ts" 'phpunit-current-test)))
+
 (use-package php-boris :commands php-boris) ; PHP REPL
 
 ;;

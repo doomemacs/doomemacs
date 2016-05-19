@@ -192,11 +192,12 @@
 (depends-on "moonscript" :git "https://github.com/k2052/moonscript-mode")
 
 ;; PHP -- modules/module-php.el
-(depends-on "php-mode")
-(depends-on "php-refactor-mode")
-(depends-on "php-boris")
-(depends-on "php-extras")
 (depends-on "hack-mode" :git "https://github.com/beefsack/hack-mode")
+(depends-on "php-mode")
+(depends-on "php-extras")
+(depends-on "php-refactor-mode")
+(depends-on "phpunit")
+(depends-on "php-boris")
 
 ;; Processing -- modules/module-processing.el
 (depends-on "processing-mode")
