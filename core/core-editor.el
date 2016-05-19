@@ -15,7 +15,6 @@
  truncate-partial-width-windows 50
 
  visual-fill-column-center-text nil
- confirm-nonexistent-file-or-buffer nil
 
  ;; Sane scroll settings
  scroll-margin 0
@@ -83,35 +82,6 @@
 
 
 ;;
-;; Automatic minor modes
-;;
-
-(defvar narf-auto-minor-mode-alist '()
-  "Alist of filename patterns vs corresponding minor mode functions, see
-`auto-mode-alist'. All elements of this alist are checked, meaning you can
-enable multiple minor modes for the same regexp.")
-
-(defun narf|enable-minor-mode-maybe ()
-  "Check file name against `narf-auto-minor-mode-alist'."
-  (when buffer-file-name
-    (let ((name buffer-file-name)
-          (remote-id (file-remote-p buffer-file-name))
-          (alist narf-auto-minor-mode-alist))
-      ;; Remove backup-suffixes from file name.
-      (setq name (file-name-sans-versions name))
-      ;; Remove remote file name identification.
-      (when (and (stringp remote-id)
-                 (string-match-p (regexp-quote remote-id) name))
-        (setq name (substring name (match-end 0))))
-      (while (and alist (caar alist) (cdar alist))
-        (if (string-match (caar alist) name)
-            (funcall (cdar alist) 1))
-        (setq alist (cdr alist))))))
-
-(add-hook 'find-file-hook 'narf|enable-minor-mode-maybe)
-
-
-;;
 ;; Modes, hooks 'n hacks
 ;;
 
@@ -152,8 +122,6 @@ enable multiple minor modes for the same regexp.")
       electric-indent-functions)
 
 ;;
-;;(global-whitespace-mode -1)  ; Show whitespace
-;;(global-visual-line-mode -1) ; wrap buffers
 (global-auto-revert-mode 1)    ; revert buffers for changed files
 ;; Enable syntax highlighting for older emacs
 (unless (bound-and-true-p global-font-lock-mode)
@@ -197,10 +165,6 @@ enable multiple minor modes for the same regexp.")
   :commands (er/expand-region er/contract-region er/mark-symbol er/mark-word))
 
 (use-package goto-last-change :commands goto-last-change)
-
-(use-package help-fns+ ; Improved help commands
-  :commands (describe-buffer describe-command describe-file
-             describe-keymap describe-option describe-option-of-type))
 
 (use-package hideshow
   :commands (hs-minor-mode hs-toggle-hiding hs-already-hidden-p)

@@ -167,7 +167,7 @@
   :commands nlinum-mode
   :preface
   (setq linum-format "%3d ")
-  (defvar nlinum-format "%4d ")
+  (defvar nlinum-format "%4d  ")
   (defvar narf--hl-nlinum-overlay nil)
   (defvar narf--hl-nlinum-line nil)
   (defface linum-highlight-face '((t (:inherit linum)))

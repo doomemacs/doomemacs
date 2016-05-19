@@ -165,6 +165,43 @@ folder is the root of a project or not.")
              async-wait
              async-inject-variables))
 
+(use-package json
+  :commands (json-read-from-string json-encode json-read-file))
+
+(use-package help-fns+ ; Improved help commands
+  :commands (describe-buffer describe-command describe-file
+             describe-keymap describe-option describe-option-of-type))
+
+
+;;
+;; Automatic minor modes
+;;
+
+(defvar narf-auto-minor-mode-alist '()
+  "Alist of filename patterns vs corresponding minor mode functions, see
+`auto-mode-alist'. All elements of this alist are checked, meaning you can
+enable multiple minor modes for the same regexp.")
+
+(defun narf|enable-minor-mode-maybe ()
+  "Check file name against `narf-auto-minor-mode-alist'."
+  (when buffer-file-name
+    (let ((name buffer-file-name)
+          (remote-id (file-remote-p buffer-file-name))
+          (alist narf-auto-minor-mode-alist))
+      ;; Remove backup-suffixes from file name.
+      (setq name (file-name-sans-versions name))
+      ;; Remove remote file name identification.
+      (when (and (stringp remote-id)
+                 (string-match-p (regexp-quote remote-id) name))
+        (setq name (substring name (match-end 0))))
+      (while (and alist (caar alist) (cdar alist))
+        (if (string-match (caar alist) name)
+            (funcall (cdar alist) 1))
+        (setq alist (cdr alist))))))
+
+(add-hook 'find-file-hook 'narf|enable-minor-mode-maybe)
+
+
 ;;
 (add-hook! after-init
   ;; We add this to `after-init-hook' to allow errors to stop this advice

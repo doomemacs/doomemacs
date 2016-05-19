@@ -6,8 +6,7 @@
 
 (use-package css-mode
   :mode "\\.css$"
-  :init
-  (add-hook! css-mode '(yas-minor-mode-on flycheck-mode))
+  :init (add-hook! css-mode '(yas-minor-mode-on flycheck-mode))
   :config
   (def-company-backend! css-mode (css yasnippet))
   (push '("css" "scss" "sass" "less" "styl") projectile-other-file-alist))
