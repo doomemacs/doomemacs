@@ -1,9 +1,9 @@
 ;;; module-sh.el
 
 (use-package sh-script
-  :mode ("\\.\\(ba\\|z\\)sh$"
-         "/\\.?z\\(sh\\(/.*\\|$\\)\\|profile\\|log\\(in\\|out\\)\\|sh\\(rc\\|env\\)\\)$"
-         "/\\.?bash\\(/.*\\|rc\\|_profile\\)$")
+  :mode (("\\.\\(ba\\|z\\)sh$" . sh-mode)
+         ("/\\.?z\\(sh\\(/.*\\|$\\)\\|profile\\|log\\(in\\|out\\)\\|sh\\(rc\\|env\\)\\)$" . sh-mode)
+         ("/\\.?bash\\(/.*\\|rc\\|_profile\\)$" . sh-mode))
   :init
   (add-hook! sh-mode
     '(flycheck-mode narf|sh-extra-font-lock-activate))
