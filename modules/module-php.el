@@ -15,7 +15,7 @@
   :config
   (def-repl! php-mode php-boris)
   (def-docset! php-mode "php,laravel")
-  (def-company-backend! php-mode '(company-ac-php-backend php-extras-company))
+  (def-company-backend! php-mode '(php-extras-company company-yasnippet))
 
   (map! :map php-mode-map (:localleader :nv ";" 'narf/append-semicolon))
 
@@ -27,13 +27,6 @@
     (sp-local-pair "<?="    " ?>")
     (sp-local-pair "<?"    "?>"   :when '(("RET")) :post-handlers '("||\n[i]"))
     (sp-local-pair "<?php" "?>"   :when '(("RET")) :post-handlers '("||\n[i]"))))
-
-(use-package ac-php-company
-  :after php-mode
-  :config
-  (map! :map php-mode-map
-        :n "gd" 'ac-php-find-symbol-at-point
-        :n "gD" 'ac-php-location-stack-back))
 
 (use-package php-extras
   :after php-mode
