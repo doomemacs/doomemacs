@@ -1,10 +1,8 @@
 ;;; bootstrap.el
 
-(eval-when-compile (require 'cl-lib))
-
-;; Shut up byte-compiler!
-(defvar narf-current-theme)
-(defvar narf-current-font)
+(eval-when-compile
+  (defconst emacs-start-time (current-time))
+  (require 'cl-lib))
 
 ;; Global constants
 (eval-and-compile
@@ -44,6 +42,10 @@
 ;;
 ;; Bootstrap
 ;;
+
+;; Shut up byte-compiler!
+(defvar narf-current-theme)
+(defvar narf-current-font)
 
 (defun narf (packages)
   "Bootstrap NARF emacs and initialize PACKAGES"

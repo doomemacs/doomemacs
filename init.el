@@ -40,15 +40,11 @@
 ;;
 ;;; License: MIT
 
-(defconst emacs-start-time (current-time))
 (load (concat user-emacs-directory "bootstrap.el"))
 ;;
 
 (defconst narf-default-theme 'narf-dark)
 (defconst narf-default-font (font-spec :family "Hack" :size 12))
-
-(setq user-full-name "Henrik Lissner"
-      user-mail-address "henrik@lissner.net")
 
 (narf `(core ; core/core.el
 
