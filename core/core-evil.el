@@ -379,8 +379,10 @@
   ;; evil-escape causes noticable lag in linewise motions in visual mode, so disable it in
   ;; visual mode
   (defun narf|evil-escape-disable () (evil-escape-mode -1))
+  (defun narf|evil-escape-enable () (evil-escape-mode +1))
   (add-hook 'evil-visual-state-entry-hook 'narf|evil-escape-disable)
-  (add-hook 'evil-visual-state-exit-hook 'evil-escape-mode)
+  (add-hook 'evil-visual-state-exit-hook 'narf|evil-escape-enable)
+  (add-hook 'evil-insert-state-exit-hook 'narf|evil-escape-enable)
 
   (push 'neotree-mode evil-escape-excluded-major-modes))
 
