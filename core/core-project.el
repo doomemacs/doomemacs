@@ -85,15 +85,17 @@
         neo-auto-indent-point t
         neo-mode-line-type 'none
         neo-persist-show nil
-        neo-window-width 26
+        neo-window-width 28
         neo-show-updir-line nil
         neo-auto-indent-point t
+        neo-theme 'nerd ; fallback
         neo-banner-message nil)
   :config
   (evil-set-initial-state 'neotree-mode 'motion)
+  (add-hook 'neo-after-create-hook 'narf|hide-mode-line)
 
   ;; A custom and simple theme for neotree
-  (advice-add 'neo-buffer--insert-fold-symbol :override 'narf*neo-buffer-fold-symbol)
+  (advice-add 'neo-buffer--insert-fold-symbol :override 'narf*neo-theme)
   ;; Shorter pwd in neotree
   (advice-add 'neo-buffer--insert-root-entry :filter-args 'narf*neotree-shorten-pwd)
   ;; Don't ask for confirmation when creating files
@@ -103,7 +105,9 @@
 
   (add-hook 'neotree-mode-hook 'narf|neotree-init-keymap)
   (defun narf|neotree-init-keymap ()
+    (setq line-spacing 1)
     (map! :map evil-motion-state-local-map
+          "ESC ESC" 'neotree-hide
           "q"   'neotree-hide
           "RET" 'neotree-enter
           "J"   'neotree-select-next-sibling-node

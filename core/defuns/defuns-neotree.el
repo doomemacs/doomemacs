@@ -34,16 +34,6 @@
     (neotree-hide)))
 
 ;;;###autoload
-(defun narf*neo-buffer-fold-symbol (name)
-  "Custom hybrid ascii theme with leading whitespace."
-  (let ((n-insert-symbol (lambda (n)
-                           (neo-buffer--insert-with-face
-                            n 'neo-expand-btn-face))))
-    (or (and (eq name 'open)  (funcall n-insert-symbol "- "))
-        (and (eq name 'close) (funcall n-insert-symbol "+ "))
-        (and (eq name 'leaf)  (funcall n-insert-symbol "  ")))))
-
-;;;###autoload
 (defun narf*save-neotree (orig-fun &rest args)
   "Prevents messing up the neotree buffer on window changes"
   (narf/neotree-save (apply orig-fun args)))
@@ -57,7 +47,17 @@
 ;;;###autoload
 (defun narf*neotree-shorten-pwd (node)
   "Shorter pwd in neotree"
-  (list (abbreviate-file-name (car node))))
+  (list (concat "  " (projectile-project-name))))
+
+;;;###autoload
+(defun narf*neo-theme (name)
+  "Custom hybrid ascii theme with leading whitespace."
+  (let ((n-insert-symbol (lambda (n)
+                           (neo-buffer--insert-with-face
+                            n 'neo-expand-btn-face))))
+    (or (and (eq name 'open)  (funcall n-insert-symbol " -  "))
+        (and (eq name 'close) (funcall n-insert-symbol " +  "))
+        (and (eq name 'leaf)  (funcall n-insert-symbol "   ")))))
 
 (provide 'defuns-neotree)
 ;;; defuns-neotree.el ends here
