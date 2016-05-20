@@ -43,8 +43,9 @@
 (load (concat user-emacs-directory "bootstrap.el"))
 ;;
 
-(defconst narf-default-theme 'narf-dark)
-(defconst narf-default-font (font-spec :family "Hack" :size 12))
+(defconst narf-default-theme  'narf-one)
+(defconst narf-terminal-theme 'narf-dark)
+(defconst narf-default-font (font-spec :family "Fira Mono" :size 12))
 
 (narf `(core ; core/core.el
 

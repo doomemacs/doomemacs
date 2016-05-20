@@ -6,7 +6,8 @@
 
 ;; Global constants
 (eval-and-compile
-  (defconst narf-default-theme 'wombat)
+  (defconst narf-default-theme  'wombat)
+  (defconst narf-terminal-theme 'wombat)
   (defconst narf-default-font  nil)
 
   (defconst narf-emacs-dir     (expand-file-name "." user-emacs-directory))
@@ -72,7 +73,7 @@
 
     ;; Local settings
     (load "~/.emacs.local.el" t t)
-    (setq narf-current-theme narf-default-theme
+    (setq narf-current-theme (if (display-graphic-p) narf-default-theme narf-terminal-theme)
           narf-current-font  narf-default-font)
     ;; Here we a'go!
     (mapc 'require packages)
