@@ -47,6 +47,10 @@
 (defconst narf-terminal-theme 'narf-dark)
 (defconst narf-default-font (font-spec :family "Fira Mono" :size 12))
 
+(defconst narf-leader-prefix      ","  "Prefix for <leader> bindings")
+(defconst narf-localleader-prefix "\\" "Prefix for <localleader> bindings")
+
+;; Load packages
 (narf `(core ; core/core.el
 
         ;; OS-specific config
@@ -74,6 +78,7 @@
         module-cc          ; C/C++/Obj-C madness
         module-crystal     ; ruby at the speed of c
         module-csharp      ; unity, .NET, and mono shenanigans
+        module-css         ; #big-bang::before { content: ""; }
         module-data        ; config and data formats
         module-go          ; the hipster dialect
         module-haskell     ; a language that's lazier than I am
@@ -92,7 +97,7 @@
         module-scala       ; Java, but good
         module-sh          ; she sells Z-shells by the C XOR
         module-text        ; writing docs for people to ignore
-        module-web         ; #big-bang::before { content: ""; }
+        module-web         ; The end is always near </html>
 
         ;; Experimental
         ;;module-eshell      ; for inferior OSes *cough*windows

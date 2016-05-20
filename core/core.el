@@ -9,7 +9,7 @@
 ;;   narf|…     A hook
 ;;   narf*…     An advising function
 ;;   narf.…     Custom prefix commands
-;;   …!         Macro
+;;   …!         Macro or shortcut alias
 ;;
 ;; Autoloaded functions are in {core,modules}/defuns/defuns-*.el
 ;;
@@ -79,21 +79,14 @@
 ;; Variables
 ;;
 
-(defvar narf-leader-prefix "," "Prefix key for <leader> maps")
-(defvar narf-localleader-prefix "\\" "Prefix key for <localleader> maps")
-
-;; Buffers/Files
 (defvar narf-unreal-buffers '("^ ?\\*.+\\*"
                               image-mode
                               dired-mode
                               reb-mode
                               messages-buffer-mode)
   "A list of regexps or modes whose buffers are considered unreal, and will be
-ignored when using `narf:next-real-buffer' and `narf:previous-real-buffer', and
-killed by `narf/kill-unreal-buffers'.
-
-`narf/kill-real-buffer' will also gloss over these buffers when finding a new
-buffer to display.")
+ignored when using `narf:next-real-buffer' and `narf:previous-real-buffer' (or
+killed by `narf/kill-unreal-buffers', or after `narf/kill-real-buffer').")
 
 (defvar narf-ignore-buffers '("*Completions*" "*Compile-Log*" "*inferior-lisp*"
                               "*Fuzzy Completions*" "*Apropos*" "*Help*" "*cvs*"
@@ -131,20 +124,18 @@ gets killed.")
   "A list of files that count as 'project files', which determine whether a
 folder is the root of a project or not.")
 
-;; Fringe/margins
-(defvar narf-fringe-size 6 "Default width to use for the fringes.")
-
 
 ;;
-;; Bootstrap
+;; Libraries
 ;;
 
 (require 'f)
-(autoload 'use-package "use-package" "" nil 'macro)
 (unless (require 'autoloads nil t)
   (load (concat narf-emacs-dir "/scripts/generate-autoloads.el"))
   (require 'autoloads))
 (require 'core-defuns)
+
+(autoload 'use-package "use-package" "" nil 'macro)
 
 (use-package anaphora
   :commands (awhen aif acond awhile))
@@ -204,13 +195,14 @@ enable multiple minor modes for the same regexp.")
 
 ;;
 (add-hook! after-init
-  ;; We add this to `after-init-hook' to allow errors to stop this advice
+  ;; We add this to `after-init-hook' to allow errors to stop it
   (defadvice save-buffers-kill-emacs (around no-query-kill-emacs activate)
     "Prevent annoying \"Active processes exist\" query when you quit Emacs."
     (cl-flet ((process-list ())) ad-do-it))
 
-  ;; Don't display anything
+  ;; Prevent any auto-displayed text...
   (advice-add 'display-startup-echo-area-message :override 'ignore)
+  ;; ...so we can display our own
   (message ":: Loaded in %.3fs"
            (float-time (time-subtract (current-time) emacs-start-time))))
 

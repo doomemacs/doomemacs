@@ -1,5 +1,10 @@
 ;;; core-ui.el --- interface & mode-line config
 
+;; y/n instead of yes/no
+(fset 'yes-or-no-p 'y-or-n-p)
+
+(defvar narf-fringe-size 3 "Default fringe width")
+
 (setq-default
  blink-matching-paren nil ; don't blink--too distracting
  show-paren-delay 0.075
@@ -36,8 +41,6 @@
  fringe-indicator-alist (delq (assoc 'continuation fringe-indicator-alist)
                               fringe-indicator-alist))
 
-(fset 'yes-or-no-p 'y-or-n-p)  ; y/n instead of yes/no
-
 ;; Ask for confirmation on exit only if there are real buffers left
 (when window-system
   (setq confirm-kill-emacs
@@ -47,7 +50,7 @@
             t))))
 
 (load-theme narf-current-theme t)
-(tooltip-mode -1)  ; show tooltips in echo area
+(tooltip-mode -1) ; show tooltips in echo area
 ;; set up minibuffer and fringe
 (if (not window-system)
     (menu-bar-mode -1)
@@ -160,8 +163,7 @@
   :commands (rainbow-mode)
   :init
   ;; hl-line-mode and rainbow-mode don't play well together
-  (add-hook! (sass-mode scss-mode less-css-mode)
-    '(rainbow-mode narf|hl-line-off)))
+  (add-hook 'rainbow-mode-hook 'narf|hl-line-off))
 
 (use-package nlinum
   :commands nlinum-mode

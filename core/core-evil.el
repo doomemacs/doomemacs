@@ -74,10 +74,8 @@
       "Close popups, disable search highlights and quit the minibuffer if open."
       (let ((minib-p (minibuffer-window-active-p (minibuffer-window)))
             (evil-hl-p (evil-ex-hl-active-p 'evil-ex-search)))
-        (when minib-p
-          (abort-recursive-edit))
-        (when evil-hl-p
-          (evil-ex-nohighlight))
+        (when minib-p (abort-recursive-edit))
+        (when evil-hl-p (evil-ex-nohighlight))
         ;; Close non-repl popups and clean up `narf-popup-windows'
         (unless (or minib-p evil-hl-p
                     (memq (get-buffer-window) narf-popup-windows))

@@ -74,7 +74,7 @@
     ;; Local settings
     (load "~/.emacs.local.el" t t)
     (setq narf-current-theme (if (display-graphic-p) narf-default-theme narf-terminal-theme)
-          narf-current-font  narf-default-font)
+          narf-current-font narf-default-font)
     ;; Here we a'go!
     (mapc 'require packages)
 
