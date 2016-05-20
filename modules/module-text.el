@@ -1,8 +1,15 @@
 ;;; module-text.el
 
 (use-package markdown-mode
-  :mode ("\\.md$" "/README$")
-  :init (add-hook 'markdown-mode-hook 'turn-on-auto-fill)
+  :mode ("\\.m\\(d\\|arkdown\\)$" "/README$"
+         ("/README\\.md$" . gfm-mode))
+  :init
+  (add-hook 'markdown-mode-hook 'turn-on-auto-fill)
+  (setq markdown-enable-wiki-links t
+        markdown-italic-underscore t
+        markdown-enable-math t
+        markdown-make-gfm-checkboxes-buttons t
+        markdown-gfm-additional-languages '("sh"))
   :config
   (map! :map markdown-mode-map
         "<backspace>"  nil
