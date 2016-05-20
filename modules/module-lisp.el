@@ -69,7 +69,7 @@
 
   (dolist (i '(("Evil Command" "\\(^\\s-*(evil-define-command +\\)\\(\\_<.+\\_>\\)" 2)
                ("Evil Operator" "\\(^\\s-*(evil-define-operator +\\)\\(\\_<.+\\_>\\)" 2)
-               ("Package" "\\(^\\s-*(use-package +\\)\\(\\_<.+\\_>\\)" 2)
+               ("Package" "\\(^\\s-*(use-package +\\)\\(\\_<[^ \n]+\\_>\\)" 2)
                ("Spaceline Segment" "\\(^\\s-*(spaceline-define-segment +\\)\\(\\_<.+\\_>\\)" 2)))
     (push i imenu-generic-expression)))
 
