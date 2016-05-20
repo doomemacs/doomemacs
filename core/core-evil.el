@@ -2,16 +2,6 @@
 
 (use-package evil
   :init
-  ;; highlight matching delimiters where it's important
-  (defun show-paren-mode-off () (show-paren-mode -1))
-  (add-hook 'evil-insert-state-entry-hook    'show-paren-mode)
-  (add-hook 'evil-insert-state-exit-hook     'show-paren-mode-off)
-  (add-hook 'evil-visual-state-entry-hook    'show-paren-mode)
-  (add-hook 'evil-visual-state-exit-hook     'show-paren-mode-off)
-  (add-hook 'evil-operator-state-entry-hook  'show-paren-mode)
-  (add-hook 'evil-operator-state-exit-hook   'show-paren-mode-off)
-  (add-hook 'evil-normal-state-entry-hook    'show-paren-mode-off)
-
   ;; Disable highlights on insert-mode
   (add-hook 'evil-insert-state-entry-hook 'evil-ex-nohighlight)
   (setq evil-magic t
@@ -43,49 +33,59 @@
         ;; https://bitbucket.org/lyro/evil/issues/594/undo-doesnt-behave-like-vim
         evil-want-fine-undo (if (> emacs-major-version 24) 'fine))
 
+  ;; highlight matching delimiters where it's important
+  (defun show-paren-mode-off () (show-paren-mode -1))
+  (add-hook 'evil-insert-state-entry-hook   'show-paren-mode)
+  (add-hook 'evil-insert-state-exit-hook    'show-paren-mode-off)
+  (add-hook 'evil-visual-state-entry-hook   'show-paren-mode)
+  (add-hook 'evil-visual-state-exit-hook    'show-paren-mode-off)
+  (add-hook 'evil-operator-state-entry-hook 'show-paren-mode)
+  (add-hook 'evil-operator-state-exit-hook  'show-paren-mode-off)
+  (add-hook 'evil-normal-state-entry-hook   'show-paren-mode-off)
+
   :config
   (evil-mode 1)
   (evil-select-search-module 'evil-search-module 'evil-search)
+  (mapc (lambda (r) (evil-set-initial-state (car r) (cdr r)))
+        '((compilation-mode       . normal)
+          (help-mode              . normal)
+          (message-mode           . normal)
+          (debugger-mode          . normal)
+          (image-mode             . normal)
+          (doc-view-mode          . normal)
+          (tabulated-list-mode    . emacs)
+          (profile-report-mode    . emacs)
+          (Info-mode              . emacs)
+          (view-mode              . emacs)
+          (comint-mode            . emacs)
+          (cider-repl-mode        . emacs)
+          (term-mode              . emacs)
+          (calendar-mode          . emacs)
+          (Man-mode               . emacs)
+          (grep-mode              . emacs)))
 
   (map! :map evil-command-window-mode-map :n [escape] 'kill-buffer-and-window)
-
-  ;; modes to map to different default states
-  (dolist (mode-map '((compilation-mode       . normal)
-                      (help-mode              . normal)
-                      (message-mode           . normal)
-                      (debugger-mode          . normal)
-                      (image-mode             . normal)
-                      (doc-view-mode          . normal)
-                      (tabulated-list-mode    . emacs)
-                      (profile-report-mode    . emacs)
-                      (Info-mode              . emacs)
-                      (view-mode              . emacs)
-                      (comint-mode            . emacs)
-                      (cider-repl-mode        . emacs)
-                      (term-mode              . emacs)
-                      (calendar-mode          . emacs)
-                      (Man-mode               . emacs)
-                      (grep-mode              . emacs)))
-    (evil-set-initial-state `,(car mode-map) `,(cdr mode-map)))
 
   (progn ; evil hacks
     (advice-add 'evil-force-normal-state :after 'narf*evil-esc-quit)
     (defun narf*evil-esc-quit ()
       "Close popups, disable search highlights and quit the minibuffer if open."
-      (let ((minib-p (minibuffer-window-active-p (minibuffer-window)))
-            (evil-hl-p (evil-ex-hl-active-p 'evil-ex-search)))
-        (when minib-p (abort-recursive-edit))
-        (when evil-hl-p (evil-ex-nohighlight))
-        ;; Close non-repl popups and clean up `narf-popup-windows'
-        (unless (or minib-p evil-hl-p
-                    (memq (get-buffer-window) narf-popup-windows))
-          (mapc (lambda (w)
-                  (if (window-live-p w)
-                      (with-selected-window w
-                        (unless (derived-mode-p 'comint-mode)
-                          (narf/popup-close w)))
-                    (narf/popup-remove w)))
-                narf-popup-windows))))
+      (if (eq major-mode 'help-mode)
+          (narf/popup-close)
+        (let ((minib-p (minibuffer-window-active-p (minibuffer-window)))
+              (evil-hl-p (evil-ex-hl-active-p 'evil-ex-search)))
+          (when minib-p (abort-recursive-edit))
+          (when evil-hl-p (evil-ex-nohighlight))
+          ;; Close non-repl popups and clean up `narf-popup-windows'
+          (unless (or minib-p evil-hl-p
+                      (memq (get-buffer-window) narf-popup-windows))
+            (mapc (lambda (w)
+                    (if (window-live-p w)
+                        (with-selected-window w
+                          (unless (derived-mode-p 'comint-mode)
+                            (narf/popup-close w)))
+                      (narf/popup-remove w)))
+                  narf-popup-windows)))))
 
     ;; Fix harmless (yet disruptive) error reporting w/ hidden buffers caused by
     ;; workgroups killing windows
@@ -168,50 +168,21 @@
           ;; Clean up
           (setq file-name (replace-regexp-in-string regexp "\\1" file-name t)))))
 
-  ;; Make :g[lobal] highlight matches
-  ;; TODO Redo this mess
-  (defvar narf-buffer-match-global evil-ex-substitute-global "")
-  (defun narf--ex-buffer-match (flag &optional arg)
-    (let ((hl-name 'evil-ex-buffer-match))
-      (with-selected-window (minibuffer-selected-window)
-        (narf/-ex-match-init hl-name)
-        (narf/-ex-buffer-match arg hl-name (list (if narf-buffer-match-global ?g))))))
-  (defun narf--ex-global-match (flag &optional arg)
-    (let ((hl-name 'evil-ex-global-match))
-      (with-selected-window (minibuffer-selected-window)
-        (narf/-ex-match-init hl-name)
-        (let ((result (car-safe (evil-ex-parse-global arg))))
-          (narf/-ex-buffer-match result hl-name nil (point-min) (point-max))))))
-
-  (evil-ex-define-argument-type buffer-match :runner narf--ex-buffer-match)
-  (evil-ex-define-argument-type global-match :runner narf--ex-global-match)
+  ;; Extra argument types for highlight buffer (or global) regexp matches
+  (evil-ex-define-argument-type buffer-match :runner narf/evil-ex-buffer-match)
+  (evil-ex-define-argument-type global-match :runner narf/evil-ex-global-match)
 
   (evil-define-interactive-code "<//>"
     :ex-arg buffer-match
     (list (when (evil-ex-p) evil-ex-argument)))
   (evil-define-interactive-code "<g//>"
     :ex-arg global-match
-    (when (evil-ex-p) (evil-ex-parse-global evil-ex-argument)))
-
-  (evil-define-operator narf:align (&optional beg end bang pattern)
-    "Ex interface to `align-regexp'. Accepts vim-style regexps."
-    (interactive "<r><!><//>")
-    (align-regexp
-     beg end
-     (concat "\\(\\s-*\\)"
-             (if bang
-                 (regexp-quote pattern)
-               (evil-transform-vim-style-regexp pattern)))
-     1 1))
-
-  (evil-define-operator narf:evil-ex-global (beg end pattern command &optional invert)
-    :motion mark-whole-buffer
-    :move-point nil
-    (interactive "<r><g//><!>")
-    (evil-ex-global beg end pattern command invert))
-  (evil-ex-define-cmd "g[lobal]" 'narf:evil-ex-global))
+    (when (evil-ex-p) (evil-ex-parse-global evil-ex-argument))))
 
 ;; evil plugins
+(use-package evil-numbers
+  :commands (evil-numbers/inc-at-pt evil-numbers/dec-at-pt))
+
 (use-package evil-anzu
   :config
   (setq anzu-cons-mode-line-p nil
@@ -220,9 +191,7 @@
 
 (use-package evil-args
   :commands (evil-inner-arg evil-outer-arg evil-forward-arg evil-backward-arg evil-jump-out-args)
-  :init
-  (define-key evil-inner-text-objects-map "a" #'evil-inner-arg)
-  (define-key evil-outer-text-objects-map "a" #'evil-outer-arg))
+  :init (def-text-obj! "a" 'evil-inner-arg 'evil-outer-arg))
 
 (use-package evil-commentary
   :commands (evil-commentary evil-commentary-yank evil-commentary-line)
@@ -230,8 +199,7 @@
 
 (use-package evil-exchange
   :commands evil-exchange
-  :config
-  (advice-add 'evil-force-normal-state :after 'narf*evil-exchange-off))
+  :config (advice-add 'evil-force-normal-state :after 'narf*evil-exchange-off))
 
 (use-package evil-multiedit
   :commands (evil-multiedit-match-all
@@ -242,20 +210,14 @@
              evil-multiedit-prev
              evil-multiedit-abort
              evil-multiedit-ex-match)
-  :init
-  (map! :v  "R"     'evil-multiedit-match-all
-        :n  "M-C-D" 'evil-multiedit-restore
-        :nv "M-d"   'evil-multiedit-match-and-next
-        :nv "M-D"   'evil-multiedit-match-and-prev)
   :config
-  (map! (:map evil-multiedit-state-map
-          "RET" 'evil-multiedit-toggle-or-restrict-region
-          "C-n" 'evil-multiedit-next
-          "C-p" 'evil-multiedit-prev
-          :v "RET" 'evil-multiedit-toggle-or-restrict-region)
-        (:map evil-multiedit-insert-state-map
-          "C-n" 'evil-multiedit-next
-          "C-p" 'evil-multiedit-prev)))
+  (map! :map evil-multiedit-state-map
+        "RET" 'evil-multiedit-toggle-or-restrict-region
+        "C-n" 'evil-multiedit-next
+        "C-p" 'evil-multiedit-prev
+        :map evil-multiedit-insert-state-map
+        "C-n" 'evil-multiedit-next
+        "C-p" 'evil-multiedit-prev))
 
 (use-package evil-indent-plus
   :commands (evil-indent-plus-i-indent
@@ -265,31 +227,18 @@
              evil-indent-plus-i-indent-up-down
              evil-indent-plus-a-indent-up-down)
   :init
-  (map! :map evil-inner-text-objects-map
-        "i" 'evil-indent-plus-i-indent
-        "I" 'evil-indent-plus-i-indent-up
-        "J" 'evil-indent-plus-i-indent-up-down
-        :map evil-outer-text-objects-map
-        "i" 'evil-indent-plus-a-indent
-        "I" 'evil-indent-plus-a-indent-up
-        "J" 'evil-indent-plus-a-indent-up-down))
+  (def-text-obj! "i" 'evil-indent-plus-i-indent 'evil-indent-plus-a-indent)
+  (def-text-obj! "I" 'evil-indent-plus-i-indent-up 'evil-indent-plus-a-indent-up)
+  (def-text-obj! "J" 'evil-indent-plus-i-indent-up-down 'evil-indent-plus-a-indent-up-down))
 
 (use-package evil-matchit
   :commands (evilmi-jump-items evilmi-text-object global-evil-matchit-mode)
   :config (global-evil-matchit-mode 1)
-  :init
-  (map! :n "%" 'evilmi-jump-items
-        :map evil-inner-text-objects-map "%" 'evilmi-text-object
-        :map evil-outer-text-objects-map "%" 'evilmi-text-object))
-
-(use-package evil-numbers
-  :commands (evil-numbers/inc-at-pt evil-numbers/dec-at-pt))
+  :init (def-text-obj! "%" 'evilmi-text-object))
 
 (use-package evil-textobj-anyblock
   :commands (evil-textobj-anyblock-inner-block evil-textobj-anyblock-a-block)
-  :init
-  (map! :map evil-inner-text-objects-map "B" 'evil-textobj-anyblock-inner-block
-        :map evil-outer-text-objects-map "B" 'evil-textobj-anyblock-a-block))
+  :init (def-text-obj! "B" 'evil-textobj-anyblock-inner-block 'evil-textobj-anyblock-a-block))
 
 (use-package evil-search-highlight-persist
   :config
@@ -334,7 +283,6 @@
   :config
   (evil-snipe-mode 1)
   (evil-snipe-override-mode 1)
-
   (define-key evil-snipe-parent-transient-map (kbd "C-;") 'narf/evil-snipe-easymotion))
 
 (use-package evil-surround

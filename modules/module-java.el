@@ -35,7 +35,11 @@
   (after! company-dict
     (push 'android-mode company-dict-minor-mode-list)))
 
-(use-package groovy-mode :mode "\\.g\\(radle\\|vy\\|roovy\\)$")
+(use-package groovy-mode
+  :mode "\\.g\\(radle\\|vy\\|roovy\\)$"
+  :config
+  (after! quickrun
+    (push '("\\.gvy$" . "groovy") quickrun-file-alist)))
 
 (provide 'module-java)
 ;;; module-java.el ends here

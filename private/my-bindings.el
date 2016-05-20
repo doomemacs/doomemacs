@@ -1,18 +1,6 @@
 ;;; my-bindings.el
 
-;; Minimalistic key mapping! Why go so far for this?
-;; ...
-;; Uh. Good question.
-
-(eval-when-compile (require 'core-defuns))
-
-;; See `narf-leader-prefix' & `narf-localleader-prefix' in ../core/core.el
-
 (map!
- ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
- ;; Global keymaps                     ;;
- ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
  "M-x"  'helm-M-x
  "A-x"  'helm-M-x
  "M-;"  'eval-expression
@@ -31,9 +19,8 @@
  "M-t"  'narf:tab-create
  "M-T"  'narf/tab-display
  "A-`"  'os-switch-to-term
- "C-`"  'narf/popup-messages
+ "C-`"  'narf/popup-toggle
  "C-~"  'narf:repl
- "M-`"  'narf/popup-toggle
 
  "M-w"  'narf/close-window-or-tab
  "M-W"  'delete-frame
@@ -46,10 +33,10 @@
  "C-h"  'evil-window-left
  "C-l"  'evil-window-right
 
- "A-j"  (λ! (narf/evil-window-resize 'below))
- "A-k"  (λ! (narf/evil-window-resize 'above))
- "A-h"  (λ! (narf/evil-window-resize 'left))
- "A-l"  (λ! (narf/evil-window-resize 'right))
+ "A-j"  'narf/evil-window-resize-d
+ "A-k"  'narf/evil-window-resize-u
+ "A-h"  'narf/evil-window-resize-l
+ "A-l"  'narf/evil-window-resize-r
 
  "C-<escape>" 'evil-emacs-state
  :e "C-<escape>" 'evil-normal-state
@@ -94,11 +81,6 @@
    ;; Restore osx text objects
    :i "<A-backspace>" 'evil-delete-backward-word
    :i "<A-delete>"    (λ! (evil-forward-word) (evil-delete-backward-word)))
-
-
- ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
- ;; Local keymaps                      ;;
- ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
  :m ";" 'evil-ex
  (:leader
@@ -252,9 +234,9 @@
 
  ;; aliases for %
  :m  "%"   'evilmi-jump-items
- :m [tab] (λ! (if (ignore-errors (hs-already-hidden-p))
-                  (hs-toggle-hiding)
-                (call-interactively 'evilmi-jump-items)))
+ :m  [tab] (λ! (if (ignore-errors (hs-already-hidden-p))
+                   (hs-toggle-hiding)
+                 (call-interactively 'evilmi-jump-items)))
 
  ;; Textmate-esque newlines
  :i  "<backspace>"   'backward-delete-char-untabify
@@ -297,6 +279,22 @@
    "C-S-w"   (λ! (ace-window 4))    ; swap windows
    "C-C"     (λ! (ace-window 16)))  ; delete windows
 
+ ;; `evil-multiedit'
+ :v  "R"     'evil-multiedit-match-all
+ :n  "M-C-D" 'evil-multiedit-restore
+ :nv "M-d"   'evil-multiedit-match-and-next
+ :nv "M-D"   'evil-multiedit-match-and-prev
+ (:map evil-multiedit-state-map
+   :v "RET" 'evil-multiedit-toggle-or-restrict-region)
+
+ ;; `yasnippet'
+ :i  [(tab)]     'yas-expand
+ :v  "<backtab>" 'narf/yas-insert-snippet
+
+ ;; `auto-yasnippet'
+ :i  "<C-tab>" 'aya-expand
+ :nv "<C-tab>" 'aya-create
+
  ;; Vim omni-complete emulation
  :i "C-SPC" 'narf/company-complete
  (:prefix "C-x"
@@ -333,93 +331,10 @@
 
  (:after help-mode
    (:map help-map
-     "e" 'narf/popup-messages
-     ;; Remove slow/annoying help subsections
-     "h" nil
-     "g" nil)
+     "e" 'narf/popup-messages)
    (:map help-mode-map
      :n "]]" 'help-go-forward
-     :n "[[" 'help-go-back
-     :n "<escape>" 'narf/popup-close)))
-
-;; Line-wise mouse selection on margin
-(global-set-key (kbd "<left-margin> <down-mouse-1>") 'narf/mouse-drag-line)
-(global-set-key (kbd "<left-margin> <mouse-1>")      'narf/mouse-select-line)
-(global-set-key (kbd "<left-margin> <drag-mouse-1>") 'narf/mouse-select-line)
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Keymap fixes                       ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; This section is dedicated to bindings that "fix" certain keys so that they behave more
-;; like vim (or how I like it).
-
-;; Restores "dumb" indentation to the tab key. This rustles a lot of peoples' jimmies,
-;; apparently, but it's how I like it.
-(map! :i "<tab>"     'narf/dumb-indent
-      :i "<backtab>" 'narf/dumb-dedent
-      :i "<C-tab>"   'indent-for-tab-command
-
-      ;; No dumb-tab for lisp
-      (:map lisp-mode-map        :i [remap narf/dumb-indent] 'indent-for-tab-command)
-      (:map emacs-lisp-mode-map  :i [remap narf/dumb-indent] 'indent-for-tab-command)
-
-      ;; Highjacks space/backspace to:
-      ;;   a) delete spaces on either side of the cursor, if present ( | ) -> (|)
-      ;;   b) allow backspace to delete space-indented blocks intelligently
-      ;;   c) and not do any of this magic when inside a string
-      :i "SPC"                                  'narf/inflate-space-maybe
-      :i [remap backward-delete-char-untabify]  'narf/deflate-space-maybe
-      :i [remap newline]                        'narf/newline-and-indent
-
-      ;; Smarter move-to-beginning-of-line
-      :i [remap move-beginning-of-line]         'narf/move-to-bol
-
-      ;; Restore bash-esque keymaps in insert mode; C-w and C-a already exist
-      :i "C-e" 'narf/move-to-eol
-      :i "C-u" 'narf/backward-kill-to-bol-and-indent
-
-      ;; Fixes delete
-      :i "<kp-delete>" 'delete-char
-
-      ;; Fix osx keymappings and then some
-      :i "<M-left>"   'narf/move-to-bol
-      :i "<M-right>"  'narf/move-to-eol
-      :i "<M-up>"     'beginning-of-buffer
-      :i "<M-down>"   'end-of-buffer
-      :i "<C-up>"     'smart-up
-      :i "<C-down>"   'smart-down
-
-      ;; Fix emacs motion keys
-      :i "A-b"      'evil-backward-word-begin
-      :i "A-w"      'evil-forward-word-begin
-      :i "A-e"      'evil-forward-word-end
-
-      ;; Textmate-esque insert-line before/after
-      :i "<M-return>"    'evil-open-below
-      :i "<S-M-return>"  'evil-open-above
-      ;; insert lines in-place)
-      :n "<M-return>"    (λ! (save-excursion (evil-insert-newline-below)))
-      :n "<S-M-return>"  (λ! (save-excursion (evil-insert-newline-above)))
-
-      ;; Make ESC quit all the things
-      (:map (minibuffer-local-map
-             minibuffer-local-ns-map
-             minibuffer-local-completion-map
-             minibuffer-local-must-match-map
-             minibuffer-local-isearch-map)
-        [escape] 'abort-recursive-edit
-        "C-r" 'evil-paste-from-register)
-
-      (:map (evil-ex-search-keymap read-expression-map)
-        "C-w" 'backward-kill-word
-        "C-u" 'backward-kill-sentence
-        "C-b" 'backward-word)
-
-      (:map evil-ex-completion-map "C-a" 'move-beginning-of-line)
-
-      (:map view-mode-map "<escape>" 'View-quit-all))
+     :n "[[" 'help-go-back)))
 
 ;; Common unicode characters
 (map! :i "A-o" (λ! (insert "ø"))

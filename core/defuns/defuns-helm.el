@@ -73,5 +73,23 @@ buffers."
   (let ((narf-helm-force-project-buffers (and (not all-p) (narf/project-p))))
     (helm-buffers-list)))
 
+;;;###autoload
+(defun narf*helm-replace-prompt (plist)
+  (if (keywordp (car plist))
+      (setq plist (plist-put plist :prompt helm-global-prompt))
+    (setcar (nthcdr 2 plist) helm-global-prompt))
+  plist)
+
+;;;###autoload
+(defun narf*helm-hide-header (source &optional force)
+  (setq header-line-format nil)
+  (narf|hide-mode-line))
+
+;;;###autoload
+(defun narf*helm-hide-source-header-maybe ()
+  (if (<= (length helm-sources) 1)
+      (set-face-attribute 'helm-source-header nil :height 0.1 :foreground "#111111")
+    (set-face-attribute 'helm-source-header nil :height 1.0 :foreground narf-helm-header-fg)))
+
 (provide 'defuns-helm)
 ;;; defuns-helm.el ends here

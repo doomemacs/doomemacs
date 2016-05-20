@@ -57,8 +57,8 @@
                            (or macro (read-char "@-"))))))
 
 ;;; Custom argument handlers
-;;;###autoload
-(defun narf/-ex-match-init (name &optional face update-hook)
+(defvar narf-buffer-match-global evil-ex-substitute-global "")
+(defun narf--evil-ex-match-init (name &optional face update-hook)
   (with-current-buffer evil-ex-current-buffer
     (cond
      ((eq flag 'start)
@@ -70,8 +70,7 @@
      ((eq flag 'stop)
       (evil-ex-delete-hl name)))))
 
-;;;###autoload
-(defun narf/-ex-buffer-match (arg &optional hl-name flags beg end)
+(defun narf--evil-ex-buffer-match (arg &optional hl-name flags beg end)
   (when (and (eq flag 'update)
              evil-ex-substitute-highlight-all
              (not (zerop (length arg))))
@@ -93,6 +92,21 @@
        (evil-ex-pattern-update-ex-info nil "incomplete replacement"))
       (user-error
        (evil-ex-pattern-update-ex-info nil (format "?%s" lossage))))))
+
+;;;###autoload
+(defun narf/evil-ex-buffer-match (flag &optional arg)
+  (let ((hl-name 'evil-ex-buffer-match))
+    (with-selected-window (minibuffer-selected-window)
+      (narf--evil-ex-match-init hl-name)
+      (narf--evil-ex-buffer-match arg hl-name (list (if narf-buffer-match-global ?g))))))
+
+;;;###autoload
+(defun narf/evil-ex-global-match (flag &optional arg)
+  (let ((hl-name 'evil-ex-global-match))
+    (with-selected-window (minibuffer-selected-window)
+      (narf--evil-ex-match-init hl-name)
+      (let ((result (car-safe (evil-ex-parse-global arg))))
+        (narf--evil-ex-buffer-match result hl-name nil (point-min) (point-max))))))
 
 ;;;###autoload
 (defun narf/evil-ex-undefine-cmd (cmd)

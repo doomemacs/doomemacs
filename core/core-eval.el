@@ -5,7 +5,7 @@
 ;; + Simple code navigation (using `dump-jump' and `imenu-list')
 ;; + A universal tags config (WIP)
 
-;; remove annoying ellipsis when printing sexp in message buffer
+;; remove ellipsis when printing sexp in message buffer
 (setq eval-expression-print-length nil
       eval-expression-print-level  nil)
 
@@ -17,19 +17,15 @@
              quickrun-compile-only
              quickrun-replace-region
              helm-quickrun)
-  :init
-  (add-hook 'quickrun/mode-hook 'linum-mode)
-  :config
-  (setq quickrun-focus-p nil)
-  (push '("\\.gvy$" . "groovy") quickrun-file-alist))
+  :init (add-hook 'quickrun/mode-hook 'linum-mode)
+  :config (setq quickrun-focus-p nil))
 
 (use-package repl-toggle
   :commands (rtog/toggle-repl rtog/add-repl)
   :init
-  (setq rtog/mode-repl-alist '())
-
   (defvar narf--repl-buffer nil)
   (defvar-local repl-p nil)
+  (setq rtog/mode-repl-alist '())
 
   (add-hook! repl-toggle-mode
     (evil-initialize-state 'emacs)

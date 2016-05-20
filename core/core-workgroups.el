@@ -16,6 +16,7 @@ automatically renamed to the project name.")
 (use-package workgroups2
   :when (display-graphic-p)
   :init
+  (add-hook 'emacs-startup-hook 'workgroups-mode)
   (setq-default
    wg-session-file (concat narf-temp-dir "/workgroups/last")
    wg-workgroup-directory (concat narf-temp-dir "/workgroups/")
@@ -44,7 +45,6 @@ automatically renamed to the project name.")
    wg-list-display-decor-previous-left ""
    wg-list-display-decor-previous-right "")
 
-  (add-hook 'emacs-startup-hook 'workgroups-mode)
   :config
   ;; Remember fixed workgroup names between sessions
   (push 'narf-wg-names savehist-additional-variables)

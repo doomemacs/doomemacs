@@ -27,9 +27,8 @@
     [0 0 0 0 0 0 0 0 0 0 0 0 0 128 192 224 240 248]
     nil nil 'center)
 
-  ;; Refresh git-gutter on ESC in normal mode
+  ;; Refreshing git-gutter
   (advice-add 'evil-force-normal-state :after 'git-gutter)
-
   (add-hook 'focus-in-hook 'git-gutter:update-all-windows)
 
   (defalias 'narf/vcs-next-hunk    'git-gutter:next-hunk)
@@ -39,7 +38,7 @@
   (defalias 'narf/vcs-revert-hunk  'git-gutter:revert-hunk))
 
 (after! vc-annotate
-  (evil-set-initial-state 'vc-annotate-mode 'normal)
+  (evil-set-initial-state 'vc-annotate-mode     'normal)
   (evil-set-initial-state 'vc-git-log-view-mode 'normal)
   (map! :map vc-annotate-mode-map
         :n "q" 'kill-this-buffer
@@ -52,26 +51,7 @@
         :n "RET" 'vc-annotate-find-revision-at-line))
 
 (use-package browse-at-remote
-  :commands (browse-at-remote/browse browse-at-remote/to-clipboard)
-  :init
-  (evil-define-command narf:git-remote-browse (&optional bang)
-    "Open the website for the current (or specified) version controlled FILE. If BANG,
-then use hub to do it."
-    (interactive "<!>")
-    (let (url)
-      (condition-case err
-          (setq url (browse-at-remote/get-url))
-        (error
-         (setq url (shell-command-to-string "hub browse -u --"))
-         (setq url (if url
-                       (concat (s-trim url) "/" (f-relative (buffer-file-name) (narf/project-root))
-                               (when (use-region-p) (format "#L%s-L%s"
-                                                            (line-number-at-pos (region-beginning))
-                                                            (line-number-at-pos (region-end)))))))))
-      (when url
-        (if bang
-            (message "Url copied to clipboard: %s" (kill-new url))
-          (browse-url url))))))
+  :commands (browse-at-remote/browse browse-at-remote/to-clipboard))
 
 (provide 'core-vcs)
 ;;; core-vcs.el ends here

@@ -85,6 +85,20 @@ evil-window-move-* (e.g. `evil-window-move-far-left')"
           ((memq direction '(above below))
            (evil-window-increase-height count)))))
 
+;;;###autoload (autoload 'narf/evil-window-resize-r "defuns-window" nil t)
+(evil-define-command narf/evil-window-resize-r (&optional count)
+  (interactive "<c>") (narf/evil-window-resize 'right count))
+;;;###autoload (autoload 'narf/evil-window-resize-l "defuns-window" nil t)
+(evil-define-command narf/evil-window-resize-l (&optional count)
+  (interactive "<c>") (narf/evil-window-resize 'left count))
+;;;###autoload (autoload 'narf/evil-window-resize-u "defuns-window" nil t)
+(evil-define-command narf/evil-window-resize-u (&optional count)
+  :repeat nil
+  (interactive "<c>") (narf/evil-window-resize 'above count))
+;;;###autoload (autoload 'narf/evil-window-resize-d "defuns-window" nil t)
+(evil-define-command narf/evil-window-resize-d (&optional count)
+  (interactive "<c>") (narf/evil-window-resize 'below count))
+
 ;;;###autoload
 (defun narf/window-reorient ()
   "Reorient all windows that are scrolled to the right."

@@ -2,10 +2,9 @@
 
 (use-package autoinsert
   :after yasnippet
-  :init
+  :config
   (setq auto-insert-query nil  ; Don't prompt before insertion
         auto-insert-alist '()) ; Tabula rasa
-  :config
   (auto-insert-mode 1)
 
   (mapc (lambda (rule)
@@ -69,8 +68,8 @@
           ("\\.php$"                         "__"               php-mode)
 
           ;; Python
-          ;;"tests?/test_.+\\.py$"         "__"               nose-mode)
-          ;;"/setup\\.py$"                 "__setup.py"       python-mode)
+          ;;"tests?/test_.+\\.py$"         "__"                 nose-mode)
+          ;;"/setup\\.py$"                 "__setup.py"         python-mode)
           ("\\.py$"                          "__"               python-mode)
 
           ;; Ruby

@@ -1,29 +1,32 @@
 ;;; core-editor.el
 
-(setq-default
- ;; spaces instead of tabs
- indent-tabs-mode nil
- tab-always-indent t
- tab-width 4
+(global-auto-revert-mode 1)    ; revert buffers for changed files
+;; Enable syntax highlighting for older emacs
+(unless (bound-and-true-p global-font-lock-mode)
+  (global-font-lock-mode t))
 
- require-final-newline t
+(setq-default
+ ;; Formatting
  delete-trailing-lines nil
  fill-column 80
+ indent-tabs-mode nil
  line-spacing 0
- word-wrap t
+ require-final-newline t
+ tab-always-indent t
+ tab-width 4
  truncate-lines t
  truncate-partial-width-windows 50
-
  visual-fill-column-center-text nil
-
- ;; Sane scroll settings
- scroll-margin 0
- scroll-conservatively 1001
- scroll-preserve-screen-position t
- hscroll-step 1
+ word-wrap t
+ ;; Scrolling
  hscroll-margin 1
-
+ hscroll-step 1
+ scroll-conservatively 1001
+ scroll-margin 0
+ scroll-preserve-screen-position t
+ ;; Regions
  shift-select-mode t
+ ;; Whitespace
  tabify-regexp "^\t* [ \t]+"
  whitespace-line-column fill-column
  whitespace-style '(face tabs tab-mark
@@ -71,22 +74,34 @@
       recentf-filename-handlers '(abbreviate-file-name))
 (recentf-mode 1)
 
+;; window config undo/redo
+(setq winner-dont-bind-my-keys t)
+(winner-mode 1)
+(add-hook! after-init
+  (setq winner-boring-buffers narf-ignore-buffers))
+
 ;; Let editorconfig handle global whitespace settings
-(use-package editorconfig
-  :config
-  (editorconfig-mode +1)
-  (associate! editorconfig-conf-mode :match "/\\.?editorconfig$")
-  ;; So whitespace in tabs indentation mode
+(use-package editorconfig :demand t
+  :mode ("\\.?editorconfig$" . editorconfig-conf-mode)
+  :config (editorconfig-mode +1)
+  ;; Show whitespace in tabs indentation mode
   (add-hook! 'editorconfig-custom-hooks
     (if indent-tabs-mode (whitespace-mode +1))))
 
 
 ;;
-;; Modes, hooks 'n hacks
+;; Hooks 'n hacks
 ;;
 
 (associate! makefile-gmake-mode :match "/Makefile$")
 (add-hook! special-mode (setq truncate-lines nil))
+;; If file is oversized...
+(add-hook! find-file
+  (when (> (buffer-size) 1048576)
+    (setq buffer-read-only t)
+    (buffer-disable-undo)
+    (fundamental-mode)
+    (visual-line-mode)))
 
 (defadvice delete-trailing-whitespace
     (around delete-trailing-whitespace-ignore-line activate)
@@ -100,16 +115,9 @@
                (string-match-p "^[\s\t]*$" linestr))
       (insert linestr))))
 
-;; If file is oversized...
-(add-hook! find-file
-  (when (> (buffer-size) 1048576)
-    (setq buffer-read-only t)
-    (buffer-disable-undo)
-    (fundamental-mode)
-    (visual-line-mode)))
-
-;; Smarter electric-indent (see `def-electric!')
-(electric-indent-mode -1) ; on by default
+;; Disable by default, please
+(electric-indent-mode -1)
+;; Smarter, keyword-based electric-indent (see `def-electric!')
 (defvar narf-electric-indent-p nil)
 (defvar-local narf-electric-indent-words '())
 (setq electric-indent-chars '(?\n ?\^?))
@@ -120,18 +128,6 @@
             (looking-at-p
              (concat "\\<" (regexp-opt narf-electric-indent-words))))))
       electric-indent-functions)
-
-;;
-(global-auto-revert-mode 1)    ; revert buffers for changed files
-;; Enable syntax highlighting for older emacs
-(unless (bound-and-true-p global-font-lock-mode)
-  (global-font-lock-mode t))
-
-;; window config undo/redo
-(setq winner-dont-bind-my-keys t)
-(winner-mode 1)
-(add-hook! after-init
-  (setq winner-boring-buffers narf-ignore-buffers))
 
 
 ;;
@@ -171,8 +167,7 @@
   :config (setq hs-isearch-open t)
   :init
   (advice-add 'evil-toggle-fold :before 'narf*load-hs-minor-mode)
-
-  ;; Prettify code folding in emacs ;;;;;;
+  ;; Prettify code folding in emacs
   (define-fringe-bitmap 'hs-marker [16 48 112 240 112 48 16] nil nil 'center)
   (defface hs-face '((t (:background "#ff8")))
     "Face to hightlight the ... area of hidden regions"
@@ -180,7 +175,6 @@
   (defface hs-fringe-face '((t (:foreground "#888")))
     "Face used to highlight the fringe on folded regions"
     :group 'hideshow)
-
   (setq hs-set-up-overlay
         (lambda (ov)
           (when (eq 'code (overlay-get ov 'hs))
@@ -201,7 +195,6 @@
   (setq imenu-list-mode-line-format nil
         imenu-list-position 'right
         imenu-list-size 32)
-
   (map! :map imenu-list-major-mode-map
         :n [escape] 'narf/imenu-list-quit
         :n "RET" 'imenu-list-goto-entry
@@ -210,17 +203,16 @@
 
 (use-package re-builder
   :commands (re-builder reb-mode-buffer-p)
-  :init
-  (add-hook 'reb-mode-hook 'narf|reb-cleanup)
-  (evil-set-initial-state 'reb-mode 'insert)
+  :init (add-hook 'reb-mode-hook 'narf|reb-cleanup)
   :config
+  (evil-set-initial-state 'reb-mode 'insert)
   (setq reb-re-syntax 'string)
   (map! :map rxt-help-mode-map
         :n [escape] 'kill-buffer-and-window
         :map reb-mode-map
-        :n "C-g"        'reb-quit
-        :n [escape]     'reb-quit
-        :n [backtab]    'reb-change-syntax))
+        :n "C-g" 'reb-quit
+        :n [escape] 'reb-quit
+        :n [backtab] 'reb-change-syntax))
 
 (use-package rotate-text
   :commands (rotate-text rotate-text-backward)
@@ -260,6 +252,83 @@
    :unless '(sp-point-before-word-p sp-point-before-same-p))
   (sp-with-modes '(xml-mode nxml-mode php-mode)
     (sp-local-pair "<!--" "-->"   :post-handlers '(("| " "SPC")))))
+
+
+;;
+;; Keybinding fixes
+;;
+
+;; This section is dedicated to bindings that "fix" certain keys so that they
+;; behave more like vim (or how I like it).
+
+;; Line-wise mouse selection on margin
+(global-set-key (kbd "<left-margin> <down-mouse-1>") 'narf/mouse-drag-line)
+(global-set-key (kbd "<left-margin> <mouse-1>")      'narf/mouse-select-line)
+(global-set-key (kbd "<left-margin> <drag-mouse-1>") 'narf/mouse-select-line)
+
+;; Restores "dumb" indentation to the tab key. This rustles a lot of peoples'
+;; jimmies, apparently, but it's how I like it.
+(map! :i "<tab>"     'narf/dumb-indent
+      :i "<backtab>" 'narf/dumb-dedent
+      :i "<C-tab>"   'indent-for-tab-command
+      ;; No dumb-tab for lisp
+      (:map lisp-mode-map        :i [remap narf/dumb-indent] 'indent-for-tab-command)
+      (:map emacs-lisp-mode-map  :i [remap narf/dumb-indent] 'indent-for-tab-command)
+      ;; Highjacks space/backspace to:
+      ;;   a) eat spaces on either side of the cursor, if present ( | ) -> (|)
+      ;;   b) allow backspace to delete space-indented blocks intelligently
+      ;;   c) but do none of this when inside a string
+      :i "SPC"                                  'narf/inflate-space-maybe
+      :i [remap backward-delete-char-untabify]  'narf/deflate-space-maybe
+      :i [remap newline]                        'narf/newline-and-indent
+      ;; Smarter move-to-beginning-of-line
+      :i [remap move-beginning-of-line]         'narf/move-to-bol
+      ;; Restore bash-esque keymaps in insert mode; C-w and C-a already exist
+      :i "C-e" 'narf/move-to-eol
+      :i "C-u" 'narf/backward-kill-to-bol-and-indent
+      ;; Fixes delete
+      :i "<kp-delete>" 'delete-char
+      ;; Fix osx keymappings and then some
+      :i "<M-left>"   'narf/move-to-bol
+      :i "<M-right>"  'narf/move-to-eol
+      :i "<M-up>"     'beginning-of-buffer
+      :i "<M-down>"   'end-of-buffer
+      :i "<C-up>"     'smart-up
+      :i "<C-down>"   'smart-down
+      ;; Fix emacs motion keys
+      :i "A-b"      'evil-backward-word-begin
+      :i "A-w"      'evil-forward-word-begin
+      :i "A-e"      'evil-forward-word-end
+      ;; Textmate-esque insert-line before/after
+      :i "<M-return>"    'evil-open-below
+      :i "<S-M-return>"  'evil-open-above
+      ;; insert lines in-place)
+      :n "<M-return>"    (λ! (save-excursion (evil-insert-newline-below)))
+      :n "<S-M-return>"  (λ! (save-excursion (evil-insert-newline-above)))
+      ;; Make ESC quit all the things
+      (:map (minibuffer-local-map
+             minibuffer-local-ns-map
+             minibuffer-local-completion-map
+             minibuffer-local-must-match-map
+             minibuffer-local-isearch-map)
+        [escape] 'abort-recursive-edit
+        "C-r" 'evil-paste-from-register)
+
+      (:map (evil-ex-search-keymap read-expression-map)
+        "C-w" 'backward-kill-word
+        "C-u" 'backward-kill-sentence
+        "C-b" 'backward-word)
+
+      (:map evil-ex-completion-map "C-a" 'move-beginning-of-line)
+
+      (:after view
+        (:map view-mode-map "<escape>" 'View-quit-all))
+
+      (:after help-mode
+        (:map help-map
+          ;; Remove slow/annoying help subsections
+          "h" nil
+          "g" nil)))
 
 (provide 'core-editor)
 ;;; core-editor.el ends here

@@ -7,7 +7,6 @@
   (defvar helm-global-prompt "››› ")
   (setq-default
    helm-quick-update t
-
    ;; Speedier without fuzzy matching
    helm-mode-fuzzy-match nil
    helm-buffers-fuzzy-matching nil
@@ -15,58 +14,39 @@
    helm-M-x-fuzzy-match nil
    helm-recentf-fuzzy-match nil
    helm-projectile-fuzzy-match nil
-
+   ;; Display extraineous helm UI elements
    helm-display-header-line nil
    helm-ff-auto-update-initial-value nil
    helm-find-files-doc-header nil
-   helm-move-to-line-cycle-in-source t
-
    ;; Don't override evil-ex's completion
    helm-mode-handle-completion-in-region nil
-   helm-candidate-number-limit 50)
+   helm-candidate-number-limit 50
+   ;; Don't wrap item cycling
+   helm-move-to-line-cycle-in-source t)
+
+  (defvar helm-projectile-find-file-map (make-sparse-keymap))
 
   :config
-  (map! (:map (helm-map helm-projectile-find-file-map)
-          :e "ESC"        nil
-          :e "/"          nil
-          :e "M-v"        'clipboard-yank
-          :e "C-w"        'backward-kill-word
-          :e "C-r"        'evil-paste-from-register ; Evil registers in helm! Glorious!
-          :e "C-b"        'backward-word
-          :e "<left>"     'backward-char
-          :e "<right>"    'forward-char
-          :e "<escape>"   'helm-keyboard-quit
-          :e [escape]     'helm-keyboard-quit
-          :e "<tab>"      'helm-execute-persistent-action)
-        (:map (helm-generic-files-map helm-projectile-find-file-map)
-          :e "ESC"        'helm-keyboard-quit)
-        (:map helm-ag-map
-          :e "<backtab>"  'helm-ag-edit)
-        (:after helm-ag
-          (:map helm-ag-edit-map
-            "<escape>"   'helm-ag--edit-abort
-            :n "zx"      'helm-ag--edit-abort))
-        (:map helm-map
-          "C-S-n"      'helm-next-source
-          "C-S-p"      'helm-previous-source
-          "C-u"        'helm-delete-minibuffer-contents))
+  (set-keymap-parent helm-projectile-find-file-map helm-map)
+  (map! :map helm-map
+        "C-S-n"      'helm-next-source
+        "C-S-p"      'helm-previous-source
+        "C-u"        'helm-delete-minibuffer-contents
+        "C-w"        'backward-kill-word
+        "M-v"        'clipboard-yank
+        "C-r"        'evil-paste-from-register ; Evil registers in helm! Glorious!
+        "C-b"        'backward-word
+        "<left>"     'backward-char
+        "<right>"    'forward-char
+        "<escape>"   'helm-keyboard-quit
+        "ESC"        'helm-keyboard-quit
+        [escape]     'helm-keyboard-quit
+        "<tab>"      'helm-execute-persistent-action
+        :map helm-generic-files-map
+        :e "ESC"     'helm-keyboard-quit)
 
   ;;; Helm hacks
   (defvar narf-helm-header-fg (face-attribute 'helm-source-header :foreground) "docstring")
-  (defun narf*helm-hide-source-header-maybe ()
-    (if (<= (length helm-sources) 1)
-        (set-face-attribute 'helm-source-header nil :height 0.1 :foreground "#111111")
-      (set-face-attribute 'helm-source-header nil :height 1.0 :foreground narf-helm-header-fg)))
-
-  (defun narf*helm-hide-header (source &optional force)
-    (setq header-line-format nil)
-    (narf|hide-mode-line))
-
-  (defun narf*helm-replace-prompt (plist)
-    (if (keywordp (car plist))
-        (setq plist (plist-put plist :prompt helm-global-prompt))
-      (setcar (nthcdr 2 plist) helm-global-prompt))
-    plist)
 
   ;; Shrink source headers if there is only one source
   (add-hook 'helm-after-initialize-hook 'narf*helm-hide-source-header-maybe)
@@ -74,7 +54,6 @@
   (advice-add 'helm :filter-args 'narf*helm-replace-prompt)
   ;; Hide mode-line in helm windows
   (advice-add 'helm-display-mode-line :override 'narf*helm-hide-header)
-  ;; (advice-add 'helm-display-mode-line :override 'narf*helm-hide-header)
 
   (after! yasnippet (push 'helm-alive-p yas-dont-activate)))
 
@@ -115,8 +94,7 @@
   (map! :map helm-find-files-map
         "C-w" 'helm-find-files-up-one-level
         "TAB" 'helm-execute-persistent-action)
-
-  (mapc (lambda (r) (add-to-list 'helm-boring-file-regexp-list r))
+  (mapc (lambda (r) (push r helm-boring-file-regexp-list))
         (list "\\.projects$" "\\.DS_Store$")))
 
 (use-package helm-ag
@@ -129,7 +107,13 @@
              helm-ag-project-root
              helm-ag-pop-stack
              helm-ag-buffers
-             helm-ag-clear-stack))
+             helm-ag-clear-stack)
+  :config
+  (map! :map helm-ag-map
+        "<backtab>"  'helm-ag-edit
+        :map helm-ag-edit-map
+        "<escape>"   'helm-ag--edit-abort
+        :n "zx"      'helm-ag--edit-abort))
 
 (use-package helm-css-scss ; https://github.com/ShingoFukuyama/helm-css-scss
   :commands (helm-css-scss

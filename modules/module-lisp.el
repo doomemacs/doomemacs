@@ -3,12 +3,8 @@
 (associate! emacs-lisp-mode :match "\\(/Cask\\|\\.\\(el\\|gz\\)\\)$")
 (add-hook! emacs-lisp-mode '(turn-on-eldoc-mode flycheck-mode highlight-numbers-mode))
 
-(use-package highlight-quoted
-  :commands (highlight-quoted-mode)
-  :init (add-hook 'emacs-lisp-mode-hook 'highlight-quoted-mode))
-
-(use-package slime :defer t
-  :config (setq inferior-lisp-program "clisp"))
+;; Real go-to-definition for elisp
+(map! :map emacs-lisp-mode-map :m "gd" 'narf/elisp-find-function-at-pt)
 
 (add-hook 'emacs-lisp-mode-hook 'narf/elisp-init)
 (defun narf/elisp-init ()
@@ -27,9 +23,6 @@
         (delq (assq 'emacs-lisp-mode editorconfig-indentation-alist)
               editorconfig-indentation-alist))
 
-  ;; Real go-to-definition for elisp
-  (map! :map emacs-lisp-mode-map :m "gd" 'narf/elisp-find-function-at-pt)
-
   (remove-hook 'emacs-lisp-mode-hook 'narf/elisp-init))
 
 (add-hook 'emacs-lisp-mode-hook 'narf/elisp-hook)
@@ -43,7 +36,7 @@
          (,(concat
             "(\\(def-"
             (regexp-opt '("electric" "project-type" "company-backend"
-                          "builder" "repl" "textobj" "tmp-excmd" "rotate"
+                          "builder" "repl" "text-obj" "tmp-excmd" "rotate"
                           "repeat" "yas-mode" "version-cmd" "docset"
                           "open-with"))
             "!\\)")
@@ -98,6 +91,15 @@
              for disp = (propertize disp1 'help-echo bufname)
              collect
              (cons disp (cons k v)))))
+
+
+;;
+(use-package highlight-quoted
+  :commands (highlight-quoted-mode)
+  :init (add-hook 'emacs-lisp-mode-hook 'highlight-quoted-mode))
+
+(use-package slime :defer t
+  :config (setq inferior-lisp-program "clisp"))
 
 
 ;;

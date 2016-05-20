@@ -23,12 +23,12 @@
         evil-complete-previous-func 'narf/company-evil-complete-previous)
   (push 'company-sort-by-occurrence company-transformers)
 
-  (define-key company-active-map "\C-w" nil)
-
-  (global-company-mode +1))
+  (global-company-mode +1)
+  (define-key company-active-map "\C-w" nil))
 
 ;; NOTE: Doesn't look pretty outside of emacs-mac
 (use-package company-quickhelp
+  :when (featurep 'mac)
   :after company
   :config (company-quickhelp-mode +1))
 
