@@ -4,7 +4,7 @@
   :defer 1
   :commands (helm helm-other-buffer helm-mode)
   :init
-  (defvar helm-global-prompt "›")
+  (defvar helm-global-prompt "››› ")
   (setq-default
    helm-quick-update t
 
@@ -23,28 +23,29 @@
 
    ;; Don't override evil-ex's completion
    helm-mode-handle-completion-in-region nil
-   helm-candidate-number-limit 40)
+   helm-candidate-number-limit 50)
 
   :config
-  (map! (:map (helm-map helm-generic-files-map helm-find-files-map helm-swoop-map helm-projectile-find-file-map)
-          "ESC"        nil
-          "/"          nil
-          "M-v"        'clipboard-yank
-          "C-w"        'backward-kill-word
-          "C-r"        'evil-paste-from-register ; Evil registers in helm! Glorious!
-          "C-b"        'backward-word
-          "<left>"     'backward-char
-          "<right>"    'forward-char
-          "<escape>"   'helm-keyboard-quit
-          [escape]     'helm-keyboard-quit
-          "<tab>"      'helm-execute-persistent-action)
+  (map! (:map (helm-map helm-projectile-find-file-map)
+          :e "ESC"        nil
+          :e "/"          nil
+          :e "M-v"        'clipboard-yank
+          :e "C-w"        'backward-kill-word
+          :e "C-r"        'evil-paste-from-register ; Evil registers in helm! Glorious!
+          :e "C-b"        'backward-word
+          :e "<left>"     'backward-char
+          :e "<right>"    'forward-char
+          :e "<escape>"   'helm-keyboard-quit
+          :e [escape]     'helm-keyboard-quit
+          :e "<tab>"      'helm-execute-persistent-action)
         (:map (helm-generic-files-map helm-projectile-find-file-map)
-          "ESC"        'helm-keyboard-quit)
+          :e "ESC"        'helm-keyboard-quit)
         (:map helm-ag-map
-          "<backtab>"  'helm-ag-edit)
-        (:map helm-ag-edit-map
-          "<escape>"   'helm-ag--edit-abort
-          :n "zx"      'helm-ag--edit-abort)
+          :e "<backtab>"  'helm-ag-edit)
+        (:after helm-ag
+          (:map helm-ag-edit-map
+            "<escape>"   'helm-ag--edit-abort
+            :n "zx"      'helm-ag--edit-abort))
         (:map helm-map
           "C-S-n"      'helm-next-source
           "C-S-p"      'helm-previous-source
@@ -67,22 +68,33 @@
       (setcar (nthcdr 2 plist) helm-global-prompt))
     plist)
 
-  (defvar narf-helm-force-project-buffers nil)
-  (defun helm*buffer-list (&rest _) (narf/get-buffer-names narf-helm-force-project-buffers))
-  (advice-add 'helm-buffer-list :override 'helm*buffer-list)
-
   ;; Shrink source headers if there is only one source
   (add-hook 'helm-after-initialize-hook 'narf*helm-hide-source-header-maybe)
   ;; A simpler prompt: see `helm-global-prompt'
   (advice-add 'helm :filter-args 'narf*helm-replace-prompt)
   ;; Hide mode-line in helm windows
   (advice-add 'helm-display-mode-line :override 'narf*helm-hide-header)
+  ;; (advice-add 'helm-display-mode-line :override 'narf*helm-hide-header)
 
   (after! yasnippet (push 'helm-alive-p yas-dont-activate)))
 
 (use-package helm-mode
   :after helm
   :config (helm-mode 1))
+
+(use-package helm-locate
+  :defer t
+  :init
+  (defvar helm-generic-files-map (make-sparse-keymap)
+    "Generic Keymap for files.")
+  :config (set-keymap-parent helm-generic-files-map helm-map))
+
+(use-package helm-buffers
+  :commands (helm-buffers-list helm-mini)
+  :config
+  (defvar narf-helm-force-project-buffers nil)
+  (defun helm*buffer-list (&rest _) (narf/get-buffer-names narf-helm-force-project-buffers))
+  (advice-add 'helm-buffer-list :override 'helm*buffer-list))
 
 (use-package helm-tags
   :commands (helm-tags-get-tag-file helm-etags-select))
