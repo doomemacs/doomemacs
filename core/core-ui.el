@@ -62,22 +62,17 @@
   (set-frame-font narf-default-font t)
   (set-face-attribute 'default t :font narf-current-font)
   ;; standardize fringe width
-  (fringe-mode narf-fringe-size)
+  (push `(left-fringe  . ,narf-fringe-size) default-frame-alist)
+  (push `(right-fringe . ,narf-fringe-size) default-frame-alist)
+  ;; no fringe in the minibuffer
+  (add-hook! after-init (set-window-fringes (minibuffer-window) 0 0 nil))
   ;; Show tilde in margin on empty lines
   (define-fringe-bitmap 'tilde [64 168 16] nil nil 'center)
-  (set-fringe-bitmap-face 'tilde 'font-lock-comment-face)
+  (set-fringe-bitmap-face 'tilde 'fringe)
   (setcdr (assq 'empty-line fringe-indicator-alist) 'tilde)
   ;; Default frame size on startup
   (push '(width . 120) default-frame-alist)
-  (push '(height . 30) default-frame-alist)
-  ;; Brighter minibuffer when active + no fringe in minibuffer
-  (defface narf-minibuffer-active '((t (:inherit mode-line)))
-    "Face for active minibuffer")
-  (add-hook! minibuffer-setup
-    (set-window-fringes (minibuffer-window) 0 0 nil)
-    (set (make-local-variable 'face-remapping-alist)
-         '((default narf-minibuffer-active))))
-  (add-hook! after-init (set-window-fringes (minibuffer-window) 0 0 nil)))
+  (push '(height . 32) default-frame-alist))
 
 ;; Try to display unicode characters without upsetting line-hieght (as much as possible)
 (narf-fix-unicode "DejaVu Sans" '(?⚠ ?★ ?λ ?➊ ?➋ ?➌ ?➍ ?➎ ?❻ ?➐ ?➑ ?➒ ?➓))
