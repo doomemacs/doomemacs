@@ -222,7 +222,7 @@
 (depends-on "flycheck-rust")
 
 ;; Scala -- modules/module-scala.el
-(depends-on "scala-mode2")
+(depends-on "scala-mode")
 (depends-on "sbt-mode")
 (depends-on "ensime")
 
