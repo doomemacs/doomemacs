@@ -33,9 +33,9 @@
         evil-replace-state-tag   "R"
 
         ;; Color-coded state cursors
-        evil-default-cursor "orange"
+        evil-default-cursor (face-attribute 'minibuffer-prompt :foreground nil t)
         evil-normal-state-cursor 'box
-        evil-emacs-state-cursor  '("cyan" box)
+        evil-emacs-state-cursor  `(,(face-attribute 'highlight :foreground nil t) box)
         evil-insert-state-cursor 'bar
         evil-visual-state-cursor 'hollow
 
