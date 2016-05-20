@@ -155,7 +155,7 @@
 
    `(vertical-border                ((,c (:foreground ,vertical-bar :background ,vertical-bar))))
 
-   `(linum                          ((,c (:foreground ,linum-fg :background ,bg :bold nil :height 0.8))))
+   `(linum                          ((,c (:foreground ,linum-fg :background ,bg :bold nil))))
    `(linum-highlight-face           ((,c (:inherit linum :foreground ,linum-hl-fg :background ,current-line))))
    `(show-paren-match               ((,c (:foreground ,magenta :inverse-video t))))
 
