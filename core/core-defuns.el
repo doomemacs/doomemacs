@@ -248,14 +248,18 @@ Examples:
      (define-key evil-motion-state-map (kbd "S-SPC") ',prev-func)))
 
 ;;
-(defun narf|update-scratch-buffer-cwd (&optional dir) ; see core-editor.el
-  "Make sure scratch buffer is always 'in a project.'"
-  (let ((dir (or dir (narf/project-root))))
-    (with-current-buffer (get-buffer-create "*scratch*")
+(defun narf|update-scratch-buffer-cwd (&optional dir)
+  "Make sure scratch buffer is always 'in a project', and looks good."
+  (let ((dir (or dir (narf/project-root)))
+        (scratchbuf (get-buffer-create "*scratch*")))
+    (with-current-buffer scratchbuf
+      ;; Darken the window if it's the only one left
+      (if (one-window-p t)
+          (kill-local-variable 'face-remapping-alist)
+        (set (make-local-variable 'face-remapping-alist)
+             '((default narf-default))))
       (setq default-directory dir)
-      (setq header-line-format
-            '(:eval
-              (concat " ∴ " (abbreviate-file-name default-directory)))))))
+      (setq mode-line-format '(:eval (spaceline-ml-scratch))))))
 
 
 ;;
