@@ -9,12 +9,10 @@
   (def-builder! ruby-mode "rake %s" "Rakefile")
   (def-company-backend! ruby-mode (dabbrev-code))
   (def-docset! ruby-mode "rb,ruby,rubygem")
-  (def-version-cmd! ruby-mode "ruby --version | cut -d' ' -f2")
-  (def-repl! ruby-mode inf-ruby)
   (def-electric! ruby-mode :words ("else" "end" "elseif"))
-
-  (setq ruby-deep-indent-paren t) ; Formatting
-
+  (def-repl! ruby-mode inf-ruby)
+  (def-version-cmd! ruby-mode "ruby --version | cut -d' ' -f2")
+  (setq ruby-deep-indent-paren t)
   ;; Don't interfere with my custom RET behavior
   (define-key ruby-mode-map [?\n] nil))
 
@@ -73,6 +71,7 @@
 (use-package company-inf-ruby :after inf-ruby)
 
 ;;
+;; TODO Parse Rakefile for tasks
 (def-project-type! rake "rake"
   :files ("Rakefile"))
 
