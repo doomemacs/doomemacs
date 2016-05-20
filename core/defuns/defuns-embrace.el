@@ -13,11 +13,13 @@
 ;;;###autoload
 (defun narf/embrace-escaped ()
   "Escaped surround characters."
-  (let* ((char (string (read-char "\\")))
-         (pair (narf--embrace-get-pair char))
-         (text (if (sp-point-in-string) "\\\\%s" "\\%s")))
-    (cons (format text (car pair))
-          (format text (cdr pair)))))
+  (let ((char (read-char "\\")))
+    (if (eq char 27)
+        (cons "" "")
+      (let ((pair (narf--embrace-get-pair (string char)))
+            (text (if (sp-point-in-string) "\\\\%s" "\\%s")))
+        (cons (format text (car pair))
+              (format text (cdr pair)))))))
 
 ;;;###autoload
 (defun narf/embrace-latex ()
