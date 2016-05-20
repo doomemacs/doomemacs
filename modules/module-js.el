@@ -109,22 +109,49 @@
         (:leader :n "h" 'tide-documentation-at-point)))
 
 ;;
+(defvar npm-conf (make-hash-table :test 'equal))
 (def-project-type! nodejs "node"
-  :modes (web-mode js-mode js2-mode json-mode coffee-mode scss-mode sass-mode less-css-mode)
-  :files ("package.json"))
-
-(def-project-type! angularjs "angular"
-  :modes (web-mode js-mode js2-mode json-mode coffee-mode scss-mode sass-mode less-css-mode)
-  :files ("public/libraries/angular/"))
-
-(def-project-type! electron "electron"
-  :modes (nodejs-project-mode)
-  :files ("app/index.html" "app/main.js"))
-;; TODO electron-compile support
+  :modes (web-mode js-mode coffee-mode css-mode sass-mode pug-mode)
+  :files ("package.json")
+  :when
+  (lambda (&rest _)
+    (let* ((project-path (narf/project-root))
+           (hash (gethash project-path npm-conf))
+           (package-file (f-expand "package.json" project-path))
+           deps)
+      (awhen (and (not hash) (f-exists? package-file)
+                  (json-read-file package-file))
+        (puthash project-path it npm-conf)))
+    t))
 
 (def-project-type! expressjs "express"
+  :modes (nodejs-project-mode bower-project-mode)
+  :when
+  (lambda (&rest _)
+    (awhen (gethash (narf/project-root) npm-conf)
+      (assq 'express (cdr-safe (assq 'dependencies it))))))
+
+;; TODO electron-compile support
+(def-project-type! electron "electron"
   :modes (nodejs-project-mode)
-  :files ("node_modules/express/"))
+  :files ("app/index.html" "app/main.js")
+  :when
+  (lambda (&rest _)
+    (awhen (gethash (narf/project-root) npm-conf)
+      (let ((deps (append (car-safe (assq 'dependencies it))
+                          (car-safe (assq 'devDependencies it)))))
+        (or (assq 'electron-prebuilt deps)
+            (assq 'electron-packager deps)
+            (string-prefix-p "electron" (or (assq 'start it) "") t))))))
+
+(def-project-type! reactjs "react"
+  :modes (nodejs-project-mode bower-project-mode)
+  :when
+  (lambda (&rest _)
+    (let* ((project (narf/project-root))
+           (deps (append (cdr-safe (assq 'dependencies (gethash project bower-conf)))
+                         (cdr-safe (assq 'dependencies (gethash project npm-conf))))))
+      (assq 'react deps))))
 
 ;; TODO react
 
