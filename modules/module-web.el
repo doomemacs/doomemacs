@@ -70,6 +70,34 @@
 ;; Project types
 ;;
 
+(defvar bower-conf (make-hash-table :test 'equal))
+(def-project-type! bower "bower"
+  :modes (web-mode js-mode coffee-mode css-mode sass-mode pug-mode)
+  :files ("bower.json")
+  :when
+  (lambda (&rest _)
+    (let* ((project-path (narf/project-root))
+           (hash (gethash project-path bower-conf))
+           (package-file (f-expand "bower.json" project-path))
+           deps)
+      (awhen (and (not hash) (f-exists? package-file)
+                  (json-read-file package-file))
+        (puthash project-path it bower-conf)))
+    t))
+
+(def-project-type! angularjs "angular"
+  :modes (nodejs-project-mode bower-project-mode)
+  :when
+  (lambda (&rest _)
+    (let* ((project (narf/project-root))
+           (bower (gethash project bower-conf))
+           (npm (gethash project npm-conf))
+           (deps (append (cdr-safe (assq 'dependencies bower))
+                         (cdr-safe (assq 'dependencies npm))
+                         (cdr-safe (assq 'devDependencies bower))
+                         (cdr-safe (assq 'devDependencies npm)))))
+      (assq 'angular deps))))
+
 (def-project-type! jekyll ":{"
   :modes (web-mode js-mode coffee-mode css-mode haml-mode pug-mode)
   :match "/\\(\\(css\\|_\\(layouts\\|posts\\|sass\\)\\)/.+\\|.+.html\\)$"
