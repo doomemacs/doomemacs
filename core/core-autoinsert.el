@@ -34,8 +34,9 @@
 
           ;; Elisp
           ("-test\\.el$"                     "__"               emacs-ert-mode)
-          ("\\.emacs\\.d/.+\\.el$"           "__initfile"       emacs-lisp-mode)
-          ("\\.emacs\\.d/private/\\(snippets\\|templates\\)/.+$" "__" snippet-mode)
+          ("/.+\\.el$"                       "__initfile"       emacs-lisp-mode)
+          ("\\(\\.emacs\\.d\\|narf-emacs\\)/private/\\(snippets\\|templates\\)/.+$"
+           "__" snippet-mode)
 
           ;; Go
           ("/main\\.go$"                     "__main.go"        go-mode t)
