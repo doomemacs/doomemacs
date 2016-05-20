@@ -18,13 +18,13 @@
   (require 'git-gutter-fringe)
 
   (define-fringe-bitmap 'git-gutter-fr:added
-    [240 240 240 240 240 240 240 240 240 240 240 240 240 240 240 240 240 240 240 240]
+    [224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224]
     nil nil 'center)
   (define-fringe-bitmap 'git-gutter-fr:modified
-    [240 240 240 240 240 240 240 240 240 240 240 240 240 240 240 240 240 240 240 240]
+    [224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224]
     nil nil 'center)
   (define-fringe-bitmap 'git-gutter-fr:deleted
-    [0 0 0 0 0 0 0 128 192 224 240 248]
+    [0 0 0 0 0 0 0 0 0 0 0 0 0 128 192 224 240 248]
     nil nil 'center)
 
   ;; Refresh git-gutter on ESC in normal mode
