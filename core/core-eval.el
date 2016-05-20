@@ -29,8 +29,7 @@
   (setq rtog/mode-repl-alist '())
 
   (defvar narf--repl-buffer nil)
-  (defvar repl-p nil)
-  (make-variable-buffer-local 'repl-p)
+  (defvar-local repl-p nil)
 
   (add-hook! repl-toggle-mode
     (evil-initialize-state 'emacs)
