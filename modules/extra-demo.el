@@ -9,9 +9,9 @@
 ;;   + TODO peer programming collab
 
 ;; Big-mode settings
-(defconst big-mode-font (font-spec :family "Hack" :size 16))
+(defconst big-mode-font (font-spec :family "Inconsolata" :size 18))
 (defconst big-mode-line-spacing 0)
-(defconst big-mode-modeline-height 30)
+(defconst big-mode-modeline-height 35)
 
 ;;
 (use-package impatient-mode
@@ -23,9 +23,13 @@
   :init-value nil
   :lighter " BIG"
   :global t
-  (setq-default powerline-height (if big-mode big-mode-modeline-height big-mode--powerline-height))
   (narf/load-font (if big-mode big-mode-font narf-default-font))
-  (setq-default line-spacing (if big-mode big-mode-line-spacing big-mode--line-spacing)))
+  (setq-default powerline-height
+                (if big-mode
+                    big-mode-modeline-height
+                  big-mode--powerline-height))
+  (setq-default line-spacing
+                (if big-mode big-mode-line-spacing big-mode--line-spacing)))
 
 (provide 'extra-demo)
 ;;; extra-demo.el ends here
