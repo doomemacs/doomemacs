@@ -145,6 +145,12 @@
 (depends-on "omnisharp")
 (depends-on "shader-mode")
 
+;; CSS -- modules/module-css.el
+(depends-on "stylus-mode")
+(depends-on "less-css-mode")
+(depends-on "scss-mode")
+(depends-on "sass-mode")
+
 ;; Data -- modules/module-data.el
 (depends-on "vimrc-mode")
 (depends-on "json-mode")
@@ -238,10 +244,6 @@
 (depends-on "company-web")
 (depends-on "emmet-mode")
 (depends-on "haml-mode")
-(depends-on "stylus-mode")
-(depends-on "less-css-mode")
-(depends-on "scss-mode")
-(depends-on "sass-mode")
 (depends-on "pug-mode" :git "https://github.com/hlissner/pug-mode")
 
 
