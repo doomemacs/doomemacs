@@ -37,24 +37,26 @@
   (setq mode-name "Elisp") ; [pedantry intensifies]
 
   (font-lock-add-keywords
-   nil `(("(\\(lambda\\)"
-          (1 (narf/show-as ?λ)))
+   nil `(("(\\(lambda\\)"       (1 (narf/show-as ?λ)))
+         ("(\\(narf\\)\\>" (1 font-lock-keyword-face append))
          ;; Highlight narf macros (macros are fontified in emacs 25+)
          (,(concat
             "(\\(def-"
             (regexp-opt '("electric" "project-type" "company-backend"
                           "builder" "repl" "textobj" "tmp-excmd" "rotate"
-                          "repeat" "yas-mode" "version-cmd" "docset"))
+                          "repeat" "yas-mode" "version-cmd" "docset"
+                          "open-with"))
             "!\\)")
           (1 font-lock-keyword-face append))
          (,(concat
             "(\\("
             (regexp-opt '("λ" "in" "map" "after" "shut-up" "add-hook"
-                          "associate" "open-with" "define-org-link"
+                          "associate" "define-org-link" "ex"
                           "define-org-section"))
             "!\\)")
           (1 font-lock-keyword-face append))
          ;; Ert
+
          (,(concat
             "("
             (regexp-opt '("ert-deftest") t)
