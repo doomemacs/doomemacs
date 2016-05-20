@@ -195,7 +195,7 @@
   :init
   (defvar-local narf--env-version nil)
   (defvar-local narf--env-command nil)
-  (defvar powerline-height 23)
+  (defvar powerline-height 26)
   (defvar powerline-default-separator nil)
 
   :config
@@ -227,24 +227,21 @@
                          output)
                      buffer-path))))
         (if active 'mode-line-buffer-path)))
-            (powerline-raw "%b" (if active 'mode-line-buffer-file)))
-    :tight-right t)
-
-  (spaceline-define-segment *buffer-modified
-    (unless (string-prefix-p "*" (buffer-name))
-      (powerline-raw
-       (concat (when buffer-file-name
-                 (concat
-                  (if (buffer-modified-p) "[+]")
-                  (if (not (file-exists-p buffer-file-name)) "[!]")))
-               (if buffer-read-only "[RO]"))
-       'mode-line-is-modified))
-    :skip-alternate t
-    :tight t)
+     (powerline-raw "%b" (if active 'mode-line-buffer-file))
+     (when buffer-file-name
+       (powerline-raw
+        (concat (when buffer-file-name
+                  (concat
+                   (if (buffer-modified-p) "✱")
+                   (if (not (file-exists-p buffer-file-name)) "[!]")))
+                (if buffer-read-only "[RO]"))
+        'mode-line-is-modified)))
+    :tight-right t
+    :skip-alternate t)
 
   (spaceline-define-segment *buffer-position
     "A more vim-like buffer position."
-    (concat "%l/%c "
+    (concat "(%l,%c) "
             (let ((start (window-start))
                   (end (window-end))
                   (pend (point-max)))
@@ -254,17 +251,13 @@
                 (let ((perc (/ end 0.01 pend)))
                   (cond ((= start 1) ":Top")
                         ((>= perc 100) ":Bot")
-                        (t (format ":%d%%%%" perc)))))))
-    :tight-left t)
+                        (t (format ":%d%%%%" perc))))))
+            " "))
 
   (spaceline-define-segment *vc
     "Version control info"
-    (when (and active vc-mode)
-      (powerline-raw
-       (substring
-        vc-mode (1+ (length (symbol-name (vc-backend buffer-file-name)))))
-       other-face))
-    :tight-right t)
+    (when vc-mode
+      (concat "⎇ " (substring vc-mode (+ 2 (length (symbol-name (vc-backend buffer-file-name))))))))
 
   ;; search indicators
   (defface mode-line-count-face nil "")
@@ -283,8 +276,7 @@ anzu to be enabled."
     :tight t)
 
   (spaceline-define-segment *iedit
-    "Show the number of matches and what match you're on (or after). Requires
-iedit."
+    "Show the number of iedit regions matches + what match you're on."
     (when (bound-and-true-p iedit-mode)
       (propertize
        (let ((this-oc (iedit-find-current-occurrence-overlay))
@@ -320,7 +312,7 @@ iedit."
     :tight t)
 
   (spaceline-define-segment *macro-recording
-    "Show when recording macro"
+    "Show when recording macro."
     (when (and active defining-kbd-macro)
       (powerline-raw
        (format " %s ▶ " (char-to-string evil-this-macro))
@@ -340,8 +332,7 @@ iedit."
             (if narf--env-version (concat " " narf--env-version))
             (and (featurep 'face-remap)
                  (/= text-scale-mode-amount 0)
-                 (format " (%+d)" text-scale-mode-amount)))
-    :tight-right t)
+                 (format " (%+d)" text-scale-mode-amount))))
 
   (spaceline-define-segment *selection-info
     "Information about the current selection."
@@ -358,14 +349,15 @@ iedit."
             ;; rectangle selection
             ((or (bound-and-true-p rectangle-mark-mode)
                  (and evil (eq 'block evil-visual-selection)))
-             (format "%dx%dB" lines (if evil cols (1- cols))))
+             (format " %dx%dB " lines (if evil cols (1- cols))))
             ;; line selection
             ((or (> lines 1) (eq 'line evil-visual-selection))
              (if (and (eq evil-state 'visual) (eq evil-this-type 'line))
                  (format "%dL" lines)
-               (format "%dC %dL" chars lines)))
-            (t (format "%dC" (if evil chars (1- chars)))))))
-       highlight-face)))
+               (format " %dC %dL " chars lines)))
+            (t (format " %dC " (if evil chars (1- chars)))))))
+       highlight-face))
+    :tight t)
 
   ;; flycheck
   (defface spaceline-flycheck-error
@@ -403,31 +395,44 @@ iedit."
                                                    'mode-line)))))))))
     :tight t)
 
-  (defvar narf--mode-line-padding
-    (pl/percent-xpm powerline-height 100 0 100 0 1 nil nil))
   (spaceline-define-segment *pad
     "Padding, to ensure the mode-line is `powerline-height' pixels tall"
-    narf--mode-line-padding
+    (pl/percent-xpm powerline-height 100 0 100 0 3 (if active "#00B3EF") nil)
     :tight t)
 
   (spaceline-compile
    'main
-   ;; Left side
-   '(((*macro-recording *anzu *iedit *evil-substitute *flycheck)
+   '(*pad
+     ((*macro-recording *anzu *iedit *evil-substitute *flycheck *selection-info)
       :skip-alternate t
       :tight t)
-     *buffer-path
-     *buffer-modified
-     *vc)
-   ;; Right side
-   '(*selection-info
+     *buffer-path)
+   '(*vc
      *major-mode
      *env-version
      *buffer-encoding-abbrev
      (global :when active)
-     *buffer-position
-     *pad
-     ))
+     *buffer-position))
+
+  ;;
+  (spaceline-define-segment *default-dir
+    "Shows default-directory"
+    (concat "[" (abbreviate-file-name default-directory) "]")
+    :face other-face)
+
+  (spaceline-compile
+   'scratch
+   '(*pad
+     ((*macro-recording *anzu *iedit *evil-substitute *flycheck *selection-info)
+      :skip-alternate t
+      :tight t)
+     *buffer-path
+     *default-dir)
+   '(*major-mode
+     *env-version
+     *buffer-encoding-abbrev
+     (global :when active)
+     *buffer-position))
 
   ;; Initialize modeline
   (setq-default mode-line-format '("%e" (:eval (spaceline-ml-main)))))
