@@ -79,5 +79,20 @@
   :modes (php-mode yaml-mode web-mode nxml-mode js2-mode scss-mode)
   :files ("artisan" "server.php"))
 
+(defvar php-composer-conf (make-hash-table :test 'equal))
+(def-project-type! composer "composer"
+  :modes (web-mode php-mode)
+  :files ("composer.json")
+  :when
+  (lambda (&rest _)
+    (let* ((project-path (narf/project-root))
+           (hash (gethash project-path php-composer-conf))
+           (package-file (f-expand "composer.json" project-path))
+           deps)
+      (awhen (and (not hash) (f-exists? package-file)
+                  (json-read-file package-file))
+        (puthash project-path it php-composer-conf)))
+    t))
+
 (provide 'module-php)
 ;;; module-php.el ends here
