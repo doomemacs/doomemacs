@@ -348,11 +348,13 @@
 (use-package evil-embrace
   :after evil-surround
   :config
+  (setq evil-embrace-show-help-p nil)
   (evil-embrace-enable-evil-surround-integration)
-  ;; Escaped surround characters
-  (embrace-add-pair-regexp ?\\ "\\[[{(]" "\\[]})]" 'narf/embrace-escaped)
   (add-hook 'LaTeX-mode-hook 'embrace-LaTeX-mode-hook)
   (add-hook 'org-mode-hook 'embrace-org-mode-hook)
+  (add-hook! (text-mode prog-mode)
+    ;; Escaped surround characters
+    (embrace-add-pair-regexp ?\\ "\\[[{(]" "\\[]})]" 'narf/embrace-escaped))
   (add-hook! emacs-lisp-mode
     (embrace-add-pair ?\` "`" "'"))
   (add-hook! (emacs-lisp-mode lisp-mode)
