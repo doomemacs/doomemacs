@@ -3,7 +3,23 @@
 
 (deftheme narf-one "A dark theme for narfy emacs, inspired by Molokai")
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(when (display-graphic-p)
+  ;; Brighten up code buffers; darken special and popup buffers
+  (defface narf-default '((t (:inherit default)))
+    "Face for source code windows")
+  (defun narf|buffer-bg (&rest _)
+    (set (make-local-variable 'face-remapping-alist)
+         '((default narf-default)
+           (linum narf-linum))))
+  (add-hook 'find-file-hook 'narf|buffer-bg)
+
+  ;; Brighter minibuffer when active + no fringe in minibuffer
+  (defface narf-minibuffer-active '((t (:inherit mode-line)))
+    "Face for active minibuffer")
+  (add-hook! minibuffer-setup
+    (set-window-fringes (minibuffer-window) 0 0 nil)
+    (set (make-local-variable 'face-remapping-alist)
+         '((default narf-minibuffer-active)))))
 
 (let* ((c '((class color)))
 
@@ -88,7 +104,6 @@
    `(default                         ((,c (:foreground ,fg :background ,bg-d))))
    `(narf-default                    ((,c (:inherit default :background ,bg))))
    `(fringe                          ((,c (:inherit narf-default :foreground ,comments))))
-   ;; `(narf-fringe                     ((,c (:inherit fringe :background ,bg))))
    `(cursor                          ((,c (:background ,white))))
    `(hl-line                         ((,c (:background ,current-line))))
    `(region                          ((,c (:background ,selection :foreground ,white))))
