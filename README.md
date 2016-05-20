@@ -27,11 +27,11 @@ make snippets # install hlissner/emacs-snippets into private/snippets
 
 To get a picture of what's in here, check out:
 
-* **[The Caskfile](Cask)**: lists installed plugins and where they're configured.
-* **[init.el](init.el)**: lists all loaded modules
-* **[private/my-bindings.el]**: most of the custom keybinds
-* **[private/my-commands.el]**: available custom ex commands
-* **[ext/Makefile](ext/Makefile)**: lists external dependencies
+* [The Caskfile](Cask): lists installed plugins and where they're configured.
+* [init.el](init.el): lists all loaded modules
+* [private/my-bindings.el](private/my-bindings.el): most of the custom keybinds
+* [private/my-commands.el](private/my-commands.el): available custom ex commands
+* [ext/Makefile](ext/Makefile): lists external dependencies
 
 ### Highlights
 
@@ -55,7 +55,7 @@ To get a picture of what's in here, check out:
 * Snippet expansion with **yasnippet** and **auto-yasnippet**
 * File template support with **auto-insert** and **yasnippet**
 * Code folding with **hideshow**
-* Multiple cursors with **[evil-multiedit]**
+* Multiple cursors with **[evil-multiedit](https://github.com/hlissner/evil-multiedit)**
 * O/S interaction functions, like **os-reveal** and **os-open-in-browser**
 * Custom TODO, FIXME and NOTE highlighting
 * **big-mode** for presentations and demonstrations
@@ -78,10 +78,3 @@ To get a picture of what's in here, check out:
 
 ## What about Windo-
 ![Windows, you say...](http://i3.kym-cdn.com/photos/images/newsfeed/000/549/293/504.gif)
-
-
- [private/my-bindings.el]: private/my-bindings.el
- [private/my-commands.el]: private/my-commands.el
- [evil-mc]: https://github.com/gabesoft/evil-mc
- [multiple-cursors]: https://github.com/magnars/multiple-cursors.el
- [evil-multiedit]: https://github.com/hlissner/evil-multiedit
