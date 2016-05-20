@@ -42,5 +42,6 @@ _update:
 _install:
 	@cask install 2>&1
 	@rm -f bootstrap.elc
+	@mkdir -p $(CACHE_DIR)/{undo,backup,workgroups}
 
 .PHONY: all
