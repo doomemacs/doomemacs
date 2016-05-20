@@ -185,55 +185,55 @@ Examples:
       (while rest
         (setq key (pop rest))
         (push
-         (cond ((listp key) ; it's a sub exp
-                `(,(macroexpand `(map! ,@key))))
+         (reverse
+          (cond ((listp key) ; it's a sub exp
+                 `(,(macroexpand `(map! ,@key))))
 
-               ((keywordp key)
-                (when (memq key '(:leader :localleader))
-                  (push (pcase key
-                          (:leader narf-leader-prefix)
-                          (:localleader narf-localleader-prefix))
-                        rest)
-                  (setq key :prefix))
-                (pcase key
-                  ;; TODO: Data checks
-                  (:prefix  (setq prefix (concat prefix (kbd (pop rest)))) nil)
-                  (:map     (setq keymaps (-list (pop rest))) nil)
-                  (:unset  `(,(macroexpand `(map! ,(kbd (pop rest)) nil))))
-                  (:after   (prog1 `((after! ,(pop rest)   ,(macroexpand `(map! ,@rest)))) (setq rest '())))
-                  (:when    (prog1 `((if ,(pop rest)       ,(macroexpand `(map! ,@rest)))) (setq rest '())))
-                  (:unless  (prog1 `((if (not ,(pop rest)) ,(macroexpand `(map! ,@rest)))) (setq rest '())))
-                  (otherwise ; might be a state prefix
-                   (mapc (lambda (letter)
-                           (if (assoc letter state-map)
-                               (add-to-list 'states (cdr (assoc letter state-map)))
-                             (user-error "Invalid mode prefix %s in key %s" letter key)))
-                         (split-string (substring (symbol-name key) 1) "" t))
-                   (unless states
-                     (user-error "Unrecognized keyword %s" key)) nil)))
+                ((keywordp key)
+                 (when (memq key '(:leader :localleader))
+                   (push (cond ((eq key :leader)
+                                narf-leader-prefix)
+                               ((eq key :localleader)
+                                narf-localleader-prefix))
+                         rest)
+                   (setq key :prefix))
+                 (pcase key
+                   (:prefix  (setq prefix (concat prefix (kbd (pop rest)))) nil)
+                   (:map     (setq keymaps (-list (pop rest))) nil)
+                   (:unset  `(,(macroexpand `(map! ,(kbd (pop rest)) nil))))
+                   (:after   (prog1 `((after! ,(pop rest)   ,(macroexpand `(map! ,@rest)))) (setq rest '())))
+                   (:when    (prog1 `((if ,(pop rest)       ,(macroexpand `(map! ,@rest)))) (setq rest '())))
+                   (:unless  (prog1 `((if (not ,(pop rest)) ,(macroexpand `(map! ,@rest)))) (setq rest '())))
+                   (otherwise ; might be a state prefix
+                    (mapc (lambda (letter)
+                            (if (assoc letter state-map)
+                                (push (cdr (assoc letter state-map)) states)
+                              (user-error "Invalid mode prefix %s in key %s" letter key)))
+                          (split-string (substring (symbol-name key) 1) "" t))
+                    (unless states
+                      (user-error "Unrecognized keyword %s" key)) nil)))
 
-               ;; It's a key-def pair
-               ((or (stringp key)
-                    (characterp key)
-                    (vectorp key))
-                (when (stringp key)
-                  (setq key (kbd key)))
-                (when prefix
-                  (setq key (cond ((vectorp key) (vconcat prefix key))
-                                  (t (concat prefix key)))))
-                (unless (> (length rest) 0)
-                  (user-error "Map has no definition for %s" key))
-                (setq def (pop rest))
-                (let (out-forms)
-                  (dolist (keymap keymaps)
-                    (if (not states)
-                        (add-to-list 'out-forms `(evil-define-key nil ,keymap ,key ,def) t)
-                      (dolist (state states)
-                        (add-to-list 'out-forms `(evil-define-key ',state ,keymap ,key ,def) t))))
-                  (setq states '())
-                  out-forms))
-
-               (t (user-error "Invalid key %s" key)))
+                ;; It's a key-def pair
+                ((or (stringp key)
+                     (characterp key)
+                     (vectorp key))
+                 (when (stringp key)
+                   (setq key (kbd key)))
+                 (when prefix
+                   (setq key (cond ((vectorp key) (vconcat prefix key))
+                                   (t (concat prefix key)))))
+                 (unless (> (length rest) 0)
+                   (user-error "Map has no definition for %s" key))
+                 (setq def (pop rest))
+                 (let (out-forms)
+                   (mapc (lambda (keymap)
+                           (if states
+                               (push `(evil-define-key ',states ,keymap ,key ,def) out-forms)
+                             (push `(define-key ,keymap ,key ,def) out-forms)))
+                         keymaps)
+                   (setq states '())
+                   out-forms))
+                (t (user-error "Invalid key %s" key))))
          forms)
         (setq i (1+ i)))
       `(progn ,@(apply #'nconc (delete nil (delete (list nil) (reverse forms))))))))
