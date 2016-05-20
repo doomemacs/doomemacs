@@ -158,6 +158,8 @@ Examples:
 
 
 (after! evil
+  (defalias 'ex! 'evil-ex-define-cmd)
+
   ;; Register keywords for proper indentation (see `map!')
   (put ':prefix      'lisp-indent-function 'defun)
   (put ':map         'lisp-indent-function 'defun)
