@@ -1,22 +1,5 @@
 ;;; my-commands.el
 
-(evil-define-operator doom:evil-ex-global (beg end pattern command &optional invert)
-  "Rewritten :g[lobal] that will highlight buffer matches. Takes the same arguments."
-  :motion mark-whole-buffer :move-point nil
-  (interactive "<r><g//><!>")
-  (evil-ex-global beg end pattern command invert))
-
-(evil-define-operator doom:align (&optional beg end bang pattern)
-  "Ex interface to `align-regexp'. Accepts vim-style regexps."
-  (interactive "<r><!><//>")
-  (align-regexp
-   beg end
-   (concat "\\(\\s-*\\)"
-           (if bang
-               (regexp-quote pattern)
-             (evil-transform-vim-style-regexp pattern)))
-   1 1))
-
 ;;; Rewritten commands
 (ex! "g[lobal]"    'doom:evil-ex-global)
 

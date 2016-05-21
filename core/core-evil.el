@@ -177,7 +177,24 @@
     (list (when (evil-ex-p) evil-ex-argument)))
   (evil-define-interactive-code "<g//>"
     :ex-arg global-match
-    (when (evil-ex-p) (evil-ex-parse-global evil-ex-argument))))
+    (when (evil-ex-p) (evil-ex-parse-global evil-ex-argument)))
+
+  (evil-define-operator doom:evil-ex-global (beg end pattern command &optional invert)
+    "Rewritten :g[lobal] that will highlight buffer matches. Takes the same arguments."
+    :motion mark-whole-buffer :move-point nil
+    (interactive "<r><g//><!>")
+    (evil-ex-global beg end pattern command invert))
+
+  (evil-define-operator doom:align (&optional beg end bang pattern)
+    "Ex interface to `align-regexp'. Accepts vim-style regexps."
+    (interactive "<r><!><//>")
+    (align-regexp
+     beg end
+     (concat "\\(\\s-*\\)"
+             (if bang
+                 (regexp-quote pattern)
+               (evil-transform-vim-style-regexp pattern)))
+     1 1)))
 
 ;; evil plugins
 (use-package evil-numbers
