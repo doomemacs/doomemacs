@@ -195,6 +195,66 @@ enable multiple minor modes for the same regexp.")
 
 
 ;;
+(setq initial-major-mode 'doom-mode
+      initial-scratch-message nil
+      inhibit-startup-screen t) ; don't show emacs start screen
+
+(defvar doom-buffer-name "*doom*" "")
+(defvar doom-buffer nil "")
+(define-derived-mode doom-mode text-mode "DOOM"
+  "Major mode for special DOOM buffers.")
+
+(add-hook 'after-init-hook 'doom-mode-init)
+(defun doom-mode-init (&optional auto-detect-frame)
+  (let ((old-scratch (get-buffer "*scratch*")))
+    (when old-scratch
+      (with-current-buffer old-scratch
+        (rename-buffer doom-buffer-name)
+        (setq doom-buffer old-scratch))))
+  (unless doom-buffer
+    (setq doom-buffer (get-buffer-create doom-buffer-name)))
+  (with-current-buffer doom-buffer
+    (doom-mode)
+    (erase-buffer)
+    (insert
+     (let* ((width (- (if auto-detect-frame (window-width) (cdr (assq 'width default-frame-alist))) 3))
+            (lead (make-string (truncate (/ (- width 78) 2)) ? )))
+       (concat
+        (propertize
+         (concat
+          (make-string (min 3 (/ (if auto-detect-frame (window-height) (cdr (assq 'height default-frame-alist))) 5)) ?\n)
+          lead "=================     ===============     ===============   ========  ========\n"
+          lead "\\\\ . . . . . . .\\\\   //. . . . . . .\\\\   //. . . . . . .\\\\  \\\\. . .\\\\// . . //\n"
+          lead "||. . ._____. . .|| ||. . ._____. . .|| ||. . ._____. . .|| || . . .\\/ . . .||\n"
+          lead "|| . .||   ||. . || || . .||   ||. . || || . .||   ||. . || ||. . . . . . . ||\n"
+          lead "||. . ||   || . .|| ||. . ||   || . .|| ||. . ||   || . .|| || . | . . . . .||\n"
+          lead "|| . .||   ||. _-|| ||-_ .||   ||. . || || . .||   ||. _-|| ||-_.|\\ . . . . ||\n"
+          lead "||. . ||   ||-'  || ||  `-||   || . .|| ||. . ||   ||-'  || ||  `|\\_ . .|. .||\n"
+          lead "|| . _||   ||    || ||    ||   ||_ . || || . _||   ||    || ||   |\\ `-_/| . ||\n"
+          lead "||_-' ||  .|/    || ||    \\|.  || `-_|| ||_-' ||  .|/    || ||   | \\  / |-_.||\n"
+          lead "||    ||_-'      || ||      `-_||    || ||    ||_-'      || ||   | \\  / |  `||\n"
+          lead "||    `'         || ||         `'    || ||    `'         || ||   | \\  / |   ||\n"
+          lead "||            .===' `===.         .==='.`===.         .===' /==. |  \\/  |   ||\n"
+          lead "||         .=='   \\_|-_ `===. .==='   _|_   `===. .===' _-|/   `==  \\/  |   ||\n"
+          lead "||      .=='    _-'    `-_  `='    _-'   `-_    `='  _-'   `-_  /|  \\/  |   ||\n"
+          lead "||   .=='    _-'          '-__\\._-'         '-_./__-'         `' |. /|  |   ||\n"
+          lead "||.=='    _-'                                                     `' |  /==.||\n"
+          lead "=='    _-'                         E M A C S                          \\/   `==\n"
+          lead "\\   _-'                                                                `-_   /\n"
+          lead " `''                                                                     ``'")
+         'face 'font-lock-comment-face)
+        "\n\n"
+        (propertize
+         (s-center (1- width) (format "Press `,m` to open recent files, or `,E` to access emacs.d"
+                                      emacs-end-time))
+         'face 'font-lock-keyword-face)
+        (if emacs-end-time
+            (concat
+             "\n\n"
+             (s-trim-right (s-center (- width 2) (format "Loaded X packages in %.3fs" emacs-end-time))))
+          ""))))
+    (doom|update-scratch-buffer-cwd)))
+
 (add-hook! after-init
   ;; We add this to `after-init-hook' to allow errors to stop it
   (defadvice save-buffers-kill-emacs (around no-query-kill-emacs activate)
