@@ -1,5 +1,4 @@
 ;;; bootstrap.el
-
 (eval-when-compile (require 'cl-lib))
 
 ;; Global constants
@@ -31,7 +30,6 @@
 
 (eval-when-compile
   (defvar doom--load-path load-path)
-
   ;; Helper for traversing subdirectories recursively
   (defun --subdirs (path &optional include-self)
     (let ((result (if include-self (list path) (list))))
@@ -53,12 +51,10 @@
   "Bootstrap DOOM emacs and initialize PACKAGES"
   (setq-default gc-cons-threshold 4388608
                 gc-cons-percentage 0.4)
-
   ;; prematurely optimize for faster startup
   (let ((gc-cons-threshold 339430400)
         (gc-cons-percentage 0.6)
         file-name-handler-alist)
-
     ;; Scan various folders to populate the load-paths
     (setq load-path
           (eval-when-compile

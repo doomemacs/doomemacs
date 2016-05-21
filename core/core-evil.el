@@ -161,12 +161,12 @@
                             ("S" (shell-quote-argument path))
                             (t path))
                           "")))
-                (setq file-name
-                      (replace-regexp-in-string (format "\\(?:^\\|[^\\\\]\\)\\(%s\\)"
-                                                        (string-trim-left (car match)))
-                                                path file-name t t 1)))))
-          ;; Clean up
-          (setq file-name (replace-regexp-in-string regexp "\\1" file-name t)))))
+              (setq file-name
+                    (replace-regexp-in-string (format "\\(?:^\\|[^\\\\]\\)\\(%s\\)"
+                                                      (string-trim-left (car match)))
+                                              path file-name t t 1)))))
+        ;; Clean up
+        (setq file-name (replace-regexp-in-string regexp "\\1" file-name t)))))
 
   ;; Extra argument types for highlight buffer (or global) regexp matches
   (evil-ex-define-argument-type buffer-match :runner doom/evil-ex-buffer-match)
