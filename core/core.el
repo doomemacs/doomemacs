@@ -263,9 +263,8 @@ enable multiple minor modes for the same regexp.")
 
   ;; Prevent any auto-displayed text...
   (advice-add 'display-startup-echo-area-message :override 'ignore)
-  ;; ...so we can display our own
   (setq emacs-end-time (float-time (time-subtract (current-time) emacs-start-time)))
-  (message ":: Loaded in %.3fs" emacs-end-time))
+  (message ""))
 
 (provide 'core)
 ;;; core.el ends here
