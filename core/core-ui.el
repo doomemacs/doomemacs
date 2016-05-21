@@ -52,6 +52,13 @@
 (load-theme doom-current-theme t)
 (tooltip-mode -1) ; show tooltips in echo area
 
+;; standardize fringe width
+(push `(left-fringe  . ,doom-fringe-size) default-frame-alist)
+(push `(right-fringe . ,doom-fringe-size) default-frame-alist)
+;; Default frame size on startup
+(push '(width . 120) default-frame-alist)
+(push '(height . 32) default-frame-alist)
+
 ;; set up minibuffer and fringe
 (if (not window-system)
     (menu-bar-mode -1)
@@ -62,12 +69,6 @@
   ;; set fonts
   (set-frame-font doom-default-font t)
   (set-face-attribute 'default t :font doom-current-font)
-  ;; standardize fringe width
-  (push `(left-fringe  . ,doom-fringe-size) default-frame-alist)
-  (push `(right-fringe . ,doom-fringe-size) default-frame-alist)
-  ;; Default frame size on startup
-  (push '(width . 120) default-frame-alist)
-  (push '(height . 32) default-frame-alist)
   ;; no fringe in the minibuffer
   (add-hook! after-init (set-window-fringes (minibuffer-window) 0 0 nil))
   ;; Show tilde in margin on empty lines
