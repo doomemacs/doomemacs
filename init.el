@@ -45,14 +45,15 @@
                (IS-WINDOWS  'core-os-win32))
 
         ;; The heart of DOOM
+        core-scratch       ; a perdier scratch buffer
         core-ui            ; draw me like one of your French editors
         core-evil          ; come to the dark side, we have cookies
         core-editor        ; filling the editor-shaped hole in the emacs OS
-        core-company       ; for the lazy typist
-        core-yasnippet     ; for the lazier typist
-        core-autoinsert    ; for the laziest typist
+        core-company       ; auto-completion, for the lazy typist
+        core-yasnippet     ; snippets, for the lazier typist
+        core-autoinsert    ; file templates, for the laziest typist
         core-flycheck      ; get tazed for every semicolon you forget
-        core-project       ; whose project am I in?
+        core-project       ; for project navigation aficionados
         core-vcs           ; remember remember, that commit in November
         core-helm          ; a search engine for life and love
         core-workgroups    ; cure Emacs alzheimers + tab emulation
@@ -60,12 +61,12 @@
         core-popup         ; taming sudden and inevitable windows
 
         ;; Environments
-        module-apple       ; Applescript, Swift, Launchbar & other wallet syphons
         module-cc          ; C/C++/Obj-C madness
         module-crystal     ; ruby at the speed of c
         module-csharp      ; unity, .NET, and mono shenanigans
         module-css         ; #big-bang::before { content: ""; }
-        module-data        ; config and data formats
+        module-data        ; config/data formats
+        module-db          ; using emacs as a db browser/client
         module-go          ; the hipster dialect
         module-haskell     ; a language that's lazier than I am
         module-java        ; the poster child for carpal tunnel syndrome
@@ -74,7 +75,6 @@
         module-latex       ; for writing papers in Emacs
         module-lisp        ; drowning in parentheses
         module-lua         ; one-based indices? one-based indices.
-        module-org         ; for organized fearless leader
         module-php         ; making php less painful to work with
         module-processing  ; pretty prototypes
         module-python      ; beautiful is better than ugly
@@ -82,11 +82,13 @@
         module-rust        ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
         module-scala       ; Java, but good
         module-sh          ; she sells Z-shells by the C XOR
+        module-swift       ; I wanted emoji variables. I got them
         module-text        ; writing docs for people to ignore
         module-web         ; The end is always near </html>
 
         ;; Experimental
-        ;;module-eshell      ; for inferior OSes *cough*windows
+        ;;module-eshell    ; for inferior OSes *cough*windows
+        ;;module-org       ; for organized fearless leader
 
         ;; Extra libraries
         extra-demo         ; allow me to demonstrate...
@@ -98,5 +100,3 @@
         my-commands
         my-bindings
         ))
-
-;;
