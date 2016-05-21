@@ -1,10 +1,9 @@
-# DOOM Emacs
+![DOOM Emacs](/../screenshots/scratch.png?raw=true)
 ![Screenshot](/../screenshots/main.png?raw=true)
 
-> What we do every night, Pinky...
-
-This is an Emacs configuration for stubborn vimmers and megalomaniacal mice alike. It
-strives to emulate vim as best it can, and surpass it in any way possible.
+This is an Emacs configuration for stubborn vimmers and silent demon
+annihilating protagonists alike. It strives to emulate vim as best it can, and
+surpass it in any way possible.
 
 ## Installation
 
@@ -76,5 +75,5 @@ To get a picture of what's in here, check out:
 
     ![py/rb version in modeline](/../screenshots/version.png?raw=true)
 
-## What about Windo-
-![Windows, you say...](http://i3.kym-cdn.com/photos/images/newsfeed/000/549/293/504.gif)
+---
+![Yay! Evil!](/../screenshots/cacochan.png)
