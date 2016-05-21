@@ -315,11 +315,15 @@
   :config
   (setq evil-embrace-show-help-p nil)
   (evil-embrace-enable-evil-surround-integration)
+  (push (cons ?\\ (make-embrace-pair-struct
+                   :key ?\\
+                   :read-function 'doom/embrace-escaped
+                   :left-regexp "\\[[{(]"
+                   :right-regexp "\\[]})]"))
+        (default-value 'embrace--pairs-list))
+
   (add-hook 'LaTeX-mode-hook 'embrace-LaTeX-mode-hook)
   (add-hook 'org-mode-hook 'embrace-org-mode-hook)
-  (add-hook! (text-mode prog-mode)
-    ;; Escaped surround characters
-    (embrace-add-pair-regexp ?\\ "\\[[{(]" "\\[]})]" 'doom/embrace-escaped))
   (add-hook! emacs-lisp-mode
     (embrace-add-pair ?\` "`" "'"))
   (add-hook! (emacs-lisp-mode lisp-mode)
