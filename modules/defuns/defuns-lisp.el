@@ -45,16 +45,6 @@
   (ert-run-tests-interactively t))
 
 ;;;###autoload
-(defun doom/elisp-auto-compile ()
-  (when (let ((file-name (buffer-file-name)))
-          (and (f-exists? (f-expand (concat (f-base file-name) ".elc") (f-dirname file-name)))
-               (--any? (f-child-of? file-name it)
-                       (append (list doom-core-dir doom-modules-dir
-                                     doom-core-dir doom-modules-dir
-                                     doom-private-dir)))))
-    (doom:compile-el)))
-
-;;;###autoload
 (defun doom/elisp-inf-ielm ()
   (ielm)
   (let ((buf (current-buffer)))

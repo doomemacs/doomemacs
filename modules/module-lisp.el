@@ -58,7 +58,6 @@
           (2 font-lock-function-name-face))))
 
   (add-hook 'before-save-hook 'delete-trailing-whitespace nil t)
-  (add-hook 'after-save-hook  'doom/elisp-auto-compile nil t)
 
   (dolist (i '(("Evil Command" "\\(^\\s-*(evil-define-command +\\)\\(\\_<.+\\_>\\)" 2)
                ("Evil Operator" "\\(^\\s-*(evil-define-operator +\\)\\(\\_<.+\\_>\\)" 2)
