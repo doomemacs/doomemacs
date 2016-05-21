@@ -85,9 +85,9 @@
 
 (after! help-mode
   ;; So that help buffer links do not open in the help popup, we need to redefine these
-  ;; three button types to use `switch-to-buffer-other-window' rather than
-  ;; `pop-to-buffer'. Instead of lambas these help-functions should be function symbols,
-  ;; so that we could advise those instead of clumsify redefine these button types.
+  ;; three button types to use `switch-to-buffer' rather than `pop-to-buffer'.
+  ;; Instead of lambas these help-functions should be function symbols, so that
+  ;; we could advise those instead of clumsify redefine these button types.
   (define-button-type 'help-function-def
     :supertype 'help-xref
     'help-function (lambda (fun file)
@@ -96,7 +96,8 @@
                        (setq file (help-C-file-name (indirect-function fun) 'fun)))
                      (let ((location
                             (find-function-search-for-symbol fun nil file)))
-                       (switch-to-buffer-other-window (car location))
+                       (doom/popup-save
+                        (switch-to-buffer (car location)))
                        (if (cdr location)
                            (goto-char (cdr location))
                          (message "Unable to find location in file"))))
@@ -108,7 +109,8 @@
                      (when (eq file 'C-source)
                        (setq file (help-C-file-name var 'var)))
                      (let ((location (find-variable-noselect var file)))
-                       (switch-to-buffer-other-window (car location))
+                       (doom/popup-save
+                        (switch-to-buffer (car location)))
                        (if (cdr location)
                            (goto-char (cdr location))
                          (message "Unable to find location in file"))))
@@ -120,7 +122,8 @@
                      (require 'find-func)
                      (let ((location
                             (find-function-search-for-symbol fun 'defface file)))
-                       (switch-to-buffer-other-window (car location))
+                       (doom/popup-save
+                        (switch-to-buffer (car location)))
                        (if (cdr location)
                            (goto-char (cdr location))
                          (message "Unable to find location in file"))))
