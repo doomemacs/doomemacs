@@ -251,7 +251,7 @@ enable multiple minor modes for the same regexp.")
         (if emacs-end-time
             (concat
              "\n\n"
-             (s-trim-right (s-center (- width 2) (format "Loaded X packages in %.3fs" emacs-end-time))))
+             (s-trim-right (s-center (- width 2) (format "Loaded in %.3fs" emacs-end-time))))
           ""))))
     (doom|update-scratch-buffer-cwd)))
 
