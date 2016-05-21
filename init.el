@@ -26,7 +26,7 @@
 ;;
 ;; These demons are not part of GNU Emacs.
 ;;
-;;; License: GPLv3
+;;; License: MIT
 
 (load (concat user-emacs-directory "bootstrap.el"))
 ;;
