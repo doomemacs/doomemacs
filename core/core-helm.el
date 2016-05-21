@@ -46,14 +46,14 @@
         :e "ESC"     'helm-keyboard-quit)
 
   ;;; Helm hacks
-  (defvar narf-helm-header-fg (face-attribute 'helm-source-header :foreground) "docstring")
+  (defvar doom-helm-header-fg (face-attribute 'helm-source-header :foreground) "docstring")
 
   ;; Shrink source headers if there is only one source
-  (add-hook 'helm-after-initialize-hook 'narf*helm-hide-source-header-maybe)
+  (add-hook 'helm-after-initialize-hook 'doom*helm-hide-source-header-maybe)
   ;; A simpler prompt: see `helm-global-prompt'
-  (advice-add 'helm :filter-args 'narf*helm-replace-prompt)
+  (advice-add 'helm :filter-args 'doom*helm-replace-prompt)
   ;; Hide mode-line in helm windows
-  (advice-add 'helm-display-mode-line :override 'narf*helm-hide-header)
+  (advice-add 'helm-display-mode-line :override 'doom*helm-hide-header)
 
   (after! yasnippet (push 'helm-alive-p yas-dont-activate)))
 
@@ -71,8 +71,8 @@
 (use-package helm-buffers
   :commands (helm-buffers-list helm-mini)
   :config
-  (defvar narf-helm-force-project-buffers nil)
-  (defun helm*buffer-list (&rest _) (narf/get-buffer-names narf-helm-force-project-buffers))
+  (defvar doom-helm-force-project-buffers nil)
+  (defun helm*buffer-list (&rest _) (doom/get-buffer-names doom-helm-force-project-buffers))
   (advice-add 'helm-buffer-list :override 'helm*buffer-list))
 
 (use-package helm-tags

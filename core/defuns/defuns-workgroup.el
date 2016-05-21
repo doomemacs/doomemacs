@@ -1,37 +1,37 @@
 ;;; defuns-workgroup.el
 
 ;;;###autoload
-(defun narf|wg-cleanup ()
-  (narf/popup-close-all)
+(defun doom|wg-cleanup ()
+  (doom/popup-close-all)
   (when (and (featurep 'neotree) (neo-global--window-exists-p))
     (neotree-hide)))
 
 ;;;###autoload
-(defun narf/wg-projectile-switch-project ()
-  (let ((project-root (narf/project-root)))
-    (narf:workgroup-new nil (file-name-nondirectory (directory-file-name project-root)) t)
-    (narf|update-scratch-buffer-cwd project-root)
+(defun doom/wg-projectile-switch-project ()
+  (let ((project-root (doom/project-root)))
+    (doom:workgroup-new nil (file-name-nondirectory (directory-file-name project-root)) t)
+    (doom|update-scratch-buffer-cwd project-root)
     (when (featurep 'neotree)
       (neotree-projectile-action))))
 
-;;;###autoload (autoload 'narf:save-session "defuns-workgroup" nil t)
-(evil-define-command narf:save-session (&optional bang session-name)
+;;;###autoload (autoload 'doom:save-session "defuns-workgroup" nil t)
+(evil-define-command doom:save-session (&optional bang session-name)
   (interactive "<!><a>")
   (unless (wg-workgroup-list)
     (wg-create-workgroup wg-first-wg-name))
-  (narf|wg-cleanup)
+  (doom|wg-cleanup)
   (wg-save-session-as (if session-name
                           (concat wg-workgroup-directory session-name)
                         (if bang
-                            (concat wg-workgroup-directory (f-filename (narf/project-root)))
+                            (concat wg-workgroup-directory (f-filename (doom/project-root)))
                           wg-session-file))))
 
-;;;###autoload (autoload 'narf:load-session "defuns-workgroup" nil t)
-(evil-define-command narf:load-session (&optional bang session-name)
+;;;###autoload (autoload 'doom:load-session "defuns-workgroup" nil t)
+(evil-define-command doom:load-session (&optional bang session-name)
   (interactive "<!><a>")
   (let ((session-file (if session-name
                           (concat wg-workgroup-directory session-name)
-                        (let ((sess (concat wg-workgroup-directory (f-filename (narf/project-root)))))
+                        (let ((sess (concat wg-workgroup-directory (f-filename (doom/project-root)))))
                           (if bang
                               (when (file-exists-p sess)
                                 sess)
@@ -39,16 +39,16 @@
     (unless session-file
       (user-error "No session found"))
     (wg-open-session session-file))
-  (narf/workgroup-display t))
+  (doom/workgroup-display t))
 
 ;;;###autoload
-(defun narf/clear-sessions ()
+(defun doom/clear-sessions ()
   "Delete all session files."
   (interactive)
   (mapc 'delete-file (f-glob (expand-file-name "*" wg-workgroup-directory))))
 
-;;;###autoload (autoload 'narf:workgroup-new "defuns-workgroup" nil t)
-(evil-define-command narf:workgroup-new (bang name &optional silent)
+;;;###autoload (autoload 'doom:workgroup-new "defuns-workgroup" nil t)
+(evil-define-command doom:workgroup-new (bang name &optional silent)
   "Create a new workgroup. If BANG, overwrite any workgroup named NAME."
   (interactive "<!><a>")
   (unless name
@@ -58,43 +58,43 @@
       (wg-delete-workgroup new-wg)
       (setq new-wg nil))
     (setq new-wg (or new-wg (wg-make-and-add-workgroup name t)))
-    (add-to-list 'narf-wg-names (wg-workgroup-uid new-wg))
+    (add-to-list 'doom-wg-names (wg-workgroup-uid new-wg))
     (wg-switch-to-workgroup new-wg))
   (unless silent
-    (narf--workgroup-display (wg-previous-workgroup t)
+    (doom--workgroup-display (wg-previous-workgroup t)
                              (format "Created %s" name)
                              'success)))
 
-;;;###autoload (autoload 'narf:workgroup-rename "defuns-workgroup" nil t)
-(evil-define-command narf:workgroup-rename (bang &optional new-name)
+;;;###autoload (autoload 'doom:workgroup-rename "defuns-workgroup" nil t)
+(evil-define-command doom:workgroup-rename (bang &optional new-name)
   (interactive "<!><a>")
   (let* ((wg (wg-current-workgroup))
          (wg-uid (wg-workgroup-uid wg))
          (old-name (wg-workgroup-name wg)))
     (if bang
-        (setq narf-wg-names (delete wg-uid narf-wg-names))
+        (setq doom-wg-names (delete wg-uid doom-wg-names))
       (unless new-name
         (user-error "You didn't enter in a name"))
       (wg-rename-workgroup new-name wg)
-      (add-to-list 'narf-wg-names wg-uid)
-      (narf--workgroup-display wg (format "Renamed '%s'->'%s'" old-name new-name) 'success))))
+      (add-to-list 'doom-wg-names wg-uid)
+      (doom--workgroup-display wg (format "Renamed '%s'->'%s'" old-name new-name) 'success))))
 
-;;;###autoload (autoload 'narf:workgroup-delete "defuns-workgroup" nil t)
-(evil-define-command narf:workgroup-delete (&optional bang name)
+;;;###autoload (autoload 'doom:workgroup-delete "defuns-workgroup" nil t)
+(evil-define-command doom:workgroup-delete (&optional bang name)
   (interactive "<!><a>")
   (let* ((current-wg (wg-current-workgroup))
          (wg-name (or name (wg-workgroup-name current-wg))))
     (when bang
       (setq wg-name (wg-read-workgroup-name)))
     (let ((wg (wg-get-workgroup name)))
-      (setq narf-wg-names (delete (wg-workgroup-uid wg) narf-wg-names))
+      (setq doom-wg-names (delete (wg-workgroup-uid wg) doom-wg-names))
       (if (eq wg current-wg)
           (wg-kill-workgroup)
         (wg-delete-workgroup wg))
-      (narf--workgroup-display nil (format "Deleted %s" wg-name) 'success))))
+      (doom--workgroup-display nil (format "Deleted %s" wg-name) 'success))))
 
 ;;;###autoload
-(defun narf:kill-other-workgroups ()
+(defun doom:kill-other-workgroups ()
   "Kill all other workgroups."
   (interactive)
   (let (workgroup (wg-current-workgroup))
@@ -102,7 +102,7 @@
       (unless (wg-current-workgroup-p w)
         (wg-kill-workgroup w)))))
 
-(defun narf--num-to-unicode (num)
+(defun doom--num-to-unicode (num)
   "Return a nice unicode representation of a single-digit number STR."
   (cl-case num
    (1 "➊")
@@ -116,22 +116,22 @@
    (9 "➒")
    (0 "➓")))
 
-(defun narf--workgroup-display (&optional suppress-update message message-face)
-  (message "%s%s" (narf/workgroup-display suppress-update t)
+(defun doom--workgroup-display (&optional suppress-update message message-face)
+  (message "%s%s" (doom/workgroup-display suppress-update t)
            (propertize message 'face message-face)))
 
 ;;;###autoload
-(defun narf/workgroup-display (&optional suppress-update return-p message)
+(defun doom/workgroup-display (&optional suppress-update return-p message)
   (interactive)
   (when (wg-current-session t)
     (unless (eq suppress-update t)
-      (narf/workgroup-update-names (if (wg-workgroup-p suppress-update) suppress-update)))
+      (doom/workgroup-update-names (if (wg-workgroup-p suppress-update) suppress-update)))
     (let ((output (wg-display-internal
                    (lambda (workgroup index)
                      (if (not workgroup) wg-nowg-string
                        (wg-element-display
                         workgroup
-                        (format " %s %s " (narf--num-to-unicode (1+ index)) (wg-workgroup-name workgroup))
+                        (format " %s %s " (doom--num-to-unicode (1+ index)) (wg-workgroup-name workgroup))
                         'wg-current-workgroup-p)))
                    (wg-workgroup-list))))
       (if return-p
@@ -139,16 +139,16 @@
         (message "%s%s" output (or message ""))))))
 
 ;;;###autoload
-(defun narf/workgroup-update-names (&optional wg)
+(defun doom/workgroup-update-names (&optional wg)
   (let ((wg (or wg (wg-current-workgroup))))
-    (unless (member (wg-workgroup-uid wg) narf-wg-names)
+    (unless (member (wg-workgroup-uid wg) doom-wg-names)
       (ignore-errors
         (let ((old-name (wg-workgroup-name wg))
-              (new-name (f-filename (narf/project-root))))
+              (new-name (f-filename (doom/project-root))))
           (unless (string= new-name old-name)
             (wg-rename-workgroup new-name wg)))))))
 
-(defun narf--switch-to-workgroup (direction &optional count)
+(defun doom--switch-to-workgroup (direction &optional count)
   (interactive "<c>")
   (assert (memq direction '(left right)))
   (condition-case err
@@ -156,52 +156,52 @@
         (if count
             (wg-switch-to-workgroup-at-index (1- count))
           (funcall (intern (format "wg-switch-to-workgroup-%s" direction))))
-        (narf/workgroup-display t))
-      (error (narf/workgroup-display t nil (format "Nope! %s" (cadr err))))))
+        (doom/workgroup-display t))
+      (error (doom/workgroup-display t nil (format "Nope! %s" (cadr err))))))
 
-;;;###autoload (autoload 'narf:switch-to-workgroup-left "defuns-workgroup" nil t)
-(evil-define-command narf:switch-to-workgroup-left (count)
+;;;###autoload (autoload 'doom:switch-to-workgroup-left "defuns-workgroup" nil t)
+(evil-define-command doom:switch-to-workgroup-left (count)
   (interactive "<c>")
-  (narf--switch-to-workgroup 'left))
+  (doom--switch-to-workgroup 'left))
 
-;;;###autoload (autoload 'narf:switch-to-workgroup-right "defuns-workgroup" nil t)
-(evil-define-command narf:switch-to-workgroup-right (count)
+;;;###autoload (autoload 'doom:switch-to-workgroup-right "defuns-workgroup" nil t)
+(evil-define-command doom:switch-to-workgroup-right (count)
   (interactive "<c>")
-  (narf--switch-to-workgroup 'right))
+  (doom--switch-to-workgroup 'right))
 
 ;;;###autoload
-(defun narf:switch-to-workgroup-at-index (index)
+(defun doom:switch-to-workgroup-at-index (index)
   (interactive)
-  (narf/workgroup-update-names)
+  (doom/workgroup-update-names)
   (let ((wg (nth index (wg-workgroup-list-or-error)))
         msg)
     (if wg
         (unless (eq wg (wg-current-workgroup t))
           (wg-switch-to-workgroup-at-index index))
       (setq msg (format "No tab #%s" (1+ index))))
-    (narf/workgroup-display t nil msg)))
+    (doom/workgroup-display t nil msg)))
 
 ;;;###autoload
-(defun narf/undo-window-change ()
+(defun doom/undo-window-change ()
   (interactive)
   (call-interactively (if (wg-current-workgroup t) 'wg-undo-wconfig-change 'winner-undo)))
 
 ;;;###autoload
-(defun narf/redo-window-change ()
+(defun doom/redo-window-change ()
   (interactive)
   (call-interactively (if (wg-current-workgroup t) 'wg-redo-wconfig-change 'winner-redo)))
 
 ;;;###autoload
-(defun narf/close-window-or-workgroup ()
+(defun doom/close-window-or-workgroup ()
   (interactive)
-  (if (memq (get-buffer-window) narf-popup-windows)
-      (narf/popup-close)
-    (narf/kill-real-buffer)
+  (if (memq (get-buffer-window) doom-popup-windows)
+      (doom/popup-close)
+    (doom/kill-real-buffer)
     (if (and (one-window-p t)
              (> (length (wg-workgroup-list)) 1))
         (if (string= (wg-workgroup-name (wg-current-workgroup)) wg-first-wg-name)
             (evil-window-delete)
-          (narf:workgroup-delete))
+          (doom:workgroup-delete))
       (evil-window-delete))))
 
 (provide 'defuns-workgroup)

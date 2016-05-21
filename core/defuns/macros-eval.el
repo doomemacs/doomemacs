@@ -4,12 +4,12 @@
 (defmacro def-builder! (mode command &optional build-file)
   "Register major/minor MODE with build COMMAND. If FILES are provided, do an additional
 check to make sure they exist in the project root."
-  (let ((fn (intern (format "narf--init-builder-%s" mode))))
+  (let ((fn (intern (format "doom--init-builder-%s" mode))))
     `(progn
        (defun ,fn ()
          (when (or (null ,build-file)
-                   (narf/project-has-files ,build-file))
-           (setq narf--build-command '(,command . ,build-file))))
+                   (doom/project-has-files ,build-file))
+           (setq doom--build-command '(,command . ,build-file))))
        (add-hook! ,mode ',fn))))
 
 ;;;###autoload

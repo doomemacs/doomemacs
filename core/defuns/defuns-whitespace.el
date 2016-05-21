@@ -1,18 +1,18 @@
 ;;; defuns-whitespace.el
 
 ;;;###autoload
-(defun narf--point-at-bol-non-blank()
+(defun doom--point-at-bol-non-blank()
   (save-excursion (evil-first-non-blank) (point)))
 
 ;;;###autoload
-(defun narf/surrounded-p ()
+(defun doom/surrounded-p ()
   (and (looking-back "[[{(]\\(\s+\\|\n\\)?\\(\s\\|\t\\)*")
        (let* ((whitespace (match-string 1))
               (match-str (concat whitespace (match-string 2) "[])}]")))
          (looking-at-p match-str))))
 
 ;;;###autoload
-(defun narf/backward-kill-to-bol-and-indent ()
+(defun doom/backward-kill-to-bol-and-indent ()
   "Kill line to the first non-blank character. If invoked again
 afterwards, kill line to column 1."
   (interactive)
@@ -22,12 +22,12 @@ afterwards, kill line to column 1."
         (indent-according-to-mode))))
 
 ;;;###autoload
-(defun narf/move-to-bol ()
+(defun doom/move-to-bol ()
   "Moves cursor to the first non-blank character on the line. If
 already there, move it to the true bol."
   (interactive)
   (evil-save-goal-column
-    (let ((point-at-bol (narf--point-at-bol-non-blank))
+    (let ((point-at-bol (doom--point-at-bol-non-blank))
           (point (point)))
       (if (= point-at-bol point)
           (evil-move-beginning-of-line)
@@ -35,20 +35,20 @@ already there, move it to the true bol."
           (evil-first-non-blank))))))
 
 ;;;###autoload
-(defun narf/move-to-eol ()
+(defun doom/move-to-eol ()
   (interactive)
   (evil-save-goal-column
     (let ((old-point (point)))
       (when (comment-search-forward (point-at-eol) t)
         (goto-char (match-beginning 0))
-        (skip-syntax-backward " ^<*" (narf--point-at-bol-non-blank))
+        (skip-syntax-backward " ^<*" (doom--point-at-bol-non-blank))
 
         (if (eq old-point (point)) ;
             (evil-move-end-of-line))))))
 
 ;; Mimic expandtab in vim
 ;;;###autoload
-(defun narf/backward-delete-whitespace-to-column ()
+(defun doom/backward-delete-whitespace-to-column ()
   "Delete back to the previous column of whitespace, or as much
 whitespace as possible, or just one char if that's not possible."
   (interactive)
@@ -75,7 +75,7 @@ whitespace as possible, or just one char if that's not possible."
         (t (backward-delete-char-untabify 1))))
 
 ;;;###autoload
-(defun narf/dumb-indent (&optional smart)
+(defun doom/dumb-indent (&optional smart)
   "Inserts a tab character (or spaces x tab-width). Checks if the
 auto-complete window is open."
   (interactive)
@@ -86,14 +86,14 @@ auto-complete window is open."
       (insert (s-repeat spaces " ")))))
 
 ;;;###autoload
-(defun narf/smart-indent ()
+(defun doom/smart-indent ()
   (interactive)
   (save-excursion
     (back-to-indentation)
-    (narf/dumb-indent)))
+    (doom/dumb-indent)))
 
 ;;;###autoload
-(defun narf/dumb-dedent ()
+(defun doom/dumb-dedent ()
   (interactive)
   (if indent-tabs-mode
       (delete-char -1)
@@ -105,23 +105,23 @@ auto-complete window is open."
         (delete-char (- spaces))))))
 
 ;;;###autoload
-(defun narf/inflate-space-maybe ()
+(defun doom/inflate-space-maybe ()
   "Checks if point is surrounded by {} [] () delimiters and adds a
 space on either side of the point if so."
   (interactive)
-  (if (narf/surrounded-p)
+  (if (doom/surrounded-p)
       (progn (call-interactively 'self-insert-command)
              (save-excursion (call-interactively 'self-insert-command)))
     (call-interactively 'self-insert-command)))
 
 ;;;###autoload
-(defun narf/deflate-space-maybe ()
+(defun doom/deflate-space-maybe ()
   "Checks if point is surrounded by {} [] () delimiters, and deletes
 spaces on either side of the point if so. Resorts to
-`narf/backward-delete-whitespace-to-column' otherwise."
+`doom/backward-delete-whitespace-to-column' otherwise."
   (interactive)
   (save-match-data
-    (if (narf/surrounded-p)
+    (if (doom/surrounded-p)
         (let ((whitespace-match (match-string 1)))
           (cond ((not whitespace-match)
                  (call-interactively 'sp-backward-delete-char))
@@ -131,10 +131,10 @@ spaces on either side of the point if so. Resorts to
                  (save-excursion (delete-char 1)))
                 (t
                  (just-one-space 0))))
-      (narf/backward-delete-whitespace-to-column))))
+      (doom/backward-delete-whitespace-to-column))))
 
 ;;;###autoload
-(defun narf/newline-and-indent ()
+(defun doom/newline-and-indent ()
   (interactive)
   (cond ((sp-point-in-string)
          (newline))
@@ -158,8 +158,8 @@ spaces on either side of the point if so. Resorts to
          (newline nil t)
          (indent-according-to-mode))))
 
-;;;###autoload (autoload 'narf:whitespace-retab "defuns-whitespace" nil t)
-(evil-define-operator narf:whitespace-retab (beg end)
+;;;###autoload (autoload 'doom:whitespace-retab "defuns-whitespace" nil t)
+(evil-define-operator doom:whitespace-retab (beg end)
   "Akin to vim's retab, this changes all tabs-to-spaces or spaces-to-tabs,
   depending on `indent-tab-mode'. Untested."
   :motion nil
@@ -173,8 +173,8 @@ spaces on either side of the point if so. Resorts to
       (tabify beg end)
     (untabify beg end)))
 
-;;;###autoload (autoload 'narf:whitespace-align "defuns-whitespace" nil t)
-(evil-define-command narf:whitespace-align (beg end &optional regexp bang)
+;;;###autoload (autoload 'doom:whitespace-align "defuns-whitespace" nil t)
+(evil-define-command doom:whitespace-align (beg end &optional regexp bang)
   :repeat nil
   (interactive "<r><a><!>")
   (when regexp

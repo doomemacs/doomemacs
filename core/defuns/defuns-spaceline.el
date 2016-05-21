@@ -1,16 +1,16 @@
 ;;; defuns-spaceline.el
 
 ;;;###autoload
-(defun narf|spaceline-env-update ()
-  (when narf--env-command
-    (let ((default-directory (narf/project-root)))
-      (let ((s (shell-command-to-string narf--env-command)))
-        (setq narf--env-version (if (string-match "[ \t\n\r]+\\'" s)
+(defun doom|spaceline-env-update ()
+  (when doom--env-command
+    (let ((default-directory (doom/project-root)))
+      (let ((s (shell-command-to-string doom--env-command)))
+        (setq doom--env-version (if (string-match "[ \t\n\r]+\\'" s)
                                     (replace-match "" t t s)
                                   s))))))
 
 ;;;###autoload
-(defun narf/-flycheck-count (state)
+(defun doom/-flycheck-count (state)
   "Return flycheck information for the given error type STATE."
   (when (flycheck-has-current-errors-p state)
     (if (eq 'running flycheck-last-status-change)

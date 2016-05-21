@@ -23,7 +23,7 @@
   :init-value nil
   :lighter " BIG"
   :global t
-  (narf/load-font (if big-mode big-mode-font narf-default-font))
+  (doom/load-font (if big-mode big-mode-font doom-default-font))
   (setq-default powerline-height
                 (if big-mode
                     big-mode-modeline-height

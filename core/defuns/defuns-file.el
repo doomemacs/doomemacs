@@ -1,7 +1,7 @@
 ;;; defuns-file.el
 
-;;;###autoload (autoload 'narf:file-delete "defuns-file" nil t)
-(evil-define-command narf:file-delete (&optional bang filename)
+;;;###autoload (autoload 'doom:file-delete "defuns-file" nil t)
+(evil-define-command doom:file-delete (&optional bang filename)
   "Delete current buffer's file. If bang, then kill the buffer afterwards as well."
   :repeat nil
   (interactive "<!><f>")
@@ -14,18 +14,18 @@
           (mapc (lambda (file)
                   (when (file-exists-p file)
                     (delete-file file t)))
-                (narf/org-attachments)))
+                (doom/org-attachments)))
         (set-buffer-modified-p nil)
         (delete-file filename)
         (kill-this-buffer)
-        (unless (narf/real-buffer-p)
-          (narf/previous-real-buffer))
+        (unless (doom/real-buffer-p)
+          (doom/previous-real-buffer))
         (save-place-forget-unreadable-files)
         (message "File successfully deleted: %s" filename)))))
 
-(defun narf--save-exit() (save-buffer) (kill-buffer) (remove-hook 'yas-after-exit-snippet-hook '--save-exit))
-;;;###autoload (autoload 'narf:file-create "defuns-file" nil t)
-(evil-define-command narf:file-create (path &optional bang)
+(defun doom--save-exit() (save-buffer) (kill-buffer) (remove-hook 'yas-after-exit-snippet-hook '--save-exit))
+;;;###autoload (autoload 'doom:file-create "defuns-file" nil t)
+(evil-define-command doom:file-create (path &optional bang)
   "Deploy files (and their associated templates) quickly. Will prompt
 you to fill in each snippet field before buffer closes unless BANG is
 provided."
@@ -40,12 +40,12 @@ provided."
         (if (f-exists? fullpath)
             (error "File already exists: %s" path)
           (find-file fullpath)
-          (add-hook 'yas-after-exit-snippet-hook 'narf--save-exit)
-          (if bang (narf--save-exit)))
+          (add-hook 'yas-after-exit-snippet-hook 'doom--save-exit)
+          (if bang (doom--save-exit)))
       (error "Directory doesn't exist: %s" dir))))
 
-;;;###autoload (autoload 'narf:file-move "defuns-file" nil t)
-(evil-define-command narf:file-move (path)
+;;;###autoload (autoload 'doom:file-move "defuns-file" nil t)
+(evil-define-command doom:file-move (path)
   "Move current buffer's file to PATH. Replaces %, # and other variables (see
   `evil-ex-replace-special-filenames')"
   :repeat nil
@@ -56,13 +56,13 @@ provided."
                          ((f-dir? (f-dirname path))
                           (f-full path))
                          (t (user-error "Not a valid destination: %s" path))))
-         (project-root (narf/project-root)))
+         (project-root (doom/project-root)))
     ;; Move all attachments if in org-mode
     (when (eq major-mode 'org-mode)
       (mapc (lambda (file)
               (when (and (file-exists-p file) (not (f-same? old-path new-path)))
                 (rename-file file (f-expand (f-filename old-path) (f-dirname new-path)) t)))
-            (narf/org-attachments)))
+            (doom/org-attachments)))
     (when (buffer-modified-p)
       (save-buffer))
     (rename-file old-path new-path 1)
@@ -70,7 +70,7 @@ provided."
     (set-visited-file-name new-path)
     (set-buffer-modified-p nil)
     (save-place-forget-unreadable-files)
-    (setq narf--spaceline-file-path nil)
+    (setq doom--spaceline-file-path nil)
     (message "File '%s' successfully renamed to '%s'"
              (f-relative old-path project-root) (f-relative new-path project-root))))
 

@@ -1,9 +1,9 @@
-;;; defuns-eshell.el ---
+;;; defuns-eshell.el
 
-(defun narf--eshell-in-prompt-p (&optional offset)
+(defun doom--eshell-in-prompt-p (&optional offset)
   (>= (- (point) (or offset 0)) (save-excursion (eshell-bol) (point))))
 
-(defun narf--eshell-current-git-branch ()
+(defun doom--eshell-current-git-branch ()
     (let ((branch (car (loop for match in (split-string (shell-command-to-string "git branch") "\n")
                              when (string-match "^\*" match)
                              collect match))))
@@ -12,48 +12,48 @@
         "")))
 
 ;;;###autoload
-(defun narf/eshell-prompt ()
+(defun doom/eshell-prompt ()
   (concat (propertize (abbreviate-file-name (eshell/pwd)) 'face 'eshell-prompt)
-          (propertize (narf--eshell-current-git-branch) 'face 'font-lock-function-name-face)
+          (propertize (doom--eshell-current-git-branch) 'face 'font-lock-function-name-face)
           (propertize " $ " 'face 'font-lock-constant-face)))
 
 ;;;###autoload
-(defun narf/eshell-evil-append ()
+(defun doom/eshell-evil-append ()
   (interactive)
   (goto-char (point-max))
   (call-interactively 'evil-append))
 
 ;;;###autoload
-(defun narf/eshell-evil-append-maybe ()
+(defun doom/eshell-evil-append-maybe ()
   (interactive)
-  (if (narf--eshell-in-prompt-p)
+  (if (doom--eshell-in-prompt-p)
       (call-interactively 'evil-insert)
-    (narf/eshell-append)))
+    (doom/eshell-append)))
 
 ;;;###autoload
-(defun narf/eshell-evil-prepend ()
+(defun doom/eshell-evil-prepend ()
   (interactive)
   (eshell-bol)
   (call-interactively 'evil-insert))
 
 ;;;###autoload
-(defun narf/eshell-evil-prepend-maybe ()
+(defun doom/eshell-evil-prepend-maybe ()
   (interactive)
-  (if (narf--eshell-in-prompt-p)
+  (if (doom--eshell-in-prompt-p)
       (call-interactively 'evil-insert)
-    (narf/eshell-prepend)))
+    (doom/eshell-prepend)))
 
 ;;;###autoload
-(defun narf/eshell-evil-replace-maybe ()
+(defun doom/eshell-evil-replace-maybe ()
   (interactive)
-  (if (narf--eshell-in-prompt-p)
+  (if (doom--eshell-in-prompt-p)
       (call-interactively 'evil-replace)
     (user-error "Cannot edit read-only region")))
 
 ;;;###autoload
-(defun narf/eshell-evil-replace-state-maybe ()
+(defun doom/eshell-evil-replace-state-maybe ()
   (interactive)
-  (if (narf--eshell-in-prompt-p)
+  (if (doom--eshell-in-prompt-p)
       (call-interactively 'evil-replace-state)
     (user-error "Cannot edit read-only region")))
 

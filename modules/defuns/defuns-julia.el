@@ -1,7 +1,7 @@
 ;;; defuns-julia.el
 
 ;;;###autoload
-(defun narf/julia-repl ()
+(defun doom/julia-repl ()
   "Run an inferior instance of `julia' inside Emacs."
   (interactive)
   (let ((buffer (get-buffer-create "*Julia*")))

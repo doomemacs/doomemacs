@@ -1,13 +1,13 @@
 ;;; defuns-regex.el
 
 ;;;###autoload
-(defun narf|reb-cleanup ()
+(defun doom|reb-cleanup ()
   (replace-regexp "^[ \n]*" "" nil (point-min) (point-max))
   (text-scale-set 2)
   (goto-char 2))
 
-;;;###autoload (autoload 'narf:regex "defuns-regex" nil t)
-(evil-define-operator narf:regex (beg end type &optional regexstr bang)
+;;;###autoload (autoload 'doom:regex "defuns-regex" nil t)
+(evil-define-operator doom:regex (beg end type &optional regexstr bang)
   "Either a) converts selected (or entered-in) pcre regex into elisp
 regex, OR b) opens up re-builder."
   :move-point nil

@@ -3,7 +3,7 @@
 ;; y/n instead of yes/no
 (fset 'yes-or-no-p 'y-or-n-p)
 
-(defvar narf-fringe-size 3 "Default fringe width")
+(defvar doom-fringe-size 3 "Default fringe width")
 
 (setq-default
  blink-matching-paren nil ; don't blink--too distracting
@@ -45,12 +45,13 @@
 (when window-system
   (setq confirm-kill-emacs
         (lambda (_)
-          (if (narf/get-real-buffers)
+          (if (doom/get-real-buffers)
               (y-or-n-p ">> Gee, I dunno Brain... Are you sure?")
             t))))
 
-(load-theme narf-current-theme t)
+(load-theme doom-current-theme t)
 (tooltip-mode -1) ; show tooltips in echo area
+
 ;; set up minibuffer and fringe
 (if (not window-system)
     (menu-bar-mode -1)
@@ -59,44 +60,44 @@
   ;; full filename in frame title
   (setq frame-title-format '(buffer-file-name "%f" ("%b")))
   ;; set fonts
-  (set-frame-font narf-default-font t)
-  (set-face-attribute 'default t :font narf-current-font)
+  (set-frame-font doom-default-font t)
+  (set-face-attribute 'default t :font doom-current-font)
   ;; standardize fringe width
-  (push `(left-fringe  . ,narf-fringe-size) default-frame-alist)
-  (push `(right-fringe . ,narf-fringe-size) default-frame-alist)
+  (push `(left-fringe  . ,doom-fringe-size) default-frame-alist)
+  (push `(right-fringe . ,doom-fringe-size) default-frame-alist)
+  ;; Default frame size on startup
+  (push '(width . 120) default-frame-alist)
+  (push '(height . 32) default-frame-alist)
   ;; no fringe in the minibuffer
   (add-hook! after-init (set-window-fringes (minibuffer-window) 0 0 nil))
   ;; Show tilde in margin on empty lines
   (define-fringe-bitmap 'tilde [64 168 16] nil nil 'center)
   (set-fringe-bitmap-face 'tilde 'fringe)
-  (setcdr (assq 'empty-line fringe-indicator-alist) 'tilde)
-  ;; Default frame size on startup
-  (push '(width . 120) default-frame-alist)
-  (push '(height . 32) default-frame-alist))
+  (setcdr (assq 'empty-line fringe-indicator-alist) 'tilde))
 
 ;; Try to display unicode characters without upsetting line-hieght (as much as possible)
-(narf-fix-unicode "DejaVu Sans" '(?⚠ ?★ ?λ ?➊ ?➋ ?➌ ?➍ ?➎ ?❻ ?➐ ?➑ ?➒ ?➓))
+(doom-fix-unicode "DejaVu Sans" '(?⚠ ?★ ?λ ?➊ ?➋ ?➌ ?➍ ?➎ ?❻ ?➐ ?➑ ?➒ ?➓))
 
 ;; on by default in Emacs 25; I prefer to enable on a mode-by-mode basis, so disable it
 (when (and (> emacs-major-version 24) (featurep 'eldoc))
   (global-eldoc-mode -1))
 
 ;; Highlight TODO/FIXME/NOTE tags
-(defface narf-todo-face '((t (:inherit font-lock-warning-face)))
+(defface doom-todo-face '((t (:inherit font-lock-warning-face)))
   "Face for TODOs")
-(defface narf-fixme-face '((t (:inherit font-lock-warning-face)))
+(defface doom-fixme-face '((t (:inherit font-lock-warning-face)))
   "Face for FIXMEs")
-(defface narf-note-face '((t (:inherit font-lock-warning-face)))
+(defface doom-note-face '((t (:inherit font-lock-warning-face)))
   "Face for NOTEs")
 (add-hook! (prog-mode emacs-lisp-mode css-mode)
   (font-lock-add-keywords
-   nil '(("\\<\\(TODO\\(?:(.*)\\)?:?\\)\\>"  1 'narf-todo-face prepend)
-         ("\\<\\(FIXME\\(?:(.*)\\)?:?\\)\\>" 1 'narf-fixme-face prepend)
-         ("\\<\\(NOTE\\(?:(.*)\\)?:?\\)\\>"  1 'narf-note-face prepend))))
+   nil '(("\\<\\(TODO\\(?:(.*)\\)?:?\\)\\>"  1 'doom-todo-face prepend)
+         ("\\<\\(FIXME\\(?:(.*)\\)?:?\\)\\>" 1 'doom-fixme-face prepend)
+         ("\\<\\(NOTE\\(?:(.*)\\)?:?\\)\\>"  1 'doom-note-face prepend))))
 
 ;; Hide mode-line in help/compile window
-(add-hook 'help-mode-hook 'narf|hide-mode-line)
-(add-hook 'compilation-mode-hook 'narf|hide-mode-line)
+(add-hook 'help-mode-hook 'doom|hide-mode-line)
+(add-hook 'compilation-mode-hook 'doom|hide-mode-line)
 
 
 ;;
@@ -107,17 +108,17 @@
   :init
   (add-hook! (prog-mode markdown-mode) 'hl-line-mode)
   :config
-  (defvar-local narf--hl-line-mode nil)
+  (defvar-local doom--hl-line-mode nil)
   (setq hl-line-sticky-flag nil
         global-hl-line-sticky-flag nil)
 
-  (defun narf|hl-line-on ()  (if narf--hl-line-mode (hl-line-mode +1)))
-  (defun narf|hl-line-off () (if narf--hl-line-mode (hl-line-mode -1)))
+  (defun doom|hl-line-on ()  (if doom--hl-line-mode (hl-line-mode +1)))
+  (defun doom|hl-line-off () (if doom--hl-line-mode (hl-line-mode -1)))
 
-  (add-hook! hl-line-mode (if hl-line-mode (setq narf--hl-line-mode t)))
+  (add-hook! hl-line-mode (if hl-line-mode (setq doom--hl-line-mode t)))
   ;; Disable line highlight in visual mode
-  (add-hook 'evil-visual-state-entry-hook 'narf|hl-line-off)
-  (add-hook 'evil-visual-state-exit-hook  'narf|hl-line-on))
+  (add-hook 'evil-visual-state-entry-hook 'doom|hl-line-off)
+  (add-hook 'evil-visual-state-exit-hook  'doom|hl-line-on))
 
 (use-package visual-fill-column :defer t
   :config
@@ -134,17 +135,17 @@
 
   (after! editorconfig
     (advice-add 'highlight-indentation-guess-offset
-                :override 'narf*hl-indent-guess-offset))
+                :override 'doom*hl-indent-guess-offset))
 
   ;; A long-winded method for ensuring whitespace is maintained (so that
   ;; highlight-indentation-mode can display them consistently)
   (add-hook! highlight-indentation-mode
     (if highlight-indentation-mode
         (progn
-          (narf/add-whitespace)
-          (add-hook 'after-save-hook 'narf/add-whitespace nil t)
+          (doom/add-whitespace)
+          (add-hook 'after-save-hook 'doom/add-whitespace nil t)
           (add-hook 'before-save-hook 'delete-trailing-whitespace nil t))
-      (remove-hook 'after-save-hook 'narf/add-whitespace t)
+      (remove-hook 'after-save-hook 'doom/add-whitespace t)
       (remove-hook 'before-save-hook 'delete-trailing-whitespace t))))
 
 (use-package highlight-numbers :commands (highlight-numbers-mode))
@@ -161,16 +162,16 @@
   :commands (rainbow-mode)
   :init
   ;; hl-line-mode and rainbow-mode don't play well together
-  (add-hook 'rainbow-mode-hook 'narf|hl-line-off))
+  (add-hook 'rainbow-mode-hook 'doom|hl-line-off))
 
 (use-package nlinum
   :commands nlinum-mode
   :preface
   (setq linum-format "%3d ")
   (defvar nlinum-format "%4d   ")
-  (defvar narf--hl-nlinum-overlay nil)
-  (defvar narf--hl-nlinum-line nil)
-  (defface narf-linum '((t (:inherit linum)))
+  (defvar doom--hl-nlinum-overlay nil)
+  (defvar doom--hl-nlinum-line nil)
+  (defface doom-linum '((t (:inherit linum)))
     "Face for line in popups")
   (defface linum-highlight-face '((t (:inherit linum)))
     "Face for line highlights")
@@ -179,7 +180,7 @@
     (markdown-mode prog-mode scss-mode web-mode conf-mode)
     'nlinum-mode)
   (add-hook! 'nlinum-mode-hook
-    (add-hook 'post-command-hook 'narf|nlinum-hl-line nil t))
+    (add-hook 'post-command-hook 'doom|nlinum-hl-line nil t))
   :config
   (add-hook! nlinum-mode
     (setq nlinum--width
@@ -193,8 +194,8 @@
 
 (use-package spaceline
   :init
-  (defvar-local narf--env-version nil)
-  (defvar-local narf--env-command nil)
+  (defvar-local doom--env-version nil)
+  (defvar-local doom--env-command nil)
   (defvar powerline-height 26)
   (defvar powerline-default-separator nil)
 
@@ -209,7 +210,7 @@
      (when buffer-file-name
        (powerline-raw
         (f-dirname
-         (let ((buffer-path (f-relative buffer-file-name (narf/project-root)))
+         (let ((buffer-path (f-relative buffer-file-name (doom/project-root)))
                (max-length (truncate (/ (window-body-width) 1.75))))
            (concat (projectile-project-name) "/"
                    (if (> (length buffer-path) max-length)
@@ -329,7 +330,7 @@ anzu to be enabled."
     "The major mode, including process, environment and text-scale info."
     (concat (format "%s" mode-name)
             (if (stringp mode-line-process) mode-line-process)
-            (if narf--env-version (concat " " narf--env-version))
+            (if doom--env-version (concat " " doom--env-version))
             (and (featurep 'face-remap)
                  (/= text-scale-mode-amount 0)
                  (format " (%+d)" text-scale-mode-amount))))
@@ -370,20 +371,20 @@ anzu to be enabled."
     '((t (:foreground "#8DE6F7" :distant-foreground "#21889B")))
     "Face for flycheck info feedback in the modeline.")
 
-  (defvar-local narf--flycheck-err-cache nil "")
-  (defvar-local narf--flycheck-cache nil "")
+  (defvar-local doom--flycheck-err-cache nil "")
+  (defvar-local doom--flycheck-cache nil "")
   (spaceline-define-segment *flycheck
     "Persistent and cached flycheck indicators in the mode-line."
     (when (and (bound-and-true-p flycheck-mode)
                (or flycheck-current-errors
                    (eq 'running flycheck-last-status-change)))
-      (or (and (or (eq narf--flycheck-err-cache narf--flycheck-cache)
+      (or (and (or (eq doom--flycheck-err-cache doom--flycheck-cache)
                    (memq flycheck-last-status-change '(running not-checked)))
-               narf--flycheck-cache)
-          (and (setq narf--flycheck-err-cache flycheck-current-errors)
-               (setq narf--flycheck-cache
-                     (let ((fe (narf/-flycheck-count 'error))
-                           (fw (narf/-flycheck-count 'warning)))
+               doom--flycheck-cache)
+          (and (setq doom--flycheck-err-cache flycheck-current-errors)
+               (setq doom--flycheck-cache
+                     (let ((fe (doom/-flycheck-count 'error))
+                           (fw (doom/-flycheck-count 'warning)))
                        (concat
                         (if fe (propertize (format " ⚠%s " fe)
                                            'face (if active

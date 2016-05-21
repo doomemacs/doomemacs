@@ -5,7 +5,7 @@
 (defmacro def-company-backend! (hooks backends)
   "Register a company backend for a mode."
   (let* ((hooks (if (listp hooks) hooks (list hooks)))
-         (def-name (intern (format "narf--init-company-%s"
+         (def-name (intern (format "doom--init-company-%s"
                                    (mapconcat 'identity (mapcar 'symbol-name hooks) "-"))))
          (quoted (eq (car-safe backends) 'quote)))
     `(progn

@@ -4,8 +4,8 @@
   :commands (c-mode c++-mode objc-mode java-mode)
   :mode ("\\.mm" . objc-mode)
   :init
-  (add-hook! c++-mode '(highlight-numbers-mode narf|init-c++-C11-highlights))
-  (add-hook 'c-initialization-hook 'narf|init-c/c++-settings)
+  (add-hook! c++-mode '(highlight-numbers-mode doom|init-c++-C11-highlights))
+  (add-hook 'c-initialization-hook 'doom|init-c/c++-settings)
 
   ;; C++ header files
   (push (cons (lambda () (and (f-ext? buffer-file-name "h")
@@ -30,22 +30,22 @@
   (setq c-tab-always-indent nil
         c-electric-flag nil)
 
-  (map! :map c-mode-base-map (:localleader :nv ";" 'narf/append-semicolon))
+  (map! :map c-mode-base-map (:localleader :nv ";" 'doom/append-semicolon))
 
   (sp-with-modes '(c-mode c++-mode objc-mode java-mode)
-    (sp-local-pair "<" ">" :when '(narf/sp-point-is-template-p narf/sp-point-after-include-p))
+    (sp-local-pair "<" ">" :when '(doom/sp-point-is-template-p doom/sp-point-after-include-p))
     (sp-local-pair "/*" "*/" :post-handlers '(("||\n[i]" "RET") ("| " "SPC")))
     ;; Doxygen blocks
     (sp-local-pair "/**" "*/" :post-handlers '(("||\n[i]" "RET") ("||\n[i]" "SPC")))
     (sp-local-pair "/*!" "*/" :post-handlers '(("||\n[i]" "RET") ("[d-1]< | " "SPC"))))
 
   ;; Improve indentation of inline lambdas in C++11
-  (advice-add 'c-lineup-arglist :around 'narf/c-lineup-arglist))
+  (advice-add 'c-lineup-arglist :around 'doom/c-lineup-arglist))
 
 (use-package irony
   :after cc-mode
   :config
-  (setq irony-server-install-prefix (concat narf-temp-dir "/irony/"))
+  (setq irony-server-install-prefix (concat doom-temp-dir "/irony/"))
   (add-hook! c++-mode
     (make-variable-buffer-local 'irony-additional-clang-options)
     (push "-std=c++11" irony-additional-clang-options))

@@ -9,7 +9,7 @@
        (mapc (lambda (cmd) (evil-ex-define-cmd (car cmd) (cdr cmd)))
              ',commands))
      (defun ,cmd-off (&rest _)
-       (mapc (lambda (cmd) (narf/evil-ex-undefine-cmd (car cmd)))
+       (mapc (lambda (cmd) (doom/evil-ex-undefine-cmd (car cmd)))
              ',commands))))
 
 ;; Shortcuts for the evil expression register

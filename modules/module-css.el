@@ -1,7 +1,7 @@
 ;;; module-css.el
 
 (after! emr
-  (emr-declare-command 'narf/css-toggle-inline-or-block
+  (emr-declare-command 'doom/css-toggle-inline-or-block
     :title "toggle inline/block"
     :modes '(css-mode less-css-mode scss-mode)
     :predicate (lambda () (not (use-region-p)))))
@@ -35,7 +35,7 @@
 (use-package sass-mode
   :mode "\\.sass$"
   :config
-  (def-builder! sass-mode narf/sass-build)
+  (def-builder! sass-mode doom/sass-build)
   (def-company-backend! sass-mode (css yasnippet))
   (def-docset! sass-mode "sass,bourbon")
   (push '("sass" "css") projectile-other-file-alist))
@@ -43,15 +43,15 @@
 (use-package scss-mode
   :mode "\\.scss$"
   :config
-  (def-builder! scss-mode narf/scss-build)
+  (def-builder! scss-mode doom/scss-build)
   (def-company-backend! scss-mode (css yasnippet))
   (def-docset! scss-mode "sass,bourbon")
   (push '("scss" "css") projectile-other-file-alist)
   (setq scss-compile-at-save nil))
 
 (map! :map (css-mode-map sass-mode-map scss-mode-map)
-      :n "M-R" 'narf/web-refresh-browser
-      (:localleader :nv ";" 'narf/append-semicolon)
+      :n "M-R" 'doom/web-refresh-browser
+      (:localleader :nv ";" 'doom/append-semicolon)
       (:leader
         :n ";" 'helm-css-scss
         :n ":" 'helm-css-scss-multi))

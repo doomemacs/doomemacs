@@ -2,25 +2,25 @@
 
 ;;;; Code building ;;;;;;;;;;;;;;;;;;;;;;
 ;;;###autoload
-(defvar narf--build-command '("make %s" . "Makefile"))
-(make-variable-buffer-local 'narf--build-command)
+(defvar doom--build-command '("make %s" . "Makefile"))
+(make-variable-buffer-local 'doom--build-command)
 
 ;;;###autoload
-(defun narf/set-build-command (command &optional file)
+(defun doom/set-build-command (command &optional file)
   (when (or (null file)
-            (narf/project-has-files file))
-    (setq narf--build-command `(,command . ,file))))
+            (doom/project-has-files file))
+    (setq doom--build-command `(,command . ,file))))
 
-;;;###autoload (autoload 'narf:build "defuns-quickrun" nil t)
-(evil-define-command narf:build (arg)
+;;;###autoload (autoload 'doom:build "defuns-quickrun" nil t)
+(evil-define-command doom:build (arg)
   "Call a build command in the current directory. If ARG is nil this function calls
 `recompile', otherwise it calls `compile' passing ARG as build command."
   (interactive "<sh>")
-  (when (null narf--build-command)
+  (when (null doom--build-command)
     (user-error "No build command was set"))
-  (let ((build-file (cdr narf--build-command))
-        (build-cmd (car narf--build-command))
-        (project-dir (narf/project-root)))
+  (let ((build-file (cdr doom--build-command))
+        (build-cmd (car doom--build-command))
+        (project-dir (doom/project-root)))
     (if (or (null build-file) (f-exists? (f-expand build-file project-dir)))
         (if (or (symbolp build-cmd) (functionp build-cmd))
             (if (commandp build-cmd)
@@ -31,17 +31,17 @@
       (error "Could not build!"))))
 
 ;;;; Code running ;;;;;;;;;;;;;;;;;;;;;;
-;;;###autoload (autoload 'narf:eval-buffer "defuns-quickrun" nil t)
-(evil-define-command narf:eval-buffer ()
+;;;###autoload (autoload 'doom:eval-buffer "defuns-quickrun" nil t)
+(evil-define-command doom:eval-buffer ()
   "Evaluate the whole buffer."
   :move-point nil :repeat nil
   (interactive)
   (cond ((eq major-mode 'emacs-lisp-mode)
-         (narf:eval-region (point-min) (point-max)))
+         (doom:eval-region (point-min) (point-max)))
         (t (quickrun))))
 
-;;;###autoload (autoload 'narf:eval-region "defuns-quickrun" nil t)
-(evil-define-operator narf:eval-region (beg end)
+;;;###autoload (autoload 'doom:eval-region "defuns-quickrun" nil t)
+(evil-define-operator doom:eval-region (beg end)
   "Evaluate a region and, if large enough, prints its output to a popup buffer (if an
 elisp buffer). Otherwise forward the region to Quickrun."
   :move-point nil :repeat nil
@@ -62,11 +62,11 @@ elisp buffer). Otherwise forward the region to Quickrun."
                (insert out)
                (read-only-mode 1)
                (goto-char (point-min))
-               (narf/popup-buffer (current-buffer))))))
+               (doom/popup-buffer (current-buffer))))))
         (t (quickrun-region beg end))))
 
-;;;###autoload (autoload 'narf:eval-region-and-replace "defuns-quickrun" nil t)
-(evil-define-operator narf:eval-region-and-replace (beg end)
+;;;###autoload (autoload 'doom:eval-region-and-replace "defuns-quickrun" nil t)
+(evil-define-operator doom:eval-region-and-replace (beg end)
   (interactive "<r>")
   (cond ((eq major-mode 'emacs-lisp-mode)
          (kill-region beg end)

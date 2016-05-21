@@ -1,27 +1,28 @@
 ;;; bootstrap.el
 
-(eval-when-compile
-  (defconst emacs-start-time (current-time))
-  (require 'cl-lib))
+(eval-when-compile (require 'cl-lib))
 
 ;; Global constants
 (eval-and-compile
-  (defconst narf-default-theme  'wombat)
-  (defconst narf-terminal-theme 'wombat)
-  (defconst narf-default-font  nil)
+  (defconst emacs-start-time (current-time))
+  (defconst emacs-end-time nil)
 
-  (defconst narf-emacs-dir     (expand-file-name "." user-emacs-directory))
-  (defconst narf-core-dir      (concat narf-emacs-dir "/core"))
-  (defconst narf-modules-dir   (concat narf-emacs-dir "/modules"))
-  (defconst narf-private-dir   (concat narf-emacs-dir "/private"))
-  (defconst narf-packages-dir  (concat narf-emacs-dir "/.cask/" emacs-version "/elpa"))
-  (defconst narf-script-dir    (concat narf-emacs-dir "/scripts"))
-  (defconst narf-ext-dir       (concat narf-emacs-dir "/ext"))
-  (defconst narf-snippet-dirs  (list (concat narf-private-dir "/snippets")
-                                     (concat narf-private-dir "/templates")))
+  (defconst doom-default-theme  'wombat)
+  (defconst doom-terminal-theme 'wombat)
+  (defconst doom-default-font  nil)
+
+  (defconst doom-emacs-dir     (expand-file-name "." user-emacs-directory))
+  (defconst doom-core-dir      (concat doom-emacs-dir "/core"))
+  (defconst doom-modules-dir   (concat doom-emacs-dir "/modules"))
+  (defconst doom-private-dir   (concat doom-emacs-dir "/private"))
+  (defconst doom-packages-dir  (concat doom-emacs-dir "/.cask/" emacs-version "/elpa"))
+  (defconst doom-script-dir    (concat doom-emacs-dir "/scripts"))
+  (defconst doom-ext-dir       (concat doom-emacs-dir "/ext"))
+  (defconst doom-snippet-dirs  (list (concat doom-private-dir "/snippets")
+                                     (concat doom-private-dir "/templates")))
   ;; Hostname and emacs version-based elisp temp directories
-  (defconst narf-temp-dir      (format "%s/cache/%s/%s.%s"
-                                       narf-private-dir (system-name)
+  (defconst doom-temp-dir      (format "%s/cache/%s/%s.%s"
+                                       doom-private-dir (system-name)
                                        emacs-major-version emacs-minor-version))
 
   (defconst IS-MAC     (eq system-type 'darwin))
@@ -29,7 +30,7 @@
   (defconst IS-WINDOWS (eq system-type 'windows-nt)))
 
 (eval-when-compile
-  (defvar narf--load-path load-path)
+  (defvar doom--load-path load-path)
 
   ;; Helper for traversing subdirectories recursively
   (defun --subdirs (path &optional include-self)
@@ -45,11 +46,11 @@
 ;;
 
 ;; Shut up byte-compiler!
-(defvar narf-current-theme)
-(defvar narf-current-font)
+(defvar doom-current-theme)
+(defvar doom-current-font)
 
-(defun narf (packages)
-  "Bootstrap NARF emacs and initialize PACKAGES"
+(defun doom (packages)
+  "Bootstrap DOOM emacs and initialize PACKAGES"
   (setq-default gc-cons-threshold 4388608
                 gc-cons-percentage 0.4)
 
@@ -61,23 +62,20 @@
     ;; Scan various folders to populate the load-paths
     (setq load-path
           (eval-when-compile
-            (append (list narf-private-dir)
-                    (--subdirs narf-core-dir t)
-                    (--subdirs narf-modules-dir t)
-                    (--subdirs narf-packages-dir)
-                    (--subdirs (expand-file-name "../bootstrap" narf-packages-dir))
-                    narf--load-path))
+            (append (list doom-private-dir)
+                    (--subdirs doom-core-dir t)
+                    (--subdirs doom-modules-dir t)
+                    (--subdirs doom-packages-dir)
+                    (--subdirs (expand-file-name "../bootstrap" doom-packages-dir))
+                    doom--load-path))
           custom-theme-load-path
-          (append (list (expand-file-name "themes/" narf-private-dir))
+          (append (list (expand-file-name "themes/" doom-private-dir))
                   custom-theme-load-path))
 
-    ;; Local settings
     (load "~/.emacs.local.el" t t)
-    (setq narf-current-theme (if (display-graphic-p) narf-default-theme narf-terminal-theme)
-          narf-current-font narf-default-font)
-    ;; Here we a'go!
+    (setq doom-current-theme (if (display-graphic-p) doom-default-theme doom-terminal-theme)
+          doom-current-font doom-default-font)
     (mapc 'require packages)
-
     (when (display-graphic-p)
       (require 'server)
       (unless (server-running-p)

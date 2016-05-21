@@ -67,25 +67,25 @@
   (map! :map evil-command-window-mode-map :n [escape] 'kill-buffer-and-window)
 
   (progn ; evil hacks
-    (advice-add 'evil-force-normal-state :after 'narf*evil-esc-quit)
-    (defun narf*evil-esc-quit ()
+    (advice-add 'evil-force-normal-state :after 'doom*evil-esc-quit)
+    (defun doom*evil-esc-quit ()
       "Close popups, disable search highlights and quit the minibuffer if open."
       (if (eq major-mode 'help-mode)
-          (narf/popup-close)
+          (doom/popup-close)
         (let ((minib-p (minibuffer-window-active-p (minibuffer-window)))
               (evil-hl-p (evil-ex-hl-active-p 'evil-ex-search)))
           (when minib-p (abort-recursive-edit))
           (when evil-hl-p (evil-ex-nohighlight))
-          ;; Close non-repl popups and clean up `narf-popup-windows'
+          ;; Close non-repl popups and clean up `doom-popup-windows'
           (unless (or minib-p evil-hl-p
-                      (memq (get-buffer-window) narf-popup-windows))
+                      (memq (get-buffer-window) doom-popup-windows))
             (mapc (lambda (w)
                     (if (window-live-p w)
                         (with-selected-window w
                           (unless (derived-mode-p 'comint-mode)
-                            (narf/popup-close w)))
-                      (narf/popup-remove w)))
-                  narf-popup-windows)))))
+                            (doom/popup-close w)))
+                      (doom/popup-remove w)))
+                  doom-popup-windows)))))
 
     ;; Fix harmless (yet disruptive) error reporting w/ hidden buffers caused by
     ;; workgroups killing windows
@@ -130,7 +130,7 @@
           (let ((flags (split-string (caddr match) ":" t))
                 (path (file-relative-name
                        (pcase (cadr match)
-                         ("@" (narf/project-root))
+                         ("@" (doom/project-root))
                          ("%" (buffer-file-name))
                          ("#" (and (other-buffer) (buffer-file-name (other-buffer)))))
                        default-directory))
@@ -169,8 +169,8 @@
           (setq file-name (replace-regexp-in-string regexp "\\1" file-name t)))))
 
   ;; Extra argument types for highlight buffer (or global) regexp matches
-  (evil-ex-define-argument-type buffer-match :runner narf/evil-ex-buffer-match)
-  (evil-ex-define-argument-type global-match :runner narf/evil-ex-global-match)
+  (evil-ex-define-argument-type buffer-match :runner doom/evil-ex-buffer-match)
+  (evil-ex-define-argument-type global-match :runner doom/evil-ex-global-match)
 
   (evil-define-interactive-code "<//>"
     :ex-arg buffer-match
@@ -199,7 +199,7 @@
 
 (use-package evil-exchange
   :commands evil-exchange
-  :config (advice-add 'evil-force-normal-state :after 'narf*evil-exchange-off))
+  :config (advice-add 'evil-force-normal-state :after 'doom*evil-exchange-off))
 
 (use-package evil-multiedit
   :commands (evil-multiedit-match-all
@@ -247,7 +247,7 @@
 
 (use-package evil-easymotion
   :defer 1
-  :init (defvar narf--evil-snipe-repeat-fn)
+  :init (defvar doom--evil-snipe-repeat-fn)
   :config
   (evilem-default-keybindings "g SPC")
   (evilem-define (kbd "g SPC n") 'evil-ex-search-next)
@@ -263,7 +263,7 @@
            (evil-snipe-enable-highlight)
            (evil-snipe-enable-incremental-highlight)))
 
-  (setq narf--evil-snipe-repeat-fn
+  (setq doom--evil-snipe-repeat-fn
         (evilem-create 'evil-snipe-repeat
                        :bind ((evil-snipe-scope 'whole-buffer)
                               (evil-snipe-enable-highlight)
@@ -283,7 +283,7 @@
   :config
   (evil-snipe-mode 1)
   (evil-snipe-override-mode 1)
-  (define-key evil-snipe-parent-transient-map (kbd "C-;") 'narf/evil-snipe-easymotion))
+  (define-key evil-snipe-parent-transient-map (kbd "C-;") 'doom/evil-snipe-easymotion))
 
 (use-package evil-surround
   :commands (global-evil-surround-mode
@@ -302,13 +302,13 @@
   (add-hook 'org-mode-hook 'embrace-org-mode-hook)
   (add-hook! (text-mode prog-mode)
     ;; Escaped surround characters
-    (embrace-add-pair-regexp ?\\ "\\[[{(]" "\\[]})]" 'narf/embrace-escaped))
+    (embrace-add-pair-regexp ?\\ "\\[[{(]" "\\[]})]" 'doom/embrace-escaped))
   (add-hook! emacs-lisp-mode
     (embrace-add-pair ?\` "`" "'"))
   (add-hook! (emacs-lisp-mode lisp-mode)
-    (embrace-add-pair-regexp ?f "([^ ]+ " ")" 'narf/embrace-elisp-fn))
+    (embrace-add-pair-regexp ?f "([^ ]+ " ")" 'doom/embrace-elisp-fn))
   (add-hook! (org-mode latex-mode)
-    (embrace-add-pair-regexp ?l "\\[a-z]+{" "}" 'narf/embrace-latex)))
+    (embrace-add-pair-regexp ?l "\\[a-z]+{" "}" 'doom/embrace-latex)))
 
 (use-package evil-visualstar
   :commands (global-evil-visualstar-mode
@@ -326,11 +326,11 @@
 
   ;; evil-escape causes noticable lag in linewise motions in visual mode, so disable it in
   ;; visual mode
-  (defun narf|evil-escape-disable () (evil-escape-mode -1))
-  (defun narf|evil-escape-enable () (evil-escape-mode +1))
-  (add-hook 'evil-visual-state-entry-hook 'narf|evil-escape-disable)
-  (add-hook 'evil-visual-state-exit-hook 'narf|evil-escape-enable)
-  (add-hook 'evil-insert-state-exit-hook 'narf|evil-escape-enable)
+  (defun doom|evil-escape-disable () (evil-escape-mode -1))
+  (defun doom|evil-escape-enable () (evil-escape-mode +1))
+  (add-hook 'evil-visual-state-entry-hook 'doom|evil-escape-disable)
+  (add-hook 'evil-visual-state-exit-hook 'doom|evil-escape-enable)
+  (add-hook 'evil-insert-state-exit-hook 'doom|evil-escape-enable)
 
   (push 'neotree-mode evil-escape-excluded-major-modes))
 

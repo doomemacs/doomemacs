@@ -1,18 +1,18 @@
-;;; defuns-java.el ---
+;;; defuns-java.el
 
 ;; yasnippet defuns
 ;;;###autoload
-(defun narf/java-android-mode-is-layout-file ()
+(defun doom/java-android-mode-is-layout-file ()
   (and android-mode
        (eq major-mode 'nxml-mode)
        (string-equal (file-name-base (directory-file-name default-directory)) "layout")))
 
 ;;;###autoload
-(defun narf/java-android-mode-in-tags (&rest tags)
+(defun doom/java-android-mode-in-tags (&rest tags)
   (-contains? tags (android-mode-tag-name)))
 
 ;;;###autoload
-(defun narf/java-android-mode-tag-name ()
+(defun doom/java-android-mode-tag-name ()
   (save-excursion
     (let (beg end)
       (nxml-backward-up-element)
@@ -23,13 +23,13 @@
       (buffer-substring-no-properties beg end))))
 
 ;;;###autoload
-(defun narf|android-mode-enable-maybe ()
-  (let ((root (narf/project-root)))
-    (when (or (narf/project-has-files "local.properties" root)
-              (narf/project-has-files "AndroidManifest.xml" root)
-              (narf/project-has-files "src/main/AndroidManifest.xml" root))
+(defun doom|android-mode-enable-maybe ()
+  (let ((root (doom/project-root)))
+    (when (or (doom/project-has-files "local.properties" root)
+              (doom/project-has-files "AndroidManifest.xml" root)
+              (doom/project-has-files "src/main/AndroidManifest.xml" root))
       (android-mode +1)
-      (narf/set-build-command "./gradlew %s" "build.gradle"))))
+      (doom/set-build-command "./gradlew %s" "build.gradle"))))
 
 (provide 'defuns-java)
 ;;; defuns-java.el ends here

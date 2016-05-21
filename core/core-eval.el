@@ -23,7 +23,7 @@
 (use-package repl-toggle
   :commands (rtog/toggle-repl rtog/add-repl)
   :init
-  (defvar narf--repl-buffer nil)
+  (defvar doom--repl-buffer nil)
   (defvar-local repl-p nil)
   (setq rtog/mode-repl-alist '())
 
@@ -61,14 +61,14 @@
         :n "c" 'realgud:cmd-continue)
 
   ;; Temporary Ex commands for the debugger
-  (def-tmp-excmd! narf:def-debug-on narf:def-debug-off
+  (def-tmp-excmd! doom:def-debug-on doom:def-debug-off
     ("n[ext]" . realgud:cmd-next)
     ("s[tep]" . realgud:cmd-step)
-    ("b[reak]" . narf:debug-toggle-breakpoint)
+    ("b[reak]" . doom:debug-toggle-breakpoint)
     ("c[ontinue]" . realgud:cmd-continue))
 
-  (advice-add 'realgud-cmdbuf-init :after 'narf:def-debug-on)
-  (advice-add 'realgud:cmd-quit :after 'narf:def-debug-off))
+  (advice-add 'realgud-cmdbuf-init :after 'doom:def-debug-on)
+  (advice-add 'realgud:cmd-quit :after 'doom:def-debug-off))
 
 (provide 'core-eval)
 ;;; core-eval.el ends here

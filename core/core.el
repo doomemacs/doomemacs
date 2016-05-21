@@ -2,14 +2,14 @@
 ;;
 ;;; Naming conventions:
 ;;
-;;   narf-…     A public variable/constant or function
-;;   narf--…    An internal variable or function (non-interactive)
-;;   narf/…     An autoloaded interactive function
-;;   narf:…     An ex command
-;;   narf|…     A hook
-;;   narf*…     An advising function
-;;   narf.…     Custom prefix commands
-;;   …!         Macro or shortcut alias
+;;   doom-...     A public variable/constant or function
+;;   doom--...    An internal variable or function (non-interactive)
+;;   doom/...     An autoloaded interactive function
+;;   doom:...     An ex command
+;;   doom|...     A hook
+;;   doom*...     An advising function
+;;   doom....     Custom prefix commands
+;;   ...!         Macro or shortcut alias
 ;;
 ;; Autoloaded functions are in {core,modules}/defuns/defuns-*.el
 ;;
@@ -20,9 +20,9 @@
  package--init-file-ensured t
  package-enable-at-startup nil
  package-archives
- '(("gnu" . "http://elpa.gnu.org/packages/")
+ '(("gnu"   . "http://elpa.gnu.org/packages/")
    ("melpa" . "http://melpa.org/packages/")
-   ("org" . "http://orgmode.org/elpa/"))
+   ("org"   . "http://orgmode.org/elpa/"))
 
  ad-redefinition-action            'accept      ; silence the advised function warnings
  compilation-always-kill            t           ; kill compilation process before spawning another
@@ -36,34 +36,31 @@
  enable-recursive-minibuffers       nil         ; no minibufferception
  idle-update-delay                  2           ; update a little less often
  inhibit-startup-echo-area-message  "hlissner"  ; username shuts up emacs
- inhibit-startup-screen             t           ; don't show emacs start screen
- initial-major-mode                'text-mode   ; initial scratch buffer mode
- initial-scratch-message            nil
  major-mode                        'text-mode
  ring-bell-function                'ignore      ; silence of the bells!
  save-interprogram-paste-before-kill nil
  sentence-end-double-space          nil
- confirm-nonexistent-file-or-buffer nil
+ confirm-nonexistent-file-or-buffer t
 
  ;; http://ergoemacs.org/emacs/emacs_stop_cursor_enter_prompt.html
  minibuffer-prompt-properties
  '(read-only t point-entered minibuffer-avoid-prompt face minibuffer-prompt)
 
  bookmark-save-flag                 t
- bookmark-default-file              (concat narf-temp-dir "/bookmarks")
+ bookmark-default-file              (concat doom-temp-dir "/bookmarks")
 
  ;; Disable all backups (that's what git/dropbox are for)
  history-length                     1000
  vc-make-backup-files               nil
  auto-save-default                  nil
- auto-save-list-file-name           (concat narf-temp-dir "/autosave")
+ auto-save-list-file-name           (concat doom-temp-dir "/autosave")
  make-backup-files                  nil
  create-lockfiles                   nil
- backup-directory-alist            `((".*" . ,(concat narf-temp-dir "/backup/")))
+ backup-directory-alist            `((".*" . ,(concat doom-temp-dir "/backup/")))
 
  ;; Remember undo history
  undo-tree-auto-save-history        nil
- undo-tree-history-directory-alist `(("." . ,(concat narf-temp-dir "/undo/"))))
+ undo-tree-history-directory-alist `(("." . ,(concat doom-temp-dir "/undo/"))))
 
 ;; UTF-8 please
 (setq locale-coding-system    'utf-8)   ; pretty
@@ -79,16 +76,16 @@
 ;; Variables
 ;;
 
-(defvar narf-unreal-buffers '("^ ?\\*.+\\*"
+(defvar doom-unreal-buffers '("^ ?\\*.+\\*"
                               image-mode
                               dired-mode
                               reb-mode
                               messages-buffer-mode)
   "A list of regexps or modes whose buffers are considered unreal, and will be
-ignored when using `narf:next-real-buffer' and `narf:previous-real-buffer' (or
-killed by `narf/kill-unreal-buffers', or after `narf/kill-real-buffer').")
+ignored when using `doom:next-real-buffer' and `doom:previous-real-buffer' (or
+killed by `doom/kill-unreal-buffers', or after `doom/kill-real-buffer').")
 
-(defvar narf-ignore-buffers '("*Completions*" "*Compile-Log*" "*inferior-lisp*"
+(defvar doom-ignore-buffers '("*Completions*" "*Compile-Log*" "*inferior-lisp*"
                               "*Fuzzy Completions*" "*Apropos*" "*Help*" "*cvs*"
                               "*Buffer List*" "*Ibuffer*" "*NeoTree*" "
                               *NeoTree*" "*esh command on file*" "*WoMan-Log*"
@@ -108,14 +105,14 @@ killed by `narf/kill-unreal-buffers', or after `narf/kill-real-buffer').")
                               "*Org todo*" "*Org Links*" "*Agenda Commands*")
   "List of buffer names to ignore when using `winner-undo', or `winner-redo'")
 
-(defvar narf-cleanup-processes-alist '(("pry" . ruby-mode)
+(defvar doom-cleanup-processes-alist '(("pry" . ruby-mode)
                                        ("irb" . ruby-mode)
                                        ("ipython" . python-mode))
-  "An alist of (process-name . major-mode), that `narf:cleanup-processes' checks
+  "An alist of (process-name . major-mode), that `doom:cleanup-processes' checks
 before killing processes. If there are no buffers with matching major-modes, it
 gets killed.")
 
-(defvar narf-project-root-files
+(defvar doom-project-root-files
   '(".git" ".hg" ".svn" ".project" "local.properties" "project.properties"
     "rebar.config" "project.clj" "SConstruct" "pom.xml" "build.sbt"
     "build.gradle" "Gemfile" "requirements.txt" "tox.ini" "package.json"
@@ -130,10 +127,14 @@ folder is the root of a project or not.")
 ;;
 
 (require 'f)
-(unless (require 'autoloads nil t)
-  (load (concat narf-emacs-dir "/scripts/generate-autoloads.el"))
-  (require 'autoloads))
+(require 'dash)
+(require 's)
+
 (require 'core-defuns)
+(unless (require 'autoloads nil t)
+  (doom-reload-autoloads)
+  (unless (require 'autoloads nil t)
+    (error "Autoloads couldn't be loaded or generated!")))
 
 (autoload 'use-package "use-package" "" nil 'macro)
 
@@ -147,7 +148,7 @@ folder is the root of a project or not.")
              persistent-soft-flush
              persistent-soft-location-readable
              persistent-soft-location-destroy)
-  :init (defvar pcache-directory (concat narf-temp-dir "/pcache/")))
+  :init (defvar pcache-directory (concat doom-temp-dir "/pcache/")))
 
 (use-package async
   :commands (async-start
@@ -168,17 +169,17 @@ folder is the root of a project or not.")
 ;; Automatic minor modes
 ;;
 
-(defvar narf-auto-minor-mode-alist '()
+(defvar doom-auto-minor-mode-alist '()
   "Alist of filename patterns vs corresponding minor mode functions, see
 `auto-mode-alist'. All elements of this alist are checked, meaning you can
 enable multiple minor modes for the same regexp.")
 
-(defun narf|enable-minor-mode-maybe ()
-  "Check file name against `narf-auto-minor-mode-alist'."
+(defun doom|enable-minor-mode-maybe ()
+  "Check file name against `doom-auto-minor-mode-alist'."
   (when buffer-file-name
     (let ((name buffer-file-name)
           (remote-id (file-remote-p buffer-file-name))
-          (alist narf-auto-minor-mode-alist))
+          (alist doom-auto-minor-mode-alist))
       ;; Remove backup-suffixes from file name.
       (setq name (file-name-sans-versions name))
       ;; Remove remote file name identification.
@@ -190,7 +191,7 @@ enable multiple minor modes for the same regexp.")
             (funcall (cdar alist) 1))
         (setq alist (cdr alist))))))
 
-(add-hook 'find-file-hook 'narf|enable-minor-mode-maybe)
+(add-hook 'find-file-hook 'doom|enable-minor-mode-maybe)
 
 
 ;;
@@ -203,8 +204,8 @@ enable multiple minor modes for the same regexp.")
   ;; Prevent any auto-displayed text...
   (advice-add 'display-startup-echo-area-message :override 'ignore)
   ;; ...so we can display our own
-  (message ":: Loaded in %.3fs"
-           (float-time (time-subtract (current-time) emacs-start-time))))
+  (setq emacs-end-time (float-time (time-subtract (current-time) emacs-start-time)))
+  (message ":: Loaded in %.3fs" emacs-end-time))
 
 (provide 'core)
 ;;; core.el ends here

@@ -8,7 +8,7 @@
         (words (plist-get rest :words))
         (patterns (plist-get rest :patterns))
         fn-name)
-    (setq fn-name (intern (format "narf--rotate-%s"
+    (setq fn-name (intern (format "doom--rotate-%s"
                                   (s-join "-" (mapcar 'symbol-name modes)))))
     `(progn
        (defun ,fn-name ()

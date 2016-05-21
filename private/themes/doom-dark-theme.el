@@ -1,28 +1,7 @@
-;; NARF Dark
+;; DOOM Dark
 ;; By Henrik Lissner <http://github.com/hlissner/emacs.d>
 
-(require 'dash)
-
-(deftheme narf-dark "A dark theme for narfy emacs, inspired by Molokai")
-
-;; Color helper functions
-;; Shamelessly *borrowed* from solarized
-(defun --color-name-to-rgb (color &optional frame)
-  (let ((valmax (float (car (color-values "#ffffff")))))
-    (mapcar (lambda (x) (/ x valmax)) (color-values color frame))))
-
-(defun --color-rgb-to-hex  (red green blue)
-  (format "#%02x%02x%02x"
-          (* red 255) (* green 255) (* blue 255)))
-
-(defun --color-blend (color1 color2 alpha)
-  (apply '--color-rgb-to-hex
-         (-zip-with '(lambda (it other)
-                       (+ (* alpha it) (* other (- 1 alpha))))
-                    (--color-name-to-rgb color1)
-                    (--color-name-to-rgb color2))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(deftheme doom-dark "A dark theme for hellish emacs, inspired by Molokai")
 
 (let* ((c '((class color)))
 
@@ -99,7 +78,7 @@
        (vc-deleted     red))
 
   (custom-theme-set-faces
-   'narf-dark
+   'doom-dark
 
    ;; Text
    `(default                         ((,c (:foreground ,fg :background ,bg))))
@@ -122,7 +101,7 @@
    `(flycheck-warning                ((,c (:underline (:style wave :color ,yellow) :background ,grey-2))))
    `(flycheck-info                   ((,c (:underline (:style wave :color ,green)  :background ,grey-2))))
    `(flyspell-incorrect              ((,c (:underline (:style wave :color ,error-highlight)
-                                           :inherit unspecified))))
+                                                      :inherit unspecified))))
 
    `(hs-face                         ((,c (:foreground ,comments :background ,black))))
    `(hs-fringe-face                  ((,c (:foreground ,orange))))
@@ -160,7 +139,7 @@
    `(show-paren-match               ((,c (:foreground ,magenta :inverse-video t))))
 
    ;; Modeline
-   `(narf-minibuffer-active         ((,c (:background ,active-minibuffer))))
+   `(doom-minibuffer-active         ((,c (:background ,active-minibuffer))))
    `(mode-line                      ((,c (:foreground ,modeline-fg          :background ,modeline-bg))))
    `(mode-line-inactive             ((,c (:foreground ,modeline-fg-inactive :background ,modeline-bg-inactive))))
 
@@ -182,9 +161,9 @@
    `(isearch                        ((,c (:foreground ,search-fg :background ,search-bg))))
    `(isearch-lazy-highlight-face    ((,c (:foreground ,search-rest-fg :background ,search-rest-bg))))
 
-   `(narf-todo-face                 ((,c (:foreground ,yellow))))
-   `(narf-fixme-face                ((,c (:foreground ,red))))
-   `(narf-note-face                 ((,c (:foreground ,cyan))))
+   `(doom-todo-face                 ((,c (:foreground ,yellow))))
+   `(doom-fixme-face                ((,c (:foreground ,red))))
+   `(doom-note-face                 ((,c (:foreground ,cyan))))
 
    `(evil-ex-substitute-replacement ((,c (:foreground ,magenta :background ,black :bold ,bold))))
    `(evil-search-highlight-persist-highlight-face ((,c (:background ,search-rest-bg))))
@@ -368,7 +347,7 @@
    `(org-checkbox-statistics-todo ((,c (:inherit org-todo))))
    `(org-checkbox-statistics-done ((,c (:inherit org-done))))
 
-   ;; NARF custom org faces
+   ;; DOOM custom org faces
    `(org-headline-todo    ((,c (:bold nil))))
    `(org-block            ((,c (:background ,current-line))))
    `(org-block-background ((,c (:background ,current-line))))
@@ -379,36 +358,55 @@
    `(org-todo-checkbox    ((,c (:inherit variable-pitch))))
    )
 
+  ;; *****************************************************************************************
+
+  (after! vc-annotate
+    (require 'dash)
+
+    ;; Color helper functions
+    ;; Shamelessly *borrowed* from solarized
+    (defun --color-name-to-rgb (color &optional frame)
+      (let ((valmax (float (car (color-values "#ffffff")))))
+        (mapcar (lambda (x) (/ x valmax)) (color-values color frame))))
+
+    (defun --color-rgb-to-hex  (red green blue)
+      (format "#%02x%02x%02x"
+              (* red 255) (* green 255) (* blue 255)))
+
+    (defun --color-blend (color1 color2 alpha)
+      (apply '--color-rgb-to-hex
+             (-zip-with '(lambda (it other)
+                           (+ (* alpha it) (* other (- 1 alpha))))
+                        (--color-name-to-rgb color1)
+                        (--color-name-to-rgb color2))))
+
+    (custom-theme-set-variables
+     'doom-dark
+     `(vc-annotate-color-map
+       '((20 .  ,green)
+         (40 .  ,(--color-blend yellow green (/ 1.0 3)))
+         (60 .  ,(--color-blend yellow green (/ 2.0 3)))
+         (80 .  ,yellow)
+         (100 . ,(--color-blend orange yellow (/ 1.0 3)))
+         (120 . ,(--color-blend orange yellow (/ 2.0 3)))
+         (140 . ,orange)
+         (160 . ,(--color-blend magenta orange (/ 1.0 3)))
+         (180 . ,(--color-blend magenta orange (/ 2.0 3)))
+         (200 . ,magenta)
+         (220 . ,(--color-blend red magenta (/ 1.0 3)))
+         (240 . ,(--color-blend red magenta (/ 2.0 3)))
+         (260 . ,red)
+         (280 . ,(--color-blend grey-2 red (/ 1.0 4)))
+         (300 . ,(--color-blend grey-2 red (/ 2.0 4)))
+         (320 . ,(--color-blend grey-2 red (/ 3.0 4)))
+         (340 . ,grey-2)
+         (360 . ,grey-2)))
+     `(vc-annotate-very-old-color nil)
+     `(vc-annotate-background ,black))))
+
 ;; *****************************************************************************************
 
-  (custom-theme-set-variables
-   'narf-dark
-   `(vc-annotate-color-map
-     '((20 .  ,green)
-       (40 .  ,(--color-blend yellow green (/ 1.0 3)))
-       (60 .  ,(--color-blend yellow green (/ 2.0 3)))
-       (80 .  ,yellow)
-       (100 . ,(--color-blend orange yellow (/ 1.0 3)))
-       (120 . ,(--color-blend orange yellow (/ 2.0 3)))
-       (140 . ,orange)
-       (160 . ,(--color-blend magenta orange (/ 1.0 3)))
-       (180 . ,(--color-blend magenta orange (/ 2.0 3)))
-       (200 . ,magenta)
-       (220 . ,(--color-blend red magenta (/ 1.0 3)))
-       (240 . ,(--color-blend red magenta (/ 2.0 3)))
-       (260 . ,red)
-       (280 . ,(--color-blend grey-2 red (/ 1.0 4)))
-       (300 . ,(--color-blend grey-2 red (/ 2.0 4)))
-       (320 . ,(--color-blend grey-2 red (/ 3.0 4)))
-       (340 . ,grey-2)
-       (360 . ,grey-2)))
-   `(vc-annotate-very-old-color nil)
-   `(vc-annotate-background ,black))
-  )
-
-;; *****************************************************************************************
-
-(provide-theme 'narf-dark)
+(provide-theme 'doom-dark)
 
 ;; Local Variables:
 ;; no-byte-compile: t

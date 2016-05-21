@@ -2,9 +2,9 @@
 ;; for ../core-yasnippet.el
 
 ;;;###autoload
-(defun narf|yas-before-expand ()
+(defun doom|yas-before-expand ()
   "Strip out the shitespace before a line selection."
-  (when (narf/evil-visual-line-state-p)
+  (when (doom/evil-visual-line-state-p)
     (setq-local
      yas-selected-text
      (replace-regexp-in-string
@@ -13,13 +13,13 @@
                                       (1- (region-end)))))))
 
 ;;;###autoload
-(defun narf|yas-after-expand ()
+(defun doom|yas-after-expand ()
   "Switch to insert mode when expanding a template via backtab, or go back to
 normal mode if there are no fields."
   (setq yas-selected-text nil))
 
 ;;;###autoload
-(defun narf/yas-insert-snippet ()
+(defun doom/yas-insert-snippet ()
   "Switch to insert mode when expanding a template via backtab, or go back to
 normal mode if there are no fields."
   (interactive)
@@ -36,7 +36,7 @@ normal mode if there are no fields."
     (unless fields (evil-change-state 'normal))))
 
 ;;;###autoload
-(defun narf/yas-goto-start-of-field ()
+(defun doom/yas-goto-start-of-field ()
   "Go to the beginning of a field."
   (interactive)
   (let* ((snippet (car (yas--snippets-at-point)))
@@ -46,7 +46,7 @@ normal mode if there are no fields."
       (goto-char position))))
 
 ;;;###autoload
-(defun narf/yas-goto-end-of-field ()
+(defun doom/yas-goto-end-of-field ()
   (interactive)
   (let* ((snippet (car (yas--snippets-at-point)))
          (position (yas--field-end (yas--snippet-active-field snippet))))
@@ -55,7 +55,7 @@ normal mode if there are no fields."
       (goto-char position))))
 
 ;;;###autoload
-(defun narf/yas-backspace (&optional field)
+(defun doom/yas-backspace (&optional field)
   "Prevents Yas from stepping on my toes when I use backspace."
   (interactive)
   (let ((field (or field (and yas--active-field-overlay
@@ -65,7 +65,7 @@ normal mode if there are no fields."
           (t (delete-char -1)))))
 
 ;;;###autoload
-(defun narf/yas-delete (&optional field)
+(defun doom/yas-delete (&optional field)
   (interactive)
   (let ((field (or field (and yas--active-field-overlay
                               (overlay-buffer yas--active-field-overlay)
@@ -79,7 +79,7 @@ normal mode if there are no fields."
           (t (delete-char 1)))))
 
 ;;;###autoload
-(defun narf/yas-clear-to-sof (&optional field)
+(defun doom/yas-clear-to-sof (&optional field)
   (interactive)
   (let* ((field (or field (and yas--active-field-overlay
                                (overlay-buffer yas--active-field-overlay)
@@ -90,10 +90,11 @@ normal mode if there are no fields."
 
 ;; Snippet helpers ;;;;;;;;;;;;;;;;;;;;;
 ;;;###autoload
-(defun narf/yas-find-file ()
+(defun doom/yas-find-file ()
   "Browse through snippets folder"
+  ;; FIXME
   (interactive)
-  (narf/ido-find-file (car narf-snippet-dirs)))
+  (doom/ido-find-file (car doom-snippet-dirs)))
 
 (provide 'defuns-yasnippet)
 ;;; nlinum-defuns.el ends here

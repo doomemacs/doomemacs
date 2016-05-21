@@ -10,8 +10,8 @@
   (push '("jade" "html") projectile-other-file-alist)
   (push '("pug" "html")  projectile-other-file-alist)
   (map! :map pug-mode-map
-        :i [tab] 'narf/dumb-indent
-        :i [backtab] 'narf/dumb-dedent))
+        :i [tab] 'doom/dumb-indent
+        :i [backtab] 'doom/dumb-dedent))
 
 (use-package web-mode
   :mode ("\\.p?html?$"
@@ -37,7 +37,7 @@
 
   (map! :map web-mode-map
         "M-/" 'web-mode-comment-or-uncomment
-        :n  "M-r" 'narf/web-refresh-browser
+        :n  "M-r" 'doom/web-refresh-browser
 
         :n  "za" 'web-mode-fold-or-unfold
         (:localleader :n "t" 'web-mode-element-rename)
@@ -77,7 +77,7 @@
   :files ("bower.json")
   :when
   (lambda (&rest _)
-    (let* ((project-path (narf/project-root))
+    (let* ((project-path (doom/project-root))
            (hash (gethash project-path bower-conf))
            (package-file (f-expand "bower.json" project-path))
            deps)
@@ -90,7 +90,7 @@
   :modes (nodejs-project-mode bower-project-mode)
   :when
   (lambda (&rest _)
-    (let* ((project (narf/project-root))
+    (let* ((project (doom/project-root))
            (bower (gethash project bower-conf))
            (npm (gethash project npm-conf))
            (deps (append (cdr-safe (assq 'dependencies bower))

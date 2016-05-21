@@ -4,7 +4,7 @@ REPO_URL="https://github.com/hlissner"
 
 all: install autoloads bootstrap.elc
 
-# If you keep emacs open while running either of these, run narf/reload afterwards
+# If you keep emacs open while running either of these, run doom-reload afterwards
 install: autoloads _install bootstrap.elc
 update: autoloads _update bootstrap.elc
 
@@ -12,7 +12,7 @@ autoloads:
 	@$(EMACS) --batch \
 		-l bootstrap.el \
 		-l core/core-defuns.el \
-		--eval '(narf-reload-autoloads)' 2>&1
+		--eval '(doom-reload-autoloads)' 2>&1
 
 compile: autoloads bootstrap.elc
 	@$(EMACS) --batch -f batch-byte-compile 2>&1 \

@@ -10,8 +10,8 @@
          "/git/ignore$"))
 
 (use-package git-gutter
-  :commands (git-gutter-mode narf/vcs-next-hunk narf/vcs-prev-hunk
-             narf/vcs-show-hunk narf/vcs-stage-hunk narf/vcs-revert-hunk)
+  :commands (git-gutter-mode doom/vcs-next-hunk doom/vcs-prev-hunk
+             doom/vcs-show-hunk doom/vcs-stage-hunk doom/vcs-revert-hunk)
   :init
   (add-hook! (text-mode prog-mode conf-mode) 'git-gutter-mode)
   :config
@@ -31,11 +31,11 @@
   (advice-add 'evil-force-normal-state :after 'git-gutter)
   (add-hook 'focus-in-hook 'git-gutter:update-all-windows)
 
-  (defalias 'narf/vcs-next-hunk    'git-gutter:next-hunk)
-  (defalias 'narf/vcs-prev-hunk    'git-gutter:previous-hunk)
-  (defalias 'narf/vcs-show-hunk    'git-gutter:popup-hunk)
-  (defalias 'narf/vcs-stage-hunk   'git-gutter:stage-hunk)
-  (defalias 'narf/vcs-revert-hunk  'git-gutter:revert-hunk))
+  (defalias 'doom/vcs-next-hunk    'git-gutter:next-hunk)
+  (defalias 'doom/vcs-prev-hunk    'git-gutter:previous-hunk)
+  (defalias 'doom/vcs-show-hunk    'git-gutter:popup-hunk)
+  (defalias 'doom/vcs-stage-hunk   'git-gutter:stage-hunk)
+  (defalias 'doom/vcs-revert-hunk  'git-gutter:revert-hunk))
 
 (after! vc-annotate
   (evil-set-initial-state 'vc-annotate-mode     'normal)

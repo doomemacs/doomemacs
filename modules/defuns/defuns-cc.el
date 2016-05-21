@@ -1,6 +1,6 @@
 ;;; defuns-cc.el --- for module-cc.el
 
-(defun narf--c-lineup-inclass (langelem)
+(defun doom--c-lineup-inclass (langelem)
   (let ((inclass (assoc 'inclass c-syntactic-context)))
     (save-excursion
       (goto-char (c-langelem-pos inclass))
@@ -10,7 +10,7 @@
         '++))))
 
 ;;;###autoload
-(defun narf/c-lineup-arglist (orig-fun &rest args)
+(defun doom/c-lineup-arglist (orig-fun &rest args)
   "Improve indentation of continued C++11 lambda function opened as argument."
   (if (and (eq major-mode 'c++-mode)
            (ignore-errors
@@ -23,7 +23,7 @@
     (apply orig-fun args)))
 
 ;;;###autoload
-(defun narf|init-c/c++-settings ()
+(defun doom|init-c/c++-settings ()
   (when (memq major-mode '(c-mode c++-mode objc-mode))
     (c-toggle-electric-state -1)
     (c-toggle-auto-newline -1)
@@ -33,7 +33,7 @@
     (c-set-offset 'brace-list-open '+)   ; all "opens" should be indented by the c-indent-level
     (c-set-offset 'case-label '+)        ; indent case labels by c-indent-level, too
     (c-set-offset 'access-label '-)
-    (c-set-offset 'inclass 'narf--c-lineup-inclass)
+    (c-set-offset 'inclass 'doom--c-lineup-inclass)
     (c-set-offset 'arglist-intro '+)
     (c-set-offset 'arglist-close '0)
     ;; Certain mappings interfere with smartparens and custom bindings
@@ -52,11 +52,11 @@
     (define-key c++-mode-map "}" nil)
     ;; FIXME: fix smartparens
     ;; (define-key c++-mode-map ">" nil)
-    (map! :map (c-mode-base-map c++-mode-map) :i ">" 'narf/autoclose->-maybe)
+    (map! :map (c-mode-base-map c++-mode-map) :i ">" 'doom/autoclose->-maybe)
     (define-key c++-mode-map "<" nil)))
 
 ;;;###autoload
-(defun narf/autoclose->-maybe ()
+(defun doom/autoclose->-maybe ()
   "For some reason smartparens won't autoskip >'s, this hack does."
   (interactive)
   (if (save-excursion
@@ -65,22 +65,22 @@
       (forward-char)
     (call-interactively 'self-insert-command)))
 
-(defun narf--copy-face (new-face face)
+(defun doom--copy-face (new-face face)
   "Define NEW-FACE from existing FACE."
   (copy-face face new-face)
   (eval `(defvar ,new-face nil))
   (set new-face new-face))
 
 ;;;###autoload
-(defun narf|init-c++-C11-highlights ()
+(defun doom|init-c++-C11-highlights ()
   ;; C++11 syntax support (until cc-mode is updated)
   (require 'font-lock)
   ;; labels, case, public, private, protected, namespace-tags
-  (narf--copy-face 'font-lock-label-face 'font-lock-keyword-face)
+  (doom--copy-face 'font-lock-label-face 'font-lock-keyword-face)
   ;; comment markups such as Javadoc-tags
-  (narf--copy-face 'font-lock-doc-markup-face 'font-lock-doc-face)
+  (doom--copy-face 'font-lock-doc-markup-face 'font-lock-doc-face)
   ;; comment markups
-  (narf--copy-face 'font-lock-doc-string-face 'font-lock-comment-face)
+  (doom--copy-face 'font-lock-doc-string-face 'font-lock-comment-face)
   (setq font-lock-maximum-decoration t)
 
   ;; We could place some regexes into `c-mode-common-hook', but
@@ -119,7 +119,7 @@
          ) t))
 
 ;;;###autoload
-(defun narf/append-semicolon ()
+(defun doom/append-semicolon ()
   "Append a semicolon to the end of this (or each selected) non-empty line."
   (interactive)
   (let ((beg (if (evil-visual-state-p) evil-visual-beginning (line-beginning-position)))
@@ -137,12 +137,12 @@
       (evil-normal-state))))
 
 ;;;###autoload
-(defun narf/sp-point-is-template-p (id action context)
+(defun doom/sp-point-is-template-p (id action context)
   (and (sp-in-code-p id action context)
        (sp-point-after-word-p id action context)))
 
 ;;;###autoload
-(defun narf/sp-point-after-include-p (id action context)
+(defun doom/sp-point-after-include-p (id action context)
   (and (sp-in-code-p id action context)
        (save-excursion
          (goto-char (line-beginning-position))

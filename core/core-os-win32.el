@@ -1,6 +1,6 @@
 ;;; core-os-win32.el --- Windows-specific settings
 
-(defun narf-open-with (&optional app-name path)
+(defun doom-open-with (&optional app-name path)
   (interactive)
   (error "Not yet implemented"))
 

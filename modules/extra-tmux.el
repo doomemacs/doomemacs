@@ -24,37 +24,37 @@
   :ex-arg shell
   (list (when (evil-ex-p) (evil-ex-file-arg))))
 
-;;;###autoload (autoload 'narf:tmux-cd "extra-tmux" nil t)
-(evil-define-command narf:tmux-cd (&optional bang)
+;;;###autoload (autoload 'doom:tmux-cd "extra-tmux" nil t)
+(evil-define-command doom:tmux-cd (&optional bang)
   (interactive "<!>")
   (if bang
-      (narf/tmux-cd-to-project)
-    (narf/tmux-cd-to-here)))
+      (doom/tmux-cd-to-project)
+    (doom/tmux-cd-to-here)))
 
-(defvar narf-tmux-last-command nil "The last command sent to tmux")
-;;;###autoload (autoload 'narf:tmux "extra-tmux" nil t)
-(evil-define-operator narf:tmux (&optional command bang)
+(defvar doom-tmux-last-command nil "The last command sent to tmux")
+;;;###autoload (autoload 'doom:tmux "extra-tmux" nil t)
+(evil-define-operator doom:tmux (&optional command bang)
   "Sends input to tmux. Use `bang' to append to tmux"
   :type inclusive
   (interactive "<term><!>")
   (unless command
-    (setq command narf-tmux-last-command))
+    (setq command doom-tmux-last-command))
   (if (not command)
       (os-switch-to-term)
     (tmux command (not bang))
-    (setq narf-tmux-last-command command)
+    (setq doom-tmux-last-command command)
     (when (evil-ex-p)
       (message "[Tmux] %s" command))))
 
 ;;;###autoload
-(defun narf/tmux-cd-to-here (&optional dir)
+(defun doom/tmux-cd-to-here (&optional dir)
   (interactive)
   (tmux (format "cd '%s'" (or dir default-directory))))
 
 ;;;###autoload
-(defun narf/tmux-cd-to-project ()
+(defun doom/tmux-cd-to-project ()
   (interactive)
-  (narf/tmux-cd-to-here (narf/project-root)))
+  (doom/tmux-cd-to-here (doom/project-root)))
 
 (provide 'extra-tmux)
 ;;; extra-tmux.el ends here

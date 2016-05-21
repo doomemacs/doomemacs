@@ -10,7 +10,7 @@
   (mapc (lambda (rule)
           (define-auto-insert
             (nth 0 rule)
-            (vector `(lambda () (narf/auto-insert-snippet ,(nth 1 rule) ',(nth 2 rule) ,(nth 3 rule))))))
+            (vector `(lambda () (doom/auto-insert-snippet ,(nth 1 rule) ',(nth 2 rule) ,(nth 3 rule))))))
         `(;; General
           ("/\\.gitignore$"                  "__"               gitignore-mode)
           ("/Dockerfile$"                    "__"               dockerfile-mode)
@@ -34,7 +34,7 @@
           ;; Elisp
           ("-test\\.el$"                     "__"               emacs-ert-mode)
           ("/.+\\.el$"                       "__initfile"       emacs-lisp-mode)
-          ("\\(\\.emacs\\.d\\|narf-emacs\\)/private/\\(snippets\\|templates\\)/.+$"
+          ("\\(\\.emacs\\.d\\|doom-emacs\\)/private/\\(snippets\\|templates\\)/.+$"
            "__" snippet-mode)
 
           ;; Go

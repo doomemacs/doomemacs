@@ -3,7 +3,7 @@
 
 (defvar *linum-mdown-line* nil)
 
-(defun narf--line-at-click ()
+(defun doom--line-at-click ()
   (save-excursion
     (let ((click-y (cdr (cdr (mouse-position))))
           (line-move-visual-store line-move-visual))
@@ -16,18 +16,18 @@
       (1+ (line-number-at-pos)))))
 
 ;;;###autoload
-(defun narf/mouse-drag-line ()
+(defun doom/mouse-drag-line ()
   (interactive)
-  (goto-line (narf--line-at-click))
+  (goto-line (doom--line-at-click))
   (set-mark (point))
   (setq *linum-mdown-line* (line-number-at-pos)))
 
 ;;;###autoload
-(defun narf/mouse-select-line ()
+(defun doom/mouse-select-line ()
   (interactive)
   (when *linum-mdown-line*
     (let (mu-line)
-      (setq mu-line (narf--line-at-click))
+      (setq mu-line (doom--line-at-click))
       (goto-line *linum-mdown-line*)
       (if (> mu-line *linum-mdown-line*)
           (progn
@@ -40,12 +40,12 @@
       (setq *linum-mdown-line* nil))))
 
 ;;;###autoload
-(defun narf*load-hs-minor-mode ()
+(defun doom*load-hs-minor-mode ()
   (hs-minor-mode 1)
-  (advice-remove 'evil-toggle-fold 'narf-load-hs-minor-mode))
+  (advice-remove 'evil-toggle-fold 'doom-load-hs-minor-mode))
 
 ;;;###autoload
-(defun narf/reselect-paste ()
+(defun doom/reselect-paste ()
   (interactive)
   (evil-goto-mark ?\[)
   (evil-visual-state)

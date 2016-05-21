@@ -1,7 +1,7 @@
 ;;; defuns-highlight-indentation.el
 
 ;;;###autoload
-(defun narf/add-whitespace (&optional start end)
+(defun doom/add-whitespace (&optional start end)
   "Maintain indentation whitespace in buffer. Used so that highlight-indentation will
 display consistent guides. Whitespace is stripped out on save, so this doesn't affect the
 end file."
@@ -38,7 +38,7 @@ end file."
   nil)
 
 ;;;###autoload
-(defun narf*hl-indent-guess-offset ()
+(defun doom*hl-indent-guess-offset ()
   (string-to-int (gethash 'indent_size (editorconfig-get-properties))))
 
 (provide 'defuns-highlight-indentation)

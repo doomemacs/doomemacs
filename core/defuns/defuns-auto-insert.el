@@ -2,10 +2,10 @@
 ;; for ../core-auto-insert.el
 
 ;;;###autoload
-(defun narf/auto-insert-snippet (key &optional mode project-only)
+(defun doom/auto-insert-snippet (key &optional mode project-only)
   "Auto insert a snippet of yasnippet into new file."
   (interactive)
-  (when (if project-only (narf/project-p) t)
+  (when (if project-only (doom/project-p) t)
     (let ((is-yasnippet-on (not (cond ((functionp yas-dont-activate)
                                        (funcall yas-dont-activate))
                                       ((consp yas-dont-activate)

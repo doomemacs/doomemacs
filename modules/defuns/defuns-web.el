@@ -1,26 +1,26 @@
 ;;; defuns-web.el
 
 ;;;###autoload
-(defun narf/web-html-email2mailto (beg end)
+(defun doom/web-html-email2mailto (beg end)
   (interactive "r")
   (replace-regexp "\\b\\([a-zA-Z0-9._+-%]+@[a-zA-Z0-9-.]+\\.[a-zA-Z]+\\)\\b"
                   "<a href=\"mailto:\\1\">\\1</a>"
                   nil beg end))
 
 ;;;###autoload
-(defun narf/web-html-url2anchor (beg end)
+(defun doom/web-html-url2anchor (beg end)
   (interactive "r")
   (replace-regexp "\\bhttps?://.+?\\b"
                   "<a href=\"\\1\">\\1</a>"
                   nil beg end))
 
 ;;;###autoload
-(defun narf/web-refresh-browser ()
+(defun doom/web-refresh-browser ()
   (interactive)
   (call-process-shell-command "osascript -e 'tell application \"Google Chrome\" to tell the active tab of its first window to reload' &" nil 0))
 
-;;;###autoload (autoload 'narf/html-entities "defuns-web" nil t)
-(evil-define-operator narf/html-entities (bang beg end)
+;;;###autoload (autoload 'doom/html-entities "defuns-web" nil t)
+(evil-define-operator doom/html-entities (bang beg end)
   "HTML encode/decode the selected region. Based on Xah's replace HTML named entities
 function @ http://ergoemacs.org/emacs/elisp_replace_html_entities_command.html"
   (interactive "<!><r>")

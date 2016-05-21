@@ -1,6 +1,6 @@
 <?php
 
-class `(narf/php-class-name)`$1 {
+class `(doom/php-class-name)`$1 {
 
     $0
 

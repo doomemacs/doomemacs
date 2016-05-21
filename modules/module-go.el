@@ -15,9 +15,9 @@
         (:leader :n "h" 'godef-describe)
         (:localleader
           :n "p"  'helm-go-package
-          :n "tr" 'narf:go-test-run-all
-          :n "ta" 'narf:go-test-run-all
-          :n "ts" 'narf:go-test-run-package))
+          :n "tr" 'doom:go-test-run-all
+          :n "ta" 'doom:go-test-run-all
+          :n "ts" 'doom:go-test-run-package))
 
   (mapc (lambda (x)
           (let ((command-name (car x))

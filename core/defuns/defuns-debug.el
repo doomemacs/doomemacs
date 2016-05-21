@@ -28,22 +28,22 @@
   (interactive)
   (message "Mode: %s" major-mode))
 
-;;;###autoload (autoload 'narf:echo "defuns-debug" nil t)
-(evil-define-command narf:echo (bang message)
+;;;###autoload (autoload 'doom:echo "defuns-debug" nil t)
+(evil-define-command doom:echo (bang message)
   "Display MSG in echo-area without logging it in *Messages* buffer."
   (interactive "<!><a>")
   (let (message-log-max)
     (message "%s%s" (if bang ">> " "") message)))
 
-;;;###autoload (autoload 'narf:debug "defuns-debug" nil t)
-(evil-define-command narf:debug (&optional path)
+;;;###autoload (autoload 'doom:debug "defuns-debug" nil t)
+(evil-define-command doom:debug (&optional path)
   "Initiate debugger for current major mode"
   (interactive "<f>")
-  (let ((default-directory (narf/project-root)))
+  (let ((default-directory (doom/project-root)))
     (cond ((memq major-mode '(c-mode c++-mode))
            (realgud:gdb (if path (concat "gdb " path))))
           ((memq major-mode '(ruby-mode enh-ruby-mode))
-           (narf:repl nil (format "run '%s'" (f-filename (or path buffer-file-name)))))
+           (doom:repl nil (format "run '%s'" (f-filename (or path buffer-file-name)))))
           ((eq major-mode 'sh-mode)
            (let ((shell sh-shell))
              (when (string= shell "sh")
@@ -60,16 +60,16 @@
            (haskell-debug))
           (t (user-error "No debugger for %s" major-mode)))))
 
-;;;###autoload (autoload 'narf:debug-toggle-breakpoint "defuns-debug" nil t)
-(evil-define-command narf:debug-toggle-breakpoint (&optional bang)
+;;;###autoload (autoload 'doom:debug-toggle-breakpoint "defuns-debug" nil t)
+(evil-define-command doom:debug-toggle-breakpoint (&optional bang)
   (interactive "<!>")
   (call-interactively (if bang 'realgud:cmd-clear 'realgud:cmd-break)))
 
 ;;;###autoload
-(defun narf/debug-quit ()
+(defun doom/debug-quit ()
   (interactive)
   (ignore-errors (call-interactively 'realgud:cmd-quit))
-  (narf/popup-close)
+  (doom/popup-close)
   (evil-normal-state))
 
 (provide 'defuns-debug)

@@ -1,7 +1,7 @@
 ;;; defuns-sh.el
 
 (defvar sh-extra-font-lock--keywords
-  `((narf/sh-extra-font-lock--match-var-in-double-quoted-string
+  `((doom/sh-extra-font-lock--match-var-in-double-quoted-string
      (2 font-lock-variable-name-face prepend))
     (,(concat
        "\\<"
@@ -10,13 +10,13 @@
      (0 'font-lock-builtin-face))))
 
 ;;;###autoload
-(defun narf/sh-extra-font-lock--is-in-double-quoted-string ()
+(defun doom/sh-extra-font-lock--is-in-double-quoted-string ()
   "Non-nil if point in inside a double-quoted string."
   (let ((state (syntax-ppss)))
     (eq (nth 3 state) ?\")))
 
 ;;;###autoload
-(defun narf/sh-extra-font-lock--match-var-in-double-quoted-string (limit)
+(defun doom/sh-extra-font-lock--match-var-in-double-quoted-string (limit)
   "Search for variables in double-quoted strings bounded by LIMIT."
   (let (res)
     (while
@@ -24,11 +24,11 @@
                    (re-search-forward
                     "\\$\\({#?\\)?\\([[:alpha:]_][[:alnum:]_]*\\|[-#?@!]\\)"
                     limit t))
-             (not (narf/sh-extra-font-lock--is-in-double-quoted-string))))
+             (not (doom/sh-extra-font-lock--is-in-double-quoted-string))))
     res))
 
 ;;;###autoload
-(defun narf|sh-extra-font-lock-activate ()
+(defun doom|sh-extra-font-lock-activate ()
   "Activate sh-extra-font-lock."
   (interactive)
   (font-lock-add-keywords nil sh-extra-font-lock--keywords)
@@ -39,7 +39,7 @@
         (font-lock-fontify-buffer)))))
 
 ;;;###autoload
-(defun narf/inf-shell ()
+(defun doom/inf-shell ()
   (let* ((dest-sh (symbol-name sh-shell))
          (sh-shell-file dest-sh))
     (sh-shell-process t)

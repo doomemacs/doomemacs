@@ -1,4 +1,4 @@
-# NARF Emacs
+# DOOM Emacs
 ![Screenshot](/../screenshots/main.png?raw=true)
 
 > What we do every night, Pinky...
@@ -27,11 +27,11 @@ make snippets # install hlissner/emacs-snippets into private/snippets
 
 To get a picture of what's in here, check out:
 
-* [The Caskfile](Cask): lists installed plugins and where they're configured.
-* [init.el](init.el): lists all loaded modules
-* [private/my-bindings.el](private/my-bindings.el): most of the custom keybinds
-* [private/my-commands.el](private/my-commands.el): available custom ex commands
-* [ext/Makefile](ext/Makefile): lists external dependencies
+* **[The Caskfile](Cask)**: lists installed plugins and where they're configured.
+* **[init.el](init.el)**: lists all loaded modules
+* **[private/my-bindings.el](private/my-bindings.el)**: most of the custom keybinds
+* **[private/my-commands.el](private/my-commands.el)**: available custom ex commands
+* **[ext/Makefile](ext/Makefile)**: lists external dependencies
 
 ### Highlights
 

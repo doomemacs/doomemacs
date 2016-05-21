@@ -7,7 +7,7 @@
   :config
   (def-company-backend! lua-mode (lua yasnippet))
   (def-electric! lua-mode :words ("else" "end"))
-  (def-repl! lua-mode narf/inf-lua)
+  (def-repl! lua-mode doom/inf-lua)
   (sp-with-modes '(lua-mode)
     ;; disable defaults
     (sp-local-pair "if" nil :actions       :rem)

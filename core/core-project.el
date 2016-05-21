@@ -13,7 +13,7 @@
 (add-hook 'dired-mode-hook 'dired-omit-mode)
 
 ;; List directories first
-(defun narf|dired-sort ()
+(defun doom|dired-sort ()
   "Dired sort hook to list directories first."
   (save-excursion
     (let (buffer-read-only)
@@ -23,15 +23,15 @@
        (fboundp 'dired-insert-set-properties)
        (dired-insert-set-properties (point-min) (point-max)))
   (set-buffer-modified-p nil))
-(add-hook 'dired-after-readin-hook 'narf|dired-sort)
+(add-hook 'dired-after-readin-hook 'doom|dired-sort)
 
 ;; Automatically create missing directories when creating new files
-(defun narf|create-non-existent-directory ()
+(defun doom|create-non-existent-directory ()
   (let ((parent-directory (file-name-directory buffer-file-name)))
     (when (and (not (file-exists-p parent-directory))
                (y-or-n-p (format "Directory `%s' does not exist! Create it?" parent-directory)))
       (make-directory parent-directory t))))
-(push 'narf|create-non-existent-directory find-file-not-found-functions)
+(push 'doom|create-non-existent-directory find-file-not-found-functions)
 
 ;;
 (use-package ido
@@ -50,13 +50,13 @@
         ido-enable-tramp-completion nil
         ido-enable-tramp-completion t
         ido-cr+-max-items 10000
-        ido-save-directory-list-file (concat narf-temp-dir "/ido.last"))
-  (add-hook 'ido-setup-hook 'narf|ido-setup-home-keybind)
+        ido-save-directory-list-file (concat doom-temp-dir "/ido.last"))
+  (add-hook 'ido-setup-hook 'doom|ido-setup-home-keybind)
   :config
   (add-hook! ido-setup
     (push "\\`.DS_Store$" ido-ignore-files)
     (push "Icon\\?$" ido-ignore-files)
-    (advice-add 'ido-sort-mtime :override 'narf*ido-sort-mtime)
+    (advice-add 'ido-sort-mtime :override 'doom*ido-sort-mtime)
 
     (require 'ido-vertical-mode)
     (ido-vertical-mode 1)
@@ -70,7 +70,7 @@
           "C-w" 'ido-delete-backward-word-updir
           "C-u" 'ido-up-directory))
 
-  (add-hook! (ido-make-file-list ido-make-dir-list) 'narf*ido-sort-mtime))
+  (add-hook! (ido-make-file-list ido-make-dir-list) 'doom*ido-sort-mtime))
 
 ;;
 (use-package neotree
@@ -92,19 +92,19 @@
         neo-banner-message nil)
   :config
   (evil-set-initial-state 'neotree-mode 'motion)
-  (add-hook 'neo-after-create-hook 'narf|hide-mode-line)
+  (add-hook 'neo-after-create-hook 'doom|hide-mode-line)
 
   ;; A custom and simple theme for neotree
-  (advice-add 'neo-buffer--insert-fold-symbol :override 'narf*neo-theme)
+  (advice-add 'neo-buffer--insert-fold-symbol :override 'doom*neo-theme)
   ;; Shorter pwd in neotree
-  (advice-add 'neo-buffer--insert-root-entry :filter-args 'narf*neotree-shorten-pwd)
+  (advice-add 'neo-buffer--insert-root-entry :filter-args 'doom*neotree-shorten-pwd)
   ;; Don't ask for confirmation when creating files
-  (advice-add 'neotree-create-node :around 'narf*neotree-create-node)
+  (advice-add 'neotree-create-node :around 'doom*neotree-create-node)
   ;; Prevents messing up the neotree buffer on window changes
-  (advice-add 'narf/evil-window-move :around 'narf*save-neotree)
+  (advice-add 'doom/evil-window-move :around 'doom*save-neotree)
 
-  (add-hook 'neotree-mode-hook 'narf|neotree-init-keymap)
-  (defun narf|neotree-init-keymap ()
+  (add-hook 'neotree-mode-hook 'doom|neotree-init-keymap)
+  (defun doom|neotree-init-keymap ()
     (setq line-spacing 1)
     (map! :map evil-motion-state-local-map
           "ESC ESC" 'neotree-hide
@@ -127,17 +127,17 @@
   :config
   (setq projectile-require-project-root nil
         projectile-enable-caching t
-        projectile-cache-file (concat narf-temp-dir "/projectile.cache")
-        projectile-known-projects-file (concat narf-temp-dir "/projectile.projects")
+        projectile-cache-file (concat doom-temp-dir "/projectile.cache")
+        projectile-known-projects-file (concat doom-temp-dir "/projectile.projects")
         projectile-indexing-method 'alien
-        projectile-project-root-files narf-project-root-files
+        projectile-project-root-files doom-project-root-files
         projectile-file-exists-remote-cache-expire nil)
 
   ;; Don't cache ignored files!
-  (defun narf*projectile-cache-current-file (orig-fun &rest args)
+  (defun doom*projectile-cache-current-file (orig-fun &rest args)
     (unless (--any (f-descendant-of? buffer-file-name it) (projectile-ignored-directories))
       (apply orig-fun args)))
-  (advice-add 'projectile-cache-current-file :around 'narf*projectile-cache-current-file)
+  (advice-add 'projectile-cache-current-file :around 'doom*projectile-cache-current-file)
 
   (push "ido.last" projectile-globally-ignored-files)
   (push "assets"   projectile-globally-ignored-directories)

@@ -10,7 +10,7 @@
   :config
   (shackle-mode 1)
   (setq shackle-rules
-        '(;; Debuggers
+        `(;; Debuggers
           ("\\`\\*\\(g\\|zsh\\|bash\\)db.*?\\*\\'" :align below :size 20 :regexp t)
           ("\\`\\*trepanjs.*?\\*\\'"               :align below :size 20 :regexp t)
           ("\\`\\*\\(debug:\\)haskell\\*\\'"       :align below :size 20 :regexp t)
@@ -47,7 +47,7 @@
           ("^\\*.+-Profiler-Report .+\\*$" :align below :size 0.3 :regexp t)
           ("*processing-compilation*"  :align below :size 10   :noselect t)
           ("*Backtrace*"               :align below :size 0.25 :noselect t)
-          ("*scratch*"                 :align below :size 0.3  :select t)
+          (,doom-buffer-name           :align below :size 0.3  :select t)
           ("*Help*"                    :align below :size 16   :select t)
           ("*Messages*"                :align below :size 15   :select t)
           ("*Warnings*"                :align below :size 10   :noselect t)
@@ -57,26 +57,26 @@
 
           ;; Custom + REPLs
           ("*eval*" :align below :size 12)
-          ("^\\*narf.+\\*$" :regexp t :align below :size 12 :noselect t)
+          ("^\\*doom.+\\*$" :regexp t :align below :size 12 :noselect t)
           ((:custom (lambda (b &rest _)
                       (when (featurep 'repl-toggle)
                         (when (string-prefix-p "*" (buffer-name (get-buffer b)))
                           (with-current-buffer b repl-p)))))
            :popup t :align below :size 16)))
 
-  (defvar narf-popup-windows '()
+  (defvar doom-popup-windows '()
     "A list of windows that have been opened via shackle. Do not touch this!")
 
   ;; There is no shackle-popup hook, so I hacked one in
-  (advice-add 'shackle-display-buffer :after 'narf|run-popup-hooks)
+  (advice-add 'shackle-display-buffer :after 'doom|run-popup-hooks)
 
-  (add-hook 'shackle-popup-hook 'narf|popup-init)     ; Keep track of popups
-  (add-hook 'shackle-popup-hook 'narf|hide-mode-line) ; No mode line in popups
+  (add-hook 'shackle-popup-hook 'doom|popup-init)     ; Keep track of popups
+  (add-hook 'shackle-popup-hook 'doom|hide-mode-line) ; No mode line in popups
 
   ;; Prevents popups from messaging with windows-moving functions
-  (defun narf*save-popups (orig-fun &rest args)
-    (narf/popup-save (apply orig-fun args)))
-  (advice-add 'narf/evil-window-move :around 'narf*save-popups))
+  (defun doom*save-popups (orig-fun &rest args)
+    (doom/popup-save (apply orig-fun args)))
+  (advice-add 'doom/evil-window-move :around 'doom*save-popups))
 
 
 ;;
@@ -143,41 +143,41 @@
                 helm-split-window-in-side-p t))
 
 (after! helm-swoop
-  (setq helm-swoop-split-window-function (lambda ($buf) (narf/popup-buffer $buf))))
+  (setq helm-swoop-split-window-function (lambda ($buf) (doom/popup-buffer $buf))))
 
 (after! helm-ag
   ;; Helm-ag needs a little coaxing for it to cooperate with shackle. Mostly to prevent
   ;; it from switching between windows and buffers.
   (defadvice helm-ag--edit-abort (around helm-ag-edit-abort-popup-compat activate)
     (cl-letf (((symbol-function 'select-window) 'ignore)) ad-do-it)
-    (narf/popup-close nil t t))
+    (doom/popup-close nil t t))
   (defadvice helm-ag--edit-commit (around helm-ag-edit-commit-popup-compat activate)
     (cl-letf (((symbol-function 'select-window) 'ignore)) ad-do-it)
-    (narf/popup-close nil t t))
+    (doom/popup-close nil t t))
   (defadvice helm-ag--edit (around helm-ag-edit-popup-compat activate)
     (cl-letf (((symbol-function 'other-window) 'ignore)
-              ((symbol-function 'switch-to-buffer) 'narf/popup-buffer))
+              ((symbol-function 'switch-to-buffer) 'doom/popup-buffer))
       ad-do-it)))
 
 (after! quickrun
   ;; This allows us to run code several times in a row without having to close the popup
   ;; window and move back to the code buffer.
-  (defun narf*quickrun-close-popup (&optional _ _ _ _)
+  (defun doom*quickrun-close-popup (&optional _ _ _ _)
     (let* ((buffer (get-buffer quickrun/buffer-name))
            (window (and buffer (get-buffer-window buffer))))
       (when buffer
         (shut-up! (quickrun/kill-running-process))
-        (narf/popup-close window nil t))))
-  (advice-add 'quickrun :before 'narf*quickrun-close-popup)
-  (advice-add 'quickrun-region :before 'narf*quickrun-close-popup)
+        (doom/popup-close window nil t))))
+  (advice-add 'quickrun :before 'doom*quickrun-close-popup)
+  (advice-add 'quickrun-region :before 'doom*quickrun-close-popup)
 
   ;; Turns on `nlinum-mode', and ensures window is scrolled to EOF
-  (defun narf|quickrun-after-run ()
+  (defun doom|quickrun-after-run ()
     (let ((window (get-buffer-window quickrun/buffer-name)))
       (with-selected-window window
         (goto-char (point-min)))))
-  (add-hook 'quickrun-after-run-hook 'narf|quickrun-after-run)
-  (add-hook 'quickrun/mode-hook 'narf|hide-mode-line))
+  (add-hook 'quickrun-after-run-hook 'doom|quickrun-after-run)
+  (add-hook 'quickrun/mode-hook 'doom|hide-mode-line))
 
 (add-hook! org-load
   ;; This ensures org-src-edit yields control of its buffer to shackle.
@@ -196,7 +196,7 @@
           args))
 
   ;; Taming Org-agenda!
-  (defun narf/org-agenda-quit ()
+  (defun doom/org-agenda-quit ()
     "Necessary to finagle org-agenda into shackle popups and behave properly on quit."
     (interactive)
     (if org-agenda-columns-active
@@ -210,11 +210,11 @@
               org-agenda-buffer nil))))
 
   (map! :map org-agenda-mode-map
-        :e "<escape>" 'narf/org-agenda-quit
-        :e "ESC" 'narf/org-agenda-quit
-        :e [escape] 'narf/org-agenda-quit
-        "q" 'narf/org-agenda-quit
-        "Q" 'narf/org-agenda-quit))
+        :e "<escape>" 'doom/org-agenda-quit
+        :e "ESC" 'doom/org-agenda-quit
+        :e [escape] 'doom/org-agenda-quit
+        "q" 'doom/org-agenda-quit
+        "Q" 'doom/org-agenda-quit))
 
 (after! realgud
   ;; This allows realgud debuggers to run in a popup.
@@ -229,7 +229,7 @@
         (if (and process (eq 'run (process-status process)))
             (progn
               (pop-to-buffer cmd-buf)
-              (define-key evil-emacs-state-local-map (kbd "ESC ESC") 'narf/debug-quit)
+              (define-key evil-emacs-state-local-map (kbd "ESC ESC") 'doom/debug-quit)
               (realgud:track-set-debugger debugger-name)
               (realgud-cmdbuf-info-in-debugger?= 't)
               (realgud-cmdbuf-info-cmd-args= cmd-args)

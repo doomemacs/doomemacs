@@ -1,7 +1,7 @@
 ;;; defuns-scss.el
 
 ;;;###autoload
-(defun narf/css-toggle-inline-or-block ()
+(defun doom/css-toggle-inline-or-block ()
   "Toggles between a SCSS multiline block and one-line block."
   (interactive)
   (save-excursion
@@ -28,10 +28,10 @@
         (just-one-space)))))
 
 ;;;###autoload
-(defalias 'narf/sass-build 'narf/scss-build)
+(defalias 'doom/sass-build 'doom/scss-build)
 
 ;;;###autoload
-(defun narf/scss-build ()
+(defun doom/scss-build ()
   "Compile all sass/scss files in project"
   (interactive)
   (let ((scss-dir (f-slash (or (f-traverse-upwards (lambda (d)

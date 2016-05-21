@@ -1,7 +1,7 @@
-;; NARF Dark
+;; DOOM Light
 ;; By Henrik Lissner <http://github.com/hlissner/emacs.d>
 
-(deftheme narf-light "A light theme for narfy emacs, inspired by Base 16")
+(deftheme doom-light "A light theme for hellish emacs, inspired by Base 16")
 
 (let* ((c '((class color)))
 
@@ -90,7 +90,7 @@
        (vc-deleted     orange))
 
   (custom-theme-set-faces
-   'narf-light
+   'doom-light
 
    ;; Text
    `(default                         ((,c (:foreground ,fg :background ,bg))))
@@ -169,9 +169,9 @@
    `(isearch                        ((,c (:foreground ,search-fg :background ,search-bg))))
    `(isearch-lazy-highlight-face    ((,c (:foreground ,search-rest-fg :background ,search-rest-bg))))
 
-   `(narf-todo-face                 ((,c (:foreground ,yellow :bold t))))
-   `(narf-fixme-face                ((,c (:foreground ,red :bold t))))
-   `(narf-note-face                 ((,c (:foreground ,cyan :bold t))))
+   `(doom-todo-face                 ((,c (:foreground ,yellow :bold t))))
+   `(doom-fixme-face                ((,c (:foreground ,red :bold t))))
+   `(doom-note-face                 ((,c (:foreground ,cyan :bold t))))
 
    `(evil-ex-substitute-replacement ((,c (:foreground ,magenta :background ,black :bold t))))
    `(evil-search-highlight-persist-highlight-face ((,c (:background ,search-rest-bg))))
@@ -316,7 +316,7 @@
    `(org-checkbox-statistics-todo ((,c (:inherit org-todo))))
    `(org-checkbox-statistics-done ((,c (:inherit org-done))))
 
-   ;; NARF custom org faces
+   ;; DOOM custom org faces
    `(org-headline-todo    ((,c (:foreground ,dark-cyan :bold nil))))
    `(org-block            ((,c (:background ,current-line))))
    `(org-block-background ((,c (:background ,current-line))))
@@ -331,7 +331,7 @@
 
 ;; *****************************************************************************************
 
-(provide-theme 'narf-light)
+(provide-theme 'doom-light)
 
 ;; Local Variables:
 ;; no-byte-compile: t

@@ -24,7 +24,7 @@
         :n "RET" 'flycheck-error-list-goto-error)
 
   ;; Flycheck buffer on ESC in normal mode.
-  (advice-add 'evil-force-normal-state :after 'narf*flycheck-buffer)
+  (advice-add 'evil-force-normal-state :after 'doom*flycheck-buffer)
 
   (define-fringe-bitmap 'flycheck-fringe-bitmap-double-arrow
     [0 0 0 8 24 56 120 248 120 56 24 8 0 0 0]

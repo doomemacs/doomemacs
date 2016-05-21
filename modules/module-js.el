@@ -22,7 +22,7 @@
   ;; [pedantry intensifies]
   (add-hook! js2-mode (setq mode-name "JS2"))
 
-  (map! :map js2-mode-map (:localleader :nv ";" 'narf/append-semicolon)))
+  (map! :map js2-mode-map (:localleader :nv ";" 'doom/append-semicolon)))
 
 (use-package tern
   :after js2-mode
@@ -95,14 +95,14 @@
   (setq tide-format-options
         '(:insertSpaceAfterFunctionKeywordForAnonymousFunctions t
           :placeOpenBraceOnNewLineForFunctions nil))
-  (defun narf|tide-setup ()
+  (defun doom|tide-setup ()
     (tide-setup)
     (flycheck-mode +1)
     (eldoc-mode +1))
-  (add-hook 'typescript-mode-hook 'narf|tide-setup)
+  (add-hook 'typescript-mode-hook 'doom|tide-setup)
   (add-hook! web-mode
     (when (f-ext? buffer-file-name "tsx")
-      (narf|tide-setup)))
+      (doom|tide-setup)))
 
   (map! :map typescript-mode-map
         :m "gd" 'tide-jump-to-definition
@@ -115,7 +115,7 @@
   :files ("package.json")
   :when
   (lambda (&rest _)
-    (let* ((project-path (narf/project-root))
+    (let* ((project-path (doom/project-root))
            (hash (gethash project-path npm-conf))
            (package-file (f-expand "package.json" project-path))
            deps)
@@ -128,7 +128,7 @@
   :modes (nodejs-project-mode bower-project-mode)
   :when
   (lambda (&rest _)
-    (awhen (gethash (narf/project-root) npm-conf)
+    (awhen (gethash (doom/project-root) npm-conf)
       (assq 'express (cdr-safe (assq 'dependencies it))))))
 
 ;; TODO electron-compile support
@@ -137,7 +137,7 @@
   :files ("app/index.html" "app/main.js")
   :when
   (lambda (&rest _)
-    (awhen (gethash (narf/project-root) npm-conf)
+    (awhen (gethash (doom/project-root) npm-conf)
       (let ((deps (append (car-safe (assq 'dependencies it))
                           (car-safe (assq 'devDependencies it)))))
         (or (assq 'electron-prebuilt deps)
@@ -148,7 +148,7 @@
   :modes (nodejs-project-mode bower-project-mode)
   :when
   (lambda (&rest _)
-    (let* ((project (narf/project-root))
+    (let* ((project (doom/project-root))
            (deps (append (cdr-safe (assq 'dependencies (gethash project bower-conf)))
                          (cdr-safe (assq 'dependencies (gethash project npm-conf))))))
       (assq 'react deps))))

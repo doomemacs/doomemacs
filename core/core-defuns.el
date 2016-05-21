@@ -80,14 +80,14 @@ Examples:
        (,@(cond ((or files in pred)
                  (when (and files (not (or (listp files) (stringp files))))
                    (user-error "associate! :files expects a string or list of strings"))
-                 (let ((hook-name (intern (format "narf--init-mode-%s" mode))))
+                 (let ((hook-name (intern (format "doom--init-mode-%s" mode))))
                    `(progn
                       (defun ,hook-name ()
                         (when (and ,(if match `(if buffer-file-name (string-match-p ,match buffer-file-name)) t)
                                    (or ,(not files)
                                        (and (boundp ',mode)
                                             (not ,mode)
-                                            (narf/project-has-files ,@(-list files))))
+                                            (doom/project-has-files ,@(-list files))))
                                    (or (not ,pred)
                                        (funcall ,pred buffer-file-name)))
                           (,mode 1)))
@@ -96,7 +96,7 @@ Examples:
                                     (mapcar (lambda (m) (intern (format "%s-hook" m))) in))
                           `((add-hook 'find-file-hook ',hook-name))))))
                 (match
-                 `(add-to-list ',(if minor 'narf-auto-minor-mode-alist 'auto-mode-alist)
+                 `(add-to-list ',(if minor 'doom-auto-minor-mode-alist 'auto-mode-alist)
                                (cons ,match ',mode)))
                 (t (user-error "associate! invalid rules for mode [%s] (in %s) (match %s) (files %s)"
                                mode in match files)))))))
@@ -108,7 +108,7 @@ Examples:
          (mode (intern mode-name))
          (mode-map (intern (format "%s-map" mode-name)))
          (mode-hook-sym (intern (format "%s-hook" mode-name)))
-         (mode-init-sym (intern (format "narf--init-project-%s" mode-name))))
+         (mode-init-sym (intern (format "doom--init-project-%s" mode-name))))
     (let ((modes (plist-get body :modes))
           (pred  (plist-get body :when))
           (match (plist-get body :match))
@@ -200,9 +200,9 @@ Examples:
                 ((keywordp key)
                  (when (memq key '(:leader :localleader))
                    (push (cond ((eq key :leader)
-                                narf-leader-prefix)
+                                doom-leader)
                                ((eq key :localleader)
-                                narf-localleader-prefix))
+                                doom-localleader))
                          rest)
                    (setq key :prefix))
                  (pcase key
@@ -249,21 +249,20 @@ Examples:
 (defmacro def-repeat! (command next-func prev-func)
   "Repeat motions with SPC/S-SPC"
   `(defadvice ,command
-       (before ,(intern (format "narf-space--%s" (symbol-name command))) activate)
+       (before ,(intern (format "doom-space--%s" (symbol-name command))) activate)
      (define-key evil-motion-state-map (kbd "SPC") ',next-func)
      (define-key evil-motion-state-map (kbd "S-SPC") ',prev-func)))
 
 ;;
-(defun narf|update-scratch-buffer-cwd (&optional dir)
+(defun doom|update-scratch-buffer-cwd (&optional dir)
   "Make sure scratch buffer is always 'in a project', and looks good."
-  (let ((dir (or dir (narf/project-root)))
-        (scratchbuf (get-buffer-create "*scratch*")))
-    (with-current-buffer scratchbuf
-      ;; Darken the window if it's the only one left
-      (if (one-window-p t)
-          (kill-local-variable 'face-remapping-alist)
-        (set (make-local-variable 'face-remapping-alist)
-             '((default narf-default))))
+  (let ((dir (or dir (doom/project-root))))
+    (with-current-buffer doom-buffer
+      ;; Reset scratch buffer if it wasn't visible
+      (unless (or (eq (current-buffer) doom-buffer)
+                  (--any? (eq doom-buffer it) (doom/get-visible-windows)))
+        (and (one-window-p t) (doom-mode-init))
+        (setq-local indicate-empty-lines nil))
       (setq default-directory dir)
       (setq mode-line-format '(:eval (spaceline-ml-scratch))))))
 
@@ -272,34 +271,34 @@ Examples:
 ;; Global Defuns
 ;;
 
-(defun narf-reload ()
+(defun doom-reload ()
   "Reload `load-path', in case you updated cask while emacs was open!"
   (interactive)
-  (setq load-path (append (list narf-private-dir narf-core-dir narf-modules-dir narf-packages-dir)
-                          (f-directories narf-core-dir nil t)
-                          (f-directories narf-modules-dir nil t)
-                          (f-directories narf-packages-dir)
-                          (f-directories (f-expand "../bootstrap" narf-packages-dir))
-                          narf--load-path)))
+  (setq load-path (append (list doom-private-dir doom-core-dir doom-modules-dir doom-packages-dir)
+                          (f-directories doom-core-dir nil t)
+                          (f-directories doom-modules-dir nil t)
+                          (f-directories doom-packages-dir)
+                          (f-directories (f-expand "../bootstrap" doom-packages-dir))
+                          doom--load-path)))
 
-(defun narf-reload-autoloads ()
-  "Regenerate autoloads for NARF emacs."
+(defun doom-reload-autoloads ()
+  "Regenerate autoloads for DOOM emacs."
   (interactive)
-  (let ((generated-autoload-file (concat narf-core-dir "/autoloads.el")))
+  (let ((generated-autoload-file (concat doom-core-dir "/autoloads.el")))
     (when (file-exists-p generated-autoload-file)
       (delete-file generated-autoload-file))
     (mapc (lambda (dir)
             (update-directory-autoloads (concat dir "/defuns"))
             (message "Scanned: %s" dir))
-          (list narf-core-dir narf-modules-dir))
+          (list doom-core-dir doom-modules-dir))
     (when (called-interactively-p 'interactive)
       (require 'autoloads))
     (message "Done!")))
 
-(defun narf-fix-unicode (font chars &optional size)
+(defun doom-fix-unicode (font chars &optional size)
   "Display certain unicode characters in a specific font.
 
-e.g. (narf-fix-unicode \"DejaVu Sans\" '(?⚠ ?★ ?λ ?➊ ?➋ ?➌ ?➍ ?➎ ?❻ ?➐ ?➑ ?➒ ?➓))"
+e.g. (doom-fix-unicode \"DejaVu Sans\" '(?⚠ ?★ ?λ ?➊ ?➋ ?➌ ?➍ ?➎ ?❻ ?➐ ?➑ ?➒ ?➓))"
   (mapc (lambda (x) (set-fontset-font
                 "fontset-default" `(,x . ,x)
                 (font-spec :name font :size size) nil 'prepend))

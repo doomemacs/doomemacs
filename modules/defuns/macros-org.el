@@ -4,20 +4,20 @@
 (defmacro define-org-section! (type directory &optional id-func link-glob)
   (setq directory (f-slash directory))
   (let* ((type-str (symbol-name type))
-         (link-sym (intern (format "narf/org-link-%s" type-str)))
+         (link-sym (intern (format "doom/org-link-%s" type-str)))
          (dir-var (intern (format "org-directory-%s" type-str))))
     `(progn
        ;; Variable containing directory: `org-directory-%s'
        (defvar ,dir-var ,(expand-file-name directory org-directory))
 
-       ;; Open helm in directory: `narf/helm-org-%s'
-       (evil-define-command ,(intern (format "narf:org-search-%s" type-str)) ()
+       ;; Open helm in directory: `doom/helm-org-%s'
+       (evil-define-command ,(intern (format "doom:org-search-%s" type-str)) ()
          (interactive)
          (let ((default-directory (concat ,dir-var "/" (format-time-string "%Y") "/")))
            (helm-find-files nil)))
 
-       ;; Open helm in directory: `narf/helm-org-%s'
-       (defun ,(intern (format "narf/helm-org-find-file-in-%s" type-str)) ()
+       ;; Open helm in directory: `doom/helm-org-%s'
+       (defun ,(intern (format "doom/helm-org-find-file-in-%s" type-str)) ()
          (interactive)
          (helm-do-ag (f-slash ,dir-var)))
 

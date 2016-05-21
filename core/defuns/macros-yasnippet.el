@@ -1,5 +1,4 @@
 ;;; macros-yasnippet.el
-;; for ../core-yasnippet.el
 
 ;;;###autoload
 (defmacro def-yas-mode! (mode)

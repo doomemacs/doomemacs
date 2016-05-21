@@ -1,7 +1,7 @@
 ;;; defuns-buffers.el
 
-;;;###autoload (autoload 'narf:narrow "defuns-buffers" nil t)
-(evil-define-operator narf:narrow (&optional beg end bang)
+;;;###autoload (autoload 'doom:narrow "defuns-buffers" nil t)
+(evil-define-operator doom:narrow (&optional beg end bang)
   "Restrict editing in this buffer to the current region, indirectly. With BANG,
 clone the buffer and hard-narrow the selection. Otherwise use fancy-narrow. If
 mark isn't active, then widen the buffer (if narrowed).
@@ -18,14 +18,14 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
     (widen)))
 
 ;;;###autoload
-(defun narf/set-read-only-region (begin end)
+(defun doom/set-read-only-region (begin end)
   "See http://stackoverflow.com/questions/7410125"
   (let ((modified (buffer-modified-p)))
     (add-text-properties begin end '(read-only t))
     (set-buffer-modified-p modified)))
 
 ;;;###autoload
-(defun narf/set-region-writeable (begin end)
+(defun doom/set-region-writeable (begin end)
   "See http://stackoverflow.com/questions/7410125"
   (let ((modified (buffer-modified-p))
         (inhibit-read-only t))
@@ -41,7 +41,7 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
   (defalias 'wg-save-session 'ignore))
 
 ;;;###autoload
-(defun narf/get-buffers (&optional project-p)
+(defun doom/get-buffers (&optional project-p)
   "Get all buffers in the current workgroup.
 
     If PROJECT-P is non-nil, get all buffers in current workgroup
@@ -51,89 +51,91 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
                       (--filter (memq it assocbuf) (buffer-list))
                     (buffer-list)))
         project-root)
-    (aif (and project-p (narf/project-root t))
+    (aif (and project-p (doom/project-root t))
         (funcall (if (eq project-p 'not) '-remove '-filter)
                  (lambda (b) (projectile-project-buffer-p b it))
                  buffers)
       buffers)))
 
 ;;;###autoload
-(defun narf/get-buffer-names (&optional project-p)
+(defun doom/get-buffer-names (&optional project-p)
   (mapcar (lambda (b) (buffer-name b))
-          (narf/get-buffers project-p)))
+          (doom/get-buffers project-p)))
 
 ;;;###autoload
-(defun narf/get-visible-windows (&optional buffer-list)
+(defun doom/get-visible-windows (&optional buffer-list)
   (-map #'get-buffer-window
-        (narf/get-visible-buffers (or buffer-list (narf/get-buffers)))))
+        (doom/get-visible-buffers (or buffer-list (doom/get-buffers)))))
 
 ;;;###autoload
-(defun narf/get-visible-buffers (&optional buffer-list)
+(defun doom/get-visible-buffers (&optional buffer-list)
   "Get a list of buffers that are not buried (i.e. visible)"
-  (-filter #'get-buffer-window (or buffer-list (narf/get-buffers))))
+  (-filter #'get-buffer-window (or buffer-list (doom/get-buffers))))
 
 ;;;###autoload
-(defun narf/get-buried-buffers (&optional buffer-list)
+(defun doom/get-buried-buffers (&optional buffer-list)
   "Get a list of buffers that are buried (i.e. not visible)"
-  (let* ((buffers (or buffer-list (narf/get-buffers)))
+  (let* ((buffers (or buffer-list (doom/get-buffers)))
          (old-len (length buffers)))
     (-remove 'get-buffer-window buffers)))
 
 ;;;###autoload
-(defun narf/get-matching-buffers (pattern &optional buffer-list)
+(defun doom/get-matching-buffers (pattern &optional buffer-list)
   "Get a list of buffers that match the pattern"
   (--filter (string-match-p pattern (buffer-name it))
-            (or buffer-list (narf/get-buffers))))
+            (or buffer-list (doom/get-buffers))))
 
 ;;;###autoload
-(defun narf/get-buffers-in-modes (modes &optional buffer-list)
+(defun doom/get-buffers-in-modes (modes &optional buffer-list)
   "Get a list of buffers whose major-mode is one of MODES"
   (--filter (with-current-buffer it (memq major-mode modes))
-            (or buffer-list (narf/get-buffers))))
+            (or buffer-list (doom/get-buffers))))
 
 ;;;###autoload
-(defun narf/get-real-buffers (&optional buffer-list)
-  (-filter #'narf/real-buffer-p (or buffer-list (narf/get-buffers))))
+(defun doom/get-real-buffers (&optional buffer-list)
+  (-filter #'doom/real-buffer-p (or buffer-list (doom/get-buffers))))
 
 ;;;###autoload
-(defun narf/kill-real-buffer ()
+(defun doom/kill-real-buffer ()
   "Kill buffer (but only bury scratch buffer), then switch to a real buffer. Only buries
 the buffer if it is being displayed in another window."
   (interactive)
   (let (new-dir)
-    (if (string-match-p "^\\*scratch\\*" (or (buffer-name) ""))
-        (message "Already in the scratch buffer")
-      (setq new-dir (narf/project-root))
+    (if (string-match-p doom-buffer-name (or (buffer-name) ""))
+        (progn
+          (doom-mode-init t)
+          (message "Already in the scratch buffer"))
+      (setq new-dir (doom/project-root))
       (if (> (length (get-buffer-window-list (current-buffer) nil t)) 1)
           (bury-buffer)
-        (kill-this-buffer)))
-    (if (narf/popup-p (selected-window))
-        (narf/popup-close)
-      (unless (narf/real-buffer-p (current-buffer))
-        (narf/previous-real-buffer)
-        (narf|update-scratch-buffer-cwd new-dir)))))
+        (kill-this-buffer))
+      (if (doom/popup-p (selected-window))
+        (doom/popup-close)
+      (unless (doom/real-buffer-p (current-buffer))
+        (doom/previous-real-buffer)
+        (doom|update-scratch-buffer-cwd new-dir))))))
 
 ;;;###autoload
-(defun narf/kill-unreal-buffers ()
-  "Kill all buried, unreal buffers in current frame. See `narf-unreal-buffers'"
+(defun doom/kill-unreal-buffers ()
+  "Kill all buried, unreal buffers in current frame. See `doom-unreal-buffers'"
   (interactive)
-  (let* ((all-buffers (narf/get-buffers))
-         (real-buffers (narf/get-real-buffers all-buffers))
+  (let* ((all-buffers (doom/get-buffers))
+         (real-buffers (doom/get-real-buffers all-buffers))
          (kill-list (--filter (not (memq it real-buffers))
-                              (narf/get-buried-buffers all-buffers))))
+                              (doom/get-buried-buffers all-buffers))))
     (mapc 'kill-buffer kill-list)
-    (narf/kill-process-buffers)
+    (doom/kill-process-buffers)
     (message "Cleaned up %s buffers" (length kill-list))))
 
 ;;;###autoload
-(defun narf/kill-process-buffers ()
+(defun doom/kill-process-buffers ()
   "Kill all buffers that represent running processes and aren't visible."
   (interactive)
-  (let ((buffer-list (narf/get-buffers))
+  (let ((buffer-list (doom/get-buffers))
         (killed-processes 0))
     (dolist (p (process-list))
       (let* ((process-name (process-name p))
-             (assoc (assoc process-name narf-cleanup-processes-alist)))
+             (assoc (assoc process-name doom-cleanup-processes-alist)))
         (when (and assoc
                    (not (string= process-name "server"))
                    (process-live-p p)
@@ -145,23 +147,23 @@ the buffer if it is being displayed in another window."
     (message "Cleaned up %s processes" killed-processes)))
 
 ;;;###autoload
-(defun narf/kill-matching-buffers (regexp &optional buffer-list)
+(defun doom/kill-matching-buffers (regexp &optional buffer-list)
   (interactive)
   (let ((i 0))
     (mapc (lambda (b)
             (when (string-match-p regexp (buffer-name b))
               (kill-buffer b)
               (setq i (1+ i))))
-          (if buffer-list buffer-list (narf/get-buffers)))
+          (if buffer-list buffer-list (doom/get-buffers)))
     (message "Killed %s matches" i)))
 
 ;;;###autoload
-(defun narf/cycle-real-buffers (&optional n)
+(defun doom/cycle-real-buffers (&optional n)
   "Switch to the previous buffer and avoid special buffers. If there's nothing
 left, create a scratch buffer."
   (let* ((start-buffer (current-buffer))
          (move-func (if (< n 0) 'switch-to-next-buffer 'switch-to-prev-buffer))
-         (real-buffers (narf/get-real-buffers))
+         (real-buffers (doom/get-real-buffers))
          (realc (length real-buffers))
          (max 25)
          (i 0)
@@ -169,16 +171,16 @@ left, create a scratch buffer."
     (if (or (= realc 0)
             (and (= realc 1) (eq (car real-buffers) (current-buffer))))
         (progn
-          (narf|update-scratch-buffer-cwd)
-          (switch-to-buffer "*scratch*")
+          (doom|update-scratch-buffer-cwd)
+          (switch-to-buffer doom-buffer-name)
           (message "Nowhere to go"))
       (funcall move-func)
       (while (and continue)
         (let ((current-buffer (current-buffer)))
           (cond ((or (eq current-buffer start-buffer)
                      (>= i max))
-                 (narf|update-scratch-buffer-cwd)
-                 (switch-to-buffer "*scratch*")
+                 (doom|update-scratch-buffer-cwd)
+                 (switch-to-buffer doom-buffer-name)
                  (setq continue nil))
                 ((not (memq current-buffer real-buffers))
                  (funcall move-func))
@@ -187,70 +189,70 @@ left, create a scratch buffer."
         (cl-incf i)))))
 
 ;;;###autoload
-(defun narf/real-buffer-p (&optional buffer-or-name)
+(defun doom/real-buffer-p (&optional buffer-or-name)
   (let ((buffer (if buffer-or-name (get-buffer buffer-or-name) (current-buffer))))
     (when (buffer-live-p buffer)
       (not (--any? (if (stringp it)
                        (string-match-p it (buffer-name buffer))
                      (eq (buffer-local-value 'major-mode buffer) it))
-                   narf-unreal-buffers)))))
+                   doom-unreal-buffers)))))
 
 ;; Inspired by spacemacs <https://github.com/syl20bnr/spacemacs/blob/master/spacemacs/funcs.el>
 ;;;###autoload
-(defun narf/next-real-buffer ()
+(defun doom/next-real-buffer ()
   "Switch to the next buffer and avoid special buffers."
   (interactive)
-  (narf/cycle-real-buffers +1))
+  (doom/cycle-real-buffers +1))
 
 ;;;###autoload
-(defun narf/previous-real-buffer ()
+(defun doom/previous-real-buffer ()
   "Switch to the previous buffer and avoid special buffers."
   (interactive)
-  (narf/cycle-real-buffers -1))
+  (doom/cycle-real-buffers -1))
 
-(defun narf--kill-buffers (buffers &optional filter-func)
+(defun doom--kill-buffers (buffers &optional filter-func)
   (let ((buffers (if filter-func (-filter filter-func buffers) buffers))
         (affected 0))
     (mapc (lambda (b) (when (kill-buffer b) (incf affected))) buffers)
-    (unless (narf/real-buffer-p)
-      (narf/previous-real-buffer))
+    (unless (doom/real-buffer-p)
+      (doom/previous-real-buffer))
     (message "Killed %s buffers" affected)))
 
-;;;###autoload (autoload 'narf:kill-all-buffers "defuns-buffers" nil t)
-(evil-define-command narf:kill-all-buffers (&optional bang)
+;;;###autoload (autoload 'doom:kill-all-buffers "defuns-buffers" nil t)
+(evil-define-command doom:kill-all-buffers (&optional bang)
   "Kill all project buffers. If BANG, kill *all* buffers (in workgroup)."
   (interactive "<!>")
-  (narf--kill-buffers (narf/get-buffers (not bang)))
-  (mapc (lambda (w) (when (eq (window-buffer w) (get-buffer "*scratch*"))
+  (doom--kill-buffers (doom/get-buffers (not bang)))
+  (mapc (lambda (w) (when (eq (window-buffer w) doom-buffer)
                  (delete-window w)))
-        (narf/get-visible-windows)))
+        (doom/get-visible-windows)))
 
-;;;###autoload (autoload 'narf:kill-other-buffers "defuns-buffers" nil t)
-(evil-define-command narf:kill-other-buffers (&optional bang)
+;;;###autoload (autoload 'doom:kill-other-buffers "defuns-buffers" nil t)
+(evil-define-command doom:kill-other-buffers (&optional bang)
   "Kill all other project buffers. If BANG, kill *all* other buffers (in workgroup)."
   (interactive "<!>")
-  (narf--kill-buffers (narf/get-buffers (not bang))
+  (doom--kill-buffers (doom/get-buffers (not bang))
                       (lambda (b) (not (eq b (current-buffer)))))
   (when bang
     (delete-other-windows)))
 
-;;;###autoload (autoload 'narf:kill-buried-buffers "defuns-buffers" nil t)
-(evil-define-command narf:kill-buried-buffers (&optional bang)
+;;;###autoload (autoload 'doom:kill-buried-buffers "defuns-buffers" nil t)
+(evil-define-command doom:kill-buried-buffers (&optional bang)
   "Kill buried project buffers (in workgroup) and report how many it found. BANG = get all
 buffers regardless of project."
   (interactive "<!>")
-  (narf--kill-buffers (narf/get-buried-buffers (narf/get-buffers (not bang)))))
+  (doom--kill-buffers (doom/get-buried-buffers (doom/get-buffers (not bang)))))
 
-;;;###autoload (autoload 'narf:kill-buried-buffers "defuns-buffers" nil t)
-(evil-define-command narf:kill-matching-buffers (&optional bang pattern)
+;;;###autoload (autoload 'doom:kill-buried-buffers "defuns-buffers" nil t)
+(evil-define-command doom:kill-matching-buffers (&optional bang pattern)
   "Kill project buffers matching regex pattern PATTERN. If BANG, then extend search to
 buffers regardless of project."
   :repeat nil
   (interactive "<!><a>")
-  (narf-kill-buffers (narf/get-matching-buffers pattern (narf/get-buffers (not bang)))))
+  (doom-kill-buffers (doom/get-matching-buffers pattern (doom/get-buffers (not bang)))))
 
-;;;###autoload (autoload 'narf:send-to-scratch-or-org "defuns-buffers" nil t)
-(evil-define-operator narf:send-to-scratch-or-org (&optional beg end bang)
+;;;###autoload (autoload 'doom:send-to-scratch-or-org "defuns-buffers" nil t)
+(evil-define-operator doom:send-to-scratch-or-org (&optional beg end bang)
   "Send a selection to the scratch buffer. If BANG, then send it to org-capture instead."
   :move-point nil
   :type inclusive
@@ -261,9 +263,9 @@ buffers regardless of project."
     (if bang
         (org-capture-string text)
       ;; or scratch buffer by default
-      (let* ((project-dir (narf/project-root t))
-             (buffer-name "*scratch*"))
-        (narf/popup-buffer buffer-name)
+      (let* ((project-dir (doom/project-root t))
+             (buffer-name doom-buffer-name))
+        (doom/popup-buffer buffer-name)
         (with-current-buffer buffer-name
           (when project-dir
             (cd project-dir))
@@ -271,19 +273,19 @@ buffers regardless of project."
           (funcall mode))
         ))))
 
-;;;###autoload (autoload 'narf:cd "defuns-buffers" nil t)
-(evil-define-command narf:cd (dir)
+;;;###autoload (autoload 'doom:cd "defuns-buffers" nil t)
+(evil-define-command doom:cd (dir)
   "Ex-command alias for `cd'"
   :repeat nil
   (interactive "<f>")
   (cd (if (zerop (length dir)) "~" dir)))
 
 ;;;###autoload
-(defun narf/kill-all-buffers-do-not-remember ()
+(defun doom/kill-all-buffers-do-not-remember ()
   "Kill all buffers so that workgroups2 will wipe its current session."
   (interactive)
   (let ((confirm-kill-emacs nil))
-    (mapc 'kill-buffer (narf/get-buffers))
+    (mapc 'kill-buffer (doom/get-buffers))
     (kill-this-buffer)
     (delete-other-windows)
     (wg-save-session t)

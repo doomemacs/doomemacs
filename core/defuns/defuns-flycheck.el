@@ -2,12 +2,12 @@
 ;; for ../core-flycheck.el
 
 ;;;###autoload
-(defun narf*flycheck-buffer ()
+(defun doom*flycheck-buffer ()
   (when (bound-and-true-p flycheck-mode)
     (flycheck-buffer)))
 
 ;;;###autoload
-(defun narf/flycheck-next-error ()
+(defun doom/flycheck-next-error ()
   (interactive)
   (call-interactively
    (if (bound-and-true-p flycheck-mode)
@@ -15,7 +15,7 @@
      'next-error)))
 
 ;;;###autoload
-(defun narf/flycheck-previous-error ()
+(defun doom/flycheck-previous-error ()
   (interactive)
   (call-interactively
    (if (bound-and-true-p flycheck-mode)
@@ -23,7 +23,7 @@
      'previous-error)))
 
 ;;;###autoload
-(defun narf/flycheck-errors ()
+(defun doom/flycheck-errors ()
   (interactive)
   (when (bound-and-true-p flycheck-mode)
     (flycheck-buffer)

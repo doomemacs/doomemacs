@@ -1,6 +1,6 @@
 ;;; module-latex.el
 
-(defvar bibtex-dir "~/Dropbox/docs/biblio")
+(defvar doom-bibtex-dir "~/Dropbox/docs/biblio")
 
 (use-package reftex
   :commands turn-on-reftex
@@ -8,7 +8,7 @@
   (setq reftex-plug-into-AUCTeX t
         reftex-ref-style-default-list '("Cleveref" "Hyperref" "Fancyref")
         reftex-default-bibliography
-        `(,(expand-file-name "phys.bib" bibtex-dir)))
+        `(,(expand-file-name "phys.bib" doom-bibtex-dir)))
   (add-hook! (LaTeX-mode latex-mode) 'turn-on-reftex))
 
 (use-package helm-bibtex
@@ -26,12 +26,12 @@
 
   :config
   (setq helm-bibtex-bibliography
-        (list (f-expand "phys.bib" bibtex-dir))
+        (list (f-expand "phys.bib" doom-bibtex-dir))
 
         helm-bibtex-library-path
-        (list (f-expand "phys-pdf" bibtex-dir))
+        (list (f-expand "phys-pdf" doom-bibtex-dir))
 
-        helm-bibtex-notes-path (f-expand "notes.org" bibtex-dir)
+        helm-bibtex-notes-path (f-expand "notes.org" doom-bibtex-dir)
 
         helm-bibtex-pdf-open-function
         (lambda (fpath) (async-start-process "open-pdf" "/usr/bin/open" nil fpath))))

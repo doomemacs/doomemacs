@@ -1,41 +1,41 @@
 ;;; defuns-nlinum.el
 
 ;;;###autoload
-(defun narf/nlinum-toggle ()
+(defun doom/nlinum-toggle ()
   (interactive)
   (if (bound-and-true-p nlinum-mode)
-      (narf|nlinum-disable)
-    (narf|nlinum-enable)))
+      (doom|nlinum-disable)
+    (doom|nlinum-enable)))
 
 ;;;###autoload
-(defun narf|nlinum-enable ()
+(defun doom|nlinum-enable ()
   (nlinum-mode +1)
-  (add-hook 'post-command-hook 'narf|nlinum-hl-line nil t)
-  (narf|nlinum-unhl-line))
+  (add-hook 'post-command-hook 'doom|nlinum-hl-line nil t)
+  (doom|nlinum-unhl-line))
 
 ;;;###autoload
-(defun narf|nlinum-disable ()
+(defun doom|nlinum-disable ()
   (nlinum-mode -1)
-  (remove-hook 'post-command-hook 'narf|nlinum-hl-line t)
-  (narf|nlinum-unhl-line))
+  (remove-hook 'post-command-hook 'doom|nlinum-hl-line t)
+  (doom|nlinum-unhl-line))
 
 ;;;###autoload
-(defun narf|nlinum-unhl-line ()
+(defun doom|nlinum-unhl-line ()
   "Unhighlight line number"
-  (when narf--hl-nlinum-overlay
+  (when doom--hl-nlinum-overlay
     (let* ((disp (get-text-property
-                  0 'display (overlay-get narf--hl-nlinum-overlay 'before-string)))
+                  0 'display (overlay-get doom--hl-nlinum-overlay 'before-string)))
            (str (nth 1 disp)))
       (put-text-property 0 (length str) 'face 'linum str)
-      (setq narf--hl-nlinum-overlay nil
-            narf--hl-nlinum-line nil)
+      (setq doom--hl-nlinum-overlay nil
+            doom--hl-nlinum-line nil)
       disp)))
 
 ;;;###autoload
-(defun narf|nlinum-hl-line (&optional line)
+(defun doom|nlinum-hl-line (&optional line)
   "Highlight line number"
   (let ((line-no (or line (string-to-number (format-mode-line "%l")))))
-    (if (and nlinum-mode (not (eq line-no narf--hl-nlinum-line)))
+    (if (and nlinum-mode (not (eq line-no doom--hl-nlinum-line)))
         (let* ((pbol (if line
                          (save-excursion (goto-char 1)
                                          (forward-line line-no)
@@ -49,11 +49,11 @@
           (jit-lock-fontify-now pbol peol)
           (let ((ov (--first (overlay-get it 'nlinum) (overlays-in pbol peol))))
             (when ov
-              (narf|nlinum-unhl-line)
+              (doom|nlinum-unhl-line)
               (let ((str (nth 1 (get-text-property 0 'display (overlay-get ov 'before-string)))))
                 (put-text-property 0 (length str) 'face 'linum-highlight-face str)
-                (setq narf--hl-nlinum-overlay ov
-                      narf--hl-nlinum-line line-no))))))))
+                (setq doom--hl-nlinum-overlay ov
+                      doom--hl-nlinum-line line-no))))))))
 
 (provide 'defuns-nlinum)
 ;;; defuns-nlinum.el ends here

@@ -1,8 +1,8 @@
 ;;; module-org.el
 
-(add-hook 'org-load-hook 'narf|org-init t)
-(add-hook 'org-load-hook 'narf|org-keybinds t)
-(add-hook 'org-mode-hook 'narf|org-hook)
+(add-hook 'org-load-hook 'doom|org-init t)
+(add-hook 'org-load-hook 'doom|org-keybinds t)
+(add-hook 'org-mode-hook 'doom|org-hook)
 
 (defvar org-directory (expand-file-name "~/Dropbox/notes/"))
 
@@ -17,7 +17,7 @@
 (require 'module-org-notebook)
 
 ;;
-(defun narf|org-hook ()
+(defun doom|org-hook ()
   (evil-org-mode +1)
   (visual-line-mode +1)
   (setq line-spacing 2)
@@ -29,14 +29,14 @@
         (outline-previous-visible-heading 1)
         (org-show-subtree))))
 
-  (defun narf|org-update ()
+  (defun doom|org-update ()
     (when (file-exists-p buffer-file-name)
       (org-update-statistics-cookies t)))
 
-  (add-hook 'before-save-hook 'narf|org-update nil t)
-  (add-hook 'evil-insert-state-exit-hook 'narf|org-update nil t))
+  (add-hook 'before-save-hook 'doom|org-update nil t)
+  (add-hook 'evil-insert-state-exit-hook 'doom|org-update nil t))
 
-(defun narf|org-init ()
+(defun doom|org-init ()
   (setq-default
    org-export-coding-system 'utf-8
 
@@ -109,7 +109,7 @@
    org-highlight-latex-and-related '(latex)
    org-latex-create-formula-image-program 'dvipng
    org-latex-image-default-width ".9\\linewidth"
-   org-latex-preview-ltxpng-directory (concat narf-temp-dir "/ltxpng/")
+   org-latex-preview-ltxpng-directory (concat doom-temp-dir "/ltxpng/")
    org-latex-remove-logfiles nil
    org-startup-with-latex-preview nil
    ;; org-latex-packages-alist
@@ -122,7 +122,7 @@
      ;; TODO: New vocabulary word
 
      ("c" "Changelog" entry
-      (file+headline (f-expand "CHANGELOG.org" (narf/project-root)) "Unreleased")
+      (file+headline (f-expand "CHANGELOG.org" (doom/project-root)) "Unreleased")
       "* %?")
 
      ;; ("p" "Project Notes" entry
@@ -142,8 +142,8 @@
      ;;  "** %i%?\n")
      ))
 
-  (narf-fix-unicode "DejaVu Sans" '(?♭ ?♯))
-  (narf-fix-unicode "Hack" '(?× ?∙ ?÷ ?⌉ ?⌈ ?⌊ ?⌋
+  (doom-fix-unicode "DejaVu Sans" '(?♭ ?♯))
+  (doom-fix-unicode "Hack" '(?× ?∙ ?÷ ?⌉ ?⌈ ?⌊ ?⌋
                              ?∩ ?∪ ?⊆ ?⊂ ?⊄ ?⊇ ?⊃ ?⊅
                              ?⇒ ?⇐ ?⇔ ?↔ ?→ ?≡ ?∴ ?∵ ?⊕ ?∀ ?∃ ?∄ ?∈ ?∉
                              ?∨ ?∧ ?¬))
@@ -196,13 +196,13 @@
   (pushnew 'org-is-agenda-file recentf-exclude)
 
   ;; Remove highlights on ESC
-  (defun narf*org-remove-occur-highlights (&rest args)
+  (defun doom*org-remove-occur-highlights (&rest args)
     (when (eq major-mode 'org-mode) (org-remove-occur-highlights)))
-  (advice-add 'evil-force-normal-state :before 'narf*org-remove-occur-highlights)
+  (advice-add 'evil-force-normal-state :before 'doom*org-remove-occur-highlights)
 
   ;; smartparens config
   (sp-with-modes '(org-mode)
-    (sp-local-pair "*" "*" :unless '(sp-point-after-word-p sp-point-at-bol-p) :skip-match 'narf/sp-org-skip-asterisk)
+    (sp-local-pair "*" "*" :unless '(sp-point-after-word-p sp-point-at-bol-p) :skip-match 'doom/sp-org-skip-asterisk)
     (sp-local-pair "_" "_" :unless '(sp-point-before-word-p sp-point-after-word-p sp-point-before-symbol-p))
     (sp-local-pair "/" "/" :unless '(sp-point-before-word-p sp-point-after-word-p sp-point-before-symbol-p) :post-handlers '(("[d1]" "SPC")))
     (sp-local-pair "~" "~" :unless '(sp-point-before-word-p sp-point-after-word-p sp-point-before-symbol-p) :post-handlers '(("[d1]" "SPC")))
@@ -213,12 +213,12 @@
     (sp-local-pair "$$" "$$"   :post-handlers '((:add " | ")) :unless '(sp-point-at-bol-p))
     (sp-local-pair "{" nil)))
 
-(defun narf|org-keybinds ()
+(defun doom|org-keybinds ()
   (map! (:map org-mode-map
           "RET" nil
           "C-j" nil
           "C-k" nil
-          :i [remap narf/inflate-space-maybe] 'org-self-insert-command
+          :i [remap doom/inflate-space-maybe] 'org-self-insert-command
           :i "RET" 'org-return-indent)
 
         (:map evil-org-mode-map
@@ -227,36 +227,36 @@
           :ni "A-k" 'org-metaup
           :ni "A-j" 'org-metadown
           ;; Expand tables (or shiftmeta move)
-          :ni "A-L" 'narf/org-table-append-field-or-shift-right
-          :ni "A-H" 'narf/org-table-prepend-field-or-shift-left
-          :ni "A-K" 'narf/org-table-prepend-row-or-shift-up
-          :ni "A-J" 'narf/org-table-append-row-or-shift-down
+          :ni "A-L" 'doom/org-table-append-field-or-shift-right
+          :ni "A-H" 'doom/org-table-prepend-field-or-shift-left
+          :ni "A-K" 'doom/org-table-prepend-row-or-shift-up
+          :ni "A-J" 'doom/org-table-append-row-or-shift-down
 
-          :i  "C-L" 'narf/org-table-next-field
-          :i  "C-H" 'narf/org-table-previous-field
-          :i  "C-K" 'narf/org-table-previous-row
-          :i  "C-J" 'narf/org-table-next-row
+          :i  "C-L" 'doom/org-table-next-field
+          :i  "C-H" 'doom/org-table-previous-field
+          :i  "C-K" 'doom/org-table-previous-row
+          :i  "C-J" 'doom/org-table-next-row
 
           :i  "C-e" 'org-end-of-line
           :i  "C-a" 'org-beginning-of-line
-          :i  "<tab>"   'narf/org-indent
-          :i  "<S-tab>" 'narf/org-dedent
+          :i  "<tab>"   'doom/org-indent
+          :i  "<S-tab>" 'doom/org-dedent
 
           :nv "j"   'evil-next-visual-line
           :nv "k"   'evil-previous-visual-line
-          :v  "<S-tab>" 'narf/yas-insert-snippet
+          :v  "<S-tab>" 'doom/yas-insert-snippet
 
           :i  "M-a" (λ! (evil-visual-state) (org-mark-element))
           :n  "M-a" 'org-mark-element
           :v  "M-a" 'mark-whole-buffer
 
-          :ni "<M-return>"   (λ! (narf/org-insert-item 'below))
-          :ni "<S-M-return>" (λ! (narf/org-insert-item 'above))
+          :ni "<M-return>"   (λ! (doom/org-insert-item 'below))
+          :ni "<S-M-return>" (λ! (doom/org-insert-item 'above))
 
-          :i  "M-b" (λ! (narf/org-surround "*")) ; bold
-          :i  "M-u" (λ! (narf/org-surround "_")) ; underline
-          :i  "M-i" (λ! (narf/org-surround "/")) ; italics
-          :i  "M-`" (λ! (narf/org-surround "+")) ; strikethrough
+          :i  "M-b" (λ! (doom/org-surround "*")) ; bold
+          :i  "M-u" (λ! (doom/org-surround "_")) ; underline
+          :i  "M-i" (λ! (doom/org-surround "/")) ; italics
+          :i  "M-`" (λ! (doom/org-surround "+")) ; strikethrough
 
           :v  "M-b" "S*"
           :v  "M-u" "S_"
@@ -265,7 +265,7 @@
 
           (:leader
             :n ";"  'helm-org-in-buffer-headings
-            :n "oa" 'narf/org-attachment-reveal)
+            :n "oa" 'doom/org-attachment-reveal)
 
           (:localleader
             :n  "/"  'org-sparse-tree
@@ -276,18 +276,18 @@
             :n  "="  'org-align-all-tags
             :nv "l"  'org-insert-link
             :n  "L"  'org-store-link
-            :n  "x"  'narf/org-remove-link
+            :n  "x"  'doom/org-remove-link
             ;; :n  "w"  'writing-mode
             :n  "v"  'variable-pitch-mode
-            :n  "SPC" 'narf/org-toggle-checkbox
+            :n  "SPC" 'doom/org-toggle-checkbox
             :n  "RET" 'org-archive-subtree
 
             :n  "a"  'org-agenda
-            :n  "A"  'narf:org-attachment-list
+            :n  "A"  'doom:org-attachment-list
 
             :n  "d"  'org-time-stamp
             :n  "D"  'org-deadline
-            :n  "i"  'narf/org-toggle-inline-images-at-point
+            :n  "i"  'doom/org-toggle-inline-images-at-point
             :n  "t"  (λ! (org-todo (if (org-entry-is-todo-p) 'none 'todo)))
             :v  "t"  (λ! (evil-ex-normal evil-visual-beginning evil-visual-end "\\t"))
             :n  "T"  'org-todo
@@ -312,7 +312,7 @@
           :m  "]l"  'org-next-link
           :m  "[l"  'org-previous-link
 
-          :n  "RET" 'narf/org-dwim-at-point
+          :n  "RET" 'doom/org-dwim-at-point
 
           :m  "gh"  'outline-up-heading
           :m  "gj"  'org-forward-heading-same-level

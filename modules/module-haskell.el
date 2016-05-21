@@ -15,7 +15,7 @@
 (use-package inf-haskell
   :commands (inferior-haskell-mode inf-haskell-mode switch-to-haskell)
   :config
-  (map! :map inf-haskell-mode-map "ESC ESC" 'narf/popup-close))
+  (map! :map inf-haskell-mode-map "ESC ESC" 'doom/popup-close))
 
 (provide 'module-haskell)
 ;;; module-haskell.el ends here

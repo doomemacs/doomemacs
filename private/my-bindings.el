@@ -15,17 +15,17 @@
  ;; debug
  "<f9>" 'what-face
 
- "M-b"  'narf:build
- "M-t"  'narf:tab-create
- "M-T"  'narf/tab-display
+ "M-b"  'doom:build
+ "M-t"  'doom:tab-create
+ "M-T"  'doom/tab-display
  "A-`"  'os-switch-to-term
- "C-`"  'narf/popup-toggle
- "C-~"  'narf:repl
+ "C-`"  'doom/popup-toggle
+ "C-~"  'doom:repl
 
- "M-w"  'narf/close-window-or-tab
+ "M-w"  'doom/close-window-or-tab
  "M-W"  'delete-frame
- "M-n"  'narf/new-buffer
- "M-N"  'narf/new-frame
+ "M-n"  'doom/new-buffer
+ "M-N"  'doom/new-frame
 
  ;; Simpler window navigation
  "C-j"  'evil-window-down
@@ -33,28 +33,28 @@
  "C-h"  'evil-window-left
  "C-l"  'evil-window-right
 
- "A-j"  'narf/evil-window-resize-d
- "A-k"  'narf/evil-window-resize-u
- "A-h"  'narf/evil-window-resize-l
- "A-l"  'narf/evil-window-resize-r
+ "A-j"  'doom/evil-window-resize-d
+ "A-k"  'doom/evil-window-resize-u
+ "A-h"  'doom/evil-window-resize-l
+ "A-l"  'doom/evil-window-resize-r
 
  "C-<escape>" 'evil-emacs-state
  :e "C-<escape>" 'evil-normal-state
 
- :m "M-1"  (λ! (narf:switch-to-tab 0))
- :m "M-2"  (λ! (narf:switch-to-tab 1))
- :m "M-3"  (λ! (narf:switch-to-tab 2))
- :m "M-4"  (λ! (narf:switch-to-tab 3))
- :m "M-5"  (λ! (narf:switch-to-tab 4))
- :m "M-6"  (λ! (narf:switch-to-tab 5))
- :m "M-7"  (λ! (narf:switch-to-tab 6))
- :m "M-8"  (λ! (narf:switch-to-tab 7))
- :m "M-9"  (λ! (narf:switch-to-tab 8))
+ :m "M-1"  (λ! (doom:switch-to-tab 0))
+ :m "M-2"  (λ! (doom:switch-to-tab 1))
+ :m "M-3"  (λ! (doom:switch-to-tab 2))
+ :m "M-4"  (λ! (doom:switch-to-tab 3))
+ :m "M-5"  (λ! (doom:switch-to-tab 4))
+ :m "M-6"  (λ! (doom:switch-to-tab 5))
+ :m "M-7"  (λ! (doom:switch-to-tab 6))
+ :m "M-8"  (λ! (doom:switch-to-tab 7))
+ :m "M-9"  (λ! (doom:switch-to-tab 8))
 
  (:when IS-MAC
    "<A-left>"       'backward-word
    "<A-right>"      'forward-word
-   "<M-backspace>"  'narf/backward-kill-to-bol-and-indent
+   "<M-backspace>"  'doom/backward-kill-to-bol-and-indent
    "A-SPC"          'just-one-space
    "M-a"            'mark-whole-buffer
    "M-c"            'evil-yank
@@ -64,19 +64,19 @@
    "M-v"            'clipboard-yank
    "M-z"            'undo
    "M-Z"            'redo
-   "C-M-f"          'narf:toggle-fullscreen
+   "C-M-f"          'doom:toggle-fullscreen
 
-   :m "M-j"  'narf/multi-next-line
-   :m "M-k"  'narf/multi-previous-line
+   :m "M-j"  'doom/multi-next-line
+   :m "M-k"  'doom/multi-previous-line
 
-   :n "M-r"  'narf:eval-buffer
-   :v "M-r"  'narf:eval-region
+   :n "M-r"  'doom:eval-buffer
+   :v "M-r"  'doom:eval-region
 
-   :ni "<M-f1>" 'narf/dash-at-pt
+   :ni "<M-f1>" 'doom/dash-at-pt
 
    ;; Textmate-esque indent shift left/right
-   :i "M-]"   'narf/smart-indent
-   :i "M-["   'narf/dumb-dedent
+   :i "M-]"   'doom/smart-indent
+   :i "M-["   'doom/dumb-dedent
 
    ;; Restore osx text objects
    :i "<A-backspace>" 'evil-delete-backward-word
@@ -84,7 +84,7 @@
 
  :m ";" 'evil-ex
  (:leader
-   :nv ","  'narf/helm-buffers-dwim
+   :nv ","  'doom/helm-buffers-dwim
    :nv "<"  'helm-buffers-list
    :nv "."  'helm-find-files
    :nv ">"  'helm-projectile-find-file-in-known-projects
@@ -100,32 +100,32 @@
 
    :n  "h"  'help-command
    :nv "p"  'helm-show-kill-ring
-   :n  "R"  'narf/reset-theme
-   :n  "e"  'narf/flycheck-errors
+   :n  "R"  'doom/reset-theme
+   :n  "e"  'doom/flycheck-errors
    :n  "s"  'yas-visit-snippet-file
-   :n  "S"  'narf/yas-find-file
+   :n  "S"  'doom/yas-find-file
    :n  "D"  'vc-annotate
    (:prefix "d"
-     :n "." 'narf/vcs-show-hunk
+     :n "." 'doom/vcs-show-hunk
      :n "/" 'vc-diff
-     :n "s" 'narf/vcs-stage-hunk
-     :n "r" 'narf/vcs-revert-hunk)
+     :n "s" 'doom/vcs-stage-hunk
+     :n "r" 'doom/vcs-revert-hunk)
 
    :n  "b"  'helm-bookmarks
-   :nv "l"  'narf/nlinum-toggle
+   :nv "l"  'doom/nlinum-toggle
 
    :nv "qq" 'evil-save-and-quit
-   :nv "QQ" 'narf/kill-all-buffers-do-not-remember
+   :nv "QQ" 'doom/kill-all-buffers-do-not-remember
 
    ;; Quick access to my dotfiles and emacs.d
-   :nv "E"  'narf/helm-find-in-emacsd
-   :nv "\\" 'narf/helm-find-in-dotfiles
+   :nv "E"  'doom/helm-find-in-emacsd
+   :nv "\\" 'doom/helm-find-in-dotfiles
 
    ;; Tmux
    (:prefix "t"
-     :n "." 'narf/tmux-cd-to-here
-     :n "/" 'narf/tmux-cd-to-project
-     :v "r" 'narf:tmux)
+     :n "." 'doom/tmux-cd-to-here
+     :n "/" 'doom/tmux-cd-to-project
+     :v "r" 'doom:tmux)
 
    ;; Open with O/S
    :n "O" 'os-reveal
@@ -141,22 +141,22 @@
      :n "T" 'os-switch-to-term-and-cd)
 
    ;; Org notes
-   :n "X" 'narf/org
+   :n "X" 'doom/org
    (:prefix "x"
-     :n "." 'narf/org-find-file
-     :n "/" 'narf/org-find-file-in-notes
-     :n "e" 'narf/org-find-exported-file))
+     :n "." 'doom/org-find-file
+     :n "/" 'doom/org-find-file-in-notes
+     :n "e" 'doom/org-find-exported-file))
 
  (:localleader
-   :n "\\" 'narf/neotree
+   :n "\\" 'doom/neotree
    :n "]" 'imenu-list-minor-mode
-   :n "b" 'narf:build
-   :n "R" 'narf:repl
-   :v "R" 'narf:repl-eval
-   :v "r" 'narf:eval-region
+   :n "b" 'doom:build
+   :n "R" 'doom:repl
+   :v "R" 'doom:repl-eval
+   :v "r" 'doom:eval-region
    (:prefix "r"
      :n  "e" 'emr-show-refactor-menu
-     :n  "r" 'narf:eval-buffer))
+     :n  "r" 'doom:eval-buffer))
 
  :nv "K"  'smart-up
 
@@ -164,24 +164,24 @@
  :n  "="  (λ! (save-excursion (call-interactively 'evil-indent)))
  :v  "="  'evil-indent
 
- :n  "zr" 'narf/evil-open-folds
- :n  "zm" 'narf/evil-close-folds
- :n  "zx" 'narf/kill-real-buffer
+ :n  "zr" 'doom/evil-open-folds
+ :n  "zm" 'doom/evil-close-folds
+ :n  "zx" 'doom/kill-real-buffer
  :n  "ZX" 'bury-buffer
 
  ;; These are intentionally reversed
- :n  "]b" 'narf/next-real-buffer
- :n  "[b" 'narf/previous-real-buffer
+ :n  "]b" 'doom/next-real-buffer
+ :n  "[b" 'doom/previous-real-buffer
 
- :m  "]d" 'narf/vcs-next-hunk
- :m  "[d" 'narf/vcs-prev-hunk
- :m  "]e" 'narf/flycheck-next-error
- :m  "[e" 'narf/flycheck-previous-error
+ :m  "]d" 'doom/vcs-next-hunk
+ :m  "[d" 'doom/vcs-prev-hunk
+ :m  "]e" 'doom/flycheck-next-error
+ :m  "[e" 'doom/flycheck-previous-error
  ;; Switch tabs
- :n  "]w" 'narf:switch-to-tab-right
- :n  "[w" 'narf:switch-to-tab-left
- :m  "gt" 'narf:switch-to-tab-right
- :m  "gT" 'narf:switch-to-tab-left
+ :n  "]w" 'doom:switch-to-tab-right
+ :n  "[w" 'doom:switch-to-tab-left
+ :m  "gt" 'doom:switch-to-tab-right
+ :m  "gT" 'doom:switch-to-tab-left
 
  ;; Increment/decrement number under cursor
  :n  "g=" 'evil-numbers/inc-at-pt
@@ -192,17 +192,17 @@
               (call-interactively 'find-file-at-point)
               (helm-mode 1))
 
- :m  "gD" 'narf/find-def
- :n  "gp" 'narf/reselect-paste
+ :m  "gD" 'doom/find-def
+ :n  "gp" 'doom/reselect-paste
  :n  "gc" 'evil-commentary
  :n  "gx" 'evil-exchange
- :n  "gr" 'narf:eval-region
- :n  "gR" 'narf:eval-buffer
- :v  "gR" 'narf:eval-region-and-replace
+ :n  "gr" 'doom:eval-region
+ :n  "gR" 'doom:eval-buffer
+ :v  "gR" 'doom:eval-region-and-replace
  :m  "g]" 'smart-right
  :m  "g[" 'smart-left
- :v  "@"  'narf/evil-macro-on-all-lines
- :n  "g@" 'narf/evil-macro-on-all-lines
+ :v  "@"  'doom/evil-macro-on-all-lines
+ :n  "g@" 'doom/evil-macro-on-all-lines
 
  :v  "."  'evil-repeat
 
@@ -240,7 +240,7 @@
 
  ;; Textmate-esque newlines
  :i  "<backspace>"   'backward-delete-char-untabify
- :i  "<M-backspace>" 'narf/backward-kill-to-bol-and-indent
+ :i  "<M-backspace>" 'doom/backward-kill-to-bol-and-indent
  :i  "<C-return>"    'evil-ret-and-indent
 
  ;; Emacsien motions for insert mode
@@ -256,20 +256,20 @@
  :n  "!"     'rotate-text
 
  (:map evil-window-map ; prefix "C-w"
-   "u"       'narf/undo-window-change
+   "u"       'doom/undo-window-change
 
    ;; Jump to new splits
-   "s"       'narf/evil-window-split
-   "v"       'narf/evil-window-vsplit
+   "s"       'doom/evil-window-split
+   "v"       'doom/evil-window-vsplit
 
    ;; Move window in one step
-   "H"       (λ! (narf/evil-window-move 'left))
-   "J"       (λ! (narf/evil-window-move 'down))
-   "K"       (λ! (narf/evil-window-move 'up))
-   "L"       (λ! (narf/evil-window-move 'right))
+   "H"       (λ! (doom/evil-window-move 'left))
+   "J"       (λ! (doom/evil-window-move 'down))
+   "K"       (λ! (doom/evil-window-move 'up))
+   "L"       (λ! (doom/evil-window-move 'right))
 
-   "C-u"     'narf/undo-window-change
-   "C-r"     'narf/redo-window-change
+   "C-u"     'doom/undo-window-change
+   "C-r"     'doom/redo-window-change
    "C-h"     'evil-window-left
    "C-j"     'evil-window-down
    "C-k"     'evil-window-up
@@ -289,17 +289,17 @@
 
  ;; `yasnippet'
  :i  [(tab)]     'yas-expand
- :v  "<backtab>" 'narf/yas-insert-snippet
+ :v  "<backtab>" 'doom/yas-insert-snippet
 
  ;; `auto-yasnippet'
  :i  "<C-tab>" 'aya-expand
  :nv "<C-tab>" 'aya-create
 
  ;; Vim omni-complete emulation
- :i "C-SPC" 'narf/company-complete
+ :i "C-SPC" 'doom/company-complete
  (:prefix "C-x"
-   :i "C-l"   'narf/company-whole-lines
-   :i "C-k"   'narf/company-dict-or-keywords
+   :i "C-l"   'doom/company-whole-lines
+   :i "C-k"   'doom/company-dict-or-keywords
    :i "C-f"   'company-files
    :i "C-]"   'company-tags
    :i "s"     'company-ispell
@@ -320,7 +320,7 @@
      "C-S-s"      'company-search-candidates
      "C-s"        'company-filter-candidates
      "C-SPC"      'company-complete-common-or-cycle
-     [tab]        'narf/company-complete-common-or-complete-full
+     [tab]        'doom/company-complete-common-or-complete-full
      "<backtab>"  'company-select-previous
      [escape]     (λ! (company-abort) (evil-normal-state 1))
      "<C-return>" 'helm-company)
@@ -331,7 +331,7 @@
 
  (:after help-mode
    (:map help-map
-     "e" 'narf/popup-messages)
+     "e" 'doom/popup-messages)
    (:map help-mode-map
      :n "]]" 'help-go-forward
      :n "[[" 'help-go-back)))

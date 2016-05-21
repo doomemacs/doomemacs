@@ -1,13 +1,13 @@
 ;;; defuns-company.el
 
 ;;;###autoload
-(defun narf/company-evil-complete-next (&optional arg)
+(defun doom/company-evil-complete-next (&optional arg)
   (call-interactively 'company-dabbrev)
   (if (eq company-candidates-length 1)
       (company-complete)))
 
 ;;;###autoload
-(defun narf/company-evil-complete-previous (&optional arg)
+(defun doom/company-evil-complete-previous (&optional arg)
   (let ((company-selection-wrap-around t))
     (call-interactively 'company-dabbrev)
     (if (eq company-candidates-length 1)
@@ -15,7 +15,7 @@
       (call-interactively 'company-select-previous))))
 
 ;;;###autoload
-(defun narf/company-complete-common-or-complete-full ()
+(defun doom/company-complete-common-or-complete-full ()
   (interactive)
   (when (company-manual-begin)
     (if (eq last-command #'company-complete-common-or-cycle)
@@ -27,7 +27,7 @@
           (call-interactively #'company-complete-selection)
           (call-interactively #'company-complete))))))
 
-(defun narf--company-whole-lines ()
+(defun doom--company-whole-lines ()
   (split-string
    (replace-regexp-in-string
     "^[\t\s]+" ""
@@ -36,22 +36,22 @@
    "\\(\r\n\\|[\n\r]\\)" t))
 
 ;;;###autoload
-(defun narf/company-whole-lines (command &optional arg &rest ignored)
+(defun doom/company-whole-lines (command &optional arg &rest ignored)
   (interactive (list 'interactive))
-  (let ((lines (narf--company-whole-lines)))
+  (let ((lines (doom--company-whole-lines)))
     (cl-case command
-      (interactive (company-begin-backend 'narf/company-whole-lines))
+      (interactive (company-begin-backend 'doom/company-whole-lines))
       (prefix (company-grab-line "^[\t\s]*\\(.+\\)" 1))
       (candidates (all-completions arg lines)))))
 
 ;;;###autoload
-(defun narf/company-dict-or-keywords ()
+(defun doom/company-dict-or-keywords ()
   (interactive)
   (let ((company-backends '((company-keywords company-dict))))
     (call-interactively 'company-complete)))
 
 ;;;###autoload
-(defun narf/company-complete ()
+(defun doom/company-complete ()
   "Bring up the completion popup. If there is only one result, auto-complete it."
   (interactive)
   (when (and (company-manual-begin)

@@ -1,8 +1,7 @@
 ;;; defuns-helm.el
-;; see ../core-helm.el
 
-;;;###autoload (autoload 'narf:helm-recentf "defuns-helm" nil t)
-(evil-define-command narf:helm-recentf (&optional bang)
+;;;###autoload (autoload 'doom:helm-recentf "defuns-helm" nil t)
+(evil-define-command doom:helm-recentf (&optional bang)
   "Ex-mode interface for `helm-recentf' and `helm-projectile-recentf'. If
  `bang', then `search' is interpreted as regexp."
   :repeat nil
@@ -11,8 +10,8 @@
 
 ;; Ex-mode interface for `helm-ag'. If `bang', then `search' is interpreted as
 ;; regexp.
-;;;###autoload (autoload 'narf:helm-ag-search "defuns-helm" nil t)
-(evil-define-operator narf:helm-ag-search (beg end search regex-p &optional dir)
+;;;###autoload (autoload 'doom:helm-ag-search "defuns-helm" nil t)
+(evil-define-operator doom:helm-ag-search (beg end search regex-p &optional dir)
   "Preform an helm-ag search with SEARCH. If SEARCH is nil and in visual mode, use the
 selection, otherwise activate live ag searching in helm.
 
@@ -22,7 +21,7 @@ DIR specifies the default-directory from which ag is run."
   :repeat nil
   (interactive "<r><a><!>")
   (require 'helm-ag)
-  (let* ((helm-ag--default-directory (or dir (f-slash (narf/project-root))))
+  (let* ((helm-ag--default-directory (or dir (f-slash (doom/project-root))))
          (helm-ag-command-option (unless regex-p "-Q "))
          (input "")
          (header-name (format "Search in %s" helm-ag--default-directory)))
@@ -40,56 +39,56 @@ DIR specifies the default-directory from which ag is run."
 
 ;; Ex-mode interface for `helm-do-ag'. If `bang', then `search' is interpreted
 ;; as regexp
-;;;###autoload (autoload 'narf:helm-ag-search-cwd "defuns-helm" nil t)
-(evil-define-operator narf:helm-ag-search-cwd (beg end &optional search bang)
+;;;###autoload (autoload 'doom:helm-ag-search-cwd "defuns-helm" nil t)
+(evil-define-operator doom:helm-ag-search-cwd (beg end &optional search bang)
   :type inclusive :repeat nil
   (interactive "<r><a><!>")
-  (narf:helm-ag-search beg end search bang default-directory))
+  (doom:helm-ag-search beg end search bang default-directory))
 
 ;; Ex-mode interface for `helm-swoop', `helm-multi-swoop-all' (if `bang'), or
 ;; `helm-css-scss' and `helm-css-scss-multi' (if `bang') if major-mode is
 ;; `scss-mode'
-;;;###autoload (autoload 'narf:helm-swoop "defuns-helm" nil t)
-(evil-define-command narf:helm-swoop (&optional search bang)
+;;;###autoload (autoload 'doom:helm-swoop "defuns-helm" nil t)
+(evil-define-command doom:helm-swoop (&optional search bang)
   :repeat nil
   (interactive "<a><!>")
   (if bang (helm-multi-swoop-all search) (helm-swoop :$query search)))
 
 ;;;###autoload
-(defun narf/helm-find-in-emacsd ()
+(defun doom/helm-find-in-emacsd ()
   (interactive)
-  (in! narf-emacs-dir (helm-projectile-find-file)))
+  (in! doom-emacs-dir (helm-projectile-find-file)))
 
 ;;;###autoload
-(defun narf/helm-find-in-dotfiles ()
+(defun doom/helm-find-in-dotfiles ()
   (interactive)
   (in! (expand-file-name ".dotfiles" "~") (helm-projectile-find-file)))
 
 ;;;###autoload
-(defun narf/helm-buffers-dwim (&optional all-p)
+(defun doom/helm-buffers-dwim (&optional all-p)
   "Displays open buffers in current project. If ALL-P, then show all open
 buffers."
   (interactive)
-  (let ((narf-helm-force-project-buffers (and (not all-p) (narf/project-p))))
+  (let ((doom-helm-force-project-buffers (and (not all-p) (doom/project-p))))
     (helm-buffers-list)))
 
 ;;;###autoload
-(defun narf*helm-replace-prompt (plist)
+(defun doom*helm-replace-prompt (plist)
   (if (keywordp (car plist))
       (setq plist (plist-put plist :prompt helm-global-prompt))
     (setcar (nthcdr 2 plist) helm-global-prompt))
   plist)
 
 ;;;###autoload
-(defun narf*helm-hide-header (source &optional force)
+(defun doom*helm-hide-header (source &optional force)
   (setq header-line-format nil)
-  (narf|hide-mode-line))
+  (doom|hide-mode-line))
 
 ;;;###autoload
-(defun narf*helm-hide-source-header-maybe ()
+(defun doom*helm-hide-source-header-maybe ()
   (if (<= (length helm-sources) 1)
       (set-face-attribute 'helm-source-header nil :height 0.1 :foreground "#111111")
-    (set-face-attribute 'helm-source-header nil :height 1.0 :foreground narf-helm-header-fg)))
+    (set-face-attribute 'helm-source-header nil :height 1.0 :foreground doom-helm-header-fg)))
 
 (provide 'defuns-helm)
 ;;; defuns-helm.el ends here

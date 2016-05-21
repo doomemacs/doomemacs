@@ -7,12 +7,12 @@
         (chars (plist-get rest :chars))
         (words (plist-get rest :words)))
     (when (or chars words)
-      (let ((fn-name (intern (format "narf--electric-%s" (s-join "-" (mapcar 'symbol-name modes))))))
+      (let ((fn-name (intern (format "doom--electric-%s" (s-join "-" (mapcar 'symbol-name modes))))))
         `(progn
            (defun ,fn-name ()
              (electric-indent-local-mode +1)
              ,(if chars `(setq electric-indent-chars ',chars))
-             ,(if words `(setq narf-electric-indent-words ',words)))
+             ,(if words `(setq doom-electric-indent-words ',words)))
            (add-hook! ,modes ',fn-name))))))
 
 ;;;###autoload
@@ -23,7 +23,7 @@
         (words (plist-get rest :words))
         (patterns (plist-get rest :patterns)))
     (when (or symbols words patterns)
-      (let ((fn-name (intern (format "narf--rotate-%s" (s-join "-" (mapcar 'symbol-name modes))))))
+      (let ((fn-name (intern (format "doom--rotate-%s" (s-join "-" (mapcar 'symbol-name modes))))))
         `(progn
            (defun ,fn-name ()
              ,(if symbols `(setq-local rotate-text-local-symbols ',symbols))

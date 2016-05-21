@@ -1,25 +1,25 @@
 ;;; defuns-org.el
 
 ;;;###autoload
-(defun narf/org-find-file-in-notes ()
+(defun doom/org-find-file-in-notes ()
   (interactive)
   (in! (f-slash org-directory)
     (helm-projectile-find-file)))
 
 ;;;###autoload
-(defun narf/org-find-file ()
+(defun doom/org-find-file ()
   (interactive)
   (in! (f-slash org-directory)
     (helm-find-files nil)))
 
 ;;;###autoload
-(defun narf/org-find-exported-file ()
+(defun doom/org-find-exported-file ()
   (interactive)
-  (in! (f-slash narf-org-export-directory)
+  (in! (f-slash doom-org-export-directory)
     (helm-find-files nil)))
 
 ;;;###autoload
-(defun narf/org-get-property (name)
+(defun doom/org-get-property (name)
   (interactive)
   (save-excursion
     (goto-char 1)
@@ -27,7 +27,7 @@
     (buffer-substring-no-properties (match-beginning 1) (match-end 1))))
 
 ;;;###autoload
-(defun narf/org-indent ()
+(defun doom/org-indent ()
   (interactive)
   (cond
    ((and (org-on-heading-p)
@@ -37,7 +37,7 @@
    (t (call-interactively 'self-insert-command))))
 
 ;;;###autoload
-(defun narf/org-dedent ()
+(defun doom/org-dedent ()
   (interactive)
   (cond
    ((and (org-on-heading-p)
@@ -47,7 +47,7 @@
    (t (call-interactively 'self-insert-command))))
 
 ;;;###autoload
-(defun narf/org-insert-item (direction)
+(defun doom/org-insert-item (direction)
   "Inserts a new heading or item, depending on the context. I use this instead of
 `org-insert-item' or `org-insert-heading' because they try to do too much and end up doing
 this otherwise simple task wrong (e.g. whitespace in the wrong places)."
@@ -74,7 +74,7 @@ this otherwise simple task wrong (e.g. whitespace in the wrong places)."
              ('below
               (org-table-insert-row))
              ('above
-              (narf/org-table-prepend-row-or-shift-up))))
+              (doom/org-table-prepend-row-or-shift-up))))
           (t
            (let ((level (save-excursion
                           (org-back-to-heading)
@@ -104,7 +104,7 @@ this otherwise simple task wrong (e.g. whitespace in the wrong places)."
     (evil-append-line 1)))
 
 ;;;###autoload
-(defun narf/org-toggle-checkbox ()
+(defun doom/org-toggle-checkbox ()
   (interactive)
   (let ((context (org-element-lineage (org-element-context) '(item) t)))
     (when context
@@ -116,7 +116,7 @@ this otherwise simple task wrong (e.g. whitespace in the wrong places)."
         (insert "[ ] ")))))
 
 ;;;###autoload
-(defun narf/org-dwim-at-point ()
+(defun doom/org-dwim-at-point ()
   (interactive)
   (let* ((scroll-pt (window-start))
          (context (org-element-context))
@@ -160,14 +160,14 @@ this otherwise simple task wrong (e.g. whitespace in the wrong places)."
      ((memq type '(link))
       (let ((path (org-element-property :path (org-element-lineage (org-element-context) '(link) t))))
         (if (and path (image-type-from-file-name path))
-            (narf/org-refresh-inline-images)
+            (doom/org-refresh-inline-images)
           (org-open-at-point))))
 
-     (t (narf/org-refresh-inline-images)))
+     (t (doom/org-refresh-inline-images)))
     (set-window-start nil scroll-pt)))
 
 ;;;###autoload
-(defun narf/org-refresh-inline-images ()
+(defun doom/org-refresh-inline-images ()
   (interactive)
   (if (> (length org-inline-image-overlays) 0)
       (org-remove-inline-images)
@@ -182,7 +182,7 @@ this otherwise simple task wrong (e.g. whitespace in the wrong places)."
 
 ;; Formatting shortcuts
 ;;;###autoload
-(defun narf/org-surround (delim)
+(defun doom/org-surround (delim)
   (if (region-active-p)
       (save-excursion
         (goto-char (region-beginning))
@@ -193,7 +193,7 @@ this otherwise simple task wrong (e.g. whitespace in the wrong places)."
     (save-excursion (insert delim))))
 
 ;;;###autoload
-(defun narf/org-word-count (beg end &optional count-footnotes?)
+(defun doom/org-word-count (beg end &optional count-footnotes?)
   "Report the number of words in the Org mode buffer or selected region.
 Ignores:
 - comments
@@ -265,7 +265,7 @@ COUNT-FOOTNOTES? is non-nil."
                      (if mark-active "region" "buffer")))))
 
 ;;;###autoload
-(defun narf/org-remove-link ()
+(defun doom/org-remove-link ()
   "Replace an org link by its description or if empty its address"
   (interactive)
   (if (org-in-regexp org-bracket-link-regexp 1)
@@ -277,52 +277,52 @@ COUNT-FOOTNOTES? is non-nil."
         (insert description))))
 
 ;;;###autoload
-(defun narf/org-table-next-row ()
+(defun doom/org-table-next-row ()
   (interactive)
   (if (org-at-table-p) (org-table-next-row) (org-down-element)))
 
 ;;;###autoload
-(defun narf/org-table-previous-row ()
+(defun doom/org-table-previous-row ()
   (interactive)
-  (if (org-at-table-p) (narf--org-table-previous-row) (org-up-element)))
+  (if (org-at-table-p) (doom--org-table-previous-row) (org-up-element)))
 
 ;;;###autoload
-(defun narf/org-table-next-field ()
+(defun doom/org-table-next-field ()
   (interactive)
   (if (org-at-table-p) (org-table-next-field) (org-end-of-line)))
 
 ;;;###autoload
-(defun narf/org-table-previous-field ()
+(defun doom/org-table-previous-field ()
   (interactive)
   (if (org-at-table-p) (org-table-previous-field) (org-beginning-of-line)))
 
 ;;;###autoload
-(defun narf/org-table-append-field-or-shift-right ()
+(defun doom/org-table-append-field-or-shift-right ()
   (interactive)
   (org-shiftmetaright)
   (when (org-at-table-p) (org-metaright)))
 
 ;;;###autoload
-(defun narf/org-table-prepend-field-or-shift-left ()
+(defun doom/org-table-prepend-field-or-shift-left ()
   (interactive)
   (if (org-at-table-p)
       (org-shiftmetaright)
     (org-shiftmetaleft)))
 
 ;;;###autoload
-(defun narf/org-table-append-row-or-shift-down ()
+(defun doom/org-table-append-row-or-shift-down ()
   (interactive)
   (org-shiftmetadown)
   (when (org-at-table-p) (org-metadown)))
 
 ;;;###autoload
-(defun narf/org-table-prepend-row-or-shift-up ()
+(defun doom/org-table-prepend-row-or-shift-up ()
   (interactive)
   (if (org-at-table-p)
       (org-shiftmetadown)
     (org-shiftmetaup)))
 
-(defun narf--org-table-previous-row ()
+(defun doom--org-table-previous-row ()
   "Go to the previous row (same column) in the current table. Before doing so,
 re-align the table if necessary. (Necessary because org-mode has a
 `org-table-next-row', but not `org-table-previous-row')"
@@ -340,8 +340,8 @@ re-align the table if necessary. (Necessary because org-mode has a
     (skip-chars-backward "^|\n\r")
     (when (org-looking-at-p " ") (forward-char))))
 
-;;;###autoload (autoload 'narf:org-link "defuns-org" nil t)
-(evil-define-command narf:org-link (link)
+;;;###autoload (autoload 'doom:org-link "defuns-org" nil t)
+(evil-define-command doom:org-link (link)
   "Add LINK to the org buffer. If a selection is active, link selection to LINK."
   (interactive "<a>")
   (unless (eq major-mode 'org-mode)
@@ -351,7 +351,7 @@ re-align the table if necessary. (Necessary because org-mode has a
     (org-insert-link nil link (when (and beg end) (buffer-substring-no-properties beg end)))))
 
 ;;;###autoload
-(defun narf/sp-org-skip-asterisk (ms mb me)
+(defun doom/sp-org-skip-asterisk (ms mb me)
     (or (and (= (line-beginning-position) mb)
              (eq 32 (char-after (1+ mb))))
         (and (= (1+ (line-beginning-position)) me)

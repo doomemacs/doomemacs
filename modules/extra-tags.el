@@ -2,7 +2,7 @@
 
 ;; WIP
 
-(defvar narf-ctags-alist
+(defvar doom-ctags-alist
   '((ruby-mode :exec "ripper-tags -R -f %t --emacs")
     (c++-mode :ext "cpp")
     (c-mode :ext "c")
@@ -11,26 +11,26 @@
     ))
 
 
-(add-hook 'find-file-hook 'narf|init-tags)
-(defun narf|init-tags ()
-  (awhen (narf/tags-p)
+(add-hook 'find-file-hook 'doom|init-tags)
+(defun doom|init-tags ()
+  (awhen (doom/tags-p)
     (setq tags-table-list (list it))))
 
 ;; TODO
-;; (defun narf/tags-generate ()
+;; (defun doom/tags-generate ()
 ;;   (interactive)
-;;   (let ((command (assoc major-mode narf-ctags-alist))
-;;         (default-directory (narf/project-root)))
+;;   (let ((command (assoc major-mode doom-ctags-alist))
+;;         (default-directory (doom/project-root)))
 ;;     (unless command
 ;;       (user-error "No tag generator for %s" major-mode))
-;;     (async-shell-command command "*narf:generate-tags*")))
+;;     (async-shell-command command "*doom:generate-tags*")))
 
 ;;;###autoload
-(defun narf/find-def ()
+(defun doom/find-def ()
   (interactive)
   (let ((orig-pt (point))
         (orig-file (buffer-file-name)))
-    (cond ((and (narf/tags-p)
+    (cond ((and (doom/tags-p)
                 (progn (call-interactively 'helm-etags-select)
                        (and (/= orig-pt (point))
                             (f-same? orig-file buffer-file-name)))))
@@ -40,8 +40,8 @@
           (t (call-interactively 'evil-goto-definition)))))
 
 ;;;###autoload
-(defun narf/tags-p ()
-  (let ((path (expand-file-name ".tags" (narf/project-root))))
+(defun doom/tags-p ()
+  (let ((path (expand-file-name ".tags" (doom/project-root))))
     (and (f-exists? path) path)))
 
 (provide 'extra-tags)

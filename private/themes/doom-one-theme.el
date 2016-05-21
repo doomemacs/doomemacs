@@ -1,25 +1,25 @@
-;; NARF One Dark (inspired by Atom)
+;; DOOM One Dark (inspired by Atom)
 ;; By Henrik Lissner <http://github.com/hlissner/emacs.d>
 
-(deftheme narf-one "A dark theme for narfy emacs, inspired by Molokai")
+(deftheme doom-one "A dark theme for hellish emacs, inspired by Molokai")
 
 (when (display-graphic-p)
   ;; Brighten up code buffers; darken special and popup buffers
-  (defface narf-default '((t (:inherit default)))
+  (defface doom-default '((t (:inherit default)))
     "Face for source code windows")
-  (defun narf|buffer-bg (&rest _)
+  (defun doom|buffer-bg (&rest _)
     (set (make-local-variable 'face-remapping-alist)
-         '((default narf-default)
-           (linum narf-linum))))
-  (add-hook 'find-file-hook 'narf|buffer-bg)
+         '((default doom-default)
+           (linum doom-linum))))
+  (add-hook 'find-file-hook 'doom|buffer-bg)
 
   ;; Brighter minibuffer when active + no fringe in minibuffer
-  (defface narf-minibuffer-active '((t (:inherit mode-line)))
+  (defface doom-minibuffer-active '((t (:inherit mode-line)))
     "Face for active minibuffer")
   (add-hook! minibuffer-setup
     (set-window-fringes (minibuffer-window) 0 0 nil)
     (set (make-local-variable 'face-remapping-alist)
-         '((default narf-minibuffer-active)))))
+         '((default doom-minibuffer-active)))))
 
 (let* ((c '((class color)))
 
@@ -98,12 +98,12 @@
        (vc-deleted     red))
 
   (custom-theme-set-faces
-   'narf-one
+   'doom-one
 
    ;; Text
    `(default                         ((,c (:foreground ,fg :background ,bg-d))))
-   `(narf-default                    ((,c (:inherit default :background ,bg))))
-   `(fringe                          ((,c (:inherit narf-default :foreground ,comments))))
+   `(doom-default                    ((,c (:inherit default :background ,bg))))
+   `(fringe                          ((,c (:inherit doom-default :foreground ,comments))))
    `(cursor                          ((,c (:background ,white))))
    `(hl-line                         ((,c (:background ,current-line))))
    `(region                          ((,c (:background ,selection :foreground ,white))))
@@ -156,12 +156,12 @@
    `(vertical-border                ((,c (:foreground ,vertical-bar :background ,vertical-bar))))
 
    `(linum                          ((,c (:foreground ,linum-fg :background ,bg-d :bold nil))))
-   `(narf-linum                     ((,c (:inherit linum :background ,bg))))
+   `(doom-linum                     ((,c (:inherit linum :background ,bg))))
    `(linum-highlight-face           ((,c (:inherit linum :foreground ,linum-hl-fg :background ,current-line))))
    `(show-paren-match               ((,c (:foreground ,magenta :inverse-video t))))
 
    ;; Modeline
-   `(narf-minibuffer-active         ((,c (:background ,bg))))
+   `(doom-minibuffer-active         ((,c (:background ,bg))))
    `(mode-line                      ((,c (:foreground ,modeline-fg          :background ,modeline-bg))))
    `(mode-line-inactive             ((,c (:foreground ,modeline-fg-inactive :background ,modeline-bg-inactive))))
 
@@ -183,9 +183,9 @@
    `(isearch                        ((,c (:foreground ,search-fg :background ,search-bg))))
    `(isearch-lazy-highlight-face    ((,c (:foreground ,search-rest-fg :background ,search-rest-bg))))
 
-   `(narf-todo-face                 ((,c (:foreground ,yellow))))
-   `(narf-fixme-face                ((,c (:foreground ,red))))
-   `(narf-note-face                 ((,c (:foreground ,cyan))))
+   `(doom-todo-face                 ((,c (:foreground ,yellow))))
+   `(doom-fixme-face                ((,c (:foreground ,red))))
+   `(doom-note-face                 ((,c (:foreground ,cyan))))
 
    `(evil-ex-substitute-replacement ((,c (:foreground ,magenta :background ,black :bold ,bold))))
    `(evil-search-highlight-persist-highlight-face ((,c (:background ,search-rest-bg))))
@@ -364,7 +364,7 @@
    `(org-checkbox-statistics-todo ((,c (:inherit org-todo))))
    `(org-checkbox-statistics-done ((,c (:inherit org-done))))
 
-   ;; NARF custom org faces
+   ;; DOOM custom org faces
    `(org-headline-todo    ((,c (:bold nil))))
    `(org-block            ((,c (:background ,current-line))))
    `(org-block-background ((,c (:background ,current-line))))
@@ -398,7 +398,7 @@
                         (--color-name-to-rgb color2))))
 
     (custom-theme-set-variables
-     'narf-one
+     'doom-one
      `(vc-annotate-color-map
        '((20 .  ,green)
          (40 .  ,(--color-blend yellow green (/ 1.0 3)))
@@ -423,7 +423,7 @@
 
 ;; *****************************************************************************************
 
-(provide-theme 'narf-one)
+(provide-theme 'doom-one)
 
 ;; Local Variables:
 ;; no-byte-compile: t

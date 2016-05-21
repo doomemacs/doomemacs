@@ -6,7 +6,7 @@
   :commands python-mode
   :init
   (setq-default
-   python-environment-directory narf-temp-dir
+   python-environment-directory doom-temp-dir
    python-shell-interpreter "ipython"
    python-shell-interpreter-args "--deep-reload"
    python-shell-prompt-regexp "In \\[[0-9]+\\]: "
@@ -23,7 +23,7 @@
   (def-company-backend! python-mode (anaconda))
   (def-docset! python-mode "py,py3,python")
   (def-version-cmd! python-mode "python --version 2>&1 | cut -d' ' -f2")
-  (def-repl! python-mode narf/inf-python)
+  (def-repl! python-mode doom/inf-python)
 
   (define-key python-mode-map (kbd "DEL") nil)) ; interferes with smartparens
 
@@ -31,14 +31,14 @@
   :after python
   :init
   (add-hook! python-mode '(anaconda-mode anaconda-eldoc-mode eldoc-mode))
-  (setq anaconda-mode-installation-directory (concat narf-temp-dir "/anaconda/")
+  (setq anaconda-mode-installation-directory (concat doom-temp-dir "/anaconda/")
         anaconda-mode-eldoc-as-single-line t)
 
   :config
   (map! :map anaconda-mode-map     :m "gd"     'anaconda-mode-find-definitions)
   (map! :map anaconda-nav-mode-map :n [escape] 'anaconda-nav-quit)
 
-  (advice-add 'anaconda-mode-doc-buffer :after 'narf*anaconda-mode-doc-buffer))
+  (advice-add 'anaconda-mode-doc-buffer :after 'doom*anaconda-mode-doc-buffer))
 
 (use-package company-anaconda
   :after anaconda-mode

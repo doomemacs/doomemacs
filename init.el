@@ -4,62 +4,47 @@
 ;; URL:     https://github.com/hlissner/.emacs.d
 ;; Version: 1.0.1
 ;;
-;;; Are you pondering what I'm pondering, Pinky?
+;;   =================     ===============     ===============   ========  ========
+;;   \\ . . . . . . .\\   //. . . . . . .\\   //. . . . . . .\\  \\. . .\\// . . //
+;;   ||. . ._____. . .|| ||. . ._____. . .|| ||. . ._____. . .|| || . . .\/ . . .||
+;;   || . .||   ||. . || || . .||   ||. . || || . .||   ||. . || ||. . . . . . . ||
+;;   ||. . ||   || . .|| ||. . ||   || . .|| ||. . ||   || . .|| || . | . . . . .||
+;;   || . .||   ||. _-|| ||-_ .||   ||. . || || . .||   ||. _-|| ||-_.|\ . . . . ||
+;;   ||. . ||   ||-'  || ||  `-||   || . .|| ||. . ||   ||-'  || ||  `|\_ . .|. .||
+;;   || . _||   ||    || ||    ||   ||_ . || || . _||   ||    || ||   |\ `-_/| . ||
+;;   ||_-' ||  .|/    || ||    \|.  || `-_|| ||_-' ||  .|/    || ||   | \  / |-_.||
+;;   ||    ||_-'      || ||      `-_||    || ||    ||_-'      || ||   | \  / |  `||
+;;   ||    `'         || ||         `'    || ||    `'         || ||   | \  / |   ||
+;;   ||            .===' `===.         .==='.`===.         .===' /==. |  \/  |   ||
+;;   ||         .=='   \_|-_ `===. .==='   _|_   `===. .===' _-|/   `==  \/  |   ||
+;;   ||      .=='    _-'    `-_  `='    _-'   `-_    `='  _-'   `-_  /|  \/  |   ||
+;;   ||   .=='    _-'          '-__\._-'         '-_./__-'         `' |. /|  |   ||
+;;   ||.=='    _-'                                                     `' |  /==.||
+;;   =='    _-'                                                            \/   `==
+;;   \   _-'                                                                `-_   /
+;;    `''                                                                      ``'
 ;;
-;;                          ,,,        !/:.
-;;                         /::\".      !!:::
-;;                         :::::\".  ," \:,::
-;;                         ::::::\ ". ,","\::.
-;;                         \:::::":\ "/""v' :'
-;;                          !::::\   !    \ \   __
-;;                           "::::\  \     ! \.&&&&,
-;;                              ," __ ",  cd,&&&&&&'
-;;                              \    ". "" / \&&&"                       _,---
-;;                                "",__\_        /                    _,:":::::
-;;                              _," ,""  ,-,__,/":,_                ,",":::::::
-;;                           _,"  ,"     `''   ::::,",__,,----,,__," /:::::::::
-;;                        ,"   ,".__,          \:::,"            "  /:::":::::/
-;;                      ,"  ,/"::::::\          >"                 (_-"/::::::
-;;                     /  ,"_!:::::::/,       ,"              _,,--,  /::::::/
-;;                   /   "" _,"\:::::::'     !              ,"      ){:::::/
-;;                  !    _,"    \ "",         \,"""-,____,"__,,,"_," _/
-;;                   ""t"       \\   \          "-,_(*)&&&&(*)," \ ."
-;;                    /          \",  !            ,   \   ! -    )
-;;                    !          \  ""             !    !==!"-,__,'
-;;                    !           \                 """_""""`, ", /"_
-;;                    \       ,   .l                 /" "     ", \! ,_/
-;;                     ),     \   / \                \/       ,, /! !
-;;                   ,::\      \,"   \                !        \/ ! !
-;;               _,::::" )     )\  ,"  ___            \ -,_,  ,"",! !
-;;        __,,,::::""   ,"   ,":::,-:::--:"           __\_!__/_""-,_!
-;;  ,,:::"""""""      ,:_,""__...._"""::::""       /:::::" ""::::::
-;; (:._              l::::::::::::\\/               ""          ""
-;;   """"--,,,---              """"
+;; These demons are not part of GNU Emacs.
 ;;
-;; These mice are not part of GNU Emacs.
-;;
-;;; License: MIT
+;;; License: GPLv3
 
 (load (concat user-emacs-directory "bootstrap.el"))
 ;;
 
-(defconst narf-default-theme  'narf-one)
-(defconst narf-terminal-theme 'narf-dark)
-(defconst narf-default-font (font-spec :family "Fira Mono" :size 12))
+(defconst doom-default-theme  'doom-one)
+(defconst doom-terminal-theme 'doom-dark)
+(defconst doom-default-font (font-spec :family "Fira Mono" :size 12))
 
-(defconst narf-leader-prefix      ","  "Prefix for <leader> bindings")
-(defconst narf-localleader-prefix "\\" "Prefix for <localleader> bindings")
+(defconst doom-leader ","       "Prefix for <leader> bindings")
+(defconst doom-localleader "\\" "Prefix for <localleader> bindings")
 
-;; Load packages
-(narf `(core ; core/core.el
+(doom `(core ; core/core.el
 
-        ;; OS-specific config
         ,(cond (IS-MAC      'core-os-osx)
                (IS-LINUX    'core-os-linux)
                (IS-WINDOWS  'core-os-win32))
 
-        ;; The heart of NARF
-        core-popup         ; taming sudden and inevitable windows
+        ;; The heart of DOOM
         core-ui            ; draw me like one of your French editors
         core-evil          ; come to the dark side, we have cookies
         core-editor        ; filling the editor-shaped hole in the emacs OS
@@ -72,6 +57,7 @@
         core-helm          ; a search engine for life and love
         core-workgroups    ; cure Emacs alzheimers + tab emulation
         core-eval          ; run code, run; debug too
+        core-popup         ; taming sudden and inevitable windows
 
         ;; Environments
         module-apple       ; Applescript, Swift, Launchbar & other wallet syphons
@@ -108,9 +94,9 @@
         extra-tmux         ; close the rift between GUI & terminal
         extra-write        ; Emacs as a word processor
 
-        ;; Customization
-        my-bindings
+        ;; Personal
         my-commands
+        my-bindings
         ))
 
-;;; I think so Brain...
+;;

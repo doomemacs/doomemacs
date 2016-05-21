@@ -1,41 +1,41 @@
 ;;; defuns-org-notebook.el
 
 ;;;###autoload
-(defun narf/org ()
+(defun doom/org ()
   (interactive)
   (find-file (f-expand "inbox.org" org-directory)))
 
 ;;;###autoload
-(defun narf/org-notebook-new ()
+(defun doom/org-notebook-new ()
   (interactive)
   (projectile-invalidate-cache nil)
   (let* ((default-directory org-directory)
          (dir (projectile-complete-dir))
-         (narf-org-quicknote-dir dir))
+         (doom-org-quicknote-dir dir))
     (when dir
-      (narf/org-notebook-quick-note))))
+      (doom/org-notebook-quick-note))))
 
 ;;;###autoload
-(defun narf/org-notebook-quick-note ()
+(defun doom/org-notebook-quick-note ()
   (interactive)
   (let (text)
     (when (evil-visual-state-p)
       (setq text (buffer-substring-no-properties evil-visual-beginning evil-visual-end)))
     (switch-to-buffer (generate-new-buffer "*quick-note*"))
-    (setq default-directory narf-org-quicknote-dir)
+    (setq default-directory doom-org-quicknote-dir)
     (erase-buffer)
     (insert text)))
 
 ;;;###autoload
-(defun narf/org-download-dnd (uri action)
+(defun doom/org-download-dnd (uri action)
   (if (eq major-mode 'org-mode)
-      (narf:org-attach uri)
+      (doom:org-attach uri)
     (let ((dnd-protocol-alist
-           (rassq-delete-all 'narf/org-download-dnd (copy-alist dnd-protocol-alist))))
+           (rassq-delete-all 'doom/org-download-dnd (copy-alist dnd-protocol-alist))))
       (dnd-handle-one-url nil action uri))))
 
-;;;###autoload (autoload 'narf:org-attach "defuns-org-notebook" nil t)
-(evil-define-command narf:org-attach (&optional uri)
+;;;###autoload (autoload 'doom:org-attach "defuns-org-notebook" nil t)
+(evil-define-command doom:org-attach (&optional uri)
   (interactive "<a>")
   (unless (eq major-mode 'org-mode)
     (user-error "Not in an org-mode buffer"))
@@ -51,22 +51,22 @@
         (if (evil-visual-state-p)
             (org-insert-link nil (format "./%s" rel-path)
                              (concat (buffer-substring-no-properties (region-beginning) (region-end))
-                                     " " (narf/org-attach-icon rel-path)))
+                                     " " (doom/org-attach-icon rel-path)))
 
           (insert (if image-p
                       (format "[[./%s]]" rel-path)
                     (format "%s [[./%s][%s]]"
-                            (narf/org-attach-icon rel-path)
+                            (doom/org-attach-icon rel-path)
                             rel-path (f-filename rel-path)))))
         (when (string-match-p (regexp-opt '("jpg" "jpeg" "gif" "png")) (f-ext rel-path))
           (org-toggle-inline-images)))
-    (let ((attachments (narf-org-attachments)))
+    (let ((attachments (doom-org-attachments)))
       (unless attachments
         (user-error "No attachments in this file"))
       (helm :sources (helm-build-sync-source "Attachments" :candidates attachments)))))
 
 ;;;###autoload
-(defun narf/org-attach-icon (path)
+(defun doom/org-attach-icon (path)
   (char-to-string (pcase (downcase (f-ext path))
                     ("jpg" ?) ("jpeg" ?) ("png" ?) ("gif" ?)
                     ("pdf" ?)
@@ -79,7 +79,7 @@
                     (t ?))))
 
 ;;;###autoload
-(defun narf/org-attachments ()
+(defun doom/org-attachments ()
   "Retrieves a list of all the attachments pertinent to the currect org-mode buffer."
   (org-save-outline-visibility nil
     (let ((attachments '())
@@ -100,15 +100,15 @@
       (-distinct attachments))))
 
 ;;;###autoload
-(defun narf/org-cleanup-attachments ()
+(defun doom/org-cleanup-attachments ()
   "Deletes any attachments that are no longer present in the org-mode buffer."
-  (let* ((attachments (narf/org-attachments))
-         (to-delete (-difference narf-org-attachments-list attachments)))
+  (let* ((attachments (doom/org-attachments))
+         (to-delete (-difference doom-org-attachments-list attachments)))
     (mapc (lambda (f)
             (message "Deleting attachment: %s" f)
             (delete-file f t))
           to-delete)
-    (setq narf-org-attachments-list attachments)))
+    (setq doom-org-attachments-list attachments)))
 
 
 ;;
@@ -117,10 +117,10 @@
 
 ;; Ex-mode interface for `helm-ag'. If `bang', then `search' is interpreted as
 ;; regexp.
-;;;###autoload (autoload 'narf:org-helm-search "defuns-org-notebook" nil t)
-(evil-define-operator narf:org-helm-search (beg end &optional search bang)
+;;;###autoload (autoload 'doom:org-helm-search "defuns-org-notebook" nil t)
+(evil-define-operator doom:org-helm-search (beg end &optional search bang)
   (interactive "<r><a><!>")
-  (narf:helm-ag-search beg end (if bang (concat "^\\*+.*" search ".*$") search) t org-directory))
+  (doom:helm-ag-search beg end (if bang (concat "^\\*+.*" search ".*$") search) t org-directory))
 
 (provide 'defuns-org-notebook)
 ;;; defuns-org-notebook.el ends here

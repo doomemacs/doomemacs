@@ -10,14 +10,14 @@
   :init
   (add-hook 'php-mode-hook 'flycheck-mode)
   (setq php-template-compatibility nil
-        php-extras-eldoc-functions-file (concat narf-temp-dir "/php-extras-eldoc-functions"))
+        php-extras-eldoc-functions-file (concat doom-temp-dir "/php-extras-eldoc-functions"))
 
   :config
   (def-repl! php-mode php-boris)
   (def-docset! php-mode "php,laravel")
   (def-company-backend! php-mode '(php-extras-company company-yasnippet))
 
-  (map! :map php-mode-map (:localleader :nv ";" 'narf/append-semicolon))
+  (map! :map php-mode-map (:localleader :nv ";" 'doom/append-semicolon))
 
   (sp-with-modes '(php-mode)
     (sp-local-pair "/*"    "*/" :post-handlers '(("||\n[i]" "RET") ("| " "SPC")))
@@ -85,7 +85,7 @@
   :files ("composer.json")
   :when
   (lambda (&rest _)
-    (let* ((project-path (narf/project-root))
+    (let* ((project-path (doom/project-root))
            (hash (gethash project-path php-composer-conf))
            (package-file (f-expand "composer.json" project-path))
            deps)

@@ -15,12 +15,12 @@
         company-backends '((company-capf company-keywords))
 
         company-quickhelp-delay nil
-        company-statistics-file (concat narf-temp-dir "/company-stats-cache.el"))
+        company-statistics-file (concat doom-temp-dir "/company-stats-cache.el"))
 
   :config
   ;; Rewrites evil-complete to use company-dabbrev
-  (setq evil-complete-next-func     'narf/company-evil-complete-next
-        evil-complete-previous-func 'narf/company-evil-complete-previous)
+  (setq evil-complete-next-func     'doom/company-evil-complete-next
+        evil-complete-previous-func 'doom/company-evil-complete-previous)
   (push 'company-sort-by-occurrence company-transformers)
 
   (global-company-mode +1)
@@ -45,7 +45,7 @@
 
 (use-package company-dict
   :commands company-dict
-  :config (setq company-dict-dir (concat narf-private-dir "/dict")))
+  :config (setq company-dict-dir (concat doom-private-dir "/dict")))
 
 (use-package company-template
   :after ac-php-company)

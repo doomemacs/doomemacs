@@ -1,7 +1,7 @@
 ;;; defuns-git.el
 
-;;;### (autoload 'narf/git-remote-browse "defuns-git" nil t)
-(evil-define-command narf:git-remote-browse (&optional bang)
+;;;### (autoload 'doom:git-remote-browse "defuns-git" nil t)
+(evil-define-command doom:git-remote-browse (&optional bang)
   "Open the website for the current (or specified) version controlled FILE. If BANG,
 then use hub to do it."
   (interactive "<!>")
@@ -11,7 +11,7 @@ then use hub to do it."
       (error
        (setq url (shell-command-to-string "hub browse -u --"))
        (setq url (if url
-                     (concat (s-trim url) "/" (f-relative (buffer-file-name) (narf/project-root))
+                     (concat (s-trim url) "/" (f-relative (buffer-file-name) (doom/project-root))
                              (when (use-region-p) (format "#L%s-L%s"
                                                           (line-number-at-pos (region-beginning))
                                                           (line-number-at-pos (region-end)))))))))

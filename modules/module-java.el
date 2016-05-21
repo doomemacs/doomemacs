@@ -1,6 +1,8 @@
 ;;; module-java.el --- the poster child for carpal tunnel
 
-(def-docset! java-mode "java,droid,javafx,grails,groovy,playjava,spring,cvj,processing,javadoc")
+(after! c-initialization
+  (def-docset! java-mode
+    "java,droid,javafx,grails,groovy,playjava,spring,cvj,processing,javadoc"))
 
 (use-package eclim
   :functions (eclim--project-dir eclim--project-name)
@@ -29,7 +31,7 @@
 (use-package android-mode
   :commands android-mode
   :init
-  (add-hook! (java-mode groovy-mode nxml-mode) 'narf|android-mode-enable-maybe)
+  (add-hook! (java-mode groovy-mode nxml-mode) 'doom|android-mode-enable-maybe)
   :config
   (def-yas-mode! 'android-mode)
   (after! company-dict

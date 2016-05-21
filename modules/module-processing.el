@@ -5,7 +5,7 @@
   :commands (processing-mode processing-find-sketch)
   :mode "\\.pde$"
   :init
-  (add-hook 'processing-compilation-mode-hook 'narf|hide-mode-line)
+  (add-hook 'processing-compilation-mode-hook 'doom|hide-mode-line)
 
   :config
   (def-builder! processing-mode processing-sketch-build)
@@ -28,7 +28,7 @@
     (quickrun-add-command
      "processing" `((:command . ,processing-location)
                     (:exec . (lambda () (format "--sketch=%s --output=%s --force --run"
-                                           (narf/project-root) processing-output-dir)))
+                                           (doom/project-root) processing-output-dir)))
                     (:description . "Run Processing sketch"))
      :mode 'processing-mode))
 

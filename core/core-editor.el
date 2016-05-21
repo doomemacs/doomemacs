@@ -38,14 +38,14 @@
 ;; Save point across sessions
 (require 'saveplace)
 (setq-default
- save-place-file (concat narf-temp-dir "/saveplace")
+ save-place-file (concat doom-temp-dir "/saveplace")
  save-place t)
 (when (>= emacs-major-version 25)
   (save-place-mode +1))
 
 ;; Save history across sessions
 (require 'savehist)
-(setq savehist-file (concat narf-temp-dir "/savehist")
+(setq savehist-file (concat doom-temp-dir "/savehist")
       savehist-save-minibuffer-history t
       savehist-additional-variables
       '(kill-ring search-ring regexp-search-ring))
@@ -64,7 +64,7 @@
 
 ;; Keep track of recently opened files
 (require 'recentf)
-(setq recentf-save-file (concat narf-temp-dir "/recentf")
+(setq recentf-save-file (concat doom-temp-dir "/recentf")
       recentf-exclude '("/tmp/" "/ssh:" "\\.?ido\\.last$" "\\.revive$" "/TAGS$"
                         "emacs\\.d/private/cache/.+" "emacs\\.d/workgroups/.+$"
                         "wg-default" "/company-statistics-cache.el$")
@@ -78,7 +78,7 @@
 (setq winner-dont-bind-my-keys t)
 (winner-mode 1)
 (add-hook! after-init
-  (setq winner-boring-buffers narf-ignore-buffers))
+  (setq winner-boring-buffers doom-ignore-buffers))
 
 ;; Let editorconfig handle global whitespace settings
 (use-package editorconfig :demand t
@@ -118,15 +118,15 @@
 ;; Disable by default, please
 (electric-indent-mode -1)
 ;; Smarter, keyword-based electric-indent (see `def-electric!')
-(defvar narf-electric-indent-p nil)
-(defvar-local narf-electric-indent-words '())
+(defvar doom-electric-indent-p nil)
+(defvar-local doom-electric-indent-words '())
 (setq electric-indent-chars '(?\n ?\^?))
 (push (lambda (c)
-        (when (and (eolp) narf-electric-indent-words)
+        (when (and (eolp) doom-electric-indent-words)
           (save-excursion
             (backward-word)
             (looking-at-p
-             (concat "\\<" (regexp-opt narf-electric-indent-words))))))
+             (concat "\\<" (regexp-opt doom-electric-indent-words))))))
       electric-indent-functions)
 
 
@@ -148,7 +148,7 @@
 (use-package dumb-jump
   :commands (dumb-jump-go dumb-jump-quick-look dumb-jump-back)
   :config
-  (setq dumb-jump-default-project narf-emacs-dir)
+  (setq dumb-jump-default-project doom-emacs-dir)
   (dumb-jump-mode +1))
 
 (use-package emr
@@ -166,7 +166,7 @@
   :commands (hs-minor-mode hs-toggle-hiding hs-already-hidden-p)
   :config (setq hs-isearch-open t)
   :init
-  (advice-add 'evil-toggle-fold :before 'narf*load-hs-minor-mode)
+  (advice-add 'evil-toggle-fold :before 'doom*load-hs-minor-mode)
   ;; Prettify code folding in emacs
   (define-fringe-bitmap 'hs-marker [16 48 112 240 112 48 16] nil nil 'center)
   (defface hs-face '((t (:background "#ff8")))
@@ -196,14 +196,14 @@
         imenu-list-position 'right
         imenu-list-size 32)
   (map! :map imenu-list-major-mode-map
-        :n [escape] 'narf/imenu-list-quit
+        :n [escape] 'doom/imenu-list-quit
         :n "RET" 'imenu-list-goto-entry
         :n "SPC" 'imenu-list-display-entry
         :n [tab] 'hs-toggle-hiding))
 
 (use-package re-builder
   :commands (re-builder reb-mode-buffer-p)
-  :init (add-hook 'reb-mode-hook 'narf|reb-cleanup)
+  :init (add-hook 'reb-mode-hook 'doom|reb-cleanup)
   :config
   (evil-set-initial-state 'reb-mode 'insert)
   (setq reb-re-syntax 'string)
@@ -262,35 +262,35 @@
 ;; behave more like vim (or how I like it).
 
 ;; Line-wise mouse selection on margin
-(global-set-key (kbd "<left-margin> <down-mouse-1>") 'narf/mouse-drag-line)
-(global-set-key (kbd "<left-margin> <mouse-1>")      'narf/mouse-select-line)
-(global-set-key (kbd "<left-margin> <drag-mouse-1>") 'narf/mouse-select-line)
+(global-set-key (kbd "<left-margin> <down-mouse-1>") 'doom/mouse-drag-line)
+(global-set-key (kbd "<left-margin> <mouse-1>")      'doom/mouse-select-line)
+(global-set-key (kbd "<left-margin> <drag-mouse-1>") 'doom/mouse-select-line)
 
 ;; Restores "dumb" indentation to the tab key. This rustles a lot of peoples'
 ;; jimmies, apparently, but it's how I like it.
-(map! :i "<tab>"     'narf/dumb-indent
-      :i "<backtab>" 'narf/dumb-dedent
+(map! :i "<tab>"     'doom/dumb-indent
+      :i "<backtab>" 'doom/dumb-dedent
       :i "<C-tab>"   'indent-for-tab-command
       ;; No dumb-tab for lisp
-      (:map lisp-mode-map        :i [remap narf/dumb-indent] 'indent-for-tab-command)
-      (:map emacs-lisp-mode-map  :i [remap narf/dumb-indent] 'indent-for-tab-command)
+      (:map lisp-mode-map        :i [remap doom/dumb-indent] 'indent-for-tab-command)
+      (:map emacs-lisp-mode-map  :i [remap doom/dumb-indent] 'indent-for-tab-command)
       ;; Highjacks space/backspace to:
       ;;   a) eat spaces on either side of the cursor, if present ( | ) -> (|)
       ;;   b) allow backspace to delete space-indented blocks intelligently
       ;;   c) but do none of this when inside a string
-      :i "SPC"                                  'narf/inflate-space-maybe
-      :i [remap backward-delete-char-untabify]  'narf/deflate-space-maybe
-      :i [remap newline]                        'narf/newline-and-indent
+      :i "SPC"                                  'doom/inflate-space-maybe
+      :i [remap backward-delete-char-untabify]  'doom/deflate-space-maybe
+      :i [remap newline]                        'doom/newline-and-indent
       ;; Smarter move-to-beginning-of-line
-      :i [remap move-beginning-of-line]         'narf/move-to-bol
+      :i [remap move-beginning-of-line]         'doom/move-to-bol
       ;; Restore bash-esque keymaps in insert mode; C-w and C-a already exist
-      :i "C-e" 'narf/move-to-eol
-      :i "C-u" 'narf/backward-kill-to-bol-and-indent
+      :i "C-e" 'doom/move-to-eol
+      :i "C-u" 'doom/backward-kill-to-bol-and-indent
       ;; Fixes delete
       :i "<kp-delete>" 'delete-char
       ;; Fix osx keymappings and then some
-      :i "<M-left>"   'narf/move-to-bol
-      :i "<M-right>"  'narf/move-to-eol
+      :i "<M-left>"   'doom/move-to-bol
+      :i "<M-right>"  'doom/move-to-eol
       :i "<M-up>"     'beginning-of-buffer
       :i "<M-down>"   'end-of-buffer
       :i "<C-up>"     'smart-up

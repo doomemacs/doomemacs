@@ -8,10 +8,11 @@
 
 ;; Write-mode settings
 (defconst write-mode nil)
-(defconst write-mode-theme 'narf-light)
+(defconst write-mode-theme 'doom-light)
 (defconst write-mode-font (font-spec :family "Hack" :size 12))
 
 (defconst write-mode--last-mode-line mode-line-format)
+(defconst write-mode--last-theme doom-current-theme)
 (defconst write-mode--last-line-spacing line-spacing)
 
 (spaceline-compile
@@ -40,8 +41,8 @@ functionality with buffer-local ones, which can be buggy in a minor-mode."
   (interactive)
   (let* ((mode-p write-mode)
          (on-off (if mode-p -1 +1)))
-    (narf/load-theme (if mode-p 'narf-dark write-mode-theme) t)
-    (narf/load-font (if mode-p narf-default-font write-mode-font))
+    (doom/load-theme (if mode-p write-mode--last-theme write-mode-theme) t)
+    (doom/load-font (if mode-p doom-default-font write-mode-font))
     (if mode-p
         (remove-hook 'org-mode-hook 'write-mode|org-hook)
       (add-hook 'org-mode-hook 'write-mode|org-hook))
@@ -54,7 +55,7 @@ functionality with buffer-local ones, which can be buggy in a minor-mode."
               (unless mode-p
                 (setq mode-line-format write-mode--last-mode-line
                       header-line-format nil))))
-          (narf/get-buffers-in-modes '(org-mode markdown-mode)))
+          (doom/get-buffers-in-modes '(org-mode markdown-mode)))
     (setq write-mode (not mode-p))))
 
 (when (> emacs-major-version 24)

@@ -12,8 +12,8 @@
 (use-package racer
   :after rust-mode
   :preface
-  (setq racer-cmd (concat narf-ext-dir "/racer")
-        racer-rust-src-path (concat narf-ext-dir "/rust/src/"))
+  (setq racer-cmd (concat doom-ext-dir "/racer")
+        racer-rust-src-path (concat doom-ext-dir "/rust/src/"))
   :when (f-exists? racer-cmd)
   :init (add-hook! rust-mode '(racer-mode eldoc-mode flycheck-rust-setup))
   :config

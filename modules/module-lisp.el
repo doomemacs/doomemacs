@@ -4,12 +4,12 @@
 (add-hook! emacs-lisp-mode '(turn-on-eldoc-mode flycheck-mode highlight-numbers-mode))
 
 ;; Real go-to-definition for elisp
-(map! :map emacs-lisp-mode-map :m "gd" 'narf/elisp-find-function-at-pt)
+(map! :map emacs-lisp-mode-map :m "gd" 'doom/elisp-find-function-at-pt)
 
-(add-hook 'emacs-lisp-mode-hook 'narf/elisp-init)
-(defun narf/elisp-init ()
+(add-hook 'emacs-lisp-mode-hook 'doom/elisp-init)
+(defun doom/elisp-init ()
   (def-company-backend! emacs-lisp-mode (elisp yasnippet))
-  (def-repl! emacs-lisp-mode narf/elisp-inf-ielm)
+  (def-repl! emacs-lisp-mode doom/elisp-inf-ielm)
   (def-rotate! emacs-lisp-mode
     :symbols (("t" "nil")
               ("let" "let*")
@@ -23,16 +23,16 @@
         (delq (assq 'emacs-lisp-mode editorconfig-indentation-alist)
               editorconfig-indentation-alist))
 
-  (remove-hook 'emacs-lisp-mode-hook 'narf/elisp-init))
+  (remove-hook 'emacs-lisp-mode-hook 'doom/elisp-init))
 
-(add-hook 'emacs-lisp-mode-hook 'narf/elisp-hook)
-(defun narf/elisp-hook ()
+(add-hook 'emacs-lisp-mode-hook 'doom/elisp-hook)
+(defun doom/elisp-hook ()
   (setq mode-name "Elisp") ; [pedantry intensifies]
 
   (font-lock-add-keywords
-   nil `(("(\\(lambda\\)"       (1 (narf/show-as ?λ)))
-         ("(\\(narf\\)\\>" (1 font-lock-keyword-face append))
-         ;; Highlight narf macros (macros are fontified in emacs 25+)
+   nil `(("(\\(lambda\\)" (1 (doom/show-as ?λ)))
+         ("(\\(doom\\)\\(-[^) ]+\\)?)" (0 font-lock-keyword-face append))
+         ;; Highlight doom macros (macros are fontified in emacs 25+)
          (,(concat
             "(\\(def-"
             (regexp-opt '("electric" "project-type" "company-backend"
@@ -43,7 +43,7 @@
           (1 font-lock-keyword-face append))
          (,(concat
             "(\\("
-            (regexp-opt '("λ" "in" "map" "after" "shut-up" "add-hook"
+            (regexp-opt '("Î»" "in" "map" "after" "shut-up" "add-hook"
                           "associate" "define-org-link" "ex"
                           "define-org-section"))
             "!\\)")
@@ -58,7 +58,7 @@
           (2 font-lock-function-name-face))))
 
   (add-hook 'before-save-hook 'delete-trailing-whitespace nil t)
-  (add-hook 'after-save-hook  'narf/elisp-auto-compile nil t)
+  (add-hook 'after-save-hook  'doom/elisp-auto-compile nil t)
 
   (dolist (i '(("Evil Command" "\\(^\\s-*(evil-define-command +\\)\\(\\_<.+\\_>\\)" 2)
                ("Evil Operator" "\\(^\\s-*(evil-define-operator +\\)\\(\\_<.+\\_>\\)" 2)
@@ -107,10 +107,10 @@
   :modes (emacs-lisp-mode)
   :match "/test/.+-test\\.el$"
   :bind (:localleader
-          :n "tr" 'narf/ert-rerun-test
-          :n "ta" 'narf/ert-run-all-tests
-          :n "ts" 'narf/ert-run-test)
-  (add-hook 'ert-results-mode-hook 'narf|hide-mode-line))
+          :n "tr" 'doom/ert-rerun-test
+          :n "ta" 'doom/ert-run-all-tests
+          :n "ts" 'doom/ert-run-test)
+  (add-hook 'ert-results-mode-hook 'doom|hide-mode-line))
 
 (provide 'module-lisp)
 ;;; module-elisp.el ends here

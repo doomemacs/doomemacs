@@ -2,7 +2,7 @@
 ;; for ../core-project.el
 
 ;;;###autoload
-(defun narf/neotree ()
+(defun doom/neotree ()
   "Toggle the neotree window"
   (interactive)
   (let ((in-neotree (and (neo-global--window-exists-p)
@@ -11,14 +11,14 @@
         (path buffer-file-name))
     (if in-neotree
         (neotree-hide)
-      (let ((project-root (narf/project-root)))
+      (let ((project-root (doom/project-root)))
         (unless (and (neo-global--window-exists-p)
                      (f-same? (neo-global--with-window neo-buffer--start-node) project-root))
           (neotree-dir project-root))
         (neotree-find path project-root)))))
 
 ;;;###autoload
-(defmacro narf/neotree-save (&rest body)
+(defmacro doom/neotree-save (&rest body)
   `(let ((neo-p (neo-global--window-exists-p)))
      (when neo-p (neotree-hide))
      ,@body
@@ -27,30 +27,30 @@
          (neotree-show)))))
 
 ;;;###autoload
-(defun narf|neotree-close-on-window-change (&rest _)
+(defun doom|neotree-close-on-window-change (&rest _)
   "Close neotree to prevent ensuing mindow buggery."
   (unless (and (neo-global--window-exists-p)
                (eq (current-buffer) (neo-global--get-buffer)))
     (neotree-hide)))
 
 ;;;###autoload
-(defun narf*save-neotree (orig-fun &rest args)
+(defun doom*save-neotree (orig-fun &rest args)
   "Prevents messing up the neotree buffer on window changes"
-  (narf/neotree-save (apply orig-fun args)))
+  (doom/neotree-save (apply orig-fun args)))
 
 ;;;###autoload
-(defun narf*neotree-create-node (orig-fun &rest args)
+(defun doom*neotree-create-node (orig-fun &rest args)
   "Don't ask for confirmation when creating files"
   (cl-letf (((symbol-function 'yes-or-no-p) (lambda (&rest _) t)))
     (apply orig-fun args)))
 
 ;;;###autoload
-(defun narf*neotree-shorten-pwd (node)
+(defun doom*neotree-shorten-pwd (node)
   "Shorter pwd in neotree"
   (list (concat "  " (projectile-project-name))))
 
 ;;;###autoload
-(defun narf*neo-theme (name)
+(defun doom*neo-theme (name)
   "Custom hybrid ascii theme with leading whitespace."
   (let ((n-insert-symbol (lambda (n)
                            (neo-buffer--insert-with-face

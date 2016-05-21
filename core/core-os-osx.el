@@ -68,7 +68,7 @@
 ;; OS-integration
 ;;
 
-(defun narf-open-with (&optional app-name path)
+(defun doom-open-with (&optional app-name path)
   "Send PATH to APP-NAME on OSX."
   (interactive)
   (let* ((path (f-full (s-replace "'" "\\'"
@@ -85,16 +85,16 @@
 (defmacro def-open-with! (id &optional app dir)
   `(defun ,(intern (format "os-%s" id)) ()
      (interactive)
-     (narf-open-with ,app ,dir)))
+     (doom-open-with ,app ,dir)))
 
 (def-open-with! open-in-default-program)
 (def-open-with! open-in-browser "Google Chrome")
 (def-open-with! reveal "Finder" default-directory)
-(def-open-with! reveal-project "Finder" (narf/project-root))
+(def-open-with! reveal-project "Finder" (doom/project-root))
 (def-open-with! upload "Transmit")
 (def-open-with! upload-folder "Transmit" default-directory)
 (def-open-with! send-to-launchbar "LaunchBar")
-(def-open-with! send-project-to-launchbar "LaunchBar" (narf/project-root))
+(def-open-with! send-project-to-launchbar "LaunchBar" (doom/project-root))
 
 (defun os-switch-to-term ()
   (interactive)
@@ -102,8 +102,8 @@
 
 (defun os-switch-to-term-and-cd ()
   (interactive)
-  (narf:send-to-tmux (format "cd %s" (shell-quote-argument default-directory)))
-  (narf-switch-to-iterm))
+  (doom:send-to-tmux (format "cd %s" (shell-quote-argument default-directory)))
+  (doom-switch-to-iterm))
 
 ;; Open with external programs
 (use-package openwith
