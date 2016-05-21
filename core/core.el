@@ -217,7 +217,8 @@ enable multiple minor modes for the same regexp.")
     (doom-mode)
     (erase-buffer)
     (insert
-     (let* ((width (- (if auto-detect-frame (window-width) (cdr (assq 'width default-frame-alist))) 3))
+     (let* ((auto-detect-frame (or auto-detect-frame (not (display-graphic-p))))
+            (width (- (if auto-detect-frame (window-width) (cdr (assq 'width default-frame-alist))) 3))
             (lead (make-string (truncate (/ (- width 78) 2)) ? )))
        (concat
         (propertize
