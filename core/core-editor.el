@@ -271,6 +271,7 @@
 (map! :i "<tab>"     'doom/dumb-indent
       :i "<backtab>" 'doom/dumb-dedent
       :i "<C-tab>"   'indent-for-tab-command
+      :i "<A-tab>"   (λ! (insert "\t"))
       ;; No dumb-tab for lisp
       (:map lisp-mode-map        :i [remap doom/dumb-indent] 'indent-for-tab-command)
       (:map emacs-lisp-mode-map  :i [remap doom/dumb-indent] 'indent-for-tab-command)
