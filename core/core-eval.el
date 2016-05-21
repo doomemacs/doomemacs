@@ -18,7 +18,9 @@
              quickrun-replace-region
              helm-quickrun)
   :init (add-hook 'quickrun/mode-hook 'linum-mode)
-  :config (setq quickrun-focus-p nil))
+  :config
+  (setq quickrun-focus-p nil)
+  (push 'quickrun/mode doom-popup-protect-modes))
 
 (use-package repl-toggle
   :commands (rtog/toggle-repl rtog/add-repl)

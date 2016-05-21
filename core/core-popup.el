@@ -66,12 +66,23 @@
 
   (defvar doom-popup-windows '()
     "A list of windows that have been opened via shackle. Do not touch this!")
+  (defvar-local doom-popup-protect nil
+    "If non-nil, this popup buffer won't be killed when closed.")
+  (defvar doom-last-popup nil
+    "The last (important) popup buffer.")
+
+  (defvar doom-popup-escapable-modes
+    '(messages-buffer-mode esup-mode help-mode tabulated-list-mode)
+    "A list of modes that can be closed with a single ESC.")
+  (defvar doom-popup-protect-modes
+    '(messages-buffer-mode esup-mode help-mode tabulated-list-mode comint-mode)
+    "A list of modes that shouldn't be killed and can be revived.")
 
   ;; There is no shackle-popup hook, so I hacked one in
+  (defvar doom-popup-hook '() "Hook run whenever a popup is opened.")
   (advice-add 'shackle-display-buffer :after 'doom|run-popup-hooks)
-
-  (add-hook 'shackle-popup-hook 'doom|popup-init)     ; Keep track of popups
-  (add-hook 'shackle-popup-hook 'doom|hide-mode-line) ; No mode line in popups
+  (add-hook 'doom-popup-hook 'doom|popup-init)     ; Keep track of popups
+  (add-hook 'doom-popup-hook 'doom|hide-mode-line) ; No mode line in popups
 
   ;; Prevents popups from messaging with windows-moving functions
   (defun doom*save-popups (orig-fun &rest args)
