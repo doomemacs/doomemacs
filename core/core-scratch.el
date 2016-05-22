@@ -12,13 +12,19 @@
   "The name of the doom scratch buffer.")
 
 (define-derived-mode doom-mode text-mode "DOOM"
-  "Major mode for special DOOM buffers.")
+  "Major mode for special DOOM buffers."
+  :group 'doom)
 
 ;; Don't kill the scratch buffer
 (add-hook! 'kill-buffer-query-functions
   (not (string= doom-buffer-name (buffer-name))))
 
-(add-hook! emacs-startup 'doom-mode-init)
+(add-hook! emacs-startup 'doom-mode-startup)
+
+(defun doom-mode-startup ()
+  (doom-mode-init)
+  (setq mode-line-format nil))
+
 (defun doom-mode-init (&optional auto-detect-frame)
   (unless (buffer-live-p doom-buffer) (setq doom-buffer nil))
   (let ((old-scratch (get-buffer "*scratch*")))
