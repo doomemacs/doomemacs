@@ -304,5 +304,15 @@ e.g. (doom-fix-unicode \"DejaVu Sans\" '(?⚠ ?★ ?λ ?➊ ?➋ ?➌ ?➍ ?➎ 
                 (font-spec :name font :size size) nil 'prepend))
         chars))
 
+(defun doom-byte-compile ()
+  "Byte compile the core and library .el files in ~/.emacs.d"
+  (interactive)
+  (mapc (lambda (f) (packed-byte-compile-file (concat doom-emacs-dir "/" f)))
+        '("init.el" "bootstrap.el" "private/my-commands.el" "private/my-bindings.el"
+          "core/core.el" "core/core-defuns.el" "core/core-ui.el"))
+  (byte-recompile-directory (concat doom-core-dir "/defuns") 0 t)
+  (byte-recompile-directory (concat doom-modules-dir "/defuns") 0 t)
+  (message "Compiled!"))
+
 (provide 'core-defuns)
 ;;; core-defuns.el ends here
