@@ -31,7 +31,7 @@
 
   (font-lock-add-keywords
    nil `(("(\\(lambda\\)" (1 (doom/show-as ?λ)))
-         ("(\\(doom\\)\\(-[^) ]+\\)?)" (0 font-lock-keyword-face append))
+         ("(\\(\\(doom\\)\\(-[^) ]*\\)?\\)[) ]" (1 font-lock-builtin-face))
          ;; Highlight doom macros (macros are fontified in emacs 25+)
          (,(concat
             "(\\(def-"
@@ -43,9 +43,9 @@
           (1 font-lock-keyword-face append))
          (,(concat
             "(\\("
-            (regexp-opt '("Î»" "in" "map" "after" "shut-up" "add-hook"
+            (regexp-opt '("λ" "in" "map" "after" "shut-up" "add-hook"
                           "associate" "define-org-link" "ex"
-                          "define-org-section"))
+                          "define-org-section" "set"))
             "!\\)")
           (1 font-lock-keyword-face append))
          ;; Ert
