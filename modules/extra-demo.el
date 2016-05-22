@@ -24,12 +24,11 @@
   :lighter " BIG"
   :global t
   (doom/load-font (if big-mode big-mode-font doom-default-font))
-  (setq-default powerline-height
-                (if big-mode
-                    big-mode-modeline-height
-                  big-mode--powerline-height))
-  (setq-default line-spacing
-                (if big-mode big-mode-line-spacing big-mode--line-spacing)))
+  (setq-default
+   powerline-height
+   (if big-mode big-mode-modeline-height big-mode--powerline-height)
+   line-spacing
+   (if big-mode big-mode-line-spacing big-mode--line-spacing)))
 
 (provide 'extra-demo)
 ;;; extra-demo.el ends here

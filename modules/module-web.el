@@ -38,10 +38,8 @@
   (map! :map web-mode-map
         "M-/" 'web-mode-comment-or-uncomment
         :n  "M-r" 'doom/web-refresh-browser
-
         :n  "za" 'web-mode-fold-or-unfold
         (:localleader :n "t" 'web-mode-element-rename)
-
         :nv "]a" 'web-mode-attribute-next
         :nv "[a" 'web-mode-attribute-previous
         :nv "]t" 'web-mode-tag-next

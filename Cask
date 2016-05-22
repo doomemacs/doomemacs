@@ -21,6 +21,7 @@
 
 ;; OSX --- core/core-os-osx.el
 (depends-on "dash-at-point")
+(depends-on "applescript-mode")
 (depends-on "exec-path-from-shell")
 (depends-on "openwith")
 
@@ -119,11 +120,6 @@
 
 
 ;;;; MODULES ;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Apple -- modules/module-apple.el
-(depends-on "applescript-mode")
-(depends-on "swift-mode")
-(depends-on "company-sourcekit")
-
 ;; C/C++ -- modules/module-cc.el
 (depends-on "cmake-mode")
 (depends-on "company-irony")
@@ -191,6 +187,7 @@
 ;; Lisp -- modules/module-lisp.el
 (depends-on "highlight-quoted")
 (depends-on "slime")
+(depends-on "auto-compile")
 
 ;; Lua -- modules/module-lua.el
 (depends-on "company-lua")
@@ -235,6 +232,10 @@
 ;; Shell -- modules/module-sh.el
 (depends-on "company-shell" :git "https://github.com/Alexander-Miller/company-shell")
 
+;; Swift -- modules/module-swift.el
+(depends-on "swift-mode")
+(depends-on "company-sourcekit")
+
 ;; Text modes -- modules/module-text.el
 (depends-on "markdown-mode")
 (depends-on "markdown-toc")
@@ -247,13 +248,12 @@
 (depends-on "pug-mode" :git "https://github.com/hlissner/pug-mode")
 
 
-;;;; ORGANIZATIONAL/WRITING ;;;;;;;;;;;;
+;;;; Experimental ;;;;;;;;;;;;
 ;; Org -- modules/module-org.el
 (depends-on "org-plus-contrib")
 (depends-on "org-bullets")
 (depends-on "ob-go" :git "https://github.com/pope/ob-go")
 (depends-on "ob-http")
-
 ;; Org Notebook -- modules/module-org-notebook.el
 (depends-on "org-download")
 (depends-on "ox-pandoc")

@@ -43,7 +43,9 @@
   ;; Strip out whitespace before a line selection
   (add-hook 'yas-before-expand-snippet-hook 'doom|yas-before-expand)
   ;; Fix previous hook persisting yas-selected-text between expansions
-  (add-hook 'yas-after-exit-snippet-hook 'doom|yas-after-expand))
+  (add-hook 'yas-after-exit-snippet-hook 'doom|yas-after-expand)
+  ;; Suppress yasnippet with helm
+  (after! helm (push 'helm-alive-p yas-dont-activate)))
 
 (use-package auto-yasnippet
   :commands (aya-create aya-expand aya-open-line aya-persist-snippet)

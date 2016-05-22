@@ -4,9 +4,7 @@
   :mode (("\\.\\(ba\\|z\\)sh$" . sh-mode)
          ("/\\.?z\\(sh\\(/.*\\|$\\)\\|profile\\|log\\(in\\|out\\)\\|sh\\(rc\\|env\\)\\)$" . sh-mode)
          ("/\\.?bash\\(/.*\\|rc\\|_profile\\)$" . sh-mode))
-  :init
-  (add-hook! sh-mode
-    '(flycheck-mode doom|sh-extra-font-lock-activate))
+  :init (add-hook! sh-mode '(flycheck-mode doom|sh-extra-font-lock-activate))
   :config
   (def-company-backend! sh-mode (shell))
   (def-electric! sh-mode :words ("else" "elif" "fi" "done"))

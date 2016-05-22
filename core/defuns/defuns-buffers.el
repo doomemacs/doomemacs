@@ -171,7 +171,7 @@ left, create a scratch buffer."
     (if (or (= realc 0)
             (and (= realc 1) (eq (car real-buffers) (current-buffer))))
         (progn
-          (doom|update-scratch-buffer-cwd)
+          (doom|update-scratch-buffer)
           (switch-to-buffer doom-buffer-name)
           (message "Nowhere to go"))
       (funcall move-func)
@@ -179,7 +179,7 @@ left, create a scratch buffer."
         (let ((current-buffer (current-buffer)))
           (cond ((or (eq current-buffer start-buffer)
                      (>= i max))
-                 (doom|update-scratch-buffer-cwd)
+                 (doom|update-scratch-buffer)
                  (switch-to-buffer doom-buffer-name)
                  (setq continue nil))
                 ((not (memq current-buffer real-buffers))
@@ -251,9 +251,9 @@ buffers regardless of project."
   (interactive "<!><a>")
   (doom-kill-buffers (doom/get-matching-buffers pattern (doom/get-buffers (not bang)))))
 
-;;;###autoload (autoload 'doom:send-to-scratch-or-org "defuns-buffers" nil t)
-(evil-define-operator doom:send-to-scratch-or-org (&optional beg end bang)
-  "Send a selection to the scratch buffer. If BANG, then send it to org-capture instead."
+;;;###autoload (autoload 'doom:scratch-or-org "defuns-buffers" nil t)
+(evil-define-operator doom:scratch-or-org (&optional beg end bang)
+  "Send a selection to the scratch buffer. If BANG, use org-capture instead."
   :move-point nil
   :type inclusive
   (interactive "<r><!>")
@@ -267,11 +267,10 @@ buffers regardless of project."
              (buffer-name doom-buffer-name))
         (doom/popup-buffer buffer-name)
         (with-current-buffer buffer-name
-          (when project-dir
-            (cd project-dir))
+          (erase-buffer)
+          (doom|update-scratch-buffer)
           (if text (insert text))
-          (funcall mode))
-        ))))
+          (funcall mode))))))
 
 ;;;###autoload (autoload 'doom:cd "defuns-buffers" nil t)
 (evil-define-command doom:cd (dir)
@@ -284,7 +283,7 @@ buffers regardless of project."
 (defun doom/kill-all-buffers-do-not-remember ()
   "Kill all buffers so that workgroups2 will wipe its current session."
   (interactive)
-  (let ((confirm-kill-emacs nil))
+  (let (confirm-kill-emacs)
     (mapc 'kill-buffer (doom/get-buffers))
     (kill-this-buffer)
     (delete-other-windows)

@@ -14,12 +14,12 @@
 ;;; Autoloaded functions are in {core,modules}/defuns/defuns-*.el
 
 ;; UTF-8 please
+(set-charset-priority 'unicode)
 (setq locale-coding-system    'utf-8)   ; pretty
 (set-terminal-coding-system   'utf-8)   ; pretty
 (set-keyboard-coding-system   'utf-8)   ; pretty
 (set-selection-coding-system  'utf-8)   ; please
 (prefer-coding-system         'utf-8)   ; with sugar on top
-(set-charset-priority 'unicode)
 (setq default-process-coding-system '(utf-8-unix . utf-8-unix))
 
 (setq-default major-mode 'text-mode)
@@ -43,7 +43,6 @@
       ediff-window-setup-function       'ediff-setup-windows-plain  ; no extra frames
       enable-recursive-minibuffers       nil         ; no minibufferception
       idle-update-delay                  2           ; update a little less often
-      inhibit-startup-echo-area-message  "hlissner"  ; username shuts up emacs
       ring-bell-function                'ignore      ; silence of the bells!
       save-interprogram-paste-before-kill nil
       sentence-end-double-space          nil
@@ -68,62 +67,24 @@
 
 
 ;;
-;; Variables
-;;
-
-(defvar doom-unreal-buffers
-  '("^ ?\\*.+\\*" image-mode dired-mode reb-mode messages-buffer-mode)
-  "A list of regexps or modes whose buffers are considered unreal, and will be
-ignored when using `doom:next-real-buffer' and `doom:previous-real-buffer' (or
-killed by `doom/kill-unreal-buffers', or after `doom/kill-real-buffer').")
-
-(defvar doom-ignore-buffers
-  '("*Completions*" "*Compile-Log*" "*inferior-lisp*" "*Fuzzy Completions*"
-    "*Apropos*" "*Help*" "*cvs*" "*Buffer List*" "*Ibuffer*" "*NeoTree*"
-    "*NeoTree*" "*esh command on file*" "*WoMan-Log*" "*compilation*"
-    "*use-package*" "*quickrun*" "*eclim: problems*" "*Flycheck errors*"
-    "*popwin-dummy*"
-    ;; Helm
-    "*helm*" "*helm recentf*" "*helm projectile*" "*helm imenu*"
-    "*helm company*" "*helm buffers*" "*Helm Css SCSS*" "*helm-ag*"
-    "*helm-ag-edit*" "*Helm Swoop*" "*helm M-x*" "*helm mini*"
-    "*Helm Completions*" "*Helm Find Files*" "*helm mu*" "*helm mu contacts*"
-    "*helm-mode-describe-variable*" "*helm-mode-describe-function*"
-    ;; Org
-    "*Org todo*" "*Org Links*" "*Agenda Commands*")
-  "List of buffer names to ignore when using `winner-undo', or `winner-redo'")
-
-(defvar doom-cleanup-processes-alist
-  '(("pry" . ruby-mode)
-    ("irb" . ruby-mode)
-    ("ipython" . python-mode))
-  "An alist of (process-name . major-mode), that `doom:cleanup-processes' checks
-before killing processes. If there are no buffers with matching major-modes, it
-gets killed.")
-
-(defvar doom-project-root-files
-  '(".git" ".hg" ".svn" ".project" "local.properties" "project.properties"
-    "rebar.config" "project.clj" "SConstruct" "pom.xml" "build.sbt"
-    "build.gradle" "Gemfile" "requirements.txt" "tox.ini" "package.json"
-    "gulpfile.js" "Gruntfile.js" "bower.json" "composer.json" "Cargo.toml"
-    "mix.exs")
-  "A list of files that count as 'project files', which determine whether a
-folder is the root of a project or not.")
-
-
-;;
 ;; Libraries
 ;;
 
-(require 'f)
-(require 'dash)
-(require 's)
+(defgroup doom nil
+  "Emacs for the stubborn martian vimmer."
+  :prefix "doom")
 
-(require 'core-defuns)
-(unless (require 'autoloads nil t)
-  (doom-reload-autoloads)
+(eval-and-compile
+  (require 'f)
+  (require 'dash)
+  (require 's)
+
+  (require 'core-vars)
+  (require 'core-defuns)
   (unless (require 'autoloads nil t)
-    (error "Autoloads couldn't be loaded or generated!")))
+    (doom-reload-autoloads)
+    (unless (require 'autoloads nil t)
+      (error "Autoloads couldn't be loaded or generated!"))))
 
 (autoload 'use-package "use-package" "" nil 'macro)
 
@@ -182,17 +143,12 @@ enable multiple minor modes for the same regexp.")
 
 (add-hook 'find-file-hook 'doom|enable-minor-mode-maybe)
 
-(add-hook! after-init
+;;
+(add-hook! emacs-startup
   ;; We add this to `after-init-hook' to allow errors to stop it
   (defadvice save-buffers-kill-emacs (around no-query-kill-emacs activate)
     "Prevent annoying \"Active processes exist\" query when you quit Emacs."
-    (cl-flet ((process-list ())) ad-do-it))
-
-  ;; Prevent any auto-displayed text...
-  (advice-add 'display-startup-echo-area-message :override 'ignore)
-  (setq emacs-end-time (float-time (time-subtract (current-time) emacs-start-time)))
-  (doom-mode-init)
-  (message ""))
+    (cl-flet ((process-list ())) ad-do-it)))
 
 (provide 'core)
 ;;; core.el ends here

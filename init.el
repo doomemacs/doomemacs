@@ -29,11 +29,10 @@
 ;;; License: MIT
 
 (load (concat user-emacs-directory "bootstrap.el"))
-;;
 
 (defconst doom-default-theme  'doom-one)
 (defconst doom-terminal-theme 'doom-dark)
-(defconst doom-default-font (font-spec :family "Fira Mono" :size 12))
+(defconst doom-default-font   (font-spec :family "Fira Mono" :size 12))
 
 (defconst doom-leader ","       "Prefix for <leader> bindings")
 (defconst doom-localleader "\\" "Prefix for <localleader> bindings")

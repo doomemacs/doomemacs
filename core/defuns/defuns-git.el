@@ -1,9 +1,9 @@
 ;;; defuns-git.el
 
-;;;### (autoload 'doom:git-remote-browse "defuns-git" nil t)
+;;;###autoload (autoload 'doom:git-remote-browse "defuns-git" nil t)
 (evil-define-command doom:git-remote-browse (&optional bang)
-  "Open the website for the current (or specified) version controlled FILE. If BANG,
-then use hub to do it."
+  "Open the website for the current (or specified) version controlled FILE. If
+BANG, then use hub to do it."
   (interactive "<!>")
   (let (url)
     (condition-case err

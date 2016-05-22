@@ -24,7 +24,6 @@
   (def-docset! python-mode "py,py3,python")
   (def-version-cmd! python-mode "python --version 2>&1 | cut -d' ' -f2")
   (def-repl! python-mode doom/inf-python)
-
   (define-key python-mode-map (kbd "DEL") nil)) ; interferes with smartparens
 
 (use-package anaconda-mode

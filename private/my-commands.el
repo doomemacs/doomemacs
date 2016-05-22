@@ -34,7 +34,7 @@
 (ex! "repl"        'doom:repl)                   ; invoke or send to repl
 (ex! "t[mux]"      'doom:tmux)                   ; send to tmux
 (ex! "tcd"         'doom:tmux-cd)                ; cd to default-directory in tmux
-(ex! "x"           'doom:send-to-scratch-or-org)
+(ex! "x"           'doom:scratch-or-org)
 ;; GIT
 (ex! "ga[dd]"      'doom/vcs-stage-hunk)
 (ex! "gbr[owse]"   'doom:git-remote-browse)      ; show file in github/gitlab

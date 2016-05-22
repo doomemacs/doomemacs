@@ -10,7 +10,7 @@
 (defun doom/wg-projectile-switch-project ()
   (let ((project-root (doom/project-root)))
     (doom:workgroup-new nil (file-name-nondirectory (directory-file-name project-root)) t)
-    (doom|update-scratch-buffer-cwd project-root)
+    (doom|update-scratch-buffer project-root)
     (when (featurep 'neotree)
       (neotree-projectile-action))))
 

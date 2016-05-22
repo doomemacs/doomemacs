@@ -10,31 +10,27 @@
         markdown-enable-math t
         markdown-make-gfm-checkboxes-buttons t
         markdown-gfm-additional-languages '("sh"))
+
   :config
   (map! :map markdown-mode-map
         "<backspace>"  nil
         "<M-left>"     nil
         "<M-right>"    nil
-
-        ;; Assumes you have a markdown renderer plugin in chrome
-        :nv "M-r"  (λ! (doom-open-with "Google Chrome"))
-
         "M-*"  'markdown-insert-list-item
         "M-b"  'markdown-insert-bold
         "M-i"  'markdown-insert-italic
         "M-`"  'doom/markdown-insert-del
-
+        ;; Assumes you have a markdown renderer plugin in chrome
+        :nv "M-r"  (λ! (doom-open-with "Google Chrome"))
+        ;; TODO: Make context sensitive
+        :n "[p"   'markdown-promote
+        :n "]p"   'markdown-demote
+        :i "M--"  'markdown-insert-hr
         (:localleader
           :nv "i"   'markdown-insert-image
           :nv "l"   'markdown-insert-link
           :nv "L"   'markdown-insert-reference-link-dwim
-          :nv "b"   'markdown-preview)
-
-        ;; TODO: Make context sensitive
-        :n "[p"   'markdown-promote
-        :n "]p"   'markdown-demote
-
-        :i "M--"  'markdown-insert-hr))
+          :nv "b"   'markdown-preview)))
 
 (use-package markdown-toc :after markdown-mode)
 

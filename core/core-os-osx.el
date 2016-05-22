@@ -8,15 +8,13 @@
       ;; Prefixes: Command = M, Alt = A
       mac-command-modifier 'meta
       mac-option-modifier  'alt
-
       ;; sane trackpad/mouse scroll settings
       mac-redisplay-dont-reset-vscroll t
       mac-mouse-wheel-smooth-scroll nil
       mouse-wheel-scroll-amount '(5 ((shift) . 2))  ; one line at a time
       mouse-wheel-progressive-speed nil             ; don't accelerate scrolling
-
-      ;;; NOTE Meaningless to railwaycat's emacs-mac build
       ;; Curse Lion and its sudden but inevitable fullscreen mode!
+      ;; NOTE Meaningless to railwaycat's emacs-mac build
       ns-use-native-fullscreen nil
       ;; Don't open files from the workspace in a new frame
       ns-pop-up-frames nil)
@@ -54,6 +52,14 @@
   :init
   (defmacro def-docset! (mode docset)
     `(add-hook! ,mode (setq-local dash-at-point-docset ,docset))))
+
+(use-package applescript-mode :mode "\\.applescript$")
+
+(def-project-type! lb6 "lb6"
+  :match "\\.lb\\(action\\|ext\\)/.+$"
+  :build (lambda ()
+           (awhen (f-traverse-upwards (lambda (f) (f-ext? f "lbaction")))
+             (shell-command (format "open '%s'" it)))))
 
 (after! evil
   ;; On OSX, stop copying each visual state move to the clipboard:

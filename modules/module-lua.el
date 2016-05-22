@@ -13,12 +13,10 @@
     (sp-local-pair "if" nil :actions       :rem)
     (sp-local-pair "while" nil :actions    :rem)
     (sp-local-pair "function" nil :actions :rem)
-
     (sp-local-pair "then " " end")
     (sp-local-pair "do "   " end")
     (sp-local-pair "then"  "end" :when '(("RET")) :post-handlers '("||\n[i]"))
     (sp-local-pair "do"    "end" :when '(("RET")) :post-handlers '("||\n[i]"))
-
     ;; block functions
     (sp-local-pair "function" "end" :when '(sp-point-after-bol-p) :post-handlers '(" |\n[i]"))
     ;; inline functions

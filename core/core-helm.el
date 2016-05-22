@@ -53,9 +53,7 @@
   ;; A simpler prompt: see `helm-global-prompt'
   (advice-add 'helm :filter-args 'doom*helm-replace-prompt)
   ;; Hide mode-line in helm windows
-  (advice-add 'helm-display-mode-line :override 'doom*helm-hide-header)
-
-  (after! yasnippet (push 'helm-alive-p yas-dont-activate)))
+  (advice-add 'helm-display-mode-line :override 'doom*helm-hide-header))
 
 (use-package helm-mode
   :after helm
@@ -123,7 +121,7 @@
   (setq helm-css-scss-split-direction 'split-window-vertically
         helm-css-scss-split-with-multiple-windows t))
 
-(use-package helm-swoop    ; https://github.com/ShingoFukuyama/helm-swoop
+(use-package helm-swoop ; https://github.com/ShingoFukuyama/helm-swoop
   :defines  (helm-swoop-last-prefix-number)
   :commands (helm-swoop helm-multi-swoop helm-multi-swoop-all)
   :config
