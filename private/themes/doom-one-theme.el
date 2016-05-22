@@ -4,22 +4,35 @@
 (deftheme doom-one "A dark theme for hellish emacs, inspired by Molokai")
 
 (when (display-graphic-p)
-  ;; Brighten up code buffers; darken special and popup buffers
   (defface doom-default '((t (:inherit default)))
-    "Face for source code windows")
-  (defun doom|buffer-bg (&rest _)
+    "Face for source code windows"
+    :group 'doom)
+  (defface doom-linum '((t (:inherit linum)))
+    "Another linum face for darker windows (like popups)"
+    :group 'doom)
+
+  ;; Brighten up code buffers; darken special and popup buffers
+  (defvar-local doom-one-buffer nil)
+  (put 'doom-one-buffer 'permanent-local t)
+  (defun doom-one|buffer-bg (&rest _)
+    (setq-local doom-one-buffer t)
     (set (make-local-variable 'face-remapping-alist)
          '((default doom-default)
            (linum doom-linum))))
-  (add-hook 'find-file-hook 'doom|buffer-bg)
+  (defun doom-one|buffer-bg-maybe ()
+    (when doom-one-buffer (doom-one|buffer-bg)))
+  (add-hook 'find-file-hook 'doom-one|buffer-bg)
+  (add-hook 'after-change-major-mode-hook 'doom-one|buffer-bg-maybe)
 
   ;; Brighter minibuffer when active + no fringe in minibuffer
   (defface doom-minibuffer-active '((t (:inherit mode-line)))
-    "Face for active minibuffer")
+    "Face for active minibuffer"
+    :group 'doom)
   (add-hook! minibuffer-setup
-    (set-window-fringes (minibuffer-window) 0 0 nil)
-    (set (make-local-variable 'face-remapping-alist)
-         '((default doom-minibuffer-active)))))
+    (with-selected-window (minibuffer-window)
+      (set-window-fringes (selected-window) 0 0 nil)
+      (set (make-local-variable 'face-remapping-alist)
+           '((default doom-minibuffer-active))))))
 
 (let* ((c '((class color)))
 
@@ -42,7 +55,7 @@
        (grey-d         "#3F3F48")
        (grey-dd        "#20272e")
        (yellow         "#E2C770")
-       (yellow-d       "#9d8464")
+       (yellow-d       "#CDB464")
        (orange         "#E69055")
        (red            "#ff665c")
        (magenta        "#DC79DC")
@@ -107,7 +120,7 @@
    `(cursor                          ((,c (:background ,white))))
    `(hl-line                         ((,c (:background ,current-line))))
    `(region                          ((,c (:background ,selection :foreground ,white))))
-   `(highlight                       ((,c (:foreground ,yellow :inverse-video t))))
+   `(highlight                       ((,c (:background ,blue :foreground ,black))))
    `(shadow                          ((,c (:foreground ,cyan))))
    ;; `(secondary-selection          ((,c (:background ,orange))))
    ;; `(lazy-highlight               ((,c (:background ,orange))))
@@ -118,9 +131,9 @@
    `(warning                         ((,c (:foreground ,yellow))))
    `(success                         ((,c (:foreground ,green ))))
 
-   `(flycheck-error                  ((,c (:underline (:style wave :color ,red)    :background ,grey-d))))
-   `(flycheck-warning                ((,c (:underline (:style wave :color ,yellow) :background ,grey-d))))
-   `(flycheck-info                   ((,c (:underline (:style wave :color ,green)  :background ,grey-d))))
+   `(flycheck-error                  ((,c (:underline (:style wave :color ,red)    :background ,bg-d))))
+   `(flycheck-warning                ((,c (:underline (:style wave :color ,yellow) :background ,bg-d))))
+   `(flycheck-info                   ((,c (:underline (:style wave :color ,green)  :background ,bg-d))))
    `(flyspell-incorrect              ((,c (:underline (:style wave :color ,error-highlight)
                                            :inherit unspecified))))
 
@@ -157,7 +170,7 @@
 
    `(linum                          ((,c (:foreground ,linum-fg :background ,bg-d :bold nil))))
    `(doom-linum                     ((,c (:inherit linum :background ,bg))))
-   `(linum-highlight-face           ((,c (:inherit linum :foreground ,linum-hl-fg :background ,current-line))))
+   `(doom-linum-highlight-face      ((,c (:inherit linum :foreground ,linum-hl-fg :background ,current-line))))
    `(show-paren-match               ((,c (:foreground ,magenta :inverse-video t))))
 
    ;; Modeline
@@ -170,9 +183,9 @@
    `(mode-line-buffer-path          ((,c (:foreground ,modeline-fg-2))))
    `(mode-line-count-face           ((,c (:foreground ,black :background ,blue))))
 
-   `(spaceline-flycheck-error       ((,c (:underline nil :foreground ,black :background ,red))))
-   `(spaceline-flycheck-warning     ((,c (:underline nil :foreground ,black :background ,yellow))))
-   `(spaceline-flycheck-info        ((,c (:underline nil :foreground ,black :background ,green))))
+   `(doom-flycheck-error            ((,c (:underline nil :foreground ,black :background ,red))))
+   `(doom-flycheck-warning          ((,c (:underline nil :foreground ,black :background ,yellow))))
+   `(doom-flycheck-info             ((,c (:underline nil :foreground ,black :background ,green))))
    `(spaceline-highlight-face       ((,c (:foreground ,black :background ,yellow))))
    `(powerline-active1              ((,c (:foreground ,modeline-fg-2 :background ,modeline-bg))))
    `(powerline-active2              ((,c (:foreground ,modeline-fg-3 :background ,modeline-bg))))
@@ -280,6 +293,12 @@
    `(avy-lead-face-2    ((,c (:background ,highlight :foreground ,black))))
    `(avy-lead-face      ((,c (:background ,highlight :foreground ,black))))
 
+   ;; which-key
+   `(which-key-key-face                   ((,c (:foreground ,green))))
+   `(which-key-group-description-face     ((,c (:foreground ,violet))))
+   `(which-key-command-description-face   ((,c (:foreground ,blue))))
+   `(which-key-local-map-description-face ((,c (:foreground ,magenta))))
+
    ;; lang-specific
    ;; *****************************************************************************************
    ;; (css|scss)-mode
@@ -377,54 +396,44 @@
 
 ;; *****************************************************************************************
 
-  (after! vc-annotate
-    (require 'dash)
+  (require 'dash)
 
-    ;; Color helper functions
-    ;; Shamelessly *borrowed* from solarized
-    (defun --color-name-to-rgb (color &optional frame)
-      (let ((valmax (float (car (color-values "#ffffff")))))
-        (mapcar (lambda (x) (/ x valmax)) (color-values color frame))))
+  ;; Color helper functions
+  ;; Shamelessly *borrowed* from solarized
+  (defun --color-name-to-rgb (color &optional frame)
+    (mapcar (lambda (x) (/ x (float (car (color-values "#ffffff")))))
+            (color-values color frame)))
 
-    (defun --color-rgb-to-hex  (red green blue)
-      (format "#%02x%02x%02x"
-              (* red 255) (* green 255) (* blue 255)))
+  (defun --color-blend (color1 color2 alpha)
+    (apply (lambda (r g b) (format "#%02x%02x%02x" (* r 255) (* g 255) (* b 255)))
+           (--zip-with (+ (* alpha it) (* other (- 1 alpha)))
+                       (--color-name-to-rgb color1)
+                       (--color-name-to-rgb color2))))
 
-    (defun --color-blend (color1 color2 alpha)
-      (apply '--color-rgb-to-hex
-             (-zip-with '(lambda (it other)
-                           (+ (* alpha it) (* other (- 1 alpha))))
-                        (--color-name-to-rgb color1)
-                        (--color-name-to-rgb color2))))
-
-    (custom-theme-set-variables
-     'doom-one
-     `(vc-annotate-color-map
-       '((20 .  ,green)
-         (40 .  ,(--color-blend yellow green (/ 1.0 3)))
-         (60 .  ,(--color-blend yellow green (/ 2.0 3)))
-         (80 .  ,yellow)
-         (100 . ,(--color-blend orange yellow (/ 1.0 3)))
-         (120 . ,(--color-blend orange yellow (/ 2.0 3)))
-         (140 . ,orange)
-         (160 . ,(--color-blend magenta orange (/ 1.0 3)))
-         (180 . ,(--color-blend magenta orange (/ 2.0 3)))
-         (200 . ,magenta)
-         (220 . ,(--color-blend red magenta (/ 1.0 3)))
-         (240 . ,(--color-blend red magenta (/ 2.0 3)))
-         (260 . ,red)
-         (280 . ,(--color-blend grey-2 red (/ 1.0 4)))
-         (300 . ,(--color-blend grey-2 red (/ 2.0 4)))
-         (320 . ,(--color-blend grey-2 red (/ 3.0 4)))
-         (340 . ,grey-2)
-         (360 . ,grey-2)))
-     `(vc-annotate-very-old-color nil)
-     `(vc-annotate-background ,black))))
+  (custom-theme-set-variables
+   'doom-one
+   `(vc-annotate-color-map
+     '((20 .  ,green)
+       (40 .  ,(--color-blend yellow green (/ 1.0 3)))
+       (60 .  ,(--color-blend yellow green (/ 2.0 3)))
+       (80 .  ,yellow)
+       (100 . ,(--color-blend orange yellow (/ 1.0 3)))
+       (120 . ,(--color-blend orange yellow (/ 2.0 3)))
+       (140 . ,orange)
+       (160 . ,(--color-blend magenta orange (/ 1.0 3)))
+       (180 . ,(--color-blend magenta orange (/ 2.0 3)))
+       (200 . ,magenta)
+       (220 . ,(--color-blend red magenta (/ 1.0 3)))
+       (240 . ,(--color-blend red magenta (/ 2.0 3)))
+       (260 . ,red)
+       (280 . ,(--color-blend grey-l red (/ 1.0 4)))
+       (300 . ,(--color-blend grey-l red (/ 2.0 4)))
+       (320 . ,(--color-blend grey-l red (/ 3.0 4)))
+       (340 . ,grey-l)
+       (360 . ,grey-l)))
+   `(vc-annotate-very-old-color nil)
+   `(vc-annotate-background ,black)))
 
 ;; *****************************************************************************************
 
 (provide-theme 'doom-one)
-
-;; Local Variables:
-;; no-byte-compile: t
-;; End:

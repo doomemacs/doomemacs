@@ -146,7 +146,7 @@
 
    ;; `(linum                          ((,c (:foreground ,linum-fg :bold nil :height 0.9))))
    `(linum                          ((,c (:foreground ,linum-fg :bold nil :height 0.8))))
-   `(linum-highlight-face           ((,c (:inherit linum :bold t :foreground ,linum-hl-fg))))
+   `(doom-linum-highlight-face      ((,c (:inherit linum :bold t :foreground ,linum-hl-fg))))
    `(show-paren-match               ((,c (:foreground ,magenta :bold t :inverse-video t))))
 
    ;; Modeline

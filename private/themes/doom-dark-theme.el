@@ -135,7 +135,7 @@
    `(vertical-border                ((,c (:foreground ,vertical-bar :background ,vertical-bar))))
 
    `(linum                          ((,c (:foreground ,linum-fg :background ,bg :bold nil))))
-   `(linum-highlight-face           ((,c (:inherit linum :foreground ,linum-hl-fg :background ,current-line))))
+   `(doom-linum-highlight-face      ((,c (:inherit linum :foreground ,linum-hl-fg :background ,current-line))))
    `(show-paren-match               ((,c (:foreground ,magenta :inverse-video t))))
 
    ;; Modeline
@@ -360,49 +360,43 @@
 
   ;; *****************************************************************************************
 
-  (after! vc-annotate
-    (require 'dash)
+  (require 'dash)
 
-    ;; Color helper functions
-    ;; Shamelessly *borrowed* from solarized
-    (defun --color-name-to-rgb (color &optional frame)
-      (let ((valmax (float (car (color-values "#ffffff")))))
-        (mapcar (lambda (x) (/ x valmax)) (color-values color frame))))
+  ;; Color helper functions
+  ;; Shamelessly *borrowed* from solarized
+  (defun --color-name-to-rgb (color &optional frame)
+    (mapcar (lambda (x) (/ x (float (car (color-values "#ffffff")))))
+            (color-values color frame)))
 
-    (defun --color-rgb-to-hex  (red green blue)
-      (format "#%02x%02x%02x"
-              (* red 255) (* green 255) (* blue 255)))
+  (defun --color-blend (color1 color2 alpha)
+    (apply (lambda (r g b) (format "#%02x%02x%02x" (* r 255) (* g 255) (* b 255)))
+           (--zip-with (+ (* alpha it) (* other (- 1 alpha)))
+                       (--color-name-to-rgb color1)
+                       (--color-name-to-rgb color2))))
 
-    (defun --color-blend (color1 color2 alpha)
-      (apply '--color-rgb-to-hex
-             (-zip-with '(lambda (it other)
-                           (+ (* alpha it) (* other (- 1 alpha))))
-                        (--color-name-to-rgb color1)
-                        (--color-name-to-rgb color2))))
-
-    (custom-theme-set-variables
-     'doom-dark
-     `(vc-annotate-color-map
-       '((20 .  ,green)
-         (40 .  ,(--color-blend yellow green (/ 1.0 3)))
-         (60 .  ,(--color-blend yellow green (/ 2.0 3)))
-         (80 .  ,yellow)
-         (100 . ,(--color-blend orange yellow (/ 1.0 3)))
-         (120 . ,(--color-blend orange yellow (/ 2.0 3)))
-         (140 . ,orange)
-         (160 . ,(--color-blend magenta orange (/ 1.0 3)))
-         (180 . ,(--color-blend magenta orange (/ 2.0 3)))
-         (200 . ,magenta)
-         (220 . ,(--color-blend red magenta (/ 1.0 3)))
-         (240 . ,(--color-blend red magenta (/ 2.0 3)))
-         (260 . ,red)
-         (280 . ,(--color-blend grey-2 red (/ 1.0 4)))
-         (300 . ,(--color-blend grey-2 red (/ 2.0 4)))
-         (320 . ,(--color-blend grey-2 red (/ 3.0 4)))
-         (340 . ,grey-2)
-         (360 . ,grey-2)))
-     `(vc-annotate-very-old-color nil)
-     `(vc-annotate-background ,black))))
+  (custom-theme-set-variables
+   'doom-one
+   `(vc-annotate-color-map
+     '((20 .  ,green)
+       (40 .  ,(--color-blend yellow green (/ 1.0 3)))
+       (60 .  ,(--color-blend yellow green (/ 2.0 3)))
+       (80 .  ,yellow)
+       (100 . ,(--color-blend orange yellow (/ 1.0 3)))
+       (120 . ,(--color-blend orange yellow (/ 2.0 3)))
+       (140 . ,orange)
+       (160 . ,(--color-blend magenta orange (/ 1.0 3)))
+       (180 . ,(--color-blend magenta orange (/ 2.0 3)))
+       (200 . ,magenta)
+       (220 . ,(--color-blend red magenta (/ 1.0 3)))
+       (240 . ,(--color-blend red magenta (/ 2.0 3)))
+       (260 . ,red)
+       (280 . ,(--color-blend grey-l red (/ 1.0 4)))
+       (300 . ,(--color-blend grey-l red (/ 2.0 4)))
+       (320 . ,(--color-blend grey-l red (/ 3.0 4)))
+       (340 . ,grey-l)
+       (360 . ,grey-l)))
+   `(vc-annotate-very-old-color nil)
+   `(vc-annotate-background ,black)))
 
 ;; *****************************************************************************************
 
