@@ -100,6 +100,11 @@
 (use-package slime :defer t
   :config (setq inferior-lisp-program "clisp"))
 
+(use-package auto-compile
+  :commands (auto-compile-on-save-mode)
+  :init (add-hook 'emacs-lisp-mode-hook 'auto-compile-on-save-mode)
+  :config (setq auto-compile-display-buffer nil))
+
 
 ;;
 (def-project-type! emacs-ert "ert"
