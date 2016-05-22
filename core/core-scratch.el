@@ -2,16 +2,23 @@
 
 (setq initial-major-mode 'doom-mode
       initial-scratch-message "\n  Loading..."
-      inhibit-startup-screen t) ; don't show emacs start screen
+      inhibit-startup-screen t
+      ;; shuts up emacs at startup
+      inhibit-startup-echo-area-message user-login-name)
 
-(defvar doom-buffer nil "")
-(defvar doom-buffer-name "*doom*" "")
+(defvar doom-buffer nil
+  "The global and persistent scratch buffer for doom.")
+(defvar doom-buffer-name "*doom*"
+  "The name of the doom scratch buffer.")
+
 (define-derived-mode doom-mode text-mode "DOOM"
   "Major mode for special DOOM buffers.")
 
 ;; Don't kill the scratch buffer
-(add-hook! 'kill-buffer-query-functions (not (string= doom-buffer-name (buffer-name))))
+(add-hook! 'kill-buffer-query-functions
+  (not (string= doom-buffer-name (buffer-name))))
 
+(add-hook! emacs-startup 'doom-mode-init)
 (defun doom-mode-init (&optional auto-detect-frame)
   (unless (buffer-live-p doom-buffer) (setq doom-buffer nil))
   (let ((old-scratch (get-buffer "*scratch*")))
@@ -31,7 +38,10 @@
        (concat
         (propertize
          (concat
-          (make-string (min 3 (/ (if auto-detect-frame (window-height) (cdr (assq 'height default-frame-alist))) 5)) ?\n)
+          (make-string (min 3 (/ (if auto-detect-frame
+                                     (window-height)
+                                   (cdr (assq 'height default-frame-alist))) 5))
+                       ?\n)
           lead "=================     ===============     ===============   ========  ========\n"
           lead "\\\\ . . . . . . .\\\\   //. . . . . . .\\\\   //. . . . . . .\\\\  \\\\. . .\\\\// . . //\n"
           lead "||. . ._____. . .|| ||. . ._____. . .|| ||. . ._____. . .|| || . . .\\/ . . .||\n"
@@ -57,11 +67,11 @@
          (s-trim-right
           (s-center (1- width) "Press `,m` to open recent files, or `,E` to access emacs.d"))
          'face 'font-lock-keyword-face)
-        (if emacs-end-time
-            (concat
-             "\n\n"
-             (s-trim-right (s-center (- width 2) (format "Loaded in %.3fs" emacs-end-time))))
-          ""))))
+        (concat
+         "\n\n"
+         (s-trim-right (s-center (- width 2)
+                                 (format "Loaded in %.3fs"
+                                         (float-time (time-subtract after-init-time emacs-start-time)))))))))
     (back-to-indentation)
     (doom|update-scratch-buffer)))
 
