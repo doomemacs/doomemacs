@@ -3,11 +3,10 @@
 (defalias '! 'eval-when-compile)
 ;; For benchmarking
 (defconst emacs-start-time (current-time))
-(defconst emacs-end-time nil)
 ;; Global constants
 (defconst doom-default-theme  'wombat)
 (defconst doom-terminal-theme 'wombat)
-(defconst doom-default-font  nil)
+(defconst doom-default-font   nil)
 
 (defconst doom-emacs-dir     (! (expand-file-name "." user-emacs-directory)))
 (defconst doom-core-dir      (! (concat doom-emacs-dir "/core")))
@@ -45,36 +44,39 @@
 (defvar doom-current-theme)
 (defvar doom-current-font)
 
-(defun doom (packages)
+(defmacro doom (_ default-theme _ term-theme _ font &rest packages)
   "Bootstrap DOOM emacs and initialize PACKAGES"
-  (setq-default gc-cons-threshold 4388608
-                gc-cons-percentage 0.4)
-  ;; prematurely optimize for faster startup
-  (let ((gc-cons-threshold 339430400)
-        (gc-cons-percentage 0.6)
-        file-name-handler-alist)
-    ;; Scan various folders to populate the load-paths
-    (setq load-path
-          (! (append (list doom-private-dir)
-                     (--subdirs doom-core-dir t)
-                     (--subdirs doom-modules-dir t)
-                     (--subdirs doom-packages-dir)
-                     (--subdirs (expand-file-name "../bootstrap" doom-packages-dir))
-                     doom--load-path))
-          custom-theme-load-path
-          (! (append (list (expand-file-name "themes/" doom-private-dir))
-                     custom-theme-load-path)))
-
-    (load "~/.emacs.local.el" t t)
-    (setq doom-current-theme (if (display-graphic-p) doom-default-theme doom-terminal-theme)
-          doom-current-font doom-default-font)
-    (mapc 'require packages)
-    (when (display-graphic-p)
-      (require 'server)
-      (unless (server-running-p)
-        (server-start)))
-    ;; Prevent any auto-displayed text + benchmarking
-    (advice-add 'display-startup-echo-area-message :override 'ignore)
-    (message "")))
+  `(progn
+     (setq doom-default-theme ',default-theme
+           doom-terminal-theme ',term-theme
+           doom-default-font (font-spec :family ,(nth 0 font) :size ,(nth 1 font) :antialias ,(not (nth 2 font))))
+     (setq-default gc-cons-threshold 4388608
+                   gc-cons-percentage 0.4)
+     ;; prematurely optimize for faster startup
+     (let ((gc-cons-threshold 339430400)
+           (gc-cons-percentage 0.6)
+           file-name-handler-alist)
+       ;; Scan various folders to populate the load-paths
+       (setq load-path
+             ',(append (list doom-private-dir)
+                       (--subdirs doom-core-dir t)
+                       (--subdirs doom-modules-dir t)
+                       (--subdirs doom-packages-dir)
+                       (--subdirs (expand-file-name "../bootstrap" doom-packages-dir))
+                       doom--load-path)
+             custom-theme-load-path
+             ',(append (list (expand-file-name "themes/" doom-private-dir))
+                       custom-theme-load-path))
+       (load "~/.emacs.local.el" t t)
+       (setq doom-current-theme (if (display-graphic-p) doom-default-theme doom-terminal-theme)
+             doom-current-font doom-default-font)
+       ,@(mapcar (lambda (pkg) `(require ',pkg)) packages)
+       (when (display-graphic-p)
+         (require 'server)
+         (unless (server-running-p)
+           (server-start)))
+       ;; Prevent any auto-displayed text + benchmarking
+       (advice-add 'display-startup-echo-area-message :override 'ignore)
+       (message ""))))
 
 ;;; bootstrap.el ends here
