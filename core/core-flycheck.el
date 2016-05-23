@@ -27,24 +27,7 @@
   (advice-add 'evil-force-normal-state :after 'doom*flycheck-buffer)
 
   (define-fringe-bitmap 'flycheck-fringe-bitmap-double-arrow
-    [0 0 0 8 24 56 120 248 120 56 24 8 0 0 0]
-    ;; (fringe-helper-convert
-    ;;  "........"
-    ;;  "........"
-    ;;  "........"
-    ;;  "....X..."
-    ;;  "...XX..."
-    ;;  "..XXX..."
-    ;;  ".XXXX..."
-    ;;  "XXXXX..."
-    ;;  ".XXXX..."
-    ;;  "..XXX..."
-    ;;  "...XX..."
-    ;;  "....X..."
-    ;;  "........"
-    ;;  "........"
-    ;;  "........")
-    ))
+    [0 0 0 0 0 4 12 28 60 124 252 124 60 28 12 4 0 0 0 0]))
 
 (use-package flycheck-package
   :after flycheck
