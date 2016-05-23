@@ -1,4 +1,4 @@
-;;; module-lisp --- all things lisp
+;;; module-elisp --- all things lisp
 
 (associate! emacs-lisp-mode :match "\\(/Cask\\|\\.\\(el\\|gz\\)\\)$")
 (add-hook! emacs-lisp-mode '(turn-on-eldoc-mode flycheck-mode highlight-numbers-mode))
@@ -9,6 +9,7 @@
 (add-hook 'emacs-lisp-mode-hook 'doom/elisp-init)
 (defun doom/elisp-init ()
   (def-company-backend! emacs-lisp-mode (elisp yasnippet))
+  (def-docset! emacs-lisp-mode ("Emacs Lisp"))
   (def-repl! emacs-lisp-mode doom/elisp-inf-ielm)
   (def-rotate! emacs-lisp-mode
     :symbols (("t" "nil")
@@ -31,7 +32,7 @@
 
   (font-lock-add-keywords
    nil `(("(\\(lambda\\)" (1 (doom/show-as ?λ)))
-         ("(\\(\\(doom\\)\\(-[^) ]*\\)?\\)[) ]" (1 font-lock-builtin-face))
+         ("(\\(\\(doom\\)\\([-:/|][^) ]*\\)?\\)[) ]" (1 font-lock-builtin-face))
          ;; Highlight doom macros (macros are fontified in emacs 25+)
          (,(concat
             "(\\(def-"
@@ -45,7 +46,7 @@
             "(\\("
             (regexp-opt '("λ" "in" "map" "after" "shut-up" "add-hook"
                           "associate" "define-org-link" "ex"
-                          "define-org-section" "set"))
+                          "define-org-section" "set" "noop"))
             "!\\)")
           (1 font-lock-keyword-face append))
          ;; Ert
@@ -116,5 +117,5 @@
           :n "ts" 'doom/ert-run-test)
   (add-hook 'ert-results-mode-hook 'doom|hide-mode-line))
 
-(provide 'module-lisp)
+(provide 'module-elisp)
 ;;; module-elisp.el ends here
