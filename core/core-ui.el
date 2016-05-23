@@ -1,58 +1,47 @@
 ;;; core-ui.el --- interface & mode-line config
 
+(defconst doom-fringe-size 3 "Default fringe width")
+
 ;; y/n instead of yes/no
 (fset 'yes-or-no-p 'y-or-n-p)
 
-(defvar doom-fringe-size 3 "Default fringe width")
-
 (setq-default
- blink-matching-paren nil ; don't blink--too distracting
- show-paren-delay 0.075
-
+ indicate-buffer-boundaries nil ; don't show where buffer starts/ends
+ indicate-empty-lines nil       ; show empty lines
+ fringes-outside-margins t      ; switches order of fringe and margin
  ;; Keep cursors and highlights in current window only
  cursor-in-non-selected-windows nil
  highlight-nonselected-windows nil
+ ;; Disable bidirectional text support for slight performance bonus
+ bidi-display-reordering nil
+ ;; Remove continuation arrow on right fringe
+ fringe-indicator-alist (delq (assq 'continuation fringe-indicator-alist)
+                              fringe-indicator-alist)
 
- uniquify-buffer-name-style nil ; my mode-line does this for me
+ blink-matching-paren nil ; don't blink--too distracting
+ show-paren-delay 0.075
+ uniquify-buffer-name-style nil
  visible-bell nil
  visible-cursor nil
  x-stretch-cursor t
  use-dialog-box nil             ; always avoid GUI
  redisplay-dont-pause t         ; don't pause display on input
- indicate-buffer-boundaries nil ; don't show where buffer starts/ends
- indicate-empty-lines t         ; show empty lines
- fringes-outside-margins t      ; switches order of fringe and margin
  split-width-threshold nil      ; favor horizontal splits
  show-help-function nil         ; hide :help-echo text
-
  jit-lock-defer-time nil
  jit-lock-stealth-nice 0.1
  jit-lock-stealth-time 0.2
  jit-lock-stealth-verbose nil
-
- ;; Disable bidirectional text support for slight performance bonus
- bidi-display-reordering nil
-
  ;; Minibuffer resizing
  resize-mini-windows 'grow-only
  max-mini-window-height 0.3
+ ;; Ask for confirmation on exit only if there are real buffers left
+ confirm-kill-emacs
+ (lambda (_) (if window-system (if (doom/get-real-buffers) (y-or-n-p "› Quit?") t) t)))
 
- ;; Remove arrow on the right fringe when wrapped
- fringe-indicator-alist (delq (assoc 'continuation fringe-indicator-alist)
-                              fringe-indicator-alist))
-
-;; Ask for confirmation on exit only if there are real buffers left
-(when window-system
-  (setq confirm-kill-emacs
-        (lambda (_)
-          (if (doom/get-real-buffers)
-              (y-or-n-p ">> Gee, I dunno Brain... Are you sure?")
-            t))))
-
+;; Initialize UI
 (load-theme doom-current-theme t)
 (tooltip-mode -1) ; show tooltips in echo area
-
-;; set up minibuffer and fringe
 (if (not window-system)
     (menu-bar-mode -1)
   (scroll-bar-mode -1)  ; no scrollbar
@@ -69,16 +58,17 @@
   (push '(width . 120) default-frame-alist)
   (push '(height . 32) default-frame-alist)
   ;; no fringe in the minibuffer
-  (add-hook! after-init (set-window-fringes (minibuffer-window) 0 0 nil))
+  (add-hook! (emacs-startup minibuffer-setup)
+    (set-window-fringes (minibuffer-window) 0 0 nil))
   ;; Show tilde in margin on empty lines
   (define-fringe-bitmap 'tilde [64 168 16] nil nil 'center)
   (set-fringe-bitmap-face 'tilde 'fringe)
   (setcdr (assq 'empty-line fringe-indicator-alist) 'tilde))
 
-;; Try to display unicode characters without upsetting line-hieght (as much as possible)
+;; Fix certain unicode characters without upsetting line-height
 (doom-fix-unicode "DejaVu Sans" '(?⚠ ?★ ?λ ?➊ ?➋ ?➌ ?➍ ?➎ ?❻ ?➐ ?➑ ?➒ ?➓))
 
-;; on by default in Emacs 25; I prefer to enable on a mode-by-mode basis, so disable it
+;; On by default in Emacs 25. I'll enable it manually, so disable it globally
 (when (and (> emacs-major-version 24) (featurep 'eldoc))
   (global-eldoc-mode -1))
 
@@ -105,8 +95,7 @@
 ;;
 
 (use-package hl-line
-  :init
-  (add-hook! (prog-mode markdown-mode) 'hl-line-mode)
+  :init (add-hook! (prog-mode markdown-mode) 'hl-line-mode)
   :config
   (defvar-local doom--hl-line-mode nil)
   (setq hl-line-sticky-flag nil
@@ -114,7 +103,6 @@
 
   (defun doom|hl-line-on ()  (if doom--hl-line-mode (hl-line-mode +1)))
   (defun doom|hl-line-off () (if doom--hl-line-mode (hl-line-mode -1)))
-
   (add-hook! hl-line-mode (if hl-line-mode (setq doom--hl-line-mode t)))
   ;; Disable line highlight in visual mode
   (add-hook 'evil-visual-state-entry-hook 'doom|hl-line-off)
@@ -132,11 +120,9 @@
   (add-hook! (nxml-mode yaml-mode json-mode scss-mode
               c-mode-common ruby-mode python-mode lua-mode)
     'highlight-indentation-mode)
-
   (after! editorconfig
     (advice-add 'highlight-indentation-guess-offset
                 :override 'doom*hl-indent-guess-offset))
-
   ;; A long-winded method for ensuring whitespace is maintained (so that
   ;; highlight-indentation-mode can display them consistently)
   (add-hook! highlight-indentation-mode
@@ -152,17 +138,15 @@
 
 (use-package rainbow-delimiters
   :commands rainbow-delimiters-mode
+  :config (setq rainbow-delimiters-max-face-count 3)
   :init
-  (add-hook! (emacs-lisp-mode lisp-mode js2-mode css-mode c-mode-common)
-    'rainbow-delimiters-mode)
-  :config
-  (setq rainbow-delimiters-max-face-count 3))
+  (add-hook! (emacs-lisp-mode lisp-mode js-mode css-mode c-mode-common)
+    'rainbow-delimiters-mode))
 
+;; NOTE hl-line-mode and rainbow-mode don't play well together
 (use-package rainbow-mode
   :commands (rainbow-mode)
-  :init
-  ;; hl-line-mode and rainbow-mode don't play well together
-  (add-hook 'rainbow-mode-hook 'doom|hl-line-off))
+  :init (add-hook 'rainbow-mode-hook 'doom|hl-line-off))
 
 (use-package nlinum
   :commands nlinum-mode
@@ -183,9 +167,8 @@
     (add-hook 'post-command-hook 'doom|nlinum-hl-line nil t))
   :config
   (add-hook! nlinum-mode
-    (setq nlinum--width
-          (length (save-excursion (goto-char (point-max))
-                                  (format-mode-line "%l"))))))
+    (setq nlinum--width (length (save-excursion (goto-char (point-max))
+                                                (format-mode-line "%l"))))))
 
 
 ;;
@@ -233,7 +216,7 @@
        (powerline-raw
         (concat (when buffer-file-name
                   (concat
-                   (if (buffer-modified-p) "✱")
+                   (if (buffer-modified-p) " ✱")
                    (if (not (file-exists-p buffer-file-name)) "[!]")))
                 (if buffer-read-only "[RO]"))
         'mode-line-is-modified)))
