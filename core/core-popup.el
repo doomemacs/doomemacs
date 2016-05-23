@@ -26,10 +26,13 @@
           ("*esup*"                   :align below :size 30  :noselect t)
           ("*ert*"                    :align below :size 20  :noselect t)
           ;; vcs
-          ("^\\*git-gutter.+\\*$"     :align below :size 0.4 :noselect t :regexp t)
-          ("*vc-diff*"                :align below :size 0.4 :noselect t)
-          ("*vc-change-log*"          :align below           :select t)
+          ("*git-messenger*"          :align left  :size 55  :select t)
+          ("^\\*git-gutter.+\\*$"     :align below :size 15  :noselect t :regexp t)
+          ("*vc-diff*"                :align below :size 15  :noselect t)
+          ("*vc-change-log*"          :align below :size 15  :select t)
           (vc-annotate-mode           :same t)
+          ((:custom (lambda (b &rest _) (derived-mode-p 'magit-mode)))
+           :align below :size 0.5)
           ;; Util
           ("*Apropos*"                :align below :size 0.3)
           ("*minor-modes*"            :align below :size 0.5 :noselect t)
@@ -93,6 +96,21 @@
 ;;
 ;; Hacks
 ;;
+
+(defun doom-load-magit-hacks ()
+  ;; Some wrassling must be done to get magit to kill itself, and trigger my
+  ;; shackle popup hooks.
+  (setq magit-bury-buffer-function
+        (lambda (&rest _) (doom/popup-close (selected-window)))
+        magit-display-buffer-function
+        (lambda (b)
+          (funcall (if (doom/popup-p (selected-window)) 'switch-to-buffer 'doom/popup-buffer) b)
+          (get-buffer-window b))
+        magit-display-file-buffer-function
+        (lambda (b)
+          (when doom-prev-buffer
+            (select-window (get-buffer-window doom-prev-buffer)))
+          (switch-to-buffer b))))
 
 (after! help-mode
   ;; So that help buffer links do not open in the help popup, we need to redefine these

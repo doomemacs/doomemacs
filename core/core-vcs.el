@@ -37,6 +37,24 @@
   (defalias 'doom/vcs-stage-hunk   'git-gutter:stage-hunk)
   (defalias 'doom/vcs-revert-hunk  'git-gutter:revert-hunk))
 
+(use-package git-messenger
+  :commands git-messenger:popup-message
+  :init (defvar git-messenger-map (make-sparse-keymap))
+  :config
+  (setq git-messenger:show-detail t)
+  (map! :map git-messenger-map
+        "<escape>" 'git-messenger:popup-close
+        "q"        'git-messenger:popup-close))
+
+(use-package magit
+  :commands (magit-status)
+  :config
+  (doom-load-magit-hacks)
+  (add-hook 'magit-mode-hook 'turn-off-evil-snipe-override-mode))
+(use-package evil-magit
+  :after magit
+  :config (evil-set-initial-state 'magit-popup-mode 'normal))
+
 (after! vc-annotate
   (evil-set-initial-state 'vc-annotate-mode     'normal)
   (evil-set-initial-state 'vc-git-log-view-mode 'normal)
@@ -51,7 +69,7 @@
         :n "RET" 'vc-annotate-find-revision-at-line))
 
 (use-package browse-at-remote
-  :commands (browse-at-remote/browse browse-at-remote/to-clipboard))
+  :commands (browse-at-remote/browse browse-at-remote/get-url))
 
 (provide 'core-vcs)
 ;;; core-vcs.el ends here
