@@ -1,7 +1,10 @@
-; (source "melpa", "https://melpa.org/packages/")
-; (source "marmalade" "https://marmalade-repo.org/packages/")
-; (source "org", "http://orgmode.org/elpa/")
-; (source "gnu", "https://elpa.gnu.org")
+;; -*- mode: emacs-lisp; -*-
+
+;;; NOTE For Emacs 25; which seems to complain without them
+;; (source "melpa", "https://melpa.org/packages/")
+;; (source "marmalade" "https://marmalade-repo.org/packages/")
+;; (source "org", "http://orgmode.org/elpa/")
+;; (source "gnu", "https://elpa.gnu.org")
 
 (source melpa)
 (source marmalade)
@@ -20,7 +23,6 @@
 (depends-on "use-package")
 
 ;; OSX --- core/core-os-osx.el
-(depends-on "dash-at-point")
 (depends-on "applescript-mode")
 (depends-on "exec-path-from-shell")
 (depends-on "openwith")
@@ -36,6 +38,7 @@
 (depends-on "rainbow-mode")
 (depends-on "spaceline")
 (depends-on "visual-fill-column")
+(depends-on "which-key")
 
 ;; Evil --- core/core-evil.el
 (depends-on "evil")
@@ -95,9 +98,12 @@
 
 ;; VCS --- core/core-vcs.el
 (depends-on "browse-at-remote")
+(depends-on "evil-magit")
 (depends-on "git-gutter-fringe")
+(depends-on "git-messenger")
 (depends-on "gitconfig-mode")
 (depends-on "gitignore-mode")
+(depends-on "magit")
 
 ;; Helm -- core/core-helm.el
 (depends-on "helm")
@@ -105,6 +111,7 @@
 (depends-on "helm-c-yasnippet")
 (depends-on "helm-company")
 (depends-on "helm-css-scss")
+(depends-on "helm-dash")
 (depends-on "helm-describe-modes" :git "https://github.com/emacs-helm/helm-describe-modes")
 (depends-on "helm-projectile")
 (depends-on "helm-swoop")
@@ -185,9 +192,9 @@
 (depends-on "julia-mode")
 
 ;; Lisp -- modules/module-lisp.el
+(depends-on "auto-compile")
 (depends-on "highlight-quoted")
 (depends-on "slime")
-(depends-on "auto-compile")
 
 ;; Lua -- modules/module-lua.el
 (depends-on "company-lua")
@@ -225,44 +232,44 @@
 (depends-on "rust-mode")
 
 ;; Scala -- modules/module-scala.el
-(depends-on "scala-mode")
-(depends-on "sbt-mode")
 (depends-on "ensime")
+(depends-on "sbt-mode")
+(depends-on "scala-mode")
 
 ;; Shell -- modules/module-sh.el
 (depends-on "company-shell" :git "https://github.com/Alexander-Miller/company-shell")
 
 ;; Swift -- modules/module-swift.el
-(depends-on "swift-mode")
 (depends-on "company-sourcekit")
+(depends-on "swift-mode")
 
 ;; Text modes -- modules/module-text.el
 (depends-on "markdown-mode")
 (depends-on "markdown-toc")
 
 ;; Web -- modules/module-web.el
-(depends-on "web-mode")
 (depends-on "company-web")
 (depends-on "emmet-mode")
 (depends-on "haml-mode")
 (depends-on "pug-mode" :git "https://github.com/hlissner/pug-mode")
+(depends-on "web-mode")
 
 
 ;;;; Experimental ;;;;;;;;;;;;
 ;; Org -- modules/module-org.el
-(depends-on "org-plus-contrib")
-(depends-on "org-bullets")
-(depends-on "ob-go" :git "https://github.com/pope/ob-go")
-(depends-on "ob-http")
+;(depends-on "org-plus-contrib")
+;(depends-on "ob-go" :git "https://github.com/pope/ob-go")
+;(depends-on "ob-http")
+;(depends-on "org-bullets")
 ;; Org Notebook -- modules/module-org-notebook.el
-(depends-on "org-download")
-(depends-on "ox-pandoc")
+;(depends-on "org-download")
+;(depends-on "ox-pandoc")
 
 
 ;;;; EXTRA TOOLS ;;;;;;;;;;;;;;;;;;;;;;;
 ;; Demo --- extra-demo.el
-(depends-on "impatient-mode")
 (depends-on "htmlize")
+(depends-on "impatient-mode")
 
 ;; Writing -- modules/extra-write.el
 (depends-on "helm-bibtex")
