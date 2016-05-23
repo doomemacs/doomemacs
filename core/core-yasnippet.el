@@ -14,9 +14,10 @@
         yas-indent-line 'auto
         yas-also-auto-indent-first-line t
         yas-wrap-around-region nil
+        yas-prompt-functions '(yas-ido-prompt yas-no-prompt)
         ;; Only load personal snippets
-        yas-snippet-dirs doom-snippet-dirs
-        yas-prompt-functions '(yas-ido-prompt yas-no-prompt))
+        yas-snippet-dirs (list (concat doom-private-dir "/snippets")
+                               (concat doom-private-dir "/templates")))
 
   (add-hook! (text-mode prog-mode snippet-mode markdown-mode org-mode)
     'yas-minor-mode-on)
@@ -45,7 +46,7 @@
   ;; Fix previous hook persisting yas-selected-text between expansions
   (add-hook 'yas-after-exit-snippet-hook 'doom|yas-after-expand)
   ;; Suppress yasnippet with helm
-  (after! helm (push 'helm-alive-p yas-dont-activate)))
+  (after! helm (push 'helm-alive-p yas-dont-activate-functions)))
 
 (use-package auto-yasnippet
   :commands (aya-create aya-expand aya-open-line aya-persist-snippet)
