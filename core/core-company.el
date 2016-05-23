@@ -13,7 +13,6 @@
         company-global-modes '(not eshell-mode comint-mode erc-mode message-mode help-mode)
         company-frontends '(company-pseudo-tooltip-frontend company-echo-metadata-frontend)
         company-backends '((company-capf company-keywords))
-
         company-quickhelp-delay nil
         company-statistics-file (concat doom-temp-dir "/company-stats-cache.el"))
 
@@ -46,9 +45,6 @@
 (use-package company-dict
   :commands company-dict
   :config (setq company-dict-dir (concat doom-private-dir "/dict")))
-
-(use-package company-template
-  :after ac-php-company)
 
 (provide 'core-company)
 ;;; core-company.el ends here
