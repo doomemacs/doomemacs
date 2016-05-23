@@ -10,10 +10,11 @@
   "The global and persistent scratch buffer for doom.")
 (defvar doom-buffer-name "*doom*"
   "The name of the doom scratch buffer.")
+(defvar-local doom-buffer-edited nil
+  "If non-nil, the scratch buffer has been edited.")
 
 (define-derived-mode doom-mode text-mode "DOOM"
-  "Major mode for special DOOM buffers."
-  :group 'doom)
+  "Major mode for special DOOM buffers.")
 
 ;; Don't kill the scratch buffer
 (add-hook! 'kill-buffer-query-functions
@@ -24,6 +25,11 @@
 (defun doom-mode-startup ()
   (doom-mode-init)
   (setq mode-line-format nil))
+
+(defun doom-mode-erase-on-insert ()
+  (erase-buffer)
+  (setq doom-buffer-edited t)
+  (remove-hook 'evil-insert-state-entry-hook 'doom-mode-erase-on-insert t))
 
 (defun doom-mode-init (&optional auto-detect-frame)
   (unless (buffer-live-p doom-buffer) (setq doom-buffer nil))
@@ -36,18 +42,23 @@
     (setq doom-buffer (get-buffer-create doom-buffer-name)))
   (with-current-buffer doom-buffer
     (doom-mode)
+    (add-hook 'evil-insert-state-entry-hook 'doom-mode-erase-on-insert nil t)
+    (add-hook 'after-change-major-mode-hook 'doom-mode-erase-on-insert nil t)
     (erase-buffer)
+    (setq doom-buffer-edited nil)
     (insert
      (let* ((auto-detect-frame (or auto-detect-frame (not (display-graphic-p))))
-            (width (- (if auto-detect-frame (window-width) (cdr (assq 'width default-frame-alist))) 3))
-            (lead (make-string (truncate (/ (- width 78) 2)) ? )))
+            (width (if auto-detect-frame
+                       (window-width)
+                     (cdr (assq 'width default-frame-alist))))
+            (height (if auto-detect-frame
+                        (window-height)
+                      (cdr (assq 'height default-frame-alist))))
+            (lead (make-string (truncate (max 0 (/ (- width 78) 2))) ? )))
        (concat
         (propertize
          (concat
-          (make-string (min 3 (/ (if auto-detect-frame
-                                     (window-height)
-                                   (cdr (assq 'height default-frame-alist))) 5))
-                       ?\n)
+          (make-string (min 3 (truncate (/ height 5))) ?\n)
           lead "=================     ===============     ===============   ========  ========\n"
           lead "\\\\ . . . . . . .\\\\   //. . . . . . .\\\\   //. . . . . . .\\\\  \\\\. . .\\\\// . . //\n"
           lead "||. . ._____. . .|| ||. . ._____. . .|| ||. . ._____. . .|| || . . .\\/ . . .||\n"
@@ -71,15 +82,15 @@
         "\n\n"
         (propertize
          (s-trim-right
-          (s-center (1- width) "Press `,m` to open recent files, or `,E` to access emacs.d"))
+          (s-center (max 0 (1- width)) "Press `,m` to open recent files, or `,E` to access emacs.d"))
          'face 'font-lock-keyword-face)
         (concat
          "\n\n"
-         (s-trim-right (s-center (- width 2)
+         (s-trim-right (s-center (max 0 (- width 2))
                                  (format "Loaded in %.3fs"
                                          (float-time (time-subtract after-init-time emacs-start-time)))))))))
     (back-to-indentation)
-    (doom|update-scratch-buffer)))
+    (doom|update-scratch-buffer nil t)))
 
 (provide 'core-scratch)
 ;;; core-scratch.el ends here

@@ -51,11 +51,12 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
                       (--filter (memq it assocbuf) (buffer-list))
                     (buffer-list)))
         project-root)
-    (aif (and project-p (doom/project-root t))
-        (funcall (if (eq project-p 'not) '-remove '-filter)
-                 (lambda (b) (projectile-project-buffer-p b it))
-                 buffers)
-      buffers)))
+    (append (aif (and project-p (doom/project-root t))
+                (funcall (if (eq project-p 'not) '-remove '-filter)
+                         (lambda (b) (projectile-project-buffer-p b it))
+                         buffers)
+              buffers)
+            (list doom-buffer))))
 
 ;;;###autoload
 (defun doom/get-buffer-names (&optional project-p)
@@ -96,24 +97,25 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
   (-filter #'doom/real-buffer-p (or buffer-list (doom/get-buffers))))
 
 ;;;###autoload
-(defun doom/kill-real-buffer ()
+(defun doom/kill-real-buffer (&optional arg)
   "Kill buffer (but only bury scratch buffer), then switch to a real buffer. Only buries
 the buffer if it is being displayed in another window."
-  (interactive)
-  (let (new-dir)
-    (if (string-match-p doom-buffer-name (or (buffer-name) ""))
+  (interactive (list t))
+    (if (eq doom-buffer (current-buffer))
         (progn
-          (doom-mode-init t)
-          (message "Already in the scratch buffer"))
-      (setq new-dir (doom/project-root))
-      (if (> (length (get-buffer-window-list (current-buffer) nil t)) 1)
-          (bury-buffer)
-        (kill-this-buffer))
-      (if (doom/popup-p (selected-window))
-        (doom/popup-close)
-      (unless (doom/real-buffer-p (current-buffer))
-        (doom/previous-real-buffer)
-        (doom|update-scratch-buffer-cwd new-dir))))))
+          (when (= (length (get-buffer-window-list doom-buffer nil t)) 1)
+            (doom-mode-init t))
+          (when arg (message "Already in scratch buffer")))
+      (let ((new-dir (doom/project-root)))
+        (if (doom/popup-p (selected-window))
+            (doom/popup-close)
+          (if (> (length (get-buffer-window-list (current-buffer) nil t)) 1)
+              (bury-buffer)
+            (kill-this-buffer))
+          (unless (doom/real-buffer-p (current-buffer))
+            (doom/previous-real-buffer))
+          (when (get-buffer-window-list doom-buffer nil t)
+            (doom|update-scratch-buffer new-dir))))))
 
 ;;;###autoload
 (defun doom/kill-unreal-buffers ()
@@ -189,13 +191,18 @@ left, create a scratch buffer."
         (cl-incf i)))))
 
 ;;;###autoload
-(defun doom/real-buffer-p (&optional buffer-or-name)
-  (let ((buffer (if buffer-or-name (get-buffer buffer-or-name) (current-buffer))))
-    (when (buffer-live-p buffer)
-      (not (--any? (if (stringp it)
-                       (string-match-p it (buffer-name buffer))
-                     (eq (buffer-local-value 'major-mode buffer) it))
-                   doom-unreal-buffers)))))
+(defun doom/real-buffer-p (&optional buffer)
+  "Returns whether BUFFER a 'real' buffer or not. Real means it isn't a popup,
+temporary, scratch or special buffer."
+  (setq buffer (get-buffer (or buffer (current-buffer))))
+  (when (buffer-live-p buffer)
+    (with-current-buffer buffer
+      (not (or (apply #'derived-mode-p
+                      (-filter 'symbolp doom-unreal-buffers))
+               (--any? (if (stringp it)
+                           (string-match-p it (buffer-name buffer))
+                         (eq major-mode it))
+                       doom-unreal-buffers))))))
 
 ;; Inspired by spacemacs <https://github.com/syl20bnr/spacemacs/blob/master/spacemacs/funcs.el>
 ;;;###autoload
@@ -222,7 +229,7 @@ left, create a scratch buffer."
 (evil-define-command doom:kill-all-buffers (&optional bang)
   "Kill all project buffers. If BANG, kill *all* buffers (in workgroup)."
   (interactive "<!>")
-  (doom--kill-buffers (doom/get-buffers (not bang)))
+  (doom--kill-buffers (--filter (eq it doom-buffer) (doom/get-buffers (not bang))))
   (mapc (lambda (w) (when (eq (window-buffer w) doom-buffer)
                  (delete-window w)))
         (doom/get-visible-windows)))
