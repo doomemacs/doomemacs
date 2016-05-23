@@ -2,7 +2,9 @@
 
 ;;;###autoload
 (defun doom/popup-remove (window)
-  (setq doom-popup-windows (delete window doom-popup-windows)))
+  (setq doom-popup-windows (delete window doom-popup-windows))
+  (unless (and doom-prev-buffer (not (buffer-live-p doom-prev-buffer)))
+    (setq doom-prev-buffer nil)))
 
 ;;;###autoload
 (defun doom/popup-p (&optional window)
@@ -95,26 +97,30 @@
     (goto-char (point-max))))
 
 ;;;###autoload
-(defun doom|run-popup-hooks (&rest _)
+(defun doom*run-popup-pre-hooks (&rest _)
+  (unless (and doom-prev-buffer
+               (doom/popup-p (get-buffer-window doom-prev-buffer)))
+    (setq doom-prev-buffer (current-buffer))))
+
+;;;###autoload
+(defun doom*run-popup-post-hooks (&rest _)
   (with-current-buffer shackle-last-buffer
-    (run-hooks 'doom-popup-hook)))
+    (run-hooks 'doom-popup-post-hook)))
 
 ;;;###autoload
 (defun doom|popup-init ()
   (add-to-list 'doom-popup-windows (get-buffer-window))
-  (local-set-key [escape escape] 'doom/popup-close)
-  (let ((repl-p (bound-and-true-p repl-toggle-mode)))
-    (when (or repl-p
-              (memq major-mode doom-popup-protect-modes)
-              (apply #'derived-mode-p doom-popup-protect-modes))
-      (setq-local doom-popup-protect t)
-      (setq doom-last-popup (current-buffer)))
-    (when (or repl-p
-              (memq major-mode doom-popup-protect-modes)
-              (apply #'derived-mode-p doom-popup-escapable-modes))
+  (unless (and helm-alive-p (doom/popup-p (get-buffer-window helm-buffer)))
+    (ignore-errors
+      (local-set-key [escape escape] 'doom/popup-close)
       (let ((map evil-normal-state-local-map))
-        (define-key map [escape] 'doom/popup-close)
-        (define-key map (kbd "ESC") 'doom/popup-close)))))
+        (define-key map [escape escape] 'doom/popup-close)
+        (unless (apply #'derived-mode-p doom-popup-inescapable-modes)
+          (define-key map [escape] 'doom/popup-close)
+          (define-key map (kbd "ESC") 'doom/popup-close))))
+    (when (apply #'derived-mode-p doom-popup-protect-modes)
+      (setq-local doom-popup-protect t)
+      (setq doom-last-popup (current-buffer)))))
 
 (provide 'defuns-popups)
 ;;; defuns-popups.el ends here

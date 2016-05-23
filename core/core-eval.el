@@ -18,20 +18,15 @@
              quickrun-replace-region
              helm-quickrun)
   :init (add-hook 'quickrun/mode-hook 'linum-mode)
-  :config
-  (setq quickrun-focus-p nil)
-  (push 'quickrun/mode doom-popup-protect-modes))
+  :config (setq quickrun-focus-p nil))
 
 (use-package repl-toggle
   :commands (rtog/toggle-repl rtog/add-repl)
   :init
-  (defvar doom--repl-buffer nil)
-  (defvar-local repl-p nil)
+  (defvar doom--repl-buffer nil "The current REPL buffer.")
+  (defvar-local repl-p nil "Whether this is a repl buffer or not.")
   (setq rtog/mode-repl-alist '())
-
-  (add-hook! repl-toggle-mode
-    (evil-initialize-state 'emacs)
-    (setq repl-p t))
+  (add-hook! repl-toggle-mode (evil-initialize-state 'emacs))
 
   :config
   (map! :map repl-toggle-mode-map
@@ -69,6 +64,7 @@
     ("b[reak]" . doom:debug-toggle-breakpoint)
     ("c[ontinue]" . realgud:cmd-continue))
 
+  ;; TODO does this work with shackle?
   (advice-add 'realgud-cmdbuf-init :after 'doom:def-debug-on)
   (advice-add 'realgud:cmd-quit :after 'doom:def-debug-off))
 

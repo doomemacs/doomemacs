@@ -63,7 +63,6 @@
 
 ;;;###autoload
 (defun doom|hide-mode-line (&rest _)
-  (set-window-fringes (selected-window) 0 0 nil)
   (setq mode-line-format nil))
 
 (provide 'defuns-ui)

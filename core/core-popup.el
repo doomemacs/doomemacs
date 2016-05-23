@@ -14,10 +14,9 @@
           ("\\`\\*\\(g\\|zsh\\|bash\\)db.*?\\*\\'" :align below :size 20 :regexp t)
           ("\\`\\*trepanjs.*?\\*\\'"               :align below :size 20 :regexp t)
           ("\\`\\*\\(debug:\\)haskell\\*\\'"       :align below :size 20 :regexp t)
-
           ;; Plugins
-          ("\\` ?\\*[hH]elm.*?\\*\\'" :align below :size 20  :select t   :regexp t)
-          (" ?\\*Flycheck.+\\*"       :align below :size 15  :noselect t :regexp t)
+          ("\\` ?\\*[hH]elm.*?\\*\\'" :align below :size 14  :select t   :regexp t)
+          (" ?\\*Flycheck.+\\*"       :align below :size 14  :noselect t :regexp t)
           ("*helm bookmarks*"         :align below :size 7   :select t)
           (" *NeoTree*"               :align left            :select t)
           ("*evil-registers*"         :align below :size 0.3)
@@ -37,36 +36,32 @@
           ;; Util
           ("*Apropos*"                :align below :size 0.3)
           ("*minor-modes*"            :align below :size 0.5 :noselect t)
-
           ;; Org
-          ("^\\*Org Src .+\\*$"       :align below :size 0.4 :select t :regexp t)
-          ("^\\*Org-Babel.*\\*$"      :align below :size 0.4 :regexp t)
-          ("^\\*Org Agenda.+"         :align below :size 0.4 :regexp t)
-          ("*Calendar*"               :align below :size 0.4)
           (" *Agenda Commands*"       :align below :size 30)
           (" *Org todo*"              :align below :size 5   :noselect t)
+          ("*Calendar*"               :align below :size 0.4)
           ("*Org Links*"              :align below :size 5)
-
+          ("^\\*Org Agenda.+"         :align below :size 0.4 :regexp t)
+          ("^\\*Org Src .+\\*$"       :align below :size 0.4 :select t :regexp t)
+          ("^\\*Org-Babel.*\\*$"      :align below :size 0.4 :regexp t)
           ;; Emacs
-          ("^\\*.+-Profiler-Report .+\\*$" :align below :size 0.3 :regexp t)
-          ("*processing-compilation*"  :align below :size 10   :noselect t)
-          ("*Backtrace*"               :align below :size 0.25 :noselect t)
           (,doom-buffer-name           :align below :size 0.3  :select t)
+          ("*Completions*"             :align below :size 20   :noselect t)
           ("*Help*"                    :align below :size 16   :select t)
           ("*Messages*"                :align below :size 15   :select t)
           ("*Warnings*"                :align below :size 10   :noselect t)
-          ("*Completions*"             :align below :size 20   :noselect t)
-          (debugger-mode               :align below :size 0.25 :noselect t)
-          (compilation-mode                                    :noselect t)
-
+          ("*processing-compilation*"  :align below :size 10   :noselect t)
+          ("^\\*.+-Profiler-Report .+\\*$" :align below :size 0.3 :regexp t)
+          (compilation-mode            :align below :size 15   :noselect t)
+          ("*Backtrace*"               :align below :size 25   :noselect t)
           ;; Custom + REPLs
-          ("*eval*" :align below :size 12)
+          ("*eval*" :align below :size 20)
           ("^\\*doom.+\\*$" :regexp t :align below :size 12 :noselect t)
           ((:custom (lambda (b &rest _)
                       (when (featurep 'repl-toggle)
                         (when (string-prefix-p "*" (buffer-name (get-buffer b)))
-                          (with-current-buffer b repl-p)))))
-           :popup t :align below :size 16)))
+                          (with-current-buffer b repl-toggle-mode)))))
+           :popup t :align below :size 16 :select t)))
 
   (defvar doom-popup-windows '()
     "A list of windows that have been opened via shackle. Do not touch this!")
@@ -74,19 +69,23 @@
     "If non-nil, this popup buffer won't be killed when closed.")
   (defvar doom-last-popup nil
     "The last (important) popup buffer.")
+  (defvar doom-prev-buffer nil
+    "The buffer from which the popup was invoked.")
 
-  (defvar doom-popup-escapable-modes
-    '(messages-buffer-mode esup-mode help-mode tabulated-list-mode)
-    "A list of modes that can be closed with a single ESC.")
+  (defvar doom-popup-inescapable-modes
+    '(compilation-mode comint-mode)
+    "A list of modes that should not be closeable with a single ESC.")
   (defvar doom-popup-protect-modes
     '(messages-buffer-mode esup-mode help-mode tabulated-list-mode comint-mode)
     "A list of modes that shouldn't be killed and can be revived.")
 
   ;; There is no shackle-popup hook, so I hacked one in
-  (defvar doom-popup-hook '() "Hook run whenever a popup is opened.")
-  (advice-add 'shackle-display-buffer :after 'doom|run-popup-hooks)
-  (add-hook 'doom-popup-hook 'doom|popup-init)     ; Keep track of popups
-  (add-hook 'doom-popup-hook 'doom|hide-mode-line) ; No mode line in popups
+  (defvar doom-popup-pre-hook  '() "Hooks run after a popup is opened.")
+  (defvar doom-popup-post-hook '() "Hooks run before a popup is opened.")
+  (advice-add 'shackle-display-buffer :before 'doom*run-popup-pre-hooks)
+  (advice-add 'shackle-display-buffer :after  'doom*run-popup-post-hooks)
+  (add-hook 'doom-popup-post-hook 'doom|popup-init)     ; Keep track of popups
+  (add-hook 'doom-popup-post-hook 'doom|hide-mode-line) ; No mode line in popups
 
   ;; Prevents popups from messaging with windows-moving functions
   (defun doom*save-popups (orig-fun &rest args)
@@ -176,7 +175,7 @@
                 helm-split-window-in-side-p t))
 
 (after! helm-swoop
-  (setq helm-swoop-split-window-function (lambda ($buf) (doom/popup-buffer $buf))))
+  (setq helm-swoop-split-window-function (lambda (b) (doom/popup-buffer b))))
 
 (after! helm-ag
   ;; Helm-ag needs a little coaxing for it to cooperate with shackle. Mostly to prevent
@@ -193,8 +192,8 @@
       ad-do-it)))
 
 (after! quickrun
-  ;; This allows us to run code several times in a row without having to close the popup
-  ;; window and move back to the code buffer.
+  ;; This allows us to run code several times in a row without having to close
+  ;; the popup window and move back to the code buffer.
   (defun doom*quickrun-close-popup (&optional _ _ _ _)
     (let* ((buffer (get-buffer quickrun/buffer-name))
            (window (and buffer (get-buffer-window buffer))))
