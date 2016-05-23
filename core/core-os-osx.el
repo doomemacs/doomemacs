@@ -46,14 +46,9 @@
 ;; OSX-related plugins + hacks
 ;;
 
-(use-package dash-at-point
-  :commands (dash-at-point dash-at-point-with-docset dash-at-point-run-search
-             dash-at-point-guess-docset)
-  :init
-  (defmacro def-docset! (mode docset)
-    `(add-hook! ,mode (setq-local dash-at-point-docset ,docset))))
-
-(use-package applescript-mode :mode "\\.applescript$")
+(use-package applescript-mode
+  :mode "\\.applescript$"
+  :config (def-docset! applescript-mode ("AppleScript")))
 
 (def-project-type! lb6 "lb6"
   :match "\\.lb\\(action\\|ext\\)/.+$"

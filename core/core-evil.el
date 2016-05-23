@@ -53,6 +53,7 @@
           (debugger-mode          . normal)
           (image-mode             . normal)
           (doc-view-mode          . normal)
+          (eww-mode               . normal)
           (tabulated-list-mode    . emacs)
           (profile-report-mode    . emacs)
           (Info-mode              . emacs)

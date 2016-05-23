@@ -25,6 +25,7 @@
           ("*nosetests*"              :align below :size 0.4 :noselect t)
           ("*esup*"                   :align below :size 30  :noselect t)
           ("*ert*"                    :align below :size 20  :noselect t)
+          (eww-mode                   :align below :size 30  :select t)
           ;; vcs
           ("*git-messenger*"          :align left  :size 55  :select t)
           ("^\\*git-gutter.+\\*$"     :align below :size 15  :noselect t :regexp t)

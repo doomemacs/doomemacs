@@ -73,6 +73,15 @@
   (defun helm*buffer-list (&rest _) (doom/get-buffer-names doom-helm-force-project-buffers))
   (advice-add 'helm-buffer-list :override 'helm*buffer-list))
 
+(use-package helm-dash
+  :when (not IS-WINDOWS)
+  :commands (helm-dash helm-dash-at-point helm-dash-install-docset def-docset!)
+  :config
+  (setq helm-dash-browser-func 'doom/dash-open
+        helm-dash-candidate-format "%d → %n (%t)")
+  (defmacro def-docset! (mode docsets)
+    `(add-hook! ,mode (setq-local helm-dash-docsets ',docsets))))
+
 (use-package helm-tags
   :commands (helm-tags-get-tag-file helm-etags-select))
 
