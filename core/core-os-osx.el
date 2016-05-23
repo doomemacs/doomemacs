@@ -24,12 +24,10 @@
   (setenv "SHELL" "/usr/local/bin/zsh")
   ;; `exec-path-from-shell' is slow, so bring out the cache
   (setq exec-path
-        (or (persistent-soft-fetch 'exec-path-env "osx")
-            (progn
-              (require 'exec-path-from-shell)
-              (exec-path-from-shell-initialize)
-              (persistent-soft-store 'exec-path-env exec-path "osx")
-              exec-path))))
+        (eval-when-compile
+          (require 'exec-path-from-shell)
+          (exec-path-from-shell-initialize)
+          exec-path)))
 
 ;; Enable mouse support in terminal
 (unless window-system
