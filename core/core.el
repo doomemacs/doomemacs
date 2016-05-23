@@ -13,6 +13,21 @@
 ;;
 ;;; Autoloaded functions are in {core,modules}/defuns/defuns-*.el
 
+;; Paths
+(defalias '! 'eval-when-compile)
+
+(defconst doom-emacs-dir     (! (expand-file-name user-emacs-directory)))
+(defconst doom-core-dir      (! (expand-file-name "core" doom-emacs-dir)))
+(defconst doom-modules-dir   (! (expand-file-name "modules" doom-emacs-dir)))
+(defconst doom-private-dir   (! (expand-file-name "private" doom-emacs-dir)))
+(defconst doom-packages-dir  (! (expand-file-name (concat ".cask/" emacs-version "/elpa") doom-emacs-dir)))
+(defconst doom-ext-dir       (! (expand-file-name "ext" doom-emacs-dir)))
+(defconst doom-temp-dir
+  (! (format "%s/cache/%s/%s.%s"
+             doom-private-dir (system-name)
+             emacs-major-version emacs-minor-version))
+  "Hostname and emacs-version-based elisp temp directories")
+
 ;; UTF-8 please
 (set-charset-priority 'unicode)
 (setq locale-coding-system    'utf-8)   ; pretty
@@ -22,17 +37,21 @@
 (prefer-coding-system         'utf-8)   ; with sugar on top
 (setq default-process-coding-system '(utf-8-unix . utf-8-unix))
 
-(setq-default major-mode 'text-mode)
+;; Premature optimization for faster startup
+(setq-default gc-cons-threshold 4388608
+              gc-cons-percentage 0.4
+              major-mode 'text-mode)
+
 ;; stop package.el from being annoying. I rely solely on Cask.
 (setq package--init-file-ensured t
       package-enable-at-startup nil
       package-archives
       '(("gnu"   . "http://elpa.gnu.org/packages/")
         ("melpa" . "http://melpa.org/packages/")
-        ("org"   . "http://orgmode.org/elpa/")))
+        ("org"   . "http://orgmode.org/elpa/"))
 
-;; Core variables
-(setq ad-redefinition-action            'accept      ; silence the advised function warnings
+      ad-redefinition-action            'accept      ; silence the advised function warnings
+      confirm-nonexistent-file-or-buffer t
       compilation-always-kill            t           ; kill compl. process before spawning another
       compilation-ask-about-save         nil         ; save all buffers before compiling
       compilation-scroll-output          t           ; scroll with output while compiling
@@ -42,11 +61,10 @@
       ediff-split-window-function       'split-window-horizontally  ; side-by-side diffs
       ediff-window-setup-function       'ediff-setup-windows-plain  ; no extra frames
       enable-recursive-minibuffers       nil         ; no minibufferception
-      idle-update-delay                  2           ; update a little less often
+      idle-update-delay                  5           ; update a little less often
       ring-bell-function                'ignore      ; silence of the bells!
       save-interprogram-paste-before-kill nil
       sentence-end-double-space          nil
-      confirm-nonexistent-file-or-buffer t
       ;; http://ergoemacs.org/emacs/emacs_stop_cursor_enter_prompt.html
       minibuffer-prompt-properties
       '(read-only t point-entered minibuffer-avoid-prompt face minibuffer-prompt)
@@ -67,26 +85,46 @@
 
 
 ;;
+;; Load path
+;;
+
+(defvar doom--load-path load-path
+  "Initial `load-path'; so we don't clobber it on consecutive reloads.")
+
+;; Populate the load-path manually; cask shouldn't be an internal dependency
+(setq load-path
+      (! (defun --subdirs (path &optional include-self)
+           (let ((result (if include-self (list path) (list))))
+             (dolist (file (ignore-errors (directory-files path t "^[^.]" t)))
+               (when (file-directory-p file)
+                 (push file result)))
+             result))
+         (append (list doom-private-dir)
+                 (--subdirs doom-core-dir t)
+                 (--subdirs doom-modules-dir t)
+                 (--subdirs doom-packages-dir)
+                 (--subdirs (expand-file-name "../bootstrap" doom-packages-dir))
+                 doom--load-path))
+      custom-theme-load-path
+      (! (append (list (expand-file-name "themes/" doom-private-dir))
+                 custom-theme-load-path)))
+
+
+;;
 ;; Libraries
 ;;
 
-(defgroup doom nil
-  "Emacs for the stubborn martian vimmer."
-  :prefix "doom")
-
-(eval-and-compile
-  (require 'f)
-  (require 'dash)
-  (require 's)
-
-  (require 'core-vars)
-  (require 'core-defuns)
-  (unless (require 'autoloads nil t)
-    (doom-reload-autoloads)
-    (unless (require 'autoloads nil t)
-      (error "Autoloads couldn't be loaded or generated!"))))
+(require 'f)
+(require 'dash)
+(require 's)
 
 (autoload 'use-package "use-package" "" nil 'macro)
+(require 'core-vars)
+(require 'core-defuns)
+(unless (require 'autoloads nil t)
+  (doom-reload-autoloads)
+  (unless (require 'autoloads nil t)
+    (error "Autoloads weren't generated! Run `make autoloads`")))
 
 (use-package anaphora
   :commands (awhen aif acond awhile))

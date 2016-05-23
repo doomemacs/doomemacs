@@ -28,14 +28,14 @@
 ;;
 ;;; License: MIT
 
-(load (concat user-emacs-directory "bootstrap.el"))
+(defconst emacs-start-time (current-time))
+(load (concat user-emacs-directory "core/core.el"))
 
-(doom :default-theme  doom-one
-      :terminal-theme doom-dark
+(doom :default-theme  'doom-one
+      :terminal-theme 'doom-dark
       :default-font ("Fira Mono" 12)
 
       ;;; The heart of DOOM
-      core               ; core/core.el
       core-os            ; os-specific config
       core-scratch       ; a perdier scratch buffer
       core-ui            ; draw me like one of your French editors
@@ -59,13 +59,13 @@
       module-css         ; #big-bang::before { content: ""; }
       module-data        ; config/data formats
       module-db          ; using emacs as a db browser/client
+      module-elisp       ; drowning in parentheses
       module-go          ; the hipster dialect
       module-haskell     ; a language that's lazier than I am
       module-java        ; the poster child for carpal tunnel syndrome
       module-js          ; all(hope(abandon(ye(who(enter(here))))))
       module-julia       ; MATLAB, but fast
       module-latex       ; for writing papers in Emacs
-      module-elisp       ; drowning in parentheses
       module-lua         ; one-based indices? one-based indices.
       module-php         ; making php less painful to work with
       module-processing  ; pretty prototypes
@@ -79,8 +79,8 @@
       module-web         ; The end is always near </html>
 
       ;;; Experimental
-      ; module-eshell    ; for inferior OSes *cough*windows
-      ; module-org       ; for organized fearless leader
+      ;; module-eshell    ; for inferior OSes *cough*windows
+      ;; module-org       ; for organized fearless leader
 
       ;;; Extra libraries
       extra-demo         ; allow me to demonstrate...

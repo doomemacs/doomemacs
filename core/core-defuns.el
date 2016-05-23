@@ -1,10 +1,42 @@
+;;; core-defuns.el
+
+;; Bootstrap macro
+(defmacro doom (_ default-theme __ term-theme ___ font &rest packages)
+  "Bootstrap DOOM emacs and initialize PACKAGES"
+  `(let ((gc-cons-threshold 339430400)
+         (gc-cons-percentage 0.6)
+         file-name-handler-alist)
+     ;; Local settings
+     (load "~/.emacs.local.el" t t)
+     ;; Global constants
+     (defvar doom-default-theme  ,default-theme)
+     (defvar doom-terminal-theme ,term-theme)
+     (defvar doom-default-font
+       (font-spec :family ,(nth 0 font)
+                  :size ,(nth 1 font)
+                  :antialias ,(not (nth 2 font))))
+
+     (defvar doom-current-theme (if (display-graphic-p) doom-default-theme doom-terminal-theme))
+     (defvar doom-current-font doom-default-font)
+
+     (unless noninteractive
+       ,@(mapcar (lambda (pkg) `(require ',pkg))
+                 packages)
+       (when (display-graphic-p)
+         (require 'server)
+         (unless (server-running-p)
+           (server-start)))
+       ;; Prevent any auto-displayed text + benchmarking
+       (advice-add 'display-startup-echo-area-message :override 'ignore)
+       (message ""))))
+
 ;; Backwards compatible `with-eval-after-load'
 (unless (fboundp 'with-eval-after-load)
   (defmacro with-eval-after-load (file &rest body)
     `(eval-after-load ,file (lambda () ,@body))))
 
 (defmacro λ! (&rest body)
-  "A shortcut for: `(lambda () (interactive) ,@body)"
+  "A shortcut for inline keybind lambdas."
   `(lambda () (interactive) ,@body))
 
 (defmacro shut-up! (&rest body)
@@ -30,6 +62,9 @@ during compilation."
   (declare (indent defun))
   `(let ((default-directory ,dir))
      ,@forms))
+
+(defmacro noop! (name &optional args)
+  `(defun ,name ,args (interactive) (error "%s not implemented!" name)))
 
 (defmacro add-hook! (hook &rest func-or-forms)
   "A convenience macro for `add-hook'.
@@ -254,15 +289,15 @@ Examples:
      (define-key evil-motion-state-map (kbd "S-SPC") ',prev-func)))
 
 ;;
-(defun doom|update-scratch-buffer-cwd (&optional dir)
+(defun doom|update-scratch-buffer (&optional dir inhibit-doom)
   "Make sure scratch buffer is always 'in a project', and looks good."
   (let ((dir (or dir (doom/project-root))))
     (with-current-buffer doom-buffer
       ;; Reset scratch buffer if it wasn't visible
-      (unless (or (eq (current-buffer) doom-buffer)
-                  (--any? (eq doom-buffer it) (doom/get-visible-windows)))
-        (and (one-window-p t) (doom-mode-init))
-        (setq-local indicate-empty-lines nil))
+      (when (and (get-buffer-window-list doom-buffer nil t)
+                 (not doom-buffer-edited)
+                 (not inhibit-doom))
+        (doom-mode-init t))
       (setq default-directory dir)
       (setq mode-line-format '(:eval (spaceline-ml-scratch))))))
 
@@ -279,14 +314,16 @@ Examples:
                           (f-directories doom-modules-dir nil t)
                           (f-directories doom-packages-dir)
                           (f-directories (f-expand "../bootstrap" doom-packages-dir))
-                          doom--load-path)))
+                          doom--load-path))
+  (message "Reloaded!"))
 
 (defun doom-reload-autoloads ()
   "Regenerate autoloads for DOOM emacs."
   (interactive)
   (let ((generated-autoload-file (concat doom-core-dir "/autoloads.el")))
     (when (file-exists-p generated-autoload-file)
-      (delete-file generated-autoload-file))
+      (delete-file generated-autoload-file)
+      (message "Deleted old autoloads.el"))
     (mapc (lambda (dir)
             (update-directory-autoloads (concat dir "/defuns"))
             (message "Scanned: %s" dir))
