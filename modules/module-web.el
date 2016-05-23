@@ -3,7 +3,6 @@
 (use-package haml-mode :mode "\\.haml$")
 
 (use-package pug-mode
-  :load-path "/Volumes/hlissner/Dropbox/work/plugins/pug-mode"
   :mode ("\\.jade$" "\\.pug$")
   :config
   (def-company-backend! pug-mode (yasnippet))
