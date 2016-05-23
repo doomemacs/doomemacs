@@ -73,17 +73,11 @@
   (global-eldoc-mode -1))
 
 ;; Highlight TODO/FIXME/NOTE tags
-(defface doom-todo-face '((t (:inherit font-lock-warning-face)))
-  "Face for TODOs")
-(defface doom-fixme-face '((t (:inherit font-lock-warning-face)))
-  "Face for FIXMEs")
-(defface doom-note-face '((t (:inherit font-lock-warning-face)))
-  "Face for NOTEs")
 (add-hook! (prog-mode emacs-lisp-mode css-mode)
   (font-lock-add-keywords
-   nil '(("\\<\\(TODO\\(?:(.*)\\)?:?\\)\\>"  1 'doom-todo-face prepend)
-         ("\\<\\(FIXME\\(?:(.*)\\)?:?\\)\\>" 1 'doom-fixme-face prepend)
-         ("\\<\\(NOTE\\(?:(.*)\\)?:?\\)\\>"  1 'doom-note-face prepend))))
+   nil '(("\\<\\(TODO\\(?:(.*)\\)?:?\\)\\>"  1 'warning prepend)
+         ("\\<\\(FIXME\\(?:(.*)\\)?:?\\)\\>" 1 'error prepend)
+         ("\\<\\(NOTE\\(?:(.*)\\)?:?\\)\\>"  1 'success prepend))))
 
 ;; Hide mode-line in help/compile window
 (add-hook 'help-mode-hook 'doom|hide-mode-line)
@@ -155,10 +149,6 @@
   (defvar nlinum-format "%4d   ")
   (defvar doom--hl-nlinum-overlay nil)
   (defvar doom--hl-nlinum-line nil)
-  (defface doom-linum '((t (:inherit linum)))
-    "Face for line in popups")
-  (defface linum-highlight-face '((t (:inherit linum)))
-    "Face for line highlights")
   :init
   (add-hook!
     (markdown-mode prog-mode scss-mode web-mode conf-mode)
@@ -337,22 +327,17 @@ anzu to be enabled."
             ;; line selection
             ((or (> lines 1) (eq 'line evil-visual-selection))
              (if (and (eq evil-state 'visual) (eq evil-this-type 'line))
-                 (format "%dL" lines)
+                 (format " %dL " lines)
                (format " %dC %dL " chars lines)))
             (t (format " %dC " (if evil chars (1- chars)))))))
        highlight-face))
     :tight t)
 
   ;; flycheck
-  (defface spaceline-flycheck-error
-    '((t (:foreground "#FC5C94" :distant-foreground "#A20C41")))
+  (defface doom-flycheck-error '((t (:inherit error)))
     "Face for flycheck error feedback in the modeline.")
-  (defface spaceline-flycheck-warning
-    '((t (:foreground "#F3EA98" :distant-foreground "#968B26")))
+  (defface doom-flycheck-warning '((t (:inherit warning)))
     "Face for flycheck warning feedback in the modeline.")
-  (defface spaceline-flycheck-info
-    '((t (:foreground "#8DE6F7" :distant-foreground "#21889B")))
-    "Face for flycheck info feedback in the modeline.")
 
   (defvar-local doom--flycheck-err-cache nil "")
   (defvar-local doom--flycheck-cache nil "")
@@ -371,11 +356,11 @@ anzu to be enabled."
                        (concat
                         (if fe (propertize (format " ⚠%s " fe)
                                            'face (if active
-                                                     'spaceline-flycheck-error
+                                                     'doom-flycheck-error
                                                    'mode-line)))
                         (if fw (propertize (format " ⚠%s " fw)
                                            'face (if active
-                                                     'spaceline-flycheck-warning
+                                                     'doom-flycheck-warning
                                                    'mode-line)))))))))
     :tight t)
 
