@@ -38,7 +38,6 @@
 (depends-on "rainbow-mode")
 (depends-on "spaceline")
 (depends-on "visual-fill-column")
-(depends-on "which-key")
 
 ;; Evil --- core/core-evil.el
 (depends-on "evil")
