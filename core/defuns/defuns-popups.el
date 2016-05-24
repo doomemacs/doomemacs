@@ -110,17 +110,17 @@
 ;;;###autoload
 (defun doom|popup-init ()
   (add-to-list 'doom-popup-windows (get-buffer-window))
-  (unless (and helm-alive-p (doom/popup-p (get-buffer-window helm-buffer)))
+  (unless (one-window-p)
     (ignore-errors
       (local-set-key [escape escape] 'doom/popup-close)
       (let ((map evil-normal-state-local-map))
         (define-key map [escape escape] 'doom/popup-close)
         (unless (apply #'derived-mode-p doom-popup-inescapable-modes)
           (define-key map [escape] 'doom/popup-close)
-          (define-key map (kbd "ESC") 'doom/popup-close))))
-    (when (apply #'derived-mode-p doom-popup-protect-modes)
-      (setq-local doom-popup-protect t)
-      (setq doom-last-popup (current-buffer)))))
+          (define-key map (kbd "ESC") 'doom/popup-close)))
+      (when (apply #'derived-mode-p doom-popup-protect-modes)
+        (setq-local doom-popup-protect t)
+        (setq doom-last-popup (current-buffer))))))
 
 (provide 'defuns-popups)
 ;;; defuns-popups.el ends here
