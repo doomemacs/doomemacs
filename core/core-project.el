@@ -143,6 +143,9 @@
   (push "assets"   projectile-globally-ignored-directories)
   (push ".cask"    projectile-globally-ignored-directories)
 
+  (push ".elc"     projectile-globally-ignored-file-suffixes)
+  (push doom-temp-dir projectile-globally-ignored-directories)
+
   (projectile-global-mode +1))
 
 (provide 'core-project)

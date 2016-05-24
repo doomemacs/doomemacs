@@ -5,26 +5,24 @@
   :commands (helm helm-other-buffer helm-mode)
   :init
   (defvar helm-global-prompt "››› ")
-  (setq-default
-   helm-quick-update t
-   ;; Speedier without fuzzy matching
-   helm-mode-fuzzy-match nil
-   helm-buffers-fuzzy-matching nil
-   helm-apropos-fuzzy-match nil
-   helm-M-x-fuzzy-match nil
-   helm-recentf-fuzzy-match nil
-   helm-projectile-fuzzy-match nil
-   ;; Display extraineous helm UI elements
-   helm-display-header-line nil
-   helm-ff-auto-update-initial-value nil
-   helm-find-files-doc-header nil
-   ;; Don't override evil-ex's completion
-   helm-mode-handle-completion-in-region nil
-   helm-candidate-number-limit 50
-   ;; Don't wrap item cycling
-   helm-move-to-line-cycle-in-source t)
-
   (defvar helm-projectile-find-file-map (make-sparse-keymap))
+  (setq helm-quick-update t
+        ;; Speedier without fuzzy matching
+        helm-mode-fuzzy-match nil
+        helm-buffers-fuzzy-matching nil
+        helm-apropos-fuzzy-match nil
+        helm-M-x-fuzzy-match nil
+        helm-recentf-fuzzy-match nil
+        helm-projectile-fuzzy-match nil
+        ;; Display extraineous helm UI elements
+        helm-display-header-line nil
+        helm-ff-auto-update-initial-value nil
+        helm-find-files-doc-header nil
+        ;; Don't override evil-ex's completion
+        helm-mode-handle-completion-in-region nil
+        helm-candidate-number-limit 50
+        ;; Don't wrap item cycling
+        helm-move-to-line-cycle-in-source t)
 
   :config
   (set-keymap-parent helm-projectile-find-file-map helm-map)
@@ -46,8 +44,7 @@
         :e "ESC"     'helm-keyboard-quit)
 
   ;;; Helm hacks
-  (defvar doom-helm-header-fg (face-attribute 'helm-source-header :foreground) "docstring")
-
+  (defconst doom-helm-header-fg (face-attribute 'helm-source-header :foreground))
   ;; Shrink source headers if there is only one source
   (add-hook 'helm-after-initialize-hook 'doom*helm-hide-source-header-maybe)
   ;; A simpler prompt: see `helm-global-prompt'

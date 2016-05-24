@@ -8,13 +8,13 @@
     (doom|nlinum-enable)))
 
 ;;;###autoload
-(defun doom|nlinum-enable ()
+(defun doom|nlinum-enable (&rest _)
   (nlinum-mode +1)
   (add-hook 'post-command-hook 'doom|nlinum-hl-line nil t)
   (doom|nlinum-unhl-line))
 
 ;;;###autoload
-(defun doom|nlinum-disable ()
+(defun doom|nlinum-disable (&rest _)
   (nlinum-mode -1)
   (remove-hook 'post-command-hook 'doom|nlinum-hl-line t)
   (doom|nlinum-unhl-line))
@@ -51,7 +51,7 @@
             (when ov
               (doom|nlinum-unhl-line)
               (let ((str (nth 1 (get-text-property 0 'display (overlay-get ov 'before-string)))))
-                (put-text-property 0 (length str) 'face 'linum-highlight-face str)
+                (put-text-property 0 (length str) 'face 'doom-nlinum-highlight str)
                 (setq doom--hl-nlinum-overlay ov
                       doom--hl-nlinum-line line-no))))))))
 

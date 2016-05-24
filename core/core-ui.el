@@ -42,7 +42,7 @@
 ;; Initialize UI
 (load-theme doom-current-theme t)
 (tooltip-mode -1) ; show tooltips in echo area
-(if (not window-system)
+(if (not (display-graphic-p))
     (menu-bar-mode -1)
   (scroll-bar-mode -1)  ; no scrollbar
   (tool-bar-mode   -1)  ; no toolbar
@@ -63,10 +63,13 @@
   ;; Show tilde in margin on empty lines
   (define-fringe-bitmap 'tilde [64 168 16] nil nil 'center)
   (set-fringe-bitmap-face 'tilde 'fringe)
-  (setcdr (assq 'empty-line fringe-indicator-alist) 'tilde))
+  (setcdr (assq 'empty-line fringe-indicator-alist) 'tilde)
+  ;; Fix certain unicode characters without upsetting line-height
+  (doom-fix-unicode "DejaVu Sans" '(?⚠ ?★ ?λ ?➊ ?➋ ?➌ ?➍ ?➎ ?❻ ?➐ ?➑ ?➒ ?➓)))
 
-;; Fix certain unicode characters without upsetting line-height
-(doom-fix-unicode "DejaVu Sans" '(?⚠ ?★ ?λ ?➊ ?➋ ?➌ ?➍ ?➎ ?❻ ?➐ ?➑ ?➒ ?➓))
+;; Hide mode-line in help/compile window
+(add-hook 'help-mode-hook 'doom|hide-mode-line)
+(add-hook 'compilation-mode-hook 'doom|hide-mode-line)
 
 ;; On by default in Emacs 25. I'll enable it manually, so disable it globally
 (when (and (> emacs-major-version 24) (featurep 'eldoc))
@@ -78,10 +81,6 @@
    nil '(("\\<\\(TODO\\(?:(.*)\\)?:?\\)\\>"  1 'warning prepend)
          ("\\<\\(FIXME\\(?:(.*)\\)?:?\\)\\>" 1 'error prepend)
          ("\\<\\(NOTE\\(?:(.*)\\)?:?\\)\\>"  1 'success prepend))))
-
-;; Hide mode-line in help/compile window
-(add-hook 'help-mode-hook 'doom|hide-mode-line)
-(add-hook 'compilation-mode-hook 'doom|hide-mode-line)
 
 
 ;;

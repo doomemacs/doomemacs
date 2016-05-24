@@ -48,9 +48,9 @@
     (setq doom-buffer-edited nil)
     (insert
      (let* ((auto-detect-frame (or auto-detect-frame (not (display-graphic-p))))
-            (width (if auto-detect-frame
-                       (window-width)
-                     (cdr (assq 'width default-frame-alist))))
+            (width (max 3 (- (if auto-detect-frame
+                                 (window-width)
+                               (cdr (assq 'width default-frame-alist))) 3)))
             (height (if auto-detect-frame
                         (window-height)
                       (cdr (assq 'height default-frame-alist))))

@@ -2,8 +2,6 @@
 
 (use-package evil
   :init
-  ;; Disable highlights on insert-mode
-  (add-hook 'evil-insert-state-entry-hook 'evil-ex-nohighlight)
   (setq evil-magic t
         evil-want-C-u-scroll t
         evil-ex-visual-char-range t  ; column range for ex commands
@@ -25,7 +23,7 @@
         ;; Color-coded state cursors
         evil-default-cursor (face-attribute 'minibuffer-prompt :foreground nil t)
         evil-normal-state-cursor 'box
-        evil-emacs-state-cursor  `(,(face-attribute 'highlight :foreground nil t) box)
+        evil-emacs-state-cursor  `(,(face-attribute 'shadow :foreground nil nil) box)
         evil-insert-state-cursor 'bar
         evil-visual-state-cursor 'hollow
 
@@ -42,6 +40,8 @@
   (add-hook 'evil-operator-state-entry-hook 'show-paren-mode)
   (add-hook 'evil-operator-state-exit-hook  'show-paren-mode-off)
   (add-hook 'evil-normal-state-entry-hook   'show-paren-mode-off)
+  ;; Disable highlights on insert-mode
+  (add-hook 'evil-insert-state-entry-hook 'evil-ex-nohighlight)
 
   :config
   (evil-mode 1)
@@ -344,17 +344,15 @@
   :config
   (setq evil-escape-key-sequence "jk"
         evil-escape-delay 0.25)
-  (evil-escape-mode +1)
-
-  ;; evil-escape causes noticable lag in linewise motions in visual mode, so disable it in
-  ;; visual mode
+  (push 'neotree-mode evil-escape-excluded-major-modes)
+  ;; evil-escape causes noticable lag in commands that start with j, so we
+  ;; enable it only where we need it.
   (defun doom|evil-escape-disable () (evil-escape-mode -1))
-  (defun doom|evil-escape-enable () (evil-escape-mode +1))
-  (add-hook 'evil-visual-state-entry-hook 'doom|evil-escape-disable)
-  (add-hook 'evil-visual-state-exit-hook 'doom|evil-escape-enable)
-  (add-hook 'evil-insert-state-exit-hook 'doom|evil-escape-enable)
-
-  (push 'neotree-mode evil-escape-excluded-major-modes))
+  (defun doom|evil-escape-enable ()  (evil-escape-mode +1))
+  (add-hook 'evil-insert-state-entry-hook 'doom|evil-escape-enable)
+  (add-hook 'evil-insert-state-exit-hook  'doom|evil-escape-disable)
+  (add-hook 'evil-replace-state-entry-hook 'doom|evil-escape-enable)
+  (add-hook 'evil-replace-state-exit-hook  'doom|evil-escape-disable))
 
 (provide 'core-evil)
 ;;; core-evil.el ends here

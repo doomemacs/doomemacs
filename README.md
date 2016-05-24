@@ -1,9 +1,11 @@
-![DOOM Emacs](/../screenshots/scratch.png?raw=true)
-![Screenshot](/../screenshots/main.png?raw=true)
+[![MIT](https://img.shields.io/badge/license-MIT-green.svg)](./LICENSE)
 
 This is an Emacs configuration for stubborn vimmers and silent demon
 annihilating protagonists alike. It strives to emulate vim as best it can, and
 surpass it in any way possible.
+
+![Splash page screenshot](../screenshots/scratch.png?raw=true)
+![Main screenshots](../screenshots/main.png?raw=true)
 
 ## Installation
 
@@ -44,7 +46,7 @@ To get a picture of what's in here, check out:
 * Project-wide search and replace with **helm-ag** (press shift-Tab while in results
   buffer)
 * Session persistence (and tab emulation) with **workgroups2**
-  ![Workgroups2 tabs emulation](/../screenshots/tabs.png?raw=true)
+  ![Workgroups2 tabs emulation](../screenshots/tabs.png?raw=true)
 * Run code inline with **quickrun**
 * REPLs for many major modes with **repl-toggle**, including Ruby, Python,
   PHP, JS, Elisp, Haskell and Lua.
@@ -66,14 +68,14 @@ To get a picture of what's in here, check out:
 * **Modeline improvements**
   * evil-search/iedit/evil-substitute mode-line integration:
 
-    ![matches count in mode-line](/../screenshots/search.png?raw=true)
-    ![substitutions count in mode-line](/../screenshots/subst.png?raw=true)
+    ![matches count in mode-line](../screenshots/search.png?raw=true)
+    ![substitutions count in mode-line](../screenshots/subst.png?raw=true)
   * Macro-recording indicator:
 
-    ![macro indicator in modeline](/../screenshots/macro.png?raw=true)
+    ![macro indicator in modeline](../screenshots/macro.png?raw=true)
   * Show (py|rb)env version in mode-line
 
-    ![py/rb version in modeline](/../screenshots/version.png?raw=true)
+    ![py/rb version in modeline](../screenshots/version.png?raw=true)
 
 ---
-![Yay! Evil!](/../screenshots/cacochan.png)
+![Yay! Evil!](../screenshots/cacochan.png)

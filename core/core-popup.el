@@ -241,12 +241,13 @@
         (setq org-agenda-archives-mode nil
               org-agenda-buffer nil))))
 
-  (map! :map org-agenda-mode-map
-        :e "<escape>" 'doom/org-agenda-quit
-        :e "ESC" 'doom/org-agenda-quit
-        :e [escape] 'doom/org-agenda-quit
-        "q" 'doom/org-agenda-quit
-        "Q" 'doom/org-agenda-quit))
+  (after! org-agenda
+    (map! :map org-agenda-mode-map
+          :e "<escape>" 'doom/org-agenda-quit
+          :e "ESC" 'doom/org-agenda-quit
+          :e [escape] 'doom/org-agenda-quit
+          "q" 'doom/org-agenda-quit
+          "Q" 'doom/org-agenda-quit)))
 
 (after! realgud
   ;; This allows realgud debuggers to run in a popup.

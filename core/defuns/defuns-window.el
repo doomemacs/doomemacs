@@ -48,6 +48,15 @@ evil-window-move-* (e.g. `evil-window-move-far-left')"
       (select-window that-window))))
 
 ;;;###autoload
+(defun doom/evil-window-move-l () (interactive) (doom/evil-window-move 'left))
+;;;###autoload
+(defun doom/evil-window-move-d () (interactive) (doom/evil-window-move 'down))
+;;;###autoload
+(defun doom/evil-window-move-u () (interactive) (doom/evil-window-move 'up))
+;;;###autoload
+(defun doom/evil-window-move-r () (interactive) (doom/evil-window-move 'right))
+
+;;;###autoload
 (defun doom/new-buffer ()
   (interactive)
   (switch-to-buffer (generate-new-buffer "*new*")))
