@@ -1,7 +1,19 @@
 ;;; defuns-git.el
 
-;;;###autoload (autoload 'doom:git-remote-browse "defuns-git" nil t)
-(evil-define-command doom:git-remote-browse (&optional bang)
+;;;###autoload
+(defun doom/git-root ()
+  (awhen (car-safe (browse-at-remote/remote-ref buffer-file-name))
+    (cdr (browse-at-remote/get-url-from-remote it))))
+
+;;;###autoload
+(defun doom/git-issues ()
+  "Open the github issues page for current repo."
+  (interactive)
+  (awhen (doom/git-root)
+    (browse-url (concat it "/issues"))))
+
+;;;###autoload (autoload 'doom:git-browse "defuns-git" nil t)
+(evil-define-command doom:git-browse (&optional bang)
   "Open the website for the current (or specified) version controlled FILE. If
 BANG, then use hub to do it."
   (interactive "<!>")

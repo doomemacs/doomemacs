@@ -48,8 +48,10 @@
 
 ;; GIT
 (ex! "ga[dd]"      'doom/vcs-stage-hunk)
-(ex! "gbr[owse]"   'doom:git-remote-browse)      ; show file in github/gitlab
 (ex! "gre[vert]"   'doom/vcs-revert-hunk)
+(ex! "gbr[owse]"   'doom:git-browse)      ; show file in github/gitlab
+(ex! "gbi[ssues]"  'doom/git-issues)      ; show github issues
+
 ;; Dealing with buffers
 (ex! "k[ill]"      'doom/kill-real-buffer)       ; Kill current buffer
 (ex! "k[ill]all"   'doom:kill-all-buffers)       ; Kill buffers (bang = in project)
