@@ -32,7 +32,6 @@
   :after php-mode
   :config
   (defun php-extras-company-setup ()) ;; company will set up itself
-
   ;; Generate php-extras documentation and completion asynchronously
   (unless (file-exists-p (concat php-extras-eldoc-functions-file ".el"))
     (async-start `(lambda ()

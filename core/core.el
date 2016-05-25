@@ -9,7 +9,7 @@
 ;;   doom|...     A hook
 ;;   doom*...     An advising function
 ;;   doom....     Custom prefix commands
-;;   ...!         Macro or shortcut alias
+;;   ...!         Macro, shortcut alias or subst defun
 ;;
 ;;; Autoloaded functions are in {core,modules}/defuns/defuns-*.el
 
@@ -93,11 +93,12 @@
 
 ;; Populate the load-path manually; cask shouldn't be an internal dependency
 (setq load-path
-      (! (defun --subdirs (path &optional include-self)
+      (! (defsubst --subdirs (path &optional include-self)
            (let ((result (if include-self (list path) (list))))
-             (dolist (file (ignore-errors (directory-files path t "^[^.]" t)))
-               (when (file-directory-p file)
-                 (push file result)))
+             (mapc (lambda (file)
+                     (when (file-directory-p file)
+                       (push file result)))
+                   (ignore-errors (directory-files path t "^[^.]" t)))
              result))
          (append (list doom-private-dir)
                  (--subdirs doom-core-dir t)

@@ -181,5 +181,11 @@ spaces on either side of the point if so. Resorts to
     (align-regexp beg end
                   (concat "\\(\\s-*\\)" (rxt-pcre-to-elisp regexp)) 1 1)))
 
+;;;###autoload
+(defun doom/static-reindent ()
+  "Reindent without moving cursor."
+  (interactive)
+  (save-excursion (call-interactively 'evil-indent)))
+
 (provide 'defuns-whitespace)
 ;;; defuns-whitespace.el ends here

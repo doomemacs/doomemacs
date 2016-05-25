@@ -27,7 +27,6 @@
 
 ;; NOTE: Doesn't look pretty outside of emacs-mac
 (use-package company-quickhelp
-  :when (featurep 'mac)
   :after company
   :config (company-quickhelp-mode +1))
 

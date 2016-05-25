@@ -8,7 +8,8 @@
   (def-builder! toml-mode "cargo run" "Cargo.toml")
   (def-docset! rust-mode ("Rust")))
 
-(use-package flycheck-rust :after rust-mode)
+(use-package flycheck-rust
+  :after rust-mode)
 
 (use-package racer
   :after rust-mode

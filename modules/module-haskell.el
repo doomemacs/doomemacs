@@ -6,8 +6,7 @@
          ("\\.cabal$" . haskell-cabal-mode))
   :interpreter (("runghc" . haskell-mode)
                 ("runhaskell" . haskell-mode))
-  :init
-  (add-hook! haskell-mode '(interactive-haskell-mode flycheck-mode))
+  :init (add-hook! haskell-mode '(interactive-haskell-mode flycheck-mode))
   :config
   (def-docset! haskell-mode ("Haskell"))
   (def-popup! "*debug:haskell*" :size 20)
@@ -16,8 +15,7 @@
 
 (use-package inf-haskell
   :commands (inferior-haskell-mode inf-haskell-mode switch-to-haskell)
-  :config
-  (map! :map inf-haskell-mode-map "ESC ESC" 'doom/popup-close))
+  :config (map! :map inf-haskell-mode-map "ESC ESC" 'doom/popup-close))
 
 (provide 'module-haskell)
 ;;; module-haskell.el ends here

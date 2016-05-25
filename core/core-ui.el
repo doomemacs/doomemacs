@@ -1,13 +1,13 @@
 ;;; core-ui.el --- interface & mode-line config
 
-(defconst doom-fringe-size 3 "Default fringe width")
+(defconst doom-fringe-size '3 "Default fringe width")
 
 ;; y/n instead of yes/no
 (fset 'yes-or-no-p 'y-or-n-p)
 
 (setq-default
  indicate-buffer-boundaries nil ; don't show where buffer starts/ends
- indicate-empty-lines nil       ; show empty lines
+ indicate-empty-lines nil       ; don't show empty lines
  fringes-outside-margins t      ; switches order of fringe and margin
  ;; Keep cursors and highlights in current window only
  cursor-in-non-selected-windows nil
@@ -52,6 +52,7 @@
   (set-frame-font doom-default-font t)
   (set-face-attribute 'default t :font doom-current-font)
   ;; standardize fringe width
+  (fringe-mode doom-fringe-size)
   (push `(left-fringe  . ,doom-fringe-size) default-frame-alist)
   (push `(right-fringe . ,doom-fringe-size) default-frame-alist)
   ;; Default frame size on startup

@@ -51,5 +51,12 @@
   (evil-visual-state)
   (evil-goto-mark ?\]))
 
+;;;###autoload
+(defun doom/delete-forward-word ()
+  "Delete the word in front of the cursor."
+  (interactive)
+  (evil-forward-word)
+  (evil-delete-backward-word))
+
 (provide 'defuns-editor)
 ;;; defuns-editor.el ends here

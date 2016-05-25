@@ -1,5 +1,7 @@
 ;;; defuns-eshell.el
 
+(require 'eshell)
+
 (defun doom--eshell-in-prompt-p (&optional offset)
   (>= (- (point) (or offset 0)) (save-excursion (eshell-bol) (point))))
 
@@ -10,6 +12,16 @@
       (if (not (eq branch nil))
           (concat " [" (substring branch 2) "]")
         "")))
+
+;;;###autoload
+(defun doom/eshell (&optional same &rest _)
+  (interactive)
+  (let ((buf (get-buffer-create eshell-buffer-name)))
+    (cl-assert (and buf (buffer-live-p buf)))
+    (doom/popup-buffer buf)
+    (with-current-buffer buf
+      (unless (derived-mode-p 'eshell-mode)
+        (eshell-mode)))))
 
 ;;;###autoload
 (defun doom/eshell-prompt ()

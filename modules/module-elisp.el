@@ -34,7 +34,7 @@
 
   (font-lock-add-keywords
    nil `(("(\\(lambda\\)" (1 (doom/show-as ?λ)))
-         ("(\\(\\(doom\\)\\([-:/|][^) ]*\\)?\\)[) ]" (1 font-lock-builtin-face))
+         ("(\\(\\(doom\\)\\([-:/|][^) ]*\\)?\\)[) \n]" (1 font-lock-builtin-face))
          ;; Highlight doom macros (macros are fontified in emacs 25+)
          (,(concat
             "(\\(def-"

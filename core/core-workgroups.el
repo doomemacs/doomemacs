@@ -44,8 +44,6 @@ automatically renamed to the project name.")
    wg-list-display-decor-previous-left ""
    wg-list-display-decor-previous-right "")
 
-  (add-hook 'emacs-startup-hook 'workgroups-mode)
-
   :config
   ;; Remember fixed workgroup names between sessions
   (push 'doom-wg-names savehist-additional-variables)
@@ -72,7 +70,11 @@ automatically renamed to the project name.")
   (defalias 'doom:switch-to-tab 'doom:switch-to-workgroup-at-index)
   (defalias 'doom:switch-to-tab-left 'wg-switch-to-workgroup-left)
   (defalias 'doom:switch-to-tab-right 'wg-switch-to-workgroup-right)
-  (defalias 'doom:switch-to-tab-last 'wg-switch-to-previous-workgroup))
+  (defalias 'doom:switch-to-tab-last 'wg-switch-to-previous-workgroup)
+
+  (add-hook! emacs-startup
+    (workgroups-mode +1)
+    (wg-create-workgroup wg-first-wg-name)))
 
 (provide 'core-workgroups)
 ;;; core-workgroups.el ends here
