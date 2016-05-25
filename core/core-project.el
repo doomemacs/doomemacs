@@ -94,6 +94,9 @@
   (evil-set-initial-state 'neotree-mode 'motion)
   (add-hook 'neo-after-create-hook 'doom|hide-mode-line)
 
+  ;; Don't mess with neotree on wg-related window-config changes
+  (advice-add 'doom/undo-window-change :around 'doom*save-neotree)
+  (advice-add 'doom/redo-window-change :around 'doom*save-neotree)
   ;; A custom and simple theme for neotree
   (advice-add 'neo-buffer--insert-fold-symbol :override 'doom*neo-theme)
   ;; Shorter pwd in neotree
