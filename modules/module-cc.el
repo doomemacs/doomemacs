@@ -24,8 +24,8 @@
   :config
   (def-electric! (c-mode c++-mode objc-mode) :chars (?\n ?\}))
   (def-company-backend! (c-mode c++-mode objc-mode) (irony-c-headers irony))
-  (def-docset! c-mode "c,sdl,glib,gl2,gl3,gl4,manpages")
-  (def-docset! c++-mode "cpp,sdl,net,boost,qt,cvcpp,cocos2dx,c,manpages")
+  (def-docset! c-mode ("C" "org.libsdl.sdl20"))
+  (def-docset! c++-mode ("C++" "C" "Boost" "Qt_4" "Qt_5" "Cocos2D" "Cocos2D-X" "org.libsdl.sdl20"))
 
   (setq c-tab-always-indent nil
         c-electric-flag nil)

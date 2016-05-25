@@ -9,6 +9,7 @@
   :config
   (def-builder! go-mode "go build")
   (def-company-backend! go-mode (go yasnippet))
+  (def-docset! go-mode ("Go"))
   (def-repl! go-mode gorepl-run)
   (map! :map go-mode-map
         :n "gd" 'godef-jump

@@ -14,7 +14,7 @@
 
   :config
   (def-repl! php-mode php-boris)
-  (def-docset! php-mode "php,laravel")
+  (def-docset! php-mode ("PHP" "Laravel" "PHPUnit"))
   (def-company-backend! php-mode '(php-extras-company company-yasnippet))
 
   (map! :map php-mode-map (:localleader :nv ";" 'doom/append-semicolon))

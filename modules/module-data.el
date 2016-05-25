@@ -16,7 +16,7 @@
 
 (use-package dockerfile-mode :mode "/Dockerfile$"
   :config
-  (def-docset! dockerfile-mode "docker")
+  (def-docset! dockerfile-mode ("Docker"))
   (def-builder! dockerfile-mode dockerfile-build-buffer "Dockerfile"))
 
 ;; For ROM hacking or debugging

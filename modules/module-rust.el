@@ -5,7 +5,8 @@
   :init (add-hook 'rust-mode-hook 'flycheck-mode)
   :config
   (def-builder! rust-mode "cargo run" "Cargo.toml")
-  (def-builder! toml-mode "cargo run" "Cargo.toml"))
+  (def-builder! toml-mode "cargo run" "Cargo.toml")
+  (def-docset! rust-mode ("Rust")))
 
 (use-package flycheck-rust :after rust-mode)
 

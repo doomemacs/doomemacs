@@ -75,12 +75,10 @@
 
 (use-package helm-dash
   :when (not IS-WINDOWS)
-  :commands (helm-dash helm-dash-at-point helm-dash-install-docset def-docset!)
+  :commands (helm-dash helm-dash-at-point helm-dash-install-docset)
   :config
   (setq helm-dash-browser-func 'doom/dash-open
-        helm-dash-candidate-format "%d → %n (%t)")
-  (defmacro def-docset! (mode docsets)
-    `(add-hook! ,mode (setq-local helm-dash-docsets ',docsets))))
+        helm-dash-candidate-format "%d → %n (%t)"))
 
 (use-package helm-tags
   :commands (helm-tags-get-tag-file helm-etags-select))

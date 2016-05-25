@@ -6,7 +6,8 @@
   :init (add-hook 'swift-mode-hook 'flycheck-mode)
   :config
   (def-company-backend! swift-mode (sourcekit yasnippet))
-  (def-repl! swift-mode swift-mode-run-repl)
+  (def-docset! swift-mode ("Swift"))
+  (def-repl! swift-mode swift-mode-run-repl) ; TODO test this
   (after! flycheck (push 'swift flycheck-checkers)))
 
 (use-package company-sourcekit

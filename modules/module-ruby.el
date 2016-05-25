@@ -8,7 +8,7 @@
   :config
   (def-builder! ruby-mode "rake %s" "Rakefile")
   (def-company-backend! ruby-mode (dabbrev-code))
-  (def-docset! ruby-mode "rb,ruby,rubygem")
+  (def-docset! ruby-mode ("Ruby_2" "Ruby_on_Rails_5"))
   (def-electric! ruby-mode :words ("else" "end" "elseif"))
   (def-repl! ruby-mode inf-ruby)
   (def-version-cmd! ruby-mode "ruby --version | cut -d' ' -f2")

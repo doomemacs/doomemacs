@@ -1,8 +1,7 @@
 ;;; module-java.el --- the poster child for carpal tunnel
 
 (after! c-initialization
-  (def-docset! java-mode
-    "java,droid,javafx,grails,groovy,playjava,spring,cvj,processing,javadoc"))
+  (def-docset! java-mode ("Java" "Android" "JavaFX")))
 
 (use-package eclim
   :functions (eclim--project-dir eclim--project-name)

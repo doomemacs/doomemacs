@@ -6,6 +6,7 @@
   :init (add-hook 'lua-mode-hook 'flycheck-mode)
   :config
   (def-company-backend! lua-mode (lua yasnippet))
+  (def-docset! lua-mode ("Lua_5.2" "Lua_5.3"))
   (def-electric! lua-mode :words ("else" "end"))
   (def-repl! lua-mode doom/inf-lua)
   (sp-with-modes '(lua-mode)

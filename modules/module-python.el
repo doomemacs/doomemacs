@@ -21,10 +21,13 @@
 
   :config
   (def-company-backend! python-mode (anaconda))
-  (def-docset! python-mode "py,py3,python")
-  (def-version-cmd! python-mode "python --version 2>&1 | cut -d' ' -f2")
+  (def-docset! python-mode ("OpenCV_Python"))
   (def-repl! python-mode doom/inf-python)
-  (define-key python-mode-map (kbd "DEL") nil)) ; interferes with smartparens
+  (def-version-cmd! python-mode "python --version 2>&1 | cut -d' ' -f2")
+  (define-key python-mode-map (kbd "DEL") nil) ; interferes with smartparens
+  (add-hook 'doom-env-version-hook
+    (lambda (v) (when (eq major-mode 'python-mode)
+             (push (if (string-prefix-p "2" v) "Python_2" "Python_3") helm-dash-docsets)))))
 
 (use-package anaconda-mode
   :after python
