@@ -1,14 +1,14 @@
-;;; module-java.el --- the poster child for carpal tunnel
+;;; module-java.el
 
 (after! c-initialization
   (def-docset! java-mode ("Java" "Android" "JavaFX")))
 
+(defvar eclim-eclipse-dirs '("/Applications/eclipse"))
+(defvar eclim-executable     "/Applications/eclipse/eclim")
 (use-package eclim
   :functions (eclim--project-dir eclim--project-name)
   :commands (eclim-mode global-eclim-mode)
   :preface
-  (setq eclim-eclipse-dirs '("/Applications/eclipse")
-        eclim-executable     "/Applications/eclipse/eclim")
   :when (file-exists-p eclim-executable)
   :init (add-hook 'java-mode-hook 'eclim-mode)
   :config
