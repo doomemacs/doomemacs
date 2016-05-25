@@ -156,9 +156,14 @@
   (add-hook! 'nlinum-mode-hook
     (add-hook 'post-command-hook 'doom|nlinum-hl-line nil t))
   :config
+  ;; Calculate line number column width
   (add-hook! nlinum-mode
     (setq nlinum--width (length (save-excursion (goto-char (point-max))
-                                                (format-mode-line "%l"))))))
+                                                (format-mode-line "%l")))))
+  ;; Disable nlinum when making frames, otherwise we get linum face error
+  ;; messages that prevent frame creation.
+  (add-hook 'before-make-frame-hook 'doom|nlinum-disable)
+  (add-hook 'after-make-frame-functions 'doom|nlinum-enable))
 
 
 ;;
