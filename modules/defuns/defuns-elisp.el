@@ -1,4 +1,9 @@
-;;; defuns-lisp.el
+;;; defuns-elisp.el
+
+;;;###autoload (autoload 'doom:byte-compile "defuns-elisp" nil t)
+(evil-define-command doom:byte-compile (&optional bang)
+  (interactive "<!>")
+  (if bang (doom-byte-compile) (byte-compile-file buffer-file-name)))
 
 ;;;###autoload
 (defun doom/elisp-find-function-at-pt ()
@@ -12,7 +17,7 @@
   (let ((func (function-called-at-point)))
     (if func (find-function-other-window func))))
 
-(defun doom--ert-pre ()
+(defsubst doom--ert-pre ()
   (save-buffer)
   (eval-buffer))
 
@@ -51,5 +56,5 @@
     (bury-buffer)
     (pop-to-buffer buf)))
 
-(provide 'defuns-lisp)
-;;; defuns-lisp.el ends here
+(provide 'defuns-elisp)
+;;; defuns-elisp.el ends here
