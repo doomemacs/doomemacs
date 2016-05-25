@@ -195,11 +195,9 @@ Examples:
 (after! evil
   (defalias 'ex! 'evil-ex-define-cmd)
 
-  (defmacro def-text-obj! (key inner-fn &optional outer-fn)
-    (unless outer-fn (setq outer-fn inner-fn))
-    `(progn
-       (define-key evil-inner-text-objects-map ,key ,inner-fn)
-       (define-key evil-outer-text-objects-map ,key ,outer-fn)))
+  (defsubst def-text-obj! (key inner-fn &optional outer-fn)
+    (define-key evil-inner-text-objects-map key inner-fn)
+    (define-key evil-outer-text-objects-map key (or outer-fn inner-fn)))
 
   ;; Register keywords for proper indentation (see `map!')
   (put ':prefix      'lisp-indent-function 'defun)
