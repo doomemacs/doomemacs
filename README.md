@@ -15,14 +15,12 @@ brew install emacs --with-cocoa --with-imagemagick
 git clone https://github.com/hlissner/.emacs.d ~/.emacs.d
 cd ~/.emacs.d
 make          # installs plugins via cask and generates autoloads
-```
 
-And to optionally:
-
-```
-make compile  # optionally byte-compiles everything
+# Optional
 make snippets # install hlissner/emacs-snippets into private/snippets
 ```
+
+To byte compile, run `(doom-byte-compile)`
 
 ## Features
 
