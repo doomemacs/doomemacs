@@ -233,10 +233,19 @@
                         (t (format ":%d%%%%" perc))))))
             " "))
 
+  (defface mode-line-vcs-info nil '((t (:inherit warning))))
+  (defface mode-line-vcs-warning nil '((t (:inherit warning))))
   (spaceline-define-segment *vc
     "Version control info"
     (when vc-mode
-      (concat "⎇ " (substring vc-mode (+ 2 (length (symbol-name (vc-backend buffer-file-name))))))))
+      (propertize
+       (concat "⎇ " (substring vc-mode (+ 2 (length (symbol-name (vc-backend buffer-file-name))))))
+       'face (when active
+               (let ((state (vc-state buffer-file-name)))
+                 (cond ((memq state '(edited added))
+                        'mode-line-vcs-info)
+                       ((memq state '(removed needs-merge needs-update conflict removed unregistered))
+                        'mode-line-vcs-warning)))))))
 
   ;; search indicators
   (defface mode-line-count-face nil "")
