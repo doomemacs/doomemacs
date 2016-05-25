@@ -9,6 +9,7 @@
 
   :config
   (def-builder! processing-mode processing-sketch-build)
+  (def-popup! "*processing-compilation*" :align below :size 10 :noselect t)
   (setq processing-location "/usr/local/bin/processing-java"
         processing-application-dir "/Applications/Processing.app"
         processing-sketchbook-dir "~/Dropbox/work/pde"

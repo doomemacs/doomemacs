@@ -18,17 +18,25 @@
              quickrun-replace-region
              helm-quickrun)
   :init (add-hook 'quickrun/mode-hook 'linum-mode)
-  :config (setq quickrun-focus-p nil))
+  :config
+  (setq quickrun-focus-p nil)
+  (def-popup! "*quickrun*" :align below :size 10)
+  (def-popup! "*eval*"     :align below :size 20))
 
 (use-package repl-toggle
   :commands (rtog/toggle-repl rtog/add-repl)
+  :preface  (defvar rtog/mode-repl-alist nil)
   :init
-  (defvar doom--repl-buffer nil "The current REPL buffer.")
-  (defvar-local repl-p nil "Whether this is a repl buffer or not.")
-  (setq rtog/mode-repl-alist '())
+  (defvar doom-repl-buffer nil "The current REPL buffer.")
   (add-hook! repl-toggle-mode (evil-initialize-state 'emacs))
-
   :config
+  (def-popup!
+    (:custom (lambda (b &rest _)
+               (when (and (featurep 'repl-toggle)
+                          (string-prefix-p "*" (buffer-name (get-buffer b))))
+                 (with-current-buffer b repl-toggle-mode))))
+    :popup t :align below :size 16 :select t)
+
   (map! :map repl-toggle-mode-map
         :ei "C-n" 'comint-next-input
         :ei "C-p" 'comint-previous-input
@@ -56,6 +64,10 @@
         :m "b" 'realgud:cmd-break
         :m "B" 'realgud:cmd-clear
         :n "c" 'realgud:cmd-continue)
+
+  ;; Popup rules
+  (def-popup! "\\`\\*\\(g\\|zsh\\|bash\\)db.*?\\*\\'" :size 20 :regexp t)
+  (def-popup! "\\`\\*trepanjs.*?\\*\\'"               :size 20 :regexp t)
 
   ;; Temporary Ex commands for the debugger
   (def-tmp-excmd! doom:def-debug-on doom:def-debug-off

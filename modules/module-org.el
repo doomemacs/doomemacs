@@ -37,6 +37,14 @@
   (add-hook 'evil-insert-state-exit-hook 'doom|org-update nil t))
 
 (defun doom|org-init ()
+  (def-popup! " *Agenda Commands*"  :align below :size 30)
+  (def-popup! " *Org todo*"         :align below :size 5   :noselect t)
+  (def-popup! "*Calendar*"          :align below :size 0.4)
+  (def-popup! "*Org Links*"         :align below :size 5)
+  (def-popup! "^\\*Org Agenda.+"    :align below :size 0.4 :regexp t)
+  (def-popup! "^\\*Org Src .+\\*$"  :align below :size 0.4 :select t :regexp t)
+  (def-popup! "^\\*Org-Babel.*\\*$" :align below :size 0.4 :regexp t)
+
   (setq-default
    org-export-coding-system 'utf-8
 

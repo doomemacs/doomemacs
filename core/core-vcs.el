@@ -16,6 +16,7 @@
   (add-hook! (text-mode prog-mode conf-mode) 'git-gutter-mode)
   :config
   (require 'git-gutter-fringe)
+  (def-popup! "^\\*git-gutter.+\\*$" :align below :size 15 :noselect t :regexp t)
 
   (define-fringe-bitmap 'git-gutter-fr:added
     [224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224]
@@ -41,6 +42,7 @@
   :commands git-messenger:popup-message
   :init (defvar git-messenger-map (make-sparse-keymap))
   :config
+  (def-popup! "*git-messenger*" :align left :size 55 :select t)
   (setq git-messenger:show-detail t)
   (map! :map git-messenger-map
         "<escape>" 'git-messenger:popup-close
@@ -49,7 +51,9 @@
 (use-package magit
   :commands (magit-status)
   :config
-  (doom-load-magit-hacks)
+  (doom-popup-magit-hacks)
+  (def-popup! (:custom (lambda (b &rest _) (derived-mode-p 'magit-mode)))
+    :align below :size 0.5)
   (add-hook 'magit-mode-hook 'turn-off-evil-snipe-override-mode))
 (use-package evil-magit
   :after magit

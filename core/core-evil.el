@@ -65,8 +65,11 @@
           (Man-mode               . emacs)
           (grep-mode              . emacs)))
 
-  (map! :map evil-command-window-mode-map :n [escape] 'kill-buffer-and-window)
+  ;; Popups
+  (def-popup! "*evil-registers*" :align below :size 0.3)
+  (def-popup! "*Command Line*"   :align below :size 8 :select t)
 
+  ;; Evil hacks
   (progn ; evil hacks
     (advice-add 'evil-force-normal-state :after 'doom*evil-esc-quit)
     (defun doom*evil-esc-quit ()

@@ -43,6 +43,9 @@
         :map helm-generic-files-map
         :e "ESC"     'helm-keyboard-quit)
 
+  ;;; Popup setup
+  (def-popup! "\\` ?\\*[hH]elm.*?\\*\\'" :align below :size 14 :select t :regexp t)
+
   ;;; Helm hacks
   (defconst doom-helm-header-fg (face-attribute 'helm-source-header :foreground))
   ;; Shrink source headers if there is only one source

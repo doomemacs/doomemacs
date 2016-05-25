@@ -36,6 +36,7 @@
       :default-font ("Fira Mono" 12)
 
       ;;; The heart of DOOM
+      core-popup         ; taming sudden and inevitable windows
       core-os            ; os-specific config
       core-scratch       ; a perdier scratch buffer
       core-ui            ; draw me like one of your French editors
@@ -50,7 +51,6 @@
       core-helm          ; a search engine for life and love
       core-workgroups    ; cure Emacs alzheimers + tab emulation
       core-eval          ; run code, run; debug too
-      core-popup         ; taming sudden and inevitable windows
 
       ;;; Dev environments
       module-cc          ; C/C++/Obj-C madness

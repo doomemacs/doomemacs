@@ -3,6 +3,7 @@
 (use-package sql-mode
   :mode "\\.sql$"
   :config
+  (def-popup! "\\*SQL.*\\*" :align below :size 0.4 :noselect t :regexp t)
   (evil-set-initial-state 'sql-interactive-mode 'emacs)
   (push 'sql-interactive-mode doom-popup-protect-modes)
   ;; For my local development environment

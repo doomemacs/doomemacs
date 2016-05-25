@@ -9,6 +9,8 @@
         flycheck-disabled-checkers '(emacs-lisp emacs-lisp-checkdoc make))
 
   :config
+  (def-popup! " ?\\*Flycheck.+\\*" :align below :size 14 :noselect t :regexp t)
+
   (unless (> emacs-major-version 24)
     ;; Fixes Unknown defun property `interactive-only' error (in emacs <25) by compiling
     ;; flycheck source files

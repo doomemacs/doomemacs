@@ -67,6 +67,7 @@
   :preface (defvar nose-mode-map (make-sparse-keymap))
   :init (associate! nose-mode :match "/test_.+\\.py$" :in (python-mode))
   :config
+  (def-popup! "*nosetests*" :align below :size 0.4 :noselect t)
   (def-yas-mode! 'nose-mode)
   (map! :map nose-mode-map
         (:localleader

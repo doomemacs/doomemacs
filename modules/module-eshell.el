@@ -16,6 +16,9 @@
         ;; em-alias
         eshell-aliases-file (concat doom-temp-dir "/.eshell-aliases"))
 
+  :config
+  (def-popup! eshell-mode :frame t :select t)
+
   ;; plan 9 smart shell
   (require 'em-smart)
   (add-to-list 'eshell-modules-list 'eshell-smart)

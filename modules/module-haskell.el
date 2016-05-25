@@ -9,6 +9,7 @@
   :init
   (add-hook! haskell-mode '(interactive-haskell-mode flycheck-mode))
   :config
+  (def-popup! "*debug:haskell*" :size 20)
   (def-repl! haskell-mode switch-to-haskell)
   (push ".hi" completion-ignored-extensions))
 

@@ -10,11 +10,10 @@
 (defun doom/popup-p (&optional window)
   "Whether WINDOW is a shackle popup window or not."
   (and doom-popup-windows
-       (-any? (lambda (w)
-                (if (window-live-p w) t (doom/popup-remove w) nil))
-              doom-popup-windows)
+       (--any? (if (window-live-p it) t (doom/popup-remove it) nil)
+               doom-popup-windows)
        (if window
-           (-any? (lambda (w) (eq window w)) doom-popup-windows)
+           (--any? (eq window it) doom-popup-windows)
          t)))
 
 ;;;###autoload
@@ -121,6 +120,11 @@
       (when (apply #'derived-mode-p doom-popup-protect-modes)
         (setq-local doom-popup-protect t)
         (setq doom-last-popup (current-buffer))))))
+
+;;;###autoload
+(defun doom*save-popup (orig-fun &rest args)
+  "Prevents messing up a popup buffer on window changes"
+  (doom/popup-save (apply orig-fun args)))
 
 (provide 'defuns-popups)
 ;;; defuns-popups.el ends here

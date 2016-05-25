@@ -10,67 +10,32 @@
   :config
   (shackle-mode 1)
   (setq shackle-rules
-        `(;; Debuggers
-          ("\\`\\*\\(g\\|zsh\\|bash\\)db.*?\\*\\'" :align below :size 20 :regexp t)
-          ("\\`\\*trepanjs.*?\\*\\'"               :align below :size 20 :regexp t)
-          ("\\`\\*\\(debug:\\)haskell\\*\\'"       :align below :size 20 :regexp t)
-          ;; Plugins
-          ("\\` ?\\*[hH]elm.*?\\*\\'" :align below :size 14  :select t   :regexp t)
-          (" ?\\*Flycheck.+\\*"       :align below :size 14  :noselect t :regexp t)
-          ("*helm bookmarks*"         :align below :size 7   :select t)
-          (" *NeoTree*"               :align left            :select t)
-          ("*evil-registers*"         :align below :size 0.3)
-          ("*quickrun*"               :align below :size 10)
-          ("*nosetests*"              :align below :size 0.4 :noselect t)
-          ("*esup*"                   :align below :size 30  :noselect t)
-          ("*ert*"                    :align below :size 20  :noselect t)
-          (eww-mode                   :align below :size 30  :select t)
-          ;; vcs
-          ("*git-messenger*"          :align left  :size 55  :select t)
-          ("^\\*git-gutter.+\\*$"     :align below :size 15  :noselect t :regexp t)
-          ("*vc-diff*"                :align below :size 15  :noselect t)
-          ("*vc-change-log*"          :align below :size 15  :select t)
-          (vc-annotate-mode           :same t)
-          ((:custom (lambda (b &rest _) (derived-mode-p 'magit-mode)))
-           :align below :size 0.5)
-          ;; Util
-          ("*Apropos*"                :align below :size 0.3)
-          ("*minor-modes*"            :align below :size 0.5 :noselect t)
-          ;; Org
-          (" *Agenda Commands*"       :align below :size 30)
-          (" *Org todo*"              :align below :size 5   :noselect t)
-          ("*Calendar*"               :align below :size 0.4)
-          ("*Org Links*"              :align below :size 5)
-          ("^\\*Org Agenda.+"         :align below :size 0.4 :regexp t)
-          ("^\\*Org Src .+\\*$"       :align below :size 0.4 :select t :regexp t)
-          ("^\\*Org-Babel.*\\*$"      :align below :size 0.4 :regexp t)
-          ;; Emacs
-          (,doom-buffer-name           :align below :size 0.3  :select t)
-          ("*Completions*"             :align below :size 20   :noselect t)
-          ("*Help*"                    :align below :size 16   :select t)
-          ("*Messages*"                :align below :size 15   :select t)
-          ("*Warnings*"                :align below :size 10   :noselect t)
-          ("*processing-compilation*"  :align below :size 10   :noselect t)
+        `(;; Util
           ("^\\*.+-Profiler-Report .+\\*$" :align below :size 0.3 :regexp t)
-          (compilation-mode            :align below :size 15   :noselect t)
-          ("*Backtrace*"               :align below :size 25   :noselect t)
-          ;; Custom + REPLs
-          ("*eval*" :align below :size 20)
-          ("^\\*doom.+\\*$" :regexp t :align below :size 12 :noselect t)
-          ((:custom (lambda (b &rest _)
-                      (when (featurep 'repl-toggle)
-                        (when (string-prefix-p "*" (buffer-name (get-buffer b)))
-                          (with-current-buffer b repl-toggle-mode)))))
-           :popup t :align below :size 16 :select t)))
+          ("*esup*"          :align below :size 30  :noselect t)
+          ("*minor-modes*"   :align below :size 0.5 :noselect t)
+          ;; Emacs
+          ("*Apropos*"       :align below :size 0.3)
+          ("*Backtrace*"     :align below :size 25  :noselect t)
+          ("*Completions*"   :align below :size 20  :noselect t)
+          ("*Help*"          :align below :size 16  :select t)
+          ("*Messages*"      :align below :size 15  :select t)
+          ("*Warnings*"      :align below :size 10  :noselect t)
+          (compilation-mode  :align below :size 15  :noselect t)
+          (eww-mode          :align below :size 30  :select t)
+          ;; vcs
+          ("*vc-diff*"       :align below :size 15  :noselect t)
+          ("*vc-change-log*" :align below :size 15  :select t)
+          (vc-annotate-mode  :same t)))
 
   (defvar doom-popup-windows '()
     "A list of windows that have been opened via shackle. Do not touch this!")
-  (defvar-local doom-popup-protect nil
-    "If non-nil, this popup buffer won't be killed when closed.")
   (defvar doom-last-popup nil
     "The last (important) popup buffer.")
   (defvar doom-prev-buffer nil
     "The buffer from which the popup was invoked.")
+  (defvar-local doom-popup-protect nil
+    "If non-nil, this popup buffer won't be killed when closed.")
 
   (defvar doom-popup-inescapable-modes
     '(compilation-mode comint-mode)
@@ -97,7 +62,7 @@
 ;; Hacks
 ;;
 
-(defun doom-load-magit-hacks ()
+(defun doom-popup-magit-hacks ()
   ;; Some wrassling must be done to get magit to kill itself, and trigger my
   ;; shackle popup hooks.
   (setq magit-bury-buffer-function
@@ -112,11 +77,34 @@
             (select-window (get-buffer-window doom-prev-buffer)))
           (switch-to-buffer b))))
 
+(after! evil
+  (defun doom*evil-command-window (orig-fn &rest args)
+    (cl-flet ((switch-to-buffer ()))
+      (apply orig-fn args))
+    )
+  (defun doom*evil-command-window (hist cmd-key execute-fn)
+    (when (eq major-mode 'evil-command-window-mode)
+      (user-error "Cannot recursively open command line window"))
+    (dolist (win (window-list))
+      (when (equal (buffer-name (window-buffer win))
+                   "*Command Line*")
+        (kill-buffer (window-buffer win))
+        (delete-window win)))
+    (setq evil-command-window-current-buffer (current-buffer))
+    (ignore-errors (kill-buffer "*Command Line*"))
+    (with-current-buffer (pop-to-buffer "*Command Line*")
+      (setq-local evil-command-window-execute-fn execute-fn)
+      (setq-local evil-command-window-cmd-key cmd-key)
+      (evil-command-window-mode)
+      (evil-command-window-insert-commands hist)
+      (doom|hide-mode-line)))
+  (advice-add 'evil-command-window :override 'doom*evil-command-window))
+
 (after! help-mode
-  ;; So that help buffer links do not open in the help popup, we need to redefine these
-  ;; three button types to use `switch-to-buffer' rather than `pop-to-buffer'.
-  ;; Instead of lambas these help-functions should be function symbols, so that
-  ;; we could advise those instead of clumsify redefine these button types.
+  ;; So that file links in help buffers don't replace the help buffer, we need
+  ;; to redefine these three button types to use `doom/popup-save' and
+  ;; `switch-to-buffer' rather than `pop-to-buffer'. This way, it is sure to
+  ;; open links in the source buffer.
   (define-button-type 'help-function-def
     :supertype 'help-xref
     'help-function (lambda (fun file)
@@ -159,18 +147,18 @@
     'help-echo (purecopy "mouse-2, RET: find face's definition")))
 
 (after! helm
-  ;; This is a good alternative to either popwin or shackle, specifically for helm. If
-  ;; either fail me (for the last time), this is where I'll turn.
+  ;; This is a good alternative to either popwin or shackle, specifically for
+  ;; helm. If either fail me (for the last time), this is where I'll turn.
   ;;(add-to-list 'display-buffer-alist
   ;;             `(,(rx bos "*helm" (* not-newline) "*" eos)
   ;;               (display-buffer-in-side-window)
   ;;               (inhibit-same-window . t)
   ;;               (window-height . 0.4)))
 
-  ;; Helm tries to clean up after itself, but shackle has already done this. This fixes
-  ;; that. To reproduce, add a helm rule in `shackle-rules', open two splits
-  ;; side-by-side, move to the buffer on the right and invoke helm. It will close all
-  ;; but the left-most buffer.
+  ;; Helm tries to clean up after itself, but shackle has already done this.
+  ;; This fixes that. To reproduce, add a helm rule in `shackle-rules', open two
+  ;; splits side-by-side, move to the buffer on the right and invoke helm. It
+  ;; will close all but the left-most buffer.
   (setq-default helm-reuse-last-window-split-state t
                 helm-split-window-in-side-p t))
 
@@ -178,8 +166,7 @@
   (setq helm-swoop-split-window-function (lambda (b) (doom/popup-buffer b))))
 
 (after! helm-ag
-  ;; Helm-ag needs a little coaxing for it to cooperate with shackle. Mostly to prevent
-  ;; it from switching between windows and buffers.
+  ;; This prevents helm-ag from switching between windows and buffers.
   (defadvice helm-ag--edit-abort (around helm-ag-edit-abort-popup-compat activate)
     (cl-letf (((symbol-function 'select-window) 'ignore)) ad-do-it)
     (doom/popup-close nil t t))
@@ -192,8 +179,7 @@
       ad-do-it)))
 
 (after! quickrun
-  ;; This allows us to run code several times in a row without having to close
-  ;; the popup window and move back to the code buffer.
+  ;; This allows us to rerun code from inside a quickrun buffer.
   (defun doom*quickrun-close-popup (&optional _ _ _ _)
     (let* ((buffer (get-buffer quickrun/buffer-name))
            (window (and buffer (get-buffer-window buffer))))
@@ -203,20 +189,19 @@
   (advice-add 'quickrun :before 'doom*quickrun-close-popup)
   (advice-add 'quickrun-region :before 'doom*quickrun-close-popup)
 
-  ;; Turns on `nlinum-mode', and ensures window is scrolled to EOF
+  ;; Ensures window is scrolled to BOF
   (defun doom|quickrun-after-run ()
-    (let ((window (get-buffer-window quickrun/buffer-name)))
-      (with-selected-window window
-        (goto-char (point-min)))))
+    (with-selected-window (get-buffer-window quickrun/buffer-name)
+      (goto-char (point-min))))
   (add-hook 'quickrun-after-run-hook 'doom|quickrun-after-run)
   (add-hook 'quickrun/mode-hook 'doom|hide-mode-line))
 
 (add-hook! org-load
-  ;; This ensures org-src-edit yields control of its buffer to shackle.
+  ;; Ensures org-src-edit yields control of its buffer to shackle.
   (defun org-src-switch-to-buffer (buffer context)
     (pop-to-buffer buffer))
 
-  ;; And these for org-todo, org-link and agenda
+  ;; And these for org-todo, org-link and org-agenda
   (defun org-pop-to-buffer-same-window (&optional buffer-or-name norecord label)
     "Pop to buffer specified by BUFFER-OR-NAME in the selected window."
     (display-buffer buffer-or-name))

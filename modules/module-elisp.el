@@ -19,6 +19,8 @@
               ("advice-add" "advice-remove")
               ("add-hook" "add-hook!" "remove-hook")))
 
+  (def-popup! "*ert*" :align below :size 20 :noselect t)
+
   ;; Don't affect lisp indentation (only `tab-width')
   (setq editorconfig-indentation-alist
         (delq (assq 'emacs-lisp-mode editorconfig-indentation-alist)
@@ -38,7 +40,7 @@
             "(\\(def-"
             (regexp-opt '("electric" "project-type" "company-backend"
                           "builder" "repl" "text-obj" "tmp-excmd" "rotate"
-                          "repeat" "yas-mode" "version-cmd" "docset"
+                          "repeat" "yas-mode" "version-cmd" "docset" "popup"
                           "open-with"))
             "!\\)")
           (1 font-lock-keyword-face append))
