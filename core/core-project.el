@@ -106,6 +106,10 @@
   ;; Prevents messing up the neotree buffer on window changes
   (advice-add 'doom/evil-window-move :around 'doom*save-neotree)
 
+  (defun doom*neotree-no-fringes ()
+    (set-window-fringes neo-global--window 1 0))
+  (advice-add 'neo-global--select-window :after 'doom*neotree-no-fringes)
+
   (add-hook 'neotree-mode-hook 'doom|neotree-init-keymap)
   (defun doom|neotree-init-keymap ()
     (setq line-spacing 1)
