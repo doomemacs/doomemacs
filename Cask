@@ -217,6 +217,10 @@
 (depends-on "nose")
 (depends-on "pip-requirements")
 
+;; REST -- modules/module-rest.el
+(depends-on "restclient")
+(depends-on "company-restclient")
+
 ;; Ruby -- modules/module-ruby.el
 (depends-on "company-inf-ruby")
 (depends-on "inf-ruby")
