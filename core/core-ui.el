@@ -76,6 +76,11 @@
 (when (and (> emacs-major-version 24) (featurep 'eldoc))
   (global-eldoc-mode -1))
 
+(use-package eldoc-eval
+  :config
+  (setq eldoc-in-minibuffer-show-fn 'doom/eldoc-show-in-mode-line)
+  (eldoc-in-minibuffer-mode +1))
+
 ;; Highlight TODO/FIXME/NOTE tags
 (add-hook! (prog-mode emacs-lisp-mode css-mode)
   (font-lock-add-keywords
@@ -416,6 +421,21 @@ anzu to be enabled."
      *buffer-encoding-abbrev
      (global :when active)
      *buffer-position))
+
+  ;;
+  (spaceline-define-segment *eldoc
+    (and (bound-and-true-p str) str)
+    :tight t
+    :face 'mode-line)
+
+  (spaceline-define-segment *eldoc-pad
+    "Padding, to ensure the mode-line is `powerline-height' pixels tall"
+    (pl/percent-xpm powerline-height 100 0 100 0 3 "#B3EF00" nil)
+    :tight t
+    :face 'mode-line)
+
+  (spaceline-compile
+   'eldoc '(*eldoc-pad *eldoc) '())
 
   ;; Initialize modeline
   (setq-default mode-line-format '("%e" (:eval (spaceline-ml-main)))))

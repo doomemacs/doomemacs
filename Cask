@@ -64,6 +64,7 @@
 (depends-on "avy")
 (depends-on "dumb-jump")
 (depends-on "editorconfig")
+(depends-on "eldoc-eval")
 (depends-on "emr")
 (depends-on "expand-region")
 (depends-on "fancy-narrow")
