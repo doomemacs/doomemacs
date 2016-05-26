@@ -237,7 +237,7 @@
 
   ;; Auto-close more conservatively
   (sp-pair "'" nil :unless '(sp-point-after-word-p))
-  (sp-pair "\"" nil :unless '(sp-point-before-word-p sp-point-before-same-p))
+  (sp-pair "\"" nil :unless '(sp-point-before-word-p sp-point-after-word-p sp-point-before-same-p))
   (sp-pair "{" nil :post-handlers '(("||\n[i]" "RET") ("| " " "))
                    :unless '(sp-point-before-word-p sp-point-before-same-p))
   (sp-pair "(" nil :post-handlers '(("||\n[i]" "RET") ("| " " "))
@@ -247,8 +247,7 @@
 
   (sp-local-pair
    'css-mode "/*" "*/" :post-handlers '(("[d-3]||\n[i]" "RET") ("| " "SPC")))
-  (sp-local-pair
-   '(sh-mode markdown-mode) "`" "`"
+  (sp-local-pair '(sh-mode markdown-mode) "`" nil
    :unless '(sp-point-before-word-p sp-point-before-same-p))
   (sp-with-modes '(xml-mode nxml-mode php-mode)
     (sp-local-pair "<!--" "-->"   :post-handlers '(("| " "SPC")))))
@@ -279,9 +278,9 @@
       ;;   a) eat spaces on either side of the cursor, if present ( | ) -> (|)
       ;;   b) allow backspace to delete space-indented blocks intelligently
       ;;   c) but do none of this when inside a string
-      :i "SPC"                                  'doom/inflate-space-maybe
-      :i [remap backward-delete-char-untabify]  'doom/deflate-space-maybe
-      :i [remap newline]                        'doom/newline-and-indent
+      :i "SPC"                          'doom/inflate-space-maybe
+      :i [remap delete-backward-char]   'doom/deflate-space-maybe
+      :i [remap newline]                'doom/newline-and-indent
       ;; Smarter move-to-beginning-of-line
       :i [remap move-beginning-of-line] 'doom/move-to-bol
       ;; Restore bash-esque keymaps in insert mode; C-w and C-a already exist

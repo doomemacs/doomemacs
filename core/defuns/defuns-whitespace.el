@@ -48,31 +48,41 @@ already there, move it to the true bol."
 
 ;; Mimic expandtab in vim
 ;;;###autoload
+;;;###autoload
 (defun doom/backward-delete-whitespace-to-column ()
-  "Delete back to the previous column of whitespace, or as much
-whitespace as possible, or just one char if that's not possible."
+  "Delete back to the previous column of whitespace, or as much whitespace as
+possible, or just one char if that's not possible."
   (interactive)
-  (cond ;; If in a string
-        ((sp-point-in-string)
-         (call-interactively 'backward-delete-char-untabify))
-        ;; If using tabs (or at bol), just delete normally
-        ((or indent-tabs-mode
-             (= (point-at-bol) (point)))
-         (call-interactively 'backward-delete-char))
-        ;; Delete up to the nearest tab column IF only whitespace between point
-        ;; and bol.
-        ((looking-back "^[\\t ]*" (point-at-bol))
-         (let ((movement (% (current-column) tab-width))
-               (p (point)))
-           (when (= movement 0)
-             (setq movement tab-width))
-           (save-match-data
-             (if (string-match "\\w*\\(\\s-+\\)$"
-                               (buffer-substring-no-properties (- p movement) p))
-                 (backward-delete-char (- (match-end 1) (match-beginning 1)))
-               (backward-delete-char-untabify 1)))))
-        ;; Otherwise do a regular delete
-        (t (backward-delete-char-untabify 1))))
+  (let* ((context (sp--get-pair-list-context 'navigate))
+         (open-pair (sp--get-opening-regexp context))
+         (close-pair (sp--get-closing-regexp context))
+         open-len close-len)
+    (cond ;; When in strings (sp acts weird with quotes; this is the fix)
+          ;; Also, skip closing delimiters
+          ((and (and (sp--looking-back open-pair)
+                     (setq open-len (- (match-beginning 0) (match-end 0))))
+                (and (looking-at close-pair)
+                     (setq close-len (- (match-beginning 0) (match-end 0)))))
+           (delete-backward-char open-len)
+           (delete-char close-len))
+          ;; If using tabs (or at bol), just delete normally
+          ((or indent-tabs-mode
+               (= (point-at-bol) (point)))
+           (call-interactively 'backward-delete-char-untabify))
+          ;; Delete up to the nearest tab column IF only whitespace between
+          ;; point and bol.
+          ((sp--looking-back-p "^[\\t ]*" (point-at-bol))
+           (let ((movement (% (current-column) tab-width))
+                 (p (point)))
+             (when (= movement 0)
+               (setq movement tab-width))
+             (save-match-data
+               (if (string-match "\\w*\\(\\s-+\\)$"
+                                 (buffer-substring-no-properties (- p movement) p))
+                   (delete-backward-char (- (match-end 1) (match-beginning 1)))
+                 (call-interactively 'delete-backward-char)))))
+          ;; Otherwise do a regular delete
+          (t (call-interactively 'delete-backward-char)))))
 
 ;;;###autoload
 (defun doom/dumb-indent (&optional smart)
@@ -96,7 +106,7 @@ auto-complete window is open."
 (defun doom/dumb-dedent ()
   (interactive)
   (if indent-tabs-mode
-      (delete-char -1)
+      (call-interactively 'backward-delete-char)
     (save-excursion
       (unless (looking-back "^[\s\t]*")
         (evil-first-non-blank))
@@ -124,13 +134,12 @@ spaces on either side of the point if so. Resorts to
     (if (doom/surrounded-p)
         (let ((whitespace-match (match-string 1)))
           (cond ((not whitespace-match)
-                 (call-interactively 'sp-backward-delete-char))
+                 (call-interactively 'delete-backward-char))
                 ((string-match "\n" whitespace-match)
                  (evil-delete (point-at-bol) (point))
-                 (delete-char -1)
-                 (save-excursion (delete-char 1)))
-                (t
-                 (just-one-space 0))))
+                 (call-interactively 'delete-backward-char)
+                 (save-excursion (call-interactively 'delete-char)))
+                (t (just-one-space 0))))
       (doom/backward-delete-whitespace-to-column))))
 
 ;;;###autoload
