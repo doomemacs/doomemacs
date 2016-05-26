@@ -12,6 +12,7 @@ semanticdb
 ede-projects.el
 tramp
 smex-items
+debug.el
 
 # compiled files
 *.elc
