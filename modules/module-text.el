@@ -12,6 +12,7 @@
         markdown-gfm-additional-languages '("sh"))
 
   :config
+  (def-electric! markdown-mode :chars ("+" "#"))
   (map! :map markdown-mode-map
         "<backspace>"  nil
         "<M-left>"     nil
