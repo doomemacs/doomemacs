@@ -27,7 +27,8 @@
 
 (defun doom-mode-startup ()
   (doom-mode-init)
-  (setq mode-line-format nil))
+  (with-current-buffer doom-buffer
+    (setq mode-line-format nil)))
 
 (defun doom-mode-erase-on-insert ()
   (erase-buffer)
