@@ -34,5 +34,9 @@
 
 (use-package markdown-toc :after markdown-mode)
 
+(use-package rst
+  :mode ("\\.re?st$" . rst-mode)
+  :config (def-builder! rst-mode rst-compile-pdf-preview))
+
 (provide 'module-text)
 ;;; module-text.el ends here
