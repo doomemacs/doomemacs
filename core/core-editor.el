@@ -262,9 +262,9 @@
 ;; behave more like vim (or how I like it).
 
 ;; Line-wise mouse selection on margin
-(global-set-key (kbd "<left-margin> <down-mouse-1>") 'doom/mouse-drag-line)
-(global-set-key (kbd "<left-margin> <mouse-1>")      'doom/mouse-select-line)
-(global-set-key (kbd "<left-margin> <drag-mouse-1>") 'doom/mouse-select-line)
+(map! "<left-margin> <down-mouse-1>" 'doom/mouse-drag-line
+      "<left-margin> <mouse-1>"      'doom/mouse-select-line
+      "<left-margin> <drag-mouse-1>" 'doom/mouse-select-line)
 
 ;; Restores "dumb" indentation to the tab key. This rustles a lot of peoples'
 ;; jimmies, apparently, but it's how I like it.
@@ -283,7 +283,7 @@
       :i [remap backward-delete-char-untabify]  'doom/deflate-space-maybe
       :i [remap newline]                        'doom/newline-and-indent
       ;; Smarter move-to-beginning-of-line
-      :i [remap move-beginning-of-line]         'doom/move-to-bol
+      :i [remap move-beginning-of-line] 'doom/move-to-bol
       ;; Restore bash-esque keymaps in insert mode; C-w and C-a already exist
       :i "C-e" 'doom/move-to-eol
       :i "C-u" 'doom/backward-kill-to-bol-and-indent

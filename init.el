@@ -71,7 +71,7 @@
       module-php         ; making php less painful to work with
       module-processing  ; pretty prototypes
       module-python      ; beautiful is better than ugly
-      module-rest        ; GET /a/life?please=1&top=cherry
+      module-rest        ; Emacs as a service
       module-ruby        ; 1.step do {|i| p "Ruby is #{i&1==0?'love':'life'}"}
       module-rust        ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
       module-scala       ; Java, but good

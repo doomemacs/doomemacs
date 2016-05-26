@@ -29,6 +29,7 @@
 
 (use-package php-extras
   :after php-mode
+  :init (add-hook 'php-mode-hook 'turn-on-eldoc-mode)
   :config
   (defun php-extras-company-setup ()) ;; company will set up itself
   ;; Generate php-extras documentation and completion asynchronously
@@ -43,7 +44,7 @@
 
 (use-package php-refactor-mode
   :after php-mode
-  :init (add-hook! php-mode '(turn-on-eldoc-mode php-refactor-mode))
+  :init (add-hook 'php-mode-hook 'php-refactor-mode)
   :config
   (mapc (lambda (x)
           (let ((command-name (car x))

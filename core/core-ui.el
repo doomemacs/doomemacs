@@ -159,7 +159,9 @@
     (markdown-mode prog-mode scss-mode web-mode conf-mode)
     'nlinum-mode)
   (add-hook! 'nlinum-mode-hook
-    (add-hook 'post-command-hook 'doom|nlinum-hl-line nil t))
+    (if nlinum-mode-hook
+        (add-hook 'post-command-hook 'doom|nlinum-hl-line nil t)
+      (remove-hook 'post-command-hook 'doom|nlinum-hl-line t)))
   :config
   ;; Calculate line number column width
   (add-hook! nlinum-mode

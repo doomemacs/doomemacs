@@ -1,4 +1,4 @@
-;;; module-csharp.el
+;;; module-csharp.el --- -*- no-byte-compile: t; -*-
 
 (use-package csharp-mode
   :mode "\\.cs$"

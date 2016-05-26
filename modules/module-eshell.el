@@ -1,4 +1,4 @@
-;;; module-eshell.el
+;;; module-eshell.el --- -*- no-byte-compile: t; -*-
 
 (use-package eshell
   :when IS-WINDOWS

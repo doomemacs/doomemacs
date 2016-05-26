@@ -46,7 +46,7 @@
       :m "M-8"  (λ! (doom:switch-to-tab 7))
       :m "M-9"  (λ! (doom:switch-to-tab 8))
       (:when IS-MAC
-        "<M-backspace>"  'doom/backward-kill-to-bol-and-indent
+        "<M-backspace>"     'doom/backward-kill-to-bol-and-indent
         "<A-left>"          'backward-word
         "<A-right>"         'forward-word
         "A-SPC"             'just-one-space
@@ -250,7 +250,7 @@
       ;; evil-matchit
       :m  "%"   'evilmi-jump-items
 
-      ;; hide-show
+      ;; hide-show/evil-matchit
       :m  [tab] (λ! (if (ignore-errors (hs-already-hidden-p))
                         (hs-toggle-hiding)
                       (call-interactively 'evilmi-jump-items)))
@@ -310,14 +310,14 @@
 
       ;;; Insert mode hacks
       ;; Textmate-esque newlines
-      :i  "<backspace>"   'backward-delete-char-untabify
-      :i  "<M-backspace>" 'doom/backward-kill-to-bol-and-indent
-      :i  "<C-return>"    'evil-ret-and-indent
+      :i "<backspace>"   'delete-backward-char
+      :i "<M-backspace>" 'doom/backward-kill-to-bol-and-indent
+      :i "<C-return>"    'evil-ret-and-indent
       ;; Emacsien motions for insert mode
       :i "C-b" 'backward-word
       :i "C-f" 'forward-word
       ;; escape from insert mode (more responsive than using key-chord-define)
-      :irv "C-g"  'evil-normal-state)
+      :irv "C-g" 'evil-normal-state)
 
 ;; Common unicode characters
 (map! :i "A-o" (λ! (insert "ø"))

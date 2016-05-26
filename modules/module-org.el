@@ -1,4 +1,4 @@
-;;; module-org.el
+;;; module-org.el --- -*- no-byte-compile: t; -*-
 
 (add-hook 'org-load-hook 'doom|org-init t)
 (add-hook 'org-load-hook 'doom|org-keybinds t)

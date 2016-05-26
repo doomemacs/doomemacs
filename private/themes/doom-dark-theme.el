@@ -375,7 +375,7 @@
                        (--color-name-to-rgb color2))))
 
   (custom-theme-set-variables
-   'doom-one
+   'doom-dark
    `(vc-annotate-color-map
      '((20 .  ,green)
        (40 .  ,(--color-blend yellow green (/ 1.0 3)))
@@ -390,11 +390,11 @@
        (220 . ,(--color-blend red magenta (/ 1.0 3)))
        (240 . ,(--color-blend red magenta (/ 2.0 3)))
        (260 . ,red)
-       (280 . ,(--color-blend grey-l red (/ 1.0 4)))
-       (300 . ,(--color-blend grey-l red (/ 2.0 4)))
-       (320 . ,(--color-blend grey-l red (/ 3.0 4)))
-       (340 . ,grey-l)
-       (360 . ,grey-l)))
+       (280 . ,(--color-blend grey-2 red (/ 1.0 4)))
+       (300 . ,(--color-blend grey-2 red (/ 2.0 4)))
+       (320 . ,(--color-blend grey-2 red (/ 3.0 4)))
+       (340 . ,grey-2)
+       (360 . ,grey-2)))
    `(vc-annotate-very-old-color nil)
    `(vc-annotate-background ,black)))
 

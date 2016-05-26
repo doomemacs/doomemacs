@@ -13,7 +13,6 @@
 ;;
 ;;; Autoloaded functions are in {core,modules}/defuns/defuns-*.el
 
-;; Paths
 (defalias '! 'eval-when-compile)
 
 (defconst doom-emacs-dir     (! (expand-file-name user-emacs-directory)))
@@ -28,6 +27,37 @@
              emacs-major-version emacs-minor-version))
   "Hostname and emacs-version-based elisp temp directories")
 
+
+;;
+;; Load path
+;;
+
+(defvar doom--load-path load-path
+  "Initial `load-path'; so we don't clobber it on consecutive reloads.")
+
+;; Populate the load-path manually; cask shouldn't be an internal dependency
+(setq load-path
+      (! (defsubst --subdirs (path &optional include-self)
+           (let ((result (if include-self (list path) (list))))
+             (mapc (lambda (file)
+                     (when (file-directory-p file)
+                       (push file result)))
+                   (ignore-errors (directory-files path t "^[^.]" t)))
+             result))
+         (append (list doom-private-dir)
+                 (--subdirs doom-core-dir t)
+                 (--subdirs doom-modules-dir t)
+                 (--subdirs doom-packages-dir)
+                 (--subdirs (expand-file-name "../bootstrap" doom-packages-dir))
+                 doom--load-path))
+      custom-theme-load-path
+      (! (append (list (expand-file-name "themes/" doom-private-dir))
+                 custom-theme-load-path)))
+
+;;
+;; Core configuration
+;;
+
 ;; UTF-8 please
 (set-charset-priority 'unicode)
 (setq locale-coding-system    'utf-8)   ; pretty
@@ -39,7 +69,7 @@
 
 ;; Premature optimization for faster startup
 (setq-default gc-cons-threshold 4388608
-              gc-cons-percentage 0.4
+              gc-cons-percentage 0.3
               major-mode 'text-mode)
 
 ;; stop package.el from being annoying. I rely solely on Cask.
@@ -85,41 +115,13 @@
 
 
 ;;
-;; Load path
+;; Bootstrap
 ;;
 
-(defvar doom--load-path load-path
-  "Initial `load-path'; so we don't clobber it on consecutive reloads.")
-
-;; Populate the load-path manually; cask shouldn't be an internal dependency
-(setq load-path
-      (! (defsubst --subdirs (path &optional include-self)
-           (let ((result (if include-self (list path) (list))))
-             (mapc (lambda (file)
-                     (when (file-directory-p file)
-                       (push file result)))
-                   (ignore-errors (directory-files path t "^[^.]" t)))
-             result))
-         (append (list doom-private-dir)
-                 (--subdirs doom-core-dir t)
-                 (--subdirs doom-modules-dir t)
-                 (--subdirs doom-packages-dir)
-                 (--subdirs (expand-file-name "../bootstrap" doom-packages-dir))
-                 doom--load-path))
-      custom-theme-load-path
-      (! (append (list (expand-file-name "themes/" doom-private-dir))
-                 custom-theme-load-path)))
-
-
-;;
-;; Libraries
-;;
-
+(autoload 'use-package "use-package" "" nil 'macro)
 (require 'f)
 (require 'dash)
 (require 's)
-
-(autoload 'use-package "use-package" "" nil 'macro)
 (require 'core-vars)
 (require 'core-defuns)
 (unless (require 'autoloads nil t)
