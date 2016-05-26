@@ -37,7 +37,6 @@
   :config
   (def-builder! sass-mode doom/sass-build)
   (def-company-backend! sass-mode (css yasnippet))
-  (def-docset! sass-mode ("CSS" "Sass" "Bourbon"))
   (push '("sass" "css") projectile-other-file-alist))
 
 (use-package scss-mode
@@ -45,7 +44,7 @@
   :config
   (def-builder! scss-mode doom/scss-build)
   (def-company-backend! scss-mode (css yasnippet))
-  (def-docset! scss-mode ("CSS" "Sass" "Bourbon"))
+  (def-docset! scss-mode "sass,bourbon,compass,neat,css")
   (push '("scss" "css") projectile-other-file-alist)
   (setq scss-compile-at-save nil))
 

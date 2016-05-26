@@ -42,6 +42,7 @@
       core-ui            ; draw me like one of your French editors
       core-evil          ; come to the dark side, we have cookies
       core-editor        ; filling the editor-shaped hole in the emacs OS
+      core-docs          ; getting to the documentation
       core-company       ; auto-completion, for the lazy typist
       core-yasnippet     ; snippets, for the lazier typist
       core-autoinsert    ; file templates, for the laziest typist

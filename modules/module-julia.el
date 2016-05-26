@@ -4,7 +4,7 @@
   :mode "\\.jl$"
   :interpreter "julia"
   :config
-  (def-docset! julia-mode ("Julia"))
+  (def-docset! julia-mode "julia")
   (def-repl! julia-mode doom/julia-repl))
 
 (provide 'module-julia)

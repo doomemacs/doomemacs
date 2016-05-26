@@ -46,7 +46,7 @@
 
 (use-package applescript-mode
   :mode "\\.applescript$"
-  :config (def-docset! applescript-mode ("AppleScript")))
+  :config (def-docset! applescript-mode "applescript"))
 
 (def-project-type! lb6 "lb6"
   :match "\\.lb\\(action\\|ext\\)/.+$"

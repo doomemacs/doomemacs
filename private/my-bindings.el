@@ -63,7 +63,7 @@
         :m  "M-k"           'doom/multi-previous-line
         :n  "M-r"           'doom:eval-buffer
         :v  "M-r"           'doom:eval-region
-        :ni "<M-f1>"        'doom/dash-at-pt
+        :ni "<M-f1>"        'doom:docs-lookup
         ;; Textmate-esque indent shift left/right
         :i  "M-]"           'doom/smart-indent
         :i  "M-["           'doom/dumb-dedent

@@ -74,6 +74,9 @@
 (depends-on "smart-forward")
 (depends-on "smartparens")
 
+;; Documentation --- core/core-docs.el
+(depends-on "dash-at-point")
+
 ;; Completion --- core/core-company.el
 (depends-on "company")
 (depends-on "company-dict")
@@ -111,7 +114,6 @@
 (depends-on "helm-c-yasnippet")
 (depends-on "helm-company")
 (depends-on "helm-css-scss")
-(depends-on "helm-dash")
 (depends-on "helm-describe-modes" :git "https://github.com/emacs-helm/helm-describe-modes")
 (depends-on "helm-projectile")
 (depends-on "helm-swoop")

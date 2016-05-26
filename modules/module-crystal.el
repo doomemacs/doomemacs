@@ -4,7 +4,7 @@
   :mode "\\.cr$"
   :interpreter "crystal"
   :config
-  (def-docset! crystal-mode ("crystal"))
+  (def-docset! crystal-mode "crystal")
   (after! quickrun
     (quickrun-add-command
      "crystal" '((:command . "crystal")

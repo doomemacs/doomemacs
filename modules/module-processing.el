@@ -7,7 +7,6 @@
   :init (add-hook 'processing-compilation-mode-hook 'doom|hide-mode-line)
   :config
   (def-builder! processing-mode processing-sketch-build)
-  (def-docset! processing-mode ("Processing"))
   (def-popup! "*processing-compilation*" :align below :size 10 :noselect t)
   (setq processing-location "/usr/local/bin/processing-java"
         processing-application-dir "/Applications/Processing.app"

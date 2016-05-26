@@ -8,17 +8,12 @@
   :config
   (def-builder! ruby-mode "rake %s" "Rakefile")
   (def-company-backend! ruby-mode (dabbrev-code))
-  (def-docset! ruby-mode ("Ruby_2" "Ruby_on_Rails_5"))
   (def-electric! ruby-mode :words ("else" "end" "elseif"))
   (def-repl! ruby-mode inf-ruby)
   (def-version-cmd! ruby-mode "ruby --version | cut -d' ' -f2")
   (setq ruby-deep-indent-paren t)
   ;; Don't interfere with my custom RET behavior
-  (define-key ruby-mode-map [?\n] nil)
-
-  (add-hook 'doom-env-version-hook
-    (lambda (v) (when (eq major-mode 'ruby-mode)
-             (push (if (string-prefix-p "2" v) "Ruby_2" "Ruby") helm-dash-docsets)))))
+  (define-key ruby-mode-map [?\n] nil))
 
 (use-package ruby-refactor
   :after ruby-mode

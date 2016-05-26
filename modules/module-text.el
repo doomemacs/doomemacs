@@ -12,7 +12,6 @@
         markdown-gfm-additional-languages '("sh"))
 
   :config
-  (def-docset! markdown-mode ("Markdown"))
   (map! :map markdown-mode-map
         "<backspace>"  nil
         "<M-left>"     nil

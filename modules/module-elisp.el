@@ -9,7 +9,6 @@
 (add-hook 'emacs-lisp-mode-hook 'doom/elisp-init)
 (defun doom/elisp-init ()
   (def-company-backend! emacs-lisp-mode (elisp yasnippet))
-  (def-docset! emacs-lisp-mode ("Emacs Lisp"))
   (def-repl! emacs-lisp-mode doom/elisp-inf-ielm)
   (def-rotate! emacs-lisp-mode
     :symbols (("t" "nil")

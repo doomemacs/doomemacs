@@ -3,9 +3,7 @@
 (use-package scala-mode
   :mode "\\.s\\(cala\\|bt\\)$"
   :init (add-hook 'scala-mode-hook 'turn-on-eldoc-mode)
-  :config
-  (def-company-backend! scala-mode '(ensime-company (company-yasnippet)))
-  (def-docset! scala-mode ("Scala")))
+  :config (def-company-backend! scala-mode '(ensime-company (company-yasnippet))))
 
 (use-package sbt-mode
   :after scala-mode)

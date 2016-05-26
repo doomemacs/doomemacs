@@ -1,7 +1,7 @@
 ;;; module-java.el
 
 (after! c-initialization
-  (def-docset! java-mode ("Java" "Android" "JavaFX")))
+  (def-docset! java-mode "java,javafx,grails,groovy,playjava,spring,cvj,processing,javadoc"))
 
 (defvar eclim-eclipse-dirs '("/Applications/eclipse"))
 (defvar eclim-executable     "/Applications/eclipse/eclim")

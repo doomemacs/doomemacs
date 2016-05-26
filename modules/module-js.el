@@ -7,10 +7,7 @@
   :config
   (def-repl! js2-mode nodejs-repl)
   (def-company-backend! js2-mode (tern yasnippet))
-  (def-docset! js2-mode
-    ("JavaScript" "jQuery" "jQuery_Mobile" "jQuery_UI" "AngularJS" "BackboneJS"
-     "D3JS" "EmberJS" "ExtJS" "KnockoutJS" "MarionetteJS" "MomentJS" "NodeJS"
-     "PrototypeJS" "RequireJS" "SailsJS" "UnderscoreJS" "VueJS" "ZeptoJS"))
+  (def-docset! js2-mode "js,jquery,nodejs,angularjs,express")
   (def-electric! js2-mode :chars (?\} ?\) ?.) :words ("||" "&&"))
   (setq-default
    js2-skip-preprocessor-directives t
