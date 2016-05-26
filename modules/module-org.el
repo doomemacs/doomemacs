@@ -21,6 +21,7 @@
   (evil-org-mode +1)
   (visual-line-mode +1)
   (setq line-spacing 2)
+  (org-bullets-mode +1)
 
   ;; If saveplace places the point in a folded position, unfold it on load
   (when (outline-invisible-p)
@@ -52,7 +53,7 @@
    org-indent-mode-turns-on-hiding-stars t
    org-adapt-indentation nil
    org-blank-before-new-entry '((heading . nil) (plain-list-item . auto))
-   ;; org-bullets-bullet-list '("✸" "•" "◦" "•" "◦" "•" "◦")
+   org-bullets-bullet-list '("✸" "•" "◦" "•" "◦" "•" "◦")
    org-cycle-separator-lines 1
    org-cycle-include-plain-lists t
    org-ellipsis 'hs-face
@@ -162,8 +163,9 @@
      (plantuml . t) (emacs-lisp . t) (matlab . t)
      (latex . t) (calc . t) (lisp . t) (lilypond . t)
      ;; (go . t)
-     (http . t)
-     (rust . t)))
+     ;; (http . t)
+     ;; (rust . t)
+     ))
 
   (let ((ext-regexp (regexp-opt '("GIF" "JPG" "JPEG" "SVG" "TIF" "TIFF" "BMP" "XPM"
                                   "gif" "jpg" "jpeg" "svg" "tif" "tiff" "bmp" "xpm"))))
@@ -219,7 +221,9 @@
     (sp-local-pair "\\[" "\\]" :post-handlers '(("| " "SPC")))
     (sp-local-pair "\\(" "\\)" :post-handlers '(("| " "SPC")))
     (sp-local-pair "$$" "$$"   :post-handlers '((:add " | ")) :unless '(sp-point-at-bol-p))
-    (sp-local-pair "{" nil)))
+    (sp-local-pair "{" nil))
+
+  (use-package org-bullets :commands (org-bullets-mode)))
 
 (defun doom|org-keybinds ()
   (map! (:map org-mode-map

@@ -81,6 +81,7 @@
 ;;;###autoload
 (defun doom/org-attachments ()
   "Retrieves a list of all the attachments pertinent to the currect org-mode buffer."
+  (require 'org-macs)
   (org-save-outline-visibility nil
     (let ((attachments '())
           element
