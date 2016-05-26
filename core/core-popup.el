@@ -39,7 +39,7 @@
     "If non-nil, this popup buffer won't be killed when closed.")
 
   (defvar doom-popup-inescapable-modes
-    '(compilation-mode comint-mode)
+    '(compilation-mode comint-mode "^\\*doom.*\\*$")
     "A list of modes that should not be closeable with a single ESC.")
   (defvar doom-popup-protect-modes
     '(messages-buffer-mode esup-mode help-mode tabulated-list-mode comint-mode)
@@ -52,10 +52,7 @@
   (advice-add 'shackle-display-buffer :after  'doom*run-popup-post-hooks)
   (add-hook 'doom-popup-post-hook 'doom|popup-init)     ; Keep track of popups
   (add-hook 'doom-popup-post-hook 'doom|hide-mode-line) ; No mode line in popups
-
   ;; Prevents popups from messaging with windows-moving functions
-  (defun doom*save-popups (orig-fun &rest args)
-    (doom/popup-save (apply orig-fun args)))
   (advice-add 'doom/evil-window-move :around 'doom*save-popups))
 
 
@@ -79,10 +76,6 @@
           (switch-to-buffer b))))
 
 (after! evil
-  (defun doom*evil-command-window (orig-fn &rest args)
-    (cl-flet ((switch-to-buffer ()))
-      (apply orig-fn args))
-    )
   (defun doom*evil-command-window (hist cmd-key execute-fn)
     (when (eq major-mode 'evil-command-window-mode)
       (user-error "Cannot recursively open command line window"))

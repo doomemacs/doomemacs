@@ -101,21 +101,23 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
   "Kill buffer (but only bury scratch buffer), then switch to a real buffer. Only buries
 the buffer if it is being displayed in another window."
   (interactive (list t))
-    (if (eq doom-buffer (current-buffer))
-        (progn
-          (when (= (length (get-buffer-window-list doom-buffer nil t)) 1)
-            (doom-mode-init t))
-          (when arg (message "Already in scratch buffer")))
-      (let ((new-dir (doom/project-root)))
-        (if (doom/popup-p (selected-window))
-            (doom/popup-close)
-          (if (> (length (get-buffer-window-list (current-buffer) nil t)) 1)
-              (bury-buffer)
-            (kill-this-buffer))
-          (unless (doom/real-buffer-p (current-buffer))
-            (doom/previous-real-buffer))
-          (when (get-buffer-window-list doom-buffer nil t)
-            (doom|update-scratch-buffer new-dir))))))
+  (if (eq doom-buffer (current-buffer))
+      (if (one-window-p)
+          (progn
+            (when (= (length (get-buffer-window-list doom-buffer nil t)) 1)
+              (doom-mode-init t))
+            (when arg (message "Already in scratch buffer")))
+        (doom/previous-real-buffer))
+    (let ((new-dir (doom/project-root)))
+      (if (doom/popup-p (selected-window))
+          (doom/popup-close)
+        (if (> (length (get-buffer-window-list (current-buffer) nil t)) 1)
+            (bury-buffer)
+          (kill-this-buffer))
+        (unless (doom/real-buffer-p (current-buffer))
+          (doom/previous-real-buffer))
+        (when (get-buffer-window-list doom-buffer nil t)
+          (doom|update-scratch-buffer new-dir))))))
 
 ;;;###autoload
 (defun doom/kill-unreal-buffers ()
@@ -270,14 +272,14 @@ buffers regardless of project."
     (if bang
         (org-capture-string text)
       ;; or scratch buffer by default
-      (let* ((project-dir (doom/project-root t))
-             (buffer-name doom-buffer-name))
-        (doom/popup-buffer buffer-name)
-        (with-current-buffer buffer-name
+      (with-current-buffer (doom/popup-buffer doom-buffer)
+        (doom|update-scratch-buffer nil t)
+        (unless (eq major-mode mode)
+          (funcall mode))
+        (unless doom-buffer-edited
           (erase-buffer)
-          (doom|update-scratch-buffer)
-          (if text (insert text))
-          (funcall mode))))))
+          (setq doom-buffer-edited t))
+        (if text (insert text))))))
 
 ;;;###autoload (autoload 'doom:cd "defuns-buffers" nil t)
 (evil-define-command doom:cd (dir)
