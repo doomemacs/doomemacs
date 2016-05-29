@@ -12,8 +12,9 @@
   (setq shackle-rules
         `(;; Util
           ("^\\*.+-Profiler-Report .+\\*$" :align below :size 0.3 :regexp t)
-          ("*esup*"            :align below :size 30  :noselect t)
+          ("*esup*"            :align below :size 0.4  :noselect t)
           ("*minor-modes*"     :align below :size 0.5 :noselect t)
+          ("*eval*"            :align below :size 20)
           ;; Emacs
           ("*Pp Eval Output*"  :align below :size 0.3)
           ("*Apropos*"         :align below :size 0.3)

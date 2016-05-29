@@ -22,7 +22,7 @@
   (doom-blend color "#FFFFFF" (- 1 alpha)))
 
 
-(when (display-graphic-p)
+(when window-system
   (defface doom-default '((t (:inherit default)))
     "Face for source code windows."
     :group 'doom)

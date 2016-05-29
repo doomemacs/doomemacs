@@ -205,6 +205,7 @@
   :commands (evil-numbers/inc-at-pt evil-numbers/dec-at-pt))
 
 (use-package evil-anzu
+  :defer 1
   :config
   (setq anzu-cons-mode-line-p nil
         anzu-minimum-input-length 1

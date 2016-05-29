@@ -1,34 +1,34 @@
 ;;; core-defuns.el
 
 ;; Bootstrap macro
-(defmacro doom (_ default-theme __ term-theme ___ font &rest packages)
+(defmacro doom (_ theme __ font &rest packages)
   "Bootstrap DOOM emacs and initialize PACKAGES"
-  `(let ((gc-cons-threshold 339430400)
-         (gc-cons-percentage 0.6)
-         file-name-handler-alist)
+  `(let (file-name-handler-alist)
      ;; Local settings
-     (load "~/.emacs.local.el" t t)
+     ;; (load "~/.emacs.local.el" t t)
      ;; Global constants
-     (defvar doom-default-theme  ,default-theme)
-     (defvar doom-terminal-theme ,term-theme)
+     (defvar doom-default-theme ,theme)
      (defvar doom-default-font
        (font-spec :family ,(nth 0 font)
                   :size ,(nth 1 font)
                   :antialias ,(not (nth 2 font))))
 
-     (defvar doom-current-theme (if (display-graphic-p) doom-default-theme doom-terminal-theme))
+     (defvar doom-current-theme doom-default-theme)
      (defvar doom-current-font doom-default-font)
 
      (unless noninteractive
        ,@(mapcar (lambda (pkg) `(require ',pkg))
                  packages)
-       (when (display-graphic-p)
+       (when window-system
          (require 'server)
          (unless (server-running-p)
            (server-start)))
        ;; Prevent any auto-displayed text + benchmarking
        (advice-add 'display-startup-echo-area-message :override 'ignore)
-       (message ""))))
+       (message ""))
+
+     (setq-default gc-cons-threshold 4388608
+                   gc-cons-percentage 0.4)))
 
 ;; Backwards compatible `with-eval-after-load'
 (unless (fboundp 'with-eval-after-load)
@@ -339,14 +339,20 @@ e.g. (doom-fix-unicode \"DejaVu Sans\" '(?⚠ ?★ ?λ ?➊ ?➋ ?➌ ?➍ ?➎ 
                 (font-spec :name font :size size) nil 'prepend))
         chars))
 
-(defun doom-byte-compile ()
+(defun doom-byte-compile (&optional minimal)
   "Byte compile the core and library .el files in ~/.emacs.d"
   (interactive)
   (mapc (lambda (f) (byte-compile-file (concat doom-emacs-dir "/" f)))
         '("init.el" "private/my-commands.el" "private/my-bindings.el"
-          "core/core.el" "core/core-defuns.el" "core/core-ui.el"))
-  (byte-recompile-directory doom-core-dir 0 t)
-  (byte-recompile-directory doom-modules-dir 0 t)
+          "core/core.el" "core/core-defuns.el" "core/core-ui.el"
+          "core/core-os.el" "core/core-os-osx.el" "core/core-os-win32.el"
+          "core/core-os-linux.el"))
+  (unless minimal
+    (byte-recompile-directory doom-core-dir 0 t)
+    (byte-recompile-directory doom-modules-dir 0 t))
+  (when minimal
+    (byte-recompile-directory (concat doom-core-dir "/defuns") 0 t)
+    (byte-recompile-directory (concat doom-modules-dir "/defuns") 0 t))
   (message "Compiled!"))
 
 (provide 'core-defuns)

@@ -6,6 +6,7 @@
 (fset 'yes-or-no-p 'y-or-n-p)
 
 (setq-default
+ line-spacing 1
  indicate-buffer-boundaries nil ; don't show where buffer starts/ends
  indicate-empty-lines nil       ; don't show empty lines
  fringes-outside-margins t      ; switches order of fringe and margin
@@ -42,7 +43,7 @@
 ;; Initialize UI
 (load-theme doom-current-theme t)
 (tooltip-mode -1) ; show tooltips in echo area
-(if (not (display-graphic-p))
+(if (not window-system)
     (menu-bar-mode -1)
   (scroll-bar-mode -1)  ; no scrollbar
   (tool-bar-mode   -1)  ; no toolbar
@@ -151,7 +152,7 @@
   :commands nlinum-mode
   :preface
   (setq linum-format "%3d ")
-  (defvar nlinum-format "%4d   ")
+  (defvar nlinum-format "%4d ")
   (defvar doom--hl-nlinum-overlay nil)
   (defvar doom--hl-nlinum-line nil)
   :init
@@ -260,7 +261,8 @@
   (spaceline-define-segment *anzu
     "Show the current match number and the total number of matches. Requires
 anzu to be enabled."
-    (when (evil-ex-hl-active-p 'evil-ex-search)
+    (when (and (featurep 'evil-anzu)
+               (evil-ex-hl-active-p 'evil-ex-search))
       (powerline-raw
        (let ((here anzu--current-position)
              (total anzu--total-matched))

@@ -6,7 +6,7 @@ all: install autoloads init.elc
 
 # If you run either of these with emacs open, run doom-reload afterwards
 install: autoloads _install init.elc
-update: autoloads _update init.elc
+update: autoloads _update core/core.elc init.elc
 
 autoloads:
 	@$(EMACS) --batch -l init.el --eval '(doom-reload-autoloads)' 2>&1
@@ -31,11 +31,11 @@ clean-cache:
 
 _update:
 	@cask update 2>&1
-	@rm -f init.elc
+	@rm -f init.elc core/core.elc
 
 _install:
 	@cask install 2>&1
-	@rm -f init.elc
+	@rm -f init.elc core/core.elc
 	@mkdir -p $(CACHE_DIR)/{undo,backup,workgroups}
 
 .PHONY: all

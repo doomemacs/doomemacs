@@ -54,24 +54,22 @@ already there, move it to the true bol."
 possible, or just one char if that's not possible."
   (interactive)
   (let* ((context (sp--get-pair-list-context 'navigate))
-         (open-pair (sp--get-opening-regexp context))
-         (close-pair (sp--get-closing-regexp context))
+         (open-pair-re (sp--get-opening-regexp context))
+         (close-pair-re (sp--get-closing-regexp context))
          open-len close-len)
     (cond ;; When in strings (sp acts weird with quotes; this is the fix)
           ;; Also, skip closing delimiters
-          ((and (and (sp--looking-back open-pair)
+          ((and (and (sp--looking-back open-pair-re)
                      (setq open-len (- (match-beginning 0) (match-end 0))))
-                (and (looking-at close-pair)
-                     (setq close-len (- (match-beginning 0) (match-end 0)))))
+                (and (looking-at close-pair-re)
+                     (setq close-len (- (match-beginning 0) (match-end 0))))
+                (string= (plist-get (sp-get-thing t) :op)
+                         (plist-get (sp-get-thing) :cl)))
            (delete-backward-char open-len)
            (delete-char close-len))
-          ;; If using tabs (or at bol), just delete normally
-          ((or indent-tabs-mode
-               (= (point-at-bol) (point)))
-           (call-interactively 'backward-delete-char-untabify))
           ;; Delete up to the nearest tab column IF only whitespace between
           ;; point and bol.
-          ((sp--looking-back-p "^[\\t ]*" (point-at-bol))
+          ((sp--looking-back-p "^[\\t ]*" (line-beginning-position))
            (let ((movement (% (current-column) tab-width))
                  (p (point)))
              (when (= movement 0)

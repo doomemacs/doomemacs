@@ -263,8 +263,8 @@
 
       ;; yasnippet
       (:map yas-minor-mode-map
-        :i  [(tab)]     'yas-expand
-        :v  "<backtab>" 'doom/yas-insert-snippet)
+        :i  [(tab)] 'yas-expand
+        :v  [(tab)] 'doom/yas-insert-snippet)
 
       ;; company-mode and vim-like omni-complete
       :i "C-SPC" 'doom/company-complete

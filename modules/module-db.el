@@ -12,11 +12,7 @@
         sql-user "root"
         sql-password ""))
 
-(defvar db-commands
-  '((mysql
-     (:listdb )
-     )))
-
+;; extract these
 (evil-define-command doom:db-select (product)
   (interactive "<a>")
   (sql-set-product (intern product))

@@ -20,8 +20,7 @@
   :init (add-hook 'quickrun/mode-hook 'linum-mode)
   :config
   (setq quickrun-focus-p nil)
-  (def-popup! "*quickrun*" :align below :size 10)
-  (def-popup! "*eval*"     :align below :size 20))
+  (def-popup! "*quickrun*" :align below :size 10))
 
 (use-package repl-toggle
   :commands (rtog/toggle-repl rtog/add-repl)

@@ -13,6 +13,10 @@
 ;;
 ;;; Autoloaded functions are in {core,modules}/defuns/defuns-*.el
 
+;; Premature optimization for faster startup
+(setq-default gc-cons-threshold 339430400
+              gc-cons-percentage 0.6)
+
 (defalias '! 'eval-when-compile)
 
 (defconst doom-emacs-dir     (! (expand-file-name user-emacs-directory)))
@@ -27,6 +31,9 @@
              emacs-major-version emacs-minor-version))
   "Hostname and emacs-version-based elisp temp directories")
 
+;; window-system is deprecated. Not on my watch!
+(unless (boundp 'window-system)
+  (defvar window-system (framep-on-display)))
 
 ;;
 ;; Load path
@@ -37,7 +44,7 @@
 
 ;; Populate the load-path manually; cask shouldn't be an internal dependency
 (setq load-path
-      (! (defsubst --subdirs (path &optional include-self)
+      (! (defun --subdirs (path &optional include-self)
            (let ((result (if include-self (list path) (list))))
              (mapc (lambda (file)
                      (when (file-directory-p file)
@@ -67,11 +74,6 @@
 (prefer-coding-system         'utf-8)   ; with sugar on top
 (setq default-process-coding-system '(utf-8-unix . utf-8-unix))
 
-;; Premature optimization for faster startup
-(setq-default gc-cons-threshold 4388608
-              gc-cons-percentage 0.3
-              major-mode 'text-mode)
-
 ;; stop package.el from being annoying. I rely solely on Cask.
 (setq package--init-file-ensured t
       package-enable-at-startup nil
@@ -81,10 +83,10 @@
         ("org"   . "http://orgmode.org/elpa/"))
 
       ad-redefinition-action            'accept      ; silence the advised function warnings
-      confirm-nonexistent-file-or-buffer t
       compilation-always-kill            t           ; kill compl. process before spawning another
       compilation-ask-about-save         nil         ; save all buffers before compiling
       compilation-scroll-output          t           ; scroll with output while compiling
+      confirm-nonexistent-file-or-buffer t
       delete-by-moving-to-trash          t
       echo-keystrokes                    0.02        ; show me what I type
       ediff-diff-options                 "-w"
@@ -92,6 +94,7 @@
       ediff-window-setup-function       'ediff-setup-windows-plain  ; no extra frames
       enable-recursive-minibuffers       nil         ; no minibufferception
       idle-update-delay                  5           ; update a little less often
+      major-mode                        'text-mode
       ring-bell-function                'ignore      ; silence of the bells!
       save-interprogram-paste-before-kill nil
       sentence-end-double-space          nil
@@ -120,8 +123,6 @@
 
 (autoload 'use-package "use-package" "" nil 'macro)
 (require 'f)
-(require 'dash)
-(require 's)
 (require 'core-vars)
 (require 'core-defuns)
 (unless (require 'autoloads nil t)

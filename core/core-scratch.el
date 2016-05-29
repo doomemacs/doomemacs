@@ -51,7 +51,7 @@
     (erase-buffer)
     (setq doom-buffer-edited nil)
     (insert
-     (let* ((auto-detect-frame (or auto-detect-frame (not (display-graphic-p))))
+     (let* ((auto-detect-frame (or auto-detect-frame (not window-system)))
             (width (max 3 (- (if auto-detect-frame
                                  (window-width)
                                (cdr (assq 'width default-frame-alist))) 3)))

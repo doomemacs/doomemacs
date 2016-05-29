@@ -9,8 +9,8 @@
 ;;   + TODO peer programming collab
 
 ;; Big-mode settings
-(defconst big-mode-font (font-spec :family "Hack" :size 16))
-(defconst big-mode-line-spacing 0)
+(defconst big-mode-font (font-spec :family "Inconsolata" :size 18))
+(defconst big-mode-line-spacing 1)
 (defconst big-mode-modeline-height 35)
 
 ;;
@@ -37,8 +37,15 @@
     (setq neo-window-width 28)
     (remove-hook 'neo-after-create-hook 'doom|text-scale-1)))
 
-(defun doom|text-scale-1 (&rest _) (text-scale-set -1) (setq line-spacing 0))
-(defun doom|text-scale+1 (&rest _) (text-scale-set +1))
+(defun doom|text-scale-1 (&rest _)
+  (text-scale-set -1) (setq line-spacing 0))
+
+(evil-define-command doom:big-mode (&optional size)
+  (interactive "<a>")
+  (let ((big-mode-font big-mode-font))
+    (when (and size (not big-mode))
+      (font-put big-mode-font :size (string-to-int size)))
+    (big-mode (if big-mode -1 +1))))
 
 (provide 'extra-demo)
 ;;; extra-demo.el ends here

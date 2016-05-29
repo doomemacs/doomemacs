@@ -14,7 +14,7 @@ defuns/defuns-workgroups.el.")
 automatically renamed to the project name.")
 
 (use-package workgroups2
-  :when (display-graphic-p)
+  :when window-system
   :init
   (setq-default
    wg-session-file (concat doom-temp-dir "/workgroups/last")

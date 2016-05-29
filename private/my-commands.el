@@ -80,7 +80,7 @@
 (ex! "rm"          'doom:file-delete)
 
 ;; Presentation/demo
-(ex! "big"         'big-mode)
+(ex! "big"         'doom:big-mode)
 (ex! "full[scr]"   'doom:toggle-fullscreen)
 
 ;; Sessions/tabs

@@ -2,7 +2,7 @@
 ;;
 ;; Author:  Henrik Lissner <henrik@lissner.net>
 ;; URL:     https://github.com/hlissner/.emacs.d
-;; Version: 1.1.2
+;; Version: 1.1.3
 ;;
 ;;   =================     ===============     ===============   ========  ========
 ;;   \\ . . . . . . .\\   //. . . . . . .\\   //. . . . . . .\\  \\. . .\\// . . //
@@ -29,11 +29,10 @@
 ;;; License: MIT
 
 (defconst emacs-start-time (current-time))
-(load (concat user-emacs-directory "core/core.el"))
+(load (concat user-emacs-directory "core/core"))
 
-(doom :default-theme  'doom-one
-      :terminal-theme 'doom-dark
-      :default-font ("Fira Mono" 12)
+(doom :theme (if window-system 'doom-one 'doom-dark)
+      :font ("Inconsolata" 14)
 
       ;;; The heart of DOOM
       core-popup         ; taming sudden and inevitable windows
@@ -81,8 +80,8 @@
       module-web         ; The end is always near </html>
 
       ;;; Experimental
-      ;; module-eshell    ; for inferior OSes *cough*windows
-      ;; module-org       ; for organized fearless leader
+      ;; module-eshell   ; for inferior OSes *cough*windows
+      ;; module-org      ; for organized fearless leader
 
       ;;; Extra libraries
       extra-demo         ; allow me to demonstrate...
