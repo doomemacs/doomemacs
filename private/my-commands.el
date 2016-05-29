@@ -1,5 +1,7 @@
 ;;; my-commands.el
 
+(eval-when-compile (require 'core-defuns))
+
 ;;; Rewritten commands
 (ex! "g[lobal]"    'doom:evil-ex-global)
 

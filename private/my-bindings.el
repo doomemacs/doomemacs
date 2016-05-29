@@ -1,5 +1,7 @@
 ;;; my-bindings.el
 
+(eval-when-compile (require 'core-defuns))
+
 (map! "<f9>" 'what-face
       ;; Essential
       "M-x"  'helm-M-x
