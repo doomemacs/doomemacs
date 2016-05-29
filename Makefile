@@ -11,6 +11,9 @@ update: autoloads _update core/core.elc init.elc
 autoloads:
 	@$(EMACS) --batch -l init.el --eval '(doom-reload-autoloads)' 2>&1
 
+compile: clean
+	@$(EMACS) --batch -l init.el --eval '(doom-byte-compile t)' 2>&1
+
 snippets:
 	@[ -d private/snippets ] || git clone $(REPO_URL)/emacs-snippets private/snippets
 
