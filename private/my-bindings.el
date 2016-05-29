@@ -77,25 +77,27 @@
       :m ";" 'evil-ex
       (:leader
         :nv ","   'doom/helm-buffers-dwim
-        :nv "<"   'helm-buffers-list
         :nv "."   'helm-find-files
-        :nv ">"   'helm-projectile-find-file-in-known-projects
         :nv "/"   'helm-projectile-find-file
-        :nv ";"   'helm-semantic-or-imenu
         :nv ":"   'helm-imenu-in-all-buffers
+        :nv ";"   'helm-semantic-or-imenu
+        :nv "<"   'helm-buffers-list
+        :v  "="   'align-regexp
+        :nv ">"   'helm-projectile-find-file-in-known-projects
         :nv "]"   'helm-etags-select
         :nv "a"   'helm-projectile-find-other-file
+        :n  "b"   'helm-bookmarks
+        :n  "e"   'doom/flycheck-errors
+        :n  "k"   'doom:docs-lookup
+        :nv "l"   'doom/nlinum-toggle
         :nv "m"   'helm-recentf
         :nv "M"   'helm-projectile-recentf
-        :nv "P"   'helm-projectile-switch-project
-        :v  "="   'align-regexp
         :nv "p"   'helm-show-kill-ring
+        :nv "P"   'helm-projectile-switch-project
         :n  "R"   'doom/reset-theme
-        :n  "e"   'doom/flycheck-errors
         :n  "s"   'yas-visit-snippet-file
         :n  "S"   'doom/yas-find-file
-        :n  "b"   'helm-bookmarks
-        :nv "l"   'doom/nlinum-toggle
+        ;; Quick quitting
         :nv "Q"   'evil-save-and-quit
         :nv "C-q" 'doom/kill-all-buffers-do-not-remember
         ;; Quick access to config files

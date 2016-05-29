@@ -14,7 +14,7 @@
   "If non-nil, the scratch buffer has been edited.")
 
 (def-popup! "*doom*"                   :align below :size 35 :select t)
-(def-popup! "^\\*doom.+\\*$" :regexp t :align below :size 12  :noselect t)
+(def-popup! "^\\*doom.+\\*$" :regexp t :align below :size 12 :noselect t)
 
 (define-derived-mode doom-mode text-mode "DOOM"
   "Major mode for special DOOM buffers.")
