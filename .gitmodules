@@ -1,0 +1,3 @@
+[submodule "private/themes/doom-theme"]
+	path = private/themes/doom-theme
+	url = git@github.com:hlissner/emacs-doom-theme.git

@@ -25,6 +25,7 @@
 (defconst doom-private-dir   (! (expand-file-name "private" doom-emacs-dir)))
 (defconst doom-packages-dir  (! (expand-file-name (concat ".cask/" emacs-version "/elpa") doom-emacs-dir)))
 (defconst doom-ext-dir       (! (expand-file-name "ext" doom-emacs-dir)))
+(defconst doom-themes-dir    (! (expand-file-name "themes" doom-private-dir)))
 (defconst doom-temp-dir
   (! (format "%s/cache/%s/%s.%s"
              doom-private-dir (system-name)
@@ -42,23 +43,25 @@
 (defvar doom--load-path load-path
   "Initial `load-path'; so we don't clobber it on consecutive reloads.")
 
+(defsubst --subdirs (path &optional include-self)
+  (let ((result (if include-self (list path) (list))))
+    (mapc (lambda (file)
+            (when (file-directory-p file)
+              (push file result)))
+          (ignore-errors (directory-files path t "^[^.]" t)))
+    result))
+
 ;; Populate the load-path manually; cask shouldn't be an internal dependency
 (setq load-path
-      (! (defun --subdirs (path &optional include-self)
-           (let ((result (if include-self (list path) (list))))
-             (mapc (lambda (file)
-                     (when (file-directory-p file)
-                       (push file result)))
-                   (ignore-errors (directory-files path t "^[^.]" t)))
-             result))
-         (append (list doom-private-dir)
+      (! (append (list doom-private-dir)
                  (--subdirs doom-core-dir t)
                  (--subdirs doom-modules-dir t)
                  (--subdirs doom-packages-dir)
                  (--subdirs (expand-file-name "../bootstrap" doom-packages-dir))
+                 (--subdirs doom-themes-dir t)
                  doom--load-path))
       custom-theme-load-path
-      (! (append (list (expand-file-name "themes/" doom-private-dir))
+      (! (append (--subdirs doom-themes-dir t)
                  custom-theme-load-path)))
 
 ;;

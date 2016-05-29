@@ -312,6 +312,7 @@ Examples:
                           (f-directories doom-modules-dir nil t)
                           (f-directories doom-packages-dir)
                           (f-directories (f-expand "../bootstrap" doom-packages-dir))
+                          (f-directories doom-themes-dir nil t)
                           doom--load-path))
   (message "Reloaded!"))
 
