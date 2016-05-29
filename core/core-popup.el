@@ -54,7 +54,7 @@
   (add-hook 'doom-popup-post-hook 'doom|popup-init)     ; Keep track of popups
   (add-hook 'doom-popup-post-hook 'doom|hide-mode-line) ; No mode line in popups
   ;; Prevents popups from messaging with windows-moving functions
-  (advice-add 'doom/evil-window-move :around 'doom*save-popups))
+  (advice-add 'doom/evil-window-move :around 'doom*save-popup))
 
 
 ;;
