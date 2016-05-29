@@ -1,6 +1,11 @@
 ;;; macros-evil.el
 
 ;;;###autoload
+(defsubst def-text-obj! (key inner-fn &optional outer-fn)
+  (define-key evil-inner-text-objects-map key inner-fn)
+  (define-key evil-outer-text-objects-map key (or outer-fn inner-fn)))
+
+;;;###autoload
 (defmacro def-tmp-excmd! (cmd-on cmd-off &rest commands)
   "Creates a toggle for a set of ex commands, named CMD-ON and CMD-OFF."
   (declare (indent 2))
