@@ -23,6 +23,9 @@
 (add-hook! 'kill-buffer-query-functions
   (not (string= doom-buffer-name (buffer-name))))
 
+(after! uniquify
+  (push (regexp-quote doom-buffer-name) uniquify-ignore-buffers-re))
+
 (add-hook! emacs-startup 'doom-mode-startup)
 
 (defun doom-mode-startup ()
