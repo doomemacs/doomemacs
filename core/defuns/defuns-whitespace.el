@@ -69,7 +69,7 @@ possible, or just one char if that's not possible."
            (delete-char close-len))
           ;; Delete up to the nearest tab column IF only whitespace between
           ;; point and bol.
-          ((sp--looking-back-p "^[\\t ]*" (line-beginning-position))
+          ((save-match-data (looking-back "^[\\t ]*" (line-beginning-position)))
            (let ((movement (% (current-column) tab-width))
                  (p (point)))
              (when (= movement 0)
