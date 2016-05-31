@@ -4,6 +4,14 @@ This is an Emacs configuration for stubborn vimmers and silent demon
 annihilating protagonists alike. It strives to emulate vim as best it can, and
 surpass it in any way possible.
 
+<center>
+[![Yay! Evil!](https://raw.githubusercontent.com/hlissner/.emacs.d/screenshots/cacochan.png)](http://ultravioletbat.deviantart.com/art/Yay-Evil-111710573)
+</center>
+<br />
+
+It is tailored to OSX 10.11+, Emacs 24.5.1+ and my needs as a software
+developer, designer, scientist and doom enthusiast.
+
 ![Splash page screenshot](https://raw.githubusercontent.com/hlissner/.emacs.d/screenshots/scratch.png?raw=true)
 ![Main screenshots](https://raw.githubusercontent.com/hlissner/.emacs.d/screenshots/main.png?raw=true)
 
@@ -17,10 +25,14 @@ cd ~/.emacs.d
 make          # installs plugins via cask and generates autoloads
 
 # Optional
+make compile  # compiles core and autoloaded files
 make snippets # install hlissner/emacs-snippets into private/snippets
 ```
 
-To byte compile, run `(doom-byte-compile)`
+For a more comprehensive byte compile, run `:bc!` (`:bc` will compile the
+current *.el file).
+
+
 
 ## Features
 
@@ -75,5 +87,4 @@ To get a picture of what's in here, check out:
 
     ![py/rb version in modeline](https://raw.githubusercontent.com/hlissner/.emacs.d/screenshots/version.png?raw=true)
 
----
-![Yay! Evil!](https://raw.githubusercontent.com/hlissner/.emacs.d/screenshots/cacochan.png)
+

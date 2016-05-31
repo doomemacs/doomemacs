@@ -6,7 +6,6 @@
 (fset 'yes-or-no-p 'y-or-n-p)
 
 (setq-default
- line-spacing 1
  indicate-buffer-boundaries nil ; don't show where buffer starts/ends
  indicate-empty-lines nil       ; don't show empty lines
  fringes-outside-margins t      ; switches order of fringe and margin
@@ -58,7 +57,7 @@
   (push `(right-fringe . ,doom-fringe-size) default-frame-alist)
   ;; Default frame size on startup
   (push '(width . 120) default-frame-alist)
-  (push '(height . 32) default-frame-alist)
+  (push '(height . 40) default-frame-alist)
   ;; no fringe in the minibuffer
   (add-hook! (emacs-startup minibuffer-setup)
     (set-window-fringes (minibuffer-window) 0 0 nil))

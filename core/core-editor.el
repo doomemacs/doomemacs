@@ -10,7 +10,6 @@
  delete-trailing-lines nil
  fill-column 80
  indent-tabs-mode nil
- line-spacing 0
  require-final-newline t
  tab-always-indent t
  tab-width 4

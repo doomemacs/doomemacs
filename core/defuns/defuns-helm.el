@@ -90,5 +90,13 @@ buffers."
       (set-face-attribute 'helm-source-header nil :height 0.1 :foreground "#111111")
     (set-face-attribute 'helm-source-header nil :height 1.0 :foreground doom-helm-header-fg)))
 
+(defvar doom-helm-force-project-buffers nil
+  "If non-nil, helm-buffers-list will only show project buffers.")
+
+;;;###autoload
+(defun helm*buffer-list (&rest _)
+  (append (doom/get-buffer-names doom-helm-force-project-buffers)
+          (list doom-buffer-name)))
+
 (provide 'defuns-helm)
 ;;; defuns-helm.el ends here

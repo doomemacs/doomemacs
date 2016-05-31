@@ -2,10 +2,10 @@ EMACS=emacs
 CACHE_DIR="private/cache/`hostname`/`emacs --version | grep -o '2[0-9]\.[0-9]'`"
 REPO_URL="https://github.com/hlissner"
 
-all: install autoloads init.elc
+all: install
 
 # If you run either of these with emacs open, run doom-reload afterwards
-install: autoloads _install init.elc
+install: autoloads _install core/core.elc init.elc
 update: autoloads _update core/core.elc init.elc
 
 autoloads:
@@ -27,18 +27,19 @@ clean-cache:
 	@find $(CACHE_DIR) -type f -maxdepth 1 -delete
 	@rm -f $(CACHE_DIR)/{workgroups,pcache,ltxpng,backup}/*
 
+clean-lite:
+	@rm -f init.elc core/core.elc
+
 ########################################
 
 %.elc: %.el
 	@$(EMACS) --batch -l init.el -f batch-byte-compile 2>&1 $<
 
-_update:
+_update: clean-lite
 	@cask update 2>&1
-	@rm -f init.elc core/core.elc
 
-_install:
+_install: clean-lite
 	@cask install 2>&1
-	@rm -f init.elc core/core.elc
 	@mkdir -p $(CACHE_DIR)/{undo,backup,workgroups}
 
 .PHONY: all

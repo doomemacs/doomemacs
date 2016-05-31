@@ -55,18 +55,15 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
                 (funcall (if (eq project-p 'not) '-remove '-filter)
                          (lambda (b) (projectile-project-buffer-p b it))
                          buffers)
-              buffers)
-            (list doom-buffer))))
+              buffers))))
 
 ;;;###autoload
 (defun doom/get-buffer-names (&optional project-p)
-  (mapcar (lambda (b) (buffer-name b))
-          (doom/get-buffers project-p)))
+  (mapcar #'buffer-name (doom/get-buffers project-p)))
 
 ;;;###autoload
 (defun doom/get-visible-windows (&optional buffer-list)
-  (-map #'get-buffer-window
-        (doom/get-visible-buffers (or buffer-list (doom/get-buffers)))))
+  (mapcar #'get-buffer-window (doom/get-visible-buffers (or buffer-list (doom/get-buffers)))))
 
 ;;;###autoload
 (defun doom/get-visible-buffers (&optional buffer-list)

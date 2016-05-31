@@ -13,7 +13,7 @@
        (--any? (if (window-live-p it) t (doom/popup-remove it) nil)
                doom-popup-windows)
        (if window
-           (--any? (eq window it) doom-popup-windows)
+           (memq window doom-popup-windows)
          t)))
 
 ;;;###autoload

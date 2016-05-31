@@ -52,8 +52,8 @@
               (doom|nlinum-unhl-line)
               (let ((str (nth 1 (get-text-property 0 'display (overlay-get ov 'before-string)))))
                 (put-text-property 0 (length str) 'face 'doom-nlinum-highlight str)
-                (setq doom--hl-nlinum-overlay ov
-                      doom--hl-nlinum-line line-no))))))))
+                (setq doom--hl-nlinum-line line-no
+                      doom--hl-nlinum-overlay ov))))))))
 
 (provide 'defuns-nlinum)
 ;;; defuns-nlinum.el ends here

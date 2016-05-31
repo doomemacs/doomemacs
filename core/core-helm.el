@@ -68,10 +68,7 @@
 
 (use-package helm-buffers
   :commands (helm-buffers-list helm-mini)
-  :config
-  (defvar doom-helm-force-project-buffers nil)
-  (defun helm*buffer-list (&rest _) (doom/get-buffer-names doom-helm-force-project-buffers))
-  (advice-add 'helm-buffer-list :override 'helm*buffer-list))
+  :config (advice-add 'helm-buffer-list :override 'helm*buffer-list))
 
 (use-package helm-tags
   :commands (helm-tags-get-tag-file helm-etags-select))
