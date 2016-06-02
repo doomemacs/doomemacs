@@ -1,3 +1,6 @@
+# -*- mode: snippet -*-
+# name: GPL 3.0 License
+# --
 ${1:Software Headline}
 Copyright (C) `(format-time-string "%Y")` `user-full-name`
 

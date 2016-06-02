@@ -1,3 +1,6 @@
+# -*- mode: snippet -*-
+# name: Apache 2.0 License
+# --
                                  Apache License
                            Version 2.0, January 2004
                         http://www.apache.org/licenses/
@@ -186,7 +189,7 @@
       same "printed page" as the copyright notice for easier
       identification within third-party archives.
 
-   Copyright `(format-time-string "%Y")` `user-full-name`
+   Copyright `(format-time-string "%Y")` ${1:`user-full-name`}
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.

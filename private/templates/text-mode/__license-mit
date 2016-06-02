@@ -1,3 +1,6 @@
+# -*- mode: snippet -*-
+# name: MIT License
+# --
 The MIT License (MIT)
 
 Copyright (c) `(format-time-string "%Y")` `user-full-name`.
