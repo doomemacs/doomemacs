@@ -161,6 +161,13 @@ Examples:
            :lighter ,(concat " " lighter)
            :keymap (make-sparse-keymap))
 
+         (after! yasnippet
+           (add-hook ',mode-hook-sym
+                     (lambda ()
+                       (if ,mode
+                           (yas-activate-extra-mode ',mode)
+                         (yas-deactivate-extra-mode ',mode)))))
+
          ,(when bind `(map! :map ,mode-map ,bind))
 
          (associate! ,mode
@@ -171,13 +178,6 @@ Examples:
            :when ,pred)
 
          (defun ,mode-init-sym ()
-           (after! yasnippet
-             (when (boundp 'yas--extra-modes)
-               (add-hook ',(intern (concat mode-name "-hook"))
-                         (lambda ()
-                           (if (symbol-value ',mode)
-                               (yas-activate-extra-mode ',mode)
-                             (yas-deactivate-extra-mode ',mode))))))
            (after! company-dict
              (push ',mode company-dict-minor-mode-list))
            ,(when build
