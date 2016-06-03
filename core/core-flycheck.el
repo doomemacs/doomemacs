@@ -9,6 +9,8 @@
         flycheck-disabled-checkers '(emacs-lisp emacs-lisp-checkdoc make))
 
   :config
+  ;; Display warning symbol unicode better
+  (doom-fix-unicode "DejaVu Sans Mono" '(?⚠) 18)
   (def-popup! " ?\\*Flycheck.+\\*" :align below :size 14 :noselect t :regexp t)
 
   (unless (> emacs-major-version 24)

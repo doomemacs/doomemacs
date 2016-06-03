@@ -66,7 +66,8 @@
   (set-fringe-bitmap-face 'tilde 'fringe)
   (setcdr (assq 'empty-line fringe-indicator-alist) 'tilde)
   ;; Fix certain unicode characters without upsetting line-height
-  (doom-fix-unicode "DejaVu Sans" '(?⚠ ?★ ?λ ?➊ ?➋ ?➌ ?➍ ?➎ ?❻ ?➐ ?➑ ?➒ ?➓)))
+  (doom-fix-unicode "DejaVu Sans Mono" '(?★) 13)
+  (doom-fix-unicode "Hack" '(?λ) 13))
 
 ;; Hide mode-line in help/compile window
 (add-hook 'help-mode-hook 'doom|hide-mode-line)

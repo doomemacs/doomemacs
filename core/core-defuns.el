@@ -332,8 +332,8 @@ Examples:
 
 e.g. (doom-fix-unicode \"DejaVu Sans\" '(?⚠ ?★ ?λ ?➊ ?➋ ?➌ ?➍ ?➎ ?❻ ?➐ ?➑ ?➒ ?➓))"
   (mapc (lambda (x) (set-fontset-font
-                "fontset-default" `(,x . ,x)
-                (font-spec :name font :size size) nil 'prepend))
+                t (cons x x)
+                (font-spec :name font :size size)))
         chars))
 
 (defun doom-byte-compile (&optional minimal)

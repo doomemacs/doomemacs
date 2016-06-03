@@ -151,6 +151,8 @@
      ;;  "** %i%?\n")
      ))
 
+  ;; Display certain unicode characters properly
+  (doom-fix-unicode "DejaVu Sans" '(?⟳) 13)
   (doom-fix-unicode "DejaVu Sans" '(?♭ ?♯))
   (doom-fix-unicode "Hack" '(?× ?∙ ?÷ ?⌉ ?⌈ ?⌊ ?⌋
                              ?∩ ?∪ ?⊆ ?⊂ ?⊄ ?⊇ ?⊃ ?⊅
