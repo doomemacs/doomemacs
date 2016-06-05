@@ -15,8 +15,7 @@
              quickrun-with-arg
              quickrun-shell
              quickrun-compile-only
-             quickrun-replace-region
-             helm-quickrun)
+             quickrun-replace-region)
   :init (add-hook 'quickrun/mode-hook 'linum-mode)
   :config
   (setq quickrun-focus-p nil)

@@ -25,6 +25,10 @@
   :mode "\\.less$"
   :config (push '("less" "css") projectile-other-file-alist))
 
+(use-package counsel-css
+  :commands (counsel-css counsel-css-imenu-setup)
+  :init (add-hook 'css-mode-hook 'counsel-css-imenu-setup))
+
 
 ;;
 ;; Sass
@@ -50,10 +54,7 @@
 
 (map! :map (css-mode-map sass-mode-map scss-mode-map)
       :n "M-R" 'doom/web-refresh-browser
-      (:localleader :nv ";" 'doom/append-semicolon)
-      (:leader
-        :n ";" 'helm-css-scss
-        :n ":" 'helm-css-scss-multi))
+      (:localleader :nv ";" 'doom/append-semicolon))
 
 (provide 'module-css)
 ;;; module-css.el ends here

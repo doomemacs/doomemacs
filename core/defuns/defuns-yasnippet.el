@@ -92,9 +92,12 @@ normal mode if there are no fields."
 ;;;###autoload
 (defun doom/yas-find-file ()
   "Browse through snippets folder"
-  ;; FIXME
   (interactive)
-  (doom/ido-find-file (car doom-snippet-dirs)))
+  (projectile-find-file-in-directory (car yas-snippet-dirs)))
+
+;;;###autoload
+(defun doom/yas-ivy-prompt (prompt choices &optional display-fn)
+  (yas-completing-prompt prompt choices display-fn #'ivy-completing-read))
 
 (provide 'defuns-yasnippet)
 ;;; nlinum-defuns.el ends here

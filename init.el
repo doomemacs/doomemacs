@@ -48,7 +48,7 @@
       core-flycheck      ; get tazed for every semicolon you forget
       core-project       ; for project navigation aficionados
       core-vcs           ; remember remember, that commit in November
-      core-helm          ; a search engine for life and love
+      core-ivy           ; a search engine for life and love
       core-workgroups    ; cure Emacs alzheimers + tab emulation
       core-eval          ; run code, run; debug too
 

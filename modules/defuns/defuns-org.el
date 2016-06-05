@@ -3,20 +3,20 @@
 ;;;###autoload
 (defun doom/org-find-file-in-notes ()
   (interactive)
-  (in! (f-slash org-directory)
-    (helm-projectile-find-file)))
+  (let ((default-directory (f-slash org-directory)))
+    (projectile-find-file)))
 
 ;;;###autoload
 (defun doom/org-find-file ()
   (interactive)
-  (in! (f-slash org-directory)
-    (helm-find-files nil)))
+  (let ((default-directory (f-slash org-directory)))
+    (counsel-find-file)))
 
 ;;;###autoload
 (defun doom/org-find-exported-file ()
   (interactive)
-  (in! (f-slash doom-org-export-directory)
-    (helm-find-files nil)))
+  (let ((default-directory (f-slash doom-org-export-directory)))
+    (counsel-find-file)))
 
 ;;;###autoload
 (defun doom/org-get-property (name)

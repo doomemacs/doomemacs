@@ -159,6 +159,13 @@
   :commands (describe-buffer describe-command describe-file
              describe-keymap describe-option describe-option-of-type))
 
+(use-package smex
+  :commands (smex smex-major-mode-commands)
+  :config
+  (setq smex-completion-method 'ivy
+        smex-save-file (concat doom-temp-dir "/smex-items"))
+  (smex-initialize))
+
 
 ;;
 ;; Automatic minor modes

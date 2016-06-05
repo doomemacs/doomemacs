@@ -8,7 +8,7 @@
 ;;; Custom commands
 ;; Emacs utilities
 (ex! "echo"        'doom:echo)
-(ex! "minor"       'helm-describe-modes) ; list minor modes
+(ex! "minor"       'describe-minor-mode) ; list minor modes
 (ex! "bc[omp]"     'doom:byte-compile)
 (ex! "re[load]"    'doom-reload)
 (ex! "re[load]au"  'doom-reload-autoloads)
@@ -26,7 +26,7 @@
 (ex! "htmle[nt]"   'doom/html-entities)          ; encode/decode html entities
 (ex! "ie[dit]"     'evil-multiedit-ex-match)
 (ex! "na[rrow]"    'doom:narrow)
-(ex! "rec[ent]"    'doom:helm-recentf)           ; show recent files
+(ex! "mru"         'doom:ivy-recentf)            ; show recent files
 (ex! "ref[actor]"  'emr-show-refactor-menu)
 (ex! "reo[rient]"  'doom/window-reorient)        ; scroll all windows to left
 (ex! "retab"       'doom:whitespace-retab)
@@ -65,11 +65,11 @@
 (ex! "m[sg]"       'doom/popup-messages)         ; open *messages* in popup
 
 ;; Project navigation
-(ex! "a"           'helm-projectile-find-other-file)
-(ex! "ag"          'doom:helm-ag-search)
-(ex! "ag[cw]d"     'doom:helm-ag-search-cwd)
+(ex! "a"           'projectile-find-other-file)
+(ex! "ag"          'doom:ivy-ag-search)
+(ex! "ag[cw]d"     'doom:ivy-ag-search-cwd)
 (ex! "cd"          'doom:cd)
-(ex! "se[arch]"    'doom:helm-swoop)             ; in-file search
+(ex! "sw[iper]"    'doom:ivy-swiper)             ; in-file search
 
 ;; Project tools
 (ex! "build"       'doom:build)

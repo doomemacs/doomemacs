@@ -4,8 +4,10 @@
 
 (map! "<f9>" 'what-face
       ;; Essential
-      "M-x"  'helm-M-x
-      "A-x"  'helm-M-x
+      "M-x"  'smex
+      "A-x"  'smex
+      "M-X"  'smex-major-mode-commands
+      "A-X"  'smex-major-mode-commands
       "M-;"  'eval-expression
       "A-;"  'eval-expression
       ;; Tools
@@ -54,7 +56,7 @@
         "A-SPC"             'just-one-space
         "M-a"               'mark-whole-buffer
         "M-c"               'evil-yank
-        "M-o"               'helm-find-files
+        "M-o"               'counsel-find-file
         "M-q"               'evil-quit-all
         "M-s"               'save-buffer
         "M-v"               'clipboard-yank
@@ -76,24 +78,23 @@
       ;;; <leader> and <localleader>
       :m ";" 'evil-ex
       (:leader
-        :nv ","   'doom/helm-buffers-dwim
-        :nv "."   'helm-find-files
-        :nv "/"   'helm-projectile-find-file
-        :nv ":"   'helm-imenu-in-all-buffers
-        :nv ";"   'helm-semantic-or-imenu
-        :nv "<"   'helm-buffers-list
+        :nv ","   'doom/switch-to-project-buffer
+        :nv "<"   'doom/switch-to-buffer
+        :nv "."   'counsel-find-file
+        :nv ">"   'projectile-find-file-in-known-projects
+        :nv "/"   'counsel-projectile-find-file
+        :n  ":"   'imenu-list-minor-mode
+        :nv ";"   'counsel-imenu
         :v  "="   'align-regexp
-        :nv ">"   'helm-projectile-find-file-in-known-projects
-        :nv "]"   'helm-etags-select
-        :nv "a"   'helm-projectile-find-other-file
-        :n  "b"   'helm-bookmarks
+        :nv "a"   'projectile-find-other-file
+        :n  "b"   'counsel-bookmark
         :n  "e"   'doom/flycheck-errors
         :n  "k"   'doom:docs-lookup
         :nv "l"   'doom/nlinum-toggle
-        :nv "m"   'helm-recentf
-        :nv "M"   'helm-projectile-recentf
-        :nv "p"   'helm-show-kill-ring
-        :nv "P"   'helm-projectile-switch-project
+        :nv "m"   'ivy-recentf
+        :nv "M"   'projectile-recentf
+        :nv "p"   'counsel-yank-pop
+        :nv "P"   'counsel-projectile
         :n  "R"   'doom/reset-theme
         :n  "s"   'yas-visit-snippet-file
         :n  "S"   'doom/yas-find-file
@@ -101,8 +102,8 @@
         :nv "Q"   'evil-save-and-quit
         :nv "C-q" 'doom/kill-all-buffers-do-not-remember
         ;; Quick access to config files
-        :nv "E"   'doom/helm-find-in-emacsd
-        :nv "\\"  'doom/helm-find-in-dotfiles
+        :nv "E"   'doom/find-file-in-emacsd
+        :nv "\\"  'doom/find-file-in-dotfiles
         ;; Alternative to C-h (used as window shortcut)
         :n  "h"   'help-command
         (:prefix "d" ; <diff>
@@ -139,7 +140,6 @@
 
       (:localleader
         :n "\\" 'doom/neotree
-        :n "]"  'imenu-list-minor-mode
         :n "b"  'doom:build
         :n "R"  'doom:repl
         :v "R"  'doom:repl-eval
@@ -175,8 +175,7 @@
       ;; Increment/decrement number under cursor
       :n  "g=" 'evil-numbers/inc-at-pt
       :n  "g-" 'evil-numbers/dec-at-pt
-      ;; NOTE: Helm is too bulky for ffap (which I use for quick file navigation)
-      :n  "gf" (λ! (helm-mode -1) (call-interactively 'find-file-at-point) (helm-mode 1))
+      :n  "gf" 'find-file-at-point
       ;; Navigation
       :nv "K"  'smart-up
       :m  "gD" 'doom/find-def
@@ -298,7 +297,7 @@
           [tab]        'doom/company-complete-common-or-complete-full
           "<backtab>"  'company-select-previous
           [escape]     (λ! (company-abort) (evil-normal-state 1))
-          "<C-return>" 'helm-company)
+          [C-return]   'counsel-company)
         (:map company-search-map
           "C-n"        'company-search-repeat-forward
           "C-p"        'company-search-repeat-backward

@@ -21,6 +21,7 @@
 (depends-on "persistent-soft")
 (depends-on "s")
 (depends-on "use-package")
+(depends-on "smex" :git "https://github.com/syl20bnr/smex")
 
 ;; OSX --- core/core-os-osx.el
 (depends-on "applescript-mode")
@@ -74,6 +75,7 @@
 (depends-on "rotate-text" :git "https://github.com/debug-ito/rotate-text.el")
 (depends-on "smart-forward")
 (depends-on "smartparens")
+(depends-on "swiper")
 
 ;; Documentation --- core/core-docs.el
 (depends-on "dash-at-point")
@@ -95,10 +97,14 @@
 (depends-on "flyspell")
 
 ;; Project --- core/core-project.el
+(depends-on "counsel")
+(depends-on "counsel-projectile")
 (depends-on "flx-ido")
 ;;(depends-on "ido-ubiquitous")
 (depends-on "ido-vertical-mode")
+(depends-on "ivy")
 (depends-on "neotree")
+(depends-on "projectile")
 
 ;; VCS --- core/core-vcs.el
 (depends-on "browse-at-remote")
@@ -110,15 +116,14 @@
 (depends-on "magit")
 
 ;; Helm -- core/core-helm.el
-(depends-on "helm")
-(depends-on "helm-ag")
-(depends-on "helm-c-yasnippet")
-(depends-on "helm-company")
-(depends-on "helm-css-scss")
-(depends-on "helm-describe-modes" :git "https://github.com/emacs-helm/helm-describe-modes")
-(depends-on "helm-projectile")
-(depends-on "helm-swoop")
-(depends-on "projectile")
+;;(depends-on "helm")
+;;(depends-on "helm-ag")
+;;(depends-on "helm-c-yasnippet")
+;;(depends-on "helm-company")
+;;(depends-on "helm-css-scss")
+;;(depends-on "helm-describe-modes" :git "https://github.com/emacs-helm/helm-describe-modes")
+;;(depends-on "helm-projectile")
+;;(depends-on "helm-swoop")
 
 ;; Code evaluation/REPLs/debug -- core/core-eval.el
 (depends-on "quickrun")
@@ -156,6 +161,7 @@
 (depends-on "sass-mode")
 (depends-on "scss-mode")
 (depends-on "stylus-mode")
+(depends-on "counsel-css" :git "https://github.com/hlissner/emacs-counsel-css")
 
 ;; Data -- modules/module-data.el
 (depends-on "company-ansible")

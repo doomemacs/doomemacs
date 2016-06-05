@@ -253,6 +253,8 @@
   (sp-with-modes '(xml-mode nxml-mode php-mode)
     (sp-local-pair "<!--" "-->"   :post-handlers '(("| " "SPC")))))
 
+(use-package swiper :commands (swiper swiper-all))
+
 
 ;;
 ;; Keybinding fixes
