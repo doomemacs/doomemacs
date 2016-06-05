@@ -319,7 +319,7 @@ Examples:
             (message "Scanned: %s" dir))
           (list doom-core-dir doom-modules-dir))
     (when (called-interactively-p 'interactive)
-      (require 'autoloads))
+      (load "autoloads"))
     (message "Done!")))
 
 (defun doom-fix-unicode (font chars &optional size)
