@@ -61,6 +61,7 @@
 
 ;; Editor --- core/core-editor.el
 (depends-on "ace-window")
+(depends-on "ace-link")
 (depends-on "avy")
 (depends-on "dumb-jump")
 (depends-on "editorconfig")

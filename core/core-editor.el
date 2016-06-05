@@ -139,6 +139,8 @@
                 aw-scope 'frame
                 aw-background t))
 
+(use-package ace-link :commands (ace-link-help ace-link-org))
+
 (use-package avy
   :commands (avy-goto-char-2 avy-goto-line)
   :config (setq avy-all-windows nil

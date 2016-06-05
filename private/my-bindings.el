@@ -309,8 +309,9 @@
         (:map help-map
           "e" 'doom/popup-messages)
         (:map help-mode-map
-          :n "]]" 'help-go-forward
-          :n "[[" 'help-go-back))
+          :n "]]"  'help-go-forward
+          :n "[["  'help-go-back
+          :n "o"   'ace-link-help))
 
       ;;; Insert mode hacks
       ;; Textmate-esque newlines
