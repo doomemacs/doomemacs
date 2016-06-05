@@ -54,10 +54,10 @@
   (doom-popup-magit-hacks)
   (def-popup! (:custom (lambda (b &rest _) (derived-mode-p 'magit-mode)))
     :align below :size 0.5)
-  (add-hook 'magit-mode-hook 'turn-off-evil-snipe-override-mode))
-(use-package evil-magit
-  :after magit
-  :config (evil-set-initial-state 'magit-popup-mode 'normal))
+  (add-hook 'magit-mode-hook 'turn-off-evil-snipe-override-mode)
+
+  (require 'evil-magit)
+  (evil-set-initial-state 'magit-popup-mode 'normal))
 
 (after! vc-annotate
   (evil-set-initial-state 'vc-annotate-mode     'normal)
