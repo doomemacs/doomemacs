@@ -6,6 +6,7 @@
   (setq flycheck-indication-mode 'right-fringe
         ;; Removed checks on idle/change for snappiness
         flycheck-check-syntax-automatically '(save mode-enabled)
+        flycheck-highlighting-mode 'symbols
         flycheck-disabled-checkers '(emacs-lisp emacs-lisp-checkdoc make))
 
   :config

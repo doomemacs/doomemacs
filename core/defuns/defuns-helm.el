@@ -2,8 +2,7 @@
 
 ;;;###autoload (autoload 'doom:helm-recentf "defuns-helm" nil t)
 (evil-define-command doom:helm-recentf (&optional bang)
-  "Ex-mode interface for `helm-recentf' and `helm-projectile-recentf'. If
- `bang', then `search' is interpreted as regexp."
+  "Ex-mode interface for `helm-recentf' and `helm-projectile-recentf'."
   :repeat nil
   (interactive "<!>")
   (if bang (helm-recentf) (helm-projectile-recentf)))
@@ -57,12 +56,14 @@ DIR specifies the default-directory from which ag is run."
 ;;;###autoload
 (defun doom/helm-find-in-emacsd ()
   (interactive)
-  (in! doom-emacs-dir (helm-projectile-find-file)))
+  (let ((default-directory doom-emacs-dir))
+    (helm-projectile-find-file)))
 
 ;;;###autoload
 (defun doom/helm-find-in-dotfiles ()
   (interactive)
-  (in! (expand-file-name ".dotfiles" "~") (helm-projectile-find-file)))
+  (let ((default-directory (expand-file-name ".dotfiles" "~")))
+    (helm-projectile-find-file)))
 
 ;;;###autoload
 (defun doom/helm-buffers-dwim (&optional all-p)

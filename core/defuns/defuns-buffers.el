@@ -114,7 +114,8 @@ the buffer if it is being displayed in another window."
         (unless (doom/real-buffer-p (current-buffer))
           (doom/previous-real-buffer))
         (when (get-buffer-window-list doom-buffer nil t)
-          (doom|update-scratch-buffer new-dir))))))
+          (doom|update-scratch-buffer new-dir)))))
+    t)
 
 ;;;###autoload
 (defun doom/kill-unreal-buffers ()

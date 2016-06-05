@@ -49,8 +49,7 @@
 
 (use-package auto-yasnippet
   :commands (aya-create aya-expand aya-open-line aya-persist-snippet)
-  :config
-  (setq aya-persist-snippets-dir (concat doom-private-dir "auto-snippets/")))
+  :config (setq aya-persist-snippets-dir (concat doom-private-dir "auto-snippets/")))
 
 (provide 'core-yasnippet)
 ;;; core-yasnippet.el ends here

@@ -10,8 +10,8 @@
 defuns/defuns-workgroups.el.")
 
 (defvar doom-wg-names '()
-  "A list of fixed names for workgroups. If a name is set, workgroup names aren't
-automatically renamed to the project name.")
+  "A list of fixed names for workgroups. If a name is set, workgroup names
+aren't automatically renamed to the project name.")
 
 (use-package workgroups2
   :when window-system
