@@ -1,5 +1,7 @@
 ;;; module-text.el
 
+(associate! text-mode :match "/LICENSE$")
+
 (use-package markdown-mode
   :mode ("\\.m\\(d\\|arkdown\\)$" "/README$"
          ("/README\\.md$" . gfm-mode))
