@@ -134,5 +134,39 @@
 (use-package helm-elisp :commands helm-apropos)
 (use-package helm-command :commands helm-M-x)
 
+
+;; Popup hacks
+(after! helm
+  ;; This is a good alternative to either popwin or shackle, specifically for
+  ;; helm. If either fail me (for the last time), this is where I'll turn.
+  ;;(add-to-list 'display-buffer-alist
+  ;;             `(,(rx bos "*helm" (* not-newline) "*" eos)
+  ;;               (display-buffer-in-side-window)
+  ;;               (inhibit-same-window . t)
+  ;;               (window-height . 0.4)))
+
+  ;; Helm tries to clean up after itself, but shackle has already done this.
+  ;; This fixes that. To reproduce, add a helm rule in `shackle-rules', open two
+  ;; splits side-by-side, move to the buffer on the right and invoke helm. It
+  ;; will close all but the left-most buffer.
+  (setq-default helm-reuse-last-window-split-state t
+                helm-split-window-in-side-p t))
+
+(after! helm-swoop
+  (setq helm-swoop-split-window-function (lambda (b) (doom/popup-buffer b))))
+
+(after! helm-ag
+  ;; This prevents helm-ag from switching between windows and buffers.
+  (defadvice helm-ag--edit-abort (around helm-ag-edit-abort-popup-compat activate)
+    (cl-letf (((symbol-function 'select-window) 'ignore)) ad-do-it)
+    (doom/popup-close nil t t))
+  (defadvice helm-ag--edit-commit (around helm-ag-edit-commit-popup-compat activate)
+    (cl-letf (((symbol-function 'select-window) 'ignore)) ad-do-it)
+    (doom/popup-close nil t t))
+  (defadvice helm-ag--edit (around helm-ag-edit-popup-compat activate)
+    (cl-letf (((symbol-function 'other-window) 'ignore)
+              ((symbol-function 'switch-to-buffer) 'doom/popup-buffer))
+      ad-do-it)))
+
 (provide 'core-helm)
 ;;; core-helm.el ends here
