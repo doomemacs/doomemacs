@@ -12,7 +12,7 @@
   (setq shackle-rules
         `(;; Util
           ("^\\*.+-Profiler-Report .+\\*$" :align below :size 0.3 :regexp t)
-          ("*esup*"            :align below :size 0.4  :noselect t)
+          ("*esup*"            :align below :size 0.4 :noselect t)
           ("*minor-modes*"     :align below :size 0.5 :noselect t)
           ("*eval*"            :align below :size 20)
           ;; Emacs
@@ -77,6 +77,8 @@
           (switch-to-buffer b))))
 
 (after! evil
+  ;; The evil command window has a mind of its own (uses `switch-to-buffer'). We
+  ;; monkey patch it to use pop-to-buffer.
   (defun doom*evil-command-window (hist cmd-key execute-fn)
     (when (eq major-mode 'evil-command-window-mode)
       (user-error "Cannot recursively open command line window"))
@@ -96,10 +98,10 @@
   (advice-add 'evil-command-window :override 'doom*evil-command-window))
 
 (after! help-mode
-  ;; So that file links in help buffers don't replace the help buffer, we need
-  ;; to redefine these three button types to use `doom/popup-save' and
-  ;; `switch-to-buffer' rather than `pop-to-buffer'. This way, it is sure to
-  ;; open links in the source buffer.
+  ;; Following links in help buffers sometimes uses itself or other-window. We
+  ;; want it only to replace the buffer we opened the popup from. To do this we
+  ;; must redefine these three button types to use `doom/popup-save' and
+  ;; `switch-to-buffer' rather than `pop-to-buffer'.
   (define-button-type 'help-function-def
     :supertype 'help-xref
     'help-function (lambda (fun file)

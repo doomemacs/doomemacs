@@ -58,11 +58,6 @@ during compilation."
        'with-no-warnings)
     (with-eval-after-load ',feature ,@forms)))
 
-(defmacro in! (dir &rest forms)
-  (declare (indent defun))
-  `(let ((default-directory ,dir))
-     ,@forms))
-
 (defmacro noop! (name &optional args)
   `(defun ,name ,args (interactive) (error "%s not implemented!" name)))
 

@@ -227,19 +227,14 @@
   :commands (evil-multiedit-match-all
              evil-multiedit-match-and-next
              evil-multiedit-match-and-prev
+             evil-multiedit-match-symbol-and-next
+             evil-multiedit-match-symbol-and-prev
              evil-multiedit-toggle-or-restrict-region
              evil-multiedit-next
              evil-multiedit-prev
              evil-multiedit-abort
              evil-multiedit-ex-match)
-  :config
-  (map! :map evil-multiedit-state-map
-        "RET" 'evil-multiedit-toggle-or-restrict-region
-        "C-n" 'evil-multiedit-next
-        "C-p" 'evil-multiedit-prev
-        :map evil-multiedit-insert-state-map
-        "C-n" 'evil-multiedit-next
-        "C-p" 'evil-multiedit-prev))
+  :config (evil-multiedit-default-keybinds))
 
 (use-package evil-indent-plus
   :commands (evil-indent-plus-i-indent
