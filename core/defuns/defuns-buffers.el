@@ -229,7 +229,7 @@ temporary, scratch or special buffer."
 (evil-define-command doom:kill-all-buffers (&optional bang)
   "Kill all project buffers. If BANG, kill *all* buffers (in workgroup)."
   (interactive "<!>")
-  (doom--kill-buffers (--filter (eq it doom-buffer) (doom/get-buffers (not bang))))
+  (doom--kill-buffers (--filter (not (eq it doom-buffer)) (doom/get-buffers (not bang))))
   (mapc (lambda (w) (when (eq (window-buffer w) doom-buffer)
                  (delete-window w)))
         (doom/get-visible-windows)))
