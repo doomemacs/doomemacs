@@ -1,11 +1,8 @@
 ;;; core-helm.el
 
 (use-package helm
-  :defer 1
-  :commands (helm helm-other-buffer helm-mode)
+  :commands (helm helm-other-buffer)
   :init
-  (defvar helm-global-prompt "››› ")
-  (defvar helm-projectile-find-file-map (make-sparse-keymap))
   (setq helm-quick-update t
         ;; Speedier without fuzzy matching
         helm-mode-fuzzy-match nil
@@ -25,7 +22,8 @@
         helm-move-to-line-cycle-in-source t)
 
   :config
-  (set-keymap-parent helm-projectile-find-file-map helm-map)
+  (defvar helm-global-prompt "››› ")
+
   (map! :map helm-map
         "C-S-n"      'helm-next-source
         "C-S-p"      'helm-previous-source
@@ -81,7 +79,10 @@
   :commands (helm-projectile-find-other-file
              helm-projectile-switch-project
              helm-projectile-find-file
-             helm-projectile-find-dir))
+             helm-projectile-find-dir)
+  :init
+  (defvar helm-projectile-find-file-map (make-sparse-keymap))
+  (set-keymap-parent helm-projectile-find-file-map helm-map))
 
 (use-package helm-files
   :commands (helm-browse-project helm-find helm-find-files helm-for-files helm-multi-files helm-recentf)
