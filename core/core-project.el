@@ -106,26 +106,26 @@
     (set-window-fringes neo-global--window 1 0))
   (advice-add 'neo-global--select-window :after 'doom*neotree-no-fringes)
 
-  (add-hook 'neotree-mode-hook 'hl-line-mode)
-  (add-hook 'neotree-mode-hook 'doom|neotree-init-keymap)
-  (defun doom|neotree-init-keymap ()
-    (map! :map evil-motion-state-local-map
-          "ESC ESC" 'neotree-hide
-          "q"   'neotree-hide
-          "RET" 'neotree-enter
-          "J"   'neotree-select-next-sibling-node
-          "K"   'neotree-select-previous-sibling-node
-          "H"   'neotree-select-up-node
-          "L"   'neotree-select-down-node
-          "v"   'neotree-enter-vertical-split
-          "s"   'neotree-enter-horizontal-split
-          "c"   'neotree-create-node
-          "d"   'neotree-delete-node
-          "g"   'neotree-refresh
-          "r"   'neotree-rename-node
-          "R"   'neotree-change-root)))
+  (add-hook! neotree-mode
+    (set (make-local-variable 'hl-line-sticky-flag) t)
+    (hl-line-mode +1))
+  (map! :map neotree-mode-map
+        :m "\\\\" 'evil-window-prev
+        "ESC ESC" 'neotree-hide
+        "q"   'neotree-hide
+        "RET" 'neotree-enter
+        "J"   'neotree-select-next-sibling-node
+        "K"   'neotree-select-previous-sibling-node
+        "H"   'neotree-select-up-node
+        "L"   'neotree-select-down-node
+        "v"   'neotree-enter-vertical-split
+        "s"   'neotree-enter-horizontal-split
+        "c"   'neotree-create-node
+        "d"   'neotree-delete-node
+        "g"   'neotree-refresh
+        "r"   'neotree-rename-node
+        "R"   'neotree-change-root))
 
-;;
 (use-package projectile
   :config
   (setq projectile-require-project-root nil
