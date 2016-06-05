@@ -335,7 +335,7 @@ e.g. (doom-fix-unicode \"DejaVu Sans\" '(?⚠ ?★ ?λ ?➊ ?➋ ?➌ ?➍ ?➎ 
   "Byte compile the core and library .el files in ~/.emacs.d"
   (interactive)
   (mapc (lambda (f) (byte-compile-file (concat doom-emacs-dir "/" f) t))
-        '("init.el" "core/core.el" "core/core-defuns.el" "core/core-ui.el"
+        '("init.el" "core/core.el" "core/core-defuns.el"
           "core/core-os.el" "core/core-os-osx.el" "core/core-os-win32.el"
           "core/core-os-linux.el" "private/my-commands.el"
           "private/my-bindings.el"))
