@@ -10,6 +10,7 @@
          (quoted (eq (car-safe backends) 'quote)))
     `(progn
        (defun ,def-name ()
+         (require 'company)
          (set (make-local-variable 'company-backends)
               (append '((,@(mapcar (lambda (backend)
                                      (if quoted

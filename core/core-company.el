@@ -1,6 +1,8 @@
 ;;; core-company.el
 
 (use-package company
+  :commands (company-mode global-company-mode company-complete
+             company-complete-common company-manual-begin company-grab-line)
   :init
   (setq company-idle-delay nil
         company-minimum-prefix-length 2
@@ -12,18 +14,23 @@
         company-require-match 'never
         company-global-modes '(not eshell-mode comint-mode erc-mode message-mode help-mode)
         company-frontends '(company-pseudo-tooltip-frontend company-echo-metadata-frontend)
-        company-backends '((company-capf company-keywords))
+        company-backends '(company-capf company-yasnippet)
         company-quickhelp-delay nil
         company-statistics-file (concat doom-temp-dir "/company-stats-cache.el"))
 
   :config
+  (require 'company-capf)
+  (require 'company-yasnippet)
+
   ;; Rewrites evil-complete to use company-dabbrev
   (setq evil-complete-next-func     'doom/company-evil-complete-next
         evil-complete-previous-func 'doom/company-evil-complete-previous)
+
   (push 'company-sort-by-occurrence company-transformers)
 
-  (global-company-mode +1)
-  (define-key company-active-map "\C-w" nil))
+  (define-key company-active-map "\C-w" nil)
+
+  (global-company-mode +1))
 
 ;; NOTE: Doesn't look pretty outside of emacs-mac
 (use-package company-quickhelp
@@ -35,11 +42,11 @@
   :config (company-statistics-mode +1))
 
 (use-package company-dabbrev :commands company-dabbrev)
-
 (use-package company-dabbrev-code :commands company-dabbrev-code)
-
-(use-package company-files
-  :commands company-files)
+(use-package company-etags :commands company-etags)
+(use-package company-files :commands company-files)
+(use-package company-gtags :commands company-gtags)
+(use-package company-ispell :commands company-ispell)
 
 (use-package company-dict
   :commands company-dict

@@ -54,7 +54,9 @@
 (defun doom/company-complete ()
   "Bring up the completion popup. If there is only one result, auto-complete it."
   (interactive)
-  (when (and (company-manual-begin)
+  (require 'company)
+  (when (and (bound-and-true-p company-mode)
+             (company-manual-begin)
              (= company-candidates-length 1))
     (company-complete-common)))
 
