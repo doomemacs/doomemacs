@@ -146,11 +146,12 @@
 (after! quickrun
   ;; This allows us to rerun code from inside a quickrun buffer.
   (defun doom*quickrun-close-popup (&optional _ _ _ _)
-    (let* ((buffer (get-buffer quickrun/buffer-name))
-           (window (and buffer (get-buffer-window buffer))))
+    (let ((buffer (get-buffer quickrun/buffer-name))
+          window)
       (when buffer
+        (setq window (get-buffer-window buffer))
         (shut-up! (quickrun/kill-running-process))
-        (doom/popup-close window))))
+        (doom/popup-close window nil t))))
   (advice-add 'quickrun :before 'doom*quickrun-close-popup)
   (advice-add 'quickrun-region :before 'doom*quickrun-close-popup)
 
