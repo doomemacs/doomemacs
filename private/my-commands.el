@@ -37,8 +37,7 @@
 (ex! "date"        'doom:insert-date)
 
 ;; External resources
-(ex! "dash"        'doom:dash)                   ; look up in `helm-dash'
-(ex! "dashi"       'doom:dash-install)           ; install docset
+(ex! "dash"        'doom:docs-lookup)            ; look up documentation
 (ex! "db"          'doom:db)
 (ex! "dbu[se]"     'doom:db-select)
 (ex! "http"        'httpd-start)                 ; start http server
