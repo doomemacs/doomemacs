@@ -26,5 +26,38 @@ determine if a directory is a project."
 ;;;###autoload
 (defalias 'doom/project-name 'projectile-project-name)
 
+;;
+;; Navigation
+;;
+
+;;;###autoload
+(defun doom/switch-to-project-buffer (&optional all-p)
+  "Displays open buffers in current project. If ALL-P, then show all open
+buffers."
+  (interactive)
+  (ivy-read "Switch to: " (doom/get-buffer-names (not all-p))
+            :matcher #'ivy--switch-buffer-matcher
+            :preselect (buffer-name (other-buffer (current-buffer)))
+            :action #'ivy--switch-buffer-action
+            :keymap ivy-switch-buffer-map
+            :caller 'doom/switch-to-project-buffer))
+
+;;;###autoload
+(defun doom/switch-to-buffer ()
+  (interactive)
+  (doom/switch-to-project-buffer t))
+
+;;;###autoload
+(defun doom/find-file-in-emacsd ()
+  (interactive)
+  (let ((default-directory doom-emacs-dir))
+    (projectile-find-file)))
+
+;;;###autoload
+(defun doom/find-file-in-dotfiles ()
+  (interactive)
+  (let ((default-directory (expand-file-name ".dotfiles" "~")))
+    (projectile-find-file)))
+
 (provide 'defuns-project)
 ;;; defuns-project.el ends here
