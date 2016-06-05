@@ -323,12 +323,5 @@
       ;; escape from insert mode (more responsive than using key-chord-define)
       :irv "C-g" 'evil-normal-state)
 
-;; Common unicode characters
-(map! :i "A-o" (λ! (insert "ø"))
-      :i "A-O" (λ! (insert "Ø"))
-
-      :i "A--" (λ! (insert "–"))
-      :i "A-_" (λ! (insert "—")))
-
 (provide 'my-bindings)
 ;;; my-bindings.el ends here

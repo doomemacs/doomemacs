@@ -333,5 +333,17 @@
           "h" nil
           "g" nil)))
 
+;; Fix certain keys in the terminal
+(unless window-system
+  (map! :map key-translation-map
+        "TAB" [tab]))
+
+;; Common unicode characters
+(map! :map key-translation-map
+      "A-o" (kbd "ø")
+      "A-O" (kbd "Ø")
+      "A--" (kbd "–")
+      "A-_" (kbd "—"))
+
 (provide 'core-editor)
 ;;; core-editor.el ends here
