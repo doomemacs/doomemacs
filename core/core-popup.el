@@ -150,7 +150,7 @@
            (window (and buffer (get-buffer-window buffer))))
       (when buffer
         (shut-up! (quickrun/kill-running-process))
-        (doom/popup-close window nil t))))
+        (doom/popup-close window))))
   (advice-add 'quickrun :before 'doom*quickrun-close-popup)
   (advice-add 'quickrun-region :before 'doom*quickrun-close-popup)
 

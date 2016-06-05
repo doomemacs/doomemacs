@@ -19,7 +19,7 @@
 ;;;###autoload
 (defmacro doom/popup-save (&rest body)
   `(let ((popup-p (doom/popup-p)))
-     (when popup-p (doom/popup-close-all t))
+     (when popup-p (doom/popup-close-all t t))
      ,@body
      (when popup-p
        (save-selected-window
@@ -34,15 +34,12 @@
     (setq doom-last-popup buffer)))
 
 ;;;###autoload
-(defun doom/popup-close (&optional window dont-kill dont-close-all)
+(defun doom/popup-close (&optional window dont-kill dont-redraw)
   "Find and close the currently active popup (if available)."
   (interactive)
   (let ((dont-kill (or doom-popup-protect dont-kill)))
-    (when (not window)
-      (if (doom/popup-p (selected-window))
-          (setq window (selected-window))
-        (unless dont-close-all
-          (doom/popup-close-all dont-kill))))
+    (when (and (not window) (doom/popup-p (selected-window)))
+      (setq window (selected-window)))
     (when (and window (window-live-p window))
       ;; REPL buffer
       (cond ((and (derived-mode-p 'comint-mode)
@@ -58,14 +55,18 @@
                (delq 'process-kill-buffer-query-function
                      kill-buffer-query-functions)))
           (kill-buffer (window-buffer window))))
-      (delete-window window))))
+      (delete-window window)
+      (unless (or dont-redraw (>= emacs-major-version 25))
+        (redraw-frame)))))
 
 ;;;###autoload
-(defun doom/popup-close-all (&optional dont-kill-buffers)
+(defun doom/popup-close-all (&optional dont-kill-buffers dont-redraw)
   "Closes all popup windows (and kills the buffers if DONT-KILL-BUFFERS is non-nil)"
   (interactive)
-  (mapc (lambda (w) (doom/popup-close w dont-kill-buffers))
+  (mapc (lambda (w) (doom/popup-close w dont-kill-buffers t))
         doom-popup-windows)
+  (unless (or dont-redraw (>= emacs-major-version 25))
+    (redraw-frame))
   (setq doom-popup-windows nil))
 
 ;;;###autoload
@@ -104,7 +105,9 @@
 ;;;###autoload
 (defun doom*run-popup-post-hooks (&rest _)
   (with-current-buffer shackle-last-buffer
-    (run-hooks 'doom-popup-post-hook)))
+    (run-hooks 'doom-popup-post-hook)
+    (when (< emacs-major-version 25)
+      (redraw-frame))))
 
 ;;;###autoload
 (defun doom|popup-init ()
