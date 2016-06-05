@@ -105,9 +105,7 @@
 ;;;###autoload
 (defun doom*run-popup-post-hooks (&rest _)
   (with-current-buffer shackle-last-buffer
-    (run-hooks 'doom-popup-post-hook)
-    (when (< emacs-major-version 25)
-      (redraw-frame))))
+    (run-hooks 'doom-popup-post-hook)))
 
 ;;;###autoload
 (defun doom|popup-init ()
