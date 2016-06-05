@@ -97,10 +97,12 @@
 (use-package hl-line
   :init (add-hook! (prog-mode markdown-mode) 'hl-line-mode)
   :config
-  (defvar-local doom--hl-line-mode nil)
-  (setq hl-line-sticky-flag nil
-        global-hl-line-sticky-flag nil)
+  ;; Doesn't seem to play nice in emacs 25+
+  (when (< emacs-major-version 25)
+    (setq hl-line-sticky-flag nil
+          global-hl-line-sticky-flag nil))
 
+  (defvar-local doom--hl-line-mode nil)
   (defun doom|hl-line-on ()  (if doom--hl-line-mode (hl-line-mode +1)))
   (defun doom|hl-line-off () (if doom--hl-line-mode (hl-line-mode -1)))
   (add-hook! hl-line-mode (if hl-line-mode (setq doom--hl-line-mode t)))
