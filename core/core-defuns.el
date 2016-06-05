@@ -5,7 +5,7 @@
   "Bootstrap DOOM emacs and initialize PACKAGES"
   `(let (file-name-handler-alist)
      ;; Local settings
-     ;; (load "~/.emacs.local.el" t t)
+     (load "~/.emacs.local.el" t t)
      ;; Global constants
      (defvar doom-default-theme ,theme)
      (defvar doom-default-font
