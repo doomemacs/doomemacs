@@ -163,5 +163,12 @@
   (require 'evil-easymotion)
   (call-interactively doom--evil-snipe-repeat-fn))
 
+;;;###autoload
+(defun doom/evil-matchit ()
+  (interactive)
+  (if (ignore-errors (hs-already-hidden-p))
+      (hs-toggle-hiding)
+    (call-interactively 'evilmi-jump-items)))
+
 (provide 'defuns-evil)
 ;;; defuns-evil.el ends here

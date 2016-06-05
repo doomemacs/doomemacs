@@ -37,8 +37,8 @@
       "A-h"  'doom/evil-window-resize-l
       "A-l"  'doom/evil-window-resize-r
       ;; Temporary escape into emacs mode
-      "C-<escape>" 'evil-emacs-state
-      :e "C-<escape>" 'evil-normal-state
+      "<C-escape>" 'evil-emacs-state
+      :e "<C-escape>" 'evil-normal-state
       ;; Switching tabs (workgroups)
       :m "M-1"  (λ! (doom:switch-to-tab 0))
       :m "M-2"  (λ! (doom:switch-to-tab 1))
@@ -254,9 +254,7 @@
       :m  "%"   'evilmi-jump-items
 
       ;; hide-show/evil-matchit
-      :m  [tab] (λ! (if (ignore-errors (hs-already-hidden-p))
-                        (hs-toggle-hiding)
-                      (call-interactively 'evilmi-jump-items)))
+      :m  "<tab>" 'doom/evil-matchit
       ;; rotate-text
       :n  "!"     'rotate-text
 
@@ -266,8 +264,8 @@
 
       ;; yasnippet
       (:map yas-minor-mode-map
-        :i  [(tab)] 'yas-expand
-        :v  [(tab)] 'doom/yas-insert-snippet)
+        :i [tab] 'yas-expand
+        :v [tab] 'doom/yas-insert-snippet)
 
       ;; company-mode and vim-like omni-complete
       :i "C-SPC" 'doom/company-complete
@@ -295,7 +293,7 @@
           "C-s"        'company-filter-candidates
           "C-SPC"      'company-complete-common-or-cycle
           [tab]        'doom/company-complete-common-or-complete-full
-          "<backtab>"  'company-select-previous
+          [backtab]    'company-select-previous
           [escape]     (λ! (company-abort) (evil-normal-state 1))
           [C-return]   'counsel-company)
         (:map company-search-map
@@ -314,9 +312,9 @@
 
       ;;; Insert mode hacks
       ;; Textmate-esque newlines
-      :i "<backspace>"   'delete-backward-char
-      :i "<M-backspace>" 'doom/backward-kill-to-bol-and-indent
-      :i "<C-return>"    'evil-ret-and-indent
+      :i [backspace]    'delete-backward-char
+      :i [M-backspace]  'doom/backward-kill-to-bol-and-indent
+      :i [C-return]     (λ! (evil-open-below 1))
       ;; Emacsien motions for insert mode
       :i "C-b" 'backward-word
       :i "C-f" 'forward-word
