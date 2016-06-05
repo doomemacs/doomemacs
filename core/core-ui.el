@@ -278,7 +278,7 @@ anzu to be enabled."
     "Show the number of iedit regions matches + what match you're on."
     (when (bound-and-true-p iedit-mode)
       (propertize
-       (let ((this-oc (iedit-find-current-occurrence-overlay))
+       (let ((this-oc (let (message-log-max) (iedit-find-current-occurrence-overlay)))
              (length (or (ignore-errors (length iedit-occurrences-overlays)) 0)))
          (format
           " %s/%s "
