@@ -184,7 +184,7 @@
   :init
   (defvar-local doom--env-version nil)
   (defvar-local doom--env-command nil)
-  (defvar powerline-height 26)
+  (defvar powerline-height 30)
   (defvar powerline-default-separator nil)
 
   :config
@@ -234,14 +234,13 @@
             (let ((start (window-start))
                   (end (window-end))
                   (pend (point-max)))
-              (if (and (eq start 1)
-                       (eq end pend))
+              (if (and (= start 1)
+                       (= end pend))
                   ":All"
                 (let ((perc (/ end 0.01 pend)))
                   (cond ((= start 1) ":Top")
                         ((>= perc 100) ":Bot")
-                        (t (format ":%d%%%%" perc))))))
-            " "))
+                        (t (format ":%d%%%%" perc))))))))
 
   (defface mode-line-vcs-info nil '((t (:inherit warning))))
   (defface mode-line-vcs-warning nil '((t (:inherit warning))))
@@ -386,8 +385,7 @@ anzu to be enabled."
                         (if fw (propertize (format " ⚠%s " fw)
                                            'face (if active
                                                      'doom-flycheck-warning
-                                                   'mode-line)))))))))
-    :tight t)
+                                                   'mode-line))))))))))
 
   (spaceline-define-segment *pad
     "Padding, to ensure the mode-line is `powerline-height' pixels tall"
@@ -397,7 +395,8 @@ anzu to be enabled."
   (spaceline-compile
    'main
    '(*pad
-     ((*macro-recording *anzu *iedit *evil-substitute *flycheck *selection-info)
+     ((*macro-recording *anzu *iedit
+       *evil-substitute *selection-info *flycheck)
       :skip-alternate t
       :tight t)
      *buffer-path)
@@ -406,7 +405,8 @@ anzu to be enabled."
      *env-version
      *buffer-encoding-abbrev
      (global :when active)
-     *buffer-position))
+     *buffer-position
+     ))
 
   ;;
   (spaceline-define-segment *default-dir
