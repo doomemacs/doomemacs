@@ -1,9 +1,5 @@
 ;;; core-project.el --- all your (basic) project navigational needs
 
-;;
-;; Dired
-;;
-
 (setq ;; Always copy/delete recursively
       dired-recursive-copies  'always
       dired-recursive-deletes 'top
@@ -33,7 +29,6 @@
       (make-directory parent-directory t))))
 (push 'doom|create-non-existent-directory find-file-not-found-functions)
 
-;;
 (use-package ido
   :functions (ido-to-end)
   :init
@@ -42,6 +37,7 @@
           "^\\*.*Completions\\*$" "^\\*Ediff" "^\\*tramp" "^\\*cvs-"
           "_region_" " output\\*$" "^TAGS$" "^\*Ido")
         ido-use-faces nil
+        ido-enable-flex-matching t
         ido-confirm-unique-completion t
         ido-case-fold t
         ido-create-new-buffer 'always
@@ -49,6 +45,7 @@
         ido-enable-last-directory-history t
         ido-enable-tramp-completion nil
         ido-enable-tramp-completion t
+        ido-use-filename-at-point 'guess
         ido-cr+-max-items 10000
         ido-save-directory-list-file (concat doom-temp-dir "/ido.last"))
   (add-hook 'ido-setup-hook 'doom|ido-setup-home-keybind)
@@ -72,7 +69,6 @@
 
   (add-hook! (ido-make-file-list ido-make-dir-list) 'doom*ido-sort-mtime))
 
-;;
 (use-package neotree
   :commands (neotree-show
              neotree-hide
