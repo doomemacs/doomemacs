@@ -87,7 +87,11 @@
   :config (setq-default coffee-indent-like-python-mode t))
 
 (use-package typescript-mode
-  :mode "\\.ts$")
+  :mode (("\\.ts$" . typescript-mode)
+         ("\\.tsx$" . web-mode))
+  :init
+  (add-hook! typescript-mode
+    '(rainbow-delimiters-mode doom|ts-fontify)))
 
 (use-package tide
   :after typescript-mode
@@ -95,18 +99,22 @@
   (setq tide-format-options
         '(:insertSpaceAfterFunctionKeywordForAnonymousFunctions t
           :placeOpenBraceOnNewLineForFunctions nil))
+
   (defun doom|tide-setup ()
     (tide-setup)
     (flycheck-mode +1)
     (eldoc-mode +1))
   (add-hook 'typescript-mode-hook 'doom|tide-setup)
+
   (add-hook! web-mode
     (when (f-ext? buffer-file-name "tsx")
       (doom|tide-setup)))
 
   (map! :map typescript-mode-map
         :m "gd" 'tide-jump-to-definition
-        (:leader :n "h" 'tide-documentation-at-point)))
+        (:leader :n "h" 'tide-documentation-at-point))
+
+  (advice-add 'tide-project-root :override 'doom/project-root))
 
 ;;
 (defvar npm-conf (make-hash-table :test 'equal))
