@@ -35,11 +35,10 @@ before killing processes. If there are no buffers with matching major-modes, it
 gets killed.")
 
 (defvar doom-project-root-files
-  '(".git" ".hg" ".svn" ".project" "local.properties" "project.properties"
-    "rebar.config" "project.clj" "SConstruct" "pom.xml" "build.sbt"
-    "build.gradle" "Gemfile" "requirements.txt" "tox.ini" "package.json"
+  '(".git" ".hg" ".svn" "rebar.config" "project.clj" "SConstruct" "pom.xml"
+    "build.sbt" "build.gradle" "Gemfile" "requirements.txt" "package.json"
     "gulpfile.js" "Gruntfile.js" "bower.json" "composer.json" "Cargo.toml"
-    "mix.exs")
+    "mix.exs" "tsconfig.json")
   "A list of files that count as 'project files', which determine whether a
 folder is the root of a project or not.")
 
