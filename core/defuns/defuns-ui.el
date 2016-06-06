@@ -88,23 +88,20 @@
           (sit-for eldoc-show-in-mode-line-delay))))
     (force-mode-line-update)))
 
-(defvar-local doom-hide-mode-line nil)
+(put 'doom-hide-mode-line-mode 'permanent-local t)
+(put 'doom--mode-line 'permanent-local t)
+
 (defvar-local doom--mode-line nil)
 ;;;###autoload
 (define-minor-mode doom-hide-mode-line-mode
   "Minor mode to hide the mode-line in the current buffer."
   :init-value nil
   :global nil
-  :variable doom-hide-mode-line
-  (if doom-hide-mode-line
+  (if doom-hide-mode-line-mode
       (setq doom--mode-line mode-line-format
             mode-line-format nil)
     (setq mode-line-format doom--mode-line
-          doom--mode-line nil))
-  (force-mode-line-update)
-  ;; Apparently force-mode-line-update is not always enough to
-  ;; redisplay the mode-line
-  (redraw-display))
+          doom--mode-line nil)))
 
 (provide 'defuns-ui)
 ;;; defuns-ui.el ends here
