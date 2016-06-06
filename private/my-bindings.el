@@ -211,9 +211,6 @@
         "C-k"     'evil-window-up
         "C-l"     'evil-window-right
         "C-w"     'ace-window
-        ;; Jump to new splits
-        "s"       'doom/evil-window-split
-        "v"       'doom/evil-window-vsplit
         ;; Swapping windows
         "H"       'doom/evil-window-move-l
         "J"       'doom/evil-window-move-d
@@ -303,7 +300,7 @@
       ;; help-mode
       (:after help-mode
         (:map help-map
-          "e" 'view-echo-area-messages)
+          "e" 'doom/popup-messages)
         (:map help-mode-map
           :n "]]"  'help-go-forward
           :n "[["  'help-go-back

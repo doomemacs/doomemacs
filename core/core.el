@@ -85,7 +85,9 @@
         ("melpa" . "http://melpa.org/packages/")
         ("org"   . "http://orgmode.org/elpa/"))
 
+      byte-compile-warnings nil
       ad-redefinition-action            'accept      ; silence the advised function warnings
+      apropos-do-all                     t
       compilation-always-kill            t           ; kill compl. process before spawning another
       compilation-ask-about-save         nil         ; save all buffers before compiling
       compilation-scroll-output          t           ; scroll with output while compiling

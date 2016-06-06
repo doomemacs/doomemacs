@@ -15,7 +15,6 @@
 (use-package web-mode
   :mode ("\\.p?html?$"
          "\\.\\(tpl\\|blade\\)\\(\\.php\\)?$"
-         "\\.tsx$"
          "\\.erb$"
          "\\.jsp$"
          "\\.as[cp]x$"

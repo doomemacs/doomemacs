@@ -18,7 +18,7 @@ buffers."
   (interactive)
   (ivy-read "Kill ring:" (--filter (not (or (< (length it) 3)
                                             (string-match-p "\\`[\n[:blank:]]+\\'" it)))
-                                   (remove-duplicates kill-ring :test' equal))))
+                                   (remove-duplicates kill-ring :test 'equal))))
 
 ;;;###autoload (autoload 'doom:ivy-recentf "defuns-ivy" nil t)
 (evil-define-command doom:ivy-recentf (&optional bang)

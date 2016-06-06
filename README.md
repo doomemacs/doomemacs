@@ -32,8 +32,6 @@ make snippets # install hlissner/emacs-snippets into private/snippets
 For a more comprehensive byte compile, run `:bc!` (`:bc` will compile the
 current *.el file).
 
-
-
 ## Features
 
 To get a picture of what's in here, check out:
@@ -86,5 +84,4 @@ To get a picture of what's in here, check out:
   * Show (py|rb)env version in mode-line
 
     ![py/rb version in modeline](https://raw.githubusercontent.com/hlissner/.emacs.d/screenshots/version.png?raw=true)
-
 

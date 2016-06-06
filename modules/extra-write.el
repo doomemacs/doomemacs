@@ -15,18 +15,19 @@
 (defconst write-mode--last-theme doom-current-theme)
 (defconst write-mode--last-line-spacing line-spacing)
 
-(spaceline-compile
- 'write
- '(((*macro-recording *anzu *iedit *evil-substitute *flycheck)
-    :skip-alternate t
-    :tight t)
-   *buffer-path
-   *buffer-modified)
- '((*selection-info :when active)
-   *buffer-encoding-abbrev
-   (global :when active)
-   *buffer-position
-   *pad))
+(after! spaceline
+  (spaceline-compile
+   'write
+   '(((*macro-recording *anzu *iedit *evil-substitute *flycheck)
+      :skip-alternate t
+      :tight t)
+     *buffer-path
+     *buffer-modified)
+   '((*selection-info :when active)
+     *buffer-encoding-abbrev
+     (global :when active)
+     *buffer-position
+     *pad)))
 
 ;;
 (defun write-mode|org-hook ()
