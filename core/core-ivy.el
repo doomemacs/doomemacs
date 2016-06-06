@@ -11,6 +11,8 @@
   (ivy-mode +1)
   (map! :map ivy-minibuffer-map
         [escape] 'keyboard-escape-quit
+        "C-r" 'evil-paste-from-register
+        "M-v" 'clipboard-yank
         "C-w" 'backward-kill-word
         "C-u" 'backward-kill-sentence
         "C-b" 'backward-word
