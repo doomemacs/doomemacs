@@ -78,7 +78,7 @@
       :m ";" 'evil-ex
       (:leader
         :nv ","   'doom/switch-to-project-buffer
-        :nv "<"   'doom/switch-to-buffer
+        :nv "<"   'ivy-switch-buffer
         :nv "."   'counsel-find-file
         :nv ">"   'projectile-find-file-in-known-projects
         :nv "/"   'counsel-projectile-find-file

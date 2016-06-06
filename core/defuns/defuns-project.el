@@ -31,21 +31,16 @@ determine if a directory is a project."
 ;;
 
 ;;;###autoload
-(defun doom/switch-to-project-buffer (&optional all-p)
+(defun doom/switch-to-project-buffer ()
   "Displays open buffers in current project. If ALL-P, then show all open
 buffers."
   (interactive)
-  (ivy-read "Switch to: " (doom/get-buffer-names (not all-p))
+  (ivy-read "Switch to: " (doom/get-buffer-names t)
             :matcher #'ivy--switch-buffer-matcher
             :preselect (buffer-name (other-buffer (current-buffer)))
             :action #'ivy--switch-buffer-action
             :keymap ivy-switch-buffer-map
             :caller 'doom/switch-to-project-buffer))
-
-;;;###autoload
-(defun doom/switch-to-buffer ()
-  (interactive)
-  (doom/switch-to-project-buffer t))
 
 ;;;###autoload
 (defun doom/find-file-in-emacsd ()
