@@ -322,13 +322,20 @@ Examples:
       (load "autoloads"))
     (message "Done!")))
 
-(defun doom-fix-unicode (font chars &optional size)
+(defun doom-fix-unicode (font &rest chars)
   "Display certain unicode characters in a specific font.
 
-e.g. (doom-fix-unicode \"DejaVu Sans\" '(?⚠ ?★ ?λ ?➊ ?➋ ?➌ ?➍ ?➎ ?❻ ?➐ ?➑ ?➒ ?➓))"
+e.g. (doom-fix-unicode \"DejaVu Sans\" ?⚠ ?★ ?λ)"
+  (declare (indent 1))
   (mapc (lambda (x) (set-fontset-font
                 t (cons x x)
-                (font-spec :name font :size size)))
+                (cond ((fontp font)
+                       font)
+                      ((listp font)
+                       (font-spec :family (car font) :size (nth 1 font)))
+                      ((stringp font)
+                       (font-spec :family font))
+                      (t (error "FONT is an invalid type: %s" font)))))
         chars))
 
 (defun doom-byte-compile (&optional minimal)

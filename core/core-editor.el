@@ -343,7 +343,10 @@
       "A-o" (kbd "ø")
       "A-O" (kbd "Ø")
       "A--" (kbd "–")
-      "A-_" (kbd "—"))
+      "A-_" (kbd "—")
+      "A-8" (kbd "•")
+      "A-*" (kbd "°")
+      "A-p" (kbd "π"))
 
 (provide 'core-editor)
 ;;; core-editor.el ends here

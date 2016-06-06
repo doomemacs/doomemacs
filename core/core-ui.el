@@ -65,9 +65,8 @@
   (define-fringe-bitmap 'tilde [64 168 16] nil nil 'center)
   (set-fringe-bitmap-face 'tilde 'fringe)
   (setcdr (assq 'empty-line fringe-indicator-alist) 'tilde)
-  ;; Fix certain unicode characters without upsetting line-height
-  (doom-fix-unicode "DejaVu Sans Mono" '(?★) 13)
-  (doom-fix-unicode "Hack" '(?λ) 13))
+  ;; Fallback to `doom-unicode-font' for Unicode characters
+  (set-fontset-font t 'unicode doom-unicode-font))
 
 ;; Hide mode-line in help/compile window
 (add-hook 'help-mode-hook 'doom|hide-mode-line)
@@ -192,6 +191,13 @@
   (defface mode-line-buffer-file nil "Face for mode-line buffer file name")
   (defface mode-line-buffer-path nil "Face for mode-line buffer file path")
 
+  ;; Make certain unicode glyphs bigger for UI purposes
+  (doom-fix-unicode '("DejaVu Sans Mono" 15) ?✱)
+  (let ((font "DejaVu Sans Mono for Powerline"))
+    (doom-fix-unicode (list font 10) ?)
+    (doom-fix-unicode (list font 16) ?∄)
+    (doom-fix-unicode (list font 15) ?))
+
   ;; Custom modeline segments
   (spaceline-define-segment *buffer-path
     (concat
@@ -217,13 +223,13 @@
                      buffer-path))))
         (if active 'mode-line-buffer-path)))
      (powerline-raw "%b" (if active 'mode-line-buffer-file))
+     " "
      (when buffer-file-name
        (powerline-raw
-        (concat (when buffer-file-name
-                  (concat
-                   (if (buffer-modified-p) " ✱")
-                   (if (not (file-exists-p buffer-file-name)) "[!]")))
-                (if buffer-read-only "[RO]"))
+        (concat
+         (if (not (file-exists-p buffer-file-name)) "∄"
+            (if (buffer-modified-p) "✱"))
+          (if buffer-read-only ""))
         'mode-line-is-modified)))
     :tight-right t
     :skip-alternate t)
@@ -248,7 +254,8 @@
     "Version control info"
     (when vc-mode
       (propertize
-       (concat "⎇ " (substring vc-mode (+ 2 (length (symbol-name (vc-backend buffer-file-name))))))
+       (concat " "
+               (substring vc-mode (+ 2 (length (symbol-name (vc-backend buffer-file-name))))))
        'face (when active
                (let ((state (vc-state buffer-file-name)))
                  (cond ((memq state '(edited added))
@@ -378,11 +385,11 @@ anzu to be enabled."
                      (let ((fe (doom/-flycheck-count 'error))
                            (fw (doom/-flycheck-count 'warning)))
                        (concat
-                        (if fe (propertize (format " ⚠%s " fe)
+                        (if fe (propertize (format " •%s " fe)
                                            'face (if active
                                                      'doom-flycheck-error
                                                    'mode-line)))
-                        (if fw (propertize (format " ⚠%s " fw)
+                        (if fw (propertize (format " •%s " fw)
                                            'face (if active
                                                      'doom-flycheck-warning
                                                    'mode-line))))))))))

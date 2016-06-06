@@ -42,5 +42,9 @@ gets killed.")
   "A list of files that count as 'project files', which determine whether a
 folder is the root of a project or not.")
 
+(defvar doom-unicode-font
+  (font-spec :family "DejaVu Sans Mono" :size 13)
+  "Font to fall back to for unicode glyphs.")
+
 (provide 'core-vars)
 ;;; core-vars.el ends here
