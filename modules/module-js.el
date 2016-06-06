@@ -128,7 +128,7 @@
            (package-file (f-expand "package.json" project-path))
            deps)
       (awhen (and (not hash) (f-exists? package-file)
-                  (json-read-file package-file))
+                  (ignore-errors (json-read-file package-file)))
         (puthash project-path it npm-conf)))
     t))
 

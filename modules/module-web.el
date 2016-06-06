@@ -79,7 +79,7 @@
            (package-file (f-expand "bower.json" project-path))
            deps)
       (awhen (and (not hash) (f-exists? package-file)
-                  (json-read-file package-file))
+                  (ignore-errors (json-read-file package-file)))
         (puthash project-path it bower-conf)))
     t))
 
