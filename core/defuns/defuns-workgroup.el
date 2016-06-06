@@ -102,20 +102,6 @@
       (unless (wg-current-workgroup-p w)
         (wg-kill-workgroup w)))))
 
-(defun doom--num-to-unicode (num)
-  "Return a nice unicode representation of a single-digit number STR."
-  (cl-case num
-   (1 "➊")
-   (2 "➋")
-   (3 "➌")
-   (4 "➍")
-   (5 "➎")
-   (6 "❻")
-   (7 "➐")
-   (8 "➑")
-   (9 "➒")
-   (0 "➓")))
-
 (defun doom--workgroup-display (&optional suppress-update message message-face)
   (message "%s%s" (doom/workgroup-display suppress-update t)
            (propertize message 'face message-face)))
@@ -131,7 +117,7 @@
                      (if (not workgroup) wg-nowg-string
                        (wg-element-display
                         workgroup
-                        (format " %s %s " (doom--num-to-unicode (1+ index)) (wg-workgroup-name workgroup))
+                        (format " [%d] %s " (1+ index) (wg-workgroup-name workgroup))
                         'wg-current-workgroup-p)))
                    (wg-session-workgroup-list it))))
       (if return-p
