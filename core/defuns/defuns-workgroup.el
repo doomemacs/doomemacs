@@ -52,7 +52,7 @@
   "Create a new workgroup. If BANG, overwrite any workgroup named NAME."
   (interactive "<!><a>")
   (unless name
-    (setq name (format "#%s" (1+ (length (wg-workgroup-list))))))
+    (setq name (format "#%s" (1+ (length (wg-session-workgroup-list (wg-current-session t)))))))
   (let ((new-wg (wg-get-workgroup name t)))
     (when (and new-wg bang)
       (wg-delete-workgroup new-wg)
@@ -98,7 +98,7 @@
   "Kill all other workgroups."
   (interactive)
   (let (workgroup (wg-current-workgroup))
-    (dolist (w (wg-workgroup-list))
+    (dolist (w (wg-session-workgroup-list (wg-current-session t)))
       (unless (wg-current-workgroup-p w)
         (wg-kill-workgroup w)))))
 
@@ -123,7 +123,7 @@
 ;;;###autoload
 (defun doom/workgroup-display (&optional suppress-update return-p message)
   (interactive)
-  (when (wg-current-session t)
+  (awhen (wg-current-session t)
     (unless (eq suppress-update t)
       (doom/workgroup-update-names (if (wg-workgroup-p suppress-update) suppress-update)))
     (let ((output (wg-display-internal
@@ -133,7 +133,7 @@
                         workgroup
                         (format " %s %s " (doom--num-to-unicode (1+ index)) (wg-workgroup-name workgroup))
                         'wg-current-workgroup-p)))
-                   (wg-workgroup-list))))
+                   (wg-session-workgroup-list it))))
       (if return-p
           output
         (message "%s%s" output (or message ""))))))
