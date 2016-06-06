@@ -37,7 +37,7 @@
  max-mini-window-height 0.3
  ;; Ask for confirmation on exit only if there are real buffers left
  confirm-kill-emacs
- (lambda (_) (if window-system (if (doom/get-real-buffers) (y-or-n-p "› Quit?") t) t)))
+ (lambda (_) (if (doom/get-real-buffers) (y-or-n-p "› Quit?") t) t))
 
 ;; Initialize UI
 (load-theme doom-current-theme t)
