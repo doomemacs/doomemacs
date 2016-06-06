@@ -16,7 +16,7 @@
 (def-popup! "*doom*"                   :align below :size 35 :select t)
 (def-popup! "^\\*doom.+\\*$" :regexp t :align below :size 12 :noselect t)
 
-(define-derived-mode doom-mode text-mode "DOOM"
+(define-derived-mode doom-mode fundamental-mode "DOOM"
   "Major mode for special DOOM buffers.")
 
 ;; Don't kill the scratch buffer
@@ -26,12 +26,7 @@
 (after! uniquify
   (push (regexp-quote doom-buffer-name) uniquify-ignore-buffers-re))
 
-(add-hook! emacs-startup 'doom-mode-startup)
-
-(defun doom-mode-startup ()
-  (doom-mode-init)
-  (with-current-buffer doom-buffer
-    (setq mode-line-format nil)))
+(add-hook! emacs-startup 'doom-mode-init)
 
 (defun doom-mode-erase-on-insert ()
   (erase-buffer)
@@ -65,7 +60,7 @@
        (concat
         (propertize
          (concat
-          (make-string (min 5 (truncate (/ height 5))) ?\n)
+          (make-string (max 5 (- (truncate (/ height 2)) 12)) ?\n)
           lead "=================     ===============     ===============   ========  ========\n"
           lead "\\\\ . . . . . . .\\\\   //. . . . . . .\\\\   //. . . . . . .\\\\  \\\\. . .\\\\// . . //\n"
           lead "||. . ._____. . .|| ||. . ._____. . .|| ||. . ._____. . .|| || . . .\\/ . . .||\n"
