@@ -161,6 +161,8 @@
                          (cdr-safe (assq 'dependencies (gethash project npm-conf))))))
       (assq 'react deps))))
 
+(def-project-type! gulpjs "gulp" :match "/gulpfile.js$")
+
 ;; TODO react
 
 (provide 'module-js)
