@@ -170,5 +170,83 @@
       (hs-toggle-hiding)
     (call-interactively 'evilmi-jump-items)))
 
+;;;###autoload
+(defun doom*evil-command-window (hist cmd-key execute-fn)
+  "The evil command window has a mind of its own (uses `switch-to-buffer'). We
+monkey patch it to use pop-to-buffer."
+  (when (eq major-mode 'evil-command-window-mode)
+    (user-error "Cannot recursively open command line window"))
+  (dolist (win (window-list))
+    (when (equal (buffer-name (window-buffer win))
+                 "*Command Line*")
+      (kill-buffer (window-buffer win))
+      (delete-window win)))
+  (setq evil-command-window-current-buffer (current-buffer))
+  (ignore-errors (kill-buffer "*Command Line*"))
+  (with-current-buffer (pop-to-buffer "*Command Line*")
+    (setq-local evil-command-window-execute-fn execute-fn)
+    (setq-local evil-command-window-cmd-key cmd-key)
+    (evil-command-window-mode)
+    (evil-command-window-insert-commands hist)))
+
+;;;###autoload
+(defun doom*evil-esc-quit ()
+  "Close popups, disable search highlights and quit the minibuffer if open."
+  (let ((minib-p (minibuffer-window-active-p (minibuffer-window)))
+          (evil-hl-p (evil-ex-hl-active-p 'evil-ex-search)))
+      (when minib-p (abort-recursive-edit))
+      (when evil-hl-p (evil-ex-nohighlight))
+      ;; Close non-repl popups and clean up `doom-popup-windows'
+      (unless (or minib-p evil-hl-p (bound-and-true-p doom-popup-mode))
+        (doom/popup-close-all))))
+
+;;;###autoload
+(defun doom*evil-ex-replace-special-filenames (file-name)
+  "Replace special symbols in FILE-NAME."
+  (let ((case-fold-search nil)
+        (regexp (concat "\\(?:^\\|[^\\\\]\\)"
+                        "\\([#%@]\\)"
+                        "\\(\\(?::\\(?:[phtreS~.]\\|g?s[^: $]+\\)\\)*\\)")))
+    (dolist (match (s-match-strings-all regexp file-name))
+      (let ((flags (split-string (caddr match) ":" t))
+            (path (file-relative-name
+                   (pcase (cadr match)
+                     ("@" (doom/project-root))
+                     ("%" (buffer-file-name))
+                     ("#" (and (other-buffer) (buffer-file-name (other-buffer)))))
+                   default-directory))
+            flag global)
+        (when path
+          (while flags
+            (setq flag (pop flags))
+            (when (string-suffix-p "\\" flag)
+              (setq flag (concat flag (pop flags))))
+            (when (string-prefix-p "gs" flag)
+              (setq global t flag (string-remove-prefix "g" flag)))
+            (setq path
+                  (or (pcase (substring flag 0 1)
+                        ("p" (expand-file-name path))
+                        ("~" (file-relative-name path "~"))
+                        ("." (file-relative-name path default-directory))
+                        ("h" (directory-file-name path))
+                        ("t" (file-name-nondirectory (directory-file-name path)))
+                        ("r" (file-name-sans-extension path))
+                        ("e" (file-name-extension path))
+                        ("s" (let* ((args (evil-delimited-arguments (substring flag 1) 2))
+                                    (pattern (evil-transform-vim-style-regexp (car args)))
+                                    (replace (cadr args)))
+                               (replace-regexp-in-string
+                                (if global pattern (concat "\\(" pattern "\\).*\\'"))
+                                (evil-transform-vim-style-regexp replace) path t t
+                                (unless global 1))))
+                        ("S" (shell-quote-argument path))
+                        (t path))
+                      "")))
+          (setq file-name
+                (replace-regexp-in-string (format "\\(?:^\\|[^\\\\]\\)\\(%s\\)"
+                                                  (string-trim-left (car match)))
+                                          path file-name t t 1)))))
+    (setq file-name (replace-regexp-in-string regexp "\\1" file-name t))))
+
 (provide 'defuns-evil)
 ;;; defuns-evil.el ends here

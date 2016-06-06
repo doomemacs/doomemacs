@@ -69,108 +69,50 @@
   (def-popup! "*evil-registers*" :align below :size 0.3)
   (def-popup! "*Command Line*"   :align below :size 8 :select t)
 
-  ;; Evil hacks
-  (progn ; evil hacks
-    (advice-add 'evil-force-normal-state :after 'doom*evil-esc-quit)
-    (defun doom*evil-esc-quit ()
-      "Close popups, disable search highlights and quit the minibuffer if open."
-      (if (eq major-mode 'help-mode)
-          (doom/popup-close)
-        (let ((minib-p (minibuffer-window-active-p (minibuffer-window)))
-              (evil-hl-p (evil-ex-hl-active-p 'evil-ex-search)))
-          (when minib-p (abort-recursive-edit))
-          (when evil-hl-p (evil-ex-nohighlight))
-          ;; Close non-repl popups and clean up `doom-popup-windows'
-          (unless (or minib-p evil-hl-p
-                      (memq (get-buffer-window) doom-popup-windows))
-            (mapc (lambda (w)
-                    (if (window-live-p w)
-                        (with-selected-window w
-                          (unless (derived-mode-p 'comint-mode)
-                            (doom/popup-close w)))
-                      (doom/popup-remove w)))
-                  doom-popup-windows)))))
+  ;;; Evil hacks
+  ;; Don't interfere with neotree + auto move to new split
+  (advice-add 'evil-window-split :around 'doom*evil-window-split)
+  (advice-add 'evil-window-vsplit :around 'doom*evil-window-vsplit)
+  ;; Integrate evil's command window into shackle
+  (advice-add 'evil-command-window :override 'doom*evil-command-window)
+  (add-hook 'evil-command-window-mode-hook 'doom-hide-mode-line-mode)
+  ;; Close popups, disable search highlights and quit the minibuffer if open
+  (advice-add 'evil-force-normal-state :after 'doom*evil-esc-quit)
 
-    ;; Fix harmless (yet disruptive) error reporting w/ hidden buffers caused by
-    ;; workgroups killing windows
-    ;; TODO Delete timer on dead windows
-    (defadvice evil-ex-hl-do-update-highlight
-        (around evil-ex-hidden-buffer-ignore-errors activate)
-      (ignore-errors ad-do-it))
+  ;; Fix harmless (yet disruptive) error reporting w/ hidden buffers caused by
+  ;; workgroups killing windows
+  ;; TODO Delete timer on dead windows?
+  (defadvice evil-ex-hl-do-update-highlight
+      (around evil-ex-hidden-buffer-ignore-errors activate)
+    (ignore-errors ad-do-it))
 
-    ;; Hide keystroke display while isearch is active
-    (add-hook! isearch-mode     (setq echo-keystrokes 0))
-    (add-hook! isearch-mode-end (setq echo-keystrokes 0.02))
+  ;; Hide keystroke display while isearch is active
+  (add-hook! isearch-mode     (setq echo-keystrokes 0))
+  (add-hook! isearch-mode-end (setq echo-keystrokes 0.02))
 
-    (after! evil-snipe
-      (def-repeat! evil-snipe-f evil-snipe-repeat evil-snipe-repeat-reverse)
-      (def-repeat! evil-snipe-F evil-snipe-repeat evil-snipe-repeat-reverse)
-      (def-repeat! evil-snipe-t evil-snipe-repeat evil-snipe-repeat-reverse)
-      (def-repeat! evil-snipe-T evil-snipe-repeat evil-snipe-repeat-reverse)
-      (def-repeat! evil-snipe-s evil-snipe-repeat evil-snipe-repeat-reverse)
-      (def-repeat! evil-snipe-S evil-snipe-repeat evil-snipe-repeat-reverse)
-      (def-repeat! evil-snipe-x evil-snipe-repeat evil-snipe-repeat-reverse)
-      (def-repeat! evil-snipe-X evil-snipe-repeat evil-snipe-repeat-reverse))
+  (after! evil-snipe
+    (def-repeat! evil-snipe-f evil-snipe-repeat evil-snipe-repeat-reverse)
+    (def-repeat! evil-snipe-F evil-snipe-repeat evil-snipe-repeat-reverse)
+    (def-repeat! evil-snipe-t evil-snipe-repeat evil-snipe-repeat-reverse)
+    (def-repeat! evil-snipe-T evil-snipe-repeat evil-snipe-repeat-reverse)
+    (def-repeat! evil-snipe-s evil-snipe-repeat evil-snipe-repeat-reverse)
+    (def-repeat! evil-snipe-S evil-snipe-repeat evil-snipe-repeat-reverse)
+    (def-repeat! evil-snipe-x evil-snipe-repeat evil-snipe-repeat-reverse)
+    (def-repeat! evil-snipe-X evil-snipe-repeat evil-snipe-repeat-reverse))
+  (after! evil-visualstar
+    (def-repeat! evil-visualstar/begin-search-forward
+      evil-ex-search-next evil-ex-search-previous)
+    (def-repeat! evil-visualstar/begin-search-backward
+      evil-ex-search-previous evil-ex-search-next))
+  (def-repeat! evil-ex-search-next evil-ex-search-next evil-ex-search-previous)
+  (def-repeat! evil-ex-search-previous evil-ex-search-next evil-ex-search-previous)
+  (def-repeat! evil-ex-search-forward evil-ex-search-next evil-ex-search-previous)
+  (def-repeat! evil-ex-search-backward evil-ex-search-next evil-ex-search-previous)
 
-    (after! evil-visualstar
-      (def-repeat! evil-visualstar/begin-search-forward
-        evil-ex-search-next evil-ex-search-previous)
-      (def-repeat! evil-visualstar/begin-search-backward
-        evil-ex-search-previous evil-ex-search-next))
-
-    (def-repeat! evil-ex-search-next evil-ex-search-next evil-ex-search-previous)
-    (def-repeat! evil-ex-search-previous evil-ex-search-next evil-ex-search-previous)
-    (def-repeat! evil-ex-search-forward evil-ex-search-next evil-ex-search-previous)
-    (def-repeat! evil-ex-search-backward evil-ex-search-next evil-ex-search-previous)
-
-    ;; A monkey patch to add all of vim's file ex substitution flags to evil-mode.
-    (defun evil-ex-replace-special-filenames (file-name)
-      "Replace special symbols in FILE-NAME."
-      (let ((case-fold-search nil)
-            (regexp (concat "\\(?:^\\|[^\\\\]\\)"
-                            "\\([#%@]\\)"
-                            "\\(\\(?::\\(?:[phtreS~.]\\|g?s[^: $]+\\)\\)*\\)")))
-        (dolist (match (s-match-strings-all regexp file-name))
-          (let ((flags (split-string (caddr match) ":" t))
-                (path (file-relative-name
-                       (pcase (cadr match)
-                         ("@" (doom/project-root))
-                         ("%" (buffer-file-name))
-                         ("#" (and (other-buffer) (buffer-file-name (other-buffer)))))
-                       default-directory))
-                flag global)
-            (when path
-              (while flags
-                (setq flag (pop flags))
-                (when (string-suffix-p "\\" flag)
-                  (setq flag (concat flag (pop flags))))
-                (when (string-prefix-p "gs" flag)
-                  (setq global t flag (string-remove-prefix "g" flag)))
-                (setq path
-                      (or (pcase (substring flag 0 1)
-                            ("p" (expand-file-name path))
-                            ("~" (file-relative-name path "~"))
-                            ("." (file-relative-name path default-directory))
-                            ("h" (directory-file-name path))
-                            ("t" (file-name-nondirectory (directory-file-name path)))
-                            ("r" (file-name-sans-extension path))
-                            ("e" (file-name-extension path))
-                            ("s" (let* ((args (evil-delimited-arguments (substring flag 1) 2))
-                                        (pattern (evil-transform-vim-style-regexp (car args)))
-                                        (replace (cadr args)))
-                                   (replace-regexp-in-string
-                                    (if global pattern (concat "\\(" pattern "\\).*\\'"))
-                                    (evil-transform-vim-style-regexp replace) path t t
-                                    (unless global 1))))
-                            ("S" (shell-quote-argument path))
-                            (t path))
-                          "")))
-              (setq file-name
-                    (replace-regexp-in-string (format "\\(?:^\\|[^\\\\]\\)\\(%s\\)"
-                                                      (string-trim-left (car match)))
-                                              path file-name t t 1)))))
-        ;; Clean up
-        (setq file-name (replace-regexp-in-string regexp "\\1" file-name t)))))
+  ;; monkey patch `evil-ex-replace-special-filenames' to add most of vim's file
+  ;; ex substitution flags to evil-mode
+  (advice-add 'evil-ex-replace-special-filenames
+              :override 'doom*evil-ex-replace-special-filenames)
 
   ;; Extra argument types for highlight buffer (or global) regexp matches
   (evil-ex-define-argument-type buffer-match :runner doom/evil-ex-buffer-match)

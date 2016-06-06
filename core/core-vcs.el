@@ -51,9 +51,23 @@
 (use-package magit
   :commands (magit-status)
   :config
-  (doom-popup-magit-hacks)
   (def-popup! (:custom (lambda (b &rest _) (derived-mode-p 'magit-mode)))
     :align below :size 0.5)
+
+  ;; Some wrassling must be done to get magit to kill itself, and trigger
+  ;; shackle popup hooks.
+  (setq magit-bury-buffer-function
+        (lambda (&rest _) (doom/popup-close (selected-window)))
+        magit-display-buffer-function
+        (lambda (b)
+          (funcall (if (doom/popup-p (selected-window)) 'switch-to-buffer 'doom/popup-buffer) b)
+          (get-buffer-window b))
+        magit-display-file-buffer-function
+        (lambda (b)
+          (when doom-prev-buffer
+            (select-window (get-buffer-window doom-prev-buffer)))
+          (switch-to-buffer b)))
+
   (add-hook 'magit-mode-hook 'turn-off-evil-snipe-override-mode)
 
   (require 'evil-magit)

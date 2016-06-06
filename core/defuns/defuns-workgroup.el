@@ -194,15 +194,15 @@
 ;;;###autoload
 (defun doom/close-window-or-workgroup ()
   (interactive)
-  (if (memq (get-buffer-window) doom-popup-windows)
+  (if (doom/popup-p)
       (doom/popup-close)
-    (doom/kill-real-buffer)
-    (if (and (one-window-p t)
-             (> (length (wg-workgroup-list)) 1))
-        (if (string= (wg-workgroup-name (wg-current-workgroup)) wg-first-wg-name)
-            (evil-window-delete)
-          (doom:workgroup-delete))
-      (evil-window-delete))))
+    (when (doom/kill-real-buffer)
+      (if (and (one-window-p t)
+               (> (length (wg-workgroup-list)) 1))
+          (if (string= (wg-workgroup-name (wg-current-workgroup)) wg-first-wg-name)
+              (evil-window-delete)
+            (doom:workgroup-delete))
+        (evil-window-delete)))))
 
 (provide 'defuns-workgroup)
 ;;; defuns-workgroup.el ends here

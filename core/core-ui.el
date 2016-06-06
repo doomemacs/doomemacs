@@ -69,8 +69,8 @@
   (set-fontset-font t 'unicode doom-unicode-font))
 
 ;; Hide mode-line in help/compile window
-(add-hook 'help-mode-hook 'doom|hide-mode-line)
-(add-hook 'compilation-mode-hook 'doom|hide-mode-line)
+(add-hook 'help-mode-hook 'doom-hide-mode-line-mode)
+(add-hook 'compilation-mode-hook 'doom-hide-mode-line-mode)
 
 ;; On by default in Emacs 25. I'll enable it manually, so disable it globally
 (when (and (> emacs-major-version 24) (featurep 'eldoc))

@@ -116,7 +116,7 @@
           :n "tr" 'doom/ert-rerun-test
           :n "ta" 'doom/ert-run-all-tests
           :n "ts" 'doom/ert-run-test)
-  (add-hook 'ert-results-mode-hook 'doom|hide-mode-line))
+  (add-hook 'ert-results-mode-hook 'doom-hide-mode-line-mode))
 
 (provide 'module-elisp)
 ;;; module-elisp.el ends here

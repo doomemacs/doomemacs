@@ -14,9 +14,8 @@
       "M-/"  'evil-commentary-line
       "A-/"  'evil-commentary-line
       "M-b"  'doom:build
-      "A-`"  'os-switch-to-term
-      "C-`"  'doom/popup-toggle
-      "C-~"  'doom:repl
+      "C-`"  'doom/popup-last-buffer
+      "M-~"  'doom/eshell
       ;; Text-scaling
       "M-0"  (λ! (text-scale-set 0))
       "M-="  'text-scale-increase
@@ -304,7 +303,7 @@
       ;; help-mode
       (:after help-mode
         (:map help-map
-          "e" 'doom/popup-messages)
+          "e" 'view-echo-area-messages)
         (:map help-mode-map
           :n "]]"  'help-go-forward
           :n "[["  'help-go-back

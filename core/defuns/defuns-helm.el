@@ -82,8 +82,7 @@ buffers."
 
 ;;;###autoload
 (defun doom*helm-hide-header (source &optional force)
-  (setq header-line-format nil)
-  (doom|hide-mode-line))
+  (doom-hide-mode-line-mode +1))
 
 ;;;###autoload
 (defun doom*helm-hide-source-header-maybe ()

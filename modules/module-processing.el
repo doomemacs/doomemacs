@@ -4,7 +4,7 @@
   :when IS-MAC
   :commands (processing-mode processing-find-sketch)
   :mode "\\.pde$"
-  :init (add-hook 'processing-compilation-mode-hook 'doom|hide-mode-line)
+  :init (add-hook 'processing-compilation-mode-hook 'doom-hide-mode-line-mode)
   :config
   (def-builder! processing-mode processing-sketch-build)
   (def-popup! "*processing-compilation*" :align below :size 10 :noselect t)

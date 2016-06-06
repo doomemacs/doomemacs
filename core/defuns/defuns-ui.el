@@ -62,10 +62,6 @@
         (doom/get-visible-buffers (doom/get-real-buffers))))
 
 ;;;###autoload
-(defun doom|hide-mode-line (&rest _)
-  (setq mode-line-format nil))
-
-;;;###autoload
 (defun doom/eldoc-show-in-mode-line (input)
   "Display string STR in the mode-line next to minibuffer."
   (with-current-buffer (eldoc-current-buffer)
@@ -91,6 +87,24 @@
           (force-mode-line-update)
           (sit-for eldoc-show-in-mode-line-delay))))
     (force-mode-line-update)))
+
+(defvar-local doom-hide-mode-line nil)
+(defvar-local doom--mode-line nil)
+;;;###autoload
+(define-minor-mode doom-hide-mode-line-mode
+  "Minor mode to hide the mode-line in the current buffer."
+  :init-value nil
+  :global nil
+  :variable doom-hide-mode-line
+  (if doom-hide-mode-line
+      (setq doom--mode-line mode-line-format
+            mode-line-format nil)
+    (setq mode-line-format doom--mode-line
+          doom--mode-line nil))
+  (force-mode-line-update)
+  ;; Apparently force-mode-line-update is not always enough to
+  ;; redisplay the mode-line
+  (redraw-display))
 
 (provide 'defuns-ui)
 ;;; defuns-ui.el ends here

@@ -88,7 +88,7 @@
         neo-banner-message nil)
   :config
   (evil-set-initial-state 'neotree-mode 'motion)
-  (add-hook 'neo-after-create-hook 'doom|hide-mode-line)
+  (add-hook 'neo-after-create-hook 'doom-hide-mode-line-mode)
 
   ;; Don't mess with neotree on wg-related window-config changes
   (advice-add 'doom/undo-window-change :around 'doom*save-neotree)

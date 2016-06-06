@@ -1,17 +1,17 @@
 ;;; defuns-window.el --- library for acting on windows
 
 ;;;###autoload
-(defun doom/evil-window-split ()
+(defun doom*evil-window-split (orig-fn &rest args)
   (interactive)
   (doom/neotree-save
-   (call-interactively 'evil-window-split)
+   (apply orig-fn args)
    (evil-window-down 1)))
 
 ;;;###autoload
-(defun doom/evil-window-vsplit ()
+(defun doom*evil-window-vsplit (orig-fn &rest args)
   (interactive)
   (doom/neotree-save
-   (call-interactively 'evil-window-vsplit)
+   (apply orig-fn args)
    (evil-window-right 1)))
 
 ;;;###autoload
