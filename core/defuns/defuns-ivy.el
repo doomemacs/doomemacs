@@ -32,6 +32,8 @@ buffers."
   (interactive "<a>")
   (swiper (or search (thing-at-point 'symbol))))
 
+(defvar doom-ivy-ag-last-search nil)
+
 ;;;###autoload (autoload 'doom:ivy-ag-search "defuns-ivy" nil t)
 (evil-define-operator doom:ivy-ag-search (beg end search regex-p &optional dir)
   "Preform a counsel search with SEARCH. If SEARCH is nil and in visual mode,
@@ -44,7 +46,11 @@ DIR specifies the default-directory from which ag is run."
   (let ((counsel-ag-base-command
          (format "ag --nocolor --nogroup %s %%s -- ."
                  (if regex-p "-Q" "")))
-        (search (or search (and beg end (buffer-substring-no-properties beg end)))))
+        (search (or search
+                    (and (evil-visual-state-p)
+                         (and beg end (rxt-quote-pcre (buffer-substring-no-properties beg end))))
+                    doom-ivy-ag-last-search)))
+    (setq doom-ivy-ag-last-search search)
     (counsel-ag search (or dir (f-slash (doom/project-root))))))
 
 ;;;###autoload (autoload 'doom:ivy-ag-search-cwd "defuns-ivy" nil t)

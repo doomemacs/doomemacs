@@ -215,6 +215,8 @@
         :n [escape] 'reb-quit
         :n [backtab] 'reb-change-syntax))
 
+(use-package pcre2el :commands (rxt-quote-pcre))
+
 (use-package rotate-text
   :commands (rotate-text rotate-text-backward)
   :config (push '("true" "false") rotate-text-words))
