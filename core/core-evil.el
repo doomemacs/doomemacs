@@ -46,6 +46,14 @@
   :config
   (evil-mode 1)
   (evil-select-search-module 'evil-search-module 'evil-search)
+
+  ;; Reset evil-mode in the messages buffer, because it opens before evil
+  ;; normalizes its keymaps, so none of the custom keybindings work in it.
+  (add-hook! emacs-startup
+    (with-current-buffer "*Messages*"
+      (evil-mode -1)
+      (evil-mode +1)))
+
   (mapc (lambda (r) (evil-set-initial-state (car r) (cdr r)))
         '((compilation-mode       . normal)
           (help-mode              . normal)
