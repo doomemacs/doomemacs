@@ -35,12 +35,13 @@
 (defun doom|nlinum-hl-line (&optional line)
   "Highlight line number"
   (let ((line-no (or line (string-to-number (format-mode-line "%l")))))
-    (if (and nlinum-mode (not (eq line-no doom--hl-nlinum-line)))
-        (let* ((pbol (if line
-                         (save-excursion (goto-char 1)
-                                         (forward-line line-no)
-                                         (line-beginning-position))
-                       (line-beginning-position)))
+    (unless doom--hl-nlinum-line
+      (setq doom--hl-nlinum-line line-no))
+    (if (and nlinum-mode (or (not (= line-no doom--hl-nlinum-line))
+                             (memq this-command '(next-line previous-line
+                                                  evil-window-bottom evil-window-top
+                                                  evil-goto-line evil-goto-first-line))))
+        (let* ((pbol (line-beginning-position))
                (peol (1+ pbol))
                (max (point-max)))
           ;; Handle EOF case
