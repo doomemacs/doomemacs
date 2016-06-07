@@ -81,8 +81,8 @@ current window."
             (kill-buffer (window-buffer window)))
         (doom-popup-mode -1))
       (delete-window window)
-      (unless (and (< emacs-major-version 25) (not dont-redraw))
-        (redraw-frame)))))
+      (when (< emacs-major-version 25)
+        (unless dont-redraw (redraw-frame))))))
 
 ;;;###autoload
 (defun doom/popup-close-all (&optional dont-kill dont-redraw)
@@ -92,8 +92,7 @@ the display (unless DONT-REDRAW is non-nil)."
   (mapc (lambda (w) (doom/popup-close w dont-kill t))
         (doom/get-visible-windows (buffer-list)))
   (when (< emacs-major-version 25)
-    (unless dont-redraw
-      (redraw-frame))))
+    (unless dont-redraw (redraw-frame))))
 
 ;;;###autoload
 (defun doom/popup-last-buffer ()
