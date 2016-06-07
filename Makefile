@@ -1,5 +1,5 @@
 EMACS=emacs
-CACHE_DIR="private/cache/`hostname`/`emacs --version | grep -o '2[0-9]\.[0-9]'`"
+CACHE_DIR="private/cache/`hostname`/"
 REPO_URL="https://github.com/hlissner"
 
 all: install

@@ -27,10 +27,8 @@
 (defconst doom-ext-dir       (! (expand-file-name "ext" doom-emacs-dir)))
 (defconst doom-themes-dir    (! (expand-file-name "themes" doom-private-dir)))
 (defconst doom-temp-dir
-  (! (format "%s/cache/%s/%s.%s"
-             doom-private-dir (system-name)
-             emacs-major-version emacs-minor-version))
-  "Hostname and emacs-version-based elisp temp directories")
+  (! (format "%s/cache/%s" doom-private-dir (system-name)))
+  "Hostname-based elisp temp directories")
 
 ;; window-system is deprecated. Not on my watch!
 (unless (boundp 'window-system)
