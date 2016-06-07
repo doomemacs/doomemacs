@@ -80,8 +80,8 @@
       module-web         ; The end is always near </html>
 
       ;;; Experimental
-      ;; module-eshell   ; for inferior OSes *cough*windows
-      ;; module-org      ; for organized fearless leader
+      module-eshell      ; for inferior OSes *cough*windows
+      module-org         ; for organized fearless leader
 
       ;;; Extra libraries
       extra-demo         ; allow me to demonstrate...
