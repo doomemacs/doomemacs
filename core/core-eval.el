@@ -22,26 +22,14 @@
   (def-popup! "*quickrun*" :align below :size 10)
 
   ;;; Popup hacks
-  (defun doom*quickrun-close-popup (&optional _ _ _ _)
-    "Allows us to re-run quickrun from inside the quickrun buffer."
-    (let ((buffer (get-buffer quickrun/buffer-name))
-          window)
-      (when buffer
-        (setq window (get-buffer-window buffer))
-        (shut-up! (quickrun/kill-running-process))
-        (doom/popup-close window nil t))))
   (advice-add 'quickrun :before 'doom*quickrun-close-popup)
   (advice-add 'quickrun-region :before 'doom*quickrun-close-popup)
-
-  (defun doom|quickrun-after-run ()
-    "Ensures window is scrolled to BOF"
-    (with-selected-window (get-buffer-window quickrun/buffer-name)
-      (goto-char (point-min))))
+  ;; Ensures window is scrolled to BOF
   (add-hook 'quickrun-after-run-hook 'doom|quickrun-after-run))
 
 (use-package repl-toggle
   :commands (rtog/toggle-repl rtog/add-repl)
-  :preface  (defvar rtog/mode-repl-alist nil)
+  :preface (defvar rtog/mode-repl-alist nil)
   :init
   (defvar doom-repl-buffer nil "The current REPL buffer.")
   (add-hook! repl-toggle-mode (evil-initialize-state 'emacs))
@@ -95,36 +83,8 @@
   ;; TODO does this work with shackle?
   (advice-add 'realgud-cmdbuf-init :after 'doom:def-debug-on)
   (advice-add 'realgud:cmd-quit :after 'doom:def-debug-off)
-
   ;; Monkey-patch `realgud:run-process' to run in a popup.
-  ;; TODO Find a more elegant advice-based solution
-  ;; FIXME Causes realgud:cmd-* to focus popup on every invocation
-  (defun realgud:run-process(debugger-name script-filename cmd-args minibuffer-history &optional no-reset)
-    (let ((cmd-buf))
-      (setq cmd-buf
-            (apply 'realgud-exec-shell debugger-name script-filename
-                   (car cmd-args) no-reset (cdr cmd-args)))
-      (let ((process (get-buffer-process cmd-buf)))
-        (if (and process (eq 'run (process-status process)))
-            (progn
-              (pop-to-buffer cmd-buf)
-              (define-key evil-emacs-state-local-map (kbd "ESC ESC") 'doom/debug-quit)
-              (realgud:track-set-debugger debugger-name)
-              (realgud-cmdbuf-info-in-debugger?= 't)
-              (realgud-cmdbuf-info-cmd-args= cmd-args)
-              (when cmd-buf
-                (switch-to-buffer cmd-buf)
-                (when realgud-cmdbuf-info
-                  (let* ((info realgud-cmdbuf-info)
-                         (cmd-args (realgud-cmdbuf-info-cmd-args info))
-                         (cmd-str  (mapconcat 'identity  cmd-args " ")))
-                    (set minibuffer-history
-                         (list-utils-uniq (cons cmd-str (eval minibuffer-history))))))))
-          ;; else
-          (progn
-            (if cmd-buf (switch-to-buffer cmd-buf))
-            (message "Error running command: %s" (mapconcat 'identity cmd-args " ")))))
-      cmd-buf)))
+  (advice-add 'realgud:run-process :override 'doom*realgud:run-process))
 
 (provide 'core-eval)
 ;;; core-eval.el ends here

@@ -79,5 +79,21 @@ elisp buffer). Otherwise forward the region to Quickrun."
                   (insert (current-kill 0)))))
         (t (quickrun-replace-region beg end))))
 
+;;;###autoload
+(defun doom*quickrun-close-popup (&optional _ _ _ _)
+  "Allows us to re-run quickrun from inside the quickrun buffer."
+  (let ((buffer (get-buffer quickrun/buffer-name))
+        window)
+    (when buffer
+      (setq window (get-buffer-window buffer))
+      (shut-up! (quickrun/kill-running-process))
+      (doom/popup-close window nil t))))
+
+;;;###autoload
+(defun doom|quickrun-after-run ()
+  "Ensures window is scrolled to BOF"
+  (with-selected-window (get-buffer-window quickrun/buffer-name)
+    (goto-char (point-min))))
+
 (provide 'defuns-quickrun)
 ;;; defuns-quickrun.el ends here
