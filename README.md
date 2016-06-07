@@ -9,8 +9,8 @@ surpass it in any way possible.
 </center>
 <br />
 
-It is tailored to OSX 10.11+, Emacs 24.5.1+ and my needs as a software
-developer, designer, scientist and doom enthusiast.
+It is tailored to OSX 10.11+, Emacs 25+ and my needs as a software developer,
+designer, scientist and doom enthusiast.
 
 ![Splash page screenshot](https://raw.githubusercontent.com/hlissner/.emacs.d/screenshots/scratch.png?raw=true)
 ![Main screenshots](https://raw.githubusercontent.com/hlissner/.emacs.d/screenshots/main.png?raw=true)
@@ -49,10 +49,9 @@ To get a picture of what's in here, check out:
 * Completion with **company-mode**
 * Nigh-universal code debugging interface with **realgud**
 * Pretty mode-line with **spaceline**
-* Project navigation with **helm** and **neotree**
-* Project search with **ag** and file search with **evil-search** or **helm-swoop**
-* Project-wide search and replace with **helm-ag** (press shift-Tab while in results
-  buffer)
+* Project navigation with **ivy** and **neotree**
+* Project search with **ag**
+* File search with **evil-search** or **swiper**
 * Session persistence (and tab emulation) with **workgroups2**
   ![Workgroups2 tabs emulation](https://raw.githubusercontent.com/hlissner/.emacs.d/screenshots/tabs.png?raw=true)
 * Run code inline with **quickrun**
