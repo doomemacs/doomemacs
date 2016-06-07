@@ -15,6 +15,9 @@
           ("*esup*"            :align below :size 0.4 :noselect t)
           ("*minor-modes*"     :align below :size 0.5 :noselect t)
           ("*eval*"            :align below :size 16  :noselect t)
+          ;; Doom
+          ("*doom*"            :align below :size 35  :select t)
+          ("^\\*doom.+\\*$"    :align below :size 12  :noselect t :regexp t)
           ;; Emacs
           ("*Pp Eval Output*"  :align below :size 0.3)
           ("*Apropos*"         :align below :size 0.3)
