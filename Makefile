@@ -5,8 +5,8 @@ REPO_URL="https://github.com/hlissner"
 all: install
 
 # If you run either of these with emacs open, run doom-reload afterwards
-install: autoloads _install core/core.elc init.elc
-update: autoloads _update core/core.elc init.elc
+install: _install core/core.elc init.elc autoloads
+update: _update core/core.elc init.elc autoloads
 
 autoloads:
 	@$(EMACS) --batch -l init.el --eval '(doom-reload-autoloads)' 2>&1
