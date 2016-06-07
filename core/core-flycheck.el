@@ -12,13 +12,6 @@
   :config
   (def-popup! " ?\\*Flycheck.+\\*" :align below :size 14 :noselect t :regexp t)
 
-  (unless (> emacs-major-version 24)
-    ;; Fixes Unknown defun property `interactive-only' error (in emacs <25) by compiling
-    ;; flycheck source files
-    (let ((path (locate-library "flycheck")))
-      (unless (f-ext? path "elc")
-        (byte-compile-file path))))
-
   (map! :map flycheck-error-list-mode-map
         :n "C-n" 'flycheck-error-list-next-error
         :n "C-p" 'flycheck-error-list-previous-error
@@ -37,7 +30,7 @@
   :config (flycheck-package-setup))
 
 (use-package flycheck-pos-tip
-  :when (= emacs-major-version 24)
+  :when (eq window-system 'mac) ; NOTE emacs-mac, not ns
   :after flycheck
   :config
   (setq flycheck-pos-tip-timeout 10
