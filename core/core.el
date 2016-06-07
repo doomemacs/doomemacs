@@ -68,22 +68,25 @@
 
 ;; UTF-8 please
 (set-charset-priority 'unicode)
-(setq locale-coding-system    'utf-8)   ; pretty
-(set-terminal-coding-system   'utf-8)   ; pretty
-(set-keyboard-coding-system   'utf-8)   ; pretty
-(set-selection-coding-system  'utf-8)   ; please
-(prefer-coding-system         'utf-8)   ; with sugar on top
+(setq locale-coding-system   'utf-8)   ; pretty
+(set-terminal-coding-system  'utf-8)   ; pretty
+(set-keyboard-coding-system  'utf-8)   ; pretty
+(set-selection-coding-system 'utf-8)   ; please
+(prefer-coding-system        'utf-8)   ; with sugar on top
 (setq default-process-coding-system '(utf-8-unix . utf-8-unix))
 
-;; stop package.el from being annoying. I rely solely on Cask.
-(setq package--init-file-ensured t
-      package-enable-at-startup nil
-      package-archives
-      '(("gnu"   . "http://elpa.gnu.org/packages/")
-        ("melpa" . "http://melpa.org/packages/")
-        ("org"   . "http://orgmode.org/elpa/"))
+;; Stop package.el from being annoying. I rely solely on Cask.
+(setq-default
+ package--init-file-ensured t
+ package-user-dir doom-packages-dir
+ package-enable-at-startup nil
+ package-archives
+ '(("gnu"   . "http://elpa.gnu.org/packages/")
+   ("melpa" . "http://melpa.org/packages/")
+   ("org"   . "http://orgmode.org/elpa/")))
 
-      byte-compile-warnings nil
+;; Core settings
+(setq byte-compile-warnings              nil
       ad-redefinition-action            'accept      ; silence the advised function warnings
       apropos-do-all                     t
       compilation-always-kill            t           ; kill compl. process before spawning another
