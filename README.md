@@ -12,6 +12,8 @@ surpass it in any way possible.
 It is tailored to OSX 10.11+, Emacs 25+ and my needs as a software developer,
 designer, scientist and doom enthusiast.
 
+[More screenshots](https://github.com/hlissner/.emacs.d/tree/screenshots)
+
 ![Splash page screenshot](https://raw.githubusercontent.com/hlissner/.emacs.d/screenshots/scratch.png?raw=true)
 ![Main screenshots](https://raw.githubusercontent.com/hlissner/.emacs.d/screenshots/main.png?raw=true)
 
@@ -44,43 +46,55 @@ To get a picture of what's in here, check out:
 
 ### Highlights
 
-* Pretty line numbers with **nlinum** and neckbearded hackery
-* Syntax checking with **Flycheck**
-* Completion with **company-mode**
-* Nigh-universal code debugging interface with **realgud**
-* Pretty mode-line with **spaceline**
-* Project navigation with **ivy** and **neotree**
-* Project search with **ag**
-* File search with **evil-search** or **swiper**
-* Session persistence (and tab emulation) with **workgroups2**
-  ![Workgroups2 tabs emulation](https://raw.githubusercontent.com/hlissner/.emacs.d/screenshots/tabs.png?raw=true)
-* Run code inline with **quickrun**
-* REPLs for many major modes with **repl-toggle**, including Ruby, Python,
-  PHP, JS, Elisp, Haskell and Lua.
-* 2-char motions with **evil-snipe**
-* Diffs in the margin with **git-gutter**
-* Repeat (most) motions with <kbd>SPC</kbd>
-* Snippet expansion with **yasnippet** and **auto-yasnippet**
-* File template support with **auto-insert** and **yasnippet**
+* Line numbers + highlight with **[nlinum]** <br />
+* Syntax checking with **[flycheck]** <br />
+* Completion with **[company-mode]** <br />
+* Nigh-universal code debugging interface with **[realgud]**
+* Project navigation with **[ivy]** and **[neotree]**
+* Project search with **[counsel-ag]**
+* Buffer search with **evil-search** and **[swiper]**
+* Session persistence (and tab emulation) with **[workgroups2]**
+* Run code inline with **[quickrun]**
+* REPLs for many major modes with **[repl-toggle]**, including Ruby, Python, PHP,
+  JS, Elisp, Haskell and Lua.
+* Minimalistic diffs in the margin with **[git-gutter-fringe]**
+* Snippet expansion with **[yasnippet]** and **[auto-yasnippet]**
+* File template support with **auto-insert** and **[yasnippet]**
 * Code folding with **hideshow**
-* Multiple cursors with **[evil-multiedit](https://github.com/hlissner/evil-multiedit)**
-* O/S interaction functions, like **os-reveal** and **os-open-in-browser**
+* Custom O/S interaction commands, like **os-reveal** and **os-open-in-browser**
 * Custom TODO, FIXME and NOTE highlighting
 * **big-mode** for presentations and demonstrations
 * Tmux integration with `:t` and `:tcd` ex commands
-* Tamed popup windows with **shackle**
-* Vim-esque omnicompletion. e.g. `C-x C-f` for files
-* Quick keybindings with `:[nviom]map`
-* Emacs for modern note-taking/LaTeX/writing with **org-mode** or **rst-mode**
-* **Modeline improvements**
-  * evil-search/iedit/evil-substitute mode-line integration:
+* Tamed popup windows with **[shackle]**
+* emacs for modern note-taking/LaTeX/writing with **org-mode** or **rst-mode**
+* Vim-esque Emacs with **[evil-mode]**, plus:
+  * 2-char motions with **[evil-snipe]**
+  * Repeat (most) motions with <kbd>SPC</kbd>
+  * Multiple cursors with **[evil-multiedit]**
+  * Quick keybindings with `:[nviom]map`
+  * Vim-esque omnicompletion. e.g. `C-x C-f` for files
+* Pretty mode-line with **[spaceline]**, plus:
+  * evil-search/iedit/evil-substitute mode-line integration
+  * Indicator when macro is recording<br/>
+  * Show python/ruby version in mode-line (with rbenv/pyenv)
 
-    ![matches count in mode-line](https://raw.githubusercontent.com/hlissner/.emacs.d/screenshots/search.png?raw=true)
-    ![substitutions count in mode-line](https://raw.githubusercontent.com/hlissner/.emacs.d/screenshots/subst.png?raw=true)
-  * Macro-recording indicator:
 
-    ![macro indicator in modeline](https://raw.githubusercontent.com/hlissner/.emacs.d/screenshots/macro.png?raw=true)
-  * Show (py|rb)env version in mode-line
-
-    ![py/rb version in modeline](https://raw.githubusercontent.com/hlissner/.emacs.d/screenshots/version.png?raw=true)
-
+[nlinum]: http://elpa.gnu.org/packages/nlinum.html
+[flycheck]: https://melpa.org/#/flycheck
+[company-mode]: https://melpa.org/#/company
+[realgud]: https://melpa.org/#/realgud
+[ivy]: https://melpa.org/#/ivy
+[git-gutter-fringe]: https://melpa.org/#/git-gutter-fringe
+[neotree]: https://melpa.org/#/neotree
+[counsel-ag]: https://melpa.org/#/counsel
+[swiper]: https://melpa.org/#/swiper
+[evil-mode]: https://melpa.org/#/evil
+[workgroups2]: https://melpa.org/#/workgroups2
+[quickrun]: https://melpa.org/#/quickrun
+[repl-toggle]: https://melpa.org/#/repl-toggle
+[yasnippet]: https://melpa.org/#/yasnippet
+[auto-yasnippet]: https://melpa.org/#/auto-yasnippet
+[shackle]: https://melpa.org/#/shackle
+[evil-snipe]: https://melpa.org/#/evil-snipe
+[evil-multiedit]: https://melpa.org/#/evil-multiedit
+[spaceline]: https://melpa.org/#/spaceline
