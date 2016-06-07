@@ -12,8 +12,6 @@ surpass it in any way possible.
 It is tailored to OSX 10.11+, Emacs 25+ and my needs as a software developer,
 designer, scientist and doom enthusiast.
 
-[More screenshots](https://github.com/hlissner/.emacs.d/tree/screenshots)
-
 ![Splash page screenshot](https://raw.githubusercontent.com/hlissner/.emacs.d/screenshots/scratch.png?raw=true)
 ![Main screenshots](https://raw.githubusercontent.com/hlissner/.emacs.d/screenshots/main.png?raw=true)
 
@@ -98,3 +96,7 @@ To get a picture of what's in here, check out:
 [evil-snipe]: https://melpa.org/#/evil-snipe
 [evil-multiedit]: https://melpa.org/#/evil-multiedit
 [spaceline]: https://melpa.org/#/spaceline
+
+## More screenshots
+
+In the [screenshots branch](https://github.com/hlissner/.emacs.d/tree/screenshots).
