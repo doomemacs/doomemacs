@@ -193,20 +193,20 @@ monkey patch it to use pop-to-buffer."
 (defun doom*evil-esc-quit ()
   "Close popups, disable search highlights and quit the minibuffer if open."
   (let ((minib-p (minibuffer-window-active-p (minibuffer-window)))
-          (evil-hl-p (evil-ex-hl-active-p 'evil-ex-search)))
-      (when minib-p (abort-recursive-edit))
-      (when evil-hl-p (evil-ex-nohighlight))
-      ;; Close non-repl popups and clean up `doom-popup-windows'
-      (unless (or minib-p evil-hl-p (bound-and-true-p doom-popup-mode))
-        (doom/popup-close-all))))
+        (evil-hl-p (evil-ex-hl-active-p 'evil-ex-search)))
+    (when minib-p (abort-recursive-edit))
+    (when evil-hl-p (evil-ex-nohighlight))
+    ;; Close non-repl popups and clean up `doom-popup-windows'
+    (unless (or minib-p evil-hl-p (bound-and-true-p doom-popup-mode))
+      (doom/popup-close-all))))
 
 ;;;###autoload
 (defun doom*evil-ex-replace-special-filenames (file-name)
   "Replace special symbols in FILE-NAME."
-  (let ((case-fold-search nil)
-        (regexp (concat "\\(?:^\\|[^\\\\]\\)"
+  (let ((regexp (concat "\\(?:^\\|[^\\\\]\\)"
                         "\\([#%@]\\)"
-                        "\\(\\(?::\\(?:[phtreS~.]\\|g?s[^: $]+\\)\\)*\\)")))
+                        "\\(\\(?::\\(?:[phtreS~.]\\|g?s[^: $]+\\)\\)*\\)"))
+        case-fold-search)
     (dolist (match (s-match-strings-all regexp file-name))
       (let ((flags (split-string (caddr match) ":" t))
             (path (file-relative-name
@@ -222,7 +222,8 @@ monkey patch it to use pop-to-buffer."
             (when (string-suffix-p "\\" flag)
               (setq flag (concat flag (pop flags))))
             (when (string-prefix-p "gs" flag)
-              (setq global t flag (string-remove-prefix "g" flag)))
+              (setq global t
+                    flag (string-remove-prefix "g" flag)))
             (setq path
                   (or (pcase (substring flag 0 1)
                         ("p" (expand-file-name path))
@@ -240,7 +241,7 @@ monkey patch it to use pop-to-buffer."
                                 (evil-transform-vim-style-regexp replace) path t t
                                 (unless global 1))))
                         ("S" (shell-quote-argument path))
-                        (t path))
+                        (_ path))
                       "")))
           (setq file-name
                 (replace-regexp-in-string (format "\\(?:^\\|[^\\\\]\\)\\(%s\\)"
