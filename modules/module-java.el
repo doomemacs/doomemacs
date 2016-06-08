@@ -32,7 +32,7 @@
   :init
   (add-hook! (java-mode groovy-mode nxml-mode) 'doom|android-mode-enable-maybe)
   :config
-  (def-yas-mode! 'android-mode)
+  (def-yas-mode! android-mode)
   (after! company-dict
     (push 'android-mode company-dict-minor-mode-list)))
 
