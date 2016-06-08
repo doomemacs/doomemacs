@@ -271,13 +271,13 @@
 
 ;;;; Experimental ;;;;;;;;;;;;
 ;; Org -- modules/module-org.el
-;(depends-on "org-plus-contrib")
-;(depends-on "ob-go" :git "https://github.com/pope/ob-go")
-;(depends-on "ob-http")
-;(depends-on "org-bullets")
+(depends-on "org-plus-contrib")
+; (depends-on "ob-go" :git "https://github.com/pope/ob-go")
+; (depends-on "ob-http")
+(depends-on "org-bullets")
 ;; Org Notebook -- modules/module-org-notebook.el
-;(depends-on "org-download")
-;(depends-on "ox-pandoc")
+(depends-on "org-download")
+(depends-on "ox-pandoc")
 
 
 ;;;; EXTRA TOOLS ;;;;;;;;;;;;;;;;;;;;;;;
@@ -286,4 +286,4 @@
 (depends-on "impatient-mode")
 
 ;; Writing -- modules/extra-write.el
-(depends-on "helm-bibtex")
+; (depends-on "helm-bibtex")
