@@ -11,6 +11,7 @@
         evil-echo-state nil
         evil-ex-substitute-global t
         evil-insert-skip-empty-lines t
+        evil-want-fine-undo nil
 
         evil-normal-state-tag    "N"
         evil-insert-state-tag    "I"
@@ -25,11 +26,7 @@
         evil-normal-state-cursor 'box
         evil-emacs-state-cursor  `(,(face-attribute 'shadow :foreground nil nil) box)
         evil-insert-state-cursor 'bar
-        evil-visual-state-cursor 'hollow
-
-        ;; NOTE: a bug in emacs 25 breaks undoing in evil. See
-        ;; https://bitbucket.org/lyro/evil/issues/594/undo-doesnt-behave-like-vim
-        evil-want-fine-undo (if (> emacs-major-version 24) 'fine))
+        evil-visual-state-cursor 'hollow)
 
   ;; highlight matching delimiters where it's important
   (defun show-paren-mode-off () (show-paren-mode -1))
