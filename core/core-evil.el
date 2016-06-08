@@ -44,6 +44,13 @@
   (evil-mode 1)
   (evil-select-search-module 'evil-search-module 'evil-search)
 
+  ;; evil-anzu is strangely slow on startup. Byte compiling doesn't help.
+  ;; We use this to lazy load it instead.
+  (defun doom*evil-search (&rest _)
+    (require 'evil-anzu)
+    (advice-remove 'evil-ex-start-search 'doom*evil-search))
+  (advice-add 'evil-ex-start-search :before 'doom*evil-search)
+
   ;; Reset evil-mode in the messages buffer, because it opens before evil
   ;; normalizes its keymaps, so none of the custom keybindings work in it.
   (add-hook! emacs-startup
@@ -152,7 +159,7 @@
   :commands (evil-numbers/inc-at-pt evil-numbers/dec-at-pt))
 
 (use-package evil-anzu
-  :defer 1
+  :defer t
   :config
   (setq anzu-cons-mode-line-p nil
         anzu-minimum-input-length 1
