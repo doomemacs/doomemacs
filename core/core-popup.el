@@ -72,7 +72,8 @@
                      (let ((location
                             (find-function-search-for-symbol fun nil file)))
                        (doom/popup-save
-                        (switch-to-buffer (car location) nil t))
+                        (switch-to-buffer (car location) nil t)
+                        (awhen (cdr location) (goto-char it)))
                        (if (cdr location)
                            (goto-char (cdr location))
                          (message "Unable to find location in file")))))
@@ -84,7 +85,8 @@
                        (setq file (help-C-file-name var 'var)))
                      (let ((location (find-variable-noselect var file)))
                        (doom/popup-save
-                        (switch-to-buffer (car location) nil t))
+                        (switch-to-buffer (car location) nil t)
+                        (awhen (cdr location) (goto-char it)))
                        (if (cdr location)
                            (goto-char (cdr location))
                          (message "Unable to find location in file")))))
@@ -96,7 +98,8 @@
                      (let ((location
                             (find-function-search-for-symbol fun 'defface file)))
                        (doom/popup-save
-                        (switch-to-buffer (car location) nil t))
+                        (switch-to-buffer (car location) nil t)
+                        (awhen (cdr location) (goto-char it)))
                        (if (cdr location)
                            (goto-char (cdr location))
                          (message "Unable to find location in file"))))))
