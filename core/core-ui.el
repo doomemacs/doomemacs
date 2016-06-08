@@ -111,7 +111,8 @@
 (use-package visual-fill-column :defer t
   :config
   (setq-default visual-fill-column-center-text nil
-                visual-fill-column-width fill-column))
+                visual-fill-column-width fill-column
+                split-window-preferred-function 'visual-line-mode-split-window-sensibly))
 
 (use-package highlight-indentation
   :commands (highlight-indentation-mode
