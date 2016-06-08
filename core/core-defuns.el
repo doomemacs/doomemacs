@@ -190,6 +190,14 @@ Examples:
 (after! evil
   (defalias 'ex! 'evil-ex-define-cmd)
 
+  ;; NOTE evil-mode doesn't read local `evil-ex-commands', and will
+  ;; not autocomplete local commands.
+  (defun ex-local! (cmd fn)
+    "Define a buffer-local ex command."
+    (unless (local-variable-p 'evil-ex-commands)
+      (setq-local evil-ex-commands (copy-alist evil-ex-commands)))
+    (evil-ex-define-cmd cmd fn))
+
   ;; Register keywords for proper indentation (see `map!')
   (put ':prefix      'lisp-indent-function 'defun)
   (put ':map         'lisp-indent-function 'defun)

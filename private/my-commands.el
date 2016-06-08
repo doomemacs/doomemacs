@@ -98,9 +98,11 @@
 (ex! "tabs"        'doom/tab-display)
 
 ;; Org-mode
-(ex! "att[ach]"    'doom:org-attach)             ; attach file to org file
-(ex! "link"        'doom:org-link)
-(ex! "org"         'doom:org-helm-search)        ; search org notes
+(add-hook! org-mode
+  ;;(ex! "org"         'doom:org-helm-search)   ; search org notes
+  (ex! "att[ach]"    'doom:org-attach)          ; attach file to org file
+  (ex! "link"        'doom:org-link)
+  (ex-local! "vlc" 'doom-org-insert-vlc))
 
 (provide 'my-commands)
 ;;; my-commands.el ends here
