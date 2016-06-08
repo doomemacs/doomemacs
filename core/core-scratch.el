@@ -10,15 +10,22 @@
   "The global and persistent scratch buffer for doom.")
 (defvar doom-buffer-name "*doom*"
   "The name of the doom scratch buffer.")
-(defvar-local doom-buffer-edited nil
+(defvar doom-buffer-edited nil
   "If non-nil, the scratch buffer has been edited.")
 
 (define-derived-mode doom-mode fundamental-mode "DOOM"
   "Major mode for special DOOM buffers.")
 
+;; Update the doom buffer if it's visible during a killing
+(add-hook! 'kill-buffer-query-functions
+  (when (and (get-buffer-window-list doom-buffer nil t)
+             (not doom-buffer-edited))
+    (doom-mode-init t))
+  t)
+
 ;; Don't kill the scratch buffer
 (add-hook! 'kill-buffer-query-functions
-  (not (string= doom-buffer-name (buffer-name))))
+  (not (eq doom-buffer (current-buffer))))
 
 (after! uniquify
   (push (regexp-quote doom-buffer-name) uniquify-ignore-buffers-re))
