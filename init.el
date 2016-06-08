@@ -83,11 +83,11 @@
       module-eshell      ; for inferior OSes *cough*windows
       module-org         ; for organized fearless leader
 
-      ;;; Extra libraries
-      extra-demo         ; allow me to demonstrate...
-      extra-tags         ; if you liked it you should've generated a tag for it
-      extra-tmux         ; close the rift between GUI & terminal
-      extra-write        ; Emacs as a word processor
+      ;;; Custom modules
+      custom-demo        ; allow me to demonstrate...
+      custom-tags        ; if you liked it you should've generated a tag for it
+      custom-tmux        ; close the rift between GUI & terminal
+      custom-write       ; Emacs as a word processor
 
       ;;; Personal
       my-commands

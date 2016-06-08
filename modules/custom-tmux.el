@@ -1,4 +1,4 @@
-;;; extra-tmux.el
+;;; custom-tmux.el
 
 ;; This library offers:
 ;;   + A way of communicating with a tmux instance
@@ -24,7 +24,7 @@
   :ex-arg shell
   (list (when (evil-ex-p) (evil-ex-file-arg))))
 
-;;;###autoload (autoload 'doom:tmux-cd "extra-tmux" nil t)
+;;;###autoload (autoload 'doom:tmux-cd "custom-tmux" nil t)
 (evil-define-command doom:tmux-cd (&optional bang)
   (interactive "<!>")
   (if bang
@@ -32,7 +32,7 @@
     (doom/tmux-cd-to-here)))
 
 (defvar doom-tmux-last-command nil "The last command sent to tmux")
-;;;###autoload (autoload 'doom:tmux "extra-tmux" nil t)
+;;;###autoload (autoload 'doom:tmux "custom-tmux" nil t)
 (evil-define-operator doom:tmux (&optional command bang)
   "Sends input to tmux. Use `bang' to append to tmux"
   :type inclusive
@@ -56,5 +56,5 @@
   (interactive)
   (doom/tmux-cd-to-here (doom/project-root)))
 
-(provide 'extra-tmux)
-;;; extra-tmux.el ends here
+(provide 'custom-tmux)
+;;; custom-tmux.el ends here
