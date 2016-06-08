@@ -190,8 +190,8 @@ Examples:
 (after! evil
   (defalias 'ex! 'evil-ex-define-cmd)
 
-  ;; NOTE evil-mode doesn't read local `evil-ex-commands', and will
-  ;; not autocomplete local commands.
+  ;; NOTE evil-mode doesn't read local `evil-ex-commands', and will not
+  ;; autocomplete local commands.
   (defun ex-local! (cmd fn)
     "Define a buffer-local ex command."
     (unless (local-variable-p 'evil-ex-commands)

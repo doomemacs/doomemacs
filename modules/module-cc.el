@@ -45,7 +45,7 @@
   :config
   (setq irony-server-install-prefix (concat doom-temp-dir "/irony/"))
   (add-hook! c++-mode
-    (make-variable-buffer-local 'irony-additional-clang-options)
+    (make-local-variable 'irony-additional-clang-options)
     (push "-std=c++11" irony-additional-clang-options))
 
   (require 'irony-eldoc)

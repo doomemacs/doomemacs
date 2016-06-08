@@ -68,6 +68,7 @@
             (select-window (get-buffer-window doom-prev-buffer)))
           (switch-to-buffer b)))
 
+  ;; Prevent magit and evil-snipe conflicts
   (add-hook 'magit-mode-hook 'turn-off-evil-snipe-override-mode)
 
   (require 'evil-magit)

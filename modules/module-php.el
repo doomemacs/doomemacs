@@ -29,7 +29,7 @@
 
 (use-package php-extras
   :after php-mode
-  :init (add-hook 'php-mode-hook 'turn-on-eldoc-mode)
+  :init (add-hook 'php-mode-hook 'eldoc-mode)
   :config
   (defun php-extras-company-setup ()) ;; company will set up itself
   ;; Generate php-extras documentation and completion asynchronously

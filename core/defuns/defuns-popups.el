@@ -144,7 +144,6 @@ the display (unless DONT-REDRAW is non-nil)."
                           doom-popup-rules))))
     (setq doom-last-popup (current-buffer))
     (setq-local doom-popup-rule rules)
-    ;; (set-window-dedicated-p (selected-window) doom-popup-mode)
     (unless (memq :noesc rules)
       (make-local-variable 'doom-popup-mode-map)
       (let ((map doom-popup-mode-map))
