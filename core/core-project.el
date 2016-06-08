@@ -112,19 +112,20 @@
   (map! :map neotree-mode-map
         :m "\\\\" 'evil-window-prev
         "ESC ESC" 'neotree-hide
-        "q"   'neotree-hide
-        "RET" 'neotree-enter
-        "J"   'neotree-select-next-sibling-node
-        "K"   'neotree-select-previous-sibling-node
-        "H"   'neotree-select-up-node
-        "L"   'neotree-select-down-node
-        "v"   'neotree-enter-vertical-split
-        "s"   'neotree-enter-horizontal-split
-        "c"   'neotree-create-node
-        "d"   'neotree-delete-node
-        "g"   'neotree-refresh
-        "r"   'neotree-rename-node
-        "R"   'neotree-change-root))
+        "q"       'neotree-hide
+        [return]  'neotree-enter
+        "RET"     'neotree-enter
+        :m "J"    'neotree-select-next-sibling-node
+        :m "K"    'neotree-select-previous-sibling-node
+        :m "H"    'neotree-select-up-node
+        :m "L"    'neotree-select-down-node
+        "v"       'neotree-enter-vertical-split
+        "s"       'neotree-enter-horizontal-split
+        "c"       'neotree-create-node
+        "d"       'neotree-delete-node
+        "g"       'neotree-refresh
+        "r"       'neotree-rename-node
+        "R"       'neotree-change-root))
 
 (use-package projectile
   :config
