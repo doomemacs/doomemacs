@@ -17,7 +17,7 @@ designer, scientist and doom enthusiast.
 
 ## Installation
 
-```
+```bash
 # Install cask + emacs
 brew install cask
 brew tap railwaycat/emacsmacport
