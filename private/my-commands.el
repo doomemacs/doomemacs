@@ -12,6 +12,7 @@
 (ex! "bc[omp]"     'doom:byte-compile)
 (ex! "re[load]"    'doom-reload)
 (ex! "re[load]au"  'doom-reload-autoloads)
+(ex! "clog"        'clm/toggle-command-log-buffer)
 
 ;; Quick mapping keys to commands, allows :nmap \m !make
 (ex! "imap"        'doom:imap)

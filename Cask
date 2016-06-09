@@ -64,6 +64,7 @@
 (depends-on "ace-link")
 (depends-on "ace-window")
 (depends-on "avy")
+(depends-on "command-log-mode")
 (depends-on "dumb-jump")
 (depends-on "editorconfig")
 (depends-on "eldoc-eval")
