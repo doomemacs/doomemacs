@@ -70,14 +70,13 @@
                      (require 'find-func)
                      (when (eq file 'C-source)
                        (setq file (help-C-file-name (indirect-function fun) 'fun)))
-                     (let ((location
-                            (find-function-search-for-symbol fun nil file)))
+                     (let ((location (find-function-search-for-symbol fun nil file)))
                        (doom/popup-save
                         (switch-to-buffer (car location) nil t)
-                        (awhen (cdr location) (goto-char it)))
-                       (if (cdr location)
-                           (goto-char (cdr location))
-                         (message "Unable to find location in file")))))
+                        (if (cdr location)
+                            (goto-char (cdr location))
+                          (message "Unable to find location in file")))
+                       (select-window (get-buffer-window (car location))))))
 
   (define-button-type 'help-variable-def
     :supertype 'help-xref
@@ -87,10 +86,10 @@
                      (let ((location (find-variable-noselect var file)))
                        (doom/popup-save
                         (switch-to-buffer (car location) nil t)
-                        (awhen (cdr location) (goto-char it)))
-                       (if (cdr location)
-                           (goto-char (cdr location))
-                         (message "Unable to find location in file")))))
+                        (if (cdr location)
+                            (goto-char (cdr location))
+                          (message "Unable to find location in file")))
+                       (select-window (get-buffer-window (car location))))))
 
   (define-button-type 'help-face-def
     :supertype 'help-xref
@@ -100,10 +99,10 @@
                             (find-function-search-for-symbol fun 'defface file)))
                        (doom/popup-save
                         (switch-to-buffer (car location) nil t)
-                        (awhen (cdr location) (goto-char it)))
-                       (if (cdr location)
-                           (goto-char (cdr location))
-                         (message "Unable to find location in file"))))))
+                        (if (cdr location)
+                            (goto-char (cdr location))
+                          (message "Unable to find location in file")))
+                       (select-window (get-buffer-window (car location)))))))
 
 (provide 'core-popup)
 ;;; core-popup.el ends here
