@@ -81,7 +81,7 @@
         neo-auto-indent-point t
         neo-mode-line-type 'none
         neo-persist-show nil
-        neo-window-width 28
+        neo-window-width 26
         neo-show-updir-line nil
         neo-auto-indent-point t
         neo-theme 'nerd ; fallback
@@ -90,24 +90,23 @@
   (evil-set-initial-state 'neotree-mode 'motion)
   (add-hook 'neo-after-create-hook 'doom-hide-mode-line-mode)
 
-  ;; Don't mess with neotree on wg-related window-config changes
-  (advice-add 'doom/undo-window-change :around 'doom*save-neotree)
-  (advice-add 'doom/redo-window-change :around 'doom*save-neotree)
   ;; A custom and simple theme for neotree
-  (advice-add 'neo-buffer--insert-fold-symbol :override 'doom*neo-theme)
+  (advice-add 'neo-buffer--insert-fold-symbol :override 'doom*neo-insert-fold-symbol)
   ;; Shorter pwd in neotree
-  (advice-add 'neo-buffer--insert-root-entry :filter-args 'doom*neotree-shorten-pwd)
+  (advice-add 'neo-buffer--insert-root-entry :filter-args 'doom*neo-insert-root-entry)
   ;; Don't ask for confirmation when creating files
   (advice-add 'neotree-create-node :around 'doom*neotree-create-node)
   ;; Prevents messing up the neotree buffer on window changes
   (advice-add 'doom/evil-window-move :around 'doom*save-neotree)
 
-  (defun doom*neotree-no-fringes ()
-    (set-window-fringes neo-global--window 1 0))
+  ;; Minimize 'border' between windows (won't work in hook)
+  (defun doom*neotree-no-fringes () (set-window-fringes neo-global--window 1 0))
   (advice-add 'neo-global--select-window :after 'doom*neotree-no-fringes)
 
   (add-hook! neotree-mode
     (set (make-local-variable 'hl-line-sticky-flag) t)
+    (setq line-spacing 2)
+    (text-scale-set -1)
     (hl-line-mode +1))
   (map! :map neotree-mode-map
         :m "\\\\" 'evil-window-prev

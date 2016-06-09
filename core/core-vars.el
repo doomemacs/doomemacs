@@ -13,7 +13,7 @@ killed by `doom/kill-unreal-buffers', or after `doom/kill-real-buffer').")
 (defvar doom-ignore-buffers
   '("*Messages*" "*eval*" "*Completions*" "*Compile-Log*" "*inferior-lisp*"
     "*Fuzzy Completions*" "*Apropos*" "*Help*" "*cvs*" "*Buffer List*"
-    "*Ibuffer*" "*NeoTree*" "*NeoTree*" "*esh command on file*" "*WoMan-Log*"
+    "*Ibuffer*" " *NeoTree*" "*NeoTree*" "*esh command on file*" "*WoMan-Log*"
     "*compilation*" "*use-package*" "*quickrun*" "*eclim: problems*"
     "*Flycheck errors*" "*popwin-dummy*"
     ;; Helm
