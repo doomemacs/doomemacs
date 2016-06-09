@@ -18,8 +18,12 @@ designer, scientist and doom enthusiast.
 ## Installation
 
 ```
+# Install cask + emacs
 brew install cask
-brew install emacs --with-cocoa --with-imagemagick
+brew tap railwaycat/emacsmacport
+brew install emacs-mac --with-imagemagick --with-modern-icon --HEAD
+
+# Install this emacs.d
 git clone https://github.com/hlissner/.emacs.d ~/.emacs.d
 cd ~/.emacs.d
 make          # installs plugins via cask and generates autoloads
