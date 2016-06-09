@@ -28,6 +28,7 @@
           ("*Warnings*"        :align below :size 10  :noselect t)
           (compilation-mode    :align below :size 15  :noselect t)
           (eww-mode            :align below :size 30  :select t)
+          ("*command-log*"     :align right :size 28  :noselect t)
           ;; vcs
           ("*vc-diff*"         :align below :size 15  :noselect t)
           ("*vc-change-log*"   :align below :size 15  :select t)
