@@ -46,7 +46,7 @@
          (,(concat
             "(\\("
             (regexp-opt '("λ" "in" "map" "after" "shut-up" "add-hook"
-                          "associate" "define-org-link" "ex"
+                          "associate" "define-org-link" "ex" "ex-local"
                           "define-org-section" "set" "noop"))
             "!\\)")
           (1 font-lock-keyword-face append))
