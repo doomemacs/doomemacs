@@ -263,7 +263,8 @@ buffers regardless of project."
       ;; or scratch buffer by default
       (with-current-buffer (doom/popup-buffer doom-buffer)
         (doom|update-scratch-buffer nil t)
-        (unless (eq major-mode mode)
+        (when (and (not (eq major-mode mode))
+                   (functionp mode))
           (funcall mode))
         (unless doom-buffer-edited
           (erase-buffer)
