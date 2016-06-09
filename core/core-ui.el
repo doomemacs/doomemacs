@@ -130,10 +130,9 @@
     (if highlight-indentation-mode
         (progn
           (doom/add-whitespace)
-          (add-hook 'after-save-hook 'doom/add-whitespace nil t)
-          (add-hook 'before-save-hook 'delete-trailing-whitespace nil t))
+          (add-hook 'after-save-hook 'doom/add-whitespace nil t))
       (remove-hook 'after-save-hook 'doom/add-whitespace t)
-      (remove-hook 'before-save-hook 'delete-trailing-whitespace t))))
+      (delete-trailing-whitespace))))
 
 (use-package highlight-numbers :commands (highlight-numbers-mode))
 
