@@ -6,7 +6,7 @@
   :mode ("\\.m\\(d\\|arkdown\\)$" "/README$"
          ("/README\\.md$" . gfm-mode))
   :init
-  (add-hook 'markdown-mode-hook 'turn-on-auto-fill)
+  (add-hook 'markdown-mode-hook 'auto-fill-mode)
   (setq markdown-enable-wiki-links t
         markdown-italic-underscore t
         markdown-enable-math t

@@ -45,19 +45,16 @@
     (apply orig-fun args)))
 
 ;;;###autoload
-(defun doom*neotree-shorten-pwd (node)
-  "Shorter pwd in neotree"
+(defun doom*neo-insert-root-entry (node)
+  "Pretty-print pwd in neotree"
   (list (concat "  " (projectile-project-name))))
 
 ;;;###autoload
-(defun doom*neo-theme (name)
-  "Custom hybrid ascii theme with leading whitespace."
-  (let ((n-insert-symbol (lambda (n)
-                           (neo-buffer--insert-with-face
-                            n 'neo-expand-btn-face))))
-    (or (and (eq name 'open)  (funcall n-insert-symbol " -  "))
-        (and (eq name 'close) (funcall n-insert-symbol " +  "))
-        (and (eq name 'leaf)  (funcall n-insert-symbol "   ")))))
+(defun doom*neo-insert-fold-symbol (name)
+  "Custom hybrid unicode theme with leading whitespace."
+  (or (and (eq name 'open)  (neo-buffer--insert-with-face " -  " 'neo-expand-btn-face))
+      (and (eq name 'close) (neo-buffer--insert-with-face " +  " 'neo-expand-btn-face))
+      (and (eq name 'leaf)  (neo-buffer--insert-with-face "   " 'neo-expand-btn-face))))
 
 (provide 'defuns-neotree)
 ;;; defuns-neotree.el ends here

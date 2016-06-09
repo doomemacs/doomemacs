@@ -1,4 +1,4 @@
-;;; extra-tags.el
+;;; custom-tags.el
 
 ;; WIP
 
@@ -27,6 +27,7 @@
 
 ;;;###autoload
 (defun doom/find-def ()
+  "Find definition using tags, falling back to dumb-jump otherwise."
   (interactive)
   (let ((orig-pt (point))
         (orig-file (buffer-file-name)))
@@ -44,5 +45,5 @@
   (let ((path (expand-file-name ".tags" (doom/project-root))))
     (and (f-exists? path) path)))
 
-(provide 'extra-tags)
-;;; extra-tags.el ends here
+(provide 'custom-tags)
+;;; custom-tags.el ends here

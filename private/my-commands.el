@@ -12,6 +12,7 @@
 (ex! "bc[omp]"     'doom:byte-compile)
 (ex! "re[load]"    'doom-reload)
 (ex! "re[load]au"  'doom-reload-autoloads)
+(ex! "clog"        'clm/toggle-command-log-buffer)
 
 ;; Quick mapping keys to commands, allows :nmap \m !make
 (ex! "imap"        'doom:imap)
@@ -41,7 +42,7 @@
 (ex! "db"          'doom:db)
 (ex! "dbu[se]"     'doom:db-select)
 (ex! "http"        'httpd-start)                 ; start http server
-(ex! "re[gex]"     'doom:regex)                  ; open re-builder
+(ex! "rx"          'doom:regex)                  ; open re-builder
 (ex! "repl"        'doom:repl)                   ; invoke or send to repl
 (ex! "sh[ell]"     'doom/eshell)
 (ex! "t[mux]"      'doom:tmux)                   ; send to tmux
@@ -98,9 +99,11 @@
 (ex! "tabs"        'doom/tab-display)
 
 ;; Org-mode
-(ex! "att[ach]"    'doom:org-attach)             ; attach file to org file
-(ex! "link"        'doom:org-link)
-(ex! "org"         'doom:org-helm-search)        ; search org notes
+(add-hook! org-mode
+  ;;(ex! "org"         'doom:org-helm-search)   ; search org notes
+  (ex! "att[ach]"    'doom:org-attach)          ; attach file to org file
+  (ex! "link"        'doom:org-link)
+  (ex-local! "vlc" 'doom-org-insert-vlc))
 
 (provide 'my-commands)
 ;;; my-commands.el ends here

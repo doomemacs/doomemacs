@@ -28,6 +28,7 @@
           ("*Warnings*"        :align below :size 10  :noselect t)
           (compilation-mode    :align below :size 15  :noselect t)
           (eww-mode            :align below :size 30  :select t)
+          ("*command-log*"     :align right :size 28  :noselect t)
           ;; vcs
           ("*vc-diff*"         :align below :size 15  :noselect t)
           ("*vc-change-log*"   :align below :size 15  :select t)
@@ -69,13 +70,13 @@
                      (require 'find-func)
                      (when (eq file 'C-source)
                        (setq file (help-C-file-name (indirect-function fun) 'fun)))
-                     (let ((location
-                            (find-function-search-for-symbol fun nil file)))
+                     (let ((location (find-function-search-for-symbol fun nil file)))
                        (doom/popup-save
-                        (switch-to-buffer (car location) nil t))
-                       (if (cdr location)
-                           (goto-char (cdr location))
-                         (message "Unable to find location in file")))))
+                        (switch-to-buffer (car location) nil t)
+                        (if (cdr location)
+                            (goto-char (cdr location))
+                          (message "Unable to find location in file")))
+                       (select-window (get-buffer-window (car location))))))
 
   (define-button-type 'help-variable-def
     :supertype 'help-xref
@@ -84,10 +85,11 @@
                        (setq file (help-C-file-name var 'var)))
                      (let ((location (find-variable-noselect var file)))
                        (doom/popup-save
-                        (switch-to-buffer (car location) nil t))
-                       (if (cdr location)
-                           (goto-char (cdr location))
-                         (message "Unable to find location in file")))))
+                        (switch-to-buffer (car location) nil t)
+                        (if (cdr location)
+                            (goto-char (cdr location))
+                          (message "Unable to find location in file")))
+                       (select-window (get-buffer-window (car location))))))
 
   (define-button-type 'help-face-def
     :supertype 'help-xref
@@ -96,10 +98,11 @@
                      (let ((location
                             (find-function-search-for-symbol fun 'defface file)))
                        (doom/popup-save
-                        (switch-to-buffer (car location) nil t))
-                       (if (cdr location)
-                           (goto-char (cdr location))
-                         (message "Unable to find location in file"))))))
+                        (switch-to-buffer (car location) nil t)
+                        (if (cdr location)
+                            (goto-char (cdr location))
+                          (message "Unable to find location in file")))
+                       (select-window (get-buffer-window (car location)))))))
 
 (provide 'core-popup)
 ;;; core-popup.el ends here

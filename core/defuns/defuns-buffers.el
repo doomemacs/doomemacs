@@ -98,28 +98,19 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
   "Kill buffer (but only bury scratch buffer), then switch to a real buffer. Only buries
 the buffer if it is being displayed in another window."
   (interactive (list t))
-  (if (eq doom-buffer (current-buffer))
-      (if (one-window-p)
-          (progn
-            (when (= (length (get-buffer-window-list doom-buffer nil t)) 1)
-              (doom-mode-init t))
-            (when arg (message "Already in scratch buffer")))
-        (doom/previous-real-buffer))
-    (let ((new-dir (doom/project-root)))
-      (if (doom/popup-p)
-          (doom/popup-close)
-        (if (> (length (get-buffer-window-list (current-buffer) nil t)) 1)
-            (bury-buffer)
-          (when (and buffer-file-name (buffer-modified-p))
-            (if (yes-or-no-p "Buffer is unsaved, save it?")
-                (save-buffer)
-              (set-buffer-modified-p nil)))
-          (kill-this-buffer))
-        (unless (doom/real-buffer-p (current-buffer))
-          (doom/previous-real-buffer))
-        (when (get-buffer-window-list doom-buffer nil t)
-          (doom|update-scratch-buffer new-dir)))))
-    t)
+  (cond ((doom/popup-p)
+         (doom/popup-close))
+        (t
+         (if (> (length (get-buffer-window-list (current-buffer) nil t)) 1)
+             (bury-buffer)
+           (when (and buffer-file-name (buffer-modified-p))
+             (if (yes-or-no-p "Buffer is unsaved, save it?")
+                 (save-buffer)
+               (set-buffer-modified-p nil)))
+           (kill-buffer)
+           (unless (doom/real-buffer-p)
+             (doom/previous-real-buffer)))))
+  t)
 
 ;;;###autoload
 (defun doom/kill-unreal-buffers ()
@@ -168,45 +159,41 @@ the buffer if it is being displayed in another window."
   "Switch to the previous buffer and avoid special buffers. If there's nothing
 left, create a scratch buffer."
   (let* ((start-buffer (current-buffer))
-         (move-func (if (< n 0) 'switch-to-next-buffer 'switch-to-prev-buffer))
-         (real-buffers (doom/get-real-buffers))
-         (realc (length real-buffers))
+         (move-func (if (> n 0) 'switch-to-next-buffer 'switch-to-prev-buffer))
          (max 25)
          (i 0)
-         (continue t))
-    (if (or (= realc 0)
-            (and (= realc 1) (eq (car real-buffers) (current-buffer))))
-        (progn
-          (doom|update-scratch-buffer)
-          (switch-to-buffer doom-buffer-name)
-          (message "Nowhere to go"))
-      (funcall move-func)
-      (while (and continue)
-        (let ((current-buffer (current-buffer)))
-          (cond ((or (eq current-buffer start-buffer)
-                     (>= i max))
-                 (doom|update-scratch-buffer)
-                 (switch-to-buffer doom-buffer-name)
-                 (setq continue nil))
-                ((not (memq current-buffer real-buffers))
-                 (funcall move-func))
-                (t
-                 (setq continue nil))))
-        (cl-incf i)))))
+         (continue t)
+         destbuf)
+    (setq destbuf
+          (catch 'goto
+            (if (not (doom/get-real-buffers))
+                (throw 'goto doom-buffer)
+              (funcall move-func)
+              (while (not (and (doom/real-buffer-p)
+                               (doom/project-p)))
+                (if (or (eq (current-buffer) start-buffer)
+                        (>= i max))
+                    (throw 'goto doom-buffer)
+                  (funcall move-func))
+                (cl-incf i))
+              (current-buffer))))
+    (when (eq destbuf doom-buffer)
+      (doom|update-scratch-buffer)
+      (message "Nowhere to go"))
+    (switch-to-buffer destbuf)))
 
 ;;;###autoload
 (defun doom/real-buffer-p (&optional buffer)
   "Returns whether BUFFER a 'real' buffer or not. Real means it isn't a popup,
 temporary, scratch or special buffer."
-  (setq buffer (get-buffer (or buffer (current-buffer))))
+  (setq buffer (or (and (bufferp buffer) buffer)
+                   (and (stringp buffer) (get-buffer buffer))
+                   (current-buffer)))
   (when (buffer-live-p buffer)
     (with-current-buffer buffer
-      (not (or (apply #'derived-mode-p
-                      (-filter 'symbolp doom-unreal-buffers))
-               (--any? (if (stringp it)
-                           (string-match-p it (buffer-name buffer))
-                         (eq major-mode it))
-                       doom-unreal-buffers))))))
+      (not (or (apply #'derived-mode-p (-filter 'symbolp doom-unreal-buffers))
+               (--any? (string-match-p it (buffer-name buffer))
+                       (-filter 'stringp doom-unreal-buffers)))))))
 
 ;; Inspired by spacemacs <https://github.com/syl20bnr/spacemacs/blob/master/spacemacs/funcs.el>
 ;;;###autoload
@@ -276,7 +263,8 @@ buffers regardless of project."
       ;; or scratch buffer by default
       (with-current-buffer (doom/popup-buffer doom-buffer)
         (doom|update-scratch-buffer nil t)
-        (unless (eq major-mode mode)
+        (when (and (not (eq major-mode mode))
+                   (functionp mode))
           (funcall mode))
         (unless doom-buffer-edited
           (erase-buffer)

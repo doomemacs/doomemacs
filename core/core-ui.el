@@ -97,9 +97,8 @@
   :init (add-hook! (prog-mode markdown-mode) 'hl-line-mode)
   :config
   ;; Doesn't seem to play nice in emacs 25+
-  (when (< emacs-major-version 25)
-    (setq hl-line-sticky-flag nil
-          global-hl-line-sticky-flag nil))
+  (setq hl-line-sticky-flag nil
+        global-hl-line-sticky-flag nil)
 
   (defvar-local doom--hl-line-mode nil)
   (defun doom|hl-line-on ()  (if doom--hl-line-mode (hl-line-mode +1)))
@@ -112,7 +111,8 @@
 (use-package visual-fill-column :defer t
   :config
   (setq-default visual-fill-column-center-text nil
-                visual-fill-column-width fill-column))
+                visual-fill-column-width fill-column
+                split-window-preferred-function 'visual-line-mode-split-window-sensibly))
 
 (use-package highlight-indentation
   :commands (highlight-indentation-mode
@@ -130,10 +130,9 @@
     (if highlight-indentation-mode
         (progn
           (doom/add-whitespace)
-          (add-hook 'after-save-hook 'doom/add-whitespace nil t)
-          (add-hook 'before-save-hook 'delete-trailing-whitespace nil t))
+          (add-hook 'after-save-hook 'doom/add-whitespace nil t))
       (remove-hook 'after-save-hook 'doom/add-whitespace t)
-      (remove-hook 'before-save-hook 'delete-trailing-whitespace t))))
+      (delete-trailing-whitespace))))
 
 (use-package highlight-numbers :commands (highlight-numbers-mode))
 
@@ -394,9 +393,11 @@ anzu to be enabled."
                                                      'doom-flycheck-warning
                                                    'mode-line))))))))))
 
+  (defvar *pad-active (pl/percent-xpm powerline-height 100 0 100 0 3 "#00B3EF" nil))
+  (defvar *pad-inactive (pl/percent-xpm powerline-height 100 0 100 0 3 nil nil))
   (spaceline-define-segment *pad
     "Padding, to ensure the mode-line is `powerline-height' pixels tall"
-    (pl/percent-xpm powerline-height 100 0 100 0 3 (if active "#00B3EF") nil)
+    (if active *pad-active *pad-inactive)
     :tight t)
 
   (spaceline-compile
@@ -441,9 +442,10 @@ anzu to be enabled."
     :tight t
     :face 'mode-line)
 
+  (defvar *eldoc-pad-xpm (pl/percent-xpm powerline-height 100 0 100 0 3 "#B3EF00" nil))
   (spaceline-define-segment *eldoc-pad
     "Padding, to ensure the mode-line is `powerline-height' pixels tall"
-    (pl/percent-xpm powerline-height 100 0 100 0 3 "#B3EF00" nil)
+    *eldoc-pad-xpm
     :tight t
     :face 'mode-line)
 

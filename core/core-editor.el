@@ -146,6 +146,10 @@
   :config (setq avy-all-windows nil
                 avy-background t))
 
+(use-package command-log-mode
+  :commands (clm/command-log-buffer command-log-mode global-command-log-mode)
+  :config (setq command-log-mode-is-global t))
+
 (use-package dumb-jump
   :commands (dumb-jump-go dumb-jump-quick-look dumb-jump-back)
   :config
