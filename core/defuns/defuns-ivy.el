@@ -59,5 +59,18 @@ DIR specifies the default-directory from which ag is run."
   (interactive "<r><a><!>")
   (doom:ivy-ag-search beg end search regex-p default-directory))
 
+;;;###autoload
+(defun doom*counsel-ag-function (string)
+  "Advice to get rid of the character limit from `counsel-ag-function', which
+interferes with my custom :ag ex command `doom:ivy-ag-search'."
+  (if (< (length string) 1)
+      (counsel-more-chars 1)
+    (let ((default-directory counsel--git-grep-dir)
+          (regex (counsel-unquote-regex-parens
+                  (setq ivy--old-re (ivy--regex string)))))
+      (counsel--async-command
+       (format counsel-ag-base-command (shell-quote-argument regex)))
+      nil)))
+
 (provide 'defuns-ivy)
 ;;; defuns-ivy.el ends here

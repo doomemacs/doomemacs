@@ -5,9 +5,13 @@
   :init
   (setq projectile-completion-system 'ivy
         ivy-height 15
-        ivy-do-completion-in-region nil)
+        ivy-do-completion-in-region nil
+        ivy-wrap t)
 
   :config
+  (after! magit
+    (setq magit-completing-read-function 'ivy-completing-read))
+
   (ivy-mode +1)
   (map! :map ivy-minibuffer-map
         [escape] 'keyboard-escape-quit
@@ -18,23 +22,14 @@
         "C-b" 'backward-word
         "C-f" 'forward-word)
 
+  ;;
   (require 'counsel)
-  (defun counsel-ag-function (string)
-  "Grep in the current directory for STRING."
-  (if (< (length string) 1)
-      (counsel-more-chars 1)
-    (let ((default-directory counsel--git-grep-dir)
-          (regex (counsel-unquote-regex-parens
-                  (setq ivy--old-re
-                        (ivy--regex string)))))
-      (counsel--async-command
-       (format counsel-ag-base-command (shell-quote-argument regex)))
-      nil))))
 
   (add-hook! doom-popup-mode
     (when (eq major-mode 'ivy-occur-grep-mode)
       (ivy-wgrep-change-to-wgrep-mode)))
 
+  (advice-add 'counsel-ag-function :override 'doom*counsel-ag-function)
   (define-key counsel-ag-map [backtab] 'ivy-occur))
 
 (use-package counsel-projectile :after projectile)
