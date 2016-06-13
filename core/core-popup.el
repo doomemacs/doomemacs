@@ -38,15 +38,15 @@
   ;; :nokill   = Won't be killed when closed
   ;; :modeline = Show the modeline
   (defvar doom-popup-rules
-    '(("^\\*doom\\*$"       :noesc :nokill :modeline)
-      ("^\\*doom.*\\*$"     :noesc :nokill)
-      (compilation-mode     :noesc)
-      (help-mode            :noesc)
-      (comint-mode          :noesc :nokill)
-      (eshell-mode          :noesc :nokill)
-      (messages-buffer-mode        :nokill)
-      (esup-mode            :noesc)
-      (tabulated-list-mode  :noesc)))
+    '(("^\\*doom\\(:scratch\\)?\\*$" :noesc :nokill :modeline)
+      ("^\\*doom.*\\*$"       :noesc :nokill)
+      (ivy-occur-grep-mode    :noesc)
+      (compilation-mode       :noesc)
+      (comint-mode            :noesc :nokill)
+      (eshell-mode            :noesc :nokill)
+      (messages-buffer-mode          :nokill)
+      (esup-mode              :noesc)
+      (tabulated-list-mode    :noesc)))
 
   ;; There is no shackle-popup hook, so I hacked one in
   (advice-add 'shackle-display-buffer :around 'doom*popup-init)

@@ -31,6 +31,12 @@
        (format counsel-ag-base-command (shell-quote-argument regex)))
       nil))))
 
+  (add-hook! doom-popup-mode
+    (when (eq major-mode 'ivy-occur-grep-mode)
+      (ivy-wgrep-change-to-wgrep-mode)))
+
+  (define-key counsel-ag-map [backtab] 'ivy-occur))
+
 (use-package counsel-projectile :after projectile)
 
 (provide 'core-ivy)
