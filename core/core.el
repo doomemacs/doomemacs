@@ -45,23 +45,6 @@
 ignored when using `doom:next-real-buffer' and `doom:previous-real-buffer' (or
 killed by `doom/kill-unreal-buffers', or after `doom/kill-real-buffer').")
 
-(defvar doom-ignore-buffers
-  '("*Messages*" "*eval*" "*Completions*" "*Compile-Log*" "*inferior-lisp*"
-    "*Fuzzy Completions*" "*Apropos*" "*Help*" "*cvs*" "*Buffer List*"
-    "*Ibuffer*" " *NeoTree*" "*NeoTree*" "*esh command on file*" "*WoMan-Log*"
-    "*compilation*" "*use-package*" "*quickrun*" "*eclim: problems*"
-    "*Flycheck errors*" "*popwin-dummy*"
-    ;; Helm
-    ;; "*helm*" "*helm recentf*" "*helm projectile*" "*helm imenu*"
-    ;; "*helm company*" "*helm buffers*" "*Helm Css SCSS*" "*helm-ag*"
-    ;; "*helm-ag-edit*" "*Helm Swoop*" "*helm M-x*" "*helm mini*"
-    ;; "*Helm Completions*" "*Helm Find Files*" "*helm mu*"
-    ;; "*helm mu contacts*" "*helm-mode-describe-variable*"
-    ;; "*helm-mode-describe-function*"
-    ;; Org
-    "*Org todo*" "*Org Links*" "*Agenda Commands*")
-  "List of buffer names to ignore when using `winner-undo', or `winner-redo'")
-
 (defvar doom-cleanup-processes-alist
   '(("pry" . ruby-mode)
     ("irb" . ruby-mode)

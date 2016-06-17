@@ -75,9 +75,14 @@
 
 ;; window config undo/redo
 (setq winner-dont-bind-my-keys t)
+(require 'winner)
+;; Ignore all special buffers
+(advice-add 'winner-window-list :filter-return 'doom*winner-window-list)
+(defun doom*winner-window-list (windows)
+  (-remove (lambda (win) (string-match-p "^\\s-*\\*" (buffer-name (window-buffer win))))
+           windows))
 (winner-mode 1)
-(add-hook! after-init
-  (setq winner-boring-buffers doom-ignore-buffers))
+
 
 ;; Let editorconfig handle global whitespace settings
 (use-package editorconfig :demand t
