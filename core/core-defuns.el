@@ -17,7 +17,11 @@
      (defvar doom-current-font doom-default-font)
 
      (unless noninteractive
-       ,@(mapcar (lambda (pkg) `(require ',pkg))
+       ,@(mapcar (lambda (pkg)
+                   (let ((lib-path (locate-library (symbol-name pkg))))
+                     (unless lib-path
+                       (error "Initfile not found: %s" pkg))
+                     `(require ',pkg ,(f-no-ext lib-path))))
                  packages)
        (when window-system
          (require 'server)
