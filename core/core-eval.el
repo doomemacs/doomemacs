@@ -38,7 +38,7 @@
     (:custom (lambda (b &rest _)
                (when (and (featurep 'repl-toggle)
                           (string-prefix-p "*" (buffer-name (get-buffer b))))
-                 (with-current-buffer b repl-toggle-mode))))
+                 (buffer-local-value 'repl-toggle-mode b))))
     :popup t :align below :size 16 :select t)
 
   (map! :map repl-toggle-mode-map

@@ -27,12 +27,12 @@
 
 ;;;###autoload
 (defun doom/popup-p (&optional window)
-  "Whether WINDOW is a shackle popup window or not. If WINDOW is nil, use
-current window."
-  (let ((window (or window (selected-window))))
-    (and (window-live-p window)
-         (with-selected-window window (bound-and-true-p doom-popup-mode))
-         window)))
+  "Whether WINDOW is a popup window or not. If WINDOW is nil, use current
+window. Returns nil or the popup window."
+  (setq window (or window (selected-window)))
+  (and (window-live-p window)
+       (buffer-local-value 'doom-popup-mode (window-buffer window))
+       window))
 
 ;;;###autoload
 (defun doom/popups-p ()

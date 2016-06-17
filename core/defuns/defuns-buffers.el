@@ -86,7 +86,7 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
 ;;;###autoload
 (defun doom/get-buffers-in-modes (modes &optional buffer-list)
   "Get a list of buffers whose major-mode is one of MODES"
-  (--filter (with-current-buffer it (memq major-mode modes))
+  (--filter (memq (buffer-local-value 'major-mode it) modes)
             (or buffer-list (doom/get-buffers))))
 
 ;;;###autoload
