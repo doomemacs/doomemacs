@@ -178,282 +178,263 @@
 ;; Mode-line
 ;;
 
-(use-package spaceline
-  :init
-  (defvar-local doom--env-version nil)
-  (defvar-local doom--env-command nil)
-  (defvar powerline-height 30)
-  (defvar powerline-default-separator nil)
+(defvar mode-line-height 30)
+(defvar-local doom--env-version nil)
+(defvar-local doom--env-command nil)
 
-  :config
-  (defface mode-line-is-modified nil "Face for mode-line modified symbol")
-  (defface mode-line-buffer-file nil "Face for mode-line buffer file name")
-  (defface mode-line-buffer-path nil "Face for mode-line buffer file path")
+(eval-when-compile (require 'powerline))
+(defvar mode-line-bar          (! (pl/percent-xpm mode-line-height 100 0 100 0 3 "#00B3EF" nil)))
+(defvar mode-line-eldoc-bar    (! (pl/percent-xpm mode-line-height 100 0 100 0 3 "#B3EF00" nil)))
+(defvar mode-line-inactive-bar (! (pl/percent-xpm mode-line-height 100 0 100 0 3 nil nil)))
 
-  ;; Make certain unicode glyphs bigger for UI purposes
-  (doom-fix-unicode '("DejaVu Sans Mono" 15) ?✱)
-  (let ((font "DejaVu Sans Mono for Powerline"))
-    (doom-fix-unicode (list font 10) ?)
-    (doom-fix-unicode (list font 16) ?∄)
-    (doom-fix-unicode (list font 15) ?))
+(defface mode-line-is-modified nil "Face for mode-line modified symbol")
+(defface mode-line-buffer-path nil "Face for mode-line buffer file path")
+(defface mode-line-highlight nil "")
+(defface mode-line-2 nil "")
 
-  ;; Custom modeline segments
-  (spaceline-define-segment *buffer-path
-    (concat
-     (when buffer-file-name
-       (powerline-raw
-        (f-dirname
-         (let ((buffer-path (f-relative buffer-file-name (doom/project-root)))
-               (max-length (truncate (/ (window-body-width) 1.75))))
-           (concat (projectile-project-name) "/"
-                   (if (> (length buffer-path) max-length)
-                       (let ((path (reverse (split-string buffer-path "/" t)))
-                             (output ""))
-                         (when (and path (equal "" (car path)))
-                           (setq path (cdr path)))
-                         (while (and path (<= (length output) (- max-length 4)))
-                           (setq output (concat (car path) "/" output))
-                           (setq path (cdr path)))
-                         (when path
-                           (setq output (concat "../" output)))
-                         (when (string-suffix-p "/" output)
-                           (setq output (substring output 0 -1)))
-                         output)
-                     buffer-path))))
-        (if active 'mode-line-buffer-path)))
-     (powerline-raw "%b" (if active 'mode-line-buffer-file))
-     " "
-     (when buffer-file-name
-       (powerline-raw
-        (concat
-         (if (not (file-exists-p buffer-file-name)) "∄"
-            (if (buffer-modified-p) "✱"))
-          (if buffer-read-only ""))
-        'mode-line-is-modified)))
-    :tight-right t
-    :skip-alternate t)
+;; Make certain unicode glyphs bigger for UI purposes
+(doom-fix-unicode '("DejaVu Sans Mono" 15) ?✱)
+(let ((font "DejaVu Sans Mono for Powerline"))
+  (doom-fix-unicode (list font 12) ?)
+  (doom-fix-unicode (list font 16) ?∄)
+  (doom-fix-unicode (list font 15) ?))
 
-  (spaceline-define-segment *buffer-position
-    "A more vim-like buffer position."
-    (concat "(%l,%c) "
-            (let ((start (window-start))
-                  (end (window-end))
-                  (pend (point-max)))
-              (if (and (= start 1)
-                       (= end pend))
-                  ":All"
-                (let ((perc (/ end 0.01 pend)))
-                  (cond ((= start 1) ":Top")
-                        ((>= perc 100) ":Bot")
-                        (t (format ":%d%%%%" perc))))))))
+(defvar mode-line-selected-window nil)
+(defun doom|set-selected-window (&rest _)
+  (let ((window (frame-selected-window)))
+    (unless (minibuffer-window-active-p window)
+      (setq mode-line-selected-window window))))
+(add-hook 'window-configuration-change-hook #'doom|set-selected-window)
+(add-hook 'focus-in-hook #'doom|set-selected-window)
 
-  (defface mode-line-vcs-info nil '((t (:inherit warning))))
-  (defface mode-line-vcs-warning nil '((t (:inherit warning))))
-  (spaceline-define-segment *vc
-    "Version control info"
-    (when vc-mode
-      (propertize
-       (concat " "
-               (substring vc-mode (+ 2 (length (symbol-name (vc-backend buffer-file-name))))))
-       'face (when active
-               (let ((state (vc-state buffer-file-name)))
-                 (cond ((memq state '(edited added))
-                        'mode-line-vcs-info)
-                       ((memq state '(removed needs-merge needs-update conflict removed unregistered))
-                        'mode-line-vcs-warning)))))))
+(advice-add 'select-window :after 'doom|set-selected-window)
+(advice-add 'select-frame  :after 'doom|set-selected-window)
 
-  ;; search indicators
-  (defface mode-line-count-face nil "")
-  (make-variable-buffer-local 'anzu--state)
-  (spaceline-define-segment *anzu
-    "Show the current match number and the total number of matches. Requires
-anzu to be enabled."
-    (when (and (featurep 'evil-anzu)
-               (evil-ex-hl-active-p 'evil-ex-search))
-      (powerline-raw
-       (let ((here anzu--current-position)
-             (total anzu--total-matched))
-         (format " %s/%d%s "
-                 here total
-                 (if anzu--overflow-p "+" "")))
-       (if active 'mode-line-count-face 'mode-line-inactive)))
-    :tight t)
 
-  (spaceline-define-segment *iedit
-    "Show the number of iedit regions matches + what match you're on."
-    (when (bound-and-true-p iedit-mode)
-      (propertize
-       (let ((this-oc (let (message-log-max) (iedit-find-current-occurrence-overlay)))
-             (length (or (ignore-errors (length iedit-occurrences-overlays)) 0)))
-         (format
-          " %s/%s "
-          (save-excursion
-            (unless this-oc
-              (iedit-prev-occurrence)
-              (setq this-oc (iedit-find-current-occurrence-overlay)))
-            (if this-oc
-                ;; NOTE: Not terribly reliable
-                (- length (-elem-index this-oc iedit-occurrences-overlays))
-              "-"))
-          length))
-       'face (if active 'mode-line-count-face 'mode-line-inactive)))
-    :tight t)
+;;
+;; Mode-line segments
+;;
 
-  (spaceline-define-segment *evil-substitute
-    "Show number of :s matches in real time."
-    (when (and (evil-ex-p) (evil-ex-hl-active-p 'evil-ex-substitute))
-      (powerline-raw
-       (let ((range (if evil-ex-range
-                        (cons (car evil-ex-range) (cadr evil-ex-range))
-                      (cons (line-beginning-position) (line-end-position))))
-             (pattern (car-safe (evil-delimited-arguments evil-ex-argument 2))))
-         (if pattern
-             (format " %s matches "
-                     (count-matches pattern (car range) (cdr range))
-                     evil-ex-argument)
-           " ... "))
-       (if active 'mode-line-count-face 'mode-line-inactive)))
-    :tight t)
+(defun *buffer-path ()
+  (when buffer-file-name
+    (propertize
+     (f-dirname
+      (let ((buffer-path (file-relative-name buffer-file-name (doom/project-root)))
+            (max-length (truncate (/ (window-body-width) 1.75))))
+        (concat (projectile-project-name) "/"
+                (if (> (length buffer-path) max-length)
+                    (let ((path (reverse (split-string buffer-path "/" t)))
+                          (output ""))
+                      (when (and path (equal "" (car path)))
+                        (setq path (cdr path)))
+                      (while (and path (<= (length output) (- max-length 4)))
+                        (setq output (concat (car path) "/" output))
+                        (setq path (cdr path)))
+                      (when path
+                        (setq output (concat "../" output)))
+                      (when (string-suffix-p "/" output)
+                        (setq output (substring output 0 -1)))
+                      output)
+                  buffer-path))))
+     'face (if active 'mode-line-buffer-path))))
 
-  (spaceline-define-segment *macro-recording
-    "Show when recording macro."
-    (when (and active defining-kbd-macro)
-      (powerline-raw
-       (format " %s ▶ " (char-to-string evil-this-macro))
-       highlight-face))
-    :tight t)
+(defun *buffer-state ()
+  (when buffer-file-name
+    (propertize
+     (concat (if (not (file-exists-p buffer-file-name))
+                 "∄"
+               (if (buffer-modified-p) "✱"))
+             (if buffer-read-only ""))
+     'face 'mode-line-is-modified)))
 
-  (spaceline-define-segment *buffer-encoding-abbrev
-    "The line ending convention used in the buffer."
-    (unless (string-match-p "\\(utf-8\\|undecided\\)"
-                            (symbol-name buffer-file-coding-system))
-      (format "%s" buffer-file-coding-system)))
+(defun *buffer-name ()
+  "The buffer's name."
+  (s-trim-left (format-mode-line "%b")))
 
-  (spaceline-define-segment *major-mode
-    "The major mode, including process, environment and text-scale info."
-    (concat (format "%s" mode-name)
-            (if (stringp mode-line-process) mode-line-process)
-            (if doom--env-version (concat " " doom--env-version))
-            (and (featurep 'face-remap)
-                 (/= text-scale-mode-amount 0)
-                 (format " (%+d)" text-scale-mode-amount))))
+(defun *buffer-pwd ()
+  "Displays `default-directory'."
+  (propertize
+   (concat "[" (abbreviate-file-name default-directory) "]")
+   'face 'mode-line-2))
 
-  (spaceline-define-segment *selection-info
-    "Information about the current selection."
-    (when (and active (evil-visual-state-p))
-      (powerline-raw
-       (let ((reg-beg (region-beginning))
-             (reg-end (region-end))
-             (evil (eq 'visual evil-state)))
-         (let ((lines (count-lines reg-beg (min (1+ reg-end) (point-max))))
-               (chars (- (1+ reg-end) reg-beg))
-               (cols (1+ (abs (- (evil-column reg-end)
-                                 (evil-column reg-beg))))))
-           (cond
-            ;; rectangle selection
-            ((or (bound-and-true-p rectangle-mark-mode)
-                 (and evil (eq 'block evil-visual-selection)))
-             (format " %dx%dB " lines (if evil cols (1- cols))))
-            ;; line selection
-            ((or (> lines 1) (eq 'line evil-visual-selection))
-             (if (and (eq evil-state 'visual) (eq evil-this-type 'line))
-                 (format " %dL " lines)
-               (format " %dC %dL " chars lines)))
-            (t (format " %dC " (if evil chars (1- chars)))))))
-       highlight-face))
-    :tight t)
+(defun *major-mode ()
+  "The major mode, including process, environment and text-scale info."
+  (concat (format-mode-line mode-name)
+          (if (stringp mode-line-process) mode-line-process)
+          (if doom--env-version (concat " " doom--env-version))
+          (and (featurep 'face-remap)
+               (/= text-scale-mode-amount 0)
+               (format " (%+d)" text-scale-mode-amount))))
 
-  ;; flycheck
-  (defface doom-flycheck-error '((t (:inherit error)))
-    "Face for flycheck error feedback in the modeline.")
-  (defface doom-flycheck-warning '((t (:inherit warning)))
-    "Face for flycheck warning feedback in the modeline.")
+(defun *buffer-encoding-abbrev ()
+  "The line ending convention used in the buffer."
+  (if (memq buffer-file-coding-system '(utf-8 utf-8-unix))
+      ""
+    (symbol-name buffer-file-coding-system)))
 
-  (defvar-local doom--flycheck-err-cache nil "")
-  (defvar-local doom--flycheck-cache nil "")
-  (spaceline-define-segment *flycheck
-    "Persistent and cached flycheck indicators in the mode-line."
-    (when (and (bound-and-true-p flycheck-mode)
-               (or flycheck-current-errors
-                   (eq 'running flycheck-last-status-change)))
-      (or (and (or (eq doom--flycheck-err-cache doom--flycheck-cache)
-                   (memq flycheck-last-status-change '(running not-checked)))
-               doom--flycheck-cache)
-          (and (setq doom--flycheck-err-cache flycheck-current-errors)
-               (setq doom--flycheck-cache
-                     (let ((fe (doom/-flycheck-count 'error))
-                           (fw (doom/-flycheck-count 'warning)))
-                       (concat
-                        (if fe (propertize (format " •%s " fe)
-                                           'face (if active
-                                                     'doom-flycheck-error
-                                                   'mode-line)))
-                        (if fw (propertize (format " •%s " fw)
-                                           'face (if active
-                                                     'doom-flycheck-warning
-                                                   'mode-line))))))))))
+(defface mode-line-vcs-info nil '((t (:inherit warning))))
+(defface mode-line-vcs-warning nil '((t (:inherit warning))))
+(defun *vc ()
+  "Displays the current branch, colored based on its state."
+  (when vc-mode
+    (let ((backend (concat " " (substring vc-mode (+ 2 (length (symbol-name (vc-backend buffer-file-name)))))))
+          (face (let ((state (vc-state buffer-file-name)))
+                  (cond ((memq state '(edited added))
+                         'mode-line-vcs-info)
+                        ((memq state '(removed needs-merge needs-update conflict removed unregistered))
+                         'mode-line-vcs-warning)))))
+      (if active
+          (propertize backend 'face face)
+        backend))))
 
-  (defvar *pad-active (pl/percent-xpm powerline-height 100 0 100 0 3 "#00B3EF" nil))
-  (defvar *pad-inactive (pl/percent-xpm powerline-height 100 0 100 0 3 nil nil))
-  (spaceline-define-segment *pad
-    "Padding, to ensure the mode-line is `powerline-height' pixels tall"
-    (if active *pad-active *pad-inactive)
-    :tight t)
+(defface doom-flycheck-error '((t (:inherit error)))
+  "Face for flycheck error feedback in the modeline.")
+(defface doom-flycheck-warning '((t (:inherit warning)))
+  "Face for flycheck warning feedback in the modeline.")
+(defvar-local doom--flycheck-err-cache nil "")
+(defvar-local doom--flycheck-cache nil "")
+(defun *flycheck ()
+  "Persistent and cached flycheck indicators in the mode-line."
+  (when (and (featurep 'flycheck)
+             flycheck-mode
+             (or flycheck-current-errors
+                 (eq 'running flycheck-last-status-change)))
+    (or (and (or (eq doom--flycheck-err-cache doom--flycheck-cache)
+                 (memq flycheck-last-status-change '(running not-checked)))
+             doom--flycheck-cache)
+        (and (setq doom--flycheck-err-cache flycheck-current-errors)
+             (setq doom--flycheck-cache
+                   (let ((fe (doom/-flycheck-count 'error))
+                         (fw (doom/-flycheck-count 'warning)))
+                     (concat
+                      (if fe (propertize (format " •%d " fe)
+                                         'face (if active
+                                                   'doom-flycheck-error
+                                                 'mode-line)))
+                      (if fw (propertize (format " •%d " fw)
+                                         'face (if active
+                                                   'doom-flycheck-warning
+                                                 'mode-line))))))))))
 
-  (spaceline-compile
-   'main
-   '(*pad
-     ((*macro-recording *anzu *iedit
-       *evil-substitute *selection-info *flycheck)
-      :skip-alternate t
-      :tight t)
-     *buffer-path)
-   '(*vc
-     *major-mode
-     *env-version
-     *buffer-encoding-abbrev
-     (global :when active)
-     *buffer-position
-     ))
+(defun *selection-info ()
+  "Information about the current selection."
+  (when (and active (evil-visual-state-p))
+    (propertize
+     (let ((reg-beg (region-beginning))
+           (reg-end (region-end))
+           (evil (eq 'visual evil-state)))
+       (let ((lines (count-lines reg-beg (min (1+ reg-end) (point-max))))
+             (chars (- (1+ reg-end) reg-beg))
+             (cols (1+ (abs (- (evil-column reg-end)
+                               (evil-column reg-beg))))))
+         (cond
+          ;; rectangle selection
+          ((or (bound-and-true-p rectangle-mark-mode)
+               (and evil (eq 'block evil-visual-selection)))
+           (format " %dx%dB " lines (if evil cols (1- cols))))
+          ;; line selection
+          ((or (> lines 1) (eq 'line evil-visual-selection))
+           (if (and (eq evil-state 'visual) (eq evil-this-type 'line))
+               (format " %dL " lines)
+             (format " %dC %dL " chars lines)))
+          (t (format " %dC " (if evil chars (1- chars)))))))
+     'face 'mode-line-highlight)))
 
-  ;;
-  (spaceline-define-segment *default-dir
-    "Shows default-directory"
-    (concat "[" (abbreviate-file-name default-directory) "]")
-    :face other-face)
+(defun *macro-recording ()
+  "Show when recording macro."
+  (when (and active defining-kbd-macro)
+    (propertize
+     (format " %s ▶ " (char-to-string evil-this-macro))
+     'face 'mode-line-highlight)))
 
-  (spaceline-compile
-   'scratch
-   '(*pad
-     ((*macro-recording *anzu *iedit *evil-substitute *flycheck *selection-info)
-      :skip-alternate t
-      :tight t)
-     *buffer-path
-     *default-dir)
-   '(*major-mode
-     *env-version
-     *buffer-encoding-abbrev
-     (global :when active)
-     *buffer-position))
+(defface mode-line-count-face nil "")
+(make-variable-buffer-local 'anzu--state)
+(defun *anzu ()
+  "Show the current match number and the total number of matches. Requires anzu
+to be enabled."
+  (when (and (featurep 'evil-anzu) (evil-ex-hl-active-p 'evil-ex-search))
+    (propertize
+     (format " %s/%d%s "
+             anzu--current-position anzu--total-matched
+             (if anzu--overflow-p "+" ""))
+     'face (if active 'mode-line-count-face))))
 
-  ;;
-  (spaceline-define-segment *eldoc
-    (and (bound-and-true-p str) str)
-    :tight t
-    :face 'mode-line)
+(defun *evil-substitute ()
+  "Show number of :s matches in real time."
+  (when (and (evil-ex-p) (evil-ex-hl-active-p 'evil-ex-substitute))
+    (propertize
+     (let ((range (if evil-ex-range
+                      (cons (car evil-ex-range) (cadr evil-ex-range))
+                    (cons (line-beginning-position) (line-end-position))))
+           (pattern (car-safe (evil-delimited-arguments evil-ex-argument 2))))
+       (if pattern
+           (format " %s matches "
+                   (count-matches pattern (car range) (cdr range))
+                   evil-ex-argument)
+         " ... "))
+     'face (if active 'mode-line-count-face))))
 
-  (defvar *eldoc-pad-xpm (pl/percent-xpm powerline-height 100 0 100 0 3 "#B3EF00" nil))
-  (spaceline-define-segment *eldoc-pad
-    "Padding, to ensure the mode-line is `powerline-height' pixels tall"
-    *eldoc-pad-xpm
-    :tight t
-    :face 'mode-line)
+(defun *iedit ()
+  "Show the number of iedit regions matches + what match you're on."
+  (when (and (boundp 'iedit-mode) iedit-mode)
+    (propertize
+     (let ((this-oc (let (message-log-max) (iedit-find-current-occurrence-overlay)))
+           (length (or (ignore-errors (length iedit-occurrences-overlays)) 0)))
+       (format
+        " %s/%s "
+        (save-excursion
+          (unless this-oc
+            (iedit-prev-occurrence)
+            (setq this-oc (iedit-find-current-occurrence-overlay)))
+          (if this-oc
+              ;; NOTE: Not terribly reliable
+              (- length (-elem-index this-oc iedit-occurrences-overlays))
+            "-"))
+        length))
+     'face (if active 'mode-line-count-face))))
 
-  (spaceline-compile
-   'eldoc '(*eldoc-pad *eldoc) '())
+(defun *buffer-position ()
+  "A more vim-like buffer position."
+  (let ((start (window-start))
+        (end (window-end))
+        (pend (point-max)))
+    (if (and (= start 1)
+             (= end pend))
+        ":All"
+      (cond ((= start 1) ":Top")
+            ((= end pend) ":Bot")
+            (t (format ":%d%%%%" (/ end 0.01 pend)))))))
 
-  ;; Initialize modeline
-  (setq-default mode-line-format '("%e" (:eval (spaceline-ml-main)))))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun doom-mode-line (&optional id)
+  `(:eval
+    (let* ((active (eq (selected-window) mode-line-selected-window))
+           (lhs (list (propertize " " 'display (if active mode-line-bar mode-line-inactive-bar))
+                      (*flycheck)
+                      (*macro-recording)
+                      (*selection-info)
+                      (*anzu)
+                      (*evil-substitute)
+                      (*iedit)
+                      " "
+                      (*buffer-path)
+                      (*buffer-name)
+                      " "
+                      (*buffer-state)
+                      ,(if (eq id 'scratch) '(*buffer-pwd))))
+           (rhs (list (*buffer-encoding-abbrev)
+                      (*vc)
+                      "  " (*major-mode) "  "
+                      (propertize
+                       (concat "(%l,%c) " (*buffer-position))
+                       'face (if active 'mode-line-2))))
+           (middle (propertize
+                    " " 'display `((space :align-to (- (+ right right-fringe right-margin)
+                                                       ,(1+ (string-width (format-mode-line rhs)))))))))
+      (list lhs middle rhs))))
+
+(setq-default mode-line-format (doom-mode-line))
 
 (provide 'core-ui)
 ;;; core-ui.el ends here

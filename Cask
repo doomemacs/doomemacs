@@ -37,7 +37,7 @@
 (depends-on "nlinum")
 (depends-on "rainbow-delimiters")
 (depends-on "rainbow-mode")
-(depends-on "spaceline")
+(depends-on "powerline")
 (depends-on "visual-fill-column")
 
 ;; Evil --- core/core-evil.el

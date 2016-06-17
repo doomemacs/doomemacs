@@ -1,7 +1,5 @@
 ;;; custom-demo.el --- -*- no-byte-compile: t; -*-
 
-(defvar powerline-height)
-
 ;; This library offers:
 ;;   + impatient-mode: for broadcasting my emacs session
 ;;   + big-mode: for enlarged text while screencasting
@@ -19,7 +17,7 @@
   :config (httpd-start))
 
 (defvar big-mode--old-line-spacing line-spacing)
-(defvar big-mode--old-modeline-height powerline-height)
+(defvar big-mode--old-modeline-height mode-line-height)
 (define-minor-mode big-mode
   :init-value nil
   :lighter " BIG"
@@ -28,10 +26,10 @@
     (doom/load-font (if big-mode big-mode-font doom-default-font)))
   (if big-mode
       (setq-default
-       powerline-height big-mode-modeline-height
+       mode-line-height big-mode-modeline-height
        line-spacing big-mode-line-spacing)
     (setq-default
-     powerline-height big-mode--old-modeline-height
+     mode-line-height big-mode--old-modeline-height
      line-spacing big-mode--old-line-spacing)))
 
 (evil-define-command doom:big (&optional size)
