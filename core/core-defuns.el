@@ -359,13 +359,14 @@ e.g. (doom-fix-unicode \"DejaVu Sans\" ?⚠ ?★ ?λ)"
           "core/core-os.el" "core/core-os-osx.el" "core/core-os-win32.el"
           "core/core-os-linux.el" "private/my-commands.el"
           "private/my-bindings.el"))
-  (unless minimal
-    (byte-recompile-directory doom-core-dir 0 t)
-    (byte-recompile-directory doom-modules-dir 0 t))
-  (when minimal
-    (byte-recompile-directory (concat doom-core-dir "/defuns") 0 t)
-    (byte-recompile-directory (concat doom-modules-dir "/defuns") 0 t))
-  (message "Compiled!"))
+  (unless (eq minimal 'basic)
+    (unless minimal
+      (byte-recompile-directory doom-core-dir 0 t)
+      (byte-recompile-directory doom-modules-dir 0 t))
+    (when minimal
+      (byte-recompile-directory (concat doom-core-dir "/defuns") 0 t)
+      (byte-recompile-directory (concat doom-modules-dir "/defuns") 0 t))
+    (message "Compiled!")))
 
 (provide 'core-defuns)
 ;;; core-defuns.el ends here
