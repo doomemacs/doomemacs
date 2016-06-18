@@ -283,9 +283,9 @@
 
 
 ;;;; EXTRA TOOLS ;;;;;;;;;;;;;;;;;;;;;;;
-;; Demo --- extra-demo.el
+;; Demo --- modules/custom-demo.el
 (depends-on "htmlize")
 (depends-on "impatient-mode")
 
-;; Writing -- modules/extra-write.el
+;; Writing -- modules/custom-write.el
 ; (depends-on "helm-bibtex")
