@@ -62,7 +62,8 @@ elisp buffer). Otherwise forward the region to Quickrun."
                (setq lines (count-lines (point-min) (point-max)))
                (goto-char (point-min))
                (when (< lines 5)
-                 (message "%s" (buffer-substring (point-min) (point-max)))))
+                 (message "%s" (buffer-substring (point-min) (point-max)))
+                 (kill-buffer buf)))
              (unless (< lines 5)
                (doom/popup-buffer buf)))))
         (t (quickrun-region beg end))))
@@ -82,12 +83,9 @@ elisp buffer). Otherwise forward the region to Quickrun."
 ;;;###autoload
 (defun doom*quickrun-close-popup (&optional _ _ _ _)
   "Allows us to re-run quickrun from inside the quickrun buffer."
-  (let ((buffer (get-buffer quickrun/buffer-name))
-        window)
-    (when buffer
-      (setq window (get-buffer-window buffer))
-      (shut-up! (quickrun/kill-running-process))
-      (doom/popup-close window nil t))))
+  (awhen (get-buffer-window quickrun/buffer-name)
+    (shut-up! (quickrun/kill-running-process))
+    (doom/popup-close it nil t)))
 
 ;;;###autoload
 (defun doom|quickrun-after-run ()
