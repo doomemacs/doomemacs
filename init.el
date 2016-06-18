@@ -2,7 +2,7 @@
 ;;
 ;; Author:  Henrik Lissner <henrik@lissner.net>
 ;; URL:     https://github.com/hlissner/.emacs.d
-;; Version: 1.2.2
+;; Version: 1.2.3
 ;;
 ;;   =================     ===============     ===============   ========  ========
 ;;   \\ . . . . . . .\\   //. . . . . . .\\   //. . . . . . .\\  \\. . .\\// . . //
@@ -60,6 +60,7 @@
       module-data        ; config/data formats
       module-db          ; using emacs as a db browser/client
       module-elisp       ; drowning in parentheses
+      module-eshell      ; so I can have a sane shell, even in Windows
       module-go          ; the hipster dialect
       module-haskell     ; a language that's lazier than I am
       module-java        ; the poster child for carpal tunnel syndrome
