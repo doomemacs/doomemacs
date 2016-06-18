@@ -192,15 +192,13 @@ monkey patch it to use pop-to-buffer."
 ;;;###autoload
 (defun doom*evil-esc-quit ()
   "Close popups, disable search highlights and quit the minibuffer if open."
-  (if (and (doom/popup-p) (memq :noesc doom-popup-rule))
-      (doom/popup-close)
-    (let ((minib-p (minibuffer-window-active-p (minibuffer-window)))
-          (evil-hl-p (evil-ex-hl-active-p 'evil-ex-search)))
-      (when minib-p (abort-recursive-edit))
-      (when evil-hl-p (evil-ex-nohighlight))
-      ;; Close non-repl popups and clean up `doom-popup-windows'
-      (unless (or minib-p evil-hl-p)
-        (doom/popup-close-all)))))
+  (let ((minib-p (minibuffer-window-active-p (minibuffer-window)))
+        (evil-hl-p (evil-ex-hl-active-p 'evil-ex-search)))
+    (when minib-p (abort-recursive-edit))
+    (when evil-hl-p (evil-ex-nohighlight))
+    ;; Close non-repl popups and clean up `doom-popup-windows'
+    (unless (or minib-p evil-hl-p)
+      (doom/popup-close-all))))
 
 ;;;###autoload
 (defun doom*evil-ex-replace-special-filenames (file-name)
