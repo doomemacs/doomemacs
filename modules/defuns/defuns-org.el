@@ -357,5 +357,16 @@ re-align the table if necessary. (Necessary because org-mode has a
         (and (= (1+ (line-beginning-position)) me)
              (eq 32 (char-after me)))))
 
+;;;###autoload (autoload 'doom:org-capture "defuns-org" nil t)
+(evil-define-operator doom:org-capture (&optional beg end bang)
+  "Send a selection to `org-capture'."
+  :move-point nil
+  :type inclusive
+  (interactive "<r><!>")
+  (org-capture-string
+   (if (and (evil-visual-state-p) beg end)
+       (buffer-substring beg end)
+     "")))
+
 (provide 'defuns-org)
 ;;; defuns-org.el ends here

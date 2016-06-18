@@ -47,7 +47,7 @@
 (ex! "sh[ell]"     'doom/eshell)
 (ex! "t[mux]"      'doom:tmux)                   ; send to tmux
 (ex! "tcd"         'doom:tmux-cd)                ; cd to default-directory in tmux
-(ex! "x"           'doom:scratch-or-org)
+(ex! "x"           'doom:scratch-buffer)
 
 ;; GIT
 (ex! "ga[dd]"      'doom/vcs-stage-hunk)
@@ -99,11 +99,12 @@
 (ex! "tabs"        'doom/tab-display)
 
 ;; Org-mode
+(ex! "org"         'doom:org-capture)
 (add-hook! org-mode
   ;;(ex! "org"         'doom:org-helm-search)   ; search org notes
-  (ex! "att[ach]"    'doom:org-attach)          ; attach file to org file
-  (ex! "link"        'doom:org-link)
-  (ex-local! "vlc" 'doom-org-insert-vlc))
+  (ex-local! "att[ach]" 'doom:org-attach)          ; attach file to org file
+  (ex-local! "link"     'doom:org-link)
+  (ex-local! "vlc"      'doom-org-insert-vlc))
 
 (provide 'my-commands)
 ;;; my-commands.el ends here

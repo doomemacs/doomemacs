@@ -259,27 +259,25 @@ buffers regardless of project."
   (interactive "<!><a>")
   (doom-kill-buffers (doom/get-matching-buffers pattern (doom/get-buffers (not bang)))))
 
-;;;###autoload (autoload 'doom:scratch-or-org "defuns-buffers" nil t)
-(evil-define-operator doom:scratch-or-org (&optional beg end bang)
-  "Send a selection to the scratch buffer. If BANG, use org-capture instead."
+;;;###autoload (autoload 'doom:scratch-buffer "defuns-buffers" nil t)
+(evil-define-operator doom:scratch-buffer (&optional beg end bang)
+  "Send a selection to the scratch buffer. If BANG, don't use a popup."
   :move-point nil
   :type inclusive
   (interactive "<r><!>")
   (let ((text (when (and (evil-visual-state-p) beg end)
-                (buffer-substring beg end))))
-    (if bang
-        (org-capture-string text)
-      ;; or scratch buffer by default
-      (let ((mode major-mode)
-            (old-project (doom/project-root))
-            (new-buf (get-buffer-create "*doom:scratch*")))
-        (with-selected-window (doom/popup-buffer new-buf)
-          (setq default-directory old-project)
-          (setq mode-line-format (doom-mode-line 'scratch))
-          (when (and (not (eq major-mode mode))
-                     (functionp mode))
-            (funcall mode))
-          (if text (insert text)))))))
+                (buffer-substring beg end)))
+        (mode major-mode)
+        (old-project (doom/project-root))
+        (new-buf (get-buffer-create "*doom:scratch*")))
+    (with-current-buffer new-buf
+      (setq default-directory old-project)
+      (setq mode-line-format (doom-mode-line 'scratch))
+      (when (and (not (eq major-mode mode))
+                 (functionp mode))
+        (funcall mode))
+      (if text (insert text)))
+    (if bang (switch-to-buffer new-buf) (doom/popup-buffer new-buf))))
 
 ;;;###autoload (autoload 'doom:cd "defuns-buffers" nil t)
 (evil-define-command doom:cd (dir)
