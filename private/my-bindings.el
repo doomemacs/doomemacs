@@ -39,10 +39,10 @@
       "C-k"  'evil-window-up
       "C-h"  'evil-window-left
       "C-l"  'evil-window-right
-      "A-j"  'doom/evil-window-resize-d
-      "A-k"  'doom/evil-window-resize-u
-      "A-h"  'doom/evil-window-resize-l
-      "A-l"  'doom/evil-window-resize-r
+      "A-C-j" 'doom/evil-window-resize-d
+      "A-C-k" 'doom/evil-window-resize-u
+      "A-C-h" 'doom/evil-window-resize-l
+      "A-C-l" 'doom/evil-window-resize-r
       ;; Temporary escape into emacs mode
       "<C-escape>" 'evil-emacs-state
       :e "<C-escape>" 'evil-normal-state
