@@ -133,8 +133,12 @@
         projectile-cache-file (concat doom-temp-dir "/projectile.cache")
         projectile-known-projects-file (concat doom-temp-dir "/projectile.projects")
         projectile-indexing-method 'alien
-        projectile-project-root-files doom-project-root-files
-        projectile-file-exists-remote-cache-expire nil)
+        projectile-file-exists-remote-cache-expire nil
+        projectile-project-root-files
+        '(".git" ".hg" ".svn" "rebar.config" "project.clj" "SConstruct" "pom.xml"
+          "build.sbt" "build.gradle" "Gemfile" "requirements.txt" "package.json"
+          "gulpfile.js" "Gruntfile.js" "bower.json" "composer.json" "Cargo.toml"
+          "mix.exs" "tsconfig.json"))
 
   ;; Don't cache ignored files!
   (defun doom*projectile-cache-current-file (orig-fun &rest args)

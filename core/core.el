@@ -53,14 +53,6 @@ killed by `doom/kill-unreal-buffers', or after `doom/kill-real-buffer').")
 before killing processes. If there are no buffers with matching major-modes, it
 gets killed.")
 
-(defvar doom-project-root-files
-  '(".git" ".hg" ".svn" "rebar.config" "project.clj" "SConstruct" "pom.xml"
-    "build.sbt" "build.gradle" "Gemfile" "requirements.txt" "package.json"
-    "gulpfile.js" "Gruntfile.js" "bower.json" "composer.json" "Cargo.toml"
-    "mix.exs" "tsconfig.json")
-  "A list of files that count as 'project files', which determine whether a
-folder is the root of a project or not.")
-
 (defvar doom-unicode-font
   (font-spec :family "DejaVu Sans Mono" :size 13)
   "Font to fall back to for unicode glyphs.")
