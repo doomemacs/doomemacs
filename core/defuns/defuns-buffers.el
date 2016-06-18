@@ -41,41 +41,45 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
   (defalias 'wg-save-session 'ignore))
 
 ;;;###autoload
-(defun doom/get-buffers (&optional project-p)
+(defun doom/get-buffers (&optional all-p)
   "Get all buffers in the current workgroup.
 
     If PROJECT-P is non-nil, get all buffers in current workgroup
     If both are non-nil, get all project buffers across all workgroups"
-  (let* ((assocbuf (wg-workgroup-associated-buffers nil))
-         (buffers (if (wg-current-workgroup t)
-                      (--filter (memq it assocbuf) (buffer-list))
-                    (buffer-list)))
+  (let ((buffers (if (wg-current-workgroup t)
+                     (doom/get-buffers-in-workgroup)
+                   (buffer-list)))
         project-root)
-    (append (aif (and project-p (doom/project-root t))
-                (funcall (if (eq project-p 'not) '-remove '-filter)
+    (append (aif (and (not all-p) (doom/project-root t))
+                (funcall (if (eq all-p 'not) '-remove '-filter)
                          (lambda (b) (projectile-project-buffer-p b it))
                          buffers)
-              buffers))))
+              buffers)
+            (list doom-buffer))))
 
 ;;;###autoload
-(defun doom/get-buffer-names (&optional project-p)
-  (mapcar #'buffer-name (doom/get-buffers project-p)))
+(defun doom/get-buffers-in-workgroup ()
+  (let ((assoc-bufs (wg-workgroup-associated-buffers nil)))
+    (--filter (memq it assoc-bufs) (buffer-list))))
 
 ;;;###autoload
-(defun doom/get-visible-windows (&optional buffer-list)
-  (mapcar #'get-buffer-window (doom/get-visible-buffers (or buffer-list (doom/get-buffers)))))
+(defun doom/get-buffer-names (&optional buffer-list)
+  (mapcar #'buffer-name (or buffer-list (doom/get-buffers))))
+
+;;;###autoload
+(defun doom/get-visible-windows (&optional window-list)
+  "Get a list of the visible windows in the current frame (that aren't popups)."
+  (-remove #'doom/popup-p (or window-list (window-list))))
 
 ;;;###autoload
 (defun doom/get-visible-buffers (&optional buffer-list)
-  "Get a list of buffers that are not buried (i.e. visible)"
+  "Get a list of unburied buffers in the current project and workgroup."
   (-filter #'get-buffer-window (or buffer-list (doom/get-buffers))))
 
 ;;;###autoload
 (defun doom/get-buried-buffers (&optional buffer-list)
-  "Get a list of buffers that are buried (i.e. not visible)"
-  (let* ((buffers (or buffer-list (doom/get-buffers)))
-         (old-len (length buffers)))
-    (-remove 'get-buffer-window buffers)))
+  "Get a list of buried buffers in the current project and workgroup."
+  (-remove 'get-buffer-window (or buffer-list (doom/get-buffers))))
 
 ;;;###autoload
 (defun doom/get-matching-buffers (pattern &optional buffer-list)
@@ -98,28 +102,31 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
   "Kill buffer (but only bury scratch buffer), then switch to a real buffer. Only buries
 the buffer if it is being displayed in another window."
   (interactive (list t))
-  (cond ((doom/popup-p)
-         (doom/popup-close))
+  (cond ((eq (current-buffer) doom-buffer)
+         (doom-mode-init t))
         (t
-         (if (> (length (get-buffer-window-list (current-buffer) nil t)) 1)
-             (bury-buffer)
-           (when (and buffer-file-name (buffer-modified-p))
+         (let* ((old-project (doom/project-root))
+                (buffer (current-buffer))
+                (only-buffer-window-p (= (length (get-buffer-window-list buffer nil t)) 1)))
+           (when (and only-buffer-window-p buffer-file-name (buffer-modified-p))
              (if (yes-or-no-p "Buffer is unsaved, save it?")
                  (save-buffer)
                (set-buffer-modified-p nil)))
-           (kill-buffer)
-           (unless (doom/real-buffer-p)
-             (doom/previous-real-buffer)))))
+           (when arg
+             (doom/previous-real-buffer)
+             (when (eq buffer (current-buffer))
+               (switch-to-buffer doom-buffer t t)
+               (doom|update-scratch-buffer old-project))
+             (when only-buffer-window-p
+               (kill-buffer buffer))))))
   t)
 
 ;;;###autoload
 (defun doom/kill-unreal-buffers ()
   "Kill all buried, unreal buffers in current frame. See `doom-unreal-buffers'"
   (interactive)
-  (let* ((all-buffers (doom/get-buffers))
-         (real-buffers (doom/get-real-buffers all-buffers))
-         (kill-list (--filter (not (memq it real-buffers))
-                              (doom/get-buried-buffers all-buffers))))
+  (let ((kill-list (-remove 'doom/real-buffer-p
+                            (doom/get-buried-buffers (buffer-list)))))
     (mapc 'kill-buffer kill-list)
     (doom/kill-process-buffers)
     (message "Cleaned up %s buffers" (length kill-list))))
@@ -128,7 +135,7 @@ the buffer if it is being displayed in another window."
 (defun doom/kill-process-buffers ()
   "Kill all buffers that represent running processes and aren't visible."
   (interactive)
-  (let ((buffer-list (doom/get-buffers))
+  (let ((buffer-list (buffer-list))
         (killed-processes 0))
     (dolist (p (process-list))
       (let* ((process-name (process-name p))
@@ -163,14 +170,16 @@ left, create a scratch buffer."
          (max 25)
          (i 0)
          (continue t)
+         (buffers (doom/get-real-buffers (doom/get-buffers t)))
          destbuf)
     (setq destbuf
           (catch 'goto
-            (if (not (doom/get-real-buffers))
-                (throw 'goto doom-buffer)
+            (if (or (not buffers)
+                    (= (length buffers) 1))
+                (progn (message "No other buffers in workgroup")
+                       (throw 'goto (current-buffer)))
               (funcall move-func)
-              (while (not (and (doom/real-buffer-p)
-                               (doom/project-p)))
+              (while (not (memq (current-buffer) buffers))
                 (if (or (eq (current-buffer) start-buffer)
                         (>= i max))
                     (throw 'goto doom-buffer)
@@ -189,11 +198,12 @@ temporary, scratch or special buffer."
   (setq buffer (or (and (bufferp buffer) buffer)
                    (and (stringp buffer) (get-buffer buffer))
                    (current-buffer)))
-  (when (buffer-live-p buffer)
-    (with-current-buffer buffer
-      (not (or (apply #'derived-mode-p (-filter 'symbolp doom-unreal-buffers))
-               (--any? (string-match-p it (buffer-name buffer))
-                       (-filter 'stringp doom-unreal-buffers)))))))
+  (or (eq buffer doom-buffer)
+      (when (buffer-live-p buffer)
+        (with-current-buffer buffer
+          (not (or (apply #'derived-mode-p (-filter 'symbolp doom-unreal-buffers))
+                   (--any? (string-match-p it (buffer-name buffer))
+                           (-filter 'stringp doom-unreal-buffers))))))))
 
 ;; Inspired by spacemacs <https://github.com/syl20bnr/spacemacs/blob/master/spacemacs/funcs.el>
 ;;;###autoload
@@ -283,7 +293,7 @@ buffers regardless of project."
   "Kill all buffers so that workgroups2 will wipe its current session."
   (interactive)
   (let (confirm-kill-emacs)
-    (mapc 'kill-buffer (doom/get-buffers))
+    (mapc 'kill-buffer (doom/get-buffers t))
     (kill-this-buffer)
     (delete-other-windows)
     (wg-save-session t)
