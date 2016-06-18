@@ -9,6 +9,7 @@
 (defvar doom-popup-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map [remap doom/kill-real-buffer] 'doom/popup-close)
+    (define-key map [remap evil-window-delete]    'doom/popup-close)
     (define-key map [remap evil-window-move-very-bottom] 'ignore)
     (define-key map [remap evil-window-move-very-top]    'ignore)
     (define-key map [remap evil-window-move-far-left]    'ignore)
@@ -17,6 +18,14 @@
     (define-key map [remap evil-window-vsplit] 'ignore)
     map)
    "Active keymap in popup windows.")
+
+(defvar doom-popup-mode-local-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map [remap evil-force-normal-state] 'doom/popup-close)
+    (define-key map [escape] 'doom/popup-close)
+    (define-key map (kbd "ESC") 'doom/popup-close)
+    map)
+  "Active keymap in popup windows with ESC bindings.")
 
 (advice-add 'doom/evil-window-move :around 'doom*popup-window-move)
 
@@ -37,8 +46,7 @@ window. Returns nil or the popup window."
 ;;;###autoload
 (defun doom/popups-p ()
   "Whether there is a popup window open and alive somewhere."
-  (and doom-last-popup
-       (window-live-p (get-buffer-window doom-last-popup))))
+  (and doom-last-popup (window-live-p (get-buffer-window doom-last-popup))))
 
 ;;;###autoload
 (defmacro doom/popup-save (&rest body)
@@ -50,18 +58,20 @@ window. Returns nil or the popup window."
      (prog1
          ,@body
        (when popup-p
-         (if in-popup-p
-             (doom/popup-last-buffer)
-           (save-excursion (doom/popup-last-buffer)))))))
+         (let ((origin-win (selected-window)))
+           (doom/popup-last-buffer)
+           (when in-popup-p
+             (select-window origin-win)))))))
 
 ;;;###autoload
 (defun doom/popup-buffer (buffer &optional plist)
   "Display BUFFER in a shackle popup."
-  (let ((buffer-name (cond ((stringp buffer) buffer)
-                           ((bufferp buffer) (buffer-name buffer))
-                           (t (error "Not a valid buffer")))))
+  (let* ((buffer-name (cond ((stringp buffer) buffer)
+                            ((bufferp buffer) (buffer-name buffer))
+                            (t (error "Not a valid buffer"))))
+         (buffer (get-buffer-create buffer-name)))
     (shackle-display-buffer
-     (get-buffer-create buffer-name)
+     buffer
      nil (or plist (shackle-match buffer-name)))))
 
 ;;;###autoload
@@ -79,18 +89,18 @@ window. Returns nil or the popup window."
                  (delq 'process-kill-buffer-query-function
                        kill-buffer-query-functions)))
             (kill-buffer (window-buffer window)))
-        (doom-popup-mode -1))
-      (delete-window window)
-      (when (< emacs-major-version 25)
-        (unless dont-redraw (redraw-frame))))))
+        (doom-popup-mode -1)))
+    (delete-window window)
+    (unless dont-redraw (redraw-frame))))
 
 ;;;###autoload
 (defun doom/popup-close-all (&optional dont-kill dont-redraw)
   "Closes all popups (kill them if DONT-KILL-BUFFERS is non-nil). Then redraw
 the display (unless DONT-REDRAW is non-nil)."
   (interactive)
-  (mapc (lambda (w) (doom/popup-close w dont-kill t))
-        (doom/get-visible-windows (buffer-list)))
+  (let ((orig-win (selected-window)))
+    (mapc (lambda (w) (doom/popup-close w dont-kill t))
+          (--filter (and (doom/popup-p it) (not (eq it orig-win))) (window-list))))
   (when (< emacs-major-version 25)
     (unless dont-redraw (redraw-frame))))
 
@@ -114,7 +124,7 @@ the display (unless DONT-REDRAW is non-nil)."
 (defun doom*popup-init (orig-fn &rest args)
   "Enable `doom-popup-mode' in every popup window and returns the window."
   (let ((window (apply orig-fn args)))
-    (with-current-buffer (window-buffer window)
+    (with-selected-window window
       (doom-popup-mode +1))
     ;; NOTE orig-fn returns a window, so `doom*popup-init' must too
     window))
@@ -125,31 +135,27 @@ the display (unless DONT-REDRAW is non-nil)."
   (doom/popup-save (apply orig-fun args)))
 
 (put 'doom-popup-mode 'permanent-local t)
-(put 'doom-popup-mode-map 'permanent-local t)
+(put 'doom-popup-rule 'permanent-local t)
 
 ;;;###autoload
 (define-minor-mode doom-popup-mode
   "Pop ups"
+  :global nil
   :init-value nil
   :keymap doom-popup-mode-map
-  :global nil
-  (let ((rules (or doom-popup-rule
-                   (--any (let ((key (car it)))
-                            (when (cond ((symbolp key)
-                                         (or (eq major-mode key)
-                                             (derived-mode-p key)))
-                                        ((and (stringp key) buffer-file-name)
-                                         (string-match-p key buffer-file-name)))
-                              (cdr it)))
-                          doom-popup-rules))))
+  (let ((rules (--any (let ((key (car it)))
+                        (when (cond ((symbolp key)
+                                     (or (eq major-mode key)
+                                         (derived-mode-p key)))
+                                    ((stringp key)
+                                     (string-match-p key (buffer-name))))
+                          (cdr it)))
+                      doom-popup-rules)))
     (setq doom-last-popup (current-buffer))
     (setq-local doom-popup-rule rules)
-    (unless (memq :noesc rules)
-      (make-local-variable 'doom-popup-mode-map)
-      (let ((map doom-popup-mode-map))
-        (define-key map [remap evil-force-normal-state] 'doom/popup-close)
-        (define-key map [escape] 'doom/popup-close)
-        (define-key map (kbd "ESC") 'doom/popup-close)))
+    (let ((map doom-popup-mode-map))
+      (unless (memq :noesc rules)
+        (use-local-map doom-popup-mode-local-map)))
     (unless (memq :modeline rules)
       (doom-hide-mode-line-mode (if doom-popup-mode +1 -1)))))
 
