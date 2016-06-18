@@ -2,6 +2,14 @@
 
 (eval-when-compile (require 'core-defuns))
 
+(defmacro @find-file-in (path &optional project-p)
+  "Returns a interactive function for searching files"
+  `(lambda () (interactive)
+     (let ((default-directory ,path))
+       (,@(if project-p
+              '(projectile-find-file)
+            '(call-interactively 'find-file))))))
+
 (map! "<f9>" 'what-face
       ;; Essential
       "M-x"  'smex
@@ -77,11 +85,11 @@
       ;;; <leader> and <localleader>
       :m ";" 'evil-ex
       (:leader
-        :nv ","   'doom/switch-to-project-buffer
-        :nv "<"   'ivy-switch-buffer
-        :nv "."   'counsel-find-file
+        :nv ","   'doom/ivy-switch-project-buffer
+        :nv "<"   'doom/ivy-switch-buffer
+        :nv "."   (@find-file-in default-directory)
+        :nv "/"   (@find-file-in (doom/project-root) t)
         :nv ">"   'projectile-find-file-in-known-projects
-        :nv "/"   'counsel-projectile-find-file
         :n  ":"   'imenu-list-minor-mode
         :nv ";"   'counsel-imenu
         :v  "="   'align-regexp
@@ -101,8 +109,8 @@
         :nv "Q"   'evil-save-and-quit
         :nv "C-q" 'doom/kill-all-buffers-do-not-remember
         ;; Quick access to config files
-        :nv "E"   'doom/find-file-in-emacsd
-        :nv "\\"  'doom/find-file-in-dotfiles
+        :nv "E"   (@find-file-in doom-emacs-dir t)
+        :nv "\\"  (@find-file-in (f-expand ".dotfiles" "~") t)
         ;; Alternative to C-h (used as window shortcut)
         :n  "h"   'help-command
         (:prefix "d" ; <diff>
@@ -132,10 +140,10 @@
             :n "l" 'os-send-to-launchbar
             :n "L" 'os-send-project-to-launchbar))
         (:prefix "x" ; <org>
-          :n "." 'doom/org-find-file
-          :n "/" 'doom/org-find-file-in-notes
-          :n "e" 'doom/org-find-exported-file
-          :n "x" 'doom/org))
+          :n "x" 'doom/org
+          :n "." (@find-file-in org-directory)
+          :n "/" (@find-file-in org-directory t)
+          :n "e" (@find-file-in org-export-directory)))
 
       (:localleader
         :n "\\" 'doom/neotree
