@@ -265,21 +265,21 @@ buffers regardless of project."
   :move-point nil
   :type inclusive
   (interactive "<r><!>")
-  (let ((mode major-mode)
-        (text (when (and (evil-visual-state-p) beg end)
+  (let ((text (when (and (evil-visual-state-p) beg end)
                 (buffer-substring beg end))))
     (if bang
         (org-capture-string text)
       ;; or scratch buffer by default
-      (with-current-buffer (doom/popup-buffer doom-buffer)
-        (doom|update-scratch-buffer nil t)
-        (when (and (not (eq major-mode mode))
-                   (functionp mode))
-          (funcall mode))
-        (unless doom-buffer-edited
-          (erase-buffer)
-          (setq doom-buffer-edited t))
-        (if text (insert text))))))
+      (let ((mode major-mode)
+            (old-project (doom/project-root))
+            (new-buf (get-buffer-create "*doom:scratch*")))
+        (with-selected-window (doom/popup-buffer new-buf)
+          (setq default-directory old-project)
+          (setq mode-line-format (doom-mode-line 'scratch))
+          (when (and (not (eq major-mode mode))
+                     (functionp mode))
+            (funcall mode))
+          (if text (insert text)))))))
 
 ;;;###autoload (autoload 'doom:cd "defuns-buffers" nil t)
 (evil-define-command doom:cd (dir)
