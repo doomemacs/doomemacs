@@ -1,7 +1,6 @@
 ;;; core-helm.el
 
 (use-package helm
-  :commands (helm helm-other-buffer)
   :init
   (setq helm-quick-update t
         ;; Speedier without fuzzy matching
@@ -51,11 +50,10 @@
   ;; A simpler prompt: see `helm-global-prompt'
   (advice-add 'helm :filter-args 'doom*helm-replace-prompt)
   ;; Hide mode-line in helm windows
-  (advice-add 'helm-display-mode-line :override 'doom*helm-hide-header))
+  (advice-add 'helm-display-mode-line :override 'doom*helm-hide-header)
 
-(use-package helm-mode
-  :after helm
-  :config (helm-mode 1))
+  (require 'helm-mode)
+  (helm-mode +1))
 
 (use-package helm-locate
   :defer t
@@ -82,7 +80,9 @@
              helm-projectile-find-dir)
   :init
   (defvar helm-projectile-find-file-map (make-sparse-keymap))
-  (set-keymap-parent helm-projectile-find-file-map helm-map))
+  :config
+  (set-keymap-parent helm-projectile-find-file-map helm-map)
+  (setq projectile-completion-system 'helm))
 
 (use-package helm-files
   :commands (helm-browse-project helm-find helm-find-files helm-for-files helm-multi-files helm-recentf)

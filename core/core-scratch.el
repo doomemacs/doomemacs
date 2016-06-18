@@ -8,7 +8,7 @@
 
 (defvar doom-buffer nil
   "The global and persistent scratch buffer for doom.")
-(defvar doom-buffer-name "*doom*"
+(defvar doom-buffer-name " *doom*"
   "The name of the doom scratch buffer.")
 (defvar doom-buffer-edited nil
   "If non-nil, the scratch buffer has been edited.")

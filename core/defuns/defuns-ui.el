@@ -91,6 +91,9 @@
 (put 'doom-hide-mode-line-mode 'permanent-local t)
 (put 'doom--mode-line 'permanent-local t)
 
+(defvar doom-hide-mode-line-format nil
+  "Format to use when `doom-hide-mode-line-mode' replaces the modeline")
+
 (defvar-local doom--mode-line nil)
 ;;;###autoload
 (define-minor-mode doom-hide-mode-line-mode
@@ -99,9 +102,9 @@
   :global nil
   (if doom-hide-mode-line-mode
       (setq doom--mode-line mode-line-format
-            mode-line-format nil)
+            mode-line-format doom-hide-mode-line-format)
     (setq mode-line-format doom--mode-line
-          doom--mode-line nil)))
+          doom--mode-line doom-hide-mode-line-format)))
 
 (provide 'defuns-ui)
 ;;; defuns-ui.el ends here

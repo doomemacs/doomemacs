@@ -146,10 +146,8 @@
       (apply orig-fun args)))
   (advice-add 'projectile-cache-current-file :around 'doom*projectile-cache-current-file)
 
-  (push "ido.last" projectile-globally-ignored-files)
   (push "assets"   projectile-globally-ignored-directories)
   (push ".cask"    projectile-globally-ignored-directories)
-
   (push ".elc"     projectile-globally-ignored-file-suffixes)
   (push doom-temp-dir projectile-globally-ignored-directories)
 

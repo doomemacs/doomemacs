@@ -19,13 +19,13 @@
 
 (defalias '! 'eval-when-compile)
 
-(defconst doom-emacs-dir     (! (expand-file-name user-emacs-directory)))
-(defconst doom-core-dir      (! (expand-file-name "core" doom-emacs-dir)))
-(defconst doom-modules-dir   (! (expand-file-name "modules" doom-emacs-dir)))
-(defconst doom-private-dir   (! (expand-file-name "private" doom-emacs-dir)))
-(defconst doom-packages-dir  (! (expand-file-name (concat ".cask/" emacs-version "/elpa") doom-emacs-dir)))
-(defconst doom-ext-dir       (! (expand-file-name "ext" doom-emacs-dir)))
-(defconst doom-themes-dir    (! (expand-file-name "themes" doom-private-dir)))
+(defconst doom-emacs-dir    (! (expand-file-name user-emacs-directory)))
+(defconst doom-core-dir     (! (expand-file-name "core" doom-emacs-dir)))
+(defconst doom-modules-dir  (! (expand-file-name "modules" doom-emacs-dir)))
+(defconst doom-private-dir  (! (expand-file-name "private" doom-emacs-dir)))
+(defconst doom-packages-dir (! (expand-file-name (concat ".cask/" emacs-version "/elpa") doom-emacs-dir)))
+(defconst doom-ext-dir      (! (expand-file-name "ext" doom-emacs-dir)))
+(defconst doom-themes-dir   (! (expand-file-name "themes" doom-private-dir)))
 (defconst doom-temp-dir
   (! (format "%s/cache/%s" doom-private-dir (system-name)))
   "Hostname-based elisp temp directories")
