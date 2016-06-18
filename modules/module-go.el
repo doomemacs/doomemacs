@@ -14,7 +14,6 @@
         :n "gd" 'godef-jump
         (:leader :n "h" 'godef-describe)
         (:localleader
-          :n "p"  'helm-go-package
           :n "tr" 'doom:go-test-run-all
           :n "ta" 'doom:go-test-run-all
           :n "ts" 'doom:go-test-run-package))
@@ -39,8 +38,6 @@
 (use-package company-go :after go-mode)
 
 (use-package gorepl-mode :commands (gorepl-run gorepl-run-load-current-file))
-
-(use-package helm-go-package :commands helm-go-package)
 
 (provide 'module-go)
 ;;; module-go.el ends here
