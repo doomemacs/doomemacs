@@ -14,8 +14,8 @@
     (when (featurep 'neotree)
       (neotree-projectile-action))))
 
-;;;###autoload (autoload 'doom:save-session "defuns-workgroup" nil t)
-(evil-define-command doom:save-session (&optional bang session-name)
+;;;###autoload (autoload 'doom:workgroup-save "defuns-workgroup" nil t)
+(evil-define-command doom:workgroup-save (&optional bang session-name)
   (interactive "<!><a>")
   (unless (wg-workgroup-list)
     (wg-create-workgroup wg-first-wg-name))
@@ -26,8 +26,8 @@
                             (concat wg-workgroup-directory (f-filename (doom/project-root)))
                           wg-session-file))))
 
-;;;###autoload (autoload 'doom:load-session "defuns-workgroup" nil t)
-(evil-define-command doom:load-session (&optional bang session-name)
+;;;###autoload (autoload 'doom:workgroup-load "defuns-workgroup" nil t)
+(evil-define-command doom:workgroup-load (&optional bang session-name)
   (interactive "<!><a>")
   (let ((session-file (if session-name
                           (concat wg-workgroup-directory session-name)

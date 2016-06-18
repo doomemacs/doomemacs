@@ -87,8 +87,8 @@
 (ex! "full[scr]"   'doom:toggle-fullscreen)
 
 ;; Sessions/tabs
-(ex! "sl[oad]"     'doom:load-session)
-(ex! "ss[ave]"     'doom:save-session)
+(ex! "sl[oad]"     'doom:workgroup-load)
+(ex! "ss[ave]"     'doom:workgroup-save)
 (ex! "tabc[lose]"  'doom:kill-tab)
 (ex! "tabc[lose]o" 'doom:kill-other-tabs)
 (ex! "tabl[ast]"   'doom:switch-to-tab-last)
