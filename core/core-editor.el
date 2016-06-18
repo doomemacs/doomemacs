@@ -238,7 +238,8 @@
   (setq sp-autowrap-region nil          ; let evil-surround handle this
         sp-highlight-pair-overlay nil
         sp-cancel-autoskip-on-backward-movement nil
-        sp-show-pair-delay 0)
+        sp-show-pair-delay 0
+        sp-max-pair-length 5)
 
   (smartparens-global-mode 1)
   (require 'smartparens-config)

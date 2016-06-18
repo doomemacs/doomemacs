@@ -8,13 +8,17 @@
   (def-company-backend! lua-mode (lua yasnippet))
   (def-electric! lua-mode :words ("else" "end"))
   (def-repl! lua-mode doom/inf-lua)
+  (add-hook! lua-mode
+    (setq-local sp-max-pair-length 9))
   (sp-with-modes '(lua-mode)
     ;; disable defaults
     (sp-local-pair "if" nil :actions       :rem)
     (sp-local-pair "while" nil :actions    :rem)
     (sp-local-pair "function" nil :actions :rem)
+    (sp-local-pair "if "   " end")
     (sp-local-pair "then " " end")
     (sp-local-pair "do "   " end")
+    (sp-local-pair "if"    "end" :when '(("RET")) :post-handlers '(" |\n[i]"))
     (sp-local-pair "then"  "end" :when '(("RET")) :post-handlers '("||\n[i]"))
     (sp-local-pair "do"    "end" :when '(("RET")) :post-handlers '("||\n[i]"))
     ;; block functions
