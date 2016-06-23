@@ -9,12 +9,6 @@
     (if (not (file-exists-p filename))
         (error "File doesn't exist: %s" filename)
       (when (or bang (and (not bang) (y-or-n-p (format "Delete %s?" (f-base filename)))))
-        ;; Delete attachments if in org-mode
-        (when (eq major-mode 'org-mode)
-          (mapc (lambda (file)
-                  (when (file-exists-p file)
-                    (delete-file file t)))
-                (doom/org-attachments)))
         (set-buffer-modified-p nil)
         (delete-file filename)
         (kill-this-buffer)
