@@ -150,6 +150,7 @@
 (depends-on "irony")
 (depends-on "irony-eldoc")
 (depends-on "opencl-mode")
+(depends-on "modern-cpp-font-lock")
 
 ;; Crystal -- modules/module-crystal.el
 (depends-on "crystal-mode" :git "https://github.com/jpellerin/emacs-crystal-mode")

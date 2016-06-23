@@ -4,7 +4,9 @@
   :commands (c-mode c++-mode objc-mode java-mode)
   :mode ("\\.mm" . objc-mode)
   :init
-  (add-hook! c++-mode '(highlight-numbers-mode doom|init-c++-C11-highlights))
+  (add-hook! (c-mode c++-mode) 'doom|extra-fontify-c/c++)
+  (add-hook 'c-mode-hook 'highlight-numbers-mode)
+  (add-hook 'c++-mode-hook 'doom|extra-fontify-c++)
   (add-hook 'c-initialization-hook 'doom|init-c/c++-settings)
 
   ;; C++ header files
@@ -39,6 +41,10 @@
 
   ;; Improve indentation of inline lambdas in C++11
   (advice-add 'c-lineup-arglist :around 'doom/c-lineup-arglist))
+
+(use-package modern-cpp-font-lock
+  :commands modern-c++-font-lock-mode
+  :init (add-hook 'c++-mode-hook 'modern-c++-font-lock-mode))
 
 (use-package irony
   :after cc-mode
