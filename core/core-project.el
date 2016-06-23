@@ -29,46 +29,6 @@
       (make-directory parent-directory t))))
 (push 'doom|create-non-existent-directory find-file-not-found-functions)
 
-(use-package ido
-  :functions (ido-to-end)
-  :init
-  (setq ido-ignore-buffers
-        '("\\` " "^\\*ESS\\*" "^\\*Messages\\*" "^\\*Help\\*" "^\\*Buffer"
-          "^\\*.*Completions\\*$" "^\\*Ediff" "^\\*tramp" "^\\*cvs-"
-          "_region_" " output\\*$" "^TAGS$" "^\*Ido")
-        ido-use-faces nil
-        ido-enable-flex-matching t
-        ido-confirm-unique-completion t
-        ido-case-fold t
-        ido-create-new-buffer 'always
-        ido-enable-flex-matching t
-        ido-enable-last-directory-history t
-        ido-enable-tramp-completion nil
-        ido-enable-tramp-completion t
-        ido-use-filename-at-point 'guess
-        ido-cr+-max-items 10000
-        ido-save-directory-list-file (concat doom-temp-dir "/ido.last"))
-  (add-hook 'ido-setup-hook 'doom|ido-setup-home-keybind)
-  :config
-  (add-hook! ido-setup
-    (push "\\`.DS_Store$" ido-ignore-files)
-    (push "Icon\\?$" ido-ignore-files)
-    (advice-add 'ido-sort-mtime :override 'doom*ido-sort-mtime)
-
-    (require 'ido-vertical-mode)
-    (ido-vertical-mode 1)
-    (require 'flx-ido)
-    (flx-ido-mode 1)
-    (map! :map (ido-common-completion-map
-                ido-completion-map
-                ido-file-completion-map)
-          "C-n" 'ido-next-match
-          "C-p" 'ido-prev-match
-          "C-w" 'ido-delete-backward-word-updir
-          "C-u" 'ido-up-directory))
-
-  (add-hook! (ido-make-file-list ido-make-dir-list) 'doom*ido-sort-mtime))
-
 (use-package neotree
   :commands (neotree-show
              neotree-hide
