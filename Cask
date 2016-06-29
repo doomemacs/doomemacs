@@ -165,7 +165,6 @@
 (depends-on "sass-mode")
 (depends-on "scss-mode")
 (depends-on "stylus-mode")
-(depends-on "counsel-css" :git "https://github.com/hlissner/emacs-counsel-css")
 
 ;; Data -- modules/module-data.el
 (depends-on "company-ansible")

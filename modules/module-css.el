@@ -11,7 +11,10 @@
 
 (use-package css-mode
   :mode "\\.css$"
-  :init (add-hook! css-mode '(yas-minor-mode-on flycheck-mode rainbow-mode highlight-numbers-mode))
+  :init
+  (add-hook! css-mode
+    '(yas-minor-mode-on flycheck-mode rainbow-mode highlight-numbers-mode
+      doom|counsel-css-imenu-setup))
   :config
   (def-company-backend! css-mode (css yasnippet))
   (push '("css" "scss" "sass" "less" "styl") projectile-other-file-alist))
@@ -24,10 +27,6 @@
 (use-package less-css-mode
   :mode "\\.less$"
   :config (push '("less" "css") projectile-other-file-alist))
-
-(use-package counsel-css
-  :commands (counsel-css counsel-css-imenu-setup)
-  :init (add-hook 'css-mode-hook 'counsel-css-imenu-setup))
 
 
 ;;
