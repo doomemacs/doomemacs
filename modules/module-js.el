@@ -6,7 +6,7 @@
   :init (add-hook 'js2-mode-hook 'tern-mode)
   :config
   (def-repl! js2-mode nodejs-repl)
-  (def-company-backend! js2-mode (tern yasnippet))
+  (def-company-backend! js2-mode (tern))
   (def-docset! js2-mode "js,jquery,nodejs,angularjs,express")
   (def-electric! js2-mode :chars (?\} ?\) ?.) :words ("||" "&&"))
   (setq-default
