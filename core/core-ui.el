@@ -118,9 +118,6 @@
   :commands (highlight-indentation-mode
              highlight-indentation-current-column-mode)
   :init
-  (add-hook! (nxml-mode yaml-mode json-mode scss-mode
-              c-mode-common ruby-mode python-mode lua-mode)
-    'highlight-indentation-mode)
   (after! editorconfig
     (advice-add 'highlight-indentation-guess-offset
                 :override 'doom*hl-indent-guess-offset))
