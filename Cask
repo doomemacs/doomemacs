@@ -95,7 +95,6 @@
 
 ;; Flycheck --- core/core-flycheck.el
 (depends-on "flycheck")
-(depends-on "flycheck-package")
 (depends-on "flycheck-pos-tip")
 (depends-on "flyspell")
 

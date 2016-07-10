@@ -1,7 +1,7 @@
 ;;; module-elisp --- all things lisp
 
 (associate! emacs-lisp-mode :match "\\(/Cask\\|\\.\\(el\\|gz\\)\\)$")
-(add-hook! emacs-lisp-mode '(eldoc-mode flycheck-mode highlight-numbers-mode))
+(add-hook! emacs-lisp-mode '(eldoc-mode highlight-numbers-mode))
 
 ;; Real go-to-definition for elisp
 (map! :map emacs-lisp-mode-map :m "gd" 'doom/elisp-find-function-at-pt)
