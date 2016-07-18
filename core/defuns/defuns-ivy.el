@@ -86,15 +86,13 @@ If REGEX-P is non-nil, SEARCH will be treated as a regular expression.
 DIR specifies the default-directory from which ag is run."
   :type inclusive :repeat nil
   (interactive "<r><a><!>")
-  (let ((counsel-ag-base-command
-         (format "ag --nocolor --nogroup %s %%s -- ."
-                 (if regex-p "-Q" "")))
-        (search (or search
+  (let ((search (or search
                     (and (evil-visual-state-p)
                          (and beg end (rxt-quote-pcre (buffer-substring-no-properties beg end))))
                     doom-ivy-ag-last-search)))
     (setq doom-ivy-ag-last-search search)
-    (counsel-ag search (or dir (f-slash (doom/project-root))))))
+    (counsel-ag search (or dir (f-slash (doom/project-root)))
+                (concat "--nocolor --nogroup" (if regex-p " -Q")))))
 
 ;;;###autoload (autoload 'doom:ivy-ag-search-cwd "defuns-ivy" nil t)
 (evil-define-operator doom:ivy-ag-search-cwd (beg end search regex-p)
@@ -103,16 +101,22 @@ DIR specifies the default-directory from which ag is run."
   (doom:ivy-ag-search beg end search regex-p default-directory))
 
 ;;;###autoload
-(defun doom*counsel-ag-function (string)
+(defun doom*counsel-ag-function (string extra-ag-args)
   "Advice to get rid of the character limit from `counsel-ag-function', which
 interferes with my custom :ag ex command `doom:ivy-ag-search'."
+  (when (null extra-ag-args)
+    (setq extra-ag-args ""))
   (if (< (length string) 1)
       (counsel-more-chars 1)
     (let ((default-directory counsel--git-grep-dir)
           (regex (counsel-unquote-regex-parens
-                  (setq ivy--old-re (ivy--regex string)))))
-      (counsel--async-command
-       (format counsel-ag-base-command (shell-quote-argument regex)))
+                  (setq ivy--old-re
+                        (ivy--regex string)))))
+      (let ((ag-cmd (format counsel-ag-base-command
+                            (concat extra-ag-args
+                                    " -- "
+                                    (shell-quote-argument regex)))))
+        (counsel--async-command ag-cmd))
       nil)))
 
 (provide 'defuns-ivy)
