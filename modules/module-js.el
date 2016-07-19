@@ -3,7 +3,7 @@
 (use-package js2-mode
   :mode "\\.js$"
   :interpreter "node"
-  :init (add-hook 'js2-mode-hook 'tern-mode)
+  :init (add-hook! js2-mode '(tern-mode flycheck-mode))
   :config
   (def-repl! js2-mode nodejs-repl)
   (def-company-backend! js2-mode (tern))
@@ -11,13 +11,12 @@
   (def-electric! js2-mode :chars (?\} ?\) ?.) :words ("||" "&&"))
   (setq-default
    js2-skip-preprocessor-directives t
-   js2-show-parse-errors nil
-   js2-global-externs '("module" "require" "buster" "sinon" "assert"
-                        "refute" "setTimeout" "clearTimeout"
-                        "setInterval" "clearInterval" "location"
-                        "__dirname" "console" "JSON" "jQuery" "$"
-                        ;; Launchbar API
-                        "LaunchBar" "File" "Action" "HTTP" "include" "Lib"))
+   js2-highlight-external-variables nil
+   js2-mode-show-parse-errors nil)
+
+  (add-hook! lb6-project-mode
+    (when (eq major-mode 'js2-mode)
+      (setq js2-additional-externs '("LaunchBar" "File" "Action" "HTTP" "include" "Lib"))))
 
   ;; [pedantry intensifies]
   (add-hook! js2-mode (setq mode-name "JS2"))
@@ -162,8 +161,6 @@
       (assq 'react deps))))
 
 (def-project-type! gulpjs "gulp" :match "/gulpfile.js$")
-
-;; TODO react
 
 (provide 'module-js)
 ;;; module-js.el ends here
