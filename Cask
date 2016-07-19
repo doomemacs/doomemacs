@@ -127,9 +127,8 @@
 ;;(depends-on "helm-projectile")
 ;;(depends-on "helm-swoop")
 
-;; Code evaluation/REPLs/debug -- core/core-eval.el
+;; Code evaluation/REPLs -- core/core-eval.el
 (depends-on "quickrun")
-(depends-on "realgud")
 (depends-on "repl-toggle")
 
 ;; Sessions --- core/core-sessions.el
@@ -288,3 +287,6 @@
 
 ;; Writing -- modules/custom-write.el
 ; (depends-on "helm-bibtex")
+
+;; Debugging -- modules/custom-debug.el
+(depends-on "realgud")

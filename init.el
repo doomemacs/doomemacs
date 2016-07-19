@@ -50,7 +50,7 @@
       core-vcs           ; remember remember, that commit in November
       core-ivy           ; a search engine for life and love
       core-workgroups    ; cure Emacs alzheimers + tab emulation
-      core-eval          ; run code, run; debug too
+      core-eval          ; run code, run + REPL support
 
       ;;; Dev environments
       module-cc          ; C/C++/Obj-C madness
@@ -58,7 +58,6 @@
       module-csharp      ; unity, .NET, and mono shenanigans
       module-css         ; #big-bang::before { content: ""; }
       module-data        ; config/data formats
-      module-db          ; using emacs as a db browser/client
       module-elisp       ; drowning in parentheses
       module-eshell      ; so I can have a sane shell, even in Windows
       module-go          ; the hipster dialect
@@ -69,7 +68,7 @@
       module-latex       ; for writing papers in Emacs
       module-lua         ; one-based indices? one-based indices.
       module-php         ; making php less painful to work with
-      module-processing  ; pretty prototypes
+      module-processing  ; for prototyping
       module-python      ; beautiful is better than ugly
       module-rest        ; Emacs as a service
       module-ruby        ; 1.step do {|i| p "Ruby is #{i&1==0?'love':'life'}"}
@@ -80,11 +79,12 @@
       module-text        ; writing docs for people to ignore
       module-web         ; The end is always near </html>
 
-      ;;; Experimental
-      module-eshell      ; for inferior OSes *cough*windows
+      ;;; Org
       module-org         ; for organized fearless leader
 
       ;;; Custom modules
+      custom-db          ; emacs as a db browser/client
+      custom-debug       ; nigh-universal debugging
       custom-demo        ; allow me to demonstrate...
       custom-tags        ; if you liked it you should've generated a tag for it
       custom-tmux        ; close the rift between GUI & terminal

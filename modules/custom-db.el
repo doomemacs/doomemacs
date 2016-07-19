@@ -1,4 +1,4 @@
-;;; module-db.el
+;;; custom-db.el
 
 (use-package sql-mode
   :mode "\\.sql$"
@@ -39,5 +39,5 @@ open comint."
         (sql-product-interactive product 0)
         (message "Started new %s connection" product)))))
 
-(provide 'module-db)
-;;; module-db.el ends here
+(provide 'custom-db)
+;;; custom-db.el ends here
