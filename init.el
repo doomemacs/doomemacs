@@ -86,6 +86,7 @@
       custom-db          ; emacs as a db browser/client
       custom-debug       ; nigh-universal debugging
       custom-demo        ; allow me to demonstrate...
+      custom-screeps     ; The programmer MMO
       custom-tags        ; if you liked it you should've generated a tag for it
       custom-tmux        ; close the rift between GUI & terminal
       custom-write       ; Emacs as a word processor
