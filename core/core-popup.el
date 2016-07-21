@@ -63,8 +63,8 @@
 (after! help-mode
   ;; Following links in help buffers sometimes uses itself or other-window
   ;; (annoying!). It should only replace the buffer we opened the popup from. To
-  ;; fix this these three button types need to be redefined to stow away the
-  ;; popups then follow the link from the last buffer, using `doom/popup-save'.
+  ;; fix this these three button types need to be redefined so that the right
+  ;; window is in focus before the link is followed.
   (define-button-type 'help-function-def
     :supertype 'help-xref
     'help-function (lambda (fun file)

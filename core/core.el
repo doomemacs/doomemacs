@@ -8,8 +8,8 @@
 ;;   doom:...     An ex command
 ;;   doom|...     A hook
 ;;   doom*...     An advising function
-;;   doom....     Custom prefix commands
 ;;   ...!         Macro, shortcut alias or subst defun
+;;   @...         Autoloaded interactive lambda macro for keybinds
 ;;
 ;;; Autoloaded functions are in {core,modules}/defuns/defuns-*.el
 
