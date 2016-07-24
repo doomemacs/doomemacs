@@ -150,7 +150,7 @@ spaces on either side of the point if so. Resorts to
                 (js2-line-break))
                ((-contains? '(java-mode php-mode) major-mode)
                 (c-indent-new-comment-line))
-               ((-contains? '(c-mode c++-mode objc-mode css-mode scss-mode) major-mode)
+               ((-contains? '(c-mode c++-mode objc-mode css-mode scss-mode js2-mode) major-mode)
                 (newline-and-indent)
                 (insert "* ")
                 (indent-according-to-mode))
