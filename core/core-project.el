@@ -6,7 +6,7 @@
       ;; Auto refresh dired, but be quiet about it
       global-auto-revert-non-file-buffers t
       auto-revert-verbose nil)
-(add-hook 'dired-mode-hook 'dired-omit-mode)
+;; (add-hook 'dired-mode-hook 'dired-omit-mode)
 
 ;; List directories first
 (defun doom|dired-sort ()
