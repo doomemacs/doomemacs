@@ -35,6 +35,7 @@
              neotree-toggle
              neotree-dir
              neotree-find
+             neo-global--with-buffer
              neo-global--window-exists-p)
   :init
   (setq neo-create-file-auto-open t
