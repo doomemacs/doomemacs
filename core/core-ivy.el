@@ -21,6 +21,8 @@
         "C-u" 'backward-kill-sentence
         "C-b" 'backward-word
         "C-f" 'forward-word)
+  ;; Fix display glitches
+  (advice-add 'ivy-done :after 'redraw-display)
 
   ;;
   (require 'counsel)
