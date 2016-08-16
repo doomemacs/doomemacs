@@ -159,7 +159,10 @@
                          (cdr-safe (assq 'dependencies (gethash project npm-conf))))))
       (assq 'react deps))))
 
-(def-project-type! gulpjs "gulp" :match "/gulpfile.js$")
+(def-project-type! gulpjs "gulp"
+  :modes (nodejs-project-mode)
+  :files ("gulpfile.js")
+  :build ("gulp %s" "gulpfile.js"))
 
 (provide 'module-js)
 ;;; module-js.el ends here
