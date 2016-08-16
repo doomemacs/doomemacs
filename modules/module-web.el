@@ -19,6 +19,7 @@
          "\\.jsp$"
          "\\.as[cp]x$"
          "\\.mustache$"
+         "\\.tsx$"
          "wp-content/themes/.+/.+\\.php$")
   :init
   (add-hook 'web-mode-hook 'turn-off-smartparens-mode)

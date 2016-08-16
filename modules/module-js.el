@@ -86,8 +86,7 @@
   :config (setq-default coffee-indent-like-python-mode t))
 
 (use-package typescript-mode
-  :mode (("\\.ts$" . typescript-mode)
-         ("\\.tsx$" . web-mode))
+  :mode "\\.ts$"
   :init
   (add-hook! typescript-mode
     '(rainbow-delimiters-mode doom|ts-fontify)))
