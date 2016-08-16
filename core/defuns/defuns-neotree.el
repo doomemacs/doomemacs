@@ -52,9 +52,20 @@
 ;;;###autoload
 (defun doom*neo-insert-fold-symbol (name)
   "Custom hybrid unicode theme with leading whitespace."
-  (or (and (eq name 'open)  (neo-buffer--insert-with-face " -  " 'neo-expand-btn-face))
-      (and (eq name 'close) (neo-buffer--insert-with-face " +  " 'neo-expand-btn-face))
-      (and (eq name 'leaf)  (neo-buffer--insert-with-face "   " 'neo-expand-btn-face))))
+  (or (and (eq name 'open)
+           (neo-buffer--insert-with-face (format " - %s "
+                                                 (propertize ""
+                                                             'face `(:family "fontawesome" :height 1.2)
+                                                             'display '(raise -0.2)))
+                                         'neo-expand-btn-face))
+      (and (eq name 'close)
+           (neo-buffer--insert-with-face (format " + %s "
+                                                 (propertize ""
+                                                             'face `(:family "fontawesome" :height 1.2)
+                                                             'display '(raise -0.2)))
+                                         'neo-expand-btn-face))
+      (and (eq name 'leaf)
+           (neo-buffer--insert-with-face " " 'neo-expand-btn-face))))
 
 (provide 'defuns-neotree)
 ;;; defuns-neotree.el ends here
