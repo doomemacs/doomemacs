@@ -67,7 +67,6 @@
   (add-hook! neotree-mode
     (set (make-local-variable 'hl-line-sticky-flag) t)
     (setq line-spacing 2)
-    (text-scale-set -1)
     (hl-line-mode +1))
   (map! :map neotree-mode-map
         :m "\\\\" 'evil-window-prev
