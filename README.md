@@ -2,19 +2,15 @@
 
 [![Yay! Evil!](https://raw.githubusercontent.com/hlissner/.emacs.d/screenshots/cacochan.png)](http://ultravioletbat.deviantart.com/art/Yay-Evil-111710573)
 
-This is an Emacs configuration for the stubborn, melodramatic, shell-dwelling
-vimmer disappointed with the text-editor status quo. I wanted Atom's (or
-Sublime's) snappy and [quasi]-native GUI, but more low-level customizability. I
-wanted vim/emac's versality and modal philosophy, but didn't want to live in the
-70's (or deal with VimL's shenanigans). I wanted the toybox IDE behemoths like
-Intellij give you, but not the opinionated workflows that come with them.
+This is an Emacs configuration for a stubborn, melodramatic and shell-dwelling
+vimmer disappointed with the text-editor status quo.
 
-I ended up with DOOM. It strives to look and act like modern editors (whatever
-that will mean to me on any given day), emulate vim as best it can, and strive
-to surpass it in any way possible. All to fit my needs as a software developer,
-designer, scientist and doom enthusiast.
+Doom tries to look and act like modern editors (whatever that will mean to me on
+any given day), emulates vim as best it can and strives to surpass it in any way
+possible. All to fit my needs as a software developer, indie gamedev, designer,
+scientist and doom enthusiast.
 
-It was tailored for Emacs 25+ on OSX 10.11+. I use vim everywhere else.
+It was tailored for Emacs 25+ on OSX 10.11+. I use [vim] everywhere else.
 
 ![Main screenshot](https://raw.githubusercontent.com/hlissner/.emacs.d/screenshots/main.png?raw=true)
 
@@ -127,4 +123,5 @@ See screenshots in the [screenshots branch][sc].
 [sc]: https://github.com/hlissner/.emacs.d/tree/screenshots
 [sc-diffs]: https://github.com/hlissner/.emacs.d/blob/screenshots/git-gutter.png?raw=true
 [sc-multiedit]: https://raw.githubusercontent.com/hlissner/evil-multiedit/screenshots/main.gif?raw=true
+[vim]: https://github.com/hlissner/.vim
 
