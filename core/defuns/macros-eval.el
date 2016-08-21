@@ -10,6 +10,8 @@ check to make sure they exist in the project root."
          (when (or (null ,build-file)
                    (doom/project-has-files ,build-file))
            (setq doom--build-command '(,command . ,build-file))))
+       ,(when (eq major-mode mode)
+          (funcall fn))
        (add-hook! ,mode ',fn))))
 
 ;;;###autoload
