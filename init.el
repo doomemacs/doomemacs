@@ -31,7 +31,7 @@
 (defconst emacs-start-time (current-time))
 (load (concat user-emacs-directory "core/core"))
 
-(doom :theme (if window-system 'doom-one 'doom-dark)
+(doom :theme 'doom-one
       :font ("Inconsolata" 14)
 
       ;;; The heart of DOOM
