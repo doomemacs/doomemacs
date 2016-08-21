@@ -1,19 +1,24 @@
 [![MIT](https://img.shields.io/badge/license-MIT-green.svg)](./LICENSE)
 
-This is an Emacs configuration for stubborn vimmers and silent demon
-annihilating protagonists alike. It strives to emulate vim as best it can, and
-surpass it in any way possible.
-
-<center>
 [![Yay! Evil!](https://raw.githubusercontent.com/hlissner/.emacs.d/screenshots/cacochan.png)](http://ultravioletbat.deviantart.com/art/Yay-Evil-111710573)
-</center>
-<br />
 
-It is tailored to OSX 10.11+, Emacs 25+ and my needs as a software developer,
+This is an Emacs configuration for the stubborn, melodramatic, shell-dwelling
+vimmer disappointed with the text-editor status quo. I wanted Atom's (or
+Sublime's) snappy and [quasi]-native GUI, but more low-level customizability. I
+wanted vim/emac's versality and modal philosophy, but didn't want to live in the
+70's (or deal with VimL's shenanigans). I wanted the toybox IDE behemoths like
+Intellij give you, but not the opinionated workflows that come with them.
+
+I ended up with DOOM. It strives to look and act like modern editors (whatever
+that will mean to me on any given day), emulate vim as best it can, and strive
+to surpass it in any way possible. All to fit my needs as a software developer,
 designer, scientist and doom enthusiast.
 
-![Splash page screenshot](https://raw.githubusercontent.com/hlissner/.emacs.d/screenshots/scratch.png?raw=true)
-![Main screenshots](https://raw.githubusercontent.com/hlissner/.emacs.d/screenshots/main.png?raw=true)
+It was tailored for Emacs 25+ on OSX 10.11+. I use vim everywhere else.
+
+![Main screenshot](https://raw.githubusercontent.com/hlissner/.emacs.d/screenshots/main.png?raw=true)
+
+**NOTE:** you can [find the theme in a separate repo](https://github.com/hlissner/emacs-doom-theme).
 
 ## Installation
 
@@ -44,63 +49,82 @@ To get a picture of what's in here, check out:
 * **[init.el](init.el)**: lists all loaded modules
 * **[private/my-bindings.el](private/my-bindings.el)**: most of the custom keybinds
 * **[private/my-commands.el](private/my-commands.el)**: available custom ex commands
-* **[ext/Makefile](ext/Makefile)**: lists external dependencies
+* **[ext/*.sh](ext/)**: scripts for external dependency setup (e.g. irony-mode)
+
+See screenshots in the [screenshots branch][sc].
 
 ### Highlights
 
-* Line numbers + highlight with **[nlinum]** <br />
-* Syntax checking with **[flycheck]** <br />
-* Completion with **[company-mode]** <br />
-* Nigh-universal code debugging interface with **[realgud]**
-* Project navigation with **[ivy]** and **[neotree]**
-* Project search with **[counsel-ag]**
-* Buffer search with **evil-search** and **[swiper]**
-* Session persistence (and tab emulation) with **[workgroups2]**
-* Run code inline with **[quickrun]**
-* REPLs for many major modes with **[repl-toggle]**, including Ruby, Python, PHP,
-  JS, Elisp, Haskell and Lua.
-* Minimalistic diffs in the margin with **[git-gutter-fringe]**
-* Snippet expansion with **[yasnippet]** and **[auto-yasnippet]**
-* File template support with **auto-insert** and **[yasnippet]**
-* Code folding with **hideshow**
-* Custom O/S interaction commands, like **os-reveal** and **os-open-in-browser**
-* Custom TODO, FIXME and NOTE highlighting
-* **big-mode** for presentations and demonstrations
-* Tmux integration with `:t` and `:tcd` ex commands
-* Tamed popup windows with **[shackle]**
-* emacs for modern note-taking/LaTeX/writing with **org-mode** or **rst-mode**
-* Vim-esque Emacs with **[evil-mode]**, plus:
-  * 2-char motions with **[evil-snipe]**
-  * Repeat (most) motions with <kbd>SPC</kbd>
-  * Multiple cursors with **[evil-multiedit]**
-  * Quick keybindings with `:[nviom]map`
-  * Vim-esque omnicompletion. e.g. `C-x C-f` for files
+* Tamed popup windows with **[shackle]**; see `def-popup!` and `shackle-rules`.
+  e.g. help buffers will always pop up at the bottom of the frame, and are
+  removed with ESC.
+* Workspaces & session persistence with **[workgroups2]**
+* Project and workspace-sensitive buffer navigation and functions
+* A vim-like environment with **[evil-mode]**
+  * vim-seek/vim-sneak functionality with **[evil-snipe]** (provides 2-char motions)
+  * [Multiple cursors][sc-multiedit] with **[evil-multiedit]**
+  * Repeat (most) motions with <kbd>SPC</kbd> and
+    <kbd>shift</kbd>+<kbd>SPC</kbd>
+  * On-the-fly keybindings with `:[nviom]map`
+  * Global <kbd>C-x</kbd> omnicompletion (e.g. <kbd>C-x</kbd>+<kbd>C-f</kbd> for
+    files)
+* Fast search utilities:
+  * Project and buffer navigation with **[ivy]**
+  * File browser sidebar with **[neotree]**
+  * Project search (and replace) with **[counsel-ag]** and **[wgrep]**
+  * Buffer search with **[swiper]**
+* REPLs for many languages including Ruby, Python, PHP, JS, Elisp, Haskell and
+  Lua.
+* [Minimalistic diffs in the fringe][sc-diffs] with **[git-gutter-fringe]**.
+* Modded **org-mode** to be a modern note-taking/LaTeX/word-processing platform. (WIP)
+* Code debugging interface with **[realgud]** (currently supports gdb, trepanjs,
+  bashdb and zshdb, working on Python/Ruby support)
+* A do-what-I-mean jump-to-definition implementation that either uses major-mode
+  commands or falls back to **[dumb-jump]**/ctags.
 * Pretty mode-line with **[spaceline]**, plus:
   * evil-search/iedit/evil-substitute mode-line integration
   * Indicator when macro is recording<br/>
   * Show python/ruby version in mode-line (with rbenv/pyenv)
 
 
-[nlinum]: http://elpa.gnu.org/packages/nlinum.html
-[flycheck]: https://melpa.org/#/flycheck
-[company-mode]: https://melpa.org/#/company
-[realgud]: https://melpa.org/#/realgud
-[ivy]: https://melpa.org/#/ivy
-[git-gutter-fringe]: https://melpa.org/#/git-gutter-fringe
-[neotree]: https://melpa.org/#/neotree
-[counsel-ag]: https://melpa.org/#/counsel
-[swiper]: https://melpa.org/#/swiper
-[evil-mode]: https://melpa.org/#/evil
-[workgroups2]: https://melpa.org/#/workgroups2
-[quickrun]: https://melpa.org/#/quickrun
-[repl-toggle]: https://melpa.org/#/repl-toggle
-[yasnippet]: https://melpa.org/#/yasnippet
+### Other features
+
+* Line numbers + highlight with **[nlinum]**
+* On-demand [platform agnostic] shell with **eshell**
+* Consistent marker-based code-folding with **hideshow**
+* Inline code execution anywhere (once or live) with **[quickrun]**
+* Snippet expansion and file templates with **[yasnippet]**
+* Completion with **[company-mode]**
+* Syntax checking with **[flycheck]**
+* Custom O/S interaction commands, like **os-reveal** and **os-open-in-browser**
+* Custom TODO, FIXME and NOTE highlighting and search
+* **big-mode** for presentations and demonstrations
+* Tmux integration with `:t` and `:tcd` ex commands
+
+
 [auto-yasnippet]: https://melpa.org/#/auto-yasnippet
-[shackle]: https://melpa.org/#/shackle
-[evil-snipe]: https://melpa.org/#/evil-snipe
+[company-mode]: https://melpa.org/#/company
+[counsel-ag]: https://melpa.org/#/counsel
+[dumb-jump]: https://melpa.org/#/dumb-jump
+[evil-mode]: https://melpa.org/#/evil
 [evil-multiedit]: https://melpa.org/#/evil-multiedit
+[evil-snipe]: https://melpa.org/#/evil-snipe
+[flycheck]: https://melpa.org/#/flycheck
+[git-gutter-fringe]: https://melpa.org/#/git-gutter-fringe
+[ivy]: https://melpa.org/#/ivy
+[neotree]: https://melpa.org/#/neotree
+[nlinum]: http://elpa.gnu.org/packages/nlinum.html
+[quickrun]: https://melpa.org/#/quickrun
+[realgud]: https://melpa.org/#/realgud
+[repl-toggle]: https://melpa.org/#/repl-toggle
+[shackle]: https://melpa.org/#/shackle
 [spaceline]: https://melpa.org/#/spaceline
+[swiper]: https://melpa.org/#/swiper
+[workgroups2]: https://melpa.org/#/workgroups2
+[wgrep]: https://melpa.org/#/wgrep
+[yasnippet]: https://melpa.org/#/yasnippet
 
-## More screenshots
+[sc]: https://github.com/hlissner/.emacs.d/tree/screenshots
+[sc-diffs]: https://github.com/hlissner/.emacs.d/blob/screenshots/git-gutter.png?raw=true
+[sc-multiedit]: https://raw.githubusercontent.com/hlissner/evil-multiedit/screenshots/main.gif?raw=true
 
-In the [screenshots branch](https://github.com/hlissner/.emacs.d/tree/screenshots).
