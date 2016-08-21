@@ -1,27 +1,24 @@
 ;;; module-org.el --- -*- no-byte-compile: t; -*-
 
-(add-hook 'org-load-hook 'doom|org-init t)
-(add-hook 'org-load-hook 'doom|org-keybinds t)
-(add-hook 'org-mode-hook 'doom|org-hook)
-
-(defvar org-directory (expand-file-name "~/Dropbox/notes/"))
+(defconst org-directory (expand-file-name "~/Dropbox/org/"))
 
 (define-minor-mode evil-org-mode
   "Evil-mode bindings for org-mode."
   :init-value nil
-  :lighter    " !"
-  :keymap     (make-sparse-keymap) ; defines evil-org-mode-map
-  :group      'evil-org)
+  :lighter " !"
+  :keymap (make-sparse-keymap)
+  :group 'evil-org)
 
-(require 'module-org-crm)
-(require 'module-org-notebook)
+(add-hook 'org-load-hook 'doom|org-init t)
+(add-hook 'org-load-hook 'doom|org-keybinds t)
+(add-hook 'org-load-hook 'doom|org-hacks t)
+(add-hook 'org-mode-hook 'doom|org-hook)
 
 ;;
 (defun doom|org-hook ()
   (evil-org-mode +1)
   (visual-line-mode +1)
-  (setq line-spacing 2)
-  (org-bullets-mode +1)
+  (setq line-spacing 1)
 
   ;; If saveplace places the point in a folded position, unfold it on load
   (when (outline-invisible-p)
@@ -53,7 +50,6 @@
    org-indent-mode-turns-on-hiding-stars t
    org-adapt-indentation nil
    org-blank-before-new-entry '((heading . nil) (plain-list-item . auto))
-   org-bullets-bullet-list '("✸" "•" "◦" "•" "◦" "•" "◦")
    org-cycle-separator-lines 1
    org-cycle-include-plain-lists t
    org-ellipsis 'hs-face
@@ -64,7 +60,7 @@
    org-fontify-whole-heading-line t
    org-footnote-auto-label 'plain
    org-hide-emphasis-markers t
-   org-hide-leading-stars nil
+   org-hide-leading-stars t
    org-image-actual-width nil
    org-indent-indentation-per-level 2
    org-pretty-entities t
@@ -90,7 +86,7 @@
    org-special-ctrl-a/e t
 
    ;; Sorting/refiling
-   org-archive-location (concat org-directory "/Archived/%s::")
+   org-archive-location (concat org-directory "/archived/%s::")
    org-refile-targets '((nil . (:maxlevel . 2))) ; display full path in refile completion
 
    ;; Agenda
@@ -100,7 +96,7 @@
    org-agenda-window-setup 'other-frame ; to get org-agenda to behave with shackle...
    org-agenda-inhibit-startup t
    org-agenda-files (f-entries org-directory (lambda (path) (f-ext? path "org")))
-   org-todo-keywords '((sequence "[ ](t)" "[-](p)" "|" "[X](d)")
+   org-todo-keywords '((sequence "[ ](t)" "[-](p)" "[?](m)" "|" "[X](d)")
                        (sequence "TODO(T)" "|" "DONE(D)")
                        (sequence "IDEA(i)" "NEXT(n)" "ACTIVE(a)" "WAITING(w)" "LATER(l)" "|" "CANCELLED(c)"))
 
@@ -124,40 +120,7 @@
    ;; org-latex-packages-alist
    ;; '(("" "gauss" t)
    ;;   ("" "physics" t) TODO Install this)
-
-   org-capture-templates
-   '(;; TODO: New Note (note)
-     ;; TODO: New Task (todo)
-     ;; TODO: New vocabulary word
-
-     ("c" "Changelog" entry
-      (file+headline (f-expand "CHANGELOG.org" (doom/project-root)) "Unreleased")
-      "* %?")
-
-     ;; ("p" "Project Notes" entry
-     ;;  (file+headline org-default-notes-file "Inbox")
-     ;;  "* %u %?\n%i" :prepend t)
-
-     ;; ("m" "Major-mode Notes" entry
-     ;;  (file+headline org-default-notes-file "Inbox")
-     ;;  "* %u %?\n%i" :prepend t)
-
-     ;; ("n" "Notes" entry
-     ;;  (file+headline org-default-notes-file "Inbox")
-     ;;  "* %u %?\n%i" :prepend t)
-
-     ;; ("v" "Vocab" entry
-     ;;  (file+headline (concat org-directory "topics/vocab.org") "Unsorted")
-     ;;  "** %i%?\n")
-     ))
-
-  ;; Display certain unicode characters properly
-  ;; (doom-fix-unicode '("DejaVu Sans" 13)
-  ;;   ?♭ ?♯ ?⟳
-  ;;   ?× ?∙ ?÷ ?⌉ ?⌈ ?⌊ ?⌋
-  ;;   ?∩ ?∪ ?⊆ ?⊂ ?⊄ ?⊇ ?⊃ ?⊅
-  ;;   ?⇒ ?⇐ ?⇔ ?↔ ?→ ?≡ ?∴ ?∵ ?⊕ ?∀ ?∃ ?∄ ?∈ ?∉
-  ;;   ?∨ ?∧ ?¬)
+   )
 
   (org-babel-do-load-languages
    'org-babel-load-languages
@@ -176,12 +139,6 @@
                       ext-regexp "\\)\\(\\]\\]\\|>\\|'\\)?") . 2)
             (,(concat "<\\(http://.+\\." ext-regexp "\\)>") . 1))))
 
-  ;; Don't open separate windows
-  (push '(file . find-file) org-link-frame-setup)
-
-  ;; Reveal files in finder
-  (setq org-file-apps '(("\\.org$" . emacs) (t . "open -R \"%s\"")))
-
   ;; Fontify checkboxes and dividers
   (defface org-list-bullet '((t ())) "Face for list bullets")
   (font-lock-add-keywords
@@ -199,33 +156,77 @@
         org-crypt-key user-mail-address
         epa-file-encrypt-to user-mail-address)
 
-  ;; Don't track attachments
-  (push (format "/%s.+$" (regexp-quote org-attach-directory)) recentf-exclude)
+  ;; smartparens config
+  (sp-with-modes '(org-mode)
+    (sp-local-pair "\\[" "\\]" :post-handlers '(("| " "SPC")))
+    (sp-local-pair "\\(" "\\)" :post-handlers '(("| " "SPC")))
+    (sp-local-pair "$$" "$$"   :post-handlers '((:add " | ")) :unless '(sp-point-at-bol-p))
+    (sp-local-pair "{" nil))
+
+  ;; bullets
+  (use-package org-bullets :commands org-bullets-mode))
+
+(defun doom|org-hacks ()
+  ;; Don't open separate windows
+  (push '(file . find-file) org-link-frame-setup)
+
+  ;; Reveal files in finder
+  (setq org-file-apps '(("\\.org$" . emacs) (t . "open -R \"%s\"")))
+
   ;; Don't clobber recentf with agenda files
   (defun org-is-agenda-file (filename)
     (find (file-truename filename) org-agenda-files :key 'file-truename
           :test 'equal))
   (pushnew 'org-is-agenda-file recentf-exclude)
 
+  ;; Don't track attachments
+  (push (format "/%s.+$" (regexp-quote org-attach-directory)) recentf-exclude)
+
   ;; Remove highlights on ESC
   (defun doom*org-remove-occur-highlights (&rest args)
     (when (eq major-mode 'org-mode) (org-remove-occur-highlights)))
   (advice-add 'evil-force-normal-state :before 'doom*org-remove-occur-highlights)
 
-  ;; smartparens config
-  (sp-with-modes '(org-mode)
-    (sp-local-pair "*" "*" :unless '(sp-point-after-word-p sp-point-at-bol-p) :skip-match 'doom/sp-org-skip-asterisk)
-    (sp-local-pair "_" "_" :unless '(sp-point-before-word-p sp-point-after-word-p sp-point-before-symbol-p))
-    (sp-local-pair "/" "/" :unless '(sp-point-before-word-p sp-point-after-word-p sp-point-before-symbol-p) :post-handlers '(("[d1]" "SPC")))
-    (sp-local-pair "~" "~" :unless '(sp-point-before-word-p sp-point-after-word-p sp-point-before-symbol-p) :post-handlers '(("[d1]" "SPC")))
-    (sp-local-pair "=" "=" :unless '(sp-point-before-word-p sp-point-after-word-p sp-point-before-symbol-p) :post-handlers '(("[d1]" "SPC")))
+  ;; Don't reset org-hide!
+  (advice-add 'org-find-invisible-foreground :override 'ignore)
 
-    (sp-local-pair "\\[" "\\]" :post-handlers '(("| " "SPC")))
-    (sp-local-pair "\\(" "\\)" :post-handlers '(("| " "SPC")))
-    (sp-local-pair "$$" "$$"   :post-handlers '((:add " | ")) :unless '(sp-point-at-bol-p))
-    (sp-local-pair "{" nil))
+  ;; Tame org-mode popups
+  ;; Ensures org-src-edit yields control of its buffer to shackle.
+  (defun org-src-switch-to-buffer (buffer context)
+    (pop-to-buffer buffer))
 
-  (use-package org-bullets :commands (org-bullets-mode)))
+  ;; And these for org-todo, org-link and org-agenda
+  (defun org-pop-to-buffer-same-window (&optional buffer-or-name norecord label)
+    "Pop to buffer specified by BUFFER-OR-NAME in the selected window."
+    (display-buffer buffer-or-name))
+
+  (defun org-switch-to-buffer-other-window (&rest args)
+    (mapc (lambda (b)
+            (let ((buf (if (stringp b) (get-buffer-create b) b)))
+              (pop-to-buffer buf t t)))
+          args))
+
+  ;; Taming Org-agenda!
+  (defun doom/org-agenda-quit ()
+    "Necessary to finagle org-agenda into shackle popups and behave properly on quit."
+    (interactive)
+    (if org-agenda-columns-active
+        (org-columns-quit)
+      (let ((buf (current-buffer)))
+        (and (not (eq org-agenda-window-setup 'current-window))
+             (not (one-window-p))
+             (delete-window))
+        (kill-buffer buf)
+        (setq org-agenda-archives-mode nil
+              org-agenda-buffer nil))))
+
+  (after! org-agenda
+    (map! :map org-agenda-mode-map
+          :e "<escape>" 'doom/org-agenda-quit
+          :e "ESC" 'doom/org-agenda-quit
+          :e [escape] 'doom/org-agenda-quit
+          "q" 'doom/org-agenda-quit
+          "Q" 'doom/org-agenda-quit)))
 
 (defun doom|org-keybinds ()
   (map! (:map org-mode-map
@@ -347,7 +348,7 @@
           :v  "<"   (λ! (org-metaleft)  (evil-visual-restore))
           :v  ">"   (λ! (org-metaright) (evil-visual-restore))
           :n  "-"   'org-cycle-list-bullet
-          :n  [tab] 'org-cycle)
+          :m  "<tab>" 'org-cycle)
 
         (:map org-src-mode-map
           :n  "<escape>" (λ! (message "Exited") (org-edit-src-exit)))

@@ -1,4 +1,4 @@
-;;; module-org-notebook.el
+;;; module-org-notes.el
 
 ;; This transforms Emacs+org-mode into a notebook application with:
 ;;   + Custom links for class notes
@@ -13,12 +13,12 @@
 (add-hook 'org-load-hook 'doom|org-attach-init t)
 (add-hook 'org-load-hook 'doom|org-export-init t)
 
-(defvar org-directory-notebook (expand-file-name "/notebook/" org-directory))
-(defvar org-default-notes-file (expand-file-name "inbox.org" org-directory))
+(defconst org-directory-notebook (f-expand "notes/" org-directory))
+(defconst org-default-notes-file (f-expand "inbox.org" org-directory-notebook))
 
 (defvar org-attach-directory ".attach/")
-(defvar doom-org-export-directory (concat org-directory ".export"))
-(defvar doom-org-quicknote-dir (concat org-directory "Inbox/"))
+(defvar org-export-directory (concat org-directory ".export"))
+(defvar org-quicknote-directory (concat org-directory "Inbox/"))
 
 ;; Keep track of attachments
 (defvar-local doom-org-attachments-list '()
@@ -32,13 +32,40 @@
 
 ;;
 (defun doom|org-notebook-init ()
-  ;; (define-org-section! course "Classes"
-  ;;   (lambda (path) (substring path 0 (s-index-of " " path))) "%s*.org")
-  ;; (exmap "ocl[ass]" 'doom:org-search-course)
-  (doom-fix-unicode "FontAwesome" '(? ? ? ? ? ? ? ?) 13))
+  (setq org-capture-templates
+        '(;; TODO: New Note (note)
+          ;; TODO: New Task (todo)
+          ;; TODO: New vocabulary word
 
+          ("c" "Changelog" entry
+           (file+headline (f-expand "CHANGELOG.org" (doom/project-root)) "Unreleased")
+           "* %?")
+
+          ;; ("p" "Project Notes" entry
+          ;;  (file+headline org-default-notes-file "Inbox")
+          ;;  "* %u %?\n%i" :prepend t)
+
+          ;; ("m" "Major-mode Notes" entry
+          ;;  (file+headline org-default-notes-file "Inbox")
+          ;;  "* %u %?\n%i" :prepend t)
+
+          ;; ("n" "Notes" entry
+          ;;  (file+headline org-default-notes-file "Inbox")
+          ;;  "* %u %?\n%i" :prepend t)
+
+          ;; ("v" "Vocab" entry
+          ;;  (file+headline (concat org-directory "topics/vocab.org") "Unsorted")
+          ;;  "** %i%?\n")
+          )))
+
+;; I don't like Org's attachment system. So I replaced it with my own, which stores
+;; attachments in a global org .attach directory. It also implements drag-and-drop
+;; file support and attachment icons. It also treats images specially.
 ;;
+;; To clean up unreferenced attachments, call `doom/org-cleanup-attachments'
 (defun doom|org-attach-init ()
+  ;; Render attachment icons properly
+  (doom-fix-unicode '("FontAwesome" 13) ? ? ? ? ? ? ? ?)
   ;; Drag-and-drop support
   (require 'org-download)
   (setq-default org-download-image-dir org-attach-directory
@@ -56,13 +83,7 @@
 
   ;; Add another drag-and-drop handler that will handle anything but image files
   (setq dnd-protocol-alist `(("^\\(https?\\|ftp\\|file\\|nfs\\):\\(//\\)?" . doom/org-download-dnd)
-                             ,@dnd-protocol-alist))
-
-  ;; ...auto-delete attachments once all references to it have been deleted.
-  (add-hook 'org-mode-hook 'doom|org-attach-track-init)
-  (defun doom|org-attach-track-init ()
-    (setq doom-org-attachments-list (doom/org-attachments))
-    (add-hook 'after-save-hook 'doom/org-cleanup-attachments nil t)))
+                             ,@dnd-protocol-alist)))
 
 
 ;;
@@ -76,23 +97,22 @@
   (setq org-pandoc-options '((standalone . t) (mathjax . t) (parse-raw . t)))
 
   ;; Export to a central directory (why isn't this easier?)
-  (unless (file-directory-p doom-org-export-directory)
-    (mkdir doom-org-export-directory))
+  (unless (file-directory-p org-export-directory)
+    (mkdir org-export-directory))
   (defun doom*org-export-output-file-name (args)
     (unless (nth 2 args)
-      (setq args (append args (list doom-org-export-directory))))
+      (setq args (append args (list org-export-directory))))
     args)
   (advice-add 'org-export-output-file-name :filter-args 'doom*org-export-output-file-name))
 
-
-;;
+;; TODO
 ;; (defvar doom-org-tags '())
 ;; (defun doom|org-tag-init ()
 ;;   (async-start
 ;;    `(lambda ()
-;;       (let ((default-directory (doom/project-root))
-;;             (data (s-trim (shell-command-to-string "ag --nocolor --nonumbers '^#\\+TAGS:'")))
-;;             (alist '()))
+;;       (let* ((default-directory (doom/project-root))
+;;              (data (s-trim (shell-command-to-string "ag --nocolor --nonumbers '^#\\+TAGS:'")))
+;;              (alist '()))
 ;;         (unless (zerop (length data))
 ;;           (mapc (lambda (l)
 ;;                   (let* ((parts (s-split ":" l))
@@ -107,10 +127,8 @@
 ;;                 (s-lines data))
 ;;           alist)))
 ;;    (lambda (_)
-;;      (load (concat php-extras-eldoc-functions-file ".el"))
-;;      (message "PHP eldoc updated!")))
-;;   )
+;;      )))
 
 ;;
-(provide 'module-org-notebook)
-;;; module-org-notebook.el ends here
+(provide 'module-org-notes)
+;;; module-org-notes.el ends here

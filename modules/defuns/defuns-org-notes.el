@@ -1,4 +1,4 @@
-;;; defuns-org-notebook.el
+;;; defuns-org-notes.el
 
 ;;;###autoload
 (defun doom/org ()
@@ -34,7 +34,7 @@
            (rassq-delete-all 'doom/org-download-dnd (copy-alist dnd-protocol-alist))))
       (dnd-handle-one-url nil action uri))))
 
-;;;###autoload (autoload 'doom:org-attach "defuns-org-notebook" nil t)
+;;;###autoload (autoload 'doom:org-attach "defuns-org-notes" nil t)
 (evil-define-command doom:org-attach (&optional uri)
   (interactive "<a>")
   (unless (eq major-mode 'org-mode)
@@ -51,22 +51,21 @@
         (if (evil-visual-state-p)
             (org-insert-link nil (format "./%s" rel-path)
                              (concat (buffer-substring-no-properties (region-beginning) (region-end))
-                                     " " (doom/org-attach-icon rel-path)))
+                                     " " (doom--org-attach-icon rel-path)))
 
           (insert (if image-p
-                      (format "[[./%s]]" rel-path)
-                    (format "%s [[./%s][%s]]"
-                            (doom/org-attach-icon rel-path)
+                      (format "[[./%s]] " rel-path)
+                    (format "%s [[./%s][%s]] "
+                            (doom--org-attach-icon rel-path)
                             rel-path (f-filename rel-path)))))
         (when (string-match-p (regexp-opt '("jpg" "jpeg" "gif" "png")) (f-ext rel-path))
-          (org-toggle-inline-images)))
-    (let ((attachments (doom-org-attachments)))
-      (unless attachments
-        (user-error "No attachments in this file"))
-      (helm :sources (helm-build-sync-source "Attachments" :candidates attachments)))))
+          (org-redisplay-inline-images)))
+    (let ((default-directory ".attach/"))
+      (if (file-exists-p default-directory)
+          (call-interactively 'find-file)
+        (user-error "No attachments")))))
 
-;;;###autoload
-(defun doom/org-attach-icon (path)
+(defun doom--org-attach-icon (path)
   (char-to-string (pcase (downcase (f-ext path))
                     ("jpg" ?) ("jpeg" ?) ("png" ?) ("gif" ?)
                     ("pdf" ?)
@@ -76,12 +75,20 @@
                     ("ogg" ?) ("mp3" ?) ("wav" ?)
                     ("mp4" ?) ("mov" ?) ("avi" ?)
                     ("zip" ?) ("gz" ?) ("tar" ?) ("7z" ?) ("rar" ?)
-                    (t ?))))
+                    (_ ?))))
 
 ;;;###autoload
-(defun doom/org-attachments ()
-  "Retrieves a list of all the attachments pertinent to the currect org-mode buffer."
-  (require 'org-macs)
+(defun doom/org-cleanup-attachments ()
+  ;; "Deletes any attachments that are no longer present in the org-mode buffer."
+  (let* ((attachments-local (doom-org-attachments))
+         (attachments (f-entries org-attach-directory))
+         (to-delete (-difference attachments-local attachments)))
+    ;; TODO
+    to-delete))
+
+(defun doom-org-attachments ()
+  (unless (eq major-mode 'org-mode)
+    (user-error "Not an org buffer"))
   (org-save-outline-visibility nil
     (let ((attachments '())
           element
@@ -100,28 +107,6 @@
                 (push file attachments))))))
       (-distinct attachments))))
 
-;;;###autoload
-(defun doom/org-cleanup-attachments ()
-  "Deletes any attachments that are no longer present in the org-mode buffer."
-  (let* ((attachments (doom/org-attachments))
-         (to-delete (-difference doom-org-attachments-list attachments)))
-    (mapc (lambda (f)
-            (message "Deleting attachment: %s" f)
-            (delete-file f t))
-          to-delete)
-    (setq doom-org-attachments-list attachments)))
 
-
-;;
-;; Easy searching
-;;
-
-;; Ex-mode interface for `helm-ag'. If `bang', then `search' is interpreted as
-;; regexp.
-;;;###autoload (autoload 'doom:org-helm-search "defuns-org-notebook" nil t)
-(evil-define-operator doom:org-helm-search (beg end &optional search bang)
-  (interactive "<r><a><!>")
-  (doom:helm-ag-search beg end (if bang (concat "^\\*+.*" search ".*$") search) t org-directory))
-
-(provide 'defuns-org-notebook)
-;;; defuns-org-notebook.el ends here
+(provide 'defuns-org-notes)
+;;; defuns-org-notes.el ends here
