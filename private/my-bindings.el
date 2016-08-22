@@ -98,7 +98,7 @@
         :n  "e"   'doom/flycheck-errors
         :n  "k"   'doom:docs-lookup
         :nv "l"   'doom/nlinum-toggle
-        :nv "m"   'ivy-recentf
+        :nv "m"   'counsel-recentf
         :nv "M"   'projectile-recentf
         :nv "p"   'counsel-yank-pop
         :nv "P"   'counsel-projectile
