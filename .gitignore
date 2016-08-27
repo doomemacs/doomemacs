@@ -1,5 +1,8 @@
 .cask/
-ext/
+ext/*
+!ext/*.sh
+!ext/*.md
+!ext/VARS
 eshell/
 private/cache/
 private/snippets/

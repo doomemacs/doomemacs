@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+CACHE_DIR="${HOME}/.emacs.d/private/cache/`hostname`/"
+ELPA_DIR="${HOME}/.emacs.d/.cask/`emacs --version | grep -E -o '2[4-9]\.[0-9\.]+'`/elpa"
+
+is-mac() { [ "$(uname)" == "Darwin" ]; }
+is-linux() { [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; }
+
+git-repo() {
+    old=$(pwd)
+    if [ -d "$2" ]; then
+        cd "$2" && git pull
+    else
+        git clone --depth 1 --recursive "$1" "$2"
+    fi
+    cd "$old"
+}
