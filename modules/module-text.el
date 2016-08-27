@@ -6,10 +6,12 @@
   :mode ("\\.m\\(d\\|arkdown\\)$" "/README$"
          ("/README\\.md$" . gfm-mode))
   :init
-  (add-hook 'markdown-mode-hook 'auto-fill-mode)
+  (add-hook! markdown-mode
+    (auto-fill-mode +1)
+    (setq line-spacing 2))
   (setq markdown-enable-wiki-links t
-        markdown-italic-underscore t
         markdown-enable-math t
+        markdown-italic-underscore t
         markdown-make-gfm-checkboxes-buttons t
         markdown-gfm-additional-languages '("sh"))
 
