@@ -95,7 +95,7 @@
 ;;
 
 (use-package hl-line
-  :init (add-hook! (prog-mode markdown-mode) 'hl-line-mode)
+  :init (add-hook! prog-mode 'hl-line-mode)
   :config
   ;; Doesn't seem to play nice in emacs 25+
   (setq hl-line-sticky-flag nil
