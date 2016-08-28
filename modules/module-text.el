@@ -8,7 +8,8 @@
   :init
   (add-hook! markdown-mode
     (auto-fill-mode +1)
-    (setq line-spacing 2))
+    (setq line-spacing 2
+          fill-column 70))
   (setq markdown-enable-wiki-links t
         markdown-enable-math t
         markdown-italic-underscore t
