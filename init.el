@@ -2,7 +2,7 @@
 ;;
 ;; Author:  Henrik Lissner <henrik@lissner.net>
 ;; URL:     https://github.com/hlissner/.emacs.d
-;; Version: 1.2.4
+;; Version: 1.2.5
 ;;
 ;;   =================     ===============     ===============   ========  ========
 ;;   \\ . . . . . . .\\   //. . . . . . .\\   //. . . . . . .\\  \\. . .\\// . . //
