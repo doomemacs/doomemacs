@@ -38,8 +38,9 @@
 (depends-on "nlinum")
 (depends-on "rainbow-delimiters")
 (depends-on "rainbow-mode")
-(depends-on "powerline")
+(depends-on "stripe-buffer")
 (depends-on "visual-fill-column")
+(depends-on "powerline")
 
 ;; Evil --- core/core-evil.el
 (depends-on "evil")
@@ -100,12 +101,10 @@
 (depends-on "flyspell")
 
 ;; Project --- core/core-project.el
-(depends-on "counsel")
-(depends-on "counsel-projectile")
+(depends-on "dired-k")
 (depends-on "flx-ido")
 ;;(depends-on "ido-ubiquitous")
 (depends-on "ido-vertical-mode")
-(depends-on "ivy")
 (depends-on "neotree")
 (depends-on "projectile")
 
@@ -117,6 +116,11 @@
 (depends-on "gitconfig-mode")
 (depends-on "gitignore-mode")
 (depends-on "magit")
+
+;; Ivy -- core/core-ivy.el
+(depends-on "ivy")
+(depends-on "counsel")
+(depends-on "counsel-projectile")
 
 ;; Helm -- core/core-helm.el
 ;;(depends-on "helm")

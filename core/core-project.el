@@ -21,6 +21,13 @@
   (set-buffer-modified-p nil))
 (add-hook 'dired-after-readin-hook 'doom|dired-sort)
 
+(use-package dired-k
+  :after dired
+  :config
+  (setq dired-k-style 'git)
+  (add-hook 'dired-initial-position-hook 'dired-k)
+  (add-hook 'dired-after-readin-hook #'dired-k-no-revert))
+
 ;; Automatically create missing directories when creating new files
 (defun doom|create-non-existent-directory ()
   (let ((parent-directory (file-name-directory buffer-file-name)))
