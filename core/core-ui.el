@@ -102,7 +102,7 @@
         beacon-blink-when-point-moves-vertically 10))
 
 (use-package hl-line
-  :init (add-hook! prog-mode 'hl-line-mode)
+  :init (add-hook 'prog-mode-hook 'hl-line-mode)
   :config
   ;; Doesn't seem to play nice in emacs 25+
   (setq hl-line-sticky-flag nil
@@ -115,12 +115,6 @@
   ;; Disable line highlight in visual mode
   (add-hook 'evil-visual-state-entry-hook 'doom|hl-line-off)
   (add-hook 'evil-visual-state-exit-hook  'doom|hl-line-on))
-
-(use-package visual-fill-column :defer t
-  :config
-  (setq-default visual-fill-column-center-text nil
-                visual-fill-column-width fill-column
-                split-window-preferred-function 'visual-line-mode-split-window-sensibly))
 
 (use-package highlight-indentation
   :commands (highlight-indentation-mode
@@ -141,18 +135,6 @@
 
 (use-package highlight-numbers :commands (highlight-numbers-mode))
 
-(use-package rainbow-delimiters
-  :commands rainbow-delimiters-mode
-  :config (setq rainbow-delimiters-max-face-count 3)
-  :init
-  (add-hook! (emacs-lisp-mode lisp-mode js-mode css-mode c-mode-common)
-    'rainbow-delimiters-mode))
-
-;; NOTE hl-line-mode and rainbow-mode don't play well together
-(use-package rainbow-mode
-  :commands (rainbow-mode)
-  :init (add-hook 'rainbow-mode-hook 'doom|hl-line-off))
-
 (use-package nlinum
   :commands nlinum-mode
   :preface
@@ -162,9 +144,10 @@
   (defvar doom--hl-nlinum-line nil)
   :init
   (add-hook!
-    (markdown-mode prog-mode scss-mode web-mode conf-mode)
+    (markdown-mode prog-mode scss-mode web-mode conf-mode groovy-mode nxml-mode)
     'nlinum-mode)
-  (add-hook! 'nlinum-mode-hook
+  ;; FIXME This only works if hl-line is active!
+  (add-hook! nlinum-mode
     (if nlinum-mode-hook
         (add-hook 'post-command-hook 'doom|nlinum-hl-line nil t)
       (remove-hook 'post-command-hook 'doom|nlinum-hl-line t)))
@@ -173,10 +156,33 @@
   (add-hook! nlinum-mode
     (setq nlinum--width (length (save-excursion (goto-char (point-max))
                                                 (format-mode-line "%l")))))
+
   ;; Disable nlinum when making frames, otherwise we get linum face error
   ;; messages that prevent frame creation.
   (add-hook 'before-make-frame-hook 'doom|nlinum-disable)
   (add-hook 'after-make-frame-functions 'doom|nlinum-enable))
+
+(use-package rainbow-delimiters
+  :commands rainbow-delimiters-mode
+  :config (setq rainbow-delimiters-max-face-count 3)
+  :init
+  (add-hook! (emacs-lisp-mode lisp-mode js-mode css-mode c-mode-common)
+    'rainbow-delimiters-mode))
+
+;; NOTE hl-line-mode and rainbow-mode don't play well together
+(use-package rainbow-mode
+  :commands rainbow-mode
+  :init (after! hl-line (add-hook 'rainbow-mode-hook 'doom|hl-line-off)))
+
+(use-package stripe-buffer
+  :commands stripe-buffer-mode
+  :init (add-hook 'dired-mode-hook 'stripe-buffer-mode))
+
+(use-package visual-fill-column :defer t
+  :config
+  (setq-default visual-fill-column-center-text nil
+                visual-fill-column-width fill-column
+                split-window-preferred-function 'visual-line-mode-split-window-sensibly))
 
 
 ;;
