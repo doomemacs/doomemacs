@@ -94,6 +94,13 @@
 ;; Plugins
 ;;
 
+(use-package beacon
+  :config
+  (beacon-mode +1)
+  (setq beacon-color (face-attribute 'highlight :background nil t)
+        beacon-blink-when-buffer-changes t
+        beacon-blink-when-point-moves-vertically 10))
+
 (use-package hl-line
   :init (add-hook! prog-mode 'hl-line-mode)
   :config

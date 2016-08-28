@@ -32,6 +32,7 @@
 (depends-on "shackle")
 
 ;; UI --- core/core-ui.el
+(depends-on "beacon")
 (depends-on "highlight-indentation" :git "https://github.com/localredhead/Highlight-Indentation-for-Emacs")
 (depends-on "highlight-numbers")
 (depends-on "nlinum")
