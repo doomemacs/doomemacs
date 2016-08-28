@@ -32,7 +32,7 @@
 (load (concat user-emacs-directory "core/core"))
 
 (doom :theme 'doom-one
-      :font ("Inconsolata" 14)
+      :font ("Fira Mono" 12)
 
       ;;; The heart of DOOM
       core-popup         ; taming sudden and inevitable windows
