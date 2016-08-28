@@ -77,10 +77,10 @@ See screenshots in the [screenshots branch][sc].
   bashdb and zshdb, working on Python/Ruby support)
 * A do-what-I-mean jump-to-definition implementation that either uses major-mode
   commands or falls back to **[dumb-jump]**/ctags.
-* Pretty mode-line with **[spaceline]**, plus:
+* A pretty mode-line with:
   * evil-search/iedit/evil-substitute mode-line integration
-  * Indicator when macro is recording<br/>
-  * Show python/ruby version in mode-line (with rbenv/pyenv)
+  * Macro-recording indicator
+  * Python/ruby version in mode-line (for rbenv/pyenv)
 
 
 ### Other features
@@ -114,7 +114,6 @@ See screenshots in the [screenshots branch][sc].
 [realgud]: https://melpa.org/#/realgud
 [repl-toggle]: https://melpa.org/#/repl-toggle
 [shackle]: https://melpa.org/#/shackle
-[spaceline]: https://melpa.org/#/spaceline
 [swiper]: https://melpa.org/#/swiper
 [workgroups2]: https://melpa.org/#/workgroups2
 [wgrep]: https://melpa.org/#/wgrep
