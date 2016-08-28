@@ -80,7 +80,6 @@ gets killed.")
                  (--subdirs doom-modules-dir t)
                  (--subdirs doom-packages-dir)
                  (--subdirs (expand-file-name "../bootstrap" doom-packages-dir))
-                 (--subdirs doom-themes-dir t)
                  doom--load-path))
       custom-theme-load-path
       (! (append (--subdirs doom-themes-dir t)
