@@ -23,7 +23,7 @@
           ("*Pp Eval Output*"  :align below :size 0.3)
           ("*Apropos*"         :align below :size 0.3)
           ("*Backtrace*"       :align below :size 25  :noselect t)
-          ("*Completions*"     :align below :size 20  :noselect t)
+          ("*Completions*"     :align below :size 30  :noselect t)
           ("*Help*"            :align below :size 16  :select t)
           ("*Messages*"        :align below :size 15  :select t)
           ("*Warnings*"        :align below :size 10  :noselect t)
