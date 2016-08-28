@@ -4,7 +4,7 @@
 (defun what-face (pos)
   "Tells you the name of the face (point) is on."
   (interactive "d")
-  (let ((hl-line-p hl-line-mode))
+  (let ((hl-line-p (bound-and-true-p hl-line-mode)))
     (if hl-line-p (hl-line-mode -1))
     (let ((face (or (get-char-property (point) 'read-face-name)
                     (get-char-property (point) 'face))))
