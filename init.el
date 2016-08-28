@@ -67,6 +67,7 @@
       module-julia       ; MATLAB, but fast
       module-latex       ; for writing papers in Emacs
       module-lua         ; one-based indices? one-based indices.
+      module-octave      ; math isn't a choice. It's a way of life
       module-php         ; making php less painful to work with
       module-processing  ; for prototyping
       module-python      ; beautiful is better than ugly
