@@ -109,10 +109,13 @@
       (apply orig-fun args)))
   (advice-add 'projectile-cache-current-file :around 'doom*projectile-cache-current-file)
 
+  (push doom-temp-dir projectile-globally-ignored-directories)
   (push "assets"   projectile-globally-ignored-directories)
   (push ".cask"    projectile-globally-ignored-directories)
+  (push ".sync"    projectile-globally-ignored-directories)
   (push ".elc"     projectile-globally-ignored-file-suffixes)
-  (push doom-temp-dir projectile-globally-ignored-directories)
+  (push ".project" projectile-globally-ignored-file-suffixes)
+  (push "Icon"   projectile-globally-ignored-files)
 
   (projectile-global-mode +1))
 

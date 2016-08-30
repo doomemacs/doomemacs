@@ -181,6 +181,7 @@
 
   ;; Don't track attachments
   (push (format "/%s.+$" (regexp-quote org-attach-directory)) recentf-exclude)
+  (push ".attach" projectile-globally-ignored-file-suffixes)
 
   ;; Remove highlights on ESC
   (defun doom*org-remove-occur-highlights (&rest args)

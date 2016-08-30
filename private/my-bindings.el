@@ -7,8 +7,8 @@
   `(lambda () (interactive)
      (let ((default-directory ,path))
        (,@(if project-p
-              '(projectile-find-file)
-            '(call-interactively 'find-file))))))
+              '(counsel-projectile-find-file)
+            '(call-interactively 'counsel-find-file))))))
 
 (map! "<f9>" 'what-face
       ;; Essential
