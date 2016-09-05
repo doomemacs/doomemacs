@@ -19,7 +19,8 @@
       (setq js2-additional-externs '("LaunchBar" "File" "Action" "HTTP" "include" "Lib"))))
 
   ;; [pedantry intensifies]
-  (add-hook! js2-mode (setq mode-name "JS2"))
+  (add-hook! js2-mode (setq mode-name "JS2"
+                            js-switch-indent-offset js-indent-level))
 
   (map! :map js2-mode-map (:localleader :nv ";" 'doom/append-semicolon)))
 
