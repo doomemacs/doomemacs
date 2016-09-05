@@ -144,7 +144,8 @@
   (defvar doom--hl-nlinum-line nil)
   :init
   (add-hook!
-    (markdown-mode prog-mode scss-mode web-mode conf-mode groovy-mode nxml-mode)
+    (markdown-mode prog-mode scss-mode web-mode conf-mode groovy-mode
+     nxml-mode snippet-mode php-mode)
     'nlinum-mode)
   ;; FIXME This only works if hl-line is active!
   (add-hook! nlinum-mode
