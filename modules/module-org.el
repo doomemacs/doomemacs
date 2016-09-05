@@ -1,6 +1,6 @@
 ;;; module-org.el --- -*- no-byte-compile: t; -*-
 
-(defconst org-directory (expand-file-name "~/Dropbox/org/"))
+(defconst org-directory (expand-file-name "~/Notes/"))
 
 (define-minor-mode evil-org-mode
   "Evil-mode bindings for org-mode."
