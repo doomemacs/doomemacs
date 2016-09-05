@@ -112,7 +112,8 @@
    org-edit-src-content-indentation 0
 
    ;; Latex
-   org-format-latex-options (plist-put org-format-latex-options :scale 1.4)
+   org-format-latex-options (plist-put org-format-latex-options :scale 1.5)
+   org-format-latex-options (plist-put org-format-latex-options :background (face-attribute 'doom-default :background nil t))
    org-highlight-latex-and-related '(latex)
    org-latex-create-formula-image-program 'dvipng
    org-latex-image-default-width ".9\\linewidth"
