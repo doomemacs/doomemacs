@@ -30,7 +30,7 @@
       disp)))
 
 ;;;###autoload
-(defun doom|nlinum-hl-line ()
+(defun doom|nlinum-hl-line (&rest _)
   "Highlight line number"
   (let* ((pbol (line-beginning-position))
          (peol (1+ pbol))

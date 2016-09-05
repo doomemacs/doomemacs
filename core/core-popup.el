@@ -52,8 +52,8 @@
   ;; There is no shackle-popup hook, so I hacked one in
   (advice-add 'shackle-display-buffer :around 'doom*popup-init)
   ;; Don't mess with popups
-  (advice-add 'balance-windows :around 'doom*save-popup)
-  (advice-add 'doom/evil-window-move :around 'doom*save-popup))
+  (advice-add 'balance-windows        :around 'doom*save-popup)
+  (advice-add 'doom/evil-window-move  :around 'doom*save-popup))
 
 
 ;;

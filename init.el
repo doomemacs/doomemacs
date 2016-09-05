@@ -64,9 +64,9 @@
       module-haskell     ; a language that's lazier than I am
       module-java        ; the poster child for carpal tunnel syndrome
       module-js          ; all(hope(abandon(ye(who(enter(here))))))
-      module-julia       ; MATLAB, but fast
+      module-julia       ; A better, faster MATLAB
       module-latex       ; for writing papers in Emacs
-      module-lua         ; one-based indices? one-based indices.
+      module-lua         ; one-based indices? one-based indices
       module-octave      ; math isn't a choice. It's a way of life
       module-php         ; making php less painful to work with
       module-processing  ; for prototyping

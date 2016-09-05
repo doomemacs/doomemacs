@@ -51,7 +51,6 @@
             "!\\)")
           (1 font-lock-keyword-face append))
          ;; Ert
-
          (,(concat
             "("
             (regexp-opt '("ert-deftest") t)
