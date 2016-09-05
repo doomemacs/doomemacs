@@ -95,7 +95,9 @@
    org-agenda-dim-blocked-tasks nil
    org-agenda-window-setup 'other-frame ; to get org-agenda to behave with shackle...
    org-agenda-inhibit-startup t
-   org-agenda-files (f-entries org-directory (lambda (path) (f-ext? path "org")))
+   org-agenda-files (append (f-entries org-directory (lambda (path) (f-ext? path "org")))
+                            (f-entries (f-expand "projects" org-directory) (lambda (path) (f-ext? path "org")))
+                            (f-entries (f-expand "contacts" org-directory) (lambda (path) (f-ext? path "org"))))
    org-todo-keywords '((sequence "[ ](t)" "[-](p)" "[?](m)" "|" "[X](d)")
                        (sequence "TODO(T)" "|" "DONE(D)")
                        (sequence "IDEA(i)" "NEXT(n)" "ACTIVE(a)" "WAITING(w)" "LATER(l)" "|" "CANCELLED(c)"))
