@@ -74,7 +74,7 @@
    ;; Behavior
    org-catch-invisible-edits 'show
    org-checkbox-hierarchical-statistics nil
-   org-completion-use-ido nil ; Use helm for refiling
+   org-completion-use-ido nil ; Use ivy/counsel for refiling
    org-confirm-elisp-link-function nil
    org-default-priority ?C
    org-hidden-keywords '(title)
@@ -282,7 +282,6 @@
           :v  "M-`" "S+"
 
           (:leader
-            :n ";"  'helm-org-in-buffer-headings
             :n "oa" 'doom/org-attachment-reveal)
 
           (:localleader
