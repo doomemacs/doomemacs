@@ -188,7 +188,8 @@
 
 ;; Java -- modules/module-java.el
 (depends-on "android-mode")
-(depends-on "emacs-eclim")
+(depends-on "eclim")
+(depends-on "company-emacs-eclim")
 (depends-on "groovy-mode")
 
 ;; JS -- modules/module-js.el
