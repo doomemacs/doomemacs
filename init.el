@@ -54,6 +54,7 @@
       core-eval          ; run code, run + REPL support
 
       ;;; Dev environments
+      module-asm         ; Assembly
       module-cc          ; C/C++/Obj-C madness
       module-crystal     ; ruby at the speed of c
       module-csharp      ; unity, .NET, and mono shenanigans
