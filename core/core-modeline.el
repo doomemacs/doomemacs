@@ -7,6 +7,7 @@
 ;;       + powerline
 ;;       + evil-mode
 ;;       + projectile
+;;       + DejaVu Mono for Powerline font <https://github.com/powerline/fonts>
 ;;   + OPTIONAL
 ;;       + anzu
 ;;       + iedit and evil-multiedit
