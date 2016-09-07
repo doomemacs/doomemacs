@@ -40,7 +40,6 @@
  (lambda (_) (if (doom/get-real-buffers) (y-or-n-p "› Quit?") t) t))
 
 ;; Initialize UI
-(load-theme doom-current-theme t)
 (tooltip-mode -1) ; show tooltips in echo area
 (if (not window-system)
     (menu-bar-mode -1)
@@ -93,6 +92,10 @@
 ;;
 ;; Plugins
 ;;
+
+(use-package doom-theme
+  :config
+  (load-theme doom-current-theme t))
 
 (use-package beacon
   :config

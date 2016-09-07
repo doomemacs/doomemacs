@@ -33,14 +33,15 @@
 
 ;; UI --- core/core-ui.el
 (depends-on "beacon")
+(depends-on "doom-theme" :git "https://github.com/hlissner/emacs-doom-theme")
 (depends-on "highlight-indentation" :git "https://github.com/localredhead/Highlight-Indentation-for-Emacs")
 (depends-on "highlight-numbers")
 (depends-on "nlinum")
+(depends-on "powerline")
 (depends-on "rainbow-delimiters")
 (depends-on "rainbow-mode")
 (depends-on "stripe-buffer")
 (depends-on "visual-fill-column")
-(depends-on "powerline")
 
 ;; Evil --- core/core-evil.el
 (depends-on "evil")
