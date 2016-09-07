@@ -4,8 +4,8 @@ ext/*
 !ext/*.md
 !ext/VARS
 eshell/
-private/cache/
-private/snippets/
+private/cache
+private/snippets
 var/
 core/autoloads.el
 .mc-lists.el
