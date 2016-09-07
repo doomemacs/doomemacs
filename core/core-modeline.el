@@ -1,7 +1,23 @@
 ;;; core-modeline.el
 
 ;; This file tries to be an almost self-contained configuration of my mode-line.
-;; Any external dependencies are noted in comments.
+;;
+;; It depends on the following external packages:
+;;   + REQUIRED
+;;       + powerline
+;;       + evil-mode
+;;       + projectile
+;;   + OPTIONAL
+;;       + anzu
+;;       + iedit and evil-multiedit
+;;       + flycheck
+;;
+;; The only external functions used are:
+;;  `doom-fix-unicode'  in core/core-defuns.el
+;;  `doom/project-root' in core/defuns/defuns-projectile.el
+;;
+;; Both are simple, isolated functions and, besides projectile, has no other
+;; dependencies.
 
 (defvar mode-line-height 30
   "How tall the mode-line should be. This is only respected in GUI emacs.")
@@ -45,11 +61,7 @@
 ;; Functions
 ;;
 
-;; Other required functions:
-;;  `doom-fix-unicode'  in core/core-defuns.el
-;;  `doom/project-root' in core/defuns/defuns-projectile.el
-
-(defun doom-flycheck-count (state)
+(defun doom-ml-flycheck-count (state)
   "Return flycheck information for the given error type STATE."
   (when (flycheck-has-current-errors-p state)
     (if (eq 'running flycheck-last-status-change)
@@ -57,29 +69,29 @@
       (cdr-safe (assq state (flycheck-count-errors flycheck-current-errors))))))
 
 ;; pyenv/rbenv version segment
-(defvar doom-env-version-hook '()
+(defvar doom-ml-env-version-hook '()
   "Hook that runs whenever the environment version changes (e.g. rbenv/pyenv)")
 
-(defun doom|modeline-env-update ()
-  (when doom--env-command
+(defun doom-ml|env-update ()
+  (when doom-ml--env-command
     (let ((default-directory (doom/project-root)))
-      (let ((s (shell-command-to-string doom--env-command)))
-        (setq doom--env-version (if (string-match "[ \t\n\r]+\\'" s)
+      (let ((s (shell-command-to-string doom-ml--env-command)))
+        (setq doom-ml--env-version (if (string-match "[ \t\n\r]+\\'" s)
                                     (replace-match "" t t s)
                                   s))
-        (run-hook-with-args 'doom-env-version-hook doom--env-version)))))
+        (run-hook-with-args 'doom-ml-env-version-hook doom-ml--env-version)))))
 
 (defmacro def-version-cmd! (modes command)
-  "Define a COMMAND for MODE that will set `doom--env-command' when that mode is
+  "Define a COMMAND for MODE that will set `doom-ml--env-command' when that mode is
 activated, which should return the version number of the current environment. It is used
-by `doom|modeline-env-update' to display a version number in the modeline. For instance:
+by `doom-ml|env-update' to display a version number in the modeline. For instance:
 
   (def-version-cmd! ruby-mode \"ruby --version | cut -d' ' -f2\")
 
 This will display the ruby version in the modeline in ruby-mode buffers. It is cached the
 first time."
-  (add-hook! (focus-in find-file) 'doom|modeline-env-update)
-  `(add-hook! ,modes (setq doom--env-command ,command)))
+  (add-hook! (focus-in find-file) 'doom-ml|env-update)
+  `(add-hook! ,modes (setq doom-ml--env-command ,command)))
 
 
 ;;
@@ -87,8 +99,8 @@ first time."
 ;;
 
 ;; Where (py|rb)env version strings will be stored
-(defvar-local doom--env-version nil)
-(defvar-local doom--env-command nil)
+(defvar-local doom-ml--env-version nil)
+(defvar-local doom-ml--env-command nil)
 
 ;; Make certain unicode glyphs bigger for the mode-line.
 ;; FIXME Replace with all-the-icons?
@@ -171,7 +183,7 @@ project root). Excludes the file basename. See `*buffer-name' for that."
   "The major mode, including process, environment and text-scale info."
   (concat (format-mode-line mode-name)
           (if (stringp mode-line-process) mode-line-process)
-          (if doom--env-version (concat " " doom--env-version))
+          (if doom-ml--env-version (concat " " doom-ml--env-version))
           (and (featurep 'face-remap)
                (/= text-scale-mode-amount 0)
                (format " (%+d)" text-scale-mode-amount))))
@@ -202,8 +214,8 @@ project root). Excludes the file basename. See `*buffer-name' for that."
              doom--flycheck-cache)
         (and (setq doom--flycheck-err-cache flycheck-current-errors)
              (setq doom--flycheck-cache
-                   (let ((fe (doom/-flycheck-count 'error))
-                         (fw (doom/-flycheck-count 'warning)))
+                   (let ((fe (doom-ml-flycheck-count 'error))
+                         (fw (doom-ml-flycheck-count 'warning)))
                      (concat
                       (if fe (propertize (format " •%d " fe)
                                          'face (if active
