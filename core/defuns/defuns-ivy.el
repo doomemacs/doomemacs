@@ -71,7 +71,7 @@ all open buffers."
   (interactive "<!>")
   (if bang (ivy-recentf) (projectile-recentf)))
 
-;;;###autoload (autoload 'doom:ivy-swipe "defuns-ivy" nil t)
+;;;###autoload (autoload 'doom:ivy-swiper "defuns-ivy" nil t)
 (evil-define-command doom:ivy-swiper (&optional search)
   (interactive "<a>")
   (swiper (or search (thing-at-point 'symbol))))
