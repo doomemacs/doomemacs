@@ -39,6 +39,7 @@
       core-os            ; os-specific config
       core-scratch       ; a perdier scratch buffer
       core-ui            ; draw me like one of your French editors
+      core-modeline      ; a self-contained mode-line config for masochists
       core-evil          ; come to the dark side, we have cookies
       core-editor        ; filling the editor-shaped hole in the emacs OS
       core-docs          ; getting to the documentation
