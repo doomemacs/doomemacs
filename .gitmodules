@@ -1,6 +1,0 @@
-[submodule "private/themes/doom-theme"]
-	path = private/themes/doom-theme
-	url = git@github.com:hlissner/emacs-doom-theme.git
-[submodule "private/snippets"]
-	path = private/snippets
-	url = git@github.com:hlissner/emacs-snippets.git
