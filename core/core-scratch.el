@@ -28,7 +28,7 @@
   (not (eq doom-buffer (current-buffer))))
 
 (after! uniquify
-  (push (regexp-quote doom-buffer-name) uniquify-ignore-buffers-re))
+  (setq uniquify-ignore-buffers-re (regexp-quote doom-buffer-name)))
 
 (add-hook! emacs-startup 'doom-mode-init)
 
