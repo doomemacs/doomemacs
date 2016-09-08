@@ -12,6 +12,11 @@
   (awhen (doom/git-root)
     (browse-url (concat it "/issues"))))
 
+;;;###autoload
+(defun doom/git-magit ()
+  (interactive)
+  (call-interactively 'magit-status))
+
 ;;;###autoload (autoload 'doom:git-browse "defuns-git" nil t)
 (evil-define-command doom:git-browse (&optional bang)
   "Open the website for the current (or specified) version controlled FILE. If
