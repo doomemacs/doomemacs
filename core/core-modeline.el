@@ -4,12 +4,14 @@
 ;;
 ;; It depends on the following external packages:
 ;;   + REQUIRED
+;;       + f
+;;       + s
 ;;       + powerline
-;;       + evil-mode
 ;;       + projectile
 ;;       + DejaVu Mono for Powerline font <https://github.com/powerline/fonts>
 ;;   + OPTIONAL
-;;       + anzu
+;;       + evil-mode
+;;       + anzu + evil-anzu
 ;;       + iedit and evil-multiedit
 ;;       + flycheck
 ;;
@@ -28,9 +30,9 @@
 ;; NOTE Compile this file for a faster startup!
 (eval-when-compile (require 'powerline))
 ;; FIXME Don't hardcode colors in
-(defvar mode-line-bar          (! (pl/percent-xpm mode-line-height 100 0 100 0 3 "#00B3EF" nil)))
-(defvar mode-line-eldoc-bar    (! (pl/percent-xpm mode-line-height 100 0 100 0 3 "#B3EF00" nil)))
-(defvar mode-line-inactive-bar (! (pl/percent-xpm mode-line-height 100 0 100 0 3 nil nil)))
+(defvar mode-line-bar          (eval-when-compile (pl/percent-xpm mode-line-height 100 0 100 0 3 "#00B3EF" nil)))
+(defvar mode-line-eldoc-bar    (eval-when-compile (pl/percent-xpm mode-line-height 100 0 100 0 3 "#B3EF00" nil)))
+(defvar mode-line-inactive-bar (eval-when-compile (pl/percent-xpm mode-line-height 100 0 100 0 3 nil nil)))
 
 ;; Custom faces
 (defface mode-line-is-modified nil
