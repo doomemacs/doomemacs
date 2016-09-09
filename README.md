@@ -19,6 +19,9 @@ It was tailored for Emacs 25+ on OSX 10.11+. I use [vim] everywhere else.
 ## Installation
 
 ```bash
+# Ensure homebrew is up to date
+brew update && brew upgrade
+
 # Install cask + emacs
 brew install cask
 brew tap railwaycat/emacsmacport
@@ -43,6 +46,7 @@ To get a picture of what's in here, check out:
 
 * **[The Caskfile](Cask)**: lists installed plugins and where they're configured.
 * **[init.el](init.el)**: lists all loaded modules
+* **[core/core-modeline.el](core/core-modeline.el)**: my modeline config
 * **[private/my-bindings.el](private/my-bindings.el)**: most of the custom keybinds
 * **[private/my-commands.el](private/my-commands.el)**: available custom ex commands
 * **[ext/*.sh](ext/)**: scripts for external dependency setup (e.g. irony-mode)
@@ -77,7 +81,7 @@ See screenshots in the [screenshots branch][sc].
   bashdb and zshdb, working on Python/Ruby support)
 * A do-what-I-mean jump-to-definition implementation that either uses major-mode
   commands or falls back to **[dumb-jump]**/ctags.
-* A pretty mode-line with:
+* A [pretty mode-line](core/core-modeline.el) with:
   * evil-search/iedit/evil-substitute mode-line integration
   * Macro-recording indicator
   * Python/ruby version in mode-line (for rbenv/pyenv)
@@ -93,9 +97,27 @@ See screenshots in the [screenshots branch][sc].
 * Completion with **[company-mode]**
 * Syntax checking with **[flycheck]**
 * Custom O/S interaction commands, like **os-reveal** and **os-open-in-browser**
-* Custom TODO, FIXME and NOTE highlighting and search
-* **big-mode** for presentations and demonstrations
+* Custom TODO, FIXME and NOTE highlighting and search (`:todo`)
+* **big-mode** for presentations and demonstrations (`:big`)
 * Tmux integration with `:t` and `:tcd` ex commands
+
+
+## Troubleshooting
+
+Though this wasn't designed with anyone else's use in mind, I'd be
+happy to help anyone out with problems encountered using (or cribbing
+from) my config. [Don't hesitate to report bugs](https://github.com/hlissner/.emacs.d/issues/new)!
+
+A few things to keep in mind:
+
+1. Cask can be flakey, especially with new builds. If you're getting
+   odd errors when starting up Emacs, try to run `make install` again.
+   I've also had cryptic cask errors that I had to reboot to resolve.
+   YMMV.
+2. If you add new functions to any of the autoloaded
+   `(core|modules)/defuns/*.el` library files, `make autoloads` must
+   be run afterwards. `:reload` will reload Emacs' load-path if you're
+   running Emacs while doing so.
 
 
 [auto-yasnippet]: https://melpa.org/#/auto-yasnippet
