@@ -142,6 +142,11 @@
 
 
 ;;;; MODULES ;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Assembly -- modules/module-asm.el
+(depends-on "mips-mode")
+(depends-on "haxor-mode")
+(depends-on "nasm-mode")
+
 ;; C/C++ -- modules/module-cc.el
 (depends-on "cmake-mode")
 (depends-on "company-irony")
