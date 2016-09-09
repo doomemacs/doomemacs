@@ -14,7 +14,7 @@
     (set-syntax-table (make-syntax-table asm-mode-syntax-table))
     (modify-syntax-entry asm-comment-char "< b")
     ;; Fix one level comments.
-    (set (make-local-variable #'comment-start) (string asm-comment-char)))
+    (set (make-local-variable #'comment-start) (string asm-comment-char))))
 
 (provide 'module-asm)
 ;;; module-asm.el ends here
