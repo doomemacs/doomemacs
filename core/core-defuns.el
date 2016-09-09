@@ -356,9 +356,9 @@ e.g. (doom-fix-unicode \"DejaVu Sans\" ?⚠ ?★ ?λ)"
   (interactive)
   (mapc (lambda (f) (byte-compile-file (concat doom-emacs-dir "/" f) t))
         '("init.el" "core/core.el" "core/core-defuns.el" "core/core-ui.el"
-          "core/core-os.el" "core/core-os-osx.el" "core/core-os-win32.el"
-          "core/core-os-linux.el" "private/my-commands.el"
-          "private/my-bindings.el"))
+          "core/core-modeline.el" "core/core-os.el" "core/core-os-osx.el"
+          "core/core-os-win32.el" "core/core-os-linux.el"
+          "private/my-commands.el" "private/my-bindings.el"))
   (unless (eq minimal 'basic)
     (unless minimal
       (byte-recompile-directory doom-core-dir 0 t)
