@@ -77,6 +77,7 @@
 (ex! "build"       'doom:build)
 (ex! "debug"       'doom:debug)
 (ex! "er[rors]"    'doom/flycheck-errors)
+(ex! "todo"        'doom/ivy-tasks)
 (ex! "ma[ke]"      'doom:build)
 
 ;; File operations

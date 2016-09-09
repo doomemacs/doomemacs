@@ -101,6 +101,12 @@ DIR specifies the default-directory from which ag is run."
   (doom:ivy-ag-search beg end search regex-p default-directory))
 
 ;;;###autoload
+(defun doom/ivy-tasks ()
+  (interactive)
+  ;; TODO Something a little nicer
+  (counsel-ag " (TODO|FIXME|NOTE) " (doom/project-root)))
+
+;;;###autoload
 (defun doom*counsel-ag-function (string extra-ag-args)
   "Advice to get rid of the character limit from `counsel-ag-function', which
 interferes with my custom :ag ex command `doom:ivy-ag-search'."
