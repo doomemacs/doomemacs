@@ -110,14 +110,14 @@ from) my config. [Don't hesitate to report bugs](https://github.com/hlissner/.em
 
 A few things to keep in mind:
 
-1. Cask can be flakey, especially with new builds. If you're getting
-   odd errors when starting up Emacs, try to run `make install` again.
-   I've also had cryptic cask errors that I had to reboot to resolve.
-   YMMV.
+1. **Cask can be flakey, especially with new builds.** If you're
+   getting odd errors when starting up Emacs, try to run `make
+   install` again. I've also had cryptic cask errors that I had to
+   reboot to resolve. YMMV.
 2. If you add new functions to any of the autoloaded
-   `(core|modules)/defuns/*.el` library files, `make autoloads` must
-   be run afterwards. `:reload` will reload Emacs' load-path if you're
-   running Emacs while doing so.
+   `(core|modules)/defuns/*.el` library files, run `make autoloads`
+   afterwards. `:reload` will reload Emacs' load-path if you have
+   Emacs open while doing so.
 
 
 [auto-yasnippet]: https://melpa.org/#/auto-yasnippet
