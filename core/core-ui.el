@@ -76,11 +76,6 @@
 (when (and (> emacs-major-version 24) (featurep 'eldoc))
   (global-eldoc-mode -1))
 
-(use-package eldoc-eval
-  :config
-  (setq eldoc-in-minibuffer-show-fn 'doom/eldoc-show-in-mode-line)
-  (eldoc-in-minibuffer-mode +1))
-
 ;; Highlight TODO/FIXME/NOTE tags
 (add-hook! (prog-mode emacs-lisp-mode css-mode)
   (font-lock-add-keywords
