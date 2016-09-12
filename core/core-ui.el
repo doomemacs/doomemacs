@@ -47,15 +47,15 @@
   (tool-bar-mode   -1)  ; no toolbar
   ;; full filename in frame title
   (setq frame-title-format '(buffer-file-name "%f" ("%b")))
-  ;; set fonts
-  (ignore-errors
+  ;; set font
+  (with-demoted-errors "FONT ERROR: %s"
     (set-frame-font doom-default-font t)
     (set-face-attribute 'default t :font doom-current-font))
   ;; standardize fringe width
   (fringe-mode doom-fringe-size)
   (push `(left-fringe  . ,doom-fringe-size) default-frame-alist)
   (push `(right-fringe . ,doom-fringe-size) default-frame-alist)
-  ;; Default frame size on startup
+  ;; default frame size on startup
   (push '(width . 120) default-frame-alist)
   (push '(height . 40) default-frame-alist)
   ;; no fringe in the minibuffer
