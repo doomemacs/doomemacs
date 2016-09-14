@@ -42,6 +42,7 @@
 (use-package company-dabbrev :commands company-dabbrev)
 (use-package company-dabbrev-code :commands company-dabbrev-code)
 (use-package company-etags :commands company-etags)
+(use-package company-elisp :commands company-elisp)
 (use-package company-files :commands company-files)
 (use-package company-gtags :commands company-gtags)
 (use-package company-ispell :commands company-ispell)
