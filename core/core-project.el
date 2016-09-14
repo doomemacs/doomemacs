@@ -48,7 +48,7 @@
         neo-auto-indent-point nil
         neo-mode-line-type 'none
         neo-persist-show nil
-        neo-window-width 26
+        neo-window-width 24
         neo-show-updir-line nil
         neo-theme 'nerd ; fallback
         neo-banner-message nil)
