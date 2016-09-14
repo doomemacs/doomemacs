@@ -45,12 +45,11 @@
              neo-global--window-exists-p)
   :init
   (setq neo-create-file-auto-open t
-        neo-auto-indent-point t
+        neo-auto-indent-point nil
         neo-mode-line-type 'none
         neo-persist-show nil
         neo-window-width 26
         neo-show-updir-line nil
-        neo-auto-indent-point t
         neo-theme 'nerd ; fallback
         neo-banner-message nil)
   :config
