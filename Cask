@@ -32,6 +32,7 @@
 (depends-on "shackle")
 
 ;; UI --- core/core-ui.el
+(depends-on "all-the-icons")
 (depends-on "beacon")
 (depends-on "doom-theme" :git "https://github.com/hlissner/emacs-doom-theme")
 (depends-on "highlight-indentation" :git "https://github.com/localredhead/Highlight-Indentation-for-Emacs")
