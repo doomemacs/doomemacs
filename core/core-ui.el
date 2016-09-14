@@ -88,9 +88,12 @@
 ;; Plugins
 ;;
 
-(use-package doom-theme
+(use-package doom-themes
   :config
-  (load-theme doom-current-theme t))
+  (load-theme doom-current-theme t)
+  (require 'doom-neotree)
+  (add-hook 'minibuffer-setup-hook 'doom-brighten-minibuffer)
+  (add-hook 'find-file-hook 'doom-buffer-mode))
 
 (use-package beacon
   :config
