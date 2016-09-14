@@ -1,4 +1,4 @@
-;; custom-write.el
+;; custom-write.el --- FIXME
 
 ;; This library offers the following:
 ;;   + Write-mode: a mode that turns Emacs into an app for writing notes,

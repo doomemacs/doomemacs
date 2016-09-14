@@ -18,6 +18,7 @@
   (require 'git-gutter-fringe)
   (def-popup! "^\\*git-gutter.+\\*$" :align below :size 15 :noselect t :regexp t)
 
+  ;; colored fringe "bars"
   (define-fringe-bitmap 'git-gutter-fr:added
     [224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224]
     nil nil 'center)
