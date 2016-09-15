@@ -32,7 +32,7 @@
       (ivy-wgrep-change-to-wgrep-mode)))
 
   (advice-add 'counsel-ag-function :override 'doom*counsel-ag-function)
-  (define-key counsel-ag-map [backtab] 'ivy-occur)
+  (define-key counsel-ag-map [backtab] 'doom/counsel-ag-occur)
 
   (setq counsel-find-file-ignore-regexp "\\(?:^[#.]\\)\\|\\(?:[#~]$\\)\\|\\(?:^Icon?\\)"))
 

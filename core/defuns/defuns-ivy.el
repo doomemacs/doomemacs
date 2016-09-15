@@ -125,5 +125,12 @@ interferes with my custom :ag ex command `doom:ivy-ag-search'."
         (counsel--async-command ag-cmd))
       nil)))
 
+;;;###autoload
+(defun doom/counsel-ag-occur ()
+  "Invoke the search+replace wgrep buffer on the current ag search results."
+  (interactive)
+  (require 'wgrep)
+  (call-interactively 'ivy-occur))
+
 (provide 'defuns-ivy)
 ;;; defuns-ivy.el ends here
