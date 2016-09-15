@@ -88,6 +88,7 @@
 (use-package editorconfig :demand t
   :mode ("\\.?editorconfig$" . editorconfig-conf-mode)
   :config (editorconfig-mode +1)
+  (push 'doom-mode editorconfig-exclude-modes)
   ;; Show whitespace in tabs indentation mode
   (add-hook! 'editorconfig-custom-hooks
     (if indent-tabs-mode (whitespace-mode +1))))
