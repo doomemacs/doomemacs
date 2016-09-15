@@ -16,34 +16,31 @@
 (define-derived-mode doom-mode fundamental-mode "DOOM"
   "Major mode for special DOOM buffers.")
 
-;; Update the doom buffer if it's visible during a killing
-(add-hook! 'kill-buffer-query-functions
-  (when (and (get-buffer-window-list doom-buffer nil t)
-             (not doom-buffer-edited))
-    (doom-mode-init t))
-  t)
-
 ;; Don't kill the scratch buffer
 (add-hook! 'kill-buffer-query-functions
   (not (eq doom-buffer (current-buffer))))
 
+(add-hook 'emacs-startup-hook 'doom-mode-init)
+
 (after! uniquify
   (setq uniquify-ignore-buffers-re (regexp-quote doom-buffer-name)))
-
-(add-hook! emacs-startup 'doom-mode-init)
 
 (defun doom-mode-erase-on-insert ()
   (erase-buffer)
   (setq doom-buffer-edited t)
   (remove-hook 'evil-insert-state-entry-hook 'doom-mode-erase-on-insert t))
 
+(defun doom|update-scratch-buffer-hook (&rest _)
+  (doom|update-scratch-buffer))
+
 (defun doom-mode-init (&optional auto-detect-frame)
-  (unless (buffer-live-p doom-buffer) (setq doom-buffer nil))
   (let ((old-scratch (get-buffer "*scratch*")))
     (when old-scratch
       (with-current-buffer old-scratch
         (rename-buffer doom-buffer-name)
         (setq doom-buffer old-scratch))))
+  (unless (buffer-live-p doom-buffer)
+    (setq doom-buffer nil))
   (unless doom-buffer
     (setq doom-buffer (get-buffer-create doom-buffer-name)))
   (with-current-buffer doom-buffer
@@ -96,7 +93,10 @@
                                  (format "Loaded in %.3fs"
                                          (float-time (time-subtract after-init-time emacs-start-time)))))))))
     (back-to-indentation)
-    (doom|update-scratch-buffer nil t)))
+    (doom|update-scratch-buffer nil t)
+
+    ;; Readjust the scratch buffer if it is visible, when the window config changes.
+    (add-hook 'window-configuration-change-hook 'doom|update-scratch-buffer-hook)))
 
 (provide 'core-scratch)
 ;;; core-scratch.el ends here
