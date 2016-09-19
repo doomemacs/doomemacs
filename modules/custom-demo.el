@@ -17,7 +17,7 @@
   :config (httpd-start))
 
 (defvar big-mode--old-line-spacing line-spacing)
-(defvar big-mode--old-modeline-height mode-line-height)
+(defvar big-mode--old-modeline-height doom-modeline-height)
 (define-minor-mode big-mode
   :init-value nil
   :lighter " BIG"
@@ -26,10 +26,10 @@
     (doom/load-font (if big-mode big-mode-font doom-default-font)))
   (if big-mode
       (setq-default
-       mode-line-height big-mode-modeline-height
+       doom-modeline-height big-mode-modeline-height
        line-spacing big-mode-line-spacing)
     (setq-default
-     mode-line-height big-mode--old-modeline-height
+     doom-modeline-height big-mode--old-modeline-height
      line-spacing big-mode--old-line-spacing)))
 
 (evil-define-command doom:big (&optional size)
