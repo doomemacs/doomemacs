@@ -49,8 +49,7 @@
   (setq frame-title-format '(buffer-file-name "%f" ("%b")))
   ;; set font
   (with-demoted-errors "FONT ERROR: %s"
-    (set-frame-font doom-default-font t)
-    (set-face-attribute 'default t :font doom-current-font))
+    (set-frame-font doom-default-font t))
   ;; standardize fringe width
   (fringe-mode doom-fringe-size)
   (push `(left-fringe  . ,doom-fringe-size) default-frame-alist)
