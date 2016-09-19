@@ -97,10 +97,15 @@
 
 (use-package doom-themes
   :config
+  (setq doom-neotree-enable-variable-pitch t
+        doom-neotree-line-spacing 3)
   (load-theme doom-current-theme t)
-  (require 'doom-neotree)
+  ;; brighter source buffers
+  (add-hook 'find-file-hook 'doom-buffer-mode)
+  ;; brighter minibuffer when active
   (add-hook 'minibuffer-setup-hook 'doom-brighten-minibuffer)
-  (add-hook 'find-file-hook 'doom-buffer-mode))
+  ;; Custom neotree theme
+  (require 'doom-neotree))
 
 (use-package beacon
   :config
