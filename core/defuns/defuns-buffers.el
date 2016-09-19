@@ -116,7 +116,8 @@ the buffer if it is being displayed in another window."
              (doom/previous-real-buffer)
              (when (eq buffer (current-buffer))
                (switch-to-buffer doom-buffer t t)
-               (doom|update-scratch-buffer old-project))
+               (when (featurep 'core-scratch)
+                 (doom|update-scratch-buffer old-project)))
              (when only-buffer-window-p
                (kill-buffer buffer))))))
   t)
