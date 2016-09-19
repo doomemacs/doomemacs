@@ -1,6 +1,6 @@
 ;;; custom-tags.el
 
-;; WIP
+;; TODO Finish me!
 
 (defvar doom-ctags-alist
   '((ruby-mode :exec "ripper-tags -R -f %t --emacs")
