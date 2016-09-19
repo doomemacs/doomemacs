@@ -14,19 +14,33 @@
 (defconst write-mode--last-theme doom-current-theme)
 (defconst write-mode--last-line-spacing line-spacing)
 
-(after! spaceline
-  (spaceline-compile
-   'write
-   '(((*macro-recording *anzu *iedit *evil-substitute *flycheck)
-      :skip-alternate t
-      :tight t)
-     *buffer-path
-     *buffer-modified)
-   '((*selection-info :when active)
-     *buffer-encoding-abbrev
-     (global :when active)
-     *buffer-position
-     *pad)))
+(defun doom-write-mode-line (&optional id)
+  `(:eval
+    (let* ((active (eq (selected-window) mode-line-selected-window))
+           (lhs (list (propertize " "
+                                  'display
+                                  (pl/percent-xpm doom-modeline-height 100 0 100 0 3
+                                                  (face-attribute (if active 'doom-modeline-bar 'doom-modeline-inactive-bar) :background nil t)
+                                                  nil))
+                      (*flycheck)
+                      (*macro-recording)
+                      (*selection-info)
+                      (*anzu)
+                      (*evil-substitute)
+                      (*iedit)
+                      " "
+                      ,(if (eq id 'scratch)
+                           '(*buffer-pwd)
+                         '(list (*buffer-path) (*buffer-name) " "))
+                      (*buffer-state)))
+           (rhs (list (*buffer-encoding-abbrev) "  "
+                      (*vc) "  "
+                      (*major-mode) "  "
+                      (*buffer-position)))
+           (middle (propertize
+                    " " 'display `((space :align-to (- (+ right right-fringe right-margin)
+                                                       ,(1+ (string-width (format-mode-line rhs)))))))))
+      (list lhs middle rhs))))
 
 (defvar write-mode nil)
 (defun doom/write-mode ()
