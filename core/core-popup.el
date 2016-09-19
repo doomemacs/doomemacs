@@ -23,7 +23,6 @@
           ("*Pp Eval Output*"  :align below :size 0.3)
           ("*Apropos*"         :align below :size 0.3)
           ("*Backtrace*"       :align below :size 25  :noselect t)
-          ("*Completions*"     :align below :size 30  :noselect t)
           ("*Help*"            :align below :size 16  :select t)
           ("*Messages*"        :align below :size 15  :select t)
           ("*Warnings*"        :align below :size 10  :noselect t)
@@ -35,8 +34,13 @@
           ("*vc-change-log*"   :align below :size 15  :select t)
           (vc-annotate-mode    :same t)))
 
+  ;; Emacs 25.1+ already shows the completion window at the bottom of the
+  ;; current frame.
+  (unless (and (>= emacs-major-version 25) (= emacs-minor-version 1))
+    (push '("*Completions*"     :align below :size 30  :noselect t) shackle-rules))
+
   ;; :noesc    = Can't be closed with a single ESC
-  ;; :nokill   = Won't be killed when closed
+  ;; :nokill   = Won't be killed when closed (only buried)
   ;; :modeline = Show the modeline
   (defvar doom-popup-rules
     '(("^\\*doom\\(:scratch\\)?\\*$" :noesc :nokill :modeline)
