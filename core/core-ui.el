@@ -88,6 +88,14 @@
 ;; Plugins
 ;;
 
+;; The native vertical border "consumes" a pixel of the fringe area on
+;; righter-most window splits in emacs-mac. `window-divider-mode' does not.
+(when (boundp 'window-divider-mode)
+  (window-divider-mode +1)
+  (setq window-divider-default-places 'right-only
+        window-divider-default-bottom-width 1
+        window-divider-default-right-width 1))
+
 (use-package doom-themes
   :config
   (load-theme doom-current-theme t)
