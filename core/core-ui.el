@@ -41,9 +41,9 @@
  (lambda (_) (if (doom/get-real-buffers) (y-or-n-p "› Quit?") t) t))
 
 ;; Initialize UI
-(tooltip-mode -1) ; show tooltips in echo area
-(if (not window-system)
-    (menu-bar-mode -1)
+(tooltip-mode -1)  ; show tooltips in echo area
+(menu-bar-mode -1) ; no menu in GUI Emacs (or terminal)
+(when window-system
   (scroll-bar-mode -1)  ; no scrollbar
   (tool-bar-mode   -1)  ; no toolbar
   ;; full filename in frame title
