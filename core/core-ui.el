@@ -82,18 +82,20 @@
          ("\\<\\(FIXME\\(?:(.*)\\)?:?\\)\\>" 1 'error prepend)
          ("\\<\\(NOTE\\(?:(.*)\\)?:?\\)\\>"  1 'success prepend))))
 
+;; `window-divider-mode' gives us finer control over the border between windows.
+;; The native border "consumes" a pixel of the fringe on righter-most splits (in
+;; Yamamoto's emacs-mac at least), window-divider does not.
+;; NOTE Only available on Emacs 25.1+
+(when (boundp 'window-divider-mode)
+  (setq window-divider-default-places t
+        window-divider-default-bottom-width 1
+        window-divider-default-right-width 1)
+  (window-divider-mode +1))
+
 
 ;;
 ;; Plugins
 ;;
-
-;; The native vertical border "consumes" a pixel of the fringe area on
-;; righter-most window splits in emacs-mac. `window-divider-mode' does not.
-(when (boundp 'window-divider-mode)
-  (window-divider-mode +1)
-  (setq window-divider-default-places 'right-only
-        window-divider-default-bottom-width 1
-        window-divider-default-right-width 1))
 
 (use-package doom-themes
   :config
