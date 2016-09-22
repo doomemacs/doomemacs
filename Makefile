@@ -1,5 +1,7 @@
+HOSTNAME=`emacs --batch --eval '(message "%s" (system-name))' 2>&1`
+
 EMACS=emacs
-CACHE_DIR="private/cache/`hostname`/"
+CACHE_DIR="private/cache/$(HOSTNAME)/"
 REPO_URL="https://github.com/hlissner"
 
 all: install
