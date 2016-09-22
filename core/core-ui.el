@@ -6,9 +6,10 @@
 (fset 'yes-or-no-p 'y-or-n-p)
 
 (setq-default
- indicate-buffer-boundaries nil ; don't show where buffer starts/ends
- indicate-empty-lines nil       ; don't show empty lines
- fringes-outside-margins t      ; switches order of fringe and margin
+ mode-line-default-help-echo nil ; don't say anything on mode-line mouseover
+ indicate-buffer-boundaries nil  ; don't show where buffer starts/ends
+ indicate-empty-lines nil        ; don't show empty lines
+ fringes-outside-margins t       ; switches order of fringe and margin
  ;; Keep cursors and highlights in current window only
  cursor-in-non-selected-windows nil
  highlight-nonselected-windows nil
