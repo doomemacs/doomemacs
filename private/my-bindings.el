@@ -56,31 +56,31 @@
       :m "M-7"  (λ! (doom:switch-to-tab 6))
       :m "M-8"  (λ! (doom:switch-to-tab 7))
       :m "M-9"  (λ! (doom:switch-to-tab 8))
-      (:when IS-MAC
-        "<M-backspace>"     'doom/backward-kill-to-bol-and-indent
-        "<A-left>"          'backward-word
-        "<A-right>"         'forward-word
-        "A-SPC"             'just-one-space
-        "M-a"               'mark-whole-buffer
-        "M-c"               'evil-yank
-        "M-o"               'counsel-find-file
-        "M-q"               'evil-quit-all
-        "M-s"               'save-buffer
-        "M-v"               'clipboard-yank
-        "M-z"               'undo
-        "M-Z"               'redo
-        "C-M-f"             'doom:toggle-fullscreen
-        :m  "M-j"           'doom/multi-next-line
-        :m  "M-k"           'doom/multi-previous-line
-        :n  "M-r"           'doom:eval-buffer
-        :v  "M-r"           'doom:eval-region
-        :ni "<M-f1>"        'doom:docs-lookup
-        ;; Textmate-esque indent shift left/right
-        :i  "M-]"           'doom/smart-indent
-        :i  "M-["           'doom/dumb-dedent
-        ;; Restore osx text objects
-        :i  "<A-backspace>" 'evil-delete-backward-word
-        :i  "<A-delete>"    'doom/delete-forward-word)
+
+      "<M-backspace>"     'doom/backward-kill-to-bol-and-indent
+      "<A-left>"          'backward-word
+      "<A-right>"         'forward-word
+      "A-SPC"             'just-one-space
+      "M-a"               'mark-whole-buffer
+      "M-c"               'evil-yank
+      "M-o"               'counsel-find-file
+      "M-q"               'evil-quit-all
+      "M-s"               'save-buffer
+      "M-v"               'clipboard-yank
+      "M-z"               'undo
+      "M-Z"               'redo
+      "C-M-f"             'doom:toggle-fullscreen
+      :m  "M-j"           'doom/multi-next-line
+      :m  "M-k"           'doom/multi-previous-line
+      :n  "M-r"           'doom:eval-buffer
+      :v  "M-r"           'doom:eval-region
+      :ni "<M-f1>"        'doom:docs-lookup
+      ;; Textmate-esque indent shift left/right
+      :i  "M-]"           'doom/smart-indent
+      :i  "M-["           'doom/dumb-dedent
+      ;; Restore osx text objects
+      :i  "<A-backspace>" 'evil-delete-backward-word
+      :i  "<A-delete>"    'doom/delete-forward-word
 
       ;;; <leader> and <localleader>
       :m ";" 'evil-ex
