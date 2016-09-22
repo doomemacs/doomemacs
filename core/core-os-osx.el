@@ -2,10 +2,7 @@
 
 (global-set-key (kbd "M-q") 'kill-emacs)
 
-;; Use a shared clipboard
-(setq x-select-enable-clipboard t
-      select-enable-clipboard t
-      ;; Prefixes: Command = M, Alt = A
+(setq ;; Prefixes: Command = M, Alt = A
       mac-command-modifier 'meta
       mac-option-modifier  'alt
       ;; sane trackpad/mouse scroll settings

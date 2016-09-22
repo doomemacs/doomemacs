@@ -4,6 +4,10 @@
 (defconst IS-LINUX   (eq system-type 'gnu/linux))
 (defconst IS-WINDOWS (eq system-type 'windows-nt))
 
+;; Use a shared clipboard
+(setq x-select-enable-clipboard t
+      select-enable-clipboard t)
+
 ;; Stubs, these should be defined in all OS modules
 (noop! doom-open-with (&optional app-name path))
 (noop! os-switch-to-term)
