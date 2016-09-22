@@ -17,7 +17,7 @@
 ;; Both are simple, isolated functions and, besides projectile, have no other
 ;; dependencies.
 
-(defvar doom-modeline-height 30
+(defvar doom-modeline-height 29
   "How tall the mode-line should be. This is only respected in GUI emacs.")
 
 ;; Custom faces

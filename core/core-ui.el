@@ -55,7 +55,7 @@
   (fringe-mode doom-fringe-size)
   (push `(left-fringe  . ,doom-fringe-size) default-frame-alist)
   (push `(right-fringe . ,doom-fringe-size) default-frame-alist)
-  ;; default frame size on startup
+  ;; slightly larger default frame size on startup
   (push '(width . 120) default-frame-alist)
   (push '(height . 40) default-frame-alist)
   ;; no fringe in the minibuffer
@@ -68,15 +68,15 @@
   ;; Fallback to `doom-unicode-font' for Unicode characters
   (set-fontset-font t 'unicode doom-unicode-font))
 
-;; Hide mode-line in help/compile window
+;; mode-line is unimportant in help/compile windows
 (add-hook 'help-mode-hook 'doom-hide-mode-line-mode)
 (add-hook 'compilation-mode-hook 'doom-hide-mode-line-mode)
 
-;; On by default in Emacs 25. I'll enable it manually, so disable it globally
+;; Eldoc is enabled globally on Emacs 25. No thank you, I'll do it myself.
 (when (and (> emacs-major-version 24) (featurep 'eldoc))
   (global-eldoc-mode -1))
 
-;; Highlight TODO/FIXME/NOTE tags
+;; TODO/FIXME/NOTE highlighting in comments
 (add-hook! (prog-mode emacs-lisp-mode css-mode)
   (font-lock-add-keywords
    nil '(("\\<\\(TODO\\(?:(.*)\\)?:?\\)\\>"  1 'warning prepend)
@@ -120,7 +120,7 @@
 (use-package hl-line
   :init (add-hook 'prog-mode-hook 'hl-line-mode)
   :config
-  ;; Doesn't seem to play nice in emacs 25+
+  ;; Doesn't play nice with emacs 25+
   (setq hl-line-sticky-flag nil
         global-hl-line-sticky-flag nil)
 
