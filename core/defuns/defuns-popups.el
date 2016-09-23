@@ -155,9 +155,7 @@ the display (unless DONT-REDRAW is non-nil)."
     (setq-local doom-popup-rule rules)
     (let ((map doom-popup-mode-map))
       (unless (memq :noesc rules)
-        (use-local-map doom-popup-mode-local-map)))
-    (unless (memq :modeline rules)
-      (doom-hide-mode-line-mode (if doom-popup-mode +1 -1)))))
+        (use-local-map doom-popup-mode-local-map)))))
 
 (provide 'defuns-popups)
 ;;; defuns-popups.el ends here

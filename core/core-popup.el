@@ -43,7 +43,7 @@
   ;; :nokill   = Won't be killed when closed (only buried)
   ;; :modeline = Show the modeline
   (defvar doom-popup-rules
-    '(("^\\*doom\\(:scratch\\)?\\*$" :noesc :nokill :modeline)
+    '(("^\\*doom\\(:scratch\\)?\\*$" :noesc :nokill)
       ("^\\*doom.*\\*$"       :noesc :nokill)
       (ivy-occur-grep-mode    :noesc)
       (compilation-mode       :noesc)
