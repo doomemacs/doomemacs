@@ -7,14 +7,14 @@
      ;; Local settings
      (load "~/.emacs.local.el" t t)
      ;; Global constants
-     (defvar doom-default-theme ,theme)
-     (defvar doom-default-font
+     (defconst doom-default-theme ,theme)
+     (defconst doom-default-font
        (font-spec :family ,(nth 0 font)
                   :size ,(nth 1 font)
                   :antialias ,(not (nth 2 font))))
 
-     (defvar doom-current-theme doom-default-theme)
-     (defvar doom-current-font doom-default-font)
+     (defconst doom-current-theme doom-default-theme)
+     (defconst doom-current-font doom-default-font)
 
      (unless noninteractive
        ,@(mapcar (lambda (pkg)
