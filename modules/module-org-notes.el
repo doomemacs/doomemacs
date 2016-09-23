@@ -64,8 +64,8 @@
 ;;
 ;; To clean up unreferenced attachments, call `doom/org-cleanup-attachments'
 (defun doom|org-attach-init ()
-  ;; Render attachment icons properly
-  (doom-fix-unicode '("FontAwesome" 13) ? ? ? ? ? ? ? ?)
+  ;; FIXME Use all-the-icons
+  ;; (doom-fix-unicode '("FontAwesome" 13) ? ? ? ? ? ? ? ?)
   ;; Drag-and-drop support
   (require 'org-download)
   (setq-default org-download-image-dir org-attach-directory
