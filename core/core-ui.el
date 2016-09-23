@@ -74,6 +74,8 @@
 ;; mode-line is unimportant in help/compile windows
 (add-hook 'help-mode-hook 'doom-hide-mode-line-mode)
 (add-hook 'compilation-mode-hook 'doom-hide-mode-line-mode)
+(add-hook 'messages-buffer-mode-hook 'doom-hide-mode-line-mode)
+(with-current-buffer "*Messages*" (doom-hide-mode-line-mode +1))
 
 ;; Eldoc is enabled globally on Emacs 25. No thank you, I'll do it myself.
 (when (and (> emacs-major-version 24) (featurep 'eldoc))
