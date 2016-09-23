@@ -41,7 +41,6 @@
 
   ;; :noesc    = Can't be closed with a single ESC
   ;; :nokill   = Won't be killed when closed (only buried)
-  ;; :modeline = Show the modeline
   (defvar doom-popup-rules
     '(("^\\*doom\\(:scratch\\)?\\*$" :noesc :nokill)
       ("^\\*doom.*\\*$"       :noesc :nokill)
@@ -65,10 +64,10 @@
 ;;
 
 (after! help-mode
-  ;; Following links in help buffers sometimes uses itself or other-window
-  ;; (annoying!). It should only replace the buffer we opened the popup from. To
-  ;; fix this these three button types need to be redefined so that the right
-  ;; window is in focus before the link is followed.
+  ;; Help buffers use itself (or `other-window') to decide where to open
+  ;; followed links, which can be unpredictable. It should *only* replace the
+  ;; original buffer we opened the popup from. To fix this these three button
+  ;; types need to be redefined to set aside the popup before following a link.
   (define-button-type 'help-function-def
     :supertype 'help-xref
     'help-function (lambda (fun file)
