@@ -38,7 +38,10 @@
  max-mini-window-height 0.3
  ;; Ask for confirmation on exit only if there are real buffers left
  confirm-kill-emacs
- (lambda (_) (if (doom/get-real-buffers) (y-or-n-p "› Quit?") t) t))
+ (lambda (_)
+   (if (doom/get-real-buffers)
+       (y-or-n-p "››› Quit?")
+     t)))
 
 ;; Initialize UI
 (tooltip-mode -1)  ; show tooltips in echo area
