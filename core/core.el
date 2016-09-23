@@ -63,7 +63,7 @@ gets killed.")
 ;;
 
 (defvar doom--load-path load-path
-  "Initial `load-path'; so we don't clobber it on consecutive reloads.")
+  "Initial `load-path', so we don't clobber it on consecutive reloads.")
 
 (defsubst --subdirs (path &optional include-self)
   (let ((result (if include-self (list path) (list))))
@@ -89,16 +89,21 @@ gets killed.")
 ;; Core configuration
 ;;
 
-;; UTF-8 please
-(set-charset-priority 'unicode)
-(setq locale-coding-system   'utf-8)   ; pretty
+;; UTF-8 as the default coding system, please
+(set-charset-priority 'unicode)        ; pretty
+(prefer-coding-system        'utf-8)   ; pretty
 (set-terminal-coding-system  'utf-8)   ; pretty
-(set-keyboard-coding-system  'utf-8)   ; pretty
+(set-keyboard-coding-system  'utf-8)   ; perdy
 (set-selection-coding-system 'utf-8)   ; please
-(prefer-coding-system        'utf-8)   ; with sugar on top
-(setq default-process-coding-system '(utf-8-unix . utf-8-unix))
+(setq locale-coding-system   'utf-8)   ; with sugar on top
 
-;; Stop package.el from being annoying. I rely solely on Cask.
+;; Backwards compatibility as default-buffer-file-coding-system
+;; is deprecated in 23.2.
+(if (boundp 'buffer-file-coding-system)
+    (setq-default buffer-file-coding-system 'utf-8)
+  (setq default-buffer-file-coding-system 'utf-8))
+
+;; Don't pester me package.el. Cask is my one and only.
 (setq-default
  package--init-file-ensured t
  package-user-dir doom-packages-dir
