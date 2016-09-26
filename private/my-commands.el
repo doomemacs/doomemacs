@@ -84,9 +84,9 @@
 (ex! "mv"          'doom:file-move)
 (ex! "rm"          'doom:file-delete)
 
-;; Presentation/demo
-(ex! "big"         'doom:big-mode)
-(ex! "full[scr]"   'doom:toggle-fullscreen)
+;; Presentation/demo/write-mode
+(ex! "big"         'doom:big)
+(ex! "full[scr]"   'doom/toggle-fullscreen)
 
 ;; Sessions/tabs
 (ex! "sl[oad]"     'doom:workgroup-load)

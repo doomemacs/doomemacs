@@ -1,6 +1,5 @@
 ;;; defuns-ui.el
 
-;;;###autoload (autoload 'doom:toggle-fullscreen "defuns-ui" nil t)
 ;;;###autoload (autoload 'doom:set-columns "defuns-ui" nil t)
 (after! evil
   (evil-define-command doom:set-columns (&optional bang columns)
@@ -16,11 +15,12 @@
         (setq visual-fill-column-width columns)))
     (if visual-fill-column-mode
         (visual-fill-column--adjust-window)
-      (visual-fill-column-mode 1)))
+      (visual-fill-column-mode 1))))
 
-  (evil-define-command doom:toggle-fullscreen ()
-    (interactive)
-    (set-frame-parameter nil 'fullscreen (if (not (frame-parameter nil 'fullscreen)) 'fullboth))))
+;;;###autoload
+(defun doom/toggle-fullscreen ()
+  (interactive)
+  (set-frame-parameter nil 'fullscreen (if (not (frame-parameter nil 'fullscreen)) 'fullboth)))
 
 ;;;###autoload
 (defun doom/reset-theme ()

@@ -69,7 +69,7 @@
       "M-v"               'clipboard-yank
       "M-z"               'undo
       "M-Z"               'redo
-      "C-M-f"             'doom:toggle-fullscreen
+      "C-M-f"             'doom/toggle-fullscreen
       :m  "M-j"           'doom/multi-next-line
       :m  "M-k"           'doom/multi-previous-line
       :n  "M-r"           'doom:eval-buffer
