@@ -2,9 +2,6 @@
 
 (defconst doom-fringe-size '3 "Default fringe width")
 
-;; y/n instead of yes/no
-(fset 'yes-or-no-p 'y-or-n-p)
-
 (setq-default
  mode-line-default-help-echo nil ; don't say anything on mode-line mouseover
  indicate-buffer-boundaries nil  ; don't show where buffer starts/ends
@@ -36,6 +33,7 @@
  ;; Minibuffer resizing
  resize-mini-windows 'grow-only
  max-mini-window-height 0.3
+
  ;; Ask for confirmation on exit only if there are real buffers left
  confirm-kill-emacs
  (lambda (_)
@@ -43,8 +41,11 @@
        (y-or-n-p "››› Quit?")
      t)))
 
+;; y/n instead of yes/no
+(fset 'yes-or-no-p 'y-or-n-p)
+
 ;; Initialize UI
-(tooltip-mode -1)  ; show tooltips in echo area
+(tooltip-mode -1)  ; show tooltips in echo area instead
 (menu-bar-mode -1) ; no menu in GUI Emacs (or terminal)
 (when window-system
   (scroll-bar-mode -1)  ; no scrollbar
@@ -53,7 +54,9 @@
   (setq frame-title-format '(buffer-file-name "%f" ("%b")))
   ;; set font
   (with-demoted-errors "FONT ERROR: %s"
-    (set-frame-font doom-default-font t))
+    (set-frame-font doom-default-font t)
+    ;; Fallback to `doom-unicode-font' for Unicode characters
+    (set-fontset-font t 'unicode doom-unicode-font))
   ;; standardize fringe width
   (fringe-mode doom-fringe-size)
   (push `(left-fringe  . ,doom-fringe-size) default-frame-alist)
@@ -67,9 +70,7 @@
   ;; Show tilde in margin on empty lines
   (define-fringe-bitmap 'tilde [64 168 16] nil nil 'center)
   (set-fringe-bitmap-face 'tilde 'fringe)
-  (setcdr (assq 'empty-line fringe-indicator-alist) 'tilde)
-  ;; Fallback to `doom-unicode-font' for Unicode characters
-  (set-fontset-font t 'unicode doom-unicode-font))
+  (setcdr (assq 'empty-line fringe-indicator-alist) 'tilde))
 
 ;; mode-line is unimportant in help/compile windows
 (add-hook 'help-mode-hook 'doom-hide-mode-line-mode)
@@ -144,8 +145,9 @@
   (after! editorconfig
     (advice-add 'highlight-indentation-guess-offset
                 :override 'doom*hl-indent-guess-offset))
-  ;; A long-winded method for ensuring whitespace is maintained (so that
-  ;; highlight-indentation-mode can display them consistently)
+  ;; Since empty lines are stripped on save, the indentation highlights will
+  ;; have unseemly breaks in them. These hooks will indent empty lines so that
+  ;; the highlights are consistent, without affecting the saved output.
   (add-hook! highlight-indentation-mode
     (if highlight-indentation-mode
         (progn
@@ -174,7 +176,7 @@
         (add-hook 'post-command-hook 'doom|nlinum-hl-line nil t)
       (remove-hook 'post-command-hook 'doom|nlinum-hl-line t)))
   :config
-  ;; Calculate line number column width
+  ;; Calculate line number column width beforehand
   (add-hook! nlinum-mode
     (setq nlinum--width (length (save-excursion (goto-char (point-max))
                                                 (format-mode-line "%l")))))

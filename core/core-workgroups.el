@@ -1,17 +1,20 @@
 ;;; core-workgroups.el
 
 ;; I use workgroups to accomplish two things:
-;;   1. Vim-like tab emulation (type :tabs to see a list of tabs -- maybe I'll add some
-;;      code to make a permanent frame header to display these some day)
+;;   1. Vim-like tab emulation (type :tabs to see a list of tabs -- maybe I'll
+;;      add some code to make a permanent frame header to display these some
+;;      day)
 ;;   2. Session persistence (with :ss and :sl)
+;;   3. Tab names reflect the project open in them, unless they've been
+;;      explicitly named with :tabrename <name>
 
 (defvar doom-wg-frames '()
   "A list of all the frames opened as separate workgroups. See
 defuns/defuns-workgroups.el.")
 
 (defvar doom-wg-names '()
-  "A list of fixed names for workgroups. If a name is set, workgroup names
-aren't automatically renamed to the project name.")
+  "Keeps track of the fixed names for workgroups (set with :tabrename), so that
+these workgroups won't be auto-renamed.")
 
 (use-package workgroups2
   :when window-system

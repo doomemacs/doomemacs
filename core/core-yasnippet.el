@@ -34,10 +34,10 @@
         [backspace]     'doom/yas-backspace
         "<delete>"      'doom/yas-delete)
 
+  ;; Fix an error caused by smartparens interfering with yasnippet bindings
+  (advice-add 'yas-expand :before 'sp-remove-active-pair-overlay)
   ;; Exit snippets on ESC in normal mode
   (advice-add 'evil-force-normal-state :before 'yas-exit-all-snippets)
-  ;; Fix an issue with smartparens interfering with yasnippet keybindings
-  (advice-add 'yas-expand :before 'sp-remove-active-pair-overlay)
   ;; Once you're in normal mode, you're out
   (add-hook 'evil-normal-state-entry-hook 'yas-abort-snippet)
   ;; Strip out whitespace before a line selection

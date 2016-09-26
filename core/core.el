@@ -53,14 +53,18 @@ killed by `doom/kill-unreal-buffers', or after `doom/kill-real-buffer').")
 before killing processes. If there are no buffers with matching major-modes, it
 gets killed.")
 
-(defvar doom-unicode-font
+(defconst doom-unicode-font
   (font-spec :family "DejaVu Sans Mono" :size 13)
-  "Font to fall back to for unicode glyphs.")
+  "Fallback font for unicode glyphs.")
 
 
 ;;
 ;; Load path
 ;;
+
+;; Populate the load-path manually. This way, cask (and `cask-initialize') won't
+;; be an internal dependency -- they slow down startup a lot! And we eval them
+;; when compiling.
 
 (defvar doom--load-path load-path
   "Initial `load-path', so we don't clobber it on consecutive reloads.")
@@ -73,7 +77,6 @@ gets killed.")
           (ignore-errors (directory-files path t "^[^.]" t)))
     result))
 
-;; Populate the load-path manually; cask shouldn't be an internal dependency
 (setq load-path
       (! (append (list doom-private-dir)
                  (--subdirs doom-core-dir t)
@@ -97,8 +100,7 @@ gets killed.")
 (set-selection-coding-system 'utf-8)   ; please
 (setq locale-coding-system   'utf-8)   ; with sugar on top
 
-;; Backwards compatibility as default-buffer-file-coding-system
-;; is deprecated in 23.2.
+;; default-buffer-file-coding-system is deprecated on 23.2
 (if (boundp 'buffer-file-coding-system)
     (setq-default buffer-file-coding-system 'utf-8)
   (setq default-buffer-file-coding-system 'utf-8))
