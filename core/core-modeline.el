@@ -192,8 +192,8 @@ directory, the file name, and its state (modified, read-only or non-existent)."
             (propertize (or (*buffer-path) "") 'face `(:inherit (,face doom-modeline-alternate)))
             (propertize (or (*buffer-name) "") 'face face)
             (propertize " " 'face face)
-            (aif (*buffer-state) (concat it (propertize " " 'face face)))
-            )))
+            (let ((state (*buffer-state)))
+              (if state (concat state (propertize " " 'face face)))))))
 
 (defun *buffer-encoding-abbrev ()
   "The line ending convention used in the buffer (if it isn't unix) and its
