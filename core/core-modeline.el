@@ -85,6 +85,8 @@ active.")
   "Hook that runs whenever the environment version changes (e.g. rbenv/pyenv)")
 
 (defun doom-ml|env-update ()
+  "Update (py|rb)env version string in `doom-ml--env-version', generated with
+`doom-ml--env-command'."
   (when doom-ml--env-command
     (let ((default-directory (projectile-project-root)))
       (let ((s (shell-command-to-string doom-ml--env-command)))
