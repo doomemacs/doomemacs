@@ -273,7 +273,7 @@ buffers regardless of project."
         (new-buf (get-buffer-create "*doom:scratch*")))
     (with-current-buffer new-buf
       (setq default-directory old-project)
-      (setq mode-line-format (doom-mode-line 'scratch))
+      (setq mode-line-format (doom-modeline 'scratch))
       (when (and (not (eq major-mode mode))
                  (functionp mode))
         (funcall mode))

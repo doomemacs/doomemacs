@@ -300,7 +300,7 @@ Examples:
                  (not inhibit-doom))
         (doom-mode-init t))
       (setq default-directory dir)
-      (setq mode-line-format (doom-mode-line 'scratch)))))
+      (setq mode-line-format (doom-modeline 'scratch)))))
 
 
 ;;

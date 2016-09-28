@@ -365,7 +365,7 @@ to be enabled."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun doom-mode-line (&optional id)
+(defun doom-modeline (&optional id)
   `(:eval
     (let* ((active (eq (selected-window) doom-ml-selected-window))
            (lhs (list (propertize " "
@@ -392,7 +392,7 @@ to be enabled."
                                                        ,(1+ (string-width (format-mode-line rhs)))))))))
       (list lhs middle rhs))))
 
-(setq-default mode-line-format (doom-mode-line))
+(setq-default mode-line-format (doom-modeline))
 
 
 ;;
@@ -404,7 +404,7 @@ to be enabled."
                   (face-background 'doom-modeline-eldoc-bar)
                   nil))
 
-(defun doom-eldoc-mode-line ()
+(defun doom-eldoc-modeline ()
   `(:eval
     (let ((active (eq (selected-window) doom-ml-selected-window)))
       (list (list (propertize " " 'display doom-eldoc-modeline-bar)
@@ -418,7 +418,7 @@ to be enabled."
            (str              (and (stringp input) (concat " " input)))
            (len              (length str))
            (tmp-str          str)
-           (mode-line-format (or (and str (doom-eldoc-mode-line))
+           (mode-line-format (or (and str (doom-eldoc-modeline))
                                  mode-line-format))
            roll mode-line-in-non-selected-windows)
       (catch 'break
