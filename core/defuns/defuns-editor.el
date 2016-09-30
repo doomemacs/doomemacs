@@ -46,6 +46,7 @@
 
 ;;;###autoload
 (defun doom/reselect-paste ()
+  "Go back into visual mode and reselect the last pasted region."
   (interactive)
   (evil-goto-mark ?\[)
   (evil-visual-state)

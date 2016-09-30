@@ -2,7 +2,7 @@
 
 ;;;###autoload (autoload 'doom:file-delete "defuns-file" nil t)
 (evil-define-command doom:file-delete (&optional bang filename)
-  "Delete current buffer's file. If bang, then kill the buffer afterwards as well."
+  "Delete current buffer's file. If BANG, kill buffer afterwards."
   :repeat nil
   (interactive "<!><f>")
   (let ((filename (file-truename (or filename (buffer-file-name)))))
@@ -41,7 +41,7 @@ provided."
 ;;;###autoload (autoload 'doom:file-move "defuns-file" nil t)
 (evil-define-command doom:file-move (path)
   "Move current buffer's file to PATH. Replaces %, # and other variables (see
-  `evil-ex-replace-special-filenames')"
+`evil-ex-replace-special-filenames')"
   :repeat nil
   (interactive "<f>")
   (let* ((old-path (buffer-file-name))

@@ -12,7 +12,7 @@
 
 ;;;###autoload
 (defun doom/embrace-escaped ()
-  "Escaped surround characters."
+  "Backslash-escaped surround character support for embrace."
   (let ((char (read-char "\\")))
     (if (eq char 27)
         (cons "" "")
@@ -23,11 +23,12 @@
 
 ;;;###autoload
 (defun doom/embrace-latex ()
-  "LaTeX commands"
+  "LaTeX command support for embrace."
   (cons (format "\\%s{" (read-string "\\")) "}"))
 
 ;;;###autoload
 (defun doom/embrace-elisp-fn ()
+  "Elisp function support for embrace."
   (cons (format "(%s " (or (read-string "(") "")) ")"))
 
 (provide 'defuns-embrace)

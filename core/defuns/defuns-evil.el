@@ -1,16 +1,16 @@
 ;;; defuns-evil.el
 
-;;;###autoload (autoload 'doom:evil-open-folds "defuns-evil" nil t)
+;;;###autoload (autoload 'doom/evil-open-folds "defuns-evil" nil t)
 (evil-define-command doom/evil-open-folds (count)
-  "Instead of `evil-open-folds'. Accepts COUNT for dictating fold level."
+  "Instead of `evil-open-folds'; accepts COUNT for dictating fold level."
   (interactive "P")
   (unless (bound-and-true-p hs-minor-mode)
     (hs-minor-mode 1))
   (if count (hs-hide-level count) (evil-open-folds)))
 
-;;;###autoload (autoload 'doom:evil-open-folds "defuns-evil" nil t)
+;;;###autoload (autoload 'doom/evil-open-folds "defuns-evil" nil t)
 (evil-define-command doom/evil-close-folds (count)
-  "Instead of `evil-close-folds'. Accepts COUNT for dictating fold level."
+  "Instead of `evil-close-folds'; accepts COUNT for dictating fold level."
   (interactive "P")
   (unless (bound-and-true-p hs-minor-mode)
     (hs-minor-mode 1))
@@ -18,14 +18,14 @@
 
 ;;;###autoload (autoload 'doom/multi-next-line "defuns-evil" nil t)
 (evil-define-motion doom/multi-next-line (count)
-  "Move down 6 lines"
+  "Move down 6 lines."
   :type line
   (let ((line-move-visual visual-line-mode))
     (evil-line-move (* 6 (or count 1)))))
 
 ;;;###autoload (autoload 'doom/multi-previous-line "defuns-evil" nil t)
 (evil-define-motion doom/multi-previous-line (count)
-  "Move up 6 lines"
+  "Move up 6 lines."
   :type line
   (let ((line-move-visual visual-line-mode))
     (evil-line-move (- (* 6 (or count 1))))))

@@ -107,7 +107,7 @@
         :n  "S"   'doom/yas-find-file
         ;; Quick quitting
         :nv "Q"   'evil-save-and-quit
-        :nv "C-q" 'doom/kill-all-buffers-do-not-remember
+        :nv "C-q" 'doom/kill-workgroup-and-quit
         ;; Quick access to config files
         :nv "E"   (@find-file-in doom-emacs-dir t)
         :nv "\\"  (@find-file-in (f-expand ".dotfiles" "~") t)

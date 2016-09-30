@@ -79,5 +79,10 @@ these workgroups won't be auto-renamed.")
     (workgroups-mode +1)
     (wg-create-workgroup wg-first-wg-name)))
 
+(unless window-system
+  (defalias 'wg-workgroup-associated-buffers 'ignore)
+  (defalias 'wg-current-workgroup 'ignore)
+  (defalias 'wg-save-session 'ignore))
+
 (provide 'core-workgroups)
 ;;; core-workgroups.el ends here

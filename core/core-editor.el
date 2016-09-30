@@ -9,10 +9,12 @@
  ;; Formatting
  delete-trailing-lines nil
  fill-column 80
+ ;; Spaces, not tabs
  indent-tabs-mode nil
  require-final-newline t
  tab-always-indent t
  tab-width 4
+ ;; Wrapping
  truncate-lines t
  truncate-partial-width-windows 50
  visual-fill-column-center-text nil

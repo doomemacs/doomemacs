@@ -2,12 +2,14 @@
 
 ;;;###autoload
 (defun doom/company-evil-complete-next (&optional arg)
+  "dabbrev wrapper for `evil-complete-next'"
   (call-interactively 'company-dabbrev)
   (if (eq company-candidates-length 1)
       (company-complete)))
 
 ;;;###autoload
 (defun doom/company-evil-complete-previous (&optional arg)
+  "dabbrev wrapper for `evil-complete-previous'"
   (let ((company-selection-wrap-around t))
     (call-interactively 'company-dabbrev)
     (if (eq company-candidates-length 1)
@@ -37,6 +39,8 @@
 
 ;;;###autoload
 (defun doom/company-whole-lines (command &optional arg &rest ignored)
+  "`company-mode' completion backend that completes whole-lines, akin to vim's
+C-x C-l."
   (interactive (list 'interactive))
   (let ((lines (doom--company-whole-lines)))
     (cl-case command
@@ -52,7 +56,7 @@
 
 ;;;###autoload
 (defun doom/company-complete ()
-  "Bring up the completion popup. If there is only one result, auto-complete it."
+  "Bring up the completion popup. If only one result, complete it."
   (interactive)
   (require 'company)
   (when (and (bound-and-true-p company-mode)

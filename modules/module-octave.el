@@ -12,7 +12,7 @@
 ;;     (require 'ac-octave)
 ;;     (setq ac-sources '(ac-source-octave))))
 
-(use-package octave-inf :commands (run-octave))
+(use-package octave-inf :commands run-octave)
 
 (provide 'module-octave)
 ;;; module-octave.el ends here

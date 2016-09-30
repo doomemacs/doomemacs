@@ -3,8 +3,8 @@
 ;;;###autoload (autoload 'doom:narrow "defuns-buffers" nil t)
 (evil-define-operator doom:narrow (&optional beg end bang)
   "Restrict editing in this buffer to the current region, indirectly. With BANG,
-clone the buffer and hard-narrow the selection. Otherwise use fancy-narrow. If
-mark isn't active, then widen the buffer (if narrowed).
+clone the buffer and hard-narrow the selection. If mark isn't active, then widen
+the buffer (if narrowed).
 
 Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
   (interactive "<r><!>")
@@ -19,14 +19,14 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
 
 ;;;###autoload
 (defun doom/set-read-only-region (begin end)
-  "See http://stackoverflow.com/questions/7410125"
+  "Mark a region as read-only (http://stackoverflow.com/questions/7410125)"
   (let ((modified (buffer-modified-p)))
     (add-text-properties begin end '(read-only t))
     (set-buffer-modified-p modified)))
 
 ;;;###autoload
 (defun doom/set-region-writeable (begin end)
-  "See http://stackoverflow.com/questions/7410125"
+  "Undoes `doom/set-read-only-region' (http://stackoverflow.com/questions/7410125)"
   (let ((modified (buffer-modified-p))
         (inhibit-read-only t))
     (remove-text-properties begin end '(read-only t))
@@ -35,17 +35,12 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
 
 ;; Buffer Life and Death ;;;;;;;;;;;;;;;
 
-(unless window-system
-  (defalias 'wg-workgroup-associated-buffers 'ignore)
-  (defalias 'wg-current-workgroup 'ignore)
-  (defalias 'wg-save-session 'ignore))
-
 ;;;###autoload
 (defun doom/get-buffers (&optional all-p)
-  "Get all buffers in the current workgroup.
+  "Get all buffers in the current project, in the current workgroup.
 
-    If PROJECT-P is non-nil, get all buffers in current workgroup
-    If both are non-nil, get all project buffers across all workgroups"
+    If ALL-P is non-nil, get all buffers across all projects in current
+workgroup."
   (let ((buffers (if (wg-current-workgroup t)
                      (doom/get-buffers-in-workgroup)
                    (buffer-list)))
@@ -59,48 +54,64 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
 
 ;;;###autoload
 (defun doom/get-buffers-in-workgroup ()
-  (let ((assoc-bufs (wg-workgroup-associated-buffers nil)))
-    (--filter (memq it assoc-bufs) (buffer-list))))
+  "Get a list of buffers in current workgroup. Returns nil if workgroups2 isn't
+loaded."
+  (when (featurep 'workgroups2)
+    (let ((assoc-bufs (wg-workgroup-associated-buffers nil)))
+      (--filter (memq it assoc-bufs) (buffer-list)))))
 
 ;;;###autoload
 (defun doom/get-buffer-names (&optional buffer-list)
+  "Get a list of names of buffers in the current workgroup, OR return the names
+of the buffers in BUFFER-LIST."
   (mapcar #'buffer-name (or buffer-list (doom/get-buffers))))
 
 ;;;###autoload
 (defun doom/get-visible-windows (&optional window-list)
-  "Get a list of the visible windows in the current frame (that aren't popups)."
+  "Get a list of the visible windows in the current frame (that aren't popups),
+OR return only the visible windows in WINDOW-LIST."
   (-remove #'doom/popup-p (or window-list (window-list))))
 
 ;;;###autoload
 (defun doom/get-visible-buffers (&optional buffer-list)
-  "Get a list of unburied buffers in the current project and workgroup."
+  "Get a list of unburied buffers in the current project and workgroup, OR
+return only the unburied buffers in BUFFER-LIST (a list of BUFFER-OR-NAMEs)."
   (-filter #'get-buffer-window (or buffer-list (doom/get-buffers))))
 
 ;;;###autoload
 (defun doom/get-buried-buffers (&optional buffer-list)
-  "Get a list of buried buffers in the current project and workgroup."
+  "Get a list of buried buffers in the current project and workgroup, OR return
+only the buried buffers in BUFFER-LIST (a list of BUFFER-OR-NAMEs)."
   (-remove 'get-buffer-window (or buffer-list (doom/get-buffers))))
 
 ;;;###autoload
 (defun doom/get-matching-buffers (pattern &optional buffer-list)
-  "Get a list of buffers that match the pattern"
+  "Get a list of all buffers (in the current workgroup OR in BUFFER-LIST) that
+match the regex PATTERN."
   (--filter (string-match-p pattern (buffer-name it))
             (or buffer-list (doom/get-buffers))))
 
 ;;;###autoload
 (defun doom/get-buffers-in-modes (modes &optional buffer-list)
-  "Get a list of buffers whose major-mode is one of MODES"
+  "Get a list of all buffers (in the current workgroup OR in BUFFER-LIST) whose
+`major-mode' is one of MODES."
   (--filter (memq (buffer-local-value 'major-mode it) modes)
             (or buffer-list (doom/get-buffers))))
 
 ;;;###autoload
 (defun doom/get-real-buffers (&optional buffer-list)
+  "Get a list of all buffers (in the current workgroup OR in BUFFER-LIST) that
+`doom/real-buffer-p' returns non-nil for."
   (-filter #'doom/real-buffer-p (or buffer-list (doom/get-buffers))))
 
 ;;;###autoload
 (defun doom/kill-real-buffer (&optional arg)
-  "Kill buffer (but only bury scratch buffer), then switch to a real buffer. Only buries
-the buffer if it is being displayed in another window."
+  "Kill buffer then switch to a real buffer. Only buries the buffer if it is
+being displayed in another window.
+
+NOTE: only buries scratch buffer.
+
+See `doom/real-buffer-p' for what 'real' means."
   (interactive (list t))
   (cond ((eq (current-buffer) doom-buffer)
          (doom-mode-init t))
@@ -124,7 +135,8 @@ the buffer if it is being displayed in another window."
 
 ;;;###autoload
 (defun doom/kill-unreal-buffers ()
-  "Kill all buried, unreal buffers in current frame. See `doom-unreal-buffers'"
+  "Kill all buried buffers in current frame that match any of the rules in
+`doom-unreal-buffers'."
   (interactive)
   (let ((kill-list (-remove 'doom/real-buffer-p
                             (doom/get-buried-buffers (buffer-list)))))
@@ -134,7 +146,7 @@ the buffer if it is being displayed in another window."
 
 ;;;###autoload
 (defun doom/kill-process-buffers ()
-  "Kill all buffers that represent running processes and aren't visible."
+  "Kill all buried buffers that represent running processes."
   (interactive)
   (let ((buffer-list (buffer-list))
         (killed-processes 0))
@@ -152,11 +164,13 @@ the buffer if it is being displayed in another window."
     (message "Cleaned up %s processes" killed-processes)))
 
 ;;;###autoload
-(defun doom/kill-matching-buffers (regexp &optional buffer-list)
+(defun doom/kill-matching-buffers (pattern &optional buffer-list)
+  "Kill all buffers (in current workgroup OR in BUFFER-LIST) that match the
+regex PATTERN."
   (interactive)
   (let ((i 0))
     (mapc (lambda (b)
-            (when (string-match-p regexp (buffer-name b))
+            (when (string-match-p pattern (buffer-name b))
               (kill-buffer b)
               (setq i (1+ i))))
           (if buffer-list buffer-list (doom/get-buffers)))
@@ -164,8 +178,8 @@ the buffer if it is being displayed in another window."
 
 ;;;###autoload
 (defun doom/cycle-real-buffers (&optional n)
-  "Switch to the previous buffer and avoid special buffers. If there's nothing
-left, create a scratch buffer."
+  "Switch to the previous buffer, skipping over special buffers. If there's
+nothing left, create a scratch buffer."
   (let* ((start-buffer (current-buffer))
          (move-func (if (> n 0) 'switch-to-next-buffer 'switch-to-prev-buffer))
          (max 25)
@@ -194,8 +208,9 @@ left, create a scratch buffer."
 
 ;;;###autoload
 (defun doom/real-buffer-p (&optional buffer)
-  "Returns whether BUFFER a 'real' buffer or not. Real means it isn't a popup,
-temporary, scratch or special buffer."
+  "Returns whether BUFFER a 'real' buffer or not. Real means: a) it isn't a
+popup (or temporary) window and b) it isn't a special buffer (e.g. scratch or
+*messages* buffer)."
   (setq buffer (or (and (bufferp buffer) buffer)
                    (and (stringp buffer) (get-buffer buffer))
                    (current-buffer)))
@@ -206,16 +221,17 @@ temporary, scratch or special buffer."
                    (--any? (string-match-p it (buffer-name buffer))
                            (-filter 'stringp doom-unreal-buffers))))))))
 
-;; Inspired by spacemacs <https://github.com/syl20bnr/spacemacs/blob/master/spacemacs/funcs.el>
 ;;;###autoload
 (defun doom/next-real-buffer ()
-  "Switch to the next buffer and avoid special buffers."
+  "Switch to the next real buffer, skipping special buffers. See
+`doom/real-buffer-p'."
   (interactive)
   (doom/cycle-real-buffers +1))
 
 ;;;###autoload
 (defun doom/previous-real-buffer ()
-  "Switch to the previous buffer and avoid special buffers."
+  "Switch to the previous real buffer, skipping special buffers. See
+`doom/real-buffer-p'."
   (interactive)
   (doom/cycle-real-buffers -1))
 
@@ -247,22 +263,23 @@ temporary, scratch or special buffer."
 
 ;;;###autoload (autoload 'doom:kill-buried-buffers "defuns-buffers" nil t)
 (evil-define-command doom:kill-buried-buffers (&optional bang)
-  "Kill buried project buffers (in workgroup) and report how many it found. BANG = get all
-buffers regardless of project."
+  "Kill buried project buffers in current workgroup and report how many it
+found. If BANG, then include buffers that aren't part of the current project."
   (interactive "<!>")
   (doom--kill-buffers (doom/get-buried-buffers (doom/get-buffers (not bang)))))
 
 ;;;###autoload (autoload 'doom:kill-buried-buffers "defuns-buffers" nil t)
 (evil-define-command doom:kill-matching-buffers (&optional bang pattern)
-  "Kill project buffers matching regex pattern PATTERN. If BANG, then extend search to
-buffers regardless of project."
+  "Kill project buffers in current workgroup that match regex PATTERN. If BANG,
+then include buffers that aren't part of the current project."
   :repeat nil
   (interactive "<!><a>")
   (doom-kill-buffers (doom/get-matching-buffers pattern (doom/get-buffers (not bang)))))
 
 ;;;###autoload (autoload 'doom:scratch-buffer "defuns-buffers" nil t)
 (evil-define-operator doom:scratch-buffer (&optional beg end bang)
-  "Send a selection to the scratch buffer. If BANG, don't use a popup."
+  "Send a region to and pop up the scratch buffer. If BANG, don't use a popup
+(use the current window)."
   :move-point nil
   :type inclusive
   (interactive "<r><!>")
@@ -282,14 +299,14 @@ buffers regardless of project."
 
 ;;;###autoload (autoload 'doom:cd "defuns-buffers" nil t)
 (evil-define-command doom:cd (dir)
-  "Ex-command alias for `cd'"
+  "Change the `default-directory' to DIR (alias for `cd')"
   :repeat nil
   (interactive "<f>")
   (cd (if (zerop (length dir)) "~" dir)))
 
 ;;;###autoload
-(defun doom/kill-all-buffers-do-not-remember ()
-  "Kill all buffers so that workgroups2 will wipe its current session."
+(defun doom/kill-workgroup-and-quit ()
+  "Wipe the current workgroup session and save the blank slate."
   (interactive)
   (let (confirm-kill-emacs)
     (mapc 'kill-buffer (doom/get-buffers t))

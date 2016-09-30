@@ -52,7 +52,7 @@
   (tool-bar-mode   -1)  ; no toolbar
   ;; full filename in frame title
   (setq frame-title-format '(buffer-file-name "%f" ("%b")))
-  ;; set font
+  ;; Set theme and font
   (with-demoted-errors "FONT ERROR: %s"
     (set-frame-font doom-default-font t)
     ;; Fallback to `doom-unicode-font' for Unicode characters
