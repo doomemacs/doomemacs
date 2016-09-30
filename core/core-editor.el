@@ -189,14 +189,17 @@
   (setq hs-set-up-overlay
         (lambda (ov)
           (when (eq 'code (overlay-get ov 'hs))
-            (let ((marker-string "*")
-                  (display-string (format " ... " (count-lines (overlay-start ov)
-                                                               (overlay-end ov)))))
+            (let* ((marker-string "*")
+                   (display-string (concat " " (all-the-icons-octicon "ellipsis" :v-adjust 0) " "))
+                   (len (length display-string)))
               (put-text-property 0 1 'display
                                  (list 'right-fringe 'hs-marker 'hs-fringe-face)
                                  marker-string)
-              (put-text-property 0 (length display-string)
-                                 'face 'hs-face display-string)
+              (put-text-property 0 1 'face 'hs-face display-string)
+              (put-text-property (1- len) len 'face 'hs-face display-string)
+              (put-text-property 1 (1- len)
+                                 'face `(:inherit hs-face :family ,(all-the-icons-octicon-family) :height 1.2)
+                                 display-string)
               (overlay-put ov 'before-string marker-string)
               (overlay-put ov 'display display-string))))))
 
