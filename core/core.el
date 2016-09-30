@@ -54,7 +54,7 @@ before killing processes. If there are no buffers with matching major-modes, it
 gets killed.")
 
 (defconst doom-unicode-font
-  (font-spec :family "DejaVu Sans Mono" :size 13)
+  (font-spec :family "DejaVu Sans Mono" :size 12)
   "Fallback font for unicode glyphs.")
 
 
