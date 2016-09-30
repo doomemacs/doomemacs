@@ -49,9 +49,9 @@ killed by `doom/kill-unreal-buffers', or after `doom/kill-real-buffer').")
   '(("pry" . ruby-mode)
     ("irb" . ruby-mode)
     ("ipython" . python-mode))
-  "An alist of (process-name . major-mode), that `doom:cleanup-processes' checks
-before killing processes. If there are no buffers with matching major-modes, it
-gets killed.")
+  "An alist of (process-name . major-mode) that `doom/kill-process-buffers'
+checks before killing processes. If there are no buffers with matching
+major-modes, the process gets killed.")
 
 (defconst doom-unicode-font
   (font-spec :family "DejaVu Sans Mono" :size 12)
