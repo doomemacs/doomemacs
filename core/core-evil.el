@@ -248,6 +248,7 @@
    evil-snipe-scope 'line
    evil-snipe-repeat-scope 'visible
    evil-snipe-override-evil-repeat-keys nil ; causes problems with remapped ;
+   evil-snipe-char-fold t
    evil-snipe-aliases '((?\[ "[[{(]")
                         (?\] "[]})]")
                         (?\; "[;:]")))
