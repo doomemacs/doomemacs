@@ -48,6 +48,7 @@
           ("/package\\.json$"                "__package.json"   json-mode)
           ("/bower\\.json$"                  "__bower.json"     json-mode)
           ("\\.\\(json\\|jshintrc\\)$"       "__"               json-mode)
+          ("/gulpfile\\.js$"                 "__gulpfile.js"    js-mode)
           ;; Lua
           ("/main\\.lua$"                    "__main.lua"       love-mode)
           ("/conf\\.lua$"                    "__conf.lua"       love-mode)
