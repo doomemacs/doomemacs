@@ -1,5 +1,9 @@
 ;;; module-js.el
 
+(use-package unityjs-mode
+  :mode "/Assets/.*\\.js$"
+  :config (add-hook 'unityjs-mode-hook 'flycheck-mode))
+
 (use-package js2-mode
   :mode "\\.js$"
   :interpreter "node"
@@ -77,10 +81,6 @@
 
 ;;
 (use-package jsx-mode :mode "\\.jsx$")
-
-(use-package unityjs-mode
-  :mode "/Assets/.*\\.js$"
-  :config (add-hook 'unityjs-mode-hook 'flycheck-mode))
 
 (use-package coffee-mode
   :mode "\\.coffee$"
