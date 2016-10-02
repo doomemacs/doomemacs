@@ -307,17 +307,36 @@ Examples:
 ;; Global Defuns
 ;;
 
+(defsubst --subdirs (path &optional include-self)
+  "Get list of subdirectories in PATH, including PATH is INCLUDE-SELF is
+non-nil."
+  (let ((result (if include-self (list path) (list))))
+    (mapc (lambda (file)
+            (when (file-directory-p file)
+              (push file result)))
+          (ignore-errors (directory-files path t "^[^.]" t)))
+    result))
+
 (defun doom-reload ()
-  "Reload `load-path', in case you updated cask while emacs was open!"
+  "Reload `load-path' and `custom-theme-load-path', in case you updated cask
+while emacs was open!"
   (interactive)
-  (setq load-path (append (list doom-private-dir doom-core-dir doom-modules-dir doom-packages-dir)
-                          (f-directories doom-core-dir nil t)
-                          (f-directories doom-modules-dir nil t)
-                          (f-directories doom-packages-dir)
-                          (f-directories (f-expand "../bootstrap" doom-packages-dir))
-                          (f-directories doom-themes-dir nil t)
-                          doom--load-path))
-  (message "Reloaded!"))
+  (let ((-load-path
+         (append (list doom-private-dir doom-core-dir doom-modules-dir doom-packages-dir)
+                 (--subdirs doom-core-dir t)
+                 (--subdirs doom-modules-dir t)
+                 (--subdirs doom-packages-dir)
+                 (--subdirs (expand-file-name (format "../../%s/bootstrap" emacs-version)
+                                              doom-packages-dir))
+                 doom--load-path))
+        (-custom-theme-load-path
+         (append (--subdirs doom-themes-dir t)
+                 custom-theme-load-path)))
+    (setq load-path -load-path
+          custom-theme-load-path -custom-theme-load-path)
+    (if (called-interactively-p 'interactive)
+        (message "Reloaded!")
+      (list -load-path -custom-theme-load-path))))
 
 (defun doom-reload-autoloads ()
   "Regenerate autoloads for DOOM emacs."
