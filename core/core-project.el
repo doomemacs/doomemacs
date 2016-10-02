@@ -75,7 +75,7 @@
         "s"       'neotree-enter-horizontal-split
         "c"       'neotree-create-node
         "d"       'neotree-delete-node
-        "g"       'neotree-refresh
+        "C-r"     'neotree-refresh
         "r"       'neotree-rename-node
         "R"       'neotree-change-root))
 
