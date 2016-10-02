@@ -32,6 +32,9 @@ clean-cache:
 clean-lite:
 	@rm -f init.elc core/core.elc
 
+test:
+	@cask exec ert-runner -l core/core.el
+
 ########################################
 
 %.elc: %.el
@@ -44,4 +47,4 @@ _install: clean-lite
 	@cask install 2>&1
 	@mkdir -p $(CACHE_DIR)/{undo,backup,workgroups}
 
-.PHONY: all
+.PHONY: all test

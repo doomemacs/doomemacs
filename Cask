@@ -303,3 +303,8 @@
 
 ;; Debugging -- modules/custom-debug.el
 (depends-on "realgud")
+
+
+;;;; DEV TOOLS ;;;;;;;;;;;;;;;;;
+(development
+  (depends-on "ert-runner"))
