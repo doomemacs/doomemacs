@@ -91,7 +91,8 @@
 
   ;; Don't cache ignored files!
   (defun doom*projectile-cache-current-file (orig-fun &rest args)
-    (unless (--any (f-descendant-of? buffer-file-name it) (projectile-ignored-directories))
+    (unless (--any (f-descendant-of? buffer-file-name it)
+                   (projectile-ignored-directories))
       (apply orig-fun args)))
   (advice-add 'projectile-cache-current-file :around 'doom*projectile-cache-current-file)
 

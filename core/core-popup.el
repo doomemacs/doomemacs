@@ -2,9 +2,9 @@
 
 ;; I use a slew of hackery to get Emacs to treat 'pop-ups' consistently. It goes
 ;; through great lengths to tame helm, flycheck, help buffers--*even* the beast
-;; that is org-mode.
+;; that is org-mode, with the help of `display-buffer-alist' and shackle.
 ;;
-;; Be warned, an update could break any of this.
+;; Be warned, an update could break this.
 
 (use-package shackle
   :config
@@ -34,13 +34,13 @@
           ("*vc-change-log*"   :align below :size 15  :select t)
           (vc-annotate-mode    :same t)))
 
-  ;; Emacs 25.1+ already shows the completion window at the bottom of the
+  ;; Emacs 25.1+ properly shows the completion window at the bottom of the
   ;; current frame.
-  (unless (and (>= emacs-major-version 25) (= emacs-minor-version 1))
+  (unless (version< emacs-version "25.1")
     (push '("*Completions*"     :align below :size 30  :noselect t) shackle-rules))
 
-  ;; :noesc    = Can't be closed with a single ESC
-  ;; :nokill   = Won't be killed when closed (only buried)
+  ;; :noesc  = Can't be closed with a single ESC
+  ;; :nokill = Won't be killed when closed (only buried)
   (defvar doom-popup-rules
     '(("^\\*doom\\(:scratch\\)?\\*$" :noesc :nokill)
       ("^\\*doom.*\\*$"       :noesc :nokill)
@@ -52,9 +52,9 @@
       (esup-mode              :noesc)
       (tabulated-list-mode    :noesc)))
 
-  ;; There is no shackle-popup hook, so I hacked one in
+  ;; There is no shackle-popup hook, so I hack one in
   (advice-add 'shackle-display-buffer :around 'doom*popup-init)
-  ;; Don't mess with popups
+  ;; Tell these functions not to mess with popups
   (advice-add 'balance-windows        :around 'doom*save-popup)
   (advice-add 'doom/evil-window-move  :around 'doom*save-popup))
 

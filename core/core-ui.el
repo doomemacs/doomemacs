@@ -79,7 +79,7 @@
 (with-current-buffer "*Messages*" (doom-hide-mode-line-mode +1))
 
 ;; Eldoc is enabled globally on Emacs 25. No thank you, I'll do it myself.
-(when (and (> emacs-major-version 24) (featurep 'eldoc))
+(when (bound-and-true-p global-eldoc-mode)
   (global-eldoc-mode -1))
 
 ;; TODO/FIXME/NOTE highlighting in comments

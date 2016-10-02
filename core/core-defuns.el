@@ -339,7 +339,7 @@ while emacs was open!"
       (list -load-path -custom-theme-load-path))))
 
 (defun doom-reload-autoloads ()
-  "Regenerate autoloads for DOOM emacs."
+  "Regenerate and reload autoloads.el."
   (interactive)
   (let ((generated-autoload-file (concat doom-core-dir "/autoloads.el")))
     (when (file-exists-p generated-autoload-file)
@@ -354,7 +354,9 @@ while emacs was open!"
     (message "Done!")))
 
 (defun doom-byte-compile (&optional minimal)
-  "Byte compile the core and library .el files in ~/.emacs.d"
+  "Byte compile the core and library .el files in ~/.emacs.d. If MINIMAL is nil,
+only byte compile a few important files. If t, compile all files too. If 'basic,
+only compile defun libraries."
   (interactive)
   (mapc (lambda (f) (byte-compile-file (concat doom-emacs-dir "/" f) t))
         '("init.el" "core/core.el" "core/core-defuns.el" "core/core-ui.el"

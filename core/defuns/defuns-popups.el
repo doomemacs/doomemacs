@@ -101,6 +101,8 @@ the display (unless DONT-REDRAW is non-nil)."
   (let ((orig-win (selected-window)))
     (mapc (lambda (w) (doom/popup-close w dont-kill t))
           (--filter (and (doom/popup-p it) (not (eq it orig-win))) (window-list))))
+  ;; Earlier versions of Emacs were more prone to graphical artifacts, so redraw
+  ;; the frame in them.
   (when (< emacs-major-version 25)
     (unless dont-redraw (redraw-frame))))
 
@@ -122,7 +124,7 @@ the display (unless DONT-REDRAW is non-nil)."
 
 ;;;###autoload
 (defun doom*popup-init (orig-fn &rest args)
-  "Enable `doom-popup-mode' in every popup window and returns the window."
+  "Enables `doom-popup-mode' in every popup window and returns the window."
   (let ((window (apply orig-fn args)))
     (with-selected-window window
       (doom-popup-mode +1))
@@ -139,7 +141,8 @@ the display (unless DONT-REDRAW is non-nil)."
 
 ;;;###autoload
 (define-minor-mode doom-popup-mode
-  "Pop ups"
+  "Minor mode for pop-up windows. Enables local keymaps and sets state
+variables."
   :global nil
   :init-value nil
   :keymap doom-popup-mode-map

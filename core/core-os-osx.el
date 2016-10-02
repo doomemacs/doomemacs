@@ -16,7 +16,8 @@
       ;; Don't open files from the workspace in a new frame
       ns-pop-up-frames nil)
 
-;; fix emacs PATH on OSX (GUI only)
+;; On OSX, in GUI Emacs, `exec-path' isn't populated properly (it should match
+;; $PATH in my shell). `exe-path-from-shell' fixes this.
 (when window-system
   (setenv "SHELL" "/usr/local/bin/zsh")
   ;; `exec-path-from-shell' is slow, so bring out the cache
@@ -69,7 +70,7 @@
 
 
 ;;
-;; OS-integration
+;; OS-specific functions
 ;;
 
 (defun doom-open-with (&optional app-name path)
@@ -109,7 +110,11 @@
   (doom:send-to-tmux (format "cd %s" (shell-quote-argument default-directory)))
   (doom-switch-to-iterm))
 
-;; Open with external programs
+
+;;
+;; Plugins
+;;
+
 (use-package openwith
   :config
   (openwith-mode t)
