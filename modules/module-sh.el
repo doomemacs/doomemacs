@@ -3,7 +3,9 @@
 (use-package sh-script
   :mode (("\\.\\(ba\\|z\\)sh$" . sh-mode)
          ("/\\.?z\\(sh\\(/.*\\|$\\)\\|profile\\|log\\(in\\|out\\)\\|sh\\(rc\\|env\\)\\)$" . sh-mode)
-         ("/\\.?bash\\(/.*\\|rc\\|_profile\\)$" . sh-mode))
+         ("/\\.?bash\\(/.*\\|rc\\|_profile\\)$" . sh-mode)
+         ("/\\.?xinitrc$" . sh-mode)
+         ("/bspwmrc$" . sh-mode))
   :init (add-hook! sh-mode '(flycheck-mode doom|sh-extra-font-lock-activate))
   :config
   (def-company-backend! sh-mode (shell))
