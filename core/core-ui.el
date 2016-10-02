@@ -64,6 +64,8 @@
   ;; slightly larger default frame size on startup
   (push '(width . 120) default-frame-alist)
   (push '(height . 40) default-frame-alist)
+  ;; Slightly transparent frame
+  (push '(alpha . 98) default-frame-alist)
   ;; no fringe in the minibuffer
   (add-hook! (emacs-startup minibuffer-setup)
     (set-window-fringes (minibuffer-window) 0 0 nil))
