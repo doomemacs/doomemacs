@@ -89,9 +89,7 @@
          'face 'font-lock-keyword-face)
         (concat
          "\n\n"
-         (s-trim-right (s-center (max 0 (- width 2))
-                                 (format "Loaded in %.3fs"
-                                         (float-time (time-subtract after-init-time emacs-start-time)))))))))
+         (s-trim-right (s-center (max 0 (- width 2)) (format "Loaded in %s" (emacs-init-time))))))))
     (back-to-indentation)
     (doom|update-scratch-buffer nil t)
 
