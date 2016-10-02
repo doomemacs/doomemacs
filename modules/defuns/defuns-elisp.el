@@ -24,21 +24,24 @@
 ;;;###autoload
 (defun doom/ert-run-test ()
   (interactive)
-  (let (case-fold-search)
+  (let (case-fold-search thing)
     (doom--ert-pre)
-    (aif (thing-at-point 'defun t)
-        (if (string-match "(ert-deftest \\([^ ]+\\)" it)
-            (ert-run-tests-interactively (substring it (match-beginning 1) (match-end 1)))
+    (setq thing (thing-at-point 'defun t))
+    (if thing
+        (if (string-match "(ert-deftest \\([^ ]+\\)" thing)
+            (ert-run-tests-interactively
+             (substring thing (match-beginning 1) (match-end 1)))
           (user-error "Invalid test at point"))
       (user-error "No test found at point"))))
 
 ;;;###autoload
 (defun doom/ert-rerun-test ()
   (interactive)
-  (let (case-fold-search)
+  (let (case-fold-search thing)
     (doom--ert-pre)
-    (aif (car-safe ert--selector-history)
-        (ert-run-tests-interactively it)
+    (setq thing (car-safe ert--selector-history))
+    (if thing
+        (ert-run-tests-interactively thing)
       (message "No test found in history, looking for test at point")
       (doom/ert-run-test))))
 

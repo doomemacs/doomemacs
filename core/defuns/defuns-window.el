@@ -79,10 +79,11 @@ evil-window-move-* (e.g. `evil-window-move-far-left')"
 ;;;###autoload
 (defun doom/close-frame ()
   (interactive)
-  (aif (assq (selected-frame) doom-wg-frames)
-      (progn (wg-delete-workgroup (wg-get-workgroup (cdr it)))
-             (delete-frame (car it)))
-    (delete-frame)))
+  (let ((frame (assq (selected-frame) doom-wg-frames)))
+    (if frame
+        (progn (wg-delete-workgroup (wg-get-workgroup (cdr frame)))
+               (delete-frame (car frame)))
+      (delete-frame))))
 
 ;;;###autoload
 (defun doom/evil-window-resize (direction &optional count)

@@ -44,10 +44,10 @@ workgroup."
   (let ((buffers (if (wg-current-workgroup t)
                      (doom/get-buffers-in-workgroup)
                    (buffer-list)))
-        project-root)
-    (append (aif (and (not all-p) (doom/project-root t))
+        (project-root (and (not all-p) (doom/project-root t))))
+    (append (if project-root
                 (funcall (if (eq all-p 'not) '-remove '-filter)
-                         (lambda (b) (projectile-project-buffer-p b it))
+                         (lambda (b) (projectile-project-buffer-p b project-root))
                          buffers)
               buffers)
             (list doom-buffer))))
