@@ -4,8 +4,6 @@
 (defmacro doom (_ theme __ font &rest packages)
   "Bootstrap DOOM emacs and initialize PACKAGES"
   `(let (file-name-handler-alist)
-     ;; Local settings
-     (load "~/.emacs.local.el" t t)
      ;; Global constants
      (defconst doom-default-theme ,theme)
      (defconst doom-default-font
@@ -15,13 +13,15 @@
 
      (defconst doom-current-theme doom-default-theme)
      (defconst doom-current-font doom-default-font)
-
+     ;; Local settings
+     (load "~/.emacs.local.el" t t)
+     ;; Bootstrap
      (unless noninteractive
        ,@(mapcar (lambda (pkg)
                    (let ((lib-path (locate-library (symbol-name pkg))))
                      (unless lib-path
                        (error "Initfile not found: %s" pkg))
-                     `(require ',pkg ,(f-no-ext lib-path))))
+                     `(require ',pkg ,(file-name-sans-extension lib-path))))
                  packages)
        (when window-system
          (require 'server)
