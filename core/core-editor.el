@@ -205,6 +205,10 @@
               (overlay-put ov 'before-string marker-string)
               (overlay-put ov 'display display-string))))))
 
+(use-package help-fns+ ; Improved help commands
+  :commands (describe-buffer describe-command describe-file
+             describe-keymap describe-option describe-option-of-type))
+
 (use-package imenu-list
   :commands imenu-list-minor-mode
   :config
@@ -270,6 +274,13 @@
    :unless '(sp-point-before-word-p sp-point-before-same-p))
   (sp-with-modes '(xml-mode nxml-mode php-mode)
     (sp-local-pair "<!--" "-->"   :post-handlers '(("| " "SPC")))))
+
+(use-package smex
+  :commands (smex smex-major-mode-commands)
+  :config
+  (setq smex-completion-method 'ivy
+        smex-save-file (concat doom-temp-dir "/smex-items"))
+  (smex-initialize))
 
 (use-package swiper :commands (swiper swiper-all))
 

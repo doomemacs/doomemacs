@@ -4,7 +4,7 @@
 ;;
 ;;   doom-...     A public variable/constant or function
 ;;   doom--...    An internal variable or function (non-interactive)
-;;   doom/...     An autoloaded interactive function
+;;   doom/...     An autoloaded function
 ;;   doom:...     An ex command
 ;;   doom|...     A hook
 ;;   doom*...     An advising function
@@ -53,40 +53,10 @@ killed by `doom/kill-unreal-buffers', or after `doom/kill-real-buffer').")
 checks before killing processes. If there are no buffers with matching
 major-modes, the process gets killed.")
 
-(defconst doom-unicode-font
+(defvar doom-unicode-font
   (font-spec :family "DejaVu Sans Mono" :size 12)
   "Fallback font for unicode glyphs.")
 
-
-;;
-;; Load path
-;;
-
-;; Populate the load-path manually. This way, cask (and `cask-initialize') won't
-;; be an internal dependency -- they slow down startup a lot! And we eval them
-;; when compiling.
-
-(defvar doom--load-path load-path
-  "Initial `load-path', so we don't clobber it on consecutive reloads.")
-
-(defsubst --subdirs (path &optional include-self)
-  (let ((result (if include-self (list path) (list))))
-    (mapc (lambda (file)
-            (when (file-directory-p file)
-              (push file result)))
-          (ignore-errors (directory-files path t "^[^.]" t)))
-    result))
-
-(setq load-path
-      (! (append (list doom-private-dir)
-                 (--subdirs doom-core-dir t)
-                 (--subdirs doom-modules-dir t)
-                 (--subdirs doom-packages-dir)
-                 (--subdirs (expand-file-name "../bootstrap" doom-packages-dir))
-                 doom--load-path))
-      custom-theme-load-path
-      (! (append (--subdirs doom-themes-dir t)
-                 custom-theme-load-path)))
 
 ;;
 ;; Core configuration
@@ -157,46 +127,27 @@ major-modes, the process gets killed.")
 ;; Bootstrap
 ;;
 
-(autoload 'use-package "use-package" "" nil 'macro)
-(require 'f)
+(defvar doom--load-path load-path
+  "Initial `load-path', used as a base so we don't clobber it on consecutive
+reloads.")
+
+;; Just the bear necessities... ♫
+(setq load-path (append (list doom-core-dir) doom--load-path))
+
+;; Populate load-path manually. This way, cask (and `cask-initialize') won't be
+;; an internal dependency -- they slow down startup a lot!
 (require 'core-defuns)
+(let ((paths (eval-when-compile (doom-reload))))
+  (setq load-path (car paths)
+        custom-theme-load-path (cadr paths)))
+
+;; Many functions are lazy-loaded. The autoloads.el file contains info on where
+;; to find them if they're called. Tries to generate autoloads.el if one isn't
+;; found.
 (unless (require 'autoloads nil t)
   (doom-reload-autoloads)
   (unless (require 'autoloads nil t)
     (error "Autoloads weren't generated! Run `make autoloads`")))
-
-(use-package anaphora
-  :commands (awhen aif acond awhile))
-
-(use-package persistent-soft
-  :commands (persistent-soft-store
-             persistent-soft-fetch
-             persistent-soft-exists-p
-             persistent-soft-flush
-             persistent-soft-location-readable
-             persistent-soft-location-destroy)
-  :init (defvar pcache-directory (concat doom-temp-dir "/pcache/")))
-
-(use-package async
-  :commands (async-start
-             async-start-process
-             async-get
-             async-wait
-             async-inject-variables))
-
-(use-package json
-  :commands (json-read-from-string json-encode json-read-file))
-
-(use-package help-fns+ ; Improved help commands
-  :commands (describe-buffer describe-command describe-file
-             describe-keymap describe-option describe-option-of-type))
-
-(use-package smex
-  :commands (smex smex-major-mode-commands)
-  :config
-  (setq smex-completion-method 'ivy
-        smex-save-file (concat doom-temp-dir "/smex-items"))
-  (smex-initialize))
 
 
 ;;
@@ -227,12 +178,38 @@ enable multiple minor modes for the same regexp.")
 
 (add-hook 'find-file-hook 'doom|enable-minor-mode-maybe)
 
+
 ;;
-(add-hook! emacs-startup
-  ;; We add this to `after-init-hook' to allow errors to stop it
-  (defadvice save-buffers-kill-emacs (around no-query-kill-emacs activate)
-    "Prevent annoying \"Active processes exist\" query when you quit Emacs."
-    (cl-flet ((process-list ())) ad-do-it)))
+;; Essential plugins
+;;
+
+(require 'dash)
+(require 's)
+(require 'f)
+
+(autoload 'use-package "use-package" "" nil 'macro)
+
+(use-package anaphora
+  :commands (awhen aif acond awhile))
+
+(use-package persistent-soft
+  :commands (persistent-soft-store
+             persistent-soft-fetch
+             persistent-soft-exists-p
+             persistent-soft-flush
+             persistent-soft-location-readable
+             persistent-soft-location-destroy)
+  :init (defvar pcache-directory (concat doom-temp-dir "/pcache/")))
+
+(use-package async
+  :commands (async-start
+             async-start-process
+             async-get
+             async-wait
+             async-inject-variables))
+
+(use-package json
+  :commands (json-read-from-string json-encode json-read-file))
 
 (provide 'core)
 ;;; core.el ends here
