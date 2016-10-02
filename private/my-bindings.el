@@ -64,7 +64,7 @@
       "M-a"               'mark-whole-buffer
       "M-c"               'evil-yank
       "M-o"               'counsel-find-file
-      "M-q"               'evil-quit-all
+      "M-q"               'kill-emacs
       "M-s"               'save-buffer
       "M-v"               'clipboard-yank
       "M-z"               'undo
