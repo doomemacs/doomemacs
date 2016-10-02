@@ -17,17 +17,42 @@
 (setq-default gc-cons-threshold 339430400
               gc-cons-percentage 0.6)
 
-(defalias '! 'eval-when-compile)
+;;
+;; Global Constants
+;;
 
-(defconst doom-emacs-dir    (! (expand-file-name user-emacs-directory)))
-(defconst doom-core-dir     (! (expand-file-name "core" doom-emacs-dir)))
-(defconst doom-modules-dir  (! (expand-file-name "modules" doom-emacs-dir)))
-(defconst doom-private-dir  (! (expand-file-name "private" doom-emacs-dir)))
-(defconst doom-packages-dir (! (expand-file-name (concat ".cask/" emacs-version "/elpa") doom-emacs-dir)))
-(defconst doom-ext-dir      (! (expand-file-name "ext" doom-emacs-dir)))
-(defconst doom-themes-dir   (! (expand-file-name "themes" doom-private-dir)))
+(defconst doom-emacs-dir
+  (expand-file-name user-emacs-directory)
+  "The path to this emacs.d directory")
+
+(defconst doom-core-dir
+  (expand-file-name "core" doom-emacs-dir)
+  "Where essential files are stored")
+
+(defconst doom-modules-dir
+  (expand-file-name "modules" doom-emacs-dir)
+  "Where configuration modules are stored")
+
+(defconst doom-private-dir
+  (expand-file-name "private" doom-emacs-dir)
+  "Where private configuration filse and assets are stored (like snippets)")
+
+(defconst doom-packages-dir
+  (expand-file-name
+   (format ".cask/%s.%s/elpa" emacs-major-version emacs-minor-version)
+   doom-emacs-dir)
+  "Where plugins are installed (by cask)")
+
+(defconst doom-ext-dir
+  (expand-file-name "ext" doom-emacs-dir)
+  "Where external dependencies are stored (like libraries or binaries)")
+
+(defconst doom-themes-dir
+  (expand-file-name "themes" doom-private-dir)
+  "Where theme files and subfolders go")
+
 (defconst doom-temp-dir
-  (! (format "%s/cache/%s" doom-private-dir (system-name)))
+  (format "%s/cache/%s" doom-private-dir (system-name))
   "Hostname-based elisp temp directories")
 
 ;; window-system is deprecated. Not on my watch!
@@ -35,8 +60,8 @@
   (defvar window-system (framep-on-display)))
 
 ;;
-(defvar doom-leader      ","  "Prefix for <leader> bindings")
-(defvar doom-localleader "\\" "Prefix for <localleader> bindings")
+(defconst doom-leader      ","  "Prefix for <leader> bindings")
+(defconst doom-localleader "\\" "Prefix for <localleader> bindings")
 
 (defvar doom-unreal-buffers
   '("^ ?\\*.+" image-mode dired-mode reb-mode messages-buffer-mode
@@ -86,9 +111,9 @@ major-modes, the process gets killed.")
    ("org"   . "http://orgmode.org/elpa/")))
 
 ;; Core settings
-(setq byte-compile-warnings              nil
-      ad-redefinition-action            'accept      ; silence the advised function warnings
-      apropos-do-all                     t
+(setq ad-redefinition-action            'accept      ; silence the advised function warnings
+      apropos-do-all                     t           ; make `apropos' more useful
+      byte-compile-warnings              nil
       compilation-always-kill            t           ; kill compl. process before spawning another
       compilation-ask-about-save         nil         ; save all buffers before compiling
       compilation-scroll-output          t           ; scroll with output while compiling
