@@ -86,6 +86,8 @@
 
 ;; Documentation --- core/core-docs.el
 (depends-on "dash-at-point")
+(depends-on "zeal-at-point")
+(depends-on "google-this")
 
 ;; Completion --- core/core-company.el
 (depends-on "company")
