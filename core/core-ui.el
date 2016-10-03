@@ -37,7 +37,7 @@
  ;; Ask for confirmation on exit only if there are real buffers left
  confirm-kill-emacs
  (lambda (_)
-   (if (doom/get-real-buffers)
+   (if (ignore-errors (doom/get-real-buffers))
        (y-or-n-p "››› Quit?")
      t)))
 
