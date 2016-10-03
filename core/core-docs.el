@@ -22,5 +22,21 @@
      (setq-local ,(if IS-MAC 'dash-at-point-docset 'zeal-at-point-docset)
                  ,docset)))
 
+(use-package google-this
+  :commands (google-this-search
+             google-this-lucky-and-insert-url
+             google-this-lucky-search
+             google-this-string
+             google-this-line
+             google-this-ray
+             google-this-word
+             google-this-symbol
+             google-this-region
+             google-this
+             google-this-noconfirm
+             google-this-error
+             google-this-cpp-reference
+             google-this-forecast))
+
 (provide 'core-docs)
 ;;; core-docs.el ends here
