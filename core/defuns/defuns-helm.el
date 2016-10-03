@@ -54,18 +54,6 @@ DIR specifies the default-directory from which ag is run."
   (if bang (helm-multi-swoop-all search) (helm-swoop :$query search)))
 
 ;;;###autoload
-(defun doom/helm-find-in-emacsd ()
-  (interactive)
-  (let ((default-directory doom-emacs-dir))
-    (helm-projectile-find-file)))
-
-;;;###autoload
-(defun doom/helm-find-in-dotfiles ()
-  (interactive)
-  (let ((default-directory (expand-file-name ".dotfiles" "~")))
-    (helm-projectile-find-file)))
-
-;;;###autoload
 (defun doom/helm-buffers-dwim (&optional all-p)
   "Displays open buffers in current project. If ALL-P, then show all open
 buffers."

@@ -7,15 +7,26 @@
   `(lambda () (interactive)
      (let ((default-directory ,path))
        (,@(if project-p
+              ;; '(helm-projectile-find-file)
               '(counsel-projectile-find-file)
-            '(call-interactively 'counsel-find-file))))))
+            ;; '(call-interactively 'helm-find-files)
+            '(call-interactively 'counsel-find-file)
+            )))))
 
 (map! "<f9>" 'what-face
       ;; Essential
-      "M-x"  'smex
-      "A-x"  'smex
-      "M-X"  'smex-major-mode-commands
-      "A-X"  'smex-major-mode-commands
+      (:when (featurep 'helm)
+        "M-x"  'helm-M-x
+        "A-x"  'helm-M-x
+        "M-X"  'helm-apropos
+        "A-X"  'helm-apropos
+        "M-o"  'helm-find-files)
+      (:when (featurep 'ivy)
+        "M-x"  'smex
+        "A-x"  'smex
+        "M-X"  'smex-major-mode-commands
+        "A-X"  'smex-major-mode-commands
+        "M-o"  'counsel-find-file)
       "M-;"  'eval-expression
       "A-;"  'eval-expression
       ;; Tools
@@ -63,8 +74,7 @@
       "A-SPC"             'just-one-space
       "M-a"               'mark-whole-buffer
       "M-c"               'evil-yank
-      "M-o"               'counsel-find-file
-      "M-q"               'kill-emacs
+      "M-q"               'save-buffers-kill-emacs
       "M-s"               'save-buffer
       "M-v"               'clipboard-yank
       "M-z"               'undo
@@ -87,19 +97,25 @@
       (:leader
         :nv ","   'doom/ivy-switch-project-buffer
         :nv "<"   'doom/ivy-switch-buffer
+        ;; :nv ","   'helm-buffers-list
+        ;; :nv "<"   'helm-mini
         :nv "."   (@find-file-in default-directory)
         :nv "/"   (@find-file-in (doom/project-root) t)
         :nv ">"   'projectile-find-file-in-known-projects
         :n  ":"   'imenu-list-minor-mode
+        ;; :nv ";"   'helm-semantic-or-imenu
         :nv ";"   'counsel-imenu
         :v  "="   'align-regexp
         :nv "a"   'projectile-find-other-file
+        ;; :n  "b"   'helm-bookmarks
         :n  "b"   'counsel-bookmark
         :n  "e"   'doom/flycheck-errors
         :n  "k"   'doom:docs-lookup
         :nv "l"   'doom/nlinum-toggle
+        ;; :nv "m"   'helm-recentf
         :nv "m"   'counsel-recentf
         :nv "M"   'projectile-recentf
+        ;; :nv "p"   'helm-projectile-switch-project
         :nv "p"   'counsel-yank-pop
         :nv "P"   'counsel-projectile
         :n  "R"   'doom/reset-theme
