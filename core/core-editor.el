@@ -278,8 +278,7 @@
 (use-package smex
   :commands (smex smex-major-mode-commands)
   :config
-  (setq smex-completion-method 'ivy
-        smex-save-file (concat doom-temp-dir "/smex-items"))
+  (setq smex-save-file (concat doom-temp-dir "/smex-items"))
   (smex-initialize))
 
 (use-package swiper :commands (swiper swiper-all))

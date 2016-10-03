@@ -13,7 +13,7 @@
   (setq yas-verbosity 0
         yas-indent-line 'auto
         yas-also-auto-indent-first-line t
-        yas-prompt-functions '(doom/yas-ivy-prompt yas-ido-prompt yas-no-prompt)
+        yas-prompt-functions '(yas-ido-prompt yas-no-prompt)
         ;; Only load personal snippets
         yas-snippet-dirs (list (concat doom-private-dir "/snippets")
                                (concat doom-private-dir "/templates")))

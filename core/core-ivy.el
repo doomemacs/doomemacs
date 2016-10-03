@@ -9,9 +9,6 @@
         ivy-wrap t)
 
   :config
-  (after! magit
-    (setq magit-completing-read-function 'ivy-completing-read))
-
   (ivy-mode +1)
   (map! :map ivy-minibuffer-map
         [escape] 'keyboard-escape-quit
@@ -23,6 +20,10 @@
         "C-f" 'forward-word)
   ;; Fix display glitches
   (advice-add 'ivy-done :after 'redraw-display)
+
+  (after! magit (setq magit-completing-read-function 'ivy-completing-read))
+  (after! smex (setq smex-completion-method 'ivy))
+  (after! yasnippet (push 'doom/yas-ivy-prompt yas-prompt-functions))
 
   ;;
   (require 'counsel)
