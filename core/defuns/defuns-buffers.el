@@ -1,5 +1,7 @@
 ;;; defuns-buffers.el
 
+(defvar-local doom--narrowed-origin nil)
+
 ;;;###autoload (autoload 'doom:narrow "defuns-buffers" nil t)
 (evil-define-operator doom:narrow (&optional beg end bang)
   "Restrict editing in this buffer to the current region, indirectly. With BANG,
@@ -11,11 +13,17 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
   (if (region-active-p)
       (progn
         (deactivate-mark)
-        (let ((buf (clone-indirect-buffer nil nil)))
-          (with-current-buffer buf
-            (narrow-to-region beg end))
-          (switch-to-buffer buf)))
-    (widen)))
+        (when bang
+          (let ((old-buf (current-buffer)))
+            (switch-to-buffer (clone-indirect-buffer nil nil))
+            (setq doom--narrowed-origin old-buf)))
+        (narrow-to-region beg end))
+    (if doom--narrowed-origin
+        (progn
+          (kill-this-buffer)
+          (switch-to-buffer doom--narrowed-origin)
+          (setq doom--narrowed-origin nil))
+      (widen))))
 
 ;;;###autoload
 (defun doom/set-read-only-region (begin end)
