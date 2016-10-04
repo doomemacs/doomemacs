@@ -1,5 +1,7 @@
 ;;; module-data.el
 
+(associate! conf-mode :match "/sxhkdrc$")
+
 (associate! nxml-mode :match "\\.plist$")
 (after! nxml-mode
   (def-company-backend! nxml-mode (nxml yasnippet)))
@@ -12,7 +14,8 @@
 (use-package json-mode :mode "\\.js\\(on\\|[hl]int\\(rc\\)?\\)$"
   :config (def-electric! json-mode :chars (?\n ?: ?{ ?})))
 
-(use-package vimrc-mode :mode ("/\\.?g?vimrc$" "\\.vim$" "/\\.vim/rc/.+$"))
+(use-package vimrc-mode
+  :mode ("/\\.?g?vimrc$" "\\.vim$" "/\\.vim/rc/.+$" "/\\.?vimperatorrc$" "\\.vimp$"))
 
 (use-package dockerfile-mode :mode "/Dockerfile$"
   :config
