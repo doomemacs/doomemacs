@@ -234,10 +234,9 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 (defun *vc ()
   "Displays the current branch, colored based on its state."
   (when vc-mode
-    (let ((backend vc-mode)
-          (state   (vc-state buffer-file-name))
+    (let ((state   (vc-state buffer-file-name))
           (face    'mode-line-inactive)
-          (all-the-icons-scale-factor 1.2)
+          (all-the-icons-scale-factor 1.0)
           (all-the-icons-default-adjust -0.1))
       (concat (propertize " " 'face 'variable-pitch)
               (cond ((memq state '(edited added))
@@ -245,31 +244,25 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                      (all-the-icons-octicon
                       "git-branch"
                       :face face
+                      :height 1.2
                       :v-adjust -0.05))
                     ((eq state 'needs-merge)
                      (if active (setq face 'doom-modeline-info))
-                     (all-the-icons-octicon
-                      "git-merge"
-                      :face face
-                      :height 1.0))
+                     (all-the-icons-octicon "git-merge" :face face))
                     ((eq state 'needs-update)
                      (if active (setq face 'doom-modeline-warning))
-                     (all-the-icons-octicon
-                      "arrow-down"
-                      :face face
-                      :height 1.0))
+                     (all-the-icons-octicon "arrow-down" :face face))
                     ((memq state '(removed conflict unregistered))
                      (if active (setq face 'doom-modeline-urgent))
-                     (all-the-icons-octicon
-                      "alert"
-                      :face face
-                      :height 1.0))
+                     (all-the-icons-octicon "alert" :face face))
                     (t
                      (if active (setq face 'mode-line))
                      (all-the-icons-octicon
                       "git-branch"
-                      :face face)))
-              (propertize backend 'face (if active face))
+                      :face face
+                      :height 1.2
+                      :v-adjust -0.05)))
+              (propertize vc-mode 'face (if active face))
               "  "))))
 
 (defvar-local doom--flycheck-err-cache nil "")
