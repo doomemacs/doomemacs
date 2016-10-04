@@ -200,7 +200,7 @@
               (put-text-property 0 1 'face 'hs-face display-string)
               (put-text-property (1- len) len 'face 'hs-face display-string)
               (put-text-property 1 (1- len)
-                                 'face `(:inherit hs-face :family ,(all-the-icons-octicon-family) :height 1.2)
+                                 'face `(:inherit hs-face :family ,(all-the-icons-octicon-family) :height 1.1)
                                  display-string)
               (overlay-put ov 'before-string marker-string)
               (overlay-put ov 'display display-string))))))
