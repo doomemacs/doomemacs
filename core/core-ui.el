@@ -1,4 +1,4 @@
-;;; core-ui.el --- interface & mode-line config
+;;; core-ui.el
 
 (defvar doom-ui-fringe-size '3
   "Default fringe width")
@@ -87,6 +87,16 @@
 ;;
 ;; Plugins
 ;;
+
+(use-package all-the-icons
+  :commands (all-the-icons-icon-for-buffer
+             all-the-icons-icon-for-file
+             all-the-icons-icon-for-mode
+             all-the-icons-alltheicon
+             all-the-icons-faicon
+             all-the-icons-fileicon
+             all-the-icons-oction
+             all-the-icons-wicon))
 
 (use-package doom-themes
   :config
