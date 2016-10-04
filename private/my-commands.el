@@ -41,6 +41,7 @@
 (ex! "dash"        'doom:docs-lookup)            ; look up documentation
 (ex! "db"          'doom:db)
 (ex! "dbu[se]"     'doom:db-select)
+(ex! "go[ogle]"    'doom:google-search)
 (ex! "http"        'httpd-start)                 ; start http server
 (ex! "rx"          'doom:regex)                  ; open re-builder
 (ex! "repl"        'doom:repl)                   ; invoke or send to repl
