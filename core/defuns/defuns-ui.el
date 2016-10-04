@@ -40,7 +40,7 @@
     (disable-theme doom-ui-theme))
   (load-theme theme t)
   (unless suppress-font
-    (doom/load-font doom-current-font))
+    (doom/load-font doom-ui-font))
   (setq doom-ui-theme theme))
 
 ;;;###autoload
