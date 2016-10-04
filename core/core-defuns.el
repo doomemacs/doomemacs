@@ -359,8 +359,8 @@ only compile defun libraries."
       (byte-recompile-directory doom-modules-dir 0 t))
     (when minimal
       (byte-recompile-directory (concat doom-core-dir "/defuns") 0 t)
-      (byte-recompile-directory (concat doom-modules-dir "/defuns") 0 t))
-    (message "Compiled!")))
+      (byte-recompile-directory (concat doom-modules-dir "/defuns") 0 t)))
+  (message "Compiled!"))
 
 (provide 'core-defuns)
 ;;; core-defuns.el ends here
