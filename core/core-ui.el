@@ -3,7 +3,7 @@
 (defvar doom-ui-fringe-size '3
   "Default fringe width")
 
-(defvar doom-ui-theme 'doom-one-dark
+(defvar doom-ui-theme 'doom-one
   "The color theme currently in use.")
 
 (defvar doom-ui-font
