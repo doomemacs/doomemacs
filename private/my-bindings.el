@@ -7,9 +7,7 @@
   `(lambda () (interactive)
      (let ((default-directory ,path))
        (,@(if project-p
-              ;; '(helm-projectile-find-file)
               '(counsel-projectile-find-file)
-            ;; '(call-interactively 'helm-find-files)
             '(call-interactively 'counsel-find-file)
             )))))
 
