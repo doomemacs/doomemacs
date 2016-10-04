@@ -136,24 +136,24 @@ cached the first time."
   "Displays the buffer's full path relative to the project root (includes the
 project root). Excludes the file basename. See `doom-buffer-name' for that."
   (when buffer-file-name
-    (let ((buffer-path (f-relative (f-dirname buffer-file-name) (doom/project-root)))
-          (max-length (truncate (/ (window-body-width) 1.75))))
+    (let* ((default-directory (f-dirname buffer-file-name))
+           (buffer-path (f-relative buffer-file-name (doom/project-root)))
+           (max-length (truncate (* (window-body-width) 0.4))))
       (when (and buffer-path (not (equal buffer-path ".")))
-        (concat (if (> (length buffer-path) max-length)
-                    (let ((path (reverse (split-string buffer-path "/" t)))
-                          (output ""))
-                      (when (and path (equal "" (car path)))
-                        (setq path (cdr path)))
-                      (while (and path (<= (length output) (- max-length 4)))
-                        (setq output (concat (car path) "/" output))
-                        (setq path (cdr path)))
-                      (when path
-                        (setq output (concat "../" output)))
-                      (when (string-suffix-p "/" output)
-                        (setq output (substring output 0 -1)))
-                      output)
-                  buffer-path)
-                "/")))))
+        (if (> (length buffer-path) max-length)
+            (let ((path (reverse (split-string buffer-path "/" t)))
+                  (output ""))
+              (when (and path (equal "" (car path)))
+                (setq path (cdr path)))
+              (while (and path (<= (length output) (- max-length 4)))
+                (setq output (concat (car path) "/" output))
+                (setq path (cdr path)))
+              (when path
+                (setq output (concat "../" output)))
+              (when (string-suffix-p "/" output)
+                (setq output (substring output 0 -1)))
+              output)
+          buffer-path)))))
 
 
 ;;
@@ -204,15 +204,9 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                        :v-adjust -0.05)
                       " "))
 
-            (if modified-p
-                (propertize (concat (doom-buffer-path)
-                                    "%b")
-                            'face 'doom-modeline-buffer-modified)
-              (concat
-               (propertize (or (doom-buffer-path) "")
-                           'face (if active 'doom-modeline-buffer-path))
-               (propertize "%b"
-                           'face (if active 'doom-modeline-buffer-name))))
+            (propertize (doom-buffer-path)
+                        'face `(inherit (,(if modified-p 'doom-modeline-buffer-modified)
+                                         ,(if active 'doom-modeline-buffer-path))))
             "  %l:%c %p  ")))
 
 (defun *buffer-encoding ()
