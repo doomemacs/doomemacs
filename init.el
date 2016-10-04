@@ -30,11 +30,7 @@
 
 (load (concat user-emacs-directory "core/core"))
 
-(doom :theme 'doom-one
-      :font ("Fira Mono" 12)
-
-      ;;; The heart of DOOM
-      core-popup         ; taming sudden and inevitable windows
+(doom core-popup         ; taming sudden and inevitable windows
       core-os            ; os-specific configs
       core-ui            ; draw me like one of your French editors
       core-modeline      ; a self-contained mode-line config for masochists

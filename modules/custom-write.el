@@ -11,7 +11,7 @@
 (defconst write-mode-font (font-spec :family "Source Sans Pro" :size 14))
 
 (defconst write-mode--last-mode-line mode-line-format)
-(defconst write-mode--last-theme doom-current-theme)
+(defconst write-mode--last-theme doom-ui-theme)
 (defconst write-mode--last-line-spacing line-spacing)
 
 (defun doom-write-mode-line (&optional id)

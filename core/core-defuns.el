@@ -1,18 +1,9 @@
 ;;; core-defuns.el
 
 ;; Bootstrap macro
-(defmacro doom (_ theme __ font &rest packages)
+(defmacro doom (&rest packages)
   "Bootstrap DOOM emacs and initialize PACKAGES"
   `(let (file-name-handler-alist)
-     ;; Global constants
-     (defconst doom-default-theme ,theme)
-     (defconst doom-default-font
-       (font-spec :family ,(nth 0 font)
-                  :size ,(nth 1 font)
-                  :antialias ,(not (nth 2 font))))
-
-     (defconst doom-current-theme doom-default-theme)
-     (defconst doom-current-font doom-default-font)
      ;; Local settings
      (load "~/.emacs.local.el" t t)
      ;; Bootstrap
@@ -30,7 +21,6 @@
        ;; Prevent any auto-displayed text + benchmarking
        (advice-add 'display-startup-echo-area-message :override 'ignore)
        (message ""))
-
      (setq-default gc-cons-threshold 4388608
                    gc-cons-percentage 0.4)))
 

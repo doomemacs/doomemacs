@@ -25,23 +25,23 @@
 ;;;###autoload
 (defun doom/reset-theme ()
   (interactive)
-  (doom/load-theme (or doom-current-theme doom-default-theme)))
+  (doom/load-theme doom-ui-theme))
 
 ;;;###autoload
 (defun doom/load-font (font)
   (interactive)
   (set-frame-font font t)
-  (setq doom-current-font font))
+  (setq doom-ui-font font))
 
 ;;;###autoload
 (defun doom/load-theme (theme &optional suppress-font)
   (interactive)
-  (when doom-current-theme
-    (disable-theme doom-current-theme))
+  (when doom-ui-theme
+    (disable-theme doom-ui-theme))
   (load-theme theme t)
   (unless suppress-font
     (doom/load-font doom-current-font))
-  (setq doom-current-theme theme))
+  (setq doom-ui-theme theme))
 
 ;;;###autoload
 (defun doom/show-as (how &optional pred)

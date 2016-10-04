@@ -1,6 +1,19 @@
 ;;; core-ui.el --- interface & mode-line config
 
-(defconst doom-fringe-size '3 "Default fringe width")
+(defvar doom-ui-fringe-size '3
+  "Default fringe width")
+
+(defvar doom-ui-theme 'doom-one-dark
+  "The color theme currently in use.")
+
+(defvar doom-ui-font
+  (font-spec :family "Fira Mono" :size 12)
+  "The font currently in use.")
+
+
+;;
+;; Configuration
+;;
 
 (setq-default
  mode-line-default-help-echo nil ; don't say anything on mode-line mouseover
@@ -33,7 +46,6 @@
  ;; Minibuffer resizing
  resize-mini-windows 'grow-only
  max-mini-window-height 0.3
-
  ;; Ask for confirmation on exit only if there are real buffers left
  confirm-kill-emacs
  (lambda (_)
@@ -43,36 +55,6 @@
 
 ;; y/n instead of yes/no
 (fset 'yes-or-no-p 'y-or-n-p)
-
-;; Initialize UI
-(tooltip-mode -1)  ; show tooltips in echo area instead
-(menu-bar-mode -1) ; no menu in GUI Emacs (or terminal)
-(when window-system
-  (scroll-bar-mode -1)  ; no scrollbar
-  (tool-bar-mode   -1)  ; no toolbar
-  ;; full filename in frame title
-  (setq frame-title-format '(buffer-file-name "%f" ("%b")))
-  ;; Set theme and font
-  (with-demoted-errors "FONT ERROR: %s"
-    (set-frame-font doom-default-font t)
-    ;; Fallback to `doom-unicode-font' for Unicode characters
-    (set-fontset-font t 'unicode doom-unicode-font))
-  ;; standardize fringe width
-  (fringe-mode doom-fringe-size)
-  (push `(left-fringe  . ,doom-fringe-size) default-frame-alist)
-  (push `(right-fringe . ,doom-fringe-size) default-frame-alist)
-  ;; slightly larger default frame size on startup
-  (push '(width . 120) default-frame-alist)
-  (push '(height . 40) default-frame-alist)
-  ;; Slightly transparent frame
-  (push '(alpha . 98) default-frame-alist)
-  ;; no fringe in the minibuffer
-  (add-hook! (emacs-startup minibuffer-setup)
-    (set-window-fringes (minibuffer-window) 0 0 nil))
-  ;; Show tilde in margin on empty lines
-  (define-fringe-bitmap 'tilde [64 168 16] nil nil 'center)
-  (set-fringe-bitmap-face 'tilde 'fringe)
-  (setcdr (assq 'empty-line fringe-indicator-alist) 'tilde))
 
 ;; mode-line is unimportant in help/compile windows
 (add-hook 'help-mode-hook 'doom-hide-mode-line-mode)
@@ -110,7 +92,7 @@
   :config
   (setq doom-neotree-enable-variable-pitch t
         doom-neotree-line-spacing 3)
-  (load-theme doom-current-theme t)
+  (load-theme doom-ui-theme t)
   ;; brighter source buffers
   (add-hook 'find-file-hook 'doom-buffer-mode)
   ;; brighter minibuffer when active
@@ -209,6 +191,40 @@
   (setq-default visual-fill-column-center-text nil
                 visual-fill-column-width fill-column
                 split-window-preferred-function 'visual-line-mode-split-window-sensibly))
+
+
+;;
+;; Bootstrap
+;;
+
+(tooltip-mode -1) ; relegate tooltips to echo area only
+(menu-bar-mode -1)
+(when window-system
+  (scroll-bar-mode -1)
+  (tool-bar-mode -1)
+  ;; full filename in frame title
+  (setq frame-title-format '(buffer-file-name "%f" ("%b")))
+  ;; Set theme and font
+  (with-demoted-errors "FONT ERROR: %s"
+    (set-frame-font doom-ui-font t)
+    ;; Fallback to `doom-unicode-font' for Unicode characters
+    (set-fontset-font t 'unicode doom-ui-font))
+  ;; standardize fringe width
+  (fringe-mode doom-ui-fringe-size)
+  (push `(left-fringe  . ,doom-ui-fringe-size) default-frame-alist)
+  (push `(right-fringe . ,doom-ui-fringe-size) default-frame-alist)
+  ;; slightly larger default frame size on startup
+  (push '(width . 120) default-frame-alist)
+  (push '(height . 40) default-frame-alist)
+  ;; Slightly transparent frame
+  (push '(alpha . 98) default-frame-alist)
+  ;; no fringe in the minibuffer
+  (add-hook! (emacs-startup minibuffer-setup)
+    (set-window-fringes (minibuffer-window) 0 0 nil))
+  ;; Show tilde in margin on empty lines
+  (define-fringe-bitmap 'tilde [64 168 16] nil nil 'center)
+  (set-fringe-bitmap-face 'tilde 'fringe)
+  (setcdr (assq 'empty-line fringe-indicator-alist) 'tilde))
 
 (provide 'core-ui)
 ;;; core-ui.el ends here
