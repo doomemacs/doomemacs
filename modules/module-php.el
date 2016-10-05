@@ -18,6 +18,8 @@
 
   (map! :map php-mode-map (:localleader :nv ";" 'doom/append-semicolon))
 
+  (add-hook! php-mode (setq-local sp-max-pair-length 6))
+
   (sp-with-modes '(php-mode)
     (sp-local-pair "/*"    "*/" :post-handlers '(("||\n[i]" "RET") ("| " "SPC")))
     (sp-local-pair "/**"   "*/" :post-handlers '(("||\n[i]" "RET") ("||\n[i]" "SPC")))

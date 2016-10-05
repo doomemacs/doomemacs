@@ -14,14 +14,7 @@
   (setq sh-indent-after-continuation 'always)
 
   ;; [pedantry intensifies]
-  (add-hook! sh-mode (setq mode-name "sh"))
-
-  (sp-with-modes '(sh-mode)
-    (sp-local-pair "case"  "" :when '(("SPC")) :post-handlers '((:add doom/sp-insert-yasnippet)) :actions '(insert))
-    (sp-local-pair "if"    "" :when '(("SPC")) :post-handlers '((:add doom/sp-insert-yasnippet)) :actions '(insert))
-    (sp-local-pair "for"   "" :when '(("SPC")) :post-handlers '((:add doom/sp-insert-yasnippet)) :actions '(insert))
-    (sp-local-pair "elif"  "" :when '(("SPC")) :post-handlers '((:add doom/sp-insert-yasnippet)) :actions '(insert))
-    (sp-local-pair "while" "" :when '(("SPC")) :post-handlers '((:add doom/sp-insert-yasnippet)) :actions '(insert))))
+  (add-hook! sh-mode (setq mode-name "sh")))
 
 (use-package company-shell
   :after sh-script

@@ -8,22 +8,9 @@
   (def-company-backend! lua-mode (lua yasnippet))
   (def-electric! lua-mode :words ("else" "end"))
   (def-repl! lua-mode doom/inf-lua)
-  (add-hook! lua-mode (setq-local sp-max-pair-length 9))
-  (sp-with-modes '(lua-mode)
-    ;; disable defaults
-    (sp-local-pair "if" nil :actions       :rem)
-    (sp-local-pair "while" nil :actions    :rem)
-    (sp-local-pair "function" nil :actions :rem)
-    (sp-local-pair "if "   " end")
-    (sp-local-pair "then " " end")
-    (sp-local-pair "do "   " end")
-    (sp-local-pair "if"    "end" :when '(("RET")) :post-handlers '(" |\n[i]"))
-    (sp-local-pair "then"  "end" :when '(("RET")) :post-handlers '("||\n[i]"))
-    (sp-local-pair "do"    "end" :when '(("RET")) :post-handlers '("||\n[i]"))
-    ;; block functions
-    (sp-local-pair "function" "end" :when '(sp-point-after-bol-p) :post-handlers '(" |\n[i]"))
-    ;; inline functions
-    (sp-local-pair "function " " end" :unless '(sp-point-after-bol-p))))
+
+  ;; sp's lua-specific rules are obnoxious, so we disable them
+  (setq sp-pairs (delete (assq 'lua-mode sp-pairs) sp-pairs)))
 
 (use-package company-lua :after lua-mode)
 

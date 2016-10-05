@@ -252,29 +252,26 @@
         sp-highlight-pair-overlay nil
         sp-cancel-autoskip-on-backward-movement nil
         sp-show-pair-delay 0
-        sp-max-pair-length 5)
-
+        sp-max-pair-length 3)
   (smartparens-global-mode 1)
   (require 'smartparens-config)
-
   ;; Smartparens interferes with Replace mode
   (add-hook 'evil-replace-state-entry-hook 'turn-off-smartparens-mode)
   (add-hook 'evil-replace-state-exit-hook  'turn-on-smartparens-mode)
-
   ;; Auto-close more conservatively
   (sp-pair "'" nil :unless '(sp-point-after-word-p))
   (sp-pair "\"" nil :unless '(sp-point-before-word-p sp-point-after-word-p sp-point-before-same-p))
   (sp-pair "{" nil :post-handlers '(("||\n[i]" "RET") ("| " " "))
-                   :unless '(sp-point-before-word-p sp-point-before-same-p))
+           :unless '(sp-point-before-word-p sp-point-before-same-p))
   (sp-pair "(" nil :post-handlers '(("||\n[i]" "RET") ("| " " "))
-                   :unless '(sp-point-before-word-p sp-point-before-same-p))
+           :unless '(sp-point-before-word-p sp-point-before-same-p))
   (sp-pair "[" nil :post-handlers '(("| " " "))
-                   :unless '(sp-point-before-word-p sp-point-before-same-p))
+           :unless '(sp-point-before-word-p sp-point-before-same-p))
 
   (sp-local-pair
    'css-mode "/*" "*/" :post-handlers '(("[d-3]||\n[i]" "RET") ("| " "SPC")))
   (sp-local-pair '(sh-mode markdown-mode) "`" nil
-   :unless '(sp-point-before-word-p sp-point-before-same-p))
+                 :unless '(sp-point-before-word-p sp-point-before-same-p))
   (sp-with-modes '(xml-mode nxml-mode php-mode)
     (sp-local-pair "<!--" "-->"   :post-handlers '(("| " "SPC")))))
 
