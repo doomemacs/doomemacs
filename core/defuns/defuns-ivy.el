@@ -23,19 +23,19 @@
                     (concat
                      (propertize buffer-name
                                  'face (cond ((string-match-p "^ ?\\*" buffer-name)
-                                              'font-lock-doc-face)
+                                              'font-lock-comment-face)
                                              ((not (string= proot (doom/project-root)))
                                               'font-lock-keyword-face)
                                              (buffer-read-only
                                               'error)))
                      (when (and buffer-file-name (buffer-modified-p))
-                       (propertize "[+]" 'face 'mode-line-is-modified)))
+                       (propertize "[+]" 'face 'doom-modeline-buffer-modified)))
                     (propertize mode-name 'face 'font-lock-constant-face)
                     (when buffer-file-name
                       (f-slash (abbreviate-file-name (f-dirname buffer-file-name))))))))
              (or buffer-list (doom/get-buffers))))))
 
-(defun doom-ivy-select-buffer-action (buffer)
+(defun doom--ivy-select-buffer-action (buffer)
   (ivy--switch-buffer-action
    (s-chop-suffix
     "[+]"
@@ -49,7 +49,7 @@ all open buffers."
   (ivy-read (format "%s buffers: " (if all-p "All" "Project"))
             (doom-ivy-get-buffers (if all-p (buffer-list)))
             :matcher #'ivy--switch-buffer-matcher
-            :action #'doom-ivy-select-buffer-action
+            :action #'doom--ivy-select-buffer-action
             :keymap ivy-switch-buffer-map
             :caller 'doom/ivy-switch-project-buffer))
 
