@@ -2,6 +2,8 @@
 
 ;;;###autoload
 (defmacro def-electric! (modes &rest rest)
+  "Declare :words (list of strings) or :chars (lists of chars) in MODES that
+trigger electric indentation."
   (declare (indent 1))
   (let ((modes (-list modes))
         (chars (plist-get rest :chars))
@@ -17,6 +19,7 @@
 
 ;;;###autoload
 (defmacro def-rotate! (modes &rest rest)
+  "Declare :symbols, :words or :patterns that `rotate-text' will cycle through."
   (declare (indent 1))
   (let ((modes (if (listp modes) modes (list modes)))
         (symbols (plist-get rest :symbols))
