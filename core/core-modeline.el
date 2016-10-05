@@ -401,9 +401,10 @@ lines are selected, or the NxM dimensions of a block selection."
                       " "
                       ,(if (eq id 'scratch)
                            '(*buffer-project)
-                         '(*buffer-info))
-                      ,(if (eq id 'media)
-                           '(*media-info)
+                         (if (eq id 'media)
+                             '(*media-info)
+                           '(*buffer-info)))
+                      ,(unless (eq id 'media)
                          '(list "  %l:%c %p  "
                                 (*selection-info)
                                 (*flycheck)))))
@@ -416,7 +417,7 @@ lines are selected, or the NxM dimensions of a block selection."
                                                     ,(+ 1 (string-width (format-mode-line rhs)))))))))
       (list lhs mid rhs))))
 
-(setq mode-line-format (doom-modeline))
+(setq-default mode-line-format (doom-modeline))
 
 (add-hook! image-mode
   (setq mode-line-format (doom-modeline 'media)))
