@@ -129,7 +129,7 @@ cached the first time."
 (defun doom-buffer-path ()
   "Displays the buffer's full path relative to the project root (includes the
 project root). Excludes the file basename. See `doom-buffer-name' for that."
-  (when buffer-file-name
+  (if buffer-file-name
     (let* ((default-directory (f-dirname buffer-file-name))
            (buffer-path (f-relative buffer-file-name (doom/project-root)))
            (max-length (truncate (* (window-body-width) 0.4))))
@@ -147,7 +147,8 @@ project root). Excludes the file basename. See `doom-buffer-name' for that."
               (when (string-suffix-p "/" output)
                 (setq output (substring output 0 -1)))
               output)
-          buffer-path)))))
+          buffer-path)))
+    "%b"))
 
 
 ;;
