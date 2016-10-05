@@ -1,31 +1,21 @@
 ;;; module-java.el
 
-(after! c-initialization
-  (def-docset! java-mode "java,javafx,grails,groovy,playjava,spring,cvj,processing,javadoc"))
-
-(defvar eclim-eclipse-dirs '("/Applications/eclipse"))
-(defvar eclim-executable     "/Applications/eclipse/eclim")
-(use-package eclim
-  :functions (eclim--project-dir eclim--project-name)
-  :commands (eclim-mode global-eclim-mode)
-  :preface
-  :when (file-exists-p eclim-executable)
-  :init (add-hook 'java-mode-hook 'eclim-mode)
+(use-package meghanada
+  :init
+  (add-hook! java-mode '(meghanada-mode flycheck-mode))
   :config
-  ;; (require 'eclim-ant)
-  ;; (require 'eclim-maven)
-  (require 'eclim-problems)
-  (require 'eclim-project)
-  (require 'eclimd)
-  (setq help-at-pt-display-when-idle t)
-  (setq help-at-pt-timer-delay 0.1)
-  (help-at-pt-set-timer)
+  (def-docset! java-mode "java,javafx,grails,groovy,playjava,spring,cvj,processing,javadoc")
+  (def-builder! java-mode meghanada-compile-project)
 
-  (map! :map java-mode-map :m "gd" 'eclim-java-find-declaration))
+  (setq meghanada-server-install-dir (f-expand "meghanada-server" doom-ext-dir)
+        meghanada-use-company t
+        meghanada-use-flycheck t
+        meghanada-use-auto-start t)
 
-(use-package company-emacs-eclim
-  :after eclim
-  :config (company-emacs-eclim-setup))
+  (unless (f-exists? (meghanada--locate-server-jar))
+    (meghanada-install-server))
+
+  (map! :map meghanada-mode-map :m "gd" 'meghanada-jump-declaration))
 
 (use-package android-mode
   :commands android-mode
