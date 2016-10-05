@@ -123,9 +123,6 @@ major-modes, the process gets killed.")
       confirm-nonexistent-file-or-buffer t
       delete-by-moving-to-trash          t
       echo-keystrokes                    0.02        ; show me what I type
-      ediff-diff-options                 "-w"
-      ediff-split-window-function       'split-window-horizontally  ; side-by-side diffs
-      ediff-window-setup-function       'ediff-setup-windows-plain  ; no extra frames
       enable-recursive-minibuffers       nil         ; no minibufferception
       idle-update-delay                  5           ; update a little less often
       major-mode                        'text-mode

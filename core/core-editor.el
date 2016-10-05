@@ -85,7 +85,6 @@
            windows))
 (winner-mode 1)
 
-
 ;; Let editorconfig handle global whitespace settings
 (use-package editorconfig :demand t
   :mode ("\\.?editorconfig$" . editorconfig-conf-mode)
@@ -94,6 +93,16 @@
   ;; Show whitespace in tabs indentation mode
   (add-hook! 'editorconfig-custom-hooks
     (if indent-tabs-mode (whitespace-mode +1))))
+
+;; Ediff
+(setq ediff-diff-options           "-w"
+      ediff-split-window-function 'split-window-horizontally
+      ;; no extra frames
+      ediff-window-setup-function 'ediff-setup-windows-plain)
+
+(defvar doom-ediff-enabled nil)
+(add-hook! ediff-startup (setq doom-ediff-enabled t))
+(add-hook! ediff-quit    (setq doom-ediff-enabled nil))
 
 
 ;;
