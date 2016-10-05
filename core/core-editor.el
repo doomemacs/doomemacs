@@ -179,6 +179,9 @@
   :commands (hs-minor-mode hs-toggle-hiding hs-already-hidden-p)
   :config (setq hs-isearch-open t)
   :init
+  (defun doom*load-hs-minor-mode ()
+    (hs-minor-mode 1)
+    (advice-remove 'evil-toggle-fold 'doom-load-hs-minor-mode))
   (advice-add 'evil-toggle-fold :before 'doom*load-hs-minor-mode)
   ;; Prettify code folding in emacs
   (define-fringe-bitmap 'hs-marker [16 48 112 240 112 48 16] nil nil 'center)

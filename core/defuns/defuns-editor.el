@@ -40,11 +40,6 @@
       (setq *linum-mdown-line* nil))))
 
 ;;;###autoload
-(defun doom*load-hs-minor-mode ()
-  (hs-minor-mode 1)
-  (advice-remove 'evil-toggle-fold 'doom-load-hs-minor-mode))
-
-;;;###autoload
 (defun doom/reselect-paste ()
   "Go back into visual mode and reselect the last pasted region."
   (interactive)
