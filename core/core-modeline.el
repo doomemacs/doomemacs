@@ -376,6 +376,11 @@ lines are selected, or the NxM dimensions of a block selection."
         length))
      'face (if active 'doom-modeline-panel 'mode-line-inactive))))
 
+(defun *media-info ()
+  (cond ((eq major-mode 'image-mode)
+         (let ((size (image-size (image-get-display-property) :pixels)))
+           (format "  %dx%d  " (car size) (cdr size))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun doom-modeline (&optional id)
@@ -394,17 +399,24 @@ lines are selected, or the NxM dimensions of a block selection."
                       ,(if (eq id 'scratch)
                            '(*buffer-project)
                          '(*buffer-info))
-                      (*selection-info)
-                      (*flycheck)))
-           (rhs (list (*buffer-encoding)
-                      (*vc)
+                      ,(if (eq id 'media)
+                           '(*media-info)
+                         '(list "  %l:%c %p  "
+                                (*selection-info)
+                                (*flycheck)))))
+           (rhs (list ,(unless (eq id 'media)
+                         '(list (*buffer-encoding)
+                                (*vc)))
                       (*major-mode)))
            (mid (propertize
                  " " 'display `((space :align-to (- (+ right right-fringe right-margin)
                                                     ,(+ 1 (string-width (format-mode-line rhs)))))))))
       (list lhs mid rhs))))
 
-(setq-default mode-line-format (doom-modeline))
+(setq mode-line-format (doom-modeline))
+
+(add-hook! image-mode
+  (setq mode-line-format (doom-modeline 'media)))
 
 
 ;;
