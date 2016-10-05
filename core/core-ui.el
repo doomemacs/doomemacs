@@ -46,6 +46,7 @@
  ;; Minibuffer resizing
  resize-mini-windows 'grow-only
  max-mini-window-height 0.3
+ image-animate-loop t
  ;; Ask for confirmation on exit only if there are real buffers left
  confirm-kill-emacs
  (lambda (_)
