@@ -177,7 +177,10 @@ project root). Excludes the file basename. See `doom-buffer-name' for that."
   "Combined information about the current buffer, including the current working
 directory, the file name, and its state (modified, read-only or non-existent)."
   (let ((all-the-icons-scale-factor 1.2)
-        (modified-p (buffer-modified-p)))
+        (modified-p (buffer-modified-p))
+        faces)
+    (if active (push 'doom-modeline-buffer-path faces))
+    (if modified-p (push 'doom-modeline-buffer-modified faces))
     (concat (if buffer-read-only
                 (concat (all-the-icons-octicon
                          "lock"
@@ -197,8 +200,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                        :v-adjust -0.05)
                       " "))
             (propertize (doom-buffer-path)
-                        'face `(:inherit (,(if modified-p 'doom-modeline-buffer-modified)
-                                          ,(if active 'doom-modeline-buffer-path)))))))
+                        'face (if (or modified-p active) `(:inherit ,faces))))))
 
 (defun *buffer-encoding ()
   "The encoding and eol style of the buffer."
