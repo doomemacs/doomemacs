@@ -298,7 +298,7 @@ then include buffers that aren't part of the current project."
         (new-buf (get-buffer-create "*doom:scratch*")))
     (with-current-buffer new-buf
       (setq default-directory old-project)
-      (setq mode-line-format (doom-modeline 'scratch))
+      (setq mode-line-format (doom-modeline))
       (when (and (not (eq major-mode mode))
                  (functionp mode))
         (funcall mode))

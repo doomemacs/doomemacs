@@ -1,87 +1,106 @@
+[![Main screenshot](https://raw.githubusercontent.com/hlissner/.emacs.d/screenshots/main.png?raw=true)][sc]
+
 [![MIT](https://img.shields.io/badge/license-MIT-green.svg)](./LICENSE)
+[![DOOM v1.2.9](https://img.shields.io/badge/DOOM-v1.2.9-blue.svg)](./init.el)
 
-[![Yay! Evil!](https://raw.githubusercontent.com/hlissner/.emacs.d/screenshots/cacochan.png)](http://ultravioletbat.deviantart.com/art/Yay-Evil-111710573)
+<a href="http://ultravioletbat.deviantart.com/art/Yay-Evil-111710573">
+  <img src="https://raw.githubusercontent.com/hlissner/.emacs.d/screenshots/cacochan.png" align="right" />
+</a>
 
-This is an Emacs configuration for a stubborn, melodramatic and shell-dwelling
-vimmer disappointed with the text-editor status quo.
+This is an Emacs configuration for a stubborn, melodramatic and
+shell-dwelling vimmer disappointed with the text-editor status quo.
 
-Doom tries to look and act like modern editors (whatever that will mean to me on
-any given day), emulates vim as best it can and strives to surpass it in any way
-possible. All to fit my needs as a software developer, indie gamedev, designer,
-scientist and doom enthusiast.
+Doom tries to look and act like modern editors (whatever that will
+mean to me on any given day), emulates vim as best it can and strives
+to surpass it in any way possible. All to fit my needs as a software
+developer, indie game developer, UX designer, scientist and doom
+enthusiast.
 
-It was tailored for Emacs 25+ on OSX 10.11+. I use [vim] everywhere else.
+It was tailored for Emacs 25+ on **OSX 10.11+** and
+**Arch Linux 4.7+**. I use [vim] everywhere else.
 
-![Main screenshot](https://raw.githubusercontent.com/hlissner/.emacs.d/screenshots/main.png?raw=true)
-
-**NOTE:** you can [find the theme in a separate repo](https://github.com/hlissner/emacs-doom-theme).
+**NOTE:** you can [find the theme in a separate repo][doom-theme].
 
 ## Installation
 
+Depends on [Cask] and make:
+
 ```bash
-# Ensure homebrew is up to date
-brew update && brew upgrade
-
-# Install cask + emacs
-brew install cask
-brew tap railwaycat/emacsmacport
-brew install emacs-mac --with-imagemagick --with-modern-icon --HEAD
-
-# Install this emacs.d
 git clone https://github.com/hlissner/.emacs.d ~/.emacs.d
 cd ~/.emacs.d
 make          # installs plugins via cask and generates autoloads
 
-# Optional
+# OPTIONAL
 make compile  # compiles core and autoloaded files
 make snippets # install hlissner/emacs-snippets into private/snippets
 ```
 
-For a more comprehensive byte compile, run `:bc!` (`:bc` will compile the
-current *.el file).
+Run `:bc!` for a more comprehensive byte compile (`:bc` will compile
+the current, open *.el file).
+
+For OSX users, I recommend Yukihiro Matsumoto's fork of Emacs, which
+you can get through homebrew:
+
+```bash
+brew tap railwaycat/emacsmacport
+brew install emacs-mac --with-imagemagick --with-modern-icon --HEAD
+```
 
 ## Features
 
 To get a picture of what's in here, check out:
 
-* **[The Caskfile](Cask)**: lists installed plugins and where they're configured.
-* **[init.el](init.el)**: lists all loaded modules
-* **[core/core-modeline.el](core/core-modeline.el)**: my modeline config
-* **[private/my-bindings.el](private/my-bindings.el)**: most of the custom keybinds
-* **[private/my-commands.el](private/my-commands.el)**: available custom ex commands
-* **[ext/*.sh](ext/)**: scripts for external dependency setup (e.g. irony-mode)
+* **[The Caskfile](Cask)**: lists installed plugins & where they're
+  configured.
+* **[init.el](init.el)**: birds-eye view of loaded modules and load
+  order.
+* **[core/core-modeline.el](core/core-modeline.el)**: my modeline
+  config.
+* **[private/my-bindings.el](private/my-bindings.el)**: most of my
+  custom keybinds.
+* **[private/my-commands.el](private/my-commands.el)**: custom ex
+  commands.
+* **[ext/*.sh](ext/)**: scripts that will set up external
+  dependencies, such as [irony-mode] or [racer].
 
 See screenshots in the [screenshots branch][sc].
 
 ### Highlights
 
-* Tamed popup windows with **[shackle]**; see `def-popup!` and `shackle-rules`.
-  e.g. help buffers will always pop up at the bottom of the frame, and are
-  removed with ESC.
-* Workspaces & session persistence with **[workgroups2]**
+* Strong support for a large selection of languages, including C/C++,
+  Ruby, Python, PHP, JS, Elisp, Haskell, Lua, Julia, Go, Crystal,
+  Assembly, Java, Swift, (Ba|z)?sh, Scala, Rust, LaTeX, Processing,
+  Octave, and more!
+* Tamed popup windows with **[shackle]**. e.g. help buffers will
+  always pop up at the bottom of the frame, and are removed with ESC.
+* Workspaces & session persistence with **[workgroups2]**.
 * Project and workspace-sensitive buffer navigation and functions
 * A vim-like environment with **[evil-mode]**
-  * vim-seek/vim-sneak functionality with **[evil-snipe]** (provides 2-char motions)
+  * vim-seek/vim-sneak functionality with **[evil-snipe]** (2-char
+    motions)
   * [Multiple cursors][sc-multiedit] with **[evil-multiedit]**
   * Repeat (most) motions with <kbd>SPC</kbd> and
-    <kbd>shift</kbd>+<kbd>SPC</kbd>
+    <kbd>shift</kbd>+<kbd>SPC</kbd> (backwards)
   * On-the-fly keybindings with `:[nviom]map`
-  * Global <kbd>C-x</kbd> omnicompletion (e.g. <kbd>C-x</kbd>+<kbd>C-f</kbd> for
-    files)
+  * Global <kbd>C-x</kbd> omnicompletion (e.g.
+    <kbd>C-x</kbd>+<kbd>C-f</kbd> for files)
 * Fast search utilities:
   * Project and buffer navigation with **[ivy]**
   * File browser sidebar with **[neotree]**
-  * Project search (and replace) with **[counsel-ag]** and **[wgrep]**
+  * Project search (and replace) with **[counsel-ag]** (and
+    **[wgrep]**)
   * Buffer search with **[swiper]**
-* REPLs for many languages including Ruby, Python, PHP, JS, Elisp, Haskell and
-  Lua.
+* REPLs for many languages including Ruby, Python, PHP, JS, Elisp,
+  Haskell and Lua.
 * [Minimalistic diffs in the fringe][sc-diffs] with **[git-gutter-fringe]**.
-* Modded **org-mode** to be a modern note-taking/LaTeX/word-processing platform. (WIP)
-* Code debugging interface with **[realgud]** (currently supports gdb, trepanjs,
-  bashdb and zshdb, working on Python/Ruby support)
-* A do-what-I-mean jump-to-definition implementation that either uses major-mode
-  commands or falls back to **[dumb-jump]**/ctags.
-* A [pretty mode-line](core/core-modeline.el) with:
+* Modded **org-mode** to be a modern note-taking/LaTeX/word-processing
+  platform. (WIP)
+* Code debugging interface with **[realgud]** (currently supports gdb,
+  trepanjs, bashdb and zshdb, working on Python/Ruby support)
+* A do-what-I-mean jump-to-definition implementation that either uses
+  major-mode commands or falls back to **[dumb-jump]**/ctags.
+* A [pretty mode-line](core/core-modeline.el) inspired by Atom's. It
+  includes:
   * evil-search/iedit/evil-substitute mode-line integration
   * Macro-recording indicator
   * Python/ruby version in mode-line (for rbenv/pyenv)
@@ -96,7 +115,8 @@ See screenshots in the [screenshots branch][sc].
 * Snippet expansion and file templates with **[yasnippet]**
 * Completion with **[company-mode]**
 * Syntax checking with **[flycheck]**
-* Custom O/S interaction commands, like **os-reveal** and **os-open-in-browser**
+* Custom O/S interaction commands, like **os-reveal** and
+  **os-open-in-browser**
 * Custom TODO, FIXME and NOTE highlighting and search (`:todo`)
 * **big-mode** for presentations and demonstrations (`:big`)
 * Tmux integration with `:t` and `:tcd` ex commands
@@ -120,6 +140,10 @@ A few things to keep in mind:
    Emacs open while doing so.
 
 
+[yay-evil]: http://ultravioletbat.deviantart.com/art/Yay-Evil-111710573
+[Cask]: https://github.com/cask/cask
+[Homebrew]: http://brew.sh
+
 [auto-yasnippet]: https://melpa.org/#/auto-yasnippet
 [company-mode]: https://melpa.org/#/company
 [counsel-ag]: https://melpa.org/#/counsel
@@ -129,20 +153,22 @@ A few things to keep in mind:
 [evil-snipe]: https://melpa.org/#/evil-snipe
 [flycheck]: https://melpa.org/#/flycheck
 [git-gutter-fringe]: https://melpa.org/#/git-gutter-fringe
+[irony-mode]: https://github.com/Sarcasm/irony-mode
 [ivy]: https://melpa.org/#/ivy
 [neotree]: https://melpa.org/#/neotree
 [nlinum]: http://elpa.gnu.org/packages/nlinum.html
 [quickrun]: https://melpa.org/#/quickrun
+[racer]: https://github.com/phildawes/racer
 [realgud]: https://melpa.org/#/realgud
 [repl-toggle]: https://melpa.org/#/repl-toggle
 [shackle]: https://melpa.org/#/shackle
 [swiper]: https://melpa.org/#/swiper
-[workgroups2]: https://melpa.org/#/workgroups2
 [wgrep]: https://melpa.org/#/wgrep
+[workgroups2]: https://melpa.org/#/workgroups2
 [yasnippet]: https://melpa.org/#/yasnippet
 
 [sc]: https://github.com/hlissner/.emacs.d/tree/screenshots
 [sc-diffs]: https://github.com/hlissner/.emacs.d/blob/screenshots/git-gutter.png?raw=true
 [sc-multiedit]: https://raw.githubusercontent.com/hlissner/evil-multiedit/screenshots/main.gif?raw=true
 [vim]: https://github.com/hlissner/.vim
-
+[doom-theme]: https://github.com/hlissner/emacs-doom-theme
