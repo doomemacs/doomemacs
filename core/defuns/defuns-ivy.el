@@ -37,7 +37,9 @@
 
 (defun doom-ivy-select-buffer-action (buffer)
   (ivy--switch-buffer-action
-   (substring buffer 0 (s-index-of "   " buffer))))
+   (s-chop-suffix
+    "[+]"
+    (substring buffer 0 (s-index-of "   " buffer)))))
 
 ;;;###autoload
 (defun doom/ivy-switch-project-buffer (&optional all-p)
