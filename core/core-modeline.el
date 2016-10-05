@@ -45,14 +45,11 @@
   '((t (:inherit doom-modeline-buffer-path :bold nil)))
   "Face used for the filename part of the mode-line buffer path.")
 
-(defface doom-modeline-buffer-modified '((t (:inherit highlight)))
+(defface doom-modeline-buffer-modified '((t (:inherit highlight :background nil)))
   "Face used for the 'unsaved' symbol in the mode-line.")
 
 (defface doom-modeline-major-mode '((t (:inherit mode-line :bold t)))
   "Face used for the major-mode segment in the mode-line.")
-
-(defface doom-modeline-alternate '((t (:inherit mode-line)))
-  "Secondary color for the modeline.")
 
 (defface doom-modeline-highlight '((t (:inherit mode-line)))
   "Face for bright segments of the mode-line.")
@@ -161,16 +158,14 @@ project root). Excludes the file basename. See `doom-buffer-name' for that."
 ;;
 
 (defconst &bar-active
-  (eval-when-compile
-    (doom-make-xpm (face-background 'doom-modeline-bar)
-                   doom-modeline-height
-                   doom-modeline-bar-width)))
+  (doom-make-xpm (face-background 'doom-modeline-bar)
+                 doom-modeline-height
+                 doom-modeline-bar-width))
 
 (defconst &bar-inactive
-  (eval-when-compile
-    (doom-make-xpm (face-background 'doom-modeline-inactive-bar)
-                   doom-modeline-height
-                   doom-modeline-bar-width)))
+  (doom-make-xpm (face-background 'mode-line-inactive)
+                 doom-modeline-height
+                 doom-modeline-bar-width))
 
 (defun *buffer-project ()
   "Displays `default-directory', for special buffers like the scratch buffer."
@@ -203,7 +198,6 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                        :face 'doom-modeline-urgent
                        :v-adjust -0.05)
                       " "))
-
             (propertize (doom-buffer-path)
                         'face `(inherit (,(if modified-p 'doom-modeline-buffer-modified)
                                          ,(if active 'doom-modeline-buffer-path))))
