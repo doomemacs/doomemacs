@@ -279,19 +279,6 @@ Examples:
      (define-key evil-motion-state-map (kbd "SPC") ',next-func)
      (define-key evil-motion-state-map (kbd "S-SPC") ',prev-func)))
 
-;;
-(defun doom|update-scratch-buffer (&optional dir inhibit-doom)
-  "Make sure scratch buffer is always 'in a project', and looks good."
-  (let ((dir (or dir (doom/project-root))))
-    (with-current-buffer doom-buffer
-      ;; Reset scratch buffer if it wasn't visible
-      (when (and (get-buffer-window-list doom-buffer nil t)
-                 (not doom-buffer-edited)
-                 (not inhibit-doom))
-        (doom-mode-init t))
-      (setq default-directory dir)
-      (setq mode-line-format (doom-modeline 'scratch)))))
-
 
 ;;
 ;; Global Defuns

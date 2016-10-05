@@ -21,6 +21,9 @@
 ;; Global Constants
 ;;
 
+(defconst doom-version "1.2.9"
+  "Current version of DOOM emacs")
+
 (defconst doom-emacs-dir
   (expand-file-name user-emacs-directory)
   "The path to this emacs.d directory")

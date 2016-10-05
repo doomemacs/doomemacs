@@ -1,5 +1,6 @@
 ;;; defuns-buffers.el
 
+(defvar doom-buffer)
 (defvar-local doom--narrowed-origin nil)
 
 ;;;###autoload (autoload 'doom:narrow "defuns-buffers" nil t)
@@ -121,24 +122,23 @@ NOTE: only buries scratch buffer.
 
 See `doom/real-buffer-p' for what 'real' means."
   (interactive (list t))
-  (cond ((eq (current-buffer) doom-buffer)
-         (doom-mode-init t))
-        (t
-         (let* ((old-project (doom/project-root))
-                (buffer (current-buffer))
-                (only-buffer-window-p (= (length (get-buffer-window-list buffer nil t)) 1)))
-           (when (and only-buffer-window-p buffer-file-name (buffer-modified-p))
-             (if (yes-or-no-p "Buffer is unsaved, save it?")
-                 (save-buffer)
-               (set-buffer-modified-p nil)))
-           (when arg
-             (doom/previous-real-buffer)
-             (when (eq buffer (current-buffer))
-               (switch-to-buffer doom-buffer t t)
-               (when (featurep 'core-scratch)
-                 (doom|update-scratch-buffer old-project)))
-             (when only-buffer-window-p
-               (kill-buffer buffer))))))
+  (let* ((scratch-p (eq (current-buffer) doom-buffer))
+         (old-project (doom/project-root))
+         (buffer (current-buffer))
+         (only-buffer-window-p (= (length (get-buffer-window-list buffer nil t)) 1)))
+    (unless scratch-p
+      (when (and only-buffer-window-p buffer-file-name (buffer-modified-p))
+        (if (yes-or-no-p "Buffer is unsaved, save it?")
+            (save-buffer)
+          (set-buffer-modified-p nil)))
+      (when arg
+        (doom/previous-real-buffer)
+        (when (eq buffer (current-buffer))
+          (switch-to-buffer doom-buffer t t))
+        (when only-buffer-window-p
+          (kill-buffer buffer))))
+    (when (eq (current-buffer) doom-buffer)
+      (doom-reload-scratch-buffer old-project)))
   t)
 
 ;;;###autoload
@@ -210,7 +210,7 @@ nothing left, create a scratch buffer."
                 (cl-incf i))
               (current-buffer))))
     (when (eq destbuf doom-buffer)
-      (doom|update-scratch-buffer)
+      (doom-reload-scratch-buffer)
       (message "Nowhere to go"))
     (switch-to-buffer destbuf)))
 
