@@ -196,9 +196,8 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                        :v-adjust -0.05)
                       " "))
             (propertize (doom-buffer-path)
-                        'face `(inherit (,(if modified-p 'doom-modeline-buffer-modified)
-                                         ,(if active 'doom-modeline-buffer-path))))
-            "  %l:%c %p  ")))
+                        'face `(:inherit (,(if modified-p 'doom-modeline-buffer-modified)
+                                          ,(if active 'doom-modeline-buffer-path)))))))
 
 (defun *buffer-encoding ()
   "The encoding and eol style of the buffer."
