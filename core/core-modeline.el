@@ -38,9 +38,6 @@
 (defface doom-modeline-buffer-path '((t (:inherit mode-line :bold t)))
   "Face used for the dirname part of the buffer path.")
 
-(defface doom-modeline-buffer-name '((t (:inherit mode-line :bold t)))
-  "Face used for the filename part of the mode-line buffer path.")
-
 (defface doom-modeline-buffer-project
   '((t (:inherit doom-modeline-buffer-path :bold nil)))
   "Face used for the filename part of the mode-line buffer path.")
