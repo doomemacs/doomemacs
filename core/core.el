@@ -167,8 +167,8 @@ reloads.")
 (require 'core-defuns)
 (let ((paths (eval-when-compile (doom-reload))))
   (setq load-path (car paths)
-        custom-theme-load-path (cadr paths)
-        doom-packages (caddr paths)))
+        custom-theme-load-path (nth 1 paths)
+        doom-packages (nth 2 paths)))
 
 ;; Many functions are lazy-loaded. The autoloads.el file contains info on where
 ;; to find them if they're called. Tries to generate autoloads.el if one isn't
