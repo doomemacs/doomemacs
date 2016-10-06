@@ -60,24 +60,27 @@
   (advice-add 'neotree-create-node :around 'doom*neotree-create-node)
   ;; Prevents messing up the neotree buffer on window changes
   (advice-add 'doom/evil-window-move :around 'doom*save-neotree)
-
-  (map! :map neotree-mode-map
-        :m "\\\\" 'evil-window-prev
-        "ESC ESC" 'neotree-hide
-        "q"       'neotree-hide
-        [return]  'neotree-enter
-        "RET"     'neotree-enter
-        :m "J"    'neotree-select-next-sibling-node
-        :m "K"    'neotree-select-previous-sibling-node
-        :m "H"    'neotree-select-up-node
-        :m "L"    'neotree-select-down-node
-        "v"       'neotree-enter-vertical-split
-        "s"       'neotree-enter-horizontal-split
-        "c"       'neotree-create-node
-        "d"       'neotree-delete-node
-        "C-r"     'neotree-refresh
-        "r"       'neotree-rename-node
-        "R"       'neotree-change-root))
+  ;; Set up bindings, because `neotree-mode-map' won't cooperate
+  (add-hook 'neo-after-create-hook 'doom|neotree-init-keymap)
+  (defun doom|neotree-init-keymap (&rest _)
+    (map! :map evil-motion-state-local-map
+          :m "\\\\" 'evil-window-prev
+          "ESC ESC" 'neotree-hide
+          "q"       'neotree-hide
+          [return]  'neotree-enter
+          "RET"     'neotree-enter
+          "<return>" 'neotree-enter
+          :m "J"    'neotree-select-next-sibling-node
+          :m "K"    'neotree-select-previous-sibling-node
+          :m "H"    'neotree-select-up-node
+          :m "L"    'neotree-select-down-node
+          "v"       'neotree-enter-vertical-split
+          "s"       'neotree-enter-horizontal-split
+          "c"       'neotree-create-node
+          "d"       'neotree-delete-node
+          "C-r"     'neotree-refresh
+          "r"       'neotree-rename-node
+          "R"       'neotree-change-root)))
 
 (use-package projectile
   :config
