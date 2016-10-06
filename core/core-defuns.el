@@ -298,22 +298,25 @@ non-nil."
   "Reload `load-path' and `custom-theme-load-path', in case you updated cask
 while emacs was open!"
   (interactive)
-  (let ((-load-path
-         (append (list doom-private-dir doom-core-dir doom-modules-dir doom-packages-dir)
-                 (--subdirs doom-core-dir t)
-                 (--subdirs doom-modules-dir t)
-                 (--subdirs doom-packages-dir)
-                 (--subdirs (expand-file-name (format "../../%s/bootstrap" emacs-version)
-                                              doom-packages-dir))
-                 doom--load-path))
-        (-custom-theme-load-path
-         (append (--subdirs doom-themes-dir t)
-                 custom-theme-load-path)))
+  (let* ((-packages-path (--subdirs doom-packages-dir))
+         (-load-path
+          (append (list doom-private-dir doom-core-dir doom-modules-dir doom-packages-dir)
+                  (--subdirs doom-core-dir t)
+                  (--subdirs doom-modules-dir t)
+                  -packages-path
+                  (--subdirs (expand-file-name (format "../../%s/bootstrap" emacs-version)
+                                               doom-packages-dir))
+                  doom--load-path))
+         (-custom-theme-load-path
+          (append (--subdirs doom-themes-dir t)
+                  custom-theme-load-path)))
     (setq load-path -load-path
           custom-theme-load-path -custom-theme-load-path)
     (if (called-interactively-p 'interactive)
         (message "Reloaded!")
-      (list -load-path -custom-theme-load-path))))
+      (list -load-path
+            -custom-theme-load-path
+            (mapcar '--subdirs -packages-path)))))
 
 (defun doom-reload-autoloads ()
   "Regenerate and reload autoloads.el."

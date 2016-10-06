@@ -114,7 +114,8 @@ buffer. Without this, it would refuse to split, saying 'too small to split'."
                 "\n\n\n"
                 (propertize (concat (s-center 78 "~  ~")
                                     "\n"
-                                    (s-center 78 (format "Loaded in %s" (emacs-init-time))))
+                                    (s-center 78 (format "Loaded %d packages in %s"
+                                                         (length doom-packages) (emacs-init-time))))
                             'face 'font-lock-comment-face))
         (setq doom--scratch-width width
               doom--scratch-height height)))

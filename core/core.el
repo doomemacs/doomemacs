@@ -156,6 +156,9 @@ major-modes, the process gets killed.")
   "Initial `load-path', used as a base so we don't clobber it on consecutive
 reloads.")
 
+(defvar doom-packages '()
+  "A list of all installed packages. Filled internally; do not edit it!")
+
 ;; Just the bear necessities... ♫
 (setq load-path (append (list doom-core-dir) doom--load-path))
 
@@ -164,7 +167,8 @@ reloads.")
 (require 'core-defuns)
 (let ((paths (eval-when-compile (doom-reload))))
   (setq load-path (car paths)
-        custom-theme-load-path (cadr paths)))
+        custom-theme-load-path (cadr paths)
+        doom-packages (caddr paths)))
 
 ;; Many functions are lazy-loaded. The autoloads.el file contains info on where
 ;; to find them if they're called. Tries to generate autoloads.el if one isn't
