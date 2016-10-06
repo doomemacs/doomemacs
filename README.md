@@ -1,7 +1,7 @@
 [![Main screenshot](https://raw.githubusercontent.com/hlissner/.emacs.d/screenshots/main.png?raw=true)][sc]
 
 [![MIT](https://img.shields.io/badge/license-MIT-green.svg)](./LICENSE)
-[![DOOM v1.2.9](https://img.shields.io/badge/DOOM-v1.2.9-blue.svg)](./init.el)
+[![DOOM v1.3.0](https://img.shields.io/badge/DOOM-v1.2.9-blue.svg)](./init.el)
 
 <a href="http://ultravioletbat.deviantart.com/art/Yay-Evil-111710573">
   <img src="https://raw.githubusercontent.com/hlissner/.emacs.d/screenshots/cacochan.png" align="right" />
