@@ -10,6 +10,10 @@
   (font-spec :family "Fira Mono" :size 12)
   "The font currently in use.")
 
+(defvar doom-ui-variable-pitch-font
+  (font-spec :family "Fira Sans" :size 12)
+  "The font currently in use.")
+
 
 ;;
 ;; Configuration
@@ -219,7 +223,9 @@
   (with-demoted-errors "FONT ERROR: %s"
     (set-frame-font doom-ui-font t)
     ;; Fallback to `doom-unicode-font' for Unicode characters
-    (set-fontset-font t 'unicode doom-ui-font))
+    (set-fontset-font t 'unicode doom-ui-font)
+    ;; Set font for variable-pitch mode
+    (set-face-attribute 'variable-pitch nil :font doom-ui-variable-pitch-font))
   ;; standardize fringe width
   (fringe-mode doom-ui-fringe-size)
   (push `(left-fringe  . ,doom-ui-fringe-size) default-frame-alist)
