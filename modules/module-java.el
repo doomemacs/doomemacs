@@ -1,6 +1,7 @@
 ;;; module-java.el
 
 (use-package meghanada
+  :commands meghanada-mode
   :init
   (add-hook! java-mode '(meghanada-mode flycheck-mode))
   :config
