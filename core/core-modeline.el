@@ -281,32 +281,39 @@ directory, the file name, and its state (modified, read-only or non-existent)."
         (or (and (or (eq doom--flycheck-err-cache doom--flycheck-cache)
                      (memq flycheck-last-status-change '(running not-checked)))
                  (if (eq flycheck-last-status-change 'running)
-                     (all-the-icons-octicon
-                      "ellipsis"
-                      :face 'doom-modeline-warning
-                      :height 1.05
-                      :v-adjust 0)
+                     (concat " "
+                             (all-the-icons-octicon
+                              "ellipsis"
+                              :face 'font-lock-doc-face
+                              :height 1.1
+                              :v-adjust 0)
+                             " ")
                    doom--flycheck-cache))
             (and (setq doom--flycheck-err-cache flycheck-current-errors)
                  (setq doom--flycheck-cache
                        (let ((fw (doom-ml-flycheck-count 'warning))
                              (fe (doom-ml-flycheck-count 'error)))
                          (concat (if fe (concat
-                                         (all-the-icons-octicon "x" :face 'doom-modeline-urgent :height 1.2 :v-adjust -0.06)
-                                         (propertize (format " %d " fe) 'face 'doom-modeline-urgent)
-                                         " "))
+                                         " "
+                                         (all-the-icons-octicon "circle-slash" :face 'doom-modeline-urgent :height 1.0 :v-adjust 0)
+                                         (propertize " " 'face 'variable-pitch)
+                                         (propertize (format "%d" fe) 'face 'doom-modeline-urgent)))
                                  (if fw (concat
-                                         (all-the-icons-octicon "circle-slash" :face 'doom-modeline-warning :height 1.0 :v-adjust -0.01)
-                                         (propertize (format " %d " fw) 'face 'doom-modeline-warning)
-                                         " "))
+                                         " "
+                                         (all-the-icons-octicon "alert" :face 'doom-modeline-warning :height 0.9 :v-adjust 0)
+                                         (propertize " " 'face 'variable-pitch)
+                                         (propertize (format "%d" fw) 'face 'doom-modeline-warning)
+                                         ))
                                  (unless (or fe fw)
                                    (when (active)
                                      (all-the-icons-octicon "check" :height 1.2 :v-adjust -0.06))))))))
       (concat
+       " "
        (all-the-icons-octicon "check"
                               :face (if (active) 'doom-modeline-info)
                               :height 1.2
-                              :v-adjust -0.06)))))
+                              :v-adjust -0.06)
+       " "))))
 
 (defun *selection-info ()
   "Information about the current selection, such as how many characters and
@@ -424,11 +431,14 @@ lines are selected, or the NxM dimensions of a block selection."
                               '(list (*buffer-info)
                                      "  %l:%c %p  "
                                      (*selection-info)
-                                     (*flycheck))))))
-           (rhs (list ,(if id ""
-                         '(list (*buffer-encoding)
-                                (*vc)))
-                      (*major-mode)))
+                                     )))))
+           (rhs ,(if id
+                     '(list (*major-mode))
+                   '(list (*buffer-encoding)
+                          (*vc)
+                          (*major-mode)
+                          " "
+                          (*flycheck))))
            (mid (propertize
                  " " 'display `((space :align-to (- (+ right right-fringe right-margin)
                                                     ,(+ 1 (string-width (format-mode-line rhs)))))))))
