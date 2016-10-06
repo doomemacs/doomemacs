@@ -115,17 +115,15 @@
 (use-package hl-line
   :init (add-hook 'prog-mode-hook 'hl-line-mode)
   :config
-  ;; Doesn't play nice with emacs 25+
+  ;; stickiness doesn't play nice with emacs 25+
   (setq hl-line-sticky-flag nil
         global-hl-line-sticky-flag nil)
 
+  ;; Remember whether hl-line was initially on or off in the current buffer
   (defvar-local doom--hl-line-mode nil)
   (defun doom|hl-line-on ()  (if doom--hl-line-mode (hl-line-mode +1)))
   (defun doom|hl-line-off () (if doom--hl-line-mode (hl-line-mode -1)))
-  (add-hook! hl-line-mode (if hl-line-mode (setq doom--hl-line-mode t)))
-  ;; Disable line highlight in visual mode
-  (add-hook 'evil-visual-state-entry-hook 'doom|hl-line-off)
-  (add-hook 'evil-visual-state-exit-hook  'doom|hl-line-on))
+  (add-hook! hl-line-mode (if hl-line-mode (setq doom--hl-line-mode t))))
 
 (use-package highlight-indentation
   :commands (highlight-indentation-mode
