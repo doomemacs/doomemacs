@@ -31,8 +31,8 @@
 (load (concat user-emacs-directory "core/core"))
 
 (doom core-popup         ; taming sudden and inevitable windows
-      core-os            ; os-specific configs
       core-ui            ; draw me like one of your French editors
+      core-os            ; os-specific configs
       core-modeline      ; a self-contained mode-line config for masochists
       core-evil          ; vim in emacs; come to the dark side, we have cookies
       core-editor        ; fill the editor-shaped hole in the emacs OS
