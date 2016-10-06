@@ -30,18 +30,14 @@
 ;;;###autoload
 (defun doom/load-font (font)
   (interactive)
-  (set-frame-font font t)
-  (setq doom-ui-font font))
+  (set-frame-font font t))
 
 ;;;###autoload
-(defun doom/load-theme (theme &optional suppress-font)
+(defun doom/load-theme (theme)
   (interactive)
   (when doom-ui-theme
     (disable-theme doom-ui-theme))
-  (load-theme theme t)
-  (unless suppress-font
-    (doom/load-font doom-ui-font))
-  (setq doom-ui-theme theme))
+  (load-theme theme t))
 
 ;;;###autoload
 (defun doom/show-as (how &optional pred)
