@@ -78,13 +78,12 @@ buffer. Without this, it would refuse to split, saying 'too small to split'."
                 (set-window-margins window pad pad)
                 (setq height (max 0
                                   (min (or height 9999)
-                                       (- (truncate (/ (window-height window) 2)) 14))))))
+                                       (- (truncate (/ (window-height window) 2)) 12))))))
             (get-buffer-window-list doom-buffer nil t))
       (when (or (not doom--scratch-width)
                 (not doom--scratch-height)
                 (/= doom--scratch-width width)
-                (/= doom--scratch-height height)
-                t)
+                (/= doom--scratch-height height))
         (erase-buffer)
         (insert (propertize
                  (concat
@@ -126,7 +125,7 @@ buffer. Without this, it would refuse to split, saying 'too small to split'."
     (add-hook 'window-configuration-change-hook 'doom-reload-scratch-buffer)))
 
 (defun doom--scratch-menu ()
-  (let ((all-the-icons-scale-factor 1.5)
+  (let ((all-the-icons-scale-factor 1.3)
         (all-the-icons-default-adjust -0.05)
         (start (point)) end)
     (with-temp-buffer
@@ -135,7 +134,8 @@ buffer. Without this, it would refuse to split, saying 'too small to split'."
                 "mark-github"
                 :face 'font-lock-keyword-face)
                (propertize " Homepage" 'face 'font-lock-keyword-face))
-       'action '(lambda (_) (browse-url "https://github.com/hlissner/.emacs.d")))
+       'action '(lambda (_) (browse-url "https://github.com/hlissner/.emacs.d"))
+       'follow-link t)
 
       (insert "    ")
 
@@ -144,7 +144,8 @@ buffer. Without this, it would refuse to split, saying 'too small to split'."
                 "file-text"
                 :face 'font-lock-keyword-face)
                (propertize " Recent files" 'face 'font-lock-keyword-face))
-       'action '(lambda (_) (call-interactively 'counsel-recentf)))
+       'action '(lambda (_) (call-interactively 'counsel-recentf))
+       'follow-link t)
 
       (insert "   ")
 
@@ -153,7 +154,8 @@ buffer. Without this, it would refuse to split, saying 'too small to split'."
                 "list-ordered"
                 :face 'font-lock-keyword-face)
                (propertize " Changelog" 'face 'font-lock-keyword-face))
-       'action '(lambda (_) (find-file (f-expand "CHANGELOG.org" doom-emacs-dir))))
+       'action '(lambda (_) (find-file (f-expand "CHANGELOG.org" doom-emacs-dir)))
+       'follow-link t)
 
       (insert "   ")
 
