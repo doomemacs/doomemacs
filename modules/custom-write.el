@@ -50,9 +50,9 @@ readable font."
   (interactive)
   (setq write-mode (not write-mode))
   (when write-mode-theme
-    (doom/load-theme (if write-mode write-mode-theme write-mode--last-theme) t))
+    (doom/load-theme (if write-mode write-mode-theme write-mode--last-theme)))
   (when write-mode-font
-    (doom/load-font (if write-mode write-mode-font doom-default-font)))
+    (doom/load-font (if write-mode write-mode-font doom-ui-font)))
   (mapc (lambda (b)
           (with-current-buffer b
             (setq line-spacing (if write-mode write-mode--last-line-spacing '2))

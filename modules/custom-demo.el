@@ -23,7 +23,7 @@
   :lighter " BIG"
   :global t
   (when big-mode-font
-    (doom/load-font (if big-mode big-mode-font doom-default-font)))
+    (doom/load-font (if big-mode big-mode-font doom-ui-font)))
   (if big-mode
       (setq-default
        doom-modeline-height big-mode-modeline-height
