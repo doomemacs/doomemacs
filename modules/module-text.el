@@ -18,6 +18,12 @@
 
   :config
   (def-electric! markdown-mode :chars ("+" "#"))
+
+  (sp-local-pair
+   '(markdown-mode gfm-mode)
+   "\`\`\`" "\`\`\`" :post-handlers '(("||\n" "RET")))
+
+  (map! :map gfm-mode-map "`"    'self-insert-command)
   (map! :map markdown-mode-map
         "<backspace>"  nil
         "<M-left>"     nil
