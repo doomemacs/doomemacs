@@ -85,9 +85,9 @@ buffer. Without this, it would refuse to split, saying 'too small to split'."
                 (/= doom--scratch-width width)
                 (/= doom--scratch-height height))
         (erase-buffer)
-        (insert (propertize
+        (insert (make-string (if height (max 0 height) 0) ?\n)
+                (propertize
                  (concat
-                  (make-string (if height (max 0 height) 0) ?\n)
                   "=================     ===============     ===============   ========  ========\n"
                   "\\\\ . . . . . . .\\\\   //. . . . . . .\\\\   //. . . . . . .\\\\  \\\\. . .\\\\// . . //\n"
                   "||. . ._____. . .|| ||. . ._____. . .|| ||. . ._____. . .|| || . . .\\/ . . .||\n"
@@ -105,17 +105,18 @@ buffer. Without this, it would refuse to split, saying 'too small to split'."
                   "||   .=='    _-'          '-__\\._-'         '-_./__-'         `' |. /|  |   ||\n"
                   "||.=='    _-'                                                     `' |  /==.||\n"
                   "=='    _-'                         E M A C S                          \\/   `==\n"
-                  "\\   _-'                                                              `-_   /\n"
-                  " `''                                                                     ``'")
+                  "\\   _-'                                                                `-_   /\n"
+                  " `''                                                                      ``'")
                  'face 'font-lock-comment-face)
                 "\n\n"
-                (s-center 73 (doom--scratch-menu))
-                "\n\n\n"
-                (propertize (concat (s-center 78 "~  ~")
-                                    "\n"
-                                    (s-center 78 (format "Loaded %d packages in %s"
-                                                         (length doom-packages) (emacs-init-time))))
-                            'face 'font-lock-comment-face))
+                (s-center 73 (doom--scratch-info))
+                "\n\n"
+                (s-center
+                 78 (propertize (format "Loaded %d packages in %s"
+                                        (length doom-packages)
+                                        (emacs-init-time))
+                                'face '(:inherit font-lock-comment-face
+                                        :height 0.9))))
         (setq doom--scratch-width width
               doom--scratch-height height)))
     (goto-char 1521)
@@ -124,10 +125,16 @@ buffer. Without this, it would refuse to split, saying 'too small to split'."
     ;; Readjust the scratch buffer if it is visible, when the frame changes.
     (add-hook 'window-configuration-change-hook 'doom-reload-scratch-buffer)))
 
-(defun doom--scratch-menu ()
+;; TODO Less hard-coded
+(defun doom--scratch-info ()
   (let ((all-the-icons-scale-factor 1.3)
         (all-the-icons-default-adjust -0.05)
-        (start (point)) end)
+        (last-session-p (f-exists-p wg-session-file))
+        (start (point))
+        (sep "   ")
+        end)
+    (unless last-session-p
+      (setq sep "     "))
     (with-temp-buffer
       (insert-text-button
        (concat (all-the-icons-octicon
@@ -137,7 +144,7 @@ buffer. Without this, it would refuse to split, saying 'too small to split'."
        'action '(lambda (_) (browse-url "https://github.com/hlissner/.emacs.d"))
        'follow-link t)
 
-      (insert "    ")
+      (insert sep " ")
 
       (insert-text-button
        (concat (all-the-icons-octicon
@@ -147,21 +154,26 @@ buffer. Without this, it would refuse to split, saying 'too small to split'."
        'action '(lambda (_) (call-interactively 'counsel-recentf))
        'follow-link t)
 
-      (insert "   ")
+      (insert sep)
 
       (insert-text-button
        (concat (all-the-icons-octicon
-                "list-ordered"
+                "tools"
                 :face 'font-lock-keyword-face)
-               (propertize " Changelog" 'face 'font-lock-keyword-face))
-       'action '(lambda (_) (find-file (f-expand "CHANGELOG.org" doom-emacs-dir)))
+               (propertize " Edit emacs.d" 'face 'font-lock-keyword-face))
+       'action '(lambda (_) (find-file (f-expand "init.el" doom-emacs-dir)))
        'follow-link t)
 
-      (insert "   ")
+      (when last-session-p
+        (insert sep)
 
-      (insert (all-the-icons-octicon "clock")
-              " Uptime: "
-              (emacs-uptime "%yy %dd %hh %mm %z%ss"))
+        (insert-text-button
+         (concat (all-the-icons-octicon
+                  "history"
+                  :face 'font-lock-keyword-face)
+                 (propertize " Reload last session" 'face 'font-lock-keyword-face))
+         'action '(lambda (_) (doom:workgroup-load))
+         'follow-link t))
 
       (setq end (point))
       (buffer-string))))
