@@ -4,9 +4,11 @@
 (use-package ivy
   :init
   (setq projectile-completion-system 'ivy
-        ivy-height 15
+        ivy-height 14
         ivy-do-completion-in-region nil
-        ivy-wrap t)
+        ivy-wrap t
+        ;; fontify until EOL
+        ivy-format-function 'ivy-format-function-line)
 
   :config
   (ivy-mode +1)
