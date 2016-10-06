@@ -14,7 +14,7 @@
   "If non-nil, the scratch buffer has been edited.")
 
 (define-derived-mode doom-mode fundamental-mode
-  (concat "DOOM v" doom-version)
+  (concat "v" doom-version)
   "Major mode for special DOOM buffers.")
 
 ;; Don't kill the scratch buffer
@@ -37,8 +37,10 @@ buffer. Without this, it would refuse to split, saying 'too small to split'."
 (defun doom|mode-erase-on-insert ()
   "Erase the buffer and prepare it to be used like a normal buffer."
   (erase-buffer)
-  (setq doom-buffer-edited t)
   (set-window-margins (get-buffer-window doom-buffer) 0 0)
+  (setq doom-buffer-edited t
+        mode-line-format (doom-modeline)
+        doom--scratch-width nil)
   (remove-hook 'evil-insert-state-entry-hook 'doom|mode-erase-on-insert t))
 
 (defun doom-reload-scratch-buffer (&optional dir)
@@ -48,6 +50,8 @@ buffer. Without this, it would refuse to split, saying 'too small to split'."
              (not (minibuffer-window-active-p (minibuffer-window))))
     (doom--reload-scratch-buffer dir)))
 
+(defvar doom--scratch-width nil)
+(defvar doom--scratch-height nil)
 (defun doom--reload-scratch-buffer (&optional dir)
   ;; Rename the old scratch buffer, if it exists.
   (let ((old-scratch (get-buffer "*scratch*")))
@@ -66,52 +70,98 @@ buffer. Without this, it would refuse to split, saying 'too small to split'."
     (add-hook 'evil-insert-state-entry-hook 'doom|mode-erase-on-insert nil t)
     (add-hook 'after-change-major-mode-hook 'doom|mode-erase-on-insert nil t)
     (setq doom-buffer-edited nil)
-    (let ((width 78) height)
+    (let ((width 78)
+          updates-p height)
       (mapc (lambda (window)
               (set-window-margins window 0 0)
               (let ((pad (max 0 (- (truncate (/ (window-width window) 2)) (truncate (/ width 2))))))
                 (set-window-margins window pad pad)
                 (setq height (max 0
                                   (min (or height 9999)
-                                       (- (truncate (/ (window-height window) 2)) 13))))))
+                                       (- (truncate (/ (window-height window) 2)) 14))))))
             (get-buffer-window-list doom-buffer nil t))
-      (erase-buffer)
-      (insert (propertize
-               (concat
-                (make-string (if height (max 0 height) 0) ?\n)
-                "=================     ===============     ===============   ========  ========\n"
-                "\\\\ . . . . . . .\\\\   //. . . . . . .\\\\   //. . . . . . .\\\\  \\\\. . .\\\\// . . //\n"
-                "||. . ._____. . .|| ||. . ._____. . .|| ||. . ._____. . .|| || . . .\\/ . . .||\n"
-                "|| . .||   ||. . || || . .||   ||. . || || . .||   ||. . || ||. . . . . . . ||\n"
-                "||. . ||   || . .|| ||. . ||   || . .|| ||. . ||   || . .|| || . | . . . . .||\n"
-                "|| . .||   ||. _-|| ||-_ .||   ||. . || || . .||   ||. _-|| ||-_.|\\ . . . . ||\n"
-                "||. . ||   ||-'  || ||  `-||   || . .|| ||. . ||   ||-'  || ||  `|\\_ . .|. .||\n"
-                "|| . _||   ||    || ||    ||   ||_ . || || . _||   ||    || ||   |\\ `-_/| . ||\n"
-                "||_-' ||  .|/    || ||    \\|.  || `-_|| ||_-' ||  .|/    || ||   | \\  / |-_.||\n"
-                "||    ||_-'      || ||      `-_||    || ||    ||_-'      || ||   | \\  / |  `||\n"
-                "||    `'         || ||         `'    || ||    `'         || ||   | \\  / |   ||\n"
-                "||            .===' `===.         .==='.`===.         .===' /==. |  \\/  |   ||\n"
-                "||         .=='   \\_|-_ `===. .==='   _|_   `===. .===' _-|/   `==  \\/  |   ||\n"
-                "||      .=='    _-'    `-_  `='    _-'   `-_    `='  _-'   `-_  /|  \\/  |   ||\n"
-                "||   .=='    _-'          '-__\\._-'         '-_./__-'         `' |. /|  |   ||\n"
-                "||.=='    _-'                                                     `' |  /==.||\n"
-                "=='    _-'                         E M A C S                          \\/   `==\n"
-                "\\   _-'                                                              `-_   /\n"
-                " `''                                                                     ``'")
-               'face 'font-lock-comment-face)
-              "\n\n"
-              (propertize
-               (s-center 78 "Press `,m` to open recent files, or `,E` to access emacs.d")
-               'face 'font-lock-keyword-face)
-              "\n\n"
-              (s-center 78 (format "Loaded in %s" (emacs-init-time))))
-      (back-to-indentation))
-    ;;
+      (when (or (not doom--scratch-width)
+                (not doom--scratch-height)
+                (/= doom--scratch-width width)
+                (/= doom--scratch-height height)
+                t)
+        (erase-buffer)
+        (insert (propertize
+                 (concat
+                  (make-string (if height (max 0 height) 0) ?\n)
+                  "=================     ===============     ===============   ========  ========\n"
+                  "\\\\ . . . . . . .\\\\   //. . . . . . .\\\\   //. . . . . . .\\\\  \\\\. . .\\\\// . . //\n"
+                  "||. . ._____. . .|| ||. . ._____. . .|| ||. . ._____. . .|| || . . .\\/ . . .||\n"
+                  "|| . .||   ||. . || || . .||   ||. . || || . .||   ||. . || ||. . . . . . . ||\n"
+                  "||. . ||   || . .|| ||. . ||   || . .|| ||. . ||   || . .|| || . | . . . . .||\n"
+                  "|| . .||   ||. _-|| ||-_ .||   ||. . || || . .||   ||. _-|| ||-_.|\\ . . . . ||\n"
+                  "||. . ||   ||-'  || ||  `-||   || . .|| ||. . ||   ||-'  || ||  `|\\_ . .|. .||\n"
+                  "|| . _||   ||    || ||    ||   ||_ . || || . _||   ||    || ||   |\\ `-_/| . ||\n"
+                  "||_-' ||  .|/    || ||    \\|.  || `-_|| ||_-' ||  .|/    || ||   | \\  / |-_.||\n"
+                  "||    ||_-'      || ||      `-_||    || ||    ||_-'      || ||   | \\  / |  `||\n"
+                  "||    `'         || ||         `'    || ||    `'         || ||   | \\  / |   ||\n"
+                  "||            .===' `===.         .==='.`===.         .===' /==. |  \\/  |   ||\n"
+                  "||         .=='   \\_|-_ `===. .==='   _|_   `===. .===' _-|/   `==  \\/  |   ||\n"
+                  "||      .=='    _-'    `-_  `='    _-'   `-_    `='  _-'   `-_  /|  \\/  |   ||\n"
+                  "||   .=='    _-'          '-__\\._-'         '-_./__-'         `' |. /|  |   ||\n"
+                  "||.=='    _-'                                                     `' |  /==.||\n"
+                  "=='    _-'                         E M A C S                          \\/   `==\n"
+                  "\\   _-'                                                              `-_   /\n"
+                  " `''                                                                     ``'")
+                 'face 'font-lock-comment-face)
+                "\n\n"
+                (s-center 73 (doom--scratch-menu))
+                "\n\n\n"
+                (propertize (concat (s-center 78 "~  ~")
+                                    "\n"
+                                    (s-center 78 (format "Loaded in %s" (emacs-init-time))))
+                            'face 'font-lock-comment-face))
+        (setq doom--scratch-width width
+              doom--scratch-height height)))
+    (goto-char 1521)
     (when dir (setq default-directory dir))
-    ;;
     (setq mode-line-format (doom-modeline 'scratch))
-    ;; Readjust the scratch buffer if it is visible, when the window config changes.
+    ;; Readjust the scratch buffer if it is visible, when the frame changes.
     (add-hook 'window-configuration-change-hook 'doom-reload-scratch-buffer)))
+
+(defun doom--scratch-menu ()
+  (let ((all-the-icons-scale-factor 1.5)
+        (all-the-icons-default-adjust -0.05)
+        (start (point)) end)
+    (with-temp-buffer
+      (insert-text-button
+       (concat (all-the-icons-octicon
+                "mark-github"
+                :face 'font-lock-keyword-face)
+               (propertize " Homepage" 'face 'font-lock-keyword-face))
+       'action '(lambda (_) (browse-url "https://github.com/hlissner/.emacs.d")))
+
+      (insert "    ")
+
+      (insert-text-button
+       (concat (all-the-icons-octicon
+                "file-text"
+                :face 'font-lock-keyword-face)
+               (propertize " Recent files" 'face 'font-lock-keyword-face))
+       'action '(lambda (_) (call-interactively 'counsel-recentf)))
+
+      (insert "   ")
+
+      (insert-text-button
+       (concat (all-the-icons-octicon
+                "list-ordered"
+                :face 'font-lock-keyword-face)
+               (propertize " Changelog" 'face 'font-lock-keyword-face))
+       'action '(lambda (_) (find-file (f-expand "CHANGELOG.org" doom-emacs-dir))))
+
+      (insert "   ")
+
+      (insert (all-the-icons-octicon "clock")
+              " Uptime: "
+              (emacs-uptime "%yy %dd %hh %mm %z%ss"))
+
+      (setq end (point))
+      (buffer-string))))
 
 (provide 'core-scratch)
 ;;; core-scratch.el ends here
