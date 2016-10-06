@@ -52,9 +52,9 @@
       (esup-mode              :noesc)
       (tabulated-list-mode    :noesc)))
 
-  ;; There is no shackle-popup hook, so I hack one in
+  ;; There is no shackle-popup hook, so I created one:
   (advice-add 'shackle-display-buffer :around 'doom*popup-init)
-  ;; Tell these functions not to mess with popups
+  ;; Tell these functions not to mess with popups:
   (advice-add 'balance-windows        :around 'doom*save-popup)
   (advice-add 'doom/evil-window-move  :around 'doom*save-popup))
 

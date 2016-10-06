@@ -157,7 +157,7 @@
     (markdown-mode prog-mode scss-mode web-mode conf-mode groovy-mode
      nxml-mode snippet-mode php-mode)
     'nlinum-mode)
-  ;; FIXME This only works if hl-line is active!
+  ;; FIXME This only works if hl-line is active! Why?
   (add-hook! nlinum-mode
     (if nlinum-mode-hook
         (add-hook 'post-command-hook 'doom|nlinum-hl-line nil t)
