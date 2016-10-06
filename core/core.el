@@ -21,7 +21,7 @@
 ;; Global Constants
 ;;
 
-(defconst doom-version "1.2.9"
+(defconst doom-version "1.3.0"
   "Current version of DOOM emacs")
 
 (defconst doom-emacs-dir
