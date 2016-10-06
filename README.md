@@ -16,7 +16,7 @@ to surpass it in any way possible. All to fit my needs as a software
 developer, indie game developer, UX designer, scientist and doom
 enthusiast.
 
-It was tailored for Emacs 25+ on **OSX 10.11+** and
+It was tailored for GUI Emacs 25+ on **OSX 10.11+** and
 **Arch Linux 4.7+**. I use [vim] everywhere else.
 
 **NOTE:** you can [find the theme in a separate repo][doom-theme].
