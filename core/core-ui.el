@@ -93,27 +93,17 @@
 ;; Plugins
 ;;
 
-(use-package all-the-icons
-  :commands (all-the-icons-icon-for-buffer
-             all-the-icons-icon-for-file
-             all-the-icons-icon-for-mode
-             all-the-icons-alltheicon
-             all-the-icons-faicon
-             all-the-icons-fileicon
-             all-the-icons-oction
-             all-the-icons-wicon))
-
 (use-package doom-themes
   :config
   (setq doom-neotree-enable-variable-pitch t
+        doom-neotree-file-icons 'simple
         doom-neotree-line-spacing 3)
   (load-theme doom-ui-theme t)
   ;; brighter source buffers
   (add-hook 'find-file-hook 'doom-buffer-mode)
-  ;; brighter minibuffer when active
-  (add-hook 'minibuffer-setup-hook 'doom-brighten-minibuffer)
   ;; Custom neotree theme
-  (require 'doom-neotree))
+  (when window-system
+    (require 'doom-neotree)))
 
 (use-package beacon
   :config

@@ -2,8 +2,6 @@
 
 ;; This file tries to be an almost self-contained configuration of my mode-line.
 
-(require 'powerline)
-
 ;;; These are the invisible dependencies
 ;; Required
 ;;(require 'f)
@@ -18,6 +16,17 @@
 ;;(require 'evil-anzu)
 ;;(require 'iedit)
 ;;(require 'evil-multiedit)
+
+(require 'powerline)
+(require 'all-the-icons)
+
+;; all-the-icons doesn't work in the terminal, so we "disable" it.
+(unless window-system
+  (defun all-the-icons-octicon (&rest _) "" "")
+  (defun all-the-icons-faicon (&rest _) "" "")
+  (defun all-the-icons-fileicon (&rest _) "" "")
+  (defun all-the-icons-wicon (&rest _) "" "")
+  (defun all-the-icons-alltheicon (&rest _) "" ""))
 
 
 ;;
