@@ -115,7 +115,7 @@
         :nv "M"   'projectile-recentf
         ;; :nv "p"   'helm-projectile-switch-project
         :nv "p"   'counsel-yank-pop
-        :nv "P"   'counsel-projectile
+        :nv "P"   'counsel-projectile-switch-project
         :n  "R"   'doom/reset-theme
         :n  "s"   'yas-visit-snippet-file
         :n  "S"   'doom/yas-find-file
