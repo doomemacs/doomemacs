@@ -21,10 +21,10 @@
         evil-motion-state-tag    "M"
         evil-replace-state-tag   "R"
 
-        ;; Color-coded state cursors
-        evil-default-cursor (face-attribute 'minibuffer-prompt :foreground nil t)
+        ;; Set cursor colors
+        evil-default-cursor (face-attribute 'cursor :background nil t)
         evil-normal-state-cursor 'box
-        evil-emacs-state-cursor  `(,(face-attribute 'shadow :foreground nil nil) box)
+        evil-emacs-state-cursor  `(,(face-attribute 'warning :foreground nil nil) box)
         evil-insert-state-cursor 'bar
         evil-visual-state-cursor 'hollow)
 
