@@ -19,14 +19,6 @@
     map)
    "Active keymap in popup windows.")
 
-(defvar doom-popup-mode-local-map
-  (let ((map (make-sparse-keymap)))
-    (define-key map [remap evil-force-normal-state] 'doom/popup-close)
-    (define-key map [escape] 'doom/popup-close)
-    (define-key map (kbd "ESC") 'doom/popup-close)
-    map)
-  "Active keymap in popup windows with ESC bindings.")
-
 (advice-add 'doom/evil-window-move :around 'doom*popup-window-move)
 
 ;;;###autoload
@@ -156,9 +148,10 @@ variables."
                       doom-popup-rules)))
     (setq doom-last-popup (current-buffer))
     (setq-local doom-popup-rule rules)
-    (let ((map doom-popup-mode-map))
-      (unless (memq :noesc rules)
-        (use-local-map doom-popup-mode-local-map)))))
+    (unless (memq :noesc rules)
+      (define-key map [remap evil-force-normal-state] 'doom/popup-close)
+      (define-key map [escape] 'doom/popup-close)
+      (define-key map (kbd "ESC") 'doom/popup-close))))
 
 (provide 'defuns-popups)
 ;;; defuns-popups.el ends here
