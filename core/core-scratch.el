@@ -129,9 +129,10 @@ buffer. Without this, it would refuse to split, saying 'too small to split'."
 (defun doom--scratch-info ()
   (let ((all-the-icons-scale-factor 1.3)
         (all-the-icons-default-adjust -0.05)
-        (last-session-p (f-exists-p wg-session-file))
         (start (point))
         (sep "   ")
+        (last-session-p (and (featurep 'workgroups2)
+                             (f-exists-p wg-session-file)))
         end)
     (unless last-session-p
       (setq sep "     "))
