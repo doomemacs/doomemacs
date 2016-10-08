@@ -206,8 +206,8 @@
       :n  "gr" 'doom:eval-region
       :n  "gR" 'doom:eval-buffer
       :v  "gR" 'doom:eval-region-and-replace
-      :m  "g]" 'smart-right
-      :m  "g[" 'smart-left
+      :m  "g]" 'smart-forward
+      :m  "g[" 'smart-backward
       :v  "@"  'doom/evil-macro-on-all-lines
       :n  "g@" 'doom/evil-macro-on-all-lines
       ;; Repeat in visual mode

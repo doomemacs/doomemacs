@@ -253,7 +253,7 @@
   :config (push '("true" "false") rotate-text-words))
 
 (use-package smart-forward
-  :commands (smart-up smart-down smart-left smart-right))
+  :commands (smart-up smart-down smart-backward smart-forward))
 
 (use-package smartparens
   :config
