@@ -255,10 +255,10 @@ popup (or temporary) window and b) it isn't a special buffer (e.g. scratch or
 (evil-define-command doom:kill-all-buffers (&optional bang)
   "Kill all project buffers. If BANG, kill *all* buffers (in workgroup)."
   (interactive "<!>")
-  (doom--kill-buffers (--filter (not (eq it doom-buffer)) (doom/get-buffers (not bang))))
-  (mapc (lambda (w) (when (eq (window-buffer w) doom-buffer)
-                 (delete-window w)))
-        (doom/get-visible-windows)))
+  (doom--kill-buffers (--filter (not (eq it doom-buffer))
+                                (doom/get-buffers (not bang))))
+  (delete-other-windows)
+  (switch-to-buffer doom-buffer))
 
 ;;;###autoload (autoload 'doom:kill-other-buffers "defuns-buffers" nil t)
 (evil-define-command doom:kill-other-buffers (&optional bang)
