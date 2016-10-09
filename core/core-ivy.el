@@ -20,8 +20,6 @@
         "C-u" 'backward-kill-sentence
         "C-b" 'backward-word
         "C-f" 'forward-word)
-  ;; Fix display glitches
-  (advice-add 'ivy-done :after 'redraw-display)
 
   (after! magit (setq magit-completing-read-function 'ivy-completing-read))
   (after! smex (setq smex-completion-method 'ivy))

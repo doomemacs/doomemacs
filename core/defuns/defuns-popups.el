@@ -70,7 +70,7 @@ window. Returns nil or the popup window."
      nil (or plist (shackle-match buffer-name)))))
 
 ;;;###autoload
-(defun doom/popup-close (&optional window dont-kill dont-redraw)
+(defun doom/popup-close (&optional window dont-kill)
   "Find and close the currently active popup (if available)."
   (interactive)
   (setq window (or window (selected-window)))
@@ -85,8 +85,7 @@ window. Returns nil or the popup window."
                        kill-buffer-query-functions)))
             (kill-buffer (window-buffer window)))
         (doom-popup-mode -1)))
-    (delete-window window)
-    (unless dont-redraw (redraw-frame))))
+    (delete-window window)))
 
 ;;;###autoload
 (defun doom/popup-close-maybe ()
@@ -98,17 +97,13 @@ window. Returns nil or the popup window."
     (doom/popup-close)))
 
 ;;;###autoload
-(defun doom/popup-close-all (&optional dont-kill dont-redraw)
-  "Closes all popups (kill them if DONT-KILL-BUFFERS is non-nil). Then redraw
-the display (unless DONT-REDRAW is non-nil)."
+(defun doom/popup-close-all (&optional dont-kill)
+  "Closes all popups (kill them if DONT-KILL-BUFFERS is non-nil)."
   (interactive)
   (let ((orig-win (selected-window)))
     (mapc (lambda (w) (doom/popup-close w dont-kill t))
-          (--filter (and (doom/popup-p it) (not (eq it orig-win))) (window-list))))
-  ;; Earlier versions of Emacs were more prone to graphical artifacts, so redraw
-  ;; the frame in them.
-  (when (< emacs-major-version 25)
-    (unless dont-redraw (redraw-frame))))
+          (--filter (and (doom/popup-p it) (not (eq it orig-win)))
+                    (window-list)))))
 
 ;;;###autoload
 (defun doom/popup-last-buffer ()
