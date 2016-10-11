@@ -159,10 +159,10 @@
   ;; This prevents helm-ag from switching between windows and buffers.
   (defadvice helm-ag--edit-abort (around helm-ag-edit-abort-popup-compat activate)
     (cl-letf (((symbol-function 'select-window) 'ignore)) ad-do-it)
-    (doom/popup-close nil t t))
+    (doom/popup-close nil t))
   (defadvice helm-ag--edit-commit (around helm-ag-edit-commit-popup-compat activate)
     (cl-letf (((symbol-function 'select-window) 'ignore)) ad-do-it)
-    (doom/popup-close nil t t))
+    (doom/popup-close nil t))
   (defadvice helm-ag--edit (around helm-ag-edit-popup-compat activate)
     (cl-letf (((symbol-function 'other-window) 'ignore)
               ((symbol-function 'switch-to-buffer) 'doom/popup-buffer))

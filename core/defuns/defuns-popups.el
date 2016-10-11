@@ -49,7 +49,7 @@ window. Returns nil or the popup window."
   `(let ((popup-p (doom/popups-p))
          (in-popup-p (doom/popup-p)))
      (when popup-p
-       (doom/popup-close-all t t))
+       (doom/popup-close-all t))
      (prog1
          ,@body
        (when popup-p
@@ -101,7 +101,7 @@ window. Returns nil or the popup window."
   "Closes all popups (kill them if DONT-KILL-BUFFERS is non-nil)."
   (interactive)
   (let ((orig-win (selected-window)))
-    (mapc (lambda (w) (doom/popup-close w dont-kill t))
+    (mapc (lambda (w) (doom/popup-close w dont-kill))
           (--filter (and (doom/popup-p it) (not (eq it orig-win)))
                     (window-list)))))
 

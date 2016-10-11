@@ -85,7 +85,7 @@ elisp buffer). Otherwise forward the region to Quickrun."
   "Allows us to re-run quickrun from inside the quickrun buffer."
   (awhen (get-buffer-window quickrun/buffer-name)
     (shut-up! (quickrun/kill-running-process))
-    (doom/popup-close it nil t)))
+    (doom/popup-close it nil)))
 
 ;;;###autoload
 (defun doom|quickrun-after-run ()
