@@ -1,13 +1,22 @@
 #!/usr/bin/env bash
 
-cd ~/.emacs.d/ext
-source ./VARS
+source VARS
 
 #
 echo "Setting up JS (tern/trepanjs)"
 
-if is-mac; then
-    brew install node
-fi
+case "$OSTYPE" in
+    darwin*)
+        brew install node
+        ;;
+    linux*)
+        if is-arch; then
+            sudo pacman --noconfirm -S nodejs npm
+        else
+            echo "..."
+            exit 1
+        fi
+        ;;
+esac
 
 npm -g install trepanjs tern

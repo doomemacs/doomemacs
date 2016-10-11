@@ -1,10 +1,15 @@
 #!/usr/bin/env bash
 
-CACHE_DIR="${HOME}/.emacs.d/private/cache/`hostname`/"
-ELPA_DIR="${HOME}/.emacs.d/.cask/`emacs --version | grep -E -o '2[4-9]\.[0-9\.]+'`/elpa"
+HOSTNAME=`emacs --batch --eval '(message "%s" (system-name))' 2>&1`
 
-is-mac() { [ "$(uname)" == "Darwin" ]; }
-is-linux() { [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; }
+ROOT_DIR="$(cd $(dirname $0)/../ && pwd -P)"
+CACHE_DIR="$ROOT_DIR/private/cache/$HOSTNAME"
+ELPA_DIR="$ROOT_DIR/.cask/`emacs --version | grep -E -o '2[4-9]\.[0-9\.]+'`/elpa"
+EXT_DIR="$ROOT_DIR/ext"
+
+#
+is-arch() { [ -f "/etc/arch-release" ]; }
+is-deb()  { [ -f "/etc/debian_version" ]; }
 
 git-repo() {
     old=$(pwd)

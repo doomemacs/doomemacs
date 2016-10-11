@@ -49,7 +49,7 @@
 (use-package irony
   :after cc-mode
   :config
-  (setq irony-server-install-prefix (concat doom-temp-dir "/irony/"))
+  (setq irony-server-install-prefix (concat doom-ext-dir "/irony-mode/server/build/irony/"))
   (add-hook! c++-mode
     (make-local-variable 'irony-additional-clang-options)
     (push "-std=c++11" irony-additional-clang-options))
