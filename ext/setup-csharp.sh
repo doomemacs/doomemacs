@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
-cd ~/.emacs.d/ext
-source ./VARS
+source VARS
 
 #
 echo "Setting up C# (omnisharp)"
