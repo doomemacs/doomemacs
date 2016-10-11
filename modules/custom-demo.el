@@ -7,7 +7,7 @@
 ;;   + TODO peer programming collab
 
 ;; Big-mode settings
-(defconst big-mode-font (font-spec :family "Inconsolata" :size 16))
+(defconst big-mode-font (font-spec :family "Fira Mono" :size 14))
 (defconst big-mode-line-spacing 0)
 (defconst big-mode-modeline-height 35)
 
