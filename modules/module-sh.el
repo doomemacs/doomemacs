@@ -9,7 +9,7 @@
   :init (add-hook! sh-mode '(flycheck-mode doom|sh-extra-font-lock-activate))
   :config
   (def-company-backend! sh-mode (shell))
-  (def-electric! sh-mode :words ("else" "elif" "fi" "done"))
+  (def-electric! sh-mode :words ("else" "elif" "fi" "done" "then" "do" "esac" ";;"))
   (def-repl! sh-mode doom/inf-shell)
   (setq sh-indent-after-continuation 'always)
 
