@@ -8,6 +8,7 @@ ELPA_DIR="$ROOT_DIR/.cask/`emacs --version | grep -E -o '2[4-9]\.[0-9\.]+'`/elpa
 EXT_DIR="$ROOT_DIR/ext"
 
 #
+is-mac()  { [[ "$OSTYPE" == darwin* ]]; }
 is-arch() { [ -f "/etc/arch-release" ]; }
 is-deb()  { [ -f "/etc/debian_version" ]; }
 
