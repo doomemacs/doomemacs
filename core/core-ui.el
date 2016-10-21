@@ -218,9 +218,6 @@
   (fringe-mode doom-ui-fringe-size)
   (push `(left-fringe  . ,doom-ui-fringe-size) default-frame-alist)
   (push `(right-fringe . ,doom-ui-fringe-size) default-frame-alist)
-  ;; slightly larger default frame size on startup
-  (push '(width . 120) default-frame-alist)
-  (push '(height . 40) default-frame-alist)
   ;; no fringe in the minibuffer
   (add-hook! (emacs-startup minibuffer-setup)
     (set-window-fringes (minibuffer-window) 0 0 nil))
