@@ -98,8 +98,8 @@
         org-export-with-toc t
         org-export-with-author t)
 
-  (require 'ox-pandoc)
-  (setq org-pandoc-options '((standalone . t) (mathjax . t) (parse-raw . t)))
+  ;; (require 'ox-pandoc)
+  ;; (setq org-pandoc-options '((standalone . t) (mathjax . t) (parse-raw . t)))
 
   ;; Export to a central directory (why isn't this easier?)
   (unless (file-directory-p org-export-directory)
