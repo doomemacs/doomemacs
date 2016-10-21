@@ -1,7 +1,5 @@
 ;;; module-org.el --- -*- no-byte-compile: t; -*-
 
-(defconst org-directory (expand-file-name "~/Notes/"))
-
 (define-minor-mode evil-org-mode
   "Evil-mode bindings for org-mode."
   :init-value nil
@@ -13,6 +11,8 @@
 (add-hook 'org-load-hook 'doom|org-keybinds t)
 (add-hook 'org-load-hook 'doom|org-hacks t)
 (add-hook 'org-mode-hook 'doom|org-hook)
+
+(defvaralias 'org-directory 'doom-org-dir)
 
 ;;
 (defun doom|org-hook ()
@@ -183,7 +183,7 @@
   (pushnew 'org-is-agenda-file recentf-exclude)
 
   ;; Don't track attachments
-  (push (format "/%s.+$" (regexp-quote org-attach-directory)) recentf-exclude)
+  (push (format "/%s.+$" (regexp-quote doom-org-attachment-dir)) recentf-exclude)
   (push ".attach" projectile-globally-ignored-file-suffixes)
 
   ;; Remove highlights on ESC

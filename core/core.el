@@ -58,6 +58,10 @@
   (format "%s/cache/%s" doom-private-dir (system-name))
   "Hostname-based elisp temp directories")
 
+(defconst doom-org-dir
+  (expand-file-name "~/org")
+  "Where to find org notes")
+
 ;; window-system is deprecated. Not on my watch!
 (unless (boundp 'window-system)
   (defvar window-system (framep-on-display)))

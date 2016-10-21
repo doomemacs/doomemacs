@@ -13,12 +13,14 @@
 (add-hook 'org-load-hook 'doom|org-attach-init t)
 (add-hook 'org-load-hook 'doom|org-export-init t)
 
-(defconst org-directory-notebook (f-expand "notes/" org-directory))
-(defconst org-default-notes-file (f-expand "inbox.org" org-directory-notebook))
+(defvar doom-org-notes-dir (f-expand "notes" doom-org-dir)
+  "The directory where the notes are kept")
 
-(defvar org-attach-directory ".attach/")
-(defvar org-export-directory (concat org-directory ".export"))
-(defvar org-quicknote-directory (concat org-directory "Inbox/"))
+(defvar doom-org-quicknote-dir (f-expand "inbox" doom-org-notes-dir)
+  "")
+
+(defvar doom-org-attachment-dir ".attach/"
+  "Where to store attachments (relative to current org file).")
 
 ;; Keep track of attachments
 (defvar-local doom-org-attachments-list '()
@@ -32,7 +34,10 @@
 
 ;;
 (defun doom|org-notebook-init ()
-  (setq org-capture-templates
+  (setq org-default-notes-file (f-expand "inbox.org" doom-org-notes-dir)
+        org-attach-directory doom-org-attachment-dir
+        org-export-directory (concat org-directory ".export")
+        org-capture-templates
         '(;; TODO: New Note (note)
           ;; TODO: New Task (todo)
           ;; TODO: New vocabulary word
@@ -68,7 +73,7 @@
   ;; (doom-fix-unicode '("FontAwesome" 13) ? ? ? ? ? ? ? ?)
   ;; Drag-and-drop support
   (require 'org-download)
-  (setq-default org-download-image-dir org-attach-directory
+  (setq-default org-download-image-dir doom-org-attachment-dir
                 org-download-heading-lvl nil
                 org-download-timestamp "_%Y%m%d_%H%M%S")
 

@@ -2,7 +2,8 @@
 
 (add-hook 'org-load-hook 'doom|org-crm-init)
 
-(defvar org-directory-crm (expand-file-name "/crm/" org-directory))
+(defvar org-directory-crm (expand-file-name "/crm/" doom-org-dir)
+  "")
 
 (defun doom|org-crm-init ()
   ;; (define-org-section! work "Work")
