@@ -58,6 +58,15 @@
        (y-or-n-p "››› Quit?")
      t)))
 
+;; A subtle bell: flash the mode-line
+;; TODO More flexible colors (only suits dark themes)
+(setq ring-bell-function
+      (lambda ()
+        (let ((bg (face-attribute 'mode-line :background)))
+          (set-face-attribute 'mode-line nil :background "#54252c")
+          (run-with-timer 0.1 nil `(lambda () (set-face-attribute 'mode-line nil :background ,bg))))))
+
+
 ;; y/n instead of yes/no
 (fset 'yes-or-no-p 'y-or-n-p)
 

@@ -130,7 +130,6 @@ major-modes, the process gets killed.")
       enable-recursive-minibuffers       nil         ; no minibufferception
       idle-update-delay                  5           ; update a little less often
       major-mode                        'text-mode
-      ring-bell-function                'ignore      ; silence of the bells!
       save-interprogram-paste-before-kill nil
       sentence-end-double-space          nil
       ;; http://ergoemacs.org/emacs/emacs_stop_cursor_enter_prompt.html
