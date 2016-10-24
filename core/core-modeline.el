@@ -269,7 +269,8 @@ directory, the file name, and its state (modified, read-only or non-existent)."
               " "
               (propertize (substring vc-mode (+ (if (eq backend 'Hg) 2 3) 2))
                           'face (if active face))
-              "  "))))
+              "  "
+              (propertize " " 'face 'variable-pitch)))))
 
 (defvar-local doom--flycheck-err-cache nil "")
 (defvar-local doom--flycheck-cache nil "")
