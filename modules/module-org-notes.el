@@ -36,7 +36,7 @@
 (defun doom|org-notebook-init ()
   (setq org-default-notes-file (f-expand "inbox.org" doom-org-notes-dir)
         org-attach-directory doom-org-attachment-dir
-        org-export-directory (concat org-directory ".export")
+        org-export-directory (f-expand ".export" org-directory)
         org-capture-templates
         '(;; TODO: New Note (note)
           ;; TODO: New Task (todo)
