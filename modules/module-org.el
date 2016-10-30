@@ -241,15 +241,15 @@
           :i "RET" 'org-return-indent)
 
         (:map evil-org-mode-map
-          :ni "A-l" 'org-metaright
-          :ni "A-h" 'org-metaleft
-          :ni "A-k" 'org-metaup
-          :ni "A-j" 'org-metadown
+          :ni "A-L" 'org-metaright
+          :ni "A-H" 'org-metaleft
+          :ni "A-K" 'org-metaup
+          :ni "A-J" 'org-metadown
           ;; Expand tables (or shiftmeta move)
-          :ni "A-L" 'doom/org-table-append-field-or-shift-right
-          :ni "A-H" 'doom/org-table-prepend-field-or-shift-left
-          :ni "A-K" 'doom/org-table-prepend-row-or-shift-up
-          :ni "A-J" 'doom/org-table-append-row-or-shift-down
+          :ni "C-S-l" 'doom/org-table-append-field-or-shift-right
+          :ni "C-S-h" 'doom/org-table-prepend-field-or-shift-left
+          :ni "C-S-k" 'doom/org-table-prepend-row-or-shift-up
+          :ni "C-S-j" 'doom/org-table-append-row-or-shift-down
 
           :i  "C-L" 'doom/org-table-next-field
           :i  "C-H" 'doom/org-table-previous-field
