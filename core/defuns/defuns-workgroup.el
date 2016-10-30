@@ -2,9 +2,12 @@
 
 ;;;###autoload
 (defun doom|wg-cleanup ()
-  (doom/popup-close-all)
-  (when (and (featurep 'neotree) (neo-global--window-exists-p))
-    (neotree-hide)))
+  "Remove unsavable windows and buffers before we save the window
+configuration."
+  (let (doom-buffer-inhibit-refresh)
+    (doom/popup-close-all)
+    (when (and (featurep 'neotree) (neo-global--window-exists-p))
+      (neotree-hide))))
 
 ;;;###autoload
 (defun doom/wg-projectile-switch-project ()
@@ -17,9 +20,9 @@
 ;;;###autoload (autoload 'doom:workgroup-save "defuns-workgroup" nil t)
 (evil-define-command doom:workgroup-save (&optional bang session-name)
   (interactive "<!><a>")
+  (doom|wg-cleanup)
   (unless (wg-workgroup-list)
     (wg-create-workgroup wg-first-wg-name))
-  (doom|wg-cleanup)
   (wg-save-session-as (if session-name
                           (concat wg-workgroup-directory session-name)
                         (if bang
@@ -29,6 +32,7 @@
 ;;;###autoload (autoload 'doom:workgroup-load "defuns-workgroup" nil t)
 (evil-define-command doom:workgroup-load (&optional bang session-name)
   (interactive "<!><a>")
+  (doom|wg-cleanup)
   (let ((session-file (if session-name
                           (concat wg-workgroup-directory session-name)
                         (let ((sess (concat wg-workgroup-directory (f-filename (doom/project-root)))))

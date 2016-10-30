@@ -12,6 +12,8 @@
   "The name of the doom scratch buffer.")
 (defvar doom-buffer-edited nil
   "If non-nil, the scratch buffer has been edited.")
+(defvar doom-buffer-inhibit-refresh nil
+  "If non-nil, the doom buffer won't be refreshed.")
 
 (define-derived-mode doom-mode fundamental-mode
   (concat "v" doom-version)
@@ -45,7 +47,8 @@ buffer. Without this, it would refuse to split, saying 'too small to split'."
 
 (defun doom-reload-scratch-buffer (&optional dir)
   "Update the DOOM scratch buffer (or create it, if it doesn't exist)."
-  (when (and (get-buffer-window-list doom-buffer nil t)
+  (when (and (not doom-buffer-inhibit-refresh)
+             (get-buffer-window-list doom-buffer nil t)
              (or (not doom-buffer-edited) dir)
              (not (minibuffer-window-active-p (minibuffer-window))))
     (doom--reload-scratch-buffer dir)))
