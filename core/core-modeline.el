@@ -54,7 +54,7 @@
 (defface doom-modeline-buffer-modified '((t (:inherit highlight :background nil)))
   "Face used for the 'unsaved' symbol in the mode-line.")
 
-(defface doom-modeline-major-mode '((t (:inherit mode-line :bold t)))
+(defface doom-modeline-buffer-major-mode '((t (:inherit mode-line :bold t)))
   "Face used for the major-mode segment in the mode-line.")
 
 (defface doom-modeline-highlight '((t (:inherit mode-line)))
@@ -231,7 +231,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
            (and (featurep 'face-remap)
                 (/= text-scale-mode-amount 0)
                 (format " (%+d)" text-scale-mode-amount)))
-   'face (if (active) 'doom-modeline-major-mode)))
+   'face (if (active) 'doom-modeline-buffer-major-mode)))
 
 (defun *vc ()
   "Displays the current branch, colored based on its state."
