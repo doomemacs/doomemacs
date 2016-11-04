@@ -294,18 +294,21 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                  (setq doom--flycheck-cache
                        (let ((fw (doom-ml-flycheck-count 'warning))
                              (fe (doom-ml-flycheck-count 'error)))
-                         (concat (if fe (concat
-                                         " "
+                         (concat (if (or fe fw) " ")
+                                 (if fe (concat
                                          (all-the-icons-octicon "circle-slash" :face 'doom-modeline-urgent :height 1.0 :v-adjust 0)
                                          (propertize " " 'face 'variable-pitch)
-                                         (propertize (format "%d" fe) 'face 'doom-modeline-urgent)))
-                                 (if fw (concat
+                                         (propertize (format "%d" fe) 'face 'doom-modeline-urgent)
                                          " "
+                                         ))
+                                 (if fw (concat
                                          (all-the-icons-octicon "alert" :face 'doom-modeline-warning :height 0.9 :v-adjust 0)
                                          (propertize " " 'face 'variable-pitch)
                                          (propertize (format "%d" fw) 'face 'doom-modeline-warning)
+                                         " "
                                          ))
-                                 (unless (or fe fw)
+                                 (if (or fe fw)
+                                     " "
                                    (when (active)
                                      (all-the-icons-octicon "check" :height 1.2 :v-adjust -0.06))))))))
       (concat
