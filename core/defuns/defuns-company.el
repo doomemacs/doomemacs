@@ -42,6 +42,8 @@
   "`company-mode' completion backend that completes whole-lines, akin to vim's
 C-x C-l."
   (interactive (list 'interactive))
+  (require 'company)
+  (unless (bound-and-true-p company-mode) (company-mode))
   (let ((lines (doom--company-whole-lines)))
     (cl-case command
       (interactive (company-begin-backend 'doom/company-whole-lines))
@@ -59,8 +61,8 @@ C-x C-l."
   "Bring up the completion popup. If only one result, complete it."
   (interactive)
   (require 'company)
-  (when (and (bound-and-true-p company-mode)
-             (company-manual-begin)
+  (unless (bound-and-true-p company-mode) (company-mode))
+  (when (and (company-manual-begin)
              (= company-candidates-length 1))
     (company-complete-common)))
 
