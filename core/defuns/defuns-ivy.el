@@ -109,7 +109,7 @@ DIR specifies the default-directory from which ag is run."
   (counsel-ag " (TODO|FIXME|NOTE) " (doom/project-root)))
 
 ;;;###autoload
-(defun doom*counsel-ag-function (string extra-ag-args)
+(defun doom*counsel-ag-function (string base-cmd extra-ag-args)
   "Advice to get rid of the character limit from `counsel-ag-function', which
 interferes with my custom :ag ex command `doom:ivy-ag-search'."
   (when (null extra-ag-args)
@@ -120,12 +120,14 @@ interferes with my custom :ag ex command `doom:ivy-ag-search'."
           (regex (counsel-unquote-regex-parens
                   (setq ivy--old-re
                         (ivy--regex string)))))
-      (let ((ag-cmd (format counsel-ag-base-command
+      (let ((ag-cmd (format base-cmd
                             (concat extra-ag-args
                                     " -- "
                                     (shell-quote-argument regex)))))
-        (counsel--async-command ag-cmd))
-      nil)))
+        (if (file-remote-p default-directory)
+            (split-string (shell-command-to-string ag-cmd) "\n" t)
+          (counsel--async-command ag-cmd)
+          nil)))))
 
 ;;;###autoload
 (defun doom/counsel-ag-occur ()
