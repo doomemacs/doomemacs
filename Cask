@@ -279,7 +279,7 @@
 (depends-on "company-web")
 (depends-on "emmet-mode")
 (depends-on "haml-mode")
-(depends-on "pug-mode" :git "https://github.com/hlissner/pug-mode")
+(depends-on "pug-mode" :git "https://github.com/hlissner/emacs-pug-mode")
 (depends-on "web-mode")
 
 
