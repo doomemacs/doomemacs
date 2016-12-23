@@ -58,7 +58,7 @@
   (format "%s/cache/%s" doom-private-dir (system-name))
   "Hostname-based elisp temp directories")
 
-(defconst doom-org-dir
+(defvar doom-org-dir
   (expand-file-name "~/org")
   "Where to find org notes")
 
