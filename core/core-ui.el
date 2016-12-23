@@ -35,6 +35,8 @@
 
  blink-matching-paren nil ; don't blink--too distracting
  show-paren-delay 0.075
+ show-paren-highlight-openparen t
+ show-paren-when-point-inside-paren t
  uniquify-buffer-name-style nil
  visible-bell nil
  visible-cursor nil
