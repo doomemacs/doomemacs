@@ -217,9 +217,8 @@ directory, the file name, and its state (modified, read-only or non-existent)."
             (cond ((eq eol-type 0) "LF  ")
                   ((eq eol-type 1) "CRLF  ")
                   ((eq eol-type 2) "CR  ")))
-          (upcase (symbol-name
-                   (plist-get (coding-system-plist buffer-file-coding-system)
-                              :name)))
+          (let ((coding-sys (plist-get (coding-system-plist buffer-file-coding-system) :name)))
+            (upcase (symbol-name (if (eq coding-sys 'prefer-utf-8) 'utf-8 coding-sys))))
           "  "))
 
 (defun *major-mode ()
