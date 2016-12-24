@@ -228,7 +228,7 @@
 ;; PHP -- modules/module-php.el
 (depends-on "hack-mode" :git "https://github.com/beefsack/hack-mode")
 (depends-on "php-boris")
-(depends-on "php-extras")
+(depends-on "php-extras" :git "https://github.com/arnested/php-extras")
 (depends-on "php-mode")
 (depends-on "php-refactor-mode")
 (depends-on "phpunit")
