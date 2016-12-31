@@ -6,7 +6,7 @@
          ("/\\.?bash\\(/.*\\|rc\\|_profile\\)$" . sh-mode)
          ("/\\.?xinitrc$" . sh-mode)
          ("/bspwmrc$" . sh-mode))
-  :init (add-hook! sh-mode '(flycheck-mode doom|sh-extra-font-lock-activate))
+  :init (add-hook! sh-mode '(flycheck-mode doom|sh-extra-font-lock-activate highlight-numbers-mode))
   :config
   (def-company-backend! sh-mode (shell))
   (def-electric! sh-mode :words ("else" "elif" "fi" "done" "then" "do" "esac" ";;"))
