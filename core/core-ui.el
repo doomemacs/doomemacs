@@ -227,7 +227,7 @@
   (with-demoted-errors "FONT ERROR: %s"
     (set-frame-font doom-ui-font t)
     ;; Fallback to `doom-unicode-font' for Unicode characters
-    (set-fontset-font t 'unicode doom-ui-font)
+    (set-fontset-font t 'unicode doom-unicode-font)
     ;; Set font for variable-pitch mode
     (set-face-attribute 'variable-pitch nil :font doom-ui-variable-pitch-font))
   ;; standardize fringe width
