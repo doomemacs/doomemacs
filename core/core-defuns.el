@@ -202,9 +202,48 @@ Examples:
   (put ':localleader 'lisp-indent-function 'defun)
 
   (defmacro map! (&rest rest)
+    "A nightmare of a key-binding macro that will use `evil-define-key',
+`evil-define-key*', `define-key' and `global-set-key' depending on context and
+plist key flags. It was designed to make binding multiple keys more concise,
+like in vim.
+
+States
+    :n  normal
+    :v  visual
+    :i  insert
+    :e  emacs
+    :o  operator
+    :m  motion
+    :r  replace
+
+    These can be combined (order doesn't matter), e.g. :nvi will apply to
+    normal, visual and insert mode. The state resets after the following
+    key=>def pair.
+
+    If omitted, the keybind will be defined globally.
+
+Flags
+    :unset [KEY]              ; unset key
+    :nodefer                  ; don't use `evil-delay' for future keybinds
+    (:map [KEYMAP] [...])     ; apply all inner keybinds to KEYMAP
+    (:prefix [PREFIX] [...])  ; assign prefix to all inner keybindings
+    (:after [FEATURE] [...])  ; apply keybinds when [FEATURE] loads
+
+Conditional keybinds
+    (:when [CONDITION] [...])
+    (:unless [CONDITION] [...])
+
+Example
+    (map! :map magit-mode-map
+          :m \"C-r\" 'do-something           ; assign C-r in motion state
+          :nv \"q\" 'magit-mode-quit-window  ; assign to 'q' in normal and visual states
+          \"C-x C-r\" 'a-global-keybind
+
+          (:when IS-MAC
+           :n \"M-s\" 'some-fn
+           :i \"M-o\" (lambda (interactive) (message \"Hi\"))))"
     (let ((i 0)
           (keymaps (if (boundp 'keymaps) keymaps))
-          (default-keymaps '((current-global-map)))
           (state-map '(("n" . normal)
                        ("v" . visual)
                        ("i" . insert)
@@ -213,9 +252,8 @@ Examples:
                        ("m" . motion)
                        ("r" . replace)))
           (prefix (if (boundp 'prefix) prefix))
+          (nodefer (if (boundp 'nodefer) nodefer))
           key def states forms)
-      (unless keymaps
-        (setq keymaps default-keymaps))
       (while rest
         (setq key (pop rest))
         (push
@@ -234,15 +272,16 @@ Examples:
                  (pcase key
                    (:prefix  (setq prefix (concat prefix (kbd (pop rest)))) nil)
                    (:map     (setq keymaps (-list (pop rest))) nil)
+                   (:nodefer (setq nodefer t) nil)
                    (:unset  `(,(macroexpand `(map! ,(kbd (pop rest)) nil))))
                    (:after   (prog1 `((after! ,(pop rest)   ,(macroexpand `(map! ,@rest)))) (setq rest '())))
                    (:when    (prog1 `((if ,(pop rest)       ,(macroexpand `(map! ,@rest)))) (setq rest '())))
                    (:unless  (prog1 `((if (not ,(pop rest)) ,(macroexpand `(map! ,@rest)))) (setq rest '())))
                    (otherwise ; might be a state prefix
                     (mapc (lambda (letter)
-                            (if (assoc letter state-map)
-                                (push (cdr (assoc letter state-map)) states)
-                              (user-error "Invalid mode prefix %s in key %s" letter key)))
+                            (cond ((assoc letter state-map)
+                                   (push (cdr (assoc letter state-map)) states))
+                                  (t (user-error "Invalid mode prefix %s in key %s" letter key))))
                           (split-string (substring (symbol-name key) 1) "" t))
                     (unless states
                       (user-error "Unrecognized keyword %s" key)) nil)))
@@ -260,13 +299,23 @@ Examples:
                    (user-error "Map has no definition for %s" key))
                  (setq def (pop rest))
                  (let (out-forms)
-                   (mapc (lambda (keymap)
-                           (if states
-                               (push `(evil-define-key ',states ,keymap ,key ,def) out-forms)
-                             (push `(define-key ,keymap ,key ,def) out-forms)))
-                         keymaps)
+                   (cond ((and keymaps states)
+                          (mapc (lambda (keymap)
+                                  (push `(,(if nodefer 'evil-define-key* 'evil-define-key)
+                                          ',states ,keymap ,key ,def)
+                                        out-forms))
+                                keymaps))
+                         (keymaps
+                          (mapc (lambda (keymap) (push `(define-key ,keymap ,key ,def) out-forms))
+                                keymaps))
+                         (states
+                          (mapc (lambda (state) (push `(define-key (evil-state-property ',state :keymap t) ,key ,def)
+                                                 out-forms))
+                                states))
+                         (t (push `(global-set-key ,key ,def) out-forms)))
                    (setq states '())
                    out-forms))
+
                 (t (user-error "Invalid key %s" key))))
          forms)
         (setq i (1+ i)))

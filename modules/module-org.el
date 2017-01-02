@@ -233,7 +233,8 @@
           "Q" 'doom/org-agenda-quit)))
 
 (defun doom|org-keybinds ()
-  (map! (:map org-mode-map
+  (map! :nodefer
+        (:map org-mode-map
           "RET" nil
           "C-j" nil
           "C-k" nil

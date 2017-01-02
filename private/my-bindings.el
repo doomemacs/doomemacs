@@ -11,7 +11,8 @@
             '(call-interactively 'counsel-find-file)
             )))))
 
-(map! "<f9>" 'what-face
+(map! :nodefer
+      [f9]   'what-face
       ;; Essential
       (:when (featurep 'helm)
         "M-x"  'helm-M-x
