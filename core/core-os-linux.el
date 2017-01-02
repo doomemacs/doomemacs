@@ -1,7 +1,7 @@
 ;;; core-os-linux.el --- Debian-specific settings
 
-(setq x-super-keysym 'meta
-      x-meta-keysym  'alt)
+(setq x-super-keysym 'alt
+      x-meta-keysym  'meta)
 
 (defun doom-open-with (command &rest args)
   "Open PATH in APP-NAME, using xdg-open."
