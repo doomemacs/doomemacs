@@ -52,8 +52,9 @@
 (use-package magit
   :commands (magit-status)
   :config
-  ;; Prevent magit and evil-snipe conflicts
+  ;; Prevent magit + evil-snipe conflicts
   (add-hook 'magit-mode-hook 'turn-off-evil-snipe-override-mode)
+  (map! :map magit-mode-map :m "<tab>" 'magit-section-toggle)
   (require 'evil-magit))
 
 (after! vc-annotate

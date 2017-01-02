@@ -250,7 +250,7 @@
           :ni "C-S-h" 'doom/org-table-prepend-field-or-shift-left
           :ni "C-S-k" 'doom/org-table-prepend-row-or-shift-up
           :ni "C-S-j" 'doom/org-table-append-row-or-shift-down
-
+          ;; Navigate table cells
           :i  "C-L" 'doom/org-table-next-field
           :i  "C-H" 'doom/org-table-previous-field
           :i  "C-K" 'doom/org-table-previous-row
@@ -258,8 +258,11 @@
 
           :i  "C-e" 'org-end-of-line
           :i  "C-a" 'org-beginning-of-line
-          :i  "<tab>"   'doom/org-indent
-          :i  "<S-tab>" 'doom/org-dedent
+
+          :i  "<tab>" 'doom/org-indent-or-next-field
+          :i  [S-iso-lefttab] 'doom/org-dedent-or-prev-field ; for GNU Emacs
+          :i  [(shift tab)] 'doom/org-dedent-or-prev-field
+          :i  [backtab] 'doom/org-dedent-or-prev-field
 
           :nv "j"   'evil-next-visual-line
           :nv "k"   'evil-previous-visual-line
