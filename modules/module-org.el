@@ -241,10 +241,17 @@
           :i "RET" 'org-return-indent)
 
         (:map evil-org-mode-map
-          :ni "A-L" 'org-metaright
-          :ni "A-H" 'org-metaleft
-          :ni "A-K" 'org-metaup
-          :ni "A-J" 'org-metadown
+          :n  "RET" 'doom/org-dwim-at-point
+          ;;
+          :ni "A-l" 'org-metaright
+          :ni "A-h" 'org-metaleft
+          :ni "A-k" 'org-metaup
+          :ni "A-j" 'org-metadown
+          ;;
+          :ni "A-L" 'org-shiftmetaright
+          :ni "A-H" 'org-shiftmetaleft
+          :ni "A-K" 'org-shiftmetaup
+          :ni "A-J" 'org-shiftmetadown
           ;; Expand tables (or shiftmeta move)
           :ni "C-S-l" 'doom/org-table-append-field-or-shift-right
           :ni "C-S-h" 'doom/org-table-prepend-field-or-shift-left
@@ -314,8 +321,7 @@
             :n  "T"  'org-todo
             :n  "s"  'org-schedule
             :n  "r"  'org-refile
-            :n  "R"  (λ! (org-metaleft) (org-archive-to-archive-sibling)) ; archive to parent sibling
-            )
+            :n  "R"  (λ! (org-metaleft) (org-archive-to-archive-sibling))) ; archive to parent sibling
 
           ;; TODO Improve folding bindings
           :n  "za"  'org-cycle
@@ -332,8 +338,6 @@
           :m  "[["  (λ! (call-interactively 'org-backward-heading-same-level) (org-beginning-of-line))
           :m  "]l"  'org-next-link
           :m  "[l"  'org-previous-link
-
-          :n  "RET" 'doom/org-dwim-at-point
 
           :m  "gh"  'outline-up-heading
           :m  "gj"  'org-forward-heading-same-level
