@@ -21,8 +21,8 @@
         "C-b" 'backward-word
         "C-f" 'forward-word)
 
-  (after! magit (setq magit-completing-read-function 'ivy-completing-read))
-  (after! smex (setq smex-completion-method 'ivy))
+  (after! magit     (setq magit-completing-read-function 'ivy-completing-read))
+  (after! smex      (setq smex-completion-method 'ivy))
   (after! yasnippet (push 'doom/yas-ivy-prompt yas-prompt-functions))
 
   ;;
