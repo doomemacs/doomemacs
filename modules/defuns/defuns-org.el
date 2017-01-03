@@ -28,29 +28,53 @@
 
 ;;;###autoload
 (defun doom/org-indent ()
+  "Indent the current item (header or item). Otherwise, forward to
+`self-insert-command'."
   (interactive)
-  (cond
-   ((and (org-on-heading-p)
-         (looking-back "^\\*+ +" (line-beginning-position)))
-    (ignore-errors
-      (org-demote)))
-   (t (call-interactively 'self-insert-command))))
+  (cond ((org-at-item-p)
+         (org-indent-item-tree))
+        ((and (org-on-heading-p)
+              (looking-back "^\\*+ +.*" (line-beginning-position)))
+         (ignore-errors (org-demote)))
+        (t (call-interactively 'self-insert-command))))
+
+;;;###autoload
+(defun doom/org-indent-or-next-field ()
+  "Depending on the context either indent the current item or go the next table field."
+  (interactive)
+  (call-interactively (if (org-at-table-p) 'org-table-next-field 'doom/org-indent)))
 
 ;;;###autoload
 (defun doom/org-dedent ()
+  "Dedent the current item (header or item). Otherwise, forward to
+`self-insert-command'."
   (interactive)
-  (cond
-   ((and (org-on-heading-p)
-         (looking-back "^\\*+ +" (line-beginning-position)))
-    (ignore-errors
-      (org-promote)))
-   (t (call-interactively 'self-insert-command))))
+  (cond ((org-at-item-p)
+         (let ((struct (if (org-region-active-p)
+                           (save-excursion (goto-char (region-beginning))
+                                           (org-list-struct))
+                         (org-list-struct))))
+           (org-list-indent-item-generic -1 nil struct)))
+        ((and (org-on-heading-p)
+              (looking-back "^\\*+ +.*" (line-beginning-position)))
+         (ignore-errors
+           (org-promote)))
+        (t (call-interactively 'self-insert-command))))
+
+;;;###autoload
+(defun doom/org-dedent-or-prev-field ()
+  "Depending on the context either dedent the current item or go the previous table field."
+  (interactive)
+  (call-interactively (if (org-at-table-p) 'org-table-previous-field 'doom/org-dedent)))
 
 ;;;###autoload
 (defun doom/org-insert-item (direction)
-  "Inserts a new heading or item, depending on the context. I use this instead of
-`org-insert-item' or `org-insert-heading' because they try to do too much and end up doing
-this otherwise simple task wrong (e.g. whitespace in the wrong places)."
+  "Inserts a new heading, table cell or item, depending on the context.
+DIRECTION can be 'above or 'below.
+
+I use this instead of `org-insert-item' or `org-insert-heading' which are too
+opinionated and perform this simple task incorrectly (e.g. whitespace in the
+wrong places)."
   (interactive)
   (let* ((context (org-element-lineage
                    (org-element-context)
@@ -71,10 +95,8 @@ this otherwise simple task wrong (e.g. whitespace in the wrong places)."
              (insert "[ ] ")))
           ((memq type '(table table-row))
            (cl-case direction
-             ('below
-              (org-table-insert-row))
-             ('above
-              (doom/org-table-prepend-row-or-shift-up))))
+             ('below (org-table-insert-row t))
+             ('above (doom/org-table-prepend-row-or-shift-up))))
           (t
            (let ((level (save-excursion
                           (org-back-to-heading)
