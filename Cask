@@ -175,7 +175,6 @@
 ;; CSS -- modules/module-css.el
 (depends-on "less-css-mode")
 (depends-on "sass-mode")
-(depends-on "scss-mode")
 (depends-on "stylus-mode")
 
 ;; Data -- modules/module-data.el
