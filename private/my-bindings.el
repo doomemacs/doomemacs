@@ -13,18 +13,10 @@
 
 (map! [f9]   'what-face
       ;; Essential
-      (:when (featurep 'helm)
-        "M-x"  'helm-M-x
-        "A-x"  'helm-M-x
-        "M-X"  'helm-apropos
-        "A-X"  'helm-apropos
-        "M-o"  'helm-find-files)
-      (:when (featurep 'ivy)
-        "M-x"  'smex
-        "A-x"  'smex
-        "M-X"  'smex-major-mode-commands
-        "A-X"  'smex-major-mode-commands
-        "M-o"  'counsel-find-file)
+      "M-x"  'smex
+      "A-x"  'smex
+      "M-X"  'smex-major-mode-commands
+      "A-X"  'smex-major-mode-commands
       "M-;"  'eval-expression
       "A-;"  'eval-expression
       ;; Tools
@@ -53,8 +45,8 @@
       "A-C-h" 'doom/evil-window-resize-l
       "A-C-l" 'doom/evil-window-resize-r
       ;; Temporary escape into emacs mode
-      "<C-escape>" 'evil-emacs-state
-      :e "<C-escape>" 'evil-normal-state
+      [C-escape]    'evil-emacs-state
+      :e [C-escape] 'evil-normal-state
       ;; Switching tabs (workgroups)
       :m "M-1"  (λ! (doom:switch-to-tab 0))
       :m "M-2"  (λ! (doom:switch-to-tab 1))
@@ -66,9 +58,9 @@
       :m "M-8"  (λ! (doom:switch-to-tab 7))
       :m "M-9"  (λ! (doom:switch-to-tab 8))
 
-      "<M-backspace>"     'doom/backward-kill-to-bol-and-indent
-      "<A-left>"          'backward-word
-      "<A-right>"         'forward-word
+      [M-backspace]       'doom/backward-kill-to-bol-and-indent
+      [A-left]            'backward-word
+      [A-right]           'forward-word
       "A-SPC"             'just-one-space
       "M-a"               'mark-whole-buffer
       "M-c"               'evil-yank
@@ -78,44 +70,39 @@
       "M-z"               'undo
       "M-Z"               'redo
       "C-M-f"             'doom/toggle-fullscreen
-      :m  "M-j"           'doom/multi-next-line
-      :m  "M-k"           'doom/multi-previous-line
+      :m  "A-j"           'doom/multi-next-line
+      :m  "A-k"           'doom/multi-previous-line
       :n  "M-r"           'doom:eval-buffer
       :v  "M-r"           'doom:eval-region
-      :ni "<M-f1>"        'doom:docs-lookup
+      :ni [M-f1]          'doom:docs-lookup
       ;; Textmate-esque indent shift left/right
       :i  "M-]"           'doom/smart-indent
       :i  "M-["           'doom/dumb-dedent
       ;; Restore osx text objects
-      :i  "<A-backspace>" 'evil-delete-backward-word
-      :i  "<A-delete>"    'doom/delete-forward-word
+      :i  [A-backspace]   'evil-delete-backward-word
+      :i  [A-delete]      'doom/delete-forward-word
 
       ;;; <leader> and <localleader>
       :m ";" 'evil-ex
       (:leader
-        :nv ","   'doom/ivy-switch-project-buffer
-        :nv "<"   'doom/ivy-switch-buffer
-        ;; :nv ","   'helm-buffers-list
-        ;; :nv "<"   'helm-mini
+        :nv ","   'doom/ivy-switch-project-buffer ; or 'helm-buffers-list
+        :nv "<"   'doom/ivy-switch-buffer         ; or 'helm-mini
         :nv "."   (@find-file-in default-directory)
         :nv "/"   (@find-file-in (doom/project-root) t)
         :nv ">"   'projectile-find-file-in-known-projects
-        :n  ":"   'imenu-list-minor-mode
-        ;; :nv ";"   'helm-semantic-or-imenu
+        :n  ":"   'imenu-list-minor-mode          ; or 'helm-semantic-or-imenu
         :nv ";"   'counsel-imenu
         :v  "="   'align-regexp
         :nv "a"   'projectile-find-other-file
-        ;; :n  "b"   'helm-bookmarks
-        :n  "b"   'counsel-bookmark
+        :n  "b"   'counsel-bookmark               ; or 'helm-bookmarks
+        :n  "B"   'bookmark-delete
         :n  "e"   'doom/flycheck-errors
         :n  "k"   'doom:docs-lookup
         :nv "l"   'doom/nlinum-toggle
-        ;; :nv "m"   'helm-recentf
-        :nv "m"   'counsel-recentf
+        :nv "m"   'counsel-recentf                ; or 'helm-recentf
         :nv "M"   'projectile-recentf
-        ;; :nv "p"   'helm-projectile-switch-project
         :nv "p"   'counsel-yank-pop
-        :nv "P"   'counsel-projectile-switch-project
+        :nv "P"   'counsel-projectile-switch-project ; or 'helm-projectile-switch-project
         :n  "R"   'doom/reset-theme
         :n  "s"   'yas-visit-snippet-file
         :n  "S"   'doom/yas-find-file
