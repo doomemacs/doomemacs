@@ -23,22 +23,30 @@
   :config
   (defvar helm-global-prompt "››› ")
 
-  (map! :map helm-map
-        "C-S-n"      'helm-next-source
-        "C-S-p"      'helm-previous-source
-        "C-u"        'helm-delete-minibuffer-contents
-        "C-w"        'backward-kill-word
-        "M-v"        'clipboard-yank
-        "C-r"        'evil-paste-from-register ; Evil registers in helm! Glorious!
-        "C-b"        'backward-word
-        "<left>"     'backward-char
-        "<right>"    'forward-char
-        "<escape>"   'helm-keyboard-quit
-        "ESC"        'helm-keyboard-quit
-        [escape]     'helm-keyboard-quit
-        "<tab>"      'helm-execute-persistent-action
-        :map helm-generic-files-map
-        :e "ESC"     'helm-keyboard-quit)
+  (map! "M-x"         'helm-M-x
+        "A-x"         'helm-M-x
+        "M-X"         'helm-apropos
+        "A-X"         'helm-apropos
+        "A-X"         'helm-apropos
+        "M-o"         'helm-find-files
+
+        (:map helm-map
+          "C-S-n"      'helm-next-source
+          "C-S-p"      'helm-previous-source
+          "C-u"        'helm-delete-minibuffer-contents
+          "C-w"        'backward-kill-word
+          "M-v"        'clipboard-yank
+          "C-r"        'evil-paste-from-register ; Evil registers in helm! Glorious!
+          "C-b"        'backward-word
+          "<left>"     'backward-char
+          "<right>"    'forward-char
+          "<escape>"   'helm-keyboard-quit
+          "ESC"        'helm-keyboard-quit
+          [escape]     'helm-keyboard-quit
+          "<tab>"      'helm-execute-persistent-action)
+
+        (:map* helm-generic-files-map
+          :e "ESC"     'helm-keyboard-quit))
 
   ;;; Popup setup
   (def-popup! "\\` ?\\*[hH]elm.*?\\*\\'" :align below :size 14 :select t :regexp t)

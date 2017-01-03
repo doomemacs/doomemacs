@@ -3,9 +3,6 @@
 (associate! emacs-lisp-mode :match "\\(/Cask\\|\\.\\(el\\|gz\\)\\)$")
 (add-hook! emacs-lisp-mode '(eldoc-mode highlight-numbers-mode))
 
-;; Real go-to-definition for elisp
-(map! :map emacs-lisp-mode-map :m "gd" 'doom/elisp-find-function-at-pt)
-
 (add-hook 'emacs-lisp-mode-hook 'doom/elisp-init)
 (defun doom/elisp-init ()
   (def-company-backend! emacs-lisp-mode (elisp yasnippet))
@@ -24,6 +21,9 @@
   (setq editorconfig-indentation-alist
         (delq (assq 'emacs-lisp-mode editorconfig-indentation-alist)
               editorconfig-indentation-alist))
+
+  ;; Real go-to-definition for elisp
+  (map! :map emacs-lisp-mode-map :m "gd" 'doom/elisp-find-function-at-pt)
 
   (remove-hook 'emacs-lisp-mode-hook 'doom/elisp-init))
 

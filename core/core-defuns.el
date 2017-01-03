@@ -193,19 +193,25 @@ Examples:
     (evil-ex-define-cmd cmd fn))
 
   ;; Register keywords for proper indentation (see `map!')
-  (put ':prefix      'lisp-indent-function 'defun)
-  (put ':map         'lisp-indent-function 'defun)
-  (put ':after       'lisp-indent-function 'defun)
-  (put ':when        'lisp-indent-function 'defun)
-  (put ':unless      'lisp-indent-function 'defun)
-  (put ':leader      'lisp-indent-function 'defun)
-  (put ':localleader 'lisp-indent-function 'defun)
+  (put ':prefix       'lisp-indent-function 'defun)
+  (put ':map          'lisp-indent-function 'defun)
+  (put ':map*         'lisp-indent-function 'defun)
+  (put ':after        'lisp-indent-function 'defun)
+  (put ':when         'lisp-indent-function 'defun)
+  (put ':unless       'lisp-indent-function 'defun)
+  (put ':leader       'lisp-indent-function 'defun)
+  (put ':localleader  'lisp-indent-function 'defun)
 
   (defmacro map! (&rest rest)
     "A nightmare of a key-binding macro that will use `evil-define-key',
 `evil-define-key*', `define-key' and `global-set-key' depending on context and
 plist key flags. It was designed to make binding multiple keys more concise,
 like in vim.
+
+Yes, it tries to do too much. Yes, I only did it to make the \"frontend\" config
+that little bit more concise. Yes, I could simply have used the above functions.
+But it takes a little insanity to custom write your own emacs.d, so what else
+were you expecting?
 
 States
     :n  normal
@@ -215,19 +221,22 @@ States
     :o  operator
     :m  motion
     :r  replace
+    :L  local
 
     These can be combined (order doesn't matter), e.g. :nvi will apply to
     normal, visual and insert mode. The state resets after the following
     key=>def pair.
 
+    Capitalize the state flag to make it a local binding.
+
     If omitted, the keybind will be defined globally.
 
 Flags
-    :unset [KEY]              ; unset key
-    :nodefer                  ; don't use `evil-delay' for future keybinds
-    (:map [KEYMAP] [...])     ; apply all inner keybinds to KEYMAP
-    (:prefix [PREFIX] [...])  ; assign prefix to all inner keybindings
-    (:after [FEATURE] [...])  ; apply keybinds when [FEATURE] loads
+    :unset [KEY]               ; unset key
+    (:map [KEYMAP] [...])      ; apply inner keybinds to KEYMAP
+    (:map* [KEYMAP] [...])     ; apply inner keybinds to KEYMAP (deferred)
+    (:prefix [PREFIX] [...])   ; assign prefix to all inner keybindings
+    (:after [FEATURE] [...])   ; apply keybinds when [FEATURE] loads
 
 Conditional keybinds
     (:when [CONDITION] [...])
@@ -242,8 +251,7 @@ Example
           (:when IS-MAC
            :n \"M-s\" 'some-fn
            :i \"M-o\" (lambda (interactive) (message \"Hi\"))))"
-    (let ((i 0)
-          (keymaps (if (boundp 'keymaps) keymaps))
+    (let ((keymaps (if (boundp 'keymaps) keymaps))
           (state-map '(("n" . normal)
                        ("v" . visual)
                        ("i" . insert)
@@ -252,73 +260,89 @@ Example
                        ("m" . motion)
                        ("r" . replace)))
           (prefix (if (boundp 'prefix) prefix))
-          (nodefer (if (boundp 'nodefer) nodefer))
-          key def states forms)
+          (defer (if (boundp 'defer) defer))
+          local key def states forms)
       (while rest
         (setq key (pop rest))
         (push
          (reverse
-          (cond ((listp key) ; it's a sub exp
-                 `(,(macroexpand `(map! ,@key))))
+          (cond
+           ;; it's a sub expr
+           ((listp key)
+            `(,(macroexpand `(map! ,@key))))
 
-                ((keywordp key)
-                 (when (memq key '(:leader :localleader))
-                   (push (cond ((eq key :leader)
-                                doom-leader)
-                               ((eq key :localleader)
-                                doom-localleader))
-                         rest)
-                   (setq key :prefix))
-                 (pcase key
-                   (:prefix  (setq prefix (concat prefix (kbd (pop rest)))) nil)
-                   (:map     (setq keymaps (-list (pop rest))) nil)
-                   (:nodefer (setq nodefer t) nil)
-                   (:unset  `(,(macroexpand `(map! ,(kbd (pop rest)) nil))))
-                   (:after   (prog1 `((after! ,(pop rest)   ,(macroexpand `(map! ,@rest)))) (setq rest '())))
-                   (:when    (prog1 `((if ,(pop rest)       ,(macroexpand `(map! ,@rest)))) (setq rest '())))
-                   (:unless  (prog1 `((if (not ,(pop rest)) ,(macroexpand `(map! ,@rest)))) (setq rest '())))
-                   (otherwise ; might be a state prefix
-                    (mapc (lambda (letter)
-                            (cond ((assoc letter state-map)
-                                   (push (cdr (assoc letter state-map)) states))
-                                  (t (user-error "Invalid mode prefix %s in key %s" letter key))))
-                          (split-string (substring (symbol-name key) 1) "" t))
-                    (unless states
-                      (user-error "Unrecognized keyword %s" key)) nil)))
+           ;; it's a flag
+           ((keywordp key)
+            (when (memq key '(:leader :localleader))
+              (push (cond ((eq key :leader)
+                           doom-leader)
+                          ((eq key :localleader)
+                           doom-localleader))
+                    rest)
+              (setq key :prefix))
+            (pcase key
+              (:prefix  (setq prefix (concat prefix (kbd (pop rest)))) nil)
+              (:map     (setq keymaps (-list (pop rest))) nil)
+              (:map*    (setq defer t keymaps (-list (pop rest))) nil)
+              (:unset  `(,(macroexpand `(map! ,(kbd (pop rest)) nil))))
+              (:after   (prog1 `((after! ,(pop rest)   ,(macroexpand `(map! ,@rest)))) (setq rest '())))
+              (:when    (prog1 `((if ,(pop rest)       ,(macroexpand `(map! ,@rest)))) (setq rest '())))
+              (:unless  (prog1 `((if (not ,(pop rest)) ,(macroexpand `(map! ,@rest)))) (setq rest '())))
+              (otherwise ; might be a state prefix
+               (mapc (lambda (letter)
+                       (cond ((assoc letter state-map)
+                              (push (cdr (assoc letter state-map)) states))
+                             ((string= letter "L")
+                              (setq local t))
+                             (t (user-error "Invalid mode prefix %s in key %s" letter key))))
+                     (split-string (substring (symbol-name key) 1) "" t))
+               (unless states
+                 (user-error "Unrecognized keyword %s" key))
+               (when (assoc "L" states)
+                 (cond ((= (length states) 1)
+                        (user-error "local keybinding for %s must accompany another state" key))
+                       ((> (length keymaps) 0)
+                        (user-error "local keybinding for %s cannot accompany a keymap" key))))
+               nil)))
 
-                ;; It's a key-def pair
-                ((or (stringp key)
-                     (characterp key)
-                     (vectorp key))
-                 (when (stringp key)
-                   (setq key (kbd key)))
-                 (when prefix
-                   (setq key (cond ((vectorp key) (vconcat prefix key))
-                                   (t (concat prefix key)))))
-                 (unless (> (length rest) 0)
-                   (user-error "Map has no definition for %s" key))
-                 (setq def (pop rest))
-                 (let (out-forms)
-                   (cond ((and keymaps states)
-                          (mapc (lambda (keymap)
-                                  (push `(,(if nodefer 'evil-define-key* 'evil-define-key)
-                                          ',states ,keymap ,key ,def)
-                                        out-forms))
-                                keymaps))
-                         (keymaps
-                          (mapc (lambda (keymap) (push `(define-key ,keymap ,key ,def) out-forms))
-                                keymaps))
-                         (states
-                          (mapc (lambda (state) (push `(define-key (evil-state-property ',state :keymap t) ,key ,def)
-                                                 out-forms))
-                                states))
-                         (t (push `(global-set-key ,key ,def) out-forms)))
-                   (setq states '())
-                   out-forms))
+           ;; It's a key-def pair
+           ((or (stringp key)
+                (characterp key)
+                (vectorp key))
+            (when (stringp key)
+              (setq key (kbd key)))
+            (when prefix
+              (setq key (cond ((vectorp key) (vconcat prefix key))
+                              (t (concat prefix key)))))
+            (unless (> (length rest) 0)
+              (user-error "Map has no definition for %s" key))
+            (setq def (pop rest))
+            (let (out-forms)
+              (cond ((and keymaps states)
+                     (mapc (lambda (keymap)
+                             (push `(,(if defer 'evil-define-key 'evil-define-key*)
+                                     ',states ,keymap ,key ,def)
+                                   out-forms))
+                           keymaps))
+                    (keymaps
+                     (mapc (lambda (keymap) (push `(define-key ,keymap ,key ,def) out-forms))
+                           keymaps))
+                    (states
+                     (mapc (lambda (state)
+                             (push `(define-key
+                                      (evil-state-property ',state ,(if local :local-keymap :keymap) t)
+                                      ,key ,def)
+                                   out-forms))
+                           states))
+                    (t (push `(,(if local 'local-set-key 'global-set-key)
+                               ,key ,def)
+                             out-forms)))
+              (setq states '()
+                    local nil)
+              out-forms))
 
-                (t (user-error "Invalid key %s" key))))
-         forms)
-        (setq i (1+ i)))
+           (t (user-error "Invalid key %s" key))))
+         forms))
       `(progn ,@(apply #'nconc (delete nil (delete (list nil) (reverse forms))))))))
 
 (defmacro def-repeat! (command next-func prev-func)

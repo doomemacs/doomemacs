@@ -11,8 +11,7 @@
             '(call-interactively 'counsel-find-file)
             )))))
 
-(map! :nodefer
-      [f9]   'what-face
+(map! [f9]   'what-face
       ;; Essential
       (:when (featurep 'helm)
         "M-x"  'helm-M-x
@@ -282,9 +281,10 @@
       :nv "<C-tab>" 'aya-create
 
       ;; yasnippet
-      (:map yas-minor-mode-map
-        :i [tab] 'yas-expand
-        :v [tab] 'doom/yas-insert-snippet)
+      (:after yasnippet
+        (:map yas-minor-mode-map
+          :i [tab] 'yas-expand
+          :v [tab] 'doom/yas-insert-snippet))
 
       ;; company-mode and vim-like omni-complete
       :i "C-SPC" 'doom/company-complete

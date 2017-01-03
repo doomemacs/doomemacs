@@ -9,6 +9,11 @@
 (sp-with-modes '(css-mode scss-mode less-css-mode stylus-mode)
   (sp-local-pair "/*" "*/" :post-handlers '(("[d-3]||\n[i]" "RET") ("| " "SPC"))))
 
+(map! (:map* (css-mode-map scss-mode-map less-css-mode-map)
+        :n "M-R" 'doom/web-refresh-browser)
+      (:map* (css-mode-map scss-mode-map less-css-mode-map)
+        :localleader :nv ";" 'doom/append-semicolon))
+
 (use-package css-mode
   :mode "\\.css$"
   :init
@@ -51,9 +56,6 @@
   (push '("scss" "css") projectile-other-file-alist)
   (setq scss-compile-at-save nil))
 
-(map! :map (css-mode-map sass-mode-map scss-mode-map)
-      :n "M-R" 'doom/web-refresh-browser
-      (:localleader :nv ";" 'doom/append-semicolon))
 
 (provide 'module-css)
 ;;; module-css.el ends here

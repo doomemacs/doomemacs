@@ -64,24 +64,23 @@
   ;; overridden when the neotree buffer is spawned). So we bind them in a hook.
   (add-hook 'neo-after-create-hook 'doom|neotree-init-keymap)
   (defun doom|neotree-init-keymap (&rest _)
-    (map! :map evil-motion-state-local-map
-          "\\\\"     'evil-window-prev
-          "ESC ESC"  'neotree-hide
-          "q"        'neotree-hide
-          [return]   'neotree-enter
-          "RET"      'neotree-enter
-          "<return>" 'neotree-enter
-          "J"        'neotree-select-next-sibling-node
-          "K"        'neotree-select-previous-sibling-node
-          "H"        'neotree-select-up-node
-          "L"        'neotree-select-down-node
-          "v"        'neotree-enter-vertical-split
-          "s"        'neotree-enter-horizontal-split
-          "c"        'neotree-create-node
-          "d"        'neotree-delete-node
-          "C-r"      'neotree-refresh
-          "r"        'neotree-rename-node
-          "R"        'neotree-change-root)))
+    (map! :Lm "\\\\"     'evil-window-prev
+          :Lm "ESC ESC"  'neotree-hide
+          :Lm "q"        'neotree-hide
+          :Lm [return]   'neotree-enter
+          :Lm "RET"      'neotree-enter
+          :Lm "<return>" 'neotree-enter
+          :Lm "J"        'neotree-select-next-sibling-node
+          :Lm "K"        'neotree-select-previous-sibling-node
+          :Lm "H"        'neotree-select-up-node
+          :Lm "L"        'neotree-select-down-node
+          :Lm "v"        'neotree-enter-vertical-split
+          :Lm "s"        'neotree-enter-horizontal-split
+          :Lm "c"        'neotree-create-node
+          :Lm "d"        'neotree-delete-node
+          :Lm "C-r"      'neotree-refresh
+          :Lm "r"        'neotree-rename-node
+          :Lm "R"        'neotree-change-root)))
 
 (use-package projectile
   :config

@@ -320,8 +320,8 @@
       :i "<C-tab>"   'indent-for-tab-command
       :i "<A-tab>"   (λ! (insert "\t"))
       ;; No dumb-tab for lisp
-      (:map lisp-mode-map        :i [remap doom/dumb-indent] 'indent-for-tab-command)
-      (:map emacs-lisp-mode-map  :i [remap doom/dumb-indent] 'indent-for-tab-command)
+      (:map* lisp-mode-map       :i [remap doom/dumb-indent] 'indent-for-tab-command)
+      (:map* emacs-lisp-mode-map :i [remap doom/dumb-indent] 'indent-for-tab-command)
       ;; Highjacks space/backspace to:
       ;;   a) eat spaces on either side of the cursor, if present ( | ) -> (|)
       ;;   b) allow backspace to delete space-indented blocks intelligently
@@ -344,15 +344,15 @@
       :i "<C-up>"     'smart-up
       :i "<C-down>"   'smart-down
       ;; Fix emacs motion keys
-      :i "A-b"      'evil-backward-word-begin
-      :i "A-w"      'evil-forward-word-begin
-      :i "A-e"      'evil-forward-word-end
+      :i "A-b"        'evil-backward-word-begin
+      :i "A-w"        'evil-forward-word-begin
+      :i "A-e"        'evil-forward-word-end
       ;; Textmate-esque insert-line before/after
-      :i "<M-return>"    'evil-open-below
-      :i "<S-M-return>"  'evil-open-above
+      :i [M-return]    'evil-open-below
+      :i [S-M-return]  'evil-open-above
       ;; insert lines in-place)
-      :n "<M-return>"    (λ! (save-excursion (evil-insert-newline-below)))
-      :n "<S-M-return>"  (λ! (save-excursion (evil-insert-newline-above)))
+      :n [M-return]    (λ! (save-excursion (evil-insert-newline-below)))
+      :n [S-M-return]  (λ! (save-excursion (evil-insert-newline-above)))
       ;; Make ESC quit all the things
       (:map (minibuffer-local-map
              minibuffer-local-ns-map
@@ -378,20 +378,19 @@
           "h" nil
           "g" nil)))
 
-;; Fix certain keys in the terminal
-(unless window-system
-  (map! :map key-translation-map
-        "TAB" [tab]))
-
-;; Common unicode characters
 (map! :map key-translation-map
-      "A-o" (kbd "ø")
-      "A-O" (kbd "Ø")
-      "A--" (kbd "–")
-      "A-_" (kbd "—")
-      "A-8" (kbd "•")
-      "A-*" (kbd "°")
-      "A-p" (kbd "π"))
+
+      ;; Fix certain keys in the terminal
+      (:unless window-system "TAB" [tab])
+
+      ;; Common unicode characters
+      :i "A-o" (kbd "ø")
+      :i "A-O" (kbd "Ø")
+      :i "A--" (kbd "–")
+      :i "A-_" (kbd "—")
+      :i "A-8" (kbd "•")
+      :i "A-*" (kbd "°")
+      :i "A-p" (kbd "π"))
 
 (provide 'core-editor)
 ;;; core-editor.el ends here
