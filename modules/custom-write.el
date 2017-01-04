@@ -7,7 +7,6 @@
 ;;   + Bibtex integration
 
 ;; Write-mode settings
-(defconst write-mode-theme 'doom-one)
 (defconst write-mode-font (font-spec :family "Source Sans Pro" :size 14))
 
 (defconst write-mode--last-mode-line mode-line-format)
@@ -49,8 +48,6 @@ adds eye-candy to org-mode, switches to a light color theme and to a more
 readable font."
   (interactive)
   (setq write-mode (not write-mode))
-  (when write-mode-theme
-    (doom/load-theme (if write-mode write-mode-theme write-mode--last-theme)))
   (when write-mode-font
     (doom/load-font (if write-mode write-mode-font doom-ui-font)))
   (mapc (lambda (b)
