@@ -225,7 +225,7 @@
   (setq frame-title-format '(buffer-file-name "%f" ("%b")))
   ;; Set theme and font
   (with-demoted-errors "FONT ERROR: %s"
-    (set-frame-font doom-ui-font t)
+    (set-frame-font doom-ui-font t t)
     ;; Fallback to `doom-unicode-font' for Unicode characters
     (set-fontset-font t 'unicode doom-unicode-font)
     ;; Set font for variable-pitch mode
