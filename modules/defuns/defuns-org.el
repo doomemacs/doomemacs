@@ -1,32 +1,6 @@
 ;;; defuns-org.el
 
 ;;;###autoload
-(defun doom/org-find-file-in-notes ()
-  (interactive)
-  (let ((default-directory (f-slash org-directory)))
-    (projectile-find-file)))
-
-;;;###autoload
-(defun doom/org-find-file ()
-  (interactive)
-  (let ((default-directory (f-slash org-directory)))
-    (counsel-find-file)))
-
-;;;###autoload
-(defun doom/org-find-exported-file ()
-  (interactive)
-  (let ((default-directory (f-slash doom-org-export-directory)))
-    (counsel-find-file)))
-
-;;;###autoload
-(defun doom/org-get-property (name)
-  (interactive)
-  (save-excursion
-    (goto-char 1)
-    (re-search-forward (format "^#\\+%s:[ \t]*\\([^\n]+\\)" (upcase name)) nil t)
-    (buffer-substring-no-properties (match-beginning 1) (match-end 1))))
-
-;;;###autoload
 (defun doom/org-indent ()
   "Indent the current item (header or item). Otherwise, forward to
 `self-insert-command'."
@@ -63,7 +37,8 @@
 
 ;;;###autoload
 (defun doom/org-dedent-or-prev-field ()
-  "Depending on the context either dedent the current item or go the previous table field."
+  "Depending on the context either dedent the current item or go the previous
+table field."
   (interactive)
   (call-interactively (if (org-at-table-p) 'org-table-previous-field 'doom/org-dedent)))
 
@@ -139,6 +114,9 @@ wrong places)."
 
 ;;;###autoload
 (defun doom/org-dwim-at-point ()
+  "Do-what-I-mean at point. This includes following timestamp links, aligning
+tables, toggling checkboxes/todos, executing babel blocks, previewing latex
+fragments, opening links, or refreshing images."
   (interactive)
   (let* ((scroll-pt (window-start))
          (context (org-element-context))
@@ -190,6 +168,7 @@ wrong places)."
 
 ;;;###autoload
 (defun doom/org-refresh-inline-images ()
+  "Refresh image previews in the current heading/tree."
   (interactive)
   (if (> (length org-inline-image-overlays) 0)
       (org-remove-inline-images)
@@ -202,9 +181,9 @@ wrong places)."
          (line-end-position)
        (save-excursion (org-end-of-subtree) (point))))))
 
-;; Formatting shortcuts
 ;;;###autoload
 (defun doom/org-surround (delim)
+  "Surround the cursor (or selected region) with DELIM."
   (if (region-active-p)
       (save-excursion
         (goto-char (region-beginning))
@@ -214,89 +193,10 @@ wrong places)."
     (insert delim)
     (save-excursion (insert delim))))
 
-;;;###autoload
-(defun doom/org-word-count (beg end &optional count-footnotes?)
-  "Report the number of words in the Org mode buffer or selected region.
-Ignores:
-- comments
-- tables
-- source code blocks (#+BEGIN_SRC ... #+END_SRC, and inline blocks)
-- hyperlinks (but does count words in hyperlink descriptions)
-- tags, priorities, and TODO keywords in headers
-- sections tagged as 'not for export'.
 
-The text of footnote definitions is ignored, unless the optional argument
-COUNT-FOOTNOTES? is non-nil."
-  (interactive "r")
-  (unless mark-active
-    (setf beg (point-min)
-          end (point-max)))
-  (let ((wc 0))
-    (save-excursion
-      (goto-char beg)
-      (while (< (point) end)
-        (cond
-         ;; Ignore comments.
-         ((or (org-at-comment-p) (org-at-table-p))
-          nil)
-         ;; Ignore hyperlinks. But if link has a description, count
-         ;; the words within the description.
-         ((looking-at org-bracket-link-analytic-regexp)
-          (when (match-string-no-properties 5)
-            (let ((desc (match-string-no-properties 5)))
-              (save-match-data
-                (incf wc (length (remove "" (org-split-string
-                                             desc "\\W")))))))
-          (goto-char (match-end 0)))
-         ((looking-at org-any-link-re)
-          (goto-char (match-end 0)))
-         ;; Ignore source code blocks.
-         ((org-between-regexps-p "^#\\+BEGIN_SRC\\W" "^#\\+END_SRC\\W")
-          nil)
-         ;; Ignore inline source blocks, counting them as 1 word.
-         ((save-excursion
-            (backward-char)
-            (looking-at org-babel-inline-src-block-regexp))
-          (goto-char (match-end 0))
-          (setf wc (+ 2 wc)))
-         ;; Ignore footnotes.
-         ((and (not count-footnotes?)
-               (or (org-footnote-at-definition-p)
-                   (org-footnote-at-reference-p)))
-          nil)
-         (t
-          (let ((contexts (org-context)))
-            (cond
-             ;; Ignore tags and TODO keywords, etc.
-             ((or (assoc :todo-keyword contexts)
-                  (assoc :priority contexts)
-                  (assoc :keyword contexts)
-                  (assoc :checkbox contexts))
-              nil)
-             ;; Ignore sections marked with tags that are
-             ;; excluded from export.
-             ((assoc :tags contexts)
-              (if (intersection (org-get-tags-at) org-export-exclude-tags
-                                :test 'equal)
-                  (org-forward-same-level 1)
-                nil))
-             (t
-              (incf wc))))))
-        (re-search-forward "\\w+\\W*")))
-    (message (format "%d words in %s." wc
-                     (if mark-active "region" "buffer")))))
-
-;;;###autoload
-(defun doom/org-remove-link ()
-  "Replace an org link by its description or if empty its address"
-  (interactive)
-  (if (org-in-regexp org-bracket-link-regexp 1)
-      (let ((remove (list (match-beginning 0) (match-end 0)))
-            (description (if (match-end 3)
-                             (org-match-string-no-properties 3)
-                           (org-match-string-no-properties 1))))
-        (apply 'delete-region remove)
-        (insert description))))
+;;
+;; tables
+;;
 
 ;;;###autoload
 (defun doom/org-table-next-row ()
@@ -305,8 +205,25 @@ COUNT-FOOTNOTES? is non-nil."
 
 ;;;###autoload
 (defun doom/org-table-previous-row ()
+  "Go to the previous row (same column) in the current table. Before doing so,
+re-align the table if necessary. (Necessary because org-mode has a
+`org-table-next-row', but not `org-table-previous-row')"
   (interactive)
-  (if (org-at-table-p) (doom--org-table-previous-row) (org-up-element)))
+  (if (org-at-table-p)
+      (progn
+        (org-table-maybe-eval-formula)
+        (org-table-maybe-recalculate-line)
+        (if (and org-table-automatic-realign
+                 org-table-may-need-update)
+            (org-table-align))
+        (let ((col (org-table-current-column)))
+          (beginning-of-line 0)
+          (when (or (not (org-at-table-p)) (org-at-table-hline-p))
+            (beginning-of-line))
+          (org-table-goto-column col)
+          (skip-chars-backward "^|\n\r")
+          (when (org-looking-at-p " ") (forward-char))))
+    (org-up-element)))
 
 ;;;###autoload
 (defun doom/org-table-next-field ()
@@ -327,9 +244,7 @@ COUNT-FOOTNOTES? is non-nil."
 ;;;###autoload
 (defun doom/org-table-prepend-field-or-shift-left ()
   (interactive)
-  (if (org-at-table-p)
-      (org-shiftmetaright)
-    (org-shiftmetaleft)))
+  (if (org-at-table-p) (org-shiftmetaright) (org-shiftmetaleft)))
 
 ;;;###autoload
 (defun doom/org-table-append-row-or-shift-down ()
@@ -344,23 +259,10 @@ COUNT-FOOTNOTES? is non-nil."
       (org-shiftmetadown)
     (org-shiftmetaup)))
 
-(defun doom--org-table-previous-row ()
-  "Go to the previous row (same column) in the current table. Before doing so,
-re-align the table if necessary. (Necessary because org-mode has a
-`org-table-next-row', but not `org-table-previous-row')"
-  (interactive)
-  (org-table-maybe-eval-formula)
-  (org-table-maybe-recalculate-line)
-  (if (and org-table-automatic-realign
-           org-table-may-need-update)
-      (org-table-align))
-  (let ((col (org-table-current-column)))
-    (beginning-of-line 0)
-    (when (or (not (org-at-table-p)) (org-at-table-hline-p))
-      (beginning-of-line))
-    (org-table-goto-column col)
-    (skip-chars-backward "^|\n\r")
-    (when (org-looking-at-p " ") (forward-char))))
+
+;;
+;; Links
+;;
 
 ;;;###autoload (autoload 'doom:org-link "defuns-org" nil t)
 (evil-define-command doom:org-link (link)
@@ -373,22 +275,134 @@ re-align the table if necessary. (Necessary because org-mode has a
     (org-insert-link nil link (when (and beg end) (buffer-substring-no-properties beg end)))))
 
 ;;;###autoload
-(defun doom/sp-org-skip-asterisk (ms mb me)
-    (or (and (= (line-beginning-position) mb)
-             (eq 32 (char-after (1+ mb))))
-        (and (= (1+ (line-beginning-position)) me)
-             (eq 32 (char-after me)))))
+(defun doom/org-remove-link ()
+  "Replace an org link by its description or if empty its address"
+  (interactive)
+  (if (org-in-regexp org-bracket-link-regexp 1)
+      (let ((remove (list (match-beginning 0) (match-end 0)))
+            (description (if (match-end 3)
+                             (org-match-string-no-properties 3)
+                           (org-match-string-no-properties 1))))
+        (apply 'delete-region remove)
+        (insert description))))
+
+
+;;
+;; org-capture
+;;
+
+;;;###autoload
+(defun doom/org-capture (&optional template string)
+  "Run `org-capture' in a new, disposable popup frame."
+  (interactive)
+  (let ((org-capture-entry (org-capture-select-template template)))
+    (cond ((equal org-capture-entry "C")
+           (find-file (expand-file-name "module-org-notes.el" doom-modules-dir))
+           (re-search-forward "^\\s-+(setq org-capture-templates" (point-max) t)
+           (recenter))
+          ((not (equal org-capture-entry "q"))
+           (let ((frame (make-frame '((name . "org-capture") (height . 15) (width . 80)))))
+             (with-selected-frame frame
+               (if string
+                   (org-capture-string string)
+                 (org-capture))))))))
 
 ;;;###autoload (autoload 'doom:org-capture "defuns-org" nil t)
 (evil-define-operator doom:org-capture (&optional beg end bang)
-  "Send a selection to `org-capture'."
+  "Send a selection to `doom/org-capture'."
   :move-point nil
   :type inclusive
   (interactive "<r><!>")
-  (org-capture-string
+  (doom/org-capture
    (if (and (evil-visual-state-p) beg end)
        (buffer-substring beg end)
      "")))
+
+
+;;
+;; attachments
+;;
+
+;;;###autoload (autoload 'doom:org-attach "defuns-org-notes" nil t)
+(evil-define-command doom:org-attach (&optional uri)
+  (interactive "<a>")
+  (unless (eq major-mode 'org-mode)
+    (user-error "Not in an org-mode buffer"))
+  (if uri
+      (let* ((rel-path (org-download--fullname uri))
+             (new-path (f-expand rel-path))
+             (image-p (image-type-from-file-name uri)))
+        (cond ((string-match-p (concat "^" (regexp-opt '("http" "https" "nfs" "ftp" "file")) ":/") uri)
+               (url-copy-file uri new-path))
+              (t (copy-file uri new-path)))
+        (unless new-path
+          (user-error "No file was provided"))
+        (if (evil-visual-state-p)
+            (org-insert-link nil (format "./%s" rel-path)
+                             (concat (buffer-substring-no-properties (region-beginning) (region-end))
+                                     " " (doom--org-attach-icon rel-path)))
+
+          (insert (if image-p
+                      (format "[[./%s]] " rel-path)
+                    (format "%s [[./%s][%s]] "
+                            (doom--org-attach-icon rel-path)
+                            rel-path (f-filename rel-path)))))
+        (when (string-match-p (regexp-opt '("jpg" "jpeg" "gif" "png")) (f-ext rel-path))
+          (org-redisplay-inline-images)))
+    (let ((default-directory ".attach/"))
+      (if (file-exists-p default-directory)
+          (call-interactively 'find-file)
+        (user-error "No attachments")))))
+
+(defun doom--org-attach-icon (path)
+  (char-to-string (pcase (downcase (f-ext path))
+                    ("jpg" ?) ("jpeg" ?) ("png" ?) ("gif" ?)
+                    ("pdf" ?)
+                    ("ppt" ?) ("pptx" ?)
+                    ("xls" ?) ("xlsx" ?)
+                    ("doc" ?) ("docx" ?)
+                    ("ogg" ?) ("mp3" ?) ("wav" ?)
+                    ("mp4" ?) ("mov" ?) ("avi" ?)
+                    ("zip" ?) ("gz" ?) ("tar" ?) ("7z" ?) ("rar" ?)
+                    (_ ?))))
+
+;;;###autoload
+(defun doom/org-cleanup-attachments ()
+  ;; "Deletes any attachments that are no longer present in the org-mode buffer."
+  (let* ((attachments-local (doom-org-attachments))
+         (attachments (f-entries org-attach-directory))
+         (to-delete (-difference attachments-local attachments)))
+    ;; TODO
+    to-delete))
+
+(defun doom-org-attachments ()
+  (unless (eq major-mode 'org-mode)
+    (user-error "Not an org buffer"))
+  (org-save-outline-visibility nil
+    (let ((attachments '())
+          element
+          file)
+      (when (and (f-dir? org-attach-directory)
+                 (> (length (f-glob (concat (f-slash org-attach-directory) "*"))) 0))
+        (save-excursion
+          (goto-char (point-min))
+          (while (progn (org-next-link) (not org-link-search-failed))
+            (setq element (org-element-lineage (org-element-context) '(link) t))
+            (when element
+              (setq file (expand-file-name (org-element-property :path element)))
+              (when (and (string= (org-element-property :type element) "file")
+                         (string= (concat (f-base (f-dirname file)) "/") org-attach-directory)
+                         (file-exists-p file))
+                (push file attachments))))))
+      (-distinct attachments))))
+
+;;;###autoload
+(defun doom/org-download-dnd (uri action)
+  (if (eq major-mode 'org-mode)
+      (doom:org-attach uri)
+    (let ((dnd-protocol-alist
+           (rassq-delete-all 'doom/org-download-dnd (copy-alist dnd-protocol-alist))))
+      (dnd-handle-one-url nil action uri))))
 
 (provide 'defuns-org)
 ;;; defuns-org.el ends here

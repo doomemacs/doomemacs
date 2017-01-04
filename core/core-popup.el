@@ -105,5 +105,43 @@
                            (goto-char (cdr location))
                          (message "Unable to find location in file"))))))
 
+(add-hook! org-load
+  ;; Ensures org-src-edit yields control of its buffer to shackle.
+  (defun org-src-switch-to-buffer (buffer context)
+    (pop-to-buffer buffer))
+
+  ;; And these for org-todo, org-link and org-agenda
+  (defun org-pop-to-buffer-same-window (&optional buffer-or-name norecord label)
+    "Pop to buffer specified by BUFFER-OR-NAME in the selected window."
+    (display-buffer buffer-or-name))
+
+  (defun org-switch-to-buffer-other-window (&rest args)
+    (car-safe
+     (mapc (lambda (b)
+             (let ((buf (if (stringp b) (get-buffer-create b) b)))
+               (pop-to-buffer buf t t)))
+           args)))
+
+  (defun doom/org-agenda-quit ()
+    "Necessary to finagle org-agenda into shackle popups and behave properly on quit."
+    (interactive)
+    (if org-agenda-columns-active
+        (org-columns-quit)
+      (let ((buf (current-buffer)))
+        (and (not (eq org-agenda-window-setup 'current-window))
+             (not (one-window-p))
+             (delete-window))
+        (kill-buffer buf)
+        (setq org-agenda-archives-mode nil
+              org-agenda-buffer nil))))
+
+  (after! org-agenda
+    (map! :map org-agenda-mode-map
+          :e "<escape>" 'doom/org-agenda-quit
+          :e "ESC" 'doom/org-agenda-quit
+          :e [escape] 'doom/org-agenda-quit
+          "q" 'doom/org-agenda-quit
+          "Q" 'doom/org-agenda-quit)))
+
 (provide 'core-popup)
 ;;; core-popup.el ends here

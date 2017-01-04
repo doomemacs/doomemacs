@@ -79,8 +79,6 @@
 
       ;;; Org
       module-org         ; for organized fearless leader
-      module-org-notes   ; org-mode as a (modern?) note-taking platform
-      module-org-crm     ; org-mode for business management
 
       ;;; Custom/experimental modules
       custom-db          ; emacs as a db browser/client

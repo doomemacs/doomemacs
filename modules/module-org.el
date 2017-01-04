@@ -1,5 +1,15 @@
 ;;; module-org.el --- -*- no-byte-compile: t; -*-
 
+;; A few things you can expect
+;;   + `org-capture' in a popup frame (can be invoked from outside emacs too)
+;;   + A simpler attachment system (with auto-deleting support) and
+;;     drag-and-drop for images and documents into org files
+;;   + Exported files are put in a centralized location (see
+;;     `org-export-directory')
+;;   + TODO Custom links for class notes
+;;   + TODO An org-mode based CRM (including invoicing and pdf exporting) (see custom-crm)
+;;   + TODO A tag-based file browser reminiscient of Evernote and Quiver (there's neotree too!)
+
 (define-minor-mode evil-org-mode
   "Evil-mode bindings for org-mode."
   :init-value nil
@@ -8,14 +18,32 @@
   :group 'evil-org)
 
 (add-hook 'org-load-hook 'doom|org-init t)
-(add-hook 'org-load-hook 'doom|org-keybinds t)
+(add-hook 'org-load-hook 'doom|org-init-attach t)
+(add-hook 'org-load-hook 'doom|org-init-export t)
+(add-hook 'org-load-hook 'doom|org-init-capture t)
 (add-hook 'org-load-hook 'doom|org-hacks t)
 (add-hook 'org-mode-hook 'doom|org-hook)
 
+;; Custom variables
 (defvaralias 'org-directory 'doom-org-dir)
+
+(defvar doom-org-notes-dir (f-expand "notes" doom-org-dir)
+  "The directory where the notes are kept")
+
+(defvar doom-org-quicknote-dir (f-expand "inbox" doom-org-dir)
+  "The directory to store quick notes produced by `doom:org-capture' (individual org files)")
+
+(defvar doom-org-attachment-dir ".attach/"
+  "Where to store attachments (relative to current org file).")
+
+(defvar-local doom-org-attachments-list '()
+  "A list of attachments for the current buffer. This is so my custom attachment
+system can keep track of each buffer's attachments.")
+
 
 ;;
 (defun doom|org-hook ()
+  "Run everytime `org-mode' is enabled."
   (evil-org-mode +1)
   (visual-line-mode +1)
   (setq line-spacing 1)
@@ -34,7 +62,9 @@
   (add-hook 'before-save-hook 'doom|org-update nil t)
   (add-hook 'evil-insert-state-exit-hook 'doom|org-update nil t))
 
+
 (defun doom|org-init ()
+  "Initializes org core."
   (def-popup! " *Agenda Commands*"  :align below :size 30)
   (def-popup! " *Org todo*"         :align below :size 5   :noselect t)
   (def-popup! "*Calendar*"          :align below :size 0.4)
@@ -167,73 +197,9 @@
     (sp-local-pair "{" nil))
 
   ;; bullets
-  (use-package org-bullets :commands org-bullets-mode))
+  (use-package org-bullets :commands org-bullets-mode)
 
-(defun doom|org-hacks ()
-  ;; Don't open separate windows
-  (push '(file . find-file) org-link-frame-setup)
-
-  ;; Reveal files in finder
-  (setq org-file-apps '(("\\.org$" . emacs) (t . "open -R \"%s\"")))
-
-  ;; Don't clobber recentf with agenda files
-  (defun org-is-agenda-file (filename)
-    (find (file-truename filename) org-agenda-files :key 'file-truename
-          :test 'equal))
-  (pushnew 'org-is-agenda-file recentf-exclude)
-
-  ;; Don't track attachments
-  (push (format "/%s.+$" (regexp-quote doom-org-attachment-dir)) recentf-exclude)
-  (push ".attach" projectile-globally-ignored-file-suffixes)
-
-  ;; Remove highlights on ESC
-  (defun doom*org-remove-occur-highlights (&rest args)
-    (when (eq major-mode 'org-mode) (org-remove-occur-highlights)))
-  (advice-add 'evil-force-normal-state :before 'doom*org-remove-occur-highlights)
-
-  ;; Don't reset org-hide!
-  (advice-add 'org-find-invisible-foreground :override 'ignore)
-
-  ;; Tame org-mode popups
-  ;; Ensures org-src-edit yields control of its buffer to shackle.
-  (defun org-src-switch-to-buffer (buffer context)
-    (pop-to-buffer buffer))
-
-  ;; And these for org-todo, org-link and org-agenda
-  (defun org-pop-to-buffer-same-window (&optional buffer-or-name norecord label)
-    "Pop to buffer specified by BUFFER-OR-NAME in the selected window."
-    (display-buffer buffer-or-name))
-
-  (defun org-switch-to-buffer-other-window (&rest args)
-    (car-safe
-     (mapc (lambda (b)
-             (let ((buf (if (stringp b) (get-buffer-create b) b)))
-               (pop-to-buffer buf t t)))
-           args)))
-
-  ;; Taming Org-agenda!
-  (defun doom/org-agenda-quit ()
-    "Necessary to finagle org-agenda into shackle popups and behave properly on quit."
-    (interactive)
-    (if org-agenda-columns-active
-        (org-columns-quit)
-      (let ((buf (current-buffer)))
-        (and (not (eq org-agenda-window-setup 'current-window))
-             (not (one-window-p))
-             (delete-window))
-        (kill-buffer buf)
-        (setq org-agenda-archives-mode nil
-              org-agenda-buffer nil))))
-
-  (after! org-agenda
-    (map! :map org-agenda-mode-map
-          :e "<escape>" 'doom/org-agenda-quit
-          :e "ESC" 'doom/org-agenda-quit
-          :e [escape] 'doom/org-agenda-quit
-          "q" 'doom/org-agenda-quit
-          "Q" 'doom/org-agenda-quit)))
-
-(defun doom|org-keybinds ()
+  ;; Keybinds
   (map! (:map org-mode-map
           "RET" nil
           "C-j" nil
@@ -283,6 +249,7 @@
           :ni "<M-return>"   (λ! (doom/org-insert-item 'below))
           :ni "<S-M-return>" (λ! (doom/org-insert-item 'above))
 
+          ;; Formatting shortcuts
           :i  "M-b" (λ! (doom/org-surround "*")) ; bold
           :i  "M-u" (λ! (doom/org-surround "_")) ; underline
           :i  "M-i" (λ! (doom/org-surround "/")) ; italics
@@ -293,47 +260,40 @@
           :v  "M-i" "S/"
           :v  "M-`" "S+"
 
-          (:leader
-            :n "oa" 'doom/org-attachment-reveal)
-
           (:localleader
-            :n  "/"  'org-sparse-tree
-            :n  "?"  'org-tags-view
-
-            :n  "n"  (λ! (if (buffer-narrowed-p) (widen) (org-narrow-to-subtree)))
-            :n  "e"  'org-edit-special
-            :n  "="  'org-align-all-tags
-            :nv "l"  'org-insert-link
-            :n  "L"  'org-store-link
-            :n  "x"  'doom/org-remove-link
-            ;; :n  "w"  'writing-mode
-            :n  "v"  'variable-pitch-mode
-            :n  "SPC" 'doom/org-toggle-checkbox
             :n  "RET" 'org-archive-subtree
-
-            :n  "a"  'org-agenda
-            :n  "A"  'doom:org-attachment-list
-
-            :n  "d"  'org-time-stamp
+            :n  "SPC" 'doom/org-toggle-checkbox
+            :n  "/"  'org-sparse-tree
+            :n  "="  'org-align-all-tags
+            :n  "?"  'org-tags-view
             :n  "D"  'org-deadline
-            :n  "i"  'doom/org-toggle-inline-images-at-point
-            :n  "t"  (λ! (org-todo (if (org-entry-is-todo-p) 'none 'todo)))
-            :v  "t"  (λ! (evil-ex-normal evil-visual-beginning evil-visual-end "\\t"))
-            :n  "T"  'org-todo
-            :n  "s"  'org-schedule
-            :n  "r"  'org-refile
+            :n  "L"  'org-store-link
             :n  "R"  (λ! (org-metaleft) (org-archive-to-archive-sibling))) ; archive to parent sibling
+          :n  "T"  'org-todo
+          :n  "a"  'org-agenda
+          :n  "d"  'org-time-stamp
+          :n  "e"  'org-edit-special
+          :n  "i"  'doom/org-toggle-inline-images-at-point
+          :nv "l"  'org-insert-link
+          :n  "n"  (λ! (if (buffer-narrowed-p) (widen) (org-narrow-to-subtree)))
+          :n  "r"  'org-refile
+          :n  "s"  'org-schedule
+          :n  "t"  (λ! (org-todo (if (org-entry-is-todo-p) 'none 'todo)))
+          :v  "t"  (λ! (evil-ex-normal evil-visual-beginning evil-visual-end "\\t"))
+          :n  "v"  'variable-pitch-mode
+          ;; :n  "w"  'writing-mode
+          :n  "x"  'doom/org-remove-link
 
           ;; TODO Improve folding bindings
           :n  "za"  'org-cycle
           :n  "zA"  'org-shifttab
-          :n  "zm"  (λ! (outline-hide-sublevels 1))
-          :n  "zr"  'outline-show-all
-          :n  "zo"  'outline-show-subtree
-          :n  "zO"  'outline-show-all
           :n  "zc"  'outline-hide-subtree
           :n  "zC"  (λ! (outline-hide-sublevels 1))
           :n  "zd"  (lambda (&optional arg) (interactive "p") (outline-hide-sublevels (or arg 3)))
+          :n  "zm"  (λ! (outline-hide-sublevels 1))
+          :n  "zo"  'outline-show-subtree
+          :n  "zO"  'outline-show-all
+          :n  "zr"  'outline-show-all
 
           :m  "]]"  (λ! (call-interactively 'org-forward-heading-same-level) (org-beginning-of-line))
           :m  "[["  (λ! (call-interactively 'org-backward-heading-same-level) (org-beginning-of-line))
@@ -372,6 +332,146 @@
             :e "C-k" 'org-agenda-previous-item
             :e "C-n" 'org-agenda-next-item
             :e "C-p" 'org-agenda-previous-item))))
+
+
+;; FIXME
+;; Initializes my own org-mode attachment system. I didn't like Org's native
+;; one. Mine stores attachments in a global org .attach directory. It also
+;; implements drag-and-drop file support and attachment icons. It also treats
+;; images specially.
+;;
+;; To clean up unreferenced attachments, call `doom/org-cleanup-attachments'
+(defun doom|org-init-attach ()
+  (setq org-attach-directory doom-org-attachment-dir)
+
+  ;; Don't track attachments in recentf or projectile
+  (push (format "/%s.+$" (regexp-quote doom-org-attachment-dir)) recentf-exclude)
+  (push ".attach" projectile-globally-ignored-file-suffixes)
+
+  ;; FIXME Use all-the-icons
+  ;; (doom-fix-unicode '("FontAwesome" 13) ? ? ? ? ? ? ? ?)
+  ;; Drag-and-drop support
+  (require 'org-download)
+  (setq-default org-download-image-dir doom-org-attachment-dir
+                org-download-heading-lvl nil
+                org-download-timestamp "_%Y%m%d_%H%M%S")
+
+  (setq org-download-screenshot-method
+        (cond (IS-MAC   "screencapture -i %s")
+              (IS-LINUX "maim --opengl -s %s")))
+
+  ;; Write download paths relative to current file
+  (defun org-download--dir-2 () nil)
+  (defun doom*org-download--fullname (path)
+    (f-relative path (f-dirname (buffer-file-name))))
+  (advice-add 'org-download--fullname :filter-return 'doom*org-download--fullname)
+
+  ;; Add another drag-and-drop handler that will handle anything but image files
+  (setq dnd-protocol-alist `(("^\\(https?\\|ftp\\|file\\|nfs\\):\\(//\\)?" . doom/org-download-dnd)
+                             ,@dnd-protocol-alist))
+
+  ;; keybinds
+  (map! (:leader
+          :n "oa" (@find-file-in doom-org-attachment-dir))))
+
+
+;; My own, centralized exporting system as well.
+(defun doom|org-init-export ()
+  (setq org-export-directory (f-expand ".export" org-directory)
+        org-export-backends '(ascii html latex md)
+        org-export-with-toc t
+        org-export-with-author t)
+
+  ;; Export to a central directory (why isn't this easier?)
+  (unless (file-directory-p org-export-directory)
+    (mkdir org-export-directory))
+  (defun doom*org-export-output-file-name (args)
+    (unless (nth 2 args)
+      (setq args (append args (list org-export-directory))))
+    args)
+  (advice-add 'org-export-output-file-name :filter-args 'doom*org-export-output-file-name)
+
+  ;; (require 'ox-pandoc)
+  ;; (setq org-pandoc-options '((standalone . t) (mathjax . t) (parse-raw . t)))
+
+  ;; keybinds
+  (map! (:leader
+          :n "oe" (@find-file-in org-export-directory))))
+
+
+;; Sets up a sane `org-capture' workflow, wherein the org-capture buffer is
+;; opened in a popup frame, and can be invoked from outside Emacs as well.
+;;
+;; See `doom/org-capture'
+(defun doom|org-init-capture ()
+  "Set up a sane `org-capture' workflow."
+  (setq org-default-notes-file (f-expand "notes.org" doom-org-dir))
+
+  (require 'org-capture)
+  (require 'org-protocol)
+  (def-popup! "*Org Select*" :align below :size 0.4)
+
+  (defadvice org-capture (after make-full-window-frame activate)
+    "If org-capture creates a new frame, this initializes it properly, by
+deleting other windows and blanking out the mode-line."
+    (when (equal "org-capture" (frame-parameter nil 'name))
+      (setq mode-line-format nil)
+      (delete-other-windows)))
+
+  (defadvice org-capture-finalize (after delete-capture-frame activate)
+    "Closes the frame once org-capture is done."
+    (when (equal "org-capture" (frame-parameter nil 'name))
+      (delete-frame)))
+
+  (setq org-capture-templates
+        '(;; TODO: New Task (todo)
+          ;; TODO: New vocabulary word
+
+          ("c" "Changelog" entry
+           (file+headline (f-expand "CHANGELOG.org" (doom/project-root)) "Unreleased")
+           "* %?")
+
+          ;; ("p" "Project Notes" entry
+          ;;  (file+headline org-default-notes-file "Inbox")
+          ;;  "* %u %?\n%i" :prepend t)
+
+          ;; ("m" "Major-mode Notes" entry
+          ;;  (file+headline org-default-notes-file "Inbox")
+          ;;  "* %u %?\n%i" :prepend t)
+
+          ("n" "Notes" entry
+           (file+headline org-default-notes-file "Inbox")
+           "* %u %?\n%i" :prepend t)
+
+          ;; ("v" "Vocab" entry
+          ;;  (file+headline (concat org-directory "topics/vocab.org") "Unsorted")
+          ;;  "** %i%?\n")
+          )))
+
+;; Getting org to behave
+(defun doom|org-hacks ()
+  ;; Don't open separate windows
+  (push '(file . find-file) org-link-frame-setup)
+
+  ;; Let OS decide what to do with files when opened
+  (setq org-file-apps
+        `(("\\.org$" . emacs)
+          (t . ,(cond (IS-MAC "open -R \"%s\"")
+                      (IS-LINUX "xdg-open \"%s\"")))))
+
+  ;; Don't clobber recentf with agenda files
+  (defun org-is-agenda-file (filename)
+    (find (file-truename filename) org-agenda-files :key 'file-truename
+          :test 'equal))
+  (pushnew 'org-is-agenda-file recentf-exclude)
+
+  ;; Remove highlights on ESC
+  (defun doom*org-remove-occur-highlights (&rest args)
+    (when (eq major-mode 'org-mode) (org-remove-occur-highlights)))
+  (advice-add 'evil-force-normal-state :before 'doom*org-remove-occur-highlights)
+
+  ;; Don't reset org-hide!
+  (advice-add 'org-find-invisible-foreground :override 'ignore))
 
 (provide 'module-org)
 ;;; module-org.el ends here
