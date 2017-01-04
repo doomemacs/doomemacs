@@ -11,7 +11,7 @@ case "$OSTYPE" in
         ;;
     linux*)
         if is-arch; then
-            sudo pacman --noconfirm -S nodejs npm
+            sudo pacman --needed --noconfirm -S nodejs npm
         else
             echo "..."
             exit 1
