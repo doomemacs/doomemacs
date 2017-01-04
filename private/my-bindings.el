@@ -176,10 +176,10 @@
       :m  "]e" 'doom/flycheck-next-error
       :m  "[e" 'doom/flycheck-previous-error
       ;; Switch tabs
-      :n  "]w" 'doom:switch-to-tab-right
-      :n  "[w" 'doom:switch-to-tab-left
-      :m  "gt" 'doom:switch-to-tab-right
-      :m  "gT" 'doom:switch-to-tab-left
+      :n  "]w" 'doom:switch-to-workgroup-right
+      :n  "[w" 'doom:switch-to-workgroup-left
+      :m  "gt" 'doom:switch-to-workgroup-right
+      :m  "gT" 'doom:switch-to-workgroup-left
       ;; Increment/decrement number under cursor
       :n  "g=" 'evil-numbers/inc-at-pt
       :n  "g-" 'evil-numbers/dec-at-pt
