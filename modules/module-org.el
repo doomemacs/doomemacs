@@ -205,10 +205,11 @@
     (display-buffer buffer-or-name))
 
   (defun org-switch-to-buffer-other-window (&rest args)
-    (mapc (lambda (b)
-            (let ((buf (if (stringp b) (get-buffer-create b) b)))
-              (pop-to-buffer buf t t)))
-          args))
+    (car-safe
+     (mapc (lambda (b)
+             (let ((buf (if (stringp b) (get-buffer-create b) b)))
+               (pop-to-buffer buf t t)))
+           args)))
 
   ;; Taming Org-agenda!
   (defun doom/org-agenda-quit ()
