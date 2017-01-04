@@ -52,10 +52,19 @@
 (use-package magit
   :commands (magit-status)
   :config
+  (def-popup! "^\\*magit.+" :align below :regexp t)
   ;; Prevent magit + evil-snipe conflicts
   (add-hook 'magit-mode-hook 'turn-off-evil-snipe-override-mode)
-  (map! :map magit-mode-map :m "<tab>" 'magit-section-toggle)
-  (require 'evil-magit))
+  (require 'evil-magit)
+
+  (setq magit-display-file-buffer-function 'doom/magit-pop-to-buffer)
+
+  (map! :map magit-mode-map
+        ;; Don't let Tab binding in my-bindings conflict with Tab in magit
+        :m "<tab>" 'magit-section-toggle
+        ;; Don't interfere with window movement keys
+        :nv "C-j" nil
+        :nv "C-k" nil))
 
 (after! vc-annotate
   (evil-set-initial-state 'vc-annotate-mode     'normal)
