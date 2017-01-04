@@ -297,7 +297,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                  (setq doom--flycheck-cache
                        (let ((fw (doom-ml-flycheck-count 'warning))
                              (fe (doom-ml-flycheck-count 'error)))
-                         (concat (if (or fe fw) " ")
+                         (concat (if (or fe fw) "  ")
                                  (if fe (concat
                                          (all-the-icons-octicon "circle-slash" :face 'doom-modeline-urgent :height 1.0 :v-adjust 0)
                                          (propertize " " 'face 'variable-pitch)
@@ -311,11 +311,11 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                                          " "
                                          ))
                                  (if (or fe fw)
-                                     " "
+                                     "  "
                                    (when (active)
                                      (all-the-icons-octicon "check" :height 1.2 :v-adjust -0.06))))))))
       (concat
-       " "
+       "  "
        (all-the-icons-octicon "check"
                               :face (if (active) 'doom-modeline-info)
                               :height 1.2
@@ -444,8 +444,8 @@ lines are selected, or the NxM dimensions of a block selection."
                    '(list (*buffer-encoding)
                           (*vc)
                           (*major-mode)
-                          " "
-                          (*flycheck))))
+                          (*flycheck)
+                          )))
            (mid (propertize
                  " " 'display `((space :align-to (- (+ right right-fringe right-margin)
                                                     ,(+ 1 (string-width (format-mode-line rhs)))))))))
