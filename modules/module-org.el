@@ -214,7 +214,6 @@ system can keep track of each buffer's attachments.")
           :ni "A-h" 'org-metaleft
           :ni "A-k" 'org-metaup
           :ni "A-j" 'org-metadown
-          ;;
           :ni "A-L" 'org-shiftmetaright
           :ni "A-H" 'org-shiftmetaleft
           :ni "A-K" 'org-shiftmetaup
@@ -268,21 +267,21 @@ system can keep track of each buffer's attachments.")
             :n  "?"  'org-tags-view
             :n  "D"  'org-deadline
             :n  "L"  'org-store-link
-            :n  "R"  (λ! (org-metaleft) (org-archive-to-archive-sibling))) ; archive to parent sibling
-          :n  "T"  'org-todo
-          :n  "a"  'org-agenda
-          :n  "d"  'org-time-stamp
-          :n  "e"  'org-edit-special
-          :n  "i"  'doom/org-toggle-inline-images-at-point
-          :nv "l"  'org-insert-link
-          :n  "n"  (λ! (if (buffer-narrowed-p) (widen) (org-narrow-to-subtree)))
-          :n  "r"  'org-refile
-          :n  "s"  'org-schedule
-          :n  "t"  (λ! (org-todo (if (org-entry-is-todo-p) 'none 'todo)))
-          :v  "t"  (λ! (evil-ex-normal evil-visual-beginning evil-visual-end "\\t"))
-          :n  "v"  'variable-pitch-mode
-          ;; :n  "w"  'writing-mode
-          :n  "x"  'doom/org-remove-link
+            :n  "R"  (λ! (org-metaleft) (org-archive-to-archive-sibling)) ; archive to parent sibling
+            :n  "T"  'org-todo
+            :n  "a"  'org-agenda
+            :n  "d"  'org-time-stamp
+            :n  "e"  'org-edit-special
+            :n  "i"  'doom/org-toggle-inline-images-at-point
+            :nv "l"  'org-insert-link
+            :n  "n"  (λ! (if (buffer-narrowed-p) (widen) (org-narrow-to-subtree)))
+            :n  "r"  'org-refile
+            :n  "s"  'org-schedule
+            :n  "t"  (λ! (org-todo (if (org-entry-is-todo-p) 'none 'todo)))
+            :v  "t"  (λ! (evil-ex-normal evil-visual-beginning evil-visual-end "\\t"))
+            :n  "v"  'variable-pitch-mode
+            ;; :n  "w"  'writing-mode
+            :n  "x"  'doom/org-remove-link)
 
           ;; TODO Improve folding bindings
           :n  "za"  'org-cycle
