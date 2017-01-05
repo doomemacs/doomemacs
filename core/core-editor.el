@@ -239,12 +239,12 @@
   :config
   (evil-set-initial-state 'reb-mode 'insert)
   (setq reb-re-syntax 'string)
-  (map! :map rxt-help-mode-map
-        :n [escape] 'kill-buffer-and-window
-        :map reb-mode-map
-        :n "C-g" 'reb-quit
-        :n [escape] 'reb-quit
-        :n [backtab] 'reb-change-syntax))
+  (map! (:map* rxt-help-mode-map
+          :n [escape] 'kill-buffer-and-window)
+        (:map* reb-mode-map
+          :n "C-g" 'reb-quit
+          :n [escape] 'reb-quit
+          :n [backtab] 'reb-change-syntax)))
 
 (use-package pcre2el :commands (rxt-quote-pcre))
 
