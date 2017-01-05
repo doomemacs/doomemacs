@@ -7,8 +7,7 @@
   (interactive)
   (cond ((org-at-item-p)
          (org-indent-item-tree))
-        ((and (org-on-heading-p)
-              (looking-back "^\\*+ +.*" (line-beginning-position)))
+        ((org-at-heading-p)
          (ignore-errors (org-demote)))
         (t (call-interactively 'self-insert-command))))
 
@@ -29,10 +28,8 @@
                                            (org-list-struct))
                          (org-list-struct))))
            (org-list-indent-item-generic -1 nil struct)))
-        ((and (org-on-heading-p)
-              (looking-back "^\\*+ +.*" (line-beginning-position)))
-         (ignore-errors
-           (org-promote)))
+        ((org-at-heading-p)
+         (ignore-errors (org-promote)))
         (t (call-interactively 'self-insert-command))))
 
 ;;;###autoload
