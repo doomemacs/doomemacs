@@ -77,6 +77,7 @@ system can keep track of each buffer's attachments.")
    org-export-coding-system 'utf-8
 
    ;; Appearance
+   outline-blank-line t
    org-indent-mode-turns-on-hiding-stars t
    org-adapt-indentation nil
    org-blank-before-new-entry '((heading . nil) (plain-list-item . auto))
@@ -237,6 +238,8 @@ system can keep track of each buffer's attachments.")
           :i  [(shift tab)] 'doom/org-dedent-or-prev-field
           :i  [backtab] 'doom/org-dedent-or-prev-field
 
+          :n  "<tab>" 'doom/org-toggle-fold
+
           :nv "j"   'evil-next-visual-line
           :nv "k"   'evil-previous-visual-line
           :v  "<S-tab>" 'doom/yas-insert-snippet
@@ -284,7 +287,7 @@ system can keep track of each buffer's attachments.")
             :n  "x"  'doom/org-remove-link)
 
           ;; TODO Improve folding bindings
-          :n  "za"  'org-cycle
+          :n  "za"  'doom/org-toggle-fold
           :n  "zA"  'org-shifttab
           :n  "zc"  'outline-hide-subtree
           :n  "zC"  (λ! (outline-hide-sublevels 1))

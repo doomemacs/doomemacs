@@ -113,6 +113,16 @@ wrong places)."
         (insert "[ ] ")))))
 
 ;;;###autoload
+(defun doom/org-toggle-fold ()
+  "Toggle the local fold at the point (as opposed to cycling through all levels
+with `org-cycle')."
+  (interactive)
+  (cond ((org-at-heading-p)
+         (outline-toggle-children))
+        ((org-at-item-p)
+         (org-cycle))))
+
+;;;###autoload
 (defun doom/org-dwim-at-point ()
   "Do-what-I-mean at point. This includes following timestamp links, aligning
 tables, toggling checkboxes/todos, executing babel blocks, previewing latex
