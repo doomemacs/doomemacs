@@ -122,23 +122,24 @@ NOTE: only buries scratch buffer.
 
 See `doom/real-buffer-p' for what 'real' means."
   (interactive (list t))
-  (let* ((scratch-p (eq (current-buffer) doom-buffer))
+  (let* ((scratch-p (doom-scratch-buffer-p))
          (old-project (doom/project-root))
          (buffer (current-buffer))
          (only-buffer-window-p (= (length (get-buffer-window-list buffer nil t)) 1)))
     (unless scratch-p
-      (when (and only-buffer-window-p buffer-file-name (buffer-modified-p))
+      (when (and buffer-file-name only-buffer-window-p (buffer-modified-p))
         (if (yes-or-no-p "Buffer is unsaved, save it?")
             (save-buffer)
           (set-buffer-modified-p nil)))
       (when arg
         (doom/previous-real-buffer)
-        (when (eq buffer (current-buffer))
-          (switch-to-buffer doom-buffer t t))
-        (when only-buffer-window-p
-          (kill-buffer buffer))))
-    (when (eq (current-buffer) doom-buffer)
-      (doom-reload-scratch-buffer old-project)))
+        (unless (eq (current-buffer) buffer)
+          (when only-buffer-window-p
+            (kill-buffer buffer)
+            (unless (doom/real-buffer-p)
+              (doom/previous-real-buffer)))))))
+  (when (doom-scratch-buffer-p)
+    (doom-scratch-force-reload))
   t)
 
 ;;;###autoload
@@ -194,23 +195,26 @@ nothing left, create a scratch buffer."
          (i 0)
          (continue t)
          (buffers (doom/get-real-buffers (doom/get-buffers t)))
+         (fail-buffer (if (> (length (get-buffer-window-list doom-buffer nil t)) 1)
+                          start-buffer
+                        doom-buffer))
          destbuf)
     (setq destbuf
           (catch 'goto
             (if (or (not buffers)
                     (= (length buffers) 1))
                 (progn (message "No other buffers in workgroup")
-                       (throw 'goto (current-buffer)))
+                       (throw 'goto fail-buffer))
               (funcall move-func)
               (while (not (memq (current-buffer) buffers))
                 (if (or (eq (current-buffer) start-buffer)
                         (>= i max))
-                    (throw 'goto doom-buffer)
+                    (throw 'goto fail-buffer)
                   (funcall move-func))
                 (cl-incf i))
               (current-buffer))))
     (when (eq destbuf doom-buffer)
-      (doom-reload-scratch-buffer)
+      (doom-scratch-reload)
       (message "Nowhere to go"))
     (switch-to-buffer destbuf)))
 
@@ -222,12 +226,11 @@ popup (or temporary) window and b) it isn't a special buffer (e.g. scratch or
   (setq buffer (or (and (bufferp buffer) buffer)
                    (and (stringp buffer) (get-buffer buffer))
                    (current-buffer)))
-  (or (eq buffer doom-buffer)
-      (when (buffer-live-p buffer)
-        (with-current-buffer buffer
-          (not (or (apply #'derived-mode-p (-filter 'symbolp doom-unreal-buffers))
-                   (--any? (string-match-p it (buffer-name buffer))
-                           (-filter 'stringp doom-unreal-buffers))))))))
+  (when (buffer-live-p buffer)
+    (with-current-buffer buffer
+      (not (or (apply #'derived-mode-p (-filter 'symbolp doom-unreal-buffers))
+               (--any? (string-match-p it (buffer-name buffer))
+                       (-filter 'stringp doom-unreal-buffers)))))))
 
 ;;;###autoload
 (defun doom/next-real-buffer ()

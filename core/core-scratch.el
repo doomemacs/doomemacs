@@ -8,128 +8,136 @@
 
 (defvar doom-buffer nil
   "The global and persistent scratch buffer for doom.")
-(defvar doom-buffer-name " *doom*"
+
+(defvar doom-scratch-name " *doom*"
   "The name of the doom scratch buffer.")
-(defvar doom-buffer-edited nil
+
+(defvar doom-scratch-edited nil
   "If non-nil, the scratch buffer has been edited.")
-(defvar doom-buffer-inhibit-refresh nil
+
+(defvar doom-scratch-inhibit-refresh nil
   "If non-nil, the doom buffer won't be refreshed.")
+
+(defvar doom-scratch-modeline (doom-modeline 'scratch)
+  "Modeline format for doom scratch buffer.")
+
+(defvar doom-scratch-widgets '(banner shortmenu loaded)
+  "List of widgets to display in a blank scratch buffer.")
 
 (define-derived-mode doom-mode fundamental-mode
   (concat "v" doom-version)
-  "Major mode for special DOOM buffers.")
+  "Major mode for the DOOM scratch buffer.")
 
-;; Don't kill the scratch buffer
-(add-hook! 'kill-buffer-query-functions
-  (not (eq doom-buffer (current-buffer))))
+(defvar doom-scratch--width 0)
+(defvar doom-scratch--height 0)
 
-(add-hook 'emacs-startup-hook 'doom--reload-scratch-buffer)
 
-;; Don't rename these buffers. That could cause problems.
-(after! uniquify
-  (setq uniquify-ignore-buffers-re (regexp-quote doom-buffer-name)))
+;;
+(add-hook 'emacs-startup-hook 'doom-scratch)
+(add-hook! 'kill-buffer-query-functions (not (doom-scratch-buffer-p)))
+(add-hook! window-setup
+  (add-hook 'window-configuration-change-hook 'doom-scratch-reload)
+  (doom-scratch-reload))
 
-(defun doom*scratch-split-hack (&rest _)
-  "Removes the window margins before attempting a vertical-split on the scratch
-buffer. Without this, it would refuse to split, saying 'too small to split'."
-  (when (eq (current-buffer) doom-buffer)
-    (set-window-margins nil 0 0)))
-(advice-add 'split-window :before 'doom*scratch-split-hack)
 
-(defun doom|mode-erase-on-insert ()
-  "Erase the buffer and prepare it to be used like a normal buffer."
-  (erase-buffer)
-  (set-window-margins (get-buffer-window doom-buffer) 0 0)
-  (setq doom-buffer-edited t
-        mode-line-format (doom-modeline)
-        doom--scratch-width nil)
-  (remove-hook 'evil-insert-state-entry-hook 'doom|mode-erase-on-insert t))
+;;
+(defun doom-scratch-buffer-p (&optional buffer)
+  (let ((buffer (or buffer (current-buffer))))
+    (and (buffer-live-p buffer)
+         (eq buffer doom-buffer))))
 
-(defun doom-reload-scratch-buffer (&optional dir)
-  "Update the DOOM scratch buffer (or create it, if it doesn't exist)."
-  (when (and (not doom-buffer-inhibit-refresh)
-             (get-buffer-window-list doom-buffer nil t)
-             (or (not doom-buffer-edited) dir)
-             (not (minibuffer-window-active-p (minibuffer-window))))
-    (doom--reload-scratch-buffer dir)))
-
-(defvar doom--scratch-width nil)
-(defvar doom--scratch-height nil)
-(defun doom--reload-scratch-buffer (&optional dir)
+(defun doom-scratch-buffer ()
+  "Ensure the scratch buffer exists and is alive (otherwise create it)."
   ;; Rename the old scratch buffer, if it exists.
   (let ((old-scratch (get-buffer "*scratch*")))
-    (when old-scratch
-      (with-current-buffer old-scratch
-        (rename-buffer doom-buffer-name)
-        (setq doom-buffer old-scratch))))
+    (when old-scratch (kill-buffer old-scratch)))
   ;; Ensure the doom buffer is alive!
   (unless (buffer-live-p doom-buffer)
     (setq doom-buffer nil))
   (unless doom-buffer
-    (setq doom-buffer (get-buffer-create doom-buffer-name)))
-  ;; Fill it with the splash screen content
-  (with-current-buffer doom-buffer
-    (doom-mode)
-    (add-hook 'evil-insert-state-entry-hook 'doom|mode-erase-on-insert nil t)
-    (add-hook 'after-change-major-mode-hook 'doom|mode-erase-on-insert nil t)
-    (setq doom-buffer-edited nil)
-    (let ((width 78)
-          updates-p height)
-      (mapc (lambda (window)
-              (set-window-margins window 0 0)
-              (let ((pad (max 0 (- (truncate (/ (window-width window) 2)) (truncate (/ width 2))))))
-                (set-window-margins window pad pad)
-                (setq height (max 0
-                                  (min (or height 9999)
-                                       (- (truncate (/ (window-height window) 2)) 12))))))
-            (get-buffer-window-list doom-buffer nil t))
-      (when (or (not doom--scratch-width)
-                (not doom--scratch-height)
-                (/= doom--scratch-width width)
-                (/= doom--scratch-height height))
-        (erase-buffer)
-        (insert (make-string (if height (max 0 height) 0) ?\n)
-                (propertize
-                 (concat
-                  "=================     ===============     ===============   ========  ========\n"
-                  "\\\\ . . . . . . .\\\\   //. . . . . . .\\\\   //. . . . . . .\\\\  \\\\. . .\\\\// . . //\n"
-                  "||. . ._____. . .|| ||. . ._____. . .|| ||. . ._____. . .|| || . . .\\/ . . .||\n"
-                  "|| . .||   ||. . || || . .||   ||. . || || . .||   ||. . || ||. . . . . . . ||\n"
-                  "||. . ||   || . .|| ||. . ||   || . .|| ||. . ||   || . .|| || . | . . . . .||\n"
-                  "|| . .||   ||. _-|| ||-_ .||   ||. . || || . .||   ||. _-|| ||-_.|\\ . . . . ||\n"
-                  "||. . ||   ||-'  || ||  `-||   || . .|| ||. . ||   ||-'  || ||  `|\\_ . .|. .||\n"
-                  "|| . _||   ||    || ||    ||   ||_ . || || . _||   ||    || ||   |\\ `-_/| . ||\n"
-                  "||_-' ||  .|/    || ||    \\|.  || `-_|| ||_-' ||  .|/    || ||   | \\  / |-_.||\n"
-                  "||    ||_-'      || ||      `-_||    || ||    ||_-'      || ||   | \\  / |  `||\n"
-                  "||    `'         || ||         `'    || ||    `'         || ||   | \\  / |   ||\n"
-                  "||            .===' `===.         .==='.`===.         .===' /==. |  \\/  |   ||\n"
-                  "||         .=='   \\_|-_ `===. .==='   _|_   `===. .===' _-|/   `==  \\/  |   ||\n"
-                  "||      .=='    _-'    `-_  `='    _-'   `-_    `='  _-'   `-_  /|  \\/  |   ||\n"
-                  "||   .=='    _-'          '-__\\._-'         '-_./__-'         `' |. /|  |   ||\n"
-                  "||.=='    _-'                                                     `' |  /==.||\n"
-                  "=='    _-'                         E M A C S                          \\/   `==\n"
-                  "\\   _-'                                                                `-_   /\n"
-                  " `''                                                                      ``'")
-                 'face 'font-lock-comment-face)
-                "\n\n"
-                (s-center 73 (doom--scratch-info))
-                "\n\n"
-                (s-center
-                 78 (propertize (format "Loaded %d packages in %s"
-                                        (length doom-packages)
-                                        (emacs-init-time))
-                                'face '(:inherit font-lock-comment-face
-                                        :height 0.9))))
-        (setq doom--scratch-width width
-              doom--scratch-height height)))
-    (goto-char 1521)
-    (when dir (setq default-directory dir))
-    (setq mode-line-format (doom-modeline 'scratch))
-    ;; Readjust the scratch buffer if it is visible, when the frame changes.
-    (add-hook 'window-configuration-change-hook 'doom-reload-scratch-buffer)))
+    (setq doom-buffer (get-buffer-create doom-scratch-name)))
+  doom-buffer)
 
-;; TODO Less hard-coded
-(defun doom--scratch-info ()
+(defun doom-scratch ()
+  (interactive)
+  (doom-scratch-reload)
+  (switch-to-buffer doom-buffer)
+  nil)
+
+(defun doom-scratch-force-reload ()
+  (setq doom-scratch-edited nil)
+  (doom-scratch-reload))
+
+(defun doom|scratch-clear-on-insert ()
+  "Erase the buffer and prepare it to be used like a normal buffer."
+  (erase-buffer)
+  ;; (set-window-margins (get-buffer-window doom-buffer) 0 0)
+  (setq doom-scratch-edited t
+        mode-line-format (doom-modeline))
+  (remove-hook 'evil-insert-state-entry-hook 'doom|mode-erase-on-insert t))
+
+(defun doom-scratch-reload (&optional dir)
+  "Update the DOOM scratch buffer (or create it, if it doesn't exist)."
+  (when (and (not doom-scratch-inhibit-refresh)
+             (not (minibuffer-window-active-p (minibuffer-window)))
+             (get-buffer-window-list doom-buffer nil t)
+             (or (not doom-scratch-edited) dir))
+    (let ((old-pwd (or dir default-directory)))
+      (with-current-buffer (doom-scratch-buffer)
+        (doom-mode)
+        (add-hook 'evil-insert-state-entry-hook 'doom|scratch-clear-on-insert nil t)
+        (add-hook 'after-change-major-mode-hook 'doom|scratch-clear-on-insert nil t)
+        (setq doom-scratch-edited nil)
+
+        (erase-buffer)
+        (let ((doom-scratch--width (1- (window-width (get-buffer-window doom-buffer))))
+              (doom-scratch--height (window-height (get-buffer-window doom-buffer))))
+          (insert (make-string (max 0 (- (truncate (/ doom-scratch--height 2)) 12)) ?\n))
+          (mapc (lambda (widget-name)
+                  (funcall (intern (format "doom-scratch-widget-%s" widget-name)))
+                  (insert "\n\n"))
+                doom-scratch-widgets))
+
+        (setq default-directory old-pwd)
+        (setq mode-line-format (doom-modeline 'scratch)))))
+  t)
+
+(defun doom-scratch-widget-banner ()
+  (mapc (lambda (line)
+          (insert "\n")
+          (insert (propertize (s-center doom-scratch--width line)
+                              'face 'font-lock-comment-face) " "))
+        '("=================     ===============     ===============   ========  ========"
+          "\\\\ . . . . . . .\\\\   //. . . . . . .\\\\   //. . . . . . .\\\\  \\\\. . .\\\\// . . //"
+          "||. . ._____. . .|| ||. . ._____. . .|| ||. . ._____. . .|| || . . .\\/ . . .||"
+          "|| . .||   ||. . || || . .||   ||. . || || . .||   ||. . || ||. . . . . . . ||"
+          "||. . ||   || . .|| ||. . ||   || . .|| ||. . ||   || . .|| || . | . . . . .||"
+          "|| . .||   ||. _-|| ||-_ .||   ||. . || || . .||   ||. _-|| ||-_.|\\ . . . . ||"
+          "||. . ||   ||-'  || ||  `-||   || . .|| ||. . ||   ||-'  || ||  `|\\_ . .|. .||"
+          "|| . _||   ||    || ||    ||   ||_ . || || . _||   ||    || ||   |\\ `-_/| . ||"
+          "||_-' ||  .|/    || ||    \\|.  || `-_|| ||_-' ||  .|/    || ||   | \\  / |-_.||"
+          "||    ||_-'      || ||      `-_||    || ||    ||_-'      || ||   | \\  / |  `||"
+          "||    `'         || ||         `'    || ||    `'         || ||   | \\  / |   ||"
+          "||            .===' `===.         .==='.`===.         .===' /==. |  \\/  |   ||"
+          "||         .=='   \\_|-_ `===. .==='   _|_   `===. .===' _-|/   `==  \\/  |   ||"
+          "||      .=='    _-'    `-_  `='    _-'   `-_    `='  _-'   `-_  /|  \\/  |   ||"
+          "||   .=='    _-'          '-__\\._-'         '-_./__-'         `' |. /|  |   ||"
+          "||.=='    _-'                                                     `' |  /==.||"
+          "=='    _-'                         E M A C S                          \\/   `=="
+          "\\   _-'                                                                `-_   /"
+          " `''                                                                      ``'")))
+
+(defun doom-scratch-widget-loaded ()
+  (insert
+   (s-center (1- doom-scratch--width)
+             (propertize
+              (format "Loaded %d packages in %s"
+                      (length doom-packages)
+                      (emacs-init-time))
+              'face '(:inherit font-lock-comment-face
+                               :height 0.9)))))
+
+(defun doom-scratch-widget-shortmenu ()
   (let ((all-the-icons-scale-factor 1.3)
         (all-the-icons-default-adjust -0.05)
         (start (point))
@@ -139,48 +147,50 @@ buffer. Without this, it would refuse to split, saying 'too small to split'."
         end)
     (unless last-session-p
       (setq sep "     "))
-    (with-temp-buffer
-      (insert-text-button
-       (concat (all-the-icons-octicon
-                "mark-github"
-                :face 'font-lock-keyword-face)
-               (propertize " Homepage" 'face 'font-lock-keyword-face))
-       'action '(lambda (_) (browse-url "https://github.com/hlissner/.emacs.d"))
-       'follow-link t)
+    (insert
+     (s-center (- doom-scratch--width 5)
+               (with-temp-buffer
+                 (insert-text-button
+                  (concat (all-the-icons-octicon
+                           "mark-github"
+                           :face 'font-lock-keyword-face)
+                          (propertize " Homepage" 'face 'font-lock-keyword-face))
+                  'action '(lambda (_) (browse-url "https://github.com/hlissner/.emacs.d"))
+                  'follow-link t)
 
-      (insert sep " ")
+                 (insert sep " ")
 
-      (insert-text-button
-       (concat (all-the-icons-octicon
-                "file-text"
-                :face 'font-lock-keyword-face)
-               (propertize " Recent files" 'face 'font-lock-keyword-face))
-       'action '(lambda (_) (call-interactively 'counsel-recentf))
-       'follow-link t)
+                 (insert-text-button
+                  (concat (all-the-icons-octicon
+                           "file-text"
+                           :face 'font-lock-keyword-face)
+                          (propertize " Recent files" 'face 'font-lock-keyword-face))
+                  'action '(lambda (_) (call-interactively 'counsel-recentf))
+                  'follow-link t)
 
-      (insert sep)
+                 (insert sep)
 
-      (insert-text-button
-       (concat (all-the-icons-octicon
-                "tools"
-                :face 'font-lock-keyword-face)
-               (propertize " Edit emacs.d" 'face 'font-lock-keyword-face))
-       'action '(lambda (_) (find-file (f-expand "init.el" doom-emacs-dir)))
-       'follow-link t)
+                 (insert-text-button
+                  (concat (all-the-icons-octicon
+                           "tools"
+                           :face 'font-lock-keyword-face)
+                          (propertize " Edit emacs.d" 'face 'font-lock-keyword-face))
+                  'action '(lambda (_) (find-file (f-expand "init.el" doom-emacs-dir)))
+                  'follow-link t)
 
-      (when last-session-p
-        (insert sep)
+                 (when last-session-p
+                   (insert sep)
 
-        (insert-text-button
-         (concat (all-the-icons-octicon
-                  "history"
-                  :face 'font-lock-keyword-face)
-                 (propertize " Reload last session" 'face 'font-lock-keyword-face))
-         'action '(lambda (_) (doom:workgroup-load))
-         'follow-link t))
+                   (insert-text-button
+                    (concat (all-the-icons-octicon
+                             "history"
+                             :face 'font-lock-keyword-face)
+                            (propertize " Reload last session" 'face 'font-lock-keyword-face))
+                    'action '(lambda (_) (doom:workgroup-load))
+                    'follow-link t))
 
-      (setq end (point))
-      (buffer-string))))
+                 (setq end (point))
+                 (buffer-string))))))
 
 (provide 'core-scratch)
 ;;; core-scratch.el ends here
