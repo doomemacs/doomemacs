@@ -8,7 +8,7 @@
     (hs-minor-mode 1))
   (if count (hs-hide-level count) (evil-open-folds)))
 
-;;;###autoload (autoload 'doom/evil-open-folds "defuns-evil" nil t)
+;;;###autoload (autoload 'doom/evil-close-folds "defuns-evil" nil t)
 (evil-define-command doom/evil-close-folds (count)
   "Instead of `evil-close-folds'; accepts COUNT for dictating fold level."
   (interactive "P")
