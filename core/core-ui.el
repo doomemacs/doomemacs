@@ -77,11 +77,15 @@
 ;; y/n instead of yes/no
 (fset 'yes-or-no-p 'y-or-n-p)
 
-;; mode-line is unimportant in help/compile windows
-(add-hook 'help-mode-hook 'doom-hide-mode-line-mode)
-(add-hook 'compilation-mode-hook 'doom-hide-mode-line-mode)
-(add-hook 'messages-buffer-mode-hook 'doom-hide-mode-line-mode)
+;; mode-line is unimportant in help/compile/completion candidate windows
 (with-current-buffer "*Messages*" (doom-hide-mode-line-mode +1))
+(add-hook! (help-mode
+            compilation-mode
+            messages-buffer-mode
+            completion-setup
+            completion-in-region-mode
+            completion-list-mode)
+  'doom-hide-mode-line-mode)
 
 ;; Eldoc is enabled globally on Emacs 25. No thank you, I'll do it myself.
 (when (bound-and-true-p global-eldoc-mode)
