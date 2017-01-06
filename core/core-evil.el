@@ -44,20 +44,6 @@
   (evil-mode 1)
   (evil-select-search-module 'evil-search-module 'evil-search)
 
-  ;; evil-anzu is strangely slow on startup. Byte compiling doesn't help.
-  ;; We use this to lazy load it instead.
-  (defun doom*evil-search (&rest _)
-    (require 'evil-anzu)
-    (advice-remove 'evil-ex-start-search 'doom*evil-search))
-  (advice-add 'evil-ex-start-search :before 'doom*evil-search)
-
-  ;; Reset evil-mode in the messages buffer, because it opens before evil
-  ;; normalizes its keymaps, so none of the custom keybindings work in it.
-  (add-hook! emacs-startup
-    (with-current-buffer "*Messages*"
-      (evil-mode -1)
-      (evil-mode +1)))
-
   (mapc (lambda (r) (evil-set-initial-state (car r) (cdr r)))
         '((compilation-mode       . normal)
           (help-mode              . normal)
@@ -83,7 +69,7 @@
 
   ;;; Evil hacks
   ;; Don't interfere with neotree + auto move to new split
-  (advice-add 'evil-window-split :around 'doom*evil-window-split)
+  (advice-add 'evil-window-split  :around 'doom*evil-window-split)
   (advice-add 'evil-window-vsplit :around 'doom*evil-window-vsplit)
   ;; Integrate evil's command window into shackle
   (advice-add 'evil-command-window :override 'doom*evil-command-window)
@@ -102,20 +88,6 @@
   (add-hook! isearch-mode     (setq echo-keystrokes 0))
   (add-hook! isearch-mode-end (setq echo-keystrokes 0.02))
 
-  (after! evil-snipe
-    (def-repeat! evil-snipe-f evil-snipe-repeat evil-snipe-repeat-reverse)
-    (def-repeat! evil-snipe-F evil-snipe-repeat evil-snipe-repeat-reverse)
-    (def-repeat! evil-snipe-t evil-snipe-repeat evil-snipe-repeat-reverse)
-    (def-repeat! evil-snipe-T evil-snipe-repeat evil-snipe-repeat-reverse)
-    (def-repeat! evil-snipe-s evil-snipe-repeat evil-snipe-repeat-reverse)
-    (def-repeat! evil-snipe-S evil-snipe-repeat evil-snipe-repeat-reverse)
-    (def-repeat! evil-snipe-x evil-snipe-repeat evil-snipe-repeat-reverse)
-    (def-repeat! evil-snipe-X evil-snipe-repeat evil-snipe-repeat-reverse))
-  (after! evil-visualstar
-    (def-repeat! evil-visualstar/begin-search-forward
-      evil-ex-search-next evil-ex-search-previous)
-    (def-repeat! evil-visualstar/begin-search-backward
-      evil-ex-search-previous evil-ex-search-next))
   (def-repeat! evil-ex-search-next evil-ex-search-next evil-ex-search-previous)
   (def-repeat! evil-ex-search-previous evil-ex-search-next evil-ex-search-previous)
   (def-repeat! evil-ex-search-forward evil-ex-search-next evil-ex-search-previous)
@@ -160,6 +132,13 @@
 
 (use-package evil-anzu
   :defer t
+  :init
+  ;; evil-anzu is strangely slow on startup. Byte compiling doesn't help. We use
+  ;; this to lazy load it instead.
+  (defun doom*evil-search (&rest _)
+    (require 'evil-anzu)
+    (advice-remove 'evil-ex-start-search 'doom*evil-search))
+  (advice-add 'evil-ex-start-search :before 'doom*evil-search)
   :config
   (setq anzu-cons-mode-line-p nil
         anzu-minimum-input-length 1
@@ -255,7 +234,17 @@
   :config
   (evil-snipe-mode 1)
   (evil-snipe-override-mode 1)
-  (define-key evil-snipe-parent-transient-map (kbd "C-;") 'doom/evil-snipe-easymotion))
+
+  (define-key evil-snipe-parent-transient-map (kbd "C-;") 'doom/evil-snipe-easymotion)
+
+  (def-repeat! evil-snipe-f evil-snipe-repeat evil-snipe-repeat-reverse)
+  (def-repeat! evil-snipe-F evil-snipe-repeat evil-snipe-repeat-reverse)
+  (def-repeat! evil-snipe-t evil-snipe-repeat evil-snipe-repeat-reverse)
+  (def-repeat! evil-snipe-T evil-snipe-repeat evil-snipe-repeat-reverse)
+  (def-repeat! evil-snipe-s evil-snipe-repeat evil-snipe-repeat-reverse)
+  (def-repeat! evil-snipe-S evil-snipe-repeat evil-snipe-repeat-reverse)
+  (def-repeat! evil-snipe-x evil-snipe-repeat evil-snipe-repeat-reverse)
+  (def-repeat! evil-snipe-X evil-snipe-repeat evil-snipe-repeat-reverse))
 
 (use-package evil-surround
   :commands (global-evil-surround-mode
@@ -292,7 +281,12 @@
              evil-visualstar/begin-search-forward
              evil-visualstar/begin-search-backward)
   :config
-  (global-evil-visualstar-mode 1))
+  (global-evil-visualstar-mode 1)
+
+  (def-repeat! evil-visualstar/begin-search-forward
+    evil-ex-search-next evil-ex-search-previous)
+  (def-repeat! evil-visualstar/begin-search-backward
+    evil-ex-search-previous evil-ex-search-next))
 
 (use-package evil-escape
   :config
