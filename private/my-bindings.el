@@ -103,6 +103,7 @@
         :nv "M"   'projectile-recentf
         :nv "p"   'counsel-yank-pop
         :nv "P"   'counsel-projectile-switch-project ; or 'helm-projectile-switch-project
+        :n  "r"   'emr-show-refactor-menu
         :n  "R"   'doom/reset-theme
         :n  "s"   'yas-visit-snippet-file
         :n  "S"   'doom/yas-find-file
@@ -150,11 +151,7 @@
         :n "\\" 'doom/neotree
         :n "b"  'doom:build
         :n "R"  'doom:repl
-        :v "R"  'doom:repl-eval
-        :v "r"  'doom:eval-region
-        (:prefix "r" ; <refactor/run>
-          :n "e" 'emr-show-refactor-menu
-          :n "r" 'doom:eval-buffer))
+        :v "R"  'doom:repl-eval)
 
       ;;; Evil-esque bindings
       ;; Yank to EOL
