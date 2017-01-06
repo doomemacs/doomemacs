@@ -47,16 +47,25 @@
       ;; Temporary escape into emacs mode
       [C-escape]    'evil-emacs-state
       :e [C-escape] 'evil-normal-state
+      ;; Basic keys for emacs mode
+      :e "h"    'evil-backward-char
+      :e "j"    'evil-next-line
+      :e "k"    'evil-previous-line
+      :e "l"    'evil-forward-char
+      :e "C-h"  'evil-window-left
+      :e "C-j"  'evil-window-down
+      :e "C-k"  'evil-window-up
+      :e "C-l"  'evil-window-right
       ;; Switching tabs (workgroups)
-      :m "M-1"  (λ! (doom:switch-to-tab 0))
-      :m "M-2"  (λ! (doom:switch-to-tab 1))
-      :m "M-3"  (λ! (doom:switch-to-tab 2))
-      :m "M-4"  (λ! (doom:switch-to-tab 3))
-      :m "M-5"  (λ! (doom:switch-to-tab 4))
-      :m "M-6"  (λ! (doom:switch-to-tab 5))
-      :m "M-7"  (λ! (doom:switch-to-tab 6))
-      :m "M-8"  (λ! (doom:switch-to-tab 7))
-      :m "M-9"  (λ! (doom:switch-to-tab 8))
+      :m "C-1"  (λ! (doom:switch-to-tab 0))
+      :m "C-2"  (λ! (doom:switch-to-tab 1))
+      :m "C-3"  (λ! (doom:switch-to-tab 2))
+      :m "C-4"  (λ! (doom:switch-to-tab 3))
+      :m "C-5"  (λ! (doom:switch-to-tab 4))
+      :m "C-6"  (λ! (doom:switch-to-tab 5))
+      :m "C-7"  (λ! (doom:switch-to-tab 6))
+      :m "C-8"  (λ! (doom:switch-to-tab 7))
+      :m "C-9"  (λ! (doom:switch-to-tab 8))
 
       [M-backspace]       'doom/backward-kill-to-bol-and-indent
       [A-left]            'backward-word
