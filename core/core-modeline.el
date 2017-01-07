@@ -238,7 +238,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 
 (defun *vc ()
   "Displays the current branch, colored based on its state."
-  (when vc-mode
+  (when (and vc-mode buffer-file-name)
     (let ((backend (vc-backend buffer-file-name))
           (state   (vc-state buffer-file-name))
           (face    'mode-line-inactive)
