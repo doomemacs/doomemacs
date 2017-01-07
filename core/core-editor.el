@@ -68,7 +68,8 @@
 (setq recentf-save-file (concat doom-temp-dir "/recentf")
       recentf-exclude '("/tmp/" "/ssh:" "\\.?ido\\.last$" "\\.revive$" "/TAGS$"
                         "emacs\\.d/private/cache/.+" "emacs\\.d/workgroups/.+$"
-                        "wg-default" "/company-statistics-cache.el$")
+                        "wg-default" "/company-statistics-cache.el$"
+                        "^/var/folders/.+$" "^/tmp/.+")
       recentf-max-menu-items 0
       recentf-max-saved-items 250
       recentf-auto-cleanup 600
