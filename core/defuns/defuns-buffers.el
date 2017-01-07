@@ -285,7 +285,7 @@ found. If BANG, then include buffers that aren't part of the current project."
 then include buffers that aren't part of the current project."
   :repeat nil
   (interactive "<!><a>")
-  (doom-kill-buffers (doom/get-matching-buffers pattern (doom/get-buffers (not bang)))))
+  (doom--kill-buffers (doom/get-matching-buffers pattern (doom/get-buffers (not bang)))))
 
 ;;;###autoload (autoload 'doom:scratch-buffer "defuns-buffers" nil t)
 (evil-define-operator doom:scratch-buffer (&optional beg end bang)
