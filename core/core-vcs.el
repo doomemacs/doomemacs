@@ -82,5 +82,21 @@
 (use-package browse-at-remote
   :commands (browse-at-remote/browse browse-at-remote/get-url))
 
+;; Ediff
+(defvar doom-ediff-enabled nil)
+(add-hook! ediff-load
+  (setq ediff-diff-options           "-w"
+        ediff-split-window-function 'split-window-horizontally
+        ediff-window-setup-function 'ediff-setup-windows-plain) ; no extra frames
+
+  ;; Brighten other buffers
+  (add-hook 'ediff-prepare-buffer-hook 'doom-buffer-mode)
+
+  ;; TODO Custom modeline for ediff buffers
+
+  ;; For modeline awareness
+  (add-hook! ediff-startup (setq doom-ediff-enabled t))
+  (add-hook! ediff-quit    (setq doom-ediff-enabled nil)))
+
 (provide 'core-vcs)
 ;;; core-vcs.el ends here
