@@ -60,13 +60,14 @@
   (advice-add 'neotree-create-node :around 'doom*neotree-create-node)
   ;; Prevents messing up the neotree buffer on window changes
   (advice-add 'doom/evil-window-move :around 'doom*save-neotree)
+  (advice-add 'doom/popup-buffer     :around 'doom*save-neotree)
   ;; Adding keybindings to `neotree-mode-map' wouldn't work for me (they get
   ;; overridden when the neotree buffer is spawned). So we bind them in a hook.
   (add-hook 'neo-after-create-hook 'doom|neotree-init-keymap)
   (defun doom|neotree-init-keymap (&rest _)
     (map! :Lm "\\\\"     'evil-window-prev
-          :Lm "ESC ESC"  'neotree-hide
-          :Lm "q"        'neotree-hide
+          :Lm "ESC ESC"  'doom/neotree-close
+          :Lm "q"        'doom/neotree-close
           :Lm [return]   'neotree-enter
           :Lm "RET"      'neotree-enter
           :Lm "<return>" 'neotree-enter

@@ -18,9 +18,16 @@
         (neotree-find path project-root)))))
 
 ;;;###autoload
+(defun doom/neotree-close ()
+  (interactive)
+  (when (neo-global--window-exists-p)
+    (with-selected-window neo-global--window
+      (evil-window-delete))))
+
+;;;###autoload
 (defmacro doom/neotree-save (&rest body)
   `(let ((neo-p (neo-global--window-exists-p)))
-     (when neo-p (neotree-hide))
+     (when neo-p (doom/neotree-close))
      ,@body
      (when neo-p
        (save-selected-window
