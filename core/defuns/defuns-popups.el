@@ -49,7 +49,8 @@ window. Returns nil or the popup window."
   `(let ((popup-p (doom/popups-p))
          (in-popup-p (doom/popup-p)))
      (when popup-p
-       (doom/popup-close-all t))
+       (doom/popup-close-all t)
+       (doom/popup-close nil t))
      (prog1
          ,@body
        (when popup-p
