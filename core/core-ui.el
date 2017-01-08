@@ -82,8 +82,6 @@
 (add-hook! (help-mode
             compilation-mode
             messages-buffer-mode
-            completion-setup
-            completion-in-region-mode
             completion-list-mode)
   'doom-hide-mode-line-mode)
 
