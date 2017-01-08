@@ -53,7 +53,9 @@ configuration."
 
 ;;;###autoload (autoload 'doom:workgroup-new "defuns-workgroup" nil t)
 (evil-define-command doom:workgroup-new (bang name &optional silent)
-  "Create a new workgroup. If BANG, overwrite any workgroup named NAME."
+  "Create a new workgroup named NAME. If BANG, overwrite any workgroup named
+NAME. If NAME is omitted, autogenerate a name. If SILENT, then don't show the
+tabs in the minibuffer afterwards."
   (interactive "<!><a>")
   (unless name
     (setq name (format "#%s" (1+ (length (wg-session-workgroup-list (wg-current-session t)))))))
@@ -70,7 +72,9 @@ configuration."
                              'success)))
 
 ;;;###autoload (autoload 'doom:workgroup-rename "defuns-workgroup" nil t)
-(evil-define-command doom:workgroup-rename (bang &optional new-name)
+(evil-define-command doom:workgroup-rename (&optional bang new-name)
+  "Rename the current workgroup to NEW-NAME. If BANG and this workgroup has a
+fixed name, un-fix it."
   (interactive "<!><a>")
   (let* ((wg (wg-current-workgroup))
          (wg-uid (wg-workgroup-uid wg))
@@ -85,6 +89,8 @@ configuration."
 
 ;;;###autoload (autoload 'doom:workgroup-delete "defuns-workgroup" nil t)
 (evil-define-command doom:workgroup-delete (&optional bang name)
+  "Delete the workgroup specified by NAME. If NAME is omitted, delete the
+current workgroup. If BANG, prompts the user for which workgroup to delete."
   (interactive "<!><a>")
   (let* ((current-wg (wg-current-workgroup))
          (wg-name (or name (wg-workgroup-name current-wg))))
