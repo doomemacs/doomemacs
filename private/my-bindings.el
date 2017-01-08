@@ -24,7 +24,7 @@
       "A-/"  'evil-commentary-line
       "M-b"  'doom:build
       "C-`"  'doom/popup-last-buffer
-      "M-~"  'doom/eshell
+      "C-~"  (λ! (doom:eshell t))
       ;; Text-scaling
       "M-0"  (λ! (text-scale-set 0))
       "M-="  'text-scale-increase

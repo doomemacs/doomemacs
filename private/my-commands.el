@@ -45,7 +45,7 @@
 (ex! "http"        'httpd-start)                 ; start http server
 (ex! "rx"          'doom:regex)                  ; open re-builder
 (ex! "repl"        'doom:repl)                   ; invoke or send to repl
-(ex! "sh[ell]"     'doom/eshell)
+(ex! "sh[ell]"     'doom:eshell)
 (ex! "t[mux]"      'doom:tmux)                   ; send to tmux
 (ex! "tcd"         'doom:tmux-cd)                ; cd to default-directory in tmux
 (ex! "x"           'doom:scratch-buffer)
