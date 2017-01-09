@@ -18,6 +18,9 @@
   (require 'git-gutter-fringe)
   (def-popup! "^\\*git-gutter.+\\*$" :align below :size 15 :noselect t :regexp t)
 
+  ;; NOTE If you want the git gutter to be on the outside of the margins (rather
+  ;; than inside), `fringes-outside-margins' should be non-nil.
+
   ;; colored fringe "bars"
   (define-fringe-bitmap 'git-gutter-fr:added
     [224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224]
