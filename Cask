@@ -165,7 +165,7 @@
 (depends-on "modern-cpp-font-lock")
 
 ;; Crystal -- modules/module-crystal.el
-(depends-on "crystal-mode" :git "https://github.com/jpellerin/emacs-crystal-mode")
+(depends-on "crystal-mode" :git "https://github.com/dotmilk/emacs-crystal-mode")
 
 ;; C# -- modules/module-csharp.el
 (depends-on "csharp-mode")
