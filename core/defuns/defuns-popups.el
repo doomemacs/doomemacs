@@ -22,7 +22,25 @@
     map)
    "Active keymap in popup windows.")
 
-(advice-add 'doom/evil-window-move :around 'doom*popup-window-move)
+;;;###autoload
+(define-minor-mode doom-popup-mode
+  "Minor mode for pop-up windows. Enables local keymaps and sets state
+variables."
+  :global nil
+  :init-value nil
+  :keymap doom-popup-mode-map
+  (let ((rules (--any (let ((key (car it)))
+                        (when (cond ((symbolp key)
+                                     (or (eq major-mode key)
+                                         (derived-mode-p key)))
+                                    ((stringp key)
+                                     (string-match-p key (buffer-name))))
+                          (cdr it)))
+                      doom-popup-rules)))
+    (set-window-dedicated-p nil doom-popup-mode)
+    (setq doom-last-popup (current-buffer))
+    (setq-local doom-popup-rule rules)))
+(put 'doom-popup-mode 'permanent-local t)
 
 ;;;###autoload
 (defun doom*popup-window-move (orig-fn &rest args)
@@ -80,12 +98,12 @@ window. Returns nil or the popup window."
       ;; If REPL...
       (when (bound-and-true-p repl-toggle-mode)
         (setq rtog/--last-buffer nil))
-      (if (not (or dont-kill (memq :nokill doom-popup-rule)))
-          (let ((kill-buffer-query-functions
-                 (delq 'process-kill-buffer-query-function
-                       kill-buffer-query-functions)))
-            (kill-buffer (window-buffer window)))
-        (doom-popup-mode -1)))
+      (doom-popup-mode -1)
+      (unless (or dont-kill (memq :nokill doom-popup-rule))
+        (let ((kill-buffer-query-functions
+               (delq 'process-kill-buffer-query-function
+                     kill-buffer-query-functions)))
+          (kill-buffer (window-buffer window)))))
     (delete-window window)))
 
 ;;;###autoload
@@ -135,27 +153,6 @@ window. Returns nil or the popup window."
 (defun doom*save-popup (orig-fun &rest args)
   "Prevents messing up a popup buffer on window changes"
   (doom/popup-save (apply orig-fun args)))
-
-(put 'doom-popup-mode 'permanent-local t)
-(put 'doom-popup-rule 'permanent-local t)
-
-;;;###autoload
-(define-minor-mode doom-popup-mode
-  "Minor mode for pop-up windows. Enables local keymaps and sets state
-variables."
-  :global nil
-  :init-value nil
-  :keymap doom-popup-mode-map
-  (let ((rules (--any (let ((key (car it)))
-                        (when (cond ((symbolp key)
-                                     (or (eq major-mode key)
-                                         (derived-mode-p key)))
-                                    ((stringp key)
-                                     (string-match-p key (buffer-name))))
-                          (cdr it)))
-                      doom-popup-rules)))
-    (setq doom-last-popup (current-buffer))
-    (setq-local doom-popup-rule rules)))
 
 (provide 'defuns-popups)
 ;;; defuns-popups.el ends here
