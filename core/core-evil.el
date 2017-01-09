@@ -22,7 +22,7 @@
         evil-replace-state-tag   "R"
 
         ;; Set cursor colors
-        evil-default-cursor (face-attribute 'cursor :foreground nil t)
+        evil-default-cursor (face-attribute 'cursor :background nil t)
         evil-normal-state-cursor 'box
         evil-emacs-state-cursor  `(,(face-attribute 'warning :foreground nil nil) box)
         evil-insert-state-cursor 'bar
