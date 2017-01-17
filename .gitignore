@@ -1,13 +1,10 @@
-.cask/
-ext/*
-!ext/*.sh
-!ext/*.md
-!ext/VARS
 eshell/
-private/cache
-private/snippets
 var/
-core/autoloads.el
+private/
+scripts/*/
+modules/autoloads.el
+
+# emacs tempfiles that shouldn't be there
 .mc-lists.el
 .org-id-locations
 auto-save-list
@@ -24,5 +21,6 @@ debug.el
 *.dat
 *.eld
 
+# transient files
 *.cache-*
 *.log
