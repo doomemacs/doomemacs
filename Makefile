@@ -1,50 +1,25 @@
-HOSTNAME=`emacs --batch --eval '(message "%s" (system-name))' 2>&1`
-
 EMACS=emacs
-CACHE_DIR="private/cache/$(HOSTNAME)/"
-REPO_URL="https://github.com/hlissner"
+CACHE_DIR=""
 
-all: install
+all: install update
 
-# If you run either of these with emacs open, run doom-reload afterwards
-install: _install core/core.elc init.elc autoloads
-update: _update core/core.elc init.elc autoloads
+install: autoloads
+	@$(EMACS) -Q --batch --eval '(setq use-package-always-ensure t)' -l init.el
+
+update: autoloads
+	@$(EMACS) -Q --batch -l init.el -f 'doom/packages-update'
 
 autoloads:
-	@$(EMACS) --batch -l init.el --eval '(doom-reload-autoloads)' 2>&1
+	@$(EMACS) -Q --batch -l init.el -f 'doom/refresh-autoloads'
 
-compile: clean
-	@$(EMACS) --batch -l init.el --eval '(doom-byte-compile t)' 2>&1
+compile:
+	@$(EMACS) -Q --batch -l init.el -f 'doom/byte-compile'
 
-snippets:
-	@[ -d private/snippets ] || git clone $(REPO_URL)/emacs-snippets private/snippets
+clean: clean-elc
+	@$(EMACS) -Q --batch -l init.el -f 'doom/packages-clean'
 
-clean:
-	@rm -rf auto-save-list recentf places ido.last async-bytecomp.log elpa tramp
-	@rm -rf projectile-bookmarks.eld projectile.cache company-statistics-cache.el
-	@rm -rf var semanticdb anaconda-mode
-	@rm -f *.elc {core,modules,private,contrib}/*.elc {core,modules}/defuns/*.elc
+clean-elc:
+	@rm -fv init.elc
+	@find {core,modules} -type f -iname '*.elc' -exec rm \-fv {} \;
 
-clean-cache:
-	@find $(CACHE_DIR) -type f -maxdepth 1 -delete
-	@rm -f $(CACHE_DIR)/{workgroups,pcache,ltxpng,backup}/*
-
-clean-lite:
-	@rm -f init.elc core/core.elc
-
-test:
-	@cask exec ert-runner -l core/core.el
-
-########################################
-
-%.elc: %.el
-	@$(EMACS) --batch -l init.el -f batch-byte-compile 2>&1 $<
-
-_update: clean-lite
-	@cask update 2>&1
-
-_install: clean-lite
-	@cask install 2>&1
-	@mkdir -p $(CACHE_DIR)/{undo,backup,workgroups}
-
-.PHONY: all test
+.PHONY: all

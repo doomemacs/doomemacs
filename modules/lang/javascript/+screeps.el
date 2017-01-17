@@ -165,7 +165,7 @@
 
     "REACTIONS" "BODYPARTS_ALL" "RESOURCES_ALL" "COLORS_ALL"))
 
-(def-project-type! screeps "screeps"
+(project! screeps "screeps"
   :match "/screeps/.+$"
   :modes (nodejs-project-mode))
 
@@ -174,5 +174,3 @@
     (add-to-list 'flycheck-disabled-checkers 'javascript-jshint)
     (setq js2-additional-externs (append '("_") screeps-objects screeps-constants))))
 
-(provide 'custom-screeps)
-;;; custom-screeps.el ends here
