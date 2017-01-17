@@ -1,6 +1,6 @@
-;;; core-flycheck.el --- check yourself before you shrek yourself
+;;; core-syntax-checking.el --- tasing you for every forgotten semicolon
 
-(use-package flycheck
+(package! flycheck
   :commands (flycheck-mode flycheck-list-errors flycheck-buffer)
   :init
   (setq flycheck-indication-mode 'right-fringe
@@ -13,7 +13,7 @@
         flycheck-display-errors-delay 0.5)
 
   :config
-  (def-popup! " ?\\*Flycheck.+\\*" :align below :size 14 :noselect t :regexp t)
+  ;; (def-popup! " ?\\*Flycheck.+\\*" :align below :size 14 :noselect t :regexp t)
 
   (map! :map flycheck-error-list-mode-map
         :n "C-n" 'flycheck-error-list-next-error
@@ -23,16 +23,20 @@
         :n "RET" 'flycheck-error-list-goto-error)
 
   ;; Flycheck buffer on ESC in normal mode.
+  (defun doom*flycheck-buffer ()
+    (when (bound-and-true-p flycheck-mode) (flycheck-buffer)))
   (advice-add 'evil-force-normal-state :after 'doom*flycheck-buffer)
 
   (define-fringe-bitmap 'flycheck-fringe-bitmap-double-arrow
-    [0 0 0 0 0 4 12 28 60 124 252 124 60 28 12 4 0 0 0 0])
+    [0 0 0 0 0 4 12 28 60 124 252 124 60 28 12 4 0 0 0 0]))
 
-  (when (eq window-system 'mac)
-    (require 'flycheck-pos-tip)
-    (flycheck-pos-tip-mode +1)))
+;; NOTE Looks bad on emacs-mac build on MacOS
+(package! flycheck-pos-tip
+  :unless (eq window-system 'ns)
+  :after flycheck
+  :config (flycheck-pos-tip-mode +1))
 
-(use-package flyspell :commands flyspell-mode)
+(package! flyspell :commands flyspell-mode)
 
-(provide 'core-flycheck)
-;;; core-flycheck.el ends here
+(provide 'core-syntax-checking)
+;;; core-syntax-checking.el ends here

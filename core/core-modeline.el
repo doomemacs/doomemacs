@@ -1,6 +1,6 @@
-;;; core-modeline.el
+;;; core-modeline.el --- make mode-lines sexy again
 
-;; This file tries to be an almost self-contained configuration of my mode-line.
+;; This file tries to be a self-contained configuration of my mode-line.
 
 ;;; These are the invisible dependencies
 ;; Required
@@ -17,21 +17,24 @@
 ;;(require 'iedit)
 ;;(require 'evil-multiedit)
 
-(require 'powerline)
-(require 'all-the-icons)
+(package! powerline)
 
-;; all-the-icons doesn't work in the terminal, so we "disable" it.
-(unless window-system
-  (defun all-the-icons-octicon (&rest _) "" "")
-  (defun all-the-icons-faicon (&rest _) "" "")
-  (defun all-the-icons-fileicon (&rest _) "" "")
-  (defun all-the-icons-wicon (&rest _) "" "")
-  (defun all-the-icons-alltheicon (&rest _) "" ""))
+(package! all-the-icons :demand t)
+
+(package! eldoc-eval :demand t
+  :config
+  (setq eldoc-in-minibuffer-show-fn 'doom-eldoc-show-in-mode-line)
+  (eldoc-in-minibuffer-mode +1))
+
+
 
 
 ;;
 ;; Variables
 ;;
+
+(defvar doom-modeline-formats '()
+  "")
 
 (defvar doom-modeline-height 29
   "How tall the mode-line should be (only respected in GUI emacs).")
@@ -44,30 +47,37 @@
 ;; Custom faces
 ;;
 
-(defface doom-modeline-buffer-path '((t (:inherit mode-line :bold t)))
+(defface doom-modeline-buffer-path
+  '((t (:inherit mode-line :bold t)))
   "Face used for the dirname part of the buffer path.")
 
 (defface doom-modeline-buffer-project
   '((t (:inherit doom-modeline-buffer-path :bold nil)))
   "Face used for the filename part of the mode-line buffer path.")
 
-(defface doom-modeline-buffer-modified '((t (:inherit highlight :background nil)))
+(defface doom-modeline-buffer-modified
+  '((t (:inherit highlight :background nil)))
   "Face used for the 'unsaved' symbol in the mode-line.")
 
-(defface doom-modeline-buffer-major-mode '((t (:inherit mode-line :bold t)))
+(defface doom-modeline-buffer-major-mode
+  '((t (:inherit mode-line :bold t)))
   "Face used for the major-mode segment in the mode-line.")
 
-(defface doom-modeline-highlight '((t (:inherit mode-line)))
+(defface doom-modeline-highlight
+  '((t (:inherit mode-line)))
   "Face for bright segments of the mode-line.")
 
-(defface doom-modeline-panel '((t (:inherit mode-line)))
+(defface doom-modeline-panel
+  '((t (:inherit mode-line)))
   "Face for 'X out of Y' segments, such as `*anzu', `*evil-substitute' and
 `iedit'")
 
-(defface doom-modeline-info `((t (:inherit success)))
+(defface doom-modeline-info
+  `((t (:inherit success)))
   "Face for info-level messages in the modeline. Used by `*vc'.")
 
-(defface doom-modeline-warning `((t (:inherit warning)))
+(defface doom-modeline-warning
+  `((t (:inherit warning)))
   "Face for warnings in the modeline. Used by `*flycheck'")
 
 (defface doom-modeline-urgent `((t (:inherit error)))
@@ -86,37 +96,41 @@ active.")
 
 
 ;;
-;; Functions
+;; Bootstrap
 ;;
 
-;; Where (py|rb)env version strings will be stored
-(defvar-local doom-ml--env-version nil)
-(defvar-local doom-ml--env-command nil)
+;; all-the-icons doesn't work in the terminal, so we "disable" it.
+(unless window-system
+  (defun all-the-icons-octicon (&rest _) "" "")
+  (defun all-the-icons-faicon (&rest _) "" "")
+  (defun all-the-icons-fileicon (&rest _) "" "")
+  (defun all-the-icons-wicon (&rest _) "" "")
+  (defun all-the-icons-alltheicon (&rest _) "" ""))
 
-(add-hook 'focus-in-hook 'doom-ml|env-update)
-(add-hook 'find-file-hook 'doom-ml|env-update)
+(defmacro modeline! (name &rest def)
+  (declare (indent defun))) ;; TODO
 
-(defun doom-ml|env-update ()
-  "Update (py|rb)env version string in `doom-ml--env-version', generated with
-`doom-ml--env-command'."
-  (when doom-ml--env-command
-    (let* ((default-directory (doom/project-root))
+(defvar-local doom-modeline-env-version nil)
+(defvar-local doom-modeline-env-command nil)
+(add-hook 'focus-in-hook 'doom-modeline|update-env)
+(add-hook 'find-file-hook 'doom-modeline|update-env)
+(defun doom-modeline|update-env ()
+  (when doom-modeline-env-command
+    (let* ((default-directory (doom-project-root))
            (s (shell-command-to-string doom-ml--env-command)))
-      (setq doom-ml--env-version (if (string-match "[ \t\n\r]+\\'" s)
-                                     (replace-match "" t t s)
-                                   s)))))
+      (setq doom-modeline-env-version (if (string-match "[ \t\n\r]+\\'" s)
+                                          (replace-match "" t t s)
+                                        s)))))
 
-(defmacro def-version-cmd! (mode command)
-  "Define a COMMAND for MODE that will set `doom-ml--env-command' when that mode
-is activated, which should return the version number of the current environment.
-It is used by `doom-ml|env-update' to display a version number in the modeline.
-For instance:
+(doom-define-setting 'env
+  "Command used to set the interpreter version in the current buffer."
+  :type '(stringp functionp)
+  :hook (lambda (command) (setq doom-modeline-env-command x)))
 
-  (def-version-cmd! ruby-mode \"ruby --version | cut -d' ' -f2\")
+;; (set! python-mode :env "python --version 2>&1 | cut -d' ' -f2")
+;; (set! ruby-mode   :env "ruby --version 2>&1 | cut -d' ' -f2")
 
-This will display the ruby version in the modeline in ruby-mode buffers. It is
-cached the first time."
-  `(add-hook ',mode (lambda () (setq doom-ml--env-command ,command))))
+(defsubst active() (eq (selected-window) powerline-selected-window))
 
 (defun doom-ml-flycheck-count (state)
   "Return flycheck information for the given error type STATE."
@@ -127,6 +141,9 @@ cached the first time."
 
 (defun doom-make-xpm (color height width)
   "Create an XPM bitmap."
+  (unless (featurep 'powerline)
+    (require 'powerline)
+    (pl/memoize 'doom-make-xpm))
   (when window-system
     (propertize
      " " 'display
@@ -140,7 +157,7 @@ cached the first time."
 project root). Excludes the file basename. See `doom-buffer-name' for that."
   (if buffer-file-name
     (let* ((default-directory (f-dirname buffer-file-name))
-           (buffer-path (f-relative buffer-file-name (doom/project-root)))
+           (buffer-path (f-relative buffer-file-name (doom-project-root)))
            (max-length (truncate (* (window-body-width) 0.4))))
       (when (and buffer-path (not (equal buffer-path ".")))
         (if (> (length buffer-path) max-length)
@@ -159,16 +176,35 @@ project root). Excludes the file basename. See `doom-buffer-name' for that."
           buffer-path)))
     "%b"))
 
-(defsubst active () (eq (selected-window) powerline-selected-window))
-
-;; Memoize for optimization
-(pl/memoize 'doom-make-xpm)
-(pl/memoize 'face-background)
-(pl/memoize 'all-the-icons-octicon)
+(defun doom-eldoc-show-in-mode-line (input)
+  "Display string STR in the mode-line next to minibuffer."
+  (with-current-buffer (eldoc-current-buffer)
+    (let* ((max              (window-width (selected-window)))
+           (str              (and (stringp input) (concat " " input)))
+           (len              (length str))
+           (tmp-str          str)
+           (mode-line-format (or (and str (doom-eldoc-modeline))
+                                 mode-line-format))
+           roll mode-line-in-non-selected-windows)
+      (catch 'break
+        (if (and (> len max) eldoc-mode-line-rolling-flag)
+            (progn
+              (while (setq roll (sit-for 0.3))
+                (setq tmp-str (substring tmp-str 2)
+                      mode-line-format (concat tmp-str " [<]" str))
+                (force-mode-line-update)
+                (when (< (length tmp-str) 2) (setq tmp-str str)))
+              (unless roll
+                (when eldoc-mode-line-stop-rolling-on-input
+                  (setq eldoc-mode-line-rolling-flag nil))
+                (throw 'break nil)))
+          (force-mode-line-update)
+          (sit-for eldoc-show-in-mode-line-delay))))
+    (force-mode-line-update)))
 
 
 ;;
-;; Mode-line segments
+;; Segments
 ;;
 
 (defun *buffer-project ()
@@ -179,7 +215,7 @@ project root). Excludes the file basename. See `doom-buffer-name' for that."
              :face face
              :v-adjust -0.05
              :height 1.25)
-            (propertize (concat " " (abbreviate-file-name (doom/project-root)))
+            (propertize (concat " " (abbreviate-file-name (doom-project-root)))
                         'face face))))
 
 (defun *buffer-info ()
@@ -230,7 +266,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
   (propertize
    (concat (format-mode-line mode-name)
            (if (stringp mode-line-process) mode-line-process)
-           (if doom-ml--env-version (concat " " doom-ml--env-version))
+           (if doom-modeline-env-version (concat " " doom-modeline-env-version))
            (and (featurep 'face-remap)
                 (/= text-scale-mode-amount 0)
                 (format " (%+d)" text-scale-mode-amount)))
@@ -411,96 +447,59 @@ lines are selected, or the NxM dimensions of a block selection."
          (let ((size (image-size (image-get-display-property) :pixels)))
            (format "  %dx%d  " (car size) (cdr size))))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defun doom-modeline (&optional id)
-  `(:eval
-    (let* ((meta (concat (*macro-recording)
-                         (*anzu)
-                         (*evil-substitute)
-                         (*iedit)))
-           (lhs (list (doom-make-xpm (face-background (if (active)
-                                                          'doom-modeline-bar
-                                                        'doom-modeline-inactive-bar))
-                                     doom-modeline-height
-                                     doom-modeline-bar-width)
-                      ,(unless (eq id 'scratch)
-                         '(if (and (= (length meta) 0)
-                                   (not doom-ediff-enabled))
-                              " %I "
-                            meta))
-                      " "
-                      ,(cond ((eq id 'scratch)
-                              '(*buffer-project))
-                             ((eq id 'media)
-                              '(*media-info))
-                             (t
-                              '(list (*buffer-info)
-                                     "  %l:%c %p  "
-                                     (*selection-info)
-                                     )))))
-           (rhs ,(if id
-                     '(list (*major-mode))
-                   '(list (*buffer-encoding)
-                          (*vc)
-                          (*major-mode)
-                          (*flycheck)
-                          )))
-           (mid (propertize
-                 " " 'display `((space :align-to (- (+ right right-fringe right-margin)
-                                                    ,(+ 1 (string-width (format-mode-line rhs)))))))))
-      (list lhs mid rhs))))
-
-(setq-default mode-line-format (doom-modeline))
-
-(add-hook! image-mode
-  (setq mode-line-format (doom-modeline 'media)))
-
 
 ;;
-;; Eldoc-in-mode-line support (for `eval-expression')
+;; Mode lines
 ;;
 
-(defun doom-eldoc-modeline ()
-  `(:eval
-    (list (list ,(when window-system
-                   `(doom-make-xpm (face-background 'doom-modeline-eldoc-bar)
-                                   doom-modeline-height
-                                   doom-modeline-bar-width))
-                (and (bound-and-true-p str) str))
-          (propertize " " 'display `((space :align-to (1- (+ right right-fringe right-margin))))))))
+(doom-modeline-define 'main
+  `(let* ((meta (concat (*macro-recording)
+                        (*anzu)
+                        (*evil-substitute)
+                        (*iedit)))
+          (lhs (list (doom-make-xpm (face-background (if (active)
+                                                         'doom-modeline-bar
+                                                       'doom-modeline-inactive-bar))
+                                    doom-modeline-height
+                                    doom-modeline-bar-width)
+                     (if (= (length meta) 0) " %I " meta)
+                     " "
+                     (*buffer-info)
+                     "  %l:%c %p  "
+                     (*selection-info)))
+          (rhs (list (*buffer-encoding)
+                     (*vc)
+                     (*major-mode)
+                     (*flycheck)))
+          (mid (propertize
+                " " 'display `((space :align-to (- (+ right right-fringe right-margin)
+                                                   ,(+ 1 (string-width (format-mode-line rhs)))))))))
+     (list lhs mid rhs)))
 
-(defun doom-eldoc-show-in-mode-line (input)
-  "Display string STR in the mode-line next to minibuffer."
-  (with-current-buffer (eldoc-current-buffer)
-    (let* ((max              (window-width (selected-window)))
-           (str              (and (stringp input) (concat " " input)))
-           (len              (length str))
-           (tmp-str          str)
-           (mode-line-format (or (and str (doom-eldoc-modeline))
-                                 mode-line-format))
-           roll mode-line-in-non-selected-windows)
-      (catch 'break
-        (if (and (> len max) eldoc-mode-line-rolling-flag)
-            (progn
-              (while (setq roll (sit-for 0.3))
-                (setq tmp-str (substring tmp-str 2)
-                      mode-line-format (concat tmp-str " [<]" str))
-                (force-mode-line-update)
-                (when (< (length tmp-str) 2) (setq tmp-str str)))
-              (unless roll
-                (when eldoc-mode-line-stop-rolling-on-input
-                  (setq eldoc-mode-line-rolling-flag nil))
-                (throw 'break nil)))
-          (force-mode-line-update)
-          (sit-for eldoc-show-in-mode-line-delay))))
-    (force-mode-line-update)))
+(doom-modeline-define 'eldoc
+  `(list (list ,(when window-system
+                  `(doom-make-xpm (face-background 'doom-modeline-eldoc-bar)
+                                  doom-modeline-height
+                                  doom-modeline-bar-width))
+               (and (bound-and-true-p str) str))
+         (propertize " " 'display `((space :align-to (1- (+ right right-fringe right-margin)))))))
 
-;; Show eldoc in the mode-line when using `eval-expression'.
-(use-package eldoc-eval
-  :config
-  (setq eldoc-in-minibuffer-show-fn 'doom-eldoc-show-in-mode-line)
-  (eldoc-in-minibuffer-mode +1))
+(doom-modeline-define 'minimal
+  `(let* ((lhs (list (doom-make-xpm (face-background (if (active)
+                                                         'doom-modeline-bar
+                                                       'doom-modeline-inactive-bar))
+                                    doom-modeline-height
+                                    doom-modeline-bar-width)
+                     " "
+                     (*buffer-project)))
+          (rhs (list (*major-mode)))
+          (mid (propertize
+                " " 'display `((space :align-to (- (+ right right-fringe right-margin)
+                                                   ,(+ 1 (string-width (format-mode-line rhs)))))))))
+     (list lhs mid rhs)))
+
+;;
+(setq-default mode-line-format (assq 'main doom-modeline-formats))
 
 (provide 'core-modeline)
 ;;; core-modeline.el ends here

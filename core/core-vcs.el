@@ -1,27 +1,23 @@
-;;; core-vcs.el --- version control awareness
+;;; core-vcs.el
 
-(use-package gitconfig-mode
-  :mode ("/\\.?git/?config$" "/\\.gitmodules$")
+(package! gitconfig-mode
+  :mode "/\\.?git/?config$"
+  :mode "/\\.gitmodules$"
   :init (add-hook 'gitconfig-mode-hook 'flyspell-mode))
 
-(use-package gitignore-mode
-  :mode ("/\\.gitignore$"
-         "/\\.git/info/exclude$"
-         "/git/ignore$"))
+(package! gitignore-mode
+  :mode "/\\.gitignore$"
+  :mode "/\\.git/info/exclude$"
+  :mode "/git/ignore$")
 
-(use-package git-gutter
-  :commands (git-gutter-mode doom/vcs-next-hunk doom/vcs-prev-hunk
-             doom/vcs-show-hunk doom/vcs-stage-hunk doom/vcs-revert-hunk)
-  :init
-  (add-hook! (text-mode prog-mode conf-mode) 'git-gutter-mode)
+(package! git-gutter-fringe
+  :commands git-gutter-mode
+  :init (add-hook! (text-mode prog-mode conf-mode) 'git-gutter-mode)
   :config
-  (require 'git-gutter-fringe)
-  (def-popup! "^\\*git-gutter.+\\*$" :align below :size 15 :noselect t :regexp t)
+  ;; places the git gutter outside the margins.
+  (setq-default fringes-outside-margins t)
 
-  ;; NOTE If you want the git gutter to be on the outside of the margins (rather
-  ;; than inside), `fringes-outside-margins' should be non-nil.
-
-  ;; colored fringe "bars"
+  ;; thin fringe bitmaps
   (define-fringe-bitmap 'git-gutter-fr:added
     [224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224]
     nil nil 'center)
@@ -32,35 +28,15 @@
     [0 0 0 0 0 0 0 0 0 0 0 0 0 128 192 224 240 248]
     nil nil 'center)
 
-  ;; Refreshing git-gutter
+  ;; Refreshing git-gutter on ESC and focus
   (advice-add 'evil-force-normal-state :after 'git-gutter)
-  (add-hook 'focus-in-hook 'git-gutter:update-all-windows)
+  (add-hook 'focus-in-hook 'git-gutter:update-all-windows))
 
-  (defalias 'doom/vcs-next-hunk    'git-gutter:next-hunk)
-  (defalias 'doom/vcs-prev-hunk    'git-gutter:previous-hunk)
-  (defalias 'doom/vcs-show-hunk    'git-gutter:popup-hunk)
-  (defalias 'doom/vcs-stage-hunk   'git-gutter:stage-hunk)
-  (defalias 'doom/vcs-revert-hunk  'git-gutter:revert-hunk))
-
-(use-package git-messenger
-  :commands git-messenger:popup-message
-  :init (defvar git-messenger-map (make-sparse-keymap))
+(package! magit
+  :commands magit-status
   :config
-  (def-popup! "*git-messenger*" :align left :size 55 :select t)
-  (setq git-messenger:show-detail t)
-  (map! :map git-messenger-map
-        "<escape>" 'git-messenger:popup-close
-        "q"        'git-messenger:popup-close))
-
-(use-package magit
-  :commands (magit-status)
-  :config
-  (def-popup! "^\\*magit.+" :align below :regexp t)
   ;; Prevent magit + evil-snipe conflicts
   (add-hook 'magit-mode-hook 'turn-off-evil-snipe-override-mode)
-  (require 'evil-magit)
-
-  (setq magit-display-file-buffer-function 'doom/magit-pop-to-buffer)
 
   (map! :map magit-mode-map
         ;; Don't let Tab binding in my-bindings conflict with Tab in magit
@@ -68,6 +44,11 @@
         ;; Don't interfere with window movement keys
         :nv "C-j" nil
         :nv "C-k" nil))
+
+(package! evil-magit :after magit)
+
+(package! browse-at-remote
+  :commands (browse-at-remote/browse browse-at-remote/get-url))
 
 (after! vc-annotate
   (evil-set-initial-state 'vc-annotate-mode     'normal)
@@ -82,24 +63,41 @@
         :n [tab] 'vc-annotate-toggle-annotation-visibility
         :n "RET" 'vc-annotate-find-revision-at-line))
 
-(use-package browse-at-remote
-  :commands (browse-at-remote/browse browse-at-remote/get-url))
 
-;; Ediff
-(defvar doom-ediff-enabled nil)
-(add-hook! ediff-load
-  (setq ediff-diff-options           "-w"
-        ediff-split-window-function 'split-window-horizontally
-        ediff-window-setup-function 'ediff-setup-windows-plain) ; no extra frames
+;;
+;; Defuns
+;;
 
-  ;; Brighten other buffers
-  (add-hook 'ediff-prepare-buffer-hook 'doom-buffer-mode)
+(defun doom-git-root ()
+  "Get git url root."
+  (when-let (url (car-safe (browse-at-remote--remote-ref buffer-file-name)))
+    (cdr (browse-at-remote--get-url-from-remote url))))
 
-  ;; TODO Custom modeline for ediff buffers
+(defun doom/git-browse-issues ()
+  "Open the github issues page for current repo."
+  (interactive)
+  (if-let (root (doom-git-root))
+      (browse-url (concat root "/issues"))
+    (user-error "No git root found!")))
 
-  ;; For modeline awareness
-  (add-hook! ediff-startup (setq doom-ediff-enabled t))
-  (add-hook! ediff-quit    (setq doom-ediff-enabled nil)))
+(evil-define-command doom:git-browse (&optional bang)
+  "Open the website for the current (or specified) version controlled FILE. If
+BANG, then copy it to clipboard. Fallback to repository root."
+  (interactive "<!>")
+  (let (url)
+    (condition-case err
+        (setq url (browse-at-remote-get-url))
+      (error
+       (setq url (shell-command-to-string "hub browse -u --"))
+       (setq url (if url
+                     (concat (s-trim url) "/" (f-relative (buffer-file-name) (doom-project-root))
+                             (when (use-region-p) (format "#L%s-L%s"
+                                                          (line-number-at-pos (region-beginning))
+                                                          (line-number-at-pos (region-end)))))))))
+    (when url
+      (if bang
+          (message "Url copied to clipboard: %s" (kill-new url))
+        (browse-url url)))))
 
 (provide 'core-vcs)
 ;;; core-vcs.el ends here

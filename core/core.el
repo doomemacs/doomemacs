@@ -1,99 +1,56 @@
 ;;; core.el --- The heart of the beast
-;;
+
 ;;; Naming conventions:
 ;;
-;;   doom-...     A public variable/constant or function
-;;   doom--...    An internal variable or function (non-interactive)
-;;   doom/...     An autoloaded function
-;;   doom:...     An ex command
-;;   doom|...     A hook
-;;   doom*...     An advising function
-;;   ...!         Macro, shortcut alias or subst defun
-;;   @...         Autoloaded interactive lambda macro for keybinds
+;;   doom-...   A public variable or function (non-interactive use)
+;;   doom--...  A private variable, function (non-interactive use) or macro
+;;   doom/...   An interactive function
+;;   doom:...   An evil operator, motion or command
+;;   doom|...   A hook
+;;   doom*...   An advising function
+;;   ...!       Macro, shortcut alias or defsubst
+;;   @...       lambda macro for keybinds
+;;   +...       Any of the above, but part of a module, e.g. +emacs-lisp|init-hook
 ;;
 ;;; Autoloaded functions are in {core,modules}/defuns/defuns-*.el
 
-;; Premature optimization for faster startup
-(setq-default gc-cons-threshold 339430400
-              gc-cons-percentage 0.6)
+(when (version< emacs-version "25.1")
+  (error "DOOM Emacs no longer supports Emacs <25.1! Time to upgrade!"))
 
-;;
-;; Global Constants
-;;
-
-(defconst doom-version "1.3.1"
+;;;
+(defvar doom-version "2.0.0"
   "Current version of DOOM emacs")
 
-(defconst doom-emacs-dir
-  (expand-file-name user-emacs-directory)
+(defvar doom-emacs-dir user-emacs-directory
   "The path to this emacs.d directory")
 
-(defconst doom-core-dir
-  (expand-file-name "core" doom-emacs-dir)
+(defvar doom-core-dir (concat doom-emacs-dir "core/")
   "Where essential files are stored")
 
-(defconst doom-modules-dir
-  (expand-file-name "modules" doom-emacs-dir)
+(defvar doom-modules-dir (concat doom-emacs-dir "modules/")
   "Where configuration modules are stored")
 
-(defconst doom-private-dir
-  (expand-file-name "private" doom-emacs-dir)
+(defvar doom-private-dir (concat doom-emacs-dir "private/")
   "Where private configuration filse and assets are stored (like snippets)")
 
-(defconst doom-packages-dir
-  (expand-file-name
-   (format ".cask/%s.%s/elpa" emacs-major-version emacs-minor-version)
-   doom-emacs-dir)
-  "Where plugins are installed (by cask)")
-
-(defconst doom-ext-dir
-  (expand-file-name "ext" doom-emacs-dir)
+(defvar doom-scripts-dir (concat doom-emacs-dir "scripts/")
   "Where external dependencies are stored (like libraries or binaries)")
 
-(defconst doom-themes-dir
-  (expand-file-name "themes" doom-private-dir)
+(defvar doom-packages-dir (concat doom-private-dir "packages/")
+  "Where package.el and quelpa plugins (and their caches) are kept.")
+
+(defvar doom-themes-dir (concat doom-private-dir "themes/")
   "Where theme files and subfolders go")
 
-(defconst doom-temp-dir
-  (format "%s/cache/%s" doom-private-dir (system-name))
+(defvar doom-temp-dir
+  (concat doom-private-dir "cache/" (system-name) "/")
   "Hostname-based elisp temp directories")
 
-(defconst doom-org-dir
-  (expand-file-name "~/org")
+(defvar doom-org-dir "~/org/"
   "Where to find org notes")
 
-;; window-system is deprecated. Not on my watch!
-(unless (boundp 'window-system)
-  (defvar window-system (framep-on-display)))
 
-;;
-(defconst doom-leader      ","  "Prefix for <leader> bindings")
-(defconst doom-localleader "\\" "Prefix for <localleader> bindings")
-
-(defvar doom-unreal-buffers
-  '("^ ?\\*.+" image-mode dired-mode reb-mode messages-buffer-mode
-    tabulated-list-mode comint-mode magit-mode)
-  "A list of regexps or modes whose buffers are considered unreal, and will be
-ignored when using `doom:next-real-buffer' and `doom:previous-real-buffer' (or
-killed by `doom/kill-unreal-buffers', or after `doom/kill-real-buffer').")
-
-(defvar doom-cleanup-processes-alist
-  '(("pry" . ruby-mode)
-    ("irb" . ruby-mode)
-    ("ipython" . python-mode))
-  "An alist of (process-name . major-mode) that `doom/kill-process-buffers'
-checks before killing processes. If there are no buffers with matching
-major-modes, the process gets killed.")
-
-(defvar doom-unicode-font
-  (font-spec :family "DejaVu Sans Mono" :size 12)
-  "Fallback font for unicode glyphs.")
-
-
-;;
-;; Core configuration
-;;
-
+;;;
 ;; UTF-8 as the default coding system, please
 (set-charset-priority 'unicode)        ; pretty
 (prefer-coding-system        'utf-8)   ; pretty
@@ -101,93 +58,35 @@ major-modes, the process gets killed.")
 (set-keyboard-coding-system  'utf-8)   ; perdy
 (set-selection-coding-system 'utf-8)   ; please
 (setq locale-coding-system   'utf-8)   ; with sugar on top
+(setq-default buffer-file-coding-system 'utf-8)
 
-;; default-buffer-file-coding-system is deprecated on 23.2
-(if (boundp 'buffer-file-coding-system)
-    (setq-default buffer-file-coding-system 'utf-8)
-  (setq default-buffer-file-coding-system 'utf-8))
-
-;; Don't pester me package.el. Cask is my one and only.
-(setq-default
- package--init-file-ensured t
- package-user-dir doom-packages-dir
- package-enable-at-startup nil
- package-archives
- '(("gnu"   . "http://elpa.gnu.org/packages/")
-   ("melpa" . "http://melpa.org/packages/")
-   ("org"   . "http://orgmode.org/elpa/")))
-
-;; Core settings
-(setq ad-redefinition-action            'accept      ; silence the advised function warnings
-      apropos-do-all                     t           ; make `apropos' more useful
-      byte-compile-warnings              nil
-      compilation-always-kill            t           ; kill compl. process before spawning another
-      compilation-ask-about-save         nil         ; save all buffers before compiling
-      compilation-scroll-output          t           ; scroll with output while compiling
+;; Configuration
+(setq ad-redefinition-accept 'accept   ; silence advised function warnings
+      apropos-do-all t                 ; make `apropos' more useful
+      byte-compile-warnings nil
+      compilation-always-kill t
+      compilation-ask-about-save nil
+      compilation-scroll-output t
       confirm-nonexistent-file-or-buffer t
-      delete-by-moving-to-trash          t
-      echo-keystrokes                    0.02        ; show me what I type
-      enable-recursive-minibuffers       nil         ; no minibufferception
-      idle-update-delay                  5           ; update a little less often
-      major-mode                        'text-mode
-      save-interprogram-paste-before-kill nil
-      sentence-end-double-space          nil
-      ;; http://ergoemacs.org/emacs/emacs_stop_cursor_enter_prompt.html
-      minibuffer-prompt-properties
-      '(read-only t point-entered minibuffer-avoid-prompt face minibuffer-prompt)
-      ;; persistent bookmarks
-      bookmark-save-flag                 t
-      bookmark-default-file              (concat doom-temp-dir "/bookmarks")
-      ;; Disable backups (that's what git/dropbox are for)
-      history-length                     1000
-      vc-make-backup-files               nil
-      auto-save-default                  nil
-      auto-save-list-file-name           (concat doom-temp-dir "/autosave")
-      make-backup-files                  nil
-      create-lockfiles                   nil
-      backup-directory-alist            `((".*" . ,(concat doom-temp-dir "/backup/")))
-      ;; Remember undo history
-      undo-tree-auto-save-history        nil
-      undo-tree-history-directory-alist `(("." . ,(concat doom-temp-dir "/undo/"))))
+      enable-recursive-minibuffers nil
+      idle-update-delay 5
+      minibuffer-prompt-properties '(read-only t point-entered minibuffer-avoid-prompt face minibuffer-prompt)
+      save-interprogram-paste-before-kill nil)
+
+;; History & backup settings
+(setq auto-save-default nil
+      auto-save-list-file-name (concat doom-temp-dir "/autosave")
+      backup-directory-alist (list (cons ".*" (concat doom-temp-dir "/backup/")))
+      create-lockfiles nil
+      history-length 1000
+      make-backup-files nil
+      vc-make-backup-files nil)
 
 
-;;
-;; Bootstrap
-;;
-
-(defvar doom--load-path load-path
-  "Initial `load-path', used as a base so we don't clobber it on consecutive
-reloads.")
-
-(defvar doom-packages '()
-  "A list of all installed packages. Filled internally; do not edit it!")
-
-;; Just the bear necessities... ♫
-(setq load-path (append (list doom-core-dir) doom--load-path))
-
-;; Populate load-path manually. This way, cask (and `cask-initialize') won't be
-;; an internal dependency -- they slow down startup a lot!
-(require 'core-defuns)
-(let ((paths (eval-when-compile (doom-reload))))
-  (setq load-path (car paths)
-        custom-theme-load-path (nth 1 paths)
-        doom-packages (nth 2 paths)))
-
-;; Many functions are lazy-loaded. The autoloads.el file contains info on where
-;; to find them if they're called. Tries to generate autoloads.el if one isn't
-;; found.
-(unless (require 'autoloads nil t)
-  (doom-reload-autoloads)
-  (unless (require 'autoloads nil t)
-    (error "Autoloads weren't generated! Run `make autoloads`")))
-
-
-;;
+;;;
 ;; Automatic minor modes
-;;
-
 (defvar doom-auto-minor-mode-alist '()
-  "Alist of filename patterns vs corresponding minor mode functions, see
+  "Alist mapping filename patterns to corresponding minor mode functions, like
 `auto-mode-alist'. All elements of this alist are checked, meaning you can
 enable multiple minor modes for the same regexp.")
 
@@ -211,37 +110,105 @@ enable multiple minor modes for the same regexp.")
 (add-hook 'find-file-hook 'doom|enable-minor-mode-maybe)
 
 
+;;;
+;; Bootstrap
+(setq gc-cons-threshold 339430400
+      gc-cons-percentage 0.6)
+
+(let (file-name-handler-list)
+  (eval-and-compile
+    (load (concat doom-core-dir "core-packages") nil t))
+  (eval-when-compile
+    ;; Ensure cache folder exists
+    (unless (file-exists-p doom-temp-dir)
+      (make-directory doom-temp-dir t))
+    (doom-package-init))
+
+  (setq load-path (eval-when-compile load-path)
+        custom-theme-load-path (append (list doom-themes-dir) custom-theme-load-path))
+
+  ;;; Essential packages
+  (require 'core-lib)
+  (package! dash :demand t)
+  (package! s    :demand t)
+  (package! f    :demand t)
+
+  ;;; Helper packages (autoloaded)
+  (package! async
+    :commands (async-start
+               async-start-process
+               async-byte-recompile-directory))
+
+  (package! persistent-soft
+    :commands (persistent-soft-exists-p
+               persistent-soft-fetch
+               persistent-soft-flush
+               persistent-soft-store)
+    :init (defvar pcache-directory (concat doom-temp-dir "/pcache/")))
+
+  (package! smex :commands smex)
+
+  ;;; Let 'er rip! (order matters!)
+  ;; (require 'core-settings)        ; configuration management system
+  ;; (require 'core-popups)          ; taming sudden yet inevitable windows
+  (require 'core-evil)            ; come to the dark side, we have cookies
+  ;; (require 'core-project)
+  ;; (require 'core-os)
+  ;; (require 'core-ui)
+  ;; (require 'core-modeline)
+  ;; (require 'core-editor)
+  ;; (require 'core-completion)
+  ;; (require 'core-syntax-checking)
+  ;; (require 'core-snippets)
+  ;; (require 'core-repl)
+  ;; (require 'core-sessions)
+  ;; (require 'core-workspaces)
+  ;; (require 'core-vcs)
+  ;; (require 'core-dashboard)
+
+  (unless (require 'autoloads nil t)
+    (doom/refresh-autoloads t)))
+
+
+;;;
 ;;
-;; Essential plugins
-;;
+(defmacro doom! (&rest packages)
+  (let (paths)
+    (dolist (p packages)
+      (if (memq p '(:apps :emacs :lang :lib :private :ui))
+          (setq mode p)
+        (unless mode
+          (error "No namespace specified on `doom!' for %s" p))
+        (pushnew (format "%s%s/%s/" doom-modules-dir (substring (symbol-name mode) 1) (symbol-name p))
+                 paths)))
 
-(require 'dash)
-(require 's)
-(require 'f)
+    `(let (file-name-handler-alist)
+       (unless noninteractive
+         (load "~/.emacs.local.el" t t))
 
-(autoload 'use-package "use-package" "" nil 'macro)
+       (with-demoted-errors "ERROR: %s"
+         ,@(mapcar
+            (lambda (path)
+              (macroexp-progn
+               (mapcar (lambda (file)
+                         (when noninteractive (setq file (file-name-sans-extension file)))
+                         `(load ,(expand-file-name file path) t t (not noninteractive)))
+                       (append (list "packages.el")
+                               (unless noninteractive (list "config.el"))))))
+            paths))
 
-(use-package anaphora
-  :commands (awhen aif acond awhile))
+       (unless noninteractive
+         (require 'my-bindings)
+         (require 'my-commands)
 
-(use-package persistent-soft
-  :commands (persistent-soft-store
-             persistent-soft-fetch
-             persistent-soft-exists-p
-             persistent-soft-flush
-             persistent-soft-location-readable
-             persistent-soft-location-destroy)
-  :init (defvar pcache-directory (concat doom-temp-dir "/pcache/")))
+         (when (display-graphic-p)
+           (require 'server)
+           (unless (server-running-p)
+             (server-start)))
 
-(use-package async
-  :commands (async-start
-             async-start-process
-             async-get
-             async-wait
-             async-inject-variables))
-
-(use-package json
-  :commands (json-read-from-string json-encode json-read-file))
+         ;; Prevent any auto-displayed text + benchmarking
+         (advice-add 'display-startup-echo-area-message :override 'ignore)
+         (message "")))))
 
 (provide 'core)
 ;;; core.el ends here
