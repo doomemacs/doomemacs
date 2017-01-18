@@ -37,8 +37,6 @@
        dired       ;
        eshell      ; a consistent, cross-platform shell
        org         ; for organized fearless leader
-       files       ; library for manipulating files
-       buffers
 
        ;; Applications are large-scale states that, when activated, will
        ;; transform Emacs into something other than an editor. See
