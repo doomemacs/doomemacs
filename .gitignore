@@ -3,6 +3,7 @@ var/
 private/
 scripts/*/
 modules/autoloads.el
+init.el
 
 # emacs tempfiles that shouldn't be there
 .mc-lists.el

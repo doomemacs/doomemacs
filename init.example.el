@@ -2,7 +2,7 @@
 ;;
 ;; Author:  Henrik Lissner <henrik@lissner.net>
 ;; URL:     https://github.com/hlissner/.emacs.d
-;; Version: 1.3.1
+;; Version: 2.0.0
 ;;
 ;;   =================     ===============     ===============   ========  ========
 ;;   \\ . . . . . . .\\   //. . . . . . .\\   //. . . . . . .\\  \\. . .\\// . . //
@@ -30,20 +30,29 @@
 
 (load (concat user-emacs-directory "core/core") nil t)
 
-(doom! :emacs
-       dired
-       eshell
-       org         ; for organized fearless leader
+(doom! :lib *      ; does nothing if modules/lib/*/ only contains autoload.el
 
-       :apps
-       crm
-       email
-       finance
-       present
-       rss
-       stream      ;
-       twitter
-       write
+       ;; These modules enhance built-in emacs functionality.
+       :emacs
+       dired       ;
+       eshell      ; a consistent, cross-platform shell
+       org         ; for organized fearless leader
+       files       ; library for manipulating files
+       buffers
+
+       ;; Applications are large-scale states that, when activated, will
+       ;; transform Emacs into something other than an editor. See
+       ;; `doom-toggle-state' to do so (and see a list of available states).
+       :app
+       crm         ; org-mode for client relations management
+       email       ; emacs as an email client
+       finance     ; keeping track of my shekels
+       present     ; showing off presentations in emacs
+       restclient  ; emacs as a service
+       rss         ; emacs as an RSS reader
+       stream      ; https://livecoding.tv/vnought
+       twitter     ; https://twitter.com/vnought
+       write       ; emacs as a word processor (latex + org)
 
        :lang
        asm         ; assembly for fun
@@ -64,7 +73,6 @@
        php         ; make php less awful to work with
        processing  ; for prototyping
        python      ; beautiful is better than ugly
-       rest        ; emacs as a service
        ruby        ; 1.step do {|i| p "Ruby is #{i&1==0?'love':'life'}"}
        rust        ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
        scala       ; java, but good
@@ -73,5 +81,10 @@
        text        ; writing docs for people to ignore
        typescript  ; javascript, but better
        web         ; The end is always near </html>
-       vim
-       )
+       viml        ; PURGE THE HERETICS, FOR THE EMPEROR
+
+       ;; Private modules are your own personal modules, and aren't tracked in
+       ;; the repo. Only one module is included with DOOM emacs here. Mine! Feel
+       ;; free to copy it to your own module and have fun.
+       :private hlissner)
+
