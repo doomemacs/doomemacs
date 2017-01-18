@@ -149,22 +149,21 @@ enable multiple minor modes for the same regexp.")
   (package! smex :commands smex)
 
   ;;; Let 'er rip! (order matters!)
-  ;; (require 'core-settings)        ; configuration management system
-  ;; (require 'core-popups)          ; taming sudden yet inevitable windows
-  (require 'core-evil)            ; come to the dark side, we have cookies
+  ;; (require 'core-set)           ; configuration management system
+  ;; (require 'core-popups)        ; taming sudden yet inevitable windows
+  (require 'core-evil)             ; come to the dark side, we have cookies
   ;; (require 'core-project)
   ;; (require 'core-os)
   ;; (require 'core-ui)
   ;; (require 'core-modeline)
   ;; (require 'core-editor)
   ;; (require 'core-completion)
-  ;; (require 'core-syntax-checking)
-  ;; (require 'core-snippets)
+  ;; (require 'core-jump)
   ;; (require 'core-repl)
-  ;; (require 'core-sessions)
-  ;; (require 'core-workspaces)
+  ;; (require 'core-snippets)
+  ;; (require 'core-syntax-checking)
   ;; (require 'core-vcs)
-  ;; (require 'core-dashboard)
+  ;; (require 'core-workspaces)
 
   (unless (require 'autoloads nil t)
     (doom/refresh-autoloads t)))
