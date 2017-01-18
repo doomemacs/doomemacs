@@ -1,12 +1,8 @@
 ;;; core-project.el --- tools for getting around your project
 
-;; I want Emacs project-aware. i.e. To know what project I'm in, and to be able
-;; to tell me about it. `projectile' helps me with this. It also provides nifty
-;; tools for digging out files I want from a project of any size.
-;;
-;; `neotree', on the other hand, allows me to browse my project files. I
-;; occasionally like having a birds-eye view of my files.
-
+;; I want Emacs to be nominally aware of the projects. `projectile' provides
+;; tools for digging through project files and exposing an API I can use to make
+;; other plugins/features project-aware.
 (package! projectile :demand t
   :init
   (setq projectile-cache-file (concat doom-temp-dir "/projectile.cache")
@@ -22,6 +18,8 @@
         projectile-require-project-root nil)
 
   :config
+  (projectile-global-mode +1)
+
   (mapc (lambda (r) (push r projectile-other-file-alist))
         '(("less" "css")
           ("styl" "css")
@@ -32,20 +30,41 @@
           ("pug" "html")
           ("html" "jade" "pug" "jsx" "tsx")))
 
+  (defun doom-project-p (&optional strict-p)
+    "Whether or not this buffer is currently in a project or not."
+    (let ((projectile-require-project-root strict-p))
+      (projectile-project-p)))
+
+  (defun doom-project-root (&optional strict-p)
+    "Get the path to the root of your project."
+    (let ((projectile-require-project-root strict-p))
+      (projectile-project-root)))
+
+  (defun doom-project-has-files (files &optional root)
+    "Return non-nil if FILES exist in the project root."
+    (let ((root (or root (doom-project-root)))
+          (files (if (listp files) files (list files)))
+          (found-p (if files t)))
+      (while (and found-p files)
+        (let ((file (expand-file-name (pop files) root)))
+          (setq found-p (if (string-suffix-p "/" file)
+                            (file-directory-p file)
+                          (file-exists-p file)))))
+      found-p))
+
   (defun doom*projectile-cache-current-file (orig-fun &rest args)
     "Don't cache ignored files."
     (unless (--any (f-descendant-of? buffer-file-name it)
                    (projectile-ignored-directories))
       (apply orig-fun args)))
-  (advice-add 'projectile-cache-current-file :around 'doom*projectile-cache-current-file)
-
-  (projectile-global-mode +1))
+  (advice-add 'projectile-cache-current-file :around 'doom*projectile-cache-current-file))
 
 
 ;;
 ;; Autoloaded Packages
 ;;
 
+;; A side-panel for browsing my project files. Inspired by vim's NERDTree.
 (package! neotree
   :commands (neotree-show
              neotree-hide
