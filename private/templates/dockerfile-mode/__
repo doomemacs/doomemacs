@@ -1,4 +1,0 @@
-FROM ${1:phusion/baseimage:latest}
-MAINTAINER ${2:Henrik Lissner <henrik@lissner.net>}
-
-$0

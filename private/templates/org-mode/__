@@ -1,6 +1,0 @@
-# -*- mode: snippet -*-
-# name: Org template
-# --
-#+TITLE:${1:`(f-base buffer-file-name)`}
-
-$0

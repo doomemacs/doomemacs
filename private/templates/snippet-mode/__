@@ -1,8 +1,0 @@
-# -*- mode: snippet -*-
-# --
-# -*- mode: snippet -*-
-# name: $1
-# key: ${2:trigger-key}${3:
-# condition: t}
-# --
-$0

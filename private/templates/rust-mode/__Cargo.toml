@@ -1,5 +1,0 @@
-[package]
-name = "${1:Project Name}"
-version = "0.0.1"
-authors = [ "`user-full-name` <`user-mail-address`>" ]
-$0
