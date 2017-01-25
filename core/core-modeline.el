@@ -133,7 +133,7 @@ cached the first time."
      (let ((data nil)
            (i 0))
        (setq data (make-list height (make-list width 1)))
-       (pl/make-xpm "percent" color color (reverse data))))))
+       (pl/make-xpm "percent" color color data)))))
 
 (defun doom-buffer-path ()
   "Displays the buffer's full path relative to the project root (includes the
