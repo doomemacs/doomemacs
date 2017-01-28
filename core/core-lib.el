@@ -39,27 +39,21 @@ Examples:
   (unless func-or-forms
     (error "add-hook!: FUNC-OR-FORMS is empty"))
   (let* ((val (car func-or-forms))
-         (quoted (eq (car-safe hook) 'quote))
-         (hook (if quoted (cadr hook) hook))
+         (quoted-p (eq (car-safe hook) 'quote))
+         (hook (if quoted-p (cadr hook) hook))
          (funcs (if (eq (car-safe val) 'quote)
                     (if (cdr-safe (cadr val))
                         (cadr val)
                       (list (cadr val)))
-                  (list func-or-forms)))
-         (forms '()))
-    (mapc (lambda (f)
-            (let ((func (if (symbolp f) `(quote ,f) `(lambda (&rest _) ,@func-or-forms))))
-              (mapc (lambda (h)
-                      (push `(add-hook ',(if quoted h (intern (format "%s-hook" h))) ,func) forms))
-                    (-list hook))))
-          funcs)
-    (macroexp-progn forms)))
-
-;; TODO
-(defmacro add-lambda-hook! (hooks func-name &rest forms))
-
-;; TODO
-(defmacro remove-hooks! (hooks &rest funcs))
+                  (list func-or-forms))))
+    (macroexp-progn
+     (mapcar (lambda (f)
+               (let ((func (if (symbolp f) `(quote ,f) `(lambda (&rest _) ,@func-or-forms))))
+                 (macroexp-progn
+                  (mapcar (lambda (h)
+                            `(add-hook ',(if quoted-p h (intern (format "%s-hook" h))) ,func))
+                          (-list hook)))))
+             funcs))))
 
 (defmacro associate! (mode &rest rest)
   "Associate a major or minor mode to certain patterns and project files."
