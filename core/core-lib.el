@@ -16,7 +16,9 @@ during compilation."
          'progn
        (message "after: cannot find %s" feature)
        'with-no-warnings)
-    (with-eval-after-load ',feature ,@forms)))
+    (with-eval-after-load ',feature
+      (let ((package-name ',feature))
+        ,@forms))))
 
 (defmacro add-hook! (hook &rest func-or-forms)
   "A convenience macro for `add-hook'.
