@@ -34,21 +34,20 @@ will be set.")
 (defvar doom-modules-dir (concat doom-emacs-dir "modules/")
   "Where configuration modules are stored")
 
-(defvar doom-private-dir (concat doom-emacs-dir "private/")
-  "Where private configuration filse and assets are stored (like snippets)")
-
 (defvar doom-scripts-dir (concat doom-emacs-dir "scripts/")
   "Where external dependencies are stored (like libraries or binaries)")
 
-(defvar doom-packages-dir (concat doom-private-dir "packages/")
+(defvar doom-local-dir (concat doom-emacs-dir ".local/")
+  "Untracked directory for local Emacs files, including the cache
+(`doom-cache-dir'), packages (`doom-packages-dir') and autoloads file.")
+
+(defvar doom-cache-dir
+  (concat doom-local-dir "cache/" (system-name) "/")
+  "Hostname-based directory for temporary files.")
+
+(defvar doom-packages-dir
+  (concat doom-local-dir "packages/")
   "Where package.el and quelpa plugins (and their caches) are kept.")
-
-(defvar doom-themes-dir (concat doom-private-dir "themes/")
-  "Where theme files and subfolders go")
-
-(defvar doom-temp-dir
-  (concat doom-private-dir "cache/" (system-name) "/")
-  "Hostname-based elisp temp directories")
 
 (defvar doom-org-dir "~/org/"
   "Where to find org notes")
