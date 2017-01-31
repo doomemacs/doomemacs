@@ -56,7 +56,10 @@ symbol and cdr is the submodule's name as a symbol.")
       quelpa-checkout-melpa-p nil
       quelpa-update-melpa-p nil
       quelpa-use-package-inhibit-loading-quelpa t
-      quelpa-dir (expand-file-name "quelpa" doom-packages-dir))
+      quelpa-dir (expand-file-name "quelpa" doom-packages-dir)
+      ;; ssh, no tears. Only compiling.
+      byte-compile-warnings
+      '(unresolved callargs obsolete noruntime cl-functions make-local constants suspicious))
 
 
 ;;

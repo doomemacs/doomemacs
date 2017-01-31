@@ -57,32 +57,31 @@ will be set.")
 
 
 ;;;
-;; UTF-8 as the default coding system, please
+;; UTF-8 as the default coding system
 (set-charset-priority 'unicode)        ; pretty
 (prefer-coding-system        'utf-8)   ; pretty
 (set-terminal-coding-system  'utf-8)   ; pretty
-(set-keyboard-coding-system  'utf-8)   ; perdy
-(set-selection-coding-system 'utf-8)   ; please
-(setq locale-coding-system   'utf-8)   ; with sugar on top
-(setq-default buffer-file-coding-system 'utf-8)
+(set-keyboard-coding-system  'utf-8)   ; pretty
+(set-selection-coding-system 'utf-8)   ; perdy
+(setq locale-coding-system   'utf-8)   ; please
+(setq-default buffer-file-coding-system 'utf-8) ; with sugar on top
 
 ;; Configuration
 (setq ad-redefinition-accept 'accept   ; silence advised function warnings
       apropos-do-all t                 ; make `apropos' more useful
-      byte-compile-warnings nil
-      compilation-always-kill t
-      compilation-ask-about-save nil
+      compilation-always-kill t        ; kill compilation process before starting another
+      compilation-ask-about-save nil   ; save all buffers on `compile'
       compilation-scroll-output t
       confirm-nonexistent-file-or-buffer t
       enable-recursive-minibuffers nil
-      idle-update-delay 5
+      idle-update-delay 1              ; update ui less often
+      ;; keep the point out of the minibuffer
       minibuffer-prompt-properties '(read-only t point-entered minibuffer-avoid-prompt face minibuffer-prompt)
-      save-interprogram-paste-before-kill nil)
 
-;; History & backup settings
-(setq auto-save-default nil
-      auto-save-list-file-name (concat doom-temp-dir "/autosave")
-      backup-directory-alist (list (cons ".*" (concat doom-temp-dir "/backup/")))
+      ;; History & backup settings
+      auto-save-default nil
+      auto-save-list-file-name (concat doom-cache-dir "/autosave")
+      backup-directory-alist (list (cons ".*" (concat doom-cache-dir "/backup/")))
       create-lockfiles nil
       history-length 1000
       make-backup-files nil
