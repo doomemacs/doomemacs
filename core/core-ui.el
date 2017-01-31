@@ -5,7 +5,6 @@
 (setq bidi-display-reordering nil ; disable bidirectional text for tiny performance boost
       blink-matching-paren nil    ; don't blink--too distracting
       cursor-in-non-selected-windows nil  ; hide cursors in other windows
-      echo-keystrokes 0.02        ; show typed keys in minibuffer
       frame-inhibit-implied-resize t
       ;; remove continuation arrow on right fringe
       fringe-indicator-alist (delq (assq 'continuation fringe-indicator-alist)
@@ -37,6 +36,12 @@
 
 ;; auto-enabled in Emacs 25+; I'd rather enable it manually
 (global-eldoc-mode -1)
+
+;; show typed keystrokes in minibuffer
+(setq echo-keystrokes 0.02)
+;; ...but hide them while isearch is active
+(add-hook! isearch-mode     (setq echo-keystrokes 0))
+(add-hook! isearch-mode-end (setq echo-keystrokes 0.02))
 
 ;; A minor mode for toggling the mode-line
 (defvar doom--hidden-modeline-format nil
