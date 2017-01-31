@@ -1,25 +1,33 @@
 EMACS=emacs
-CACHE_DIR=""
 
 all: install update
 
-install: autoloads
-	@$(EMACS) -Q --batch --eval '(setq use-package-always-ensure t)' -l init.el
+install: init.el
+	@$(EMACS) --batch \
+		--eval '(setq doom-auto-install-p t)' \
+		-l init.el \
+		--eval '(message "%s" (if doom--packages "All done!" "Nothing to install"))'
 
-update: autoloads
-	@$(EMACS) -Q --batch -l init.el -f 'doom/packages-update'
+update: init.el
+	@$(EMACS) --batch -l init.el -f 'doom/packages-update'
 
-autoloads:
-	@$(EMACS) -Q --batch -l init.el -f 'doom/refresh-autoloads'
+autoloads: init.el
+	@$(EMACS) --batch -l init.el -f 'doom/refresh-autoloads'
 
-compile:
-	@$(EMACS) -Q --batch -l init.el -f 'doom/byte-compile'
+compile: init.el
+	@$(EMACS) --batch -l init.el -f 'doom/byte-compile'
 
-clean: clean-elc
-	@$(EMACS) -Q --batch -l init.el -f 'doom/packages-clean'
+clean: init.el
+	@$(EMACS) --batch -l init.el -f 'doom/packages-clean'
+
+clean-cache:
+	@$(EMACS) --batch -l core/core.el --eval '(delete-directory doom-cache-dir t)'
 
 clean-elc:
 	@rm -fv init.elc
 	@find {core,modules} -type f -iname '*.elc' -exec rm \-fv {} \;
+
+init.el:
+	@[ -f init.el ] || $(error No init.el file, please create one or copy init.example.el)
 
 .PHONY: all

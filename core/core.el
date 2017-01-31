@@ -21,6 +21,10 @@
 (defvar doom-version "2.0.0"
   "Current version of DOOM emacs")
 
+(defvar doom-debug-mode nil
+  "If non-nil, all loading functions will be verbose and `use-package-debug'
+will be set.")
+
 (defvar doom-emacs-dir user-emacs-directory
   "The path to this emacs.d directory")
 
@@ -115,20 +119,24 @@ enable multiple minor modes for the same regexp.")
 (setq gc-cons-threshold 339430400
       gc-cons-percentage 0.6)
 
+(eval-when-compile
+  (unless (file-exists-p doom-packages-dir)
+    (error "No packages are installed, run 'make install'"))
+
+  ;; Ensure cache folder exist
+  (unless (file-exists-p doom-cache-dir)
+    (make-directory doom-cache-dir t)))
+
 (let (file-name-handler-list)
   (eval-and-compile
-    (load (concat doom-core-dir "core-packages") nil t))
+    (load (concat doom-core-dir "core-packages") nil :nomessage))
   (eval-when-compile
-    ;; Ensure cache folder exists
-    (unless (file-exists-p doom-temp-dir)
-      (make-directory doom-temp-dir t))
-    (doom-package-init))
-
-  (setq load-path (eval-when-compile load-path)
-        custom-theme-load-path (append (list doom-themes-dir) custom-theme-load-path))
+    (doom-initialize))
+  (setq load-path (eval-when-compile load-path))
 
   ;;; Essential packages
   (require 'core-lib)
+
   (package! dash :demand t)
   (package! s    :demand t)
   (package! f    :demand t)
@@ -139,75 +147,62 @@ enable multiple minor modes for the same regexp.")
                async-start-process
                async-byte-recompile-directory))
 
+  (defvar pcache-directory (concat doom-cache-dir "pcache/"))
   (package! persistent-soft
     :commands (persistent-soft-exists-p
                persistent-soft-fetch
                persistent-soft-flush
-               persistent-soft-store)
-    :init (defvar pcache-directory (concat doom-temp-dir "/pcache/")))
+               persistent-soft-store))
 
   (package! smex :commands smex)
 
+  (unless (require 'autoloads nil t)
+    (add-hook 'after-init-hook 'doom/refresh-autoloads))
+
   ;;; Let 'er rip! (order matters!)
-  ;; (require 'core-set)           ; configuration management system
-  ;; (require 'core-popups)        ; taming sudden yet inevitable windows
-  (require 'core-evil)             ; come to the dark side, we have cookies
-  ;; (require 'core-project)
-  ;; (require 'core-os)
-  ;; (require 'core-ui)
-  ;; (require 'core-modeline)
-  ;; (require 'core-editor)
-  ;; (require 'core-completion)
+  (require 'core-ui)         ; draw me like one of your French editors
+  (require 'core-popups)     ; taming sudden yet inevitable windows
+  (require 'core-editor)     ; baseline configuration for text editing
+  (require 'core-projects)   ; getting around your projects
+
+  ;; (require 'core-workspaces) ; TODO
+  ;; (require 'core-completion) ; TODO company & auto-complete, for the lazy typist
+  ;; (require 'core-evil)
   ;; (require 'core-jump)
   ;; (require 'core-repl)
   ;; (require 'core-snippets)
-  ;; (require 'core-syntax-checking)
-  ;; (require 'core-vcs)
-  ;; (require 'core-workspaces)
-
-  (unless (require 'autoloads nil t)
-    (doom/refresh-autoloads t)))
-
+  ;; (require 'core-syntax-checking))
+  )
 
 ;;;
 ;;
 (defmacro doom! (&rest packages)
-  (let (paths)
-    (dolist (p packages)
-      (if (memq p '(:apps :emacs :lang :lib :private :ui))
-          (setq mode p)
-        (unless mode
-          (error "No namespace specified on `doom!' for %s" p))
-        (pushnew (format "%s%s/%s/" doom-modules-dir (substring (symbol-name mode) 1) (symbol-name p))
-                 paths)))
+  "DOOM Emacs bootstrap macro. List the modules to load. Benefits from
+byte-compilation."
+  `(let (file-name-handler-alist)
+     ,@(mapcar (lambda (pkg)
+                 `(progn
+                    (add-to-list 'doom-modules (cons ,(car pkg) ',(cdr pkg)))
+                    ,(macroexpand `(load! ,(car pkg) ,(cdr pkg)))))
+               (let (pkgs mode)
+                 (dolist (p packages)
+                   (cond ((string-prefix-p ":" (symbol-name p))
+                          (setq mode p))
+                         ((not mode)
+                          (error "No namespace specified on `doom!' for %s" p))
+                         (t
+                          (setq pkgs (append pkgs (list (cons mode p)))))))
+                 pkgs))
 
-    `(let (file-name-handler-alist)
-       (unless noninteractive
-         (load "~/.emacs.local.el" t t))
+     (unless noninteractive
+       (when (display-graphic-p)
+         (require 'server)
+         (unless (server-running-p)
+           (server-start)))
 
-       (with-demoted-errors "ERROR: %s"
-         ,@(mapcar
-            (lambda (path)
-              (macroexp-progn
-               (mapcar (lambda (file)
-                         (when noninteractive (setq file (file-name-sans-extension file)))
-                         `(load ,(expand-file-name file path) t t (not noninteractive)))
-                       (append (list "packages.el")
-                               (unless noninteractive (list "config.el"))))))
-            paths))
-
-       (unless noninteractive
-         (require 'my-bindings)
-         (require 'my-commands)
-
-         (when (display-graphic-p)
-           (require 'server)
-           (unless (server-running-p)
-             (server-start)))
-
-         ;; Prevent any auto-displayed text + benchmarking
-         (advice-add 'display-startup-echo-area-message :override 'ignore)
-         (message "")))))
+       ;; Prevent any auto-displayed text + benchmarking
+       (advice-add 'display-startup-echo-area-message :override 'ignore)
+       (message ""))))
 
 (provide 'core)
 ;;; core.el ends here

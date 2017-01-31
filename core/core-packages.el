@@ -16,18 +16,26 @@
 ;;    used previously. package.el and quelpa are much more stable.
 ;; 4. No external dependencies (e.g. Cask) for plugin management.
 
-(defvar doom-init nil
+(defvar doom--init nil
   "Whether doom's package system has been initialized or not. It may not be if
 you have byte-compiled your configuration (as intended).")
 
-(defvar doom-packages '(quelpa-use-package)
-  "List of enabled packages.")
+(defvar doom-packages (list (cons 'quelpa-use-package nil))
+  "List of explicitly installed packages (not dependencies).")
 
 (defvar doom-modules nil
-  "List of installed modules.")
+  "List of enabled modules; each are cons cells whose car is the module's name
+symbol and cdr is the submodule's name as a symbol.")
 
-(defvar doom--load-path load-path
-  "A backup of `load-path' before it was initialized.")
+(defvar doom-auto-install-p nil
+  "")
+
+(defvar doom--load-path (append (list doom-core-dir
+                                      doom-modules-dir
+                                      doom-local-dir)
+                                load-path)
+  "A backup of `load-path', used as a bare-bones foundation for
+`doom/packages-reload' or `doom-initialize'.")
 
 (setq load-prefer-newer nil
       package--init-file-ensured t
@@ -41,6 +49,7 @@ you have byte-compiled your configuration (as intended).")
       use-package-always-defer t
       use-package-always-ensure nil
       use-package-debug doom-debug-mode
+      use-package-verbose doom-debug-mode
       quelpa-checkout-melpa-p nil
       quelpa-update-melpa-p nil
       quelpa-use-package-inhibit-loading-quelpa t
@@ -48,120 +57,208 @@ you have byte-compiled your configuration (as intended).")
 
 
 ;;
-;; Library
+;; Bootstrap function
 ;;
 
-(defun doom-package-init (&optional force-p)
-  "Initialize DOOM, its essential packages and package.el. This must be used on
-first run. If you byte compile core/core.el, this file is avoided to speed up
-startup. Returns `load-path'."
-  (when (or (not doom-init) force-p)
+(autoload 'use-package "quelpa-use-package" nil t)
+
+(defun doom-initialize (&optional force-p)
+  "Initialize installed packages (using package.el). This must be used on first
+run, as it will prepare Emacs to auto-install all missing packages (otherwise
+you'll get errors). If you byte compile core/core.el, calls to `package.el' are
+avoided to speed up startup."
+  (unless (or doom--init force-p)
+    (setq load-path doom--load-path
+          package-activated-list nil)
     (package-initialize)
-    (when (or (not (file-exists-p package-user-dir)) force-p)
-      (package-refresh-contents))
+    (unless package-archive-contents
+      (package-read-all-archive-contents))
     (unless (package-installed-p 'quelpa-use-package)
-      (package-install 'quelpa-use-package t))
+      (package-refresh-contents)
+      (package-install 'quelpa-use-package t)
+      (setq doom-auto-install-p (not noninteractive)))
+    (unless (featurep 'quelpa-use-package)
+      (require 'quelpa-use-package)
+      (quelpa-use-package-activate-advice)
+      (setq use-package-expand-minimally t)
+      ;; Move :ensure to after conditional properties
+      (delq :ensure use-package-keywords)
+      (push :ensure (cdr (memq :unless use-package-keywords))))
+    (setq doom--init t)))
 
-    (require 'quelpa-use-package)
-    (setq use-package-always-ensure t)
-    (quelpa-use-package-activate-advice)
 
-    (add-to-list 'load-path doom-local-dir)
-    (add-to-list 'load-path doom-modules-dir)
-    (add-to-list 'load-path doom-core-dir)
+;;
+;; Macros
+;;
 
-    (setq doom-init t)))
+(defvar doom--packages nil
+  "List of packages explicitly installed during this session.")
 
-(defmacro package! (name &rest rest)
-  "Declare a package. Wraps around `use-package', and takes the same arguments
-that it does. NOTE: Packages are deferred by default."
+(defmacro package! (name &rest plist)
+  "Uses `quelpa' and `use-package' to ensure PACKAGES are installed and
+available. If `doom-auto-install-p' is nil, then strip out :ensure and :quelpa
+properties, which is the case if you've byte-compiled DOOM Emacs.
+
+It takes the same arguments as `use-package'.
+
+Each element in PACKAGES can be a symbol or a list, whose car is the package
+symbol and cdr is a plist. The plist accepts any argument `quelpa-use-package'
+uses."
   (declare (indent defun))
-  (add-to-list 'doom-packages name)
-  ;; If `use-package-always-ensure' is nil, then remove any possibility of an
-  ;; installation by package.el or quelpa.
-  (unless use-package-always-ensure
-    (when (and (plist-member rest :ensure)
-               (plist-get rest :ensure))
-      (setq rest (plist-put rest :ensure nil)))
-    (when (plist-member rest :quelpa)
-      (use-package-plist-delete rest :quelpa)))
-  (macroexpand-all `(use-package ,name ,@rest)))
+  (let ((use-package-always-ensure doom-auto-install-p)
+        recipe)
+    (when (plist-member plist :quelpa)
+      (setq recipe (plist-get plist :quelpa))
+      ;; prepend NAME to quelpa recipe, if none is specified, to avoid local
+      ;; MELPA lookups by quelpa.
+      (when (= 0 (mod (length recipe) 2))
+        (push name recipe)
+        (plist-put plist :quelpa (append (list name) recipe))))
+    (if (and doom-auto-install-p
+             (not (bound-and-true-p byte-compile-current-file)))
+        (unless (package-installed-p name)
+          (add-to-list 'doom--packages name))
+      (use-package-plist-delete plist :ensure)
+      (use-package-plist-delete plist :quelpa))
+    `(progn
+       (add-to-list 'doom-packages '(,name ,@recipe))
+       ,(macroexpand-all `(use-package ,name ,@plist)))))
 
-(defmacro load! (file-or-module-sym &optional submodule noerror)
+(defmacro load! (file-or-module-sym &optional submodule)
   "Load a module from `doom-modules-dir'. Plays the same role as
 `load-relative', but is specific to DOOM emacs modules and submodules.
 
 Examples:
   (load! :lang emacs-lisp)  loads modules/lang/emacs-lisp/{packages,config}.el
-  (load! +local-module)     if called from ./config.el, loads ./+local-module.el
-                            Note: requires that config.el be loaded with `load!'"
-  (let* ((module-name (symbol-name file-or-module-sym))
-         (module (if (and submodule (string-prefix-p ":" module-name)) (substring module-name 1) module-name)))
-    (if submodule
-        (let ((path (concat doom-modules-dir module "/" (symbol-name submodule) "/")))
-          (macroexp-progn
-           (mapcar (lambda (file)
-                     (when (file-exists-p (concat path file ".el"))
-                       (doom--load path file (not doom-debug-mode))))
-                   (append (list "packages")
-                           (unless noninteractive (list "config"))))))
-      (let ((path (concat (f-dirname load-file-name) "/")))
-        (doom--load path module (not doom-debug-mode))))))
+
+  ;; Note: requires that the calling module be loaded with `load!'
+  (load! +local-module)     if called from ./config.el, loads ./+local-module.el"
+  (let ((module-name (if (symbolp file-or-module-sym)
+                         (symbol-name file-or-module-sym)
+                       file-or-module-sym))
+        submodule-name
+        path file)
+    (cond ((null submodule)
+           (setq path (f-dirname load-file-name)
+                 file (list module-name)))
+          (t
+           (when (string-prefix-p ":" module-name)
+             (setq module-name (substring module-name 1)))
+           (setq path (f-expand (concat module-name "/" (symbol-name submodule))
+                                doom-modules-dir)
+                 file (if doom-auto-install-p "packages.el" "config.el"))))
+    (setq path (f-slash path)
+          file (concat path file))
+    (when (file-exists-p file)
+      `(let ((__FILE__ ,file)
+             (__DIR__  ,path))
+         (load __FILE__ nil :noerror noninteractive noninteractive)))))
 
 (defvar __DIR__ nil "The directory of the currently loaded file (with `load!')")
 (defvar __FILE__ nil "The full path of the currently loaded file (with `load!')")
 
-(defun doom--load (path file &optional noerror)
-  `(let ((__FILE__ ,(concat path file (if noninteractive ".el")))
-         (__DIR__ ,path))
-     (load __FILE__ nil ,noerror noninteractive noninteractive)))
 
-(defun doom-package-outdated-p (package &optional inhibit-refresh-p)
-  "Determine whether PACKAGE (a symbol) is outdated or not. If INHIBIT-REFRESH-P
-is non-nil, don't run `package-refresh-contents' (which is slow, but useful if
-you intend to use this method for batch processing -- be sure to run
-`package-refresh-contents' beforehand however)."
-  (unless inhibit-refresh-p
-    (package-refresh-contents))
-  (when (and (package-installed-p package)
-             (cadr (assq package package-archive-contents)))
-    (let* ((newest-desc (cadr (assq package package-archive-contents)))
-           (installed-desc (cadr (or (assq package package-alist)
-                                     (assq package package--builtins))))
-           (newest-version  (package-desc-version newest-desc))
-           (installed-version (package-desc-version installed-desc)))
-      (not (version-list-<= newest-version installed-version)))))
+;;
+;; Commands
+;;
+
+(defun doom-package-outdated-p (package)
+  "Determine whether PACKAGE (a symbol) is outdated or not. Be sure to run
+`package-refresh-contents' beforehand, or the return value could be out of
+date."
+  (let ((pkg (assq package doom-packages)))
+    (when (and pkg (package-installed-p package))
+      (let* ((pkg-recipe (cdr pkg))
+             (cur-desc (cadr (or (assq package package-alist)
+                                 (assq package package--builtins))))
+             (cur-version (package-desc-version cur-desc))
+             (inhibit-message t)
+             new-version)
+        (setq new-version
+              (if pkg-recipe
+                  (let ((ver (quelpa-checkout
+                              pkg-recipe
+                              (f-expand (symbol-name package) quelpa-build-dir))))
+                    (or (and ver (version-to-list ver)) cur-version))
+                (package-desc-version (cadr (assq package package-archive-contents)))))
+        (not (version-list-<= new-version cur-version))))))
 
 (defun doom/packages-reload ()
   "Reload `load-path' by scanning all packages. Run this if you ran make update
 or make clean outside of Emacs."
   (interactive)
-  (setq load-path doom--load-path)
-  (doom-package-init t)
+  (doom-initialize t)
   (when (called-interactively-p 'interactive)
     (message "Reloaded %s packages" (length package-alist))))
+
+(defun doom/packages-install ()
+  "Install missing packages."
+  (interactive)
+  (let ((doom-auto-install-p t))
+    (load (concat doom-emacs-dir "init.el"))))
 
 (defun doom/packages-update ()
   "Update outdated packages. This includes quelpa itself, quelpa-installed
 packages, and ELPA packages. This will delete old versions of packages as well."
   (interactive)
-  (doom-package-init t)
-  (quelpa-upgrade) ; upgrade quelpa + quelpa-installed packages
-  (mapc (lambda (package)
-          (condition-case ex
-              (let ((desc (cadr (assq package package-alist))))
-                (delete-directory (package-desc-dir desc) t)
-                (package-install-from-archive (cadr (assoc package package-archive-contents))))
-            ('error (message "ERROR: %s" ex)))) ;; TODO
-        (-uniq (--filter (or (assq it quelpa-cache)
-                             (doom-package-outdated-p it t))
-                         (package--find-non-dependencies)))))
+  (package-refresh-contents)
+  (package-read-all-archive-contents)
+  ;; first, upgrade quelpa + quelpa-installed packages
+  (require 'quelpa)
+  (let ((n 0)
+        (err 0)
+        (quelpa-upgrade-p t)
+        quelpa-verbose)
+    (when (quelpa-setup-p)
+      (setq quelpa-cache (--filter (package-installed-p (car it)) quelpa-cache))
+      (dolist (package quelpa-cache)
+        (condition-case ex
+            (let ((old-version (ignore-errors
+                                 (package-desc-version
+                                  (cadr (or (assq (car package) package-alist)
+                                            (assq (car package) package--builtins))))))
+                  new-version)
+              (when (doom-package-outdated-p (car package))
+                (setq n (1+ n))
+                (let ((inhibit-message t))
+                  (quelpa package))
+                (setq new-version (package-desc-version
+                                   (cadr (or (assq (car package) package-alist)
+                                             (assq (car package) package--builtins)))))
+                (when noninteractive
+                  (message "Updating %s (%s -> %s) (quelpa)" (car package)
+                           (mapconcat 'number-to-string old-version ".")
+                           (mapconcat 'number-to-string new-version ".")))))
+          ('error
+           (setq err (1+ err))
+           (message "ERROR (quelpa): %s" ex)))))
+    ;; ...then update elpa packages
+    (mapc (lambda (package)
+            (when noninteractive (message "Updating %s (elpa)" package))
+            (condition-case ex
+                (let ((desc (cadr (assq package package-alist)))
+                      (archive (cadr (assoc package package-archive-contents))))
+                  (setq n (1+ n))
+                  (package-install-from-archive archive)
+                  (delete-directory (package-desc-dir desc) t))
+              ('error
+               (setq err (1+ err))
+               (message "ERROR (elpa): %s" ex)))) ;; TODO real error string
+          (-uniq (--filter (and (not (assq it quelpa-cache))
+                                (doom-package-outdated-p it))
+                           (package--find-non-dependencies))))
+    (when noninteractive
+      (message (if (= n 0)
+                   "Everything is up-to-date"
+                 "Updated %s packages") n)
+      (when (> err 0)
+        (message "There were %s errors" err)))))
 
 (defun doom/packages-clean ()
   "Delete packages that are no longer used or referred to."
   (interactive)
-  (doom-package-init t)
-  (let* ((package-selected-packages (-intersection (package--find-non-dependencies) doom-packages))
+  (let* ((package-selected-packages (-intersection (package--find-non-dependencies)
+                                                   (mapcar 'car doom-packages)))
          (packages-to-delete (package--removable-packages))
          quelpa-modified-p)
     (cond ((not package-selected-packages)
@@ -174,62 +271,63 @@ packages, and ELPA packages. This will delete old versions of packages as well."
                          (mapconcat 'symbol-name (reverse packages-to-delete) ", "))))
            (message "Aborted."))
           (t
-           (dolist (package packages-to-delete)
-             (package-delete package t)
-             (when (assq package quelpa-cache)
-               (setq quelpa-cache (assq-delete-all package quelpa-cache)
+           (require 'quelpa)
+           (quelpa-setup-p)
+           (dolist (p packages-to-delete)
+             (package-delete (cadr (assq p package-alist)) t)
+             (when (and quelpa-cache (assq p quelpa-cache))
+               (setq quelpa-cache (assq-delete-all p quelpa-cache)
                      quelpa-modified-p t)))
            (when quelpa-modified-p
              (quelpa-save-cache))))))
 
 (defun doom/byte-compile (&optional comprehensive-p)
-  "Byte (re)compile the important files in your emacs configuration. DOOM Emacs
-was designed to benefit a lot from this. If COMPREHENSIVE-P is non-nil, compile
-config.el and autoload.el files as well -- the performance benefit from this is
-minor and may take a while.
-
-No need to recompile any of these files so long as `auto-compile-mode' is on in
-`emacs-lisp-mode', which, if you're using the provided emacs-lisp module, should
-be the case."
+  "Byte (re)compile the important files in your emacs configuration (init.el and
+core/*.el). If COMPREHENSIVE-P is non-nil, also compile config.el files in
+modules. DOOM Emacs was designed to benefit a lot from this."
   (interactive)
-  (let (use-package-always-ensure)
-    (doom-package-init)
+  (let (use-package-always-ensure
+        file-name-handler-alist)
     (mapc 'byte-compile-file
-          (append (list (expand-file-name "init.el" doom-emacs-dir)
-                        (expand-file-name "core.el" doom-core-dir))
-                  (reverse
-                   (f-glob "core-*.el" doom-core-dir))
-                   (f-glob "*/*/packages.el" doom-modules-dir)
+          (append (list (f-expand "init.el" doom-emacs-dir)
+                        (f-expand "core.el" doom-core-dir))
+                  (reverse (f-glob "core-*.el" doom-core-dir))
                   (when comprehensive-p
-                    (f-glob "*/*/config.el" doom-modules-dir))
-                  (when comprehensive-p
-                    (f-glob "*/*/autoload.el" doom-modules-dir))))))
+                    (f-glob "*/*/config.el" doom-modules-dir))))))
 
 (defun doom/refresh-autoloads ()
   "Refreshes the autoloads.el file, which tells Emacs where to find all the
 autoloaded functions in the modules you use or among the core libraries.
 
-Rerun this whever you modify your init.el (or use `make autoloads` from the
+Rerun this whenever you modify your init.el (or use `make autoloads` from the
 command line)."
   (interactive)
   (let ((generated-autoload-file (concat doom-local-dir "autoloads.el"))
-        (interactive-p (called-interactively-p 'interactive))
         (autoload-files
-         (append (-filter 'file-exists-p
-                          (mapcar (lambda (m)
-                                    (f-expand
-                                     (format "%s/%s/autoload.el" (substring (symbol-name (car m)) 1) (cdr m))
-                                     doom-modules-dir))
-                                  doom-modules))
-                 (f-glob "autoload/*.el" doom-core-dir))))
-    (when (file-exists-p generated-autoload-file)
+         (append
+          (-flatten (mapcar (lambda (m)
+                              (let* ((dir (f-expand (format "%s/%s"
+                                                            (substring (symbol-name (car m)) 1)
+                                                            (cdr m))
+                                                    doom-modules-dir))
+                                     (auto-dir (f-expand "autoload" dir))
+                                     (auto-file (f-expand "autoload.el" dir)))
+                                (cond ((f-directory-p auto-dir)
+                                       (f-glob "*.el" auto-dir))
+                                      ((f-exists-p auto-file)
+                                       auto-file))))
+                            doom-modules))
+          (f-glob "autoload/*.el" doom-core-dir))))
+    (when (f-exists-p generated-autoload-file)
       (delete-file generated-autoload-file)
-      (when interactive-p (message "Deleted old autoloads.el")))
+      (when noninteractive (message "Deleted old autoloads.el")))
     (dolist (file autoload-files)
-      (update-file-autoloads file t)
-      (unless interactive-p
+      (update-file-autoloads file)
+      (when noninteractive
         (message "Detected: %s" (f-relative file doom-emacs-dir))))
-    (when interactive-p (message "Done!"))
+    (with-current-buffer (get-file-buffer generated-autoload-file)
+      (save-buffer))
+    (when noninteractive (message "Done!"))
     (with-demoted-errors "WARNING: %s"
       (load generated-autoload-file nil t))))
 
