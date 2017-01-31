@@ -52,6 +52,9 @@ will be set.")
 (defvar doom-org-dir "~/org/"
   "Where to find org notes")
 
+(defconst IS-MAC   (eq system-type 'darwin))
+(defconst IS-LINUX (eq system-type 'gnu/linux))
+
 
 ;;;
 ;; UTF-8 as the default coding system, please
