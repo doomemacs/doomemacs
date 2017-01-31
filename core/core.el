@@ -156,53 +156,22 @@ enable multiple minor modes for the same regexp.")
 
   (package! smex :commands smex)
 
-  (unless (require 'autoloads nil t)
-    (add-hook 'after-init-hook 'doom/refresh-autoloads))
-
   ;;; Let 'er rip! (order matters!)
   (require 'core-ui)         ; draw me like one of your French editors
   (require 'core-popups)     ; taming sudden yet inevitable windows
   (require 'core-editor)     ; baseline configuration for text editing
   (require 'core-projects)   ; getting around your projects
 
-  ;; (require 'core-workspaces) ; TODO
-  ;; (require 'core-completion) ; TODO company & auto-complete, for the lazy typist
-  ;; (require 'core-evil)
-  ;; (require 'core-jump)
-  ;; (require 'core-repl)
-  ;; (require 'core-snippets)
-  ;; (require 'core-syntax-checking))
-  )
+  (unless (require 'autoloads nil t)
+    (add-hook 'after-init-hook 'doom/refresh-autoloads)))
 
-;;;
-;;
-(defmacro doom! (&rest packages)
-  "DOOM Emacs bootstrap macro. List the modules to load. Benefits from
-byte-compilation."
-  `(let (file-name-handler-alist)
-     ,@(mapcar (lambda (pkg)
-                 `(progn
-                    (add-to-list 'doom-modules (cons ,(car pkg) ',(cdr pkg)))
-                    ,(macroexpand `(load! ,(car pkg) ,(cdr pkg)))))
-               (let (pkgs mode)
-                 (dolist (p packages)
-                   (cond ((string-prefix-p ":" (symbol-name p))
-                          (setq mode p))
-                         ((not mode)
-                          (error "No namespace specified on `doom!' for %s" p))
-                         (t
-                          (setq pkgs (append pkgs (list (cons mode p)))))))
-                 pkgs))
-
-     (unless noninteractive
-       (when (display-graphic-p)
-         (require 'server)
-         (unless (server-running-p)
-           (server-start)))
-
-       ;; Prevent any auto-displayed text + benchmarking
-       (advice-add 'display-startup-echo-area-message :override 'ignore)
-       (message ""))))
+;; (require 'core-workspaces) ; TODO
+;; (require 'core-completion) ; TODO company & auto-complete, for the lazy typist
+;; (require 'core-evil)
+;; (require 'core-jump)
+;; (require 'core-repl)
+;; (require 'core-snippets)
+;; (require 'core-syntax-checking)
 
 (provide 'core)
 ;;; core.el ends here

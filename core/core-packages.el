@@ -30,6 +30,9 @@ symbol and cdr is the submodule's name as a symbol.")
 (defvar doom-auto-install-p nil
   "")
 
+(defvar doom-dont-load-p nil
+  "If non-nil, don't actually load modules, only keep track of them.")
+
 (defvar doom--load-path (append (list doom-core-dir
                                       doom-modules-dir
                                       doom-local-dir)
@@ -60,7 +63,33 @@ symbol and cdr is the submodule's name as a symbol.")
 ;; Bootstrap function
 ;;
 
-(autoload 'use-package "quelpa-use-package" nil t)
+(defmacro doom! (&rest packages)
+  "DOOM Emacs bootstrap macro. List the modules to load. Benefits from
+byte-compilation."
+  (let (mode)
+    (dolist (p packages)
+      (cond ((string-prefix-p ":" (symbol-name p))
+             (setq mode p))
+            ((not mode)
+             (error "No namespace specified on `doom!' for %s" p))
+            (t
+             (setq doom-modules (append doom-modules (list (cons mode p))))))))
+  (unless doom-dont-load-p
+    `(let (file-name-handler-alist)
+       ,@(mapcar (lambda (pkg) (macroexpand `(load! ,(car pkg) ,(cdr pkg))))
+                 doom-modules)
+
+       (unless noninteractive
+         (when (display-graphic-p)
+           (require 'server)
+           (unless (server-running-p)
+             (server-start)))
+
+         ;; Prevent any auto-displayed text + benchmarking
+         (advice-add 'display-startup-echo-area-message :override 'ignore)
+         (message "Loaded %s packages in %s"
+                  (length doom-packages)
+                  (emacs-init-time))))))
 
 (defun doom-initialize (&optional force-p)
   "Initialize installed packages (using package.el). This must be used on first
