@@ -138,20 +138,17 @@ symbol and cdr is a plist. The plist accepts any argument `quelpa-use-package'
 uses."
   (declare (indent defun))
   (let ((use-package-always-ensure doom-auto-install-p)
-        recipe)
-    (when (plist-member plist :quelpa)
-      (setq recipe (plist-get plist :quelpa))
-      ;; prepend NAME to quelpa recipe, if none is specified, to avoid local
-      ;; MELPA lookups by quelpa.
-      (when (= 0 (mod (length recipe) 2))
-        (push name recipe)
-        (plist-put plist :quelpa (append (list name) recipe))))
-    (if (and doom-auto-install-p
-             (not (bound-and-true-p byte-compile-current-file)))
+        (recipe (plist-get plist :quelpa)))
+    ;; prepend NAME to quelpa recipe, if none is specified, to avoid local
+    ;; MELPA lookups by quelpa.
+    (when (and recipe (= 0 (mod (length recipe) 2)))
+      (push name recipe)
+      (plist-put plist :quelpa (append (list name) recipe)))
+    (if doom-auto-install-p
         (unless (package-installed-p name)
           (add-to-list 'doom--packages name))
-      (use-package-plist-delete plist :ensure)
-      (use-package-plist-delete plist :quelpa))
+      (setq plist (use-package-plist-delete plist :ensure))
+      (setq plist (use-package-plist-delete plist :quelpa)))
     `(progn
        (add-to-list 'doom-packages '(,name ,@recipe))
        ,(macroexpand-all `(use-package ,name ,@plist)))))
