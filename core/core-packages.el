@@ -1,12 +1,12 @@
 ;;; core-packages.el
 
-;; Emacs is opinionated about package management. Unfortunately, so am I. So I
-;; combined use-package, quelpa and package.el to manage my plugins.
+;; Emacs package management is opinionated. Unfortunately, so am I. So I
+;; combined `use-package`, quelpa and package.el to manage my plugins.
 ;;
 ;; Why all the trouble? Because:
 ;; 1. Scriptability: I want my plugins managable from the command line (as well
-;;    as an 'update-all-packages' command within emacs to update my plugins
-;;    automatically, rather than through package.el's clunky interface).
+;;    as an `doom/packages-update' command within emacs to update my plugins
+;;    automatically, rather than through package.el's interface).
 ;; 2. Flexibility: I want to install packages from sources other than ELPA
 ;;    repositories. Such as github or the Emacs wiki. Some plugins are out of
 ;;    date through official channels, have changed hands unofficially, or simply
@@ -192,7 +192,9 @@ Examples:
 ;;
 
 (defun doom-package-outdated-p (package)
-  "Determine whether PACKAGE (a symbol) is outdated or not. Be sure to run
+  "Determine whether PACKAGE (a symbol) is outdated or not. If outdated, returns
+a cons cell, whose car is the current version string of PACKAGE (a symbol), and
+whose cdr is the latest version of the package. Be sure to run
 `package-refresh-contents' beforehand, or the return value could be out of
 date."
   (let ((pkg (assq package doom-packages)))
@@ -227,8 +229,8 @@ or make clean outside of Emacs."
     (load (concat doom-emacs-dir "init.el"))))
 
 (defun doom/packages-update ()
-  "Update outdated packages. This includes quelpa itself, quelpa-installed
-packages, and ELPA packages. This will delete old versions of packages as well."
+  "Update outdated packages. This includes quelpa-installed packages and ELPA
+packages. This will delete old versions of packages as well."
   (interactive)
   (package-refresh-contents)
   (package-read-all-archive-contents)
@@ -284,7 +286,7 @@ packages, and ELPA packages. This will delete old versions of packages as well."
         (message "There were %s errors" err)))))
 
 (defun doom/packages-clean ()
-  "Delete packages that are no longer used or referred to."
+  "Delete packages that are no longer used or depended on."
   (interactive)
   (let* ((package-selected-packages (-intersection (package--find-non-dependencies)
                                                    (mapcar 'car doom-packages)))
