@@ -2,23 +2,23 @@ EMACS=emacs
 
 all: install update
 
-install: init.el
+install: init.el clean-elc
 	@$(EMACS) --batch \
 		--eval '(setq doom-auto-install-p t)' \
 		-l init.el \
 		--eval '(message "%s" (if doom--packages "All done!" "Nothing to install"))'
 
-update: init.el
+update: init.el clean-elc
 	@$(EMACS) --batch -l init.el -f 'doom/packages-update'
+
+clean: init.el clean-elc
+	@$(EMACS) --batch -l init.el -f 'doom/packages-clean'
+
+compile: init.el clean-elc
+	@$(EMACS) --batch -l init.el -f 'doom/byte-compile'
 
 autoloads: init.el
 	@$(EMACS) --batch -l init.el -f 'doom/refresh-autoloads'
-
-compile: init.el
-	@$(EMACS) --batch -l init.el -f 'doom/byte-compile'
-
-clean: init.el
-	@$(EMACS) --batch -l init.el -f 'doom/packages-clean'
 
 clean-cache:
 	@$(EMACS) --batch -l core/core.el --eval '(delete-directory doom-cache-dir t)'
