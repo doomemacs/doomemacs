@@ -22,28 +22,34 @@ killed by `doom:kill-old-buffers', or after `doom-kill-buffer').")
 checks before killing processes. If there are no buffers with matching
 major-modes, the process gets killed.")
 
-;;;###autoload (autoload 'doom-buffer:narrow "core/autoload/buffers" nil t)
-(evil-define-operator doom-buffer:narrow (&optional beg end bang)
+;;;###autoload
+(defun doom-narrow-buffer (beg end &optional clone-p)
   "Restrict editing in this buffer to the current region, indirectly. With BANG,
 clone the buffer and hard-narrow the selection. If mark isn't active, then widen
 the buffer (if narrowed).
 
 Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
-  (interactive "<r><!>")
+  (interactive "r")
   (if (region-active-p)
-      (progn
-        (deactivate-mark)
-        (when bang
-          (let ((old-buf (current-buffer)))
-            (switch-to-buffer (clone-indirect-buffer nil nil))
-            (setq doom-buffer--narrowed-origin old-buf)))
-        (narrow-to-region beg end))
+    (progn
+      (deactivate-mark)
+      (when clone-p
+        (let ((old-buf (current-buffer)))
+          (switch-to-buffer (clone-indirect-buffer nil nil))
+          (setq doom-buffer--narrowed-origin old-buf)))
+      (narrow-to-region beg end))
     (if doom-buffer--narrowed-origin
-        (progn
-          (kill-this-buffer)
-          (switch-to-buffer doom-buffer--narrowed-origin)
-          (setq doom-buffer--narrowed-origin nil))
+      (progn
+        (kill-this-buffer)
+        (switch-to-buffer doom-buffer--narrowed-origin)
+        (setq doom-buffer--narrowed-origin nil))
       (widen))))
+
+;;;###autoload (autoload 'doom:buffer-narrow "core/autoload/buffers" nil t)
+(after! evil
+  (evil-define-operator doom:buffer-narrow (&optional beg end bang)
+    (interactive "<r><!>")
+    (doom-narrow-buffer beg end bang)))
 
 
 ;; Buffer Life and Death ;;;;;;;;;;;;;;;
@@ -152,14 +158,6 @@ popup (or temporary) window and b) it isn't a special buffer (e.g. scratch or
                (--any? (string-match-p it (buffer-name buffer))
                        (-filter 'stringp doom-buffers-unreal-alist)))))))
 
-(defun doom--kill-buffers (buffers &optional filter-func)
-  (let ((buffers (if filter-func (-filter filter-func buffers) buffers))
-        (affected 0))
-    (mapc (lambda (b) (when (kill-buffer b) (incf affected))) buffers)
-    (unless (doom-real-buffer-p)
-      (doom--cycle-real-buffers -1))
-    (message "Killed %s buffers" affected)))
-
 ;;;###autoload
 (defun doom/next-buffer ()
   "Switch to the next real buffer, skipping special buffers. See
@@ -196,8 +194,8 @@ See `doom-real-buffer-p' for what 'real' means."
         (when only-buffer-window-p
           (kill-buffer buffer)
           (unless (doom-real-buffer-p)
-            (doom--cycle-real-buffers -1))))))
-  t)
+            (doom--cycle-real-buffers -1))))
+      (eq (current-buffer) buffer))))
 
 ;;;###autoload
 (defun doom-kill-buffer-and-windows (buffer)
@@ -237,9 +235,7 @@ regex PATTERN. Returns the number of killed buffers."
 (defun doom/kill-this-buffer ()
   "Uses `doom-kill-buffer' on the current buffer."
   (interactive)
-  (doom-kill-buffer (current-buffer))
-  (when (and (called-interactively-p 'interactive)
-             (eq (current-buffer) doom-fallback-buffer))
+  (when (and (doom-kill-buffer) (called-interactively-p 'interactive))
     (message "Nowhere left to go!")))
 
 ;;;###autoload
