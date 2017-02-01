@@ -224,8 +224,10 @@ or make clean outside of Emacs."
 (defun doom/packages-install ()
   "Install missing packages."
   (interactive)
+  (declare (interactive-only t))
+  (doom-initialize t)
   (let ((doom-auto-install-p t))
-    (load (concat doom-emacs-dir "init.el"))))
+    (load (concat doom-emacs-dir "init.el") nil nil t)))
 
 (defun doom/packages-update ()
   "Update outdated packages. This includes quelpa-installed packages and ELPA
