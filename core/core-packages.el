@@ -210,7 +210,8 @@ date."
                               (f-expand (symbol-name package) quelpa-build-dir))))
                     (or (and ver (version-to-list ver)) cur-version))
                 (package-desc-version (cadr (assq package package-archive-contents)))))
-        (not (version-list-<= new-version cur-version))))))
+        (unless (version-list-<= new-version cur-version)
+          (cons cur-version new-version))))))
 
 (defun doom/packages-reload ()
   "Reload `load-path' by scanning all packages. Run this if you ran make update
@@ -230,58 +231,50 @@ or make clean outside of Emacs."
   "Update outdated packages. This includes quelpa-installed packages and ELPA
 packages. This will delete old versions of packages as well."
   (interactive)
+  (message "Refreshing packages...")
+  (package-initialize)
   (package-refresh-contents)
-  (package-read-all-archive-contents)
-  ;; first, upgrade quelpa + quelpa-installed packages
-  (require 'quelpa)
-  (let ((n 0)
-        (err 0)
-        (quelpa-upgrade-p t)
-        quelpa-verbose)
+  (if (not package-alist)
+      (message "No packages are installed")
+    (require 'quelpa)
     (when (quelpa-setup-p)
-      (setq quelpa-cache (--filter (package-installed-p (car it)) quelpa-cache))
-      (dolist (package quelpa-cache)
-        (condition-case ex
-            (let ((old-version (ignore-errors
-                                 (package-desc-version
-                                  (cadr (or (assq (car package) package-alist)
-                                            (assq (car package) package--builtins))))))
-                  new-version)
-              (when (doom-package-outdated-p (car package))
-                (setq n (1+ n))
-                (let ((inhibit-message t))
-                  (quelpa package))
-                (setq new-version (package-desc-version
-                                   (cadr (or (assq (car package) package-alist)
-                                             (assq (car package) package--builtins)))))
-                (when noninteractive
-                  (message "Updating %s (%s -> %s) (quelpa)" (car package)
-                           (mapconcat 'number-to-string old-version ".")
-                           (mapconcat 'number-to-string new-version ".")))))
-          ('error
-           (setq err (1+ err))
-           (message "ERROR (quelpa): %s" ex)))))
-    ;; ...then update elpa packages
-    (mapc (lambda (package)
-            (when noninteractive (message "Updating %s (elpa)" package))
-            (condition-case ex
-                (let ((desc (cadr (assq package package-alist)))
-                      (archive (cadr (assoc package package-archive-contents))))
-                  (setq n (1+ n))
-                  (package-install-from-archive archive)
-                  (delete-directory (package-desc-dir desc) t))
-              ('error
-               (setq err (1+ err))
-               (message "ERROR (elpa): %s" ex)))) ;; TODO real error string
-          (-uniq (--filter (and (not (assq it quelpa-cache))
-                                (doom-package-outdated-p it))
-                           (package--find-non-dependencies))))
-    (when noninteractive
-      (message (if (= n 0)
-                   "Everything is up-to-date"
-                 "Updated %s packages") n)
-      (when (> err 0)
-        (message "There were %s errors" err)))))
+      (setq quelpa-cache (--filter (package-installed-p (car it)) quelpa-cache)))
+    (let* ((err 0)
+           (quelpa-packages (-map 'car quelpa-cache))
+           (elpa-packages (-difference (package--find-non-dependencies) quelpa-packages))
+           outdated-packages)
+      (dolist (pkg (append quelpa-packages elpa-packages))
+        (-when-let (ver (doom-package-outdated-p pkg))
+          (push (list pkg ver) outdated-packages)))
+      (cond ((not outdated-packages)
+             (message "Everything is up-to-date"))
+            ((not (y-or-n-p
+                   (format "%s packages will be updated:\n%s\n\nProceed?"
+                           (length outdated-packages)
+                           (mapconcat (lambda (pkg) (format "%s: %s -> %s"
+                                                       (car pkg)
+                                                       (car (cdr pkg))
+                                                       (cdr (cdr pkg))))
+                                      outdated-packages ", "))))
+             (message "Aborted"))
+            (t
+             (dolist (pkg outdated-packages)
+               (condition-case ex
+                   (cond ((assq pkg quelpa-outdated-packages)
+                          (let ((inhibit-message t))
+                            (quelpa package)))
+                         ((memq pkg elpa-outdated-packages)
+                          (let ((desc (cadr (assq pkg package-alist)))
+                                (archive (cadr (assoc pkg package-archive-contents))))
+                            (package-install-from-archive archive)
+                            (delete-directory (package-desc-dir desc) t)))
+                         (t (error "Not a valid package")))
+                 ('error
+                  (setq err (1+ err))
+                  (message "ERROR (%s): %s" pkg ex))))))
+      (if (> err 0)
+          (message "Done, but with %s errors" err)
+        (message "Done")))))
 
 (defun doom/packages-clean ()
   "Delete packages that are no longer used or depended on."
