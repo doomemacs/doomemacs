@@ -330,12 +330,14 @@ monkey patch it to use pop-to-buffer, and to remember the previous window."
               org-agenda-buffer nil))))
 
   (after! org-agenda
-    (map! :map org-agenda-mode-map
-          :e "<escape>" 'doom/popup-org-agenda-quit
-          :e "ESC" 'doom/popup-org-agenda-quit
-          :e [escape] 'doom/popup-org-agenda-quit
-          "q" 'doom/popup-org-agenda-quit
-          "Q" 'doom/popup-org-agenda-quit)))
+    (after! evil
+      (evil-define-key* 'motion org-agenda-mode-map
+        [escape] 'doom/popup-org-agenda-quit
+        (kbd "ESC") 'doom/popup-org-agenda-quit))
+
+    (let ((map org-agenda-mode-map))
+      (define-key map "q" 'doom/popup-org-agenda-quit)
+      (define-key map "Q" 'doom/popup-org-agenda-quit))))
 
 (after! repl-toggle
   (add-hook! doom-popup-close
