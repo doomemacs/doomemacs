@@ -21,7 +21,7 @@
   (setq shackle-default-alignment 'below
         shackle-select-reused-windows t)
 
-  (defmacro defpopup! (&rest rules)
+  (defmacro def-popup! (&rest rules)
     "Define one or more popup rules. See `shackle-rules' for the format of these
 rules. If :align is omitted, it will use `shackle-default-alignment'."
     (declare (indent 0))
@@ -43,24 +43,25 @@ rules. If :align is omitted, it will use `shackle-default-alignment'."
 
   ;; :noesc and :modeline are custom settings and are not part of shackle. See
   ;; `doom*popup-init' and `doom-popup-buffer' for how they're used.
-  (defpopup! ("^ ?\\*doom:.+\\*$" :size 35  :regexp t   :modeline t)
-             ("^ ?\\*doom .+\\*$" :size 12  :noselect t :regexp t :modeline t)
-             ("^\\*.+-Profiler-Report .+\\*$" :size 0.3 :regexp t)
-             ("*esup*"            :size 0.4 :noselect t :noesc t)
-             ("*minor-modes*"     :size 0.5 :noselect t)
-             ("*eval*"            :size 16  :noselect t)
-             ("*Pp Eval Output*"  :size 0.3)
-             ("*Apropos*"         :size 0.3)
-             ("*Backtrace*"       :size 25  :noselect t)
-             ("*Help*"            :size 16)
-             ("*Messages*"        :size 10  :select t)
-             ("*Warnings*"        :size 10  :noselect t)
-             ("*command-log*"     :size 28  :noselect t :align right)
-             (compilation-mode    :size 15  :noselect t :noesc t)
-             (ivy-occur-grep-mode :size 25  :noesc t)
-             (eww-mode            :size 30)
-             (comint-mode         :noesc t)
-             (tabulated-list-mode :noesc t))
+  (def-popup!
+    ("^ ?\\*doom:.+\\*$" :size 35  :regexp t   :modeline t)
+    ("^ ?\\*doom .+\\*$" :size 12  :noselect t :regexp t :modeline t)
+    ("^\\*.+-Profiler-Report .+\\*$" :size 0.3 :regexp t)
+    ("*esup*"            :size 0.4 :noselect t :noesc t)
+    ("*minor-modes*"     :size 0.5 :noselect t)
+    ("*eval*"            :size 16  :noselect t)
+    ("*Pp Eval Output*"  :size 0.3)
+    ("*Apropos*"         :size 0.3)
+    ("*Backtrace*"       :size 25  :noselect t)
+    ("*Help*"            :size 16)
+    ("*Messages*"        :size 10  :select t)
+    ("*Warnings*"        :size 10  :noselect t)
+    ("*command-log*"     :size 28  :noselect t :align right)
+    (compilation-mode    :size 15  :noselect t :noesc t)
+    (ivy-occur-grep-mode :size 25  :noesc t)
+    (eww-mode            :size 30)
+    (comint-mode         :noesc t)
+    (tabulated-list-mode :noesc t))
 
   (defvar doom-popup-history nil
     "A list of popups that were last closed. Used by `doom/popup-restore' and
