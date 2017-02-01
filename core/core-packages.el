@@ -305,19 +305,26 @@ packages. This will delete old versions of packages as well."
            (when quelpa-modified-p
              (quelpa-save-cache))))))
 
-(defun doom/byte-compile (&optional comprehensive-p)
-  "Byte (re)compile the important files in your emacs configuration (init.el and
-core/*.el). If COMPREHENSIVE-P is non-nil, also compile config.el files in
-modules. DOOM Emacs was designed to benefit a lot from this."
+(defun doom/byte-compile ()
+  "Byte (re)compile the important files in your emacs configuration (i.e.
+init.el, core/*.el and modules/*/*/config.el) DOOM Emacs was designed to benefit
+a lot from this."
   (interactive)
-  (let (use-package-always-ensure
+  (doom-initialize)
+  (let ((targets (append (list (f-expand "init.el" doom-emacs-dir)
+                               (f-expand "core.el" doom-core-dir))
+                         (reverse (f-glob "core-*.el" doom-core-dir))
+                         (-filter 'f-exists-p
+                                  (--map (doom-module-path (car it) (cdr it) "config.el")
+                                         doom-modules))))
+        use-package-always-ensure
         file-name-handler-alist)
-    (mapc 'byte-compile-file
-          (append (list (f-expand "init.el" doom-emacs-dir)
-                        (f-expand "core.el" doom-core-dir))
-                  (reverse (f-glob "core-*.el" doom-core-dir))
-                  (when comprehensive-p
-                    (f-glob "*/*/config.el" doom-modules-dir))))))
+    (mapc 'byte-compile-file targets)
+    (when noninteractive
+      (when targets (message "\n"))
+      (message "Compiled %s files:\n%s" (length targets)
+               (mapconcat (lambda (file) (concat "+ " (f-relative file doom-emacs-dir)))
+                          targets "\n")))))
 
 (defun doom/refresh-autoloads ()
   "Refreshes the autoloads.el file, which tells Emacs where to find all the
