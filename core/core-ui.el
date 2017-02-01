@@ -115,7 +115,7 @@ disabled.")
   :config
   (setq highlight-indent-guides-method 'character)
 
-  (defun doom|adjust-indent-guides (&optional start end)
+  (defun doom|inject-trailing-whitespace (&optional start end)
     "The opposite of `delete-trailing-whitespace'. Injects whitespace into
 buffer so that `highlight-indent-guides-mode' will display uninterrupted indent
 markers. This whitespace is stripped out on save, as not to affect the resulting
@@ -155,7 +155,7 @@ file."
   (add-hook! highlight-indent-guides-mode
     (if highlight-indent-guides-mode
         (progn
-          (doom|adjust-indent-guides)
+          (doom|inject-trailing-whitespace)
           (add-hook 'after-save-hook 'doom|adjust-indent-guides nil t))
       (remove-hook 'after-save-hook 'doom|adjust-indent-guides t)
       (delete-trailing-whitespace))))
@@ -182,18 +182,13 @@ file."
     'nlinum-mode)
 
   :config
-  (defun doom/toggle-line-numbers ()
-    "Toggle `nlinum-mode'."
-    (interactive)
-    (nlinum-mode (if nlinum-mode -1 +1)))
-
   ;; Optimization: calculate line number column width beforehand
   (add-hook! nlinum-mode
     (setq nlinum--width (length (save-excursion (goto-char (point-max))
                                                 (format-mode-line "%l")))))
 
-  ;; Disable nlinum when making frames, otherwise we get linum face error
-  ;; messages that prevent frame creation.
+  ;; Disable nlinum explicitly before making a frame, otherwise nlinum throws
+  ;; linum face errors that prevent the frame from spawning.
   (add-hook! '(before-make-frame-hook after-make-frame-functions)
     (nlinum-mode -1)))
 

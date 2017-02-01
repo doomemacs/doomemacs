@@ -159,20 +159,13 @@ enable multiple minor modes for the same regexp.")
 
   ;;; Let 'er rip! (order matters!)
   (require 'core-ui)         ; draw me like one of your French editors
+  (require 'core-states)     ; TODO
   (require 'core-popups)     ; taming sudden yet inevitable windows
   (require 'core-editor)     ; baseline configuration for text editing
   (require 'core-projects)   ; getting around your projects
 
-  (unless (require 'autoloads nil t)
+  (unless (require 'autoloads (concat doom-local-dir "autoloads.el") t)
     (add-hook 'after-init-hook 'doom/refresh-autoloads)))
-
-;; (require 'core-workspaces) ; TODO
-;; (require 'core-completion) ; TODO company & auto-complete, for the lazy typist
-;; (require 'core-evil)
-;; (require 'core-jump)
-;; (require 'core-repl)
-;; (require 'core-snippets)
-;; (require 'core-syntax-checking)
 
 (provide 'core)
 ;;; core.el ends here
