@@ -257,7 +257,9 @@ packages. This will delete old versions of packages as well."
                                                        (car pkg)
                                                        (car (cdr pkg))
                                                        (cdr (cdr pkg))))
-                                      outdated-packages ", "))))
+                                      (--sort (string-lessp (symbol-name (car it))
+                                                            (symbol-name (car other)))
+                                              outdated-packages) ", "))))
              (message "Aborted"))
             (t
              (dolist (pkg outdated-packages)
