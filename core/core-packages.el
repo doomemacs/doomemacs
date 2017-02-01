@@ -103,8 +103,6 @@ avoided to speed up startup."
     (setq load-path doom--load-path
           package-activated-list nil)
     (package-initialize)
-    (unless package-archive-contents
-      (package-read-all-archive-contents))
     (unless (package-installed-p 'quelpa-use-package)
       (package-refresh-contents)
       (package-install 'quelpa-use-package t)
