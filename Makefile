@@ -4,7 +4,7 @@ all: install update
 
 install: init.el clean-elc
 	@$(EMACS) --batch \
-		--eval '(setq doom-auto-install-p t)' \
+		--eval '(setq doom--auto-install-p t)' \
 		-l init.el \
 		--eval '(message "%s" (if doom--packages "All done!" "Nothing to install"))'
 

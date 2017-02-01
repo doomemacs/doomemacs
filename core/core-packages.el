@@ -11,31 +11,35 @@
 ;;    repositories. Such as github or the Emacs wiki. Some plugins are out of
 ;;    date through official channels, have changed hands unofficially, or simply
 ;;    haven't been submitted to an ELPA repo yet.
-;; 3. Stability: I don't want to be scared that every time I use my package
-;;    management something may go wrong. This was the case with Cask, which I
-;;    used previously. package.el and quelpa are much more stable.
+;; 3. Stability: I don't want to worry that each time I use my package
+;;    manager something might inexplicably go wrong. This was the case with
+;;    Cask, which I used previously. package.el and quelpa appear to be much
+;;    more stable.
 ;; 4. No external dependencies (e.g. Cask) for plugin management.
 
-(defvar doom--init nil
-  "Whether doom's package system has been initialized or not. It may not be if
-you have byte-compiled your configuration (as intended).")
-
-(defvar doom-packages (list (cons 'quelpa-use-package nil))
-  "List of explicitly installed packages (not dependencies).")
+(defvar doom-packages '((quelpa-use-package))
+  "List of packages that have been explicitly installed (not dependencies) with
+`package!'. Each element is a list whose car is the package symbol, and cdr is
+its quelpa recipe, if available.")
 
 (defvar doom-modules nil
-  "List of enabled modules; each are cons cells whose car is the module's name
-symbol and cdr is the submodule's name as a symbol.")
+  "List of enabled modules; each element is a cons cell (MODULE . SUBMODULE),
+where MODULE is the module's property symbol, e.g. :lang, and SUBMODULE is the
+submodule symbol, e.g. 'evil.")
 
-(defvar doom-auto-install-p nil
-  "")
+(defvar doom--init nil
+  "Non-nil if doom's package system has been initialized or not. It may not be
+if you have byte-compiled your configuration (as intended).")
 
-(defvar doom-dont-load-p nil
+(defvar doom--auto-install-p nil
+  "If non-nil, install missing packages. Otherwise, strip :ensure and :quelpa
+from `package!' calls.")
+
+(defvar doom--dont-load-p nil
   "If non-nil, don't actually load modules, only keep track of them.")
 
 (defvar doom--load-path (append (list doom-core-dir
-                                      doom-modules-dir
-                                      doom-local-dir)
+                                      doom-modules-dir)
                                 load-path)
   "A backup of `load-path', used as a bare-bones foundation for
 `doom/packages-reload' or `doom-initialize'.")
@@ -77,7 +81,7 @@ byte-compilation."
              (error "No namespace specified on `doom!' for %s" p))
             (t
              (setq doom-modules (append doom-modules (list (cons mode p))))))))
-  (unless doom-dont-load-p
+  (unless doom--dont-load-p
     `(let (file-name-handler-alist)
        ,@(mapcar (lambda (pkg) (macroexpand `(load! ,(car pkg) ,(cdr pkg))))
                  doom-modules)
@@ -95,10 +99,9 @@ byte-compilation."
                   (emacs-init-time))))))
 
 (defun doom-initialize (&optional force-p)
-  "Initialize installed packages (using package.el). This must be used on first
-run, as it will prepare Emacs to auto-install all missing packages (otherwise
-you'll get errors). If you byte compile core/core.el, calls to `package.el' are
-avoided to speed up startup."
+  "Initialize installed packages (using package.el). On first run it will
+prepare Emacs to auto-install all missing packages. If you byte compile
+core/core.el, calls to `package.el' are avoided to speed up startup."
   (unless (or doom--init force-p)
     (setq load-path doom--load-path
           package-activated-list nil)
@@ -106,7 +109,7 @@ avoided to speed up startup."
     (unless (package-installed-p 'quelpa-use-package)
       (package-refresh-contents)
       (package-install 'quelpa-use-package t)
-      (setq doom-auto-install-p (not noninteractive)))
+      (setq doom--auto-install-p (not noninteractive)))
     (unless (featurep 'quelpa-use-package)
       (require 'quelpa-use-package)
       (quelpa-use-package-activate-advice)
@@ -124,25 +127,23 @@ avoided to speed up startup."
 (defvar doom--packages nil
   "List of packages explicitly installed during this session.")
 
+(defalias 'use-package! 'use-package
+  "To adhere to the naming conventions of DOOM emacs.")
+
 (defmacro package! (name &rest plist)
-  "Uses `quelpa' and `use-package' to ensure PACKAGES are installed and
-available. If `doom-auto-install-p' is nil, then strip out :ensure and :quelpa
-properties, which is the case if you've byte-compiled DOOM Emacs.
-
-It takes the same arguments as `use-package'.
-
-Each element in PACKAGES can be a symbol or a list, whose car is the package
-symbol and cdr is a plist. The plist accepts any argument `quelpa-use-package'
-uses."
+  "Wraps around `use-package' (with `quelpa-use-package') and takes the same
+arguments. Ensures the package named NAME is installed and available. If
+`doom--auto-install-p' is nil, then strip out :ensure and :quelpa properties,
+which is the case if you've byte-compiled DOOM Emacs."
   (declare (indent defun))
-  (let ((use-package-always-ensure doom-auto-install-p)
+  (let ((use-package-always-ensure doom--auto-install-p)
         (recipe (plist-get plist :quelpa)))
     ;; prepend NAME to quelpa recipe, if none is specified, to avoid local
     ;; MELPA lookups by quelpa.
     (when (and recipe (= 0 (mod (length recipe) 2)))
       (push name recipe)
       (plist-put plist :quelpa (append (list name) recipe)))
-    (if doom-auto-install-p
+    (if doom--auto-install-p
         (unless (package-installed-p name)
           (add-to-list 'doom--packages name))
       (setq plist (use-package-plist-delete plist :ensure))
@@ -156,10 +157,15 @@ uses."
 `load-relative', but is specific to DOOM emacs modules and submodules.
 
 Examples:
-  (load! :lang emacs-lisp)  loads modules/lang/emacs-lisp/{packages,config}.el
+(load! :lang emacs-lisp)
 
-  ;; Note: requires that the calling module be loaded with `load!'
-  (load! +local-module)     if called from ./config.el, loads ./+local-module.el"
+  Loads modules/lang/emacs-lisp/(packages|config).el; package.el if
+  `doom--auto-install-p' is non-nil, config.el otherwise.
+
+(load! +local-module)
+
+  NOTE: Requires that the calling module be loaded with `load!'.
+  If called from ./config.el, loads ./+local-module.el"
   (let (path file)
     (cond ((null submodule)
            (setq path (f-dirname load-file-name)
@@ -168,7 +174,7 @@ Examples:
                               file-or-module-sym))))
           (t
            (setq path (f-slash (doom-module-path file-or-module-sym submodule))
-                 file (if doom-auto-install-p "packages.el" "config.el"))))
+                 file (if doom--auto-install-p "packages.el" "config.el"))))
     (setq path (f-slash path)
           file (concat path file))
     (when (f-exists-p file)
@@ -226,7 +232,7 @@ or make clean outside of Emacs."
   (interactive)
   (declare (interactive-only t))
   (doom-initialize t)
-  (let ((doom-auto-install-p t))
+  (let ((doom--auto-install-p t))
     (load (concat doom-emacs-dir "init.el") nil nil t)))
 
 (defun doom/packages-update ()
@@ -338,7 +344,7 @@ command line)."
   (interactive)
   ;; Reload modules (don't load anything)
   (setq doom-modules nil)
-  (let ((doom-dont-load-p t)
+  (let ((doom--dont-load-p t)
         (noninteractive t))
     (load (concat doom-emacs-dir "init.el") nil :nomessage t))
 
