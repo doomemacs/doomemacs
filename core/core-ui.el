@@ -21,7 +21,6 @@
       indicate-empty-lines nil
       max-mini-window-height 0.3
       mode-line-default-help-echo nil  ; disable mode-line mouseovers
-      redisplay-dont-pause t         ; don't pause display on input
       resize-mini-windows 'grow-only ; Minibuffer resizing
       show-help-function nil         ; hide :help-echo text
       show-paren-delay 0.075
