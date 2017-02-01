@@ -162,29 +162,29 @@ Examples:
 
   ;; Note: requires that the calling module be loaded with `load!'
   (load! +local-module)     if called from ./config.el, loads ./+local-module.el"
-  (let ((module-name (if (symbolp file-or-module-sym)
-                         (symbol-name file-or-module-sym)
-                       file-or-module-sym))
-        submodule-name
-        path file)
+  (let (path file)
     (cond ((null submodule)
            (setq path (f-dirname load-file-name)
-                 file (list module-name)))
+                 file (list (if (symbolp file-or-module-sym)
+                                (symbol-name file-or-module-sym)
+                              file-or-module-sym))))
           (t
-           (when (string-prefix-p ":" module-name)
-             (setq module-name (substring module-name 1)))
-           (setq path (f-expand (concat module-name "/" (symbol-name submodule))
-                                doom-modules-dir)
+           (setq path (f-slash (doom-module-path file-or-module-sym submodule))
                  file (if doom-auto-install-p "packages.el" "config.el"))))
     (setq path (f-slash path)
           file (concat path file))
-    (when (file-exists-p file)
+    (when (f-exists-p file)
       `(let ((__FILE__ ,file)
              (__DIR__  ,path))
-         (load __FILE__ nil :noerror noninteractive noninteractive)))))
+         (load ,(if noninteractive file (f-no-ext file))
+               nil ,(not doom-debug-mode) noninteractive)))))
 
 (defvar __DIR__ nil "The directory of the currently loaded file (with `load!')")
 (defvar __FILE__ nil "The full path of the currently loaded file (with `load!')")
+
+(defun doom-module-path (module submodule &optional file)
+  (f-expand (concat (substring (symbol-name module) 1) "/" (symbol-name submodule) "/" file)
+            doom-modules-dir))
 
 
 ;;
