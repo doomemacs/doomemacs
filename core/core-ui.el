@@ -2,6 +2,12 @@
 
 (defvar doom-ui-fringe-size '3 "Default fringe width")
 
+(defvar doom-ui-default-background "#333333"
+  "The default frame background color.")
+
+(defvar doom-ui-default-foreground "#CCCCCC"
+  "The default frame foreground color.")
+
 (setq bidi-display-reordering nil ; disable bidirectional text for tiny performance boost
       blink-matching-paren nil    ; don't blink--too distracting
       cursor-in-non-selected-windows nil  ; hide cursors in other windows
@@ -78,8 +84,12 @@ disabled.")
   (setq-default frame-title-format '("%b"))
   ;; standardize fringe width
   (fringe-mode doom-ui-fringe-size)
-  (push `(left-fringe  . ,doom-ui-fringe-size) default-frame-alist)
-  (push `(right-fringe . ,doom-ui-fringe-size) default-frame-alist)
+  (setq default-frame-alist
+        (append `((left-fringe  . ,doom-ui-fringe-size)
+                  (right-fringe . ,doom-ui-fringe-size)
+                  (background-color . ,doom-ui-default-background)
+                  (foreground-color . ,doom-ui-default-foreground))
+                default-frame-alist))
   ;; no fringe in the minibuffer
   (add-hook! (emacs-startup minibuffer-setup)
     (set-window-fringes (minibuffer-window) 0 0 nil)))
