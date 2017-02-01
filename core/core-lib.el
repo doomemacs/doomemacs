@@ -14,11 +14,8 @@ during compilation."
                  (require feature nil :no-error)
                (load feature :no-message :no-error)))
          'progn
-       (message "after: cannot find %s" feature)
        'with-no-warnings)
-    (with-eval-after-load ',feature
-      (let ((package-name ',feature))
-        ,@forms))))
+    (with-eval-after-load ',feature ,@forms)))
 
 (defmacro add-hook! (hook &rest func-or-forms)
   "A convenience macro for `add-hook'.
