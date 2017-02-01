@@ -334,14 +334,17 @@ autoloaded functions in the modules you use or among the core libraries.
 Rerun this whenever you modify your init.el (or use `make autoloads` from the
 command line)."
   (interactive)
+  ;; Reload modules (don't load anything)
+  (setq doom-modules nil)
+  (let ((doom-dont-load-p t)
+        (noninteractive t))
+    (load (concat doom-emacs-dir "init.el") nil :nomessage t))
+
   (let ((generated-autoload-file (concat doom-local-dir "autoloads.el"))
         (autoload-files
          (append
           (-flatten (mapcar (lambda (m)
-                              (let* ((dir (f-expand (format "%s/%s"
-                                                            (substring (symbol-name (car m)) 1)
-                                                            (cdr m))
-                                                    doom-modules-dir))
+                              (let* ((dir (doom-module-path (car m) (cdr m)))
                                      (auto-dir (f-expand "autoload" dir))
                                      (auto-file (f-expand "autoload.el" dir)))
                                 (cond ((f-directory-p auto-dir)
