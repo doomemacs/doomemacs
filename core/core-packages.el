@@ -281,6 +281,7 @@ packages. This will delete old versions of packages as well."
 (defun doom/packages-clean ()
   "Delete packages that are no longer used or depended on."
   (interactive)
+  (package-initialize)
   (let* ((package-selected-packages (-intersection (package--find-non-dependencies)
                                                    (mapcar 'car doom-packages)))
          (packages-to-delete (package--removable-packages))
