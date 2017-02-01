@@ -176,20 +176,6 @@
 
 (package! pcre2el :commands rxt-quote-pcre)
 
-(package! re-builder
-  :commands (re-builder reb-mode-buffer-p)
-  :init (add-hook 'reb-mode-hook 'doom|reb-cleanup)
-  :config
-  (evil-set-initial-state 'reb-mode 'insert)
-  (setq reb-re-syntax 'string)
-  ;; (map! (:map* rxt-help-mode-map
-  ;;         :n [escape] 'kill-buffer-and-window)
-  ;;       (:map* reb-mode-map
-  ;;         :n "C-g" 'reb-quit
-  ;;         :n [escape] 'reb-quit
-  ;;         :n [backtab] 'reb-change-syntax))
-  )
-
 (package! rotate-text
   :quelpa (:fetcher github :repo "debug-ito/rotate-text.el")
   :commands (rotate-text rotate-text-backward)
