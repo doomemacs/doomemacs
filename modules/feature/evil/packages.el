@@ -1,7 +1,6 @@
-;;; packages.el
+;;; core/evil/packages.el
 
 (package! evil)
-(package! evil-anzu)
 (package! evil-args)
 (package! evil-commentary)
 (package! evil-easymotion)

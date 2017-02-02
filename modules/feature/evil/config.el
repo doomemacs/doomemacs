@@ -1,4 +1,4 @@
-;;; core-evil.el --- come to the dark side, we have cookies
+;;; core/evil/config.el
 
 ;; I'm a vimmer at heart. Its modal philosophy suits me better, and this module
 ;; strives to make Emacs a much better vim than vim was.
@@ -14,7 +14,7 @@
 ;; evil-mode
 ;;
 
-(use-package evil
+(use-package! evil
   :demand t
   :init
   (setq evil-want-C-u-scroll t
@@ -30,7 +30,7 @@
         evil-insert-skip-empty-lines t)
 
   :config
-  (defpopup!
+  (def-popup!
     ("*evil-registers*" :size 0.3)
     ("*Command Line*" :size 8))
 
@@ -56,16 +56,10 @@
           (Man-mode               . emacs)
           (grep-mode              . emacs))))
 
-;;; Private macros
 (defsubst +evil--textobj! (key inner-fn &optional outer-fn)
   "Define a text object."
   (define-key evil-inner-text-objects-map key inner-fn)
   (define-key evil-outer-text-objects-map key (or outer-fn inner-fn)))
-
-;; Shortcuts for the evil expression register
-(defmacro $= (str &rest args) `(calc-eval (format ,str ,@args)))
-(defmacro $r (char) `(evil-get-register ,char))
-(defmacro $expand (path) `(evil-ex-replace-special-filenames ,path))
 
 
 ;;
@@ -89,9 +83,9 @@
 ;; Fix harmless (yet disruptive) error reporting w/ hidden buffers caused by
 ;; workgroups killing windows
 ;; TODO Delete timer on dead windows?
-;; (defun doom*ignore-errors (orig-fn &rest args)
+;; (defun +evil*ignore-hl-errors (orig-fn &rest args)
 ;;   (ignore-errors (apply orig-fn args)))
-;; (advice-add 'evil-ex-hl-do-update-highlight :around 'doom*ignore-errors)
+;; (advice-add 'evil-ex-hl-do-update-highlight :around '+evil*ignore-hl-errors)
 
 ;; monkey patch `evil-ex-replace-special-filenames' to add more ex
 ;; substitution flags to evil-mode
@@ -99,8 +93,9 @@
             :override '+evil*ex-replace-special-filenames)
 
 ;; Add extra argument types that highlight matches in the current buffer.
-(evil-ex-define-argument-type buffer-match :runner doom-evil-ex-buffer-match)
-(evil-ex-define-argument-type global-match :runner doom-evil-ex-global-match)
+;; TODO Must be simpler way to do this
+(evil-ex-define-argument-type buffer-match :runner +evil-ex-buffer-match)
+(evil-ex-define-argument-type global-match :runner +evil-ex-global-match)
 
 (evil-define-interactive-code "<//>"
   :ex-arg buffer-match (list (when (evil-ex-p) evil-ex-argument)))
@@ -129,37 +124,22 @@
 ;; Plugins
 ;;
 
-(use-package evil-anzu
-  :init
-  ;; evil-anzu is strangely slow on startup. Byte compiling doesn't help. We use
-  ;; this to lazy load it instead.
-  ;; (defun doom*evil-search (&rest _)
-  ;;   (require 'evil-anzu)
-  ;;   (advice-remove 'evil-ex-start-search 'doom*evil-search))
-  ;; (advice-add 'evil-ex-start-search :before 'doom*evil-search)
-
-  :config
-  (setq anzu-cons-mode-line-p nil
-        anzu-minimum-input-length 1
-        anzu-search-threshold 250))
-
-
-(use-package evil-args
-  :commands (evil-inner-arg evil-outer-arg evil-forward-arg evil-backward-arg
+(use-package! evil-args
+  :commands (evil-inner-arg evil-outer-arg
+             evil-forward-arg evil-backward-arg
              evil-jump-out-args)
-  :init
-  (+evil--textobj! "a" 'evil-inner-arg 'evil-outer-arg))
+  :init (+evil--textobj! "a" 'evil-inner-arg 'evil-outer-arg))
 
 
-(use-package evil-commentary
+(use-package! evil-commentary
   :commands (evil-commentary evil-commentary-yank evil-commentary-line)
-  :config! (evil-commentary-mode 1))
+  :config (evil-commentary-mode 1))
 
 
-(use-package evil-easymotion
+(use-package! evil-easymotion
   :defer 1
   :config
-  (defvar doom--evil-snipe-repeat-fn)
+  (defvar +evil--snipe-repeat-fn)
 
   (evilem-default-keybindings "g SPC")
   (evilem-define (kbd "g SPC n") 'evil-ex-search-next)
@@ -175,14 +155,14 @@
                         (evil-snipe-enable-highlight)
                         (evil-snipe-enable-incremental-highlight)))
 
-  (setq doom--evil-snipe-repeat-fn
+  (setq +evil--snipe-repeat-fn
         (evilem-create 'evil-snipe-repeat
                        :bind ((evil-snipe-scope 'whole-buffer)
                               (evil-snipe-enable-highlight)
                               (evil-snipe-enable-incremental-highlight)))))
 
 
-(use-package evil-embrace
+(use-package! evil-embrace
   :after evil-surround
   :config
   (setq evil-embrace-show-help-p nil)
@@ -236,7 +216,7 @@
     (embrace-add-pair-regexp ?l "\\[a-z]+{" "}" '+evil--embrace-latex)))
 
 
-(use-package evil-escape
+(use-package! evil-escape
   :commands evil-escape-mode
   :init
   (defun +evil|escape-disable () (evil-escape-mode -1))
@@ -251,7 +231,7 @@
         evil-escape-delay 0.25))
 
 
-(use-package evil-exchange
+(use-package! evil-exchange
   :commands evil-exchange
   :config
   (defun +evil*exchange-off ()
@@ -259,7 +239,7 @@
   (advice-add 'evil-force-normal-state :after '+evil*exchange-off))
 
 
-(use-package evil-indent-plus
+(use-package! evil-indent-plus
   :commands (evil-indent-plus-i-indent
              evil-indent-plus-a-indent
              evil-indent-plus-i-indent-up
@@ -272,7 +252,7 @@
   (+evil--textobj! "J" 'evil-indent-plus-i-indent-up-down 'evil-indent-plus-a-indent-up-down))
 
 
-(use-package evil-matchit
+(use-package! evil-matchit
   :commands (evilmi-jump-items evilmi-text-object global-evil-matchit-mode)
   :config (global-evil-matchit-mode 1)
   :init
@@ -287,7 +267,7 @@ if on a delimiter, jump to the matching one (`evilmi-jump-items')."
       (call-interactively 'evilmi-jump-items))))
 
 
-(use-package evil-multiedit
+(use-package! evil-multiedit
   :commands (evil-multiedit-match-all
              evil-multiedit-match-and-next
              evil-multiedit-match-and-prev
@@ -298,17 +278,16 @@ if on a delimiter, jump to the matching one (`evilmi-jump-items')."
              evil-multiedit-prev
              evil-multiedit-abort
              evil-multiedit-ex-match)
-  :config
-  (evil-multiedit-default-keybinds))
+  :config (evil-multiedit-default-keybinds))
 
 
-(use-package evil-textobj-anyblock
+(use-package! evil-textobj-anyblock
   :commands (evil-numbers/inc-at-pt evil-numbers/dec-at-pt)
   :init
   (+evil--textobj! "B" 'evil-textobj-anyblock-inner-block 'evil-textobj-anyblock-a-block))
 
 
-(use-package evil-search-highlight-persist
+(use-package! evil-search-highlight-persist
   :demand t
   :commands (evil-textobj-anyblock-inner-block evil-textobj-anyblock-a-block)
   :config
@@ -316,7 +295,7 @@ if on a delimiter, jump to the matching one (`evilmi-jump-items')."
   (advice-add 'evil-force-normal-state :after 'evil-search-highlight-persist-remove-all))
 
 
-(use-package evil-snipe
+(use-package! evil-snipe
   :demand t
   :init
   (setq evil-snipe-smart-case t
@@ -333,12 +312,12 @@ if on a delimiter, jump to the matching one (`evilmi-jump-items')."
   (evil-snipe-mode 1)
   (evil-snipe-override-mode 1)
   ;; Switch to evil-easymotion/avy after first snipe
-  (define-key evil-snipe-parent-transient-map "\C-;"
+  (define-key evil-snipe-parent-transient-map (kbd "C-;")
     (λ! (require 'evil-easymotion)
-        (call-interactively doom--evil-snipe-repeat-fn))))
+        (call-interactively +evil--snipe-repeat-fn))))
 
 
-(use-package evil-surround
+(use-package! evil-surround
   :commands (global-evil-surround-mode
              evil-surround-edit
              evil-Surround-edit
@@ -346,7 +325,7 @@ if on a delimiter, jump to the matching one (`evilmi-jump-items')."
   :config (global-evil-surround-mode 1))
 
 
-(use-package evil-visualstar
+(use-package! evil-visualstar
   :commands (global-evil-visualstar-mode
              evil-visualstar/begin-search
              evil-visualstar/begin-search-forward
@@ -355,7 +334,7 @@ if on a delimiter, jump to the matching one (`evilmi-jump-items')."
 
 
 ;; A side-panel for browsing my project files. Inspired by vim's NERDTree.
-(use-package neotree
+(use-package! neotree
   :commands (neotree-show
              neotree-hide
              neotree-toggle
@@ -390,8 +369,8 @@ if on a delimiter, jump to the matching one (`evilmi-jump-items')."
 
   ;; Adding keybindings to `neotree-mode-map' wouldn't work for me (they get
   ;; overridden when the neotree buffer is spawned). So we bind them in a hook.
-  (add-hook 'neo-after-create-hook 'doom|neotree-init-keymap)
-  (defun doom|neotree-init-keymap (&rest _)
+  (add-hook 'neo-after-create-hook '+evil|neotree-init-keymap)
+  (defun +evil|neotree-init-keymap (&rest _)
     (let ((map evil-motion-state-local-map))
       (define-key map (kbd "\\\\")     'evil-window-prev)
       (define-key map (kbd "RET")      'neotree-enter)
