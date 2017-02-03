@@ -222,10 +222,11 @@ Examples:
 (defun doom-module-path (module submodule &optional file)
   "Get the full path to a module: e.g. :lang emacs-lisp maps to
 ~/.emacs.d/modules/lang/emacs-lisp/. Will append FILE if non-nil."
-  (when (symbolp module)
-    (setq module (symbol-name module)))
-  (when (string-prefix-p ":" module)
-    (setq module (substring module 1)))
+  (setq module
+        (cond ((keywordp module) (substring (symbol-name module) 1))
+              ((symbolp module)  (symbol-name module))
+              ((stringp module) module)
+              (t (error "Not a valid module name: %s" module))))
   (when (symbolp submodule)
     (setq submodule (symbol-name submodule)))
   (f-expand (concat module "/" submodule "/" file)
