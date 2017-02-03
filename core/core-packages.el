@@ -28,6 +28,9 @@ submodule symbol, e.g. 'evil.")
 (defvar doom-protected-packages '(quelpa-use-package f s dash)
   "A list of packages that shouldn't be deleted.")
 
+(defvar doom-installed-packages nil
+  "A list of packages that were installed during the current session.")
+
 (defvar doom--init nil
   "Non-nil if doom's package system has been initialized or not. It may not be
 if you have byte-compiled your configuration (as intended).")
@@ -178,7 +181,9 @@ Note that packages are deferred by default."
     (when (and recipe (= 0 (mod (length recipe) 2)))
       (push name recipe)
       (setq plist (plist-put plist :quelpa recipe)))
-    (unless doom--auto-install-p
+    (if doom--auto-install-p
+        (unless (package-installed-p name)
+          (pushnew name doom-installed-packages))
       (setq plist (use-package-plist-delete plist :ensure))
       (setq plist (use-package-plist-delete plist :quelpa)))
     ;; (package--save-selected-packages (cons name package-selected-packages))
