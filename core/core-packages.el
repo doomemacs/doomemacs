@@ -277,26 +277,31 @@ command line)."
     (load generated-autoload-file nil t t)
     (message "Done!")))
 
-(defun doom/byte-compile ()
+(defun doom/byte-compile (&optional comprehensive-p)
   "Byte (re)compile the important files in your emacs configuration (i.e.
 init.el, core/*.el and modules/*/*/config.el) DOOM Emacs was designed to benefit
-a lot from this."
+a lot from this.
+
+If COMPREHENSIVE-P or the envar ALL is non-nil, also compile all autoload files.
+The benefit from this is minimal and may take more time."
   (interactive)
   (doom-initialize)
   (doom-reload-modules)
-  (let ((targets (append (list (f-expand "init.el" doom-emacs-dir)
-                               (f-expand "core.el" doom-core-dir))
-                         (reverse (f-glob "core-*.el" doom-core-dir))
-                         (-filter 'f-exists-p
-                                  (--map (doom-module-path (car it) (cdr it) "config.el")
-                                         doom-enabled-modules))))
-        (n 0)
-        results
-        use-package-always-ensure
-        file-name-handler-alist)
+  (let* ((map-fn (lambda (file) (and (f-ext-p file "el")
+                                (if comprehensive-p
+                                    (not (string= (f-base file) "packages"))
+                                  (string= (f-base file) "config")))))
+         (targets (append
+                   (list (f-expand "init.el" doom-emacs-dir)
+                         (f-expand "core.el" doom-core-dir))
+                   (f-glob "core-*.el" doom-core-dir)
+                   (-flatten (--map (f-entries (doom-module-path (car it) (cdr it)) map-fn t)
+                                    doom-enabled-modules))))
+         (n 0)
+         results)
     (mapc (lambda (file)
             (push (cons (f-relative file doom-emacs-dir)
-                        (when (byte-compile-file file)
+                        (when (byte-recompile-file file nil 0)
                           (setq n (1+ n))
                           t))
                   results))
