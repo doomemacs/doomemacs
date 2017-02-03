@@ -31,10 +31,15 @@ Examples:
     (add-hook! some-mode '(enable-something and-another))
     (add-hook! '(one-mode-hook second-mode-hook) 'enable-something)
     (add-hook! (one-mode second-mode) 'enable-something)
-    (add-hook! (one-mode second-mode) (setq v 5) (setq a 2))"
+    (add-hook! (one-mode second-mode) (setq v 5) (setq a 2))
+
+If HOOK is omitted, then default to `__PACKAGE__' to determine HOOK."
   (declare (indent defun) (debug t))
   (unless func-or-forms
-    (error "add-hook!: FUNC-OR-FORMS is empty"))
+    (unless (bound-and-true-p __PACKAGE__)
+      (error "add-hook!: FUNC-OR-FORMS is empty"))
+    (setq func-or-forms hook
+          hook __PACKAGE__))
   (let* ((val (car func-or-forms))
          (quoted-p (eq (car-safe hook) 'quote))
          (hook (if quoted-p (cadr hook) hook))
