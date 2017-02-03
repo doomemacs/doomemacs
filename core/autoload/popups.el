@@ -95,7 +95,9 @@ possible rules."
   "Close the current popup *if* its window doesn't have a noesc parameter."
   (interactive)
   (if (window-parameter (selected-window) 'noesc)
-      (call-interactively 'evil-force-normal-state)
+      (call-interactively (if (featurep 'evil)
+                              'evil-force-normal-state
+                            'keyboard-escape-quit))
     (doom/popup-close)))
 
 (defun doom--popup-data (window)
