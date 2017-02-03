@@ -177,7 +177,7 @@
 (package! pcre2el :commands rxt-quote-pcre)
 
 (package! rotate-text
-  :quelpa (:fetcher github :repo "debug-ito/rotate-text.el")
+  :recipe (:fetcher github :repo "debug-ito/rotate-text.el")
   :commands (rotate-text rotate-text-backward)
   :config (push '("true" "false") rotate-text-words))
 

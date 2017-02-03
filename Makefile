@@ -9,16 +9,16 @@ update: init.el
 	@$(EMACS) --batch -l core/core.el -f 'doom/packages-update'
 
 clean: init.el
-	@$(EMACS) --batch -l core/core.el -f 'doom/packages-clean'
+	@$(EMACS) --batch -l core/core.el -f 'doom/packages-autoremove'
+
+autoloads: init.el
+	@$(EMACS) --batch -l core/core.el -f 'doom/refresh-autoloads'
 
 compile: init.el clean-elc
 	@$(EMACS) --batch -l core/core.el -f 'doom/byte-compile'
 
 compile-all: init.el clean-elc
 	@$(EMACS) --batch -l core/core.el --eval '(doom/byte-compile t)'
-
-autoloads: init.el
-	@$(EMACS) --batch -l core/core.el -f 'doom/refresh-autoloads'
 
 clean-cache:
 	@$(EMACS) --batch -l core/core.el --eval '(delete-directory doom-cache-dir t)'

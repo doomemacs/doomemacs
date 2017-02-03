@@ -120,52 +120,48 @@ enable multiple minor modes for the same regexp.")
 (setq gc-cons-threshold 339430400
       gc-cons-percentage 0.6)
 
-(eval-when-compile
-  (unless (file-exists-p doom-packages-dir)
-    (error "No packages are installed, run 'make install'"))
-
-  ;; Ensure cache folder exist
-  (unless (file-exists-p doom-cache-dir)
-    (make-directory doom-cache-dir t)))
-
 (let (file-name-handler-list)
   (eval-and-compile
-    (load (concat doom-core-dir "core-packages") nil :nomessage))
+    (require 'core-packages (concat doom-core-dir "core-packages")))
   (eval-when-compile
+    ;; Ensure cache folder exist
+    (unless (file-exists-p doom-cache-dir)
+      (make-directory doom-cache-dir t))
     (doom-initialize))
   (setq load-path (eval-when-compile load-path))
 
-  ;;; Essential packages
+  (eval-and-compile
+    (require 'dash)
+    (require 'f)
+    (require 's))
+
+  ;;; Let 'er rip
   (require 'core-lib)
-
-  (package! dash :demand t)
-  (package! s    :demand t)
-  (package! f    :demand t)
-
-  ;;; Helper packages (autoloaded)
-  (package! async
-    :commands (async-start
-               async-start-process
-               async-byte-recompile-directory))
-
-  (defvar pcache-directory (concat doom-cache-dir "pcache/"))
-  (package! persistent-soft
-    :commands (persistent-soft-exists-p
-               persistent-soft-fetch
-               persistent-soft-flush
-               persistent-soft-store))
-
-  (package! smex :commands smex)
-
-  ;;; Let 'er rip! (order matters!)
-  (require 'core-ui)         ; draw me like one of your French editors
-  (require 'core-states)     ; TODO
-  (require 'core-popups)     ; taming sudden yet inevitable windows
-  (require 'core-editor)     ; baseline configuration for text editing
-  (require 'core-projects)   ; getting around your projects
-
   (unless (require 'autoloads (concat doom-local-dir "autoloads.el") t)
-    (add-hook 'after-init-hook 'doom/refresh-autoloads)))
+    (doom/refresh-autoloads))
+
+  (unless noninteractive
+    (package! anaphora
+      :commands (awhen aif acond awhile))
+
+    (package! async
+      :commands (async-start
+                 async-start-process
+                 async-byte-recompile-directory))
+
+    (package! persistent-soft
+      :preface (defvar pcache-directory (concat doom-cache-dir "pcache/"))
+      :commands (persistent-soft-exists-p
+                 persistent-soft-fetch
+                 persistent-soft-flush
+                 persistent-soft-store))
+
+    (require! core-set)         ; a centralized config system; provides `set!'
+    (require! core-states)      ; TODO
+    (require! core-ui)          ; draw me like one of your French editors
+    (require! core-popups)      ; taming sudden yet inevitable windows
+    (require! core-editor)      ; baseline configuration for text editing
+    (require! core-projects)))  ; making Emacs project-aware
 
 (provide 'core)
 ;;; core.el ends here

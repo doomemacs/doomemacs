@@ -101,7 +101,7 @@ disabled.")
 ;; I modified the built-in `hideshow' package to enable itself when needed. A
 ;; better, more vim-like code-folding plugin would be the `origami' plugin, but
 ;; until certain breaking bugs are fixed in it, I won't switch over.
-(package! hideshow :ensure nil ; built-in
+(use-package! hideshow ; built-in
   :commands (hs-minor-mode hs-toggle-hiding hs-already-hidden-p)
   :init
   (defun doom*autoload-hideshow ()
@@ -164,7 +164,7 @@ file."
 (package! highlight-numbers :commands highlight-numbers-mode)
 
 ;; Line highlighting
-(package! hl-line :ensure nil ; built-in
+(use-package! hl-line ; built-in
   :config
   ;; stickiness doesn't play nice with emacs 25+
   (setq hl-line-sticky-flag nil
