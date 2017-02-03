@@ -60,7 +60,7 @@ from `package!' calls.")
       use-package-always-defer t
       use-package-always-ensure nil
       use-package-expand-minimally t
-      use-package-debug doom-debug-mode
+      use-package-debug nil
       use-package-verbose doom-debug-mode
       quelpa-checkout-melpa-p nil
       quelpa-update-melpa-p nil
