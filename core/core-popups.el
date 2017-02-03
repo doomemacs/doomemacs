@@ -21,29 +21,24 @@
   (setq shackle-default-alignment 'below
         shackle-select-reused-windows t)
 
-  (defmacro def-popup! (&rest rules)
-    "Define one or more popup rules. See `shackle-rules' for the format of these
-rules. If :align is omitted, it will use `shackle-default-alignment'."
-    (declare (indent 0))
-    (macroexp-progn
-     (mapcar (lambda (rule)
-               ;; Ensure some default attributes are set for window rules
-               (let ((pattern (car rule))
-                     (ruleset (cdr rule)))
-                 ;; Align popups by default (error if this doesn't happen)
-                 (unless (plist-member ruleset :align)
-                   (plist-put ruleset :align shackle-default-alignment))
-                 ;; Select popups by default
-                 (unless (or (plist-member ruleset :select)
-                             (plist-member ruleset :noselect))
-                   (plist-put ruleset :select t))
-                 (setq rule (append (list pattern) ruleset))
-               `(push ',rule shackle-rules)))
-             rules)))
+  (def-setting! :popup (rule)
+    "Prepend a new popup rule to `shackle-rules'."
+    ;; Ensure some default attributes are set for window rules
+    (let ((pattern (car rule))
+          (ruleset (cdr rule)))
+      ;; Align popups by default (error if this doesn't happen)
+      (unless (plist-member ruleset :align)
+        (plist-put ruleset :align shackle-default-alignment))
+      ;; Select popups by default
+      (unless (or (plist-member ruleset :select)
+                  (plist-member ruleset :noselect))
+        (plist-put ruleset :select t))
+      (setq rule (append (list pattern) ruleset))
+      `(push ',rule shackle-rules)))
 
   ;; :noesc and :modeline are custom settings and are not part of shackle. See
   ;; `doom*popup-init' and `doom-popup-buffer' for how they're used.
-  (def-popup!
+  (set! :popup
     ("^ ?\\*doom:.+\\*$" :size 35  :regexp t   :modeline t)
     ("^ ?\\*doom .+\\*$" :size 12  :noselect t :regexp t :modeline t)
     ("^\\*.+-Profiler-Report .+\\*$" :size 0.3 :regexp t)
