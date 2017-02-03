@@ -74,7 +74,6 @@ line or use --debug-init to enable this.")
       idle-update-delay 1              ; update ui less often
       ;; keep the point out of the minibuffer
       minibuffer-prompt-properties '(read-only t point-entered minibuffer-avoid-prompt face minibuffer-prompt)
-
       ;; History & backup settings
       auto-save-default nil
       auto-save-list-file-name (concat doom-cache-dir "/autosave")
@@ -153,6 +152,9 @@ enable multiple minor modes for the same regexp.")
                  persistent-soft-flush
                  persistent-soft-store))
 
+    (package! smex :commands smex)
+
+    ;;
     (require! core-set)         ; a centralized config system; provides `set!'
     (require! core-states)      ; TODO
     (require! core-ui)          ; draw me like one of your French editors

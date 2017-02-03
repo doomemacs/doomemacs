@@ -1,5 +1,8 @@
 ;;; core-lib.el
 
+(defvar +evil-leader)
+(defvar +evil-localleader)
+
 (defmacro λ! (&rest body)
   "A shortcut for inline keybind lambdas."
   `(lambda () (interactive) ,@body))

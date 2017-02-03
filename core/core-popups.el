@@ -15,6 +15,28 @@
 ;; emacs update, or an update to any of the packages it tries to tame (like helm
 ;; or org-mode).
 
+(defvar doom-popup-history nil
+  "A list of popups that were last closed. Used by `doom/popup-restore' and
+`doom*popup-save'.")
+
+(defvar doom-popup-remember-history t
+  "If non-nil, DOOM will remember the last popup(s) that were open in
+`doom-popup-history'.")
+
+(defvar doom-popup-other-window nil
+  "The last window selected before a popup was opened.")
+
+(defvar-local doom-popup-rules nil
+  "The shackle rule that caused this buffer to be recognized as a popup.")
+
+(defvar doom-popup-mode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map [escape]    'doom/popup-close-maybe)
+    (define-key map (kbd "ESC") 'doom/popup-close-maybe)
+    map)
+  "Active keymap in popup windows.")
+
+
 (package! shackle :demand t
   :config
   (shackle-mode 1)
@@ -57,27 +79,6 @@
     (eww-mode            :size 30)
     (comint-mode         :noesc t)
     (tabulated-list-mode :noesc t))
-
-  (defvar doom-popup-history nil
-    "A list of popups that were last closed. Used by `doom/popup-restore' and
-`doom*popup-save'.")
-
-  (defvar doom-popup-remember-history t
-    "If non-nil, DOOM will remember the last popup(s) that were open in
-`doom-popup-history'.")
-
-  (defvar doom-popup-other-window nil
-    "The last window selected before a popup was opened.")
-
-  (defvar-local doom-popup-rules nil
-    "The shackle rule that caused this buffer to be recognized as a popup.")
-
-  (defvar doom-popup-mode-map
-    (let ((map (make-sparse-keymap)))
-      (define-key map [escape]    'doom/popup-close-maybe)
-      (define-key map (kbd "ESC") 'doom/popup-close-maybe)
-      map)
-    "Active keymap in popup windows.")
 
   (define-minor-mode doom-popup-mode
     "Minor mode for pop-up windows."

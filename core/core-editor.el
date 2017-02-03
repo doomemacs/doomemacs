@@ -38,7 +38,7 @@
       select-enable-clipboard t
       select-enable-primary t)
 
-(unless noninteractive
+(let ((inhibit-message t))
   ;; Save point across sessions
   (require 'saveplace)
   (setq save-place-file (concat doom-cache-dir "saveplace")

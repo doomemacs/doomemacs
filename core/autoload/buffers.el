@@ -24,7 +24,7 @@ major-modes, the process gets killed.")
 
 ;;;###autoload
 (defun doom-narrow-buffer (beg end &optional clone-p)
-  "Restrict editing in this buffer to the current region, indirectly. With BANG,
+  "Restrict editing in this buffer to the current region, indirectly. With CLONE-P,
 clone the buffer and hard-narrow the selection. If mark isn't active, then widen
 the buffer (if narrowed).
 
@@ -45,15 +45,8 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
         (setq doom-buffer--narrowed-origin nil))
       (widen))))
 
-;;;###autoload (autoload 'doom:buffer-narrow "core/autoload/buffers" nil t)
-(after! evil
-  (evil-define-operator doom:buffer-narrow (&optional beg end bang)
-    (interactive "<r><!>")
-    (doom-narrow-buffer beg end bang)))
-
 
 ;; Buffer Life and Death ;;;;;;;;;;;;;;;
-
 ;;;###autoload
 (defun doom-buffer-list (&optional all-p)
   "Get all buffers in the current project, in the current workgroup.
