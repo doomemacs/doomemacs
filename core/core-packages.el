@@ -210,9 +210,10 @@ Examples:
  (load! +local-module)
 
   Loads +local-module.el relative to `__DIR__' or `doom-core-dir'."
-  (let (path file)
+  (let ((prefer-el-p (or doom--prefer-el-p noninteractive))
+        path file)
     (cond ((null submodule)
-           (setq path (or __DIR__ doom-core-dir)
+           (setq path __DIR__
                  file (concat (if (symbolp file-or-module-sym)
                                   (symbol-name file-or-module-sym)
                                 file-or-module-sym)
@@ -224,8 +225,8 @@ Examples:
           file (concat path file))
     `(let ((__FILE__ ,file)
            (__DIR__  ,path))
-       (load (if doom--prefer-el-p ,file ,(f-no-ext file))
-             nil (not doom-debug-mode) doom--prefer-el-p))))
+       (load ,(if doom--prefer-el-p file (f-no-ext file))
+             nil (not doom-debug-mode) ,doom--prefer-el-p))))
 
 (defun doom-module-path (module submodule &optional file)
   "Get the full path to a module: e.g. :lang emacs-lisp maps to
