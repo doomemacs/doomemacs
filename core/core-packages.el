@@ -188,6 +188,14 @@ Note that packages are deferred by default."
     (pushnew name doom-packages)
     (macroexpand `(use-package ,name ,@plist))))
 
+(defmacro require! (feature)
+  "Like `require', but prefers uncompiled files when `doom--prefer-el-p' is
+non-nil or in a noninteractive session."
+  (let ((prefer-el-p (or doom--prefer-el-p noninteractive)))
+    `(require ',feature
+              ,(locate-file (concat (symbol-name feature) (if prefer-el-p ".el"))
+                            load-path))))
+
 (defmacro load! (file-or-module-sym &optional submodule file)
   "Load a module from `doom-modules-dir'. Plays the same role as
 `load-relative', but is specific to DOOM emacs modules and submodules. If
