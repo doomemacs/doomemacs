@@ -21,9 +21,9 @@
 (defvar doom-version "2.0.0"
   "Current version of DOOM emacs")
 
-(defvar doom-debug-mode nil
-  "If non-nil, all loading functions will be verbose and `use-package-debug'
-will be set.")
+(defvar doom-debug-mode (or (getenv "DEBUG") debug-on-error)
+  "If non-nil, all doom functions will be verbose. Set DEBUG=1 in the command
+line or use --debug-init to enable this.")
 
 (defvar doom-emacs-dir user-emacs-directory
   "The path to this emacs.d directory")
