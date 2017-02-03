@@ -132,7 +132,7 @@ avoided to speed up startup."
     (load (concat doom-emacs-dir "init.el") nil :nomessage :nosuffix)))
 
 (defun doom-reload-packages (&optional install-p)
-  "Reload `doom-packages'."
+  "Reload `doom-packages'. Returns the difference in packages before and after."
   (doom-initialize)
   (doom-reload-modules)
   (let ((before-packages-n (length package-alist))
@@ -185,14 +185,14 @@ Note that packages are deferred by default."
           (pushnew name doom-installed-packages))
       (setq plist (use-package-plist-delete plist :ensure))
       (setq plist (use-package-plist-delete plist :quelpa)))
-    ;; (package--save-selected-packages (cons name package-selected-packages))
     (pushnew name doom-packages)
     (macroexpand `(use-package ,name ,@plist))))
 
 (defmacro load! (file-or-module-sym &optional submodule file)
   "Load a module from `doom-modules-dir'. Plays the same role as
 `load-relative', but is specific to DOOM emacs modules and submodules. If
-`doom--prefer-el-p' is non-nil, prefer the un-compiled elisp file.
+`doom--prefer-el-p' is non-nil or in an noninteractive session, prefer the
+un-compiled elisp file.
 
 Examples:
  (load! :lang emacs-lisp)
