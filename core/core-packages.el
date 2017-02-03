@@ -88,7 +88,7 @@ byte-compilation."
              (setq doom-enabled-modules (append doom-enabled-modules (list (cons mode p))))))))
   `(unless noninteractive
      (let (file-name-handler-alist)
-       ,@(mapcar (lambda (pkg) (macroexpand `(load! ,(car pkg) ,(cdr pkg))))
+       ,@(mapcar (lambda (pkg) `(load! ,(car pkg) ,(cdr pkg)))
                  doom-enabled-modules)
 
        (when (display-graphic-p)
@@ -162,9 +162,8 @@ avoided to speed up startup."
   "A `use-package' wrapper, to adhere to the naming conventions of DOOM emacs
 and let-bind `package-name' for the containing forms. Note that packages are
 deferred by default."
-  (macroexpand
-   `(let ((package-name ',name))
-      (use-package ,name ,@plist))))
+  `(let ((package-name ',name))
+     (use-package ,name ,@plist)))
 
 (defmacro package! (name &rest plist)
   "Wraps around `use-package' (with `quelpa-use-package') and takes the same
