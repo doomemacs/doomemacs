@@ -49,9 +49,6 @@ line or use --debug-init to enable this.")
   (concat doom-local-dir "packages/")
   "Where package.el and quelpa plugins (and their caches) are kept.")
 
-(defvar doom-org-dir "~/org/"
-  "Where to find org notes")
-
 (defconst IS-MAC   (eq system-type 'darwin))
 (defconst IS-LINUX (eq system-type 'gnu/linux))
 
