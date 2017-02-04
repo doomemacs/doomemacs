@@ -1,4 +1,4 @@
-;;; autoload.el
+;;; ui/doom/autoload.el
 
 ;;;###autoload (autoload '+doom:scratch-buffer "ui/doom/autoload" nil t)
 (evil-define-operator +doom:scratch-buffer (&optional beg end bang)

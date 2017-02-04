@@ -16,9 +16,8 @@
 ;;(require 'iedit)
 ;;(require 'evil-multiedit)
 
-(package! powerline :demand t)
-
-(package! all-the-icons :when (display-graphic-p) :demand t)
-
-(package! eldoc-eval :demand t)
+(package! all-the-icons)
+(package! eldoc-eval)
+(package! evil-anzu :when (featurep 'evil))
+(package! powerline)
 

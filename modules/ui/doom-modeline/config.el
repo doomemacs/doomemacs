@@ -1,4 +1,4 @@
-;;; config.el --- make mode-lines sexy again
+;;; ui/doom-modeline/config.el
 
 ;; all-the-icons doesn't work in the terminal, so we "disable" it.
 (unless (display-graphic-p)
@@ -8,10 +8,28 @@
   (defun all-the-icons-wicon (&rest _) "" "")
   (defun all-the-icons-alltheicon (&rest _) "" ""))
 
-(after! eldoc-eval
+(use-package powerline :demand t)
+
+(use-package all-the-icons :demand t
+  :when (display-graphic-p))
+
+(use-package eldoc-eval :demand t
+  :config
   ;; Show eldoc in the mode-line with `eval-expression'
   (setq eldoc-in-minibuffer-show-fn '+doom-modeline--show-eldoc)
   (eldoc-in-minibuffer-mode +1))
+
+;; anzu and evil-anzu make it possible to display current/total in the
+;; mode-line.
+(use-package! evil-anzu
+  :init
+  (defun +evil*lazy-load-evil-anzu (&rest _) (require 'evil-anzu))
+  (advice-add 'evil-ex-start-setup :before '+evil*lazy-load-evil-anzu)
+  :config
+  (advice-remove 'evil-ex-start-setup '+evil*lazy-load-evil-anzu)
+  (setq anzu-cons-mode-line-p nil
+        anzu-minimum-input-length 1
+        anzu-search-threshold 250))
 
 
 ;;; Flash the mode-line on error
@@ -116,14 +134,6 @@ active.")
 ;; Bootstrap
 ;;
 
-;; all-the-icons doesn't work in the terminal, so we "disable" it.
-(unless (display-graphic-p)
-  (defun all-the-icons-octicon (&rest _) "" "")
-  (defun all-the-icons-faicon (&rest _) "" "")
-  (defun all-the-icons-fileicon (&rest _) "" "")
-  (defun all-the-icons-wicon (&rest _) "" "")
-  (defun all-the-icons-alltheicon (&rest _) "" ""))
-
 ;; Show version string for multi-version managers like rvm, rbenv, pyenv, etc.
 (defvar-local +doom-modeline-env-version nil)
 (defvar-local +doom-modeline-env-command nil)
@@ -178,7 +188,7 @@ active.")
      (let ((data nil)
            (i 0))
        (setq data (make-list height (make-list width 1)))
-       (pl/make-xpm "percent" color color (reverse data))))))
+       (pl/make-xpm "percent" color color data)))))
 ;; Definitely not premature optimization, I-I swear!
 (pl/memoize '+doom-modeline--make-xpm)
 
@@ -433,7 +443,9 @@ lines are selected, or the NxM dimensions of a block selection."
 (make-variable-buffer-local 'anzu--state)
 (defun *anzu ()
   "Show the match index and total number thereof. Requires `evil-anzu'."
-  (when (and (featurep 'evil-anzu) (evil-ex-hl-active-p 'evil-ex-search))
+  (when (or (featurep 'anzu)
+            (and (featurep 'evil-ex-hl-active-p)
+                 (evil-ex-hl-active-p 'evil-ex-search)))
     (propertize
      (format " %s/%d%s "
              anzu--current-position anzu--total-matched
@@ -475,6 +487,7 @@ lines are selected, or the NxM dimensions of a block selection."
      'face (if (active) 'doom-modeline-panel))))
 
 (defun *media-info ()
+  "TODO"
   (cond ((eq major-mode 'image-mode)
          (let ((size (image-size (image-get-display-property) :pixels)))
            (format "  %dx%d  " (car size) (cdr size))))))
@@ -486,9 +499,9 @@ lines are selected, or the NxM dimensions of a block selection."
 
 (+doom-modeline-define 'main
   `(:eval
-    (let* ((meta (concat (*macro-recording)
+    (let* ((meta (concat ,(if (featurep 'evil) '(*macro-recording))
                          (*anzu)
-                         (*evil-substitute)
+                         ,(if (featurep 'evil) '(*evil-substitute))
                          (*iedit)))
            (lhs (list (+doom-modeline--make-xpm (face-background (if (active)
                                                                      'doom-modeline-bar
@@ -499,7 +512,7 @@ lines are selected, or the NxM dimensions of a block selection."
                       " "
                       (*buffer-info)
                       "  %l:%c %p  "
-                      (*selection-info)))
+                      ,(if (featurep 'evil) '(*selection-info))))
            (rhs (list (*buffer-encoding)
                       (*vc)
                       (*major-mode)
@@ -519,6 +532,22 @@ lines are selected, or the NxM dimensions of a block selection."
           (propertize " " 'display `((space :align-to (1- (+ right right-fringe right-margin))))))))
 
 (+doom-modeline-define 'minimal
+  `(:eval
+    (let* ((lhs (list (+doom-modeline--make-xpm (face-background (if (active)
+                                                                     'doom-modeline-bar
+                                                                   'doom-modeline-inactive-bar))
+                                                doom-modeline-height
+                                                doom-modeline-bar-width)
+                      " "
+                      (*buffer-info)))
+           (rhs (list (*media-info)
+                      (*major-mode)))
+           (mid (propertize
+                 " " 'display `((space :align-to (- (+ right right-fringe right-margin)
+                                                    ,(+ 1 (string-width (format-mode-line rhs)))))))))
+      (list lhs mid rhs))))
+
+(+doom-modeline-define 'project
   `(:eval
     (let* ((lhs (list (+doom-modeline--make-xpm (face-background (if (active)
                                                                      'doom-modeline-bar
