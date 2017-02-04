@@ -22,6 +22,7 @@
         evil-want-Y-yank-to-eol t
         evil-magic t
         evil-echo-state t
+        evil-indent-convert-tabs t
         evil-ex-interactive-search-highlight 'selected-window
         evil-ex-search-vim-style-regexp t
         evil-ex-substitute-global t
@@ -35,6 +36,11 @@
 
   (evil-mode +1)
   (evil-select-search-module 'evil-search-module 'evil-search)
+
+  ;; Don't move cursor on indent
+  (defun +evil*static-reindent (orig-fn &rest args)
+    (save-excursion (apply orig-fn args)))
+  (advice-add 'evil-indent :around '+evil*static-reindent)
 
   (mapc (lambda (r) (evil-set-initial-state (car r) (cdr r)))
         '((compilation-mode       . normal)
@@ -106,6 +112,7 @@
   :motion mark-whole-buffer :move-point nil
   (interactive "<r><g//><!>")
   (evil-ex-global beg end pattern command invert))
+(evil-ex-define-cmd "g[lobal]" '+evil:global)
 
 (evil-define-operator +evil:align (&optional beg end bang pattern)
   "Ex interface to `align-regexp'. Accepts vim-style regexps."
