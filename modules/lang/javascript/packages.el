@@ -1,13 +1,28 @@
-;;; lang/js/packages.el
+;; -*- no-byte-compile: t; -*-
+;; lang/javascript/packages.el
 
-(package! js2-mode :mode "\\.js$" :interpreter "node")
+(package! js2-mode)
+(package! jsx-mode)
+(package! coffee-mode)
+(package! tern)
+(package! company-tern)
+(package! js2-refactor)
 
-(package! jsx-mode :mode "\\.jsx$")
+(bootstrap! javascript
+ "Sets up NodeJS, the TrepanJS debugger."
 
-(package! coffee-mode :mode "\\.coffee$")
+ :if-arch
+ (unless (and (executable-find "node")
+              (executable-find "npm"))
+   (sudo "pacman --needed --noconfirm -S nodejs npm"))
 
-(package! tern :after js2-mode)
+ ;; :if-deb
+ ;; TODO
 
-(package! company-tern :after js2-mode)
+ :if-macos
+ (unless (executable-find "node")
+   (sh "brew install node"))
 
-(package! js2-refactor :after js2-mode)
+ :after
+ (unless (executable-find "tern")
+   (sh "npm -g install trepanjs tern")))

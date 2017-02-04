@@ -1,4 +1,4 @@
-;;; custom-screeps.el
+;;; lang/javascript/+screeps.el
 
 (defconst screeps-objects
   '("ConstructionSite" "Creep" "Flag" "Game" "Memory" "Mineral" "Nuke"
