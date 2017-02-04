@@ -179,25 +179,37 @@ packages are deferred by default."
 
 (defmacro package! (name &rest plist)
   "Wraps around `use-package' to declare a deferred package (unless otherwise
-indicated), takes the same arguments, but adds the :recipe property, which takes
-a MELPA recipe. Also binds `__PACKAGE__` for PLIST forms to optionally use."
+indicated), takes the same arguments, but adds a few custom properties:
+
+ :recipe RECIPE        Takes a MELPA-style recipe (see `quelpa-recipe' for an
+                       example); for packages to be installed from external
+                       sources.
+ :pin ARCHIVE-NAME     Instructs ELPA to only look for this package in
+                       ARCHIVE-NAME. e.g. \"org\".
+ :needs FEATURE        Don't install this package if FEATURE isn't available.
+
+Also binds `__PACKAGE__` for PLIST forms to optionally use."
   (declare (indent defun))
   (let ((recipe (cadr (memq :recipe plist)))
         (pin    (cadr (memq :pin plist)))
-        (lpath  (cadr (memq :load-path plist))))
-    (when (and recipe (= 0 (mod (length recipe) 2)))
-      (push name recipe))
-    (if (not lpath)
-        (cl-pushnew (cons name recipe) doom-packages :key 'car)
-      (cl-pushnew lpath doom--base-load-path)
-      (setq recipe nil
-            pin nil))
-    (when pin
-      (cl-pushnew (cons package (plist-get plist :pin)) package-pinned-packages :key 'car))
-    (setq plist (use-package-plist-delete plist :recipe))
-    (setq plist (use-package-plist-delete plist :pin))
-    (unless doom-dont-load-p
-      `(use-package! ,name ,@plist))))
+        (lpath  (cadr (memq :load-path plist)))
+        (dep    (cadr (memq :needs plist))))
+    (when (or (not dep)
+              (or (featurep dep)
+                  (package-installed-p dep)))
+      (when (and recipe (= 0 (mod (length recipe) 2)))
+        (push name recipe))
+      (if (not lpath)
+          (cl-pushnew (cons name recipe) doom-packages :key 'car)
+        (cl-pushnew lpath doom--base-load-path)
+        (setq recipe nil
+              pin nil))
+      (when pin
+        (cl-pushnew (cons package (plist-get plist :pin)) package-pinned-packages :key 'car))
+      (setq plist (use-package-plist-delete plist :recipe))
+      (setq plist (use-package-plist-delete plist :pin))
+      (unless doom-dont-load-p
+        `(use-package! ,name ,@plist)))))
 
 (defmacro require! (feature)
   "Like `require', but will prefer uncompiled files if `doom-prefer-el-p' is
