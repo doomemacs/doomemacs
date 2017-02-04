@@ -58,7 +58,7 @@ the quelpa recipe (if any).
 
 BACKEND can be 'quelpa or 'elpa, and will instruct this function to return only
 the packages relevant to that backend."
-  (doom-initialize)
+  (doom-reload)
   (unless (quelpa-setup-p)
     (error "Could not initialize quelpa"))
   (--map (cons it (assq it quelpa-cache))
@@ -76,17 +76,30 @@ be fed to `doom/packages-update'."
 (defun doom-get-orphaned-packages ()
   "Return a list of packages that are no longer needed or depended on. Can be
 fed to `doom/packages-delete'."
-  (doom-initialize)
-  (-difference (package--removable-packages)
-               doom-protected-packages))
+  (doom-reload)
+  (let ((package-selected-packages
+         (append (mapcar 'car doom-packages) doom-protected-packages)))
+    (package--removable-packages)))
 
 ;;;###autoload
 (defun doom-get-packages-to-install ()
   "Return a list of packages that aren't installed, but need to be. Used by
 `doom/packages-install'."
-  (doom-refresh-self)
+  (doom-reload)
   (--remove (assq (car it) package-alist)
             (append doom-packages (-map 'list doom-protected-packages))))
+
+;;;###autoload
+(defun doom*package-delete (name)
+  "Makes `package-delete' update `quelpa-cache'."
+  (when (and (not (package-installed-p name))
+             (quelpa-setup-p)
+             (assq name quelpa-cache))
+    (setq quelpa-cache (assq-delete-all name quelpa-cache))
+    (quelpa-save-cache)
+    (let ((path (f-expand (symbol-name name) quelpa-build-dir)))
+      (when (f-exists-p path)
+        (delete-directory path t)))))
 
 
 ;;
@@ -133,15 +146,8 @@ appropriate."
   (doom-initialize)
   (unless (package-installed-p name)
     (error "%s isn't installed" name))
-  (let ((desc (cadr (assq package package-alist))))
+  (let ((desc (cadr (assq name package-alist))))
     (package-delete desc))
-  (when (and (quelpa-setup-p)
-             (assq name quelpa-cache))
-    (setq quelpa-cache (delq name quelpa-cache))
-    (let ((path (f-expand (symbol-name name) quelpa-build-dir)))
-      (when (f-exists-p path)
-        (delete-directory path t)))
-    (quelpa-save-cache))
   (not (package-installed-p name)))
 
 
@@ -152,6 +158,7 @@ appropriate."
 
 ;;;###autoload
 (defun doom/packages-install ()
+  "Interactive command for installing missing packages."
   (interactive)
   (let ((packages (doom-get-packages-to-install)))
     (cond ((not packages)
@@ -187,6 +194,7 @@ appropriate."
 
 ;;;###autoload
 (defun doom/packages-update ()
+  "Interactive command for updating packages."
   (interactive)
   (let ((packages (doom-get-outdated-packages)))
     (cond ((not packages)
@@ -219,6 +227,7 @@ appropriate."
 
 ;;;###autoload
 (defun doom/packages-autoremove ()
+  "Interactive command for auto-removing orphaned packages."
   (interactive)
   (let ((packages (doom-get-orphaned-packages)))
     (cond ((not packages)
@@ -242,7 +251,6 @@ appropriate."
                 (doom-message "Error deleting %s: %s" pkg ex))))
 
            (doom-message "Finished!")))))
-
 
 ;;;###autoload
 (defalias 'doom/package-install 'package-install)

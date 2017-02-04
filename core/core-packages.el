@@ -37,6 +37,10 @@ if you have byte-compiled your configuration (as intended).")
 anything, just track what should be loaded. Useful for scanning packages and
 loaded modules.")
 
+(defvar doom-reloading-p nil
+  "If non-nil, DOOM is reloading itself. Use this to determine to prevent
+infinite recursion.")
+
 (defvar doom-prefer-el-p noninteractive
   "If non-nil, load uncompiled .el config files.")
 
@@ -62,7 +66,6 @@ loaded modules.")
       use-package-verbose doom-debug-mode
       quelpa-checkout-melpa-p nil
       quelpa-update-melpa-p nil
-      quelpa-use-package-inhibit-loading-quelpa t
       quelpa-dir (expand-file-name "quelpa" doom-packages-dir)
       ;; ssh, no tears. Only compiling.
       byte-compile-warnings
@@ -107,7 +110,13 @@ avoided to speed up startup."
   (unless (or doom-init-p force-p)
     (setq load-path doom--base-load-path
           package-activated-list nil)
-    (package-initialize)
+    (package-initialize t)
+    ;; Sure, package-initialize fills the load-path, but it will error out on
+    ;; missing packages. UNACCEPTAABBLLLE!
+    (setq load-path
+          (append load-path
+                  (directory-files package-user-dir t "^[a-zA-Z0-9]" t)))
+
     (unless (and (file-exists-p doom-packages-dir)
                  (require 'use-package nil t)
                  (require 'quelpa nil t))
@@ -125,7 +134,7 @@ avoided to speed up startup."
 
     (require 'quelpa)
     (require 'use-package)
-    (advice-add 'package-delete :around 'doom*package-delete)
+    (advice-add 'package-delete :after 'doom*package-delete)
     ;; Remove package management keywords, I'll deal with the myself
     (mapc (lambda (keyword) (setq use-package-keywords (delq keyword use-package-keywords)))
           '(:ensure :pin))
@@ -134,12 +143,21 @@ avoided to speed up startup."
 (defun doom-reload ()
   "Rereads the Emacs config, reloading `doom-packages' and
 `doom-enabled-modules'."
-  (doom-initialize)
-  (let ((doom-prefer-el-p t)
-        (doom-dont-load-p t))
-    (setq doom-modules nil
-          doom-packages nil)
-    (load (concat doom-emacs-dir "init.el") :noerror (not doom-debug-mode) :nosuffix)))
+  (unless doom-reloading-p
+    (doom-initialize)
+    (let ((doom-prefer-el-p t)
+          (doom-dont-load-p t)
+          (doom-reloading-p t)
+          noninteractive)
+      (setq doom-enabled-modules nil
+            doom-packages nil)
+      (let ((load-fn (lambda (file) (load file :noerror (not doom-debug-mode) :nosuffix))))
+        (mapc load-fn
+              (list (f-expand "init.el" doom-emacs-dir)
+                    (f-expand "core.el" doom-core-dir)))
+        (mapc load-fn
+              (--map (doom-module-path (car it) (cdr it) "packages.el")
+                     doom-enabled-modules))))))
 
 
 ;;
@@ -155,43 +173,48 @@ avoided to speed up startup."
 conventions of DOOM emacs, as well as let-bind `__PACKAGE__' for the containing
 forms. This is helpful for macros like `set!' and `add-hook!'. Note that
 packages are deferred by default."
+  (declare (indent defun))
   `(let ((__PACKAGE__ ',name))
      (use-package ,name ,@plist)))
 
 (defmacro package! (name &rest plist)
-  "Wraps around `use-package' (with `quelpa-use-package') and takes the same
-arguments. Ensures the package named NAME is installed and available. If
-`doom--auto-install-p' is nil, then strip out :ensure and :quelpa properties,
-which is the case if you've byte-compiled DOOM Emacs.
-
-Note that packages are deferred by default."
+  "Wraps around `use-package' to declare a deferred package (unless otherwise
+indicated), takes the same arguments, but adds the :recipe property, which takes
+a MELPA recipe. Also binds `__PACKAGE__` for PLIST forms to optionally use."
   (declare (indent defun))
   (let ((recipe (cadr (memq :recipe plist)))
-        (pin    (cadr (memq :pin plist))))
-    (when recipe
-      (when (= 0 (mod (length recipe) 2))
-        (push name recipe))
-      (setq plist (use-package-plist-delete plist :recipe)))
+        (pin    (cadr (memq :pin plist)))
+        (lpath  (cadr (memq :load-path plist))))
+    (when (and recipe (= 0 (mod (length recipe) 2)))
+      (push name recipe))
+    (if (not lpath)
+        (cl-pushnew (cons name recipe) doom-packages :key 'car)
+      (cl-pushnew lpath doom--base-load-path)
+      (setq recipe nil
+            pin nil))
     (when pin
-      (add-to-list 'package-pinned-packages (cons package (plist-get plist :pin)))
-      (setq plist (use-package-plist-delete plist :pin)))
-    (pushnew (cons name recipe) doom-packages :key 'car)
+      (cl-pushnew (cons package (plist-get plist :pin)) package-pinned-packages :key 'car))
+    (setq plist (use-package-plist-delete plist :recipe))
+    (setq plist (use-package-plist-delete plist :pin))
     (unless doom-dont-load-p
       `(use-package! ,name ,@plist))))
 
 (defmacro require! (feature)
-  "Like `require', but prefers uncompiled files when `doom-prefer-el-p' is
-non-nil or in a noninteractive session."
+  "Like `require', but will prefer uncompiled files if `doom-prefer-el-p' is
+non-nil or this is a noninteractive session."
   (let ((prefer-el-p (or doom-prefer-el-p noninteractive)))
     `(require ',feature
               ,(locate-file (concat (symbol-name feature) (if prefer-el-p ".el"))
                             load-path))))
 
-(defmacro load! (file-or-module-sym &optional submodule file)
-  "Load a module from `doom-modules-dir'. Plays the same role as
-`load-relative', but is specific to DOOM emacs modules and submodules. If
-`doom-prefer-el-p' is non-nil or in an noninteractive session, prefer the
-un-compiled elisp file.
+(defmacro load! (module &optional submodule file)
+  "Load a module from `doom-modules-dir' when both MODULE and SUBMODULE is
+provided (both symbols). If FILE is non-nil, append it to the resulting path. If
+SUBMODULE is nil, MODULE is loaded relative to the current file (see `__DIR__').
+When SUBMODULE is nil, FILE isn't used.
+
+Will prefer uncompiled elisp sources if `doom-prefer-el-p' is non-nil or this is
+an noninteractive session.
 
 Examples:
  (load! :lang emacs-lisp)
@@ -205,13 +228,13 @@ Examples:
         path file)
     (cond ((null submodule)
            (setq path __DIR__
-                 file (concat (symbol-name file-or-module-sym) ".el")))
+                 file (concat (symbol-name module) ".el")))
           (t
-           (pushnew (cons file-or-module-sym submodule)
-                    doom-enabled-modules
-                    :test (lambda (x y) (and (eq (car x) (car y))
-                                        (eq (cdr x) (cdr y)))))
-           (setq path (doom-module-path file-or-module-sym submodule)
+           (cl-pushnew (cons module submodule)
+                       doom-enabled-modules
+                       :test (lambda (x y) (and (eq (car x) (car y))
+                                           (eq (cdr x) (cdr y)))))
+           (setq path (doom-module-path module submodule)
                  file (or file "config.el"))))
     (setq path (f-slash path)
           file (concat path file))
@@ -249,39 +272,42 @@ or make clean outside of Emacs."
   "Refreshes the autoloads.el file, which tells Emacs where to find all the
 autoloaded functions in the modules you use or among the core libraries.
 
+In modules, checks for modules/*/autoload.el and modules/*/autoload/*.el.
+
 Rerun this whenever you modify your init.el (or use `make autoloads` from the
 command line)."
   (interactive)
-  (doom-reload)
-  (let ((generated-autoload-file (concat doom-local-dir "autoloads.el"))
-        (autoload-files
-         (append (-flatten (mapcar (lambda (dir)
-                                     (let ((auto-dir  (f-expand "autoload" dir))
-                                           (auto-file (f-expand "autoload.el" dir)))
-                                       (cond ((f-directory-p auto-dir)
-                                              (f-glob "*.el" auto-dir))
-                                             ((f-exists-p auto-file)
-                                              auto-file))))
-                                   (--map (doom-module-path (car it) (cdr it)) doom-enabled-modules)))
-                 (f-glob "autoload/*.el" doom-core-dir))))
-    (when (f-exists-p generated-autoload-file)
-      (f-delete generated-autoload-file)
-      (message "Deleted old autoloads.el"))
-    (dolist (file autoload-files)
-      (update-file-autoloads file)
-      (message "Detected: %s" (f-relative file doom-emacs-dir)))
-    (with-current-buffer (get-file-buffer generated-autoload-file)
-      (save-buffer))
-    (load generated-autoload-file nil t t)
-    (message "Done!")))
+  (unless doom-reloading-p
+    (doom-reload)
+    (let ((generated-autoload-file (concat doom-local-dir "autoloads.el"))
+          (autoload-files
+           (append (-flatten (mapcar (lambda (dir)
+                                       (let ((auto-dir  (f-expand "autoload" dir))
+                                             (auto-file (f-expand "autoload.el" dir)))
+                                         (cond ((f-directory-p auto-dir)
+                                                (f-glob "*.el" auto-dir))
+                                               ((f-exists-p auto-file)
+                                                auto-file))))
+                                     (--map (doom-module-path (car it) (cdr it)) doom-enabled-modules)))
+                   (f-glob "autoload/*.el" doom-core-dir))))
+      (when (f-exists-p generated-autoload-file)
+        (f-delete generated-autoload-file)
+        (message "Deleted old autoloads.el"))
+      (dolist (file autoload-files)
+        (update-file-autoloads file)
+        (message "Detected: %s" (f-relative file doom-emacs-dir)))
+      (with-current-buffer (get-file-buffer generated-autoload-file)
+        (save-buffer)
+        (eval-buffer))
+      (message "Done!"))))
 
 (defun doom/byte-compile (&optional comprehensive-p)
   "Byte (re)compile the important files in your emacs configuration (i.e.
 init.el, core/*.el and modules/*/*/config.el) DOOM Emacs was designed to benefit
 a lot from this.
 
-If COMPREHENSIVE-P or the envar ALL is non-nil, also compile all autoload files.
-The benefit from this is minimal and may take more time."
+If COMPREHENSIVE-P is non-nil, then compile modules/*/*/*.el (except for
+packages.el files). The benefit from this is minimal and may take more time."
   (interactive)
   (doom-reload)
   (let ((targets (append

@@ -133,9 +133,7 @@ enable multiple minor modes for the same regexp.")
 
   ;;; Let 'er rip
   (require 'core-lib)
-  (unless (require 'autoloads (concat doom-local-dir "autoloads.el") t)
-    (doom/refresh-autoloads))
-
+  (require 'autoloads (concat doom-local-dir "autoloads.el") t)
   (unless noninteractive
     (package! anaphora
       :commands (awhen aif acond awhile))
@@ -160,7 +158,12 @@ enable multiple minor modes for the same regexp.")
     (require! core-ui)          ; draw me like one of your French editors
     (require! core-popups)      ; taming sudden yet inevitable windows
     (require! core-editor)      ; baseline configuration for text editing
-    (require! core-projects)))  ; making Emacs project-aware
+    (require! core-projects)    ; making Emacs project-aware
+
+    ;; We check last as a promise that the core files won't use autoloaded
+    ;; functions. If they do, it shouldn't be autoloaded!
+    (unless (featurep 'autoloads)
+      (doom/refresh-autoloads))))
 
 (provide 'core)
 ;;; core.el ends here
