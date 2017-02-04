@@ -126,11 +126,6 @@ enable multiple minor modes for the same regexp.")
     (doom-initialize))
   (setq load-path (eval-when-compile load-path))
 
-  (eval-and-compile
-    (require 'dash)
-    (require 'f)
-    (require 's))
-
   ;;; Let 'er rip
   (require 'core-lib)
   (require 'autoloads (concat doom-local-dir "autoloads.el") t)

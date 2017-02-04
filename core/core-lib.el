@@ -3,6 +3,15 @@
 (defvar +evil-leader)
 (defvar +evil-localleader)
 
+(require 'dash)
+(require 'f)
+(require 's)
+
+
+;;
+;; Library
+;;
+
 (defmacro λ! (&rest body)
   "A shortcut for inline keybind lambdas."
   `(lambda () (interactive) ,@body))
