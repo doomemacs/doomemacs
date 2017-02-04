@@ -1,8 +1,8 @@
-;;; config.el
-
-;; A silly little thing that prompts you with messages when you try to quit.
-;; Some quotes are taken from Doom's quit messages, others are random
-;; references.
+;;; fun/doom-quit/config.el
+;;
+;; A silly module that prompts you with messages when you try to quit, like DOOM
+;; did. Some quotes are taken from Doom's quit-message list, others are random,
+;; nerdy references that no decent human being has any business recognizing.
 
 (defvar +doom-quit-messages
   '(;; from Doom 1
