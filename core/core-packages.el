@@ -128,7 +128,7 @@ avoided to speed up startup."
                   (unless (package-installed-p pkg)
                     (error "Couldn't install %s" pkg)))
                 doom-protected-packages)
-        ('error
+        (error
          (delete-directory doom-packages-dir t)
          (error "There was an error initializing DOOM. Try running it again"))))
 

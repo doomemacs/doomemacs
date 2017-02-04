@@ -187,7 +187,7 @@ appropriate."
                                pkg
                                (cond ((cdr pkg) "QUELPA")
                                      (t "ELPA")))
-               ('error
+               (error
                 (doom-message "Error installing %s: %s" (car pkg) ex))))
 
            (doom-message "Finished!")))))
@@ -220,7 +220,7 @@ appropriate."
                                    "Updated"
                                  "Failed to update")
                                pkg)
-               ('error
+               (error
                 (doom-message "Error installing %s: %s" pkg ex))))
 
            (doom-message "Finished!")))))
@@ -247,7 +247,7 @@ appropriate."
                                    "Deleted"
                                  "Failed to delete")
                                pkg)
-               ('error
+               (error
                 (doom-message "Error deleting %s: %s" pkg ex))))
 
            (doom-message "Finished!")))))
