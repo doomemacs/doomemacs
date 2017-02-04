@@ -76,6 +76,8 @@ infinite recursion.")
 ;; Bootstrap function
 ;;
 
+(autoload 'use-package "use-package" nil nil 'macro)
+
 (defmacro doom! (&rest packages)
   "DOOM Emacs bootstrap macro. List the modules to load. Benefits from
 byte-compilation."
