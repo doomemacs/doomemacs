@@ -27,7 +27,10 @@ clean-elc:
 	@rm -fv init.elc
 	@find {core,modules} -type f -iname '*.elc' -exec rm \-fv {} \;
 
+test:
+	@$(EMACS) --batch -l test/init.el -f 'doom!run-tests'
+
 init.el:
 	@[ -f init.el ] || $(error No init.el file, please create one or copy init.example.el)
 
-.PHONY: all
+.PHONY: all test
