@@ -141,3 +141,16 @@ evil-window-move-* (e.g. `evil-window-move-far-left')"
         (switch-to-buffer this-buffer))
       (select-window that-window))))
 
+;;;###autoload (autoload '+evil:macro-on-all-lines "feature/evil/autoload" nil t)
+(evil-define-operator +evil:macro-on-all-lines (beg end &optional macro)
+  "Apply macro to each line."
+  :motion nil
+  :move-point nil
+  (interactive "<r><a>")
+  (unless (and beg end)
+    (setq beg (region-beginning)
+          end (region-end)))
+  (evil-ex-normal beg end
+                  (concat "@"
+                          (single-key-description
+                           (or macro (read-char "@-"))))))

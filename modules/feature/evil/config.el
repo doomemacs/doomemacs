@@ -14,8 +14,7 @@
 ;; evil-mode
 ;;
 
-(use-package! evil
-  :demand t
+(use-package! evil :demand t
   :init
   (setq evil-want-C-u-scroll t
         evil-want-visual-char-semi-exclusive t
@@ -30,7 +29,7 @@
         evil-insert-skip-empty-lines t)
 
   :config
-  (def-popup!
+  (set! :popup
     ("*evil-registers*" :size 0.3)
     ("*Command Line*" :size 8))
 
@@ -287,16 +286,14 @@ if on a delimiter, jump to the matching one (`evilmi-jump-items')."
   (+evil--textobj! "B" 'evil-textobj-anyblock-inner-block 'evil-textobj-anyblock-a-block))
 
 
-(use-package! evil-search-highlight-persist
-  :demand t
+(use-package! evil-search-highlight-persist :demand t
   :commands (evil-textobj-anyblock-inner-block evil-textobj-anyblock-a-block)
   :config
   (global-evil-search-highlight-persist t)
   (advice-add 'evil-force-normal-state :after 'evil-search-highlight-persist-remove-all))
 
 
-(use-package! evil-snipe
-  :demand t
+(use-package! evil-snipe :demand t
   :init
   (setq evil-snipe-smart-case t
         evil-snipe-repeat-keys nil ; using space to repeat
