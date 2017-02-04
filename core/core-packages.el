@@ -309,7 +309,7 @@ command line)."
         (message "Deleted old autoloads.el"))
       (dolist (file autoload-files)
         (update-file-autoloads file)
-        (message "Detected: %s" (f-relative file doom-emacs-dir)))
+        (message "Scanned %s" (f-relative file doom-emacs-dir)))
       (with-current-buffer (get-file-buffer generated-autoload-file)
         (save-buffer)
         (eval-buffer))
@@ -321,7 +321,7 @@ init.el, core/*.el and modules/*/*/config.el) DOOM Emacs was designed to benefit
 a lot from this.
 
 If COMPREHENSIVE-P is non-nil, then compile modules/*/*/*.el (except for
-packages.el files). The benefit from this is minimal and may take more time."
+packages.el files) -- this will likely take a long time."
   (interactive)
   (doom-reload)
   (let ((targets (append
@@ -331,9 +331,9 @@ packages.el files). The benefit from this is minimal and may take more time."
                   (-flatten
                    (--map (f--entries (doom-module-path (car it) (cdr it))
                                       (and (f-ext-p it "el")
-                                           (if comprehensive-p
-                                               (not (string= (f-base it) "packages"))
-                                             (string= (f-base it) "config")))
+                                           (or comprehensive-p
+                                               (string= (f-base it) "config")
+                                               (string-prefix-p "+" (f-base it))))
                                       t)
                           doom-enabled-modules))))
         (n 0)
