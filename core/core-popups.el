@@ -67,8 +67,8 @@
   ;; :noesc and :modeline are custom settings and are not part of shackle. See
   ;; `doom*popup-init' and `doom-popup-buffer' for how they're used.
   (set! :popup
-    ("^ ?\\*doom:.+\\*$" :size 35  :regexp t   :modeline t)
-    ("^ ?\\*doom .+\\*$" :size 12  :noselect t :regexp t :modeline t)
+    ("^ ?\\*doom:.+\\*$" :size 40  :modeline t :regexp t)
+    ("^ ?\\*doom .+\\*$" :size 30  :noselect t :regexp t)
     ("^\\*.+-Profiler-Report .+\\*$" :size 0.3 :regexp t)
     ("*esup*"            :size 0.4 :noselect t :noesc t)
     ("*minor-modes*"     :size 0.5 :noselect t)
@@ -77,7 +77,7 @@
     ("*Apropos*"         :size 0.3)
     ("*Backtrace*"       :size 25  :noselect t)
     ("*Help*"            :size 16)
-    ("*Messages*"        :size 10  :select t)
+    ("*Messages*"        :size 10)
     ("*Warnings*"        :size 10  :noselect t)
     ("*command-log*"     :size 28  :noselect t :align right)
     (compilation-mode    :size 15  :noselect t :noesc t)
