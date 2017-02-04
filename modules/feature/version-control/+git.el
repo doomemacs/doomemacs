@@ -1,4 +1,4 @@
-;;; core/version-control/+git.el
+;;; feature/version-control/+git.el
 
 (use-package! gitconfig-mode
   :mode "/\\.?git/?config$"

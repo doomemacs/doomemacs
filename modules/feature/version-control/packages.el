@@ -1,5 +1,5 @@
 ;; -*- no-byte-compile: t; -*-
-;;; core/version-control/packages.el
+;;; feature/version-control/packages.el
 
 ;;; config.el
 ;; n/a

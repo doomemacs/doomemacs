@@ -1,4 +1,4 @@
-;;; core/version-control/config.el
+;;; feature/version-control/config.el
 
 (load! +git)
 ;; (load! +hg)
