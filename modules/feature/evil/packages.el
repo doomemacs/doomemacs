@@ -1,3 +1,4 @@
+;; -*- no-byte-compile: t; -*-
 ;;; core/evil/packages.el
 
 (package! evil)

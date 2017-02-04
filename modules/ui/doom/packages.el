@@ -1,3 +1,4 @@
+;; -*- no-byte-compile: t; -*-
 ;;; ui/doom/packages.el
 
 (package! beacon :demand t)

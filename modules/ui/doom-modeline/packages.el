@@ -1,4 +1,5 @@
-;;; packages.el
+;; -*- no-byte-compile: t; -*-
+;;; ui/doom-modeline/packages.el
 
 ;;; These are the invisible dependencies
 ;; Required

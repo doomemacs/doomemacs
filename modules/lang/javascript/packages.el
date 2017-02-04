@@ -1,5 +1,5 @@
 ;; -*- no-byte-compile: t; -*-
-;; lang/javascript/packages.el
+;;; lang/javascript/packages.el
 
 (package! js2-mode)
 (package! jsx-mode)
