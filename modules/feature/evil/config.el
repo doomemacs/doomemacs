@@ -14,6 +14,10 @@
 ;; evil-mode
 ;;
 
+(doom-def-setting :evil-state
+  'evil-set-initial-state
+  "Set the initialize STATE of MODE using `evil-set-initial-state'.")
+
 (use-package! evil :demand t
   :init
   (setq evil-want-C-u-scroll t
@@ -316,9 +320,9 @@ if on a delimiter, jump to the matching one (`evilmi-jump-items')."
   (evil-snipe-mode 1)
   (evil-snipe-override-mode 1)
   ;; Switch to evil-easymotion/avy after first snipe
-  (define-key evil-snipe-parent-transient-map (kbd "C-;")
-    (λ! (require 'evil-easymotion)
-        (call-interactively +evil--snipe-repeat-fn))))
+  (map! :map evil-snipe-parent-transient-map
+        "C-;" (λ! (require 'evil-easymotion)
+                  (call-interactively +evil--snipe-repeat-fn))))
 
 
 (use-package! evil-surround
@@ -369,28 +373,27 @@ if on a delimiter, jump to the matching one (`evilmi-jump-items')."
           "^#.*#$"))
 
   :config
-  (evil-set-initial-state 'neotree-mode 'motion)
+  (set! :evil-state (neotree-mode motion))
 
   ;; Adding keybindings to `neotree-mode-map' wouldn't work for me (they get
   ;; overridden when the neotree buffer is spawned). So we bind them in a hook.
   (add-hook 'neo-after-create-hook '+evil|neotree-init-keymap)
   (defun +evil|neotree-init-keymap (&rest _)
-    (let ((map evil-motion-state-local-map))
-      (define-key map (kbd "\\\\")     'evil-window-prev)
-      (define-key map (kbd "RET")      'neotree-enter)
-      (define-key map (kbd "<return>") 'neotree-enter)
-      (define-key map (kbd "ESC ESC")  'neotree-hide)
-      (define-key map [return]         'neotree-enter)
-      (define-key map "q"              'neotree-hide)
-      (define-key map "J"              'neotree-select-next-sibling-node)
-      (define-key map "K"              'neotree-select-previous-sibling-node)
-      (define-key map "H"              'neotree-select-up-node)
-      (define-key map "L"              'neotree-select-down-node)
-      (define-key map "v"              'neotree-enter-vertical-split)
-      (define-key map "s"              'neotree-enter-horizontal-split)
-      (define-key map "c"              'neotree-create-node)
-      (define-key map "d"              'neotree-delete-node)
-      (define-key map "\C-r"           'neotree-refresh)
-      (define-key map "r"              'neotree-rename-node)
-      (define-key map "R"              'neotree-change-root))))
+    (map! :Lm "\\\\"     'evil-window-prev
+          :Lm "RET"      'neotree-enter
+          :Lm "<return>" 'neotree-enter
+          :Lm "ESC ESC"  'neotree-hide
+          :Lm [return]   'neotree-enter
+          :Lm "q"        'neotree-hide
+          :Lm "J"        'neotree-select-next-sibling-node
+          :Lm "K"        'neotree-select-previous-sibling-node
+          :Lm "H"        'neotree-select-up-node
+          :Lm "L"        'neotree-select-down-node
+          :Lm "v"        'neotree-enter-vertical-split
+          :Lm "s"        'neotree-enter-horizontal-split
+          :Lm "c"        'neotree-create-node
+          :Lm "d"        'neotree-delete-node
+          :Lm "\C-r"     'neotree-refresh
+          :Lm "r"        'neotree-rename-node
+          :Lm "R"        'neotree-change-root)))
 

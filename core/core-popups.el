@@ -37,27 +37,33 @@
   "Active keymap in popup windows.")
 
 
+;;
+;; Bootstrap
+;;
+
+(doom-def-setting :popup
+  (lambda (&rest rule)
+    (let ((pattern (car rule))
+          (plist (cdr rule)))
+      ;; Align popups by default (error if this doesn't happen)
+      (unless (plist-member plist :align)
+        (plist-put plist :align t))
+      ;; Select popups by default
+      (unless (or (plist-member plist :select)
+                  (plist-member plist :noselect))
+        (plist-put plist :select t))
+      (push (cons pattern plist) shackle-rules)))
+  "Prepend a new popup rule to `shackle-rules'.")
+
 (package! shackle :demand t
-  :config
-  (shackle-mode 1)
+  :init
   (setq shackle-default-alignment 'below
         shackle-select-reused-windows t)
 
-  (def-setting! :popup (rule)
-    "Prepend a new popup rule to `shackle-rules'."
-    ;; Ensure some default attributes are set for window rules
-    (let ((pattern (car rule))
-          (ruleset (cdr rule)))
-      ;; Align popups by default (error if this doesn't happen)
-      (unless (plist-member ruleset :align)
-        (plist-put ruleset :align shackle-default-alignment))
-      ;; Select popups by default
-      (unless (or (plist-member ruleset :select)
-                  (plist-member ruleset :noselect))
-        (plist-put ruleset :select t))
-      (setq rule (append (list pattern) ruleset))
-      `(push ',rule shackle-rules)))
+  :config
+  (shackle-mode 1)
 
+  ;;; Baseline popup-window rules
   ;; :noesc and :modeline are custom settings and are not part of shackle. See
   ;; `doom*popup-init' and `doom-popup-buffer' for how they're used.
   (set! :popup

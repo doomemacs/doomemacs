@@ -26,23 +26,19 @@ during compilation."
 HOOK can be one hook or a list of hooks. If the hook(s) are not quoted, -hook is
 appended to them automatically. If they are quoted, they are used verbatim.
 
-FUNC-OR-FORMS can be a quoted symbol, a list of quoted symbols, or forms. Forms will be
-wrapped in a lambda. A list of symbols will expand into a series of add-hook calls.
+FUNC-OR-FORMS can be a quoted symbol, a list of quoted symbols, or forms. Forms
+will be wrapped in a lambda. A list of symbols will expand into a series of
+add-hook calls.
 
 Examples:
     (add-hook! 'some-mode-hook 'enable-something)
     (add-hook! some-mode '(enable-something and-another))
     (add-hook! '(one-mode-hook second-mode-hook) 'enable-something)
     (add-hook! (one-mode second-mode) 'enable-something)
-    (add-hook! (one-mode second-mode) (setq v 5) (setq a 2))
-
-If HOOK is omitted, then default to `__PACKAGE__' to determine HOOK."
+    (add-hook! (one-mode second-mode) (setq v 5) (setq a 2))"
   (declare (indent defun) (debug t))
   (unless func-or-forms
-    (unless (bound-and-true-p __PACKAGE__)
-      (error "add-hook!: FUNC-OR-FORMS is empty"))
-    (setq func-or-forms hook
-          hook __PACKAGE__))
+    (error "add-hook!: FUNC-OR-FORMS is empty"))
   (let* ((val (car func-or-forms))
          (quoted-p (eq (car-safe hook) 'quote))
          (hook (if quoted-p (cadr hook) hook))
@@ -60,15 +56,14 @@ If HOOK is omitted, then default to `__PACKAGE__' to determine HOOK."
                           (-list hook)))))
              funcs))))
 
-(defmacro associate! (&rest rest)
+(defmacro associate! (mode &rest plist)
   "Associate a major or minor mode to certain patterns and project files."
   (declare (indent 1))
-  (let* ((mode  (if (keywordp (car rest)) __PACKAGE__ (pop rest)))
-         (minor (plist-get rest :minor))
-         (in    (plist-get rest :in))
-         (match (plist-get rest :match))
-         (files (plist-get rest :files))
-         (pred  (plist-get rest :when)))
+  (let* ((minor (plist-get plist :minor))
+         (in    (plist-get plist :in))
+         (match (plist-get plist :match))
+         (files (plist-get plist :files))
+         (pred  (plist-get plist :when)))
     (cond ((or files in pred)
            (when (and files (not (or (listp files) (stringp files))))
              (user-error "associate! :files expects a string or list of strings"))
