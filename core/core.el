@@ -21,7 +21,7 @@
 (defvar doom-version "2.0.0"
   "Current version of DOOM emacs")
 
-(defvar doom-debug-mode (or (getenv "DEBUG") debug-on-error)
+(defvar doom-debug-mode (or (getenv "DEBUG") init-file-debug)
   "If non-nil, all doom functions will be verbose. Set DEBUG=1 in the command
 line or use --debug-init to enable this.")
 
