@@ -8,7 +8,7 @@
          (window-parameter window 'popup))))
 
 ;;;###autoload
-(defun doom-popup-buffer (buffer &optional plist)
+(defun doom-popup-buffer (buffer &rest plist)
   "Display BUFFER in a shackle popup. See `shackle-rules' for possible rules."
   (let* ((buffer-name (cond ((stringp buffer) buffer)
                             ((bufferp buffer) (buffer-name buffer))
@@ -16,12 +16,14 @@
          (buffer (get-buffer-create buffer-name)))
     (unless (doom-popup-p)
       (setq doom-popup-other-window (selected-window)))
+    (when (and plist (not (plist-member plist :align)))
+      (plist-put plist :align shackle-default-alignment))
     (shackle-display-buffer
      buffer
      nil (or plist (shackle-match buffer-name)))))
 
 ;;;###autoload
-(defun doom-popup-file (file &optional plist)
+(defun doom-popup-file (file &rest plist)
   "Display FILE in a shackle popup, with PLIST rules. See `shackle-rules' for
 possible rules."
   (unless (file-exists-p file)
