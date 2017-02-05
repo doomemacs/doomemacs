@@ -9,20 +9,19 @@
   "An alist of settings, mapping setting keywords to setter functions, which can
 be a lambda or symbol.")
 
-(defun doom-def-setting (keyword setter-fn &optional docstring)
+(defmacro def-setting! (keyword arglist &optional docstring &rest forms)
   "Define a setting macro. Takes the same arguments as `defmacro'. This should
 return forms, which will be run when `set!' is used to call this setting."
-  (declare (indent defun))
+  (declare (indent defun) (doc-string 3))
   (unless (keywordp keyword)
     (error "Not a valid property name: %s" keyword))
-  (unless (or (symbolp setter-fn)
-              (functionp setter-fn))
-    (error "Not a valid setting function for %s" keyword))
-  (push (list keyword
-              :source load-file-name
-              :docstring docstring
-              :fn setter-fn)
-        doom-settings))
+  `(push (list ,keyword
+               :source ,(__FILE__)
+               :docstring ,docstring
+               :fn (lambda ,arglist
+                     ,docstring
+                     ,@forms))
+         doom-settings))
 
 (defmacro set! (keyword &rest rest)
   "Set an option defined by `def-setting!'. Skip if doesn't exist."

@@ -36,24 +36,23 @@
     map)
   "Active keymap in popup windows.")
 
+(def-setting! :popup (&rest rule)
+  "Prepend a new popup rule to `shackle-rules'."
+  (let ((pattern (car rule))
+        (plist (cdr rule)))
+    ;; Align popups by default (error if this doesn't happen)
+    (unless (plist-member plist :align)
+      (plist-put plist :align t))
+    ;; Select popups by default
+    (unless (or (plist-member plist :select)
+                (plist-member plist :noselect))
+      (plist-put plist :select t))
+    (push (cons pattern plist) shackle-rules)))
+
 
 ;;
 ;; Bootstrap
 ;;
-
-(doom-def-setting :popup
-  (lambda (&rest rule)
-    (let ((pattern (car rule))
-          (plist (cdr rule)))
-      ;; Align popups by default (error if this doesn't happen)
-      (unless (plist-member plist :align)
-        (plist-put plist :align t))
-      ;; Select popups by default
-      (unless (or (plist-member plist :select)
-                  (plist-member plist :noselect))
-        (plist-put plist :select t))
-      (push (cons pattern plist) shackle-rules)))
-  "Prepend a new popup rule to `shackle-rules'.")
 
 (package! shackle :demand t
   :init
@@ -67,24 +66,25 @@
   ;; :noesc and :modeline are custom settings and are not part of shackle. See
   ;; `doom*popup-init' and `doom-popup-buffer' for how they're used.
   (set! :popup
-    ("^ ?\\*doom:.+\\*$" :size 40  :modeline t :regexp t)
-    ("^ ?\\*doom .+\\*$" :size 30  :noselect t :regexp t)
+    ("^ ?\\*doom:.+\\*$"      :size 40  :modeline t :regexp t)
+    ("^ ?\\*doom .+\\*$"      :size 30  :noselect t :regexp t)
     ("^\\*.+-Profiler-Report .+\\*$" :size 0.3 :regexp t)
-    ("*esup*"            :size 0.4 :noselect t :noesc t)
-    ("*minor-modes*"     :size 0.5 :noselect t)
-    ("*eval*"            :size 16  :noselect t)
-    ("*Pp Eval Output*"  :size 0.3)
-    ("*Apropos*"         :size 0.3)
-    ("*Backtrace*"       :size 25  :noselect t)
-    ("*Help*"            :size 16)
-    ("*Messages*"        :size 10)
-    ("*Warnings*"        :size 10  :noselect t)
-    ("*command-log*"     :size 28  :noselect t :align right)
-    (compilation-mode    :size 15  :noselect t :noesc t)
-    (ivy-occur-grep-mode :size 25  :noesc t)
-    (eww-mode            :size 30)
-    (comint-mode         :noesc t)
-    (tabulated-list-mode :noesc t))
+    ("*esup*"                 :size 0.4 :noselect t :noesc t)
+    ("*minor-modes*"          :size 0.5 :noselect t)
+    ("*eval*"                 :size 16  :noselect t)
+    ("*Pp Eval Output*"       :size 0.3)
+    ("*Apropos*"              :size 0.3)
+    ("*Backtrace*"            :size 25  :noselect t)
+    ("*Help*"                 :size 16)
+    ("*Messages*"             :size 10)
+    ("*Warnings*"             :size 10  :noselect t)
+    ("*command-log*"          :size 28  :noselect t :align right)
+    ("*Shell Command Output*" :size 20 :noselect t)
+    (compilation-mode         :size 15  :noselect t :noesc t)
+    (ivy-occur-grep-mode      :size 25  :noesc t)
+    (eww-mode                 :size 30)
+    (comint-mode              :noesc t)
+    (tabulated-list-mode      :noesc t))
 
   (define-minor-mode doom-popup-mode
     "Minor mode for pop-up windows."

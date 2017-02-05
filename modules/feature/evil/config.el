@@ -9,14 +9,14 @@
 (defvar +evil-localleader "\\"
   "The <localleader> key, used by the `map!' macro for :localleader bindings.")
 
+(def-setting! :evil-state (mode state)
+  "Set the initialize STATE of MODE using `evil-set-initial-state'."
+  (evil-set-initial-state mode state))
+
 
 ;;
 ;; evil-mode
 ;;
-
-(doom-def-setting :evil-state
-  'evil-set-initial-state
-  "Set the initialize STATE of MODE using `evil-set-initial-state'.")
 
 (use-package! evil :demand t
   :init
