@@ -18,6 +18,6 @@
 
 (package! all-the-icons)
 (package! eldoc-eval)
-(package! evil-anzu :when (featurep 'evil))
+(package! evil-anzu :needs evil)
 (package! powerline)
 
