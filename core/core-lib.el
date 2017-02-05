@@ -7,6 +7,21 @@
 (require 'f)
 (require 's)
 
+(package! anaphora
+  :commands (awhen aif acond awhile))
+
+(package! async
+  :commands (async-start
+             async-start-process
+             async-byte-recompile-directory))
+
+(package! persistent-soft
+  :preface (defvar pcache-directory (concat doom-cache-dir "pcache/"))
+  :commands (persistent-soft-exists-p
+             persistent-soft-fetch
+             persistent-soft-flush
+             persistent-soft-store))
+
 
 ;;
 ;; Library
@@ -68,35 +83,36 @@ Examples:
 (defmacro associate! (mode &rest plist)
   "Associate a major or minor mode to certain patterns and project files."
   (declare (indent 1))
-  (let* ((minor (plist-get plist :minor))
-         (in    (plist-get plist :in))
-         (match (plist-get plist :match))
-         (files (plist-get plist :files))
-         (pred  (plist-get plist :when)))
-    (cond ((or files in pred)
-           (when (and files (not (or (listp files) (stringp files))))
-             (user-error "associate! :files expects a string or list of strings"))
-           (let ((hook-name (intern (format "doom--init-mode-%s" mode))))
-             (macroexp-progn
-              (list `(defun ,hook-name ()
-                       (when (and ,(if match `(if buffer-file-name (string-match-p ,match buffer-file-name)) t)
-                                  (or ,(not files)
-                                      (and (boundp ',mode)
-                                           (not ,mode)
-                                           (doom-project-has-files ,@(-list files))))
-                                  (or (not ,pred)
-                                      (funcall ,pred buffer-file-name)))
-                         (,mode 1)))
-                    (if (and in (listp in))
-                        (macroexp-progn
-                         (mapcar (lambda (h) `(add-hook ',h ',hook-name))
-                                 (mapcar (lambda (m) (intern (format "%s-hook" m))) in)))
-                      `(add-hook 'find-file-hook ',hook-name))))))
-          (match
-           `(add-to-list ',(if minor 'doom-auto-minor-mode-alist 'auto-mode-alist)
-                         (cons ,match ',mode)))
-          (t (user-error "associate! invalid rules for mode [%s] (in %s) (match %s) (files %s)"
-                         mode in match files)))))
+  (unless noninteractive
+    (let* ((minor (plist-get plist :minor))
+           (in    (plist-get plist :in))
+           (match (plist-get plist :match))
+           (files (plist-get plist :files))
+           (pred  (plist-get plist :when)))
+      (cond ((or files in pred)
+             (when (and files (not (or (listp files) (stringp files))))
+               (user-error "associate! :files expects a string or list of strings"))
+             (let ((hook-name (intern (format "doom--init-mode-%s" mode))))
+               (macroexp-progn
+                (list `(defun ,hook-name ()
+                         (when (and ,(if match `(if buffer-file-name (string-match-p ,match buffer-file-name)) t)
+                                    (or ,(not files)
+                                        (and (boundp ',mode)
+                                             (not ,mode)
+                                             (doom-project-has-files ,@(-list files))))
+                                    (or (not ,pred)
+                                        (funcall ,pred buffer-file-name)))
+                           (,mode 1)))
+                      (if (and in (listp in))
+                          (macroexp-progn
+                           (mapcar (lambda (h) `(add-hook ',h ',hook-name))
+                                   (mapcar (lambda (m) (intern (format "%s-hook" m))) in)))
+                        `(add-hook 'find-file-hook ',hook-name))))))
+            (match
+             `(add-to-list ',(if minor 'doom-auto-minor-mode-alist 'auto-mode-alist)
+                           (cons ,match ',mode)))
+            (t (user-error "associate! invalid rules for mode [%s] (in %s) (match %s) (files %s)"
+                           mode in match files))))))
 
 ;; Register keywords for proper indentation (see `map!')
 (put ':prefix       'lisp-indent-function 'defun)
@@ -159,97 +175,108 @@ Example
           (:when IS-MAC
            :n \"M-s\" 'some-fn
            :i \"M-o\" (lambda (interactive) (message \"Hi\"))))"
-  (let ((keymaps (if (boundp 'keymaps) keymaps))
-        (prefix  (if (boundp 'prefix) prefix))
-        (state-map '(("n" . normal)
-                     ("v" . visual)
-                     ("i" . insert)
-                     ("e" . emacs)
-                     ("o" . operator)
-                     ("m" . motion)
-                     ("r" . replace)))
-        local key def states forms)
-    (while rest
-      (setq key (pop rest))
-      (cond
-       ;; it's a sub expr
-       ((listp key)
-        (push (macroexpand `(map! ,@key)) forms))
+  (unless noninteractive
+    (let ((keymaps (if (boundp 'keymaps) keymaps))
+          (prefix  (if (boundp 'prefix) prefix))
+          (state-map '(("n" . normal)
+                       ("v" . visual)
+                       ("i" . insert)
+                       ("e" . emacs)
+                       ("o" . operator)
+                       ("m" . motion)
+                       ("r" . replace)))
+          local key def states forms)
+      (while rest
+        (setq key (pop rest))
+        (cond
+         ;; it's a sub expr
+         ((listp key)
+          (push (macroexpand `(map! ,@key)) forms))
 
-       ;; it's a flag
-       ((keywordp key)
-        (when (cond ((eq key :leader)
-                     (push (or +evil-leader ",") rest))
-                    ((eq key :localleader)
-                     (push (or +evil-localleader "\\") rest)))
-          (setq key :prefix))
-        (pcase key
-          (:prefix  (setq prefix (concat prefix (kbd (pop rest)))))
-          (:map     (setq keymaps (-list (pop rest))))
-          (:unset  `(,(macroexpand `(map! ,(kbd (pop rest))))))
-          (:after   (prog1 `((after! ,(pop rest)   ,(macroexpand `(map! ,@rest)))) (setq rest '())))
-          (:when    (prog1 `((if ,(pop rest)       ,(macroexpand `(map! ,@rest)))) (setq rest '())))
-          (:unless  (prog1 `((if (not ,(pop rest)) ,(macroexpand `(map! ,@rest)))) (setq rest '())))
-          (otherwise ; might be a state prefix
-           (mapc (lambda (letter)
-                   (cond ((assoc letter state-map)
-                          (push (cdr (assoc letter state-map)) states))
-                         ((string= letter "L")
-                          (setq local t))
-                         (t (user-error "Invalid mode prefix %s in key %s" letter key))))
-                 (split-string (substring (symbol-name key) 1) "" t))
-           (unless states
-             (user-error "Unrecognized keyword %s" key))
-           (when (assoc "L" states)
-             (cond ((= (length states) 1)
-                    (user-error "local keybinding for %s must accompany another state" key))
-                   ((> (length keymaps) 0)
-                    (user-error "local keybinding for %s cannot accompany a keymap" key)))))))
+         ;; it's a flag
+         ((keywordp key)
+          (when (cond ((eq key :leader)
+                       (push (or +evil-leader ",") rest))
+                      ((eq key :localleader)
+                       (push (or +evil-localleader "\\") rest)))
+            (setq key :prefix))
+          (pcase key
+            (:prefix  (setq prefix (concat prefix (kbd (pop rest)))))
+            (:map     (setq keymaps (-list (pop rest))))
+            (:unset  `(,(macroexpand `(map! ,(kbd (pop rest))))))
+            (:after   (prog1 `((after! ,(pop rest)   ,(macroexpand `(map! ,@rest)))) (setq rest '())))
+            (:when    (prog1 `((if ,(pop rest)       ,(macroexpand `(map! ,@rest)))) (setq rest '())))
+            (:unless  (prog1 `((if (not ,(pop rest)) ,(macroexpand `(map! ,@rest)))) (setq rest '())))
+            (otherwise ; might be a state prefix
+             (mapc (lambda (letter)
+                     (cond ((assoc letter state-map)
+                            (push (cdr (assoc letter state-map)) states))
+                           ((string= letter "L")
+                            (setq local t))
+                           (t (user-error "Invalid mode prefix %s in key %s" letter key))))
+                   (split-string (substring (symbol-name key) 1) "" t))
+             (unless states
+               (user-error "Unrecognized keyword %s" key))
+             (when (assoc "L" states)
+               (cond ((= (length states) 1)
+                      (user-error "local keybinding for %s must accompany another state" key))
+                     ((> (length keymaps) 0)
+                      (user-error "local keybinding for %s cannot accompany a keymap" key)))))))
 
-       ;; It's a key-def pair
-       ((or (stringp key)
-            (characterp key)
-            (vectorp key))
-        (unwind-protect
-            (catch 'skip
-              (when (stringp key)
-                (setq key (kbd key)))
-              (when prefix
-                (setq key (if (vectorp key) (vconcat prefix key) (concat prefix key))))
-              (unless (> (length rest) 0)
-                (user-error "Map has no definition for %s" key))
-              (setq def (pop rest))
-              (push
-               (cond ((and keymaps states)
-                      (throw 'skip 'evil)
-                      (macroexp-progn
-                       (mapcar (lambda (keymap) `(evil-define-key* ',states ,keymap ,key ,def))
-                               keymaps)))
-                     (keymaps
-                      (macroexp-progn
-                       (mapcar (lambda (keymap) `(define-key ,keymap ,key ,def))
-                               keymaps)))
-                     (states
-                      (throw 'skip 'evil)
-                      (macroexp-progn
-                       (mapcar (lambda (state)
-                                 `(define-key
-                                    (evil-state-property ',state ,(if local :local-keymap :keymap) t)
-                                    ,key ,def))
-                               states)))
-                     (t `(,(if local 'local-set-key 'global-set-key)
-                          ,key ,def)))
-               forms))
-          (setq states '()
-                local nil)))
+         ;; It's a key-def pair
+         ((or (stringp key)
+              (characterp key)
+              (vectorp key))
+          (unwind-protect
+              (catch 'skip
+                (when (stringp key)
+                  (setq key (kbd key)))
+                (when prefix
+                  (setq key (if (vectorp key) (vconcat prefix key) (concat prefix key))))
+                (unless (> (length rest) 0)
+                  (user-error "Map has no definition for %s" key))
+                (setq def (pop rest))
+                (push
+                 (cond ((and keymaps states)
+                        (throw 'skip 'evil)
+                        (macroexp-progn
+                         (mapcar (lambda (keymap) `(evil-define-key* ',states ,keymap ,key ,def))
+                                 keymaps)))
+                       (keymaps
+                        (macroexp-progn
+                         (mapcar (lambda (keymap) `(define-key ,keymap ,key ,def))
+                                 keymaps)))
+                       (states
+                        (throw 'skip 'evil)
+                        (macroexp-progn
+                         (mapcar (lambda (state)
+                                   `(define-key
+                                      (evil-state-property ',state ,(if local :local-keymap :keymap) t)
+                                      ,key ,def))
+                                 states)))
+                       (t `(,(if local 'local-set-key 'global-set-key)
+                            ,key ,def)))
+                 forms))
+            (setq states '()
+                  local nil)))
 
-       (t (user-error "Invalid key %s" key))))
-    (macroexp-progn (reverse forms))))
+         (t (user-error "Invalid key %s" key))))
+      (macroexp-progn (reverse forms)))))
 
-(when (or noninteractive doom-dont-load-p)
-  (defmacro add-hook! (&rest _))
-  (defmacro associate! (&rest _))
-  (defmacro map! (&rest _)))
+(defun doom-os ()
+  "Returns the OS: arch, debian, macos, general linux, cygwin or windows."
+  (let ((gnu-linux-p (eq system-type 'gnu/linux)))
+    (cond ((and gnu-linux-p (f-exists-p "/etc/arch-release"))
+           'arch)
+          ((and gnu-linux-p (f-exists-p "/etc/debian_version"))
+           'debian)
+          (gnu-linux-p
+           'linux)
+          ((eq system-type 'darwin)
+           'macos)
+          ((memq system-type '(windows-nt cygwin))
+           'windows)
+          (t (error "Unknown OS: %s" system-type)))))
 
 (provide 'core-lib)
 ;;; core-lib.el ends here

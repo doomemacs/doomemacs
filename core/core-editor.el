@@ -184,6 +184,8 @@
 (package! smart-forward
   :commands (smart-up smart-down smart-backward smart-forward))
 
+(package! smex :commands smex)
+
 (package! swiper :commands (swiper swiper-all))
 
 (package! wgrep

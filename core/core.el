@@ -130,30 +130,12 @@ enable multiple minor modes for the same regexp.")
   (require 'core-lib)
   (require 'autoloads (concat doom-local-dir "autoloads.el") t)
   (unless noninteractive
-    (package! anaphora
-      :commands (awhen aif acond awhile))
-
-    (package! async
-      :commands (async-start
-                 async-start-process
-                 async-byte-recompile-directory))
-
-    (package! persistent-soft
-      :preface (defvar pcache-directory (concat doom-cache-dir "pcache/"))
-      :commands (persistent-soft-exists-p
-                 persistent-soft-fetch
-                 persistent-soft-flush
-                 persistent-soft-store))
-
-    (package! smex :commands smex)
-
-    ;;
-    (require! core-set)         ; a centralized config system; provides `set!'
-    (require! core-states)      ; TODO
-    (require! core-ui)          ; draw me like one of your French editors
-    (require! core-popups)      ; taming sudden yet inevitable windows
-    (require! core-editor)      ; baseline configuration for text editing
-    (require! core-projects)    ; making Emacs project-aware
+    (require 'core-set)         ; a centralized config system; provides `set!'
+    (require 'core-states)      ; TODO
+    (require 'core-ui)          ; draw me like one of your French editors
+    (require 'core-popups)      ; taming sudden yet inevitable windows
+    (require 'core-editor)      ; baseline configuration for text editing
+    (require 'core-projects)    ; making Emacs project-aware
 
     ;; We check last as a promise that the core files won't use autoloaded
     ;; functions. If they do, it shouldn't be autoloaded!
