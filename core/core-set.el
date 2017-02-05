@@ -1,7 +1,12 @@
 ;;; core-set.el
-
-;; When we switch out feature modules, I don't want certain config segments to
-;; casue errors. This gives a
+;;
+;; This provides a centralized configuration system that a) won't evaluate its
+;; arguments if it doesn't need to (performance), b) won't complain if the
+;; setting doesn't exist and c) is more elegant than a bunch of `after!' blocks,
+;; which can cause intermittent stuttering in large quantities. I'm a fan of
+;; concise, do-what-I-mean front-facing configuration, believe it or not.
+;;
+;; Plus, it can benefit from byte-compilation.
 
 (define-key help-map "\C-s" 'doom/describe-setting)
 
