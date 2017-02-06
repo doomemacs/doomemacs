@@ -1,4 +1,5 @@
 ;;; ui.el
+(provide 'doom-lib-ui)
 
 ;;;###autoload
 (defun doom/toggle-fullscreen ()

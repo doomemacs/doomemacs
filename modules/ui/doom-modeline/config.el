@@ -1,4 +1,5 @@
 ;;; ui/doom-modeline/config.el
+(provide '+doom-modeline)
 
 ;; all-the-icons doesn't work in the terminal, so we "disable" it.
 (unless (display-graphic-p)

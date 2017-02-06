@@ -1,5 +1,5 @@
 ;; -*- no-byte-compile: t; -*-
-;;; core/evil/packages.el
+;;; feature/evil/packages.el
 
 (package! evil)
 (package! evil-args)

@@ -1,4 +1,4 @@
-;;; autoload.el
+;;; os/macos/autoload.el
 
 ;;;###autoload
 (defun +macos-open-with (&optional app-name path)

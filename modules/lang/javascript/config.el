@@ -1,4 +1,5 @@
 ;; lang/javascript/config.el
+(provide '+javascript)
 
 (use-package! js2-mode
   :mode "\\.js$"

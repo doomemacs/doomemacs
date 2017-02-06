@@ -1,4 +1,5 @@
 ;;; ui/doom/config.el
+(provide '+doom)
 
 (defvar +doom-theme 'doom-one
   "The color theme currently in use.")

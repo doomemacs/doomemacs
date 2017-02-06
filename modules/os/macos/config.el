@@ -1,3 +1,5 @@
+;;; os/macos/config.el
+(provide '+macos)
 
 (setq mac-command-modifier 'meta
       mac-option-modifier  'alt

@@ -1,4 +1,5 @@
 ;;; lang/emacs-lisp/config.el
+(provide '+emacs-lisp)
 
 (associate! emacs-lisp-mode :match "/Cask$")
 (add-hook! emacs-lisp-mode '(highlight-quoted-mode auto-compile-on-save-mode +emacs-lisp|hook))

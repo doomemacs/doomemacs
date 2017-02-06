@@ -1,4 +1,5 @@
 ;;; editor.el
+(provide 'doom-lib-editor)
 
 (defun doom--goto-first-non-blank ()
   (beginning-of-visual-line)

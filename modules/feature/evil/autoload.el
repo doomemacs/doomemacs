@@ -1,4 +1,4 @@
-;;; core/evil/packages.el
+;;; feature/evil/packages.el
 
 ;;;###autoload
 (defun +evil*ex-replace-special-filenames (file-name)

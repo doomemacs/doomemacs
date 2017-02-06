@@ -1,4 +1,5 @@
 ;;; packages.el
+(provide 'doom-lib-packages)
 
 (defvar doom-packages-last-refresh nil
   "A timestamp indicating the last time `package-refresh-contents' was run.")

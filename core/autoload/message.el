@@ -1,4 +1,5 @@
 ;;; message.el
+(provide 'doom-lib-message)
 
 ;;;###autoload
 (defun doom-message-buffer ()
