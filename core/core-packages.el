@@ -85,6 +85,10 @@ byte-compilation."
              (setq mode p))
             ((not mode)
              (error "No namespace specified on `doom!' for %s" p))
+            ((eq p '*)
+             (let ((mode-name (substring (symbol-name mode) 1)))
+               (--map (setq doom-modules (append doom-modules (list (cons mode (f-base it)))))
+                      (f-directories (f-expand mode-name doom-modules-dir)))))
             (t
              (setq doom-modules (append doom-modules (list (cons mode p))))))))
   (unless noninteractive
