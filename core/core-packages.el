@@ -16,6 +16,14 @@
 ;;    Cask, which I used previously. package.el and quelpa appear to be much
 ;;    more stable.
 ;; 4. No external dependencies (e.g. Cask) for plugin management.
+;;
+;; Note: it should be safe to use *most* package.el functions directly, but for
+;; complete certainty I recommend the DOOM variants: `doom/install-package',
+;; `doom/delete-package' and `doom/update-packages'. As well as:
+;; `doom/packages-install', `doom/packages-update', and
+;; `doom/packages-autoremove'.
+;;
+;; See core/autoload/packages.el for more functions.
 
 (defvar doom-enabled-modules nil
   "List of enabled modules; each element is a cons cell (MODULE . SUBMODULE),
@@ -65,6 +73,7 @@ if you have byte-compiled your configuration (as intended).")
 ;;
 
 (autoload 'use-package "use-package" nil nil 'macro)
+(advice-add 'package-delete :after 'doom*package-delete)
 
 (defmacro doom! (&rest packages)
   "DOOM Emacs bootstrap macro. List the modules to load. Benefits from
@@ -77,20 +86,20 @@ byte-compilation."
              (error "No namespace specified on `doom!' for %s" p))
             (t
              (setq doom-enabled-modules (append doom-enabled-modules (list (cons mode p))))))))
-  `(let (file-name-handler-alist)
-     ,@(mapcar (lambda (pkg) `(load! ,(car pkg) ,(cdr pkg)))
-               doom-enabled-modules)
+  `(unless noninteractive
+     (let (file-name-handler-alist)
+       ,@(mapcar (lambda (pkg) `(load! ,(car pkg) ,(cdr pkg)))
+                 doom-enabled-modules)
 
-     (when (display-graphic-p)
-       (require 'server)
-       (unless (server-running-p)
-         (server-start)))
+       (when (display-graphic-p)
+         (require 'server)
+         (unless (server-running-p)
+           (server-start)))
 
-     ;; Prevent any auto-displayed text + benchmarking
-     (advice-add 'display-startup-echo-area-message :override 'ignore)
-     (message "Loaded %s packages in %s"
-              (- (length load-path) (length doom--base-load-path))
-              (emacs-init-time))))
+       ;; Benchmark
+       (format "Loaded %s packages in %s"
+               (- (length load-path) (length doom--base-load-path))
+               (emacs-init-time)))))
 
 (defun doom-initialize (&optional force-p)
   "Initialize installed packages (using package.el) and ensure the core packages
@@ -102,9 +111,11 @@ avoided to speed up startup."
     (package-initialize t)
     ;; Sure, package-initialize fills the load-path, but it will error out on
     ;; missing packages. UNACCEPTAABBLLLE!
-    (setq load-path
-          (append load-path
-                  (directory-files package-user-dir t "^[a-zA-Z0-9]" t)))
+    (setq load-path (append load-path (directory-files package-user-dir t "^[a-zA-Z0-9]" t)))
+
+    ;; Ensure cache folder exists
+    (unless (file-exists-p doom-cache-dir)
+      (make-directory doom-cache-dir t))
 
     (unless (and (file-exists-p doom-packages-dir)
                  (require 'use-package nil t)
@@ -123,56 +134,43 @@ avoided to speed up startup."
 
     (require 'quelpa)
     (require 'use-package)
-    (advice-add 'package-delete :after 'doom*package-delete)
     ;; Remove package management keywords, I'll deal with the myself
     (mapc (lambda (keyword) (setq use-package-keywords (delq keyword use-package-keywords)))
           '(:ensure :pin))
     (setq doom-init-p t)))
+
+(defun doom-initialize-autoloads (&optional force-p)
+  "Ensures that an autoloads file exists and is loaded."
+  (unless (or (featurep 'autoloads)
+              (load doom-autoload-file t t))
+    (doom/refresh-autoloads)
+    (unless (file-exists-p doom-autoload-file)
+      (error "Autoloads file couldn't be generated"))))
 
 
 ;;
 ;; Macros
 ;;
 
-(defvar __DIR__ nil  "The directory of the currently loaded file (set by `load!')")
-(defvar __FILE__ nil "The full path of the currently loaded file (set by `load!')")
 (defvar __PACKAGE__ nil "The name of the current package.")
 
-(defun __DIR__ ()
-  (or __DIR__
-      (and load-file-name (f-dirname load-file-name))
-      (and buffer-file-name (f-dirname buffer-file-name))
-      default-directory
-      (and (bound-and-true-p byte-compile-current-file)
-           (f-dirname byte-compile-current-file))
-      (error "__DIR__ is unset")))
+(defalias 'use-package! 'use-package
+  "A `use-package' alias. It exists so DOOM configs adhere to the naming
+conventions of DOOM emacs. Note that packages are deferred by default.
 
-(defun __FILE__ ()
-  (or __FILE__
-      load-file-name
-      buffer-file-name
-      (and (bound-and-true-p byte-compile-current-file)
-           byte-compile-current-file)
-      (error "__FILE__ is unset")))
-
-(defmacro use-package! (name &rest plist)
-  "A `use-package' wrapper. It exists so configs can adhere to the naming
-conventions of DOOM emacs, as well as let-bind `__PACKAGE__' for the containing
-forms. This is helpful for macros like `set!' and `add-hook!'. Note that
-packages are deferred by default."
-  (declare (indent defun))
-  `(let ((__PACKAGE__ ',name))
-     (use-package ,name ,@plist)))
+By DOOM conventions, using this instead of `package!' means you are configuring
+a package regardless of whether it's installed or not, while `package!' is used
+to declare how to install/setup a package.")
 
 (defmacro package! (name &rest plist)
-  "Declares a package. This does not actually load nor install them explicitly.
+  "Declares a package. This does not load nor install them explicitly.
 
 If used in `doom-core-dir', this is a wrapper for `use-package!' (all packages
 are deferred by default), and takes the same arguments as `use-package'.
 
-If used outside of `doom-core-dir', this macro is purely declarative and doesn't
-call `use-package!'. These calls are parsed by package management functions,
-such as `doom-read-packages'.
+If used outside of `doom-core-dir' (i.e. in packages.el files within modules),
+this macro serves a purely declarative purpose and doesn't call `use-package!'.
+These calls are parsed by `doom-read-packages' to build `doom-packages'.
 
 Adds a few custom properties in either case:
 
@@ -189,7 +187,8 @@ Adds a few custom properties in either case:
   (declare (indent defun))
   (mapc (lambda (key) (setq plist (use-package-plist-delete plist key)))
         '(:recipe :pin :setup :needs))
-  `(use-package! ,name ,@plist))
+  `(let ((__PACKAGE__ ',name))
+     (use-package! ,name ,@plist)))
 
 (defmacro load! (module &optional submodule file)
   "Load a module from `doom-modules-dir' when both MODULE and SUBMODULE is
@@ -224,7 +223,7 @@ Examples:
 
 (defun doom-module-path (module submodule &optional file)
   "Get the full path to a module: e.g. :lang emacs-lisp maps to
-~/.emacs.d/modules/lang/emacs-lisp/. Will append FILE if non-nil."
+~/.emacs.d/modules/lang/emacs-lisp/ and will append FILE if non-nil."
   (setq module
         (cond ((keywordp module) (substring (symbol-name module) 1))
               ((symbolp module) (symbol-name module))
@@ -315,86 +314,6 @@ There should be a measurable benefit from this, but it may take a while."
       (message "Compiled %s files:\n%s" n
                (mapconcat (lambda (file) (concat "+ " (if (cdr file) "SUCCESS" "FAIL") ": " (car file)))
                           (reverse results) "\n")))))
-
-
-;;
-;; Package parsing
-;;
-
-(defun doom--parse-forms (sym forms)
-  (let ((result-forms (and (boundp 'result-forms) result-forms)))
-    (dolist (form forms)
-      (cond ((eq (car-safe form) sym)
-             (push (cdr-safe form) result-forms))
-
-            ((and (listp form)
-                  (not (-cons-pair? form)))
-             (setq result-forms (doom--parse-forms sym form)))))
-    result-forms))
-
-(defun doom--parse-file-forms (sym file)
-  (declare (indent defun))
-  (unless (f-exists-p file)
-    (error "%s does not exist" file))
-  (unless (symbolp sym)
-    (error "%s is not a valid symbol" sym))
-  (let (forms)
-    (with-temp-buffer
-      (insert "(setq forms '(\n")
-      (insert-file-contents file)
-      (goto-char (point-max))
-      (insert "\n))")
-      (eval-buffer))
-    (doom--parse-forms sym forms)))
-
-(defun doom--strip-property (plist property)
-  (let (forms)
-    (while (and plist (not (eq (car plist) property)))
-      (setq forms (append forms (list (pop plist)))))
-    (pop plist)
-    (while (and plist (not (keywordp (car plist))))
-      (pop plist))
-    (when plist
-      (setq forms (append forms plist)))
-    forms))
-
-(defun doom-read-packages (&optional force-p nopackages)
-  "Parses your Emacs config to keep track of packages declared with `package!'
-in `doom-packages' and enabled modules in `doom-enabled-modules'."
-  (doom-initialize)
-  (when (or force-p (not doom-enabled-modules) (not doom-packages))
-    (setq doom-enabled-modules
-          (let (paths mode enabled-modules)
-            (--each (doom--parse-file-forms 'doom! (f-expand "init.el" doom-emacs-dir))
-              (dolist (module it)
-                (cond ((keywordp module)
-                       (setq mode module))
-                      ((not mode)
-                       (error "Malformed doom! call: no namespace for %s" module))
-                      (t
-                       (push (cons mode module) enabled-modules)))))
-            enabled-modules))
-
-    (unless nopackages
-      (setq package-pinned-packages nil
-            doom-packages nil)
-      (mapc (lambda (pkg) (cl-pushnew pkg doom-packages :key 'car))
-            (mapcar (lambda (args)
-                      (mapc (lambda (keyword) (setq args (doom--strip-property args keyword)))
-                            '(:preface :ensure :requires :no-require :bind :bind* :bind-keymap
-                              :bind-keymap* :interpreter :mode :commands :defines :functions
-                              :defer :init :after :demand :config :diminish :delight))
-                      args)
-                    (--sort (string-greaterp (symbol-name (car it))
-                                             (symbol-name (car other)))
-                            (-flatten-n
-                             1 (mapcar (lambda (file)
-                                         (when (f-exists-p file)
-                                           (doom--parse-file-forms 'package! file)))
-                                       (append (f-glob "core*.el" doom-core-dir)
-                                               (--map (doom-module-path (car it) (cdr it) "packages.el")
-                                                      doom-enabled-modules)))))))
-      t)))
 
 (provide 'core-packages)
 ;;; core-packages.el ends here

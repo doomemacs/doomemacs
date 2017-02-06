@@ -90,9 +90,65 @@ fed to `doom/packages-delete'."
   (--remove (assq (car it) package-alist)
             (append doom-packages (-map 'list doom-protected-packages))))
 
+(defun doom--scrape-sexps (sym file)
+  (declare (indent defun))
+  (unless (f-exists-p file)
+    (error "%s does not exist" file))
+  (unless (symbolp sym)
+    (error "%s is not a valid symbol" sym))
+  (with-temp-buffer
+    (insert-file-contents file)
+    (goto-char (point-min))
+    (let ((regexp (concat "\\(^\\|\\s-\\)(" (symbol-name sym) " "))
+          sexps)
+      (while (re-search-forward regexp nil t)
+        (let ((sexp (cdr-safe (save-excursion
+                                (beginning-of-defun)
+                                (sexp-at-point)))))
+          (push sexp sexps)))
+      (reverse sexps))))
+
+;;;###autoload
+(defun doom-read-packages (&optional force-p nopackages)
+  "Parses your Emacs config to keep track of packages declared with `package!'
+in `doom-packages' and enabled modules in `doom-enabled-modules'."
+  (doom-initialize)
+  (when (or force-p (not doom-enabled-modules) (not doom-packages))
+    (setq doom-enabled-modules
+          (let (paths mode enabled-modules)
+            (--each (doom--scrape-sexps 'doom! (f-expand "init.el" doom-emacs-dir))
+              (dolist (module it)
+                (cond ((keywordp module)
+                       (setq mode module))
+                      ((not mode)
+                       (error "Malformed doom! call: no namespace for %s" module))
+                      (t
+                       (push (cons mode module) enabled-modules)))))
+            enabled-modules))
+
+    (unless nopackages
+      (setq package-pinned-packages nil
+            doom-packages nil)
+      (mapc (lambda (pkg) (cl-pushnew pkg doom-packages :key 'car))
+            (-map (lambda (args)
+                    (plist! args &delete
+                      :preface :ensure :requires :no-require :bind :bind* :bind-keymap
+                      :bind-keymap* :interpreter :mode :commands :defines :functions
+                      :defer :init :after :demand :config :diminish :delight))
+                  (--sort (string-greaterp (symbol-name (car it))
+                                           (symbol-name (car other)))
+                          (-flatten-n
+                           1 (mapcar (lambda (file)
+                                       (when (f-exists-p file)
+                                         (doom--scrape-sexps 'package! file)))
+                                     (append (f-glob "core*.el" doom-core-dir)
+                                             (--map (doom-module-path (car it) (cdr it) "packages.el")
+                                                    doom-enabled-modules)))))))
+      t)))
+
 ;;;###autoload
 (defun doom*package-delete (name)
-  "Makes `package-delete' update `quelpa-cache'."
+  "Update `quelpa-cache' upon a successful `package-delete'."
   (when (and (not (package-installed-p name))
              (quelpa-setup-p)
              (assq name quelpa-cache))
@@ -164,7 +220,6 @@ appropriate."
   (let ((desc (cadr (assq name package-alist))))
     (package-delete desc))
   (not (package-installed-p name)))
-
 
 
 ;;
@@ -256,7 +311,9 @@ appropriate."
           ((not (y-or-n-p
                  (format "%s packages will be deleted:\n\n%s\n\nProceed?"
                          (length packages)
-                         (mapconcat 'symbol-name (-sort 'string-lessp packages) ", "))))
+                         (mapconcat (lambda (sym) (format "+ %s" (symbol-name sym)))
+                                    (-sort 'string-lessp packages)
+                                    "\n"))))
            (message "Aborted!"))
 
           (t
@@ -289,6 +346,8 @@ appropriate."
 
 ;;;###autoload
 (defun doom/update-package (&optional package)
+  "Use this instead of package.el's update interface."
+  (declare (interactive-only t))
   (interactive
    (list (completing-read "Update package: " (doom-get-packages))))
   (if (doom-package-outdated-p package)
