@@ -21,7 +21,7 @@ autoloads: init.el
 compile: init.el clean-elc
 	@$(EMACS) --batch -l init.el -f 'doom/byte-compile'
 
-compile-all: init.el clean-elc
+compile-lite: init.el clean-elc
 	@$(EMACS) --batch -l core/core.el --eval '(doom/byte-compile t)'
 
 clean-cache:
