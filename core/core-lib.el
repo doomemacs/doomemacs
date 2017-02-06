@@ -1,10 +1,8 @@
 ;;; core-lib.el
 
 (require 'dash)
-(require 'f)
 (require 's)
-(eval-when-compile (require 'cl-lib))
-
+(require 'f)
 
 (defvar +evil-leader)
 (defvar +evil-localleader)
@@ -53,11 +51,12 @@
 
 (defmacro λ! (&rest body)
   "A shortcut for inline keybind lambdas."
+  (declare (doc-string 1))
   `(lambda () (interactive) ,@body))
 
 (defmacro after! (feature &rest forms)
-  "A smart wrapper around `with-eval-after-load', that supresses warnings
-during compilation."
+  "A smart wrapper around `with-eval-after-load'. Supresses warnings during
+compilation."
   (declare (indent defun) (debug t))
   `(,(if (or (not (boundp 'byte-compile-current-file))
              (not byte-compile-current-file)

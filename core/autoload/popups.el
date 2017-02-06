@@ -18,7 +18,7 @@
     (unless (doom-popup-p)
       (setq doom-popup-other-window (selected-window)))
     (when (and plist (not (plist-member plist :align)))
-      (plist-put plist :align shackle-default-alignment))
+      (plist-put plist :align t))
     (shackle-display-buffer
      buffer
      nil (or plist (shackle-match buffer-name)))))
