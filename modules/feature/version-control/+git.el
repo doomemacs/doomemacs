@@ -31,7 +31,7 @@
 (use-package! magit
   :commands magit-status
   :config
-  (def-popup! ("^\\*magit.+" :regexp t))
+  (set! :popup ("^\\*magit.+" :regexp t))
   (after! evil-snipe
     ;; evil-snipe conflicts with magit
     (add-hook 'magit-mode-hook 'turn-off-evil-snipe-override-mode)))
