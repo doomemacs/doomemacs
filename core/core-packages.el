@@ -25,7 +25,7 @@
 ;;
 ;; See core/autoload/packages.el for more functions.
 
-(defvar doom-enabled-modules nil
+(defvar doom-modules nil
   "List of enabled modules; each element is a cons cell (MODULE . SUBMODULE),
 where MODULE is the module's property symbol, e.g. :lang, and SUBMODULE is the
 submodule symbol, e.g. 'evil.")
@@ -85,11 +85,11 @@ byte-compilation."
             ((not mode)
              (error "No namespace specified on `doom!' for %s" p))
             (t
-             (setq doom-enabled-modules (append doom-enabled-modules (list (cons mode p))))))))
-  `(unless noninteractive
-     (let (file-name-handler-alist)
+             (setq doom-modules (append doom-modules (list (cons mode p))))))))
+  (unless noninteractive
+    `(let (file-name-handler-alist)
        ,@(mapcar (lambda (pkg) `(load! ,(car pkg) ,(cdr pkg)))
-                 doom-enabled-modules)
+                 doom-modules)
 
        (when (display-graphic-p)
          (require 'server)
@@ -210,7 +210,7 @@ Examples:
                  file (concat (symbol-name module) ".el")))
           (t
            (cl-pushnew (cons module submodule)
-                       doom-enabled-modules
+                       doom-modules
                        :test (lambda (x y) (and (eq (car x) (car y))
                                            (eq (cdr x) (cdr y)))))
            (setq path (doom-module-path module submodule)
@@ -240,7 +240,7 @@ Examples:
 ;;
 
 (defun doom/reload ()
-  "Reload `load-path', `doom-enabled-modules' and `doom-packages' by
+  "Reload `load-path', `doom-modules' and `doom-packages' by
 reinitializing doom and parsing config files for `package!' and `doom!' calls.
 There are few reasons to use this."
   (interactive)
@@ -269,7 +269,7 @@ the commandline."
                                            ((f-exists-p auto-file)
                                             auto-file)))
                                    (--map (doom-module-path (car it) (cdr it))
-                                          doom-enabled-modules)))
+                                          doom-modules)))
                   (f-glob "autoload/*.el" doom-core-dir)))
     (when (f-exists-p generated-autoload-file)
       (f-delete generated-autoload-file)
@@ -300,7 +300,7 @@ There should be a measurable benefit from this, but it may take a while."
                                             (or (string= (f-base it) "config")
                                                 (string-prefix-p "+" (f-base it))))
                                        t)
-                           doom-enabled-modules)))))
+                           doom-modules)))))
         (n 0)
         results)
     (dolist (file targets)

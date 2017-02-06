@@ -112,10 +112,10 @@ fed to `doom/packages-delete'."
 ;;;###autoload
 (defun doom-read-packages (&optional force-p nopackages)
   "Parses your Emacs config to keep track of packages declared with `package!'
-in `doom-packages' and enabled modules in `doom-enabled-modules'."
+in `doom-packages' and enabled modules in `doom-modules'."
   (doom-initialize)
-  (when (or force-p (not doom-enabled-modules) (not doom-packages))
-    (setq doom-enabled-modules
+  (when (or force-p (not doom-modules) (not doom-packages))
+    (setq doom-modules
           (let (paths mode enabled-modules)
             (--each (doom--scrape-sexps 'doom! (f-expand "init.el" doom-emacs-dir))
               (dolist (module it)
@@ -144,7 +144,7 @@ in `doom-packages' and enabled modules in `doom-enabled-modules'."
                                          (doom--scrape-sexps 'package! file)))
                                      (append (f-glob "core*.el" doom-core-dir)
                                              (--map (doom-module-path (car it) (cdr it) "packages.el")
-                                                    doom-enabled-modules)))))))
+                                                    doom-modules)))))))
       t)))
 
 ;;;###autoload
@@ -168,25 +168,26 @@ in `doom-packages' and enabled modules in `doom-enabled-modules'."
   "Installs package NAME with optional quelpa RECIPE (see `quelpa-recipe' for an
 example; the package name can be omitted)."
   (doom-refresh-packages)
+  (doom-read-packages)
   (when (package-installed-p name)
     (error "%s is already installed, skipping" name))
   (when (plist-get plist :disabled)
     (error "%s is disabled, skipping" name))
   (when (plist-get plist :load-path)
     (error "%s has a local load-path, skipping" name))
-  (cond ((plist-get plist :recipe)
-         (let ((recipe (plist-get plist :recipe)))
-           (when (and recipe (= 0 (mod (length recipe) 2)))
-             (setq recipe (cons name recipe)))
-           (quelpa recipe)))
-        (t (package-install name)))
+  (let ((needs (plist-get plist :needs)))
+    (when (and needs
+               (--any-p (not (rassq it doom-modules))
+                        (-list needs)))
+      (error "%s doesn't have necessary dependencies (%s), skipping" needs)))
+  (let ((inhibit-message (not doom-debug-mode)))
+    (cond ((plist-get plist :recipe)
+           (let ((recipe (plist-get plist :recipe)))
+             (when (and recipe (= 0 (mod (length recipe) 2)))
+               (setq recipe (cons name recipe)))
+             (quelpa recipe)))
+          (t (package-install name))))
   (cl-pushnew (cons name plist) doom-packages :key 'car)
-  (when (plist-member plist :setup)
-    (let ((setup (plist-get plist :setup)))
-      (when (listp setup)
-        (setq setup (assq (doom-os) setup)))
-      (when setup
-        (async-shell-command setup))))
   (package-installed-p name))
 
 (defun doom-update-package (name)
@@ -196,7 +197,8 @@ appropriate."
   (unless (package-installed-p name)
     (error "%s isn't installed" name))
   (when (doom-package-outdated-p name)
-    (let (quelpa-modified-p)
+    (let ((inhibit-message (not doom-debug-mode))
+          quelpa-modified-p)
       (pcase (doom-package-backend name)
         ('quelpa
          (let ((quelpa-upgrade-p t))
