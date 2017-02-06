@@ -4,18 +4,22 @@ all: install update autoloads
 
 install: init.el
 	@$(EMACS) --batch -l core/core.el -f 'doom/packages-install'
+	@$(EMACSCLIENT) -e '(doom/reload)' >/dev/null 2>&1 || true
 
 update: init.el
 	@$(EMACS) --batch -l core/core.el -f 'doom/packages-update'
+	@$(EMACSCLIENT) -e '(doom/reload)' >/dev/null 2>&1 || true
 
 clean: init.el
 	@$(EMACS) --batch -l core/core.el -f 'doom/packages-autoremove'
+	@$(EMACSCLIENT) -e '(doom/reload)' >/dev/null 2>&1 || true
 
 autoloads: init.el
-	@$(EMACS) --batch -l core/core.el -f 'doom/refresh-autoloads'
+	@$(EMACS) --batch -l init.el -f 'doom/refresh-autoloads'
+	@$(EMACSCLIENT) -e '(doom/reload)' >/dev/null 2>&1 || true
 
 compile: init.el clean-elc
-	@$(EMACS) --batch -l core/core.el -f 'doom/byte-compile'
+	@$(EMACS) --batch -l init.el -f 'doom/byte-compile'
 
 compile-all: init.el clean-elc
 	@$(EMACS) --batch -l core/core.el --eval '(doom/byte-compile t)'

@@ -1,7 +1,7 @@
 ;;; core-packages.el
-
+;;
 ;; Emacs package management is opinionated. Unfortunately, so am I. So I
-;; combined `use-package`, quelpa and package.el to manage my plugins.
+;; combined `use-package', `quelpa' and package.el to manage my plugins.
 ;;
 ;; Why all the trouble? Because:
 ;; 1. Scriptability: I want my plugins managable from the command line (as well
@@ -57,7 +57,7 @@ if you have byte-compiled your configuration (as intended).")
       quelpa-dir (expand-file-name "quelpa" doom-packages-dir)
       ;; ssh, no tears. Only compiling.
       byte-compile-warnings
-      '(unresolved callargs obsolete noruntime cl-functions make-local constants suspicious))
+      '(redefine callargs obsolete cl-functions interactive-only mapcar constants suspicious))
 
 
 ;;
@@ -143,12 +143,16 @@ avoided to speed up startup."
       (and load-file-name (f-dirname load-file-name))
       (and buffer-file-name (f-dirname buffer-file-name))
       default-directory
+      (and (bound-and-true-p byte-compile-current-file)
+           (f-dirname byte-compile-current-file))
       (error "__DIR__ is unset")))
 
 (defun __FILE__ ()
   (or __FILE__
       load-file-name
       buffer-file-name
+      (and (bound-and-true-p byte-compile-current-file)
+           byte-compile-current-file)
       (error "__FILE__ is unset")))
 
 (defmacro use-package! (name &rest plist)
@@ -237,34 +241,37 @@ Examples:
 ;;
 
 (defun doom/reload ()
-  "Reload `load-path' by reinitializing package.el. Run this if you ran update
-or delete packages from outside of Emacs."
+  "Reload `load-path', `doom-enabled-modules' and `doom-packages' by
+reinitializing doom and parsing config files for `package!' and `doom!' calls.
+There are few reasons to use this."
   (interactive)
   (doom-initialize t)
+  (doom-read-packages t)
+  (doom-initialize-autoloads)
   (message "Reloaded %s packages" (length package-alist)))
 
 (defun doom/refresh-autoloads ()
   "Refreshes the autoloads.el file, which tells Emacs where to find all the
-autoloaded functions in the modules you use or among the core libraries.
+autoloaded functions in the modules you use or among the core libraries, e.g.
+core/autoload/*.el.
 
-In modules, checks for modules/*/autoload.el and modules/*/autoload/*.el.
+In modules, checks modules/*/autoload.el and modules/*/autoload/*.el.
 
-Rerun this whenever you modify your init.el (or use `make autoloads` from the
-command line)."
+Rerun this whenever init.el is modified. You can also use `make autoloads` from
+the commandline."
   (interactive)
-  (doom-read-packages nil t)
-  (let ((generated-autoload-file (concat doom-local-dir "autoloads.el"))
-        (autoload-files
-         (append (-flatten (mapcar (lambda (dir)
-                                     (let ((auto-dir  (f-expand "autoload" dir))
-                                           (auto-file (f-expand "autoload.el" dir)))
-                                       (cond ((f-directory-p auto-dir)
-                                              (f-glob "*.el" auto-dir))
-                                             ((f-exists-p auto-file)
-                                              auto-file))))
+  (let ((generated-autoload-file doom-autoload-file)
+        autoload-files)
+    (setq autoload-files
+          (append (-flatten (--map (let ((auto-dir  (f-expand "autoload" it))
+                                         (auto-file (f-expand "autoload.el" it)))
+                                     (cond ((f-directory-p auto-dir)
+                                            (f-glob "*.el" auto-dir))
+                                           ((f-exists-p auto-file)
+                                            auto-file)))
                                    (--map (doom-module-path (car it) (cdr it))
                                           doom-enabled-modules)))
-                 (f-glob "autoload/*.el" doom-core-dir))))
+                  (f-glob "autoload/*.el" doom-core-dir)))
     (when (f-exists-p generated-autoload-file)
       (f-delete generated-autoload-file)
       (message "Deleted old autoloads.el"))
@@ -276,27 +283,25 @@ command line)."
       (eval-buffer))
     (message "Done!")))
 
-(defun doom/byte-compile (&optional comprehensive-p)
-  "Byte (re)compile the important files in your emacs configuration (i.e.
-init.el, core/*.el and modules/*/*/config.el) DOOM Emacs was designed to benefit
-a lot from this.
+(defun doom/byte-compile (&optional simple-p)
+  "Byte (re)compile the important files in your emacs configuration (init.el &
+core/*.el). DOOM Emacs was designed to benefit from this.
 
-If COMPREHENSIVE-P is non-nil, then compile modules/*/*/*.el (except for
-packages.el files) -- this will likely take a long time."
+If SIMPLE-P is nil, also byte-compile modules/*/*/*.el (except for packages.el).
+There should be a measurable benefit from this, but it may take a while."
   (interactive)
-  (doom-read-packages)
-  (let ((targets (append
-                  (list (f-expand "init.el" doom-emacs-dir)
-                        (f-expand "core.el" doom-core-dir))
-                  (f-glob "core-*.el" doom-core-dir)
-                  (-flatten
-                   (--map (f--entries (doom-module-path (car it) (cdr it))
-                                      (and (f-ext-p it "el")
-                                           (or comprehensive-p
-                                               (string= (f-base it) "config")
-                                               (string-prefix-p "+" (f-base it))))
-                                      t)
-                          doom-enabled-modules))))
+  (let ((targets
+         (append (list (f-expand "init.el" doom-emacs-dir)
+                       (f-expand "core.el" doom-core-dir))
+                 (f-glob "core-*.el" doom-core-dir)
+                 (unless simple-p
+                   (-flatten
+                    (--map (f--entries (doom-module-path (car it) (cdr it))
+                                       (and (f-ext-p it "el")
+                                            (or (string= (f-base it) "config")
+                                                (string-prefix-p "+" (f-base it))))
+                                       t)
+                           doom-enabled-modules)))))
         (n 0)
         results)
     (dolist (file targets)
@@ -353,7 +358,6 @@ packages.el files) -- this will likely take a long time."
       (setq forms (append forms plist)))
     forms))
 
-;;;###autoload
 (defun doom-read-packages (&optional force-p nopackages)
   "Parses your Emacs config to keep track of packages declared with `package!'
 in `doom-packages' and enabled modules in `doom-enabled-modules'."

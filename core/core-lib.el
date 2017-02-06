@@ -6,6 +6,7 @@
 (require 'dash)
 (require 'f)
 (require 's)
+(eval-when-compile (require 'cl-lib))
 
 (package! anaphora
   :commands (awhen aif acond awhile))
@@ -43,6 +44,13 @@ during compilation."
          'progn
        'with-no-warnings)
     (with-eval-after-load ',feature ,@forms)))
+
+(defmacro quiet! (&rest forms)
+  "Run FORMS without making any noise (no messages)."
+  `(cl-letf (((symbol-function 'load-file) (lambda (file) (load file nil t)))
+             ((symbol-function 'message) (lambda (&rest _)))
+             (inhibit-message t))
+     ,@forms))
 
 (defmacro add-hook! (hook &rest func-or-forms)
   "A convenience macro for `add-hook'.

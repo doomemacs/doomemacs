@@ -38,7 +38,7 @@
       select-enable-clipboard t
       select-enable-primary t)
 
-(let ((inhibit-message t))
+(unless noninteractive
   ;; Save point across sessions
   (require 'saveplace)
   (setq save-place-file (concat doom-cache-dir "saveplace")
@@ -50,8 +50,7 @@
   (require 'savehist)
   (setq savehist-file (concat doom-cache-dir "savehist")
         savehist-save-minibuffer-history t
-        savehist-additional-variables
-        '(kill-ring search-ring regexp-search-ring))
+        savehist-additional-variables '(kill-ring search-ring regexp-search-ring))
   (savehist-mode 1)
 
   ;; Remove text-property cruft from history
@@ -76,7 +75,7 @@
         recentf-max-saved-items 250
         recentf-auto-cleanup 600
         recentf-filename-handlers '(abbreviate-file-name))
-  (recentf-mode 1)
+  (quiet! (recentf-mode 1))
 
   ;; Ediff
   (add-hook! ediff-load
@@ -131,8 +130,8 @@
    'css-mode "/*" "*/" :post-handlers '(("[d-3]||\n[i]" "RET") ("| " "SPC")))
   (sp-local-pair '(sh-mode markdown-mode) "`" nil
     :unless '(sp-point-before-word-p sp-point-before-same-p))
-  (sp-with-modes '(xml-mode nxml-mode php-mode)
-    (sp-local-pair "<!--" "-->"   :post-handlers '(("| " "SPC")))))
+  (sp-local-pair '(xml-mode nxml-mode php-mode)
+                 "<!--" "-->"   :post-handlers '(("| " "SPC"))))
 
 
 ;;
@@ -191,7 +190,7 @@
 (package! wgrep
   :commands (wgrep-setup wgrep-change-to-wgrep-mode)
   :config
-  (def-popup! ("^\\*ivy-occur counsel-ag" :size 25 :select t :regexp t))
+  (set! :popup ("^\\*ivy-occur counsel-ag" :size 25 :select t :regexp t))
   (setq wgrep-auto-save-buffer t)
   (advice-add 'wgrep-abort-changes :after 'doom/popup-close)
   (advice-add 'wgrep-finish-edit :after 'doom/popup-close))
