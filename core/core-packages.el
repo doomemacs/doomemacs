@@ -60,12 +60,13 @@ if you have byte-compiled your configuration (as intended).")
       use-package-expand-minimally t
       use-package-debug nil
       use-package-verbose doom-debug-mode
+
       quelpa-checkout-melpa-p nil
       quelpa-update-melpa-p nil
       quelpa-dir (expand-file-name "quelpa" doom-packages-dir)
-      ;; ssh, no tears. Only compiling.
-      byte-compile-warnings
-      '(redefine callargs obsolete cl-functions interactive-only mapcar constants suspicious))
+
+      byte-compile-dynamic t
+      byte-compile-warnings '(not mapcar free-vars unresolved noruntime lexical make-local))
 
 
 ;;
