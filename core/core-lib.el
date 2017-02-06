@@ -1,12 +1,35 @@
 ;;; core-lib.el
 
-(defvar +evil-leader)
-(defvar +evil-localleader)
-
 (require 'dash)
 (require 'f)
 (require 's)
 (eval-when-compile (require 'cl-lib))
+
+
+(defvar +evil-leader)
+(defvar +evil-localleader)
+
+(defvar __DIR__ nil  "The directory of the currently loaded file (set by `load!')")
+(defvar __FILE__ nil "The full path of the currently loaded file (set by `load!')")
+
+(defun __DIR__ ()
+  "Get the full path to the current file's parent folder."
+  (or __DIR__
+      (and load-file-name (f-dirname load-file-name))
+      (and buffer-file-name (f-dirname buffer-file-name))
+      default-directory
+      (and (bound-and-true-p byte-compile-current-file)
+           (f-dirname byte-compile-current-file))
+      (error "__DIR__ is unset")))
+
+(defun __FILE__ ()
+  "Get the full path to the current file."
+  (or __FILE__
+      load-file-name
+      buffer-file-name
+      (and (bound-and-true-p byte-compile-current-file)
+           byte-compile-current-file)
+      (error "__FILE__ is unset")))
 
 (package! anaphora
   :commands (awhen aif acond awhile))
