@@ -185,13 +185,10 @@ Adds a few custom properties in either case:
  :pin ARCHIVE-NAME     Instructs ELPA to only look for this package in
                        ARCHIVE-NAME. e.g. \"org\".
  :needs FEATURE        Don't install this package if FEATURE isn't available. Can be a
-                       (:module . submodule) cons pair.
- :setup CMD-OR-PCASE   A command to run after install. Can be a pcase list, whose
-                       car's are symbols of OSes that `doom-os' returns, and whose
-                       cdr's are string shell commands."
+                       (:module . submodule) cons pair."
   (declare (indent defun))
   (mapc (lambda (key) (setq plist (use-package-plist-delete plist key)))
-        '(:recipe :pin :setup :needs))
+        '(:recipe :pin :needs))
   `(let ((__PACKAGE__ ',name))
      (use-package! ,name ,@plist)))
 
