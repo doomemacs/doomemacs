@@ -1,5 +1,5 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; feature/workspaces/packages.el
 
-(package! workgroups2)
+(package! persp-mode)
 

@@ -54,10 +54,11 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
 
 If ALL-P is non-nil, get all buffers across all projects in current
 workgroup."
-  (let ((buffers (if (featurep 'workgroups2)
-                     (let ((assoc-bufs (wg-workgroup-associated-buffers nil)))
-                       (--filter (memq it assoc-bufs) (buffer-list)))
-                   (buffer-list)))
+  (let ((buffers (cond ((and (featurep 'workgroups2) workgroups-mode)
+                        (wg-workgroup-associated-buffers nil))
+                       ((and (featurep 'persp-mode) persp-mode)
+                        (persp-buffer-list-restricted))
+                       (t (buffer-list))))
         (project-root (and (not all-p) (doom-project-root t))))
     (append (if project-root
                 (funcall (if (eq all-p 'not) '-remove '-filter)

@@ -1,71 +1,58 @@
 ;;; feature/workspaces/config.el
 
-(defvar +workspace-frames '()
-  "A list of all the frames opened as separate workgroups. See
-defuns/defuns-workgroups.el.")
+;; `persp-mode' gives me workspaces, a workspace-restricted `buffer-list', and
+;; file-based session persistence. The switch from workgroups2 was motivated by
+;; performance. Workgroups2 wasn't entirely stable either.
 
-(defvar +workspace-names '()
-  "Keeps track of the fixed names for workgroups (set with :tabrename), so that
-these workgroups won't be auto-renamed.")
-
-(defvar +workspaces-dir (concat doom-cache-dir "workgroups/")
-  "Path to workspaces.")
-
-
-(use-package! workgroups2 :demand t
+(use-package! persp-mode :demand t
   :init
-  (setq wg-workgroup-directory +workspaces-dir
-        wg-session-file (concat wg-workgroup-directory "last")
-        wg-first-wg-name "*untitled*"
-        wg-session-load-on-start nil
-        wg-mode-line-display-on nil
-        wg-mess-with-buffer-list nil
-        wg-emacs-exit-save-behavior 'save ; Options: 'save 'ask nil
-        wg-workgroups-mode-exit-save-behavior 'save
-        wg-log-level 0
-
-        ;; NOTE: Some of these make workgroup-restoration unstable
-        wg-restore-mark t
-        wg-restore-frame-position t
-        wg-restore-remote-buffers nil
-        wg-restore-scroll-bars nil
-        wg-restore-fringes nil
-        wg-restore-margins nil
-        wg-restore-point-max t ; Throws silent errors if non-nil
-
-        wg-list-display-decor-divider " "
-        wg-list-display-decor-left-brace ""
-        wg-list-display-decor-right-brace "| "
-        wg-list-display-decor-current-left ""
-        wg-list-display-decor-current-right ""
-        wg-list-display-decor-previous-left ""
-        wg-list-display-decor-previous-right "")
+  (setq persp-autokill-buffer-on-remove 'kill-weak
+        persp-nil-name "main"
+        persp-auto-save-fname "_autosave"
+        persp-save-dir (concat doom-cache-dir "workspaces/")
+        persp-set-last-persp-for-new-frames nil
+        persp-auto-resume-time (if (display-graphic-p) 0.01 -1)
+        persp-switch-to-added-buffer nil)
 
   :config
-  (eval-when-compile
-    (unless (f-exists-p +workspaces-dir)
-      (make-directory +workspaces-dir t)))
+  ;; Ensure unreal/popup buffers aren't saved
+  (defun +workspaces--filter-unreal (buf) (not (doom-real-buffer-p buf)))
+  (setq persp-filter-save-buffers-functions (list '+workspaces--filter-unreal))
+  (push '+workspaces--filter-unreal persp-common-buffer-filter-functions)
 
-  ;; Remember fixed workgroup names between sessions
-  (push '+workspace-names savehist-additional-variables)
+  ;; Auto-add buffers when opening them. Allows a perspective-specific buffer list.
+  (defun doom*persp-auto-add-buffer (buffer &rest _)
+    (when (and persp-mode (not persp-temporarily-display-buffer))
+      (persp-add-buffer buffer (get-current-persp) nil)))
+  (advice-add 'switch-to-buffer :after 'doom*persp-auto-add-buffer)
+  (advice-add 'display-buffer   :after 'doom*persp-auto-add-buffer)
 
-  ;; `wg-mode-line-display-on' wasn't enough
-  (advice-add 'wg-change-modeline :override 'ignore)
-  ;; Don't remember popup and neotree windows
-  (add-hook 'kill-emacs-hook '+workspace-cleanup)
+  ;; TODO Integration with projectile
+  ;; ;; Create a new workspace on project switch
+  ;; (defun doom|new-workspace-on-project-change ()
+  ;;   (+workspace-new (f-filename (doom-project-root))))
+  ;; (add-hook 'projectile-before-switch-project-hook 'doom|new-workspace-on-project-change)
 
-  (after! projectile
-    ;; Create a new workspace on project switch
-    ;; FIXME Possibly bug?
-    (defun doom*workspace-projectile-switch-project ()
-      (let ((project-root (doom-project-root)))
-        (doom:workspace-new nil (file-name-nondirectory (directory-file-name project-root)) t)
-        (doom-reload-scratch-buffer project-root)
-        (when (featurep 'neotree)
-          (neotree-projectile-action))))
-    (setq projectile-switch-project-action 'doom*workspace-projectile-switch-project))
+  ;; TODO Test per-frame perspectives
 
-  (workgroups-mode +1)
-  ;; Ensure there is always a workgroup active
-  (wg-create-workgroup wg-first-wg-name))
+  (persp-mode 1))
+
+(after! ivy
+  (defun +workspaces|ivy-ignore-non-persp-buffers (b)
+    (when persp-mode
+      (let ((persp (get-current-persp)))
+        (and persp (not (persp-contain-buffer-p b persp))))))
+  (pushnew '+workspaces|ivy-ignore-non-persp-buffers ivy-ignore-buffers)
+
+  (setq ivy-sort-functions-alist
+        (append ivy-sort-functions-alist
+                '((persp-kill-buffer   . nil)
+                  (persp-remove-buffer . nil)
+                  (persp-add-buffer    . nil)
+                  (persp-switch        . nil)
+                  (persp-window-switch . nil)
+                  (persp-frame-switch  . nil)
+                  (+workspace/switch-to . nil)
+                  (+workspace/delete . nil)))))
+
 
