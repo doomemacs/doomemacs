@@ -10,9 +10,19 @@
 (defvar +evil-localleader "\\"
   "The <localleader> key, used by the `map!' macro for :localleader bindings.")
 
-(def-setting! :evil-state (mode state)
+(def-setting! :evil-state (&rest mode-state-list)
   "Set the initialize STATE of MODE using `evil-set-initial-state'."
-  (evil-set-initial-state mode state))
+  (if (-all-p 'listp mode-state-list)
+      (macroexp-progn
+       (--map (let ((argc (length it)))
+                (unless (= argc 2)
+                  (error ":evil-state sub-lists expect 2 arguments, got %s" argc))
+                `(evil-set-initial-state ',(car it) ',(cadr it)))
+              mode-state-list))
+    (let ((argc (length mode-state-list)))
+      (unless (= argc 2)
+        (error ":evil-state expected 2 arguments, got %s" argc)))
+    `(evil-set-initial-state ',(car mode-state-list) ',(cadr mode-state-list))))
 
 
 ;;
@@ -36,8 +46,8 @@
 
   :config
   (set! :popup
-    ("*evil-registers*" :size 0.3)
-    ("*Command Line*" :size 8))
+    '("*evil-registers*" :size 0.3)
+    '("*Command Line*" :size 8))
 
   (evil-mode +1)
   (evil-select-search-module 'evil-search-module 'evil-search)
@@ -374,7 +384,7 @@ if on a delimiter, jump to the matching one (`evilmi-jump-items')."
           "^#.*#$"))
 
   :config
-  (set! :evil-state (neotree-mode motion))
+  (set! :evil-state 'neotree-mode 'motion)
 
   ;; Adding keybindings to `neotree-mode-map' wouldn't work for me (they get
   ;; overridden when the neotree buffer is spawned). So we bind them in a hook.

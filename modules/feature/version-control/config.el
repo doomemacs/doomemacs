@@ -6,13 +6,13 @@
 
 (after! vc-annotate
   (set! :popup
-    ("*vc-diff*" :size 15 :noselect t)
-    ("*vc-change-log*" :size 15 :select t)
-    (vc-annotate-mode :same t))
+    '("*vc-diff*" :size 15 :noselect t)
+    '("*vc-change-log*" :size 15 :select t)
+    '(vc-annotate-mode :same t))
 
   (set! :evil-state
-    (vc-annotate-mode normal)
-    (vc-git-log-view-mode normal))
+    '(vc-annotate-mode normal)
+    '(vc-git-log-view-mode normal))
 
   (map! :map vc-annotate-mode-map
         :n "q" 'kill-this-buffer
