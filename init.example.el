@@ -28,58 +28,43 @@
 ;;
 ;;; License: MIT
 
-(setq user-emacs-directory "~/work/conf/doom-emacs-old")
-
 (require 'core (concat user-emacs-directory "core/core"))
 
 (doom! :feature
        evil            ; come to the dark side, we have cookies
-       completion      ; company-mode & auto-complete; for lazy typists
-       dev             ; tools for tweaking DOOM Emacs
-       ivy             ; a search engine for love and life
+       ;; TODO jump            ; navigating your code
        snippets        ; my elves. They type so I don't have to
-       syntax-checking ; tasing you for every missing semicolon
-       spell-checking  ; tasing you for mispellings and grammar derps
+       file-templates  ; auto-snippets for empty files
+       spellcheck      ; tasing you for misspelling mispelling
+       syntax-checker  ; tasing you for every forgotten semicolon
        version-control ; remember, remember that commit in November
-       file-templates  ; auto-snippets for empty files, for lazier typists
-       repl            ; run code, run
-       jump            ; navigating your code
        workspaces      ; tab emulation, persistence and separate workspaces
+
+       :completion
+       company         ; auto-completion backend
+       ;; TODO auto-complete   ; auto-completion backend #2
+       ivy             ; a search engine for love and life
+       ;; TODO helm            ;
+       ;; ido             ;
 
        :ui
        doom            ; doom-one; a look inspired by Atom's Dark One
-       doom-dashboard  ; a nifty splash screen for Emacs
+       ;; TODO doom-dashboard  ; a nifty splash screen for Emacs
        doom-modeline   ; a snazzy Atom-inspired mode-line
-       git-gutter      ; diffs in the fringe
+
+       :os
+       macos           ; resolves some issues running Emacs on MacOS
 
        :fun
        doom-quit       ; DOOM quit-message prompts when you quit Emacs
 
-       :emacs
-       autoinsert      ; file templates, for the laziest typists
-       dired           ;
-       eshell          ; a consistent, cross-platform shell
-       ido             ;
-       org             ; for organized fearless leader
-
-       :tool
-       dash            ; dash.app
-       google          ;
-       tmux            ;
-       rest            ;
-
-       ;; Applications are large, toggle-able states that transform Emacs to
-       ;; fulfill a specific purpose. See `doom/toggle'.
-       :app
-       crm             ; org-mode for client relations management
-       db              ; Emacs as a database browser
-       email           ; Emacs as an email client
-       finance         ; keeping track of my shekels
-       present         ; showing off presentations in emacs
-       rss             ; emacs as an RSS reader
-       stream          ; for streaming code (https://livecoding.tv/vnought)
-       twitter         ; twitter client https://twitter.com/vnought
-       write           ; emacs as a word processor (latex + org + markdown)
+       :tools
+       eshell          ; a consistent, cross-platform shell (WIP)
+       ;; TODO dash            ; interacting with dash.app
+       dired           ; making dired pretty [functional]
+       restclient      ; A REST REPL
+       tmux            ; an API for interacting with tmux
+       upload          ; map local to remote projects via ssh/ftp
 
        :lang
        asm             ; assembly for fun or debugging
@@ -89,7 +74,6 @@
        css             ; #big-bang::before { content: ""; }
        data            ; config/data formats
        emacs-lisp      ; drown in parentheses
-       git             ; various git files
        go              ; the hipster dialect
        haskell         ; a language that's lazier than I am
        html            ; The end is always near </html>
@@ -99,6 +83,7 @@
        latex           ; writing papers in Emacs has never been so fun
        lua             ; one-based indices? one-based indices
        octave          ; math isn't a choice, it's a way of life
+       org             ; for organized fearless leader (WIP)
        php             ; make php less awful to work with
        processing      ; for prototyping
        python          ; beautiful is better than ugly
@@ -122,8 +107,21 @@
        launchbar
        screeps
 
-       ;; Private modules are aren't tracked in the repo. Only one module is
-       ;; included with DOOM emacs here. Mine! Feel free to copy it to your own
-       ;; module and have fun.
+       ;; Applications are large, toggle-able states that transform Emacs to
+       ;; fulfill a specific purpose. See `doom/toggle'. They should be loaded
+       ;; last.
+       :app
+       ;; TODO crm             ; org-mode for client relations management
+       ;; TODO db              ; Emacs as a database browser
+       ;; TODO email           ; Emacs as an email client
+       ;; TODO finance         ; keeping track of my shekels
+       ;; TODO present         ; showing off presentations in emacs
+       ;; TODO rss             ; emacs as an RSS reader
+       ;; TODO stream          ; for streaming code (https://livecoding.tv/vnought)
+       ;; TODO twitter         ; twitter client https://twitter.com/vnought
+       ;; TODO write           ; emacs as a word processor (latex + org + markdown)
+
+       ;; Private modules are aren't tracked in the repo, except for mine. Use
+       ;; it as a reference for your own.
        :private hlissner)
 
