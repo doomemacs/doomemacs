@@ -87,9 +87,7 @@ fed to `doom/packages-delete'."
 (defun doom-get-packages-to-install ()
   "Return a list of packages that aren't installed, but need to be. Used by
 `doom/packages-install'."
-  (doom-read-packages t)
-  (--remove (assq (car it) package-alist)
-            (append doom-packages (-map 'list doom-protected-packages))))
+  (--remove (assq (car it) package-alist) (doom-get-packages)))
 
 (defun doom--scrape-sexps (sym file)
   (declare (indent defun))
@@ -245,8 +243,9 @@ appropriate."
                          (mapconcat (lambda (pkg)
                                       (format "+ %s (%s)"
                                               (car pkg)
-                                              (cond ((plist-get (cdr pkg) :recipe) "QUELPA")
-                                                    (t "ELPA"))))
+                                              (if (plist-get (cdr pkg) :recipe)
+                                                  "QUELPA"
+                                                "ELPA")))
                                     (--sort (string-lessp (symbol-name (car it))
                                                           (symbol-name (car other)))
                                             packages)
