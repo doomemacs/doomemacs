@@ -66,85 +66,97 @@
   ;; :noesc and :modeline are custom settings and are not part of shackle. See
   ;; `doom*popup-init' and `doom-popup-buffer' for how they're used.
   (set! :popup
-    ("^ ?\\*doom:.+\\*$"      :size 40  :modeline t :regexp t)
-    ("^ ?\\*doom .+\\*$"      :size 30  :noselect t :regexp t)
-    ("^\\*.+-Profiler-Report .+\\*$" :size 0.3 :regexp t)
-    ("*esup*"                 :size 0.4 :noselect t :noesc t)
-    ("*minor-modes*"          :size 0.5 :noselect t)
-    ("*eval*"                 :size 16  :noselect t)
-    ("*Pp Eval Output*"       :size 0.3)
-    ("*Apropos*"              :size 0.3)
-    ("*Backtrace*"            :size 25  :noselect t)
-    ("*Help*"                 :size 16)
-    ("*Messages*"             :size 10)
-    ("*Warnings*"             :size 10  :noselect t)
-    ("*command-log*"          :size 28  :noselect t :align right)
-    ("*Shell Command Output*" :size 20 :noselect t)
-    (compilation-mode         :size 15  :noselect t :noesc t)
-    (ivy-occur-grep-mode      :size 25  :noesc t)
-    (eww-mode                 :size 30)
-    (comint-mode              :noesc t)
-    (tabulated-list-mode      :noesc t))
+    '("^ ?\\*doom:.+\\*$"      :size 40  :modeline t :regexp t)
+    '("^ ?\\*doom .+\\*$"      :size 30  :noselect t :regexp t)
+    '("^\\*.+-Profiler-Report .+\\*$" :size 0.3 :regexp t)
+    '("*esup*"                 :size 0.4 :noselect t :noesc t)
+    '("*minor-modes*"          :size 0.5 :noselect t)
+    '("*eval*"                 :size 16  :noselect t)
+    '("*Pp Eval Output*"       :size 0.3)
+    '("*Apropos*"              :size 0.3)
+    '("*Backtrace*"            :size 25  :noselect t)
+    '("*Help*"                 :size 16)
+    '("*Messages*"             :size 10)
+    '("*Warnings*"             :size 10  :noselect t)
+    '("*command-log*"          :size 28  :noselect t :align right)
+    '("*Shell Command Output*" :size 20 :noselect t)
+    '(compilation-mode         :size 15  :noselect t :noesc t)
+    '(ivy-occur-grep-mode      :size 25  :noesc t)
+    '(eww-mode                 :size 30)
+    '(comint-mode              :noesc t)
+    '(tabulated-list-mode      :noesc t)))
 
-  (define-minor-mode doom-popup-mode
-    "Minor mode for pop-up windows."
-    :init-value nil
-    :keymap doom-popup-mode-map
-    (if (and (not doom-popup-mode)
-             doom-hide-modeline-mode)
-        (doom-hide-modeline-mode -1)
-      (let ((modeline (plist-get doom-popup-rules :modeline)))
-        (cond ((eq modeline 'nil)
-               (doom-hide-modeline-mode +1))
-              ((symbolp modeline)
-               (let ((doom--hidden-modeline-format (+doom-modeline modeline)))
-                 (doom-hide-modeline-mode +1))))))
-    (set-window-dedicated-p nil doom-popup-mode))
-  (put 'doom-popup-mode 'permanent-local t)
 
-  ;; Tell `window-state-get' and `current-window-configuration' to persist these
-  ;; custom parameters.
-  (dolist (param '(popup noesc))
-    (add-to-list 'window-persistent-parameters (cons param 'writable)))
+(define-minor-mode doom-popup-mode
+  "Minor mode for pop-up windows."
+  :init-value nil
+  :keymap doom-popup-mode-map
+  (if (and (not doom-popup-mode)
+           doom-hide-modeline-mode)
+      (doom-hide-modeline-mode -1)
+    (let ((modeline (plist-get doom-popup-rules :modeline)))
+      (cond ((eq modeline 'nil)
+             (doom-hide-modeline-mode +1))
+            ((symbolp modeline)
+             (let ((doom--hidden-modeline-format (+doom-modeline modeline)))
+               (doom-hide-modeline-mode +1))))))
+  (mapc (lambda (cfg) (set-window-parameter nil cfg nil))
+        '(popup no-other-window noesc))
+  (set-window-dedicated-p nil doom-popup-mode))
+(put 'doom-popup-mode 'permanent-local t)
 
-  (defun doom*popup-init (orig-fn &rest args)
-    "Enables `doom-popup-mode' in popup windows and returns the window."
-    (unless (doom-popup-p)
-      (setq doom-popup-other-window (selected-window)))
-    (let ((window (apply orig-fn args))
-          (rules (nth 2 args)))
-      (unless window
-        (error "No window was found (%s)" args))
-      (mapc (lambda (cfg) (set-window-parameter window (car cfg) (cdr cfg)))
-            (append `((popup . ,rules)
-                      (no-other-window . ,t))
-                    (when (plist-get rules :noesc)
-                      `((noesc . ,t)))))
-      (with-selected-window window
-        (setq-local doom-popup-rules rules)
-        (doom-popup-mode +1))
-      ;; NOTE orig-fn returns a window, so `doom*popup-init' must too
-      window))
+;; Tell `window-state-get' and `current-window-configuration' to persist these
+;; custom parameters.
+(dolist (param '(popup noesc))
+  (add-to-list 'window-persistent-parameters (cons param 'writable)))
 
-  (defun doom*popup-save (orig-fn &rest args)
-    "Puts aside all popups before executing the original function, usually to
+(defun doom*popup-init (orig-fn &rest args)
+  "Enables `doom-popup-mode' in popup windows and returns the window."
+  (unless (doom-popup-p)
+    (setq doom-popup-other-window (selected-window)))
+  (let* ((window (apply orig-fn args))
+         (rules (or (nth 2 args) (shackle-match (window-buffer window)))))
+    (unless window
+      (error "No window was found for %s: %s" (car args) rules))
+    (mapc (lambda (cfg) (set-window-parameter window (car cfg) (cdr cfg)))
+          (append `((popup . ,rules)
+                    (no-other-window . ,t))
+                  (when (plist-get rules :noesc)
+                    `((noesc . ,t)))))
+    (with-selected-window window
+      (setq-local doom-popup-rules rules)
+      (doom-popup-mode +1))
+    ;; NOTE orig-fn returns a window, so `doom*popup-init' must too
+    window))
+(advice-add 'shackle-display-buffer :around 'doom*popup-init)
+
+(defun doom*popup-save (orig-fn &rest args)
+  "Puts aside all popups before executing the original function, usually to
 prevent the popups from interfering (or the other way around)."
-    (let ((in-popup-p (doom-popup-p))
-          (popups (doom-popup-windows))
-          (doom-popup-remember-history t))
+  (let ((in-popup-p (doom-popup-p))
+        (popups (doom-popup-windows))
+        (doom-popup-remember-history t))
+    (when popups
+      (mapc 'doom/popup-close popups))
+    (unwind-protect (apply orig-fn args)
       (when popups
-        (mapc 'doom/popup-close popups))
-      (unwind-protect (apply orig-fn args)
-        (when popups
-          (let ((origin (selected-window)))
-            (doom/popup-restore)
-            (unless in-popup-p
-              (select-window origin)))))))
+        (let ((origin (selected-window)))
+          (doom/popup-restore)
+          (unless in-popup-p
+            (select-window origin)))))))
+;; Don't affect popup windows
+(advice-add 'balance-windows :around 'doom*popup-save)
 
-  ;; There is no shackle-popup hook, so I created one:
-  (advice-add 'shackle-display-buffer :around 'doom*popup-init)
-  ;; Don't affect popup windows
-  (advice-add 'balance-windows :around 'doom*popup-save))
+(defun doom*popup-close (orig-fn &rest args)
+  "Ensure that popups are closed properly."
+  (let ((window (car args)))
+    (when (doom-popup-p window)
+      (with-selected-window window
+        (doom-popup-mode -1)
+        (when doom-popup-remember-history
+          (setq doom-popup-history (list (doom--popup-data window)))))))
+  (apply orig-fn args))
+(advice-add 'delete-window :around 'doom*popup-close)
 
 
 ;;

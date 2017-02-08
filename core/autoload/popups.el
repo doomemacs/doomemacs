@@ -5,23 +5,18 @@
 (defun doom-popup-p (&optional window)
   "Return t if WINDOW is a popup. Uses current window if WINDOW is omitted."
   (let ((window (or window (selected-window))))
-    (and window
-         (window-parameter window 'popup))))
+    (and window (buffer-local-value 'doom-popup-mode (window-buffer window)))))
 
 ;;;###autoload
 (defun doom-popup-buffer (buffer &rest plist)
   "Display BUFFER in a shackle popup. See `shackle-rules' for possible rules."
-  (let* ((buffer-name (cond ((stringp buffer) buffer)
-                            ((bufferp buffer) (buffer-name buffer))
-                            (t (error "Not a valid buffer"))))
-         (buffer (get-buffer-create buffer-name)))
-    (unless (doom-popup-p)
-      (setq doom-popup-other-window (selected-window)))
-    (when (and plist (not (plist-member plist :align)))
-      (plist-put plist :align t))
-    (shackle-display-buffer
-     buffer
-     nil (or plist (shackle-match buffer-name)))))
+  (unless (bufferp buffer)
+    (error "%s is not a valid buffer" buffer))
+  (when (and plist (not (plist-member plist :align)))
+    (plist-put plist :align t))
+  (shackle-display-buffer
+   buffer
+   nil (or plist (shackle-match buffer))))
 
 ;;;###autoload
 (defun doom-popup-file (file &rest plist)
@@ -38,17 +33,18 @@ possible rules."
 
 ;;;###autoload
 (defun doom/popup-restore ()
-  "Restore the last popup."
+  "Restore the last popups."
   (interactive)
   (unless doom-popup-history
     (error "No popups to restore"))
   (dolist (spec doom-popup-history)
     (let ((buffer (get-buffer (car spec)))
-          (path (plist-get spec :file)))
+          (path (plist-get (cdr spec) :file))
+          (rules (plist-get (cdr spec) :rules)))
       (when (and (not buffer) path)
         (setq buffer (find-file-noselect path t)))
       (when buffer
-        (doom-popup-buffer buffer (plist-get spec :rules)))))
+        (apply 'doom-popup-buffer buffer rules))))
   (setq doom-popup-history '()))
 
 ;;;###autoload
@@ -70,14 +66,7 @@ possible rules."
 `selected-window'. The contained buffer is buried."
   (interactive)
   (let ((window (or window (selected-window))))
-    (when (and (doom-popup-p window)
-               (window-live-p window))
-      (with-selected-window window
-        (when (called-interactively-p 'interactive)
-          (run-hooks 'doom-popup-close-hook))
-        (doom-popup-mode -1)
-        (when doom-popup-remember-history
-          (setq doom-popup-history (list (doom--popup-data window)))))
+    (when (doom-popup-p window)
       (delete-window window))))
 
 ;;;###autoload
@@ -89,19 +78,19 @@ possible rules."
                            (window-list))))
     (when popups
       (setq doom-popup-history (mapcar 'doom--popup-data (doom-popup-windows)))
-      (run-hooks 'doom-popup-close-hook)
       (let (doom-popup-remember-history)
-        (mapc 'doom/popup-close popups)))))
+        (mapc 'delete-window popups)))))
 
 ;;;###autoload
 (defun doom/popup-close-maybe ()
   "Close the current popup *if* its window doesn't have a noesc parameter."
   (interactive)
-  (if (window-parameter (selected-window) 'noesc)
-      (call-interactively (if (featurep 'evil)
-                              'evil-force-normal-state
-                            'keyboard-escape-quit))
-    (doom/popup-close)))
+  (let ((window (selected-window)))
+    (if (window-parameter window 'noesc)
+        (call-interactively (if (featurep 'evil)
+                                'evil-force-normal-state
+                              'keyboard-escape-quit))
+      (delete-window window))))
 
 (defun doom--popup-data (window)
   (let ((buffer (window-buffer window)))
