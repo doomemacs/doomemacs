@@ -1,11 +1,11 @@
 ;;; lang/emacs-lisp/config.el
 (provide '+emacs-lisp)
 
-(associate! emacs-lisp-mode :match "/Cask$")
-(add-hook! emacs-lisp-mode '(highlight-quoted-mode auto-compile-on-save-mode +emacs-lisp|hook))
-
-(after! elisp-mode
-  ;; Real go-to-definition for elisp
+(use-package! elisp-mode
+  :mode ("/Cask$" . emacs-lisp-mode)
+  :init
+  (add-hook! emacs-lisp-mode '(highlight-quoted-mode auto-compile-on-save-mode +emacs-lisp|hook))
+  :config
   (map! :map emacs-lisp-mode-map
         :m "gd" '+emacs-lisp/find-function
         :leader :m "gd" '+emacs-lisp/find-function-other-window)
@@ -35,6 +35,7 @@
                  ("Package" "\\(^\\s-*(\\(use-package\\|package\\)!? +\\)\\(\\_<[^ \n]+\\_>\\)" 3)
                  ("Spaceline Segment" "\\(^\\s-*(spaceline-define-segment +\\)\\(\\_<.+\\_>\\)" 2)))
       (push i imenu-generic-expression))))
+
 
 (after! debug ;; elisp debugging
   (map! :map debugger-mode-map
