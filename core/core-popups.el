@@ -17,7 +17,7 @@
 
 (defvar doom-popup-history nil
   "A list of popups that were last closed. Used by `doom/popup-restore' and
-`doom*popup-save'.")
+`doom*popups-save'.")
 
 (defvar doom-popup-remember-history t
   "If non-nil, DOOM will remember the last popup(s) that were open in
@@ -92,52 +92,70 @@
     '(tabulated-list-mode      :noesc t)))
 
 
+;;
+;; Modifications
+;;
+
+;; Tell `window-state-get' and `current-window-configuration' to persist these
+;; custom parameters. Allows `persp-mode' to remember popup states.
+(setq window-persistent-parameters
+      (append '((popup . writable)
+                (noesc . writable))
+              window-persistent-parameters))
+
+
 (define-minor-mode doom-popup-mode
-  "Minor mode for pop-up windows."
+  "Minor mode for popup windows."
   :init-value nil
   :keymap doom-popup-mode-map
   (if (and (not doom-popup-mode)
            doom-hide-modeline-mode)
       (doom-hide-modeline-mode -1)
     (let ((modeline (plist-get doom-popup-rules :modeline)))
-      (cond ((eq modeline 'nil)
+      (cond ((or (eq modeline 'nil)
+                 (not modeline))
              (doom-hide-modeline-mode +1))
             ((symbolp modeline)
              (let ((doom--hidden-modeline-format (+doom-modeline modeline)))
                (doom-hide-modeline-mode +1))))))
-  (mapc (lambda (cfg) (set-window-parameter nil cfg nil))
-        '(popup no-other-window noesc))
+  (unless doom-popup-mode
+    (mapc (lambda (cfg) (set-window-parameter nil cfg nil))
+          '(popup no-other-window noesc)))
   (set-window-dedicated-p nil doom-popup-mode))
 (put 'doom-popup-mode 'permanent-local t)
 
-;; Tell `window-state-get' and `current-window-configuration' to persist these
-;; custom parameters.
-(dolist (param '(popup noesc))
-  (add-to-list 'window-persistent-parameters (cons param 'writable)))
+(defun doom-popup--init (window &optional plist)
+  "Initializes a window as a popup window. Sets custom window parameters and
+enables `doom-popup-mode'."
+  (unless window
+    (error "No window was found for %s: %s" (car args) plist))
+  (unless plist
+    (setq plist (shackle-match (window-buffer window))))
+  (mapc (lambda (cfg) (set-window-parameter window (car cfg) (cdr cfg)))
+        (append `((popup . ,plist)
+                  (no-other-window . ,t))
+                (when (plist-get plist :noesc)
+                  `((noesc . ,t)))))
+  (with-selected-window window
+    (unless (eq plist t)
+      (setq-local doom-popup-rules plist))
+    (doom-popup-mode +1))
+  window)
+
+
+(advice-add 'shackle-display-buffer :around 'doom*popup-init)
+(advice-add 'balance-windows :around 'doom*popups-save)
+(advice-add 'delete-window :around 'doom*delete-popup-window)
 
 (defun doom*popup-init (orig-fn &rest args)
-  "Enables `doom-popup-mode' in popup windows and returns the window."
+  "Invokes `doom-popup--init' on windows that qualify as popups. Returns the window."
   (unless (doom-popup-p)
     (setq doom-popup-other-window (selected-window)))
-  (let* ((window (apply orig-fn args))
-         (rules (or (nth 2 args) (shackle-match (window-buffer window)))))
-    (unless window
-      (error "No window was found for %s: %s" (car args) rules))
-    (mapc (lambda (cfg) (set-window-parameter window (car cfg) (cdr cfg)))
-          (append `((popup . ,rules)
-                    (no-other-window . ,t))
-                  (when (plist-get rules :noesc)
-                    `((noesc . ,t)))))
-    (with-selected-window window
-      (setq-local doom-popup-rules rules)
-      (doom-popup-mode +1))
-    ;; NOTE orig-fn returns a window, so `doom*popup-init' must too
-    window))
-(advice-add 'shackle-display-buffer :around 'doom*popup-init)
+  (doom-popup--init (apply orig-fn args) (nth 2 args)))
 
-(defun doom*popup-save (orig-fn &rest args)
+(defun doom*popups-save (orig-fn &rest args)
   "Puts aside all popups before executing the original function, usually to
-prevent the popups from interfering (or the other way around)."
+prevent popups from messaging up the UI (or vice versa)."
   (let ((in-popup-p (doom-popup-p))
         (popups (doom-popup-windows))
         (doom-popup-remember-history t))
@@ -149,11 +167,9 @@ prevent the popups from interfering (or the other way around)."
           (doom/popup-restore)
           (unless in-popup-p
             (select-window origin)))))))
-;; Don't affect popup windows
-(advice-add 'balance-windows :around 'doom*popup-save)
 
-(defun doom*popup-close (orig-fn &rest args)
-  "Ensure that popups are closed properly."
+(defun doom*delete-popup-window (orig-fn &rest args)
+  "Ensure that popups are deleted properly."
   (let ((window (car args)))
     (when (doom-popup-p window)
       (with-selected-window window
@@ -161,7 +177,6 @@ prevent the popups from interfering (or the other way around)."
         (when doom-popup-remember-history
           (setq doom-popup-history (list (doom--popup-data window)))))))
   (apply orig-fn args))
-(advice-add 'delete-window :around 'doom*popup-close)
 
 
 ;;
@@ -179,15 +194,18 @@ prevent the popups from interfering (or the other way around)."
     (define-key map [remap evil-window-vsplit]           'ignore)
     (define-key map [remap evil-force-normal-state]      'doom/popup-close-maybe))
 
-  ;; Close popups when you press ESC in normal mode, in any buffer
+  ;; Make evil-mode cooperate with popups
+  (advice-add 'evil-force-normal-state :before 'doom*popup-evil-close-on-esc)
+  (advice-add 'evil-command-window :override 'doom*popup-evil-command-window)
+  (advice-add 'evil-command-window-execute :override 'doom*popup-evil-command-window-execute)
+
   (defun doom*popup-evil-close-on-esc ()
-    "Close non-repl popups and clean up `doom-popup-windows'."
+    "Close non-repl popups and clean up `doom-popup-windows' when you press ESC
+from normal mode in any buffer."
     (unless (or (minibuffer-window-active-p (minibuffer-window))
                 (evil-ex-hl-active-p 'evil-ex-search))
       (doom/popup-close-all)))
-  (advice-add 'evil-force-normal-state :after 'doom*popup-evil-close-on-esc)
 
-  ;; Tame the command window
   (defun doom*popup-evil-command-window (hist cmd-key execute-fn)
     "The evil command window has a mind of its own (uses `switch-to-buffer'). We
 monkey patch it to use pop-to-buffer, and to remember the previous window."
@@ -205,10 +223,10 @@ monkey patch it to use pop-to-buffer, and to remember the previous window."
       (setq-local evil-command-window-cmd-key cmd-key)
       (evil-command-window-mode)
       (evil-command-window-insert-commands hist)))
-  (advice-add 'evil-command-window :override 'doom*popup-evil-command-window)
 
   (defun doom*popup-evil-command-window-execute ()
-    "Execute the command under the cursor in the appropriate buffer."
+    "Execute the command under the cursor in the appropriate buffer, rather than
+the command buffer."
     (interactive)
     (let ((result (buffer-substring (line-beginning-position)
                                     (line-end-position)))
@@ -221,14 +239,13 @@ monkey patch it to use pop-to-buffer, and to remember the previous window."
       (doom/popup-close popup)
       (funcall execute-fn result)
       (setq evil-command-window-current-buffer nil)))
-  (advice-add 'evil-command-window-execute :override 'doom*popup-evil-command-window-execute)
 
-  ;; Tell these functions not to mess with popups
-  (advice-add 'doom-evil-window-move        :around 'doom*popup-save)
-  (advice-add 'evil-window-move-very-bottom :around 'doom*popup-save)
-  (advice-add 'evil-window-move-very-top    :around 'doom*popup-save)
-  (advice-add 'evil-window-move-far-left    :around 'doom*popup-save)
-  (advice-add 'evil-window-move-far-right   :around 'doom*popup-save)
+  ;; Don't mess with popups
+  (advice-add 'doom-evil-window-move        :around 'doom*popups-save)
+  (advice-add 'evil-window-move-very-bottom :around 'doom*popups-save)
+  (advice-add 'evil-window-move-very-top    :around 'doom*popups-save)
+  (advice-add 'evil-window-move-far-left    :around 'doom*popups-save)
+  (advice-add 'evil-window-move-far-right   :around 'doom*popups-save)
 
   ;; Don't block moving to/from popup windows
   (defun doom*ignore-window-parameters-in-popups (dir &optional arg window)
@@ -239,12 +256,14 @@ monkey patch it to use pop-to-buffer, and to remember the previous window."
      window t arg windmove-wrap-around t))
   (advice-add 'windmove-find-other-window :override 'doom*ignore-window-parameters-in-popups))
 
+
 ;; (after! magit
 ;;   ;; Don't open files (from magit) within the magit popup
-;;   (advice-add 'magit-display-file-buffer-traditional :around 'doom*popup-save))
+;;   (advice-add 'magit-display-file-buffer-traditional :around 'doom*popups-save))
+
 
 (after! neotree
-  (defun doom*popup-save-neotree (orig-fun &rest args)
+  (defun doom*popups-save-neotree (orig-fun &rest args)
     "Prevents messing up the neotree buffer on window changes."
     (let ((neo-p (and (featurep 'neotree) (neo-global--window-exists-p))))
       (when neo-p
@@ -256,18 +275,19 @@ monkey patch it to use pop-to-buffer, and to remember the previous window."
             (neotree-show))))))
 
   ;; Prevent neotree from interfering with popups
-  (advice-add 'shackle-display-buffer :around 'doom*popup-save-neotree)
+  (advice-add 'shackle-display-buffer :around 'doom*popups-save-neotree)
   ;; Prevents messing up the neotree buffer on window changes
-  (advice-add 'doom-evil-window-move :around 'doom*popup-save-neotree)
-  ;; (advice-add 'doom-popup-buffer     :around 'doom*popup-save-neotree)
+  (advice-add 'doom-evil-window-move :around 'doom*popups-save-neotree)
+  ;; (advice-add 'doom-popup-buffer     :around 'doom*popups-save-neotree)
   ;; Don't let neotree interfere with moving, splitting or rebalancing windows
-  (advice-add 'balance-windows :around 'doom*popup-save-neotree)
-  (advice-add 'split-window    :around 'doom*popup-save-neotree)
-  (advice-add 'shackle-display-buffer :around 'doom*popup-save-neotree)
-  (advice-add 'evil-window-move-very-bottom :around 'doom*popup-save-neotree)
-  (advice-add 'evil-window-move-very-top    :around 'doom*popup-save-neotree)
-  (advice-add 'evil-window-move-far-left    :around 'doom*popup-save-neotree)
-  (advice-add 'evil-window-move-far-right   :around 'doom*popup-save-neotree))
+  (advice-add 'balance-windows :around 'doom*popups-save-neotree)
+  (advice-add 'split-window    :around 'doom*popups-save-neotree)
+  (advice-add 'shackle-display-buffer :around 'doom*popups-save-neotree)
+  (advice-add 'evil-window-move-very-bottom :around 'doom*popups-save-neotree)
+  (advice-add 'evil-window-move-very-top    :around 'doom*popups-save-neotree)
+  (advice-add 'evil-window-move-far-left    :around 'doom*popups-save-neotree)
+  (advice-add 'evil-window-move-far-right   :around 'doom*popups-save-neotree))
+
 
 (add-hook! org-load
   ;; Ensures org-src-edit yields control of its buffer to shackle.
@@ -310,6 +330,7 @@ monkey patch it to use pop-to-buffer, and to remember the previous window."
     (let ((map org-agenda-mode-map))
       (define-key map "q" 'doom/popup-org-agenda-quit)
       (define-key map "Q" 'doom/popup-org-agenda-quit))))
+
 
 (after! repl-toggle
   (add-hook! doom-popup-close

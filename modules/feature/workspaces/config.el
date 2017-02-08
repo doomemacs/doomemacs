@@ -16,9 +16,10 @@
 
   :config
   ;; Ensure unreal/popup buffers aren't saved
-  (defun +workspaces--filter-unreal (buf) (not (doom-real-buffer-p buf)))
-  (setq persp-filter-save-buffers-functions (list '+workspaces--filter-unreal))
-  (push '+workspaces--filter-unreal persp-common-buffer-filter-functions)
+  (push (lambda (buf) (doom-popup-p (get-buffer-window buf)))
+        persp-filter-save-buffers-functions)
+  (push (lambda (buf) (not (doom-real-buffer-p buf)))
+        persp-common-buffer-filter-functions)
 
   ;; Auto-add buffers when opening them. Allows a perspective-specific buffer list.
   (defun doom*persp-auto-add-buffer (buffer &rest _)
@@ -35,7 +36,12 @@
 
   ;; TODO Test per-frame perspectives
 
-  (persp-mode 1))
+  ;; Restore popups on load
+  (defun +workspaces*reinit-popups ()
+    (dolist (window (window-list))
+      (let ((plist (window-parameter window 'popup)))
+        (when plist (doom-popup--init window plist)))))
+  (advice-add 'persp-load-state-from-file :after '+workspaces*reinit-popups))
 
 (after! ivy
   (defun +workspaces|ivy-ignore-non-persp-buffers (b)
