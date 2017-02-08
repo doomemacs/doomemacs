@@ -248,7 +248,7 @@ regex PATTERN. Returns the number of killed buffers."
 (defun doom/kill-all-buffers (&optional project-p)
   "Kill all buffers in this workspace. If PROJECT-P, kill all buffers that
 belong to the current project in this workspace."
-  (interactive)
+  (interactive "P")
   (let ((buffers (doom-buffer-list (not project-p))))
     (mapc 'doom-kill-buffer-and-windows buffers)
     (when (called-interactively-p 'interactive)
@@ -258,7 +258,7 @@ belong to the current project in this workspace."
 (defun doom/kill-other-buffers (&optional project-p)
   "Kill all other buffers in this workgroup. If PROJECT-P, kill only the other
 buffers that belong to the current project."
-  (interactive)
+  (interactive "P")
   (let ((buffers (doom-buffer-list (not project-p))))
     (mapc (lambda (buf)
             (unless (eq buf (current-buffer))
@@ -271,7 +271,7 @@ buffers that belong to the current project."
 (defun doom/kill-matching-buffers (pattern &optional project-p)
   "Kill buffers in current workgroup that match regex PATTERN. If BANG, then
 exclude buffers that aren't part of the current project."
-  (interactive)
+  (interactive "sP")
   (let* ((buffers (doom-buffer-list (not project-p)))
          (n (doom-kill-matching-buffers pattern buffers)))
     (when (called-interactively-p 'interactive)
