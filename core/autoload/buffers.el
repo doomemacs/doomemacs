@@ -179,6 +179,7 @@ buffer, but buries the buffer if it is present in another window.
 See `doom-real-buffer-p' for what 'real' means."
   (let* ((old-project (doom-project-root))
          (buffer (or buffer (current-buffer)))
+         (buffer-win (get-buffer-window buffer))
          (only-buffer-window-p (= (length (get-buffer-window-list buffer nil t)) 1)))
     (with-current-buffer buffer
       (when (and only-buffer-window-p
@@ -188,13 +189,19 @@ See `doom-real-buffer-p' for what 'real' means."
                  (yes-or-no-p "Buffer is unsaved, save it?"))
             (save-buffer)
           (set-buffer-modified-p nil)))
-      (doom--cycle-real-buffers -1)
-      (unless (eq (current-buffer) buffer)
-        (when only-buffer-window-p
-          (kill-buffer buffer)
-          (unless (doom-real-buffer-p)
-            (doom--cycle-real-buffers -1))))
-      (eq (current-buffer) buffer))))
+      (if (window-dedicated-p buffer-win)
+          (unless (window--delete buffer-win t t)
+            (split-window buffer-win)
+            (window--delete buffer-win t t))
+        (doom--cycle-real-buffers -1)
+        (unless (eq (current-buffer) buffer)
+          (when only-buffer-window-p
+            (kill-buffer buffer)
+            (unless (doom-real-buffer-p)
+              (doom--cycle-real-buffers -1))))
+        (when buffer-win
+          (unrecord-window-buffer buffer-win buffer))
+        (eq (current-buffer) buffer)))))
 
 ;;;###autoload
 (defun doom-kill-buffer-and-windows (buffer)
