@@ -71,7 +71,7 @@
          (hash (gethash project-path npm-conf))
          (package-file (expand-file-name "package.json" project-path))
          deps)
-    (when-let (json (and (not hash) (f-exists? package-file)
-                         (ignore-errors (json-read-file package-file))))
+    (-when-let (json (and (not hash) (f-exists? package-file)
+                          (ignore-errors (json-read-file package-file))))
       (puthash project-path json npm-conf))))
 

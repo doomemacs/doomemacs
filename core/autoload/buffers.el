@@ -3,12 +3,13 @@
 
 (defvar-local doom-buffer--narrowed-origin nil)
 
+;;;###autoload
 (defvar doom-fallback-buffer "*scratch*"
   "The name of the buffer to fall back to if no other buffers exist (will create
 it if it doesn't exist).")
 
-(defvar doom-buffers-unreal-alist
-  '("^ ?\\*.+" image-mode dired-mode reb-mode messages-buffer-mode
+(defvar doom-buffers-unreal
+  '("^ ?\\*" image-mode dired-mode reb-mode messages-buffer-mode
     tabulated-list-mode comint-mode magit-mode)
   "A list of regexps or modes whose buffers are considered unreal, and will be
 ignored when using `doom:next-real-buffer' and `doom:previous-real-buffer' (or
@@ -125,7 +126,7 @@ See `doom-real-buffer-p' for what 'real' means."
           (catch 'goto
             (if (or (not buffers)
                     (= (length buffers) 1))
-                (progn (message "No other buffers in workgroup")
+                (progn (message "No other buffers in workspace")
                        (throw 'goto fail-buffer))
               (funcall move-func)
               (while (not (memq (current-buffer) buffers))

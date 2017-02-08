@@ -3,6 +3,7 @@
 ;; I want Emacs to be nominally aware of the projects. `projectile' provides
 ;; tools for digging through project files and exposing an API I can use to make
 ;; other plugins/features project-aware.
+
 (package! projectile :demand t
   :init
   (setq projectile-cache-file (concat doom-cache-dir "/projectile.cache")

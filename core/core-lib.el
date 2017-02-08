@@ -4,9 +4,6 @@
 (require 's)
 (require 'f)
 
-(defvar +evil-leader)
-(defvar +evil-localleader)
-
 (defvar __DIR__ nil  "The directory of the currently loaded file (set by `load!')")
 (defvar __FILE__ nil "The full path of the currently loaded file (set by `load!')")
 
@@ -50,7 +47,7 @@
 ;;
 
 (defmacro λ! (&rest body)
-  "A shortcut for inline keybind lambdas."
+  "A shortcut for inline interactive lambdas."
   (declare (doc-string 1))
   `(lambda () (interactive) ,@body))
 
@@ -154,7 +151,6 @@ Examples:
 (put ':leader       'lisp-indent-function 'defun)
 (put ':localleader  'lisp-indent-function 'defun)
 
-;;;###autoload
 (defmacro map! (&rest rest)
   "A nightmare of a key-binding macro that will use `evil-define-key*',
 `define-key', `local-set-key' and `global-set-key' depending on context and
@@ -292,21 +288,6 @@ Example
 
          (t (user-error "Invalid key %s" key))))
       (macroexp-progn (reverse forms)))))
-
-(defun doom-os ()
-  "Returns the OS: arch, debian, macos, general linux, cygwin or windows."
-  (let ((gnu-linux-p (eq system-type 'gnu/linux)))
-    (cond ((and gnu-linux-p (f-exists-p "/etc/arch-release"))
-           'arch)
-          ((and gnu-linux-p (f-exists-p "/etc/debian_version"))
-           'debian)
-          (gnu-linux-p
-           'linux)
-          ((eq system-type 'darwin)
-           'macos)
-          ((memq system-type '(windows-nt cygwin))
-           'windows)
-          (t (error "Unknown OS: %s" system-type)))))
 
 (provide 'core-lib)
 ;;; core-lib.el ends here

@@ -9,10 +9,11 @@
 ;;   doom|...   A hook
 ;;   doom*...   An advising function
 ;;   ...!       Macro, shortcut alias or defsubst
-;;   @...       lambda macro for keybinds
+;;   @...       A generator macro for keybinds
 ;;   +...       Any of the above, but part of a module, e.g. +emacs-lisp|init-hook
 ;;
-;;; Autoloaded functions are in {core,modules}/defuns/defuns-*.el
+;; Autoloaded functions are in core/autoload/*.el and modules/*/*/autoload.el or
+;; modules/*/*/autoload/*.el.
 
 (when (version< emacs-version "25.1")
   (error "DOOM Emacs no longer supports Emacs <25.1! Time to upgrade!"))
@@ -132,15 +133,12 @@ enable multiple minor modes for the same regexp.")
 
   ;;; Let 'er rip
   (require 'core-lib)
+  (doom-initialize-autoloads)
   (unless noninteractive
     (require 'core-ui)          ; draw me like one of your French editors
     (require 'core-popups)      ; taming sudden yet inevitable windows
     (require 'core-editor)      ; baseline configuration for text editing
-    (require 'core-projects))   ; making Emacs project-aware
-
-  ;; We do this last to promise that core files will not use autoloaded files.
-  ;; If they did, those functions shouldn't be autoloaded!
-  (doom-initialize-autoloads))
+    (require 'core-projects)))  ; making Emacs project-aware
 
 (provide 'core)
 ;;; core.el ends here

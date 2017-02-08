@@ -38,6 +38,6 @@ test:
 	@$(EMACS) -l test/init.el -f 'doom!run-tests'
 
 init.el:
-	@[ -f init.el ] || $(error No init.el file, please create one or copy init.example.el)
+	@[ -f init.el ] || $(error No init.el file; create one or copy init.example.el)
 
 .PHONY: all test
