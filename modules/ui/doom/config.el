@@ -62,6 +62,10 @@
 
   ;; brighter source buffers
   (add-hook 'find-file-hook 'doom-buffer-mode)
+  ;; Popup buffers should always be dimmed
+  (defun +doom|disable-buffer-mode ()
+    (when doom-buffer-mode (doom-buffer-mode -1)))
+  (add-hook 'doom-popup-mode-hook '+doom|disable-buffer-mode)
 
   ;; Add file icons to doom-neotree
   (require 'doom-neotree)
