@@ -38,54 +38,53 @@
       select-enable-clipboard t
       select-enable-primary t)
 
-(unless noninteractive
-  ;; Save point across sessions
-  (require 'saveplace)
-  (setq save-place-file (concat doom-cache-dir "saveplace")
-        save-place t)
-  (when (>= emacs-major-version 25)
-    (save-place-mode +1))
+;; Save point across sessions
+(require 'saveplace)
+(setq save-place-file (concat doom-cache-dir "saveplace")
+      save-place t)
+(when (>= emacs-major-version 25)
+  (save-place-mode +1))
 
-  ;; Save history across sessions
-  (require 'savehist)
-  (setq savehist-file (concat doom-cache-dir "savehist")
-        savehist-save-minibuffer-history t
-        savehist-additional-variables '(kill-ring search-ring regexp-search-ring))
-  (savehist-mode 1)
+;; Save history across sessions
+(require 'savehist)
+(setq savehist-file (concat doom-cache-dir "savehist")
+      savehist-save-minibuffer-history t
+      savehist-additional-variables '(kill-ring search-ring regexp-search-ring))
+(savehist-mode 1)
 
-  ;; Remove text-property cruft from history
-  (defun unpropertize-savehist ()
-    (mapc (lambda (list)
-            (when (boundp list)
-              (set list (mapcar 'substring-no-properties (eval list)))))
-          '(kill-ring minibuffer-history helm-grep-history helm-ff-history
-            file-name-history read-expression-history extended-command-history
-            evil-ex-history)))
-  (add-hook 'kill-emacs-hook    'unpropertize-savehist)
-  (add-hook 'savehist-save-hook 'unpropertize-savehist)
+;; Remove text-property cruft from history
+(defun unpropertize-savehist ()
+  (mapc (lambda (list)
+          (when (boundp list)
+            (set list (mapcar 'substring-no-properties (eval list)))))
+        '(kill-ring minibuffer-history helm-grep-history helm-ff-history
+                    file-name-history read-expression-history extended-command-history
+                    evil-ex-history)))
+(add-hook 'kill-emacs-hook    'unpropertize-savehist)
+(add-hook 'savehist-save-hook 'unpropertize-savehist)
 
-  ;; Keep track of recently opened files
-  (require 'recentf)
-  (setq recentf-save-file (concat doom-cache-dir "recentf")
-        recentf-exclude '("/tmp/" "/ssh:" "\\.?ido\\.last$" "\\.revive$" "/TAGS$"
-                          "emacs\\.d/private/cache/.+" "emacs\\.d/workgroups/.+$"
-                          "wg-default" "/company-statistics-cache.el$"
-                          "^/var/folders/.+$" "^/tmp/.+")
-        recentf-max-menu-items 0
-        recentf-max-saved-items 250
-        recentf-auto-cleanup 600
-        recentf-filename-handlers '(abbreviate-file-name))
-  (quiet! (recentf-mode 1))
+;; Keep track of recently opened files
+(require 'recentf)
+(setq recentf-save-file (concat doom-cache-dir "recentf")
+      recentf-exclude '("/tmp/" "/ssh:" "\\.?ido\\.last$" "\\.revive$" "/TAGS$"
+                        "emacs\\.d/private/cache/.+" "emacs\\.d/workgroups/.+$"
+                        "wg-default" "/company-statistics-cache.el$"
+                        "^/var/folders/.+$" "^/tmp/.+")
+      recentf-max-menu-items 0
+      recentf-max-saved-items 250
+      recentf-auto-cleanup 600
+      recentf-filename-handlers '(abbreviate-file-name))
+(quiet! (recentf-mode 1))
 
-  ;; Ediff
-  (add-hook! ediff-load
-    (setq ediff-diff-options           "-w"
-          ediff-split-window-function 'split-window-horizontally
-          ediff-window-setup-function 'ediff-setup-windows-plain)) ; no extra frames
+;; Ediff
+(add-hook! ediff-load
+  (setq ediff-diff-options           "-w"
+        ediff-split-window-function 'split-window-horizontally
+        ediff-window-setup-function 'ediff-setup-windows-plain)) ; no extra frames
 
-  ;; revert buffers for changed files
-  (global-auto-revert-mode 1)
-  (setq auto-revert-verbose nil))
+;; revert buffers for changed files
+(global-auto-revert-mode 1)
+(setq auto-revert-verbose nil)
 
 
 ;;
