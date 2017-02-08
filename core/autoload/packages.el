@@ -282,15 +282,16 @@ appropriate."
           ((not (y-or-n-p
                  (format "%s packages will be updated:\n\n%s\n\nProceed?"
                          (length packages)
-                         (let* ((-packages (--map (symbol-name (car it)) packages))
-                                (-max-len (or (-max (-map 'length -packages)) 10)))
+                         (let ((-max-len (or (-max (--map (length (symbol-name (car it))) packages)) 10)))
                            (mapconcat
-                            (lambda (pkg) (let ((desc (assq pkg packages)))
-                                       (format "+ %s %s\t-> %s"
-                                               (s-pad-right (+ -max-len 2) " " pkg)
-                                               (car (cdr desc))
-                                               (car (cdr (cdr desc))))))
-                            (-sort 'string-lessp -packages)
+                            (lambda (pkg)
+                              (format "+ %s %s\t-> %s"
+                                      (s-pad-right (+ -max-len 2) " " (symbol-name (car pkg)))
+                                      (cadr pkg)
+                                      (cadr (cdr pkg))))
+                            (--sort (string-lessp (symbol-name (car it))
+                                                  (symbol-name (car other)))
+                                    packages)
                             "\n")))))
            (message "Aborted!"))
 
