@@ -259,14 +259,16 @@ appropriate."
            (dolist (pkg packages)
              (condition-case ex
                  (doom-message "%s %s (%s)"
-                               (if (doom-install-package (car pkg) (cdr pkg))
-                                   "Installed"
-                                 "Failed to install")
+                               (cond ((package-installed-p (car pkg))
+                                      "Skipped (already installed)")
+                                     ((doom-install-package (car pkg) (cdr pkg))
+                                      "Installed")
+                                     (t "Failed to install"))
                                pkg
                                (cond ((cdr pkg) "QUELPA")
                                      (t "ELPA")))
                (error
-                (doom-message "Error installing %s: %s" (car pkg) ex))))
+                (doom-message "Error (%s): %s" (car pkg) ex))))
 
            (doom-message "Finished!")))))
 
@@ -281,15 +283,16 @@ appropriate."
           ((not (y-or-n-p
                  (format "%s packages will be updated:\n\n%s\n\nProceed?"
                          (length packages)
-                         (mapconcat
-                          (lambda (pkg) (format "+ %s %s -> %s\t%s"
-                                           (s-pad-right 20 " " (symbol-name (car pkg)))
-                                           (car (cdr pkg))
-                                           (car (cdr (cdr pkg)))))
-                          (--sort (string-lessp (symbol-name (car it))
-                                                (symbol-name (car other)))
-                                  packages)
-                          "\n"))))
+                         (let* ((-packages (--map (symbol-name (car it)) packages))
+                                (-max-len (or (-max (-map 'length -packages)) 10)))
+                           (mapconcat
+                            (lambda (pkg) (let ((desc (assq pkg packages)))
+                                       (format "+ %s %s\t-> %s"
+                                               (s-pad-right (+ -max-len 2) " " pkg)
+                                               (car (cdr desc))
+                                               (car (cdr (cdr desc))))))
+                            (-sort 'string-lessp -packages)
+                            "\n")))))
            (message "Aborted!"))
 
           (t
