@@ -141,18 +141,21 @@ See `doom-real-buffer-p' for what 'real' means."
     (switch-to-buffer destbuf)))
 
 ;;;###autoload
-(defun doom-real-buffer-p (&optional buffer)
-  "Returns whether BUFFER a 'real' buffer or not. Real means: a) it isn't a
-popup (or temporary) window and b) it isn't a special buffer (e.g. scratch or
-*messages* buffer). See `doom-buffers-unreal-alist'."
-  (setq buffer (or (and (bufferp buffer) buffer)
-                   (and (stringp buffer) (get-buffer buffer))
-                   (current-buffer)))
-  (when (buffer-live-p buffer)
-    (with-current-buffer buffer
-      (not (or (apply #'derived-mode-p (-filter 'symbolp doom-buffers-unreal-alist))
-               (--any? (string-match-p it (buffer-name buffer))
-                       (-filter 'stringp doom-buffers-unreal-alist)))))))
+(defun doom-real-buffer-p (&optional buffer-or-name)
+  "Returns t if BUFFER-OR-NAME is a 'real' buffer. Real means:
+
+a) it isn't a popup (or temporary) window
+b) it isn't a special buffer (e.g. scratch or *messages* buffer)
+c) and its major-mode or buffer-name-matching regexp isn't in
+`doom-buffers-unreal'."
+  (let ((buffer (window-normalize-buffer buffer-or-name)))
+    (when (buffer-live-p buffer)
+      (not (or (doom-popup-p (get-buffer-window buffer))
+               (eq (buffer-name buffer) doom-fallback-buffer)
+               (--any? (and (stringp it) (string-match-p it (buffer-name buffer)))
+                       doom-buffers-unreal)
+               (with-current-buffer buffer
+                 (apply 'derived-mode-p (-filter 'symbolp doom-buffers-unreal))))))))
 
 ;;;###autoload
 (defun doom/next-buffer ()
