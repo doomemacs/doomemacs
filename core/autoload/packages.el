@@ -98,15 +98,17 @@ fed to `doom/packages-delete'."
   (unless (symbolp sym)
     (error "%s is not a valid symbol" sym))
   (with-temp-buffer
-    (insert-file-contents file)
+    (buffer-disable-undo)
+    (emacs-lisp-mode)
+    (insert-file-contents file nil nil nil t)
     (goto-char (point-min))
     (let ((regexp (concat "\\(^\\|\\s-\\)(" (symbol-name sym) " "))
           sexps)
       (while (re-search-forward regexp nil t)
-        (let ((sexp (cdr-safe (save-excursion
-                                (beginning-of-defun)
-                                (sexp-at-point)))))
-          (push sexp sexps)))
+        (unless (nth 4 (syntax-ppss))
+          (save-excursion
+            (beginning-of-defun)
+            (push (cdr (sexp-at-point)) sexps))))
       (reverse sexps))))
 
 ;;;###autoload
