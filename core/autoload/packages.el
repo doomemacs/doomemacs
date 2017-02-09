@@ -70,23 +70,31 @@ the packages relevant to that backend."
 
 ;;;###autoload
 (defun doom-get-outdated-packages ()
-  "Return a list of packages that are out of date. Each element is a sublist,
-containing (list package-symbol current-version-string new-version-string). Can
-be fed to `doom/packages-update'."
-  (-non-nil (--map (doom-package-outdated-p (car it)) (doom-get-packages))))
+  "Return a list of lists representing packages that are out of date. Each
+element is a sublist, containing (PACKAGE-SYMBOL OLD-VERSION-LIST
+NEW-VERSION-LIST).
+
+Used by `doom/packages-update'."
+  (-non-nil (--map (doom-package-outdated-p (car it))
+                   (doom-get-packages))))
 
 ;;;###autoload
 (defun doom-get-orphaned-packages ()
-  "Return a list of packages that are no longer needed or depended on. Can be
-fed to `doom/packages-delete'."
+  "Return a list of symbols representing packages that are no longer needed or
+depended on.
+
+Used by `doom/packages-autoremove'."
   (doom-read-packages t)
   (let ((package-selected-packages (append (mapcar 'car doom-packages) doom-protected-packages)))
     (package--removable-packages)))
 
 ;;;###autoload
 (defun doom-get-packages-to-install ()
-  "Return a list of packages that aren't installed, but need to be. Used by
-`doom/packages-install'."
+  "Return a list of packages that aren't installed, but need to be. Each element
+is a list whose CAR is the package symbol, and whose CDR is a plist taken from
+that package's `@package' declaration.
+
+Used by `doom/packages-install'."
   (--remove (assq (car it) package-alist) (doom-get-packages)))
 
 (defun doom--scrape-sexps (sym file)

@@ -1,15 +1,13 @@
 ;;; core-popups.el --- taming sudden yet inevitable windows
 
 ;; I'd like certain buffers--like help windows, prompts or
-;; informational/terminal/temporary buffers--to have less presence among my work
-;; buffers (typically, source code buffers). I'd also like them to be easy to
-;; both dispose of quickly and invoke from anywhere. It will also hide the
-;; mode-line in popups using `doom-hide-modeline-mode'
+;; informational/terminal/temporary buffers--to have less presence over my work
+;; buffers (e.g. source code buffers). I'd also like them to be easy to both
+;; dispose of quickly and invoke from anywhere. Also, hide the mode-line in
+;; popups with `doom-hide-modeline-mode'
 ;;
-;; I use `shackle' to make this as consistent as possible, which lets you
-;; specify rules on how to treat certain buffers. I go through great lengths to
-;; tame helm, flycheck, help buffers--*even* the beast that is org-mode, with
-;; the help of `display-buffer-alist' and `shackle'.
+;; I use `shackle' to make this as consistent as possible, which allows you
+;; to specify rules on how to treat certain buffers.
 ;;
 ;; Be warned, there is a lot of hackery voodoo here that could break with an
 ;; emacs update, or an update to any of the packages it tries to tame (like helm

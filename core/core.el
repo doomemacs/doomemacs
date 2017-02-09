@@ -2,14 +2,15 @@
 
 ;;; Naming conventions:
 ;;
-;;   doom-...   A public variable or function (non-interactive use)
-;;   doom--...  A private variable, function (non-interactive use) or macro
-;;   doom/...   An interactive function
-;;   doom:...   An evil operator, motion or command
-;;   doom|...   A hook
-;;   doom*...   An advising function
-;;   ...!       Macro, shortcut alias or defsubst
-;;   @...       A generator macro for keybinds
+;;   doom-...   public variables or functions (non-interactive)
+;;   doom--...  private anything (non-interactive), not safe for direct use
+;;   doom/...   an interactive function
+;;   doom:...   an evil operator, motion or command
+;;   doom|...   hook function
+;;   doom*...   advising functions
+;;   doom!...   interaction commands exclusively for installing external dependencies
+;;   @...       a macro, public shortcut alias or a generator macro for keybinds
+;;   %...       functions used for in-snippet logic
 ;;   +...       Any of the above, but part of a module, e.g. +emacs-lisp|init-hook
 ;;
 ;; Autoloaded functions are in core/autoload/*.el and modules/*/*/autoload.el or

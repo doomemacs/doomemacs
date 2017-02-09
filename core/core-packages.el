@@ -14,14 +14,15 @@
 ;; 3. Stability: I don't want to worry that each time I use my package
 ;;    manager something might inexplicably go wrong. This was the case with
 ;;    Cask, which I used previously. package.el and quelpa appear to be much
-;;    more stable.
+;;    faster and more stable.
 ;; 4. No external dependencies (e.g. Cask) for plugin management.
 ;;
-;; Note: it should be safe to use *most* package.el functions directly, but for
-;; complete certainty I recommend the DOOM variants: `doom/install-package',
-;; `doom/delete-package' and `doom/update-packages'. As well as:
-;; `doom/packages-install', `doom/packages-update', and
-;; `doom/packages-autoremove'.
+;; Note: it should be safe to use *most* package.el functions directly, though I
+;; wouldn't recommend you use `package-autoremove'. For complete certainty, I've provided safer DOOM vaiants:
+;; `doom/install-package', `doom/delete-package' and `doom/update-packages'.
+;;
+;; As well as: `doom/packages-install', `doom/packages-update', and
+;; `doom/packages-autoremove', which are called from the Makefile.
 ;;
 ;; See core/autoload/packages.el for more functions.
 
@@ -122,11 +123,11 @@ avoided to speed up startup."
     (unless (file-exists-p doom-cache-dir)
       (make-directory doom-cache-dir t))
 
+    ;; Ensure core packages are installed
     (unless (and (file-exists-p doom-packages-dir)
                  (require 'use-package nil t)
                  (require 'quelpa nil t))
       (package-refresh-contents)
-      ;; Ensure core packages are installed
       (condition-case ex
           (mapc (lambda (pkg)
                   (package-install pkg)
