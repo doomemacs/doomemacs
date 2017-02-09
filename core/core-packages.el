@@ -76,7 +76,7 @@ if you have byte-compiled your configuration (as intended).")
 (autoload 'use-package "use-package" nil nil 'macro)
 (advice-add 'package-delete :after 'doom*package-delete)
 
-(defmacro doom! (&rest packages)
+(defmacro @doom (&rest packages)
   "DOOM Emacs bootstrap macro. List the modules to load. Benefits from
 byte-compilation."
   (let (mode)
@@ -84,7 +84,7 @@ byte-compilation."
       (cond ((keywordp p)
              (setq mode p))
             ((not mode)
-             (error "No namespace specified on `doom!' for %s" p))
+             (error "No namespace specified on `@doom' for %s" p))
             ((eq p '*)
              (let ((mode-name (substring (symbol-name mode) 1)))
                (--map (setq doom-modules (append doom-modules (list (cons mode (f-base it)))))
@@ -93,7 +93,7 @@ byte-compilation."
              (setq doom-modules (append doom-modules (list (cons mode p))))))))
   (unless noninteractive
     `(let (file-name-handler-alist)
-       ,@(mapcar (lambda (pkg) `(load! ,(car pkg) ,(cdr pkg)))
+       ,@(mapcar (lambda (pkg) `(@load ,(car pkg) ,(cdr pkg)))
                  doom-modules)
 
        (when (display-graphic-p)
@@ -159,22 +159,22 @@ avoided to speed up startup."
 
 (defvar __PACKAGE__ nil "The name of the current package.")
 
-(defalias 'use-package! 'use-package
+(defalias '@use-package 'use-package
   "A `use-package' alias. It exists so DOOM configs adhere to the naming
 conventions of DOOM emacs. Note that packages are deferred by default.
 
-By DOOM conventions, using this instead of `package!' means you are configuring
-a package regardless of whether it's installed or not, while `package!' is used
+By DOOM conventions, using this instead of `@package' means you are configuring
+a package regardless of whether it's installed or not, while `@package' is used
 to declare how to install/setup a package.")
 
-(defmacro package! (name &rest plist)
+(defmacro @package (name &rest plist)
   "Declares a package. This does not load nor install them explicitly.
 
-If used in `doom-core-dir', this is a wrapper for `use-package!' (all packages
+If used in `doom-core-dir', this is a wrapper for `@use-package' (all packages
 are deferred by default), and takes the same arguments as `use-package'.
 
 If used outside of `doom-core-dir' (i.e. in packages.el files within modules),
-this macro serves a purely declarative purpose and doesn't call `use-package!'.
+this macro serves a purely declarative purpose and doesn't call `@use-package'.
 These calls are parsed by `doom-read-packages' to build `doom-packages'.
 
 Adds a few custom properties in either case:
@@ -190,20 +190,20 @@ Adds a few custom properties in either case:
   (mapc (lambda (key) (setq plist (use-package-plist-delete plist key)))
         '(:recipe :pin :needs))
   `(let ((__PACKAGE__ ',name))
-     (use-package! ,name ,@plist)))
+     (@use-package ,name ,@plist)))
 
-(defmacro load! (module &optional submodule file)
+(defmacro @load (module &optional submodule file)
   "Load a module from `doom-modules-dir' when both MODULE and SUBMODULE is
 provided (both symbols). If FILE is non-nil, append it to the resulting path. If
 SUBMODULE is nil, MODULE is loaded relative to the current file (see `__DIR__').
 When SUBMODULE is nil, FILE isn't used.
 
 Examples:
- (load! :lang emacs-lisp)
+ (@load :lang emacs-lisp)
 
   Loads modules/lang/emacs-lisp/FILE.el (defaults to config.el).
 
- (load! +local-module)
+ (@load +local-module)
 
   Loads +local-module.el relative to `__DIR__' or `doom-core-dir'."
   (let (path file)
@@ -243,7 +243,7 @@ Examples:
 
 (defun doom/reload ()
   "Reload `load-path', `doom-modules' and `doom-packages' by
-reinitializing doom and parsing config files for `package!' and `doom!' calls.
+reinitializing doom and parsing config files for `@package' and `@doom' calls.
 There are few reasons to use this."
   (interactive)
   (doom-initialize t)

@@ -15,9 +15,9 @@
 be a lambda or symbol.")
 
 ;;;###autoload
-(defmacro def-setting! (keyword arglist &optional docstring &rest forms)
+(defmacro @def-setting (keyword arglist &optional docstring &rest forms)
   "Define a setting macro. Like `defmacro', this should return a form to be
-executed when called with `set!'. FORMS are not evaluated until `set!' calls it."
+executed when called with `@set'. FORMS are not evaluated until `@set' calls it."
   (declare (indent defun) (doc-string 3))
   (unless (keywordp keyword)
     (error "Not a valid property name: %s" keyword))
@@ -37,13 +37,13 @@ executed when called with `set!'. FORMS are not evaluated until `set!' calls it.
         (byte-compile sym)))))
 
 ;;;###autoload
-(defmacro set! (keyword &rest values)
-  "Set an option defined by `def-setting!'. Skip if doesn't exist."
+(defmacro @set (keyword &rest values)
+  "Set an option defined by `@def-setting'. Skip if doesn't exist."
   (declare (indent defun))
   (unless values
-    (error "Empty set! for %s" keyword))
+    (error "Empty @set for %s" keyword))
   (cond ((not values)
-         (error "Empty set! for %s" keyword))
+         (error "Empty @set for %s" keyword))
         ((not (assq keyword doom-settings))
          (when doom-debug-mode
            (warn "No setting found for %s" keyword)))

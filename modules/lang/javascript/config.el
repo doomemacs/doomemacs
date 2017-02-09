@@ -1,7 +1,7 @@
 ;; lang/javascript/config.el
 (provide '+javascript)
 
-(use-package! js2-mode
+(@use-package js2-mode
   :mode "\\.js$"
   :interpreter "node"
   :init
@@ -10,17 +10,17 @@
         js2-mode-show-parse-errors nil)
 
   :config
-  (add-hook! '(tern-mode flycheck-mode highlight-indent-guides-mode))
+  (@add-hook '(tern-mode flycheck-mode highlight-indent-guides-mode))
   ;; Only way to conform switch-case indentation to editorconfig's config
-  (add-hook! (setq js-switch-indent-offset js-indent-level))
+  (@add-hook (setq js-switch-indent-offset js-indent-level))
 
-  (map! :map js2-mode-map :localleader :nv ";" 'doom/append-semicolon)
+  (@map :map js2-mode-map :localleader :nv ";" 'doom/append-semicolon)
 
-  (set! :repl nodejs-repl)
-  (set! :company-backends tern)
-  (set! :electric-chars ?\} ?\) ?.)
-  (set! :electric-words "||" "&&")
-  (set! :emr
+  (@set :repl nodejs-repl)
+  (@set :company-backends tern)
+  (@set :electric-chars ?\} ?\) ?.)
+  (@set :electric-words "||" "&&")
+  (@set :emr
     (:v  js2r-extract-function           "extract function")
     (:v  js2r-extract-method             "extract method")
     (:v  js2r-introduce-parameter        "introduce parameter")
@@ -48,13 +48,13 @@
     (:n  js2r-forward-slurp              "forward slurp")
     (:n  js2r-forward-barf               "forward barf")))
 
-(use-package! js2-refactor :after emr)
+(@use-package js2-refactor :after emr)
 
-(use-package! company-tern :commands company-tern :after tern)
+(@use-package company-tern :commands company-tern :after tern)
 
-(use-package! jsx-mode :mode "\\.jsx$")
+(@use-package jsx-mode :mode "\\.jsx$")
 
-(use-package! coffee-mode
+(@use-package coffee-mode
   :mode "\\.coffee$"
   :init (setq coffee-indent-like-python-mode t))
 

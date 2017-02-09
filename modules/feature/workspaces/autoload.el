@@ -389,7 +389,7 @@ the workspace and move to the next."
 ;;;###autoload (autoload '+workspace:switch-next "feature/workspaces/autoload" nil t)
 ;;;###autoload (autoload '+workspace:switch-previous "feature/workspaces/autoload" nil t)
 
-(after! evil
+(@after evil
   (evil-define-command +workspace:save-session (&optional name)
     "Ex wrapper around `+workspace/save-session'."
     (interactive "<a>") (+workspace/save-session name))

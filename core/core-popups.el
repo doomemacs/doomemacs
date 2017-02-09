@@ -36,7 +36,7 @@
     map)
   "Active keymap in popup windows.")
 
-(def-setting! :popup (&rest rules)
+(@def-setting :popup (&rest rules)
   "Prepend a new popup rule to `shackle-rules'."
   (if (not (-all-p 'listp rules))
       `(cl-pushnew ',rules shackle-rules :key 'car :test 'equal)
@@ -59,7 +59,7 @@
 ;; Bootstrap
 ;;
 
-(package! shackle :demand t
+(@package shackle :demand t
   :init
   (setq shackle-default-alignment 'below
         shackle-select-reused-windows t)
@@ -70,7 +70,7 @@
   ;;; Baseline popup-window rules
   ;; :noesc and :modeline are custom settings and are not part of shackle. See
   ;; `doom*popup-init' and `doom-popup-buffer' for how they're used.
-  (set! :popup
+  (@set :popup
     '("^ ?\\*doom:.+\\*$"      :size 40  :modeline t :regexp t)
     '("^ ?\\*doom .+\\*$"      :size 30  :noselect t :regexp t)
     '("^\\*.+-Profiler-Report .+\\*$" :size 0.3 :regexp t)
@@ -183,7 +183,7 @@ prevent popups from messaging up the UI (or vice versa)."
 ;; Hacks
 ;;
 
-(after! evil
+(@after evil
   (let ((map doom-popup-mode-map))
     (define-key map [remap evil-window-delete]           'doom/popup-close)
     (define-key map [remap evil-window-move-very-bottom] 'ignore)
@@ -257,12 +257,12 @@ the command buffer."
   (advice-add 'windmove-find-other-window :override 'doom*ignore-window-parameters-in-popups))
 
 
-;; (after! magit
+;; (@after magit
 ;;   ;; Don't open files (from magit) within the magit popup
 ;;   (advice-add 'magit-display-file-buffer-traditional :around 'doom*popups-save))
 
 
-(after! neotree
+(@after neotree
   (defun doom*popups-save-neotree (orig-fun &rest args)
     "Prevents messing up the neotree buffer on window changes."
     (let ((neo-p (and (featurep 'neotree) (neo-global--window-exists-p))))
@@ -289,7 +289,7 @@ the command buffer."
   (advice-add 'evil-window-move-far-right   :around 'doom*popups-save-neotree))
 
 
-(add-hook! org-load
+(@add-hook org-load
   ;; Ensures org-src-edit yields control of its buffer to shackle.
   (defun doom*org-src-switch-to-buffer (buffer context) (pop-to-buffer buffer))
   (advice-add 'org-src-switch-to-buffer :override 'doom*org-src-switch-to-buffer)
@@ -321,8 +321,8 @@ the command buffer."
         (setq org-agenda-archives-mode nil
               org-agenda-buffer nil))))
 
-  (after! org-agenda
-    (after! evil
+  (@after org-agenda
+    (@after evil
       (evil-define-key* 'motion org-agenda-mode-map
         [escape] 'doom/popup-org-agenda-quit
         (kbd "ESC") 'doom/popup-org-agenda-quit))
@@ -332,8 +332,8 @@ the command buffer."
       (define-key map "Q" 'doom/popup-org-agenda-quit))))
 
 
-(after! repl-toggle
-  (add-hook! doom-popup-close
+(@after repl-toggle
+  (@add-hook doom-popup-close
     (setq rtog/--last-buffer nil)))
 
 (provide 'core-popups)

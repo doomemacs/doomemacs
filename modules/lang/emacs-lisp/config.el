@@ -1,12 +1,13 @@
 ;;; lang/emacs-lisp/config.el
 (provide '+emacs-lisp)
 
-(use-package! elisp-mode
+(@use-package elisp-mode
   :mode ("/Cask$" . emacs-lisp-mode)
   :init
-  (add-hook! emacs-lisp-mode '(highlight-quoted-mode auto-compile-on-save-mode +emacs-lisp|hook))
+  (@add-hook emacs-lisp-mode '(highlight-quoted-mode auto-compile-on-save-mode +emacs-lisp|hook))
+
   :config
-  (map! :map emacs-lisp-mode-map
+  (@map :map emacs-lisp-mode-map
         :m "gd" '+emacs-lisp/find-function
         :leader :m "gd" '+emacs-lisp/find-function-other-window)
 
@@ -37,8 +38,8 @@
       (push i imenu-generic-expression))))
 
 
-(after! debug ;; elisp debugging
-  (map! :map debugger-mode-map
+(@after debug ;; elisp debugging
+  (@map :map debugger-mode-map
         :n "RET" 'debug-help-follow
         :n "n"   'debugger-step-through
         :n "c"   'debugger-continue))
@@ -48,17 +49,17 @@
 ;; Plugins
 ;;
 
-(use-package! auto-compile
+(@use-package auto-compile
   :commands auto-compile-on-save-mode
   :config
   (setq auto-compile-display-buffer nil
         auto-compile-use-mode-line nil))
 
 
-(use-package! highlight-quoted
+(@use-package highlight-quoted
   :commands highlight-quoted-mode)
 
 
-(use-package! slime
+(@use-package slime
   :config (setq inferior-lisp-program "clisp"))
 

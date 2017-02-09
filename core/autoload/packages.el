@@ -111,18 +111,18 @@ fed to `doom/packages-delete'."
 
 ;;;###autoload
 (defun doom-read-packages (&optional force-p nopackages)
-  "Parses your Emacs config to keep track of packages declared with `package!'
+  "Parses your Emacs config to keep track of packages declared with `@package'
 in `doom-packages' and enabled modules in `doom-modules'."
   (doom-initialize)
   (when (or force-p (not doom-modules) (not doom-packages))
     (setq doom-modules
           (let (paths mode enabled-modules)
-            (--each (doom--scrape-sexps 'doom! (f-expand "init.el" doom-emacs-dir))
+            (--each (doom--scrape-sexps '@doom (f-expand "init.el" doom-emacs-dir))
               (dolist (module it)
                 (cond ((keywordp module)
                        (setq mode module))
                       ((not mode)
-                       (error "Malformed doom! call: no namespace for %s" module))
+                       (error "Malformed @doom call: no namespace for %s" module))
                       (t
                        (push (cons mode module) enabled-modules)))))
             enabled-modules))
@@ -131,8 +131,8 @@ in `doom-packages' and enabled modules in `doom-modules'."
       (setq package-pinned-packages nil
             doom-packages nil)
       (mapc (lambda (pkg) (cl-pushnew pkg doom-packages :key 'car))
-            (-map (lambda (args)
-                    (plist! args &delete
+            (-map (lambda (mplist)
+                    (@mplist mplist &delete
                       :preface :ensure :requires :no-require :bind :bind* :bind-keymap
                       :bind-keymap* :interpreter :mode :commands :defines :functions
                       :defer :init :after :demand :config :diminish :delight))
@@ -141,7 +141,7 @@ in `doom-packages' and enabled modules in `doom-modules'."
                           (-flatten-n
                            1 (mapcar (lambda (file)
                                        (when (f-exists-p file)
-                                         (doom--scrape-sexps 'package! file)))
+                                         (doom--scrape-sexps '@package file)))
                                      (append (f-glob "core*.el" doom-core-dir)
                                              (--map (doom-module-path (car it) (cdr it) "packages.el")
                                                     doom-modules)))))))

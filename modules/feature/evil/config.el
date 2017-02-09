@@ -5,12 +5,12 @@
 ;; strives to make Emacs a much better vim than vim was.
 
 (defvar +evil-leader ","
-  "The <leader> key, used by the `map!' macro for :leader bindings.")
+  "The <leader> key, used by the `@map' macro for :leader bindings.")
 
 (defvar +evil-localleader "\\"
-  "The <localleader> key, used by the `map!' macro for :localleader bindings.")
+  "The <localleader> key, used by the `@map' macro for :localleader bindings.")
 
-(def-setting! :evil-state (&rest mode-state-list)
+(@def-setting :evil-state (&rest mode-state-list)
   "Set the initialize STATE of MODE using `evil-set-initial-state'."
   (if (-all-p 'listp mode-state-list)
       (macroexp-progn
@@ -29,7 +29,7 @@
 ;; evil-mode
 ;;
 
-(use-package! evil :demand t
+(@use-package evil :demand t
   :init
   (setq evil-want-C-u-scroll t
         evil-want-visual-char-semi-exclusive t
@@ -45,7 +45,7 @@
         evil-insert-skip-empty-lines t)
 
   :config
-  (set! :popup
+  (@set :popup
     '("*evil-registers*" :size 0.3)
     '("*Command Line*" :size 8))
 
@@ -76,7 +76,7 @@
           (Man-mode               . emacs)
           (grep-mode              . emacs))))
 
-(defsubst +evil--textobj! (key inner-fn &optional outer-fn)
+(defsubst +evil--textobj (key inner-fn &optional outer-fn)
   "Define a text object."
   (define-key evil-inner-text-objects-map key inner-fn)
   (define-key evil-outer-text-objects-map key (or outer-fn inner-fn)))
@@ -145,19 +145,19 @@
 ;; Plugins
 ;;
 
-(use-package! evil-args
+(@use-package evil-args
   :commands (evil-inner-arg evil-outer-arg
              evil-forward-arg evil-backward-arg
              evil-jump-out-args)
-  :init (+evil--textobj! "a" 'evil-inner-arg 'evil-outer-arg))
+  :init (+evil--textobj "a" 'evil-inner-arg 'evil-outer-arg))
 
 
-(use-package! evil-commentary
+(@use-package evil-commentary
   :commands (evil-commentary evil-commentary-yank evil-commentary-line)
   :config (evil-commentary-mode 1))
 
 
-(use-package! evil-easymotion
+(@use-package evil-easymotion
   :defer 1
   :config
   (defvar +evil--snipe-repeat-fn)
@@ -183,7 +183,7 @@
                               (evil-snipe-enable-incremental-highlight)))))
 
 
-(use-package! evil-embrace
+(@use-package evil-embrace
   :after evil-surround
   :config
   (setq evil-embrace-show-help-p nil)
@@ -229,15 +229,15 @@
   ;; Add extra pairs
   (add-hook 'LaTeX-mode-hook 'embrace-LaTeX-mode-hook)
   (add-hook 'org-mode-hook 'embrace-org-mode-hook)
-  (add-hook! emacs-lisp-mode
+  (@add-hook emacs-lisp-mode
     (embrace-add-pair ?\` "`" "'"))
-  (add-hook! (emacs-lisp-mode lisp-mode)
+  (@add-hook (emacs-lisp-mode lisp-mode)
     (embrace-add-pair-regexp ?f "([^ ]+ " ")" '+evil--embrace-elisp-fn))
-  (add-hook! (org-mode latex-mode)
+  (@add-hook (org-mode latex-mode)
     (embrace-add-pair-regexp ?l "\\[a-z]+{" "}" '+evil--embrace-latex)))
 
 
-(use-package! evil-escape
+(@use-package evil-escape
   :commands evil-escape-mode
   :init
   (defun +evil|escape-disable () (evil-escape-mode -1))
@@ -252,7 +252,7 @@
         evil-escape-delay 0.25))
 
 
-(use-package! evil-exchange
+(@use-package evil-exchange
   :commands evil-exchange
   :config
   (defun +evil*exchange-off ()
@@ -260,7 +260,7 @@
   (advice-add 'evil-force-normal-state :after '+evil*exchange-off))
 
 
-(use-package! evil-indent-plus
+(@use-package evil-indent-plus
   :commands (evil-indent-plus-i-indent
              evil-indent-plus-a-indent
              evil-indent-plus-i-indent-up
@@ -268,16 +268,16 @@
              evil-indent-plus-i-indent-up-down
              evil-indent-plus-a-indent-up-down)
   :init
-  (+evil--textobj! "i" 'evil-indent-plus-i-indent 'evil-indent-plus-a-indent)
-  (+evil--textobj! "I" 'evil-indent-plus-i-indent-up 'evil-indent-plus-a-indent-up)
-  (+evil--textobj! "J" 'evil-indent-plus-i-indent-up-down 'evil-indent-plus-a-indent-up-down))
+  (+evil--textobj "i" 'evil-indent-plus-i-indent 'evil-indent-plus-a-indent)
+  (+evil--textobj "I" 'evil-indent-plus-i-indent-up 'evil-indent-plus-a-indent-up)
+  (+evil--textobj "J" 'evil-indent-plus-i-indent-up-down 'evil-indent-plus-a-indent-up-down))
 
 
-(use-package! evil-matchit
+(@use-package evil-matchit
   :commands (evilmi-jump-items evilmi-text-object global-evil-matchit-mode)
   :config (global-evil-matchit-mode 1)
   :init
-  (+evil--textobj! "%" 'evilmi-text-object)
+  (+evil--textobj "%" 'evilmi-text-object)
 
   (defun +evil/matchit-or-toggle-fold ()
     "If on a fold-able element, toggle the fold (`hs-toggle-hiding'). Otherwise,
@@ -288,7 +288,7 @@ if on a delimiter, jump to the matching one (`evilmi-jump-items')."
       (call-interactively 'evilmi-jump-items))))
 
 
-(use-package! evil-multiedit
+(@use-package evil-multiedit
   :commands (evil-multiedit-match-all
              evil-multiedit-match-and-next
              evil-multiedit-match-and-prev
@@ -302,20 +302,20 @@ if on a delimiter, jump to the matching one (`evilmi-jump-items')."
   :config (evil-multiedit-default-keybinds))
 
 
-(use-package! evil-textobj-anyblock
+(@use-package evil-textobj-anyblock
   :commands (evil-numbers/inc-at-pt evil-numbers/dec-at-pt)
   :init
-  (+evil--textobj! "B" 'evil-textobj-anyblock-inner-block 'evil-textobj-anyblock-a-block))
+  (+evil--textobj "B" 'evil-textobj-anyblock-inner-block 'evil-textobj-anyblock-a-block))
 
 
-(use-package! evil-search-highlight-persist :demand t
+(@use-package evil-search-highlight-persist :demand t
   :commands (evil-textobj-anyblock-inner-block evil-textobj-anyblock-a-block)
   :config
   (global-evil-search-highlight-persist t)
   (advice-add 'evil-force-normal-state :after 'evil-search-highlight-persist-remove-all))
 
 
-(use-package! evil-snipe :demand t
+(@use-package evil-snipe :demand t
   :init
   (setq evil-snipe-smart-case t
         evil-snipe-repeat-keys nil ; using space to repeat
@@ -331,12 +331,12 @@ if on a delimiter, jump to the matching one (`evilmi-jump-items')."
   (evil-snipe-mode 1)
   (evil-snipe-override-mode 1)
   ;; Switch to evil-easymotion/avy after first snipe
-  (map! :map evil-snipe-parent-transient-map
-        "C-;" (λ! (require 'evil-easymotion)
+  (@map :map evil-snipe-parent-transient-map
+        "C-;" (@λ (require 'evil-easymotion)
                   (call-interactively +evil--snipe-repeat-fn))))
 
 
-(use-package! evil-surround
+(@use-package evil-surround
   :commands (global-evil-surround-mode
              evil-surround-edit
              evil-Surround-edit
@@ -344,7 +344,7 @@ if on a delimiter, jump to the matching one (`evilmi-jump-items')."
   :config (global-evil-surround-mode 1))
 
 
-(use-package! evil-visualstar
+(@use-package evil-visualstar
   :commands (global-evil-visualstar-mode
              evil-visualstar/begin-search
              evil-visualstar/begin-search-forward
@@ -353,7 +353,7 @@ if on a delimiter, jump to the matching one (`evilmi-jump-items')."
 
 
 ;; A side-panel for browsing my project files. Inspired by vim's NERDTree.
-(use-package! neotree
+(@use-package neotree
   :commands (neotree-show
              neotree-hide
              neotree-toggle
@@ -384,13 +384,13 @@ if on a delimiter, jump to the matching one (`evilmi-jump-items')."
           "^#.*#$"))
 
   :config
-  (set! :evil-state 'neotree-mode 'motion)
+  (@set :evil-state 'neotree-mode 'motion)
 
   ;; Adding keybindings to `neotree-mode-map' wouldn't work for me (they get
   ;; overridden when the neotree buffer is spawned). So we bind them in a hook.
   (add-hook 'neo-after-create-hook '+evil|neotree-init-keymap)
   (defun +evil|neotree-init-keymap (&rest _)
-    (map! :Lm "\\\\"     'evil-window-prev
+    (@map :Lm "\\\\"     'evil-window-prev
           :Lm "RET"      'neotree-enter
           :Lm "<return>" 'neotree-enter
           :Lm "ESC ESC"  'neotree-hide

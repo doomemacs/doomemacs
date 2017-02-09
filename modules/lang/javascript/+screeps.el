@@ -169,7 +169,7 @@
   :match "/screeps/.+$"
   :modes (nodejs-project-mode))
 
-(add-hook! screeps-project-mode
+(@add-hook screeps-project-mode
   (when (eq major-mode 'js2-mode)
     (add-to-list 'flycheck-disabled-checkers 'javascript-jshint)
     (setq js2-additional-externs (append '("_") screeps-objects screeps-constants))))

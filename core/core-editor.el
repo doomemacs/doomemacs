@@ -74,10 +74,10 @@
       recentf-max-saved-items 250
       recentf-auto-cleanup 600
       recentf-filename-handlers '(abbreviate-file-name))
-(quiet! (recentf-mode 1))
+(@quiet (recentf-mode 1))
 
 ;; Ediff
-(add-hook! ediff-load
+(@add-hook ediff-load
   (setq ediff-diff-options           "-w"
         ediff-split-window-function 'split-window-horizontally
         ediff-window-setup-function 'ediff-setup-windows-plain)) ; no extra frames
@@ -93,15 +93,15 @@
 
 ;; Handles whitespace (tabs/spaces) settings externally. This way projects can
 ;; specify their own formatting rules.
-(package! editorconfig :demand t
+(@package editorconfig :demand t
   :mode ("\\.?editorconfig$" . editorconfig-conf-mode)
   :config (editorconfig-mode +1)
   ;; Show whitespace in tabs indentation mode
-  (add-hook! 'editorconfig-custom-hooks
+  (@add-hook 'editorconfig-custom-hooks
     (if indent-tabs-mode (whitespace-mode +1))))
 
 ;; Auto-close delimiters and blocks as you type
-(package! smartparens :demand t
+(@package smartparens :demand t
   :init
   (setq sp-autowrap-region nil          ; let evil-surround handle this
         sp-highlight-pair-overlay nil
@@ -137,59 +137,66 @@
 ;; Autoloaded Plugins
 ;;
 
-(package! ace-link :commands (ace-link-help ace-link-org))
+(@package ace-link :commands (ace-link-help ace-link-org))
 
-(package! ace-window
+(@package ace-window
   :commands ace-window
   :config (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)
                 aw-scope 'frame
                 aw-background t))
 
-(package! avy
+(@package avy
   :commands (avy-goto-char-2 avy-goto-line)
   :config (setq avy-all-windows nil
                 avy-background t))
 
-(package! command-log-mode
-  :commands (clm/command-log-buffer command-log-mode global-command-log-mode)
-  :config (setq command-log-mode-is-global t))
+(@package command-log-mode
+  :commands (command-log-mode global-command-log-mode)
+  :config
+  (@set :popup "*command-log*" :size 40 :align 'right :noselect t)
+  (setq command-log-mode-auto-show t
+        command-log-mode-open-log-turns-on-mode t))
 
-(package! emr
+(@package emr
   :commands (emr-show-refactor-menu emr-declare-command)
   :config (emr-initialize)
   (define-key popup-menu-keymap [escape] 'keyboard-quit))
 
-(package! expand-region :commands (er/expand-region er/contract-region er/mark-symbol er/mark-word))
+(@package expand-region :commands (er/expand-region er/contract-region er/mark-symbol er/mark-word))
 
-(package! goto-last-change :commands goto-last-change)
+(@package goto-last-change :commands goto-last-change)
 
-(package! help-fns+ ; Improved help commands
+(@package help-fns+ ; Improved help commands
   :commands (describe-buffer describe-command describe-file
              describe-keymap describe-option describe-option-of-type))
 
-(package! imenu-anywhere
+(@package imenu-anywhere
   :commands (ido-imenu-anywhere ivy-imenu-anywhere helm-imenu-anywhere))
 
-(package! imenu-list :commands imenu-list-minor-mode)
+(@package imenu-list :commands imenu-list-minor-mode)
 
-(package! pcre2el :commands rxt-quote-pcre)
+(@package pcre2el :commands rxt-quote-pcre)
 
-(package! rotate-text
+(@package rotate-text
   :recipe (:fetcher github :repo "debug-ito/rotate-text.el")
   :commands (rotate-text rotate-text-backward)
   :config (push '("true" "false") rotate-text-words))
 
-(package! smart-forward
+(@package smart-forward
   :commands (smart-up smart-down smart-backward smart-forward))
 
-(package! smex :commands smex)
+(@package smex
+  :commands (smex smex-major-mode-commands)
+  :config
+  (setq smex-save-file (concat doom-cache-dir "/smex-items"))
+  (smex-initialize))
 
-(package! swiper :commands (swiper swiper-all))
+(@package swiper :commands (swiper swiper-all))
 
-(package! wgrep
+(@package wgrep
   :commands (wgrep-setup wgrep-change-to-wgrep-mode)
   :config
-  (set! :popup "^\\*ivy-occur counsel-ag" :size 25 :select t :regexp t)
+  (@set :popup "^\\*ivy-occur counsel-ag" :size 25 :select t :regexp t)
   (setq wgrep-auto-save-buffer t)
   (advice-add 'wgrep-abort-changes :after 'doom/popup-close)
   (advice-add 'wgrep-finish-edit :after 'doom/popup-close))

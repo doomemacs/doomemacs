@@ -4,7 +4,7 @@
 ;; file-based session persistence. The switch from workgroups2 was motivated by
 ;; performance. Workgroups2 wasn't entirely stable either.
 
-(use-package! persp-mode :demand t
+(@use-package persp-mode :demand t
   :init
   (setq persp-autokill-buffer-on-remove 'kill-weak
         persp-nil-name "main"
@@ -15,6 +15,8 @@
         persp-switch-to-added-buffer nil)
 
   :config
+  (@add-hook emacs-startup (persp-mode 1))
+
   ;; Ensure unreal/popup buffers aren't saved
   (push (lambda (buf) (doom-popup-p (get-buffer-window buf)))
         persp-filter-save-buffers-functions)
@@ -43,7 +45,7 @@
         (when plist (doom-popup--init window plist)))))
   (advice-add 'persp-load-state-from-file :after '+workspaces*reinit-popups))
 
-(after! ivy
+(@after ivy
   (defun +workspaces|ivy-ignore-non-persp-buffers (b)
     (when persp-mode
       (let ((persp (get-current-persp)))

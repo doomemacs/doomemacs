@@ -4,8 +4,8 @@
 (require 's)
 (require 'f)
 
-(defvar __DIR__ nil  "The directory of the currently loaded file (set by `load!')")
-(defvar __FILE__ nil "The full path of the currently loaded file (set by `load!')")
+(defvar __DIR__ nil  "The directory of the currently loaded file (set by `@load')")
+(defvar __FILE__ nil "The full path of the currently loaded file (set by `@load')")
 
 (defun __DIR__ ()
   "Get the full path to the current file's parent folder."
@@ -26,15 +26,15 @@
            byte-compile-current-file)
       (error "__FILE__ is unset")))
 
-(package! anaphora
+(@package anaphora
   :commands (awhen aif acond awhile))
 
-(package! async
+(@package async
   :commands (async-start
              async-start-process
              async-byte-recompile-directory))
 
-(package! persistent-soft
+(@package persistent-soft
   :preface (defvar pcache-directory (concat doom-cache-dir "pcache/"))
   :commands (persistent-soft-exists-p
              persistent-soft-fetch
@@ -46,12 +46,12 @@
 ;; Library
 ;;
 
-(defmacro λ! (&rest body)
+(defmacro @λ (&rest body)
   "A shortcut for inline interactive lambdas."
   (declare (doc-string 1))
   `(lambda () (interactive) ,@body))
 
-(defmacro after! (feature &rest forms)
+(defmacro @after (feature &rest forms)
   "A smart wrapper around `with-eval-after-load'. Supresses warnings during
 compilation."
   (declare (indent defun) (debug t))
@@ -64,14 +64,22 @@ compilation."
        'with-no-warnings)
     (with-eval-after-load ',feature ,@forms)))
 
-(defmacro quiet! (&rest forms)
-  "Run FORMS without making any noise (no messages)."
-  `(cl-letf (((symbol-function 'load-file) (lambda (file) (load file nil t)))
-             ((symbol-function 'message) (lambda (&rest _)))
-             (inhibit-message t))
-     ,@forms))
+(defmacro @quiet (&rest forms)
+  "Run FORMS without making any noise."
+  `(progn
+     (fset 'doom--old-write-region-fn (symbol-function 'write-region))
+     (cl-letf ((standard-output (lambda (&rest _)))
+               ((symbol-function 'load-file) (lambda (file) (load file nil t)))
+               ((symbol-function 'message) (lambda (&rest _)))
+               ((symbol-function 'write-region)
+                (lambda (start end filename &optional append visit lockname mustbenew)
+                  (unless visit (setq visit 'no-message))
+                  (doom--old-write-region-fn start end filename append visit lockname mustbenew)))
+               (inhibit-message t)
+               (save-silently t))
+       ,@forms)))
 
-(defmacro add-hook! (hook &rest func-or-forms)
+(defmacro @add-hook (hook &rest func-or-forms)
   "A convenience macro for `add-hook'.
 
 HOOK can be one hook or a list of hooks. If the hook(s) are not quoted, -hook is
@@ -82,14 +90,14 @@ will be wrapped in a lambda. A list of symbols will expand into a series of
 add-hook calls.
 
 Examples:
-    (add-hook! 'some-mode-hook 'enable-something)
-    (add-hook! some-mode '(enable-something and-another))
-    (add-hook! '(one-mode-hook second-mode-hook) 'enable-something)
-    (add-hook! (one-mode second-mode) 'enable-something)
-    (add-hook! (one-mode second-mode) (setq v 5) (setq a 2))"
+    (@add-hook 'some-mode-hook 'enable-something)
+    (@add-hook some-mode '(enable-something and-another))
+    (@add-hook '(one-mode-hook second-mode-hook) 'enable-something)
+    (@add-hook (one-mode second-mode) 'enable-something)
+    (@add-hook (one-mode second-mode) (setq v 5) (setq a 2))"
   (declare (indent defun) (debug t))
   (unless func-or-forms
-    (error "add-hook!: FUNC-OR-FORMS is empty"))
+    (error "@add-hook: FUNC-OR-FORMS is empty"))
   (let* ((val (car func-or-forms))
          (quoted-p (eq (car-safe hook) 'quote))
          (hook (if quoted-p (cadr hook) hook))
@@ -107,7 +115,7 @@ Examples:
                           (-list hook)))))
              funcs))))
 
-(defmacro associate! (mode &rest plist)
+(defmacro @associate (mode &rest plist)
   "Associate a major or minor mode to certain patterns and project files."
   (declare (indent 1))
   (unless noninteractive
@@ -118,7 +126,7 @@ Examples:
            (pred  (plist-get plist :when)))
       (cond ((or files in pred)
              (when (and files (not (or (listp files) (stringp files))))
-               (user-error "associate! :files expects a string or list of strings"))
+               (user-error "@associate :files expects a string or list of strings"))
              (let ((hook-name (intern (format "doom--init-mode-%s" mode))))
                (macroexp-progn
                 (list `(defun ,hook-name ()
@@ -138,10 +146,10 @@ Examples:
             (match
              `(add-to-list ',(if minor 'doom-auto-minor-mode-alist 'auto-mode-alist)
                            (cons ,match ',mode)))
-            (t (user-error "associate! invalid rules for mode [%s] (in %s) (match %s) (files %s)"
+            (t (user-error "@associate invalid rules for mode [%s] (in %s) (match %s) (files %s)"
                            mode in match files))))))
 
-;; Register keywords for proper indentation (see `map!')
+;; Register keywords for proper indentation (see `@map')
 (put ':prefix       'lisp-indent-function 'defun)
 (put ':map          'lisp-indent-function 'defun)
 (put ':map*         'lisp-indent-function 'defun)
@@ -151,7 +159,7 @@ Examples:
 (put ':leader       'lisp-indent-function 'defun)
 (put ':localleader  'lisp-indent-function 'defun)
 
-(defmacro map! (&rest rest)
+(defmacro @map (&rest rest)
   "A nightmare of a key-binding macro that will use `evil-define-key*',
 `define-key', `local-set-key' and `global-set-key' depending on context and
 plist key flags. It was designed to make binding multiple keys more concise,
@@ -193,7 +201,7 @@ Conditional keybinds
     (:unless [CONDITION] [...])
 
 Example
-    (map! :map magit-mode-map
+    (@map :map magit-mode-map
           :m \"C-r\" 'do-something           ; assign C-r in motion state
           :nv \"q\" 'magit-mode-quit-window  ; assign to 'q' in normal and visual states
           \"C-x C-r\" 'a-global-keybind
@@ -217,7 +225,7 @@ Example
         (cond
          ;; it's a sub expr
          ((listp key)
-          (push (macroexpand `(map! ,@key)) forms))
+          (push `(@map ,@key) forms))
 
          ;; it's a flag
          ((keywordp key)
@@ -229,10 +237,10 @@ Example
           (pcase key
             (:prefix  (setq prefix (concat prefix (kbd (pop rest)))))
             (:map     (setq keymaps (-list (pop rest))))
-            (:unset  `(,(macroexpand `(map! ,(kbd (pop rest))))))
-            (:after   (prog1 `((after! ,(pop rest)   ,(macroexpand `(map! ,@rest)))) (setq rest '())))
-            (:when    (prog1 `((if ,(pop rest)       ,(macroexpand `(map! ,@rest)))) (setq rest '())))
-            (:unless  (prog1 `((if (not ,(pop rest)) ,(macroexpand `(map! ,@rest)))) (setq rest '())))
+            (:unset  `((@map ,(kbd (pop rest)))))
+            (:after   (prog1 `((@after ,(pop rest)   (@map ,@rest))) (setq rest '())))
+            (:when    (prog1 `((if ,(pop rest)       (@map ,@rest))) (setq rest '())))
+            (:unless  (prog1 `((if (not ,(pop rest)) (@map ,@rest))) (setq rest '())))
             (otherwise ; might be a state prefix
              (mapc (lambda (letter)
                      (cond ((assoc letter state-map)

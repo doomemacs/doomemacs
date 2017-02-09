@@ -38,24 +38,10 @@
 (window-divider-mode +1)
 
 
-;; Causes a flash around the cursor when it moves across a "large" distance.
-;; Usually between windows, or across files. This makes it easier to keep track
-;; where your cursor is, which I find helpful on my 30" 2560x1600 display.
-(use-package! beacon :demand t
-  :config
-  (beacon-mode +1)
-  (setq beacon-color (let ((bg (face-attribute 'highlight :background nil t)))
-                       (if (eq bg 'unspecified)
-                           (face-attribute 'highlight :foreground nil t)
-                         bg))
-        beacon-blink-when-buffer-changes t
-        beacon-blink-when-point-moves-vertically 10))
-
-
 ;; Apply the doom-one theme from `doom-themes' for full compatibility; gives
 ;; Emacs a look inspired by Dark One in Atom.
 ;; <https://github.com/hlissner/emacs-doom-theme>
-(use-package! doom-themes :demand t
+(@use-package doom-themes :demand t
   :load-path "~/work/plugins/emacs-doom-theme"
   :config
   (load-theme +doom-theme t)
@@ -77,8 +63,22 @@
   (require 'doom-nlinum))
 
 
+;; Causes a flash around the cursor when it moves across a "large" distance.
+;; Usually between windows, or across files. This makes it easier to keep track
+;; where your cursor is, which I find helpful on my 30" 2560x1600 display.
+(@use-package beacon :demand t
+  :config
+  (beacon-mode +1)
+  (setq beacon-color (let ((bg (face-attribute 'highlight :background nil t)))
+                       (if (eq bg 'unspecified)
+                           (face-attribute 'highlight :foreground nil t)
+                         bg))
+        beacon-blink-when-buffer-changes t
+        beacon-blink-when-point-moves-vertically 10))
+
+
 ;; Nicer folded overlays that stand out a bit more
-(after! hideshow
+(@after hideshow
   (defface doom-folded-face '((t (:foreground "#555" :background "#888")))
     "Face to hightlight `hideshow' overlays."
     :group 'hideshow)
@@ -90,7 +90,7 @@
 
 
 ;; Show diffs with subtle lines in the fringe
-(after! git-gutter-fringe
+(@after git-gutter-fringe
   ;; places the git gutter outside the margins.
   (setq-default fringes-outside-margins t)
   ;; thin fringe bitmaps

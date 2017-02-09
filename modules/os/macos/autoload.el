@@ -15,7 +15,7 @@
     (message "Running: %s" command)
     (shell-command command)))
 
-(defmacro +macos--open-with! (id &optional app dir)
+(defmacro +macos@open-with (id &optional app dir)
   `(defun ,(intern (format "+macos/%s" id)) ()
      (interactive)
      (+macos-open-with ,app ,dir)))
@@ -27,22 +27,22 @@
   (browse-url buffer-file-name))
 
 ;;;###autoload (autoload '+macos/open-in-default-program "os/macos/autoload" nil t)
-(+macos--open-with! open-in-default-program)
+(+macos@open-with open-in-default-program)
 
 ;;;###autoload (autoload '+macos/reveal-in-finder "os/macos/autoload" nil t)
-(+macos--open-with! reveal-in-finder "Finder" default-directory)
+(+macos@open-with reveal-in-finder "Finder" default-directory)
 
 ;;;###autoload (autoload '+macos/reveal-project-in-finder "os/macos/autoload" nil t)
-(+macos--open-with! reveal-project-in-finder "Finder" (doom-project-root))
+(+macos@open-with reveal-project-in-finder "Finder" (doom-project-root))
 
 ;;;###autoload (autoload '+macos/send-to-transmit "os/macos/autoload" nil t)
-(+macos--open-with! send-to-transmit "Transmit")
+(+macos@open-with send-to-transmit "Transmit")
 
 ;;;###autoload (autoload '+macos/send-cwd-to-transmit "os/macos/autoload" nil t)
-(+macos--open-with! send-cwd-to-transmit "Transmit" default-directory)
+(+macos@open-with send-cwd-to-transmit "Transmit" default-directory)
 
 ;;;###autoload (autoload '+macos/send-to-launchbar "os/macos/autoload" nil t)
-(+macos--open-with! send-to-launchbar "LaunchBar")
+(+macos@open-with send-to-launchbar "LaunchBar")
 
 ;;;###autoload (autoload '+macos/send-project-to-launchbar "os/macos/autoload" nil t)
-(+macos--open-with! send-project-to-launchbar "LaunchBar" (doom-project-root))
+(+macos@open-with send-project-to-launchbar "LaunchBar" (doom-project-root))

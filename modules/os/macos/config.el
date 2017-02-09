@@ -28,7 +28,7 @@
        (require 'osx-clipboard)
        (osx-clipboard-mode +1)))
 
-(after! evil
+(@after evil
   ;; On OSX, stop copying each visual state move to the clipboard:
   ;; https://bitbucket.org/lyro/evil/issue/336/osx-visual-state-copies-the-region-on
   ;; Most of this code grokked from:
