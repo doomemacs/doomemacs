@@ -138,7 +138,7 @@ See `doom-real-buffer-p' for what 'real' means."
               (current-buffer))))
     (when (eq destbuf fail-buffer)
       (message "Nowhere to go"))
-    (switch-to-buffer destbuf)))
+    (set-window-buffer (selected-window) destbuf)))
 
 ;;;###autoload
 (defun doom-real-buffer-p (&optional buffer-or-name)
