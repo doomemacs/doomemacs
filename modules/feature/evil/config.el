@@ -127,7 +127,6 @@
   :motion mark-whole-buffer :move-point nil
   (interactive "<r><g//><!>")
   (evil-ex-global beg end pattern command invert))
-(evil-ex-define-cmd "g[lobal]" '+evil:global)
 
 (evil-define-operator +evil:align (&optional beg end bang pattern)
   "Ex interface to `align-regexp'. Accepts vim-style regexps."
@@ -139,6 +138,9 @@
                (regexp-quote pattern)
              (evil-transform-vim-style-regexp pattern)))
    1 1))
+
+(evil-ex-define-cmd "g[lobal]" '+evil:global)
+(evil-ex-define-cmd "al[ign]" '+evil:align)
 
 
 ;;
