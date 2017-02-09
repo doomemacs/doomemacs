@@ -258,8 +258,8 @@ Example
                    (split-string (substring (symbol-name key) 1) "" t))
              (unless states
                (user-error "Unrecognized keyword %s" key))
-             (when (assoc "L" states)
-               (cond ((= (length states) 1)
+             (when local
+               (cond ((= (length states) 0)
                       (user-error "local keybinding for %s must accompany another state" key))
                      ((> (length keymaps) 0)
                       (user-error "local keybinding for %s cannot accompany a keymap" key)))))))
