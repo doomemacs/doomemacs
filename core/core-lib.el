@@ -190,7 +190,6 @@ States
     If omitted, the keybind will be defined globally.
 
 Flags
-    :unset [KEY]               ; unset key
     (:map [KEYMAP] [...])      ; inner keybinds are applied to KEYMAP
     (:prefix [PREFIX] [...])   ; assign prefix to all inner keybindings
     (:after [FEATURE] [...])   ; apply keybinds when [FEATURE] loads
@@ -246,7 +245,6 @@ Example
                           `(vconcat ,prefix (if (stringp ,def) (kbd ,def) ,def))
                         `(vconcat ,prefix ,(if (stringp def) (kbd def) def))))))
             (:map     (setq keymaps (-list (pop rest))))
-            (:unset  `((@map ,(kbd (pop rest)))))
             (:after   (prog1 `((@after ,(pop rest)   (@map ,@rest))) (setq rest '())))
             (:when    (prog1 `((if ,(pop rest)       (@map ,@rest))) (setq rest '())))
             (:unless  (prog1 `((if (not ,(pop rest)) (@map ,@rest))) (setq rest '())))
