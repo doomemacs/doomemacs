@@ -152,7 +152,6 @@ Examples:
 ;; Register keywords for proper indentation (see `@map')
 (put ':prefix       'lisp-indent-function 'defun)
 (put ':map          'lisp-indent-function 'defun)
-(put ':map*         'lisp-indent-function 'defun)
 (put ':after        'lisp-indent-function 'defun)
 (put ':when         'lisp-indent-function 'defun)
 (put ':unless       'lisp-indent-function 'defun)
@@ -229,13 +228,23 @@ Example
 
          ;; it's a flag
          ((keywordp key)
-          (when (cond ((eq key :leader)
-                       (push (or +evil-leader ",") rest))
-                      ((eq key :localleader)
-                       (push (or +evil-localleader "\\") rest)))
-            (setq key :prefix))
+          (when (memq key '(:leader :localleader))
+            (if (not (featurep '+evil))
+                (setq rest nil
+                      key :ignore)
+              (cond ((eq key :leader)
+                     (push '+evil-leader rest))
+                    ((eq key :localleader)
+                     (push '+evil-localleader rest)))
+              (setq key :prefix)))
           (pcase key
-            (:prefix  (setq prefix (concat prefix (kbd (pop rest)))))
+            (:ignore)
+            (:prefix
+              (let ((def (pop rest)))
+                (setq prefix
+                      (if (or (symbolp def) (listp def))
+                          `(vconcat ,prefix (if (stringp ,def) (kbd ,def) ,def))
+                        `(vconcat ,prefix ,(if (stringp def) (kbd def) def))))))
             (:map     (setq keymaps (-list (pop rest))))
             (:unset  `((@map ,(kbd (pop rest)))))
             (:after   (prog1 `((@after ,(pop rest)   (@map ,@rest))) (setq rest '())))
@@ -266,31 +275,32 @@ Example
                 (when (stringp key)
                   (setq key (kbd key)))
                 (when prefix
-                  (setq key (if (vectorp key) (vconcat prefix key) (concat prefix key))))
+                  (setq key (append prefix (list key))))
                 (unless (> (length rest) 0)
                   (user-error "Map has no definition for %s" key))
                 (setq def (pop rest))
-                (push
-                 (cond ((and keymaps states)
-                        (throw 'skip 'evil)
-                        (macroexp-progn
-                         (mapcar (lambda (keymap) `(evil-define-key* ',states ,keymap ,key ,def))
-                                 keymaps)))
-                       (keymaps
-                        (macroexp-progn
-                         (mapcar (lambda (keymap) `(define-key ,keymap ,key ,def))
-                                 keymaps)))
-                       (states
-                        (throw 'skip 'evil)
-                        (macroexp-progn
-                         (mapcar (lambda (state)
-                                   `(define-key
-                                      (evil-state-property ',state ,(if local :local-keymap :keymap) t)
-                                      ,key ,def))
-                                 states)))
-                       (t `(,(if local 'local-set-key 'global-set-key)
-                            ,key ,def)))
-                 forms))
+                (push (cond ((and keymaps states)
+                             (unless (featurep 'evil)
+                               (throw 'skip 'evil))
+                             (macroexp-progn
+                              (mapcar (lambda (keymap) `(evil-define-key* ',states ,keymap ,key ,def))
+                                      keymaps)))
+                            (keymaps
+                             (macroexp-progn
+                              (mapcar (lambda (keymap) `(define-key ,keymap ,key ,def))
+                                      keymaps)))
+                            (states
+                             (unless (featurep 'evil)
+                               (throw 'skip 'evil))
+                             (macroexp-progn
+                              (mapcar (lambda (state)
+                                        `(define-key
+                                           ,(intern (format "evil-%s-state-%smap" state (if local "local-" "")))
+                                           ,key ,def))
+                                      states)))
+                            (t `(,(if local 'local-set-key 'global-set-key)
+                                 ,key ,def)))
+                      forms))
             (setq states '()
                   local nil)))
 
