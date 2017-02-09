@@ -21,21 +21,29 @@
     (add-hook 'before-save-hook 'delete-trailing-whitespace nil t)
 
     (font-lock-add-keywords
-     nil `(("(\\(lambda\\)" (1 (ignore (compose-region (match-beginning 1) (match-end 1) ?λ 'decompose-region))))
-           ("[^'](\\(\\(doom\\)\\([-:/|!][^) ]*\\)?\\)[) \n]" (1 font-lock-builtin-face))
-           ;; Highlight doom macros (macros are fontified in emacs 25+)
-           ("[^'](\\([^ ]+!\\)"
-            (1 font-lock-keyword-face append))
-           ;; Ert
-           ("[^'](\\(ert-deftest\\) \\([^ ]+\\)"
-            (1 font-lock-keyword-face)
-            (2 font-lock-function-name-face))))
+     nil `(;; Display "lambda" as λ
+           ("(\\(lambda\\)" (1 (ignore (compose-region (match-beginning 1) (match-end 1) ?λ 'decompose-region))))
+           ;; Highlight doom/module functions
+           ("\\(^\\|\\s-\\)(\\(\\(doom\\|\\+\\)[^) ]+\\)[) \n]" (2 font-lock-builtin-face))
+           ;; Highlight doom macros (no need, macros are fontified in emacs 25+)
+           ;; ("\\(^\\|\\s-\\)(\\(@[^) ]+\\)[) \n]" (2 font-lock-preprocessor-face append))
+           ))
 
-    (dolist (i '(("Evil Command" "\\(^\\s-*(evil-define-command +\\)\\(\\_<[^ ]+\\_>\\)" 2)
-                 ("Evil Operator" "\\(^\\s-*(evil-define-operator +\\)\\(\\_<[^ ]+\\_>\\)" 2)
-                 ("Package" "\\(^\\s-*(\\(use-package\\|package\\)!? +\\)\\(\\_<[^ \n]+\\_>\\)" 3)
-                 ("Spaceline Segment" "\\(^\\s-*(spaceline-define-segment +\\)\\(\\_<.+\\_>\\)" 2)))
-      (push i imenu-generic-expression))))
+    (setq imenu-generic-expression
+          '(("Evil Commands" "^\\s-*(evil-define-\\(?:command\\|operator\\|motion\\) +\\(\\_<[^ ()\n]+\\_>\\)" 1)
+            ("Package" "^\\s-*(@\\(?:use-package\\|package\\) +\\(\\_<[^ ()\n]+\\_>\\)" 1)
+            ("Settings" "^\\s-*(@def-setting +\\([^ ()\n]+\\)" 1)
+            ("Modelines" "^\\s-*(@def-modeline +\\([^ ()\n]+\\)" 1)
+            ("Modeline Segments" "^\\s-*(@def-modeline-segment +\\([^ ()\n]+\\)" 1)
+            ("Advice" "^\\s-*(def\\(?:\\(?:ine-\\)?advice\\))")
+            ("Modes" "^\\s-*(define-\\(?:global\\(?:ized\\)?-minor\\|generic\\|minor\\)-mode +\\([^ ()\n]+\\)" 1)
+            ("Macros" "^\\s-*(\\(?:cl-\\)?def\\(?:ine-compile-macro\\|macro\\) +\\([^ )\n]+\\)" 1)
+            ("Inline Functions" "\\s-*(\\(?:cl-\\)?defsubst +\\([^ )\n]+\\)" 1)
+            ("Functions" "^\\-s*(\\(?:cl-\\)?def\\(?:un\\*?\\|method\\|generic\\) +\\([^ )\n]+\\)" 1)
+            ("Variables" "^\\s-*(\\(def\\(?:c\\(?:onst\\(?:ant\\)?\\|ustom\\)\\|ine-symbol-macro\\|parameter\\)\\)\\s-+\\(\\(?:\\sw\\|\\s_\\|\\\\.\\)+\\)" 2)
+            ("Variables" "^\\s-*(defvar\\(?:-local\\)?\\s-+\\(\\(?:\\sw\\|\\s_\\|\\\\.\\)+\\)[[:space:]\n]+[^)]" 1)
+            ("Types" "^\\s-*(\\(cl-def\\(?:struct\\|type\\)\\|def\\(?:class\\|face\\|group\\|ine-\\(?:condition\\|error\\|widget\\)\\|package\\|struct\\|t\\(?:\\(?:hem\\|yp\\)e\\)\\)\\)\\s-+'?\\(\\(?:\\sw\\|\\s_\\|\\\\.\\)+\\)" 2)
+            ))))
 
 
 (@after debug ;; elisp debugging

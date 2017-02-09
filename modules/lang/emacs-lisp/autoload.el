@@ -2,12 +2,6 @@
 
 ;; ---- emacs-lisp ---------------------------------------------------
 
-;;;###autoload (autoload '+emacs-lisp:byte-compile "lang/emacs-lisp/autoload" nil t)
-(evil-define-command +emacs-lisp:byte-compile (&optional bang)
-  "Byte compile the current file, or if BANG, the entire emacs configuration."
-  (interactive "<!>")
-  (if bang (doom-byte-compile) (byte-compile-file buffer-file-name)))
-
 ;;;###autoload
 (defun +emacs-lisp/find-function ()
   "Jump to the definition of the function at point."
