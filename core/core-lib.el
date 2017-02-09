@@ -223,7 +223,7 @@ Example
         (cond
          ;; it's a sub expr
          ((listp key)
-          (push `(@map ,@key) forms))
+          (push (macroexpand `(@map ,@key)) forms))
 
          ;; it's a flag
          ((keywordp key)
@@ -245,9 +245,9 @@ Example
                           `(vconcat ,prefix (if (stringp ,def) (kbd ,def) ,def))
                         `(vconcat ,prefix ,(if (stringp def) (kbd def) def))))))
             (:map     (setq keymaps (-list (pop rest))))
-            (:after   (prog1 `((@after ,(pop rest)   (@map ,@rest))) (setq rest '())))
-            (:when    (prog1 `((if ,(pop rest)       (@map ,@rest))) (setq rest '())))
-            (:unless  (prog1 `((if (not ,(pop rest)) (@map ,@rest))) (setq rest '())))
+            (:after   (prog1 `((@after ,(pop rest)   ,(macroexpand `(@map ,@rest)))) (setq rest '())))
+            (:when    (prog1 `((if ,(pop rest)       ,(macroexpand `(@map ,@rest)))) (setq rest '())))
+            (:unless  (prog1 `((if (not ,(pop rest)) ,(macroexpand `(@map ,@rest)))) (setq rest '())))
             (otherwise ; might be a state prefix
              (mapc (lambda (letter)
                      (cond ((assoc letter state-map)
