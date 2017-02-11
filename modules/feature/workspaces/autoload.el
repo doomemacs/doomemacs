@@ -1,8 +1,5 @@
 ;;; feature/workspaces/autoload.el
 
-(defvar +workspace-session-file "_sessions"
-  "The file basename in which to store entire perspective sessions.")
-
 (defvar +workspace-workspace-file "_workspaces"
   "The file basename in which to store single workspace perspectives.")
 
@@ -173,7 +170,8 @@ session."
        "Session to load: "
        (-map 'f-filename
              (f--files persp-save-dir
-                       (not (string-prefix-p "_" (f-filename it)))))))))
+                       (not (string-prefix-p "_" (f-filename it)))))
+       nil t))))
   (+workspace-load-session name)
   (+workspace/display))
 
@@ -203,9 +201,10 @@ the session as."
              (f--files persp-save-dir
                        (not (string-prefix-p "_" (f-filename it)))))))))
   (condition-case ex
-      (if (+workspace-save-session name)
-          (+workspace-message (format "Saved session as %s" name) 'success)
-        (error "Couldn't save session as %s" name))
+      (let ((name (or name (+workspace-current-name))))
+        (if (+workspace-save-session name)
+            (+workspace-message (format "Saved session as %s" name) 'success)
+          (error "Couldn't save session as %s" name)))
     '(error (+workspace-error (cadr ex) t))))
 
 ;;;###autoload
@@ -247,9 +246,9 @@ workspace to delete."
   (+workspace-switch persp-nil-name)
   (delete-other-windows-internal)
   (switch-to-buffer doom-fallback-buffer)
-  (--each (unless (eq (buffer-name it) doom-fallback-buffer)
-            (kill-buffer it))
-    (buffer-list)))
+  (--each (buffer-list)
+    (unless (eq (buffer-name it) doom-fallback-buffer)
+      (kill-buffer it))))
 
 ;;;###autoload
 (defun +workspace/new (&optional name clone-p)
@@ -328,8 +327,10 @@ the workspace and move to the next."
       (doom/popup-close)
     (let ((current-persp-name (+workspace-current-name)))
       (cond ((or (equal current-persp-name persp-nil-name)
-                 (not (one-window-p t)))
-             (delete-window))
+                 (= (length (doom-visible-windows)) 1))
+             (if (bound-and-true-p evil-mode)
+                 (evil-window-delete)
+               (delete-window)))
             ((> (length (+workspace-list)) 1)
              (let* ((names (+workspace-list))
                     (index (--find-index (equal current-persp-name it) names)))
