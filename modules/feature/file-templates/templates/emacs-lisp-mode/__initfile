@@ -1,0 +1,6 @@
+;;; `(f-filename buffer-file-name)`${1: --- ${2:description}}
+
+$0
+
+(provide '`(f-base buffer-file-name)`)
+;;; `(f-filename buffer-file-name)` ends here

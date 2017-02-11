@@ -1,0 +1,3 @@
+#!/usr/bin/env `(if (f-ext? buffer-file-name "zsh") "zsh" "sh")`
+
+$0

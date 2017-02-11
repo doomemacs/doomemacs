@@ -1,0 +1,14 @@
+{
+  "name": "${1:package-name}",
+  "description": "${2:description}",
+  "license": "MIT",
+  "authors": [
+    "`user-full-name` <`user-mail-address`>"
+  ],
+  "main": "public/app.js",
+  "moduleType": [],
+  "homepage": "",
+  "dependencies": {
+    `%`$0
+  }
+}

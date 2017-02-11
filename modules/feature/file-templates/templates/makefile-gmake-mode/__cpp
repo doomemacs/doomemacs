@@ -1,0 +1,46 @@
+# -*- mode: snippet -*-
+# contributor: Henrik Lissner
+# --
+CC            = clang++
+TAGS          = ctags -e -x >TAGS
+FLAGS         = -std=c++11 -stdlib=libc++ -Iinclude -I/usr/local/include -L/usr/local/lib
+CFLAGS        = -pedantic -Wall -Wextra -ggdb3
+LIBS          = # ...
+
+DEBUG_FLAGS   = -O0 -D _DEBUG
+RELEASE_FLAGS = -O2 -D NDEBUG -combile -fwhole-program
+
+RELEASE_DIR   = ./build/release
+DEBUG_DIR     = ./build/debug
+
+TARGET        = ${1:appname$(s-replace " " "" yas-text)}
+HEADERS       = \$(shell echo include/*.h)
+SOURCES       = \$(shell echo src/*.cpp) \$(shell echo src/**/*.cpp)
+OBJECTS       = \$(SOURCES:.cpp=.o)
+
+###
+
+all: \$(TARGET)
+
+debug: FLAGS += \$(DEBUG_FLAGS)
+debug: \$(TARGET)
+
+release: FLAGS += \$(RELEASE_FLAGS)
+release: \$(TARGET)
+
+profile: CFLAGS += -pg
+profile: \$(TARGET)
+
+\$(TARGET): \$(OBJECTS)
+    \$(CC) \$(FLAGS) \$(CFLAGS) -o \$(TARGET) \$(OBJECTS)
+
+%.o: %.cpp
+	\$(CC) \$(FLAGS) \$(CFLAGS) -c -o \$@ \$<
+
+tags: \$(SOURCES)
+    \$(CTAGS) \$(SOURCES)
+
+clean:
+    -rm -f \$(OBJECTS) \$(TARGET)
+
+.PHONY: all profile release debug clean

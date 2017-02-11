@@ -1,0 +1,99 @@
+# -*- mode: snippet -*-
+# name: Info.plist File Template
+# condition: (eq major-mode 'nxml-mode)
+# --
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+
+    <key>CFBundleIdentifier</key>
+    <string>io.henrik.launchbar.${1:$(replace-regexp-in-string "[^a-zA-Z0-9]" "" yas-text)}</string>
+
+    <key>CFBundleName</key>
+    <string>${1:Action Name}</string>
+
+    <!-- <key>CFBundleShortVersionString</key> -->
+    <!-- <value>1.0</value> -->
+
+    <key>CFBundleVersion</key>
+    <string>${2:1.0.0}</string>
+
+    <key>CFBundleIconFile</key>
+    <string>icon</string>
+
+    <key>LBDebugLogEnabled</key>
+    <false />
+
+    <!-- LB stuff -->
+    <!-- <key>LSMinimumSystemVersion</key> -->
+    <!-- <string>10.9.1</string> -->
+
+    <!-- Per-action keys -->
+    <!-- <key>LBTextInputTitle</key> -->
+    <!-- <string>Rate</string> -->
+
+    <key>LBScripts</key>
+    <dict>
+        <key>LBDefaultScript</key>
+        <dict>
+            <key>LBScriptName</key>
+            <string>default.js</string>
+
+            <key>LBRunInBackground</key>
+            <false />
+
+            <key>LBRequiresArgument</key>
+            <true />
+
+            <key>LBAcceptedArgumentTypes</key>
+            <array>
+                <string>string</string>
+            </array>
+
+            <key>LBReturnsResult</key>
+            <true />
+
+            <key>LBReturnType</key>
+            <string>string</string>
+        </dict>
+    </dict>
+
+    <key>LBDescription</key>
+    <dict>
+        <key>LBAuthor</key>
+        <string>Henrik Lissner</string>
+
+        <key>LBWebsite</key>
+        <string>http://v0.io/launchbar</string>
+
+        <key>LBEmail</key>
+        <string>contact@henrik.io</string>
+
+        <key>LBTwitter</key>
+        <string>@vnought</string>
+
+        <key>LBSummary</key>
+        <string>${3:A short summary of this action}</string>
+
+        <key>LBArgument</key>
+        <string>${4:Describe the input(s) for this action}</string>${5:
+
+        <key>LBResult</key>
+        <string>${6:Describe the result type}</string>
+
+        }${7:<key>LBRequirements</key>
+        <string>${8:The requirements for this action to work}</string>}
+
+        <!-- <key>LBChangelog</key> -->
+        <!-- <string></string> -->
+
+        <key>LBUpdateURL</key>
+        <string>https://github.com/hlissner/lb6-${2:actions}/blob/master/$1.lbaction/Contents/Info.plist</string>
+
+        <key>LBDownloadURL</key>
+        <string>https://dl.v0.io/launchbar/$1.lbaction</string>
+    </dict>
+
+</dict>
+</plist>
