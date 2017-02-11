@@ -101,7 +101,7 @@ disabled.")
 ;; I modified the built-in `hideshow' package to enable itself when needed. A
 ;; better, more vim-like code-folding plugin would be the `origami' plugin, but
 ;; until certain breaking bugs are fixed in it, I won't switch over.
-(@use-package hideshow ; built-in
+(@def-package hideshow ; built-in
   :commands (hs-minor-mode hs-toggle-hiding hs-already-hidden-p)
   :init
   (defun doom*autoload-hideshow ()
@@ -110,7 +110,7 @@ disabled.")
   (advice-add 'evil-toggle-fold :before 'doom*autoload-hideshow))
 
 ;; Show uninterrupted indentation markers with some whitespace voodoo.
-(@package highlight-indent-guides
+(@def-package highlight-indent-guides
   :commands highlight-indent-guides-mode
   :config
   (setq highlight-indent-guides-method 'character)
@@ -161,10 +161,10 @@ file."
       (delete-trailing-whitespace))))
 
 ;; Some modes don't adequately highlight numbers, therefore...
-(@package highlight-numbers :commands highlight-numbers-mode)
+(@def-package highlight-numbers :commands highlight-numbers-mode)
 
 ;; Line highlighting
-(@use-package hl-line ; built-in
+(@def-package hl-line ; built-in
   :init
   ;; stickiness doesn't play nice with emacs 25+
   (setq hl-line-sticky-flag nil
@@ -172,7 +172,7 @@ file."
 
 ;; Line number column. A faster (or equivalent, in the worst case) line number
 ;; plugin than the built-in `linum'.
-(@package nlinum
+(@def-package nlinum
   :commands nlinum-mode
   :preface (defvar nlinum-format "%4d ")
   :init
@@ -194,7 +194,7 @@ file."
 
 ;; Helps us distinguish stacked delimiter pairs. Especially in parentheses-drunk
 ;; languages like Lisp.
-(@package rainbow-delimiters
+(@def-package rainbow-delimiters
   :commands rainbow-delimiters-mode
   :config (setq rainbow-delimiters-max-face-count 3)
   :init

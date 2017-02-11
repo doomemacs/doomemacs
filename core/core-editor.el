@@ -93,7 +93,7 @@
 
 ;; Handles whitespace (tabs/spaces) settings externally. This way projects can
 ;; specify their own formatting rules.
-(@package editorconfig :demand t
+(@def-package editorconfig :demand t
   :mode ("\\.?editorconfig$" . editorconfig-conf-mode)
   :config (editorconfig-mode +1)
   ;; Show whitespace in tabs indentation mode
@@ -101,7 +101,7 @@
     (if indent-tabs-mode (whitespace-mode +1))))
 
 ;; Auto-close delimiters and blocks as you type
-(@package smartparens :demand t
+(@def-package smartparens :demand t
   :init
   (setq sp-autowrap-region nil          ; let evil-surround handle this
         sp-highlight-pair-overlay nil
@@ -137,63 +137,56 @@
 ;; Autoloaded Plugins
 ;;
 
-(@package ace-link :commands (ace-link-help ace-link-org))
+(@def-package ace-link :commands (ace-link-help ace-link-org))
 
-(@package ace-window
+(@def-package ace-window
   :commands ace-window
   :config (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)
                 aw-scope 'frame
                 aw-background t))
 
-(@package avy
+(@def-package avy
   :commands (avy-goto-char-2 avy-goto-line)
   :config (setq avy-all-windows nil
                 avy-background t))
 
-(@package command-log-mode
+(@def-package command-log-mode
   :commands (command-log-mode global-command-log-mode)
   :config
   (@set :popup "*command-log*" :size 40 :align 'right :noselect t)
   (setq command-log-mode-auto-show t
         command-log-mode-open-log-turns-on-mode t))
 
-(@package emr
+(@def-package emr
   :commands (emr-show-refactor-menu emr-declare-command)
   :config (emr-initialize)
   (define-key popup-menu-keymap [escape] 'keyboard-quit))
 
-(@package expand-region :commands (er/expand-region er/contract-region er/mark-symbol er/mark-word))
+(@def-package expand-region :commands (er/expand-region er/contract-region er/mark-symbol er/mark-word))
 
-(@package goto-last-change :commands goto-last-change)
+(@def-package goto-last-change :commands goto-last-change)
 
-(@package help-fns+ ; Improved help commands
+(@def-package help-fns+ ; Improved help commands
   :commands (describe-buffer describe-command describe-file
              describe-keymap describe-option describe-option-of-type))
 
-(@package imenu-anywhere
+(@def-package imenu-anywhere
   :commands (ido-imenu-anywhere ivy-imenu-anywhere helm-imenu-anywhere))
 
-(@package imenu-list :commands imenu-list-minor-mode)
+(@def-package imenu-list :commands imenu-list-minor-mode)
 
-(@package pcre2el :commands rxt-quote-pcre)
+(@def-package pcre2el :commands rxt-quote-pcre)
 
-(@package rotate-text
-  :recipe (:fetcher github :repo "debug-ito/rotate-text.el")
+(@def-package rotate-text
   :commands (rotate-text rotate-text-backward)
   :config (push '("true" "false") rotate-text-words))
 
-(@package smart-forward
+(@def-package smart-forward
   :commands (smart-up smart-down smart-backward smart-forward))
 
-(@package smex
-  :commands (smex smex-major-mode-commands)
-  :config
-  (setq smex-save-file (concat doom-cache-dir "/smex-items"))
-  (smex-initialize))
+(@def-package swiper :commands (swiper swiper-all))
 
-(@package swiper :commands (swiper swiper-all))
-
-(@package wgrep
+(@def-package wgrep
   :commands (wgrep-setup wgrep-change-to-wgrep-mode)
   :config
   (@set :popup "^\\*ivy-occur counsel-ag" :size 25 :select t :regexp t)

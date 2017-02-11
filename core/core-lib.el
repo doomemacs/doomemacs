@@ -26,21 +26,6 @@
            byte-compile-current-file)
       (error "__FILE__ is unset")))
 
-(@package anaphora
-  :commands (awhen aif acond awhile))
-
-(@package async
-  :commands (async-start
-             async-start-process
-             async-byte-recompile-directory))
-
-(@package persistent-soft
-  :preface (defvar pcache-directory (concat doom-cache-dir "pcache/"))
-  :commands (persistent-soft-exists-p
-             persistent-soft-fetch
-             persistent-soft-flush
-             persistent-soft-store))
-
 
 ;;
 ;; Library

@@ -15,13 +15,13 @@ autoremove: init.el
 	@$(EMACS) -l core/core.el -f 'doom/packages-autoremove'
 
 autoloads: init.el
-	@$(EMACS) -l init.el -f 'doom/refresh-autoloads'
+	@$(EMACS) -l core/core.el -f 'doom/reload-autoloads'
 
-compile: init.el clean-elc
-	@$(EMACS) -l init.el -f 'doom/byte-compile'
+compile: init.el clean
+	@$(EMACS) -l core/core.el -f 'doom/recompile'
 
-compile-lite: init.el clean-elc
-	@$(EMACS) -l core/core.el --eval '(doom/byte-compile t)'
+compile-lite: init.el clean
+	@$(EMACS) -l core/core.el --eval '(doom/recompile t)'
 
 clean:
 	@rm -fv init.elc

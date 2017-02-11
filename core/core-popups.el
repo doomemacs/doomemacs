@@ -57,7 +57,7 @@
 ;; Bootstrap
 ;;
 
-(@package shackle :demand t
+(@def-package shackle :demand t
   :init
   (setq shackle-default-alignment 'below
         shackle-select-reused-windows t)
