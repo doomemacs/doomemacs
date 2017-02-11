@@ -40,8 +40,7 @@
 
 ;; Save point across sessions
 (require 'saveplace)
-(setq save-place-file (concat doom-cache-dir "saveplace")
-      save-place t)
+(setq save-place-file (concat doom-cache-dir "saveplace"))
 (when (>= emacs-major-version 25)
   (save-place-mode +1))
 
