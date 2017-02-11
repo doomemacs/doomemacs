@@ -29,7 +29,7 @@
 ;; evil-mode
 ;;
 
-(@use-package evil :demand t
+(@def-package evil :demand t
   :init
   (setq evil-want-C-u-scroll t
         evil-want-visual-char-semi-exclusive t
@@ -147,19 +147,19 @@
 ;; Plugins
 ;;
 
-(@use-package evil-args
+(@def-package evil-args
   :commands (evil-inner-arg evil-outer-arg
              evil-forward-arg evil-backward-arg
              evil-jump-out-args)
   :init (+evil--textobj "a" 'evil-inner-arg 'evil-outer-arg))
 
 
-(@use-package evil-commentary
+(@def-package evil-commentary
   :commands (evil-commentary evil-commentary-yank evil-commentary-line)
   :config (evil-commentary-mode 1))
 
 
-(@use-package evil-easymotion
+(@def-package evil-easymotion
   :defer 1
   :config
   (defvar +evil--snipe-repeat-fn)
@@ -185,7 +185,7 @@
                               (evil-snipe-enable-incremental-highlight)))))
 
 
-(@use-package evil-embrace
+(@def-package evil-embrace
   :after evil-surround
   :config
   (setq evil-embrace-show-help-p nil)
@@ -239,7 +239,7 @@
     (embrace-add-pair-regexp ?l "\\[a-z]+{" "}" '+evil--embrace-latex)))
 
 
-(@use-package evil-escape
+(@def-package evil-escape
   :commands evil-escape-mode
   :init
   (defun +evil|escape-disable () (evil-escape-mode -1))
@@ -254,7 +254,7 @@
         evil-escape-delay 0.25))
 
 
-(@use-package evil-exchange
+(@def-package evil-exchange
   :commands evil-exchange
   :config
   (defun +evil*exchange-off ()
@@ -262,7 +262,7 @@
   (advice-add 'evil-force-normal-state :after '+evil*exchange-off))
 
 
-(@use-package evil-indent-plus
+(@def-package evil-indent-plus
   :commands (evil-indent-plus-i-indent
              evil-indent-plus-a-indent
              evil-indent-plus-i-indent-up
@@ -275,7 +275,7 @@
   (+evil--textobj "J" 'evil-indent-plus-i-indent-up-down 'evil-indent-plus-a-indent-up-down))
 
 
-(@use-package evil-matchit
+(@def-package evil-matchit
   :commands (evilmi-jump-items evilmi-text-object global-evil-matchit-mode)
   :config (global-evil-matchit-mode 1)
   :init
@@ -290,7 +290,7 @@ if on a delimiter, jump to the matching one (`evilmi-jump-items')."
       (call-interactively 'evilmi-jump-items))))
 
 
-(@use-package evil-multiedit
+(@def-package evil-multiedit
   :commands (evil-multiedit-match-all
              evil-multiedit-match-and-next
              evil-multiedit-match-and-prev
@@ -304,20 +304,20 @@ if on a delimiter, jump to the matching one (`evilmi-jump-items')."
   :config (evil-multiedit-default-keybinds))
 
 
-(@use-package evil-textobj-anyblock
+(@def-package evil-textobj-anyblock
   :commands (evil-numbers/inc-at-pt evil-numbers/dec-at-pt)
   :init
   (+evil--textobj "B" 'evil-textobj-anyblock-inner-block 'evil-textobj-anyblock-a-block))
 
 
-(@use-package evil-search-highlight-persist :demand t
+(@def-package evil-search-highlight-persist :demand t
   :commands (evil-textobj-anyblock-inner-block evil-textobj-anyblock-a-block)
   :config
   (global-evil-search-highlight-persist t)
   (advice-add 'evil-force-normal-state :after 'evil-search-highlight-persist-remove-all))
 
 
-(@use-package evil-snipe :demand t
+(@def-package evil-snipe :demand t
   :init
   (setq evil-snipe-smart-case t
         evil-snipe-repeat-keys nil ; using space to repeat
@@ -338,7 +338,7 @@ if on a delimiter, jump to the matching one (`evilmi-jump-items')."
                   (call-interactively +evil--snipe-repeat-fn))))
 
 
-(@use-package evil-surround
+(@def-package evil-surround
   :commands (global-evil-surround-mode
              evil-surround-edit
              evil-Surround-edit
@@ -346,7 +346,7 @@ if on a delimiter, jump to the matching one (`evilmi-jump-items')."
   :config (global-evil-surround-mode 1))
 
 
-(@use-package evil-visualstar
+(@def-package evil-visualstar
   :commands (global-evil-visualstar-mode
              evil-visualstar/begin-search
              evil-visualstar/begin-search-forward
@@ -355,7 +355,7 @@ if on a delimiter, jump to the matching one (`evilmi-jump-items')."
 
 
 ;; A side-panel for browsing my project files. Inspired by vim's NERDTree.
-(@use-package neotree
+(@def-package neotree
   :commands (neotree-show
              neotree-hide
              neotree-toggle
