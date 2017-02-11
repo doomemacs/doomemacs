@@ -93,7 +93,7 @@ Used by `doom/packages-autoremove'."
     (package--removable-packages)))
 
 ;;;###autoload
-(defun doom-get-packages-to-install ()
+(defun doom-get-missing-packages ()
   "Return a list of packages that aren't installed, but need to be. Each element
 is a list whose CAR is the package symbol, and whose CDR is a plist taken from
 that package's `@package' declaration.
@@ -175,7 +175,7 @@ appropriate."
 (defun doom/packages-install ()
   "Interactive command for installing missing packages."
   (interactive)
-  (let ((packages (doom-get-packages-to-install)))
+  (let ((packages (doom-get-missing-packages)))
     (cond ((not packages)
            (message "No packages to install!"))
 
