@@ -265,22 +265,22 @@ Example
                 (push (cond ((and keymaps states)
                              (unless (featurep 'evil)
                                (throw 'skip 'evil))
-                             (macroexp-progn
-                              (mapcar (lambda (keymap) `(evil-define-key* ',states ,keymap ,key ,def))
-                                      keymaps)))
+                             `(progn
+                                ,@(mapcar (lambda (keymap) `(evil-define-key* ',states ,keymap ,key ,def))
+                                          keymaps)))
                             (keymaps
-                             (macroexp-progn
-                              (mapcar (lambda (keymap) `(define-key ,keymap ,key ,def))
-                                      keymaps)))
+                             `(progn
+                                ,@(mapcar (lambda (keymap) `(define-key ,keymap ,key ,def))
+                                          keymaps)))
                             (states
                              (unless (featurep 'evil)
                                (throw 'skip 'evil))
-                             (macroexp-progn
-                              (mapcar (lambda (state)
-                                        `(define-key
-                                           ,(intern (format "evil-%s-state-%smap" state (if local "local-" "")))
-                                           ,key ,def))
-                                      states)))
+                             `(progn
+                                ,@(mapcar (lambda (state)
+                                            `(define-key
+                                               ,(intern (format "evil-%s-state-%smap" state (if local "local-" "")))
+                                               ,key ,def))
+                                          states)))
                             (t `(,(if local 'local-set-key 'global-set-key)
                                  ,key ,def)))
                       forms))
@@ -288,7 +288,7 @@ Example
                   local nil)))
 
          (t (user-error "Invalid key %s" key))))
-      (macroexp-progn (reverse forms)))))
+      `(progn ,@(reverse forms)))))
 
 (provide 'core-lib)
 ;;; core-lib.el ends here
