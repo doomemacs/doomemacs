@@ -11,7 +11,7 @@
   "A hook that runs when persp loads a new session.")
 
 
-(@use-package persp-mode :demand t
+(@def-package persp-mode :demand t
   :init
   (setq persp-autokill-buffer-on-remove 'kill-weak
         persp-nil-name "main"

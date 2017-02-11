@@ -1,7 +1,7 @@
 ;;; feature/version-control/autoload.el
 
 ;;;###autoload
-(defun +vcs-git-root ()
+(defun +vcs-root ()
   "Get git url root."
   (-when-let (url (car-safe (browse-at-remote--remote-ref buffer-file-name)))
     (cdr (browse-at-remote--get-url-from-remote url))))
@@ -27,6 +27,6 @@ Fallback to repository root."
 (defun +vcs/git-browse-issues ()
   "Open the github issues page for current repo."
   (interactive)
-  (if-let (root (+vcs-git-root))
+  (if-let (root (+vcs-root))
       (browse-url (concat root "/issues"))
     (user-error "No git root found!")))

@@ -6,10 +6,12 @@
 
 ;;; +git
 (@package browse-at-remote)
-(@package evil-magit :needs evil)
 (@package git-gutter-fringe)
 (@package gitconfig-mode)
 (@package gitignore-mode)
 (@package magit)
+
+(when (@featurep :feature evil)
+  (@package evil-magit))
 
 ;;; TODO +hg

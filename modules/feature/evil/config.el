@@ -1,5 +1,4 @@
 ;;; feature/evil/config.el
-(provide '+evil)
 
 ;; I'm a vimmer at heart. Its modal philosophy suits me better, and this module
 ;; strives to make Emacs a much better vim than vim was.

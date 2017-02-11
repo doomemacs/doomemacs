@@ -1,5 +1,4 @@
 ;;; feature/version-control/config.el
-(provide '+version-control)
 
 (@load +git)
 ;; (@load +hg)

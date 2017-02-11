@@ -1,7 +1,6 @@
 ;;; lang/emacs-lisp/config.el
-(provide '+emacs-lisp)
 
-(@use-package elisp-mode
+(@def-package elisp-mode
   :mode ("/Cask$" . emacs-lisp-mode)
   :init
   (@add-hook emacs-lisp-mode '(highlight-quoted-mode auto-compile-on-save-mode +emacs-lisp|hook))
@@ -57,17 +56,17 @@
 ;; Plugins
 ;;
 
-(@use-package auto-compile
+(@def-package auto-compile
   :commands auto-compile-on-save-mode
   :config
   (setq auto-compile-display-buffer nil
         auto-compile-use-mode-line nil))
 
 
-(@use-package highlight-quoted
+(@def-package highlight-quoted
   :commands highlight-quoted-mode)
 
 
-(@use-package slime
+(@def-package slime
   :config (setq inferior-lisp-program "clisp"))
 

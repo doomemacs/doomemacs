@@ -1,16 +1,16 @@
 ;;; feature/version-control/+git.el
 
-(@use-package gitconfig-mode
+(@def-package gitconfig-mode
   :mode "/\\.?git/?config$"
   :mode "/\\.gitmodules$"
   :init (add-hook 'gitconfig-mode-hook 'flyspell-mode))
 
-(@use-package gitignore-mode
+(@def-package gitignore-mode
   :mode "/\\.?git/?config$"
   :mode "/\\.gitmodules$")
 
 
-(@use-package git-gutter-fringe
+(@def-package git-gutter-fringe
   :commands git-gutter-mode
   :init (@add-hook (text-mode prog-mode conf-mode) 'git-gutter-mode)
   :config
@@ -24,20 +24,17 @@
     (advice-add 'evil-force-normal-state :after 'git-gutter)))
 
 
-(@use-package browse-at-remote
+(@def-package browse-at-remote
   :commands (browse-at-remote/browse browse-at-remote/get-url))
 
 
-(@use-package magit
+(@def-package magit
   :commands magit-status
   :config
   (@set :popup "^\\*magit.+" :regexp t)
-  (@after evil-snipe
+
+  (@after evil
+    (require 'evil-magit)
     ;; evil-snipe conflicts with magit
     (add-hook 'magit-mode-hook 'turn-off-evil-snipe-override-mode)))
-
-
-(@use-package evil-magit
-  :when (featurep 'evil)
-  :after magit)
 

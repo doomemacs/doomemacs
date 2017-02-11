@@ -1,7 +1,6 @@
 ;; lang/javascript/config.el
-(provide '+javascript)
 
-(@use-package js2-mode
+(@def-package js2-mode
   :mode "\\.js$"
   :interpreter "node"
   :init
@@ -48,13 +47,13 @@
     (:n  js2r-forward-slurp              "forward slurp")
     (:n  js2r-forward-barf               "forward barf")))
 
-(@use-package js2-refactor :after emr)
+(@def-package js2-refactor :after emr)
 
-(@use-package company-tern :commands company-tern :after tern)
+(@def-package company-tern :commands company-tern :after tern)
 
-(@use-package jsx-mode :mode "\\.jsx$")
+(@def-package jsx-mode :mode "\\.jsx$")
 
-(@use-package coffee-mode
+(@def-package coffee-mode
   :mode "\\.coffee$"
   :init (setq coffee-indent-like-python-mode t))
 

@@ -1,5 +1,4 @@
 ;;; ui/doom/config.el
-(provide '+doom)
 
 (defvar +doom-theme 'doom-one
   "The color theme currently in use.")
@@ -41,7 +40,7 @@
 ;; Apply the doom-one theme from `doom-themes' for full compatibility; gives
 ;; Emacs a look inspired by Dark One in Atom.
 ;; <https://github.com/hlissner/emacs-doom-theme>
-(@use-package doom-themes :demand t
+(@def-package doom-themes :demand t
   :load-path "~/work/plugins/emacs-doom-theme"
   :config
   (load-theme +doom-theme t)
@@ -66,7 +65,7 @@
 ;; Causes a flash around the cursor when it moves across a "large" distance.
 ;; Usually between windows, or across files. This makes it easier to keep track
 ;; where your cursor is, which I find helpful on my 30" 2560x1600 display.
-(@use-package beacon :demand t
+(@def-package beacon :demand t
   :config
   (beacon-mode +1)
   (setq beacon-color (let ((bg (face-attribute 'highlight :background nil t)))
