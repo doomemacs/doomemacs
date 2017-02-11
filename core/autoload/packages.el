@@ -8,10 +8,15 @@
 (defun doom-refresh-packages ()
   "Refresh ELPA packages."
   (doom-initialize)
-  (when (or (not doom-packages-last-refresh)
-            (> (nth 1 (time-since doom-packages-last-refresh)) 3600))
-    (package-refresh-contents)
-    (setq doom-packages-last-refresh (current-time))))
+  (let ((refresh-cache (f-expand "last-pkg-refresh" doom-cache-dir)))
+    (when (and (not doom-packages-last-refresh)
+               (f-exists-p refresh-cache))
+      (setq doom-packages-last-refresh (read (f-read refresh-cache))))
+    (when (or (not doom-packages-last-refresh)
+              (> (nth 1 (time-since doom-packages-last-refresh)) 600))
+      (package-refresh-contents)
+      (setq doom-packages-last-refresh (current-time))
+      (f-write (pp-to-string doom-packages-last-refresh) 'utf-8 refresh-cache))))
 
 ;;;###autoload
 (defun doom-package-backend (name)
