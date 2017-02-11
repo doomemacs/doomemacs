@@ -1,51 +1,71 @@
 ;;; core-packages.el
 ;;
-;; Emacs package management is opinionated. Unfortunately, so am I. So I
-;; combined `use-package', `quelpa' and package.el to manage my plugins.
+;; Emacs package management is opinionated. Unfortunately, so am I. So with the
+;; help of `use-package', `quelpa' and package.el, DOOM Emacs manages my
+;; plugins and internal module dependency chains.
+;;
+;; So I've divided my config into two parts: configuration and
+;; packages/dependency control. You'll find packages.el files in each DOOM
+;; module (in `doom-modules-dir') and one in `doom-core-dir'. When executed,
+;; they fill `doom-packages' and `doom-modules', which are necessary for DOOM to
+;; extrapolate all kinds of information about plugins.
 ;;
 ;; Why all the trouble? Because:
-;; 1. Scriptability: I want my plugins managable from the command line (as well
-;;    as an `doom/packages-update' command within emacs to update my plugins
-;;    automatically, rather than through package.el's interface).
-;; 2. Flexibility: I want to install packages from sources other than ELPA
-;;    repositories. Such as github or the Emacs wiki. Some plugins are out of
-;;    date through official channels, have changed hands unofficially, or simply
-;;    haven't been submitted to an ELPA repo yet.
+;; 1. Scriptability: I want my plugins managable from the command line. This
+;;    means a `doom/packages-update' command I can call to programmatically
+;;    update my plugins, rather than through package.el's interface.
+;; 2. Flexibility: I want to install packages from sources other than ELPA. Like
+;;    github or the Emacs wiki. Some plugins are out-of-date through official
+;;    channels, have changed hands unofficially, or simply haven't been
+;;    submitted to an ELPA repo yet.
 ;; 3. Stability: I don't want to worry that each time I use my package
-;;    manager something might inexplicably go wrong. This was the case with
-;;    Cask, which I used previously. package.el and quelpa appear to be much
-;;    faster and more stable.
-;; 4. No external dependencies (e.g. Cask) for plugin management.
+;;    manager something might inexplicably go wrong. Cask, which I used
+;;    previously, was horribly unstable. package.el and quelpa, however, appear
+;;    very stable (and much faster).
+;; 4. Performance: A minor point, but it helps startup performance not to do
+;;    package.el initialization and package installation checks at startup.
+;; 5. Simplicity: Without Cask, I have no external dependencies to worry about
+;;    (unless make counts). DOOM handles itself. Arguably, my emacs.d is
+;;    overcomplicated, but configuring is simpler as a result (well, for me
+;;    anyway :P).
 ;;
-;; Note: it should be safe to use *most* package.el functions directly, though I
-;; wouldn't recommend you use `package-autoremove'. For complete certainty, I've provided safer DOOM vaiants:
-;; `doom/install-package', `doom/delete-package' and `doom/update-packages'.
+;; It should be safe to use package.el functionality, however, avoid
+;; `package-autoremove' as it may not reliably select the right packages to
+;; delete.
 ;;
-;; As well as: `doom/packages-install', `doom/packages-update', and
-;; `doom/packages-autoremove', which are called from the Makefile.
+;; For complete certainty, I've provided DOOM alternatives of package commands,
+;; like `doom/install-package', `doom/delete-package' and
+;; `doom/update-packages'. As well as: `doom/packages-install',
+;; `doom/packages-update' and `doom/packages-autoremove', which are called from
+;; the Makefile tasks.
 ;;
 ;; See core/autoload/packages.el for more functions.
 
-(defvar doom-modules nil
-  "List of enabled modules; each element is a cons cell (MODULE . SUBMODULE),
-where MODULE is the module's property symbol, e.g. :lang, and SUBMODULE is the
-submodule symbol, e.g. 'evil.")
-
-(defvar doom-packages nil
-  "A list of enabled packages.")
-
-(defvar doom-protected-packages '(quelpa use-package dash f s)
-  "A list of packages that shouldn't be deleted.")
-
 (defvar doom-init-p nil
   "Non-nil if doom's package system has been initialized or not. It may not be
-if you have byte-compiled your configuration (as intended).")
+if you have byte-compiled your configuration (as intended). Running
+`doom-initialize' sets this.")
 
-(defvar doom--base-load-path (append (list doom-core-dir
-                                           doom-modules-dir)
-                                     load-path)
-  "A backup of `load-path', used as a bare-bones foundation for
-`doom/packages-reload' or `doom-initialize'.")
+(defvar doom-modules nil
+  "Alist of enabled modules; each element is a list, whose CAR is a module
+keyword, and whose CDR is a list of submodule symbols.")
+
+(defvar doom-packages nil
+  "A list of enabled packages. Each element is a sublist, whose CAR is the
+package's name as a symbol, and whose CDR is the plist supplied to its
+`@package' declaration.")
+
+(defvar doom-protected-packages
+  '(quelpa use-package dash f s)
+  "A list of packages that must be installed (and will be auto-installed if
+missing) and shouldn't be deleted.")
+
+(defvar doom--base-load-path
+  (append (list doom-core-dir doom-modules-dir)
+          load-path)
+  "A backup of `load-path' before it was altered by `doom-initialize'. Used as a
+base when running `doom/reload', or by `@doom', for calculating how many
+packages exist.")
 
 (setq load-prefer-newer nil
       package--init-file-ensured t
@@ -118,7 +138,8 @@ to speed up startup."
     (setq doom-init-p t)))
 
 (defun doom-initialize-autoloads (&optional force-p)
-  "Ensures that an autoloads file exists and is loaded."
+  "Ensures that `doom-autoload-file' exists and is loaded. If it doesn't, run
+`doom/reload-autoloads' to generate it."
   (unless (ignore-errors (require 'autoloads doom-autoload-file t))
     (unless noninteractive
       (doom/reload-autoloads)
@@ -126,19 +147,19 @@ to speed up startup."
         (error "Autoloads file couldn't be generated")))))
 
 (defun doom-initialize-packages (&optional force-p)
-  "Parses your Emacs config to keep track of packages declared with `@package'
-in `doom-packages' and enabled modules in `doom-modules'."
+  "Executes the packages.el files across DOOM Emacs to refresh `doom-modules'
+and `doom-packages'."
   (doom-initialize force-p)
   (when (or force-p (not doom-modules) (not doom-packages))
-    (setq doom-modules nil)
+    (setq doom-modules nil
+          doom-packages nil)
     (let ((noninteractive t))
       (mapc (lambda (file) (load file nil :nomessage))
             (list (f-expand "packages.el" doom-core-dir)
                   (f-expand "init.el" doom-emacs-dir)))
-      ;; Look up packages.el for enabled modules
       (mapc (lambda (file) (load file :noerror :nomessage))
             (--map (doom-module-path (car it) (cdr it) "packages.el")
-                   (doom-module-pairs))))))
+                   (doom--module-pairs))))))
 
 (defun doom-module-path (module submodule &optional file)
   "Get the full path to a module: e.g. :lang emacs-lisp maps to
@@ -152,8 +173,12 @@ in `doom-packages' and enabled modules in `doom-modules'."
     (f-expand (concat module-name "/" submodule-name "/" file)
               doom-modules-dir)))
 
-(defun doom-module-pairs ()
-  "TODO"
+(defun doom-module-loaded-p (module submodule)
+  "Returns t if SUBMODULE (in MODULE) is present in `doom-modules'."
+  (memq submodule (cdr (assq module doom-modules))))
+
+(defun doom--module-pairs ()
+  "Returns `doom-modules' as a list of (MODULE . SUBMODULE) cons cells."
   (let (pairs module)
     (dolist (modules doom-modules)
       (setq module (car modules))
@@ -161,19 +186,23 @@ in `doom-packages' and enabled modules in `doom-modules'."
         (push (cons module submodule) pairs)))
     pairs))
 
-(defun doom-module-loaded-p (module submodule)
-  "TODO"
-  (memq submodule (cdr (assq module doom-modules))))
+(defun doom--enable-module (module submodule &optional force-p)
+  "Adds MODULE and SUBMODULE to `doom-modules', if it isn't already there (or if
+FORCE-P is non-nil). MODULE is a keyword, SUBMODULE is a symbol. e.g. :lang
+'emacs-lisp.
 
-(defun doom-enable-module (module submodule &optional force-p)
+Used by `@require' and `@depends-on'."
   (unless (or force-p (doom-module-loaded-p module submodule))
     (let ((sublist (assq module doom-modules)))
       (if sublist
           (setf sublist (cons sublist submodule))
         (push (list module submodule) doom-modules)))))
 
-(defun doom-enable-modules (modules)
-  "TODO"
+(defun doom--enable-modules (modules)
+  "Adds MODULES to `doom-modules'.
+
+MODULES must be in mplist format:
+  '(:feature evil :lang emacs-lisp javascript java)"
   (let (mode)
     (dolist (m modules)
       (cond ((keywordp m)
@@ -182,13 +211,13 @@ in `doom-packages' and enabled modules in `doom-modules'."
              (error "No namespace specified on `@doom' for %s" m))
             ((eq m '*)
              (let ((mode-str (substring (symbol-name mode) 1)))
-               (doom-enable-modules
+               (doom--enable-modules
                 (cons mode
                       (--map (intern (f-base it))
                              (f-directories
                               (f-expand mode-str doom-modules-dir)))))))
             (t
-             (doom-enable-module mode m))))
+             (doom--enable-module mode m))))
     doom-modules))
 
 
@@ -201,12 +230,14 @@ in `doom-packages' and enabled modules in `doom-modules'."
 (defmacro @doom (&rest modules)
   "DOOM Emacs bootstrap macro. List the modules to load. Benefits from
 byte-compilation."
-  (doom-enable-modules modules)
+  (doom--enable-modules modules)
   (unless noninteractive
     `(let (file-name-handler-alist)
+       (setq doom-modules ',doom-modules)
+
        ,@(mapcar (lambda (pkg)
                    `(@require ,(car pkg) ,(cdr pkg) t))
-                 (doom-module-pairs))
+                 (doom--module-pairs))
 
        (when (display-graphic-p)
          (require 'server)
@@ -223,26 +254,30 @@ byte-compilation."
 conventions of DOOM emacs. Note that packages are deferred by default.")
 
 (defmacro @load (filesym &optional path noerror)
-  "TODO"
-  (let ((path (or (and path (eval path)) __DIR__))
-        file)
+  "Loads a file relative to the current module (or PATH). FILESYM is a file path
+as a symbol. PATH is a directory to prefix it with. If NOERROR is non-nil, don't
+throw an error if the file doesn't exist.
+
+Sets `__FILE__' and `__DIR__' on the loaded file."
+  (let ((path (or (and path (eval path)) __DIR__)))
     (unless path
       (error "Could not find %s" filesym))
-    (setq file (f-expand (concat (symbol-name filesym) ".el") path))
-    (if (f-exists-p file)
-        `(let ((__FILE__ ,file)
-               (__DIR__  ,path))
-           (load ,(f-no-ext file) ,noerror (not doom-debug-mode)))
-      (unless noerror
-        (error "Could not @load file %s" file)))))
+    (let ((file (f-expand (concat (symbol-name filesym) ".el") path)))
+      (if (f-exists-p file)
+          `(let ((__FILE__ ,file)
+                 (__DIR__  ,path))
+             (load ,(f-no-ext file) ,noerror (not doom-debug-mode)))
+        (unless noerror
+          (error "Could not @load file %s" file))))))
 
 (defmacro @require (module submodule &optional reload-p)
-  "Like `require', but for doom modules."
+  "Like `require', but for doom modules. Will load a module's config.el file if
+it hasn't already, and if it exists."
   (unless noninteractive
     (let ((loaded-p (doom-module-loaded-p module submodule)))
       (when (or reload-p (not loaded-p))
         (unless loaded-p
-          (doom-enable-module module submodule t))
+          (doom--enable-module module submodule t))
         `(@load config ,(doom-module-path module submodule) t)))))
 
 
@@ -274,7 +309,7 @@ Accepts the following properties:
 (defmacro @depends-on (module submodule)
   "Declares that this module depends on another. MODULE is a keyword, and
 SUBMODULE is a symbol."
-  (doom-enable-module ,module ',submodule)
+  (doom--enable-module ,module ',submodule)
   `(@load packages ,(doom-module-path module submodule) t))
 
 
@@ -310,7 +345,7 @@ the commandline."
                                              (and (f-directory-p auto-dir)
                                                   (f-glob "*.el" auto-dir))))
                                    (--map (doom-module-path (car it) (cdr it))
-                                          (doom-module-pairs))))
+                                          (doom--module-pairs))))
                   (f-glob "autoload/*.el" doom-core-dir)))
     (when (f-exists-p generated-autoload-file)
       (f-delete generated-autoload-file)
@@ -340,21 +375,17 @@ There should be a measurable benefit from this, but it may take a while."
                  (unless simple-p
                    (-flatten
                     (--map (f--entries (doom-module-path (car it) (cdr it))
-                                       (and (f-ext-p it "el")
-                                            (or (string= (f-base it) "config")
-                                                (string-prefix-p "+" (f-base it))))
-                                       t)
-                           (doom-module-pairs))))))
+                                       (f-ext-p it "el") t)
+                           (doom--module-pairs))))))
         (n 0)
         results)
     (dolist (file targets)
       (push (cons (f-relative file doom-emacs-dir)
-                  (when (byte-recompile-file file nil 0)
-                    (setq n (1+ n))
-                    t))
+                  (and (byte-recompile-file file nil 0)
+                       (setq n (1+ n))))
             results))
     (when noninteractive
-      (when targets (message "\n"))
+      (if targets (message "\n"))
       (message "Compiled %s files:\n%s" n
                (mapconcat (lambda (file) (concat "+ " (if (cdr file) "SUCCESS" "FAIL") ": " (car file)))
                           (reverse results) "\n")))))
