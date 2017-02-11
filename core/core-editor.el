@@ -52,15 +52,15 @@
 (savehist-mode 1)
 
 ;; Remove text-property cruft from history
-(defun unpropertize-savehist ()
+(defun doom|unpropertize-savehist ()
   (mapc (lambda (list)
           (when (boundp list)
             (set list (mapcar 'substring-no-properties (eval list)))))
         '(kill-ring minibuffer-history helm-grep-history helm-ff-history
-                    file-name-history read-expression-history extended-command-history
-                    evil-ex-history)))
-(add-hook 'kill-emacs-hook    'unpropertize-savehist)
-(add-hook 'savehist-save-hook 'unpropertize-savehist)
+          file-name-history read-expression-history extended-command-history
+          evil-ex-history)))
+(add-hook 'kill-emacs-hook    'doom|unpropertize-savehist)
+(add-hook 'savehist-save-hook 'doom|unpropertize-savehist)
 
 ;; Keep track of recently opened files
 (require 'recentf)
