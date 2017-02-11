@@ -205,7 +205,7 @@ appropriate."
                                      ((doom-install-package (car pkg) (cdr pkg))
                                       "Installed")
                                      (t "Failed to install"))
-                               pkg
+                               (car pkg)
                                (cond ((cdr pkg) "QUELPA")
                                      (t "ELPA")))
                (error
