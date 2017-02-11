@@ -1,5 +1,7 @@
 ;;; ui/doom-modeline/config.el
-(provide '+doom-modeline)
+
+(eval-when-compile
+  (require 'powerline))
 
 ;; all-the-icons doesn't work in the terminal, so we "disable" it.
 (unless (display-graphic-p)
@@ -9,12 +11,10 @@
   (defun all-the-icons-wicon (&rest _) "" "")
   (defun all-the-icons-alltheicon (&rest _) "" ""))
 
-(use-package powerline :demand t)
-
-(use-package all-the-icons :demand t
+(@def-package all-the-icons :demand t
   :when (display-graphic-p))
 
-(use-package eldoc-eval :demand t
+(@def-package eldoc-eval :demand t
   :config
   ;; Show eldoc in the mode-line with `eval-expression'
   (setq eldoc-in-minibuffer-show-fn '+doom-modeline--show-eldoc)
@@ -22,12 +22,13 @@
 
 ;; anzu and evil-anzu make it possible to display current/total in the
 ;; mode-line.
-(use-package! evil-anzu
+(@def-package evil-anzu
+  :when (featurep 'evil)
   :init
   (defun +evil*lazy-load-evil-anzu (&rest _) (require 'evil-anzu))
-  (advice-add 'evil-ex-start-setup :before '+evil*lazy-load-evil-anzu)
+  (advice-add 'evil-ex-start-search :before '+evil*lazy-load-evil-anzu)
   :config
-  (advice-remove 'evil-ex-start-setup '+evil*lazy-load-evil-anzu)
+  (advice-remove 'evil-ex-start-search '+evil*lazy-load-evil-anzu)
   (setq anzu-cons-mode-line-p nil
         anzu-minimum-input-length 1
         anzu-search-threshold 250))
@@ -53,7 +54,7 @@
 ;; and it's a symbol, use it to find the modeline format in
 ;; `doom-modeline-formats'. If nil, show the mode-line as normal. If t, then
 ;; hide the modeline entirely.
-(add-hook! doom-popup-mode
+(@add-hook doom-popup-mode
   (if (and (not doom-popup-mode)
            doom-hide-modeline-mode)
       (doom-hide-modeline-mode -1)
@@ -69,14 +70,15 @@
 ;; Variables
 ;;
 
-(defvar doom-modeline-formats '()
-  "An alist of mode-line formats. Use `+doom-modeline' to retrieve one.")
-
-(defvar doom-modeline-height 29
+(defvar +doom-modeline-height 29
   "How tall the mode-line should be (only respected in GUI emacs).")
 
-(defvar doom-modeline-bar-width 3
+(defvar +doom-modeline-bar-width 3
   "How wide the mode-line bar should be (only respected in GUI emacs).")
+
+(defvar +doom-modeline-vspc
+  (propertize " " 'face 'variable-pitch)
+  "docstring")
 
 
 ;;
@@ -105,7 +107,7 @@
 
 (defface doom-modeline-panel
   '((t (:inherit mode-line)))
-  "Face for 'X out of Y' segments, such as `*anzu', `*evil-substitute' and
+  "Face for 'X out of Y' segments, such as `+doom-modeline--anzu', `+doom-modeline--evil-substitute' and
 `iedit'")
 
 (defface doom-modeline-info
@@ -149,23 +151,8 @@ active.")
                                         s)))))
 
 ;; Only support python and ruby for now
-(add-hook! python-mode (setq +doom-modeline-env-command "python --version 2>&1 | cut -d' ' -f2"))
-(add-hook! ruby-mode   (setq +doom-modeline-env-command "ruby --version 2>&1 | cut -d' ' -f2"))
-
-
-;;
-;; Library
-;;
-
-(defun +doom-modeline (key)
-  (let ((modeline (assq key doom-modeline-formats)))
-    (unless modeline
-      (error "Modeline preset doesn't exist: %s" key))
-    (cdr modeline)))
-
-(defun +doom-modeline-define (name &rest forms)
-  "Define a modeline format."
-  (push `(,name . ,forms) doom-modeline-formats))
+(@add-hook python-mode (setq +doom-modeline-env-command "python --version 2>&1 | cut -d' ' -f2"))
+(@add-hook ruby-mode   (setq +doom-modeline-env-command "ruby --version 2>&1 | cut -d' ' -f2"))
 
 
 ;;
@@ -173,13 +160,6 @@ active.")
 ;;
 
 (defsubst active () (eq (selected-window) powerline-selected-window))
-
-(defun +doom-modeline--flycheck-count (state)
-  "Return flycheck information for the given error type STATE."
-  (when (flycheck-has-current-errors-p state)
-    (if (eq 'running flycheck-last-status-change)
-        "?"
-      (cdr-safe (assq state (flycheck-count-errors flycheck-current-errors))))))
 
 (defun +doom-modeline--make-xpm (color height width)
   "Create an XPM bitmap."
@@ -224,7 +204,7 @@ project root). Excludes the file basename. See `doom-buffer-name' for that."
            (str              (and (stringp input) (concat " " input)))
            (len              (length str))
            (tmp-str          str)
-           (mode-line-format (or (and str (doom-eldoc-modeline))
+           (mode-line-format (or (and str (doom-modeline 'eldoc))
                                  mode-line-format))
            roll mode-line-in-non-selected-windows)
       (catch 'break
@@ -250,8 +230,9 @@ project root). Excludes the file basename. See `doom-buffer-name' for that."
 ;; Segments
 ;;
 
-(defun *buffer-project ()
-  "Displays `default-directory', for special buffers like the scratch buffer."
+(@def-modeline-segment buffer-project
+  "Displays `doom-project-root'. This is for special buffers like the scratch
+buffer where knowing the current project directory is important."
   (let ((face (if (active) 'doom-modeline-buffer-project)))
     (concat (all-the-icons-octicon
              "file-directory"
@@ -261,7 +242,7 @@ project root). Excludes the file basename. See `doom-buffer-name' for that."
             (propertize (concat " " (abbreviate-file-name (doom-project-root)))
                         'face face))))
 
-(defun *buffer-info ()
+(@def-modeline-segment buffer-info
   "Combined information about the current buffer, including the current working
 directory, the file name, and its state (modified, read-only or non-existent)."
   (let ((all-the-icons-scale-factor 1.2)
@@ -290,8 +271,8 @@ directory, the file name, and its state (modified, read-only or non-existent)."
             (propertize (+doom-modeline--buffer-path)
                         'face (if faces `(:inherit ,faces))))))
 
-(defun *buffer-encoding ()
-  "The encoding and eol style of the buffer."
+(@def-modeline-segment buffer-encoding
+  "Displays the encoding and eol style of the buffer the same way Atom does."
   (concat (let ((eol-type (coding-system-eol-type buffer-file-coding-system)))
             (cond ((eq eol-type 0) "LF  ")
                   ((eq eol-type 1) "CRLF  ")
@@ -304,7 +285,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                   (t (upcase (symbol-name sys-name)))))
           "  "))
 
-(defun *major-mode ()
+(@def-modeline-segment major-mode
   "The major mode, including process, environment and text-scale info."
   (propertize
    (concat (format-mode-line mode-name)
@@ -315,7 +296,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                 (format " (%+d)" text-scale-mode-amount)))
    'face (if (active) 'doom-modeline-buffer-major-mode)))
 
-(defun *vc ()
+(@def-modeline-segment vcs
   "Displays the current branch, colored based on its state."
   (when (and vc-mode buffer-file-name)
     (let ((backend (vc-backend buffer-file-name))
@@ -324,7 +305,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
           (active  (active))
           (all-the-icons-scale-factor 1.0)
           (all-the-icons-default-adjust -0.1))
-      (concat (propertize " " 'face 'variable-pitch)
+      (concat +doom-modeline-vspc
               (cond ((memq state '(edited added))
                      (if active (setq face 'doom-modeline-info))
                      (all-the-icons-octicon
@@ -352,83 +333,75 @@ directory, the file name, and its state (modified, read-only or non-existent)."
               (propertize (substring vc-mode (+ (if (eq backend 'Hg) 2 3) 2))
                           'face (if active face))
               "  "
-              (propertize " " 'face 'variable-pitch)))))
+              +doom-modeline-vspc))))
 
-(defvar-local doom--flycheck-err-cache nil "")
-(defvar-local doom--flycheck-cache nil "")
-(defun *flycheck ()
-  "Persistent and cached flycheck indicators in the mode-line."
-  (when (and (featurep 'flycheck) flycheck-mode)
-    (if (or flycheck-current-errors
-            (eq 'running flycheck-last-status-change))
-        (or (and (or (eq doom--flycheck-err-cache doom--flycheck-cache)
-                     (memq flycheck-last-status-change '(running not-checked)))
-                 (if (eq flycheck-last-status-change 'running)
-                     (concat " "
-                             (all-the-icons-octicon
-                              "ellipsis"
-                              :face 'font-lock-doc-face
-                              :height 1.1
-                              :v-adjust 0)
-                             " ")
-                   doom--flycheck-cache))
-            (and (setq doom--flycheck-err-cache flycheck-current-errors)
-                 (setq doom--flycheck-cache
-                       (let ((fw (+doom-modeline--flycheck-count 'warning))
-                             (fe (+doom-modeline--flycheck-count 'error)))
-                         (concat (if (or fe fw) "  ")
-                                 (if fe (concat
-                                         (all-the-icons-octicon "circle-slash" :face 'doom-modeline-urgent :height 1.0 :v-adjust 0)
-                                         (propertize " " 'face 'variable-pitch)
-                                         (propertize (format "%d" fe) 'face 'doom-modeline-urgent)
-                                         " "
-                                         ))
-                                 (if fw (concat
-                                         (all-the-icons-octicon "alert" :face 'doom-modeline-warning :height 0.9 :v-adjust 0)
-                                         (propertize " " 'face 'variable-pitch)
-                                         (propertize (format "%d" fw) 'face 'doom-modeline-warning)
-                                         " "
-                                         ))
-                                 (if (or fe fw)
-                                     "  "
-                                   (when (active)
-                                     (all-the-icons-octicon "check" :height 1.2 :v-adjust -0.06))))))))
-      (concat
-       "  "
-       (all-the-icons-octicon "check"
-                              :face (if (active) 'doom-modeline-info)
-                              :height 1.2
-                              :v-adjust -0.06)
-       " "))))
+(defun +doom-ml-icon (icon &optional text face)
+  "Displays an octicon ICON with FACE, followed by TEXT. Uses
+`all-the-icons-octicon' to fetch the icon."
+  (concat
+   "  "
+   (when icon
+     (concat
+      (all-the-icons-octicon icon :face face :height 1.0 :v-adjust 0)
+      (when text
+        (propertize "  " 'face 'variable-pitch))))
+   (when text
+     (propertize text 'face face))))
 
-(defun *selection-info ()
+(@def-modeline-segment flycheck
+  "Displays color-coded flycheck error status in the current buffer with pretty
+icons."
+  (when (boundp 'flycheck-last-status-change)
+    (pcase flycheck-last-status-change
+      (`finished (if flycheck-current-errors
+                     (let-alist (flycheck-count-errors flycheck-current-errors)
+                       (let ((sum (+ (or .error 0) (or .warning 0))))
+                         (+doom-ml-icon "circle-slash" (format "%s issue%s" sum (if (eq 1 sum) "" "s"))
+                                     (if .error 'doom-modeline-urgent 'doom-modeline-warning))))
+                   (concat
+                    (+doom-ml-icon "check" nil 'doom-modeline-info) " ")))
+      (`running     (+doom-ml-icon "ellipsis" "Running" 'font-lock-doc-face))
+      (`no-checker  (+doom-ml-icon "alert" "-" 'font-lock-doc-face))
+      (`errored     (+doom-ml-icon "alert" "Error" 'doom-modeline-urgent))
+      (`interrupted (+doom-ml-icon "x" "Interrupted" 'font-lock-doc-face))
+      ;; (`suspicious  "")
+      )))
+
+(defsubst doom-column (pos)
+  (save-excursion
+    (when pos (goto-char pos))
+    (current-column)))
+
+(@def-modeline-segment selection-info
   "Information about the current selection, such as how many characters and
 lines are selected, or the NxM dimensions of a block selection."
-  (when (and (active) (evil-visual-state-p))
-    (concat
-     " "
-     (propertize
-      (let ((reg-beg (region-beginning))
-            (reg-end (region-end))
-            (evil (eq 'visual evil-state)))
-        (let ((lines (count-lines reg-beg (min (1+ reg-end) (point-max))))
-              (chars (- (1+ reg-end) reg-beg))
-              (cols (1+ (abs (- (evil-column reg-end)
-                                (evil-column reg-beg))))))
-          (cond
-           ;; rectangle selection
-           ((or (bound-and-true-p rectangle-mark-mode)
-                (and evil (eq 'block evil-visual-selection)))
-            (format " %dx%dB " lines (if evil cols (1- cols))))
-           ;; line selection
-           ((or (> lines 1) (eq 'line evil-visual-selection))
-            (if (and (eq evil-state 'visual) (eq evil-this-type 'line))
-                (format " %dL " lines)
-              (format " %dC %dL " chars lines)))
-           (t (format " %dC " (if evil chars (1- chars)))))))
-      'face 'doom-modeline-highlight))))
+  (when mark-active
+    (let ((evil-p (featurep 'evil)))
+      (concat
+       " "
+       (propertize
+        (let ((reg-beg (region-beginning))
+              (reg-end (region-end))
+              (evil (and evil-p (eq 'visual evil-state))))
+          (let ((lines (count-lines reg-beg (min (1+ reg-end) (point-max))))
+                (chars (- (1+ reg-end) reg-beg))
+                (cols (1+ (abs (- (doom-column reg-end)
+                                  (doom-column reg-beg))))))
+            (cond
+             ;; rectangle selection
+             ((or (bound-and-true-p rectangle-mark-mode)
+                  (and evil (eq 'block evil-visual-selection)))
+              (format " %dx%dB " lines (if evil cols (1- cols))))
+             ;; line selection
+             ((or (> lines 1) (eq 'line evil-visual-selection))
+              (if (and (eq evil-state 'visual) (eq evil-this-type 'line))
+                  (format " %dL " lines)
+                (format " %dC %dL " chars lines)))
+             (t (format " %dC " (if evil chars (1- chars)))))))
+        'face 'doom-modeline-highlight)))))
 
-(defun *macro-recording ()
+
+(defun +doom-modeline--macro-recording ()
   "Display current macro being recorded."
   (when (and (active) defining-kbd-macro)
     (let ((sep (propertize " " 'face 'doom-modeline-panel)))
@@ -442,20 +415,20 @@ lines are selected, or the NxM dimensions of a block selection."
               sep))))
 
 (make-variable-buffer-local 'anzu--state)
-(defun *anzu ()
+(defsubst +doom-modeline--anzu ()
   "Show the match index and total number thereof. Requires `evil-anzu'."
-  (when (or (featurep 'anzu)
-            (and (featurep 'evil-ex-hl-active-p)
-                 (evil-ex-hl-active-p 'evil-ex-search)))
+  (when (evil-ex-hl-active-p 'evil-ex-search)
     (propertize
      (format " %s/%d%s "
              anzu--current-position anzu--total-matched
              (if anzu--overflow-p "+" ""))
      'face (if (active) 'doom-modeline-panel))))
 
-(defun *evil-substitute ()
+(defsubst +doom-modeline--evil-substitute ()
   "Show number of :s matches in real time."
-  (when (and (evil-ex-p) (evil-ex-hl-active-p 'evil-ex-substitute))
+  (when (and (evil-ex-p) (or (evil-ex-hl-active-p 'evil-ex-substitute)
+                             (evil-ex-hl-active-p 'evil-ex-global-match)
+                             (evil-ex-hl-active-p 'evil-ex-buffer-match)))
     (propertize
      (let ((range (if evil-ex-range
                       (cons (car evil-ex-range) (cadr evil-ex-range))
@@ -468,101 +441,86 @@ lines are selected, or the NxM dimensions of a block selection."
          " ... "))
      'face (if (active) 'doom-modeline-panel))))
 
-(defun *iedit ()
+(defsubst +doom-modeline--iedit ()
   "Show the number of iedit regions matches + what match you're on."
-  (when (and (boundp 'iedit-mode) iedit-mode)
+  (when iedit-mode
     (propertize
      (let ((this-oc (let (message-log-max) (iedit-find-current-occurrence-overlay)))
-           (length (or (ignore-errors (length iedit-occurrences-overlays)) 0)))
-       (format
-        " %s/%s "
-        (save-excursion
-          (unless this-oc
-            (iedit-prev-occurrence)
-            (setq this-oc (iedit-find-current-occurrence-overlay)))
-          (if this-oc
-              ;; NOTE: Not terribly reliable
-              (- length (-elem-index this-oc iedit-occurrences-overlays))
-            "-"))
-        length))
+           (length  (or (ignore-errors (length iedit-occurrences-overlays)) 0)))
+       (format " %s/%s "
+               (save-excursion
+                 (unless this-oc
+                   (iedit-prev-occurrence)
+                   (setq this-oc (iedit-find-current-occurrence-overlay)))
+                 (if this-oc
+                     ;; NOTE: Not terribly reliable
+                     (- length (-elem-index this-oc iedit-occurrences-overlays))
+                   "-"))
+               length))
      'face (if (active) 'doom-modeline-panel))))
 
-(defun *media-info ()
+(@def-modeline-segment matches
+  "TODO"
+  (or (concat (if (active) (+doom-modeline--macro-recording))
+              (when (featurep 'evil)
+                (concat (+doom-modeline--anzu)
+                        (+doom-modeline--evil-substitute)))
+              (if (boundp 'iedit-mode) (+doom-modeline--iedit))
+              )
+      " %I "))
+
+(@def-modeline-segment media-info
   "TODO"
   (cond ((eq major-mode 'image-mode)
          (let ((size (image-size (image-get-display-property) :pixels)))
            (format "  %dx%d  " (car size) (cdr size))))))
+
+(@def-modeline-segment eldoc
+  "TODO"
+  (and (boundp 'str) str))
+
+(@def-modeline-segment bar
+  (+doom-modeline--make-xpm
+   (face-background (if (active)
+                        'doom-modeline-bar
+                      'doom-modeline-inactive-bar))
+   +doom-modeline-height
+   +doom-modeline-bar-width))
+
+(@def-modeline-segment eldoc-bar
+  (+doom-modeline--make-xpm
+   (face-background 'doom-modeline-eldoc-bar)
+   +doom-modeline-height
+   +doom-modeline-bar-width))
 
 
 ;;
 ;; Mode lines
 ;;
 
-(+doom-modeline-define 'main
-  `(:eval
-    (let* ((meta (concat ,(if (featurep 'evil) '(*macro-recording))
-                         (*anzu)
-                         ,(if (featurep 'evil) '(*evil-substitute))
-                         (*iedit)))
-           (lhs (list (+doom-modeline--make-xpm (face-background (if (active)
-                                                                     'doom-modeline-bar
-                                                                   'doom-modeline-inactive-bar))
-                                                doom-modeline-height
-                                                doom-modeline-bar-width)
-                      (if (= (length meta) 0) " %I " meta)
-                      " "
-                      (*buffer-info)
-                      "  %l:%c %p  "
-                      ,(if (featurep 'evil) '(*selection-info))))
-           (rhs (list (*buffer-encoding)
-                      (*vc)
-                      (*major-mode)
-                      (*flycheck)))
-           (mid (propertize
-                 " " 'display `((space :align-to (- (+ right right-fringe right-margin)
-                                                    ,(+ 1 (string-width (format-mode-line rhs)))))))))
-      (list lhs mid rhs))))
+(@def-modeline main
+  (bar matches " " buffer-info "  %l:%c %p  " selection-info)
+  (buffer-encoding vcs major-mode flycheck))
 
-(+doom-modeline-define 'eldoc
-  `(:eval
-    (list (list ,(when (display-graphic-p)
-                   `(+doom-modeline--make-xpm (face-background 'doom-modeline-eldoc-bar)
-                                              doom-modeline-height
-                                              doom-modeline-bar-width))
-                (and (bound-and-true-p str) str))
-          (propertize " " 'display `((space :align-to (1- (+ right right-fringe right-margin))))))))
+(@def-modeline eldoc
+  (eldoc-bar " " eldoc)
+  (media-info major-mode))
 
-(+doom-modeline-define 'minimal
-  `(:eval
-    (let* ((lhs (list (+doom-modeline--make-xpm (face-background (if (active)
-                                                                     'doom-modeline-bar
-                                                                   'doom-modeline-inactive-bar))
-                                                doom-modeline-height
-                                                doom-modeline-bar-width)
-                      " "
-                      (*buffer-info)))
-           (rhs (list (*media-info)
-                      (*major-mode)))
-           (mid (propertize
-                 " " 'display `((space :align-to (- (+ right right-fringe right-margin)
-                                                    ,(+ 1 (string-width (format-mode-line rhs)))))))))
-      (list lhs mid rhs))))
+(@def-modeline minimal
+  (bar matches " " buffer-info)
+  (media-info major-mode))
 
-(+doom-modeline-define 'project
-  `(:eval
-    (let* ((lhs (list (+doom-modeline--make-xpm (face-background (if (active)
-                                                                     'doom-modeline-bar
-                                                                   'doom-modeline-inactive-bar))
-                                                doom-modeline-height
-                                                doom-modeline-bar-width)
-                      " "
-                      (*buffer-project)))
-           (rhs (list (*major-mode)))
-           (mid (propertize
-                 " " 'display `((space :align-to (- (+ right right-fringe right-margin)
-                                                    ,(+ 1 (string-width (format-mode-line rhs)))))))))
-      (list lhs mid rhs))))
+(@def-modeline project
+  (bar " " bufer-project)
+  (major-mode))
 
 ;;
-(setq-default mode-line-format (+doom-modeline 'main))
+(setq-default mode-line-format (doom-modeline 'main))
+
+;; This scratch buffer is already created, and doesn't get a modeline. For the
+;; love of Emacs, someone give the man a modeline!
+(with-current-buffer "*scratch*"
+  (setq mode-line-format (doom-modeline 'main)))
+
+
 
