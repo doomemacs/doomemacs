@@ -195,7 +195,7 @@ Used by `@require' and `@depends-on'."
   (unless (or force-p (doom-module-loaded-p module submodule))
     (let ((sublist (assq module doom-modules)))
       (if sublist
-          (setf sublist (cons sublist submodule))
+          (setcdr (last sublist) (list submodule))
         (push (list module submodule) doom-modules)))))
 
 (defun doom--enable-modules (modules)
@@ -309,7 +309,7 @@ Accepts the following properties:
 (defmacro @depends-on (module submodule)
   "Declares that this module depends on another. MODULE is a keyword, and
 SUBMODULE is a symbol."
-  (doom--enable-module ,module ',submodule)
+  (doom--enable-module module submodule)
   `(@load packages ,(doom-module-path module submodule) t))
 
 
