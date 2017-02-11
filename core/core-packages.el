@@ -175,7 +175,8 @@ and `doom-packages'."
 
 (defun doom-module-loaded-p (module submodule)
   "Returns t if SUBMODULE (in MODULE) is present in `doom-modules'."
-  (memq submodule (cdr (assq module doom-modules))))
+  (and (memq submodule (cdr (assq module doom-modules)))
+       t))
 
 (defun doom--module-pairs ()
   "Returns `doom-modules' as a list of (MODULE . SUBMODULE) cons cells."
