@@ -280,6 +280,10 @@ it hasn't already, and if it exists."
           (doom--enable-module module submodule t))
         `(@load config ,(doom-module-path module submodule) t)))))
 
+(defmacro @featurep (module submodule)
+  "Convenience macro that wraps `doom-module-loaded-p'."
+  `(doom-module-loaded-p ,module ',submodule))
+
 
 ;;
 ;; Declarative macros
