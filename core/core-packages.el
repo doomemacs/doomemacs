@@ -78,41 +78,40 @@ if you have byte-compiled your configuration (as intended).")
 
 (defun doom-initialize (&optional force-p)
   "Initialize installed packages (using package.el) and ensure the core packages
-are installed. If you byte compile core/core.el, calls to `package.el' are
-avoided to speed up startup."
+are installed. If you byte compile core/core.el, this function will be avoided
+to speed up startup."
   ;; This is called early during Emacs initialization, so we can only use native
   ;; emacs functions.
   (unless (or doom-init-p force-p)
     (setq load-path doom--base-load-path
           package-activated-list nil)
+
+    ;; Ensure cache folder exists
+    (mapc (lambda (dir)
+            (unless (file-directory-p dir)
+              (make-directory dir t)))
+          (list doom-cache-dir package-user-dir))
+
     (package-initialize t)
 
     ;; Sure, `package-initialize' fills the load-path, but when NO-ACTIVATE is
     ;; non-nil, it will error out on missing packages. UNACCEPTAABBLLLE!
     (setq load-path (append load-path (directory-files package-user-dir t "^[a-zA-Z0-9]" t)))
 
-    ;; Ensure cache folder exists
-    (unless (file-exists-p doom-cache-dir)
-      (make-directory doom-cache-dir t))
-
     ;; Ensure core packages are installed
-    (unless (and (file-exists-p doom-packages-dir)
-                 (require 'use-package nil t)
-                 (require 'quelpa nil t))
-      (package-refresh-contents)
-      (condition-case ex
-          (mapc (lambda (pkg)
-                  (package-install pkg)
-                  (unless (package-installed-p pkg)
-                    (error "Couldn't install %s" pkg)))
-                doom-protected-packages)
-        (error
-         (delete-directory doom-packages-dir t)
-         (error "There was an error initializing DOOM. Try running it again"))))
+    (let ((core-packages (cl-remove-if 'package-installed-p doom-protected-packages)))
+      (when core-packages
+        (package-refresh-contents)
+        (dolist (pkg core-packages)
+          (let ((inhibit-message t))
+            (package-install pkg))
+          (if (package-installed-p pkg)
+              (message "Installed %s" pkg)
+            (error "Couldn't install %s" pkg)))))
 
     (require 'quelpa)
     (require 'use-package)
-    ;; Remove package management keywords, I'll deal with the myself
+    ;; Remove package management keywords, I'll deal with that myself
     (mapc (lambda (keyword) (setq use-package-keywords (delq keyword use-package-keywords)))
           '(:ensure :pin))
 
