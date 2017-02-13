@@ -47,8 +47,7 @@ if you have byte-compiled your configuration (as intended). Running
 `doom-initialize' sets this.")
 
 (defvar doom-modules nil
-  "Alist of enabled modules; each element is a list, whose CAR is a module
-keyword, and whose CDR is a list of submodule symbols.")
+  "A hash table of enabled modules.")
 
 (defvar doom-packages nil
   "A list of enabled packages. Each element is a sublist, whose CAR is the
@@ -161,6 +160,27 @@ and `doom-packages'."
             (--map (doom-module-path (car it) (cdr it) "packages.el")
                    (doom--module-pairs))))))
 
+(defun doom-initialize-modules (modules)
+  "Adds MODULES to `doom-modules'. MODULES must be in mplist format.
+
+  e.g '(:feature evil :lang emacs-lisp javascript java)"
+  (unless doom-modules
+    (setq doom-modules (make-hash-table :test 'equal :size (length modules))))
+  (let (mode)
+    (dolist (m modules)
+      (cond ((keywordp m)
+             (setq mode m))
+            ((not mode)
+             (error "No namespace specified on `@doom' for %s" m))
+            ((eq m '*)
+             (let ((mode-str (substring (symbol-name mode) 1)))
+               (doom-initialize-modules
+                (cons mode
+                      (--map (intern (f-base it))
+                             (f-directories (f-expand mode-str doom-modules-dir)))))))
+            (t
+             (doom--enable-module mode m))))))
+
 (defun doom-module-path (module submodule &optional file)
   "Get the full path to a module: e.g. :lang emacs-lisp maps to
 ~/.emacs.d/modules/lang/emacs-lisp/ and will append FILE if non-nil."
@@ -174,17 +194,16 @@ and `doom-packages'."
               doom-modules-dir)))
 
 (defun doom-module-loaded-p (module submodule)
-  "Returns t if SUBMODULE (in MODULE) is present in `doom-modules'."
-  (and (memq submodule (cdr (assq module doom-modules)))
-       t))
+  "Returns t if MODULE->SUBMODULE is present in `doom-modules'."
+  (gethash (cons module submodule) doom-modules))
 
 (defun doom--module-pairs ()
-  "Returns `doom-modules' as a list of (MODULE . SUBMODULE) cons cells."
-  (let (pairs module)
-    (dolist (modules doom-modules)
-      (setq module (car modules))
-      (dolist (submodule (cdr modules))
-        (push (cons module submodule) pairs)))
+  "Returns `doom-modules' as a list of (MODULE . SUBMODULE) cons cells. The list
+is sorted by order of insertion."
+  (let (pairs)
+    (maphash (lambda (key value)
+               (setq pairs (append pairs (list (cons (car key) (cdr key))))))
+             doom-modules)
     pairs))
 
 (defun doom--enable-module (module submodule &optional force-p)
@@ -194,32 +213,7 @@ FORCE-P is non-nil). MODULE is a keyword, SUBMODULE is a symbol. e.g. :lang
 
 Used by `@require' and `@depends-on'."
   (unless (or force-p (doom-module-loaded-p module submodule))
-    (let ((sublist (assq module doom-modules)))
-      (if sublist
-          (setcdr (last sublist) (list submodule))
-        (push (list module submodule) doom-modules)))))
-
-(defun doom--enable-modules (modules)
-  "Adds MODULES to `doom-modules'.
-
-MODULES must be in mplist format:
-  '(:feature evil :lang emacs-lisp javascript java)"
-  (let (mode)
-    (dolist (m modules)
-      (cond ((keywordp m)
-             (setq mode m))
-            ((not mode)
-             (error "No namespace specified on `@doom' for %s" m))
-            ((eq m '*)
-             (let ((mode-str (substring (symbol-name mode) 1)))
-               (doom--enable-modules
-                (cons mode
-                      (--map (intern (f-base it))
-                             (f-directories
-                              (f-expand mode-str doom-modules-dir)))))))
-            (t
-             (doom--enable-module mode m))))
-    doom-modules))
+    (puthash (cons module submodule) t doom-modules)))
 
 
 ;;
@@ -231,13 +225,12 @@ MODULES must be in mplist format:
 (defmacro @doom (&rest modules)
   "DOOM Emacs bootstrap macro. List the modules to load. Benefits from
 byte-compilation."
-  (doom--enable-modules modules)
+  (doom-initialize-modules modules)
   (unless noninteractive
     `(let (file-name-handler-alist)
        (setq doom-modules ',doom-modules)
 
-       ,@(mapcar (lambda (pkg)
-                   `(@require ,(car pkg) ,(cdr pkg) t))
+       ,@(mapcar (lambda (module) `(@require ,(car module) ,(cdr module) t))
                  (doom--module-pairs))
 
        (when (display-graphic-p)
