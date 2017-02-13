@@ -7,7 +7,6 @@
 (@def-package projectile :demand t
   :init
   (setq projectile-cache-file (concat doom-cache-dir "/projectile.cache")
-        projectile-completion-system 'ivy
         projectile-enable-caching (not noninteractive)
         projectile-file-exists-remote-cache-expire nil
         projectile-globally-ignored-directories `(,doom-cache-dir ".sync")
