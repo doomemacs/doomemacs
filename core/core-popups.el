@@ -37,7 +37,7 @@
 (@def-setting :popup (&rest rules)
   "Prepend a new popup rule to `shackle-rules'."
   (if (not (-all-p 'listp rules))
-      `(cl-pushnew ',rules shackle-rules :key 'car :test 'equal)
+      `(push ',rules shackle-rules)
     (let (real-rules)
       (dolist (rule rules)
         (let ((pattern (car rule))
