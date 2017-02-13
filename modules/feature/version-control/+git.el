@@ -19,6 +19,19 @@
   ;; Update git-gutter on focus (in case I was using git externally)
   (add-hook 'focus-in-hook 'git-gutter:update-all-windows)
 
+  ;; places the git gutter outside the margins.
+  (setq-default fringes-outside-margins t)
+  ;; thin fringe bitmaps
+  (define-fringe-bitmap 'git-gutter-fr:added
+    [224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224]
+    nil nil 'center)
+  (define-fringe-bitmap 'git-gutter-fr:modified
+    [224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224]
+    nil nil 'center)
+  (define-fringe-bitmap 'git-gutter-fr:deleted
+    [0 0 0 0 0 0 0 0 0 0 0 0 0 128 192 224 240 248]
+    nil nil 'center)
+
   (@after evil
     ;; Refreshing git-gutter on ESC
     (advice-add 'evil-force-normal-state :after 'git-gutter)))
