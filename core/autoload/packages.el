@@ -230,7 +230,7 @@ appropriate."
                               (format "+ %s %s -> %s"
                                       (s-pad-right (+ -max-len 2) " " (symbol-name (car pkg)))
                                       (s-pad-right 14 " " (doom--version-list-str (cadr pkg)))
-                                      (doom--version-list-str (caddr pkg))))
+                                      (doom--version-list-str (cl-caddr pkg))))
                             (--sort (string-lessp (symbol-name (car it))
                                                   (symbol-name (car other)))
                                     packages)
@@ -319,7 +319,7 @@ calls."
       (if (y-or-n-p (format "%s will be updated from %s to %s. Update?"
                             (car desc)
                             (doom--version-list-str (cadr desc))
-                            (doom--version-list-str (caddr desc))))
+                            (doom--version-list-str (cl-caddr desc))))
           (message "%s %s"
                    (if (doom-update-package package)
                        "Updated"

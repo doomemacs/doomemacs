@@ -3,6 +3,7 @@
 (require 'dash)
 (require 's)
 (require 'f)
+(eval-when-compile (require 'cl-lib))
 
 (defvar __DIR__ nil  "The directory of the currently loaded file (set by `@load')")
 (defvar __FILE__ nil "The full path of the currently loaded file (set by `@load')")

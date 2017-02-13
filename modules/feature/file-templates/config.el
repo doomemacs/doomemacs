@@ -102,8 +102,8 @@
       (require 'yasnippet)
       (unless yas-minor-mode
         (yas-minor-mode-on))
-      (let ((snippet (let ((template (cdar (mapcan #'(lambda (table) (yas--fetch table key))
-                                                   (yas--get-snippet-tables mode)))))
+      (let ((snippet (let ((template (cdar (cl-mapcan #'(lambda (table) (yas--fetch table key))
+                                                      (yas--get-snippet-tables mode)))))
                        (if template (yas--template-content template) nil))))
         (when (and yas-minor-mode snippet)
           (yas-expand-snippet snippet)

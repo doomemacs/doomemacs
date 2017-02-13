@@ -10,7 +10,7 @@ flags."
                         "\\(\\(?::\\(?:[phtreS~.]\\|g?s[^: $]+\\)\\)*\\)"))
         case-fold-search)
     (dolist (match (s-match-strings-all regexp file-name))
-      (let ((flags (split-string (caddr match) ":" t))
+      (let ((flags (split-string (cl-caddr match) ":" t))
             (path (file-relative-name
                    (pcase (cadr match)
                      ("@" (doom-project-root))
