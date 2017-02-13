@@ -18,7 +18,6 @@
 
 (@package all-the-icons)
 (@package eldoc-eval)
-(@package powerline)
 (when (@featurep :feature evil)
   (@package evil-anzu))
 

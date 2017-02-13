@@ -1,15 +1,12 @@
 ;;; ui/doom-modeline/config.el
 
-(eval-when-compile
-  (require 'powerline))
-
 ;; all-the-icons doesn't work in the terminal, so we "disable" it.
 (unless (display-graphic-p)
-  (defun all-the-icons-octicon (&rest _) "" "")
-  (defun all-the-icons-faicon (&rest _) "" "")
-  (defun all-the-icons-fileicon (&rest _) "" "")
-  (defun all-the-icons-wicon (&rest _) "" "")
-  (defun all-the-icons-alltheicon (&rest _) "" ""))
+  (defalias 'all-the-icons-octicon 'ignore)
+  (defalias 'all-the-icons-faicon 'ignore)
+  (defalias 'all-the-icons-fileicon 'ignore)
+  (defalias 'all-the-icons-wicon 'ignore)
+  (defalias 'all-the-icons-alltheicon 'ignore))
 
 (@def-package all-the-icons :demand t
   :when (display-graphic-p))
@@ -51,9 +48,8 @@
 
 
 ;; Don't show modeline in popup windows without a :modeline rule. If one exists
-;; and it's a symbol, use it to find the modeline format in
-;; `doom-modeline-formats'. If nil, show the mode-line as normal. If t, then
-;; hide the modeline entirely.
+;; and it's a symbol, use `doom-modeline' to grab the format. If nil, show the
+;; mode-line as normal. If t, then hide the modeline entirely.
 (@add-hook doom-popup-mode
   (if (and (not doom-popup-mode)
            doom-hide-modeline-mode)
@@ -64,6 +60,20 @@
             ((symbolp modeline)
              (let ((doom--hidden-modeline-format (+doom-modeline modeline)))
                (doom-hide-modeline-mode +1)))))))
+
+
+;; Keep `+doom-modeline-current-window' up-to-date
+(defvar +doom-modeline-current-window (frame-selected-window))
+(defun +doom-modeline|set-selected-window (&rest _)
+  "sets the variable `+doom-modeline-current-window` appropriately"
+  (when (not (minibuffer-window-active-p (frame-selected-window)))
+    (setq +doom-modeline-current-window (frame-selected-window))))
+
+(add-hook 'window-configuration-change-hook '+doom-modeline|set-selected-window)
+(add-hook 'focus-in-hook '+doom-modeline|set-selected-window)
+(advice-add 'handle-switch-frame :after '+doom-modeline|set-selected-window)
+(advice-add 'select-window :after '+doom-modeline|set-selected-window)
+
 
 
 ;;
@@ -85,52 +95,68 @@
 ;; Custom faces
 ;;
 
+(defgroup +doom-modeline nil
+  ""
+  :group 'doom)
+
 (defface doom-modeline-buffer-path
   '((t (:inherit mode-line :bold t)))
-  "Face used for the dirname part of the buffer path.")
+  "Face used for the dirname part of the buffer path."
+  :group '+doom-modeline)
 
 (defface doom-modeline-buffer-project
   '((t (:inherit doom-modeline-buffer-path :bold nil)))
-  "Face used for the filename part of the mode-line buffer path.")
+  "Face used for the filename part of the mode-line buffer path."
+  :group '+doom-modeline)
 
 (defface doom-modeline-buffer-modified
   '((t (:inherit highlight :background nil)))
-  "Face used for the 'unsaved' symbol in the mode-line.")
+  "Face used for the 'unsaved' symbol in the mode-line."
+  :group '+doom-modeline)
 
 (defface doom-modeline-buffer-major-mode
   '((t (:inherit mode-line :bold t)))
-  "Face used for the major-mode segment in the mode-line.")
+  "Face used for the major-mode segment in the mode-line."
+  :group '+doom-modeline)
 
 (defface doom-modeline-highlight
   '((t (:inherit mode-line)))
-  "Face for bright segments of the mode-line.")
+  "Face for bright segments of the mode-line."
+  :group '+doom-modeline)
 
 (defface doom-modeline-panel
   '((t (:inherit mode-line)))
   "Face for 'X out of Y' segments, such as `+doom-modeline--anzu', `+doom-modeline--evil-substitute' and
-`iedit'")
+`iedit'"
+  :group '+doom-modeline)
 
 (defface doom-modeline-info
   `((t (:inherit success)))
-  "Face for info-level messages in the modeline. Used by `*vc'.")
+  "Face for info-level messages in the modeline. Used by `*vc'."
+  :group '+doom-modeline)
 
 (defface doom-modeline-warning
   `((t (:inherit warning)))
-  "Face for warnings in the modeline. Used by `*flycheck'")
+  "Face for warnings in the modeline. Used by `*flycheck'"
+  :group '+doom-modeline)
 
 (defface doom-modeline-urgent `((t (:inherit error)))
-  "Face for errors in the modeline. Used by `*flycheck'")
+  "Face for errors in the modeline. Used by `*flycheck'"
+  :group '+doom-modeline)
 
 ;; Bar
 (defface doom-modeline-bar '((t (:inherit highlight :foreground nil)))
-  "The face used for the left-most bar on the mode-line of an active window.")
+  "The face used for the left-most bar on the mode-line of an active window."
+  :group '+doom-modeline)
 
 (defface doom-modeline-eldoc-bar '((t (:inherit shadow :foreground nil)))
   "The face used for the left-most bar on the mode-line when eldoc-eval is
-active.")
+active."
+  :group '+doom-modeline)
 
 (defface doom-modeline-inactive-bar '((t (:inherit mode-line-inactive)))
-  "The face used for the left-most bar on the mode-line of an inactive window.")
+  "The face used for the left-most bar on the mode-line of an inactive window."
+  :group '+doom-modeline)
 
 
 ;;
@@ -159,19 +185,43 @@ active.")
 ;; Modeline helpers
 ;;
 
-(defsubst active () (eq (selected-window) powerline-selected-window))
+(defsubst active ()
+  (eq (selected-window) +doom-modeline-current-window))
 
-(defun +doom-modeline--make-xpm (color height width)
+;; From from `powerline's `pl/make-xpm'.
+(@def-memoized +doom-modeline--make-xpm (color height width)
   "Create an XPM bitmap."
   (when (display-graphic-p)
     (propertize
      " " 'display
-     (let ((data nil)
-           (i 0))
-       (setq data (make-list height (make-list width 1)))
-       (pl/make-xpm "percent" color color data)))))
-;; Definitely not premature optimization, I-I swear!
-(pl/memoize '+doom-modeline--make-xpm)
+     (let ((data (make-list height (make-list width 1)))
+           (i 0)
+           (color (or color "None")))
+       (create-image
+        (concat
+         (format "/* XPM */\nstatic char * percent[] = {\n\"%i %i 2 1\",\n\". c %s\",\n\"  c %s\","
+                 (length (car data))
+                 (length data)
+                 color
+                 color)
+         (let ((len (length data))
+               (idx 0))
+           (apply 'concat
+                  (mapcar #'(lambda (dl)
+                              (setq idx (+ idx 1))
+                              (concat
+                               "\""
+                               (concat
+                                (mapcar #'(lambda (d)
+                                            (if (eq d 0)
+                                                (string-to-char " ")
+                                              (string-to-char ".")))
+                                        dl))
+                               (if (eq idx len)
+                                   "\"};"
+                                 "\",\n")))
+                          data))))
+        'xpm t :ascent 'center)))))
 
 (defun +doom-modeline--buffer-path ()
   "Displays the buffer's full path relative to the project root (includes the
@@ -222,8 +272,6 @@ project root). Excludes the file basename. See `doom-buffer-name' for that."
           (force-mode-line-update)
           (sit-for eldoc-show-in-mode-line-delay))))
     (force-mode-line-update)))
-
-
 
 
 ;;
@@ -436,8 +484,7 @@ lines are selected, or the NxM dimensions of a block selection."
            (pattern (car-safe (evil-delimited-arguments evil-ex-argument 2))))
        (if pattern
            (format " %s matches "
-                   (count-matches pattern (car range) (cdr range))
-                   evil-ex-argument)
+                   (count-matches pattern (car range) (cdr range)))
          " ... "))
      'face (if (active) 'doom-modeline-panel))))
 
@@ -479,6 +526,7 @@ lines are selected, or the NxM dimensions of a block selection."
   "TODO"
   (and (boundp 'str) str))
 
+;;
 (@def-modeline-segment bar
   (+doom-modeline--make-xpm
    (face-background (if (active)

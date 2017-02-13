@@ -15,7 +15,7 @@ use the current window."
         (new-buf (get-buffer-create " *doom:scratch*")))
     (with-current-buffer new-buf
       (setq default-directory old-project
-            mode-line-format (assq 'minimal doom-modeline-formats))
+            mode-line-format (doom-modeline 'minimal))
       (when (and (not (eq major-mode mode))
                  (functionp mode))
         (funcall mode))
