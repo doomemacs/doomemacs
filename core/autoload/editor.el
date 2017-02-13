@@ -45,7 +45,7 @@ If already there, do nothing."
         (funcall goto-char-fn eoc)))))
 
 (defun doom--surrounded-p ()
-  (and (looking-back "[[{(]\\(\s+\\|\n\\)?\\(\s\\|\t\\)*")
+  (and (looking-back "[[{(]\\(\s+\\|\n\\)?\\(\s\\|\t\\)*" (line-beginning-position))
        (let* ((whitespace (match-string 1))
               (match-str (concat whitespace (match-string 2) "[])}]")))
          (looking-at-p match-str))))
@@ -67,7 +67,7 @@ If already there, do nothing."
   (if indent-tabs-mode
       (call-interactively 'backward-delete-char)
     (save-excursion
-      (unless (looking-back "^[\s\t]*")
+      (unless (looking-back "^[\s\t]*" (line-beginning-position))
         (doom--goto-first-non-blank))
       (let* ((movement (% (current-column) tab-width))
              (spaces (if (= 0 movement) tab-width (- tab-width movement))))
@@ -101,7 +101,7 @@ possible, or just one char if that's not possible."
                 (setq close-len (- (match-beginning 0) (match-end 0))))
            (string= (plist-get (sp-get-thing t) :op)
                     (plist-get (sp-get-thing) :cl)))
-      (delete-backward-char open-len)
+      (delete-char (- 0 open-len))
       (delete-char close-len))
      ;; Delete up to the nearest tab column IF only whitespace between
      ;; point and bol.
@@ -113,7 +113,7 @@ possible, or just one char if that's not possible."
         (save-match-data
           (if (string-match "\\w*\\(\\s-+\\)$"
                             (buffer-substring-no-properties (- p movement) p))
-              (delete-backward-char (- (match-end 1) (match-beginning 1)))
+              (delete-char (- 0 (- (match-end 1) (match-beginning 1))))
             (call-interactively 'delete-backward-char)))))
      ;; Otherwise do a regular delete
      (t (call-interactively 'delete-backward-char)))))
