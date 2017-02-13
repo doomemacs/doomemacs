@@ -206,30 +206,18 @@ file."
 ;; Modeline
 ;;
 
-(defvar doom-modeline-segments '()
-  "An alist of mode-line segments. Use `@def-modeline-segment' to define them.")
-
-(defvar doom-modeline-formats '()
-  "An alist of mode-line formats. Use `@def-modeline' to define them and
-`doom-modeline' to retrieve them.")
-
 ;; TODO Improve docstrings
 (defmacro @def-modeline-segment (name &rest forms)
   "Defines a modeline segment function and byte compiles it."
   (declare (indent defun) (doc-string 2))
-  (let ((sym (intern (format "doom-modeline-segment--%s" name))))
-    (prog1
-        `(progn
-           (defun ,sym () ,@forms)
-           (push (cons ',name ',sym) doom-modeline-segments))
-      (let (byte-compile-warnings)
-        (byte-compile ',sym)))))
+  `(defun ,(intern (format "doom-modeline-segment--%s" name)) ()
+     ,@forms))
 
 (defsubst doom--prepare-modeline-segments (segments)
   (-non-nil
    (--map (if (stringp it)
               it
-            (list (cdr (assq it doom-modeline-segments))))
+            (list (intern (format "doom-modeline-segment--%s" (symbol-name it)))))
           segments)))
 
 (defmacro @def-modeline (name lhs &optional rhs)
@@ -240,7 +228,7 @@ Example:
      (bar matches \" \" buffer-info)
      (media-info major-mode))
    (setq-default mode-line-format (doom-modeline 'minimal))"
-  (let ((sym (intern (format "doom-modeline--%s" name)))
+  (let ((sym (intern (format "doom-modeline-format--%s" name)))
         (lhs-forms (doom--prepare-modeline-segments lhs))
         (rhs-forms (doom--prepare-modeline-segments rhs)))
     (prog1
@@ -254,18 +242,16 @@ Example:
                       `((space :align-to (- (+ right right-fringe right-margin)
                                             ,(+ 1 (string-width (format-mode-line rhs)))))))
                      rhs)))
-           (push (cons ',name ',sym) doom-modeline-formats))
-      (let (byte-compile-warnings)
-        (byte-compile ',sym)))))
+           ,(unless (bound-and-true-p byte-compile-current-file)
+              `(let (byte-compile-warnings)
+                 (byte-compile ',sym)))))))
 
 (defun doom-modeline (key)
-  "Fetch the forms for the mode line format named KEY from
-`doom-modeline-formats'. KEY is a symbol, and should be the name of a mode line
-defined with `@def-modeline'."
-  (let ((modeline (assq key doom-modeline-formats)))
-    (unless modeline
+  "TODO"
+  (let ((fn (intern (format "doom-modeline-format--%s" key))))
+    (unless (functionp fn)
       (error "Modeline format doesn't exist: %s" key))
-    `(:eval (,(cdr modeline)))))
+    `(:eval (,fn))))
 
 (provide 'core-ui)
 ;;; core-ui.el ends here
