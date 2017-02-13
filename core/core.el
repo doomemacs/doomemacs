@@ -9,7 +9,7 @@
 ;;   doom|...   hook function
 ;;   doom*...   advising functions
 ;;   doom!...   interaction commands exclusively for installing external dependencies
-;;   @...       a macro, public shortcut alias or a generator macro for keybinds
+;;   @...       a macro or function that configures DOOM
 ;;   %...       functions used for in-snippet logic
 ;;   +...       Any of the above, but part of a module, e.g. +emacs-lisp|init-hook
 ;;
@@ -21,20 +21,20 @@
 
 ;;;
 (defvar doom-version "2.0.0"
-  "Current version of DOOM emacs")
+  "Current version of DOOM emacs.")
 
 (defvar doom-debug-mode (or (getenv "DEBUG") init-file-debug)
   "If non-nil, all doom functions will be verbose. Set DEBUG=1 in the command
 line or use --debug-init to enable this.")
 
 (defvar doom-emacs-dir user-emacs-directory
-  "The path to this emacs.d directory")
+  "The path to this emacs.d directory.")
 
 (defvar doom-core-dir (concat doom-emacs-dir "core/")
-  "Where essential files are stored")
+  "Where essential files are stored.")
 
 (defvar doom-modules-dir (concat doom-emacs-dir "modules/")
-  "Where configuration modules are stored")
+  "Where configuration modules are stored.")
 
 (defvar doom-local-dir (concat doom-emacs-dir ".local/")
   "Untracked directory for local Emacs files, including the cache
@@ -56,6 +56,10 @@ and `doom-initialize-autoloads'.")
 (defconst IS-MAC   (eq system-type 'darwin))
 (defconst IS-LINUX (eq system-type 'gnu/linux))
 
+(defgroup doom nil
+  ""
+  :group 'emacs)
+
 
 ;;;
 ;; UTF-8 as the default coding system
@@ -75,6 +79,7 @@ and `doom-initialize-autoloads'.")
       compilation-scroll-output t
       confirm-nonexistent-file-or-buffer t
       enable-recursive-minibuffers nil
+      debug-on-error (and (not noninteractive) doom-debug-mode)
       idle-update-delay 1              ; update ui less often
       ;; keep the point out of the minibuffer
       minibuffer-prompt-properties '(read-only t point-entered minibuffer-avoid-prompt face minibuffer-prompt)
