@@ -145,18 +145,31 @@ to speed up startup."
       (unless (file-exists-p doom-autoload-file)
         (error "Autoloads file couldn't be generated")))))
 
-(defun doom-initialize-packages (&optional force-p)
-  "Executes the packages.el files across DOOM Emacs to refresh `doom-modules'
-and `doom-packages'."
+(defun doom-initialize-packages (&optional force-p load-p)
+  "Loads the packages.el files across DOOM Emacs in order to fill `doom-modules'
+and `doom-packages', if they aren't set already. If FORCE-P is non-nil, do it
+even if they are."
   (doom-initialize force-p)
-  (when (or force-p (not doom-modules) (not doom-packages))
-    (setq doom-modules nil
-          doom-packages nil)
-    (let ((noninteractive t))
-      (mapc (lambda (file) (load file nil :nomessage))
-            (list (f-expand "packages.el" doom-core-dir)
-                  (f-expand "init.el" doom-emacs-dir)))
-      (mapc (lambda (file) (load file :noerror :nomessage))
+  (let ((noninteractive t)
+        (load-fn
+         (lambda (file &optional noerror)
+           (condition-case ex
+               (load file noerror :nomessage :nosuffix)
+             ('error (message "INIT-PACKAGES ERROR (%s): %s" file ex))))))
+    (when (or force-p (not doom-modules))
+      (setq doom-modules nil)
+      (funcall load-fn (f-expand "init.el" doom-emacs-dir))
+      (when load-p
+        (mapc (lambda (file) (funcall load-fn file t))
+              (append (reverse (f-glob "core*.el" doom-core-dir))
+                      (f-glob "autoload/*.el" doom-core-dir)
+                      (--map (doom-module-path (car it) (cdr it) "config.el")
+                             (doom--module-pairs))))))
+
+    (when (or force-p (not doom-packages))
+      (setq doom-packages nil)
+      (funcall load-fn (f-expand "packages.el" doom-core-dir))
+      (mapc (lambda (file) (funcall load-fn file t))
             (--map (doom-module-path (car it) (cdr it) "packages.el")
                    (doom--module-pairs))))))
 
@@ -253,7 +266,7 @@ as a symbol. PATH is a directory to prefix it with. If NOERROR is non-nil, don't
 throw an error if the file doesn't exist.
 
 Sets `__FILE__' and `__DIR__' on the loaded file."
-  (let ((path (or (and path (eval path)) __DIR__)))
+  (let ((path (or (and path (eval path)) (__DIR__))))
     (unless path
       (error "Could not find %s" filesym))
     (let ((file (f-expand (concat (symbol-name filesym) ".el") path)))
@@ -365,15 +378,22 @@ core/*.el). DOOM Emacs was designed to benefit from this.
 If SIMPLE-P is nil, also byte-compile modules/*/*/*.el (except for packages.el).
 There should be a measurable benefit from this, but it may take a while."
   (interactive)
-  (doom-initialize-packages t)
+  ;; Ensure all relevant config files are loaded. This way we don't need
+  ;; eval-when-compile and require blocks scattered all over.
+  (doom-initialize-packages t noninteractive)
   (let ((targets
          (append (list (f-expand "init.el" doom-emacs-dir)
                        (f-expand "core.el" doom-core-dir))
                  (f-glob "core-*.el" doom-core-dir)
+                 (f-glob "autoload/*.el" doom-core-dir)
                  (unless simple-p
                    (-flatten
                     (--map (f--entries (doom-module-path (car it) (cdr it))
-                                       (f-ext-p it "el") t)
+                                       (and (f-ext-p it "el")
+                                            (let ((fname (f-filename it)))
+                                              (or (string= fname "config.el")
+                                                  (s-prefix-p "+" fname t))))
+                                       t)
                            (doom--module-pairs))))))
         (n 0)
         results)
