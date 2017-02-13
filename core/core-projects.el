@@ -21,15 +21,16 @@
   :config
   (projectile-mode +1)
 
-  (mapc (lambda (r) (push r projectile-other-file-alist))
-        '(("less" "css")
-          ("styl" "css")
-          ("sass" "css")
-          ("scss" "css")
-          ("css" "scss" "sass" "less" "styl")
-          ("jade" "html")
-          ("pug" "html")
-          ("html" "jade" "pug" "jsx" "tsx")))
+  (setq projectile-other-file-alist
+        (append '(("less" "css")
+                  ("styl" "css")
+                  ("sass" "css")
+                  ("scss" "css")
+                  ("css" "scss" "sass" "less" "styl")
+                  ("jade" "html")
+                  ("pug" "html")
+                  ("html" "jade" "pug" "jsx" "tsx"))
+                projectile-other-file-alist))
 
   (defun doom*projectile-cache-current-file (orig-fun &rest args)
     "Don't cache ignored files."
