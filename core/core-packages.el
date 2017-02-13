@@ -97,10 +97,9 @@ packages exist.")
 
 (defun doom-initialize (&optional force-p)
   "Initialize installed packages (using package.el) and ensure the core packages
-are installed. If you byte compile core/core.el, this function will be avoided
+are installed. If you byte-compile core/core.el, this function will be avoided
 to speed up startup."
-  ;; This is called early during Emacs initialization, so we can only use native
-  ;; emacs functions.
+  ;; Called early during initialization; only use native functions!
   (unless (or doom-init-p force-p)
     (setq load-path doom--base-load-path
           package-activated-list nil)
@@ -112,9 +111,12 @@ to speed up startup."
           (list doom-cache-dir package-user-dir))
 
     (package-initialize t)
-
-    ;; Sure, `package-initialize' fills the load-path, but when NO-ACTIVATE is
-    ;; non-nil, it will error out on missing packages. UNACCEPTAABBLLLE!
+    ;; Sure, `package-initialize' could fill `load-path', but package activation
+    ;; costs precious milliseconds, and my premature optimization quota isn't
+    ;; filled yet. UNACCEPTAABBLLLE!
+    ;;
+    ;; Also, in some edge cases involving package initialization during a
+    ;; non-interactive session, `package-initialize' fails to fill `load-path'.
     (setq load-path (append load-path (directory-files package-user-dir t "^[a-zA-Z0-9]" t)))
 
     ;; Ensure core packages are installed
@@ -297,24 +299,27 @@ it hasn't already, and if it exists."
 ;;
 
 (defmacro @package (name &rest plist)
-  "Declares a package. This does not load nor install them explicitly.
-
-this macro serves a purely declarative purpose, and are run to build
-`doom-packages', so that functions like `doom/packages-install' can operate on
-them.
+  "Declares a package and how to install it (if applicable). This does not load
+nor install them.
 
 Accepts the following properties:
 
- :recipe RECIPE        Takes a MELPA-style recipe (see `quelpa-recipe' for an
-                       example); for packages to be installed from external
-                       sources.
+ :recipe RECIPE        Takes a MELPA-style recipe (see `quelpa-recipe' in
+                       `quelpa' for an example); for packages to be installed
+                       from external sources.
  :pin ARCHIVE-NAME     Instructs ELPA to only look for this package in
-                       ARCHIVE-NAME. e.g. \"org\"."
+                       ARCHIVE-NAME. e.g. \"org\". Ignored if RECIPE is present.
+
+This macro serves a purely declarative purpose, and are used to fill
+`doom-packages', so that functions like `doom/packages-install' can operate on
+them. "
   (declare (indent defun))
   (let ((pkg-recipe (plist-get plist :recipe))
         (pkg-pin    (plist-get plist :pin)))
     (when (= 0 (mod (length pkg-recipe) 2))
       (plist-put plist :recipe (cons name pkg-recipe)))
+    (when (and pkg-recipe pkg-pin)
+      (plist-put plist :pkg-pin nil))
     `(add-to-list 'doom-packages ',(cons name plist) t)))
 
 (defmacro @depends-on (module submodule)
@@ -337,7 +342,7 @@ SUBMODULE is a symbol."
 
 (defun doom/reload-autoloads ()
   "Refreshes the autoloads.el file, which tells Emacs where to find all the
-autoloaded functions in the modules you use or among the core libraries, e.g.
+autoloaded functions in enabled modules or among the core libraries, e.g.
 core/autoload/*.el.
 
 In modules, checks modules/*/autoload.el and modules/*/autoload/*.el.
