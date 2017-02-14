@@ -8,6 +8,22 @@
      (setq ivy-exit 'done)
      (exit-minibuffer)))
 
+(@map [remap find-file] 'counsel-find-file
+      [remap switch-to-buffer] 'ivy-switch-buffer
+      [remap projectile-switch-to-buffer] '+ivy/switch-project-buffer
+      [remap recentf] 'counsel-recentf
+      [remap imenu] 'counsel-imenu
+      [remap bookmark-jump] 'counsel-bookmark
+      [remap projectile-switch-project] 'counsel-projectile-switch-project
+      [remap projectile-find-file] 'counsel-projectile-find-file
+      [remap imenu-anywhere]  'ivy-imenu-anywhere
+      [remap execute-extended-command] 'counsel-M-x)
+
+
+;;
+;; Packages
+;;
+
 (@def-package ivy :demand t
   :init
   (setq ivy-height 14
@@ -17,6 +33,9 @@
         ivy-format-function 'ivy-format-function-line) ;; highlight til EOL
 
   :config
+  (setq projectile-completion-system 'ivy
+        smex-completion-method 'ivy)
+
   (@map :map ivy-mode-map
         [remap ivy-switch-buffer] '+ivy/switch-buffer
         [remap projectile-switch-to-buffer] '+ivy/switch-project-buffer
@@ -36,18 +55,16 @@
   (advice-add 'ivy-read :after 'doom|redisplay)
 
   (@after magit      (setq magit-completing-read-function 'ivy-completing-read))
-  (@after smex       (setq smex-completion-method 'ivy))
-  (@after yasnippet  (push 'doom-yas-ivy-prompt yas-prompt-functions))
+  (@after yasnippet  (push '+ivy-yas-prompt yas-prompt-functions))
 
   (ivy-mode +1))
 
 
 (@def-package counsel
   :after ivy
-  :init
+  :config
   (setq counsel-find-file-ignore-regexp "\\(?:^[#.]\\)\\|\\(?:[#~]$\\)\\|\\(?:^Icon?\\)")
 
-  :config
   (require 'counsel-projectile)
 
   (@def-counsel-action ag-open-in-other-window
