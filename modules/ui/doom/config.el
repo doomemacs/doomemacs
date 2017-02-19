@@ -37,20 +37,36 @@
 (window-divider-mode +1)
 
 
-;; Apply the doom-one theme from `doom-themes' for full compatibility; gives
-;; Emacs a look inspired by Dark One in Atom.
+;; doom-one: gives Emacs a look inspired by Dark One in Atom.
 ;; <https://github.com/hlissner/emacs-doom-theme>
 (@def-package doom-themes :demand t
   :load-path "~/work/plugins/emacs-doom-theme"
   :config
   (load-theme +doom-theme t)
 
+  (nconc default-frame-alist
+         `((background-color . ,(face-background 'default))
+           (foreground-color . ,(face-foreground 'default))))
+
   ;; brighter source buffers
+  (defun +doom|buffer-mode-on ()
+    (unless (doom-popup-p)
+      (doom-buffer-mode +1)))
+  ;; (add-hook 'find-file-hook '+doom|buffer-mode-on)
   (add-hook 'find-file-hook 'doom-buffer-mode)
   ;; Popup buffers should always be dimmed
-  (defun +doom|disable-buffer-mode ()
+  (defun +doom|buffer-mode-off ()
     (when doom-buffer-mode (doom-buffer-mode -1)))
-  (add-hook 'doom-popup-mode-hook '+doom|disable-buffer-mode)
+  (add-hook 'doom-popup-mode-hook '+doom|buffer-mode-off)
+
+  (when (@featurep :feature workspaces)
+    (defun +doom|restore-bright-buffers (windows)
+      "Restore `doom-buffer-mode' in buffers when `persp-mode' loads a session."
+      (dolist (window windows)
+        (when (and (doom-real-buffer-p (window-buffer window))
+                   (not (bound-and-true-p doom-buffer-mode)))
+          (doom-buffer-mode +1))))
+    (add-hook '+workspaces-load-session-hook '+doom|restore-bright-buffers))
 
   ;; Add file icons to doom-neotree
   (require 'doom-neotree)
@@ -65,7 +81,8 @@
 ;; Causes a flash around the cursor when it moves across a "large" distance.
 ;; Usually between windows, or across files. This makes it easier to keep track
 ;; where your cursor is, which I find helpful on my 30" 2560x1600 display.
-(@def-package beacon :demand t
+(@def-package beacon
+  :after doom-themes
   :config
   (beacon-mode +1)
   (setq beacon-color (let ((bg (face-attribute 'highlight :background nil t)))
@@ -76,11 +93,13 @@
         beacon-blink-when-point-moves-vertically 10))
 
 
-;; Nicer folded overlays that stand out a bit more
 (@after hideshow
-  (defface doom-folded-face '((t (:foreground "#555" :background "#888")))
+  ;; Nicer code-folding overlays
+  (defface doom-folded-face
+    '((t (:foreground "#555" :background "#888")))
     "Face to hightlight `hideshow' overlays."
     :group 'hideshow)
+
   (setq hs-set-up-overlay
         (lambda (ov)
           (when (eq 'code (overlay-get ov 'hs))
