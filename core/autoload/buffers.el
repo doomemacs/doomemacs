@@ -61,50 +61,49 @@ workgroup."
                         (persp-buffer-list-restricted))
                        (t (buffer-list))))
         (project-root (and (not all-p) (doom-project-root t))))
-    (append (if project-root
-                (funcall (if (eq all-p 'not) '-remove '-filter)
-                         (lambda (b) (projectile-project-buffer-p b project-root))
-                         buffers)
-              buffers)
-            (list doom-fallback-buffer))))
+    (if project-root
+        (funcall (if (eq all-p 'not) 'cl-remove-if 'cl-remove-if-not)
+                 (lambda (b) (projectile-project-buffer-p b project-root))
+                 buffers)
+      buffers)))
 
 ;;;###autoload
 (defun doom-real-buffers-list (&optional buffer-list)
   "Get a list of all buffers (in the current workgroup OR in BUFFER-LIST) that
 `doom-real-buffer-p' returns non-nil for."
-  (-filter #'doom-real-buffer-p (or buffer-list (doom-buffer-list))))
+  (cl-remove-if-not 'doom-real-buffer-p (or buffer-list (doom-buffer-list))))
 
 ;;;###autoload
 (defun doom-buffers-in-mode (modes &optional buffer-list)
   "Get a list of all buffers (in the current workgroup OR in BUFFER-LIST) whose
 `major-mode' is one of MODES."
-  (--filter (memq (buffer-local-value 'major-mode it) modes)
-            (or buffer-list (doom-buffer-list))))
+  (cl-remove-if-not (lambda (buf) (memq (buffer-local-value 'major-mode it) modes))
+                    (or buffer-list (doom-buffer-list))))
 
 ;;;###autoload
 (defun doom-visible-windows (&optional window-list)
   "Get a list of the visible windows in the current frame (that aren't popups),
 OR return only the visible windows in WINDOW-LIST."
-  (-remove #'doom-popup-p (or window-list (window-list))))
+  (cl-remove-if 'doom-popup-p (or window-list (window-list))))
 
 ;;;###autoload
 (defun doom-visible-buffers (&optional buffer-list)
   "Get a list of unburied buffers in the current project and workgroup, OR
 return only the unburied buffers in BUFFER-LIST (a list of BUFFER-OR-NAMEs)."
-  (-filter #'get-buffer-window (or buffer-list (doom-buffer-list))))
+  (cl-remove-if-not 'get-buffer-window (or buffer-list (doom-buffer-list))))
 
 ;;;###autoload
 (defun doom-buried-buffers (&optional buffer-list)
   "Get a list of buried buffers in the current project and workgroup, OR return
 only the buried buffers in BUFFER-LIST (a list of BUFFER-OR-NAMEs)."
-  (-remove 'get-buffer-window (or buffer-list (doom-buffer-list))))
+  (cl-remove-if 'get-buffer-window (or buffer-list (doom-buffer-list))))
 
 ;;;###autoload
 (defun doom-matching-buffers (pattern &optional buffer-list)
   "Get a list of all buffers (in the current workgroup OR in BUFFER-LIST) that
 match the regex PATTERN."
-  (--filter (string-match-p pattern (buffer-name it))
-            (or buffer-list (doom-buffer-list))))
+  (cl-remove-if-not (lambda (buf) (string-match-p pattern (buffer-name buf)))
+                    (or buffer-list (doom-buffer-list))))
 
 (defun doom--cycle-real-buffers (&optional n)
   "Switch to the next buffer N times (previous, if N < 0), skipping over special
@@ -148,14 +147,14 @@ a) it isn't a popup (or temporary) window
 b) it isn't a special buffer (e.g. scratch or *messages* buffer)
 c) and its major-mode or buffer-name-matching regexp isn't in
 `doom-buffers-unreal'."
-  (let ((buffer (window-normalize-buffer buffer-or-name)))
-    (when (buffer-live-p buffer)
-      (not (or (doom-popup-p (get-buffer-window buffer))
-               (eq (buffer-name buffer) doom-fallback-buffer)
-               (--any? (and (stringp it) (string-match-p it (buffer-name buffer)))
-                       doom-buffers-unreal)
-               (with-current-buffer buffer
-                 (apply 'derived-mode-p (-filter 'symbolp doom-buffers-unreal))))))))
+  (when-let (buffer (ignore-errors (window-normalize-buffer buffer-or-name)))
+    (or (eq buffer (doom-fallback-buffer))
+        (not (or (doom-popup-p (get-buffer-window buffer))
+                 (cl-some (lambda (rule)
+                            (and (stringp rule) (string-match-p rule (buffer-name buffer))))
+                          doom-buffers-unreal)
+                 (with-current-buffer buffer
+                   (apply 'derived-mode-p (cl-remove-if-not 'symbolp doom-buffers-unreal))))))))
 
 ;;;###autoload
 (defun doom/next-buffer ()
@@ -222,9 +221,11 @@ See `doom-real-buffer-p' for what 'real' means."
         (when (and assoc
                    (not (string= process-name "server"))
                    (process-live-p p)
-                   (not (--any? (let ((mode (buffer-local-value 'major-mode it)))
-                                  (eq mode (cdr assoc)))
-                                buffer-list)))
+                   (not (cl-some
+                         (lambda (buf)
+                           (let ((mode (buffer-local-value 'major-mode it)))
+                             (eq mode (cdr assoc))))
+                         buffer-list)))
           (delete-process p)
           (setq n (1+ n)))))
     n))

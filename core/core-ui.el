@@ -214,11 +214,13 @@ file."
      ,@forms))
 
 (defsubst doom--prepare-modeline-segments (segments)
-  (-non-nil
-   (--map (if (stringp it)
-              it
-            (list (intern (format "doom-modeline-segment--%s" (symbol-name it)))))
-          segments)))
+  (delq
+   nil
+   (mapcar (lambda (seg)
+             (if (stringp seg)
+                 seg
+               (list (intern (format "doom-modeline-segment--%s" (symbol-name seg))))))
+           segments)))
 
 (defmacro @def-modeline (name lhs &optional rhs)
   "Defines a modeline format and byte-compiles it.

@@ -31,7 +31,7 @@ possible rules."
 ;;;###autoload
 (defun doom-popup-windows ()
   "Get a list of open poups."
-  (-filter 'doom-popup-p (window-list)))
+  (cl-remove-if-not 'doom-popup-p (window-list)))
 
 ;;;###autoload
 (defun doom/popup-restore ()
@@ -76,8 +76,9 @@ possible rules."
   "Closes all open popups. If DONT-KILL is non-nil, don't kill their buffers."
   (interactive)
   (let* ((orig-win (selected-window))
-         (popups (--filter (and (doom-popup-p it) (not (eq it orig-win)))
-                           (window-list))))
+         (popups (cl-remove-if-not (lambda (win) (and (doom-popup-p win)
+                                                 (not (eq win orig-win))))
+                                   (window-list))))
     (when popups
       (setq doom-popup-history (mapcar 'doom--popup-data (doom-popup-windows)))
       (let (doom-popup-remember-history)

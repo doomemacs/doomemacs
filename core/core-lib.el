@@ -1,31 +1,29 @@
 ;;; core-lib.el
 
-(require 'dash)
-(require 's)
-(require 'f)
-(eval-when-compile (require 'cl-lib))
+(require 'cl-lib)
+(eval-when-compile
+  (require 'subr-x))
 
-(defvar __DIR__ nil  "The directory of the currently loaded file (set by `@load')")
-(defvar __FILE__ nil "The full path of the currently loaded file (set by `@load')")
+;; I don't use use-package for these to save on the `fboundp' lookups it does
+;; for its :commands property.
+(mapc (lambda (sym) (autoload sym "async"))
+      '(async-start async-start-process async-byte-recompile-directory))
 
-(defun __DIR__ ()
-  "Get the full path to the current file's parent folder."
-  (or __DIR__
-      (and load-file-name (f-dirname load-file-name))
-      (and buffer-file-name (f-dirname buffer-file-name))
-      default-directory
-      (and (bound-and-true-p byte-compile-current-file)
-           (f-dirname byte-compile-current-file))
-      (error "__DIR__ is unset")))
+(mapc (lambda (sym) (autoload sym "persistent-soft"))
+      '(persistent-soft-exists-p persistent-soft-fetch persistent-soft-flush persistent-soft-store))
 
-(defun __FILE__ ()
-  "Get the full path to the current file."
-  (or __FILE__
-      load-file-name
-      buffer-file-name
-      (and (bound-and-true-p byte-compile-current-file)
-           byte-compile-current-file)
-      (error "__FILE__ is unset")))
+(mapc (lambda (sym) (autoload sym "s"))
+      '(s-trim s-trim-left s-trim-right s-chomp s-collapse-whitespace s-word-wrap
+        s-center s-pad-left s-pad-right s-truncate s-left s-right s-chop-suffix
+        s-chop-suffixes s-chop-prefix s-chop-prefixes s-shared-start s-shared-end
+        s-repeat s-concat s-prepend s-append s-lines s-match s-match-strings-all
+        s-matched-positions-all s-slice-at s-split s-split-up-to s-join s-equals?
+        s-less? s-matches? s-blank? s-present? s-ends-with? s-starts-with? s-contains?
+        s-lowercase? s-uppercase? s-mixedcase? s-capitalized? s-numeric? s-replace
+        s-replace-all s-downcase s-upcase s-capitalize s-titleize s-with s-index-of
+        s-reverse s-presence s-format s-lex-format s-count-matches s-wrap s-split-words
+        s-lower-camel-case s-upper-camel-case s-snake-case s-dashed-words
+        s-capitalized-words s-titleized-words s-word-initials))
 
 
 ;;
@@ -91,15 +89,15 @@ Examples:
                     (if (cdr-safe (cadr val))
                         (cadr val)
                       (list (cadr val)))
-                  (list func-or-forms))))
-    (macroexp-progn
-     (mapcar (lambda (f)
-               (let ((func (if (symbolp f) `(quote ,f) `(lambda (&rest _) ,@func-or-forms))))
-                 (macroexp-progn
-                  (mapcar (lambda (h)
-                            `(add-hook ',(if quoted-p h (intern (format "%s-hook" h))) ,func))
-                          (-list hook)))))
-             funcs))))
+                  (list func-or-forms)))
+         forms)
+    ;; Maybe use `cl-loop'?
+    (dolist (fn funcs)
+      (setq fn (if (symbolp fn) `(quote ,fn) `(lambda (&rest _) ,@func-or-forms)))
+      (dolist (h (if (listp hook) hook (list hook)))
+        (push `(add-hook ',(if quoted-p h (intern (format "%s-hook" h))) ,fn)
+              forms)))
+    `(progn ,@(reverse forms))))
 
 (defmacro @associate (mode &rest plist)
   "Associate a major or minor mode to certain patterns and project files."
@@ -120,7 +118,7 @@ Examples:
                                     (or ,(not files)
                                         (and (boundp ',mode)
                                              (not ,mode)
-                                             (doom-project-has-files ,@(-list files))))
+                                             (doom-project-has-files ,@(if (listp files) files (list files)))))
                                     (or (not ,pred)
                                         (funcall ,pred buffer-file-name)))
                            (,mode 1)))

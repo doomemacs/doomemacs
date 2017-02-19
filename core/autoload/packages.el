@@ -237,7 +237,7 @@ appropriate."
 (defun doom/packages-update ()
   "Interactive command for updating packages."
   (interactive)
-  (let ((packages (cl-sort (doom-get-outdated-packages) 'doom--sort-alpha)))
+  (let ((packages (sort (doom-get-outdated-packages) 'doom--sort-alpha)))
     (cond ((not packages)
            (message "Everything is up-to-date"))
 

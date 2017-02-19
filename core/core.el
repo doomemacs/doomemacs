@@ -138,38 +138,8 @@ enable multiple minor modes for the same regexp.")
   (require 'core-lib)
   (require 'core-os) ; consistent behavior across Oses
   (doom-initialize-autoloads)
+
   (unless noninteractive
-    (@def-package anaphora
-      :commands (awhen aif acond awhile))
-
-    (@def-package async
-      :commands (async-start
-                 async-start-process
-                 async-byte-recompile-directory))
-
-    (@def-package persistent-soft
-      :preface (defvar pcache-directory (concat doom-cache-dir "pcache/"))
-      :commands (persistent-soft-exists-p
-                 persistent-soft-fetch
-                 persistent-soft-flush
-                 persistent-soft-store))
-
-    (@def-package ht
-      :commands (ht-create ht-merge ht-copy ht-select ht-reject ht-select-keys
-                 ht-get ht-keys ht-values ht-items ht-find ht-size
-                 ht-set! ht-update! ht-remove! ht-clear! ht-reject!
-                 ht-map ht-each
-                 ht? ht-contains? ht-equal? ht-empty?
-                 ht->alist ht->plist
-                 ht<-alist ht<-plist
-                 ht ht-amap ht-aeach))
-
-    (@def-package smex
-      :commands (smex smex-major-mode-commands)
-      :config
-      (setq smex-save-file (concat doom-cache-dir "/smex-items"))
-      (smex-initialize))
-
     (require 'core-ui)          ; draw me like one of your French editors
     (require 'core-popups)      ; taming sudden yet inevitable windows
     (require 'core-editor)      ; baseline configuration for text editing

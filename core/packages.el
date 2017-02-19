@@ -2,11 +2,9 @@
 ;;; core/packages.el
 
 ;; core packages
-(@package anaphora)
 (@package async)
 (@package persistent-soft)
-(@package ht)
-(@package smex)
+(@package s)
 
 ;; core-os.el
 (when IS-MAC

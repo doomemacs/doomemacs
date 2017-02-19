@@ -50,7 +50,7 @@ Examples:
 (defun doom-mplist-get (plist &rest keys)
   "TODO"
   (if (cdr keys)
-      (let ((keys (--map (memq it plist) keys))
+      (let ((keys (mapcar (lambda (key) (memq key plist)) keys))
             values)
         (dolist (forms keys)
           (when forms
@@ -60,6 +60,6 @@ Examples:
 
 ;;;###autoload
 (defun doom-mplist-member (plist &rest keys)
-  (--any-p (memq it plist) keys))
+  (cl-some (lambda (key) (memq key plist)) keys))
 
 

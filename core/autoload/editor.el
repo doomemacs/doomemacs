@@ -58,7 +58,7 @@ If already there, do nothing."
       (insert "\t")
     (let* ((movement (% (current-column) tab-width))
            (spaces (if (= 0 movement) tab-width (- tab-width movement))))
-      (insert (s-repeat spaces " ")))))
+      (insert (make-string spaces ? )))))
 
 ;;;###autoload
 (defun doom/dumb-dedent ()
@@ -157,9 +157,9 @@ from a commented line."
         ((sp-point-in-comment)
          (cond ((eq major-mode 'js2-mode)
                 (js2-line-break))
-               ((-contains? '(java-mode php-mode) major-mode)
+               ((memq major-mode '(java-mode php-mode))
                 (c-indent-new-comment-line))
-               ((-contains? '(c-mode c++-mode objc-mode css-mode scss-mode js2-mode) major-mode)
+               ((memq major-mode '(c-mode c++-mode objc-mode css-mode scss-mode js2-mode))
                 (newline-and-indent)
                 (insert "* ")
                 (indent-according-to-mode))

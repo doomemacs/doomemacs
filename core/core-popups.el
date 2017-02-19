@@ -36,21 +36,9 @@
 
 (@def-setting :popup (&rest rules)
   "Prepend a new popup rule to `shackle-rules'."
-  (if (not (-all-p 'listp rules))
-      `(push ',rules shackle-rules)
-    (let (real-rules)
-      (dolist (rule rules)
-        (let ((pattern (car rule))
-              (plist (cdr rule)))
-          ;; Align popups by default (error if this doesn't happen)
-          (unless (plist-member plist :align)
-            (plist-put plist :align t))
-          ;; Select popups by default
-          (unless (or (plist-member plist :select)
-                      (plist-member plist :noselect))
-            (plist-put plist :select t))
-          (push (cons pattern plist) real-rules)))
-      `(setq shackle-rules (append ',real-rules shackle-rules)))))
+  (if (cl-every 'listp rules)
+      `(nconc shackle-rules ',rules)
+    `(push ',rules shackle-rules)))
 
 
 ;;

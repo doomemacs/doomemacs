@@ -33,8 +33,10 @@
 
   (defun doom*projectile-cache-current-file (orig-fun &rest args)
     "Don't cache ignored files."
-    (unless (--any (f-descendant-of? buffer-file-name it)
-                   (projectile-ignored-directories))
+    (unless (cl-some (lambda (path)
+                       (string-prefix-p buffer-file-name
+                                        (expand-file-name path)))
+                     (projectile-ignored-directories))
       (apply orig-fun args)))
   (advice-add 'projectile-cache-current-file :around 'doom*projectile-cache-current-file))
 
