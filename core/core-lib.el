@@ -58,7 +58,8 @@ compilation."
                ((symbol-function 'write-region)
                 (lambda (start end filename &optional append visit lockname mustbenew)
                   (unless visit (setq visit 'no-message))
-                  (doom--old-write-region-fn start end filename append visit lockname mustbenew)))
+                  (doom--old-write-region-fn
+                   start end filename append visit lockname mustbenew)))
                (inhibit-message t)
                (save-silently t))
        ,@forms)))
@@ -109,7 +110,9 @@ Examples:
            (files (plist-get plist :files))
            (pred  (plist-get plist :when)))
       (cond ((or files in pred)
-             (when (and files (not (or (listp files) (stringp files))))
+             (when (and files
+                        (not (or (listp files)
+                                 (stringp files))))
                (user-error "@associate :files expects a string or list of strings"))
              (let ((hook-name (intern (format "doom--init-mode-%s" mode))))
                (macroexp-progn

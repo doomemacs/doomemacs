@@ -1,8 +1,8 @@
 ;;; core-projects.el --- tools for getting around your project
 
-;; I want Emacs to be nominally aware of the projects. `projectile' provides
-;; tools for digging through project files and exposing an API I can use to make
-;; other plugins/features project-aware.
+;; I want Emacs to be aware of the projects. `projectile' provides tools for
+;; digging through project files and exposing an API I can use to make other
+;; plugins/features project-aware.
 
 (@def-package projectile :demand t
   :init

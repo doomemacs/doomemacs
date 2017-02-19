@@ -69,30 +69,36 @@ and `doom-initialize-autoloads'.")
 (setq-default buffer-file-coding-system 'utf-8) ; with sugar on top
 
 ;; Configuration
-(setq ad-redefinition-accept 'accept   ; silence advised function warnings
-      apropos-do-all t                 ; make `apropos' more useful
-      compilation-always-kill t        ; kill compilation process before starting another
-      compilation-ask-about-save nil   ; save all buffers on `compile'
-      compilation-scroll-output t
-      confirm-nonexistent-file-or-buffer t
-      enable-recursive-minibuffers nil
-      debug-on-error (and (not noninteractive) doom-debug-mode)
-      idle-update-delay 1              ; update ui less often
-      ;; keep the point out of the minibuffer
-      minibuffer-prompt-properties '(read-only t point-entered minibuffer-avoid-prompt face minibuffer-prompt)
-      ;; History & backup settings
-      auto-save-default nil
-      auto-save-list-file-name (concat doom-cache-dir "/autosave")
-      backup-directory-alist (list (cons ".*" (concat doom-cache-dir "/backup/")))
-      create-lockfiles nil
-      history-length 1000
-      make-backup-files nil
-      vc-make-backup-files nil)
+(setq-default
+ ad-redefinition-action 'accept   ; silence advised function warnings
+ apropos-do-all t                 ; make `apropos' more useful
+ compilation-always-kill t        ; kill compilation process before starting another
+ compilation-ask-about-save nil   ; save all buffers on `compile'
+ compilation-scroll-output t
+ confirm-nonexistent-file-or-buffer t
+ custom-file (concat doom-cache-dir "custom.el")
+ enable-recursive-minibuffers nil
+ debug-on-error (and (not noninteractive) doom-debug-mode)
+ idle-update-delay 1              ; update ui less often
+ ;; keep the point out of the minibuffer
+ minibuffer-prompt-properties '(read-only t point-entered minibuffer-avoid-prompt face minibuffer-prompt)
+ ;; History & backup settings
+ auto-save-default nil
+ auto-save-list-file-name (concat doom-cache-dir "/autosave")
+ backup-directory-alist (list (cons ".*" (concat doom-cache-dir "/backup/")))
+ create-lockfiles nil
+ history-length 1000
+ make-backup-files nil
+ vc-make-backup-files nil
+ ;; in case of `persistent-soft'
+ pcache-directory (concat doom-cache-dir "pcache/"))
 
 ;; be quiet at startup
 (advice-add 'display-startup-echo-area-message :override 'ignore)
 (setq inhibit-startup-message t
-      inhibit-startup-echo-area-message user-login-name)
+      inhibit-startup-echo-area-message user-login-name
+      initial-major-mode 'fundamental-mode
+      initial-scratch-message nil)
 
 
 ;;;

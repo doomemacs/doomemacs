@@ -30,7 +30,7 @@ executed when called with `@set'. FORMS are not evaluated until `@set' calls it.
     (if (functionp fn)
         (apply fn (eval `(list ,@values)))
       (when doom-debug-mode
-        (warn "No setting found for %s" keyword)))))
+        (message "No setting found for %s" keyword)))))
 
 
 ;; (defun describe-setting ()

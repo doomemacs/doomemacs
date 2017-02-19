@@ -2,40 +2,39 @@
 
 (defvar doom-ui-fringe-size '3 "Default fringe width")
 
-(defvar doom-ui-default-background "#333333"
-  "The default frame background color.")
-
-(defvar doom-ui-default-foreground "#CCCCCC"
-  "The default frame foreground color.")
-
-(setq bidi-display-reordering nil ; disable bidirectional text for tiny performance boost
-      blink-matching-paren nil    ; don't blink--too distracting
-      cursor-in-non-selected-windows nil  ; hide cursors in other windows
-      frame-inhibit-implied-resize t
-      ;; remove continuation arrow on right fringe
-      fringe-indicator-alist (delq (assq 'continuation fringe-indicator-alist)
-                                   fringe-indicator-alist)
-      highlight-nonselected-window nil
-      image-animate-loop t
-      indicate-buffer-boundaries nil
-      indicate-empty-lines nil
-      max-mini-window-height 0.3
-      mode-line-default-help-echo nil  ; disable mode-line mouseovers
-      resize-mini-windows 'grow-only ; Minibuffer resizing
-      show-help-function nil         ; hide :help-echo text
-      show-paren-delay 0.075
-      show-paren-highlight-openparen t
-      show-paren-when-point-inside-paren t
-      split-width-threshold nil      ; favor horizontal splits
-      uniquify-buffer-name-style nil
-      use-dialog-box nil             ; always avoid GUI
-      visible-cursor nil
-      x-stretch-cursor t
-      ;; no beeping or blinking please
-      ring-bell-function 'ignore
-      visible-bell nil
-      ;; Ask for confirmation on quit only if real buffers exist
-      confirm-kill-emacs (lambda (_) (if (doom-real-buffers-list) (y-or-n-p "››› Quit?") t)))
+(setq-default
+ bidi-display-reordering nil ; disable bidirectional text for tiny performance boost
+ blink-matching-paren nil    ; don't blink--too distracting
+ cursor-in-non-selected-windows nil  ; hide cursors in other windows
+ frame-inhibit-implied-resize t
+ ;; remove continuation arrow on right fringe
+ fringe-indicator-alist (delq (assq 'continuation fringe-indicator-alist)
+                              fringe-indicator-alist)
+ highlight-nonselected-window nil
+ image-animate-loop t
+ indicate-buffer-boundaries nil
+ indicate-empty-lines nil
+ jit-lock-defer-time nil
+ jit-lock-stealth-nice 0.1
+ jit-lock-stealth-time 0.2
+ jit-lock-stealth-verbose nil
+ max-mini-window-height 0.3
+ mode-line-default-help-echo nil  ; disable mode-line mouseovers
+ resize-mini-windows 'grow-only ; Minibuffer resizing
+ show-help-function nil         ; hide :help-echo text
+ show-paren-delay 0.075
+ show-paren-highlight-openparen t
+ show-paren-when-point-inside-paren t
+ split-width-threshold nil      ; favor horizontal splits
+ uniquify-buffer-name-style nil
+ use-dialog-box nil             ; always avoid GUI
+ visible-cursor nil
+ x-stretch-cursor t
+ ;; no beeping or blinking please
+ ring-bell-function 'ignore
+ visible-bell nil
+ ;; Ask for confirmation on quit only if real buffers exist
+ confirm-kill-emacs (lambda (_) (if (doom-real-buffers-list) (y-or-n-p "››› Quit?") t)))
 
 (fset 'yes-or-no-p 'y-or-n-p) ; y/n instead of yes/no
 
@@ -66,7 +65,7 @@ disabled.")
           doom--mode-line nil))
   (force-mode-line-update))
 ;; Ensure major-mode or theme changes don't overwrite these variables
-(put 'doom--old-modeline 'permanent-local t)
+(put 'doom--old-modeline-format 'permanent-local t)
 (put 'doom-hide-modeline-mode 'permanent-local t)
 
 
@@ -80,14 +79,12 @@ disabled.")
   (scroll-bar-mode -1)
   (tool-bar-mode -1)
   ;; buffer name  in frame title
-  (setq-default frame-title-format '("%b"))
+  (setq-default frame-title-format '("DOOM Emacs"))
   ;; standardize fringe width
   (fringe-mode doom-ui-fringe-size)
   (setq default-frame-alist
         (append `((left-fringe  . ,doom-ui-fringe-size)
-                  (right-fringe . ,doom-ui-fringe-size)
-                  (background-color . ,doom-ui-default-background)
-                  (foreground-color . ,doom-ui-default-foreground))
+                  (right-fringe . ,doom-ui-fringe-size))
                 default-frame-alist))
   ;; no fringe in the minibuffer
   (@add-hook (emacs-startup minibuffer-setup)
@@ -160,12 +157,12 @@ file."
       (remove-hook 'after-save-hook 'doom|adjust-indent-guides t)
       (delete-trailing-whitespace))))
 
-;; Some modes don't adequately highlight numbers, therefore...
+;; For modes that don't adequately highlight numbers
 (@def-package highlight-numbers :commands highlight-numbers-mode)
 
 ;; Line highlighting
 (@def-package hl-line ; built-in
-  :init
+  :config
   ;; stickiness doesn't play nice with emacs 25+
   (setq hl-line-sticky-flag nil
         global-hl-line-sticky-flag nil))
@@ -174,7 +171,9 @@ file."
 ;; plugin than the built-in `linum'.
 (@def-package nlinum
   :commands nlinum-mode
-  :preface (defvar nlinum-format "%4d ")
+  :preface
+  (defvar linum-format "%3d ")
+  (defvar nlinum-format "%4d ")
   :init
   (@add-hook
     (markdown-mode prog-mode scss-mode web-mode conf-mode groovy-mode

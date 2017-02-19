@@ -1,42 +1,38 @@
 ;;; core-editor.el --- filling the editor shaped hole in the Emacs OS
 
-(setq shift-select-mode t ; activate mark on shift-click
-      ;; Save clipboard contents into kill-ring before replacing them
-      save-interprogram-paste-before-kill t
-      ;; Bookmarks
-      bookmark-default-file (concat doom-cache-dir "/bookmarks")
-      bookmark-save-flag t
-      ;; Formatting
-      delete-trailing-lines nil
-      fill-column 80
-      sentence-end-double-space nil
-      ;; Scrolling
-      hscroll-margin 1
-      hscroll-step 1
-      scroll-conservatively 1001
-      scroll-margin 0
-      scroll-preserve-screen-position t
-      ;; Whitespace (see `editorconfig')
-      indent-tabs-mode nil
-      require-final-newline t
-      tab-always-indent t
-      tab-width 4
-      tabify-regexp "^\t* [ \t]+"  ; for :retab
-      whitespace-line-column fill-column
-      whitespace-style
-      '(face tabs tab-mark trailing lines-tail)
-      whitespace-display-mappings
-      '((tab-mark ?\t [?› ?\t]) (newline-mark 10  [36 10]))
-      ;; Wrapping
-      truncate-lines t
-      truncate-partial-width-windows 50
-      visual-fill-column-center-text nil
-      word-wrap t
-      ;; clipboard
-      x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING)
-      ;; Use a shared clipboard
-      select-enable-clipboard t
-      select-enable-primary t)
+(setq-default
+ shift-select-mode t ; activate mark on shift-click
+ ;; Save clipboard contents into kill-ring before replacing them
+ save-interprogram-paste-before-kill t
+ ;; Bookmarks
+ bookmark-default-file (concat doom-cache-dir "/bookmarks")
+ bookmark-save-flag t
+ ;; Formatting
+ delete-trailing-lines nil
+ fill-column 80
+ sentence-end-double-space nil
+ ;; Scrolling
+ hscroll-margin 1
+ hscroll-step 1
+ scroll-conservatively 1001
+ scroll-margin 0
+ scroll-preserve-screen-position t
+ ;; Whitespace (see `editorconfig')
+ indent-tabs-mode nil
+ require-final-newline t
+ tab-always-indent t
+ tab-width 4
+ tabify-regexp "^\t* [ \t]+"  ; for :retab
+ whitespace-line-column fill-column
+ whitespace-style
+ '(face tabs tab-mark trailing lines-tail)
+ whitespace-display-mappings
+ '((tab-mark ?\t [?› ?\t]) (newline-mark 10  [36 10]))
+ ;; Wrapping
+ truncate-lines t
+ truncate-partial-width-windows 50
+ visual-fill-column-center-text nil
+ word-wrap t)
 
 ;; Save point across sessions
 (require 'saveplace)
@@ -71,7 +67,6 @@
                         "^/var/folders/.+$" "^/tmp/.+")
       recentf-max-menu-items 0
       recentf-max-saved-items 250
-      recentf-auto-cleanup 600
       recentf-filename-handlers '(abbreviate-file-name))
 (@quiet (recentf-mode 1))
 
@@ -136,18 +131,21 @@
 ;; Autoloaded Plugins
 ;;
 
-(@def-package ace-link :commands (ace-link-help ace-link-org))
+(@def-package ace-link
+  :commands (ace-link-help ace-link-org))
 
 (@def-package ace-window
   :commands ace-window
-  :config (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)
-                aw-scope 'frame
-                aw-background t))
+  :config
+  (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)
+        aw-scope 'frame
+        aw-background t))
 
 (@def-package avy
   :commands (avy-goto-char-2 avy-goto-line)
-  :config (setq avy-all-windows nil
-                avy-background t))
+  :config
+  (setq avy-all-windows nil
+        avy-background t))
 
 (@def-package command-log-mode
   :commands (command-log-mode global-command-log-mode)
@@ -161,7 +159,8 @@
   :config (emr-initialize)
   (define-key popup-menu-keymap [escape] 'keyboard-quit))
 
-(@def-package expand-region :commands (er/expand-region er/contract-region er/mark-symbol er/mark-word))
+(@def-package expand-region
+  :commands (er/expand-region er/contract-region er/mark-symbol er/mark-word))
 
 (@def-package goto-last-change :commands goto-last-change)
 
@@ -178,7 +177,8 @@
 
 (@def-package rotate-text
   :commands (rotate-text rotate-text-backward)
-  :config (push '("true" "false") rotate-text-words))
+  :config
+  (push '("true" "false") rotate-text-words))
 
 (@def-package smart-forward
   :commands (smart-up smart-down smart-backward smart-forward))
