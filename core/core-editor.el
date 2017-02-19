@@ -154,11 +154,6 @@
   (setq command-log-mode-auto-show t
         command-log-mode-open-log-turns-on-mode t))
 
-(@def-package emr
-  :commands (emr-show-refactor-menu emr-declare-command)
-  :config (emr-initialize)
-  (define-key popup-menu-keymap [escape] 'keyboard-quit))
-
 (@def-package expand-region
   :commands (er/expand-region er/contract-region er/mark-symbol er/mark-word))
 

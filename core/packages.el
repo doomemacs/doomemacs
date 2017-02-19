@@ -27,7 +27,6 @@
 (@package ace-window)
 (@package avy)
 (@package command-log-mode)
-(@package emr)
 (@package expand-region)
 (@package goto-last-change)
 (@package help-fns+)
