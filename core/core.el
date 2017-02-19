@@ -16,10 +16,6 @@
 ;; Autoloaded functions are in core/autoload/*.el and modules/*/*/autoload.el or
 ;; modules/*/*/autoload/*.el.
 
-(when (version< emacs-version "25.1")
-  (error "DOOM Emacs no longer supports Emacs <25.1! Time to upgrade!"))
-
-;;;
 (defvar doom-version "2.0.0"
   "Current version of DOOM emacs.")
 
