@@ -3,7 +3,7 @@
 ;;;###autoload
 (defun +vcs-root ()
   "Get git url root."
-  (-when-let (url (car-safe (browse-at-remote--remote-ref buffer-file-name)))
+  (when-let (url (car-safe (browse-at-remote--remote-ref buffer-file-name)))
     (cdr (browse-at-remote--get-url-from-remote url))))
 
 ;;;###autoload
@@ -17,10 +17,13 @@ Fallback to repository root."
       (error
        (setq url (shell-command-to-string "hub browse -u --"))
        (setq url (if url
-                     (concat (s-trim url) "/" (f-relative (buffer-file-name) (doom-project-root))
-                             (when (use-region-p) (format "#L%s-L%s"
-                                                          (line-number-at-pos (region-beginning))
-                                                          (line-number-at-pos (region-end)))))))))
+                     (concat (string-trim url) "/"
+                             (file-relative-name (buffer-file-name)
+                                                 (doom-project-root))
+                             (when (use-region-p)
+                               (format "#L%s-L%s"
+                                       (line-number-at-pos (region-beginning))
+                                       (line-number-at-pos (region-end)))))))))
     (when url (browse-url url))))
 
 ;;;###autoload

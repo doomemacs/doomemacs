@@ -10,7 +10,6 @@
 (@package gitconfig-mode)
 (@package gitignore-mode)
 (@package magit)
-
 (when (@featurep :feature evil)
   (@package evil-magit))
 
