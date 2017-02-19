@@ -1,40 +1,61 @@
-;;; module-latex.el
+;;; lang/latex/config.el
 
-(defvar doom-bibtex-dir "~/Dropbox/docs/biblio")
+;; TODO Test me
 
-(use-package reftex
-  :commands turn-on-reftex
+(defvar +latex-bibtex-dir "~/work/writing/biblio/"
+  "Where bibtex files are kept.")
+
+(defvar +latex-bibtex-default-file "default.bib"
+  "TODO")
+
+
+;;
+;; Plugins
+;;
+
+(@def-package auctex
+  :mode ("\\.tex$" . LaTeX-mode)
   :init
-  (setq reftex-plug-into-AUCTeX t
-        reftex-ref-style-default-list '("Cleveref" "Hyperref" "Fancyref")
-        reftex-default-bibliography
-        `(,(expand-file-name "phys.bib" doom-bibtex-dir)))
-  (add-hook! (LaTeX-mode latex-mode) 'turn-on-reftex))
-
-(use-package helm-bibtex
-  :commands helm-bibtex
-  :init
+  (add-hook 'LaTeX-mode-hook 'turn-on-auto-fill)
+  :config
   (setq TeX-auto-save t
         TeX-parse-self t
-        bibtex-dialect 'biblatex
-        bibtex-align-at-equal-sign t
-        bibtex-text-indentation 20)
-  (add-hook! bibtex-mode
-    (local-set-key (kbd "C-c \\") 'bibtex-fill-entry)
-    (setq fill-column 140))
-  (add-hook! (LaTeX-mode latex-mode) 'turn-on-auto-fill)
+        TeX-source-correlate-start-server nil
+        LaTeX-fill-break-at-separators nil)
 
+  (@add-hook LaTeX-mode '(LaTeX-math-mode TeX-source-correlate-mode))
+
+  (@set :company-backend 'LaTeX-mode '(company-auctex)))
+
+(@def-package company-auctex)
+
+
+(@def-package bibtex ; built-in
   :config
-  (setq helm-bibtex-bibliography
-        (list (f-expand "phys.bib" doom-bibtex-dir))
+  (setq bibtex-dialect 'biblatex
+        bibtex-align-at-equal-sign t
+        bibtex-text-indentation 20
+        bibtex-completion-bibliography (list +latex-bibtex-default-file))
 
-        helm-bibtex-library-path
-        (list (f-expand "phys-pdf" doom-bibtex-dir))
+  (@map :map bibtex-mode-map
+        "C-c \\" 'bibtex-fill-entry))
 
-        helm-bibtex-notes-path (f-expand "notes.org" doom-bibtex-dir)
 
-        helm-bibtex-pdf-open-function
-        (lambda (fpath) (async-start-process "open-pdf" "/usr/bin/open" nil fpath))))
+(@def-package reftex ; built-in
+  :commands turn-on-reftex
+  :init
+  (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
+  :config
+  (setq reftex-plug-into-AUCTeX t
+        reftex-default-bibliography (list +latex-bibtex-default-file))
 
-(provide 'module-latex)
-;;; module-latex.el ends here
+  (@map :map reftex-mode-map
+        :leader :n ";" 'reftex-toc))
+
+
+(@def-package ivy-bibtex
+  :commands ivy-bibtex)
+
+(@def-package helm-bibtex
+  :commands helm-bibtex)
+

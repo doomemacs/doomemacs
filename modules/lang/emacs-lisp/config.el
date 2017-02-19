@@ -1,14 +1,14 @@
 ;;; lang/emacs-lisp/config.el
 
-(@def-package elisp-mode
+(@def-package elisp-mode ; built-in
   :mode ("/Cask$" . emacs-lisp-mode)
   :init
-  (@add-hook emacs-lisp-mode '(highlight-quoted-mode auto-compile-on-save-mode +emacs-lisp|hook))
+  (add-hook 'emacs-lisp-mode-hook '+emacs-lisp|hook)
 
   :config
   (@map :map emacs-lisp-mode-map
         :m "gd" '+emacs-lisp/find-function
-        :leader :m "gd" '+emacs-lisp/find-function-other-window)
+        :leader :m "gd" '+emacs-lisp/find-function-in-other-window)
 
   ;; Don't affect lisp indentation (only `tab-width')
   (setq editorconfig-indentation-alist
@@ -19,11 +19,15 @@
     (setq mode-name "Elisp") ; [pedantry intensifies]
     (add-hook 'before-save-hook 'delete-trailing-whitespace nil t)
 
+    (eldoc-mode +1)
+    (highlight-quoted-mode +1)
+    (auto-compile-on-save-mode +1)
+
     (font-lock-add-keywords
      nil `(;; Display "lambda" as λ
            ("(\\(lambda\\)" (1 (ignore (compose-region (match-beginning 1) (match-end 1) ?λ 'decompose-region))))
            ;; Highlight doom/module functions
-           ("\\(^\\|\\s-\\)(\\(\\(doom\\|\\+\\)[^) ]+\\)[) \n]" (2 font-lock-builtin-face))
+           ("\\(^\\|\\s-\\|,\\)(\\(\\(doom\\|\\+\\)[^) ]+\\)[) \n]" (2 font-lock-builtin-face))
            ;; Highlight doom macros (no need, macros are fontified in emacs 25+)
            ;; ("\\(^\\|\\s-\\)(\\(@[^) ]+\\)[) \n]" (2 font-lock-preprocessor-face append))
            ))
@@ -38,18 +42,11 @@
             ("Modes" "^\\s-*(define-\\(?:global\\(?:ized\\)?-minor\\|generic\\|minor\\)-mode +\\([^ ()\n]+\\)" 1)
             ("Macros" "^\\s-*(\\(?:cl-\\)?def\\(?:ine-compile-macro\\|macro\\) +\\([^ )\n]+\\)" 1)
             ("Inline Functions" "\\s-*(\\(?:cl-\\)?defsubst +\\([^ )\n]+\\)" 1)
-            ("Functions" "^\\-s*(\\(?:cl-\\)?def\\(?:un\\*?\\|method\\|generic\\) +\\([^ )\n]+\\)" 1)
+            ("Functions" "^\\s-*(\\(?:cl-\\)?def\\(?:un\\|un\\*\\|method\\|generic\\) +\\([^ )\n]+\\)" 1)
             ("Variables" "^\\s-*(\\(def\\(?:c\\(?:onst\\(?:ant\\)?\\|ustom\\)\\|ine-symbol-macro\\|parameter\\)\\)\\s-+\\(\\(?:\\sw\\|\\s_\\|\\\\.\\)+\\)" 2)
             ("Variables" "^\\s-*(defvar\\(?:-local\\)?\\s-+\\(\\(?:\\sw\\|\\s_\\|\\\\.\\)+\\)[[:space:]\n]+[^)]" 1)
             ("Types" "^\\s-*(\\(cl-def\\(?:struct\\|type\\)\\|def\\(?:class\\|face\\|group\\|ine-\\(?:condition\\|error\\|widget\\)\\|package\\|struct\\|t\\(?:\\(?:hem\\|yp\\)e\\)\\)\\)\\s-+'?\\(\\(?:\\sw\\|\\s_\\|\\\\.\\)+\\)" 2)
             ))))
-
-
-(@after debug ;; elisp debugging
-  (@map :map debugger-mode-map
-        :n "RET" 'debug-help-follow
-        :n "n"   'debugger-step-through
-        :n "c"   'debugger-continue))
 
 
 ;;

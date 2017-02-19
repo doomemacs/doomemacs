@@ -1,24 +1,26 @@
-;;; module-sh.el
+;;; lang/sh/config.el
 
-(use-package sh-script
-  :mode (("\\.\\(ba\\|z\\)sh$" . sh-mode)
-         ("/\\.?z\\(sh\\(/.*\\|$\\)\\|profile\\|log\\(in\\|out\\)\\|sh\\(rc\\|env\\)\\)$" . sh-mode)
-         ("/\\.?bash\\(/.*\\|rc\\|_profile\\)$" . sh-mode)
-         ("/\\.?xinitrc$" . sh-mode)
+(@def-package sh-script ; built-in
+  :mode (("\\.zsh$" . sh-mode)
          ("/bspwmrc$" . sh-mode))
-  :init (add-hook! sh-mode '(flycheck-mode doom|sh-extra-font-lock-activate highlight-numbers-mode))
+  :init
+  (@add-hook sh-mode '(flycheck-mode highlight-numbers-mode +sh|extra-fontify))
   :config
-  (def-company-backend! sh-mode (shell))
-  (def-electric! sh-mode :words ("else" "elif" "fi" "done" "then" "do" "esac" ";;"))
-  (def-repl! sh-mode doom/inf-shell)
+  (@set :company-backend 'sh-mode '(company-shell))
+  (@set :electric 'sh-mode :words "else" "elif" "fi" "done" "then" "do" "esac" ";;")
+  (@set :repl 'sh-mode '+sh/repl)
   (setq sh-indent-after-continuation 'always)
 
   ;; [pedantry intensifies]
-  (add-hook! sh-mode (setq mode-name "sh")))
+  (@add-hook sh-mode (setq mode-name "sh"))
 
-(use-package company-shell
+  (defun +sh|detect-zsh ()
+    (when (and buffer-file-name (string-match-p "\\.zsh\\'" buffer-file-name))
+      (sh-set-shell "zsh")))
+  (add-hook 'sh-mode-hook '+sh|detect-zsh))
+
+
+(@def-package company-shell
   :after sh-script
   :config (setq company-shell-delete-duplicates t))
 
-(provide 'module-sh)
-;;; module-sh.el ends here

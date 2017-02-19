@@ -1,11 +1,11 @@
-;;; lang/text/autoload.el
+;;; lang/markdown/autoload.el
 
 ;; Implement strike-through formatting
 (defvar +text--markdown-regex-del
   "\\(^\\|[^\\]\\)\\(\\(~\\{2\\}\\)\\([^ \n	\\]\\|[^ \n	]\\(?:.\\|\n[^\n]\\)*?[^\\ ]\\)\\(\\3\\)\\)")
 
 ;;;###autoload
-(defun +text/markdown-insert-del ()
+(defun +markdown/insert-del ()
   "Surround region in github strike-through delimiters."
   (interactive)
   (let ((delim "~~"))

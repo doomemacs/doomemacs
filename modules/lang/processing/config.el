@@ -1,46 +1,39 @@
 ;;; module-processing.el
 
-(use-package processing-mode
-  :when IS-MAC
+(@def-package processing-mode
   :commands (processing-mode processing-find-sketch)
   :mode "\\.pde$"
-  :init (add-hook 'processing-compilation-mode-hook 'doom-hide-mode-line-mode)
+  :init
+  (add-hook 'processing-compilation-mode-hook 'doom-hide-modeline-mode)
   :config
-  (def-builder! processing-mode processing-sketch-build)
-  (def-popup! "*processing-compilation*" :align below :size 10 :noselect t)
+  (@set :build 'build-sketch 'processing-mode 'processing-sketch-build)
+  (@set :popup "*processing-compilation*" :size 10 :noselect t)
+  (@set :eval 'processing-mode
+        '((:command . ,processing-location)
+          (:exec . (lambda () (format "--sketch=%s --output=%s --force --run"
+                                 (doom/project-root) processing-output-dir)))
+          (:description . "Run Processing sketch")))
+  (@set :company-backend 'processing-mode
+        '(company-keywords :with company-yasnippet company-dabbrev-code))
+
   (setq processing-location "/usr/local/bin/processing-java"
         processing-application-dir "/Applications/Processing.app"
         processing-sketchbook-dir "~/Dropbox/work/pde"
         processing-output-dir "/tmp")
 
-  (map! :map processing-mode-map
+  (@map :map processing-mode-map
         :nv "M-r" 'processing-sketch-run
         :m "gd" 'processing-find-in-reference
         :m "gF" 'processing-find-sketch
-        (:localleader
-          "e" 'processing-export-application
-          "h" 'processing-open-reference
-          "e" 'processing-open-examples
-          "o" 'processing-open-sketchbook))
 
-  (after! quickrun
-    (quickrun-add-command
-     "processing" `((:command . ,processing-location)
-                    (:exec . (lambda () (format "--sketch=%s --output=%s --force --run"
-                                           (doom/project-root) processing-output-dir)))
-                    (:description . "Run Processing sketch"))
-     :mode 'processing-mode))
+        :localleader
+        :n "e" 'processing-export-application
+        :n "h" 'processing-open-reference
+        :n "e" 'processing-open-examples
+        :n "o" 'processing-open-sketchbook)
 
-  (add-hook! processing-mode
-    (setq-local company-backends '((company-keywords
-                                    :with
-                                    company-yasnippet
-                                    company-dabbrev-code)))
-    (make-local-variable 'company-keywords-alist)
-    (add-to-list 'company-keywords-alist
-                 (cons 'processing-mode (append processing-functions
-                                                processing-builtins
-                                                processing-constants)))))
-
-(provide 'module-processing)
-;;; module-processing.el ends here
+  (@after company-keywords
+    (nconc company-keywords-alist
+           (cons 'processing-mode (append processing-functions
+                                          processing-builtins
+                                          processing-constants)))))

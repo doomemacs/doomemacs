@@ -1,34 +1,40 @@
-;;; module-lua.el --- lua + Love2D
+;;; lang/lua/config.el --- lua + Love2D
 
-(use-package lua-mode
+(@def-package lua-mode
   :mode "\\.lua$"
   :interpreter "lua"
-  :init (add-hook 'lua-mode-hook 'flycheck-mode)
+  :init
+  (add-hook 'lua-mode-hook 'flycheck-mode)
   :config
-  (def-company-backend! lua-mode (lua yasnippet))
-  (def-electric! lua-mode :words ("else" "end"))
-  (def-repl! lua-mode doom/inf-lua)
+  (@set :company-backend 'lua-mode '(company-lua company-yasnippet))
+  (@set :electric 'lua-mode :words "else" "end")
+  (@set :repl 'lua-mode '+lua/repl)
 
   ;; sp's lua-specific rules are obnoxious, so we disable them
   (setq sp-pairs (delete (assq 'lua-mode sp-pairs) sp-pairs)))
 
-(use-package company-lua :after lua-mode)
 
-(use-package moonscript
+(@def-package company-lua
+  :after lua-mode)
+
+
+(@def-package moonscript
   :mode ("\\.moon$" . moonscript-mode)
   :config
   (push '(moonscript-mode moonscript-indent-offset) editorconfig-indentation-alist))
 
+
 ;;
-(def-project-type! love "♥"
-  :modes (lua-mode markdown-mode json-mode)
-  :files ("main.lua" "conf.lua")
-  :build ("open -a love.app '%s'" "main.lua"))
+;; TODO Frameworks
+;;
 
-(def-project-type! hammerspoon "hammer"
-  :modes (lua-mode markdown-mode)
-  :match "/\\.?hammerspoon/.+\\.lua$"
-  :build "open hammerspoon://reload")
+;; (def-project-type! love "♥"
+;;   :modes (lua-mode markdown-mode json-mode)
+;;   :files ("main.lua" "conf.lua")
+;;   :build ("open -a love.app '%s'" "main.lua"))
 
-(provide 'module-lua)
-;;; module-lua.el ends here
+;; (def-project-type! hammerspoon "hammer"
+;;   :modes (lua-mode markdown-mode)
+;;   :match "/\\.?hammerspoon/.+\\.lua$"
+;;   :build "open hammerspoon://reload")
+

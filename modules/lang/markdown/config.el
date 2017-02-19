@@ -1,4 +1,4 @@
-;;; lang/text/config.el
+;;; lang/markdown/config.el
 
 (@def-package markdown-mode
   :mode ("\\.m\\(d\\|arkdown\\)$" "/README$"
@@ -11,6 +11,8 @@
         markdown-gfm-additional-languages '("sh"))
 
   :config
+  (@set :electric 'markdown-mode :chars "+" "#")
+
   (@add-hook markdown-mode
     (auto-fill-mode +1)
     (setq line-spacing 2
@@ -20,33 +22,38 @@
    '(markdown-mode gfm-mode)
    "\`\`\`" "\`\`\`" :post-handlers '(("||\n" "RET")))
 
-  (@set :electric-chars "+" "#")
-  (@map :map gfm-mode-map "`"    'self-insert-command)
-  (@map :map markdown-mode-map
+  (@map :map gfm-mode-map
+        "`" 'self-insert-command
+
+        :map markdown-mode-map
         "<backspace>"  nil
         "<M-left>"     nil
         "<M-right>"    nil
         "M-*"  'markdown-insert-list-item
         "M-b"  'markdown-insert-bold
         "M-i"  'markdown-insert-italic
-        "M-`"  '+text/markdown-insert-del
+        "M-`"  '+markdown/insert-del
+        :m "gj" 'markdown-next-visible-heading
+        :m "gk" 'markdown-previous-visible-heading
         ;; Assumes you have a markdown renderer plugin in chrome
-        :nv "M-r"  (@λ (doom-open-with "Google Chrome"))
+        :n "M-r"  'browse-url-of-file
         ;; TODO: Make context sensitive
         :n "[p"   'markdown-promote
         :n "]p"   'markdown-demote
+        :n "[l"   'markdown-next-link
+        :n "]l"   'markdown-previous-link
+        :n "gf"   'markdown-follow-thing-at-point
         :i "M--"  'markdown-insert-hr
         (:localleader
-          :nv "i"   'markdown-insert-image
-          :nv "l"   'markdown-insert-link
-          :nv "L"   'markdown-insert-reference-link-dwim
-          :nv "b"   'markdown-preview)))
+         :nv "o"   'markdown-open
+         :nv "b"   'markdown-preview
+         (:prefix "i"
+           :nv "t"   'markdown-toc-generate-toc
+           :nv "i"   'markdown-insert-image
+           :nv "l"   'markdown-insert-link
+           :nv "L"   'markdown-insert-reference-link-dwim))))
 
 
 (@def-package markdown-toc
-  :after markdown-mode)
+  :commands markdown-toc-generate-toc)
 
-
-(@def-package rst ; built-in
-  :mode ("\\.re?st$" . rst-mode)
-  :config (@set :builder '(rst-mode rst-compile-pdf-preview)))

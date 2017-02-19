@@ -1,18 +1,14 @@
-;;; module-octave.el
+;;; lang/octave/config.el
 
-(use-package octave
+;; built-in
+(@def-package octave
   :mode (("\\.m$" . octave-mode))
-  :config
-  ;; (setq inferior-octave-program "/usr/local/bin/octave")
-  )
+  :commands (octave-mode run-octave)
+  :config (@set :repl 'octave-mode 'run-octave))
 
 ;; (use-package ac-octave
 ;;   :config
-;;   (add-hook! octave-mode
+;;   (@add-hook octave-mode
 ;;     (require 'ac-octave)
 ;;     (setq ac-sources '(ac-source-octave))))
 
-(use-package octave-inf :commands run-octave)
-
-(provide 'module-octave)
-;;; module-octave.el ends here

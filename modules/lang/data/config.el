@@ -1,40 +1,52 @@
 ;;; module-data.el
 
-(associate! conf-mode :match "/sxhkdrc$")
+(@associate conf-mode :match "/sxhkdrc$")
 
-(associate! nxml-mode :match "\\.plist$")
-(after! nxml-mode
-  (def-company-backend! nxml-mode (nxml yasnippet)))
 
-(use-package toml-mode :mode "\\.toml$")
-
-(use-package yaml-mode :mode "\\.ya?ml$"
-  :config (def-electric! yaml-mode :chars (?\n ?\: ?\-)))
-
-(use-package json-mode :mode "\\.js\\(on\\|[hl]int\\(rc\\)?\\)$"
-  :config (def-electric! json-mode :chars (?\n ?: ?{ ?})))
-
-(use-package vimrc-mode
-  :mode ("/\\.?g?vimrc$" "\\.vim$" "/\\.vim/rc/.+$" "/\\.?vimperatorrc$" "\\.vimp$"))
-
-(use-package dockerfile-mode :mode "/Dockerfile$"
+(@def-package nxml-mode
+  :mode "\\.plist$"
   :config
-  (def-docset! dockerfile-mode "docker")
-  (def-builder! dockerfile-mode dockerfile-build-buffer "Dockerfile"))
+  (@set :company-backend 'nxml-mode '(company-nxml company-yasnippet)))
+
+
+(@def-package toml-mode :mode "\\.toml$")
+
+
+(@def-package yaml-mode
+  :mode "\\.ya?ml$"
+  :config
+  (@set :electric 'yaml-mode :chars ?\n ?\: ?\-))
+
+
+(@def-package json-mode :mode "\\.js\\(on\\|[hl]int\\(rc\\)?\\)$"
+  :config
+  (@set :electric 'json-mode :chars ?\n ?: ?{ ?}))
+
+
+(@def-package vimrc-mode
+  :mode ("/\\.?g?vimrc$" "\\.vim$" "/\\.?vimperatorrc$" "\\.vimp$"))
+
+
+(@def-package dockerfile-mode
+  :mode "/Dockerfile$"
+  :config
+  ;; TODO
+  (@set :build 'docker 'dockerfile-mode '+data-dockerfile-p '+data/dockerfile-build))
+
 
 ;; For ROM hacking or debugging
-(use-package hexl-mode
+(@def-package hexl-mode
   :mode ("\\.hex$" "\\.nes$"))
 
+
 ;;
-(def-project-type! ansible-mode "ans"
-  :modes (yaml-mode)
-  :files ("roles/")
-  (def-company-backend! ansible-mode (ansible)))
-(use-package company-ansible :commands (company-ansible))
+;; Frameworks
+;;
 
-(def-project-type! vagrant "vagrant"
-  :files ("Vagrantfile"))
+;; (@def-project ansible-mode "ans"
+;;   :modes (yaml-mode)
+;;   :files ("roles/"))
 
-(provide 'module-data)
-;;; module-data.el ends here
+;; (@def-project vagrant "vagrant"
+;;   :files ("Vagrantfile"))
+

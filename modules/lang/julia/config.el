@@ -1,11 +1,8 @@
-;;; module-julia.el
+;;; lang/julia/config.el
 
 (use-package julia-mode
   :mode "\\.jl$"
   :interpreter "julia"
   :config
-  (def-docset! julia-mode "julia")
-  (def-repl! julia-mode doom/julia-repl))
+  (@set :repl 'julia-mode '+julia/repl))
 
-(provide 'module-julia)
-;;; module-julia.el ends here

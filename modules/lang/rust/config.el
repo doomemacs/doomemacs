@@ -1,25 +1,31 @@
 ;;; module-rust.el
 
-(use-package rust-mode
+(@def-package rust-mode
   :mode "\\.rs$"
-  :init (add-hook 'rust-mode-hook 'flycheck-mode)
+  :init
+  (add-hook 'rust-mode-hook 'flycheck-mode)
   :config
-  (def-builder! rust-mode "cargo run" "Cargo.toml")
-  (def-builder! toml-mode "cargo run" "Cargo.toml"))
+  (@set :build 'cargo-run '(rust-mode toml-mode)
+         '+rust-is-cargo-project-p '+rust/cargo-run))
 
-(use-package flycheck-rust
-  :after rust-mode)
 
-(defvar racer-cmd (concat doom-ext-dir "/racer"))
-(defvar racer-rust-src-path (concat doom-ext-dir "/rust/src/"))
-(use-package racer
+(defvar racer-cmd (concat doom-cache-dir "racer"))
+(defvar racer-rust-src-path (concat doom-cache-dir "rust/src/"))
+(@def-package racer
   :after rust-mode
-  :when (f-exists? racer-cmd)
-  :init (add-hook! rust-mode '(racer-mode eldoc-mode flycheck-rust-setup))
+  :when (file-exists-p racer-cmd)
+  :init
+  (@add-hook rust-mode '(racer-mode eldoc-mode flycheck-rust-setup))
   :config
   ;; TODO Unit test keybinds
-  (def-company-backend! rust-mode (racer))
-  (map! :map rust-mode-map :m "gd" 'racer-find-definition))
+  (@set :company-backend 'rust-mode '(company-racer))
+  (@map :map rust-mode-map :m "gd" 'racer-find-definition))
 
-(provide 'module-rust)
-;;; module-rust.el ends here
+
+(@def-package company-racer
+  :after racer)
+
+
+(@def-package flycheck-rust
+  :after rust-mode)
+

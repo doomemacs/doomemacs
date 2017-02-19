@@ -1,49 +1,49 @@
-;;; module-csharp.el --- -*- no-byte-compile: t; -*-
+;;; module-csharp.el
 
-(use-package csharp-mode
+(@def-package csharp-mode
   :mode "\\.cs$"
   :init (add-hook 'csharp-mode-hook 'flycheck-mode))
 
-(use-package shader-mode :mode "\\.shader$") ; unity shaders
 
-(use-package omnisharp
-  :commands (omnisharp-mode)
+(@def-package omnisharp
+  :commands omnisharp-mode
   :preface
   (setq omnisharp-auto-complete-want-documentation nil
-        omnisharp-server-executable-path (concat doom-ext-dir "/OmniSharp.exe"))
+        omnisharp-server-executable-path (concat doom-local-dir "OmniSharp.exe"))
   :when (file-exists-p omnisharp-server-executable-path)
-  :init (add-hook! csharp-mode '(eldoc-mode omnisharp-mode))
+  :init
+  (@add-hook csharp-mode '(eldoc-mode omnisharp-mode))
   :config
-  (def-company-backend! csharp-mode (omnisharp))
-  (map! :map omnisharp-mode-map
-        "gd" 'omnisharp-go-to-definition
-        (:localleader
-          "tr" (λ! (omnisharp-unit-test "fixture"))
-          "ts" (λ! (omnisharp-unit-test "single"))
-          "ta" (λ! (omnisharp-unit-test "all"))))
+  (@set :company-backend 'csharp-mode '(company-omnisharp))
 
   ;; Map all refactor commands (see emr)
-  (mapc (lambda (x)
-          (let ((command-name (car x))
-                (title (cadr x)))
-            (emr-declare-command
-             (intern (format "omnisharp-%s" (symbol-name command-name)))
-              :title title :modes 'omnisharp-mode)))
-        '((find-usages                                 "find usages")
-          (find-implementations                        "find implementations")
-          (fix-code-issue-at-point                     "fix code issue at point")
-          (fix-usings                                  "fix usings")
-          (rename                                      "rename")
-          (current-type-information                    "current type information")
-          (current-type-documentation                  "current type documentation")
-          (navigate-to-current-file-member             "navigate to current file member")
-          (navigate-to-solution-member                 "navigate to solution member")
-          (navigate-to-solution-file-then-file-member  "navigate to solution file then member")
-          (navigate-to-solution-file                   "navigate to solution file")
-          (navigate-to-region                          "navigate to region")
-          (show-last-auto-complete-result              "last auto complete result")
-          (show-overloads-at-point                     "show overloads at point")
-          (recompile                                   "recompile"))))
+  (@map :map omnisharp-mode-map
+        :n "gd" 'omnisharp-go-to-definition
 
-(provide 'module-csharp)
-;;; module-csharp.el ends here
+        :localleader
+        :n "b" 'omnisharp-recompile
+
+        :prefix "r"
+        :n "fu" 'omnisharp-find-usages
+        :n "fi" 'omnisharp-find-implementations
+        :n "i"  'omnisharp-fix-code-issue-at-point
+        :n "u"  'omnisharp-fix-usings
+        :n "r"  'omnisharp-rename
+        :n "ti" 'omnisharp-current-type-information
+        :n "td" 'omnisharp-current-type-documentation
+        :n "gf" 'omnisharp-navigate-to-current-file-member
+        :n "gm" 'omnisharp-navigate-to-solution-member
+        :n "gM" 'omnisharp-navigate-to-solution-file-then-file-member
+        :n "gF" 'omnisharp-navigate-to-solution-file
+        :n "gr" 'omnisharp-navigate-to-region
+        :n "a"  'omnisharp-show-last-auto-complete-result
+        :n "o"  'omnisharp-show-overloads-at-point
+
+        :prefix "t"
+        :n "tr" (@λ (omnisharp-unit-test "fixture"))
+        :n "ts" (@λ (omnisharp-unit-test "single"))
+        :n "ta" (@λ (omnisharp-unit-test "all"))))
+
+
+(@def-package shader-mode :mode "\\.shader$") ; unity shaders
+

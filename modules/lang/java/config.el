@@ -1,37 +1,35 @@
-;;; module-java.el
+;;; lang/java/config.el
 
-(use-package meghanada
+(@def-package meghanada
   :commands meghanada-mode
   :init
-  (add-hook! java-mode '(meghanada-mode flycheck-mode))
+  (@add-hook java-mode '(meghanada-mode flycheck-mode))
   :config
-  (def-docset! java-mode "java,javafx,grails,groovy,playjava,spring,cvj,processing,javadoc")
-  (def-builder! java-mode meghanada-compile-project)
+  (@set :build 'compile-file    'java-mode 'meghanada-compile-file)
+  (@set :build 'compile-project 'java-mode 'meghanada-compile-project)
 
-  (setq meghanada-server-install-dir (f-expand "meghanada-server" doom-ext-dir)
+  (setq meghanada-server-install-dir (expand-file-name "meghanada-server" doom-cache-dir)
         meghanada-use-company t
         meghanada-use-flycheck t
         meghanada-use-auto-start t)
 
-  (unless (f-exists? (meghanada--locate-server-jar))
-    (meghanada-install-server))
+  (@map :map meghanada-mode-map :m "gd" 'meghanada-jump-declaration)
 
-  (map! :map meghanada-mode-map :m "gd" 'meghanada-jump-declaration))
+  (unless (file-exists-p (meghanada--locate-server-jar))
+    (meghanada-install-server)))
 
-(use-package android-mode
+
+(@def-package android-mode
   :commands android-mode
   :init
-  (add-hook! (java-mode groovy-mode nxml-mode) 'doom|android-mode-enable-maybe)
+  (@add-hook (java-mode groovy-mode nxml-mode) '+java|android-mode-maybe)
   :config
-  (def-yas-mode! android-mode)
-  (after! company-dict
-    (push 'android-mode company-dict-minor-mode-list)))
+  (@set :yas-minor-mode 'android-mode)
+  (@set :company-dict-minor-mode 'android-mode))
 
-(use-package groovy-mode
-  :mode "\\.g\\(radle\\|vy\\|roovy\\)$"
+
+(@def-package groovy-mode
+  :mode "\\.g\\(radle\\|roovy\\)$"
   :config
-  (after! quickrun
-    (push '("\\.gvy$" . "groovy") quickrun-file-alist)))
+  (@set :eval 'groovy-mode "groovy"))
 
-(provide 'module-java)
-;;; module-java.el ends here
