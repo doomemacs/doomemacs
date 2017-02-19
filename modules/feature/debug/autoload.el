@@ -19,7 +19,7 @@
       (cond ((memq major-mode '(c-mode c++-mode))
              (realgud:gdb (if path (concat "gdb " path))))
             ((memq major-mode '(ruby-mode enh-ruby-mode))
-             (doom:repl nil (format "run '%s'" (f-filename (or path buffer-file-name)))))
+             (doom:repl nil (format "run '%s'" (file-name-nondirectory (or path buffer-file-name)))))
             ((eq major-mode 'sh-mode)
              (let ((shell sh-shell))
                (when (string= shell "sh")
