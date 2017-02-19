@@ -1,11 +1,7 @@
-;;; feature/workspaces/autoload.el
+;;; feature/workspaces/autoload/workspaces.el
 
 (defvar +workspace-workspace-file "_workspaces"
   "The file basename in which to store single workspace perspectives.")
-
-(defvar +workspace--counter 1
-  "")
-(add-to-list 'savehist-additional-variables '+workspace-names)
 
 (defface +workspace-tab-selected-face
   '((((class color) (background light))
@@ -131,11 +127,11 @@ perspective or its hash table."
   (persp-frame-switch name))
 
 (defun +workspace--generate-id ()
-  (let ((numbers (--map (string-to-number (substring it 1))
-                        (--filter (string-match-p "^#[0-9]+$" it)
-                                  (+workspace-list)))))
+  (let ((numbers (mapcar (lambda (it) (string-to-number (substring it 1)))
+                         (cl-remove-if-not (lambda (it) (string-match-p "^#[0-9]+$" it))
+                                           (+workspace-list)))))
     (if numbers
-        (1+ (-max numbers))
+        (1+ (car (sort numbers (lambda (it other) (> it other)))))
       1)))
 
 
@@ -168,9 +164,7 @@ session."
     (unless current-prefix-arg
       (completing-read
        "Session to load: "
-       (-map 'f-filename
-             (f--files persp-save-dir
-                       (not (string-prefix-p "_" (f-filename it)))))
+       (directory-files persp-save-dir nil "^[^_]")
        nil t))))
   (+workspace-load-session name)
   (+workspace/display))
@@ -197,9 +191,7 @@ the session as."
     (when current-prefix-arg
       (completing-read
        "Save session as: "
-       (-map 'f-filename
-             (f--files persp-save-dir
-                       (not (string-prefix-p "_" (f-filename it)))))))))
+       (directory-files persp-save-dir nil "^[^_]")))))
   (condition-case ex
       (let ((name (or name (+workspace-current-name))))
         (if (+workspace-save-session name)
@@ -241,14 +233,21 @@ workspace to delete."
 (defun +workspace/kill-session ()
   "Delete the current session, clears all workspaces, windows and buffers."
   (interactive)
-  (unless (-all-p '+workspace-delete (+workspace-list t))
+  (unless (cl-every '+workspace-delete (+workspace-list t))
     (+workspace-error "Could not clear session"))
   (+workspace-switch persp-nil-name)
-  (delete-other-windows-internal)
+  (doom/kill-all-buffers)
   (switch-to-buffer doom-fallback-buffer)
-  (--each (buffer-list)
-    (unless (eq (buffer-name it) doom-fallback-buffer)
-      (kill-buffer it))))
+  (dolist (buf (buffer-list))
+    (unless (eq (buffer-name buf) doom-fallback-buffer)
+      (persp-remove-buffer buf)
+      (kill-buffer buf))))
+
+;;;###autoload
+(defun +workspace/kill-session-and-quit ()
+  "Forgets current session and quits."
+  (+workspace/kill-session)
+  (save-buffers-kill-terminal))
 
 ;;;###autoload
 (defun +workspace/new (&optional name clone-p)
@@ -263,8 +262,8 @@ pre-existing workspace."
             (error "%s already exists" name)
           (persp-frame-switch name)
           (if clone-p
-              (--each (persp-add-buffer (window-buffer it) persp nil)
-                (window-list))
+              (dolist (window (window-list))
+                (persp-add-buffer (window-buffer window) persp nil))
             (delete-other-windows-internal)
             (switch-to-buffer doom-fallback-buffer))
           (+workspace/display)))
@@ -277,7 +276,8 @@ end of the workspace list."
   (interactive
    (list (or current-prefix-arg
              (completing-read "Switch to workspace: " (+workspace-list)))))
-  (when (and (stringp index) (s-numeric? index))
+  (when (and (stringp index)
+             (string-match-p "^[0-9]+$" index))
     (setq index (string-to-number index)))
   (condition-case ex
       (let ((names (+workspace-list)))
@@ -305,15 +305,11 @@ end of the workspace list."
   "Cycle n workspaces to the right (default) or left."
   (interactive (list 1))
   (condition-case ex
-      (let ((spaces (+workspace-list))
-            (current-name (+workspace-current-name))
-            index new-index)
-        (unless (and space current-name)
-          (error "No spaces or current workspace to cycle to/from"))
-        (setq index (--find-index (eq it current-name) spaces)
-              new-index (mod (+ index n) (length spaces)))
-        (unless (= index new-index)
-          (+workspace-switch new-index))
+      (let ((persp-switch-wrap t))
+        (dotimes (i n)
+          (if (> n 0)
+              (persp-next)
+            (persp-prev)))
         (unless (called-interactively-p 'interactive)
           (+workpace/display)))
     ('error (+workspace-error (cadr ex) t))))
@@ -332,10 +328,7 @@ the workspace and move to the next."
                  (evil-window-delete)
                (delete-window)))
             ((> (length (+workspace-list)) 1)
-             (let* ((names (+workspace-list))
-                    (index (--find-index (equal current-persp-name it) names)))
-               (+workspace/delete current-persp-name)
-               (+workspace-switch (nth (1- index) names))))))))
+             (+workspace/delete current-persp-name))))))
 
 
 ;;
@@ -344,23 +337,28 @@ the workspace and move to the next."
 
 (defun +workspace--tabline (&optional names)
   (let ((names (or names (+workspace-list)))
-        (current-name (+workspace-current-name)))
-    (s-join
-     " " (--map-indexed
-          (propertize (format " [%s] %s " (1+ it-index) it)
-                      'face (if (equal current-name it)
-                                '+workspace-tab-selected-face
-                              '+workspace-tab-face))
-          names))))
+        (current-name (+workspace-current-name))
+        (i 0))
+    (mapconcat
+     'identity
+     (mapcar (lambda (it)
+               (cl-incf i)
+               (propertize (format " [%d] %s " i it)
+                           'face (if (equal current-name it)
+                                     '+workspace-tab-selected-face
+                                   '+workspace-tab-face)))
+             names)
+     " ")))
 
 (defun +workspace--message-body (message &optional  type)
   (concat (+workspace--tabline)
-          (propertize " |  " 'face 'font-lock-comment-face)
-          (propertize message 'face (pcase type
-                                      ('error 'error)
-                                      ('warn 'warning)
-                                      ('success 'success)
-                                      ('info 'font-lock-comment-face)))))
+          (propertize " | " 'face 'font-lock-comment-face)
+          (propertize (format "%s" message)
+                      'face (pcase type
+                              ('error 'error)
+                              ('warn 'warning)
+                              ('success 'success)
+                              ('info 'font-lock-comment-face)))))
 
 ;;;###autoload
 (defun +workspace-message (message &optional type)
@@ -374,58 +372,4 @@ the workspace and move to the next."
 (defun +workspace/display ()
   (interactive)
   (message "%s" (+workspace--tabline)))
-
-
-;;
-;; Evil commands
-;;
-
-;;;###autoload (autoload '+workspace:save-session "feature/workspaces/autoload" nil t)
-;;;###autoload (autoload '+workspace:load-session "feature/workspaces/autoload" nil t)
-;;;###autoload (autoload '+workspace:save "feature/workspaces/autoload" nil t)
-;;;###autoload (autoload '+workspace:load "feature/workspaces/autoload" nil t)
-;;;###autoload (autoload '+workspace:new "feature/workspaces/autoload" nil t)
-;;;###autoload (autoload '+workspace:rename "feature/workspaces/autoload" nil t)
-;;;###autoload (autoload '+workspace:delete "feature/workspaces/autoload" nil t)
-;;;###autoload (autoload '+workspace:switch-next "feature/workspaces/autoload" nil t)
-;;;###autoload (autoload '+workspace:switch-previous "feature/workspaces/autoload" nil t)
-
-(@after evil
-  (evil-define-command +workspace:save-session (&optional name)
-    "Ex wrapper around `+workspace/save-session'."
-    (interactive "<a>") (+workspace/save-session name))
-
-  (evil-define-command +workspace:load-session (&optional name)
-    "Ex wrapper around `+workspace/load-session'."
-    (interactive "<a>") (+workspace/load-session name))
-
-  (evil-define-command +workspace:save (&optional name)
-    "Ex wrapper around `+workspace/save-session'."
-    (interactive "<a>") (+workspace/save name))
-
-  (evil-define-command +workspace:load (&optional name)
-    "Ex wrapper around `+workspace/load-session'."
-    (interactive "<a>") (+workspace/load name))
-
-  (evil-define-command +workspace:new (bang name)
-    "Ex wrapper around `+workspace/new'. If BANG, clone the current workspace."
-    (interactive "<!><a>") (+workspace/new name bang))
-
-  (evil-define-command +workspace:rename (new-name)
-    "Ex wrapper around `+workspace/rename'."
-    (interactive "<a>") (+workspace/rename new-name))
-
-  (evil-define-command +workspace:delete ()
-    "Ex wrapper around `+workspace/delete'."
-    (interactive "<a>") (+workspace/delete (+workspace-current-name)))
-
-  (evil-define-command +workspace:switch-next (&optional count)
-    "Switch to next workspace. If COUNT, switch to COUNT-th workspace."
-    (interactive "<c>")
-    (if count (+workspace/switch-to count) (+workspace/cycle +1)))
-
-  (evil-define-command +workspace:switch-previous (&optional count)
-    "Switch to previous workspace. If COUNT, switch to COUNT-th workspace."
-    (interactive "<c>")
-    (if count (+workspace/switch-to count) (+workspace/cycle -1))))
 
