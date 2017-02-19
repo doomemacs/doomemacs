@@ -1,22 +1,15 @@
 ;;; packages.el
 (provide 'doom-lib-packages)
 
-(defvar doom-packages-last-refresh nil
-  "A timestamp indicating the last time `package-refresh-contents' was run.")
-
 ;;;###autoload
 (defun doom-refresh-packages ()
   "Refresh ELPA packages."
   (doom-initialize)
-  (let ((refresh-cache (f-expand "last-pkg-refresh" doom-cache-dir)))
-    (when (and (not doom-packages-last-refresh)
-               (f-exists-p refresh-cache))
-      (setq doom-packages-last-refresh (read (f-read refresh-cache))))
-    (when (or (not doom-packages-last-refresh)
-              (> (nth 1 (time-since doom-packages-last-refresh)) 600))
+  (let ((last-refresh (persistent-soft-fetch 'last-pkg-refresh "emacs")))
+    (when (or (not last-refresh)
+              (> (nth 1 (time-since last-refresh)) 600))
       (package-refresh-contents)
-      (setq doom-packages-last-refresh (current-time))
-      (f-write (pp-to-string doom-packages-last-refresh) 'utf-8 refresh-cache))))
+      (persistent-soft-store 'last-pkg-refresh (current-time) "emacs"))))
 
 ;;;###autoload
 (defun doom-package-backend (name)
@@ -36,19 +29,20 @@ quelpa or nil (if not installed)."
   "Determine whether NAME (a symbol) is outdated or not. If outdated, returns a
 list, whose car is NAME, and cdr the current version list and latest version
 list of the package."
-  (doom-refresh-packages)
-  (-when-let (pkg (assq name package-alist))
+  (doom-initialize)
+  (when-let (pkg (assq name package-alist))
     (let* ((old-version (package-desc-version (cadr pkg)))
            (new-version
             (pcase (doom-package-backend name)
               ('quelpa
                (let ((recipe (assq name quelpa-cache))
-                     (dir (f-expand (symbol-name name) quelpa-build-dir))
+                     (dir (expand-file-name (symbol-name name) quelpa-build-dir))
                      (inhibit-message t))
-                 (-if-let (ver (and (quelpa-setup-p) (quelpa-checkout recipe dir)))
+                 (if-let (ver (and (quelpa-setup-p) (quelpa-checkout recipe dir)))
                      (version-to-list ver)
                    old-version)))
               ('elpa
+               (doom-refresh-packages)
                (let ((desc (cadr (assq name package-archive-contents))))
                  (when (package-desc-p desc)
                    (package-desc-version desc)))))))
@@ -63,15 +57,26 @@ Each element is a cons cell, whose car is the package symbol and whose cdr is
 the quelpa recipe (if any).
 
 BACKEND can be 'quelpa or 'elpa, and will instruct this function to return only
-the packages relevant to that backend."
+the packages relevant to that backend.
+
+Warning: this function is expensive; it re-evaluates all of doom's config files.
+Be careful not to use it in a loop."
   (doom-initialize-packages t)
   (unless (quelpa-setup-p)
     (error "Could not initialize quelpa"))
-  (-non-nil
-   (--map (or (assq it doom-packages)
-              (list (car (assq it package-alist))))
-          (append doom-protected-packages
-                  (mapcar 'car doom-packages)))))
+  (delete
+   nil
+   (mapcar (lambda (pkgsym)
+             (or (assq pkgsym doom-packages)
+                 (list (car (assq pkgsym package-alist)))))
+           (append doom-protected-packages (mapcar 'car doom-packages)))))
+
+;;;###autoload
+(defun doom-get-dependencies-for (name)
+  "Return a list of packages that depend on the package named NAME."
+  (doom-initialize)
+  (when-let (desc (cadr (assq name package-alist)))
+    (mapcar 'package-desc-name (package--used-elsewhere-p desc nil t))))
 
 ;;;###autoload
 (defun doom-get-outdated-packages ()
@@ -79,8 +84,7 @@ the packages relevant to that backend."
 containing (PACKAGE-SYMBOL OLD-VERSION-LIST NEW-VERSION-LIST).
 
 Used by `doom/packages-update'."
-  (-non-nil (--map (doom-package-outdated-p (car it))
-                   (doom-get-packages))))
+  (delq nil (mapcar 'doom-package-outdated-p (mapcar 'car (doom-get-packages)))))
 
 ;;;###autoload
 (defun doom-get-orphaned-packages ()
@@ -89,29 +93,44 @@ depended on.
 
 Used by `doom/packages-autoremove'."
   (doom-initialize-packages t)
-  (let ((package-selected-packages (append (mapcar 'car doom-packages) doom-protected-packages)))
+  (let ((package-selected-packages
+         (append (mapcar 'car doom-packages) doom-protected-packages)))
     (package--removable-packages)))
 
 ;;;###autoload
 (defun doom-get-missing-packages ()
-  "Return a list of packages that aren't installed, but need to be. Each element
-is a list whose CAR is the package symbol, and whose CDR is a plist taken from
-that package's `@package' declaration.
+  "Return a list of requested packages that aren't installed or built-in. Each
+element is a list whose CAR is the package symbol, and whose CDR is a plist
+taken from that package's `@package' declaration.
 
 Used by `doom/packages-install'."
-  (--remove (assq (car it) package-alist) (doom-get-packages)))
+  (cl-remove-if (lambda (pkgsym)
+                  (or (assq (car pkgsym) package-alist)
+                      (and (not (plist-get (assq (car pkgsym) doom-packages) :pin))
+                           (assq (car pkgsym) package--builtins))))
+                (doom-get-packages)))
 
 ;;;###autoload
-(defun doom*package-delete (name)
+(defun doom*package-delete (name &rest _)
   "Update `quelpa-cache' upon a successful `package-delete'."
   (when (and (not (package-installed-p name))
              (quelpa-setup-p)
              (assq name quelpa-cache))
     (setq quelpa-cache (assq-delete-all name quelpa-cache))
     (quelpa-save-cache)
-    (let ((path (f-expand (symbol-name name) quelpa-build-dir)))
-      (when (f-exists-p path)
+    (let ((path (expand-file-name (symbol-name name) quelpa-build-dir)))
+      (when (file-exists-p path)
         (delete-directory path t)))))
+
+;;; Private functions
+(defsubst doom--version-list-str (vlist)
+  (concat (number-to-string (car vlist))
+          "."
+          (number-to-string (cadr vlist))))
+
+(defsubst doom--sort-alpha (it other)
+  (string-lessp (symbol-name (car it))
+                (symbol-name (car other))))
 
 
 ;;
@@ -135,7 +154,7 @@ example; the package name can be omitted)."
 (defun doom-update-package (name)
   "Updates package NAME if it is out of date, using quelpa or package.el as
 appropriate."
-  (doom-refresh-packages)
+  (doom-initialize)
   (unless (package-installed-p name)
     (error "%s isn't installed" name))
   (when (doom-package-outdated-p name)
@@ -157,13 +176,14 @@ appropriate."
      (package-desc-version (cadr (assq name package-alist)))
      (package-desc-version (cadr (assq name package-archive-contents))))))
 
-(defun doom-delete-package (name)
+(defun doom-delete-package (name &optional force-p)
   "Uninstalls package NAME if it exists, and clears it from `quelpa-cache'."
   (doom-initialize)
   (unless (package-installed-p name)
     (error "%s isn't installed" name))
-  (let ((desc (cadr (assq name package-alist))))
-    (package-delete desc))
+  (let ((desc (cadr (assq name package-alist)))
+        (inhibit-message t))
+    (package-delete desc force-p))
   (not (package-installed-p name)))
 
 
@@ -179,76 +199,79 @@ appropriate."
     (cond ((not packages)
            (message "No packages to install!"))
 
-          ((not (y-or-n-p
-                 (format "%s packages will be installed:\n\n%s\n\nProceed?"
-                         (length packages)
-                         (mapconcat (lambda (pkg)
-                                      (format "+ %s (%s)"
-                                              (car pkg)
-                                              (if (plist-get (cdr pkg) :recipe)
-                                                  "QUELPA"
-                                                "ELPA")))
-                                    (--sort (string-lessp (symbol-name (car it))
-                                                          (symbol-name (car other)))
-                                            packages)
-                                    "\n"))))
+          ((not (or (getenv "YES")
+                    (y-or-n-p
+                     (format "%s packages will be installed:\n\n%s\n\nProceed?"
+                             (length packages)
+                             (mapconcat (lambda (pkg)
+                                          (format "+ %s (%s)"
+                                                  (car pkg)
+                                                  (if (plist-get (cdr pkg) :recipe)
+                                                      "QUELPA"
+                                                    "ELPA")))
+                                        (sort (cl-copy-list packages) 'doom--sort-alpha)
+                                        "\n")))))
            (message "Aborted!"))
 
           (t
-           (doom-message "Installing %s packages" (length packages))
+           (message "Installing %s packages" (length packages))
 
            (dolist (pkg packages)
              (condition-case ex
-                 (doom-message "%s %s (%s)"
-                               (cond ((package-installed-p (car pkg))
-                                      "Skipped (already installed)")
-                                     ((doom-install-package (car pkg) (cdr pkg))
-                                      "Installed")
-                                     (t "Failed to install"))
-                               (car pkg)
-                               (cond ((cdr pkg) "QUELPA")
-                                     (t "ELPA")))
+                 (progn
+                   (message "%s %s (%s)"
+                            (cond ((package-installed-p (car pkg))
+                                   "Skipped (already installed)")
+                                  ((doom-install-package (car pkg) (cdr pkg))
+                                   "Installed")
+                                  (t "Failed to install"))
+                            (car pkg)
+                            (cond ((cdr pkg) "QUELPA")
+                                  (t "ELPA"))))
                (error
-                (doom-message "Error (%s): %s" (car pkg) ex))))
+                (message "Error (%s): %s" (car pkg) ex))))
 
-           (doom-message "Finished!")))))
+           (message "Finished!")))))
 
 ;;;###autoload
 (defun doom/packages-update ()
   "Interactive command for updating packages."
   (interactive)
-  (let ((packages (doom-get-outdated-packages)))
+  (let ((packages (cl-sort (doom-get-outdated-packages) 'doom--sort-alpha)))
     (cond ((not packages)
            (message "Everything is up-to-date"))
 
-          ((not (y-or-n-p
-                 (format "%s packages will be updated:\n\n%s\n\nProceed?"
-                         (length packages)
-                         (let ((-max-len (or (-max (--map (length (symbol-name (car it))) packages)) 10)))
-                           (mapconcat
-                            (lambda (pkg)
-                              (format "+ %s %s -> %s"
-                                      (s-pad-right (+ -max-len 2) " " (symbol-name (car pkg)))
-                                      (s-pad-right 14 " " (doom--version-list-str (cadr pkg)))
-                                      (doom--version-list-str (cl-caddr pkg))))
-                            (--sort (string-lessp (symbol-name (car it))
-                                                  (symbol-name (car other)))
-                                    packages)
-                            "\n")))))
+          ((not (or (getenv "YES")
+                    (y-or-n-p
+                     (format "%s packages will be updated:\n\n%s\n\nProceed?"
+                             (length packages)
+                             (let ((max-len
+                                    (or (car (sort (mapcar (lambda (it) (length (symbol-name (car it)))) packages)
+                                                   (lambda (it other) (> it other))))
+                                        10)))
+                               (mapconcat
+                                (lambda (pkg)
+                                  (format "+ %s %s -> %s"
+                                          (s-pad-right (+ max-len 2) " " (symbol-name (car pkg)))
+                                          (s-pad-right 14 " " (doom--version-list-str (cadr pkg)))
+                                          (doom--version-list-str (cl-caddr pkg))))
+                                packages
+                                "\n"))))))
            (message "Aborted!"))
 
           (t
            (dolist (pkg packages)
              (condition-case ex
-                 (doom-message "%s %s"
-                               (if (doom-update-package (car pkg))
-                                   "Updated"
-                                 "Failed to update")
-                               (car pkg))
+                 (progn
+                   (message "%s %s"
+                            (if (doom-update-package (car pkg))
+                                "Updated"
+                              "Failed to update")
+                            (car pkg)))
                (error
-                (doom-message "Error installing %s: %s" (car pkg) ex))))
+                (message "Error installing %s: %s" (car pkg) ex))))
 
-           (doom-message "Finished!")))))
+           (message "Finished!")))))
 
 ;;;###autoload
 (defun doom/packages-autoremove ()
@@ -258,31 +281,27 @@ appropriate."
     (cond ((not packages)
            (message "No unused packages to remove"))
 
-          ((not (y-or-n-p
-                 (format "%s packages will be deleted:\n\n%s\n\nProceed?"
-                         (length packages)
-                         (mapconcat (lambda (sym) (format "+ %s" (symbol-name sym)))
-                                    (-sort 'string-lessp packages)
-                                    "\n"))))
+          ((not (or (getenv "YES")
+                    (y-or-n-p
+                     (format "%s packages will be deleted:\n\n%s\n\nProceed?"
+                             (length packages)
+                             (mapconcat (lambda (sym) (format "+ %s" (symbol-name sym)))
+                                        (sort (cl-copy-list packages) 'string-lessp)
+                                        "\n")))))
            (message "Aborted!"))
 
           (t
            (dolist (pkg packages)
              (condition-case ex
-                 (doom-message "%s %s"
-                               (if (doom-delete-package pkg)
+                 (message "%s %s"
+                               (if (doom-delete-package pkg t)
                                    "Deleted"
                                  "Failed to delete")
                                pkg)
                (error
-                (doom-message "Error deleting %s: %s" pkg ex))))
+                (message "Error deleting %s: %s" pkg ex))))
 
-           (doom-message "Finished!")))))
-
-(defun doom--version-list-str (vlist)
-  (concat (number-to-string (car vlist))
-          "."
-          (number-to-string (cadr vlist))))
+           (message "Finished!")))))
 
 ;;;###autoload
 (defalias 'doom/install-package 'package-install)
@@ -313,9 +332,9 @@ calls."
    (let ((packages (doom-get-outdated-packages)))
      (list
       (if packages
-          (completing-read "Update package: " (--map (symbol-name (car it)) packages))
+          (completing-read "Update package: " (mapcar 'symbol-name (mapcar 'car packages)))
         (user-error "All packages are up-to-date")))))
-  (-if-let (desc (doom-package-outdated-p (intern package)))
+  (if-let (desc (doom-package-outdated-p (intern package)))
       (if (y-or-n-p (format "%s will be updated from %s to %s. Update?"
                             (car desc)
                             (doom--version-list-str (cadr desc))
