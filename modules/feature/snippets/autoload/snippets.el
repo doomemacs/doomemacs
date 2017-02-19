@@ -1,21 +1,4 @@
-;;; autoload.el
-
-;;;###autoload
-(defun +snippets/expand-on-region ()
-  "Switch to insert mode when expanding a template via region selection, or go
-back to normal mode if there are no fields."
-  (interactive)
-  (when (evil-visual-state-p)
-    (let ((end (region-end)))
-      (evil-visual-select
-       (region-beginning)
-       (if (eq evil-this-type 'line) end (1+ end))
-       'inclusive)))
-  (yas-insert-snippet)
-  (let* ((snippet (first (yas--snippets-at-point)))
-         (fields (yas--snippet-fields snippet)))
-    (evil-insert-state +1)
-    (unless fields (evil-change-state 'normal))))
+;;; feature/snippets/autoload/snippets.el
 
 ;;;###autoload
 (defun +snippets/goto-start-of-field ()
@@ -73,12 +56,6 @@ buggy behavior when <delete> is pressed in an empty field."
          (sof (marker-position (yas--field-start field))))
     (when (and field (> (point) sof))
       (delete-region sof (point)))))
-
-;;;###autoload
-(defun +snippets/find-file ()
-  "Browse through snippets folder"
-  (interactive)
-  (projectile-find-file-in-directory (car yas-snippet-dirs)))
 
 ;; TODO move this to ivy
 ;;;###autoload
