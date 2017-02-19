@@ -8,6 +8,11 @@
 (@package ht)
 (@package smex)
 
+;; core-os.el
+(when IS-MAC
+  (@package exec-path-from-shell)
+  (@package osx-clipboard))
+
 ;; core-ui.el
 (@package highlight-indent-guides)
 (@package highlight-numbers)
