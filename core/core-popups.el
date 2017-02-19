@@ -48,46 +48,56 @@
 (@def-package shackle :demand t
   :init
   (setq shackle-default-alignment 'below
-        shackle-select-reused-windows t)
+        ;;; Baseline popup-window rules
+        ;; :noesc and :modeline are custom settings and are not part of shackle. See
+        ;; `doom*popup-init' and `doom-popup-buffer' for how they're used.
+        shackle-rules
+        '(("^ ?\\*doom:.+\\*$"      :size 40  :modeline t :regexp t)
+          ("^ ?\\*doom .+\\*$"      :size 30  :noselect t :regexp t)
+          ("^\\*.+-Profiler-Report .+\\*$" :size 0.3 :regexp t)
+          ("*esup*"                 :size 0.4 :noselect t :noesc t)
+          ("*minor-modes*"          :size 0.5 :noselect t)
+          ("*eval*"                 :size 16  :noselect t)
+          ("*Pp Eval Output*"       :size 0.3)
+          ("*Apropos*"              :size 0.3)
+          ("*Backtrace*"            :size 25  :noselect t)
+          ("*Help*"                 :size 16)
+          ("*Messages*"             :size 10)
+          ("*Warnings*"             :size 10  :noselect t)
+          ("*command-log*"          :size 28  :noselect t :align right)
+          ("*Shell Command Output*" :size 20  :noselect t)
+          (compilation-mode         :size 15  :noselect t :noesc t)
+          (ivy-occur-grep-mode      :size 25  :noesc t)
+          (eww-mode                 :size 30)
+          (comint-mode              :noesc t)
+          (tabulated-list-mode      :noesc t)))
 
   :config
-  (shackle-mode 1)
-
-  ;;; Baseline popup-window rules
-  ;; :noesc and :modeline are custom settings and are not part of shackle. See
-  ;; `doom*popup-init' and `doom-popup-buffer' for how they're used.
-  (@set :popup
-    '("^ ?\\*doom:.+\\*$"      :size 40  :modeline t :regexp t)
-    '("^ ?\\*doom .+\\*$"      :size 30  :noselect t :regexp t)
-    '("^\\*.+-Profiler-Report .+\\*$" :size 0.3 :regexp t)
-    '("*esup*"                 :size 0.4 :noselect t :noesc t)
-    '("*minor-modes*"          :size 0.5 :noselect t)
-    '("*eval*"                 :size 16  :noselect t)
-    '("*Pp Eval Output*"       :size 0.3)
-    '("*Apropos*"              :size 0.3)
-    '("*Backtrace*"            :size 25  :noselect t)
-    '("*Help*"                 :size 16)
-    '("*Messages*"             :size 10)
-    '("*Warnings*"             :size 10  :noselect t)
-    '("*command-log*"          :size 28  :noselect t :align right)
-    '("*Shell Command Output*" :size 20 :noselect t)
-    '(compilation-mode         :size 15  :noselect t :noesc t)
-    '(ivy-occur-grep-mode      :size 25  :noesc t)
-    '(eww-mode                 :size 30)
-    '(comint-mode              :noesc t)
-    '(tabulated-list-mode      :noesc t)))
+  (shackle-mode 1))
 
 
 ;;
 ;; Modifications
 ;;
 
+(defun doom*shackle-always-align (plist)
+  "Ensure popups are always aligned and selected by default. Eliminates the need
+for the obvious :align t on every rule."
+  (when plist
+    (unless (plist-member plist :align)
+      (plist-put plist :align t))
+    (unless (or (plist-member plist :select)
+                (plist-member plist :noselect))
+      (plist-put plist :select t)))
+  plist)
+(advice-add 'shackle--match :filter-return 'doom*shackle-always-align)
+
+
 ;; Tell `window-state-get' and `current-window-configuration' to persist these
 ;; custom parameters. Allows `persp-mode' to remember popup states.
-(setq window-persistent-parameters
-      (append '((popup . writable)
-                (noesc . writable))
-              window-persistent-parameters))
+(nconc window-persistent-parameters
+       '((popup . writable)
+         (noesc . writable)))
 
 
 (define-minor-mode doom-popup-mode
@@ -128,11 +138,7 @@ enables `doom-popup-mode'."
     (doom-popup-mode +1))
   window)
 
-
-(advice-add 'shackle-display-buffer :around 'doom*popup-init)
-(advice-add 'balance-windows :around 'doom*popups-save)
-(advice-add 'delete-window :around 'doom*delete-popup-window)
-
+;;
 (defun doom*popup-init (orig-fn &rest args)
   "Invokes `doom-popup--init' on windows that qualify as popups. Returns the window."
   (unless (doom-popup-p)
@@ -163,6 +169,10 @@ prevent popups from messaging up the UI (or vice versa)."
         (when doom-popup-remember-history
           (setq doom-popup-history (list (doom--popup-data window)))))))
   (apply orig-fn args))
+
+(advice-add 'shackle-display-buffer :around 'doom*popup-init)
+(advice-add 'balance-windows :around 'doom*popups-save)
+(advice-add 'delete-window :around 'doom*delete-popup-window)
 
 
 ;;
