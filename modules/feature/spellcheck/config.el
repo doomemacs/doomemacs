@@ -2,7 +2,17 @@
 
 (@def-package flyspell ; built-in
   :commands flyspell-mode
-  :init (@add-hook text-mode 'flyspell-mode))
+  :init
+  (add-hook 'text-mode-hook 'flyspell-mode)
+  :config
+  (setq ispell-program-name (executable-find "aspell")
+        ispell-list-command "--list"
+        ispell-extr-args '("--dont-tex-check-comments"))
+
+  (@map :map flyspell-mode-map
+        :localleader
+        :n "s" 'flyspell-correct-word-generic
+        :n "S" 'flyspell-correct-previous-word-generic))
 
 
 (@def-package flyspell-correct
@@ -14,18 +24,5 @@
   :after flyspell-correct
   :config
   (setq flyspell-popup-correct-delay 0.8)
-  (add-hook 'flyspell-mode-hook 'flyspell-popup-auto-correct-mode))
-
-
-(@def-package flyspell-correct-ivy
-  :when (@featurep :completion ivy)
-  :after flyspell-correct)
-
-(@def-package flyspell-correct-helm
-  :when (@featurep :completion helm)
-  :after flyspell-correct)
-
-(@def-package flyspell-correct-ido
-  :when (@featurep :emacs ido)
-  :after flyspell-correct)
+  (define-key popup-menu-keymap [escape] 'keyboard-quit))
 
