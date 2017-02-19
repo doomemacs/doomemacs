@@ -20,7 +20,6 @@
 ;; anzu and evil-anzu make it possible to display current/total in the
 ;; mode-line.
 (@def-package evil-anzu
-  :when (featurep 'evil)
   :init
   (defun +evil*lazy-load-evil-anzu (&rest _) (require 'evil-anzu))
   (advice-add 'evil-ex-start-search :before '+evil*lazy-load-evil-anzu)
@@ -219,9 +218,7 @@ active."
                                                 (string-to-char " ")
                                               (string-to-char ".")))
                                         dl))
-                               (if (eq idx len)
-                                   "\"};"
-                                 "\",\n")))
+                               (if (eq idx len) "\"};" "\",\n")))
                           data))))
         'xpm t :ascent 'center)))))
 
@@ -229,8 +226,8 @@ active."
   "Displays the buffer's full path relative to the project root (includes the
 project root). Excludes the file basename. See `doom-buffer-name' for that."
   (if buffer-file-name
-    (let* ((default-directory (f-dirname buffer-file-name))
-           (buffer-path (f-relative buffer-file-name (doom-project-root)))
+    (let* ((default-directory (file-name-directory buffer-file-name))
+           (buffer-path (file-relative-name buffer-file-name (doom-project-root)))
            (max-length (truncate (* (window-body-width) 0.4))))
       (when (and buffer-path (not (equal buffer-path ".")))
         (if (> (length buffer-path) max-length)
@@ -453,7 +450,7 @@ lines are selected, or the NxM dimensions of a block selection."
 
 (defun +doom-modeline--macro-recording ()
   "Display current macro being recorded."
-  (when (and (active) defining-kbd-macro)
+  (when (and (active) (bound-and-true-p evil-this-macro))
     (let ((sep (propertize " " 'face 'doom-modeline-panel)))
       (concat sep
               (propertize (char-to-string evil-this-macro)
@@ -467,7 +464,8 @@ lines are selected, or the NxM dimensions of a block selection."
 (make-variable-buffer-local 'anzu--state)
 (defsubst +doom-modeline--anzu ()
   "Show the match index and total number thereof. Requires `evil-anzu'."
-  (when (evil-ex-hl-active-p 'evil-ex-search)
+  (when (and (bound-and-true-p anzu--current-position)
+             (evil-ex-hl-active-p 'evil-ex-search))
     (propertize
      (format " %s/%d%s "
              anzu--current-position anzu--total-matched
@@ -476,7 +474,8 @@ lines are selected, or the NxM dimensions of a block selection."
 
 (defsubst +doom-modeline--evil-substitute ()
   "Show number of :s matches in real time."
-  (when (and (evil-ex-p) (or (evil-ex-hl-active-p 'evil-ex-substitute)
+  (when (and (featurep 'evil)
+             (evil-ex-p) (or (evil-ex-hl-active-p 'evil-ex-substitute)
                              (evil-ex-hl-active-p 'evil-ex-global-match)
                              (evil-ex-hl-active-p 'evil-ex-buffer-match)))
     (propertize
@@ -492,7 +491,7 @@ lines are selected, or the NxM dimensions of a block selection."
 
 (defsubst +doom-modeline--iedit ()
   "Show the number of iedit regions matches + what match you're on."
-  (when iedit-mode
+  (when (and (featurep 'iedit) iedit-mode)
     (propertize
      (let ((this-oc (let (message-log-max) (iedit-find-current-occurrence-overlay)))
            (length  (or (ignore-errors (length iedit-occurrences-overlays)) 0)))
@@ -510,12 +509,10 @@ lines are selected, or the NxM dimensions of a block selection."
 
 (@def-modeline-segment matches
   "TODO"
-  (or (concat (if (active) (+doom-modeline--macro-recording))
-              (when (featurep 'evil)
-                (concat (+doom-modeline--anzu)
-                        (+doom-modeline--evil-substitute)))
-              (if (boundp 'iedit-mode) (+doom-modeline--iedit))
-              )
+  (or (concat (+doom-modeline--macro-recording)
+              (+doom-modeline--anzu)
+              (+doom-modeline--evil-substitute)
+              (+doom-modeline--iedit))
       " %I "))
 
 (@def-modeline-segment media-info
