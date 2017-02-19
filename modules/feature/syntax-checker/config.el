@@ -9,7 +9,7 @@
         flycheck-highlighting-mode 'symbols
         flycheck-disabled-checkers '(emacs-lisp-checkdoc make))
 
-  (@set :popup " ?\\*Flycheck.+\\*" :align below :size 14 :noselect t :regexp t)
+  (@set :popup " ?\\*Flycheck.+\\*" :size 14 :noselect t :regexp t)
 
   (@map :map flycheck-error-list-mode-map
         :n "C-n" 'flycheck-error-list-next-error
