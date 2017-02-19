@@ -10,9 +10,6 @@
   "A hash-table of plists, containing functions for building source code. Used
 by `+eval/build', and filled with the `:build' setting")
 
-(defvar +eval--runners nil
-  "A list of `quickrun-add-command' arguments.")
-
 (defvar +eval--repls nil
   "A list of `rtog/add-repl' arguments.")
 
@@ -26,20 +23,37 @@ by `+eval/build', and filled with the `:build' setting")
       (list 'rtog/add-repl mode command)
     `(push ',(list mode command) +eval--repls)))
 
-(@def-setting :build (name mode pred-fn build-fn)
+(@def-setting :build (name mode pred-fn &optional build-fn)
   "Define a build command function (BUILD-FN) for major-mode MODE, called NAME
-(a symbol). PRED-FN is a predicate function that determines this builder's
+-- a symbol -- PRED-FN is a predicate function that determines this builder's
 suitability for the current buffer."
+  (unless build-fn
+    (setq build-fn pred-fn
+          pred-fn nil))
   `(puthash ',(cons name mode)
             (list :predicate ,pred-fn :fn ,build-fn)
             +eval-builders))
 
-(@def-setting :eval (name alist &rest plist)
-  "Define a code evaluator for `quickrun'. Takes the same arguments as
-`quickrun-add-command'."
-  (if (featurep 'quickrun)
-      (apply 'quickrun-add-command name alist plist)
-    `(push ',(list name alist plist) +eval--runners)))
+(@def-setting :eval (mode command)
+  "Define a code evaluator for `quickrun'.
+
+1. If MODE is a string and COMMAND is the string, MODE is a file regexp and
+   COMMAND is a string key for an entry in `quickrun-file-alist'.
+2. If MODE is not a string and COMMAND is a string, MODE is a major-mode symbol
+   and COMMAND is a key; they will be registered in
+   `quickrun--major-mode-alist'.
+3. If MODE is not a string and COMMAND is a list, use `quickrun-add-command'. e.g.
+   (quickrun-add-command MODE COMMAND :mode MODE)"
+  (if (stringp command)
+      `(@after quickrun
+         (push ,(cons mode command)
+               ,(if (stringp mode)
+                    'quickrun-file-alist
+                  'quickrun--major-mode-alist)))
+    `(@after quickrun
+       (quickrun-add-command
+        ,(symbol-name mode)
+        ',command :mode ',mode))))
 
 
 ;;
@@ -60,16 +74,13 @@ suitability for the current buffer."
   ;; don't auto-focus quickrun windows. Shackle handles that for us.
   (setq quickrun-focus-p nil)
 
-  (dolist (runner +eval--runners)
-    (apply 'quickrun-add-command runner))
-
   (defun +repl*quickrun-close-popup (&optional _ _ _ _)
     "Allows us to re-run quickrun from inside the quickrun buffer (silently)."
     (awhen (get-buffer-window quickrun/buffer-name)
       (let (message-log-max)
         (quickrun/kill-running-process)
         (message ""))
-      (doom/popup-close it nil)))
+      (doom/popup-close it)))
 
   (defun +repl|quickrun-scroll-to-bof ()
     "Ensures window is scrolled to BOF"
@@ -89,10 +100,10 @@ suitability for the current buffer."
   :init (@add-hook repl-toggle-mode (evil-initialize-state 'emacs))
   :config
   (@set :popup
-    (:custom (lambda (b &rest _)
-               (when (and (featurep 'repl-toggle)
-                          (string-prefix-p "*" (buffer-name (get-buffer b))))
-                 (buffer-local-value 'repl-toggle-mode b))))
+    '(:custom (lambda (b &rest _)
+                (when (and (featurep 'repl-toggle)
+                           (string-prefix-p "*" (buffer-name (get-buffer b))))
+                  (buffer-local-value 'repl-toggle-mode b))))
     :popup t :size 16)
 
   (dolist (repl +eval--repls)

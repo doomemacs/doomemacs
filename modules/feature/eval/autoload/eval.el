@@ -49,22 +49,3 @@ elisp buffer). Otherwise forward the region to Quickrun."
                   (insert (current-kill 0)))))
         (t (quickrun-replace-region beg end))))
 
-
-;;;###autoload (autoload '+repl:eval-region "feature/repl/autoload/repl" nil t)
-;;;###autoload (autoload '+repl:eval-region-and-replace "feature/repl/autoload/eval" nil t)
-
-(@after evil
-   (evil-set-command-properties '+repl/eval-buffer :move-point nil :repeat nil)
-   (evil-set-command-properties '+repl/eval-region :move-point nil :repeat nil)
-
-   (evil-define-operator +repl:eval-region (beg end)
-     "Evaluate a region and, if large enough, prints its output to a popup buffer (if an
-   elisp buffer). Otherwise forward the region to Quickrun."
-     :move-point nil :repeat nil
-     (interactive "<r>")
-     (+repl/eval-region beg end))
-
-   (evil-define-operator +repl:eval-region-and-replace (beg end)
-     (interactive "<r>")
-     (+repl/eval-region-and-replace beg end)))
-
