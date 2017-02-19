@@ -12,7 +12,8 @@
         (neotree-hide)
       (let ((project-root (doom-project-root)))
         (unless (and (neo-global--window-exists-p)
-                     (f-same? (neo-global--with-buffer neo-buffer--start-node) project-root))
+                     (equal (file-truename (neo-global--with-buffer neo-buffer--start-node))
+                            (file-truename project-root)))
           (neotree-dir project-root))
         (neotree-find path project-root)))))
 

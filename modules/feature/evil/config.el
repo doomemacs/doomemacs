@@ -3,21 +3,15 @@
 ;; I'm a vimmer at heart. Its modal philosophy suits me better, and this module
 ;; strives to make Emacs a much better vim than vim was.
 
-(defvar +evil-leader ","
-  "The <leader> key, used by the `@map' macro for :leader bindings.")
-
-(defvar +evil-localleader "\\"
-  "The <localleader> key, used by the `@map' macro for :localleader bindings.")
-
 (@def-setting :evil-state (&rest mode-state-list)
   "Set the initialize STATE of MODE using `evil-set-initial-state'."
-  (if (-all-p 'listp mode-state-list)
-      (macroexp-progn
-       (--map (let ((argc (length it)))
-                (unless (= argc 2)
-                  (error ":evil-state sub-lists expect 2 arguments, got %s" argc))
-                `(evil-set-initial-state ',(car it) ',(cadr it)))
-              mode-state-list))
+  (if (cl-every 'listp mode-state-list)
+      (let (forms)
+        (dolist (it mode-state-list)
+          (unless (consp it)
+            (error ":evil-state expected cons cells, got %s" it))
+          (push `(evil-set-initial-state ',(car it) ',(cdr it)) forms))
+        `(progn ,@(reverse forms)))
     (let ((argc (length mode-state-list)))
       (unless (= argc 2)
         (error ":evil-state expected 2 arguments, got %s" argc)))
@@ -44,36 +38,51 @@
         evil-insert-skip-empty-lines t)
 
   :config
+  (evil-mode +1)
+  (evil-select-search-module 'evil-search-module 'evil-search)
+
+  ;; Set cursor colors later, presumably once theme is loaded
+  (@add-hook 'after-init-hook
+    (setq evil-default-cursor (face-attribute 'cursor :background nil t)
+          evil-normal-state-cursor 'box
+          evil-emacs-state-cursor  `(,(face-attribute 'warning :foreground nil nil) box)
+          evil-insert-state-cursor 'bar
+          evil-visual-state-cursor 'hollow))
+
+  ;; highlight matching delimiters where it's important
+  (defun +evil|show-paren-mode-off () (show-paren-mode -1))
+  (add-hook 'evil-insert-state-entry-hook   'show-paren-mode)
+  (add-hook 'evil-insert-state-exit-hook    '+evil|show-paren-mode-off)
+  (add-hook 'evil-visual-state-entry-hook   'show-paren-mode)
+  (add-hook 'evil-visual-state-exit-hook    '+evil|show-paren-mode-off)
+  (add-hook 'evil-operator-state-entry-hook 'show-paren-mode)
+  (add-hook 'evil-operator-state-exit-hook  '+evil|show-paren-mode-off)
+  (add-hook 'evil-normal-state-entry-hook   '+evil|show-paren-mode-off)
+  ;; Disable highlights on insert-mode
+  ;; (add-hook 'evil-insert-state-entry-hook 'evil-ex-nohighlight)
+
   (@set :popup
     '("*evil-registers*" :size 0.3)
     '("*Command Line*" :size 8))
 
-  (evil-mode +1)
-  (evil-select-search-module 'evil-search-module 'evil-search)
-
-  ;; Don't move cursor on indent
-  (defun +evil*static-reindent (orig-fn &rest args)
-    (save-excursion (apply orig-fn args)))
-  (advice-add 'evil-indent :around '+evil*static-reindent)
-
-  (mapc (lambda (r) (evil-set-initial-state (car r) (cdr r)))
-        '((compilation-mode       . normal)
-          (help-mode              . normal)
-          (message-mode           . normal)
-          (debugger-mode          . normal)
-          (image-mode             . normal)
-          (doc-view-mode          . normal)
-          (eww-mode               . normal)
-          (tabulated-list-mode    . emacs)
-          (profile-report-mode    . emacs)
-          (Info-mode              . emacs)
-          (view-mode              . emacs)
-          (comint-mode            . emacs)
-          (cider-repl-mode        . emacs)
-          (term-mode              . emacs)
-          (calendar-mode          . emacs)
-          (Man-mode               . emacs)
-          (grep-mode              . emacs))))
+  (@set :evil-state
+        '(compilation-mode       . normal)
+        '(help-mode              . normal)
+        '(message-mode           . normal)
+        '(debugger-mode          . normal)
+        '(image-mode             . normal)
+        '(doc-view-mode          . normal)
+        '(eww-mode               . normal)
+        '(tabulated-list-mode    . emacs)
+        '(profile-report-mode    . emacs)
+        '(Info-mode              . emacs)
+        '(view-mode              . emacs)
+        '(comint-mode            . emacs)
+        '(cider-repl-mode        . emacs)
+        '(term-mode              . emacs)
+        '(calendar-mode          . emacs)
+        '(Man-mode               . emacs)
+        '(grep-mode              . emacs)))
 
 (defsubst +evil--textobj (key inner-fn &optional outer-fn)
   "Define a text object."
@@ -93,18 +102,23 @@
     (evil-ex-nohighlight)))
 (advice-add 'evil-force-normal-state :after '+evil*esc)
 
+;; Don't move cursor on indent
+(defun +evil*static-reindent (orig-fn &rest args)
+  (save-excursion (apply orig-fn args)))
+(advice-add 'evil-indent :around '+evil*static-reindent)
+
 ;; Move to new split
 (defun +evil*window-follow (&rest _)  (evil-window-down 1))
 (defun +evil*window-vfollow (&rest _) (evil-window-right 1))
 (advice-add 'evil-window-split  :after '+evil*window-follow)
 (advice-add 'evil-window-vsplit :after '+evil*window-vfollow)
 
-;; Fix harmless (yet disruptive) error reporting w/ hidden buffers caused by
-;; workgroups killing windows
+;; Fix harmless (yet disruptive) error reporting w/ hidden buffers
+;; caused by dead popup windows
 ;; TODO Delete timer on dead windows?
-;; (defun +evil*ignore-hl-errors (orig-fn &rest args)
-;;   (ignore-errors (apply orig-fn args)))
-;; (advice-add 'evil-ex-hl-do-update-highlight :around '+evil*ignore-hl-errors)
+(defun +evil*ignore-hl-errors (orig-fn &rest args)
+  (ignore-errors (apply orig-fn args)))
+(advice-add 'evil-ex-hl-do-update-highlight :around '+evil*ignore-hl-errors)
 
 ;; monkey patch `evil-ex-replace-special-filenames' to add more ex
 ;; substitution flags to evil-mode
@@ -139,7 +153,7 @@
    1 1))
 
 (evil-ex-define-cmd "g[lobal]" '+evil:global)
-(evil-ex-define-cmd "al[ign]" '+evil:align)
+(evil-ex-define-cmd "al[ign]"  '+evil:align)
 
 
 ;;
@@ -160,6 +174,7 @@
 
 (@def-package evil-easymotion
   :defer 1
+  :commands evilem-define
   :config
   (defvar +evil--snipe-repeat-fn)
 
@@ -192,14 +207,14 @@
 
   ;; Defuns
   (defun +evil--embrace-get-pair (char)
-    (acond ((cdr-safe (assoc (string-to-char char) evil-surround-pairs-alist))
-            `(,(car it) . ,(cdr it)))
-           ((assoc-default char embrace--pairs-list)
-            (if (functionp (embrace-pair-struct-read-function it))
-                (let ((pair (funcall (embrace-pair-struct-read-function it))))
-                  `(,(car pair) . ,(cdr pair)))
-              `(,(embrace-pair-struct-left it) . ,(embrace-pair-struct-right it))))
-           (t `(,char . ,char))))
+    (if-let (pair (cdr-safe (assoc (string-to-char char) evil-surround-pairs-alist)))
+        pair
+      (if-let (pair (assoc-default char embrace--pairs-list))
+          (if-let (real-pair (and (functionp (embrace-pair-struct-read-function pair))
+                                  (funcall (embrace-pair-struct-read-function pair))))
+              real-pair
+            (cons (embrace-pair-struct-left pair) (embrace-pair-struct-right pair)))
+        (cons char char))))
 
   (defun +evil--embrace-escaped ()
     "Backslash-escaped surround character support for embrace."
@@ -277,16 +292,7 @@
 (@def-package evil-matchit
   :commands (evilmi-jump-items evilmi-text-object global-evil-matchit-mode)
   :config (global-evil-matchit-mode 1)
-  :init
-  (+evil--textobj "%" 'evilmi-text-object)
-
-  (defun +evil/matchit-or-toggle-fold ()
-    "If on a fold-able element, toggle the fold (`hs-toggle-hiding'). Otherwise,
-if on a delimiter, jump to the matching one (`evilmi-jump-items')."
-    (interactive)
-    (if (ignore-errors (hs-already-hidden-p))
-        (hs-toggle-hiding)
-      (call-interactively 'evilmi-jump-items))))
+  :init (+evil--textobj "%" 'evilmi-text-object))
 
 
 (@def-package evil-multiedit
@@ -319,10 +325,10 @@ if on a delimiter, jump to the matching one (`evilmi-jump-items')."
 (@def-package evil-snipe :demand t
   :init
   (setq evil-snipe-smart-case t
-        evil-snipe-repeat-keys nil ; using space to repeat
         evil-snipe-scope 'line
         evil-snipe-repeat-scope 'visible
-        evil-snipe-override-evil-repeat-keys nil ; causes problems with remapped ;
+        evil-snipe-repeat-keys nil ; causes problems with remapped ;
+        evil-snipe-override-evil-repeat-keys nil
         evil-snipe-char-fold t
         evil-snipe-aliases '((?\[ "[[{(]")
                              (?\] "[]})]")
@@ -386,6 +392,8 @@ if on a delimiter, jump to the matching one (`evilmi-jump-items')."
 
   :config
   (@set :evil-state 'neotree-mode 'motion)
+
+  (push neo-buffer-name winner-boring-buffers)
 
   ;; Adding keybindings to `neotree-mode-map' wouldn't work for me (they get
   ;; overridden when the neotree buffer is spawned). So we bind them in a hook.
