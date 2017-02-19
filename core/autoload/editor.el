@@ -186,3 +186,16 @@ consistent throughout a selected region, depending on `indent-tab-mode'."
       (tabify beg end)
     (untabify beg end)))
 
+;;;###autoload
+(defun doom/toggle-sticky (&optional beg end)
+  "Make a selection sticky by placing it in the header line. Possibly helpful
+for function signatures or notes. Run again to clear the header line."
+  (interactive "r")
+  (setq header-line-format
+        (when mark-active
+          (concat (propertize (format nlinum-format (line-number-at-pos beg))
+                              'face 'font-lock-comment-face)
+                  (let ((content (buffer-substring beg end)))
+                    (setq content (s-replace "\n" " " content))
+                    (setq content (replace-regexp-in-string "\\s-+" " " content))
+                    content)))))
