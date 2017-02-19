@@ -49,10 +49,12 @@
         "C-b" 'backward-word
         "C-f" 'forward-word)
 
-  ;; Occasionally, when ivy closes, it causes display artifacting between
-  ;; horizontal splits. This fixes it, though may cause flickering on some OSes.
-  (defun doom|redisplay (&rest _) (redisplay))
+  ;; Occasionally, when ivy closes, it causes display artifacting
+  ;; between horizontal splits. This fixes it, though may cause
+  ;; flickering on some OSes.
+  (defun doom|redisplay (&rest _) (force-mode-line-update))
   (advice-add 'ivy-read :after 'doom|redisplay)
+  (add-hook 'projectile-find-file-hook 'doom|redisplay)
 
   (@after magit      (setq magit-completing-read-function 'ivy-completing-read))
   (@after yasnippet  (push '+ivy-yas-prompt yas-prompt-functions))
@@ -94,4 +96,12 @@
         [backtab] '+ivy/counsel-ag-occur     ; search/replace on results
         "C-SPC"   'counsel-git-grep-recenter ; preview
         "M-RET"   '+ivy/counsel-ag-open-in-other-window))
+
+
+;; Used by `counsel-M-x'
+(@def-package smex
+  :commands (smex smex-major-mode-commands)
+  :config
+  (setq smex-save-file (concat doom-cache-dir "/smex-items"))
+  (smex-initialize))
 

@@ -4,3 +4,4 @@
 (@package ivy)
 (@package counsel)
 (@package counsel-projectile)
+(@package smex)

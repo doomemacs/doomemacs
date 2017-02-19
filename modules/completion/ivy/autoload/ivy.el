@@ -1,8 +1,8 @@
-;;; completion/ivy/packages.el
+;;; completion/ivy/autoload/ivy.el
 
 ;; Show more information in ivy-switch-buffer; and only display
 ;; project/workgroup-relevant buffers.
-(defun +ivy-get-buffers (&optional buffer-list)
+(defun +ivy--get-buffers (&optional buffer-list)
   (let ((min-name 5)
         (min-mode 5)
         (proot (doom-project-root)))
@@ -32,8 +32,8 @@
                        (propertize "[+]" 'face 'doom-modeline-buffer-modified)))
                     (propertize mode-name 'face 'font-lock-constant-face)
                     (when buffer-file-name
-                      (f-slash (abbreviate-file-name (f-dirname buffer-file-name))))))))
-             (or buffer-list (doom/get-buffers t))))))
+                      (abbreviate-file-name (file-name-directory buffer-file-name)))))))
+             (or buffer-list (doom-buffer-list t))))))
 
 (defun +ivy--select-buffer-action (buffer)
   (ivy--switch-buffer-action
@@ -47,7 +47,7 @@
 all open buffers."
   (interactive)
   (ivy-read (format "%s buffers: " (if all-p "All" "Project"))
-            (+ivy-get-buffers (if all-p (buffer-list)))
+            (+ivy--get-buffers (if all-p (buffer-list)))
             :matcher #'ivy--switch-buffer-matcher
             :action #'+ivy--select-buffer-action
             :keymap ivy-switch-buffer-map
@@ -62,14 +62,16 @@ all open buffers."
 ;;;###autoload
 (defun +ivy/kill-ring ()
   (interactive)
-  (ivy-read "Kill ring:" (--filter (not (or (< (length it) 3)
-                                            (string-match-p "\\`[\n[:blank:]]+\\'" it)))
-                                   (cl-remove-duplicates kill-ring :test 'equal))))
+  (ivy-read "Kill ring:"
+            (cl-remove-if (lambda (it)
+                            (or (< (length it) 3)
+                                (string-match-p "\\`[\n[:blank:]]+\\'" it)))
+                          (cl-remove-duplicates kill-ring :test 'equal))))
 
 ;;;###autoload
 (defun +ivy/tasks ()
   (interactive)
-  ;; TODO Something a little nicer
+  ;; TODO Make nicer
   (counsel-ag " (TODO|FIXME|NOTE) " (doom-project-root)))
 
 ;;;###autoload
@@ -103,37 +105,3 @@ interferes with my custom :ag ex command `+ivy:ag-search'."
 ;;;###autoload
 (defun +ivy-yas-prompt (prompt choices &optional display-fn)
   (yas-completing-prompt prompt choices display-fn #'ivy-completing-read))
-
-
-;;;###autoload (autoload '+ivy:ag-search "completion/ivy/autoload" nil t)
-;;;###autoload (autoload '+ivy:ag-search-cwd "completion/ivy/autoload" nil t)
-;;;###autoload (autoload '+ivy:swiper "completion/ivy/autoload" nil t)
-(@after evil
-  (defvar +ivy--ag-last-search nil)
-
-  (evil-define-operator +ivy:ag-search (beg end search regex-p &optional dir)
-    "Preform a counsel search with SEARCH. If SEARCH is nil and in visual mode,
-use the selection, otherwise activate live ag searching in helm.
-
-If REGEX-P is non-nil, SEARCH will be treated as a regular expression.
-DIR specifies the default-directory from which ag is run."
-    :type inclusive :repeat nil
-    (interactive "<r><a><!>")
-    (let ((search (or search
-                      (and (evil-visual-state-p)
-                           (and beg end (rxt-quote-pcre (buffer-substring-no-properties beg end))))
-                      +ivy--ag-last-search)))
-      (setq +ivy--ag-last-search search)
-      (counsel-ag search (or dir (f-slash (doom-project-root)))
-                  (concat "--nocolor --nogroup" (if regex-p " -Q")))))
-
-  (evil-define-operator +ivy:ag-search-cwd (beg end search regex-p)
-    :type inclusive :repeat nil
-    (interactive "<r><a><!>")
-    (+ivy:ag-search beg end search regex-p default-directory))
-
-  (evil-define-command +ivy:swiper (&optional search)
-    "Invoke `swiper' with SEARCH, otherwise with the symbol at point."
-    (interactive "<a>")
-    (swiper (or search (thing-at-point 'symbol)))))
-
