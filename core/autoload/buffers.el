@@ -25,6 +25,10 @@ checks before killing processes. If there are no buffers with matching
 major-modes, the process gets killed.")
 
 ;;;###autoload
+(defun doom-fallback-buffer ()
+  (get-buffer-create doom-fallback-buffer))
+
+;;;###autoload
 (defun doom-narrow-buffer (beg end &optional clone-p)
   "Restrict editing in this buffer to the current region, indirectly. With CLONE-P,
 clone the buffer and hard-narrow the selection. If mark isn't active, then widen
@@ -114,30 +118,30 @@ See `doom-real-buffer-p' for what 'real' means."
          (move-func (if (> n 0) 'switch-to-next-buffer 'switch-to-prev-buffer))
          (max 25)
          (i 0)
+         (project-dir (doom-project-root))
          (buffers (doom-real-buffers-list))
-         (fail-buffer (cond ((> (length (get-buffer-window-list doom-fallback-buffer nil t)) 1)
-                             start-buffer)
-                            ((bufferp doom-fallback-buffer)
-                             doom-fallback-buffer)
-                            (t doom-fallback-buffer)))
          destbuf)
     (setq destbuf
           (catch 'goto
             (if (or (not buffers)
                     (= (length buffers) 1))
                 (progn (message "No other buffers in workspace")
-                       (throw 'goto fail-buffer))
+                       (throw 'goto t))
               (funcall move-func)
               (while (not (memq (current-buffer) buffers))
                 (if (or (eq (current-buffer) start-buffer)
                         (>= i max))
-                    (throw 'goto fail-buffer)
+                    (throw 'goto t)
                   (funcall move-func))
                 (cl-incf i))
               (current-buffer))))
-    (when (eq destbuf fail-buffer)
+    (when (eq destbuf t)
+      (setq destbuf (doom-fallback-buffer))
       (message "Nowhere to go"))
-    (set-window-buffer (selected-window) destbuf)))
+    (prog1
+        (set-buffer destbuf)
+      (when (eq destbuf (doom-fallback-buffer))
+        (cd project-dir)))))
 
 ;;;###autoload
 (defun doom-real-buffer-p (&optional buffer-or-name)
@@ -176,38 +180,36 @@ c) and its major-mode or buffer-name-matching regexp isn't in
 buffer, but buries the buffer if it is present in another window.
 
 See `doom-real-buffer-p' for what 'real' means."
-  (let* ((old-project (doom-project-root))
-         (buffer (or buffer (current-buffer)))
+  (let* ((buffer (or buffer (current-buffer)))
          (buffer-win (get-buffer-window buffer))
-         (only-buffer-window-p (= (length (get-buffer-window-list buffer nil t)) 1)))
-    (with-current-buffer buffer
-      (when (and only-buffer-window-p
-                 (buffer-file-name buffer)
-                 (buffer-modified-p buffer))
+         (only-buffer-window-p (= 1 (length (get-buffer-window-list buffer nil t)))))
+    (when (and only-buffer-window-p
+               (buffer-file-name buffer)
+               (buffer-modified-p buffer))
+      (with-current-buffer buffer
         (if (and (not dont-save)
                  (yes-or-no-p "Buffer is unsaved, save it?"))
             (save-buffer)
-          (set-buffer-modified-p nil)))
-      (if (window-dedicated-p buffer-win)
-          (unless (window--delete buffer-win t t)
-            (split-window buffer-win)
-            (window--delete buffer-win t t))
-        (doom--cycle-real-buffers -1)
-        (unless (eq (current-buffer) buffer)
-          (when only-buffer-window-p
-            (kill-buffer buffer)
-            (unless (doom-real-buffer-p)
-              (doom--cycle-real-buffers -1))))
-        (when buffer-win
-          (unrecord-window-buffer buffer-win buffer))
-        (eq (current-buffer) buffer)))))
+          (set-buffer-modified-p nil))))
+    (if (window-dedicated-p buffer-win)
+        (unless (window--delete buffer-win t t)
+          (split-window buffer-win)
+          (window--delete buffer-win t t))
+      (doom--cycle-real-buffers -1)
+      (when buffer-win
+        (unrecord-window-buffer buffer-win buffer))
+      (when only-buffer-window-p
+        (unless (eq buffer (doom-fallback-buffer))
+          (kill-buffer buffer))))
+    (eq (current-buffer) buffer)))
 
 ;;;###autoload
 (defun doom-kill-buffer-and-windows (buffer)
   "Kill the buffer and delete all the windows it's displayed in."
   (unless (one-window-p t)
     (mapc (lambda (win) (unless (one-window-p t) (delete-window win)))
-          (get-buffer-window-list buf))))
+          (get-buffer-window-list buffer)))
+  (kill-buffer buffer))
 
 ;;;###autoload
 (defun doom-kill-process-buffers ()
