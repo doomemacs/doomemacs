@@ -61,6 +61,8 @@
              (let ((doom--hidden-modeline-format (+doom-modeline modeline)))
                (doom-hide-modeline-mode +1)))))))
 
+(@add-hook (completion-in-region-mode completion-list-mode) 'doom-hide-modeline-mode)
+
 
 ;; Keep `+doom-modeline-current-window' up-to-date
 (defvar +doom-modeline-current-window (frame-selected-window))
