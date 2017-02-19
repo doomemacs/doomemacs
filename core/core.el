@@ -173,7 +173,8 @@ enable multiple minor modes for the same regexp.")
     (require 'core-ui)          ; draw me like one of your French editors
     (require 'core-popups)      ; taming sudden yet inevitable windows
     (require 'core-editor)      ; baseline configuration for text editing
-    (require 'core-projects)))  ; making Emacs project-aware
+    (require 'core-projects)    ; making Emacs project-aware
+    (require 'core-keybinds)))  ; centralized keybind system + which-key
 
 (provide 'core)
 ;;; core.el ends here

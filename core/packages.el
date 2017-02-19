@@ -43,3 +43,6 @@
 
 ;; core-projects.el
 (@package projectile)
+
+;; core-keybinds.el
+(@package which-key)
