@@ -6,14 +6,14 @@
 
 (@def-package projectile :demand t
   :init
-  (setq projectile-cache-file (concat doom-cache-dir "/projectile.cache")
+  (setq projectile-cache-file (concat doom-cache-dir "projectile.cache")
         projectile-enable-caching (not noninteractive)
         projectile-file-exists-remote-cache-expire nil
-        projectile-globally-ignored-directories `(,doom-cache-dir ".sync")
+        projectile-globally-ignored-directories `(,doom-local-dir ".sync")
         projectile-globally-ignored-file-suffixes '(".elc" ".pyc" ".o")
         projectile-globally-ignored-files '(".DS_Store" "Icon")
         projectile-indexing-method 'alien
-        projectile-known-projects-file (concat doom-cache-dir "/projectile.projects")
+        projectile-known-projects-file (concat doom-cache-dir "projectile.projects")
         projectile-project-root-files '(".git" ".hg" ".svn" ".project")
         projectile-require-project-root nil)
 
