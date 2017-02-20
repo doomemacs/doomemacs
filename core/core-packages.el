@@ -56,7 +56,7 @@ package's name as a symbol, and whose CDR is the plist supplied to its
 `@package' declaration.")
 
 (defvar doom-protected-packages
-  '(quelpa use-package)
+  '(persistent-soft quelpa use-package)
   "A list of packages that must be installed (and will be auto-installed if
 missing) and shouldn't be deleted.")
 
