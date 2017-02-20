@@ -50,7 +50,8 @@ compilation."
 
 (defmacro @quiet (&rest forms)
   "Run FORMS without making any noise."
-  `(progn
+  `(if doom-debug-mode
+       (progn ,@forms)
      (fset 'doom--old-write-region-fn (symbol-function 'write-region))
      (cl-letf ((standard-output (lambda (&rest _)))
                ((symbol-function 'load-file) (lambda (file) (load file nil t)))
