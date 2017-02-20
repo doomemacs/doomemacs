@@ -158,13 +158,13 @@ evil-window-move-* (e.g. `evil-window-move-far-left')"
       (select-window that-window))))
 
 ;;;###autoload
-(defun +evil/window-move-left () "`+evil-window-move'"  (interactive) (evil-window-move 'left))
+(defun +evil/window-move-left () "`+evil-window-move'"  (interactive) (+evil-window-move 'left))
 ;;;###autoload
-(defun +evil/window-move-right () "`+evil-window-move'" (interactive) (evil-window-move 'right))
+(defun +evil/window-move-right () "`+evil-window-move'" (interactive) (+evil-window-move 'right))
 ;;;###autoload
-(defun +evil/window-move-up () "`+evil-window-move'"    (interactive) (evil-window-move 'up))
+(defun +evil/window-move-up () "`+evil-window-move'"    (interactive) (+evil-window-move 'up))
 ;;;###autoload
-(defun +evil/window-move-down () "`+evil-window-move'"  (interactive) (evil-window-move 'down))
+(defun +evil/window-move-down () "`+evil-window-move'"  (interactive) (+evil-window-move 'down))
 
 ;;;###autoload
 (defun +evil/matchit-or-toggle-fold ()
