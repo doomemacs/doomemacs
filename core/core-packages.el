@@ -121,7 +121,7 @@ to speed up startup."
     ;; Also, in some edge cases involving package initialization during a
     ;; non-interactive session, `package-initialize' fails to fill `load-path'.
     ;; If we want something done right, do it ourselves!
-    (nconc load-path (directory-files package-user-dir t "^[a-zA-Z0-9]" t))
+    (setq load-path (append load-path (directory-files package-user-dir t "^[a-zA-Z0-9]" t)))
 
     ;; Ensure core packages are installed
     (when-let (core-packages (cl-remove-if 'package-installed-p doom-protected-packages))
