@@ -139,10 +139,9 @@
   (insert
    (propertize
     (s-center +doom-dashboard--width
-              (format "Loaded %d packages in %s "
-                      (eval-when-compile
-                        (- (length (directory-files doom-packages-dir nil nil t)) 2))
-                      (emacs-init-time)))
+              (format "Loaded %d packages in %.03fs "
+                      (- (length load-path) (length doom--base-load-path))
+                      doom-init-time))
     'face 'font-lock-comment-face)
    "\n"))
 
