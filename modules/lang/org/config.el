@@ -1,4 +1,4 @@
-;;; emacs/org/config.el --- -*- no-byte-compile: t; -*-
+;;; lang/org/config.el --- -*- no-byte-compile: t; -*-
 
 ;; A few things you can expect
 ;;   + `org-capture' in a popup frame (can be invoked from outside emacs too)

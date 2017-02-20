@@ -1,4 +1,4 @@
-;;; emacs/org/+capture.el --- -*- no-byte-compile: t; -*-
+;;; lang/org/+capture.el --- -*- no-byte-compile: t; -*-
 
 ;; Sets up a sane `org-capture' workflow, wherein the org-capture buffer is
 ;; opened in a popup frame, and can be invoked from outside Emacs as well.

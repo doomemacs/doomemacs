@@ -1,4 +1,4 @@
-;;; emacs/org/+attach.el --- -*- no-byte-compile: t; -*-
+;;; lang/org/+attach.el --- -*- no-byte-compile: t; -*-
 
 ;; FIXME
 ;; Initializes my own org-mode attachment system. I didn't like Org's native

@@ -1,4 +1,4 @@
-;;; emacs/org/+export.el --- -*- no-byte-compile: t; -*-
+;;; lang/org/+export.el --- -*- no-byte-compile: t; -*-
 
 ;; My own, centralized exporting system as well.
 

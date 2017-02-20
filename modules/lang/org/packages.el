@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
-;;; emacs/org/packages.el
+;;; lang/org/packages.el
 
-(@package org-plus-contrib)
+(@package org-plus-contrib :pin "org")
 (@package org-download)
 ;; (@package ox-pandox)
 ;; (@package org-bullets)
