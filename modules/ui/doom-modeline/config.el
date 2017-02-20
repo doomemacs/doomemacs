@@ -558,7 +558,7 @@ lines are selected, or the NxM dimensions of a block selection."
   (media-info major-mode))
 
 (@def-modeline project
-  (bar " " bufer-project)
+  (bar " " buffer-project)
   (major-mode))
 
 ;;
