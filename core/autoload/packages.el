@@ -227,9 +227,12 @@ appropriate."
                                   ((doom-install-package (car pkg) (cdr pkg))
                                    "Installed")
                                   (t "Failed to install"))
-                            (car pkg)
-                            (cond ((cdr pkg) "QUELPA")
-                                  (t "ELPA"))))
+                            (concat (symbol-name (car pkg))
+                                    (when (plist-member (cdr pkg) :pin)
+                                      (format " [pinned: %s]" (plist-get (cdr pkg) :pin))))
+                            (pcase (doom-package-backend (car pkg))
+                              ('quelpa "QUELPA")
+                              ('elpa "ELPA"))))
                (error
                 (message "Error (%s): %s" (car pkg) ex))))
 
