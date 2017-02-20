@@ -28,13 +28,12 @@ make install
 make compile       # optional, may take a while
 ```
 
-Each time you change init.el, you must do the following:
+Run `make` each time you change init.el (and recompile, if necessary).
+Running `make` is the equivalent of doing:
 
 ```bash
 make install       # or (doom/packages-install)
 make autoloads     # or (doom/reload-autoloads)
-# ...and optionally
-make compile       # or (doom/byte-compile)
 ```
 
 ## Deciphering my emacs.d
