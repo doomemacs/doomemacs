@@ -266,14 +266,14 @@
           :n  "M-a" 'org-mark-element
           :v  "M-a" 'mark-whole-buffer
 
-          :ni "<M-return>"   (@λ (doom/org-insert-item 'below))
-          :ni "<S-M-return>" (@λ (doom/org-insert-item 'above))
+          :ni "<M-return>"   (@λ (+org/insert-item 'below))
+          :ni "<S-M-return>" (@λ (+org/insert-item 'above))
 
           ;; Formatting shortcuts
-          :i  "M-b" (@λ (doom/org-surround "*")) ; bold
-          :i  "M-u" (@λ (doom/org-surround "_")) ; underline
-          :i  "M-i" (@λ (doom/org-surround "/")) ; italics
-          :i  "M-`" (@λ (doom/org-surround "+")) ; strikethrough
+          :i  "M-b" (@λ (+org-surround "*")) ; bold
+          :i  "M-u" (@λ (+org-surround "_")) ; underline
+          :i  "M-i" (@λ (+org-surround "/")) ; italics
+          :i  "M-`" (@λ (+org-surround "+")) ; strikethrough
 
           :v  "M-b" "S*"
           :v  "M-u" "S_"
@@ -282,7 +282,7 @@
 
           (:localleader
            :n  "RET" 'org-archive-subtree
-           :n  "SPC" 'doom/org-toggle-checkbox
+           :n  "SPC" '+org/toggle-checkbox
            :n  "/"  'org-sparse-tree
            :n  "="  'org-align-all-tags
            :n  "?"  'org-tags-view
@@ -293,7 +293,6 @@
            :n  "a"  'org-agenda
            :n  "d"  'org-time-stamp
            :n  "e"  'org-edit-special
-           :n  "i"  'doom/org-toggle-inline-images-at-point
            :n  "l"  'org-insert-link
            :n  "n"  (@λ (if (buffer-narrowed-p) (widen) (org-narrow-to-subtree)))
            :n  "r"  'org-refile
@@ -302,10 +301,11 @@
            :v  "t"  (@λ (evil-ex-normal evil-visual-beginning evil-visual-end "\\t"))
            :n  "v"  'variable-pitch-mode
            ;; :n  "w"  'writing-mode
-           :n  "x"  'doom/org-remove-link)
+           ;; :n  "x"  '+org/remove-link
+           )
 
           ;; TODO Improve folding bindings
-          :n  "za"  'doom/org-toggle-fold
+          :n  "za"  '+org/toggle-fold
           :n  "zA"  'org-shifttab
           :n  "zc"  'outline-hide-subtree
           :n  "zC"  (@λ (outline-hide-sublevels 1))
