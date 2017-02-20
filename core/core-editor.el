@@ -51,7 +51,7 @@
 ;; Remove text-property cruft from history
 (defun doom|unpropertize-savehist ()
   (mapc (lambda (sym)
-          (when (boundp sym)
+          (when (and (boundp sym) (listp (symbol-value sym)))
             (setf (symbol-value sym) (mapcar 'substring-no-properties (symbol-value sym)))))
         '(kill-ring minibuffer-history helm-grep-history helm-ff-history
           file-name-history read-expression-history extended-command-history
