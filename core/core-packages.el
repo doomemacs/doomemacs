@@ -43,17 +43,16 @@
 ;; See core/autoload/packages.el for more functions.
 
 (defvar doom-init-p nil
-  "Non-nil if doom's package system has been initialized or not. It may not be
-if you have byte-compiled your configuration (as intended). Running
-`doom-initialize' sets this.")
+  "Non-nil if doom's package system has been initialized (by `doom-initialize').
+This will be nil if you have byte-compiled your configuration (as intended).")
 
 (defvar doom-modules nil
-  "A hash table of enabled modules.")
+  "A hash table of enabled modules. Set by `doom-initialize-modules'.")
 
 (defvar doom-packages nil
   "A list of enabled packages. Each element is a sublist, whose CAR is the
 package's name as a symbol, and whose CDR is the plist supplied to its
-`@package' declaration.")
+`@package' declaration. Set by `doom-initialize-packages'.")
 
 (defvar doom-protected-packages
   '(persistent-soft quelpa use-package)
@@ -109,30 +108,30 @@ to speed up startup."
           package-activated-list nil)
 
     ;; Ensure cache folder exists
-    (mapc (lambda (dir)
-            (unless (file-directory-p dir)
-              (make-directory dir t)))
-          (list doom-cache-dir package-user-dir))
+    (dolist (dir (list doom-cache-dir package-user-dir))
+      (unless (file-directory-p dir)
+        (make-directory dir t)))
 
     (package-initialize t)
-    ;; Sure, `package-initialize' could fill `load-path', but package activation
-    ;; costs precious milliseconds, and my premature optimization quota isn't
-    ;; filled yet. UNACCEPTAABBLLLE!
+    ;; Sure, we could let `package-initialize' fill `load-path', but package
+    ;; activation costs precious milliseconds and does other stuff I don't
+    ;; really care about (like load autoload files). My premature optimization
+    ;; quota isn't filled yet.
     ;;
     ;; Also, in some edge cases involving package initialization during a
     ;; non-interactive session, `package-initialize' fails to fill `load-path'.
-    (setq load-path (append load-path (directory-files package-user-dir t "^[a-zA-Z0-9]" t)))
+    ;; If we want something done right, do it ourselves!
+    (nconc load-path (directory-files package-user-dir t "^[a-zA-Z0-9]" t))
 
     ;; Ensure core packages are installed
-    (let ((core-packages (cl-remove-if 'package-installed-p doom-protected-packages)))
-      (when core-packages
-        (package-refresh-contents)
-        (dolist (pkg core-packages)
-          (let ((inhibit-message t))
-            (package-install pkg))
-          (if (package-installed-p pkg)
-              (message "Installed %s" pkg)
-            (error "Couldn't install %s" pkg)))))
+    (when-let (core-packages (cl-remove-if 'package-installed-p doom-protected-packages))
+      (package-refresh-contents)
+      (dolist (pkg core-packages)
+        (let ((inhibit-message t))
+          (package-install pkg))
+        (if (package-installed-p pkg)
+            (message "Installed %s" pkg)
+          (error "Couldn't install %s" pkg))))
 
     (require 'quelpa)
     (require 'use-package)
@@ -143,7 +142,7 @@ to speed up startup."
     (setq doom-init-p t)))
 
 (defun doom-initialize-autoloads (&optional force-p)
-  "Ensures that `doom-autoload-file' exists and is loaded. If it doesn't, run
+  "Ensures that `doom-autoload-file' exists and is loaded. Otherwise run
 `doom/reload-autoloads' to generate it."
   (unless (ignore-errors (require 'autoloads doom-autoload-file t))
     (unless noninteractive
@@ -152,9 +151,10 @@ to speed up startup."
         (error "Autoloads file couldn't be generated")))))
 
 (defun doom-initialize-packages (&optional force-p load-p)
-  "Loads the packages.el files across DOOM Emacs in order to fill `doom-modules'
-and `doom-packages', if they aren't set already. If FORCE-P is non-nil, do it
-even if they are."
+  "Crawls across your emacs.d in order to fill `doom-modules' (from init.el) and
+`doom-packages' (from packages.el files), if they aren't set already. If FORCE-P
+is non-nil, do it even if they are. Also aggressively loads all core autoload
+files."
   (doom-initialize force-p)
   (let ((noninteractive t)
         (load-fn
@@ -222,11 +222,10 @@ even if they are."
 (defun doom--module-pairs ()
   "Returns `doom-modules' as a list of (MODULE . SUBMODULE) cons cells. The list
 is sorted by order of insertion."
-  (let (pairs)
-    (maphash (lambda (key value)
-               (setq pairs (append pairs (list (cons (car key) (cdr key))))))
+  (let ((pairs '(nil)))
+    (maphash (lambda (key value) (nconc pairs (list (cons (car key) (cdr key)))))
              doom-modules)
-    pairs))
+    (cdr pairs)))
 
 (defun doom--module-paths (&optional append-file)
   "Returns a list of absolute file paths to modules, with APPEND-FILE added, if
