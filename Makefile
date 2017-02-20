@@ -5,13 +5,13 @@ EMACS=emacs --batch --eval "(setq user-emacs-directory default-directory)"
 # Tasks
 all: install update autoloads
 
-install: init.el
+install: init.el .local/autoloads.el
 	@$(EMACS) -l core/core.el -f 'doom/packages-install'
 
-update: init.el
+update: init.el .local/autoloads.el
 	@$(EMACS) -l core/core.el -f 'doom/packages-update'
 
-autoremove: init.el
+autoremove: init.el .local/autoloads.el
 	@$(EMACS) -l core/core.el -f 'doom/packages-autoremove'
 
 autoloads: init.el
@@ -37,5 +37,8 @@ run:
 
 init.el:
 	@[ -f init.el ] || $(error No init.el file; create one or copy init.example.el)
+
+.local/autoloads.el:
+	@$(EMACS) -l core/core.el -f 'doom/reload-autoloads'
 
 .PHONY: all test
