@@ -237,11 +237,12 @@ workspace to delete."
     (+workspace-error "Could not clear session"))
   (+workspace-switch persp-nil-name)
   (doom/kill-all-buffers)
-  (switch-to-buffer doom-fallback-buffer)
-  (dolist (buf (buffer-list))
-    (unless (eq (buffer-name buf) doom-fallback-buffer)
-      (persp-remove-buffer buf)
-      (kill-buffer buf))))
+  (let ((fallback-buf (doom-fallback-buffer)))
+    (switch-to-buffer fallback-buf)
+    (dolist (buf (buffer-list))
+      (unless (eq (buffer-name buf) fallback-buf)
+        (persp-remove-buffer buf)
+        (kill-buffer buf)))))
 
 ;;;###autoload
 (defun +workspace/kill-session-and-quit ()
@@ -265,7 +266,7 @@ pre-existing workspace."
               (dolist (window (window-list))
                 (persp-add-buffer (window-buffer window) persp nil))
             (delete-other-windows-internal)
-            (switch-to-buffer doom-fallback-buffer))
+            (switch-to-buffer (doom-fallback-buffer)))
           (+workspace/display)))
     ('error (+workspace-error (cadr ex) t))))
 
