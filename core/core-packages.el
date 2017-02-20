@@ -107,8 +107,8 @@ to speed up startup."
     (setq load-path doom--base-load-path
           package-activated-list nil)
 
-    ;; Ensure cache folder exists
-    (dolist (dir (list doom-cache-dir package-user-dir))
+    ;; Ensure core folders exist
+    (dolist (dir (list doom-local-dir doom-cache-dir package-user-dir))
       (unless (file-directory-p dir)
         (make-directory dir t)))
 
