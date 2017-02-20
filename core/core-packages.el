@@ -340,15 +340,23 @@ Accepts the following properties:
 
 This macro serves a purely declarative purpose, and are used to fill
 `doom-packages', so that functions like `doom/packages-install' can operate on
-them. "
+them."
   (declare (indent defun))
-  (let ((pkg-recipe (plist-get plist :recipe))
-        (pkg-pin    (plist-get plist :pin)))
+  (let* ((old-plist (assq name doom-packages))
+         (pkg-recipe (or (plist-get plist :recipe)
+                         (and old-plist (plist-get old-plist :recipe))))
+         (pkg-pin    (or (plist-get plist :pin)
+                         (and old-plist (plist-get old-plist :pin)))))
     (when (= 0 (mod (length pkg-recipe) 2))
       (plist-put plist :recipe (cons name pkg-recipe)))
     (when (and pkg-recipe pkg-pin)
-      (plist-put plist :pkg-pin nil))
-    `(add-to-list 'doom-packages ',(cons name plist) t)))
+      (plist-put plist :pin nil))
+    `(progn
+       (when ,(and pkg-pin t)
+         (add-to-list 'package-pinned-packages ,(cons name pkg-pin)))
+       (when ,(and old-plist t)
+         (assq-delete-all ',name doom-packages))
+       (push ',(cons name plist) doom-packages))))
 
 (defmacro @depends-on (module submodule)
   "Declares that this module depends on another. MODULE is a keyword, and
