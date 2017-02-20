@@ -50,17 +50,16 @@ possible rules."
   (setq doom-popup-history '()))
 
 ;;;###autoload
-(defun doom/popup-restore-or-switch ()
+(defun doom/popup-toggle ()
+  "Toggle popups."
   (interactive)
-  (let (popups)
-    (cond ((doom-popup-p)
-           (unless (doom-visible-windows)
-             (user-error "No non-popups available"))
-           (other-window 1))
-          ((setq popups (doom-popup-windows))
-           (select-window (car popups)))
-          (t
-           (doom/popup-restore)))))
+  (when (doom-popup-p)
+    (if doom-popup-other-window
+        (select-window doom-popup-other-window)
+      (other-window 1)))
+  (if (doom-popup-windows)
+      (doom/popup-close-all)
+    (doom/popup-restore)))
 
 ;;;###autoload
 (defun doom/popup-close (&optional window)
