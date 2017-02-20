@@ -294,26 +294,26 @@ the command buffer."
 
 
 (@after neotree
-  (defun doom*popups-save-neotree (orig-fun &rest args)
+  (defun doom*popups-save-neotree (orig-fn &rest args)
     "Prevents messing up the neotree buffer on window changes."
-    (let ((neo-p (and (featurep 'neotree) (neo-global--window-exists-p))))
+    (let ((neo-p (and (featurep 'neotree)
+                      (neo-global--window-exists-p))))
       (when neo-p
-        (neotree-hide)
-        (balance-windows))
-      (unwind-protect (apply orig-fun args)
+        (neotree-hide))
+      (unwind-protect (apply orig-fn args)
         (when neo-p
           (save-selected-window
             (neotree-show))))))
 
   ;; Prevent neotree from interfering with popups
-  (advice-add 'shackle-display-buffer :around 'doom*popups-save-neotree)
+  ;; (advice-add 'shackle-display-buffer :around 'doom*popups-save-neotree)
   ;; Prevents messing up the neotree buffer on window changes
-  (advice-add 'doom-evil-window-move :around 'doom*popups-save-neotree)
+  (advice-add '+evil-window-move :around 'doom*popups-save-neotree)
   ;; (advice-add 'doom-popup-buffer     :around 'doom*popups-save-neotree)
   ;; Don't let neotree interfere with moving, splitting or rebalancing windows
-  (advice-add 'balance-windows :around 'doom*popups-save-neotree)
-  (advice-add 'split-window    :around 'doom*popups-save-neotree)
-  (advice-add 'shackle-display-buffer :around 'doom*popups-save-neotree)
+  ;; (advice-add 'balance-windows :around 'doom*popups-save-neotree)
+  ;; (advice-add 'split-window    :around 'doom*popups-save-neotree)
+  ;; (advice-add 'shackle-display-buffer :around 'doom*popups-save-neotree)
   (advice-add 'evil-window-move-very-bottom :around 'doom*popups-save-neotree)
   (advice-add 'evil-window-move-very-top    :around 'doom*popups-save-neotree)
   (advice-add 'evil-window-move-far-left    :around 'doom*popups-save-neotree)
