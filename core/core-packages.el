@@ -220,10 +220,10 @@ files."
 (defun doom--module-pairs ()
   "Returns `doom-modules' as a list of (MODULE . SUBMODULE) cons cells. The list
 is sorted by order of insertion."
-  (let ((pairs '(nil)))
-    (maphash (lambda (key value) (nconc pairs (list (cons (car key) (cdr key)))))
+  (let (pairs)
+    (maphash (lambda (key value) (push (cons (car key) (cdr key)) pairs))
              doom-modules)
-    (cdr pairs)))
+    (reverse pairs)))
 
 (defun doom--module-paths (&optional append-file)
   "Returns a list of absolute file paths to modules, with APPEND-FILE added, if
