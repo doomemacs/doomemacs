@@ -3,7 +3,6 @@
 
 ;; core packages
 (@package async)
-(@package persistent-soft)
 (@package s)
 
 ;; core-os.el
