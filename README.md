@@ -1,143 +1,108 @@
 [![Main screenshot](https://raw.githubusercontent.com/hlissner/.emacs.d/screenshots/main.png?raw=true)][sc]
 
 [![MIT](https://img.shields.io/badge/license-MIT-green.svg)](./LICENSE)
-[![DOOM v1.3.0](https://img.shields.io/badge/DOOM-v1.3.0-blue.svg)](./init.el)
+[![DOOM v2.0.0](https://img.shields.io/badge/DOOM-v2.0.0-blue.svg)](./init.el)
 
 <a href="http://ultravioletbat.deviantart.com/art/Yay-Evil-111710573">
   <img src="https://raw.githubusercontent.com/hlissner/.emacs.d/screenshots/cacochan.png" align="right" />
 </a>
 
 This is an Emacs configuration for a stubborn, melodramatic and
-shell-dwelling vimmer disappointed with the text-editor status quo.
+shell-dwelling vimmer disappointed with the text-editor statsu quo.
 
-Doom tries to look and act like modern editors (whatever that will
-mean to me on any given day), emulates vim as best it can and strives
-to surpass it in any way possible. All to fit my needs as a software
-developer, indie game developer, UX designer, scientist and doom
-enthusiast.
+Doom tries to look and act like modern editors (whatever that means to
+me on any given day), emulate vim as best it can and strive to surpass
+it in any way possible. I've designed it to fit my needs as a software
+developer, indie game developer, scientist and doom enthusiast.
 
-It was tailored for GUI Emacs 25+ on **OSX 10.11+** and
-**Arch Linux 4.7+**. I use [vim] everywhere else.
+It was tailored for **MacOS 10.11+** and **Arch Linux 4.7+**, and
+exclusively for Emacs 25.1+ **(NOTE: Older versions of Emacs won't
+work).**. I use [vim] everywhere else.
 
 **NOTE:** you can [find the theme in a separate repo][doom-theme].
 
 ## Installation
 
-Depends on [Cask] and make:
-
 ```bash
 git clone https://github.com/hlissner/.emacs.d ~/.emacs.d
 cd ~/.emacs.d
-make          # installs plugins via cask and generates autoloads
-
-# OPTIONAL
-make compile  # compiles core and autoloaded files
-make snippets # install hlissner/emacs-snippets into private/snippets
+cp init.example.el init.el  # maybe edit init.el
+make install
+make compile       # optional, may take a while
 ```
 
-Run `:bc!` for a more comprehensive byte compile (`:bc` will compile
-the current, open *.el file).
+If you change the module list in `init.el`, you'll need to refresh
+autoloads and, if necessary, recompile:
 
-For OSX users, I recommend Yukihiro Matsumoto's fork of Emacs, which
-you can get through homebrew:
++ `make autoloads` or `(doom/reload-autoloads)`
++ If you byte-compiled: `make compile` or `(doom/byte-compile)`
 
-```bash
-brew tap railwaycat/emacsmacport
-brew install emacs-mac --with-imagemagick --with-modern-icon --HEAD
-```
-
-## Features
+## Deciphering my emacs.d
 
 To get a picture of what's in here, check out:
 
-* **[The Caskfile](Cask)**: lists installed plugins & where they're
-  configured.
-* **[init.el](init.el)**: birds-eye view of loaded modules and load
-  order.
-* **[core/core-modeline.el](core/core-modeline.el)**: my modeline
-  config.
-* **[private/my-bindings.el](private/my-bindings.el)**: most of my
-  custom keybinds.
-* **[private/my-commands.el](private/my-commands.el)**: custom ex
-  commands.
-* **[ext/*.sh](ext/)**: scripts that will set up external
-  dependencies, such as [irony-mode] or [racer].
+* **[init.example.el](init.example.el)**: what my init.el looks like.
+  Copy this to `init.el` and you're set.
+* **[modules/README.md](modules/README.md)**: a primer into module
+  structure and how the module system works.
+* **[modules/private/hlissner/+bindings.el](modules/private/hlissner/+bindings.el)**:
+  my custom keybinds.
+* **[modules/private/hlissner/+commands.el](modules/private/hlissner/+commands.el)**:
+  my custom ex commands.
+* **[modules/ui](modules/ui)**: the modules that makes my Emacs look
+  the way it does, including my modeline, dashboard and more.
++ See screenshots in the [screenshots branch][sc].
++ Some modules have README's.
 
-See screenshots in the [screenshots branch][sc].
+### Features
 
-### Highlights
-
-* Strong support for a large selection of languages, including C/C++,
-  Ruby, Python, PHP, JS, Elisp, Haskell, Lua, Julia, Go, Crystal,
-  Assembly, Java, Swift, (Ba|z)?sh, Scala, Rust, LaTeX, Processing,
-  Octave, and more!
-* Tamed popup windows with **[shackle]**. e.g. help buffers will
-  always pop up at the bottom of the frame, and are removed with ESC.
-* Workspaces & session persistence with **[workgroups2]**.
-* Project and workspace-sensitive buffer navigation and functions
-* A vim-like environment with **[evil-mode]**
-  * vim-seek/vim-sneak functionality with **[evil-snipe]** (2-char
-    motions)
-  * [Multiple cursors][sc-multiedit] with **[evil-multiedit]**
+* Strong support for a [large selection of languages](modules/lang),
+  including REPLs and inline/live code evaluation.
+* A [consistent popup management system](core/core-popups.el) using
+  **[shackle]** for temporary or disposable buffers. e.g. help buffers
+  will always pop up at the bottom of the frame, and are removed with
+  ESC.
+* Workspaces, tab emulation and session persistence with
+  **[workgroups2]**.
+* Project and workspace-sensitive buffer navigation and functions.
+* A vim-centric environment with **[evil-mode]**
+  * 2-character motions (ala vim-seek/vim-sneak) with **[evil-snipe]**
+  * Sublime Text-esque [multiple cursors][sc-multiedit] with
+    **[evil-multiedit]**
   * Repeat (most) motions with <kbd>SPC</kbd> and
     <kbd>shift</kbd>+<kbd>SPC</kbd> (backwards)
-  * On-the-fly keybindings with `:[nviom]map`
-  * Global <kbd>C-x</kbd> omnicompletion (e.g.
-    <kbd>C-x</kbd>+<kbd>C-f</kbd> for files)
+  * Global <kbd>C-x</kbd> omnicompletion
 * Fast search utilities:
   * Project and buffer navigation with **[ivy]**
   * File browser sidebar with **[neotree]**
-  * Project search (and replace) with **[counsel-ag]** (and
-    **[wgrep]**)
-  * Buffer search with **[swiper]**
-* REPLs for many languages including Ruby, Python, PHP, JS, Elisp,
-  Haskell and Lua.
+  * Project search (& replace) with **[counsel-ag]** (and **[wgrep]**)
+  * Interactive buffer search with **[swiper]**
+* REPLs & inline/live code evaluation (using **[quickrun]**) for many
+  languages including Ruby, Python, PHP, JS, Elisp, Haskell and Lua.
 * [Minimalistic diffs in the fringe][sc-diffs] with **[git-gutter-fringe]**.
-* Modded **org-mode** to be a modern note-taking/LaTeX/word-processing
-  platform. (WIP)
-* Code debugging interface with **[realgud]** (currently supports gdb,
-  trepanjs, bashdb and zshdb, working on Python/Ruby support)
-* A do-what-I-mean jump-to-definition implementation that either uses
-  major-mode commands or falls back to **[dumb-jump]**/ctags.
-* A [pretty mode-line](core/core-modeline.el) inspired by Atom's. It
-  includes:
+* A do-what-I-mean jump-to-definition implementation that tries its
+  darnest to find the definition of what you're looking at. It tries
+  major-mode commands, **[dumb-jump]**, ctags, then **[counsel-ag]**.
+* Snippets and file-templates with **[yasnippet]**.
+* Hybrid completion with both **[company-mode]** and
+  **[auto-complete]**. They collaborate to give you the completion
+  system most appropriate for the current major mode.
+* A modern interface inspired by Atom's, with a smarter, perdier
+  mode-line that includes:
   * evil-search/iedit/evil-substitute mode-line integration
   * Macro-recording indicator
   * Python/ruby version in mode-line (for rbenv/pyenv)
 
+## Contributing or troubleshooting
 
-### Other features
+My config wasn't designed with anyone else's use in mind, but I'm all
+for improving it in any way possible. [Don't hesitate to report bugs
+or tell me my Elisp-fu sucks](https://github.com/hlissner/.emacs.d/issues/new)!
 
-* Line numbers + highlight with **[nlinum]**
-* On-demand [platform agnostic] shell with **eshell**
-* Consistent marker-based code-folding with **hideshow**
-* Inline code execution anywhere (once or live) with **[quickrun]**
-* Snippet expansion and file templates with **[yasnippet]**
-* Completion with **[company-mode]**
-* Syntax checking with **[flycheck]**
-* Custom O/S interaction commands, like **os-reveal** and
-  **os-open-in-browser**
-* Custom TODO, FIXME and NOTE highlighting and search (`:todo`)
-* **big-mode** for presentations and demonstrations (`:big`)
-* Tmux integration with `:t` and `:tcd` ex commands
-
-
-## Troubleshooting
-
-Though this wasn't designed with anyone else's use in mind, I'd be
-happy to help anyone out with problems encountered using (or cribbing
-from) my config. [Don't hesitate to report bugs](https://github.com/hlissner/.emacs.d/issues/new)!
-
-A few things to keep in mind:
-
-1. **Cask can be flakey, especially with new builds.** If you're
-   getting odd errors when starting up Emacs, try to run `make
-   install` again. I've also had cryptic cask errors that I had to
-   reboot to resolve. YMMV.
-2. If you add new functions to any of the autoloaded
-   `(core|modules)/defuns/*.el` library files, run `make autoloads`
-   afterwards. `:reload` will reload Emacs' load-path if you have
-   Emacs open while doing so.
+If you'd like to help, I'd be happy to accept any sort of
+contributions, whether that be modules, extra documentation, bug fixes
+or even elisp tips. I don't mind any opportunity to learn more about
+Emacs.
 
 
 [yay-evil]: http://ultravioletbat.deviantart.com/art/Yay-Evil-111710573
