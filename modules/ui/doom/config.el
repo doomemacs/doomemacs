@@ -44,6 +44,12 @@
   :config
   (load-theme +doom-theme t)
 
+  (defface +doom-folded-face
+    `((t (:inherit font-lock-comment-face
+          :background ,(face-background 'default))))
+    "Face to hightlight `hideshow' overlays."
+    :group 'doom)
+
   (nconc default-frame-alist
          `((background-color . ,(face-background 'default))
            (foreground-color . ,(face-foreground 'default))))
@@ -95,16 +101,11 @@
 
 (@after hideshow
   ;; Nicer code-folding overlays
-  (defface doom-folded-face
-    '((t (:foreground "#555" :background "#888")))
-    "Face to hightlight `hideshow' overlays."
-    :group 'hideshow)
-
   (setq hs-set-up-overlay
         (lambda (ov)
           (when (eq 'code (overlay-get ov 'hs))
             (overlay-put
-             ov 'display (propertize "  [...]  " 'face 'doom-folded-face))))))
+             ov 'display (propertize "  [...]  " 'face '+doom-folded-face))))))
 
 
 ;; subtle diff indicators in the fringe

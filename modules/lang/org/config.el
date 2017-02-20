@@ -94,7 +94,7 @@
    org-blank-before-new-entry '((heading . nil) (plain-list-item . auto))
    org-cycle-separator-lines 1
    org-cycle-include-plain-lists t
-   org-ellipsis 'doom-folded-face
+   org-ellipsis '+doom-folded-face
    org-entities-user '(("flat" "\\flat" nil "" "" "266D" "♭")
                        ("sharp" "\\sharp" nil "" "" "266F" "♯"))
    org-fontify-done-headline t
