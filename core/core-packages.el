@@ -437,13 +437,7 @@ This may take a while."
         (n 0)
         results)
     (dolist (path (doom--module-paths))
-      (nconc targets
-             (cl-remove-if (lambda (file)
-                             (let ((fname (file-name-nondirectory file)))
-                               (or (string= fname ".")
-                                   (string= fname ".."))))
-                           (reverse
-                            (directory-files-recursively path "\\.el$")))))
+      (nconc targets (reverse (directory-files-recursively path "\\.el$"))))
     (dolist (file targets)
       (push (cons (file-relative-name file doom-emacs-dir)
                   (and (byte-recompile-file file nil 0)
