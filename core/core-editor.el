@@ -44,14 +44,15 @@
 (require 'savehist)
 (setq savehist-file (concat doom-cache-dir "savehist")
       savehist-save-minibuffer-history t
+      savehist-autosave-interval nil ; save on kill only
       savehist-additional-variables '(kill-ring search-ring regexp-search-ring))
 (savehist-mode 1)
 
 ;; Remove text-property cruft from history
 (defun doom|unpropertize-savehist ()
-  (mapc (lambda (list)
-          (when (boundp list)
-            (set list (mapcar 'substring-no-properties (eval list)))))
+  (mapc (lambda (sym)
+          (when (boundp sym)
+            (setf (symbol-value sym) (mapcar 'substring-no-properties (symbol-value sym)))))
         '(kill-ring minibuffer-history helm-grep-history helm-ff-history
           file-name-history read-expression-history extended-command-history
           evil-ex-history)))
