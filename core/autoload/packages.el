@@ -66,12 +66,11 @@ Be careful not to use it in a loop."
   (doom-initialize-packages t)
   (unless (quelpa-setup-p)
     (error "Could not initialize quelpa"))
-  (delete
-   nil
-   (mapcar (lambda (pkgsym)
-             (or (assq pkgsym doom-packages)
-                 (list (car (assq pkgsym package-alist)))))
-           (append doom-protected-packages (mapcar 'car doom-packages)))))
+  (delq nil
+        (mapcar (lambda (pkgsym)
+                  (or (assq pkgsym doom-packages)
+                      (list (car (assq pkgsym package-alist)))))
+                (append doom-protected-packages (mapcar 'car doom-packages)))))
 
 ;;;###autoload
 (defun doom-get-dependencies-for (name)
