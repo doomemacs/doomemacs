@@ -191,16 +191,8 @@ prevent popups from messaging up the UI (or vice versa)."
     (define-key map [remap evil-force-normal-state]      'doom/popup-close-maybe))
 
   ;; Make evil-mode cooperate with popups
-  (advice-add 'evil-force-normal-state :before 'doom*popup-evil-close-on-esc)
   (advice-add 'evil-command-window :override 'doom*popup-evil-command-window)
   (advice-add 'evil-command-window-execute :override 'doom*popup-evil-command-window-execute)
-
-  (defun doom*popup-evil-close-on-esc ()
-    "Close non-repl popups and clean up `doom-popup-windows' when you press ESC
-from normal mode in any buffer."
-    (unless (or (minibuffer-window-active-p (minibuffer-window))
-                (evil-ex-hl-active-p 'evil-ex-search))
-      (doom/popup-close-all)))
 
   (defun doom*popup-evil-command-window (hist cmd-key execute-fn)
     "The evil command window has a mind of its own (uses `switch-to-buffer'). We
