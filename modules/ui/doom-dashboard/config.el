@@ -150,7 +150,7 @@
         (all-the-icons-default-adjust -0.05)
         (start (point))
         (sep "   ")
-        (last-session-p (and (featurep 'persp-file)
+        (last-session-p (and (and (featurep 'persp-mode) persp-mode)
                              (file-exists-p (expand-file-name persp-auto-save-fname persp-save-dir)))))
     (unless last-session-p
       (setq sep "     "))
