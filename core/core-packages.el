@@ -142,14 +142,11 @@ to speed up startup."
 
     (setq doom-init-p t)))
 
-(defun doom-initialize-autoloads (&optional force-p)
+(defun doom-initialize-autoloads (&optional inhibit-reload-p)
   "Ensures that `doom-autoload-file' exists and is loaded. Otherwise run
 `doom/reload-autoloads' to generate it."
-  (unless (ignore-errors (require 'autoloads doom-autoload-file t))
-    (unless noninteractive
-      (doom/reload-autoloads)
-      (unless (file-exists-p doom-autoload-file)
-        (error "Autoloads file couldn't be generated")))))
+  (unless (file-exists-p doom-autoload-file)
+    (@quiet (doom/reload-autoloads))))
 
 (defun doom-initialize-packages (&optional force-p load-p)
   "Crawls across your emacs.d in order to fill `doom-modules' (from init.el) and
@@ -387,7 +384,7 @@ In modules, checks modules/*/autoload.el and modules/*/autoload/*.el.
 Rerun this whenever init.el is modified. You can also use `make autoloads` from
 the commandline."
   (interactive)
-  (doom-initialize-packages noninteractive)
+  (doom-initialize-packages (not noninteractive))
   (let ((generated-autoload-file doom-autoload-file)
         (autoload-files
          (file-expand-wildcards
@@ -413,18 +410,21 @@ the commandline."
         (update-file-autoloads file))
       (message "Scanned %s" (file-relative-name file doom-emacs-dir)))
     (condition-case ex
-        (with-current-buffer (get-file-buffer generated-autoload-file)
-          (save-buffer)
-          (eval-buffer)
-          (message "Done!"))
-      ('error (error "Couldn't evaluate autoloads.el: %s" (cadr ex))))))
+        (let ((buf (get-file-buffer generated-autoload-file)))
+          (unwind-protect
+              (with-current-buffer buf
+                (save-buffer)
+                (eval-buffer)
+                (message "Finished generating autoloads.el!"))
+            (kill-buffer buf)))
+      ('error
+       (delete-file generated-autoload-file)
+       (error "Couldn't evaluate autoloads.el: %s" (cadr ex))))))
 
-(defun doom/recompile (&optional simple-p)
-  "Byte (re)compile the important files in your emacs configuration (init.el &
-core/*.el). DOOM Emacs was designed to benefit from this.
-
-If SIMPLE-P is nil, also byte-compile modules/*/*/*.el (except for packages.el).
-There should be a measurable benefit from this, but it may take a while."
+(defun doom/recompile ()
+  "Byte (re)compile the important files in your emacs configuration (init.el,
+core/*.el & modules/*/*/**.el). DOOM Emacs was designed to benefit from this.
+This may take a while."
   (interactive)
   ;; Ensure all relevant config files are loaded. This way we don't need
   ;; eval-when-compile and require blocks scattered all over.
