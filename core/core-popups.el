@@ -245,6 +245,49 @@ the command buffer."
   (advice-add 'windmove-find-other-window :override 'doom*ignore-window-parameters-in-popups))
 
 
+(@after help-mode
+  ;; Help buffers use `other-window' to decide where to open followed links,
+  ;; which can be unpredictable. It should *only* replace the original buffer we
+  ;; opened the popup from. To fix this these three button
+  ;; types need to be redefined to set aside the popup before following a link.
+  (define-button-type 'help-function-def
+    :supertype 'help-xref
+    'help-function (lambda (fun file)
+                     (require 'find-func)
+                     (when (eq file 'C-source)
+                       (setq file (help-C-file-name (indirect-function fun) 'fun)))
+                     (let ((location (find-function-search-for-symbol fun nil file)))
+                       (doom/popup-close)
+                       (switch-to-buffer (car location) nil t)
+                       (if (cdr location)
+                           (goto-char (cdr location))
+                         (message "Unable to find location in file")))))
+
+  (define-button-type 'help-variable-def
+    :supertype 'help-xref
+    'help-function (lambda (var &optional file)
+                     (when (eq file 'C-source)
+                       (setq file (help-C-file-name var 'var)))
+                     (let ((location (find-variable-noselect var file)))
+                       (doom/popup-close)
+                       (switch-to-buffer (car location) nil t)
+                       (if (cdr location)
+                           (goto-char (cdr location))
+                         (message "Unable to find location in file")))))
+
+  (define-button-type 'help-face-def
+    :supertype 'help-xref
+    'help-function (lambda (fun file)
+                     (require 'find-func)
+                     (let ((location
+                            (find-function-search-for-symbol fun 'defface file)))
+                       (doom/popup-close)
+                       (switch-to-buffer (car location) nil t)
+                       (if (cdr location)
+                           (goto-char (cdr location))
+                         (message "Unable to find location in file"))))))
+
+
 ;; (@after magit
 ;;   ;; Don't open files (from magit) within the magit popup
 ;;   (advice-add 'magit-display-file-buffer-traditional :around 'doom*popups-save))
