@@ -42,4 +42,15 @@ private/hlissner/snippets."
   (let ((default-directory (expand-file-name ".dotfiles" "~")))
     (call-interactively (command-remapping 'find-file))))
 
+;;;###autoload
+(defun +hlissner/find-in-notes ()
+  (interactive)
+  (projectile-find-file-in-directory +org-dir))
+
+;;;###autoload
+(defun +hlissner/browse-notes ()
+  (interactive)
+  (let ((default-directory +org-dir))
+    (call-interactively (command-remapping 'find-file))))
+
 
