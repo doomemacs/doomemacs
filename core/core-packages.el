@@ -124,14 +124,15 @@ to speed up startup."
     (setq load-path (append load-path (directory-files package-user-dir t "^[a-zA-Z0-9]" t)))
 
     ;; Ensure core packages are installed
-    (when-let (core-packages (cl-remove-if 'package-installed-p doom-protected-packages))
-      (package-refresh-contents)
-      (dolist (pkg core-packages)
-        (let ((inhibit-message t))
-          (package-install pkg))
-        (if (package-installed-p pkg)
-            (message "Installed %s" pkg)
-          (error "Couldn't install %s" pkg))))
+    (let ((core-packages (cl-remove-if 'package-installed-p doom-protected-packages)))
+      (when core-packages
+        (package-refresh-contents)
+        (dolist (pkg core-packages)
+          (let ((inhibit-message t))
+            (package-install pkg))
+          (if (package-installed-p pkg)
+              (message "Installed %s" pkg)
+            (error "Couldn't install %s" pkg)))))
 
     (require 'quelpa)
     (require 'use-package)
