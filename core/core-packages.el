@@ -1,5 +1,4 @@
 ;;; core-packages.el
-(defvar doom-start-time (current-time))
 
 ;; Emacs package management is opinionated. Unfortunately, so am I. So with the
 ;; help of `use-package', `quelpa' and package.el, DOOM Emacs manages my
@@ -58,6 +57,9 @@ package's name as a symbol, and whose CDR is the plist supplied to its
   '(persistent-soft quelpa use-package)
   "A list of packages that must be installed (and will be auto-installed if
 missing) and shouldn't be deleted.")
+
+(defvar doom-init-time nil
+  "The time it took, in seconds, for DOOM Emacs to initialize.")
 
 (defvar doom--base-load-path
   (append (list doom-core-dir doom-modules-dir)
@@ -247,7 +249,7 @@ Used by `@require' and `@depends-on'."
 (defun doom--display-benchmark ()
   (message "Loaded %s packages in %.03fs"
            (- (length load-path) (length doom--base-load-path))
-           (float-time (time-subtract nil doom-start-time))))
+           (setq doom-init-time (float-time (time-subtract after-init-time before-init-time)))))
 
 
 ;;
