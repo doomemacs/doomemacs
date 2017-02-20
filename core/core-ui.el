@@ -109,7 +109,9 @@ disabled.")
   (defun doom*autoload-hideshow ()
     (unless (bound-and-true-p hs-minor-mode)
       (hs-minor-mode 1)))
-  (advice-add 'evil-toggle-fold :before 'doom*autoload-hideshow))
+  (advice-add 'evil-toggle-fold :before 'doom*autoload-hideshow)
+  :config
+  (setq hs-hide-comments-when-hiding-all nil))
 
 ;; Show uninterrupted indentation markers with some whitespace voodoo.
 (@def-package highlight-indent-guides
