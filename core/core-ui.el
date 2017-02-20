@@ -68,6 +68,11 @@ disabled.")
 (put 'doom--old-modeline-format 'permanent-local t)
 (put 'doom-hide-modeline-mode 'permanent-local t)
 
+;; window config undo/redo
+(defvar winner-dont-bind-my-keys t)
+(require 'winner)
+(winner-mode 1)
+
 
 ;;
 ;; Bootstrap
