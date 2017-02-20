@@ -5,8 +5,8 @@
   "Install my snippets from https://github.com/hlissner/emacs-snippets into
 private/hlissner/snippets."
   (interactive)
-  (bs-fetch :github "hlissner/emacs-snippets"
-            (expand-file-name "snippets" (doom-module-path :private 'hlissner))))
+  (doom-fetch :github "hlissner/emacs-snippets"
+              (expand-file-name "snippets" (doom-module-path :private 'hlissner))))
 
 ;;;###autoload
 (defun +hlissner/find-in-templates ()
