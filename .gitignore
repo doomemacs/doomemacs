@@ -1,8 +1,5 @@
 .local/
-eshell/
 var/
-private/
-scripts/*/
 init.el
 
 # emacs tempfiles that shouldn't be there
@@ -13,7 +10,6 @@ semanticdb
 ede-projects.el
 tramp
 smex-items
-debug.el
 
 # compiled files
 *.elc
