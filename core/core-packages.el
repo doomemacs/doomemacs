@@ -347,13 +347,14 @@ them."
                          (and old-plist (plist-get old-plist :recipe))))
          (pkg-pin    (or (plist-get plist :pin)
                          (and old-plist (plist-get old-plist :pin)))))
-    (when (= 0 (mod (length pkg-recipe) 2))
-      (plist-put plist :recipe (cons name pkg-recipe)))
-    (when (and pkg-recipe pkg-pin)
-      (plist-put plist :pin nil))
+    (when pkg-recipe
+      (when (= 0 (mod (length pkg-recipe) 2))
+        (plist-put plist :recipe (cons name pkg-recipe)))
+      (when pkg-pin
+        (plist-put plist :pin nil)))
     `(progn
        (when ,(and pkg-pin t)
-         (add-to-list 'package-pinned-packages ,(cons name pkg-pin)))
+         (cl-pushnew (cons ',name ,pkg-pin) package-pinned-packages :key 'car))
        (when ,(and old-plist t)
          (assq-delete-all ',name doom-packages))
        (push ',(cons name plist) doom-packages))))
