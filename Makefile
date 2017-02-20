@@ -33,6 +33,11 @@ clean-cache:
 test:
 	@$(EMACS) -l test/init.el -f 'doom-run-tests'
 
+# This is only useful if your emacs.d is somewhere other than ~/.emacs.d (for
+# development purposes for instance).
+run:
+	@emacs --eval "(setq user-emacs-directory default-directory)" -q -l init.el
+
 init.el:
 	@[ -f init.el ] || $(error No init.el file; create one or copy init.example.el)
 
