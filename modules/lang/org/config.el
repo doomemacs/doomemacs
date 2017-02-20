@@ -57,13 +57,13 @@
         (outline-previous-visible-heading 1)
         (org-show-subtree))))
 
-  (defun +org|update ()
+  (defun +org|update-cookies ()
     "Update counts on headlines (\"cookies\")."
     (when (file-exists-p buffer-file-name)
       (org-update-statistics-cookies t)))
 
-  (add-hook 'before-save-hook '+org|update nil t)
-  (add-hook 'evil-insert-state-exit-hook '+org|update nil t))
+  (add-hook 'before-save-hook '+org|update-cookies nil t)
+  (add-hook 'evil-insert-state-exit-hook '+org|update-cookies nil t))
 
 
 (defun +org|init ()
