@@ -428,7 +428,7 @@ There should be a measurable benefit from this, but it may take a while."
   (interactive)
   ;; Ensure all relevant config files are loaded. This way we don't need
   ;; eval-when-compile and require blocks scattered all over.
-  (doom-initialize-packages t noninteractive)
+  (doom-initialize-packages (not noninteractive) noninteractive)
   (let ((targets
          (append (list (expand-file-name "init.el" doom-emacs-dir)
                        (expand-file-name "core.el" doom-core-dir))
@@ -436,15 +436,14 @@ There should be a measurable benefit from this, but it may take a while."
                  (file-expand-wildcards (expand-file-name "autoload/*.el" doom-core-dir))))
         (n 0)
         results)
-    (unless simple-p
-      (dolist (path (doom--module-paths))
-        (nconc targets
-               (cl-remove-if (lambda (file)
-                               (let ((fname (file-name-nondirectory file)))
-                                 (or (string= fname ".")
-                                     (string= fname ".."))))
-                             (reverse
-                              (directory-files-recursively path "\\.el$"))))))
+    (dolist (path (doom--module-paths))
+      (nconc targets
+             (cl-remove-if (lambda (file)
+                             (let ((fname (file-name-nondirectory file)))
+                               (or (string= fname ".")
+                                   (string= fname ".."))))
+                           (reverse
+                            (directory-files-recursively path "\\.el$")))))
     (dolist (file targets)
       (push (cons (file-relative-name file doom-emacs-dir)
                   (and (byte-recompile-file file nil 0)

@@ -20,9 +20,6 @@ autoloads: init.el
 compile: init.el clean
 	@$(EMACS) -l core/core.el -f 'doom/recompile'
 
-compile-lite: init.el clean
-	@$(EMACS) -l core/core.el --eval '(doom/recompile t)'
-
 clean:
 	@rm -fv init.elc
 	@find {core,modules} -type f -iname '*.elc' -exec rm \-fv {} \;
