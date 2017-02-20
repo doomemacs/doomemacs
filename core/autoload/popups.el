@@ -94,6 +94,11 @@ possible rules."
                               'keyboard-escape-quit))
       (delete-window window))))
 
+;;;###autoload
+(defun doom/popup ()
+  "Display currently selected buffer in a popup window."
+  (doom-popup-buffer (current-buffer) :align t))
+
 (defun doom--popup-data (window)
   (let ((buffer (window-buffer window)))
     `(,(buffer-name buffer)
