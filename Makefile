@@ -30,9 +30,6 @@ clean:
 clean-cache:
 	@$(EMACS) -l core/core.el --eval '(delete-directory doom-cache-dir t)'
 
-test:
-	@$(EMACS) -l test/init.el -f 'doom-run-tests'
-
 # This is only useful if your emacs.d is somewhere other than ~/.emacs.d (for
 # development purposes for instance).
 run:
