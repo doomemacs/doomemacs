@@ -23,8 +23,8 @@
 trigger electric indentation."
   (declare (indent 1))
   (let ((modes (if (listp modes) modes (list modes)))
-        (chars (doom-mplist-get rest :chars))
-        (words (doom-mplist-get rest :words)))
+        (chars (doom-mplist-get plist :chars))
+        (words (doom-mplist-get plist :words)))
     (when (or chars words)
       (let ((fn-name (intern (format "doom--electric-%s" (s-join "-" (mapcar 'symbol-name modes))))))
         `(progn
