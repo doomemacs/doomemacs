@@ -171,8 +171,6 @@
 (@def-package smart-forward
   :commands (smart-up smart-down smart-backward smart-forward))
 
-(@def-package swiper :commands (swiper swiper-all))
-
 (@def-package wgrep
   :commands (wgrep-setup wgrep-change-to-wgrep-mode)
   :config

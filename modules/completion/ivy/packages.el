@@ -5,3 +5,4 @@
 (@package counsel)
 (@package counsel-projectile)
 (@package smex)
+(@package swiper)

@@ -34,7 +34,6 @@
 (@package imenu-list)
 (@package pcre2el)
 (@package smart-forward)
-(@package swiper)
 (@package wgrep)
 
 ;; core-projects.el

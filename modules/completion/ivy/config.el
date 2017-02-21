@@ -68,6 +68,9 @@
         [remap execute-extended-command] 'counsel-M-x))
 
 
+(@def-package swiper :commands (swiper swiper-all))
+
+
 (@def-package counsel
   :after ivy
   :config
