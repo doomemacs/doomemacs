@@ -26,28 +26,6 @@
                  (save-place-forget-unreadable-files))
                (message "Successfully deleted %s" (file-relative-name fname))))))))
 
-(defun doom--save-exit() (save-buffer) (kill-buffer) (remove-hook 'yas-after-exit-snippet-hook '--save-exit))
-;;;###autoload (autoload '+evil:file-create "feature/evil/autoload/files" nil t)
-(evil-define-command +evil:file-create (path &optional bang)
-  "Deploy files (and their associated templates) quickly. Will prompt
-you to fill in each snippet field before buffer closes unless BANG is
-provided."
-  :repeat nil
-  ;; TODO Test me
-  (interactive "<f><!>")
-  (let* ((fullpath (expand-file-name path))
-         (dir (file-name-directory fullpath))
-         (is-auto t))
-    (when (and bang (not (file-exists-p dir)))
-      (mkdir dir))
-    (if (file-exists-p dir)
-        (if (file-exists-p fullpath)
-            (error "File already exists: %s" path)
-          (find-file fullpath)
-          (add-hook 'yas-after-exit-snippet-hook 'doom--save-exit)
-          (if bang (doom--save-exit)))
-      (error "Directory doesn't exist: %s" dir))))
-
 ;;;###autoload (autoload '+evil:file-move "feature/evil/autoload/files" nil t)
 (evil-define-command +evil:file-move (bang dest-path)
   "Move current buffer's file to PATH. Replaces %, # and other variables (see
@@ -65,8 +43,11 @@ provided."
          (project-root (doom-project-root))
          (short-old-path (file-relative-name old-path project-root))
          (short-new-path (file-relative-name new-path project-root)))
-    (when (y-or-n-p (format "Renaming %s to %s, proceed?"
-                            short-old-path short-dest-path))
+    (when (or bang
+              (y-or-n-p (format (if (file-exists-p new-path)
+                                    "File already exists at %s, overwrite?"
+                                  "Renaming %s to %s, proceed?")
+                                short-old-path short-new-path)))
       (when (buffer-modified-p)
         (save-buffer))
       (rename-file old-path new-path 1)
