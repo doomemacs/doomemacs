@@ -139,7 +139,7 @@ See `doom-real-buffer-p' for what 'real' means."
       (setq destbuf (doom-fallback-buffer))
       (message "Nowhere to go"))
     (prog1
-        (set-buffer destbuf)
+        (switch-to-buffer destbuf)
       (when (eq destbuf (doom-fallback-buffer))
         (cd project-dir)))))
 
@@ -199,8 +199,7 @@ See `doom-real-buffer-p' for what 'real' means."
       (when buffer-win
         (unrecord-window-buffer buffer-win buffer))
       (when only-buffer-window-p
-        (unless (eq buffer (doom-fallback-buffer))
-          (kill-buffer buffer))))
+        (kill-buffer buffer)))
     (eq (current-buffer) buffer)))
 
 ;;;###autoload

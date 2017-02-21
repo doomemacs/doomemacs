@@ -41,7 +41,12 @@
       doom-fallback-buffer +doom-dashboard-name)
 
 (add-hook 'emacs-startup-hook '+doom-dashboard/open)
-(@add-hook 'kill-buffer-query-functions (not (+doom-dashboard-p)))
+(@add-hook 'kill-buffer-query-functions
+   (if (not (+doom-dashboard-p))
+       t
+     (ignore-errors (+doom-dashboard-force-reload))
+     (bury-buffer)
+     nil))
 (@add-hook 'window-setup-hook
   (add-hook 'window-configuration-change-hook '+doom-dashboard-reload)
   (+doom-dashboard-reload))
@@ -64,7 +69,7 @@
     (and (buffer-live-p buffer)
          (eq buffer (doom-fallback-buffer)))))
 
-(defun doom-dashboard-force-reload ()
+(defun +doom-dashboard-force-reload ()
   (setq +doom-dashboard-edited-p nil)
   (+doom-dashboard-reload))
 

@@ -81,6 +81,14 @@
 (global-auto-revert-mode 1)
 (setq auto-revert-verbose nil)
 
+;; don't kill scratch buffers
+(defun doom|dont-kill-scratch-buffer ()
+  (if (not (eq (buffer-name) "*scratch*"))
+      t
+    (bury-buffer)
+    nil))
+(add-hook 'kill-buffer-query-functions 'doom|dont-kill-scratch-buffer)
+
 
 ;;
 ;; Core Plugins
