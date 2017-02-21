@@ -1,7 +1,6 @@
 ;;; core-editor.el --- filling the editor shaped hole in the Emacs OS
 
 (setq-default
- shift-select-mode t ; activate mark on shift-click
  ;; Save clipboard contents into kill-ring before replacing them
  save-interprogram-paste-before-kill t
  ;; Bookmarks
@@ -38,8 +37,7 @@
 ;; Save point across sessions
 (require 'saveplace)
 (setq save-place-file (concat doom-cache-dir "saveplace"))
-(when (>= emacs-major-version 25)
-  (save-place-mode +1))
+(save-place-mode +1)
 
 ;; Save history across sessions
 (require 'savehist)

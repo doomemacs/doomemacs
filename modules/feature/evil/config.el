@@ -35,7 +35,10 @@
         evil-ex-search-vim-style-regexp t
         evil-ex-substitute-global t
         evil-ex-visual-char-range t  ; column range for ex commands
-        evil-insert-skip-empty-lines t)
+        evil-insert-skip-empty-lines t
+
+        ;; don't activate mark on shift-click
+        shift-select-mode nil)
 
   :config
   (evil-mode +1)
@@ -58,8 +61,6 @@
   (add-hook 'evil-operator-state-entry-hook 'show-paren-mode)
   (add-hook 'evil-operator-state-exit-hook  '+evil|show-paren-mode-off)
   (add-hook 'evil-normal-state-entry-hook   '+evil|show-paren-mode-off)
-  ;; Disable highlights on insert-mode
-  ;; (add-hook 'evil-insert-state-entry-hook 'evil-ex-nohighlight)
 
   (@set :popup
     '("*evil-registers*" :size 0.3)

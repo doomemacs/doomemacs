@@ -106,6 +106,8 @@ are installed. If you byte-compile core/core.el, this function will be avoided
 to speed up startup."
   ;; Called early during initialization; only use native functions!
   (unless (or doom-init-p force-p)
+    (message "Doom initialized")
+
     (setq load-path doom--base-load-path
           package-activated-list nil)
 
@@ -123,7 +125,7 @@ to speed up startup."
     ;; Also, in some edge cases involving package initialization during a
     ;; non-interactive session, `package-initialize' fails to fill `load-path'.
     ;; If we want something done right, do it ourselves!
-    (setq load-path (append load-path (directory-files package-user-dir t "^[a-zA-Z0-9]" t)))
+    (setq load-path (append load-path (directory-files package-user-dir t "^\\w" t)))
 
     ;; Ensure core packages are installed
     (let ((core-packages (cl-remove-if 'package-installed-p doom-protected-packages)))
@@ -170,7 +172,6 @@ files."
               (append (reverse (file-expand-wildcards (concat doom-core-dir "core*.el")))
                       (file-expand-wildcards (concat doom-core-dir "autoload/*.el"))
                       (doom--module-paths "config.el")))))
-
     (when (or force-p (not doom-packages))
       (setq doom-packages nil)
       (funcall load-fn (expand-file-name "packages.el" doom-core-dir))

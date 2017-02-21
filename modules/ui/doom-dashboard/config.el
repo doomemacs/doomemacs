@@ -39,9 +39,7 @@
 
 
 ;;
-(setq initial-major-mode '+doom-dashboard-mode
-      initial-scratch-message "\n  Loading..."
-      doom-fallback-buffer +doom-dashboard-name)
+(setq doom-fallback-buffer +doom-dashboard-name)
 
 (add-hook 'emacs-startup-hook '+doom-dashboard/open)
 (@add-hook 'kill-buffer-query-functions
@@ -62,7 +60,7 @@
 
 ;;
 (defun +doom-dashboard/open ()
-  ""
+  "Open the dashboard buffer."
   (interactive)
   (+doom-dashboard-reload)
   (switch-to-buffer (doom-fallback-buffer)))

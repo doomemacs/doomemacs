@@ -1,5 +1,7 @@
 ;;; ui/doom-modeline/config.el
 
+(line-number-mode -1)
+
 ;; all-the-icons doesn't work in the terminal, so we "disable" it.
 (unless (display-graphic-p)
   (defalias 'all-the-icons-octicon 'ignore)
