@@ -1,5 +1,8 @@
 ;;; module-rust.el
 
+(defvar +rust-cache-dir (concat doom-cache-dir "+rust/")
+  "TODO")
+
 (@def-package rust-mode
   :mode "\\.rs$"
   :init
@@ -9,14 +12,15 @@
          '+rust-is-cargo-project-p '+rust/cargo-run))
 
 
-(defvar racer-cmd (concat doom-cache-dir "racer"))
-(defvar racer-rust-src-path (concat doom-cache-dir "rust/src/"))
 (@def-package racer
   :after rust-mode
-  :when (file-exists-p racer-cmd)
+  :preface
   :init
   (@add-hook rust-mode '(racer-mode eldoc-mode flycheck-rust-setup))
   :config
+  (setq racer-cmd (expand-file-name "racer/target/release/racer" +rust-cache-dir)
+        racer-rust-src-path (expand-file-name "rust/src/" +rust-cache-dir))
+
   ;; TODO Unit test keybinds
   (@set :company-backend 'rust-mode '(company-racer))
   (@map :map rust-mode-map :m "gd" 'racer-find-definition))
