@@ -8,17 +8,6 @@
      (setq ivy-exit 'done)
      (exit-minibuffer)))
 
-(@map [remap find-file] 'counsel-find-file
-      [remap switch-to-buffer] 'ivy-switch-buffer
-      [remap projectile-switch-to-buffer] '+ivy/switch-project-buffer
-      [remap recentf] 'counsel-recentf
-      [remap imenu] 'counsel-imenu
-      [remap bookmark-jump] 'counsel-bookmark
-      [remap projectile-switch-project] 'counsel-projectile-switch-project
-      [remap projectile-find-file] 'counsel-projectile-find-file
-      [remap imenu-anywhere]  'ivy-imenu-anywhere
-      [remap execute-extended-command] 'counsel-M-x)
-
 
 ;;
 ;; Packages
@@ -36,11 +25,7 @@
   (setq projectile-completion-system 'ivy
         smex-completion-method 'ivy)
 
-  (@map :map ivy-mode-map
-        [remap ivy-switch-buffer] '+ivy/switch-buffer
-        [remap projectile-switch-to-buffer] '+ivy/switch-project-buffer
-
-        :map ivy-minibuffer-map
+  (@map :map ivy-minibuffer-map
         [escape] 'keyboard-escape-quit
         "C-r" 'evil-paste-from-register
         "M-v" 'clipboard-yank
@@ -59,7 +44,19 @@
   (@after magit      (setq magit-completing-read-function 'ivy-completing-read))
   (@after yasnippet  (push '+ivy-yas-prompt yas-prompt-functions))
 
-  (ivy-mode +1))
+  (ivy-mode +1)
+
+  (@map :map ivy-mode-map
+        [remap find-file] 'counsel-find-file
+        [remap switch-to-buffer] '+ivy/switch-buffer
+        [remap persp-switch-to-buffer] '+ivy/switch-workspace-buffer
+        [remap recentf] 'counsel-recentf
+        [remap imenu] 'counsel-imenu
+        [remap bookmark-jump] 'counsel-bookmark
+        [remap projectile-switch-project] 'counsel-projectile-switch-project
+        [remap projectile-find-file] 'counsel-projectile-find-file
+        [remap imenu-anywhere]  'ivy-imenu-anywhere
+        [remap execute-extended-command] 'counsel-M-x))
 
 
 (@def-package counsel

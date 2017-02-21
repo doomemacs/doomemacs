@@ -70,7 +70,7 @@
  ;;; <leader> and <localleader>
  :m ";" 'evil-ex
  (:leader
-   :desc "Switch project buffer"    :n ","  'projectile-switch-to-buffer
+   :desc "Switch project buffer"    :n ","  'persp-switch-to-buffer
    :desc "Switch buffer"            :n "<"  'switch-to-buffer
    :desc "Browse files"             :n "."  'find-file
    :desc "Find file from here"      :n ">"  'counsel-file-jump
