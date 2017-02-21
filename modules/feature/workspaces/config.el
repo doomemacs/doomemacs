@@ -42,10 +42,13 @@
   (advice-add 'display-buffer   :after '+workspaces*auto-add-buffer)
 
   ;; TODO Integration with projectile?
-  ;; ;; Create a new workspace on project switch
-  ;; (defun doom|new-workspace-on-project-change ()
-  ;;   (+workspace-new (f-filename (doom-project-root))))
-  ;; (add-hook 'projectile-before-switch-project-hook 'doom|new-workspace-on-project-change)
+  ;; Create a new workspace on project switch
+  (defun doom|new-workspace-on-project-change ()
+    (let ((project-name (projectile-project-name)))
+      (if (+workspace-exists-p project-name)
+          (+workspace/switch-to project-name)
+        (+workspace/new project-name))))
+  (add-hook 'projectile-before-switch-project-hook 'doom|new-workspace-on-project-change)
 
   ;; TODO Test per-frame perspectives
 
