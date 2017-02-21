@@ -34,16 +34,14 @@
         company-require-match 'never
         company-global-modes '(not eshell-mode comint-mode erc-mode message-mode help-mode)
         company-frontends '(company-pseudo-tooltip-frontend company-echo-metadata-frontend)
-        company-backends '(company-capf)
-        company-quickhelp-delay nil
-        company-statistics-file (concat doom-cache-dir "/company-stats-cache.el"))
+        company-backends '(company-capf))
 
   (@set :company-backend 'python-mode '(company-anaconda))
 
   (push 'company-sort-by-occurrence company-transformers)
 
   (@after yasnippet
-    (setq-default company-backends (append company-backends '(company-yasnippet))))
+    (nconc company-backends '(company-yasnippet)))
 
   (@map (:map company-active-map
           ;; Don't interfere with insert mode binding for `evil-delete-backward-word'
@@ -69,14 +67,22 @@
           "C-s"        (@λ (company-search-abort) (company-filter-candidates))
           [escape]     'company-search-abort))
 
-  (global-company-mode +1)
+  (global-company-mode +1))
 
-  ;; Looks ugly on OSX without emacs-mac build
-  (require 'company-quickhelp)
-  (company-quickhelp-mode +1)
 
-  (require 'company-statistics)
+(@def-package company-statistics
+  :after company
+  :config
+  (setq company-statistics-file (concat doom-cache-dir "company-stats-cache.el"))
   (company-statistics-mode +1))
+
+
+;; Looks ugly on OSX without emacs-mac build
+(@def-package company-quickhelp
+  :after company
+  :config
+  (setq company-quickhelp-delay nil)
+  (company-quickhelp-mode +1))
 
 
 (@def-package company-dict
