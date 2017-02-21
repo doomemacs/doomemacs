@@ -5,7 +5,7 @@
  ;; Save clipboard contents into kill-ring before replacing them
  save-interprogram-paste-before-kill t
  ;; Bookmarks
- bookmark-default-file (concat doom-cache-dir "/bookmarks")
+ bookmark-default-file (concat doom-cache-dir "bookmarks")
  bookmark-save-flag t
  ;; Formatting
  delete-trailing-lines nil
@@ -52,10 +52,8 @@
 ;; Keep track of recently opened files
 (require 'recentf)
 (setq recentf-save-file (concat doom-cache-dir "recentf")
-      recentf-exclude '("/tmp/" "/ssh:" "\\.?ido\\.last$" "\\.revive$" "/TAGS$"
-                        "emacs\\.d/private/cache/.+" "emacs\\.d/workgroups/.+$"
-                        "wg-default" "/company-statistics-cache.el$"
-                        "^/var/folders/.+$" "^/tmp/.+")
+      recentf-exclude `("/tmp/" "/ssh:" "\\.?ido\\.last$" "\\.revive$" "/TAGS$"
+                        "emacs\\.d/.local/.+" "^/var/folders/.+$")
       recentf-max-menu-items 0
       recentf-max-saved-items 250
       recentf-filename-handlers '(abbreviate-file-name))
