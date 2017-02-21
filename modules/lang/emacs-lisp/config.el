@@ -10,6 +10,14 @@
         :m "gd" '+emacs-lisp/find-function
         :leader :m "gd" '+emacs-lisp/find-function-in-other-window)
 
+  (@set :rotate 'emacs-lisp-mode
+        :symbols '(("t" "nil")
+                   ("let" "let*")
+                   ("when" "unless")
+                   ("append" "prepend")
+                   ("advice-add" "advice-remove")
+                   ("add-hook" "add-hook!" "remove-hook")))
+
   ;; Don't affect lisp indentation (only `tab-width')
   (setq editorconfig-indentation-alist
         (delq (assq 'emacs-lisp-mode editorconfig-indentation-alist)
