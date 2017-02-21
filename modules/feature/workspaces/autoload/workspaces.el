@@ -324,7 +324,7 @@ the workspace and move to the next."
       (doom/popup-close)
     (let ((current-persp-name (+workspace-current-name)))
       (cond ((or (equal current-persp-name persp-nil-name)
-                 (= (length (doom-visible-windows)) 1))
+                 (> (length (doom-visible-windows)) 1))
              (if (bound-and-true-p evil-mode)
                  (evil-window-delete)
                (delete-window)))
