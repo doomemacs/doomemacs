@@ -54,22 +54,26 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
 
 ;; Buffer Life and Death ;;;;;;;;;;;;;;;
 ;;;###autoload
-(defun doom-buffer-list (&optional all-p)
+(defun doom-buffer-list (&optional project-p)
   "Get all buffers in the current project, in the current workgroup.
 
-If ALL-P is non-nil, get all buffers across all projects in current
-workgroup."
-  (let ((buffers (cond ((and (featurep 'workgroups2) workgroups-mode)
-                        (wg-workgroup-associated-buffers nil))
-                       ((and (featurep 'persp-mode) persp-mode)
-                        (persp-buffer-list-restricted))
-                       (t (buffer-list))))
-        (project-root (and (not all-p) (doom-project-root t))))
-    (if project-root
-        (funcall (if (eq all-p 'not) 'cl-remove-if 'cl-remove-if-not)
-                 (lambda (b) (projectile-project-buffer-p b project-root))
-                 buffers)
-      buffers)))
+If PROJECT-P is non-nil, get all buffers associated with the current project in
+the current workspace."
+  (let* ((buffers (cond ((and (featurep 'workgroups2) workgroups-mode)
+                         (wg-workgroup-associated-buffers nil))
+                        ((and (featurep 'persp-mode) persp-mode)
+                         (persp-buffer-list-restricted))
+                        (t (buffer-list))))
+         (project-root (and project-p (doom-project-root t)))
+         (buffer-list (if project-root
+                          (funcall (if (eq project-p 'not) 'cl-remove-if 'cl-remove-if-not)
+                                   (lambda (b) (projectile-project-buffer-p b project-root))
+                                   buffers)
+                        buffers))
+         (fallback-buffer (doom-fallback-buffer)))
+    (unless (memq fallback-buffer buffer-list)
+      (nconc buffer-list (list (doom-fallback-buffer))))
+    buffer-list))
 
 ;;;###autoload
 (defun doom-real-buffers-list (&optional buffer-list)
@@ -251,7 +255,7 @@ regex PATTERN. Returns the number of killed buffers."
   "Kill all buffers in this workspace. If PROJECT-P, kill all buffers that
 belong to the current project in this workspace."
   (interactive "P")
-  (let ((buffers (doom-buffer-list (not project-p))))
+  (let ((buffers (doom-buffer-list project-p)))
     (mapc 'doom-kill-buffer-and-windows buffers)
     (when (called-interactively-p 'interactive)
       (message "Killed %s buffers" (length buffers)))))
@@ -261,7 +265,7 @@ belong to the current project in this workspace."
   "Kill all other buffers in this workgroup. If PROJECT-P, kill only the other
 buffers that belong to the current project."
   (interactive "P")
-  (let ((buffers (doom-buffer-list (not project-p))))
+  (let ((buffers (doom-buffer-list project-p)))
     (mapc (lambda (buf)
             (unless (eq buf (current-buffer))
               (doom-kill-buffer-and-windows buf)))
@@ -274,7 +278,7 @@ buffers that belong to the current project."
   "Kill buffers in current workgroup that match regex PATTERN. If BANG, then
 exclude buffers that aren't part of the current project."
   (interactive "sP")
-  (let* ((buffers (doom-buffer-list (not project-p)))
+  (let* ((buffers (doom-buffer-list project-p))
          (n (doom-kill-matching-buffers pattern buffers)))
     (when (called-interactively-p 'interactive)
       (message "Killed %s buffers" n))))
@@ -283,7 +287,7 @@ exclude buffers that aren't part of the current project."
 (defun doom/cleanup-buffers ()
   "Clean up buried, unreal buffers."
   (interactive)
-  (let ((buffers (doom-buried-buffers (doom-buffer-list t))))
+  (let ((buffers (doom-buried-buffers (doom-buffer-list))))
     (mapc 'doom-kill-buffer buffers)
     (setq n (+ (doom-kill-process-buffers) (length buffers)))
     (when (called-interactively-p 'interactive)
