@@ -260,7 +260,9 @@ the command buffer."
                        (doom/popup-close)
                        (switch-to-buffer (car location) nil t)
                        (if (cdr location)
-                           (goto-char (cdr location))
+                           (progn
+                             (goto-char (cdr location))
+                             (recenter))
                          (message "Unable to find location in file")))))
 
   (define-button-type 'help-variable-def
@@ -272,7 +274,9 @@ the command buffer."
                        (doom/popup-close)
                        (switch-to-buffer (car location) nil t)
                        (if (cdr location)
-                           (goto-char (cdr location))
+                           (progn
+                             (goto-char (cdr location))
+                             (recenter))
                          (message "Unable to find location in file")))))
 
   (define-button-type 'help-face-def
@@ -284,7 +288,9 @@ the command buffer."
                        (doom/popup-close)
                        (switch-to-buffer (car location) nil t)
                        (if (cdr location)
-                           (goto-char (cdr location))
+                           (progn
+                             (goto-char (cdr location))
+                             (recenter))
                          (message "Unable to find location in file"))))))
 
 
