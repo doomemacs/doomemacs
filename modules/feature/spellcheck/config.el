@@ -26,3 +26,8 @@
   (setq flyspell-popup-correct-delay 0.8)
   (define-key popup-menu-keymap [escape] 'keyboard-quit))
 
+
+(@def-package flyspell-correct-helm :after flyspell-correct)
+
+
+(@def-package flyspell-correct-ivy  :after flyspell-correct)
