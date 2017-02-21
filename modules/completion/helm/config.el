@@ -1,30 +1,18 @@
 ;;; completion/helm/config.el
 
-;; TODO Untested in DOOM v2.0
+;; Warning: since I don't use helm, this may be out of date.
 
 (defvar +helm-global-prompt "››› "
   "The helm text prompt prefix string is globally replaced with this string.")
 
-(@map [remap find-file] 'helm-find-files
-      [remap switch-to-buffer] 'doom/helm-buffers-dwim
-      [remap projectile-switch-to-buffer] (λ! (doom/helm-buffers-dwim t))
-      [remap recentf]            'helm-recentf
-      [remap projectile-recentf] 'helm-projectile-recentf
-      [remap projectile-find-file] 'helm-projectile-find-file
-      [remap imenu]              'helm-semantic-or-imenu
-      [remap bookmark-jump]      'helm-bookmarks
-      [remap noop-show-kill-ring] 'helm-show-kill-ring
-      [remap projectile-switch-project] 'helm-projectile-switch-project
-      [remap projectile-find-file] 'helm-projectile-find-file
-      [remap imenu-anywhere]  'helm-imenu-anywhere
-      [remap execute-extended-command] 'helm-M-x)
+
 
 
 ;;
 ;; Packages
 ;;
 
-(@def-package helm
+(@def-package helm :demand t
   :init
   (setq helm-quick-update t
         ;; Speedier without fuzzy matching
@@ -85,6 +73,21 @@
 
   (require 'helm-mode)
   (helm-mode +1)
+
+  (@map :map helm-mode-map
+        [remap find-file] 'helm-find-files
+        [remap switch-to-buffer] 'doom/helm-buffers-dwim
+        [remap projectile-switch-to-buffer] (λ! (doom/helm-buffers-dwim t))
+        [remap recentf]            'helm-recentf
+        [remap projectile-recentf] 'helm-projectile-recentf
+        [remap projectile-find-file] 'helm-projectile-find-file
+        [remap imenu]              'helm-semantic-or-imenu
+        [remap bookmark-jump]      'helm-bookmarks
+        [remap noop-show-kill-ring] 'helm-show-kill-ring
+        [remap projectile-switch-project] 'helm-projectile-switch-project
+        [remap projectile-find-file] 'helm-projectile-find-file
+        [remap imenu-anywhere]  'helm-imenu-anywhere
+        [remap execute-extended-command] 'helm-M-x)
 
   (defvar helm-projectile-find-file-map (make-sparse-keymap))
   (require 'helm-projectile)
