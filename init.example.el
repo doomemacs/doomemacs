@@ -57,10 +57,12 @@
        hl-todo         ; highlight TODO/FIXME/NOTE tags
 
        :tools
+       electric-indent ; smarter, keyword-based electric-indent
        eshell          ; a consistent, cross-platform shell (WIP)
        ;; TODO dash            ; interacting with dash.app
        dired           ; making dired pretty [functional]
        restclient      ; A REST REPL
+       rotate-text     ; cycle region at point between text candidates
        tmux            ; an API for interacting with tmux
        upload          ; map local to remote projects via ssh/ftp
 

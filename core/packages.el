@@ -33,7 +33,6 @@
 (@package imenu-anywhere)
 (@package imenu-list)
 (@package pcre2el)
-(@package rotate-text :recipe (:fetcher github :repo "debug-ito/rotate-text.el"))
 (@package smart-forward)
 (@package swiper)
 (@package wgrep)

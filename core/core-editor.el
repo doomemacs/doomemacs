@@ -77,6 +77,9 @@
     nil))
 (add-hook 'kill-buffer-query-functions 'doom|dont-kill-scratch-buffer)
 
+;; enabled by default in Emacs 25+. No thanks.
+(electric-indent-mode -1)
+
 
 ;;
 ;; Core Plugins
@@ -166,11 +169,6 @@
 (@def-package imenu-list :commands imenu-list-minor-mode)
 
 (@def-package pcre2el :commands rxt-quote-pcre)
-
-(@def-package rotate-text
-  :commands (rotate-text rotate-text-backward)
-  :config
-  (push '("true" "false") rotate-text-words))
 
 (@def-package smart-forward
   :commands (smart-up smart-down smart-backward smart-forward))
