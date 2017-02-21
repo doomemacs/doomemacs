@@ -5,6 +5,9 @@
 (defvar +doom-dashboard-modeline nil
   "TODO")
 
+(defvar +doom-dashboard-old-modeline nil
+  "TODO")
+
 (defvar +doom-dashboard-edited-p nil
   "If non-nil, the scratch buffer has been edited.")
 
@@ -79,7 +82,7 @@
     (erase-buffer)
     ;; (set-window-margins (get-buffer-window (doom-fallback-buffer)) 0 0)
     (setq +doom-dashboard-edited-p t
-          mode-line-format (doom-modeline))
+          mode-line-format +doom-dashboard-old-modeline)
     (setq fringe-indicator-alist +doom-dashboard--old-fringe-indicator)
     (remove-hook 'evil-insert-state-entry-hook 'doom|mode-erase-on-insert t)))
 
@@ -90,6 +93,7 @@
              (get-buffer-window-list (doom-fallback-buffer) nil t)
              (or (not +doom-dashboard-edited-p) dir))
     (unless +doom-dashboard-modeline
+      (setq +doom-dashboard-old-modeline mode-line-format)
       (setq +doom-dashboard-modeline
             (if (@featurep :ui doom-modeline)
                 (doom-modeline 'project)
