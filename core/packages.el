@@ -4,6 +4,7 @@
 ;; core packages
 (@package async)
 (@package s)
+(@package f)
 
 ;; core-os.el
 (when IS-MAC
