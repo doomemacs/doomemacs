@@ -178,7 +178,6 @@
 (@def-package wgrep
   :commands (wgrep-setup wgrep-change-to-wgrep-mode)
   :config
-  (@set :popup "^\\*ivy-occur counsel-ag" :size 25 :select t :regexp t)
   (setq wgrep-auto-save-buffer t)
   (advice-add 'wgrep-abort-changes :after 'doom/popup-close)
   (advice-add 'wgrep-finish-edit :after 'doom/popup-close))
