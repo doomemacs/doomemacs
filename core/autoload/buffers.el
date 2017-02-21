@@ -129,8 +129,7 @@ See `doom-real-buffer-p' for what 'real' means."
           (catch 'goto
             (if (or (not buffers)
                     (= (length buffers) 1))
-                (progn (message "No other buffers in workspace")
-                       (throw 'goto t))
+                (throw 'goto t)
               (funcall move-func)
               (while (not (memq (current-buffer) buffers))
                 (if (or (eq (current-buffer) start-buffer)
@@ -140,8 +139,7 @@ See `doom-real-buffer-p' for what 'real' means."
                 (cl-incf i))
               (current-buffer))))
     (when (eq destbuf t)
-      (setq destbuf (doom-fallback-buffer))
-      (message "Nowhere to go"))
+      (setq destbuf (doom-fallback-buffer)))
     (prog1
         (switch-to-buffer destbuf)
       (when (eq destbuf (doom-fallback-buffer))
