@@ -125,7 +125,7 @@ enable multiple minor modes for the same regexp.")
 
 ;;;
 ;; Bootstrap
-(setq gc-cons-threshold 339430400
+(setq gc-cons-threshold 402653184
       gc-cons-percentage 0.6)
 
 (let (file-name-handler-list)
@@ -147,6 +147,10 @@ enable multiple minor modes for the same regexp.")
     (require 'core-editor)      ; baseline configuration for text editing
     (require 'core-projects)    ; making Emacs project-aware
     (require 'core-keybinds)))  ; centralized keybind system + which-key
+
+(@add-hook 'window-setup-hook
+  (setq gc-cons-threshold 134217728
+        gc-cons-percentage 0.3))
 
 (provide 'core)
 ;;; core.el ends here
