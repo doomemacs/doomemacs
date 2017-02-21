@@ -79,8 +79,8 @@ line or use --debug-init to enable this.")
  minibuffer-prompt-properties '(read-only t point-entered minibuffer-avoid-prompt face minibuffer-prompt)
  ;; History & backup settings
  auto-save-default nil
- auto-save-list-file-name (concat doom-cache-dir "/autosave")
- backup-directory-alist (list (cons ".*" (concat doom-cache-dir "/backup/")))
+ auto-save-list-file-name (concat doom-cache-dir "autosave")
+ backup-directory-alist (list (cons ".*" (concat doom-cache-dir "backup/")))
  create-lockfiles nil
  history-length 1000
  make-backup-files nil
