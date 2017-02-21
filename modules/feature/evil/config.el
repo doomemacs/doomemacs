@@ -44,6 +44,10 @@
   (evil-mode +1)
   (evil-select-search-module 'evil-search-module 'evil-search)
 
+  (@set :popup
+    '("*evil-registers*" :size 0.3)
+    '("*Command Line*" :size 8))
+
   ;; Set cursor colors later, presumably once theme is loaded
   (@add-hook 'after-init-hook
     (setq evil-default-cursor (face-attribute 'cursor :background nil t)
@@ -62,28 +66,16 @@
   (add-hook 'evil-operator-state-exit-hook  '+evil|show-paren-mode-off)
   (add-hook 'evil-normal-state-entry-hook   '+evil|show-paren-mode-off)
 
-  (@set :popup
-    '("*evil-registers*" :size 0.3)
-    '("*Command Line*" :size 8))
-
-  (@set :evil-state
-        '(compilation-mode       . normal)
-        '(help-mode              . normal)
-        '(message-mode           . normal)
-        '(debugger-mode          . normal)
-        '(image-mode             . normal)
-        '(doc-view-mode          . normal)
-        '(eww-mode               . normal)
-        '(tabulated-list-mode    . emacs)
-        '(profile-report-mode    . emacs)
-        '(Info-mode              . emacs)
-        '(view-mode              . emacs)
-        '(comint-mode            . emacs)
-        '(cider-repl-mode        . emacs)
-        '(term-mode              . emacs)
-        '(calendar-mode          . emacs)
-        '(Man-mode               . emacs)
-        '(grep-mode              . emacs)))
+  (mapc (lambda (args) (evil-set-initial-state (car args) (cdr args)))
+        '((tabulated-list-mode    . emacs)
+          (profile-report-mode    . emacs)
+          (Info-mode              . emacs)
+          (view-mode              . emacs)
+          (comint-mode            . emacs)
+          (term-mode              . emacs)
+          (calendar-mode          . emacs)
+          (Man-mode               . emacs)
+          (grep-mode              . emacs))))
 
 (defsubst +evil--textobj (key inner-fn &optional outer-fn)
   "Define a text object."
@@ -250,7 +242,7 @@
     (embrace-add-pair ?\` "`" "'"))
   (@add-hook (emacs-lisp-mode lisp-mode)
     (embrace-add-pair-regexp ?f "([^ ]+ " ")" '+evil--embrace-elisp-fn))
-  (@add-hook (org-mode latex-mode)
+  (@add-hook (org-mode LaTeX-mode)
     (embrace-add-pair-regexp ?l "\\[a-z]+{" "}" '+evil--embrace-latex)))
 
 
@@ -369,11 +361,10 @@
              neotree-find
              neo-global--with-buffer
              neo-global--window-exists-p)
-  :init
+  :config
   (setq neo-create-file-auto-open t
         neo-auto-indent-point nil
         neo-mode-line-type 'none
-        neo-persist-show nil
         neo-window-width 25
         neo-show-updir-line nil
         neo-theme 'nerd ; fallback
@@ -391,7 +382,6 @@
           "~$"
           "^#.*#$"))
 
-  :config
   (@set :evil-state 'neotree-mode 'motion)
 
   (push neo-buffer-name winner-boring-buffers)

@@ -35,24 +35,24 @@
 ;;; Flash the mode-line on error
 ;; TODO More flexible colors (only suits dark themes)
 ;; FIXME fast key-repeat can make the mode-line bg get stuck (rare)
-(defvar doom--visual-bell-bg nil)
+(defvar doom--visual-bell-old-bg nil)
 (setq ring-bell-function 'doom-visual-bell
       visible-bell nil)
 (defun doom-visual-bell ()
   "Blink the mode-line red briefly."
-  (unless doom--visual-bell-bg
-    (setq doom--visual-bell-bg (face-attribute 'mode-line :background)))
+  (unless doom--visual-bell-old-bg
+    (setq doom--visual-bell-old-bg (face-attribute 'mode-line :background)))
   (set-face-attribute 'mode-line nil :background "#54252C")
   (run-with-timer
    0.1 nil
-   (lambda () (set-face-attribute 'mode-line nil :background doom--visual-bell-bg))))
+   (lambda () (set-face-attribute 'mode-line nil :background doom--visual-bell-old-bg))))
 
 
 ;; Keep `+doom-modeline-current-window' up-to-date
 (defvar +doom-modeline-current-window (frame-selected-window))
 (defun +doom-modeline|set-selected-window (&rest _)
-  "sets the variable `+doom-modeline-current-window` appropriately"
-  (when (not (minibuffer-window-active-p (frame-selected-window)))
+  "Sets `+doom-modeline-current-window' appropriately"
+  (unless (minibuffer-window-active-p (frame-selected-window))
     (setq +doom-modeline-current-window (frame-selected-window))))
 
 (add-hook 'window-configuration-change-hook '+doom-modeline|set-selected-window)

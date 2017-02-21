@@ -6,7 +6,7 @@
   :repeat nil
   ;; TODO Test me
   (interactive "<!><f>")
-  (let* ((fname (file-truename (or fname (buffer-file-name))))
+  (let* ((fname (file-truename (or filename (buffer-file-name))))
          (fbase (file-name-sans-extension (file-name-nondirectory fname)))
          (buf (current-buffer)))
     (cond ((not (file-exists-p fname))
@@ -20,7 +20,7 @@
                (delete-file fname)
              (if (file-exists-p fname)
                  (error "Failed to delete %s" (file-relative-name fname))
-               (doom/previous-real-buffer)
+               (doom/previous-buffer)
                (kill-buffer buf)
                (when (bound-and-true-p save-place-mode)
                  (save-place-forget-unreadable-files))

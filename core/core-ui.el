@@ -71,7 +71,7 @@ disabled.")
 ;; window config undo/redo
 (defvar winner-dont-bind-my-keys t)
 (require 'winner)
-(winner-mode 1)
+(add-hook 'window-setup-hook 'winner-mode)
 
 
 ;;
@@ -87,10 +87,8 @@ disabled.")
   (setq-default frame-title-format '("DOOM Emacs"))
   ;; standardize fringe width
   (fringe-mode doom-ui-fringe-size)
-  (setq default-frame-alist
-        (append `((left-fringe  . ,doom-ui-fringe-size)
-                  (right-fringe . ,doom-ui-fringe-size))
-                default-frame-alist))
+  (push (cons 'left-fringe  doom-ui-fringe-size) default-frame-alist)
+  (push (cons 'right-fringe doom-ui-fringe-size) default-frame-alist)
   ;; no fringe in the minibuffer
   (@add-hook (emacs-startup minibuffer-setup)
     (set-window-fringes (minibuffer-window) 0 0 nil)))
