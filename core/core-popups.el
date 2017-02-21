@@ -49,25 +49,25 @@
   :init
   (setq shackle-default-alignment 'below
         ;;; Baseline popup-window rules
-        ;; :noesc and :modeline are custom settings and are not part of shackle. See
-        ;; `doom*popup-init' and `doom-popup-buffer' for how they're used.
+        ;; :noesc, :modeline and :autokill are custom settings and are not part
+        ;; of shackle. See `doom*popup-init' and `doom-popup-buffer' for how
+        ;; they're used.
         shackle-rules
         '(("^ ?\\*doom:.+\\*$"      :size 40  :modeline t :regexp t)
           ("^ ?\\*doom .+\\*$"      :size 30  :noselect t :regexp t)
-          ("^\\*.+-Profiler-Report .+\\*$" :size 0.3 :regexp t)
-          ("*esup*"                 :size 0.4 :noselect t :noesc t)
-          ("*minor-modes*"          :size 0.5 :noselect t)
-          ("*eval*"                 :size 16  :noselect t)
-          ("*Pp Eval Output*"       :size 0.3)
+          ("^\\*.+-Profiler-Report .+\\*$" :size 0.3 :regexp t :autokill t)
+          ("*minor-modes*"          :size 0.5 :noselect t :autokill t)
+          ("*eval*"                 :size 16  :noselect t :autokill t)
+          ("*Pp Eval Output*"       :size 0.3 :autokill t)
           ("*Apropos*"              :size 0.3)
           ("*Backtrace*"            :size 25  :noselect t)
-          ("*Help*"                 :size 16)
+          ("*Help*"                 :size 16  :autokill t)
           ("*Messages*"             :size 10)
-          ("*Warnings*"             :size 10  :noselect t)
+          ("*Warnings*"             :size 10  :noselect t :autokill t)
           ("*command-log*"          :size 28  :noselect t :align right)
-          ("*Shell Command Output*" :size 20  :noselect t)
-          ("*Occur*"                :size 30  :noselect t)
-          (compilation-mode         :size 15  :noselect t :noesc t)
+          ("*Shell Command Output*" :size 20  :noselect t :autokill t)
+          ("*Occur*"                :size 25  :noselect t :autokill t)
+          (compilation-mode         :size 15  :noselect t :noesc t :autokill t)
           (ivy-occur-grep-mode      :size 25  :noesc t)
           (eww-mode                 :size 30)
           (comint-mode              :noesc t)
@@ -98,7 +98,8 @@ for the obvious :align t on every rule."
 ;; custom parameters. Allows `persp-mode' to remember popup states.
 (nconc window-persistent-parameters
        '((popup . writable)
-         (noesc . writable)))
+         (noesc . writable)
+         (autokill . writable)))
 
 
 (define-minor-mode doom-popup-mode
@@ -132,7 +133,9 @@ enables `doom-popup-mode'."
         (append `((popup . ,plist)
                   (no-other-window . ,t))
                 (when (plist-get plist :noesc)
-                  `((noesc . ,t)))))
+                  `((noesc . ,t)))
+                (when (plist-get plist :autokill)
+                  `((autokill . ,t)))))
   (with-selected-window window
     (unless (eq plist t)
       (setq-local doom-popup-rules plist))
@@ -162,13 +165,16 @@ prevent popups from messaging up the UI (or vice versa)."
             (select-window origin)))))))
 
 (defun doom*delete-popup-window (orig-fn &rest args)
-  "Ensure that popups are deleted properly."
+  "Ensure that popups are deleted properly, and killed if they have :autokill
+properties."
   (let ((window (car args)))
     (when (doom-popup-p window)
       (with-selected-window window
         (doom-popup-mode -1)
         (when doom-popup-remember-history
-          (setq doom-popup-history (list (doom--popup-data window)))))))
+          (setq doom-popup-history (list (doom--popup-data window))))
+        (when (window-parameter window 'autokill)
+          (kill-buffer (window-buffer window))))))
   (apply orig-fn args))
 
 (advice-add 'shackle-display-buffer :around 'doom*popup-init)

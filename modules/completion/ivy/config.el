@@ -64,7 +64,7 @@
   :config
   (setq counsel-find-file-ignore-regexp "\\(?:^[#.]\\)\\|\\(?:[#~]$\\)\\|\\(?:^Icon?\\)")
 
-  (@set :popup "^\\*ivy-occur counsel-ag" :size 25 :select t :regexp t)
+  (@set :popup "^\\*ivy-occur counsel-ag" :size 25 :regexp t :autokill t)
 
   (require 'counsel-projectile)
 
