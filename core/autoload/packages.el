@@ -315,7 +315,14 @@ appropriate."
   "Prompts the user with a list of packages and deletes the selected package.
 Use this interactively. Use `doom-delete-package' for direct calls."
   (interactive
-   (list (completing-read "Delete package: " (doom-get-packages))))
+   (progn
+     (doom-initialize)
+     (list (completing-read
+            "Delete package: "
+            (delq nil
+                  (mapcar (lambda (p) (unless (package-built-in-p p) p))
+                          (mapcar 'car package-alist)))
+            nil t))))
   (if (package-installed-p package)
       (if (y-or-n-p (format "%s will be deleted. Confirm?" package))
           (message "%s %s"
