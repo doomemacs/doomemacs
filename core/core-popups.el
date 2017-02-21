@@ -106,6 +106,10 @@ for the obvious :align t on every rule."
   "Minor mode for popup windows."
   :init-value nil
   :keymap doom-popup-mode-map
+  ;; Don't show modeline in popup windows without a :modeline rule. If one
+  ;; exists and it's a symbol, use `doom-modeline' to grab the format. If
+  ;; non-nil, show the mode-line as normal. If nil (or omitted), then hide the
+  ;; modeline entirely.
   (if (and (not doom-popup-mode)
            doom-hide-modeline-mode)
       (doom-hide-modeline-mode -1)
@@ -114,13 +118,12 @@ for the obvious :align t on every rule."
                  (not modeline))
              (doom-hide-modeline-mode +1))
             ((symbolp modeline)
-             (let ((doom--hidden-modeline-format (+doom-modeline modeline)))
-               (doom-hide-modeline-mode +1))))))
-  (unless doom-popup-mode
-    (mapc (lambda (cfg) (set-window-parameter nil cfg nil))
-          '(popup no-other-window noesc)))
-  (set-window-dedicated-p nil doom-popup-mode))
+             (let ((doom--hidden-modeline-format (doom-modeline modeline)))
+               (doom-hide-modeline-mode +1)))))))
 (put 'doom-popup-mode 'permanent-local t)
+
+;; Hide modeline in completion popups
+(@add-hook (completion-in-region-mode completion-list-mode) 'doom-hide-modeline-mode)
 
 (defun doom-popup--init (window &optional plist)
   "Initializes a window as a popup window. Sets custom window parameters and
@@ -171,6 +174,10 @@ properties."
     (when (doom-popup-p window)
       (with-selected-window window
         (doom-popup-mode -1)
+        (unless doom-popup-mode
+          (mapc (lambda (cfg) (set-window-parameter window cfg nil))
+                '(popup no-other-window noesc autokill)))
+          (set-window-dedicated-p window nil)
         (when doom-popup-remember-history
           (setq doom-popup-history (list (doom--popup-data window))))
         (when (window-parameter window 'autokill)

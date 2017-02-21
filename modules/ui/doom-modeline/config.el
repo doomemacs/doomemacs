@@ -48,23 +48,6 @@
    (lambda () (set-face-attribute 'mode-line nil :background doom--visual-bell-bg))))
 
 
-;; Don't show modeline in popup windows without a :modeline rule. If one exists
-;; and it's a symbol, use `doom-modeline' to grab the format. If nil, show the
-;; mode-line as normal. If t, then hide the modeline entirely.
-(@add-hook doom-popup-mode
-  (if (and (not doom-popup-mode)
-           doom-hide-modeline-mode)
-      (doom-hide-modeline-mode -1)
-    (let ((modeline (plist-get doom-popup-rules :modeline)))
-      (cond ((eq modeline 'nil)
-             (doom-hide-modeline-mode +1))
-            ((symbolp modeline)
-             (let ((doom--hidden-modeline-format (+doom-modeline modeline)))
-               (doom-hide-modeline-mode +1)))))))
-
-(@add-hook (completion-in-region-mode completion-list-mode) 'doom-hide-modeline-mode)
-
-
 ;; Keep `+doom-modeline-current-window' up-to-date
 (defvar +doom-modeline-current-window (frame-selected-window))
 (defun +doom-modeline|set-selected-window (&rest _)
