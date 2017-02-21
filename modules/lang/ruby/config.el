@@ -9,7 +9,7 @@
   :config
   (@set :build 'rake 'ruby-mode '+ruby/rake)
   (@set :company-backend 'ruby-mode '(company-dabbrev-code))
-  (@set :electric 'ruby-mode :words "else" "end" "elseif")
+  (@set :electric 'ruby-mode :words '("else" "end" "elseif"))
   (@set :repl 'ruby-mode 'inf-ruby)
   (setq ruby-deep-indent-paren t)
   ;; Don't interfere with my custom RET behavior

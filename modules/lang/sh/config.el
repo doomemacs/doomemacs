@@ -7,7 +7,7 @@
   (@add-hook sh-mode '(flycheck-mode highlight-numbers-mode +sh|extra-fontify))
   :config
   (@set :company-backend 'sh-mode '(company-shell))
-  (@set :electric 'sh-mode :words "else" "elif" "fi" "done" "then" "do" "esac" ";;")
+  (@set :electric 'sh-mode :words '("else" "elif" "fi" "done" "then" "do" "esac" ";;"))
   (@set :repl 'sh-mode '+sh/repl)
   (setq sh-indent-after-continuation 'always)
 

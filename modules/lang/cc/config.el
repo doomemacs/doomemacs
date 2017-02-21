@@ -33,7 +33,7 @@
   (add-hook 'c++-mode-hook '+cc|extra-fontify-c++)
 
   (@set :electric '(c-mode c++-mode objc-mode java-mode)
-        :chars ?\n ?\})
+        :chars '(?\n ?\}))
 
   (@set :company-backend
         '(c-mode c++-mode objc-mode)

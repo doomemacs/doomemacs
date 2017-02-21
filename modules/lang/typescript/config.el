@@ -6,7 +6,7 @@
   (add-hook 'typescript-mode-hook 'rainbow-delimiters-mode)
   :config
   (@set :company-backend 'typescript-mode '(company-tide))
-  (@set :electric 'typescript-mode :chars ?\} ?\) :words "||" "&&")
+  (@set :electric 'typescript-mode :chars '(?\} ?\)) :words '("||" "&&"))
 
   ;; TODO emr definitions for:
   ;; + tide-jump-back

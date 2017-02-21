@@ -7,7 +7,7 @@
   (add-hook 'lua-mode-hook 'flycheck-mode)
   :config
   (@set :company-backend 'lua-mode '(company-lua company-yasnippet))
-  (@set :electric 'lua-mode :words "else" "end")
+  (@set :electric 'lua-mode :words '("else" "end"))
   (@set :repl 'lua-mode '+lua/repl)
 
   ;; sp's lua-specific rules are obnoxious, so we disable them

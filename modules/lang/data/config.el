@@ -15,12 +15,12 @@
 (@def-package yaml-mode
   :mode "\\.ya?ml$"
   :config
-  (@set :electric 'yaml-mode :chars ?\n ?\: ?\-))
+  (@set :electric 'yaml-mode :chars '(?\n ?\: ?\-)))
 
 
 (@def-package json-mode :mode "\\.js\\(on\\|[hl]int\\(rc\\)?\\)$"
   :config
-  (@set :electric 'json-mode :chars ?\n ?: ?{ ?}))
+  (@set :electric 'json-mode :chars '(?\n ?: ?{ ?})))
 
 
 (@def-package vimrc-mode
