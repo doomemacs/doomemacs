@@ -32,7 +32,8 @@
  truncate-lines t
  truncate-partial-width-windows 50
  visual-fill-column-center-text nil
- word-wrap t)
+ word-wrap t
+ vc-follow-symlinks t)
 
 ;; Save point across sessions
 (require 'saveplace)
