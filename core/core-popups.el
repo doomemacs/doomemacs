@@ -66,6 +66,7 @@
           ("*Warnings*"             :size 10  :noselect t)
           ("*command-log*"          :size 28  :noselect t :align right)
           ("*Shell Command Output*" :size 20  :noselect t)
+          ("*Occur*"                :size 30  :noselect t)
           (compilation-mode         :size 15  :noselect t :noesc t)
           (ivy-occur-grep-mode      :size 25  :noesc t)
           (eww-mode                 :size 30)
