@@ -48,17 +48,6 @@
       savehist-additional-variables '(kill-ring search-ring regexp-search-ring))
 (savehist-mode 1)
 
-;; Remove text-property cruft from history
-(defun doom|unpropertize-savehist ()
-  (mapc (lambda (sym)
-          (when (and (boundp sym) (listp (symbol-value sym)))
-            (setf (symbol-value sym) (mapcar 'substring-no-properties (symbol-value sym)))))
-        '(kill-ring minibuffer-history helm-grep-history helm-ff-history
-          file-name-history read-expression-history extended-command-history
-          evil-ex-history)))
-(add-hook 'kill-emacs-hook    'doom|unpropertize-savehist)
-(add-hook 'savehist-save-hook 'doom|unpropertize-savehist)
-
 ;; Keep track of recently opened files
 (require 'recentf)
 (setq recentf-save-file (concat doom-cache-dir "recentf")
