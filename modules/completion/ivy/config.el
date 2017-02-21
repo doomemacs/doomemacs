@@ -1,5 +1,14 @@
 ;;; completion/ivy/packages.el
 
+;; Ivy is my completion backend of choice. With counsel's help, I get:
+;;
+;; + Project-wide search with `counsel-ag' (or `+ivy:ag-search')
+;; + Project-wide replace if you press <backtab> in the ag occur buffer.
+;; + An Atom/Sublime-Text Command-T implementation with `counsel-find-file' and
+;;   `counsel-projectile-find-file'.
+;; + Ido-like completion for a slew of functions, like `counsel-M-x' and
+;;   `counsel-imenu'.
+
 ;; TODO Make this a setting
 (defmacro @def-counsel-action (name &rest forms)
   `(defun ,(intern (format "+ivy/counsel-%s" (symbol-name name))) ()
@@ -68,6 +77,7 @@
 
   (require 'counsel-projectile)
 
+  ;; FIXME Messy workaround, refactor this
   (@def-counsel-action ag-open-in-other-window
     (lambda (x)
       (when (string-match "\\`\\(.*?\\):\\([0-9]+\\):\\(.*\\)\\'" x)

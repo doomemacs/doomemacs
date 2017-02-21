@@ -68,7 +68,6 @@
           ("*Shell Command Output*" :size 20  :noselect t :autokill t)
           ("*Occur*"                :size 25  :noselect t :autokill t)
           (compilation-mode         :size 15  :noselect t :noesc t :autokill t)
-          (ivy-occur-grep-mode      :size 25  :noesc t)
           (eww-mode                 :size 30)
           (comint-mode              :noesc t)
           (tabulated-list-mode      :noesc t)))
@@ -83,7 +82,7 @@
 
 (defun doom*shackle-always-align (plist)
   "Ensure popups are always aligned and selected by default. Eliminates the need
-for the obvious :align t on every rule."
+for :align t on every rule."
   (when plist
     (unless (plist-member plist :align)
       (plist-put plist :align t))

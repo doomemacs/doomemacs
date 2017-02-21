@@ -19,15 +19,18 @@
 
 ;;;###autoload
 (defun doom-sh (&rest args)
-  "Runs a shell command and prints any output to the DOOM buffer.")
+  "Runs a shell command and prints any output to the DOOM buffer."
+  (error "doom-sh not implemented yet"))
 
 ;;;###autoload
-(defun doom-async-sh (&rest args))
+(defun doom-async-sh (&rest args)
+  "Like `doom-sh', but runs command asynchronously."
+  (error "doom-async-sh not implemented yet"))
 
 ;;;###autoload
 (defun doom-sudo (&rest args)
-  "Runs a shell command as admin, prompting for a password. Prints any output to
-the DOOM buffer.")
+  "Like `doom-sh', but runs as root (prompts for password)."
+  (error "doom-sudo not implemented yet"))
 
 ;;;###autoload
 (defun doom-fetch (fetcher location dest)
