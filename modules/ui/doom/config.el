@@ -55,13 +55,14 @@
   (push (cons 'foreground-color (face-foreground 'default)) default-frame-alist)
 
   ;; brighter source buffers
-  (defun doom*brighter-buffer-maybe (buffer &rest _)
+  (defun +doom|buffer-mode-on ()
+    "Brightens buffers so long as they represent files and aren't popups."
     (when (and (not doom-buffer-mode)
                buffer-file-name
                (not (doom-popup-p (selected-window))))
       (doom-buffer-mode +1)))
-  (advice-add 'switch-to-buffer :after 'doom*brighter-buffer-maybe)
-  (advice-add 'display-buffer   :after 'doom*brighter-buffer-maybe)
+  (add-hook 'find-file-hook '+doom|buffer-mode-on)
+  (add-hook 'after-revert-hook '+doom|buffer-mode-on)
 
   ;; Popup buffers should always be dimmed
   (defun +doom|buffer-mode-off ()
@@ -72,10 +73,8 @@
     (defun +doom|restore-bright-buffers (&rest _)
       "Restore `doom-buffer-mode' in buffers when `persp-mode' loads a session."
       (dolist (buf (persp-buffer-list))
-        (when (and (doom-real-buffer-p buf)
-                   (not (buffer-local-value 'doom-buffer-mode buf)))
-          (with-current-buffer buf
-            (doom-buffer-mode +1)))))
+        (with-current-buffer buf
+          (+doom|buffer-mode-on))))
     (add-hook '+workspaces-load-session-hook '+doom|restore-bright-buffers))
 
   ;; Add file icons to doom-neotree
