@@ -23,16 +23,20 @@
 ;;
 
 (@def-package ivy :demand t
-  :init
+  :config
   (setq ivy-height 14
         ivy-do-completion-in-region nil
         ivy-wrap t
         ivy-fixed-height-minibuffer t
-        ivy-format-function 'ivy-format-function-line) ;; highlight til EOL
+        projectile-completion-system 'ivy
+        smex-completion-method 'ivy
+        ;; highlight til EOL
+        ivy-format-function 'ivy-format-function-line)
 
-  :config
-  (setq projectile-completion-system 'ivy
-        smex-completion-method 'ivy)
+  (@after magit      (setq magit-completing-read-function 'ivy-completing-read))
+  (@after yasnippet  (push '+ivy-yas-prompt yas-prompt-functions))
+
+  (ivy-mode +1)
 
   (@map :map ivy-minibuffer-map
         [escape] 'keyboard-escape-quit
@@ -42,18 +46,6 @@
         "C-u" 'backward-kill-sentence
         "C-b" 'backward-word
         "C-f" 'forward-word)
-
-  ;; Occasionally, when ivy closes, it causes display artifacting
-  ;; between horizontal splits. This fixes it, though may cause
-  ;; flickering on some OSes.
-  (defun doom|redisplay (&rest _) (force-mode-line-update))
-  (advice-add 'ivy-read :after 'doom|redisplay)
-  (add-hook 'projectile-find-file-hook 'doom|redisplay)
-
-  (@after magit      (setq magit-completing-read-function 'ivy-completing-read))
-  (@after yasnippet  (push '+ivy-yas-prompt yas-prompt-functions))
-
-  (ivy-mode +1)
 
   (@map :map ivy-mode-map
         [remap find-file] 'counsel-find-file
@@ -65,7 +57,18 @@
         [remap projectile-switch-project] 'counsel-projectile-switch-project
         [remap projectile-find-file] 'counsel-projectile-find-file
         [remap imenu-anywhere]  'ivy-imenu-anywhere
-        [remap execute-extended-command] 'counsel-M-x))
+        [remap execute-extended-command] 'counsel-M-x)
+
+  (when (@featurep :feature workspaces)
+    (nconc ivy-sort-functions-alist
+           '((persp-kill-buffer   . nil)
+             (persp-remove-buffer . nil)
+             (persp-add-buffer    . nil)
+             (persp-switch        . nil)
+             (persp-window-switch . nil)
+             (persp-frame-switch  . nil)
+             (+workspace/switch-to . nil)
+             (+workspace/delete . nil)))))
 
 
 (@def-package swiper :commands (swiper swiper-all))

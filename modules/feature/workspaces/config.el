@@ -68,22 +68,3 @@
         (doom-popup--init window plist))))
   (add-hook '+workspaces-load-session-hook '+workspaces|restore-popups))
 
-(@after ivy
-  ;; (defun +workspaces|ivy-ignore-non-persp-buffers (b)
-  ;;   (when persp-mode
-  ;;     (let ((persp (get-current-persp)))
-  ;;       (and persp (not (persp-contain-buffer-p b persp))))))
-  ;; (pushnew '+workspaces|ivy-ignore-non-persp-buffers ivy-ignore-buffers)
-
-  (setq ivy-sort-functions-alist
-        (append ivy-sort-functions-alist
-                '((persp-kill-buffer   . nil)
-                  (persp-remove-buffer . nil)
-                  (persp-add-buffer    . nil)
-                  (persp-switch        . nil)
-                  (persp-window-switch . nil)
-                  (persp-frame-switch  . nil)
-                  (+workspace/switch-to . nil)
-                  (+workspace/delete . nil)))))
-
-
