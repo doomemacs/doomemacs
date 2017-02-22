@@ -33,12 +33,6 @@
 
   (define-key persp-mode-map [remap delete-window] '+workspace/close-window-or-workspace)
 
-  ;; Ensure unreal/popup buffers aren't saved
-  (push (lambda (buf) (doom-popup-p (get-buffer-window buf)))
-        persp-filter-save-buffers-functions)
-  (push (lambda (buf) (not (doom-real-buffer-p buf)))
-        persp-common-buffer-filter-functions)
-
   ;; Auto-add buffers when opening them. Allows a perspective-specific buffer list.
   (defun +workspaces*auto-add-buffer (buffer &rest _)
     (when (and persp-mode
