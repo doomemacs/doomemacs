@@ -1,14 +1,18 @@
 ;;; feature/workspaces/autoload/evil.el
 
 ;;;###autoload (autoload '+workspace:save-session "feature/workspaces/autoload/evil" nil t)
-(evil-define-command +workspace:save-session (&optional name)
-  "Ex wrapper around `+workspace/save-session'."
-  (interactive "<a>") (+workspace/save-session name))
+(evil-define-command +workspace:save-session (&optional bang name)
+  "Ex wrapper around `+workspace/save-session'. If BANG, then autosave
+(pointless if autosaving/loading is off). If NAME is nil, default to 'last'."
+  (interactive "<!><a>")
+  (+workspace/save-session (if bang persp-auto-save-fname name)))
 
 ;;;###autoload (autoload '+workspace:load-session "feature/workspaces/autoload/evil" nil t)
-(evil-define-command +workspace:load-session (&optional name)
-  "Ex wrapper around `+workspace/load-session'."
-  (interactive "<a>") (+workspace/load-session name))
+(evil-define-command +workspace:load-session (&optional bang name)
+  "Ex wrapper around `+workspace/load-session'. If BANG, then load last autosave
+(pointless if autosaving/loading is off). If NAME is nil, defaults to 'last'."
+  (interactive "<!><a>")
+  (+workspace/load-session (if bang persp-auto-save-fname name)))
 
 ;;;###autoload (autoload '+workspace:save "feature/workspaces/autoload/evil" nil t)
 (evil-define-command +workspace:save (&optional name)

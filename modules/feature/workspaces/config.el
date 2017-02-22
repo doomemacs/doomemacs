@@ -5,6 +5,10 @@
 ;; abandoned it because of its instability and impact on performance.
 ;; `persp-mode' has proven faster and more reliable (and it's still maintained).
 ;;
+;; I've disabled auto-load/save. I prefer that session persistence be manual.
+;; You can save a session with :ss or `+workspace/save-session', and load the
+;; last saved session with :sl or `+workspace/load-session'.
+;;
 ;; Note: persp-mode requires `workgroups' for file persistence in Emacs 24.4.
 
 (defvar +workspaces-load-session-hook nil
@@ -18,8 +22,12 @@
         persp-auto-save-fname "autosave"
         persp-save-dir (concat doom-cache-dir "workspaces/")
         persp-set-last-persp-for-new-frames nil
+        persp-switch-to-added-buffer nil
+
+        ;; Don't auto-load on startup
         persp-auto-resume-time -1
-        persp-switch-to-added-buffer nil)
+        ;; Don't auto-save
+        persp-auto-save-opt 0)
 
   (add-hook 'after-init-hook 'persp-mode)
 

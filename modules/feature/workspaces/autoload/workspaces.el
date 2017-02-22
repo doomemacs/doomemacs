@@ -156,7 +156,7 @@ current workspace (by name) from session files."
     (+workspace/display)))
 
 ;;;###autoload
-(defun +workspace/load-session (name)
+(defun +workspace/load-session (&optional name)
   "Load a session and switch to it. If called with C-u, try to load the last
 session."
   (interactive
@@ -164,9 +164,9 @@ session."
     (unless current-prefix-arg
       (completing-read
        "Session to load: "
-       (directory-files persp-save-dir nil "^[^_]")
+       (directory-files persp-save-dir nil "^[^_.]")
        nil t))))
-  (+workspace-load-session name)
+  (+workspace-load-session (or name "last"))
   (+workspace/display))
 
 ;;;###autoload
@@ -191,9 +191,9 @@ the session as."
     (when current-prefix-arg
       (completing-read
        "Save session as: "
-       (directory-files persp-save-dir nil "^[^_]")))))
+       (directory-files persp-save-dir nil "^[^_.]")))))
   (condition-case ex
-      (let ((name (or name (+workspace-current-name))))
+      (let ((name (or name "last")))
         (if (+workspace-save-session name)
             (+workspace-message (format "Saved session as %s" name) 'success)
           (error "Couldn't save session as %s" name)))
