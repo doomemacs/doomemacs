@@ -88,21 +88,23 @@
     (lambda (x)
       (when (string-match "\\`\\(.*?\\):\\([0-9]+\\):\\(.*\\)\\'" x)
         (let ((file-name (match-string-no-properties 1 x))
-              (line-number (match-string-no-properties 2 x)))
+              (line-number (match-string-no-properties 2 x))
+              dest-win)
           (with-ivy-window
             (find-file-other-window (expand-file-name file-name counsel--git-grep-dir))
+            (setq dest-win (selected-window))
             (forward-line (1- (string-to-number line-number)))
             (re-search-forward (ivy--regex ivy-text t) (line-end-position) t)
+            (recenter)
             (swiper--ensure-visible)
             (run-hooks 'counsel-grep-post-action-hook)
             (unless (eq ivy-exit 'done)
               (swiper--cleanup)
-              (swiper--add-overlays (ivy--regex ivy-text))))))))
+              (swiper--add-overlays (ivy--regex ivy-text))))
+          (when dest-win
+            (select-window dest-win))))))
 
-  (@def-counsel-action open-in-other-window
-    (lambda (x) (with-ivy-window (find-file-other-window x))))
-
-  (@add-hook doom-popup-mode
+  (@add-hook 'doom-popup-mode-hook
     (when (eq major-mode 'ivy-occur-grep-mode)
       (ivy-wgrep-change-to-wgrep-mode)))
 
