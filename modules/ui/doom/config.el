@@ -58,8 +58,8 @@
   (defun +doom|buffer-mode-on ()
     "Brightens buffers so long as they represent files and aren't popups."
     (when (and (not doom-buffer-mode)
-               buffer-file-name
-               (not (doom-popup-p (selected-window))))
+               (not doom-popup-mode)
+               buffer-file-name)
       (doom-buffer-mode +1)))
   (add-hook 'find-file-hook '+doom|buffer-mode-on)
   (add-hook 'after-revert-hook '+doom|buffer-mode-on)
