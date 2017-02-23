@@ -10,10 +10,10 @@
   (defalias 'all-the-icons-wicon 'ignore)
   (defalias 'all-the-icons-alltheicon 'ignore))
 
-(@def-package all-the-icons :demand t
+(def-package! all-the-icons :demand t
   :when (display-graphic-p))
 
-(@def-package eldoc-eval :demand t
+(def-package! eldoc-eval :demand t
   :config
   ;; Show eldoc in the mode-line with `eval-expression'
   (setq eldoc-in-minibuffer-show-fn '+doom-modeline--show-eldoc)
@@ -21,7 +21,7 @@
 
 ;; anzu and evil-anzu make it possible to display current/total in the
 ;; mode-line.
-(@def-package evil-anzu
+(def-package! evil-anzu
   :init
   (defun +evil*lazy-load-evil-anzu (&rest _) (require 'evil-anzu))
   (advice-add 'evil-ex-start-search :before '+evil*lazy-load-evil-anzu)
@@ -163,8 +163,8 @@ active."
                                         s)))))
 
 ;; Only support python and ruby for now
-(@add-hook python-mode (setq +doom-modeline-env-command "python --version 2>&1 | cut -d' ' -f2"))
-(@add-hook ruby-mode   (setq +doom-modeline-env-command "ruby --version 2>&1 | cut -d' ' -f2"))
+(add-hook! python-mode (setq +doom-modeline-env-command "python --version 2>&1 | cut -d' ' -f2"))
+(add-hook! ruby-mode   (setq +doom-modeline-env-command "ruby --version 2>&1 | cut -d' ' -f2"))
 
 
 ;;
@@ -175,7 +175,7 @@ active."
   (eq (selected-window) +doom-modeline-current-window))
 
 ;; From from `powerline's `pl/make-xpm'.
-(@def-memoized +doom-modeline--make-xpm (color height width)
+(def-memoized! +doom-modeline--make-xpm (color height width)
   "Create an XPM bitmap."
   (when (display-graphic-p)
     (propertize
@@ -262,7 +262,7 @@ project root). Excludes the file basename. See `doom-buffer-name' for that."
 ;; Segments
 ;;
 
-(@def-modeline-segment buffer-project
+(def-modeline-segment! buffer-project
   "Displays `doom-project-root'. This is for special buffers like the scratch
 buffer where knowing the current project directory is important."
   (let ((face (if (active) 'doom-modeline-buffer-project)))
@@ -274,7 +274,7 @@ buffer where knowing the current project directory is important."
             (propertize (concat " " (abbreviate-file-name (doom-project-root)))
                         'face face))))
 
-(@def-modeline-segment buffer-info
+(def-modeline-segment! buffer-info
   "Combined information about the current buffer, including the current working
 directory, the file name, and its state (modified, read-only or non-existent)."
   (let ((all-the-icons-scale-factor 1.2)
@@ -303,7 +303,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
             (propertize (+doom-modeline--buffer-path)
                         'face (if faces `(:inherit ,faces))))))
 
-(@def-modeline-segment buffer-encoding
+(def-modeline-segment! buffer-encoding
   "Displays the encoding and eol style of the buffer the same way Atom does."
   (concat (let ((eol-type (coding-system-eol-type buffer-file-coding-system)))
             (cond ((eq eol-type 0) "LF  ")
@@ -317,7 +317,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                   (t (upcase (symbol-name sys-name)))))
           "  "))
 
-(@def-modeline-segment major-mode
+(def-modeline-segment! major-mode
   "The major mode, including process, environment and text-scale info."
   (propertize
    (concat (format-mode-line mode-name)
@@ -328,7 +328,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                 (format " (%+d)" text-scale-mode-amount)))
    'face (if (active) 'doom-modeline-buffer-major-mode)))
 
-(@def-modeline-segment vcs
+(def-modeline-segment! vcs
   "Displays the current branch, colored based on its state."
   (when (and vc-mode buffer-file-name)
     (let ((backend (vc-backend buffer-file-name))
@@ -380,7 +380,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
    (when text
      (propertize text 'face face))))
 
-(@def-modeline-segment flycheck
+(def-modeline-segment! flycheck
   "Displays color-coded flycheck error status in the current buffer with pretty
 icons."
   (when (boundp 'flycheck-last-status-change)
@@ -404,7 +404,7 @@ icons."
     (when pos (goto-char pos))
     (current-column)))
 
-(@def-modeline-segment selection-info
+(def-modeline-segment! selection-info
   "Information about the current selection, such as how many characters and
 lines are selected, or the NxM dimensions of a block selection."
   (when mark-active
@@ -492,7 +492,7 @@ lines are selected, or the NxM dimensions of a block selection."
                length))
      'face (if (active) 'doom-modeline-panel))))
 
-(@def-modeline-segment matches
+(def-modeline-segment! matches
   "TODO"
   (or (concat (+doom-modeline--macro-recording)
               (+doom-modeline--anzu)
@@ -500,18 +500,18 @@ lines are selected, or the NxM dimensions of a block selection."
               (+doom-modeline--iedit))
       " %I "))
 
-(@def-modeline-segment media-info
+(def-modeline-segment! media-info
   "TODO"
   (cond ((eq major-mode 'image-mode)
          (let ((size (image-size (image-get-display-property) :pixels)))
            (format "  %dx%d  " (car size) (cdr size))))))
 
-(@def-modeline-segment eldoc
+(def-modeline-segment! eldoc
   "TODO"
   (and (boundp 'str) str))
 
 ;;
-(@def-modeline-segment bar
+(def-modeline-segment! bar
   (+doom-modeline--make-xpm
    (face-background (if (active)
                         'doom-modeline-bar
@@ -519,7 +519,7 @@ lines are selected, or the NxM dimensions of a block selection."
    +doom-modeline-height
    +doom-modeline-bar-width))
 
-(@def-modeline-segment eldoc-bar
+(def-modeline-segment! eldoc-bar
   (+doom-modeline--make-xpm
    (face-background 'doom-modeline-eldoc-bar)
    +doom-modeline-height
@@ -530,19 +530,19 @@ lines are selected, or the NxM dimensions of a block selection."
 ;; Mode lines
 ;;
 
-(@def-modeline main
+(def-modeline! main
   (bar matches " " buffer-info "  %l:%c %p  " selection-info)
   (buffer-encoding vcs major-mode flycheck))
 
-(@def-modeline eldoc
+(def-modeline! eldoc
   (eldoc-bar " " eldoc)
   (media-info major-mode))
 
-(@def-modeline minimal
+(def-modeline! minimal
   (bar matches " " buffer-info)
   (media-info major-mode))
 
-(@def-modeline project
+(def-modeline! project
   (bar " " buffer-project)
   (major-mode))
 

@@ -28,7 +28,7 @@
   "Major mode for the DOOM dashboard buffer.")
 
 
-(@def-package all-the-icons :when (display-graphic-p))
+(def-package! all-the-icons :when (display-graphic-p))
 
 (unless (display-graphic-p)
   (defalias 'all-the-icons-octicon 'ignore)
@@ -42,18 +42,18 @@
 (setq doom-fallback-buffer +doom-dashboard-name)
 
 (add-hook 'emacs-startup-hook '+doom-dashboard/open)
-(@add-hook 'kill-buffer-query-functions
+(add-hook! 'kill-buffer-query-functions
    (if (not (+doom-dashboard-p))
        t
      (ignore-errors (+doom-dashboard-force-reload))
      (bury-buffer)
      nil))
-(@add-hook 'window-setup-hook
+(add-hook! 'window-setup-hook
   (add-hook 'window-configuration-change-hook '+doom-dashboard-reload)
   (+doom-dashboard-reload))
 
 ;; Compatibility with `midnight-mode' and `clean-buffer-list'
-(@after midnight-mode
+(after! midnight-mode
   (push +doom-dashboard-name clean-buffer-list-kill-never-buffer-names)
   (push "^\\s-*\\*doom.+" clean-buffer-list-kill-never-regexps))
 
@@ -93,7 +93,7 @@
     (unless +doom-dashboard-modeline
       (setq +doom-dashboard-old-modeline mode-line-format)
       (setq +doom-dashboard-modeline
-            (if (@featurep :ui doom-modeline)
+            (if (featurep! :ui doom-modeline)
                 (doom-modeline 'project)
               mode-line-format)))
     (let ((old-pwd (or dir default-directory)))

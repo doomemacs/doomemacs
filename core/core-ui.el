@@ -44,8 +44,8 @@
 ;; show typed keystrokes in minibuffer
 (setq echo-keystrokes 0.02)
 ;; ...but hide them while isearch is active
-(@add-hook isearch-mode     (setq echo-keystrokes 0))
-(@add-hook isearch-mode-end (setq echo-keystrokes 0.02))
+(add-hook! isearch-mode     (setq echo-keystrokes 0))
+(add-hook! isearch-mode-end (setq echo-keystrokes 0.02))
 
 ;; A minor mode for toggling the mode-line
 (defvar doom--hidden-modeline-format nil
@@ -90,7 +90,7 @@ disabled.")
   (push (cons 'left-fringe  doom-ui-fringe-size) default-frame-alist)
   (push (cons 'right-fringe doom-ui-fringe-size) default-frame-alist)
   ;; no fringe in the minibuffer
-  (@add-hook (emacs-startup minibuffer-setup)
+  (add-hook! (emacs-startup minibuffer-setup)
     (set-window-fringes (minibuffer-window) 0 0 nil)))
 
 
@@ -101,7 +101,7 @@ disabled.")
 ;; I modified the built-in `hideshow' package to enable itself when needed. A
 ;; better, more vim-like code-folding plugin would be the `origami' plugin, but
 ;; until certain breaking bugs are fixed in it, I won't switch over.
-(@def-package hideshow ; built-in
+(def-package! hideshow ; built-in
   :commands (hs-minor-mode hs-toggle-hiding hs-already-hidden-p)
   :init
   (defun doom*autoload-hideshow ()
@@ -112,7 +112,7 @@ disabled.")
   (setq hs-hide-comments-when-hiding-all nil))
 
 ;; Show uninterrupted indentation markers with some whitespace voodoo.
-(@def-package highlight-indent-guides
+(def-package! highlight-indent-guides
   :commands highlight-indent-guides-mode
   :config
   (setq highlight-indent-guides-method 'character)
@@ -154,7 +154,7 @@ file."
       (set-buffer-modified-p nil))
     nil)
 
-  (@add-hook highlight-indent-guides-mode
+  (add-hook! highlight-indent-guides-mode
     (if highlight-indent-guides-mode
         (progn
           (doom|inject-trailing-whitespace)
@@ -163,10 +163,10 @@ file."
       (delete-trailing-whitespace))))
 
 ;; For modes that don't adequately highlight numbers
-(@def-package highlight-numbers :commands highlight-numbers-mode)
+(def-package! highlight-numbers :commands highlight-numbers-mode)
 
 ;; Line highlighting
-(@def-package hl-line ; built-in
+(def-package! hl-line ; built-in
   :config
   ;; stickiness doesn't play nice with emacs 25+
   (setq hl-line-sticky-flag nil
@@ -174,35 +174,35 @@ file."
 
 ;; Line number column. A faster (or equivalent, in the worst case) line number
 ;; plugin than the built-in `linum'.
-(@def-package nlinum
+(def-package! nlinum
   :commands nlinum-mode
   :preface
   (defvar linum-format "%3d ")
   (defvar nlinum-format "%4d ")
   :init
-  (@add-hook
+  (add-hook!
     (markdown-mode prog-mode scss-mode web-mode conf-mode groovy-mode
      nxml-mode snippet-mode php-mode)
     'nlinum-mode)
 
   :config
   ;; Optimization: calculate line number column width beforehand
-  (@add-hook nlinum-mode
+  (add-hook! nlinum-mode
     (setq nlinum--width (length (save-excursion (goto-char (point-max))
                                                 (format-mode-line "%l")))))
 
   ;; Disable nlinum explicitly before making a frame, otherwise nlinum throws
   ;; linum face errors that prevent the frame from spawning.
-  (@add-hook '(before-make-frame-hook after-make-frame-functions)
+  (add-hook! '(before-make-frame-hook after-make-frame-functions)
     (nlinum-mode -1)))
 
 ;; Helps us distinguish stacked delimiter pairs. Especially in parentheses-drunk
 ;; languages like Lisp.
-(@def-package rainbow-delimiters
+(def-package! rainbow-delimiters
   :commands rainbow-delimiters-mode
   :config (setq rainbow-delimiters-max-face-count 3)
   :init
-  (@add-hook (emacs-lisp-mode lisp-mode js-mode css-mode c-mode-common)
+  (add-hook! (emacs-lisp-mode lisp-mode js-mode css-mode c-mode-common)
     'rainbow-delimiters-mode))
 
 
@@ -211,7 +211,7 @@ file."
 ;;
 
 ;; TODO Improve docstrings
-(defmacro @def-modeline-segment (name &rest forms)
+(defmacro def-modeline-segment! (name &rest forms)
   "Defines a modeline segment function and byte compiles it."
   (declare (indent defun) (doc-string 2))
   `(defun ,(intern (format "doom-modeline-segment--%s" name)) ()
@@ -226,11 +226,11 @@ file."
                (list (intern (format "doom-modeline-segment--%s" (symbol-name seg))))))
            segments)))
 
-(defmacro @def-modeline (name lhs &optional rhs)
+(defmacro def-modeline! (name lhs &optional rhs)
   "Defines a modeline format and byte-compiles it.
 
 Example:
-   (@def-modeline minimal
+   (def-modeline! minimal
      (bar matches \" \" buffer-info)
      (media-info major-mode))
    (setq-default mode-line-format (doom-modeline 'minimal))"

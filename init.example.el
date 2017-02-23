@@ -30,7 +30,7 @@
 
 (require 'core (concat user-emacs-directory "core/core"))
 
-(@doom :feature
+(doom! :feature
        evil            ; come to the dark side, we have cookies
        ;; TODO jump            ; navigating your code
        snippets        ; my elves. They type so I don't have to

@@ -32,7 +32,7 @@
 ;; Packages
 ;;
 
-(@def-package dired-k
+(def-package! dired-k
   :after dired
   :config
   (setq dired-k-style 'git)
@@ -40,7 +40,7 @@
   (add-hook 'dired-after-readin-hook #'dired-k-no-revert))
 
 ;; Striped dired buffers
-(@def-package stripe-buffer
+(def-package! stripe-buffer
   :commands stripe-buffer-mode
   :init (add-hook 'dired-mode-hook 'stripe-buffer-mode))
 

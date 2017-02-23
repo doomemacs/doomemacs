@@ -3,7 +3,7 @@
 ;; I'm a vimmer at heart. Its modal philosophy suits me better, and this module
 ;; strives to make Emacs a much better vim than vim was.
 
-(@def-setting :evil-state (&rest mode-state-list)
+(def-setting! :evil-state (&rest mode-state-list)
   "Set the initialize STATE of MODE using `evil-set-initial-state'."
   (if (cl-every 'listp mode-state-list)
       (let (forms)
@@ -22,7 +22,7 @@
 ;; evil-mode
 ;;
 
-(@def-package evil :demand t
+(def-package! evil :demand t
   :init
   (setq evil-want-C-u-scroll t
         evil-want-visual-char-semi-exclusive t
@@ -44,12 +44,12 @@
   (evil-mode +1)
   (evil-select-search-module 'evil-search-module 'evil-search)
 
-  (@set :popup
+  (set! :popup
     '("*evil-registers*" :size 0.3)
     '("*Command Line*" :size 8))
 
   ;; Set cursor colors later, presumably once theme is loaded
-  (@add-hook 'after-init-hook
+  (add-hook! 'after-init-hook
     (setq evil-default-cursor (face-attribute 'cursor :background nil t)
           evil-normal-state-cursor 'box
           evil-emacs-state-cursor  `(,(face-attribute 'warning :foreground nil nil) box)
@@ -153,19 +153,19 @@
 ;; Plugins
 ;;
 
-(@def-package evil-args
+(def-package! evil-args
   :commands (evil-inner-arg evil-outer-arg
              evil-forward-arg evil-backward-arg
              evil-jump-out-args)
   :init (+evil--textobj "a" 'evil-inner-arg 'evil-outer-arg))
 
 
-(@def-package evil-commentary
+(def-package! evil-commentary
   :commands (evil-commentary evil-commentary-yank evil-commentary-line)
   :config (evil-commentary-mode 1))
 
 
-(@def-package evil-easymotion
+(def-package! evil-easymotion
   :defer 1
   :commands evilem-define
   :config
@@ -192,7 +192,7 @@
                               (evil-snipe-enable-incremental-highlight)))))
 
 
-(@def-package evil-embrace
+(def-package! evil-embrace
   :after evil-surround
   :config
   (setq evil-embrace-show-help-p nil)
@@ -238,15 +238,15 @@
   ;; Add extra pairs
   (add-hook 'LaTeX-mode-hook 'embrace-LaTeX-mode-hook)
   (add-hook 'org-mode-hook 'embrace-org-mode-hook)
-  (@add-hook emacs-lisp-mode
+  (add-hook! emacs-lisp-mode
     (embrace-add-pair ?\` "`" "'"))
-  (@add-hook (emacs-lisp-mode lisp-mode)
+  (add-hook! (emacs-lisp-mode lisp-mode)
     (embrace-add-pair-regexp ?f "([^ ]+ " ")" '+evil--embrace-elisp-fn))
-  (@add-hook (org-mode LaTeX-mode)
+  (add-hook! (org-mode LaTeX-mode)
     (embrace-add-pair-regexp ?l "\\[a-z]+{" "}" '+evil--embrace-latex)))
 
 
-(@def-package evil-escape
+(def-package! evil-escape
   :commands evil-escape-mode
   :init
   (defun +evil|escape-disable () (evil-escape-mode -1))
@@ -261,7 +261,7 @@
         evil-escape-delay 0.25))
 
 
-(@def-package evil-exchange
+(def-package! evil-exchange
   :commands evil-exchange
   :config
   (defun +evil*exchange-off ()
@@ -269,7 +269,7 @@
   (advice-add 'evil-force-normal-state :after '+evil*exchange-off))
 
 
-(@def-package evil-indent-plus
+(def-package! evil-indent-plus
   :commands (evil-indent-plus-i-indent
              evil-indent-plus-a-indent
              evil-indent-plus-i-indent-up
@@ -282,13 +282,13 @@
   (+evil--textobj "J" 'evil-indent-plus-i-indent-up-down 'evil-indent-plus-a-indent-up-down))
 
 
-(@def-package evil-matchit
+(def-package! evil-matchit
   :commands (evilmi-jump-items evilmi-text-object global-evil-matchit-mode)
   :config (global-evil-matchit-mode 1)
   :init (+evil--textobj "%" 'evilmi-text-object))
 
 
-(@def-package evil-multiedit
+(def-package! evil-multiedit
   :commands (evil-multiedit-match-all
              evil-multiedit-match-and-next
              evil-multiedit-match-and-prev
@@ -302,20 +302,20 @@
   :config (evil-multiedit-default-keybinds))
 
 
-(@def-package evil-textobj-anyblock
+(def-package! evil-textobj-anyblock
   :commands (evil-numbers/inc-at-pt evil-numbers/dec-at-pt)
   :init
   (+evil--textobj "B" 'evil-textobj-anyblock-inner-block 'evil-textobj-anyblock-a-block))
 
 
-(@def-package evil-search-highlight-persist :demand t
+(def-package! evil-search-highlight-persist :demand t
   :commands (evil-textobj-anyblock-inner-block evil-textobj-anyblock-a-block)
   :config
   (global-evil-search-highlight-persist t)
   (advice-add 'evil-force-normal-state :after 'evil-search-highlight-persist-remove-all))
 
 
-(@def-package evil-snipe :demand t
+(def-package! evil-snipe :demand t
   :init
   (setq evil-snipe-smart-case t
         evil-snipe-scope 'line
@@ -331,12 +331,12 @@
   (evil-snipe-mode 1)
   (evil-snipe-override-mode 1)
   ;; Switch to evil-easymotion/avy after first snipe
-  (@map :map evil-snipe-parent-transient-map
-        "C-;" (@λ (require 'evil-easymotion)
+  (map! :map evil-snipe-parent-transient-map
+        "C-;" (λ! (require 'evil-easymotion)
                   (call-interactively +evil--snipe-repeat-fn))))
 
 
-(@def-package evil-surround
+(def-package! evil-surround
   :commands (global-evil-surround-mode
              evil-surround-edit
              evil-Surround-edit
@@ -344,7 +344,7 @@
   :config (global-evil-surround-mode 1))
 
 
-(@def-package evil-visualstar
+(def-package! evil-visualstar
   :commands (global-evil-visualstar-mode
              evil-visualstar/begin-search
              evil-visualstar/begin-search-forward
@@ -353,7 +353,7 @@
 
 
 ;; A side-panel for browsing my project files. Inspired by vim's NERDTree.
-(@def-package neotree
+(def-package! neotree
   :commands (neotree-show
              neotree-hide
              neotree-toggle
@@ -382,7 +382,7 @@
           "~$"
           "^#.*#$"))
 
-  (@set :evil-state 'neotree-mode 'motion)
+  (set! :evil-state 'neotree-mode 'motion)
 
   (push neo-buffer-name winner-boring-buffers)
 
@@ -390,7 +390,7 @@
   ;; overridden when the neotree buffer is spawned). So we bind them in a hook.
   (add-hook 'neo-after-create-hook '+evil|neotree-init-keymap)
   (defun +evil|neotree-init-keymap (&rest _)
-    (@map :Lm "\\\\"     'evil-window-prev
+    (map! :Lm "\\\\"     'evil-window-prev
           :Lm "RET"      'neotree-enter
           :Lm "<return>" 'neotree-enter
           :Lm "ESC ESC"  'neotree-hide

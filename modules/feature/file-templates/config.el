@@ -1,12 +1,12 @@
 ;;; feature/file-templates/config.el
 
-(@require :feature snippets)
+(require! :feature snippets)
 
 (defvar +file-templates-dir
   (expand-file-name "templates/" (file-name-directory load-file-name))
   "")
 
-(@def-package autoinsert ; built-in
+(def-package! autoinsert ; built-in
   :after yasnippet
   :init
   (setq auto-insert-query nil  ; Don't prompt before insertion

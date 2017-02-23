@@ -1,21 +1,21 @@
 ;;; lang/ruby/config.el
 
-(@def-package ruby-mode
+(def-package! ruby-mode
   :mode ("\\.rb$" "\\.rake$" "\\.gemspec$" "\\.?pryrc$"
          "/\\(Gem\\|Cap\\|Vagrant\\|Rake\\)file$")
   :interpreter "ruby"
   :init
   (add-hook 'ruby-mode-hook 'flycheck-mode)
   :config
-  (@set :build 'rake 'ruby-mode '+ruby/rake)
-  (@set :company-backend 'ruby-mode '(company-dabbrev-code))
-  (@set :electric 'ruby-mode :words '("else" "end" "elseif"))
-  (@set :repl 'ruby-mode 'inf-ruby)
+  (set! :build 'rake 'ruby-mode '+ruby/rake)
+  (set! :company-backend 'ruby-mode '(company-dabbrev-code))
+  (set! :electric 'ruby-mode :words '("else" "end" "elseif"))
+  (set! :repl 'ruby-mode 'inf-ruby)
   (setq ruby-deep-indent-paren t)
   ;; Don't interfere with my custom RET behavior
   (define-key ruby-mode-map [?\n] nil)
 
-  (@map :map ruby-mode-map
+  (map! :map ruby-mode-map
         :localleader
         :prefix "r"
         :desc "toggle block"             :nv "b"  'ruby-toggle-block
@@ -27,7 +27,7 @@
         :desc "convert post conditional" :nv "cc" 'ruby-refactor-convert-post-conditional))
 
 
-(@def-package ruby-refactor
+(def-package! ruby-refactor
   :commands
   (ruby-refactor-extract-to-method ruby-refactor-extract-local-variable
    ruby-refactor-extract-constant ruby-refactor-add-parameter
@@ -35,16 +35,16 @@
 
 
 ;; Highlight doc comments
-(@def-package yard-mode
+(def-package! yard-mode
   :commands yard-mode
   :init (add-hook 'ruby-mode-hook 'yard-mode))
 
 
-(@def-package rspec-mode
+(def-package! rspec-mode
   :mode ("/\\.rspec$" . text-mode)
   :init
-  (@associate rspec-mode :match "/\\.rspec$")
-  (@associate rspec-mode :in (ruby-mode yaml-mode) :files ("/spec/"))
+  (associate! rspec-mode :match "/\\.rspec$")
+  (associate! rspec-mode :in (ruby-mode yaml-mode) :files ("/spec/"))
   (defvar rspec-mode-verifiable-map (make-sparse-keymap))
   (defvar evilmi-ruby-match-tags
     '((("unless" "if") ("elsif" "else") "end")
@@ -54,7 +54,7 @@
       ;; Rake
       (("task" "namespace") () "end")))
   :config
-  (@map :map rspec-mode-map
+  (map! :map rspec-mode-map
         :localleader
         :n "tr" 'rspec-rerun
         :n "ta" 'rspec-verify-all
@@ -62,19 +62,19 @@
         :n "tv" 'rspec-verify))
 
 
-(@def-package inf-ruby
+(def-package! inf-ruby
   :commands (inf-ruby inf-ruby-console-auto)
   :config
-  (@set :company-backend 'inf-ruby-mode '(company-inf-ruby)))
+  (set! :company-backend 'inf-ruby-mode '(company-inf-ruby)))
 
 
-(@def-package company-inf-ruby
+(def-package! company-inf-ruby
   :after inf-ruby)
 
 ;;
 ;; TODO Frameworks
 ;;
 
-;; (@def-project rake "rake"
+;; (def-project! rake "rake"
 ;;   :files ("Rakefile"))
 

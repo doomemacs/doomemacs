@@ -1,6 +1,6 @@
 ;;; lang/cc/config.el --- C, C++, and Objective-C
 
-(@def-package cc-mode
+(def-package! cc-mode
   :commands (c-mode c++-mode objc-mode java-mode)
   :mode ("\\.mm" . objc-mode)
   :init
@@ -32,10 +32,10 @@
   ;; Fontification of C++11 string literals
   (add-hook 'c++-mode-hook '+cc|extra-fontify-c++)
 
-  (@set :electric '(c-mode c++-mode objc-mode java-mode)
+  (set! :electric '(c-mode c++-mode objc-mode java-mode)
         :chars '(?\n ?\}))
 
-  (@set :company-backend
+  (set! :company-backend
         '(c-mode c++-mode objc-mode)
         '(company-irony-c-headers company-irony))
 
@@ -74,7 +74,7 @@
 
   ;; Certain mappings interfere with smartparens and custom bindings,
   ;; so unbind them
-  (@map :map c-mode-map
+  (map! :map c-mode-map
         "DEL" nil
         "#" 'self-insert-command
         "{" 'self-insert-command
@@ -99,58 +99,58 @@
         :i ">" '+cc/autoclose->-maybe))
 
 
-(@def-package modern-cpp-font-lock
+(def-package! modern-cpp-font-lock
   :commands modern-c++-font-lock-mode
   :init (add-hook 'c++-mode-hook 'modern-c++-font-lock-mode))
 
 
-(@def-package irony
+(def-package! irony
   :after cc-mode
   :config
   (setq irony-server-install-prefix (concat doom-cache-dir "irony-server/"))
-  (@add-hook 'irony-mode-hook '(irony-eldoc flycheck-mode))
-  (@add-hook 'c++-mode-hook
+  (add-hook! 'irony-mode-hook '(irony-eldoc flycheck-mode))
+  (add-hook! 'c++-mode-hook
     (make-local-variable 'irony-additional-clang-options)
     (push "-std=c++11" irony-additional-clang-options)))
 
-(@def-package irony-eldoc :after irony)
+(def-package! irony-eldoc :after irony)
 
-(@def-package flycheck-irony :after irony :config (flycheck-irony-setup))
+(def-package! flycheck-irony :after irony :config (flycheck-irony-setup))
 
 
 ;;
 ;; Tools
 ;;
 
-(@def-package disaster :commands disaster)
+(def-package! disaster :commands disaster)
 
 
 ;;
 ;; Plugins
 ;;
 
-(@def-package company-cmake :after cmake-mode)
+(def-package! company-cmake :after cmake-mode)
 
-(@def-package company-irony :after irony)
+(def-package! company-irony :after irony)
 
-(@def-package company-irony-c-headers :after company-irony)
+(def-package! company-irony-c-headers :after company-irony)
 
 
 ;;
 ;; Major modes
 ;;
 
-(@def-package cmake-mode
+(def-package! cmake-mode
   :mode "CMakeLists\\.txt$"
   :config
-  (@set :company-backend 'cmake-mode '(company-cmake company-yasnippet)))
+  (set! :company-backend 'cmake-mode '(company-cmake company-yasnippet)))
 
-(@def-package glsl-mode :mode ("\\.glsl\\'" "\\.vert\\'" "\\.frag\\'" "\\.geom\\'"))
+(def-package! glsl-mode :mode ("\\.glsl\\'" "\\.vert\\'" "\\.frag\\'" "\\.geom\\'"))
 
-(@def-package cuda-mode :mode "\\.cuh?$")
+(def-package! cuda-mode :mode "\\.cuh?$")
 
-(@def-package opencl-mode :mode "\\.cl$")
+(def-package! opencl-mode :mode "\\.cl$")
 
-(@def-package demangle-mode
+(def-package! demangle-mode
   :commands demangle-mode
   :init (add-hook 'llvm-mode-hook 'demangle-mode))

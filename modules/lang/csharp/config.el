@@ -1,23 +1,23 @@
 ;;; module-csharp.el
 
-(@def-package csharp-mode
+(def-package! csharp-mode
   :mode "\\.cs$"
   :init (add-hook 'csharp-mode-hook 'flycheck-mode))
 
 
-(@def-package omnisharp
+(def-package! omnisharp
   :commands omnisharp-mode
   :preface
   (setq omnisharp-auto-complete-want-documentation nil
         omnisharp-server-executable-path (concat doom-local-dir "OmniSharp.exe"))
   :when (file-exists-p omnisharp-server-executable-path)
   :init
-  (@add-hook csharp-mode '(eldoc-mode omnisharp-mode))
+  (add-hook! csharp-mode '(eldoc-mode omnisharp-mode))
   :config
-  (@set :company-backend 'csharp-mode '(company-omnisharp))
+  (set! :company-backend 'csharp-mode '(company-omnisharp))
 
   ;; Map all refactor commands (see emr)
-  (@map :map omnisharp-mode-map
+  (map! :map omnisharp-mode-map
         :n "gd" 'omnisharp-go-to-definition
 
         :localleader
@@ -40,10 +40,10 @@
         :n "o"  'omnisharp-show-overloads-at-point
 
         :prefix "t"
-        :n "tr" (@λ (omnisharp-unit-test "fixture"))
-        :n "ts" (@λ (omnisharp-unit-test "single"))
-        :n "ta" (@λ (omnisharp-unit-test "all"))))
+        :n "tr" (λ! (omnisharp-unit-test "fixture"))
+        :n "ts" (λ! (omnisharp-unit-test "single"))
+        :n "ta" (λ! (omnisharp-unit-test "all"))))
 
 
-(@def-package shader-mode :mode "\\.shader$") ; unity shaders
+(def-package! shader-mode :mode "\\.shader$") ; unity shaders
 

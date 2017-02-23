@@ -12,7 +12,7 @@
 (defvar doom--which-key-defs '(nil))
 
 
-(@def-package which-key
+(def-package! which-key
   :defer 1
   :config
   (setq which-key-sort-order 'which-key-prefix-then-key-order
@@ -50,7 +50,7 @@
                       state))
                   (split-string (substring (symbol-name keyword) 1) "" t)))))
 
-;; Register keywords for proper indentation (see `@map')
+;; Register keywords for proper indentation (see `map!')
 (put ':prefix       'lisp-indent-function 'defun)
 (put ':map          'lisp-indent-function 'defun)
 (put ':map*         'lisp-indent-function 'defun)
@@ -59,7 +59,7 @@
 (put ':unless       'lisp-indent-function 'defun)
 (put ':desc         'lisp-indent-function 'defun)
 
-(defmacro @map (&rest rest)
+(defmacro map! (&rest rest)
   "A nightmare of a key-binding macro that will use `evil-define-key*',
 `define-key', `local-set-key' and `global-set-key' depending on context and
 plist key flags (and whether evil is loaded or not). It was designed to make
@@ -96,7 +96,7 @@ Conditional keybinds
     (:unless [CONDITION] [...])
 
 Example
-    (@map :map magit-mode-map
+    (map! :map magit-mode-map
           :m \"C-r\" 'do-something           ; assign C-r in motion state
           :nv \"q\" 'magit-mode-quit-window  ; assign to 'q' in normal and visual states
           \"C-x C-r\" 'a-global-keybind
@@ -113,7 +113,7 @@ Example
       (cond
        ;; it's a sub expr
        ((listp key)
-        (push (macroexpand `(@map ,@key)) forms))
+        (push (macroexpand `(map! ,@key)) forms))
 
        ;; it's a flag
        ((keywordp key)
@@ -126,9 +126,9 @@ Example
                (setq key :prefix
                      desc "<localleader>")))
         (pcase key
-          (:when    (prog1 `((if ,(pop rest)       ,(macroexpand `(@map ,@rest)))) (setq rest '())))
-          (:unless  (prog1 `((if (not ,(pop rest)) ,(macroexpand `(@map ,@rest)))) (setq rest '())))
-          (:after   (prog1 `((@after ,(pop rest)   ,(macroexpand `(@map ,@rest)))) (setq rest '())))
+          (:when    (prog1 `((if ,(pop rest)       ,(macroexpand `(map! ,@rest)))) (setq rest '())))
+          (:unless  (prog1 `((if (not ,(pop rest)) ,(macroexpand `(map! ,@rest)))) (setq rest '())))
+          (:after   (prog1 `((after! ,(pop rest)   ,(macroexpand `(map! ,@rest)))) (setq rest '())))
           (:desc    (setq desc (pop rest)))
           (:map*    (setq defer t) (push :map rest))
           (:map
@@ -166,7 +166,7 @@ Example
               (when prefix
                 (setq key (append prefix (list key))))
               (unless (> (length rest) 0)
-                (user-error "@map has no definition for %s key" key))
+                (user-error "map! has no definition for %s key" key))
               (setq def (pop rest))
               (when desc
                 (push `(nconc doom--which-key-defs (list ,(key-description (eval key)) ,desc))

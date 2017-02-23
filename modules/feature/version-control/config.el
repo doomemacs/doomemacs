@@ -1,19 +1,19 @@
 ;;; feature/version-control/config.el
 
-(@load +git)
-;; (@load +hg)
+(load! +git)
+;; (load! +hg)
 
-(@after vc-annotate
-  (@set :popup
+(after! vc-annotate
+  (set! :popup
     '("*vc-diff*" :size 15 :noselect t)
     '("*vc-change-log*" :size 15)
     '(vc-annotate-mode :same t))
 
-  (@set :evil-state
+  (set! :evil-state
     '(vc-annotate-mode . normal)
     '(vc-git-log-view-mode . normal))
 
-  (@map :map vc-annotate-mode-map
+  (map! :map vc-annotate-mode-map
         :n "q"   'kill-this-buffer
         :n "d"   'vc-annotate-show-diff-revision-at-line
         :n "D"   'vc-annotate-show-changeset-diff-revision-at-line

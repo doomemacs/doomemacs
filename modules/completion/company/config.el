@@ -1,6 +1,6 @@
 ;;; completion/company/config.el
 
-(@def-setting :company-backend (modes backends)
+(def-setting! :company-backend (modes backends)
   "Register company BACKENDS to MODES."
   (let* ((modes (if (listp modes) modes (list modes)))
          (backends (if (listp backends) backends (list backends)))
@@ -13,14 +13,14 @@
          (require 'company)
          (set (make-local-variable 'company-backends)
               (append '((,@backends)) company-backends)))
-       (@add-hook ,modes ',def-name))))
+       (add-hook! ,modes ',def-name))))
 
 
 ;;
 ;; Packages
 ;;
 
-(@def-package company
+(def-package! company
   :commands (company-mode global-company-mode company-complete
              company-complete-common company-manual-begin company-grab-line)
   :config
@@ -36,14 +36,14 @@
         company-frontends '(company-pseudo-tooltip-frontend company-echo-metadata-frontend)
         company-backends '(company-capf))
 
-  (@set :company-backend 'python-mode '(company-anaconda))
+  (set! :company-backend 'python-mode '(company-anaconda))
 
   (push 'company-sort-by-occurrence company-transformers)
 
-  (@after yasnippet
+  (after! yasnippet
     (nconc company-backends '(company-yasnippet)))
 
-  (@map (:map company-active-map
+  (map! (:map company-active-map
           ;; Don't interfere with insert mode binding for `evil-delete-backward-word'
           "C-w"        nil
 
@@ -57,20 +57,20 @@
           "C-SPC"      'company-complete-common
           [tab]        'company-complete-common-or-cycle
           [backtab]    'company-select-previous
-          [escape]     (@λ (company-abort) (evil-normal-state 1))
+          [escape]     (λ! (company-abort) (evil-normal-state 1))
           [C-return]   'counsel-company)
 
         ;; Automatically applies to `company-filter-map'
         (:map company-search-map
           "C-n"        'company-search-repeat-forward
           "C-p"        'company-search-repeat-backward
-          "C-s"        (@λ (company-search-abort) (company-filter-candidates))
+          "C-s"        (λ! (company-search-abort) (company-filter-candidates))
           [escape]     'company-search-abort))
 
   (global-company-mode +1))
 
 
-(@def-package company-statistics
+(def-package! company-statistics
   :after company
   :config
   (setq company-statistics-file (concat doom-cache-dir "company-stats-cache.el"))
@@ -78,14 +78,14 @@
 
 
 ;; Looks ugly on OSX without emacs-mac build
-(@def-package company-quickhelp
+(def-package! company-quickhelp
   :after company
   :config
   (setq company-quickhelp-delay nil)
   (company-quickhelp-mode +1))
 
 
-(@def-package company-dict
+(def-package! company-dict
   :commands company-dict)
 
 

@@ -12,7 +12,7 @@
 ;; Packages
 ;;
 
-(@def-package helm :demand t
+(def-package! helm :demand t
   :init
   (setq helm-quick-update t
         ;; Speedier without fuzzy matching
@@ -35,7 +35,7 @@
   :config
   (setq projectile-completion-system 'helm)
 
-  (@map "M-x"         'helm-M-x
+  (map! "M-x"         'helm-M-x
         "A-x"         'helm-M-x
         "M-X"         'helm-apropos
         "A-X"         'helm-apropos
@@ -60,7 +60,7 @@
           :e "ESC"     'helm-keyboard-quit))
 
   ;;; Popup setup
-  (@set :popup "\\` ?\\*[hH]elm.*?\\*\\'" :size 14 :regexp t)
+  (set! :popup "\\` ?\\*[hH]elm.*?\\*\\'" :size 14 :regexp t)
 
   ;;; Helm hacks
   (defconst doom-helm-header-fg (face-attribute 'helm-source-header :foreground))
@@ -74,7 +74,7 @@
   (require 'helm-mode)
   (helm-mode +1)
 
-  (@map :map helm-mode-map
+  (map! :map helm-mode-map
         [remap find-file] 'helm-find-files
         [remap switch-to-buffer] 'doom/helm-buffers-dwim
         [remap projectile-switch-to-buffer] (λ! (doom/helm-buffers-dwim t))
@@ -94,40 +94,40 @@
   (set-keymap-parent helm-projectile-find-file-map helm-map))
 
 
-(@def-package helm-locate
+(def-package! helm-locate
   :init
   (defvar helm-generic-files-map (make-sparse-keymap)
     "Generic Keymap for files.")
   :config (set-keymap-parent helm-generic-files-map helm-map))
 
 
-(@def-package helm-buffers
+(def-package! helm-buffers
   :commands (helm-buffers-list helm-mini)
   :config (advice-add 'helm-buffer-list :override 'helm*buffer-list))
 
 
-(@def-package helm-tags
+(def-package! helm-tags
   :commands (helm-tags-get-tag-file helm-etags-select))
 
 
-(@def-package helm-bookmark
+(def-package! helm-bookmark
   :commands (helm-bookmarks helm-filtered-bookmarks)
   :config (setq-default helm-bookmark-show-location t))
 
 
-(@def-package helm-files
+(def-package! helm-files
   :commands (helm-browse-project helm-find helm-find-files helm-for-files helm-multi-files helm-recentf)
   :config
   (setq helm-boring-file-regexp-list
         (append (list "\\.projects$" "\\.DS_Store$")
                 helm-boring-file-regexp-list))
 
-  (@map :map helm-find-files-map
+  (map! :map helm-find-files-map
         "C-w" 'helm-find-files-up-one-level
         "TAB" 'helm-execute-persistent-action))
 
 
-(@def-package helm-ag
+(def-package! helm-ag
   :commands (helm-ag
              helm-ag-mode
              helm-do-ag
@@ -139,7 +139,7 @@
              helm-ag-buffers
              helm-ag-clear-stack)
   :config
-  (@map (:map helm-ag-map
+  (map! (:map helm-ag-map
           "<backtab>"  'helm-ag-edit)
         (:map helm-ag-edit-map
           "<escape>"   'helm-ag--edit-abort
@@ -147,7 +147,7 @@
           :n "zx"      'helm-ag--edit-abort)))
 
 
-(@def-package helm-css-scss ; https://github.com/ShingoFukuyama/helm-css-scss
+(def-package! helm-css-scss ; https://github.com/ShingoFukuyama/helm-css-scss
   :commands (helm-css-scss
              helm-css-scss-multi
              helm-css-scss-insert-close-comment)
@@ -156,7 +156,7 @@
         helm-css-scss-split-with-multiple-windows t))
 
 
-(@def-package helm-swoop ; https://github.com/ShingoFukuyama/helm-swoop
+(def-package! helm-swoop ; https://github.com/ShingoFukuyama/helm-swoop
   :commands (helm-swoop helm-multi-swoop helm-multi-swoop-all)
   :config
   (setq helm-swoop-use-line-number-face t
@@ -165,18 +165,18 @@
         helm-swoop-pre-input-function (lambda () "")))
 
 
-(@def-package helm-describe-modes :commands helm-describe-modes)
-(@def-package helm-ring :commands helm-show-kill-ring)
-(@def-package helm-semantic :commands helm-semantic-or-imenu)
-(@def-package helm-elisp :commands helm-apropos)
-(@def-package helm-command :commands helm-M-x)
+(def-package! helm-describe-modes :commands helm-describe-modes)
+(def-package! helm-ring :commands helm-show-kill-ring)
+(def-package! helm-semantic :commands helm-semantic-or-imenu)
+(def-package! helm-elisp :commands helm-apropos)
+(def-package! helm-command :commands helm-M-x)
 
 
 ;;
 ;; Popup hacks
 ;;
 
-(@after helm
+(after! helm
   ;; Helm tries to clean up after itself, but shackle has already done this.
   ;; This fixes that. To reproduce, add a helm rule in `shackle-rules', open two
   ;; splits side-by-side, move to the buffer on the right and invoke helm. It
@@ -184,10 +184,10 @@
   (setq-default helm-reuse-last-window-split-state t
                 helm-split-window-in-side-p t))
 
-(@after helm-swoop
+(after! helm-swoop
   (setq helm-swoop-split-window-function (lambda (b) (doom-popup-buffer b))))
 
-(@after helm-ag
+(after! helm-ag
   ;; This prevents helm-ag from switching between windows and buffers.
   (defadvice helm-ag--edit-abort (around helm-ag-edit-abort-popup-compat activate)
     (cl-letf (((symbol-function 'select-window) 'ignore)) ad-do-it)

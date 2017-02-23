@@ -7,7 +7,7 @@
 ;;
 ;; Interactive versions of `ssh-deploy's functions are in autoload.el.
 
-(@def-package ssh-deploy
+(def-package! ssh-deploy
   :commands (ssh-deploy-upload-handler
              ssh-deploy-upload-handler-forced
              ssh-deploy-diff-handler
@@ -15,12 +15,12 @@
              ssh-deploy-remote-changes-handler)
   :init
   ;; Maybe auto-upload on save
-  (@add-hook 'after-save-hook
+  (add-hook! 'after-save-hook
     (when (and (bound-and-true-p ssh-deploy-root-remote) ssh-deploy-on-explicit-save)
       (ssh-deploy-upload-handler)))
 
   ;; Maybe check for changes on open file (if possible)
-  (@add-hook 'find-file-hook
+  (add-hook! 'find-file-hook
     (when (bound-and-true-p ssh-deploy-root-remote)
       (unless ssh-deploy-root-local
         (setq ssh-deploy-root-local (doom-project-root)))

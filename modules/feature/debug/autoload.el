@@ -11,7 +11,7 @@
 ;;;###autoload (autoload '+debug:debug-toggle-breakpoint "feature/debug/autoload" nil t)
 ;;;###autoload (autoload '+debug:run "feature/debug/autoload" nil t)
 
-(@after evil
+(after! evil
   (evil-define-command +debug:run (&optional path)
     "Initiate debugger for current major mode"
     (interactive "<f>")

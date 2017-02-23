@@ -1,6 +1,6 @@
 ;;; lang/markdown/config.el
 
-(@def-package markdown-mode
+(def-package! markdown-mode
   :mode ("\\.m\\(d\\|arkdown\\)$" "/README$"
          ("/README\\.md$" . gfm-mode))
   :init
@@ -11,9 +11,9 @@
         markdown-gfm-additional-languages '("sh"))
 
   :config
-  (@set :electric 'markdown-mode :chars '(?+ ?#))
+  (set! :electric 'markdown-mode :chars '(?+ ?#))
 
-  (@add-hook markdown-mode
+  (add-hook! markdown-mode
     (auto-fill-mode +1)
     (setq line-spacing 2
           fill-column 70))
@@ -22,7 +22,7 @@
    '(markdown-mode gfm-mode)
    "\`\`\`" "\`\`\`" :post-handlers '(("||\n" "RET")))
 
-  (@map :map gfm-mode-map
+  (map! :map gfm-mode-map
         "`" 'self-insert-command
 
         :map markdown-mode-map
@@ -54,6 +54,6 @@
            :nv "L"   'markdown-insert-reference-link-dwim))))
 
 
-(@def-package markdown-toc
+(def-package! markdown-toc
   :commands markdown-toc-generate-toc)
 

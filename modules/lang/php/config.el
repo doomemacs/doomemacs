@@ -1,12 +1,12 @@
 ;;; lang/php/config.el
 
-;; (@def-package hack-mode
+;; (def-package! hack-mode
 ;;   :mode "\\.hh$"
 ;;   :config
-;;   (@set :company-backend 'hack-mode '(company-capf)))
+;;   (set! :company-backend 'hack-mode '(company-capf)))
 
 
-(@def-package php-mode
+(def-package! php-mode
   :mode ("\\.php[s345]?$" "\\.inc$")
   :interpreter "php"
   :init
@@ -14,10 +14,10 @@
   :config
   (setq php-template-compatibility nil)
 
-  (@set :repl 'php-mode 'php-boris)
-  (@set :company-bakend 'php-mode '(php-extras-company company-yasnippet))
+  (set! :repl 'php-mode 'php-boris)
+  (set! :company-bakend 'php-mode '(php-extras-company company-yasnippet))
 
-  (@add-hook php-mode (setq-local sp-max-pair-length 6))
+  (add-hook! php-mode (setq-local sp-max-pair-length 6))
 
   (sp-with-modes '(php-mode)
     (sp-local-pair "/*"    "*/" :post-handlers '(("||\n[i]" "RET") ("| " "SPC")))
@@ -28,7 +28,7 @@
     (sp-local-pair "<?"    "?>"   :when '(("RET")) :post-handlers '("||\n[i]"))
     (sp-local-pair "<?php" "?>"   :when '(("RET")) :post-handlers '("||\n[i]")))
 
-  (@map :map php-mode-map
+  (map! :map php-mode-map
         :localleader
         :nv ";" 'doom/append-semicolon
 
@@ -44,7 +44,7 @@
         :n "s" 'phpunit-current-test))
 
 
-(@def-package php-extras
+(def-package! php-extras
   :after php-mode
   :init
   (add-hook 'php-mode-hook 'eldoc-mode)
@@ -65,28 +65,28 @@
                    (message "PHP eldoc updated!")))))
 
 
-(@def-package php-refactor-mode
+(def-package! php-refactor-mode
   :commands php-refactor-mode
   :init (add-hook 'php-mode-hook 'php-refactor-mode))
 
 
-(@def-package phpunit
+(def-package! phpunit
   :commands (phpunit-current-test phpunit-current-class phpunit-current-project))
 
 
-(@def-package php-boris :commands php-boris)
+(def-package! php-boris :commands php-boris)
 
 
 ;;
 ;; Projects
 ;;
 
-;; (@def-project laravel "laravel"
+;; (def-project! laravel "laravel"
 ;;   :modes (php-mode yaml-mode web-mode nxml-mode js2-mode scss-mode)
 ;;   :files ("artisan" "server.php"))
 
 ;; (defvar php-composer-conf (make-hash-table :test 'equal))
-;; (@def-project composer "composer"
+;; (def-project! composer "composer"
 ;;   :modes (web-mode php-mode)
 ;;   :files ("composer.json")
 ;;   :when

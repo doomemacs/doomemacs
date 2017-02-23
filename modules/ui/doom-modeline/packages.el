@@ -16,8 +16,8 @@
 ;;(require 'iedit)
 ;;(require 'evil-multiedit)
 
-(@package all-the-icons)
-(@package eldoc-eval)
-(when (@featurep :feature evil)
-  (@package evil-anzu))
+(package! all-the-icons)
+(package! eldoc-eval)
+(when (featurep! :feature evil)
+  (package! evil-anzu))
 

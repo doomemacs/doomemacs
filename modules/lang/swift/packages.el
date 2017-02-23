@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/swift/packages.el
 
-(@package swift-mode)
+(package! swift-mode)
 
-(when (@featurep :completion company)
-  (@package company-sourcekit))
+(when (featurep! :completion company)
+  (package! company-sourcekit))

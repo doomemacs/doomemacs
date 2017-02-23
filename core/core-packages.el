@@ -51,7 +51,7 @@ This will be nil if you have byte-compiled your configuration (as intended).")
 (defvar doom-packages nil
   "A list of enabled packages. Each element is a sublist, whose CAR is the
 package's name as a symbol, and whose CDR is the plist supplied to its
-`@package' declaration. Set by `doom-initialize-packages'.")
+`package!' declaration. Set by `doom-initialize-packages'.")
 
 (defvar doom-protected-packages
   '(persistent-soft quelpa use-package)
@@ -65,7 +65,7 @@ missing) and shouldn't be deleted.")
   (append (list doom-core-dir doom-modules-dir)
           load-path)
   "A backup of `load-path' before it was altered by `doom-initialize'. Used as a
-base when running `doom/reload', or by `@doom', for calculating how many
+base when running `doom/reload', or by `doom!', for calculating how many
 packages exist.")
 
 (setq load-prefer-newer nil
@@ -150,7 +150,7 @@ to speed up startup."
   "Ensures that `doom-autoload-file' exists and is loaded. Otherwise run
 `doom/reload-autoloads' to generate it."
   (unless (file-exists-p doom-autoload-file)
-    (@quiet (doom/reload-autoloads))))
+    (quiet! (doom/reload-autoloads))))
 
 (defun doom-initialize-packages (&optional force-p load-p)
   "Crawls across your emacs.d in order to fill `doom-modules' (from init.el) and
@@ -189,7 +189,7 @@ files."
       (cond ((keywordp m)
              (setq mode m))
             ((not mode)
-             (error "No namespace specified on `@doom' for %s" m))
+             (error "No namespace specified on `doom!' for %s" m))
             ((eq m '*)
              (doom-initialize-modules
               (cons mode
@@ -243,7 +243,7 @@ the file exists."
 FORCE-P is non-nil). MODULE is a keyword, SUBMODULE is a symbol. e.g. :lang
 'emacs-lisp.
 
-Used by `@require' and `@depends-on'."
+Used by `require!' and `depends-on!'."
   (unless (or force-p (doom-module-loaded-p module submodule))
     (puthash (cons module submodule) t doom-modules)))
 
@@ -259,7 +259,7 @@ Used by `@require' and `@depends-on'."
 
 (autoload 'use-package "use-package" nil nil 'macro)
 
-(defmacro @doom (&rest modules)
+(defmacro doom! (&rest modules)
   "DOOM Emacs bootstrap macro. List the modules to load. Benefits from
 byte-compilation."
   (doom-initialize-modules modules)
@@ -267,7 +267,7 @@ byte-compilation."
      (setq doom-modules ',doom-modules)
 
      (unless noninteractive
-       ,@(mapcar (lambda (module) `(@require ,(car module) ,(cdr module) t))
+       ,@(mapcar (lambda (module) `(require! ,(car module) ,(cdr module) t))
                  (doom--module-pairs))
 
        (when (display-graphic-p)
@@ -278,15 +278,15 @@ byte-compilation."
        ;; Benchmark
        (add-hook 'after-init-hook 'doom--display-benchmark t))))
 
-(defmacro @def-package (name &rest plist)
+(defmacro def-package! (name &rest plist)
   "Defines and configures a package using `use-package'. Packages are deferred
-by default. If the package isn't installed or loaded, `@def-package' is
+by default. If the package isn't installed or loaded, `def-package!' is
 ignored."
   (when (or (featurep name)
             (package-installed-p name))
     `(use-package ,name ,@plist)))
 
-(defmacro @load (filesym &optional path noerror)
+(defmacro load! (filesym &optional path noerror)
   "Loads a file relative to the current module (or PATH). FILESYM is a file path
 as a symbol. PATH is a directory to prefix it with. If NOERROR is non-nil, don't
 throw an error if the file doesn't exist."
@@ -304,9 +304,9 @@ throw an error if the file doesn't exist."
       (if (file-exists-p file)
           `(load ,(file-name-sans-extension file) ,noerror (not doom-debug-mode))
         (unless noerror
-          (error "Could not @load file %s" file))))))
+          (error "Could not load! file %s" file))))))
 
-(defmacro @require (module submodule &optional reload-p)
+(defmacro require! (module submodule &optional reload-p)
   "Like `require', but for doom modules. Will load a module's config.el file if
 it hasn't already, and if it exists."
   (when (or (not noninteractive)
@@ -315,9 +315,9 @@ it hasn't already, and if it exists."
       (when (or reload-p (not loaded-p))
         (unless loaded-p
           (doom--enable-module module submodule t))
-        `(@load config ,(doom-module-path module submodule) t)))))
+        `(load! config ,(doom-module-path module submodule) t)))))
 
-(defmacro @featurep (module submodule)
+(defmacro featurep! (module submodule)
   "Convenience macro that wraps `doom-module-loaded-p'."
   `(doom-module-loaded-p ,module ',submodule))
 
@@ -326,7 +326,7 @@ it hasn't already, and if it exists."
 ;; Declarative macros
 ;;
 
-(defmacro @package (name &rest plist)
+(defmacro package! (name &rest plist)
   "Declares a package and how to install it (if applicable). This does not load
 nor install them.
 
@@ -359,11 +359,11 @@ them."
          (assq-delete-all ',name doom-packages))
        (push ',(cons name plist) doom-packages))))
 
-(defmacro @depends-on (module submodule)
+(defmacro depends-on! (module submodule)
   "Declares that this module depends on another. MODULE is a keyword, and
 SUBMODULE is a symbol."
   (doom--enable-module module submodule)
-  `(@load packages ,(doom-module-path module submodule) t))
+  `(load! packages ,(doom-module-path module submodule) t))
 
 
 ;;
@@ -402,7 +402,7 @@ the commandline."
                   ;; Make evil.el autoload files a special case; don't load them
                   ;; unless evil is enabled.
                   (unless (and (equal (file-name-nondirectory file) "evil.el")
-                               (not (@featurep :feature evil)))
+                               (not (featurep! :feature evil)))
                     (push file autoload-files)))
                 (file-expand-wildcards (expand-file-name "*.el" auto-dir) t)))))
     (when (file-exists-p generated-autoload-file)

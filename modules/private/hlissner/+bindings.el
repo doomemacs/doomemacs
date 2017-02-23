@@ -4,7 +4,7 @@
 (setq x-super-keysym 'alt
       x-alt-keysym 'meta)
 
-(defmacro @find-file-in (path &optional project-p)
+(defmacro find-file-in! (path &optional project-p)
   "Returns a interactive function for searching files"
   `(lambda () (interactive)
      (let ((default-directory ,path))
@@ -12,7 +12,7 @@
              '(call-interactively (command-remapping 'projectile-find-file))
            '(call-interactive (command-remapping 'find-file))))))
 
-(@map
+(map!
  ;; Essential
  "M-x"    'execute-extended-command
  "A-x"    'execute-extended-command
@@ -22,7 +22,7 @@
  [f9]     'doom/what-face
  "C-`"    'doom/popup-toggle
  ;; Text-scaling
- "M-0"    (@λ (text-scale-set 0))
+ "M-0"    (λ! (text-scale-set 0))
  "M-="    'text-scale-increase
  "M--"    'text-scale-decrease
  ;; Simple window navigation/manipulation
@@ -46,15 +46,15 @@
  :n [C-escape] 'evil-normal-state
 
  ;; Switching tabs (workgroups)
- "M-1"  (@λ (+workspace/switch-to 0))
- "M-2"  (@λ (+workspace/switch-to 1))
- "M-3"  (@λ (+workspace/switch-to 2))
- "M-4"  (@λ (+workspace/switch-to 3))
- "M-5"  (@λ (+workspace/switch-to 4))
- "M-6"  (@λ (+workspace/switch-to 5))
- "M-7"  (@λ (+workspace/switch-to 6))
- "M-8"  (@λ (+workspace/switch-to 7))
- "M-9"  (@λ (+workspace/switch-to 8))
+ "M-1"  (λ! (+workspace/switch-to 0))
+ "M-2"  (λ! (+workspace/switch-to 1))
+ "M-3"  (λ! (+workspace/switch-to 2))
+ "M-4"  (λ! (+workspace/switch-to 3))
+ "M-5"  (λ! (+workspace/switch-to 4))
+ "M-6"  (λ! (+workspace/switch-to 5))
+ "M-7"  (λ! (+workspace/switch-to 6))
+ "M-8"  (λ! (+workspace/switch-to 7))
+ "M-9"  (λ! (+workspace/switch-to 8))
  "M-0"  '+workspace/switch-to-last
 
  [M-backspace]  'doom/backward-kill-to-bol-and-indent
@@ -115,7 +115,7 @@
    (:desc "SSH/FTP"
      :prefix "u"
      :desc "Upload local"           :n "u" '+upload/local
-     :desc "Upload local (force)"   :n "U" (@λ (+upload/local t))
+     :desc "Upload local (force)"   :n "U" (λ! (+upload/local t))
      :desc "Download remote"        :n "d" '+upload/remote-download
      :desc "Diff local & remote"    :n "D" '+upload/diff
      :desc "Browse remote files"    :n "." '+upload/browse
@@ -245,7 +245,7 @@
    :i "C-s"   'company-yasnippet
    :i "C-o"   'company-capf
    :i "C-n"   'company-dabbrev-code
-   :i "C-p"   (@λ (let ((company-selection-wrap-around t))
+   :i "C-p"   (λ! (let ((company-selection-wrap-around t))
                     (call-interactively 'company-dabbrev-code)
                     (company-select-previous-or-abort))))
  ;; evil-visual-star
@@ -286,7 +286,7 @@
 ;; This section is dedicated to "fixing" certain keys so that they behave
 ;; properly or more like vim (or how I like it).
 
-(@map (:unless window-system "TAB" [tab]) ; Fix TAB in terminal
+(map! (:unless window-system "TAB" [tab]) ; Fix TAB in terminal
 
       ;; I want C-a and C-e to be a little smarter. C-a will jump to
       ;; indentation. Pressing it again will send you to the true bol. Same goes
@@ -300,7 +300,7 @@
       :i "<tab>"     'doom/dumb-indent
       :i "<backtab>" 'doom/dumb-dedent
       :i "<C-tab>"   'indent-for-tab-command
-      :i "<A-tab>"   (@λ (insert "\t"))
+      :i "<A-tab>"   (λ! (insert "\t"))
       ;; 'smart' indentation for lisp modes
       (:after lisp-mode
         (:map lisp-mode-map       :i [remap doom/dumb-indent] 'indent-for-tab-command))

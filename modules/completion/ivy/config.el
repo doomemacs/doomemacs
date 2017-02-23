@@ -10,7 +10,7 @@
 ;;   `counsel-imenu'.
 
 ;; TODO Make this a setting
-(defmacro @def-counsel-action (name &rest forms)
+(defmacro def-counsel-action! (name &rest forms)
   `(defun ,(intern (format "+ivy/counsel-%s" (symbol-name name))) ()
      (interactive)
      (ivy-set-action ',@forms)
@@ -22,7 +22,7 @@
 ;; Packages
 ;;
 
-(@def-package ivy :demand t
+(def-package! ivy :demand t
   :config
   (setq ivy-height 14
         ivy-do-completion-in-region nil
@@ -33,12 +33,12 @@
         ;; highlight til EOL
         ivy-format-function 'ivy-format-function-line)
 
-  (@after magit      (setq magit-completing-read-function 'ivy-completing-read))
-  (@after yasnippet  (push '+ivy-yas-prompt yas-prompt-functions))
+  (after! magit      (setq magit-completing-read-function 'ivy-completing-read))
+  (after! yasnippet  (push '+ivy-yas-prompt yas-prompt-functions))
 
   (ivy-mode +1)
 
-  (@map :map ivy-minibuffer-map
+  (map! :map ivy-minibuffer-map
         [escape] 'keyboard-escape-quit
         "C-r" 'evil-paste-from-register
         "M-v" 'clipboard-yank
@@ -47,7 +47,7 @@
         "C-b" 'backward-word
         "C-f" 'forward-word)
 
-  (@map :map ivy-mode-map
+  (map! :map ivy-mode-map
         [remap find-file] 'counsel-find-file
         [remap switch-to-buffer] '+ivy/switch-buffer
         [remap persp-switch-to-buffer] '+ivy/switch-workspace-buffer
@@ -59,7 +59,7 @@
         [remap imenu-anywhere]  'ivy-imenu-anywhere
         [remap execute-extended-command] 'counsel-M-x)
 
-  (when (@featurep :feature workspaces)
+  (when (featurep! :feature workspaces)
     (nconc ivy-sort-functions-alist
            '((persp-kill-buffer   . nil)
              (persp-remove-buffer . nil)
@@ -71,20 +71,20 @@
              (+workspace/delete . nil)))))
 
 
-(@def-package swiper :commands (swiper swiper-all))
+(def-package! swiper :commands (swiper swiper-all))
 
 
-(@def-package counsel
+(def-package! counsel
   :after ivy
   :config
   (setq counsel-find-file-ignore-regexp "\\(?:^[#.]\\)\\|\\(?:[#~]$\\)\\|\\(?:^Icon?\\)")
 
-  (@set :popup "^\\*ivy-occur counsel-ag" :size 25 :regexp t :autokill t)
+  (set! :popup "^\\*ivy-occur counsel-ag" :size 25 :regexp t :autokill t)
 
   (require 'counsel-projectile)
 
   ;; FIXME Messy workaround, refactor this
-  (@def-counsel-action ag-open-in-other-window
+  (def-counsel-action! ag-open-in-other-window
     (lambda (x)
       (when (string-match "\\`\\(.*?\\):\\([0-9]+\\):\\(.*\\)\\'" x)
         (let ((file-name (match-string-no-properties 1 x))
@@ -104,21 +104,21 @@
           (when dest-win
             (select-window dest-win))))))
 
-  (@add-hook 'doom-popup-mode-hook
+  (add-hook! 'doom-popup-mode-hook
     (when (eq major-mode 'ivy-occur-grep-mode)
       (ivy-wgrep-change-to-wgrep-mode)))
 
   (defun +ivy*recenter (&rest _) (recenter))
   (advice-add 'counsel-ag-function :override '+ivy*counsel-ag-function)
   (advice-add 'imenu :after '+ivy*recenter)
-  (@map :map counsel-ag-map
+  (map! :map counsel-ag-map
         [backtab] '+ivy/counsel-ag-occur     ; search/replace on results
         "C-SPC"   'counsel-git-grep-recenter ; preview
         "M-RET"   '+ivy/counsel-ag-open-in-other-window))
 
 
 ;; Used by `counsel-M-x'
-(@def-package smex
+(def-package! smex
   :commands (smex smex-major-mode-commands)
   :config
   (setq smex-save-file (concat doom-cache-dir "/smex-items"))

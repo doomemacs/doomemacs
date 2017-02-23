@@ -1,7 +1,7 @@
 ;;; lang/web/config.el
 
-(@load +html)
-(@load +css)
+(load! +html)
+(load! +css)
 
 
 ;;
@@ -9,7 +9,7 @@
 ;;
 
 ;; (defvar bower-conf (make-hash-table :test 'equal))
-;; (@def-project bower "bower"
+;; (def-project! bower "bower"
 ;;   :modes (web-mode js-mode coffee-mode css-mode sass-mode pug-mode)
 ;;   :files ("bower.json")
 ;;   :when
@@ -23,7 +23,7 @@
 ;;         (puthash project-path it bower-conf)))
 ;;     t))
 
-;; (@def-project angularjs "angular"
+;; (def-project! angularjs "angular"
 ;;   :modes (nodejs-project-mode bower-project-mode)
 ;;   :when
 ;;   (lambda (&rest _)
@@ -36,15 +36,15 @@
 ;;                          (cdr-safe (assq 'devDependencies npm)))))
 ;;       (assq 'angular deps))))
 
-;; (@def-project jekyll ":{"
+;; (def-project! jekyll ":{"
 ;;   :modes (web-mode js-mode coffee-mode css-mode haml-mode pug-mode)
 ;;   :match "/\\(\\(css\\|_\\(layouts\\|posts\\|sass\\)\\)/.+\\|.+.html\\)$"
 ;;   :files ("config.yml" "_layouts/")
-;;   (@add-hook mode
+;;   (add-hook! mode
 ;;     (when (eq major-mode 'web-mode)
 ;;       (web-mode-set-engine "django"))))
 
-;; (@def-project wordpress "wp"
+;; (def-project! wordpress "wp"
 ;;   :modes (php-mode web-mode css-mode haml-mode pug-mode)
 ;;   :match "/wp-\\(\\(content\\|admin\\|includes\\)/\\)?.+$"
 ;;   :files ("wp-config.php" "wp-content/"))

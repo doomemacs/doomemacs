@@ -9,7 +9,7 @@
 ;;   doom|...   hook function
 ;;   doom*...   advising functions
 ;;   doom!...   interaction commands exclusively for installing external dependencies
-;;   @...       a macro or function that configures DOOM
+;;   ...!       a macro or function that configures DOOM
 ;;   %...       functions used for in-snippet logic
 ;;   +...       Any of the above, but part of a module, e.g. +emacs-lisp|init-hook
 ;;
@@ -148,7 +148,7 @@ enable multiple minor modes for the same regexp.")
     (require 'core-projects)    ; making Emacs project-aware
     (require 'core-keybinds)))  ; centralized keybind system + which-key
 
-(@add-hook 'window-setup-hook
+(add-hook! 'window-setup-hook
   (setq gc-cons-threshold 134217728
         gc-cons-percentage 0.3))
 

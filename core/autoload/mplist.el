@@ -9,15 +9,15 @@
 ;; regular plists.
 ;;
 ;; (let ((a '(abc :commands 1 :config 3 4 5)))
-;;   (@mplist a &delete :commands :config))
+;;   (mplist! a &delete :commands :config))
 
 ;;;###autoload
-(defmacro @mplist (var action &rest args)
+(defmacro mplist! (var action &rest args)
   "A helper macro that makes dealing with doom-mplist-* functions a little more concise.
 
 Examples:
-  (@mplist plist &delete :x :y)
-  (@mplist plist &get :x)"
+  (mplist! plist &delete :x :y)
+  (mplist! plist &get :x)"
   (declare (indent defun))
   (let ((fn-sym (intern (format "doom-mplist-%s" (substring (symbol-name action) 1)))))
     (when (fboundp fn-sym)

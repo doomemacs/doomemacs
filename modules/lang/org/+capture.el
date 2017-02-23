@@ -13,7 +13,7 @@
 
   (require 'org-capture)
   (require 'org-protocol)
-  (@set :popup "*Org Select*" :size 0.4)
+  (set! :popup "*Org Select*" :size 0.4)
 
   (defadvice org-capture (after make-full-window-frame activate)
     "If org-capture creates a new frame, this initializes it properly, by

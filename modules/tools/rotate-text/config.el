@@ -1,12 +1,12 @@
 ;;; tools/rotate-text/config.el
 
-(@def-package rotate-text
+(def-package! rotate-text
   :commands (rotate-text rotate-text-backward)
   :config
   (push '("true" "false") rotate-text-words))
 
 
-(@def-setting :rotate (modes &rest plist)
+(def-setting! :rotate (modes &rest plist)
   "Declare :symbols, :words or :patterns that `rotate-text' will cycle through."
   (declare (indent 1))
   (let ((modes (if (listp modes) modes (list modes)))
@@ -21,5 +21,5 @@
              ,(if symbols `(setq rotate-text-local-symbols ',symbols))
              ,(if words `(setq rotate-text-local-words ',words))
              ,(if patterns `(setq rotate-text-local-patterns ',patterns)))
-           (@add-hook ,modes ',fn-name))))))
+           (add-hook! ,modes ',fn-name))))))
 

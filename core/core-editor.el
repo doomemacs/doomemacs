@@ -55,10 +55,10 @@
       recentf-max-menu-items 0
       recentf-max-saved-items 250
       recentf-filename-handlers '(abbreviate-file-name))
-(@quiet (recentf-mode 1))
+(quiet! (recentf-mode 1))
 
 ;; Ediff
-(@add-hook ediff-load
+(add-hook! ediff-load
   (setq ediff-diff-options           "-w"
         ediff-split-window-function 'split-window-horizontally
         ediff-window-setup-function 'ediff-setup-windows-plain)) ; no extra frames
@@ -85,15 +85,15 @@
 
 ;; Handles whitespace (tabs/spaces) settings externally. This way projects can
 ;; specify their own formatting rules.
-(@def-package editorconfig :demand t
+(def-package! editorconfig :demand t
   :mode ("\\.?editorconfig$" . editorconfig-conf-mode)
   :config (editorconfig-mode +1)
   ;; Show whitespace in tabs indentation mode
-  (@add-hook 'editorconfig-custom-hooks
+  (add-hook! 'editorconfig-custom-hooks
     (if indent-tabs-mode (whitespace-mode +1))))
 
 ;; Auto-close delimiters and blocks as you type
-(@def-package smartparens :demand t
+(def-package! smartparens :demand t
   :init
   (setq sp-autowrap-region nil          ; let evil-surround handle this
         sp-highlight-pair-overlay nil
@@ -129,49 +129,49 @@
 ;; Autoloaded Plugins
 ;;
 
-(@def-package ace-link
+(def-package! ace-link
   :commands (ace-link-help ace-link-org))
 
-(@def-package ace-window
+(def-package! ace-window
   :commands ace-window
   :config
   (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)
         aw-scope 'frame
         aw-background t))
 
-(@def-package avy
+(def-package! avy
   :commands (avy-goto-char-2 avy-goto-line)
   :config
   (setq avy-all-windows nil
         avy-background t))
 
-(@def-package command-log-mode
+(def-package! command-log-mode
   :commands (command-log-mode global-command-log-mode)
   :config
-  (@set :popup "*command-log*" :size 40 :align 'right :noselect t)
+  (set! :popup "*command-log*" :size 40 :align 'right :noselect t)
   (setq command-log-mode-auto-show t
         command-log-mode-open-log-turns-on-mode t))
 
-(@def-package expand-region
+(def-package! expand-region
   :commands (er/expand-region er/contract-region er/mark-symbol er/mark-word))
 
-(@def-package goto-last-change :commands goto-last-change)
+(def-package! goto-last-change :commands goto-last-change)
 
-(@def-package help-fns+ ; Improved help commands
+(def-package! help-fns+ ; Improved help commands
   :commands (describe-buffer describe-command describe-file
              describe-keymap describe-option describe-option-of-type))
 
-(@def-package imenu-anywhere
+(def-package! imenu-anywhere
   :commands (ido-imenu-anywhere ivy-imenu-anywhere helm-imenu-anywhere))
 
-(@def-package imenu-list :commands imenu-list-minor-mode)
+(def-package! imenu-list :commands imenu-list-minor-mode)
 
-(@def-package pcre2el :commands rxt-quote-pcre)
+(def-package! pcre2el :commands rxt-quote-pcre)
 
-(@def-package smart-forward
+(def-package! smart-forward
   :commands (smart-up smart-down smart-backward smart-forward))
 
-(@def-package wgrep
+(def-package! wgrep
   :commands (wgrep-setup wgrep-change-to-wgrep-mode)
   :config
   (setq wgrep-auto-save-buffer t)

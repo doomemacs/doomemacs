@@ -23,6 +23,6 @@
   ;; (setq org-pandoc-options '((standalone . t) (mathjax . t) (parse-raw . t)))
 
   ;; keybinds
-  ;; (@map :leader :n "oe" (@find-file-in org-export-directory))
+  ;; (map! :leader :n "oe" (find-file-in! org-export-directory))
   )
 

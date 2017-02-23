@@ -5,7 +5,7 @@ Modules are made up of three (optional) parts:
 + A `config.el` file, automatically loaded when the module is loaded
   (through `@doom` or `@require`). It uses `@def-package` calls (thin
   wrappers around `use-package`) to configure packages.
-+ A `packages.el` file filled with `@package` and `@depends-on`
++ A `packages.el` file filled with `package!` and `depends-on!`
   declarations. These are purely declarative macros. They populate
   `doom-packages` and `doom-modules` for the package management
   system.

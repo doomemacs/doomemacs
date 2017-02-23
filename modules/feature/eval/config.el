@@ -17,13 +17,13 @@ by `+eval/build', and filled with the `:build' setting")
 (setq eval-expression-print-length nil
       eval-expression-print-level  nil)
 
-(@def-setting :repl (mode command)
+(def-setting! :repl (mode command)
   "Define a REPL for a mode. Takes same arguements as `rtog/add-repl'."
   (if (featurep 'repl-toggle)
       (list 'rtog/add-repl mode command)
     `(push ',(list mode command) +eval--repls)))
 
-(@def-setting :build (name mode pred-fn &optional build-fn)
+(def-setting! :build (name mode pred-fn &optional build-fn)
   "Define a build command function (BUILD-FN) for major-mode MODE, called NAME
 -- a symbol -- PRED-FN is a predicate function that determines this builder's
 suitability for the current buffer."
@@ -34,7 +34,7 @@ suitability for the current buffer."
             (list :predicate ,pred-fn :fn ,build-fn)
             +eval-builders))
 
-(@def-setting :eval (mode command)
+(def-setting! :eval (mode command)
   "Define a code evaluator for `quickrun'.
 
 1. If MODE is a string and COMMAND is the string, MODE is a file regexp and
@@ -45,12 +45,12 @@ suitability for the current buffer."
 3. If MODE is not a string and COMMAND is a list, use `quickrun-add-command'. e.g.
    (quickrun-add-command MODE COMMAND :mode MODE)"
   (if (stringp command)
-      `(@after quickrun
+      `(after! quickrun
          (push ,(cons mode command)
                ,(if (stringp mode)
                     'quickrun-file-alist
                   'quickrun--major-mode-alist)))
-    `(@after quickrun
+    `(after! quickrun
        (quickrun-add-command
         ,(symbol-name mode)
         ',command :mode ',mode))))
@@ -60,7 +60,7 @@ suitability for the current buffer."
 ;; Packages
 ;;
 
-(@def-package quickrun
+(def-package! quickrun
   :commands (quickrun
              quickrun-region
              quickrun-with-arg
@@ -69,7 +69,7 @@ suitability for the current buffer."
              quickrun-replace-region)
   :init (add-hook 'quickrun/mode-hook 'linum-mode)
   :config
-  (@set :popup "*quickrun*" :size 10)
+  (set! :popup "*quickrun*" :size 10)
 
   ;; don't auto-focus quickrun windows. Shackle handles that for us.
   (setq quickrun-focus-p nil)
@@ -94,12 +94,12 @@ suitability for the current buffer."
   (add-hook 'quickrun-after-run-hook '+repl|quickrun-scroll-to-bof))
 
 
-(@def-package repl-toggle
+(def-package! repl-toggle
   :commands rtog/toggle-repl
   :preface (defvar rtog/mode-repl-alist nil)
-  :init (@add-hook repl-toggle-mode (evil-initialize-state 'emacs))
+  :init (add-hook! repl-toggle-mode (evil-initialize-state 'emacs))
   :config
-  (@set :popup
+  (set! :popup
     '(:custom (lambda (b &rest _)
                 (when (and (featurep 'repl-toggle)
                            (string-prefix-p "*" (buffer-name (get-buffer b))))
@@ -109,7 +109,7 @@ suitability for the current buffer."
   (dolist (repl +eval--repls)
     (apply 'rtog/add-repl repl))
 
-  (@map :map repl-toggle-mode-map
+  (map! :map repl-toggle-mode-map
         :ei "C-n" 'comint-next-input
         :ei "C-p" 'comint-previous-input
         :ei "<down>" 'comint-next-input

@@ -1,16 +1,16 @@
 ;;; lang/emacs-lisp/config.el
 
-(@def-package elisp-mode ; built-in
+(def-package! elisp-mode ; built-in
   :mode ("/Cask$" . emacs-lisp-mode)
   :init
   (add-hook 'emacs-lisp-mode-hook '+emacs-lisp|hook)
 
   :config
-  (@map :map emacs-lisp-mode-map
+  (map! :map emacs-lisp-mode-map
         :m "gd" '+emacs-lisp/find-function
         :leader :m "gd" '+emacs-lisp/find-function-in-other-window)
 
-  (@set :rotate 'emacs-lisp-mode
+  (set! :rotate 'emacs-lisp-mode
         :symbols '(("t" "nil")
                    ("let" "let*")
                    ("when" "unless")
@@ -35,17 +35,14 @@
      nil `(;; Display "lambda" as λ
            ("(\\(lambda\\)" (1 (ignore (compose-region (match-beginning 1) (match-end 1) ?λ 'decompose-region))))
            ;; Highlight doom/module functions
-           ("\\(^\\|\\s-\\|,\\)(\\(\\(doom\\|\\+\\)[^) ]+\\)[) \n]" (2 font-lock-builtin-face))
-           ;; Highlight doom macros (no need, macros are fontified in emacs 25+)
-           ;; ("\\(^\\|\\s-\\)(\\(@[^) ]+\\)[) \n]" (2 font-lock-preprocessor-face append))
-           ))
+           ("\\(^\\|\\s-\\|,\\)(\\(\\(doom\\|\\+\\)[^) ]+\\)[) \n]" (2 font-lock-builtin-face))))
 
     (setq imenu-generic-expression
           '(("Evil Commands" "^\\s-*(evil-define-\\(?:command\\|operator\\|motion\\) +\\(\\_<[^ ()\n]+\\_>\\)" 1)
-            ("Package" "^\\s-*(@\\(?:use-package\\|package\\) +\\(\\_<[^ ()\n]+\\_>\\)" 1)
-            ("Settings" "^\\s-*(@def-setting +\\([^ ()\n]+\\)" 1)
-            ("Modelines" "^\\s-*(@def-modeline +\\([^ ()\n]+\\)" 1)
-            ("Modeline Segments" "^\\s-*(@def-modeline-segment +\\([^ ()\n]+\\)" 1)
+            ("Package" "^\\s-*(\\(?:def-\\)?package! +\\(\\_<[^ ()\n]+\\_>\\)" 1)
+            ("Settings" "^\\s-*(def-setting! +\\([^ ()\n]+\\)" 1)
+            ("Modelines" "^\\s-*(def-modeline! +\\([^ ()\n]+\\)" 1)
+            ("Modeline Segments" "^\\s-*(def-modeline-segment! +\\([^ ()\n]+\\)" 1)
             ("Advice" "^\\s-*(def\\(?:\\(?:ine-\\)?advice\\))")
             ("Modes" "^\\s-*(define-\\(?:global\\(?:ized\\)?-minor\\|generic\\|minor\\)-mode +\\([^ ()\n]+\\)" 1)
             ("Macros" "^\\s-*(\\(?:cl-\\)?def\\(?:ine-compile-macro\\|macro\\) +\\([^ )\n]+\\)" 1)
@@ -61,17 +58,17 @@
 ;; Plugins
 ;;
 
-(@def-package auto-compile
+(def-package! auto-compile
   :commands auto-compile-on-save-mode
   :config
   (setq auto-compile-display-buffer nil
         auto-compile-use-mode-line nil))
 
 
-(@def-package highlight-quoted
+(def-package! highlight-quoted
   :commands highlight-quoted-mode)
 
 
-(@def-package slime
+(def-package! slime
   :config (setq inferior-lisp-program "clisp"))
 

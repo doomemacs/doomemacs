@@ -4,5 +4,5 @@
   :mode "\\.jl$"
   :interpreter "julia"
   :config
-  (@set :repl 'julia-mode '+julia/repl))
+  (set! :repl 'julia-mode '+julia/repl))
 

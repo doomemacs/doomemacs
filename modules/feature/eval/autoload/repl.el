@@ -15,7 +15,7 @@
 ;;;###autoload (autoload '+repl:open "feature/repl/autoload/repl" nil t)
 ;;;###autoload (autoload '+repl:send "feature/repl/autoload/repl" nil t)
 
-(@after evil
+(after! evil
   (evil-define-command +repl:open (&optional bang command)
     :repeat nil
     (interactive "<!><a>")

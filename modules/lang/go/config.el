@@ -1,17 +1,17 @@
 ;;; lang/go/config.el
 
-(@def-package go-mode
+(def-package! go-mode
   :mode "\\.go$"
   :interpreter "go"
   :init
   (add-hook 'go-mode-hook 'flycheck-mode)
-  (@add-hook go-mode (add-hook 'before-save-hook 'gofmt-before-save))
+  (add-hook! go-mode (add-hook 'before-save-hook 'gofmt-before-save))
   :config
-  (@set :build 'go-build 'go-mode '+go/build)
-  (@set :company-backend 'go-mode '(company-go company-yasnippet))
-  (@set :repl 'go-mode 'gorepl-run)
+  (set! :build 'go-build 'go-mode '+go/build)
+  (set! :company-backend 'go-mode '(company-go company-yasnippet))
+  (set! :repl 'go-mode 'gorepl-run)
 
-  (@map :map go-mode-map
+  (map! :map go-mode-map
         :n "gd" 'godef-jump
         (:localleader
          :n "k"  'godef-describe
@@ -24,14 +24,14 @@
          :n "s" '+go/test-run-package)))
 
 
-(@def-package company-go :after go-mode)
+(def-package! company-go :after go-mode)
 
 
-(@def-package go-eldoc
+(def-package! go-eldoc
   :after go-mode
   :init (add-hook 'go-mode-hook 'go-eldoc-setup))
 
 
-(@def-package gorepl-mode
+(def-package! gorepl-mode
   :commands (gorepl-run gorepl-run-load-current-file))
 

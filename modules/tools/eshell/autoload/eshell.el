@@ -25,7 +25,7 @@
   "Open eshell in a separate workspace. Requires the (:feature workspaces)
 module to be loaded."
   (interactive)
-  (unless (@featurep :feature workspaces)
+  (unless (featurep! :feature workspaces)
     (user-error ":feature workspaces is required, but disabled"))
   (unless (+workspace-get "eshell" t)
     (+workspace/new "eshell"))

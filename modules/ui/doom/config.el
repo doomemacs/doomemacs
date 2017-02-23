@@ -39,7 +39,7 @@
 
 ;; doom-one: gives Emacs a look inspired by Dark One in Atom.
 ;; <https://github.com/hlissner/emacs-doom-theme>
-(@def-package doom-themes :demand t
+(def-package! doom-themes :demand t
   :load-path "~/work/plugins/emacs-doom-theme"
   :config
   (load-theme +doom-theme t)
@@ -69,7 +69,7 @@
     (when doom-buffer-mode (doom-buffer-mode -1)))
   (add-hook 'doom-popup-mode-hook '+doom|buffer-mode-off)
 
-  (when (@featurep :feature workspaces)
+  (when (featurep! :feature workspaces)
     (defun +doom|restore-bright-buffers (&rest _)
       "Restore `doom-buffer-mode' in buffers when `persp-mode' loads a session."
       (dolist (buf (persp-buffer-list))
@@ -90,7 +90,7 @@
 ;; Causes a flash around the cursor when it moves across a "large" distance.
 ;; Usually between windows, or across files. This makes it easier to keep track
 ;; where your cursor is, which I find helpful on my 30" 2560x1600 display.
-(@def-package beacon
+(def-package! beacon
   :after doom-themes
   :config
   (beacon-mode +1)
@@ -102,7 +102,7 @@
         beacon-blink-when-point-moves-vertically 10))
 
 
-(@after hideshow
+(after! hideshow
   ;; Nicer code-folding overlays
   (setq hs-set-up-overlay
         (lambda (ov)
@@ -112,7 +112,7 @@
 
 
 ;; subtle diff indicators in the fringe
-(@after git-gutter-fringe
+(after! git-gutter-fringe
   ;; places the git gutter outside the margins.
   (setq-default fringes-outside-margins t)
   ;; thin fringe bitmaps

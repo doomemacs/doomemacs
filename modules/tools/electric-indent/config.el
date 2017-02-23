@@ -18,7 +18,7 @@
              (concat "\\<" (regexp-opt doom-electric-indent-words))))))
       electric-indent-functions)
 
-(@def-setting :electric (modes &rest plist)
+(def-setting! :electric (modes &rest plist)
   "Declare :words (list of strings) or :chars (lists of chars) in MODES that
 trigger electric indentation."
   (declare (indent 1))
@@ -32,5 +32,5 @@ trigger electric indentation."
              (electric-indent-local-mode +1)
              ,(if chars `(setq electric-indent-chars ',chars))
              ,(if words `(setq doom-electric-indent-words ',words)))
-           (@add-hook ,modes ',fn-name))))))
+           (add-hook! ,modes ',fn-name))))))
 

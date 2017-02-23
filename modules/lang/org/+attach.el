@@ -39,6 +39,6 @@
                              ,@dnd-protocol-alist))
 
   ;; keybinds
-  ;; (@map :leader :n "oa" (@find-file-in +org-attachment-dir))
+  ;; (map! :leader :n "oa" (find-file-in! +org-attachment-dir))
   )
 

@@ -4,7 +4,7 @@
 ;; digging through project files and exposing an API I can use to make other
 ;; plugins/features project-aware.
 
-(@def-package projectile :demand t
+(def-package! projectile :demand t
   :init
   (setq projectile-cache-file (concat doom-cache-dir "projectile.cache")
         projectile-enable-caching (not noninteractive)

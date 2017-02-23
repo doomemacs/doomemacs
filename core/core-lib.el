@@ -42,12 +42,12 @@
 ;; Library
 ;;
 
-(defmacro @λ (&rest body)
+(defmacro λ! (&rest body)
   "A shortcut for inline interactive lambdas."
   (declare (doc-string 1))
   `(lambda () (interactive) ,@body))
 
-(defmacro @after (feature &rest forms)
+(defmacro after! (feature &rest forms)
   "A smart wrapper around `with-eval-after-load'. Supresses warnings during
 compilation."
   (declare (indent defun) (debug t))
@@ -60,7 +60,7 @@ compilation."
        'with-no-warnings)
     (with-eval-after-load ',feature ,@forms)))
 
-(defmacro @quiet (&rest forms)
+(defmacro quiet! (&rest forms)
   "Run FORMS without making any noise."
   `(if doom-debug-mode
        (progn ,@forms)
@@ -77,7 +77,7 @@ compilation."
                (save-silently t))
        ,@forms)))
 
-(defmacro @add-hook (hook &rest func-or-forms)
+(defmacro add-hook! (hook &rest func-or-forms)
   "A convenience macro for `add-hook'.
 
 HOOK can be one hook or a list of hooks. If the hook(s) are not quoted, -hook is
@@ -88,14 +88,14 @@ will be wrapped in a lambda. A list of symbols will expand into a series of
 add-hook calls.
 
 Examples:
-    (@add-hook 'some-mode-hook 'enable-something)
-    (@add-hook some-mode '(enable-something and-another))
-    (@add-hook '(one-mode-hook second-mode-hook) 'enable-something)
-    (@add-hook (one-mode second-mode) 'enable-something)
-    (@add-hook (one-mode second-mode) (setq v 5) (setq a 2))"
+    (add-hook! 'some-mode-hook 'enable-something)
+    (add-hook! some-mode '(enable-something and-another))
+    (add-hook! '(one-mode-hook second-mode-hook) 'enable-something)
+    (add-hook! (one-mode second-mode) 'enable-something)
+    (add-hook! (one-mode second-mode) (setq v 5) (setq a 2))"
   (declare (indent defun) (debug t))
   (unless func-or-forms
-    (error "@add-hook: FUNC-OR-FORMS is empty"))
+    (error "add-hook!: FUNC-OR-FORMS is empty"))
   (let* ((val (car func-or-forms))
          (quoted-p (eq (car-safe hook) 'quote))
          (hook (if quoted-p (cadr hook) hook))
@@ -113,7 +113,7 @@ Examples:
               forms)))
     `(progn ,@(reverse forms))))
 
-(defmacro @associate (mode &rest plist)
+(defmacro associate! (mode &rest plist)
   "Associate a major or minor mode to certain patterns and project files."
   (declare (indent 1))
   (unless noninteractive
@@ -126,7 +126,7 @@ Examples:
              (when (and files
                         (not (or (listp files)
                                  (stringp files))))
-               (user-error "@associate :files expects a string or list of strings"))
+               (user-error "associate! :files expects a string or list of strings"))
              (let ((hook-name (intern (format "doom--init-mode-%s" mode))))
                (macroexp-progn
                 (list `(defun ,hook-name ()
@@ -146,21 +146,21 @@ Examples:
             (match
              `(add-to-list ',(if minor 'doom-auto-minor-mode-alist 'auto-mode-alist)
                            (cons ,match ',mode)))
-            (t (user-error "@associate invalid rules for mode [%s] (in %s) (match %s) (files %s)"
+            (t (user-error "associate! invalid rules for mode [%s] (in %s) (match %s) (files %s)"
                            mode in match files))))))
 
 
 ;; Provides a centralized configuration system that a) won't evaluate its
 ;; arguments if it doesn't need to (performance), b) won't complain if the
-;; setting doesn't exist and c) is more elegant than a bunch of `@after' blocks,
+;; setting doesn't exist and c) is more elegant than a bunch of `after!' blocks,
 ;; which can cause intermittent stuttering in large quantities. I'm a fan of
 ;; concise, do-what-I-mean front-facing configuration, believe it or not.
 ;;
 ;; Plus, it can benefit from byte-compilation.
 
-(defmacro @def-setting (keyword arglist &optional docstring &rest forms)
+(defmacro def-setting! (keyword arglist &optional docstring &rest forms)
   "Define a setting macro. Like `defmacro', this should return a form to be
-executed when called with `@set'. FORMS are not evaluated until `@set' calls it."
+executed when called with `set!'. FORMS are not evaluated until `set!' calls it."
   (declare (indent defun) (doc-string 3))
   (unless (keywordp keyword)
     (error "Not a valid property name: %s" keyword))
@@ -168,11 +168,11 @@ executed when called with `@set'. FORMS are not evaluated until `@set' calls it.
      ,docstring
      ,@forms))
 
-(defmacro @set (keyword &rest values)
-  "Set an option defined by `@def-setting'. Skip if doesn't exist."
+(defmacro set! (keyword &rest values)
+  "Set an option defined by `def-setting!'. Skip if doesn't exist."
   (declare (indent defun))
   (unless values
-    (error "Empty @set for %s" keyword))
+    (error "Empty set! for %s" keyword))
   (let ((fn (intern (format "doom-setting--setter%s" keyword))))
     (if (functionp fn)
         (apply fn (eval `(list ,@values)))

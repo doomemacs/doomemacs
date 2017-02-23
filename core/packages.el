@@ -2,42 +2,42 @@
 ;;; core/packages.el
 
 ;; core packages
-(@package async)
-(@package s)
-(@package f)
+(package! async)
+(package! s)
+(package! f)
 
 ;; core-os.el
 (when IS-MAC
-  (@package exec-path-from-shell)
-  (@package osx-clipboard))
+  (package! exec-path-from-shell)
+  (package! osx-clipboard))
 
 ;; core-ui.el
-(@package highlight-indent-guides)
-(@package highlight-numbers)
-(@package nlinum)
-(@package rainbow-delimiters)
+(package! highlight-indent-guides)
+(package! highlight-numbers)
+(package! nlinum)
+(package! rainbow-delimiters)
 
 ;; core-popups.el
-(@package shackle)
+(package! shackle)
 
 ;; core-editor.el
-(@package editorconfig)
-(@package smartparens)
-(@package ace-link)
-(@package ace-window)
-(@package avy)
-(@package command-log-mode)
-(@package expand-region)
-(@package goto-last-change)
-(@package help-fns+)
-(@package imenu-anywhere)
-(@package imenu-list)
-(@package pcre2el)
-(@package smart-forward)
-(@package wgrep)
+(package! editorconfig)
+(package! smartparens)
+(package! ace-link)
+(package! ace-window)
+(package! avy)
+(package! command-log-mode)
+(package! expand-region)
+(package! goto-last-change)
+(package! help-fns+)
+(package! imenu-anywhere)
+(package! imenu-list)
+(package! pcre2el)
+(package! smart-forward)
+(package! wgrep)
 
 ;; core-projects.el
-(@package projectile)
+(package! projectile)
 
 ;; core-keybinds.el
-(@package which-key)
+(package! which-key)

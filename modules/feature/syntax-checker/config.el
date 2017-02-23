@@ -1,6 +1,6 @@
 ;;; feature/syntax-checker/config.el
 
-(@def-package flycheck
+(def-package! flycheck
   :commands (flycheck-mode flycheck-list-errors flycheck-buffer)
   :config
   (setq flycheck-indication-mode 'right-fringe ; git-gutter is in the left fringe
@@ -9,9 +9,9 @@
         flycheck-highlighting-mode 'symbols
         flycheck-disabled-checkers '(emacs-lisp-checkdoc make))
 
-  (@set :popup " ?\\*Flycheck.+\\*" :size 14 :noselect t :regexp t)
+  (set! :popup " ?\\*Flycheck.+\\*" :size 14 :noselect t :regexp t)
 
-  (@map :map flycheck-error-list-mode-map
+  (map! :map flycheck-error-list-mode-map
         :n "C-n" 'flycheck-error-list-next-error
         :n "C-p" 'flycheck-error-list-previous-error
         :n "j"   'flycheck-error-list-next-error
@@ -27,7 +27,7 @@
   (advice-add 'evil-force-normal-state :after '+syntax-checkers|flycheck-buffer))
 
 
-(@def-package flycheck-pos-type :after flycheck
+(def-package! flycheck-pos-type :after flycheck
   :config
   (setq flycheck-pos-tip-timeout 10
         flycheck-display-errors-delay 0.5)

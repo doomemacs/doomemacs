@@ -10,7 +10,7 @@
 (defvar +eshell-buffers '()
   "TODO")
 
-(@def-package eshell ; built-in
+(def-package! eshell ; built-in
   :init
   (setq eshell-directory-name (concat doom-cache-dir "/eshell")
         eshell-scroll-to-bottom-on-input 'all
@@ -25,13 +25,13 @@
         eshell-aliases-file "~/.eshell-aliases")
 
   :config
-  (@set :popup "^\\*eshell:popup\\*$" :regexp t :size 25)
-  (@set :evil-state 'eshell-mode 'insert)
+  (set! :popup "^\\*eshell:popup\\*$" :regexp t :size 25)
+  (set! :evil-state 'eshell-mode 'insert)
 
   (defun +eshell|keymap-setup ()
     "Setup eshell keybindings. This must be done in a hook because eshell
 redefines its keys every time `eshell-mode' is enabled."
-    (@map :map eshell-mode-map
+    (map! :map eshell-mode-map
           :n "i" '+eshell/evil-prepend-maybe
           :n "I" '+eshell/evil-prepend
           :n "a" '+eshell/evil-append-maybe
@@ -55,7 +55,7 @@ redefines its keys every time `eshell-mode' is enabled."
     (setq +eshell-buffers (delete (current-buffer) +eshell-buffers))
     (cond ((doom-popup-p)
            (delete-window))
-          ((and (@featurep :feature workspaces)
+          ((and (featurep! :feature workspaces)
                 (string= "eshell" (+workspace-current-name)))
            (+workspace/close-window-or-workspace))))
   (add-hook 'eshell-exit-hook 'doom|eshell-cleanup)
@@ -67,7 +67,7 @@ redefines its keys every time `eshell-mode' is enabled."
 
   (add-hook 'eshell-mode-hook 'doom-hide-modeline-mode)
 
-  (@add-hook eshell-mode
+  (add-hook! eshell-mode
     (add-hook 'evil-insert-state-exit-hook  'hl-line-mode nil t)
     (add-hook 'evil-insert-state-entry-hook (lambda () (hl-line-mode -1)) nil t))
 

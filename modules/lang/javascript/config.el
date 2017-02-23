@@ -1,8 +1,8 @@
 ;; lang/javascript/config.el
 
-;; TODO (@load +screeps)
+;; TODO (load! +screeps)
 
-(@def-package js2-mode
+(def-package! js2-mode
   :mode "\\.js$"
   :interpreter "node"
   :config
@@ -10,19 +10,19 @@
         js2-highlight-external-variables nil
         js2-mode-show-parse-errors nil)
 
-  (@add-hook js2-mode '(tern-mode flycheck-mode highlight-indent-guides-mode))
+  (add-hook! js2-mode '(tern-mode flycheck-mode highlight-indent-guides-mode))
   ;; Conform switch-case indentation to editorconfig's config
-  (@add-hook js2-mode (setq js-switch-indent-offset js-indent-level))
+  (add-hook! js2-mode (setq js-switch-indent-offset js-indent-level))
 
-  (@set :repl 'js2-mode 'nodejs-repl)
+  (set! :repl 'js2-mode 'nodejs-repl)
 
-  (@set :company-backend 'js2-mode '(company-tern))
+  (set! :company-backend 'js2-mode '(company-tern))
 
-  (@set :electric 'js2-mode
+  (set! :electric 'js2-mode
         :chars ?\} ?\) ?.
         :words "||" "&&")
 
-  (@map :map js2-mode-map
+  (map! :map js2-mode-map
         :localleader
         :nv ";" 'doom/append-semicolon
 
@@ -55,10 +55,10 @@
         :n  "ii" 'js2r-wrap-buffer-in-iife))
 
 
-(@def-package nodejs-repl :commands nodejs-repl)
+(def-package! nodejs-repl :commands nodejs-repl)
 
 
-(@def-package js2-refactor
+(def-package! js2-refactor
   :commands
   (js2r-extract-function js2r-extract-method js2r-introduce-parameter
    js2r-localize-parameter js2r-expand-object js2r-contract-object
@@ -70,16 +70,16 @@
    js2r-debug-this js2r-forward-slurp js2r-forward-barf))
 
 
-(@def-package company-tern
+(def-package! company-tern
   :when (featurep 'company)
   :commands company-tern
   :after tern)
 
 
-(@def-package jsx-mode :mode "\\.jsx$")
+(def-package! jsx-mode :mode "\\.jsx$")
 
 
-(@def-package coffee-mode
+(def-package! coffee-mode
   :mode "\\.coffee$"
   :init (setq coffee-indent-like-python-mode t))
 

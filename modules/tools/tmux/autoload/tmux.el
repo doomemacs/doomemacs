@@ -27,7 +27,7 @@
            (errors (get-buffer-create " *tmux stderr*"))
            code)
       (unwind-protect
-          (if (= 0 (setq code (@quiet (shell-command cmdstr output errors))))
+          (if (= 0 (setq code (quiet! (shell-command cmdstr output errors))))
               (with-current-buffer output
                 (setq +tmux-last-command `(,cmdstr ,@args))
                 (buffer-string))

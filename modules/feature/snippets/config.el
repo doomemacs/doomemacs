@@ -3,7 +3,7 @@
 ;; Snippets! I've thrown together a few hacks to make `yasnippet' and `evil'
 ;; behave together.
 
-(@def-package yasnippet
+(def-package! yasnippet
   :commands (yas-minor-mode
              yas-minor-mode-on
              yas-expand
@@ -14,7 +14,7 @@
   (defvar yas-minor-mode-map (make-sparse-keymap))
 
   :init
-  (@add-hook (text-mode prog-mode snippet-mode markdown-mode org-mode)
+  (add-hook! (text-mode prog-mode snippet-mode markdown-mode org-mode)
     'yas-minor-mode-on)
 
   :config
@@ -34,8 +34,8 @@
   ;; fix an error caused by smartparens interfering with yasnippet bindings
   (advice-add 'yas-expand :before 'sp-remove-active-pair-overlay)
 
-  (@after evil
-    (@map (:map yas-keymap
+  (after! evil
+    (map! (:map yas-keymap
             "C-e"           '+snippets/goto-end-of-field
             "C-a"           '+snippets/goto-start-of-field
             "<M-right>"     '+snippets/goto-end-of-field
@@ -73,10 +73,10 @@
     (add-hook 'yas-after-exit-snippet-hook '+snippets|yas-after-expand)))
 
 
-(@def-package auto-yasnippet
+(def-package! auto-yasnippet
   :commands (aya-create aya-expand aya-open-line aya-persist-snippet)
   :init
-  (@map :i  [C-tab] 'aya-expand
+  (map! :i  [C-tab] 'aya-expand
         :nv [C-tab] 'aya-create)
   :config
   (setq aya-persist-snippets-dir (concat doom-local-dir "auto-snippets/")))

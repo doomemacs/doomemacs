@@ -35,9 +35,9 @@
 ;;   "A list of attachments for the current buffer. This is so my custom attachment
 ;; system can keep track of each buffer's attachments.")
 
-(@load +attach)
-(@load +capture)
-(@load +export)
+(load! +attach)
+(load! +capture)
+(load! +export)
 
 
 ;;
@@ -75,7 +75,7 @@
     :keymap (make-sparse-keymap)
     :group 'evil-org)
 
-  (@set :popup
+  (set! :popup
     '(" *Agenda Commands*"  :size 30  :noselect t)
     '(" *Org todo*"         :size 5   :noselect t)
     '("*Calendar*"          :size 0.4 :noselect t)
@@ -216,10 +216,10 @@
     (sp-local-pair "{" nil))
 
   ;; bullets
-  (@def-package org-bullets :commands org-bullets-mode)
+  (def-package! org-bullets :commands org-bullets-mode)
 
   ;; Keybinds
-  (@map (:map org-mode-map
+  (map! (:map org-mode-map
           "RET" nil
           "C-j" nil
           "C-k" nil
@@ -262,18 +262,18 @@
           :nv "k"   'evil-previous-visual-line
           :v  "<S-tab>" '+snippets/expand-on-region
 
-          :i  "M-a" (@λ (evil-visual-state) (org-mark-element))
+          :i  "M-a" (λ! (evil-visual-state) (org-mark-element))
           :n  "M-a" 'org-mark-element
           :v  "M-a" 'mark-whole-buffer
 
-          :ni "<M-return>"   (@λ (+org/insert-item 'below))
-          :ni "<S-M-return>" (@λ (+org/insert-item 'above))
+          :ni "<M-return>"   (λ! (+org/insert-item 'below))
+          :ni "<S-M-return>" (λ! (+org/insert-item 'above))
 
           ;; Formatting shortcuts
-          :i  "M-b" (@λ (+org-surround "*")) ; bold
-          :i  "M-u" (@λ (+org-surround "_")) ; underline
-          :i  "M-i" (@λ (+org-surround "/")) ; italics
-          :i  "M-`" (@λ (+org-surround "+")) ; strikethrough
+          :i  "M-b" (λ! (+org-surround "*")) ; bold
+          :i  "M-u" (λ! (+org-surround "_")) ; underline
+          :i  "M-i" (λ! (+org-surround "/")) ; italics
+          :i  "M-`" (λ! (+org-surround "+")) ; strikethrough
 
           :v  "M-b" "S*"
           :v  "M-u" "S_"
@@ -288,17 +288,17 @@
            :n  "?"  'org-tags-view
            :n  "D"  'org-deadline
            :nv "L"  'org-store-link
-           :n  "R"  (@λ (org-metaleft) (org-archive-to-archive-sibling)) ; archive to parent sibling
+           :n  "R"  (λ! (org-metaleft) (org-archive-to-archive-sibling)) ; archive to parent sibling
            :n  "T"  'org-todo
            :n  "a"  'org-agenda
            :n  "d"  'org-time-stamp
            :n  "e"  'org-edit-special
            :n  "l"  'org-insert-link
-           :n  "n"  (@λ (if (buffer-narrowed-p) (widen) (org-narrow-to-subtree)))
+           :n  "n"  (λ! (if (buffer-narrowed-p) (widen) (org-narrow-to-subtree)))
            :n  "r"  'org-refile
            :n  "s"  'org-schedule
-           :n  "t"  (@λ (org-todo (if (org-entry-is-todo-p) 'none 'todo)))
-           :v  "t"  (@λ (evil-ex-normal evil-visual-beginning evil-visual-end "\\t"))
+           :n  "t"  (λ! (org-todo (if (org-entry-is-todo-p) 'none 'todo)))
+           :v  "t"  (λ! (evil-ex-normal evil-visual-beginning evil-visual-end "\\t"))
            :n  "v"  'variable-pitch-mode
            ;; :n  "w"  'writing-mode
            ;; :n  "x"  '+org/remove-link
@@ -308,25 +308,25 @@
           :n  "za"  '+org/toggle-fold
           :n  "zA"  'org-shifttab
           :n  "zc"  'outline-hide-subtree
-          :n  "zC"  (@λ (outline-hide-sublevels 1))
+          :n  "zC"  (λ! (outline-hide-sublevels 1))
           :n  "zd"  (lambda (&optional arg) (interactive "p") (outline-hide-sublevels (or arg 3)))
-          :n  "zm"  (@λ (outline-hide-sublevels 1))
+          :n  "zm"  (λ! (outline-hide-sublevels 1))
           :n  "zo"  'outline-show-subtree
           :n  "zO"  'outline-show-all
           :n  "zr"  'outline-show-all
 
-          :m  "]]"  (@λ (call-interactively 'org-forward-heading-same-level) (org-beginning-of-line))
-          :m  "[["  (@λ (call-interactively 'org-backward-heading-same-level) (org-beginning-of-line))
+          :m  "]]"  (λ! (call-interactively 'org-forward-heading-same-level) (org-beginning-of-line))
+          :m  "[["  (λ! (call-interactively 'org-backward-heading-same-level) (org-beginning-of-line))
           :m  "]l"  'org-next-link
           :m  "[l"  'org-previous-link
 
           :m  "gh"  'outline-up-heading
           :m  "gj"  'org-forward-heading-same-level
           :m  "gk"  'org-backward-heading-same-level
-          :m  "gl"  (@λ (call-interactively 'outline-next-visible-heading) (show-children))
+          :m  "gl"  (λ! (call-interactively 'outline-next-visible-heading) (show-children))
 
           :n  "go"  'org-open-at-point
-          :n  "gO"  (@λ (let ((org-link-frame-setup (append '((file . find-file-other-window)) org-link-frame-setup))
+          :n  "gO"  (λ! (let ((org-link-frame-setup (append '((file . find-file-other-window)) org-link-frame-setup))
                               (org-file-apps '(("\\.org$" . emacs)
                                                (t . "open \"%s\""))))
                           (call-interactively 'org-open-at-point)))
@@ -336,13 +336,13 @@
           :m  "^"   'org-beginning-of-line
           :n  "<"   'org-metaleft
           :n  ">"   'org-metaright
-          :v  "<"   (@λ (org-metaleft)  (evil-visual-restore))
-          :v  ">"   (@λ (org-metaright) (evil-visual-restore))
+          :v  "<"   (λ! (org-metaleft)  (evil-visual-restore))
+          :v  ">"   (λ! (org-metaright) (evil-visual-restore))
           :n  "-"   'org-cycle-list-bullet
           :m  "<tab>" 'org-cycle)
 
         (:map org-src-mode-map
-          :n  "<escape>" (@λ (message "Exited") (org-edit-src-exit)))
+          :n  "<escape>" (λ! (message "Exited") (org-edit-src-exit)))
 
         (:after org-agenda
           (:map org-agenda-mode-map

@@ -1,6 +1,6 @@
 ;;; lang/python/config.el
 
-(@def-package python
+(def-package! python
   :commands python-mode
   :init
   (setq python-environment-directory doom-cache-dir
@@ -17,11 +17,11 @@
   (add-hook 'python-mode-hook 'flycheck-mode)
 
   :config
-  (@set :repl 'python-mode '+python/repl)
+  (set! :repl 'python-mode '+python/repl)
   (define-key python-mode-map (kbd "DEL") nil)) ; interferes with smartparens
 
 
-(@def-package anaconda-mode
+(def-package! anaconda-mode
   :after python
   :init
   (add-hook 'python-mode-hook 'anaconda-mode)
@@ -30,17 +30,17 @@
         anaconda-mode-eldoc-as-single-line t)
 
   :config
-  (@set :company-backend 'python-mode '(company-anaconda))
+  (set! :company-backend 'python-mode '(company-anaconda))
 
-  (@map :map anaconda-mode-map     :m "gd"     'anaconda-mode-find-definitions
+  (map! :map anaconda-mode-map     :m "gd"     'anaconda-mode-find-definitions
         :map anaconda-nav-mode-map :n [escape] 'anaconda-nav-quit)
 
   (advice-add 'anaconda-mode-doc-buffer :after 'doom*anaconda-mode-doc-buffer))
 
-(@def-package company-anaconda
+(def-package! company-anaconda
   :after anaconda-mode
   :config
-  (@set :emr 'python-mode
+  (set! :emr 'python-mode
         '(:nv anaconda-mode-show-doc          "view documentation")
         '(:nv anaconda-mode-find-assignments  "find assignments")
         '(:nv anaconda-mode-find-definitions  "find definitions")
@@ -48,20 +48,20 @@
         '(:n  anaconda-mode-find-references   "show usages")))
 
 
-(@def-package pip-requirements
+(def-package! pip-requirements
   :mode ("/requirements.txt$" . pip-requirements-mode))
 
 
-(@def-package nose
+(def-package! nose
   :commands nose-mode
   :preface
   (defvar nose-mode-map (make-sparse-keymap))
   :init
-  (@associate nose-mode :match "/test_.+\\.py$" :in (python-mode))
+  (associate! nose-mode :match "/test_.+\\.py$" :in (python-mode))
   :config
-  (@set :popup "*nosetests*" :size 0.4 :noselect t)
-  (@set :yas-minor-mode 'nose-mode)
-  (@map :map nose-mode-map
+  (set! :popup "*nosetests*" :size 0.4 :noselect t)
+  (set! :yas-minor-mode 'nose-mode)
+  (map! :map nose-mode-map
         :localleader
         :n "tr" 'nosetests-again
         :n "ta" 'nosetests-all

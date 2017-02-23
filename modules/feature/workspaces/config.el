@@ -15,7 +15,7 @@
   "A hook that runs when persp loads a new session.")
 
 
-(@def-package persp-mode :demand t
+(def-package! persp-mode :demand t
   :config
   (setq persp-autokill-buffer-on-remove 'kill-weak
         persp-nil-name "main"
@@ -55,7 +55,7 @@
   ;; TODO Test per-frame perspectives
 
   ;; Be quiet when saving
-  (defun +workspace*silence (orig-fn &rest args) (@quiet (apply orig-fn args)))
+  (defun +workspace*silence (orig-fn &rest args) (quiet! (apply orig-fn args)))
   (advice-add 'persp-save-state-to-file :around '+workspace*silence)
 
   ;; Add a hook to session loading
