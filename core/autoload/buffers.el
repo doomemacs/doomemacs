@@ -286,7 +286,7 @@ exclude buffers that aren't part of the current project."
   "Clean up buried, unreal buffers."
   (interactive)
   (let ((buffers (doom-buried-buffers (doom-buffer-list))))
-    (mapc 'doom-kill-buffer buffers)
+    (mapc 'kill-buffer buffers)
     (setq n (+ (doom-kill-process-buffers) (length buffers)))
     (when (called-interactively-p 'interactive)
       (message "Cleaned up %s buffers" n))))
