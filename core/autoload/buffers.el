@@ -26,6 +26,8 @@ major-modes, the process gets killed.")
 
 ;;;###autoload
 (defun doom-fallback-buffer ()
+  "Returns the fallback buffer, creating it if necessary. By default this is the
+scratch buffer."
   (get-buffer-create doom-fallback-buffer))
 
 ;;;###autoload
@@ -55,7 +57,7 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
 ;; Buffer Life and Death ;;;;;;;;;;;;;;;
 ;;;###autoload
 (defun doom-buffer-list (&optional project-p)
-  "Get all buffers in the current project, in the current workgroup.
+  "Get all buffers in the current project, in the current workspace.
 
 If PROJECT-P is non-nil, get all buffers associated with the current project in
 the current workspace."
@@ -77,13 +79,13 @@ the current workspace."
 
 ;;;###autoload
 (defun doom-real-buffers-list (&optional buffer-list)
-  "Get a list of all buffers (in the current workgroup OR in BUFFER-LIST) that
+  "Get a list of all buffers (in the current workspace OR in BUFFER-LIST) that
 `doom-real-buffer-p' returns non-nil for."
   (cl-remove-if-not 'doom-real-buffer-p (or buffer-list (doom-buffer-list))))
 
 ;;;###autoload
 (defun doom-buffers-in-mode (modes &optional buffer-list)
-  "Get a list of all buffers (in the current workgroup OR in BUFFER-LIST) whose
+  "Get a list of all buffers (in the current workspace OR in BUFFER-LIST) whose
 `major-mode' is one of MODES."
   (cl-remove-if-not (lambda (buf) (memq (buffer-local-value 'major-mode it) modes))
                     (or buffer-list (doom-buffer-list))))
@@ -96,19 +98,19 @@ OR return only the visible windows in WINDOW-LIST."
 
 ;;;###autoload
 (defun doom-visible-buffers (&optional buffer-list)
-  "Get a list of unburied buffers in the current project and workgroup, OR
+  "Get a list of unburied buffers in the current project and workspace, OR
 return only the unburied buffers in BUFFER-LIST (a list of BUFFER-OR-NAMEs)."
   (cl-remove-if-not 'get-buffer-window (or buffer-list (doom-buffer-list))))
 
 ;;;###autoload
 (defun doom-buried-buffers (&optional buffer-list)
-  "Get a list of buried buffers in the current project and workgroup, OR return
+  "Get a list of buried buffers in the current project and workspace, OR return
 only the buried buffers in BUFFER-LIST (a list of BUFFER-OR-NAMEs)."
   (cl-remove-if 'get-buffer-window (or buffer-list (doom-buffer-list))))
 
 ;;;###autoload
 (defun doom-matching-buffers (pattern &optional buffer-list)
-  "Get a list of all buffers (in the current workgroup OR in BUFFER-LIST) that
+  "Get a list of all buffers (in the current workspace OR in BUFFER-LIST) that
 match the regex PATTERN."
   (cl-remove-if-not (lambda (buf) (string-match-p pattern (buffer-name buf)))
                     (or buffer-list (doom-buffer-list))))
@@ -235,7 +237,7 @@ See `doom-real-buffer-p' for what 'real' means."
 
 ;;;###autoload
 (defun doom-kill-matching-buffers (pattern &optional buffer-list)
-  "Kill all buffers (in current workgroup OR in BUFFER-LIST) that match the
+  "Kill all buffers (in current workspace OR in BUFFER-LIST) that match the
 regex PATTERN. Returns the number of killed buffers."
   (let ((buffers (doom-matching-buffers pattern buffer-list)))
     (mapc 'doom-kill-buffer buffers)
@@ -260,7 +262,7 @@ belong to the current project in this workspace."
 
 ;;;###autoload
 (defun doom/kill-other-buffers (&optional project-p)
-  "Kill all other buffers in this workgroup. If PROJECT-P, kill only the other
+  "Kill all other buffers in this workspace. If PROJECT-P, kill only the other
 buffers that belong to the current project."
   (interactive "P")
   (let ((buffers (doom-buffer-list project-p)))
@@ -273,7 +275,7 @@ buffers that belong to the current project."
 
 ;;;###autoload
 (defun doom/kill-matching-buffers (pattern &optional project-p)
-  "Kill buffers in current workgroup that match regex PATTERN. If BANG, then
+  "Kill buffers in current workspace that match regex PATTERN. If BANG, then
 exclude buffers that aren't part of the current project."
   (interactive "sP")
   (let* ((buffers (doom-buffer-list project-p))
@@ -283,9 +285,9 @@ exclude buffers that aren't part of the current project."
 
 ;;;###autoload
 (defun doom/cleanup-buffers ()
-  "Clean up buried, unreal buffers."
+  "Clean up buried and process buffers in the current workspace."
   (interactive)
-  (let ((buffers (doom-buried-buffers (doom-buffer-list))))
+  (let ((buffers (doom-buried-buffers)))
     (mapc 'kill-buffer buffers)
     (setq n (+ (doom-kill-process-buffers) (length buffers)))
     (when (called-interactively-p 'interactive)
