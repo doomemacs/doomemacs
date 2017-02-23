@@ -272,50 +272,39 @@ the command buffer."
 (after! help-mode
   ;; Help buffers use `other-window' to decide where to open followed links,
   ;; which can be unpredictable. It should *only* replace the original buffer we
-  ;; opened the popup from. To fix this these three button
-  ;; types need to be redefined to set aside the popup before following a link.
+  ;; opened the popup from. To fix this these three button types need to be
+  ;; redefined to set aside the popup before following a link.
+  (defsubst doom--switch-from-popup (location)
+    (doom/popup-close)
+    (message "-- %s" location)
+    (switch-to-buffer (car location) nil t)
+    (if (not (cdr location))
+        (message "Unable to find location in file")
+      (goto-char location)
+      (recenter)))
+
   (define-button-type 'help-function-def
     :supertype 'help-xref
-    'help-function (lambda (fun file)
-                     (require 'find-func)
-                     (when (eq file 'C-source)
-                       (setq file (help-C-file-name (indirect-function fun) 'fun)))
-                     (let ((location (find-function-search-for-symbol fun nil file)))
-                       (doom/popup-close)
-                       (switch-to-buffer (car location) nil t)
-                       (if (cdr location)
-                           (progn
-                             (goto-char (cdr location))
-                             (recenter))
-                         (message "Unable to find location in file")))))
+    'help-function
+    (lambda (fun file)
+      (require 'find-func)
+      (when (eq file 'C-source)
+        (setq file (help-C-file-name (indirect-function fun) 'fun)))
+      (doom--switch-from-popup (find-function-search-for-symbol fun nil file))))
 
   (define-button-type 'help-variable-def
     :supertype 'help-xref
-    'help-function (lambda (var &optional file)
-                     (when (eq file 'C-source)
-                       (setq file (help-C-file-name var 'var)))
-                     (let ((location (find-variable-noselect var file)))
-                       (doom/popup-close)
-                       (switch-to-buffer (car location) nil t)
-                       (if (cdr location)
-                           (progn
-                             (goto-char (cdr location))
-                             (recenter))
-                         (message "Unable to find location in file")))))
+    'help-function
+    (lambda (var &optional file)
+      (when (eq file 'C-source) (setq file (help-C-file-name var 'var)))
+      (doom--switch-from-popup (find-variable-noselect var file))))
 
   (define-button-type 'help-face-def
     :supertype 'help-xref
-    'help-function (lambda (fun file)
-                     (require 'find-func)
-                     (let ((location
-                            (find-function-search-for-symbol fun 'defface file)))
-                       (doom/popup-close)
-                       (switch-to-buffer (car location) nil t)
-                       (if (cdr location)
-                           (progn
-                             (goto-char (cdr location))
-                             (recenter))
-                         (message "Unable to find location in file"))))))
+    'help-function
+    (lambda (fun file)
+      (require 'find-func)
+      (doom--switch-from-popup (find-function-search-for-symbol fun 'defface file)))))
 
 
 ;; (after! magit
