@@ -5,9 +5,7 @@
 (defun doom-popup-p (&optional window)
   "Return t if WINDOW is a popup. Uses current window if WINDOW is omitted."
   (let ((window (or window (selected-window))))
-    (and window
-         (or (window-parameter window 'popup)
-             (buffer-local-value 'doom-popup-mode (window-buffer window))))))
+    (and window (window-parameter window 'popup))))
 
 ;;;###autoload
 (defun doom-popup-buffer (buffer &rest plist)
@@ -35,7 +33,9 @@ possible rules."
 
 ;;;###autoload
 (defun doom/popup-restore ()
-  "Restore the last popups."
+  "Restore the last popups. If the buffers have been killed, and represented
+real files, they will be restored. Special buffers or buffers with non-nil
+:autokill properties will not be."
   (interactive)
   (unless doom-popup-history
     (error "No popups to restore"))
@@ -72,14 +72,11 @@ possible rules."
 
 ;;;###autoload
 (defun doom/popup-close-all ()
-  "Closes all open popups. If DONT-KILL is non-nil, don't kill their buffers."
+  "Closes all open popups."
   (interactive)
-  (let* ((orig-win (selected-window))
-         (popups (cl-remove-if-not (lambda (win) (and (doom-popup-p win)
-                                                 (not (eq win orig-win))))
-                                   (window-list))))
-    (when popups
-      (setq doom-popup-history (mapcar 'doom--popup-data (doom-popup-windows)))
+  (let ((orig-win (selected-window)))
+    (when-let (popups (doom-popup-windows))
+      (setq doom-popup-history (mapcar 'doom--popup-data popups))
       (let (doom-popup-remember-history)
         (mapc 'delete-window popups)))))
 
@@ -88,7 +85,7 @@ possible rules."
   "Close the current popup *if* its window doesn't have a noesc parameter."
   (interactive)
   (let ((window (selected-window)))
-    (if (window-parameter window 'noesc)
+    (if (window-parameter window :noesc)
         (call-interactively (if (featurep 'evil)
                                 'evil-force-normal-state
                               'keyboard-escape-quit))

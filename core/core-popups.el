@@ -34,6 +34,10 @@
     map)
   "Active keymap in popup windows.")
 
+(defvar doom-popup-window-parameters '(:noesc :modeline :autokill)
+  "A list of window parameters that are set (and cleared) when `doom-popup-mode
+is enabled/disabled.'")
+
 (@def-setting :popup (&rest rules)
   "Prepend a new popup rule to `shackle-rules'."
   (if (cl-every 'listp rules)
@@ -61,7 +65,7 @@
           ("*Pp Eval Output*"       :size 0.3 :autokill t)
           ("*Apropos*"              :size 0.3)
           ("*Backtrace*"            :size 25  :noselect t)
-          ("*Help*"                 :size 16  :autokill t)
+          ("*Help*"                 :size 16)
           ("*Messages*"             :size 10)
           ("*Warnings*"             :size 10  :noselect t :autokill t)
           ("*command-log*"          :size 28  :noselect t :align right)
@@ -73,87 +77,98 @@
           (tabulated-list-mode      :noesc t)))
 
   :config
-  (shackle-mode 1))
+  (shackle-mode 1)
 
-
-;;
-;; Modifications
-;;
-
-(defun doom*shackle-always-align (plist)
-  "Ensure popups are always aligned and selected by default. Eliminates the need
+  (defun doom*shackle-always-align (plist)
+    "Ensure popups are always aligned and selected by default. Eliminates the need
 for :align t on every rule."
-  (when plist
-    (unless (plist-member plist :align)
-      (plist-put plist :align t))
-    (unless (or (plist-member plist :select)
-                (plist-member plist :noselect))
-      (plist-put plist :select t)))
-  plist)
-(advice-add 'shackle--match :filter-return 'doom*shackle-always-align)
+    (when plist
+      (unless (plist-member plist :align)
+        (plist-put plist :align t))
+      (unless (or (plist-member plist :select)
+                  (plist-member plist :noselect))
+        (plist-put plist :select t)))
+    plist)
+  (advice-add 'shackle--match :filter-return 'doom*shackle-always-align))
 
+
+;;
+;; Integration
+;;
 
 ;; Tell `window-state-get' and `current-window-configuration' to persist these
-;; custom parameters. Allows `persp-mode' to remember popup states.
-(nconc window-persistent-parameters
-       '((popup . writable)
-         (noesc . writable)
-         (autokill . writable)))
-
+;; custom parameters. Helpful for `persp-mode' to persist popup windows.
+(push (cons 'no-other-window 'writable) window-persistent-parameters)
+(dolist (param doom-popup-window-parameters)
+  (push (cons param 'writable) window-persistent-parameters))
 
 (define-minor-mode doom-popup-mode
   "Minor mode for popup windows."
   :init-value nil
   :keymap doom-popup-mode-map
-  ;; Don't show modeline in popup windows without a :modeline rule. If one
-  ;; exists and it's a symbol, use `doom-modeline' to grab the format. If
-  ;; non-nil, show the mode-line as normal. If nil (or omitted), then hide the
-  ;; modeline entirely.
-  (if (and (not doom-popup-mode)
-           doom-hide-modeline-mode)
-      (doom-hide-modeline-mode -1)
-    (let ((modeline (plist-get doom-popup-rules :modeline)))
-      (cond ((or (eq modeline 'nil)
-                 (not modeline))
-             (doom-hide-modeline-mode +1))
-            ((symbolp modeline)
-             (let ((doom--hidden-modeline-format (doom-modeline modeline)))
-               (doom-hide-modeline-mode +1)))))))
-(put 'doom-popup-mode 'permanent-local t)
+  (let ((window (selected-window)))
+    ;; Major mode changes (and other things) may call
+    ;; `kill-all-local-variables', turning off things like `doom-popup-mode'.
+    ;; This prevents that.
+    (put 'doom-popup-mode 'permanent-local doom-popup-mode)
+    ;; Ensure that buffer-opening functions/commands (like
+    ;; `switch-to-buffer-other-window' won't use this window).
+    (set-window-parameter window 'no-other-window doom-popup-mode)
+    ;; Makes popup window resist interactively changing its buffer.
+    (set-window-dedicated-p window doom-popup-mode)
+    (cond (doom-popup-mode
+           ;; Don't show modeline in popup windows without a :modeline rule. If
+           ;; one exists and it's a symbol, use `doom-modeline' to grab the
+           ;; format. If non-nil, show the mode-line as normal. If nil (or
+           ;; omitted, by default), then hide the modeline entirely.
+           (let ((modeline (plist-get doom-popup-rules :modeline)))
+             (cond ((or (eq modeline 'nil)
+                        (not modeline))
+                    (doom-hide-modeline-mode +1))
+                   ((symbolp modeline)
+                    (let ((doom--hidden-modeline-format (doom-modeline modeline)))
+                      (doom-hide-modeline-mode +1)))))
+           ;; Save metadata into window parameters so it can be saved by window
+           ;; config persisting plugins like workgroups or persp-mode.
+           (set-window-parameter window 'popup (or doom-popup-rules t))
+           (when doom-popup-rules
+             (dolist (param doom-popup-window-parameters)
+               (when-let (val (plist-get doom-popup-rules param))
+                 (set-window-parameter window param val)))))
+
+          (t
+           ;; show modeline
+           (when doom-hide-modeline-mode
+             (doom-hide-modeline-mode -1))
+           ;; Ensure window parameters are cleaned up
+           (set-window-parameter window 'popup nil)
+           (dolist (param doom-popup-window-parameters)
+             (set-window-parameter window param nil))))))
 
 ;; Hide modeline in completion popups
 (@add-hook (completion-in-region-mode completion-list-mode) 'doom-hide-modeline-mode)
 
-(defun doom-popup--init (window &optional plist)
-  "Initializes a window as a popup window. Sets custom window parameters and
-enables `doom-popup-mode'."
-  (unless window
-    (error "No window was found for %s: %s" (car args) plist))
-  (unless plist
-    (setq plist (shackle-match (window-buffer window))))
-  (mapc (lambda (cfg) (set-window-parameter window (car cfg) (cdr cfg)))
-        (append `((popup . ,plist)
-                  (no-other-window . ,t))
-                (when (plist-get plist :noesc)
-                  `((noesc . ,t)))
-                (when (plist-get plist :autokill)
-                  `((autokill . ,t)))))
-  (with-selected-window window
-    (unless (eq plist t)
-      (setq-local doom-popup-rules plist))
-    (doom-popup-mode +1))
-  window)
-
 ;;
 (defun doom*popup-init (orig-fn &rest args)
-  "Invokes `doom-popup--init' on windows that qualify as popups. Returns the window."
+  "Initializes a window as a popup window by enabling `doom-popup-mode' in it.
+Returns the window."
   (unless (doom-popup-p)
     (setq doom-popup-other-window (selected-window)))
-  (doom-popup--init (apply orig-fn args) (nth 2 args)))
+  (let ((plist (or (nth 2 args)
+                   (and (bufferp (car args))
+                        (shackle-match (window-buffer (car args))))))
+        (window (apply orig-fn args)))
+    (unless window
+      (error "No popup window was found for %s: %s" (car args) plist))
+    (with-selected-window window
+      (unless (eq plist t)
+        (setq-local doom-popup-rules plist))
+      (doom-popup-mode +1))
+    window))
 
 (defun doom*popups-save (orig-fn &rest args)
-  "Puts aside all popups before executing the original function, usually to
-prevent popups from messaging up the UI (or vice versa)."
+  "Sets aside all popups before executing the original function, usually to
+prevent the popup(s) from messing up the UI (or vice versa)."
   (let ((in-popup-p (doom-popup-p))
         (popups (doom-popup-windows))
         (doom-popup-remember-history t))
@@ -166,25 +181,22 @@ prevent popups from messaging up the UI (or vice versa)."
           (unless in-popup-p
             (select-window origin)))))))
 
-(defun doom*delete-popup-window (orig-fn &rest args)
+(defun doom*delete-popup-window (&optional window)
   "Ensure that popups are deleted properly, and killed if they have :autokill
 properties."
-  (let ((window (or (car args) (selected-window))))
+  (let ((window (or window (selected-window))))
     (when (doom-popup-p window)
       (when doom-popup-remember-history
         (setq doom-popup-history (list (doom--popup-data window))))
-      (set-window-dedicated-p window nil)
-      (if (window-parameter window 'autokill)
-          (kill-buffer (window-buffer window))
+      (let ((autokill-p (window-parameter window :autokill)))
         (with-selected-window window
-          (doom-popup-mode -1)))
-      (mapc (lambda (cfg) (set-window-parameter window cfg nil))
-            '(popup no-other-window noesc autokill))))
-  (apply orig-fn args))
+          (doom-popup-mode -1)
+          (when autokill-p
+            (kill-buffer (current-buffer))))))))
 
 (advice-add 'shackle-display-buffer :around 'doom*popup-init)
 (advice-add 'balance-windows :around 'doom*popups-save)
-(advice-add 'delete-window :around 'doom*delete-popup-window)
+(advice-add 'delete-window :before 'doom*delete-popup-window)
 
 
 ;;
