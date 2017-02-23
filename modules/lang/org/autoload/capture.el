@@ -1,4 +1,4 @@
-;;; emacs/org/autoload/capture.el
+;;; lang/org/autoload/capture.el
 
 ;;;###autoload
 (defun +org/capture (&optional template string)

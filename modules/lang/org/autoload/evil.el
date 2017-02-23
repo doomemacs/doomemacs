@@ -1,6 +1,6 @@
-;;; emacs/org/autoload/evil.el
+;;; lang/org/autoload/evil.el
 
-;;;###autoload (autoload '+org:capture "emacs/org/autoload/evil" nil t)
+;;;###autoload (autoload '+org:capture "lang/org/autoload/evil" nil t)
 (evil-define-operator +org:capture (&optional beg end bang)
   "Send a selection to `doom/org-capture'."
   :move-point nil :type inclusive
@@ -10,7 +10,7 @@
        (buffer-substring beg end)
      "")))
 
-;;;###autoload (autoload '+org:attach "emacs/org/autoload/evil" nil t)
+;;;###autoload (autoload '+org:attach "lang/org/autoload/evil" nil t)
 (evil-define-command +org:attach (&optional uri)
   (interactive "<a>")
   (unless (eq major-mode 'org-mode)

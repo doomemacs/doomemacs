@@ -1,4 +1,4 @@
-;;; emacs/org/autoload/util.el
+;;; lang/org/autoload/util.el
 
 ;;;###autoload
 (defun +org-get-property (name &optional file)

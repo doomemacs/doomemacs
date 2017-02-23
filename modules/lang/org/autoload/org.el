@@ -1,4 +1,4 @@
-;;; emacs/org/autoload/org.el
+;;; lang/org/autoload/org.el
 
 ;;;###autoload
 (defun +org/indent ()

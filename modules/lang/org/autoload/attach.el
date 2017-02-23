@@ -1,4 +1,4 @@
-;;; emacs/org/autoload/attach.el
+;;; lang/org/autoload/attach.el
 
 (defun doom--org-attach-icon (path)
   (char-to-string (pcase (downcase (f-ext path))
