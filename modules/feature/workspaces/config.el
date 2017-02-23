@@ -67,6 +67,8 @@
   (defun +workspaces|restore-popups (windows)
     (dolist (window windows)
       (when-let (plist (window-parameter window 'popup))
-        (doom-popup--init window plist))))
+        (with-selected-window window
+          (unless doom-popup-mode
+            (doom-popup-mode +1))))))
   (add-hook '+workspaces-load-session-hook '+workspaces|restore-popups))
 
