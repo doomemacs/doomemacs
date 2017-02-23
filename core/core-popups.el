@@ -169,18 +169,17 @@ prevent popups from messaging up the UI (or vice versa)."
 (defun doom*delete-popup-window (orig-fn &rest args)
   "Ensure that popups are deleted properly, and killed if they have :autokill
 properties."
-  (let ((window (car args)))
+  (let ((window (or (car args) (selected-window))))
     (when (doom-popup-p window)
-      (with-selected-window window
-        (doom-popup-mode -1)
-        (unless doom-popup-mode
-          (mapc (lambda (cfg) (set-window-parameter window cfg nil))
-                '(popup no-other-window noesc autokill)))
-          (set-window-dedicated-p window nil)
-        (when doom-popup-remember-history
-          (setq doom-popup-history (list (doom--popup-data window))))
-        (when (window-parameter window 'autokill)
-          (kill-buffer (window-buffer window))))))
+      (when doom-popup-remember-history
+        (setq doom-popup-history (list (doom--popup-data window))))
+      (set-window-dedicated-p window nil)
+      (if (window-parameter window 'autokill)
+          (kill-buffer (window-buffer window))
+        (with-selected-window window
+          (doom-popup-mode -1)))
+      (mapc (lambda (cfg) (set-window-parameter window cfg nil))
+            '(popup no-other-window noesc autokill))))
   (apply orig-fn args))
 
 (advice-add 'shackle-display-buffer :around 'doom*popup-init)
