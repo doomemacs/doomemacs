@@ -43,7 +43,6 @@
   (advice-add 'switch-to-buffer :after '+workspaces*auto-add-buffer)
   (advice-add 'display-buffer   :after '+workspaces*auto-add-buffer)
 
-  ;; TODO Integration with projectile?
   ;; Create a new workspace on project switch
   (defun doom|new-workspace-on-project-change ()
     (let ((project-name (projectile-project-name)))

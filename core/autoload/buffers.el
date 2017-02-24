@@ -23,18 +23,18 @@ the buffer (if narrowed).
 Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
   (interactive "r")
   (if (region-active-p)
-    (progn
-      (deactivate-mark)
-      (when clone-p
-        (let ((old-buf (current-buffer)))
-          (switch-to-buffer (clone-indirect-buffer nil nil))
-          (setq doom-buffer--narrowed-origin old-buf)))
-      (narrow-to-region beg end))
-    (if doom-buffer--narrowed-origin
       (progn
-        (kill-this-buffer)
-        (switch-to-buffer doom-buffer--narrowed-origin)
-        (setq doom-buffer--narrowed-origin nil))
+        (deactivate-mark)
+        (when clone-p
+          (let ((old-buf (current-buffer)))
+            (switch-to-buffer (clone-indirect-buffer nil nil))
+            (setq doom-buffer--narrowed-origin old-buf)))
+        (narrow-to-region beg end))
+    (if doom-buffer--narrowed-origin
+        (progn
+          (kill-this-buffer)
+          (switch-to-buffer doom-buffer--narrowed-origin)
+          (setq doom-buffer--narrowed-origin nil))
       (widen))))
 
 

@@ -46,9 +46,9 @@
 (add-hook! 'kill-buffer-query-functions
    (if (not (+doom-dashboard-p))
        t
-     (ignore-errors (+doom-dashboard-force-reload))
-     (bury-buffer)
-     nil))
+     (ignore
+      (ignore-errors (+doom-dashboard-force-reload))
+      (bury-buffer))))
 (add-hook! 'window-setup-hook
   (add-hook 'window-configuration-change-hook '+doom-dashboard-reload)
   (+doom-dashboard-reload))
@@ -79,10 +79,9 @@
   "Erase the buffer and prepare it to be used like a normal buffer."
   (unless +doom-dashboard-edited-p
     (erase-buffer)
-    ;; (set-window-margins (get-buffer-window (doom-fallback-buffer)) 0 0)
     (setq +doom-dashboard-edited-p t
-          mode-line-format +doom-dashboard-old-modeline)
-    (setq fringe-indicator-alist +doom-dashboard--old-fringe-indicator)
+          mode-line-format +doom-dashboard-old-modeline
+          fringe-indicator-alist +doom-dashboard--old-fringe-indicator)
     (remove-hook 'evil-insert-state-entry-hook 'doom|mode-erase-on-insert t)))
 
 (defun +doom-dashboard-deferred-reload (&rest _)
