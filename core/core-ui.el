@@ -189,12 +189,7 @@ file."
   ;; Optimization: calculate line number column width beforehand
   (add-hook! nlinum-mode
     (setq nlinum--width (length (save-excursion (goto-char (point-max))
-                                                (format-mode-line "%l")))))
-
-  ;; Disable nlinum explicitly before making a frame, otherwise nlinum throws
-  ;; linum face errors that prevent the frame from spawning.
-  (add-hook! '(before-make-frame-hook after-make-frame-functions)
-    (nlinum-mode -1)))
+                                                (format-mode-line "%l"))))))
 
 ;; Helps us distinguish stacked delimiter pairs. Especially in parentheses-drunk
 ;; languages like Lisp.
