@@ -42,6 +42,7 @@
 (setq doom-fallback-buffer +doom-dashboard-name)
 
 (add-hook 'emacs-startup-hook '+doom-dashboard/open)
+(add-hook 'after-make-frame-functions '+doom-dashboard-deferred-reload)
 (add-hook! 'kill-buffer-query-functions
    (if (not (+doom-dashboard-p))
        t
@@ -83,6 +84,11 @@
           mode-line-format +doom-dashboard-old-modeline)
     (setq fringe-indicator-alist +doom-dashboard--old-fringe-indicator)
     (remove-hook 'evil-insert-state-entry-hook 'doom|mode-erase-on-insert t)))
+
+(defun +doom-dashboard-deferred-reload (&rest _)
+  "Reload the dashboard after a brief pause. This is necessary for new frames,
+whose dimensions may not be fully initialized by the time this is run."
+  (run-with-timer 0.1 nil '+doom-dashboard-reload))
 
 (defun +doom-dashboard-reload (&optional dir)
   "Update the DOOM scratch buffer (or create it, if it doesn't exist)."
