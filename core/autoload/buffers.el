@@ -143,20 +143,11 @@ See `doom-real-buffer-p' for what 'real' means."
 
 ;;;###autoload
 (defun doom-real-buffer-p (&optional buffer-or-name)
-  "Returns t if BUFFER-OR-NAME is a 'real' buffer. Real means:
-
-a) it isn't a popup (or temporary) window
-b) it isn't a special buffer (e.g. scratch or *messages* buffer)
-c) and its major-mode or buffer-name-matching regexp isn't in
-`doom-buffers-unreal'."
+  "Returns t if BUFFER-OR-NAME is a 'real' buffer. Real means it a) isn't a
+popup window/buffer and b) isn't a special buffer."
   (when-let (buffer (ignore-errors (window-normalize-buffer buffer-or-name)))
-    (or (eq buffer (doom-fallback-buffer))
-        (not (or (doom-popup-p (get-buffer-window buffer))
-                 (cl-some (lambda (rule)
-                            (and (stringp rule) (string-match-p rule (buffer-name buffer))))
-                          doom-buffers-unreal)
-                 (with-current-buffer buffer
-                   (apply 'derived-mode-p (cl-remove-if-not 'symbolp doom-buffers-unreal))))))))
+    (not (or (doom-popup-p buffer)
+             (string-match-p "^ ?\\*" (buffer-name buffer))))))
 
 ;;;###autoload
 (defun doom/next-buffer ()
