@@ -201,21 +201,16 @@ See `doom-real-buffer-p' for what 'real' means."
 
 ;;;###autoload
 (defun doom-kill-process-buffers ()
-  "Kill all buried buffers that represent running processes."
+  "Kill all processes that have no visible associated buffers."
   (interactive)
-  (let ((buffer-list (buffer-list))
-        (n 0))
+  (let ((n 0))
     (dolist (p (process-list))
-      (let* ((process-name (process-name p))
-             (assoc (assoc process-name doom-buffers-processes-alist)))
-        (when (and assoc
-                   (not (string= process-name "server"))
-                   (process-live-p p)
-                   (not (cl-some
-                         (lambda (buf)
-                           (let ((mode (buffer-local-value 'major-mode it)))
-                             (eq mode (cdr assoc))))
-                         buffer-list)))
+      (let ((process-buffer (process-buffer p)))
+        (when (and (process-live-p p)
+                   (not (string= (process-name p) "server"))
+                   (or (not process-buffer)
+                       (and (bufferp process-buffer)
+                            (get-buffer-window-list process-buffer nil t))))
           (delete-process p)
           (setq n (1+ n)))))
     n))
