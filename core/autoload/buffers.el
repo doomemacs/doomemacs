@@ -61,21 +61,15 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
 
 If PROJECT-P is non-nil, get all buffers associated with the current project in
 the current workspace."
-  (let* ((buffers (cond ((and (featurep 'workgroups2) workgroups-mode)
-                         (wg-workgroup-associated-buffers nil))
-                        ((and (featurep 'persp-mode) persp-mode)
-                         (persp-buffer-list-restricted))
-                        (t (buffer-list))))
-         (project-root (and project-p (doom-project-root t)))
-         (buffer-list (if project-root
-                          (funcall (if (eq project-p 'not) 'cl-remove-if 'cl-remove-if-not)
-                                   (lambda (b) (projectile-project-buffer-p b project-root))
-                                   buffers)
-                        buffers))
-         (fallback-buffer (doom-fallback-buffer)))
-    (unless (memq fallback-buffer buffer-list)
-      (nconc buffer-list (list (doom-fallback-buffer))))
-    buffer-list))
+  (let ((buffers (if (and (featurep 'persp-mode) persp-mode)
+                     (persp-buffer-list-restricted)
+                   (buffer-list)))
+        (project-root (and project-p (doom-project-root t))))
+    (if project-root
+        (funcall (if (eq project-p 'not) 'cl-remove-if 'cl-remove-if-not)
+                 (lambda (b) (projectile-project-buffer-p b project-root))
+                 buffers)
+      buffers)))
 
 ;;;###autoload
 (defun doom-real-buffers-list (&optional buffer-list)
