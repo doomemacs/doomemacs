@@ -94,36 +94,27 @@ match the regex PATTERN."
                     (or buffer-list (doom-buffer-list))))
 
 (defun doom--cycle-real-buffers (&optional n)
-  "Switch to the next buffer N times (previous, if N < 0), skipping over special
-and unreal buffers. If there's nothing left, create a scratch buffer.
-
-See `doom-real-buffer-p' for what 'real' means."
-  (let* ((start-buffer (current-buffer))
-         (move-func (if (> n 0) 'switch-to-next-buffer 'switch-to-prev-buffer))
-         (max 25)
-         (i 0)
-         (project-dir (doom-project-root))
-         (buffers (doom-real-buffers-list))
-         destbuf)
-    (setq destbuf
-          (catch 'goto
-            (if (or (not buffers)
-                    (= (length buffers) 1))
-                (throw 'goto t)
-              (funcall move-func)
-              (while (not (memq (current-buffer) buffers))
-                (if (or (eq (current-buffer) start-buffer)
-                        (>= i max))
-                    (throw 'goto t)
-                  (funcall move-func))
-                (cl-incf i))
-              (current-buffer))))
-    (when (eq destbuf t)
-      (setq destbuf (doom-fallback-buffer)))
-    (prog1
-        (switch-to-buffer destbuf)
-      (when (eq destbuf (doom-fallback-buffer))
-        (cd project-dir)))))
+  "Switch to the next buffer N times (previous, if N < 0), skipping over unreal
+buffers. If there's nothing left, switch to `doom-fallback-buffer'. See
+`doom-real-buffer-p' for what 'real' means."
+  (let ((buffers (delq (current-buffer) (doom-real-buffers-list)))
+        (project-dir (doom-project-root)))
+    (cond ((or (not buffers)
+               (zerop (mod n (1+ (length buffers)))))
+           (set-window-buffer nil (doom-fallback-buffer)))
+          ((= (length buffers) 1)
+           (set-window-buffer nil (car buffers)))
+          (t
+           (let ((move-func (if (> n 0) 'switch-to-next-buffer 'switch-to-prev-buffer)))
+             ;; Why this instead of switching straight to the Nth buffer in
+             ;; BUFFERS? Because `switch-to-next-buffer' and
+             ;; `switch-to-prev-buffer' properly update buffer list order.
+             (while (not (memq (current-buffer) buffers))
+               (dotimes (i (abs n))
+                 (funcall move-func))))))
+    (when (eq (current-buffer) (doom-fallback-buffer))
+      (cd project-dir))
+    (current-buffer)))
 
 ;;;###autoload
 (defun doom-real-buffer-p (&optional buffer-or-name)
