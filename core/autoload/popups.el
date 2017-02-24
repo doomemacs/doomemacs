@@ -2,10 +2,14 @@
 (provide 'doom-lib-popups)
 
 ;;;###autoload
-(defun doom-popup-p (&optional window)
-  "Return t if WINDOW is a popup. Uses current window if WINDOW is omitted."
-  (let ((window (or window (selected-window))))
-    (and window (window-parameter window 'popup))))
+(defun doom-popup-p (&optional target)
+  "Return t if TARGET (a window or buffer) is a popup. Uses current window if
+omitted."
+  (when-let (target (or target (selected-window)))
+    (cond ((bufferp target)
+           (buffer-local-value 'doom-popup-mode target))
+          ((windowp target)
+           (window-parameter target 'popup)))))
 
 ;;;###autoload
 (defun doom-popup-buffer (buffer &rest plist)
