@@ -276,7 +276,6 @@ the command buffer."
   ;; redefined to set aside the popup before following a link.
   (defsubst doom--switch-from-popup (location)
     (doom/popup-close)
-    (message "-- %s" location)
     (switch-to-buffer (car location) nil t)
     (if (not (cdr location))
         (message "Unable to find location in file")
