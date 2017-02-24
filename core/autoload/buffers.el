@@ -8,22 +8,6 @@
   "The name of the buffer to fall back to if no other buffers exist (will create
 it if it doesn't exist).")
 
-(defvar doom-buffers-unreal
-  '("^ ?\\*" image-mode dired-mode reb-mode messages-buffer-mode
-    tabulated-list-mode comint-mode magit-mode)
-  "A list of regexps or modes whose buffers are considered unreal, and will be
-ignored when using `doom:next-real-buffer' and `doom:previous-real-buffer' (or
-killed by `doom:kill-old-buffers', or after `doom-kill-buffer').")
-
-(defvar doom-buffers-processes-alist
-  '(("pry" . ruby-mode)
-    ("irb" . ruby-mode)
-    ("ipython" . python-mode)
-    ("tide" . typescript-mode))
-  "An alist of (process-name . major-mode) that `doom-kill-process-buffers'
-checks before killing processes. If there are no buffers with matching
-major-modes, the process gets killed.")
-
 ;;;###autoload
 (defun doom-fallback-buffer ()
   "Returns the fallback buffer, creating it if necessary. By default this is the
