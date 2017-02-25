@@ -16,8 +16,8 @@
 (defun +org-cleanup-attachments ()
   ;; "Deletes any attachments that are no longer present in the org-mode buffer."
   (let* ((attachments-local (+org-attachments))
-         (attachments (f-entries org-attach-directory))
-         (to-delete (-difference attachments-local attachments)))
+         (attachments (directory-files org-attach-directory t "^[^.]" t))
+         (to-delete (cl-set-difference attachments-local attachments)))
     ;; TODO
     to-delete))
 
@@ -28,19 +28,20 @@
     (let ((attachments '())
           element
           file)
-      (when (and (f-dir? org-attach-directory)
-                 (> (length (f-glob (concat (f-slash org-attach-directory) "*"))) 0))
+      (when (and (file-directory-p org-attach-directory)
+                 (> (length (file-expand-wildcards (expand-file-name "*" org-attach-directory))) 0))
         (save-excursion
           (goto-char (point-min))
           (while (progn (org-next-link) (not org-link-search-failed))
-            (setq element (org-element-lineage (org-element-context) '(link) t))
-            (when element
-              (setq file (expand-file-name (org-element-property :path element)))
+            (setq element (org-element-context))
+            (when-let (file (and (eq (org-element-type element) 'link)
+                                 (expand-file-name (org-element-property :path element))))
               (when (and (string= (org-element-property :type element) "file")
-                         (string= (concat (f-base (f-dirname file)) "/") org-attach-directory)
+                         (string= (concat (file-name-base (directory-file-name (file-name-directory file))) "/")
+                                  org-attach-directory)
                          (file-exists-p file))
                 (push file attachments))))))
-      (-distinct attachments))))
+      (cl-remove-duplicates attachments))))
 
 ;;;###autoload
 (defun +org-download-dnd (uri action)
