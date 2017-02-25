@@ -273,20 +273,20 @@
            :n  "/"  'org-sparse-tree
            :n  "="  'org-align-all-tags
            :n  "?"  'org-tags-view
-           :n  "D"  'org-deadline
-           :nv "L"  'org-store-link
-           :n  "R"  (λ! (org-metaleft) (org-archive-to-archive-sibling)) ; archive to parent sibling
-           :n  "T"  'org-todo
            :n  "a"  'org-agenda
            :n  "d"  'org-time-stamp
+           :n  "D"  'org-deadline
            :n  "e"  'org-edit-special
-           :nv "l"  'org-insert-link
            :n  "n"  (λ! (if (buffer-narrowed-p) (widen) (org-narrow-to-subtree)))
            :n  "r"  'org-refile
+           :n  "R"  (λ! (org-metaleft) (org-archive-to-archive-sibling)) ; archive to parent sibling
            :n  "s"  'org-schedule
            :n  "t"  (λ! (org-todo (if (org-entry-is-todo-p) 'none 'todo)))
            :v  "t"  (λ! (evil-ex-normal evil-visual-beginning evil-visual-end "\\t"))
+           :n  "T"  'org-todo
            :n  "v"  'variable-pitch-mode
+           :nv "l"  'org-insert-link
+           :nv "L"  'org-store-link
            ;; :n  "w"  'writing-mode
            ;; :n  "x"  '+org/remove-link
            )
