@@ -89,7 +89,9 @@ is enabled/disabled.'")
     "Ensure popups are always aligned and selected by default. Eliminates the need
 for :align t on every rule."
     (when plist
-      (unless (plist-member plist :align)
+      (unless (or (plist-member plist :align)
+                  (plist-member plist :same)
+                  (plist-member plist :frame))
         (plist-put plist :align t))
       (unless (or (plist-member plist :select)
                   (plist-member plist :noselect))
