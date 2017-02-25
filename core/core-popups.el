@@ -384,33 +384,17 @@ the command buffer."
     (pop-to-buffer (car args)))
   (advice-add 'org-switch-to-buffer-other-window :override 'doom*org-switch-to-buffer-other-window)
 
-  ;; ...for org-todo, org-link and org-agenda popups
-  ;; (defun doom*org-pop-to-buffer-same-window (&optional buffer-or-name norecord label)
-  ;;   "Pop to buffer specified by BUFFER-OR-NAME in the selected window."
-  ;;   (switch-to-buffer buffer-or-name))
-  ;; (advice-add 'org-pop-to-buffer-same-window :override 'doom*org-pop-to-buffer-same-window)
-
-  ;; (defun doom/popup-org-agenda-quit ()
-  ;;   "Necessary to finagle org-agenda into shackle popups & behave on quit."
-  ;;   (interactive)
-  ;;   (if org-agenda-columns-active
-  ;;       (org-columns-quit)
-  ;;     (let ((buf (current-buffer)))
-  ;;       (and (not (eq org-agenda-window-setup 'current-window))
-  ;;            (not (one-window-p))
-  ;;            (delete-window))
-  ;;       (kill-buffer buf)
-  ;;       (setq org-agenda-archives-mode nil
-  ;;             org-agenda-buffer nil))))
+  ;; Hide modeline in org-agenda
+  (add-hook 'org-agenda-finalize-hook 'doom-hide-modeline-mode)
 
   (after! org-agenda
     (after! evil
       (map! :map* org-agenda-mode-map
-            :m [escape] 'doom/popup-org-agenda-quit
-            :m "ESC"    'doom/popup-org-agenda-quit))
+            :m [escape] 'org-agenda-Quit
+            :m "ESC"    'org-agenda-Quit))
     (let ((map org-agenda-mode-map))
-      (define-key map "q" 'doom/popup-org-agenda-quit)
-      (define-key map "Q" 'doom/popup-org-agenda-quit))))
+      (define-key map "q" 'org-agenda-Quit)
+      (define-key map "Q" 'org-agenda-Quit))))
 
 
 (after! repl-toggle
