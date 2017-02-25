@@ -17,7 +17,7 @@
     (user-error "Not in an org-mode buffer"))
   (if uri
       (let* ((rel-path (org-download--fullname uri))
-             (new-path (f-expand rel-path))
+             (new-path (expand-file-name rel-path))
              (image-p (image-type-from-file-name uri)))
         (cond ((string-match-p (concat "^" (regexp-opt '("http" "https" "nfs" "ftp" "file")) ":/") uri)
                (url-copy-file uri new-path))
@@ -33,8 +33,8 @@
                       (format "[[./%s]] " rel-path)
                     (format "%s [[./%s][%s]] "
                             (doom--org-attach-icon rel-path)
-                            rel-path (f-filename rel-path)))))
-        (when (string-match-p (regexp-opt '("jpg" "jpeg" "gif" "png")) (f-ext rel-path))
+                            rel-path (file-name-nondirectory (directory-file-name rel-path))))))
+        (when (string-match-p (regexp-opt '("jpg" "jpeg" "gif" "png")) (file-name-extension rel-path))
           (org-redisplay-inline-images)))
     (let ((default-directory ".attach/"))
       (if (file-exists-p default-directory)

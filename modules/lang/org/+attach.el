@@ -31,7 +31,7 @@
   ;; Write download paths relative to current file
   (advice-add 'org-download--dir-2 :override 'ignore)
   (defun +org*download-fullname (path)
-    (file-relative-name path (f-dirname (buffer-file-name))))
+    (file-relative-name path (file-name-directory (buffer-file-name))))
   (advice-add 'org-download--fullname :filter-return '+org*download-fullname)
 
   ;; Add another drag-and-drop handler that will handle anything but image files

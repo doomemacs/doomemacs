@@ -1,7 +1,7 @@
 ;;; lang/org/autoload/attach.el
 
 (defun doom--org-attach-icon (path)
-  (char-to-string (pcase (downcase (f-ext path))
+  (char-to-string (pcase (downcase (file-name-extension path))
                     ("jpg" ?) ("jpeg" ?) ("png" ?) ("gif" ?)
                     ("pdf" ?)
                     ("ppt" ?) ("pptx" ?)

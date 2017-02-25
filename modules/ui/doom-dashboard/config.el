@@ -194,7 +194,7 @@ whose dimensions may not be fully initialized by the time this is run."
                            "tools"
                            :face 'font-lock-keyword-face)
                           (propertize " Edit emacs.d" 'face 'font-lock-keyword-face))
-                  'action '(lambda (_) (find-file (f-expand "init.el" doom-emacs-dir)))
+                  'action '(lambda (_) (find-file (expand-file-name "init.el" doom-emacs-dir)))
                   'follow-link t)
 
                  (when last-session-p

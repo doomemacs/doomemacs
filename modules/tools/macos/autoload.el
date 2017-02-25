@@ -4,12 +4,13 @@
 (defun +macos-open-with (&optional app-name path)
   "Send PATH to APP-NAME on OSX."
   (interactive)
-  (let* ((path (f-full (replace-regexp-in-string
-                        "'" "\\'"
-                        (or path (if (eq major-mode 'dired-mode)
-                                     (dired-get-file-for-visit)
-                                   (buffer-file-name)))
-                        nil t)))
+  (let* ((path (expand-file-name
+                (replace-regexp-in-string
+                 "'" "\\'"
+                 (or path (if (eq major-mode 'dired-mode)
+                              (dired-get-file-for-visit)
+                            (buffer-file-name)))
+                 nil t)))
          (command (format "open %s"
                           (if app-name
                               (format "-a %s '%s'" (shell-quote-argument app-name) path)
