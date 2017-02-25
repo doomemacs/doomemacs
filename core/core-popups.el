@@ -288,7 +288,7 @@ the command buffer."
     (switch-to-buffer (car location) nil t)
     (if (not (cdr location))
         (message "Unable to find location in file")
-      (goto-char location)
+      (goto-char (cdr location))
       (recenter)))
 
   (define-button-type 'help-function-def
