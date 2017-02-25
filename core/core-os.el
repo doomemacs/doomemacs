@@ -28,12 +28,10 @@
               ;; `exec-path-from-shell' is slow, so bring out the cache
               (setq exec-path
                     (or (persistent-soft-fetch 'exec-path "emacs")
-                        (persistent-soft-store
-                         'exec-path
-                         (progn (when (require 'exec-path-from-shell nil t)
-                                  (exec-path-from-shell-initialize))
-                                exec-path)
-                         "emacs"))))
+                        (and (require 'exec-path-from-shell nil t)
+                             (progn (exec-path-from-shell-initialize)
+                                    (persistent-soft-store 'exec-path exec-path "emacs")))
+                        exec-path)))
              (t
               (when (require 'osx-clipboard nil t)
                 (osx-clipboard-mode +1))))

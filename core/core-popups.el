@@ -27,13 +27,6 @@
 (defvar-local doom-popup-rules nil
   "The shackle rule that caused this buffer to be recognized as a popup.")
 
-(defvar doom-popup-mode-map
-  (let ((map (make-sparse-keymap)))
-    (define-key map [escape]    'doom/popup-close-maybe)
-    (define-key map (kbd "ESC") 'doom/popup-close-maybe)
-    map)
-  "Active keymap in popup windows.")
-
 (defvar doom-popup-window-parameters '(:noesc :modeline :autokill)
   "A list of window parameters that are set (and cleared) when `doom-popup-mode
 is enabled/disabled.'")
@@ -110,6 +103,13 @@ for :align t on every rule."
 (push (cons 'no-other-window 'writable) window-persistent-parameters)
 (dolist (param doom-popup-window-parameters)
   (push (cons param 'writable) window-persistent-parameters))
+
+(defvar doom-popup-mode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map [escape]    'doom/popup-close-maybe)
+    (define-key map (kbd "ESC") 'doom/popup-close-maybe)
+    map)
+  "Active keymap in popup windows.")
 
 (define-minor-mode doom-popup-mode
   "Minor mode for popup windows."
@@ -270,11 +270,10 @@ the command buffer."
 
   ;; Don't block moving to/from popup windows
   (defun doom*ignore-window-parameters-in-popups (dir &optional arg window)
-    (window-in-direction
-     (cond ((eq dir 'up) 'above)
-           ((eq dir 'down) 'below)
-           (t dir))
-     window t arg windmove-wrap-around t))
+    (window-in-direction (cond ((eq dir 'up)   'above)
+                               ((eq dir 'down) 'below)
+                               (t dir))
+                         window t arg windmove-wrap-around t))
   (advice-add 'windmove-find-other-window :override 'doom*ignore-window-parameters-in-popups))
 
 
@@ -304,7 +303,8 @@ the command buffer."
     :supertype 'help-xref
     'help-function
     (lambda (var &optional file)
-      (when (eq file 'C-source) (setq file (help-C-file-name var 'var)))
+      (when (eq file 'C-source)
+        (setq file (help-C-file-name var 'var)))
       (doom--switch-from-popup (find-variable-noselect var file))))
 
   (define-button-type 'help-face-def
@@ -332,15 +332,9 @@ the command buffer."
           (save-selected-window
             (neotree-show))))))
 
-  ;; Prevent neotree from interfering with popups
-  ;; (advice-add 'shackle-display-buffer :around 'doom*popups-save-neotree)
   ;; Prevents messing up the neotree buffer on window changes
   (advice-add '+evil-window-move :around 'doom*popups-save-neotree)
-  ;; (advice-add 'doom-popup-buffer     :around 'doom*popups-save-neotree)
   ;; Don't let neotree interfere with moving, splitting or rebalancing windows
-  ;; (advice-add 'balance-windows :around 'doom*popups-save-neotree)
-  ;; (advice-add 'split-window    :around 'doom*popups-save-neotree)
-  ;; (advice-add 'shackle-display-buffer :around 'doom*popups-save-neotree)
   (advice-add 'evil-window-move-very-bottom :around 'doom*popups-save-neotree)
   (advice-add 'evil-window-move-very-top    :around 'doom*popups-save-neotree)
   (advice-add 'evil-window-move-far-left    :around 'doom*popups-save-neotree)
