@@ -40,21 +40,29 @@
     "[+]"
     (substring buffer 0 (s-index-of "   " buffer)))))
 
-;;;###autoload
-(defun +ivy/switch-workspace-buffer ()
-  "Switch to an open buffer in the current workspace."
-  (interactive)
-  (+ivy/switch-buffer t))
+(defun +ivy--select-buffer-other-window-action (buffer)
+  (ivy--switch-buffer-other-window-action
+   (s-chop-suffix
+    "[+]"
+    (substring buffer 0 (s-index-of "   " buffer)))))
 
 ;;;###autoload
-(defun +ivy/switch-buffer (&optional workspace-only-p)
+(defun +ivy/switch-workspace-buffer (&optional other-window-p)
+  "Switch to an open buffer in the current workspace."
+  (interactive "P")
+  (+ivy/switch-buffer other-window-p t))
+
+;;;###autoload
+(defun +ivy/switch-buffer (&optional other-window-p workspace-only-p)
   "Switch to an open buffer in the global buffer list. If WORKSPACE-ONLY-P,
 limit to buffers in the current workspace."
-  (interactive)
+  (interactive "P")
   (ivy-read (format "%s buffers: " (if workspace-only-p "Workspace" "Global"))
             (+ivy--get-buffers (unless workspace-only-p (buffer-list)))
-            :matcher #'ivy--switch-buffer-matcher
-            :action #'+ivy--select-buffer-action
+            :action (if other-window-p
+                        '+ivy--select-buffer-other-window-action
+                      '+ivy--select-buffer-action)
+            :matcher 'ivy--switch-buffer-matcher
             :keymap ivy-switch-buffer-map
             :caller '+ivy/switch-workspace-buffer))
 
