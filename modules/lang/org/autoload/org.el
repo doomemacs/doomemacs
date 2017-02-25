@@ -48,10 +48,7 @@ I use this instead of `org-insert-item' or `org-insert-heading' which are too
 opinionated and perform this simple task incorrectly (e.g. whitespace in the
 wrong places)."
   (interactive)
-  (let* ((context (org-element-lineage
-                   (org-element-context)
-                   '(table table-row headline inlinetask item plain-list)
-                   t))
+  (let* ((context (org-element-context))
          (type (org-element-type context)))
     (cond ((eq type 'item)
            (let ((marker (org-element-property :bullet context)))
@@ -69,12 +66,15 @@ wrong places)."
            (cl-case direction
              ('below (org-table-insert-row t))
              ('above (+org/table-prepend-row-or-shift-up))))
-          (t
-           (let ((level (save-excursion
-                          (org-back-to-heading)
-                          (org-element-property
-                           :level (org-element-lineage (org-element-context)
-                                                       '(headline) t)))))
+          ((memq type '(headline inlinetask plain-list))
+           (let* ((subcontext (org-element-context))
+                  (level (save-excursion
+                           (org-back-to-heading)
+                           (org-element-property
+                            :level
+                            (if (eq (org-element-type subcontext) 'headline)
+                                subcontext
+                              1)))))
              (cl-case direction
                ('below
                 (let ((at-eol (= (point) (1- (line-end-position)))))
@@ -94,7 +94,8 @@ wrong places)."
                   (save-excursion (evil-open-above 1))
                   (save-excursion (insert "\n")))))
              (when (org-element-property :todo-type context)
-               (org-todo 'todo)))))
+               (org-todo 'todo))))
+          (t (user-error "Not a valid list")))
     (evil-append-line 1)))
 
 ;;;###autoload
