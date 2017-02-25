@@ -280,7 +280,7 @@
            :n  "a"  'org-agenda
            :n  "d"  'org-time-stamp
            :n  "e"  'org-edit-special
-           :n  "l"  'org-insert-link
+           :nv "l"  'org-insert-link
            :n  "n"  (λ! (if (buffer-narrowed-p) (widen) (org-narrow-to-subtree)))
            :n  "r"  'org-refile
            :n  "s"  'org-schedule
