@@ -23,7 +23,9 @@
         persp-save-dir (concat doom-cache-dir "workspaces/")
         persp-set-last-persp-for-new-frames nil
         persp-switch-to-added-buffer nil
-
+        ;; Don't restore winconf on new frames
+        persp-init-frame-behaviour t
+        persp-init-new-frame-behaviour-override 'auto-temp
         ;; Don't auto-load on startup
         persp-auto-resume-time -1
         ;; Don't auto-save
@@ -32,6 +34,20 @@
   (add-hook 'after-init-hook 'persp-mode)
 
   (define-key persp-mode-map [remap delete-window] '+workspace/close-window-or-workspace)
+
+  ;; Per-frame perspectives
+  (setq persp-init-new-frame-behaviour-override nil
+        persp-interactive-init-frame-behaviour-override
+        (lambda (frame &optional new-frame-p)
+          (select-frame frame)
+          (+workspace/new)
+          (set-frame-parameter frame 'assoc-persp (+workspace-current-name))))
+  ;; Delete workspace associated with current frame IF it has no real buffers.
+  (defun +workspaces*delete-frame-and-persp (frame)
+    (when (and (string= (or (frame-parameter frame 'assoc-persp) "") (+workspace-current-name))
+               (not (delq (doom-fallback-buffer) (doom-real-buffers-list))))
+      (+workspace/delete persp-name)))
+  (add-hook 'delete-frame-functions '+workspaces*delete-frame-and-persp)
 
   ;; Auto-add buffers when opening them. Allows a perspective-specific buffer list.
   (defun +workspaces*auto-add-buffer (buffer &rest _)
@@ -50,8 +66,6 @@
           (+workspace/switch-to project-name)
         (+workspace/new project-name))))
   (add-hook 'projectile-before-switch-project-hook 'doom|new-workspace-on-project-change)
-
-  ;; TODO Test per-frame perspectives
 
   ;; Be quiet when saving
   (defun +workspace*silence (orig-fn &rest args) (quiet! (apply orig-fn args)))
