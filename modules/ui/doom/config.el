@@ -66,7 +66,9 @@
 
   ;; Popup buffers should always be dimmed
   (defun +doom|buffer-mode-off ()
-    (when doom-buffer-mode (doom-buffer-mode -1)))
+    (when (and doom-buffer-mode
+               (not (get-buffer-window-list)))
+      (doom-buffer-mode -1)))
   (add-hook 'doom-popup-mode-hook '+doom|buffer-mode-off)
 
   (when (featurep! :feature workspaces)
