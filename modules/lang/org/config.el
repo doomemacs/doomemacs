@@ -17,16 +17,12 @@
 (add-hook 'org-mode-hook '+org|hook)
 
 ;; Custom variables
-(defvar +org-dir "~/work/org/"
+(defvar +org-dir (expand-file-name "~/work/org/")
   "The directory where org files are kept.")
-
 (defvaralias 'org-directory '+org-dir)
 
 (defvar +org-notes-dir (concat +org-dir "notes")
   "The directory where the notes are kept")
-
-(defvar +org-quicknote-dir (concat +org-dir "inbox")
-  "The directory to store quick notes produced by `doom:org-capture' (individual org files)")
 
 (defvar +org-attachment-dir ".attach/"
   "Where to store attachments (relative to current org file).")
@@ -59,7 +55,7 @@
 
   (defun +org|update-cookies ()
     "Update counts on headlines (\"cookies\")."
-    (when (file-exists-p buffer-file-name)
+    (when (and buffer-file-name (file-exists-p buffer-file-name))
       (org-update-statistics-cookies t)))
 
   (add-hook 'before-save-hook '+org|update-cookies nil t)
@@ -74,15 +70,6 @@
     :lighter " !"
     :keymap (make-sparse-keymap)
     :group 'evil-org)
-
-  (set! :popup
-    '(" *Agenda Commands*"  :size 30  :noselect t)
-    '(" *Org todo*"         :size 5   :noselect t)
-    '("*Calendar*"          :size 0.4 :noselect t)
-    '("*Org Links*"         :size 5   :noselect t)
-    '("^\\*Org Agenda.+"    :size 0.4 :regexp t)
-    '("^\\*Org Src .+\\*$"  :size 0.4 :regexp t)
-    '("^\\*Org-Babel.*\\*$" :size 0.4 :regexp t))
 
   (setq-default
    org-export-coding-system 'utf-8

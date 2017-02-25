@@ -348,43 +348,66 @@ the command buffer."
 
 
 (add-hook! org-load
-  ;; Ensures org-src-edit yields control of its buffer to shackle.
-  (defun doom*org-src-switch-to-buffer (buffer context) (pop-to-buffer buffer))
-  (advice-add 'org-src-switch-to-buffer :override 'doom*org-src-switch-to-buffer)
+  (set! :popup
+    '("*Calendar*"         :size 0.4 :noselect t)
+    '(" *Org todo*"        :size 5 :noselect t)
+    '("*Org Note*"         :size 10)
+    '("*Org Select*"       :size 20 :noselect t)
+    '("*Org Links*"        :size 5 :noselect t)
+    '(" *Agenda Commands*" :noselect t)
+    '("^\\*Org Agenda"     :regexp t :size 0.4)
+    '("*Org Clock*"        :noselect t)
+    '("*Edit Formulas*"    :size 10)
+    '("\\*Org Src"         :regexp t :size 15)
+    '("^\\*Org-Babel"      :regexp t :size 0.4)
+    '("^CAPTURE.*\\.org$"  :regexp t :size 20))
 
-  ;; ...for org-todo, org-link and org-agenda popups
-  (defun doom*org-pop-to-buffer-same-window (&optional buffer-or-name norecord label)
-    "Pop to buffer specified by BUFFER-OR-NAME in the selected window."
-    (display-buffer buffer-or-name))
-  (advice-add 'org-pop-to-buffer-same-window :override 'doom*org-pop-to-buffer-same-window)
+  ;; Org tries to do its own popup management, causing buffer/window config
+  ;; armageddon when paired with shackle. To fix this, first we suppress
+  ;; delete-other-windows in org functions:
+  (defun doom*suppress-delete-other-windows (orig-fn &rest args)
+    (cl-flet ((silence (&rest args) (ignore)))
+      (advice-add 'delete-other-windows :around #'silence)
+      (unwind-protect
+          (apply orig-fn args)
+        (advice-remove 'delete-other-windows #'silence))))
+  (advice-add 'org-capture-place-template :around #'doom*suppress-delete-other-windows)
+  (advice-add 'org-agenda :around #'doom*suppress-delete-other-windows)
+  (advice-add 'org-add-log-note :around #'doom*suppress-delete-other-windows)
 
+  ;; Tell org-src-edit to open another window, which shackle can intercept.
+  (setq org-src-window-setup 'other-window)
+
+  ;; Then, we tell org functions to use pop-to-buffer instead of
+  ;; switch-to-buffer-*. Buffers get handed off to shackle properly this way.
   (defun doom*org-switch-to-buffer-other-window (&rest args)
-    (car-safe
-     (mapc (lambda (b)
-             (let ((buf (if (stringp b) (get-buffer-create b) b)))
-               (pop-to-buffer buf t t)))
-           args)))
+    (pop-to-buffer (car args)))
   (advice-add 'org-switch-to-buffer-other-window :override 'doom*org-switch-to-buffer-other-window)
 
-  (defun doom/popup-org-agenda-quit ()
-    "Necessary to finagle org-agenda into shackle popups & behave on quit."
-    (interactive)
-    (if org-agenda-columns-active
-        (org-columns-quit)
-      (let ((buf (current-buffer)))
-        (and (not (eq org-agenda-window-setup 'current-window))
-             (not (one-window-p))
-             (delete-window))
-        (kill-buffer buf)
-        (setq org-agenda-archives-mode nil
-              org-agenda-buffer nil))))
+  ;; ...for org-todo, org-link and org-agenda popups
+  ;; (defun doom*org-pop-to-buffer-same-window (&optional buffer-or-name norecord label)
+  ;;   "Pop to buffer specified by BUFFER-OR-NAME in the selected window."
+  ;;   (switch-to-buffer buffer-or-name))
+  ;; (advice-add 'org-pop-to-buffer-same-window :override 'doom*org-pop-to-buffer-same-window)
+
+  ;; (defun doom/popup-org-agenda-quit ()
+  ;;   "Necessary to finagle org-agenda into shackle popups & behave on quit."
+  ;;   (interactive)
+  ;;   (if org-agenda-columns-active
+  ;;       (org-columns-quit)
+  ;;     (let ((buf (current-buffer)))
+  ;;       (and (not (eq org-agenda-window-setup 'current-window))
+  ;;            (not (one-window-p))
+  ;;            (delete-window))
+  ;;       (kill-buffer buf)
+  ;;       (setq org-agenda-archives-mode nil
+  ;;             org-agenda-buffer nil))))
 
   (after! org-agenda
     (after! evil
-      (evil-define-key* 'motion org-agenda-mode-map
-        [escape] 'doom/popup-org-agenda-quit
-        (kbd "ESC") 'doom/popup-org-agenda-quit))
-
+      (map! :map* org-agenda-mode-map
+            :m [escape] 'doom/popup-org-agenda-quit
+            :m "ESC"    'doom/popup-org-agenda-quit))
     (let ((map org-agenda-mode-map))
       (define-key map "q" 'doom/popup-org-agenda-quit)
       (define-key map "Q" 'doom/popup-org-agenda-quit))))
