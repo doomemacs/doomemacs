@@ -101,8 +101,8 @@ wrong places)."
 ;;;###autoload
 (defun +org/toggle-checkbox ()
   (interactive)
-  (let ((context (org-element-lineage (org-element-context) '(item) t)))
-    (when context
+  (let ((context (org-element-context)))
+    (when (eq (org-element-type context) 'item)
       (org-end-of-line)
       (org-beginning-of-line)
       (if (org-element-property :checkbox context)
@@ -139,24 +139,24 @@ fragments, opening links, or refreshing images."
           (org-table-recalculate t)
         (org-table-align)))
 
-     ((and (memq type '(item))
+     ((and (eq type 'item)
            (org-element-property :checkbox context))
       (org-toggle-checkbox))
 
-     ((and (memq type '(headline))
+     ((and (eq type 'headline)
            (org-element-property :todo-type context))
       (org-todo
        (if (eq (org-element-property :todo-type context) 'done) 'todo 'done)))
 
-     ((and (memq type '(headline))
+     ((and (eq type 'headline)
            (string= "ARCHIVE" (car-safe (org-get-tags))))
       (org-force-cycle-archived))
 
-     ((memq type '(headline))
+     ((eq type 'headline)
       (org-remove-latex-fragment-image-overlays)
       (org-preview-latex-fragment '(4)))
 
-     ((memq type '(babel-call))
+     ((eq type 'babel-call)
       (org-babel-lob-execute-maybe))
 
      ((memq type '(src-block inline-src-block))
@@ -165,8 +165,8 @@ fragments, opening links, or refreshing images."
      ((memq type '(latex-fragment latex-environment))
       (org-preview-latex-fragment))
 
-     ((memq type '(link))
-      (let ((path (org-element-property :path (org-element-lineage (org-element-context) '(link) t))))
+     ((eq type 'link)
+      (let ((path (org-element-property :path (org-element-context))))
         (if (and path (image-type-from-file-name path))
             (+org/refresh-inline-images)
           (org-open-at-point))))
