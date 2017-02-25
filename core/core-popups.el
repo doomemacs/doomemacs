@@ -1,16 +1,16 @@
 ;;; core-popups.el --- taming sudden yet inevitable windows
 
-;; I'd like certain buffers--like help windows, prompts or
-;; informational/terminal/temporary buffers--to have less presence over my work
-;; buffers (e.g. source code buffers). I'd also like them to be easy to both
-;; dispose of quickly and invoke from anywhere. Also, hide the mode-line in
-;; popups with `doom-hide-modeline-mode'
+;; I want a "real"-buffer-first policy in my Emacsian utpoia; popup buffers
+;; ought to be second-class citizens to "real" buffers. No need for a wall or
+;; controversial immigration policies -- all we need is `shackle'.
 ;;
-;; I use `shackle' to make this as consistent as possible, which allows you
-;; to specify rules on how to treat certain buffers.
+;; The gist is: popups should always be displayed on one side of the frame, away
+;; from 'real' buffers; they should be easy to dispose of when we don't want to
+;; see them; and easily brought back in case we change our minds. Also, popups
+;; should typically have no mode-line.
 ;;
-;; Be warned, there is a lot of hackery voodoo here that could break with an
-;; emacs update, or an update to any of the packages it tries to tame (like helm
+;; Be warned, this requires a lot of hackery and voodoo that could break with an
+;; emacs update or an update to any of the packages it tries to tame (like helm
 ;; or org-mode).
 
 (defvar doom-popup-history nil
@@ -54,8 +54,14 @@ is enabled/disabled.'")
   (setq shackle-default-alignment 'below
         ;;; Baseline popup-window rules
         ;; :noesc, :modeline and :autokill are custom settings and are not part
-        ;; of shackle. See `doom*popup-init' and `doom-popup-buffer' for how
-        ;; they're used.
+        ;; of shackle:
+        ;;  :noesc      determines if pressing ESC in this popup will close it.
+        ;;              Used by `doom/popup-close-maybe'.
+        ;;  :modeline   By default, mode-lines are hidden in popups unless this is
+        ;;              non-nil. If it is a symbol, it'll use `doom-modeline' to
+        ;;              fetch a modeline config. Set in `doom-popup-mode'.
+        ;;  :autokill   If non-nil, the buffer in these popups will be killed when
+        ;;              their popup is closed. Used in `doom*delete-popup-window'
         shackle-rules
         '(("^ ?\\*doom:.+\\*$"      :size 40  :modeline t :regexp t)
           ("^ ?\\*doom .+\\*$"      :size 30  :noselect t :regexp t)
@@ -96,8 +102,9 @@ for :align t on every rule."
 ;; Integration
 ;;
 
-;; Tell `window-state-get' and `current-window-configuration' to persist these
-;; custom parameters. Helpful for `persp-mode' to persist popup windows.
+;; Tell `window-state-get' and `current-window-configuration' to recognize these
+;; custom parameters. Helpful for `persp-mode' and persisting window configs
+;; that have popups in them.
 (push (cons 'no-other-window 'writable) window-persistent-parameters)
 (dolist (param doom-popup-window-parameters)
   (push (cons param 'writable) window-persistent-parameters))
@@ -150,8 +157,8 @@ for :align t on every rule."
 
 ;;
 (defun doom*popup-init (orig-fn &rest args)
-  "Initializes a window as a popup window by enabling `doom-popup-mode' in it.
-Returns the window."
+  "Initializes a window as a popup window by enabling `doom-popup-mode' in it
+and setting `doom-popup-rules' within it. Returns the window."
   (unless (doom-popup-p)
     (setq doom-popup-other-window (selected-window)))
   (let ((plist (or (nth 2 args)
