@@ -34,7 +34,7 @@ is enabled/disabled.'")
 (def-setting! :popup (&rest rules)
   "Prepend a new popup rule to `shackle-rules'."
   (if (cl-every 'listp rules)
-      `(nconc shackle-rules ',rules)
+      `(setq shackle-rules (nconc ',rules shackle-rules))
     `(push ',rules shackle-rules)))
 
 
