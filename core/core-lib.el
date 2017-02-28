@@ -77,41 +77,52 @@ compilation."
                (save-silently t))
        ,@forms)))
 
-(defmacro add-hook! (hook &rest func-or-forms)
-  "A convenience macro for `add-hook'.
+(defmacro add-hook! (&rest args)
+  "A convenience macro for `add-hook'. Takes, in order:
 
-HOOK can be one hook or a list of hooks. If the hook(s) are not quoted, -hook is
-appended to them automatically. If they are quoted, they are used verbatim.
-
-FUNC-OR-FORMS can be a quoted symbol, a list of quoted symbols, or forms. Forms
-will be wrapped in a lambda. A list of symbols will expand into a series of
-add-hook calls.
+  1. Optional properties :local and/or :append, which will make the hook
+     buffer-local or append to the list of hooks (respectively),
+  2. The hooks: either an unquoted major mode, an unquoted list of major-modes,
+     a quoted hook variable or a quoted list of hook variables. If unquoted, the
+     hooks will be resolved by appending -hook to each symbol.
+  3. A function, list of functions, or body forms to be wrapped in a lambda.
 
 Examples:
     (add-hook! 'some-mode-hook 'enable-something)
     (add-hook! some-mode '(enable-something and-another))
     (add-hook! '(one-mode-hook second-mode-hook) 'enable-something)
     (add-hook! (one-mode second-mode) 'enable-something)
-    (add-hook! (one-mode second-mode) (setq v 5) (setq a 2))"
+    (add-hook! :append (one-mode second-mode) 'enable-something)
+    (add-hook! :local (one-mode second-mode) 'enable-something)
+    (add-hook! (one-mode second-mode) (setq v 5) (setq a 2))
+    (add-hook! :append :local (one-mode second-mode) (setq v 5) (setq a 2))"
   (declare (indent defun) (debug t))
-  (unless func-or-forms
-    (error "add-hook!: FUNC-OR-FORMS is empty"))
-  (let* ((val (car func-or-forms))
-         (quoted-p (eq (car-safe hook) 'quote))
-         (hook (if quoted-p (cadr hook) hook))
-         (funcs (if (eq (car-safe val) 'quote)
-                    (if (cdr-safe (cadr val))
-                        (cadr val)
-                      (list (cadr val)))
-                  (list func-or-forms)))
-         forms)
-    ;; Maybe use `cl-loop'?
-    (dolist (fn funcs)
-      (setq fn (if (symbolp fn) `(quote ,fn) `(lambda (&rest _) ,@func-or-forms)))
-      (dolist (h (if (listp hook) hook (list hook)))
-        (push `(add-hook ',(if quoted-p h (intern (format "%s-hook" h))) ,fn)
-              forms)))
-    `(progn ,@(reverse forms))))
+  (let (hook append-p local-p)
+    (while (keywordp (car args))
+      (cl-ecase (pop args)
+        (:append (setq append-p t))
+        (:local  (setq local-p t))))
+    (let* ((hooks (pop args))
+           (quoted-p (eq (car-safe hooks) 'quote))
+           (funcs
+            (let ((val (car args)))
+              (if (eq (car-safe val) 'quote)
+                  (if (cdr-safe (cadr val))
+                      (cadr val)
+                    (list (cadr val)))
+                (list args))))
+           forms)
+      (when quoted-p
+        (setq hooks (cadr hooks)))
+      (unless (listp hooks)
+        (setq hooks (list hooks)))
+      (dolist (fn funcs)
+        (setq fn (if (symbolp fn) `(quote ,fn) `(lambda (&rest args) ,@args)))
+        (dolist (h hooks)
+          (push `(add-hook ',(if quoted-p h (intern (format "%s-hook" h)))
+                           ,fn ,append-p ,local-p)
+                forms)))
+      `(progn ,@(reverse forms)))))
 
 (defmacro associate! (mode &rest plist)
   "Associate a major or minor mode to certain patterns and project files."
