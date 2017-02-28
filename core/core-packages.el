@@ -106,7 +106,8 @@ are installed. If you byte-compile core/core.el, this function will be avoided
 to speed up startup."
   ;; Called early during initialization; only use native functions!
   (unless (or doom-init-p force-p)
-    (message "Doom initialized")
+    (unless noninteractive
+      (message "Doom initialized"))
 
     (setq load-path doom--base-load-path
           package-activated-list nil)
