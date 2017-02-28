@@ -10,18 +10,14 @@
   "A hash-table of plists, containing functions for building source code. Used
 by `+eval/build', and filled with the `:build' setting")
 
-(defvar +eval--repls nil
-  "A list of `rtog/add-repl' arguments.")
-
 ;; remove ellipsis when printing sexp in message buffer
 (setq eval-expression-print-length nil
       eval-expression-print-level  nil)
 
 (def-setting! :repl (mode command)
   "Define a REPL for a mode. Takes same arguements as `rtog/add-repl'."
-  (if (featurep 'repl-toggle)
-      (list 'rtog/add-repl mode command)
-    `(push ',(list mode command) +eval--repls)))
+  `(after! repl-toggle
+     (rtog/add-repl ',mode ',command)))
 
 (def-setting! :build (name mode pred-fn &optional build-fn)
   "Define a build command function (BUILD-FN) for major-mode MODE, called NAME
@@ -105,9 +101,6 @@ suitability for the current buffer."
                            (string-prefix-p "*" (buffer-name (get-buffer b))))
                   (buffer-local-value 'repl-toggle-mode b))))
     :popup t :size 16)
-
-  (dolist (repl +eval--repls)
-    (apply 'rtog/add-repl repl))
 
   (map! :map repl-toggle-mode-map
         :ei "C-n" 'comint-next-input
