@@ -8,7 +8,7 @@
   (add-hook 'swift-mode-hook 'flycheck-mode)
   :config
   (set! :repl 'swift-mode 'swift-mode-run-repl) ; TODO test this
-  (after! flycheck (push 'swift flycheck-checkers)))
+  (push 'swift flycheck-checkers))
 
 
 (def-package! company-sourcekit

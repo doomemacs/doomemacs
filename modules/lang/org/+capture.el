@@ -1,4 +1,4 @@
-;;; lang/org/+capture.el --- -*- no-byte-compile: t; -*-
+;;; lang/org/+capture.el
 
 ;; Sets up two `org-capture' workflows that I like:
 ;;

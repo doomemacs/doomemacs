@@ -15,7 +15,7 @@ by `+eval/build', and filled with the `:build' setting")
       eval-expression-print-level  nil)
 
 (def-setting! :repl (mode command)
-  "Define a REPL for a mode. Takes same arguements as `rtog/add-repl'."
+  "Define a REPL for a mode. Takes the same arguements as `rtog/add-repl'."
   `(after! repl-toggle
      (rtog/add-repl ',mode ',command)))
 
@@ -63,7 +63,8 @@ suitability for the current buffer."
              quickrun-shell
              quickrun-compile-only
              quickrun-replace-region)
-  :init (add-hook 'quickrun/mode-hook 'linum-mode)
+  :init
+  (add-hook 'quickrun/mode-hook 'linum-mode)
   :config
   (set! :popup "*quickrun*" :size 10)
 
@@ -71,7 +72,7 @@ suitability for the current buffer."
   (setq quickrun-focus-p nil)
 
   (defun +repl*quickrun-close-popup (&optional _ _ _ _)
-    "Allows us to re-run quickrun from inside the quickrun buffer (silently)."
+    "Allows us to silently re-run quickrun from within the quickrun buffer."
     (awhen (get-buffer-window quickrun/buffer-name)
       (let (message-log-max)
         (quickrun/kill-running-process)
@@ -79,7 +80,7 @@ suitability for the current buffer."
       (doom/popup-close it)))
 
   (defun +repl|quickrun-scroll-to-bof ()
-    "Ensures window is scrolled to BOF"
+    "Ensures window is scrolled to BOF on invocation."
     (with-selected-window (get-buffer-window quickrun/buffer-name)
       (goto-char (point-min))))
 
@@ -93,14 +94,13 @@ suitability for the current buffer."
 (def-package! repl-toggle
   :commands rtog/toggle-repl
   :preface (defvar rtog/mode-repl-alist nil)
-  :init (add-hook! repl-toggle-mode (evil-initialize-state 'emacs))
   :config
   (set! :popup
     '(:custom (lambda (b &rest _)
                 (when (and (featurep 'repl-toggle)
                            (string-prefix-p "*" (buffer-name (get-buffer b))))
                   (buffer-local-value 'repl-toggle-mode b))))
-    :popup t :size 16)
+    :size 16)
 
   (map! :map repl-toggle-mode-map
         :ei "C-n" 'comint-next-input

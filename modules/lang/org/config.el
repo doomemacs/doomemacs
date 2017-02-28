@@ -2,10 +2,10 @@
 
 ;; A few things you can expect
 ;;   + `org-capture' in a popup frame (can be invoked from outside emacs too)
-;;   + A simpler attachment system (with auto-deleting support) and
-;;     drag-and-drop for images and documents into org files
 ;;   + Exported files are put in a centralized location (see
 ;;     `org-export-directory')
+;;   + TODO A simpler attachment system (with auto-deleting support) and
+;;     drag-and-drop for images and documents into org files
 ;;   + TODO Custom links for class notes
 ;;   + TODO An org-mode based CRM (including invoicing and pdf exporting) (see custom-crm)
 ;;   + TODO A tag-based file browser reminiscient of Evernote and Quiver (there's neotree too!)

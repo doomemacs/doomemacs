@@ -8,7 +8,7 @@
   (set! :build 'compile-file    'java-mode 'meghanada-compile-file)
   (set! :build 'compile-project 'java-mode 'meghanada-compile-project)
 
-  (setq meghanada-server-install-dir (expand-file-name "meghanada-server" doom-cache-dir)
+  (setq meghanada-server-install-dir (expand-file-name "meghanada-server/" doom-cache-dir)
         meghanada-use-company t
         meghanada-use-flycheck t
         meghanada-use-auto-start t)

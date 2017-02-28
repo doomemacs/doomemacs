@@ -1,6 +1,7 @@
-;;; lang/org/+attach.el --- -*- no-byte-compile: t; -*-
+;;; lang/org/+attach.el
 
-;; FIXME
+;; FIXME Needs to be rewritten
+;;
 ;; Initializes my own org-mode attachment system. I didn't like Org's native
 ;; one. Mine stores attachments in a global org .attach directory. It also
 ;; implements drag-and-drop file support and attachment icons. It also treats

@@ -5,7 +5,6 @@
   :init
   (add-hook 'typescript-mode-hook 'rainbow-delimiters-mode)
   :config
-  (set! :company-backend 'typescript-mode '(company-tide))
   (set! :electric 'typescript-mode :chars '(?\} ?\)) :words '("||" "&&"))
 
   ;; TODO tide-jump-back
@@ -39,6 +38,7 @@
 (def-package! tide
   :after typescript-mode
   :config
+  (set! :company-backend 'typescript-mode '(company-tide))
   (setq tide-format-options
         '(:insertSpaceAfterFunctionKeywordForAnonymousFunctions t
           :placeOpenBraceOnNewLineForFunctions nil)))

@@ -212,6 +212,8 @@ properties."
 ;; Hacks
 ;;
 
+;; Run these as late as possible, to give a chance for other modules to
+;; customize these settings in their own hooks.
 (add-hook! 'window-setup-hook
   (after! evil
     (let ((map doom-popup-mode-map))
