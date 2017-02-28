@@ -33,8 +33,7 @@
   :config
   (set! :company-backend 'python-mode '(company-anaconda))
 
-  (map! :map anaconda-mode-map     :m "gd"     'anaconda-mode-find-definitions
-        :map anaconda-nav-mode-map :n [escape] 'anaconda-nav-quit)
+  (map! :map anaconda-mode-map :m "gd" 'anaconda-mode-find-definitions)
 
   (advice-add 'anaconda-mode-doc-buffer :after 'doom*anaconda-mode-doc-buffer))
 
