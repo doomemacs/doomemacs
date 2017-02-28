@@ -25,18 +25,6 @@
         s-lower-camel-case s-upper-camel-case s-snake-case s-dashed-words
         s-capitalized-words s-titleized-words s-word-initials))
 
-(mapc (lambda (sym) (autoload sym "f"))
-      '(f-join f-split f-expand f-filename f-dirname f-common-parent f-ext
-        f-no-ext f-swap-ext f-base f-relative f-short f-long f-canonical f-slash
-        f-full f-uniquify f-uniquify-alist f-read-bytes f-write-bytes
-        f-read-text f-write-text f-append-text f-append-bytes f-mkdir f-delete
-        f-symlink f-move f-copy f-copy-contenst f-touch f-exists? f-directory?
-        f-file? f-symlink? f-readable? f-writable? f-executable? f-absolute?
-        f-relative? f-root? f-ext? f-same? f-parent-of? f-child-of?
-        f-ancestor-of? f-descendant-of? f-hidden? f-size f-depth f-this-file
-        f-path-separator f-glob f-entries f-directories f-files f-root
-        f-traverse-upwards f-with-sandbox))
-
 
 ;;
 ;; Library
