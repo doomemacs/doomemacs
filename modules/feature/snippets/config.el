@@ -4,16 +4,20 @@
 ;; behave together.
 
 (def-package! yasnippet
-  :commands (yas-minor-mode
-             yas-minor-mode-on
-             yas-expand
-             yas-insert-snippet
-             yas-new-snippet
+  :commands (yas-minor-mode yas-minor-mode-on yas-expand yas-expand-snippet
+             yas-lookup-snippet yas-insert-snippet yas-new-snippet
              yas-visit-snippet-file)
   :preface
   (defvar yas-minor-mode-map (make-sparse-keymap))
 
   :init
+  ;; Ensure `yas-reload-all' is called as late as possible. Other modules could
+  ;; have additional configuration for yasnippet. For example, file-templates.
+  (add-hook 'yas-minor-mode-hook '+snippets|load)
+  (defun +snippets|load (&rest _)
+    (yas-reload-all)
+    (remove-hook 'yas-minor-mode-hook '+snippets|load))
+
   (add-hook! (text-mode prog-mode snippet-mode markdown-mode org-mode)
     'yas-minor-mode-on)
 
@@ -23,13 +27,6 @@
         yas-also-auto-indent-first-line t
         yas-prompt-functions '(yas-completing-prompt yas-ido-prompt yas-no-prompt)
         yas-snippet-dirs '(yas-installed-snippets-dir))
-
-  ;; Ensure `yas-reload-all' is called as late as possible. Other modules could
-  ;; have additional configuration for yasnippet. For example, file-templates.
-  (defun +snippets|load (&rest _)
-    (yas-reload-all)
-    (advice-remove 'yas-expand '+snippets|load))
-  (advice-add 'yas-expand :before '+snippets|load)
 
   ;; fix an error caused by smartparens interfering with yasnippet bindings
   (advice-add 'yas-expand :before 'sp-remove-active-pair-overlay)
