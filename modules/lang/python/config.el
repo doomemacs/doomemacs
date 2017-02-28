@@ -40,12 +40,14 @@
 (def-package! company-anaconda
   :after anaconda-mode
   :config
-  (set! :emr 'python-mode
-        '(:nv anaconda-mode-show-doc          "view documentation")
-        '(:nv anaconda-mode-find-assignments  "find assignments")
-        '(:nv anaconda-mode-find-definitions  "find definitions")
-        '(:nv anaconda-mode-find-file         "find assignments")
-        '(:n  anaconda-mode-find-references   "show usages")))
+  (map! :map python-mode-map
+        :localleader
+        :prefix "r"
+        :nv "fd" 'anaconda-mode-show-doc
+        :nv "fa" 'anaconda-mode-find-assignments
+        :nv "fa" 'anaconda-mode-find-definitions
+        :nv "ff" 'anaconda-mode-find-file
+        :nv "u"  'anaconda-mode-find-references))
 
 
 (def-package! pip-requirements
