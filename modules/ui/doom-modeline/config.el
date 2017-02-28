@@ -157,7 +157,7 @@ active."
 (defun +doom-modeline|update-env ()
   (when +doom-modeline-env-command
     (let* ((default-directory (doom-project-root))
-           (s (shell-command-to-string doom-ml--env-command)))
+           (s (shell-command-to-string +doom-modeline-env-command)))
       (setq +doom-modeline-env-version (if (string-match "[ \t\n\r]+\\'" s)
                                           (replace-match "" t t s)
                                         s)))))
