@@ -46,7 +46,7 @@ suitability for the current buffer."
    (quickrun-add-command MODE COMMAND :mode MODE)"
   (if (stringp command)
       `(after! quickrun
-         (push ,(cons mode command)
+         (push ',(cons mode command)
                ,(if (stringp mode)
                     'quickrun-file-alist
                   'quickrun--major-mode-alist)))
