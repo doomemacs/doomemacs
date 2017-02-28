@@ -386,6 +386,13 @@
 
   (push neo-buffer-name winner-boring-buffers)
 
+  ;; Don't ask for confirmation when creating files
+  (defun +evil*neotree-create-node (orig-fun &rest args)
+    "Don't ask for confirmation when creating files"
+    (cl-letf (((symbol-function 'yes-or-no-p) (lambda (&rest _) t)))
+      (apply orig-fun args)))
+  (advice-add 'neotree-create-node :around '+evil*neotree-create-node)
+
   ;; Adding keybindings to `neotree-mode-map' wouldn't work for me (they get
   ;; overridden when the neotree buffer is spawned). So we bind them in a hook.
   (add-hook 'neo-after-create-hook '+evil|neotree-init-keymap)
