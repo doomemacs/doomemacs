@@ -3,25 +3,24 @@
 ;; ---- emacs-lisp ---------------------------------------------------
 
 ;;;###autoload
-(defun +emacs-lisp/find-function ()
-  "Jump to the definition of the function at point."
-  (interactive)
-  (let ((func (function-called-at-point)))
-    (if func (find-function func))))
-
-;;;###autoload
-(defun +emacs-lisp/find-function-other-window ()
-  "Jump to the definition of the function at point in a popup window."
-  (interactive)
-  (let ((fn (function-called-at-point)))
-    (when fn
-      (find-function-do-it
-       fn nil
-       (lambda (buffer)
-         (select-window (doom-popup-buffer buffer :size 30)))))))
+(defun +emacs-lisp/find-function (&optional arg)
+  "Jump to the definition of the function at point. If ARG (the prefix) is
+non-nil, the function will be revealed in another window. If ARG is 16 (C-u
+C-u), then reveal the function in a popup window."
+  (interactive "p")
+  (when-let (func (function-called-at-point))
+    (cond ((= arg 16)
+           (let ((buf (find-function-noselect func t)))
+             (doom-popup-buffer (car buf) :align t :size 30 :select t)
+             (goto-char (cdr buf))))
+          ((> arg 1)
+           (find-function-other-window func))
+          (t
+           (find-function func)))))
 
 ;;;###autoload
 (defun +emacs-lisp/repl ()
+  "Open an ielm REPL for Emacs Lisp."
   (interactive)
   (ielm)
   (let ((buf (current-buffer)))

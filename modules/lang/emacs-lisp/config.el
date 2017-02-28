@@ -7,8 +7,7 @@
 
   :config
   (map! :map emacs-lisp-mode-map
-        :m "gd" '+emacs-lisp/find-function
-        :leader :m "gd" '+emacs-lisp/find-function-in-other-window)
+        :m "gd" '+emacs-lisp/find-function)
 
   (set! :rotate 'emacs-lisp-mode
         :symbols '(("t" "nil")
