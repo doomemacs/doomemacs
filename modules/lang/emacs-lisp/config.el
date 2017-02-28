@@ -15,7 +15,7 @@
                    ("when" "unless")
                    ("append" "prepend")
                    ("advice-add" "advice-remove")
-                   ("add-hook" "add-hook!" "remove-hook")))
+                   ("add-hook" "remove-hook")))
 
   ;; Don't affect lisp indentation (only `tab-width')
   (setq editorconfig-indentation-alist
