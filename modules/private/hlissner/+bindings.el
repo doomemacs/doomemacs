@@ -157,8 +157,12 @@
  (:localleader
   :desc "Open file explorer" :n "\\" '+evil/neotree
 
-  (:desc "Refactor"   :prefix "r")
-  (:desc "Unit tests" :prefix "t"))
+  (:desc "Refactor..." :prefix "r")
+
+  (:desc "Find..."     :prefix "f"
+    :desc "Get type..." :prefix "t")
+
+  (:desc "Unit tests"  :prefix "t"))
 
  ;;; Evil-esque bindings
  ;; Yank to EOL
