@@ -18,13 +18,13 @@
   (map! :map ruby-mode-map
         :localleader
         :prefix "r"
-        :desc "toggle block"             :nv "b"  'ruby-toggle-block
-        :desc "extract method"           :nv "em" 'ruby-refactor-extract-to-method
-        :desc "extract local variable"   :nv "ev" 'ruby-refactor-extract-local-variable
-        :desc "extract constant"         :nv "ec" 'ruby-refactor-extract-constant
-        :desc "add parameter"            :nv "ad" 'ruby-refactor-add-parameter
-        :desc "extract to let"           :nv "el" 'ruby-refactor-extract-to-let
-        :desc "convert post conditional" :nv "cc" 'ruby-refactor-convert-post-conditional))
+        :nv "b"  'ruby-toggle-block
+        :nv "em" 'ruby-refactor-extract-to-method
+        :nv "ev" 'ruby-refactor-extract-local-variable
+        :nv "ec" 'ruby-refactor-extract-constant
+        :nv "ad" 'ruby-refactor-add-parameter
+        :nv "el" 'ruby-refactor-extract-to-let
+        :nv "cc" 'ruby-refactor-convert-post-conditional))
 
 
 (def-package! ruby-refactor
