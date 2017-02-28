@@ -4,6 +4,7 @@
   :commands python-mode
   :init
   (setq python-environment-directory doom-cache-dir
+        python-indent-guess-indent-offset-verbose nil
         python-shell-interpreter "ipython"
         python-shell-interpreter-args "--deep-reload"
         python-shell-prompt-regexp "In \\[[0-9]+\\]: "
