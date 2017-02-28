@@ -119,10 +119,17 @@ Examples:
       (dolist (fn funcs)
         (setq fn (if (symbolp fn) `(quote ,fn) `(lambda (&rest args) ,@args)))
         (dolist (h hooks)
-          (push `(add-hook ',(if quoted-p h (intern (format "%s-hook" h)))
-                           ,fn ,append-p ,local-p)
+          (push `(,(if (boundp 'hook-fn) hook-fn 'add-hook)
+                  ',(if quoted-p h (intern (format "%s-hook" h)))
+                  ,fn ,append-p ,local-p)
                 forms)))
       `(progn ,@(reverse forms)))))
+
+(defmacro remove-hook! (&rest args)
+  "Convenience macro for `remove-hook'. Takes the same arguments as
+`add-hook!'."
+  (let ((hook-fn 'remove-hook))
+    (macroexpand `(add-hook! ,@args))))
 
 (defmacro associate! (mode &rest plist)
   "Associate a major or minor mode to certain patterns and project files."
