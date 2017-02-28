@@ -14,14 +14,14 @@
   (map! :map go-mode-map
         :n "gd" 'godef-jump
         (:localleader
-         :n "k"  'godef-describe
-         :prefix "r"
-         :n  "i" go-remove-unused-imports
-         :nv "f" gofmt
-         :prefix "t"
-         :n "r" '+go/test-run-all
-         :n "a" '+go/test-run-all
-         :n "s" '+go/test-run-package)))
+         :n "fh"  'godef-describe
+         (:prefix "r"
+           :n  "i" go-remove-unused-imports
+           :nv "f" gofmt)
+         (:prefix "t"
+           :n "r" '+go/test-run-all
+           :n "a" '+go/test-run-all
+           :n "s" '+go/test-run-package))))
 
 
 (def-package! company-go :after go-mode)

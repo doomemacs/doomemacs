@@ -24,13 +24,15 @@
   (map! :map processing-mode-map
         :nv "M-r" 'processing-sketch-run
         :m "gd" 'processing-find-in-reference
-        :m "gF" 'processing-find-sketch
 
-        :localleader
-        :n "e" 'processing-export-application
-        :n "h" 'processing-open-reference
-        :n "e" 'processing-open-examples
-        :n "o" 'processing-open-sketchbook)
+        (:localleader
+         :n "e" 'processing-export-application
+         :n "h" 'processing-open-reference
+         :n "e" 'processing-open-examples
+         :n "o" 'processing-open-sketchbook
+
+         :prefix "f"
+         :n "s" 'processing-find-sketch))
 
   (after! company-keywords
     (nconc company-keywords-alist

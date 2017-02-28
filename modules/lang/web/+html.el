@@ -19,7 +19,7 @@
   (advice-add 'web-mode-fold-or-unfold :after 'nlinum--flush)
 
   (map! :map web-mode-map
-        (:localleader :n "t" 'web-mode-element-rename)
+        (:localleader :n "rt" 'web-mode-element-rename)
         "M-/" 'web-mode-comment-or-uncomment
         :i  "SPC" 'self-insert-command
         :n  "M-r" 'doom/web-refresh-browser

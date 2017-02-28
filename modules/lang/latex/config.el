@@ -37,8 +37,7 @@
         bibtex-text-indentation 20
         bibtex-completion-bibliography (list +latex-bibtex-default-file))
 
-  (map! :map bibtex-mode-map
-        "C-c \\" 'bibtex-fill-entry))
+  (map! :map bibtex-mode-map "C-c \\" 'bibtex-fill-entry))
 
 
 (def-package! reftex ; built-in

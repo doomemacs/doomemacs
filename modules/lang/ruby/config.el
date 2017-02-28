@@ -19,11 +19,11 @@
         :localleader
         :prefix "r"
         :nv "b"  'ruby-toggle-block
+        :nv "ec" 'ruby-refactor-extract-constant
+        :nv "el" 'ruby-refactor-extract-to-let
         :nv "em" 'ruby-refactor-extract-to-method
         :nv "ev" 'ruby-refactor-extract-local-variable
-        :nv "ec" 'ruby-refactor-extract-constant
         :nv "ad" 'ruby-refactor-add-parameter
-        :nv "el" 'ruby-refactor-extract-to-let
         :nv "cc" 'ruby-refactor-convert-post-conditional))
 
 
@@ -56,10 +56,11 @@
   :config
   (map! :map rspec-mode-map
         :localleader
-        :n "tr" 'rspec-rerun
-        :n "ta" 'rspec-verify-all
-        :n "ts" 'rspec-verify-single
-        :n "tv" 'rspec-verify))
+        :prefix "t"
+        :n "r" 'rspec-rerun
+        :n "a" 'rspec-verify-all
+        :n "s" 'rspec-verify-single
+        :n "v" 'rspec-verify))
 
 
 (def-package! inf-ruby

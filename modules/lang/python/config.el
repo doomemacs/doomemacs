@@ -41,13 +41,14 @@
   :after anaconda-mode
   :config
   (map! :map python-mode-map
+        :m "gd" 'anaconda-mode-find-definitions
         :localleader
-        :prefix "r"
-        :nv "fd" 'anaconda-mode-show-doc
-        :nv "fa" 'anaconda-mode-find-assignments
-        :nv "fa" 'anaconda-mode-find-definitions
-        :nv "ff" 'anaconda-mode-find-file
-        :nv "u"  'anaconda-mode-find-references))
+        :prefix "f"
+        :nv "d" 'anaconda-mode-find-definitions
+        :nv "h" 'anaconda-mode-show-doc
+        :nv "a" 'anaconda-mode-find-assignments
+        :nv "f" 'anaconda-mode-find-file
+        :nv "u" 'anaconda-mode-find-references))
 
 
 (def-package! pip-requirements
@@ -65,11 +66,12 @@
   (set! :yas-minor-mode 'nose-mode)
   (map! :map nose-mode-map
         :localleader
-        :n "tr" 'nosetests-again
-        :n "ta" 'nosetests-all
-        :n "ts" 'nosetests-one
-        :n "tv" 'nosetests-module
-        :n "tA" 'nosetests-pdb-all
-        :n "tO" 'nosetests-pdb-one
-        :n "tV" 'nosetests-pdb-module))
+        :prefix "t"
+        :n "r" 'nosetests-again
+        :n "a" 'nosetests-all
+        :n "s" 'nosetests-one
+        :n "v" 'nosetests-module
+        :n "A" 'nosetests-pdb-all
+        :n "O" 'nosetests-pdb-one
+        :n "V" 'nosetests-pdb-module))
 

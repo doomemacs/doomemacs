@@ -32,7 +32,8 @@
 
   (map! :map typescript-mode-map
         :m "gd" 'tide-jump-to-definition
-        :m "K"  'tide-documentation-at-point))
+        :localleader
+        :m "fh" 'tide-documentation-at-point))
 
 
 (def-package! tide
