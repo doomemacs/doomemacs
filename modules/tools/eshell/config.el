@@ -48,7 +48,7 @@ redefines its keys every time `eshell-mode' is enabled."
           :n [remap evil-window-vsplit]      '+eshell/vsplit
           :n [remap evil-record-macro]       'eshell-life-is-too-much
           [remap doom/close-window-or-tab]   'eshell-life-is-too-much))
-  (add-hook 'eshell-mode-hook 'doom|eshell-keymap-setup)
+  (add-hook 'eshell-mode-hook '+eshell|keymap-setup)
 
   (defun +eshell|cleanup ()
     "Close window (or workspace) on quit."
@@ -58,12 +58,12 @@ redefines its keys every time `eshell-mode' is enabled."
           ((and (featurep! :feature workspaces)
                 (string= "eshell" (+workspace-current-name)))
            (+workspace/close-window-or-workspace))))
-  (add-hook 'eshell-exit-hook 'doom|eshell-cleanup)
+  (add-hook 'eshell-exit-hook '+eshell|cleanup)
 
   (defun +eshell|init ()
     "Keep track of eshell buffers."
     (add-to-list '+eshell-buffers (current-buffer)))
-  (add-hook 'eshell-mode-hook 'doom|eshell-init)
+  (add-hook 'eshell-mode-hook '+eshell|init)
 
   (add-hook 'eshell-mode-hook 'doom-hide-modeline-mode)
 
