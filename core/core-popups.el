@@ -61,6 +61,7 @@ is enabled/disabled.'")
         shackle-rules
         '(("^ ?\\*doom:.+\\*$"      :size 40  :modeline t :regexp t)
           ("^ ?\\*doom .+\\*$"      :size 30  :noselect t :regexp t)
+          ("*Metahelp*"             :size 0.5 :autokill t :autoclose t)
           ("^\\*.+-Profiler-Report .+\\*$" :size 0.3 :regexp t :autokill t)
           ("*minor-modes*"          :size 0.5 :noselect t :autokill t)
           ("*eval*"                 :size 16  :noselect t :autokill t :autoclose t)
