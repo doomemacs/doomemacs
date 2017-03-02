@@ -1,32 +1,26 @@
 ;;; memoize.el
-(provide 'core-lib-memoize)
+(provide 'doom-lib-memoize)
 
-(defvar doom-memoized-table (make-hash-table :test 'equal)
-  "TODO")
+(defvar doom-memoized-table (make-hash-table :test 'equal :size 10)
+  "A lookup table containing memoized functions. The keys are argument lists,
+and the value is the function's return value.")
 
-;;;###autoload
-(defun doom-memoize (func)
-  "Memoize the given function."
-  (cl-typecase func
-    (symbol (put func 'function-documentation
-                 (concat (documentation func) " (memoized)"))
-            (fset func (doom--memoize-wrap (symbol-function func)))
-            func)
-    (function (doom--memoize-wrap func))))
-
-;;;###autoload
-(defun doom--memoize-wrap (func)
+(defsubst doom--memoize-wrap (name)
   "Return the memoized version of FUNC."
-  `(lambda (&rest args)
-     (or (gethash args doom-memoized-table)
-         (puthash args (apply ',func args) doom-memoized-table))))
+  (let ((func (symbol-function name)))
+    `(lambda (&rest args)
+       ,(documentation name)
+       (let ((key (cons ',name args)))
+         (or (gethash key doom-memoized-table)
+             (puthash key (apply ',func args) doom-memoized-table))))))
 
-;;;###autoload
 (defmacro def-memoized! (name arglist &rest body)
   "Create a memoize'd function. NAME, ARGLIST, DOCSTRING and BODY
 have the same meaning as in `defun'."
   (declare (indent defun) (doc-string 3))
+  (when (stringp (car body))
+    (setcar body (concat (car body) " (memoized)")))
   `(progn
      (defun ,name ,arglist ,@body)
-     (doom-memoize ',name)))
+     (fset ',name (doom--memoize-wrap ',name))))
 
