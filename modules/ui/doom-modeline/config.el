@@ -16,6 +16,16 @@
 (def-package! eldoc-eval :demand t
   :config
   ;; Show eldoc in the mode-line with `eval-expression'
+  (defun +doom-modeline--show-eldoc (input)
+    "Display string STR in the mode-line next to minibuffer."
+    (with-current-buffer (eldoc-current-buffer)
+      (let* ((str              (and (stringp input) input))
+             (mode-line-format (or (and str (doom-modeline 'eldoc))
+                                   mode-line-format))
+             mode-line-in-non-selected-windows)
+        (force-mode-line-update)
+        (sit-for eldoc-show-in-mode-line-delay))))
+
   (setq eldoc-in-minibuffer-show-fn '+doom-modeline--show-eldoc)
   (eldoc-in-minibuffer-mode +1))
 
@@ -174,7 +184,7 @@ active."
 (defsubst active ()
   (eq (selected-window) +doom-modeline-current-window))
 
-;; From from `powerline's `pl/make-xpm'.
+;; Inspired from `powerline's `pl/make-xpm'.
 (def-memoized! +doom-modeline--make-xpm (color height width)
   "Create an XPM bitmap."
   (when (display-graphic-p)
@@ -211,51 +221,25 @@ active."
   "Displays the buffer's full path relative to the project root (includes the
 project root). Excludes the file basename. See `doom-buffer-name' for that."
   (if buffer-file-name
-    (let* ((default-directory (file-name-directory buffer-file-name))
-           (buffer-path (file-relative-name buffer-file-name (doom-project-root)))
-           (max-length (truncate (* (window-body-width) 0.4))))
-      (when (and buffer-path (not (equal buffer-path ".")))
-        (if (> (length buffer-path) max-length)
-            (let ((path (nreverse (split-string buffer-path "/" t)))
-                  (output ""))
-              (when (and path (equal "" (car path)))
-                (setq path (cdr path)))
-              (while (and path (<= (length output) (- max-length 4)))
-                (setq output (concat (car path) "/" output))
-                (setq path (cdr path)))
-              (when path
-                (setq output (concat "../" output)))
-              (when (string-suffix-p "/" output)
-                (setq output (substring output 0 -1)))
-              output)
-          buffer-path)))
+      (let* ((default-directory (file-name-directory buffer-file-name))
+             (buffer-path (file-relative-name buffer-file-name (doom-project-root))))
+        (when (and buffer-path (not (equal buffer-path ".")))
+          (let ((max-length (truncate (* (window-body-width) 0.4))))
+            (if (> (length buffer-path) max-length)
+                (let ((path (nreverse (split-string buffer-path "/" t)))
+                      (output ""))
+                  (when (and path (equal "" (car path)))
+                    (setq path (cdr path)))
+                  (while (and path (<= (length output) (- max-length 4)))
+                    (setq output (concat (car path) "/" output))
+                    (setq path (cdr path)))
+                  (when path
+                    (setq output (concat "../" output)))
+                  (when (string-suffix-p "/" output)
+                    (setq output (substring output 0 -1)))
+                  output)
+              buffer-path))))
     "%b"))
-
-(defun +doom-modeline--show-eldoc (input)
-  "Display string STR in the mode-line next to minibuffer."
-  (with-current-buffer (eldoc-current-buffer)
-    (let* ((max              (window-width (selected-window)))
-           (str              (and (stringp input) (concat " " input)))
-           (len              (length str))
-           (tmp-str          str)
-           (mode-line-format (or (and str (doom-modeline 'eldoc))
-                                 mode-line-format))
-           roll mode-line-in-non-selected-windows)
-      (catch 'break
-        (if (and (> len max) eldoc-mode-line-rolling-flag)
-            (progn
-              (while (setq roll (sit-for 0.3))
-                (setq tmp-str (substring tmp-str 2)
-                      mode-line-format (concat tmp-str " [<]" str))
-                (force-mode-line-update)
-                (when (< (length tmp-str) 2) (setq tmp-str str)))
-              (unless roll
-                (when eldoc-mode-line-stop-rolling-on-input
-                  (setq eldoc-mode-line-rolling-flag nil))
-                (throw 'break nil)))
-          (force-mode-line-update)
-          (sit-for eldoc-show-in-mode-line-delay))))
-    (force-mode-line-update)))
 
 
 ;;
@@ -330,7 +314,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 
 (def-modeline-segment! vcs
   "Displays the current branch, colored based on its state."
-  (when (and vc-mode buffer-file-name)
+  (when vc-mode
     (let ((backend (vc-backend buffer-file-name))
           (state   (vc-state buffer-file-name))
           (face    'mode-line-inactive)
@@ -385,18 +369,18 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 icons."
   (when (boundp 'flycheck-last-status-change)
     (pcase flycheck-last-status-change
-      (`finished (if flycheck-current-errors
+      ('finished (if flycheck-current-errors
                      (let-alist (flycheck-count-errors flycheck-current-errors)
                        (let ((sum (+ (or .error 0) (or .warning 0))))
                          (+doom-ml-icon "circle-slash" (format "%s issue%s" sum (if (eq 1 sum) "" "s"))
                                      (if .error 'doom-modeline-urgent 'doom-modeline-warning))))
                    (concat
                     (+doom-ml-icon "check" nil 'doom-modeline-info) " ")))
-      (`running     (+doom-ml-icon "ellipsis" "Running" 'font-lock-doc-face))
-      (`no-checker  (+doom-ml-icon "alert" "-" 'font-lock-doc-face))
-      (`errored     (+doom-ml-icon "alert" "Error" 'doom-modeline-urgent))
-      (`interrupted (+doom-ml-icon "x" "Interrupted" 'font-lock-doc-face))
-      ;; (`suspicious  "")
+      ('running     (+doom-ml-icon "ellipsis" "Running" 'font-lock-doc-face))
+      ('no-checker  (+doom-ml-icon "alert" "-" 'font-lock-doc-face))
+      ('errored     (+doom-ml-icon "alert" "Error" 'doom-modeline-urgent))
+      ('interrupted (+doom-ml-icon "x" "Interrupted" 'font-lock-doc-face))
+      ;; ('suspicious  "")
       )))
 
 (defsubst doom-column (pos)
