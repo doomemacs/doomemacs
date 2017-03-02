@@ -74,12 +74,12 @@ Returns t if popups were restored, nil otherwise."
 
 ;;;###autoload
 (defun doom/popup-close (&optional window)
-  "Find and close WINDOW if it's a popup. If WINDOW is omitted, it will use
-`selected-window'. The contained buffer is buried."
+  "Find and close WINDOW if it's a popup. If WINDOW is omitted, defaults to
+`selected-window'. The contained buffer is buried, unless it has an :autokill
+property."
   (interactive)
-  (let ((window (or window (selected-window))))
-    (when (doom-popup-p window)
-      (delete-window window))))
+  (when-let (window (doom-popup-p window))
+    (delete-window window)))
 
 ;;;###autoload
 (defun doom/popup-close-all (&optional force-p)
