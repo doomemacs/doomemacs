@@ -1,6 +1,6 @@
 ;; lang/javascript/config.el
 
-;; TODO (load! +screeps)
+(load! +screeps)
 
 (def-package! js2-mode
   :mode "\\.js$"
@@ -88,15 +88,19 @@
 ;; Projects
 ;;
 
-;; (project! npm
-;;   :modes (web-mode js2-mode)
-;;   :files ("package.json")
-;;   :config
-;;   (let* ((project-path (doom-project-root))
-;;          (hash (gethash project-path npm-conf))
-;;          (package-file (expand-file-name "package.json" project-path))
-;;          deps)
-;;     (when-let (json (and (not hash) (file-exists-p package-file)
-;;                           (ignore-errors (json-read-file package-file))))
-;;       (puthash project-path json npm-conf))))
+(def-project-mode! +javascript-npm-mode
+  :modes (web-mode js-mode markdown-mode)
+  :files "package.json")
+
+(def-project-mode! +javascript-lb6-mode
+  :modes (web-mode js-mode nxml-mode markdown-mode)
+  :match "\\.lb\\(action\\|ext\\)/"
+  :init
+  ;; TODO
+  ;; (when IS-MAC
+  ;;   (set! :build 'launchbar-action '+javascript-lb6-mode
+  ;;     (lambda ()
+  ;;       (when-let (dir (f-traverse-upwards (lambda (f) (f-ext? f "lbaction"))))
+  ;;         (shell-command (format "open '%s'" dir))))))
+  )
 

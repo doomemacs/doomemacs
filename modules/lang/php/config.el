@@ -81,22 +81,11 @@
 ;; Projects
 ;;
 
-;; (def-project! laravel "laravel"
-;;   :modes (php-mode yaml-mode web-mode nxml-mode js2-mode scss-mode)
-;;   :files ("artisan" "server.php"))
+(def-project-mode! +php-laravel-mode
+  :modes (php-mode yaml-mode web-mode nxml-mode js2-mode scss-mode)
+  :files (and "artisan" "server.php"))
 
-;; (defvar php-composer-conf (make-hash-table :test 'equal))
-;; (def-project! composer "composer"
-;;   :modes (web-mode php-mode)
-;;   :files ("composer.json")
-;;   :when
-;;   (lambda (&rest _)
-;;     (let* ((project-path (doom/project-root))
-;;            (hash (gethash project-path php-composer-conf))
-;;            (package-file (expand-file-name "composer.json" project-path))
-;;            deps)
-;;       (awhen (and (not hash) (file-exists-p package-file)
-;;                   (json-read-file package-file))
-;;         (puthash project-path it php-composer-conf)))
-;;     t))
+(def-project-mode! +php-composer-mode
+  :modes (web-mode php-mode)
+  :files "composer.json")
 

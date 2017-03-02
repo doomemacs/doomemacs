@@ -165,13 +165,12 @@
 
     "REACTIONS" "BODYPARTS_ALL" "RESOURCES_ALL" "COLORS_ALL"))
 
-;; TODO
-;; (def-project! screeps "screeps"
-;;   :match "/screeps/.+$"
-;;   :modes (nodejs-project-mode))
+(def-project-mode! +javascript-screeps-mode
+  :match "/screeps/.+$"
+  :modes (+javascript-npm-mode))
 
-;; (add-hook! screeps-project-mode
-;;   (when (eq major-mode 'js2-mode)
-;;     (add-to-list 'flycheck-disabled-checkers 'javascript-jshint)
-;;     (setq js2-additional-externs (append '("_") screeps-objects screeps-constants))))
+(add-hook! '+javascript-screeps-mode-hook
+  (when (eq major-mode 'js2-mode)
+    (push 'javascript-jshint flycheck-disabled-checkers)
+    (setq js2-additional-externs (append '("_") screeps-objects screeps-constants))))
 

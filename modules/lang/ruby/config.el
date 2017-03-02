@@ -72,10 +72,10 @@
 (def-package! company-inf-ruby
   :after inf-ruby)
 
+
 ;;
 ;; TODO Frameworks
 ;;
 
-;; (def-project! rake "rake"
-;;   :files ("Rakefile"))
-
+;; (def-project-mode! +ruby-rake-mode
+;;   :files "Rakefile")

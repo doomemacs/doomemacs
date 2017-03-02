@@ -25,16 +25,14 @@
 
 
 ;;
-;; TODO Frameworks
+;; Frameworks
 ;;
 
-;; (def-project-type! love "♥"
-;;   :modes (lua-mode markdown-mode json-mode)
-;;   :files ("main.lua" "conf.lua")
-;;   :build ("open -a love.app '%s'" "main.lua"))
-
-;; (def-project-type! hammerspoon "hammer"
-;;   :modes (lua-mode markdown-mode)
-;;   :match "/\\.?hammerspoon/.+\\.lua$"
-;;   :build "open hammerspoon://reload")
+(def-project-mode! +lua-love-mode
+  :modes (lua-mode markdown-mode json-mode)
+  :files (and "main.lua" "conf.lua")
+  :init
+  (set! :build 'love2D '+lua-love-mode
+    (lambda ()
+      (async-shell-command (format "open -a love.app '%s'" (doom-project-root))))))
 

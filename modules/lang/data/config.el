@@ -43,10 +43,10 @@
 ;; Frameworks
 ;;
 
-;; (def-project! ansible-mode "ans"
-;;   :modes (yaml-mode)
-;;   :files ("roles/"))
+(def-project-mode! +data-ansible-mode
+  :modes (yaml-mode)
+  :files "roles/")
 
-;; (def-project! vagrant "vagrant"
-;;   :files ("Vagrantfile"))
+(def-project-mode! +data-vagrant-mode
+  :files "Vagrantfile")
 

@@ -5,46 +5,33 @@
 
 
 ;;
-;; TODO Frameworks
+;; Frameworks
 ;;
 
-;; (defvar bower-conf (make-hash-table :test 'equal))
-;; (def-project! bower "bower"
-;;   :modes (web-mode js-mode coffee-mode css-mode sass-mode pug-mode)
-;;   :files ("bower.json")
-;;   :when
-;;   (lambda (&rest _)
-;;     (let* ((project-path (doom-project-root))
-;;            (hash (gethash project-path bower-conf))
-;;            (package-file (expand-file-name "bower.json" project-path))
-;;            deps)
-;;       (awhen (and (not hash) (file-exists-p package-file)
-;;                   (ignore-errors (json-read-file package-file)))
-;;         (puthash project-path it bower-conf)))
-;;     t))
+(def-project-mode! +web-bower-mode
+  :files "bower.json")
 
-;; (def-project! angularjs "angular"
-;;   :modes (nodejs-project-mode bower-project-mode)
-;;   :when
-;;   (lambda (&rest _)
-;;     (let* ((project (doom-project-root))
-;;            (bower (gethash project bower-conf))
-;;            (npm (gethash project npm-conf))
-;;            (deps (append (cdr-safe (assq 'dependencies bower))
-;;                          (cdr-safe (assq 'dependencies npm))
-;;                          (cdr-safe (assq 'devDependencies bower))
-;;                          (cdr-safe (assq 'devDependencies npm)))))
-;;       (assq 'angular deps))))
+(def-project-mode! +web-angularjs-mode
+  :modes (+javascript-npm-mode +web-bower-mode)
+  :when
+  (and (or (bound-and-true-p +web-bower-mode)
+           (bound-and-true-p +javascript-npm-mode))
+       (let* ((project-root (doom-project-root))
+              (bower (and +web-bower-mode (+web-bower-conf project-root)))
+              (npm   (and +javascript-npm-mode (+javascript-npm-conf project-root))))
+         (assq 'angular (append (cdr-safe (assq 'dependencies bower))
+                                (cdr-safe (assq 'dependencies npm))
+                                (cdr-safe (assq 'devDependencies bower))
+                                (cdr-safe (assq 'devDependencies npm)))))))
 
-;; (def-project! jekyll ":{"
-;;   :modes (web-mode js-mode coffee-mode css-mode haml-mode pug-mode)
-;;   :match "/\\(\\(css\\|_\\(layouts\\|posts\\|sass\\)\\)/.+\\|.+.html\\)$"
-;;   :files ("config.yml" "_layouts/")
-;;   (add-hook! mode
-;;     (when (eq major-mode 'web-mode)
-;;       (web-mode-set-engine "django"))))
+(def-project-mode! +web-jekyll-mode
+  :modes (web-mode js-mode coffee-mode css-mode haml-mode pug-mode)
+  :files (and "config.yml" (or "_layouts/" "_posts/"))
+  :init
+  (add-hook! '+web-jekyll-mode-hook
+    (when (eq major-mode 'web-mode)
+      (web-mode-set-engine "django"))))
 
-;; (def-project! wordpress "wp"
-;;   :modes (php-mode web-mode css-mode haml-mode pug-mode)
-;;   :match "/wp-\\(\\(content\\|admin\\|includes\\)/\\)?.+$"
-;;   :files ("wp-config.php" "wp-content/"))
+(def-project-mode! +web-wordpress-mode
+  :modes (php-mode web-mode css-mode haml-mode pug-mode)
+  :files (or "wp-config.php" "wp-config-sample.php"))
