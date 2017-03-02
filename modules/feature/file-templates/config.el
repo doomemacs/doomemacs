@@ -26,7 +26,10 @@
       (unless yas-minor-mode (yas-minor-mode-on))
       (when (and yas-minor-mode
                  (yas-expand-snippet (yas-lookup-snippet key mode t))
-                 (and (featurep 'evil) evil-mode))
+                 (and (featurep 'evil) evil-mode)
+                 (and yas--active-field-overlay
+                      (overlay-buffer yas--active-field-overlay)
+                      (overlay-get yas--active-field-overlay 'yas--field)))
         (evil-initialize-state 'insert))))
 
   (defun +file-templates|add (regexp trigger mode &optional project-only-p)
