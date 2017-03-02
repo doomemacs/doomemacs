@@ -86,7 +86,14 @@
 
 
 (def-package! company-dict
-  :commands company-dict)
+  :commands company-dict
+  :config
+  ;; Project-specific dictionaries
+  (defun +company|enable-project-dicts (mode &rest _)
+    (if (symbol-value mode)
+        (push mode company-dict-minor-mode-list)
+      (setq company-dict-minor-mode-list (delq mode company-dict-minor-mode-list))))
+  (add-hook 'doom-project-hook '+company|enable-project-dicts))
 
 
 ;;
