@@ -33,10 +33,8 @@
 ;; mode-line.
 (def-package! evil-anzu
   :init
-  (defun +evil*lazy-load-evil-anzu (&rest _) (require 'evil-anzu))
-  (advice-add 'evil-ex-start-search :before '+evil*lazy-load-evil-anzu)
+  (add-transient-hook! evil-ex-start-search (require 'evil-anzu))
   :config
-  (advice-remove 'evil-ex-start-search '+evil*lazy-load-evil-anzu)
   (setq anzu-cons-mode-line-p nil
         anzu-minimum-input-length 1
         anzu-search-threshold 250))
