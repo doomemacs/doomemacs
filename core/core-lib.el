@@ -102,6 +102,7 @@ compilation."
   "Attaches transient forms to a hook (can also be a function, which will be
 advised instead). These forms will be evaluated only once when that
 function/hook is first invoked, then it detaches itself."
+  (declare (indent 1))
   (let ((fn (intern (format "doom--transient-hook-%s" hook))))
     `(progn
        (defun ,fn (&rest _)
