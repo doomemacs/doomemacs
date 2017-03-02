@@ -158,7 +158,7 @@ for :align t on every rule."
              (set-window-parameter window param nil))))))
 
 ;; Hide modeline in completion popups
-(add-hook! (completion-in-region-mode completion-list-mode) 'doom-hide-modeline-mode)
+(add-hook 'completion-list-mode-hook 'doom-hide-modeline-mode)
 
 ;;
 (defun doom*popup-init (orig-fn &rest args)
