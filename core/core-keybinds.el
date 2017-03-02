@@ -58,6 +58,8 @@
 (put ':when         'lisp-indent-function 'defun)
 (put ':unless       'lisp-indent-function 'defun)
 (put ':desc         'lisp-indent-function 'defun)
+(put ':leader       'lisp-indent-function 'defun)
+(put ':localleader  'lisp-indent-function 'defun)
 
 (defmacro map! (&rest rest)
   "A nightmare of a key-binding macro that will use `evil-define-key*',
