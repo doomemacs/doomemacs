@@ -44,8 +44,7 @@
  ;; Temporary escape into emacs mode
  [C-escape]    'evil-emacs-state
  :n [C-escape] 'evil-normal-state
-
- ;; Switching tabs (workgroups)
+ ;; Switching tabs (workspaces)
  "M-1"  (λ! (+workspace/switch-to 0))
  "M-2"  (λ! (+workspace/switch-to 1))
  "M-3"  (λ! (+workspace/switch-to 2))
@@ -92,6 +91,17 @@
    :desc "Switch to Emacs mode"     :n "|"  'evil-emacs-state
    ;; Since I've remapped C-h...
    :desc "Help"                     :n "h"  'help-command
+   ;; workspaces
+   :desc "Switch to 1st workspace"  :n "1"  (λ! (+workspace/switch-to 0))
+   :desc "Switch to 2nd workspace"  :n "2"  (λ! (+workspace/switch-to 1))
+   :desc "Switch to 3rd workspace"  :n "3"  (λ! (+workspace/switch-to 2))
+   :desc "Switch to 4th workspace"  :n "4"  (λ! (+workspace/switch-to 3))
+   :desc "Switch to 5th workspace"  :n "5"  (λ! (+workspace/switch-to 4))
+   :desc "Switch to 6th workspace"  :n "6"  (λ! (+workspace/switch-to 5))
+   :desc "Switch to 7th workspace"  :n "7"  (λ! (+workspace/switch-to 6))
+   :desc "Switch to 8th workspace"  :n "8"  (λ! (+workspace/switch-to 7))
+   :desc "Switch to 9th workspace"  :n "9"  (λ! (+workspace/switch-to 8))
+   :desc "Switch to last workspace" :n "0"  '+workspace/switch-to-last
 
    (:desc "Applications" :prefix "a")
 
