@@ -4,6 +4,10 @@
 ;; digging through project files and exposing an API I can use to make other
 ;; plugins/features project-aware.
 
+(defvar doom-project-hook nil
+  "Hook run when a project is enabled. The name of the project's mode and its
+state are passed in.")
+
 (def-package! projectile :demand t
   :init
   (setq projectile-cache-file (concat doom-cache-dir "projectile.cache")
@@ -55,17 +59,77 @@
   (let ((projectile-require-project-root strict-p))
     (ignore-errors (projectile-project-root))))
 
-(defun doom-project-has-files (files &optional root)
-  "Return non-nil if FILES exist in the project root."
-  (let ((root (or root (doom-project-root)))
-        (files (if (listp files) files (list files)))
-        (found-p (if files t)))
-    (while (and found-p files)
-      (let ((file (expand-file-name (pop files) root)))
-        (setq found-p (if (string-suffix-p "/" file)
-                          (file-directory-p file)
-                        (file-exists-p file)))))
-    found-p))
+(defmacro doom-project-has! (files)
+  "Checks if the project has the specified FILES, relative to the project root,
+unless the path begins with ./ or ../, in which case it's relative to
+`default-directory'. Recognizes (and ...) and/or (or ...) forms."
+  (doom--resolve-paths files (doom-project-root)))
+
+
+;;
+;; Projects
+;;
+
+(defvar-local doom-project nil
+  "A list of project mode symbols to enable. Used for .dir-locals.el.")
+
+(defun doom|autoload-project-mode ()
+  "Auto-enable projects listed in `doom-project', which is meant to be set from
+.dir-locals.el files."
+  (dolist (mode doom-project)
+    (funcall mode)))
+(add-hook 'after-change-major-mode-hook 'doom|autoload-project-mode)
+
+(defmacro def-project-mode! (name &rest plist)
+  "Define a project minor-mode named NAME, and declare where and how it is
+activated. Project modes allow for project-specific settings, keymaps, hooks &
+custom configuration without having to litter the project with .dir-locals.el
+files.
+
+This creates NAME-hook and NAME-map as well.
+
+A project can be enabled through .dir-locals.el however, if `doom-project' is set
+to the name of the project mode(s) to enable.
+
+PLIST should contain any or all of these properties, which each are checked to
+see if NAME should be activated.
+
+  :modes MODES -- if buffers are derived from MODES (one or a list of symbols).
+
+  :files FILES -- if project contains FILES (relative to project root); takes a
+    solitary string or a form comprised of (and ...) and/or (or ...) forms.
+
+  :match REGEXP -- if file name matches REGEXP
+
+  :when PREDICATE -- if PREDICATE returns true (can be a form or the symbol of a
+    function)
+
+  :init FORM -- FORM will be run the first time this project mode is enabled."
+  (declare (indent 1))
+  (let ((modes (plist-get plist :modes))
+        (files (plist-get plist :files))
+        (when  (plist-get plist :when))
+        (match (plist-get plist :match))
+        (init-form (plist-get plist :init))
+        (keymap-sym (intern (format "%s-map" name))))
+    `(progn
+       (defvar ,keymap-sym (make-sparse-keymap)
+         ,(concat "Keymap for `" (symbol-name name) "'"))
+       (define-minor-mode ,name
+         "A project minor mode."
+         :init-value nil
+         :keymap ,keymap-sym)
+       ,(when (or modes match files when)
+          `(associate! ,name
+             :modes ,modes
+             :match ,match
+             :files ,files
+             :when ,when))
+       (add-hook! ,name
+         (run-hook-with-args doom-project-hook ',name))
+       ,(when init-form
+          `(add-transient-hook! ',(intern-soft (format "%s-hook" name))
+             ,init-form)))))
 
 (provide 'core-projects)
 ;;; core-projects.el ends here
