@@ -81,9 +81,10 @@ packages exist.")
 
       use-package-always-defer t
       use-package-always-ensure nil
-      use-package-expand-minimally t
+      use-package-expand-minimally (not doom-debug-mode)
       use-package-debug nil
       use-package-verbose doom-debug-mode
+      use-package-minimum-reported-time (if doom-debug-mode 0 0.1)
 
       ;; Don't use MELPA, we'll use package.el for those
       quelpa-checkout-melpa-p nil
