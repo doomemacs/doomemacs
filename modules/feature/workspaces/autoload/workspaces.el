@@ -30,7 +30,8 @@
 ;;;###autoload
 (defun +workspace-p (obj)
   "Return t if OBJ is a perspective hash table."
-  (and (hash-table-p obj)
+  (and obj
+       (hash-table-p obj)
        (perspective-p obj)))
 
 ;;;###autoload
