@@ -20,3 +20,17 @@
   (interactive "<f>")
   (cd input))
 
+;;;###autoload (autoload '+hlissner:kill-all-buffers "private/hlissner/autoload/evil" nil t)
+(evil-define-command +hlissner:kill-all-buffers (&optional bang)
+  "Kill all buffers. If BANG, kill current session too."
+  (interactive "<!>")
+  (if bang
+      (+workspace/kill-session)
+    (doom/kill-all-buffers)))
+
+;;;###autoload (autoload '+hlissner:kill-matching-buffers "private/hlissner/autoload/evil" nil t)
+(evil-define-command +hlissner:kill-matching-buffers (&optional bang pattern)
+  "Kill all buffers matching PATTERN regexp. If BANG, only match project
+buffers."
+  (interactive "<a>")
+  (doom/kill-matching-buffers pattern bang))

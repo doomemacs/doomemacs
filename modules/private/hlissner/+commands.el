@@ -43,9 +43,9 @@
 ;; Dealing with buffers
 (ex! "clean[up]"   'doom/cleanup-buffers)       ; Clean up old/unreal buffers
 (ex! "k[ill]"      'doom/kill-real-buffer)      ; Kill current buffer
-(ex! "k[ill]all"   'doom:kill-all-buffers)      ; Kill buffers (bang = in project)
-(ex! "k[ill]m"     'doom:kill-matching-buffers) ; kill buffers by regexp
-(ex! "k[ill]o"     'doom:kill-other-buffers)    ; kill other buffers
+(ex! "k[ill]all"   '+hlissner:kill-all-buffers)      ; Kill buffers (bang = in project)
+(ex! "k[ill]m"     '+hlissner:kill-matching-buffers) ; kill buffers by regexp
+(ex! "k[ill]o"     'doom/kill-other-buffers)    ; kill other buffers
 (ex! "l[ast]"      'doom/popup-last-buffer)     ; pop up last popup
 (ex! "m[sg]"       'view-echo-area-messages)    ; open *messages* in popup
 (ex! "pop[up]"     'doom/popup)                 ; open current buffer in popup
