@@ -39,21 +39,26 @@ possible rules."
 
 ;;;###autoload
 (defun doom/popup-restore ()
-  "Restore the last popups. If the buffers have been killed, and represented
-real files, they will be restored. Special buffers or buffers with non-nil
-:autokill properties will not be."
+  "Restore the last open popups. If the buffers have been killed, and
+represented real files, they will be restored. Special buffers or buffers with
+non-nil :autokill properties will not be.
+
+Returns t if popups were restored, nil otherwise."
   (interactive)
   (unless doom-popup-history
     (error "No popups to restore"))
-  (dolist (spec doom-popup-history)
-    (let ((buffer (get-buffer (car spec)))
-          (path (plist-get (cdr spec) :file))
-          (rules (plist-get (cdr spec) :rules)))
-      (when (and (not buffer) path)
-        (setq buffer (find-file-noselect path t)))
-      (when buffer
-        (apply 'doom-popup-buffer buffer rules))))
-  (setq doom-popup-history '()))
+  (let (any-p)
+    (dolist (spec doom-popup-history)
+      (let ((buffer (get-buffer (car spec)))
+            (path   (plist-get (cdr spec) :file))
+            (rules  (plist-get (cdr spec) :rules)))
+        (when (and (not buffer) path)
+          (setq buffer (find-file-noselect path t)))
+        (when (and buffer (apply 'doom-popup-buffer buffer rules) (not any-p))
+          (setq any-p t))))
+    (when any-p
+      (setq doom-popup-history '()))
+    any-p))
 
 ;;;###autoload
 (defun doom/popup-toggle ()
