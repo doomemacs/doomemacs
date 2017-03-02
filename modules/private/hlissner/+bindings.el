@@ -206,7 +206,7 @@
  ;; Navigation
  :nv "K" 'smart-up
  :m  "gD" 'doom/find-def
- :n  "gp" 'doom/editor-reselect-paste
+ :n  "gp" '+evil/reselect-paste
  :n  "gc" 'evil-commentary
  :n  "gx" 'evil-exchange
  :n  "gr" '+repl:eval-region

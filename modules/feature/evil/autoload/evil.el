@@ -17,6 +17,14 @@
   (evil-visual-restore))
 
 ;;;###autoload
+(defun +evil/reselect-paste ()
+  "Go back into visual mode and reselect the last pasted region."
+  (interactive)
+  (evil-goto-mark ?\[)
+  (evil-visual-state)
+  (evil-goto-mark ?\]))
+
+;;;###autoload
 (defun +evil*ex-replace-special-filenames (file-name)
   "Replace special symbols in FILE-NAME. Modified to include other substitution
 flags."
