@@ -20,7 +20,6 @@
 
   (defun +file-templates--expand (key &optional mode project-only)
     "Auto insert a snippet of yasnippet into new file."
-    (interactive)
     (when (if project-only (doom-project-p) t)
       (require 'yasnippet)
       (unless yas-minor-mode (yas-minor-mode-on))
