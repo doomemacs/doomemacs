@@ -1,4 +1,3 @@
-;;; -*- lexical-binding: t; -*-
 ;;; core-packages.el
 
 ;; Emacs package management is opinionated. Unfortunately, so am I. With the
