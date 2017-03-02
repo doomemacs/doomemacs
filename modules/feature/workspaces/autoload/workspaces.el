@@ -282,7 +282,8 @@ end of the workspace list."
              (string-match-p "^[0-9]+$" index))
     (setq index (string-to-number index)))
   (condition-case ex
-      (let ((names (+workspace-list)))
+      (let ((names (+workspace-list))
+            (old-name (+workspace-current-name)))
         (cond ((numberp index)
                (let ((dest (nth index names)))
                  (unless dest
@@ -293,7 +294,9 @@ end of the workspace list."
                  (error "No workspace named %s" index))
                (persp-frame-switch index)))
         (unless (called-interactively-p 'interactive)
-          (+workspace/display)))
+          (if (equal (+workspace-current-name) old-name)
+              (+workspace-message (format "Already in %s" old-name) 'warn)
+            (+workspace/display))))
     ('error (+workspace-error (cadr ex) t))))
 
 ;;;###autoload
