@@ -447,9 +447,10 @@ This may take a while."
             results))
     (when noninteractive
       (if targets (message "\n"))
-      (message "Compiled %s files:\n%s" n
-               (mapconcat (lambda (file) (concat "+ " (if (cdr file) "SUCCESS" "FAIL") ": " (car file)))
-                          (nreverse results) "\n")))))
+      (message "Compiled %s/%s files" n (length results))
+      (when-let (errors (cl-remove-if 'cdr results))
+        (message "\n%s" (mapconcat (lambda (file) (concat "+ ERROR: " (car file)))
+                                   (nreverse errors) "\n"))))))
 
 
 ;;
