@@ -27,7 +27,7 @@
 (defvar-local doom-popup-rules nil
   "The shackle rule that caused this buffer to be recognized as a popup.")
 
-(defvar doom-popup-window-parameters '(:noesc :modeline :autokill)
+(defvar doom-popup-window-parameters '(:noesc :modeline :autokill :autoclose)
   "A list of window parameters that are set (and cleared) when `doom-popup-mode
 is enabled/disabled.'")
 
@@ -46,15 +46,18 @@ is enabled/disabled.'")
   :init
   (setq shackle-default-alignment 'below
         ;;; Baseline popup-window rules
-        ;; :noesc, :modeline and :autokill are custom settings and are not part
-        ;; of shackle:
-        ;;  :noesc      determines if pressing ESC in this popup will close it.
-        ;;              Used by `doom/popup-close-maybe'.
-        ;;  :modeline   By default, mode-lines are hidden in popups unless this is
-        ;;              non-nil. If it is a symbol, it'll use `doom-modeline' to
-        ;;              fetch a modeline config. Set in `doom-popup-mode'.
-        ;;  :autokill   If non-nil, the buffer in these popups will be killed when
-        ;;              their popup is closed. Used in `doom*delete-popup-window'
+        ;; Several custom properties have been added that are not part of
+        ;; shackle and are used by doom's popup system. They are:
+        ;;
+        ;;  :noesc      Determines if pressing ESC *inside* the popup should
+        ;;              close it. Used by `doom/popup-close-maybe'.
+        ;;  :modeline   By default, mode-lines are hidden in popups unless this
+        ;;              is non-nil. If it is a symbol, it'll use `doom-modeline'
+        ;;              to fetch a modeline config. Set in `doom-popup-mode'.
+        ;;  :autokill   If non-nil, the buffer in these popups will be killed
+        ;;              when their popup is closed. Used by
+        ;;              `doom*delete-popup-window'
+        ;;  :autoclose  If non-nil, close popup if ESC is pressed from any buffer.
         shackle-rules
         '(("^ ?\\*doom:.+\\*$"      :size 40  :modeline t :regexp t)
           ("^ ?\\*doom .+\\*$"      :size 30  :noselect t :regexp t)
@@ -64,8 +67,8 @@ is enabled/disabled.'")
           ("*Pp Eval Output*"       :size 16  :noselect t :autokill t)
           ("*Apropos*"              :size 0.3)
           ("*Backtrace*"            :size 25  :noselect t)
-          ("*Help*"                 :size 16)
-          ("*Messages*"             :size 10)
+          ("*Help*"                 :size 16  :autoclose t)
+          ("*Messages*"             :size 10  :noselect t :autoclose t)
           ("*Warnings*"             :size 10  :noselect t :autokill t)
           ("*command-log*"          :size 28  :noselect t :align right)
           ("*Shell Command Output*" :size 20  :noselect t :autokill t)
@@ -225,6 +228,15 @@ properties."
       (define-key map [remap evil-window-split]            'ignore)
       (define-key map [remap evil-window-vsplit]           'ignore)
       (define-key map [remap evil-force-normal-state]      'doom/popup-close-maybe))
+
+    (defun doom*popup-close-all-maybe ()
+      "Close popups with an :autoclose property when pressing ESC from normal
+mode in any evil-mode buffer."
+      (unless (or (minibuffer-window-active-p (minibuffer-window))
+                  (and (bound-and-true-p evil-mode)
+                       (evil-ex-hl-active-p 'evil-ex-search)))
+        (doom/popup-close-all)))
+    (advice-add 'evil-force-normal-state :after 'doom*popup-close-all-maybe)
 
     ;; Make evil-mode cooperate with popups
     (advice-add 'evil-command-window :override 'doom*popup-evil-command-window)

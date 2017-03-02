@@ -75,14 +75,23 @@ real files, they will be restored. Special buffers or buffers with non-nil
       (delete-window window))))
 
 ;;;###autoload
-(defun doom/popup-close-all ()
-  "Closes all open popups."
+(defun doom/popup-close-all (&optional force-p)
+  "Closes all open popups. If FORCE-P is non-nil, or this function is called
+interactively, it will close all popups without question. Otherwise, it will
+only close popups that have an :autoclose property in their rule (see
+`shackle-rules')."
   (interactive)
   (let ((orig-win (selected-window)))
     (when-let (popups (doom-popup-windows))
       (setq doom-popup-history (mapcar 'doom--popup-data popups))
       (let (doom-popup-remember-history)
-        (mapc 'delete-window popups)))))
+        (dolist (window popups)
+          (let ((rules (window-parameter window 'popup)))
+            (when (or force-p
+                      (called-interactively-p 'interactive)
+                      (and (plist-member rules :autoclose)
+                           (plist-get rules :autoclose)))
+              (delete-window window))))))))
 
 ;;;###autoload
 (defun doom/popup-close-maybe ()
