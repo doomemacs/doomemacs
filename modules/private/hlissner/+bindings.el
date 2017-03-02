@@ -102,6 +102,7 @@
 
    (:desc "Toggle"
      :prefix "t"
+     :desc "Spell check"            :n "s" 'flyspell-mode
      :desc "Line numbers"           :n "l" 'doom/toggle-line-numbers
      :desc "Fullscreen"             :n "f" 'doom/toggle-fullscreen)
 

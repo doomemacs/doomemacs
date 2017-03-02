@@ -2,8 +2,6 @@
 
 (def-package! flyspell ; built-in
   :commands flyspell-mode
-  :init
-  (add-hook 'text-mode-hook 'flyspell-mode)
   :config
   (setq ispell-program-name (executable-find "aspell")
         ispell-list-command "--list"
