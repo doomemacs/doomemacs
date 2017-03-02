@@ -71,7 +71,6 @@
 
 
 (def-package! company-tern
-  :when (featurep 'company)
   :commands company-tern
   :after tern)
 
