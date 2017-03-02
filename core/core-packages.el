@@ -281,7 +281,8 @@ byte-compilation."
 by default. If the package isn't installed or loaded, `def-package!' is
 ignored."
   (when (or (featurep name)
-            (package-installed-p name))
+            (progn (doom-initialize)
+                   (package-installed-p name)))
     `(use-package ,name ,@plist)))
 
 (defmacro load! (filesym &optional path noerror)
