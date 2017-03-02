@@ -1,43 +1,40 @@
+;;; -*- lexical-binding: t; -*-
 ;;; core-packages.el
 
-;; Emacs package management is opinionated. Unfortunately, so am I. So with the
-;; help of `use-package', `quelpa' and package.el, DOOM Emacs manages my
-;; plugins and internal module dependency chains.
+;; Emacs package management is opinionated. Unfortunately, so am I. With the
+;; help of `use-package', `quelpa' and package.el, DOOM Emacs manages its
+;; plugins and their dependencies through `doom/packages-install',
+;; `doom/packages-update' and `doom/packages-autoremove', which can be called
+;; via `make' on the command line (make {install,update,autoremove}).
 ;;
-;; So I've divided my config into two parts: configuration and
-;; packages/dependency control. You'll find packages.el files in each DOOM
-;; module (in `doom-modules-dir') and one in `doom-core-dir'. When executed,
-;; they fill `doom-packages' and `doom-modules', which are necessary for DOOM to
-;; extrapolate all kinds of information about plugins.
+;; My config is divided into two parts: configuration and packages.el files.
+;; You'll find packages.el files in each DOOM module (in `doom-modules-dir') and
+;; one in `doom-core-dir'. When executed, they fill `doom-packages' and
+;; `doom-modules', which are necessary for DOOM to extrapolate all kinds of
+;; information about plugins.
 ;;
 ;; Why all the trouble? Because:
-;; 1. Scriptability: I want my plugins managable from the command line. This
-;;    means a `doom/packages-update' command I can call to programmatically
-;;    update my plugins, rather than through package.el's interface.
-;; 2. Flexibility: I want to install packages from sources other than ELPA. Like
-;;    github or the Emacs wiki. Some plugins are out-of-date through official
-;;    channels, have changed hands unofficially, or simply haven't been
+;; 1. Scriptability: I want an alternative to package.el's list-packages
+;;    interface for updating and installing packages.
+;; 2. Flexibility: I sometimes want packages from sources other than ELPA. Like
+;;    github or the Emacs wiki, because certain plugins are out-of-date through
+;;    official channels, have changed hands unofficially, or simply haven't been
 ;;    submitted to an ELPA repo yet.
 ;; 3. Stability: I don't want to worry that each time I use my package
-;;    manager something might inexplicably go wrong. Cask, which I used
-;;    previously, was horribly unstable. package.el and quelpa, however, appear
-;;    very stable (and much faster).
+;;    manager something might inexplicably go wrong. Cask, I'm looking at you.
 ;; 4. Performance: A minor point, but it helps startup performance not to do
 ;;    package.el initialization and package installation checks at startup.
 ;; 5. Simplicity: Without Cask, I have no external dependencies to worry about
-;;    (unless make counts). DOOM handles itself. Arguably, my emacs.d is
+;;    (unless you count make). DOOM handles itself. Arguably, my emacs.d is
 ;;    overcomplicated, but configuring is simpler as a result (well, for me
 ;;    anyway :P).
 ;;
 ;; It should be safe to use package.el functionality, however, avoid
-;; `package-autoremove' as it may not reliably select the right packages to
+;; `package-autoremove' as it will not reliably select the correct packages to
 ;; delete.
 ;;
 ;; For complete certainty, I've provided DOOM alternatives of package commands,
-;; like `doom/install-package', `doom/delete-package' and
-;; `doom/update-packages'. As well as: `doom/packages-install',
-;; `doom/packages-update' and `doom/packages-autoremove', which are called from
-;; the Makefile tasks.
+;; like `doom/install-package', `doom/delete-package' & `doom/update-packages'.
 ;;
 ;; See core/autoload/packages.el for more functions.
 
