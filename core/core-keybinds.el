@@ -194,7 +194,7 @@ Example
                 desc nil)))
 
        (t (user-error "Invalid key %s" key))))
-    `(progn ,@(reverse forms))))
+    `(progn ,@(nreverse forms))))
 
 (provide 'core-keybinds)
 ;;; core-keybinds.el ends here

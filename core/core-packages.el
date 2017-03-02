@@ -170,7 +170,7 @@ files."
       (funcall load-fn (expand-file-name "init.el" doom-emacs-dir))
       (when load-p
         (mapc (lambda (file) (funcall load-fn file t))
-              (append (reverse (file-expand-wildcards (concat doom-core-dir "core*.el")))
+              (append (nreverse (file-expand-wildcards (concat doom-core-dir "core*.el")))
                       (file-expand-wildcards (concat doom-core-dir "autoload/*.el"))
                       (doom--module-paths "config.el")))))
     (when (or force-p (not doom-packages))
@@ -227,17 +227,16 @@ is sorted by order of insertion."
   (let (pairs)
     (maphash (lambda (key value) (push (cons (car key) (cdr key)) pairs))
              doom-modules)
-    (reverse pairs)))
+    (nreverse pairs)))
 
 (defun doom--module-paths (&optional append-file)
   "Returns a list of absolute file paths to modules, with APPEND-FILE added, if
 the file exists."
   (let (paths)
-    (dolist (pair (doom--module-pairs))
+    (dolist (pair (doom--module-pairs) (nreverse paths))
       (let ((path (doom-module-path (car pair) (cdr pair) append-file)))
         (when (file-exists-p path)
-          (push path paths))))
-    (reverse paths)))
+          (push path paths))))))
 
 (defun doom--enable-module (module submodule &optional force-p)
   "Adds MODULE and SUBMODULE to `doom-modules', if it isn't already there (or if
@@ -268,8 +267,9 @@ byte-compilation."
      (setq doom-modules ',doom-modules)
 
      (unless noninteractive
-       ,@(mapcar (lambda (module) `(require! ,(car module) ,(cdr module) t))
-                 (doom--module-pairs))
+       ,@(let (forms)
+           (dolist (module (doom--module-pairs) (nreverse forms))
+             (push `(require! ,(car module) ,(cdr module) t) forms)))
 
        (when (display-graphic-p)
          (require 'server)
@@ -349,7 +349,7 @@ them."
          (pkg-pin    (or (plist-get plist :pin)
                          (and old-plist (plist-get old-plist :pin)))))
     (when pkg-recipe
-      (when (= 0 (mod (length pkg-recipe) 2))
+      (when (= 0 (% (length pkg-recipe) 2))
         (plist-put plist :recipe (cons name pkg-recipe)))
       (when pkg-pin
         (plist-put plist :pin nil)))
@@ -409,7 +409,7 @@ the commandline."
     (when (file-exists-p generated-autoload-file)
       (delete-file generated-autoload-file)
       (message "Deleted old autoloads.el"))
-    (dolist (file (reverse autoload-files))
+    (dolist (file (nreverse autoload-files))
       (let ((inhibit-message t))
         (update-file-autoloads file))
       (message "Scanned %s" (file-relative-name file doom-emacs-dir)))
@@ -441,7 +441,7 @@ This may take a while."
         (n 0)
         results)
     (dolist (path (doom--module-paths))
-      (nconc targets (reverse (directory-files-recursively path "\\.el$"))))
+      (nconc targets (nreverse (directory-files-recursively path "\\.el$"))))
     (dolist (file targets)
       (push (cons (file-relative-name file doom-emacs-dir)
                   (and (byte-recompile-file file nil 0)
@@ -451,7 +451,7 @@ This may take a while."
       (if targets (message "\n"))
       (message "Compiled %s files:\n%s" n
                (mapconcat (lambda (file) (concat "+ " (if (cdr file) "SUCCESS" "FAIL") ": " (car file)))
-                          (reverse results) "\n")))))
+                          (nreverse results) "\n")))))
 
 
 ;;

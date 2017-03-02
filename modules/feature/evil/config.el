@@ -6,12 +6,12 @@
 (def-setting! :evil-state (&rest mode-state-list)
   "Set the initialize STATE of MODE using `evil-set-initial-state'."
   (if (cl-every 'listp mode-state-list)
-      (let (forms)
-        (dolist (it mode-state-list)
-          (unless (consp it)
-            (error ":evil-state expected cons cells, got %s" it))
-          (push `(evil-set-initial-state ',(car it) ',(cdr it)) forms))
-        `(progn ,@(reverse forms)))
+      `(progn
+         ,@(let (forms)
+             (dolist (it mode-state-list (nreverse forms))
+               (unless (consp it)
+                 (error ":evil-state expected cons cells, got %s" it))
+               (push `(evil-set-initial-state ',(car it) ',(cdr it)) forms))))
     (let ((argc (length mode-state-list)))
       (unless (= argc 2)
         (error ":evil-state expected 2 arguments, got %s" argc)))

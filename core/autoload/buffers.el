@@ -100,7 +100,7 @@ buffers. If there's nothing left, switch to `doom-fallback-buffer'. See
   (let ((buffers (delq (current-buffer) (doom-real-buffers-list)))
         (project-dir (doom-project-root)))
     (cond ((or (not buffers)
-               (zerop (mod n (1+ (length buffers)))))
+               (zerop (% n (1+ (length buffers)))))
            (set-window-buffer nil (doom-fallback-buffer)))
           ((= (length buffers) 1)
            (set-window-buffer nil (car buffers)))

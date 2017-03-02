@@ -216,7 +216,7 @@ project root). Excludes the file basename. See `doom-buffer-name' for that."
            (max-length (truncate (* (window-body-width) 0.4))))
       (when (and buffer-path (not (equal buffer-path ".")))
         (if (> (length buffer-path) max-length)
-            (let ((path (reverse (split-string buffer-path "/" t)))
+            (let ((path (nreverse (split-string buffer-path "/" t)))
                   (output ""))
               (when (and path (equal "" (car path)))
                 (setq path (cdr path)))

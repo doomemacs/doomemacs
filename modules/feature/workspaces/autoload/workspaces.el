@@ -299,7 +299,7 @@ end of the workspace list."
 (defun +workspace/switch-to-last ()
   "Switch to the last workspace."
   (interactive)
-  (+workspace/switch-to (car (reverse (+workspace-list)))))
+  (+workspace/switch-to (car (last (+workspace-list)))))
 
 ;;;###autoload
 (defun +workspace/cycle (n)

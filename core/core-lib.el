@@ -111,7 +111,7 @@ Examples:
                   ',(if quoted-p h (intern (format "%s-hook" h)))
                   ,fn ,append-p ,local-p)
                 forms)))
-      `(progn ,@(reverse forms)))))
+      `(progn ,@(nreverse forms)))))
 
 (defmacro remove-hook! (&rest args)
   "Convenience macro for `remove-hook'. Takes the same arguments as
