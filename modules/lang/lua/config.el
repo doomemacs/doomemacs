@@ -21,7 +21,7 @@
 (def-package! moonscript
   :mode ("\\.moon$" . moonscript-mode)
   :config
-  (push '(moonscript-mode moonscript-indent-offset) editorconfig-indentation-alist))
+  (set! :editorconfig :add '(moonscript-mode moonscript-indent-offset)))
 
 
 ;;

@@ -18,9 +18,7 @@
                    ("add-hook" "remove-hook")))
 
   ;; Don't affect lisp indentation (only `tab-width')
-  (setq editorconfig-indentation-alist
-        (delq (assq 'emacs-lisp-mode editorconfig-indentation-alist)
-              editorconfig-indentation-alist))
+  (set! :editorconfig :remove 'emacs-lisp-mode)
 
   (defun +emacs-lisp|hook ()
     (setq mode-name "Elisp") ; [pedantry intensifies]

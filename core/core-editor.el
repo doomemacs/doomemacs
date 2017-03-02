@@ -87,7 +87,21 @@
 ;; specify their own formatting rules.
 (def-package! editorconfig :demand t
   :mode ("\\.?editorconfig$" . editorconfig-conf-mode)
-  :config (editorconfig-mode +1)
+  :init
+  (def-setting! :editorconfig (action value)
+    `(after! editorconfig
+       ,(cond ((eq action :add)
+               `(push ',value editorconfig-indentation-alist))
+              ((eq action :remove)
+               (unless (symbolp value)
+                 (error "%s is not a valid major-mode in editorconfig-indentation-alist" value))
+               `(setq editorconfig-indentation-alist
+                      (delq (assq ',value editorconfig-indentation-alist)
+                            editorconfig-indentation-alist)))
+              (t (error "%s is an invalid action for :editorconfig" action)))))
+
+  :config
+  (editorconfig-mode +1)
   ;; Show whitespace in tabs indentation mode
   (add-hook! 'editorconfig-custom-hooks
     (if indent-tabs-mode (whitespace-mode +1))))
