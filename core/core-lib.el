@@ -27,6 +27,39 @@
 
 
 ;;
+;; Helpers
+;;
+
+(defun doom--resolve-paths (paths &optional root)
+  (cond ((stringp paths)
+         `(file-exists-p
+           (expand-file-name
+            ,paths ,(if (or (string-prefix-p "./" paths)
+                            (string-prefix-p "../" paths))
+                        'default-directory
+                      root))))
+        ((listp paths)
+         (let (forms)
+           (dolist (i paths (nreverse forms))
+             (push (doom--resolve-paths i root) forms))))
+        (t paths)))
+
+(defun doom--resolve-hooks (hooks)
+  (let ((quoted-p (eq (car-safe hooks) 'quote))
+        ret-hooks)
+    (when quoted-p
+      (setq hooks (cadr hooks)))
+    (dolist (hook (if (listp hooks) hooks (list hooks)) (nreverse ret-hooks))
+      (push (cond ((eq (car-safe hook) 'quote)
+                   (cadr hook))
+                  ((string-suffix-p "-hook" (symbol-name hook))
+                   hook)
+                  (t
+                   (intern (format "%s-hook" (symbol-name hook)))))
+            ret-hooks))))
+
+
+;;
 ;; Library
 ;;
 
@@ -96,33 +129,32 @@ Examples:
     (add-hook! :append (one-mode second-mode) 'enable-something)
     (add-hook! :local (one-mode second-mode) 'enable-something)
     (add-hook! (one-mode second-mode) (setq v 5) (setq a 2))
-    (add-hook! :append :local (one-mode second-mode) (setq v 5) (setq a 2))"
+    (add-hook! :append :local (one-mode second-mode) (setq v 5) (setq a 2))
+
+Body forms can access the hook's arguments through the let-bound variable
+`args'."
   (declare (indent defun) (debug t))
   (let (hook append-p local-p)
     (while (keywordp (car args))
-      (cl-ecase (pop args)
+      (pcase (pop args)
         (:append (setq append-p t))
         (:local  (setq local-p t))))
-    (let* ((hooks (pop args))
-           (quoted-p (eq (car-safe hooks) 'quote))
-           (funcs
-            (let ((val (car args)))
-              (if (eq (car-safe val) 'quote)
-                  (if (cdr-safe (cadr val))
-                      (cadr val)
-                    (list (cadr val)))
-                (list args))))
-           forms)
-      (when quoted-p
-        (setq hooks (cadr hooks)))
-      (unless (listp hooks)
-        (setq hooks (list hooks)))
+    (let ((hooks (doom--resolve-hooks (pop args)))
+          (funcs
+           (let ((val (car args)))
+             (if (eq (car-safe val) 'quote)
+                 (if (cdr-safe (cadr val))
+                     (cadr val)
+                   (list (cadr val)))
+               (list args))))
+          forms)
       (dolist (fn funcs)
-        (setq fn (if (symbolp fn) `(quote ,fn) `(lambda (&rest args) ,@args)))
-        (dolist (h hooks)
+        (setq fn (if (symbolp fn)
+                     `(quote ,fn)
+                   `(lambda (&rest args) ,@args)))
+        (dolist (hook hooks)
           (push `(,(if (boundp 'hook-fn) hook-fn 'add-hook)
-                  ',(if quoted-p h (intern (format "%s-hook" h)))
-                  ,fn ,append-p ,local-p)
+                  ',hook ,fn ,append-p ,local-p)
                 forms)))
       `(progn ,@(nreverse forms)))))
 
@@ -133,40 +165,36 @@ Examples:
     (macroexpand `(add-hook! ,@args))))
 
 (defmacro associate! (mode &rest plist)
-  "Associate a major or minor mode to certain patterns and project files."
+  "Associate a minor mode to certain patterns and project files."
   (declare (indent 1))
   (unless noninteractive
-    (let* ((minor (plist-get plist :minor))
-           (in    (plist-get plist :in))
+    (let* ((modes (plist-get plist :modes))
            (match (plist-get plist :match))
            (files (plist-get plist :files))
-           (pred  (plist-get plist :when)))
-      (cond ((or files in pred)
+           (pred-form (plist-get plist :when)))
+      (cond ((or files modes pred-form)
              (when (and files
                         (not (or (listp files)
                                  (stringp files))))
                (user-error "associate! :files expects a string or list of strings"))
              (let ((hook-name (intern (format "doom--init-mode-%s" mode))))
-               (macroexp-progn
-                (list `(defun ,hook-name ()
-                         (when (and ,(if match `(if buffer-file-name (string-match-p ,match buffer-file-name)) t)
-                                    (or ,(not files)
-                                        (and (boundp ',mode)
-                                             (not ,mode)
-                                             (doom-project-has-files ,@(if (listp files) files (list files)))))
-                                    (or (not ,pred)
-                                        (funcall ,pred buffer-file-name)))
-                           (,mode 1)))
-                      (if (and in (listp in))
-                          (macroexp-progn
-                           (mapcar (lambda (h) `(add-hook ',h ',hook-name))
-                                   (mapcar (lambda (m) (intern (format "%s-hook" m))) in)))
-                        `(add-hook 'find-file-hook ',hook-name))))))
+               `(progn
+                  (defun ,hook-name ()
+                    (when (and (boundp ',mode)
+                               (not ,mode)
+                               ,(if match `(if buffer-file-name (string-match-p ,match buffer-file-name)) t)
+                               ,(if files (doom--resolve-paths files) t)
+                               ,(or pred-form t))
+                      (,mode 1)))
+                  ,@(if (and modes (listp modes))
+                        (let (forms)
+                          (dolist (hook (doom--resolve-hooks modes) (nreverse forms))
+                            (push `(add-hook ',hook ',hook-name) forms)))
+                      `((add-hook 'after-change-major-mode-hook ',hook-name))))))
             (match
-             `(add-to-list ',(if minor 'doom-auto-minor-mode-alist 'auto-mode-alist)
-                           (cons ,match ',mode)))
-            (t (user-error "associate! invalid rules for mode [%s] (in %s) (match %s) (files %s)"
-                           mode in match files))))))
+             `(push (cons ,match ',mode) doom-auto-minor-mode-alist))
+            (t (user-error "associate! invalid rules for mode [%s] (modes %s) (match %s) (files %s)"
+                           mode modes match files))))))
 
 
 ;; Provides a centralized configuration system that a) won't evaluate its

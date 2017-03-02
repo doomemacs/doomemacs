@@ -44,7 +44,7 @@
   :mode ("/\\.rspec$" . text-mode)
   :init
   (associate! rspec-mode :match "/\\.rspec$")
-  (associate! rspec-mode :in (ruby-mode yaml-mode) :files ("/spec/"))
+  (associate! rspec-mode :modes (ruby-mode yaml-mode) :files ("/spec/"))
   (defvar rspec-mode-verifiable-map (make-sparse-keymap))
   (defvar evilmi-ruby-match-tags
     '((("unless" "if") ("elsif" "else") "end")

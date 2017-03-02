@@ -1,6 +1,6 @@
 ;;; module-data.el
 
-(associate! conf-mode :match "/sxhkdrc$")
+(push '("/sxhkdrc" . conf-mode) auto-mode-alist)
 
 
 (def-package! nxml-mode

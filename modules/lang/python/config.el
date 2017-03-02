@@ -60,7 +60,7 @@
   :preface
   (defvar nose-mode-map (make-sparse-keymap))
   :init
-  (associate! nose-mode :match "/test_.+\\.py$" :in (python-mode))
+  (associate! nose-mode :match "/test_.+\\.py$" :modes (python-mode))
   :config
   (set! :popup "*nosetests*" :size 0.4 :noselect t)
   (set! :yas-minor-mode 'nose-mode)
