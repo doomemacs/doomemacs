@@ -1,5 +1,19 @@
 ;;; lang/org/autoload/org.el
 
+(defun +org--get-context (types &optional context)
+  (let ((context (or context (org-element-context))))
+    (while (and context (not (memq (car context) types)))
+      (setq context (plist-get (cadr context) :parent)))
+    context))
+
+(defun +org--get-types (context)
+  (let ((context (or context (org-element-context)))
+        types)
+    (while context
+      (push (car context) types)
+      (setq context (plist-get (cadr context) :parent)))
+    types))
+
 ;;;###autoload
 (defun +org/indent ()
   "Indent the current item (header or item). Otherwise, forward to
@@ -50,9 +64,10 @@ wrong places)."
   (interactive)
   (let* ((context (org-element-context))
          (type (org-element-type context)))
-    (cond ((eq type 'item)
+    (cond ((when-let (ct (+org--get-context '(item plain-list) context))
+             (setq context ct))
            (let ((marker (org-element-property :bullet context)))
-             (cl-case direction
+             (pcase direction
                ('below
                 (goto-char (line-end-position))
                 (insert (concat "\n" marker)))
@@ -101,14 +116,13 @@ wrong places)."
 ;;;###autoload
 (defun +org/toggle-checkbox ()
   (interactive)
-  (let ((context (org-element-context)))
-    (when (eq (org-element-type context) 'item)
-      (org-end-of-line)
-      (org-beginning-of-line)
-      (if (org-element-property :checkbox context)
-          (when (search-backward-regexp "\\[[ +-]\\]" (line-beginning-position) t)
-            (delete-char 4))
-        (insert "[ ] ")))))
+  (when-let (context (+org--get-context '(item)))
+    (org-end-of-line)
+    (org-beginning-of-line)
+    (if (org-element-property :checkbox context)
+        (when (search-backward-regexp "\\[[ +-]\\]" (line-beginning-position) t)
+          (delete-char 4))
+      (insert "[ ] "))))
 
 ;;;###autoload
 (defun +org/toggle-fold ()
@@ -139,8 +153,12 @@ fragments, opening links, or refreshing images."
           (org-table-recalculate t)
         (org-table-align)))
 
-     ((and (eq type 'item)
-           (org-element-property :checkbox context))
+     ((and (org-in-item-p)
+           (org-element-property :checkbox
+                                 (save-excursion
+                                   (org-beginning-of-line)
+                                   (backward-char)
+                                   (org-element-context))))
       (org-toggle-checkbox))
 
      ((and (eq type 'headline)
