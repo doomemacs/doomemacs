@@ -454,19 +454,20 @@ lines are selected, or the NxM dimensions of a block selection."
 
 (defsubst +doom-modeline--iedit ()
   "Show the number of iedit regions matches + what match you're on."
-  (when (and (featurep 'iedit) iedit-mode)
+  (when (and iedit-mode iedit-occurrences-overlays)
     (propertize
-     (let ((this-oc (let (message-log-max) (iedit-find-current-occurrence-overlay)))
-           (length  (or (ignore-errors (length iedit-occurrences-overlays)) 0)))
-       (format " %s/%s "
-               (save-excursion
-                 (unless this-oc
-                   (iedit-prev-occurrence)
-                   (setq this-oc (iedit-find-current-occurrence-overlay)))
-                 (if this-oc
-                     ;; NOTE: Not terribly reliable
-                     (- length (-elem-index this-oc iedit-occurrences-overlays))
-                   "-"))
+     (let ((this-oc (or (let ((inhibit-message t))
+                          (iedit-find-current-occurrence-overlay))
+                        (progn (iedit-prev-occurrence)
+                               (iedit-find-current-occurrence-overlay))))
+           (length (length iedit-occurrences-overlays)))
+       (format " %s/%d "
+               (if this-oc
+                   (- length
+                      (length (cdr
+                               (memq this-oc (sort (append iedit-occurrences-overlays (list))
+                                                   (lambda (x y) (< (overlay-start x) (overlay-start y))))))))
+                 "-")
                length))
      'face (if (active) 'doom-modeline-panel))))
 
