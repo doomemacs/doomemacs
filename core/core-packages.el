@@ -216,7 +216,8 @@ files."
 
 (defun doom-module-loaded-p (module submodule)
   "Returns t if MODULE->SUBMODULE is present in `doom-modules'."
-  (gethash (cons module submodule) doom-modules))
+  (and doom-modules
+       (gethash (cons module submodule) doom-modules)))
 
 (defun doom--module-pairs ()
   "Returns `doom-modules' as a list of (MODULE . SUBMODULE) cons cells. The list
