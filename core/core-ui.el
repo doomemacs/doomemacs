@@ -10,7 +10,7 @@
  ;; remove continuation arrow on right fringe
  fringe-indicator-alist (delq (assq 'continuation fringe-indicator-alist)
                               fringe-indicator-alist)
- highlight-nonselected-window nil
+ highlight-nonselected-windows nil
  image-animate-loop t
  indicate-buffer-boundaries nil
  indicate-empty-lines nil
