@@ -472,12 +472,15 @@ lines are selected, or the NxM dimensions of a block selection."
      'face (if (active) 'doom-modeline-panel))))
 
 (def-modeline-segment! matches
-  "TODO"
-  (or (concat (+doom-modeline--macro-recording)
-              (+doom-modeline--anzu)
-              (+doom-modeline--evil-substitute)
-              (+doom-modeline--iedit))
-      " %I "))
+  "Displays: 1. the currently recording macro, 2. A current/total for the
+current search term (with anzu), 3. The number of substitutions being conducted
+with `evil-ex-substitute', and/or 4. The number of active `iedit' regions."
+  (let ((meta (concat (+doom-modeline--macro-recording)
+                      (+doom-modeline--anzu)
+                      (+doom-modeline--evil-substitute)
+                      (+doom-modeline--iedit))))
+    (or (and (not (string-empty-p meta)) meta)
+        " %I ")))
 
 (def-modeline-segment! media-info
   "TODO"
