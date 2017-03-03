@@ -483,16 +483,17 @@ with `evil-ex-substitute', and/or 4. The number of active `iedit' regions."
         " %I ")))
 
 (def-modeline-segment! media-info
-  "TODO"
+  "Metadata regarding the current file, such as dimensions for images."
   (cond ((eq major-mode 'image-mode)
          (let ((size (image-size (image-get-display-property) :pixels)))
            (format "  %dx%d  " (car size) (cdr size))))))
 
 (def-modeline-segment! eldoc
-  "TODO"
+  "Used with `eldoc-eval' to show the eldoc string in the modeline, while using
+`eval-expression'."
   (and (boundp 'str) str))
 
-;;
+;; These bars regulate the height of the mode-line in GUI Emacs.
 (def-modeline-segment! bar
   (+doom-modeline--make-xpm
    (face-background (if (active)
@@ -502,6 +503,7 @@ with `evil-ex-substitute', and/or 4. The number of active `iedit' regions."
    +doom-modeline-bar-width))
 
 (def-modeline-segment! eldoc-bar
+  "A differently colored bar, to signify an eldoc display."
   (+doom-modeline--make-xpm
    (face-background 'doom-modeline-eldoc-bar)
    +doom-modeline-height
