@@ -410,11 +410,13 @@ lines are selected, or the NxM dimensions of a block selection."
 
 
 (defun +doom-modeline--macro-recording ()
-  "Display current macro being recorded."
-  (when (and (active) (bound-and-true-p evil-this-macro))
+  "Display current Emacs or evil macro being recorded."
+  (when (and (active) (or defining-kbd-macro executing-kbd-macro))
     (let ((sep (propertize " " 'face 'doom-modeline-panel)))
       (concat sep
-              (propertize (char-to-string evil-this-macro)
+              (propertize (if (bound-and-true-p evil-this-macro)
+                              (char-to-string evil-this-macro)
+                            "Macro")
                           'face 'doom-modeline-panel)
               sep
               (all-the-icons-octicon "triangle-right"
