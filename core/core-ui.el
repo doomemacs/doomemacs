@@ -205,50 +205,54 @@ file."
 ;; Modeline
 ;;
 
-;; TODO Improve docstrings
 (defmacro def-modeline-segment! (name &rest forms)
-  "Defines a modeline segment function and byte compiles it."
+  "Defines a modeline segment and byte compiles it."
   (declare (indent defun) (doc-string 2))
-  `(defun ,(intern (format "doom-modeline-segment--%s" name)) ()
-     ,@forms))
+  (let ((sym (intern (format "doom-modeline-segment--%s" name))))
+    `(progn
+       (defun ,sym () ,@forms)
+       ,(unless (bound-and-true-p byte-compile-current-file)
+          `(let (byte-compile-warnings)
+             (byte-compile ',sym))))))
 
 (defsubst doom--prepare-modeline-segments (segments)
-  (delq
-   nil
-   (mapcar (lambda (seg)
-             (if (stringp seg)
-                 seg
-               (list (intern (format "doom-modeline-segment--%s" (symbol-name seg))))))
-           segments)))
+  (let (segs)
+    (dolist (seg segments (nreverse segs))
+      (push (if (stringp seg)
+                seg
+              (list (intern (format "doom-modeline-segment--%s" (symbol-name seg)))))
+            segs))))
 
 (defmacro def-modeline! (name lhs &optional rhs)
-  "Defines a modeline format and byte-compiles it.
+  "Defines a modeline format and byte-compiles it. NAME is a symbol to identify
+it (used by `doom-modeline' for retrieval). LHS and RHS are lists of symbols of
+modeline segments defined with `def-modeline-segment!'.
 
 Example:
-   (def-modeline! minimal
-     (bar matches \" \" buffer-info)
-     (media-info major-mode))
-   (setq-default mode-line-format (doom-modeline 'minimal))"
+  (def-modeline! minimal
+    (bar matches \" \" buffer-info)
+    (media-info major-mode))
+  (setq-default mode-line-format (doom-modeline 'minimal))"
   (let ((sym (intern (format "doom-modeline-format--%s" name)))
         (lhs-forms (doom--prepare-modeline-segments lhs))
         (rhs-forms (doom--prepare-modeline-segments rhs)))
-    (prog1
-        `(progn
-           (defun ,sym ()
-             (let ((lhs (list ,@lhs-forms))
-                   (rhs (list ,@rhs-forms)))
-               (list lhs
-                     (propertize
-                      " " 'display
-                      `((space :align-to (- (+ right right-fringe right-margin)
-                                            ,(+ 1 (string-width (format-mode-line rhs)))))))
-                     rhs)))
-           ,(unless (bound-and-true-p byte-compile-current-file)
-              `(let (byte-compile-warnings)
-                 (byte-compile ',sym)))))))
+    `(progn
+       (defun ,sym ()
+         (let ((lhs (list ,@lhs-forms))
+               (rhs (list ,@rhs-forms)))
+           (list lhs
+                 (propertize
+                  " " 'display
+                  `((space :align-to (- (+ right right-fringe right-margin)
+                                        ,(+ 1 (string-width (format-mode-line rhs)))))))
+                 rhs)))
+       ,(unless (bound-and-true-p byte-compile-current-file)
+          `(let (byte-compile-warnings)
+             (byte-compile ',sym))))))
 
 (defun doom-modeline (key)
-  "TODO"
+  "Returns a mode-line configuration associated with KEY (a symbol). Throws an
+error if it doesn't exist."
   (let ((fn (intern (format "doom-modeline-format--%s" key))))
     (unless (functionp fn)
       (error "Modeline format doesn't exist: %s" key))
