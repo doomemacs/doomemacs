@@ -1,45 +1,30 @@
-;;; feature/repl/autoload/repl.el
+;;; feature/eval/autoload/repl.el
+
+(defvar +eval-last-repl-buffer nil
+  "The buffer of the last open repl.")
 
 ;;;###autoload
-(defun +repl/open ()
+(defun +eval/repl ()
+  "Open the REPL associated with the current major-mode. If selection is active,
+send region to repl."
   (interactive)
-  ;; TODO
-  (error "Not implemented"))
+  (when-let (command (cdr (assq major-mode +eval-repls)))
+    (let ((repl-buffer (save-window-excursion (funcall command))))
+      (unless (bufferp repl-buffer)
+        (error "REPL command didn't return a buffer"))
+      (with-current-buffer repl-buffer (+eval-repl-mode +1))
+      (setq +eval-last-repl-buffer repl-buffer)
+      (doom-popup-buffer repl-buffer))))
 
 ;;;###autoload
-(defun +repl/send ()
-  (interactive)
-  ;; TODO
-  (error "Not implemented"))
+(defun +eval/repl-send-region (beg end &optional inhibit-run-p)
+  "Send a selection to the REPL."
+  (interactive "r")
+  (when +eval-last-repl-buffer
+    (let ((selection (buffer-substring-no-properties beg end)))
+      (select-window (get-buffer-window +eval-last-repl-buffer))
+      (goto-char (point-max))
+      (insert selection)
+      (when (and (featurep 'evil) evil-mode)
+        (evil-change-state 'insert)))))
 
-;;;###autoload (autoload '+repl:open "feature/repl/autoload/repl" nil t)
-;;;###autoload (autoload '+repl:send "feature/repl/autoload/repl" nil t)
-
-(after! evil
-  (evil-define-command +repl:open (&optional bang command)
-    :repeat nil
-    (interactive "<!><a>")
-    (if (and doom-repl-buffer (buffer-live-p doom-repl-buffer))
-        (doom-popup-buffer doom-repl-buffer)
-      (rtog/toggle-repl (if (use-region-p) 4))
-      (setq doom-repl-buffer (current-buffer))
-      (when command
-        (with-current-buffer doom-repl-buffer
-          (insert command)
-          (unless bang (comint-send-input))))))
-
-  (evil-define-operator +repl:eval (&optional beg end bang)
-    :type inclusive :repeat nil
-    (interactive "<r><!>")
-    (let ((region-p (use-region-p))
-          (selection (s-trim (buffer-substring-no-properties beg end))))
-      (doom:repl bang)
-      (when (and region-p beg end)
-        (let* ((buf doom-repl-buffer)
-               (win (get-buffer-window buf)))
-          (unless (eq buf (doom-popup-p (get-buffer-window buf)))
-            (doom-popup-buffer buf))
-          (when (and doom-repl-buffer (buffer-live-p doom-repl-buffer))
-            (with-current-buffer doom-repl-buffer
-              (goto-char (point-max))
-              (insert selection))))))))

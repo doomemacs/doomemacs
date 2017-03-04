@@ -1,14 +1,14 @@
 ;;; feature/eval/autoload/evil.el
 
-;;;###autoload (autoload '+repl:eval-region "feature/eval/autoload/evil" nil t)
-(evil-define-operator +repl:eval-region (beg end)
+;;;###autoload (autoload '+eval:region "feature/eval/autoload/evil" nil t)
+(evil-define-operator +eval:region (beg end)
+  "Send region to the currently open repl, if available."
   :move-point nil
   (interactive "<r>")
-  (+repl/eval-region beg end))
+  (+eval/region beg end))
 
-;;;###autoload (autoload '+repl:eval-region-and-replace "feature/eval/autoload/evil" nil t)
-(evil-define-operator +repl:eval-region-and-replace (beg end)
+;;;###autoload (autoload '+eval:replace-region "feature/eval/autoload/evil" nil t)
+(evil-define-operator +eval:replace-region (beg end)
   :move-point nil
   (interactive "<r>")
-  (+repl/eval-region-and-replace beg end))
-
+  (+eval/region-and-replace beg end))

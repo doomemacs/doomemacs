@@ -1,6 +1,5 @@
 ;; -*- no-byte-compile: t; -*-
-;;; feature/repl/packages.el
+;;; feature/eval/packages.el
 
 (package! quickrun)
-(package! repl-toggle)
 
