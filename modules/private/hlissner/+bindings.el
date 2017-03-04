@@ -146,10 +146,10 @@
 
    (:desc "Code tools"
      :prefix "c"
-     :desc "Build"                  :n "b" '+eval/build
-     :desc "Open REPL"              :n "r" '+eval/repl
-     :desc "Open REPL"              :v "r" '+eval/repl-send-region
-     :desc "Open debugger"          :n "R" '+debug/open)
+     :desc "(re)build"              :n  "b" '+eval/rebuild
+     :desc "Build"                  :n  "B" '+eval/build
+     :desc "Open/Send to REPL"      :nv "r" '+eval/repl
+     :desc "Open debugger"          :n  "R" '+debug/open)
 
    (:desc "Personal"
      :prefix "SPC"
@@ -209,9 +209,9 @@
  :n  "gp" '+evil/reselect-paste
  :n  "gc" 'evil-commentary
  :n  "gx" 'evil-exchange
- :n  "gr" '+repl:eval-region
- :n  "gR" '+repl/eval-buffer
- :v  "gR" '+repl:eval-region-and-replace
+ :n  "gr" '+eval:region
+ :n  "gR" '+eval/buffer
+ :v  "gR" '+eval:replace-region
  :m  "g]" 'smart-forward
  :m  "g[" 'smart-backward
  :v  "@"  '+evil:macro-on-all-lines
