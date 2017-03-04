@@ -349,7 +349,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
               "  "
               +doom-modeline-vspc))))
 
-(defun +doom-ml-icon (icon &optional text face)
+(def-memoized! +doom-ml-icon (icon &optional text face)
   "Displays an octicon ICON with FACE, followed by TEXT. Uses
 `all-the-icons-octicon' to fetch the icon."
   (concat
@@ -371,7 +371,7 @@ icons."
                      (let-alist (flycheck-count-errors flycheck-current-errors)
                        (let ((sum (+ (or .error 0) (or .warning 0))))
                          (+doom-ml-icon "circle-slash" (format "%s issue%s" sum (if (eq 1 sum) "" "s"))
-                                     (if .error 'doom-modeline-urgent 'doom-modeline-warning))))
+                                        (if .error 'doom-modeline-urgent 'doom-modeline-warning))))
                    (concat
                     (+doom-ml-icon "check" nil 'doom-modeline-info) " ")))
       ('running     (+doom-ml-icon "ellipsis" "Running" 'font-lock-doc-face))
