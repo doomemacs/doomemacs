@@ -167,8 +167,9 @@ session."
        "Session to load: "
        (directory-files persp-save-dir nil "^[^_.]")
        nil t))))
-  (+workspace-load-session (or name "last"))
-  (+workspace/display))
+  (let ((name (or name "last")))
+    (+workspace-load-session name)
+    (+workspace-message (format "'%s' workspace loaded" name) 'success)))
 
 ;;;###autoload
 (defun +workspace/save (name)
@@ -180,7 +181,7 @@ workspace."
         (+workspace-current-name)
       (completing-read "Workspace to save: " (+workspace-list)))))
   (if (+workspace-save name)
-      (+workspace-message (format "%s workspace saved" name) 'success)
+      (+workspace-message (format "'%s' workspace saved" name) 'success)
     (+workspace-error (format "Couldn't save workspace %s" name))))
 
 ;;;###autoload
