@@ -11,8 +11,7 @@
     `(progn
        (defun ,def-name ()
          (require 'company)
-         (set (make-local-variable 'company-backends)
-              (append '((,@backends)) company-backends)))
+         (setq-local company-backends (append '((,@backends)) company-backends)))
        (add-hook! ,modes ',def-name))))
 
 
@@ -36,15 +35,13 @@
         company-frontends '(company-pseudo-tooltip-frontend company-echo-metadata-frontend)
         company-backends '(company-capf))
 
-  (set! :company-backend 'python-mode '(company-anaconda))
-
   (push 'company-sort-by-occurrence company-transformers)
 
   (after! yasnippet
     (nconc company-backends '(company-yasnippet)))
 
   (map! (:map company-active-map
-          ;; Don't interfere with insert mode binding for `evil-delete-backward-word'
+          ;; Don't interfere with `evil-delete-backward-word' in insert mode
           "C-w"        nil
 
           "C-o"        'company-search-kill-others
@@ -55,10 +52,10 @@
           "C-S-s"      'company-search-candidates
           "C-s"        'company-filter-candidates
           "C-SPC"      'company-complete-common
+          "C-h"        'company-quickhelp-manual-begin
           [tab]        'company-complete-common-or-cycle
           [backtab]    'company-select-previous
-          [escape]     (λ! (company-abort) (evil-normal-state 1))
-          [C-return]   'counsel-company)
+          [escape]     (λ! (company-abort) (evil-normal-state 1)))
 
         ;; Automatically applies to `company-filter-map'
         (:map company-search-map
