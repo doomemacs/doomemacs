@@ -370,13 +370,6 @@ SUBMODULE is a symbol."
 ;; Commands
 ;;
 
-(defun doom/reload ()
-  "Reload `load-path' by reinitializing package.el and reloading autoloads."
-  (interactive)
-  (doom-initialize t)
-  (doom/reload-autoloads)
-  (message "Reloaded %s packages" (length package-alist)))
-
 (defun doom/reload-autoloads ()
   "Refreshes the autoloads.el file, which tells Emacs where to find all the
 autoloaded functions in enabled modules or among the core libraries, e.g.
