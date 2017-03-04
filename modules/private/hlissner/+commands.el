@@ -41,14 +41,14 @@
 ;; TODO :gblame
 
 ;; Dealing with buffers
-(ex! "clean[up]"   'doom/cleanup-buffers)       ; Clean up old/unreal buffers
-(ex! "k[ill]"      'doom/kill-real-buffer)      ; Kill current buffer
-(ex! "k[ill]all"   '+hlissner:kill-all-buffers)      ; Kill buffers (bang = in project)
-(ex! "k[ill]m"     '+hlissner:kill-matching-buffers) ; kill buffers by regexp
-(ex! "k[ill]o"     'doom/kill-other-buffers)    ; kill other buffers
-(ex! "l[ast]"      'doom/popup-last-buffer)     ; pop up last popup
-(ex! "m[sg]"       'view-echo-area-messages)    ; open *messages* in popup
-(ex! "pop[up]"     'doom/popup)                 ; open current buffer in popup
+(ex! "clean[up]"   'doom/cleanup-buffers)
+(ex! "k[ill]"      'doom/kill-this-buffer)
+(ex! "k[ill]all"   '+hlissner:kill-all-buffers)
+(ex! "k[ill]m"     '+hlissner:kill-matching-buffers)
+(ex! "k[ill]o"     'doom/kill-other-buffers)
+(ex! "l[ast]"      'doom/popup-restore)
+(ex! "m[sg]"       'view-echo-area-messages)
+(ex! "pop[up]"     'doom/popup) ; open current buffer in popup
 
 ;; Project navigation
 (ex! "a"           'projectile-find-other-file)
@@ -69,8 +69,8 @@
 
 ;; Sessions/tabs
 (ex! "sclear"      '+workspace/kill-session)
-(ex! "sl[oad]"     '+workspace:load-session) ; TODO :sload [NAME]
-(ex! "ss[ave]"     '+workspace:save-session) ; TODO :ssave [NAME]
+(ex! "sl[oad]"     '+workspace:load-session)
+(ex! "ss[ave]"     '+workspace:save-session)
 (ex! "tabc[lose]"  '+workspace:delete)
 (ex! "tabclear"    'doom/kill-all-buffers)
 (ex! "tabl[ast]"   '+workspace/switch-to-list)
