@@ -52,8 +52,7 @@
     (dolist (hook (if (listp hooks) hooks (list hooks)) (nreverse ret-hooks))
       (push (cond ((eq (car-safe hook) 'quote)
                    (cadr hook))
-                  ((string-suffix-p "-hook" (symbol-name hook))
-                   hook)
+                  (quoted-p hook)
                   (t
                    (intern (format "%s-hook" (symbol-name hook)))))
             ret-hooks))))
