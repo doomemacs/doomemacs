@@ -154,12 +154,14 @@ file."
       (set-buffer-modified-p nil))
     nil)
 
-  (add-hook! highlight-indent-guides-mode
+  (add-hook! 'highlight-indent-guides-mode-hook
     (if highlight-indent-guides-mode
         (progn
           (doom|inject-trailing-whitespace)
-          (add-hook 'after-save-hook 'doom|adjust-indent-guides nil t))
-      (remove-hook 'after-save-hook 'doom|adjust-indent-guides t)
+          (add-hook 'before-save-hook 'delete-trailing-whitespace nil t)
+          (add-hook 'after-save-hook 'doom|inject-trailing-whitespace nil t))
+      (remove-hook 'before-save-hook 'delete-trailing-whitespace t)
+      (remove-hook 'after-save-hook 'doom|inject-trailing-whitespace t)
       (delete-trailing-whitespace))))
 
 ;; For modes that don't adequately highlight numbers
