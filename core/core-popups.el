@@ -168,8 +168,10 @@ and setting `doom-popup-rules' within it. Returns the window."
   (unless (doom-popup-p)
     (setq doom-popup-other-window (selected-window)))
   (let ((plist (or (nth 2 args)
-                   (and (bufferp (car args))
-                        (shackle-match (window-buffer (car args))))))
+                   (cond ((windowp (car args))
+                          (shackle-match (window-buffer (car args))))
+                         ((bufferp (car args))
+                          (shackle-match (car args))))))
         (window (apply orig-fn args)))
     (unless window
       (error "No popup window was found for %s: %s" (car args) plist))
