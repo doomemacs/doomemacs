@@ -10,9 +10,12 @@
         js2-highlight-external-variables nil
         js2-mode-show-parse-errors nil)
 
-  (add-hook! js2-mode '(tern-mode flycheck-mode highlight-indent-guides-mode))
+  (add-hook! 'js2-mode-hook
+    '(tern-mode flycheck-mode highlight-indent-guides-mode
+      rainbow-delimiters-mode))
+
   ;; Conform switch-case indentation to editorconfig's config
-  (add-hook! js2-mode (setq js-switch-indent-offset js-indent-level))
+  (add-hook! 'js2-mode-hook (setq js-switch-indent-offset js-indent-level))
 
   (set! :repl 'js2-mode 'nodejs-repl)
 

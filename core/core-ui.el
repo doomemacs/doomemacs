@@ -198,9 +198,7 @@ file."
 (def-package! rainbow-delimiters
   :commands rainbow-delimiters-mode
   :config (setq rainbow-delimiters-max-face-count 3)
-  :init
-  (add-hook! (emacs-lisp-mode lisp-mode js-mode css-mode c-mode-common)
-    'rainbow-delimiters-mode))
+  :init (add-hook 'lisp-mode-hook 'rainbow-delimiters-mode))
 
 
 ;;

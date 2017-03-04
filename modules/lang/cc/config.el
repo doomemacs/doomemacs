@@ -27,6 +27,7 @@
   (setq c-tab-always-indent nil
         c-electric-flag nil)
 
+  (add-hook 'c-mode-common-hook 'rainbow-delimiters-mode)
   ;; extra highlights for numbers in C (`modern-cpp-font-lock' offers something better for C++)
   (add-hook 'c-mode-hook 'highlight-numbers-mode)
   ;; Fontification of C++11 string literals

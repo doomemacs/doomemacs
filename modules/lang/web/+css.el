@@ -1,5 +1,7 @@
 ;;; lang/web/+css.el
 
+(add-hook! (css-mode scss-mode less-css-mode) 'rainbow-delimiters-mode)
+
 (sp-with-modes '(css-mode scss-mode less-css-mode stylus-mode)
   (sp-local-pair "/*" "*/" :post-handlers '(("[d-3]||\n[i]" "RET") ("| " "SPC"))))
 
