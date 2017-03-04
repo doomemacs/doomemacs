@@ -112,6 +112,8 @@ for :align t on every rule."
   (let ((map (make-sparse-keymap)))
     (define-key map [escape]    'doom/popup-close-maybe)
     (define-key map (kbd "ESC") 'doom/popup-close-maybe)
+    (define-key map [remap doom-kill-buffer] 'kill-this-buffer)
+    (define-key map [remap doom/kill-this-buffer] 'kill-this-buffer)
     map)
   "Active keymap in popup windows.")
 
