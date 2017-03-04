@@ -220,127 +220,125 @@ properties."
 ;; Hacks
 ;;
 
-;; Run these as late as possible, to give a chance for other modules to
-;; customize these settings in their own hooks.
-(add-hook! 'window-setup-hook
-  (after! evil
-    (let ((map doom-popup-mode-map))
-      (define-key map [remap evil-window-delete]           'doom/popup-close)
-      (define-key map [remap evil-window-move-very-bottom] 'ignore)
-      (define-key map [remap evil-window-move-very-top]    'ignore)
-      (define-key map [remap evil-window-move-far-left]    'ignore)
-      (define-key map [remap evil-window-move-far-right]   'ignore)
-      (define-key map [remap evil-window-split]            'ignore)
-      (define-key map [remap evil-window-vsplit]           'ignore)
-      (define-key map [remap evil-force-normal-state]      'doom/popup-close-maybe))
+(after! evil
+  (let ((map doom-popup-mode-map))
+    (define-key map [remap evil-window-delete]           'doom/popup-close)
+    (define-key map [remap evil-save-modified-and-close] 'doom/popup-close)
+    (define-key map [remap evil-window-move-very-bottom] 'ignore)
+    (define-key map [remap evil-window-move-very-top]    'ignore)
+    (define-key map [remap evil-window-move-far-left]    'ignore)
+    (define-key map [remap evil-window-move-far-right]   'ignore)
+    (define-key map [remap evil-window-split]            'ignore)
+    (define-key map [remap evil-window-vsplit]           'ignore)
+    (define-key map [remap evil-force-normal-state]      'doom/popup-close-maybe))
 
-    (defun doom*popup-close-all-maybe ()
-      "Close popups with an :autoclose property when pressing ESC from normal
+  (defun doom*popup-close-all-maybe ()
+    "Close popups with an :autoclose property when pressing ESC from normal
 mode in any evil-mode buffer."
-      (unless (or (minibuffer-window-active-p (minibuffer-window))
-                  (and (bound-and-true-p evil-mode)
-                       (evil-ex-hl-active-p 'evil-ex-search)))
-        (doom/popup-close-all)))
-    (advice-add 'evil-force-normal-state :after 'doom*popup-close-all-maybe)
+    (unless (or (minibuffer-window-active-p (minibuffer-window))
+                (and (bound-and-true-p evil-mode)
+                     (evil-ex-hl-active-p 'evil-ex-search)))
+      (doom/popup-close-all)))
+  (advice-add 'evil-force-normal-state :after 'doom*popup-close-all-maybe)
 
-    ;; Make evil-mode cooperate with popups
-    (advice-add 'evil-command-window :override 'doom*popup-evil-command-window)
-    (advice-add 'evil-command-window-execute :override 'doom*popup-evil-command-window-execute)
+  ;; Make evil-mode cooperate with popups
+  (advice-add 'evil-command-window :override 'doom*popup-evil-command-window)
+  (advice-add 'evil-command-window-execute :override 'doom*popup-evil-command-window-execute)
 
-    (defun doom*popup-evil-command-window (hist cmd-key execute-fn)
-      "The evil command window has a mind of its own (uses `switch-to-buffer'). We
+  (defun doom*popup-evil-command-window (hist cmd-key execute-fn)
+    "The evil command window has a mind of its own (uses `switch-to-buffer'). We
 monkey patch it to use pop-to-buffer, and to remember the previous window."
-      (when (eq major-mode 'evil-command-window-mode)
-        (user-error "Cannot recursively open command line window"))
-      (dolist (win (window-list))
-        (when (equal (buffer-name (window-buffer win))
-                     "*Command Line*")
-          (kill-buffer (window-buffer win))
-          (delete-window win)))
-      (setq evil-command-window-current-buffer (current-buffer))
-      (ignore-errors (kill-buffer "*Command Line*"))
-      (with-current-buffer (pop-to-buffer "*Command Line*")
-        (setq-local evil-command-window-execute-fn execute-fn)
-        (setq-local evil-command-window-cmd-key cmd-key)
-        (evil-command-window-mode)
-        (evil-command-window-insert-commands hist)))
+    (when (eq major-mode 'evil-command-window-mode)
+      (user-error "Cannot recursively open command line window"))
+    (dolist (win (window-list))
+      (when (equal (buffer-name (window-buffer win))
+                   "*Command Line*")
+        (kill-buffer (window-buffer win))
+        (delete-window win)))
+    (setq evil-command-window-current-buffer (current-buffer))
+    (ignore-errors (kill-buffer "*Command Line*"))
+    (with-current-buffer (pop-to-buffer "*Command Line*")
+      (setq-local evil-command-window-execute-fn execute-fn)
+      (setq-local evil-command-window-cmd-key cmd-key)
+      (evil-command-window-mode)
+      (evil-command-window-insert-commands hist)))
 
-    (defun doom*popup-evil-command-window-execute ()
-      "Execute the command under the cursor in the appropriate buffer, rather than
+  (defun doom*popup-evil-command-window-execute ()
+    "Execute the command under the cursor in the appropriate buffer, rather than
 the command buffer."
-      (interactive)
-      (let ((result (buffer-substring (line-beginning-position)
-                                      (line-end-position)))
-            (execute-fn evil-command-window-execute-fn)
-            (popup (selected-window)))
-        (select-window doom-popup-other-window)
-        (unless (equal evil-command-window-current-buffer (current-buffer))
-          (user-error "Originating buffer is no longer active"))
-        ;; (kill-buffer "*Command Line*")
-        (doom/popup-close popup)
-        (funcall execute-fn result)
-        (setq evil-command-window-current-buffer nil)))
+    (interactive)
+    (let ((result (buffer-substring (line-beginning-position)
+                                    (line-end-position)))
+          (execute-fn evil-command-window-execute-fn)
+          (popup (selected-window)))
+      (select-window doom-popup-other-window)
+      (unless (equal evil-command-window-current-buffer (current-buffer))
+        (user-error "Originating buffer is no longer active"))
+      ;; (kill-buffer "*Command Line*")
+      (doom/popup-close popup)
+      (funcall execute-fn result)
+      (setq evil-command-window-current-buffer nil)))
 
-    ;; Don't mess with popups
-    (advice-add 'doom-evil-window-move        :around 'doom*popups-save)
-    (advice-add 'evil-window-move-very-bottom :around 'doom*popups-save)
-    (advice-add 'evil-window-move-very-top    :around 'doom*popups-save)
-    (advice-add 'evil-window-move-far-left    :around 'doom*popups-save)
-    (advice-add 'evil-window-move-far-right   :around 'doom*popups-save)
+  ;; Don't mess with popups
+  (advice-add 'doom-evil-window-move        :around 'doom*popups-save)
+  (advice-add 'evil-window-move-very-bottom :around 'doom*popups-save)
+  (advice-add 'evil-window-move-very-top    :around 'doom*popups-save)
+  (advice-add 'evil-window-move-far-left    :around 'doom*popups-save)
+  (advice-add 'evil-window-move-far-right   :around 'doom*popups-save)
 
-    ;; Don't block moving to/from popup windows
-    (defun doom*ignore-window-parameters-in-popups (dir &optional arg window)
-      (window-in-direction (cond ((eq dir 'up)   'above)
-                                 ((eq dir 'down) 'below)
-                                 (t dir))
-                           window t arg windmove-wrap-around t))
-    (advice-add 'windmove-find-other-window :override 'doom*ignore-window-parameters-in-popups))
-
-
-  (after! help-mode
-    ;; Help buffers use `other-window' to decide where to open followed links,
-    ;; which can be unpredictable. It should *only* replace the original buffer we
-    ;; opened the popup from. To fix this these three button types need to be
-    ;; redefined to set aside the popup before following a link.
-    (defsubst doom--switch-from-popup (location)
-      (doom/popup-close)
-      (switch-to-buffer (car location) nil t)
-      (if (not (cdr location))
-          (message "Unable to find location in file")
-        (goto-char (cdr location))
-        (recenter)))
-
-    (define-button-type 'help-function-def
-      :supertype 'help-xref
-      'help-function
-      (lambda (fun file)
-        (require 'find-func)
-        (when (eq file 'C-source)
-          (setq file (help-C-file-name (indirect-function fun) 'fun)))
-        (doom--switch-from-popup (find-function-search-for-symbol fun nil file))))
-
-    (define-button-type 'help-variable-def
-      :supertype 'help-xref
-      'help-function
-      (lambda (var &optional file)
-        (when (eq file 'C-source)
-          (setq file (help-C-file-name var 'var)))
-        (doom--switch-from-popup (find-variable-noselect var file))))
-
-    (define-button-type 'help-face-def
-      :supertype 'help-xref
-      'help-function
-      (lambda (fun file)
-        (require 'find-func)
-        (doom--switch-from-popup (find-function-search-for-symbol fun 'defface file)))))
+  ;; Don't block moving to/from popup windows
+  (defun doom*ignore-window-parameters-in-popups (dir &optional arg window)
+    (window-in-direction (cond ((eq dir 'up)   'above)
+                               ((eq dir 'down) 'below)
+                               (t dir))
+                         window t arg windmove-wrap-around t))
+  (advice-add 'windmove-find-other-window :override 'doom*ignore-window-parameters-in-popups))
 
 
-  ;; (after! magit
-  ;;   ;; Don't open files (from magit) within the magit popup
-  ;;   (advice-add 'magit-display-file-buffer-traditional :around 'doom*popups-save))
+(after! help-mode
+  ;; Help buffers use `other-window' to decide where to open followed links,
+  ;; which can be unpredictable. It should *only* replace the original buffer we
+  ;; opened the popup from. To fix this these three button types need to be
+  ;; redefined to set aside the popup before following a link.
+  (defsubst doom--switch-from-popup (location)
+    (doom/popup-close)
+    (switch-to-buffer (car location) nil t)
+    (if (not (cdr location))
+        (message "Unable to find location in file")
+      (goto-char (cdr location))
+      (recenter)))
+
+  (define-button-type 'help-function-def
+    :supertype 'help-xref
+    'help-function
+    (lambda (fun file)
+      (require 'find-func)
+      (when (eq file 'C-source)
+        (setq file (help-C-file-name (indirect-function fun) 'fun)))
+      (doom--switch-from-popup (find-function-search-for-symbol fun nil file))))
+
+  (define-button-type 'help-variable-def
+    :supertype 'help-xref
+    'help-function
+    (lambda (var &optional file)
+      (when (eq file 'C-source)
+        (setq file (help-C-file-name var 'var)))
+      (doom--switch-from-popup (find-variable-noselect var file))))
+
+  (define-button-type 'help-face-def
+    :supertype 'help-xref
+    'help-function
+    (lambda (fun file)
+      (require 'find-func)
+      (doom--switch-from-popup (find-function-search-for-symbol fun 'defface file)))))
 
 
-  (after! neotree
+;; (after! magit
+;;   ;; Don't open files (from magit) within the magit popup
+;;   (advice-add 'magit-display-file-buffer-traditional :around 'doom*popups-save))
+
+
+(after! neotree
     (defun doom*popups-save-neotree (orig-fn &rest args)
       "Prevents messing up the neotree buffer on window changes."
       (let ((neo-p (and (featurep 'neotree)
@@ -361,13 +359,16 @@ the command buffer."
     (advice-add 'evil-window-move-far-right   :around 'doom*popups-save-neotree))
 
 
+;; Ensure these settings are attached to org-load-hook as late as possible,
+;; giving other modules to add their own hooks.
+(add-hook! 'after-init-hook
   (add-hook! 'org-load-hook
     (set! :popup
       '("*Calendar*"         :size 0.4 :noselect t)
-      '(" *Org todo*"        :size 5 :noselect t)
+      '(" *Org todo*"        :size 5   :noselect t)
       '("*Org Note*"         :size 10)
-      '("*Org Select*"       :size 20 :noselect t)
-      '("*Org Links*"        :size 5 :noselect t)
+      '("*Org Select*"       :size 20  :noselect t)
+      '("*Org Links*"        :size 5   :noselect t)
       '(" *Agenda Commands*" :noselect t)
       '("^\\*Org Agenda"     :regexp t :size 30)
       '("*Org Clock*"        :noselect t)
@@ -408,12 +409,7 @@ the command buffer."
               :m "ESC"    'org-agenda-Quit))
       (let ((map org-agenda-mode-map))
         (define-key map "q" 'org-agenda-Quit)
-        (define-key map "Q" 'org-agenda-Quit))))
-
-
-  (after! repl-toggle
-    (add-hook! doom-popup-close
-      (setq rtog/--last-buffer nil))))
+        (define-key map "Q" 'org-agenda-Quit)))))
 
 (provide 'core-popups)
 ;;; core-popups.el ends here
