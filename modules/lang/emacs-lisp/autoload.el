@@ -20,12 +20,14 @@ C-u), then reveal the function in a popup window."
 
 ;;;###autoload
 (defun +emacs-lisp/repl ()
-  "Open an ielm REPL for Emacs Lisp."
+  "Open the Emacs Lisp REPL (`ielm')."
   (interactive)
-  (ielm)
-  (let ((buf (current-buffer)))
-    (bury-buffer)
-    (pop-to-buffer buf)))
+  (pop-to-buffer
+   (or (get-buffer "*ielm*")
+       (progn (ielm)
+              (let ((buf (get-buffer "*ielm*")))
+                (bury-buffer buf)
+                buf)))))
 
 
 ;; ---- ert ---------------------------------------------------

@@ -7,10 +7,8 @@
   :init
   (add-hook 'ruby-mode-hook 'flycheck-mode)
   :config
-  (set! :build 'rake 'ruby-mode '+ruby/rake)
   (set! :company-backend 'ruby-mode '(company-dabbrev-code))
   (set! :electric 'ruby-mode :words '("else" "end" "elseif"))
-  (set! :repl 'ruby-mode 'inf-ruby)
   (setq ruby-deep-indent-paren t)
   ;; Don't interfere with my custom RET behavior
   (define-key ruby-mode-map [?\n] nil)
@@ -65,6 +63,8 @@
 
 (def-package! inf-ruby
   :commands (inf-ruby inf-ruby-console-auto)
+  :init
+  (set! :repl 'ruby-mode 'inf-ruby)
   :config
   (set! :company-backend 'inf-ruby-mode '(company-inf-ruby)))
 
@@ -78,4 +78,7 @@
 ;;
 
 ;; (def-project-mode! +ruby-rake-mode
-;;   :files "Rakefile")
+;;   :files "Rakefile"
+;;   :init
+;;   (set! :build 'rake '+ruby-rake-mode '+ruby/rake
+;;     :when (doom-project-has! "Rakefile")))

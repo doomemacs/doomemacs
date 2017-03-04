@@ -5,8 +5,8 @@
   :init
   (setq python-environment-directory doom-cache-dir
         python-indent-guess-indent-offset-verbose nil
-        python-shell-interpreter "ipython"
-        python-shell-interpreter-args "--deep-reload"
+        python-shell-interpreter "python"
+        python-shell-interpreter-args nil
         python-shell-prompt-regexp "In \\[[0-9]+\\]: "
         python-shell-prompt-block-regexp "\\.\\.\\.\\.: "
         python-shell-prompt-output-regexp "Out\\[[0-9]+\\]: "

@@ -6,9 +6,7 @@
   (add-hook 'emacs-lisp-mode-hook '+emacs-lisp|hook)
 
   :config
-  (map! :map emacs-lisp-mode-map
-        :m "gd" '+emacs-lisp/find-function)
-
+  (set! :repl 'emacs-lisp-mode '+emacs-lisp/repl)
   (set! :rotate 'emacs-lisp-mode
         :symbols '(("t" "nil")
                    ("let" "let*")
@@ -20,6 +18,9 @@
 
   ;; Don't affect lisp indentation (only `tab-width')
   (set! :editorconfig :remove 'emacs-lisp-mode)
+
+  (map! :map emacs-lisp-mode-map
+        :m "gd" '+emacs-lisp/find-function)
 
   (defun +emacs-lisp|hook ()
     (setq mode-name "Elisp") ; [pedantry intensifies]
@@ -69,5 +70,9 @@
 
 
 (def-package! slime
-  :config (setq inferior-lisp-program "clisp"))
+  :config
+  (setq inferior-lisp-program "clisp"
+        ;; enable fuzzy matching in code buffer and SLIME REPL
+        slime-complete-symbol*-fancy t
+        slime-complete-symbol-function 'slime-fuzzy-complete-symbol))
 
