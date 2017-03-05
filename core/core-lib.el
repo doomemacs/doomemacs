@@ -5,25 +5,29 @@
   (require 'subr-x))
 
 ;; I don't use use-package for these to save on the `fboundp' lookups it does
-;; for its :commands property.
-(mapc (lambda (sym) (autoload sym "async"))
-      '(async-start async-start-process async-byte-recompile-directory))
-
-(mapc (lambda (sym) (autoload sym "persistent-soft"))
-      '(persistent-soft-exists-p persistent-soft-fetch persistent-soft-flush persistent-soft-store))
-
-(mapc (lambda (sym) (autoload sym "s"))
-      '(s-trim s-trim-left s-trim-right s-chomp s-collapse-whitespace s-word-wrap
-        s-center s-pad-left s-pad-right s-truncate s-left s-right s-chop-suffix
-        s-chop-suffixes s-chop-prefix s-chop-prefixes s-shared-start s-shared-end
-        s-repeat s-concat s-prepend s-append s-lines s-match s-match-strings-all
-        s-matched-positions-all s-slice-at s-split s-split-up-to s-join s-equals?
-        s-less? s-matches? s-blank? s-present? s-ends-with? s-starts-with? s-contains?
-        s-lowercase? s-uppercase? s-mixedcase? s-capitalized? s-numeric? s-replace
-        s-replace-all s-downcase s-upcase s-capitalize s-titleize s-with s-index-of
-        s-reverse s-presence s-format s-lex-format s-count-matches s-wrap s-split-words
-        s-lower-camel-case s-upper-camel-case s-snake-case s-dashed-words
-        s-capitalized-words s-titleized-words s-word-initials))
+;; for its :commands property. I use dolists instead of mapc to avoid extra
+;; stackframes allocated for lambdas. This is _definitely_ premature
+;; optimization.
+(dolist (sym '(async-start async-start-process async-byte-recompile-directory))
+  (autoload sym "async"))
+(dolist (sym '(persistent-soft-exists-p persistent-soft-fetch
+               persistent-soft-flush persistent-soft-store))
+  (autoload sym "persistent-soft"))
+(dolist (sym '(s-trim s-trim-left s-trim-right s-chomp s-collapse-whitespace
+               s-word-wrap s-center s-pad-left s-pad-right s-truncate s-left
+               s-right s-chop-suffix s-chop-suffixes s-chop-prefix
+               s-chop-prefixes s-shared-start s-shared-end s-repeat s-concat
+               s-prepend s-append s-lines s-match s-match-strings-all
+               s-matched-positions-all s-slice-at s-split s-split-up-to s-join
+               s-equals? s-less? s-matches? s-blank? s-present? s-ends-with?
+               s-starts-with? s-contains? s-lowercase? s-uppercase? s-mixedcase?
+               s-capitalized? s-numeric? s-replace s-replace-all s-downcase
+               s-upcase s-capitalize s-titleize s-with s-index-of s-reverse
+               s-presence s-format s-lex-format s-count-matches s-wrap
+               s-split-words s-lower-camel-case s-upper-camel-case s-snake-case
+               s-dashed-words s-capitalized-words s-titleized-words
+               s-word-initials))
+  (autoload sym "s"))
 
 
 ;;

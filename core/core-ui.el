@@ -68,8 +68,8 @@ disabled.")
 (put 'doom--old-modeline-format 'permanent-local t)
 (put 'doom-hide-modeline-mode 'permanent-local t)
 
-;; window config undo/redo
-(defvar winner-dont-bind-my-keys t)
+;; undo/redo changes to Emacs' window layout
+(defvar winner-dont-bind-my-keys t) ; I'll bind keys myself
 (require 'winner)
 (add-hook 'window-setup-hook 'winner-mode)
 
@@ -86,7 +86,6 @@ disabled.")
   ;; buffer name  in frame title
   (setq-default frame-title-format '("DOOM Emacs"))
   ;; standardize fringe width
-  (fringe-mode doom-ui-fringe-size)
   (push (cons 'left-fringe  doom-ui-fringe-size) default-frame-alist)
   (push (cons 'right-fringe doom-ui-fringe-size) default-frame-alist)
   ;; no fringe in the minibuffer

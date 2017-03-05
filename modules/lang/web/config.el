@@ -19,10 +19,10 @@
        (let* ((project-root (doom-project-root))
               (bower (and +web-bower-mode (+web-bower-conf project-root)))
               (npm   (and +javascript-npm-mode (+javascript-npm-conf project-root))))
-         (assq 'angular (append (cdr-safe (assq 'dependencies bower))
-                                (cdr-safe (assq 'dependencies npm))
-                                (cdr-safe (assq 'devDependencies bower))
-                                (cdr-safe (assq 'devDependencies npm)))))))
+         (assq 'angular (append (cdr (assq 'dependencies bower))
+                                (cdr (assq 'dependencies npm))
+                                (cdr (assq 'devDependencies bower))
+                                (cdr (assq 'devDependencies npm)))))))
 
 (def-project-mode! +web-jekyll-mode
   :modes (web-mode js-mode coffee-mode css-mode haml-mode pug-mode)

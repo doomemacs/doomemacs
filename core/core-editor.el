@@ -109,7 +109,7 @@
 ;; Auto-close delimiters and blocks as you type
 (def-package! smartparens :demand t
   :init
-  (setq sp-autowrap-region nil          ; let evil-surround handle this
+  (setq sp-autowrap-region nil ; let evil-surround handle this
         sp-highlight-pair-overlay nil
         sp-cancel-autoskip-on-backward-movement nil
         sp-show-pair-delay 0

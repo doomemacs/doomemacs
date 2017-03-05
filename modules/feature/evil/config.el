@@ -66,16 +66,8 @@
   (add-hook 'evil-operator-state-exit-hook  '+evil|show-paren-mode-off)
   (add-hook 'evil-normal-state-entry-hook   '+evil|show-paren-mode-off)
 
-  (mapc (lambda (args) (evil-set-initial-state (car args) (cdr args)))
-        '((tabulated-list-mode    . emacs)
-          (profile-report-mode    . emacs)
-          (Info-mode              . emacs)
-          (view-mode              . emacs)
-          (comint-mode            . emacs)
-          (term-mode              . emacs)
-          (calendar-mode          . emacs)
-          (Man-mode               . emacs)
-          (grep-mode              . emacs))))
+  (dolist (mode '(tabulated-list-mode Info-mode view-mode comint-mode term-mode calendar-mode Man-mode grep-mode))
+    (evil-set-initial-state mode 'emacs)))
 
 (defsubst +evil--textobj (key inner-fn &optional outer-fn)
   "Define a text object."

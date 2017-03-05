@@ -141,7 +141,7 @@ popup window/buffer and b) isn't a special buffer."
 ;;;###autoload
 (defun doom-kill-buffer (&optional buffer dont-save)
   "Kill BUFFER (falls back to current buffer if omitted) then switch to a real
-buffer, but buries the buffer if it is present in another window.
+buffer, but only bury the buffer if it is present in another window.
 
 See `doom-real-buffer-p' for what 'real' means."
   (let* ((buffer (or buffer (current-buffer)))

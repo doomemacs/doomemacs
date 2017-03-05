@@ -140,7 +140,6 @@ enable multiple minor modes for the same regexp.")
   (require 'core-os) ; consistent behavior across Oses
   (with-demoted-errors "AUTOLOAD ERROR: %s"
     (require 'autoloads doom-autoload-file t))
-
   (unless noninteractive
     (require 'core-ui)          ; draw me like one of your French editors
     (require 'core-popups)      ; taming sudden yet inevitable windows
