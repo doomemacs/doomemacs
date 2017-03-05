@@ -253,7 +253,7 @@ Used by `require!' and `depends-on!'."
 
 (defun doom--display-benchmark ()
   (message "Loaded %s packages in %.03fs"
-           (- (length load-path) (length doom--base-load-path))
+           (length doom--package-load-path)
            (setq doom-init-time (float-time (time-subtract after-init-time before-init-time)))))
 
 
