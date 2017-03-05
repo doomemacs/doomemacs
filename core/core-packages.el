@@ -107,7 +107,7 @@ base by `doom!' and for calculating how many packages exist.")
 are installed. If you byte-compile core/core.el, this function will be avoided
 to speed up startup."
   ;; Called early during initialization; only use native functions!
-  (unless (or doom-init-p force-p)
+  (when (or (not doom-init-p) force-p)
     (unless noninteractive
       (message "Doom initialized"))
 
