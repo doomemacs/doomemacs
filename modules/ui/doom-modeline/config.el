@@ -38,9 +38,12 @@
   (setq anzu-cons-mode-line-p nil
         anzu-minimum-input-length 1
         anzu-search-threshold 250)
-  ;; Ensure anzu state is cleared when iedit is exited
-  (after! evil-multiedit
-    (add-hook 'iedit-mode-end-hook 'anzu--reset-mode-line)))
+  ;; Ensure anzu state is cleared when searches & iedit are done
+  (after! evil
+    (advice-add 'evil-force-normal-state :after 'anzu--reset-mode-line)
+    (advice-add 'evil-ex-search-abort :after 'anzu--reset-mode-line)
+    (after! evil-multiedit
+      (add-hook 'iedit-mode-end-hook 'anzu--reset-mode-line))))
 
 
 ;;; Flash the mode-line on error
@@ -63,8 +66,9 @@
 (defvar +doom-modeline-current-window (frame-selected-window))
 (defun +doom-modeline|set-selected-window (&rest _)
   "Sets `+doom-modeline-current-window' appropriately"
-  (unless (minibuffer-window-active-p (frame-selected-window))
-    (setq +doom-modeline-current-window (frame-selected-window))))
+  (let ((win (frame-selected-window)))
+    (unless (minibuffer-window-active-p win)
+      (setq +doom-modeline-current-window win))))
 
 (add-hook 'window-configuration-change-hook '+doom-modeline|set-selected-window)
 (add-hook 'focus-in-hook '+doom-modeline|set-selected-window)
@@ -85,7 +89,14 @@
 
 (defvar +doom-modeline-vspc
   (propertize " " 'face 'variable-pitch)
-  "docstring")
+  "TODO")
+
+;; externs
+(defvar anzu--state nil)
+(defvar evil-mode nil)
+(defvar evil-state nil)
+(defvar evil-visual-selection nil)
+(defvar iedit-mode nil)
 
 
 ;;
@@ -394,8 +405,6 @@ icons."
   (save-excursion (goto-char pos)
                   (current-column)))
 
-(defvar evil-state nil)
-(defvar evil-visual-selection nil)
 (def-modeline-segment! selection-info
   "Information about the current selection, such as how many characters and
 lines are selected, or the NxM dimensions of a block selection."
@@ -434,8 +443,6 @@ lines are selected, or the NxM dimensions of a block selection."
                                      :v-adjust -0.05)
               sep))))
 
-(defvar iedit-mode nil)
-(defvar anzu--state nil)
 (defsubst +doom-modeline--anzu ()
   "Show the match index and total number thereof. Requires `anzu', also
 `evil-anzu' if using `evil-mode' for compatibility with `evil-search'."
@@ -448,10 +455,7 @@ lines are selected, or the NxM dimensions of a block selection."
          ('replace (format " %d/%d " here total))
          (_ (format " %s/%d%s " here total (if anzu--overflow-p "+" "")))))
      'face (if (active) 'doom-modeline-panel))))
-;; Ensure anzu state is cleared when searches are aborted
-(advice-add 'evil-ex-search-abort :after 'anzu--reset-mode-line)
 
-(defvar evil-mode nil)
 (defsubst +doom-modeline--evil-substitute ()
   "Show number of :s matches in real time."
   (when (and evil-mode
