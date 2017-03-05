@@ -57,12 +57,17 @@ missing) and shouldn't be deleted.")
 (defvar doom-init-time nil
   "The time it took, in seconds, for DOOM Emacs to initialize.")
 
+(defvar doom--site-load-path load-path
+  "The load path of built in Emacs libraries.")
+
+(defvar doom--package-load-path nil
+  "The load path of package libraries installed via ELPA or QUELPA.")
+
 (defvar doom--base-load-path
   (append (list doom-core-dir doom-modules-dir)
-          load-path)
+          doom--site-load-path)
   "A backup of `load-path' before it was altered by `doom-initialize'. Used as a
-base when running `doom/reload', or by `doom!', for calculating how many
-packages exist.")
+base by `doom!' and for calculating how many packages exist.")
 
 (setq load-prefer-newer nil
       package--init-file-ensured t
@@ -123,7 +128,8 @@ to speed up startup."
     ;; Also, in some edge cases involving package initialization during a
     ;; non-interactive session, `package-initialize' fails to fill `load-path'.
     ;; If we want something done right, do it ourselves!
-    (setq load-path (append load-path (directory-files package-user-dir t "^\\w" t)))
+    (setq doom--package-load-path (directory-files package-user-dir t "^\\w" t)
+          load-path (append load-path doom--package-load-path))
 
     ;; Ensure core packages are installed
     (let ((core-packages (cl-remove-if 'package-installed-p doom-protected-packages)))
