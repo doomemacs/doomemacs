@@ -34,6 +34,7 @@
         anaconda-mode-eldoc-as-single-line t)
 
   :config
+  (set! :popup "*anaconda-mode*" :size 10 :noselect t :autoclose t :autokill t)
   (set! :company-backend 'python-mode '(company-anaconda))
 
   (map! :map anaconda-mode-map :m "gd" 'anaconda-mode-find-definitions)
