@@ -122,7 +122,7 @@
   (add-hook 'evil-replace-state-entry-hook 'turn-off-smartparens-mode)
   (add-hook 'evil-replace-state-exit-hook  'turn-on-smartparens-mode)
   ;; Auto-close more conservatively
-  (sp-pair "'" nil :unless '(sp-point-after-word-p))
+  (sp-pair "'" nil :unless '(sp-point-before-word-p sp-point-after-word-p sp-point-before-same-p))
   (sp-pair "\"" nil :unless '(sp-point-before-word-p sp-point-after-word-p sp-point-before-same-p))
   (sp-pair "{" nil :post-handlers '(("||\n[i]" "RET") ("| " " "))
            :unless '(sp-point-before-word-p sp-point-before-same-p))

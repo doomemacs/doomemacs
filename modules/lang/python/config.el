@@ -19,7 +19,10 @@
 
   :config
   (set! :repl 'python-mode '+python/repl)
-  (define-key python-mode-map (kbd "DEL") nil)) ; interferes with smartparens
+  (define-key python-mode-map (kbd "DEL") nil) ; interferes with smartparens
+
+  (sp-with-modes 'python-mode
+    (sp-local-pair "'" nil :unless '(sp-point-before-word-p sp-point-after-word-p sp-point-before-same-p))))
 
 
 (def-package! anaconda-mode
