@@ -149,7 +149,7 @@ example; the package name can be omitted)."
         (recipe (plist-get plist :recipe)))
     (cond (recipe (quelpa recipe))
           (t (package-install name))))
-  (cl-pushnew (cons name plist) doom-packages :key 'car)
+  (cl-pushnew (cons name plist) doom-packages :test 'eq :key 'car)
   (package-installed-p name))
 
 (defun doom-update-package (name)

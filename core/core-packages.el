@@ -360,7 +360,7 @@ them."
         (plist-put plist :pin nil)))
     `(progn
        (when ,(and pkg-pin t)
-         (cl-pushnew (cons ',name ,pkg-pin) package-pinned-packages :key 'car))
+         (cl-pushnew (cons ',name ,pkg-pin) package-pinned-packages :test 'eq :key 'car))
        (when ,(and old-plist t)
          (assq-delete-all ',name doom-packages))
        (push ',(cons name plist) doom-packages))))
