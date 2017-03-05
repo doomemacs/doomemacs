@@ -1,8 +1,9 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/web/packages.el
 
-;; config.el
-;; n/a
+(package! rainbow-mode)
+(when (featurep! :completion ivy)
+  (package! counsel-css :recipe (:fetcher github :repo "hlissner/emacs-counsel-css")))
 
 ;; +html.el
 (package! company-web)
