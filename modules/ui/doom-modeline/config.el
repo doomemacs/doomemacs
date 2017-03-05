@@ -37,7 +37,10 @@
   :config
   (setq anzu-cons-mode-line-p nil
         anzu-minimum-input-length 1
-        anzu-search-threshold 250))
+        anzu-search-threshold 250)
+  ;; Ensure anzu state is cleared when iedit is exited
+  (after! evil-multiedit
+    (add-hook 'iedit-mode-end-hook 'anzu--reset-mode-line)))
 
 
 ;;; Flash the mode-line on error
@@ -256,6 +259,7 @@ buffer where knowing the current project directory is important."
             (propertize (concat " " (abbreviate-file-name (doom-project-root)))
                         'face face))))
 
+;;
 (def-modeline-segment! buffer-info
   "Combined information about the current buffer, including the current working
 directory, the file name, and its state (modified, read-only or non-existent)."
@@ -285,6 +289,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
             (propertize (+doom-modeline--buffer-path)
                         'face (if faces `(:inherit ,faces))))))
 
+;;
 (def-modeline-segment! buffer-encoding
   "Displays the encoding and eol style of the buffer the same way Atom does."
   (concat (let ((eol-type (coding-system-eol-type buffer-file-coding-system)))
@@ -299,6 +304,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                   (t (upcase (symbol-name sys-name)))))
           "  "))
 
+;;
 (def-modeline-segment! major-mode
   "The major mode, including process, environment and text-scale info."
   (propertize
@@ -310,6 +316,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                 (format " (%+d)" text-scale-mode-amount)))
    'face (if (active) 'doom-modeline-buffer-major-mode)))
 
+;;
 (def-modeline-segment! vcs
   "Displays the current branch, colored based on its state."
   (when vc-mode
@@ -349,6 +356,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
               "  "
               +doom-modeline-vspc))))
 
+;;
 (def-memoized! +doom-ml-icon (icon &optional text face)
   "Displays an octicon ICON with FACE, followed by TEXT. Uses
 `all-the-icons-octicon' to fetch the icon."
@@ -381,12 +389,13 @@ icons."
       ;; ('suspicious  "")
       )))
 
+;;
 (defsubst doom-column (pos)
   (save-excursion (goto-char pos)
                   (current-column)))
 
-(defvar evil-state)
-(defvar evil-visual-selection)
+(defvar evil-state nil)
+(defvar evil-visual-selection nil)
 (def-modeline-segment! selection-info
   "Information about the current selection, such as how many characters and
 lines are selected, or the NxM dimensions of a block selection."
@@ -409,6 +418,7 @@ lines are selected, or the NxM dimensions of a block selection."
        'face 'doom-modeline-highlight))))
 
 
+;;
 (defun +doom-modeline--macro-recording ()
   "Display current Emacs or evil macro being recorded."
   (when (and (active) (or defining-kbd-macro executing-kbd-macro))
@@ -424,31 +434,37 @@ lines are selected, or the NxM dimensions of a block selection."
                                      :v-adjust -0.05)
               sep))))
 
-(make-variable-buffer-local 'anzu--state)
+(defvar iedit-mode nil)
+(defvar anzu--state nil)
 (defsubst +doom-modeline--anzu ()
-  "Show the match index and total number thereof. Requires `evil-anzu'."
-  (when (and (bound-and-true-p anzu--current-position)
-             (evil-ex-hl-active-p 'evil-ex-search))
+  "Show the match index and total number thereof. Requires `anzu', also
+`evil-anzu' if using `evil-mode' for compatibility with `evil-search'."
+  (when (and anzu--state (not iedit-mode))
     (propertize
-     (format " %s/%d%s "
-             anzu--current-position anzu--total-matched
-             (if anzu--overflow-p "+" ""))
+     (let ((here anzu--current-position)
+           (total anzu--total-matched))
+       (pcase anzu--state
+         ('replace-query (format " %d replace " total))
+         ('replace (format " %d/%d " here total))
+         (_ (format " %s/%d%s " here total (if anzu--overflow-p "+" "")))))
      'face (if (active) 'doom-modeline-panel))))
+;; Ensure anzu state is cleared when searches are aborted
+(advice-add 'evil-ex-search-abort :after 'anzu--reset-mode-line)
 
+(defvar evil-mode nil)
 (defsubst +doom-modeline--evil-substitute ()
   "Show number of :s matches in real time."
-  (when (and (featurep 'evil)
-             (evil-ex-p) (or (evil-ex-hl-active-p 'evil-ex-substitute)
-                             (evil-ex-hl-active-p 'evil-ex-global-match)
-                             (evil-ex-hl-active-p 'evil-ex-buffer-match)))
+  (when (and evil-mode
+             (or (assq 'evil-ex-substitute evil-ex-active-highlights-alist)
+                 (assq 'evil-ex-global-match evil-ex-active-highlights-alist)
+                 (assq 'evil-ex-buffer-match evil-ex-active-highlights-alist)))
     (propertize
      (let ((range (if evil-ex-range
                       (cons (car evil-ex-range) (cadr evil-ex-range))
                     (cons (line-beginning-position) (line-end-position))))
            (pattern (car-safe (evil-delimited-arguments evil-ex-argument 2))))
        (if pattern
-           (format " %s matches "
-                   (count-matches pattern (car range) (cdr range)))
+           (format " %s matches " (how-many pattern (car range) (cdr range)))
          " ... "))
      'face (if (active) 'doom-modeline-panel))))
 
@@ -479,15 +495,17 @@ with `evil-ex-substitute', and/or 4. The number of active `iedit' regions."
                       (+doom-modeline--anzu)
                       (+doom-modeline--evil-substitute)
                       (+doom-modeline--iedit))))
-    (or (and (not (string-empty-p meta)) meta)
-        " %I ")))
+     (or (and (not (string-empty-p meta)) meta)
+         " %I ")))
 
+;; TODO Include other information
 (def-modeline-segment! media-info
   "Metadata regarding the current file, such as dimensions for images."
   (cond ((eq major-mode 'image-mode)
          (let ((size (image-size (image-get-display-property) :pixels)))
            (format "  %dx%d  " (car size) (cdr size))))))
 
+;;
 (def-modeline-segment! eldoc
   "Used with `eldoc-eval' to show the eldoc string in the modeline, while using
 `eval-expression'."
@@ -537,6 +555,4 @@ with `evil-ex-substitute', and/or 4. The number of active `iedit' regions."
 ;; love of Emacs, someone give the man a modeline!
 (with-current-buffer "*scratch*"
   (setq mode-line-format (doom-modeline 'main)))
-
-
 
