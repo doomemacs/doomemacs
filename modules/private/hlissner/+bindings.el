@@ -56,6 +56,9 @@
  "M-9"  (λ! (+workspace/switch-to 8))
  "M-0"  '+workspace/switch-to-last
 
+ "M-r"  '+eval/buffer
+ "M-b"  '+eval/rebuild
+
  [M-backspace]  'doom/backward-kill-to-bol-and-indent
  "M-a"          'mark-whole-buffer
  "M-c"          'evil-yank
