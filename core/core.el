@@ -75,6 +75,7 @@ line or use --debug-init to enable this.")
  enable-recursive-minibuffers nil
  debug-on-error (and (not noninteractive) doom-debug-mode)
  idle-update-delay 1              ; update ui less often
+ url-configuration-directory (concat doom-cache-dir "url/")
  ;; keep the point out of the minibuffer
  minibuffer-prompt-properties '(read-only t point-entered minibuffer-avoid-prompt face minibuffer-prompt)
  ;; History & backup settings
