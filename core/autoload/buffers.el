@@ -4,6 +4,10 @@
 (defvar-local doom-buffer--narrowed-origin nil)
 
 ;;;###autoload
+(defvar doom-real-buffer-functions '()
+  "A list of functions that are run to determine if a buffer is real.")
+
+;;;###autoload
 (defvar doom-fallback-buffer "*scratch*"
   "The name of the buffer to fall back to if no other buffers exist (will create
 it if it doesn't exist).")
@@ -120,9 +124,10 @@ buffers. If there's nothing left, switch to `doom-fallback-buffer'. See
 (defun doom-real-buffer-p (&optional buffer-or-name)
   "Returns t if BUFFER-OR-NAME is a 'real' buffer. Real means it a) isn't a
 popup window/buffer and b) isn't a special buffer."
-  (when-let (buffer (ignore-errors (window-normalize-buffer buffer-or-name)))
-    (not (or (doom-popup-p buffer)
-             (string-match-p "^ ?\\*" (buffer-name buffer))))))
+  (let ((buf (window-normalize-buffer buffer-or-name)))
+    (or (run-hook-with-args-until-success 'doom-real-buffer-functions buf)
+        (not (or (doom-popup-p buf)
+                 (string-match-p "^\\s-*\\*" (buffer-name buf)))))))
 
 ;;;###autoload
 (defun doom/next-buffer ()
