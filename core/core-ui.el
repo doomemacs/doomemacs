@@ -199,6 +199,13 @@ file."
   :config (setq rainbow-delimiters-max-face-count 3)
   :init (add-hook 'lisp-mode-hook 'rainbow-delimiters-mode))
 
+;; For a distractions-free-like UI, that dynamically resizes margets and can
+;; center a buffer.
+(def-package! visual-fill-column
+  :commands (visual-fill-column-mode)
+  :config
+  (setq visual-fill-column-center-text nil))
+
 
 ;;
 ;; Modeline

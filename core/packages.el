@@ -16,6 +16,7 @@
 (package! highlight-numbers)
 (package! nlinum)
 (package! rainbow-delimiters)
+(package! visual-fill-column)
 
 ;; core-popups.el
 (package! shackle)
