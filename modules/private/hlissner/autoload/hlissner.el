@@ -12,13 +12,13 @@ private/hlissner/snippets."
 (defun +hlissner/find-in-templates ()
   "Browse through snippets folder"
   (interactive)
-  (projectile-find-file-in-directory (car yas-snippet-dirs)))
+  (projectile-find-file-in-directory +file-templates-dir))
 
 ;;;###autoload
 (defun +hlissner/find-in-snippets ()
   "Browse through snippets folder"
   (interactive)
-  (projectile-find-file-in-directory (car yas-snippet-dirs)))
+  (projectile-find-file-in-directory +hlissner-snippets-dir))
 
 ;;;###autoload
 (defun +hlissner/find-in-dotfiles ()

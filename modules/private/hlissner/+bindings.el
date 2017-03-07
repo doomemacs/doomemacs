@@ -2,15 +2,16 @@
 
 ;; I've switched these keys on my keyboard
 (setq x-super-keysym 'alt
-      x-alt-keysym 'meta)
+      x-alt-keysym   'meta)
 
 (defmacro find-file-in! (path &optional project-p)
   "Returns a interactive function for searching files"
   `(lambda () (interactive)
      (let ((default-directory ,path))
-       ,(if project-p
-             '(call-interactively (command-remapping 'projectile-find-file))
-           '(call-interactive (command-remapping 'find-file))))))
+       (call-interactively
+        ',(if project-p
+              (command-remapping 'projectile-find-file)
+            (command-remapping 'find-file))))))
 
 (map!
  ;; Essential
@@ -85,27 +86,28 @@
    :desc "Jump to bookmark"         :n "b"  'bookmark-jump
    :desc "Delete bookmark"          :n "B"  'bookmark-delete
    :desc "List errors"              :n "e"  'flycheck-list-errors
-   :desc "Open recent file"         :n "m"  'recentf
-   :desc "Open recent project file" :n "M"  'projectile-recentf
+   :desc "Recent files"             :n "m"  'recentf
+   :desc "Recent project files"     :n "M"  'projectile-recentf
    :desc "Insert from kill ring"    :n "y"  'counsel-yank-pop
    :desc "Switch project"           :n "p"  'projectile-switch-project
-   :desc "Find snippet in mode"     :n "s"  'yas-visit-snippet-file
+   :desc "Find snippet for mode"    :n "s"  'yas-visit-snippet-file
    :desc "Find snippet"             :n "S"  '+hlissner/find-in-snippets
    :desc "Execute in Emacs mode"    :n "\\" 'evil-execute-in-emacs-state
    :desc "Switch to Emacs mode"     :n "|"  'evil-emacs-state
    ;; Since I've remapped C-h...
    :desc "Help"                     :n "h"  'help-command
-   ;; workspaces
-   :desc "Switch to 1st workspace"  :n "1"  (λ! (+workspace/switch-to 0))
-   :desc "Switch to 2nd workspace"  :n "2"  (λ! (+workspace/switch-to 1))
-   :desc "Switch to 3rd workspace"  :n "3"  (λ! (+workspace/switch-to 2))
-   :desc "Switch to 4th workspace"  :n "4"  (λ! (+workspace/switch-to 3))
-   :desc "Switch to 5th workspace"  :n "5"  (λ! (+workspace/switch-to 4))
-   :desc "Switch to 6th workspace"  :n "6"  (λ! (+workspace/switch-to 5))
-   :desc "Switch to 7th workspace"  :n "7"  (λ! (+workspace/switch-to 6))
-   :desc "Switch to 8th workspace"  :n "8"  (λ! (+workspace/switch-to 7))
-   :desc "Switch to 9th workspace"  :n "9"  (λ! (+workspace/switch-to 8))
-   :desc "Switch to last workspace" :n "0"  '+workspace/switch-to-last
+
+   (:desc "Session/Workspace"
+     :prefix "w"
+     :desc "Load last session"      :n "l" (λ! (+workspace/load-session))
+     :desc "Load session"           :n "L" '+workspace/load-session
+     :desc "Save session"           :n "s" '+workspace/save-session
+     :desc "Delete session"         :n "X" '+workspace/kill-session
+     :desc "Load workspace"         :n "L" '+workspace/load
+     :desc "Save workspace"         :n "L" '+workspace/save
+     :desc "Delete workspace"       :n "x" '+workspace/delete
+     :desc "Switch workspace"       :n "." '+workspace/switch-to
+     :desc "Kill all buffers"       :n "x" 'doom/kill-all-buffers)
 
    (:desc "Quit"
      :prefix "q"
@@ -118,7 +120,7 @@
      :desc "Line numbers"           :n "l" 'doom/toggle-line-numbers
      :desc "Fullscreen"             :n "f" 'doom/toggle-fullscreen)
 
-   (:desc "Tmux"
+   (:desc "Tmux/Terminal"
      :prefix "T"
      :desc "cd to here"             :n "." '+tmux/cd-to-here
      :desc "cd to project"          :n "/" '+tmux/cd-to-project
@@ -134,13 +136,12 @@
      :desc "Browse remote files"    :n "." '+upload/browse
      :desc "Detect remote changes"  :n "." '+upload/check-remote)
 
-   (:desc "External Applications"
+   (:desc "Open with"
      :prefix "o"
      :desc "Default browser"        :n "b" 'browse-url-of-file
      (:when IS-MAC
        :desc "Reveal in Finder"          :n "o" '+macos/reveal
-       :desc "Reveal in Finder"          :n "r" '+macos/reveal
-       :desc "Reveal project in Finder"  :n "p" '+macos/reveal-project
+       :desc "Reveal project in Finder"  :n "O" '+macos/reveal-project
        :desc "Send to Transmit"          :n "u" '+macos/send-to-transmit
        :desc "Send project to Transmit"  :n "U" '+macos/send-project-to-transmit
        :desc "Send to Launchbar"         :n "l" '+macos/send-to-launchbar
@@ -160,18 +161,14 @@
      :desc "Browse dotfiles"        :n ">" '+hlissner/browse-dotfiles
      :desc "Find file in dotfiles"  :n "?" '+hlissner/find-in-dotfiles
      :desc "Reload theme"           :n "R" 'doom/reset-theme
+     ;; Org notes
+     :desc "Browse notes"           :n "n"   '+hlissner/browse-notes
+     :desc "Find file in notes"     :n "N"   '+hlissner/find-in-notes
+     :desc "Org Capture"            :n "SPC" '+org/capture
      ;; applications
-     :desc "Start elfeed"           :n "r" '=rss)
-
-   (:desc "Notes"
-     :prefix "x"
-     :desc "Browse notes"         :n "."   '+hlissner/browse-notes
-     :desc "Find file in notes"   :n "/"   '+hlissner/find-in-notes
-     :desc "Org Capture"          :n "SPC" '+org/capture))
+     :desc "APP: elfeed"            :n "r" '=rss))
 
  (:localleader
-  :desc "Open file explorer" :n "\\" '+evil/neotree
-
   (:desc "Refactor..." :prefix "r")
 
   (:desc "Find..."     :prefix "f"
@@ -203,13 +200,13 @@
  ;; Increment/decrement number under cursor
  :n  "g=" 'evil-numbers/inc-at-pt
  :n  "g-" 'evil-numbers/dec-at-pt
- :n  "gf" 'find-file-at-point
  ;; Todos
  :m  "]t" 'hl-todo-next
  :m  "[t" 'hl-todo-previous
  ;; Navigation
- :nv "K" 'smart-up
+ :nv "K"  'smart-up
  :m  "gD" 'doom/find-def
+ :n  "gf" 'find-file-at-point
  :n  "gp" '+evil/reselect-paste
  :n  "gc" 'evil-commentary
  :n  "gx" 'evil-exchange
@@ -303,7 +300,7 @@
 ;;
 
 ;; This section is dedicated to "fixing" certain keys so that they behave
-;; properly or more like vim (or how I like it).
+;; properly, more like vim, or how I like it.
 
 (map! (:unless window-system "TAB" [tab]) ; Fix TAB in terminal
 

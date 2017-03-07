@@ -73,7 +73,7 @@
 (ex! "ss[ave]"     '+workspace:save-session)
 (ex! "tabc[lose]"  '+workspace:delete)
 (ex! "tabclear"    'doom/kill-all-buffers)
-(ex! "tabl[ast]"   '+workspace/switch-to-list)
+(ex! "tabl[ast]"   '+workspace/switch-to-last)
 (ex! "tabload"     '+workspace:load)
 (ex! "tabn[ew]"    '+workspace:new)
 (ex! "tabn[ext]"   '+workspace:switch-next)
