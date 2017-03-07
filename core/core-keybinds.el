@@ -15,19 +15,17 @@
 (def-package! which-key
   :defer 1
   :config
-  (setq which-key-sort-order 'which-key-prefix-then-key-order
+  (setq which-key-sort-order 'which-key-key-order-alpha
+        which-key-sort-uppercase-first nil
+        which-key-add-column-padding 1
+        which-key-max-display-columns nil
+        which-key-min-display-lines 10
         ;; only pop-up for leader/localleader keys
         which-key-allow-regexps (list (format "^%s" (regexp-quote doom-leader-key))
-                                      (format "^%s" (regexp-quote doom-localleader-key)))
-        ;; perdy unicode icons
-        which-key-replacement-alist
-        (append '((("TAB" . nil) . ("↹" . nil))
-                  (("RET" . nil) . ("⏎" . nil))
-                  (("DEL" . nil) . ("⇤" . nil))
-                  (("SPC" . nil) . ("␣" . nil)))
-         which-key-replacement-alist))
+                                      (format "^%s" (regexp-quote doom-localleader-key))))
   ;; embolden local bindings
   (set-face-attribute 'which-key-local-map-description-face nil :weight 'bold)
+  (which-key-setup-side-window-bottom)
   (which-key-mode +1)
   (when (cdr doom--which-key-defs)
     (apply 'which-key-add-key-based-replacements (cdr doom--which-key-defs))))
