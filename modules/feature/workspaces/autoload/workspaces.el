@@ -112,13 +112,13 @@ success, nil otherwise."
   (persp-rename new-name (+workspace-get name)))
 
 ;;;###autoload
-(defun +workspace-delete (name)
+(defun +workspace-delete (name &optional inhibit-kill-p)
   "Delete the workspace denoted by TARGET, which can be the name of a
 perspective or its hash table."
   (when (equal name persp-nil-name)
     (error "Can't delete main workspace"))
   (+workspace-get name) ;; error checking
-  (persp-remove-by-name name))
+  (persp-kill name inhibit-kill-p))
 
 ;;;###autoload
 (defun +workspace-switch (name)
