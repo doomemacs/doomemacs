@@ -107,8 +107,6 @@
    :desc "Switch to 9th workspace"  :n "9"  (λ! (+workspace/switch-to 8))
    :desc "Switch to last workspace" :n "0"  '+workspace/switch-to-last
 
-   (:desc "Applications" :prefix "a")
-
    (:desc "Quit"
      :prefix "q"
      :desc "Quit"                   :n "q" 'evil-save-and-quit
@@ -161,7 +159,9 @@
      :desc "Find file in emacs.d"   :n "/" '+hlissner/find-in-emacsd
      :desc "Browse dotfiles"        :n ">" '+hlissner/browse-dotfiles
      :desc "Find file in dotfiles"  :n "?" '+hlissner/find-in-dotfiles
-     :desc "Reload theme"           :n "R" 'doom/reset-theme)
+     :desc "Reload theme"           :n "R" 'doom/reset-theme
+     ;; applications
+     :desc "Start elfeed"           :n "r" '=rss)
 
    (:desc "Notes"
      :prefix "x"
