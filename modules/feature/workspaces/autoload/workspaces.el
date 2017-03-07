@@ -121,10 +121,12 @@ perspective or its hash table."
   (persp-kill name inhibit-kill-p))
 
 ;;;###autoload
-(defun +workspace-switch (name)
+(defun +workspace-switch (name &optional auto-create-p)
   "Switch to another workspace."
   (unless (+workspace-exists-p name)
-    (error "%s is not an available workspace" name))
+    (if auto-create-p
+        (+workspace-new name)
+      (error "%s is not an available workspace" name)))
   (persp-frame-switch name))
 
 (defun +workspace--generate-id ()
