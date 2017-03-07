@@ -43,13 +43,14 @@
 
 (add-hook 'emacs-startup-hook '+doom-dashboard/open)
 (add-hook 'after-make-frame-functions '+doom-dashboard-deferred-reload)
-(add-hook! 'kill-buffer-query-functions
-   (if (not (+doom-dashboard-p))
-       t
-     (ignore
-      (ignore-errors (+doom-dashboard-force-reload))
-      (bury-buffer))))
 (add-hook! 'window-setup-hook
+  (add-hook! 'kill-buffer-query-functions
+    (if (not (+doom-dashboard-p))
+        t
+      (ignore
+       (ignore-errors (+doom-dashboard-force-reload))
+       (bury-buffer))))
+
   (add-hook 'window-configuration-change-hook '+doom-dashboard-reload)
   (+doom-dashboard-reload))
 
