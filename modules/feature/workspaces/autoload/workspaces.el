@@ -229,7 +229,7 @@ workspace to delete."
         current-name))))
   (condition-case ex
       (if (+workspace-delete name)
-          (+workspace-message (format "Deleted %s workspace" name) 'success)
+          (+workspace-message (format "Deleted '%s' workspace" name) 'success)
         (error "Couldn't delete %s workspace" name))
     ('error (+workspace-error (cadr ex) t))))
 

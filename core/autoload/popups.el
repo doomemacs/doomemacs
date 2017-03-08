@@ -16,6 +16,7 @@ current window if omitted."
 ;;;###autoload
 (defun doom-popup-buffer (buffer &rest plist)
   "Display BUFFER in a shackle popup. See `shackle-rules' for possible rules."
+  (declare (indent defun))
   (unless (bufferp buffer)
     (error "%s is not a valid buffer" buffer))
   (when (and plist (not (plist-member plist :align)))

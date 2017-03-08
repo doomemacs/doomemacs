@@ -56,6 +56,6 @@
   :after elfeed
   :config
   (setq rmh-elfeed-org-files
-        (mapcar (lambda (file) (expand-file-name file +rss-org-dir))
-                +rss-elfeed-files))
+        (let ((default-directory +rss-org-dir))
+          (mapcar 'expand-file-name +rss-elfeed-files)))
   (elfeed-org))

@@ -144,7 +144,7 @@ to speed up startup."
 
     (require 'quelpa)
     (require 'use-package)
-    ;; Remove package management keywords, I'll deal with that myself
+    ;; Strip package management from use-package; DOOM handles this its own way
     (mapc (lambda (keyword) (setq use-package-keywords (delq keyword use-package-keywords)))
           '(:ensure :pin))
 
