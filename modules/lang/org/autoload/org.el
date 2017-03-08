@@ -62,10 +62,12 @@ I use this instead of `org-insert-item' or `org-insert-heading' which are too
 opinionated and perform this simple task incorrectly (e.g. whitespace in the
 wrong places)."
   (interactive)
-  (let* ((context (org-element-context))
+  (let* ((context (org-element-lineage
+                   (org-element-context)
+                   '(table table-row headline inlinetask item plain-list)
+                   t))
          (type (org-element-type context)))
-    (cond ((when-let (ct (+org--get-context '(item plain-list) context))
-             (setq context ct))
+    (cond ((eq type 'item)
            (let ((marker (org-element-property :bullet context)))
              (pcase direction
                ('below
@@ -116,7 +118,7 @@ wrong places)."
 ;;;###autoload
 (defun +org/toggle-checkbox ()
   (interactive)
-  (when-let (context (+org--get-context '(item)))
+  (when-let (context (org-element-lineage (org-element-context) '(item) t))
     (org-end-of-line)
     (org-beginning-of-line)
     (if (org-element-property :checkbox context)
@@ -153,12 +155,7 @@ fragments, opening links, or refreshing images."
           (org-table-recalculate t)
         (org-table-align)))
 
-     ((and (org-in-item-p)
-           (org-element-property :checkbox
-                                 (save-excursion
-                                   (org-beginning-of-line)
-                                   (backward-char)
-                                   (org-element-context))))
+     ((org-element-property :checkbox (org-element-lineage context '(item) t))
       (org-toggle-checkbox))
 
      ((and (eq type 'headline)
@@ -184,7 +181,7 @@ fragments, opening links, or refreshing images."
       (org-preview-latex-fragment))
 
      ((eq type 'link)
-      (let ((path (org-element-property :path (org-element-context))))
+      (let ((path (org-element-property :path (org-element-lineage context '(link) t))))
         (if (and path (image-type-from-file-name path))
             (+org/refresh-inline-images)
           (org-open-at-point))))
