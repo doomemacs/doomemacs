@@ -204,7 +204,8 @@ file."
 (def-package! visual-fill-column
   :commands (visual-fill-column-mode)
   :config
-  (setq visual-fill-column-center-text nil))
+  (setq-default visual-fill-column-center-text t
+                visual-fill-column-width fill-column))
 
 
 ;;
