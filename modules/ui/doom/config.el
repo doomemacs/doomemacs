@@ -54,15 +54,12 @@
   (push (cons 'background-color (face-background 'default)) default-frame-alist)
   (push (cons 'foreground-color (face-foreground 'default)) default-frame-alist)
 
-  ;; brighter source buffers
+  ;; brighter real buffers
   (defun +doom|buffer-mode-on ()
-    "Brightens buffers so long as they represent files and aren't popups."
     (when (and (not doom-buffer-mode)
-               (not doom-popup-mode)
-               buffer-file-name)
+               (doom-real-buffer-p))
       (doom-buffer-mode +1)))
-  (add-hook 'find-file-hook '+doom|buffer-mode-on)
-  (add-hook 'after-revert-hook '+doom|buffer-mode-on)
+  (add-hook 'after-change-major-mode-hook '+doom|buffer-mode-on)
 
   ;; Popup buffers should always be dimmed
   (defun +doom|buffer-mode-off ()
