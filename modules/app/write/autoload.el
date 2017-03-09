@@ -12,8 +12,6 @@
                (not +write--buffer-mode)
                +write-mode)
       (setq +write--buffer-mode doom-buffer-mode))
-    (when +write--buffer-mode
-      (doom-buffer-mode (if +write-mode -1 +1)))
     (text-scale-set (if +write-mode 1.5 0))
     (visual-fill-column-mode arg)
     (setq line-spacing (if +write-mode 6))))
