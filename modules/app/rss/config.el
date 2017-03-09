@@ -42,6 +42,7 @@
 
   (map! :map elfeed-search-mode-map
         :n "r"   'elfeed-update
+        :n "s"   'elfeed-search-live-filter
         :n "RET" 'elfeed-search-show-entry
 
         :map elfeed-show-mode-map
