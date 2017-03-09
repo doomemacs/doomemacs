@@ -123,6 +123,8 @@
    org-refile-targets '((nil . (:maxlevel . 2))) ; display full path in refile completion
 
    ;; Agenda
+   diary-file (concat doom-local-dir "dairy/")
+   calendar-mark-diary-entries-flag t
    org-agenda-restore-windows-after-quit nil
    org-agenda-skip-unavailable-files nil
    org-agenda-dim-blocked-tasks nil
