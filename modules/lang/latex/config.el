@@ -17,7 +17,7 @@
 (load "auctex-autoloads" nil t)
 (push '("\\.[tT]e[xX]\\'" . TeX-latex-mode) auto-mode-alist)
 
-(after! tex-site
+(add-transient-hook! 'LaTeX-mode-hook
   (setq TeX-auto-save t
         TeX-parse-self t
         TeX-save-query nil
@@ -35,9 +35,7 @@
 
   (set! :popup " output\\*$" :regexp t :size 15 :noselect t :autoclose t :autokill t)
 
-  (map! :map LaTeX-mode-map "C-j" nil
-        :leader
-        :n ";" 'reftex-toc)
+  (map! :map LaTeX-mode-map "C-j" nil)
 
   (def-package! company-auctex
     :init
@@ -51,11 +49,19 @@
         reftex-default-bibliography (list +latex-bibtex-default-file)
         reftex-toc-split-windows-fraction 0.2)
 
-  (add-hook 'reftex-toc-mode-hook 'doom-hide-modeline-mode)
   (add-hook! (latex-mode LaTeX-mode) 'turn-on-reftex)
+
   :config
   (map! :map reftex-mode-map
-        :leader :n ";" 'reftex-toc))
+        :leader :n ";" 'reftex-toc)
+
+  (add-hook! 'reftex-toc-mode-hook
+    (reftex-toc-rescan)
+    (doom-hide-modeline-mode +1)
+    (map! :Le "j"   'next-line
+          :Le "k"   'previous-line
+          :Le "q"   'kill-buffer-and-window
+          :Le "ESC" 'kill-buffer-and-window)))
 
 
 (def-package! bibtex ; built-in
@@ -66,7 +72,6 @@
         bibtex-completion-bibliography (list +latex-bibtex-default-file))
 
   (map! :map bibtex-mode-map "C-c \\" 'bibtex-fill-entry))
-
 
 (def-package! ivy-bibtex
   :commands ivy-bibtex)
