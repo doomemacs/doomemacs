@@ -29,7 +29,7 @@
  uniquify-buffer-name-style nil
  use-dialog-box nil             ; always avoid GUI
  visible-cursor nil
- x-stretch-cursor t
+ x-stretch-cursor nil
  ;; no beeping or blinking please
  ring-bell-function 'ignore
  visible-bell nil
