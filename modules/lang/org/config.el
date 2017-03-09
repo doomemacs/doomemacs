@@ -222,10 +222,6 @@
         (:map evil-org-mode-map
           :n  "RET" '+org/dwim-at-point
           ;;
-          :ni "A-l" 'org-metaright
-          :ni "A-h" 'org-metaleft
-          :ni "A-k" 'org-metaup
-          :ni "A-j" 'org-metadown
           :ni "A-L" 'org-shiftmetaright
           :ni "A-H" 'org-shiftmetaleft
           :ni "A-K" 'org-shiftmetaup

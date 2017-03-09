@@ -4,14 +4,14 @@
 (evil-define-motion +hlissner:multi-next-line (count)
   "Move down 6 lines."
   :type line
-  (let ((line-move-visual visual-line-mode))
+  (let ((line-move-visual (or visual-line-mode (derived-mode-p 'text-mode))))
     (evil-line-move (* 6 (or count 1)))))
 
 ;;;###autoload (autoload '+hlissner:multi-previous-line "private/hlissner/autoload/evil" nil t)
 (evil-define-motion +hlissner:multi-previous-line (count)
   "Move up 6 lines."
   :type line
-  (let ((line-move-visual visual-line-mode))
+  (let ((line-move-visual (or visual-line-mode (derived-mode-p 'text-mode))))
     (evil-line-move (- (* 6 (or count 1))))))
 
 ;;;###autoload (autoload '+hlissner:cd "private/hlissner/autoload/evil" nil t)
