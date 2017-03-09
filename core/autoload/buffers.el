@@ -127,6 +127,7 @@ popup window/buffer and b) isn't a special buffer."
   (let ((buf (window-normalize-buffer buffer-or-name)))
     (or (run-hook-with-args-until-success 'doom-real-buffer-functions buf)
         (not (or (doom-popup-p buf)
+                 (minibufferp buf)
                  (string-match-p "^\\s-*\\*" (buffer-name buf)))))))
 
 ;;;###autoload
