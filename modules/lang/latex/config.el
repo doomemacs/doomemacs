@@ -13,8 +13,8 @@
 
 ;; Because tex-mode is built-in and AucTex has conflicting components, we need
 ;; to ensure that auctex gets loaded instead of tex-mode.
-(load "auctex")
-(load "auctex-autoloads")
+(load "auctex" nil t)
+(load "auctex-autoloads" nil t)
 (push '("\\.[tT]e[xX]\\'" . TeX-latex-mode) auto-mode-alist)
 
 (after! tex-site
