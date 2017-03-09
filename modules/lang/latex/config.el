@@ -1,7 +1,5 @@
 ;;; lang/latex/config.el
 
-;; TODO Test me
-
 (defvar +latex-bibtex-dir "~/work/writing/biblio/"
   "Where bibtex files are kept.")
 
@@ -13,21 +11,51 @@
 ;; Plugins
 ;;
 
-(def-package! auctex
-  :mode ("\\.tex$" . LaTeX-mode)
-  :init
-  (add-hook 'LaTeX-mode-hook 'turn-on-auto-fill)
-  :config
+;; Because tex-mode is built-in and AucTex has conflicting components, we need
+;; to ensure that auctex gets loaded instead of tex-mode.
+(load "auctex")
+(load "auctex-autoloads")
+(push '("\\.[tT]e[xX]\\'" . TeX-latex-mode) auto-mode-alist)
+
+(after! tex-site
   (setq TeX-auto-save t
         TeX-parse-self t
+        TeX-save-query nil
         TeX-source-correlate-start-server nil
-        LaTeX-fill-break-at-separators nil)
+        LaTeX-fill-break-at-separators nil
+        LaTeX-section-hook
+        '(LaTeX-section-heading
+          LaTeX-section-title
+          LaTeX-section-toc
+          LaTeX-section-section
+          LaTeX-section-label))
 
+  (add-hook! (latex-mode LaTeX-mode) 'turn-on-auto-fill)
   (add-hook! LaTeX-mode '(LaTeX-math-mode TeX-source-correlate-mode))
 
-  (set! :company-backend 'LaTeX-mode '(company-auctex)))
+  (set! :popup " output\\*$" :regexp t :size 15 :noselect t :autoclose t :autokill t)
 
-(def-package! company-auctex)
+  (map! :map LaTeX-mode-map "C-j" nil
+        :leader
+        :n ";" 'reftex-toc)
+
+  (def-package! company-auctex
+    :init
+    (set! :company-backend 'LaTeX-mode '(company-auctex))))
+
+
+(def-package! reftex ; built-in
+  :commands (turn-on-reftex reftex-mode)
+  :init
+  (setq reftex-plug-into-AUCTeX t
+        reftex-default-bibliography (list +latex-bibtex-default-file)
+        reftex-toc-split-windows-fraction 0.2)
+
+  (add-hook 'reftex-toc-mode-hook 'doom-hide-modeline-mode)
+  (add-hook! (latex-mode LaTeX-mode) 'turn-on-reftex)
+  :config
+  (map! :map reftex-mode-map
+        :leader :n ";" 'reftex-toc))
 
 
 (def-package! bibtex ; built-in
@@ -38,18 +66,6 @@
         bibtex-completion-bibliography (list +latex-bibtex-default-file))
 
   (map! :map bibtex-mode-map "C-c \\" 'bibtex-fill-entry))
-
-
-(def-package! reftex ; built-in
-  :commands turn-on-reftex
-  :init
-  (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
-  :config
-  (setq reftex-plug-into-AUCTeX t
-        reftex-default-bibliography (list +latex-bibtex-default-file))
-
-  (map! :map reftex-mode-map
-        :leader :n ";" 'reftex-toc))
 
 
 (def-package! ivy-bibtex
