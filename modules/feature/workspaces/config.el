@@ -83,6 +83,7 @@
       (when-let (plist (window-parameter window 'popup))
         (with-selected-window window
           (unless doom-popup-mode
+            (setq-local doom-popup-rules plist)
             (doom-popup-mode +1))))))
   (add-hook '+workspaces-load-session-hook '+workspaces|restore-popups))
 
