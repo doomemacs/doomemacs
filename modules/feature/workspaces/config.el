@@ -1,13 +1,14 @@
 ;;; feature/workspaces/config.el
 
 ;; `persp-mode' gives me workspaces, a workspace-restricted `buffer-list', and
-;; file-based session persistence. I had used workgroups2 for this, but
+;; file-based session persistence. I had used workgroups2 before this, but
 ;; abandoned it because of its instability and impact on performance.
 ;; `persp-mode' has proven faster and more reliable (and it's still maintained).
 ;;
-;; I've disabled auto-load/save. I prefer that session persistence be manual.
-;; You can save a session with :ss or `+workspace/save-session', and load the
-;; last saved session with :sl or `+workspace/load-session'.
+;; By default, sessions are auto-saved, but not auto-loaded. Use :ss or
+;; `+workspace/save-session' to save, and :sl or `+workspace/load-session' to
+;; load the last autosaved session. You can give sessions a custom name so they
+;; can be loaded much later.
 ;;
 ;; Note: persp-mode requires `workgroups' for file persistence in Emacs 24.4.
 
@@ -28,8 +29,8 @@
         persp-init-new-frame-behaviour-override 'auto-temp
         ;; Don't auto-load on startup
         persp-auto-resume-time -1
-        ;; Don't auto-save
-        persp-auto-save-opt 0)
+        ;; auto-save on kill
+        persp-auto-save-opt 1)
 
   (add-hook 'after-init-hook 'persp-mode)
 

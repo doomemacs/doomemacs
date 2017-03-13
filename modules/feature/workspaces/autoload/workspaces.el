@@ -91,8 +91,11 @@ Returns t on success, nil otherwise."
 (defun +workspace-save-session (&optional name)
   "Save a whole session as NAME. If NAME is nil, use `persp-auto-save-fname'.
 Return t on success, nil otherwise."
-  (let ((fname (or name persp-auto-save-fname)))
-    (and (persp-save-state-to-file fname) t)))
+  (when (or (not name)
+            (equal name persp-auto-save-fname))
+    (setq name persp-auto-save-fname
+          persp-auto-save-opt 0))
+  (and (persp-save-state-to-file name) t))
 
 ;;;###autoload
 (defun +workspace-new (name)
@@ -169,9 +172,11 @@ session."
        "Session to load: "
        (directory-files persp-save-dir nil "^[^_.]")
        nil t))))
-  (let ((name (or name "last")))
-    (+workspace-load-session name)
-    (+workspace-message (format "'%s' workspace loaded" name) 'success)))
+  (condition-case ex
+      (let ((name (or name persp-auto-save-fname)))
+        (+workspace-load-session name)
+        (+workspace-message (format "'%s' workspace loaded" name) 'success))
+    '(error (+workspace-error (cadr ex) t))))
 
 ;;;###autoload
 (defun +workspace/save (name)
@@ -197,10 +202,10 @@ the session as."
        "Save session as: "
        (directory-files persp-save-dir nil "^[^_.]")))))
   (condition-case ex
-      (let ((name (or name "last")))
+      (let ((name (or name persp-auto-save-fname)))
         (if (+workspace-save-session name)
-            (+workspace-message (format "Saved session as %s" name) 'success)
-          (error "Couldn't save session as %s" name)))
+            (+workspace-message (format "Saved session as '%s'" name) 'success)
+          (error "Couldn't save session as '%s'" name)))
     '(error (+workspace-error (cadr ex) t))))
 
 ;;;###autoload
