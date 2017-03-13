@@ -62,10 +62,7 @@
 
   ;; Create a new workspace on project switch
   (defun doom|new-workspace-on-project-change ()
-    (let ((project-name (projectile-project-name)))
-      (if (+workspace-exists-p project-name)
-          (+workspace/switch-to project-name)
-        (+workspace/new project-name))))
+    (+workspace-switch (projectile-project-name) t))
   (add-hook 'projectile-before-switch-project-hook 'doom|new-workspace-on-project-change)
 
   ;; Be quiet when saving
