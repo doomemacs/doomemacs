@@ -12,10 +12,7 @@
 (def-package! toml-mode :mode "\\.toml$")
 
 
-(def-package! yaml-mode
-  :mode "\\.ya?ml$"
-  :config
-  (set! :electric 'yaml-mode :chars '(?\n ?\: ?\-)))
+(def-package! yaml-mode :mode "\\.ya?ml$")
 
 
 (def-package! json-mode :mode "\\.js\\(on\\|[hl]int\\(rc\\)?\\)$"
