@@ -40,7 +40,6 @@
 ;; doom-one: gives Emacs a look inspired by Dark One in Atom.
 ;; <https://github.com/hlissner/emacs-doom-theme>
 (def-package! doom-themes :demand t
-  :load-path "~/work/plugins/emacs-doom-theme"
   :config
   (load-theme +doom-theme t)
 
