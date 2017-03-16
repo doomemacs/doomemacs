@@ -31,7 +31,6 @@
         evil-magic t
         evil-echo-state t
         evil-indent-convert-tabs t
-        evil-ex-interactive-search-highlight 'selected-window
         evil-ex-search-vim-style-regexp t
         evil-ex-substitute-global t
         evil-ex-visual-char-range t  ; column range for ex commands
@@ -97,13 +96,6 @@
 (defun +evil*window-vfollow (&rest _) (evil-window-right 1))
 (advice-add 'evil-window-split  :after '+evil*window-follow)
 (advice-add 'evil-window-vsplit :after '+evil*window-vfollow)
-
-;; Fix harmless (yet disruptive) error reporting w/ hidden buffers
-;; caused by dead popup windows
-;; TODO Delete timer on dead windows?
-(defun +evil*ignore-hl-errors (orig-fn &rest args)
-  (ignore-errors (apply orig-fn args)))
-(advice-add 'evil-ex-hl-do-update-highlight :around '+evil*ignore-hl-errors)
 
 ;; monkey patch `evil-ex-replace-special-filenames' to add more ex
 ;; substitution flags to evil-mode
