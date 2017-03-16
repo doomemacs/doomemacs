@@ -1,5 +1,9 @@
 ;;; lang/go/config.el
 
+;; requires gocode (completion), gore (repl) and a valid $GOPATH
+;;   go get -u github.com/nsf/gocode
+;;   go get -u github.com/motemen/gore
+
 (def-package! go-mode
   :mode "\\.go$"
   :interpreter "go"
@@ -8,7 +12,7 @@
   (add-hook! go-mode (add-hook 'before-save-hook 'gofmt-before-save))
   :config
   (set! :build 'go-build 'go-mode '+go/build)
-  (set! :company-backend 'go-mode '(company-go company-yasnippet))
+
   (set! :repl 'go-mode 'gorepl-run)
 
   (map! :map go-mode-map
@@ -24,7 +28,9 @@
            :n "s" '+go/test-run-package))))
 
 
-(def-package! company-go :after go-mode)
+(def-package! company-go
+  :after go-mode
+  :config (set! :company-backend 'go-mode '(company-go company-yasnippet)))
 
 
 (def-package! go-eldoc
