@@ -46,12 +46,9 @@
 (add-hook 'after-make-frame-functions '+doom-dashboard-deferred-reload)
 (add-hook! 'window-setup-hook
   (add-hook! 'kill-buffer-query-functions
-    (if (not (+doom-dashboard-p))
-        t
-      (ignore
-       (ignore-errors (+doom-dashboard-force-reload))
-       (bury-buffer))))
-
+    (or (not (+doom-dashboard-p))
+        (ignore (ignore-errors (+doom-dashboard-force-reload))
+                (bury-buffer))))
   (add-hook 'window-configuration-change-hook '+doom-dashboard-reload)
   (+doom-dashboard-reload))
 
@@ -69,6 +66,7 @@
   (switch-to-buffer (doom-fallback-buffer)))
 
 (defun +doom-dashboard-p (&optional buffer)
+  "Returns t if BUFFER is the dashboard buffer."
   (let ((buffer (or buffer (current-buffer))))
     (and (buffer-live-p buffer)
          (eq buffer (doom-fallback-buffer)))))
