@@ -16,8 +16,8 @@
         (:localleader
          :n "fh"  'godef-describe
          (:prefix "r"
-           :n  "i" go-remove-unused-imports
-           :nv "f" gofmt)
+           :n  "i" 'go-remove-unused-imports
+           :nv "f" 'gofmt)
          (:prefix "t"
            :n "r" '+go/test-run-all
            :n "a" '+go/test-run-all
