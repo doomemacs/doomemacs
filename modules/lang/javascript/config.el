@@ -11,19 +11,14 @@
         js2-mode-show-parse-errors nil)
 
   (add-hook! 'js2-mode-hook
-    '(tern-mode flycheck-mode highlight-indent-guides-mode
-      rainbow-delimiters-mode))
+    '(flycheck-mode highlight-indent-guides-mode rainbow-delimiters-mode))
 
   ;; Conform switch-case indentation to editorconfig's config
   (add-hook! 'js2-mode-hook (setq js-switch-indent-offset js-indent-level))
 
   (set! :repl 'js2-mode 'nodejs-repl)
-
-  (set! :company-backend 'js2-mode '(company-tern))
-
-  (set! :electric 'js2-mode
-        :chars ?\} ?\) ?.
-        :words "||" "&&")
+  (set! :electric 'js2-mode :chars ?\} ?\) ?. :words "||" "&&")
+  (set! :xref-backend 'js2-mode 'xref-js2-xref-backend)
 
   (map! :map js2-mode-map
         :localleader
@@ -58,6 +53,11 @@
         :n  "ii" 'js2r-wrap-buffer-in-iife))
 
 
+;; A find-{definition,references} backend for js2-mode. NOTE The xref API is
+;; unstable and may break with an Emacs update.
+(def-package! xref-js2 :commands xref-js2-xref-backend)
+
+
 (def-package! nodejs-repl :commands nodejs-repl)
 
 
@@ -73,9 +73,15 @@
    js2r-debug-this js2r-forward-slurp js2r-forward-barf))
 
 
+(def-package! tern
+  :commands tern-mode
+  :init (add-hook 'js2-mode-hook 'tern-mode))
+
+
 (def-package! company-tern
-  :commands company-tern
-  :after tern)
+  :after tern
+  :config
+  (set! :company-backend 'js2-mode '(company-tern)))
 
 
 (def-package! jsx-mode :mode "\\.jsx$")
