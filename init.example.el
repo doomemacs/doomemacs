@@ -46,7 +46,7 @@
        company         ; auto-completion backend
        ;; TODO auto-complete   ; auto-completion backend #2
        ivy             ; a search engine for love and life
-       ;; TODO helm            ;
+       ;; helm            ;
        ;; ido             ;
 
        :ui
@@ -59,8 +59,8 @@
        :tools
        electric-indent ; smarter, keyword-based electric-indent
        eshell          ; a consistent, cross-platform shell (WIP)
-       ;; TODO dash            ; interacting with dash.app
        dired           ; making dired pretty [functional]
+       macos           ; macos-specific commands
        restclient      ; A REST REPL
        rotate-text     ; cycle region at point between text candidates
        tmux            ; an API for interacting with tmux
@@ -94,19 +94,18 @@
        typescript      ; javascript, but better
        web             ; the tubes
 
-       ;; Applications are large, toggle-able states that transform Emacs to
-       ;; fulfill a specific purpose. See `doom/toggle'. They should be loaded
-       ;; last.
+       ;; Applications are opinionated modules that transform Emacs to fulfill a
+       ;; specific purpose. They should be loaded last.
        :app
        ;; TODO crm             ; org-mode for client relations management
        ;; TODO db              ; Emacs as a database browser
        ;; TODO email           ; Emacs as an email client
        ;; TODO finance         ; keeping track of my shekels
        ;; TODO present         ; showing off presentations in emacs
-       ;; TODO rss             ; emacs as an RSS reader
+       rss             ; emacs as an RSS reader
        ;; TODO stream          ; for streaming code (https://livecoding.tv/vnought)
        ;; TODO twitter         ; twitter client https://twitter.com/vnought
-       ;; TODO write           ; emacs as a word processor (latex + org + markdown)
+       write           ; emacs as a word processor (latex + org + markdown)
 
        ;; Private modules are aren't tracked in the repo, except for mine. Use
        ;; it as a reference for your own.
