@@ -14,7 +14,7 @@
   (add-hook! markdown-mode
     (auto-fill-mode +1)
     (setq line-spacing 2
-          fill-column 70))
+          fill-column 80))
 
   (sp-local-pair
    '(markdown-mode gfm-mode)
