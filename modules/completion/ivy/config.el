@@ -110,9 +110,7 @@
     (when (eq major-mode 'ivy-occur-grep-mode)
       (ivy-wgrep-change-to-wgrep-mode)))
 
-  (defun +ivy*recenter (&rest _) (recenter))
   (advice-add 'counsel-ag-function :override '+ivy*counsel-ag-function)
-  (advice-add 'imenu :after '+ivy*recenter)
   (map! :map counsel-ag-map
         [backtab] '+ivy/counsel-ag-occur     ; search/replace on results
         "C-SPC"   'counsel-git-grep-recenter ; preview

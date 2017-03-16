@@ -32,7 +32,7 @@
 
 (doom! :feature
        evil            ; come to the dark side, we have cookies
-       ;; TODO jump            ; navigating your code
+       jump            ; helping you navigate your code base
        snippets        ; my elves. They type so I don't have to
        file-templates  ; auto-snippets for empty files
        spellcheck      ; tasing you for misspelling mispelling

@@ -205,7 +205,8 @@
  :m  "[t" 'hl-todo-previous
  ;; Navigation
  :nv "K"  'smart-up
- :m  "gD" '+jump/find-definition
+ :m  "gd" '+jump/definition
+ :m  "gD" '+jump/references
  :n  "gf" 'find-file-at-point
  :n  "gp" '+evil/reselect-paste
  :n  "gc" 'evil-commentary
