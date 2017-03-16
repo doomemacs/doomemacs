@@ -71,8 +71,7 @@
 (defun doom|dont-kill-scratch-buffer ()
   (if (not (eq (buffer-name) "*scratch*"))
       t
-    (bury-buffer)
-    nil))
+    (ignore (bury-buffer))))
 (add-hook 'kill-buffer-query-functions 'doom|dont-kill-scratch-buffer)
 
 ;; enabled by default in Emacs 25+. No thanks.

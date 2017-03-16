@@ -53,15 +53,16 @@
   (push (cons 'background-color (face-background 'default)) default-frame-alist)
   (push (cons 'foreground-color (face-foreground 'default)) default-frame-alist)
 
-  ;; brighter real buffers
   (defun +doom|buffer-mode-on ()
+    "Enable `doom-buffer-mode' in buffers that are real (see
+`doom-real-buffer-p')."
     (when (and (not doom-buffer-mode)
                (doom-real-buffer-p))
       (doom-buffer-mode +1)))
   (add-hook 'after-change-major-mode-hook '+doom|buffer-mode-on)
 
-  ;; Popup buffers should always be dimmed
   (defun +doom|buffer-mode-off ()
+    "Disable `doom-buffer-mode' in popup buffers."
     (when (and doom-buffer-mode
                (not (get-buffer-window-list)))
       (doom-buffer-mode -1)))

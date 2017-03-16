@@ -1,3 +1,4 @@
+;;; ui/doom-dashboard/config.el
 
 (defvar +doom-dashboard-name " *doom*"
   "TODO")

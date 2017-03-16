@@ -99,8 +99,10 @@ see if NAME should be activated.
 
   :modes MODES -- if buffers are derived from MODES (one or a list of symbols).
 
-  :files FILES -- if project contains FILES (relative to project root); takes a
-    solitary string or a form comprised of (and ...) and/or (or ...) forms.
+  :files FILES -- if project contains FILES; takes a solitary string or a form
+    comprised of (and ...) and/or (or ...) forms. Each path is relative to the
+    project root, however, if prefixed with a '.' or '..', it is relative to the
+    current buffer.
 
   :match REGEXP -- if file name matches REGEXP
 
