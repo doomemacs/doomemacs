@@ -21,6 +21,7 @@
  "A-;"    'eval-expression
  ;; Tools
  [f9]     'doom/what-face
+ [f10]    'doom/blink-cursor
  "C-`"    'doom/popup-toggle
  ;; Text-scaling
  "M-0"    (λ! (text-scale-set 0))
@@ -118,7 +119,8 @@
      :prefix "t"
      :desc "Spell check"            :n "s" 'flyspell-mode
      :desc "Line numbers"           :n "l" 'doom/toggle-line-numbers
-     :desc "Fullscreen"             :n "f" 'doom/toggle-fullscreen)
+     :desc "Fullscreen"             :n "f" 'doom/toggle-fullscreen
+     :desc "Indent guides"          :n "i" 'highlight-indent-guides-mode)
 
    (:desc "Tmux/Terminal"
      :prefix "T"
