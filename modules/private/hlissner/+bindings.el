@@ -363,14 +363,7 @@
         "M-;"  'eval-expression
         "A-;"  'eval-expression)
 
-      (:after evil
-        (:map (evil-ex-completion-map evil-ex-search-keymap)
-          "C-a" 'move-beginning-of-line
-          "C-w" 'backward-kill-word
-          "C-u" 'backward-kill-sentence
-          "C-b" 'backward-word
-          "C-f" 'forward-word))
-      (:map read-expression-map
+      (:map (evil-ex-completion-map evil-ex-search-keymap read-expression-map)
         "C-a" 'move-beginning-of-line
         "C-w" 'backward-kill-word
         "C-u" 'backward-kill-sentence

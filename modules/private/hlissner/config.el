@@ -1,7 +1,7 @@
 ;;; private/hlissner/config.el
 
-(load! +bindings) ; my key bindings
 (when (featurep 'evil)
+  (load! +bindings)  ; my key bindings
   (load! +commands)) ; my custom ex commands
 
 (defvar +hlissner-snippets-dir
