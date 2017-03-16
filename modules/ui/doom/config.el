@@ -85,19 +85,25 @@
   (require 'doom-nlinum))
 
 
-;; Causes a flash around the cursor when it moves across a "large" distance.
-;; Usually between windows, or across files. This makes it easier to keep track
-;; where your cursor is, which I find helpful on my 30" 2560x1600 display.
-(def-package! beacon
-  :after doom-themes
-  :config
-  (beacon-mode +1)
-  (setq beacon-color (let ((bg (face-attribute 'highlight :background nil t)))
-                       (if (eq bg 'unspecified)
-                           (face-attribute 'highlight :foreground nil t)
-                         bg))
-        beacon-blink-when-buffer-changes t
-        beacon-blink-when-point-moves-vertically 10))
+;; Flashes the line around the cursor after any motion command that might
+;; reasonably send the cursor somewhere the eyes can't follow. Tremendously
+;; helpful on a 30" 2560x1600 display.
+(def-package! nav-flash
+  :commands nav-flash-show
+  :init
+  (defun doom/blink-cursor (&rest _)
+    "Blink line, to keep track of the cursor."
+    (interactive)
+    (nav-flash-show))
+
+  (add-hook! :append
+    '(imenu-after-jump-hook focus-in-hook evil-jumps-post-jump-hook find-file-hook)
+    'doom/blink-cursor)
+
+  (after! evil
+    (advice-add 'evil-window-bottom :after 'doom/blink-cursor)
+    (advice-add 'evil-window-middle :after 'doom/blink-cursor)
+    (advice-add 'evil-window-top    :after 'doom/blink-cursor)))
 
 
 (after! hideshow
