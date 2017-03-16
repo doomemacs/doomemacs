@@ -77,7 +77,8 @@ To get a picture of what's in here, check out:
 * [Minimalistic diffs in the fringe][sc-diffs] with **[git-gutter-fringe]**.
 * A do-what-I-mean jump-to-definition implementation that tries its
   darnest to find the definition of what you're looking at. It tries
-  major-mode commands, **[dumb-jump]**, ctags, then **[counsel-ag]**.
+  major-mode commands, xref (experimental Emacs library)
+  **[dumb-jump]**, ctags (WIP), then **[counsel-ag]**.
 * Snippets and file-templates with **[yasnippet]**.
 * A smarter, perdier, Atom-inspired mode-line that includes:
   * evil-search/iedit/evil-substitute mode-line integration
