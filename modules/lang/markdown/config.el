@@ -11,8 +11,6 @@
         markdown-gfm-additional-languages '("sh"))
 
   :config
-  (set! :electric 'markdown-mode :chars '(?+ ?#))
-
   (add-hook! markdown-mode
     (auto-fill-mode +1)
     (setq line-spacing 2
