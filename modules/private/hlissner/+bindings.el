@@ -14,6 +14,10 @@
             (command-remapping 'find-file))))))
 
 (map!
+ [remap evil-jump-to-tag] 'projectile-find-tag
+ [remap find-tag]         'projectile-find-tag)
+
+(map!
  ;; Essential
  "M-x"    'execute-extended-command
  "A-x"    'execute-extended-command

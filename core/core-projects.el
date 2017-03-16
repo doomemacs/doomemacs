@@ -24,9 +24,6 @@ state are passed in.")
   :config
   (projectile-mode +1)
 
-  (global-set-key [remap evil-jump-to-tag] 'projectile-find-tag)
-  (global-set-key [remap find-tag]         'projectile-find-tag)
-
   (setq projectile-other-file-alist
         (append '(("less" "css")
                   ("styl" "css")
