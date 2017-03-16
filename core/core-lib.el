@@ -138,7 +138,8 @@ Examples:
 Body forms can access the hook's arguments through the let-bound variable
 `args'."
   (declare (indent defun) (debug t))
-  (let (hook append-p local-p)
+  (let ((hook-fn (if (boundp 'hook-fn) hook-fn))
+        hook append-p local-p)
     (while (keywordp (car args))
       (pcase (pop args)
         (:append (setq append-p t))
@@ -157,8 +158,10 @@ Body forms can access the hook's arguments through the let-bound variable
                      `(quote ,fn)
                    `(lambda (&rest args) ,@args)))
         (dolist (hook hooks)
-          (push `(,(if (boundp 'hook-fn) hook-fn 'add-hook)
-                  ',hook ,fn ,append-p ,local-p)
+          (push (cond ((eq hook-fn 'remove-hook)
+                       `(remove-hook ',hook ,fn ,local-p))
+                      (t
+                       `(add-hook ',hook ,fn ,append-p ,local-p)))
                 forms)))
       `(progn ,@(nreverse forms)))))
 
