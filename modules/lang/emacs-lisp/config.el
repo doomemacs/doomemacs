@@ -19,9 +19,6 @@
   ;; Don't affect lisp indentation (only `tab-width')
   (set! :editorconfig :remove 'emacs-lisp-mode)
 
-  (map! :map emacs-lisp-mode-map
-        :m "gd" '+emacs-lisp/find-function)
-
   (defun +emacs-lisp|hook ()
     (setq mode-name "Elisp") ; [pedantry intensifies]
     (add-hook 'before-save-hook 'delete-trailing-whitespace nil t)

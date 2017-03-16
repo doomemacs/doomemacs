@@ -3,22 +3,6 @@
 ;; ---- emacs-lisp ---------------------------------------------------
 
 ;;;###autoload
-(defun +emacs-lisp/find-function (&optional arg)
-  "Jump to the definition of the function at point. If ARG (the prefix) is
-non-nil, the function will be revealed in another window. If ARG is 16 (C-u
-C-u), then reveal the function in a popup window."
-  (interactive "p")
-  (when-let (func (function-called-at-point))
-    (cond ((= arg 16)
-           (let ((buf (find-function-noselect func t)))
-             (doom-popup-buffer (car buf) :align t :size 30 :select t)
-             (goto-char (cdr buf))))
-          ((> arg 1)
-           (find-function-other-window func))
-          (t
-           (find-function func)))))
-
-;;;###autoload
 (defun +emacs-lisp/repl ()
   "Open the Emacs Lisp REPL (`ielm')."
   (interactive)
