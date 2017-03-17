@@ -30,7 +30,7 @@
   :init
   (add-hook 'python-mode-hook 'anaconda-mode)
   (add-hook 'anaconda-mode-hook 'anaconda-eldoc-mode)
-  (setq anaconda-mode-installation-directory (concat doom-cache-dir "anaconda/")
+  (setq anaconda-mode-installation-directory (concat doom-etc-dir "anaconda/")
         anaconda-mode-eldoc-as-single-line t)
 
   :config

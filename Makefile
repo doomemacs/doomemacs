@@ -21,11 +21,10 @@ compile: init.el clean
 	@$(EMACS) -l core/core.el -f 'doom/recompile'
 
 clean:
-	@rm -fv init.elc
-	@find {core,modules} -type f -iname '*.elc' -exec rm \-fv {} \;
+	@$(EMACS) -l core/core.el -f 'doom/clear-compiled'
 
 clean-cache:
-	@$(EMACS) -l core/core.el --eval '(delete-directory doom-cache-dir t)'
+	@$(EMACS) -l core/core.el -f 'doom/clear-cache'
 
 # This is only useful if your emacs.d is somewhere other than ~/.emacs.d (for
 # development purposes for instance).

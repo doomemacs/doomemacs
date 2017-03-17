@@ -108,7 +108,7 @@
 (def-package! irony
   :after cc-mode
   :config
-  (setq irony-server-install-prefix (concat doom-cache-dir "irony-server/"))
+  (setq irony-server-install-prefix (concat doom-etc-dir "irony-server/"))
   (add-hook! 'irony-mode-hook '(irony-eldoc flycheck-mode))
   (add-hook! 'c++-mode-hook
     (make-local-variable 'irony-additional-clang-options)

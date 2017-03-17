@@ -115,7 +115,7 @@ to speed up startup."
           package-activated-list nil)
 
     ;; Ensure core folders exist
-    (dolist (dir (list doom-local-dir doom-cache-dir package-user-dir))
+    (dolist (dir (list doom-local-dir doom-etc-dir doom-cache-dir package-user-dir))
       (unless (file-directory-p dir)
         (make-directory dir t)))
 
@@ -457,6 +457,22 @@ This may take a while."
       (when-let (errors (cl-remove-if 'cdr results))
         (message "\n%s" (mapconcat (lambda (file) (concat "+ ERROR: " (car file)))
                                    (nreverse errors) "\n"))))))
+
+(defun doom/clear-cache ()
+  "Clear local cache (`doom-cache-dir'). You may need to restart Emacs for some
+components to feel its effects."
+  (delete-directory doom-cache-dir t)
+  (make-directory doom-cache-dir t))
+
+(defun doom/clear-compiled ()
+  "Delete all compiled elc files in DOOM emacs, excluding compiled ELPA/QUELPA
+package files."
+  (interactive)
+  (when-let (elc-files (cl-remove-if (lambda (file) (file-in-directory-p file doom-local-dir))
+                                     (directory-files-recursively doom-emacs-dir "\\.elc$")))
+    (dolist (file elc-files)
+      (delete-file file)
+      (message "Deleting %s" (abbreviate-file-name file)))))
 
 
 ;;

@@ -49,7 +49,7 @@
   :init
   (add-hook 'php-mode-hook 'eldoc-mode)
   :config
-  (setq php-extras-eldoc-functions-file (concat doom-cache-dir "php-extras-eldoc-functions"))
+  (setq php-extras-eldoc-functions-file (concat doom-etc-dir "php-extras-eldoc-functions"))
 
   ;; company will set up itself
   (advice-add 'php-extras-company-setup :override 'ignore)

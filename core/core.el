@@ -32,17 +32,29 @@ line or use --debug-init to enable this.")
 (defvar doom-modules-dir (concat doom-emacs-dir "modules/")
   "Where configuration modules are stored.")
 
+
+;; Multi-host directories: I namespace `doom-etc-dir' and `doom-cache-dir' with
+;; host names because I use the same (often symlinked) emacs.d across several
+;; computers -- often simultaneously. Cache or other temporary files would
+;; conflict otherwise.
+
 (defvar doom-local-dir (concat doom-emacs-dir ".local/")
-  "Untracked directory for local Emacs files, including the cache
-(`doom-cache-dir'), packages (`doom-packages-dir') and autoloads file.")
+  "Root directory for local Emacs files.")
+
+(defvar doom-packages-dir (concat doom-local-dir "packages/")
+  "Where package.el and quelpa plugins (and their caches) are kept.")
+
+(defvar doom-etc-dir
+  (concat doom-local-dir "etc/" (system-name) "/")
+  "Hostname-based directory for non-volatile temporary files. These are not
+deleted or tampored with by DOOM functions. It should not be used for transient
+or unstable files.")
 
 (defvar doom-cache-dir
   (concat doom-local-dir "cache/" (system-name) "/")
-  "Hostname-based directory for temporary files.")
-
-(defvar doom-packages-dir
-  (concat doom-local-dir "packages/")
-  "Where package.el and quelpa plugins (and their caches) are kept.")
+  "Hostname-based directory for volatile temporary files. They are deleted when
+`doom/clear-cache' is called. For more stable local storage, use
+`doom-local-dir'.")
 
 (defvar doom-autoload-file
   (concat doom-local-dir "autoloads.el")
@@ -71,7 +83,7 @@ line or use --debug-init to enable this.")
  compilation-ask-about-save nil   ; save all buffers on `compile'
  compilation-scroll-output t
  confirm-nonexistent-file-or-buffer t
- custom-file (concat doom-cache-dir "custom.el")
+ custom-file (concat doom-etc-dir "custom.el")
  enable-recursive-minibuffers nil
  debug-on-error (and (not noninteractive) doom-debug-mode)
  idle-update-delay 1              ; update ui less often
