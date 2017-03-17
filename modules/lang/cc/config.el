@@ -146,7 +146,7 @@
   :config
   (set! :company-backend 'cmake-mode '(company-cmake company-yasnippet)))
 
-(def-package! glsl-mode :mode ("\\.glsl\\'" "\\.vert\\'" "\\.frag\\'" "\\.geom\\'"))
+(def-package! glsl-mode :mode ("\\.glsl$" "\\.vert$" "\\.frag$" "\\.geom$"))
 
 (def-package! cuda-mode :mode "\\.cuh?$")
 

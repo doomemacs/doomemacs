@@ -8,7 +8,7 @@
   "The font currently in use.")
 
 (defvar +doom-variable-pitch-font
-  (font-spec :family "Fira Sans" :size 12)
+  (font-spec :family "Fira Sans" :size 14)
   "The font currently in use.")
 
 (defvar +doom-unicode-font
@@ -32,7 +32,7 @@
 ;; The native border "consumes" a pixel of the fringe on righter-most splits,
 ;; `window-divider' does not. Available since Emacs 25.1.
 (setq window-divider-default-places t
-      window-divider-default-bottom-width 0
+      window-divider-default-bottom-width 1
       window-divider-default-right-width 1)
 (window-divider-mode +1)
 

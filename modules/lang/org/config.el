@@ -4,6 +4,7 @@
 ;;   + `org-capture' in a popup frame (can be invoked from outside emacs too)
 ;;   + Exported files are put in a centralized location (see
 ;;     `org-export-directory')
+;;   + Inline latex previews (requires latex and dvipng programs)
 ;;   + TODO A simpler attachment system (with auto-deleting support) and
 ;;     drag-and-drop for images and documents into org files
 ;;   + TODO Custom links for class notes

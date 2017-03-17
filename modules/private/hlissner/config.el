@@ -8,11 +8,11 @@
   (expand-file-name "snippets/" (file-name-directory load-file-name)))
 
 
-;; On Arch, bspwm is my window manager. When I open GUI Emacs there's a gap on
-;; the right side of the frame (which causes display glitches). I fix this by
-;; simply cycling fullscreen:
-(when (and (display-graphic-p) IS-LINUX)
-  (add-hook! 'after-init-hook
+;; On Arch, bspwm is my window manager. When I open GUI Emacs a gap forms on the
+;; right side of the frame (which causes display glitches). Cycling fullscreen
+;; fixing this.
+(when (and IS-LINUX (display-graphic-p))
+  (add-hook! 'window-setup-hook
     (set-frame-parameter nil 'fullscreen 'fullboth)
     (set-frame-parameter nil 'fullscreen nil)))
 

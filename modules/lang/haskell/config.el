@@ -1,7 +1,6 @@
 ;;; module-haskell.el
 
-;; Requires cabal installed for syntax-checking, and ghci (or hugs) to be
-;; installed for REPL support.
+;; requires cabal (flycheck), ghci/hugs (repl)
 
 (def-package! haskell-mode
   :mode (("\\.hs$" . haskell-mode)
