@@ -7,6 +7,10 @@
 (defvar +hlissner-snippets-dir
   (expand-file-name "snippets/" (file-name-directory load-file-name)))
 
+(setq user-mail-address "henrik@lissner.net"
+      user-full-name "Henrik Lissner"
+      epa-file-encrypt-to user-mail-address)
+
 
 ;; On Arch, bspwm is my window manager. When I open GUI Emacs a gap forms on the
 ;; right side of the frame (which causes display glitches). Cycling fullscreen
