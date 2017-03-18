@@ -24,6 +24,10 @@
              ;; Don't open files from the workspace in a new frame
              ns-pop-up-frames nil)
 
+       ;; A known problem with GUI Emacs on MacOS: it runs in an isolated
+       ;; environment, so envvars will be wrong. That includes the PATH Emacs
+       ;; picks up. `exec-path-from-shell' fixes this, and its result is cached.
+       ;; Run `doom/clear-cache' to regenerate exec-path if PATH changes.
        (cond ((display-graphic-p)
               ;; `exec-path-from-shell' is slow, so bring out the cache
               (setq exec-path
