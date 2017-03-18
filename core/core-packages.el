@@ -187,7 +187,7 @@ files."
 
   e.g '(:feature evil :lang emacs-lisp javascript java)"
   (unless doom-modules
-    (setq doom-modules (make-hash-table :test 'equal :size (length modules))))
+    (setq doom-modules (make-hash-table :test 'equal :size (+ 5 (length modules)))))
   (let (mode)
     (dolist (m modules)
       (cond ((keywordp m)
