@@ -38,12 +38,17 @@
   (setq anzu-cons-mode-line-p nil
         anzu-minimum-input-length 1
         anzu-search-threshold 250)
+
+  (make-variable-buffer-local 'anzu--state)
+  (defun +doom-modeline|reset-anzu ()
+    (setq anzu--state nil))
   ;; Ensure anzu state is cleared when searches & iedit are done
+  (add-hook! '(kill-buffer-hook find-file-hook) '+doom-modeline|reset-anzu)
   (after! evil
-    (advice-add 'evil-force-normal-state :after 'anzu--reset-mode-line)
-    (advice-add 'evil-ex-search-abort :after 'anzu--reset-mode-line)
+    (advice-add 'evil-force-normal-state :after '+doom-modeline|reset-anzu)
+    (advice-add 'evil-ex-search-abort :after '+doom-modeline|reset-anzu)
     (after! evil-multiedit
-      (add-hook 'iedit-mode-end-hook 'anzu--reset-mode-line))))
+      (add-hook 'iedit-mode-end-hook '+doom-modeline|reset-anzu))))
 
 
 ;;; Flash the mode-line on error
