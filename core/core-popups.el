@@ -115,6 +115,12 @@ for :align t on every rule."
     (define-key map (kbd "ESC") 'doom/popup-close-maybe)
     (define-key map [remap doom-kill-buffer] 'kill-this-buffer)
     (define-key map [remap doom/kill-this-buffer] 'kill-this-buffer)
+    (define-key map [remap split-window-right] 'ignore)
+    (define-key map [remap split-window-below] 'ignore)
+    (define-key map [remap split-window-horizontally] 'ignore)
+    (define-key map [remap split-window-vertically] 'ignore)
+    (define-key map [remap mouse-split-window-horizontally] 'ignore)
+    (define-key map [remap mouse-split-window-vertically] 'ignore)
     map)
   "Active keymap in popup windows.")
 
