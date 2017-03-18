@@ -84,7 +84,6 @@
    :desc "Browse files"             :n "."  'find-file
    :desc "Find file from here"      :n ">"  'counsel-file-jump
    :desc "Find file in project"     :n "/"  'projectile-find-file
-   :desc "Open file explorer"       :n "\\" '+evil/neotree
    :desc "Imenu"                    :n ";"  'imenu
    :desc "Imenu across buffers"     :n ":"  'imenu-anywhere
    :desc "Find other file"          :n "a"  'projectile-find-other-file
@@ -93,6 +92,7 @@
    :desc "List errors"              :n "e"  'flycheck-list-errors
    :desc "Recent files"             :n "m"  'recentf
    :desc "Recent project files"     :n "M"  'projectile-recentf
+   :desc "Open file explorer"       :n "n"  '+evil/neotree
    :desc "Insert from kill ring"    :n "y"  'counsel-yank-pop
    :desc "Switch project"           :n "p"  'projectile-switch-project
    :desc "Find snippet for mode"    :n "s"  'yas-visit-snippet-file
