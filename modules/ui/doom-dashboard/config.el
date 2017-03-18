@@ -42,7 +42,6 @@
 ;;
 (setq doom-fallback-buffer +doom-dashboard-name)
 
-(add-hook 'emacs-startup-hook '+doom-dashboard/open)
 (add-hook 'after-make-frame-functions '+doom-dashboard-deferred-reload)
 (add-hook! 'window-setup-hook
   (add-hook! 'kill-buffer-query-functions
@@ -50,7 +49,9 @@
         (ignore (ignore-errors (+doom-dashboard-force-reload))
                 (bury-buffer))))
   (add-hook 'window-configuration-change-hook '+doom-dashboard-reload)
-  (+doom-dashboard-reload))
+  (+doom-dashboard-reload)
+  (when (equal (buffer-name) "*scratch*")
+    (switch-to-buffer (doom-fallback-buffer))))
 
 ;; Compatibility with `midnight-mode' and `clean-buffer-list'
 (after! midnight-mode
