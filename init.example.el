@@ -61,7 +61,6 @@
        eshell          ; a consistent, cross-platform shell (WIP)
        dired           ; making dired pretty [functional]
        macos           ; macos-specific commands
-       restclient      ; A REST REPL
        rotate-text     ; cycle region at point between text candidates
        tmux            ; an API for interacting with tmux
        upload          ; map local to remote projects via ssh/ftp
@@ -86,6 +85,7 @@
        php             ; make php less awful to work with
        processing      ; for prototyping
        python          ; beautiful is better than ugly
+       rest            ; Emacs as a REST client
        ruby            ; 1.step do {|i| p "Ruby is #{i&1==0?'love':'life'}"}
        rust            ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
        scala           ; java, but good
