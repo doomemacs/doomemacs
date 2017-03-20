@@ -1,35 +1,36 @@
 # Ensure emacs always runs from this makefile's PWD
-EMACS=emacs --batch --eval "(setq user-emacs-directory default-directory)"
+EMACS_FLAGS=--eval "(setq user-emacs-directory default-directory)"
+EMACS=emacs --batch $(EMACS_FLAGS) -l core/core.el
 
 
 # Tasks
 all: install update autoloads
 
 install: init.el
-	@$(EMACS) -l core/core.el -f 'doom-initialize-autoloads' -f 'doom/packages-install'
+	@$(EMACS) -f 'doom-initialize-autoloads' -f 'doom/packages-install'
 
 update: init.el
-	@$(EMACS) -l core/core.el -f 'doom-initialize-autoloads' -f 'doom/packages-update'
+	@$(EMACS) -f 'doom-initialize-autoloads' -f 'doom/packages-update'
 
 autoremove: init.el
-	@$(EMACS) -l core/core.el -f 'doom-initialize-autoloads' -f 'doom/packages-autoremove'
+	@$(EMACS) -f 'doom-initialize-autoloads' -f 'doom/packages-autoremove'
 
 autoloads: init.el
-	@$(EMACS) -l core/core.el -f 'doom/reload-autoloads'
+	@$(EMACS) -f 'doom/reload-autoloads'
 
 compile: init.el clean
-	@$(EMACS) -l core/core.el -f 'doom/recompile'
+	@$(EMACS) -f 'doom/recompile'
 
 clean:
-	@$(EMACS) -l core/core.el -f 'doom/clean-compiled'
+	@$(EMACS) -f 'doom/clean-compiled'
 
 clean-cache:
-	@$(EMACS) -l core/core.el -f 'doom/clean-cache'
+	@$(EMACS) -f 'doom/clean-cache'
 
 # This is only useful if your emacs.d is somewhere other than ~/.emacs.d (for
 # development purposes for instance).
 run:
-	@emacs --eval "(setq user-emacs-directory default-directory)" -q -l init.el
+	@emacs $(EMACS_FLAGS) -q -l init.el
 
 init.el:
 	@[ -e init.el ] || $(error No init.el file; create one or copy init.example.el)
