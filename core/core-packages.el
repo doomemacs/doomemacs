@@ -331,7 +331,8 @@ throw an error if the file doesn't exist."
   "Like `require', but for doom modules. Will load a module's config.el file if
 it hasn't already, and if it exists."
   (when (or (not noninteractive)
-            (bound-and-true-p byte-compile-current-file))
+            (bound-and-true-p byte-compile-current-file)
+            reload-p)
     (let ((loaded-p (doom-module-loaded-p module submodule)))
       (when (or reload-p (not loaded-p))
         (unless loaded-p

@@ -21,7 +21,7 @@
 ;;
 (def-bootstrap! cc
   ;; NOTE Untested
-  (require! :lang cc)
+  (require! :lang cc t)
   (require 'irony)
   (unless (expand-file-name "bin/irony-server" irony-server-install-prefix)
     (pcase (doom-system-os)
