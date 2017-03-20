@@ -21,10 +21,10 @@ compile: init.el clean
 	@$(EMACS) -l core/core.el -f 'doom/recompile'
 
 clean:
-	@$(EMACS) -l core/core.el -f 'doom/clear-compiled'
+	@$(EMACS) -l core/core.el -f 'doom/clean-compiled'
 
 clean-cache:
-	@$(EMACS) -l core/core.el -f 'doom/clear-cache'
+	@$(EMACS) -l core/core.el -f 'doom/clean-cache'
 
 # This is only useful if your emacs.d is somewhere other than ~/.emacs.d (for
 # development purposes for instance).

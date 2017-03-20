@@ -53,7 +53,7 @@ or unstable files.")
 (defvar doom-cache-dir
   (concat doom-local-dir "cache/" (system-name) "/")
   "Hostname-based directory for volatile temporary files. They are deleted when
-`doom/clear-cache' is called. For more stable local storage, use
+`doom/clean-cache' is called. For more stable local storage, use
 `doom-local-dir'.")
 
 (defvar doom-autoload-file
