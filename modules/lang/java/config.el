@@ -13,10 +13,7 @@
         meghanada-use-flycheck t
         meghanada-use-auto-start t)
 
-  (map! :map meghanada-mode-map :m "gd" 'meghanada-jump-declaration)
-
-  (unless (file-exists-p (meghanada--locate-server-jar))
-    (meghanada-install-server)))
+  (map! :map meghanada-mode-map :m "gd" 'meghanada-jump-declaration))
 
 
 (def-package! android-mode
