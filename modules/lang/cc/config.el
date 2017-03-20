@@ -116,7 +116,10 @@
 
 (def-package! irony-eldoc :after irony)
 
-(def-package! flycheck-irony :after irony :config (flycheck-irony-setup))
+(def-package! flycheck-irony
+  :when (featurep! :feature syntax-checker)
+  :after irony
+  :config (flycheck-irony-setup))
 
 
 ;;
@@ -130,11 +133,12 @@
 ;; Plugins
 ;;
 
-(def-package! company-cmake :after cmake-mode)
+(when (featurep! :completion company)
+  (def-package! company-cmake :after cmake-mode)
 
-(def-package! company-irony :after irony)
+  (def-package! company-irony :after irony)
 
-(def-package! company-irony-c-headers :after company-irony)
+  (def-package! company-irony-c-headers :after company-irony))
 
 
 ;;

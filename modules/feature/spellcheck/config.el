@@ -15,17 +15,14 @@
 
 (def-package! flyspell-correct
   :commands (flyspell-correct-word-generic
-             flyspell-correct-previous-word-generic))
-
-
-(def-package! flyspell-correct-popup
-  :after flyspell-correct
+             flyspell-correct-previous-word-generic)
   :config
-  (setq flyspell-popup-correct-delay 0.8)
-  (define-key popup-menu-keymap [escape] 'keyboard-quit))
+  (cond ((featurep! :completion helm)
+         (require 'flyspell-correct-helm))
+        ((featurep! :completion ivy)
+         (require 'flyspell-correct-ivy))
+        (t
+         (require 'flyspell-correct-popup)
+         (setq flyspell-popup-correct-delay 0.8)
+         (define-key popup-menu-keymap [escape] 'keyboard-quit))))
 
-
-(def-package! flyspell-correct-helm :after flyspell-correct)
-
-
-(def-package! flyspell-correct-ivy  :after flyspell-correct)

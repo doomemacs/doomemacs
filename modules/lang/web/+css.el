@@ -19,6 +19,7 @@
 ;;
 
 (def-package! counsel-css
+  :when (featurep! :completion ivy)
   :commands (counsel-css counsel-css-imenu-setup)
   :init
   (add-hook 'css-mode-hook 'counsel-css-imenu-setup)

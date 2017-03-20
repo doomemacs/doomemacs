@@ -35,15 +35,17 @@
 
   :config
   (set! :popup "*anaconda-mode*" :size 10 :noselect t :autoclose t :autokill t)
-  (set! :company-backend 'python-mode '(company-anaconda))
 
   (map! :map anaconda-mode-map :m "gd" 'anaconda-mode-find-definitions)
 
   (advice-add 'anaconda-mode-doc-buffer :after 'doom*anaconda-mode-doc-buffer))
 
+
 (def-package! company-anaconda
+  :when (featurep! :completion company)
   :after anaconda-mode
   :config
+  (set! :company-backend 'python-mode '(company-anaconda))
   (map! :map python-mode-map
         :m "gd" 'anaconda-mode-find-definitions
         :localleader

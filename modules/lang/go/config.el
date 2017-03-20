@@ -29,6 +29,7 @@
 
 
 (def-package! company-go
+  :when (featurep! :completion company)
   :after go-mode
   :config (set! :company-backend 'go-mode '(company-go company-yasnippet)))
 

@@ -79,6 +79,7 @@
 
 
 (def-package! company-tern
+  :when (featurep! :completion company)
   :after tern
   :config
   (set! :company-backend 'js2-mode '(company-tern)))

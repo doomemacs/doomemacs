@@ -39,6 +39,7 @@
 
 
 (def-package! evil-magit
+  :when (featurep! :feature evil)
   :after magit
   :config
   ;; evil-snipe conflicts with magit

@@ -38,6 +38,7 @@
   (map! :map LaTeX-mode-map "C-j" nil)
 
   (def-package! company-auctex
+    :when (featurep! :completion company)
     :init
     (set! :company-backend 'LaTeX-mode '(company-auctex))))
 
@@ -74,8 +75,10 @@
   (map! :map bibtex-mode-map "C-c \\" 'bibtex-fill-entry))
 
 (def-package! ivy-bibtex
+  :when (featurep! :completion ivy)
   :commands ivy-bibtex)
 
 (def-package! helm-bibtex
+  :when (featurep! :completion helm)
   :commands helm-bibtex)
 

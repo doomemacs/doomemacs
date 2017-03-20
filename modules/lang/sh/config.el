@@ -21,6 +21,7 @@
 
 
 (def-package! company-shell
+  :when (featurep! :completion company)
   :after sh-script
   :config (setq company-shell-delete-duplicates t))
 

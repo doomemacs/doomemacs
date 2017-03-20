@@ -63,14 +63,13 @@
 
 (def-package! inf-ruby
   :commands (inf-ruby inf-ruby-console-auto)
-  :init
-  (set! :repl 'ruby-mode 'inf-ruby)
-  :config
-  (set! :company-backend 'inf-ruby-mode '(company-inf-ruby)))
+  :init (set! :repl 'ruby-mode 'inf-ruby))
 
 
 (def-package! company-inf-ruby
-  :after inf-ruby)
+  :when (featurep! :completion company)
+  :after inf-ruby
+  :config (set! :company-backend 'inf-ruby-mode '(company-inf-ruby)))
 
 
 ;;

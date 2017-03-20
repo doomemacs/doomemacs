@@ -12,6 +12,7 @@
 
 
 (def-package! company-sourcekit
+  :when (featurep! :completion company)
   :after swift-mode
   :config
   (set! :company-backend 'swift-mode '(company-sourcekit company-yasnippet)))

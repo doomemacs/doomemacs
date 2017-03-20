@@ -22,14 +22,16 @@
         racer-rust-src-path (expand-file-name "rust/src/" +rust-cache-dir))
 
   ;; TODO Unit test keybinds
-  (set! :company-backend 'rust-mode '(company-racer))
   (map! :map rust-mode-map :m "gd" 'racer-find-definition))
 
 
 (def-package! company-racer
-  :after racer)
+  :when (featurep! :completion company)
+  :after racer
+  :config (set! :company-backend 'rust-mode '(company-racer)))
 
 
 (def-package! flycheck-rust
+  :when (featurep! :feature syntax-checker)
   :after rust-mode)
 

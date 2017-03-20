@@ -6,5 +6,6 @@
 
 (when (featurep! :feature syntax-checker)
   (package! flycheck-rust))
+
 (when (featurep! :completion company)
   (package! company-racer))

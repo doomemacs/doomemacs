@@ -283,14 +283,8 @@ byte-compilation."
        ;; Benchmark
        (add-hook 'after-init-hook 'doom--display-benchmark t))))
 
-(defmacro def-package! (name &rest plist)
-  "Defines and configures a package using `use-package'. Packages are deferred
-by default. If the package isn't installed or loaded, `def-package!' is
-ignored."
-  (when (or (featurep name)
-            (progn (doom-initialize)
-                   (package-installed-p name)))
-    `(use-package ,name ,@plist)))
+(defalias 'def-package! 'use-package
+  "An alias for `use-package'. Note that packages are deferred by default.")
 
 (defmacro load! (filesym &optional path noerror)
   "Loads a file relative to the current module (or PATH). FILESYM is a file path

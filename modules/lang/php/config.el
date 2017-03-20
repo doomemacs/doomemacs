@@ -15,7 +15,7 @@
   (setq php-template-compatibility nil)
 
   (set! :repl 'php-mode 'php-boris)
-  (set! :company-bakend 'php-mode '(php-extras-company company-yasnippet))
+
 
   (add-hook! php-mode (setq-local sp-max-pair-length 6))
 
@@ -50,6 +50,8 @@
   (add-hook 'php-mode-hook 'eldoc-mode)
   :config
   (setq php-extras-eldoc-functions-file (concat doom-etc-dir "php-extras-eldoc-functions"))
+
+  (set! :company-bakend 'php-mode '(php-extras-company company-yasnippet))
 
   ;; company will set up itself
   (advice-add 'php-extras-company-setup :override 'ignore)

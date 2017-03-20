@@ -6,7 +6,6 @@
   :init
   (add-hook 'lua-mode-hook 'flycheck-mode)
   :config
-  (set! :company-backend 'lua-mode '(company-lua company-yasnippet))
   (set! :electric 'lua-mode :words '("else" "end"))
   (set! :repl 'lua-mode '+lua/repl)
 
@@ -15,7 +14,10 @@
 
 
 (def-package! company-lua
-  :after lua-mode)
+  :when (featurep! :completion company)
+  :after lua-mode
+  :config
+  (set! :company-backend 'lua-mode '(company-lua company-yasnippet)))
 
 
 (def-package! moonscript

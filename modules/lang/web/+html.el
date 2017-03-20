@@ -29,9 +29,12 @@
         :nv "]t"  'web-mode-tag-next
         :nv "[t"  'web-mode-tag-previous
         :nv "]T"  'web-mode-element-child
-        :nv "[T"  'web-mode-element-parent)
+        :nv "[T"  'web-mode-element-parent))
 
-  (def-package! company-web :after company))
+
+(def-package! company-web
+  :when (featurep! :completion company)
+  :after web-mode)
 
 
 (def-package! haml-mode :mode "\\.haml$")
