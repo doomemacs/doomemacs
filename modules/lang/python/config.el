@@ -48,6 +48,7 @@
   (set! :company-backend 'python-mode '(company-anaconda))
   (map! :map python-mode-map
         :m "gd" 'anaconda-mode-find-definitions
+        :m "gD" 'anaconda-mode-find-references
         :localleader
         :prefix "f"
         :nv "d" 'anaconda-mode-find-definitions
