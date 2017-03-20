@@ -24,7 +24,7 @@ elisp buffer). Otherwise forward the region to Quickrun."
                  (read-only-mode -1)
                  (setq-local scroll-margin 0)
                  (erase-buffer)
-                 (set-syntax-table emacs-lisp-mode-syntax-table)
+                 (emacs-lisp-mode)
                  (prin1 result buf)
                  (pp-buffer)
                  (read-only-mode 1)
