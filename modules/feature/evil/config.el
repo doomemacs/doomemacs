@@ -86,8 +86,8 @@
     (evil-ex-nohighlight)))
 (advice-add 'evil-force-normal-state :after '+evil*esc)
 
-;; Don't move cursor on indent
 (defun +evil*static-reindent (orig-fn &rest args)
+  "Don't move cursor on indent."
   (save-excursion (apply orig-fn args)))
 (advice-add 'evil-indent :around '+evil*static-reindent)
 

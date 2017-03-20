@@ -18,15 +18,14 @@
 (defvar +doom-dashboard-widgets '(banner shortmenu loaded)
   "List of widgets to display in a blank scratch buffer.")
 
-(defvar +doom-dashboard--old-fringe-indicator fringe-indicator-alist
-  "")
-
-(defvar +doom-dashboard--width 0)
-(defvar +doom-dashboard--height 0)
-
 (define-derived-mode +doom-dashboard-mode fundamental-mode
   (concat "v" doom-version)
   "Major mode for the DOOM dashboard buffer.")
+
+(defvar +doom-dashboard--width 0)
+(defvar +doom-dashboard--height 0)
+(defvar +doom-dashboard--old-fringe-indicator fringe-indicator-alist)
+
 
 
 (def-package! all-the-icons :when (display-graphic-p))

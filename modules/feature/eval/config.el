@@ -65,16 +65,17 @@ invokes the repl. Takes the same arguements as `rtog/add-repl'."
    and COMMAND is a key (for `quickrun--language-alist'), and will be registered
    in `quickrun--major-mode-alist'.
 3. If MODE is not a string and COMMAND is an alist, see `quickrun-add-command':
-   (quickrun-add-command MODE COMMAND :mode MODE)"
+   (quickrun-add-command MODE COMMAND :mode MODE)."
   `(after! quickrun
-     ,(if (stringp command)
-          `(push ',(cons mode command)
-                 ,(if (stringp mode)
-                      'quickrun-file-alist
-                    'quickrun--major-mode-alist))
-        `(quickrun-add-command
-          ,(symbol-name mode)
-          ',command :mode ',mode))))
+     ,(cond ((stringp command)
+             `(push ',(cons mode command)
+                    ,(if (stringp mode)
+                         'quickrun-file-alist
+                       'quickrun--major-mode-alist)))
+            ((listp command)
+             `(quickrun-add-command
+                ,(symbol-name mode)
+                ',command :mode ',mode)))))
 
 (def-package! quickrun
   :commands (quickrun

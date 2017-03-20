@@ -27,7 +27,8 @@
   (advice-add 'evil-force-normal-state :after '+syntax-checkers|flycheck-buffer))
 
 
-(def-package! flycheck-pos-tip :after flycheck
+(def-package! flycheck-pos-tip
+  :after flycheck
   :config
   (setq flycheck-pos-tip-timeout 10
         flycheck-display-errors-delay 0.5)

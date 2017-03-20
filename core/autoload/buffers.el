@@ -192,6 +192,7 @@ See `doom-real-buffer-p' for what 'real' means."
                    (or (not process-buffer)
                        (and (bufferp process-buffer)
                             (get-buffer-window-list process-buffer nil t))))
+          (message "Killing %s" (process-name p))
           (delete-process p)
           (setq n (1+ n)))))
     n))

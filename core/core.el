@@ -86,7 +86,7 @@ or unstable files.")
  custom-file (concat doom-etc-dir "custom.el")
  enable-recursive-minibuffers nil
  debug-on-error (and (not noninteractive) doom-debug-mode)
- idle-update-delay 1              ; update ui less often
+ idle-update-delay 2              ; update ui less often
  url-configuration-directory (concat doom-cache-dir "url/")
  ;; keep the point out of the minibuffer
  minibuffer-prompt-properties '(read-only t point-entered minibuffer-avoid-prompt face minibuffer-prompt)
