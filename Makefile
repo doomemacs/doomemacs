@@ -27,6 +27,18 @@ clean:
 clean-cache:
 	@$(EMACS) -f 'doom/clean-cache'
 
+
+# Syntactic sugar for bootstrapping modules. Allows: make bootstrap javascript
+# See doom/bootstrap for more information.
+ifeq (bootstrap,$(firstword $(MAKECMDGOALS)))
+  ARGV := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
+  $(eval $(ARGV):;@:)
+endif
+
+bootstrap: init.el
+	@$(EMACS) -f 'doom-initialize-autoloads' --eval "(doom/bootstrap '($(ARGV)))"
+
+
 # This is only useful if your emacs.d is somewhere other than ~/.emacs.d (for
 # development purposes for instance).
 run:
@@ -35,4 +47,5 @@ run:
 init.el:
 	@[ -e init.el ] || $(error No init.el file; create one or copy init.example.el)
 
-.PHONY: all test
+
+.PHONY: all test bootstrap

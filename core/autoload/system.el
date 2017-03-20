@@ -18,19 +18,21 @@
           (t (error "Unknown OS: %s" system-type)))))
 
 ;;;###autoload
-(defun doom-sh (&rest args)
+(defun doom-sh (command &rest args)
   "Runs a shell command and prints any output to the DOOM buffer."
-  (error "doom-sh not implemented yet"))
+  (if (equal (car (split-string command " ")) "sudo")
+      (apply 'doom-sudo command args)
+    (princ (shell-command-to-string (apply 'format command args)))))
 
 ;;;###autoload
-(defun doom-async-sh (&rest args)
-  "Like `doom-sh', but runs command asynchronously."
-  (error "doom-async-sh not implemented yet"))
-
-;;;###autoload
-(defun doom-sudo (&rest args)
+(defun doom-sudo (command &rest args)
   "Like `doom-sh', but runs as root (prompts for password)."
-  (error "doom-sudo not implemented yet"))
+  (let ((tramp-verbose 2)
+        (buf (get-buffer-create "*sudo*")))
+    (with-current-buffer buf
+      (unless (string-prefix-p "/sudo::/" default-directory)
+        (cd "/sudo::/"))
+      (apply 'doom-sh command args))))
 
 ;;;###autoload
 (defun doom-fetch (fetcher location dest)
@@ -59,3 +61,4 @@ etc."
           (when (featurep 'evil)
             (evil-change-state 'normal))
           (set-buffer-modified-p nil))))))
+
