@@ -6,7 +6,6 @@
   :init
   (add-hook! sh-mode '(flycheck-mode highlight-numbers-mode +sh|extra-fontify))
   :config
-  (set! :company-backend 'sh-mode '(company-shell))
   (set! :electric 'sh-mode :words '("else" "elif" "fi" "done" "then" "do" "esac" ";;"))
   (set! :repl 'sh-mode '+sh/repl)
   (setq sh-indent-after-continuation 'always)
@@ -23,5 +22,7 @@
 (def-package! company-shell
   :when (featurep! :completion company)
   :after sh-script
-  :config (setq company-shell-delete-duplicates t))
+  :config
+  (set! :company-backend 'sh-mode '(company-shell))
+  (setq company-shell-delete-duplicates t))
 
