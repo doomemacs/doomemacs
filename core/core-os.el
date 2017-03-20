@@ -31,12 +31,13 @@
        (cond ((display-graphic-p)
               ;; `exec-path-from-shell' is slow, so bring out the cache
               (setq exec-path
-                    (eval-when-compile
-                      (require 'exec-path-from-shell nil t)
-                      (nconc exec-path-from-shell-variables '("GOPATH" "GOROOT" "PYTHONPATH"))
-                      (exec-path-from-shell-initialize)
-                      (persistent-soft-store 'exec-path exec-path "emacs")
-                      exec-path)))
+                    (or (eval-when-compile
+                          (when (require 'exec-path-from-shell nil t)
+                            (nconc exec-path-from-shell-variables '("GOPATH" "GOROOT" "PYTHONPATH"))
+                            (exec-path-from-shell-initialize)
+                            (persistent-soft-store 'exec-path exec-path "emacs")
+                            exec-path))
+                        exec-path)))
              (t
               (when (require 'osx-clipboard nil t)
                 (osx-clipboard-mode +1))))
