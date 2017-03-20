@@ -1,9 +1,5 @@
 ;;; lang/go/config.el
 
-;; requires gocode (completion), gore (repl) and a valid $GOPATH
-;;   go get -u github.com/nsf/gocode
-;;   go get -u github.com/motemen/gore
-
 (def-package! go-mode
   :mode "\\.go$"
   :interpreter "go"

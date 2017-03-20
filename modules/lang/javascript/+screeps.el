@@ -1,5 +1,7 @@
 ;;; lang/javascript/+screeps.el
 
+;; TODO Constants may be out-of-date
+
 (defconst screeps-objects
   '("ConstructionSite" "Creep" "Flag" "Game" "Memory" "Mineral" "Nuke"
     "OwnedStructure" "PathFinder" "RawMemory" "Resource" "Room"
