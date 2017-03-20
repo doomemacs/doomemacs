@@ -20,16 +20,17 @@
 ;;;###autoload
 (defun doom-sh (command &rest args)
   "Runs a shell command and prints any output to the DOOM buffer."
-  (if (equal (car (split-string command " ")) "sudo")
-      (apply 'doom-sudo command args)
-    (princ (shell-command-to-string (apply 'format command args)))))
+  (let ((cmd-list (split-string command " ")))
+    (if (equal (car cmd-list) "sudo")
+        (apply 'doom-sudo (string-join (cdr command) " ") args)
+      (let ((buf (get-buffer-create "*doom-sh*")))
+        (shell-command (apply 'format command args) buf)))))
 
 ;;;###autoload
 (defun doom-sudo (command &rest args)
   "Like `doom-sh', but runs as root (prompts for password)."
-  (let ((tramp-verbose 2)
-        (buf (get-buffer-create "*sudo*")))
-    (with-current-buffer buf
+  (let ((tramp-verbose 2))
+    (with-current-buffer (get-buffer-create "*doom-sudo*")
       (unless (string-prefix-p "/sudo::/" default-directory)
         (cd "/sudo::/"))
       (apply 'doom-sh command args))))
@@ -40,22 +41,25 @@
 Requires the corresponding client, e.g. git for git repos, hg for mercurial,
 etc."
   (let* ((command (pcase fetcher
-                    (:github "git clone --recursive https://github.com/%s.git")
-                    (:git    "git clone --recursive %s")
+                    (:github "git clone --depth 1 --recursive https://github.com/%s.git")
+                    (:git    "git clone --depth 1 --recursive %s")
                     (:gist   "git clone https://gist.github.com/%s.git")
                     (_ (error "%s is not a valid fetcher" fetcher))))
          (argv (s-split-up-to " " command 1))
          (args (format (car (cdr argv)) location))
          (bin (executable-find (car argv)))
-         (fn (if noninteractive 'shell-command 'async-shell-command))
-         buf)
+         (fn (if noninteractive
+                 (lambda (&rest args) (princ (apply 'shell-command-to-string args)))
+               'async-shell-command))
+         (dest (expand-file-name dest)))
     (unless bin
       (error "%s couldn't be found" command))
-    (if (file-exists-p dest)
-        (message "Resource already exists locally, skipping")
-      (apply fn (format "%s %s '%s'" bin args dest) (unless noninteractive (list buf)))
+    (unless (file-directory-p dest)
+      (funcall fn (format "%s %s %s"
+                          bin args
+                          (shell-quote-argument dest)))
       (if noninteractive
-          (message "Cloning %s -> %s" location (file-relative-name dest doom-modules-dir))
+          (message "Cloning %s -> %s" location dest)
         (doom-popup-buffer buf)
         (with-current-buffer buf
           (when (featurep 'evil)
