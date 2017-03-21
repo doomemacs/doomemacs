@@ -69,7 +69,7 @@ missing) and shouldn't be deleted.")
   "A backup of `load-path' before it was altered by `doom-initialize'. Used as a
 base by `doom!' and for calculating how many packages exist.")
 
-(setq load-prefer-newer nil
+(setq load-prefer-newer noninteractive
       package--init-file-ensured t
       package-user-dir (expand-file-name "elpa" doom-packages-dir)
       package-enable-at-startup nil
