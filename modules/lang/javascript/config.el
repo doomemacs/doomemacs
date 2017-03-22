@@ -17,7 +17,7 @@
   (add-hook! 'js2-mode-hook (setq js-switch-indent-offset js-indent-level))
 
   (set! :repl 'js2-mode 'nodejs-repl)
-  (set! :electric 'js2-mode :chars ?\} ?\) ?. :words "||" "&&")
+  (set! :electric 'js2-mode :chars '(?\} ?\) ?.) :words '("||" "&&"))
   (set! :xref-backend 'js2-mode 'xref-js2-xref-backend)
 
   (map! :map js2-mode-map
