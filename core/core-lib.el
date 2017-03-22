@@ -259,6 +259,8 @@ using the OS package manager to install them, or retrieving them from a repo
 using `doom-fetch'."
   (interactive
    (list (list (completing-read "Bootstrap: " (mapcar 'car doom-bootstraps) nil t))))
+  (let (noninteractive)
+    (load "core.el" nil t))
   (doom-initialize-packages t)
   ;; Error out if any of the bootstraps don't exist or aren't valid functions.
   ;; If something goes wrong, it's likely we don't want to continue.
