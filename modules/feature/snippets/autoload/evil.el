@@ -10,8 +10,8 @@ and switches to insert mode if there are editable fields."
   (cl-letf (((symbol-function 'region-beginning) (lambda () evil-visual-beginning))
             ((symbol-function 'region-end)       (lambda () evil-visual-end)))
     (yas-insert-snippet))
-  (let* ((snippet (first (yas--snippets-at-point)))
-         (fields (yas--snippet-fields snippet)))
-    (evil-insert-state +1)
-    (unless fields (evil-change-state 'normal))))
+  (when-let (snippet (car-safe (yas--snippets-at-point)))
+    (let ((fields (yas--snippet-fields snippet)))
+      (evil-insert-state +1)
+      (unless fields (evil-change-state 'normal)))))
 

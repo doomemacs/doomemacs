@@ -57,7 +57,3 @@ buggy behavior when <delete> is pressed in an empty field."
     (when (and field (> (point) sof))
       (delete-region sof (point)))))
 
-;; TODO move this to ivy
-;;;###autoload
-(defun +snippets/ivy-prompt (prompt choices &optional display-fn)
-  (yas-completing-prompt prompt choices display-fn #'ivy-completing-read))

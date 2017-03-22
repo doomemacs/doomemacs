@@ -23,7 +23,8 @@
         yas-indent-line 'auto
         yas-also-auto-indent-first-line t
         yas-prompt-functions '(yas-completing-prompt yas-ido-prompt yas-no-prompt)
-        yas-snippet-dirs '(yas-installed-snippets-dir))
+        yas-snippet-dirs '(yas-installed-snippets-dir)
+        yas-use-menu nil)
 
   ;; Allows project-specific snippets
   (defun +snippets|enable-project-modes (mode &rest _)
@@ -43,6 +44,7 @@
             "<M-right>"     '+snippets/goto-end-of-field
             "<M-left>"      '+snippets/goto-start-of-field
             "<S-tab>"       'yas-prev-field
+            "<backtab>"     'yas-prev-field
             "<M-backspace>" '+snippets/delete-to-start-of-field
             "<escape>"      'evil-normal-state
             [backspace]     '+snippets/delete-backward-char
@@ -61,12 +63,11 @@
       "Strip out the shitespace before a line selection."
       (when (and (evil-visual-state-p)
                  (eq (evil-visual-type) 'line))
-        (setq-local
-         yas-selected-text
-         (replace-regexp-in-string
-          "\\(^ *\\|\n? $\\)" ""
-          (buffer-substring-no-properties evil-visual-beginning
-                                          evil-visual-end)))))
+        (setq yas-selected-text
+              (replace-regexp-in-string
+               "\\(^\\s-*\\|\n? $\\)" ""
+               (buffer-substring-no-properties evil-visual-beginning
+                                               evil-visual-end)))))
     (add-hook 'yas-before-expand-snippet-hook '+snippets|yas-before-expand)
 
     (defun +snippets|yas-after-expand ()
