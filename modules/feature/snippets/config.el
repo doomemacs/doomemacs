@@ -65,8 +65,8 @@
          yas-selected-text
          (replace-regexp-in-string
           "\\(^ *\\|\n? $\\)" ""
-          (buffer-substring-no-properties (region-beginning)
-                                          (1- (region-end)))))))
+          (buffer-substring-no-properties evil-visual-beginning
+                                          evil-visual-end)))))
     (add-hook 'yas-before-expand-snippet-hook '+snippets|yas-before-expand)
 
     (defun +snippets|yas-after-expand ()
