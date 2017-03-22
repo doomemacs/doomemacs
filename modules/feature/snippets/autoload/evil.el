@@ -6,13 +6,12 @@
 and switches to insert mode if there are editable fields."
   (interactive)
   (when (evil-visual-state-p)
-    (let ((end (region-end)))
-      (evil-visual-select
-       (region-beginning)
-       (if (eq evil-this-type 'line) end (1+ end))
-       'inclusive)))
-  (yas-insert-snippet)
+    (evil-visual-select evil-visual-beginning evil-visual-end 'inclusive))
+  (cl-letf (((symbol-function 'region-beginning) (lambda () evil-visual-beginning))
+            ((symbol-function 'region-end)       (lambda () evil-visual-end)))
+    (yas-insert-snippet))
   (let* ((snippet (first (yas--snippets-at-point)))
          (fields (yas--snippet-fields snippet)))
     (evil-insert-state +1)
     (unless fields (evil-change-state 'normal))))
+
