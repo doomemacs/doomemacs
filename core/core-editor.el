@@ -76,6 +76,18 @@
 ;; enabled by default in Emacs 25+. No thanks.
 (electric-indent-mode -1)
 
+(defun doom*delete-trailing-whitespace (orig-fn &rest args)
+  "Don't affect trailing whitespace on current line."
+  (let ((spaces (1- (current-column)))
+        (linestr (buffer-substring-no-properties
+                  (line-beginning-position)
+                  (line-end-position))))
+    (apply orig-fn args)
+    (when (and (if (featurep 'evil) (evil-insert-state-p) t)
+               (string-match-p "^[\s\t]*$" linestr))
+      (insert linestr))))
+(advice-add 'delete-trailing-whitespace :around 'doom*delete-trailing-whitespace)
+
 
 ;;
 ;; Core Plugins
