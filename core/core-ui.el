@@ -116,6 +116,7 @@ disabled.")
   :config
   (setq highlight-indent-guides-method 'character)
 
+  ;; FIXME highlight-indent-guides doesn't take advantage of injected whitespace
   (defun doom|inject-trailing-whitespace (&optional start end)
     "The opposite of `delete-trailing-whitespace'. Injects whitespace into
 buffer so that `highlight-indent-guides-mode' will display uninterrupted indent

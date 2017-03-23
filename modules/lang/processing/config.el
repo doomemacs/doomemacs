@@ -18,7 +18,7 @@
 
   (setq processing-location "/usr/local/bin/processing-java"
         processing-application-dir "/Applications/Processing.app"
-        processing-sketchbook-dir "~/Dropbox/work/pde"
+        processing-sketchbook-dir "~/work/pde"
         processing-output-dir "/tmp")
 
   (map! :map processing-mode-map

@@ -154,8 +154,8 @@ enable multiple minor modes for the same regexp.")
   (with-demoted-errors "AUTOLOAD ERROR: %s"
     (require 'autoloads doom-autoload-file t))
 
-  (require 'core-ui)          ; draw me like one of your French editors
   (unless noninteractive
+    (require 'core-ui)          ; draw me like one of your French editors
     (require 'core-popups)      ; taming sudden yet inevitable windows
     (require 'core-editor)      ; baseline configuration for text editing
     (require 'core-projects)    ; making Emacs project-aware

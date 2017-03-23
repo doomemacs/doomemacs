@@ -275,8 +275,8 @@ using `doom-fetch'."
       (let ((bootstrap (assq id doom-bootstraps)))
         (message "[%s] BOOTSTRAP START" id)
         (with-demoted-errors (format "[%s] ERROR: %%s" id)
-          (unless (funcall (cdr bootstrap))
-            (message "[%s] DONE (already bootstrapped)" id)))))))
+          (message "[%s] %s"
+                   id (if (funcall (cdr bootstrap)) "SKIPPED (nothing to do)" "DONE")))))))
 
 (provide 'core-lib)
 ;;; core-lib.el ends here
