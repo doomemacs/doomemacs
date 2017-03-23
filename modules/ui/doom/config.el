@@ -98,7 +98,7 @@
     (nav-flash-show))
 
   (add-hook! :append
-    '(imenu-after-jump-hook focus-in-hook evil-jumps-post-jump-hook find-file-hook)
+    '(imenu-after-jump-hook evil-jumps-post-jump-hook find-file-hook)
     'doom/blink-cursor)
 
   (after! evil
