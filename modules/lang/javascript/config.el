@@ -97,6 +97,9 @@
 ;; Projects
 ;;
 
+(def-project-mode! +javascript-gulp-mode
+  :files "gulpfile.js")
+
 (def-project-mode! +javascript-npm-mode
   :modes (web-mode js-mode markdown-mode)
   :files "package.json")
