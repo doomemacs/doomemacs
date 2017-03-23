@@ -24,7 +24,9 @@
         yas-also-auto-indent-first-line t
         yas-prompt-functions '(yas-completing-prompt yas-ido-prompt yas-no-prompt)
         yas-snippet-dirs '(yas-installed-snippets-dir)
-        yas-use-menu nil)
+        yas-use-menu nil
+        ;; Allow nested snippets
+        yas-triggers-in-field t)
 
   ;; Allows project-specific snippets
   (defun +snippets|enable-project-modes (mode &rest _)
