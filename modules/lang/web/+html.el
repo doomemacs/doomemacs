@@ -47,20 +47,3 @@
   (map! :map pug-mode-map
         :i [tab] 'doom/dumb-indent
         :i [backtab] 'doom/dumb-dedent))
-
-
-;;
-;; Tools
-;;
-
-(def-package! emmet-mode
-  :commands emmet-mode
-  :preface (defvar emmet-mode-keymap (make-sparse-keymap))
-  :init
-  (add-hook! (scss-mode web-mode html-mode haml-mode nxml-mode) 'emmet-mode)
-  :config
-  (setq emmet-move-cursor-between-quotes t)
-  (map! :map emmet-mode-keymap
-        :v "M-e" 'emmet-wrap-with-markup
-        :i "M-e" 'emmet-expand-yas
-        :i "M-E" 'emmet-expand-line))

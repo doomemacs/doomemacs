@@ -13,6 +13,19 @@
           :n "gQ" 'web-beautify-html)))
 
 
+(def-package! emmet-mode
+  :commands emmet-mode
+  :preface (defvar emmet-mode-keymap (make-sparse-keymap))
+  :init
+  (add-hook! (css-mode web-mode html-mode haml-mode nxml-mode) 'emmet-mode)
+  :config
+  (setq emmet-move-cursor-between-quotes t)
+  (map! :map emmet-mode-keymap
+        :v "M-e" 'emmet-wrap-with-markup
+        :i "M-e" 'emmet-expand-yas
+        :i "M-E" 'emmet-expand-line))
+
+
 ;;
 ;; Frameworks
 ;;
