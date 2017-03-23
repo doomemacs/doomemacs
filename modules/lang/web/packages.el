@@ -2,6 +2,7 @@
 ;;; lang/web/packages.el
 
 (package! rainbow-mode)
+(package! web-beautify)
 (when (featurep! :completion ivy)
   (package! counsel-css :recipe (:fetcher github :repo "hlissner/emacs-counsel-css")))
 

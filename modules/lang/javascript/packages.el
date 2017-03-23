@@ -7,6 +7,7 @@
 (package! jsx-mode)
 (package! nodejs-repl)
 (package! tern)
+(package! web-beautify)
 
 (when (featurep! :completion company)
   (package! company-tern))
@@ -16,7 +17,7 @@
 
 ;;
 (def-bootstrap! javascript
-  (unless (cl-every 'executable-find '("node" "npm" "tern"))
+  (unless (cl-every 'executable-find '("node" "npm" "tern" "js-beautify"))
     (pcase (doom-system-os)
       ('arch
        (let (progs)
@@ -31,6 +32,7 @@
     (unless (executable-find "node")
       (error "Failed to install NodeJS"))
     (unless (executable-find "tern")
-      (funcall (if (file-writable-p (executable-find "npm")) 'sh 'sudo)
-               "npm -g install tern"))
+      (sh "npm -g install tern"))
+    (unless (executable-find "js-beautify")
+      (sh "npm -g install js-beautify"))
     t))

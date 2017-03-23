@@ -93,6 +93,11 @@
   :init (setq coffee-indent-like-python-mode t))
 
 
+(def-package! web-beautify :commands web-beautify-js
+  :init
+  (map! :map* (json-mode js2-mode-map) :n "gQ" 'web-beautify-js))
+
+
 ;;
 ;; Projects
 ;;
