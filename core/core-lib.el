@@ -243,7 +243,6 @@ executed when called with `set!'. FORMS are not evaluated until `set!' calls it.
   `(push (cons ',name
                (lambda ()
                  (cl-flet ((sh (lambda (&rest args) (apply 'doom-sh args)))
-                           (sh& (lambda (&rest args) (apply 'doom-async-sh args)))
                            (sudo (lambda (&rest args) (apply 'doom-sudo args)))
                            (fetch (lambda (&rest args) (apply 'doom-fetch args)))
                            (message (lambda (&rest args)

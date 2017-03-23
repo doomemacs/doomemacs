@@ -21,10 +21,14 @@
 (defun doom-sh (command &rest args)
   "Runs a shell command and prints any output to the DOOM buffer."
   (let ((cmd-list (split-string command " ")))
-    (if (equal (car cmd-list) "sudo")
-        (apply 'doom-sudo (string-join (cdr command) " ") args)
-      (let ((buf (get-buffer-create "*doom-sh*")))
-        (shell-command (apply 'format command args) buf)))))
+    (cond ((equal (car cmd-list) "sudo")
+           (apply 'doom-sudo (string-join (cdr cmd-list) " ") args))
+          ((let ((bin (executable-find "npm")))
+             (and (file-exists-p bin)
+                  (not (file-writable-p bin))))
+           (apply 'doom-sudo (string-join cmd-list " ") args))
+          (t
+           (princ (shell-command-to-string (apply 'format command args)))))))
 
 ;;;###autoload
 (defun doom-sudo (command &rest args)
@@ -33,7 +37,7 @@
     (with-current-buffer (get-buffer-create "*doom-sudo*")
       (unless (string-prefix-p "/sudo::/" default-directory)
         (cd "/sudo::/"))
-      (apply 'doom-sh command args))))
+      (princ (shell-command-to-string (apply 'format command args))))))
 
 ;;;###autoload
 (defun doom-fetch (fetcher location dest)
