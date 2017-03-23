@@ -6,7 +6,7 @@
 (def-package! yasnippet
   :commands (yas-minor-mode yas-minor-mode-on yas-expand yas-expand-snippet
              yas-lookup-snippet yas-insert-snippet yas-new-snippet
-             yas-visit-snippet-file)
+             yas-visit-snippet-file snippet-mode)
   :preface
   (defvar yas-minor-mode-map (make-sparse-keymap))
 
