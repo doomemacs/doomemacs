@@ -16,13 +16,14 @@
   ;; Conform switch-case indentation to editorconfig's config
   (add-hook! 'js2-mode-hook (setq js-switch-indent-offset js-indent-level))
 
-  (set! :repl 'js2-mode 'nodejs-repl)
+  (set! :repl 'js2-mode '+javascript/repl)
   (set! :electric 'js2-mode :chars '(?\} ?\) ?.) :words '("||" "&&"))
   (set! :xref-backend 'js2-mode 'xref-js2-xref-backend)
 
   (map! :map js2-mode-map
         :localleader
         :nv ";" 'doom/append-semicolon
+        :n  "s" '+javascript/skewer-this-buffer
 
         :prefix "r"
         :n  "g"  'js2r-add-to-globals-annotation
@@ -93,9 +94,44 @@
   :init (setq coffee-indent-like-python-mode t))
 
 
-(def-package! web-beautify :commands web-beautify-js
+(def-package! web-beautify
+  :commands web-beautify-js
   :init
   (map! :map* (json-mode js2-mode-map) :n "gQ" 'web-beautify-js))
+
+
+;;
+;; Skewer-mode
+;;
+
+(def-package! skewer-mode
+  :commands (skewer-mode run-skewer)
+  :config
+  (map! :map skewer-mode-map
+        :localleader
+        :n "s" nil
+        :n "sE" 'skewer-eval-last-expression
+        :n "se" 'skewer-eval-defun
+        :n "sf" 'skewer-load-buffer))
+
+(def-package! skewer-css-mode ; in skewer-mode
+  :commands skewer-css-mode
+  :config
+  (map! :map skewer-css-mode-map
+        :localleader
+        :n "s" nil
+        :n "se" 'skewer-css-eval-current-declaration
+        :n "sr" 'skewer-css-eval-current-rule
+        :n "sb" 'skewer-css-eval-buffer
+        :n "sc" 'skewer-css-clear-all))
+
+(def-package! skewer-html-mode ; in skewer-mode
+  :commands skewer-html-mode
+  :config
+  (map! :map skewer-html-mode-map
+        :localleader
+        :n "s" nil
+        :n "se" 'skewer-html-eval-tag))
 
 
 ;;

@@ -8,6 +8,7 @@
 (package! nodejs-repl)
 (package! tern)
 (package! web-beautify)
+(package! skewer-mode)
 
 (when (featurep! :completion company)
   (package! company-tern))
