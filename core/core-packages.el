@@ -229,9 +229,10 @@ files."
   "Returns `doom-modules' as a list of (MODULE . SUBMODULE) cons cells. The list
 is sorted by order of insertion."
   (let (pairs)
-    (maphash (lambda (key value) (push (cons (car key) (cdr key)) pairs))
-             doom-modules)
-    (nreverse pairs)))
+    (when (hash-table-p doom-modules)
+      (maphash (lambda (key value) (push (cons (car key) (cdr key)) pairs))
+               doom-modules)
+      (nreverse pairs))))
 
 (defun doom--module-paths (&optional append-file)
   "Returns a list of absolute file paths to modules, with APPEND-FILE added, if
@@ -424,34 +425,48 @@ the commandline."
        (delete-file generated-autoload-file)
        (error "Couldn't evaluate autoloads.el: %s" (cadr ex))))))
 
-(defun doom/recompile ()
-  "Byte (re)compile the important files in your emacs configuration (init.el,
-core/*.el & modules/*/*/**.el). DOOM Emacs was designed to benefit from this.
-This may take a while."
+(defun doom/compile (&optional recompile-p lite-p)
+  "Byte compile your emacs configuration (init.el, core/*.el &
+modules/*/*/**.el). DOOM Emacs was designed to benefit from this, but it may
+take a while.
+
+If RECOMPILE-P is non-nil, don't byte-compile *.el files that don't have an
+accompanying *.elc file."
   (interactive)
   ;; Ensure all relevant config files are loaded. This way we don't need
   ;; eval-when-compile and require blocks scattered all over.
   (doom-initialize-packages (not noninteractive) noninteractive)
   (let ((targets
-         (append (list (expand-file-name "init.el" doom-emacs-dir)
-                       (expand-file-name "core.el" doom-core-dir))
-                 (file-expand-wildcards (expand-file-name "core-*.el" doom-core-dir))
-                 (file-expand-wildcards (expand-file-name "autoload/*.el" doom-core-dir))))
+         (append (list (expand-file-name "init.el" doom-emacs-dir))
+                 (reverse (directory-files-recursively doom-core-dir "\\.el$"))))
         (n 0)
         results)
-    (dolist (path (doom--module-paths))
-      (nconc targets (nreverse (directory-files-recursively path "\\.el$"))))
+    (unless lite-p
+      (dolist (path (doom--module-paths))
+        (nconc targets (nreverse (directory-files-recursively path "\\.el$")))))
+    (when recompile-p
+      (setq targets (cl-remove-if-not (lambda (file) (file-exists-p (concat (file-name-sans-extension file) ".elc")))
+                                      targets)))
     (dolist (file targets)
       (push (cons (file-relative-name file doom-emacs-dir)
-                  (and (byte-recompile-file file nil 0)
-                       (setq n (1+ n))))
+                  (byte-recompile-file file nil (unless recompile-p 0)))
             results))
-    (when noninteractive
-      (if targets (message "\n"))
-      (message "Compiled %s/%s files" n (length results))
-      (when-let (errors (cl-remove-if 'cdr results))
+    (let* ((n-fail (cl-count-if (lambda (x) (null (cdr x))) results))
+           (n-nocompile (cl-count-if (lambda (x) (eq (cdr x) 'no-byte-compile)) results))
+           (total (- (length results) n-nocompile))
+           (total-success (- total n-fail)))
+      (when (> total-success 0)
+        (message "\n"))
+      (when (> n-fail 0)
         (message "\n%s" (mapconcat (lambda (file) (concat "+ ERROR: " (car file)))
-                                   (nreverse errors) "\n"))))))
+                                   (cl-remove-if 'cdr (reverse results)) "\n")))
+      (message "%s %s file(s)"
+               (if recompile-p "Recompiled" "Compiled")
+               (format (if (= total 0) "%s" "%s/%s") total-success total)))))
+
+(defun doom/compile-lite (&optional recompile-p)
+  (interactive)
+  (doom/compile recompile-p t))
 
 (defun doom/clean-cache ()
   "Clear local cache (`doom-cache-dir'). You may need to restart Emacs for some

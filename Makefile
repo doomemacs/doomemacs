@@ -19,7 +19,10 @@ autoloads: init.el
 	@$(EMACS) -f 'doom/reload-autoloads'
 
 compile: init.el clean
-	@$(EMACS) -f 'doom/recompile'
+	@$(EMACS) -f 'doom/compile'
+
+compile-lite: init.el clean
+	@$(EMACS) -f 'doom/compile-lite'
 
 clean:
 	@$(EMACS) -f 'doom/clean-compiled'
