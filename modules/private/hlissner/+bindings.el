@@ -124,7 +124,8 @@
      :desc "Spell check"            :n "s" 'flyspell-mode
      :desc "Line numbers"           :n "l" 'doom/toggle-line-numbers
      :desc "Fullscreen"             :n "f" 'doom/toggle-fullscreen
-     :desc "Indent guides"          :n "i" 'highlight-indent-guides-mode)
+     :desc "Indent guides"          :n "i" 'highlight-indentation-mode
+     :desc "Indent guides (column)" :n "I" 'highlight-indentation-current-column-mode)
 
    (:desc "Tmux/Terminal"
      :prefix "T"
