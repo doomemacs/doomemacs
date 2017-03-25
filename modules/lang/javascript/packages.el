@@ -17,25 +17,27 @@
   (package! xref-js2))
 
 ;;
+(def-bootstrap! nodejs
+  (pcase (doom-system-os)
+    ('arch
+     (let (progs)
+       (unless (executable-find "node") (push "nodejs" progs))
+       (unless (executable-find "npm")  (push "npm" progs))
+       (when progs
+         (sudo "pacman --noconfirm -S %s" progs))))
+    ('debian) ;; TODO
+    ('macos
+     (unless (executable-find "node")
+       (sh "brew install node"))))
+  ;; return success
+  (unless (cl-every 'executable-find '("node" "npm"))
+    (error "Something went wrong installing NodeJS")))
+
 (def-bootstrap! javascript
-  (unless (cl-every 'executable-find '("node" "npm" "tern" "js-beautify" "eslint"))
-    (pcase (doom-system-os)
-      ('arch
-       (let (progs)
-         (unless (executable-find "node") (push "nodejs" progs))
-         (unless (executable-find "npm")  (push "npm" progs))
-         (when progs
-           (sudo "pacman --noconfirm -S %s" progs))))
-      ('debian) ;; TODO
-      ('macos
-       (unless (executable-find "node")
-         (sh "brew install node"))))
-    (unless (executable-find "node")
-      (error "Failed to install NodeJS"))
-    (unless (executable-find "tern")
-      (sh "npm -g install tern"))
-    (unless (executable-find "js-beautify")
-      (sh "npm -g install js-beautify"))
-    (unless (executable-find "eslint")
-      (sh "npm -g install eslint eslint-plugin-react"))
-    t))
+  :requires nodejs
+  (unless (executable-find "tern")
+    (sh "npm -g install tern"))
+  (unless (executable-find "js-beautify")
+    (sh "npm -g install js-beautify"))
+  (unless (executable-find "eslint")
+    (sh "npm -g install eslint eslint-plugin-react")))

@@ -244,16 +244,36 @@ executed when called with `set!'. FORMS are not evaluated until `set!' calls it.
 (defmacro def-bootstrap! (name &rest forms)
   "TODO"
   (declare (indent defun))
-  `(push (cons ',name
-               (lambda ()
-                 (cl-flet ((sh (lambda (&rest args) (apply 'doom-sh args)))
-                           (sudo (lambda (&rest args) (apply 'doom-sudo args)))
-                           (fetch (lambda (&rest args) (apply 'doom-fetch args)))
-                           (message (lambda (&rest args)
-                                      (apply 'message (format "[%s] %s" ,(symbol-name name) (car args))
-                                             (cdr args)))))
-                   ,@forms)))
-         doom-bootstraps))
+  (let ((prereqs (plist-get forms :requires)))
+    (while (keywordp (car forms))
+      (dotimes (i 2) (pop forms)))
+    `(push (cons ',name
+                 (lambda ()
+                   (cl-flet ((sh (lambda (&rest args) (apply 'doom-sh args)))
+                             (sudo (lambda (&rest args) (apply 'doom-sudo args)))
+                             (fetch (lambda (&rest args) (apply 'doom-fetch args)))
+                             (message (lambda (&rest args)
+                                        (apply 'message (format "[%s] %s" ,(symbol-name name) (car args))
+                                               (cdr args)))))
+                     (if (not ,(if (not prereqs)
+                                   't
+                                 (unless (listp prereqs)
+                                   (setq prereqs (list prereqs)))
+                                 `(and ,@(mapcar (lambda (sym) `(doom-bootstrap ',sym)) prereqs))))
+                         (message "Aborting (prerequisites failed)")
+                       (message "Bootstrapping")
+                       ,@forms
+                       (message "Done")))))
+           doom-bootstraps)))
+
+(defun doom-bootstrap (id)
+  (when-let (bootstrap (assq id doom-bootstraps))
+    (condition-case ex
+        (progn (funcall (cdr bootstrap)) t)
+      ('error
+       (message "[%s] Aborted (ERROR: %s)"
+                id (if (eq (car ex) 'error) (cadr ex) ex))
+       nil))))
 
 (defun doom/bootstrap (ids)
   "Bootstraps a module, if it has a bootstrapper. Bootstraps are expected to be
@@ -275,12 +295,7 @@ using `doom-fetch'."
               (and err-not-func
                    (message "ERROR: These bootstraps were invalid: %s" err-not-func)))
       (error "There were errors. Aborting."))
-    (dolist (id ids)
-      (let ((bootstrap (assq id doom-bootstraps)))
-        (message "[%s] BOOTSTRAP START" id)
-        (with-demoted-errors (format "[%s] ERROR: %%s" id)
-          (message "[%s] %s"
-                   id (if (funcall (cdr bootstrap)) "SKIPPED (nothing to do)" "DONE")))))))
+    (mapc 'doom-bootstrap ids)))
 
 (provide 'core-lib)
 ;;; core-lib.el ends here

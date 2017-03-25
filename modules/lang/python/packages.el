@@ -20,5 +20,4 @@
   (when-let (pkgs (cl-remove-if
                    (lambda (pkg) (zerop (shell-command (format "pip show %s" pkg))))
                    '("jedi" "setuptools")))
-    (sh "pip install %s" (s-join " " pkgs))
-    t))
+    (sh "pip install jedi setuptools")))

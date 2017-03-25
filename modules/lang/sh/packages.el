@@ -14,5 +14,4 @@
         ('debian
          (sudo "apt-get install -y %s" prog-str))
         ('macos
-         (sh "brew install %s" prog-str))))
-    t))
+         (sh "brew install %s" prog-str))))))

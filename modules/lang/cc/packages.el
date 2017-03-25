@@ -56,5 +56,4 @@
       (when IS-MAC
         (sh (format "install_name_tool -change @rpath/libclang.dylib %s %s"
                     "/usr/local/opt/llvm/lib/libclang.dylib"
-                    (expand-file-name "bin/irony-server" irony-server-install-prefix)))))
-    t))
+                    (expand-file-name "bin/irony-server" irony-server-install-prefix)))))))

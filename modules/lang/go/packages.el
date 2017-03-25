@@ -32,5 +32,4 @@
         '("github.com/nsf/gocode"
           "github.com/motemen/gore"
           "golang.org/x/tools/cmd/guru"
-          "golang.org/x/tools/cmd/gorename"))
-    (or changed (not gobin))))
+          "golang.org/x/tools/cmd/gorename"))))
