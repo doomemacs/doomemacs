@@ -111,15 +111,12 @@ disabled.")
   (setq hs-hide-comments-when-hiding-all nil))
 
 ;; Show uninterrupted indentation markers with some whitespace voodoo.
-(def-package! highlight-indent-guides
-  :commands highlight-indent-guides-mode
+(def-package! highlight-indentation
+  :commands (highlight-indentation-mode highlight-indentation-current-column-mode)
   :config
-  (setq highlight-indent-guides-method 'character)
-
-  ;; FIXME highlight-indent-guides doesn't take advantage of injected whitespace
   (defun doom|inject-trailing-whitespace (&optional start end)
     "The opposite of `delete-trailing-whitespace'. Injects whitespace into
-buffer so that `highlight-indent-guides-mode' will display uninterrupted indent
+buffer so that `highlight-indentation-mode' will display uninterrupted indent
 markers. This whitespace is stripped out on save, as not to affect the resulting
 file."
     (interactive (progn (barf-if-buffer-read-only)
@@ -132,7 +129,7 @@ file."
           (let ((end-marker (copy-marker (or end (point-max))))
                 (start (or start (point-min))))
             (goto-char start)
-            (while (and (re-search-forward "^$" end-marker t) (not (>= (point) end-marker)))
+            (while (and (re-search-forward "^$" end-marker t) (< (point) end-marker))
               (let (line-start line-end next-start next-end)
                 (save-excursion
                   ;; Check previous line indent
@@ -154,8 +151,8 @@ file."
       (set-buffer-modified-p nil))
     nil)
 
-  (add-hook! 'highlight-indent-guides-mode-hook
-    (if highlight-indent-guides-mode
+  (add-hook! (highlight-indentation-mode highlight-indentation-current-column-mode)
+    (if highlight-indentation-mode
         (progn
           (doom|inject-trailing-whitespace)
           (add-hook 'before-save-hook 'delete-trailing-whitespace nil t)

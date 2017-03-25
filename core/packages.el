@@ -12,7 +12,7 @@
   (package! osx-clipboard))
 
 ;; core-ui.el
-(package! highlight-indent-guides)
+(package! highlight-indentation)
 (package! highlight-numbers)
 (package! nlinum)
 (package! rainbow-delimiters)
