@@ -1,8 +1,10 @@
 ;;; core-lib.el
 
 (require 'cl-lib)
-(eval-when-compile
-  (require 'subr-x))
+
+;;
+(autoload 'when-let "subr-x")
+(autoload 'if-let "subr-x")
 
 ;; I don't use use-package for these to save on the `fboundp' lookups it does
 ;; for its :commands property. I use dolists instead of mapc to avoid extra
@@ -10,9 +12,11 @@
 ;; optimization.
 (dolist (sym '(async-start async-start-process async-byte-recompile-directory))
   (autoload sym "async"))
+
 (dolist (sym '(persistent-soft-exists-p persistent-soft-fetch
                persistent-soft-flush persistent-soft-store))
   (autoload sym "persistent-soft"))
+
 (dolist (sym '(s-trim s-trim-left s-trim-right s-chomp s-collapse-whitespace
                s-word-wrap s-center s-pad-left s-pad-right s-truncate s-left
                s-right s-chop-suffix s-chop-suffixes s-chop-prefix
