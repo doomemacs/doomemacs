@@ -128,7 +128,7 @@ see if NAME should be activated.
              :files ,files
              :when ,when))
        (add-hook! ,name
-         (run-hook-with-args doom-project-hook ',name))
+         (run-hook-with-args 'doom-project-hook ',name))
        ,(when init-form
           `(add-transient-hook! ',(intern-soft (format "%s-hook" name))
              ,init-form)))))
