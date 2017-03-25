@@ -11,7 +11,7 @@
         js2-mode-show-parse-errors nil)
 
   (add-hook! 'js2-mode-hook
-    '(flycheck-mode highlight-indent-guides-mode rainbow-delimiters-mode))
+    '(flycheck-mode highlight-indentation-mode rainbow-delimiters-mode))
 
   ;; Conform switch-case indentation to editorconfig's config
   (add-hook! 'js2-mode-hook (setq js-switch-indent-offset js-indent-level))
