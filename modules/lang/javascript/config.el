@@ -16,6 +16,14 @@
   ;; Conform switch-case indentation to editorconfig's config
   (add-hook! 'js2-mode-hook (setq js-switch-indent-offset js-indent-level))
 
+  ;; Favor local eslint over global, if available
+  (add-hook! 'flycheck-mode-hook
+    (when (derived-mode-p 'js-mode 'js2-mode)
+      (when-let ((eslint (expand-file-name "node_modules/eslint/bin/eslint.js" (doom-project-root)))
+                 (exists-p (file-exists-p eslint))
+                 (executable-p (file-executable-p eslint)))
+        (setq-local flycheck-javascript-eslint-executable eslint))))
+
   (set! :repl 'js2-mode '+javascript/repl)
   (set! :electric 'js2-mode :chars '(?\} ?\) ?.) :words '("||" "&&"))
   (set! :xref-backend 'js2-mode 'xref-js2-xref-backend)
