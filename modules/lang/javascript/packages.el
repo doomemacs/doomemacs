@@ -4,7 +4,7 @@
 (package! coffee-mode)
 (package! js2-mode)
 (package! js2-refactor)
-(package! jsx-mode)
+(package! rjsx-mode)
 (package! nodejs-repl)
 (package! tern)
 (package! web-beautify)

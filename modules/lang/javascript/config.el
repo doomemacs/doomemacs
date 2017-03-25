@@ -86,7 +86,9 @@
   (set! :company-backend 'js2-mode '(company-tern)))
 
 
-(def-package! jsx-mode :mode "\\.jsx$")
+(def-package! rjsx-mode
+  :commands rjsx-mode
+  :mode "\\.jsx$")
 
 
 (def-package! coffee-mode
