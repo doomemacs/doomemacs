@@ -45,7 +45,7 @@
             ,paths ,(if (or (string-prefix-p "./" paths)
                             (string-prefix-p "../" paths))
                         'default-directory
-                      root))))
+                      (or root `(doom-project-root))))))
         ((listp paths)
          (let (forms)
            (dolist (i paths (nreverse forms))
