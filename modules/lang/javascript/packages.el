@@ -18,7 +18,7 @@
 
 ;;
 (def-bootstrap! javascript
-  (unless (cl-every 'executable-find '("node" "npm" "tern" "js-beautify"))
+  (unless (cl-every 'executable-find '("node" "npm" "tern" "js-beautify" "eslint"))
     (pcase (doom-system-os)
       ('arch
        (let (progs)
@@ -36,4 +36,6 @@
       (sh "npm -g install tern"))
     (unless (executable-find "js-beautify")
       (sh "npm -g install js-beautify"))
+    (unless (executable-find "eslint")
+      (sh "npm -g install eslint eslint-plugin-react"))
     t))
