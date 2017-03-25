@@ -57,3 +57,9 @@
 (def-project-mode! +web-wordpress-mode
   :modes (php-mode web-mode css-mode haml-mode pug-mode)
   :files (or "wp-config.php" "wp-config-sample.php"))
+
+(def-project-mode! +web-react-mode
+  :modes (+javascript-npm-mode)
+  :when (when-let (npm (+javascript-npm-conf))
+          (and (assq 'react (append (cdr (assq 'dependencies npm))
+                                    (cdr (assq 'devDependencies npm)))))))
