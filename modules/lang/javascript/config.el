@@ -96,7 +96,11 @@
 
 (def-package! rjsx-mode
   :commands rjsx-mode
-  :mode "\\.jsx$")
+  :mode "\\.jsx$"
+  :config
+  (add-hook! rjsx-mode
+    ;; jshint doesn't really know how to deal with jsx
+    (push 'javascript-jshint flycheck-disabled-checkers)))
 
 
 (def-package! coffee-mode
