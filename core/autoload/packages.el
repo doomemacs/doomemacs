@@ -237,8 +237,7 @@ appropriate."
                 (message "Error (%s): %s" (car pkg) ex))))
 
            (message "Finished!")
-           (when noninteractive
-             (message "Restart emacs for these changes to take effect."))))))
+           (doom/reload)))))
 
 ;;;###autoload
 (defun doom/packages-update ()
@@ -279,8 +278,7 @@ appropriate."
                 (message "Error installing %s: %s" (car pkg) ex))))
 
            (message "Finished!")
-           (when noninteractive
-             (message "Restart emacs for these changes to take effect."))))))
+           (doom/reload)))))
 
 ;;;###autoload
 (defun doom/packages-autoremove ()
@@ -311,8 +309,7 @@ appropriate."
                 (message "Error deleting %s: %s" pkg ex))))
 
            (message "Finished!")
-           (when noninteractive
-             (message "Restart emacs for these changes to take effect."))))))
+           (doom/reload)))))
 
 ;;;###autoload
 (defalias 'doom/install-package 'package-install)

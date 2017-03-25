@@ -375,8 +375,11 @@ SUBMODULE is a symbol."
 (defun doom/reload ()
   "Reload `load-path'; useful if you modify/update packages outside of emacs."
   (interactive)
-  (doom-initialize t)
-  (message "Reloaded %d packages" (length doom--package-load-path)))
+  (if noninteractive
+      (server-eval-at "server" '(doom/reload))
+    (doom-initialize t)
+    (doom/compile t)
+    (message "Reloaded %d packages" (length doom--package-load-path))))
 
 (defun doom/reload-autoloads ()
   "Refreshes the autoloads.el file, which tells Emacs where to find all the
