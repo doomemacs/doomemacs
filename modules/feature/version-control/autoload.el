@@ -17,7 +17,7 @@ Fallback to repository root."
       (error
        (setq url (shell-command-to-string "hub browse -u --"))
        (setq url (if url
-                     (concat (string-trim url) "/"
+                     (concat (s-trim url) "/"
                              (file-relative-name (buffer-file-name)
                                                  (doom-project-root))
                              (when (use-region-p)

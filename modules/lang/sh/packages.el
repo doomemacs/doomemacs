@@ -7,7 +7,7 @@
 ;;
 (def-bootstrap! sh
   (when-let (progs (cl-remove-if 'executable-find '("zshdb" "bashdb" "shellcheck")))
-    (let ((prog-str (string-join progs " ")))
+    (let ((prog-str (s-join " " progs)))
       (pcase (doom-system-os)
         ('arch
          (sudo "pacman --noconfirm -S %s" prog-str))

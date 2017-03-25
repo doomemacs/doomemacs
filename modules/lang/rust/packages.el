@@ -18,7 +18,7 @@
        (unless (executable-find "rustc") (push "rust" pkgs))
        (unless (executable-find "cargo") (push "cargo" pkgs))
        (when pkgs
-         (sudo "pacman --noconfirm -S %s" (string-join pkgs " ")))))
+         (sudo "pacman --noconfirm -S %s" (s-join " " pkgs)))))
     ('debian) ;; TODO
     ('macos
      (unless (executable-find "rustc")
