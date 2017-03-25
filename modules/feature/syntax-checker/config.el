@@ -1,5 +1,9 @@
 ;;; feature/syntax-checker/config.el
 
+;; pkg-info doesn't get autoloaded when `flycheck-version' needs it, so we do
+;; it ourselves:
+(autoload 'pkg-info-version-info "pkg-info")
+
 (def-package! flycheck
   :commands (flycheck-mode flycheck-list-errors flycheck-buffer)
   :config
