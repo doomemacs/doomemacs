@@ -4,10 +4,10 @@
   "version": "1.0.0",
   "author": "`user-full-name` <`user-mail-address`>",
   "license": "MIT",
-  "main": "public/app.js",
+  "main": "${3:app/${4:main.js}}",
   "scripts": {
+    $0
   },
-  "dependencies": {
-    `%`$0
-  }
+  "dependencies": {},
+  "devDependencies": {}
 }
