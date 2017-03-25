@@ -142,11 +142,11 @@
   :files "gulpfile.js")
 
 (def-project-mode! +javascript-npm-mode
-  :modes (web-mode js-mode markdown-mode)
+  :modes (web-mode js2-mode markdown-mode)
   :files "package.json")
 
 (def-project-mode! +javascript-lb6-mode
-  :modes (web-mode js-mode nxml-mode markdown-mode)
+  :modes (web-mode js2-mode nxml-mode markdown-mode)
   :match "\\.lb\\(action\\|ext\\)/"
   :init
   ;; TODO
