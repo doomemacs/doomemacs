@@ -65,10 +65,11 @@
           ("/main\\.java$"                   "__main"           java-mode)
           ("/build\\.gradle$"                "__build.gradle"   android-mode)
           ;; Javascript
-          ("\\.\\(json\\|jshintrc\\)$"       "__"               json-mode)
-          ("/package\\.json$"                "__package.json"   json-mode)
-          ("/bower\\.json$"                  "__bower.json"     json-mode)
-          ("/gulpfile\\.js$"                 "__gulpfile.js"    js-mode)
+          ("\\.\\(json\\|jshintrc\\)$"       "__"                  json-mode)
+          ("/package\\.json$"                "__package.json"      json-mode)
+          ("/bower\\.json$"                  "__bower.json"        json-mode)
+          ("/gulpfile\\.js$"                 "__gulpfile.js"       js-mode)
+          ("/webpack\\.config\\.js$"         "__webpack.config.js" js-mode)
           ("\\.lbaction/.+/Info.plist$"                       "__Info.plst"  lb6-mode)
           ("\\.lbaction/.+/\\(default\\|suggestions\\)\\.js$" "__default.js" lb6-mode)
           ;; Lua
