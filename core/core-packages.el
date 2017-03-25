@@ -468,6 +468,8 @@ accompanying *.elc file."
                (format (if (= total 0) "%s" "%s/%s") total-success total)))))
 
 (defun doom/compile-lite (&optional recompile-p)
+  "A light-weight version of `doom/compile' which only compiles core files in
+your emacs configuration (init.el and core/**/*.el)."
   (interactive)
   (doom/compile recompile-p t))
 
