@@ -98,6 +98,8 @@ or unstable files.")
  history-length 1000
  make-backup-files nil
  vc-make-backup-files nil
+ tramp-auto-save-directory (concat doom-cache-dir "tramp/")
+ tramp-backup-directory-alist backup-directory-alist
  ;; in case of `persistent-soft'
  pcache-directory (concat doom-cache-dir "pcache/"))
 
