@@ -84,7 +84,11 @@
 
 (def-package! tern
   :commands tern-mode
-  :init (add-hook 'js2-mode-hook 'tern-mode))
+  :init (add-hook 'js2-mode-hook 'tern-mode)
+  :config
+  ;; Fix project detection
+  (defun +javascript*tern-project-dir (&rest _) (doom-project-root))
+  (advice-add 'tern-project-dir :override '+javascript*tern-project-dir))
 
 
 (def-package! company-tern
