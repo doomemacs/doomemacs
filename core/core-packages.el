@@ -500,6 +500,7 @@ package files."
 ;; Package.el modifications
 ;;
 
+;; Updates QUELPA after deleting a package
 (advice-add 'package-delete :after 'doom*package-delete)
 
 ;; In a recent update, the :after property stopped working for `use-package'.

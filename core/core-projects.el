@@ -18,8 +18,10 @@ state are passed in.")
         projectile-globally-ignored-files '(".DS_Store" "Icon")
         projectile-indexing-method 'alien
         projectile-known-projects-file (concat doom-cache-dir "projectile.projects")
-        projectile-project-root-files '(".git" ".hg" ".svn" ".project" "package.json")
-        projectile-require-project-root nil)
+        projectile-require-project-root nil
+        projectile-project-root-files
+        '(".git" ".hg" ".svn" ".project" "package.json" "setup.py" "Gemfile"
+          "build.gradle"))
 
   :config
   (projectile-mode +1)
