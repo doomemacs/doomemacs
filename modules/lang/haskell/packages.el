@@ -11,7 +11,8 @@
      (let ((pkgs (cl-remove-if 'executable-find '("ghc" "happy" "alex"))))
        (unless (executable-find "cabal")
          (push "cabal-install" pkgs))
-       (sudo "pacman --noconfirm -S ghc cabal-install happy alex" (s-join " " pkgs))))
+       (when pkgs
+         (sudo "pacman --noconfirm -S %s" (s-join " " pkgs)))))
     ('debian) ;; TODO
     ('macos
      (unless (executable-find "ghc")
