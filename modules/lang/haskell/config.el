@@ -24,5 +24,6 @@
   :after haskell-mode
   :config
   (when (executable-find "cabal")
-    (add-hook! 'haskell-mode-hook '(flycheck-mode dante-mode))))
+    (add-hook! 'haskell-mode-hook
+      '(flycheck-mode dante-mode interactive-haskell-mode))))
 
