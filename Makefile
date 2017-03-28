@@ -18,6 +18,9 @@ autoremove: init.el
 autoloads: init.el
 	@$(EMACS) -f 'doom/reload-autoloads'
 
+recompile: init.el
+	@$(EMACS) -f 'doom/recompile'
+
 compile: init.el clean
 	@$(EMACS) -f 'doom/compile'
 

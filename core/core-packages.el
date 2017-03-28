@@ -381,9 +381,10 @@ server, if necessary) by `doom/packages-install', `doom/packages-update' and
   (if noninteractive
       (ignore-errors
         (require 'server)
-        (server-eval-at "server" '(let (noninteractive) (doom/reload))))
+        (unless (server-eval-at "server" '(doom/reload))
+          (message "No active emacs session running to reload")))
     (doom-initialize t)
-    (doom/compile t)
+    (doom/recompile)
     (message "Reloaded %d packages" (length doom--package-load-path))))
 
 (defun doom/reload-autoloads ()
@@ -452,6 +453,9 @@ take a while."
                                (reverse (file-expand-wildcards (expand-file-name "*/*.el" path)))))))
     (dolist (file targets)
       (push (cons (file-relative-name file doom-emacs-dir)
+                  ;; Use `byte-recompile-file' instead of `byte-compile-file'
+                  ;; because the former distinguishes between no-byte-compile,
+                  ;; failure (nil) and success (non-nil).
                   (byte-recompile-file file t 0))
             results))
     (let* ((n-fail (cl-count-if (lambda (x) (null (cdr x))) results))
@@ -465,6 +469,27 @@ take a while."
                                    (cl-remove-if-not 'cdr (reverse results)) "\n")))
       (message "Compiled %s file(s)"
                (format (if (= total 0) "%s" "%s/%s") total-success total)))))
+
+(defun doom/recompile ()
+  "Recompile any compiled *.el files in your Emacs configuration."
+  (interactive)
+  ;; Ensure all relevant config files are loaded. This way we don't need
+  ;; eval-when-compile and require blocks scattered all over.
+  (doom-initialize-packages (not noninteractive) noninteractive)
+  (let ((n 0)
+        (targets
+         (cl-remove-if-not
+          (lambda (file) (file-exists-p (concat file "c")))
+          (append (list (expand-file-name "init.el" doom-emacs-dir))
+                  (reverse (directory-files-recursively doom-core-dir "\\.el$"))
+                  (reverse (directory-files-recursively doom-modules-dir "\\.el$"))))))
+    (dolist (file targets)
+      (when (byte-compile-file file)
+        (message "+ Recompiling %s" file)
+        (cl-incf n)))
+    (if (= (length targets) 0)
+        (message "Nothing to recompile")
+      (message "Recompiled %s/%s files" n (length targets)))))
 
 (defun doom/compile-lite ()
   "A light-weight version of `doom/compile' which only compiles core files in
