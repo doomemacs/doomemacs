@@ -47,6 +47,9 @@ bootstrap: init.el
 run:
 	@emacs $(EMACS_FLAGS) -q -l init.el
 
+reload:
+	@$(EMACS) -f 'doom/reload'
+
 init.el:
 	@[ -e init.el ] || $(error No init.el file; create one or copy init.example.el)
 
