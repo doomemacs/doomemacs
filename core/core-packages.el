@@ -503,26 +503,5 @@ package files."
 ;; Updates QUELPA after deleting a package
 (advice-add 'package-delete :after 'doom*package-delete)
 
-;; In a recent update, the :after property stopped working for `use-package'.
-;; This fixes the problem, but must be removed as soon as the fix is released.
-;; See https://github.com/jwiegley/use-package/pull/439
-(defun doom*use-package-handler/:after (name keyword arg rest state)
-  (let ((body (use-package-process-keywords name rest
-                (plist-put state :deferred t)))
-        (name-string (use-package-as-string name)))
-    (if (and (consp arg)
-             (not (memq (car arg) '(:or :any :and :all))))
-        (setq arg (cons :all arg)))
-    (use-package-concat
-     (when arg
-       (list (funcall (use-package-require-after-load arg)
-                      (macroexp-progn
-                       `(,@(when (eq (plist-get state :defer-install) :ensure)
-                             `((use-package-install-deferred-package
-                                'name :after)))
-                         (require (quote ,name) nil t))))))
-     body)))
-(advice-add 'use-package-handler/:after :override 'doom*use-package-handler/:after)
-
 (provide 'core-packages)
 ;;; core-packages.el ends here
