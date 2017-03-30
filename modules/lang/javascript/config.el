@@ -102,6 +102,9 @@
   :commands rjsx-mode
   :mode "\\.jsx$"
   :config
+  ;; disable electric keys (I use snippets and `emmet-mode' instead)
+  (define-key rjsx-mode-map "<" nil)
+  (define-key rjsx-mode-map (kbd "C-d") nil)
   (add-hook! rjsx-mode
     ;; jshint doesn't really know how to deal with jsx
     (push 'javascript-jshint flycheck-disabled-checkers)))

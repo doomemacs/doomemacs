@@ -17,7 +17,8 @@
   :commands emmet-mode
   :preface (defvar emmet-mode-keymap (make-sparse-keymap))
   :init
-  (add-hook! (css-mode web-mode html-mode haml-mode nxml-mode) 'emmet-mode)
+  (add-hook! (css-mode web-mode html-mode haml-mode nxml-mode rjsx-mode)
+    'emmet-mode)
   :config
   (setq emmet-move-cursor-between-quotes t)
   (map! :map emmet-mode-keymap
