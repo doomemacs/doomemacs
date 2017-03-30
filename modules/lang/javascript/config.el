@@ -101,6 +101,7 @@
 (def-package! rjsx-mode
   :commands rjsx-mode
   :mode "\\.jsx$"
+  :mode "components/.+\\.js$"
   :config
   ;; disable electric keys (I use snippets and `emmet-mode' instead)
   (define-key rjsx-mode-map "<" nil)
