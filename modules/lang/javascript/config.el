@@ -31,7 +31,7 @@
   (map! :map js2-mode-map
         :localleader
         :nv ";" 'doom/append-semicolon
-        :n  "s" '+javascript/skewer-this-buffer
+        :n  "S" '+javascript/skewer-this-buffer
 
         :prefix "r"
         :n  "g"  'js2r-add-to-globals-annotation
@@ -130,7 +130,6 @@
   :config
   (map! :map skewer-mode-map
         :localleader
-        :n "s" nil
         :n "sE" 'skewer-eval-last-expression
         :n "se" 'skewer-eval-defun
         :n "sf" 'skewer-load-buffer))
@@ -140,7 +139,6 @@
   :config
   (map! :map skewer-css-mode-map
         :localleader
-        :n "s" nil
         :n "se" 'skewer-css-eval-current-declaration
         :n "sr" 'skewer-css-eval-current-rule
         :n "sb" 'skewer-css-eval-buffer
@@ -151,7 +149,6 @@
   :config
   (map! :map skewer-html-mode-map
         :localleader
-        :n "s" nil
         :n "se" 'skewer-html-eval-tag))
 
 
