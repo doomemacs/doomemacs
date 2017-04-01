@@ -443,7 +443,7 @@ take a while."
   (interactive)
   ;; Ensure all relevant config files are loaded. This way we don't need
   ;; eval-when-compile and require blocks scattered all over.
-  (doom-initialize-packages (not noninteractive) noninteractive)
+  (doom-initialize-packages t t)
   (let ((targets
          (append (list (expand-file-name "init.el" doom-emacs-dir))
                  (reverse (directory-files-recursively doom-core-dir "\\.el$"))))
@@ -477,7 +477,7 @@ take a while."
   (interactive)
   ;; Ensure all relevant config files are loaded. This way we don't need
   ;; eval-when-compile and require blocks scattered all over.
-  (doom-initialize-packages (not noninteractive) noninteractive)
+  (doom-initialize-packages t t)
   (let ((n 0)
         (targets
          (cl-remove-if-not
