@@ -179,9 +179,12 @@ evil-window-move-* (e.g. `evil-window-move-far-left')"
   "If on a fold-able element, toggle the fold (`hs-toggle-hiding'). Otherwise,
 if on a delimiter, jump to the matching one (`evilmi-jump-items')."
   (interactive)
-  (if (ignore-errors (hs-already-hidden-p))
-      (hs-toggle-hiding)
-    (call-interactively 'evilmi-jump-items)))
+  (cond ((eq major-mode 'magit-status-mode)
+         (call-interactively 'magit-section-toggle))
+        ((ignore-errors (hs-already-hidden-p))
+         (hs-toggle-hiding))
+        (t
+         (call-interactively 'evilmi-jump-items))))
 
 ;;;###autoload (autoload '+evil:macro-on-all-lines "feature/evil/autoload/evil" nil t)
 (evil-define-operator +evil:macro-on-all-lines (beg end &optional macro)
