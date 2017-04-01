@@ -304,7 +304,6 @@
   (setq evil-snipe-smart-case t
         evil-snipe-scope 'line
         evil-snipe-repeat-scope 'visible
-        evil-snipe-repeat-keys nil ; causes problems with remapped ;
         evil-snipe-override-evil-repeat-keys nil
         evil-snipe-char-fold t
         evil-snipe-aliases '((?\[ "[[{(]")
@@ -312,8 +311,8 @@
                              (?\; "[;:]")))
 
   :config
-  (evil-snipe-mode 1)
-  (evil-snipe-override-mode 1)
+  ;; (evil-snipe-mode +1)
+  (evil-snipe-override-mode +1)
   ;; Switch to evil-easymotion/avy after first snipe
   (map! :map evil-snipe-parent-transient-map
         "C-;" (λ! (require 'evil-easymotion)
