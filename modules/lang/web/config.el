@@ -37,15 +37,15 @@
 (def-project-mode! +web-angularjs-mode
   :modes (+javascript-npm-mode +web-bower-mode)
   :when
-  (and (or (bound-and-true-p +web-bower-mode)
-           (bound-and-true-p +javascript-npm-mode))
-       (let* ((project-root (doom-project-root))
-              (bower (and +web-bower-mode (+web-bower-conf project-root)))
-              (npm   (and +javascript-npm-mode (+javascript-npm-conf project-root))))
-         (assq 'angular (append (cdr (assq 'dependencies bower))
-                                (cdr (assq 'dependencies npm))
-                                (cdr (assq 'devDependencies bower))
-                                (cdr (assq 'devDependencies npm)))))))
+  (let* ((project-root (doom-project-root))
+         (bower (and (bound-and-true-p +web-bower-mode)
+                     (+web-bower-conf project-root)))
+         (npm   (and (bound-and-true-p +javascript-npm-mode)
+                     (+javascript-npm-conf project-root))))
+    (assq 'angular (append (cdr (assq 'dependencies bower))
+                           (cdr (assq 'dependencies npm))
+                           (cdr (assq 'devDependencies bower))
+                           (cdr (assq 'devDependencies npm))))))
 
 (def-project-mode! +web-jekyll-mode
   :modes (web-mode js-mode coffee-mode css-mode haml-mode pug-mode)
