@@ -161,7 +161,7 @@
   :files "gulpfile.js")
 
 (def-project-mode! +javascript-npm-mode
-  :modes (web-mode js2-mode markdown-mode)
+  :modes (html-mode css-mode web-mode js2-mode markdown-mode)
   :files "package.json")
 
 (def-project-mode! +javascript-phaser-mode
