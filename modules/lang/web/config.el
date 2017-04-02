@@ -61,6 +61,7 @@
 
 (def-project-mode! +web-react-mode
   :modes (+javascript-npm-mode)
-  :when (when-let (npm (+javascript-npm-conf))
-          (and (assq 'react (append (cdr (assq 'dependencies npm))
-                                    (cdr (assq 'devDependencies npm)))))))
+  :when
+  (when-let (npm (+javascript-npm-conf))
+    (assq 'react (append (cdr (assq 'dependencies npm))
+                         (cdr (assq 'devDependencies npm))))))
