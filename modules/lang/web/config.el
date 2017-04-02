@@ -31,21 +31,9 @@
 ;; Frameworks
 ;;
 
-(def-project-mode! +web-bower-mode
-  :files "bower.json")
-
 (def-project-mode! +web-angularjs-mode
-  :modes (+javascript-npm-mode +web-bower-mode)
-  :when
-  (let* ((project-root (doom-project-root))
-         (bower (and (bound-and-true-p +web-bower-mode)
-                     (+web-bower-conf project-root)))
-         (npm   (and (bound-and-true-p +javascript-npm-mode)
-                     (+javascript-npm-conf project-root))))
-    (assq 'angular (append (cdr (assq 'dependencies bower))
-                           (cdr (assq 'dependencies npm))
-                           (cdr (assq 'devDependencies bower))
-                           (cdr (assq 'devDependencies npm))))))
+  :modes (+javascript-npm-mode)
+  :when (+javascript-npm-dep-p 'angular))
 
 (def-project-mode! +web-jekyll-mode
   :modes (web-mode js-mode coffee-mode css-mode haml-mode pug-mode)
@@ -61,7 +49,8 @@
 
 (def-project-mode! +web-react-mode
   :modes (+javascript-npm-mode)
-  :when
-  (when-let (npm (+javascript-npm-conf))
-    (assq 'react (append (cdr (assq 'dependencies npm))
-                         (cdr (assq 'devDependencies npm))))))
+  :when (+javascript-npm-dep-p 'react))
+
+(def-project-mode! +web-phaser-mode
+  :modes (+javascript-npm-mode)
+  :when (+javascript-npm-dep-p '(or phaser phaser-ce)))

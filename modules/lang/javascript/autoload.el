@@ -15,6 +15,18 @@ ignore the cache."
             (puthash project-root json +javascript-npm-conf))))))
 
 ;;;###autoload
+(defun +javascript-npm-dep-p (packages &optional project-root refresh-p)
+  (when-let (data (and (bound-and-true-p +javascript-npm-mode)
+                       (+javascript-npm-conf)))
+    (let ((deps (append (cdr (assq 'dependencies data))
+                        (cdr (assq 'devDependencies data)))))
+      (funcall (if (eq (car packages) 'and)
+                   'cl-every
+                 'cl-some)
+               (lambda (pkg) (assq pkg deps))
+               (if (listp packages) packages (list packages))))))
+
+;;;###autoload
 (defun +javascript/repl ()
   "Open a Javascript REPL. Meaning either `skewer-repl', if any of the
 skewer-*-mode's are enabled, or `nodejs-repl' otherwise."

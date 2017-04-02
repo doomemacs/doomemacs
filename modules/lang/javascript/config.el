@@ -164,21 +164,6 @@
   :modes (html-mode css-mode web-mode js2-mode markdown-mode)
   :files "package.json")
 
-(def-project-mode! +javascript-phaser-mode
-  :modes (+javascript-npm-mode)
-  :when
-  (let* ((project-root (doom-project-root))
-         (bower (and (bound-and-true-p +web-bower-mode)
-                     (+web-bower-conf project-root)))
-         (npm   (and (bound-and-true-p +javascript-npm-mode)
-                     (+javascript-npm-conf project-root)))
-         (deps (append (cdr (assq 'dependencies bower))
-                       (cdr (assq 'dependencies npm))
-                       (cdr (assq 'devDependencies bower))
-                       (cdr (assq 'devDependencies npm)))))
-    (or (assq 'phaser deps)
-        (assq 'phaser-ce deps))))
-
 (def-project-mode! +javascript-lb6-mode
   :modes (web-mode js2-mode nxml-mode markdown-mode)
   :match "\\.lb\\(action\\|ext\\)/"
