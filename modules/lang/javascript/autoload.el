@@ -20,11 +20,15 @@ ignore the cache."
                        (+javascript-npm-conf)))
     (let ((deps (append (cdr (assq 'dependencies data))
                         (cdr (assq 'devDependencies data)))))
-      (funcall (if (eq (car packages) 'and)
-                   'cl-every
-                 'cl-some)
-               (lambda (pkg) (assq pkg deps))
-               (if (listp packages) packages (list packages))))))
+      (cond ((listp packages)
+             (funcall (if (eq (car packages) 'and)
+                          'cl-every
+                        'cl-some)
+                      (lambda (pkg) (assq pkg deps))
+                      (if (listp packages) packages (list packages))))
+            ((symbolp packages)
+             (assq packages deps))
+            (t (error "Expected a package symbol or list, got %s" packages))))))
 
 ;;;###autoload
 (defun +javascript/repl ()
