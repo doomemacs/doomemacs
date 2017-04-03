@@ -248,10 +248,7 @@ workspace to delete."
   (doom/kill-all-buffers)
   (let ((fallback-buf (doom-fallback-buffer)))
     (switch-to-buffer fallback-buf)
-    (dolist (buf (buffer-list))
-      (unless (eq (buffer-name buf) fallback-buf)
-        (persp-remove-buffer buf)
-        (kill-buffer buf)))))
+    (doom/cleanup-buffers)))
 
 ;;;###autoload
 (defun +workspace/kill-session-and-quit ()
