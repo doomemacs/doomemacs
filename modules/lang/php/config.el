@@ -29,14 +29,11 @@
 
   (map! :map php-mode-map
         :localleader
-        :nv ";" 'doom/append-semicolon
-
         (:prefix "r"
           :n "cv" 'php-refactor--convert-local-to-instance-variable
           :n "u"  'php-refactor--optimize-use
           :v "xm" 'php-refactor--extract-method
           :n "rv" 'php-refactor--rename-local-variable)
-
         (:prefix "t"
           :n "r" 'phpunit-current-project
           :n "a" 'phpunit-current-class

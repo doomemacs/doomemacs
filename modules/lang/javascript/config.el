@@ -33,7 +33,6 @@
 
   (map! :map js2-mode-map
         :localleader
-        :nv ";" 'doom/append-semicolon
         :n  "S" '+javascript/skewer-this-buffer
 
         :prefix "r"

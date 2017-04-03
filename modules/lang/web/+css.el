@@ -11,7 +11,6 @@
 (map! :map* (css-mode-map scss-mode-map less-css-mode-map)
       :n "M-R" '+css/web-refresh-browser
       (:localleader
-        :nv ";"  '+css/append-semicolon
         :n  "rb" '+css/toggle-inline-or-block))
 
 ;;
