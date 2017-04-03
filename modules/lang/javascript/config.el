@@ -28,6 +28,9 @@
   (set! :electric 'js2-mode :chars '(?\} ?\) ?.) :words '("||" "&&"))
   (set! :xref-backend 'js2-mode 'xref-js2-xref-backend)
 
+  (sp-with-modes '(js2-mode rjsx-mode)
+    (sp-local-pair "/* " " */" :post-handlers '(("| " "SPC"))))
+
   (map! :map js2-mode-map
         :localleader
         :nv ";" 'doom/append-semicolon

@@ -20,8 +20,7 @@
   (add-hook! php-mode (setq-local sp-max-pair-length 6))
 
   (sp-with-modes '(php-mode)
-    (sp-local-pair "/*"    "*/" :post-handlers '(("||\n[i]" "RET") ("| " "SPC")))
-    (sp-local-pair "/**"   "*/" :post-handlers '(("||\n[i]" "RET") ("||\n[i]" "SPC")))
+    (sp-local-pair "/* "    "*/" :post-handlers '(("||\n[i] " "RET") ("| " "SPC")))
     (sp-local-pair "<? "    " ?>")
     (sp-local-pair "<?php " " ?>")
     (sp-local-pair "<?="    " ?>")
