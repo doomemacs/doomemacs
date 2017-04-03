@@ -65,10 +65,6 @@
     (+workspace-switch (projectile-project-name) t))
   (add-hook 'projectile-before-switch-project-hook 'doom|new-workspace-on-project-change)
 
-  ;; Be quiet when saving
-  (defun +workspace*silence (orig-fn &rest args) (quiet! (apply orig-fn args)))
-  (advice-add 'persp-save-state-to-file :around '+workspace*silence)
-
   ;; Add a hook to session loading
   (defun +workspaces*reinit-popups (&rest _)
     (run-hook-with-args '+workspaces-load-session-hook (window-list)))
