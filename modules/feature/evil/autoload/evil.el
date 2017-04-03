@@ -1,5 +1,7 @@
 ;;; feature/evil/packages.el
 
+(eval-when-compile (require 'subr-x))
+
 ;;;###autoload
 (defun +evil/visual-indent ()
   "vnoremap < <gv"
