@@ -40,8 +40,5 @@
 
 (def-package! evil-magit
   :when (featurep! :feature evil)
-  :after magit
-  :config
-  ;; evil-snipe conflicts with magit
-  (add-hook 'magit-mode-hook 'turn-off-evil-snipe-override-mode))
+  :after magit)
 
