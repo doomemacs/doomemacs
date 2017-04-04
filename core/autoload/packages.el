@@ -131,11 +131,6 @@ Used by `doom/packages-install'."
         (delete-directory path t)))))
 
 ;;; Private functions
-(defsubst doom--version-list-str (vlist)
-  (concat (number-to-string (car vlist))
-          "."
-          (number-to-string (cadr vlist))))
-
 (defsubst doom--sort-alpha (it other)
   (string-lessp (symbol-name (car it))
                 (symbol-name (car other))))
@@ -265,8 +260,8 @@ appropriate."
                                 (lambda (pkg)
                                   (format "+ %s %s -> %s"
                                           (s-pad-right (+ max-len 2) " " (symbol-name (car pkg)))
-                                          (s-pad-right 14 " " (doom--version-list-str (cadr pkg)))
-                                          (doom--version-list-str (cl-caddr pkg))))
+                                          (s-pad-right 14 " " (package-version-join (cadr pkg)))
+                                          (package-version-join (cl-caddr pkg))))
                                 packages
                                 "\n"))))))
            (message "Aborted!"))
@@ -358,8 +353,8 @@ calls."
   (if-let (desc (doom-package-outdated-p (intern package)))
       (if (y-or-n-p (format "%s will be updated from %s to %s. Update?"
                             (car desc)
-                            (doom--version-list-str (cadr desc))
-                            (doom--version-list-str (cl-caddr desc))))
+                            (package-version-join (cadr desc))
+                            (package-version-join (cl-caddr desc))))
           (message "%s %s"
                    (if (doom-update-package package)
                        "Updated"
