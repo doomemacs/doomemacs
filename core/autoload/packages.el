@@ -1,15 +1,21 @@
 ;;; packages.el
 (provide 'doom-lib-packages)
 
+(defvar doom--last-refresh nil)
+
 ;;;###autoload
 (defun doom-refresh-packages ()
   "Refresh ELPA packages."
   (doom-initialize)
   (let ((last-refresh (persistent-soft-fetch 'last-pkg-refresh "emacs")))
-    (when (or (not last-refresh)
-              (> (nth 1 (time-since last-refresh)) 600))
-      (package-refresh-contents)
-      (persistent-soft-store 'last-pkg-refresh (current-time) "emacs"))))
+    (when last-refresh
+      (setq doom--last-refresh last-refresh)))
+  (when (or (not doom--last-refresh)
+            (> (nth 1 (time-since doom--last-refresh)) 600))
+    (package-refresh-contents)
+    (persistent-soft-store
+     'last-pkg-refresh (setq doom--last-refresh (current-time))
+     "emacs")))
 
 ;;;###autoload
 (defun doom-package-backend (name)
