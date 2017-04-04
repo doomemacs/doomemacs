@@ -54,7 +54,8 @@
       (rename-buffer (file-name-nondirectory new-path))
       (set-visited-file-name new-path)
       (set-buffer-modified-p nil)
-      (save-place-forget-unreadable-files)
+      (when (bound-and-true-p save-place-mode)
+        (save-place-forget-unreadable-files))
       (setq doom--spaceline-file-path nil)
       (message "File '%s' successfully renamed to '%s'"
                short-old-path short-new-path))))
