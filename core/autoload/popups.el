@@ -1,5 +1,4 @@
 ;;; popups.el
-(provide 'doom-lib-popups)
 
 ;;;###autoload
 (defun doom-popup-p (&optional target)

@@ -1,5 +1,4 @@
 ;;; debug.el
-(provide 'core-lib-debug)
 
 ;;;###autoload
 (defun doom/what-face (pos)

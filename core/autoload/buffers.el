@@ -1,5 +1,4 @@
 ;;; autoload.el
-(provide 'doom-lib-buffers)
 
 (defvar-local doom-buffer--narrowed-origin nil)
 

@@ -1,5 +1,4 @@
 ;;; memoize.el
-(provide 'doom-lib-memoize)
 
 ;;;###autoload
 (defvar doom-memoized-table (make-hash-table :test 'equal :size 10)

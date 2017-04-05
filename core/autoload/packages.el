@@ -1,5 +1,4 @@
 ;;; packages.el
-(provide 'doom-lib-packages)
 
 (defvar doom--last-refresh nil)
 
