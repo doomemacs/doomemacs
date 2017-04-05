@@ -142,8 +142,8 @@ to speed up startup."
               (message "Installed %s" pkg)
             (error "Couldn't install %s" pkg)))))
 
-    (require 'quelpa)
-    (require 'use-package)
+    (load "quelpa" nil t)
+    (load "use-package" nil t)
     ;; Strip package management from use-package; DOOM handles this its own way
     (mapc (lambda (keyword) (setq use-package-keywords (delq keyword use-package-keywords)))
           '(:ensure :pin :defer-install))
