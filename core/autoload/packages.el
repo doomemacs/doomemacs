@@ -112,9 +112,10 @@ Used by `doom/packages-autoremove'."
 
 ;;;###autoload
 (defun doom-get-missing-packages ()
-  "Return a list of requested packages that aren't installed or built-in. Each
-element is a list whose CAR is the package symbol, and whose CDR is a plist
-taken from that package's `package!' declaration.
+  "Return a list of requested packages that aren't installed or built-in, but
+are enabled (with a `package!' directive). Each element is a list whose CAR is
+the package symbol, and whose CDR is a plist taken from that package's
+`package!' declaration.
 
 Used by `doom/packages-install'."
   (cl-remove-if (lambda (pkgsym)
