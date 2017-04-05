@@ -32,6 +32,8 @@
               (setq exec-path
                     (or (eval-when-compile
                           (when (require 'exec-path-from-shell nil t)
+                            (setq exec-path-from-shell-check-startup-files nil
+                                  exec-path-from-shell-arguments (delete "-i" exec-path-from-shell-arguments))
                             (nconc exec-path-from-shell-variables '("GOPATH" "GOROOT" "PYTHONPATH"))
                             (exec-path-from-shell-initialize)
                             (persistent-soft-store 'exec-path exec-path "emacs")
