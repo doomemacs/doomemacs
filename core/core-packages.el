@@ -254,7 +254,10 @@ Used by `require!' and `depends-on!'."
 
 (defun doom--display-benchmark ()
   (message "Loaded %s packages in %.03fs"
-           (eval-when-compile (length doom--package-load-path))
+           ;; Certainly imprecise, especially where custom additions to
+           ;; load-path are concerned, but I don't mind a [small] margin of
+           ;; error in the plugin count.
+           (- (length load-path) (length doom--base-load-path))
            (setq doom-init-time (float-time (time-subtract after-init-time before-init-time)))))
 
 
