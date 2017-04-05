@@ -171,6 +171,8 @@
      ;; Org notes
      :desc "Browse notes"           :n "n"   '+hlissner/browse-notes
      :desc "Find file in notes"     :n "N"   '+hlissner/find-in-notes
+     :desc "Browse project notes"   :n "p"   '+org/browse-notes-for-project
+     :desc "Browse mode notes"      :n "m"   '+org/browse-notes-for-major-mode
      :desc "Org Capture"            :n "SPC" '+org/capture
      ;; applications
      :desc "APP: elfeed"            :n "r" '=rss))
