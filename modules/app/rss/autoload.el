@@ -63,3 +63,18 @@
   (with-current-buffer (elfeed-search-buffer)
     (forward-line -1)
     (call-interactively '+rss/open)))
+
+;;;###autoload
+(defun +rss-dead-feeds (&optional years)
+  "Return a list of feeds that haven't posted anything in YEARS."
+  (let* ((years (or years 1.0))
+         (living-feeds (make-hash-table :test 'equal))
+         (seconds (* years 365.0 24 60 60))
+         (threshold (- (float-time) seconds)))
+    (with-elfeed-db-visit (entry feed)
+      (let ((date (elfeed-entry-date entry)))
+        (when (> date threshold)
+          (setf (gethash (elfeed-feed-url feed) living-feeds) t))))
+    (cl-loop for url in (elfeed-feed-list)
+             unless (gethash url living-feeds)
+             collect url)))
