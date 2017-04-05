@@ -4,7 +4,7 @@ EMACS=emacs --batch $(EMACS_FLAGS) -l core/core.el
 TESTS=$(patsubst %,-l %, $(wildcard test/test-*.el))
 
 # Tasks
-all: install update autoloads
+all: autoloads install update
 
 install: init.el
 	@$(EMACS) -f 'doom-initialize-autoloads' -f 'doom/packages-install'
