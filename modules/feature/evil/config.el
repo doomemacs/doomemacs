@@ -65,7 +65,7 @@
   (add-hook 'evil-operator-state-exit-hook  '+evil|show-paren-mode-off)
   (add-hook 'evil-normal-state-entry-hook   '+evil|show-paren-mode-off)
 
-  (dolist (mode '(tabulated-list-mode Info-mode view-mode comint-mode term-mode calendar-mode Man-mode grep-mode))
+  (dolist (mode '(tabulated-list-mode view-mode comint-mode term-mode calendar-mode Man-mode grep-mode))
     (evil-set-initial-state mode 'emacs)))
 
 (defsubst +evil--textobj (key inner-fn &optional outer-fn)
