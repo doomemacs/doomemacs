@@ -5,7 +5,7 @@
 ;; can be accessed via `+org/browse-notes-for-major-mode' and
 ;; `+org/browse-notes-for-project'.
 
-(add-hook '+org-init-hook '+org|init-notebook t)
+;; (add-hook '+org-init-hook '+org|init-notebook t)
 
 (defvar +org-notes-dir (concat +org-dir "notes/")
   "The directory where the notes are kept.")
