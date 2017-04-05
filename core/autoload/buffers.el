@@ -69,8 +69,9 @@ the current workspace."
 (defun doom-buffers-in-mode (modes &optional buffer-list)
   "Get a list of all buffers (in the current workspace OR in BUFFER-LIST) whose
 `major-mode' is one of MODES."
-  (cl-remove-if-not (lambda (buf) (memq (buffer-local-value 'major-mode it) modes))
-                    (or buffer-list (doom-buffer-list))))
+  (let ((modes (if (listp modes) modes (list modes))))
+    (cl-remove-if-not (lambda (buf) (memq (buffer-local-value 'major-mode buf) modes))
+                      (or buffer-list (doom-buffer-list)))))
 
 ;;;###autoload
 (defun doom-visible-windows (&optional window-list)
