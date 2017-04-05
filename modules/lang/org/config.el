@@ -22,9 +22,6 @@
   "The directory where org files are kept.")
 (defvaralias 'org-directory '+org-dir)
 
-(defvar +org-notes-dir (concat +org-dir "notes")
-  "The directory where the notes are kept")
-
 (defvar +org-attachment-dir ".attach/"
   "Where to store attachments (relative to current org file).")
 
@@ -39,6 +36,7 @@
 (load! +attach)
 (load! +capture)
 (load! +export)
+(load! +notebook)
 
 
 ;;
