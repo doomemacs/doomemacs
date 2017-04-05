@@ -51,8 +51,8 @@
             [delete]        '+snippets/delete-forward-char-or-field)
 
           (:map yas-minor-mode-map
-            :i [tab] 'yas-expand
-            :v [tab] '+snippets/expand-on-region))
+            :i "<tab>" yas-maybe-expand
+            :v "<tab>" '+snippets/expand-on-region))
 
     ;; Exit snippets on ESC in normal mode
     (advice-add 'evil-force-normal-state :before 'yas-exit-all-snippets)
