@@ -79,11 +79,17 @@ Be careful not to use it in a loop."
                  (append doom-protected-packages (mapcar 'car doom-packages))))))
 
 ;;;###autoload
-(defun doom-get-dependencies-for (name)
+(defun doom-get-depending-on (name)
   "Return a list of packages that depend on the package named NAME."
   (doom-initialize)
   (when-let (desc (cadr (assq name package-alist)))
     (mapcar 'package-desc-name (package--used-elsewhere-p desc nil t))))
+
+;;;###autoload
+(defun doom-get-dependencies-for (name &optional only)
+  "Return a list of dependencies for a package."
+  (doom-initialize)
+  (package--get-deps name only))
 
 ;;;###autoload
 (defun doom-get-outdated-packages ()
