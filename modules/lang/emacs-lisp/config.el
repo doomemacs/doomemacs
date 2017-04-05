@@ -81,3 +81,11 @@ version is loaded."
         slime-complete-symbol*-fancy t
         slime-complete-symbol-function 'slime-fuzzy-complete-symbol))
 
+
+;;
+;;
+;;
+
+(def-project-mode! +emacs-lisp-ert-mode
+  :modes (emacs-lisp-mode)
+  :match "/test-.+\\.el$")
