@@ -11,8 +11,8 @@ This is an Emacs configuration for a stubborn, melodramatic and
 shell-dwelling vimmer disappointed with the text-editor status quo.
 
 Doom tries to look and act like modern editors (whatever that means to
-me on any given day), emulate vim as best it can and strive to surpass
-it in any way possible. I've designed it to fit my needs as a software
+me on any given day), espouse vim's modal philosophy as best it can and strive
+to surpass vim in any way possible, and generally fit my needs as a software
 developer, indie game developer, scientist and doom enthusiast.
 
 It was tailored for **MacOS 10.11+** and **Arch Linux 4.7+**, and
@@ -26,10 +26,10 @@ cd ~/.emacs.d
 cp init.example.el init.el  # maybe edit init.el
 make install
 make compile       # optional, may take a while
+make compile-lite  # optional (lighter alternative to compile)
 ```
 
-Run `make` each time you change init.el (and recompile, if necessary).
-Running `make` is the equivalent of doing:
+Run `make` after making changes, which is the equivalent of:
 
 ```bash
 make install       # or (doom/packages-install)
