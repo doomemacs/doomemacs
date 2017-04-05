@@ -7,8 +7,8 @@
           (c (get-buffer-create "*c*"))
           (buffers (doom-buffer-list)))
       (should buffers)
-      (should (cl-every (lambda (b) (memq b buffers)) (list a b c)))
-      (should (cl-every 'bufferp buffers))))
+      (should (cl-every 'bufferp buffers))
+      (should (cl-every (lambda (b) (memq b buffers)) (list a b c)))))
 
   (ert-deftest matching-buffers ()
     (let ((a (get-buffer-create "*a*"))
@@ -16,8 +16,8 @@
           (c (get-buffer-create "*c*"))
           (buffers (doom-matching-buffers "^\\*[ac]\\*$")))
       (should (= 2 (length buffers)))
-      (should (cl-every (lambda (b) (memq b buffers)) (list a c)))
-      (should (cl-every 'bufferp buffers))))
+      (should (cl-every 'bufferp buffers))
+      (should (cl-every (lambda (b) (memq b buffers)) (list a c)))))
 
   (ert-deftest buffers-in-mode ()
     (dolist (name (list "*a*" "*b*"))
