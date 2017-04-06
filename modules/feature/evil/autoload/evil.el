@@ -29,7 +29,7 @@
 ;;;###autoload
 (defun +evil*ex-replace-special-filenames (file-name)
   "Replace special symbols in FILE-NAME. Modified to include other substitution
-flags."
+flags. See http://vimdoc.sourceforge.net/htmldoc/cmdline.html#filename-modifiers."
   (let ((regexp (concat "\\(?:^\\|[^\\\\]\\)"
                         "\\([#%\\w]\\)"
                         "\\(\\(?::\\(?:[PphtreS~.]\\|g?s[^: $]+\\)\\)*\\)"))
