@@ -3,6 +3,7 @@ sudo: false
 before_install:
   - curl -fsSkL https://gist.github.com/rejeep/ebcd57c3af83b049833b/raw > x.sh && source ./x.sh
   - evm install emacs-25.1-travis --use --skip
+  - cp init.example.el init.el
   - YES=1 make
 script:
   - make test
