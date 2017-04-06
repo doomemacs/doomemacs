@@ -94,7 +94,8 @@ base by `doom!' and for calculating how many packages exist.")
       quelpa-self-upgrade-p nil
       quelpa-dir (expand-file-name "quelpa" doom-packages-dir)
 
-      byte-compile-dynamic t
+      byte-compile-dynamic nil
+      byte-compile-verbose doom-debug-mode
       byte-compile-warnings '(not mapcar free-vars unresolved noruntime lexical make-local))
 
 
@@ -439,64 +440,61 @@ the commandline."
        (delete-file generated-autoload-file)
        (error "Couldn't evaluate autoloads.el: %s" (cadr ex))))))
 
-(defun doom/compile (&optional lite-p)
+(defun doom/compile (&optional lite-p only-recompile-p)
   "Byte compile your emacs configuration (init.el, core/*.el &
 modules/*/*/**.el). DOOM Emacs was designed to benefit from this, but it may
-take a while."
-  (interactive)
-  ;; Ensure all relevant config files are loaded. This way we don't need
-  ;; eval-when-compile and require blocks scattered all over.
+take a while.
+
+If LITE-P is non-nil, only compile the essential, core DOOM files (init.el &
+core/**/*.el).
+
+If ONLY-RECOMPILE-P is non-nil, only recompile out-of-date files."
+  (interactive "P")
+  ;; Ensure all relevant config files are loaded and up-to-date. This way we
+  ;; don't need eval-when-compile and require blocks scattered all over.
   (doom-initialize-packages t t)
   (let ((targets
          (append (list (expand-file-name "init.el" doom-emacs-dir))
                  (reverse (directory-files-recursively doom-core-dir "\\.el$"))))
-        (n 0)
-        results)
+        files-success files-fail files-no-compile)
     (unless lite-p
       (dolist (path (doom--module-paths))
         (nconc targets (append (reverse (directory-files path t "\\.el$" t))
                                (reverse (file-expand-wildcards (expand-file-name "*/*.el" path)))))))
+    (when only-recompile-p
+      (setq targets
+            (cl-remove-if-not (lambda (file)
+                                (let ((elc-file (byte-compile-dest-file file)))
+                                  (and (file-exists-p elc-file)
+                                       (file-newer-than-file-p file elc-file))))
+                              targets)))
     (dolist (file targets)
-      (push (cons (file-relative-name file doom-emacs-dir)
-                  ;; Use `byte-recompile-file' instead of `byte-compile-file'
-                  ;; because the former distinguishes between no-byte-compile,
-                  ;; failure (nil) and success (non-nil).
-                  (byte-recompile-file file t 0))
-            results))
-    (let* ((n-fail (cl-count-if (lambda (x) (null (cdr x))) results))
-           (n-nocompile (cl-count-if (lambda (x) (eq (cdr x) 'no-byte-compile)) results))
-           (total (- (length results) n-nocompile))
-           (total-success (- total n-fail)))
-      (when (> total-success 0)
-        (message "\n"))
-      (when (> n-fail 0)
+      (let ((result (quiet! (byte-compile-file file)))
+            (short-name (file-relative-name file doom-emacs-dir)))
+        (push file (cond ((eq result 'no-byte-compile)
+                          (message "+ Ignored %s" short-name)
+                          files-no-compile)
+                         ((null result)
+                          (message "+ Failed to compile %s" short-name)
+                          files-fail)
+                         (t
+                          (message "+ Compiled %s" short-name)
+                          files-success)))))
+    (let* ((total         (- (length targets) (length files-no-compile)))
+           (total-no-compile (length files-no-compile))
+           (total-fail    (length files-fail))
+           (total-success (length files-success)))
+      (when (> total-fail 0)
         (message "\n%s" (mapconcat (lambda (file) (concat "+ ERROR: " (car file)))
-                                   (cl-remove-if-not 'cdr (reverse results)) "\n")))
-      (message "Compiled %s file(s)"
-               (format (if (= total 0) "%s" "%s/%s") total-success total)))))
+                                   files-fail "\n")))
+      (message "%s %s file(s)"
+               (if only-recompile-p "Recompiled" "Compiled")
+               (format (if (= total 0) "%d" "%d/%d (%s not compiled)") total-success total total-no-compile)))))
 
 (defun doom/recompile ()
   "Recompile any compiled *.el files in your Emacs configuration."
   (interactive)
-  ;; Ensure all relevant config files are loaded. This way we don't need
-  ;; eval-when-compile and require blocks scattered all over.
-  (doom-initialize-packages t t)
-  (let ((n 0)
-        (targets
-         (cl-remove-if-not
-          (lambda (file) (file-exists-p (concat file "c")))
-          (append (list (expand-file-name "init.el" doom-emacs-dir))
-                  (reverse (directory-files-recursively doom-core-dir "\\.el$"))
-                  (reverse (directory-files-recursively doom-modules-dir "\\.el$"))))))
-    (dolist (file targets)
-      (when (quiet! (byte-compile-file file))
-        (message "+ Recompiling %s" file)
-        (when (assoc (file-truename file) load-history)
-          (ignore-errors (load file nil t)))
-        (cl-incf n)))
-    (if (= (length targets) 0)
-        (message "Nothing to recompile")
-      (message "Recompiled %s/%s files" n (length targets)))))
+  (doom/compile nil :recompile))
 
 (defun doom/compile-lite ()
   "A light-weight version of `doom/compile' which only compiles core files in
