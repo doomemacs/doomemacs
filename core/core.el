@@ -164,8 +164,8 @@ enable multiple minor modes for the same regexp.")
     (require 'core-keybinds)))  ; centralized keybind system + which-key
 
 (add-hook! 'window-setup-hook
-  (setq gc-cons-threshold 134217728
-        gc-cons-percentage 0.3))
+  (setq gc-cons-threshold 67108864
+        gc-cons-percentage 0.2))
 
 (provide 'core)
 ;;; core.el ends here
