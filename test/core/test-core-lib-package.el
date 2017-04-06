@@ -34,14 +34,15 @@ affects your Emacs packages)."
 
   (ert-deftest elpa-outdated-detection ()
     "TODO"
-    (let* ((doom--last-refresh (current-time))
-           (package-alist
-            `((doom-dummy ,(test-package-new 'doom-dummy '(20160405 1234)))))
-           (package-archive-contents
-            `((doom-dummy ,(test-package-new 'doom-dummy '(20170405 1234)))))
-           (outdated (doom-package-outdated-p 'doom-dummy)))
-      (should outdated)
-      (should (equal outdated '(doom-dummy (20160405 1234) (20170405 1234))))))
+    (cl-letf (((symbol-function 'package-refresh-contents) (lambda (&rest _))))
+      (let* ((doom--last-refresh (current-time))
+             (package-alist
+              `((doom-dummy ,(test-package-new 'doom-dummy '(20160405 1234)))))
+             (package-archive-contents
+              `((doom-dummy ,(test-package-new 'doom-dummy '(20170405 1234)))))
+             (outdated (doom-package-outdated-p 'doom-dummy)))
+        (should outdated)
+        (should (equal outdated '(doom-dummy (20160405 1234) (20170405 1234)))))))
 
   ;; TODO quelpa-outdated-detection
 
