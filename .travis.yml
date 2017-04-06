@@ -1,0 +1,9 @@
+language: emacs-lisp
+sudo: false
+before_install:
+  - evm install $EVM_EMACS --use --skip
+  - YES=1 make
+env:
+  - EVM_EMACS=emacs-25.1-travis
+script:
+  - make test
