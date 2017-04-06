@@ -31,17 +31,17 @@
   "Replace special symbols in FILE-NAME. Modified to include other substitution
 flags."
   (let ((regexp (concat "\\(?:^\\|[^\\\\]\\)"
-                        "\\([#%@]\\)"
-                        "\\(\\(?::\\(?:[phtreS~.]\\|g?s[^: $]+\\)\\)*\\)"))
+                        "\\([#%\\w]\\)"
+                        "\\(\\(?::\\(?:[PphtreS~.]\\|g?s[^: $]+\\)\\)*\\)"))
         case-fold-search)
     ;; TODO Remove s.el dependency so I can offer it upstream
     (dolist (match (s-match-strings-all regexp file-name))
       (let ((flags (split-string (cl-caddr match) ":" t))
             (path (file-relative-name
                    (pcase (cadr match)
-                     ("@" (doom-project-root))
                      ("%" (buffer-file-name))
-                     ("#" (and (other-buffer) (buffer-file-name (other-buffer)))))
+                     ("#" (and (other-buffer) (buffer-file-name (other-buffer))))
+                     (_ file-name))
                    default-directory))
             flag global)
         (when path
@@ -54,11 +54,12 @@ flags."
                     flag (string-remove-prefix "g" flag)))
             (setq path
                   (or (pcase (substring flag 0 1)
+                        ("P" (doom-project-root))
                         ("p" (expand-file-name path))
                         ("~" (file-relative-name path "~"))
                         ("." (file-relative-name path default-directory))
-                        ("h" (directory-file-name path))
-                        ("t" (file-name-nondirectory (directory-file-name path)))
+                        ("h" (directory-file-name path)) ; FIXME
+                        ("t" (file-name-nondirectory (directory-file-name path))) ; FIXME
                         ("r" (file-name-sans-extension path))
                         ("e" (file-name-extension path))
                         ("s" (let* ((args (evil-delimited-arguments (substring flag 1) 2))
@@ -73,7 +74,7 @@ flags."
                       "")))
           (setq file-name
                 (replace-regexp-in-string (format "\\(?:^\\|[^\\\\]\\)\\(%s\\)"
-                                                  (string-trim-left (car match)))
+                                                  (regexp-quote (string-trim-left (car match))))
                                           path file-name t t 1)))))
     (setq file-name (replace-regexp-in-string regexp "\\1" file-name t))))
 
