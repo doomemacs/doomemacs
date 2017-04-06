@@ -1,19 +1,20 @@
 # Ensure emacs always runs from this makefile's PWD
-EMACS_FLAGS=--eval "(setq user-emacs-directory default-directory)"
-EMACS=emacs --batch $(EMACS_FLAGS) -l core/core.el
-TESTS=$(patsubst %,-l %, $(wildcard test/test-*.el))
+EMACS_LIBS=-l core/core.el
+EMACS=emacs --batch --eval '(setq user-emacs-directory default-directory)' $(EMACS_LIBS)
+TEST_EMACS=$(EMACS) --eval '(setq noninteractive nil)' $(EMACS_LIBS)
+TESTS=$(patsubst %,-l %, $(wildcard test/**/test-*.el))
 
 # Tasks
 all: autoloads install update
 
-install: init.el
-	@$(EMACS) -f 'doom-initialize-autoloads' -f 'doom/packages-install'
+install: init.el .local/autoloads.el
+	@$(EMACS) -f 'doom/packages-install'
 
-update: init.el
-	@$(EMACS) -f 'doom-initialize-autoloads' -f 'doom/packages-update'
+update: init.el .local/autoloads.el
+	@$(EMACS) -f 'doom/packages-update'
 
-autoremove: init.el
-	@$(EMACS) -f 'doom-initialize-autoloads' -f 'doom/packages-autoremove'
+autoremove: init.el .local/autoloads.el
+	@$(EMACS) -f 'doom/packages-autoremove'
 
 autoloads: init.el
 	@$(EMACS) -f 'doom/reload-autoloads'
@@ -33,11 +34,11 @@ clean:
 clean-cache:
 	@$(EMACS) -f 'doom/clean-cache'
 
-test: init.el
-	@$(EMACS) -f 'doom-initialize-autoloads' -l ert $(TESTS) -f ert-run-tests-batch-and-exit
+test: init.el .local/autoloads.el
+	@$(TEST_EMACS) $(TESTS) -f 'ert-run-tests-batch-and-exit'
 
-test/%: init.el
-	@$(EMACS) -f 'doom-initialize-autoloads' -l ert -l $@.el -f ert-run-tests-batch-and-exit
+test/%: init.el .local/autoloads.el
+	@$(TEST_EMACS) -l $@.el -f 'ert-run-tests-batch-and-exit'
 
 
 # Syntactic sugar for bootstrapping modules. Allows: make bootstrap javascript
@@ -61,6 +62,9 @@ reload:
 
 init.el:
 	@[ -e init.el ] || $(error No init.el file; create one or copy init.example.el)
+
+.local/autoloads.el:
+	@$(EMACS) -f 'doom-initialize-autoloads'
 
 
 .PHONY: all test bootstrap
