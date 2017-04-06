@@ -1,9 +1,8 @@
 language: emacs-lisp
 sudo: false
 before_install:
-  - evm install $EVM_EMACS --use --skip
+  - curl -fsSkL https://raw.github.com/rejeep/evm/master/go | bash
+  - evm install emacs-25.1-travis --use --skip
   - YES=1 make
-env:
-  - EVM_EMACS=emacs-25.1-travis
 script:
   - make test
