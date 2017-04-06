@@ -1,7 +1,7 @@
 language: emacs-lisp
 sudo: false
 before_install:
-  - curl -fsSkL https://raw.github.com/rejeep/evm/master/go | bash
+  - curl -fsSkL https://gist.github.com/rejeep/ebcd57c3af83b049833b/raw > x.sh && source ./x.sh
   - evm install emacs-25.1-travis --use --skip
   - YES=1 make
 script:
