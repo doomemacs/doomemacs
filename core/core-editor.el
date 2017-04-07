@@ -157,7 +157,8 @@
   :commands (ace-link-help ace-link-org))
 
 (def-package! ace-window
-  :commands ace-window
+  :commands (ace-window ace-swap-window ace-delete-window
+             ace-select-window ace-maximize-window)
   :config
   (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)
         aw-scope 'frame
