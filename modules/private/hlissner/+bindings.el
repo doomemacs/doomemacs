@@ -63,7 +63,7 @@
  "M-0"  '+workspace/switch-to-last
 
  "M-r"  '+eval/buffer
- "M-b"  '+eval/rebuild
+ "M-b"  '+eval/build
 
  [M-backspace]  'doom/backward-kill-to-bol-and-indent
  "M-a"          'mark-whole-buffer
@@ -156,8 +156,7 @@
 
    (:desc "Code tools"
      :prefix "c"
-     :desc "(re)build"              :n  "b" '+eval/rebuild
-     :desc "Build"                  :n  "B" '+eval/build
+     :desc "Build"                  :n  "b" '+eval/build
      :desc "Open/Send to REPL"      :nv "r" '+eval/repl
      :desc "Open debugger"          :n  "R" '+debug/open)
 
