@@ -377,6 +377,7 @@ the command buffer."
       '("*Org Note*"         :size 10)
       '("*Org Select*"       :size 20  :noselect t)
       '("*Org Links*"        :size 5   :noselect t)
+      '("*Org Export Dispatcher*" :noselect t)
       '(" *Agenda Commands*" :noselect t)
       '("^\\*Org Agenda"     :regexp t :size 30)
       '("*Org Clock*"        :noselect t)
@@ -397,6 +398,7 @@ the command buffer."
     (advice-add 'org-capture-place-template :around #'doom*suppress-delete-other-windows)
     (advice-add 'org-agenda :around #'doom*suppress-delete-other-windows)
     (advice-add 'org-add-log-note :around #'doom*suppress-delete-other-windows)
+    (advice-add 'org-export--dispatch-ui :around #'doom*suppress-delete-other-windows)
 
     ;; Tell org-src-edit to open another window, which shackle can intercept.
     (setq org-src-window-setup 'other-window)
