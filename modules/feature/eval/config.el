@@ -12,18 +12,18 @@
   "A nested alist, mapping major modes to build function plists. Used by
 `+eval/build' and filled with the `:build' setting.")
 
-(def-setting! :build (name mode fn &rest plist)
-  "Define a build function (FN) for MODE (can be major or minor) called NAME.
+(def-setting! :build (name modes fn &rest plist)
+  "Define a build function (FN) for MODES (can be major or minor) called NAME.
 
 PLIST accepts the following properties:
 
   :when FORM    A predicate to determine if the builder is appropriate for this
                 buffer."
-  `(progn
-     (unless (assq ',mode +eval-builders)
-       (push (list ',mode nil) +eval-builders))
-     (push (list ',name :fn #',fn ,@plist)
-           (cdr (assq ',mode +eval-builders)))))
+  `(dolist (mode ',(if (listp modes) modes (list modes)) +eval-builders)
+     (unless (assq mode +eval-builders)
+       (push (list mode) +eval-builders))
+     (push (cons ',name (append (list :fn #',fn) ',plist))
+           (cdr (assq mode +eval-builders)))))
 
 
 ;;

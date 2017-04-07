@@ -3,29 +3,45 @@
 (defvar-local +eval-last-builder nil
   "The last builder run in the current buffer.")
 
+(defvar +eval-current-builder nil
+  "The spec for the currently running builder. Available from inside builder
+functions.")
+
 (defun +eval--read-builder ()
-  (let ((builders (cl-remove-if-not
-                   (lambda (plist)
-                     (when-let (pred (plist-get (cdr plist) :when))
-                       (eval pred)))
-                   (cdr (assq major-mode +eval-builders)))))
-    (completing-read
-     "Build: "
-     (mapcar 'car builders)
-     nil t)))
+  (when-let (builders
+             (cl-remove-if-not
+              (lambda (plist)
+                (if-let (pred (plist-get plist :when))
+                    (and (or (symbolp pred)
+                             (functionp pred))
+                         (funcall pred))
+                  t))
+              (cl-delete-duplicates
+               (reverse (cdr (assq major-mode +eval-builders)))
+               :key 'car)
+              :key 'cdr))
+    (if (= (length builders) 1)
+        (car builders)
+      (when-let (builder (completing-read "Build: "
+                                          (mapcar 'car builders)
+                                          nil t))
+        (assq (intern builder) builders)))))
 
 ;;;###autoload
-(defun +eval/build (&optional builder)
-  (interactive (list (+eval--read-builder)))
+(defun +eval/build (builder)
+  (interactive
+   (list (or +eval-last-builder
+             (+eval--read-builder)
+             (error "No builder for this buffer"))))
   (unless builder
-    (error "No builder for this buffer"))
-  (let ((desc (assq builder (assq major-mode +eval-builders))))
-    (unless desc
-      (error "Builder not found in registered builders"))
-    (message "Running %s" builder)))
-
-;;;###autoload
-(defun +eval/rebuild (&optional builder)
-  (interactive (list +eval-last-builder))
-  (+eval/build +eval-last-builder))
+    (error "Builder not found in registered builders"))
+  (let* ((name  (car builder))
+         (plist (cdr builder))
+         (fn (plist-get plist :fn)))
+    (message "Running %s" name)
+    (if (or (functionp fn)
+            (and (symbolp fn) (fboundp fn)))
+        (let ((+eval-current-builder builder))
+          (funcall fn))
+      (error "'%s' builder is invalid" name))))
 
