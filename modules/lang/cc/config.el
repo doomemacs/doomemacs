@@ -6,7 +6,8 @@
   :init
   ;; Auto-detect C++ header files
   (push (cons (lambda ()
-                (and (equal (file-name-extension buffer-file-name) "h")
+                (and buffer-file-name
+                     (equal (file-name-extension buffer-file-name) "h")
                      (or (file-exists-p (expand-file-name
                                          (concat (file-name-sans-extension buffer-file-name)
                                                  ".cpp")))
@@ -18,8 +19,10 @@
         magic-mode-alist)
 
   ;; Auto-detect Obj-C header files
-  (push (cons (lambda () (and (equal (file-name-extension buffer-file-name) "h")
-                         (re-search-forward "@\\<interface\\>" magic-mode-regexp-match-limit t)))
+  (push (cons (lambda ()
+                (and buffer-file-name
+                     (equal (file-name-extension buffer-file-name) "h")
+                     (re-search-forward "@\\<interface\\>" magic-mode-regexp-match-limit t)))
               'objc-mode)
         magic-mode-alist)
 

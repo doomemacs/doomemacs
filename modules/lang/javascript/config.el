@@ -107,7 +107,8 @@
   :init
   ;; auto-detect JSX file
   (push (cons (lambda ()
-                (and (equal (file-name-extension buffer-file-name) "js")
+                (and buffer-file-name
+                     (equal (file-name-extension buffer-file-name) "js")
                      (re-search-forward "\\(^\\s-*import React\\|\\( from \\|require(\\)[\"']react\\)"
                                         magic-mode-regexp-match-limit t)
                      (progn
