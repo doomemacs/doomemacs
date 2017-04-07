@@ -20,6 +20,7 @@
  jit-lock-stealth-verbose nil
  max-mini-window-height 0.3
  mode-line-default-help-echo nil  ; disable mode-line mouseovers
+ mouse-yank-at-point t          ; middle-click paste at point, not at click
  resize-mini-windows 'grow-only ; Minibuffer resizing
  show-help-function nil         ; hide :help-echo text
  show-paren-delay 0.075
