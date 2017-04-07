@@ -1,5 +1,13 @@
 ;;; lang/go/autoload.el
 
+;;;###autoload
+;; TODO (defun +go/build ())
+
+
+;;
+;; Tests
+;;
+
 (defvar +go-test-last nil
   "The last test run.")
 

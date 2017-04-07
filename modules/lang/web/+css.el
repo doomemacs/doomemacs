@@ -36,7 +36,7 @@
   :mode ("\\.scss$" . scss-mode)
   :config
   (set! :company-backend '(css-mode scss-mode) '(company-css company-yasnippet))
-  (set! :build 'compile 'scss-mode '+css/scss-build))
+  (set! :build 'compile-to-css 'scss-mode '+css/scss-build))
 
 
 (def-package! sass-mode
@@ -44,7 +44,7 @@
   :config
   (setq sass-command-options '("--style compressed"))
   (set! :company-backend 'sass-mode '(company-css company-yasnippet))
-  (set! :build 'compile 'sass-mode '+css/sass-build))
+  (set! :build 'compile-to-css 'sass-mode '+css/sass-build))
 
 
 (def-package! less-css-mode

@@ -8,8 +8,8 @@
   :init
   (add-hook 'rust-mode-hook 'flycheck-mode)
   :config
-  (set! :build 'cargo-run '(rust-mode toml-mode)
-         '+rust-is-cargo-project-p '+rust/cargo-run))
+  (set! :build 'run-cargo '(rust-mode toml-mode) '+rust/run-cargo
+    :when '+rust-cargo-project-p))
 
 
 (def-package! racer

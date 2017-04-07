@@ -34,7 +34,7 @@
   :modes (lua-mode markdown-mode json-mode)
   :files (and "main.lua" "conf.lua")
   :init
-  (set! :build 'love2D '+lua-love-mode
+  (set! :build 'run-love-app '+lua-love-mode
     (lambda ()
       (async-shell-command (format "open -a love.app '%s'" (doom-project-root))))))
 

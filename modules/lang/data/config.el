@@ -28,7 +28,9 @@
   :mode "/Dockerfile$"
   :config
   ;; TODO
-  (set! :build 'docker 'dockerfile-mode '+data-dockerfile-p '+data/dockerfile-build))
+  ;; (set! :build 'build-image 'dockerfile-mode '+data/dockerfile-build
+  ;;   :when '+data-dockerfile-p)
+  )
 
 
 ;; For ROM hacking or debugging

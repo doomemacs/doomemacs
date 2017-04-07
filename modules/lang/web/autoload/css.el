@@ -1,10 +1,10 @@
 ;;; lang/web/+css.el
 
 ;;;###autoload
-(defun +css/scss-build ()) ; TODO
+;; TODO (defun +css/scss-build ())
 
 ;;;###autoload
-(defun +css/sass-build ()) ; TODO
+;; TODO (defun +css/sass-build ())
 
 ;;;###autoload
 (defun +css/toggle-inline-or-block ()

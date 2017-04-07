@@ -80,4 +80,4 @@
 ;;   :files "Rakefile"
 ;;   :init
 ;;   (set! :build 'rake '+ruby-rake-mode '+ruby/rake
-;;     :when (doom-project-has! "Rakefile")))
+;;     :when (lambda () (doom-project-has! "Rakefile"))))

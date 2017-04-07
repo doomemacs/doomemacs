@@ -187,6 +187,8 @@
   ;;   (set! :build 'launchbar-action '+javascript-lb6-mode
   ;;     (lambda ()
   ;;       (when-let (dir (f-traverse-upwards (lambda (f) (f-ext? f "lbaction"))))
-  ;;         (shell-command (format "open '%s'" dir))))))
+  ;;         (shell-command (format "open '%s'" dir))))
+  ;;     :when
+  ;;     (lambda () (f-traverse-upwards (lambda (f) (f-ext? f "lbaction"))))))
   )
 
