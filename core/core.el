@@ -8,7 +8,6 @@
 ;;   doom:...   an evil operator, motion or command
 ;;   doom|...   hook function
 ;;   doom*...   advising functions
-;;   doom!...   interaction commands exclusively for installing external dependencies
 ;;   ...!       a macro or function that configures DOOM
 ;;   %...       functions used for in-snippet logic
 ;;   +...       Any of the above, but part of a module, e.g. +emacs-lisp|init-hook
