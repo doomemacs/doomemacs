@@ -98,7 +98,7 @@
        :app
        ;; TODO crm             ; org-mode for client relations management
        ;; TODO db              ; Emacs as a database browser
-       ;; TODO email           ; Emacs as an email client
+       email           ; Emacs as an email client
        ;; TODO finance         ; keeping track of my shekels
        present         ; showing off presentations in emacs
        rss             ; emacs as an RSS reader
