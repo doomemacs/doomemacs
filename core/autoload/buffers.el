@@ -191,7 +191,7 @@ See `doom-real-buffer-p' for what 'real' means."
                    (not (string= (process-name p) "server"))
                    (or (not process-buffer)
                        (and (bufferp process-buffer)
-                            (get-buffer-window-list process-buffer nil t))))
+                            (not (buffer-live-p process-buffer)))))
           (message "Killing %s" (process-name p))
           (delete-process p)
           (setq n (1+ n)))))
