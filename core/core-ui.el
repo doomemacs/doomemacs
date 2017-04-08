@@ -186,6 +186,13 @@ file."
     'nlinum-mode)
 
   :config
+  (defun doom*nlinum-flush (&rest _)
+    "Fix nlinum margins after a change in font."
+    (dolist (buffer (doom-visible-buffers))
+      (with-current-buffer buffer
+        (when nlinum-mode (nlinum--flush)))))
+  (advice-add 'set-frame-font :after 'doom*nlinum-flush)
+
   ;; Optimization: calculate line number column width beforehand
   (add-hook! nlinum-mode
     (setq nlinum--width (length (save-excursion (goto-char (point-max))
