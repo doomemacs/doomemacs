@@ -8,13 +8,13 @@
   <img src="https://raw.githubusercontent.com/hlissner/.emacs.d/screenshots/cacochan.png" align="right" />
 </a>
 
-This is an Emacs configuration for a stubborn, melodramatic and
-shell-dwelling vimmer disappointed with the text-editor status quo.
+This is an Emacs configuration for a stubborn, melodramatic and shell-dwelling
+vimmer disappointed with the text-editor status quo.
 
-Doom tries to look and act like modern editors (whatever that means to
-me on any given day), espouse vim's modal philosophy as best it can and strive
-to surpass vim in any way possible, and generally fit my needs as a software
-developer, indie game developer, scientist and doom enthusiast.
+Doom tries to look and act like modern editors (whatever that means to me on any
+given day), espouse vim's modal philosophy as best it can, and strive to surpass
+vim in any way possible. It fits my needs as a software developer, indie game
+developer, scientist and doom enthusiast.
 
 It was tailored for **MacOS 10.11+** and **Arch Linux 4.7+**, and
 **exclusively** for Emacs 25.1+. I use [vim] everywhere else.
@@ -42,23 +42,21 @@ make autoloads     # or (doom/reload-autoloads)
 To get a picture of what's in here, check out:
 
 * **[init.example.el](init.example.el)**: what my loadout looks like.
-* **[modules/README.md](modules/README.md)**: a primer into module
-  structure and how the module system works.
+* **[modules/README.md](modules/README.md)**: a primer into module structure and
+  how the module system works.
 * **[modules/private/hlissner/+bindings.el](modules/private/hlissner/+bindings.el)**:
   my custom keybinds.
 * **[modules/private/hlissner/+commands.el](modules/private/hlissner/+commands.el)**:
   my custom ex commands.
-* **[modules/ui](modules/ui)**: the modules that makes my Emacs look
-  the way it does, including [my theme][doom-theme], modeline,
-  dashboard and more.
+* **[modules/ui](modules/ui)**: the modules that makes my Emacs look the way it
+  does, including [my theme][doom-theme], modeline, dashboard and more.
 + Find screenshots in the [screenshots branch][sc].
 
 ### Highlights
 
-* A [popup management system](core/core-popups.el) using **[shackle]**
-  for temporary or disposable buffers.
-* Workspaces, tab emulation & session persistence with
-  **[persp-mode]**.
+* A [popup management system](core/core-popups.el) using **[shackle]** for
+  temporary or disposable buffers.
+* Workspaces, tab emulation & session persistence with **[persp-mode]**.
 * Project and workspace-restricted buffer navigation and functions.
 * A vim-centric environment with **[evil-mode]**
   * 2-character motions (ala vim-seek/vim-sneak) with **[evil-snipe]**
@@ -73,13 +71,13 @@ To get a picture of what's in here, check out:
   * Project search (& replace) with **[counsel-ag]** (and **[wgrep]**)
   * Interactive buffer search with **[swiper]**
 * REPLs & inline/live code evaluation (using **[quickrun]** and
-  **[repl-toggle]**) for many languages including Ruby, Python, PHP,
-  JS, Elisp, Haskell and Lua.
+  **[repl-toggle]**) for many languages including Ruby, Python, PHP, JS, Elisp,
+  Haskell and Lua.
 * [Minimalistic diffs in the fringe][sc-diffs] with **[git-gutter-fringe]**.
-* A do-what-I-mean jump-to-definition implementation that tries its
-  darnest to find the definition of what you're looking at. It tries
-  major-mode commands, xref (experimental Emacs library)
-  **[dumb-jump]**, ctags (WIP), then **[counsel-ag]**.
+* A do-what-I-mean jump-to-definition implementation that tries its darnest to
+  find the definition of what you're looking at. It tries major-mode commands,
+  xref (experimental Emacs library) **[dumb-jump]**, ctags (WIP), then
+  **[counsel-ag]**.
 * Snippets and file-templates with **[yasnippet]**.
 * A smarter, perdier, Atom-inspired mode-line that includes:
   * evil-search/iedit/evil-substitute mode-line integration
@@ -88,9 +86,9 @@ To get a picture of what's in here, check out:
 
 ## Contributing or troubleshooting
 
-My config wasn't intended for public use, but I'm happy to help you
-use or crib from my config and I welcome contributions of any kind;
-documentation, bug fixes or even elisp tips.
+My config wasn't intended for public use, but I'm happy to help you use or crib
+from my config. I welcome contributions of any kind; documentation, bug fixes,
+even elisp tips.
 
 [Don't hesitate to report bugs or tell me my Elisp-fu sucks](https://github.com/hlissner/.emacs.d/issues/new)!
 
