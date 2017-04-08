@@ -16,7 +16,8 @@
 
   (set! :repl 'php-mode 'php-boris)
 
-
+  ;; default is 10; this optimizes `smartparens' performance, but limits sp
+  ;; pairs to 6 characters.
   (add-hook! php-mode (setq-local sp-max-pair-length 6))
 
   (sp-with-modes '(php-mode)

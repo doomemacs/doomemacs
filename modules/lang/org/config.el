@@ -29,7 +29,7 @@
 ;;   "A list of attachments for the current buffer. This is so my custom attachment
 ;; system can keep track of each buffer's attachments.")
 
-;; Ensure ELPA org is loaded instead of the built-in org.
+;; Ensure ELPA org is prioritized above built-in org.
 (when-let (path (locate-library "org" nil doom--package-load-path))
   (push (file-name-directory path) load-path))
 
