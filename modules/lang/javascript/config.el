@@ -25,7 +25,7 @@
         (setq-local flycheck-javascript-eslint-executable eslint))))
 
   (set! :repl 'js2-mode '+javascript/repl)
-  (set! :electric 'js2-mode :chars '(?\} ?\) ?.) :words '("||" "&&"))
+  (set! :electric 'js2-mode :chars '(?\} ?\) ?.))
   (set! :xref-backend 'js2-mode 'xref-js2-xref-backend)
 
   (sp-with-modes '(js2-mode rjsx-mode)
@@ -118,6 +118,8 @@
         magic-mode-alist)
 
   :config
+  (set! :electric 'rjsx-mode :chars '(?\} ?\) ?. ?>))
+
   ;; disable electric keys (I use snippets and `emmet-mode' instead)
   (define-key rjsx-mode-map "<" nil)
   (define-key rjsx-mode-map (kbd "C-d") nil)
