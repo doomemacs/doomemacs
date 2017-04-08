@@ -66,7 +66,15 @@
   (add-hook 'evil-normal-state-entry-hook   '+evil|show-paren-mode-off)
 
   (dolist (mode '(tabulated-list-mode view-mode comint-mode term-mode calendar-mode Man-mode grep-mode))
-    (evil-set-initial-state mode 'emacs)))
+    (evil-set-initial-state mode 'emacs))
+
+  ;; make `try-expand-dabbrev' from `hippie-expand' work in mini-buffer
+  ;; @see `he-dabbrev-beg', so we need re-define syntax for '/'
+  (defun minibuffer-inactive-mode-hook-setup ()
+    (set-syntax-table (let* ((table (make-syntax-table)))
+                        (modify-syntax-entry ?/ "." table)
+                        table)))
+  (add-hook 'minibuffer-inactive-mode-hook 'minibuffer-inactive-mode-hook-setup))
 
 (defsubst +evil--textobj (key inner-fn &optional outer-fn)
   "Define a text object."
