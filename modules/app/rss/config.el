@@ -10,9 +10,6 @@
 (defvar +rss-elfeed-files (list "elfeed.org")
   "The files that configure `elfeed's rss feeds.")
 
-(defvar +rss-workspace-name "RSS"
-  "The name of the transient workspace for elfeed to run in.")
-
 (defvar +rss-split-direction 'below
   "What direction to pop up the entry buffer in elfeed.")
 
@@ -27,15 +24,15 @@
   (setq-default elfeed-search-filter "@2-week-ago ")
   (setq elfeed-db-directory (concat doom-local-dir "elfeed/")
         elfeed-show-entry-switch '+rss-popup-pane
-        elfeed-show-entry-delete '+rss/delete-pane)
+        elfeed-show-entry-delete '+rss/delete-pane
+        shr-max-image-proportion 0.6)
 
   ;; Ensure elfeed buffers are treated as real
   (push (lambda (buf) (string-match-p "^\\*elfeed" (buffer-name buf)))
         doom-real-buffer-functions)
 
-  (add-hook! (elfeed-search-mode elfeed-show-mode)
-    'doom-hide-modeline-mode)
-  (add-hook 'elfeed-show-mode-hook '+rss|elfeed-wrap)
+  (add-hook! 'elfeed-show-mode-hook
+    '(doom-hide-modeline-mode +rss|elfeed-wrap))
 
   (after! doom-themes
     (add-hook 'elfeed-show-mode-hook 'doom-buffer-mode))
@@ -52,6 +49,7 @@
         :m "k"  'evil-previous-visual-line
         :n "]b" '+rss/next
         :n "[b" '+rss/previous))
+
 
 (def-package! elfeed-org
   :after elfeed
