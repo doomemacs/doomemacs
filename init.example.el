@@ -100,7 +100,7 @@
        ;; TODO db              ; Emacs as a database browser
        ;; TODO email           ; Emacs as an email client
        ;; TODO finance         ; keeping track of my shekels
-       ;; TODO present         ; showing off presentations in emacs
+       present         ; showing off presentations in emacs
        rss             ; emacs as an RSS reader
        ;; TODO stream          ; for streaming code (https://livecoding.tv/vnought)
        ;; TODO twitter         ; twitter client https://twitter.com/vnought
