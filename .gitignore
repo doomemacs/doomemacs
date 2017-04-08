@@ -10,6 +10,7 @@ semanticdb
 ede-projects.el
 tramp
 smex-items
+network-security.data
 
 # compiled files
 *.elc
