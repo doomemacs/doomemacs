@@ -5,6 +5,7 @@ init.el
 # emacs tempfiles that shouldn't be there
 .mc-lists.el
 .org-id-locations
+.tern-port
 auto-save-list
 semanticdb
 ede-projects.el
