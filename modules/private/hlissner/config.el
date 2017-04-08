@@ -4,12 +4,16 @@
   (load! +bindings)  ; my key bindings
   (load! +commands)) ; my custom ex commands
 
+(defvar +hlissner-dir
+  (file-name-directory load-file-name))
+
 (defvar +hlissner-snippets-dir
-  (expand-file-name "snippets/" (file-name-directory load-file-name)))
+  (expand-file-name "snippets/" +hlissner-dir))
 
 (setq user-mail-address "henrik@lissner.net"
       user-full-name "Henrik Lissner"
-      epa-file-encrypt-to user-mail-address)
+      epa-file-encrypt-to user-mail-address
+      auth-sources (list (expand-file-name ".authinfo.gpg" +hlissner-dir)))
 
 
 ;; On Arch, bspwm is my window manager. When I open GUI Emacs a gap forms on the
@@ -65,3 +69,38 @@
     (+my!repeat-with-spc evil-visualstar/begin-search-backward
       evil-ex-search-previous evil-ex-search-next)))
 
+
+(after! mu4e
+  (setq-default
+   smtpmail-stream-type 'starttls
+   smtpmail-default-smtp-server "smtp.gmail.com"
+   smtpmail-smtp-server "smtp.gmail.com"
+   smtpmail-smtp-service 587)
+
+  (set! :email "gmail.com"
+    '((mu4e-sent-folder       . "/%s/Sent Mail")
+      (mu4e-drafts-folder     . "/%s/Drafts")
+      (mu4e-trash-folder      . "/%s/Trash")
+      (mu4e-refile-folder     . "/%s/All Mail")
+      (smtpmail-smtp-user     . "hlissner")
+      (user-mail-address      . "hlissner@gmail.com")
+      (mu4e-compose-signature . "---\nHenrik")))
+
+  (set! :email "ryerson.ca"
+    '((mu4e-sent-folder       . "/%s/Sent Mail")
+      (mu4e-drafts-folder     . "/%s/Drafts")
+      (mu4e-trash-folder      . "/%s/Trash")
+      (mu4e-refile-folder     . "/%s/All Mail")
+      (smtpmail-smtp-user     . "hlissner")
+      (user-mail-address      . "hlissner@ryerson.ca")
+      (mu4e-compose-signature . "---\nHenrik")))
+
+  (set! :email "lissner.net"
+    '((mu4e-sent-folder       . "/%s/Sent Mail")
+      (mu4e-drafts-folder     . "/%s/Drafts")
+      (mu4e-trash-folder      . "/%s/Trash")
+      (mu4e-refile-folder     . "/%s/All Mail")
+      (smtpmail-smtp-user     . "henrik@lissner.net")
+      (user-mail-address      . "henrik@lissner.net")
+      (mu4e-compose-signature . "---\nHenrik Lissner"))
+    t))
