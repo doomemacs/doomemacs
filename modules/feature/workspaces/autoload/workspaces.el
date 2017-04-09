@@ -316,13 +316,19 @@ end of the workspace list."
   (interactive (list 1))
   (condition-case ex
       (let ((persp-switch-wrap t))
-        (dotimes (i n)
+        (dotimes (i (abs n))
           (if (> n 0)
               (persp-next)
             (persp-prev)))
         (unless (called-interactively-p 'interactive)
           (+workpace/display)))
     ('error (+workspace-error (cadr ex) t))))
+
+;;;###autoload
+(defun +workspace/switch-left ()  (interactive) (+workspace/cycle -1))
+
+;;;###autoload
+(defun +workspace/switch-right () (interactive) (+workspace/cycle +1))
 
 ;;;###autoload
 (defun +workspace/close-window-or-workspace ()
