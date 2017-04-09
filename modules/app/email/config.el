@@ -72,7 +72,25 @@
         ;; close message after sending it
         message-kill-buffer-on-exit t
         ;; no need to ask
-        mu4e-confirm-quit nil)
+        mu4e-confirm-quit nil
+        ;; remove 'lists' column
+        mu4e-headers-fields (assq-delete-all :mailing-list mu4e-headers-fields))
+
+  (setq mu4e-marks (assq-delete-all 'trash mu4e-marks))
+  (push '(trash :char ("d" . "▼")
+                :prompt "dtrash"
+                :dyn-target
+                (lambda (target msg) (mu4e-get-trash-folder msg))
+                :action
+                (lambda (docid msg target)
+                  (mu4e~proc-move docid (mu4e~mark-check-target target) "-N")))
+        mu4e-marks)
+  (push '(read :char ("!" . "◻")
+               :prompt "!read"
+               :show-target (lambda (target) "read")
+               :action
+               (lambda (docid msg target) (mu4e~proc-move docid nil "+S-N")))
+        mu4e-marks)
 
   (after! doom-themes
     (add-hook 'mu4e-view-mode-hook 'doom-buffer-mode))
