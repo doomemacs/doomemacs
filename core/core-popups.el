@@ -421,5 +421,12 @@ the command buffer."
         (define-key map "q" 'org-agenda-Quit)
         (define-key map "Q" 'org-agenda-Quit)))))
 
+
+(after! mu4e
+  (advice-add 'mu4e~temp-window :override 'doom*mu4e~temp-window)
+  (defun doom*mu4e~temp-window (buf height)
+    (doom-popup-buffer buf :size 10 :noselect t)
+    buf))
+
 (provide 'core-popups)
 ;;; core-popups.el ends here
