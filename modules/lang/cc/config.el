@@ -116,7 +116,11 @@
   (add-hook! 'irony-mode-hook '(irony-eldoc flycheck-mode))
   (add-hook! 'c++-mode-hook
     (make-local-variable 'irony-additional-clang-options)
-    (push "-std=c++11" irony-additional-clang-options)))
+    (push "-std=c++11" irony-additional-clang-options))
+
+  (map! :map irony-mode-map
+        [remap completion-at-point] 'counsel-irony
+        [remap complete-symbol] 'counsel-irony))
 
 (def-package! irony-eldoc :after irony)
 
