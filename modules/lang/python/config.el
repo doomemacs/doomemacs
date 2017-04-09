@@ -19,6 +19,7 @@
 
   :config
   (set! :repl 'python-mode '+python/repl)
+  (set! :electric 'python-mode :chars '(?:))
   (define-key python-mode-map (kbd "DEL") nil) ; interferes with smartparens
 
   (sp-with-modes 'python-mode
