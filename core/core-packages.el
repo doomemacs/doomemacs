@@ -494,7 +494,9 @@ If ONLY-RECOMPILE-P is non-nil, only recompile out-of-date files."
 (defun doom/recompile ()
   "Recompile any compiled *.el files in your Emacs configuration."
   (interactive)
-  (doom/compile nil :recompile))
+  (doom/compile nil :recompile)
+  ;; In case `load-path' has changed (e.g. after an update)
+  (byte-recompile-file (expand-file-name "core.el" doom-core-dir) t))
 
 (defun doom/compile-lite ()
   "A light-weight version of `doom/compile' which only compiles core files in
