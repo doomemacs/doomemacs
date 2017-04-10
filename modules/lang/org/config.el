@@ -239,7 +239,7 @@
           :i  "C-e" 'org-end-of-line
           :i  "C-a" 'org-beginning-of-line
 
-          :i  "<tab>" '+org/indent-or-next-field
+          :i  "<tab>" '+org/indent-or-next-field-or-yas-expand
           :i  [S-iso-lefttab] '+org/dedent-or-prev-field ; for GNU Emacs
           :i  [(shift tab)] '+org/dedent-or-prev-field
           :i  [backtab] '+org/dedent-or-prev-field
