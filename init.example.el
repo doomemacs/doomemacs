@@ -103,7 +103,7 @@
        present         ; showing off presentations in emacs
        rss             ; emacs as an RSS reader
        ;; TODO stream          ; for streaming code (https://livecoding.tv/vnought)
-       ;; TODO twitter         ; twitter client https://twitter.com/vnought
+       twitter         ; twitter client https://twitter.com/vnought
        write           ; emacs as a word processor (latex + org + markdown)
 
        ;; Private modules are aren't tracked in the repo, except for mine. Use
