@@ -177,7 +177,9 @@
      :desc "Org Capture"            :n "SPC" '+org/capture
      ;; applications
      :desc "APP: elfeed"            :n "r" '=rss
-     :desc "APP: email"             :n "e" '=email))
+     :desc "APP: email"             :n "e" '=email
+     :desc "APP: twitter"           :n "t" '=twitter
+     ))
 
  (:localleader
   (:desc "Refactor..." :prefix "r")
