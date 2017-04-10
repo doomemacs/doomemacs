@@ -7,6 +7,14 @@
   (call-interactively 'elfeed))
 
 ;;;###autoload
+(defun +rss/quit ()
+  (interactive)
+  (doom-kill-matching-buffers "^\\*elfeed")
+  (dolist (file +rss-elfeed-files)
+    (when-let (buf (get-file-buffer (expand-file-name file +rss-org-dir)))
+      (kill-buffer buf))))
+
+;;;###autoload
 (defun +rss|elfeed-wrap ()
   "Enhances an elfeed entry's readability by wrapping it to a width of
 `fill-column' and centering it with `visual-fill-column-mode'."

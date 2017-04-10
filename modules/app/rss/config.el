@@ -41,6 +41,7 @@
         :n "r"   'elfeed-update
         :n "s"   'elfeed-search-live-filter
         :n "RET" 'elfeed-search-show-entry
+        :n "q"   '+rss/quit
 
         :map elfeed-show-mode-map
         [remap doom/kill-this-buffer] 'elfeed-kill-buffer
