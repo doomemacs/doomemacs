@@ -3,6 +3,8 @@
 (defvar +workspace-workspace-file "_workspaces"
   "The file basename in which to store single workspace perspectives.")
 
+(defvar +workspace--last nil)
+
 (defface +workspace-tab-selected-face
   '((((class color) (background light))
      (:background "#333333" :foreground "#000000")) ;; FIXME
@@ -22,10 +24,7 @@
 ;;;###autoload
 (defun +workspace-list (&optional exclude-nil-p)
   "Retrieve a list of names of open workspaces (strings)."
-  (let ((persps (persp-names)))
-    (if exclude-nil-p
-        (delete persp-nil-name persps)
-      persps)))
+  (delete persp-nil-name (persp-names)))
 
 ;;;###autoload
 (defun +workspace-p (obj)
@@ -101,8 +100,8 @@ Return t on success, nil otherwise."
 (defun +workspace-new (name)
   "Create a new workspace named NAME. If one already exists, return nil.
 Otherwise return t on success, nil otherwise."
-  (when (equal name persp-nil-name)
-    (error "Can't create a new %s workspace" name))
+  (when (+workspace-protected-p name)
+    (error "Can't create a new '%s' workspace" name))
   (unless (+workspace-exists-p name)
     (and (persp-add-new name) t)))
 
@@ -110,16 +109,16 @@ Otherwise return t on success, nil otherwise."
 (defun +workspace-rename (name new-name)
   "Rename the current workspace named NAME to NEW-NAME. Returns old name on
 success, nil otherwise."
-  (when (equal name persp-nil-name)
-    (error "Can't rename main workspace"))
+  (when (+workspace-protected-p name)
+    (error "Can't rename '%s' workspace"))
   (persp-rename new-name (+workspace-get name)))
 
 ;;;###autoload
 (defun +workspace-delete (name &optional inhibit-kill-p)
   "Delete the workspace denoted by TARGET, which can be the name of a
 perspective or its hash table."
-  (when (equal name persp-nil-name)
-    (error "Can't delete main workspace"))
+  (when (+workspace-protected-p name)
+    (error "Can't delete '%s' workspace" name))
   (+workspace-get name) ;; error checking
   (persp-kill name inhibit-kill-p))
 
@@ -130,6 +129,11 @@ perspective or its hash table."
     (if auto-create-p
         (+workspace-new name)
       (error "%s is not an available workspace" name)))
+  (let ((old-name (+workspace-current-name)))
+    (setq +workspace--last
+          (or (and (not (string= old-name persp-nil-name))
+                   old-name)
+              +workspaces-main)))
   (persp-frame-switch name))
 
 (defun +workspace--generate-id ()
@@ -139,6 +143,10 @@ perspective or its hash table."
     (if numbers
         (1+ (car (sort numbers (lambda (it other) (> it other)))))
       1)))
+
+(defun +workspace-protected-p (name)
+  (or (equal name persp-nil-name)
+      (equal name +workspaces-main)))
 
 
 ;;
@@ -233,9 +241,12 @@ workspace to delete."
                            nil nil current-name)
         current-name))))
   (condition-case ex
-      (if (+workspace-delete name)
-          (+workspace-message (format "Deleted '%s' workspace" name) 'success)
-        (error "Couldn't delete %s workspace" name))
+      (if (not (+workspace-delete name))
+          (error "Couldn't delete %s workspace" name)
+        (if (+workspace-exists-p +workspace--last)
+            (+workspace-switch +workspace--last)
+          (+workspace-switch +workspaces-main t))
+        (+workspace-message (format "Deleted '%s' workspace" name) 'success))
     ('error (+workspace-error (cadr ex) t))))
 
 ;;;###autoload
@@ -244,7 +255,7 @@ workspace to delete."
   (interactive)
   (unless (cl-every '+workspace-delete (+workspace-list t))
     (+workspace-error "Could not clear session"))
-  (+workspace-switch persp-nil-name)
+  (+workspace-switch +workspaces-main t)
   (doom/kill-all-buffers)
   (let ((fallback-buf (doom-fallback-buffer)))
     (switch-to-buffer fallback-buf)
@@ -267,7 +278,7 @@ pre-existing workspace."
       (let ((exists-p (+workspace-exists-p name)))
         (if exists-p
             (error "%s already exists" name)
-          (persp-frame-switch name)
+          (+workspace-switch name t)
           (if clone-p
               (dolist (window (window-list))
                 (persp-add-buffer (window-buffer window) persp nil))
@@ -293,11 +304,13 @@ end of the workspace list."
                (let ((dest (nth index names)))
                  (unless dest
                    (error "No workspace at #%s" (1+ index)))
-                 (persp-switch dest)))
+                 (+workspace-switch dest)))
               ((stringp index)
                (unless (member index names)
                  (error "No workspace named %s" index))
-               (persp-frame-switch index)))
+               (+workspace-switch index))
+              (t
+               (error "Not a valid index: %s" index)))
         (unless (called-interactively-p 'interactive)
           (if (equal (+workspace-current-name) old-name)
               (+workspace-message (format "Already in %s" old-name) 'warn)
@@ -338,7 +351,7 @@ the workspace and move to the next."
   (if (doom-popup-p)
       (doom/popup-close)
     (let ((current-persp-name (+workspace-current-name)))
-      (cond ((or (equal current-persp-name persp-nil-name)
+      (cond ((or (+workspace-protected-p current-persp-name)
                  (> (length (doom-visible-windows)) 1))
              (if (bound-and-true-p evil-mode)
                  (evil-window-delete)

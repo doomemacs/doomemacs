@@ -15,15 +15,19 @@
 (defvar +workspaces-load-session-hook nil
   "A hook that runs when persp loads a new session.")
 
+(defvar +workspaces-main "main"
+  "TODO")
+
 
 (def-package! persp-mode :demand t
   :config
   (setq persp-autokill-buffer-on-remove 'kill-weak
-        persp-nil-name "main"
+        persp-nil-name "nil"
         persp-auto-save-fname "autosave"
         persp-save-dir (concat doom-cache-dir "workspaces/")
         persp-set-last-persp-for-new-frames nil
         persp-switch-to-added-buffer nil
+        persp-remove-buffers-from-nil-persp-behaviour nil
         ;; Don't restore winconf on new frames
         persp-init-frame-behaviour t
         persp-init-new-frame-behaviour-override 'auto-temp
@@ -32,7 +36,15 @@
         ;; auto-save on kill
         persp-auto-save-opt 1)
 
-  (add-hook 'after-init-hook 'persp-mode)
+  (add-hook! 'after-init-hook
+    (persp-mode +1)
+    ;; The default perspective persp-mode makes (defined by `persp-nil-name') is
+    ;; odd and doesn't actually represent a real persp object, so buffers can't
+    ;; really be assigned to it, among other quirks. Therefore, we create a
+    ;; *real* main workspace to play this role.
+    (persp-add-new +workspaces-main)
+    (unless (= persp-auto-resume-time -1)
+      (persp-frame-switch +workspaces-main)))
 
   (define-key persp-mode-map [remap delete-window] '+workspace/close-window-or-workspace)
 
