@@ -76,6 +76,9 @@
         ;; remove 'lists' column
         mu4e-headers-fields (assq-delete-all :mailing-list mu4e-headers-fields))
 
+  ;; By default, mark-for-trash deletes the email completely, even from the
+  ;; server. This fix sends trashed email to the trash folder, instead. Note:
+  ;; you have to update your mail for them to actually show up in Trash.
   (setq mu4e-marks (assq-delete-all 'trash mu4e-marks))
   (push '(trash :char ("d" . "▼")
                 :prompt "dtrash"
@@ -85,6 +88,9 @@
                 (lambda (docid msg target)
                   (mu4e~proc-move docid (mu4e~mark-check-target target) "-N")))
         mu4e-marks)
+
+  ;; mark-as-read doesn't seem to work by default, and seems absent from
+  ;; `mu4e-marks', so I add it back in.
   (push '(read :char ("!" . "◻")
                :prompt "!read"
                :show-target (lambda (target) "read")
@@ -92,9 +98,12 @@
                (lambda (docid msg target) (mu4e~proc-move docid nil "+S-N")))
         mu4e-marks)
 
+  ;; Brighter + no mode-line in message windows
   (after! doom-themes
-    (add-hook 'mu4e-view-mode-hook 'doom-buffer-mode))
+    (add-hook! 'mu4e-view-mode-hook
+      '(doom-buffer-mode doom-hide-modeline-mode)))
 
+  ;; Wrap text in messages
   (add-hook! 'mu4e-view-mode-hook
     (setq-local truncate-lines nil))
 
