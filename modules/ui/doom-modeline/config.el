@@ -505,8 +505,8 @@ with `evil-ex-substitute', and/or 4. The number of active `iedit' regions."
                       (+doom-modeline--anzu)
                       (+doom-modeline--evil-substitute)
                       (+doom-modeline--iedit))))
-     (or (and (not (string-empty-p meta)) meta)
-         " %I ")))
+     (or (and (not (string= meta "")) meta)
+         (if buffer-file-name " %I "))))
 
 ;; TODO Include other information
 (def-modeline-segment! media-info
