@@ -367,6 +367,10 @@ the command buffer."
     (advice-add 'evil-window-move-far-right   :around 'doom*popups-save-neotree))
 
 
+(after! twittering-mode
+  (setq twittering-pop-to-buffer-function 'pop-to-buffer))
+
+
 ;; Ensure these settings are attached to org-load-hook as late as possible,
 ;; giving other modules to add their own hooks.
 (add-hook! 'after-init-hook
