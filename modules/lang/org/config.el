@@ -165,13 +165,27 @@
 
   (org-babel-do-load-languages
    'org-babel-load-languages
-   '((python . t) (ruby . t) (sh . t) (js . t) (css . t)
-     (plantuml . t) (emacs-lisp . t) (matlab . t)
-     (latex . t) (calc . t) (lisp . t) (lilypond . t)
-     ;; (go . t)
-     ;; (http . t)
-     ;; (rust . t)
-     ))
+   (mapcar (lambda (sym) (cons sym t))
+           '(calc
+             css
+             emacs-lisp
+             haskell
+             js
+             latex
+             ledger
+             lilypond
+             lisp
+             matlab
+             plantuml
+             python
+             restclient
+             ruby
+             ;; rust
+             sh
+             sqlite
+             sql-mode
+             translate
+             )))
 
   (let ((ext-regexp (regexp-opt '("GIF" "JPG" "JPEG" "SVG" "TIF" "TIFF" "BMP" "XPM"
                                   "gif" "jpg" "jpeg" "svg" "tif" "tiff" "bmp" "xpm"))))
