@@ -347,24 +347,31 @@ the command buffer."
 
 
 (after! neotree
-    (defun doom*popups-save-neotree (orig-fn &rest args)
-      "Prevents messing up the neotree buffer on window changes."
-      (let ((neo-p (and (featurep 'neotree)
-                        (neo-global--window-exists-p))))
+  (defun doom*popups-save-neotree (orig-fn &rest args)
+    "Prevents messing up the neotree buffer on window changes."
+    (let ((neo-p (and (featurep 'neotree)
+                      (neo-global--window-exists-p))))
+      (when neo-p
+        (neotree-hide))
+      (unwind-protect (apply orig-fn args)
         (when neo-p
-          (neotree-hide))
-        (unwind-protect (apply orig-fn args)
-          (when neo-p
-            (save-selected-window
-              (neotree-show))))))
+          (save-selected-window
+            (neotree-show))))))
 
-    ;; Prevents messing up the neotree buffer on window changes
-    (advice-add '+evil-window-move :around 'doom*popups-save-neotree)
-    ;; Don't let neotree interfere with moving, splitting or rebalancing windows
-    (advice-add 'evil-window-move-very-bottom :around 'doom*popups-save-neotree)
-    (advice-add 'evil-window-move-very-top    :around 'doom*popups-save-neotree)
-    (advice-add 'evil-window-move-far-left    :around 'doom*popups-save-neotree)
-    (advice-add 'evil-window-move-far-right   :around 'doom*popups-save-neotree))
+  ;; Prevents messing up the neotree buffer on window changes
+  (advice-add '+evil-window-move :around 'doom*popups-save-neotree)
+  ;; Don't let neotree interfere with moving, splitting or rebalancing windows
+  (advice-add 'evil-window-move-very-bottom :around 'doom*popups-save-neotree)
+  (advice-add 'evil-window-move-very-top    :around 'doom*popups-save-neotree)
+  (advice-add 'evil-window-move-far-left    :around 'doom*popups-save-neotree)
+  (advice-add 'evil-window-move-far-right   :around 'doom*popups-save-neotree))
+
+
+(after! mu4e
+  (advice-add 'mu4e~temp-window :override 'doom*mu4e~temp-window)
+  (defun doom*mu4e~temp-window (buf height)
+    (doom-popup-buffer buf :size 10 :noselect t)
+    buf))
 
 
 (after! twittering-mode
@@ -391,8 +398,9 @@ the command buffer."
       '("^CAPTURE.*\\.org$"  :regexp t :size 20))
 
     ;; Org tries to do its own popup management, causing buffer/window config
-    ;; armageddon when paired with shackle. To fix this, first we suppress
-    ;; delete-other-windows in org functions:
+    ;; armageddon when paired with shackle. To fix this, we must make a couple modifications:
+
+    ;; Suppress `delete-other-windows' in org functions:
     (defun doom*suppress-delete-other-windows (orig-fn &rest args)
       (cl-flet ((silence (&rest args) (ignore)))
         (advice-add 'delete-other-windows :around #'silence)
@@ -404,11 +412,11 @@ the command buffer."
     (advice-add 'org-add-log-note :around #'doom*suppress-delete-other-windows)
     (advice-add 'org-export--dispatch-ui :around #'doom*suppress-delete-other-windows)
 
-    ;; Tell org-src-edit to open another window, which shackle can intercept.
+    ;; Tell `org-src-edit' to open another window, which shackle can intercept.
     (setq org-src-window-setup 'other-window)
 
-    ;; Then, we tell org functions to use pop-to-buffer instead of
-    ;; switch-to-buffer-*. Buffers get handed off to shackle properly this way.
+    ;; Tell org functions to use `pop-to-buffer' instead of switch-to-buffer-*.
+    ;; Buffers get handed off to shackle properly this way.
     (defun doom*org-switch-to-buffer-other-window (&rest args)
       (pop-to-buffer (car args)))
     (advice-add 'org-switch-to-buffer-other-window :override 'doom*org-switch-to-buffer-other-window)
@@ -424,13 +432,6 @@ the command buffer."
       (let ((map org-agenda-mode-map))
         (define-key map "q" 'org-agenda-Quit)
         (define-key map "Q" 'org-agenda-Quit)))))
-
-
-(after! mu4e
-  (advice-add 'mu4e~temp-window :override 'doom*mu4e~temp-window)
-  (defun doom*mu4e~temp-window (buf height)
-    (doom-popup-buffer buf :size 10 :noselect t)
-    buf))
 
 (provide 'core-popups)
 ;;; core-popups.el ends here
