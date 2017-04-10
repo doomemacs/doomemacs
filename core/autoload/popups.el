@@ -118,6 +118,7 @@ only close popups that have an :autoclose property in their rule (see
 
 (defun doom--popup-data (window)
   (let ((buffer (window-buffer window)))
-    `(,(buffer-name buffer)
-      :file  ,(buffer-file-name buffer)
-      :rules ,(window-parameter window 'popup))))
+    (when buffer
+      `(,(buffer-name buffer)
+        :file  ,(buffer-file-name buffer)
+        :rules ,(window-parameter window 'popup)))))
