@@ -554,6 +554,10 @@ with `evil-ex-substitute', and/or 4. The number of active `iedit' regions."
   (bar matches " " buffer-info)
   (media-info major-mode))
 
+(def-modeline! special
+  (bar matches " %b   %l:%c %p  " selection-info)
+  (buffer-encoding major-mode flycheck))
+
 (def-modeline! project
   (bar " " buffer-project)
   (major-mode))
@@ -566,3 +570,12 @@ with `evil-ex-substitute', and/or 4. The number of active `iedit' regions."
 (with-current-buffer "*scratch*"
   (setq mode-line-format (doom-modeline 'main)))
 
+
+;;
+;; Hooks
+;;
+
+(defun +doom-modeline|set-special-modeline ()
+  (setq mode-line-format (doom-modeline 'special)))
+
+(add-hook 'org-src-mode-hook '+doom-modeline|set-special-modeline)
