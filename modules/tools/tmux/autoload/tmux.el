@@ -46,13 +46,16 @@ but do not execute them."
   (interactive
    (list (read-string "tmux $ ")
          current-prefix-arg))
-  (+tmux (concat "send-keys C-u " command (unless noreturn " Enter"))))
+  (+tmux (concat "send-keys C-u "
+                 (shell-quote-argument command)
+                 (unless noreturn " Enter"))))
 
 ;;;###autoload
-(defun +tmux/send-region (beg end)
+(defun +tmux/send-region (beg end &optional noreturn)
   "Send region to tmux."
-  (interactive "r")
-  (error "Not implemented"))
+  (interactive "rP")
+  (+tmux/run (string-trim (buffer-substring-no-properties beg end))
+             noreturn))
 
 ;;;###autoload
 (defun +tmux/rerun ()

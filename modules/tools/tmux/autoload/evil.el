@@ -1,9 +1,11 @@
 ;;; tools/tmux/autoload/evil.el
 
 ;;;###autoload (autoload '+tmux:run "tools/tmux/autoload/evil" nil t)
-(evil-define-command +tmux:run (command bang)
-  (interactive "<fsh><!>")
-  (+tmux/run command bang))
+(evil-define-command +tmux:run (bang &optional command)
+  (interactive "<!><fsh>")
+  (if (evil-visual-state-p)
+      (+tmux/send-region evil-visual-beginning evil-visual-end bang)
+    (+tmux/run command bang)))
 
 ;;;###autoload (autoload '+tmux:cd-here "tools/tmux/autoload/evil" nil t)
 (evil-define-command +tmux:cd-here (bang)
