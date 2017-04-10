@@ -145,12 +145,13 @@ for :align t on every rule."
            ;; format. If non-nil, show the mode-line as normal. If nil (or
            ;; omitted, by default), then hide the modeline entirely.
            (let ((modeline (plist-get doom-popup-rules :modeline)))
-             (cond ((or (eq modeline 'nil)
-                        (not modeline))
-                    (doom-hide-modeline-mode +1))
-                   ((symbolp modeline)
-                    (let ((doom--hidden-modeline-format (doom-modeline modeline)))
-                      (doom-hide-modeline-mode +1)))))
+             (unless (eq modeline 't)
+               (cond ((or (eq modeline 'nil)
+                          (not modeline))
+                      (doom-hide-modeline-mode +1))
+                     ((symbolp modeline)
+                      (let ((doom--hidden-modeline-format (doom-modeline modeline)))
+                        (doom-hide-modeline-mode +1))))))
            ;; Save metadata into window parameters so it can be saved by window
            ;; config persisting plugins like workgroups or persp-mode.
            (set-window-parameter window 'popup (or doom-popup-rules t))
@@ -393,7 +394,6 @@ the command buffer."
       '("^\\*Org Agenda"     :regexp t :size 30)
       '("*Org Clock*"        :noselect t)
       '("*Edit Formulas*"    :size 10)
-      '("\\*Org Src"         :regexp t :size 15 :autokill t)
       '("^\\*Org-Babel"      :regexp t :size 0.4)
       '("^CAPTURE.*\\.org$"  :regexp t :size 20))
 
@@ -415,16 +415,33 @@ the command buffer."
     ;; Tell `org-src-edit' to open another window, which shackle can intercept.
     (setq org-src-window-setup 'other-window)
 
-    ;; Tell org functions to use `pop-to-buffer' instead of switch-to-buffer-*.
-    ;; Buffers get handed off to shackle properly this way.
+    ;; org-edit-src simply clones and narrows the buffer, so we are secretly
+    ;; manipulating the same buffer. Since it never gets killed, we need to
+    ;; treat it specially and clean up after it manually.
+    (defun doom*org-src-switch-to-buffer (&rest args)
+      (let ((window (doom-popup-buffer (car args) :align t :size 15 :noesc t :autokill nil)))
+        (set-window-dedicated-p window nil)
+        (select-window window)))
+    (advice-add 'org-src-switch-to-buffer :override 'doom*org-src-switch-to-buffer)
+
+    (defun doom*org-src-exit (&rest _)
+      (when doom-popup-mode (doom-popup-mode -1)))
+    (advice-add 'org-edit-src-exit :after 'doom*org-src-exit)
+
+    ;; Ensure todo, agenda, and other popups are opened with shackle
     (defun doom*org-switch-to-buffer-other-window (&rest args)
-      (pop-to-buffer (car args)))
+      (let ((buf (car args)))
+        (pop-to-buffer
+         (cond ((stringp buf) (get-buffer-create buf))
+               ((bufferp buf) buf)
+               (t (error "Invalid buffer %s" buf))))))
     (advice-add 'org-switch-to-buffer-other-window :override 'doom*org-switch-to-buffer-other-window)
 
     ;; Hide modeline in org-agenda
     (add-hook 'org-agenda-finalize-hook 'doom-hide-modeline-mode)
 
     (after! org-agenda
+      (setq org-agenda-window-setup 'other-window)
       (after! evil
         (map! :map* org-agenda-mode-map
               :m [escape] 'org-agenda-Quit

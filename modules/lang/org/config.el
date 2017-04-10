@@ -5,6 +5,7 @@
 ;;   + Exported files are put in a centralized location (see
 ;;     `org-export-directory')
 ;;   + Inline latex previews (requires latex and dvipng programs)
+;;   + Inline code block execution for various languages
 ;;   + TODO A simpler attachment system (with auto-deleting support) and
 ;;     drag-and-drop for images and documents into org files
 ;;   + TODO Custom links for class notes
@@ -187,6 +188,13 @@
              translate
              )))
 
+  ;; I prefer C-c C-c for confirming over the default C-c '
+  (map! :map org-src-mode-map "C-c C-c" 'org-edit-src-exit)
+  ;; I know the keybindings, no need for the header line
+  (defun +org|src-mode-remove-header ()
+    (when header-line-format (setq header-line-format nil)))
+  (add-hook 'org-src-mode-hook '+org|src-mode-remove-header)
+
   (let ((ext-regexp (regexp-opt '("GIF" "JPG" "JPEG" "SVG" "TIF" "TIFF" "BMP" "XPM"
                                   "gif" "jpg" "jpeg" "svg" "tif" "tiff" "bmp" "xpm"))))
     (setq iimage-mode-image-regex-alist
@@ -198,7 +206,6 @@
   (defface org-list-bullet
     '((t (:inherit font-lock-keyword-face)))
     "Face for list bullets")
-
   (font-lock-add-keywords
    'org-mode '(("^ *\\([-+]\\|[0-9]+[).]\\) "
                 (1 'org-list-bullet))
@@ -342,9 +349,6 @@
           :v  ">"   (λ! (org-metaright) (evil-visual-restore))
           :n  "-"   'org-cycle-list-bullet
           :m  "<tab>" 'org-cycle)
-
-        (:map org-src-mode-map
-          :n  "<escape>" (λ! (message "Exited") (org-edit-src-exit)))
 
         (:after org-agenda
           (:map org-agenda-mode-map
