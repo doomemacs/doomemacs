@@ -1,4 +1,4 @@
-;;; extra/upload/autoload.el
+;;; tools/upload/autoload.el
 
 ;;;###autoload
 (defun +upload/local (&optional force-p)

@@ -1,4 +1,4 @@
-;;; extra/upload/config.el
+;;; tools/upload/config.el
 
 ;; Uses `ssh-deploy'. Expects a .dir-locals.el file in your project and expects
 ;; `ssh-deploy-root-remote' to be defined there to tell Emacs where to upload

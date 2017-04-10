@@ -1,4 +1,4 @@
-;;; extra/tmux/autoload/tmux.el
+;;; tools/tmux/autoload/tmux.el
 
 ;; This library offers:
 ;;   + A way of communicating with a tmux instance
