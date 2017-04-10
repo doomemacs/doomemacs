@@ -137,8 +137,10 @@ wrong places)."
 ;;;###autoload
 (defun +org/toggle-fold ()
   "Toggle the local fold at the point (as opposed to cycling through all levels
-with `org-cycle')."
+with `org-cycle'). Also removes babel result blocks, if run from a code block."
   (interactive)
+  (org-babel-when-in-src-block
+   (call-interactively 'org-babel-remove-result-one-or-many))
   (cond ((org-at-heading-p)
          (outline-toggle-children))
         ((org-at-item-p)
