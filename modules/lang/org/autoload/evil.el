@@ -5,10 +5,9 @@
   "Send a selection to `doom/org-capture'."
   :move-point nil :type inclusive
   (interactive "<r><!>")
-  (doom/org-capture
-   (if (and (evil-visual-state-p) beg end)
-       (buffer-substring beg end)
-     "")))
+  (org-capture-string
+   (when (and (evil-visual-state-p) beg end)
+     (buffer-substring beg end))))
 
 ;;;###autoload (autoload '+org:attach "lang/org/autoload/evil" nil t)
 (evil-define-command +org:attach (&optional uri)
