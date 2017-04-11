@@ -96,8 +96,9 @@ or unstable files.")
  create-lockfiles nil
  history-length 1000
  make-backup-files nil
- vc-make-backup-files nil
+ server-auth-dir (concat doom-cache-dir "server/")
  tramp-auto-save-directory (concat doom-cache-dir "tramp/")
+ vc-make-backup-files nil
  tramp-backup-directory-alist backup-directory-alist
  ;; in case of `persistent-soft'
  pcache-directory (concat doom-cache-dir "pcache/"))
