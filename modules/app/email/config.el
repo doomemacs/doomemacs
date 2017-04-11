@@ -86,7 +86,7 @@
                 (lambda (target msg) (mu4e-get-trash-folder msg))
                 :action
                 (lambda (docid msg target)
-                  (mu4e~proc-move docid (mu4e~mark-check-target target) "-N")))
+                  (mu4e~proc-move docid (mu4e~mark-check-target target) "+S-N")))
         mu4e-marks)
 
   ;; mark-as-read doesn't seem to work by default, and seems absent from
