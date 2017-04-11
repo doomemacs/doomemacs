@@ -76,7 +76,7 @@ Be careful not to use it in a loop."
                   (or (assq pkgsym doom-packages)
                       (list (car (assq pkgsym package-alist)))))
                 (cl-delete-duplicates
-                 (append doom-protected-packages (mapcar 'car doom-packages))))))
+                 (append doom-core-packages (mapcar 'car doom-packages))))))
 
 ;;;###autoload
 (defun doom-get-depending-on (name)
@@ -107,7 +107,7 @@ depended on.
 Used by `doom/packages-autoremove'."
   (doom-initialize-packages t)
   (let ((package-selected-packages
-         (append (mapcar 'car doom-packages) doom-protected-packages)))
+         (append (mapcar 'car doom-packages) doom-core-packages)))
     (package--removable-packages)))
 
 ;;;###autoload

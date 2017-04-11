@@ -49,7 +49,7 @@ This will be nil if you have byte-compiled your configuration (as intended).")
 package's name as a symbol, and whose CDR is the plist supplied to its
 `package!' declaration. Set by `doom-initialize-packages'.")
 
-(defvar doom-protected-packages
+(defvar doom-core-packages
   '(persistent-soft quelpa use-package)
   "A list of packages that must be installed (and will be auto-installed if
 missing) and shouldn't be deleted.")
@@ -133,7 +133,7 @@ to speed up startup."
           load-path (append load-path doom--package-load-path))
 
     ;; Ensure core packages are installed
-    (let ((core-packages (cl-remove-if 'package-installed-p doom-protected-packages)))
+    (let ((core-packages (cl-remove-if 'package-installed-p doom-core-packages)))
       (when core-packages
         (package-refresh-contents)
         (dolist (pkg core-packages)
