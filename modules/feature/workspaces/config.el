@@ -16,8 +16,13 @@
   "A hook that runs when persp loads a new session.")
 
 (defvar +workspaces-main "main"
-  "TODO")
+  "The name of the primary and initial workspace, which cannot be deleted or
+renamed.")
 
+
+;;
+;; Plugins
+;;
 
 (def-package! persp-mode :demand t
   :config
@@ -39,10 +44,11 @@
   (add-hook! 'after-init-hook
     (persp-mode +1)
     ;; The default perspective persp-mode makes (defined by `persp-nil-name') is
-    ;; odd and doesn't actually represent a real persp object, so buffers can't
-    ;; really be assigned to it, among other quirks. Therefore, we create a
-    ;; *real* main workspace to play this role.
+    ;; special and doesn't actually represent a real persp object, so buffers
+    ;; can't really be assigned to it, among other quirks. We create a *real*
+    ;; main workspace to fill this role.
     (persp-add-new +workspaces-main)
+    ;; Switch to it if we aren't auto-loading the last session
     (unless (= persp-auto-resume-time -1)
       (persp-frame-switch +workspaces-main)))
 
@@ -55,15 +61,17 @@
           (select-frame frame)
           (+workspace/new)
           (set-frame-parameter frame 'assoc-persp (+workspace-current-name))))
-  ;; Delete workspace associated with current frame IF it has no real buffers.
+
   (defun +workspaces*delete-frame-and-persp (frame)
+    "Delete workspace associated with current frame IF it has no real buffers."
     (when (and (string= (or (frame-parameter frame 'assoc-persp) "") (+workspace-current-name))
                (not (delq (doom-fallback-buffer) (doom-real-buffers-list))))
       (+workspace/delete persp-name)))
   (add-hook 'delete-frame-functions '+workspaces*delete-frame-and-persp)
 
-  ;; Auto-add buffers when opening them. Allows a perspective-specific buffer list.
   (defun +workspaces*auto-add-buffer (buffer &rest _)
+    "Auto-associate buffers with perspectives upon opening them. Allows a
+perspective-specific buffer list via `doom-buffer-list'."
     (when (and persp-mode
                (not persp-temporarily-display-buffer)
                (doom-real-buffer-p buffer))
@@ -72,18 +80,18 @@
   (advice-add 'switch-to-buffer :after '+workspaces*auto-add-buffer)
   (advice-add 'display-buffer   :after '+workspaces*auto-add-buffer)
 
-  ;; Create a new workspace on project switch
   (defun doom|new-workspace-on-project-change ()
+    "Create a new workspace when switching project with projectile."
     (+workspace-switch (projectile-project-name) t))
   (add-hook 'projectile-before-switch-project-hook 'doom|new-workspace-on-project-change)
 
-  ;; Add a hook to session loading
   (defun +workspaces*reinit-popups (&rest _)
+    "Runs `+workspaces-load-session-hook'."
     (run-hook-with-args '+workspaces-load-session-hook (window-list)))
   (advice-add 'persp-load-state-from-file :after '+workspaces*reinit-popups)
 
-  ;; Restore popups on load
   (defun +workspaces|restore-popups (windows)
+    "Restore popup windows when loading a perspective from file."
     (dolist (window windows)
       (when-let (plist (window-parameter window 'popup))
         (with-selected-window window

@@ -393,6 +393,7 @@ the command buffer."
       '(" *Agenda Commands*" :noselect t)
       '("^\\*Org Agenda"     :regexp t :size 30)
       '("*Org Clock*"        :noselect t)
+      '("^\\*Org Src"        :regexp t :size 0.5 :noesc t)
       '("*Edit Formulas*"    :size 10)
       '("^\\*Org-Babel"      :regexp t :size 0.4)
       '("^CAPTURE.*\\.org$"  :regexp t :size 20))
@@ -419,7 +420,7 @@ the command buffer."
     ;; manipulating the same buffer. Since it never gets killed, we need to
     ;; treat it specially and clean up after it manually.
     (defun doom*org-src-switch-to-buffer (&rest args)
-      (let ((window (doom-popup-buffer (car args) :align t :size 15 :noesc t :autokill nil)))
+      (let ((window (doom-popup-buffer (car args))))
         (set-window-dedicated-p window nil)
         (select-window window)))
     (advice-add 'org-src-switch-to-buffer :override 'doom*org-src-switch-to-buffer)
