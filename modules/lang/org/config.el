@@ -58,6 +58,12 @@
         (outline-previous-visible-heading 1)
         (org-show-subtree))))
 
+  ;; auto-align tables
+  (defun +org|realign-table-maybe ()
+    (when (org-at-table-p)
+      (org-table-align)))
+  (add-hook 'evil-insert-state-exit-hook '+org|realign-table-maybe nil t)
+
   (defun +org|update-cookies ()
     "Update counts on headlines (\"cookies\")."
     (when (and buffer-file-name (file-exists-p buffer-file-name))
@@ -95,6 +101,7 @@
    org-footnote-auto-label 'plain
    org-hide-emphasis-markers t
    org-hide-leading-stars t
+   org-hide-leading-stars-before-indent-mode t
    org-image-actual-width nil
    org-indent-indentation-per-level 2
    org-pretty-entities t
