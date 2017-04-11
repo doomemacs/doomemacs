@@ -5,12 +5,18 @@
   (interactive)
   (+workspace-switch "Twitter" t)
   (delete-other-windows)
-  (call-interactively 'twit)
-  (switch-to-buffer (car twittering-initial-timeline-spec-string))
-  (dolist (name (cdr twittering-initial-timeline-spec-string))
-    (split-window-horizontally)
-    (switch-to-buffer name))
-  (balance-windows))
+  (condition-case ex
+      (progn
+        (call-interactively 'twit)
+        (unless (get-buffer (car twittering-initial-timeline-spec-string))
+          (error "Failed to open twitter"))
+        (switch-to-buffer (car twittering-initial-timeline-spec-string))
+        (dolist (name (cdr twittering-initial-timeline-spec-string))
+          (split-window-horizontally)
+          (switch-to-buffer name))
+        (balance-windows))
+    ('error
+     (+twitter/quit-all))))
 
 ;;;###autoload
 (defun +twitter/quit ()
