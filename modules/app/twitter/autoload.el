@@ -15,17 +15,17 @@
 ;;;###autoload
 (defun +twitter/quit ()
   (interactive)
-  (call-interactively 'twittering-kill-buffer)
-  (+workspace/close-window-or-workspace))
+  (when (eq major-mode 'twittering-mode)
+    (twittering-kill-buffer)
+    (+workspace/close-window-or-workspace)))
 
 ;;;###autoload
 (defun +twitter/quit-all ()
   (interactive)
-  (if (equal (+workspace-current-name) "Twitter")
-      (+workspace/delete "Twitter")
-    (dolist (buf (doom-buffers-in-mode 'twittering-mode))
-      (with-current-buffer buf
-        (twittering-kill-buffer)))))
+  (+workspace/delete "Twitter")
+  (dolist (buf (doom-buffers-in-mode 'twittering-mode))
+    (with-current-buffer buf
+      (twittering-kill-buffer))))
 
 ;;;###autoload
 (defun +twitter/rerender-all ()
