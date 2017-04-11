@@ -7,6 +7,7 @@
 (package! ob-mongo)
 (package! ob-redis)
 (package! ob-restclient)
+(package! ob-rust :recipe (:fetcher github :repo "zweifisch/ob-rust"))
 (package! ob-sql-mode)
 (package! ob-translate)
 ;; (package! ox-pandox)
