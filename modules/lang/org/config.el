@@ -26,10 +26,6 @@
 (defvar +org-attachment-dir ".attach/"
   "Where to store attachments (relative to current org file).")
 
-;; (defvar-local +org-attachments-list '()
-;;   "A list of attachments for the current buffer. This is so my custom attachment
-;; system can keep track of each buffer's attachments.")
-
 ;; Ensure ELPA org is prioritized above built-in org.
 (when-let (path (locate-library "org" nil doom--package-load-path))
   (push (file-name-directory path) load-path))
@@ -92,7 +88,7 @@
    org-blank-before-new-entry '((heading . nil) (plain-list-item . auto))
    org-cycle-separator-lines 1
    org-cycle-include-plain-lists t
-   org-ellipsis '+doom-folded-face
+   org-ellipsis " ... "
    org-entities-user '(("flat" "\\flat" nil "" "" "266D" "♭")
                        ("sharp" "\\sharp" nil "" "" "266F" "♯"))
    org-fontify-done-headline t
@@ -176,10 +172,8 @@
     '((t (:inherit font-lock-keyword-face)))
     "Face for list bullets")
   (font-lock-add-keywords
-   'org-mode '(("^ *\\([-+]\\|[0-9]+[).]\\) "
-                (1 'org-list-bullet))
-               ("^ *\\(-----+\\)$"
-                (1 'org-meta-line))))
+   'org-mode '(("^ *\\([-+]\\|[0-9]+[).]\\) " (1 'org-list-bullet))
+               ("^ *\\(-----+\\)$" (1 'org-meta-line))))
 
   ;; Enable gpg support
   (require 'epa-file)

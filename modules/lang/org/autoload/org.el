@@ -23,6 +23,8 @@
          (org-indent-item-tree))
         ((org-at-heading-p)
          (ignore-errors (org-demote)))
+        ((org-in-src-block-p t)
+         (doom/dumb-indent))
         (t (call-interactively 'self-insert-command))))
 
 ;;;###autoload
