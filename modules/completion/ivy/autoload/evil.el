@@ -18,7 +18,8 @@ DIR specifies the default-directory from which ag is run."
                                 (if regex-p (rxt-quote-pcre str) str))))
                     +ivy--ag-last-search)))
     (setq +ivy--ag-last-search search)
-    (counsel-ag search (or dir (doom-project-root))
+    (counsel-ag (if regex-p search (rxt-quote-pcre search))
+                (or dir (doom-project-root))
                 (concat "--nocolor --nogroup" (if regex-p " -Q")))))
 
 ;;;###autoload (autoload '+ivy:ag-search-cwd "completion/ivy/autoload/evil" nil t)
