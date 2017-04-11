@@ -38,6 +38,7 @@
 (load! +capture)
 (load! +export)
 (load! +notebook)
+(load! +babel)
 
 
 ;;
@@ -136,14 +137,6 @@
                        (sequence "IDEA(i)" "NEXT(n)" "ACTIVE(a)" "WAITING(w)" "LATER(l)" "|" "CANCELLED(c)"))
 
 
-   ;; Babel
-   org-confirm-babel-evaluate nil   ; you don't need my permission
-   org-src-fontify-natively t       ; make code pretty
-   org-src-preserve-indentation t
-   org-src-tab-acts-natively t
-   org-src-window-setup 'current-window
-   org-edit-src-content-indentation 0
-
    ;; Latex
    org-format-latex-options
    (plist-put org-format-latex-options :scale 1.5)
@@ -163,37 +156,6 @@
    ;; '(("" "gauss" t)
    ;;   ("" "physics" t) TODO Install this)
    )
-
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   (mapcar (lambda (sym) (cons sym t))
-           '(calc
-             css
-             emacs-lisp
-             haskell
-             js
-             latex
-             ledger
-             lilypond
-             lisp
-             matlab
-             plantuml
-             python
-             restclient
-             ruby
-             ;; rust
-             sh
-             sqlite
-             sql-mode
-             translate
-             )))
-
-  ;; I prefer C-c C-c for confirming over the default C-c '
-  (map! :map org-src-mode-map "C-c C-c" 'org-edit-src-exit)
-  ;; I know the keybindings, no need for the header line
-  (defun +org|src-mode-remove-header ()
-    (when header-line-format (setq header-line-format nil)))
-  (add-hook 'org-src-mode-hook '+org|src-mode-remove-header)
 
   (let ((ext-regexp (regexp-opt '("GIF" "JPG" "JPEG" "SVG" "TIF" "TIFF" "BMP" "XPM"
                                   "gif" "jpg" "jpeg" "svg" "tif" "tiff" "bmp" "xpm"))))
