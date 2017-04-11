@@ -54,6 +54,9 @@ package's name as a symbol, and whose CDR is the plist supplied to its
   "A list of packages that must be installed (and will be auto-installed if
 missing) and shouldn't be deleted.")
 
+(defvar doom-protected-packages nil
+  "A list of packages that shouldn't be deleted by `doom/packages-autoremove'.")
+
 (defvar doom-init-time nil
   "The time it took, in seconds, for DOOM Emacs to initialize.")
 

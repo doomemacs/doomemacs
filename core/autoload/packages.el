@@ -108,7 +108,8 @@ Used by `doom/packages-autoremove'."
   (doom-initialize-packages t)
   (let ((package-selected-packages
          (append (mapcar 'car doom-packages) doom-core-packages)))
-    (package--removable-packages)))
+    (cl-set-difference (package--removable-packages)
+                       doom-protected-packages)))
 
 ;;;###autoload
 (defun doom-get-missing-packages ()
