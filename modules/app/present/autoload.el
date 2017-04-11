@@ -52,6 +52,13 @@
   (mapc 'delete-overlay +present--overlays-list)
   (remove-from-invisibility-spec '(+present)))
 
+;;;###autoload
+(defun +present|detect-slide ()
+  (outline-show-all)
+  (if (member "title" (org-get-tags-at))
+      (text-scale-set 10)
+    (text-scale-set +present-scale)))
+
 (defun +present--cleanup-org-tree-slides-mode ()
   (unless (cl-remove-if-not (lambda (buf) (buffer-local-value 'org-tree-slide-mode buf))
                             (doom-buffers-in-mode 'org-mode))
@@ -63,11 +70,7 @@
     (push overlay +present--overlays-list)
     (overlay-put overlay 'invisible '+present)))
 
-(defun +present--detect-slide ()
-  (outline-show-all)
-  (if (member "title" (org-get-tags-at))
-      (text-scale-set 10)
-    (text-scale-set +present-scale)))
+
 
 
 ;; --- misc -----------------------------------------------------------------------
