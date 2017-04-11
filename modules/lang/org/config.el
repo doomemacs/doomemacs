@@ -268,6 +268,7 @@
            :n  "d"  'org-time-stamp
            :n  "D"  'org-deadline
            :n  "e"  'org-edit-special
+           :n  "E"  '+org/edit-special-same-window
            :n  "n"  (λ! (if (buffer-narrowed-p) (widen) (org-narrow-to-subtree)))
            :n  "r"  'org-refile
            :n  "R"  (λ! (org-metaleft) (org-archive-to-archive-sibling)) ; archive to parent sibling

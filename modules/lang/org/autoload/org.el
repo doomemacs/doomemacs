@@ -292,3 +292,9 @@ re-align the table if necessary. (Necessary because org-mode has a
       (org-shiftmetadown)
     (org-shiftmetaup)))
 
+;;;###autoload
+(defun +org/edit-special-same-window ()
+  (interactive)
+  (let ((shackle-rules '(("^\\*Org Src" :align t :select t :regexp t :noesc t :same t))))
+    (call-interactively 'org-edit-special)
+    (doom-buffer-mode +1)))
