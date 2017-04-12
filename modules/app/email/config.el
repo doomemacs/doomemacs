@@ -115,14 +115,6 @@
   :after mu4e)
 
 
-(def-package! mu4e-alert
-  :after mu4e
-  :config
-  (cond (IS-MAC   (mu4e-alert-set-default-style 'notifier))
-        (IS-LINUX (mu4e-alert-set-default-style 'libnotify)))
-  (mu4e-alert-enable-notifications))
-
-
 (def-package! mu4e-maildirs-extension
   :after mu4e
   :config (mu4e-maildirs-extension-load))
