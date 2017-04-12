@@ -246,10 +246,10 @@ exclude buffers that aren't part of the current project."
       (message "Killed %s buffers" n))))
 
 ;;;###autoload
-(defun doom/cleanup-buffers ()
+(defun doom/cleanup-buffers (&optional all-p)
   "Clean up buried and process buffers in the current workspace."
-  (interactive)
-  (let ((buffers (doom-buried-buffers)))
+  (interactive "P")
+  (let ((buffers (doom-buried-buffers (if all-p (buffer-list)))))
     (mapc 'kill-buffer buffers)
     (setq n (+ (doom-kill-process-buffers) (length buffers)))
     (when (called-interactively-p 'interactive)
