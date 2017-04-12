@@ -2,7 +2,7 @@
 EMACS_LIBS=-l core/core.el
 EMACS=emacs --batch --eval '(setq user-emacs-directory default-directory)' $(EMACS_LIBS)
 TEST_EMACS=$(EMACS) --eval '(setq noninteractive nil)' $(EMACS_LIBS)
-TESTS=$(patsubst %,-l %, $(wildcard test/**/test-*.el))
+TESTS=$(patsubst %,-l %, $(shell find test/ -type f -name 'test-*.el'))
 
 # Tasks
 all: autoloads install update
