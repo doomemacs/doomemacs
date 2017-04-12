@@ -462,43 +462,46 @@ If ONLY-RECOMPILE-P is non-nil, only recompile out-of-date files."
   ;; Ensure all relevant config files are loaded and up-to-date. This way we
   ;; don't need eval-when-compile and require blocks scattered all over.
   (doom-initialize-packages t t)
-  (let ((targets
-         (append (list (expand-file-name "init.el" doom-emacs-dir))
-                 (reverse (directory-files-recursively doom-core-dir "\\.el$"))))
-        files-success files-fail files-no-compile)
-    (unless lite-p
-      (dolist (path (doom--module-paths))
-        (nconc targets (append (reverse (directory-files path t "\\.el$" t))
-                               (reverse (file-expand-wildcards (expand-file-name "*/*.el" path)))))))
-    (when only-recompile-p
-      (setq targets
-            (cl-remove-if-not (lambda (file)
-                                (let ((elc-file (byte-compile-dest-file file)))
-                                  (and (file-exists-p elc-file)
-                                       (file-newer-than-file-p file elc-file))))
-                              targets)))
-    (dolist (file targets)
-      (let ((result (quiet! (byte-compile-file file)))
-            (short-name (file-relative-name file doom-emacs-dir)))
-        (push file (cond ((eq result 'no-byte-compile)
-                          (message "+ Ignored %s" short-name)
-                          files-no-compile)
-                         ((null result)
-                          (message "+ Failed to compile %s" short-name)
-                          files-fail)
-                         (t
-                          (message "+ Compiled %s" short-name)
-                          files-success)))))
-    (let* ((total         (- (length targets) (length files-no-compile)))
-           (total-no-compile (length files-no-compile))
-           (total-fail    (length files-fail))
-           (total-success (length files-success)))
-      (when (> total-fail 0)
-        (message "\n%s" (mapconcat (lambda (file) (concat "+ ERROR: " (car file)))
-                                   files-fail "\n")))
-      (message "%s %s file(s)"
-               (if only-recompile-p "Recompiled" "Compiled")
-               (format (if (= total 0) "%d" "%d/%d (%s not compiled)") total-success total total-no-compile)))))
+  (let ((targets (append (list "init.el" doom-core-dir)
+                         (unless lite-p (doom--module-paths))))
+        (total-success 0)
+        (total-fail 0)
+        (total-nocomp 0)
+        el-files)
+    (mapc (lambda (file)
+            (when (or (not only-recompile-p)
+                      (let ((elc-file (byte-compile-dest-file file)))
+                        (and (file-exists-p elc-file)
+                             (file-newer-than-file-p file elc-file))))
+              (let ((result (quiet! (byte-compile-file file)))
+                    (short-name (file-relative-name file doom-emacs-dir)))
+                (cl-incf
+                 (cond ((eq result 'no-byte-compile)
+                        (message! (dark (white "Ignored %s" short-name)))
+                        total-nocomp)
+                       ((null result)
+                        (message! (red "Failed to compile %s" short-name))
+                        total-fail)
+                       (t
+                        (message! (ansi-green "Compiled %s" short-name))
+                        total-success))))))
+          (dolist (path targets (reverse el-files))
+            (let ((path (expand-file-name path doom-emacs-dir)))
+              (cond ((file-directory-p path)
+                     (setq el-files (append (directory-files-recursively path "\\.el$") el-files)))
+                    ((file-exists-p path)
+                     (push path el-files))
+                    (t
+                     (error "Invalid path: %s" path))))))
+    (message!
+     (bold
+      (ansi-apply (if (zerop total-fail) 'green 'red)
+                  "\n---\n%s %s file(s) %s"
+                  (if only-recompile-p "Recompiled" "Compiled")
+                  (format (if el-files "%d/%d" "%d")
+                          total-success
+                          (- (length el-files) total-nocomp))
+                  (format "(%s not compiled)" total-nocomp))))))
 
 (defun doom/recompile ()
   "Recompile any compiled *.el files in your Emacs configuration."
@@ -527,7 +530,7 @@ package files."
                                      (directory-files-recursively doom-emacs-dir "\\.elc$")))
     (dolist (file elc-files)
       (delete-file file)
-      (message "Deleting %s" (abbreviate-file-name file)))))
+      (message "Deleting %s" (file-relative-name file doom-emacs-dir)))))
 
 
 ;;
