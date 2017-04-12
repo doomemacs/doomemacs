@@ -1,6 +1,6 @@
-;;; ../test/test-core-lib-buffers.el
+;;; test/core/autoload/test-buffers.el
 
-(def-test-group! core-lib-buffers
+(def-test-group! core/autoload/buffers
   (ert-deftest get-buffers ()
     (let ((a (get-buffer-create "*a*"))
           (b (get-buffer-create "*b*"))

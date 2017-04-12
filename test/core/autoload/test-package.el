@@ -1,4 +1,4 @@
-;;; ../test/test-core-lib-package.el
+;;; test/core/autoload/test-package.el
 
 (defun test-package-new (name version &optional reqs)
   (package-desc-create :name name :version version :reqs reqs))
@@ -23,7 +23,7 @@ affects your Emacs packages)."
 ;; Tests
 ;;
 
-(def-test-group! core-lib-package
+(def-test-group! core/autoload/package
   (ert-deftest backend-detection ()
     "TODO"
     (let ((package-alist `((doom-dummy ,(test-package-new 'doom-dummy '(20160405 1234)))))
