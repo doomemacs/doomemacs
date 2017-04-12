@@ -3,6 +3,7 @@
 (require! :feature evil t)
 
 (def-test-group! feature/evil
+  :disabled t
   (ert-deftest custom-file-modifiers ()
     (let ((buffer-file-name "~/.emacs.d/test/modules/feature/test-evil.el")
           (default-directory "~/.emacs.d/test/modules"))
