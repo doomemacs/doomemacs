@@ -60,6 +60,9 @@ missing) and shouldn't be deleted.")
 (defvar doom-init-time nil
   "The time it took, in seconds, for DOOM Emacs to initialize.")
 
+(defvar doom-inhibit-reload nil
+  "If non-nil, remote reload calls (via the server) will be ignored.")
+
 (defvar doom--site-load-path load-path
   "The load path of built in Emacs libraries.")
 
@@ -379,7 +382,7 @@ SUBMODULE is a symbol."
 ;; Commands
 ;;
 
-(defun doom/reload ()
+(defun doom/reload (&optional ignorable-p)
   "Reload `load-path' and recompile files (if necessary). Useful if you
 modify/update packages outside of emacs. Automatically called (through the
 server, if necessary) by `doom/packages-install', `doom/packages-update' and
@@ -389,12 +392,15 @@ server, if necessary) by `doom/packages-install', `doom/packages-update' and
       (progn
         (message "Reloading...")
         (require 'server)
-        (unless (ignore-errors (server-eval-at "server" '(doom/reload)))
+        (unless (ignore-errors (server-eval-at "server" '(doom/reload t)))
           (message "Recompiling")
           (doom/recompile)))
-    (doom-initialize t)
-    (doom/recompile)
-    (message "Reloaded %d packages" (length doom--package-load-path))))
+    (if (and ignorable-p doom-inhibit-reload)
+        (message "Ignored a reload request from server")
+      (doom-initialize t)
+      (doom/recompile)
+      (message "Reloaded %d packages" (length doom--package-load-path))
+      (run-with-timer 1 nil 'redraw-frame))))
 
 (defun doom/reload-autoloads ()
   "Refreshes the autoloads.el file, which tells Emacs where to find all the
