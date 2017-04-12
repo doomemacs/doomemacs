@@ -28,6 +28,7 @@ renamed.")
   :config
   (setq persp-autokill-buffer-on-remove 'kill-weak
         persp-nil-name "nil"
+        persp-nil-hidden t
         persp-auto-save-fname "autosave"
         persp-save-dir (concat doom-cache-dir "workspaces/")
         persp-set-last-persp-for-new-frames nil

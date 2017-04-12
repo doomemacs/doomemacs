@@ -22,9 +22,9 @@
   "The face for selected tabs displayed by `+workspace/display'")
 
 ;;;###autoload
-(defun +workspace-list (&optional exclude-nil-p)
+(defun +workspace-list ()
   "Retrieve a list of names of open workspaces (strings)."
-  (delete persp-nil-name (persp-names)))
+  (delete persp-nil-name (persp-names-current-frame-fast-ordered)))
 
 ;;;###autoload
 (defun +workspace-p (obj)
@@ -253,7 +253,7 @@ workspace to delete."
 (defun +workspace/kill-session ()
   "Delete the current session, clears all workspaces, windows and buffers."
   (interactive)
-  (unless (cl-every '+workspace-delete (+workspace-list t))
+  (unless (cl-every '+workspace-delete (+workspace-list))
     (+workspace-error "Could not clear session"))
   (+workspace-switch +workspaces-main t)
   (doom/kill-all-buffers)
@@ -327,15 +327,20 @@ end of the workspace list."
 (defun +workspace/cycle (n)
   "Cycle n workspaces to the right (default) or left."
   (interactive (list 1))
-  (condition-case ex
-      (let ((persp-switch-wrap t))
-        (dotimes (i (abs n))
-          (if (> n 0)
-              (persp-next)
-            (persp-prev)))
-        (unless (called-interactively-p 'interactive)
-          (+workpace/display)))
-    ('error (+workspace-error (cadr ex) t))))
+  (let ((current-name (+workspace-current-name)))
+    (if (equal current-name persp-nil-name)
+        (+workspace-switch +workspaces-main t)
+      (condition-case ex
+          (let* ((persps (+workspace-list))
+                 (perspc (length persps))
+                 (index (position current-name persps)))
+            (when (= perspc 1)
+              (user-error "No other workspaces"))
+            (+workspace/switch-to (% (+ index n) perspc))
+            (unless (called-interactively-p 'interactive)
+              (+workspace/display)))
+        ('user-error (+workspace-error (cadr ex) t))
+        ('error (+workspace-error ex t))))))
 
 ;;;###autoload
 (defun +workspace/switch-left ()  (interactive) (+workspace/cycle -1))
