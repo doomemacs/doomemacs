@@ -45,7 +45,8 @@
 
   (defface +doom-folded-face
     `((t (:inherit font-lock-comment-face
-          :background ,(face-background 'default))))
+          :background ,(face-background 'doom-default)
+          :foreground ,(face-foreground 'font-lock-comment-face))))
     "Face to hightlight `hideshow' overlays."
     :group 'doom)
 
