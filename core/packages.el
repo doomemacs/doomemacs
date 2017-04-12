@@ -5,7 +5,6 @@
 (package! async)
 (package! s)
 (package! f)
-(package! ansi)
 
 ;; core-os.el
 (when IS-MAC
