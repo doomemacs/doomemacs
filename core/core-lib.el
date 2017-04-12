@@ -5,6 +5,11 @@
 ;;
 (autoload 'when-let "subr-x")
 (autoload 'if-let "subr-x")
+;;
+(if noninteractive
+    (require 'ansi)
+  (autoload 'with-ansi "ansi")
+  (autoload 'ansi-apply "ansi"))
 
 ;; I don't use use-package for these to save on the `fboundp' lookups it does
 ;; for its :commands property. I use dolists instead of mapc to avoid extra
@@ -69,6 +74,20 @@
 ;;
 ;; Library
 ;;
+
+(defmacro format! (message &rest args)
+  "An alternative to `format' that strips out ANSI codes if used in an
+interactive session."
+  `(with-ansi
+    ,(if noninteractive
+         `(format ,message ,@args)
+       `(cl-letf (((symbol-function 'ansi-apply) (lambda (_ &rest args) (apply 'format args))))
+          (format ,message ,@args)))))
+
+(defmacro message! (message &rest args)
+  "An alternative to `message' that strips out ANSI codes if used in an
+interactive session."
+  `(message (format! ,message ,@args)))
 
 (defmacro λ! (&rest body)
   "A shortcut for inline interactive lambdas."
