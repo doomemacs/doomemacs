@@ -226,18 +226,19 @@ appropriate."
           (t
            (dolist (pkg packages)
              (condition-case ex
-                 (ansi-message! (cond ((package-installed-p (car pkg))
-                                  (dark (white "[%%s] Skipped %%s (already installed)")))
-                                 ((doom-install-package (car pkg) (cdr pkg))
-                                  (green "[%%s] Installed %%s"))
-                                 (t
-                                  (red "[%%s] Failed to install %%s")))
-                           (pcase (doom-package-backend (car pkg))
-                             ('quelpa "QUELPA")
-                             ('elpa "ELPA"))
-                           (concat (symbol-name (car pkg))
-                                   (when (plist-member (cdr pkg) :pin)
-                                     (format " [pinned: %s]" (plist-get (cdr pkg) :pin)))))
+                 (ansi-message!
+                  (cond ((package-installed-p (car pkg))
+                         (dark (white "Skipped %%%%s (already installed)")))
+                        ((doom-install-package (car pkg) (cdr pkg))
+                         (green "Installed %%s (%%s)"))
+                        (t
+                         (red "Failed to install %%s (%%s)")))
+                  (concat (symbol-name (car pkg))
+                          (when (plist-member (cdr pkg) :pin)
+                            (format " [pinned: %s]" (plist-get (cdr pkg) :pin))))
+                  (pcase (doom-package-backend (car pkg))
+                    ('quelpa "QUELPA")
+                    ('elpa "ELPA")))
                ('error
                 (ansi-message! (red "Error (%s): %s" (car pkg) ex)))))
 
