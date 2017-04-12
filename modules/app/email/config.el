@@ -59,7 +59,7 @@
         ;; don't save message to Sent Messages, Gmail/IMAP takes care of this
         mu4e-sent-messages-behavior 'delete
         ;; allow for updating mail using 'U' in the main view:
-        mu4e-get-mail-command "offlineimap -o"
+        mu4e-get-mail-command "offlineimap -o -q"
         ;; configuration for sending mail
         message-send-mail-function 'smtpmail-send-it
         smtpmail-stream-type 'starttls
