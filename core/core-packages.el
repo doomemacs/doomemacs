@@ -477,13 +477,13 @@ If ONLY-RECOMPILE-P is non-nil, only recompile out-of-date files."
                     (short-name (file-relative-name file doom-emacs-dir)))
                 (cl-incf
                  (cond ((eq result 'no-byte-compile)
-                        (message! (dark (white "Ignored %s" short-name)))
+                        (ansi-message! (dark (white "Ignored %s" short-name)))
                         total-nocomp)
                        ((null result)
-                        (message! (red "Failed to compile %s" short-name))
+                        (ansi-message! (red "Failed to compile %s" short-name))
                         total-fail)
                        (t
-                        (message! (ansi-green "Compiled %s" short-name))
+                        (ansi-message! (green "Compiled %s" short-name))
                         total-success))))))
           (dolist (path targets (reverse el-files))
             (let ((path (expand-file-name path doom-emacs-dir)))
@@ -493,15 +493,15 @@ If ONLY-RECOMPILE-P is non-nil, only recompile out-of-date files."
                      (push path el-files))
                     (t
                      (error "Invalid path: %s" path))))))
-    (message!
+    (ansi-message!
      (bold
-      (ansi-apply (if (zerop total-fail) 'green 'red)
-                  "\n---\n%s %s file(s) %s"
-                  (if only-recompile-p "Recompiled" "Compiled")
-                  (format (if el-files "%d/%d" "%d")
-                          total-success
-                          (- (length el-files) total-nocomp))
-                  (format "(%s not compiled)" total-nocomp))))))
+      (color (if (zerop total-fail) 'green 'red)
+             "\n---\n%s %s file(s) %s"
+             (if only-recompile-p "Recompiled" "Compiled")
+             (format (if el-files "%d/%d" "%d")
+                     total-success
+                     (- (length el-files) total-nocomp))
+             (format "(%s not compiled)" total-nocomp))))))
 
 (defun doom/recompile ()
   "Recompile any compiled *.el files in your Emacs configuration."
