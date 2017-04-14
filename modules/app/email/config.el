@@ -28,6 +28,8 @@
           `(add-to-list 'mu4e-user-mail-address-list ,address))
        (let ((context (make-mu4e-context
                        :name ,label
+                       :enter-func (lambda () (mu4e-message "Switched to %s" ,label))
+                       :leave-func (lambda () (mu4e-clear-caches))
                        :match-func
                        (lambda (msg)
                          (when msg
@@ -46,10 +48,12 @@
   :commands (mu4e mu4e-compose-new)
   :config
   (setq mu4e-maildir +email-mu4e-mail-path
+        mu4e-attachment-dir "~/Downloads"
         mu4e-user-mail-address-list nil
         mu4e-update-interval nil
         mu4e-compose-format-flowed t ; visual-line-mode + auto-fill upon sending
         mu4e-view-show-addresses t
+        mu4e-headers-skip-duplicates t
         ;; try to show images
         mu4e-show-images t
         mu4e-view-show-images t
@@ -59,7 +63,11 @@
         ;; don't save message to Sent Messages, Gmail/IMAP takes care of this
         mu4e-sent-messages-behavior 'delete
         ;; allow for updating mail using 'U' in the main view:
-        mu4e-get-mail-command "offlineimap -o -q"
+        ;; for mbsync
+        mu4e-change-filenames-when-moving t
+        mu4e-get-mail-command "mbsync -a"
+        ;; for offlineimap
+        ;; mu4e-get-mail-command "offlineimap -o -q"
         ;; configuration for sending mail
         message-send-mail-function 'smtpmail-send-it
         smtpmail-stream-type 'starttls
@@ -68,35 +76,75 @@
         ;; compose with the current context, or ask
         mu4e-compose-context-policy 'ask-if-none
         ;; use helm/ivy
-        mu4e-completing-read-function 'ido-completing-read
+        mu4e-completing-read-function (cond ((featurep! :completion ivy) 'ivy-completing-read)
+                                            ((featurep! :completion helm) 'completing-read)
+                                            (t 'ido-completing-read))
         ;; close message after sending it
         message-kill-buffer-on-exit t
         ;; no need to ask
         mu4e-confirm-quit nil
         ;; remove 'lists' column
-        mu4e-headers-fields (assq-delete-all :mailing-list mu4e-headers-fields))
+        mu4e-headers-fields
+        '((:account . 12)
+          (:human-date . 12)
+          (:flags . 4)
+          (:from . 25)
+          (:subject)))
+
+  (setq mu4e-bookmarks `((,(mapconcat (lambda (arg) (format " maildir:/%s/Inbox " arg))
+                                      (mapcar 'car +email--accounts) " OR ")
+                          "Inbox" ?i)
+                         ("flag:unread" "Unread messages" ?u)
+                         ("flag:flagged" "Starred messages" ?s)
+                         ("date:today..now" "Today's messages" ?t)
+                         ("date:7d..now" "Last 7 days" ?w)
+                         ("mime:image/*" "Messages with images" ?p)))
+
+  (push '(:account
+          :name "Account"
+          :shortname "Account"
+          :help "Which account this email belongs to"
+          :function
+          (lambda (msg)
+            (let ((maildir (mu4e-message-field msg :maildir)))
+              (format "%s" (substring maildir 1 (string-match-p "/" maildir 1))))))
+        mu4e-header-info-custom)
 
   ;; By default, mark-for-trash deletes the email completely, even from the
   ;; server. This fix sends trashed email to the trash folder, instead. Note:
   ;; you have to update your mail for them to actually show up in Trash.
+  ;; (setq mu4e-marks (assq-delete-all 'delete mu4e-marks))
   (setq mu4e-marks (assq-delete-all 'trash mu4e-marks))
   (push '(trash :char ("d" . "▼")
                 :prompt "dtrash"
-                :dyn-target
-                (lambda (target msg) (mu4e-get-trash-folder msg))
+                :dyn-target (lambda (target msg) (mu4e-get-trash-folder msg))
                 :action
                 (lambda (docid msg target)
-                  (mu4e~proc-move docid (mu4e~mark-check-target target) "+S-N")))
+                  (mu4e~proc-move docid (mu4e~mark-check-target target) "-u-N")))
         mu4e-marks)
 
-  ;; mark-as-read doesn't seem to work by default, and seems absent from
-  ;; `mu4e-marks', so I add it back in.
-  (push '(read :char ("!" . "◻")
-               :prompt "!read"
-               :show-target (lambda (target) "read")
-               :action
-               (lambda (docid msg target) (mu4e~proc-move docid nil "+S-N")))
+  ;; Refile will set mail to All Mail (basically archiving them). I want this to
+  ;; auto-mark them as read, so I redefine refile to add the +S tag.
+  (setq mu4e-marks (assq-delete-all 'refile mu4e-marks))
+  (push '(refile :char ("r" . "▶")
+                 :prompt "refile"
+                 :dyn-target (lambda (target msg) (mu4e-get-refile-folder msg))
+                 :action
+                 (lambda (docid msg target)
+                   (mu4e~proc-move docid (mu4e~mark-check-target target) "-u-N")))
         mu4e-marks)
+
+  ;; This hook correctly modifies the \Inbox and \Starred flags on email when
+  ;; they are marked. Without it refiling (archiving) and flagging (starring)
+  ;; email won't properly result in the corresponding gmail action.
+  (defun +email|gmail-fix-flags (mark msg)
+    (cond ((memq mark '(trash refile)) (mu4e-action-retag-message msg "-\\Inbox"))
+          ((eq mark 'flag) (mu4e-action-retag-message msg "+\\Starred"))
+          ((eq mark 'unflag) (mu4e-action-retag-message msg "-\\Starred"))))
+  (add-hook 'mu4e-mark-execute-pre-hook '+email|gmail-fix-flags)
+
+  (when (featurep! :feature spellcheck)
+    (add-hook 'mu4e-compose-mode-hook 'flyspell-mode))
 
   ;; Brighter + no mode-line in message windows
   (after! doom-themes
