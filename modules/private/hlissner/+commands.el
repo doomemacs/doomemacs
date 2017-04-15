@@ -28,7 +28,7 @@
 (ex! "sh[ell]"     '+eshell:run)
 (ex! "t[mux]"      '+tmux:run)              ; send to tmux
 (ex! "tcd"         '+tmux:cd-here)          ; cd to default-directory in tmux
-(ex! "x"           'doom:scratch-buffer)
+(ex! "x"           '+doom:scratch-buffer)
 
 ;; GIT
 (ex! "gbrowse"     '+vcs/git-browse)        ; show file in github/gitlab
