@@ -87,7 +87,7 @@ flags. See http://vimdoc.sourceforge.net/htmldoc/cmdline.html#filename-modifiers
                               (unless global 1)))))
                         ("P"
                          (let ((default-directory (file-name-directory (expand-file-name path))))
-                           (doom-project-root)))
+                           (abbreviate-file-name (doom-project-root))))
                         (_ path))
                       "")))
           ;; strip trailing slash, if applicable
