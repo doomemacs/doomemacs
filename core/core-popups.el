@@ -60,7 +60,8 @@ is enabled/disabled.'")
         ;;  :autoclose  If non-nil, close popup if ESC is pressed from any buffer.
         shackle-rules
         '(("^ ?\\*doom:.+\\*$"      :size 40  :modeline t :regexp t)
-          ("^ ?\\*doom .+\\*$"      :size 30  :noselect t :regexp t)
+          ("^ ?\\*doom .+\\*$"      :size 10  :noselect t :regexp t)
+          ("^ *doom message*"       :size 10  :noselect t :autokill t)
           ("*Metahelp*"             :size 0.5 :autokill t :autoclose t)
           ("^\\*.+-Profiler-Report .+\\*$" :size 0.3 :regexp t :autokill t)
           ("*minor-modes*"          :size 0.5 :noselect t :autokill t)

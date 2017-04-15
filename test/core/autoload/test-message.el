@@ -1,6 +1,7 @@
 ;;; test/core/autoload/test-message.el
 
 (def-test-group! core/autoload/message
+  ;; ansi messages
   (ert-deftest ansi-format ()
     (let ((noninteractive t))
       (should (equal (format! "Hello %s" "World")
@@ -9,15 +10,15 @@
                      "[31mHello World[0m"))
       (should (equal (format! (green "Hello %s" "World"))
                      (format "\e[%dm%s\e[0m"
-                             (cdr (assq 'green doom-ansi-fg))
+                             (cdr (assq 'green doom-message-fg))
                              "Hello World")))
       (should (equal (format! (on-red "Hello %s" "World"))
                      (format "\e[%dm%s\e[0m"
-                             (cdr (assq 'on-red doom-ansi-bg))
+                             (cdr (assq 'on-red doom-message-bg))
                              "Hello World")))
       (should (equal (format! (bold "Hello %s" "World"))
                      (format "\e[%dm%s\e[0m"
-                             (cdr (assq 'bold doom-ansi-fx))
+                             (cdr (assq 'bold doom-message-fx))
                              "Hello World")))))
 
   (ert-deftest ansi-format-nested ()
@@ -38,4 +39,3 @@
                      (format! (red "Hello %s" "World"))))
       (should (equal (format! (color (if nil 'red 'blue) "Hello %s" "World"))
                      (format! (blue "Hello %s" "World")))))))
-
