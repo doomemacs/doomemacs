@@ -30,52 +30,73 @@
 (defun +evil*ex-replace-special-filenames (file-name)
   "Replace special symbols in FILE-NAME. Modified to include other substitution
 flags. See http://vimdoc.sourceforge.net/htmldoc/cmdline.html#filename-modifiers."
-  (let ((regexp (concat "\\(?:^\\|[^\\\\]\\)"
-                        "\\([#%\\w]\\)"
-                        "\\(\\(?::\\(?:[PphtreS~.]\\|g?s[^: $]+\\)\\)*\\)"))
-        case-fold-search)
-    ;; TODO Remove s.el dependency so I can offer it upstream
-    (dolist (match (s-match-strings-all regexp file-name))
-      (let ((flags (split-string (cl-caddr match) ":" t))
-            (path (file-relative-name
-                   (pcase (cadr match)
-                     ("%" (buffer-file-name))
-                     ("#" (and (other-buffer) (buffer-file-name (other-buffer))))
-                     (_ file-name))
-                   default-directory))
+  (let* (case-fold-search
+         (regexp (concat "\\(?:^\\|[^\\\\]\\)"
+                         "\\([#%]\\)"
+                         "\\(\\(?::\\(?:[PphtreS~.]\\|g?s[^:\t\n ]+\\)\\)*\\)"))
+         (matches
+          (let ((all-strings ())
+                (i 0))
+            (while (and (< i (length file-name))
+                        (string-match regexp file-name i))
+              (setq i (1+ (match-beginning 0)))
+              (let (strings)
+                (push (dotimes (i (/ (length (match-data)) 2) (nreverse strings))
+                        (push (match-string i file-name) strings))
+                      all-strings)))
+            (nreverse all-strings))))
+    (dolist (match matches)
+      (let ((flags (split-string (car (cdr (cdr match))) ":" t))
+            (path (and buffer-file-name
+                       (pcase (car (cdr match))
+                         ("%" (file-relative-name buffer-file-name))
+                         ("#" (save-excursion (other-window 1) (file-relative-name buffer-file-name))))))
             flag global)
-        (when path
+        (if (not path)
+            (setq path "")
           (while flags
             (setq flag (pop flags))
             (when (string-suffix-p "\\" flag)
               (setq flag (concat flag (pop flags))))
             (when (string-prefix-p "gs" flag)
               (setq global t
-                    flag (string-remove-prefix "g" flag)))
+                    flag (substring flag 1)))
             (setq path
                   (or (pcase (substring flag 0 1)
-                        ("P" (doom-project-root))
                         ("p" (expand-file-name path))
-                        ("~" (file-relative-name path "~"))
+                        ("~" (concat "~/" (file-relative-name path "~")))
                         ("." (file-relative-name path default-directory))
-                        ("h" (directory-file-name path)) ; FIXME
-                        ("t" (file-name-nondirectory (directory-file-name path))) ; FIXME
+                        ("t" (file-name-nondirectory (directory-file-name path)))
                         ("r" (file-name-sans-extension path))
                         ("e" (file-name-extension path))
-                        ("s" (let* ((args (evil-delimited-arguments (substring flag 1) 2))
-                                    (pattern (evil-transform-vim-style-regexp (car args)))
-                                    (replace (cadr args)))
-                               (replace-regexp-in-string
-                                (if global pattern (concat "\\(" pattern "\\).*\\'"))
-                                (evil-transform-vim-style-regexp replace) path t t
-                                (unless global 1))))
                         ("S" (shell-quote-argument path))
+                        ("h"
+                         (let ((parent (file-name-directory (expand-file-name path))))
+                           (unless (equal (file-truename path)
+                                          (file-truename parent))
+                             (if (file-name-absolute-p path)
+                                 (directory-file-name parent)
+                               (file-relative-name parent)))))
+                        ("s"
+                         (when-let (args (evil-delimited-arguments (substring flag 1) 2))
+                           (let ((pattern (evil-transform-vim-style-regexp (car args)))
+                                 (replace (cadr args)))
+                             (replace-regexp-in-string
+                              (if global pattern (concat "\\(" pattern "\\).*\\'"))
+                              (evil-transform-vim-style-regexp replace) path t t
+                              (unless global 1)))))
+                        ("P"
+                         (let ((default-directory (file-name-directory (expand-file-name path))))
+                           (doom-project-root)))
                         (_ path))
                       "")))
-          (setq file-name
-                (replace-regexp-in-string (format "\\(?:^\\|[^\\\\]\\)\\(%s\\)"
-                                                  (regexp-quote (string-trim-left (car match))))
-                                          path file-name t t 1)))))
+          ;; strip trailing slash, if applicable
+          (when (and (not (string= path "")) (equal (substring path -1) "/"))
+            (setq path (substring path 0 -1))))
+        (setq file-name
+              (replace-regexp-in-string (format "\\(?:^\\|[^\\\\]\\)\\(%s\\)"
+                                                (regexp-quote (string-trim-left (car match))))
+                                        path file-name t t 1))))
     (setq file-name (replace-regexp-in-string regexp "\\1" file-name t))))
 
 
