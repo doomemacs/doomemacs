@@ -86,15 +86,6 @@
       (user-mail-address      . "hlissner@gmail.com")
       (mu4e-compose-signature . "---\nHenrik")))
 
-  (set! :email "ryerson.ca"
-    '((mu4e-sent-folder       . "/%s/Sent Mail")
-      (mu4e-drafts-folder     . "/%s/Drafts")
-      (mu4e-trash-folder      . "/%s/Trash")
-      (mu4e-refile-folder     . "/%s/All Mail")
-      (smtpmail-smtp-user     . "hlissner")
-      (user-mail-address      . "hlissner@ryerson.ca")
-      (mu4e-compose-signature . "---\nHenrik")))
-
   (set! :email "lissner.net"
     '((mu4e-sent-folder       . "/%s/Sent Mail")
       (mu4e-drafts-folder     . "/%s/Drafts")
