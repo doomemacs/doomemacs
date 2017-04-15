@@ -207,7 +207,7 @@ appropriate."
   (interactive)
   (let ((packages (doom-get-missing-packages)))
     (cond ((not packages)
-           (ansi-message! (green "No packages to install!")))
+           (message! (green "No packages to install!")))
 
           ((not (or (getenv "YES")
                     (y-or-n-p
@@ -221,12 +221,12 @@ appropriate."
                                                     "ELPA")))
                                         (sort (cl-copy-list packages) 'doom--sort-alpha)
                                         "\n")))))
-           (ansi-message! (yellow "Aborted!")))
+           (message! (yellow "Aborted!")))
 
           (t
            (dolist (pkg packages)
              (condition-case ex
-                 (ansi-message!
+                 (message!
                   (cond ((package-installed-p (car pkg))
                          (dark (white "Skipped %%%%s (already installed)")))
                         ((doom-install-package (car pkg) (cdr pkg))
@@ -240,9 +240,9 @@ appropriate."
                     ('quelpa "QUELPA")
                     ('elpa "ELPA")))
                ('error
-                (ansi-message! (red "Error (%s): %s" (car pkg) ex)))))
+                (message! (red "Error (%s): %s" (car pkg) ex)))))
 
-           (ansi-message! (bold (green "\n---\nFinished!")))
+           (message! (bold (green "\n---\nFinished!")))
            (doom/reload)))))
 
 ;;;###autoload
@@ -251,7 +251,7 @@ appropriate."
   (interactive)
   (let ((packages (sort (doom-get-outdated-packages) 'doom--sort-alpha)))
     (cond ((not packages)
-           (ansi-message! (green "Everything is up-to-date")))
+           (message! (green "Everything is up-to-date")))
 
           ((not (or (getenv "YES")
                     (y-or-n-p
@@ -269,21 +269,21 @@ appropriate."
                                           (package-version-join (cl-caddr pkg))))
                                 packages
                                 "\n"))))))
-           (ansi-message! (yellow "Aborted!")))
+           (message! (yellow "Aborted!")))
 
           (t
            (dolist (pkg packages)
              (condition-case ex
-                 (ansi-message!
+                 (message!
                   (let ((result (doom-update-package (car pkg))))
                     (color (if result 'green 'red)
                            "%s %s"
                            (if result "Updated" "Failed to update")
                            (car pkg))))
                ('error
-                (ansi-message! (bold (red "Error installing %s: %s" (car pkg) ex))))))
+                (message! (bold (red "Error installing %s: %s" (car pkg) ex))))))
 
-           (ansi-message! (bold (green "\n---\nFinished!")))
+           (message! (bold (green "\n---\nFinished!")))
            (doom/reload)))))
 
 ;;;###autoload
@@ -292,7 +292,7 @@ appropriate."
   (interactive)
   (let ((packages (doom-get-orphaned-packages)))
     (cond ((not packages)
-           (ansi-message! (green "No unused packages to remove")))
+           (message! (green "No unused packages to remove")))
 
           ((not (or (getenv "YES")
                     (y-or-n-p
@@ -301,7 +301,7 @@ appropriate."
                              (mapconcat (lambda (sym) (format "+ %s" (symbol-name sym)))
                                         (sort (cl-copy-list packages) 'string-lessp)
                                         "\n")))))
-           (ansi-message! (yellow "Aborted!")))
+           (message! (yellow "Aborted!")))
 
           (t
            (dolist (pkg packages)
@@ -312,9 +312,9 @@ appropriate."
                             "Failed to delete")
                           pkg)
                ('error
-                (ansi-message! (red "Error deleting %s: %s" pkg ex)))))
+                (message! (red "Error deleting %s: %s" pkg ex)))))
 
-           (ansi-message! (bold (green "\n---\nFinished!")))
+           (message! (bold (green "\n---\nFinished!")))
            (doom/reload)))))
 
 ;;;###autoload

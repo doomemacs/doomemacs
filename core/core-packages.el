@@ -477,13 +477,13 @@ If ONLY-RECOMPILE-P is non-nil, only recompile out-of-date files."
                     (short-name (file-relative-name file doom-emacs-dir)))
                 (cl-incf
                  (cond ((eq result 'no-byte-compile)
-                        (ansi-message! (dark (white "Ignored %s" short-name)))
+                        (message! (dark (white "Ignored %s" short-name)))
                         total-nocomp)
                        ((null result)
-                        (ansi-message! (red "Failed to compile %s" short-name))
+                        (message! (red "Failed to compile %s" short-name))
                         total-fail)
                        (t
-                        (ansi-message! (green "Compiled %s" short-name))
+                        (message! (green "Compiled %s" short-name))
                         total-success))))))
           (dolist (path targets (reverse el-files))
             (let ((path (expand-file-name path doom-emacs-dir)))
@@ -493,7 +493,7 @@ If ONLY-RECOMPILE-P is non-nil, only recompile out-of-date files."
                      (push path el-files))
                     (t
                      (error "Invalid path: %s" path))))))
-    (ansi-message!
+    (message!
      (bold
       (color (if (zerop total-fail) 'green 'red)
              "\n---\n%s %s file(s) %s"

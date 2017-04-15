@@ -36,7 +36,7 @@
   "List of styles.")
 
 ;;;###autoload
-(defmacro ansi-format! (message &rest args)
+(defmacro format! (message &rest args)
   "An alternative to `format' that strips out ANSI codes if used in an
 interactive session."
   `(cl-flet*
@@ -50,10 +50,10 @@ interactive session."
      (format ,message ,@args)))
 
 ;;;###autoload
-(defmacro ansi-message! (message &rest args)
+(defmacro message! (message &rest args)
   "An alternative to `message' that strips out ANSI codes if used in an
 interactive session."
-  `(message (ansi-format! ,message ,@args)))
+  `(message (format! ,message ,@args)))
 
 ;;;###autoload
 (defun doom-ansi-apply (code format &rest args)
