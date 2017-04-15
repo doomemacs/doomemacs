@@ -44,9 +44,9 @@ interactive session."
            (lambda (ansi)
              `(,(car ansi)
                (lambda (message &rest args)
-                 (apply 'doom--ansi-apply ,(cdr ansi) message args))))
+                 (apply 'doom-ansi-apply ,(cdr ansi) message args))))
            (append doom-ansi-fg doom-ansi-bg doom-ansi-fx))
-        (color (symbol-function 'doom--ansi-apply)))
+        (color (symbol-function 'doom-ansi-apply)))
      (format ,message ,@args)))
 
 ;;;###autoload
@@ -55,7 +55,8 @@ interactive session."
 interactive session."
   `(message (ansi-format! ,message ,@args)))
 
-(defun doom--ansi-apply (code format &rest args)
+;;;###autoload
+(defun doom-ansi-apply (code format &rest args)
   (if noninteractive
       (format "\e[%dm%s\e[%sm"
               (if (numberp code)
