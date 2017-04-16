@@ -37,6 +37,14 @@ state are passed in.")
                   ("html" "jade" "pug" "jsx" "tsx"))
                 projectile-other-file-alist))
 
+  ;; Projectile root-searching functions cause an endless loop on TRAMP
+  ;; connections, so we disable them.
+  (defun doom*projectile-locate-dominating-file (orig-fn &rest args)
+    "Don't traverse the file system if a remote connection."
+    (unless (file-remote-p default-directory)
+      (apply orig-fn args)))
+  (advice-add 'projectile-locate-dominating-file :around 'doom*projectile-locate-dominating-file)
+
   (defun doom*projectile-cache-current-file (orig-fun &rest args)
     "Don't cache ignored files."
     (unless (cl-some (lambda (path)
