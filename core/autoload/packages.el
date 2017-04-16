@@ -279,7 +279,7 @@ appropriate."
                     (color (if result 'green 'red)
                            "%s %s"
                            (if result "Updated" "Failed to update")
-                           (car pkg))))
+                           (symbol-name (car pkg)))))
                ('error
                 (message! (bold (red "Error installing %s: %s" (car pkg) ex))))))
 
@@ -306,11 +306,12 @@ appropriate."
           (t
            (dolist (pkg packages)
              (condition-case ex
-                 (message "%s %s"
-                          (if (doom-delete-package pkg t)
-                              "Deleted"
-                            "Failed to delete")
-                          pkg)
+                 (message!
+                  (let ((result (doom-delete-package pkg t)))
+                    (color (if result 'green 'red)
+                           "%s %s"
+                           (if result "Deleted" "Failed to delete")
+                           (symbol-name pkg))))
                ('error
                 (message! (red "Error deleting %s: %s" pkg ex)))))
 
