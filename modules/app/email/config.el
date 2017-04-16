@@ -120,7 +120,7 @@
                 :dyn-target (lambda (target msg) (mu4e-get-trash-folder msg))
                 :action
                 (lambda (docid msg target)
-                  (mu4e~proc-move docid (mu4e~mark-check-target target) "-u-N")))
+                  (mu4e~proc-move docid (mu4e~mark-check-target target) "+S-u-N")))
         mu4e-marks)
 
   ;; Refile will set mail to All Mail (basically archiving them). I want this to
@@ -131,7 +131,7 @@
                  :dyn-target (lambda (target msg) (mu4e-get-refile-folder msg))
                  :action
                  (lambda (docid msg target)
-                   (mu4e~proc-move docid (mu4e~mark-check-target target) "-u-N")))
+                   (mu4e~proc-move docid (mu4e~mark-check-target target) "+S-u-N")))
         mu4e-marks)
 
   ;; This hook correctly modifies the \Inbox and \Starred flags on email when
