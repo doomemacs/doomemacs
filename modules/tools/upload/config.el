@@ -1,11 +1,17 @@
 ;;; tools/upload/config.el
 
-;; Uses `ssh-deploy'. Expects a .dir-locals.el file in your project and expects
-;; `ssh-deploy-root-remote' to be defined there to tell Emacs where to upload
-;; files to. Supports FTP and SSH. If unset, automatically ascertains
-;; `ssh-deploy-root-local' using `doom-project-root'.
+;; Uses `ssh-deploy' to map a local folder to a remote one. Use
+;; `ssh-deploy-root-remote' and `ssh-deploy-root-local' to set up this mapping.
 ;;
-;; Interactive versions of `ssh-deploy's functions are in autoload.el.
+;; Example:
+;;   (setq ssh-deploy-root-local  "/home/hlissner/work/site/"
+;;         ssh-deploy-root-remote "/ssh:hlissner@myserver.com:/var/www/site/"
+;;         ssh-deploy-on-explicity-save t)
+;;
+;; Note: `ssh-deploy-root-local' is optional, and will resort to
+;; `doom-project-root' if unspecified.
+;;
+;; Can be used via .dir-locals.el file in your project.
 
 (def-package! ssh-deploy
   :commands (ssh-deploy-upload-handler
@@ -16,12 +22,15 @@
   :init
   ;; Maybe auto-upload on save
   (add-hook! 'after-save-hook
-    (when (and (bound-and-true-p ssh-deploy-root-remote) ssh-deploy-on-explicit-save)
+    (when (and (bound-and-true-p ssh-deploy-root-remote)
+               ssh-deploy-on-explicit-save)
       (ssh-deploy-upload-handler)))
 
-  ;; Maybe check for changes on open file (if possible)
+  ;; Enable ssh-deploy if variables are set, and check for changes on open file
+  ;; (if possible)
   (add-hook! 'find-file-hook
     (when (bound-and-true-p ssh-deploy-root-remote)
+      (require 'ssh-deploy)
       (unless ssh-deploy-root-local
         (setq ssh-deploy-root-local (doom-project-root)))
       (when ssh-deploy-automatically-detect-remote-changes
