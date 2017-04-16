@@ -253,7 +253,7 @@ workspace to delete."
 (defun +workspace/kill-session ()
   "Delete the current session, clears all workspaces, windows and buffers."
   (interactive)
-  (unless (cl-every '+workspace-delete (+workspace-list))
+  (unless (cl-every '+workspace-delete (delete +workspaces-main (+workspace-list)))
     (+workspace-error "Could not clear session"))
   (+workspace-switch +workspaces-main t)
   (doom/kill-all-buffers)
