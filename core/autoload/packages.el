@@ -242,7 +242,7 @@ appropriate."
                ('error
                 (message! (red "Error (%s): %s" (car pkg) ex)))))
 
-           (message! (bold (green "\n---\nFinished!")))
+           (message! (bold (green "Finished!")))
            (doom/reload)))))
 
 ;;;###autoload
@@ -283,7 +283,7 @@ appropriate."
                ('error
                 (message! (bold (red "Error installing %s: %s" (car pkg) ex))))))
 
-           (message! (bold (green "\n---\nFinished!")))
+           (message! (bold (green "Finished!")))
            (doom/reload)))))
 
 ;;;###autoload
@@ -314,7 +314,7 @@ appropriate."
                ('error
                 (message! (red "Error deleting %s: %s" pkg ex)))))
 
-           (message! (bold (green "\n---\nFinished!")))
+           (message! (bold (green "Finished!")))
            (doom/reload)))))
 
 ;;;###autoload

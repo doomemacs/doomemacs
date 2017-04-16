@@ -496,7 +496,7 @@ If ONLY-RECOMPILE-P is non-nil, only recompile out-of-date files."
     (message!
      (bold
       (color (if (zerop total-fail) 'green 'red)
-             "\n---\n%s %s file(s) %s"
+             "%s %s file(s) %s"
              (if only-recompile-p "Recompiled" "Compiled")
              (format (if el-files "%d/%d" "%d")
                      total-success
