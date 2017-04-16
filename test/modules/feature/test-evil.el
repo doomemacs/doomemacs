@@ -19,7 +19,6 @@
       (should (equal (do-it "%:~") "~/.emacs.d/test/modules/feature/test-evil.el"))
       (should (equal (do-it "%:s?e?x?") "fxature/test-evil.el"))
       (should (equal (do-it "%:gs?e?x?") "fxaturx/txst-xvil.xl"))
-      (should (equal (do-it "%:P/") (abbreviate-file-name (doom-project-root))))
       (should (equal (file-truename (do-it "%:p"))
                      (file-truename buffer-file-name)))))
 
