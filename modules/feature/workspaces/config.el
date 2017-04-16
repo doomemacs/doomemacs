@@ -50,7 +50,7 @@ renamed.")
     ;; main workspace to fill this role.
     (persp-add-new +workspaces-main)
     ;; Switch to it if we aren't auto-loading the last session
-    (unless (= persp-auto-resume-time -1)
+    (when (= persp-auto-resume-time -1)
       (persp-frame-switch +workspaces-main)))
 
   (define-key persp-mode-map [remap delete-window] '+workspace/close-window-or-workspace)
