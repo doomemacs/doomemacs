@@ -102,7 +102,7 @@ base by `doom!' and for calculating how many packages exist.")
 
       byte-compile-dynamic nil
       byte-compile-verbose doom-debug-mode
-      byte-compile-warnings '(not mapcar free-vars unresolved noruntime lexical make-local))
+      byte-compile-warnings '(not free-vars unresolved noruntime lexical make-local))
 
 
 ;;
@@ -470,7 +470,7 @@ If ONLY-RECOMPILE-P is non-nil, only recompile out-of-date files."
                       (let ((elc-file (byte-compile-dest-file file)))
                         (and (file-exists-p elc-file)
                              (file-newer-than-file-p file elc-file))))
-              (let ((result (quiet! (byte-compile-file file)))
+              (let ((result (byte-compile-file file))
                     (short-name (file-relative-name file doom-emacs-dir)))
                 (cl-incf
                  (cond ((eq result 'no-byte-compile)
