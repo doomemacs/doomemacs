@@ -180,8 +180,7 @@ active."
 ;; Show version string for multi-version managers like rvm, rbenv, pyenv, etc.
 (defvar-local +doom-modeline-env-version nil)
 (defvar-local +doom-modeline-env-command nil)
-(add-hook 'focus-in-hook  #'+doom-modeline|update-env)
-(add-hook 'find-file-hook #'+doom-modeline|update-env)
+(add-hook! '(focus-in-hook find-file-hook) #'+doom-modeline|update-env)
 (defun +doom-modeline|update-env ()
   (when +doom-modeline-env-command
     (let* ((default-directory (doom-project-root))
@@ -192,7 +191,7 @@ active."
 
 ;; Only support python and ruby for now
 (add-hook! 'python-mode-hook (setq +doom-modeline-env-command "python --version 2>&1 | cut -d' ' -f2"))
-(add-hook! 'ruby-mode-hook   (setq +doom-modeline-env-command "ruby --version 2>&1 | cut -d' ' -f2"))
+(add-hook! 'ruby-mode-hook   (setq +doom-modeline-env-command "ruby   --version 2>&1 | cut -d' ' -f2"))
 
 
 ;;
