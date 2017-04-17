@@ -14,7 +14,7 @@
         (words    (plist-get plist :words))
         (patterns (plist-get plist :patterns)))
     (when (or symbols words patterns)
-      (let ((fn-name (intern (format "doom--rotate-%s" (s-join "-" (mapcar #'symbol-name modes))))))
+      (let ((fn-name (intern (format "doom--rotate-%s" (string-join (mapcar #'symbol-name modes) "-")))))
         `(progn
            (defun ,fn-name ()
              (require 'rotate-text)
