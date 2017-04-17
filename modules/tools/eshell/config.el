@@ -22,7 +22,7 @@
         eshell-glob-case-insensitive t
         eshell-error-if-no-glob t
         ;; em-alias
-        eshell-aliases-file "~/.eshell-aliases")
+        eshell-aliases-file (concat doom-local-dir ".eshell-aliases"))
 
   :config
   (set! :popup "^\\*eshell:popup\\*$" :regexp t :size 25)

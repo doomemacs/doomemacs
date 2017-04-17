@@ -6,8 +6,6 @@
   "The helm text prompt prefix string is globally replaced with this string.")
 
 
-
-
 ;;
 ;; Packages
 ;;

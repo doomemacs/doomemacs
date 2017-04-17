@@ -6,13 +6,13 @@
 ;; you're looking at, with:
 ;;
 ;; 1. A dwim Jump-to-definition functionality that "just works", with the help
-;;    of `dumb-jump'.
+;;    of `dumb-jump' and `xref'.
 ;; 2. A dwim interface to the new (and experimental) xref API built into Emacs.
 ;;    Once its API is more stable, backends could be written (or provided by
 ;;    plugins) to create universal find-references and find-definition
 ;;    functionality. Warning: xref may change drastically in future updates.
 ;; 3. Simple ways to look up the symbol at point in external resources, like
-;;    stackoverflow, devdocs.io or google.
+;;    stackoverflow, devdocs.io or google. See `+jump/online' (TODO Test me!)
 ;; 4. TODO Automatic and transparent integration with cscope databases and ctags
 ;;    files. Databases are optionally isolated to the Emacs environment.
 

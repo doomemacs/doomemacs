@@ -10,7 +10,8 @@
      (:background "#333333" :foreground "#000000")) ;; FIXME
     (((class color) (background dark))
      (:background "#51afef" :foreground "#181e26")))
-  "The face for selected tabs displayed by `+workspace/display'")
+  "The face for selected tabs displayed by `+workspace/display'"
+  :group 'doom)
 
 (defface +workspace-tab-face
   '((((class color) (background light))
@@ -19,7 +20,8 @@
      (:background "#23272e" :foreground "#5B6268"))
     (((class color) (background dark))
      (:background "#262626" :foreground "#525252")))
-  "The face for selected tabs displayed by `+workspace/display'")
+  "The face for selected tabs displayed by `+workspace/display'"
+  :group 'doom)
 
 ;;;###autoload
 (defun +workspace-list ()
@@ -110,7 +112,7 @@ Otherwise return t on success, nil otherwise."
   "Rename the current workspace named NAME to NEW-NAME. Returns old name on
 success, nil otherwise."
   (when (+workspace-protected-p name)
-    (error "Can't rename '%s' workspace"))
+    (error "Can't rename '%s' workspace" name))
   (persp-rename new-name (+workspace-get name)))
 
 ;;;###autoload

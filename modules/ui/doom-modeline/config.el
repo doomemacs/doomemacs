@@ -191,8 +191,8 @@ active."
                                         s)))))
 
 ;; Only support python and ruby for now
-(add-hook! python-mode (setq +doom-modeline-env-command "python --version 2>&1 | cut -d' ' -f2"))
-(add-hook! ruby-mode   (setq +doom-modeline-env-command "ruby --version 2>&1 | cut -d' ' -f2"))
+(add-hook! 'python-mode-hook (setq +doom-modeline-env-command "python --version 2>&1 | cut -d' ' -f2"))
+(add-hook! 'ruby-mode-hook   (setq +doom-modeline-env-command "ruby --version 2>&1 | cut -d' ' -f2"))
 
 
 ;;

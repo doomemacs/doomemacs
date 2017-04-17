@@ -15,13 +15,17 @@
 (def-package! yaml-mode :mode "\\.ya?ml$")
 
 
-(def-package! json-mode :mode "\\.js\\(on\\|[hl]int\\(rc\\)?\\)$"
+(def-package! json-mode
+  :mode "\\.js\\(on\\|[hl]int\\(rc\\)?\\)$"
   :config
   (set! :electric 'json-mode :chars '(?\n ?: ?{ ?})))
 
 
 (def-package! vimrc-mode
-  :mode ("/\\.?g?vimrc$" "\\.vim$" "/\\.?vimperatorrc$" "\\.vimp$"))
+  :mode "/\\.?g?vimrc$"
+  :mode "\\.vim$"
+  :mode "\\.?vimperatorrc$"
+  :mode "\\.vimp$")
 
 
 (def-package! dockerfile-mode
@@ -35,7 +39,8 @@
 
 ;; For ROM hacking or debugging
 (def-package! hexl-mode
-  :mode ("\\.hex$" "\\.nes$"))
+  :mode "\\.hex$"
+  :mode "\\.nes$")
 
 
 ;;

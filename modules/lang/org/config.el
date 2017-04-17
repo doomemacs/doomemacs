@@ -170,7 +170,8 @@
   ;; Fontify checkboxes and dividers
   (defface org-list-bullet
     '((t (:inherit font-lock-keyword-face)))
-    "Face for list bullets")
+    "Face for list bullets"
+    :group 'doom)
   (font-lock-add-keywords
    'org-mode '(("^ *\\([-+]\\|[0-9]+[).]\\) " (1 'org-list-bullet))
                ("^ *\\(-----+\\)$" (1 'org-meta-line))))

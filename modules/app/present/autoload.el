@@ -79,6 +79,8 @@
 
 ;;;###autoload
 (define-minor-mode +present/big-mode
+  "A global mode that resizes the font, for streams, screen-sharing and
+presentations."
   :init-value nil
   :lighter " BIG"
   :global t

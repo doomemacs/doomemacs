@@ -21,8 +21,8 @@
 (def-package! elfeed
   :commands elfeed
   :config
-  (setq-default elfeed-search-filter "@2-week-ago ")
-  (setq elfeed-db-directory (concat doom-local-dir "elfeed/db/")
+  (setq elfeed-search-filter "@2-week-ago "
+        elfeed-db-directory (concat doom-local-dir "elfeed/db/")
         elfeed-enclosure-default-dir (concat doom-local-dir "elfeed/enclosures/")
         elfeed-show-entry-switch #'+rss-popup-pane
         elfeed-show-entry-delete #'+rss/delete-pane
