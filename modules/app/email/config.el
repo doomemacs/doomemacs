@@ -5,7 +5,7 @@
 ;; with `mu4e', and requires `offlineimap' and `mu' to be installed.
 
 (defvar +email-mu4e-mail-path "~/.mail"
-  "TODO")
+  "The directory path of mu's maildir.")
 
 
 ;;
@@ -15,7 +15,7 @@
 (defvar +email--accounts nil)
 
 (def-setting! :email (label letvars &optional default)
-  "TODO"
+  "Registers an email address for mu4e."
   (let* ((name (or (cdr (assq 'user-full-name letvars)) user-full-name))
          (address (cdr (assq 'user-mail-address letvars))))
     (dolist (var letvars letvars)
@@ -199,6 +199,9 @@
   :config
   (setq org-mu4e-link-query-in-headers-mode nil
         org-mu4e-convert-to-html t)
+
+  ;; Only render to html once. Without this, it would continue to do so, if the
+  ;; first send failed for whatever reason.
   (add-hook! 'message-send-hook
     (setq-local org-mu4e-convert-to-html nil)))
 
