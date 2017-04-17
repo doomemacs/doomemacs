@@ -133,7 +133,7 @@ but do not execute them."
                                flags))))
     (if lines
         (mapcar (lambda (it)
-                  (let ((pane (s-split it ";")))
+                  (let ((pane (split-string it ";")))
                     (list (nth 0 pane)
                           :window-id (nth 1 pane)
                           :session-id (nth 2 pane)

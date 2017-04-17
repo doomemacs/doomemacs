@@ -1,7 +1,7 @@
 # `(progn
-     (setq-local pkgs (s-split "/" (s-chop-prefix (concat (doom-project-root) "lib/") (file-name-sans-extension buffer-file-name)) t))
+     (setq-local pkgs (split-string (s-chop-prefix (concat (doom-project-root) "lib/") (file-name-sans-extension buffer-file-name)) "/" t))
      (setq-local pkgs-p (eq (length pkgs) 1))
-     (setq-local pkg-module (s-replace " " "::" (s-titleized-words (if pkgs-p (car pkgs) (s-join " " (butlast pkgs))))))
+     (setq-local pkg-module (s-replace " " "::" (s-titleized-words (if pkgs-p (car pkgs) (string-join (butlast pkgs) " ")))))
 
      (concat "lib/" (file-name-nondirectory buffer-file-name)))`
 
