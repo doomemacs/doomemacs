@@ -1,5 +1,7 @@
 ;;; feature/version-control/config.el
 
+(setq vc-make-backup-files nil)
+
 (load! +git)
 ;; (load! +hg)
 

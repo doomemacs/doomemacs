@@ -38,22 +38,26 @@ line or use --debug-init to enable this.")
 ;; conflict otherwise.
 
 (defvar doom-local-dir (concat doom-emacs-dir ".local/")
-  "Root directory for local Emacs files.")
-
-(defvar doom-packages-dir (concat doom-local-dir "packages/")
-  "Where package.el and quelpa plugins (and their caches) are kept.")
+  "Root directory for local Emacs files. Use this as permanent storage for files
+that are safe to share across systems (if this config is symlinked across
+several computers).")
 
 (defvar doom-etc-dir
-  (concat doom-local-dir "etc/" (system-name) "/")
-  "Hostname-based directory for non-volatile temporary files. These are not
-deleted or tampored with by DOOM functions. It should not be used for transient
-or unstable files.")
+  (concat doom-local-dir "@" (system-name) "/etc/")
+  "Host-namespaced directory for non-volatile storage. These are not deleted or
+tampored with by DOOM functions. Use this for dependencies like servers or
+config files that are stable (i.e. it should be unlikely that you need to delete
+them if something goes wrong).")
 
 (defvar doom-cache-dir
-  (concat doom-local-dir "cache/" (system-name) "/")
-  "Hostname-based directory for volatile temporary files. They are deleted when
-`doom/clean-cache' is called. For more stable local storage, use
-`doom-local-dir'.")
+  (concat doom-local-dir "@" (system-name) "/cache/")
+  "Host-namespaced directory for volatile storage. Deleted when
+`doom/clean-cache' is called. Use this for transient files that are generated on
+the fly like caches and temporary files. Anything that may need to be cleared if
+there are problems.")
+
+(defvar doom-packages-dir (concat doom-local-dir "packages/")
+  "Where package.el and quelpa plugins (and their caches) are stored.")
 
 (defvar doom-autoload-file
   (concat doom-local-dir "autoloads.el")
@@ -74,7 +78,6 @@ or unstable files.")
 (setq locale-coding-system   'utf-8)   ; please
 (setq-default buffer-file-coding-system 'utf-8) ; with sugar on top
 
-;; Configuration
 (setq-default
  ad-redefinition-action 'accept   ; silence advised function warnings
  apropos-do-all t                 ; make `apropos' more useful
@@ -82,26 +85,30 @@ or unstable files.")
  compilation-ask-about-save nil   ; save all buffers on `compile'
  compilation-scroll-output t
  confirm-nonexistent-file-or-buffer t
- custom-file (concat doom-etc-dir "custom.el")
  enable-recursive-minibuffers nil
  debug-on-error (and (not noninteractive) doom-debug-mode)
  idle-update-delay 2              ; update ui less often
- url-configuration-directory (concat doom-cache-dir "url/")
  ;; keep the point out of the minibuffer
  minibuffer-prompt-properties '(read-only t point-entered minibuffer-avoid-prompt face minibuffer-prompt)
- ;; History & backup settings
+ ;; History & backup settings (save nothing, that's what git is for)
  auto-save-default nil
- auto-save-list-file-name (concat doom-cache-dir "autosave")
- backup-directory-alist (list (cons ".*" (concat doom-cache-dir "backup/")))
  create-lockfiles nil
  history-length 1000
  make-backup-files nil
- server-auth-dir (concat doom-cache-dir "server/")
- tramp-auto-save-directory (concat doom-cache-dir "tramp/")
- vc-make-backup-files nil
+ ;; files
+ abbrev-file-name             (concat doom-local-dir "abbrev.el")
+ auto-save-list-file-name     (concat doom-cache-dir "autosave")
+ backup-directory-alist       (list (cons "." (concat doom-cache-dir "backup/")))
+ custom-file                  (concat doom-etc-dir "custom.el")
+ pcache-directory             (concat doom-cache-dir "pcache/")
+ server-auth-dir              (concat doom-cache-dir "server/")
+ shared-game-score-directory  (concat doom-etc-dir "shared-game-score/")
+ tramp-auto-save-directory    (concat doom-cache-dir "tramp-auto-save/")
  tramp-backup-directory-alist backup-directory-alist
- ;; in case of `persistent-soft'
- pcache-directory (concat doom-cache-dir "pcache/"))
+ tramp-persistency-file-name  (concat doom-cache-dir "tramp-persistency.el")
+ url-cache-directory          (concat doom-cache-dir "url/")
+ url-configuration-directory  (concat doom-etc-dir "url/")
+ undo-tree-history-directory-alist (list (cons "." (concat doom-cache-dir "undo-tree-hist/"))))
 
 ;; be quiet at startup
 (advice-add 'display-startup-echo-area-message :override 'ignore)

@@ -5,7 +5,13 @@
       dired-recursive-deletes 'top
       ;; Auto refresh dired, but be quiet about it
       global-auto-revert-non-file-buffers t
-      auto-revert-verbose nil)
+      auto-revert-verbose nil
+      ;; files
+      image-dired-dir (concat doom-cache-dir "image-dired/")
+      image-dired-db-file (concat image-dired-dir "image-dired/db.el")
+      image-dired-gallery-dir (concat image-dired-dir "gallery/")
+      image-dired-temp-image-file (concat image-dired-dir "temp-image")
+      image-dired-temp-rotate-image-file (concat image-dired-dir "temp-rotate-image"))
 
 (defun +dired|sort-directories-first ()
   "List directories first in dired buffers."
