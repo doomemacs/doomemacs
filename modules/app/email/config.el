@@ -160,7 +160,32 @@
 
 
 (def-package! evil-mu4e
-  :after mu4e)
+  :after mu4e
+  :when (featurep! :feature evil)
+  :init (defvar evil-mu4e-state 'normal)
+  :config
+  (defun +email|headers-keybinds ()
+    (map! :Ln "-"   'mu4e-headers-mark-for-unflag
+          :Ln "+"   'mu4e-headers-mark-for-flag
+          :Ln "v"   'evil-visual-line
+          :Ln "q"   'mu4e~headers-quit-buffer
+          ;; Enable multiple markings via visual mode
+          :Lv "d"   '+email/mark-multiple
+          :Lv "-"   '+email/mark-multiple
+          :Lv "+"   '+email/mark-multiple
+          :Lv "!"   '+email/mark-multiple
+          :Lv "?"   '+email/mark-multiple
+          :Lv "r"   '+email/mark-multiple))
+  (add-hook 'mu4e-headers-mode-hook '+email|headers-keybinds)
+
+  ;; (defun +email|view-keybinds ())
+  ;; (add-hook 'mu4e-view-mode-hook '+email|view-keybinds)
+
+  (defun +email|main-keybinds ()
+    (map! :Ln "q" 'mu4e-quit
+          :Ln "u" 'mu4e-update-index
+          :Ln "U" 'mu4e-update-mail-and-index))
+  (add-hook 'mu4e-main-mode-hook '+email|main-keybinds))
 
 
 (def-package! mu4e-maildirs-extension
