@@ -71,7 +71,7 @@
   :after company
   :config
   (setq company-statistics-file (concat doom-cache-dir "company-stats-cache.el"))
-  (company-statistics-mode +1))
+  (quiet! (company-statistics-mode +1)))
 
 
 ;; Looks ugly on OSX without emacs-mac build
