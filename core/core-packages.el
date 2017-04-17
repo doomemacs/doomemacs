@@ -151,9 +151,6 @@ to speed up startup."
 
     (load "quelpa" nil t)
     (load "use-package" nil t)
-    ;; Strip package management from use-package; DOOM handles this its own way
-    (mapc (lambda (keyword) (setq use-package-keywords (delq keyword use-package-keywords)))
-          '(:ensure :pin :defer-install))
 
     (setq doom-init-p t)))
 
