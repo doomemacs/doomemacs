@@ -15,8 +15,8 @@
 (defvar +org-init-hook nil
   "TODO")
 
-(add-hook 'org-load-hook '+org|init)
-(add-hook 'org-mode-hook '+org|hook)
+(add-hook 'org-load-hook #'+org|init)
+(add-hook 'org-mode-hook #'+org|hook)
 
 ;; Custom variables
 (defvar +org-dir (expand-file-name "~/work/org/")
@@ -58,15 +58,15 @@
   (defun +org|realign-table-maybe ()
     (when (org-at-table-p)
       (org-table-align)))
-  (add-hook 'evil-insert-state-exit-hook '+org|realign-table-maybe nil t)
+  (add-hook 'evil-insert-state-exit-hook #'+org|realign-table-maybe nil t)
 
   (defun +org|update-cookies ()
     "Update counts on headlines (\"cookies\")."
     (when (and buffer-file-name (file-exists-p buffer-file-name))
       (org-update-statistics-cookies t)))
 
-  (add-hook 'before-save-hook '+org|update-cookies nil t)
-  (add-hook 'evil-insert-state-exit-hook '+org|update-cookies nil t))
+  (add-hook 'before-save-hook #'+org|update-cookies nil t)
+  (add-hook 'evil-insert-state-exit-hook #'+org|update-cookies nil t))
 
 
 (defun +org|init ()
@@ -199,44 +199,44 @@
           "RET" nil
           "C-j" nil
           "C-k" nil
-          :i [remap doom/inflate-space-maybe] 'org-self-insert-command
-          :i "RET" 'org-return-indent)
+          :i [remap doom/inflate-space-maybe] #'org-self-insert-command
+          :i "RET" #'org-return-indent)
 
         (:map evil-org-mode-map
-          :n  "RET" '+org/dwim-at-point
+          :n  "RET" #'+org/dwim-at-point
           ;;
-          :ni "A-L" 'org-shiftmetaright
-          :ni "A-H" 'org-shiftmetaleft
-          :ni "A-K" 'org-shiftmetaup
-          :ni "A-J" 'org-shiftmetadown
+          :ni "A-L" #'org-shiftmetaright
+          :ni "A-H" #'org-shiftmetaleft
+          :ni "A-K" #'org-shiftmetaup
+          :ni "A-J" #'org-shiftmetadown
           ;; Expand tables (or shiftmeta move)
-          :ni "C-S-l" '+org/table-append-field-or-shift-right
-          :ni "C-S-h" '+org/table-prepend-field-or-shift-left
-          :ni "C-S-k" '+org/table-prepend-row-or-shift-up
-          :ni "C-S-j" '+org/table-append-row-or-shift-down
+          :ni "C-S-l" #'+org/table-append-field-or-shift-right
+          :ni "C-S-h" #'+org/table-prepend-field-or-shift-left
+          :ni "C-S-k" #'+org/table-prepend-row-or-shift-up
+          :ni "C-S-j" #'+org/table-append-row-or-shift-down
           ;; Navigate table cells
-          :i  "C-L" '+org/table-next-field
-          :i  "C-H" '+org/table-previous-field
-          :i  "C-K" '+org/table-previous-row
-          :i  "C-J" '+org/table-next-row
+          :i  "C-L" #'+org/table-next-field
+          :i  "C-H" #'+org/table-previous-field
+          :i  "C-K" #'+org/table-previous-row
+          :i  "C-J" #'+org/table-next-row
 
-          :i  "C-e" 'org-end-of-line
-          :i  "C-a" 'org-beginning-of-line
+          :i  "C-e" #'org-end-of-line
+          :i  "C-a" #'org-beginning-of-line
 
-          :i  "<tab>" '+org/indent-or-next-field-or-yas-expand
-          :i  [S-iso-lefttab] '+org/dedent-or-prev-field ; for GNU Emacs
-          :i  [(shift tab)] '+org/dedent-or-prev-field
-          :i  [backtab] '+org/dedent-or-prev-field
+          :i  "<tab>"         #'+org/indent-or-next-field-or-yas-expand
+          :i  [S-iso-lefttab] #'+org/dedent-or-prev-field ; for GNU Emacs
+          :i  [(shift tab)]   #'+org/dedent-or-prev-field
+          :i  [backtab]       #'+org/dedent-or-prev-field
 
-          :n  "<tab>" '+org/toggle-fold
+          :n  "<tab>" #'+org/toggle-fold
 
-          :nv "j"   'evil-next-visual-line
-          :nv "k"   'evil-previous-visual-line
-          :v  "<S-tab>" '+snippets/expand-on-region
+          :nv "j"   #'evil-next-visual-line
+          :nv "k"   #'evil-previous-visual-line
+          :v  "<S-tab>" #'+snippets/expand-on-region
 
           :i  "M-a" (λ! (evil-visual-state) (org-mark-element))
-          :n  "M-a" 'org-mark-element
-          :v  "M-a" 'mark-whole-buffer
+          :n  "M-a" #'org-mark-element
+          :v  "M-a" #'mark-whole-buffer
 
           :ni "<M-return>"   (λ! (+org/insert-item 'below))
           :ni "<S-M-return>" (λ! (+org/insert-item 'above))
@@ -253,75 +253,75 @@
           :v  "M-`" "S+"
 
           (:localleader
-           :n  "RET" 'org-archive-subtree
-           :n  "SPC" '+org/toggle-checkbox
-           :n  "/"  'org-sparse-tree
-           :n  "="  'org-align-all-tags
-           :n  "?"  'org-tags-view
-           :n  "a"  'org-agenda
-           :n  "d"  'org-time-stamp
-           :n  "D"  'org-deadline
-           :n  "e"  'org-edit-special
-           :n  "E"  '+org/edit-special-same-window
+           :n  "RET" #'org-archive-subtree
+           :n  "SPC" #'+org/toggle-checkbox
+           :n  "/"  #'org-sparse-tree
+           :n  "="  #'org-align-all-tags
+           :n  "?"  #'org-tags-view
+           :n  "a"  #'org-agenda
+           :n  "d"  #'org-time-stamp
+           :n  "D"  #'org-deadline
+           :n  "e"  #'org-edit-special
+           :n  "E"  #'+org/edit-special-same-window
            :n  "n"  (λ! (if (buffer-narrowed-p) (widen) (org-narrow-to-subtree)))
-           :n  "r"  'org-refile
+           :n  "r"  #'org-refile
            :n  "R"  (λ! (org-metaleft) (org-archive-to-archive-sibling)) ; archive to parent sibling
-           :n  "s"  'org-schedule
+           :n  "s"  #'org-schedule
            :n  "t"  (λ! (org-todo (if (org-entry-is-todo-p) 'none 'todo)))
            :v  "t"  (λ! (evil-ex-normal evil-visual-beginning evil-visual-end "\\t"))
-           :n  "T"  'org-todo
-           :n  "v"  'variable-pitch-mode
-           :nv "l"  'org-insert-link
-           :nv "L"  'org-store-link
+           :n  "T"  #'org-todo
+           :n  "v"  #'variable-pitch-mode
+           :nv "l"  #'org-insert-link
+           :nv "L"  #'org-store-link
            ;; :n  "w"  'writing-mode
            ;; :n  "x"  '+org/remove-link
            )
 
           ;; TODO Improve folding bindings
-          :n  "za"  '+org/toggle-fold
-          :n  "zA"  'org-shifttab
-          :n  "zc"  'outline-hide-subtree
+          :n  "za"  #'+org/toggle-fold
+          :n  "zA"  #'org-shifttab
+          :n  "zc"  #'outline-hide-subtree
           :n  "zC"  (λ! (outline-hide-sublevels 1))
           :n  "zd"  (lambda (&optional arg) (interactive "p") (outline-hide-sublevels (or arg 3)))
           :n  "zm"  (λ! (outline-hide-sublevels 1))
-          :n  "zo"  'outline-show-subtree
-          :n  "zO"  'outline-show-all
-          :n  "zr"  'outline-show-all
+          :n  "zo"  #'outline-show-subtree
+          :n  "zO"  #'outline-show-all
+          :n  "zr"  #'outline-show-all
 
-          :m  "]]"  (λ! (call-interactively 'org-forward-heading-same-level) (org-beginning-of-line))
-          :m  "[["  (λ! (call-interactively 'org-backward-heading-same-level) (org-beginning-of-line))
-          :m  "]l"  'org-next-link
-          :m  "[l"  'org-previous-link
+          :m  "]]"  (λ! (call-interactively #'org-forward-heading-same-level) (org-beginning-of-line))
+          :m  "[["  (λ! (call-interactively #'org-backward-heading-same-level) (org-beginning-of-line))
+          :m  "]l"  #'org-next-link
+          :m  "[l"  #'org-previous-link
 
-          :m  "gh"  'outline-up-heading
-          :m  "gj"  'org-forward-heading-same-level
-          :m  "gk"  'org-backward-heading-same-level
-          :m  "gl"  (λ! (call-interactively 'outline-next-visible-heading) (show-children))
+          :m  "gh"  #'outline-up-heading
+          :m  "gj"  #'org-forward-heading-same-level
+          :m  "gk"  #'org-backward-heading-same-level
+          :m  "gl"  (λ! (call-interactively #'outline-next-visible-heading) (show-children))
 
-          :n  "go"  'org-open-at-point
+          :n  "go"  #'org-open-at-point
           :n  "gO"  (λ! (let ((org-link-frame-setup (append '((file . find-file-other-window)) org-link-frame-setup))
                               (org-file-apps '(("\\.org$" . emacs)
                                                (t . "open \"%s\""))))
-                          (call-interactively 'org-open-at-point)))
+                          (call-interactively #'org-open-at-point)))
 
-          :n  "gQ"  'org-fill-paragraph
-          :m  "$"   'org-end-of-line
-          :m  "^"   'org-beginning-of-line
-          :n  "<"   'org-metaleft
-          :n  ">"   'org-metaright
+          :n  "gQ"  #'org-fill-paragraph
+          :m  "$"   #'org-end-of-line
+          :m  "^"   #'org-beginning-of-line
+          :n  "<"   #'org-metaleft
+          :n  ">"   #'org-metaright
           :v  "<"   (λ! (org-metaleft)  (evil-visual-restore))
           :v  ">"   (λ! (org-metaright) (evil-visual-restore))
-          :n  "-"   'org-cycle-list-bullet
-          :m  "<tab>" 'org-cycle)
+          :n  "-"   #'org-cycle-list-bullet
+          :m  "<tab>" #'org-cycle)
 
         (:after org-agenda
           (:map org-agenda-mode-map
-            :e "<escape>" 'org-agenda-Quit
-            :e "m"   'org-agenda-month-view
-            :e "C-j" 'org-agenda-next-item
-            :e "C-k" 'org-agenda-previous-item
-            :e "C-n" 'org-agenda-next-item
-            :e "C-p" 'org-agenda-previous-item)))
+            :e "<escape>" #'org-agenda-Quit
+            :e "m"   #'org-agenda-month-view
+            :e "C-j" #'org-agenda-next-item
+            :e "C-k" #'org-agenda-previous-item
+            :e "C-n" #'org-agenda-next-item
+            :e "C-p" #'org-agenda-previous-item)))
 
   ;; Initialize everything else
   (run-hooks '+org-init-hook)
@@ -341,16 +341,17 @@
 
   ;; Don't clobber recentf with agenda files
   (defun +org-is-agenda-file (filename)
-    (find (file-truename filename) org-agenda-files :key 'file-truename
-          :test 'equal))
-  (add-to-list 'recentf-exclude '+org-is-agenda-file)
+    (cl-find (file-truename filename) org-agenda-files
+             :key #'file-truename
+             :test #'equal))
+  (add-to-list 'recentf-exclude #'+org-is-agenda-file)
 
   ;; Remove highlights on ESC
   (defun +org*remove-occur-highlights (&rest args)
     (when (eq major-mode 'org-mode)
       (org-remove-occur-highlights)))
-  (advice-add 'evil-force-normal-state :before '+org*remove-occur-highlights)
+  (advice-add #'evil-force-normal-state :before #'+org*remove-occur-highlights)
 
   ;; Don't reset org-hide!
-  (advice-add 'org-find-invisible-foreground :override 'ignore))
+  (advice-add #'org-find-invisible-foreground :override #'ignore))
 

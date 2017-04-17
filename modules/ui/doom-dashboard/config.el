@@ -31,23 +31,23 @@
 (def-package! all-the-icons :when (display-graphic-p))
 
 (unless (display-graphic-p)
-  (defalias 'all-the-icons-octicon 'ignore)
-  (defalias 'all-the-icons-faicon 'ignore)
-  (defalias 'all-the-icons-fileicon 'ignore)
-  (defalias 'all-the-icons-wicon 'ignore)
-  (defalias 'all-the-icons-alltheicon 'ignore))
+  (defalias 'all-the-icons-octicon    #'ignore)
+  (defalias 'all-the-icons-faicon     #'ignore)
+  (defalias 'all-the-icons-fileicon   #'ignore)
+  (defalias 'all-the-icons-wicon      #'ignore)
+  (defalias 'all-the-icons-alltheicon #'ignore))
 
 
 ;;
 (setq doom-fallback-buffer +doom-dashboard-name)
 
-(add-hook 'after-make-frame-functions '+doom-dashboard-deferred-reload)
+(add-hook 'after-make-frame-functions #'+doom-dashboard-deferred-reload)
 (add-hook! 'window-setup-hook
   (add-hook! 'kill-buffer-query-functions
     (or (not (+doom-dashboard-p))
         (ignore (ignore-errors (+doom-dashboard-force-reload))
                 (bury-buffer))))
-  (add-hook 'window-configuration-change-hook '+doom-dashboard-reload)
+  (add-hook 'window-configuration-change-hook #'+doom-dashboard-reload)
   (+doom-dashboard-reload)
   (when (equal (buffer-name) "*scratch*")
     (switch-to-buffer (doom-fallback-buffer))))
@@ -82,12 +82,12 @@
     (setq +doom-dashboard-edited-p t
           mode-line-format +doom-dashboard-old-modeline
           fringe-indicator-alist +doom-dashboard--old-fringe-indicator)
-    (remove-hook 'evil-insert-state-entry-hook 'doom|mode-erase-on-insert t)))
+    (remove-hook 'evil-insert-state-entry-hook #'doom|mode-erase-on-insert t)))
 
 (defun +doom-dashboard-deferred-reload (&rest _)
   "Reload the dashboard after a brief pause. This is necessary for new frames,
 whose dimensions may not be fully initialized by the time this is run."
-  (run-with-timer 0.1 nil '+doom-dashboard-reload))
+  (run-with-timer 0.1 nil #'+doom-dashboard-reload))
 
 (defun +doom-dashboard-reload (&optional dir)
   "Update the DOOM scratch buffer (or create it, if it doesn't exist)."
@@ -104,8 +104,8 @@ whose dimensions may not be fully initialized by the time this is run."
     (let ((old-pwd (or dir default-directory)))
       (with-current-buffer (doom-fallback-buffer)
         (+doom-dashboard-mode)
-        (add-hook 'evil-insert-state-entry-hook '+doom-dashboard|clear-on-insert nil t)
-        (add-hook 'after-change-major-mode-hook '+doom-dashboard|clear-on-insert nil t)
+        (add-hook 'evil-insert-state-entry-hook #'+doom-dashboard|clear-on-insert nil t)
+        (add-hook 'after-change-major-mode-hook #'+doom-dashboard|clear-on-insert nil t)
         (setq +doom-dashboard-edited-p nil
               fringe-indicator-alist (mapcar (lambda (i) (cons (car i) nil))
                                              fringe-indicator-alist))

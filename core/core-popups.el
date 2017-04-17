@@ -99,7 +99,7 @@ for :align t on every rule."
                   (plist-member plist :noselect))
         (plist-put plist :select t)))
     plist)
-  (advice-add 'shackle--match :filter-return 'doom*shackle-always-align))
+  (advice-add #'shackle--match :filter-return #'doom*shackle-always-align))
 
 
 ;;
@@ -173,7 +173,7 @@ for :align t on every rule."
              (set-window-parameter window param nil))))))
 
 ;; Hide modeline in completion popups
-(add-hook 'completion-list-mode-hook 'doom-hide-modeline-mode)
+(add-hook 'completion-list-mode-hook #'doom-hide-modeline-mode)
 
 ;;
 (defun doom*popup-init (orig-fn &rest args)
@@ -202,7 +202,7 @@ prevent the popup(s) from messing up the UI (or vice versa)."
         (popups (doom-popup-windows))
         (doom-popup-remember-history t))
     (when popups
-      (mapc 'doom/popup-close popups))
+      (mapc #'doom/popup-close popups))
     (unwind-protect (apply orig-fn args)
       (when popups
         (let ((origin (selected-window)))
@@ -223,9 +223,9 @@ properties."
           (when autokill-p
             (kill-buffer (current-buffer))))))))
 
-(advice-add 'shackle-display-buffer :around 'doom*popup-init)
-(advice-add 'balance-windows :around 'doom*popups-save)
-(advice-add 'delete-window :before 'doom*delete-popup-window)
+(advice-add #'shackle-display-buffer :around #'doom*popup-init)
+(advice-add #'balance-windows :around #'doom*popups-save)
+(advice-add #'delete-window :before #'doom*delete-popup-window)
 
 
 ;;
@@ -251,11 +251,11 @@ mode in any evil-mode buffer."
                 (and (bound-and-true-p evil-mode)
                      (evil-ex-hl-active-p 'evil-ex-search)))
       (doom/popup-close-all)))
-  (advice-add 'evil-force-normal-state :after 'doom*popup-close-all-maybe)
+  (advice-add #'evil-force-normal-state :after #'doom*popup-close-all-maybe)
 
   ;; Make evil-mode cooperate with popups
-  (advice-add 'evil-command-window :override 'doom*popup-evil-command-window)
-  (advice-add 'evil-command-window-execute :override 'doom*popup-evil-command-window-execute)
+  (advice-add #'evil-command-window :override #'doom*popup-evil-command-window)
+  (advice-add #'evil-command-window-execute :override #'doom*popup-evil-command-window-execute)
 
   (defun doom*popup-evil-command-window (hist cmd-key execute-fn)
     "The evil command window has a mind of its own (uses `switch-to-buffer'). We
@@ -292,11 +292,11 @@ the command buffer."
       (setq evil-command-window-current-buffer nil)))
 
   ;; Don't mess with popups
-  (advice-add 'doom-evil-window-move        :around 'doom*popups-save)
-  (advice-add 'evil-window-move-very-bottom :around 'doom*popups-save)
-  (advice-add 'evil-window-move-very-top    :around 'doom*popups-save)
-  (advice-add 'evil-window-move-far-left    :around 'doom*popups-save)
-  (advice-add 'evil-window-move-far-right   :around 'doom*popups-save)
+  (advice-add #'doom-evil-window-move        :around #'doom*popups-save)
+  (advice-add #'evil-window-move-very-bottom :around #'doom*popups-save)
+  (advice-add #'evil-window-move-very-top    :around #'doom*popups-save)
+  (advice-add #'evil-window-move-far-left    :around #'doom*popups-save)
+  (advice-add #'evil-window-move-far-right   :around #'doom*popups-save)
 
   ;; Don't block moving to/from popup windows
   (defun doom*ignore-window-parameters-in-popups (dir &optional arg window)
@@ -304,7 +304,7 @@ the command buffer."
                                ((eq dir 'down) 'below)
                                (t dir))
                          window t arg windmove-wrap-around t))
-  (advice-add 'windmove-find-other-window :override 'doom*ignore-window-parameters-in-popups))
+  (advice-add #'windmove-find-other-window :override #'doom*ignore-window-parameters-in-popups))
 
 
 (after! help-mode
@@ -347,7 +347,7 @@ the command buffer."
 
 ;; (after! magit
 ;;   ;; Don't open files (from magit) within the magit popup
-;;   (advice-add 'magit-display-file-buffer-traditional :around 'doom*popups-save))
+;;   (advice-add #'magit-display-file-buffer-traditional :around #'doom*popups-save))
 
 
 (after! neotree
@@ -363,23 +363,23 @@ the command buffer."
             (neotree-show))))))
 
   ;; Prevents messing up the neotree buffer on window changes
-  (advice-add '+evil-window-move :around 'doom*popups-save-neotree)
+  (advice-add #'+evil-window-move :around #'doom*popups-save-neotree)
   ;; Don't let neotree interfere with moving, splitting or rebalancing windows
-  (advice-add 'evil-window-move-very-bottom :around 'doom*popups-save-neotree)
-  (advice-add 'evil-window-move-very-top    :around 'doom*popups-save-neotree)
-  (advice-add 'evil-window-move-far-left    :around 'doom*popups-save-neotree)
-  (advice-add 'evil-window-move-far-right   :around 'doom*popups-save-neotree))
+  (advice-add #'evil-window-move-very-bottom :around #'doom*popups-save-neotree)
+  (advice-add #'evil-window-move-very-top    :around #'doom*popups-save-neotree)
+  (advice-add #'evil-window-move-far-left    :around #'doom*popups-save-neotree)
+  (advice-add #'evil-window-move-far-right   :around #'doom*popups-save-neotree))
 
 
 (after! mu4e
-  (advice-add 'mu4e~temp-window :override 'doom*mu4e~temp-window)
+  (advice-add #'mu4e~temp-window :override #'doom*mu4e~temp-window)
   (defun doom*mu4e~temp-window (buf height)
     (doom-popup-buffer buf :size 10 :noselect t)
     buf))
 
 
 (after! twittering-mode
-  (setq twittering-pop-to-buffer-function 'pop-to-buffer))
+  (setq twittering-pop-to-buffer-function #'pop-to-buffer))
 
 
 ;; Ensure these settings are attached to org-load-hook as late as possible,
@@ -407,14 +407,14 @@ the command buffer."
     ;; Suppress `delete-other-windows' in org functions:
     (defun doom*suppress-delete-other-windows (orig-fn &rest args)
       (cl-flet ((silence (&rest args) (ignore)))
-        (advice-add 'delete-other-windows :around #'silence)
+        (advice-add #'delete-other-windows :around #'silence)
         (unwind-protect
             (apply orig-fn args)
-          (advice-remove 'delete-other-windows #'silence))))
-    (advice-add 'org-capture-place-template :around #'doom*suppress-delete-other-windows)
-    (advice-add 'org-agenda :around #'doom*suppress-delete-other-windows)
-    (advice-add 'org-add-log-note :around #'doom*suppress-delete-other-windows)
-    (advice-add 'org-export--dispatch-ui :around #'doom*suppress-delete-other-windows)
+          (advice-remove #'delete-other-windows #'silence))))
+    (advice-add #'org-capture-place-template :around #'doom*suppress-delete-other-windows)
+    (advice-add #'org-agenda :around #'doom*suppress-delete-other-windows)
+    (advice-add #'org-add-log-note :around #'doom*suppress-delete-other-windows)
+    (advice-add #'org-export--dispatch-ui :around #'doom*suppress-delete-other-windows)
 
     ;; Tell `org-src-edit' to open another window, which shackle can intercept.
     (setq org-src-window-setup 'other-window)
@@ -426,11 +426,11 @@ the command buffer."
       (let ((window (doom-popup-buffer (car args))))
         (set-window-dedicated-p window nil)
         (select-window window)))
-    (advice-add 'org-src-switch-to-buffer :override 'doom*org-src-switch-to-buffer)
+    (advice-add #'org-src-switch-to-buffer :override #'doom*org-src-switch-to-buffer)
 
     (defun doom*org-src-exit (&rest _)
       (when doom-popup-mode (doom-popup-mode -1)))
-    (advice-add 'org-edit-src-exit :after 'doom*org-src-exit)
+    (advice-add #'org-edit-src-exit :after #'doom*org-src-exit)
 
     ;; Ensure todo, agenda, and other popups are opened with shackle
     (defun doom*org-switch-to-buffer-other-window (&rest args)
@@ -439,10 +439,10 @@ the command buffer."
          (cond ((stringp buf) (get-buffer-create buf))
                ((bufferp buf) buf)
                (t (error "Invalid buffer %s" buf))))))
-    (advice-add 'org-switch-to-buffer-other-window :override 'doom*org-switch-to-buffer-other-window)
+    (advice-add #'org-switch-to-buffer-other-window :override #'doom*org-switch-to-buffer-other-window)
 
     ;; Hide modeline in org-agenda
-    (add-hook 'org-agenda-finalize-hook 'doom-hide-modeline-mode)
+    (add-hook 'org-agenda-finalize-hook #'doom-hide-modeline-mode)
 
     (after! org-agenda
       (setq org-agenda-window-setup 'other-window)

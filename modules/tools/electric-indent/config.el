@@ -26,11 +26,11 @@ trigger electric indentation."
         (chars (plist-get plist :chars))
         (words (plist-get plist :words)))
     (when (or chars words)
-      (let ((fn-name (intern (format "doom--electric-%s" (s-join "-" (mapcar 'symbol-name modes))))))
+      (let ((fn-name (intern (format "doom--electric-%s" (s-join "-" (mapcar #'symbol-name modes))))))
         `(progn
            (defun ,fn-name ()
              (electric-indent-local-mode +1)
              ,(if chars `(setq electric-indent-chars ',chars))
              ,(if words `(setq doom-electric-indent-words ',words)))
-           (add-hook! ,modes ',fn-name))))))
+           (add-hook! ,modes #',fn-name))))))
 

@@ -32,12 +32,12 @@
  visible-cursor nil
  x-stretch-cursor nil
  ;; no beeping or blinking please
- ring-bell-function 'ignore
+ ring-bell-function #'ignore
  visible-bell nil
  ;; Ask for confirmation on quit only if real buffers exist
  confirm-kill-emacs (lambda (_) (if (doom-real-buffers-list) (y-or-n-p "››› Quit?") t)))
 
-(fset 'yes-or-no-p 'y-or-n-p) ; y/n instead of yes/no
+(fset #'yes-or-no-p #'y-or-n-p) ; y/n instead of yes/no
 
 ;; auto-enabled in Emacs 25+; I'd rather enable it manually
 (global-eldoc-mode -1)
@@ -72,7 +72,7 @@ disabled.")
 ;; undo/redo changes to Emacs' window layout
 (defvar winner-dont-bind-my-keys t) ; I'll bind keys myself
 (require 'winner)
-(add-hook 'window-setup-hook 'winner-mode)
+(add-hook 'window-setup-hook #'winner-mode)
 
 
 ;;
@@ -107,7 +107,7 @@ disabled.")
   (defun doom*autoload-hideshow ()
     (unless (bound-and-true-p hs-minor-mode)
       (hs-minor-mode 1)))
-  (advice-add 'evil-toggle-fold :before 'doom*autoload-hideshow)
+  (advice-add #'evil-toggle-fold :before #'doom*autoload-hideshow)
   :config
   (setq hs-hide-comments-when-hiding-all nil))
 
@@ -156,10 +156,10 @@ file."
     (if highlight-indentation-mode
         (progn
           (doom|inject-trailing-whitespace)
-          (add-hook 'before-save-hook 'delete-trailing-whitespace nil t)
-          (add-hook 'after-save-hook 'doom|inject-trailing-whitespace nil t))
-      (remove-hook 'before-save-hook 'delete-trailing-whitespace t)
-      (remove-hook 'after-save-hook 'doom|inject-trailing-whitespace t)
+          (add-hook 'before-save-hook #'delete-trailing-whitespace nil t)
+          (add-hook 'after-save-hook #'doom|inject-trailing-whitespace nil t))
+      (remove-hook 'before-save-hook #'delete-trailing-whitespace t)
+      (remove-hook 'after-save-hook #'doom|inject-trailing-whitespace t)
       (delete-trailing-whitespace))))
 
 ;; For modes that don't adequately highlight numbers
@@ -183,7 +183,7 @@ file."
   (add-hook!
     (markdown-mode prog-mode scss-mode web-mode conf-mode groovy-mode
      nxml-mode snippet-mode php-mode)
-    'nlinum-mode)
+    #'nlinum-mode)
 
   :config
   (defun doom*nlinum-flush (&rest _)
@@ -191,7 +191,7 @@ file."
     (dolist (buffer (doom-visible-buffers))
       (with-current-buffer buffer
         (when nlinum-mode (nlinum--flush)))))
-  (advice-add 'set-frame-font :after 'doom*nlinum-flush)
+  (advice-add #'set-frame-font :after #'doom*nlinum-flush)
 
   ;; Optimization: calculate line number column width beforehand
   (add-hook! nlinum-mode
@@ -203,7 +203,7 @@ file."
 (def-package! rainbow-delimiters
   :commands rainbow-delimiters-mode
   :config (setq rainbow-delimiters-max-face-count 3)
-  :init (add-hook 'lisp-mode-hook 'rainbow-delimiters-mode))
+  :init (add-hook 'lisp-mode-hook #'rainbow-delimiters-mode))
 
 ;; For a distractions-free-like UI, that dynamically resizes margets and can
 ;; center a buffer.
@@ -226,7 +226,7 @@ file."
        (defun ,sym () ,@forms)
        ,(unless (bound-and-true-p byte-compile-current-file)
           `(let (byte-compile-warnings)
-             (byte-compile ',sym))))))
+             (byte-compile #',sym))))))
 
 (defsubst doom--prepare-modeline-segments (segments)
   (let (segs)
@@ -261,7 +261,7 @@ Example:
                  rhs)))
        ,(unless (bound-and-true-p byte-compile-current-file)
           `(let (byte-compile-warnings)
-             (byte-compile ',sym))))))
+             (byte-compile #',sym))))))
 
 (defun doom-modeline (key)
   "Returns a mode-line configuration associated with KEY (a symbol). Throws an

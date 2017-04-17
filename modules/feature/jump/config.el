@@ -31,7 +31,7 @@
 (def-setting! :xref-backend (mode function)
   "TODO"
   `(add-hook! ,mode
-     (add-hook 'xref-backend-functions ',function nil t)))
+     (add-hook 'xref-backend-functions #',function nil t)))
 
 ;; Recenter after certain jumps
 (add-hook!

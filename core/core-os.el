@@ -54,7 +54,7 @@
          ;; Most of this code grokked from:
          ;; http://stackoverflow.com/questions/15873346/elisp-rename-macro
          (when (or (featurep 'mac) (featurep 'ns))
-           (advice-add 'evil-visual-update-x-selection :override 'ignore))))
+           (advice-add #'evil-visual-update-x-selection :override #'ignore))))
 
       (IS-LINUX
        ;; nothing yet

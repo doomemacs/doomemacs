@@ -17,7 +17,7 @@
     (unless (nth 2 args)
       (setq args (append args (list org-export-directory))))
     args)
-  (advice-add 'org-export-output-file-name :filter-args '+org*export-output-file-name)
+  (advice-add #'org-export-output-file-name :filter-args #'+org*export-output-file-name)
 
   ;; (require 'ox-pandoc)
   ;; (setq org-pandoc-options '((standalone . t) (mathjax . t) (parse-raw . t)))

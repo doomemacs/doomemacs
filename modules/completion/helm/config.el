@@ -35,29 +35,29 @@
   :config
   (setq projectile-completion-system 'helm)
 
-  (map! "M-x"         'helm-M-x
-        "A-x"         'helm-M-x
-        "M-X"         'helm-apropos
-        "A-X"         'helm-apropos
-        "M-o"         'helm-find-files
+  (map! "M-x" #'helm-M-x
+        "A-x" #'helm-M-x
+        "M-X" #'helm-apropos
+        "A-X" #'helm-apropos
+        "M-o" #'helm-find-files
 
         (:map helm-map
-          "C-S-n"      'helm-next-source
-          "C-S-p"      'helm-previous-source
-          "C-u"        'helm-delete-minibuffer-contents
-          "C-w"        'backward-kill-word
-          "M-v"        'clipboard-yank
-          "C-r"        'evil-paste-from-register ; Evil registers in helm! Glorious!
-          "C-b"        'backward-word
-          "<left>"     'backward-char
-          "<right>"    'forward-char
-          "<escape>"   'helm-keyboard-quit
-          "ESC"        'helm-keyboard-quit
-          [escape]     'helm-keyboard-quit
-          "<tab>"      'helm-execute-persistent-action)
+          "C-S-n"      #'helm-next-source
+          "C-S-p"      #'helm-previous-source
+          "C-u"        #'helm-delete-minibuffer-contents
+          "C-w"        #'backward-kill-word
+          "M-v"        #'clipboard-yank
+          "C-r"        #'evil-paste-from-register ; Evil registers in helm! Glorious!
+          "C-b"        #'backward-word
+          "<left>"     #'backward-char
+          "<right>"    #'forward-char
+          "<escape>"   #'helm-keyboard-quit
+          "ESC"        #'helm-keyboard-quit
+          [escape]     #'helm-keyboard-quit
+          "<tab>"      #'helm-execute-persistent-action)
 
         (:map* helm-generic-files-map
-          :e "ESC"     'helm-keyboard-quit))
+          :e "ESC"     #'helm-keyboard-quit))
 
   ;;; Popup setup
   (set! :popup "\\` ?\\*[hH]elm.*?\\*\\'" :size 14 :regexp t)
@@ -65,29 +65,29 @@
   ;;; Helm hacks
   (defconst doom-helm-header-fg (face-attribute 'helm-source-header :foreground))
   ;; Shrink source headers if there is only one source
-  (add-hook 'helm-after-initialize-hook 'doom*helm-hide-source-header-maybe)
+  (add-hook 'helm-after-initialize-hook #'doom*helm-hide-source-header-maybe)
   ;; A simpler prompt: see `+helm-global-prompt'
-  (advice-add 'helm :filter-args 'doom*helm-replace-prompt)
+  (advice-add #'helm :filter-args #'doom*helm-replace-prompt)
   ;; Hide mode-line in helm windows
-  (advice-add 'helm-display-mode-line :override 'doom*helm-hide-header)
+  (advice-add #'helm-display-mode-line :override #'doom*helm-hide-header)
 
   (require 'helm-mode)
   (helm-mode +1)
 
   (map! :map helm-mode-map
-        [remap find-file] 'helm-find-files
-        [remap switch-to-buffer] 'doom/helm-buffers-dwim
+        [remap find-file]                 #'helm-find-files
+        [remap switch-to-buffer]          #'doom/helm-buffers-dwim
         [remap projectile-switch-to-buffer] (λ! (doom/helm-buffers-dwim t))
-        [remap recentf]            'helm-recentf
-        [remap projectile-recentf] 'helm-projectile-recentf
-        [remap projectile-find-file] 'helm-projectile-find-file
-        [remap imenu]              'helm-semantic-or-imenu
-        [remap bookmark-jump]      'helm-bookmarks
-        [remap noop-show-kill-ring] 'helm-show-kill-ring
-        [remap projectile-switch-project] 'helm-projectile-switch-project
-        [remap projectile-find-file] 'helm-projectile-find-file
-        [remap imenu-anywhere]  'helm-imenu-anywhere
-        [remap execute-extended-command] 'helm-M-x)
+        [remap recentf]                   #'helm-recentf
+        [remap projectile-recentf]        #'helm-projectile-recentf
+        [remap projectile-find-file]      #'helm-projectile-find-file
+        [remap imenu]                     #'helm-semantic-or-imenu
+        [remap bookmark-jump]             #'helm-bookmarks
+        [remap noop-show-kill-ring]       #'helm-show-kill-ring
+        [remap projectile-switch-project] #'helm-projectile-switch-project
+        [remap projectile-find-file]      #'helm-projectile-find-file
+        [remap imenu-anywhere]            #'helm-imenu-anywhere
+        [remap execute-extended-command]  #'helm-M-x)
 
   (defvar helm-projectile-find-file-map (make-sparse-keymap))
   (require 'helm-projectile)
@@ -103,7 +103,7 @@
 
 (def-package! helm-buffers
   :commands (helm-buffers-list helm-mini)
-  :config (advice-add 'helm-buffer-list :override 'helm*buffer-list))
+  :config (advice-add #'helm-buffer-list :override #'helm*buffer-list))
 
 
 (def-package! helm-tags
@@ -123,8 +123,8 @@
                 helm-boring-file-regexp-list))
 
   (map! :map helm-find-files-map
-        "C-w" 'helm-find-files-up-one-level
-        "TAB" 'helm-execute-persistent-action))
+        "C-w" #'helm-find-files-up-one-level
+        "TAB" #'helm-execute-persistent-action))
 
 
 (def-package! helm-ag
@@ -140,11 +140,11 @@
              helm-ag-clear-stack)
   :config
   (map! (:map helm-ag-map
-          "<backtab>"  'helm-ag-edit)
+          "<backtab>"  #'helm-ag-edit)
         (:map helm-ag-edit-map
-          "<escape>"   'helm-ag--edit-abort
-          "C-c C-c"    'helm-ag--edit-commit
-          :n "zx"      'helm-ag--edit-abort)))
+          "<escape>"   #'helm-ag--edit-abort
+          "C-c C-c"    #'helm-ag--edit-commit
+          :n "zx"      #'helm-ag--edit-abort)))
 
 
 (def-package! helm-css-scss ; https://github.com/ShingoFukuyama/helm-css-scss
@@ -152,7 +152,7 @@
              helm-css-scss-multi
              helm-css-scss-insert-close-comment)
   :config
-  (setq helm-css-scss-split-direction 'split-window-vertically
+  (setq helm-css-scss-split-direction #'split-window-vertically
         helm-css-scss-split-with-multiple-windows t))
 
 
@@ -187,19 +187,20 @@
 (after! helm-swoop
   (setq helm-swoop-split-window-function (lambda (b) (doom-popup-buffer b))))
 
+
 (after! helm-ag
   ;; This prevents helm-ag from switching between windows and buffers.
   (defadvice helm-ag--edit-abort (around helm-ag-edit-abort-popup-compat activate)
-    (cl-letf (((symbol-function 'select-window) 'ignore)) ad-do-it)
+    (cl-letf (((symbol-function 'select-window) #'ignore)) ad-do-it)
     (doom/popup-close nil t))
 
   (defadvice helm-ag--edit-commit (around helm-ag-edit-commit-popup-compat activate)
-    (cl-letf (((symbol-function 'select-window) 'ignore)) ad-do-it)
+    (cl-letf (((symbol-function 'select-window) #'ignore)) ad-do-it)
     (doom/popup-close nil t))
 
   (defadvice helm-ag--edit (around helm-ag-edit-popup-compat activate)
-    (cl-letf (((symbol-function 'other-window) 'ignore)
-              ((symbol-function 'switch-to-buffer) 'doom-popup-buffer))
+    (cl-letf (((symbol-function 'other-window) #'ignore)
+              ((symbol-function 'switch-to-buffer) #'doom-popup-buffer))
       ad-do-it
       (with-current-buffer (get-buffer "*helm-ag-edit*")
         (use-local-map helm-ag-edit-map)))))

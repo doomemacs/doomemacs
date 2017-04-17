@@ -68,52 +68,52 @@ module to be loaded."
 (defun +eshell/evil-append ()
   (interactive)
   (goto-char eshell-last-output-end)
-  (call-interactively 'evil-append-line))
+  (call-interactively #'evil-append-line))
 
 ;;;###autoload
 (defun +eshell/evil-append-maybe ()
   (interactive)
   (if (+eshell--outside-prompt-p)
       (+eshell/evil-append)
-    (call-interactively 'evil-append)))
+    (call-interactively #'evil-append)))
 
 ;;;###autoload
 (defun +eshell/evil-prepend ()
   (interactive)
   (goto-char eshell-last-output-end)
-  (call-interactively 'evil-insert))
+  (call-interactively #'evil-insert))
 
 ;;;###autoload
 (defun +eshell/evil-prepend-maybe ()
   (interactive)
   (if (+eshell--outside-prompt-p)
       (+eshell/evil-prepend)
-    (call-interactively 'evil-insert)))
+    (call-interactively #'evil-insert)))
 
 ;;;###autoload
 (defun +eshell/evil-replace-maybe ()
   (interactive)
   (if (+eshell--outside-prompt-p)
       (user-error "Cannot edit read-only region")
-    (call-interactively 'evil-replace)))
+    (call-interactively #'evil-replace)))
 
 ;;;###autoload
 (defun +eshell/evil-replace-state-maybe ()
   (interactive)
   (if (+eshell--outside-prompt-p)
       (user-error "Cannot edit read-only region")
-    (call-interactively 'evil-replace-state)))
+    (call-interactively #'evil-replace-state)))
 
 ;;;###autoload
 (defun +eshell/evil-change ()
   (interactive)
   (when (+eshell--outside-prompt-p)
     (goto-char eshell-last-output-end))
-  (call-interactively 'evil-change))
+  (call-interactively #'evil-change))
 
 ;;;###autoload
 (defun +eshell/evil-change-line ()
   (interactive)
   (when (+eshell--outside-prompt-p)
     (goto-char eshell-last-output-end))
-  (call-interactively 'evil-change-line))
+  (call-interactively #'evil-change-line))

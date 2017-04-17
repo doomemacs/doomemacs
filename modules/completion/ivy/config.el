@@ -33,33 +33,34 @@
         ;; Don't use ^ as initial input
         ivy-initial-inputs-alist nil
         ;; highlight til EOL
-        ivy-format-function 'ivy-format-function-line)
+        ivy-format-function #'ivy-format-function-line)
 
-  (after! magit      (setq magit-completing-read-function 'ivy-completing-read))
-  (after! yasnippet  (push '+ivy-yas-prompt yas-prompt-functions))
+  (after! magit      (setq magit-completing-read-function #'ivy-completing-read))
+  (after! yasnippet  (push #'+ivy-yas-prompt yas-prompt-functions))
 
   (ivy-mode +1)
 
   (map! :map ivy-minibuffer-map
-        [escape] 'keyboard-escape-quit
-        "C-r" 'evil-paste-from-register
-        "M-v" 'clipboard-yank
-        "C-w" 'backward-kill-word
-        "C-u" 'backward-kill-sentence
-        "C-b" 'backward-word
-        "C-f" 'forward-word)
+        [escape] #'keyboard-escape-quit
+        "C-r" #'evil-paste-from-register
+        "M-v" #'clipboard-yank
+        "C-w" #'backward-kill-word
+        "C-u" #'backward-kill-sentence
+        "C-b" #'backward-word
+        "C-f" #'forward-word)
 
   (map! :map ivy-mode-map
-        [remap find-file] 'counsel-find-file
-        [remap switch-to-buffer] '+ivy/switch-buffer
-        [remap persp-switch-to-buffer] '+ivy/switch-workspace-buffer
-        [remap recentf] 'counsel-recentf
-        [remap imenu] 'counsel-imenu
-        [remap bookmark-jump] 'counsel-bookmark
-        [remap projectile-switch-project] 'counsel-projectile-switch-project
-        [remap projectile-find-file] 'counsel-projectile-find-file
-        [remap imenu-anywhere]  'ivy-imenu-anywhere
-        [remap execute-extended-command] 'counsel-M-x)
+        [remap describe-face]             #'counsel-describe-face
+        [remap find-file]                 #'counsel-find-file
+        [remap switch-to-buffer]          #'+ivy/switch-buffer
+        [remap persp-switch-to-buffer]    #'+ivy/switch-workspace-buffer
+        [remap recentf]                   #'counsel-recentf
+        [remap imenu]                     #'counsel-imenu
+        [remap bookmark-jump]             #'counsel-bookmark
+        [remap projectile-switch-project] #'counsel-projectile-switch-project
+        [remap projectile-find-file]      #'counsel-projectile-find-file
+        [remap imenu-anywhere]            #'ivy-imenu-anywhere
+        [remap execute-extended-command]  #'counsel-M-x)
 
   (when (featurep! :feature workspaces)
     (nconc ivy-sort-functions-alist
@@ -110,11 +111,11 @@
     (when (eq major-mode 'ivy-occur-grep-mode)
       (ivy-wgrep-change-to-wgrep-mode)))
 
-  (advice-add 'counsel-ag-function :override '+ivy*counsel-ag-function)
+  (advice-add #'counsel-ag-function :override #'+ivy*counsel-ag-function)
   (map! :map counsel-ag-map
-        [backtab] '+ivy/counsel-ag-occur     ; search/replace on results
-        "C-SPC"   'counsel-git-grep-recenter ; preview
-        "M-RET"   '+ivy/counsel-ag-open-in-other-window))
+        [backtab] #'+ivy/counsel-ag-occur     ; search/replace on results
+        "C-SPC"   #'counsel-git-grep-recenter ; preview
+        "M-RET"   #'+ivy/counsel-ag-open-in-other-window))
 
 
 ;; Used by `counsel-M-x'

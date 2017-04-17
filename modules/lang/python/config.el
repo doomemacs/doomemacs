@@ -15,10 +15,10 @@
         python-shell-completion-string-code
         "';'.join(get_ipython().Completer.all_completions('''%s'''))\n")
 
-  (add-hook 'python-mode-hook 'flycheck-mode)
+  (add-hook 'python-mode-hook #'flycheck-mode)
 
   :config
-  (set! :repl 'python-mode '+python/repl)
+  (set! :repl 'python-mode #'+python/repl)
   (set! :electric 'python-mode :chars '(?:))
   (define-key python-mode-map (kbd "DEL") nil) ; interferes with smartparens
 
@@ -29,17 +29,17 @@
 (def-package! anaconda-mode
   :after python
   :init
-  (add-hook 'python-mode-hook 'anaconda-mode)
-  (add-hook 'anaconda-mode-hook 'anaconda-eldoc-mode)
+  (add-hook 'python-mode-hook #'anaconda-mode)
+  (add-hook 'anaconda-mode-hook #'anaconda-eldoc-mode)
   (setq anaconda-mode-installation-directory (concat doom-etc-dir "anaconda/")
         anaconda-mode-eldoc-as-single-line t)
 
   :config
   (set! :popup "*anaconda-mode*" :size 10 :noselect t :autoclose t :autokill t)
 
-  (map! :map anaconda-mode-map :m "gd" 'anaconda-mode-find-definitions)
+  (map! :map anaconda-mode-map :m "gd" #'anaconda-mode-find-definitions)
 
-  (advice-add 'anaconda-mode-doc-buffer :after 'doom*anaconda-mode-doc-buffer))
+  (advice-add #'anaconda-mode-doc-buffer :after #'doom*anaconda-mode-doc-buffer))
 
 
 (def-package! company-anaconda
@@ -48,15 +48,15 @@
   :config
   (set! :company-backend 'python-mode '(company-anaconda))
   (map! :map python-mode-map
-        :m "gd" 'anaconda-mode-find-definitions
-        :m "gD" 'anaconda-mode-find-references
+        :m "gd" #'anaconda-mode-find-definitions
+        :m "gD" #'anaconda-mode-find-references
         :localleader
         :prefix "f"
-        :nv "d" 'anaconda-mode-find-definitions
-        :nv "h" 'anaconda-mode-show-doc
-        :nv "a" 'anaconda-mode-find-assignments
-        :nv "f" 'anaconda-mode-find-file
-        :nv "u" 'anaconda-mode-find-references))
+        :nv "d" #'anaconda-mode-find-definitions
+        :nv "h" #'anaconda-mode-show-doc
+        :nv "a" #'anaconda-mode-find-assignments
+        :nv "f" #'anaconda-mode-find-file
+        :nv "u" #'anaconda-mode-find-references))
 
 
 (def-package! pip-requirements
@@ -75,11 +75,11 @@
   (map! :map nose-mode-map
         :localleader
         :prefix "t"
-        :n "r" 'nosetests-again
-        :n "a" 'nosetests-all
-        :n "s" 'nosetests-one
-        :n "v" 'nosetests-module
-        :n "A" 'nosetests-pdb-all
-        :n "O" 'nosetests-pdb-one
-        :n "V" 'nosetests-pdb-module))
+        :n "r" #'nosetests-again
+        :n "a" #'nosetests-all
+        :n "s" #'nosetests-one
+        :n "v" #'nosetests-module
+        :n "A" #'nosetests-pdb-all
+        :n "O" #'nosetests-pdb-one
+        :n "V" #'nosetests-pdb-module))
 

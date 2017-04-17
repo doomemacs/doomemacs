@@ -6,10 +6,10 @@
 (def-package! rust-mode
   :mode "\\.rs$"
   :init
-  (add-hook 'rust-mode-hook 'flycheck-mode)
+  (add-hook 'rust-mode-hook #'flycheck-mode)
   :config
-  (set! :build 'run-cargo '(rust-mode toml-mode) '+rust/run-cargo
-    :when '+rust-cargo-project-p))
+  (set! :build 'run-cargo '(rust-mode toml-mode) #'+rust/run-cargo
+    :when #'+rust-cargo-project-p))
 
 
 (def-package! racer
@@ -22,7 +22,7 @@
         racer-rust-src-path (expand-file-name "rust/src/" +rust-ext-dir))
 
   ;; TODO Unit test keybinds
-  (map! :map rust-mode-map :m "gd" 'racer-find-definition))
+  (map! :map rust-mode-map :m "gd" #'racer-find-definition))
 
 
 (def-package! company-racer

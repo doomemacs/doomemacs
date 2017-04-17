@@ -10,11 +10,11 @@
   :mode ("\\.php[s345]?$" "\\.inc$")
   :interpreter "php"
   :init
-  (add-hook 'php-mode-hook 'flycheck-mode)
+  (add-hook 'php-mode-hook #'flycheck-mode)
   :config
   (setq php-template-compatibility nil)
 
-  (set! :repl 'php-mode 'php-boris)
+  (set! :repl 'php-mode #'php-boris)
 
   ;; default is 10; this optimizes `smartparens' performance, but limits sp
   ;; pairs to 6 characters.
@@ -31,27 +31,27 @@
   (map! :map php-mode-map
         :localleader
         (:prefix "r"
-          :n "cv" 'php-refactor--convert-local-to-instance-variable
-          :n "u"  'php-refactor--optimize-use
-          :v "xm" 'php-refactor--extract-method
-          :n "rv" 'php-refactor--rename-local-variable)
+          :n "cv" #'php-refactor--convert-local-to-instance-variable
+          :n "u"  #'php-refactor--optimize-use
+          :v "xm" #'php-refactor--extract-method
+          :n "rv" #'php-refactor--rename-local-variable)
         (:prefix "t"
-          :n "r" 'phpunit-current-project
-          :n "a" 'phpunit-current-class
-          :n "s" 'phpunit-current-test)))
+          :n "r"  #'phpunit-current-project
+          :n "a"  #'phpunit-current-class
+          :n "s"  #'phpunit-current-test)))
 
 
 (def-package! php-extras
   :after php-mode
   :init
-  (add-hook 'php-mode-hook 'eldoc-mode)
+  (add-hook 'php-mode-hook #'eldoc-mode)
   :config
   (setq php-extras-eldoc-functions-file (concat doom-etc-dir "php-extras-eldoc-functions"))
 
   (set! :company-bakend 'php-mode '(php-extras-company company-yasnippet))
 
   ;; company will set up itself
-  (advice-add 'php-extras-company-setup :override 'ignore)
+  (advice-add #'php-extras-company-setup :override #'ignore)
 
   ;; Make expensive php-extras generation async
   (unless (file-exists-p (concat php-extras-eldoc-functions-file ".el"))
@@ -66,7 +66,7 @@
 
 (def-package! php-refactor-mode
   :commands php-refactor-mode
-  :init (add-hook 'php-mode-hook 'php-refactor-mode))
+  :init (add-hook 'php-mode-hook #'php-refactor-mode))
 
 
 (def-package! phpunit

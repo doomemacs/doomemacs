@@ -3,7 +3,7 @@
 (def-package! typescript-mode
   :mode "\\.ts$"
   :init
-  (add-hook 'typescript-mode-hook 'rainbow-delimiters-mode)
+  (add-hook 'typescript-mode-hook #'rainbow-delimiters-mode)
   :config
   (set! :electric 'typescript-mode :chars '(?\} ?\)) :words '("||" "&&"))
 
@@ -25,14 +25,14 @@
       (tide-setup)
       (flycheck-mode +1)
       (eldoc-mode +1)))
-  (add-hook! (typescript-mode web-mode) '+typescript|tide-setup)
+  (add-hook! (typescript-mode web-mode) #'+typescript|tide-setup)
 
-  (advice-add 'tide-project-root :override 'doom-project-root)
+  (advice-add #'tide-project-root :override #'doom-project-root)
 
   (map! :map typescript-mode-map
-        :m "gd" 'tide-jump-to-definition
+        :m "gd" #'tide-jump-to-definition
         :localleader
-        :m "fh" 'tide-documentation-at-point))
+        :m "fh" #'tide-documentation-at-point))
 
 
 (def-package! tide

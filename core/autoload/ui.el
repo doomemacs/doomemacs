@@ -21,7 +21,7 @@
   (interactive)
   (let ((theme (car-safe custom-enabled-themes)))
     (when theme
-      (mapc 'disable-theme custom-enabled-themes))
+      (mapc #'disable-theme custom-enabled-themes))
     (load-theme theme t)))
 
 ;;;###autoload

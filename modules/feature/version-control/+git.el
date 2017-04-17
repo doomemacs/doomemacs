@@ -16,16 +16,16 @@
     (when (and (buffer-file-name)
                (not (file-remote-p (buffer-file-name))))
       (git-gutter-mode +1)))
-  (add-hook! (text-mode prog-mode conf-mode) '+version-control|git-gutter-maybe)
+  (add-hook! (text-mode prog-mode conf-mode) #'+version-control|git-gutter-maybe)
   :config
   (set! :popup "^\\*git-gutter.+\\*$" :regexp t :size 15 :noselect t)
 
   ;; Update git-gutter on focus (in case I was using git externally)
-  (add-hook 'focus-in-hook 'git-gutter:update-all-windows)
+  (add-hook 'focus-in-hook #'git-gutter:update-all-windows)
 
   (after! evil
     ;; Refreshing git-gutter on ESC
-    (advice-add 'evil-force-normal-state :after 'git-gutter)))
+    (advice-add #'evil-force-normal-state :after #'git-gutter)))
 
 
 (def-package! browse-at-remote

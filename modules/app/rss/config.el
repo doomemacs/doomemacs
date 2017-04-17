@@ -24,8 +24,8 @@
   (setq-default elfeed-search-filter "@2-week-ago ")
   (setq elfeed-db-directory (concat doom-local-dir "elfeed/db/")
         elfeed-enclosure-default-dir (concat doom-local-dir "elfeed/enclosures/")
-        elfeed-show-entry-switch '+rss-popup-pane
-        elfeed-show-entry-delete '+rss/delete-pane
+        elfeed-show-entry-switch #'+rss-popup-pane
+        elfeed-show-entry-delete #'+rss/delete-pane
         shr-max-image-proportion 0.6)
 
   (make-directory elfeed-db-directory t)
@@ -35,24 +35,24 @@
         doom-real-buffer-functions)
 
   (add-hook! 'elfeed-show-mode-hook
-    '(doom-hide-modeline-mode +rss|elfeed-wrap))
+    #'(doom-hide-modeline-mode +rss|elfeed-wrap))
 
   (after! doom-themes
-    (add-hook 'elfeed-show-mode-hook 'doom-buffer-mode))
+    (add-hook 'elfeed-show-mode-hook #'doom-buffer-mode))
 
   (map! :map elfeed-search-mode-map
-        :n "r"   'elfeed-update
-        :n "s"   'elfeed-search-live-filter
-        :n "RET" 'elfeed-search-show-entry
-        :n "q"   '+rss/quit
+        :n "r"   #'elfeed-update
+        :n "s"   #'elfeed-search-live-filter
+        :n "RET" #'elfeed-search-show-entry
+        :n "q"   #'+rss/quit
 
         :map elfeed-show-mode-map
-        [remap doom/kill-this-buffer] 'elfeed-kill-buffer
-        :n "q"  'elfeed-kill-buffer
-        :m "j"  'evil-next-visual-line
-        :m "k"  'evil-previous-visual-line
-        :n "]b" '+rss/next
-        :n "[b" '+rss/previous))
+        [remap doom/kill-this-buffer] #'elfeed-kill-buffer
+        :n "q"  #'elfeed-kill-buffer
+        :m "j"  #'evil-next-visual-line
+        :m "k"  #'evil-previous-visual-line
+        :n "]b" #'+rss/next
+        :n "[b" #'+rss/previous))
 
 
 (def-package! elfeed-org
@@ -60,5 +60,5 @@
   :config
   (setq rmh-elfeed-org-files
         (let ((default-directory +rss-org-dir))
-          (mapcar 'expand-file-name +rss-elfeed-files)))
+          (mapcar #'expand-file-name +rss-elfeed-files)))
   (elfeed-org))

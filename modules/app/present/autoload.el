@@ -49,7 +49,7 @@
 
 ;;;###autoload
 (defun +present|remove-overlays ()
-  (mapc 'delete-overlay +present--overlays-list)
+  (mapc #'delete-overlay +present--overlays-list)
   (remove-from-invisibility-spec '(+present)))
 
 ;;;###autoload
@@ -63,7 +63,7 @@
   (unless (cl-remove-if-not (lambda (buf) (buffer-local-value 'org-tree-slide-mode buf))
                             (doom-buffers-in-mode 'org-mode))
     (org-tree-slide-mode -1)
-    (remove-hook 'kill-buffer-hook '+present--cleanup-org-tree-slides-mode)))
+    (remove-hook 'kill-buffer-hook #'+present--cleanup-org-tree-slides-mode)))
 
 (defun +present--make-invisible (beg end)
   (let ((overlay (make-overlay beg end)))

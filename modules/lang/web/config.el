@@ -8,9 +8,9 @@
   :commands (web-beautify-html web-beautify-css)
   :init
   (map! (:map* (css-mode-map scss-mode-map less-css-mode-map)
-          :n "gQ" 'web-beautify-css)
+          :n "gQ" #'web-beautify-css)
         (:map* web-mode-map
-          :n "gQ" 'web-beautify-html)))
+          :n "gQ" #'web-beautify-html)))
 
 
 (def-package! emmet-mode
@@ -22,9 +22,9 @@
   :config
   (setq emmet-move-cursor-between-quotes t)
   (map! :map emmet-mode-keymap
-        :v "M-e" 'emmet-wrap-with-markup
-        :i "M-e" 'emmet-expand-yas
-        :i "M-E" 'emmet-expand-line))
+        :v "M-e" #'emmet-wrap-with-markup
+        :i "M-e" #'emmet-expand-yas
+        :i "M-E" #'emmet-expand-line))
 
 
 ;;

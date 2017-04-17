@@ -4,10 +4,10 @@
   :mode "\\.lua$"
   :interpreter "lua"
   :init
-  (add-hook 'lua-mode-hook 'flycheck-mode)
+  (add-hook 'lua-mode-hook #'flycheck-mode)
   :config
   (set! :electric 'lua-mode :words '("else" "end"))
-  (set! :repl 'lua-mode '+lua/repl)
+  (set! :repl 'lua-mode #'+lua/repl)
 
   ;; sp's lua-specific rules are obnoxious, so we disable them
   (setq sp-pairs (delete (assq 'lua-mode sp-pairs) sp-pairs)))

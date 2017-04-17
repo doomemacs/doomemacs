@@ -9,8 +9,8 @@
 
   (map! :map flyspell-mode-map
         :localleader
-        :n "s" 'flyspell-correct-word-generic
-        :n "S" 'flyspell-correct-previous-word-generic))
+        :n "s" #'flyspell-correct-word-generic
+        :n "S" #'flyspell-correct-previous-word-generic))
 
 
 (def-package! flyspell-correct
@@ -24,5 +24,5 @@
         (t
          (require 'flyspell-correct-popup)
          (setq flyspell-popup-correct-delay 0.8)
-         (define-key popup-menu-keymap [escape] 'keyboard-quit))))
+         (define-key popup-menu-keymap [escape] #'keyboard-quit))))
 

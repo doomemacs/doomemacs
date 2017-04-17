@@ -374,7 +374,7 @@ the workspace and move to the next."
         (current-name (+workspace-current-name))
         (i 0))
     (mapconcat
-     'identity
+     #'identity
      (mapcar (lambda (it)
                (cl-incf i)
                (propertize (format " [%d] %s " i it)
@@ -402,7 +402,7 @@ the workspace and move to the next."
 ;;;###autoload
 (defun +workspace-error (message &optional noerror)
   "Show an 'elegant' error in the echo area next to a listing of workspaces."
-  (funcall (if noerror 'message 'error) "%s" (+workspace--message-body message 'error)))
+  (funcall (if noerror #'message #'error) "%s" (+workspace--message-body message 'error)))
 
 ;;;###autoload
 (defun +workspace/display ()

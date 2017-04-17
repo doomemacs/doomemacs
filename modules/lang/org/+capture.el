@@ -56,7 +56,7 @@
     (when (equal "org-capture" (frame-parameter nil 'name))
       (setq mode-line-format nil)
       (delete-other-windows)))
-  (advice-add 'org-capture :after '+org*capture-init)
+  (advice-add #'org-capture :after #'+org*capture-init)
 
   (defun +org|capture-finalize ()
     "Closes the frame once org-capture is done."

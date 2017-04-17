@@ -4,9 +4,9 @@
   :commands (processing-mode processing-find-sketch)
   :mode "\\.pde$"
   :init
-  (add-hook 'processing-compilation-mode-hook 'doom-hide-modeline-mode)
+  (add-hook 'processing-compilation-mode-hook #'doom-hide-modeline-mode)
   :config
-  (set! :build 'build-sketch 'processing-mode 'processing-sketch-build)
+  (set! :build 'build-sketch 'processing-mode #'processing-sketch-build)
   (set! :popup "*processing-compilation*" :size 10 :noselect t)
   (set! :eval 'processing-mode
         '((:command . ,processing-location)
@@ -22,17 +22,17 @@
         processing-output-dir "/tmp")
 
   (map! :map processing-mode-map
-        :nv "M-r" 'processing-sketch-run
-        :m "gd" 'processing-find-in-reference
+        :nv "M-r" #'processing-sketch-run
+        :m "gd"   #'processing-find-in-reference
 
         (:localleader
-         :n "e" 'processing-export-application
-         :n "h" 'processing-open-reference
-         :n "e" 'processing-open-examples
-         :n "o" 'processing-open-sketchbook
+         :n "e" #'processing-export-application
+         :n "h" #'processing-open-reference
+         :n "e" #'processing-open-examples
+         :n "o" #'processing-open-sketchbook
 
          :prefix "f"
-         :n "s" 'processing-find-sketch))
+         :n "s" #'processing-find-sketch))
 
   (after! company-keywords
     (nconc company-keywords-alist

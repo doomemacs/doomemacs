@@ -18,22 +18,22 @@
 
   (set! :popup "*twittering-edit*" :size 12 :select t :modeline nil)
 
-  (add-hook 'twittering-edit-mode-hook 'doom-hide-modeline-mode)
+  (add-hook 'twittering-edit-mode-hook #'doom-hide-modeline-mode)
   (after! doom-themes
-    (add-hook 'twittering-mode-hook 'doom-buffer-mode))
+    (add-hook 'twittering-mode-hook #'doom-buffer-mode))
 
   (add-hook! twittering-mode
     (setq header-line-format (doom-modeline 'twitter)
           mode-line-format nil))
 
   (map! :map twittering-mode-map
-        [remap twittering-kill-buffer] '+twitter/quit
-        "Q" '+twitter/quit-all
-        "o" 'ace-link-addr
-        "j" 'evil-next-visual-line
-        "k" 'evil-previous-visual-line
-        "J" 'twittering-goto-next-status
-        "K" 'twittering-goto-previous-status)
+        [remap twittering-kill-buffer] #'+twitter/quit
+        "Q" #'+twitter/quit-all
+        "o" #'ace-link-addr
+        "j" #'evil-next-visual-line
+        "k" #'evil-previous-visual-line
+        "J" #'twittering-goto-next-status
+        "K" #'twittering-goto-previous-status)
 
   (def-modeline! twitter
     (bar matches " %b " selection-info)

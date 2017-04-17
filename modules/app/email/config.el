@@ -69,16 +69,16 @@
         ;; for offlineimap
         ;; mu4e-get-mail-command "offlineimap -o -q"
         ;; configuration for sending mail
-        message-send-mail-function 'smtpmail-send-it
+        message-send-mail-function #'smtpmail-send-it
         smtpmail-stream-type 'starttls
         ;; start with the first (default) context;
         mu4e-context-policy 'pick-first
         ;; compose with the current context, or ask
         mu4e-compose-context-policy 'ask-if-none
         ;; use helm/ivy
-        mu4e-completing-read-function (cond ((featurep! :completion ivy) 'ivy-completing-read)
-                                            ((featurep! :completion helm) 'completing-read)
-                                            (t 'ido-completing-read))
+        mu4e-completing-read-function (cond ((featurep! :completion ivy) #'ivy-completing-read)
+                                            ((featurep! :completion helm) #'completing-read)
+                                            (t #'ido-completing-read))
         ;; close message after sending it
         message-kill-buffer-on-exit t
         ;; no need to ask
@@ -92,7 +92,7 @@
           (:subject)))
 
   (setq mu4e-bookmarks `((,(mapconcat (lambda (arg) (format " maildir:/%s/Inbox " arg))
-                                      (mapcar 'car +email--accounts) " OR ")
+                                      (mapcar #'car +email--accounts) " OR ")
                           "Inbox" ?i)
                          ("flag:unread" "Unread messages" ?u)
                          ("flag:flagged" "Starred messages" ?s)
@@ -141,15 +141,15 @@
     (cond ((memq mark '(trash refile)) (mu4e-action-retag-message msg "-\\Inbox"))
           ((eq mark 'flag) (mu4e-action-retag-message msg "+\\Starred"))
           ((eq mark 'unflag) (mu4e-action-retag-message msg "-\\Starred"))))
-  (add-hook 'mu4e-mark-execute-pre-hook '+email|gmail-fix-flags)
+  (add-hook 'mu4e-mark-execute-pre-hook #'+email|gmail-fix-flags)
 
   (when (featurep! :feature spellcheck)
-    (add-hook 'mu4e-compose-mode-hook 'flyspell-mode))
+    (add-hook 'mu4e-compose-mode-hook #'flyspell-mode))
 
   ;; Brighter + no mode-line in message windows
   (after! doom-themes
     (add-hook! 'mu4e-view-mode-hook
-      '(doom-buffer-mode doom-hide-modeline-mode)))
+      #'(doom-buffer-mode doom-hide-modeline-mode)))
 
   ;; Wrap text in messages
   (add-hook! 'mu4e-view-mode-hook
@@ -165,27 +165,27 @@
   :init (defvar evil-mu4e-state 'normal)
   :config
   (defun +email|headers-keybinds ()
-    (map! :Ln "-"   'mu4e-headers-mark-for-unflag
-          :Ln "+"   'mu4e-headers-mark-for-flag
-          :Ln "v"   'evil-visual-line
-          :Ln "q"   'mu4e~headers-quit-buffer
+    (map! :Ln "-"   #'mu4e-headers-mark-for-unflag
+          :Ln "+"   #'mu4e-headers-mark-for-flag
+          :Ln "v"   #'evil-visual-line
+          :Ln "q"   #'mu4e~headers-quit-buffer
           ;; Enable multiple markings via visual mode
-          :Lv "d"   '+email/mark-multiple
-          :Lv "-"   '+email/mark-multiple
-          :Lv "+"   '+email/mark-multiple
-          :Lv "!"   '+email/mark-multiple
-          :Lv "?"   '+email/mark-multiple
-          :Lv "r"   '+email/mark-multiple))
-  (add-hook 'mu4e-headers-mode-hook '+email|headers-keybinds)
+          :Lv "d"   #'+email/mark-multiple
+          :Lv "-"   #'+email/mark-multiple
+          :Lv "+"   #'+email/mark-multiple
+          :Lv "!"   #'+email/mark-multiple
+          :Lv "?"   #'+email/mark-multiple
+          :Lv "r"   #'+email/mark-multiple))
+  (add-hook 'mu4e-headers-mode-hook #'+email|headers-keybinds)
 
   ;; (defun +email|view-keybinds ())
-  ;; (add-hook 'mu4e-view-mode-hook '+email|view-keybinds)
+  ;; (add-hook 'mu4e-view-mode-hook #'+email|view-keybinds)
 
   (defun +email|main-keybinds ()
-    (map! :Ln "q" 'mu4e-quit
-          :Ln "u" 'mu4e-update-index
-          :Ln "U" 'mu4e-update-mail-and-index))
-  (add-hook 'mu4e-main-mode-hook '+email|main-keybinds))
+    (map! :Ln "q" #'mu4e-quit
+          :Ln "u" #'mu4e-update-index
+          :Ln "U" #'mu4e-update-mail-and-index))
+  (add-hook 'mu4e-main-mode-hook #'+email|main-keybinds))
 
 
 (def-package! mu4e-maildirs-extension
@@ -195,7 +195,7 @@
 
 (def-package! org-mu4e
   :commands org-mu4e-compose-org-mode
-  :init (add-hook 'mu4e-compose-mode-hook 'org-mu4e-compose-org-mode)
+  :init (add-hook 'mu4e-compose-mode-hook #'org-mu4e-compose-org-mode)
   :config
   (setq org-mu4e-link-query-in-headers-mode nil
         org-mu4e-convert-to-html t)

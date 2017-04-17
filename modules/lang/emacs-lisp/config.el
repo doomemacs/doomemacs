@@ -3,10 +3,10 @@
 (def-package! elisp-mode ; built-in
   :mode ("/Cask$" . emacs-lisp-mode)
   :init
-  (add-hook 'emacs-lisp-mode-hook '+emacs-lisp|hook)
+  (add-hook 'emacs-lisp-mode-hook #'+emacs-lisp|hook)
 
   :config
-  (set! :repl 'emacs-lisp-mode '+emacs-lisp/repl)
+  (set! :repl 'emacs-lisp-mode #'+emacs-lisp/repl)
   (set! :rotate 'emacs-lisp-mode
         :symbols '(("t" "nil")
                    ("let" "let*")
@@ -21,7 +21,7 @@
 
   (defun +emacs-lisp|hook ()
     (setq mode-name "Elisp") ; [pedantry intensifies]
-    (add-hook 'before-save-hook 'delete-trailing-whitespace nil t)
+    (add-hook 'before-save-hook #'delete-trailing-whitespace nil t)
 
     (eldoc-mode +1)
     (highlight-quoted-mode +1)
@@ -30,7 +30,7 @@
 
     (font-lock-add-keywords
      nil `(;; Display "lambda" as λ
-           ("(\\(lambda\\)" (1 (ignore (compose-region (match-beginning 1) (match-end 1) ?λ 'decompose-region))))
+           ("(\\(lambda\\)" (1 (ignore (compose-region (match-beginning 1) (match-end 1) ?λ #'decompose-region))))
            ;; Highlight doom/module functions
            ("\\(^\\|\\s-\\|,\\)(\\(\\(doom\\|\\+\\)[^) ]+\\)[) \n]" (2 font-lock-builtin-face))))
 
@@ -67,7 +67,7 @@ version is loaded."
       (let ((buffer-path (file-truename buffer-file-name)))
         (when (assoc buffer-path load-history)
           (load-file buffer-path)))))
-  (advice-add 'auto-compile-byte-compile :filter-return '+emacs-lisp*load-after-compile))
+  (advice-add #'auto-compile-byte-compile :filter-return #'+emacs-lisp*load-after-compile))
 
 
 (def-package! highlight-quoted

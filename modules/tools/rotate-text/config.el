@@ -14,12 +14,12 @@
         (words    (plist-get plist :words))
         (patterns (plist-get plist :patterns)))
     (when (or symbols words patterns)
-      (let ((fn-name (intern (format "doom--rotate-%s" (s-join "-" (mapcar 'symbol-name modes))))))
+      (let ((fn-name (intern (format "doom--rotate-%s" (s-join "-" (mapcar #'symbol-name modes))))))
         `(progn
            (defun ,fn-name ()
              (require 'rotate-text)
              ,(if symbols `(setq rotate-text-local-symbols ',symbols))
              ,(if words `(setq rotate-text-local-words ',words))
              ,(if patterns `(setq rotate-text-local-patterns ',patterns)))
-           (add-hook! ,modes ',fn-name))))))
+           (add-hook! ,modes #',fn-name))))))
 

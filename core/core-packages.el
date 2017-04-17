@@ -139,7 +139,7 @@ to speed up startup."
           load-path (append load-path doom--package-load-path))
 
     ;; Ensure core packages are installed
-    (let ((core-packages (cl-remove-if 'package-installed-p doom-core-packages)))
+    (let ((core-packages (cl-remove-if #'package-installed-p doom-core-packages)))
       (when core-packages
         (package-refresh-contents)
         (dolist (pkg core-packages)
@@ -191,7 +191,7 @@ files."
 
   e.g '(:feature evil :lang emacs-lisp javascript java)"
   (unless doom-modules
-    (setq doom-modules (make-hash-table :test 'equal :size (+ 5 (length modules)))))
+    (setq doom-modules (make-hash-table :test #'equal :size (+ 5 (length modules)))))
   (let (mode)
     (dolist (m modules)
       (cond ((keywordp m)
@@ -204,7 +204,7 @@ files."
                     (mapcar
                      (lambda (dir) (intern (file-name-nondirectory dir)))
                      (cl-remove-if-not
-                      'file-directory-p
+                      #'file-directory-p
                       (directory-files (expand-file-name
                                         (substring (symbol-name mode) 1)
                                         doom-modules-dir)
@@ -289,7 +289,7 @@ byte-compilation."
            (server-start)))
 
        ;; Benchmark
-       (add-hook 'after-init-hook 'doom--display-benchmark t))))
+       (add-hook 'after-init-hook #'doom--display-benchmark t))))
 
 (defalias 'def-package! 'use-package
   "An alias for `use-package'. Note that packages are deferred by default.")
@@ -535,7 +535,7 @@ package files."
 ;;
 
 ;; Updates QUELPA after deleting a package
-(advice-add 'package-delete :after 'doom*package-delete)
+(advice-add #'package-delete :after #'doom*package-delete)
 
 (provide 'core-packages)
 ;;; core-packages.el ends here

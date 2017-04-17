@@ -21,8 +21,8 @@
   (let ((bin (executable-find "tmux")))
     (unless bin
       (error "Could not find tmux executable"))
-    (let* ((args (mapcar 'shell-quote-argument (delq nil args)))
-           (cmdstr (format "%s %s" bin (if args (apply 'format command args) command)))
+    (let* ((args (mapcar #'shell-quote-argument (delq nil args)))
+           (cmdstr (format "%s %s" bin (if args (apply #'format command args) command)))
            (output (get-buffer-create " *tmux stdout*"))
            (errors (get-buffer-create " *tmux stderr*"))
            code)
@@ -63,7 +63,7 @@ but do not execute them."
   (interactive "P")
   (unless +tmux-last-command
     (user-error "No last command to run"))
-  (apply '+tmux (car +tmux-last-command) (cdr +tmux-last-command)))
+  (apply #'+tmux (car +tmux-last-command) (cdr +tmux-last-command)))
 
 ;;;###autoload
 (defun +tmux/cd (&optional directory)

@@ -52,8 +52,8 @@
     :init
     (after! org
       (map! :map org-mode-map
-            "<f8>" '+present/org-tree-slides
-            "<f7>" '+present/next))
+            "<f8>" #'+present/org-tree-slides
+            "<f7>" #'+present/next))
     :config
     (setq org-tree-slide-skip-outline-level 2
           org-tree-slide-activate-message " "
@@ -62,11 +62,11 @@
     (org-tree-slide-simple-profile)
 
     (map! :map org-tree-slide-mode-map
-          [right] 'org-tree-slide-move-next-tree
-          [left]  'org-tree-slide-move-previous-tree)
+          [right] #'org-tree-slide-move-next-tree
+          [left]  #'org-tree-slide-move-previous-tree)
 
     (add-hook! 'org-tree-slide-mode-after-narrow-hook
-      '(+present|detect-slide +present|add-overlays org-display-inline-images))
+      #'(+present|detect-slide +present|add-overlays org-display-inline-images))
 
     (add-hook! 'org-tree-slide-mode-hook
       (doom/window-zoom)
@@ -102,7 +102,6 @@
                                     (when (and (org-at-heading-p) (not (eobp))) (backward-char 1))
                                     (point)))))))))
         (apply orig-fn args)))
-    (advice-add 'org-tree-slide--display-tree-with-narrow
-                :around '+present*org-tree-slide-narrow-exclude-header)))
-
+    (advice-add #'org-tree-slide--display-tree-with-narrow
+                :around #'+present*org-tree-slide-narrow-exclude-header)))
 

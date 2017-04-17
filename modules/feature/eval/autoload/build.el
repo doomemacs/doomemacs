@@ -23,7 +23,7 @@ functions.")
     (if (= (length builders) 1)
         (car builders)
       (when-let (builder (completing-read "Build: "
-                                          (mapcar 'car builders)
+                                          (mapcar #'car builders)
                                           nil t))
         (assq (intern builder) builders)))))
 

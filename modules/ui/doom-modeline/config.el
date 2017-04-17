@@ -4,11 +4,11 @@
 
 ;; all-the-icons doesn't work in the terminal, so we "disable" it.
 (unless (display-graphic-p)
-  (defalias 'all-the-icons-octicon 'ignore)
-  (defalias 'all-the-icons-faicon 'ignore)
-  (defalias 'all-the-icons-fileicon 'ignore)
-  (defalias 'all-the-icons-wicon 'ignore)
-  (defalias 'all-the-icons-alltheicon 'ignore))
+  (defalias 'all-the-icons-octicon    #'ignore)
+  (defalias 'all-the-icons-faicon     #'ignore)
+  (defalias 'all-the-icons-fileicon   #'ignore)
+  (defalias 'all-the-icons-wicon      #'ignore)
+  (defalias 'all-the-icons-alltheicon #'ignore))
 
 (def-package! all-the-icons :demand t
   :when (display-graphic-p))
@@ -26,7 +26,7 @@
         (force-mode-line-update)
         (sit-for eldoc-show-in-mode-line-delay))))
 
-  (setq eldoc-in-minibuffer-show-fn '+doom-modeline--show-eldoc)
+  (setq eldoc-in-minibuffer-show-fn #'+doom-modeline--show-eldoc)
   (eldoc-in-minibuffer-mode +1))
 
 ;; anzu and evil-anzu make it possible to display current/total in the
@@ -44,20 +44,18 @@
   (defun +doom-modeline|reset-anzu ()
     (setq anzu--state nil))
   ;; Ensure anzu state is cleared when searches & iedit are done
-  (add-hook! '(kill-buffer-hook find-file-hook) '+doom-modeline|reset-anzu)
+  (add-hook! '(kill-buffer-hook find-file-hook) #'+doom-modeline|reset-anzu)
   (after! evil
-    (advice-add 'evil-force-normal-state :after '+doom-modeline|reset-anzu)
-    (advice-add 'evil-ex-search-abort :after '+doom-modeline|reset-anzu)
+    (advice-add #'evil-force-normal-state :after #'+doom-modeline|reset-anzu)
+    (advice-add #'evil-ex-search-abort :after #'+doom-modeline|reset-anzu)
     (after! evil-multiedit
-      (add-hook 'iedit-mode-end-hook '+doom-modeline|reset-anzu))))
+      (add-hook 'iedit-mode-end-hook #'+doom-modeline|reset-anzu))))
 
 
 ;;; Flash the mode-line on error
 ;; TODO More flexible colors (only suits dark themes)
 ;; FIXME fast key-repeat can make the mode-line bg get stuck (rare)
 (defvar doom--visual-bell-old-bg nil)
-(setq ring-bell-function 'doom-visual-bell
-      visible-bell nil)
 (defun doom-visual-bell ()
   "Blink the mode-line red briefly."
   (unless doom--visual-bell-old-bg
@@ -66,6 +64,8 @@
   (run-with-timer
    0.1 nil
    (lambda () (set-face-attribute 'mode-line nil :background doom--visual-bell-old-bg))))
+(setq ring-bell-function #'doom-visual-bell
+      visible-bell nil)
 
 
 ;; Keep `+doom-modeline-current-window' up-to-date
@@ -76,10 +76,10 @@
     (unless (minibuffer-window-active-p win)
       (setq +doom-modeline-current-window win))))
 
-(add-hook 'window-configuration-change-hook '+doom-modeline|set-selected-window)
-(add-hook 'focus-in-hook '+doom-modeline|set-selected-window)
-(advice-add 'handle-switch-frame :after '+doom-modeline|set-selected-window)
-(advice-add 'select-window :after '+doom-modeline|set-selected-window)
+(add-hook 'window-configuration-change-hook #'+doom-modeline|set-selected-window)
+(add-hook 'focus-in-hook #'+doom-modeline|set-selected-window)
+(advice-add #'handle-switch-frame :after #'+doom-modeline|set-selected-window)
+(advice-add #'select-window :after #'+doom-modeline|set-selected-window)
 
 
 
@@ -180,8 +180,8 @@ active."
 ;; Show version string for multi-version managers like rvm, rbenv, pyenv, etc.
 (defvar-local +doom-modeline-env-version nil)
 (defvar-local +doom-modeline-env-command nil)
-(add-hook 'focus-in-hook  '+doom-modeline|update-env)
-(add-hook 'find-file-hook '+doom-modeline|update-env)
+(add-hook 'focus-in-hook  #'+doom-modeline|update-env)
+(add-hook 'find-file-hook #'+doom-modeline|update-env)
 (defun +doom-modeline|update-env ()
   (when +doom-modeline-env-command
     (let* ((default-directory (doom-project-root))
@@ -220,7 +220,7 @@ active."
                  color)
          (let ((len (length data))
                (idx 0))
-           (apply 'concat
+           (apply #'concat
                   (mapcar #'(lambda (dl)
                               (setq idx (+ idx 1))
                               (concat
@@ -578,4 +578,4 @@ with `evil-ex-substitute', and/or 4. The number of active `iedit' regions."
 (defun +doom-modeline|set-special-modeline ()
   (setq mode-line-format (doom-modeline 'special)))
 
-(add-hook 'org-src-mode-hook '+doom-modeline|set-special-modeline)
+(add-hook 'org-src-mode-hook #'+doom-modeline|set-special-modeline)

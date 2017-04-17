@@ -15,7 +15,7 @@
 (def-package! which-key
   :defer 1
   :config
-  (setq which-key-sort-order 'which-key-key-order-alpha
+  (setq which-key-sort-order #'which-key-key-order-alpha
         which-key-sort-uppercase-first nil
         which-key-add-column-padding 1
         which-key-max-display-columns nil
@@ -28,7 +28,7 @@
   (which-key-setup-side-window-bottom)
   (which-key-mode +1)
   (when (cdr doom--which-key-defs)
-    (apply 'which-key-add-key-based-replacements (cdr doom--which-key-defs))))
+    (apply #'which-key-add-key-based-replacements (cdr doom--which-key-defs))))
 
 
 (defun doom-keyword-to-states (keyword &optional ignore)

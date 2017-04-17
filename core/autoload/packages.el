@@ -76,14 +76,14 @@ Be careful not to use it in a loop."
                   (or (assq pkgsym doom-packages)
                       (list (car (assq pkgsym package-alist)))))
                 (cl-delete-duplicates
-                 (append doom-core-packages (mapcar 'car doom-packages))))))
+                 (append doom-core-packages (mapcar #'car doom-packages))))))
 
 ;;;###autoload
 (defun doom-get-depending-on (name)
   "Return a list of packages that depend on the package named NAME."
   (doom-initialize)
   (when-let (desc (cadr (assq name package-alist)))
-    (mapcar 'package-desc-name (package--used-elsewhere-p desc nil t))))
+    (mapcar #'package-desc-name (package--used-elsewhere-p desc nil t))))
 
 ;;;###autoload
 (defun doom-get-dependencies-for (name &optional only)
@@ -97,7 +97,7 @@ Be careful not to use it in a loop."
 containing (PACKAGE-SYMBOL OLD-VERSION-LIST NEW-VERSION-LIST).
 
 Used by `doom/packages-update'."
-  (delq nil (mapcar 'doom-package-outdated-p (mapcar 'car (doom-get-packages)))))
+  (delq nil (mapcar #'doom-package-outdated-p (mapcar #'car (doom-get-packages)))))
 
 ;;;###autoload
 (defun doom-get-orphaned-packages ()
@@ -107,7 +107,7 @@ depended on.
 Used by `doom/packages-autoremove'."
   (doom-initialize-packages t)
   (let ((package-selected-packages
-         (append (mapcar 'car doom-packages) doom-core-packages)))
+         (append (mapcar #'car doom-packages) doom-core-packages)))
     (cl-set-difference (package--removable-packages)
                        doom-protected-packages)))
 
@@ -158,7 +158,7 @@ example; the package name can be omitted)."
         (recipe (plist-get plist :recipe)))
     (cond (recipe (quelpa recipe))
           (t (package-install name))))
-  (cl-pushnew (cons name plist) doom-packages :test 'eq :key 'car)
+  (cl-pushnew (cons name plist) doom-packages :test #'eq :key #'car)
   (package-installed-p name))
 
 (defun doom-update-package (name)
@@ -219,7 +219,7 @@ appropriate."
                                                   (if (plist-get (cdr pkg) :recipe)
                                                       "QUELPA"
                                                     "ELPA")))
-                                        (sort (cl-copy-list packages) 'doom--sort-alpha)
+                                        (sort (cl-copy-list packages) #'doom--sort-alpha)
                                         "\n")))))
            (message! (yellow "Aborted!")))
 
@@ -249,7 +249,7 @@ appropriate."
 (defun doom/packages-update ()
   "Interactive command for updating packages."
   (interactive)
-  (let ((packages (sort (doom-get-outdated-packages) 'doom--sort-alpha)))
+  (let ((packages (sort (doom-get-outdated-packages) #'doom--sort-alpha)))
     (cond ((not packages)
            (message! (green "Everything is up-to-date")))
 
@@ -299,7 +299,7 @@ appropriate."
                      (format "%s packages will be deleted:\n\n%s\n\nProceed?"
                              (length packages)
                              (mapconcat (lambda (sym) (format "+ %s" (symbol-name sym)))
-                                        (sort (cl-copy-list packages) 'string-lessp)
+                                        (sort (cl-copy-list packages) #'string-lessp)
                                         "\n")))))
            (message! (yellow "Aborted!")))
 
@@ -319,7 +319,7 @@ appropriate."
            (doom/reload)))))
 
 ;;;###autoload
-(defalias 'doom/install-package 'package-install)
+(defalias 'doom/install-package #'package-install)
 
 ;;;###autoload
 (defun doom/delete-package (package)
@@ -332,7 +332,7 @@ Use this interactively. Use `doom-delete-package' for direct calls."
             "Delete package: "
             (delq nil
                   (mapcar (lambda (p) (unless (package-built-in-p p) p))
-                          (mapcar 'car package-alist)))
+                          (mapcar #'car package-alist)))
             nil t))))
   (if (package-installed-p package)
       (if (y-or-n-p (format "%s will be deleted. Confirm?" package))
@@ -352,7 +352,7 @@ calls."
    (let ((packages (doom-get-outdated-packages)))
      (list
       (if packages
-          (completing-read "Update package: " (mapcar 'symbol-name (mapcar 'car packages)))
+          (completing-read "Update package: " (mapcar #'symbol-name (mapcar #'car packages)))
         (user-error "All packages are up-to-date")))))
   (if-let (desc (doom-package-outdated-p (intern package)))
       (if (y-or-n-p (format "%s will be updated from %s to %s. Update?"

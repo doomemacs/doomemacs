@@ -21,35 +21,35 @@
    "\`\`\`" "\`\`\`" :post-handlers '(("||\n" "RET")))
 
   (map! :map gfm-mode-map
-        "`" 'self-insert-command
+        "`" #'self-insert-command
 
         :map markdown-mode-map
         "<backspace>"  nil
         "<M-left>"     nil
         "<M-right>"    nil
-        "M-*"  'markdown-insert-list-item
-        "M-b"  'markdown-insert-bold
-        "M-i"  'markdown-insert-italic
-        "M-`"  '+markdown/insert-del
-        :m "gj" 'markdown-next-visible-heading
-        :m "gk" 'markdown-previous-visible-heading
+        "M-*"      #'markdown-insert-list-item
+        "M-b"      #'markdown-insert-bold
+        "M-i"      #'markdown-insert-italic
+        "M-`"      #'+markdown/insert-del
+        :m "gj"    #'markdown-next-visible-heading
+        :m "gk"    #'markdown-previous-visible-heading
         ;; Assumes you have a markdown renderer plugin in chrome
-        :n "M-r"  'browse-url-of-file
+        :n "M-r"   #'browse-url-of-file
         ;; TODO: Make context sensitive
-        :n "[p"   'markdown-promote
-        :n "]p"   'markdown-demote
-        :n "[l"   'markdown-next-link
-        :n "]l"   'markdown-previous-link
-        :n "gf"   'markdown-follow-thing-at-point
-        :i "M--"  'markdown-insert-hr
+        :n "[p"    #'markdown-promote
+        :n "]p"    #'markdown-demote
+        :n "[l"    #'markdown-next-link
+        :n "]l"    #'markdown-previous-link
+        :n "gf"    #'markdown-follow-thing-at-point
+        :i "M--"   #'markdown-insert-hr
         (:localleader
-         :nv "o"   'markdown-open
-         :nv "b"   'markdown-preview
-         (:prefix "i"
-           :nv "t"   'markdown-toc-generate-toc
-           :nv "i"   'markdown-insert-image
-           :nv "l"   'markdown-insert-link
-           :nv "L"   'markdown-insert-reference-link-dwim))))
+          :nv "o"    #'markdown-open
+          :nv "b"    #'markdown-preview
+          (:prefix "i"
+            :nv "t"    #'markdown-toc-generate-toc
+            :nv "i"    #'markdown-insert-image
+            :nv "l"    #'markdown-insert-link
+            :nv "L"    #'markdown-insert-reference-link-dwim))))
 
 
 (def-package! markdown-toc

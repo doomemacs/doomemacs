@@ -84,8 +84,8 @@ compilation."
              (if (symbolp feature)
                  (require feature nil :no-error)
                (load feature :no-message :no-error)))
-         'progn
-       'with-no-warnings)
+         #'progn
+       #'with-no-warnings)
     (with-eval-after-load ',feature ,@forms)))
 
 (defmacro quiet! (&rest forms)
@@ -114,10 +114,10 @@ function/hook is first invoked, then it detaches itself."
     `(progn
        (defun ,fn (&rest _)
          ,@forms
-         ,(cond ((functionp hook) `(advice-remove ',hook ',fn))
-                ((symbolp hook) `(remove-hook ',hook ',fn))))
-       ,(cond ((functionp hook) `(advice-add ',hook :before ',fn))
-              ((symbolp hook) `(add-hook ',hook ',fn))))))
+         ,(cond ((functionp hook) `(advice-remove #',hook #',fn))
+                ((symbolp hook) `(remove-hook ',hook #',fn))))
+       ,(cond ((functionp hook) `(advice-add #',hook :before #',fn))
+              ((symbolp hook) `(add-hook ',hook #',fn))))))
 
 (defmacro add-hook! (&rest args)
   "A convenience macro for `add-hook'. Takes, in order:
@@ -151,7 +151,7 @@ Body forms can access the hook's arguments through the let-bound variable
     (let ((hooks (doom--resolve-hooks (pop args)))
           (funcs
            (let ((val (car args)))
-             (if (eq (car-safe val) 'quote)
+             (if (memq (car-safe val) '(quote function))
                  (if (cdr-safe (cadr val))
                      (cadr val)
                    (list (cadr val)))
@@ -159,7 +159,7 @@ Body forms can access the hook's arguments through the let-bound variable
           forms)
       (dolist (fn funcs)
         (setq fn (if (symbolp fn)
-                     `(quote ,fn)
+                     `(function ,fn)
                    `(lambda (&rest args) ,@args)))
         (dolist (hook hooks)
           (push (cond ((eq hook-fn 'remove-hook)
@@ -249,11 +249,11 @@ executed when called with `set!'. FORMS are not evaluated until `set!' calls it.
       (dotimes (i 2) (pop forms)))
     `(push (cons ',name
                  (lambda ()
-                   (cl-flet ((sh (lambda (&rest args) (apply 'doom-sh args)))
-                             (sudo (lambda (&rest args) (apply 'doom-sudo args)))
-                             (fetch (lambda (&rest args) (apply 'doom-fetch args)))
+                   (cl-flet ((sh (lambda (&rest args) (apply #'doom-sh args)))
+                             (sudo (lambda (&rest args) (apply #'doom-sudo args)))
+                             (fetch (lambda (&rest args) (apply #'doom-fetch args)))
                              (message (lambda (&rest args)
-                                        (apply 'message (format "[%s] %s" ,(symbol-name name) (car args))
+                                        (apply #'message (format "[%s] %s" ,(symbol-name name) (car args))
                                                (cdr args)))))
                      (if (not ,(if (not prereqs)
                                    't
@@ -281,7 +281,7 @@ recipes for setting up the external dependencies of a module by, for instance,
 using the OS package manager to install them, or retrieving them from a repo
 using `doom-fetch'."
   (interactive
-   (list (list (completing-read "Bootstrap: " (mapcar 'car doom-bootstraps) nil t))))
+   (list (list (completing-read "Bootstrap: " (mapcar #'car doom-bootstraps) nil t))))
   (let (noninteractive)
     (load "core.el" nil t))
   (doom-initialize-packages t)
@@ -295,7 +295,7 @@ using `doom-fetch'."
               (and err-not-func
                    (message "ERROR: These bootstraps were invalid: %s" err-not-func)))
       (error "There were errors. Aborting."))
-    (mapc 'doom-bootstrap ids)))
+    (mapc #'doom-bootstrap ids)))
 
 (provide 'core-lib)
 ;;; core-lib.el ends here

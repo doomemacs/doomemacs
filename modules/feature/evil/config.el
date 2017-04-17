@@ -5,7 +5,7 @@
 
 (def-setting! :evil-state (&rest mode-state-list)
   "Set the initialize STATE of MODE using `evil-set-initial-state'."
-  (if (cl-every 'listp mode-state-list)
+  (if (cl-every #'listp mode-state-list)
       `(progn
          ,@(let (forms)
              (dolist (it mode-state-list (nreverse forms))
@@ -57,13 +57,13 @@
 
   ;; highlight matching delimiters where it's important
   (defun +evil|show-paren-mode-off () (show-paren-mode -1))
-  (add-hook 'evil-insert-state-entry-hook   'show-paren-mode)
-  (add-hook 'evil-insert-state-exit-hook    '+evil|show-paren-mode-off)
-  (add-hook 'evil-visual-state-entry-hook   'show-paren-mode)
-  (add-hook 'evil-visual-state-exit-hook    '+evil|show-paren-mode-off)
-  (add-hook 'evil-operator-state-entry-hook 'show-paren-mode)
-  (add-hook 'evil-operator-state-exit-hook  '+evil|show-paren-mode-off)
-  (add-hook 'evil-normal-state-entry-hook   '+evil|show-paren-mode-off)
+  (add-hook 'evil-insert-state-entry-hook   #'show-paren-mode)
+  (add-hook 'evil-insert-state-exit-hook    #'+evil|show-paren-mode-off)
+  (add-hook 'evil-visual-state-entry-hook   #'show-paren-mode)
+  (add-hook 'evil-visual-state-exit-hook    #'+evil|show-paren-mode-off)
+  (add-hook 'evil-operator-state-entry-hook #'show-paren-mode)
+  (add-hook 'evil-operator-state-exit-hook  #'+evil|show-paren-mode-off)
+  (add-hook 'evil-normal-state-entry-hook   #'+evil|show-paren-mode-off)
 
   (dolist (mode '(tabulated-list-mode view-mode comint-mode term-mode calendar-mode Man-mode grep-mode))
     (evil-set-initial-state mode 'emacs))
@@ -74,7 +74,7 @@
     (set-syntax-table (let* ((table (make-syntax-table)))
                         (modify-syntax-entry ?/ "." table)
                         table)))
-  (add-hook 'minibuffer-inactive-mode-hook 'minibuffer-inactive-mode-hook-setup))
+  (add-hook 'minibuffer-inactive-mode-hook #'minibuffer-inactive-mode-hook-setup))
 
 (defsubst +evil--textobj (key inner-fn &optional outer-fn)
   "Define a text object."
@@ -92,23 +92,23 @@
     (abort-recursive-edit))
   (when (evil-ex-hl-active-p 'evil-ex-search)
     (evil-ex-nohighlight)))
-(advice-add 'evil-force-normal-state :after '+evil*esc)
+(advice-add #'evil-force-normal-state :after #'+evil*esc)
 
 (defun +evil*static-reindent (orig-fn &rest args)
   "Don't move cursor on indent."
   (save-excursion (apply orig-fn args)))
-(advice-add 'evil-indent :around '+evil*static-reindent)
+(advice-add #'evil-indent :around #'+evil*static-reindent)
 
 ;; Move to new split
 (defun +evil*window-follow (&rest _)  (evil-window-down 1))
 (defun +evil*window-vfollow (&rest _) (evil-window-right 1))
-(advice-add 'evil-window-split  :after '+evil*window-follow)
-(advice-add 'evil-window-vsplit :after '+evil*window-vfollow)
+(advice-add #'evil-window-split  :after #'+evil*window-follow)
+(advice-add #'evil-window-vsplit :after #'+evil*window-vfollow)
 
 ;; monkey patch `evil-ex-replace-special-filenames' to add more ex
 ;; substitution flags to evil-mode
-(advice-add 'evil-ex-replace-special-filenames
-            :override '+evil*ex-replace-special-filenames)
+(advice-add #'evil-ex-replace-special-filenames
+            :override #'+evil*ex-replace-special-filenames)
 
 ;; Add extra argument types that highlight matches in the current buffer.
 ;; TODO Must be simpler way to do this
@@ -137,8 +137,8 @@
              (evil-transform-vim-style-regexp pattern)))
    1 1))
 
-(evil-ex-define-cmd "g[lobal]" '+evil:global)
-(evil-ex-define-cmd "al[ign]"  '+evil:align)
+(evil-ex-define-cmd "g[lobal]" #'+evil:global)
+(evil-ex-define-cmd "al[ign]"  #'+evil:align)
 
 
 ;;
@@ -149,7 +149,7 @@
   :commands (evil-inner-arg evil-outer-arg
              evil-forward-arg evil-backward-arg
              evil-jump-out-args)
-  :init (+evil--textobj "a" 'evil-inner-arg 'evil-outer-arg))
+  :init (+evil--textobj "a" #'evil-inner-arg #'evil-outer-arg))
 
 
 (def-package! evil-commentary
@@ -164,21 +164,21 @@
   (defvar +evil--snipe-repeat-fn)
 
   (evilem-default-keybindings "g SPC")
-  (evilem-define (kbd "g SPC n") 'evil-ex-search-next)
-  (evilem-define (kbd "g SPC N") 'evil-ex-search-previous)
-  (evilem-define "gs" 'evil-snipe-repeat
+  (evilem-define (kbd "g SPC n") #'evil-ex-search-next)
+  (evilem-define (kbd "g SPC N") #'evil-ex-search-previous)
+  (evilem-define "gs" #'evil-snipe-repeat
                  :pre-hook (save-excursion (call-interactively #'evil-snipe-s))
                  :bind ((evil-snipe-scope 'buffer)
                         (evil-snipe-enable-highlight)
                         (evil-snipe-enable-incremental-highlight)))
-  (evilem-define "gS" 'evil-snipe-repeat-reverse
+  (evilem-define "gS" #'evil-snipe-repeat-reverse
                  :pre-hook (save-excursion (call-interactively #'evil-snipe-s))
                  :bind ((evil-snipe-scope 'buffer)
                         (evil-snipe-enable-highlight)
                         (evil-snipe-enable-incremental-highlight)))
 
   (setq +evil--snipe-repeat-fn
-        (evilem-create 'evil-snipe-repeat
+        (evilem-create #'evil-snipe-repeat
                        :bind ((evil-snipe-scope 'whole-buffer)
                               (evil-snipe-enable-highlight)
                               (evil-snipe-enable-incremental-highlight)))))
@@ -222,20 +222,20 @@
   ;; Add escaped-sequence support to embrace
   (push (cons ?\\ (make-embrace-pair-struct
                    :key ?\\
-                   :read-function '+evil--embrace-escaped
+                   :read-function #'+evil--embrace-escaped
                    :left-regexp "\\[[{(]"
                    :right-regexp "\\[]})]"))
         (default-value 'embrace--pairs-list))
 
   ;; Add extra pairs
-  (add-hook 'LaTeX-mode-hook 'embrace-LaTeX-mode-hook)
-  (add-hook 'org-mode-hook 'embrace-org-mode-hook)
+  (add-hook 'LaTeX-mode-hook #'embrace-LaTeX-mode-hook)
+  (add-hook 'org-mode-hook   #'embrace-org-mode-hook)
   (add-hook! emacs-lisp-mode
     (embrace-add-pair ?\` "`" "'"))
   (add-hook! (emacs-lisp-mode lisp-mode)
-    (embrace-add-pair-regexp ?f "([^ ]+ " ")" '+evil--embrace-elisp-fn))
+    (embrace-add-pair-regexp ?f "([^ ]+ " ")" #'+evil--embrace-elisp-fn))
   (add-hook! (org-mode LaTeX-mode)
-    (embrace-add-pair-regexp ?l "\\[a-z]+{" "}" '+evil--embrace-latex)))
+    (embrace-add-pair-regexp ?l "\\[a-z]+{" "}" #'+evil--embrace-latex)))
 
 
 (def-package! evil-escape
@@ -244,10 +244,10 @@
   (defun +evil|escape-disable () (evil-escape-mode -1))
   (defun +evil|escape-enable ()  (evil-escape-mode +1))
   ;; I only need evil-escape in insert and replace modes.
-  (add-hook 'evil-insert-state-entry-hook  '+evil|escape-enable)
-  (add-hook 'evil-insert-state-exit-hook   '+evil|escape-disable)
-  (add-hook 'evil-replace-state-entry-hook '+evil|escape-enable)
-  (add-hook 'evil-replace-state-exit-hook  '+evil|escape-disable)
+  (add-hook 'evil-insert-state-entry-hook  #'+evil|escape-enable)
+  (add-hook 'evil-insert-state-exit-hook   #'+evil|escape-disable)
+  (add-hook 'evil-replace-state-entry-hook #'+evil|escape-enable)
+  (add-hook 'evil-replace-state-exit-hook  #'+evil|escape-disable)
   :config
   (setq evil-escape-key-sequence "jk"
         evil-escape-delay 0.25))
@@ -258,7 +258,7 @@
   :config
   (defun +evil*exchange-off ()
     (if evil-exchange--overlays (evil-exchange-cancel)))
-  (advice-add 'evil-force-normal-state :after '+evil*exchange-off))
+  (advice-add #'evil-force-normal-state :after #'+evil*exchange-off))
 
 
 (def-package! evil-indent-plus
@@ -269,15 +269,15 @@
              evil-indent-plus-i-indent-up-down
              evil-indent-plus-a-indent-up-down)
   :init
-  (+evil--textobj "i" 'evil-indent-plus-i-indent 'evil-indent-plus-a-indent)
-  (+evil--textobj "I" 'evil-indent-plus-i-indent-up 'evil-indent-plus-a-indent-up)
-  (+evil--textobj "J" 'evil-indent-plus-i-indent-up-down 'evil-indent-plus-a-indent-up-down))
+  (+evil--textobj "i" #'evil-indent-plus-i-indent #'evil-indent-plus-a-indent)
+  (+evil--textobj "I" #'evil-indent-plus-i-indent-up #'evil-indent-plus-a-indent-up)
+  (+evil--textobj "J" #'evil-indent-plus-i-indent-up-down #'evil-indent-plus-a-indent-up-down))
 
 
 (def-package! evil-matchit
   :commands (evilmi-jump-items evilmi-text-object global-evil-matchit-mode)
   :config (global-evil-matchit-mode 1)
-  :init (+evil--textobj "%" 'evilmi-text-object))
+  :init (+evil--textobj "%" #'evilmi-text-object))
 
 
 (def-package! evil-multiedit
@@ -297,14 +297,14 @@
 (def-package! evil-textobj-anyblock
   :commands (evil-numbers/inc-at-pt evil-numbers/dec-at-pt)
   :init
-  (+evil--textobj "B" 'evil-textobj-anyblock-inner-block 'evil-textobj-anyblock-a-block))
+  (+evil--textobj "B" #'evil-textobj-anyblock-inner-block #'evil-textobj-anyblock-a-block))
 
 
 (def-package! evil-search-highlight-persist :demand t
   :commands (evil-textobj-anyblock-inner-block evil-textobj-anyblock-a-block)
   :config
   (global-evil-search-highlight-persist t)
-  (advice-add 'evil-force-normal-state :after 'evil-search-highlight-persist-remove-all))
+  (advice-add #'evil-force-normal-state :after #'evil-search-highlight-persist-remove-all))
 
 
 (def-package! evil-snipe :demand t
@@ -382,11 +382,11 @@
     "Don't ask for confirmation when creating files"
     (cl-letf (((symbol-function 'yes-or-no-p) (lambda (&rest _) t)))
       (apply orig-fun args)))
-  (advice-add 'neotree-create-node :around '+evil*neotree-create-node)
+  (advice-add #'neotree-create-node :around #'+evil*neotree-create-node)
 
   ;; Adding keybindings to `neotree-mode-map' wouldn't work for me (they get
   ;; overridden when the neotree buffer is spawned). So we bind them in a hook.
-  (add-hook 'neo-after-create-hook '+evil|neotree-init-keymap)
+  (add-hook 'neo-after-create-hook #'+evil|neotree-init-keymap)
   (defun +evil|neotree-init-keymap (&rest _)
     (map! :Lm "\\\\"     'evil-window-prev
           :Lm "RET"      'neotree-enter

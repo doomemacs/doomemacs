@@ -53,7 +53,7 @@ the current workspace."
                    (buffer-list)))
         (project-root (and project-p (doom-project-root t))))
     (if project-root
-        (funcall (if (eq project-p 'not) 'cl-remove-if 'cl-remove-if-not)
+        (funcall (if (eq project-p 'not) #'cl-remove-if #'cl-remove-if-not)
                  (lambda (b) (projectile-project-buffer-p b project-root))
                  buffers)
       buffers)))
@@ -62,7 +62,7 @@ the current workspace."
 (defun doom-real-buffers-list (&optional buffer-list)
   "Get a list of all buffers (in the current workspace OR in BUFFER-LIST) that
 `doom-real-buffer-p' returns non-nil for."
-  (cl-remove-if-not 'doom-real-buffer-p (or buffer-list (doom-buffer-list))))
+  (cl-remove-if-not #'doom-real-buffer-p (or buffer-list (doom-buffer-list))))
 
 ;;;###autoload
 (defun doom-buffers-in-mode (modes &optional buffer-list)
@@ -76,19 +76,19 @@ the current workspace."
 (defun doom-visible-windows (&optional window-list)
   "Get a list of the visible windows in the current frame (that aren't popups),
 OR return only the visible windows in WINDOW-LIST."
-  (cl-remove-if 'doom-popup-p (or window-list (window-list))))
+  (cl-remove-if #'doom-popup-p (or window-list (window-list))))
 
 ;;;###autoload
 (defun doom-visible-buffers (&optional buffer-list)
   "Get a list of unburied buffers in the current project and workspace, OR
 return only the unburied buffers in BUFFER-LIST (a list of BUFFER-OR-NAMEs)."
-  (cl-remove-if-not 'get-buffer-window (or buffer-list (doom-buffer-list))))
+  (cl-remove-if-not #'get-buffer-window (or buffer-list (doom-buffer-list))))
 
 ;;;###autoload
 (defun doom-buried-buffers (&optional buffer-list)
   "Get a list of buried buffers in the current project and workspace, OR return
 only the buried buffers in BUFFER-LIST (a list of BUFFER-OR-NAMEs)."
-  (cl-remove-if 'get-buffer-window (or buffer-list (doom-buffer-list))))
+  (cl-remove-if #'get-buffer-window (or buffer-list (doom-buffer-list))))
 
 ;;;###autoload
 (defun doom-matching-buffers (pattern &optional buffer-list)
@@ -109,7 +109,7 @@ buffers. If there's nothing left, switch to `doom-fallback-buffer'. See
           ((= (length buffers) 1)
            (set-window-buffer nil (car buffers)))
           (t
-           (let ((move-func (if (> n 0) 'switch-to-next-buffer 'switch-to-prev-buffer)))
+           (let ((move-func (if (> n 0) #'switch-to-next-buffer #'switch-to-prev-buffer)))
              ;; Why this instead of switching straight to the Nth buffer in
              ;; BUFFERS? Because `switch-to-next-buffer' and
              ;; `switch-to-prev-buffer' properly update buffer list order.
@@ -202,7 +202,7 @@ See `doom-real-buffer-p' for what 'real' means."
   "Kill all buffers (in current workspace OR in BUFFER-LIST) that match the
 regex PATTERN. Returns the number of killed buffers."
   (let ((buffers (doom-matching-buffers pattern buffer-list)))
-    (mapc 'doom-kill-buffer buffers)
+    (mapc #'doom-kill-buffer buffers)
     (length buffers)))
 
 ;;;###autoload
@@ -218,7 +218,7 @@ regex PATTERN. Returns the number of killed buffers."
 belong to the current project in this workspace."
   (interactive "P")
   (let ((buffers (doom-buffer-list project-p)))
-    (mapc 'doom-kill-buffer-and-windows buffers)
+    (mapc #'doom-kill-buffer-and-windows buffers)
     (when (called-interactively-p 'interactive)
       (message "Killed %s buffers" (length buffers)))))
 
@@ -250,7 +250,7 @@ exclude buffers that aren't part of the current project."
   "Clean up buried and process buffers in the current workspace."
   (interactive "P")
   (let ((buffers (doom-buried-buffers (if all-p (buffer-list)))))
-    (mapc 'kill-buffer buffers)
+    (mapc #'kill-buffer buffers)
     (setq n (+ (doom-kill-process-buffers) (length buffers)))
     (when (called-interactively-p 'interactive)
       (message "Cleaned up %s buffers" n))))

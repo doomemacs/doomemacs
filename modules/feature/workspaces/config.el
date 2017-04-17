@@ -53,7 +53,7 @@ renamed.")
     (when (= persp-auto-resume-time -1)
       (persp-frame-switch +workspaces-main)))
 
-  (define-key persp-mode-map [remap delete-window] '+workspace/close-window-or-workspace)
+  (define-key persp-mode-map [remap delete-window] #'+workspace/close-window-or-workspace)
 
   ;; Per-frame perspectives
   (setq persp-init-new-frame-behaviour-override nil
@@ -68,7 +68,7 @@ renamed.")
     (when (and (string= (or (frame-parameter frame 'assoc-persp) "") (+workspace-current-name))
                (not (delq (doom-fallback-buffer) (doom-real-buffers-list))))
       (+workspace/delete persp-name)))
-  (add-hook 'delete-frame-functions '+workspaces*delete-frame-and-persp)
+  (add-hook 'delete-frame-functions #'+workspaces*delete-frame-and-persp)
 
   (defun +workspaces*auto-add-buffer (buffer &rest _)
     "Auto-associate buffers with perspectives upon opening them. Allows a
@@ -78,18 +78,18 @@ perspective-specific buffer list via `doom-buffer-list'."
                (doom-real-buffer-p buffer))
       (persp-add-buffer buffer (get-current-persp) nil)
       (redisplay)))
-  (advice-add 'switch-to-buffer :after '+workspaces*auto-add-buffer)
-  (advice-add 'display-buffer   :after '+workspaces*auto-add-buffer)
+  (advice-add #'switch-to-buffer :after #'+workspaces*auto-add-buffer)
+  (advice-add #'display-buffer   :after #'+workspaces*auto-add-buffer)
 
   (defun doom|new-workspace-on-project-change ()
     "Create a new workspace when switching project with projectile."
     (+workspace-switch (projectile-project-name) t))
-  (add-hook 'projectile-before-switch-project-hook 'doom|new-workspace-on-project-change)
+  (add-hook 'projectile-before-switch-project-hook #'doom|new-workspace-on-project-change)
 
   (defun +workspaces*reinit-popups (&rest _)
     "Runs `+workspaces-load-session-hook'."
     (run-hook-with-args '+workspaces-load-session-hook (window-list)))
-  (advice-add 'persp-load-state-from-file :after '+workspaces*reinit-popups)
+  (advice-add #'persp-load-state-from-file :after #'+workspaces*reinit-popups)
 
   (defun +workspaces|restore-popups (windows)
     "Restore popup windows when loading a perspective from file."
@@ -99,5 +99,5 @@ perspective-specific buffer list via `doom-buffer-list'."
           (unless doom-popup-mode
             (setq-local doom-popup-rules plist)
             (doom-popup-mode +1))))))
-  (add-hook '+workspaces-load-session-hook '+workspaces|restore-popups))
+  (add-hook '+workspaces-load-session-hook #'+workspaces|restore-popups))
 

@@ -30,10 +30,10 @@
               (IS-LINUX "maim --opengl -s %s")))
 
   ;; Write download paths relative to current file
-  (advice-add 'org-download--dir-2 :override 'ignore)
+  (advice-add #'org-download--dir-2 :override #'ignore)
   (defun +org*download-fullname (path)
     (file-relative-name path (file-name-directory (buffer-file-name))))
-  (advice-add 'org-download--fullname :filter-return '+org*download-fullname)
+  (advice-add #'org-download--fullname :filter-return #'+org*download-fullname)
 
   ;; Add another drag-and-drop handler that will handle anything but image files
   (setq dnd-protocol-alist `(("^\\(https?\\|ftp\\|file\\|nfs\\):\\(//\\)?" . doom/org-download-dnd)

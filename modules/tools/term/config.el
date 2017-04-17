@@ -6,4 +6,4 @@
   (setq multi-term-program (getenv "SHELL")
         multi-term-switch-after-close nil)
 
-  (add-hook 'term-mode-hook 'doom-hide-modeline-mode))
+  (add-hook 'term-mode-hook #'doom-hide-modeline-mode))

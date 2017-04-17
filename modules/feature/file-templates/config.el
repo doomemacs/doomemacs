@@ -36,7 +36,7 @@
       regexp
       (vector `(lambda () (+file-templates--expand ,trigger ',mode ,project-only-p)))))
 
-  (mapc (lambda (args) (apply '+file-templates|add args))
+  (mapc (lambda (args) (apply #'+file-templates|add args))
         ;; General
         '(("/\\.gitignore$"                  "__"               gitignore-mode)
           ("/Dockerfile$"                    "__"               dockerfile-mode)

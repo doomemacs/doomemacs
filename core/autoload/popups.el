@@ -35,7 +35,7 @@ possible rules."
 ;;;###autoload
 (defun doom-popup-windows ()
   "Get a list of open poups."
-  (cl-remove-if-not 'doom-popup-p (window-list)))
+  (cl-remove-if-not #'doom-popup-p (window-list)))
 
 ;;;###autoload
 (defun doom/popup-restore ()
@@ -54,7 +54,7 @@ Returns t if popups were restored, nil otherwise."
             (rules  (plist-get (cdr spec) :rules)))
         (when (and (not buffer) path)
           (setq buffer (find-file-noselect path t)))
-        (when (and buffer (apply 'doom-popup-buffer buffer rules) (not any-p))
+        (when (and buffer (apply #'doom-popup-buffer buffer rules) (not any-p))
           (setq any-p t))))
     (when any-p
       (setq doom-popup-history '()))
@@ -90,7 +90,7 @@ only close popups that have an :autoclose property in their rule (see
   (interactive)
   (let ((orig-win (selected-window)))
     (when-let (popups (doom-popup-windows))
-      (setq doom-popup-history (mapcar 'doom--popup-data popups))
+      (setq doom-popup-history (mapcar #'doom--popup-data popups))
       (let (doom-popup-remember-history)
         (dolist (window popups)
           (let ((rules (window-parameter window 'popup)))
@@ -107,8 +107,8 @@ only close popups that have an :autoclose property in their rule (see
   (let ((window (selected-window)))
     (if (window-parameter window :noesc)
         (call-interactively (if (featurep 'evil)
-                                'evil-force-normal-state
-                              'keyboard-escape-quit))
+                                #'evil-force-normal-state
+                              #'keyboard-escape-quit))
       (delete-window window))))
 
 ;;;###autoload

@@ -87,7 +87,7 @@ invokes the repl. Takes the same arguements as `rtog/add-repl'."
   :init
   ;; Use standard linum-mode for quickrun eval windows; so we can have different
   ;; rules for it.
-  (add-hook 'quickrun/mode-hook 'linum-mode)
+  (add-hook 'quickrun/mode-hook #'linum-mode)
 
   :config
   (set! :popup "*quickrun*" :size 10)
@@ -102,12 +102,12 @@ invokes the repl. Takes the same arguements as `rtog/add-repl'."
         (quickrun--kill-running-process)
         (message ""))
       (delete-window win)))
-  (advice-add 'quickrun :before '+eval*quickrun-auto-close)
-  (advice-add 'quickrun-region :before '+eval*quickrun-auto-close)
+  (advice-add #'quickrun :before #'+eval*quickrun-auto-close)
+  (advice-add #'quickrun-region :before #'+eval*quickrun-auto-close)
 
   (defun +eval|quickrun-scroll-to-bof ()
     "Ensures window is scrolled to BOF on invocation."
     (with-selected-window (get-buffer-window quickrun--buffer-name)
       (goto-char (point-min))))
-  (add-hook 'quickrun-after-run-hook '+eval|quickrun-scroll-to-bof))
+  (add-hook 'quickrun-after-run-hook #'+eval|quickrun-scroll-to-bof))
 

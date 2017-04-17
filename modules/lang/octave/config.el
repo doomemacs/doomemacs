@@ -4,7 +4,7 @@
 (def-package! octave
   :mode (("\\.m$" . octave-mode))
   :commands (octave-mode run-octave)
-  :config (set! :repl 'octave-mode 'run-octave))
+  :config (set! :repl 'octave-mode #'run-octave))
 
 ;; (use-package ac-octave
 ;;   :config

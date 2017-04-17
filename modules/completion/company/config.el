@@ -5,7 +5,7 @@
   (let* ((modes (if (listp modes) modes (list modes)))
          (backends (if (listp backends) backends (list backends)))
          (def-name (intern (format "doom--init-company-%s"
-                                   (mapconcat 'identity (mapcar 'symbol-name modes) "-"))))
+                                   (mapconcat #'identity (mapcar #'symbol-name modes) "-"))))
          (quoted (eq (car-safe backends) 'quote)))
     ;; TODO more type checks
     `(progn
@@ -35,7 +35,7 @@
         company-frontends '(company-pseudo-tooltip-frontend company-echo-metadata-frontend)
         company-backends '(company-capf))
 
-  (push 'company-sort-by-occurrence company-transformers)
+  (push #'company-sort-by-occurrence company-transformers)
 
   (after! yasnippet
     (nconc company-backends '(company-yasnippet)))
@@ -44,25 +44,25 @@
           ;; Don't interfere with `evil-delete-backward-word' in insert mode
           "C-w"        nil
 
-          "C-o"        'company-search-kill-others
-          "C-n"        'company-select-next
-          "C-p"        'company-select-previous
-          "C-h"        'company-quickhelp-manual-begin
-          "C-S-h"      'company-show-doc-buffer
-          "C-S-s"      'company-search-candidates
-          "C-s"        'company-filter-candidates
-          "C-SPC"      'company-complete-common
-          "C-h"        'company-quickhelp-manual-begin
-          [tab]        'company-complete-common-or-cycle
-          [backtab]    'company-select-previous
+          "C-o"        #'company-search-kill-others
+          "C-n"        #'company-select-next
+          "C-p"        #'company-select-previous
+          "C-h"        #'company-quickhelp-manual-begin
+          "C-S-h"      #'company-show-doc-buffer
+          "C-S-s"      #'company-search-candidates
+          "C-s"        #'company-filter-candidates
+          "C-SPC"      #'company-complete-common
+          "C-h"        #'company-quickhelp-manual-begin
+          [tab]        #'company-complete-common-or-cycle
+          [backtab]    #'company-select-previous
           [escape]     (λ! (company-abort) (evil-normal-state 1)))
 
         ;; Automatically applies to `company-filter-map'
         (:map company-search-map
-          "C-n"        'company-search-repeat-forward
-          "C-p"        'company-search-repeat-backward
+          "C-n"        #'company-search-repeat-forward
+          "C-p"        #'company-search-repeat-backward
           "C-s"        (λ! (company-search-abort) (company-filter-candidates))
-          [escape]     'company-search-abort))
+          [escape]     #'company-search-abort))
 
   (global-company-mode +1))
 
@@ -90,7 +90,7 @@
     (if (symbol-value mode)
         (push mode company-dict-minor-mode-list)
       (setq company-dict-minor-mode-list (delq mode company-dict-minor-mode-list))))
-  (add-hook 'doom-project-hook '+company|enable-project-dicts))
+  (add-hook 'doom-project-hook #'+company|enable-project-dicts))
 
 
 ;;

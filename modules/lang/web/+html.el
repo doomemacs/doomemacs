@@ -10,26 +10,26 @@
          "\\.tsx$"
          "wp-content/themes/.+/.+\\.php$")
   :init
-  (add-hook 'web-mode-hook 'turn-off-smartparens-mode)
+  (add-hook 'web-mode-hook #'turn-off-smartparens-mode)
   :config
   (set! :company-backend 'web-mode '(company-web-html company-yasnippet))
   (setq web-mode-enable-html-entities-fontification t)
 
   ;; Fix blank line numbers after unfolding
-  (advice-add 'web-mode-fold-or-unfold :after 'nlinum--flush)
+  (advice-add #'web-mode-fold-or-unfold :after #'nlinum--flush)
 
   (map! :map web-mode-map
-        (:localleader :n "rt" 'web-mode-element-rename)
-        "M-/" 'web-mode-comment-or-uncomment
-        :i  "SPC" 'self-insert-command
-        :n  "M-r" 'doom/web-refresh-browser
-        :n  "za"  'web-mode-fold-or-unfold
-        :nv "]a"  'web-mode-attribute-next
-        :nv "[a"  'web-mode-attribute-previous
-        :nv "]t"  'web-mode-tag-next
-        :nv "[t"  'web-mode-tag-previous
-        :nv "]T"  'web-mode-element-child
-        :nv "[T"  'web-mode-element-parent))
+        (:localleader :n "rt" #'web-mode-element-rename)
+        "M-/" #'web-mode-comment-or-uncomment
+        :i  "SPC" #'self-insert-command
+        :n  "M-r" #'doom/web-refresh-browser
+        :n  "za"  #'web-mode-fold-or-unfold
+        :nv "]a"  #'web-mode-attribute-next
+        :nv "[a"  #'web-mode-attribute-previous
+        :nv "]t"  #'web-mode-tag-next
+        :nv "[t"  #'web-mode-tag-previous
+        :nv "]T"  #'web-mode-element-child
+        :nv "[T"  #'web-mode-element-parent))
 
 
 (def-package! company-web
@@ -45,5 +45,5 @@
   :config
   (set! :company-backend 'pug-mode '(company-yasnippet))
   (map! :map pug-mode-map
-        :i [tab] 'doom/dumb-indent
-        :i [backtab] 'doom/dumb-dedent))
+        :i [tab] #'doom/dumb-indent
+        :i [backtab] #'doom/dumb-dedent))

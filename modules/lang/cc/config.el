@@ -30,18 +30,18 @@
   (setq c-tab-always-indent nil
         c-electric-flag nil)
 
-  (add-hook 'c-mode-common-hook 'rainbow-delimiters-mode)
+  (add-hook 'c-mode-common-hook #'rainbow-delimiters-mode)
   ;; extra highlights for numbers in C (`modern-cpp-font-lock' offers something better for C++)
-  (add-hook 'c-mode-hook 'highlight-numbers-mode)
+  (add-hook 'c-mode-hook #'highlight-numbers-mode)
   ;; Fontification of C++11 string literals
-  (add-hook 'c++-mode-hook '+cc|extra-fontify-c++)
+  (add-hook 'c++-mode-hook #'+cc|extra-fontify-c++)
 
   (set! :electric '(c-mode c++-mode objc-mode java-mode)
         :chars '(?\n ?\}))
 
   (set! :company-backend
         '(c-mode c++-mode objc-mode)
-        '(company-irony-c-headers company-irony))
+        #'(company-irony-c-headers company-irony))
 
   (sp-with-modes '(c-mode c++-mode objc-mode java-mode)
     (sp-local-pair "<" ">" :when '(+cc-sp-point-is-template-p +cc-sp-point-after-include-p))
@@ -51,7 +51,7 @@
     (sp-local-pair "/*!" "*/" :post-handlers '(("||\n[i]" "RET") ("[d-1]< | " "SPC"))))
 
   ;; Improve indentation of inline lambdas in C++11
-  (advice-add 'c-lineup-arglist :around '+c-lineup-arglist)
+  (advice-add #'c-lineup-arglist :around #'+c-lineup-arglist)
 
   ;; C/C++ style settings
   (c-toggle-electric-state -1)
@@ -73,23 +73,23 @@
                 (looking-at "typedef struct"))
             '+
           '++))))
-  (c-set-offset 'inclass '+cc--c-lineup-inclass)
+  (c-set-offset 'inclass #'+cc--c-lineup-inclass)
 
 
   ;; Certain mappings interfere with smartparens and custom bindings,
   ;; so unbind them
   (map! :map c-mode-map
         "DEL" nil
-        "#" 'self-insert-command
-        "{" 'self-insert-command
-        "}" 'self-insert-command
-        "/" 'self-insert-command
-        "*" 'self-insert-command
-        ";" 'self-insert-command
-        "," 'self-insert-command
-        ":" 'self-insert-command
-        "(" 'self-insert-command
-        ")" 'self-insert-command
+        "#" #'self-insert-command
+        "{" #'self-insert-command
+        "}" #'self-insert-command
+        "/" #'self-insert-command
+        "*" #'self-insert-command
+        ";" #'self-insert-command
+        "," #'self-insert-command
+        ":" #'self-insert-command
+        "(" #'self-insert-command
+        ")" #'self-insert-command
 
         :map c++-mode-map
         "}" nil
@@ -100,27 +100,27 @@
         ;; ourselves.
         "<" nil
         :map (c-mode-base-map c++-mode-map)
-        :i ">" '+cc/autoclose->-maybe))
+        :i ">" #'+cc/autoclose->-maybe))
 
 
 (def-package! modern-cpp-font-lock
   :commands modern-c++-font-lock-mode
-  :init (add-hook 'c++-mode-hook 'modern-c++-font-lock-mode))
+  :init (add-hook 'c++-mode-hook #'modern-c++-font-lock-mode))
 
 
 (def-package! irony
   :after cc-mode
-  :init (add-hook 'c-mode-common-hook 'irony-mode)
+  :init (add-hook 'c-mode-common-hook #'irony-mode)
   :config
   (setq irony-server-install-prefix (concat doom-etc-dir "irony-server/"))
-  (add-hook! 'irony-mode-hook '(irony-eldoc flycheck-mode))
+  (add-hook! 'irony-mode-hook #'(irony-eldoc flycheck-mode))
   (add-hook! 'c++-mode-hook
     (make-local-variable 'irony-additional-clang-options)
     (push "-std=c++11" irony-additional-clang-options))
 
   (map! :map irony-mode-map
-        [remap completion-at-point] 'counsel-irony
-        [remap complete-symbol] 'counsel-irony))
+        [remap completion-at-point] #'counsel-irony
+        [remap complete-symbol] #'counsel-irony))
 
 (def-package! irony-eldoc :after irony)
 
@@ -166,4 +166,4 @@
 
 (def-package! demangle-mode
   :commands demangle-mode
-  :init (add-hook 'llvm-mode-hook 'demangle-mode))
+  :init (add-hook 'llvm-mode-hook #'demangle-mode))

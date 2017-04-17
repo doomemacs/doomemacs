@@ -44,7 +44,7 @@ interactive session."
            (lambda (rule)
              `(,(car rule)
                (lambda (message &rest args)
-                 (apply 'doom-ansi-apply ',(car rule) message args))))
+                 (apply #'doom-ansi-apply ',(car rule) message args))))
            (append doom-message-fg doom-message-bg doom-message-fx))
         (color (symbol-function 'doom-ansi-apply)))
      (format ,message ,@args)))
@@ -73,6 +73,6 @@ interactive session."
                   (assq code doom-message-fx))))
     (format "\e[%dm%s\e[%dm"
             (cdr rule)
-            (apply 'format format args)
+            (apply #'format format args)
             0)))
 

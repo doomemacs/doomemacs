@@ -12,12 +12,12 @@
   (load "haskell-mode-autoloads" nil t)
 
   (set! :popup "*debug:haskell*" :size 20)
-  (set! :repl 'haskell-mode 'switch-to-haskell)
+  (set! :repl 'haskell-mode #'switch-to-haskell)
   (push ".hi" completion-ignored-extensions)
 
   (autoload 'switch-to-haskell "inf-haskell" nil t)
   (after! inf-haskell
-    (map! :map inf-haskell-mode-map "ESC ESC" 'doom/popup-close)))
+    (map! :map inf-haskell-mode-map "ESC ESC" #'doom/popup-close)))
 
 
 (def-package! dante
@@ -25,5 +25,5 @@
   :config
   (when (executable-find "cabal")
     (add-hook! 'haskell-mode-hook
-      '(flycheck-mode dante-mode interactive-haskell-mode))))
+      #'(flycheck-mode dante-mode interactive-haskell-mode))))
 

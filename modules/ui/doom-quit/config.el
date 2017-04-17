@@ -31,5 +31,5 @@ http://doom.wikia.com/wiki/Quit_messages and elsewhere.")
       (y-or-n-p (format "%s  Quit?" (nth (random (length +doom-quit-messages)) +doom-quit-messages)))
     t))
 
-(setq confirm-kill-emacs '+doom-quit)
+(setq confirm-kill-emacs #'+doom-quit)
 

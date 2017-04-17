@@ -37,7 +37,7 @@ If already there, do nothing."
                         (skip-chars-backward " " bol)
                         (point))))
                   eol))
-         (goto-char-fn (if (featurep 'evil) 'evil-goto-char 'goto-char)))
+         (goto-char-fn (if (featurep 'evil) #'evil-goto-char #'goto-char)))
     (if (= eoc point)
         (funcall goto-char-fn eol)
       (unless (= eol point)
@@ -64,7 +64,7 @@ If already there, do nothing."
   "Dedents the current line."
   (interactive)
   (if indent-tabs-mode
-      (call-interactively 'backward-delete-char)
+      (call-interactively #'backward-delete-char)
     (save-excursion
       (unless (looking-back "^[\s\t]*" (line-beginning-position))
         (doom--goto-first-non-blank))
@@ -78,7 +78,7 @@ If already there, do nothing."
 afterwards, kill line to column 1."
   (interactive)
   (let ((empty-line (save-excursion (beginning-of-line) (looking-at-p "[ \t]*$"))))
-    (funcall (if (featurep 'evil) 'evil-delete 'delete-region)
+    (funcall (if (featurep 'evil) #'evil-delete #'delete-region)
              (point-at-bol) (point))
     (unless empty-line
       (indent-according-to-mode))))
@@ -113,9 +113,9 @@ possible, or just one char if that's not possible."
           (if (string-match "\\w*\\(\\s-+\\)$"
                             (buffer-substring-no-properties (max (point-min) (- p movement)) p))
               (delete-char (- 0 (- (match-end 1) (match-beginning 1))))
-            (call-interactively 'delete-backward-char)))))
+            (call-interactively #'delete-backward-char)))))
      ;; Otherwise do a regular delete
-     (t (call-interactively 'delete-backward-char)))))
+     (t (call-interactively #'delete-backward-char)))))
 
 ;;;###autoload
 (defun doom/inflate-space-maybe ()
@@ -123,9 +123,9 @@ possible, or just one char if that's not possible."
 space on either side of the point if so."
   (interactive)
   (if (doom--surrounded-p)
-      (progn (call-interactively 'self-insert-command)
-             (save-excursion (call-interactively 'self-insert-command)))
-    (call-interactively 'self-insert-command)))
+      (progn (call-interactively #'self-insert-command)
+             (save-excursion (call-interactively #'self-insert-command)))
+    (call-interactively #'self-insert-command)))
 
 ;;;###autoload
 (defun doom/deflate-space-maybe ()
@@ -137,12 +137,12 @@ spaces on either side of the point if so. Resorts to
     (if (doom--surrounded-p)
         (let ((whitespace-match (match-string 1)))
           (cond ((not whitespace-match)
-                 (call-interactively 'delete-backward-char))
+                 (call-interactively #'delete-backward-char))
                 ((string-match "\n" whitespace-match)
-                 (funcall (if (featurep 'evil) 'evil-delete 'delete-region)
+                 (funcall (if (featurep 'evil) #'evil-delete #'delete-region)
                           (point-at-bol) (point))
-                 (call-interactively 'delete-backward-char)
-                 (save-excursion (call-interactively 'delete-char)))
+                 (call-interactively #'delete-backward-char)
+                 (save-excursion (call-interactively #'delete-char)))
                 (t (just-one-space 0))))
       (doom/backward-delete-whitespace-to-column))))
 
@@ -155,7 +155,7 @@ from a commented line."
          (newline))
         ((sp-point-in-comment)
          (cond ((memq major-mode '(js2-mode rjsx-mode))
-                (call-interactively 'js2-line-break))
+                (call-interactively #'js2-line-break))
                ((memq major-mode '(java-mode php-mode))
                 (c-indent-new-comment-line))
                ((memq major-mode '(c-mode c++-mode objc-mode css-mode scss-mode js2-mode))

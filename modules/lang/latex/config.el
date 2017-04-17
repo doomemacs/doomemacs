@@ -30,8 +30,8 @@
           LaTeX-section-section
           LaTeX-section-label))
 
-  (add-hook! (latex-mode LaTeX-mode) 'turn-on-auto-fill)
-  (add-hook! LaTeX-mode '(LaTeX-math-mode TeX-source-correlate-mode))
+  (add-hook! (latex-mode LaTeX-mode) #'turn-on-auto-fill)
+  (add-hook! 'LaTeX-mode-hook #'(LaTeX-math-mode TeX-source-correlate-mode))
 
   (set! :popup " output\\*$" :regexp t :size 15 :noselect t :autoclose t :autokill t)
 
@@ -50,7 +50,7 @@
         reftex-default-bibliography (list +latex-bibtex-default-file)
         reftex-toc-split-windows-fraction 0.2)
 
-  (add-hook! (latex-mode LaTeX-mode) 'turn-on-reftex)
+  (add-hook! (latex-mode LaTeX-mode) #'turn-on-reftex)
 
   :config
   (map! :map reftex-mode-map
@@ -59,10 +59,10 @@
   (add-hook! 'reftex-toc-mode-hook
     (reftex-toc-rescan)
     (doom-hide-modeline-mode +1)
-    (map! :Le "j"   'next-line
-          :Le "k"   'previous-line
-          :Le "q"   'kill-buffer-and-window
-          :Le "ESC" 'kill-buffer-and-window)))
+    (map! :Le "j"   #'next-line
+          :Le "k"   #'previous-line
+          :Le "q"   #'kill-buffer-and-window
+          :Le "ESC" #'kill-buffer-and-window)))
 
 
 (def-package! bibtex ; built-in
@@ -72,7 +72,7 @@
         bibtex-text-indentation 20
         bibtex-completion-bibliography (list +latex-bibtex-default-file))
 
-  (map! :map bibtex-mode-map "C-c \\" 'bibtex-fill-entry))
+  (map! :map bibtex-mode-map "C-c \\" #'bibtex-fill-entry))
 
 (def-package! ivy-bibtex
   :when (featurep! :completion ivy)

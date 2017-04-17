@@ -111,7 +111,7 @@ there are problems.")
  undo-tree-history-directory-alist (list (cons "." (concat doom-cache-dir "undo-tree-hist/"))))
 
 ;; be quiet at startup
-(advice-add 'display-startup-echo-area-message :override 'ignore)
+(advice-add #'display-startup-echo-area-message :override #'ignore)
 (setq inhibit-startup-message t
       inhibit-startup-echo-area-message user-login-name
       initial-major-mode 'fundamental-mode
@@ -142,7 +142,7 @@ enable multiple minor modes for the same regexp.")
             (funcall (cdar alist) 1))
         (setq alist (cdr alist))))))
 
-(add-hook 'find-file-hook 'doom|enable-minor-mode-maybe)
+(add-hook 'find-file-hook #'doom|enable-minor-mode-maybe)
 
 
 ;;;

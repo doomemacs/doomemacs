@@ -60,8 +60,8 @@
 ;; Ediff
 (add-hook! ediff-load
   (setq ediff-diff-options           "-w"
-        ediff-split-window-function 'split-window-horizontally
-        ediff-window-setup-function 'ediff-setup-windows-plain)) ; no extra frames
+        ediff-split-window-function  #'split-window-horizontally
+        ediff-window-setup-function  #'ediff-setup-windows-plain)) ; no extra frames
 
 ;; revert buffers for changed files
 (global-auto-revert-mode 1)
@@ -71,7 +71,7 @@
 (defun doom|dont-kill-scratch-buffer ()
   (or (not (eq (buffer-name) "*scratch*"))
       (ignore (bury-buffer))))
-(add-hook 'kill-buffer-query-functions 'doom|dont-kill-scratch-buffer)
+(add-hook 'kill-buffer-query-functions #'doom|dont-kill-scratch-buffer)
 
 ;; enabled by default in Emacs 25+. No thanks.
 (electric-indent-mode -1)
@@ -86,7 +86,7 @@
     (when (and (if (featurep 'evil) (evil-insert-state-p) t)
                (string-match-p "^[\s\t]*$" linestr))
       (insert linestr))))
-(advice-add 'delete-trailing-whitespace :around 'doom*delete-trailing-whitespace)
+(advice-add #'delete-trailing-whitespace :around #'doom*delete-trailing-whitespace)
 
 
 ;;
@@ -129,8 +129,8 @@
   (smartparens-global-mode 1)
   (require 'smartparens-config)
   ;; Smartparens interferes with Replace mode
-  (add-hook 'evil-replace-state-entry-hook 'turn-off-smartparens-mode)
-  (add-hook 'evil-replace-state-exit-hook  'turn-on-smartparens-mode)
+  (add-hook 'evil-replace-state-entry-hook #'turn-off-smartparens-mode)
+  (add-hook 'evil-replace-state-exit-hook  #'turn-on-smartparens-mode)
   ;; Auto-close more conservatively
   (sp-pair "'" nil :unless '(sp-point-before-word-p sp-point-after-word-p sp-point-before-same-p))
   (sp-pair "\"" nil :unless '(sp-point-before-word-p sp-point-after-word-p sp-point-before-same-p))
@@ -200,8 +200,8 @@
   :commands (wgrep-setup wgrep-change-to-wgrep-mode)
   :config
   (setq wgrep-auto-save-buffer t)
-  (advice-add 'wgrep-abort-changes :after 'doom/popup-close)
-  (advice-add 'wgrep-finish-edit :after 'doom/popup-close))
+  (advice-add #'wgrep-abort-changes :after #'doom/popup-close)
+  (advice-add #'wgrep-finish-edit :after #'doom/popup-close))
 
 (provide 'core-editor)
 ;;; core-editor.el ends here
