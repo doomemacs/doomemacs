@@ -61,6 +61,7 @@ interactive session."
          (let ((beg (point))
                end)
            (insert (format! ,message ,@args))
+           (insert "\n")
            (setq end (point))
            (ansi-color-apply-on-region beg end)))
        (with-selected-window (doom-popup-buffer buf)
