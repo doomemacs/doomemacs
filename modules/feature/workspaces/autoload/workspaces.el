@@ -333,7 +333,7 @@ end of the workspace list."
       (condition-case ex
           (let* ((persps (+workspace-list))
                  (perspc (length persps))
-                 (index (position current-name persps)))
+                 (index (cl-position current-name persps)))
             (when (= perspc 1)
               (user-error "No other workspaces"))
             (+workspace/switch-to (% (+ index n) perspc))

@@ -55,7 +55,6 @@
         mu4e-view-show-addresses t
         mu4e-headers-skip-duplicates t
         ;; try to show images
-        mu4e-show-images t
         mu4e-view-show-images t
         mu4e-view-image-max-width 800
         ;; rename files when moving (required for mbsync)

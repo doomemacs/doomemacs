@@ -79,7 +79,7 @@
         (cond (org-tree-slide-mode
                (org-indent-mode -1)
                (text-scale-set +present-scale)
-               (ignore-errors (org-preview-latex-fragment '(4)))
+               (ignore-errors (org-toggle-latex-fragment '(4)))
                (set-face-attribute 'org-level-2 nil :height 1.4))
               (t
                (org-indent-mode +1)

@@ -4,7 +4,7 @@
 (defun +snippets/goto-start-of-field ()
   "Go to the beginning of the current field."
   (interactive)
-  (let* ((snippet (car (yas--snippets-at-point)))
+  (let* ((snippet (car (yas-active-snippets)))
          (position (yas--field-start (yas--snippet-active-field snippet))))
     (if (= (point) position)
         (move-beginning-of-line 1)
@@ -14,7 +14,7 @@
 (defun +snippets/goto-end-of-field ()
   "Go to the end of the current field."
   (interactive)
-  (let* ((snippet (car (yas--snippets-at-point)))
+  (let* ((snippet (car (yas-active-snippets)))
          (position (yas--field-end (yas--snippet-active-field snippet))))
     (if (= (point) position)
         (move-end-of-line 1)

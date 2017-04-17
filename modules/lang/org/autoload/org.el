@@ -181,7 +181,7 @@ fragments, opening links, or refreshing images."
 
      ((eq type 'headline)
       (org-remove-latex-fragment-image-overlays)
-      (org-preview-latex-fragment '(4)))
+      (org-toggle-latex-fragment '(4)))
 
      ((eq type 'babel-call)
       (org-babel-lob-execute-maybe))
@@ -190,7 +190,7 @@ fragments, opening links, or refreshing images."
       (org-babel-execute-src-block))
 
      ((memq type '(latex-fragment latex-environment))
-      (org-preview-latex-fragment))
+      (org-toggle-latex-fragment))
 
      ((eq type 'link)
       (let ((path (org-element-property :path (org-element-lineage context '(link) t))))

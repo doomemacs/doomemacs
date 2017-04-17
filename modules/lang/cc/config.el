@@ -41,7 +41,7 @@
 
   (set! :company-backend
         '(c-mode c++-mode objc-mode)
-        #'(company-irony-c-headers company-irony))
+        '(company-irony-c-headers company-irony))
 
   (sp-with-modes '(c-mode c++-mode objc-mode java-mode)
     (sp-local-pair "<" ">" :when '(+cc-sp-point-is-template-p +cc-sp-point-after-include-p))
