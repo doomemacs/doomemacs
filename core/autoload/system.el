@@ -48,25 +48,18 @@ etc."
                     (:github "git clone --depth 1 --recursive https://github.com/%s.git")
                     (:git    "git clone --depth 1 --recursive %s")
                     (:gist   "git clone https://gist.github.com/%s.git")
+                    ;; TODO Add hg
                     (_ (error "%s is not a valid fetcher" fetcher))))
-         (argv (s-split-up-to " " command 1))
-         (args (format (car (cdr argv)) location))
+         (argv (split-string command " " t))
+         (args (format (string-join (cdr argv) " ") location))
          (bin (executable-find (car argv)))
-         (fn (if noninteractive
-                 (lambda (&rest args) (princ (apply 'shell-command-to-string args)))
-               'async-shell-command))
          (dest (expand-file-name dest)))
     (unless bin
       (error "%s couldn't be found" command))
     (unless (file-directory-p dest)
-      (funcall fn (format "%s %s %s"
-                          bin args
-                          (shell-quote-argument dest)))
-      (if noninteractive
-          (message "Cloning %s -> %s" location dest)
-        (doom-popup-buffer buf)
-        (with-current-buffer buf
-          (when (featurep 'evil)
-            (evil-change-state 'normal))
-          (set-buffer-modified-p nil))))))
+      (funcall (if noninteractive
+                   (lambda (&rest args) (princ (shell-command-to-string args)))
+                 #'async-shell-command)
+               (format "%s %s %s" bin args (shell-quote-argument dest)))
+      (message! "Cloning %s -> %s" location dest))))
 
