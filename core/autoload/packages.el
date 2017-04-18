@@ -1,3 +1,4 @@
+;; -*- no-byte-compile: t; -*-
 ;;; packages.el
 
 (defvar doom--last-refresh nil)
