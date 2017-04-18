@@ -60,9 +60,6 @@ missing) and shouldn't be deleted.")
 (defvar doom-init-time nil
   "The time it took, in seconds, for DOOM Emacs to initialize.")
 
-(defvar doom-inhibit-reload nil
-  "If non-nil, remote reload calls (via the server) will be ignored.")
-
 (defvar doom--site-load-path load-path
   "The load path of built in Emacs libraries.")
 
@@ -392,7 +389,7 @@ server, if necessary) by `doom/packages-install', `doom/packages-update' and
         (unless (ignore-errors (server-eval-at "server" '(doom/reload t)))
           (message "Recompiling")
           (doom/recompile)))
-    (if (and ignorable-p doom-inhibit-reload)
+    (if ignorable-p
         (message "Ignored a reload request from server")
       (doom-initialize t)
       (doom/recompile)
