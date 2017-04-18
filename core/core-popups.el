@@ -384,6 +384,18 @@ the command buffer."
   (setq twittering-pop-to-buffer-function #'pop-to-buffer))
 
 
+(after! xref
+  (advice-add 'xref-goto-xref :around '+jump*xref-goto-xref)
+  (defun +jump*xref-goto-xref (orig-fn &rest args)
+    "Jump to the xref on the current line, select its window and close the popup
+you came from."
+    (interactive)
+    (let ((popup-p (doom-popup-p))
+          (window (selected-window)))
+      (apply orig-fn args)
+      (when popup-p (doom/popup-close window)))))
+
+
 ;; Ensure these settings are attached to org-load-hook as late as possible,
 ;; giving other modules to add their own hooks.
 (add-hook! 'after-init-hook
