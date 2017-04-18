@@ -82,7 +82,6 @@
        octave          ; math isn't a choice, it's a way of life
        org             ; for organized fearless leader (WIP)
        php             ; make php less awful to work with
-       processing      ; for prototyping
        python          ; beautiful is better than ugly
        rest            ; Emacs as a REST client
        ruby            ; 1.step do {|i| p "Ruby is #{i.even? ? 'love' : 'life'}"}
