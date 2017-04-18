@@ -133,28 +133,12 @@ for :align t on every rule."
   :init-value nil
   :keymap doom-popup-mode-map
   (let ((window (selected-window)))
-    ;; Major mode changes (and other things) may call
-    ;; `kill-all-local-variables', turning off things like `doom-popup-mode'.
-    ;; This prevents that.
-    (put 'doom-popup-mode 'permanent-local doom-popup-mode)
     ;; Ensure that buffer-opening functions/commands (like
     ;; `switch-to-buffer-other-window' won't use this window).
     (set-window-parameter window 'no-other-window doom-popup-mode)
     ;; Makes popup window resist interactively changing its buffer.
     (set-window-dedicated-p window doom-popup-mode)
     (cond (doom-popup-mode
-           ;; Don't show modeline in popup windows without a :modeline rule. If
-           ;; one exists and it's a symbol, use `doom-modeline' to grab the
-           ;; format. If non-nil, show the mode-line as normal. If nil (or
-           ;; omitted, by default), then hide the modeline entirely.
-           (let ((modeline (plist-get doom-popup-rules :modeline)))
-             (unless (eq modeline 't)
-               (cond ((or (eq modeline 'nil)
-                          (not modeline))
-                      (doom-hide-modeline-mode +1))
-                     ((symbolp modeline)
-                      (let ((doom--hidden-modeline-format (doom-modeline modeline)))
-                        (doom-hide-modeline-mode +1))))))
            ;; Save metadata into window parameters so it can be saved by window
            ;; config persisting plugins like workgroups or persp-mode.
            (set-window-parameter window 'popup (or doom-popup-rules t))
@@ -164,16 +148,33 @@ for :align t on every rule."
                  (set-window-parameter window param val)))))
 
           (t
-           ;; show modeline
-           (when doom-hide-modeline-mode
-             (doom-hide-modeline-mode -1))
            ;; Ensure window parameters are cleaned up
            (set-window-parameter window 'popup nil)
            (dolist (param doom-popup-window-parameters)
              (set-window-parameter window param nil))))))
 
-;; Hide modeline in completion popups
-(add-hook 'completion-list-mode-hook #'doom-hide-modeline-mode)
+;; Major mode changes (and other things) may call `kill-all-local-variables',
+;; turning off things like `doom-popup-mode'. This prevents that.
+(put 'doom-popup-mode 'permanent-local t)
+(put 'doom-popup-rules 'permanent-local t)
+
+;; Don't show modeline in popup windows without a :modeline rule. If
+;; one exists and it's a symbol, use `doom-modeline' to grab the
+;; format. If non-nil, show the mode-line as normal. If nil (or
+;; omitted, by default), then hide the modeline entirely.
+(add-hook! 'doom-popup-mode-hook
+  (if doom-popup-mode
+      (let ((modeline (plist-get doom-popup-rules :modeline)))
+        (cond ((or (eq modeline 'nil)
+                   (not modeline))
+               (doom-hide-modeline-mode +1))
+              ((and (symbolp modeline)
+                    (not (eq modeline 't)))
+               (let ((doom--mode-line (doom-modeline modeline)))
+                 (doom-hide-modeline-mode +1)))))
+    ;; show modeline
+    (when doom-hide-modeline-mode
+      (doom-hide-modeline-mode -1))))
 
 ;;
 (defun doom*popup-init (orig-fn &rest args)
