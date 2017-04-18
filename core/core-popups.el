@@ -248,7 +248,8 @@ properties."
   (defun doom*popup-close-all-maybe ()
     "Close popups with an :autoclose property when pressing ESC from normal
 mode in any evil-mode buffer."
-    (unless (or (minibuffer-window-active-p (minibuffer-window))
+    (unless (or (doom-popup-p)
+                (minibuffer-window-active-p (minibuffer-window))
                 (and (bound-and-true-p evil-mode)
                      (evil-ex-hl-active-p 'evil-ex-search)))
       (doom/popup-close-all)))
