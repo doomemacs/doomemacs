@@ -48,17 +48,9 @@ ifeq (bootstrap,$(firstword $(MAKECMDGOALS)))
   $(eval $(ARGV):;@:)
 endif
 
-bootstrap: init.el
-	@$(EMACS) -f 'doom-initialize-autoloads' --eval "(doom/bootstrap '($(ARGV)))"
+bootstrap: init.el .local/autoloads.el
+	@$(EMACS) --eval "(doom/bootstrap '($(ARGV)))"
 
-
-# This is only useful if your emacs.d is somewhere other than ~/.emacs.d (for
-# development purposes for instance).
-run:
-	@emacs $(EMACS_FLAGS) -q -l init.el
-
-reload:
-	@$(EMACS) -f 'doom/reload'
 
 init.el:
 	@[ -e init.el ] || $(error No init.el file; create one or copy init.example.el)
