@@ -90,14 +90,15 @@
           (:from . 25)
           (:subject)))
 
-  (setq mu4e-bookmarks `((,(mapconcat (lambda (arg) (format " maildir:/%s/Inbox " arg))
-                                      (mapcar #'car +email--accounts) " OR ")
-                          "Inbox" ?i)
-                         ("flag:unread" "Unread messages" ?u)
-                         ("flag:flagged" "Starred messages" ?s)
-                         ("date:today..now" "Today's messages" ?t)
-                         ("date:7d..now" "Last 7 days" ?w)
-                         ("mime:image/*" "Messages with images" ?p)))
+  (let ((inbox-query (mapconcat (lambda (arg) (format " maildir:/%s/Inbox " arg))
+                                (mapcar #'car +email--accounts) " OR ")))
+    (setq mu4e-bookmarks `((,inbox-query "Inbox" ?i)
+                           (,(format "flag:unread AND (%s)" inbox-query)
+                            "Unread messages" ?u)
+                           ("flag:flagged" "Starred messages" ?s)
+                           ("date:today..now" "Today's messages" ?t)
+                           ("date:7d..now" "Last 7 days" ?w)
+                           ("mime:image/*" "Messages with images" ?p))))
 
   (push '(:account
           :name "Account"
@@ -119,7 +120,7 @@
                 :dyn-target (lambda (target msg) (mu4e-get-trash-folder msg))
                 :action
                 (lambda (docid msg target)
-                  (mu4e~proc-move docid (mu4e~mark-check-target target) "+S-u-N")))
+                  (mu4e~proc-move docid (mu4e~mark-check-target target) "-N")))
         mu4e-marks)
 
   ;; Refile will set mail to All Mail (basically archiving them). I want this to
@@ -130,7 +131,7 @@
                  :dyn-target (lambda (target msg) (mu4e-get-refile-folder msg))
                  :action
                  (lambda (docid msg target)
-                   (mu4e~proc-move docid (mu4e~mark-check-target target) "+S-u-N")))
+                   (mu4e~proc-move docid (mu4e~mark-check-target target) "-u-N")))
         mu4e-marks)
 
   ;; This hook correctly modifies the \Inbox and \Starred flags on email when
@@ -161,14 +162,15 @@
 (def-package! evil-mu4e
   :after mu4e
   :when (featurep! :feature evil)
-  :init (defvar evil-mu4e-state 'normal)
+  :init (defvar evil-mu4e-state 'motion)
   :config
   (defun +email|headers-keybinds ()
-    (map! :Ln "-"   #'mu4e-headers-mark-for-unflag
-          :Ln "+"   #'mu4e-headers-mark-for-flag
-          :Ln "v"   #'evil-visual-line
-          :Ln "q"   #'mu4e~headers-quit-buffer
+    (map! :Lm "-"   #'mu4e-headers-mark-for-unflag
+          :Lm "+"   #'mu4e-headers-mark-for-flag
+          :Lm "v"   #'evil-visual-line
+          :Lm "q"   #'mu4e~headers-quit-buffer
           ;; Enable multiple markings via visual mode
+          :Lv "ESC" #'evil-motion-state
           :Lv "d"   #'+email/mark-multiple
           :Lv "-"   #'+email/mark-multiple
           :Lv "+"   #'+email/mark-multiple
