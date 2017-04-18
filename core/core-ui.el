@@ -49,7 +49,7 @@
 (add-hook! isearch-mode-end (setq echo-keystrokes 0.02))
 
 ;; A minor mode for toggling the mode-line
-(defvar doom--hidden-modeline-format nil
+(defvar doom--modeline-format nil
   "The modeline format to use when `doom-hide-modeline-mode' is active. Don't
 set this directly. Bind it in `let' instead.")
 (defvar-local doom--old-modeline-format nil
@@ -61,13 +61,24 @@ disabled.")
   :global nil
   (if doom-hide-modeline-mode
       (setq doom--old-modeline-format mode-line-format
-            mode-line-format doom--hidden-modeline-format)
+            mode-line-format doom--modeline-format)
     (setq mode-line-format doom--old-modeline-format
-          doom--mode-line nil))
+          doom--old-modeline-format nil))
   (force-mode-line-update))
 ;; Ensure major-mode or theme changes don't overwrite these variables
 (put 'doom--old-modeline-format 'permanent-local t)
 (put 'doom-hide-modeline-mode 'permanent-local t)
+
+(defun doom|hide-modeline-mode-reset ()
+  "Sometimes, a major-mode is activated after `doom-hide-modeline-mode' is
+activated, thus disabling it (because changing major modes invokes
+`kill-all-local-variables' and specifically seems to kill `mode-line-format's
+local value, whether or not it's permanent-local. Therefore, we cycle
+`doom-hide-modeline-mode' to fix this."
+  (when doom-hide-modeline-mode
+    (doom-hide-modeline-mode -1)
+    (doom-hide-modeline-mode +1)))
+(add-hook 'after-change-major-mode-hook 'doom|hide-modeline-mode-reset)
 
 ;; undo/redo changes to Emacs' window layout
 (defvar winner-dont-bind-my-keys t) ; I'll bind keys myself

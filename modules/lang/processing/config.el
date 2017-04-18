@@ -3,8 +3,6 @@
 (def-package! processing-mode
   :commands (processing-mode processing-find-sketch)
   :mode "\\.pde$"
-  :init
-  (add-hook 'processing-compilation-mode-hook #'doom-hide-modeline-mode)
   :config
   (set! :build 'build-sketch 'processing-mode #'processing-sketch-build)
   (set! :popup "*processing-compilation*" :size 10 :noselect t)

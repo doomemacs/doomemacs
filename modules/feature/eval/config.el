@@ -90,7 +90,7 @@ invokes the repl. Takes the same arguements as `rtog/add-repl'."
   (add-hook 'quickrun/mode-hook #'linum-mode)
 
   :config
-  (set! :popup "*quickrun*" :size 10)
+  (set! :popup "*quickrun*" :size 10 :noesc t :autokill t :autoclose t)
 
   ;; don't auto-focus quickrun windows. Shackle handles that for us.
   (setq quickrun-focus-p nil)

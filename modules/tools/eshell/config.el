@@ -65,8 +65,6 @@ redefines its keys every time `eshell-mode' is enabled."
     (add-to-list '+eshell-buffers (current-buffer)))
   (add-hook 'eshell-mode-hook #'+eshell|init)
 
-  (add-hook 'eshell-mode-hook #'doom-hide-modeline-mode)
-
   (add-hook! eshell-mode
     (add-hook 'evil-insert-state-exit-hook  #'hl-line-mode nil t)
     (add-hook 'evil-insert-state-entry-hook (lambda () (hl-line-mode -1)) nil t))
