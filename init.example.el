@@ -85,7 +85,7 @@
        processing      ; for prototyping
        python          ; beautiful is better than ugly
        rest            ; Emacs as a REST client
-       ruby            ; 1.step do {|i| p "Ruby is #{i&1==0?'love':'life'}"}
+       ruby            ; 1.step do {|i| p "Ruby is #{i.even? ? 'love' : 'life'}"}
        rust            ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
        scala           ; java, but good
        sh              ; she sells (ba|z)sh shells on the C xor
@@ -102,7 +102,6 @@
        ;; TODO finance         ; keeping track of my shekels
        present         ; showing off presentations in emacs
        rss             ; emacs as an RSS reader
-       ;; TODO stream          ; for streaming code (https://livecoding.tv/vnought)
        twitter         ; twitter client https://twitter.com/vnought
        write           ; emacs as a word processor (latex + org + markdown)
 
