@@ -240,7 +240,7 @@ appropriate."
                     ('quelpa "QUELPA")
                     ('elpa "ELPA")))
                ('error
-                (message! (red "Error installing %s: %s" (car pkg) ex)))))
+                (message! (red "Error installing %s: %s" (symbol-name (car pkg)) ex)))))
 
            (message! (bold (green "Finished!")))
            (doom/reload)))))
@@ -281,7 +281,7 @@ appropriate."
                            (if result "Updated" "Failed to update")
                            (symbol-name (car pkg)))))
                ('error
-                (message! (bold (red "Error updating %s: %s" (car pkg) ex))))))
+                (message! (bold (red "Error updating %s: %s" (symbol-name (car pkg)) ex))))))
 
            (message! (bold (green "Finished!")))
            (doom/reload)))))
@@ -313,7 +313,8 @@ appropriate."
                            (if result "Deleted" "Failed to delete")
                            (symbol-name pkg))))
                ('error
-                (message! (red "Error deleting %s: %s" pkg ex)))))
+                (message! (red "Error deleting %s: %s" (symbol-name pkg) ex))))
+             )
 
            (message! (bold (green "Finished!")))
            (doom/reload)))))
