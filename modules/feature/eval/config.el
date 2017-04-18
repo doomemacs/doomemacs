@@ -86,8 +86,8 @@ invokes the repl. Takes the same arguements as `rtog/add-repl'."
              quickrun-replace-region)
   :init
   ;; Use standard linum-mode for quickrun eval windows; so we can have different
-  ;; rules for it.
-  (add-hook 'quickrun/mode-hook #'linum-mode)
+  ;; rules for it. Plus, hide modeline in it.
+  (add-hook 'quickrun--mode-hook #'linum-mode)
 
   :config
   (set! :popup "*quickrun*" :size 10 :noesc t :autokill t :autoclose t)
