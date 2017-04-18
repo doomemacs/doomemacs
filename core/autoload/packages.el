@@ -154,7 +154,7 @@ example; the package name can be omitted)."
   (doom-refresh-packages)
   (doom-initialize-packages)
   (when (package-installed-p name)
-    (error "%s is already installed, skipping" name))
+    (user-error "%s is already installed, skipping" name))
   (let ((inhibit-message (not doom-debug-mode))
         (recipe (plist-get plist :recipe)))
     (cond (recipe (quelpa recipe))
@@ -167,7 +167,7 @@ example; the package name can be omitted)."
 appropriate."
   (doom-initialize)
   (unless (package-installed-p name)
-    (error "%s isn't installed" name))
+    (user-error "%s isn't installed" name))
   (when (doom-package-outdated-p name)
     (let ((inhibit-message (not doom-debug-mode))
           quelpa-modified-p)
@@ -191,7 +191,7 @@ appropriate."
   "Uninstalls package NAME if it exists, and clears it from `quelpa-cache'."
   (doom-initialize)
   (unless (package-installed-p name)
-    (error "%s isn't installed" name))
+    (user-error "%s isn't installed" name))
   (let ((desc (cadr (assq name package-alist)))
         (inhibit-message t))
     (package-delete desc force-p))
@@ -240,8 +240,8 @@ appropriate."
                   (pcase (doom-package-backend (car pkg))
                     ('quelpa "QUELPA")
                     ('elpa "ELPA")))
-               ('error
-                (message! (red "Error installing %s: %s" (symbol-name (car pkg)) ex)))))
+               ('user-error
+                (message! (bold (red "Error installing %s: %s" (car pkg) ex))))))
 
            (message! (bold (green "Finished!")))
            (doom/reload)))))
@@ -280,9 +280,9 @@ appropriate."
                     (color (if result 'green 'red)
                            "%s %s"
                            (if result "Updated" "Failed to update")
-                           (symbol-name (car pkg)))))
-               ('error
-                (message! (bold (red "Error updating %s: %s" (symbol-name (car pkg)) ex))))))
+                           (car pkg))))
+               ('user-error
+                (message! (bold (red "Error updating %s: %s" (car pkg) ex))))))
 
            (message! (bold (green "Finished!")))
            (doom/reload)))))
@@ -299,7 +299,7 @@ appropriate."
                     (y-or-n-p
                      (format "%s packages will be deleted:\n\n%s\n\nProceed?"
                              (length packages)
-                             (mapconcat (lambda (sym) (format "+ %s" (symbol-name sym)))
+                             (mapconcat (lambda (sym) (format "+ %s" sym))
                                         (sort (cl-copy-list packages) #'string-lessp)
                                         "\n")))))
            (message! (yellow "Aborted!")))
@@ -312,10 +312,9 @@ appropriate."
                     (color (if result 'green 'red)
                            "%s %s"
                            (if result "Deleted" "Failed to delete")
-                           (symbol-name pkg))))
-               ('error
-                (message! (red "Error deleting %s: %s" (symbol-name pkg) ex))))
-             )
+                           pkg)))
+               ('user-error
+                (message! (bold (red "Error deleting %s: %s" pkg ex))))))
 
            (message! (bold (green "Finished!")))
            (doom/reload)))))
@@ -333,9 +332,7 @@ Use this interactively. Use `doom-delete-package' for direct calls."
      (doom-initialize)
      (list (completing-read
             "Delete package: "
-            (delq nil
-                  (mapcar (lambda (p) (unless (package-built-in-p p) p))
-                          (mapcar #'car package-alist)))
+            (cl-remove-if #'package-built-in-p package-alist :key #'car)
             nil t))))
   (if (package-installed-p package)
       (if (y-or-n-p (format "%s will be deleted. Confirm?" package))
@@ -355,7 +352,8 @@ calls."
    (let ((packages (doom-get-outdated-packages)))
      (list
       (if packages
-          (completing-read "Update package: " (mapcar #'symbol-name (mapcar #'car packages)))
+          (completing-read "Update package: "
+                           (mapcar #'symbol-name (mapcar #'car packages)))
         (user-error "All packages are up-to-date")))))
   (if-let (desc (doom-package-outdated-p (intern package)))
       (if (y-or-n-p (format "%s will be updated from %s to %s. Update?"
@@ -363,9 +361,7 @@ calls."
                             (package-version-join (cadr desc))
                             (package-version-join (cl-caddr desc))))
           (message "%s %s"
-                   (if (doom-update-package package)
-                       "Updated"
-                     "Failed to update")
+                   (if (doom-update-package package) "Updated" "Failed to update")
                    pkg)
         (message "Aborted"))
     (message "%s is up-to-date" package)))

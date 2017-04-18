@@ -360,7 +360,8 @@ them."
         (plist-put plist :pin nil)))
     `(progn
        (when ,(and pkg-pin t)
-         (cl-pushnew (cons ',name ,pkg-pin) package-pinned-packages :test 'eq :key 'car))
+         (cl-pushnew (cons ',name ,pkg-pin) package-pinned-packages
+                     :test #'eq :key #'car))
        (when ,(and old-plist t)
          (assq-delete-all ',name doom-packages))
        (push ',(cons name plist) doom-packages))))
@@ -394,7 +395,7 @@ server, if necessary) by `doom/packages-install', `doom/packages-update' and
       (doom-initialize t)
       (doom/recompile)
       (message "Reloaded %d packages" (length doom--package-load-path))
-      (run-with-timer 1 nil 'redraw-frame))))
+      (run-with-timer 1 nil #'redraw-frame))))
 
 (defun doom/reload-autoloads ()
   "Refreshes the autoloads.el file, which tells Emacs where to find all the
