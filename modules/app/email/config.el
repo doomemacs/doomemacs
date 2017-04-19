@@ -53,20 +53,18 @@
         mu4e-update-interval nil
         mu4e-compose-format-flowed t ; visual-line-mode + auto-fill upon sending
         mu4e-view-show-addresses t
-        mu4e-headers-skip-duplicates t
         ;; try to show images
         mu4e-view-show-images t
         mu4e-view-image-max-width 800
-        ;; rename files when moving (required for mbsync)
-        mu4e-change-filenames-when-moving t
         ;; don't save message to Sent Messages, Gmail/IMAP takes care of this
         mu4e-sent-messages-behavior 'delete
         ;; allow for updating mail using 'U' in the main view:
         ;; for mbsync
-        mu4e-change-filenames-when-moving t
-        mu4e-get-mail-command "mbsync -a"
+        ;; mu4e-headers-skip-duplicates t
+        ;; mu4e-change-filenames-when-moving nil
+        ;; mu4e-get-mail-command "mbsync -a"
         ;; for offlineimap
-        ;; mu4e-get-mail-command "offlineimap -o -q"
+        mu4e-get-mail-command "offlineimap -o -q"
         ;; configuration for sending mail
         message-send-mail-function #'smtpmail-send-it
         smtpmail-stream-type 'starttls
@@ -88,18 +86,15 @@
           (:human-date . 12)
           (:flags . 4)
           (:from . 25)
-          (:subject)))
+          (:subject))
+        mu4e-bookmarks `(("\\\\Inbox" "Inbox" ?i)
+                         ("flag:unread AND \\\\Inbox" "Unread messages" ?u)
+                         ("flag:flagged" "Starred messages" ?s)
+                         ("date:today..now" "Today's messages" ?t)
+                         ("date:7d..now" "Last 7 days" ?w)
+                         ("mime:image/*" "Messages with images" ?p)))
 
-  (let ((inbox-query (mapconcat (lambda (arg) (format " maildir:/%s/Inbox " arg))
-                                (mapcar #'car +email--accounts) " OR ")))
-    (setq mu4e-bookmarks `((,inbox-query "Inbox" ?i)
-                           (,(format "flag:unread AND (%s)" inbox-query)
-                            "Unread messages" ?u)
-                           ("flag:flagged" "Starred messages" ?s)
-                           ("date:today..now" "Today's messages" ?t)
-                           ("date:7d..now" "Last 7 days" ?w)
-                           ("mime:image/*" "Messages with images" ?p))))
-
+  ;; Add a column to display what email account the email belongs to.
   (push '(:account
           :name "Account"
           :shortname "Account"
@@ -110,46 +105,52 @@
               (format "%s" (substring maildir 1 (string-match-p "/" maildir 1))))))
         mu4e-header-info-custom)
 
-  ;; By default, mark-for-trash deletes the email completely, even from the
-  ;; server. This fix sends trashed email to the trash folder, instead. Note:
-  ;; you have to update your mail for them to actually show up in Trash.
-  ;; (setq mu4e-marks (assq-delete-all 'delete mu4e-marks))
+  ;; In my workflow, emails won't be moved at all. Only their flags/labels are
+  ;; changed. Se we redefine the trash and refile marks not to do any moving.
+  ;; However, the real magic happens in `+email|gmail-fix-flags'.
+  ;;
+  ;; Gmail will handle the rest.
+  (setq mu4e-marks (assq-delete-all 'delete mu4e-marks))
   (setq mu4e-marks (assq-delete-all 'trash mu4e-marks))
   (push '(trash :char ("d" . "▼")
                 :prompt "dtrash"
-                :dyn-target (lambda (target msg) (mu4e-get-trash-folder msg))
+                :show-target (lambda (target) "trash")
                 :action
                 (lambda (docid msg target)
-                  (mu4e~proc-move docid (mu4e~mark-check-target target) "-N")))
+                  (mu4e~proc-move docid (mu4e~mark-check-target target) "+S-u-N")))
         mu4e-marks)
 
-  ;; Refile will set mail to All Mail (basically archiving them). I want this to
-  ;; auto-mark them as read, so I redefine refile to add the +S tag.
+  ;; Refile will be my "archive" function.
   (setq mu4e-marks (assq-delete-all 'refile mu4e-marks))
   (push '(refile :char ("r" . "▶")
                  :prompt "refile"
-                 :dyn-target (lambda (target msg) (mu4e-get-refile-folder msg))
+                 :show-target (lambda (target) "archive")
                  :action
                  (lambda (docid msg target)
-                   (mu4e~proc-move docid (mu4e~mark-check-target target) "-u-N")))
+                   (mu4e~proc-move docid (mu4e~mark-check-target target) "+S-u-N")))
         mu4e-marks)
 
-  ;; This hook correctly modifies the \Inbox and \Starred flags on email when
-  ;; they are marked. Without it refiling (archiving) and flagging (starring)
-  ;; email won't properly result in the corresponding gmail action.
+  ;; This hook correctly modifies gmail flags on emails when they are marked.
+  ;; Without it refiling (archiving), trashing, and flagging (starring) email
+  ;; won't properly result in the corresponding gmail action, since the marks
+  ;; are ineffectual otherwise.
   (defun +email|gmail-fix-flags (mark msg)
-    (cond ((memq mark '(trash refile)) (mu4e-action-retag-message msg "-\\Inbox"))
+    (cond ((eq mark 'trash) (mu4e-action-retag-message msg "-\\Inbox,+\\Trash"))
+          ((memq mark '(read refile)) (mu4e-action-retag-message msg "-\\Inbox,+\\Seen"))
           ((eq mark 'flag) (mu4e-action-retag-message msg "+\\Starred"))
           ((eq mark 'unflag) (mu4e-action-retag-message msg "-\\Starred"))))
   (add-hook 'mu4e-mark-execute-pre-hook #'+email|gmail-fix-flags)
+
+  ;; Refresh the current view after marks are executed
+  (defun +email*refresh (&rest _) (mu4e-headers-rerun-search))
+  (advice-add #'mu4e-mark-execute-all :after #'+email*refresh)
 
   (when (featurep! :feature spellcheck)
     (add-hook 'mu4e-compose-mode-hook #'flyspell-mode))
 
   ;; Brighter + no mode-line in message windows
   (after! doom-themes
-    (add-hook! 'mu4e-view-mode-hook
-      #'(doom-buffer-mode doom-hide-modeline-mode)))
+    (add-hook 'mu4e-view-mode-hook #'doom-buffer-mode))
 
   ;; Wrap text in messages
   (add-hook! 'mu4e-view-mode-hook
@@ -179,13 +180,17 @@
           :Lv "r"   #'+email/mark-multiple))
   (add-hook 'mu4e-headers-mode-hook #'+email|headers-keybinds)
 
-  ;; (defun +email|view-keybinds ())
-  ;; (add-hook 'mu4e-view-mode-hook #'+email|view-keybinds)
+  (defun +email|view-keybinds ()
+    (map! :Lm "-"   #'mu4e-headers-mark-for-unflag
+          :Lm "+"   #'mu4e-headers-mark-for-flag
+          :Lm "v"   #'evil-visual-line
+          :Lm "q"   #'mu4e~headers-quit-buffer))
+  (add-hook 'mu4e-view-mode-hook #'+email|view-keybinds)
 
   (defun +email|main-keybinds ()
-    (map! :Ln "q" #'mu4e-quit
-          :Ln "u" #'mu4e-update-index
-          :Ln "U" #'mu4e-update-mail-and-index))
+    (map! :Lm "q" #'mu4e-quit
+          :Lm "u" #'mu4e-update-index
+          :Lm "U" #'mu4e-update-mail-and-index))
   (add-hook 'mu4e-main-mode-hook #'+email|main-keybinds))
 
 
