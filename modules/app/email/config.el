@@ -88,6 +88,7 @@
           (:from . 25)
           (:subject))
         mu4e-bookmarks `(("\\\\Inbox" "Inbox" ?i)
+                         ("\\\\Draft" "Drafts" ?d)
                          ("flag:unread AND \\\\Inbox" "Unread messages" ?u)
                          ("flag:flagged" "Starred messages" ?s)
                          ("date:today..now" "Today's messages" ?t)
@@ -114,7 +115,7 @@
   (setq mu4e-marks (assq-delete-all 'trash mu4e-marks))
   (push '(trash :char ("d" . "▼")
                 :prompt "dtrash"
-                :show-target (lambda (target) "trash")
+                :dyn-target (lambda (target msg) (mu4e-get-trash-folder msg))
                 :action
                 (lambda (docid msg target)
                   (mu4e~proc-move docid (mu4e~mark-check-target target) "+S-u-N")))
@@ -135,8 +136,8 @@
   ;; won't properly result in the corresponding gmail action, since the marks
   ;; are ineffectual otherwise.
   (defun +email|gmail-fix-flags (mark msg)
-    (cond ((eq mark 'trash) (mu4e-action-retag-message msg "-\\Inbox,+\\Trash"))
-          ((memq mark '(read refile)) (mu4e-action-retag-message msg "-\\Inbox,+\\Seen"))
+    (cond ((eq mark 'trash) (mu4e-action-retag-message msg "-\\Inbox,+\\Trash,-\\Draft"))
+          ((eq mark 'refile) (mu4e-action-retag-message msg "-\\Inbox"))
           ((eq mark 'flag) (mu4e-action-retag-message msg "+\\Starred"))
           ((eq mark 'unflag) (mu4e-action-retag-message msg "-\\Starred"))))
   (add-hook 'mu4e-mark-execute-pre-hook #'+email|gmail-fix-flags)
@@ -157,41 +158,98 @@
     (setq-local truncate-lines nil))
 
   (when (fboundp 'imagemagick-register-types)
-    (imagemagick-register-types)))
+    (imagemagick-register-types))
 
+  (after! evil
+    (mapc (lambda (str) (evil-set-initial-state (car str) (cdr str)))
+          '((mu4e-main-mode . normal)
+            (mu4e-view-mode . normal)
+            (mu4e-headers-mode . normal)
+            (mu4e-compose-mode . normal)
+            (mu4e~update-mail-mode . normal)))
 
-(def-package! evil-mu4e
-  :after mu4e
-  :when (featurep! :feature evil)
-  :init (defvar evil-mu4e-state 'motion)
-  :config
-  (defun +email|headers-keybinds ()
-    (map! :Lm "-"   #'mu4e-headers-mark-for-unflag
-          :Lm "+"   #'mu4e-headers-mark-for-flag
-          :Lm "v"   #'evil-visual-line
-          :Lm "q"   #'mu4e~headers-quit-buffer
-          ;; Enable multiple markings via visual mode
-          :Lv "ESC" #'evil-motion-state
-          :Lv "d"   #'+email/mark-multiple
-          :Lv "-"   #'+email/mark-multiple
-          :Lv "+"   #'+email/mark-multiple
-          :Lv "!"   #'+email/mark-multiple
-          :Lv "?"   #'+email/mark-multiple
-          :Lv "r"   #'+email/mark-multiple))
-  (add-hook 'mu4e-headers-mode-hook #'+email|headers-keybinds)
+    (setq mu4e-view-mode-map (make-sparse-keymap)
+          ;; mu4e-compose-mode-map (make-sparse-keymap)
+          mu4e-headers-mode-map (make-sparse-keymap)
+          mu4e-main-mode-map (make-sparse-keymap))
 
-  (defun +email|view-keybinds ()
-    (map! :Lm "-"   #'mu4e-headers-mark-for-unflag
-          :Lm "+"   #'mu4e-headers-mark-for-flag
-          :Lm "v"   #'evil-visual-line
-          :Lm "q"   #'mu4e~headers-quit-buffer))
-  (add-hook 'mu4e-view-mode-hook #'+email|view-keybinds)
+    (map! (:map (mu4e-main-mode-map mu4e-view-mode-map)
+            :leader
+            :n "," #'mu4e-context-switch
+            :n "." #'mu4e-headers-search-bookmark
+            :n ">" #'mu4e-headers-search-bookmark-edit
+            :n "/" #'mu4e~headers-jump-to-maildir)
 
-  (defun +email|main-keybinds ()
-    (map! :Lm "q" #'mu4e-quit
-          :Lm "u" #'mu4e-update-index
-          :Lm "U" #'mu4e-update-mail-and-index))
-  (add-hook 'mu4e-main-mode-hook #'+email|main-keybinds))
+          (:map (mu4e-headers-mode-map mu4e-view-mode-map)
+            :localleader
+            :n "f" #'mu4e-compose-forward
+            :n "r" #'mu4e-compose-reply
+            :n "c" #'mu4e-compose-new
+            :n "e" #'mu4e-compose-edit)
+
+          (:map mu4e-main-mode-map
+            :n "q"   #'mu4e-quit
+            :n "u"   #'mu4e-update-index
+            :n "U"   #'mu4e-update-mail-and-index
+            :n "J"   #'mu4e~headers-jump-to-maildir
+            :n "c"   #'+email/compose
+            :n "b"   #'mu4e-headers-search-bookmark)
+
+          (:map mu4e-headers-mode-map
+            :n "q"   #'mu4e~headers-quit-buffer
+            :n "r"   #'mu4e-compose-reply
+            :n "c"   #'mu4e-compose-edit
+            :n "s"   #'mu4e-headers-search-edit
+            :n "S"   #'mu4e-headers-search-narrow
+            :n "RET" #'mu4e-headers-view-message
+            :n "u"   #'mu4e-headers-mark-for-unmark
+            :n "U"   #'mu4e-mark-unmark-all
+            :n "v"   #'evil-visual-line
+            :nv "d"  #'+email/mark
+            :nv "="  #'+email/mark
+            :nv "-"  #'+email/mark
+            :nv "+"  #'+email/mark
+            :nv "!"  #'+email/mark
+            :nv "?"  #'+email/mark
+            :nv "r"  #'+email/mark
+            :nv "m"  #'+email/mark
+            :n "x"   #'mu4e-mark-execute-all
+
+            :n "]]"  #'mu4e-headers-next-unread
+            :n "[["  #'mu4e-headers-prev-unread
+
+            (:localleader
+              :n "s" 'mu4e-headers-change-sorting
+              :n "t" 'mu4e-headers-toggle-threading
+              :n "r" 'mu4e-headers-toggle-include-related
+
+              :n "%" #'mu4e-headers-mark-pattern
+              :n "t" #'mu4e-headers-mark-subthread
+              :n "T" #'mu4e-headers-mark-thread))
+
+          (:map mu4e-view-mode-map
+            :n "q" #'mu4e~view-quit-buffer
+            :n "r" #'mu4e-compose-reply
+            :n "c" #'mu4e-compose-edit
+
+            :n "<M-Left>"  #'mu4e-view-headers-prev
+            :n "<M-Right>" #'mu4e-view-headers-next
+            :n "[m" #'mu4e-view-headers-prev
+            :n "]m" #'mu4e-view-headers-next
+            :n "[u" #'mu4e-view-headers-prev-unread
+            :n "]u" #'mu4e-view-headers-next-unread
+
+            (:localleader
+              :n "%" #'mu4e-view-mark-pattern
+              :n "t" #'mu4e-view-mark-subthread
+              :n "T" #'mu4e-view-mark-thread
+
+              :n "d" #'mu4e-view-mark-for-trash
+              :n "r" #'mu4e-view-mark-for-refile
+              :n "m" #'mu4e-view-mark-for-move))
+
+          (:map mu4e~update-mail-mode-map
+            :n "q" #'mu4e-interrupt-update-mail))))
 
 
 (def-package! mu4e-maildirs-extension
