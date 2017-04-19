@@ -90,8 +90,9 @@
    :desc "Jump to bookmark"         :n "b"  'bookmark-jump
    :desc "Delete bookmark"          :n "B"  'bookmark-delete
    :desc "List errors"              :n "e"  'flycheck-list-errors
-   :desc "Recent files"             :n "m"  'recentf
-   :desc "Recent project files"     :n "M"  'projectile-recentf
+   :desc "View Emacs Log"           :n "m"  'view-echo-area-messages
+   :desc "Recent files"             :n "r"  'recentf
+   :desc "Recent project files"     :n "R"  'projectile-recentf
    :desc "Open file explorer"       :n "n"  '+evil/neotree
    :desc "Insert from kill ring"    :n "y"  'counsel-yank-pop
    :desc "Switch project"           :n "p"  'projectile-switch-project
