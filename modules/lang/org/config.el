@@ -78,6 +78,14 @@
     :keymap (make-sparse-keymap)
     :group 'evil-org)
 
+  (define-minor-mode +org-pretty-mode
+    ""
+    :init-value nil
+    :lighter " *"
+    :group 'evil-org
+    (setq org-hide-emphasis-markers +org-pretty-mode)
+    (org-toggle-pretty-entities))
+
   (setq-default
    org-export-coding-system 'utf-8
 
@@ -95,12 +103,12 @@
    org-fontify-quote-and-verse-blocks t
    org-fontify-whole-heading-line t
    org-footnote-auto-label 'plain
-   org-hide-emphasis-markers t
+   org-hide-emphasis-markers nil
    org-hide-leading-stars t
    org-hide-leading-stars-before-indent-mode t
    org-image-actual-width nil
    org-indent-indentation-per-level 2
-   org-pretty-entities t
+   org-pretty-entities nil
    org-pretty-entities-include-sub-superscripts t
    org-startup-folded t
    org-startup-indented t
@@ -114,7 +122,7 @@
    org-completion-use-ido nil ; Use ivy/counsel for refiling
    org-confirm-elisp-link-function nil
    org-default-priority ?C
-   org-hidden-keywords '(title)
+   org-hidden-keywords nil
    org-hierarchical-todo-statistics t
    org-log-done t
    org-loop-over-headlines-in-active-region t
