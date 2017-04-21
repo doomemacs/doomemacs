@@ -277,7 +277,12 @@
 (def-package! evil-matchit
   :commands (evilmi-jump-items evilmi-text-object global-evil-matchit-mode)
   :config (global-evil-matchit-mode 1)
-  :init (+evil--textobj "%" #'evilmi-text-object))
+  :init
+  (+evil--textobj "%" #'evilmi-text-object)
+  (defun +evil|simple-matchit ()
+    "Force evil-matchit to favor simple bracket jumping. Helpful where the new
+algorithm is just confusing, like in python or ruby."
+    (setq-local evilmi-always-simple-jump t)))
 
 
 (def-package! evil-multiedit

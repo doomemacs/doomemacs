@@ -15,7 +15,8 @@
         python-shell-completion-string-code
         "';'.join(get_ipython().Completer.all_completions('''%s'''))\n")
 
-  (add-hook 'python-mode-hook #'flycheck-mode)
+  (add-hook! 'python-mode-hook
+    #'(flycheck-mode +evil|simple-matchit))
 
   :config
   (set! :repl 'python-mode #'+python/repl)
