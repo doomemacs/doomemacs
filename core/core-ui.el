@@ -164,7 +164,7 @@ file."
     nil)
 
   (add-hook! (highlight-indentation-mode highlight-indentation-current-column-mode)
-    (if highlight-indentation-mode
+    (if (or highlight-indentation-mode highlight-indentation-current-column-mode)
         (progn
           (doom|inject-trailing-whitespace)
           (add-hook 'before-save-hook #'delete-trailing-whitespace nil t)
