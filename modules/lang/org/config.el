@@ -43,7 +43,8 @@
 
 (defun +org|hook ()
   "Run everytime `org-mode' is enabled."
-  (evil-org-mode +1)
+  (when (featurep! :feature evil)
+    (evil-org-mode +1))
   (visual-line-mode +1)
   (setq line-spacing 1)
 
