@@ -6,15 +6,9 @@
 ;;    command, like :org).
 ;;
 ;; 2. Through a org-capture popup frame that is invoked from outside Emacs (the
-;;    script is below). This lets me open an org-capture box anywhere I can call
-;;    org-capture.sh, like, say, from qutebrowser or vimperator.
-;;
-;;    #!/usr/bin/env bash
-;;    emacsclient -c \
-;;        -F "((name . \"org-capture\") (height . 25) (width . 70))" \
-;;        --eval "(org-capture nil \"${1:-n}\")"
-;;
-;;    Place this in, say, org-capture.sh somewhere in your $PATH.
+;;    script is in ~/.emacs.d/bin). This lets me open an org-capture box
+;;    anywhere I can call org-capture, like, say, from qutebrowser, vimperator,
+;;    dmenu or a global keybinding.
 
 (add-hook '+org-init-hook '+org|init-capture t)
 
