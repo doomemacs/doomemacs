@@ -85,7 +85,9 @@ is enabled/disabled.'")
           (tabulated-list-mode      :noesc t)))
 
   :config
-  (shackle-mode 1)
+  (if (display-graphic-p)
+      (shackle-mode +1)
+    (add-transient-hook! 'after-make-frame-functions (shackle-mode +1)))
 
   (defun doom*shackle-always-align (plist)
     "Ensure popups are always aligned and selected by default. Eliminates the need

@@ -41,16 +41,19 @@
 ;;
 (setq doom-fallback-buffer +doom-dashboard-name)
 
-(add-hook 'after-make-frame-functions #'+doom-dashboard-deferred-reload)
-(add-hook! 'window-setup-hook
+(defun +doom-dashboard|init (&rest _)
+  (add-hook 'after-make-frame-functions #'+doom-dashboard-deferred-reload)
+  (add-hook 'window-configuration-change-hook #'+doom-dashboard-reload)
   (add-hook! 'kill-buffer-query-functions
     (or (not (+doom-dashboard-p))
         (ignore (ignore-errors (+doom-dashboard-force-reload))
                 (bury-buffer))))
-  (add-hook 'window-configuration-change-hook #'+doom-dashboard-reload)
   (+doom-dashboard-reload)
   (when (equal (buffer-name) "*scratch*")
     (switch-to-buffer (doom-fallback-buffer))))
+
+(add-hook! '(after-make-frame-functions window-setup-hook)
+  #'+doom-dashboard|init)
 
 ;; Compatibility with `midnight-mode' and `clean-buffer-list'
 (after! midnight-mode
