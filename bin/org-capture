@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+# Open an org-capture popup frame from the shell. This opens a temporary emacs
+# daemon if emacs isn't already running.
+#
+# Usage: org-capture [key] [message...]
+# Examples:
+#   org-capture n "To the mind that is still, the whole universe surrenders."
+
+set -e
+
+key="${1:-n}"
+
+cleanup() {
+    emacsclient --eval '(kill-emacs)'
+}
+
+if ! pgrep emacs >/dev/null; then
+    emacs --daemon
+    trap cleanup EXIT INT TERM
+fi
+
+# TODO Allow piping from stdin
+
+emacsclient -c \
+    -F '((name . "org-capture") (width . 70) (height . 25))' \
+    --eval "(+org-capture \"$key\" \"$2\")"
+
