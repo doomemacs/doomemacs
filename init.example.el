@@ -96,7 +96,6 @@
        ;; specific purpose. They should be loaded last.
        :app
        ;; TODO crm             ; org-mode for client relations management
-       ;; TODO db              ; Emacs as a database browser
        email           ; Emacs as an email client
        ;; TODO finance         ; keeping track of my shekels
        present         ; showing off presentations in emacs
