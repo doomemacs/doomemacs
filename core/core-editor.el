@@ -158,7 +158,7 @@
 
 (def-package! ace-window
   :commands (ace-window ace-swap-window ace-delete-window
-             ace-select-window ace-maximize-window)
+             ace-select-window ace-delete-other-windows)
   :config
   (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)
         aw-scope 'frame
