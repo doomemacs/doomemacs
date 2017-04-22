@@ -1,157 +1,157 @@
 #+TITLE: DOOM Emacs Changelog
 
-* Unreleased [24/30]
-** [?] app/finance :new:
-** [?] app/crm :new:
-** [?] Improve send-to-REPL workflow :new:
-** [0/4] Investigate potential plugins :new:
-*** [?] feature/version-control: [[https://github.com/pidu/git-timemachine][git-timemachine]] (replacement for vc-annotate)
-*** [?] lang/org: [[https://github.com/Malabarba/latex-extra][orgit]] (org links to magit buffers)
-*** [?] lang/latex: [[https://github.com/Malabarba/latex-extra][latex-extra]] (utility commands)
-*** [?] lang/latex: [[**https://github.com/jsinglet/latex-preview-pane][latex-preview-pane]]
-** [ ] tools/upload: add ~+upload/open-remote-file~ command :new:
-** [ ] Fix 0/0 modeline display (caused by leftover anzu state) :bug:
-** [ ] Enable snippet-mode in snippets (better mode detection) :bug:
-** [1/3] lang/org
-*** [ ] Write bootstrap to install latex tools :new:
-*** [ ] test inline latex preview support :bug:
-*** [X] org-capture from shell (whether Emacs is running or not) :new:
-See bin/org-capture
-*** [6/6] babel support for :new:
-**** [X] rust
-**** [X] restclient
-**** [X] sql
-**** [X] google translate
-**** [X] haskell
-**** [X] go
-** [X] lang/python: add ipython detection & REPL support :new:
-** [X] TAB autocompletion in comint/repl buffers
-** [X] Fix Emacs daemon compatibility :bug:
-The config assumes a frame will be visible on startup, causing errors when
-Emacs is launched as a daemon.
-** [X] ~ace-maximize-window~ is obsolete :refactor:
-** [X] Fix whitespace adjustment in highlight-indentation-current-column-mode :bug:
-** [X] Toggle-able "pretty" mode for org-mode :new:
-Sometimes, fontification (like prettified entities or hidden regions) make editing difficult. Make this toggleable.
-** [X] Simplify matchit key (%) in python :bug:
-It prioritizes jumps between if-else and other blocks over brackets. Annoying!
-** [X] Fix over-eager ESC killing popups :bug:
-** [X] Refactor out s.el dependency :refactor:
-** [X] Use sharp-quote for functions (make byte-compiler more helpful) :refactor:
-** [X] feature/workspaces: separate main workspace from nil persp :new:
-** [X] Stop Projectile & git-gutter from choking Emacs in TRAMP buffers :bug:
-** [X] Achieve vim parity w/ file modifiers (~+evil*ex-replace-special-filenames~) :new:
-** [X] Fix ~:x~ ex command (open scratch buffer) :bug:
-** [X] Colored output from package management commands :new:
-** [X] ~message!~ & ~format!~ (doom messaging system) :new:
-Prints to a DOOM message buffer in interactive sessions, and to stdout (w/ ansi
-codes) in noninteractive sessions.
-** [X] Make ~+doom-folded-face~ more subtle :ui:
-** [X] tools/term (term/multi-term support) :new:
-** [X] completion/ivy: escape regexp on ~:ag~ search :bug:
-** [X] app/twitter :new:
-** [X] Fix + refactor tools/tmux library (out of date) :refactor:bug:
-** [X] lang/cc: integrate counsel-ivy into irony-mode :new:
-** [X] lang/javascript: improve electric indent for js2-mode & rjsx-mode :new:
-** [X] On doom/recompile, aggresively recompile core.el to fix load-path inconsistencies :bug:
-** [4/4] app/email :new:
-*** [X] mbsync => offlineimap
-*** [X] visual-mode multiple-marking in mu4e headers buffer
-*** [X] native trash mark causes duplicates? :bug:
-*** [X] native refile incompatible with gmail's archive :bug:
+** Unreleased [35/47]
++ [-] app/finance
++ [-] app/crm
++ [-] Improve send-to-REPL workflow
++ [0/4] Investigate potential plugins
+  + [ ] feature/version-control: [[https://github.com/pidu/git-timemachine][git-timemachine]] (replacement for vc-annotate)
+  + [ ] lang/org: [[https://github.com/Malabarba/latex-extra][orgit]] (org links to magit buffers)
+  + [ ] lang/latex: [[https://github.com/Malabarba/latex-extra][latex-extra]] (utility commands)
+  + [ ] lang/latex: [[**https://github.com/jsinglet/latex-preview-pane][latex-preview-pane]]
++ [ ] New (tools/upload): add ~+upload/open-remote-file~ command
++ [ ] Fix 0/0 modeline display (caused by leftover anzu state)
++ [ ] Fix snippet-mode detection in snippets
++ [7/9] lang/org
+  + [ ] Add bootstrap to install latex tools :new:
+  + [ ] test inline latex preview support :bug:
+  + [X] org-capture from shell (whether Emacs is running or not) :new:
+    bin/org-capture
+  + [6/6] babel support for :new:
+    + [X] rust
+    + [X] restclient
+    + [X] sql
+    + [X] google translate
+    + [X] haskell
+    + [X] go
++ [X] lang/python: add ipython detection & REPL support :new:
++ [X] TAB autocompletion in comint/repl buffers
++ [X] Fix Emacs daemon compatibility :bug:
+  The config assumes a frame will be visible on startup, causing errors when
+  Emacs is launched as a daemon.
++ [X] ~ace-maximize-window~ is obsolete :refactor:
++ [X] Fix whitespace adjustment in highlight-indentation-current-column-mode :bug:
++ [X] Toggle-able "pretty" mode for org-mode :new:
+  Sometimes, fontification (like prettified entities or hidden regions) make editing difficult. Make this toggleable.
++ [X] Simplify matchit key (%) in python :bug:
+  It prioritizes jumps between if-else and other blocks over brackets. Annoying!
++ [X] Fix over-eager ESC killing popups :bug:
++ [X] Refactor out s.el dependency :refactor:
++ [X] Use sharp-quote for functions (make byte-compiler more helpful) :refactor:
++ [X] feature/workspaces: separate main workspace from nil persp :new:
++ [X] Stop Projectile & git-gutter from choking Emacs in TRAMP buffers :bug:
++ [X] Achieve vim parity w/ file modifiers (~+evil*ex-replace-special-filenames~) :new:
++ [X] Fix ~:x~ ex command (open scratch buffer) :bug:
++ [X] Colored output from package management commands :new:
++ [X] ~message!~ & ~format!~ (doom messaging system) :new:
+  Prints to a DOOM message buffer in interactive sessions, and to stdout (w/
+  ansi codes) in noninteractive sessions.
++ [X] Make ~+doom-folded-face~ more subtle :ui:
++ [X] tools/term (term/multi-term support) :new:
++ [X] completion/ivy: escape regexp on ~:ag~ search :bug:
++ [X] app/twitter :new:
++ [X] Fix + refactor tools/tmux library (out of date) :refactor:bug:
++ [X] lang/cc: integrate counsel-ivy into irony-mode :new:
++ [X] lang/javascript: improve electric indent for js2-mode & rjsx-mode :new:
++ [X] On doom/recompile, aggresively recompile core.el to fix load-path inconsistencies :bug:
++ [4/4] app/email :new:
+  + [X] mbsync => offlineimap
+  + [X] visual-mode multiple-marking in mu4e headers buffer
+  + [X] native trash mark causes duplicates? :bug:
+  + [X] native refile incompatible with gmail's archive :bug:
 
-* 2.0.1 [45/45]
-** [X] Fix ~doom-kill-process-buffers~ not killing process buffers :bug:
-** [X] Fix ~hippie-expand~ in ex mode/the minibuffer :bug:
-** [X] lang/{javascript,cc}: fix empty ~buffer-file-name~ in ~magic-mode-alist~ :bug:
-** [X] lang/{javascript,web}: add html/js/css reformatting (web-beautify) :new:
-** [X] Fix org-export + shackle integration :bug:ui:
-** [X] app/rss: hide modeline in listing window :ui:
-** [X] feature/eval: fix code-build system :new:
-** [X] Add .travis.yml
-** [X] yasnippet: don't hijack TAB in other modes :bug:
-** [X] private bindings: don't hijack TAB in magit :bug:
-** [X] lang/org: add +notes submodule :new:
-** [X] Add unit-tests :new:
-** [X] Remove unnecessary ~provide~'s in core autoloaded libraries :refactor:
-** [X] Fix ~doom-buffers-in-mode~ :bug:
-** [X] ~+evil:file-move~: don't error if save-place-mode is disabled :bug:
-** [X] ~doom/backward-delete-whitespace-to-column~: fix out-of-bounds error :bug:
-** [X] Remove references to doom/append-semicolon; use evil append mode instead :remove:
-** [X] Add module bootstrapping mechanism (for installing external dependencies) :new:
-See ~doom-bootstrap~, ~make bootstrap~ and ~def-bootstrap!~
-** [X] TRAMP: use ~doom-local-dir~ for temp files :fix:
-** [X] Add ~doom/recompile~ :new:
-** [X] highlight-indent-guides-mode => highlight-indentation-mode :new:
-Former won't display indent guides on blank lines, even with my whitespace
-injection hook.
-** [X] Recognize package.json as a project root file :new:
-** [X] ~def-project-mode!~: fix :files property :bug:
-** [X] Add ~doom/compile-lite~ and ~make compile-lite~ :new:
-** [X] delete-trailing-whitespace: don't affect current line :bug:
-** [X] lang/ruby: detect {Pod,Puppet,Berks}file support :new:
-** [X] lang/cc: fix irony-mode initialization in cc modes :bug:
-** [X] core-os: don't cache exec-path too aggressively :bug:
-** [X] xref integration for javascript (xref-js2) & emacs-lisp :new:
-** [X] Update lang/haskell (and add dante) :new:
-** [X] Add feature/jump :new:
-** [X] Replace beacon with nav-flash :new:
-** [X] Fix ~remove-hook!~ macro :bug:
-** [X] lang/latex: improve auctex+reftex config :new:
-** [X] ui/doom: improve doom-buffer-mode heuristics :refactor:
-** [X] ui/doom-dashboard: fix max-specpdl-size error on macos :bug:
-** [X] Add app/rss :new:
-** [X] Made ~doom-real-buffer-p~ flexible w/ ~doom-real-buffer-functions~
-** [X] Fix duplicates in package management retrieval functions
-** [X] Rewrite feature/eval
-** [X] Rewrite ui/doom-modeline
-** [X] lang/org: fix ~+org/dwim-at-point~, ~+org/insert-item~ & ~+org/toggle-checkbox~
-** [X] New macro: ~add-transient-hook!~
-** [X] Add core/autoload/memoize library for defining memoized functions
-** [X] core-popups: set default :align and :select shackle properties
-** [2/2] feature/workspaces
-*** [X] Rer-project perspectives (projectile integration)
-*** [X] Per-frame perspectives
-** [3/3] Update lang/go
-*** [X] Autocompletion (gocode + company-go) :new:
-*** [X] REPL support (gore) :new:
-*** [X] Code navigation with go-guru :new:
-** [2/2] feature/snippets
-*** [X] Support nested snippets :new:
-*** [X] Fix snippet aliases (~%alias~) :bug:
-** [7/7] lang/javascript
-*** [X] Add jsx support (rjsx-mode) :new:
-*** [X] Fix ~doom/newline-and-indent~ for rjsx-mode :bug:
-*** [X] Remove electric < in rjsx-mode :new:
-*** [X] Enable emmet-mode in rjsx-mode :new:
-*** [X] Have tern use projectile for project detection :new:
-*** [X] Add ~skewer-mode~
-*** [X] Add +javascript-gulp-mode
-** [5/5] lang/web
-*** [X] Add +css/toggle-inline-or-block command :new:
-*** [X] Remove +web-bower-mode (I don't use it anymore)
-*** [X] Improve +web-angularjs-mode detection
-*** [X] Add ~+web-react-mode~
-*** [X] Improve +web-react-mode detection
-** [4/4] app/present :new:
-*** [X] reveal.js support (& org-mode integration)
-*** [X] emacs for slide presentations (org-tree-slides)
-*** [X] big-mode (toggleable large-fonts)
-*** [X] impatient-mode
-** [2/2] app/email :new:
-*** [X] Mail through smtp
-*** [X] Basic mu4e setup
-** [2/2] feature/workspaces
-*** [X] Fix +workspace/kill-session :bug:
-*** [X] Don't silence when saving (not important enough) :refactor:
+** 2.0.1 [72/72]
++ [X] Fix ~doom-kill-process-buffers~ not killing process buffers :bug:
++ [X] Fix ~hippie-expand~ in ex mode/the minibuffer :bug:
++ [X] lang/{javascript,cc}: fix empty ~buffer-file-name~ in ~magic-mode-alist~ :bug:
++ [X] lang/{javascript,web}: add html/js/css reformatting (web-beautify) :new:
++ [X] Fix org-export + shackle integration :bug:ui:
++ [X] app/rss: hide modeline in listing window :ui:
++ [X] feature/eval: fix code-build system :new:
++ [X] Add .travis.yml
++ [X] yasnippet: don't hijack TAB in other modes :bug:
++ [X] private bindings: don't hijack TAB in magit :bug:
++ [X] lang/org: add +notes submodule :new:
++ [X] Add unit-tests :new:
++ [X] Remove unnecessary ~provide~'s in core autoloaded libraries :refactor:
++ [X] Fix ~doom-buffers-in-mode~ :bug:
++ [X] ~+evil:file-move~: don't error if save-place-mode is disabled :bug:
++ [X] ~doom/backward-delete-whitespace-to-column~: fix out-of-bounds error :bug:
++ [X] Remove references to doom/append-semicolon; use evil append mode instead :remove:
++ [X] Add module bootstrapping mechanism (for installing external dependencies) :new:
+  See ~doom-bootstrap~, ~make bootstrap~ and ~def-bootstrap!~
++ [X] TRAMP: use ~doom-local-dir~ for temp files :fix:
++ [X] Add ~doom/recompile~ :new:
++ [X] highlight-indent-guides-mode => highlight-indentation-mode :new:
+  Former won't display indent guides on blank lines, even with my whitespace
+  injection hook.
++ [X] Recognize package.json as a project root file :new:
++ [X] ~def-project-mode!~: fix :files property :bug:
++ [X] Add ~doom/compile-lite~ and ~make compile-lite~ :new:
++ [X] delete-trailing-whitespace: don't affect current line :bug:
++ [X] lang/ruby: detect {Pod,Puppet,Berks}file support :new:
++ [X] lang/cc: fix irony-mode initialization in cc modes :bug:
++ [X] core-os: don't cache exec-path too aggressively :bug:
++ [X] xref integration for javascript (xref-js2) & emacs-lisp :new:
++ [X] Update lang/haskell (and add dante) :new:
++ [X] Add feature/jump :new:
++ [X] Replace beacon with nav-flash :new:
++ [X] Fix ~remove-hook!~ macro :bug:
++ [X] lang/latex: improve auctex+reftex config :new:
++ [X] ui/doom: improve doom-buffer-mode heuristics :refactor:
++ [X] ui/doom-dashboard: fix max-specpdl-size error on macos :bug:
++ [X] Add app/rss :new:
++ [X] Made ~doom-real-buffer-p~ flexible w/ ~doom-real-buffer-functions~
++ [X] Fix duplicates in package management retrieval functions
++ [X] Rewrite feature/eval
++ [X] Rewrite ui/doom-modeline
++ [X] lang/org: fix ~+org/dwim-at-point~, ~+org/insert-item~ & ~+org/toggle-checkbox~
++ [X] New macro: ~add-transient-hook!~
++ [X] Add core/autoload/memoize library for defining memoized functions
++ [X] core-popups: set default :align and :select shackle properties
++ [2/2] feature/workspaces
+  + [X] Rer-project perspectives (projectile integration)
+  + [X] Per-frame perspectives
++ [3/3] Update lang/go
+  + [X] Autocompletion (gocode + company-go) :new:
+  + [X] REPL support (gore) :new:
+  + [X] Code navigation with go-guru :new:
++ [2/2] feature/snippets
+  + [X] Support nested snippets :new:
+  + [X] Fix snippet aliases (~%alias~) :bug:
++ [7/7] lang/javascript
+  + [X] Add jsx support (rjsx-mode) :new:
+  + [X] Fix ~doom/newline-and-indent~ for rjsx-mode :bug:
+  + [X] Remove electric < in rjsx-mode :new:
+  + [X] Enable emmet-mode in rjsx-mode :new:
+  + [X] Have tern use projectile for project detection :new:
+  + [X] Add ~skewer-mode~
+  + [X] Add +javascript-gulp-mode
++ [5/5] lang/web
+  + [X] Add +css/toggle-inline-or-block command :new:
+  + [X] Remove +web-bower-mode (I don't use it anymore)
+  + [X] Improve +web-angularjs-mode detection
+  + [X] Add ~+web-react-mode~
+  + [X] Improve +web-react-mode detection
++ [4/4] app/present :new:
+  + [X] reveal.js support (& org-mode integration)
+  + [X] emacs for slide presentations (org-tree-slides)
+  + [X] big-mode (toggleable large-fonts)
+  + [X] impatient-mode
++ [2/2] app/email :new:
+  + [X] Mail through smtp
+  + [X] Basic mu4e setup
++ [2/2] feature/workspaces
+  + [X] Fix +workspace/kill-session :bug:
+  + [X] Don't silence when saving (not important enough) :refactor:
 
-* 2.0.0 [8/8]
-** [X] lang/org: TAB = dwim :new:
-** [X] Improve ~:todo~ :new:
-** [X] Conform defuns to naming conventions :refactor:
-** [X] Reduce interactive autoloaded defuns :refactor:
-** [X] feature/jump: code navigation system (xref, dumb-jump) :new:
-** [X] Enable flyspell correction popups :new:
-** [X] Replace workgroups2 with persp-mode :new:
-** [X] Add tools/upload :new:
+** 2.0.0 [8/8]
++ [X] lang/org: TAB = dwim :new:
++ [X] Improve ~:todo~ :new:
++ [X] Conform defuns to naming conventions :refactor:
++ [X] Reduce interactive autoloaded defuns :refactor:
++ [X] feature/jump: code navigation system (xref, dumb-jump) :new:
++ [X] Enable flyspell correction popups :new:
++ [X] Replace workgroups2 with persp-mode :new:
++ [X] Add tools/upload :new:
 
