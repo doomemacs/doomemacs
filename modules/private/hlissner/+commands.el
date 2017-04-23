@@ -10,13 +10,12 @@
 
 ;; Editing
 (ex! "@"            '+evil:macro-on-all-lines)   ; TODO Test me
-(ex! "date"         '+text:insert-date)
 (ex! "enhtml"       '+web:encode-html-entities)
 (ex! "dehtml"       '+web:decode-html-entities)
 (ex! "ie[dit]"      'evil-multiedit-ex-match)
-(ex! "na[rrow]"     '+hlissner:narrow-buffer)
+(ex! "na[rrow]"     '+evil:narrow-buffer)
 (ex! "ref[actor]"   'emr-show-refactor-menu)
-(ex! "retab"        '+hlissner:retab)
+(ex! "retab"        '+evil:retab)
 
 ;; External resources
 ;; TODO (ex! "db"          'doom:db)
