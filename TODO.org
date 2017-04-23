@@ -1,6 +1,6 @@
 #+TITLE: DOOM Emacs Changelog
 
-** Unreleased [36/48]
+** Unreleased [37/49]
 + [-] app/finance
 + [-] app/crm
 + [-] Improve send-to-REPL workflow
@@ -12,6 +12,7 @@
 + [ ] New (tools/upload): add ~+upload/open-remote-file~ command
 + [ ] Fix 0/0 modeline display (caused by leftover anzu state)
 + [ ] Fix snippet-mode detection in snippets
++ [X] lang/web: fix HTML encode/decode entities commands
 + [X] Fix ~+vcs/git-browse~ & ~+vcs/git-browse-issues~
 + [7/9] lang/org
   + [ ] Add bootstrap to install latex tools :new:

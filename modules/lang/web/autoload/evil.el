@@ -1,20 +1,20 @@
 ;;; lang/html/autoload/evil.el
 
-;;;###autoload (autoload '+html:encode-html-entities "lang/html/autoload/evil" nil t)
-(evil-define-operator +html:encode-html-entities (beg end &optional input)
+;;;###autoload (autoload '+web:encode-html-entities "lang/web/autoload/evil" nil t)
+(evil-define-operator +web:encode-html-entities (beg end &optional input)
   "Encodes HTML entities in the selected region."
   (interactive "<r><a>")
   (cond (input
-         (insert (+html-encode-entities input)))
+         (insert (+web-encode-entities input)))
         ((and beg end)
-         (+html/encode-entities-region beg end))))
+         (+web/encode-entities-region beg end))))
 
-;;;###autoload (autoload '+html:decode-html-entities "lang/html/autoload/evil" nil t)
-(evil-define-operator +html:decode-html-entities (beg end &optional input)
+;;;###autoload (autoload '+web:decode-html-entities "lang/web/autoload/evil" nil t)
+(evil-define-operator +web:decode-html-entities (beg end &optional input)
   "Decodes HTML entities in the selected region."
   (interactive "<r><a>")
   (cond (input
-         (insert (+html-decode-entities input)))
+         (insert (+web-decode-entities input)))
         ((and beg end)
-         (+html/decode-entities-region beg end))))
+         (+web/decode-entities-region beg end))))
 

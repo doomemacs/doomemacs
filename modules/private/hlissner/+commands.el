@@ -11,8 +11,8 @@
 ;; Editing
 (ex! "@"            '+evil:macro-on-all-lines)   ; TODO Test me
 (ex! "date"         '+text:insert-date)
-(ex! "enhtml"       '+hlissner:encode-html-entities)
-(ex! "dehtml"       '+hlissner:decode-html-entities)
+(ex! "enhtml"       '+web:encode-html-entities)
+(ex! "dehtml"       '+web:decode-html-entities)
 (ex! "ie[dit]"      'evil-multiedit-ex-match)
 (ex! "na[rrow]"     '+hlissner:narrow-buffer)
 (ex! "ref[actor]"   'emr-show-refactor-menu)
