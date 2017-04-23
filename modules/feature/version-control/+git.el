@@ -29,7 +29,7 @@
 
 
 (def-package! browse-at-remote
-  :commands (browse-at-remote/browse browse-at-remote/get-url))
+  :commands (browse-at-remote browse-at-remote-get-url))
 
 
 (def-package! magit

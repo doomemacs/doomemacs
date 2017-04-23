@@ -8,18 +8,19 @@
 
 ;;;###autoload
 (defun +vcs/git-browse ()
-  "Open the website for the current (or specified) version controlled FILE.
-Fallback to repository root."
+  "Open the website for the current version controlled file. Fallback to
+repository root."
   (interactive)
   (let (url)
     (condition-case err
         (setq url (browse-at-remote-get-url))
-      (error
+      ('error
        (setq url (shell-command-to-string "hub browse -u --"))
        (setq url (if url
-                     (concat (string-trim url) "/"
-                             (file-relative-name (buffer-file-name)
-                                                 (doom-project-root))
+                     (concat (string-trim url) "/blob/"
+                             (or (car (vc-git-branches)) "master") "/"
+                             (file-relative-name (file-truename (buffer-file-name))
+                                                 (file-truename (doom-project-root)))
                              (when (use-region-p)
                                (format "#L%s-L%s"
                                        (line-number-at-pos (region-beginning))
