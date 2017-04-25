@@ -256,7 +256,7 @@ Example:
   (def-modeline! minimal
     (bar matches \" \" buffer-info)
     (media-info major-mode))
-  (setq-default mode-line-format (doom-modeline 'minimal))"
+  (doom-set-modeline 'minimal t)"
   (let ((sym (intern (format "doom-modeline-format--%s" name)))
         (lhs-forms (doom--prepare-modeline-segments lhs))
         (rhs-forms (doom--prepare-modeline-segments rhs)))
@@ -278,9 +278,18 @@ Example:
   "Returns a mode-line configuration associated with KEY (a symbol). Throws an
 error if it doesn't exist."
   (let ((fn (intern (format "doom-modeline-format--%s" key))))
-    (unless (functionp fn)
-      (error "Modeline format doesn't exist: %s" key))
-    `(:eval (,fn))))
+    (when (functionp fn)
+      `(:eval (,fn)))))
+
+(defun doom-set-modeline (key &optional default)
+  "Set the modeline format. Does nothing if the modeline KEY doesn't exist. If
+DEFAULT is non-nil, set the default mode-line for all buffers."
+  (let ((modeline (doom-modeline key)))
+    (when modeline
+      (setf (if default
+                (default-value 'mode-line-format)
+              (buffer-local-value 'mode-line-format (current-buffer)))
+            modeline))))
 
 (provide 'core-ui)
 ;;; core-ui.el ends here

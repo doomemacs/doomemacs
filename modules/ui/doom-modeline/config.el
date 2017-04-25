@@ -20,7 +20,7 @@
     "Display string STR in the mode-line next to minibuffer."
     (with-current-buffer (eldoc-current-buffer)
       (let* ((str              (and (stringp input) input))
-             (mode-line-format (or (and str (doom-modeline 'eldoc))
+             (mode-line-format (or (and str (or (doom-modeline 'eldoc) str))
                                    mode-line-format))
              mode-line-in-non-selected-windows)
         (force-mode-line-update)
@@ -562,12 +562,12 @@ with `evil-ex-substitute', and/or 4. The number of active `iedit' regions."
   (major-mode))
 
 ;;
-(setq-default mode-line-format (doom-modeline 'main))
+(doom-set-modeline 'main t)
 
 ;; This scratch buffer is already created, and doesn't get a modeline. For the
 ;; love of Emacs, someone give the man a modeline!
 (with-current-buffer "*scratch*"
-  (setq mode-line-format (doom-modeline 'main)))
+  (doom-set-modeline 'main))
 
 
 ;;
@@ -575,6 +575,6 @@ with `evil-ex-substitute', and/or 4. The number of active `iedit' regions."
 ;;
 
 (defun +doom-modeline|set-special-modeline ()
-  (setq mode-line-format (doom-modeline 'special)))
+  (doom-set-modeline 'special))
 
 (add-hook 'org-src-mode-hook #'+doom-modeline|set-special-modeline)

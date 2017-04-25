@@ -59,7 +59,7 @@ is enabled/disabled.'")
         ;;              `doom*delete-popup-window'
         ;;  :autoclose  If non-nil, close popup if ESC is pressed from any buffer.
         shackle-rules
-        '(("^ ?\\*doom:.+\\*$"      :size 40  :modeline t :regexp t)
+        '(("^ ?\\*doom:.+\\*$"      :size 25  :modeline minimal :regexp t :noesc t)
           ("^ ?\\*doom .+\\*$"      :size 10  :noselect t :regexp t)
           ("^ *doom message*"       :size 10  :noselect t :autokill t)
           ("*Metahelp*"             :size 0.5 :autokill t :autoclose t)
@@ -172,8 +172,9 @@ for :align t on every rule."
                (doom-hide-modeline-mode +1))
               ((and (symbolp modeline)
                     (not (eq modeline 't)))
-               (let ((doom--mode-line (doom-modeline modeline)))
-                 (doom-hide-modeline-mode +1)))))
+               (let ((doom--modeline-format (doom-modeline modeline)))
+                 (when doom--modeline-format
+                   (doom-hide-modeline-mode +1))))))
     ;; show modeline
     (when doom-hide-modeline-mode
       (doom-hide-modeline-mode -1))))

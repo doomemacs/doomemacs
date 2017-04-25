@@ -22,7 +22,7 @@
     (add-hook 'twittering-mode-hook #'doom-buffer-mode))
 
   (add-hook! twittering-mode
-    (setq header-line-format (doom-modeline 'twitter)
+    (setq header-line-format (or (doom-modeline 'twitter) mode-line-format)
           mode-line-format nil))
 
   (map! :map twittering-mode-map

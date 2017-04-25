@@ -101,9 +101,9 @@ whose dimensions may not be fully initialized by the time this is run."
     (unless +doom-dashboard-modeline
       (setq +doom-dashboard-old-modeline mode-line-format)
       (setq +doom-dashboard-modeline
-            (if (featurep! :ui doom-modeline)
-                (doom-modeline 'project)
-              mode-line-format)))
+            (or (and (featurep! :ui doom-modeline)
+                     (doom-modeline 'project))
+                mode-line-format)))
     (let ((old-pwd (or dir default-directory)))
       (with-current-buffer (doom-fallback-buffer)
         (+doom-dashboard-mode)
