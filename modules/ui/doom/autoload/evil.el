@@ -11,13 +11,14 @@ use the current window."
                 (buffer-substring beg end)))
         (mode major-mode)
         (old-project (doom-project-root))
-        (new-buf (get-buffer-create " *doom:scratch*")))
+      (new-buf (get-buffer-create "*doom:scratch*")))
+    (if bang
+        (switch-to-buffer new-buf)
+      (doom-popup-buffer new-buf))
     (with-current-buffer new-buf
-      (setq default-directory old-project
-            mode-line-format (doom-modeline 'minimal))
+      (setq default-directory old-project)
       (when (and (not (eq major-mode mode))
                  (functionp mode))
         (funcall mode))
-      (if text (insert text)))
-    (if bang (switch-to-buffer new-buf) (doom-popup-buffer new-buf))))
+      (if text (insert text)))))
 
