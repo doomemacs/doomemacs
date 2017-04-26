@@ -26,6 +26,20 @@
 (defvar +doom-dashboard--height 0)
 (defvar +doom-dashboard--old-fringe-indicator fringe-indicator-alist)
 
+(after! evil
+  (map! :map +doom-dashboard-mode-map
+        :em "j" '+doom-dashboard/next-button
+        :em "k" '+doom-dashboard/previous-button)
+
+  (defun +doom-dashboard/next-button ()
+    (interactive)
+    (ignore-errors
+      (goto-char (next-button (point)))))
+
+  (defun +doom-dashboard/previous-button ()
+    (interactive)
+    (ignore-errors
+      (goto-char (previous-button (point))))))
 
 
 (def-package! all-the-icons :when (display-graphic-p))
@@ -106,13 +120,13 @@ whose dimensions may not be fully initialized by the time this is run."
                 mode-line-format)))
     (let ((old-pwd (or dir default-directory)))
       (with-current-buffer (doom-fallback-buffer)
+        (read-only-mode -1)
         (+doom-dashboard-mode)
-        (add-hook 'evil-insert-state-entry-hook #'+doom-dashboard|clear-on-insert nil t)
-        (add-hook 'after-change-major-mode-hook #'+doom-dashboard|clear-on-insert nil t)
+        ;; (add-hook 'evil-insert-state-entry-hook #'+doom-dashboard|clear-on-insert nil t)
+        ;; (add-hook 'after-change-major-mode-hook #'+doom-dashboard|clear-on-insert nil t)
         (setq +doom-dashboard-edited-p nil
               fringe-indicator-alist (mapcar (lambda (i) (cons (car i) nil))
                                              fringe-indicator-alist))
-
         (erase-buffer)
         (let* ((+doom-dashboard--width  (window-width (get-buffer-window (doom-fallback-buffer))))
                (+doom-dashboard--height (window-height (get-buffer-window (doom-fallback-buffer)))))
@@ -121,8 +135,12 @@ whose dimensions may not be fully initialized by the time this is run."
                   (funcall (intern (format "doom-dashboard-widget--%s" widget-name)))
                   (insert "\n"))
                 +doom-dashboard-widgets))
-        (setq default-directory old-pwd)
-        (setq mode-line-format +doom-dashboard-modeline))))
+        (setq default-directory old-pwd
+              mode-line-format +doom-dashboard-modeline)
+        (unless (button-at (point))
+          (goto-char (point-min))
+          (goto-char (next-button (point))))
+        (read-only-mode +1))))
   t)
 
 (defun doom-dashboard-widget--banner ()
@@ -164,54 +182,34 @@ whose dimensions may not be fully initialized by the time this is run."
   (let ((all-the-icons-scale-factor 1.3)
         (all-the-icons-default-adjust -0.05)
         (start (point))
-        (sep "   ")
         (last-session-p (and (and (featurep 'persp-mode) persp-mode)
                              (file-exists-p (expand-file-name persp-auto-save-fname persp-save-dir)))))
-    (unless last-session-p
-      (setq sep "     "))
-    (insert
-     (s-center +doom-dashboard--width
-               (with-temp-buffer
-                 (insert-text-button
-                  (concat (all-the-icons-octicon
-                           "mark-github"
-                           :face 'font-lock-keyword-face)
-                          (propertize " Homepage" 'face 'font-lock-keyword-face))
-                  'action '(lambda (_) (browse-url "https://github.com/hlissner/.emacs.d"))
-                  'follow-link t)
-
-                 (insert sep " ")
-
-                 (insert-text-button
-                  (concat (all-the-icons-octicon
-                           "file-text"
-                           :face 'font-lock-keyword-face)
-                          (propertize " Recent files" 'face 'font-lock-keyword-face))
-                  'action '(lambda (_) (call-interactively (command-remapping 'recentf)))
-                  'follow-link t)
-
-                 (insert sep)
-
-                 (insert-text-button
-                  (concat (all-the-icons-octicon
-                           "tools"
-                           :face 'font-lock-keyword-face)
-                          (propertize " Edit emacs.d" 'face 'font-lock-keyword-face))
-                  'action '(lambda (_) (find-file (expand-file-name "init.el" doom-emacs-dir)))
-                  'follow-link t)
-
-                 (when last-session-p
-                   (insert sep)
-
+    (mapc (lambda (btn)
+            (when btn
+              (let ((label (car btn))
+                    (icon (nth 1 btn))
+                    (fn (nth 2 btn)))
+                (insert
+                 (with-temp-buffer
                    (insert-text-button
                     (concat (all-the-icons-octicon
-                             "history"
+                             icon
                              :face 'font-lock-keyword-face)
-                            (propertize " Reload last session" 'face 'font-lock-keyword-face))
-                    'action '(lambda (_) (+workspace:load-session))
-                    'follow-link t))
-
-                 (insert (make-string (if window-system 5 0) ? ))
-
-                 (buffer-string)))
-     "\n")))
+                            (propertize (concat " " label) 'face 'font-lock-keyword-face))
+                    'action fn
+                    'follow-link t)
+                   (s-center (1- +doom-dashboard--width) (buffer-string))))
+                (insert "\n\n"))))
+          `(("Homepage" "mark-github"
+             (lambda (_) (browse-url "https://github.com/hlissner/.emacs.d")))
+            ,(when last-session-p
+               '("Reload last session" "history"
+                 (lambda (_) (+workspace:load-session))))
+            ("Recently opened files" "file-text"
+             (lambda (_) (call-interactively (command-remapping 'recentf))))
+            ("Recent opened projects" "briefcase"
+             (lambda (_) (call-interactively (command-remapping 'projectile-switch-project))))
+            ("Jump to bookmark" "bookmark"
+             (lambda (_) (call-interactively (command-remapping 'bookmark-jump))))
+            ("Edit emacs.d" "tools"
+             (lambda (_) (find-file (expand-file-name "init.el" doom-emacs-dir))))))))
