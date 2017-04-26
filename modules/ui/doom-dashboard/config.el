@@ -28,8 +28,12 @@
 
 (after! evil
   (map! :map +doom-dashboard-mode-map
-        :em "j" '+doom-dashboard/next-button
-        :em "k" '+doom-dashboard/previous-button)
+        :em "j" #'+doom-dashboard/next-button
+        :em "k" #'+doom-dashboard/previous-button
+        [remap evil-insert]      #'evil-normal-state
+        [remap evil-change]      #'evil-normal-state
+        [remap evil-delete]      #'evil-normal-state
+        [remap evil-delete-char] #'evil-normal-state)
 
   (defun +doom-dashboard/next-button ()
     (interactive)
