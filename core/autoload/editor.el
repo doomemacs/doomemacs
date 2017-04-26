@@ -1,5 +1,13 @@
 ;;; editor.el
 
+;;;###autoload
+(defun doom/sudo-find-file ()
+  "Open a file as root."
+  (interactive)
+  (let ((file (read-file-name "Open as root: ")))
+    (unless (file-writable-p file)
+      (find-file (concat "/sudo:root@localhost:" file)))))
+
 (defun doom--goto-first-non-blank ()
   (beginning-of-visual-line)
   (skip-chars-forward " \t\r"))
