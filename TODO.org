@@ -1,9 +1,12 @@
 #+TITLE: DOOM Emacs Changelog
 
-** Unreleased [37/49]
+** Unreleased [37/52]
 + [-] app/finance
 + [-] app/crm
 + [-] Improve send-to-REPL workflow
++ [ ] Update screenshots
++ [ ] Fix lack of syntax highlighting in ~:x~ scratch buffer
++ [ ] Fix modeline disappearing due to loss of state (~doom--modeline-format~ being killed on major mode change)
 + [0/4] Investigate potential plugins
   + [ ] feature/version-control: [[https://github.com/pidu/git-timemachine][git-timemachine]] (replacement for vc-annotate)
   + [ ] lang/org: [[https://github.com/Malabarba/latex-extra][orgit]] (org links to magit buffers)
