@@ -49,7 +49,7 @@
 (add-hook! isearch-mode-end (setq echo-keystrokes 0.02))
 
 ;; A minor mode for toggling the mode-line
-(defvar doom--modeline-format nil
+(defvar-local doom--modeline-format nil
   "The modeline format to use when `doom-hide-modeline-mode' is active. Don't
 set this directly. Bind it in `let' instead.")
 (defvar-local doom--old-modeline-format nil
@@ -66,6 +66,7 @@ disabled.")
           doom--old-modeline-format nil))
   (force-mode-line-update))
 ;; Ensure major-mode or theme changes don't overwrite these variables
+(put 'doom--modeline-format 'permanent-local t)
 (put 'doom--old-modeline-format 'permanent-local t)
 (put 'doom-hide-modeline-mode 'permanent-local t)
 

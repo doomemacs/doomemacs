@@ -172,9 +172,9 @@ for :align t on every rule."
                (doom-hide-modeline-mode +1))
               ((and (symbolp modeline)
                     (not (eq modeline 't)))
-               (let ((doom--modeline-format (doom-modeline modeline)))
-                 (when doom--modeline-format
-                   (doom-hide-modeline-mode +1))))))
+               (setq-local doom--modeline-format (doom-modeline modeline))
+               (when doom--modeline-format
+                 (doom-hide-modeline-mode +1)))))
     ;; show modeline
     (when doom-hide-modeline-mode
       (doom-hide-modeline-mode -1))))
