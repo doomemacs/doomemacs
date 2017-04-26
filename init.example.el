@@ -79,7 +79,6 @@
        latex           ; writing papers in Emacs has never been so fun
        lua             ; one-based indices? one-based indices
        markdown        ; writing docs for people to ignore
-       octave          ; math isn't a choice, it's a way of life
        org             ; for organized fearless leader (WIP)
        php             ; make php less awful to work with
        python          ; beautiful is better than ugly
