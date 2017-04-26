@@ -285,7 +285,6 @@ byte-compilation."
          (unless (server-running-p)
            (server-start)))
 
-       ;; Benchmark
        (add-hook 'after-init-hook #'doom--display-benchmark t))))
 
 (defalias 'def-package! 'use-package

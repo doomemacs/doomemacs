@@ -12,7 +12,7 @@
        (defun ,def-name ()
          (require 'company)
          (setq-local company-backends (append '((,@backends)) company-backends)))
-       (add-hook! ,modes ',def-name))))
+       (add-hook! ,modes #',def-name))))
 
 
 ;;

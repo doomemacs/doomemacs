@@ -26,9 +26,9 @@
     (unless (file-directory-p gopath)
       (error "GOPATH isn't set up (%s)" gopath))
     (mapc (lambda (url)
-          (unless (file-directory-p (expand-file-name (concat "src/" url) gopath))
-            (sh "%s get -u '%s'" gobin url)
-            (setq changed t)))
+            (unless (file-directory-p (expand-file-name (concat "src/" url) gopath))
+              (sh "%s get -u '%s'" gobin url)
+              (setq changed t)))
         '("github.com/nsf/gocode"
           "github.com/motemen/gore"
           "golang.org/x/tools/cmd/guru"
