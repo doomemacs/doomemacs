@@ -134,7 +134,7 @@ whose dimensions may not be fully initialized by the time this is run."
         (erase-buffer)
         (let* ((+doom-dashboard--width  (window-width (get-buffer-window (doom-fallback-buffer))))
                (+doom-dashboard--height (window-height (get-buffer-window (doom-fallback-buffer)))))
-          (insert (make-string (max 0 (- (truncate (/ +doom-dashboard--height 2)) 11)) ?\n))
+          (insert (make-string (max 0 (- (truncate (/ +doom-dashboard--height 2)) 16)) ?\n))
           (mapc (lambda (widget-name)
                   (funcall (intern (format "doom-dashboard-widget--%s" widget-name)))
                   (insert "\n"))
