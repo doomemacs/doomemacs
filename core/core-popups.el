@@ -429,7 +429,6 @@ you came from."
             (apply orig-fn args)
           (advice-remove #'delete-other-windows #'silence))))
     (advice-add #'org-capture-place-template :around #'doom*suppress-delete-other-windows)
-    (advice-add #'org-agenda :around #'doom*suppress-delete-other-windows)
     (advice-add #'org-add-log-note :around #'doom*suppress-delete-other-windows)
     (advice-add #'org-export--dispatch-ui :around #'doom*suppress-delete-other-windows)
 
@@ -462,7 +461,11 @@ you came from."
     (add-hook 'org-agenda-finalize-hook #'doom-hide-modeline-mode)
 
     (after! org-agenda
-      (setq org-agenda-window-setup 'other-window)
+      (setq org-agenda-window-setup 'other-window
+            org-agenda-restore-windows-after-quit nil)
+
+      (advice-add #'org-agenda :around #'doom*suppress-delete-other-windows)
+
       (after! evil
         (map! :map* org-agenda-mode-map
               :m [escape] 'org-agenda-Quit
