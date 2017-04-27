@@ -5,7 +5,7 @@ refactoring commands, syntax-checking (flycheck), auto-formatting (gofmt) and
 snippets (yasnippet).
 
 + [[https://golang.org][Homepage]]
-+ [[../../private/hlissner/snippets/go-mode][Snippets]]
++ [[https://github.com/hlissner/emacs-snippets/tree/master/go-mode][Snippets]]
 + [[../../feature/file-templates/templates/go-mode][File templates]]
 
 ** Installation
