@@ -49,12 +49,18 @@
   (visual-line-mode +1)
   (setq line-spacing 1)
 
-  ;; If saveplace places the point in a folded position, unfold it on load
-  (when (outline-invisible-p)
-    (ignore-errors
-      (save-excursion
-        (outline-previous-visible-heading 1)
-        (org-show-subtree))))
+  (unless org-agenda-inhibit-startup
+    ;; My version of the 'overview' #+STARTUP option: expand first-level
+    ;; headings.
+    (when (eq org-startup-folded t)
+      (outline-hide-sublevels 2))
+
+    ;; If saveplace places the point in a folded position, unfold it on load
+    (when (outline-invisible-p)
+      (ignore-errors
+        (save-excursion
+          (outline-previous-visible-heading 1)
+          (org-show-subtree)))))
 
   ;; auto-align tables
   (defun +org|realign-table-maybe ()
