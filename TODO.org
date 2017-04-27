@@ -17,7 +17,7 @@
 - [0/2] New modules
   + [ ] app/finance
   + [-] app/crm
-- [1/57] Add READMEs to modules
+- [1/57] Add README.org's to modules (see [[modules/lang/go/README.org][lang/go/README.org]])
   + [0/8] :tools
     + [ ] dired
     + [ ] electric-indent

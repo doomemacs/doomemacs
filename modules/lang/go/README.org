@@ -5,8 +5,8 @@ refactoring commands, syntax-checking (flycheck), auto-formatting (gofmt) and
 snippets (yasnippet).
 
 + [[https://golang.org][Homepage]]
-+ [[../../modules/private/hlissner/snippets/go-mode][Snippets]]
-+ [[../../modules/feature/file-templates/templates/go-mode][File templates]]
++ [[../../private/hlissner/snippets/go-mode][Snippets]]
++ [[../../feature/file-templates/templates/go-mode][File templates]]
 
 ** Installation
 *** MacOS
