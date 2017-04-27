@@ -44,10 +44,11 @@
 
 (defun +org|hook ()
   "Run everytime `org-mode' is enabled."
+  (setq line-spacing 1)
+
+  (visual-line-mode +1)
   (when (and (featurep 'evil) evil-mode)
     (evil-org-mode +1))
-  (visual-line-mode +1)
-  (setq line-spacing 1)
 
   (unless org-agenda-inhibit-startup
     ;; My version of the 'overview' #+STARTUP option: expand first-level
@@ -106,11 +107,10 @@
    outline-blank-line t
    org-indent-mode-turns-on-hiding-stars t
    org-adapt-indentation nil
-   org-blank-before-new-entry '((heading . nil) (plain-list-item . auto))
    org-cycle-separator-lines 1
    org-cycle-include-plain-lists t
    org-ellipsis " ... "
-   org-entities-user '(("flat" "\\flat" nil "" "" "266D" "♭")
+   org-entities-user '(("flat"  "\\flat" nil "" "" "266D" "♭")
                        ("sharp" "\\sharp" nil "" "" "266F" "♯"))
    org-fontify-done-headline t
    org-fontify-quote-and-verse-blocks t
@@ -119,6 +119,7 @@
    org-hide-emphasis-markers nil
    org-hide-leading-stars t
    org-hide-leading-stars-before-indent-mode t
+   org-hidden-keywords nil
    org-image-actual-width nil
    org-indent-indentation-per-level 2
    org-pretty-entities nil
@@ -130,24 +131,20 @@
    org-use-sub-superscripts '{}
 
    ;; Behavior
+   org-blank-before-new-entry '((heading . nil) (plain-list-item . auto))
    org-catch-invisible-edits 'show
    org-checkbox-hierarchical-statistics nil
    org-enforce-todo-checkbox-dependencies nil
-   org-completion-use-ido nil ; Use ivy/counsel for refiling
    org-confirm-elisp-link-function nil
    org-default-priority ?C
-   org-hidden-keywords nil
    org-hierarchical-todo-statistics t
-   org-log-done t
    org-loop-over-headlines-in-active-region t
-   org-outline-path-complete-in-steps nil
    org-refile-use-outline-path t
    org-special-ctrl-a/e t
 
    ;; Sorting/refiling
    org-archive-location (concat +org-dir "/archived/%s::")
    org-refile-targets '((nil . (:maxlevel . 2))) ; display full path in refile completion
-
 
    ;; Latex
    org-highlight-latex-and-related '(latex)
@@ -172,6 +169,12 @@
               :background (face-attribute (or (cadr (assq 'default face-remapping-alist))
                                               'default)
                                           :background nil t)))
+
+  ;; Use ivy/helm if either is available
+  (when (or (featurep! :completion ivy)
+            (featurep! :completion helm))
+    (setq-default org-completion-use-ido nil
+                  org-outline-path-complete-in-steps nil))
 
   (let ((ext-regexp (regexp-opt '("GIF" "JPG" "JPEG" "SVG" "TIF" "TIFF" "BMP" "XPM"
                                   "gif" "jpg" "jpeg" "svg" "tif" "tiff" "bmp" "xpm"))))
