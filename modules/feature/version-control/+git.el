@@ -34,6 +34,7 @@
 (def-package! git-timemachine
   :commands (git-timemachine git-timemachine-toggle)
   :config
+  (require 'magit-blame)
   (add-hook! 'git-timemachine-mode-hook #'evil-force-normal-state)
   (map! :map git-timemachine-mode-map
         :nv "p" 'git-timemachine-show-previous-revision
