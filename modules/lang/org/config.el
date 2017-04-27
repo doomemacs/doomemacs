@@ -44,7 +44,7 @@
 
 (defun +org|hook ()
   "Run everytime `org-mode' is enabled."
-  (when (featurep! :feature evil)
+  (when (and (featurep 'evil) evil-mode)
     (evil-org-mode +1))
   (visual-line-mode +1)
   (setq line-spacing 1)
@@ -62,14 +62,14 @@
           (outline-previous-visible-heading 1)
           (org-show-subtree)))))
 
-  ;; auto-align tables
   (defun +org|realign-table-maybe ()
+    "Auto-align table under cursor."
     (when (org-at-table-p)
       (org-table-align)))
   (add-hook 'evil-insert-state-exit-hook #'+org|realign-table-maybe nil t)
 
   (defun +org|update-cookies ()
-    "Update counts on headlines (\"cookies\")."
+    "Update counts in headlines (aka \"cookies\")."
     (when (and buffer-file-name (file-exists-p buffer-file-name))
       (org-update-statistics-cookies t)))
 
@@ -87,12 +87,14 @@
     :group 'evil-org)
 
   (define-minor-mode +org-pretty-mode
-    ""
+    "TODO"
     :init-value nil
     :lighter " *"
     :group 'evil-org
     (setq org-hide-emphasis-markers +org-pretty-mode)
-    (org-toggle-pretty-entities))
+    (org-toggle-pretty-entities)
+    ;; In case the above un-align tables
+    (org-table-map-tables 'org-table-align t))
 
   (setq-default
    org-export-coding-system 'utf-8
@@ -130,6 +132,7 @@
    ;; Behavior
    org-catch-invisible-edits 'show
    org-checkbox-hierarchical-statistics nil
+   org-enforce-todo-checkbox-dependencies t
    org-completion-use-ido nil ; Use ivy/counsel for refiling
    org-confirm-elisp-link-function nil
    org-default-priority ?C
@@ -147,14 +150,6 @@
 
 
    ;; Latex
-   org-format-latex-options
-   (plist-put org-format-latex-options :scale 1.5)
-   org-format-latex-options
-   (plist-put org-format-latex-options
-              :background (face-attribute (or (cadr (assq 'default face-remapping-alist))
-                                              'default)
-                                          :background nil t))
-
    org-highlight-latex-and-related '(latex)
    org-latex-create-formula-image-program 'dvipng
    org-latex-image-default-width ".9\\linewidth"
@@ -165,6 +160,18 @@
    ;; '(("" "gauss" t)
    ;;   ("" "physics" t) TODO Install this)
    )
+
+  ;; LaTeX previews are too small and usually render to light backgrounds, so
+  ;; this enlargens them and ensures their background (and foreground) match the
+  ;; current theme.
+  (setq-default
+   org-format-latex-options
+   (plist-put org-format-latex-options :scale 1.5)
+   org-format-latex-options
+   (plist-put org-format-latex-options
+              :background (face-attribute (or (cadr (assq 'default face-remapping-alist))
+                                              'default)
+                                          :background nil t)))
 
   (let ((ext-regexp (regexp-opt '("GIF" "JPG" "JPEG" "SVG" "TIF" "TIFF" "BMP" "XPM"
                                   "gif" "jpg" "jpeg" "svg" "tif" "tiff" "bmp" "xpm"))))
@@ -211,8 +218,13 @@
     (sp-local-pair "$$" "$$"   :post-handlers '((:add " | ")) :unless '(sp-point-at-bol-p))
     (sp-local-pair "{" nil))
 
-  ;; bullets
-  (def-package! org-bullets :commands org-bullets-mode)
+  ;; The standard unicode characters are usually misaligned depending on the
+  ;; font. This bugs me. Personally, the markdown #-marks for headlines are more
+  ;; elegant, so use those.
+  (def-package! org-bullets
+    :commands org-bullets-mode
+    :init (add-hook 'org-mode-hook 'org-bullets-mode)
+    :config (setq org-bullets-bullet-list '("#")))
 
   ;; Keybinds
   (map! (:map org-mode-map
