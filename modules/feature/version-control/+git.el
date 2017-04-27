@@ -35,6 +35,8 @@
 (def-package! git-timemachine
   :commands (git-timemachine git-timemachine-toggle)
   :config
+  (require 'magit-blame)
+  
   ;; Sometimes I forget `git-timemachine' is enabled in a buffer, so instead of
   ;; showing revision details in the minibuffer, show them in
   ;; `header-line-format', which is always visible.
