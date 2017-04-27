@@ -1,22 +1,98 @@
 * Changelog
 
-** Unreleased [41/54]
-- Potential plugins
+*Legend:*
++ [ ] Unfinished
++ [-] Work-in-progress
++ [X] Complete
+
+** Unreleased [44/115]
+- [0/0] Test
+- [1/6] Potential plugins
   + [ ] feature/version-control: [[https://github.com/sshaw/git-link][git-link]] (replacement for browse-at-remote)
-  + [X] feature/version-control: [[https://github.com/pidu/git-timemachine][git-timemachine]] (replacement for vc-annotate)
   + [ ] lang/org: [[https://github.com/Malabarba/latex-extra][orgit]] (org links to magit buffers)
   + [ ] lang/latex: [[https://github.com/Malabarba/latex-extra][latex-extra]] (utility commands)
   + [ ] lang/latex: [[**https://github.com/jsinglet/latex-preview-pane][latex-preview-pane]]
-+ [-] app/finance
-+ [-] app/crm
-+ [-] Improve send-to-REPL workflow
+  + [ ] lang/julia: [[ https://github.com/dennisog/julia-shell-mode][julia-shell]] (unsure if better than inferior-julia in julia-mode)
+  + [X] feature/version-control: [[https://github.com/pidu/git-timemachine][git-timemachine]] (replacement for vc-annotate)
+- [0/2] New modules
+  + [ ] app/finance
+  + [-] app/crm
+- [1/57] Add READMEs to modules
+  + [0/8] :tools
+    + [ ] dired
+    + [ ] electric-indent
+    + [ ] eshell
+    + [ ] macos
+    + [ ] rotate-text
+    + [ ] term
+    + [ ] tmux
+    + [ ] upload
+  + [1/25] :lang
+    + [ ] assembly
+    + [ ] cc
+    + [ ] crystal
+    + [ ] csharp
+    + [ ] data
+    + [ ] emacs-lisp
+    + [X] go
+    + [ ] haskell
+    + [ ] java
+    + [ ] javascript
+    + [ ] julia
+    + [ ] latex
+    + [ ] lua
+    + [ ] markdown
+    + [ ] org
+    + [ ] php
+    + [ ] python
+    + [ ] rest
+    + [ ] ruby
+    + [ ] rust
+    + [ ] scala
+    + [ ] sh
+    + [ ] swift
+    + [ ] typescript
+    + [ ] web
+  + [0/10] :feature
+    + [ ] debug
+    + [ ] eval
+    + [ ] evil
+    + [ ] file-templates
+    + [ ] jump
+    + [ ] snippets
+    + [ ] spellcheck
+    + [ ] syntax-checker
+    + [ ] version-control
+    + [ ] workspaces
+  + [0/5] :ui
+    + [ ] doom
+    + [ ] doom-dashboard
+    + [ ] doom-modeline
+    + [ ] doom-quit
+    + [ ] hl-todo
+  + [0/4] :completion
+    + [ ] ivy
+    + [ ] company
+    + [ ] ido
+    + [ ] helm
+  + [0/5] :app
+    + [ ] /app/email
+    + [ ] /app/write
+    + [ ] /app/rss
+    + [ ] /app/twitter
+    + [ ] /app/present
+- [ ] Replace bootstrap system with informative READMEs
+  Bootstaps aren't robust and are too opinionated, even for my own needs.
++ [ ] send-to-REPL workflow: does it still work? (see ~:repl~ & ~+eval/repl-send-region~)
++ [ ] Fix ~M-z~ key in minibuffer (replace zap-to-char with undo)
 + [ ] Update screenshots
-+ [ ] New (tools/upload): add ~+upload/open-remote-file~ command
-+ [ ] Fix 0/0 modeline display (caused by leftover anzu state)
-+ [ ] Fix snippet-mode detection in snippets
-+ [X] lang/org: by default, unfold level 1 (keep rest folded)
-+ [ ] lang/org: Add bootstrap to install latex tools
-+ [ ] lang/org: test inline latex preview support
++ [ ] tools/upload: add ~+upload/open-remote-file~ command to open current file on the remote (with TRAMP)
++ [ ] Fix ~0/0~ displaying in modeline (caused by leftover anzu state)
++ [ ] Fix snippet-mode detection (perhaps use ~magic-mode-alist~? may)
++ [-] lang/org: fix flickering line indentation while typing (caused by ~show-paren-mode~ in insert mode)
++ [X] lang/org: fontify items with all subitems done, e.g. ~+ [0/0] headline~
++ [X] lang/org: fontify checked-checkbox items the same way DONE headlines are
++ [X] lang/org: by default, unfold level 1 on startup (keep rest folded)
 + [X] Fix lack of syntax highlighting in ~:x~ scratch buffer
 + [X] Fix modeline disappearing due to loss of state (~doom--modeline-format~ being killed on major mode change)
 + [X] lang/web: fix HTML encode/decode entities commands
@@ -32,14 +108,14 @@
 + [X] lang/python: add ipython detection & REPL support
 + [X] TAB autocompletion in comint/repl buffers
 + [X] Fix Emacs daemon compatibility
-  The config assumes a frame will be visible on startup, causing errors when
-  Emacs is launched as a daemon.
++ The config assumes a frame will be visible on startup, causing errors when
++ Emacs is launched as a daemon.
 + [X] ~ace-maximize-window~ is obsolete
 + [X] Fix whitespace adjustment in highlight-indentation-current-column-mode
 + [X] Toggle-able "pretty" mode for org-mode
-  Sometimes, fontification (like prettified entities or hidden regions) make editing difficult. Make this toggleable.
++ Sometimes, fontification (like prettified entities or hidden regions) make editing difficult. Make this toggleable.
 + [X] Simplify matchit key (%) in python
-  It prioritizes jumps between if-else and other blocks over brackets. Annoying!
++ It prioritizes jumps between if-else and other blocks over brackets. Annoying!
 + [X] Fix over-eager ESC killing popups
 + [X] Refactor out s.el dependency
 + [X] Use sharp-quote for functions (make byte-compiler more helpful)
@@ -49,8 +125,8 @@
 + [X] Fix ~:x~ ex command (open scratch buffer)
 + [X] Colored output from package management commands
 + [X] ~message!~ & ~format!~ (doom messaging system)
-  Prints to a DOOM message buffer in interactive sessions, and to stdout (w/
-  ansi codes) in noninteractive sessions.
++ Prints to a DOOM message buffer in interactive sessions, and to stdout (w/
++ ansi codes) in noninteractive sessions.
 + [X] Make ~+doom-folded-face~ more subtle
 + [X] tools/term (term/multi-term support)
 + [X] completion/ivy: escape regexp on ~:ag~ search
