@@ -182,6 +182,7 @@ Body forms can access the hook's arguments through the let-bound variable
                   (defun ,hook-name ()
                     (when (and (boundp ',mode)
                                (not ,mode)
+                               (and buffer-file-name (not (file-remote-p buffer-file-name)))
                                ,(if match `(if buffer-file-name (string-match-p ,match buffer-file-name)) t)
                                ,(if files (doom--resolve-paths files) t)
                                ,(or pred-form t))

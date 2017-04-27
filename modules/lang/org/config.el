@@ -44,10 +44,11 @@
 
 (defun +org|hook ()
   "Run everytime `org-mode' is enabled."
+  (setq line-spacing 1)
+
+  (visual-line-mode +1)
   (when (and (featurep 'evil) evil-mode)
     (evil-org-mode +1))
-  (visual-line-mode +1)
-  (setq line-spacing 1)
 
   (unless org-agenda-inhibit-startup
     ;; My version of the 'overview' #+STARTUP option: expand first-level
@@ -106,11 +107,11 @@
    outline-blank-line t
    org-indent-mode-turns-on-hiding-stars t
    org-adapt-indentation nil
-   org-blank-before-new-entry '((heading . nil) (plain-list-item . auto))
    org-cycle-separator-lines 1
    org-cycle-include-plain-lists t
-   org-ellipsis " ... "
-   org-entities-user '(("flat" "\\flat" nil "" "" "266D" "♭")
+   ;; org-ellipsis " ... "
+   org-ellipsis "  "
+   org-entities-user '(("flat"  "\\flat" nil "" "" "266D" "♭")
                        ("sharp" "\\sharp" nil "" "" "266F" "♯"))
    org-fontify-done-headline t
    org-fontify-quote-and-verse-blocks t
@@ -119,6 +120,7 @@
    org-hide-emphasis-markers nil
    org-hide-leading-stars t
    org-hide-leading-stars-before-indent-mode t
+   org-hidden-keywords nil
    org-image-actual-width nil
    org-indent-indentation-per-level 2
    org-pretty-entities nil
@@ -130,24 +132,20 @@
    org-use-sub-superscripts '{}
 
    ;; Behavior
+   org-blank-before-new-entry '((heading . nil) (plain-list-item . auto))
    org-catch-invisible-edits 'show
    org-checkbox-hierarchical-statistics nil
-   org-enforce-todo-checkbox-dependencies t
-   org-completion-use-ido nil ; Use ivy/counsel for refiling
+   org-enforce-todo-checkbox-dependencies nil
    org-confirm-elisp-link-function nil
    org-default-priority ?C
-   org-hidden-keywords nil
    org-hierarchical-todo-statistics t
-   org-log-done t
    org-loop-over-headlines-in-active-region t
-   org-outline-path-complete-in-steps nil
    org-refile-use-outline-path t
    org-special-ctrl-a/e t
 
    ;; Sorting/refiling
    org-archive-location (concat +org-dir "/archived/%s::")
    org-refile-targets '((nil . (:maxlevel . 2))) ; display full path in refile completion
-
 
    ;; Latex
    org-highlight-latex-and-related '(latex)
@@ -173,6 +171,12 @@
                                               'default)
                                           :background nil t)))
 
+  ;; Use ivy/helm if either is available
+  (when (or (featurep! :completion ivy)
+            (featurep! :completion helm))
+    (setq-default org-completion-use-ido nil
+                  org-outline-path-complete-in-steps nil))
+
   (let ((ext-regexp (regexp-opt '("GIF" "JPG" "JPEG" "SVG" "TIF" "TIFF" "BMP" "XPM"
                                   "gif" "jpg" "jpeg" "svg" "tif" "tiff" "bmp" "xpm"))))
     (setq iimage-mode-image-regex-alist
@@ -180,25 +184,20 @@
                       ext-regexp "\\)\\(\\]\\]\\|>\\|'\\)?") . 2)
             (,(concat "<\\(http://.+\\." ext-regexp "\\)>") . 1))))
 
-  ;; Fontify checkboxes and dividers
-  (defface org-list-bullet
-    '((t (:inherit font-lock-keyword-face)))
-    "Face for list bullets"
-    :group 'doom)
+  ;;; Custom fontification
   ;; I like how org-mode fontifies checked TODOs and want this to extend to
   ;; checked checkbox items, so we remove the old checkbox highlight rule...
   (font-lock-remove-keywords
-   'org-mode
-   '(("^[ \t]*\\(?:[-+*]\\|[0-9]+[.)]\\)[ \t]+\\(?:\\[@\\(?:start:\\)?[0-9]+\\][ \t]*\\)?\\(\\[[- X]\\]\\)"
-      1 'org-checkbox prepend)))
+   'org-mode '(("^[ \t]*\\(?:[-+*]\\|[0-9]+[.)]\\)[ \t]+\\(?:\\[@\\(?:start:\\)?[0-9]+\\][ \t]*\\)?\\(\\[[- X]\\]\\)"
+                1 'org-checkbox prepend)))
   (font-lock-add-keywords
    'org-mode '(;; ...and replace it with my own
-               ("^[ \t]*\\(\\(?:[-+]\\|[0-9]+[).]\\)[ \t]+\\(?:\\[@\\(?:start:\\)?[0-9]+\\][ \t]*\\)?\\[X\\][^\n]*\n\\)"
+               ("^[ \t]*\\(?:[-+*]\\|[0-9]+[).]\\)[ \t]+\\(\\(?:\\[@\\(?:start:\\)?[0-9]+\\][ \t]*\\)?\\[\\(?:X\\|\\([0-9]+\\)/\\2\\)\\][^\n]*\n\\)"
                 1 'org-headline-done t)
                ("^[ \t]*\\(?:[-+*]\\|[0-9]+[.)]\\)[ \t]+\\(?:\\[@\\(?:start:\\)?[0-9]+\\][ \t]*\\)?\\(\\[[- ]\\]\\)"
-                1 'org-checkbox prepend)
+                1 'org-checkbox append)
                ;; Also highlight list bullets
-               ("^ *\\([-+]\\|[0-9]+[).]\\) " 1 'org-list-bullet append)
+               ("^ *\\([-+]\\|[0-9]+[).]\\) " 1 'org-list-dt append)
                ;; and separators
                ("^ *\\(-----+\\)$" 1 'org-meta-line)))
 
