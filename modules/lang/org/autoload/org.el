@@ -146,7 +146,9 @@ with `org-cycle'). Also removes babel result blocks, if run from a code block."
   (cond ((org-at-heading-p)
          (outline-toggle-children))
         ((org-at-item-p)
-         (org-cycle))))
+         (let ((window-beg (window-start)))
+           (org-cycle)
+           (set-window-start nil window-beg)))))
 
 ;;;###autoload
 (defun +org/dwim-at-point ()
