@@ -30,6 +30,7 @@
 (when-let (path (locate-library "org" nil doom--package-load-path))
   (push (file-name-directory path) load-path))
 
+(load! +agenda)
 (load! +attach)
 (load! +capture)
 (load! +export)
@@ -89,6 +90,9 @@
 
   (setq-default
    org-export-coding-system 'utf-8
+   org-todo-keywords '((sequence "[ ](t)" "[-](p)" "[?](m)" "|" "[X](d)")
+                       (sequence "TODO(T)" "|" "DONE(D)")
+                       (sequence "IDEA(i)" "NEXT(n)" "ACTIVE(a)" "WAITING(w)" "LATER(l)" "|" "CANCELLED(c)"))
 
    ;; Appearance
    outline-blank-line t
@@ -134,19 +138,6 @@
    ;; Sorting/refiling
    org-archive-location (concat +org-dir "/archived/%s::")
    org-refile-targets '((nil . (:maxlevel . 2))) ; display full path in refile completion
-
-   ;; Agenda
-   diary-file (concat doom-local-dir "diary.org")
-   ;; calendar-mark-diary-entries-flag nil
-   org-agenda-restore-windows-after-quit nil
-   org-agenda-skip-unavailable-files nil
-   org-agenda-dim-blocked-tasks nil
-   org-agenda-window-setup 'other-frame ; to get org-agenda to behave with shackle...
-   org-agenda-inhibit-startup t
-   org-agenda-files (directory-files +org-dir t "\\.org$" t)
-   org-todo-keywords '((sequence "[ ](t)" "[-](p)" "[?](m)" "|" "[X](d)")
-                       (sequence "TODO(T)" "|" "DONE(D)")
-                       (sequence "IDEA(i)" "NEXT(n)" "ACTIVE(a)" "WAITING(w)" "LATER(l)" "|" "CANCELLED(c)"))
 
 
    ;; Latex
@@ -335,16 +326,7 @@
           :v  "<"   (λ! (org-metaleft)  (evil-visual-restore))
           :v  ">"   (λ! (org-metaright) (evil-visual-restore))
           :n  "-"   #'org-cycle-list-bullet
-          :m  "<tab>" #'org-cycle)
-
-        (:after org-agenda
-          (:map org-agenda-mode-map
-            :e "<escape>" #'org-agenda-Quit
-            :e "m"   #'org-agenda-month-view
-            :e "C-j" #'org-agenda-next-item
-            :e "C-k" #'org-agenda-previous-item
-            :e "C-n" #'org-agenda-next-item
-            :e "C-p" #'org-agenda-previous-item)))
+          :m  "<tab>" #'org-cycle))
 
   ;; Initialize everything else
   (run-hooks '+org-init-hook)
@@ -361,13 +343,6 @@
         `(("\\.org$" . emacs)
           (t . ,(cond (IS-MAC "open -R \"%s\"")
                       (IS-LINUX "xdg-open \"%s\"")))))
-
-  ;; Don't clobber recentf with agenda files
-  (defun +org-is-agenda-file (filename)
-    (cl-find (file-truename filename) org-agenda-files
-             :key #'file-truename
-             :test #'equal))
-  (add-to-list 'recentf-exclude #'+org-is-agenda-file)
 
   ;; Remove highlights on ESC
   (defun +org*remove-occur-highlights (&rest args)
