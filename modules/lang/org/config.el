@@ -180,25 +180,20 @@
                       ext-regexp "\\)\\(\\]\\]\\|>\\|'\\)?") . 2)
             (,(concat "<\\(http://.+\\." ext-regexp "\\)>") . 1))))
 
-  ;; Fontify checkboxes and dividers
-  (defface org-list-bullet
-    '((t (:inherit font-lock-keyword-face)))
-    "Face for list bullets"
-    :group 'doom)
+  ;;; Custom fontification
   ;; I like how org-mode fontifies checked TODOs and want this to extend to
   ;; checked checkbox items, so we remove the old checkbox highlight rule...
   (font-lock-remove-keywords
-   'org-mode
-   '(("^[ \t]*\\(?:[-+*]\\|[0-9]+[.)]\\)[ \t]+\\(?:\\[@\\(?:start:\\)?[0-9]+\\][ \t]*\\)?\\(\\[[- X]\\]\\)"
-      1 'org-checkbox prepend)))
+   'org-mode '(("^[ \t]*\\(?:[-+*]\\|[0-9]+[.)]\\)[ \t]+\\(?:\\[@\\(?:start:\\)?[0-9]+\\][ \t]*\\)?\\(\\[[- X]\\]\\)"
+                1 'org-checkbox prepend)))
   (font-lock-add-keywords
    'org-mode '(;; ...and replace it with my own
-               ("^[ \t]*\\(\\(?:[-+]\\|[0-9]+[).]\\)[ \t]+\\(?:\\[@\\(?:start:\\)?[0-9]+\\][ \t]*\\)?\\[X\\][^\n]*\n\\)"
+               ("^[ \t]*\\(?:[-+*]\\|[0-9]+[).]\\)[ \t]+\\(\\(?:\\[@\\(?:start:\\)?[0-9]+\\][ \t]*\\)?\\[X\\][^\n]*\n\\)"
                 1 'org-headline-done t)
                ("^[ \t]*\\(?:[-+*]\\|[0-9]+[.)]\\)[ \t]+\\(?:\\[@\\(?:start:\\)?[0-9]+\\][ \t]*\\)?\\(\\[[- ]\\]\\)"
-                1 'org-checkbox prepend)
+                1 'org-checkbox append)
                ;; Also highlight list bullets
-               ("^ *\\([-+]\\|[0-9]+[).]\\) " 1 'org-list-bullet append)
+               ("^ *\\([-+]\\|[0-9]+[).]\\) " 1 'org-list-dt append)
                ;; and separators
                ("^ *\\(-----+\\)$" 1 'org-meta-line)))
 
