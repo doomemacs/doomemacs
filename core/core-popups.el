@@ -415,7 +415,7 @@ you came from."
       '("*Org Clock*"        :noselect t)
       '("^\\*Org Src"        :regexp t :size 0.5 :noesc t)
       '("*Edit Formulas*"    :size 10)
-      '("^\\*Org-Babel"      :regexp t :size 0.4)
+      '("^\\*Org-Babel"      :regexp t :size 25 :noselect t)
       '("^CAPTURE.*\\.org$"  :regexp t :size 20))
 
     ;; Org tries to do its own popup management, causing buffer/window config
