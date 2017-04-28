@@ -43,6 +43,12 @@
   :config
   (load-theme +doom-theme t)
 
+  ;; Since Fira Mono doesn't have an italicized variant, highlight it instead
+  (set-face-attribute 'italic nil
+                      :weight 'ultra-light
+                      :foreground "#ffffff"
+                      :background (face-background 'doom-hl-line))
+
   (defface +doom-folded-face
     `((t (:inherit font-lock-comment-face
           :background ,(face-background 'doom-default)
