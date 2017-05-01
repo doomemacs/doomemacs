@@ -5,10 +5,13 @@
 + [-] Work-in-progress
 + [X] Complete
 
-** Unreleased [44/119]
-+ [1/8] Potential plugins
+** Unreleased [45/124]
++ [1/11] Potential plugins
+  + [ ] [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]]: client for MS Language Server Protocol, keep an eye on this
+  + [ ] lang/javascript: [[https://github.com/codesuki/add-node-modules-path][add-node-modules-path]] (adds node_modules to ~exec-path~)
   + [ ] feature/version-control: [[https://github.com/sshaw/git-link][git-link]] (replacement for browse-at-remote)
   + [ ] lang/org: [[https://github.com/Malabarba/latex-extra][orgit]] (org links to magit buffers)
+  + [ ] lang/org: [[https://github.com/jkitchin/org-ref][org-ref]] (bibtex/citation helper)
   + [ ] lang/latex: [[https://github.com/Malabarba/latex-extra][latex-extra]] (utility commands)
   + [ ] lang/latex: [[**https://github.com/jsinglet/latex-preview-pane][latex-preview-pane]]
   + [ ] lang/julia: [[ https://github.com/dennisog/julia-shell-mode][julia-shell]] (unsure if better than inferior-julia in julia-mode)
@@ -85,15 +88,19 @@
     + [ ] rss
     + [ ] twitter
     + [ ] present
++ [ ] Fix invisible modeline in terminal Emacs
 + [ ] Replace bootstrap system with informative READMEs
   Bootstaps are inflexible/too opinionated, even for my own needs.
 + [ ] send-to-REPL workflow: does it still work? (see ~:repl~ & ~+eval/repl-send-region~)
-+ [ ] Fix ~M-z~ key in minibuffer (replace zap-to-char with undo)
++ [ ] Fix ~M-z~, ~C-u~ and ~C-w~ in ~org-store-link~ & ~org-insert-link~ prompts
+  Should undo, delete-line, and delete-word, respectively. Instead, they fall
+  back to vanilla commands.
 + [ ] Update screenshots
 + [ ] tools/upload: add ~+upload/open-remote-file~ command to open current file on the remote (with TRAMP)
 + [ ] Fix ~0/0~ displaying in modeline (caused by leftover anzu state)
 + [ ] Fix snippet-mode detection (perhaps use ~magic-mode-alist~? may)
 + [-] lang/org: fix flickering line indentation while typing (caused by ~show-paren-mode~ in insert mode)
++ [X] Detect & load ~/.emacs.local.el, if available
 + [X] lang/org: fontify items with all subitems done, e.g. ~+ [0/0] headline~
 + [X] lang/org: fontify checked-checkbox items the same way DONE headlines are
 + [X] lang/org: by default, unfold level 1 on startup (keep rest folded)
