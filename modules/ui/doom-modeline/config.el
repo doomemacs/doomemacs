@@ -154,7 +154,8 @@
   "Face for warnings in the modeline. Used by `*flycheck'"
   :group '+doom-modeline)
 
-(defface doom-modeline-urgent `((t (:inherit error)))
+(defface doom-modeline-urgent
+  `((t (:inherit error)))
   "Face for errors in the modeline. Used by `*flycheck'"
   :group '+doom-modeline)
 

@@ -299,9 +299,9 @@ throw an error if the file doesn't exist."
                              ((stringp path) path)
                              ((listp path) (eval path))))
                   (and load-file-name   (file-name-directory load-file-name))
-                  (and buffer-file-name (file-name-directory buffer-file-name))
                   (and (bound-and-true-p byte-compile-current-file)
-                       (file-name-directory byte-compile-current-file)))))
+                       (file-name-directory byte-compile-current-file))
+                  (and buffer-file-name (file-name-directory buffer-file-name)))))
     (unless path
       (error "Could not find %s" filesym))
     (let ((file (expand-file-name (concat (symbol-name filesym) ".el") path)))

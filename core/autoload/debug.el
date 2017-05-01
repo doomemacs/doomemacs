@@ -6,8 +6,8 @@
   (interactive "d")
   (let ((hl-line-p (bound-and-true-p hl-line-mode)))
     (if hl-line-p (hl-line-mode -1))
-    (let ((face (or (get-char-property (point) 'read-face-name)
-                    (get-char-property (point) 'face))))
+    (let ((face (or (get-char-property pos 'read-face-name)
+                    (get-char-property pos 'face))))
       (if face (message "Face: %s" face) (message "No face at %d" pos)))
     (if hl-line-p (hl-line-mode 1))))
 
