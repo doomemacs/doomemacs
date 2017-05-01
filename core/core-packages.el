@@ -276,6 +276,8 @@ byte-compilation."
      (setq doom-modules ',doom-modules)
 
      (unless noninteractive
+       (load "~/.emacs.local.el" t t)
+
        ,@(let (forms)
            (dolist (module (doom--module-pairs) (nreverse forms))
              (push `(require! ,(car module) ,(cdr module) t) forms)))
