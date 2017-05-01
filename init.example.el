@@ -94,9 +94,10 @@
        ;; Applications are opinionated modules that transform Emacs to fulfill a
        ;; specific purpose. They should be loaded last.
        :app
-       ;; TODO crm             ; org-mode for client relations management
+       ;; TODO crm        ; org-mode for client relations management
        email           ; Emacs as an email client
-       ;; TODO finance         ; keeping track of my shekels
+       ;; TODO finance    ; keeping track of my shekels
+       ;; TODO irc        ; how neckbeards socialize
        present         ; showing off presentations in emacs
        rss             ; emacs as an RSS reader
        twitter         ; twitter client https://twitter.com/vnought
