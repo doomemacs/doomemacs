@@ -2,20 +2,24 @@
 (provide 'core-lib-system)
 
 ;;;###autoload
-(defun doom-system-os ()
-  "Returns the OS: arch, debian, macos, general linux, cygwin or windows."
-  (let ((gnu-linux-p (eq system-type 'gnu/linux)))
-    (cond ((and gnu-linux-p (file-exists-p "/etc/arch-release"))
-           'arch)
-          ((and gnu-linux-p (file-exists-p "/etc/debian_version"))
-           'debian)
-          (gnu-linux-p
-           'linux)
-          ((eq system-type 'darwin)
-           'macos)
-          ((memq system-type '(windows-nt cygwin))
-           'windows)
-          (t (error "Unknown OS: %s" system-type)))))
+(defun doom-system-os (&optional os)
+  "Returns the OS: arch, debian, macos, general linux, cygwin or windows. If OS
+is given, returns t if it matches the current system, and nil otherwise."
+  (let* ((gnu-linux-p (eq system-type 'gnu/linux))
+         (type (cond ((and gnu-linux-p (file-exists-p "/etc/arch-release"))
+                      'arch)
+                     ((and gnu-linux-p (file-exists-p "/etc/debian_version"))
+                      'debian)
+                     (gnu-linux-p
+                      'linux)
+                     ((eq system-type 'darwin)
+                      'macos)
+                     ((memq system-type '(windows-nt cygwin))
+                      'windows)
+                     (t (error "Unknown OS: %s" system-type)))))
+    (if os
+        (eq os type)
+      type)))
 
 ;;;###autoload
 (defun doom-sh (command &rest args)
