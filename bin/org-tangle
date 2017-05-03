@@ -1,0 +1,31 @@
+#!/usr/bin/env emacs --script
+
+;; Extracts source blocks from org files and prints them to stdout. Debug/info
+;; messages are directed to stderr and can be ignored. -l/--lang can be used to
+;; only tangle blocks of a certain language.
+;;
+;; Usage: org-tangle [[-l|--lang] LANG] some-file.org another.org
+;; Examples:
+;;   org-tangle modules/ui/doom/README.org > install_fira_mono.sh
+;;   org-tangle -l sh modules/lang/go/README.org | sh
+
+(load "~/.emacs.d/core/core.el" nil t)
+
+(require 'org-install)
+(require 'org)
+(require 'ob-tangle)
+
+(defun *org-babel-tangle (orig-fn &rest args)
+  "Don't write tangled blocks to files, print them to stdout."
+  (cl-letf (((symbol-function 'write-region)
+             (lambda (start end filename &optional append visit lockname mustbenew)
+               (princ (buffer-string)))))
+    (apply orig-fn args)))
+(advice-add #'org-babel-tangle :around #'*org-babel-tangle)
+
+(let ((lang (when (member (car command-line-args-left) '("--lang" "-l"))
+              (pop command-line-args-left)
+              (pop command-line-args-left)))
+      (srcs (cl-remove-if-not 'file-exists-p command-line-args-left)))
+  (dolist (file srcs)
+    (org-babel-tangle-file file nil lang)))
