@@ -12,18 +12,18 @@ modules/category/submodule/autoload/*.el
 
 ## config.el
 
-The module's main configuration file. It is the first file loaded when the
-module is loaded (through `doom!` or `require!`).
+The main configuration file and the first loaded when the module is activated
+(using `doom!` or `require!`).
 
 ## packages.el
 
-Where module's tell DOOM what packages to install and where to get them from.
-These should be _pure/declarative and idempotent_, and shouldn't have any
-side-effects (besides altering the `doom-modules` and `doom-packages`
-variables), and should have deterministic results when evaluated.
+How modules inform DOOM what packages to install and where from. These should be
+declarative, pure and idempotent. That means running them directly should have
+no side-effects (besides affecting the variables `doom-modules` and
+`doom-packages`) and whose results should alway be deterministic.
 
 By default, packages are retrieved from ELPA. Otherwise, a MELPA-style recipe
-plist can be used to fetch it from elsewhere:
+can determine how to fetch it:
 
 ```emacs-lisp
 ;; from modules/tools/rotate-text/packages.el
@@ -60,7 +60,7 @@ given that they're marked with an `;;;###autoload` cookie:
 
 My convention for extra configuration files is a `+` prefix, e.g.
 `modules/feature/version-control/+git.el`. These are **not** automatically
-loaded, and must be loaded manually with `load!` from a module's `config.el`:
+loaded, and must be loaded manually with `load!` from within `config.el`:
 
 ```emacs-lisp
 ;; from modules/feature/version-control/config.el
@@ -74,7 +74,7 @@ loaded, and must be loaded manually with `load!` from a module's `config.el`:
 Modules loosely take after Spacemacs' notion of layers, but are not intended to
 be interchangeable. Their purpose is _almost_ purely organizational.
 
-Use `featurep!` to check for other modules:
+Use `featurep!` to check for module availability:
 
 ```emacs-lisp
 ;; from modules/lang/go/packages.el
