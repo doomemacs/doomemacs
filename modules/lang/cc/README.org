@@ -12,14 +12,18 @@ generated glue code for iOS mobile apps.
 
 ** Installation
 ~irony-server~ is required to use irony-mode's features auto-completion (among
-other things). To install it, run ~M-x irony-install-server~.
+other things).
 
-This is all you need on Linux.
+To install it, run ~M-x irony-install-server~, which requires ~cmake~ and
+~libclang~.
 
 *** MacOS
-libclang is required to build irony-server. On MacOS, the best way I know of to
-get it is:
-
 #+BEGIN_SRC sh :tangle (if (doom-system-os 'macos) "yes")
-brew install llvm  # may take a while!
+brew install cmake
+brew install llvm  # 1gb+ installer: may take a while!
+#+END_SRC
+
+*** Arch Linux
+#+BEGIN_SRC sh :tangle (if (doom-system-os 'arch) "yes")
+sudo pacman --needed --noconfirm -S clang cmake
 #+END_SRC
