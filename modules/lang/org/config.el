@@ -99,9 +99,11 @@
 
   (setq-default
    org-export-coding-system 'utf-8
-   org-todo-keywords '((sequence "[ ](t)" "[-](p)" "[?](m)" "|" "[X](d)")
-                       (sequence "TODO(T)" "|" "DONE(D)")
-                       (sequence "IDEA(i)" "NEXT(n)" "ACTIVE(a)" "WAITING(w)" "LATER(l)" "|" "CANCELLED(c)"))
+   org-todo-keywords
+   '((sequence "[ ](t)" "[-](p)" "[?](m)" "|" "[X](d)")
+     (sequence "TODO(T)" "|" "DONE(D)")
+     (sequence "IDEA(i)" "NEXT(n)" "ACTIVE(a)" "WAITING(w)" "LATER(l)"
+               "|" "CANCELLED(c)"))
 
    ;; Appearance
    outline-blank-line t
@@ -109,7 +111,6 @@
    org-adapt-indentation nil
    org-cycle-separator-lines 1
    org-cycle-include-plain-lists t
-   ;; org-ellipsis " ... "
    org-ellipsis "  "
    org-entities-user '(("flat"  "\\flat" nil "" "" "266D" "♭")
                        ("sharp" "\\sharp" nil "" "" "266F" "♯"))

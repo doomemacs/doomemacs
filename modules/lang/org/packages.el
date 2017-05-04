@@ -11,5 +11,3 @@
 (package! ob-sql-mode)
 (package! ob-translate)
 ;; (package! ox-pandox)
-;; (package! org-bullets)
-

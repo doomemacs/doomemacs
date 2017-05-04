@@ -9,7 +9,7 @@
 
 
 ;;
-;;
+;; Config
 ;;
 
 (defvar +email--accounts nil)
@@ -264,8 +264,8 @@
   (setq org-mu4e-link-query-in-headers-mode nil
         org-mu4e-convert-to-html t)
 
-  ;; Only render to html once. Without this, it would continue to do so, if the
-  ;; first send failed for whatever reason.
+  ;; Only render to html once. If the first send fails for whatever reason,
+  ;; org-mu4e would do so each time you try again.
   (add-hook! 'message-send-hook
     (setq-local org-mu4e-convert-to-html nil)))
 

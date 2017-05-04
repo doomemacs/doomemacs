@@ -9,9 +9,8 @@
   `(lambda () (interactive)
      (let ((default-directory ,path))
        (call-interactively
-        ',(if project-p
-              (command-remapping 'projectile-find-file)
-            (command-remapping 'find-file))))))
+        ',(command-remapping
+           (if project-p 'projectile-find-file) 'find-file)))))
 
 (map!
  [remap evil-jump-to-tag] 'projectile-find-tag
