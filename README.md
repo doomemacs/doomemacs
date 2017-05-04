@@ -56,6 +56,7 @@ To get a picture of what's in here, check out:
 
 * A [popup management system](core/core-popups.el) using **[shackle]** for
   temporary or disposable buffers.
+* Per-project code-style settings with **[editorconfig]**.
 * Workspaces, tab emulation & session persistence with **[persp-mode]**.
 * Project and workspace-restricted buffer navigation and functions.
 * A vim-centric environment with **[evil-mode]**
@@ -83,6 +84,12 @@ To get a picture of what's in here, check out:
   * evil-search/iedit/evil-substitute mode-line integration
   * Macro-recording indicator
   * Python/ruby version in mode-line (for rbenv/pyenv)
+* Emacs as an:
+  * Email client (using mu4e & offlineimap)
+  * Presentation app (using org-tree-slides, ox-reveal, +present/big-mode
+    & impatient-mode)
+  * RSS feed reader (using elfeed)
+  * Word Processor (using LaTeX, Org and Markdown)
 
 ## Contributing or troubleshooting
 
@@ -93,28 +100,26 @@ even elisp tips.
 [Don't hesitate to report bugs or tell me my Elisp-fu sucks](https://github.com/hlissner/.emacs.d/issues/new)!
 
 
-[yay-evil]: http://ultravioletbat.deviantart.com/art/Yay-Evil-111710573
-[Cask]: https://github.com/cask/cask
-
 [company-mode]: https://melpa.org/#/company
 [counsel-ag]: https://melpa.org/#/counsel
+[doom-theme]: https://github.com/hlissner/emacs-doom-theme
 [dumb-jump]: https://melpa.org/#/dumb-jump
+[editorconfig]: http://editorconfig.org/
 [evil-mode]: https://melpa.org/#/evil
 [evil-multiedit]: https://melpa.org/#/evil-multiedit
 [evil-snipe]: https://melpa.org/#/evil-snipe
 [git-gutter-fringe]: https://melpa.org/#/git-gutter-fringe
 [ivy]: https://melpa.org/#/ivy
 [neotree]: https://melpa.org/#/neotree
+[persp-mode]: https://melpa.org/#/persp-mode
 [quickrun]: https://melpa.org/#/quickrun
 [repl-toggle]: https://melpa.org/#/repl-toggle
-[shackle]: https://melpa.org/#/shackle
-[swiper]: https://melpa.org/#/swiper
-[wgrep]: https://melpa.org/#/wgrep
-[persp-mode]: https://melpa.org/#/persp-mode
-[yasnippet]: https://melpa.org/#/yasnippet
-
-[sc]: https://github.com/hlissner/.emacs.d/tree/screenshots
 [sc-diffs]: https://github.com/hlissner/.emacs.d/blob/screenshots/git-gutter.png?raw=true
 [sc-multiedit]: https://raw.githubusercontent.com/hlissner/evil-multiedit/screenshots/main.gif?raw=true
+[sc]: https://github.com/hlissner/.emacs.d/tree/screenshots
+[shackle]: https://melpa.org/#/shackle
+[swiper]: https://melpa.org/#/swiper
 [vim]: https://github.com/hlissner/.vim
-[doom-theme]: https://github.com/hlissner/emacs-doom-theme
+[wgrep]: https://melpa.org/#/wgrep
+[yasnippet]: https://melpa.org/#/yasnippet
+[yay-evil]: http://ultravioletbat.deviantart.com/art/Yay-Evil-111710573
