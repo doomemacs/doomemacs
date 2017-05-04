@@ -4,6 +4,8 @@
   :commands (c-mode c++-mode objc-mode java-mode)
   :mode ("\\.mm" . objc-mode)
   :init
+  (setq-default c-basic-offset tab-width)
+
   ;; Auto-detect C++ header files
   (push (cons (lambda ()
                 (and buffer-file-name
