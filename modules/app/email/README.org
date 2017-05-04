@@ -1,0 +1,50 @@
+* Email
+
+I want to live in Emacs, but as we all know, living is incomplete without email.
+So I prayed to the text editor gods and they (I) answered. Emacs+evil's editing
+combined with org-mode for writing emails? Yes please.
+
+It uses ~mu4e~ to read my email, but depends on ~offlineimap~ (to sync my email
+via IMAP) and ~mu~ (to index my mail into a format ~mu4e~ can understand).
+
+#+begin_quote
+My config is gmail/gsuite oriented, and since Google has its own opinions on the
+IMAP standard, it is unlikely to translate to other hosts.
+#+end_quote
+
+** Installation
+*** MacOS
+#+BEGIN_SRC sh :tangle (if (doom-system-os 'macos) "yes")
+brew install mu --with-emacs
+brew install offlineimap
+#+END_SRC
+
+*** Arch Linux
+#+BEGIN_SRC sh :dir /sudo:: :tangle (if (doom-system-os 'arch) "yes")
+sudo pacman --noconfirm --needed -S offlineimap mu
+#+END_SRC
+
+** Setup
+First, you need to set up, download and index your email:
+
+1. Write a ~\~/.offlineimaprc~. Mine can be found [[https://github.com/hlissner/dotfiles/tree/master/shell/%252Bmu][in my dotfiles repository]]. It
+   is configured to download mail to ~\~/.mail~.
+2. Download your email: ~offlineimap -o~ (may take a while)
+3. Index it with mu: ~mu index --maildir ~/.mail~
+
+Then configure Emacs to use your email address:
+
+#+BEGIN_SRC emacs-lisp :tangle no
+;; + %s is replaced with the label, e.g. /%s/Drafts => /lissner.net/Drafts
+;; + Each path is relative to `+email-mu4e-mail-path', which is ~/.mail by
+;;   default
+(set! :email "lissner.net"
+    '((mu4e-sent-folder       . "/%s/Sent Mail")
+      (mu4e-drafts-folder     . "/%s/Drafts")
+      (mu4e-trash-folder      . "/%s/Trash")
+      (mu4e-refile-folder     . "/%s/All Mail")
+      (smtpmail-smtp-user     . "henrik@lissner.net")
+      (user-mail-address      . "henrik@lissner.net")
+      (mu4e-compose-signature . "---\nHenrik Lissner"))
+    t)
+#+END_SRC

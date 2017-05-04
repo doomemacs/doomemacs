@@ -5,7 +5,7 @@
 + [-] Work-in-progress
 + [X] Complete
 
-** Unreleased [46/123]
+** Unreleased [48/123]
 + [1/12] Potential plugins
   + [ ] [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]]: client for MS Language Server Protocol, keep an eye on this
   + [ ] lang/javascript: [[https://github.com/codesuki/add-node-modules-path][add-node-modules-path]] (adds node_modules to ~exec-path~)
@@ -25,7 +25,7 @@
   + [ ] app/irc
   + [-] app/crm
   + [-] app/write
-+ [2/57] Add README.org's (with working babel blocks?) to modules (see [[modules/lang/go/README.org][lang/go/README.org]]) to replace bootstaps
++ [4/57] Add README.org's (with working babel blocks?) to modules (see [[modules/lang/go/README.org][lang/go/README.org]]) to replace bootstaps
   + [0/8] :tools
     + [ ] dired
     + [ ] electric-indent
@@ -35,9 +35,9 @@
     + [ ] term
     + [ ] tmux
     + [ ] upload
-  + [1/25] :lang
+  + [2/25] :lang
     + [ ] assembly
-    + [ ] cc
+    + [X] cc
     + [ ] crystal
     + [ ] csharp
     + [ ] data
@@ -83,8 +83,8 @@
     + [ ] company
     + [ ] ido
     + [ ] helm
-  + [0/5] :app
-    + [ ] email
+  + [1/5] :app
+    + [X] email
     + [ ] write
     + [ ] rss
     + [ ] twitter

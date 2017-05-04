@@ -6,7 +6,8 @@ plugin to thank for bringing it to Emacs.
 On top of that, it uses:
 
 + [[https://github.com/mozilla/Fira][Fira Mono]] (font)
-+ [[https://github.com/rolandwalker/nav-flash][nav-flash]]: blinks the current line when jumping large distances, to help keep track of the cursor.
++ [[https://github.com/rolandwalker/nav-flash][nav-flash]]: blinks the current line when jumping large distances, to help keep
+  track of the cursor.
 + ~hideshow~, modified to use a nicer folded-region indicator.
 + Custom fringe bitmaps for ~git-gutter-fringe~ (thin bars)
 
