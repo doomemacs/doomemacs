@@ -95,6 +95,15 @@
     (evil-ex-nohighlight)))
 (advice-add #'evil-force-normal-state :after #'+evil*esc)
 
+(defun +evil*restore-normal-state-on-windmove (orig-fn &rest args)
+  "If in anything but normal or motion mode when moving to another window,
+restore normal mode. This prevents insert state from bleeding into other modes
+across windows."
+  (unless (memq evil-state '(normal motion))
+    (evil-normal-state +1))
+  (apply orig-fn args))
+(advice-add #'windmove-do-window-select :around #'+evil*restore-normal-state-on-windmove)
+
 (defun +evil*static-reindent (orig-fn &rest args)
   "Don't move cursor on indent."
   (save-excursion (apply orig-fn args)))
