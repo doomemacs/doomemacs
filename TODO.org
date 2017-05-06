@@ -5,12 +5,11 @@
 + [-] Work-in-progress
 + [X] Complete
 
-** Unreleased [52/129]
-+ [1/13] Potential plugins
+** Unreleased [53/129]
++ [2/13] Potential plugins
   + [ ] [[https://github.com/etu/webpaste.el][webpaste.el]]: sending text to bin servies (like gist, ix.io, sprunge, etc.)
   + [ ] [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]]: client for MS Language Server Protocol, keep an eye on this
   + [ ] lang/javascript: [[https://github.com/codesuki/add-node-modules-path][add-node-modules-path]] (adds node_modules to ~exec-path~)
-  + [ ] feature/version-control: [[https://github.com/sshaw/git-link][git-link]] (replacement for browse-at-remote)
   + [ ] lang/org: [[https://github.com/Malabarba/latex-extra][orgit]] (org links to magit buffers)
   + [ ] lang/org: [[https://github.com/jkitchin/org-ref][org-ref]] (bibtex/citation helper)
   + [ ] lang/org: [[https://github.com/tashrifsanil/org-easy-img-insert][org-easy-img-insert]]
@@ -20,6 +19,7 @@
   + [ ] lang/python: [[https://github.com/Wilfred/pyimport][pyimport]]
   + [ ] An image plugin for zooming images at point
     + https://github.com/mhayashi1120/Emacs-imagex ?
+  + [X] feature/version-control: [[https://github.com/sshaw/git-link][git-link]] (replacement for browse-at-remote)
   + [X] feature/version-control: [[https://github.com/pidu/git-timemachine][git-timemachine]] (replacement for vc-annotate)
 + [0/4] New modules
   + [ ] app/finance (maybe settle for org-mode tables?)

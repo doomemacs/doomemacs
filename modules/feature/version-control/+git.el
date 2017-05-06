@@ -13,6 +13,7 @@
   :commands git-gutter-mode
   :init
   (defun +version-control|git-gutter-maybe ()
+    "Enable `git-gutter-mode' in non-remote buffers."
     (when (and (buffer-file-name)
                (not (file-remote-p (buffer-file-name))))
       (git-gutter-mode +1)))
@@ -28,15 +29,11 @@
     (advice-add #'evil-force-normal-state :after #'git-gutter)))
 
 
-(def-package! browse-at-remote
-  :commands (browse-at-remote browse-at-remote-get-url))
-
-
 (def-package! git-timemachine
   :commands (git-timemachine git-timemachine-toggle)
   :config
   (require 'magit-blame)
-  
+
   ;; Sometimes I forget `git-timemachine' is enabled in a buffer, so instead of
   ;; showing revision details in the minibuffer, show them in
   ;; `header-line-format', which is always visible.
@@ -84,6 +81,10 @@
         ;; Don't interfere with window movement keys
         :nv "C-j" nil
         :nv "C-k" nil))
+
+
+(def-package! git-link
+  :commands (git-link git-link-commit git-link-homepage))
 
 
 (def-package! evil-magit
