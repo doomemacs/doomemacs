@@ -1,15 +1,14 @@
 ;;; core-editor.el --- filling the editor shaped hole in the Emacs OS
 
-
 (defvar doom-large-file-size 1
-  "Size (in MB) above which the user will be propmpted to open the file literally to avoid
-  performance issues. Opening literally means that no major or minor modes are active and
-  the buffer is readonly.")
+  "Size (in MB) above which the user will be prompted to open the file literally
+to avoid performance issues. Opening literally means that no major or minor
+modes are active and the buffer is read-only.")
 
-(defvar doom-large-file-modes-list 
+(defvar doom-large-file-modes-list
   '(archive-mode tar-mode jka-compr git-commit-mode image-mode
     doc-view-mode doc-view-mode-maybe ebrowse-tree-mode pdf-view-mode)
-  "Major modes which `doom/check-large-file' will not be automatically applied to")
+  "Major modes that `doom|check-large-file' will ignore.")
 
 (setq-default
  ;; Save clipboard contents into kill-ring before replacing them
@@ -99,8 +98,22 @@
       (insert linestr))))
 (advice-add #'delete-trailing-whitespace :around #'doom*delete-trailing-whitespace)
 
-;; automatically check for large files and optionally prompt to open literally
-(add-hook 'find-file-hook 'doom/check-large-file)
+(defun doom|check-large-file ()
+  "Check if the buffer's file is large. If so, ask for confirmation to open it
+literally (read-only, disabled undo and in fundamental-mode) for performance
+sake."
+  (let* ((filename (buffer-file-name))
+         (size (nth 7 (file-attributes filename))))
+    (when (and (not (memq major-mode doom-large-file-modes-list))
+               size (> size (* 1024 1024 doom-large-file-size))
+               (y-or-n-p
+                (format (concat "%s is a large file, open literally to "
+                                "avoid performance issues?")
+                        (file-relative-name filename))))
+      (setq buffer-read-only t)
+      (buffer-disable-undo)
+      (fundamental-mode))))
+(add-hook 'find-file-hook #'doom|check-large-file)
 
 
 ;;

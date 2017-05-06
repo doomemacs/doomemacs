@@ -207,16 +207,3 @@ for function signatures or notes. Run again to clear the header line."
                     (setq content (replace-regexp-in-string "\\s-+" " " content))
                     content)))))
 
-;;;###autoload
-(defun doom/check-large-file ()
-  (let* ((filename (buffer-file-name))
-         (size (nth 7 (file-attributes filename))))
-    (when (and
-           (not (memq major-mode doom-large-file-modes-list))
-           size (> size (* 1024 1024 doom-large-file-size))
-           (y-or-n-p (format (concat "%s is a large file, open literally to "
-                                     "avoid performance issues?")
-                             filename)))
-      (setq buffer-read-only t)
-      (buffer-disable-undo)
-      (fundamental-mode))))
