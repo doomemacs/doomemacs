@@ -8,7 +8,10 @@
 mode, use the selection, otherwise activate live ag searching in helm.
 
 If REGEX-P is non-nil, SEARCH will be treated as a regular expression.
-DIR specifies the default-directory from which ag is run."
+DIR specifies the default-directory from which ag is run.
+
+If there is no selection and SEARCH is empty, then relaunch the previous search
+session."
   :type inclusive :repeat nil
   (interactive "<r><a><!>")
   (let ((search (or search
@@ -23,6 +26,8 @@ DIR specifies the default-directory from which ag is run."
 
 ;;;###autoload (autoload '+ivy:file-search-cwd "completion/ivy/autoload/evil" nil t)
 (evil-define-operator +ivy:file-search-cwd (beg end search regex-p)
+  "Perform a `counsel-rg' search for SEARCH (or the current selection) in
+`default-directory'."
   :type inclusive :repeat nil
   (interactive "<r><a><!>")
   (+ivy:file-search beg end search regex-p default-directory))
