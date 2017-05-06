@@ -1,4 +1,4 @@
-;;; feature/evil/packages.el
+;;; feature/evil/autoload/evil.el
 
 (eval-when-compile (require 'subr-x))
 
