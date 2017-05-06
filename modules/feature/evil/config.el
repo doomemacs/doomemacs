@@ -58,11 +58,15 @@
 
   ;; highlight matching delimiters where it's important
   (defun +evil|show-paren-mode-off () (show-paren-mode -1))
-  (add-hook 'evil-insert-state-entry-hook   #'show-paren-mode)
+  (defun +evil|show-paren-mode-on ()
+    (unless (bound-and-true-p org-indent-mode) ; interferes with org-indent
+      (show-paren-mode +1)))
+
+  (add-hook 'evil-insert-state-entry-hook   #'+evil|show-paren-mode-on)
   (add-hook 'evil-insert-state-exit-hook    #'+evil|show-paren-mode-off)
-  (add-hook 'evil-visual-state-entry-hook   #'show-paren-mode)
+  (add-hook 'evil-visual-state-entry-hook   #'+evil|show-paren-mode-on)
   (add-hook 'evil-visual-state-exit-hook    #'+evil|show-paren-mode-off)
-  (add-hook 'evil-operator-state-entry-hook #'show-paren-mode)
+  (add-hook 'evil-operator-state-entry-hook #'+evil|show-paren-mode-on)
   (add-hook 'evil-operator-state-exit-hook  #'+evil|show-paren-mode-off)
   (add-hook 'evil-normal-state-entry-hook   #'+evil|show-paren-mode-off)
 

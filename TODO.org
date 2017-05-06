@@ -96,6 +96,7 @@
 + [ ] Update screenshots
 + [ ] tools/upload: add ~+upload/open-remote-file~ command to open current file on the remote (with TRAMP)
 + [ ] Fix ~0/0~ displaying in modeline (caused by leftover anzu state)
++ [X] Fix ~show-paren-mode~ overlays conflicting with org-indent (causes flickering)
 + [X] Fix ~M-z~, ~C-u~ and ~C-w~ in ~org-store-link~ & ~org-insert-link~ prompts
   Should undo, delete-line, and delete-word, respectively. Instead, they fall
   back to vanilla commands.
