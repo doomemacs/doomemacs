@@ -68,6 +68,7 @@ limit to buffers in the current workspace."
 
 ;;;###autoload
 (defun +ivy/kill-ring ()
+  "Search through the kill ring with `ivy'."
   (interactive)
   (ivy-read "Kill ring:"
             (cl-remove-if (lambda (it)

@@ -42,8 +42,11 @@
 
   (map! :map ivy-minibuffer-map
         [escape] #'keyboard-escape-quit
+        "M-v" #'yank
         "C-r" #'evil-paste-from-register
-        "M-v" #'clipboard-yank
+        "C-k" #'ivy-previous-line
+        "C-j" #'ivy-next-line
+        "C-l" #'ivy-alt-done
         "C-w" #'backward-kill-word
         "C-u" #'backward-kill-sentence
         "C-b" #'backward-word
