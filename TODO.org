@@ -5,7 +5,7 @@
 + [-] Work-in-progress
 + [X] Complete
 
-** Unreleased [51/126]
+** Unreleased [52/129]
 + [1/13] Potential plugins
   + [ ] [[https://github.com/etu/webpaste.el][webpaste.el]]: sending text to bin servies (like gist, ix.io, sprunge, etc.)
   + [ ] [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]]: client for MS Language Server Protocol, keep an eye on this
@@ -90,6 +90,8 @@
     + [ ] rss
     + [ ] twitter
     + [ ] present
++ [ ] completion/ivy: refactor ~def-counsel-action!~ into a setting (~def-setting!~)
++ [ ] completion/ivy: refactor ag-open-in-other-window (messy/hackish)
 + [ ] Restore open neotree window state properly when switching perspectives
 + [ ] Fix invisible buffer-info in modeline for terminal Emacs
 + [ ] send-to-REPL workflow: does it still work? (see ~:repl~ & ~+eval/repl-send-region~)
