@@ -1,0 +1,19 @@
+;;; ../core/autoload/minibuffer.el
+
+;;;###autoload
+(defun doom-minibuffer-kill-word ()
+  "Kill a word, backwards, but only if the cursor is after
+`minibuffer-prompt-end', to prevent the 'Text is read-only' warning from
+monopolizing the minibuffer."
+  (interactive)
+  (when (> (point) (minibuffer-prompt-end))
+    (call-interactively 'backward-kill-word)))
+
+;;;###autoload
+(defun doom-minibuffer-kill-line ()
+  "Kill the entire line, but only if the cursor is after
+`minibuffer-prompt-end', to prevent the 'Text is read-only' warning from
+monopolizing the minibuffer."
+  (interactive)
+  (when (> (point) (minibuffer-prompt-end))
+    (call-interactively 'backward-kill-sentence)))

@@ -373,8 +373,8 @@
 
       (:map (evil-ex-completion-map evil-ex-search-keymap read-expression-map)
         "C-a" 'move-beginning-of-line
-        "C-w" 'backward-kill-word
-        "C-u" 'backward-kill-sentence
+        "C-w" 'doom-minibuffer-kill-word
+        "C-u" 'doom-minibuffer-kill-line
         "C-b" 'backward-word
         "C-f" 'forward-word)
 
@@ -386,5 +386,4 @@
           ;; Remove slow/annoying help subsections
           "h" nil
           "g" nil)))
-
 

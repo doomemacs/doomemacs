@@ -47,8 +47,8 @@
         "C-k" #'ivy-previous-line
         "C-j" #'ivy-next-line
         "C-l" #'ivy-alt-done
-        "C-w" #'backward-kill-word
-        "C-u" #'backward-kill-sentence
+        "C-w" #'doom-minibuffer-kill-word
+        "C-u" #'doom-minibuffer-kill-line
         "C-b" #'backward-word
         "C-f" #'forward-word)
 
