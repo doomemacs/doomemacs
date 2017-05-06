@@ -5,7 +5,7 @@
 + [-] Work-in-progress
 + [X] Complete
 
-** Unreleased [49/124]
+** Unreleased [51/126]
 + [1/13] Potential plugins
   + [ ] [[https://github.com/etu/webpaste.el][webpaste.el]]: sending text to bin servies (like gist, ix.io, sprunge, etc.)
   + [ ] [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]]: client for MS Language Server Protocol, keep an eye on this
@@ -90,14 +90,16 @@
     + [ ] rss
     + [ ] twitter
     + [ ] present
++ [ ] Restore open neotree window state properly when switching perspectives
 + [ ] Fix invisible buffer-info in modeline for terminal Emacs
 + [ ] send-to-REPL workflow: does it still work? (see ~:repl~ & ~+eval/repl-send-region~)
-+ [ ] Fix ~M-z~, ~C-u~ and ~C-w~ in ~org-store-link~ & ~org-insert-link~ prompts
-  Should undo, delete-line, and delete-word, respectively. Instead, they fall
-  back to vanilla commands.
 + [ ] Update screenshots
 + [ ] tools/upload: add ~+upload/open-remote-file~ command to open current file on the remote (with TRAMP)
 + [ ] Fix ~0/0~ displaying in modeline (caused by leftover anzu state)
++ [X] Fix ~M-z~, ~C-u~ and ~C-w~ in ~org-store-link~ & ~org-insert-link~ prompts
+  Should undo, delete-line, and delete-word, respectively. Instead, they fall
+  back to vanilla commands.
++ [X] Prevent 'buffer is read-only' messages while in minibuffer
 + [X] completion/ivy: replace Ag with RipGrep
 + [X] Detect & load \~/.emacs.local.el, if available
 + [X] lang/org: fontify items with all subitems done, e.g. ~+ [0/0] headline~

@@ -376,7 +376,8 @@
         "C-w" 'doom-minibuffer-kill-word
         "C-u" 'doom-minibuffer-kill-line
         "C-b" 'backward-word
-        "C-f" 'forward-word)
+        "C-f" 'forward-word
+        "M-z" 'doom-minibuffer-undo)
 
       (:after view
         (:map view-mode-map "<escape>" 'View-quit-all))

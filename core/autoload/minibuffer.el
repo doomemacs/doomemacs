@@ -17,3 +17,9 @@ monopolizing the minibuffer."
   (interactive)
   (when (> (point) (minibuffer-prompt-end))
     (call-interactively 'backward-kill-sentence)))
+
+;;;###autoload
+(defun doom-minibuffer-undo ()
+  "Undo an edit in the minibuffer without throwing errors."
+  (interactive)
+  (ignore-errors (call-interactively 'undo)))

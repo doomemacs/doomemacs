@@ -43,6 +43,7 @@
   (map! :map ivy-minibuffer-map
         [escape] #'keyboard-escape-quit
         "M-v" #'yank
+        "M-z" #'undo
         "C-r" #'evil-paste-from-register
         "C-k" #'ivy-previous-line
         "C-j" #'ivy-next-line
