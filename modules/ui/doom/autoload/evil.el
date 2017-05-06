@@ -2,16 +2,15 @@
 
 ;;;###autoload (autoload '+doom:scratch-buffer "ui/doom/autoload/evil" nil t)
 (evil-define-operator +doom:scratch-buffer (&optional beg end bang)
-  "Send a region to and pop up the scratch buffer. If BANG, don't use a popup,
-use the current window."
+  "Opens the scratch buffer in a popup window and, optionally, send the selected
+region to it. If BANG, use current window instead of a popup."
   :move-point nil :type inclusive
-  ;; TODO Test me
   (interactive "<r><!>")
   (let ((text (when (and (evil-visual-state-p) beg end)
                 (buffer-substring beg end)))
         (mode major-mode)
         (old-project (doom-project-root))
-      (new-buf (get-buffer-create "*doom:scratch*")))
+        (new-buf (get-buffer-create "*doom:scratch*")))
     (if bang
         (switch-to-buffer new-buf)
       (doom-popup-buffer new-buf))
