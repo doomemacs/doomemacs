@@ -5,8 +5,9 @@
 + [-] Work-in-progress
 + [X] Complete
 
-** Unreleased [48/123]
-+ [1/12] Potential plugins
+** Unreleased [48/124]
++ [1/13] Potential plugins
+  + [ ] [[https://github.com/etu/webpaste.el][webpaste.el]]: sending text to bin servies (like gist, ix.io, sprunge, etc.)
   + [ ] [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]]: client for MS Language Server Protocol, keep an eye on this
   + [ ] lang/javascript: [[https://github.com/codesuki/add-node-modules-path][add-node-modules-path]] (adds node_modules to ~exec-path~)
   + [ ] feature/version-control: [[https://github.com/sshaw/git-link][git-link]] (replacement for browse-at-remote)
