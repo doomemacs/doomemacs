@@ -83,6 +83,7 @@
    :desc "Browse files"             :n "."  'find-file
    :desc "Find file from here"      :n ">"  'counsel-file-jump
    :desc "Find file in project"     :n "/"  'projectile-find-file
+   :desc "Find in file (swiper)"    :n "?"  'swiper
    :desc "Imenu"                    :n ";"  'imenu
    :desc "Imenu across buffers"     :n ":"  'imenu-anywhere
    :desc "Find other file"          :n "a"  'projectile-find-other-file
