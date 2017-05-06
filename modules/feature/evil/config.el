@@ -403,6 +403,10 @@ algorithm is just confusing, like in python or ruby."
           :Lm "K"        'neotree-select-previous-sibling-node
           :Lm "H"        'neotree-select-up-node
           :Lm "L"        'neotree-select-down-node
+          :Lm "h"        '+evil/neotree-collapse-or-up
+          :Lm "j"        'neotree-next-line
+          :Lm "k"        'neotree-previous-line
+          :Lm "l"        '+evil/neotree-expand-or-open
           :Lm "v"        'neotree-enter-vertical-split
           :Lm "s"        'neotree-enter-horizontal-split
           :Lm "c"        'neotree-create-node
