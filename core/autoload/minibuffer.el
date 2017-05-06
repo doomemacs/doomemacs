@@ -6,8 +6,13 @@
 `minibuffer-prompt-end', to prevent the 'Text is read-only' warning from
 monopolizing the minibuffer."
   (interactive)
-  (when (> (point) (minibuffer-prompt-end))
-    (call-interactively 'backward-kill-word)))
+  (call-interactively
+   (cond ((> (point) (minibuffer-prompt-end))
+          'backward-kill-word)
+         ((and (fboundp 'evil-ex-p) (evil-ex-p))
+          'evil-ex-delete-backward-char)
+         (t
+          'ivy-backward-delete-char))))
 
 ;;;###autoload
 (defun doom-minibuffer-kill-line ()
