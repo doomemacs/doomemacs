@@ -2,7 +2,7 @@
 
 ;; Ivy is my completion backend of choice. With counsel's help, I get:
 ;;
-;; + Project-wide search with `counsel-ag' (or `+ivy:ag-search')
+;; + Project-wide search with `counsel-rg' (and `+ivy:file-search')
 ;; + Project-wide replace if you press <backtab> in the ag occur buffer.
 ;; + An Atom/Sublime-Text Command-T implementation with `counsel-find-file' and
 ;;   `counsel-projectile-find-file'.
@@ -82,7 +82,7 @@
   :config
   (setq counsel-find-file-ignore-regexp "\\(?:^[#.]\\)\\|\\(?:[#~]$\\)\\|\\(?:^Icon?\\)")
 
-  (set! :popup "^\\*ivy-occur counsel-ag" :size 25 :regexp t :autokill t)
+  (set! :popup "^\\*ivy-occur counsel-[ar]g" :size 25 :regexp t :autokill t)
 
   (require 'counsel-projectile)
 
@@ -107,15 +107,16 @@
           (when dest-win
             (select-window dest-win))))))
 
-  (add-hook! 'doom-popup-mode-hook
-    (when (eq major-mode 'ivy-occur-grep-mode)
-      (ivy-wgrep-change-to-wgrep-mode)))
+  (map! :map counsel-ag-map ; applies to counsel-rg too
+        [backtab] #'+ivy/wgrep-occur  ; search/replace on results
+        "C-SPC"   #'counsel-git-grep-recenter   ; preview
+        "M-RET"   #'+ivy/counsel-ag-open-in-other-window)
 
-  (advice-add #'counsel-ag-function :override #'+ivy*counsel-ag-function)
-  (map! :map counsel-ag-map
-        [backtab] #'+ivy/counsel-ag-occur     ; search/replace on results
-        "C-SPC"   #'counsel-git-grep-recenter ; preview
-        "M-RET"   #'+ivy/counsel-ag-open-in-other-window))
+  ;; 1) Gets rid of the character limit from `counsel-ag-function' and
+  ;; 2) Disables ivy's over-zealous parentheses quoting behavior
+  ;;
+  ;; These both interfere with my custom :[ar]g ex command `+ivy:file-search'.
+  (advice-add #'counsel-ag-function :override #'+ivy*counsel-ag-function))
 
 
 ;; Used by `counsel-M-x'

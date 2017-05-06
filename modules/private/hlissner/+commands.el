@@ -51,8 +51,10 @@
 
 ;; Project navigation
 (ex! "a"           'projectile-find-other-file)
-(ex! "ag"          '+ivy:ag-search)
-(ex! "ag[cw]d"     '+ivy:ag-search-cwd)
+(ex! "ag"          '+ivy:file-search)
+(ex! "ag[cw]d"     '+ivy:file-search-cwd)
+(ex! "rg"          '+ivy:file-search)
+(ex! "rg[cw]d"     '+ivy:file-search-cwd)
 (ex! "cd"          '+hlissner:cd)
 (ex! "sw[iper]"    '+ivy:swiper)     ; in-file search
 

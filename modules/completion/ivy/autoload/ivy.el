@@ -77,37 +77,67 @@ limit to buffers in the current workspace."
 
 ;;;###autoload
 (defun +ivy/tasks ()
+  "Search through all TODO/FIXME tags in the current project using
+`counsel-rg'."
   (interactive)
-  ;; TODO Make nicer
-  (counsel-ag " (TODO|FIXME|NOTE) " (doom-project-root)))
+  (counsel-rg "\\(TODO|FIXME\\)\\s" (doom-project-root) "--case-sensitive -w"))
 
 ;;;###autoload
 (defun +ivy*counsel-ag-function (string base-cmd extra-ag-args)
-  "Advice to get rid of the character limit from `counsel-ag-function', which
-interferes with my custom :ag ex command `+ivy:ag-search'."
+  "Advice to 1) get rid of the character limit from `counsel-ag-function' and 2)
+disable ivy's over-zealous parentheses quoting behavior, both of which
+interferes with my custom :[ar]g ex command `+ivy:file-search'."
   (when (null extra-ag-args)
     (setq extra-ag-args ""))
-  (if (< (length string) 1)
+  (if (< (length string) 1)  ;; #1
       (counsel-more-chars 1)
     (let ((default-directory counsel--git-grep-dir)
           (regex (counsel-unquote-regex-parens
                   (setq ivy--old-re
-                        (ivy--regex string)))))
-      (let ((ag-cmd (format base-cmd
-                            (concat extra-ag-args
-                                    " -- "
-                                    (shell-quote-argument regex)))))
+                        (ivy--regex
+                         (counsel-unquote-regex-parens string)))))) ;; #2
+      (let* ((args-end (string-match " -- " extra-ag-args))
+             (file (if args-end
+                       (substring-no-properties extra-ag-args (+ args-end 3))
+                     ""))
+             (extra-ag-args (if args-end
+                                (substring-no-properties extra-ag-args 0 args-end)
+                              extra-ag-args))
+             (ag-cmd (format base-cmd
+                             (concat extra-ag-args
+                                     " -- "
+                                     (shell-quote-argument regex)
+                                     file))))
         (if (file-remote-p default-directory)
             (split-string (shell-command-to-string ag-cmd) "\n" t)
           (counsel--async-command ag-cmd)
           nil)))))
 
 ;;;###autoload
-(defun +ivy/counsel-ag-occur ()
-  "Invoke the search+replace wgrep buffer on the current ag search results."
+(defun +ivy/wgrep-occur ()
+  "Invoke the search+replace wgrep buffer on the current ag/rg search results."
   (interactive)
-  (require 'wgrep)
-  (call-interactively 'ivy-occur))
+  (if (not (window-minibuffer-p))
+      (user-error "No completion session is active")
+    (require 'wgrep)
+    (let* ((caller (ivy-state-caller ivy-last))
+           (occur-fn (plist-get ivy--occurs-list caller))
+           (buffer
+            (generate-new-buffer
+             (format "*ivy-occur%s \"%s\"*"
+                     (if caller (concat " " (prin1-to-string caller)) "")
+                     ivy-text))))
+      (with-current-buffer buffer
+        (let ((inhibit-read-only t))
+          (erase-buffer)
+          (funcall occur-fn))
+        (setf (ivy-state-text ivy-last) ivy-text)
+        (setq ivy-occur-last ivy-last)
+        (setq-local ivy--directory ivy--directory))
+      (ivy-exit-with-action
+       `(lambda (_)
+          (pop-to-buffer ,buffer)
+          (ivy-wgrep-change-to-wgrep-mode))))))
 
 ;;;###autoload
 (defun +ivy-yas-prompt (prompt choices &optional display-fn)

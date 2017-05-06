@@ -5,7 +5,7 @@
 + [-] Work-in-progress
 + [X] Complete
 
-** Unreleased [48/124]
+** Unreleased [49/124]
 + [1/13] Potential plugins
   + [ ] [[https://github.com/etu/webpaste.el][webpaste.el]]: sending text to bin servies (like gist, ix.io, sprunge, etc.)
   + [ ] [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]]: client for MS Language Server Protocol, keep an eye on this
@@ -98,7 +98,7 @@
 + [ ] Update screenshots
 + [ ] tools/upload: add ~+upload/open-remote-file~ command to open current file on the remote (with TRAMP)
 + [ ] Fix ~0/0~ displaying in modeline (caused by leftover anzu state)
-+ [-] lang/org: fix flickering line indentation while typing (caused by ~show-paren-mode~ in insert mode)
++ [X] completion/ivy: replace Ag with RipGrep
 + [X] Detect & load \~/.emacs.local.el, if available
 + [X] lang/org: fontify items with all subitems done, e.g. ~+ [0/0] headline~
 + [X] lang/org: fontify checked-checkbox items the same way DONE headlines are
