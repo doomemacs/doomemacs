@@ -284,6 +284,8 @@
 algorithm is just confusing, like in python or ruby."
     (setq-local evilmi-always-simple-jump t)))
 
+(def-package! evil-mc :demand t
+  :config (global-evil-mc-mode 1))
 
 (def-package! evil-multiedit
   :commands (evil-multiedit-match-all
@@ -410,4 +412,3 @@ algorithm is just confusing, like in python or ruby."
           :Lm "\C-r"     'neotree-refresh
           :Lm "r"        'neotree-rename-node
           :Lm "R"        'neotree-change-root)))
-
