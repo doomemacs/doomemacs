@@ -5,9 +5,8 @@
 + [-] Work-in-progress
 + [X] Complete
 
-** Unreleased [54/129]
-+ [2/13] Potential plugins
-  + [ ] [[https://github.com/etu/webpaste.el][webpaste.el]]: sending text to bin servies (like gist, ix.io, sprunge, etc.)
+** Unreleased [55/130]
++ [2/12] Potential plugins
   + [ ] [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]]: client for MS Language Server Protocol, keep an eye on this
   + [ ] lang/javascript: [[https://github.com/codesuki/add-node-modules-path][add-node-modules-path]] (adds node_modules to ~exec-path~)
   + [ ] lang/org: [[https://github.com/Malabarba/latex-extra][orgit]] (org links to magit buffers)
@@ -26,11 +25,12 @@
   + [ ] app/irc
   + [-] app/crm
   + [-] app/write
-+ [5/57] Add README.org's (with working babel blocks?) to modules (see [[modules/lang/go/README.org][lang/go/README.org]]) to replace bootstaps
-  + [0/8] :tools
++ [5/58] Add README.org's (with working babel blocks?) to modules (see [[modules/lang/go/README.org][lang/go/README.org]]) to replace bootstaps
+  + [0/9] :tools
     + [ ] dired
     + [ ] electric-indent
     + [ ] eshell
+    + [ ] gist
     + [ ] macos
     + [ ] rotate-text
     + [ ] term
@@ -98,6 +98,7 @@
 + [ ] Update screenshots
 + [ ] tools/upload: add ~+upload/open-remote-file~ command to open current file on the remote (with TRAMP)
 + [ ] Fix ~0/0~ displaying in modeline (caused by leftover anzu state)
++ [X] Add tools/gist (gist.el)
 + [X] Fix ~show-paren-mode~ overlays conflicting with org-indent (causes flickering)
 + [X] Fix ~M-z~, ~C-u~ and ~C-w~ in ~org-store-link~ & ~org-insert-link~ prompts
   Should undo, delete-line, and delete-word, respectively. Instead, they fall

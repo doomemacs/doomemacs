@@ -30,6 +30,8 @@
 (ex! "x"           '+doom:scratch-buffer)
 
 ;; GIT
+(ex! "gist"        '+gist:send)  ; send current buffer/region to gist
+(ex! "gistl"       '+gist:list)  ; list gists by user
 (ex! "gbrowse"     '+vcs/git-browse)        ; show file in github/gitlab
 (ex! "gissues"     '+vcs/git-browse-issues) ; show github issues
 (ex! "git"         'magit-status)           ; open magit status window

@@ -56,9 +56,10 @@
        hl-todo         ; highlight TODO/FIXME/NOTE tags
 
        :tools
+       dired           ; making dired pretty [functional]
        electric-indent ; smarter, keyword-based electric-indent
        eshell          ; a consistent, cross-platform shell (WIP)
-       dired           ; making dired pretty [functional]
+       gist            ; manage & create gists
        macos           ; macos-specific commands
        rotate-text     ; cycle region at point between text candidates
        tmux            ; an API for interacting with tmux
