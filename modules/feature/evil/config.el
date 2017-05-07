@@ -47,6 +47,9 @@
     '("*evil-registers*" :size 0.3)
     '("*Command Line*" :size 8))
 
+  ;; Don't interfere with localleader key
+  (define-key evil-motion-state-map "\\" nil)
+
   ;; Set cursor colors later, presumably once theme is loaded
   (defun +evil*init-cursors (&rest _)
     (setq evil-default-cursor (face-attribute 'cursor :background nil t)
