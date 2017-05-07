@@ -55,7 +55,7 @@
             :v "<tab>" #'+snippets/expand-on-region))
 
     ;; Exit snippets on ESC in normal mode
-    (advice-add #'evil-force-normal-state :before #'yas-exit-all-snippets)
+    (add-hook '+evil-esc-hook #'yas-exit-all-snippets)
     ;; Once you're in normal mode, you're out
     (add-hook 'evil-normal-state-entry-hook #'yas-abort-snippet)
     ;; Strip out whitespace before a line selection

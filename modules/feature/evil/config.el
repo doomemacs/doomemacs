@@ -94,13 +94,26 @@
 ;; evil hacks
 ;;
 
-(defun +evil*esc ()
-  "Disable search highlights and quit the minibuffer if open."
+(defvar +evil-esc-hook nil
+  "A hook run after ESC is pressed in normal mode (invoked by
+`evil-force-normal-state').")
+
+(defun +evil*attach-escape-hook ()
+  "Run the `+evil-esc-hook'."
+  (run-hooks '+evil-esc-hook))
+(advice-add #'evil-force-normal-state :after #'+evil*attach-escape-hook)
+
+(defun +evil|escape-minibuffer ()
+  "Quit the minibuffer if open."
   (when (minibuffer-window-active-p (minibuffer-window))
-    (abort-recursive-edit))
+    (abort-recursive-edit)))
+
+(defun +evil|escape-highlights ()
+  "Disable ex search buffer highlights."
   (when (evil-ex-hl-active-p 'evil-ex-search)
     (evil-ex-nohighlight)))
-(advice-add #'evil-force-normal-state :after #'+evil*esc)
+
+(add-hook! '+evil-esc-hook '(+evil|escape-minibuffer +evil|escape-highlights))
 
 (defun +evil*restore-normal-state-on-windmove (orig-fn &rest args)
   "If in anything but normal or motion mode when moving to another window,
@@ -272,9 +285,9 @@ across windows."
 (def-package! evil-exchange
   :commands evil-exchange
   :config
-  (defun +evil*exchange-off ()
+  (defun +evil|escape-exchange ()
     (if evil-exchange--overlays (evil-exchange-cancel)))
-  (advice-add #'evil-force-normal-state :after #'+evil*exchange-off))
+  (add-hook '+evil-esc-hook #'+evil|escape-exchange))
 
 
 (def-package! evil-indent-plus
@@ -330,7 +343,7 @@ algorithm is just confusing, like in python or ruby."
   :commands (evil-textobj-anyblock-inner-block evil-textobj-anyblock-a-block)
   :config
   (global-evil-search-highlight-persist t)
-  (advice-add #'evil-force-normal-state :after #'evil-search-highlight-persist-remove-all))
+  (add-hook '+evil-esc-hook #'evil-search-highlight-persist-remove-all))
 
 
 (def-package! evil-snipe :demand t

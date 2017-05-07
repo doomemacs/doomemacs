@@ -249,7 +249,7 @@ properties."
     (define-key map [remap evil-window-vsplit]           'ignore)
     (define-key map [remap evil-force-normal-state]      'doom/popup-close-maybe))
 
-  (defun doom*popup-close-all-maybe ()
+  (defun doom|popup-close-all-maybe ()
     "Close popups with an :autoclose property when pressing ESC from normal
 mode in any evil-mode buffer."
     (unless (or (doom-popup-p)
@@ -257,7 +257,7 @@ mode in any evil-mode buffer."
                 (and (bound-and-true-p evil-mode)
                      (evil-ex-hl-active-p 'evil-ex-search)))
       (doom/popup-close-all)))
-  (advice-add #'evil-force-normal-state :after #'doom*popup-close-all-maybe)
+  (add-hook '+evil-esc-hook #'doom|popup-close-all-maybe)
 
   ;; Make evil-mode cooperate with popups
   (advice-add #'evil-command-window :override #'doom*popup-evil-command-window)

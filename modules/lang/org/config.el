@@ -363,10 +363,10 @@
                       (IS-LINUX "xdg-open \"%s\"")))))
 
   ;; Remove highlights on ESC
-  (defun +org*remove-occur-highlights (&rest args)
+  (defun +org|remove-occur-highlights (&rest args)
     (when (eq major-mode 'org-mode)
       (org-remove-occur-highlights)))
-  (advice-add #'evil-force-normal-state :before #'+org*remove-occur-highlights)
+  (add-hook '+evil-esc-hook #'+org|remove-occur-highlights)
 
   (after! org-bullets
     (define-minor-mode org-bullets-mode

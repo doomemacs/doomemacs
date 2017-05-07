@@ -29,7 +29,7 @@
     ;; Flycheck buffer on ESC in normal mode.
     (defun +syntax-checkers|flycheck-buffer ()
       (if flycheck-mode (flycheck-buffer)))
-    (advice-add #'evil-force-normal-state :after #'+syntax-checkers|flycheck-buffer)))
+    (add-hook '+evil-esc-hook #'+syntax-checkers|flycheck-buffer)))
 
 
 (def-package! flycheck-pos-tip

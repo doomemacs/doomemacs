@@ -46,7 +46,7 @@
   ;; Ensure anzu state is cleared when searches & iedit are done
   (add-hook! '(kill-buffer-hook find-file-hook) #'+doom-modeline|reset-anzu)
   (after! evil
-    (advice-add #'evil-force-normal-state :after #'+doom-modeline|reset-anzu)
+    (add-hook '+evil-esc-hook #'+doom-modeline|reset-anzu t)
     (advice-add #'evil-ex-search-abort :after #'+doom-modeline|reset-anzu)
     (after! evil-multiedit
       (add-hook 'iedit-mode-end-hook #'+doom-modeline|reset-anzu))))
