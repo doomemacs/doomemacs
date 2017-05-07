@@ -50,9 +50,10 @@
                       :background (face-background 'doom-hl-line))
 
   (defface +doom-folded-face
-    `((t (:inherit font-lock-comment-face
-          :background ,(face-background 'doom-default)
-          :foreground ,(face-foreground 'font-lock-comment-face))))
+    `((((background dark))
+       (:inherit font-lock-comment-face :background ,(doom-color 'black)))
+      (((background light))
+       (:inherit font-lock-comment-face :background ,(doom-color 'light-grey))))
     "Face to hightlight `hideshow' overlays."
     :group 'doom)
 
