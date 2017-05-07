@@ -323,6 +323,7 @@ algorithm is just confusing, like in python or ruby."
   :config
   ;; Start evil-mc in paused mode.
   (add-hook 'evil-mc-mode-hook #'evil-mc-pause-cursors)
+  (add-hook 'evil-mc-before-cursors-created #'evil-mc-pause-cursors)
 
   (global-evil-mc-mode 1)
   (setq evil-mc-custom-known-commands
@@ -346,8 +347,7 @@ algorithm is just confusing, like in python or ruby."
   (defun +evil|escape-multiple-cursors ()
     "Undo cursors and freeze them again (for next time)."
     (when (evil-mc-has-cursors-p)
-      (evil-mc-undo-all-cursors)
-      (evil-mc-pause-cursors)))
+      (evil-mc-undo-all-cursors)))
   (add-hook '+evil-esc-hook #'+evil|escape-multiple-cursors))
 
 
@@ -406,7 +406,7 @@ algorithm is just confusing, like in python or ruby."
   :config
   ;; (evil-snipe-mode +1)
   (evil-snipe-override-mode +1)
-  ;; Switch to evil-easymotion/avy after first snipe
+  ;; Switch to evil-easymotion/avy after a snipe
   (map! :map evil-snipe-parent-transient-map
         "C-;" (λ! (require 'evil-easymotion)
                   (call-interactively +evil--snipe-repeat-fn))))
