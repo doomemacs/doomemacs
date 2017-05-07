@@ -282,13 +282,6 @@
  ;; evil-visual-star
  :v  "*"   'evil-visualstar/begin-search-forward
  :v  "#"   'evil-visualstar/begin-search-backward
- ;; evil-multiedit
- :v  "R"     'evil-multiedit-match-all
- :n  "M-C-D" 'evil-multiedit-restore
- :n  "M-d"   'evil-multiedit-match-symbol-and-next
- :n  "M-D"   'evil-multiedit-match-symbol-and-prev
- :v  "M-d"   'evil-multiedit-match-and-next
- :v  "M-D"   'evil-multiedit-match-and-prev
  ;; evil-surround
  :v  "S"   'evil-surround-region
  :o  "s"   'evil-surround-edit

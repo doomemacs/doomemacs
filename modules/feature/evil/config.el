@@ -313,11 +313,39 @@ across windows."
 algorithm is just confusing, like in python or ruby."
     (setq-local evilmi-always-simple-jump t)))
 
-(def-package! evil-mc :demand t
-  :config 
+
+(def-package! evil-mc
+  :commands evil-mc-make-cursor-here
+  :init
+  (defvar evil-mc-key-map (make-sparse-keymap))
+  (map! :n "M-d" #'evil-mc-make-cursor-here)
+
+  :config
   (global-evil-mc-mode 1)
+  (evil-mc-pause-cursors)
   (setq evil-mc-custom-known-commands
-    '((doom/deflate-space-maybe . ((:default . evil-mc-execute-default-evil-delete))))))
+        '((doom/deflate-space-maybe . ((:default . evil-mc-execute-default-call)))))
+
+  (defun +evil/mc-toggle-cursors ()
+    "Toggle frozen state of evil-mc cursors."
+    (interactive)
+    (setq evil-mc-frozen (not (and (evil-mc-has-cursors-p)
+                                   evil-mc-frozen))))
+
+  (map! :map evil-mc-key-map
+        :n "M-D" #'+evil/mc-toggle-cursors)
+
+  ;; If I switch to insert mode, chances are I want to start editing.
+  (add-hook 'evil-insert-state-entry-hook #'evil-mc-resume-cursors)
+
+  ;; undo cursors on ESC
+  (defun +evil|escape-multiple-cursors ()
+    "Undo cursors and freeze them again (for next time)."
+    (when (evil-mc-has-cursors-p)
+      (evil-mc-undo-all-cursors)
+      (evil-mc-pause-cursors)))
+  (add-hook '+evil-esc-hook #'+evil|escape-multiple-cursors))
+
 
 (def-package! evil-multiedit
   :commands (evil-multiedit-match-all
@@ -330,7 +358,21 @@ algorithm is just confusing, like in python or ruby."
              evil-multiedit-prev
              evil-multiedit-abort
              evil-multiedit-ex-match)
-  :config (evil-multiedit-default-keybinds))
+  :init
+  (map! :v "M-d"   #'evil-multiedit-match-and-next
+        :v "M-D"   #'evil-multiedit-match-and-prev
+        :v "C-M-d" #'evil-multiedit-restore
+        :v "R"     #'evil-multiedit-match-all)
+
+  :config
+  (evil-ex-define-cmd "ie[dit]" 'evil-multiedit-ex-match)
+  (map! (:map evil-multiedit-state-map
+          :n "M-d" #'evil-multiedit-match-and-next
+          :n "M-D" #'evil-multiedit-match-and-prev
+          :v "RET" #'evil-multiedit-toggle-or-restrict-region)
+        (:map (evil-multiedit-state-map evil-multiedit-insert-state-map)
+          :n "C-n" #'evil-multiedit-next
+          :n "C-p" #'evil-multiedit-prev)))
 
 
 (def-package! evil-textobj-anyblock
