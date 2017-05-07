@@ -1,7 +1,6 @@
 ;;; core-keybinds.el
 
-;; A centralized keybinds system. Uses `which-key' to preview the available keys
-;; when using `doom-leader-key' or `doom-localleader-key'.
+;; A centralized keybinds system. Uses `which-key' to preview available keys.
 
 (defvar doom-leader-key ","
   "The leader prefix key, for global commands.")
@@ -9,29 +8,36 @@
 (defvar doom-localleader-key "\\"
   "The leader prefix key, for global commands.")
 
-(defvar doom--which-key-defs '(nil))
-
 
 (def-package! which-key
-  :defer 1
+  :demand t
   :config
   (setq which-key-sort-order #'which-key-key-order-alpha
         which-key-sort-uppercase-first nil
         which-key-add-column-padding 1
         which-key-max-display-columns nil
-        which-key-min-display-lines 10
+        which-key-min-display-lines 5
         ;; only pop-up for leader/localleader keys
-        which-key-allow-regexps (list (format "^%s" (regexp-quote doom-leader-key))
+        which-key-allow-regexps (list "^C-c"
+                                      "^C-x"
+                                      (format "^%s" (regexp-quote doom-leader-key))
                                       (format "^%s" (regexp-quote doom-localleader-key))))
   ;; embolden local bindings
   (set-face-attribute 'which-key-local-map-description-face nil :weight 'bold)
   (which-key-setup-side-window-bottom)
-  (which-key-mode +1)
-  (when (cdr doom--which-key-defs)
-    (apply #'which-key-add-key-based-replacements (cdr doom--which-key-defs))))
+  (which-key-mode +1))
+
+
+(defun doom-keybind-register (key desc &optional modes)
+  "TODO"
+  (if modes
+      (dolist (mode modes)
+        (which-key-add-major-mode-key-based-replacements mode key desc))
+    (which-key-add-key-based-replacements key desc)))
 
 
 (defun doom-keyword-to-states (keyword &optional ignore)
+  "TODO"
   (let ((states '(("n" . normal)
                   ("v" . visual)
                   ("i" . insert)
@@ -52,6 +58,7 @@
 (put ':prefix       'lisp-indent-function 'defun)
 (put ':map          'lisp-indent-function 'defun)
 (put ':map*         'lisp-indent-function 'defun)
+(put ':mode         'lisp-indent-function 'defun)
 (put ':after        'lisp-indent-function 'defun)
 (put ':when         'lisp-indent-function 'defun)
 (put ':unless       'lisp-indent-function 'defun)
@@ -86,8 +93,9 @@ States
     :L cannot be in a :map.
 
 Flags
-    (:map [KEYMAP] [...])      ; inner keybinds are applied to KEYMAP(S)
-    (:map* [KEYMAP] [...])     ; same as :map, but deferred
+    (:mode [MODE(s)] [...])    ; inner keybinds are applied to major MODE(s)
+    (:map [KEYMAP(s)] [...])   ; inner keybinds are applied to KEYMAP(S)
+    (:map* [KEYMAP(s)] [...])  ; same as :map, but deferred
     (:prefix [PREFIX] [...])   ; assign prefix to all inner keybindings
     (:after [FEATURE] [...])   ; apply keybinds when [FEATURE] loads
 
@@ -107,7 +115,7 @@ Example
   (let ((keymaps (if (boundp 'keymaps) keymaps))
         (prefix  (if (boundp 'prefix) prefix))
         (defer   (if (boundp 'defer) defer))
-        local key def states forms desc)
+        local key def states forms desc modes)
     (while rest
       (setq key (pop rest))
       (cond
@@ -135,6 +143,14 @@ Example
             (setq keymaps
                   (let ((car (pop rest)))
                     (if (listp car) car (list car)))))
+          (:mode
+            (setq modes
+                  (let ((car (pop rest)))
+                    (if (listp car) car (list car))))
+            (unless keymaps
+              (setq keymaps
+                    (mapcar (lambda (m) (intern (format "%s-map" (symbol-name m))))
+                            modes))))
           (:prefix
             (let ((def (pop rest)))
               (setq prefix
@@ -142,7 +158,8 @@ Example
                         `(vconcat ,prefix (if (stringp ,def) (kbd ,def) ,def))
                       `(vconcat ,prefix ,(if (stringp def) (kbd def) def))))
               (when desc
-                (push `(nconc doom--which-key-defs (list ,(key-description (eval prefix)) ,desc))
+                (push `(doom-keybind-register ,(key-description (eval prefix))
+                                              ,desc ',modes)
                       forms)
                 (setq desc nil))))
           (otherwise ; might be a state prefix
@@ -169,7 +186,8 @@ Example
                 (user-error "map! has no definition for %s key" key))
               (setq def (pop rest))
               (when desc
-                (push `(nconc doom--which-key-defs (list ,(key-description (eval key)) ,desc))
+                (push `(doom-keybind-register ,(key-description (eval key))
+                                              ,desc ',modes)
                       forms))
               (cond ((and keymaps states)
                      (unless (featurep 'evil) (throw 'skip 'evil))
