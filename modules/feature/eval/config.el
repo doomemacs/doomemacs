@@ -56,6 +56,9 @@ invokes the repl. Takes the same arguements as `rtog/add-repl'."
 (setq eval-expression-print-length nil
       eval-expression-print-level  nil)
 
+(defvar +eval-runners-alist nil
+  "Alist mapping major modes to interactive runner functions.")
+
 (def-setting! :eval (mode command)
   "Define a code evaluator for major mode MODE with `quickrun'.
 
@@ -65,9 +68,13 @@ invokes the repl. Takes the same arguements as `rtog/add-repl'."
    and COMMAND is a key (for `quickrun--language-alist'), and will be registered
    in `quickrun--major-mode-alist'.
 3. If MODE is not a string and COMMAND is an alist, see `quickrun-add-command':
-   (quickrun-add-command MODE COMMAND :mode MODE)."
+   (quickrun-add-command MODE COMMAND :mode MODE).
+4. If MODE is not a string and COMMANd is a symbol, add it to
+   `+eval-runners-alist', which is used by `+eval/region'."
   `(after! quickrun
-     ,(cond ((stringp command)
+     ,(cond ((symbolp command)
+             `(push ',(cons mode command) +eval-runners-alist))
+            ((stringp command)
              `(push ',(cons mode command)
                     ,(if (stringp mode)
                          'quickrun-file-alist
