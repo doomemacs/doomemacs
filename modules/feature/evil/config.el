@@ -428,7 +428,9 @@ algorithm is just confusing, like in python or ruby."
   :config (global-evil-visualstar-mode 1))
 
 
-;; A side-panel for browsing my project files. Inspired by vim's NERDTree.
+;; A side-panel for browsing my project files. Inspired by vim's NERDTree. Sure,
+;; there's dired and projectile, but sometimes I'd like a bird's eye view of a
+;; project.
 (def-package! neotree
   :commands (neotree-show
              neotree-hide
@@ -438,8 +440,9 @@ algorithm is just confusing, like in python or ruby."
              neo-global--with-buffer
              neo-global--window-exists-p)
   :config
-  (setq neo-create-file-auto-open t
+  (setq neo-create-file-auto-open nil
         neo-auto-indent-point nil
+        neo-autorefresh nil
         neo-mode-line-type 'none
         neo-window-width 25
         neo-show-updir-line nil
@@ -467,6 +470,7 @@ algorithm is just confusing, like in python or ruby."
     "Don't ask for confirmation when creating files"
     (cl-letf (((symbol-function 'yes-or-no-p) (lambda (&rest _) t)))
       (apply orig-fun args)))
+
   (advice-add #'neotree-create-node :around #'+evil*neotree-create-node)
 
   ;; Adding keybindings to `neotree-mode-map' wouldn't work for me (they get
