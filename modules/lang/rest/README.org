@@ -1,0 +1,9 @@
+* REST
+
+On occasion I need to test REST APIs. I will, typically, open up an org buffer,
+create a restclient source block and hack away. [[https://github.com/pashky/restclient.el][restclient-mode]] (and
+[[https://github.com/iquiw/company-restclient][company-restclient]] for auto-completion) power this arcane wizardry.
+
+Meanwhile, [[https://github.com/iquiw/company-restclient][ob-restclient]] integrates ~restclient-mode~ into org-babel.
+
+There are no external dependencies for this module.

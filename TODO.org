@@ -5,7 +5,7 @@
 + [-] Work-in-progress
 + [X] Complete
 
-** Unreleased [53/129]
+** Unreleased [54/129]
 + [2/13] Potential plugins
   + [ ] [[https://github.com/etu/webpaste.el][webpaste.el]]: sending text to bin servies (like gist, ix.io, sprunge, etc.)
   + [ ] [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]]: client for MS Language Server Protocol, keep an eye on this
@@ -26,7 +26,7 @@
   + [ ] app/irc
   + [-] app/crm
   + [-] app/write
-+ [4/57] Add README.org's (with working babel blocks?) to modules (see [[modules/lang/go/README.org][lang/go/README.org]]) to replace bootstaps
++ [5/57] Add README.org's (with working babel blocks?) to modules (see [[modules/lang/go/README.org][lang/go/README.org]]) to replace bootstaps
   + [0/8] :tools
     + [ ] dired
     + [ ] electric-indent
@@ -36,7 +36,7 @@
     + [ ] term
     + [ ] tmux
     + [ ] upload
-  + [2/25] :lang
+  + [3/25] :lang
     + [ ] assembly
     + [X] cc
     + [ ] crystal
@@ -54,7 +54,7 @@
     + [ ] org
     + [ ] php
     + [ ] python
-    + [ ] rest
+    + [X] rest
     + [ ] ruby
     + [ ] rust
     + [ ] scala
