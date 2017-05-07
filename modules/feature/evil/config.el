@@ -321,8 +321,10 @@ algorithm is just confusing, like in python or ruby."
   (map! :n "M-d" #'evil-mc-make-cursor-here)
 
   :config
+  ;; Start evil-mc in paused mode.
+  (add-hook 'evil-mc-mode-hook #'evil-mc-pause-cursors)
+
   (global-evil-mc-mode 1)
-  (evil-mc-pause-cursors)
   (setq evil-mc-custom-known-commands
         '((doom/deflate-space-maybe . ((:default . evil-mc-execute-default-call)))))
 
@@ -332,13 +334,15 @@ algorithm is just confusing, like in python or ruby."
     (setq evil-mc-frozen (not (and (evil-mc-has-cursors-p)
                                    evil-mc-frozen))))
 
+  ;; My workflow is to place the cursors, get into position, then enable evil-mc
+  ;; (either by going into insert mode, or pressing M-d).
   (map! :map evil-mc-key-map
         :n "M-D" #'+evil/mc-toggle-cursors)
 
-  ;; If I switch to insert mode, chances are I want to start editing.
+  ;; If I switch to insert mode, chances are I want to begin editing.
   (add-hook 'evil-insert-state-entry-hook #'evil-mc-resume-cursors)
 
-  ;; undo cursors on ESC
+  ;; Undo cursors on ESC (from normal mode)
   (defun +evil|escape-multiple-cursors ()
     "Undo cursors and freeze them again (for next time)."
     (when (evil-mc-has-cursors-p)
