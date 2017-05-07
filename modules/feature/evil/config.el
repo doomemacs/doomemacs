@@ -371,12 +371,12 @@ algorithm is just confusing, like in python or ruby."
   :config
   (evil-ex-define-cmd "ie[dit]" 'evil-multiedit-ex-match)
   (map! (:map evil-multiedit-state-map
-          :n "M-d" #'evil-multiedit-match-and-next
-          :n "M-D" #'evil-multiedit-match-and-prev
-          :v "RET" #'evil-multiedit-toggle-or-restrict-region)
+          "M-d" #'evil-multiedit-match-and-next
+          "M-D" #'evil-multiedit-match-and-prev
+          "RET" #'evil-multiedit-toggle-or-restrict-region)
         (:map (evil-multiedit-state-map evil-multiedit-insert-state-map)
-          :n "C-n" #'evil-multiedit-next
-          :n "C-p" #'evil-multiedit-prev)))
+          "C-n" #'evil-multiedit-next
+          "C-p" #'evil-multiedit-prev)))
 
 
 (def-package! evil-textobj-anyblock
