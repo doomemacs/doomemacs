@@ -71,18 +71,19 @@ invokes the repl. Takes the same arguements as `rtog/add-repl'."
    (quickrun-add-command MODE COMMAND :mode MODE).
 4. If MODE is not a string and COMMANd is a symbol, add it to
    `+eval-runners-alist', which is used by `+eval/region'."
-  `(after! quickrun
-     ,(cond ((symbolp command)
-             `(push ',(cons mode command) +eval-runners-alist))
-            ((stringp command)
-             `(push ',(cons mode command)
-                    ,(if (stringp mode)
-                         'quickrun-file-alist
-                       'quickrun--major-mode-alist)))
-            ((listp command)
-             `(quickrun-add-command
-                ,(symbol-name mode)
-                ',command :mode ',mode)))))
+  (cond ((symbolp command)
+         `(push ',(cons mode command) +eval-runners-alist))
+        ((stringp command)
+         `(after! quickrun
+            (push ',(cons mode command)
+                  ,(if (stringp mode)
+                       'quickrun-file-alist
+                     'quickrun--major-mode-alist))))
+        ((listp command)
+         `(after! quickrun
+            (quickrun-add-command
+              ,(symbol-name mode)
+              ',command :mode ',mode)))))
 
 (def-package! quickrun
   :commands (quickrun
