@@ -5,8 +5,8 @@
 + [-] Work-in-progress
 + [X] Complete
 
-** Unreleased [55/130]
-+ [2/12] Potential plugins
+** Planned [5/76]
++ [0/10] Potential plugins
   + [ ] [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]]: client for MS Language Server Protocol, keep an eye on this
   + [ ] lang/javascript: [[https://github.com/codesuki/add-node-modules-path][add-node-modules-path]] (adds node_modules to ~exec-path~)
   + [ ] lang/org: [[https://github.com/Malabarba/latex-extra][orgit]] (org links to magit buffers)
@@ -18,8 +18,6 @@
   + [ ] lang/python: [[https://github.com/Wilfred/pyimport][pyimport]]
   + [ ] An image plugin for zooming images at point
     + https://github.com/mhayashi1120/Emacs-imagex ?
-  + [X] feature/version-control: [[https://github.com/sshaw/git-link][git-link]] (replacement for browse-at-remote)
-  + [X] feature/version-control: [[https://github.com/pidu/git-timemachine][git-timemachine]] (replacement for vc-annotate)
 + [0/4] New modules
   + [ ] app/finance (maybe settle for org-mode tables?)
   + [ ] app/irc
@@ -92,12 +90,23 @@
     + [ ] present
 + [ ] completion/ivy: refactor ~def-counsel-action!~ into a setting (~def-setting!~)
 + [ ] completion/ivy: refactor ag-open-in-other-window (messy/hackish)
-+ [ ] Restore open neotree window state properly when switching perspectives
 + [ ] Fix invisible buffer-info in modeline for terminal Emacs
-+ [ ] send-to-REPL workflow: does it still work? (see ~:repl~ & ~+eval/repl-send-region~)
-+ [ ] Update screenshots
 + [ ] tools/upload: add ~+upload/open-remote-file~ command to open current file on the remote (with TRAMP)
+
+** 2.0.2 [53/58]
++ [ ] Update screenshots
++ [ ] Fix ~+eval/region~ failing only on first invokation.
++ [ ] send-to-REPL workflow: does it still work? (see ~:repl~ & ~+eval/repl-send-region~)
 + [ ] Fix ~0/0~ displaying in modeline (caused by leftover anzu state)
++ [ ] Fix: Neotree forgets it's a neotree window when switching perspectives
+  + Restore neotree state on perspective switch
+  + Or close neotree before switching/creating perspectives
+  + Or hand neotree window management off to shackle
++ [X] feature/version-control: add [[https://github.com/sshaw/git-link][git-link]] (replacement for browse-at-remote)
++ [X] feature/version-control: add [[https://github.com/pidu/git-timemachine][git-timemachine]] (replacement for vc-annotate)
++ [X] completion/ivy: replace the_silver_searcher (ag) with ripgrep (rg) (counsel-ag => counsel-rg)
++ [X] Merge evil-mc workflow with evil-multiedit's (~M-d~ / ~M-D~)
++ [X] Add evil-mc plugin (with help from gilbertw1)
 + [X] Add tools/gist (gist.el)
 + [X] Fix ~show-paren-mode~ overlays conflicting with org-indent (causes flickering)
 + [X] Fix ~M-z~, ~C-u~ and ~C-w~ in ~org-store-link~ & ~org-insert-link~ prompts
