@@ -93,14 +93,14 @@
 + [ ] Fix invisible buffer-info in modeline for terminal Emacs
 + [ ] tools/upload: add ~+upload/open-remote-file~ command to open current file on the remote (with TRAMP)
 
-** 2.0.2 [53/58]
+** 2.0.2 [54/58]
 + [ ] Update screenshots
 + [ ] Fix ~+eval/region~ failing only on first invokation.
 + [ ] send-to-REPL workflow: does it still work? (see ~:repl~ & ~+eval/repl-send-region~)
 + [ ] Fix ~0/0~ displaying in modeline (caused by leftover anzu state)
-+ [ ] Fix: Neotree forgets it's a neotree window when switching perspectives
-  + Restore neotree state on perspective switch
-  + Or close neotree before switching/creating perspectives
++ [X] Fix: Neotree forgets it's a neotree window when switching perspectives
+  + +Restore neotree state on perspective switch+
+  + +Or close neotree before switching/creating perspectives+
   + Or hand neotree window management off to shackle
 + [X] feature/version-control: add [[https://github.com/sshaw/git-link][git-link]] (replacement for browse-at-remote)
 + [X] feature/version-control: add [[https://github.com/pidu/git-timemachine][git-timemachine]] (replacement for vc-annotate)

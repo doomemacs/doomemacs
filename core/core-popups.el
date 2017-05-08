@@ -357,24 +357,17 @@ the command buffer."
 
 
 (after! neotree
-  (defun doom*popups-save-neotree (orig-fn &rest args)
-    "Prevents messing up the neotree buffer on window changes."
-    (let ((neo-p (and (featurep 'neotree)
-                      (neo-global--window-exists-p))))
-      (when neo-p
-        (neotree-hide))
-      (unwind-protect (apply orig-fn args)
-        (when neo-p
-          (save-selected-window
-            (neotree-show))))))
+  ;; Neotree has its own window/popup management built-in, which is difficult to
+  ;; police. For example, switching perspectives will cause neotree to forget it
+  ;; is a neotree pane.
+  ;;
+  ;; By handing neotree over to shackle, which is better integrated into the
+  ;; rest of my config (and persp-mode), this is no longer a problem.
+  (setq neo-display-action '(+evil-neotree-display-fn))
+  (set! :popup " *NeoTree*" :align 'left :size 25)
 
-  ;; Prevents messing up the neotree buffer on window changes
-  (advice-add #'+evil-window-move :around #'doom*popups-save-neotree)
-  ;; Don't let neotree interfere with moving, splitting or rebalancing windows
-  (advice-add #'evil-window-move-very-bottom :around #'doom*popups-save-neotree)
-  (advice-add #'evil-window-move-very-top    :around #'doom*popups-save-neotree)
-  (advice-add #'evil-window-move-far-left    :around #'doom*popups-save-neotree)
-  (advice-add #'evil-window-move-far-right   :around #'doom*popups-save-neotree))
+  (defun +evil-neotree-display-fn (buf _alist)
+    (doom-popup-buffer buf)))
 
 
 (after! mu4e
