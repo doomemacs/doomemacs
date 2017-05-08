@@ -371,10 +371,10 @@ the command buffer."
 
 
 (after! mu4e
-  (advice-add #'mu4e~temp-window :override #'doom*mu4e~temp-window)
-  (defun doom*mu4e~temp-window (buf height)
+  (defun doom*mu4e-popup-window (buf height)
     (doom-popup-buffer buf :size 10 :noselect t)
-    buf))
+    buf)
+  (advice-add #'mu4e~temp-window :override #'doom*mu4e-popup-window))
 
 
 (after! twittering-mode
@@ -382,15 +382,15 @@ the command buffer."
 
 
 (after! xref
-  (advice-add 'xref-goto-xref :around '+jump*xref-goto-xref)
-  (defun +jump*xref-goto-xref (orig-fn &rest args)
+  (defun doom*xref-follow-and-close (orig-fn &rest args)
     "Jump to the xref on the current line, select its window and close the popup
 you came from."
     (interactive)
     (let ((popup-p (doom-popup-p))
           (window (selected-window)))
       (apply orig-fn args)
-      (when popup-p (doom/popup-close window)))))
+      (when popup-p (doom/popup-close window))))
+  (advice-add 'xref-goto-xref :around 'doom*xref-follow-and-close))
 
 
 ;; Ensure these settings are attached to org-load-hook as late as possible,
@@ -413,17 +413,16 @@ you came from."
       '("^CAPTURE.*\\.org$"  :regexp t :size 20))
 
     ;; Org tries to do its own popup management, causing buffer/window config
-    ;; armageddon when paired with shackle. To fix this, we must make a couple modifications:
+    ;; armageddon when paired with shackle. To fix this, we must make a couple
+    ;; modifications:
 
     ;; Suppress `delete-other-windows' in org functions:
     (defun doom*suppress-delete-other-windows (orig-fn &rest args)
-      (cl-flet ((silence (&rest args) (ignore)))
-        (advice-add #'delete-other-windows :around #'silence)
-        (unwind-protect
-            (apply orig-fn args)
-          (advice-remove #'delete-other-windows #'silence))))
-    (advice-add #'org-capture-place-template :around #'doom*suppress-delete-other-windows)
+      (cl-flet (((symbol-function 'delete-other-windows)
+                 (symbol-function 'ignore)))
+        (apply orig-fn args)))
     (advice-add #'org-add-log-note :around #'doom*suppress-delete-other-windows)
+    (advice-add #'org-capture-place-template :around #'doom*suppress-delete-other-windows)
     (advice-add #'org-export--dispatch-ui :around #'doom*suppress-delete-other-windows)
 
     ;; Tell `org-src-edit' to open another window, which shackle can intercept.
@@ -443,20 +442,20 @@ you came from."
     (advice-add #'org-edit-src-exit :after #'doom*org-src-exit)
 
     ;; Ensure todo, agenda, and other popups are opened with shackle
-    (defun doom*org-switch-to-buffer-other-window (&rest args)
+    (defun doom*org-pop-to-buffer (&rest args)
       (let ((buf (car args)))
         (pop-to-buffer
          (cond ((stringp buf) (get-buffer-create buf))
                ((bufferp buf) buf)
                (t (error "Invalid buffer %s" buf))))))
-    (advice-add #'org-switch-to-buffer-other-window :override #'doom*org-switch-to-buffer-other-window)
-
-    ;; Hide modeline in org-agenda
-    (add-hook 'org-agenda-finalize-hook #'doom-hide-modeline-mode)
+    (advice-add #'org-switch-to-buffer-other-window :override #'doom*org-pop-to-buffer)
 
     (after! org-agenda
       (setq org-agenda-window-setup 'other-window
             org-agenda-restore-windows-after-quit nil)
+
+      ;; Hide modeline in org-agenda
+      (add-hook 'org-agenda-finalize-hook #'doom-hide-modeline-mode)
 
       (advice-add #'org-agenda :around #'doom*suppress-delete-other-windows)
 
