@@ -67,16 +67,16 @@ Here is a list of my commonly used commands, their default keybinds (defined in
 
 | command                             | key / ex command        | description                                               |
 |-------------------------------------+-------------------------+-----------------------------------------------------------|
-| ~counsel-M-x~                       | ~M-x~                   | Smarter, smex-powered M-x                                 |
-| ~counsel-bookmark~                  | ~, b~                   | Find bookmark                                             |
-| ~counsel-find-file~                 | ~, .~                   | Browse from current directory                             |
-| ~counsel-projectile-find-file~      | ~, /~                   | Find file in project                                      |
-| ~counsel-projectile-switch-project~ | ~, p~                   | Open another project                                      |
-| ~counsel-recentf~                   | ~, r~                   | Find recently opened file                                 |
-| ~+ivy/switch-buffer~                | ~, ,~                   | Jump to open buffer in current workspace                  |
-| ~+ivy/switch-workspace-buffer~      | ~, <~                   | Jump to open buffer across workspaces                     |
-| ~+ivy:file-search~                  | ~:f[in]d[!] [QUERY]~    | Search project (if BANG, don't respect gitignore)         |
-| ~+ivy:file-search-cwd~              | ~:f[in]dcwd[!] [QUERY]~ | Search project in cwd (if BANG, don't respect gitignore)  |
+| ~counsel-M-x~                       | =M-x=                   | Smarter, smex-powered M-x                                 |
+| ~counsel-bookmark~                  | =<leader> b=            | Find bookmark                                             |
+| ~counsel-find-file~                 | =<leader> .=            | Browse from current directory                             |
+| ~counsel-projectile-find-file~      | =<leader> /=            | Find file in project                                      |
+| ~counsel-projectile-switch-project~ | =<leader> p=            | Open another project                                      |
+| ~counsel-recentf~                   | =<leader> r=            | Find recently opened file                                 |
+| ~+ivy/switch-buffer~                | =<leader> ,=            | Jump to buffer in current workspace                       |
+| ~+ivy/switch-workspace-buffer~      | =<leader> <=            | Jump to buffer across workspaces                          |
+| ~+ivy:file-search~                  | ~:f[in]d[!] [QUERY]~    | Search project (if BANG, ignore gitignore)                |
+| ~+ivy:file-search-cwd~              | ~:f[in]dcwd[!] [QUERY]~ | Search project in cwd (if BANG, ignore gitignore)         |
 | ~+ivy:swiper~                       | ~:sw[iper] [QUERY]~     | Search current buffer                                     |
 | ~+ivy:todo~                         | ~:todo[!]~              | List all TODO/FIXMEs in project (or current file if BANG) |
 
