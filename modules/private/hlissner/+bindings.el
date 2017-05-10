@@ -377,9 +377,8 @@
       (:after view
         (:map view-mode-map "<escape>" #'View-quit-all))
 
-      (:after help-mode
-        (:map help-map
-          ;; Remove slow/annoying help subsections
-          "h" nil
-          "g" nil)))
+      (:map help-map
+        "l" #'find-library
+        "h" #'describe-face  ; overwrite `view-hello-file'
+        "g" nil))
 
