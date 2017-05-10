@@ -18,7 +18,8 @@
   + [ ] lang/python: [[https://github.com/Wilfred/pyimport][pyimport]]
   + [ ] An image plugin for zooming images at point
     + https://github.com/mhayashi1120/Emacs-imagex ?
-+ [0/4] New modules
++ [0/5] New modules
+  + [ ] tools/regex (PCRE regex editor, perhaps use ~re-builder~ & ~pcre2el~?)
   + [ ] app/finance (maybe settle for org-mode tables?)
   + [ ] app/irc
   + [-] app/crm
@@ -94,6 +95,7 @@
 + [ ] lang/org: typing certain characters and keys while in a table causes the cell to shrink (like smartparens pairs and keys not bound to self-insert-command)
 + [ ] Fix invisible buffer-info in modeline for terminal Emacs
 + [ ] tools/upload: add ~+upload/open-remote-file~ command to open current file on the remote (with TRAMP)
++ [ ] Make ~doom-visual-bell~ more flexible by basing it's bg color off a face
 
 ** 2.0.2 [58/61]
 + [ ] Update screenshots
