@@ -95,10 +95,11 @@
 + [ ] Fix invisible buffer-info in modeline for terminal Emacs
 + [ ] tools/upload: add ~+upload/open-remote-file~ command to open current file on the remote (with TRAMP)
 
-** 2.0.2 [57/60]
+** 2.0.2 [58/61]
 + [ ] Update screenshots
 + [ ] send-to-REPL workflow: does it still work? (see ~:repl~ & ~+eval/repl-send-region~)
 + [ ] Fix ~0/0~ displaying in modeline (caused by leftover anzu state)
++ [X] completion/ivy: fix ~+ivy:find-file~ -- loss of functionality with coerced literal searches (better to escape regex rather than pass -F to rg)
 + [X] completion/ivy: refactor ~def-counsel-action!~ +into a setting (~def-setting!~)+
   Refactored into ~ivy-do-action!~ macro instead
 + [X] completion/ivy: refactor ag-open-in-other-window (messy/hackish)
