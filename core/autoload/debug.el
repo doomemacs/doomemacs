@@ -17,7 +17,7 @@
   (message "Column %d" (current-column)))
 
 ;;;###autoload
-(defun doom/what-bindings (key)
+(defun doom-what-bindings (key)
   (list
    (minor-mode-key-binding key)
    (local-key-binding key)

@@ -16,7 +16,6 @@
   :config
   (set! :company-backend 'csharp-mode '(company-omnisharp))
 
-  ;; Map all refactor commands (see emr)
   (map! :map omnisharp-mode-map
         :m "gd" #'omnisharp-go-to-definition
 

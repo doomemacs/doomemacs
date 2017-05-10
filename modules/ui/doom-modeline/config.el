@@ -59,11 +59,11 @@
 (defun doom-visual-bell ()
   "Blink the mode-line red briefly."
   (unless doom--visual-bell-old-bg
-    (setq doom--visual-bell-old-bg (face-attribute 'mode-line :background)))
-  (set-face-attribute 'mode-line nil :background "#54252C")
+    (setq doom--visual-bell-old-bg (face-background 'mode-line)))
+  (set-face-background 'mode-line "#54252C")
   (run-with-timer
    0.1 nil
-   (lambda () (set-face-attribute 'mode-line nil :background doom--visual-bell-old-bg))))
+   (lambda () (set-face-background 'mode-line doom--visual-bell-old-bg))))
 (setq ring-bell-function #'doom-visual-bell
       visible-bell nil)
 

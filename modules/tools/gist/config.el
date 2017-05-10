@@ -14,16 +14,16 @@
   ;; evil-ify gist listing
   (set! :evil-state 'gist-list-mode 'normal)
   (map! :map gist-list-menu-mode-map
-        :n "RET" '+gist/open-current
-        :n "d" 'gist-kill-current
-        :n "r" 'gist-list-reload
-        :n "c" 'gist-add-buffer
-        :n "y" 'gist-print-current-url
-        :n "b" 'gist-browse-current-url
-        :n "s" 'gist-star
-        :n "S" 'gist-unstar
-        :n "f" 'gist-fork
-        :n "q" 'quit-window)
+        :n "RET" #'+gist/open-current
+        :n "d"   #'gist-kill-current
+        :n "r"   #'gist-list-reload
+        :n "c"   #'gist-add-buffer
+        :n "y"   #'gist-print-current-url
+        :n "b"   #'gist-browse-current-url
+        :n "s"   #'gist-star
+        :n "S"   #'gist-unstar
+        :n "f"   #'gist-fork
+        :n "q"   #'quit-window)
 
   (when (bound-and-true-p shackle-mode)
     (defun +gist*list-render (orig-fn &rest args)

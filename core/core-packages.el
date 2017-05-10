@@ -515,6 +515,7 @@ your emacs configuration (init.el and core/**/*.el)."
 (defun doom/clean-cache ()
   "Clear local cache (`doom-cache-dir'). You may need to restart Emacs for some
 components to feel its effects."
+  (interactive)
   (delete-directory doom-cache-dir t)
   (make-directory doom-cache-dir t))
 

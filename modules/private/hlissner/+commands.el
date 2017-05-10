@@ -14,7 +14,6 @@
 (ex! "dehtml"       '+web:decode-html-entities)
 (ex! "ie[dit]"      'evil-multiedit-ex-match)
 (ex! "na[rrow]"     '+evil:narrow-buffer)
-(ex! "ref[actor]"   'emr-show-refactor-menu)
 (ex! "retab"        '+evil:retab)
 
 ;; External resources

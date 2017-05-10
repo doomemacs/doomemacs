@@ -111,7 +111,7 @@
    org-adapt-indentation nil
    org-cycle-separator-lines 1
    org-cycle-include-plain-lists t
-   org-ellipsis "  "
+   ;; org-ellipsis "  "
    org-entities-user '(("flat"  "\\flat" nil "" "" "266D" "♭")
                        ("sharp" "\\sharp" nil "" "" "266F" "♯"))
    org-fontify-done-headline t

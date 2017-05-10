@@ -57,7 +57,10 @@ session)."
         [remap projectile-switch-project] #'counsel-projectile-switch-project
         [remap projectile-find-file]      #'counsel-projectile-find-file
         [remap imenu-anywhere]            #'ivy-imenu-anywhere
-        [remap execute-extended-command]  #'counsel-M-x)
+        [remap execute-extended-command]  #'counsel-M-x
+        [remap describe-function]         #'counsel-describe-function
+        [remap describe-variable]         #'counsel-describe-variable
+        [remap describe-face]             #'counsel-describe-face)
 
   (when (featurep! :feature workspaces)
     (nconc ivy-sort-functions-alist

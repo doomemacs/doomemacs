@@ -86,8 +86,11 @@ limit to buffers in the current workspace."
 ;;;###autoload
 (defun +ivy*counsel-ag-function (string base-cmd extra-ag-args)
   "Advice to 1) get rid of the character limit from `counsel-ag-function' and 2)
-disable ivy's over-zealous parentheses quoting behavior, both of which
-interferes with my custom :[ar]g ex command `+ivy:file-search'."
+disable ivy's over-zealous parentheses quoting behavior (if i want literal
+parentheses, I'll escape them myself).
+
+NOTE This may need to be updated frequently, to meet changes upstream (in
+counsel-rg)."
   (when (null extra-ag-args)
     (setq extra-ag-args ""))
   (if (< (length string) 1)  ;; #1

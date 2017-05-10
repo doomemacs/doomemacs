@@ -52,9 +52,9 @@
 
   ;; Set cursor colors later, presumably once theme is loaded
   (defun +evil*init-cursors (&rest _)
-    (setq evil-default-cursor (face-attribute 'cursor :background nil t)
+    (setq evil-default-cursor (face-background 'cursor nil t)
           evil-normal-state-cursor 'box
-          evil-emacs-state-cursor  `(,(face-attribute 'warning :foreground nil nil) box)
+          evil-emacs-state-cursor  `(,(face-foreground 'warning) box)
           evil-insert-state-cursor 'bar
           evil-visual-state-cursor 'hollow))
   (advice-add #'load-theme :after #'+evil*init-cursors)
