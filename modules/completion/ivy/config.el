@@ -22,7 +22,7 @@ session)."
 
 (def-package! ivy :demand t
   :config
-  (setq ivy-height 14
+  (setq ivy-height 12
         ivy-do-completion-in-region nil
         ivy-wrap t
         ivy-fixed-height-minibuffer t
@@ -90,7 +90,7 @@ session)."
   (setq counsel-find-file-ignore-regexp "\\(?:^[#.]\\)\\|\\(?:[#~]$\\)\\|\\(?:^Icon?\\)")
 
   ;; Configure `counsel-rg'/`counsel-ag'
-  (set! :popup "^\\*ivy-occur counsel-[ar]g" :size 25 :regexp t :autokill t)
+  (set! :popup "^\\*ivy-occur counsel-[ar]g" :size (+ 2 ivy-height) :regexp t :autokill t)
 
   (ivy-add-actions
    'counsel-rg
