@@ -186,21 +186,19 @@
             (,(concat "<\\(http://.+\\." ext-regexp "\\)>") . 1))))
 
   ;;; Custom fontification
-  ;; I like how org-mode fontifies checked TODOs and want this to extend to
-  ;; checked checkbox items, so we remove the old checkbox highlight rule...
-  (font-lock-remove-keywords
-   'org-mode '(("^[ \t]*\\(?:[-+*]\\|[0-9]+[.)]\\)[ \t]+\\(?:\\[@\\(?:start:\\)?[0-9]+\\][ \t]*\\)?\\(\\[[- X]\\]\\)"
-                1 'org-checkbox prepend)))
-  (font-lock-add-keywords
-   'org-mode '(;; ...and replace it with my own
-               ("^[ \t]*\\(?:[-+*]\\|[0-9]+[).]\\)[ \t]+\\(\\(?:\\[@\\(?:start:\\)?[0-9]+\\][ \t]*\\)?\\[\\(?:X\\|\\([0-9]+\\)/\\2\\)\\][^\n]*\n\\)"
-                1 'org-headline-done t)
-               ("^[ \t]*\\(?:[-+*]\\|[0-9]+[.)]\\)[ \t]+\\(?:\\[@\\(?:start:\\)?[0-9]+\\][ \t]*\\)?\\(\\[[- ]\\]\\)"
-                1 'org-checkbox append)
-               ;; Also highlight list bullets
-               ("^ *\\([-+]\\|[0-9]+[).]\\) " 1 'org-list-dt append)
-               ;; and separators
-               ("^ *\\(-----+\\)$" 1 'org-meta-line)))
+  (add-hook! 'org-font-lock-set-keywords-hook
+    (nconc org-font-lock-extra-keywords
+           '(;; I like how org-mode fontifies checked TODOs and want this to extend to
+             ;; checked checkbox items:
+             ("^[ \t]*\\(?:[-+*]\\|[0-9]+[).]\\)[ \t]+\\(\\(?:\\[@\\(?:start:\\)?[0-9]+\\][ \t]*\\)?\\[\\(?:X\\|\\([0-9]+\\)/\\2\\)\\][^\n]*\n\\)"
+              1 'org-headline-done prepend)
+             ;; make plain list bullets stand out
+             ("^ *\\([-+]\\|[0-9]+[).]\\) " 1 'org-list-dt append)
+             ;; and separators/dividers
+             ("^ *\\(-----+\\)$" 1 'org-meta-line)
+             ;; custom #hashtags & @at-tags for another level of organization
+             ("\\s-\\(#[^ \n]+\\)" 1 'org-tag)
+             ("\\s-\\(@[^ \n]+\\)" 1 'org-special-keyword))))
 
   ;; Enable gpg support
   (require 'epa-file)
