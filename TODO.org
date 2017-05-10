@@ -5,7 +5,7 @@
 + [-] Work-in-progress
 + [X] Complete
 
-** Planned [5/76]
+** Planned [5/80]
 + [0/10] Potential plugins
   + [ ] [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]]: client for MS Language Server Protocol, keep an eye on this
   + [ ] lang/javascript: [[https://github.com/codesuki/add-node-modules-path][add-node-modules-path]] (adds node_modules to ~exec-path~)
@@ -88,6 +88,10 @@
     + [ ] rss
     + [ ] twitter
     + [ ] present
++ [ ] Write ~describe-setting~ for ~def-setting!~ definitions.
++ [ ] lang/org: restore cursor to sane location after prepending/appending new table cells.
++ [ ] lang/org: don't move cursor when realigning tables when exiting insert state.
++ [ ] lang/org: typing certain characters and keys while in a table causes the cell to shrink (like smartparens pairs and keys not bound to self-insert-command)
 + [ ] completion/ivy: refactor ~def-counsel-action!~ into a setting (~def-setting!~)
 + [ ] completion/ivy: refactor ag-open-in-other-window (messy/hackish)
 + [ ] Fix invisible buffer-info in modeline for terminal Emacs
