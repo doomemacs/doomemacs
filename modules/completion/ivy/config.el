@@ -1,19 +1,12 @@
 ;;; completion/ivy/packages.el
 
-;; Ivy is my completion backend of choice. With counsel's help, I get:
-;;
-;; + Project-wide search with `counsel-rg' (and `+ivy:file-search')
-;; + Project-wide replace if you press <backtab> in the ag occur buffer.
-;; + An Atom/Sublime-Text Command-T implementation with `counsel-find-file' and
-;;   `counsel-projectile-find-file'.
-;; + Ido-like completion for a slew of functions, like `counsel-M-x' and
-;;   `counsel-imenu'.
-
-;; TODO Make this a setting
-(defmacro def-counsel-action! (name &rest forms)
-  `(defun ,(intern (format "+ivy/counsel-%s" (symbol-name name))) ()
+(defmacro ivy-do-action! (action)
+  "A factory function that returns an interactive lamba that sets the current
+ivy action and immediately runs it on the current candidate (ending the ivy
+session)."
+  `(lambda ()
      (interactive)
-     (ivy-set-action ',@forms)
+     (ivy-set-action ,action)
      (setq ivy-exit 'done)
      (exit-minibuffer)))
 
@@ -84,37 +77,21 @@
 (def-package! counsel
   :after ivy
   :config
-  (setq counsel-find-file-ignore-regexp "\\(?:^[#.]\\)\\|\\(?:[#~]$\\)\\|\\(?:^Icon?\\)")
-
-  (set! :popup "^\\*ivy-occur counsel-[ar]g" :size 25 :regexp t :autokill t)
-
   (require 'counsel-projectile)
 
-  ;; FIXME Messy workaround, refactor this
-  (def-counsel-action! ag-open-in-other-window
-    (lambda (x)
-      (when (string-match "\\`\\(.*?\\):\\([0-9]+\\):\\(.*\\)\\'" x)
-        (let ((file-name (match-string-no-properties 1 x))
-              (line-number (match-string-no-properties 2 x))
-              dest-win)
-          (with-ivy-window
-            (find-file-other-window (expand-file-name file-name counsel--git-grep-dir))
-            (setq dest-win (selected-window))
-            (forward-line (1- (string-to-number line-number)))
-            (re-search-forward (ivy--regex ivy-text t) (line-end-position) t)
-            (recenter)
-            (swiper--ensure-visible)
-            (run-hooks 'counsel-grep-post-action-hook)
-            (unless (eq ivy-exit 'done)
-              (swiper--cleanup)
-              (swiper--add-overlays (ivy--regex ivy-text))))
-          (when dest-win
-            (select-window dest-win))))))
+  (setq counsel-find-file-ignore-regexp "\\(?:^[#.]\\)\\|\\(?:[#~]$\\)\\|\\(?:^Icon?\\)")
+
+  ;; Configure `counsel-rg'/`counsel-ag'
+  (set! :popup "^\\*ivy-occur counsel-[ar]g" :size 25 :regexp t :autokill t)
+
+  (ivy-add-actions
+   'counsel-rg
+   '(("O" +ivy-git-grep-other-window-action "open in other window")))
 
   (map! :map counsel-ag-map ; applies to counsel-rg too
         [backtab] #'+ivy/wgrep-occur  ; search/replace on results
         "C-SPC"   #'counsel-git-grep-recenter   ; preview
-        "M-RET"   #'+ivy/counsel-ag-open-in-other-window)
+        "M-RET"   (ivy-do-action! #'+ivy-git-grep-other-window-action))
 
   ;; 1) Gets rid of the character limit from `counsel-ag-function' and
   ;; 2) Disables ivy's over-zealous parentheses quoting behavior

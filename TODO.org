@@ -5,7 +5,7 @@
 + [-] Work-in-progress
 + [X] Complete
 
-** Planned [5/80]
+** Planned [5/78]
 + [0/10] Potential plugins
   + [ ] [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]]: client for MS Language Server Protocol, keep an eye on this
   + [ ] lang/javascript: [[https://github.com/codesuki/add-node-modules-path][add-node-modules-path]] (adds node_modules to ~exec-path~)
@@ -92,15 +92,17 @@
 + [ ] lang/org: restore cursor to sane location after prepending/appending new table cells.
 + [ ] lang/org: don't move cursor when realigning tables when exiting insert state.
 + [ ] lang/org: typing certain characters and keys while in a table causes the cell to shrink (like smartparens pairs and keys not bound to self-insert-command)
-+ [ ] completion/ivy: refactor ~def-counsel-action!~ into a setting (~def-setting!~)
-+ [ ] completion/ivy: refactor ag-open-in-other-window (messy/hackish)
 + [ ] Fix invisible buffer-info in modeline for terminal Emacs
 + [ ] tools/upload: add ~+upload/open-remote-file~ command to open current file on the remote (with TRAMP)
 
-** 2.0.2 [55/58]
+** 2.0.2 [57/60]
 + [ ] Update screenshots
 + [ ] send-to-REPL workflow: does it still work? (see ~:repl~ & ~+eval/repl-send-region~)
 + [ ] Fix ~0/0~ displaying in modeline (caused by leftover anzu state)
++ [X] completion/ivy: refactor ~def-counsel-action!~ +into a setting (~def-setting!~)+
+  Refactored into ~ivy-do-action!~ macro instead
++ [X] completion/ivy: refactor ag-open-in-other-window (messy/hackish)
+  Now ~+ivy-git-grep-other-window-action~
 + [X] Fix ~+eval/region~ failing only on first invocation.
   Caused by ~+eval-runners-alist~ not being populated until quickrun is loaded.
 + [X] Fix: Neotree forgets it's a neotree window when switching perspectives

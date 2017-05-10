@@ -143,3 +143,14 @@ interferes with my custom :[ar]g ex command `+ivy:file-search'."
 ;;;###autoload
 (defun +ivy-yas-prompt (prompt choices &optional display-fn)
   (yas-completing-prompt prompt choices display-fn #'ivy-completing-read))
+
+;;;###autoload
+(defun +ivy-git-grep-other-window-action (x)
+  "Opens the current candidate in another window."
+  (let (dest-window)
+    (cl-letf (((symbol-function 'find-file)
+               (lambda (filename)
+                 (find-file-other-window filename)
+                 (setq dest-window (selected-window)))))
+      (counsel-git-grep-action x)
+      (select-window dest-window))))
