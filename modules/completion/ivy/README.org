@@ -1,4 +1,4 @@
-* completion/Ivy
+* Ivy
 
 Ivy is my completion backend of choice (over ido and helm), for its speed and
 simplicity. With ivy's help and some hackery, I get the following features:
@@ -67,14 +67,14 @@ Here is a list of my commonly used commands, their default keybinds (defined in
 
 | command                             | key / ex command        | description                                               |
 |-------------------------------------+-------------------------+-----------------------------------------------------------|
-| ~counsel-M-x~                       | =M-x=                   | Smarter, smex-powered M-x                                 |
-| ~counsel-bookmark~                  | =, b=                   | Find bookmark                                             |
-| ~counsel-find-file~                 | =, .=                   | Browse from current directory                             |
-| ~counsel-projectile-find-file~      | =, /=                   | Find file in project                                      |
-| ~counsel-projectile-switch-project~ | =, p=                   | Open another project                                      |
-| ~counsel-recentf~                   | =, r=                   | Find recently opened file                                 |
-| ~+ivy/switch-buffer~                | =, ,=                   | Jump to open buffer in current workspace                  |
-| ~+ivy/switch-workspace-buffer~      | =, <=                   | Jump to open buffer across workspaces                     |
+| ~counsel-M-x~                       | ~M-x~                   | Smarter, smex-powered M-x                                 |
+| ~counsel-bookmark~                  | ~, b~                   | Find bookmark                                             |
+| ~counsel-find-file~                 | ~, .~                   | Browse from current directory                             |
+| ~counsel-projectile-find-file~      | ~, /~                   | Find file in project                                      |
+| ~counsel-projectile-switch-project~ | ~, p~                   | Open another project                                      |
+| ~counsel-recentf~                   | ~, r~                   | Find recently opened file                                 |
+| ~+ivy/switch-buffer~                | ~, ,~                   | Jump to open buffer in current workspace                  |
+| ~+ivy/switch-workspace-buffer~      | ~, <~                   | Jump to open buffer across workspaces                     |
 | ~+ivy:file-search~                  | ~:f[in]d[!] [QUERY]~    | Search project (if BANG, don't respect gitignore)         |
 | ~+ivy:file-search-cwd~              | ~:f[in]dcwd[!] [QUERY]~ | Search project in cwd (if BANG, don't respect gitignore)  |
 | ~+ivy:swiper~                       | ~:sw[iper] [QUERY]~     | Search current buffer                                     |
