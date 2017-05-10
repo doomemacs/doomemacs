@@ -5,7 +5,7 @@
   "An alist of tags for `+ivy/tasks' to include in its search, whose CDR is the
 face to render it with.")
 
-(defmacro ivy-do-action! (action)
+(defmacro +ivy-do-action! (action)
   "A factory function that returns an interactive lamba that sets the current
 ivy action and immediately runs it on the current candidate (ending the ivy
 session)."
@@ -99,12 +99,9 @@ session)."
   (map! :map counsel-ag-map ; applies to counsel-rg too
         [backtab] #'+ivy/wgrep-occur  ; search/replace on results
         "C-SPC"   #'counsel-git-grep-recenter   ; preview
-        "M-RET"   (ivy-do-action! #'+ivy-git-grep-other-window-action))
+        "M-RET"   (+ivy-do-action! #'+ivy-git-grep-other-window-action))
 
-  ;; 1) Gets rid of the character limit from `counsel-ag-function' and
-  ;; 2) Disables ivy's over-zealous parentheses quoting behavior
-  ;;
-  ;; These both interfere with my custom :[ar]g ex command `+ivy:file-search'.
+  ;; NOTE Both counsel-rg and counsel-ag use this function
   (advice-add #'counsel-ag-function :override #'+ivy*counsel-ag-function))
 
 
