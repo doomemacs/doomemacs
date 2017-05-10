@@ -187,8 +187,15 @@
 
   ;;; Custom fontification
   (add-hook! 'org-font-lock-set-keywords-hook
+    (setq org-font-lock-extra-keywords
+          (delete '("\\[\\([0-9]*%\\)\\]\\|\\[\\([0-9]*\\)/\\([0-9]*\\)\\]"
+                    (0 (org-get-checkbox-statistics-face) t))
+                  org-font-lock-extra-keywords))
     (nconc org-font-lock-extra-keywords
-           '(;; I like how org-mode fontifies checked TODOs and want this to extend to
+           '(;; Make checkbox statistic cookies respect underlying faces
+             ("\\[\\([0-9]*%\\)\\]\\|\\[\\([0-9]*\\)/\\([0-9]*\\)\\]"
+              (0 (org-get-checkbox-statistics-face) prepend))
+             ;; I like how org-mode fontifies checked TODOs and want this to extend to
              ;; checked checkbox items:
              ("^[ \t]*\\(?:[-+*]\\|[0-9]+[).]\\)[ \t]+\\(\\(?:\\[@\\(?:start:\\)?[0-9]+\\][ \t]*\\)?\\[\\(?:X\\|\\([0-9]+\\)/\\2\\)\\][^\n]*\n\\)"
               1 'org-headline-done prepend)
