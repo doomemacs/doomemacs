@@ -102,7 +102,7 @@ limit to buffers in the current workspace."
                                    (concat " -- "
                                            (shell-quote-argument (concat "\\s("
                                                                          (string-join (mapcar #'car +ivy-task-tags) "|")
-                                                                         ")([\\s:]|\([^)]+\):?)")))
+                                                                         ")([\\s:]|\\([^)]+\\):?)")))
                                    (if arg buffer-file-name ".")))
                           "\n" t))))
 
