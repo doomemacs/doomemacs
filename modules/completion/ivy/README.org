@@ -1,0 +1,101 @@
+* completion/Ivy
+
+Ivy is my completion backend of choice (over ido and helm), for its speed and
+simplicity. With ivy's help and some hackery, I get the following features:
+
++ Project-wide search & replace.
++ Project jump-to navigation ala Command-T, Sublime Text's Jump-to-anywhere or Vim's CtrlP plugin.
++ Ivy integration for ~M-x~, ~imenu~, ~recentf~ and others.
++ A powerful, interactive in-buffer search using ~swiper~.
++ Ivy-powered TODO/FIXME navigation
+
+** Dependencies
+This module depends only on [[https://github.com/BurntSushi/ripgrep][ripgrep]].
+
+*** MacOS
+#+BEGIN_SRC sh :tangle (if (doom-system-os 'macos) "yes")
+brew install ripgrep
+#+END_SRC
+
+*** Arch Linux
+#+BEGIN_SRC sh :dir /sudo:: :tangle (if (doom-system-os 'arch) "yes")
+sudo pacman --needed --noconfirm -S ripgrep
+#+END_SRC
+
+** Highlights
+*** Search & Replace
+A project-wide search can be performed by invoking ~counsel-rg~ or via the ex
+command (evil-mode): ~:find~.
+
+[[/../screenshots/modules/completion/ivy/ivy-search.gif]]
+
+From this session, you can press =Shift + Tab= to create an writeable occur
+buffer in wgrep mode.
+
+[[/../screenshots/modules/completion/ivy/ivy-search-replace.gif]]
+
+Make your modifications and press =C-c C-c= to commit them, or =C-c C-k= to
+abort.
+
+*** Jump-to-file project navigation
+Inspired by Sublime Text's jump-to-anywhere, Vim's CtrlP or Unite plugins, and
+Textmate's Command-T, a marriage of ~projectile~ and ~ivy~ makes this available
+to you in Emacs. Invoke it with =, /= or ~counsel-projectile-find-file~.
+
+[[/../screenshots/modules/completion/ivy/ivy-projectile.gif]]
+
+*** In-buffer searching
+I prefer to use ~evil-search~ (invoked by pressing =/= in normal mode) when
+jumping small/moderate (or predictable) distances. On occasion I need more
+feedback, so I turn to ~swiper~ (available directly with =M-x swiper RET=, or
+via ~:sw[iper]~).
+
+[[/../screenshots/modules/completion/ivy/ivy-swiper.gif]]
+
+*** TODO-Task lookup
+I sprinkle my projects with TODO's & FIXME's. Using ivy and ripgrep, I wrote
+~+ivy/tasks~ to help me navigate to them. It can be invoked via ~:todo[!]~ as
+well.
+
+[[/../screenshots/modules/completion/ivy/ivy-todo.gif]]
+
+** Appendix
+*** Commands & Keybindings
+Here is a list of my commonly used commands, their default keybinds (defined in
+[[../../private/hlissner/+bindings.el][private/hlissner/+bindings.el]]), and their corresponding ex command (defined in
+[[../../private/hlissner/+commands.el][private/hlissner/+commands.el]]).
+
+| command                             | key / ex command        | description                                               |
+|-------------------------------------+-------------------------+-----------------------------------------------------------|
+| ~counsel-M-x~                       | =M-x=                   | Smarter, smex-powered M-x                                 |
+| ~counsel-bookmark~                  | =, b=                   | Find bookmark                                             |
+| ~counsel-find-file~                 | =, .=                   | Browse from current directory                             |
+| ~counsel-projectile-find-file~      | =, /=                   | Find file in project                                      |
+| ~counsel-projectile-switch-project~ | =, p=                   | Open another project                                      |
+| ~counsel-recentf~                   | =, r=                   | Find recently opened file                                 |
+| ~+ivy/switch-buffer~                | =, ,=                   | Jump to open buffer in current workspace                  |
+| ~+ivy/switch-workspace-buffer~      | =, <=                   | Jump to open buffer across workspaces                     |
+| ~+ivy:file-search~                  | ~:f[in]d[!] [QUERY]~    | Search project (if BANG, don't respect gitignore)         |
+| ~+ivy:file-search-cwd~              | ~:f[in]dcwd[!] [QUERY]~ | Search project in cwd (if BANG, don't respect gitignore)  |
+| ~+ivy:swiper~                       | ~:sw[iper] [QUERY]~     | Search current buffer                                     |
+| ~+ivy:todo~                         | ~:todo[!]~              | List all TODO/FIXMEs in project (or current file if BANG) |
+
+While in an ~counsel-rg~ search (e.g. invoked from ~+ivy:file-search~), these
+new keybindings are available to you:
+
+| key         | description                                                                    |
+|-------------+--------------------------------------------------------------------------------|
+| =<backtab>= | Perform search/replace on the search results (open occur buffer in wgrep mode) |
+| =C-SPC=     | Preview the current candidate                                                  |
+| =M-RET=     | Open the selected candidate in other-window                                    |
+
+*** Hacks
++ Where possible, functions with ivy/counsel equivalents have been remapped
+  (like ~find-file~ => ~counsel-find-file~). So a keybinding to ~find-file~ will
+  invoke ~counsel-find-file~ instead.
++ ~counsel-rg~'s 3-character limit was reduced to 1 (mainly for the ex command)
++ ~counsel-rg~'s parentheses quoting behavior was reversed. Now, if you
+  want literal parentheses, you must escape them: e.g. ~\(match\)~ is literal,
+  ~(match)~ is a regexp group.
+
+
