@@ -35,7 +35,7 @@
 
 ;; Recenter after certain jumps
 (add-hook!
-  '(imenu-after-jump-hook evil-jumps-post-jump-hook)
+  '(imenu-after-jump-hook evil-jumps-post-jump-hook counsel-grep-post-action-hook)
   'recenter)
 
 
