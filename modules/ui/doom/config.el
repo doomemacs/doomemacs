@@ -110,6 +110,8 @@
     '(imenu-after-jump-hook evil-jumps-post-jump-hook find-file-hook)
     'doom/blink-cursor)
 
+  (advice-add #'recenter :after #'doom/blink-cursor)
+
   (after! evil
     (advice-add #'evil-window-bottom :after #'doom/blink-cursor)
     (advice-add #'evil-window-middle :after #'doom/blink-cursor)
