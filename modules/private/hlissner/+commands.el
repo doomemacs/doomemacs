@@ -61,7 +61,7 @@
 (ex! "build"       '+eval/build)
 (ex! "debug"       '+debug/run)
 (ex! "er[rors]"    'flycheck-list-errors)
-(ex! "todo"        '+ivy/tasks)
+(ex! "todo"        '+ivy:todo)
 
 ;; File operations
 (ex! "mv"          '+evil:file-move)

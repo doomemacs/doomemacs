@@ -40,3 +40,9 @@ session."
   "Invoke `swiper' with SEARCH, otherwise with the symbol at point."
   (interactive "<a>")
   (swiper search))
+
+;;;###autoload (autoload '+ivy:todo "completion/ivy/autoload/evil" nil t)
+(evil-define-command +ivy:todo (&optional bang)
+  "An ex wrapper around `+ivy/tasks'."
+  (interactive "<!>")
+  (+ivy/tasks bang))

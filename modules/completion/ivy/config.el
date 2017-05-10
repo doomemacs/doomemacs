@@ -1,5 +1,10 @@
 ;;; completion/ivy/packages.el
 
+(defvar +ivy-task-tags '(("TODO"  . warning)
+                         ("FIXME" . error))
+  "An alist of tags for `+ivy/tasks' to include in its search, whose CDR is the
+face to render it with.")
+
 (defmacro ivy-do-action! (action)
   "A factory function that returns an interactive lamba that sets the current
 ivy action and immediately runs it on the current candidate (ending the ivy
