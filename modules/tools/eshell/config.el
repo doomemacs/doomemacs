@@ -28,6 +28,13 @@
   (set! :popup "^\\*eshell:popup\\*$" :regexp t :size 25)
   (set! :evil-state 'eshell-mode 'insert)
 
+  ;; Visual commands require a proper terminal. Eshell can't handle that, so it
+  ;; delegates these commands to a term buffer.
+  (setq eshell-visual-commands
+        (append eshell-visual-commands
+                '("less" "tmux" "htop" "top" "bash" "zsh" "fish"))
+        eshell-visual-subcommands '(("git" "log" "l" "diff" "show")))
+
   (defun +eshell|keymap-setup ()
     "Setup eshell keybindings. This must be done in a hook because eshell
 redefines its keys every time `eshell-mode' is enabled."
