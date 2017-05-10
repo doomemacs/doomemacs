@@ -69,6 +69,7 @@ is enabled/disabled.'")
           ("*Pp Eval Output*"       :size 16  :noselect t :autokill t :autoclose t)
           ("*Apropos*"              :size 0.3)
           ("*Backtrace*"            :size 25  :noselect t)
+          ("*Buffer List*"          :size 20  :autokill t)
           ("*Help*"                 :size 16)
           ("*Messages*"             :size 10  :noselect t)
           ("*Warnings*"             :size 10  :noselect t :autokill t)
@@ -236,6 +237,17 @@ properties."
 ;;
 ;; Hacks
 ;;
+
+(progn ; hacks for built-in functions
+  (defun doom*buffer-menu (&optional arg)
+    "Open `buffer-menu' in a popup window."
+    (interactive "P")
+    (let ((buf (list-buffers-noselect arg)))
+      (doom-popup-buffer buf)
+      (with-current-buffer buf
+        (setq mode-line-format "Commands: d, s, x, u; f, o, 1, 2, m, v; ~, %; q to quit; ? for help."))))
+  (advice-add #'buffer-menu :override #'doom*buffer-menu))
+
 
 (after! evil
   (let ((map doom-popup-mode-map))
