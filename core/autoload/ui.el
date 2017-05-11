@@ -16,15 +16,6 @@
   (nlinum-mode (if nlinum-mode -1 +1)))
 
 ;;;###autoload
-(defun doom/reset-theme ()
-  "Reset the color theme currently in use."
-  (interactive)
-  (let ((theme (car-safe custom-enabled-themes)))
-    (when theme
-      (mapc #'disable-theme custom-enabled-themes))
-    (load-theme theme t)))
-
-;;;###autoload
 (defun doom/window-zoom ()
   "Maximize and isolate the current buffer. Activate again to undo this. If the
 window changes before then, the undo expires."

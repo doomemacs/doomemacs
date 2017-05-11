@@ -170,7 +170,7 @@
      :desc "Find file in emacs.d"   :n "/"   #'+hlissner/find-in-emacsd
      :desc "Browse dotfiles"        :n ">"   #'+hlissner/browse-dotfiles
      :desc "Find file in dotfiles"  :n "?"   #'+hlissner/find-in-dotfiles
-     :desc "Reload theme"           :n "R"   #'doom/reset-theme
+     :desc "Reload theme"           :n "R"   #'+doom/reset-theme
      ;; Org notes
      :desc "Browse notes"           :n "n"   #'+hlissner/browse-notes
      :desc "Find file in notes"     :n "N"   #'+hlissner/find-in-notes
