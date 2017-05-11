@@ -41,6 +41,8 @@
 ;; <https://github.com/hlissner/emacs-doom-theme>
 (def-package! doom-themes :demand t
   :config
+  (setq doom-one-linum-height 0.9)
+
   (load-theme +doom-theme t)
 
   ;; Since Fira Mono doesn't have an italicized variant, highlight it instead
@@ -89,7 +91,7 @@
   (doom-themes-neotree-config)
   (setq doom-neotree-enable-variable-pitch t
         doom-neotree-file-icons 'simple
-        doom-neotree-line-spacing 3)
+        doom-neotree-line-spacing 2)
 
   ;; Add line-highlighting to nlinum
   (doom-themes-nlinum-config))
