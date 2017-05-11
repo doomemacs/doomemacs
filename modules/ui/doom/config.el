@@ -8,7 +8,7 @@
   "The font currently in use.")
 
 (defvar +doom-variable-pitch-font
-  (font-spec :family "Fira Sans" :size 14)
+  (font-spec :family "Fira Sans" :size 13)
   "The font currently in use.")
 
 (defvar +doom-unicode-font
