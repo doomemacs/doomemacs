@@ -1,9 +1,5 @@
 ;;; feature/eval/config.el
 
-;; This module creates a centralized way of invoking/sending selections to REPLs
-;; (with `repl-toggle'), building projects/files, and running code (with
-;; `quickrun'), revealing its output in a popup window.
-
 ;;
 ;; Code building
 ;;

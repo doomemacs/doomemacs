@@ -18,7 +18,7 @@ current window if omitted."
   (declare (indent defun))
   (unless (bufferp buffer)
     (error "%s is not a valid buffer" buffer))
-  (setq plist (doom*shackle-always-align plist))
+  (setq plist (append plist (shackle-match buffer)))
   (shackle-display-buffer
    buffer
    nil (or plist (shackle-match buffer))))

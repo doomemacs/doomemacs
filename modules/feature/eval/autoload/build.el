@@ -29,6 +29,7 @@ functions.")
 
 ;;;###autoload
 (defun +eval/build (builder)
+  "TODO"
   (interactive
    (list (or +eval-last-builder
              (+eval--read-builder)

@@ -43,10 +43,10 @@
 
        :completion
        company         ; auto-completion backend
-       ;; TODO auto-complete   ; auto-completion backend #2
+       ;; TODO auto-complete
        ivy             ; a search engine for love and life
-       ;; helm            ;
-       ;; ido             ;
+       ;; helm
+       ;; ido
 
        :ui
        doom            ; doom-one; a look inspired by Atom's Dark One
