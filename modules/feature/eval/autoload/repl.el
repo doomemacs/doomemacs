@@ -1,30 +1,51 @@
 ;;; feature/eval/autoload/repl.el
 
-(defvar +eval-last-repl-buffer nil
+(defvar +eval-repl-buffer nil
   "The buffer of the last open repl.")
+
+(defun +eval--ensure-in-repl-buffer (&optional command)
+  (if (eq (current-buffer) +eval-repl-buffer)
+      t
+    (if (and +eval-repl-buffer (buffer-live-p +eval-repl-buffer))
+        (if-let (win (get-buffer-window +eval-repl-buffer))
+            (select-window win)
+          (doom-popup-buffer +eval-repl-buffer))
+      (when command
+        (let ((repl-buffer (save-window-excursion (call-interactively command))))
+          (unless (bufferp repl-buffer)
+            (error "REPL command didn't return a buffer"))
+          (with-current-buffer repl-buffer (+eval-repl-mode +1))
+          (setq +eval-repl-buffer repl-buffer)
+          (select-window (doom-popup-buffer repl-buffer)))))
+    (when (eq (current-buffer) +eval-repl-buffer)
+      (goto-char (if (derived-mode-p 'comint-mode)
+                     (cdr comint-last-prompt)
+                   (point-max)))
+      t)))
 
 ;;;###autoload
 (defun +eval/repl ()
-  "Open the REPL associated with the current major-mode. If selection is active,
-send region to repl."
+  "Opens (or reopens) the REPL associated with the current major-mode and place
+the cursor at the prompt."
   (interactive)
   (when-let (command (cdr (assq major-mode +eval-repls)))
-    (let ((repl-buffer (save-window-excursion (funcall command))))
-      (unless (bufferp repl-buffer)
-        (error "REPL command didn't return a buffer"))
-      (with-current-buffer repl-buffer (+eval-repl-mode +1))
-      (setq +eval-last-repl-buffer repl-buffer)
-      (doom-popup-buffer repl-buffer))))
+    (when (+eval--ensure-in-repl-buffer command)
+      (when (and (featurep 'evil) evil-mode)
+        (call-interactively 'evil-append-line))
+      t)))
 
 ;;;###autoload
-(defun +eval/repl-send-region (beg end &optional inhibit-run-p)
-  "Send a selection to the REPL."
+(defun +eval/repl-send-region (beg end &optional auto-execute-p)
+  "REPL must be open! Sends a selected region to it. If AUTO-EXECUTE-P, then
+execute it immediately after."
   (interactive "r")
-  (when +eval-last-repl-buffer
-    (let ((selection (buffer-substring-no-properties beg end)))
-      (select-window (get-buffer-window +eval-last-repl-buffer))
-      (goto-char (point-max))
-      (insert selection)
-      (when (and (featurep 'evil) evil-mode)
-        (evil-change-state 'insert)))))
-
+  (let ((selection (buffer-substring-no-properties beg end)))
+    (unless (+eval--ensure-in-repl-buffer)
+      (error "No REPL open"))
+    (when (and (featurep 'evil) evil-mode)
+      (call-interactively 'evil-append-line))
+    (insert (string-trim selection))
+    (when auto-execute-p
+      ;; I don't use `comint-send-input' because different REPLs may have their
+      ;; own. So I just emulate the keypress.
+      (execute-kbd-macro (kbd "RET")))))

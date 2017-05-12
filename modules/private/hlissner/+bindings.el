@@ -161,7 +161,7 @@
    (:desc "Code tools"
      :prefix "c"
      :desc "Build"                  :n  "b"  #'+eval/build
-     :desc "Open/Send to REPL"      :nv "r"  #'+eval/repl
+     :desc "Open/Send to REPL"      :nv "r"  #'+eval:repl
      :desc "Open debugger"          :n  "R"  #'+debug/open)
 
    (:desc "Personal"

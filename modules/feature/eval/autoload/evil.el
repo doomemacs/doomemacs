@@ -12,3 +12,11 @@
   :move-point nil
   (interactive "<r>")
   (+eval/region-and-replace beg end))
+
+;;;###autoload (autoload '+eval:repl "feature/eval/autoload/evil" nil t)
+(evil-define-operator +eval:repl (beg end &optional bang)
+  :move-point nil
+  (interactive "<r><!>")
+  (if (evil-normal-state-p)
+      (+eval/repl)
+    (+eval/repl-send-region beg end bang)))

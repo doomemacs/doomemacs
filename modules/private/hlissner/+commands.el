@@ -21,7 +21,7 @@
 ;; TODO (ex! "dbu[se]"     'doom:db-select)
 ;; TODO (ex! "go[ogle]"    'doom:google-search)
 (ex! "http"        'httpd-start)            ; start http server
-(ex! "repl"        '+eval/repl)             ; invoke or send to repl
+(ex! "repl"        '+eval:repl)             ; invoke or send to repl
 ;; TODO (ex! "rx"          'doom:regex)             ; open re-builder
 (ex! "sh[ell]"     '+eshell:run)
 (ex! "t[mux]"      '+tmux:run)              ; send to tmux
