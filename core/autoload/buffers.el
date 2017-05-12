@@ -255,3 +255,5 @@ exclude buffers that aren't part of the current project."
     (when (called-interactively-p 'interactive)
       (message "Cleaned up %s buffers" n))))
 
+(after! evil
+  (evil-set-command-properties #'doom/cleanup-buffers :ex-bang t))
