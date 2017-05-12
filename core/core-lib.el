@@ -99,14 +99,15 @@ compilation."
 advised instead). These forms will be evaluated only once when that
 function/hook is first invoked, then it detaches itself."
   (declare (indent 1))
-  (let ((fn (intern (format "doom--transient-hook-%s" hook))))
+  (let ((fn (intern (format "doom--transient-hook-%s" hook)))
+        (append (eq (car forms) :after)))
     `(progn
        (defun ,fn (&rest _)
          ,@forms
          ,(cond ((functionp hook) `(advice-remove #',hook #',fn))
                 ((symbolp hook) `(remove-hook ',hook #',fn))))
-       ,(cond ((functionp hook) `(advice-add #',hook :before #',fn))
-              ((symbolp hook) `(add-hook ',hook #',fn))))))
+       ,(cond ((functionp hook) `(advice-add #',hook ,(if append :after :before) #',fn))
+              ((symbolp hook) `(add-hook ',hook #',fn ,append))))))
 
 (defmacro add-hook! (&rest args)
   "A convenience macro for `add-hook'. Takes, in order:
