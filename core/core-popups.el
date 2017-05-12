@@ -445,41 +445,35 @@ you came from."
       '(" *Agenda Commands*" :noselect t)
       '("^\\*Org Agenda"     :regexp t :size 30)
       '("*Org Clock*"        :noselect t)
-      '("^\\*Org Src"        :regexp t :size 0.5 :noesc t)
+      '("^\\*Org Src"        :regexp t :size 0.35 :noesc t)
       '("*Edit Formulas*"    :size 10)
       '("^\\*Org-Babel"      :regexp t :size 25 :noselect t)
       '("^CAPTURE.*\\.org$"  :regexp t :size 20))
 
-    ;; Org tries to do its own popup management, causing buffer/window config
-    ;; armageddon when paired with shackle. To fix this, we must make a couple
-    ;; modifications:
+    ;; Org has its own window management system with a scorched earth philosophy
+    ;; I'm not fond of. i.e. it kills all windows and greedily monopolizes the
+    ;; frame. No thanks. We can do better with shackle's help.
 
-    ;; Suppress `delete-other-windows' in org functions:
+    ;; Save the emacsverse from armageddon by suppressing `delete-other-windows'
+    ;; in org functions.
     (defun doom*suppress-delete-other-windows (orig-fn &rest args)
-      (cl-flet (((symbol-function 'delete-other-windows)
+      (cl-letf (((symbol-function 'delete-other-windows)
                  (symbol-function 'ignore)))
         (apply orig-fn args)))
     (advice-add #'org-add-log-note :around #'doom*suppress-delete-other-windows)
     (advice-add #'org-capture-place-template :around #'doom*suppress-delete-other-windows)
     (advice-add #'org-export--dispatch-ui :around #'doom*suppress-delete-other-windows)
 
-    ;; Tell `org-src-edit' to open another window, which shackle can intercept.
-    (setq org-src-window-setup 'other-window)
-
-    ;; org-edit-src simply clones and narrows the buffer, so we are secretly
-    ;; manipulating the same buffer. Since it never gets killed, we need to
-    ;; treat it specially and clean up after it manually.
-    (defun doom*org-src-switch-to-buffer (&rest args)
-      (let ((window (doom-popup-buffer (car args))))
-        (set-window-dedicated-p window nil)
-        (select-window window)))
+    ;; `org-edit-src-code' simply clones and narrows the buffer to a src block,
+    ;; so we are secretly manipulating the same buffer. Since truely killing it
+    ;; would kill the original org buffer we've got to do things differently.
+    (defun doom*org-src-switch-to-buffer (buffer context)
+      (if (eq org-src-window-setup 'switch-invisibly)
+          (set-buffer buffer)
+        (pop-to-buffer buffer)))
     (advice-add #'org-src-switch-to-buffer :override #'doom*org-src-switch-to-buffer)
 
-    (defun doom*org-src-exit (&rest _)
-      (when doom-popup-mode (doom-popup-mode -1)))
-    (advice-add #'org-edit-src-exit :after #'doom*org-src-exit)
-
-    ;; Ensure todo, agenda, and other popups are opened with shackle
+    ;; Ensure todo, agenda, and other minor popups handed off to shackle.
     (defun doom*org-pop-to-buffer (&rest args)
       (let ((buf (car args)))
         (pop-to-buffer
@@ -494,7 +488,7 @@ you came from."
 
       ;; Hide modeline in org-agenda
       (add-hook 'org-agenda-finalize-hook #'doom-hide-modeline-mode)
-
+      ;; Don't monopolize frame!
       (advice-add #'org-agenda :around #'doom*suppress-delete-other-windows)
 
       (after! evil

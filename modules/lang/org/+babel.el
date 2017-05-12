@@ -43,7 +43,8 @@
            params)))
 
   ;; I prefer C-c C-c for confirming over the default C-c '
-  (map! :map org-src-mode-map "C-c C-c" 'org-edit-src-exit)
+  (map! :map org-src-mode-map "C-c C-c" #'org-edit-src-exit)
+
   ;; I know the keybindings, no need for the header line
   (defun +org|src-mode-remove-header ()
     (when header-line-format (setq header-line-format nil)))
