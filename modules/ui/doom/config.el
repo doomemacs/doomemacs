@@ -74,8 +74,7 @@
 
   (defun +doom|buffer-mode-off ()
     "Disable `doom-buffer-mode' in popup buffers."
-    (when (and doom-buffer-mode
-               (not (get-buffer-window-list)))
+    (when doom-buffer-mode
       (doom-buffer-mode -1)))
   (add-hook 'doom-popup-mode-hook #'+doom|buffer-mode-off)
 

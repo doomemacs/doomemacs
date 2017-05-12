@@ -192,7 +192,11 @@ and setting `doom-popup-rules' within it. Returns the window."
                           (shackle-match (window-buffer (car args))))
                          ((bufferp (car args))
                           (shackle-match (car args))))))
-        (window (apply orig-fn args)))
+        window)
+    (when (get-buffer-window-list (car args) nil t)
+      (setq plist (append (list :autokill t) plist))
+      (setcar args (clone-indirect-buffer (buffer-name (car args)) nil t)))
+    (setq window (apply orig-fn args))
     (unless window
       (error "No popup window was found for %s: %s" (car args) plist))
     (with-selected-window window
