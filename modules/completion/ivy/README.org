@@ -24,8 +24,9 @@ sudo pacman --needed --noconfirm -S ripgrep
 
 ** Highlights
 *** Search & Replace
-A project-wide search can be performed by invoking ~counsel-rg~ or via the ex
-command (evil-mode): ~:find~.
+A project-wide search can be performed with Ag (the silver searcher) or Rg
+(ripgrep) via their ex commands: ~:ag[!]~ and ~:rg[!]~ (or their
+current-directory counterparts ~:agcwd[!]~ and ~:rgcwd[!]~)
 
 [[/../screenshots/modules/completion/ivy/ivy-search.gif]]
 
@@ -40,7 +41,7 @@ abort.
 *** Jump-to-file project navigation
 Inspired by Sublime Text's jump-to-anywhere, Vim's CtrlP or Unite plugins, and
 Textmate's Command-T, a marriage of ~projectile~ and ~ivy~ makes this available
-to you in Emacs. Invoke it with =, /= or ~counsel-projectile-find-file~.
+to you in Emacs. Invoke it with =<leader> /= or ~counsel-projectile-find-file~.
 
 [[/../screenshots/modules/completion/ivy/ivy-projectile.gif]]
 
@@ -65,23 +66,25 @@ Here is a list of my commonly used commands, their default keybinds (defined in
 [[../../private/hlissner/+bindings.el][private/hlissner/+bindings.el]]), and their corresponding ex command (defined in
 [[../../private/hlissner/+commands.el][private/hlissner/+commands.el]]).
 
-| command                             | key / ex command        | description                                               |
-|-------------------------------------+-------------------------+-----------------------------------------------------------|
-| ~counsel-M-x~                       | =M-x=                   | Smarter, smex-powered M-x                                 |
-| ~counsel-bookmark~                  | =<leader> b=            | Find bookmark                                             |
-| ~counsel-find-file~                 | =<leader> .=            | Browse from current directory                             |
-| ~counsel-projectile-find-file~      | =<leader> /=            | Find file in project                                      |
-| ~counsel-projectile-switch-project~ | =<leader> p=            | Open another project                                      |
-| ~counsel-recentf~                   | =<leader> r=            | Find recently opened file                                 |
-| ~+ivy/switch-buffer~                | =<leader> ,=            | Jump to buffer in current workspace                       |
-| ~+ivy/switch-workspace-buffer~      | =<leader> <=            | Jump to buffer across workspaces                          |
-| ~+ivy:file-search~                  | ~:f[in]d[!] [QUERY]~    | Search project (if BANG, ignore gitignore)                |
-| ~+ivy:file-search-cwd~              | ~:f[in]dcwd[!] [QUERY]~ | Search project in cwd (if BANG, ignore gitignore)         |
-| ~+ivy:swiper~                       | ~:sw[iper] [QUERY]~     | Search current buffer                                     |
-| ~+ivy:todo~                         | ~:todo[!]~              | List all TODO/FIXMEs in project (or current file if BANG) |
+| command                             | key / ex command    | description                                                      |
+|-------------------------------------+---------------------+------------------------------------------------------------------|
+| ~counsel-M-x~                       | =M-x=               | Smarter, smex-powered M-x                                        |
+| ~counsel-bookmark~                  | =<leader> b=        | Find bookmark                                                    |
+| ~counsel-find-file~                 | =<leader> .=        | Browse from current directory                                    |
+| ~counsel-projectile-find-file~      | =<leader> /=        | Find file in project                                             |
+| ~counsel-projectile-switch-project~ | =<leader> p=        | Open another project                                             |
+| ~counsel-recentf~                   | =<leader> r=        | Find recently opened file                                        |
+| ~+ivy/switch-buffer~                | =<leader> ,=        | Jump to buffer in current workspace                              |
+| ~+ivy/switch-workspace-buffer~      | =<leader> <=        | Jump to buffer across workspaces                                 |
+| ~+ivy:ag~                           | ~:ag[!] [QUERY]~    | Search project (BANG = ignore gitignore)                         |
+| ~+ivy:ag-cwd~                       | ~:agcwd[!] [QUERY]~ | Search this directory (BANG = don't recurse into subdirectories) |
+| ~+ivy:rg~                           | ~:rg[!] [QUERY]~    | Search project (if BANG, ignore gitignore)                       |
+| ~+ivy:rg-cwd~                       | ~:rgcwd[!] [QUERY]~ | Search this directory (BANG = don't recurse into subdirectories) |
+| ~+ivy:swiper~                       | ~:sw[iper] [QUERY]~ | Search current buffer                                            |
+| ~+ivy:todo~                         | ~:todo[!]~          | List all TODO/FIXMEs in project (or current file if BANG)        |
 
-While in an ~counsel-rg~ search (e.g. invoked from ~+ivy:file-search~), these
-new keybindings are available to you:
+While in a search (e.g. invoked from ~+ivy:ag~ or ~+ivy:rg~), these new
+keybindings are available to you:
 
 | key         | description                                                                    |
 |-------------+--------------------------------------------------------------------------------|
@@ -93,8 +96,8 @@ new keybindings are available to you:
 + Where possible, functions with ivy/counsel equivalents have been remapped
   (like ~find-file~ => ~counsel-find-file~). So a keybinding to ~find-file~ will
   invoke ~counsel-find-file~ instead.
-+ ~counsel-rg~'s 3-character limit was reduced to 1 (mainly for the ex command)
-+ ~counsel-rg~'s parentheses quoting behavior was reversed. Now, if you
++ ~counsel-[arp]g~'s 3-character limit was reduced to 1 (mainly for the ex command)
++ ~counsel-[arp]g~'s parentheses quoting behavior was reversed. Now, if you
   want literal parentheses, you must escape them: e.g. ~\(match\)~ is literal,
   ~(match)~ is a regexp group.
 

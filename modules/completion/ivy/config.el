@@ -89,19 +89,19 @@ session)."
 
   (setq counsel-find-file-ignore-regexp "\\(?:^[#.]\\)\\|\\(?:[#~]$\\)\\|\\(?:^Icon?\\)")
 
-  ;; Configure `counsel-rg'/`counsel-ag'
-  (set! :popup "^\\*ivy-occur counsel-[ar]g" :size (+ 2 ivy-height) :regexp t :autokill t)
+  ;; Configure `counsel-rg', `counsel-ag' & `counsel-pt'
+  (set! :popup "^\\*ivy-occur counsel-[arp]g" :size (+ 2 ivy-height) :regexp t :autokill t)
 
-  (ivy-add-actions
-   'counsel-rg
-   '(("O" +ivy-git-grep-other-window-action "open in other window")))
+  (dolist (cmd '(counsel-ag counsel-rg counsel-pt))
+    (ivy-add-actions
+     cmd
+     '(("O" +ivy-git-grep-other-window-action "open in other window"))))
 
-  (map! :map counsel-ag-map ; applies to counsel-rg too
+  (map! :map counsel-ag-map
         [backtab] #'+ivy/wgrep-occur  ; search/replace on results
         "C-SPC"   #'counsel-git-grep-recenter   ; preview
         "M-RET"   (+ivy-do-action! #'+ivy-git-grep-other-window-action))
 
-  ;; NOTE Both counsel-rg and counsel-ag use this function
   (advice-add #'counsel-ag-function :override #'+ivy*counsel-ag-function))
 
 
