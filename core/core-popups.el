@@ -249,6 +249,27 @@ properties."
   (advice-add #'buffer-menu :override #'doom*buffer-menu))
 
 
+(after! eshell
+  ;; When eshell runs a visual command (see `eshell-visual-commands'), it spawns
+  ;; a term buffer to run it in, but where it spawns it is the problem.
+
+  ;; By tying buffer life to its process, we ensure that we land back in the
+  ;; eshell buffer after term dies. May cause problems with short-lived
+  ;; processes.
+  ;; FIXME replace with a 'kill buffer' keybinding.
+  (setq eshell-destroy-buffer-when-process-dies t)
+
+  (defun doom*eshell-undedicate-popup (orig-fn &rest args)
+    "Force spawned term buffer to share with the eshell popup (if necessary)."
+    (when (doom-popup-p)
+      (set-window-dedicated-p nil nil)
+      (add-transient-hook! eshell-query-kill-processes :after
+        (message "ding -- %s (%s)" (selected-window) (buffer-name))
+        (set-window-dedicated-p nil t)))
+    (apply orig-fn args))
+  (advice-add #'eshell-exec-visual :around #'doom*eshell-undedicate-popup))
+
+
 (after! evil
   (let ((map doom-popup-mode-map))
     (define-key map [remap evil-window-delete]           'doom/popup-close)

@@ -16,6 +16,7 @@
         eshell-scroll-to-bottom-on-input 'all
         eshell-scroll-to-bottom-on-output 'all
         eshell-buffer-shorthand t
+        eshell-kill-processes-on-exit t
         ;; em-prompt
         eshell-prompt-function #'+eshell/prompt
         ;; em-glob
