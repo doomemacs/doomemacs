@@ -153,6 +153,7 @@ See `doom-real-buffer-p' for what 'real' means."
   (let* ((buffer (or buffer (current-buffer)))
          (buffer-win (get-buffer-window buffer))
          (only-buffer-window-p (= 1 (length (get-buffer-window-list buffer nil t)))))
+    ;; deal with unsaved buffers
     (when (and only-buffer-window-p
                (buffer-file-name buffer)
                (buffer-modified-p buffer))
@@ -161,10 +162,12 @@ See `doom-real-buffer-p' for what 'real' means."
                  (yes-or-no-p "Buffer is unsaved, save it?"))
             (save-buffer)
           (set-buffer-modified-p nil))))
+    ;; deal with dedicated windows
     (if (window-dedicated-p buffer-win)
         (unless (window--delete buffer-win t t)
           (split-window buffer-win)
           (window--delete buffer-win t t))
+      ;; cycle to a real buffer
       (doom--cycle-real-buffers -1)
       (when buffer-win
         (unrecord-window-buffer buffer-win buffer))

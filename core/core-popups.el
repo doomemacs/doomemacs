@@ -27,7 +27,8 @@
 (defvar-local doom-popup-rules nil
   "The shackle rule that caused this buffer to be recognized as a popup.")
 
-(defvar doom-popup-window-parameters '(:noesc :modeline :autokill :autoclose)
+(defvar doom-popup-window-parameters
+  '(:noesc :modeline :autokill :autoclose)
   "A list of window parameters that are set (and cleared) when `doom-popup-mode
 is enabled/disabled.'")
 

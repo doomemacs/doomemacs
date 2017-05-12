@@ -1,7 +1,7 @@
 ;;; ui/doom/config.el
 
 (defvar +doom-theme 'doom-one
-  "The color theme currently in use.")
+  "The color theme to use.")
 
 (defvar +doom-font
   (font-spec :family "Fira Mono" :size 12)

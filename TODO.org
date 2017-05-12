@@ -5,7 +5,7 @@
 + [-] Work-in-progress
 + [X] Complete
 
-** Planned [6/80]
+** Planned [6/83]
 + [0/10] Potential plugins
   + [ ] [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]]: client for MS Language Server Protocol, keep an eye on this
   + [ ] lang/javascript: [[https://github.com/codesuki/add-node-modules-path][add-node-modules-path]] (adds node_modules to ~exec-path~)
@@ -89,18 +89,27 @@
     + [ ] rss
     + [ ] twitter
     + [ ] present
++ [ ] completion/ivy: flexible column width for ~+ivy/tasks~
++ [ ] Extend ~evil-escape~ to ~evil-multiedit-insert-state~
++ [ ] ui/doom (nav-flash): don't flash when activating evil-multiedit or in eshell/term buffers
 + [ ] Write ~describe-setting~ for ~def-setting!~ definitions.
-+ [ ] lang/org: restore cursor to sane location after prepending/appending new table cells.
-+ [ ] lang/org: don't move cursor when realigning tables when exiting insert state.
-+ [ ] lang/org: typing certain characters and keys while in a table causes the cell to shrink (like smartparens pairs and keys not bound to self-insert-command)
-+ [ ] Fix invisible buffer-info in modeline for terminal Emacs
++ [ ] lang/org: fix janky cursor positioning when manipulating table cells
++ [ ] lang/org: don't move cursor when realigning tables
++ [ ] lang/org: certain characters/keys, when typed in a table, cause the cell to shrink (smartparens pairs & non-self-insert-command, likely)
++ [ ] Fix invisible buffer-info segment in modeline for terminal Emacs
 + [ ] tools/upload: add ~+upload/open-remote-file~ command to open current file on the remote (with TRAMP)
-+ [ ] Make ~doom-visual-bell~ more flexible by basing it's bg color off a face
++ [ ] Generalize ~doom-visual-bell~ by basing its background off a face
 
-** 2.0.2 [58/61]
+** 2.0.2 [63/66]
 + [ ] Update screenshots
 + [ ] send-to-REPL workflow: does it still work? (see ~:repl~ & ~+eval/repl-send-region~)
 + [ ] Fix ~0/0~ displaying in modeline (caused by leftover anzu state)
++ [X] completion/ivy: restore ag searching (for compressed files)
+  Now ~:ag~, ~:rg~, ~:agcwd~ and ~:rgcwd~
++ [X] ~add-transient-hook!~: add support for appending
++ [X] lang/org: fix org-checkbox-statistics-(todo|done) not respecting underlying faces
++ [X] Make ~:cleanup~ support a BANG modifier (to span workspaces)
++ [X] Rewrote ~:mv~ and ~:rm~
 + [X] completion/ivy: fix ~+ivy:find-file~ -- loss of functionality with coerced literal searches (better to escape regex rather than pass -F to rg)
 + [X] completion/ivy: refactor ~def-counsel-action!~ +into a setting (~def-setting!~)+
   Refactored into ~ivy-do-action!~ macro instead
