@@ -173,6 +173,19 @@ See `doom-real-buffer-p' for what 'real' means."
     (eq (current-buffer) buffer)))
 
 ;;;###autoload
+(defun doom-force-kill-buffer (&optional buffer dont-save)
+  "Kill BUFFER globally and ensure all windows previously showing BUFFER have
+switched to a real buffer."
+  (interactive)
+  (let* ((buffer (or buffer (current-buffer)))
+         (windows (get-buffer-window-list buffer nil t)))
+    (kill-buffer buffer)
+    (dolist (win windows)
+      (with-selected-window win
+        (unless (doom-real-buffer-p)
+          (doom/previous-buffer))))))
+
+;;;###autoload
 (defun doom-kill-buffer-and-windows (buffer)
   "Kill the buffer and delete all the windows it's displayed in."
   (unless (one-window-p t)

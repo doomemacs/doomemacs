@@ -66,8 +66,8 @@
 (ex! "todo"        '+ivy:todo)
 
 ;; File operations
-(ex! "mv"          '+evil:file-move)
-(ex! "rm"          '+evil:file-delete)
+(ex! "mv"          '+evil:move-this-file)
+(ex! "rm"          '+evil:delete-this-file)
 
 ;; Sessions/tabs
 (ex! "sclear"      '+workspace/kill-session)
