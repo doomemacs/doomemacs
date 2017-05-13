@@ -1,6 +1,6 @@
 ;; core-ui.el --- draw me like one of your French editors
 
-(defvar doom-ui-fringe-size '3 "Default fringe width")
+(defvar doom-ui-fringe-size '4 "Default fringe width")
 
 (setq-default
  bidi-display-reordering nil ; disable bidirectional text for tiny performance boost
