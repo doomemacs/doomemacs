@@ -100,8 +100,8 @@
 + [ ] tools/upload: add ~+upload/open-remote-file~ command to open current file on the remote (with TRAMP)
 + [ ] Generalize ~doom-visual-bell~ by basing its background off a face
 
-** 2.0.2 [66/67]
-+ [ ] Update screenshots
+** 2.0.2 [67/67]
++ [X] Update screenshots
 + [X] ui/doom: polish git-gutter fringe bitmaps (deleted appears truncated)
 + [X] ui/doom-modeline: fix ~0/0~ display in modeline (leftover anzu state)
 + [X] send-to-REPL workflow: does it still work? (see ~:repl~ & ~+eval/repl-send-region~)
