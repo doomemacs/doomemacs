@@ -40,16 +40,19 @@
         anzu-minimum-input-length 1
         anzu-search-threshold 250)
 
-  (make-variable-buffer-local 'anzu--state)
+  ;; Avoid anzu conflicts across buffers
+  (mapc #'make-variable-buffer-local
+        '(anzu--total-matched anzu--current-position anzu--state
+          anzu--cached-count anzu--cached-positions anzu--last-command
+          anzu--last-isearch-string anzu--overflow-p))
+
   (defun +doom-modeline|reset-anzu ()
-    (setq anzu--state nil))
+    (anzu--reset-status))
   ;; Ensure anzu state is cleared when searches & iedit are done
-  (add-hook! '(kill-buffer-hook find-file-hook) #'+doom-modeline|reset-anzu)
-  (after! evil
-    (add-hook '+evil-esc-hook #'+doom-modeline|reset-anzu t)
-    (advice-add #'evil-ex-search-abort :after #'+doom-modeline|reset-anzu)
-    (after! evil-multiedit
-      (add-hook 'iedit-mode-end-hook #'+doom-modeline|reset-anzu))))
+  (add-hook! :append '(kill-buffer isearch-mode-end +evil-esc-hook)
+    #'+doom-modeline|reset-anzu)
+  (after! iedit
+    (add-hook 'iedit-mode-end-hook #'+doom-modeline|reset-anzu)))
 
 
 ;;; Flash the mode-line on error
@@ -456,10 +459,14 @@ lines are selected, or the NxM dimensions of a block selection."
     (propertize
      (let ((here anzu--current-position)
            (total anzu--total-matched))
-       (pcase anzu--state
-         ('replace-query (format " %d replace " total))
-         ('replace (format " %d/%d " here total))
-         (_ (format " %s/%d%s " here total (if anzu--overflow-p "+" "")))))
+       (cond ((eq anzu--state 'replace-query)
+              (format " %d replace " total))
+             ((eq anzu--state 'replace)
+              (format " %d/%d " here total))
+             (anzu--overflow-p
+              (format " %s+ " total))
+             (t
+              (format " %s/%d " here total))))
      'face (if (active) 'doom-modeline-panel))))
 
 (defsubst +doom-modeline--evil-substitute ()
@@ -517,9 +524,9 @@ with `evil-ex-substitute', and/or 4. The number of active `iedit' regions."
 
 ;;
 (def-modeline-segment! eldoc
-  "Used with `eldoc-eval' to show the eldoc string in the modeline, while using
-`eval-expression'."
-  (and (boundp 'str) str))
+  "Display eldoc documentation in the mode-line while using the minibuffer (e.g.
+`eval-expression')."
+  (bound-and-true-p str))
 
 ;; These bars regulate the height of the mode-line in GUI Emacs.
 (def-modeline-segment! bar

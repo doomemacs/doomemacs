@@ -100,9 +100,9 @@
 + [ ] tools/upload: add ~+upload/open-remote-file~ command to open current file on the remote (with TRAMP)
 + [ ] Generalize ~doom-visual-bell~ by basing its background off a face
 
-** 2.0.2 [64/66]
+** 2.0.2 [65/66]
 + [ ] Update screenshots
-+ [ ] Fix ~0/0~ displaying in modeline (caused by leftover anzu state)
++ [X] ui/doom-modeline: fix ~0/0~ display in modeline (leftover anzu state)
 + [X] send-to-REPL workflow: does it still work? (see ~:repl~ & ~+eval/repl-send-region~)
 + [X] completion/ivy: restore ag searching (for compressed files)
   Now ~:ag~, ~:rg~, ~:agcwd~ and ~:rgcwd~
