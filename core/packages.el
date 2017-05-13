@@ -14,7 +14,7 @@
 ;; core-ui.el
 (package! highlight-indentation)
 (package! highlight-numbers)
-(package! nlinum)
+(package! hlinum)
 (package! rainbow-delimiters)
 (package! visual-fill-column)
 

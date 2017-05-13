@@ -200,7 +200,7 @@ for function signatures or notes. Run again to clear the header line."
   (interactive "r")
   (setq header-line-format
         (when mark-active
-          (concat (propertize (format nlinum-format (line-number-at-pos beg))
+          (concat (propertize (format linum-format (line-number-at-pos beg))
                               'face 'font-lock-comment-face)
                   (let ((content (buffer-substring beg end)))
                     (setq content (replace-regexp-in-string "\n" " " content t t))

@@ -15,9 +15,6 @@
   (set! :company-backend 'web-mode '(company-web-html company-yasnippet))
   (setq web-mode-enable-html-entities-fontification t)
 
-  ;; Fix blank line numbers after unfolding
-  (advice-add #'web-mode-fold-or-unfold :after #'nlinum--flush)
-
   (map! :map web-mode-map
         (:localleader :n "rt" #'web-mode-element-rename)
         "M-/" #'web-mode-comment-or-uncomment

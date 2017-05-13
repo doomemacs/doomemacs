@@ -14,7 +14,7 @@
                +write-mode)
       (setq +write--buffer-mode doom-buffer-mode))
     (text-scale-set (if +write-mode 2 0))
-    (nlinum-mode iarg)
+    (doom/toggle-line-numbers iarg)
     (setq-local visual-fill-column-center-text +write-mode)
     (visual-fill-column-mode arg)
     (visual-line-mode arg)

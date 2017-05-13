@@ -10,10 +10,10 @@
      'fullboth)))
 
 ;;;###autoload
-(defun doom/toggle-line-numbers ()
-  "Toggle `nlinum-mode'."
-  (interactive)
-  (nlinum-mode (if nlinum-mode -1 +1)))
+(defun doom/toggle-line-numbers (&optional arg)
+  "Toggle `linum-mode'."
+  (interactive "P")
+  (linum-mode (or arg (if linum-mode -1 +1))))
 
 ;;;###autoload
 (defun doom/window-zoom ()

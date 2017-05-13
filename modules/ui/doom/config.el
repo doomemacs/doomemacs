@@ -90,10 +90,7 @@
   (doom-themes-neotree-config)
   (setq doom-neotree-enable-variable-pitch t
         doom-neotree-file-icons 'simple
-        doom-neotree-line-spacing 2)
-
-  ;; Add line-highlighting to nlinum
-  (doom-themes-nlinum-config))
+        doom-neotree-line-spacing 2))
 
 
 ;; Flashes the line around the cursor after any motion command that might

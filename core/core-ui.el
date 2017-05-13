@@ -182,36 +182,25 @@ file."
 
 ;; Line highlighting
 (def-package! hl-line ; built-in
+  :init
+  (add-hook! (linum-mode nlinum-mode) #'hl-line-mode)
   :config
   ;; stickiness doesn't play nice with emacs 25+
   (setq hl-line-sticky-flag nil
         global-hl-line-sticky-flag nil))
 
-;; Line number column. A faster (or equivalent, in the worst case) line number
-;; plugin than the built-in `linum'.
-(def-package! nlinum
-  :commands nlinum-mode
-  :preface
-  (defvar linum-format "%3d ")
-  (defvar nlinum-format "%4d ")
+;; Line numbers
+(def-package! linum
+  :commands linum-mode
+  :preface (defvar linum-format "%4d ")
   :init
-  (add-hook!
-    (markdown-mode prog-mode scss-mode web-mode conf-mode groovy-mode
-     nxml-mode snippet-mode php-mode)
-    #'nlinum-mode)
+  (add-hook! (prog-mode text-mode)
+    (unless (eq major-mode 'org-mode)
+      (call-interactively #'linum-mode)))
 
   :config
-  (defun doom*nlinum-flush (&rest _)
-    "Fix nlinum margins after a change in font."
-    (dolist (buffer (doom-visible-buffers))
-      (with-current-buffer buffer
-        (when nlinum-mode (nlinum--flush)))))
-  (advice-add #'set-frame-font :after #'doom*nlinum-flush)
-
-  ;; Optimization: calculate line number column width beforehand
-  (add-hook! nlinum-mode
-    (setq nlinum--width (length (save-excursion (goto-char (point-max))
-                                                (format-mode-line "%l"))))))
+  (require 'hlinum) ; highlight current line number
+  (hlinum-activate))
 
 ;; Helps us distinguish stacked delimiter pairs. Especially in parentheses-drunk
 ;; languages like Lisp.
