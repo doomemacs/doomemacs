@@ -16,6 +16,7 @@
 (package! highlight-numbers)
 (package! hlinum)
 (package! rainbow-delimiters)
+(package! vi-tilde-fringe)
 (package! visual-fill-column)
 
 ;; core-popups.el
