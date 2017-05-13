@@ -85,7 +85,7 @@ is enabled/disabled.'")
           ("*Process List*"         :size 10  :noselect t :autokill t :autoclose t)
           ("*Keys*"                 :size 10  :noselect t)
           ("^\\*ftp "               :size 8   :noselect t :autokill t :noesc t)
-          (compilation-mode         :size 15  :noselect t :noesc t :autokill t)
+          (compilation-mode         :size 15  :noselect t)
           (eww-mode                 :size 30)
           (comint-mode              :noesc t)
           (tabulated-list-mode      :noesc t)))
@@ -393,11 +393,6 @@ the command buffer."
       (doom--switch-from-popup (find-function-search-for-symbol fun 'defface file)))))
 
 
-;; (after! magit
-;;   ;; Don't open files (from magit) within the magit popup
-;;   (advice-add #'magit-display-file-buffer-traditional :around #'doom*popups-save))
-
-
 (after! neotree
   ;; Neotree has its own window/popup management built-in, which is difficult to
   ;; police. For example, switching perspectives will cause neotree to forget it
@@ -421,6 +416,11 @@ the command buffer."
 
 (after! twittering-mode
   (setq twittering-pop-to-buffer-function #'pop-to-buffer))
+
+
+(after! quickrun
+  ;; don't auto-focus quickrun windows, shackle handles that
+  (setq quickrun-focus-p nil))
 
 
 (after! xref
