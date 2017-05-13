@@ -121,8 +121,8 @@
   "Face used for the dirname part of the buffer path."
   :group '+doom-modeline)
 
-(defface doom-modeline-buffer-project
-  '((t (:inherit doom-modeline-buffer-path :bold nil)))
+(defface doom-modeline-buffer-file
+  '((t (:inherit doom-modeline-buffer-path)))
   "Face used for the filename part of the mode-line buffer path."
   :group '+doom-modeline)
 
@@ -238,29 +238,33 @@ active."
                           data))))
         'xpm t :ascent 'center)))))
 
+(defun +doom-modeline--buffer-file ()
+  "TODO"
+  "%b")
+
 (defun +doom-modeline--buffer-path ()
   "Displays the buffer's full path relative to the project root (includes the
 project root). Excludes the file basename. See `doom-buffer-name' for that."
-  (if buffer-file-name
-      (let* ((default-directory (file-name-directory buffer-file-name))
-             (buffer-path (file-relative-name buffer-file-name (doom-project-root))))
-        (when (and buffer-path (not (equal buffer-path ".")))
-          (let ((max-length (truncate (* (window-body-width) 0.4))))
-            (if (> (length buffer-path) max-length)
-                (let ((path (nreverse (split-string buffer-path "/" t)))
-                      (output ""))
-                  (when (and path (equal "" (car path)))
-                    (setq path (cdr path)))
-                  (while (and path (<= (length output) (- max-length 4)))
-                    (setq output (concat (car path) "/" output))
-                    (setq path (cdr path)))
-                  (when path
-                    (setq output (concat "../" output)))
-                  (when (string-suffix-p "/" output)
-                    (setq output (substring output 0 -1)))
-                  output)
-              buffer-path))))
-    "%b"))
+  (when buffer-file-name
+    (let ((buffer-path
+           (file-relative-name (file-name-directory buffer-file-name)
+                               (doom-project-root))))
+      (unless (equal buffer-path "./")
+        (let ((max-length (truncate (* (window-body-width) 0.4))))
+          (if (> (length buffer-path) max-length)
+              (let ((path (nreverse (split-string buffer-path "/" t)))
+                    (output ""))
+                (when (and path (equal "" (car path)))
+                  (setq path (cdr path)))
+                (while (and path (<= (length output) (- max-length 4)))
+                  (setq output (concat (car path) "/" output))
+                  (setq path (cdr path)))
+                (when path
+                  (setq output (concat "../" output)))
+                (unless (string-suffix-p "/" output)
+                  (setq output (concat output "/")))
+                output)
+            buffer-path))))))
 
 
 ;;
@@ -270,7 +274,7 @@ project root). Excludes the file basename. See `doom-buffer-name' for that."
 (def-modeline-segment! buffer-project
   "Displays `doom-project-root'. This is for special buffers like the scratch
 buffer where knowing the current project directory is important."
-  (let ((face (if (active) 'doom-modeline-buffer-project)))
+  (let ((face (if (active) 'doom-modeline-buffer-path)))
     (concat (all-the-icons-octicon
              "file-directory"
              :face face
@@ -285,8 +289,8 @@ buffer where knowing the current project directory is important."
 directory, the file name, and its state (modified, read-only or non-existent)."
   (let ((all-the-icons-scale-factor 1.2)
         (modified-p (buffer-modified-p))
+        (active (active))
         faces)
-    (if (active)   (push 'doom-modeline-buffer-path faces))
     (if modified-p (push 'doom-modeline-buffer-modified faces))
     (concat (if buffer-read-only
                 (concat (all-the-icons-octicon
@@ -306,8 +310,17 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                        :face 'doom-modeline-urgent
                        :v-adjust -0.05)
                       " "))
-            (propertize (+doom-modeline--buffer-path)
-                        'face (if faces `(:inherit ,faces))))))
+            (let ((dir-path  (+doom-modeline--buffer-path))
+                  (faces (or faces (if active 'doom-modeline-buffer-path))))
+              (when dir-path
+                (if faces
+                    (propertize dir-path 'face `(:inherit ,faces))
+                  dir-path)))
+            (let ((file-path (+doom-modeline--buffer-file))
+                  (faces (or faces (if active 'doom-modeline-buffer-file))))
+              (if faces
+                  (propertize file-path 'face `(:inherit ,faces))
+                file-path)))))
 
 ;;
 (def-modeline-segment! buffer-encoding
