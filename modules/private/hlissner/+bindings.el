@@ -61,8 +61,10 @@
  "M-9"  (λ! (+workspace/switch-to 8))
  "M-0"  #'+workspace/switch-to-last
 
- "M-r"  #'+eval/buffer
- "M-b"  #'+eval/build
+ :n "M-r"   #'+eval/buffer
+ :v "M-r"   #'+eval/region
+ :v "M-S-r" #'+eval/region-and-replace
+ :n "M-b"   #'+eval/build
 
  [M-backspace]  #'doom/backward-kill-to-bol-and-indent
  "M-a"          #'mark-whole-buffer
