@@ -59,6 +59,10 @@ is enabled/disabled.'")
         ;;              when their popup is closed. Used by
         ;;              `doom*delete-popup-window'
         ;;  :autoclose  If non-nil, close popup if ESC is pressed from any buffer.
+        ;;  :noclone    If non-nil, don't try to clone the buffer. This helps with
+        ;;              buffers with buttons/links that, when followed, should
+        ;;              open within the popup, rather than outside of it. Like
+        ;;              help buffers or eshell-term buffers.
         shackle-rules
         '(("^ ?\\*doom:.+\\*$"      :size 25  :modeline minimal :regexp t :noesc t)
           ("^ ?\\*doom .+\\*$"      :size 10  :noselect t :regexp t)
@@ -71,7 +75,7 @@ is enabled/disabled.'")
           ("*Apropos*"              :size 0.3)
           ("*Backtrace*"            :size 25  :noselect t)
           ("*Buffer List*"          :size 20  :autokill t)
-          ("*Help*"                 :size 16)
+          ("*Help*"                 :size 16  :autokill t :noclone t)
           ("*Messages*"             :size 10  :noselect t)
           ("*Warnings*"             :size 10  :noselect t :autokill t)
           ("*command-log*"          :size 28  :noselect t :align right)
@@ -194,7 +198,8 @@ and setting `doom-popup-rules' within it. Returns the window."
                          ((bufferp (car args))
                           (shackle-match (car args))))))
         window)
-    (when (get-buffer-window-list (car args) nil t)
+    (when (and (not (plist-get plist :noclone))
+               (get-buffer-window-list (get-buffer (car args)) nil t))
       (setq plist (append (list :autokill t) plist))
       (setcar args (clone-indirect-buffer (buffer-name (car args)) nil t)))
     (unless (setq window (apply orig-fn args))
