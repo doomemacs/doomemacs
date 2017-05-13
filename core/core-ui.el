@@ -79,7 +79,10 @@ local value, whether or not it's permanent-local. Therefore, we cycle
   (when doom-hide-modeline-mode
     (doom-hide-modeline-mode -1)
     (doom-hide-modeline-mode +1)))
-(add-hook 'after-change-major-mode-hook 'doom|hide-modeline-mode-reset)
+(add-hook 'after-change-major-mode-hook #'doom|hide-modeline-mode-reset)
+
+;; no modeline in completion popups
+(add-hook 'completion-list-mode-hook #'doom-hide-modeline-mode)
 
 ;; undo/redo changes to Emacs' window layout
 (defvar winner-dont-bind-my-keys t) ; I'll bind keys myself
