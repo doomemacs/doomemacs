@@ -5,8 +5,9 @@
 + [-] Work-in-progress
 + [X] Complete
 
-** Planned [6/83]
-+ [0/10] Potential plugins
+** Planned [6/87]
++ [0/11] Potential plugins
+  + [-] [[https://github.com/syl20bnr/vi-tilde-fringe][vi-tilde-fringe]]: subtle, vim-ish empty-line indicator
   + [ ] [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]]: client for MS Language Server Protocol, keep an eye on this
   + [ ] lang/javascript: [[https://github.com/codesuki/add-node-modules-path][add-node-modules-path]] (adds node_modules to ~exec-path~)
   + [ ] lang/org: [[https://github.com/Malabarba/latex-extra][orgit]] (org links to magit buffers)
@@ -89,6 +90,9 @@
     + [ ] rss
     + [ ] twitter
     + [ ] present
++ [-] core-ui: switch from nlinum => linum
++ [-] ui/doom-modeline: different faces for buffer path and file name
++ [ ] ui/doom-modeline: extend ~media-info~ segment for other media
 + [ ] completion/ivy: flexible column width for ~+ivy/tasks~
 + [ ] Extend ~evil-escape~ to ~evil-multiedit-insert-state~
 + [ ] ui/doom (nav-flash): don't flash when activating evil-multiedit or in eshell/term buffers
