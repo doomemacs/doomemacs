@@ -204,6 +204,7 @@
              ;; and separators/dividers
              ("^ *\\(-----+\\)$" 1 'org-meta-line)
              ;; custom #hashtags & @at-tags for another level of organization
+             ;; TODO refactor this into a single rule
              ("\\s-\\(#[^ \n]+\\)" 1 'org-tag)
              ("\\s-\\(@[^ \n]+\\)" 1 'org-special-keyword))))
 
@@ -224,20 +225,18 @@
     (sp-local-pair "{" nil))
 
   ;; The standard unicode characters are usually misaligned depending on the
-  ;; font. This bugs me. Personally, the markdown #-marks for headlines are more
-  ;; elegant, so use those.
+  ;; font. This bugs me. Personally, markdown #-marks for headlines are more
+  ;; elegant, so we use those.
   (def-package! org-bullets
     :commands org-bullets-mode
-    :init (add-hook 'org-mode-hook 'org-bullets-mode)
+    :init (add-hook 'org-mode-hook #'org-bullets-mode)
     :config (setq org-bullets-bullet-list '("#")))
 
   ;; Keybinds
   (map! (:map org-mode-map
-          "RET" nil
+          "RET" #'org-return-indent
           "C-j" nil
-          "C-k" nil
-          :i [remap doom/inflate-space-maybe] #'org-self-insert-command
-          :i "RET" #'org-return-indent)
+          "C-k" nil)
 
         (:map evil-org-mode-map
           :n  "RET" #'+org/dwim-at-point
@@ -266,10 +265,10 @@
           :i  [backtab]       #'+org/dedent-or-prev-field
 
           :n  "<tab>" #'+org/toggle-fold
+          :v  "<S-tab>" #'+snippets/expand-on-region
 
           :nv "j"   #'evil-next-visual-line
           :nv "k"   #'evil-previous-visual-line
-          :v  "<S-tab>" #'+snippets/expand-on-region
 
           :i  "M-a" (λ! (evil-visual-state) (org-mark-element))
           :n  "M-a" #'org-mark-element

@@ -41,8 +41,6 @@
 ;; <https://github.com/hlissner/emacs-doom-theme>
 (def-package! doom-themes :demand t
   :config
-  (setq doom-one-linum-height 0.9)
-
   (load-theme +doom-theme t)
 
   ;; Since Fira Mono doesn't have an italicized variant, highlight it instead
@@ -137,4 +135,5 @@
   (fringe-helper-define 'git-gutter-fr:deleted 'bottom
     "X......."
     "XX......"
-    "XXX....."))
+    "XXX....."
+    "XXXX...."))

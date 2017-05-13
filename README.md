@@ -1,4 +1,4 @@
-[![Main screenshot](https://raw.githubusercontent.com/hlissner/.emacs.d/screenshots/main.png?raw=true)][sc]
+[![Main screenshot](/../screenshots/main.png?raw=true)][sc]
 
 [![MIT](https://img.shields.io/badge/license-MIT-green.svg)](./LICENSE)
 [![DOOM v2.0.2](https://img.shields.io/badge/DOOM-v2.0.2-blue.svg)](./init.el)
@@ -11,13 +11,13 @@
 This is an Emacs configuration for a stubborn, melodramatic and shell-dwelling
 vimmer disappointed with the text-editor status quo.
 
-Doom tries to look and act like modern editors (whatever that means to me on any
-given day), espouse vim's modal philosophy as best it can, and strive to surpass
-vim in any way possible. It fits my needs as a software developer, indie game
-developer, scientist and doom enthusiast.
+Doom tries to: look and act like modern editors (whatever that means to me on
+any given day), espouse vim's modal philosophy as best it can and strive to
+surpass vim in any way possible. It fits my needs as a software developer, indie
+game developer, scientist and doom enthusiast.
 
-It was tailored for **MacOS 10.11+** and **Arch Linux 4.7+**, and
-**exclusively** for Emacs 25.1+. I use [vim] everywhere else.
+It was tailored for **Emacs 25.1+** on **MacOS 10.11+** and **Arch Linux 4.7+**.
+I use [vim] everywhere else.
 
 ## Installation
 
@@ -54,26 +54,30 @@ To get a picture of what's in here, check out:
 
 ### Highlights
 
-* A [popup management system](core/core-popups.el) using **[shackle]** for
-  temporary or disposable buffers.
-* Per-project code-style settings with **[editorconfig]**.
-* Workspaces, tab emulation & session persistence with **[persp-mode]**.
-* Project and workspace-restricted buffer navigation and functions.
+* A [popup window management system](core/core-popups.el) using **[shackle]** to
+  minimize mental context switching while dealing with temporary or disposable
+  buffers.
+* Per-project code-style settings with **[editorconfig]**. Let someone else
+  argue about tabs versus spaces (spaces > tabs, btw).
+* Workspaces & session persistence with **[persp-mode]**. This provides tab
+  emulation that vaguely resembles vim tabs.
+* Project & workspace-aware buffer navigation and functions.
 * A vim-centric environment with **[evil-mode]**
   * 2-character motions (ala vim-seek/vim-sneak) with **[evil-snipe]**
   * Sublime Text-esque [multiple cursors][sc-multiedit] with
-    **[evil-multiedit]**
+    **[evil-mc]** and **[evil-multiedit]**
   * Repeat (most) motions with <kbd>SPC</kbd> and
     <kbd>shift</kbd>+<kbd>SPC</kbd> (backwards)
-  * Global <kbd>C-x</kbd> omnicompletion
+  * <kbd>C-x</kbd> omnicompletion in insert mode
 * Fast search utilities:
   * Project and buffer navigation with **[ivy]**
   * File browser sidebar with **[neotree]**
-  * Project search (& replace) with **[counsel-ag]** (and **[wgrep]**)
+  * Project text search powered by [the silver searcher][ag] and [ripgrep][rg]
+    (see `:ag` and `:rg`)
+  * Project search & replace with **[wgrep]**
   * Interactive buffer search with **[swiper]**
-* REPLs & inline/live code evaluation (using **[quickrun]** and
-  **[repl-toggle]**) for many languages including Ruby, Python, PHP, JS, Elisp,
-  Haskell and Lua.
+* REPLs & inline/live code evaluation (using **[quickrun]**) with languages
+  support for Ruby, Python, PHP, JS, Elisp, Haskell, Lua and more.
 * [Minimalistic diffs in the fringe][sc-diffs] with **[git-gutter-fringe]**.
 * A do-what-I-mean jump-to-definition implementation that tries its darnest to
   find the definition of what you're looking at. It tries major-mode commands,
@@ -105,6 +109,7 @@ even elisp tips.
 [doom-theme]: https://github.com/hlissner/emacs-doom-theme
 [dumb-jump]: https://melpa.org/#/dumb-jump
 [editorconfig]: http://editorconfig.org/
+[evil-mc]: https://github.com/gabesoft/evil-mc
 [evil-mode]: https://melpa.org/#/evil
 [evil-multiedit]: https://melpa.org/#/evil-multiedit
 [evil-snipe]: https://melpa.org/#/evil-snipe
@@ -113,7 +118,6 @@ even elisp tips.
 [neotree]: https://melpa.org/#/neotree
 [persp-mode]: https://melpa.org/#/persp-mode
 [quickrun]: https://melpa.org/#/quickrun
-[repl-toggle]: https://melpa.org/#/repl-toggle
 [sc-diffs]: https://github.com/hlissner/.emacs.d/blob/screenshots/git-gutter.png?raw=true
 [sc-multiedit]: https://raw.githubusercontent.com/hlissner/evil-multiedit/screenshots/main.gif?raw=true
 [sc]: https://github.com/hlissner/.emacs.d/tree/screenshots

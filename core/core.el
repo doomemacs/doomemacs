@@ -95,6 +95,7 @@ there are problems.")
  create-lockfiles nil
  history-length 1000
  make-backup-files nil
+ undo-tree-auto-save-history t
  ;; files
  abbrev-file-name             (concat doom-local-dir "abbrev.el")
  auto-save-list-file-name     (concat doom-cache-dir "autosave")

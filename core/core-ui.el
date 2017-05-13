@@ -224,7 +224,7 @@ file."
 ;; For a distractions-free-like UI, that dynamically resizes margets and can
 ;; center a buffer.
 (def-package! visual-fill-column
-  :commands (visual-fill-column-mode)
+  :commands visual-fill-column-mode
   :config
   (setq-default visual-fill-column-center-text nil
                 visual-fill-column-width fill-column))

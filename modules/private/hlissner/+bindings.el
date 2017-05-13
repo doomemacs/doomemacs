@@ -355,6 +355,10 @@
       :i [remap delete-backward-char]   #'doom/deflate-space-maybe
       :i [remap newline]                #'doom/newline-and-indent
 
+      (:after org-mode
+        (:map org-mode-map
+          :i [remap doom/inflate-space-maybe] #'org-self-insert-command))
+
       ;; Make ESC quit all the things
       (:map (minibuffer-local-map
              minibuffer-local-ns-map
@@ -381,6 +385,7 @@
 
       (:map help-map
         "l" #'find-library
+        "L" #'view-lossage
         "h" #'describe-face  ; overwrite `view-hello-file'
         "g" nil))
 

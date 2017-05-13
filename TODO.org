@@ -5,10 +5,10 @@
 + [-] Work-in-progress
 + [X] Complete
 
-** Planned [6/87]
+** Planned [6/73]
 + [0/11] Potential plugins
-  + [-] [[https://github.com/syl20bnr/vi-tilde-fringe][vi-tilde-fringe]]: subtle, vim-ish empty-line indicator
   + [ ] [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]]: client for MS Language Server Protocol, keep an eye on this
+  + [ ] lang/javascript: [[https://github.com/NicolasPetton/Indium][indium]] (IDE), keep an eye on this
   + [ ] lang/javascript: [[https://github.com/codesuki/add-node-modules-path][add-node-modules-path]] (adds node_modules to ~exec-path~)
   + [ ] lang/org: [[https://github.com/Malabarba/latex-extra][orgit]] (org links to magit buffers)
   + [ ] lang/org: [[https://github.com/jkitchin/org-ref][org-ref]] (bibtex/citation helper)
@@ -17,10 +17,8 @@
   + [ ] lang/latex: [[**https://github.com/jsinglet/latex-preview-pane][latex-preview-pane]]
   + [ ] lang/julia: [[ https://github.com/dennisog/julia-shell-mode][julia-shell]] (unsure if better than inferior-julia in julia-mode)
   + [ ] lang/python: [[https://github.com/Wilfred/pyimport][pyimport]]
-  + [ ] An image plugin for zooming images at point
-    + https://github.com/mhayashi1120/Emacs-imagex ?
-+ [0/5] New modules
-  + [ ] tools/regex (PCRE regex editor, perhaps use ~re-builder~ & ~pcre2el~?)
+  + [ ] An image plugin for zooming images at point (maybe [[https://github.com/mhayashi1120/Emacs-imagex][emacs-imagex]])
++ [0/4] New modules
   + [ ] app/finance (maybe settle for org-mode tables?)
   + [ ] app/irc
   + [-] app/crm
@@ -90,23 +88,33 @@
     + [ ] rss
     + [ ] twitter
     + [ ] present
-+ [-] core-ui: switch from nlinum => linum
-+ [-] ui/doom-modeline: different faces for buffer path and file name
+
+** 2.0.3 [4/18]
++ [ ] lang/org: fix janky visual line motions (~evil-next-visual-line~, etc)
++ [ ] lang/org: fix janky cursor positioning when manipulating org-table cells
++ [ ] lang/org: don't move cursor when realigning org tables
++ [ ] lang/org: certain characters/keys--when typed in a table--cause the cell
+      to shrink (smartparens pairs & non-self-insert-command, likely)
++ [ ] core-ui: replace ~winner-mode~ (too unreliable)
++ [ ] Generalize ~doom-visual-bell~ by basing its background off a face
 + [ ] ui/doom-modeline: extend ~media-info~ segment for other media
 + [ ] completion/ivy: flexible column width for ~+ivy/tasks~
-+ [ ] Extend ~evil-escape~ to ~evil-multiedit-insert-state~
-+ [ ] ui/doom (nav-flash): don't flash when activating evil-multiedit or in eshell/term buffers
++ [ ] features/evil: extend ~evil-escape~ to ~evil-multiedit-insert-state~
++ [ ] ui/doom: fix nav-flash on evil-multiedit or in eshell/term buffers
 + [ ] Write ~describe-setting~ for ~def-setting!~ definitions.
-+ [ ] lang/org: fix janky cursor positioning when manipulating table cells
-+ [ ] lang/org: don't move cursor when realigning tables
-+ [ ] lang/org: certain characters/keys, when typed in a table, cause the cell to shrink (smartparens pairs & non-self-insert-command, likely)
 + [ ] Fix invisible buffer-info segment in modeline for terminal Emacs
-+ [ ] tools/upload: add ~+upload/open-remote-file~ command to open current file on the remote (with TRAMP)
-+ [ ] Generalize ~doom-visual-bell~ by basing its background off a face
++ [ ] tools/upload: add ~+upload/open-remote-file~ command to open current file
+      on the remote (with TRAMP)
++ [ ] tools/regex: PCRE regex editor, maybe ~re-builder~ & ~pcre2el~?
++ [X] Fix help-mode links opening new popups #ui
+  Added ~:noclone~ property to popup rules
++ [X] Different faces for buffer path and file name #ui
++ [X] Switch from nlinum => linum #ui
++ [X] [[https://github.com/syl20bnr/vi-tilde-fringe][vi-tilde-fringe]]: subtle, vim-ish empty-line indicator #ui
 
 ** 2.0.2 [67/67]
 + [X] Update screenshots
-+ [X] ui/doom: polish git-gutter fringe bitmaps (deleted appears truncated)
++ [X] ui/doom: polish git-gutter fringe bitmaps (deleted bitmap appears truncated)
 + [X] ui/doom-modeline: fix ~0/0~ display in modeline (leftover anzu state)
 + [X] send-to-REPL workflow: does it still work? (see ~:repl~ & ~+eval/repl-send-region~)
 + [X] completion/ivy: restore ag searching (for compressed files)
