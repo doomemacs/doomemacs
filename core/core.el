@@ -155,7 +155,8 @@ enable multiple minor modes for the same regexp.")
     (require 'core-packages (concat doom-core-dir "core-packages")))
   (eval-when-compile
     (doom-initialize))
-  (setq load-path (eval-when-compile load-path))
+  (setq load-path (eval-when-compile load-path)
+        doom--package-load-path (eval-when-compile doom--package-load-path))
 
   ;;; Let 'er rip
   (require 'core-lib)
