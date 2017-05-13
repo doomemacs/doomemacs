@@ -187,7 +187,15 @@ file."
   :config
   ;; stickiness doesn't play nice with emacs 25+
   (setq hl-line-sticky-flag nil
-        global-hl-line-sticky-flag nil))
+        global-hl-line-sticky-flag nil)
+
+  ;; acts weird with evil visual mode, so disable it temporarily
+  (defun doom|hl-line-off () (hl-line-mode -1))
+  (after! evil
+    (add-hook! 'hl-line-mode-hook
+      (when hl-line-mode
+        (add-hook 'evil-visual-state-entry-hook #'doom|hl-line-off nil t)
+        (add-hook 'evil-visual-state-exit-hook #'hl-line-mode nil t)))))
 
 ;; Line numbers
 (def-package! linum
