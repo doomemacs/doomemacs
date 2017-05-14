@@ -204,7 +204,7 @@ file."
   :init
   (add-hook! (prog-mode text-mode)
     (unless (eq major-mode 'org-mode)
-      (call-interactively #'linum-mode)))
+      (linum-mode +1)))
 
   :config
   (require 'hlinum) ; highlight current line number
