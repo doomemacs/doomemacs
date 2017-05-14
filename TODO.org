@@ -89,7 +89,7 @@
     + [ ] twitter
     + [ ] present
 
-** 2.0.3 [7/20]
+** 2.0.3 [9/22]
 + [ ] lang/org: fix janky visual line motions (~evil-next-visual-line~, etc)
 + [ ] lang/org: fix janky cursor positioning when manipulating org-table cells
 + [ ] lang/org: don't move cursor when realigning org tables
@@ -105,6 +105,8 @@
 + [ ] tools/upload: add ~+upload/open-remote-file~ command to open current file
       on the remote (with TRAMP)
 + [ ] tools/regex: PCRE regex editor, maybe ~re-builder~ & ~pcre2el~?
++ [X] Fix crash in ~doom-update-package~ caused by unreachable dependencies
++ [X] core-popups: remove ~:noclone~: simply don't try to clone unreal buffers
 + [X] completion/ivy: flexible column width for ~+ivy/tasks~
 + [X] lang/emacs-lisp: activate flycheck-mode in non-emacs.d files
 + [X] Fix evil normal-mode keybindings in help-mode popups
