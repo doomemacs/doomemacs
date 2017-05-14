@@ -259,8 +259,8 @@ project root). Excludes the file basename. See `doom-buffer-name' for that."
                 (when (and path (equal "" (car path)))
                   (setq path (cdr path)))
                 (while (and path (<= (length output) (- max-length 4)))
-                  (setq output (concat (car path) "/" output))
-                  (setq path (cdr path)))
+                  (setq output (concat (car path) "/" output)
+                        path (cdr path)))
                 (when path
                   (setq output (concat "../" output)))
                 (unless (string-suffix-p "/" output)

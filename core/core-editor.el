@@ -67,7 +67,7 @@ modes are active and the buffer is read-only.")
       recentf-filename-handlers '(abbreviate-file-name))
 (quiet! (recentf-mode 1))
 
-;; Ediff
+;; Ediff: use existing frame instead of creating a new one
 (add-hook! ediff-load
   (setq ediff-diff-options           "-w"
         ediff-split-window-function  #'split-window-horizontally

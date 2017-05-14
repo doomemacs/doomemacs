@@ -74,7 +74,7 @@
 
 
 (def-package! magit
-  :commands magit-status
+  :commands (magit-status magit-blame)
   :config
   (set! :popup "^\\*magit" :regexp t)
   (map! :map magit-mode-map
