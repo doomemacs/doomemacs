@@ -218,7 +218,9 @@ file."
   :init (add-hook 'lisp-mode-hook #'rainbow-delimiters-mode))
 
 ;; indicators for empty lines past EOF
-(def-package! vi-tilde-fringe :demand t
+(def-package! vi-tilde-fringe
+  :when (display-graphic-p)
+  :demand t
   :config (global-vi-tilde-fringe-mode t))
 
 ;; For a distractions-free-like UI, that dynamically resizes margets and can

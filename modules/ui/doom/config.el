@@ -124,16 +124,17 @@
 
 
 ;; subtle diff indicators in the fringe
-(after! git-gutter-fringe
-  ;; places the git gutter outside the margins.
-  (setq-default fringes-outside-margins t)
-  ;; thin fringe bitmaps
-  (fringe-helper-define 'git-gutter-fr:added '(center repeated)
-    "XXX.....")
-  (fringe-helper-define 'git-gutter-fr:modified '(center repeated)
-    "XXX.....")
-  (fringe-helper-define 'git-gutter-fr:deleted 'bottom
-    "X......."
-    "XX......"
-    "XXX....."
-    "XXXX...."))
+(when (display-graphic-p)
+  (after! git-gutter-fringe
+    ;; places the git gutter outside the margins.
+    (setq-default fringes-outside-margins t)
+    ;; thin fringe bitmaps
+    (fringe-helper-define 'git-gutter-fr:added '(center repeated)
+      "XXX.....")
+    (fringe-helper-define 'git-gutter-fr:modified '(center repeated)
+      "XXX.....")
+    (fringe-helper-define 'git-gutter-fr:deleted 'bottom
+      "X......."
+      "XX......"
+      "XXX....."
+      "XXXX....")))
