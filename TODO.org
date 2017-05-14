@@ -89,7 +89,7 @@
     + [ ] twitter
     + [ ] present
 
-** 2.0.3 [4/18]
+** 2.0.3 [5/19]
 + [ ] lang/org: fix janky visual line motions (~evil-next-visual-line~, etc)
 + [ ] lang/org: fix janky cursor positioning when manipulating org-table cells
 + [ ] lang/org: don't move cursor when realigning org tables
@@ -106,6 +106,7 @@
 + [ ] tools/upload: add ~+upload/open-remote-file~ command to open current file
       on the remote (with TRAMP)
 + [ ] tools/regex: PCRE regex editor, maybe ~re-builder~ & ~pcre2el~?
++ [X] Fix evil normal-mode keybindings in help-mode popups
 + [X] Fix help-mode links opening new popups #ui
   Added ~:noclone~ property to popup rules
 + [X] Different faces for buffer path and file name #ui

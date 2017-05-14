@@ -75,6 +75,8 @@
 
   (dolist (mode '(tabulated-list-mode view-mode comint-mode term-mode calendar-mode Man-mode grep-mode))
     (evil-set-initial-state mode 'emacs))
+  (dolist (mode '(help-mode))
+    (evil-set-initial-state mode 'normal))
 
   ;; make `try-expand-dabbrev' from `hippie-expand' work in mini-buffer
   ;; @see `he-dabbrev-beg', so we need re-define syntax for '/'
