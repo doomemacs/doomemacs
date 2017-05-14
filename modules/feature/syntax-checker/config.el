@@ -7,11 +7,10 @@
 (def-package! flycheck
   :commands (flycheck-mode flycheck-list-errors flycheck-buffer)
   :config
-  (setq flycheck-indication-mode 'right-fringe ; git-gutter is in the left fringe
-        ;; Removed checks on idle/change for snappiness
-        flycheck-check-syntax-automatically '(save mode-enabled)
-        flycheck-highlighting-mode 'symbols
-        flycheck-disabled-checkers '(emacs-lisp-checkdoc make))
+  (setq ;; because git-gutter is in the left fringe
+        flycheck-indication-mode 'right-fringe
+        ;; Emacs feels snappier without checks on idle/change
+        flycheck-check-syntax-automatically '(save mode-enabled))
 
   (set! :popup " ?\\*Flycheck.+\\*" :size 14 :noselect t :regexp t)
 
