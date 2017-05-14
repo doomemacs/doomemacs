@@ -177,10 +177,8 @@ appropriate."
            (quelpa (assq name quelpa-cache))
            (setq quelpa-modified-p t)))
         ('elpa
-         (let ((desc    (cadr (assq name package-alist)))
-               (archive (cadr (assq name package-archive-contents))))
-           (package-install-from-archive archive)
-           (delete-directory (package-desc-dir desc) t))))
+         (doom-delete-package name)
+         (doom-install-package name)))
       (when quelpa-modified-p
         (quelpa-save-cache)))
     (version-list-=
