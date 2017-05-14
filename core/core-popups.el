@@ -115,8 +115,7 @@ for :align t on every rule."
 ;; Tell `window-state-get' and `current-window-configuration' to recognize these
 ;; custom parameters. Helpful for `persp-mode' and persisting window configs
 ;; that have popups in them.
-(push (cons 'no-other-window 'writable) window-persistent-parameters)
-(dolist (param doom-popup-window-parameters)
+(dolist (param (cons 'popup doom-popup-window-parameters))
   (push (cons param 'writable) window-persistent-parameters))
 
 (defvar doom-popup-mode-map

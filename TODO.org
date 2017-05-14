@@ -105,6 +105,7 @@
 + [ ] tools/upload: add ~+upload/open-remote-file~ command to open current file
       on the remote (with TRAMP)
 + [ ] tools/regex: PCRE regex editor, maybe ~re-builder~ & ~pcre2el~?
++ [X] core-popups: properly persist ~popup~ window parameter between sessions
 + [X] Fix crash in ~doom-update-package~ caused by unreachable dependencies
 + [X] core-popups: remove ~:noclone~: simply don't try to clone unreal buffers
 + [X] completion/ivy: flexible column width for ~+ivy/tasks~
