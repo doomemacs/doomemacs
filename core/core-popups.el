@@ -273,7 +273,6 @@ properties."
     (when (doom-popup-p)
       (set-window-dedicated-p nil nil)
       (add-transient-hook! eshell-query-kill-processes :after
-        (message "ding -- %s (%s)" (selected-window) (buffer-name))
         (set-window-dedicated-p nil t)))
     (apply orig-fn args))
   (advice-add #'eshell-exec-visual :around #'doom*eshell-undedicate-popup))
