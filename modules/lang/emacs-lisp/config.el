@@ -29,6 +29,10 @@
     (auto-compile-on-save-mode +1)
     (rainbow-delimiters-mode +1)
 
+    (when (and buffer-file-name
+               (not (file-in-directory-p buffer-file-name doom-emacs-dir)))
+      (flycheck-mode +1))
+
     (font-lock-add-keywords
      nil `(;; Display "lambda" as λ
            ("(\\(lambda\\)" (1 (ignore (compose-region (match-beginning 1) (match-end 1) ?λ #'decompose-region))))
