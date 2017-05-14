@@ -2,8 +2,12 @@ language: emacs-lisp
 sudo: false
 before_install:
   - curl -fsSkL https://gist.github.com/rejeep/ebcd57c3af83b049833b/raw > x.sh && source ./x.sh
-  - evm install emacs-25.1-travis --use --skip
+  - evm install $EVM_EMACS --use --skip
   - cp init.example.el init.el
   - YES=1 make install
+env:
+  - EVM_EMACS=emacs-25.1-travis
+  - EVM_EMACS=emacs-25.2-travis
 script:
-  - make test
+  - emacs --version
+  - DEBUG=1 make test
