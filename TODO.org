@@ -89,7 +89,7 @@
     + [ ] twitter
     + [ ] present
 
-** 2.0.3 [6/20]
+** 2.0.3 [7/20]
 + [ ] lang/org: fix janky visual line motions (~evil-next-visual-line~, etc)
 + [ ] lang/org: fix janky cursor positioning when manipulating org-table cells
 + [ ] lang/org: don't move cursor when realigning org tables
@@ -98,7 +98,6 @@
 + [ ] core-ui: replace ~winner-mode~ (too unreliable)
 + [ ] Generalize ~doom-visual-bell~ by basing its background off a face
 + [ ] ui/doom-modeline: extend ~media-info~ segment for other media
-+ [ ] completion/ivy: flexible column width for ~+ivy/tasks~
 + [ ] features/evil: extend ~evil-escape~ to ~evil-multiedit-insert-state~
 + [ ] ui/doom: fix nav-flash on evil-multiedit or in eshell/term buffers
 + [ ] Write ~describe-setting~ for ~def-setting!~ definitions.
@@ -106,6 +105,7 @@
 + [ ] tools/upload: add ~+upload/open-remote-file~ command to open current file
       on the remote (with TRAMP)
 + [ ] tools/regex: PCRE regex editor, maybe ~re-builder~ & ~pcre2el~?
++ [X] completion/ivy: flexible column width for ~+ivy/tasks~
 + [X] lang/emacs-lisp: activate flycheck-mode in non-emacs.d files
 + [X] Fix evil normal-mode keybindings in help-mode popups
 + [X] Fix help-mode links opening new popups #ui

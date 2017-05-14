@@ -76,49 +76,64 @@ limit to buffers in the current workspace."
                                 (string-match-p "\\`[\n[:blank:]]+\\'" it)))
                           (cl-remove-duplicates kill-ring :test 'equal))))
 
-(defun +ivy--tasks-candidates ()
+;; TODO refactor ivy task candidate functions (messy!)
+(defun +ivy--tasks-candidates (tasks)
   "Generate a list of task tags (specified by `+ivy-task-tags') for
 `+ivy/tasks'."
-  (let ((default-directory (if arg default-directory (doom-project-root)))
-        case-fold-search)
+  (let* ((max-type-width (seq-max (mapcar #'length (mapcar #'car +ivy-task-tags))))
+         (max-desc-width (seq-max (mapcar #'length (mapcar #'cadr tasks))))
+         (max-width (max 25 (min (- (window-width) (+ max-type-width 1))
+                                 (seq-max (mapcar #'length (mapcar #'cadr tasks))))))
+         (fmt (format "%%-%ds %%-%ds%%s%%s:%%s" max-type-width max-width)))
+    (mapcar (lambda (task)
+              (let ((file (nth 2 task))
+                    (line (nth 3 task))
+                    (type (nth 0 task))
+                    (desc (nth 1 task)))
+                (format fmt
+                        (propertize type 'face (cdr (assoc type +ivy-task-tags)))
+                        (substring desc 0 (min max-width (length desc)))
+                        (propertize " | " 'face 'font-lock-comment-face)
+                        (propertize (abbreviate-file-name file) 'face 'font-lock-keyword-face)
+                        (propertize line 'face 'font-lock-constant-face))))
+            tasks)))
+
+(defun +ivy--tasks (target)
+  (let (case-fold-search)
     (mapcar (lambda (x)
               (save-match-data
                 (string-match (concat "^\\([^:]+\\):\\([0-9]+\\):.+\\("
                                       (string-join (mapcar #'car +ivy-task-tags) "\\|")
                                       "\\):?\\s-*\\(.+\\)")
                               x)
-                (let* (case-fold-search
-                       (file (match-string 1 x))
-                       (line (match-string 2 x))
-                       (type (match-string 3 x))
-                       (desc (match-string 4 x)))
-                  (format "%-5s %-90s %s:%s"
-                          (propertize type 'face (cdr (assoc type +ivy-task-tags)))
-                          (substring desc 0 (min 90 (length desc)))
-                          (propertize file 'face 'font-lock-keyword-face)
-                          (propertize line 'face 'font-lock-constant-face)))))
-            (split-string (shell-command-to-string
-                           (format "rg -H -S --no-heading --line-number %s %s"
-                                   (concat " -- "
-                                           (shell-quote-argument (concat "\\s("
-                                                                         (string-join (mapcar #'car +ivy-task-tags) "|")
-                                                                         ")([\\s:]|\\([^)]+\\):?)")))
-                                   (if arg buffer-file-name ".")))
-                          "\n" t))))
+                (let ((file (match-string 1 x))
+                      (line (match-string 2 x))
+                      (type (match-string 3 x))
+                      (desc (match-string 4 x)))
+                  (list type desc file line))))
+            (split-string
+             (shell-command-to-string
+              (format "rg -H -S --no-heading --line-number %s %s"
+                      (concat " -- "
+                              (shell-quote-argument
+                               (concat "\\s("
+                                       (string-join (mapcar #'car +ivy-task-tags) "|")
+                                       ")([\\s:]|\\([^)]+\\):?)")))
+                      target))
+             "\n" t))))
 
 (defun +ivy--tasks-open-action (x)
   "Jump to the file and line of the current task."
-  (let* ((spec (split-string (substring x 97) ":"))
-         (type (car (split-string x " ")))
-         (file (car spec))
-         (line (string-to-number (cadr spec))))
-    (with-ivy-window
-      (find-file (expand-file-name file (doom-project-root)))
-      (goto-char (point-min))
-      (forward-line (1- line))
-      (search-forward type (line-end-position) t)
-      (backward-char (length type))
-      (recenter))))
+  (let ((location (cadr (split-string x " | ")))
+        (type (car (split-string x " "))))
+    (destructuring-bind (file line) (split-string location ":")
+      (with-ivy-window
+        (find-file (expand-file-name file (doom-project-root)))
+        (goto-char (point-min))
+        (forward-line (1- (string-to-number line)))
+        (search-forward type (line-end-position) t)
+        (backward-char (length type))
+        (recenter)))))
 
 ;;;###autoload
 (defun +ivy/tasks (&optional arg)
@@ -129,7 +144,8 @@ search current file. See `+ivy-task-tags' to customize what this searches for."
                     (if arg
                         (concat "in: " (file-relative-name buffer-file-name))
                       "project"))
-            (+ivy--tasks-candidates)
+            (+ivy--tasks-candidates
+             (+ivy--tasks (if arg buffer-file-name (doom-project-root))))
             :action #'+ivy--tasks-open-action
             :caller '+ivy/tasks))
 
