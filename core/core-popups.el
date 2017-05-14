@@ -230,7 +230,7 @@ properties."
     (when (doom-popup-p window)
       (when doom-popup-remember-history
         (setq doom-popup-history (list (doom--popup-data window))))
-      (let ((autokill-p (window-parameter window :autokill)))
+      (let ((autokill-p (plist-get doom-popup-rules :autokill)))
         (with-selected-window window
           (doom-popup-mode -1)
           (when autokill-p

@@ -104,7 +104,7 @@ only close popups that have an :autoclose property in their rule (see
   "Close the current popup *if* its window doesn't have a noesc parameter."
   (interactive)
   (let ((window (selected-window)))
-    (if (window-parameter window :noesc)
+    (if (plist-get doom-popup-rules :noesc)
         (call-interactively (if (featurep 'evil)
                                 #'evil-force-normal-state
                               #'keyboard-escape-quit))
