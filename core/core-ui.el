@@ -27,7 +27,7 @@
  show-paren-highlight-openparen t
  show-paren-when-point-inside-paren t
  split-width-threshold nil      ; favor horizontal splits
- uniquify-buffer-name-style nil
+ uniquify-buffer-name-style 'forward
  use-dialog-box nil             ; always avoid GUI
  visible-cursor nil
  x-stretch-cursor nil
