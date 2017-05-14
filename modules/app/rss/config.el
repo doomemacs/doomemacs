@@ -34,25 +34,28 @@
   (push (lambda (buf) (string-match-p "^\\*elfeed" (buffer-name buf)))
         doom-real-buffer-functions)
 
-  (add-hook! 'elfeed-show-mode-hook
-    #'(doom-hide-modeline-mode +rss|elfeed-wrap))
+  ;; Enhance readability of a post
+  (add-hook 'elfeed-show-mode-hook #'+rss|elfeed-wrap)
 
-  (after! doom-themes
-    (add-hook 'elfeed-show-mode-hook #'doom-buffer-mode))
+  (map! (:map (elfeed-search-mode-map elfeed-show-mode-map)
+          [remap doom/kill-this-buffer] "q"
+          [remap kill-this-buffer]      "q"
+          [remap kill-buffer]           "q")
 
-  (map! :map elfeed-search-mode-map
-        :n "r"   #'elfeed-update
-        :n "s"   #'elfeed-search-live-filter
-        :n "RET" #'elfeed-search-show-entry
-        :n "q"   #'+rss/quit
+        (:map elfeed-search-mode-map
+          :n "q"   #'+rss/quit
+          :n "r"   #'elfeed-update
+          :n "s"   #'elfeed-search-live-filter
+          :n "RET" #'elfeed-search-show-entry)
 
-        :map elfeed-show-mode-map
-        [remap doom/kill-this-buffer] #'elfeed-kill-buffer
-        :n "q"  #'elfeed-kill-buffer
-        :m "j"  #'evil-next-visual-line
-        :m "k"  #'evil-previous-visual-line
-        :n "]b" #'+rss/next
-        :n "[b" #'+rss/previous))
+        (:map elfeed-show-mode-map
+          :n "q"  #'elfeed-kill-buffer
+          :m "j"  #'evil-next-visual-line
+          :m "k"  #'evil-previous-visual-line
+          [remap doom/next-buffer]      #'+rss/next
+          [remap doom/previous-buffer]  #'+rss/previous
+          [remap next-buffer]           #'+rss/next
+          [remap previous-buffer]       #'+rss/previous)))
 
 
 (def-package! elfeed-org

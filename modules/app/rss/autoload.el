@@ -40,8 +40,8 @@
     :align +rss-split-direction
     :size 0.75
     :select t
-    :noesc t
-    :autokill t))
+    :autokill t
+    :autoclose t))
 
 ;;;###autoload
 (defun +rss/open (entry)
