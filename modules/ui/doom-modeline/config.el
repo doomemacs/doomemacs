@@ -249,7 +249,7 @@ active."
 project root). Excludes the file basename. See `doom-buffer-name' for that."
   (when buffer-file-name
     (let ((buffer-path
-           (file-relative-name (file-name-directory buffer-file-name)
+           (file-relative-name (file-name-directory buffer-file-truename)
                                (doom-project-root))))
       (unless (equal buffer-path "./")
         (let ((max-length (truncate (* (window-body-width) 0.4))))
