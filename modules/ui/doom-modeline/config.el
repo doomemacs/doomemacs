@@ -239,8 +239,10 @@ active."
         'xpm t :ascent 'center)))))
 
 (defun +doom-modeline--buffer-file ()
-  "TODO"
-  "%b")
+  "Display the base of the current buffer's filename."
+  (if buffer-file-name
+      (file-name-nondirectory buffer-file-truename)
+    "%b"))
 
 (defun +doom-modeline--buffer-path ()
   "Displays the buffer's full path relative to the project root (includes the
