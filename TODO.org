@@ -89,7 +89,7 @@
     + [ ] twitter
     + [ ] present
 
-** 2.0.3 [9/25]
+** 2.0.3 [16/28]
 + [ ] tools/upload: add ~+upload/open-remote-file~ command to open current file
       on the remote (with TRAMP)
 + [ ] lang/org: fix janky visual line motions (~evil-next-visual-line~, etc)
@@ -100,14 +100,17 @@
 + [ ] core-ui: replace (or fix) ~winner-mode~ (too unreliable)
 + [ ] Generalize ~doom-visual-bell~ by basing its background off a face
 + [ ] ui/doom-modeline: extend ~media-info~ segment for other media
-+ [ ] feature/evil: extend ~evil-escape~ to ~evil-multiedit-insert-state~
 + [ ] Write ~describe-setting~ for ~def-setting!~ definitions.
 + [ ] Fix invisible buffer-info segment in modeline for terminal Emacs
-+ [-] feature/evil: fix evil-multiedit M-d bindings
-+ [-] Load ~custom-file~
 + [-] ui/doom: fix nav-flash on evil-multiedit or in eshell/term buffers
 + [-] New module :: tools/regex: PCRE regex editor
-+ [-] Fix crash in ~doom-update-package~ caused by unreachable dependencies
++ [X] feature/evil: extend ~evil-escape~ +to ~evil-multiedit-insert-state~+
++ [X] feature/evil: new code folding system
++ [X] Load ~custom-file~
++ [X] feature/evil: fix evil-multiedit M-d bindings
++ [X] map!: fix ~:after~ and ~:map*~ properties
++ [X] Fix crash in ~doom-update-package~ caused by unreachable dependencies
++ [X] ui/doom: improve nav-flash integration
 + [X] core-popups: properly persist ~popup~ window parameter between sessions
 + [X] core-popups: remove ~:noclone~: simply don't try to clone unreal buffers
 + [X] completion/ivy: flexible column width for ~+ivy/tasks~

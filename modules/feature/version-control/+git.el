@@ -36,7 +36,7 @@
 
   ;; Sometimes I forget `git-timemachine' is enabled in a buffer, so instead of
   ;; showing revision details in the minibuffer, show them in
-  ;; `header-line-format', which is always visible.
+  ;; `header-line-format', which has better visibility.
   (setq git-timemachine-show-minibuffer-details nil)
 
   (defun +vcs|toggle-header-line ()

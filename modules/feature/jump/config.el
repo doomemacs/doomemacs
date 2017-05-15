@@ -13,15 +13,16 @@
 ;;    functionality. Warning: xref may change drastically in future updates.
 ;; 3. Simple ways to look up the symbol at point in external resources, like
 ;;    stackoverflow, devdocs.io or google. See `+jump/online' (TODO Test me!)
-;; 4. TODO Automatic and transparent integration with cscope databases and ctags
-;;    files. Databases are optionally isolated to the Emacs environment.
+;; 4. TODO Automatic & transparent integration with cscope dbs + ctags.
+;;    Databases are optionally isolated to the Emacs environment.
 
-(defvar +lookup-search-url-alist
-  '(("Google"        . "https://google.com/?q=%s")
+(defvar +jump-search-url-alist
+  '(("Google"        . "https://google.com/search?q=%s")
     ("DuckDuckGo"    . "https://duckduckgo.com/?q=%s")
     ("DevDocs.io"    . "http://devdocs.io/#q=%s")
     ("StackOverflow" . "https://stackoverflow.com/search?q=%s"))
-  "An alist that maps online resources to their search url.")
+  "An alist that maps online resources to their search url. Used by
+`+jump/online'.")
 
 (set! :popup "*xref*" :size 10 :noselect t :autokill t :autoclose t)
 
