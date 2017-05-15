@@ -89,30 +89,32 @@
     + [ ] twitter
     + [ ] present
 
-** 2.0.3 [9/22]
+** 2.0.3 [9/25]
++ [ ] tools/upload: add ~+upload/open-remote-file~ command to open current file
+      on the remote (with TRAMP)
 + [ ] lang/org: fix janky visual line motions (~evil-next-visual-line~, etc)
 + [ ] lang/org: fix janky cursor positioning when manipulating org-table cells
 + [ ] lang/org: don't move cursor when realigning org tables
 + [ ] lang/org: certain characters/keys--when typed in a table--cause the cell
       to shrink (smartparens pairs & non-self-insert-command, likely)
-+ [ ] core-ui: replace ~winner-mode~ (too unreliable)
++ [ ] core-ui: replace (or fix) ~winner-mode~ (too unreliable)
 + [ ] Generalize ~doom-visual-bell~ by basing its background off a face
 + [ ] ui/doom-modeline: extend ~media-info~ segment for other media
-+ [ ] features/evil: extend ~evil-escape~ to ~evil-multiedit-insert-state~
-+ [ ] ui/doom: fix nav-flash on evil-multiedit or in eshell/term buffers
++ [ ] feature/evil: extend ~evil-escape~ to ~evil-multiedit-insert-state~
 + [ ] Write ~describe-setting~ for ~def-setting!~ definitions.
 + [ ] Fix invisible buffer-info segment in modeline for terminal Emacs
-+ [ ] tools/upload: add ~+upload/open-remote-file~ command to open current file
-      on the remote (with TRAMP)
-+ [ ] tools/regex: PCRE regex editor, maybe ~re-builder~ & ~pcre2el~?
++ [-] feature/evil: fix evil-multiedit M-d bindings
++ [-] Load ~custom-file~
++ [-] ui/doom: fix nav-flash on evil-multiedit or in eshell/term buffers
++ [-] New module :: tools/regex: PCRE regex editor
++ [-] Fix crash in ~doom-update-package~ caused by unreachable dependencies
 + [X] core-popups: properly persist ~popup~ window parameter between sessions
-+ [X] Fix crash in ~doom-update-package~ caused by unreachable dependencies
 + [X] core-popups: remove ~:noclone~: simply don't try to clone unreal buffers
 + [X] completion/ivy: flexible column width for ~+ivy/tasks~
 + [X] lang/emacs-lisp: activate flycheck-mode in non-emacs.d files
 + [X] Fix evil normal-mode keybindings in help-mode popups
 + [X] Fix help-mode links opening new popups #ui
-  Added ~:noclone~ property to popup rules
+      Added ~:noclone~ property to popup rules
 + [X] Different faces for buffer path and file name #ui
 + [X] Switch from nlinum => linum #ui
 + [X] [[https://github.com/syl20bnr/vi-tilde-fringe][vi-tilde-fringe]]: subtle, vim-ish empty-line indicator #ui
