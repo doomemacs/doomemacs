@@ -1,5 +1,7 @@
 ;;; ui/doom-modeline/config.el
 
+(eval-when-compile (require 'subr-x))
+
 (line-number-mode -1)
 
 ;; all-the-icons doesn't work in the terminal, so we "disable" it.
@@ -241,7 +243,7 @@ active."
 (defun +doom-modeline--buffer-file ()
   "Display the base of the current buffer's filename."
   (if buffer-file-name
-      (file-name-nondirectory buffer-file-truename)
+      (file-name-nondirectory (or buffer-file-truename (file-truename buffer-file-name)))
     "%b"))
 
 (defun +doom-modeline--buffer-path ()
@@ -249,7 +251,8 @@ active."
 project root). Excludes the file basename. See `doom-buffer-name' for that."
   (when buffer-file-name
     (let ((buffer-path
-           (file-relative-name (file-name-directory buffer-file-truename)
+           (file-relative-name (file-name-directory
+                                (or buffer-file-truename (file-truename buffer-file-name)))
                                (doom-project-root))))
       (unless (equal buffer-path "./")
         (let ((max-length (truncate (* (window-body-width) 0.4))))
@@ -289,11 +292,10 @@ buffer where knowing the current project directory is important."
 (def-modeline-segment! buffer-info
   "Combined information about the current buffer, including the current working
 directory, the file name, and its state (modified, read-only or non-existent)."
-  (let ((all-the-icons-scale-factor 1.2)
-        (modified-p (buffer-modified-p))
-        (active (active))
-        faces)
-    (if modified-p (push 'doom-modeline-buffer-modified faces))
+  (let* ((all-the-icons-scale-factor 1.2)
+         (modified-p (buffer-modified-p))
+         (active (active))
+         (faces (if modified-p 'doom-modeline-buffer-modified)))
     (concat (if buffer-read-only
                 (concat (all-the-icons-octicon
                          "lock"
@@ -312,15 +314,12 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                        :face 'doom-modeline-urgent
                        :v-adjust -0.05)
                       " "))
-            (let ((dir-path  (+doom-modeline--buffer-path))
-                  (faces (or faces (if active 'doom-modeline-buffer-path))))
-              (when dir-path
-                (if faces
-                    (propertize dir-path 'face `(:inherit ,faces))
-                  dir-path)))
-            (let ((file-path (+doom-modeline--buffer-file))
-                  (faces (or faces (if active 'doom-modeline-buffer-file))))
-              (if faces
+            (when-let (dir-path (+doom-modeline--buffer-path))
+              (if-let (faces (or faces (if active 'doom-modeline-buffer-path)))
+                  (propertize dir-path 'face `(:inherit ,faces))
+                dir-path))
+            (when-let (file-path (+doom-modeline--buffer-file))
+              (if-let (faces (or faces (if active 'doom-modeline-buffer-file)))
                   (propertize file-path 'face `(:inherit ,faces))
                 file-path)))))
 
