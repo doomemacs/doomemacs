@@ -46,9 +46,6 @@
  :e "C-j" #'evil-window-down
  :e "C-k" #'evil-window-up
  :e "C-l" #'evil-window-right
- ;; Temporary escape into emacs mode
- :e [C-escape] #'evil-normal-state
- :n [C-escape] #'evil-emacs-state
  ;; Switching tabs (workspaces)
  "M-1"  (λ! (+workspace/switch-to 0))
  "M-2"  (λ! (+workspace/switch-to 1))
