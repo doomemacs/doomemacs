@@ -110,7 +110,7 @@ there are problems.")
 
 ;; move custom defs out of init.el
 (setq custom-file (concat doom-etc-dir "custom.el"))
-(load custom-file nil t)
+(load custom-file t t)
 
 ;; be quiet at startup
 (advice-add #'display-startup-echo-area-message :override #'ignore)
