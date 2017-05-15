@@ -43,19 +43,17 @@
   :config
   (load-theme +doom-theme t)
 
+  ;; Add file icons to doom-neotree
+  (doom-themes-neotree-config)
+  (setq doom-neotree-enable-variable-pitch t
+        doom-neotree-file-icons 'simple
+        doom-neotree-line-spacing 2)
+
   ;; Since Fira Mono doesn't have an italicized variant, highlight it instead
   (set-face-attribute 'italic nil
                       :weight 'ultra-light
                       :foreground "#ffffff"
                       :background (face-background 'doom-hl-line))
-
-  (defface +doom-folded-face
-    `((((background dark))
-       (:inherit font-lock-comment-face :background ,(doom-color 'black)))
-      (((background light))
-       (:inherit font-lock-comment-face :background ,(doom-color 'light-grey))))
-    "Face to hightlight `hideshow' overlays."
-    :group 'doom)
 
   ;; Dark frames by default
   (when (display-graphic-p)
@@ -76,19 +74,8 @@
       (doom-buffer-mode -1)))
   (add-hook 'doom-popup-mode-hook #'+doom|buffer-mode-off)
 
-  (when (featurep! :feature workspaces)
-    (defun +doom|restore-bright-buffers (&rest _)
-      "Restore `doom-buffer-mode' in buffers when `persp-mode' loads a session."
-      (dolist (buf (persp-buffer-list))
-        (with-current-buffer buf
-          (+doom|buffer-mode-on))))
-    (add-hook '+workspaces-load-session-hook #'+doom|restore-bright-buffers))
-
-  ;; Add file icons to doom-neotree
-  (doom-themes-neotree-config)
-  (setq doom-neotree-enable-variable-pitch t
-        doom-neotree-file-icons 'simple
-        doom-neotree-line-spacing 2))
+  ;;
+  (add-hook '+workspaces-load-session-hook #'+doom|restore-bright-buffers))
 
 
 ;; Flashes the line around the cursor after any motion command that might
@@ -124,6 +111,14 @@
 
 
 (after! hideshow
+  (defface +doom-folded-face
+    `((((background dark))
+       (:inherit font-lock-comment-face :background ,(doom-color 'black)))
+      (((background light))
+       (:inherit font-lock-comment-face :background ,(doom-color 'light-grey))))
+    "Face to hightlight `hideshow' overlays."
+    :group 'doom)
+
   ;; Nicer code-folding overlays
   (setq hs-set-up-overlay
         (lambda (ov)
