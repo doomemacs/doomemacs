@@ -170,18 +170,14 @@ appropriate."
   (unless (package-installed-p name)
     (user-error "%s isn't installed" name))
   (when (doom-package-outdated-p name)
-    (let ((inhibit-message (not doom-debug-mode))
-          quelpa-modified-p)
+    (let ((inhibit-message (not doom-debug-mode)))
       (pcase (doom-package-backend name)
         ('quelpa
          (let ((quelpa-upgrade-p t))
-           (quelpa (assq name quelpa-cache))
-           (setq quelpa-modified-p t)))
+           (quelpa (assq name quelpa-cache))))
         ('elpa
          (doom-delete-package name t)
-         (doom-install-package name)))
-      (when quelpa-modified-p
-        (quelpa-save-cache)))
+         (doom-install-package name))))
     (version-list-=
      (package-desc-version (cadr (assq name package-alist)))
      (package-desc-version (cadr (assq name package-archive-contents))))))
@@ -191,9 +187,8 @@ appropriate."
   (doom-initialize)
   (unless (package-installed-p name)
     (user-error "%s isn't installed" name))
-  (let ((desc (cadr (assq name package-alist)))
-        (inhibit-message t))
-    (package-delete desc force-p))
+  (let ((inhibit-message (not doom-debug-mode)))
+    (package-delete (cadr (assq name package-alist)) force-p))
   (not (package-installed-p name)))
 
 
