@@ -85,11 +85,8 @@
 
 
   ;; --- keybind fixes ----------------------
-  (map! :n "zr"  #'+evil:open-folds-recursively
-        :n "zm"  #'+evil:close-folds-recursively
-
-        ;; undo/redo for regions
-        :v "u"   #'undo-tree-undo
+  (map! ;; undo/redo for visual regions
+        :v "C-u" #'undo-tree-undo
         :v "C-r" #'undo-tree-redo)
 
 
