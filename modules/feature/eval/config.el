@@ -92,7 +92,10 @@ invokes the repl. Takes the same arguements as `rtog/add-repl'."
   (add-hook! 'quickrun--mode-hook (linum-mode +1))
 
   :config
-  (set! :popup "*quickrun*" :size 10 :noesc t :autokill t :autoclose t)
+  (set! :popup
+    '("*quickrun*"       :size 10 :noesc t :autokill t :autoclose t)
+    '("*eval*"           :size 12 :noselect t :autokill t :autoclose t)
+    '("*Pp Eval Output*" :size 12 :noselect t :autokill t :autoclose t))
 
   (defun +eval*quickrun-auto-close (&rest _)
     "Allows us to silently re-run quickrun from within the quickrun buffer."

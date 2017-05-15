@@ -46,46 +46,41 @@ is enabled/disabled.'")
 (def-package! shackle :demand t
   :init
   (setq shackle-default-alignment 'below
+        shackle-default-size 10
         ;;; Baseline popup-window rules
         ;; Several custom properties have been added that are not part of
         ;; shackle and are used by doom's popup system. They are:
         ;;
-        ;;  :noesc      Determines if pressing ESC *inside* the popup should
-        ;;              close it. Used by `doom/popup-close-maybe'.
+        ;;  :noesc      If non-nil, pressing ESC *inside* the popup will close it.
+        ;;              Used by `doom/popup-close-maybe'.
         ;;  :modeline   By default, mode-lines are hidden in popups unless this
         ;;              is non-nil. If it is a symbol, it'll use `doom-modeline'
-        ;;              to fetch a modeline config. Set in `doom-popup-mode'.
-        ;;  :autokill   If non-nil, the buffer in these popups will be killed
-        ;;              when their popup is closed. Used by
-        ;;              `doom*delete-popup-window'. NOTE This will render
-        ;;              `doom/popup-restore' unusable for this buffer.
-        ;;  :autoclose  If non-nil, close popup if ESC is pressed from any buffer.
+        ;;              to fetch a modeline config (in `doom-popup-mode').
+        ;;  :autokill   If non-nil, the popup's buffer will be killed when the
+        ;;              popup is closed. Used by `doom*delete-popup-window'.
+        ;;              NOTE `doom/popup-restore' can't restore non-file popups
+        ;;              that have an :autokill property.
+        ;;  :autoclose  If non-nil, close popup if ESC is pressed from outside
+        ;;              the popup window.
         shackle-rules
-        '(("^ ?\\*doom:.+\\*$"      :size 25  :modeline minimal :regexp t :noesc t)
-          ("^ ?\\*doom .+\\*$"      :size 10  :noselect t :regexp t)
-          ("^ *doom message*"       :size 10  :noselect t :autokill t)
-          ("*Metahelp*"             :size 0.5 :autokill t :autoclose t)
-          ("^\\*.+-Profiler-Report .+\\*$" :size 0.3 :regexp t :autokill t)
-          ("*minor-modes*"          :size 0.5 :noselect t :autokill t)
-          ("*eval*"                 :size 16  :noselect t :autokill t :autoclose t)
-          ("*Pp Eval Output*"       :size 16  :noselect t :autokill t :autoclose t)
-          ("*Apropos*"              :size 0.3)
-          ("*Backtrace*"            :size 25  :noselect t)
-          ("*Buffer List*"          :size 20  :autokill t)
-          ("*Help*"                 :size 16)
-          ("*Messages*"             :size 10  :noselect t)
-          ("*Warnings*"             :size 10  :noselect t :autokill t)
-          ("*command-log*"          :size 28  :noselect t :align right)
-          ("*Shell Command Output*" :size 20  :noselect t :autokill t)
-          ("*Occur*"                :size 25  :noselect t :autokill t)
-          ("*Error*"                :size 10  :noselect t :autokill t :autoclose t)
-          ("*Process List*"         :size 10  :noselect t :autokill t :autoclose t)
-          ("*Keys*"                 :size 10  :noselect t)
-          ("^\\*ftp "               :size 8   :noselect t :autokill t :noesc t)
-          (compilation-mode         :size 15  :noselect t)
-          (eww-mode                 :size 30)
-          (comint-mode              :noesc t)
-          (tabulated-list-mode      :noesc t)))
+        '(("^\\*ftp " :size 8  :noselect t :autokill t :noesc t)
+          ;; doom
+          ("^\\*doom:" :regexp t :size 0.35 :noesc t :select t)
+          ("^\\*doom " :regexp t :noselect t :autokill t :autoclose t)
+          ;; built-in (emacs)
+          (Buffer-menu-mode :size 20 :autokill t)
+          (apropos-mode :size 0.3 :autokill t :autoclose t)
+          (comint-mode :noesc t)
+          (grep-mode :size 25 :noselect t :autokill t)
+          (special-mode :size 12 :noselect t :autokill t)
+          (tabulated-list-mode :noesc t)
+          (profiler-report-mode :size 0.3 :regexp t :autokill t)
+          ("*Backtrace*" :size 20 :noselect t)
+          ("*Warnings*" :noselect t :autokill t)
+          ("*Help*" :size 0.3)
+          ("^\\*.*Shell Command.*\\*$" :regexp t :size 20 :noselect t :autokill t)
+          ("^\\*"  :regexp t :noselect t)
+          ("^ \\*" :regexp t :size 12 :noselect t :autokill t :autoclose t)))
 
   :config
   (if (display-graphic-p)
@@ -138,6 +133,10 @@ for :align t on every rule."
   :init-value nil
   :keymap doom-popup-mode-map
   (let ((window (selected-window)))
+    ;; If `doom-popup-rules' isn't set for some reason, try to set it
+    (when-let (plist (and (not doom-popup-rules)
+                          (window-parameter window 'popup)))
+      (setq-local doom-popup-rules (window-parameter window 'popup)))
     ;; Ensure that buffer-opening functions/commands (like
     ;; `switch-to-buffer-other-window' won't use this window).
     (set-window-parameter window 'no-other-window doom-popup-mode)
@@ -188,13 +187,14 @@ for :align t on every rule."
 and setting `doom-popup-rules' within it. Returns the window."
   (unless (doom-popup-p)
     (setq doom-popup-other-window (selected-window)))
-  (let ((plist (or (nth 2 args)
-                   (cond ((windowp (car args))
-                          (shackle-match (window-buffer (car args))))
-                         ((bufferp (car args))
-                          (shackle-match (car args))))))
-        (buffer (get-buffer (car args)))
-        window)
+  (let* ((plist (or (nth 2 args)
+                    (cond ((windowp (car args))
+                           (shackle-match (window-buffer (car args))))
+                          ((bufferp (car args))
+                           (shackle-match (car args))))))
+         (buffer (get-buffer (car args)))
+         (window-min-height (if (plist-get plist :modeline) 4 2))
+         window)
     (when (and (doom-real-buffer-p buffer)
                (get-buffer-window-list buffer nil t))
       (setq plist (append (list :autokill t) plist))

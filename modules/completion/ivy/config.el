@@ -90,7 +90,7 @@ session)."
   (setq counsel-find-file-ignore-regexp "\\(?:^[#.]\\)\\|\\(?:[#~]$\\)\\|\\(?:^Icon?\\)")
 
   ;; Configure `counsel-rg', `counsel-ag' & `counsel-pt'
-  (set! :popup "^\\*ivy-occur counsel-[arp]g" :size (+ 2 ivy-height) :regexp t :autokill t)
+  (set! :popup 'ivy-occur-grep-mode :size (+ 2 ivy-height) :regexp t :autokill t)
 
   (dolist (cmd '(counsel-ag counsel-rg counsel-pt))
     (ivy-add-actions
