@@ -262,19 +262,15 @@ across windows."
 
 
 (def-package! evil-escape
-  :commands evil-escape-mode
+  :demand t
   :init
-  (defun +evil|escape-disable () (evil-escape-mode -1))
-  (defun +evil|escape-enable ()  (evil-escape-mode +1))
-  ;; I only need evil-escape in insert and replace modes.
-  (add-hook 'evil-insert-state-entry-hook  #'+evil|escape-enable)
-  (add-hook 'evil-insert-state-exit-hook   #'+evil|escape-disable)
-  (add-hook 'evil-replace-state-entry-hook #'+evil|escape-enable)
-  (add-hook 'evil-replace-state-exit-hook  #'+evil|escape-disable)
+  (setq evil-escape-excluded-states '(visual multiedit)
+        evil-escape-key-sequence "jk"
+        evil-escape-delay 0.25)
+
   :config
-  (map! :irvo "C-g" #'evil-escape)
-  (setq evil-escape-key-sequence "jk"
-        evil-escape-delay 0.25))
+  (evil-escape-mode +1)
+  (map! :irvo "C-g" #'evil-escape))
 
 
 (def-package! evil-exchange
@@ -338,7 +334,10 @@ the new algorithm is confusing, like in python or ruby."
     "Undo cursors and freeze them again (for next time)."
     (when (evil-mc-has-cursors-p)
       (evil-mc-undo-all-cursors)))
-  (add-hook '+evil-esc-hook #'+evil|escape-multiple-cursors))
+  (add-hook '+evil-esc-hook #'+evil|escape-multiple-cursors)
+
+  ;; disable evil-escape in evil-mc
+  (push 'evil-escape-mode evil-mc-incompatible-minor-modes))
 
 
 (def-package! evil-multiedit
