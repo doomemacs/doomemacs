@@ -330,18 +330,6 @@
       :i "C-e" #'doom/forward-to-last-non-comment-or-eol
       :i "C-u" #'doom/backward-kill-to-bol-and-indent
 
-      ;; Restore 'dumb' indentation to the tab key. This rustles a lot of peoples'
-      ;; jimmies, apparently, but it's how I like it.
-      :i "<tab>"     #'doom/dumb-indent
-      :i "<backtab>" #'doom/dumb-dedent
-      :i "<C-tab>"   #'indent-for-tab-command
-      :i "<A-tab>"   (λ! (insert "\t"))
-      ;; 'smart' indentation for lisp modes
-      (:after lisp-mode
-        (:map lisp-mode-map       :i [remap doom/dumb-indent] #'indent-for-tab-command))
-      (:after elisp-mode
-        (:map emacs-lisp-mode-map :i [remap doom/dumb-indent] #'indent-for-tab-command))
-
       ;; textmate-esque newline insertion
       :i [M-return]     #'evil-open-below
       :i [S-M-return]   #'evil-open-above
