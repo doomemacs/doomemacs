@@ -396,6 +396,10 @@ the command buffer."
   (advice-add #'mu4e~temp-window :override #'doom*mu4e-popup-window))
 
 
+(after! multi-term
+  (setq multi-term-buffer-name "doom:terminal"))
+
+
 (after! neotree
   ;; Neotree has its own window/popup management built-in, which is difficult to
   ;; police. For example, switching perspectives will cause neotree to forget it
