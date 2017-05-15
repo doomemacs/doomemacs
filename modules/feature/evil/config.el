@@ -28,6 +28,7 @@
         evil-want-visual-char-semi-exclusive t
         evil-want-fine-undo nil
         evil-want-Y-yank-to-eol t
+        evil-ex-interactive-search-highlight 'selected-window
         evil-magic t
         evil-echo-state t
         evil-indent-convert-tabs t
@@ -384,14 +385,9 @@ algorithm is just confusing, like in python or ruby."
 (def-package! evil-textobj-anyblock
   :commands (evil-numbers/inc-at-pt evil-numbers/dec-at-pt)
   :init
-  (+evil--textobj "B" #'evil-textobj-anyblock-inner-block #'evil-textobj-anyblock-a-block))
-
-
-(def-package! evil-search-highlight-persist :demand t
-  :commands (evil-textobj-anyblock-inner-block evil-textobj-anyblock-a-block)
-  :config
-  (global-evil-search-highlight-persist t)
-  (add-hook '+evil-esc-hook #'evil-search-highlight-persist-remove-all))
+  (+evil--textobj "B"
+    #'evil-textobj-anyblock-inner-block
+    #'evil-textobj-anyblock-a-block))
 
 
 (def-package! evil-snipe :demand t
