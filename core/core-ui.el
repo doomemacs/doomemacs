@@ -116,16 +116,8 @@ local value, whether or not it's permanent-local. Therefore, we cycle
 ;; Plugins
 ;;
 
-;; I modified the built-in `hideshow' package to enable itself when needed. A
-;; better, more vim-like code-folding plugin would be the `origami' plugin, but
-;; until certain breaking bugs are fixed in it, I won't switch over.
 (def-package! hideshow ; built-in
   :commands (hs-minor-mode hs-toggle-hiding hs-already-hidden-p)
-  :init
-  (defun doom*autoload-hideshow ()
-    (unless (bound-and-true-p hs-minor-mode)
-      (hs-minor-mode 1)))
-  (advice-add #'evil-toggle-fold :before #'doom*autoload-hideshow)
   :config
   (setq hs-hide-comments-when-hiding-all nil))
 

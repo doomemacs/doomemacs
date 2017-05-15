@@ -128,6 +128,13 @@
   (setq hs-set-up-overlay
         (lambda (ov)
           (when (eq 'code (overlay-get ov 'hs))
+            (when (featurep 'vimish-fold)
+              (overlay-put
+               ov 'before-string
+               (propertize "…" 'display
+                           (list vimish-fold-indication-mode
+                                 'empty-line
+                                 'vimish-fold-fringe))))
             (overlay-put
              ov 'display (propertize "  [...]  " 'face '+doom-folded-face))))))
 

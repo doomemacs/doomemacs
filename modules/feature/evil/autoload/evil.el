@@ -169,43 +169,6 @@ evil-window-move-* (e.g. `evil-window-move-far-left')"
   (doom-narrow-buffer beg end bang))
 
 
-;; --- code folding -----------------------
-
-;; I wrote these for two reasons:
-;;  1. To facilitate lazy-loading of hideshow.el (otherwise, evil wouldn't know what mode to use)
-;;  2. To allow level-based folding (parity with vim), e.g. 2zr will open all
-;;     folds up to 2nd level folds.
-
-;;;###autoload (autoload '+evil:open-folds-recursively "feature/evil/autoload/evil" nil t)
-(evil-define-command +evil:open-folds-recursively (level)
-  "Opens all folds recursively, up to LEVEL."
-  (interactive "<c>")
-  (unless (bound-and-true-p hs-minor-mode)
-    (hs-minor-mode 1))
-  (if level (hs-hide-level level) (evil-open-folds)))
-
-;;;###autoload (autoload '+evil:close-folds-recursively "feature/evil/autoload/evil" nil t)
-(evil-define-command +evil:close-folds-recursively (level)
-  "Closes all folds recursively, up to LEVEL."
-  (interactive "<c>")
-  (unless (bound-and-true-p hs-minor-mode)
-    (hs-minor-mode 1))
-  (if level (hs-hide-level level) (evil-close-folds)))
-
-;;;###autoload
-(defun +evil/matchit-or-toggle-fold ()
-  "Do what I mean. If on a fold-able element, toggle the fold with
-`hs-toggle-hiding'. Otherwise, if on a delimiter, jump to the matching one with
-`evilmi-jump-items'. If in a magit-status buffer, use `magit-section-toggle'."
-  (interactive)
-  (cond ((eq major-mode 'magit-status-mode)
-         (call-interactively 'magit-section-toggle))
-        ((ignore-errors (hs-already-hidden-p))
-         (hs-toggle-hiding))
-        (t
-         (call-interactively 'evilmi-jump-items))))
-
-
 ;; --- custom arg handlers ----------------
 
 (defvar +evil--buffer-match-global evil-ex-substitute-global "")

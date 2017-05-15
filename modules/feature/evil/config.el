@@ -388,6 +388,13 @@ the new algorithm is confusing, like in python or ruby."
   :config (global-evil-surround-mode 1))
 
 
+(def-package! evil-vimish-fold
+  :commands evil-vimish-fold-mode
+  :init
+  (setq vimish-fold-dir (concat doom-cache-dir "vimish-fold/")
+        vimish-fold-indication-mode 'right-fringe))
+
+
 ;; Without `evil-visualstar', * and # grab the word at point and search, no
 ;; matter what mode you're in. I want to be able to visually select a region and
 ;; search for other occurrences of it.
