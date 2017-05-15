@@ -430,7 +430,7 @@ the commandline."
       (delete-file generated-autoload-file)
       (message "Deleted old autoloads.el"))
     (dolist (file (nreverse autoload-files))
-      (let ((inhibit-message t))
+      (let ((inhibit-message (not doom-debug-mode)))
         (update-file-autoloads file))
       (message "Scanned %s" (file-relative-name file doom-emacs-dir)))
     (condition-case ex
