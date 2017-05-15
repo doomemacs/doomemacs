@@ -1,12 +1,19 @@
 ;;; editor.el
 
 ;;;###autoload
-(defun doom/sudo-find-file ()
+(defun doom/sudo-find-file (file)
   "Open a file as root."
+  (interactive
+   (list (read-file-name "Open as root: ")))
+  (find-file (if (file-writable-p file)
+                 file
+               (concat "/sudo:root@localhost:" file))))
+
+;;;###autoload
+(defun doom/sudo-this-file ()
+  "Open the current file as root."
   (interactive)
-  (let ((file (read-file-name "Open as root: ")))
-    (unless (file-writable-p file)
-      (find-file (concat "/sudo:root@localhost:" file)))))
+  (doom/sudo-find-file (file-truename buffer-file-name)))
 
 (defun doom--goto-first-non-blank ()
   (beginning-of-visual-line)
