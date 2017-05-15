@@ -43,10 +43,10 @@
 
        :completion
        company         ; auto-completion backend
-       ;; TODO auto-complete
+      ;auto-complete   ; TODO alternative auto-completion backend
        ivy             ; a search engine for love and life
-       ;; helm
-       ;; ido
+      ;helm
+      ;ido
 
        :ui
        doom            ; doom-one; a look inspired by Atom's Dark One
@@ -59,10 +59,10 @@
        dired           ; making dired pretty [functional]
        electric-indent ; smarter, keyword-based electric-indent
        eshell          ; a consistent, cross-platform shell (WIP)
-       gist            ; manage & create gists
+       gist            ; interacting with github gists
        macos           ; macos-specific commands
        rotate-text     ; cycle region at point between text candidates
-       term            ; Emacs as a terminal emulator
+       term            ; terminals in Emacs
        tmux            ; an API for interacting with tmux
        upload          ; map local to remote projects via ssh/ftp
 
@@ -96,11 +96,12 @@
        ;; Applications are opinionated modules that transform Emacs to fulfill a
        ;; specific purpose. They should be loaded last.
        :app
-       ;; TODO crm        ; org-mode for client relations management
+      ;crm             ; TODO org-mode for client relations management
        email           ; Emacs as an email client
-       ;; TODO finance    ; keeping track of my shekels
-       ;; TODO irc        ; how neckbeards socialize
+      ;finance         ; TODO keeping track of my shekels
+      ;irc             ; TODO how neckbeards socialize
        present         ; showing off presentations in emacs
+      ;regex           ; TODO emacs as a regexp IDE
        rss             ; emacs as an RSS reader
        twitter         ; twitter client https://twitter.com/vnought
        write           ; emacs as a word processor (latex + org + markdown)
