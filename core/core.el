@@ -95,12 +95,10 @@ there are problems.")
  create-lockfiles nil
  history-length 1000
  make-backup-files nil
- undo-tree-auto-save-history t
  ;; files
  abbrev-file-name             (concat doom-local-dir "abbrev.el")
  auto-save-list-file-name     (concat doom-cache-dir "autosave")
  backup-directory-alist       (list (cons "." (concat doom-cache-dir "backup/")))
- custom-file                  (concat doom-etc-dir "custom.el")
  pcache-directory             (concat doom-cache-dir "pcache/")
  server-auth-dir              (concat doom-cache-dir "server/")
  shared-game-score-directory  (concat doom-etc-dir "shared-game-score/")
@@ -108,8 +106,11 @@ there are problems.")
  tramp-backup-directory-alist backup-directory-alist
  tramp-persistency-file-name  (concat doom-cache-dir "tramp-persistency.el")
  url-cache-directory          (concat doom-cache-dir "url/")
- url-configuration-directory  (concat doom-etc-dir "url/")
- undo-tree-history-directory-alist (list (cons "." (concat doom-cache-dir "undo-tree-hist/"))))
+ url-configuration-directory  (concat doom-etc-dir "url/"))
+
+;; move custom defs out of init.el
+(setq custom-file (concat doom-etc-dir "custom.el"))
+(load custom-file nil t)
 
 ;; be quiet at startup
 (advice-add #'display-startup-echo-area-message :override #'ignore)

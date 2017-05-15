@@ -57,6 +57,11 @@ modes are active and the buffer is read-only.")
       savehist-additional-variables '(kill-ring search-ring regexp-search-ring))
 (savehist-mode 1)
 
+;; Branching & persistent undo
+(require 'undo-tree)
+(setq undo-tree-auto-save-history t
+      undo-tree-history-directory-alist (list (cons "." (concat doom-cache-dir "undo-tree-hist/"))))
+
 ;; Keep track of recently opened files
 (require 'recentf)
 (setq recentf-save-file (concat doom-cache-dir "recentf")
