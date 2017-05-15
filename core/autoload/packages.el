@@ -177,7 +177,7 @@ appropriate."
            (quelpa (assq name quelpa-cache))
            (setq quelpa-modified-p t)))
         ('elpa
-         (doom-delete-package name)
+         (doom-delete-package name t t)
          (doom-install-package name)))
       (when quelpa-modified-p
         (quelpa-save-cache)))
@@ -185,14 +185,14 @@ appropriate."
      (package-desc-version (cadr (assq name package-alist)))
      (package-desc-version (cadr (assq name package-archive-contents))))))
 
-(defun doom-delete-package (name &optional force-p)
+(defun doom-delete-package (name &optional force-p nosave-p)
   "Uninstalls package NAME if it exists, and clears it from `quelpa-cache'."
   (doom-initialize)
   (unless (package-installed-p name)
     (user-error "%s isn't installed" name))
   (let ((desc (cadr (assq name package-alist)))
         (inhibit-message t))
-    (package-delete desc force-p))
+    (package-delete desc force-p nosave-p))
   (not (package-installed-p name)))
 
 
