@@ -281,6 +281,7 @@ across windows."
   (add-hook 'evil-replace-state-entry-hook #'+evil|escape-enable)
   (add-hook 'evil-replace-state-exit-hook  #'+evil|escape-disable)
   :config
+  (map! :irvo "C-g" #'evil-escape)
   (setq evil-escape-key-sequence "jk"
         evil-escape-delay 0.25))
 
@@ -310,19 +311,19 @@ across windows."
   :commands (evilmi-jump-items evilmi-text-object global-evil-matchit-mode)
   :config (global-evil-matchit-mode 1)
   :init
+  (map! :m "%" #'evilmi-jump-items)
   (+evil--textobj "%" #'evilmi-text-object)
+  :config
   (defun +evil|simple-matchit ()
-    "Force evil-matchit to favor simple bracket jumping. Helpful where the new
-algorithm is just confusing, like in python or ruby."
-    (setq-local evilmi-always-simple-jump t)))
+    "A hook to force evil-matchit to favor simple bracket jumping. Helpful when
+the new algorithm is confusing, like in python or ruby."
+    (setq-local evilmi-always-simple-jump t))
+  (add-hook 'python-mode-hook #'+evil|simple-matchit))
 
 
 (def-package! evil-mc
   :commands evil-mc-make-cursor-here
-  :init
-  (defvar evil-mc-key-map (make-sparse-keymap))
-  (map! :n "M-d" #'evil-mc-make-cursor-here)
-
+  :init (defvar evil-mc-key-map (make-sparse-keymap))
   :config
   ;; Start evil-mc in paused mode.
   (add-hook 'evil-mc-mode-hook #'evil-mc-pause-cursors)
@@ -332,21 +333,16 @@ algorithm is just confusing, like in python or ruby."
   (setq evil-mc-custom-known-commands
         '((doom/deflate-space-maybe . ((:default . evil-mc-execute-default-call)))))
 
+ ;; My workflow is to place the cursors, get into position, then enable evil-mc
+ ;; by invoking `+evil/mc-toggle-cursors'
   (defun +evil/mc-toggle-cursors ()
     "Toggle frozen state of evil-mc cursors."
     (interactive)
     (setq evil-mc-frozen (not (and (evil-mc-has-cursors-p)
                                    evil-mc-frozen))))
-
-  ;; My workflow is to place the cursors, get into position, then enable evil-mc
-  ;; (either by going into insert mode, or pressing M-d).
-  (map! :map evil-mc-key-map
-        :n "M-D" #'+evil/mc-toggle-cursors)
-
-  ;; If I switch to insert mode, chances are I want to begin editing.
+  ;; ...or going into insert mode
   (add-hook 'evil-insert-state-entry-hook #'evil-mc-resume-cursors)
 
-  ;; Undo cursors on ESC (from normal mode)
   (defun +evil|escape-multiple-cursors ()
     "Undo cursors and freeze them again (for next time)."
     (when (evil-mc-has-cursors-p)
@@ -364,22 +360,7 @@ algorithm is just confusing, like in python or ruby."
              evil-multiedit-next
              evil-multiedit-prev
              evil-multiedit-abort
-             evil-multiedit-ex-match)
-  :init
-  (map! :v "M-d"   #'evil-multiedit-match-and-next
-        :v "M-D"   #'evil-multiedit-match-and-prev
-        :v "C-M-d" #'evil-multiedit-restore
-        :v "R"     #'evil-multiedit-match-all)
-
-  :config
-  (evil-ex-define-cmd "ie[dit]" 'evil-multiedit-ex-match)
-  (map! (:map evil-multiedit-state-map
-          "M-d" #'evil-multiedit-match-and-next
-          "M-D" #'evil-multiedit-match-and-prev
-          "RET" #'evil-multiedit-toggle-or-restrict-region)
-        (:map (evil-multiedit-state-map evil-multiedit-insert-state-map)
-          "C-n" #'evil-multiedit-next
-          "C-p" #'evil-multiedit-prev)))
+             evil-multiedit-ex-match))
 
 
 (def-package! evil-textobj-anyblock
@@ -418,12 +399,19 @@ algorithm is just confusing, like in python or ruby."
   :config (global-evil-surround-mode 1))
 
 
+;; Without `evil-visualstar', * and # grab the word at point and search, no
+;; matter what mode you're in. I want to be able to visually select a region and
+;; search for other occurrences of it.
 (def-package! evil-visualstar
   :commands (global-evil-visualstar-mode
              evil-visualstar/begin-search
              evil-visualstar/begin-search-forward
              evil-visualstar/begin-search-backward)
-  :config (global-evil-visualstar-mode 1))
+  :init
+  (map! :v "*" #'evil-visualstar/begin-search-forward
+        :v "#" #'evil-visualstar/begin-search-backward)
+  :config
+  (global-evil-visualstar-mode 1))
 
 
 ;; A side-panel for browsing my project files. Inspired by vim's NERDTree. Sure,

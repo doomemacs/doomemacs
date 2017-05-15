@@ -277,9 +277,24 @@
    :i "C-p"   (λ! (let ((company-selection-wrap-around t))
                     (call-interactively 'company-dabbrev-code)
                     (company-select-previous-or-abort))))
- ;; evil-visual-star
- :v  "*"   #'evil-visualstar/begin-search-forward
- :v  "#"   #'evil-visualstar/begin-search-backward
+ ;; evil-mc
+ :n "M-d" #'evil-mc-make-cursor-here
+ (:after evil-mc
+   :map evil-mc-key-map
+   :n "M-D" #'+evil/mc-toggle-cursors)
+ ;; evil-multiedit
+ :v "M-d"   #'evil-multiedit-match-and-next
+ :v "M-D"   #'evil-multiedit-match-and-prev
+ :v "C-M-d" #'evil-multiedit-restore
+ :v "R"     #'evil-multiedit-match-all
+ (:after evil-multiedit
+   (:map evil-multiedit-state-map
+     "M-d" #'evil-multiedit-match-and-next
+     "M-D" #'evil-multiedit-match-and-prev
+     "RET" #'evil-multiedit-toggle-or-restrict-region)
+   (:map (evil-multiedit-state-map evil-multiedit-insert-state-map)
+     "C-n" #'evil-multiedit-next
+     "C-p" #'evil-multiedit-prev))
  ;; evil-surround
  :v  "S"   #'evil-surround-region
  :o  "s"   #'evil-surround-edit
@@ -289,8 +304,6 @@
  :v  "V"   #'er/contract-region
  ;; rotate-text
  :n  "!"   #'rotate-text
- ;; evil-matchit
- :m  "%"   #'evilmi-jump-items
  ;; hide-show/evil-matchit
  :nv "<tab>" #'+evil/matchit-or-toggle-fold
 
@@ -339,8 +352,6 @@
       ;; Emacsien motions for insert mode
       :i "C-b" #'backward-word
       :i "C-f" #'forward-word
-      ;; escape from insert mode (more responsive than using key-chord-define)
-      :irv "C-g" #'evil-normal-state
 
       ;; Highjacks space/backspace to:
       ;;   a) balance spaces inside brackets/parentheses ( | ) -> (|)
