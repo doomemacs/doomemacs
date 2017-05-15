@@ -99,10 +99,114 @@ flags. See http://vimdoc.sourceforge.net/htmldoc/cmdline.html#filename-modifiers
                                         path file-name t t 1))))
     (setq file-name (replace-regexp-in-string regexp "\\1" file-name t))))
 
+(defun +evil--window-swap (direction)
+  "Move current window to the next window in DIRECTION. If there are no windows
+there and there is only one window, split in that direction and place this
+window there. If there are no windows and this isn't the only window, use
+evil-window-move-* (e.g. `evil-window-move-far-left')"
+  (let* ((this-window (get-buffer-window))
+         (this-buffer (current-buffer))
+         (that-window (windmove-find-other-window direction nil this-window))
+         (that-buffer (window-buffer that-window)))
+    (when (or (minibufferp that-buffer)
+              (doom-popup-p that-window))
+      (setq that-buffer nil that-window nil))
+    (if (not (or that-window (one-window-p t)))
+        (funcall (case direction
+                   ('left 'evil-window-move-far-left)
+                   ('right 'evil-window-move-far-right)
+                   ('up 'evil-window-move-very-top)
+                   ('down 'evil-window-move-very-bottom)))
+      (unless that-window
+        (setq that-window
+              (split-window this-window nil (cond ((eq direction 'up) 'above)
+                                                  ((eq direction 'down) 'below)
+                                                  (t direction))))
+        (with-selected-window that-window
+          (switch-to-buffer doom-buffer))
+        (setq that-buffer (window-buffer that-window)))
+      (with-selected-window this-window
+        (switch-to-buffer that-buffer))
+      (with-selected-window that-window
+        (switch-to-buffer this-buffer))
+      (select-window that-window))))
 
-;;
-;; Custom argument handlers
-;;
+;;;###autoload
+(defun +evil/window-move-left () "`+evil--window-swap'"  (interactive) (+evil--window-swap 'left))
+;;;###autoload
+(defun +evil/window-move-right () "`+evil--window-swap'" (interactive) (+evil--window-swap 'right))
+;;;###autoload
+(defun +evil/window-move-up () "`+evil--window-swap'"    (interactive) (+evil--window-swap 'up))
+;;;###autoload
+(defun +evil/window-move-down () "`+evil--window-swap'"  (interactive) (+evil--window-swap 'down))
+
+;;;###autoload (autoload '+evil:macro-on-all-lines "feature/evil/autoload/evil" nil t)
+(evil-define-operator +evil:macro-on-all-lines (beg end &optional macro)
+  "Apply macro to each line."
+  :motion nil
+  :move-point nil
+  (interactive "<r><a>")
+  (unless (and beg end)
+    (setq beg (region-beginning)
+          end (region-end)))
+  (evil-ex-normal beg end
+                  (concat "@"
+                          (single-key-description
+                           (or macro (read-char "@-"))))))
+
+;;;###autoload (autoload '+evil:retab "feature/evil/autoload/evil" nil t)
+(evil-define-operator +evil:retab (&optional beg end)
+  "Wrapper around `doom/retab'."
+  :motion nil :move-point nil :type line
+  (interactive "<r>")
+  (doom/retab beg end))
+
+;;;###autoload (autoload '+evil:narrow-buffer "feature/evil/autoload/evil" nil t)
+(evil-define-command +evil:narrow-buffer (beg end &optional bang)
+  "Wrapper around `doom-narrow-buffer'."
+  :move-point nil
+  (interactive "<r><!>")
+  (doom-narrow-buffer beg end bang))
+
+
+;; --- code folding -----------------------
+
+;; I wrote these for two reasons:
+;;  1. To facilitate lazy-loading of hideshow.el (otherwise, evil wouldn't know what mode to use)
+;;  2. To allow level-based folding (parity with vim), e.g. 2zr will open all
+;;     folds up to 2nd level folds.
+
+;;;###autoload (autoload '+evil:open-folds-recursively "feature/evil/autoload/evil" nil t)
+(evil-define-command +evil:open-folds-recursively (level)
+  "Opens all folds recursively, up to LEVEL."
+  (interactive "<c>")
+  (unless (bound-and-true-p hs-minor-mode)
+    (hs-minor-mode 1))
+  (if level (hs-hide-level level) (evil-open-folds)))
+
+;;;###autoload (autoload '+evil:close-folds-recursively "feature/evil/autoload/evil" nil t)
+(evil-define-command +evil:close-folds-recursively (level)
+  "Closes all folds recursively, up to LEVEL."
+  (interactive "<c>")
+  (unless (bound-and-true-p hs-minor-mode)
+    (hs-minor-mode 1))
+  (if level (hs-hide-level level) (evil-close-folds)))
+
+;;;###autoload
+(defun +evil/matchit-or-toggle-fold ()
+  "Do what I mean. If on a fold-able element, toggle the fold with
+`hs-toggle-hiding'. Otherwise, if on a delimiter, jump to the matching one with
+`evilmi-jump-items'. If in a magit-status buffer, use `magit-section-toggle'."
+  (interactive)
+  (cond ((eq major-mode 'magit-status-mode)
+         (call-interactively 'magit-section-toggle))
+        ((ignore-errors (hs-already-hidden-p))
+         (hs-toggle-hiding))
+        (t
+         (call-interactively 'evilmi-jump-items))))
+
+
+;; --- custom arg handlers ----------------
 
 (defvar +evil--buffer-match-global evil-ex-substitute-global "")
 
@@ -155,101 +259,3 @@ flags. See http://vimdoc.sourceforge.net/htmldoc/cmdline.html#filename-modifiers
       (+evil--ex-match-init hl-name)
       (let ((result (car-safe (evil-ex-parse-global arg))))
         (+evil--ex-buffer-match result hl-name nil (point-min) (point-max))))))
-
-;;;###autoload
-(defun +evil-window-move (direction)
-  "Move current window to the next window in DIRECTION. If there are no windows
-there and there is only one window, split in that direction and place this
-window there. If there are no windows and this isn't the only window, use
-evil-window-move-* (e.g. `evil-window-move-far-left')"
-  (let* ((this-window (get-buffer-window))
-         (this-buffer (current-buffer))
-         (that-window (windmove-find-other-window direction nil this-window))
-         (that-buffer (window-buffer that-window)))
-    (when (or (minibufferp that-buffer)
-              (doom-popup-p that-window))
-      (setq that-buffer nil that-window nil))
-    (if (not (or that-window (one-window-p t)))
-        (funcall (case direction
-                   ('left 'evil-window-move-far-left)
-                   ('right 'evil-window-move-far-right)
-                   ('up 'evil-window-move-very-top)
-                   ('down 'evil-window-move-very-bottom)))
-      (unless that-window
-        (setq that-window
-              (split-window this-window nil (cond ((eq direction 'up) 'above)
-                                                  ((eq direction 'down) 'below)
-                                                  (t direction))))
-        (with-selected-window that-window
-          (switch-to-buffer doom-buffer))
-        (setq that-buffer (window-buffer that-window)))
-      (with-selected-window this-window
-        (switch-to-buffer that-buffer))
-      (with-selected-window that-window
-        (switch-to-buffer this-buffer))
-      (select-window that-window))))
-
-;;;###autoload
-(defun +evil/window-move-left () "`+evil-window-move'"  (interactive) (+evil-window-move 'left))
-;;;###autoload
-(defun +evil/window-move-right () "`+evil-window-move'" (interactive) (+evil-window-move 'right))
-;;;###autoload
-(defun +evil/window-move-up () "`+evil-window-move'"    (interactive) (+evil-window-move 'up))
-;;;###autoload
-(defun +evil/window-move-down () "`+evil-window-move'"  (interactive) (+evil-window-move 'down))
-
-;;;###autoload
-(defun +evil/matchit-or-toggle-fold ()
-  "If on a fold-able element, toggle the fold (`hs-toggle-hiding'). Otherwise,
-if on a delimiter, jump to the matching one (`evilmi-jump-items')."
-  (interactive)
-  (cond ((eq major-mode 'magit-status-mode)
-         (call-interactively 'magit-section-toggle))
-        ((ignore-errors (hs-already-hidden-p))
-         (hs-toggle-hiding))
-        (t
-         (call-interactively 'evilmi-jump-items))))
-
-;;;###autoload (autoload '+evil:macro-on-all-lines "feature/evil/autoload/evil" nil t)
-(evil-define-operator +evil:macro-on-all-lines (beg end &optional macro)
-  "Apply macro to each line."
-  :motion nil
-  :move-point nil
-  (interactive "<r><a>")
-  (unless (and beg end)
-    (setq beg (region-beginning)
-          end (region-end)))
-  (evil-ex-normal beg end
-                  (concat "@"
-                          (single-key-description
-                           (or macro (read-char "@-"))))))
-
-;;;###autoload (autoload '+evil:open-folds-recursively "feature/evil/autoload/evil" nil t)
-(evil-define-command +evil:open-folds-recursively (level)
-  "Opens all folds recursively, up to LEVEL."
-  (interactive "<c>")
-  (unless (bound-and-true-p hs-minor-mode)
-    (hs-minor-mode 1))
-  (if level (hs-hide-level level) (evil-open-folds)))
-
-;;;###autoload (autoload '+evil:close-folds-recursively "feature/evil/autoload/evil" nil t)
-(evil-define-command +evil:close-folds-recursively (level)
-  "Closes all folds recursively, up to LEVEL."
-  (interactive "<c>")
-  (unless (bound-and-true-p hs-minor-mode)
-    (hs-minor-mode 1))
-  (if level (hs-hide-level level) (evil-close-folds)))
-
-;;;###autoload (autoload '+evil:retab "feature/evil/autoload/evil" nil t)
-(evil-define-operator +evil:retab (&optional beg end)
-  "Wrapper around `doom/retab'."
-  :motion nil :move-point nil :type line
-  (interactive "<r>")
-  (doom/retab beg end))
-
-;;;###autoload (autoload '+evil:narrow-buffer "feature/evil/autoload/evil" nil t)
-(evil-define-command +evil:narrow-buffer (beg end &optional bang)
-  "Wrapper around `doom-narrow-buffer'."
-  :move-point nil
-  (interactive "<r><!>")
-  (doom-narrow-buffer beg end bang))

@@ -23,9 +23,6 @@
  mouse-yank-at-point t          ; middle-click paste at point, not at click
  resize-mini-windows 'grow-only ; Minibuffer resizing
  show-help-function nil         ; hide :help-echo text
- show-paren-delay 0.075
- show-paren-highlight-openparen t
- show-paren-when-point-inside-paren t
  split-width-threshold nil      ; favor horizontal splits
  uniquify-buffer-name-style 'forward
  use-dialog-box nil             ; always avoid GUI
@@ -88,6 +85,12 @@ local value, whether or not it's permanent-local. Therefore, we cycle
 (defvar winner-dont-bind-my-keys t) ; I'll bind keys myself
 (require 'winner)
 (add-hook 'window-setup-hook #'winner-mode)
+
+;; highlight matching delimiters
+(setq show-paren-delay 0.2
+      show-paren-highlight-openparen t
+      show-paren-when-point-inside-paren t)
+(show-paren-mode +1)
 
 
 ;;

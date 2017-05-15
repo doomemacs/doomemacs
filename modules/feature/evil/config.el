@@ -26,9 +26,7 @@
   :init
   (setq evil-want-C-u-scroll t
         evil-want-visual-char-semi-exclusive t
-        evil-want-fine-undo nil
         evil-want-Y-yank-to-eol t
-        evil-ex-interactive-search-highlight 'selected-window
         evil-magic t
         evil-echo-state t
         evil-indent-convert-tabs t
@@ -36,7 +34,12 @@
         evil-ex-substitute-global t
         evil-ex-visual-char-range t  ; column range for ex commands
         evil-insert-skip-empty-lines t
-
+        evil-mode-line-format 'nil
+        ;; Move to new split
+        evil-split-window-below t
+        evil-vsplit-window-right t
+        ;; more vim-like behavior
+        evil-symbol-word-search t
         ;; don't activate mark on shift-click
         shift-select-mode nil)
 
@@ -51,7 +54,7 @@
   ;; Don't interfere with localleader key
   (define-key evil-motion-state-map "\\" nil)
 
-  ;; Set cursor colors later, presumably once theme is loaded
+  ;; Set cursor colors later, once theme is loaded
   (defun +evil*init-cursors (&rest _)
     (setq evil-default-cursor (face-background 'cursor nil t)
           evil-normal-state-cursor 'box
@@ -60,23 +63,10 @@
           evil-visual-state-cursor 'hollow))
   (advice-add #'load-theme :after #'+evil*init-cursors)
 
-  ;; highlight matching delimiters where it's important
-  (defun +evil|show-paren-mode-off () (show-paren-mode -1))
-  (defun +evil|show-paren-mode-on ()
-    (unless (bound-and-true-p org-indent-mode) ; interferes with org-indent
-      (show-paren-mode +1)))
-
-  (add-hook 'evil-insert-state-entry-hook   #'+evil|show-paren-mode-on)
-  (add-hook 'evil-insert-state-exit-hook    #'+evil|show-paren-mode-off)
-  (add-hook 'evil-visual-state-entry-hook   #'+evil|show-paren-mode-on)
-  (add-hook 'evil-visual-state-exit-hook    #'+evil|show-paren-mode-off)
-  (add-hook 'evil-operator-state-entry-hook #'+evil|show-paren-mode-on)
-  (add-hook 'evil-operator-state-exit-hook  #'+evil|show-paren-mode-off)
-  (add-hook 'evil-normal-state-entry-hook   #'+evil|show-paren-mode-off)
-
+  ;; default modes
   (dolist (mode '(tabulated-list-mode view-mode comint-mode term-mode calendar-mode Man-mode grep-mode))
     (evil-set-initial-state mode 'emacs))
-  (dolist (mode '(help-mode))
+  (dolist (mode '(help-mode debugger-mode))
     (evil-set-initial-state mode 'normal))
 
   ;; make `try-expand-dabbrev' from `hippie-expand' work in mini-buffer
@@ -85,93 +75,94 @@
     (set-syntax-table (let* ((table (make-syntax-table)))
                         (modify-syntax-entry ?/ "." table)
                         table)))
-  (add-hook 'minibuffer-inactive-mode-hook #'minibuffer-inactive-mode-hook-setup))
+  (add-hook 'minibuffer-inactive-mode-hook #'minibuffer-inactive-mode-hook-setup)
 
-(defsubst +evil--textobj (key inner-fn &optional outer-fn)
-  "Define a text object."
-  (define-key evil-inner-text-objects-map key inner-fn)
-  (define-key evil-outer-text-objects-map key (or outer-fn inner-fn)))
+  (defsubst +evil--textobj (key inner-fn &optional outer-fn)
+    "Define a text object."
+    (declare (indent defun))
+    (define-key evil-inner-text-objects-map key inner-fn)
+    (define-key evil-outer-text-objects-map key (or outer-fn inner-fn)))
 
 
-;;
-;; evil hacks
-;;
+  ;; --- keybind fixes ----------------------
+  (map! :n "zr"  #'+evil:open-folds-recursively
+        :n "zm"  #'+evil:close-folds-recursively
 
-(defvar +evil-esc-hook nil
-  "A hook run after ESC is pressed in normal mode (invoked by
+        ;; undo/redo for regions
+        :v "u"   #'undo-tree-undo
+        :v "C-r" #'undo-tree-redo)
+
+
+  ;; --- evil hacks -------------------------
+  (defvar +evil-esc-hook nil
+    "A hook run after ESC is pressed in normal mode (invoked by
 `evil-force-normal-state').")
 
-(defun +evil*attach-escape-hook ()
-  "Run the `+evil-esc-hook'."
-  (run-hooks '+evil-esc-hook))
-(advice-add #'evil-force-normal-state :after #'+evil*attach-escape-hook)
+  (defun +evil*attach-escape-hook ()
+    "Run the `+evil-esc-hook'."
+    (run-hooks '+evil-esc-hook))
+  (advice-add #'evil-force-normal-state :after #'+evil*attach-escape-hook)
 
-(defun +evil|escape-minibuffer ()
-  "Quit the minibuffer if open."
-  (when (minibuffer-window-active-p (minibuffer-window))
-    (abort-recursive-edit)))
+  (defun +evil|escape-minibuffer ()
+    "Quit the minibuffer if open."
+    (when (minibuffer-window-active-p (minibuffer-window))
+      (abort-recursive-edit)))
 
-(defun +evil|escape-highlights ()
-  "Disable ex search buffer highlights."
-  (when (evil-ex-hl-active-p 'evil-ex-search)
-    (evil-ex-nohighlight)))
+  (defun +evil|escape-highlights ()
+    "Disable ex search buffer highlights."
+    (when (evil-ex-hl-active-p 'evil-ex-search)
+      (evil-ex-nohighlight)))
 
-(add-hook! '+evil-esc-hook '(+evil|escape-minibuffer +evil|escape-highlights))
+  (add-hook! '+evil-esc-hook '(+evil|escape-minibuffer +evil|escape-highlights))
 
-(defun +evil*restore-normal-state-on-windmove (orig-fn &rest args)
-  "If in anything but normal or motion mode when moving to another window,
+  (defun +evil*restore-normal-state-on-windmove (orig-fn &rest args)
+    "If in anything but normal or motion mode when moving to another window,
 restore normal mode. This prevents insert state from bleeding into other modes
 across windows."
-  (unless (memq evil-state '(normal motion))
-    (evil-normal-state +1))
-  (apply orig-fn args))
-(advice-add #'windmove-do-window-select :around #'+evil*restore-normal-state-on-windmove)
+    (unless (memq evil-state '(normal motion))
+      (evil-normal-state +1))
+    (apply orig-fn args))
+  (advice-add #'windmove-do-window-select :around #'+evil*restore-normal-state-on-windmove)
 
-(defun +evil*static-reindent (orig-fn &rest args)
-  "Don't move cursor on indent."
-  (save-excursion (apply orig-fn args)))
-(advice-add #'evil-indent :around #'+evil*static-reindent)
+  (defun +evil*static-reindent (orig-fn &rest args)
+    "Don't move cursor on indent."
+    (save-excursion (apply orig-fn args)))
+  (advice-add #'evil-indent :around #'+evil*static-reindent)
 
-;; Move to new split
-(defun +evil*window-follow (&rest _)  (evil-window-down 1))
-(defun +evil*window-vfollow (&rest _) (evil-window-right 1))
-(advice-add #'evil-window-split  :after #'+evil*window-follow)
-(advice-add #'evil-window-vsplit :after #'+evil*window-vfollow)
+  ;; monkey patch `evil-ex-replace-special-filenames' to add more ex
+  ;; substitution flags to evil-mode
+  (advice-add #'evil-ex-replace-special-filenames
+              :override #'+evil*ex-replace-special-filenames)
 
-;; monkey patch `evil-ex-replace-special-filenames' to add more ex
-;; substitution flags to evil-mode
-(advice-add #'evil-ex-replace-special-filenames
-            :override #'+evil*ex-replace-special-filenames)
+  ;; Add extra argument types that highlight matches in the current buffer.
+  ;; TODO Must be simpler way to do this
+  (evil-ex-define-argument-type buffer-match :runner +evil-ex-buffer-match)
+  (evil-ex-define-argument-type global-match :runner +evil-ex-global-match)
 
-;; Add extra argument types that highlight matches in the current buffer.
-;; TODO Must be simpler way to do this
-(evil-ex-define-argument-type buffer-match :runner +evil-ex-buffer-match)
-(evil-ex-define-argument-type global-match :runner +evil-ex-global-match)
+  (evil-define-interactive-code "<//>"
+    :ex-arg buffer-match (list (when (evil-ex-p) evil-ex-argument)))
+  (evil-define-interactive-code "<g//>"
+    :ex-arg global-match (when (evil-ex-p) (evil-ex-parse-global evil-ex-argument)))
 
-(evil-define-interactive-code "<//>"
-  :ex-arg buffer-match (list (when (evil-ex-p) evil-ex-argument)))
-(evil-define-interactive-code "<g//>"
-  :ex-arg global-match (when (evil-ex-p) (evil-ex-parse-global evil-ex-argument)))
+  (evil-define-operator +evil:global (beg end pattern command &optional invert)
+    "Rewritten :g[lobal] that will highlight buffer matches. Takes the same arguments."
+    :motion mark-whole-buffer :move-point nil
+    (interactive "<r><g//><!>")
+    (evil-ex-global beg end pattern command invert))
 
-(evil-define-operator +evil:global (beg end pattern command &optional invert)
-  "Rewritten :g[lobal] that will highlight buffer matches. Takes the same arguments."
-  :motion mark-whole-buffer :move-point nil
-  (interactive "<r><g//><!>")
-  (evil-ex-global beg end pattern command invert))
+  (evil-define-operator +evil:align (&optional beg end bang pattern)
+    "Ex interface to `align-regexp'. Accepts vim-style regexps."
+    (interactive "<r><!><//>")
+    (align-regexp
+     beg end
+     (concat "\\(\\s-*\\)"
+             (if bang
+                 (regexp-quote pattern)
+               (evil-transform-vim-style-regexp pattern)))
+     1 1))
 
-(evil-define-operator +evil:align (&optional beg end bang pattern)
-  "Ex interface to `align-regexp'. Accepts vim-style regexps."
-  (interactive "<r><!><//>")
-  (align-regexp
-   beg end
-   (concat "\\(\\s-*\\)"
-           (if bang
-               (regexp-quote pattern)
-             (evil-transform-vim-style-regexp pattern)))
-   1 1))
-
-(evil-ex-define-cmd "g[lobal]" #'+evil:global)
-(evil-ex-define-cmd "al[ign]"  #'+evil:align)
+  (evil-ex-define-cmd "g[lobal]" #'+evil:global)
+  (evil-ex-define-cmd "al[ign]"  #'+evil:align))
 
 
 ;;
@@ -383,7 +374,6 @@ the new algorithm is confusing, like in python or ruby."
                              (?\; "[;:]")))
 
   :config
-  ;; (evil-snipe-mode +1)
   (evil-snipe-override-mode +1)
   ;; Switch to evil-easymotion/avy after a snipe
   (map! :map evil-snipe-parent-transient-map
@@ -434,6 +424,8 @@ the new algorithm is confusing, like in python or ruby."
         neo-show-updir-line nil
         neo-theme 'nerd ; fallback
         neo-banner-message nil
+        neo-confirm-create-file #'off-p
+        neo-confirm-create-directory #'off-p
         neo-show-hidden-files nil
         neo-hidden-regexp-list
         '(;; vcs folders
@@ -447,15 +439,9 @@ the new algorithm is confusing, like in python or ruby."
           "~$"
           "^#.*#$"))
 
-  (set! :evil-state 'neotree-mode 'motion)
+  (evil-set-initial-state 'neotree-mode 'motion)
 
   (push neo-buffer-name winner-boring-buffers)
-
-  (defun +evil*neotree-create-node (orig-fun &rest args)
-    "Don't ask for confirmation when creating files"
-    (cl-letf (((symbol-function 'yes-or-no-p) (lambda (&rest _) t)))
-      (apply orig-fun args)))
-  (advice-add #'neotree-create-node :around #'+evil*neotree-create-node)
 
   ;; `neotree-mode-map' are overridden when the neotree buffer is created. So we
   ;; bind them in a hook.
