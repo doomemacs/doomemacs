@@ -89,7 +89,7 @@
     + [ ] twitter
     + [ ] present
 
-** 2.0.3 [16/28]
+** 2.0.3 [17/29]
 + [ ] tools/upload: add ~+upload/open-remote-file~ command to open current file
       on the remote (with TRAMP)
 + [ ] lang/org: fix janky visual line motions (~evil-next-visual-line~, etc)
@@ -104,6 +104,7 @@
 + [ ] Fix invisible buffer-info segment in modeline for terminal Emacs
 + [-] ui/doom: fix nav-flash on evil-multiedit or in eshell/term buffers
 + [-] New module :: tools/regex: PCRE regex editor
++ [X] feature/evil: fix stringp error caused by unintialized state in hideshow
 + [X] feature/evil: extend ~evil-escape~ +to ~evil-multiedit-insert-state~+
 + [X] feature/evil: new code folding system
 + [X] Load ~custom-file~

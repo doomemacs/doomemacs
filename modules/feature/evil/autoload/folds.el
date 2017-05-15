@@ -36,7 +36,7 @@
 ;;;###autoload
 (defun +evil-fold-p ()
   (or (+evil--vimish-fold-p)
-      (hs-already-hidden-p)))
+      (ignore-errors (hs-already-hidden-p))))
 
 ;;;###autoload (autoload '+evil/fold-toggle "feature/evil/autoload/folds" nil t)
 (evil-define-command +evil/fold-toggle ()
