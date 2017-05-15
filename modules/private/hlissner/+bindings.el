@@ -191,8 +191,6 @@
   (:desc "Unit tests"  :prefix "t"))
 
  ;;; Evil-esque bindings
- ;; Yank to EOL
- :n  "Y"  "y$"
  ;; Folding
  :n  "zr" #'+evil:open-folds-recursively
  :n  "zm" #'+evil:close-folds-recursively
