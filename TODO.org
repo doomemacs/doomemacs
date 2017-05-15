@@ -89,7 +89,8 @@
     + [ ] twitter
     + [ ] present
 
-** 2.0.3 [17/29]
+** 2.0.3 [17/31]
++ [ ] Test ~package-autoremove~
 + [ ] tools/upload: add ~+upload/open-remote-file~ command to open current file
       on the remote (with TRAMP)
 + [ ] lang/org: fix janky visual line motions (~evil-next-visual-line~, etc)
@@ -102,6 +103,7 @@
 + [ ] ui/doom-modeline: extend ~media-info~ segment for other media
 + [ ] Write ~describe-setting~ for ~def-setting!~ definitions.
 + [ ] Fix invisible buffer-info segment in modeline for terminal Emacs
++ [ ] ui/doom-modeline: fix ~0/0~ display in modeline (leftover anzu state)
 + [-] ui/doom: fix nav-flash on evil-multiedit or in eshell/term buffers
 + [-] New module :: tools/regex: PCRE regex editor
 + [X] feature/evil: fix stringp error caused by unintialized state in hideshow
@@ -123,10 +125,9 @@
 + [X] Switch from nlinum => linum #ui
 + [X] [[https://github.com/syl20bnr/vi-tilde-fringe][vi-tilde-fringe]]: subtle, vim-ish empty-line indicator #ui
 
-** 2.0.2 [67/67]
+** 2.0.2 [66/66]
 + [X] Update screenshots
 + [X] ui/doom: polish git-gutter fringe bitmaps (deleted bitmap appears truncated)
-+ [X] ui/doom-modeline: fix ~0/0~ display in modeline (leftover anzu state)
 + [X] send-to-REPL workflow: does it still work? (see ~:repl~ & ~+eval/repl-send-region~)
 + [X] completion/ivy: restore ag searching (for compressed files)
   Now ~:ag~, ~:rg~, ~:agcwd~ and ~:rgcwd~
