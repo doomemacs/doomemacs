@@ -87,7 +87,7 @@ local value, whether or not it's permanent-local. Therefore, we cycle
 (add-hook 'window-setup-hook #'winner-mode)
 
 ;; highlight matching delimiters
-(setq show-paren-delay 0.2
+(setq show-paren-delay 0.1
       show-paren-highlight-openparen t
       show-paren-when-point-inside-paren t)
 (show-paren-mode +1)
