@@ -7,8 +7,7 @@
         python-indent-guess-indent-offset-verbose nil
         python-shell-interpreter "python")
 
-  (add-hook! 'python-mode-hook
-    #'(flycheck-mode +evil|simple-matchit))
+  (add-hook 'python-mode-hook #'flycheck-mode)
 
   :config
   (set! :repl 'python-mode #'+python/repl)
