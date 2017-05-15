@@ -97,21 +97,30 @@
 (def-package! nav-flash
   :commands nav-flash-show
   :init
-  (defun doom/blink-cursor (&rest _)
+  (defun doom*blink-cursor-maybe (orig-fn &rest args)
     "Blink line, to keep track of the cursor."
     (interactive)
-    (nav-flash-show))
+    (let ((point (point-marker)))
+      (apply orig-fn args)
+      (unless (equal point (point-marker))
+        (doom/blink-cursor))))
 
-  (add-hook! :append
+  (defun doom/blink-cursor (&rest _)
+    (unless (minibufferp)
+      (nav-flash-show)
+      ;; only show in the current window
+      (overlay-put compilation-highlight-overlay 'window (selected-window))))
+
+  (add-hook!
     '(imenu-after-jump-hook evil-jumps-post-jump-hook find-file-hook)
-    'doom/blink-cursor)
+    #'doom/blink-cursor)
 
+  (advice-add #'windmove-do-window-select :around #'doom*blink-cursor-maybe)
   (advice-add #'recenter :after #'doom/blink-cursor)
 
   (after! evil
-    (advice-add #'evil-window-bottom :after #'doom/blink-cursor)
-    (advice-add #'evil-window-middle :after #'doom/blink-cursor)
-    (advice-add #'evil-window-top    :after #'doom/blink-cursor)))
+    (dolist (fn '(evil-window-bottom evil-window-middle evil-window-top))
+      (advice-add fn :around #'doom*blink-cursor-maybe))))
 
 
 (after! hideshow
