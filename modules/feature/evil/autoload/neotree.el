@@ -21,37 +21,34 @@
 (defun +evil/neotree-collapse-or-up ()
   "Collapse an expanded directory node or go to the parent node."
   (interactive)
-  (let ((node (neo-buffer--get-filename-current-line)))
-    (when node
-      (if (file-directory-p node)
-          (if (neo-buffer--expanded-node-p node)
-              (+evil/neotree-collapse)
-            (neotree-select-up-node))
-        (neotree-select-up-node)))))
+  (when-let (node (neo-buffer--get-filename-current-line))
+    (if (file-directory-p node)
+        (if (neo-buffer--expanded-node-p node)
+            (+evil/neotree-collapse)
+          (neotree-select-up-node))
+      (neotree-select-up-node))))
 
 ;;;###autoload
 (defun +evil/neotree-collapse ()
   "Collapse a neotree node."
   (interactive)
-  (let ((node (neo-buffer--get-filename-current-line)))
-    (when node
-      (when (file-directory-p node)
-        (neo-buffer--set-expand node nil)
-        (neo-buffer--refresh t))
-      (when neo-auto-indent-point
-        (neo-point-auto-indent)))))
+  (when-let (node (neo-buffer--get-filename-current-line))
+    (when (file-directory-p node)
+      (neo-buffer--set-expand node nil)
+      (neo-buffer--refresh t))
+    (when neo-auto-indent-point
+      (neo-point-auto-indent))))
 
 ;;;###autoload
 (defun +evil/neotree-expand-or-open ()
   "Expand or open a neotree node."
   (interactive)
-  (let ((node (neo-buffer--get-filename-current-line)))
-    (when node
-      (if (file-directory-p node)
-          (progn
-            (neo-buffer--set-expand node t)
-            (neo-buffer--refresh t)
-            (when neo-auto-indent-point
-              (next-line)
-              (neo-point-auto-indent)))
-        (call-interactively 'neotree-enter)))))
+  (when-let (node (neo-buffer--get-filename-current-line))
+    (if (file-directory-p node)
+        (progn
+          (neo-buffer--set-expand node t)
+          (neo-buffer--refresh t)
+          (when neo-auto-indent-point
+            (next-line)
+            (neo-point-auto-indent)))
+      (call-interactively 'neotree-enter))))
