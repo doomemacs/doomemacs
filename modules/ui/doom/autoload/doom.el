@@ -7,6 +7,7 @@
   (let ((theme (or (car-safe custom-enabled-themes) +doom-theme)))
     (when theme
       (mapc #'disable-theme custom-enabled-themes))
+    (load "doom-themes-common.el" nil t)
     (load-theme theme t)
     (+doom|refresh-bright-buffers)))
 

@@ -57,8 +57,8 @@
 
   ;; Dark frames by default
   (when (display-graphic-p)
-    (push (cons 'background-color (face-background 'default)) default-frame-alist)
-    (push (cons 'foreground-color (face-foreground 'default)) default-frame-alist))
+    (push (cons 'background-color (face-background 'default)) initial-frame-alist)
+    (push (cons 'foreground-color (face-foreground 'default)) initial-frame-alist))
 
   (defun +doom|buffer-mode-on ()
     "Enable `doom-buffer-mode' in buffers that are real (see
