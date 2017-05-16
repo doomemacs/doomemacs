@@ -22,6 +22,8 @@
  "A-x"    #'execute-extended-command
  "M-;"    #'eval-expression
  "A-;"    #'eval-expression
+ "M-:"    #'+hlissner/C-u-M-x
+ "A-:"    #'+hlissner/C-u-M-x
  ;; Tools
  [f9]     #'doom/what-face
  [f10]    #'doom/blink-cursor
@@ -93,13 +95,13 @@
    :desc "View Emacs Log"           :n "m"  #'view-echo-area-messages
    :desc "Recent files"             :n "r"  #'recentf
    :desc "Recent project files"     :n "R"  #'projectile-recentf
-   :desc "Open file explorer"       :n "n"  #'+evil/neotree
+   :desc "Open Neotree"             :n "n"  #'+evil/neotree
    :desc "Insert from kill ring"    :n "y"  #'counsel-yank-pop
    :desc "Switch project"           :n "p"  #'projectile-switch-project
    :desc "Execute in Emacs mode"    :n "\\" #'evil-execute-in-emacs-state
    :desc "Switch to Emacs mode"     :n "|"  #'evil-emacs-state
    ;; Since I've remapped C-h...
-   :desc "Help"                     :n "h"  #'help-command
+   :desc "help"                     :n "h"  #'help-command
 
    (:desc "quit"
      :prefix "q"

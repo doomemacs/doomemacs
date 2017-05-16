@@ -8,6 +8,13 @@ private/hlissner/snippets."
   (doom-fetch :github "hlissner/emacs-snippets"
               (expand-file-name "snippets" (doom-module-path :private 'hlissner))))
 
+;;;###autoload
+(defun +hlissner/C-u-M-x ()
+  "Invokes `execute-extended-command' with the universal argument."
+  (interactive)
+  (let ((current-prefix-arg 1))
+    (call-interactively #'execute-extended-command)))
+
 (defmacro +hlissner-def-finder! (name dir)
   "Define a pair of find-file and browse functions."
   `(progn
