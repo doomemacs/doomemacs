@@ -66,16 +66,6 @@ limit to buffers in the current workspace."
             :keymap ivy-switch-buffer-map
             :caller '+ivy/switch-workspace-buffer))
 
-;;;###autoload
-(defun +ivy/kill-ring ()
-  "Search through the kill ring with `ivy'."
-  (interactive)
-  (ivy-read "Kill ring:"
-            (cl-remove-if (lambda (it)
-                            (or (< (length it) 3)
-                                (string-match-p "\\`[\n[:blank:]]+\\'" it)))
-                          (cl-remove-duplicates kill-ring :test 'equal))))
-
 ;; TODO refactor ivy task candidate functions (messy!)
 (defun +ivy--tasks-candidates (tasks)
   "Generate a list of task tags (specified by `+ivy-task-tags') for
