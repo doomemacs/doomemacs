@@ -5,7 +5,7 @@ TEST_EMACS=$(EMACS) --eval '(setq noninteractive nil)' $(EMACS_LIBS)
 TESTS=$(patsubst %,-l %, $(shell find test/ -type f -name 'test-*.el'))
 
 # Tasks
-all: autoloads install update
+all: autoloads autoremove install update
 
 install: init.el .local/autoloads.el
 	@$(EMACS) -f 'doom/packages-install'
