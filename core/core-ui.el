@@ -28,6 +28,9 @@
  use-dialog-box nil             ; always avoid GUI
  visible-cursor nil
  x-stretch-cursor nil
+ ;; `pos-tip' defaults
+ pos-tip-internal-border-width 6
+ pos-tip-border-width 1
  ;; no beeping or blinking please
  ring-bell-function #'ignore
  visible-bell nil
