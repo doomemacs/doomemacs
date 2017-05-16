@@ -411,7 +411,17 @@ the command buffer."
   (set! :popup " *NeoTree*" :align 'left :size 25)
 
   (defun +evil-neotree-display-fn (buf _alist)
-    (doom-popup-buffer buf)))
+    "Hand neotree off to shackle."
+    (let ((win (doom-popup-buffer buf)))
+      (setq neo-global--buffer (window-buffer win)
+            neo-global--window win)))
+
+  (defun +evil|neotree-fix-popup ()
+    "Repair neotree state whenever its popup state is restored. This ensures
+that `doom*popup-save' won't break it."
+    (when (equal (buffer-name) neo-buffer-name)
+      (setq neo-global--window (selected-window))))
+  (add-hook 'doom-popup-mode-hook #'+evil|neotree-fix-popup))
 
 
 (after! quickrun
