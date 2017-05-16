@@ -100,7 +100,7 @@
   :commands nav-flash-show
   :init
   (defun doom*blink-cursor-maybe (orig-fn &rest args)
-    "Blink line, to keep track of the cursor."
+    "Blink current line if the window has moved."
     (interactive)
     (let ((point (save-excursion (goto-char (window-start))
                                  (point-marker))))
@@ -111,6 +111,7 @@
         (doom/blink-cursor))))
 
   (defun doom/blink-cursor (&rest _)
+    "Blink current line using `nav-flash'."
     (interactive)
     (unless (minibufferp)
       (nav-flash-show)
