@@ -150,17 +150,17 @@
   :group '+doom-modeline)
 
 (defface doom-modeline-info
-  `((t (:inherit success)))
+  `((t (:inherit success :bold t)))
   "Face for info-level messages in the modeline. Used by `*vc'."
   :group '+doom-modeline)
 
 (defface doom-modeline-warning
-  `((t (:inherit warning)))
+  `((t (:inherit warning :bold t)))
   "Face for warnings in the modeline. Used by `*flycheck'"
   :group '+doom-modeline)
 
 (defface doom-modeline-urgent
-  `((t (:inherit error)))
+  `((t (:inherit error :bold t)))
   "Face for errors in the modeline. Used by `*flycheck'"
   :group '+doom-modeline)
 
@@ -378,7 +378,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                      (if active (setq face 'doom-modeline-urgent))
                      (all-the-icons-octicon "alert" :face face))
                     (t
-                     (if active (setq face 'mode-line))
+                     (if active (setq face 'font-lock-doc-face))
                      (all-the-icons-octicon
                       "git-branch"
                       :face face
@@ -399,8 +399,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
    (when icon
      (concat
       (all-the-icons-octicon icon :face face :height 1.0 :v-adjust 0)
-      (when text
-        (propertize "  " 'face 'variable-pitch))))
+      (if text " ")))
    (when text
      (propertize text 'face face))))
 
@@ -412,7 +411,8 @@ icons."
       ('finished (if flycheck-current-errors
                      (let-alist (flycheck-count-errors flycheck-current-errors)
                        (let ((sum (+ (or .error 0) (or .warning 0))))
-                         (+doom-ml-icon "circle-slash" (format "%s issue%s" sum (if (eq 1 sum) "" "s"))
+                         (+doom-ml-icon "circle-slash"
+                                        (number-to-string sum)
                                         (if .error 'doom-modeline-urgent 'doom-modeline-warning))))
                    (concat
                     (+doom-ml-icon "check" nil 'doom-modeline-info) " ")))
