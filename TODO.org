@@ -89,7 +89,7 @@
     + [ ] twitter
     + [ ] present
 
-** 2.0.3 [17/31]
+** 2.0.3 [22/42]
 + [ ] Test ~package-autoremove~
 + [ ] tools/upload: add ~+upload/open-remote-file~ command to open current file
       on the remote (with TRAMP)
@@ -104,8 +104,20 @@
 + [ ] Write ~describe-setting~ for ~def-setting!~ definitions.
 + [ ] Fix invisible buffer-info segment in modeline for terminal Emacs
 + [ ] ui/doom-modeline: fix ~0/0~ display in modeline (leftover anzu state)
-+ [-] ui/doom: fix nav-flash on evil-multiedit or in eshell/term buffers
-+ [-] New module :: tools/regex: PCRE regex editor
++ [1/9] New module :: tools/regex (PCRE IDE)
+  + [X] perl backend
+  + [ ] replace support
+  + [ ] export to code support
+  + [ ] python exporter (use ~re~ or ~regex~)
+  + [ ] php exporter (~preg_(match(_all)?|replace)~)
+  + [ ] ruby backend (~%r[.+]~)
+  + [ ] javascript (node) backend (~/.+/~)
+  + [ ] syntax highlighter for ~+regex-mode~ (plus make it a major mode)
+  + [ ] README.org
++ [X] ui/doom: fix nav-flash on evil-multiedit or in eshell/term buffers
++ [X] core-os: don't use GTK tooltips (ugly!)
++ [X] ui/doom-modeline: reduce excess whitespace on right of flycheck segment
++ [X] ui/doom-modeline: slightly darker color for git segment (when clean)
 + [X] feature/evil: fix stringp error caused by unintialized state in hideshow
 + [X] feature/evil: extend ~evil-escape~ +to ~evil-multiedit-insert-state~+
 + [X] feature/evil: new code folding system

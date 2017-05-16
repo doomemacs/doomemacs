@@ -1,14 +1,28 @@
 ;;; app/regex/config.el
 
-;; Provides a Regex IDE, invoked by `=regex'. If opened with C-u, opens in a
-;; separate frame with a dummy text buffer.
+;; Often, I find myself writing regular expressions that could terrify seasoned
+;; programmers (or little children). To hone my regex fu, I need a regex
+;; playground. Sure, there's regexr.com, but don't be silly, that's not Emacs.
+;;
+;; Sadly, the Emacs' regex syntax is niche and lacks support for a few
+;; questionably useful features, like lookaround assertions, conditionals, case
+;; modifiers or backreferences, among others. No, I want PCRE. I am going to
+;; have my cake and eat it too, damn it!
+;;
+;; Workflow:
+;;   + Invoke `=regex' (if opened with C-u, opens in separate workspace with a
+;;     dummy text buffer).
+;;   + A regex window will popup up. Any matches will be highlighted in the
+;;     original buffer.
+;;   + C-c C-k to close it
+;;   + TODO C-c C-e to export to various langauges
 ;;
 ;; WARNING: THIS IS A WORK IN PROGRESS
 
 (defvar +regex-workspace-name "*regex*"
   "TODO")
 
-(defvar +regex-default-backend 'emacs
+(defvar +regex-default-backend 'perl
   "The backend used to process regular expressions.
 The `emacs' backend handles regular expressions directly.
 The `perl' backend talks to a perl subprocess to do the handling.")

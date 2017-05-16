@@ -1,4 +1,4 @@
-;;; app/regex/autoload.el
+;;; app/regex/autoload/regex.el
 
 (defvar +regex--text-buffer nil)
 (defvar +regex--expr-buffer nil)
@@ -7,17 +7,17 @@
 ;;
 (defface +regex-match-0-face
   '((t (:foreground "Black" :background "Red" :bold t)))
-  ""
+  "TODO"
   :group 'doom)
 
 (defface +regex-match-1-face
   '((t (:foreground "Black" :background "Blue" :bold t)))
-  ""
+  "TODO"
   :group 'doom)
 
 (defface +regex-match-2-face
   '((t (:foreground "Black" :background "Green" :bold t)))
-  ""
+  "TODO"
   :group 'doom)
 
 (defvar +regex-faces
@@ -33,6 +33,7 @@
     map)
   "TODO")
 
+;;;###autoload
 (define-minor-mode +regex-mode
   "TODO"
   :init-value nil
@@ -98,15 +99,16 @@
           (ignore-errors
             (goto-char (point-min))
             (pcase +regex-default-backend
-              ('emacs (+regex-backend-emacs regex))
-              ('perl  (+regex-backend-perl regex))))))
+              ('emacs        (+regex-backend-emacs regex))
+              ('perl         (+regex-backend-generic (+regex-backend-perl regex)))
+              ('python       (+regex-backend-generic (+regex-backend-python regex)))))))
       (with-current-buffer +regex--groups-buffer
         (goto-char (point-min))))))
 
 
 ;; --- backends ---------------------------
 
-(defun +regex--render-perl (regex sample)
+(defun +regex--backend-perl (regex sample)
   "From <https://github.com/jwiegley/regex-tool>"
   (with-temp-buffer
     (unless (string-match-p "^/.+/[gm]*$" regex)
