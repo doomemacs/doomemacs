@@ -583,6 +583,10 @@ with `evil-ex-substitute', and/or 4. The number of active `iedit' regions."
   (bar " " buffer-project)
   (major-mode))
 
+(def-modeline! media
+  (bar " %b  ")
+  (media-info major-mode))
+
 ;;
 (doom-set-modeline 'main t)
 
@@ -599,4 +603,8 @@ with `evil-ex-substitute', and/or 4. The number of active `iedit' regions."
 (defun +doom-modeline|set-special-modeline ()
   (doom-set-modeline 'special))
 
+(defun +doom-modeline|set-media-modeline ()
+  (doom-set-modeline 'media))
+
 (add-hook 'org-src-mode-hook #'+doom-modeline|set-special-modeline)
+(add-hook 'image-mode-hook #'+doom-modeline|set-media-modeline)
