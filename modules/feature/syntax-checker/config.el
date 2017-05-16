@@ -7,12 +7,10 @@
 (def-package! flycheck
   :commands (flycheck-mode flycheck-list-errors flycheck-buffer)
   :config
-  (setq ;; because git-gutter is in the left fringe
-        flycheck-indication-mode 'right-fringe
-        ;; Emacs feels snappier without checks on idle/change
-        flycheck-check-syntax-automatically '(save mode-enabled))
+  ;; Emacs feels snappier without checks on idle/change
+  (setq flycheck-check-syntax-automatically '(save mode-enabled))
 
-  (set! :popup " ?\\*Flycheck.+\\*" :size 14 :noselect t :regexp t)
+  (set! :popup " ?\\*Flycheck" :size 14 :noselect t :regexp t)
 
   (map! :map flycheck-error-list-mode-map
         :n "C-n" #'flycheck-error-list-next-error
@@ -20,10 +18,6 @@
         :n "j"   #'flycheck-error-list-next-error
         :n "k"   #'flycheck-error-list-previous-error
         :n "RET" #'flycheck-error-list-goto-error)
-
-  (when (fboundp 'define-fringe-bitmap)
-    (define-fringe-bitmap 'flycheck-fringe-bitmap-double-arrow
-      [0 0 0 0 0 4 12 28 60 124 252 124 60 28 12 4 0 0 0 0]))
 
   (after! evil
     ;; Flycheck buffer on ESC in normal mode.
