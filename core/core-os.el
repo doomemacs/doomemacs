@@ -55,7 +55,8 @@
                 (osx-clipboard-mode +1)))))
 
       (IS-LINUX
-       ;; nothing yet
+       ;; native tooltips are ugly!
+       (setq x-gtk-use-system-tooltips nil)
        ))
 
 (provide 'core-os)
