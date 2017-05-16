@@ -126,8 +126,9 @@
   (advice-add #'recenter :around #'doom*blink-cursor-maybe)
 
   (after! evil
-    (dolist (fn '(evil-window-bottom evil-window-middle evil-window-top))
-      (advice-add fn :around #'doom*blink-cursor-maybe))))
+    (advice-add #'evil-window-top :after #'doom/blink-cursor)
+    (advice-add #'evil-window-middle :after #'doom/blink-cursor)
+    (advice-add #'evil-window-bottom :after #'doom/blink-cursor)))
 
 
 (after! hideshow
