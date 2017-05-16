@@ -63,8 +63,9 @@ is enabled/disabled.'")
         ;;  :autoclose  If non-nil, close popup if ESC is pressed from outside
         ;;              the popup window.
         shackle-rules
-        '(("^\\*ftp " :size 8  :noselect t :autokill t :noesc t)
+        '(("^\\*ftp " :size 8 :noselect t :autokill t :noesc t)
           ;; doom
+          ("*doom:scratch*" :size 0.35 :noesc t :select t :modeline t)
           ("^\\*doom:" :regexp t :size 0.35 :noesc t :select t)
           ("^\\*doom " :regexp t :noselect t :autokill t :autoclose t)
           ;; built-in (emacs)
@@ -77,9 +78,10 @@ is enabled/disabled.'")
           (profiler-report-mode :size 0.3 :regexp t :autokill t)
           ("*Backtrace*" :size 20 :noselect t)
           ("*Warnings*" :noselect t :autokill t)
+          ("*Messages*" :noselect t :autokill nil)
           ("*Help*" :size 0.3)
           ("^\\*.*Shell Command.*\\*$" :regexp t :size 20 :noselect t :autokill t)
-          ("^\\*"  :regexp t :noselect t)
+          ("^\\*"  :regexp t :noselect t :autokill t)
           ("^ \\*" :regexp t :size 12 :noselect t :autokill t :autoclose t)))
 
   :config
@@ -446,7 +448,7 @@ you came from."
 
 
 ;; Ensure these settings are attached to org-load-hook as late as possible,
-;; giving other modules to add their own hooks.
+;; giving other modules a chance to add their own hooks.
 (add-hook! 'after-init-hook
   (add-hook! 'org-load-hook
     (set! :popup
@@ -465,11 +467,8 @@ you came from."
       '("^CAPTURE.*\\.org$"  :regexp t :size 20))
 
     ;; Org has its own window management system with a scorched earth philosophy
-    ;; I'm not fond of. i.e. it kills all windows and greedily monopolizes the
-    ;; frame. No thanks. We can do better with shackle's help.
-
-    ;; Save the emacsverse from armageddon by suppressing `delete-other-windows'
-    ;; in org functions.
+    ;; I'm not fond of. i.e. it kills all windows and monopolizes the frame. No
+    ;; thanks. We can do better with shackle's help.
     (defun doom*suppress-delete-other-windows (orig-fn &rest args)
       (cl-letf (((symbol-function 'delete-other-windows)
                  (symbol-function 'ignore)))
