@@ -262,6 +262,7 @@ across windows."
   :demand t
   :init
   (setq evil-escape-excluded-states '(visual multiedit)
+        evil-escape-excluded-major-modes '(neotree-mode)
         evil-escape-key-sequence "jk"
         evil-escape-delay 0.25)
 
