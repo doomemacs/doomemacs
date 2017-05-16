@@ -47,7 +47,8 @@
   (setq line-spacing 1)
 
   ;; show-paren-mode causes problems for org-indent-mode
-  (show-paren-mode -1)
+  (make-local-variable 'show-paren-mode)
+  (setq show-paren-mode nil)
 
   (visual-line-mode +1)
   (when (and (featurep 'evil) evil-mode)
