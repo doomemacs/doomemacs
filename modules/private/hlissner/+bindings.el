@@ -24,7 +24,7 @@
  "A-;"    #'eval-expression
  "M-:"    #'+hlissner/C-u-M-x
  "A-:"    #'+hlissner/C-u-M-x
- ;; Tools
+ ;; Emacs debug utilities
  [f9]     #'doom/what-face
  [f10]    #'doom/blink-cursor
  "C-`"    #'doom/popup-toggle
@@ -43,38 +43,34 @@
  "C-k"    #'evil-window-up
  "C-h"    #'evil-window-left
  "C-l"    #'evil-window-right
+ "M-1"    (λ! (+workspace/switch-to 0))
+ "M-2"    (λ! (+workspace/switch-to 1))
+ "M-3"    (λ! (+workspace/switch-to 2))
+ "M-4"    (λ! (+workspace/switch-to 3))
+ "M-5"    (λ! (+workspace/switch-to 4))
+ "M-6"    (λ! (+workspace/switch-to 5))
+ "M-7"    (λ! (+workspace/switch-to 6))
+ "M-8"    (λ! (+workspace/switch-to 7))
+ "M-9"    (λ! (+workspace/switch-to 8))
+ "M-0"    #'+workspace/switch-to-last
  ;; Basic escape keys for emacs mode
  :e "C-h" #'evil-window-left
  :e "C-j" #'evil-window-down
  :e "C-k" #'evil-window-up
  :e "C-l" #'evil-window-right
- ;; Switching tabs (workspaces)
- "M-1"  (λ! (+workspace/switch-to 0))
- "M-2"  (λ! (+workspace/switch-to 1))
- "M-3"  (λ! (+workspace/switch-to 2))
- "M-4"  (λ! (+workspace/switch-to 3))
- "M-5"  (λ! (+workspace/switch-to 4))
- "M-6"  (λ! (+workspace/switch-to 5))
- "M-7"  (λ! (+workspace/switch-to 6))
- "M-8"  (λ! (+workspace/switch-to 7))
- "M-9"  (λ! (+workspace/switch-to 8))
- "M-0"  #'+workspace/switch-to-last
 
- :n "M-r"   #'+eval/buffer
- :v "M-r"   #'+eval/region
- :v "M-S-r" #'+eval/region-and-replace
- :n "M-b"   #'+eval/build
-
- [M-backspace]  #'doom/backward-kill-to-bol-and-indent
- "M-a"          #'mark-whole-buffer
- "M-c"          #'evil-yank
- "M-q"          #'save-buffers-kill-emacs
- "M-s"          #'save-buffer
- "M-v"          #'clipboard-yank
- "M-f"          #'+ivy:swiper
- "C-M-f"        #'doom/toggle-fullscreen
- :m "A-j"       #'+hlissner:multi-next-line
- :m "A-k"       #'+hlissner:multi-previous-line
+ "M-r"    #'+eval/buffer
+ "M-S-r"  #'+eval/region-and-replace
+ "M-b"    #'+eval/build
+ "M-a"    #'mark-whole-buffer
+ "M-c"    #'evil-yank
+ "M-q"    #'save-buffers-kill-emacs
+ "M-s"    #'save-buffer
+ "M-v"    #'clipboard-yank
+ "M-f"    #'+ivy:swiper
+ "C-M-f"  #'doom/toggle-fullscreen
+ :m "A-j" #'+hlissner:multi-next-line
+ :m "A-k" #'+hlissner:multi-previous-line
 
  ;;; <leader> and <localleader>
  :m ";" 'evil-ex
@@ -335,7 +331,8 @@
       ;; textmate-esque newline insertion
       :i [M-return]     #'evil-open-below
       :i [S-M-return]   #'evil-open-above
-      ;; Textmate-esque newlines
+      ;; textmate-esque deletion
+      [M-backspace]     #'doom/backward-kill-to-bol-and-indent
       :i [backspace]    #'delete-backward-char
       :i [M-backspace]  #'doom/backward-kill-to-bol-and-indent
       ;; Emacsien motions for insert mode
