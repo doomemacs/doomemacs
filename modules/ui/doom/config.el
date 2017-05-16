@@ -93,6 +93,7 @@
         (doom/blink-cursor))))
 
   (defun doom/blink-cursor (&rest _)
+    (interactive)
     (unless (minibufferp)
       (nav-flash-show)
       ;; only show in the current window
