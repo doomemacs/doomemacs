@@ -1,6 +1,8 @@
 ;;; core-keybinds.el
 
-;; A centralized keybinds system. Uses `which-key' to preview available keys.
+;; A centralized keybinds system, integrated with `which-key' to preview
+;; available keys, and `evil', if it's enabled. All built into one powerful
+;; macro: `map!'.
 
 (defvar doom-leader-key ","
   "The leader prefix key, for global commands.")
@@ -8,7 +10,18 @@
 (defvar doom-localleader-key "\\"
   "The leader prefix key, for global commands.")
 
+(defvar doom-evil-state-alist
+  '(("n" . normal)
+    ("v" . visual)
+    ("i" . insert)
+    ("e" . emacs)
+    ("o" . operator)
+    ("m" . motion)
+    ("r" . replace))
+  "A list of cons cells that map a letter to a evil state symbol.")
 
+
+;;
 (def-package! which-key
   :demand t
   :config
@@ -28,31 +41,35 @@
   (which-key-mode +1))
 
 
-(defun doom-keybind-register (key desc &optional modes)
-  "TODO"
+;;
+(defun doom--keybind-register (key desc &optional modes)
+  "Register a description for KEY with `which-key' in MODES.
+
+  KEYS should be a string in kbd format.
+  DESC should be a string describing what KEY does.
+  MODES should be a list of major mode symbols."
   (if modes
       (dolist (mode modes)
         (which-key-add-major-mode-key-based-replacements mode key desc))
     (which-key-add-key-based-replacements key desc)))
 
 
-(defun doom-keyword-to-states (keyword &optional ignore)
-  "TODO"
-  (let ((states '(("n" . normal)
-                  ("v" . visual)
-                  ("i" . insert)
-                  ("e" . emacs)
-                  ("o" . operator)
-                  ("m" . motion)
-                  ("r" . replace))))
-    (delq nil
-          (mapcar (lambda (l)
-                    (let ((state (cdr (assoc l states))))
-                      (unless state
-                        (unless (or (eq ignore t) (member l ignore))
-                          (error "not a valid state: %s" l)))
-                      state))
-                  (split-string (substring (symbol-name keyword) 1) "" t)))))
+(defun doom--keyword-to-states (keyword &optional ignore)
+  "Convert a KEYWORD into a list of evil state symbols.
+
+IGNORE is a list of keyword letters that should be ignored.
+
+For example, :nvi will map to (list 'normal 'visual 'insert). See
+`doom-evil-state-alist' to customize this."
+  (delq nil
+        (mapcar (lambda (l)
+                  (let ((state (cdr (assoc l doom-evil-state-alist))))
+                    (unless state
+                      (unless (or (eq ignore t) (member l ignore))
+                        (error "not a valid state: %s" l)))
+                    state))
+                (split-string (substring (symbol-name keyword) 1) "" t))))
+
 
 ;; Register keywords for proper indentation (see `map!')
 (put ':prefix       'lisp-indent-function 'defun)
@@ -89,6 +106,8 @@ States
     key=>def pair.
 
     If states are omitted the keybind will be global.
+
+    This can be customized with `doom-evil-state-alist'.
 
     :L cannot be in a :map.
 
@@ -158,12 +177,12 @@ Example
                         `(vconcat ,prefix (if (stringp ,def) (kbd ,def) ,def))
                       `(vconcat ,prefix ,(if (stringp def) (kbd def) def))))
               (when desc
-                (push `(doom-keybind-register ,(key-description (eval prefix))
+                (push `(doom--keybind-register ,(key-description (eval prefix))
                                               ,desc ',modes)
                       forms)
                 (setq desc nil))))
           (otherwise ; might be a state prefix
-           (setq states (doom-keyword-to-states key '("L")))
+           (setq states (doom--keyword-to-states key '("L")))
            (when (let (case-fold-search)
                    (string-match-p "L" (symbol-name key)))
              (setq local t)
@@ -186,7 +205,7 @@ Example
                 (user-error "map! has no definition for %s key" key))
               (setq def (pop rest))
               (when desc
-                (push `(doom-keybind-register ,(key-description (eval key))
+                (push `(doom--keybind-register ,(key-description (eval key))
                                               ,desc ',modes)
                       forms))
               (cond ((and keymaps states)
