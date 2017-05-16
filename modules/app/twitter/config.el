@@ -18,9 +18,6 @@
 
   (set! :popup "*twittering-edit*" :size 12 :select t)
 
-  (after! doom-themes
-    (add-hook 'twittering-mode-hook #'doom-buffer-mode))
-
   (add-hook! twittering-mode
     (setq header-line-format (or (doom-modeline 'twitter) mode-line-format)
           mode-line-format nil))

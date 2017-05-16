@@ -71,8 +71,6 @@
     (add-hook! 'org-tree-slide-mode-hook
       (doom/window-zoom)
       (let ((arg (if org-tree-slide-mode +1 -1)))
-        (when (featurep 'doom-themes)
-          (doom-buffer-mode (* arg -1)))
         (centered-window-mode arg)
         (window-divider-mode (* arg -1))
         (doom-hide-modeline-mode arg)

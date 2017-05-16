@@ -60,7 +60,6 @@
         (doom-popup-buffer +regex--expr-buffer)
         (with-current-buffer +regex--expr-buffer
           (conf-mode)
-          (doom-buffer-mode +1)
           (rainbow-delimiters-mode +1)
           (linum-mode -1)
           (+regex-mode +1)

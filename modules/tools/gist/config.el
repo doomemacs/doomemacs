@@ -6,8 +6,6 @@
 
 (def-package! gist
   :commands (gist-list gist-region-or-buffer-private gist-region-or-buffer)
-  :init
-  (add-hook 'gist-mode-hook #'doom-buffer-mode)
   :config
   (set! :popup "*github:gists*" :size 15 :select t :autokill t)
 

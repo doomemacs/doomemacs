@@ -301,4 +301,6 @@ re-align the table if necessary. (Necessary because org-mode has a
   (interactive)
   (let ((shackle-rules '(("^\\*Org Src" :align t :select t :regexp t :noesc t :same t))))
     (call-interactively 'org-edit-special)
-    (doom-buffer-mode +1)))
+    ;; FIXME too tightly coupled with doom-buffer-mode
+    (when (fboundp 'doom-buffer-mode)
+      (doom-buffer-mode +1))))

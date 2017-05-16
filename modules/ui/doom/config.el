@@ -75,7 +75,15 @@
   (add-hook 'doom-popup-mode-hook #'+doom|buffer-mode-off)
 
   ;;
-  (add-hook '+workspaces-load-session-hook #'+doom|restore-bright-buffers))
+  (add-hook '+workspaces-load-session-hook #'+doom|restore-bright-buffers)
+
+  ;; Extra modes to activate doom-buffer-mode in
+  (add-hook! (gist-mode
+              twittering-mode
+              mu4e-view-mode
+              org-tree-slide-mode
+              +regex-mode)
+    #'doom-buffer-mode))
 
 
 ;; Flashes the line around the cursor after any motion command that might

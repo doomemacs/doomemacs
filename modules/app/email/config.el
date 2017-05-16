@@ -149,10 +149,6 @@
   (when (featurep! :feature spellcheck)
     (add-hook 'mu4e-compose-mode-hook #'flyspell-mode))
 
-  ;; Brighter + no mode-line in message windows
-  (after! doom-themes
-    (add-hook 'mu4e-view-mode-hook #'doom-buffer-mode))
-
   ;; Wrap text in messages
   (add-hook! 'mu4e-view-mode-hook
     (setq-local truncate-lines nil))
