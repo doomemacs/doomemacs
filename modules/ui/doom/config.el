@@ -95,9 +95,12 @@
   (defun doom*blink-cursor-maybe (orig-fn &rest args)
     "Blink line, to keep track of the cursor."
     (interactive)
-    (let ((point (point-marker)))
+    (let ((point (save-excursion (goto-char (window-start))
+                                 (point-marker))))
       (apply orig-fn args)
-      (unless (equal point (point-marker))
+      (unless (equal point
+                     (save-excursion (goto-char (window-start))
+                                     (point-marker)))
         (doom/blink-cursor))))
 
   (defun doom/blink-cursor (&rest _)
@@ -112,7 +115,7 @@
     #'doom/blink-cursor)
 
   (advice-add #'windmove-do-window-select :around #'doom*blink-cursor-maybe)
-  (advice-add #'recenter :after #'doom/blink-cursor)
+  (advice-add #'recenter :around #'doom*blink-cursor-maybe)
 
   (after! evil
     (dolist (fn '(evil-window-bottom evil-window-middle evil-window-top))
