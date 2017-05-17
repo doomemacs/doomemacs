@@ -316,8 +316,8 @@
  (:map help-map
    "l" #'find-library
    "L" #'view-lossage
-   "h" #'describe-face  ; overwrite `view-hello-file'
-   "g" nil)) ; annoying to trigger accidentally
+   "h" #'describe-face   ; more useful than `view-hello-file'
+   "g" #'describe-char)) ; more useful than `describe-gnu-project'
 
 
 ;;
