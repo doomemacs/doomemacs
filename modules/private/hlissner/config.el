@@ -36,7 +36,7 @@
        (defun ,fn-sym (&rest _)
          (define-key evil-motion-state-map (kbd "SPC") ',next-func)
          (define-key evil-motion-state-map (kbd "S-SPC") ',prev-func))
-       (advice-add ',command :before ',fn-sym))))
+       (advice-add #',command :before #',fn-sym))))
 
 (after! evil
   ;; n/N

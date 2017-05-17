@@ -136,7 +136,11 @@ across windows."
   (advice-add #'evil-ex-replace-special-filenames
               :override #'+evil*ex-replace-special-filenames)
 
-  ;; Add extra argument types that highlight matches in the current buffer.
+  ;; By default :g[lobal] doesn't highlight matches in the current buffer. I've
+  ;; got to write my own argument type and interactive code to get it to do so.
+  ;; While I'm at it, I use this to write an :al[ign] command as a wrapper
+  ;; around `align-regexp'.
+
   ;; TODO Must be simpler way to do this
   (evil-ex-define-argument-type buffer-match :runner +evil-ex-buffer-match)
   (evil-ex-define-argument-type global-match :runner +evil-ex-global-match)
@@ -163,6 +167,8 @@ across windows."
                (evil-transform-vim-style-regexp pattern)))
      1 1))
 
+  ;; Must be aggressively defined here, otherwise the above highlighting won't
+  ;; work on first invocation
   (evil-ex-define-cmd "g[lobal]" #'+evil:global)
   (evil-ex-define-cmd "al[ign]"  #'+evil:align))
 

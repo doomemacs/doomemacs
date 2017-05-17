@@ -89,7 +89,7 @@
     + [ ] twitter
     + [ ] present
 
-** 2.0.3 [23/46]
+** 2.0.3 [25/48]
 + [ ] Test ~package-autoremove~
 + [ ] tools/upload: add ~+upload/open-remote-file~ command to open current file
       on the remote (with TRAMP)
@@ -119,6 +119,8 @@
   + [ ] syntax highlighter for ~+regex-mode~ (plus make it a major mode)
   + [ ] README.org
   + [ ] Use ~make-process~ daemon approach rather than ~call-process~
++ [X] feature/evil: make ~d~ operator invoke ~wgrep-mark-deletion~ in wgrep buffers
++ [X] feature/version-control: improve magit+shackle integration; magit links open separate popups. They should open within the same popup.
 + [X] ui/doom: fix nav-flash on evil-multiedit or in eshell/term buffers
 + [X] core-os: don't use GTK tooltips (ugly!)
 + [X] ui/doom-modeline: reduce excess whitespace on right of flycheck segment

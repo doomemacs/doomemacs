@@ -42,14 +42,15 @@
         :n "]l"    #'markdown-previous-link
         :n "gf"    #'markdown-follow-thing-at-point
         :i "M--"   #'markdown-insert-hr
-        (:localleader
-          :nv "o"    #'markdown-open
-          :nv "b"    #'markdown-preview
-          (:prefix "i"
-            :nv "t"    #'markdown-toc-generate-toc
-            :nv "i"    #'markdown-insert-image
-            :nv "l"    #'markdown-insert-link
-            :nv "L"    #'markdown-insert-reference-link-dwim))))
+
+        :localleader
+        :nv "o"    #'markdown-open
+        :nv "b"    #'markdown-preview
+        (:prefix "i"
+          :nv "t"    #'markdown-toc-generate-toc
+          :nv "i"    #'markdown-insert-image
+          :nv "l"    #'markdown-insert-link
+          :nv "L"    #'markdown-insert-reference-link-dwim)))
 
 
 (def-package! markdown-toc

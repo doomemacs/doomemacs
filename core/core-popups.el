@@ -442,7 +442,6 @@ the command buffer."
   ;;
   ;; By handing neotree over to shackle, which is better integrated into the
   ;; rest of my config (and persp-mode), this is no longer a problem.
-  (setq neo-display-action '(+evil-neotree-display-fn))
   (set! :popup " *NeoTree*" :align 'left :size 25)
 
   (defun +evil-neotree-display-fn (buf _alist)
@@ -450,6 +449,7 @@ the command buffer."
     (let ((win (doom-popup-buffer buf)))
       (setq neo-global--buffer (window-buffer win)
             neo-global--window win)))
+  (setq neo-display-action '(+evil-neotree-display-fn))
 
   (defun +evil|neotree-fix-popup ()
     "Repair neotree state whenever its popup state is restored. This ensures

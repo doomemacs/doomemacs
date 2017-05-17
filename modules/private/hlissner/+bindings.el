@@ -54,10 +54,10 @@
  "M-9"    (λ! (+workspace/switch-to 8))
  "M-0"    #'+workspace/switch-to-last
  ;; Basic escape keys for emacs mode
- :e "C-h" #'evil-window-left
- :e "C-j" #'evil-window-down
- :e "C-k" #'evil-window-up
- :e "C-l" #'evil-window-right
+ "C-h"    #'evil-window-left
+ "C-j"    #'evil-window-down
+ "C-k"    #'evil-window-up
+ "C-l"    #'evil-window-right
 
  "M-r"    #'+eval/buffer
  "M-S-r"  #'+eval/region-and-replace
