@@ -170,7 +170,8 @@ fragments, opening links, or refreshing images."
         (org-table-align)))
 
      ((org-element-property :checkbox (org-element-lineage context '(item) t))
-      (org-toggle-checkbox))
+      (let ((match (and (org-at-item-checkbox-p) (match-string 1))))
+        (org-toggle-checkbox (if (equal match "[ ]") '(16)))))
 
      ((and (eq type 'headline)
            (org-element-property :todo-type context))
