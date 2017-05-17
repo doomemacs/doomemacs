@@ -468,6 +468,12 @@ that `doom*popup-save' won't break it."
   (setq twittering-pop-to-buffer-function #'pop-to-buffer))
 
 
+(after! wgrep
+  ;; close the popup after you're done with a wgrep buffer
+  (advice-add #'wgrep-abort-changes :after #'doom/popup-close)
+  (advice-add #'wgrep-finish-edit   :after #'doom/popup-close))
+
+
 (after! xref
   (defun doom*xref-follow-and-close (orig-fn &rest args)
     "Jump to the xref on the current line, select its window and close the popup
