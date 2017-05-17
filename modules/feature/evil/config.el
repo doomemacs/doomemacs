@@ -54,6 +54,24 @@
   ;; Don't interfere with localleader key
   (define-key evil-motion-state-map "\\" nil)
 
+  ;; Custom folding system
+  (add-to-list
+   'evil-fold-list
+   '((evil-vimish-mode hs-minor-mode)
+     :delete vimish-fold-delete
+     :open-all +evil/fold-open-all
+     :close-all +evil/fold-close-all
+     :toggle +evil/fold-toggle
+     :open +evil/fold-open
+     :open-rec nil
+     :close +evil/fold-close))
+
+  (defun +evil*fold-hs-minor-mode (&rest args)
+    "Lazily activate buffer-local hs-minor-mode."
+    (unless (bound-and-true-p hs-minor-mode)
+      (hs-minor-mode +1)))
+  (advice-add #'evil-fold-action :before #'+evil*fold-hs-minor-mode)
+
   ;; Set cursor colors later, once theme is loaded
   (defun +evil*init-cursors (&rest _)
     (setq evil-default-cursor (face-background 'cursor nil t)

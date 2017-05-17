@@ -10,23 +10,6 @@
 ;; Initialize the two modes
 (evil-vimish-fold-mode +1)
 
-(defun +evil*fold-hs-minor-mode (&rest args)
-  "Lazily activate buffer-local hs-minor-mode."
-  (unless (bound-and-true-p hs-minor-mode)
-    (hs-minor-mode +1)))
-(advice-add #'evil-fold-action :before #'+evil*fold-hs-minor-mode)
-
-(add-to-list
- 'evil-fold-list
- '((evil-vimish-mode hs-minor-mode)
-   :delete vimish-fold-delete
-   :open-all +evil/fold-open-all
-   :close-all +evil/fold-close-all
-   :toggle +evil/fold-toggle
-   :open +evil/fold-open
-   :open-rec nil
-   :close +evil/fold-close))
-
 
 ;; --- fold functions ---------------------
 
