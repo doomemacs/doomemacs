@@ -22,15 +22,6 @@
 (advice-add #'tramp-read-passwd :around #'+hlissner*no-authinfo-for-tramp)
 
 
-;; On Arch, bspwm is my window manager. When I open GUI Emacs a gap forms on the
-;; right side of the frame (which causes display glitches). Cycling fullscreen
-;; fixing this.
-(when (and IS-LINUX (display-graphic-p))
-  (add-hook! 'window-setup-hook
-    (set-frame-parameter nil 'fullscreen 'fullboth)
-    (set-frame-parameter nil 'fullscreen nil)))
-
-
 ;; Don't use default snippets, use mine.
 (after! yasnippet
   (setq yas-snippet-dirs (append (list '+hlissner-snippets-dir)
