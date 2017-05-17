@@ -137,3 +137,11 @@ only close popups that have an :autoclose property in their rule (see
       `(,(buffer-name buffer)
         :file  ,(buffer-file-name buffer)
         :rules ,(window-parameter window 'popup)))))
+
+;;;###autoload
+(defun doom/popup-toggle-messages ()
+  "Toggle *Messages* buffer."
+  (interactive)
+  (if-let (win (get-buffer-window "*Messages*"))
+      (doom/popup-close win)
+    (doom-popup-buffer (get-buffer "*Messages*"))))

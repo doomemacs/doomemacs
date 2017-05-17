@@ -178,18 +178,18 @@ Example
                       `(vconcat ,prefix ,(if (stringp def) (kbd def) def))))
               (when desc
                 (push `(doom--keybind-register ,(key-description (eval prefix))
-                                              ,desc ',modes)
+                                               ,desc ',modes)
                       forms)
                 (setq desc nil))))
           (otherwise ; might be a state prefix
            (setq states (doom--keyword-to-states key '("L")))
-           (when (let (case-fold-search)
-                   (string-match-p "L" (symbol-name key)))
-             (setq local t)
-             (cond ((= (length states) 0)
-                    (user-error "local keybinding for %s must accompany another state" key))
-                   ((> (length keymaps) 0)
-                    (user-error "local keybinding for %s cannot accompany a keymap" key)))))))
+           (let (case-fold-search)
+             (when (string-match-p "L" (symbol-name key))
+               (setq local t)
+               (cond ((= (length states) 0)
+                      (user-error "local keybinding for %s must accompany another state" key))
+                     ((> (length keymaps) 0)
+                      (user-error "local keybinding for %s cannot accompany a keymap" key))))))))
 
        ;; It's a key-def pair
        ((or (stringp key)

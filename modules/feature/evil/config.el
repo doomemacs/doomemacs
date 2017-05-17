@@ -363,7 +363,6 @@ the new algorithm is confusing, like in python or ruby."
 
 
 (def-package! evil-textobj-anyblock
-  :commands (evil-numbers/inc-at-pt evil-numbers/dec-at-pt)
   :init
   (+evil--textobj "B"
     #'evil-textobj-anyblock-inner-block

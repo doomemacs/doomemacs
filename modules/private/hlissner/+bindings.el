@@ -17,19 +17,19 @@
  [remap find-tag]         #'projectile-find-tag)
 
 (map!
- ;; Essential
- "M-x"    #'execute-extended-command
- "A-x"    #'execute-extended-command
+ ;; Make M-x available everywhere
+ :nvime "M-x" #'execute-extended-command
+ :nvime "A-x" #'execute-extended-command
+ :nvime "M-:" #'+hlissner/C-u-M-x
+ :nvime "A-:" #'+hlissner/C-u-M-x
+ ;; Emacs debug utilities
  "M-;"    #'eval-expression
  "A-;"    #'eval-expression
- "M-:"    #'+hlissner/C-u-M-x
- "A-:"    #'+hlissner/C-u-M-x
- ;; Emacs debug utilities
  [f9]     #'doom/what-face
  [f10]    #'doom/blink-cursor
  "C-`"    #'doom/popup-toggle
  ;; Text-scaling
- "M-0"    (λ! (text-scale-set 0))
+ "M-+"    (λ! (text-scale-set 0))
  "M-="    #'text-scale-increase
  "M--"    #'text-scale-decrease
  ;; Simple window navigation/manipulation
@@ -75,7 +75,7 @@
  ;;; <leader> and <localleader>
  :m ";" 'evil-ex
  (:leader
-   ;; common
+   ;; Most commonly used
    :desc "Switch project buffer"    :n ","  #'persp-switch-to-buffer
    :desc "Switch buffer"            :n "<"  #'switch-to-buffer
    :desc "Browse files"             :n "."  #'find-file
@@ -88,14 +88,13 @@
    :desc "Jump to bookmark"         :n "b"  #'bookmark-jump
    :desc "Delete bookmark"          :n "B"  #'bookmark-delete
    :desc "List errors"              :n "e"  #'flycheck-list-errors
-   :desc "View Emacs Log"           :n "m"  #'view-echo-area-messages
+   :desc "View Emacs Log"           :n "m"  #'doom/popup-toggle-messages
    :desc "Recent files"             :n "r"  #'recentf
    :desc "Recent project files"     :n "R"  #'projectile-recentf
-   :desc "Open Neotree"             :n "n"  #'+evil/neotree
    :desc "Insert from kill ring"    :n "y"  #'counsel-yank-pop
    :desc "Switch project"           :n "p"  #'projectile-switch-project
-   :desc "Execute in Emacs mode"    :n "\\" #'evil-execute-in-emacs-state
-   :desc "Switch to Emacs mode"     :n "|"  #'evil-emacs-state
+   :desc "Open Neotree"             :n "\\" #'+evil/neotree
+
    ;; Since I've remapped C-h...
    :desc "help"                     :n "h"  #'help-command
 
@@ -103,6 +102,14 @@
      :prefix "q"
      :desc "Quit"                   :n "q" #'evil-save-and-quit
      :desc "Quit (forget session)"  :n "Q" #'+workspace/kill-session-and-quit)
+
+   (:desc "git"
+     :prefix "g"
+     :desc "Git status"        :n "s" #'magit-status
+     :desc "Git blame"         :n "b" #'magit-blame
+     :desc "Git time machine"  :n "t" #'git-timemachine-toggle
+     :desc "Git revert hunk"   :n "r" #'git-gutter:revert-hunk
+     :desc "List gists"        :n "g" #'+gist:list)
 
    (:desc "session"
      :prefix "s"
@@ -124,8 +131,7 @@
      :desc "Indent guides"          :n "i" #'highlight-indentation-mode
      :desc "Indent guides (column)" :n "I" #'highlight-indentation-current-column-mode
      :desc "Impatient mode"         :n "h" #'+present/impatient-mode
-     :desc "Big mode"               :n "b" #'+present/big-mode
-     :desc "Git time machine"       :n "t" #'git-timemachine-toggle)
+     :desc "Big mode"               :n "b" #'+present/big-mode)
 
    (:desc "remote"
      :prefix "u"
@@ -134,16 +140,16 @@
      :desc "Download remote"        :n "d" #'+upload/remote-download
      :desc "Diff local & remote"    :n "D" #'+upload/diff
      :desc "Browse remote files"    :n "." #'+upload/browse
-     :desc "Detect remote changes"  :n "." #'+upload/check-remote)
+     :desc "Detect remote changes"  :n ">" #'+upload/check-remote)
 
    (:desc "open"
      :prefix "o"
      :desc "Default browser"         :n  "o" #'browse-url-of-file
      :desc "Debugger"                :n  "d" #'+debug/open
+     :desc "Sudo find file"          :n  "s" #'doom/sudo-this-file
+     :desc "Sudo edit"               :n  "S" #'doom/sudo-find-file
      :desc "Build tasks"             :n  "b" #'+eval/build
-     :desc "REPL"                    :n  "r" #'+eval:repl
-     :desc "Send to REPL"            :v  "r" #'+eval:repl
-     :desc "Sudo"                    :n  "s" #'doom/sudo-this-file
+     :desc "Open/Send to REPL"       :nv "r" #'+eval:repl
      :desc "Terminal"                :n  "t" #'+term/popup
      :desc "Terminal @ project root" :n  "T" #'+term/popup-in-project
 
@@ -189,8 +195,8 @@
   (:desc "Unit tests"  :prefix "t"))
 
  ;;; Evil-esque bindings
- :n  "zx" #'doom/kill-this-buffer
  ;; Buffers
+ :n  "zx" #'doom/kill-this-buffer
  :n  "ZX" #'bury-buffer
  :n  "]b" #'doom/next-buffer
  :n  "[b" #'doom/previous-buffer
@@ -311,7 +317,7 @@
    "l" #'find-library
    "L" #'view-lossage
    "h" #'describe-face  ; overwrite `view-hello-file'
-   "g" nil)) ; annoying to accidentally trigger
+   "g" nil)) ; annoying to trigger accidentally
 
 
 ;;
