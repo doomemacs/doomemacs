@@ -222,3 +222,20 @@ evil-window-move-* (e.g. `evil-window-move-far-left')"
       (+evil--ex-match-init hl-name)
       (let ((result (car-safe (evil-ex-parse-global arg))))
         (+evil--ex-buffer-match result hl-name nil (point-min) (point-max))))))
+
+
+;; --- wgrep ------------------------------
+
+;;;###autoload (autoload '+evil-delete "feature/evil/autoload/evil" nil t)
+(evil-define-operator +evil-delete (beg end type register yank-handler)
+  "A wrapper around `evil-delete' for `wgrep' buffers that will invoke
+`wgrep-mark-deletion' on lines you try to delete."
+  (interactive "<R><x><y>")
+  (condition-case ex
+      (evil-delete beg end type register yank-handler)
+    ('text-read-only
+     (evil-apply-on-block
+      (lambda (beg _)
+        (goto-char beg)
+        (call-interactively #'wgrep-mark-deletion))
+      beg (1- end) nil))))

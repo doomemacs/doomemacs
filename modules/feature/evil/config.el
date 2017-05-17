@@ -87,7 +87,12 @@
   ;; --- keybind fixes ----------------------
   (map! ;; undo/redo for visual regions
         :v "C-u" #'undo-tree-undo
-        :v "C-r" #'undo-tree-redo)
+        :v "C-r" #'undo-tree-redo
+
+        (:after wgrep
+          ;; a wrapper that invokes `wgrep-mark-deletion' across lines
+          ;; you use `evil-delete' on.
+          :map wgrep-mode-map :n "d" #'+evil-delete))
 
 
   ;; --- evil hacks -------------------------
