@@ -92,7 +92,7 @@
         (:after wgrep
           ;; a wrapper that invokes `wgrep-mark-deletion' across lines
           ;; you use `evil-delete' on.
-          :map wgrep-mode-map :n "d" #'+evil-delete))
+          :map wgrep-mode-map [remap evil-delete] #'+evil-delete))
 
 
   ;; --- evil hacks -------------------------
