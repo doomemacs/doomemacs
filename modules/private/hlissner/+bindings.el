@@ -148,9 +148,10 @@
      :desc "Terminal @ project root" :n  "T" #'+term/popup-in-project
 
      ;; applications
-     :desc "APP: elfeed"            :n "r"   #'=rss
-     :desc "APP: email"             :n "e"   #'=email
-     :desc "APP: twitter"           :n "t"   #'=twitter
+     :desc "APP: elfeed"            :n "E"   #'=rss
+     :desc "APP: email"             :n "M"   #'=email
+     :desc "APP: twitter"           :n "T"   #'=twitter
+     :desc "APP: regex"             :n "X"   #'=regex
 
      ;; macos
      (:when IS-MAC
