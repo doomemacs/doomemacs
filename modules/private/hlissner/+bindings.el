@@ -301,6 +301,8 @@
 
  ;; help-mode
  (:map help-mode-map
+   :n "q"   #'quit-window
+   :n "Q"   #'+ivy-quit-and-resume
    :n "]]"  #'help-go-forward
    :n "[["  #'help-go-back
    :n "o"   #'ace-link-help)
