@@ -24,6 +24,18 @@ current window if omitted."
    nil (or plist (shackle-match buffer))))
 
 ;;;###autoload
+(defun doom-popup-switch-to-buffer (buffer)
+  (unless (doom-popup-p)
+    (let ((popups (doom-popup-windows)))
+      (unless popups
+        (error "No popups to switch"))
+      (select-window (car popups))))
+  (set-window-dedicated-p nil nil)
+  (switch-to-buffer buffer nil t)
+  (prog1 (selected-window)
+    (set-window-dedicated-p nil t)))
+
+;;;###autoload
 (defun doom-popup-file (file &rest plist)
   "Display FILE in a shackle popup, with PLIST rules. See `shackle-rules' for
 possible rules."

@@ -74,13 +74,7 @@
 
 
 (def-package! magit
-  :commands (magit-status magit-blame)
-  :config
-  (set! :popup "^\\*magit" :regexp t)
-  (map! :map magit-mode-map
-        ;; Don't interfere with window movement keys
-        :nv "C-j" nil
-        :nv "C-k" nil))
+  :commands (magit-status magit-blame))
 
 
 (def-package! git-link
@@ -89,5 +83,10 @@
 
 (def-package! evil-magit
   :when (featurep! :feature evil)
-  :after magit)
+  :after magit
+  :init (setq evil-magit-want-horizontal-movement t)
+  :config
+  (map! :map (magit-status-mode-map magit-revision-mode-map)
+        :n "C-j" nil
+        :n "C-k" nil))
 

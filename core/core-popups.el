@@ -391,6 +391,39 @@ the command buffer."
       (doom--switch-from-popup (find-function-search-for-symbol fun 'defface file)))))
 
 
+(after! magit
+  (set! :popup "^\\*magit" :regexp t :size 0.5 :noesc t :autokill t)
+
+  ;; magit doesn't need much coercing. It works with shackle as is, except for
+  ;; one problem: following non-file magit links tends to open additional
+  ;; popups. We want all this to be contained within one window, so...
+  (defun doom-magit-popup-buffer (buffer)
+    "Pop up the magit window with shackle."
+    (cond ((doom-popup-p)
+           (prog1 (doom-popup-switch-to-buffer buffer)
+             (doom-hide-modeline-mode +1)))
+          (t
+           (magit-display-buffer-traditional buffer))))
+
+  (defun doom-magit-quit-window (kill-buffer)
+    "Close the current magit window properly."
+    (let ((last (current-buffer)))
+      (cond ((when-let (dest (doom-buffers-in-mode
+                              'magit-mode
+                              (cl-remove-if (lambda (buf) (eq buf last))
+                                            (mapcar #'car (window-prev-buffers)))
+                              t))
+               (doom-popup-switch-to-buffer (car dest)))
+             (kill-buffer last))
+            (t
+             (mapc #'kill-buffer
+                   (doom-buffers-in-mode '(magit-mode magit-process-mode)
+                                         (buffer-list) t))))))
+
+  (setq magit-display-buffer-function #'doom-magit-popup-buffer
+        magit-bury-buffer-function #'doom-magit-quit-window))
+
+
 (after! mu4e
   (defun doom*mu4e-popup-window (buf height)
     (doom-popup-buffer buf :size 10 :noselect t)

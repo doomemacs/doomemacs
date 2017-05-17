@@ -65,11 +65,16 @@ the current workspace."
   (cl-remove-if-not #'doom-real-buffer-p (or buffer-list (doom-buffer-list))))
 
 ;;;###autoload
-(defun doom-buffers-in-mode (modes &optional buffer-list)
+(defun doom-buffers-in-mode (modes &optional buffer-list derived-p)
   "Get a list of all buffers (in the current workspace OR in BUFFER-LIST) whose
 `major-mode' is one of MODES."
   (let ((modes (if (listp modes) modes (list modes))))
-    (cl-remove-if-not (lambda (buf) (memq (buffer-local-value 'major-mode buf) modes))
+    (cl-remove-if-not (if derived-p
+                          (lambda (buf)
+                            (with-current-buffer buf
+                              (apply #'derived-mode-p modes)))
+                        (lambda (buf)
+                          (memq (buffer-local-value 'major-mode buf) modes)))
                       (or buffer-list (doom-buffer-list)))))
 
 ;;;###autoload
