@@ -30,18 +30,22 @@ make compile       # optional, may take a while
 make compile-lite  # optional (lighter alternative to compile)
 ```
 
-Run `make` after making changes, which is the equivalent of:
+Run `make` after making changes to modules (like adding packages or autoloaded
+functions). This is the equivalent of:
 
 ```bash
 make install       # or (doom/packages-install)
 make autoloads     # or (doom/reload-autoloads)
 ```
 
+You can run any Make command with `DEBUG=1` for added logging verbosity, and
+`YES=1` to auto-accept any confirmation prompts.
+
 ## Deciphering my emacs.d
 
-To get a picture of what's in here, check out:
+So you want to grok some of this madness. Here are a few suggestions:
 
-* **[init.example.el](init.example.el)**: what my loadout looks like.
+* **[init.example.el](init.example.el)**: a birds eye view of available modules
 * **[modules/README.md](modules/README.md)**: a primer into module structure and
   how the module system works.
 * **[modules/private/hlissner/+bindings.el](modules/private/hlissner/+bindings.el)**:
@@ -50,7 +54,7 @@ To get a picture of what's in here, check out:
   my custom ex commands.
 * **[modules/ui](modules/ui)**: the modules that makes my Emacs look the way it
   does, including [my theme][doom-theme], modeline, dashboard and more.
-+ Find screenshots in the [screenshots branch][sc].
+* Find screenshots in the [screenshots branch][sc].
 
 ### Highlights
 
@@ -98,12 +102,13 @@ To get a picture of what's in here, check out:
 ## Contributing or troubleshooting
 
 My config wasn't intended for public use, but I'm happy to help you use or crib
-from my config. I welcome contributions of any kind; documentation, bug fixes,
-even elisp tips.
+from my config. I welcome contributions of any kind; documentation, bug
+fixes/reports, even elisp tips.
 
-[Don't hesitate to report bugs or tell me my Elisp-fu sucks](https://github.com/hlissner/.emacs.d/issues/new)!
+[Don't hesitate to tell me my Elisp-fu sucks](https://github.com/hlissner/.emacs.d/issues/new)!
 
 
+[ag]: https://github.com/ggreer/the_silver_searcher
 [company-mode]: https://melpa.org/#/company
 [counsel-ag]: https://melpa.org/#/counsel
 [doom-theme]: https://github.com/hlissner/emacs-doom-theme
@@ -118,6 +123,7 @@ even elisp tips.
 [neotree]: https://melpa.org/#/neotree
 [persp-mode]: https://melpa.org/#/persp-mode
 [quickrun]: https://melpa.org/#/quickrun
+[ripgrep]: https://github.com/BurntSushi/ripgrep
 [sc-diffs]: https://github.com/hlissner/.emacs.d/blob/screenshots/git-gutter.png?raw=true
 [sc-multiedit]: https://raw.githubusercontent.com/hlissner/evil-multiedit/screenshots/main.gif?raw=true
 [sc]: https://github.com/hlissner/.emacs.d/tree/screenshots
