@@ -123,7 +123,7 @@ fixes/reports, even elisp tips.
 [neotree]: https://melpa.org/#/neotree
 [persp-mode]: https://melpa.org/#/persp-mode
 [quickrun]: https://melpa.org/#/quickrun
-[ripgrep]: https://github.com/BurntSushi/ripgrep
+[rg]: https://github.com/BurntSushi/ripgrep
 [sc-diffs]: https://github.com/hlissner/.emacs.d/blob/screenshots/git-gutter.png?raw=true
 [sc-multiedit]: https://raw.githubusercontent.com/hlissner/evil-multiedit/screenshots/main.gif?raw=true
 [sc]: https://github.com/hlissner/.emacs.d/tree/screenshots
