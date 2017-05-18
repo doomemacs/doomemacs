@@ -35,9 +35,6 @@
         evil-ex-visual-char-range t  ; column range for ex commands
         evil-insert-skip-empty-lines t
         evil-mode-line-format 'nil
-        ;; Move to new split
-        evil-split-window-below t
-        evil-vsplit-window-right t
         ;; more vim-like behavior
         evil-symbol-word-search t
         ;; don't activate mark on shift-click
@@ -188,7 +185,16 @@ across windows."
   ;; Must be aggressively defined here, otherwise the above highlighting won't
   ;; work on first invocation
   (evil-ex-define-cmd "g[lobal]" #'+evil:global)
-  (evil-ex-define-cmd "al[ign]"  #'+evil:align))
+  (evil-ex-define-cmd "al[ign]"  #'+evil:align)
+
+  ;; Move to new split -- setting `evil-split-window-below' &
+  ;; `evil-vsplit-window-right' to non-nil mimics this, but that doesn't update
+  ;; window history. That means when you delete a new split, Emacs leaves you on
+  ;; the 2nd to last window on the history stack, which is jarring.
+  (defun +evil*window-follow (&rest _)  (evil-window-down 1))
+  (defun +evil*window-vfollow (&rest _) (evil-window-right 1))
+  (advice-add #'evil-window-split  :after #'+evil*window-follow)
+  (advice-add #'evil-window-vsplit :after #'+evil*window-vfollow))
 
 
 ;;
