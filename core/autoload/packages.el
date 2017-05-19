@@ -4,18 +4,29 @@
 (defvar doom--last-refresh nil)
 
 ;;;###autoload
-(defun doom-refresh-packages ()
+(defun doom-refresh-packages (&optional force-p)
   "Refresh ELPA packages."
   (doom-initialize)
+  (when (or force-p (getenv "DEBUG"))
+    (doom-refresh-clear-cache))
   (let ((last-refresh (persistent-soft-fetch 'last-pkg-refresh "emacs")))
     (when last-refresh
       (setq doom--last-refresh last-refresh)))
   (when (or (not doom--last-refresh)
             (> (nth 1 (time-since doom--last-refresh)) 900))
-    (package-refresh-contents)
-    (persistent-soft-store
-     'last-pkg-refresh (setq doom--last-refresh (current-time))
-     "emacs")))
+    (condition-case ex
+        (progn
+          (package-refresh-contents)
+          (persistent-soft-store
+           'last-pkg-refresh (setq doom--last-refresh (current-time))
+           "emacs"))
+    ('error
+     (doom-refresh-clear-cache)))))
+
+;;;###autoload
+(defun doom-refresh-clear-cache ()
+  "Clear the cache for `doom-refresh-packages'."
+  (persistent-soft-store 'last-pkg-refresh nil "emacs"))
 
 ;;;###autoload
 (defun doom-package-backend (name)
@@ -157,6 +168,29 @@ Used by `doom/packages-install'."
                 nil t)))
     (cdr (assoc name table))))
 
+(defmacro doom--condition-case! (&rest body)
+  `(condition-case ex
+       (condition-case ex2
+           (progn ,@body)
+         ('file-error
+          (message! (bold (red "  Couldn't find %s\n  Trying again..." (cdr ex))))
+          (doom-refresh-packages)
+          ,@body))
+     ('user-error
+      (message! (bold (red "  ERROR: %s" ex))))
+     ('error
+      (doom-refresh-clear-cache)
+      (message! (bold (red "  FATAL ERROR: %s" ex)))
+      (when doom-debug-mode
+        (with-temp-buffer
+          (insert
+           (cl-loop for i from 2
+                    for frame = (backtrace-frame i)
+                    while frame
+                    collect frame))
+          (indent-code-rigidly (point-min) (point-max) 4)
+          (message! "%s" (buffer-string)))))))
+
 
 ;;
 ;; Main functions
@@ -242,23 +276,17 @@ appropriate."
            (doom-refresh-packages)
            (dolist (pkg packages)
              (message! "Installing %s" (car pkg))
-             (condition-case ex
-                 (progn
-                   (message!
-                    "  %s%s"
-                    (cond ((package-installed-p (car pkg))
-                           (dark (white "ALREADY INSTALLED")))
-                          ((doom-install-package (car pkg) (cdr pkg))
-                           (green "DONE"))
-                          (t
-                           (red "FAILED")))
-                    (if (plist-member (cdr pkg) :pin)
-                        (format " [pinned: %s]" (plist-get (cdr pkg) :pin))
-                      "")))
-               ('user-error
-                (message! (bold (red "  ERROR: %s" ex ))))
-               ('error
-                (message! (bold (red "  FATAL ERROR: %s" ex )))))))
+             (doom--condition-case!
+              (message! "  %s%s"
+                        (cond ((package-installed-p (car pkg))
+                               (dark (white "ALREADY INSTALLED")))
+                              ((doom-install-package (car pkg) (cdr pkg))
+                               (green "DONE"))
+                              (t
+                               (red "FAILED")))
+                        (if (plist-member (cdr pkg) :pin)
+                            (format " [pinned: %s]" (plist-get (cdr pkg) :pin))
+                          "")))))
 
           (message! (bold (green "Finished!")))
           (doom/reload))))
@@ -267,6 +295,7 @@ appropriate."
 (defun doom/packages-update ()
   "Interactive command for updating packages."
   (interactive)
+  (doom-refresh-packages)
   (let ((packages (sort (doom-get-outdated-packages) #'doom--sort-alpha)))
     (cond ((not packages)
            (message! (green "Everything is up-to-date")))
@@ -290,19 +319,14 @@ appropriate."
            (message! (yellow "Aborted!")))
 
           (t
-           (doom-refresh-packages)
            (dolist (pkg packages)
              (message! "Updating %s" (car pkg))
-             (condition-case ex
-                 (message!
-                  (let ((result (doom-update-package (car pkg))))
-                    (color (if result 'green 'red)
-                           "  %s"
-                           (if result "DONE" "FAILED"))))
-               ('user-error
-                (message! (bold (red "  ERROR: %s" ex))))
-               ('error
-                (message! (bold (red "  FATAL ERROR: %s" ex))))))
+             (doom--condition-case!
+              (message!
+               (let ((result (doom-update-package (car pkg))))
+                 (color (if result 'green 'red)
+                        "  %s"
+                        (if result "DONE" "FAILED"))))))
 
            (message! (bold (green "Finished!")))
            (doom/reload)))))
@@ -329,17 +353,13 @@ appropriate."
 
           (t
            (dolist (pkg packages)
-             (condition-case ex
-                 (message!
-                  (let ((result (doom-delete-package pkg t)))
-                    (color (if result 'green 'red)
-                           "%s %s"
-                           (if result "Removed" "Failed to remove")
-                           pkg)))
-               ('user-error
-                (message! (bold (red "  ERROR: %s" ex))))
-               ('error
-                (message! (bold (red "  FATAL ERROR: %s" ex))))))
+             (doom--condition-case!
+              (message!
+               (let ((result (doom-delete-package pkg t)))
+                 (color (if result 'green 'red)
+                        "%s %s"
+                        (if result "Removed" "Failed to remove")
+                        pkg)))))
 
            (message! (bold (green "Finished!")))
            (doom/reload)))))
@@ -399,6 +419,14 @@ calls."
                        package old-v-str new-v-str)
             (message "Aborted")))
       (message "%s is up-to-date" package))))
+
+;;;###autoload
+(defun doom/refresh-packages (&optional force-p)
+  "Synchronize package metadata with the sources in `package-archives'. If
+FORCE-P (the universal argument) is set, ignore the cache."
+  (declare (interactive-only t))
+  (interactive "P")
+  (doom-refresh-packages t))
 
 ;;;###autoload
 (defun doom/am-i-secure ()

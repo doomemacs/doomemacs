@@ -13,9 +13,9 @@
 ;; Why all the trouble? Because:
 ;; 1. Scriptability: I live in the command line. I want a programmable
 ;;    alternative to `list-packages' for updating and installing packages.
-;; 2. Flexibility: I want packages from sources other than ELPA. Like github or
-;;    the Emacs wiki, because certain plugins are out-of-date through official
-;;    channels, have changed hands, or simply aren't in any ELPA repo.
+;; 2. Flexibility: I want packages from sources other than ELPA. Primarily
+;;    github, because certain plugins are out-of-date through official channels,
+;;    have changed hands, or simply aren't in any ELPA repo.
 ;; 3. Stability: I used Cask before this. It would error out with cyrptic errors
 ;;    depending on the version of Emacs I used and the alignment of the planets.
 ;;    No more.
@@ -30,11 +30,12 @@
 ;; Technically, package.el commands should still work. To be absolutely sure,
 ;; use the doom alternatives:
 ;;
-;;    + `package-install':    `doom/install-package'
-;;    + `package-reinstall':  `doom/reinstall-package'
-;;    + `package-delete':     `doom/delete-package'
-;;    + `package-update':     `doom/update-package'
-;;    + `package-autoremove': `doom/packages-autoremove'
+;;    + `package-install':          `doom/install-package'
+;;    + `package-reinstall':        `doom/reinstall-package'
+;;    + `package-delete':           `doom/delete-package'
+;;    + `package-update':           `doom/update-package'
+;;    + `package-autoremove':       `doom/packages-autoremove'
+;;    + `package-refresh-contents': `doom/refresh-packages'
 ;;
 ;; See core/autoload/packages.el for more functions.
 
