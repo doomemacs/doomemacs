@@ -7,14 +7,16 @@
 ;;
 ;; So this is my effort to combine them.
 
-;; Initialize the two modes
-(evil-vimish-fold-mode +1)
-
-
-;; --- fold functions ---------------------
-
 (defun +evil--vimish-fold-p ()
   (cl-some #'vimish-fold--vimish-overlay-p (overlays-at (point))))
+
+(defun +evil--ensure-modes ()
+  "Ensure hs-minor-mode is enabled."
+  (unless (bound-and-true-p hs-minor-mode)
+    (hs-minor-mode +1)))
+
+
+;; --- fold commands ----------------------
 
 ;;;###autoload
 (defun +evil-fold-p ()

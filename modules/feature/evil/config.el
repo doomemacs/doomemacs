@@ -51,24 +51,6 @@
   ;; Don't interfere with localleader key
   (define-key evil-motion-state-map "\\" nil)
 
-  ;; Custom folding system
-  (add-to-list
-   'evil-fold-list
-   '((evil-vimish-mode hs-minor-mode)
-     :delete vimish-fold-delete
-     :open-all +evil/fold-open-all
-     :close-all +evil/fold-close-all
-     :toggle +evil/fold-toggle
-     :open +evil/fold-open
-     :open-rec nil
-     :close +evil/fold-close))
-
-  (defun +evil*fold-hs-minor-mode (&rest args)
-    "Lazily activate buffer-local hs-minor-mode."
-    (unless (bound-and-true-p hs-minor-mode)
-      (hs-minor-mode +1)))
-  (advice-add #'evil-fold-action :before #'+evil*fold-hs-minor-mode)
-
   ;; Set cursor colors later, once theme is loaded
   (defun +evil*init-cursors (&rest _)
     (setq evil-default-cursor (face-background 'cursor nil t)
@@ -420,11 +402,31 @@ the new algorithm is confusing, like in python or ruby."
   :config (global-evil-surround-mode 1))
 
 
-(def-package! evil-vimish-fold
-  :commands evil-vimish-fold-mode
+(def-package! evil-vimish-fold :demand t
   :init
   (setq vimish-fold-dir (concat doom-cache-dir "vimish-fold/")
-        vimish-fold-indication-mode 'right-fringe))
+        vimish-fold-indication-mode 'right-fringe)
+
+  :config
+  (evil-vimish-fold-mode +1)
+
+  ;; custom folding system
+  (defun +evil*fold-hs-minor-mode (&rest args)
+    "Lazily activate buffer-local hs-minor-mode."
+    (unless (bound-and-true-p hs-minor-mode)
+      (hs-minor-mode +1)))
+  (advice-add #'evil-fold-action :before #'+evil*fold-hs-minor-mode)
+
+  (add-to-list
+   'evil-fold-list
+   '((evil-vimish-fold-mode hs-minor-mode)
+     :delete vimish-fold-delete
+     :open-all +evil/fold-open-all
+     :close-all +evil/fold-close-all
+     :toggle +evil/fold-toggle
+     :open +evil/fold-open
+     :open-rec nil
+     :close +evil/fold-close)))
 
 
 ;; Without `evil-visualstar', * and # grab the word at point and search, no
