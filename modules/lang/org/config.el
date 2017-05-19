@@ -190,32 +190,52 @@
                       ext-regexp "\\)\\(\\]\\]\\|>\\|'\\)?") . 2)
             (,(concat "<\\(http://.+\\." ext-regexp "\\)>") . 1))))
 
-  ;;; Custom fontification
-  (add-hook! 'org-font-lock-set-keywords-hook
-    (setq org-font-lock-extra-keywords
-          (delete '("\\[\\([0-9]*%\\)\\]\\|\\[\\([0-9]*\\)/\\([0-9]*\\)\\]"
-                    (0 (org-get-checkbox-statistics-face) t))
-                  org-font-lock-extra-keywords))
-    (nconc org-font-lock-extra-keywords
-           '(;; Make checkbox statistic cookies respect underlying faces
-             ("\\[\\([0-9]*%\\)\\]\\|\\[\\([0-9]*\\)/\\([0-9]*\\)\\]"
-              (0 (org-get-checkbox-statistics-face) prepend))
-             ;; I like how org-mode fontifies checked TODOs and want this to extend to
-             ;; checked checkbox items:
-             ("^[ \t]*\\(?:[-+*]\\|[0-9]+[).]\\)[ \t]+\\(\\(?:\\[@\\(?:start:\\)?[0-9]+\\][ \t]*\\)?\\[\\(?:X\\|\\([0-9]+\\)/\\2\\)\\][^\n]*\n\\)"
-              1 'org-headline-done prepend)
-             ;; make plain list bullets stand out
-             ("^ *\\([-+]\\|[0-9]+[).]\\) " 1 'org-list-dt append)
-             ;; and separators/dividers
-             ("^ *\\(-----+\\)$" 1 'org-meta-line)
-             ;; custom #hashtags & @at-tags for another level of organization
-             ;; TODO refactor this into a single rule
-             ("\\s-\\(#[^ \n]+\\)" 1 'org-tag)
-             ("\\s-\\(@[^ \n]+\\)" 1 'org-special-keyword))))
 
-  ;; Enable gpg support
-  (require 'epa-file)
-  (epa-file-enable)
+
+  ;;; Custom fontification
+  (defun +org--tag-face (n)
+    (let ((kwd (match-string n)))
+      (or (and (equal kwd "#") 'org-tag)
+          (and (equal kwd "@") 'org-special-keyword))))
+
+  (defun +org|adjust-faces ()
+    "Correct (and improve) org-mode's font-lock keywords.
+
+  1. Re-set `org-todo' & `org-headline-done' faces, to make them respect
+     underlying faces.
+  2. Fontify item bullets
+  3. Fontify item checkboxes (and when they're marked done)"
+    (let ((org-todo (format org-heading-keyword-regexp-format
+                            org-todo-regexp))
+          (org-done (format org-heading-keyword-regexp-format
+                            (concat "\\(?:" (mapconcat #'regexp-quote org-done-keywords "\\|") "\\)"))))
+      (setq
+       org-font-lock-extra-keywords
+       (append (org-delete-all
+                `(("\\[\\([0-9]*%\\)\\]\\|\\[\\([0-9]*\\)/\\([0-9]*\\)\\]"
+                   (0 (org-get-checkbox-statistics-face) t))
+                  (,org-todo (2 (org-get-todo-face 2) t))
+                  (,org-done (2 'org-headline-done t)))
+                org-font-lock-extra-keywords)
+               `((,org-todo (2 (org-get-todo-face 2) prepend))
+                 (,org-done (2 'org-headline-done prepend))
+                 ;; Make checkbox statistic cookies respect underlying faces
+                 ("\\[\\([0-9]*%\\)\\]\\|\\[\\([0-9]*\\)/\\([0-9]*\\)\\]"
+                  (0 (org-get-checkbox-statistics-face) prepend))
+                 ;; I like how org-mode fontifies checked TODOs and want this to extend to
+                 ;; checked checkbox items:
+                 ("^[ \t]*\\(?:[-+*]\\|[0-9]+[).]\\)[ \t]+\\(\\(?:\\[@\\(?:start:\\)?[0-9]+\\][ \t]*\\)?\\[\\(?:X\\|\\([0-9]+\\)/\\2\\)\\][^\n]*\n\\)"
+                  1 'org-headline-done prepend)
+                 ;; make plain list bullets stand out
+                 ("^ *\\([-+]\\|[0-9]+[).]\\) " 1 'org-list-dt append)
+                 ;; and separators/dividers
+                 ("^ *\\(-----+\\)$" 1 'org-meta-line)
+                 ;; custom #hashtags & @at-tags for another level of organization
+                 ;; TODO refactor this into a single rule
+                 ("\\s-\\(\\([#@]\\)[^ \n]+\\)" 1 (+org--tag-face 2)))))))
+  (add-hook 'org-font-lock-set-keywords-hook #'+org|adjust-faces)
+
+  ;; enable gpg support
   (require 'org-crypt)
   (org-crypt-use-before-save-magic)
   (setq org-tags-exclude-from-inheritance '("crypt")
