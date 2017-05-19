@@ -379,6 +379,9 @@
         "M-;" #'eval-expression
         "A-;" #'eval-expression)
 
+      (:map tabulated-list-mode-map
+        [remap evil-record-macro] #'doom/popup-close-maybe)
+
       (:map (evil-ex-completion-map evil-ex-search-keymap read-expression-map)
         "C-a" #'move-beginning-of-line
         "C-w" #'doom-minibuffer-kill-word
