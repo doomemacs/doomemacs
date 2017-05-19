@@ -31,7 +31,9 @@ session)."
         ;; Don't use ^ as initial input
         ivy-initial-inputs-alist nil
         ;; highlight til EOL
-        ivy-format-function #'ivy-format-function-line)
+        ivy-format-function #'ivy-format-function-line
+        ;; disable magic slash on non-match
+        ivy-magic-slash-non-match-action nil)
 
   (after! magit      (setq magit-completing-read-function #'ivy-completing-read))
   (after! yasnippet  (push #'+ivy-yas-prompt yas-prompt-functions))
