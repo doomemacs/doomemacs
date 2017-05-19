@@ -103,44 +103,50 @@ afterwards, kill line to column 1."
   "Delete back to the previous column of whitespace, or as much whitespace as
 possible, or just one char if that's not possible."
   (interactive)
-  (let* ((context (sp--get-pair-list-context 'navigate))
+  (let* ((delete-backward-char (if (derived-mode-p 'org-mode)
+                                   #'org-delete-backward-char
+                                 #'delete-backward-char))
+         (context (sp--get-pair-list-context 'navigate))
          (open-pair-re (sp--get-opening-regexp context))
          (close-pair-re (sp--get-closing-regexp context))
          open-len close-len)
     (cond ;; When in strings (sp acts weird with quotes; this is the fix)
-     ;; Also, skip closing delimiters
-     ((and (and (sp--looking-back open-pair-re)
-                (setq open-len (- (match-beginning 0) (match-end 0))))
-           (and (looking-at close-pair-re)
-                (setq close-len (- (match-beginning 0) (match-end 0))))
-           (string= (plist-get (sp-get-thing t) :op)
-                    (plist-get (sp-get-thing) :cl)))
-      (delete-char (- 0 open-len))
-      (delete-char close-len))
-     ;; Delete up to the nearest tab column IF only whitespace between
-     ;; point and bol.
-     ((save-match-data (looking-back "^[\\t ]*" (line-beginning-position)))
-      (let ((movement (% (current-column) tab-width))
-            (p (point)))
-        (when (= movement 0)
-          (setq movement tab-width))
-        (save-match-data
-          (if (string-match "\\w*\\(\\s-+\\)$"
-                            (buffer-substring-no-properties (max (point-min) (- p movement)) p))
-              (delete-char (- 0 (- (match-end 1) (match-beginning 1))))
-            (call-interactively #'delete-backward-char)))))
-     ;; Otherwise do a regular delete
-     (t (call-interactively #'delete-backward-char)))))
+          ;; Also, skip closing delimiters
+          ((and (and (sp--looking-back open-pair-re)
+                     (setq open-len (- (match-beginning 0) (match-end 0))))
+                (and (looking-at close-pair-re)
+                     (setq close-len (- (match-beginning 0) (match-end 0))))
+                (string= (plist-get (sp-get-thing t) :op)
+                         (plist-get (sp-get-thing) :cl)))
+           (delete-char (- 0 open-len))
+           (delete-char close-len))
+
+          ;; Delete up to the nearest tab column IF only whitespace between
+          ;; point and bol.
+          ((save-match-data (looking-back "^[\\t ]*" (line-beginning-position)))
+           (let ((movement (% (current-column) tab-width))
+                 (p (point)))
+             (when (= movement 0)
+               (setq movement tab-width))
+             (save-match-data
+               (if (string-match "\\w*\\(\\s-+\\)$"
+                                 (buffer-substring-no-properties (max (point-min) (- p movement)) p))
+                   (sp-delete-char (- 0 (- (match-end 1) (match-beginning 1))))
+                 (call-interactively delete-backward-char)))))
+
+          ;; Otherwise do a regular delete
+          (t (call-interactively delete-backward-char)))))
 
 ;;;###autoload
 (defun doom/inflate-space-maybe ()
   "Checks if point is surrounded by {} [] () delimiters and adds a
 space on either side of the point if so."
   (interactive)
-  (if (doom--surrounded-p)
-      (progn (call-interactively #'self-insert-command)
-             (save-excursion (call-interactively #'self-insert-command)))
-    (call-interactively #'self-insert-command)))
+  (let ((command (or (command-remapping #'self-insert-command) #'self-insert-command)))
+    (if (doom--surrounded-p)
+        (progn (call-interactively command)
+               (save-excursion (call-interactively command)))
+      (call-interactively command))))
 
 ;;;###autoload
 (defun doom/deflate-space-maybe ()
