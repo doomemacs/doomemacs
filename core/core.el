@@ -1,5 +1,9 @@
 ;;; core.el --- The heart of the beast
 
+(eval-when-compile
+  (when (version< emacs-version "25.1")
+    (error "Emacs v%s detected, DOOM only supports >25.1" emacs-version)))
+
 ;;; Naming conventions:
 ;;
 ;;   doom-...   public variables or functions (non-interactive)
