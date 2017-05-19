@@ -87,7 +87,6 @@ base by `doom!' and for calculating how many packages exist.")
       ;; security settings
       tls-checktrust t
       gnutls-verify-error t
-      gnutls-trustfiles '("/etc/ssl/certs/ca-certificates.crt" "/etc/ssl/cert.pem")
 
       use-package-always-defer t
       use-package-always-ensure nil
