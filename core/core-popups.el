@@ -278,15 +278,21 @@ properties."
 
 (after! evil
   (let ((map doom-popup-mode-map))
-    (define-key map [remap evil-window-delete]           'doom/popup-close)
-    (define-key map [remap evil-save-modified-and-close] 'doom/popup-close)
-    (define-key map [remap evil-window-move-very-bottom] 'ignore)
-    (define-key map [remap evil-window-move-very-top]    'ignore)
-    (define-key map [remap evil-window-move-far-left]    'ignore)
-    (define-key map [remap evil-window-move-far-right]   'ignore)
-    (define-key map [remap evil-window-split]            'ignore)
-    (define-key map [remap evil-window-vsplit]           'ignore)
-    (define-key map [remap evil-force-normal-state]      'doom/popup-close-maybe))
+    (define-key map [remap evil-window-delete]           #'doom/popup-close)
+    (define-key map [remap evil-save-modified-and-close] #'doom/popup-close)
+    (define-key map [remap evil-window-move-very-bottom] #'ignore)
+    (define-key map [remap evil-window-move-very-top]    #'ignore)
+    (define-key map [remap evil-window-move-far-left]    #'ignore)
+    (define-key map [remap evil-window-move-far-right]   #'ignore)
+    (define-key map [remap evil-window-split]            #'ignore)
+    (define-key map [remap evil-window-vsplit]           #'ignore))
+
+  (defun doom|popup-close-maybe ()
+    "Close the current window if it's a popup with no :noesc property."
+    (when (and (doom-popup-p)
+               (not (doom-popup-prop :noesc)))
+      (delete-window)))
+  (add-hook '+evil-esc-hook #'doom|popup-close-maybe)
 
   (defun doom|popup-close-all-maybe ()
     "Close popups with an :autoclose property when pressing ESC from normal
