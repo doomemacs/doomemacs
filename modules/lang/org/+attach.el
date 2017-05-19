@@ -8,7 +8,7 @@
 ;; images specially.
 ;;
 ;; To clean up unreferenced attachments, call `doom/org-cleanup-attachments'
-(add-hook '+org-init-hook '+org|init-attach t)
+(add-hook '+org-init-hook #'+org|init-attach t)
 
 (defun +org|init-attach ()
   (setq org-attach-directory +org-attachment-dir)

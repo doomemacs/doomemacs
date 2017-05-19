@@ -2,7 +2,7 @@
 
 ;; My own, centralized exporting system as well.
 
-(add-hook '+org-init-hook '+org|init-export t)
+(add-hook '+org-init-hook #'+org|init-export t)
 
 (defun +org|init-export ()
   (setq org-export-directory (expand-file-name ".export" +org-dir)

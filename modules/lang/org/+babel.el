@@ -1,6 +1,6 @@
 ;;; lang/org/+babel.el
 
-(add-hook '+org-init-hook '+org|init-babel t)
+(add-hook '+org-init-hook #'+org|init-babel t)
 
 (defun +org|init-babel ()
   (setq org-confirm-babel-evaluate nil   ; you don't need my permission
@@ -35,11 +35,12 @@
              )))
 
   ;; In a recent update, `org-babel-get-header' was removed from org-mode, which
-  ;; is something a fair number of babel plugins use. So until those plugins update...
+  ;; is something a fair number of babel plugins use. So until those plugins
+  ;; update...
   (defun org-babel-get-header (params key &optional others)
     (delq nil
           (mapcar
-           (lambda (p) (when (funcall (if others #'not #'identity) (eq (car p) key)) p))
+           (lambda (p) (if (funcall (if others #'not #'identity) (eq (car p) key)) p))
            params)))
 
   ;; I prefer C-c C-c for confirming over the default C-c '
@@ -48,4 +49,4 @@
   ;; I know the keybindings, no need for the header line
   (defun +org|src-mode-remove-header ()
     (when header-line-format (setq header-line-format nil)))
-  (add-hook 'org-src-mode-hook '+org|src-mode-remove-header))
+  (add-hook 'org-src-mode-hook #'+org|src-mode-remove-header))

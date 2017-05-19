@@ -372,7 +372,7 @@
 
   ;; Remove highlights on ESC
   (defun +org|remove-occur-highlights (&rest args)
-    (when (eq major-mode 'org-mode)
+    (when (derived-mode-p 'org-mode)
       (org-remove-occur-highlights)))
   (add-hook '+evil-esc-hook #'+org|remove-occur-highlights)
 

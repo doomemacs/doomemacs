@@ -1,19 +1,5 @@
 ;;; lang/org/autoload/org.el
 
-(defun +org--get-context (types &optional context)
-  (let ((context (or context (org-element-context))))
-    (while (and context (not (memq (car context) types)))
-      (setq context (plist-get (cadr context) :parent)))
-    context))
-
-(defun +org--get-types (context)
-  (let ((context (or context (org-element-context)))
-        types)
-    (while context
-      (push (car context) types)
-      (setq context (plist-get (cadr context) :parent)))
-    types))
-
 ;;;###autoload
 (defun +org/indent ()
   "Indent the current item (header or item). Otherwise, forward to
@@ -25,7 +11,8 @@
          (ignore-errors (org-demote)))
         ((org-in-src-block-p t)
          (doom/dumb-indent))
-        (t (call-interactively 'self-insert-command))))
+        (t
+         (call-interactively #'self-insert-command))))
 
 ;;;###autoload
 (defun +org/indent-or-next-field-or-yas-expand ()
@@ -35,11 +22,11 @@ table field or c) run `yas-expand'."
   (call-interactively
    (cond ((and (bound-and-true-p yas-minor-mode)
                (yas--templates-for-key-at-point))
-          'yas-expand)
+          #'yas-expand)
          ((org-at-table-p)
-          'org-table-next-field)
+          #'org-table-next-field)
          (t
-          '+org/indent))))
+          #'+org/indent))))
 
 ;;;###autoload
 (defun +org/dedent ()
@@ -47,21 +34,26 @@ table field or c) run `yas-expand'."
 `self-insert-command'."
   (interactive)
   (cond ((org-at-item-p)
-         (let ((struct (if (org-region-active-p)
-                           (save-excursion (goto-char (region-beginning))
-                                           (org-list-struct))
-                         (org-list-struct))))
-           (org-list-indent-item-generic -1 nil struct)))
+         (org-list-indent-item-generic
+          -1 nil
+          (save-excursion
+            (when (org-region-active-p)
+              (goto-char (region-beginning)))
+            (org-list-struct))))
         ((org-at-heading-p)
          (ignore-errors (org-promote)))
-        (t (call-interactively 'self-insert-command))))
+        (t
+         (call-interactively #'self-insert-command))))
 
 ;;;###autoload
 (defun +org/dedent-or-prev-field ()
   "Depending on the context either dedent the current item or go the previous
 table field."
   (interactive)
-  (call-interactively (if (org-at-table-p) 'org-table-previous-field '+org/dedent)))
+  (call-interactively
+   (if (org-at-table-p)
+       #'org-table-previous-field
+     #'+org/dedent)))
 
 ;;;###autoload
 (defun +org/insert-item (direction)
@@ -89,10 +81,12 @@ wrong places)."
                 (save-excursion (insert "\n")))))
            (when (org-element-property :checkbox context)
              (insert "[ ] ")))
+
           ((memq type '(table table-row))
            (cl-case direction
              ('below (org-table-insert-row t))
              ('above (+org/table-prepend-row-or-shift-up))))
+
           ((memq type '(headline inlinetask plain-list))
            (let* ((subcontext (org-element-context))
                   (level (save-excursion
@@ -218,90 +212,3 @@ fragments, opening links, or refreshing images."
      (if (org-before-first-heading-p)
          (line-end-position)
        (save-excursion (org-end-of-subtree) (point))))))
-
-;;;###autoload
-(defun +org-surround (delim)
-  "Surround the cursor (or selected region) with DELIM."
-  (if (region-active-p)
-      (save-excursion
-        (goto-char (region-beginning))
-        (insert delim)
-        (goto-char (region-end))
-        (insert delim))
-    (insert delim)
-    (save-excursion (insert delim))))
-
-
-;;
-;; tables
-;;
-
-;;;###autoload
-(defun +org/table-next-row ()
-  (interactive)
-  (if (org-at-table-p) (org-table-next-row) (org-down-element)))
-
-;;;###autoload
-(defun +org/table-previous-row ()
-  "Go to the previous row (same column) in the current table. Before doing so,
-re-align the table if necessary. (Necessary because org-mode has a
-`org-table-next-row', but not `org-table-previous-row')"
-  (interactive)
-  (if (org-at-table-p)
-      (progn
-        (org-table-maybe-eval-formula)
-        (org-table-maybe-recalculate-line)
-        (if (and org-table-automatic-realign
-                 org-table-may-need-update)
-            (org-table-align))
-        (let ((col (org-table-current-column)))
-          (beginning-of-line 0)
-          (when (or (not (org-at-table-p)) (org-at-table-hline-p))
-            (beginning-of-line))
-          (org-table-goto-column col)
-          (skip-chars-backward "^|\n\r")
-          (when (org-looking-at-p " ") (forward-char))))
-    (org-up-element)))
-
-;;;###autoload
-(defun +org/table-next-field ()
-  (interactive)
-  (if (org-at-table-p) (org-table-next-field) (org-end-of-line)))
-
-;;;###autoload
-(defun +org/table-previous-field ()
-  (interactive)
-  (if (org-at-table-p) (org-table-previous-field) (org-beginning-of-line)))
-
-;;;###autoload
-(defun +org/table-append-field-or-shift-right ()
-  (interactive)
-  (org-shiftmetaright)
-  (when (org-at-table-p) (org-metaright)))
-
-;;;###autoload
-(defun +org/table-prepend-field-or-shift-left ()
-  (interactive)
-  (if (org-at-table-p) (org-shiftmetaright) (org-shiftmetaleft)))
-
-;;;###autoload
-(defun +org/table-append-row-or-shift-down ()
-  (interactive)
-  (org-shiftmetadown)
-  (when (org-at-table-p) (org-metadown)))
-
-;;;###autoload
-(defun +org/table-prepend-row-or-shift-up ()
-  (interactive)
-  (if (org-at-table-p)
-      (org-shiftmetadown)
-    (org-shiftmetaup)))
-
-;;;###autoload
-(defun +org/edit-special-same-window ()
-  (interactive)
-  (let ((shackle-rules '(("^\\*Org Src" :align t :select t :regexp t :noesc t :same t))))
-    (call-interactively 'org-edit-special)
-    ;; FIXME too tightly coupled with doom-buffer-mode
-    (when (fboundp 'doom-buffer-mode)
-      (doom-buffer-mode +1))))

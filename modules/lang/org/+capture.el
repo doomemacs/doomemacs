@@ -10,7 +10,7 @@
 ;;    anywhere I can call org-capture, like, say, from qutebrowser, vimperator,
 ;;    dmenu or a global keybinding.
 
-(add-hook '+org-init-hook '+org|init-capture t)
+(add-hook '+org-init-hook #'+org|init-capture t)
 
 (defun +org|init-capture ()
   "Set up a sane `org-capture' workflow."
@@ -58,5 +58,5 @@
       (when (and (featurep 'persp-mode) persp-mode)
         (+workspace/delete (+workspace-current-name)))
       (delete-frame)))
-  (add-hook 'org-capture-after-finalize-hook '+org|capture-finalize))
+  (add-hook 'org-capture-after-finalize-hook #'+org|capture-finalize))
 
