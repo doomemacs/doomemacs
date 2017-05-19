@@ -263,13 +263,11 @@
           :i  "C-e" #'org-end-of-line
           :i  "C-a" #'org-beginning-of-line
 
-          :i  "<tab>"         #'+org/indent-or-next-field-or-yas-expand
-          :i  [S-iso-lefttab] #'+org/dedent-or-prev-field ; for GNU Emacs
-          :i  [(shift tab)]   #'+org/dedent-or-prev-field
+          :i  [tab]           #'+org/indent-or-next-field-or-yas-expand
           :i  [backtab]       #'+org/dedent-or-prev-field
 
-          :n  "<tab>" #'+org/toggle-fold
-          :v  "<S-tab>" #'+snippets/expand-on-region
+          :n  [tab]     #'+org/toggle-fold
+          :v  [backtab] #'+snippets/expand-on-region
 
           :nv "j"   #'evil-next-visual-line
           :nv "k"   #'evil-previous-visual-line
