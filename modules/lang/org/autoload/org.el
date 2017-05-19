@@ -127,14 +127,16 @@ wrong places)."
   "Toggle the local fold at the point (as opposed to cycling through all levels
 with `org-cycle'). Also removes babel result blocks, if run from a code block."
   (interactive)
-  (org-babel-when-in-src-block
-   (call-interactively 'org-babel-remove-result-one-or-many))
-  (cond ((org-at-heading-p)
-         (outline-toggle-children))
-        ((org-at-item-p)
-         (let ((window-beg (window-start)))
-           (org-cycle)
-           (set-window-start nil window-beg)))))
+  (save-excursion
+    (org-beginning-of-line)
+    (cond ((org-in-src-block-p)
+           (org-babel-remove-result))
+          ((org-at-heading-p)
+           (outline-toggle-children))
+          ((org-at-item-p)
+           (let ((window-beg (window-start)))
+             (org-cycle)
+             (set-window-start nil window-beg))))))
 
 ;;;###autoload
 (defun +org/toggle-checkbox ()
