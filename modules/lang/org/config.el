@@ -70,7 +70,8 @@
   (defun +org|realign-table-maybe ()
     "Auto-align table under cursor."
     (when (org-at-table-p)
-      (org-table-align)))
+      (save-excursion
+        (org-table-align))))
   (add-hook 'evil-insert-state-exit-hook #'+org|realign-table-maybe nil t)
 
   (defun +org|update-cookies ()
