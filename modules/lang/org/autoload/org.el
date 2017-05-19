@@ -70,14 +70,17 @@ wrong places)."
                    t))
          (type (org-element-type context)))
     (cond ((eq type 'item)
-           (let ((marker (org-element-property :bullet context)))
+           (let ((marker (org-element-property :bullet context))
+                 (pad (save-excursion
+                        (back-to-indentation)
+                        (- (point) (line-beginning-position)))))
              (pcase direction
                ('below
                 (goto-char (line-end-position))
-                (insert (concat "\n" marker)))
+                (insert (concat  "\n" (make-string pad ? ) marker)))
                ('above
                 (goto-char (line-beginning-position))
-                (insert marker)
+                (insert (make-string pad ? ) marker)
                 (save-excursion (insert "\n")))))
            (when (org-element-property :checkbox context)
              (insert "[ ] ")))
