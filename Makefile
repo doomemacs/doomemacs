@@ -40,18 +40,7 @@ test: init.el .local/autoloads.el
 test/%: init.el .local/autoloads.el
 	@$(TEST_EMACS) -l $@.el -f 'ert-run-tests-batch-and-exit'
 
-
-# Syntactic sugar for bootstrapping modules. Allows: make bootstrap javascript
-# See doom/bootstrap for more information.
-ifeq (bootstrap,$(firstword $(MAKECMDGOALS)))
-  ARGV := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
-  $(eval $(ARGV):;@:)
-endif
-
-bootstrap: init.el .local/autoloads.el
-	@$(EMACS) --eval "(doom/bootstrap '($(ARGV)))"
-
-
+#
 init.el:
 	@[ -e init.el ] || $(error No init.el file; create one or copy init.example.el)
 
