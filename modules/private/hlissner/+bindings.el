@@ -331,7 +331,7 @@
 ;; properly, more like vim, or how I like it.
 
 (map! (:unless window-system "TAB" [tab]) ; Fix TAB in terminal
-      [S-iso-lefttab] [tab]  ; Fix TAB in GNU Emacs
+      [S-iso-lefttab] [backtab]           ; Fix TAB in GNU Emacs
 
       ;; I want C-a and C-e to be a little smarter. C-a will jump to
       ;; indentation. Pressing it again will send you to the true bol. Same goes
