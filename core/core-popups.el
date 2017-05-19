@@ -46,7 +46,7 @@ is enabled/disabled.'")
 (def-package! shackle :demand t
   :init
   (setq shackle-default-alignment 'below
-        shackle-default-size 10
+        shackle-default-size 8
         ;;; Baseline popup-window rules
         ;; Several custom properties have been added that are not part of
         ;; shackle and are used by doom's popup system. They are:
@@ -63,26 +63,25 @@ is enabled/disabled.'")
         ;;  :autoclose  If non-nil, close popup if ESC is pressed from outside
         ;;              the popup window.
         shackle-rules
-        '(("^\\*ftp " :size 8 :noselect t :autokill t :noesc t)
+        '(("^\\*ftp " :noselect t :autokill t :noesc t)
           ;; doom
-          ("*doom:scratch*" :size 0.35 :noesc t :select t :modeline t)
-          ("^\\*doom:" :regexp t :size 0.35 :noesc t :select t)
+          ("^\\*doom:" :regexp t :size 0.35 :noesc t :select t :modeline t)
           ("^\\*doom " :regexp t :noselect t :autokill t :autoclose t)
           ;; built-in (emacs)
-          (Buffer-menu-mode :size 20 :autokill t)
-          (apropos-mode :size 0.3 :autokill t :autoclose t)
-          (comint-mode :noesc t)
-          (grep-mode :size 25 :noselect t :autokill t)
-          (special-mode :size 12 :noselect t :autokill t)
-          (tabulated-list-mode :noesc t)
-          (profiler-report-mode :size 0.3 :regexp t :autokill t)
           ("*Backtrace*" :size 20 :noselect t)
-          ("*Warnings*" :noselect t :autokill t)
-          ("*Messages*" :noselect t :autokill nil)
+          ("*Warnings*" :size 5 :noselect t :autokill t :autoclose t)
+          ("*Messages*" :size 12 :noselect t :autokill nil)
           ("*Help*" :size 0.3)
           ("^\\*.*Shell Command.*\\*$" :regexp t :size 20 :noselect t :autokill t)
           ("^\\*"  :regexp t :noselect t :autokill t)
-          ("^ \\*" :regexp t :size 12 :noselect t :autokill t :autoclose t)))
+          ("^ \\*" :regexp t :size 12 :noselect t :autokill t :autoclose t)
+          (apropos-mode :size 0.3 :autokill t :autoclose t)
+          (Buffer-menu-mode :size 20 :autokill t)
+          (comint-mode :noesc t)
+          (grep-mode :size 25 :noselect t :autokill t)
+          (profiler-report-mode :size 0.3 :regexp t :autokill t :modeline minimal)
+          (tabulated-list-mode :noesc t)
+          (special-mode :noselect t :autokill t :autoclose t)))
 
   :config
   (if (display-graphic-p)
