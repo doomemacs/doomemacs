@@ -78,11 +78,15 @@ base by `doom!' and for calculating how many packages exist.")
       package-user-dir (expand-file-name "elpa" doom-packages-dir)
       package-enable-at-startup nil
       package-archives
-      '(("gnu"   . "http://elpa.gnu.org/packages/")
-        ("melpa" . "http://melpa.org/packages/")
-        ("org"   . "http://orgmode.org/elpa/"))
+      '(("gnu"   . "https://elpa.gnu.org/packages/")
+        ("melpa" . "https://melpa.org/packages/"))
       ;; I omit Marmalade because its packages are manually submitted rather
       ;; than pulled, so packages are often out of date with upstream.
+
+      ;; security settings
+      tls-checktrust t
+      gnutls-verify-error t
+      gnutls-trustfiles '("/etc/ssl/certs/ca-certificates.crt" "/etc/ssl/cert.pem")
 
       use-package-always-defer t
       use-package-always-ensure nil
