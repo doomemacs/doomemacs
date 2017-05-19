@@ -70,7 +70,8 @@ there are problems.")
 
 ;;;
 ;; UTF-8 as the default coding system
-(set-charset-priority 'unicode)        ; pretty
+(when (fboundp 'set-charset-priority)
+  (set-charset-priority 'unicode))     ; pretty
 (prefer-coding-system        'utf-8)   ; pretty
 (set-terminal-coding-system  'utf-8)   ; pretty
 (set-keyboard-coding-system  'utf-8)   ; pretty
