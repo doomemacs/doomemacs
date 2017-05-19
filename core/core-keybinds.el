@@ -29,12 +29,7 @@
         which-key-sort-uppercase-first nil
         which-key-add-column-padding 1
         which-key-max-display-columns nil
-        which-key-min-display-lines 5
-        ;; only pop-up for leader/localleader keys
-        which-key-allow-regexps (list "^C-c"
-                                      "^C-x"
-                                      (format "^%s" (regexp-quote doom-leader-key))
-                                      (format "^%s" (regexp-quote doom-localleader-key))))
+        which-key-min-display-lines 5)
   ;; embolden local bindings
   (set-face-attribute 'which-key-local-map-description-face nil :weight 'bold)
   (which-key-setup-side-window-bottom)
