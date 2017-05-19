@@ -32,7 +32,7 @@ window changes before then, the undo expires."
     (window-configuration-to-register ?_)
     (delete-other-windows)))
 
-(defvar doom--window-wconf nil)
+(defvar doom--window-enlargened nil)
 
 ;;;###autoload
 (defun doom/window-enlargen ()
