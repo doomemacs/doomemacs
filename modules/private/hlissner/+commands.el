@@ -7,8 +7,6 @@
 ;;; Custom commands
 ;; Emacs utilities
 (ex! "bc[omp]"      #'+hlissner:byte-compile)
-(ex! "clog"         #'global-command-log-mode)
-(ex! "minor"        #'describe-minor-mode) ; list minor modes
 (ex! "re[load]"     #'doom/reload)
 (ex! "re[load]au"   #'doom/reload-autoloads)
 

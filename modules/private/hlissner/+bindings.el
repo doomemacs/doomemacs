@@ -314,10 +314,13 @@
    :n "o"   #'ace-link-help)
 
  (:map help-map
-   "l" #'find-library
-   "L" #'view-lossage
-   "h" #'describe-face   ; more useful than `view-hello-file'
-   "g" #'describe-char)) ; more useful than `describe-gnu-project'
+   :desc "Describe face" "h"   #'describe-face ; overwrites `view-hello-file'
+   :desc "Face at point" "H"   #'doom/what-face
+   :desc "Minor-mode"    "M"   #'doom/what-minor-mode
+   :desc "Command log"   "W"   #'global-command-log-mode
+   :desc "Find library"  "l"   #'find-library
+   :desc "View lossage"  "L"   #'view-lossage
+   :desc "Describe char" "g"   #'describe-char)) ; overwrites `describe-gnu-project'
 
 
 ;;

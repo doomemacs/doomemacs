@@ -18,16 +18,16 @@
              (propertize "Faces:" 'face 'font-lock-comment-face)
              (if faces (string-join faces ", ") "n/a"))))
 
-;;;###autoload
-(defun doom/what-col ()
-  (interactive)
-  (message "Column %d" (current-column)))
+(defun doom-active-minor-modes ()
+  "Get a list of active minor-mode symbols."
+  (cl-remove-if (lambda (m) (and (boundp m) (symbol-value m)))
+                minor-mode-list))
 
 ;;;###autoload
-(defun doom/what-bindings (key)
-  (interactive "k")
-  (message "minor-mode:\t%s\nlocal:\t\t%s\nglobal:\t\t%s"
-           (or (minor-mode-key-binding key) "n/a")
-           (or (local-key-binding key) "n/a")
-           (or (global-key-binding key) "n/a")))
-
+(defun doom/what-minor-mode (mode)
+  "Get information on an active minor mode. Use `describe-minor-mode' for a
+selection of all minor-modes, active or not."
+  (interactive
+   (list (completing-read "Minor mode: "
+                          (doom-active-minor-modes))))
+  (describe-minor-mode-from-symbol (intern mode)))
