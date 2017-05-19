@@ -89,7 +89,7 @@
     + [ ] twitter
     + [ ] present
 
-** 2.0.3 [27/54]
+** 2.0.3 [29/56]
 + [ ] bin/org-alert: scans TODOs in org files and issues system alerts
 + [ ] Get rid of ~def-bootstrap~ and ~doom-bootstrap~; it's a clumsy system
 + [ ] tools/upload: add ~+upload/open-remote-file~ command to open current file
@@ -100,7 +100,7 @@
 + [ ] Write ~describe-setting~ for ~def-setting!~ definitions.
 + [ ] Fix invisible buffer-info segment in modeline for terminal Emacs
 + [ ] ui/doom-modeline: fix ~0/0~ display in modeline (leftover anzu state)
-+ [1/7] lang/org
++ [3/9] lang/org
   + [ ] drag-drop image attachment (org-download) and central storage
   + [ ] unified export system
   + [ ] better shackle + org-agenda integration
@@ -108,6 +108,8 @@
   + [-] fix janky cursor positioning when manipulating org-table cells
   + [-] certain characters/keys--when typed in a table--cause the cell
         to shrink (likely cause: smartparens pairs & custom SPC/BKSPC binds)
+  + [X] Fix M-RET in plain lists not preserving indent level for new items
+  + [X] don't move cursor when toggling folds
   + [X] don't move cursor when realigning org tables
 + [1/13] New module :: tools/regex (PCRE IDE)
   + [X] perl backend

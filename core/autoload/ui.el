@@ -2,7 +2,7 @@
 
 ;;;###autoload
 (defun doom/toggle-fullscreen ()
-  "Toggle fullscreen Emacs."
+  "Toggle fullscreen Emacs (non-native on MacOS)."
   (interactive)
   (set-frame-parameter
    nil 'fullscreen

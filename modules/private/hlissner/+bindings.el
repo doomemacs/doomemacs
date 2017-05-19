@@ -5,12 +5,14 @@
       x-alt-keysym   'meta)
 
 (defmacro find-file-in! (path &optional project-p)
-  "Returns an interactive function for searching files"
+  "Returns an interactive function for searching files."
   `(lambda () (interactive)
      (let ((default-directory ,path))
        (call-interactively
         ',(command-remapping
-           (if project-p 'projectile-find-file) 'find-file)))))
+           (if project-p
+               #'projectile-find-file
+             #'find-file))))))
 
 (map!
  [remap evil-jump-to-tag] #'projectile-find-tag
@@ -76,27 +78,27 @@
  :m ";" 'evil-ex
  (:leader
    ;; Most commonly used
-   :desc "Switch project buffer"    :n ","  #'persp-switch-to-buffer
-   :desc "Switch buffer"            :n "<"  #'switch-to-buffer
-   :desc "Browse files"             :n "."  #'find-file
-   :desc "Find file from here"      :n ">"  #'counsel-file-jump
-   :desc "Find file in project"     :n "/"  #'projectile-find-file
-   :desc "Find in file (swiper)"    :n "?"  #'swiper
-   :desc "Imenu"                    :n ";"  #'imenu
-   :desc "Imenu across buffers"     :n ":"  #'imenu-anywhere
-   :desc "Find other file"          :n "a"  #'projectile-find-other-file
-   :desc "Jump to bookmark"         :n "b"  #'bookmark-jump
-   :desc "Delete bookmark"          :n "B"  #'bookmark-delete
-   :desc "List errors"              :n "e"  #'flycheck-list-errors
-   :desc "View Emacs Log"           :n "m"  #'doom/popup-toggle-messages
-   :desc "Recent files"             :n "r"  #'recentf
-   :desc "Recent project files"     :n "R"  #'projectile-recentf
-   :desc "Insert from kill ring"    :n "y"  #'counsel-yank-pop
-   :desc "Switch project"           :n "p"  #'projectile-switch-project
-   :desc "Open Neotree"             :n "\\" #'+evil/neotree
+   :desc "Switch project buffer" :n ","  #'persp-switch-to-buffer
+   :desc "Switch buffer"         :n "<"  #'switch-to-buffer
+   :desc "Browse files"          :n "."  #'find-file
+   :desc "Find file from here"   :n ">"  #'counsel-file-jump
+   :desc "Find file in project"  :n "/"  #'projectile-find-file
+   :desc "Find in file (swiper)" :n "?"  #'swiper
+   :desc "Imenu"                 :n ";"  #'imenu
+   :desc "Imenu across buffers"  :n ":"  #'imenu-anywhere
+   :desc "Find other file"       :n "a"  #'projectile-find-other-file
+   :desc "Jump to bookmark"      :n "b"  #'bookmark-jump
+   :desc "Delete bookmark"       :n "B"  #'bookmark-delete
+   :desc "List errors"           :n "e"  #'flycheck-list-errors
+   :desc "View Emacs Log"        :n "m"  #'doom/popup-toggle-messages
+   :desc "Recent files"          :n "r"  #'recentf
+   :desc "Recent project files"  :n "R"  #'projectile-recentf
+   :desc "Insert from kill ring" :n "y"  #'counsel-yank-pop
+   :desc "Switch project"        :n "p"  #'projectile-switch-project
+   :desc "Open Neotree"          :n "\\" #'+evil/neotree
 
    ;; Since I've remapped C-h...
-   :desc "help"                     :n "h"  #'help-command
+   :desc "help"                  :n "h"  #'help-command
 
    (:desc "quit"
      :prefix "q"
@@ -303,7 +305,7 @@
  ;; rotate-text
  :n  "!"   #'rotate-text
  ;; hide-show/evil-matchit
- :nv "<tab>" #'+evil/matchit-or-toggle-fold
+ :nv [tab] #'+evil/matchit-or-toggle-fold
 
  ;; help-mode
  (:map help-mode-map

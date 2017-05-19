@@ -34,7 +34,7 @@
 ;; anzu and evil-anzu make it possible to display current/total in the
 ;; mode-line.
 (def-package! evil-anzu
-  :when (featurep! :feature evil)
+  :when (featurep 'evil)
   :init
   (add-transient-hook! evil-ex-start-search (require 'evil-anzu))
   :config

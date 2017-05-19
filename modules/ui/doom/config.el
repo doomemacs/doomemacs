@@ -126,7 +126,7 @@
   (advice-add #'recenter :around #'doom*blink-cursor-maybe)
 
   (after! evil
-    (advice-add #'evil-window-top :after #'doom/blink-cursor)
+    (advice-add #'evil-window-top    :after #'doom/blink-cursor)
     (advice-add #'evil-window-middle :after #'doom/blink-cursor)
     (advice-add #'evil-window-bottom :after #'doom/blink-cursor)))
 
@@ -140,7 +140,7 @@
     "Face to hightlight `hideshow' overlays."
     :group 'doom)
 
-  ;; Nicer code-folding overlays
+  ;; Nicer code-folding overlays (with fringe indicators)
   (setq hs-set-up-overlay
         (lambda (ov)
           (when (eq 'code (overlay-get ov 'hs))
@@ -159,7 +159,7 @@
   (after! flycheck
     ;; because git-gutter is in the left fringe
     (setq flycheck-indication-mode 'right-fringe)
-
+    ;; A non-descript, left-pointing arrow
     (define-fringe-bitmap 'flycheck-fringe-bitmap-double-arrow
       [0 0 0 0 0 4 12 28 60 124 252 124 60 28 12 4 0 0 0 0]))
 

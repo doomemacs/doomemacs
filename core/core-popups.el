@@ -257,15 +257,14 @@ properties."
 
 
 (after! eshell
-  ;; When eshell runs a visual command (see `eshell-visual-commands'), it spawns
-  ;; a term buffer to run it in, but where it spawns it is the problem.
-
   ;; By tying buffer life to its process, we ensure that we land back in the
   ;; eshell buffer after term dies. May cause problems with short-lived
   ;; processes.
   ;; FIXME replace with a 'kill buffer' keybinding.
   (setq eshell-destroy-buffer-when-process-dies t)
 
+  ;; When eshell runs a visual command (see `eshell-visual-commands'), it spawns
+  ;; a term buffer to run it in, but where it spawns it is the problem...
   (defun doom*eshell-undedicate-popup (orig-fn &rest args)
     "Force spawned term buffer to share with the eshell popup (if necessary)."
     (when (doom-popup-p)

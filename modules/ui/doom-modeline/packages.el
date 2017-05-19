@@ -3,8 +3,6 @@
 
 ;;; These are the invisible dependencies
 ;; Required
-;;(require 'f)
-;;(require 's)
 ;;(require 'evil)
 ;;(require 'projectile)
 ;;(require 'all-the-icons)
@@ -12,7 +10,6 @@
 ;; Optional
 ;;(require 'flycheck)
 ;;(require 'anzu)
-;;(require 'evil-anzu)
 ;;(require 'iedit)
 ;;(require 'evil-multiedit)
 

@@ -12,7 +12,7 @@ private/hlissner/snippets."
 (defun +hlissner/C-u-M-x ()
   "Invokes `execute-extended-command' with the universal argument."
   (interactive)
-  (let ((current-prefix-arg 1))
+  (let ((current-prefix-arg 4))
     (call-interactively #'execute-extended-command)))
 
 (defmacro +hlissner-def-finder! (name dir)
