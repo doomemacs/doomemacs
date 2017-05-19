@@ -10,7 +10,7 @@
   ;; Emacs feels snappier without checks on idle/change
   (setq flycheck-check-syntax-automatically '(save mode-enabled))
 
-  (set! :popup " ?\\*Flycheck" :size 14 :noselect t :regexp t)
+  (set! :popup 'flycheck-error-list-mode :select t :autokill t)
 
   (map! :map flycheck-error-list-mode-map
         :n "C-n" #'flycheck-error-list-next-error
