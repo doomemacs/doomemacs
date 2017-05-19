@@ -154,6 +154,7 @@ enable multiple minor modes for the same regexp.")
       gc-cons-percentage 0.6)
 
 (let (file-name-handler-list)
+  (require 'cl-lib)
   (eval-and-compile
     (require 'core-packages (concat doom-core-dir "core-packages")))
   (eval-when-compile

@@ -1,7 +1,5 @@
 ;;; core-lib.el
 
-(require 'cl-lib)
-
 ;; I don't use use-package for these to save on the `fboundp' lookups it does
 ;; for its :commands property. I use dolists instead of mapc to avoid extra
 ;; stackframes allocated for lambdas. This is _definitely_ premature
