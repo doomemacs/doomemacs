@@ -1,8 +1,14 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; lang/org/packages.el
 
-(package! org-plus-contrib :pin "org")
+;; NOTE This is an insecure source, but unavoidable if we want org 9.0+.
+;; orgmode.org offers no secure access to this repo. If this bothers you,
+;; comment out this package! block and download org-plus-contrib from
+;; orgmode.org.
+(package! org-plus-contrib :recipe (:fetcher git :url "http://orgmode.org/org-mode.git"))
+
 (package! org-download)
+(package! org-bullets)
 (package! ob-go)
 (package! ob-mongo)
 (package! ob-redis)
