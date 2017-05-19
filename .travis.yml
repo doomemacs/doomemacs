@@ -1,10 +1,12 @@
 language: emacs-lisp
 sudo: false
 before_install:
-  - curl -fsSkL https://gist.github.com/rejeep/ebcd57c3af83b049833b/raw > x.sh && source ./x.sh
-  - evm install $EVM_EMACS --use --skip
-  - cp init.example.el init.el
-  - YES=1 make install
+  - git clone https://github.com/rejeep/evm.git /home/travis/.evm
+  - export PATH="/home/travis/.evm/bin:$PATH"
+  - evm config path /tmp
+  - evm install $EVM_EMACS --use
+  - cp test/init.test.el init.el
+  - INSECURE=1 YES=1 make install
 env:
   - EVM_EMACS=emacs-25.1-travis
   - EVM_EMACS=emacs-25.2-travis

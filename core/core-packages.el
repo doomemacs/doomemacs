@@ -85,8 +85,8 @@ base by `doom!' and for calculating how many packages exist.")
       ;; than pulled, so packages are often out of date with upstream.
 
       ;; security settings
-      tls-checktrust t
-      gnutls-verify-error t
+      tls-checktrust (not (getenv "INSECURE"))
+      gnutls-verify-error tls-checktrust
 
       use-package-always-defer t
       use-package-always-ensure nil
