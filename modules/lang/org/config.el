@@ -297,43 +297,32 @@
           :n  "M-a" #'org-mark-element
           :v  "M-a" #'mark-whole-buffer
 
-          :ni "<M-return>"   (λ! (+org/insert-item 'below))
-          :ni "<S-M-return>" (λ! (+org/insert-item 'above))
-
-          ;; Formatting shortcuts
-          :i  "M-b" (λ! (+org-surround "*")) ; bold
-          :i  "M-u" (λ! (+org-surround "_")) ; underline
-          :i  "M-i" (λ! (+org-surround "/")) ; italics
-          :i  "M-`" (λ! (+org-surround "+")) ; strikethrough
-
-          :v  "M-b" "S*"
-          :v  "M-u" "S_"
-          :v  "M-i" "S/"
-          :v  "M-`" "S+"
+          :ni [M-return]   (λ! (+org/insert-item 'below))
+          :ni [S-M-return] (λ! (+org/insert-item 'above))
 
           (:localleader
            :n  "RET" #'org-archive-subtree
            :n  "SPC" #'+org/toggle-checkbox
-           :n  "/"  #'org-sparse-tree
-           :n  "="  #'org-align-all-tags
-           :n  "?"  #'org-tags-view
-           :n  "a"  #'org-agenda
-           :n  "d"  #'org-time-stamp
-           :n  "D"  #'org-deadline
-           :n  "e"  #'org-edit-special
-           :n  "E"  #'+org/edit-special-same-window
-           :n  "n"  (λ! (if (buffer-narrowed-p) (widen) (org-narrow-to-subtree)))
-           :n  "r"  #'org-refile
-           :n  "R"  (λ! (org-metaleft) (org-archive-to-archive-sibling)) ; archive to parent sibling
-           :n  "s"  #'org-schedule
-           :n  "t"  (λ! (org-todo (if (org-entry-is-todo-p) 'none 'todo)))
-           :v  "t"  (λ! (evil-ex-normal evil-visual-beginning evil-visual-end "\\t"))
-           :n  "T"  #'org-todo
-           :n  "v"  #'variable-pitch-mode
-           :nv "l"  #'org-insert-link
-           :nv "L"  #'org-store-link
-           ;; :n  "w"  'writing-mode
-           ;; :n  "x"  '+org/remove-link
+           :n  "/"   #'org-sparse-tree
+           :n  "="   #'org-align-all-tags
+           :n  "?"   #'org-tags-view
+           :n  "a"   #'org-agenda
+           :n  "d"   #'org-time-stamp
+           :n  "D"   #'org-deadline
+           :n  "e"   #'org-edit-special
+           :n  "E"   #'+org/edit-special-same-window
+           :n  "n"   (λ! (if (buffer-narrowed-p) (widen) (org-narrow-to-subtree)))
+           :n  "r"   #'org-refile
+           :n  "R"   (λ! (org-metaleft) (org-archive-to-archive-sibling)) ; archive to parent sibling
+           :n  "s"   #'org-schedule
+           :n  "t"   (λ! (org-todo (if (org-entry-is-todo-p) 'none 'todo)))
+           :v  "t"   (λ! (evil-ex-normal evil-visual-beginning evil-visual-end "\\t"))
+           :n  "T"   #'org-todo
+           :n  "v"   #'variable-pitch-mode
+           :nv "l"   #'org-insert-link
+           :nv "L"   #'org-store-link
+          ;:n  "w"   #'writing-mode
+          ;:n  "x"   #'+org/remove-link
            )
 
           ;; TODO Improve folding bindings

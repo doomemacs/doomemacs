@@ -116,19 +116,11 @@ wrong places)."
                   (save-excursion (insert "\n")))))
              (when (org-element-property :todo-type context)
                (org-todo 'todo))))
-          (t (user-error "Not a valid list")))
-    (evil-append-line 1)))
 
-;;;###autoload
-(defun +org/toggle-checkbox ()
-  (interactive)
-  (when-let (context (org-element-lineage (org-element-context) '(item) t))
-    (org-end-of-line)
-    (org-beginning-of-line)
-    (if (org-element-property :checkbox context)
-        (when (search-backward-regexp "\\[[ +-]\\]" (line-beginning-position) t)
-          (delete-char 4))
-      (insert "[ ] "))))
+          (t (user-error "Not a valid list, heading or table")))
+
+    (when (bound-and-true-p evil-mode)
+      (evil-append-line 1))))
 
 ;;;###autoload
 (defun +org/toggle-fold ()
@@ -143,6 +135,12 @@ with `org-cycle'). Also removes babel result blocks, if run from a code block."
          (let ((window-beg (window-start)))
            (org-cycle)
            (set-window-start nil window-beg)))))
+
+;;;###autoload
+(defun +org/toggle-checkbox ()
+  "Toggle the presence of a checkbox in the current item."
+  (interactive)
+  (org-toggle-checkbox '(4)))
 
 ;;;###autoload
 (defun +org/dwim-at-point ()
