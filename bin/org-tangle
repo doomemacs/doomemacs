@@ -1,5 +1,5 @@
-#!/usr/bin/env emacs --script
-;; -*- mode: emacs-lisp -*-
+#!/bin/sh
+":"; exec emacs --no-site-file --script "$0" -- "$@" # -*-emacs-lisp-*-
 
 ;; Extracts source blocks from org files and prints them to stdout. Debug/info
 ;; messages are directed to stderr and can be ignored. -l/--lang can be used to
