@@ -28,10 +28,13 @@ cp init.example.el init.el  # maybe edit init.el
 make install
 make compile       # optional, may take a while
 make compile-lite  # optional (lighter alternative to compile)
+
+# If you have problems, run this to diagnose any common problems
+make doctor
 ```
 
-Run `make` after making changes to modules (like adding packages or autoloaded
-functions). This is the equivalent of:
+If you change `init.el` or add/remove functions to autoload files, run `make`.
+That is the equivalent of running:
 
 ```bash
 make install       # or (doom/packages-install)
