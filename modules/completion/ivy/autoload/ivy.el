@@ -71,46 +71,49 @@ limit to buffers in the current workspace."
   "Generate a list of task tags (specified by `+ivy-task-tags') for
 `+ivy/tasks'."
   (let* ((max-type-width (seq-max (mapcar #'length (mapcar #'car +ivy-task-tags))))
-         (max-desc-width (seq-max (mapcar #'length (mapcar #'cadr tasks))))
-         (max-width (max 25 (min (- (window-width) (+ max-type-width 1))
-                                 (seq-max (mapcar #'length (mapcar #'cadr tasks))))))
-         (fmt (format "%%-%ds %%-%ds%%s%%s:%%s" max-type-width max-width)))
-    (mapcar (lambda (task)
-              (let ((file (nth 2 task))
-                    (line (nth 3 task))
-                    (type (nth 0 task))
-                    (desc (nth 1 task)))
-                (format fmt
-                        (propertize type 'face (cdr (assoc type +ivy-task-tags)))
-                        (substring desc 0 (min max-width (length desc)))
-                        (propertize " | " 'face 'font-lock-comment-face)
-                        (propertize (abbreviate-file-name file) 'face 'font-lock-keyword-face)
-                        (propertize line 'face 'font-lock-constant-face))))
-            tasks)))
+         (max-desc-width (seq-max (mapcar #'length (mapcar #'cl-cdadr tasks))))
+         (max-width (max 25 (min (- (frame-width) (+ max-type-width 1))
+                                 max-desc-width)))
+         (fmt (format "%%-%ds %%-%ds%%s%%s:%%s" max-type-width max-desc-width))
+         lines)
+    (dolist (alist tasks (nreverse lines))
+      (let-alist alist
+        (push (format fmt
+                      (propertize .type 'face (cdr (assoc .type +ivy-task-tags)))
+                      (substring .desc 0 (min max-desc-width (length .desc)))
+                      (propertize " | " 'face 'font-lock-comment-face)
+                      (propertize (abbreviate-file-name .file) 'face 'font-lock-keyword-face)
+                      (propertize .line 'face 'font-lock-constant-face))
+              lines)))))
 
 (defun +ivy--tasks (target)
   (let (case-fold-search)
-    (mapcar (lambda (x)
-              (save-match-data
-                (string-match (concat "^\\([^:]+\\):\\([0-9]+\\):.+\\("
-                                      (string-join (mapcar #'car +ivy-task-tags) "\\|")
-                                      "\\):?\\s-*\\(.+\\)")
-                              x)
-                (let ((file (match-string 1 x))
-                      (line (match-string 2 x))
-                      (type (match-string 3 x))
-                      (desc (match-string 4 x)))
-                  (list type desc file line))))
-            (split-string
-             (shell-command-to-string
-              (format "rg -H -S --no-heading --line-number %s %s"
-                      (concat " -- "
-                              (shell-quote-argument
-                               (concat "\\s("
-                                       (string-join (mapcar #'car +ivy-task-tags) "|")
-                                       ")([\\s:]|\\([^)]+\\):?)")))
-                      target))
-             "\n" t))))
+    (delq
+     nil
+     (mapcar (lambda (x)
+               (save-match-data
+                 (when (string-match (concat "^\\([^:]+\\):\\([0-9]+\\):.+\\("
+                                             (string-join (mapcar #'car +ivy-task-tags) "\\|")
+                                             "\\):?\\s-*\\(.+\\)")
+                                     x)
+                   `((type . ,(match-string 3 x))
+                     (desc . ,(match-string 4 x))
+                     (file . ,(match-string 1 x))
+                     (line . ,(match-string 2 x))))))
+             (let ((command (or (let ((bin (executable-find "rg")))
+                                  (and bin (concat bin " --line-number")))
+                                (let ((bin (executable-find "ag")))
+                                  (and bin (concat bin " --numbers")))
+                                (error "Neither ripgrep or the_silver_searcher is available")))
+                   (args (concat " -- "
+                                 (shell-quote-argument
+                                  (concat "\\s("
+                                          (string-join (mapcar #'car +ivy-task-tags) "|")
+                                          ")([\\s:]|\\([^)]+\\):?)")))))
+               (when-let (out (shell-command-to-string
+                               (format "%s -H -S --no-heading %s %s"
+                                       command args target)))
+                 (split-string out "\n" t)))))))
 
 (defun +ivy--tasks-open-action (x)
   "Jump to the file and line of the current task."
