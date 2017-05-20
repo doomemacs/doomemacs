@@ -175,7 +175,7 @@ enable multiple minor modes for the same regexp.")
     (require 'core-projects)    ; making Emacs project-aware
     (require 'core-keybinds)))  ; centralized keybind system + which-key
 
-(add-hook! 'window-setup-hook
+(add-hook! 'after-init-hook
   (setq gc-cons-threshold 16777216
         gc-cons-percentage 0.1))
 
