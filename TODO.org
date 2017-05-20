@@ -19,7 +19,7 @@
   + [ ] lang/python: [[https://github.com/Wilfred/pyimport][pyimport]]
   + [ ] An image plugin for zooming images at point (maybe [[https://github.com/mhayashi1120/Emacs-imagex][emacs-imagex]])
 + [0/4] New modules
-  + [ ] app/finance (maybe settle for org-mode tables?)
+  + [ ] app/finance (ledger + org-mode)
   + [ ] app/irc
   + [-] app/crm
   + [-] app/write
@@ -89,9 +89,9 @@
     + [ ] twitter
     + [ ] present
 
-** 2.0.3 [29/56]
+** 2.0.3 [33/60]
++ [ ] feature/workspaces: don't save session if session is already blank
 + [ ] bin/org-alert: scans TODOs in org files and issues system alerts
-+ [ ] Get rid of ~def-bootstrap~ and ~doom-bootstrap~; it's a clumsy system
 + [ ] tools/upload: add ~+upload/open-remote-file~ command to open current file
       on the remote (with TRAMP)
 + [ ] core-ui: replace (or fix) ~winner-mode~ (too unreliable)
@@ -126,6 +126,10 @@
   + [ ] syntax highlighter for ~+regex-mode~ (plus make it a major mode)
   + [ ] README.org
   + [ ] Optimize: use ~make-process~ daemon instead of ~call-process~
++ [X] Enable which-key popups for all keys
++ [X] Add bin/doctor to help diagnose potential environment issues
++ [X] Get rid of ~def-bootstrap~ and ~doom-bootstrap~; it's a clumsy system
++ [X] Use Secure HTTPS sources for package.el & verify with trust root CAs
 + [X] Test ~package-autoremove~ (replaced it with ~doom/packages-autoremove~)
 + [X] tools/gist: make new gists private by default
 + [X] feature/evil: make ~d~ operator invoke ~wgrep-mark-deletion~ in wgrep buffers
