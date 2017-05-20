@@ -175,7 +175,7 @@ enable multiple minor modes for the same regexp.")
     (require 'core-projects)    ; making Emacs project-aware
     (require 'core-keybinds)))  ; centralized keybind system + which-key
 
-(add-hook! 'after-init-hook
+(add-hook! '(after-init-hook doom-reload-hook)
   (setq gc-cons-threshold 16777216
         gc-cons-percentage 0.1))
 
