@@ -48,4 +48,4 @@ init.el:
 	@$(EMACS) -f 'doom-initialize-autoloads'
 
 
-.PHONY: all test bootstrap
+.PHONY: all test
