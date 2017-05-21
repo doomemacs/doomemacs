@@ -5,9 +5,10 @@
 
 ;;;###autoload
 (defun +jump/definition (&optional other-window)
-  "Find definition of the symbol at point.
+  "Jump to the definition of the symbol at point.
 
-Tries xref and falls back to `dumb-jump', then rg/ag."
+Tries xref and falls back to `dumb-jump', then rg/ag, then
+`evil-goto-definition' (if evil is active)."
   (interactive "P")
   (let ((sym (thing-at-point 'symbol t))
         successful)
@@ -52,7 +53,9 @@ Tries xref and falls back to `dumb-jump', then rg/ag."
 
 ;;;###autoload
 (defun +jump/references ()
-  "TODO"
+  "Show a list of references to the symbol at point.
+
+Tries `xref-find-references' and falls back to rg/ag."
   (interactive)
   (let ((sym (thing-at-point 'symbol t)))
     (cond ((progn
@@ -69,14 +72,27 @@ Tries xref and falls back to `dumb-jump', then rg/ag."
 
           (t (error "Couldn't find '%s'" sym)))))
 
+(defvar +jump--online-last-url nil)
+
 ;;;###autoload
-(defun +jump/online (where &optional search)
-  "TODO"
+(defun +jump/online (where search)
+  "Looks up SEARCH online, in you browser, as dictated by WHERE.
+
+Interactively, you are prompted to choose a source from
+`+jump-search-url-alist'."
   (interactive
    (list (completing-read "Search on: "
-                          (mapcar #'car +jump-search-url-alist)
-                          nil t)))
-  (let ((url (cdr (assoc where +jump-search-url-alist)))
-        (search (or search (read-string "Query: "))))
+                          (mapcar #'cdr +jump-search-url-alist)
+                          nil t)
+         (or (and (not current-prefix-arg)
+                  +jump--online-last-url)
+             (thing-at-point 'symbol t))))
+  (let ((url (cdr (assoc where +jump-search-url-alist))))
+    (when (or (functionp url) (symbolp url))
+      (setq url (funcall url)))
+    (cl-assert (stringp url))
+    (cl-assert (not (string-empty-p url)))
+    (cl-assert (not (string-empty-p search)))
+    (setq +jump--online-last-url url)
     (browse-url (format url (url-encode-url search)))))
 

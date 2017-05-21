@@ -38,9 +38,8 @@
 (ex! "git"         #'magit-status)           ; open magit status window
 (ex! "gstage"      #'magit-stage)
 (ex! "gunstage"    #'magit-unstage)
-;; TODO :gblame
-;; TODO :grevert
-;; TODO :gblame
+(ex! "gblame"      #'magit-blame)
+(ex! "grevert"     #'git-gutter:revert-hunk)
 
 ;; Dealing with buffers
 (ex! "clean[up]"   #'doom/cleanup-buffers)

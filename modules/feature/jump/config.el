@@ -3,36 +3,34 @@
 ;; "What am I looking at?"
 ;;
 ;; This module helps you answer that question. It helps you look up whatever
-;; you're looking at, with:
+;; you're looking at.
 ;;
-;; 1. A dwim Jump-to-definition functionality that "just works", with the help
-;;    of `dumb-jump' and `xref'.
-;; 2. A dwim interface to the new (and experimental) xref API built into Emacs.
-;;    Once its API is more stable, backends could be written (or provided by
-;;    plugins) to create universal find-references and find-definition
-;;    functionality. Warning: xref may change drastically in future updates.
-;; 3. Simple ways to look up the symbol at point in external resources, like
-;;    stackoverflow, devdocs.io or google. See `+jump/online' (TODO Test me!)
-;; 4. TODO Automatic & transparent integration with cscope dbs + ctags.
-;;    Databases are optionally isolated to the Emacs environment.
+;;   + `+jump/definition': a jump-to-definition that should 'just work'
+;;   + `+jump/references': find a symbol's references in the current project
+;;   + `+jump/online'; look up a symbol on online resources, like stackoverflow,
+;;     devdocs.io or google.
+;;
+;; This module uses `xref', an experimental new library in Emacs. It may change
+;; in the future. When xref can't be depended on it will fall back to
+;; `dumb-jump' to find what you want.
 
 (defvar +jump-search-url-alist
   '(("Google"        . "https://google.com/search?q=%s")
     ("DuckDuckGo"    . "https://duckduckgo.com/?q=%s")
     ("DevDocs.io"    . "http://devdocs.io/#q=%s")
     ("StackOverflow" . "https://stackoverflow.com/search?q=%s"))
-  "An alist that maps online resources to their search url. Used by
-`+jump/online'.")
-
-(set! :popup "*xref*" :size 10 :noselect t :autokill t :autoclose t)
-
-;; Let me control what backends to fall back on
-(setq-default xref-backend-functions '())
+  "An alist that maps online resources to their search url or a function that
+produces an url. Used by `+jump/online'.")
 
 (def-setting! :xref-backend (mode function)
   "TODO"
   `(add-hook! ,mode
      (add-hook 'xref-backend-functions #',function nil t)))
+
+(set! :popup "*xref*" :noselect t :autokill t :autoclose t)
+
+;; Let me control what backends to fall back on
+(setq-default xref-backend-functions '(t))
 
 ;; Recenter after certain jumps
 (add-hook!
@@ -47,6 +45,10 @@
 (def-package! dumb-jump
   :commands (dumb-jump-go dumb-jump-quick-look dumb-jump-back)
   :config
+  (setq dumb-jump-default-project doom-emacs-dir
+        dumb-jump-selector (cond ((featurep! :completion ivy) 'ivy)
+                                 ((featurep! :completion helm) 'helm)
+                                 (t 'popup))))
 
 
 (def-package! gxref

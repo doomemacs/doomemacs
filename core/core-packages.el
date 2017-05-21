@@ -418,6 +418,8 @@ In modules, checks modules/*/autoload.el and modules/*/autoload/*.el.
 Rerun this whenever init.el is modified. You can also use `make autoloads` from
 the commandline."
   (interactive)
+  ;; This function must not use `cl-lib', autoloaded functions or external
+  ;; dependencies. It must assume nothing is set up!
   (doom-initialize-packages (not noninteractive))
   (let ((generated-autoload-file doom-autoload-file)
         (autoload-files
