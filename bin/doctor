@@ -60,10 +60,12 @@
 (defmacro explain! (&rest args) `(message! (indented 2 (autofill ,@args))))
 
 ;;
-(message! "%s\nRunning Emacs %s on %s\n----\n"
+(message! "%s\nRunning Emacs v%s"
           (bold "DOOM Doctor")
-          (bold emacs-version)
-          (bold "%s" system-type))
+          (bold emacs-version))
+(message! "Compiled with:\n%s" (indented 2 (autofill system-configuration-features)))
+(message! "uname -a:\n%s" (indented 2 (autofill (shell-command-to-string "uname -a"))))
+(message "----\n")
 
 
 ;; --- is emacs set up properly? ------------------------------
