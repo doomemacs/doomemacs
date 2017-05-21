@@ -66,10 +66,12 @@
 
 (if (executable-find "tar")
     (check! (not (string-match-p "(GNU tar)" (shell-command-to-string "tar --version")))
-      (m "\n+ Couldn't find GNU tar (you have a different version)")
+      (m "\n+ You have BSD tar (or something else), rather than GNU tar. This *might* cause")
+      (m "  wrong-type-argument errors when installing/updating packages via quelpa.")
       (when IS-MAC
-        (m "  (MacOS users can install it using homebrew: `brew install gnu-tar')")))
-  (check! nil (m "\n+ Couldn't find `tar`")))
+        (m "  MacOS users can install gnu-tar via homebrew:")
+        (m "    brew install gnu-tar --with-default-names")))
+  (check! nil (m "\n+ Couldn't find `tar`"))) ; very unlikely
 
 (check! (not (executable-find "gnutls-cli"))
   (m "\n+ Couldn't find `gnutls-cli`")
