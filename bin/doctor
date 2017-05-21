@@ -7,8 +7,11 @@
 (defconst IS-MAC (eq system-type 'darwin))
 
 (require 'package)
+(load "~/.emacs.d/core/autoload/message" nil t)
 
-(defalias 'm #'message)
+(unless (equal (expand-file-name user-emacs-directory)
+               (expand-file-name "~/.emacs.d/"))
+  (error "Couldn't find ~/.emacs.d"))
 
 ;;
 (defvar doom-errors 0)
@@ -25,13 +28,24 @@
     (indent-rigidly (point-min) (point-max) spc)
     (buffer-string)))
 
+(defun autofill (&rest msgs)
+  (declare (indent defun))
+  (let ((fill-column 70))
+    (with-temp-buffer
+      (dolist (line msgs)
+        (when line
+          (insert line)))
+      (fill-region (point-min) (point-max))
+      (buffer-string))))
+
 (defun columns (cols length strings)
   (declare (indent defun))
   (with-temp-buffer
     (let ((sub-format (format "%%-%ds " (1- length)))
           col-format)
-      (dotimes (i cols)
+      (dotimes (i (1- cols))
         (setq col-format (concat col-format sub-format)))
+      (setq col-format (concat col-format "%s"))
       (while strings
         (insert (apply #'format col-format
                        (let (args)
@@ -40,49 +54,63 @@
                 "\n")))
     (buffer-string)))
 
+(defmacro error!   (&rest args) `(message! (bold (red ,@args))))
+(defmacro warn!    (&rest args) `(message! (bold (yellow ,@args))))
+(defmacro success! (&rest args) `(message! (bold (green ,@args))))
+(defmacro explain! (&rest args) `(message! (indented 2 (autofill ,@args))))
+
 ;;
-(m "DOOM doctor\nRunning Emacs %s on %s\n----"
-   emacs-version system-type)
+(message! "%s\nRunning Emacs %s on %s\n----\n"
+          (bold "DOOM Doctor")
+          (bold emacs-version)
+          (bold "%s" system-type))
 
 
 ;; --- is emacs set up properly? ------------------------------
 
 (check! (version< emacs-version "25.1")
-  (m "\n+ Emacs %s detected (while using %s)!" emacs-version (executable-find "emacs"))
-  (m "  DOOM only supports >= 25.1. Maybe your PATH wasn't set up properly?")
-  (when IS-MAC
-    (m (concat "  + Mac Users: I recommend using homebrew (https://brew.sh) to install Emacs:\n\n"
-               "    brew install emacs --with-modules --with-imagemagick --with-cocoa")))
-  (m ""))
+  (error! "Important: Emacs %s detected [%s]" emacs-version (executable-find "emacs"))
+  (explain!
+   "DOOM only supports >= 25.1. Perhaps your PATH wasn't set up properly."
+   (when IS-MAC
+     (concat "\nMacOS users should use homebrew (https://brew.sh) to install Emacs\n"
+             "  brew install emacs --with-modules --with-imagemagick --with-cocoa"))))
 
 
 ;; --- is the environment set up properly? --------------------
 
 (check! (not (executable-find "git"))
-  (m "\n+ Couldn't find git"))
+  (error! "Important: Couldn't find git"))
 
 (check! (memq system-type '(windows-nt ms-dos cygwin))
-  (m "\n+ Windows detected! DOOM was designed for MacOS and Linux, so expect a bumpy ride"))
+  (warn! "Warning: Windows detected")
+  (explain! "DOOM was designed for MacOS and Linux. Expect a bumpy ride!"))
 
 (if (executable-find "tar")
     (check! (not (string-match-p "(GNU tar)" (shell-command-to-string "tar --version")))
-      (m "\n+ You have BSD tar (or something else), rather than GNU tar. This *might* cause")
-      (m "  wrong-type-argument errors when installing/updating packages via quelpa.")
-      (when IS-MAC
-        (m "  MacOS users can install gnu-tar via homebrew:")
-        (m "    brew install gnu-tar --with-default-names")))
-  (check! nil (m "\n+ Couldn't find `tar`"))) ; very unlikely
+      (warn! "Warning: BSD tar detected")
+      (explain!
+       "QUELPA (through package-build) uses the system tar to build plugins."
+       "BSD tar *could* cause errors during package installation or updating from"
+       "non-ELPA sources."
+       (when IS-MAC
+         (concat "\nMacOS users can install gnu-tar via homebrew:\n"
+                 "  brew install gnu-tar"))))
+  (check! nil (error! "Important: Couldn't find tar"))) ; very unlikely
 
 (check! (not (executable-find "gnutls-cli"))
-  (m "\n+ Couldn't find `gnutls-cli`")
-  (check! (not (executable-find "openssl"))
-    (m "  ...but found `openssl` (gnutls-cli is the more secure option)")))
+  (cond ((executable-find "openssl")
+         (warn! "Warning: couldn't find gnutls-cli")
+         (explain! "...but found openssl (which is possibly less secure)"))
+        (t
+         (error! "Warning: neither gnutls-cli or openssl were found")
+         (explain! "You will be unable to install/update packages through secure sources (HTTPS)"))))
 
 
 ;; --- report! ------------------------------------------------
 
 (when (getenv "DEBUG")
-  (m "====\nHave some debug information:\n")
+  (message! "\n====\nHave some debug information:\n")
 
   (let (doom-core-packages doom-debug-mode)
     (condition-case ex
@@ -90,56 +118,57 @@
           (let ((inhibit-message t))
             (load "~/.emacs.d/core/core.el" nil t))
           (doom-initialize-packages)
-          (m "  + Attempt to load DOOM: success! Loaded v%s" doom-version)
+          (success! "  + Attempt to load DOOM: success! Loaded v%s" doom-version)
           (when (executable-find "git")
-            (m "    Revision %s"
+            (message! "    Revision %s"
                (or (ignore-errors
                      (let ((default-directory user-emacs-directory))
                        (shell-command-to-string "git rev-parse HEAD")))
                    "\n"))))
-      ('error (m "  + Attempt to load DOOM: failed\n    %s\n" (or (cdr-safe ex) (car ex))))))
+      ('error (warn! "  + Attempt to load DOOM: failed\n    %s\n" (or (cdr-safe ex) (car ex))))))
 
-  (m "  + Emacs directory: %s\n" user-emacs-directory)
+  (message! "  + Emacs directory: %s\n" user-emacs-directory)
 
   (when (bound-and-true-p doom-modules)
-    (m "  + enabled modules:\n%s"
+    (message! "  + enabled modules:\n%s"
        (indented 4
-         (columns 3 24
+         (columns 3 23
            (mapcar (lambda (x) (format "+%s" x))
-                   (sort (mapcar #'cdr (doom--module-pairs)) #'string-lessp))))))
+                   (mapcar #'cdr (doom--module-pairs)))))))
 
   (when (bound-and-true-p doom-packages)
-    (m "  + enabled packages:\n%s"
+    (message! "  + enabled packages:\n%s"
        (indented 4
-         (columns 2 36
+         (columns 2 35
            (mapcar (lambda (pkg)
                      (let ((desc (cadr (assq pkg package-alist))))
                        (when desc
                          (package-desc-full-name desc))))
                    (sort (mapcar #'car doom-packages) #'string-lessp))))))
 
-  (m "  + byte-compiled files:\n%s"
+  (message! "  + byte-compiled files:\n%s"
      (indented 4
-       (columns 2 40
+       (columns 2 39
          (let ((files (append (directory-files-recursively doom-core-dir ".elc$")
                               (directory-files-recursively doom-modules-dir ".elc$"))))
            (or (and files (mapcar (lambda (file) (file-relative-name file doom-emacs-dir))
                                   (nreverse files)))
                (list "n/a"))))))
 
-  (m "  + exec-path:\n%s"
+  (message! "  + exec-path:\n%s"
      (indented 4
-       (columns 1 80 exec-path)))
+       (columns 1 79 exec-path)))
 
-  (m "  + PATH:\n%s"
+  (message! "  + PATH:\n%s"
      (indented 4
-       (columns 1 80 (split-string (getenv "PATH") ":")))))
+       (columns 1 79 (split-string (getenv "PATH") ":")))))
 
 ;;
 (if (= doom-errors 0)
-    (m "Everything seems fine, happy Emacs'ing!")
-  (m "\n----\nThere were issues!")
+    (success! "Everything seems fine, happy Emacs'ing!")
+  (message "\n----")
+  (warn! "There were issues!")
   (unless (getenv "DEBUG")
-    (m "\nHopefully these can help you find the problem. If not, run this doctor again with DEBUG=1:")
-    (m "\n  DEBUG=1 make doctor\n")
-    (m "And file a bug report with its output at https://github.com/hlissner/.emacs.d/issues")))
+    (message! "\nHopefully these can help you find problems. If not, run this doctor again with DEBUG=1:")
+    (message! "\n  DEBUG=1 make doctor\n")
+    (message! "And file a bug report with its output at https://github.com/hlissner/.emacs.d/issues")))
