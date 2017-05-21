@@ -84,7 +84,7 @@ modes are active and the buffer is read-only.")
 
 ;; don't kill scratch buffers
 (defun doom|dont-kill-scratch-buffer ()
-  (or (not (eq (buffer-name) "*scratch*"))
+  (or (not (string= (buffer-name) "*scratch*"))
       (ignore (bury-buffer))))
 (add-hook 'kill-buffer-query-functions #'doom|dont-kill-scratch-buffer)
 
