@@ -72,6 +72,7 @@
        crystal         ; ruby at the speed of c
        csharp          ; unity, .NET, and mono shenanigans
        data            ; config/data formats
+       elm             ; care for a cup of TEA?
        emacs-lisp      ; drown in parentheses
        go              ; the hipster dialect
        haskell         ; a language that's lazier than I am
