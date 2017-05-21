@@ -72,7 +72,7 @@ Tries `xref-find-references' and falls back to rg/ag."
 
           (t (error "Couldn't find '%s'" sym)))))
 
-(defvar +jump--online-last-url nil)
+(defvar +jump--online-last nil)
 
 ;;;###autoload
 (defun +jump/online (where search)
@@ -81,18 +81,22 @@ Tries `xref-find-references' and falls back to rg/ag."
 Interactively, you are prompted to choose a source from
 `+jump-search-url-alist'."
   (interactive
-   (list (completing-read "Search on: "
-                          (mapcar #'cdr +jump-search-url-alist)
-                          nil t)
-         (or (and (not current-prefix-arg)
-                  +jump--online-last-url)
-             (thing-at-point 'symbol t))))
-  (let ((url (cdr (assoc where +jump-search-url-alist))))
-    (when (or (functionp url) (symbolp url))
-      (setq url (funcall url)))
-    (cl-assert (stringp url))
-    (cl-assert (not (string-empty-p url)))
-    (cl-assert (not (string-empty-p search)))
-    (setq +jump--online-last-url url)
-    (browse-url (format url (url-encode-url search)))))
+   (list (or (and (not current-prefix-arg)
+                  +jump--online-last)
+             (completing-read (format "Search on (%s): " (thing-at-point 'symbol t))
+                              (mapcar #'car +jump-search-url-alist)
+                              nil t))
+         (thing-at-point 'symbol t)))
+  (condition-case ex
+      (let ((url (cdr (assoc where +jump-search-url-alist))))
+        (unless url
+          (error "'%s' is an invalid search engine" where))
+        (when (or (functionp url) (symbolp url))
+          (setq url (funcall url)))
+        (cl-assert (and (stringp url) (not (string-empty-p url))))
+        (when (string-empty-p search)
+          (user-error "The search query is empty"))
+        (setq +jump--online-last where)
+        (browse-url (format url (url-encode-url search))))
+    ('error (setq +jump--online-last nil))))
 
