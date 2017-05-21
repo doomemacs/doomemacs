@@ -5,11 +5,14 @@
 + [-] Work-in-progress
 + [X] Complete
 
-** Planned [6/73]
-+ [0/11] Potential plugins
+** Planned [6/76]
++ [0/14] Potential plugins
+  + [ ] completion/ivy: [[https://github.com/yevgnen/ivy-rich][ivy-rich]], possible replacement for my ivy-buffer modifications (undecided)
+  + [ ] app/present: [[https://github.com/larstvei/Focus][focus]], for presenting code
   + [ ] [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]]: client for MS Language Server Protocol, keep an eye on this
   + [ ] lang/javascript: [[https://github.com/NicolasPetton/Indium][indium]] (IDE), keep an eye on this
   + [ ] lang/javascript: [[https://github.com/codesuki/add-node-modules-path][add-node-modules-path]] (adds node_modules to ~exec-path~)
+  + [ ] lang/javascript: [[https://github.com/lbolla/emacs-flycheck-flow][flycheck-flow]] (Flow support for JS)
   + [ ] lang/org: [[https://github.com/Malabarba/latex-extra][orgit]] (org links to magit buffers)
   + [ ] lang/org: [[https://github.com/jkitchin/org-ref][org-ref]] (bibtex/citation helper)
   + [ ] lang/org: [[https://github.com/tashrifsanil/org-easy-img-insert][org-easy-img-insert]]
@@ -89,28 +92,10 @@
     + [ ] twitter
     + [ ] present
 
-** 2.0.3 [33/60]
-+ [ ] feature/workspaces: don't save session if session is already blank
-+ [ ] bin/org-alert: scans TODOs in org files and issues system alerts
-+ [ ] tools/upload: add ~+upload/open-remote-file~ command to open current file
-      on the remote (with TRAMP)
-+ [ ] core-ui: replace (or fix) ~winner-mode~ (too unreliable)
-+ [ ] Generalize ~doom-visual-bell~ by basing its background off a face
-+ [ ] ui/doom-modeline: extend ~media-info~ segment for other media
-+ [ ] Write ~describe-setting~ for ~def-setting!~ definitions.
-+ [ ] Fix invisible buffer-info segment in modeline for terminal Emacs
-+ [ ] ui/doom-modeline: fix ~0/0~ display in modeline (leftover anzu state)
-+ [3/9] lang/org
-  + [ ] drag-drop image attachment (org-download) and central storage
-  + [ ] unified export system
-  + [ ] better shackle + org-agenda integration
-  + [ ] fix janky visual line motions (~evil-next-visual-line~, etc)
-  + [-] fix janky cursor positioning when manipulating org-table cells
-  + [-] certain characters/keys--when typed in a table--cause the cell
-        to shrink (likely cause: smartparens pairs & custom SPC/BKSPC binds)
-  + [X] Fix M-RET in plain lists not preserving indent level for new items
-  + [X] don't move cursor when toggling folds
-  + [X] don't move cursor when realigning org tables
+** 2.0.3 [37/65]
++ [1/2] Finish module :: feature/jump (go-to-definition that just works)
+  + [ ] ggtags support
+  + [X] Fix fallback chain (xref => dumb-jump => ag/rg (?))
 + [1/13] New module :: tools/regex (PCRE IDE)
   + [X] perl backend
   + [-] replace support
@@ -126,6 +111,30 @@
   + [ ] syntax highlighter for ~+regex-mode~ (plus make it a major mode)
   + [ ] README.org
   + [ ] Optimize: use ~make-process~ daemon instead of ~call-process~
++ [3/9] lang/org
+  + [ ] drag-drop image attachment (org-download) and central storage
+  + [ ] unified export system
+  + [ ] better shackle + org-agenda integration
+  + [ ] fix janky visual line motions (~evil-next-visual-line~, etc)
+  + [-] fix janky cursor positioning when manipulating org-table cells
+  + [-] certain characters/keys--when typed in a table--cause the cell
+        to shrink (likely cause: smartparens pairs & custom SPC/BKSPC binds)
+  + [X] Fix M-RET in plain lists not preserving indent level for new items
+  + [X] don't move cursor when toggling folds
+  + [X] don't move cursor when realigning org tables
++ [ ] feature/workspaces: don't save session if session is already blank
++ [-] bin/org-alert: cron script that scans TODOs in org files and dispatches system alerts
++ [ ] tools/upload: add ~+upload/open-remote-file~ command to open current file
+      on the remote (with TRAMP)
++ [-] core-ui: replace (or fix) ~winner-mode~ (too unreliable with shackle)
++ [ ] Generalize ~doom-visual-bell~ by basing its background off a face
++ [ ] ui/doom-modeline: extend ~media-info~ segment for other media
++ [ ] Write ~describe-setting~ for ~def-setting!~ definitions.
++ [ ] Fix invisible buffer-info segment in modeline for terminal Emacs
++ [ ] ui/doom-modeline: fix ~0/0~ display in modeline (leftover anzu state)
++ [X] Add :lookup ex command (~+jump:online~)
++ [X] Add :gblame ex command (~magit-blame~)
++ [X] Add :grevert ex command (~git-gutter:revert-hook~)
 + [X] Enable which-key popups for all keys
 + [X] Add bin/doctor to help diagnose potential environment issues
 + [X] Get rid of ~def-bootstrap~ and ~doom-bootstrap~; it's a clumsy system
