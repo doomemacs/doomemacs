@@ -103,6 +103,7 @@ base by `doom!' and for calculating how many packages exist.")
       quelpa-update-melpa-p nil
       quelpa-melpa-recipe-stores nil
       quelpa-self-upgrade-p nil
+      quelpa-verbose doom-debug-mode
       quelpa-dir (expand-file-name "quelpa" doom-packages-dir)
 
       byte-compile-dynamic nil
