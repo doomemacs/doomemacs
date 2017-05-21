@@ -1,38 +1,71 @@
 ;;; feature/jump/autoload.el
 
+(defvar +jump--rg-installed-p (executable-find "rg"))
+(defvar +jump--ag-installed-p (executable-find "ag"))
+
 ;;;###autoload
 (defun +jump/definition (&optional other-window)
-  "Find definition, falling back to dumb-jump, then
-`evil-goto-definition' otherwise."
-  (interactive "p")
-  (let ((orig-pt (point))
-        (orig-file (buffer-file-name))
-        (sym (thing-at-point 'symbol t)))
-    (cond ((ignore-errors (xref-find-definitions sym)
+  "Find definition of the symbol at point.
+
+Tries xref and falls back to `dumb-jump', then rg/ag."
+  (interactive "P")
+  (let ((sym (thing-at-point 'symbol t))
+        successful)
+    (cond ((null sym)
+           (user-error "Nothing under point"))
+
+          ((ignore-errors (if other-window
+                              (xref-find-definitions-other-window sym)
+                            (xref-find-definitions sym))
                           t))
 
           ((and (fboundp 'dumb-jump-go)
-                (progn (dumb-jump-go)
-                       (and (= orig-pt (point))
-                            (equal (file-truename orig-file)
-                                   (file-truename buffer-file-name))))))
+                ;; dumb-jump doesn't tell us if it succeeded or not
+                (cl-letf (((symbol-function 'dumb-jump-result-follow)
+                           `(lambda (result &optional use-tooltip proj)
+                              (setq successful t)
+                              (,(symbol-function 'dumb-jump-result-follow)
+                               result use-tooltip proj))))
+                  (if other-window
+                      (dumb-jump-go-other-window)
+                    (dumb-jump-go))
+                  successful)))
 
-          ((fboundp 'counsel-ag)
-           (counsel-ag sym (doom-project-root)))
+          ((and sym
+                (featurep 'counsel)
+                (let ((regex (rxt-quote-pcre sym)))
+                  (or (and +jump--rg-installed-p
+                           (counsel-rg regex (doom-project-root)))
+                      (and +jump--ag-installed-p
+                           (counsel-ag regex (doom-project-root)))))))
 
-          (t (error "Couldn't find '%s'" sym)))))
+          ((and (featurep 'evil)
+                evil-mode
+                (let ((bounds (bounds-of-thing-at-point 'symbol))
+                      (orig-pt (point)))
+                  (evil-goto-definition)
+                  (let ((pt (point)))
+                    (not (and (>= pt (car bounds))
+                              (<  pt (cdr bounds))))))))
+
+          (t (user-error "Couldn't find '%s'" sym)))))
 
 ;;;###autoload
-(defun +jump/references (&optional other-window)
+(defun +jump/references ()
   "TODO"
-  (interactive "p")
+  (interactive)
   (let ((sym (thing-at-point 'symbol t)))
     (cond ((progn
              (ignore-errors (xref-find-references sym)
                             t)))
 
-          ((fboundp 'counsel-ag)
-           (counsel-ag sym (doom-project-root)))
+          ((and sym
+                (featurep 'counsel)
+                (let ((regex (rxt-quote-pcre sym)))
+                  (or (and (executable-find "rg")
+                           (counsel-rg regex (doom-project-root)))
+                      (and (executable-find "ag")
+                           (counsel-ag regex (doom-project-root)))))))
 
           (t (error "Couldn't find '%s'" sym)))))
 
