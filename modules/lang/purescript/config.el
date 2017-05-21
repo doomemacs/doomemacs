@@ -2,14 +2,13 @@
 
 (def-package! purescript-mode
   :mode "\\.purs$"
-  :init
-  (add-hook 'purescript-mode-hook #'flycheck-mode)
-  (add-hook 'purescript-mode-hook #'rainbow-delimiters-mode)
   :config
+  (add-hook! 'purescript-mode-hook #'flycheck-mode)
+  (add-hook! 'purescript-mode-hook #'company-mode)
+  (add-hook! 'purescript-mode-hook #'purescript-indentation-mode)
+  (add-hook! 'purescript-mode-hook #'rainbow-delimiters-mode)
   (load "purescript-mode-autoloads" nil t)
 )
-
-;; Seems broken at the moment
 
 ;; (def-package! flycheck-purescript
 ;;   :after purescript-mode
@@ -21,12 +20,6 @@
   :after purescript-mode
   :config
   (require 'psc-ide)
-  (add-hook! 'purescript-mode-hook
-    (lambda ()
-      (company-mode)
-      (psc-ide-mode)
-      (turn-on-purescript-indentation)
-    )
-  )
+  (add-hook! 'purescript-mode-hook #'psc-ide-mode)
 )
 
