@@ -141,19 +141,23 @@
   (explain! "DOOM was designed for MacOS and Linux. Expect a bumpy ride!"))
 
 ;; bsd vs gnu tar
-(if (executable-find "tar")
-    (check! (not (string-match-p "(GNU tar)" (shell-command-to-string "tar --version")))
-      (warn! "Warning: BSD tar detected")
+(let ((tar-bin (or (executable-find "gtar")
+                   (executable-find "tar"))))
+  (if tar-bin
+      (check! (not (string-match-p "(GNU tar)" (shell-command-to-string (format "%s --version" tar-bin))))
+        (warn! "Warning: BSD tar detected")
+        (explain!
+         "QUELPA (through package-build) uses the system tar to build plugins, but it "
+         "expects GNU tar. BSD tar *could* cause errors during package installation or "
+         "updating from non-ELPA sources."
+         (when (eq system-type 'darwin)
+           (concat "\nMacOS users can install gnu-tar via homebrew:\n"
+                   "  brew install gnu-tar"))))
+    (check! t ; very unlikely
+      (error! "Important: Couldn't find tar")
       (explain!
-       "QUELPA (through package-build) uses the system tar to build plugins."
-       "BSD tar *could* cause errors during package installation or updating from"
-       "non-ELPA sources."
-       (when (eq system-type 'darwin)
-         (concat "\nMacOS users can install gnu-tar via homebrew:\n"
-                 "  brew install gnu-tar"))))
-  (check! t ; very unlikely
-    (error! "Important: Couldn't find tar")
-    (explain! "This is required by package.el and QUELPA to build packages.")))
+       "This is required by package.el and QUELPA to build packages and will "
+       "prevent you from installing & updating packages."))))
 
 
 ;; --- report! ------------------------------------------------
