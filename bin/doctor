@@ -96,7 +96,7 @@
 ;; --- is the environment set up properly? --------------------
 
 ;; gnutls-cli & openssl
-(unless (not (executable-find "gnutls-cli"))
+(unless (executable-find "gnutls-cli")
   (cond ((executable-find "openssl")
          (let* ((output (shell-command-to-string "openssl ciphers -v"))
                 (protocols
