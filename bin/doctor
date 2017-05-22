@@ -76,7 +76,8 @@
 (msg! "%s\nRunning Emacs v%s"
       (color 1 "DOOM Doctor")
       (color 1 emacs-version))
-(msg! "Compiled with:\n%s" (indented 2 (autofill system-configuration-features)))
+(when (boundp 'system-configuration-features)
+  (msg! "Compiled with:\n%s" (indented 2 (autofill system-configuration-features))))
 (msg! "uname -a:\n%s" (indented 2 (autofill (shell-command-to-string "uname -a"))))
 (msg! "----\n")
 
