@@ -112,7 +112,10 @@
 
 (def-package! irony
   :after cc-mode
-  :init (add-hook 'c-mode-common-hook #'irony-mode)
+  :init
+  (add-hook! 'c-mode-common-hook
+    (when (memq major-mode '(c-mode c++-mode objc-mode))
+      (irony-mode +1)))
   :config
   (setq irony-server-install-prefix (concat doom-etc-dir "irony-server/"))
   (add-hook! 'irony-mode-hook #'(irony-eldoc flycheck-mode))
