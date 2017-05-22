@@ -4,7 +4,8 @@
 ;; for its :commands property. I use dolists instead of mapc to avoid extra
 ;; stackframes allocated for lambdas. This is _definitely_ premature
 ;; optimization.
-(dolist (sym '(async-start async-start-process async-byte-recompile-directory))
+(dolist (sym '(async-start async-start-process async-byte-recompile-directory
+               async-inject-variables))
   (autoload sym "async"))
 
 (dolist (sym '(persistent-soft-exists-p persistent-soft-fetch
