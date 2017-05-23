@@ -68,13 +68,15 @@
   (c-set-offset 'arglist-close '0)
 
   (defun +cc--c-lineup-inclass (langelem)
-    (let ((inclass (assoc 'inclass c-syntactic-context)))
-      (save-excursion
-        (goto-char (c-langelem-pos inclass))
-        (if (or (looking-at "struct")
-                (looking-at "typedef struct"))
-            '+
-          '++))))
+    (if (memq major-mode '(c-mode c++-mode))
+        (let ((inclass (assq 'inclass c-syntactic-context)))
+          (save-excursion
+            (goto-char (c-langelem-pos inclass))
+            (if (or (looking-at "struct")
+                    (looking-at "typedef struct"))
+                '+
+              '++)))
+      '+))
   (c-set-offset 'inclass #'+cc--c-lineup-inclass)
 
 
