@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-":"; command -v emacs >/dev/null || { >&2 echo "Emacs isn't installed"; exit 1; }
-":"; [[ $(emacs --version | head -n1) == *\ 2[0-2].[0-1].[0-9] ]] && { echo "You're running $(emacs --version | head -n1)"; echo "That version is too old to run the doctor. Check your PATH"; echo; exit 2; } || exec emacs --no-site-file --batch -l "$0" # -*-emacs-lisp-*-
+":"; command -v emacs >/dev/null || { >&2 echo "Emacs isn't installed"; exit 1; } # -*-emacs-lisp-*-
+":"; [[ $(emacs --version | head -n1) == *\ 2[0-2].[0-1].[0-9] ]] && { echo "You're running $(emacs --version | head -n1)"; echo "That version is too old to run the doctor. Check your PATH"; echo; exit 2; } || exec emacs --no-site-file --batch -l "$0"
 
 ;; Uses a couple simple heuristics to locate issues with your environment that
 ;; could interfere with running or setting up DOOM Emacs.
@@ -12,6 +12,8 @@
 (unless (equal (expand-file-name user-emacs-directory)
                (expand-file-name "~/.emacs.d/"))
   (error "Couldn't find ~/.emacs.d"))
+
+(require 'pp)
 
 ;;
 (defvar doom-errors 0)
@@ -152,7 +154,7 @@
          "updating from non-ELPA sources."
          (when (eq system-type 'darwin)
            (concat "\nMacOS users can install gnu-tar via homebrew:\n"
-                   "  brew install gnu-tar"))))
+                   "    brew install gnu-tar"))))
     (check! t ; very unlikely
       (error! "Important: Couldn't find tar")
       (explain!
