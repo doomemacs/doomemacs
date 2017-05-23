@@ -98,40 +98,75 @@
 ;; --- is the environment set up properly? --------------------
 
 ;; gnutls-cli & openssl
-(unless (executable-find "gnutls-cli")
-  (cond ((executable-find "openssl")
-         (let* ((output (shell-command-to-string "openssl ciphers -v"))
-                (protocols
-                 (let (protos)
-                   (mapcar (lambda (row)
-                             (add-to-list 'protos (cadr (split-string row " " t))))
-                           (split-string (shell-command-to-string "openssl ciphers -v") "\n"))
-                   (delq nil protos))))
-           (check! (not (or (member "TLSv1.1" protocols)
-                            (member "TLSv1.2" protocols)))
-             (let ((version (cadr (split-string (shell-command-to-string "openssl version") " " t))))
-               (warn! "Warning: couldn't find gnutls-cli, and OpenSSL is out-of-date (v%s)" version)
-               (explain!
-                "This may not affect your Emacs experience, but there are security "
-                "vulnerabilities in the SSL2/3 & TLS1.0 protocols. You should use "
-                "TLS 1.1+, which wasn't introduced until OpenSSL v1.0.1.\n\n"
+(cond ((executable-find "gnutls-cli"))
+      ((executable-find "openssl")
+       (let* ((output (shell-command-to-string "openssl ciphers -v"))
+              (protocols
+               (let (protos)
+                 (mapcar (lambda (row)
+                           (add-to-list 'protos (cadr (split-string row " " t))))
+                         (split-string (shell-command-to-string "openssl ciphers -v") "\n"))
+                 (delq nil protos))))
+         (check! (not (or (member "TLSv1.1" protocols)
+                          (member "TLSv1.2" protocols)))
+           (let ((version (cadr (split-string (shell-command-to-string "openssl version") " " t))))
+             (warn! "Warning: couldn't find gnutls-cli, and OpenSSL is out-of-date (v%s)" version)
+             (explain!
+              "This may not affect your Emacs experience, but there are security "
+              "vulnerabilities in the SSL2/3 & TLS1.0 protocols. You should use "
+              "TLS 1.1+, which wasn't introduced until OpenSSL v1.0.1.\n\n"
 
-                "Please considering updating (or installing gnutls-cli, which is preferred).")))))
-        (t
-         (check! t
-           (error! "Important: couldn't find either gnutls-cli or openssl")
-           (explain!
-            "You won't be able to install/update packages because Emacs won't be able to "
-            "verify HTTPS ELPA sources. Install gnutls-cli or openssl v1.0.0+. If for some "
-            "reason you can't, you can bypass this verification with the INSECURE flag:\n\n"
+              "Please consider updating (or install gnutls-cli, which is preferred).")))))
+      (t
+       (check! t
+         (error! "Important: couldn't find either gnutls-cli nor openssl")
+         (explain!
+          "You won't be able to install/update packages because Emacs won't be able to "
+          "verify HTTPS ELPA sources. Install gnutls-cli or openssl v1.0.0+. If for some "
+          "reason you can't, you can bypass this verification with the INSECURE flag:\n\n"
 
-            "  INSECURE=1 make install\n\n"
+          "  INSECURE=1 make install\n\n"
 
-            "Or change `package-archives' to use non-https sources.\n\n"
+          "Or change `package-archives' to use non-https sources.\n\n"
 
-            "But remember that you're leaving your security in the hands of your "
-            "network, provider, government, neckbearded mother-in-laws, geeky roommates, "
-            "or just about anyone who knows more about computers than you do!")))))
+          "But remember that you're leaving your security in the hands of your "
+          "network, provider, government, neckbearded mother-in-laws, geeky roommates, "
+          "or just about anyone who knows more about computers than you do!"))))
+
+(cond ((or (executable-find "gnutls-cli")
+           (executable-find "openssl"))
+       (let ((tls-checktrust t)
+             (gnutls-verify-error t))
+         (dolist (url '("https://elpa.gnu.org/packages/archive-contents"
+                        "https://melpa.org/packages/archive-contents"))
+           (condition-case ex
+               (let (result)
+                 (let ((inhibit-message t))
+                   (url-retrieve url (lambda (status &rest _) (setq result status))))
+                 (while (not result) (sleep-for 1))
+                 (when (getenv "DEBUG")
+                   (success! "Verified %s" (nth 2 (split-string url "/")))))
+             ('error
+              (check! t
+                (error! "Rejected %s" url)
+                (explain! (pp-to-string ex))))))
+         (dolist (url '("https://self-signed.badssl.com"
+                        "https://wrong.host.badssl.com/"))
+           (condition-case ex
+               (let (result)
+                 (let ((inhibit-message t))
+                   (url-retrieve url (lambda (status &rest _) (setq result status))))
+                 (while (not result) (sleep-for 1))
+                 (check! t
+                   (warn! "Verified %s (this shouldn't happen!)" (nth 2 (split-string url "/")))
+                   (explain! (pp-to-string result))))
+             ('error
+              (when (getenv "DEBUG")
+                (success! "Rejected %s (a good thing!)" url)
+                (explain! (pp-to-string ex))))))))
+      (t
+       (error! "Nope!")))
+
 
 ;; git
 (check! (not (executable-find "git"))
