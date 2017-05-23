@@ -8,10 +8,12 @@
                                    (mapconcat #'identity (mapcar #'symbol-name modes) "-"))))
          (quoted (eq (car-safe backends) 'quote)))
     ;; TODO more type checks
-    `(progn
-       (defun ,def-name ()
-         (require 'company)
-         (setq-local company-backends (append '((,@backends)) company-backends)))
+    `(prog1
+         (defun ,def-name ()
+           (when (memq major-mode ',modes)
+             (require 'company)
+             (unless (member ',backends company-backends)
+               (setq-local company-backends (append '((,@backends)) company-backends)))))
        (add-hook! ,modes #',def-name))))
 
 
