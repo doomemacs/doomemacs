@@ -9,12 +9,17 @@
 (def-package! php-mode
   :mode ("\\.php[s345]?$" "\\.inc$")
   :interpreter "php"
-  :init
-  (add-hook 'php-mode-hook #'flycheck-mode)
   :config
+  (add-hook! 'php-mode-hook
+    #'(ac-php-core-eldoc-setup flycheck-mode))
+
   (setq php-template-compatibility nil)
 
   (set! :repl 'php-mode #'php-boris)
+
+  ;; ac-php provides custom autocompletion, php-extras provides autocompletion
+  ;; for built-in libraries
+  (set! :company-backend 'php-mode '(company-ac-php-backend php-extras-company))
 
   ;; default is 10; this optimizes `smartparens' performance, but limits sp
   ;; pairs to 6 characters.
@@ -44,17 +49,14 @@
 (def-package! php-extras
   :after php-mode
   :init
-  (add-hook 'php-mode-hook #'eldoc-mode)
+  ;; company will set up itself
+  (advice-add #'php-extras-company-setup :override #'ignore)
   :config
   (setq php-extras-eldoc-functions-file (concat doom-etc-dir "php-extras-eldoc-functions"))
 
-  (set! :company-bakend 'php-mode '(php-extras-company company-yasnippet))
-
-  ;; company will set up itself
-  (advice-add #'php-extras-company-setup :override #'ignore)
-
   ;; Make expensive php-extras generation async
   (unless (file-exists-p (concat php-extras-eldoc-functions-file ".el"))
+    (message "Generating PHP eldoc files...")
     (async-start `(lambda ()
                     ,(async-inject-variables "\\`\\(load-path\\|php-extras-eldoc-functions-file\\)$")
                     (require 'php-extras-gen-eldoc)
@@ -74,6 +76,16 @@
 
 
 (def-package! php-boris :commands php-boris)
+
+
+(def-package! company-php
+  :when (featurep! :completion company)
+  :commands (company-ac-php-backend ac-php-remake-tags ac-php-remake-tags-all ac-php-core-eldoc-setup)
+  :config
+  (unless (executable-find "phpctags")
+    (warn "php-mode: phpctags isn't installed, auto-completion will be gimped"))
+
+  (setq ac-php-tags-path (concat doom-cache-dir "ac-php/")))
 
 
 ;;
