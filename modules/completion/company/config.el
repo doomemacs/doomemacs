@@ -22,11 +22,12 @@
 ;;
 
 (def-package! company
+  :demand t
   :commands (company-mode global-company-mode company-complete
              company-complete-common company-manual-begin company-grab-line)
   :config
-  (setq company-idle-delay nil
-        company-minimum-prefix-length 2
+  (setq company-idle-delay 0.2
+        company-minimum-prefix-length 3
         company-tooltip-limit 10
         company-dabbrev-downcase nil
         company-dabbrev-ignore-case nil

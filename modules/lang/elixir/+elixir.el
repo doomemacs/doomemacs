@@ -5,7 +5,7 @@
   :init
   (add-hook 'elixir-mode-hook #'turn-off-smartparens-mode)
   :config
-  (set! :company-backend 'elixir-mode '(company-elixir company-yasnippet))
+  (set! :company-backend 'elixir-mode '(company-yasnippet))
 
 )
 
