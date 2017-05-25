@@ -114,6 +114,7 @@
 
 (def-package! irony
   :after cc-mode
+  :commands irony-install-server
   :init
   (add-hook! 'c-mode-common-hook
     (when (memq major-mode '(c-mode c++-mode objc-mode))

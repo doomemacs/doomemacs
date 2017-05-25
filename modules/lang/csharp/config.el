@@ -1,19 +1,18 @@
 ;;; module-csharp.el
 
-(def-package! csharp-mode
-  :mode "\\.cs$"
-  :init (add-hook 'csharp-mode-hook #'flycheck-mode))
+(def-package! csharp-mode :mode "\\.cs$")
 
 
 (def-package! omnisharp
-  :commands omnisharp-mode
+  :after csharp-mode
   :preface
   (setq omnisharp-auto-complete-want-documentation nil
         omnisharp-server-executable-path (concat doom-local-dir "OmniSharp.exe"))
-  :when (file-exists-p omnisharp-server-executable-path)
-  :init
-  (add-hook! csharp-mode #'(eldoc-mode omnisharp-mode))
   :config
+  (if (file-exists-p omnisharp-server-executable-path)
+      (add-hook! csharp-mode #'(eldoc-mode flycheck-mode omnisharp-mode))
+    (warn "csharp-mode: omnisharp server isn't installed, completion won't work"))
+
   (set! :company-backend 'csharp-mode '(company-omnisharp))
 
   (map! :map omnisharp-mode-map

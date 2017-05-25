@@ -2,9 +2,9 @@
 
 (def-package! meghanada
   :commands meghanada-mode
-  :init
-  (add-hook! 'java-mode-hook #'(meghanada-mode flycheck-mode))
   :config
+  (add-hook! 'java-mode-hook #'(meghanada-mode flycheck-mode))
+
   (set! :build 'compile-file    'java-mode #'meghanada-compile-file)
   (set! :build 'compile-project 'java-mode #'meghanada-compile-project)
 

@@ -26,7 +26,6 @@
              company-complete-common company-manual-begin company-grab-line)
   :config
   (setq company-idle-delay nil
-        company-minimum-prefix-length 2
         company-tooltip-limit 10
         company-dabbrev-downcase nil
         company-dabbrev-ignore-case nil

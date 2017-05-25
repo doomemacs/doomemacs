@@ -52,7 +52,7 @@
   (add-hook! :append '(isearch-mode-end-hook +evil-esc-hook)
     #'anzu--reset-status)
   (after! iedit
-    (add-hook 'iedit-mode-end-hook #'+doom-modeline|reset-anzu)))
+    (add-hook 'iedit-mode-end-hook #'anzu--reset-status)))
 
 
 ;;; Flash the mode-line on error

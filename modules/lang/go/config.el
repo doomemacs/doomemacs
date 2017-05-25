@@ -3,10 +3,10 @@
 (def-package! go-mode
   :mode "\\.go$"
   :interpreter "go"
-  :init
+  :config
   (add-hook 'go-mode-hook #'flycheck-mode)
   (add-hook! go-mode (add-hook 'before-save-hook #'gofmt-before-save nil t))
-  :config
+
   (set! :build 'go-build 'go-mode #'+go/build)
   (set! :repl 'go-mode #'gorepl-run)
 

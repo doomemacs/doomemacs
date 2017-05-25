@@ -269,7 +269,7 @@
    :i "C-l"   #'+company/whole-lines
    :i "C-k"   #'+company/dict-or-keywords
    :i "C-f"   #'company-files
-   :i "C-]"   #'company-tags
+   :i "C-]"   #'company-etags
    :i "s"     #'company-ispell
    :i "C-s"   #'company-yasnippet
    :i "C-o"   #'company-capf
