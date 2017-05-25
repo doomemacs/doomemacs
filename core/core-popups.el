@@ -256,6 +256,15 @@ properties."
   (advice-add #'buffer-menu :override #'doom*buffer-menu))
 
 
+(after! comint
+  (defun doom|popup-close-comint-buffer ()
+    (when (and (doom-popup-p)
+               (derived-mode-p 'comint-mode)
+               (not (process-live-p (get-buffer-process (current-buffer)))))
+      (delete-window)))
+  (add-hook '+evil-esc-hook #'doom|popup-close-comint-buffer t))
+
+
 (after! eshell
   ;; By tying buffer life to its process, we ensure that we land back in the
   ;; eshell buffer after term dies. May cause problems with short-lived
