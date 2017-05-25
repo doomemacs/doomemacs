@@ -1,0 +1,58 @@
+* :lang php
+
+This module adds support for PHP 5.3+ (including PHP7).
+
++ ctags-based code completion (~company-php~ and ~phpctags~)
++ eldoc support (~ac-php~ and ~php-extras~)
++ REPL (~php-boris~)
++ Code refactoring commands (~php-refactor-mode~)
++ Unit-test commands (~phpunit~)
++ Support for ~laravel~ and ~composer~ projects (with project-specific snippets)
++ [[../../feature/file-templates/templates/php-mode][File templates]]
++ [[https://github.com/hlissner/emacs-snippets/tree/master/php-mode][Snippets]]
+
+#+begin_quote
+PHP was the first programming language I got paid to code in, back in the Cretaceous period (2003). I'm so, so sorry. All those programmers who inherited my earliest PHP work. I know you're out there, writhing in your straitjackets.
+
+I suppose it's hip for programmers to projectile vomit to any mention of PHP, but they have good reason to. Not because it's /necessarily/ a bad language, and not /just/ because of a couple inconsistently ordered parameters, but because it's too easy to make junk with. You've heard the war stories.
+
+Save a programmer today. Stop a friend from choosing PHP as their first language.
+#+end_quote
+
+** Install
+To get started with PHP, you'll need ~php~ (5.3+) and ~composer~:
+
+*** MacOS
+PHP 5.5 comes prepackaged with newer versions of MacOS. These instructions are provided for reference:
+
+#+BEGIN_SRC sh :tangle (if (doom-system-os 'macos) "yes")
+brew tap homebrew/homebrew-php
+brew install php71  # or php53, php54, php55
+brew install composer
+#+END_SRC
+
+*** Arch Linux
+#+BEGIN_SRC sh :dir /sudo:: :tangle (if (doom-system-os 'arch) "yes")
+sudo pacman --needed --noconfirm -S php composer  # or php53, php54, php55
+#+END_SRC
+
+** Dependencies
+The features in this module optionally depends on the following php packages:
+
++ ~boris~ (REPL)
++ ~phpctags~ (better code completion)
++ ~phpunit~ (unit test commands)
+
+#+BEGIN_SRC sh
+composer global require \
+    d11wtq/boris \
+    phpunit/phpunit \
+    techlivezheng/phpctags
+#+END_SRC
+
+Ensure that ~\~/.composer/vendor/bin~ is in ~PATH~:
+
+#+BEGIN_SRC sh
+# place this in your profile file, like ~/.bash_profile or ~/.zshenv
+export PATH="~/.composer/vendor/bin:$PATH"
+#+END_SRC

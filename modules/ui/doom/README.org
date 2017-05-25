@@ -1,26 +1,33 @@
-* DOOM
+* :ui doom
 
-DOOM's look is loosely inspired by Atom's One Dark theme. I've my [[https://github.com/hlissner/emacs-doom-theme/][doom-themes]]
-plugin to thank for bringing it to Emacs.
+This module modifies Emacs' user interface.
 
-On top of that, it uses:
+DOOM's look is loosely inspired by Atom's One Dark theme, and is largely contained in the [[https://github.com/hlissner/emacs-doom-theme/][doom-themes]] plugin.
 
-+ [[https://github.com/mozilla/Fira][Fira Mono]] (font)
-+ [[https://github.com/rolandwalker/nav-flash][nav-flash]]: blinks the current line when jumping large distances, to help keep
-  track of the cursor.
+By default, this module uses:
+
++ [[https://github.com/mozilla/Fira][Fira Mono and Fira Sans]] (fonts)
++ [[https://dejavu-fonts.github.io/][DejaVu Sans Mono]] (font, for displaying unicode characters)
++ [[https://github.com/rolandwalker/nav-flash][nav-flash]]: blinks the current line when jumping large distances, to help keep track of the cursor.
 + ~hideshow~, modified to use a nicer folded-region indicator.
 + Custom fringe bitmaps for ~git-gutter-fringe~ (thin bars)
 
-** Installation
+** Install
 [[https://github.com/mozilla/Fira][Fira Mono]] is this module's only dependency (if you want to use it).
 
 *** MacOS
 #+BEGIN_SRC sh :tangle (if (doom-system-os 'macos) "yes")
 brew tap caskroom/fonts
-brew cask install font-fira-mono
+brew cask install font-fira-{sans,mono} font-dejavu-sans
 #+END_SRC
 
 *** Arch Linux
 #+BEGIN_SRC sh :dir /sudo:: :tangle (if (doom-system-os 'arch) "yes")
-sudo pacman --noconfirm --needed -S ttf-fira-mono
+sudo pacman --noconfirm --needed -S ttf-fira-{sans,mono} ttf-dejavu
 #+END_SRC
+
+** Troubleshooting
+*** Strange font symbols
+If you're getting strange unicode symbols, that is likely ~all-the-icons~ doing (caused by other UI modules, specifically [[../doom-modeline][doom-modeline]] and [[../doom-dashboard][doom-dashboard]]).
+
+You must install the fonts included with ~all-the-icons~ with: ~M-x all-the-icons-install-fonts~.

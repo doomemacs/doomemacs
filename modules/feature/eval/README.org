@@ -1,0 +1,109 @@
+* :feature eval
+
+This module adds support for:
+
++ [[#repls][Defining, invoking & interacting with REPLs]],
++ [[#build-tasks][Defining & invoking build tasks for projects and files]],
++ and [[#code-evaluation][evaluating code or entire buffers, printing their output to a popup window]].
+
+** Install
+This module has no external dependencies. However, specific languages may require additional setup.
+
+Check the README.org in that language's module for details.
+
+** Usage
++ *REPLs*
+  Invoked via:
+  + ~:repl~ (evil ex-command)
+  + =<leader> o r= in normal mode (or visual mode, which sends the selection to the open REPL)
+  + ~M-x +eval/repl~
+  + ~M-x +eval/repl-send-region~ while a selection (and REPL) is active
+
++ *Build Tasks*
+  You will be prompted to select a task. Only the ones that meet the predicate will be listed.
+  + ~:build~ (evil ex-command)
+  + =M-b= (by default)
+  + =<leader> o b= in normal mode
+  + ~M-x +eval/build~
+
++ *Code Evaluation*
+  Quickrun can be invoked via:
+  + ~M-x +eval/buffer~ (or ~gR~, or ~M-r~)
+  + ~M-x +eval/region~
+  + ~M-x +eval/region-and-replace~
+  + Evil users can use the ~gr~ operator to select and run a region.
+
+** Configuration
+*** REPLs
+REPLs have been defined for most of the languages DOOM supports (check its README.org to see if it does).
+
+Otherwise, you can define your own:
+
+A REPL definition consists of two parts: an interactive command that opens (and returns) a REPL buffer and a ~:repl~ definition that maps a major-mode to said command:
+
+#+BEGIN_SRC emacs-lisp
+(defun +emacs-lisp/repl ()
+  (interactive)
+  (pop-to-buffer
+   (or (get-buffer "*ielm*")
+       (progn (ielm)
+              (let ((buf (get-buffer "*ielm*")))
+                (bury-buffer buf)
+                buf)))))
+
+(set! :repl 'emacs-lisp-mode #'+emacs-lisp/repl)
+#+END_SRC
+
+*** Build Tasks
+A build task is little more than major-mode-local commands, comprised of an interactive command, an association with a major mode and an optional predicate function.
+
+#+BEGIN_SRC emacs-lisp
+(defun +lua/run-love ()
+  "Run the current project in love 10.0."
+  (async-shell-command
+   (format "/usr/bin/love %s"
+           (shell-quote-argument (doom-project-root)))))
+
+(defun +lua/build ()
+  "Run a build script in the project root."
+  (let ((default-directory (doom-project-root)))
+    (compile "luajit build.lua")))
+
+(defun +lua/generate-docs ()
+  "Generate project documentation."
+  (let ((default-directory (doom-project-root)))
+    (compile "luadoc *.lua")))
+
+(defun +lua-love-p ()
+  "Returns non-nil if the current project is a love project."
+  (doom-project-has! (and "main.lua" "config.lua")))
+
+(set! :build 'run           'lua-mode #'+lua/run-love :when (+lua-love-p))
+(set! :build 'build-project 'lua-mode #'+lua/build    :when (+lua-love-p))
+(set! :build 'generate-docs 'lua-mode #'+lua/generate-docs)
+#+END_SRC
+
+*** Code Evaluation
+Run regions or entire buffers with [[https://github.com/syohex/emacs-quickrun][Quickrun]]. Output will be sent to a popup window.
+
+Quickrun includes support for many languages, but occasionally, you'll find a language without support, such as [[https://crystal-lang.org/][Crystal]]. A "runner" can be defined like so:
+
+#+BEGIN_SRC emacs-lisp
+(set! :eval 'crystal-mode
+      '((:command     . "crystal")
+        (:exec        . "%c %s")
+        (:description . "Run Crystal script")))
+#+END_SRC
+
+A simpler version is simply to use the path to the binary:
+
+#+BEGIN_SRC emacs-lisp
+(set! :eval 'groovy-mode "groovy")
+#+END_SRC
+
+Or if you'd rather run an elisp command:
+
+#+BEGIN_SRC emacs-lisp
+(set! :eval 'emacs-lisp-mode #'+emacs-lisp-eval)
+#+END_SRC
+

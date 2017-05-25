@@ -26,23 +26,45 @@ git clone https://github.com/hlissner/.emacs.d ~/.emacs.d
 cd ~/.emacs.d
 cp init.example.el init.el  # maybe edit init.el
 make install
-make compile       # optional, may take a while
-make compile-lite  # optional (lighter alternative to compile)
 
-# If you have problems, run this to diagnose any common problems
+# DOOM is designed to benefit from byte compilation, it can boost startup time
+# and make Emacs feel a bit snappier, but it is OPTIONAL.
+make compile       # may take a while
+# or
+make compile-lite  # lighter alternative to compile
+
+# If you have problems, run this to check for common issues with your setup
 make doctor
 ```
 
-If you change `init.el` or add/remove functions to autoload files, run `make`.
-That is the equivalent of running:
+If you byte-compile, changes to the config will **not** take effect until you
+recompile or delete the byte-compiled files (with `make clean`).
+
+## Package Management
+
+Plugins can be managed from the command line with `make`:
 
 ```bash
-make install       # or (doom/packages-install)
-make autoloads     # or (doom/reload-autoloads)
+make install     # install missing plugins
+make update      # update installed plugins
+make autoremove  # remove unused plugins
+# be sure to run install and autoremove after modifying init.el
+
+# run this if you change autoload files
+make autoloads
+
+# you can run any make command with DEBUG=1 for extra logging, and YES=1 to
+# auto-accept confirmation prompts:
+DEBUG=1 make install
+YES=1 make update
 ```
 
-You can run any Make command with `DEBUG=1` for added logging verbosity, and
-`YES=1` to auto-accept any confirmation prompts.
+These can also be invoked from within emacs:
+
++ `doom/packages-install`
++ `doom/packages-update`
++ `doom/packages-autoremove`
++ `doom/reload-autoloads`
 
 ## Deciphering my emacs.d
 
@@ -83,8 +105,8 @@ So you want to grok some of this madness. Here are a few suggestions:
     (see `:ag` and `:rg`)
   * Project search & replace with **[wgrep]**
   * Interactive buffer search with **[swiper]**
-* REPLs & inline/live code evaluation (using **[quickrun]**) with languages
-  support for Ruby, Python, PHP, JS, Elisp, Haskell, Lua and more.
+* Inline/live code evaluation (using **[quickrun]**) and REPLs for a variety of
+  languages, including Ruby, Python, PHP, JS, Elisp, Haskell, Lua and more.
 * [Minimalistic diffs in the fringe][sc-diffs] with **[git-gutter-fringe]**.
 * A do-what-I-mean jump-to-definition implementation that tries its darnest to
   find the definition of what you're looking at. It tries major-mode commands,
@@ -102,13 +124,24 @@ So you want to grok some of this madness. Here are a few suggestions:
   * RSS feed reader (using elfeed)
   * Word Processor (using LaTeX, Org and Markdown)
 
-## Contributing or troubleshooting
+## Troubleshooting
 
 My config wasn't intended for public use, but I'm happy to help you use or crib
-from my config. I welcome contributions of any kind; documentation, bug
-fixes/reports, even elisp tips.
+from my config.
 
-[Don't hesitate to tell me my Elisp-fu sucks](https://github.com/hlissner/.emacs.d/issues/new)!
++ If you have questions, drop me line at henrik@lissner.net.
++ If you have issues running or setting up my Emacs config, use `make doctor` to
+  help diagnose the issue before you report an issue.
++ If you still can't make sense of it, run `DEBUG=1 make doctor` and include
+  it [with your bug report][new-issue].
+
+**And please include steps to reproduce your issue, if possible**.
+
+## Contributing
+
+I welcome contributions of any kind; documentation, bug fixes/reports, extra
+modules, even elisp tips. Really,
+[don't hesitate to tell me my Elisp-fu sucks][new-issue]!
 
 
 [ag]: https://github.com/ggreer/the_silver_searcher
@@ -124,6 +157,7 @@ fixes/reports, even elisp tips.
 [git-gutter-fringe]: https://melpa.org/#/git-gutter-fringe
 [ivy]: https://melpa.org/#/ivy
 [neotree]: https://melpa.org/#/neotree
+[new-issue]: https://github.com/hlissner/.emacs.d/issues/new
 [persp-mode]: https://melpa.org/#/persp-mode
 [quickrun]: https://melpa.org/#/quickrun
 [rg]: https://github.com/BurntSushi/ripgrep

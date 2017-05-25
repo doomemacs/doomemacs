@@ -5,7 +5,7 @@
 + [-] Work-in-progress
 + [X] Complete
 
-** Planned [6/76]
+** Planned [11/76]
 + [0/14] Potential plugins
   + [ ] completion/ivy: [[https://github.com/yevgnen/ivy-rich][ivy-rich]], possible replacement for my ivy-buffer modifications (undecided)
   + [ ] app/present: [[https://github.com/larstvei/Focus][focus]], for presenting code
@@ -26,7 +26,7 @@
   + [ ] app/irc
   + [-] app/crm
   + [-] app/write
-+ [6/58] Add README.org's (with working babel blocks?) to modules (see [[modules/lang/go/README.org][lang/go/README.org]]) to replace bootstaps
++ [11/58] Add README.org's (with working babel blocks?) to modules (see [[modules/lang/go/README.org][lang/go/README.org]]) to replace bootstaps
   + [0/9] :tools
     + [ ] dired
     + [ ] electric-indent
@@ -37,7 +37,7 @@
     + [ ] term
     + [ ] tmux
     + [ ] upload
-  + [3/25] :lang
+  + [5/25] :lang
     + [ ] assembly
     + [X] cc
     + [ ] crystal
@@ -45,7 +45,7 @@
     + [ ] data
     + [ ] emacs-lisp
     + [X] go
-    + [ ] haskell
+    + [X] haskell
     + [ ] java
     + [ ] javascript
     + [ ] julia
@@ -53,7 +53,7 @@
     + [ ] lua
     + [ ] markdown
     + [ ] org
-    + [ ] php
+    + [X] php
     + [ ] python
     + [X] rest
     + [ ] ruby
@@ -63,9 +63,9 @@
     + [ ] swift
     + [ ] typescript
     + [ ] web
-  + [0/10] :feature
+  + [1/10] :feature
     + [ ] debug
-    + [ ] eval
+    + [X] eval
     + [ ] evil
     + [ ] file-templates
     + [ ] jump
@@ -74,15 +74,15 @@
     + [ ] syntax-checker
     + [ ] version-control
     + [ ] workspaces
-  + [1/5] :ui
+  + [2/5] :ui
     + [X] doom
     + [ ] doom-dashboard
-    + [ ] doom-modeline
+    + [X] doom-modeline
     + [ ] doom-quit
     + [ ] hl-todo
-  + [1/4] :completion
+  + [2/4] :completion
     + [X] ivy
-    + [ ] company
+    + [X] company
     + [ ] ido
     + [ ] helm
   + [1/5] :app

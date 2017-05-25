@@ -1,28 +1,31 @@
-* Ivy
+* :completion ivy
 
-Ivy is my completion backend of choice (over ido and helm), for its speed and
-simplicity. With ivy's help and some hackery, I get the following features:
+This module adds the Ivy completion backend.
 
-+ Project-wide search & replace.
+I prefer ivy over ido and helm, for its speed and simplicity. With ivy's help and some hackery, I get the following features:
+
++ Project-wide search & replace powered by ~rg~ (falls back to ~ag~)
 + Project jump-to navigation ala Command-T, Sublime Text's Jump-to-anywhere or Vim's CtrlP plugin.
 + Ivy integration for ~M-x~, ~imenu~, ~recentf~ and others.
 + A powerful, interactive in-buffer search using ~swiper~.
 + Ivy-powered TODO/FIXME navigation
 
-** Dependencies
-This module depends only on [[https://github.com/BurntSushi/ripgrep][ripgrep]].
+** Install
+This module optionally depends on [[https://github.com/BurntSushi/ripgrep][ripgrep]] and [[https://github.com/ggreer/the_silver_searcher][the_silver_searcher]].
+
+~rg~ is faster, but its results aren't deterministic and it doesn't support multiline search or full PCRE, that's where ~ag~ is useful.
 
 *** MacOS
 #+BEGIN_SRC sh :tangle (if (doom-system-os 'macos) "yes")
-brew install ripgrep
+brew install ripgrep the_silver_searcher
 #+END_SRC
 
 *** Arch Linux
 #+BEGIN_SRC sh :dir /sudo:: :tangle (if (doom-system-os 'arch) "yes")
-sudo pacman --needed --noconfirm -S ripgrep
+sudo pacman --needed --noconfirm -S ripgrep the_silver_searcher
 #+END_SRC
 
-** Highlights
+** Usage
 *** Search & Replace
 A project-wide search can be performed with Ag (the silver searcher) or Rg
 (ripgrep) via their ex commands: ~:ag[!]~ and ~:rg[!]~ (or their

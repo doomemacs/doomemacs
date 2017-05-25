@@ -1,9 +1,51 @@
-* REST
+* :lang rest
 
-On occasion I need to test REST APIs. I will, typically, open up an org buffer,
-create a restclient source block and hack away. [[https://github.com/pashky/restclient.el][restclient-mode]] (and
-[[https://github.com/iquiw/company-restclient][company-restclient]] for auto-completion) power this arcane wizardry.
+This module adds [[https://en.wikipedia.org/wiki/Representational_state_transfer][REST]] support.
 
-Meanwhile, [[https://github.com/iquiw/company-restclient][ob-restclient]] integrates ~restclient-mode~ into org-babel.
++ Code-completion (~company-restclient~)
++ Code evaluation
++ org-mode: babel support (~ob-restclient~)
 
-There are no external dependencies for this module.
+#+begin_quote
+~restclient-mode~ is tremendously useful for testing REST APIs. My workflow is to open an ~org-mode~ buffer, create a restclient source block and hack away. ~restclient-mode~ and ~company-restclient~ power this arcane wizardry.
+#+end_quote
+
+** Install
+No additional setup required.
+
+** Example
+#+BEGIN_SRC restclient
+GET https://jsonplaceholder.typicode.com/posts/1
+#+END_SRC
+
+#+BEGIN_EXAMPLE
+#+RESULTS:
+#+BEGIN_SRC js
+{
+  "userId": 1,
+  "id": 1,
+  "title": "sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
+  "body": "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto"
+}
+// GET https://jsonplaceholder.typicode.com/posts/1
+// HTTP/1.1 200 OK
+// Date: Thu, 25 May 2017 13:43:42 GMT
+// Content-Type: application/json; charset=utf-8
+// Content-Length: 292
+// Connection: keep-alive
+// Set-Cookie: __cfduid=d3484257c800700f9882305963fa9d5d91495719822; expires=Fri, 25-May-18 13:43:42 GMT; path=/; domain=.typicode.com; HttpOnly
+// X-Powered-By: Express
+// Vary: Origin, Accept-Encoding
+// Access-Control-Allow-Credentials: true
+// Cache-Control: public, max-age=14400
+// Pragma: no-cache
+// Expires: Thu, 25 May 2017 17:43:42 GMT
+// X-Content-Type-Options: nosniff
+// Etag: W/"124-yiKdLzqO5gfBrJFrcdJ8Yq0LGnU"
+// Via: 1.1 vegur
+// CF-Cache-Status: HIT
+// Server: cloudflare-nginx
+// CF-RAY: 3648ecd7ef833d0d-CPH
+// Request duration: 0.347179s
+#+END_SRC
+#+END_EXAMPLE

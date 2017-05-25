@@ -1,0 +1,64 @@
+* :lang haskell
+
+This module adds [[https://www.haskell.org/][Haskell]] support.
+
++ Code completion (~company-ghc~)
++ Look up documentation (~hoogle~)
++ eldoc support (~dante~)
++ REPL (~ghci~)
++ Syntax-checking (~flycheck~)
++ Code navigation (~dante~)
++ [[https://github.com/hlissner/emacs-snippets/tree/master/haskell-mode][Snippets]]
+
+#+begin_quote
+Haskell contends with C and Ruby as my favorite language. I don't think my Haskell code will ever save the world, but I'll reach for it when working on smaller projects and programming exercises (like projecteuler.com or exercism.io).
+
+I'd love to incorporate more of it into my machine learning work, but Python and Julia hold that crown. For now.
+#+end_quote
+
+** Install
+To get started with Haskell, you need:
+
++ cabal (the haskell package builder)
++ ghc/ghci (the compiler, syntax checker & repl)
+
+*** MacOS
+#+BEGIN_SRC sh :tangle (if (doom-system-os 'macos) "yes")
+brew install cabal-install ghc
+#+END_SRC
+
+*** Arch Linux
+#+BEGIN_SRC sh :dir /sudo:: :tangle (if (doom-system-os 'arch) "yes")
+sudo pacman --needed --noconfirm -S cabal-install ghc
+#+END_SRC
+
+** Dependencies
+This module requires the following ~cabal~ packages:
+
++ ~happy~ (required by ~haskell-src-exts~)
++ ~haskell-src-exts~ (required by ~ghc-mod~ & ~hoogle~)
++ ~ghc-mod~ (for auto-completion)
++ ~hoogle~ (for documentation lookup)
+
+#+BEGIN_SRC sh
+cabal update
+cabal install happy haskell-src-exts ghc-mod hoogle
+#+END_SRC
+
+Ensure that ~\~/.cabal/bin~ is in ~PATH~:
+
+#+BEGIN_SRC sh
+# place this in your profile file, like ~/.bash_profile or ~/.zshenv
+export PATH="~/.cabal/bin:$PATH"
+#+END_SRC
+
+** Troubleshooting
++ Stack users: if a ~dist/setup-config~ file exists in your project, [[ https://github.com/DanielG/ghc-mod/wiki#known-issues-related-to-stack][ghc-mod may
+  refuse to work]].
+
+** Resources
+Here are a few resources I've found indespensible in my Haskell adventures:
+
++ [[http://learnyouahaskell.com/][Learn you a haskell for great good]]
++ [[http://haskellbook.com/][Haskell Programming from first principles]]
++ [[https://github.com/krispo/awesome-haskell][Awesome Haskell]]: an extensive list of haskell resources

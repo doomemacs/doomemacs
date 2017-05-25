@@ -1,14 +1,25 @@
-* Go
+* :lang go
 
-Go support, including auto-completion, eldoc support (go-eldoc), REPL support,
-refactoring commands, syntax-checking (flycheck), auto-formatting (gofmt) and
-snippets (yasnippet).
+This module adds [[https://golang.org][Go]] support.
 
-+ [[https://golang.org][Homepage]]
-+ [[https://github.com/hlissner/emacs-snippets/tree/master/go-mode][Snippets]]
++ Code completion (~gocode~)
++ eldoc support (~go-eldoc~)
++ REPL (~gore~)
++ Syntax-checking (~flycheck~)
++ Auto-formatting on save (~gofmt~)
++ Code navigation & refactoring (~go-guru~)
 + [[../../feature/file-templates/templates/go-mode][File templates]]
++ [[https://github.com/hlissner/emacs-snippets/tree/master/go-mode][Snippets]]
 
-** Installation
+#+begin_quote
+I have mixed feelings about Go. It's a decent compromise between C and higher-level languages. I like its simplicity and syntax (mostly), but it lacks /native/ support for certain luxuries I miss from other languages, like generics, optional arguments, and function overloading. You've got to learn to love ~interface{}~.
+
+Still, Go has been a remarkably useful (and fast!) companion for a variety of small-to-medium backend web and CLI projects.
+#+end_quote
+
+** Install
+To get started with Go, you need the ~go~ tool:
+
 *** MacOS
 #+BEGIN_SRC sh :tangle (if (doom-system-os 'macos) "yes")
 brew install go
@@ -19,15 +30,20 @@ brew install go
 sudo pacman --needed --noconfirm -S go
 #+END_SRC
 
-** Setup
-You need to set up ~GOPATH~ before you can install lang/go's dependencies.
+** Dependencies
+This module requires a valid ~GOPATH~, and the following Go packages:
+
++ ~gocode~ (for code completion)
++ ~gore~ (for the REPL)
++ ~guru~ (for code navigation & refactoring commands)
++ ~gorename~ (for extra refactoring commands)
 
 #+BEGIN_SRC sh
 export GOPATH=~/work/go
 
-go get -u github.com/nsf/gocode            # completion
-go get -u github.com/motemen/gore          # REPL
-go get -u golang.org/x/tools/cmd/guru      # code navigation commands
-go get -u golang.org/x/tools/cmd/gorename  # refactoring commands
+go get -u github.com/nsf/gocode
+go get -u github.com/motemen/gore
+go get -u golang.org/x/tools/cmd/guru
+go get -u golang.org/x/tools/cmd/gorename
 #+END_SRC
 
