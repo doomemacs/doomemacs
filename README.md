@@ -27,18 +27,23 @@ cd ~/.emacs.d
 cp init.example.el init.el  # maybe edit init.el
 make install
 
-# DOOM is designed to benefit from byte compilation, it can boost startup time
-# and make Emacs feel a bit snappier, but it is OPTIONAL.
-make compile       # may take a while
-# or
-make compile-lite  # lighter alternative to compile
-
 # If you have problems, run this to check for common issues with your setup
 make doctor
 ```
 
-If you byte-compile, changes to the config will **not** take effect until you
-recompile or delete the byte-compiled files (with `make clean`).
+Once you've tweaked the config to your liking, you may optionally byte-compile
+it. DOOM is designed to benefit from this. It will boost startup times and make
+Emacs feel a bit snappier in general.
+
+```bash
+make compile       # may take a while
+# or
+make compile-lite  # lighter alternative to compile; only compiles core files
+
+# If you byte-compile, changes to the config won't take effect until you
+# recompile or delete the byte-compiled files with:
+make clean
+```
 
 ## Package Management
 
@@ -52,6 +57,9 @@ make autoremove  # remove unused plugins
 
 # run this if you change autoload files
 make autoloads
+
+# this is the equivalent of running all four of the above commands
+make
 
 # you can run any make command with DEBUG=1 for extra logging, and YES=1 to
 # auto-accept confirmation prompts:
@@ -68,15 +76,14 @@ These can also be invoked from within emacs:
 
 ## Deciphering my emacs.d
 
-So you want to grok some of this madness. Here are a few suggestions:
+So you want to grok this madness. Here are a few suggestions:
 
 * **[init.example.el](init.example.el)**: a birds eye view of available modules
-* **[modules/README.md](modules/README.md)**: a primer into module structure and
-  how the module system works.
+* **[modules/README.md](modules/README.md)**: a primer into module structure
 * **[modules/private/hlissner/+bindings.el](modules/private/hlissner/+bindings.el)**:
   my custom keybinds.
 * **[modules/private/hlissner/+commands.el](modules/private/hlissner/+commands.el)**:
-  my custom ex commands.
+  my custom ex-commands (for [evil-mode]).
 * **[modules/ui](modules/ui)**: the modules that makes my Emacs look the way it
   does, including [my theme][doom-theme], modeline, dashboard and more.
 * Find screenshots in the [screenshots branch][sc].
@@ -111,7 +118,7 @@ So you want to grok some of this madness. Here are a few suggestions:
 * A do-what-I-mean jump-to-definition implementation that tries its darnest to
   find the definition of what you're looking at. It tries major-mode commands,
   xref (experimental Emacs library) **[dumb-jump]**, ctags (WIP), then
-  **[counsel-ag]**.
+  **[ripgrep][rg]** or **[the_silver_server][ag]** (for multiline searches).
 * Snippets and file-templates with **[yasnippet]**.
 * A smarter, perdier, Atom-inspired mode-line that includes:
   * evil-search/iedit/evil-substitute mode-line integration
@@ -127,26 +134,25 @@ So you want to grok some of this madness. Here are a few suggestions:
 ## Troubleshooting
 
 My config wasn't intended for public use, but I'm happy to help you use or crib
-from my config.
+from it.
 
-+ If you have questions, drop me line at henrik@lissner.net.
-+ If you have issues running or setting up my Emacs config, use `make doctor` to
-  help diagnose the issue before you report an issue.
++ If you have questions, drop me a line at henrik@lissner.net.
++ If you have issues running or setting up DOOM, use `make doctor` to diagnose
+  any common problems.
 + If you still can't make sense of it, run `DEBUG=1 make doctor` and include
   it [with your bug report][new-issue].
 
-**And please include steps to reproduce your issue, if possible**.
+**And please include steps to reproduce your issue, if possible.**
 
 ## Contributing
 
-I welcome contributions of any kind; documentation, bug fixes/reports, extra
+I welcome contributions of any kind: documentation, bug fixes/reports, extra
 modules, even elisp tips. Really,
 [don't hesitate to tell me my Elisp-fu sucks][new-issue]!
 
 
 [ag]: https://github.com/ggreer/the_silver_searcher
 [company-mode]: https://melpa.org/#/company
-[counsel-ag]: https://melpa.org/#/counsel
 [doom-theme]: https://github.com/hlissner/emacs-doom-theme
 [dumb-jump]: https://melpa.org/#/dumb-jump
 [editorconfig]: http://editorconfig.org/
