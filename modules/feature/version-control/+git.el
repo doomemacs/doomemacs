@@ -25,8 +25,11 @@
   (add-hook 'focus-in-hook #'git-gutter:update-all-windows)
 
   (after! evil
-    ;; Refresh git-gutter on ESC
-    (add-hook '+evil-esc-hook #'git-gutter)))
+    (defun +version-control|update-git-gutter ()
+      "Refresh git-gutter on ESC. Return nil to prevent shadowing other
+`+evil-esc-hook' hooks."
+      (ignore (git-gutter)))
+    (add-hook '+evil-esc-hook #'+version-control|update-git-gutter t)))
 
 
 (def-package! git-timemachine

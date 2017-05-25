@@ -93,26 +93,23 @@
 
 
   ;; --- evil hacks -------------------------
-  (defvar +evil-esc-hook nil
+  (defvar +evil-esc-hook '(t)
     "A hook run after ESC is pressed in normal mode (invoked by
-`evil-force-normal-state').")
+`evil-force-normal-state'). If a hook returns non-nil, all hooks after it are
+ignored.")
 
   (defun +evil*attach-escape-hook ()
     "Run the `+evil-esc-hook'."
-    (run-hooks '+evil-esc-hook))
+    (cond ((minibuffer-window-active-p (minibuffer-window))
+           ;; quit the minibuffer if open.
+           (abort-recursive-edit))
+          ((evil-ex-hl-active-p 'evil-ex-search)
+           ;; disable ex search buffer highlights.
+           (evil-ex-nohighlight))
+          (t
+           ;; Run all escape hooks. If any returns non-nil, then stop there.
+           (run-hook-with-args-until-success '+evil-esc-hook))))
   (advice-add #'evil-force-normal-state :after #'+evil*attach-escape-hook)
-
-  (defun +evil|escape-minibuffer ()
-    "Quit the minibuffer if open."
-    (when (minibuffer-window-active-p (minibuffer-window))
-      (abort-recursive-edit)))
-
-  (defun +evil|escape-highlights ()
-    "Disable ex search buffer highlights."
-    (when (evil-ex-hl-active-p 'evil-ex-search)
-      (evil-ex-nohighlight)))
-
-  (add-hook! '+evil-esc-hook '(+evil|escape-minibuffer +evil|escape-highlights))
 
   (defun +evil*restore-normal-state-on-windmove (orig-fn &rest args)
     "If in anything but normal or motion mode when moving to another window,
@@ -292,7 +289,9 @@ across windows."
   :commands evil-exchange
   :config
   (defun +evil|escape-exchange ()
-    (if evil-exchange--overlays (evil-exchange-cancel)))
+    (when evil-exchange--overlays
+      (evil-exchange-cancel)
+      t))
   (add-hook '+evil-esc-hook #'+evil|escape-exchange))
 
 
@@ -348,7 +347,8 @@ the new algorithm is confusing, like in python or ruby."
   (defun +evil|escape-multiple-cursors ()
     "Undo cursors and freeze them again (for next time)."
     (when (evil-mc-has-cursors-p)
-      (evil-mc-undo-all-cursors)))
+      (evil-mc-undo-all-cursors)
+      t))
   (add-hook '+evil-esc-hook #'+evil|escape-multiple-cursors)
 
   ;; disable evil-escape in evil-mc

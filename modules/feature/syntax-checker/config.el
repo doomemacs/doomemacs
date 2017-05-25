@@ -22,8 +22,10 @@
   (after! evil
     ;; Flycheck buffer on ESC in normal mode.
     (defun +syntax-checkers|flycheck-buffer ()
-      (if flycheck-mode (ignore-errors (flycheck-buffer))))
-    (add-hook '+evil-esc-hook #'+syntax-checkers|flycheck-buffer)))
+      (when flycheck-mode
+        (ignore-errors (flycheck-buffer))
+        nil))
+    (add-hook '+evil-esc-hook #'+syntax-checkers|flycheck-buffer t)))
 
 
 (def-package! flycheck-pos-tip

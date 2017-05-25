@@ -296,21 +296,14 @@ properties."
     (define-key map [remap evil-window-vsplit]           #'ignore))
 
   (defun doom|popup-close-maybe ()
-    "Close the current window if it's a popup with no :noesc property."
-    (when (and (doom-popup-p)
-               (not (doom-popup-prop :noesc)))
-      (delete-window)))
-  (add-hook '+evil-esc-hook #'doom|popup-close-maybe)
-
-  (defun doom|popup-close-all-maybe ()
-    "Close popups with an :autoclose property when pressing ESC from normal
-mode in any evil-mode buffer."
-    (unless (or (doom-popup-p)
-                (minibuffer-window-active-p (minibuffer-window))
-                (and (bound-and-true-p evil-mode)
-                     (evil-ex-hl-active-p 'evil-ex-search)))
-      (doom/popup-close-all)))
-  (add-hook '+evil-esc-hook #'doom|popup-close-all-maybe)
+    "If current window is a popup, close it. If minibuffer is open, close it. If
+not in a popup, close all popups with an :autoclose property."
+    (cond ((doom-popup-p)
+           (unless (doom-popup-prop :noesc)
+             (delete-window)))
+          (t
+           (doom/popup-close-all))))
+  (add-hook '+evil-esc-hook #'doom|popup-close-maybe t)
 
   ;; Make evil-mode cooperate with popups
   (advice-add #'evil-command-window :override #'doom*popup-evil-command-window)
