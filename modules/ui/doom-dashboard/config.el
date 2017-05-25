@@ -28,6 +28,8 @@
 
 (after! evil
   (map! :map +doom-dashboard-mode-map
+        "n" #'+doom-dashboard/next-button
+        "p" #'+doom-dashboard/previous-button
         :em "j" #'+doom-dashboard/next-button
         :em "k" #'+doom-dashboard/previous-button
         [remap evil-insert]      #'evil-normal-state
@@ -208,7 +210,7 @@ whose dimensions may not be fully initialized by the time this is run."
              (lambda (_) (browse-url "https://github.com/hlissner/.emacs.d")))
             ,(when last-session-p
                '("Reload last session" "history"
-                 (lambda (_) (+workspace:load-session))))
+                 (lambda (_) (+workspace/load-session))))
             ("Recently opened files" "file-text"
              (lambda (_) (call-interactively (command-remapping 'recentf))))
             ("Recent opened projects" "briefcase"
