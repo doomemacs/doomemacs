@@ -48,11 +48,9 @@
           anzu--cached-count anzu--cached-positions anzu--last-command
           anzu--last-isearch-string anzu--overflow-p))
 
-  (defun +doom-modeline|reset-anzu ()
-    (anzu--reset-status))
   ;; Ensure anzu state is cleared when searches & iedit are done
-  (add-hook! :append '(kill-buffer isearch-mode-end +evil-esc-hook)
-    #'+doom-modeline|reset-anzu)
+  (add-hook! :append '(isearch-mode-end-hook +evil-esc-hook)
+    #'anzu--reset-status)
   (after! iedit
     (add-hook 'iedit-mode-end-hook #'+doom-modeline|reset-anzu)))
 
