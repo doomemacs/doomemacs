@@ -155,13 +155,20 @@
              ov 'display (propertize "  [...]  " 'face '+doom-folded-face))))))
 
 
-(when (display-graphic-p)
+(when (and (display-graphic-p) (fboundp 'define-fringe-bitmap))
+  ;; NOTE Adjust these bitmaps if you change `doom-ui-fringe-size'
   (after! flycheck
     ;; because git-gutter is in the left fringe
     (setq flycheck-indication-mode 'right-fringe)
     ;; A non-descript, left-pointing arrow
-    (define-fringe-bitmap 'flycheck-fringe-bitmap-double-arrow
-      [0 0 0 0 0 4 12 28 60 124 252 124 60 28 12 4 0 0 0 0]))
+    (fringe-helper-define 'flycheck-fringe-bitmap-double-arrow 'center
+      "...X...."
+      "..XX...."
+      ".XXX...."
+      "XXXX...."
+      ".XXX...."
+      "..XX...."
+      "...X...."))
 
   ;; subtle diff indicators in the fringe
   (after! git-gutter-fringe
