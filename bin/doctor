@@ -56,6 +56,17 @@
                 "\n")))
     (buffer-string)))
 
+(defmacro wait-for! (var if-body &optional else-body)
+  (declare (indent defun))
+  `(let ((i 0))
+     (while (and (not ,var)
+                 (< i 5))
+       (sleep-for 1)
+       (setq i (1+ i)))
+     (if ,var
+         ,if-body
+       ,else-body)))
+
 (defun color (code msg &rest args)
   (format "\e[%dm%s\e[%dm" code (apply #'format msg args) 0))
 
@@ -143,9 +154,12 @@
                (let (result)
                  (let ((inhibit-message t))
                    (url-retrieve url (lambda (status &rest _) (setq result status))))
-                 (while (not result) (sleep-for 1))
-                 (when (getenv "DEBUG")
-                   (success! "Verified %s" (nth 2 (split-string url "/")))))
+                 (wait-for! result
+                   (when (getenv "DEBUG")
+                     (success! "Verified %s" (nth 2 (split-string url "/"))))
+                   (signal 'timed-out url)))
+             ('timed-out
+              (error! "Timed out trying to contact %s" ex))
              ('error
               (check! t
                 (error! "Rejected %s" url)
@@ -156,10 +170,13 @@
                (let (result)
                  (let ((inhibit-message t))
                    (url-retrieve url (lambda (status &rest _) (setq result status))))
-                 (while (not result) (sleep-for 1))
-                 (check! t
-                   (warn! "Verified %s (this shouldn't happen!)" (nth 2 (split-string url "/")))
-                   (explain! (pp-to-string result))))
+                 (wait-for! result
+                   (check! t
+                     (warn! "Verified %s (this shouldn't happen!)" (nth 2 (split-string url "/")))
+                     (explain! (pp-to-string result)))
+                   (signal 'timed-out url)))
+             ('timed-out
+              (error! "Timed out trying to contact %s" ex))
              ('error
               (when (getenv "DEBUG")
                 (success! "Rejected %s (a good thing!)" url)
