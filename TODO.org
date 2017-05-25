@@ -92,9 +92,10 @@
     + [ ] twitter
     + [ ] present
 
-** 2.0.3 [37/65]
-+ [1/2] Finish module :: feature/jump (go-to-definition that just works)
-  + [ ] ggtags support
+** 2.0.3 [41/71]
++ [2/3] Finish module :: feature/jump (go-to-definition that just works)
+  + [ ] automatic tag generation
+  + [X] global tags support
   + [X] Fix fallback chain (xref => dumb-jump => ag/rg (?))
 + [1/13] New module :: tools/regex (PCRE IDE)
   + [X] perl backend
@@ -122,16 +123,21 @@
   + [X] Fix M-RET in plain lists not preserving indent level for new items
   + [X] don't move cursor when toggling folds
   + [X] don't move cursor when realigning org tables
++ [ ] evil-mc: add visual-block support for making cursors
 + [ ] feature/workspaces: don't save session if session is already blank
-+ [-] bin/org-alert: cron script that scans TODOs in org files and dispatches system alerts
++ [ ] bin/org-alert: cron script that scans TODOs in org files and dispatches system alerts
 + [ ] tools/upload: add ~+upload/open-remote-file~ command to open current file
       on the remote (with TRAMP)
-+ [-] core-ui: replace (or fix) ~winner-mode~ (too unreliable with shackle)
++ [ ] core-ui: replace (or fix) ~winner-mode~ (too unreliable with shackle)
 + [ ] Generalize ~doom-visual-bell~ by basing its background off a face
 + [ ] ui/doom-modeline: extend ~media-info~ segment for other media
 + [ ] Write ~describe-setting~ for ~def-setting!~ definitions.
 + [ ] Fix invisible buffer-info segment in modeline for terminal Emacs
 + [ ] ui/doom-modeline: fix ~0/0~ display in modeline (leftover anzu state)
++ [ ] lang/php: automatic+async rebuild of tags (phpctags)
++ [X] lang/haskell: add ~company-ghc~ completion support
++ [X] core-popup: stop on first ~+evil-esc-hook~ hook to return non-nil
++ [X] lang/php: add company-php
 + [X] Add :lookup ex command (~+jump:online~)
 + [X] Add :gblame ex command (~magit-blame~)
 + [X] Add :grevert ex command (~git-gutter:revert-hook~)
