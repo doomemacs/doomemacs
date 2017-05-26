@@ -384,11 +384,11 @@
 
       (:map (evil-ex-completion-map evil-ex-search-keymap read-expression-map)
         "C-a" #'move-beginning-of-line
-        "C-w" #'doom-minibuffer-kill-word
-        "C-u" #'doom-minibuffer-kill-line
+        "C-w" #'doom/minibuffer-kill-word
+        "C-u" #'doom/minibuffer-kill-line
         "C-b" #'backward-word
         "C-f" #'forward-word
-        "M-z" #'doom-minibuffer-undo)
+        "M-z" #'doom/minibuffer-undo)
 
       (:after view
         (:map view-mode-map "<escape>" #'View-quit-all)))

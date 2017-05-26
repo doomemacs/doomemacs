@@ -48,8 +48,8 @@ session)."
         "C-k" #'ivy-previous-line
         "C-j" #'ivy-next-line
         "C-l" #'ivy-alt-done
-        "C-w" #'doom-minibuffer-kill-word
-        "C-u" #'doom-minibuffer-kill-line
+        "C-w" #'+ivy/backward-kill-word
+        "C-u" #'doom/minibuffer-kill-line
         "C-b" #'backward-word
         "C-f" #'forward-word)
 
