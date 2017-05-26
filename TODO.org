@@ -92,7 +92,7 @@
     + [ ] twitter
     + [ ] present
 
-** 2.0.3 [41/71]
+** 2.0.3 [53/81]
 + [2/3] Finish module :: feature/jump (go-to-definition that just works)
   + [ ] automatic tag generation
   + [X] global tags support
@@ -123,18 +123,28 @@
   + [X] Fix M-RET in plain lists not preserving indent level for new items
   + [X] don't move cursor when toggling folds
   + [X] don't move cursor when realigning org tables
-+ [ ] evil-mc: add visual-block support for making cursors
 + [ ] feature/workspaces: don't save session if session is already blank
 + [ ] bin/org-alert: cron script that scans TODOs in org files and dispatches system alerts
 + [ ] tools/upload: add ~+upload/open-remote-file~ command to open current file
       on the remote (with TRAMP)
-+ [ ] core-ui: replace (or fix) ~winner-mode~ (too unreliable with shackle)
++ [-] core-ui: replace (or fix) ~winner-mode~ (too unreliable with shackle)
 + [ ] Generalize ~doom-visual-bell~ by basing its background off a face
 + [ ] ui/doom-modeline: extend ~media-info~ segment for other media
-+ [ ] Write ~describe-setting~ for ~def-setting!~ definitions.
 + [ ] Fix invisible buffer-info segment in modeline for terminal Emacs
 + [ ] ui/doom-modeline: fix ~0/0~ display in modeline (leftover anzu state)
 + [ ] lang/php: automatic+async rebuild of tags (phpctags)
++ [X] nav-flash: blink on focus-in
++ [X] Add ~:textobj~ keyword to ~map!~
++ [X] Make ~doom-refresh-packages~ async
++ [X] lang/emacs-lisp: omit macro forms from imenu index
++ [X] Switch back to nlinum #ui
++ [X] Revise keybinding design; perhaps something SPC oriented (like spacemacs)
++ [X] Write ~describe-module~ for DOOM modules.
++ [X] Write ~describe-setting~ for ~def-setting!~ definitions.
++ [X] evil-mc: add ~:mc~ ex command
++ [X] evil-mc: add visual-block support for making cursors
++ [X] evil-mc: replace ~evil-multiedit~ with ~evil-mc~ (?)
++ [X] feature/jump: recenter + blink after dumb-jump
 + [X] lang/haskell: add ~company-ghc~ completion support
 + [X] core-popup: stop on first ~+evil-esc-hook~ hook to return non-nil
 + [X] lang/php: add company-php
