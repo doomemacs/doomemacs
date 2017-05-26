@@ -85,11 +85,12 @@ base by `doom!' and for calculating how many packages exist.")
       ;; than pulled, so packages are often out of date with upstream.
 
       ;; security settings
-      gnutls-verify-error (not (getenv "INSECURE")) ; INSECURE is for integrated testing
+      gnutls-verify-error (not (getenv "INSECURE")) ; you shouldn't use this
       tls-checktrust gnutls-verify-error
       tls-program (list "gnutls-cli --x509cafile %t -p %p %h"
-                        ;; less likely to be secure, but allow for backwards compatibility
-                        "openssl s_client -connect %h:%p -no_ssl2 -ign_eof")
+                        ;; compatibility fallbacks
+                        "gnutls-cli -p %p %h"
+                        "openssl s_client -connect %h:%p -no_ssl2 -no_ssl3 -ign_eof")
 
       use-package-always-defer t
       use-package-always-ensure nil
