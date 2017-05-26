@@ -173,7 +173,8 @@ Used by `doom/packages-install'."
        (condition-case ex2
            (progn ,@body)
          ('file-error
-          (message! (bold (red "  Couldn't find %s\n  Trying again..." (cdr ex))))
+          (message! (bold (red "  FILE ERROR: %s" ex2)))
+          (message! "  Trying again...")
           (doom-refresh-packages)
           ,@body))
      ('user-error
