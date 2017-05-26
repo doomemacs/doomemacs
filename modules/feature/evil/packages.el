@@ -10,7 +10,6 @@
 (package! evil-exchange)
 (package! evil-indent-plus)
 (package! evil-matchit)
-(package! evil-multiedit)
 (package! evil-mc)
 (package! evil-numbers)
 (package! evil-textobj-anyblock)

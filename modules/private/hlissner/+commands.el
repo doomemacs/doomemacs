@@ -14,7 +14,7 @@
 (ex! "@"            #'+evil:macro-on-all-lines)   ; TODO Test me
 (ex! "enhtml"       #'+web:encode-html-entities)
 (ex! "dehtml"       #'+web:decode-html-entities)
-(ex! "ie[dit]"      #'evil-multiedit-ex-match)
+(ex! "mc"           #'+evil:mc)
 (ex! "na[rrow]"     #'+evil:narrow-buffer)
 (ex! "retab"        #'+evil:retab)
 
