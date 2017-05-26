@@ -99,7 +99,7 @@
 (def-package! nav-flash
   :commands nav-flash-show
   :init
-  (defun doom*blink-cursor-maybe (orig-fn &rest args)
+  (defun +doom*blink-cursor-maybe (orig-fn &rest args)
     "Blink current line if the window has moved."
     (interactive)
     (let ((point (save-excursion (goto-char (window-start))
@@ -108,9 +108,9 @@
       (unless (equal point
                      (save-excursion (goto-char (window-start))
                                      (point-marker)))
-        (doom/blink-cursor))))
+        (+doom/blink-cursor))))
 
-  (defun doom/blink-cursor (&rest _)
+  (defun +doom/blink-cursor (&rest _)
     "Blink current line using `nav-flash'."
     (interactive)
     (unless (minibufferp)
@@ -118,17 +118,16 @@
       ;; only show in the current window
       (overlay-put compilation-highlight-overlay 'window (selected-window))))
 
-  (add-hook!
-    '(imenu-after-jump-hook evil-jumps-post-jump-hook find-file-hook)
-    #'doom/blink-cursor)
+  ;; NOTE In :feature jump `recenter' is hooked to a bunch of jumping commands,
+  ;; which will trigger nav-flash.
 
-  (advice-add #'windmove-do-window-select :around #'doom*blink-cursor-maybe)
-  (advice-add #'recenter :around #'doom*blink-cursor-maybe)
+  (advice-add #'windmove-do-window-select :around #'+doom*blink-cursor-maybe)
+  (advice-add #'recenter :around #'+doom*blink-cursor-maybe)
 
   (after! evil
-    (advice-add #'evil-window-top    :after #'doom/blink-cursor)
-    (advice-add #'evil-window-middle :after #'doom/blink-cursor)
-    (advice-add #'evil-window-bottom :after #'doom/blink-cursor)))
+    (advice-add #'evil-window-top    :after #'+doom/blink-cursor)
+    (advice-add #'evil-window-middle :after #'+doom/blink-cursor)
+    (advice-add #'evil-window-bottom :after #'+doom/blink-cursor)))
 
 
 (after! hideshow

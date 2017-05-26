@@ -28,7 +28,7 @@
  "M-;"    #'eval-expression
  "A-;"    #'eval-expression
  [f9]     #'doom/what-face
- [f10]    #'doom/blink-cursor
+ [f10]    #'+doom/blink-cursor
  "C-`"    #'doom/popup-toggle
  ;; Text-scaling
  "M-+"    (λ! (text-scale-set 0))
