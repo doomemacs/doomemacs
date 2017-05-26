@@ -3,7 +3,8 @@
 This module adds [[https://golang.org][Go]] support.
 
 + Code completion (~gocode~)
-+ eldoc support (~go-eldoc~)
++ Documentation lookup (~godoc~)
++ Eldoc support (~go-eldoc~)
 + REPL (~gore~)
 + Syntax-checking (~flycheck~)
 + Auto-formatting on save (~gofmt~)
@@ -12,7 +13,7 @@ This module adds [[https://golang.org][Go]] support.
 + [[https://github.com/hlissner/emacs-snippets/tree/master/go-mode][Snippets]]
 
 #+begin_quote
-I have mixed feelings about Go. It's a decent compromise between C and higher-level languages. I like its simplicity and syntax (mostly), but it lacks /native/ support for certain luxuries I miss from other languages, like generics, optional arguments, and function overloading. You've got to learn to love ~interface{}~.
+I have mixed feelings about Go. It's a decent compromise between C and higher-level languages. It's a pleasantly straight-forward language with elegant syntax, but it lacks /native/ support for certain luxuries I miss from other languages, like generics, optional arguments, and function overloading. You've got to learn to love ~interface{}~.
 
 Still, Go has been a remarkably useful (and fast!) companion for a variety of small-to-medium backend web and CLI projects.
 #+end_quote
@@ -34,16 +35,20 @@ sudo pacman --needed --noconfirm -S go
 This module requires a valid ~GOPATH~, and the following Go packages:
 
 + ~gocode~ (for code completion)
++ ~godoc~ (for documentation lookup)
++ ~goimports~ (for auto-formatting code on save and fixing imports)
++ ~gorename~ (for extra refactoring commands)
 + ~gore~ (for the REPL)
 + ~guru~ (for code navigation & refactoring commands)
-+ ~gorename~ (for extra refactoring commands)
 
 #+BEGIN_SRC sh
 export GOPATH=~/work/go
 
-go get -u github.com/nsf/gocode
 go get -u github.com/motemen/gore
-go get -u golang.org/x/tools/cmd/guru
+go get -u github.com/nsf/gocode
+go get -u golang.org/x/tools/cmd/godoc
+go get -u golang.org/x/tools/cmd/goimports
 go get -u golang.org/x/tools/cmd/gorename
+go get -u golang.org/x/tools/cmd/guru
 #+END_SRC
 
