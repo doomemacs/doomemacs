@@ -9,17 +9,11 @@
   (doom-initialize)
   (when (or force-p (getenv "DEBUG"))
     (doom-refresh-clear-cache))
-  (let ((last-refresh (persistent-soft-fetch 'last-pkg-refresh "emacs")))
-    (when last-refresh
-      (setq doom--last-refresh last-refresh)))
-  (when (or (not doom--last-refresh)
-            (> (nth 1 (time-since doom--last-refresh)) 900))
+  (unless (persistent-soft-fetch 'last-pkg-refresh "emacs")
     (condition-case ex
         (progn
           (package-refresh-contents)
-          (persistent-soft-store
-           'last-pkg-refresh (setq doom--last-refresh (current-time))
-           "emacs"))
+          (persistent-soft-store 'last-pkg-refresh t "emacs" 900))
     ('error
      (doom-refresh-clear-cache)))))
 
