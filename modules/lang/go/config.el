@@ -45,6 +45,12 @@
             :n "n"  #'+go/test-nested))))
 
 
+(def-package! go-eldoc
+  :after go-mode
+  :commands go-eldoc-setup
+  :config (add-hook 'go-mode-hook #'go-eldoc-setup))
+
+
 (def-package! go-guru
   :commands (go-guru-describe go-guru-freevars go-guru-implements go-guru-peers
              go-guru-referrers go-guru-definition go-guru-pointsto
@@ -55,6 +61,13 @@
     (warn "go-mode: couldn't find guru, refactoring commands won't work")))
 
 
+(def-package! gorepl-mode
+  :commands (gorepl-run gorepl-run-load-current-file)
+  :config
+  (unless (executable-find "gore")
+    (warn "go-mode: couldn't find gore, REPL support disabled")))
+
+
 (def-package! company-go
   :when (featurep! :completion company)
   :after go-mode
@@ -62,16 +75,3 @@
   (if (executable-find command-go-gocode-command)
       (set! :company-backend 'go-mode '(company-go))
     (warn "go-mode: couldn't find gocode, code completion won't work")))
-
-
-(def-package! go-eldoc
-  :commands go-eldoc-setup
-  :init (add-hook 'go-mode-hook #'go-eldoc-setup))
-
-
-(def-package! gorepl-mode
-  :commands (gorepl-run gorepl-run-load-current-file)
-  :config
-  (unless (executable-find "gore")
-    (warn "go-mode: couldn't find gore, REPL support disabled")))
-

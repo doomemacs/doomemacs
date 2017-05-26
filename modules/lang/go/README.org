@@ -34,7 +34,7 @@ sudo pacman --needed --noconfirm -S go
 ** Dependencies
 This module requires a valid ~GOPATH~, and the following Go packages:
 
-+ ~gocode~ (for code completion)
++ ~gocode~ (for code completion & eldoc support)
 + ~godoc~ (for documentation lookup)
 + ~goimports~ (for auto-formatting code on save and fixing imports)
 + ~gorename~ (for extra refactoring commands)
