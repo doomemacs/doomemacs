@@ -427,26 +427,4 @@ calls."
 FORCE-P (the universal argument) is set, ignore the cache."
   (declare (interactive-only t))
   (interactive "P")
-  (doom-refresh-packages t))
-
-;;;###autoload
-(defun doom/am-i-secure ()
-  "Test to see if your root certificates are securely configured in emacs."
-  (declare (interactive-only t))
-  (interactive)
-  (if-let (bad-hosts
-           (loop for bad
-                 in `("https://wrong.host.badssl.com/"
-                      "https://self-signed.badssl.com/")
-                 if (condition-case e
-                        (url-retrieve bad (lambda (retrieved) t))
-                      (error nil))
-                 collect bad))
-      (error (format "tls seems to be misconfigured (it got %s)."
-                     bad-hosts))
-    (url-retrieve "https://badssl.com"
-                  (lambda (status)
-                    (if (or (not status) (plist-member status :error))
-                        (warn "Something went wrong.\n\n%s" (pp-to-string status))
-                      (message "Your trust roots are set up properly.\n\n%s" (pp-to-string status))
-                      t)))))
+  (doom-refresh-packages force-p))
