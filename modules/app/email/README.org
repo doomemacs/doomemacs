@@ -30,7 +30,7 @@ sudo pacman --noconfirm --needed -S offlineimap mu
 ** Dependencies
 You need to do the following:
 
-1. Write a ~\~/.offlineimaprc~. Mine can be found [[https://github.com/hlissner/dotfiles/tree/master/shell/%252Bmu][in my dotfiles repository]]. It is configured to download mail to ~\~/.mail~. I use unix pass to securely store my login credentials.
+1. Write a ~\~/.offlineimaprc~. Mine can be found [[https://github.com/hlissner/dotfiles/tree/master/shell/+mu][in my dotfiles repository]]. It is configured to download mail to ~\~/.mail~. I use unix pass to securely store my login credentials.
 2. Download your email: ~offlineimap -o~ (may take a while)
 3. Index it with mu: ~mu index --maildir ~/.mail~
 
