@@ -433,9 +433,9 @@ the commandline."
           (push auto-file autoload-files))
         (when (file-directory-p auto-dir)
           (mapc (lambda (file)
-                  ;; Make evil.el autoload files a special case; don't load them
-                  ;; unless evil is enabled.
-                  (unless (and (equal (file-name-nondirectory file) "evil.el")
+                  ;; Make evil*.el autoload files a special case; don't load
+                  ;; them unless evil is enabled.
+                  (unless (and (string-prefix-p "evil" (file-name-nondirectory file))
                                (not (featurep! :feature evil)))
                     (push file autoload-files)))
                 (file-expand-wildcards (expand-file-name "*.el" auto-dir) t)))))
