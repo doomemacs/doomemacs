@@ -7,15 +7,20 @@
 (defun doom-refresh-packages (&optional force-p)
   "Refresh ELPA packages."
   (doom-initialize)
-  (when (or force-p (getenv "DEBUG"))
+  (when force-p
     (doom-refresh-clear-cache))
   (unless (persistent-soft-fetch 'last-pkg-refresh "emacs")
     (condition-case ex
         (progn
-          (package-refresh-contents)
-          (persistent-soft-store 'last-pkg-refresh t "emacs" 900))
-    ('error
-     (doom-refresh-clear-cache)))))
+          (message "Refreshing package archives")
+          (package-refresh-contents (not doom-debug-mode))
+          (let ((i 0))
+            (while package--downloads-in-progress
+              (sleep-for 0 250))
+            (persistent-soft-store 'last-pkg-refresh t "emacs" 900)))
+    (error
+     (doom-refresh-clear-cache)
+     (message "Failed to refresh packages: %s" (cadr ex))))))
 
 ;;;###autoload
 (defun doom-refresh-clear-cache ()
@@ -57,7 +62,6 @@ list of the package."
                      (version-to-list ver)
                    old-version)))
               ('elpa
-               (doom-refresh-packages)
                (let ((desc (cadr (assq name package-archive-contents))))
                  (when (package-desc-p desc)
                    (package-desc-version desc)))))))
@@ -169,7 +173,7 @@ Used by `doom/packages-install'."
          ('file-error
           (message! (bold (red "  FILE ERROR: %s" ex2)))
           (message! "  Trying again...")
-          (doom-refresh-packages)
+          (doom-refresh-packages t)
           ,@body))
      ('user-error
       (message! (bold (red "  ERROR: %s" ex))))
@@ -194,7 +198,6 @@ Used by `doom/packages-install'."
 (defun doom-install-package (name &optional plist)
   "Installs package NAME with optional quelpa RECIPE (see `quelpa-recipe' for an
 example; the package name can be omitted)."
-  (doom-refresh-packages)
   (doom-initialize-packages)
   (when (package-installed-p name)
     (user-error "%s is already installed, skipping" name))
@@ -268,7 +271,7 @@ appropriate."
            (message! (yellow "Aborted!")))
 
           (t
-           (doom-refresh-packages)
+           (doom-refresh-packages doom-debug-mode)
            (dolist (pkg packages)
              (message! "Installing %s" (car pkg))
              (doom--condition-case!
@@ -290,7 +293,7 @@ appropriate."
 (defun doom/packages-update ()
   "Interactive command for updating packages."
   (interactive)
-  (doom-refresh-packages)
+  (doom-refresh-packages doom-debug-mode)
   (let ((packages (sort (doom-get-outdated-packages) #'doom--sort-alpha)))
     (cond ((not packages)
            (message! (green "Everything is up-to-date")))
