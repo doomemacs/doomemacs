@@ -12,6 +12,7 @@
 
 ;; Editing
 (ex! "@"            #'+evil:macro-on-all-lines)   ; TODO Test me
+(ex! "al[ign]"      #'+evil:align)
 (ex! "enhtml"       #'+web:encode-html-entities)
 (ex! "dehtml"       #'+web:decode-html-entities)
 (ex! "mc"           #'+evil:mc)

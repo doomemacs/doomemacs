@@ -66,7 +66,7 @@
   (dolist (mode '(help-mode debugger-mode))
     (evil-set-initial-state mode 'normal))
 
-  ;; make `try-expand-dabbrev' from `hippie-expand' work in mini-buffer
+  ;; make `try-expand-dabbrev' from `hippie-expand' work in minibuffer
   ;; @see `he-dabbrev-beg', so we need re-define syntax for '/'
   (defun minibuffer-inactive-mode-hook-setup ()
     (set-syntax-table (let* ((table (make-syntax-table)))
@@ -120,41 +120,27 @@ across windows."
   (advice-add #'evil-ex-replace-special-filenames
               :override #'+evil*ex-replace-special-filenames)
 
-  ;; By default :g[lobal] doesn't highlight matches in the current buffer. I've
-  ;; got to write my own argument type and interactive code to get it to do so.
-  ;; While I'm at it, I use this to write an :al[ign] command as a wrapper
-  ;; around `align-regexp'.
-
-  ;; TODO Must be simpler way to do this
+  ;; These arg types will highlight matches in the current buffer
   (evil-ex-define-argument-type buffer-match :runner +evil-ex-buffer-match)
   (evil-ex-define-argument-type global-match :runner +evil-ex-global-match)
 
+  ;; By default :g[lobal] doesn't highlight matches in the current buffer. I've
+  ;; got to write my own argument type and interactive code to get it to do so.
+  (evil-ex-define-argument-type global-delim-match :runner +evil-ex-global-delim-match)
+
+  (dolist (sym '(evil-ex-global evil-ex-global-inverted))
+    (evil-set-command-property sym :ex-arg 'global-delim-match))
+
+  ;; Other commands can make use of this
   (evil-define-interactive-code "<//>"
     :ex-arg buffer-match (list (when (evil-ex-p) evil-ex-argument)))
-  (evil-define-interactive-code "<g//>"
-    :ex-arg global-match (when (evil-ex-p) (evil-ex-parse-global evil-ex-argument)))
+  (evil-define-interactive-code "<//g>"
+    :ex-arg global-match (list (when (evil-ex-p) evil-ex-argument)))
 
-  (evil-define-operator +evil:global (beg end pattern command &optional invert)
-    "Rewritten :g[lobal] that will highlight buffer matches. Takes the same arguments."
-    :motion mark-whole-buffer :move-point nil
-    (interactive "<r><g//><!>")
-    (evil-ex-global beg end pattern command invert))
-
-  (evil-define-operator +evil:align (&optional beg end bang pattern)
-    "Ex interface to `align-regexp'. Accepts vim-style regexps."
-    (interactive "<r><!><//>")
-    (align-regexp
-     beg end
-     (concat "\\(\\s-*\\)"
-             (if bang
-                 (regexp-quote pattern)
-               (evil-transform-vim-style-regexp pattern)))
-     1 1))
-
-  ;; Must be aggressively defined here, otherwise the above highlighting won't
-  ;; work on first invocation
-  (evil-ex-define-cmd "g[lobal]" #'+evil:global)
-  (evil-ex-define-cmd "al[ign]"  #'+evil:align)
+  (evil-set-command-properties
+   '+evil:align :move-point t :ex-arg 'buffer-match :ex-bang t :evil-mc t :keep-visual t :suppress-operator t)
+  (evil-set-command-properties
+   '+evil:mc :move-point nil :ex-arg 'global-match :ex-bang t :evil-mc t)
 
   ;; Move to new split -- setting `evil-split-window-below' &
   ;; `evil-vsplit-window-right' to non-nil mimics this, but that doesn't update

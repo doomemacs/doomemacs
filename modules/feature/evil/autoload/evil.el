@@ -171,8 +171,6 @@ evil-window-move-* (e.g. `evil-window-move-far-left')"
 
 ;; --- custom arg handlers ----------------
 
-(defvar +evil--buffer-match-global evil-ex-substitute-global "")
-
 (defun +evil--ex-match-init (name &optional face update-hook)
   (with-current-buffer evil-ex-current-buffer
     (cond
@@ -213,15 +211,34 @@ evil-window-move-* (e.g. `evil-window-move-far-left')"
   (let ((hl-name 'evil-ex-buffer-match))
     (with-selected-window (minibuffer-selected-window)
       (+evil--ex-match-init hl-name)
-      (+evil--ex-buffer-match arg hl-name (list (if +evil--buffer-match-global ?g))))))
+      (+evil--ex-buffer-match arg hl-name (list (if evil-ex-substitute-global ?g))))))
 
 ;;;###autoload
 (defun +evil-ex-global-match (flag &optional arg)
   (let ((hl-name 'evil-ex-global-match))
     (with-selected-window (minibuffer-selected-window)
       (+evil--ex-match-init hl-name)
-      (let ((result (car-safe (evil-ex-parse-global arg))))
+      (+evil--ex-buffer-match arg hl-name nil (point-min) (point-max)))))
+
+;;;###autoload
+(defun +evil-ex-global-delim-match (flag &optional arg)
+  (let ((hl-name 'evil-ex-global-delim-match))
+    (with-selected-window (minibuffer-selected-window)
+      (+evil--ex-match-init hl-name)
+      (let ((result (car-safe (evil-delimited-arguments arg 2))))
         (+evil--ex-buffer-match result hl-name nil (point-min) (point-max))))))
+
+;;;###autoload (autoload '+evil:align "feature/evil/autoload/evil" nil t)
+(evil-define-operator +evil:align (beg end pattern &optional bang)
+  "Ex interface to `align-regexp'. Accepts vim-style regexps."
+  (interactive "<r><//><!>")
+  (align-regexp
+   beg end
+   (concat "\\(\\s-*\\)"
+           (if bang
+               (regexp-quote pattern)
+             (evil-transform-vim-style-regexp pattern)))
+   1 1))
 
 
 ;; --- wgrep ------------------------------

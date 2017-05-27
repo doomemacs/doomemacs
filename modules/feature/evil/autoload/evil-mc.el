@@ -10,7 +10,7 @@
       (message "evil-mc paused")
     (message "evil-mc resumed")))
 
-;;;###autoload (autoload '+evil/mc-make-cursor-here "feature/evil/autoload/evil-mc" nil nil)
+;;;###autoload (autoload '+evil/mc-make-cursor-here "feature/evil/autoload/evil-mc" nil t)
 (evil-define-command +evil/mc-make-cursor-here ()
   "Create a cursor at point. If in visual block or line mode, then create
 cursors in column beneath+above the point on each line. Otherwise pauses
@@ -45,15 +45,15 @@ cursors."
          ;; I assume I don't want the cursors to move yet
          (evil-mc-make-cursor-here))))
 
-;;;###autoload (autoload '+evil:mc "feature/evil/autoload/evil-mc" nil nil)
+;;;###autoload (autoload '+evil:mc "feature/evil/autoload/evil-mc" nil t)
 (evil-define-command +evil:mc (beg end type pattern &optional bang)
   "Create mc cursors at each match of PATTERN within BEG and END, and leave the
-cursor at the final match. If BANG, then surround PATTERN with whole-word
-boundaries."
+cursor at the final match. If BANG, then treat PATTERN as literal."
   :move-point nil
   :evil-mc t
-  (interactive "<R><a><!>")
-  (setq evil-mc-pattern (cons (evil-mc-make-pattern pattern bang)
+  (interactive "<R><//g><!>")
+  (require 'evil-mc)
+  (setq evil-mc-pattern (cons (evil-mc-make-pattern (if bang (regexp-quote pattern) pattern) nil)
                               (list beg end type)))
   (save-excursion
     (evil-with-restriction beg end
