@@ -62,7 +62,8 @@
 ;;;###autoload (autoload '+ivy:ag "completion/ivy/autoload/evil" nil t)
 (evil-define-operator +ivy:ag (beg end query &optional all-files-p directory)
   "Perform a project file search using the silver search. QUERY is a pcre
-regexp. If omitted, will perform the last known search.
+regexp. If omitted, the current selection is used. If no selection is active,
+the last known search is used.
 
 If ALL-FILES-P, don't respect .gitignore files and search everything."
   (interactive "<r><a><!>")
@@ -72,26 +73,31 @@ If ALL-FILES-P, don't respect .gitignore files and search everything."
 ;;;###autoload (autoload '+ivy:rg "completion/ivy/autoload/evil" nil t)
 (evil-define-operator +ivy:rg (beg end query &optional all-files-p directory)
   "Perform a project file search using ripgrep. QUERY is a regexp. If omitted,
-will perform the last known search.
+the current selection is used. If no selection is active, the last known search
+is used.
 
-If ALL-FILES-P, don't respect .gitignore files and search everything."
+If ALL-FILES-P, don't respect .gitignore files and search everything.
+
+NOTE: ripgrep doesn't support multiline searches (yet)."
   (interactive "<r><a><!>")
   (let ((+ivy--file-search-all-files-p all-files-p))
     (+ivy--file-search 'rg beg end query directory)))
 
 
 ;;;###autoload (autoload '+ivy:ag-cwd "completion/ivy/autoload/evil" nil t)
-(evil-define-operator +ivy:ag-cwd (beg end query &optional inhibit-recursion-p)
-  "The same as :ag, but only searches the current directory. If
-INHIBIT-RECURSION-P, don't recurse into sub-directories."
+(evil-define-operator +ivy:ag-cwd (beg end query &optional bang)
+  "The same as :ag, but searches the current directory. If BANG, don't recurse
+into sub-directories."
   (interactive "<r><a><!>")
-  (let ((+ivy--file-search-recursion-p (not inhibit-recursion-p)))
+  (let ((+ivy--file-search-recursion-p (not bang)))
     (+ivy:ag beg end query t default-directory)))
 
 ;;;###autoload (autoload '+ivy:rg-cwd "completion/ivy/autoload/evil" nil t)
-(evil-define-operator +ivy:rg-cwd (beg end query &optional inhibit-recursion-p)
-  "The same as :rg, but only searches the current directory. If
-INHIBIT-RECURSION-P, don't recurse into sub-directories."
+(evil-define-operator +ivy:rg-cwd (beg end query &optional bang)
+  "The same as :rg, but only searches the current directory. If BANG, don't
+recurse into sub-directories.
+
+NOTE: ripgrep doesn't support multiline searches (yet)."
   (interactive "<r><a><!>")
-  (let ((+ivy--file-search-recursion-p (not inhibit-recursion-p)))
+  (let ((+ivy--file-search-recursion-p (not bang)))
     (+ivy:rg beg end query t default-directory)))

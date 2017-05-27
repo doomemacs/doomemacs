@@ -4,7 +4,7 @@ This module adds the Ivy completion backend.
 
 I prefer ivy over ido and helm, for its speed and simplicity. With ivy's help and some hackery, I get the following features:
 
-+ Project-wide search & replace powered by ~rg~ (falls back to ~ag~)
++ Project-wide search & replace powered by ~rg~ and ~ag~
 + Project jump-to navigation ala Command-T, Sublime Text's Jump-to-anywhere or Vim's CtrlP plugin.
 + Ivy integration for ~M-x~, ~imenu~, ~recentf~ and others.
 + A powerful, interactive in-buffer search using ~swiper~.
