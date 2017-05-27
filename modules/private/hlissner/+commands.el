@@ -68,6 +68,7 @@
 (ex! "todo"        #'+ivy:todo)
 
 ;; File operations
+(ex! "cp"          #'+evil:copy-this-file)
 (ex! "mv"          #'+evil:move-this-file)
 (ex! "rm"          #'+evil:delete-this-file)
 

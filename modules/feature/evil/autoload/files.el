@@ -1,6 +1,6 @@
 ;;; feature/evil/autoload/files.el
 
-(defun doom--forget-file (old-path &optional new-path)
+(defun +evil--forget-file (old-path &optional new-path)
   "Ensure `recentf', `projectile' and `save-place' forget OLD-PATH."
   (when (fboundp 'recentf-add-file)
     (when new-path
@@ -25,29 +25,25 @@ kills the buffer. If FORCE-P, force the deletion (don't ask for confirmation)."
            (error "File doesn't exist: %s" fname))
 
           ((not (or force-p (y-or-n-p (format "Really delete %s?" fbase))))
-           (message "Aborted"))
+           (message "Aborted")
+           nil)
 
           (t
            (unwind-protect
-               (delete-file fname)
+               (progn (delete-file fname) t)
              (let ((short-path (file-relative-name fname (doom-project-root))))
                (if (file-exists-p fname)
                    (error "Failed to delete %s" short-path)
                  ;; Ensures that windows displaying this buffer will be switched
                  ;; to real buffers (`doom-real-buffer-p')
                  (doom-force-kill-buffer buf t)
-                 (doom--forget-file fname)
-                 (message "Successfully deleted %s" short-path))))))))
+                 (+evil--forget-file fname)
+                 (message "Successfully deleted %s" short-path)
+                 )))))))
 
-;;;###autoload (autoload '+evil:move-this-file "feature/evil/autoload/files" nil t)
-(evil-define-command +evil:move-this-file (new-path &optional force-p)
-  "Move current buffer's file to NEW-PATH. Replaces %, # and other vim-esque
-filename modifiers (see `+evil*ex-replace-special-filenames'). If FORCE-P,
-overwrite the destination file if it exists, without confirmation."
-  :repeat nil
-  (interactive "<f><!>")
+(defun +evil--copy-file (old-path new-path &optional force-p)
   (let* ((new-path (expand-file-name new-path))
-         (old-path (file-truename (buffer-file-name)))
+         (old-path (file-truename old-path))
          (new-path (apply #'expand-file-name
                           (if (or (directory-name-p new-path)
                                   (file-directory-p new-path))
@@ -64,17 +60,45 @@ overwrite the destination file if it exists, without confirmation."
       (save-buffer))
     (cond ((equal (file-truename old-path)
                   (file-truename new-path))
-           (error "Cannot move file to itself"))
+           (throw 'status 'overwrite-self))
           ((and (file-exists-p new-path)
                 (not force-p)
                 (not (y-or-n-p (format "File already exists at %s, overwrite?" short-new-name))))
-           (message "Aborted"))
+           (throw 'status 'aborted))
           (t
-           (rename-file old-path new-path 1)
-           (kill-this-buffer)
-           (find-file new-path)
-           (doom--forget-file old-path new-path)
-           (message "File successfully moved to %s"
-                    short-new-name)))))
+           (copy-file old-path new-path t)
+           short-new-name))))
 
+;;;###autoload (autoload '+evil:move-this-file "feature/evil/autoload/files" nil t)
+(evil-define-command +evil:move-this-file (new-path &optional force-p)
+  "Move current buffer's file to NEW-PATH. Replaces %, # and other vim-esque
+filename modifiers (see `+evil*ex-replace-special-filenames'). If FORCE-P,
+overwrite the destination file if it exists, without confirmation."
+  :repeat nil
+  (interactive "<f><!>")
+  (pcase (catch 'status
+           (let ((old-path (buffer-file-name)))
+             (when-let (dest (+evil--copy-file old-path new-path force-p))
+               (delete-file old-path)
+               (kill-this-buffer)
+               (find-file new-path)
+               (+evil--forget-file old-path new-path)
+               (message "File successfully moved to %s" dest))))
+    ('overwrite-self (error "Cannot overwrite self"))
+    ('aborted (message "Aborted"))
+    (_ t)))
+
+;;;###autoload (autoload '+evil:copy-this-file "feature/evil/autoload/files" nil nil)
+(evil-define-command +evil:copy-this-file (new-path &optional force-p)
+  "Copy current buffer's file to NEW-PATH. Replaces %, # and other vim-esque
+filename modifiers (see `+evil*ex-replace-special-filenames'). If FORCE-P,
+overwrite the destination file if it exists, without confirmation."
+  :repeat nil
+  (interactive "<f><!>")
+  (pcase (catch 'status
+           (when-let (dest (+evil--copy-file (buffer-file-name) new-path force-p))
+             (message "File successfully copied to %s" dest)))
+    ('overwrite-self (error "Cannot overwrite self"))
+    ('aborted (message "Aborted"))
+    (_ t)))
 
