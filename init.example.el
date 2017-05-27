@@ -31,22 +31,21 @@
 
 (doom! :feature
        evil            ; come to the dark side, we have cookies
-       jump            ; helping you navigate your code base
+       jump            ; helping you get around
        snippets        ; my elves. They type so I don't have to
        file-templates  ; auto-snippets for empty files
        spellcheck      ; tasing you for misspelling mispelling
-       syntax-checker  ; tasing you for every forgotten semicolon
+       syntax-checker  ; tasing you for every semicolon you forget
        version-control ; remember, remember that commit in November
-       workspaces      ; tab emulation, persistence and separate workspaces
+       workspaces      ; tab emulation, persistence & separate workspaces
        eval            ; repls, runners 'n builders; run code, run
        debug           ; stepping through code, to help you add bugs
 
        :completion
-       company         ; auto-completion backend
-      ;auto-complete   ; TODO alternative auto-completion backend
+       company         ; code completion backend
        ivy             ; a search engine for love and life
-      ;helm
-      ;ido
+      ;helm            ; the *other* search engine for love and life
+      ;ido             ; the other *other* search engine...
 
        :ui
        doom            ; doom-one; a look inspired by Atom's Dark One
@@ -109,7 +108,7 @@
        twitter         ; twitter client https://twitter.com/vnought
        write           ; emacs as a word processor (latex + org + markdown)
 
-       ;; Private modules are aren't tracked in the repo, except for mine. Use
-       ;; it as a reference for your own.
+       ;; Private modules aren't tracked in source control (except for mine).
+       ;; Use it as a reference for your own.
        :private hlissner)
 
