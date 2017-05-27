@@ -4,11 +4,11 @@
 ;; available keys, and `evil', if it's enabled. All built into one powerful
 ;; macro: `map!'.
 
-(defvar doom-leader-key ","
+(defvar doom-leader-key "SPC"
   "The leader prefix key, for global commands.")
 
-(defvar doom-localleader-key "\\"
-  "The leader prefix key, for global commands.")
+(defvar doom-localleader-key "SPC m"
+  "The localleader prefix key, for major-mode specific commands.")
 
 (defvar doom-evil-state-alist
   '(("n" . normal)
@@ -25,7 +25,7 @@
 (def-package! which-key
   :demand t
   :config
-  (setq which-key-sort-order #'which-key-key-order-alpha
+  (setq which-key-sort-order #'which-key-prefix-then-key-order
         which-key-sort-uppercase-first nil
         which-key-add-column-padding 1
         which-key-max-display-columns nil

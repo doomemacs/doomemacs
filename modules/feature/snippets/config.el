@@ -40,20 +40,6 @@
   (advice-add #'yas-expand :before #'sp-remove-active-pair-overlay)
 
   (after! evil
-    (map! (:map yas-keymap
-            "C-e"           #'+snippets/goto-end-of-field
-            "C-a"           #'+snippets/goto-start-of-field
-            "<M-right>"     #'+snippets/goto-end-of-field
-            "<M-left>"      #'+snippets/goto-start-of-field
-            "<M-backspace>" #'+snippets/delete-to-start-of-field
-            [escape]        #'evil-normal-state
-            [backspace]     #'+snippets/delete-backward-char
-            [delete]        #'+snippets/delete-forward-char-or-field)
-
-          (:map yas-minor-mode-map
-            :i "<tab>" yas-maybe-expand
-            :v "<tab>" #'+snippets/expand-on-region))
-
     ;; Exit snippets on ESC in normal mode
     (add-hook '+evil-esc-hook #'yas-exit-all-snippets)
     ;; Once you're in normal mode, you're out
@@ -78,9 +64,6 @@
 
 (def-package! auto-yasnippet
   :commands (aya-create aya-expand aya-open-line aya-persist-snippet)
-  :init
-  (map! :i  [C-tab] #'aya-expand
-        :nv [C-tab] #'aya-create)
   :config
   (setq aya-persist-snippets-dir (concat doom-local-dir "auto-snippets/")))
 

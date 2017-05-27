@@ -40,19 +40,6 @@ session)."
 
   (ivy-mode +1)
 
-  (map! :map ivy-minibuffer-map
-        [escape] #'keyboard-escape-quit
-        "M-v" #'yank
-        "M-z" #'undo
-        "C-r" #'evil-paste-from-register
-        "C-k" #'ivy-previous-line
-        "C-j" #'ivy-next-line
-        "C-l" #'ivy-alt-done
-        "C-w" #'+ivy/backward-kill-word
-        "C-u" #'doom/minibuffer-kill-line
-        "C-b" #'backward-word
-        "C-f" #'forward-word)
-
   (map! :map ivy-mode-map
         [remap describe-face]             #'counsel-describe-face
         [remap find-file]                 #'counsel-find-file
@@ -98,11 +85,6 @@ session)."
     (ivy-add-actions
      cmd
      '(("O" +ivy-git-grep-other-window-action "open in other window"))))
-
-  (map! :map counsel-ag-map
-        [backtab] #'+ivy/wgrep-occur  ; search/replace on results
-        "C-SPC"   #'counsel-git-grep-recenter   ; preview
-        "M-RET"   (+ivy-do-action! #'+ivy-git-grep-other-window-action))
 
   (advice-add #'counsel-ag-function :override #'+ivy*counsel-ag-function))
 

@@ -5,12 +5,7 @@
   :config
   (setq ispell-program-name (executable-find "aspell")
         ispell-list-command "--list"
-        ispell-extr-args '("--dont-tex-check-comments"))
-
-  (map! :map flyspell-mode-map
-        :localleader
-        :n "s" #'flyspell-correct-word-generic
-        :n "S" #'flyspell-correct-previous-word-generic))
+        ispell-extr-args '("--dont-tex-check-comments")))
 
 
 (def-package! flyspell-correct

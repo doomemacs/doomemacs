@@ -1,27 +1,8 @@
 ;;; feature/debug/config.el
 
-(after! debug
-  ;; For elisp debugging
-  (map! :map debugger-mode-map
-        :n "RET" #'debug-help-follow
-        :n "n"   #'debugger-step-through
-        :n "c"   #'debugger-continue))
-
-
 (def-package! realgud
   :commands (realgud:gdb realgud:trepanjs realgud:bashdb realgud:zshdb)
   :config
-  (map! :map realgud:shortkey-mode-map
-        :n "j" #'evil-next-line
-        :n "k" #'evil-previous-line
-        :n "h" #'evil-backward-char
-        :n "l" #'evil-forward-char
-        :m "n" #'realgud:cmd-next
-        :m "b" #'realgud:cmd-break
-        :m "B" #'realgud:cmd-clear
-        :n "c" #'realgud:cmd-continue)
-
-  ;; Popup rules
   (set! :popup
      '("^\\*\\(g\\|zsh\\|bash\\)db.*?\\*$" :size 20 :regexp t)
      '("^\\*trepanjs.*?\\*$"               :size 20 :regexp t))

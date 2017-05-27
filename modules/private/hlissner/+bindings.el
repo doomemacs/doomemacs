@@ -19,6 +19,7 @@
  [remap find-tag]         #'projectile-find-tag)
 
 (map!
+ ;; --- Global keybindings ---------------------------
  ;; Make M-x available everywhere
  :nvime "M-x" #'execute-extended-command
  :nvime "A-x" #'execute-extended-command
@@ -69,49 +70,124 @@
  "M-q"    #'save-buffers-kill-emacs
  "M-s"    #'save-buffer
  "M-v"    #'clipboard-yank
- "M-f"    #'+ivy:swiper
+ "M-f"    #'swiper
  "C-M-f"  #'doom/toggle-fullscreen
  :m "A-j" #'+hlissner:multi-next-line
  :m "A-k" #'+hlissner:multi-previous-line
 
- ;;; <leader> and <localleader>
- :m ";" 'evil-ex
- (:leader
-   ;; Most commonly used
-   :desc "Switch project buffer" :n ","  #'persp-switch-to-buffer
-   :desc "Switch buffer"         :n "<"  #'switch-to-buffer
-   :desc "Browse files"          :n "."  #'find-file
-   :desc "Find file from here"   :n ">"  #'counsel-file-jump
-   :desc "Find file in project"  :n "/"  #'projectile-find-file
-   :desc "Find in file (swiper)" :n "?"  #'swiper
-   :desc "Imenu"                 :n ";"  #'imenu
-   :desc "Imenu across buffers"  :n ":"  #'imenu-anywhere
-   :desc "Find other file"       :n "a"  #'projectile-find-other-file
-   :desc "Jump to bookmark"      :n "b"  #'bookmark-jump
-   :desc "Delete bookmark"       :n "B"  #'bookmark-delete
-   :desc "List errors"           :n "e"  #'flycheck-list-errors
-   :desc "View Emacs Log"        :n "m"  #'doom/popup-toggle-messages
-   :desc "Recent files"          :n "r"  #'recentf
-   :desc "Recent project files"  :n "R"  #'projectile-recentf
-   :desc "Insert from kill ring" :n "y"  #'counsel-yank-pop
-   :desc "Switch project"        :n "p"  #'projectile-switch-project
-   :desc "Open Neotree"          :n "\\" #'+evil/neotree
 
-   ;; Since I've remapped C-h...
-   :desc "help"                  :n "h"  #'help-command
+ ;; --- <leader> -------------------------------------
+ (:leader
+   :desc "Ex command"  :nv ";"   #'evil-ex
+   :desc "M-x"         :nv ":"   #'execute-extended-command
+   :desc "Org Capture" :nv "RET" #'+org/capture
+
+   ;; Most commonly used
+   :desc "Switch buffer"         :n ","   #'persp-switch-to-buffer
+   :desc "Browse files"          :n "."   #'find-file
+   :desc "Find file in project"  :n "/"   #'projectile-find-file
+   :desc "Imenu"                 :n "i"   #'imenu
+   :desc "Imenu across buffers"  :n "I"   #'imenu-anywhere
+   :desc "Insert from kill ring" :n "y"   #'counsel-yank-pop
+
+   ;; C-u is used by evil
+   :desc "Universal argument"    :n "u"  #'universal-argument
+   :desc "window"                :n "w"  evil-window-map
 
    (:desc "quit"
      :prefix "q"
-     :desc "Quit"                   :n "q" #'evil-save-and-quit
-     :desc "Quit (forget session)"  :n "Q" #'+workspace/kill-session-and-quit)
+     :desc "Quit"                   :n "q"  #'evil-save-and-quit
+     :desc "Quit (forget session)"  :n "Q"  #'+workspace/kill-session-and-quit)
+
+   (:desc "help"
+     :prefix "h"
+     :n "h" help-map
+     :desc "Reload theme"          :n "R" #'+doom/reset-theme
+     :desc "Toggle Emacs log"      :n "m" #'doom/popup-toggle-messages
+     :desc "Find library"          :n "l" #'find-library
+     :desc "Command log"           :n "L" #'global-command-log-mode
+     :desc "Describe function"     :n "f" #'describe-function
+     :desc "Describe key"          :n "k" #'describe-key
+     :desc "Describe char"         :n "c" #'describe-char
+     :desc "Describe mode"         :n "m" #'describe-mode
+     :desc "Describe variable"     :n "v" #'describe-variable
+     :desc "Describe face"         :n "F" #'describe-face
+     :desc "Describe DOOM setting" :n "s" #'doom/describe-setting
+     :desc "Describe DOOM module"  :n "d" #'doom/describe-module
+     :desc "What face"             :n "." #'doom/what-face
+     :desc "What minor modes"      :n "M" #'doom/what-minor-mode
+     :desc "Info"                  :n "i" #'info)
+
+   (:desc "buffer"
+     :prefix "b"
+     :desc "Switch workspace buffer" :n "b"   #'persp-switch-to-buffer
+     :desc "Switch buffer"           :n "B"   #'switch-to-buffer
+     :desc "New empty buffer"        :n "c"   #'evil-buffer-new
+     :desc "Kill buffer"             :n "k"   #'doom/kill-this-buffer
+     :desc "Save buffer"             :n "s"   #'save-buffer
+     :desc "Pop scratch buffer"      :n "x"   #'+doom:scratch-buffer
+     :desc "Bury buffer"             :n "z"   #'bury-buffer
+     :desc "Next buffer"             :n "n"   #'doom/next-buffer
+     :desc "Previous buffer"         :n "p"   #'doom/previous-buffer
+     :desc "Sudo edit this file"     :n "S"   #'doom/sudo-this-file)
+
+   (:desc "previous..."
+     :prefix "["
+     :desc "Buffer"     :nv "b" #'doom/previous-buffer
+     :desc "Diff Hunk"  :nv "d" #'git-gutter:previous-hunk
+     :desc "Todo"       :nv "t" #'hl-todo-previous
+     :desc "Error"      :nv "e" #'previous-error
+     :desc "Workspace"  :nv "w" #'+workspace/switch-left
+     :desc "Smart jump" :nv "h" #'smart-backward
+     :desc "Spelling error"      :nv "s" #'evil-prev-flyspell-error
+     :desc "Spelling correction" :n  "S" #'flyspell-correct-previous-word-generic)
+
+   (:desc "next..."
+     :prefix "]"
+     :desc "Buffer"     :nv "b" #'doom/next-buffer
+     :desc "Diff Hunk"  :nv "d" #'git-gutter:next-hunk
+     :desc "Todo"       :nv "t" #'hl-todo-next
+     :desc "Error"      :nv "e" #'next-error
+     :desc "Workspace"  :nv "w" #'+workspace/switch-right
+     :desc "Smart jump" :nv "l" #'smart-forward
+     :desc "Spelling error"      :nv "s" #'evil-next-flyspell-error
+     :desc "Spelling correction" :n  "S" #'flyspell-correct-word-generic)
+
+   (:desc "jump"
+     :prefix "SPC"
+     :desc "Swiper"                :n "?"  #'swiper
+     :desc "Imenu"                 :n ";"  #'imenu
+     :desc "Imenu across buffers"  :n ":"  #'imenu-anywhere
+     :desc "Browse mode notes"     :n "\"" #'+org/browse-notes-for-major-mode
+     :desc "Browse notes"          :n "'"  #'+hlissner/browse-notes
+     :desc "Browse project notes"  :n "`"  #'+org/browse-notes-for-project
+     :desc "File file"             :n "."  #'find-file
+     :desc "Sudo find file"        :n ">"  #'doom/sudo-find-file
+     :desc "Find file in project"  :n "/"  #'projectile-find-file
+     :desc "Find other file"       :n "a"  #'projectile-find-other-file
+     :desc "Jump to bookmark"      :n "b"  #'bookmark-jump
+     :desc "Delete bookmark"       :n "B"  #'bookmark-delete
+     :desc "Find file in dotfiles" :n "d"  #'+hlissner/find-in-dotfiles
+     :desc "Browse dotfiles"       :n "D"  #'+hlissner/browse-dotfiles
+     :desc "Find file in emacs.d"  :n "e"  #'+hlissner/find-in-emacsd
+     :desc "Browse emacs.d"        :n "E"  #'+hlissner/browse-emacsd
+     :desc "Find file from here"   :n "F"  #'counsel-file-jump
+     :desc "Find file in notes"    :n "O"  #'+hlissner/find-in-notes
+     :desc "Switch project"        :n "p"  #'projectile-switch-project
+     :desc "Recent files"          :n "r"  #'recentf
+     :desc "Recent project files"  :n "R"  #'projectile-recentf
+     :desc "Find snippet for mode" :n "s"  #'yas-visit-snippet-file
+     :desc "Find snippet"          :n "S"  #'+hlissner/find-in-snippets)
 
    (:desc "git"
      :prefix "g"
-     :desc "Git status"        :n "s" #'magit-status
-     :desc "Git blame"         :n "b" #'magit-blame
-     :desc "Git time machine"  :n "t" #'git-timemachine-toggle
-     :desc "Git revert hunk"   :n "r" #'git-gutter:revert-hunk
-     :desc "List gists"        :n "g" #'+gist:list)
+     :desc "Git status"        :n  "s" #'magit-status
+     :desc "Git blame"         :n  "b" #'magit-blame
+     :desc "Git time machine"  :n  "t" #'git-timemachine-toggle
+     :desc "Git revert hunk"   :n  "r" #'git-gutter:revert-hunk
+     :desc "List gists"        :n  "g" #'+gist:list
+     :desc "Next hunk"         :nv "n" #'git-gutter:next-hunk
+     :desc "Previous hunk"     :nv "p" #'git-gutter:previous-hunk)
 
    (:desc "session"
      :prefix "s"
@@ -123,11 +199,14 @@
      :desc "Delete this workspace"    :n "x" #'+workspace/delete
      :desc "Load session"             :n "L" #'+workspace/load-session
      :desc "Autosave current session" :n "S" #'+workspace/save-session
-     :desc "Delete session"           :n "X" #'+workspace/kill-session)
+     :desc "Delete session"           :n "X" #'+workspace/kill-session
+     :desc "Next workspace"           :n "n" #'+workspace/switch-right
+     :desc "Previous workspace"       :n "p" #'+workspace/switch-left)
 
    (:desc "toggle"
      :prefix "t"
-     :desc "Spell check"            :n "s" #'flyspell-mode
+     :desc "Flyspell"               :n "s" #'flyspell-mode
+     :desc "Flycheck"               :n "f" #'flycheck-mode
      :desc "Line numbers"           :n "l" #'doom/toggle-line-numbers
      :desc "Fullscreen"             :n "f" #'doom/toggle-fullscreen
      :desc "Indent guides"          :n "i" #'highlight-indentation-mode
@@ -135,8 +214,20 @@
      :desc "Impatient mode"         :n "h" #'+present/impatient-mode
      :desc "Big mode"               :n "b" #'+present/big-mode)
 
+   (:desc "code"
+     :prefix "c"
+     :desc "List errors"               :n "x" #'flycheck-list-errors
+     :desc "Evaluate buffer/region"    :n "e" #'+eval/buffer
+                                       :v "e" #'+eval/region
+     :desc "Evaluate & replace region" :v "R" #'+eval:replace-region
+     :desc "Build tasks"               :n "b" #'+eval/build
+     :desc "Jump to definition"        :n "d" #'+jump/definition
+     :desc "Jump to references"        :n "D" #'+jump/references
+     :desc "Open REPL"                 :n "r" #'+eval/repl
+                                       :v "r" #'+eval:repl)
+
    (:desc "remote"
-     :prefix "u"
+     :prefix "r"
      :desc "Upload local"           :n "u" #'+upload/local
      :desc "Upload local (force)"   :n "U" (λ! (+upload/local t))
      :desc "Download remote"        :n "d" #'+upload/remote-download
@@ -146,20 +237,19 @@
 
    (:desc "open"
      :prefix "o"
-     :desc "Default browser"         :n  "o" #'browse-url-of-file
-     :desc "Debugger"                :n  "d" #'+debug/open
-     :desc "Sudo find file"          :n  "s" #'doom/sudo-this-file
-     :desc "Sudo edit"               :n  "S" #'doom/sudo-find-file
-     :desc "Build tasks"             :n  "b" #'+eval/build
-     :desc "Open/Send to REPL"       :nv "r" #'+eval:repl
-     :desc "Terminal"                :n  "t" #'+term/popup
-     :desc "Terminal @ project root" :n  "T" #'+term/popup-in-project
+     :desc "Default browser"     :n  "o" #'browse-url-of-file
+     :desc "Debugger"            :n  "d" #'+debug/open
+     :desc "REPL"                :n  "r" #'+eval/repl
+                                 :v  "r" #'+eval:repl
+     :desc "Neotree"             :n  "n" #'+evil/neotree
+     :desc "Terminal"            :n  "t" #'+term/popup
+     :desc "Terminal in project" :n  "T" #'+term/popup-in-project
 
      ;; applications
-     :desc "APP: elfeed"            :n "E"   #'=rss
-     :desc "APP: email"             :n "M"   #'=email
-     :desc "APP: twitter"           :n "T"   #'=twitter
-     :desc "APP: regex"             :n "X"   #'=regex
+     :desc "APP: elfeed"  :n "E" #'=rss
+     :desc "APP: email"   :n "M" #'=email
+     :desc "APP: twitter" :n "T" #'=twitter
+     :desc "APP: regex"   :n "X" #'=regex
 
      ;; macos
      (:when IS-MAC
@@ -168,71 +258,26 @@
        :desc "Send to Transmit"          :n "u" #'+macos/send-to-transmit
        :desc "Send project to Transmit"  :n "U" #'+macos/send-project-to-transmit
        :desc "Send to Launchbar"         :n "l" #'+macos/send-to-launchbar
-       :desc "Send project to Launchbar" :n "L" #'+macos/send-project-to-launchbar))
+       :desc "Send project to Launchbar" :n "L" #'+macos/send-project-to-launchbar)))
 
-   (:desc "Personal"
-     :prefix "SPC"
-     :desc "Browse emacs.d"         :n "."   #'+hlissner/browse-emacsd
-     :desc "Find file in emacs.d"   :n "/"   #'+hlissner/find-in-emacsd
-     :desc "Browse dotfiles"        :n ">"   #'+hlissner/browse-dotfiles
-     :desc "Find file in dotfiles"  :n "?"   #'+hlissner/find-in-dotfiles
-     :desc "Reload theme"           :n "R"   #'+doom/reset-theme
-     ;; Org notes
-     :desc "Browse notes"           :n "n"   #'+hlissner/browse-notes
-     :desc "Find file in notes"     :n "N"   #'+hlissner/find-in-notes
-     :desc "Browse project notes"   :n "p"   #'+org/browse-notes-for-project
-     :desc "Browse mode notes"      :n "m"   #'+org/browse-notes-for-major-mode
-     :desc "Org Capture"            :n "SPC" #'+org/capture
-     ;; misc
-     :desc "Find snippet for mode"  :n "s"  #'yas-visit-snippet-file
-     :desc "Find snippet"           :n "S"  #'+hlissner/find-in-snippets
-     ))
-
- (:localleader
-  (:desc "Refactor..." :prefix "r")
-
-  (:desc "Find..."     :prefix "f"
-    :desc "Get type..." :prefix "t")
-
-  (:desc "Unit tests"  :prefix "t"))
-
- ;;; Evil-esque bindings
- ;; Buffers
+ ;; --- Personal vim-esque bindings ------------------
  :n  "zx" #'doom/kill-this-buffer
  :n  "ZX" #'bury-buffer
  :n  "]b" #'doom/next-buffer
  :n  "[b" #'doom/previous-buffer
- ;; Diffs
- :m  "]d" #'git-gutter:next-hunk
- :m  "[d" #'git-gutter:previous-hunk
- :m  "]e" #'next-error
- :m  "[e" #'previous-error
- ;; Switch tabs
  :n  "]w" #'+workspace/switch-right
  :n  "[w" #'+workspace/switch-left
  :m  "gt" #'+workspace/switch-right
  :m  "gT" #'+workspace/switch-left
- ;; Increment/decrement number under cursor
- :n  "g=" #'evil-numbers/inc-at-pt
- :n  "g-" #'evil-numbers/dec-at-pt
- ;; Todos
- :m  "]t" #'hl-todo-next
- :m  "[t" #'hl-todo-previous
- ;; Navigation
- :nv "K"  #'smart-up
  :m  "gd" #'+jump/definition
  :m  "gD" #'+jump/references
  :n  "gp" #'+evil/reselect-paste
- :n  "gc" #'evil-commentary
- :n  "gx" #'evil-exchange
  :n  "gr" #'+eval:region
  :n  "gR" #'+eval/buffer
  :v  "gR" #'+eval:replace-region
- :m  "g]" #'smart-forward
- :m  "g[" #'smart-backward
  :v  "@"  #'+evil:macro-on-all-lines
  :n  "g@" #'+evil:macro-on-all-lines
- ;; repeat in visual mode (buggy)
+ ;; repeat in visual mode (FIXME buggy)
  :v  "."  #'evil-repeat
  ;; don't leave visual mode after shifting
  :v  "<"  #'+evil/visual-dedent  ; vnoremap < <gv
@@ -262,7 +307,12 @@
    "c"       #'+workspace/close-window-or-workspace
    "C-C"     #'ace-delete-window)
 
- ;;; Plugins
+
+ ;; --- Plugin bindings ------------------------------
+ ;; auto-yasnippet
+ :i  [C-tab] #'aya-expand
+ :nv [C-tab] #'aya-create
+
  ;; company-mode (+ vim-like omnicompletion)
  :i "C-SPC"  #'+company/complete
  (:prefix "C-x"
@@ -277,6 +327,51 @@
    :i "C-p"   (λ! (let ((company-selection-wrap-around t))
                     (call-interactively 'company-dabbrev-code)
                     (company-select-previous-or-abort))))
+ (:after company
+   (:map company-active-map
+     ;; Don't interfere with `evil-delete-backward-word' in insert mode
+     "C-w"        nil
+     "C-o"        #'company-search-kill-others
+     "C-n"        #'company-select-next
+     "C-p"        #'company-select-previous
+     "C-h"        #'company-quickhelp-manual-begin
+     "C-S-h"      #'company-show-doc-buffer
+     "C-S-s"      #'company-search-candidates
+     "C-s"        #'company-filter-candidates
+     "C-SPC"      #'company-complete-common
+     "C-h"        #'company-quickhelp-manual-begin
+     [tab]        #'company-complete-common-or-cycle
+     [backtab]    #'company-select-previous
+     [escape]     (λ! (company-abort) (evil-normal-state 1)))
+   ;; Automatically applies to `company-filter-map'
+   (:map company-search-map
+     "C-n"        #'company-search-repeat-forward
+     "C-p"        #'company-search-repeat-backward
+     "C-s"        (λ! (company-search-abort) (company-filter-candidates))
+     [escape]     #'company-search-abort))
+
+ ;; counsel
+ (:after counsel
+   :map counsel-ag-map
+   [backtab] #'+ivy/wgrep-occur  ; search/replace on results
+   "C-SPC"   #'counsel-git-grep-recenter   ; preview
+   "M-RET"   (+ivy-do-action! #'+ivy-git-grep-other-window-action))
+
+ ;; evil-commentary
+ :n  "gc" #'evil-commentary
+
+ ;; evil-exchange
+ :n  "gx" #'evil-exchange
+
+ ;; evil-matchit
+ :nv [tab] #'+evil/matchit-or-toggle-fold
+
+ ;; evil-magit
+ (:after evil-magit
+   :map (magit-status-mode-map magit-revision-mode-map)
+   :n "C-j" nil
+   :n "C-k" nil)
+
  ;; evil-mc
  :v  "R"   #'evil-mc-make-all-cursors
  :nv "M-d" #'evil-mc-make-and-goto-next-match
@@ -296,34 +391,225 @@
    :nv "C-N" #'evil-mc-make-and-goto-last-cursor
    :nv "C-p" #'evil-mc-make-and-goto-prev-cursor
    :nv "C-P" #'evil-mc-make-and-goto-first-cursor)
+
+ ;; evil-snipe
+ (:after evil-snipe
+   ;; Binding to switch to evil-easymotion/avy after a snipe
+   :map evil-snipe-parent-transient-map
+   "C-;" (λ! (require 'evil-easymotion)
+             (call-interactively +evil--snipe-repeat-fn)))
+
  ;; evil-surround
- :v  "S"   #'evil-surround-region
- :o  "s"   #'evil-surround-edit
- :o  "S"   #'evil-Surround-edit
+ :v  "S"  #'evil-surround-region
+ :o  "s"  #'evil-surround-edit
+ :o  "S"  #'evil-Surround-edit
+
  ;; expand-region
- :v  "v"   #'er/expand-region
- :v  "V"   #'er/contract-region
- ;; rotate-text
- :n  "!"   #'rotate-text
- ;; hide-show/evil-matchit
- :nv [tab] #'+evil/matchit-or-toggle-fold
+ :v  "v"  #'er/expand-region
+ :v  "V"  #'er/contract-region
 
- ;; help-mode
- (:map help-mode-map
+ ;; flycheck
+ :m  "]e" #'next-error
+ :m  "[e" #'previous-error
+ (:after flycheck
+   :map flycheck-error-list-mode-map
+   :n "C-n" #'flycheck-error-list-next-error
+   :n "C-p" #'flycheck-error-list-previous-error
+   :n "j"   #'flycheck-error-list-next-error
+   :n "k"   #'flycheck-error-list-previous-error
+   :n "RET" #'flycheck-error-list-goto-error)
+
+ ;; flyspell
+ :m  "]S" #'flyspell-correct-word-generic
+ :m  "[S" #'flyspell-correct-previous-word-generic
+
+ ;; git-gutter
+ :m  "]d" #'git-gutter:next-hunk
+ :m  "[d" #'git-gutter:previous-hunk
+
+ ;; git-timemachine
+ (:after git-timemachine
+   (:map git-timemachine-mode-map
+     :nv "p" #'git-timemachine-show-previous-revision
+     :nv "n" #'git-timemachine-show-next-revision
+     :nv "g" #'git-timemachine-show-nth-revision
+     :nv "q" #'git-timemachine-quit
+     :nv "w" #'git-timemachine-kill-abbreviated-revision
+     :nv "W" #'git-timemachine-kill-revision
+     :nv "b" #'git-timemachine-blame))
+
+ ;; gist
+ (:after gist
+   :map gist-list-menu-mode-map
+   :n "RET" #'+gist/open-current
+   :n "b"   #'gist-browse-current-url
+   :n "c"   #'gist-add-buffer
+   :n "d"   #'gist-kill-current
+   :n "f"   #'gist-fork
    :n "q"   #'quit-window
-   :n "Q"   #'+ivy-quit-and-resume
-   :n "]]"  #'help-go-forward
-   :n "[["  #'help-go-back
-   :n "o"   #'ace-link-help)
+   :n "r"   #'gist-list-reload
+   :n "s"   #'gist-star
+   :n "S"   #'gist-unstar
+   :n "y"   #'gist-print-current-url)
 
- (:map help-map
-   :desc "Describe face" "h"   #'describe-face ; overwrites `view-hello-file'
-   :desc "Face at point" "H"   #'doom/what-face
-   :desc "Minor-mode"    "M"   #'doom/what-minor-mode
-   :desc "Command log"   "W"   #'global-command-log-mode
-   :desc "Find library"  "l"   #'find-library
-   :desc "View lossage"  "L"   #'view-lossage
-   :desc "Describe char" "g"   #'describe-char)) ; overwrites `describe-gnu-project'
+ ;; hl-todo
+ :m  "]t" #'hl-todo-next
+ :m  "[t" #'hl-todo-previous
+
+ ;; ivy
+ (:after ivy
+   :map ivy-minibuffer-map
+   [escape] #'keyboard-escape-quit
+   "M-v" #'yank
+   "M-z" #'undo
+   "C-r" #'evil-paste-from-register
+   "C-k" #'ivy-previous-line
+   "C-j" #'ivy-next-line
+   "C-l" #'ivy-alt-done
+   "C-w" #'+ivy/backward-kill-word
+   "C-u" #'doom/minibuffer-kill-line
+   "C-b" #'backward-word
+   "C-f" #'forward-word)
+
+ ;; neotree
+ (:after neotree
+   :map neotree-mode-map
+   :n "g"         nil
+   :n [tab]       #'neotree-quick-look
+   :n "RET"       #'neotree-enter
+   :n [backspace] #'evil-window-prev
+   :n "j"         #'neotree-next-line
+   :n "k"         #'neotree-previous-line
+   :n "n"         #'neotree-next-line
+   :n "p"         #'neotree-previous-line
+   :n "h"         #'+evil/neotree-collapse-or-up
+   :n "l"         #'+evil/neotree-expand-or-open
+   :n "J"         #'neotree-select-next-sibling-node
+   :n "K"         #'neotree-select-previous-sibling-node
+   :n "H"         #'neotree-select-up-node
+   :n "L"         #'neotree-select-down-node
+   :n "G"         #'evil-goto-line
+   :n "gg"        #'evil-goto-first-line
+   :n "v"         #'neotree-enter-vertical-split
+   :n "s"         #'neotree-enter-horizontal-split
+   :n "q"         #'neotree-hide
+   :n "R"         #'neotree-refresh)
+
+ ;; realgud
+ (:after realgud
+   :map realgud:shortkey-mode-map
+   :n "j" #'evil-next-line
+   :n "k" #'evil-previous-line
+   :n "h" #'evil-backward-char
+   :n "l" #'evil-forward-char
+   :m "n" #'realgud:cmd-next
+   :m "b" #'realgud:cmd-break
+   :m "B" #'realgud:cmd-clear
+   :n "c" #'realgud:cmd-continue)
+
+ ;; rotate-text
+ :n  "!"  #'rotate-text
+
+ ;; smart-forward
+ :nv "K"  #'smart-up
+ :m  "g]" #'smart-forward
+ :m  "g[" #'smart-backward
+
+ ;; undo-tree -- undo/redo for visual regions
+ :v "C-u" #'undo-tree-undo
+ :v "C-r" #'undo-tree-redo
+
+ ;; yasnippet
+ (:after yasnippet
+   (:map yas-keymap
+     "C-e"           #'+snippets/goto-end-of-field
+     "C-a"           #'+snippets/goto-start-of-field
+     "<M-right>"     #'+snippets/goto-end-of-field
+     "<M-left>"      #'+snippets/goto-start-of-field
+     "<M-backspace>" #'+snippets/delete-to-start-of-field
+     [escape]        #'evil-normal-state
+     [backspace]     #'+snippets/delete-backward-char
+     [delete]        #'+snippets/delete-forward-char-or-field)
+   (:map yas-minor-mode-map
+     :i "<tab>" yas-maybe-expand
+     :v "<tab>" #'+snippets/expand-on-region))
+
+
+ ;; --- Custom evil text-objects ---------------------
+ :textobj "a" #'evil-inner-arg                    #'evil-outer-arg
+ :textobj "B" #'evil-textobj-anyblock-inner-block #'evil-textobj-anyblock-a-block
+ :textobj "i" #'evil-indent-plus-i-indent         #'evil-indent-plus-a-indent
+ :textobj "I" #'evil-indent-plus-i-indent-up      #'evil-indent-plus-a-indent-up
+ :textobj "J" #'evil-indent-plus-i-indent-up-down #'evil-indent-plus-a-indent-up-down
+
+
+ ;; --- Built-in plugins -----------------------------
+ (:after comint
+   ;; TAB auto-completion in term buffers
+   :map comint-mode-map [tab] #'company-complete)
+
+ (:after debug
+   ;; For elisp debugging
+   :map debugger-mode-map
+   :n "RET" #'debug-help-follow
+   :n "n"   #'debugger-step-through
+   :n "c"   #'debugger-continue)
+
+ (:map help-mode-map
+   :n "[["  #'help-go-back
+   :n "]]"  #'help-go-forward
+   :n "o"   #'ace-link-help
+   :n "q"   #'quit-window
+   :n "Q"   #'+ivy-quit-and-resume)
+
+ (:after vc-annotate
+   :map vc-annotate-mode-map
+   :n "q"   #'kill-this-buffer
+   :n "d"   #'vc-annotate-show-diff-revision-at-line
+   :n "D"   #'vc-annotate-show-changeset-diff-revision-at-line
+   :n "SPC" #'vc-annotate-show-log-revision-at-line
+   :n "]]"  #'vc-annotate-next-revision
+   :n "[["  #'vc-annotate-prev-revision
+   :n [tab] #'vc-annotate-toggle-annotation-visibility
+   :n "RET" #'vc-annotate-find-revision-at-line))
+
+
+;; --- Custom key functionality ---------------------
+(defmacro do-repeat! (command next-func prev-func)
+  "Repeat motions with ;/,"
+  (let ((fn-sym (intern (format "+evil*repeat-%s" command))))
+    `(progn
+       (defun ,fn-sym (&rest _)
+         (define-key evil-motion-state-map (kbd ";") ',next-func)
+         (define-key evil-motion-state-map (kbd ",") ',prev-func))
+       (advice-add #',command :before #',fn-sym))))
+
+;; n/N
+(do-repeat! evil-ex-search-next evil-ex-search-next evil-ex-search-previous)
+(do-repeat! evil-ex-search-previous evil-ex-search-next evil-ex-search-previous)
+(do-repeat! evil-ex-search-forward evil-ex-search-next evil-ex-search-previous)
+(do-repeat! evil-ex-search-backward evil-ex-search-next evil-ex-search-previous)
+
+;; f/F/t/T/s/S
+(after! evil-snipe
+  (setq evil-snipe-repeat-keys nil
+        evil-snipe-override-evil-repeat-keys nil) ; causes problems with remapped ;
+
+  (do-repeat! evil-snipe-f evil-snipe-repeat evil-snipe-repeat-reverse)
+  (do-repeat! evil-snipe-F evil-snipe-repeat evil-snipe-repeat-reverse)
+  (do-repeat! evil-snipe-t evil-snipe-repeat evil-snipe-repeat-reverse)
+  (do-repeat! evil-snipe-T evil-snipe-repeat evil-snipe-repeat-reverse)
+  (do-repeat! evil-snipe-s evil-snipe-repeat evil-snipe-repeat-reverse)
+  (do-repeat! evil-snipe-S evil-snipe-repeat evil-snipe-repeat-reverse)
+  (do-repeat! evil-snipe-x evil-snipe-repeat evil-snipe-repeat-reverse)
+  (do-repeat! evil-snipe-X evil-snipe-repeat evil-snipe-repeat-reverse))
+
+;; */#
+(after! evil-visualstar
+  (do-repeat! evil-visualstar/begin-search-forward
+    evil-ex-search-next evil-ex-search-previous)
+  (do-repeat! evil-visualstar/begin-search-backward
+    evil-ex-search-previous evil-ex-search-next))
 
 
 ;;
@@ -393,4 +679,3 @@
 
       (:after view
         (:map view-mode-map "<escape>" #'View-quit-all)))
-
