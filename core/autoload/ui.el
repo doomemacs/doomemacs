@@ -13,7 +13,13 @@
 (defun doom/toggle-line-numbers (&optional arg)
   "Toggle `linum-mode'."
   (interactive "P")
-  (linum-mode (or arg (if linum-mode -1 +1))))
+  (let ((arg (or arg (if linum-mode -1 +1))))
+    (cond ((featurep 'nlinum)
+           (nlinum-mode arg))
+          ((featurep 'linum-mode)
+           (linum-mode arg))
+          (t
+           (error "No line number plugin detected")))))
 
 ;;;###autoload
 (defun doom-resize-window (new-size &optional horizontal)

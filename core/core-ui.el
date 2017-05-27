@@ -195,18 +195,51 @@ file."
         (add-hook 'evil-visual-state-entry-hook #'doom|hl-line-off nil t)
         (add-hook 'evil-visual-state-exit-hook #'hl-line-mode nil t)))))
 
-;; Line numbers
-(def-package! linum
-  :commands linum-mode
-  :preface (defvar linum-format "%4d ")
+;; Line number column. A faster (or equivalent, in the worst case) line number
+;; plugin than the built-in `linum'.
+(def-package! nlinum
+  :commands nlinum-mode
+  :preface
+  (defvar linum-format "%3d ")
+  (defvar nlinum-format "%4d ")
   :init
   (add-hook! (prog-mode text-mode)
     (unless (eq major-mode 'org-mode)
-      (linum-mode +1)))
+      (nlinum-mode +1)))
 
   :config
-  (require 'hlinum) ; highlight current line number
-  (hlinum-activate))
+  (defun doom*nlinum-flush-all-windows (&rest _)
+    "Fix nlinum margins after major UI changes (like a change of font)."
+    (dolist (buffer (doom-visible-buffers))
+      (with-current-buffer buffer
+        (when nlinum-mode (nlinum--flush)))))
+  (advice-add #'set-frame-font :after #'doom*nlinum-flush-all-windows)
+
+  ;; A known issue with nlinum is that line numbers disappear over time. These
+  ;; hooks/advisors will attempt to stave off these glitches.
+  (defun doom*nlinum-flush (&optional _ norecord)
+    ;; norecord check is necessary to prevent infinite recursion in
+    ;; `select-window'
+    (when (and nlinum-mode (not norecord))
+      (if _
+          (nlinum--flush)
+        ;; done in two steps to leave current line number highlighting alone
+        (nlinum--region (point-min) (line-beginning-position))
+        (nlinum--region (line-end-position) (point-max)))))
+  ;; refresh when switching windows
+  (advice-add #'select-window :before #'doom*nlinum-flush)
+  (advice-add #'select-window :after  #'doom*nlinum-flush)
+  ;; and when pressing ESC in normal mode
+  (add-hook '+evil-esc-hook #'doom*nlinum-flush)
+
+  ;;
+  (after! web-mode
+    (advice-add #'web-mode-fold-or-unfold :after #'nlinum--flush))
+
+  ;; Optimization: calculate line number column width beforehand
+  (add-hook! nlinum-mode
+    (setq nlinum--width (length (save-excursion (goto-char (point-max))
+                                                (format-mode-line "%l"))))))
 
 ;; Helps us distinguish stacked delimiter pairs. Especially in parentheses-drunk
 ;; languages like Lisp.

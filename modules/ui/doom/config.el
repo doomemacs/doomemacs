@@ -43,6 +43,10 @@
   :config
   (load-theme +doom-theme t)
 
+  ;; nlinum line highlighting
+  (when (featurep 'nlinum)
+    (doom-themes-nlinum-config))
+
   ;; Add file icons to doom-neotree
   (doom-themes-neotree-config)
   (setq doom-neotree-enable-variable-pitch t
