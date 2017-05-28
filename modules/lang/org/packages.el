@@ -9,6 +9,7 @@
 
 (package! org-download)
 (package! org-bullets)
+(package! toc-org)
 (package! ob-go)
 (package! ob-mongo)
 (package! ob-redis)

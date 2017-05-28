@@ -54,6 +54,9 @@
   (when (and (featurep 'evil) evil-mode)
     (evil-org-mode +1))
 
+  (require 'toc-org)
+  (toc-org-enable)
+
   (unless org-agenda-inhibit-startup
     ;; My version of the 'overview' #+STARTUP option: expand first-level
     ;; headings.
