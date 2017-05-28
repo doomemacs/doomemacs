@@ -178,10 +178,7 @@ Example
                     forms)))
           (:prefix
             (let ((def (pop rest)))
-              (setq prefix
-                    (if (or (symbolp def) (listp def))
-                        `(vconcat ,prefix (if (stringp ,def) (kbd ,def) ,def))
-                      `(vconcat ,prefix ,(if (stringp def) (kbd def) def))))
+              (setq prefix `(vconcat ,prefix (kbd ,def)))
               (when desc
                 (push `(doom--keybind-register ,(key-description (eval prefix))
                                                ,desc ',modes)
@@ -200,11 +197,14 @@ Example
        ;; It's a key-def pair
        ((or (stringp key)
             (characterp key)
-            (vectorp key))
+            (vectorp key)
+            (symbolp key))
         (unwind-protect
             (catch 'skip
-              (when (stringp key)
-                (setq key (kbd key)))
+              (cond ((symbolp key)
+                     (setq key `(kbd ,key)))
+                    ((stringp key)
+                     (setq key (kbd key))))
               (when prefix
                 (setq key (append prefix (list key))))
               (unless (> (length rest) 0)
