@@ -71,10 +71,11 @@
 `hs-toggle-hiding'. Otherwise, if on a delimiter, jump to the matching one with
 `evilmi-jump-items'. If in a magit-status buffer, use `magit-section-toggle'."
   (interactive)
-  (call-interactively
-   (cond ((eq major-mode 'magit-status-mode)
-          #'magit-section-toggle)
-         ((+evil-fold-p)
-          #'+evil/fold-toggle)
-         (t
-          #'evilmi-jump-items))))
+  (ignore-errors
+    (call-interactively
+     (cond ((eq major-mode 'magit-status-mode)
+            #'magit-section-toggle)
+           ((+evil-fold-p)
+            #'+evil/fold-toggle)
+           (t
+            #'evilmi-jump-items)))))

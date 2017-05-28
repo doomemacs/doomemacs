@@ -3,6 +3,12 @@
 (eval-when-compile (require 'subr-x))
 
 ;;;###autoload
+(defun +evil/matchit ()
+  "Invoke `evil-matchit', but silently."
+  (interactive)
+  (ignore-errors (call-interactively #'evilmi-jump-items)))
+
+;;;###autoload
 (defun +evil/visual-indent ()
   "vnoremap < <gv"
   (interactive)
