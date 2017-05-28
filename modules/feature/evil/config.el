@@ -76,10 +76,18 @@
 
 
   ;; --- keybind fixes ----------------------
-  (after! wgrep
-    ;; a wrapper that invokes `wgrep-mark-deletion' across lines
-    ;; you use `evil-delete' on.
-    (map! :map wgrep-mode-map [remap evil-delete] #'+evil-delete))
+  (map! (:after wgrep
+          ;; a wrapper that invokes `wgrep-mark-deletion' across lines
+          ;; you use `evil-delete' on.
+          :map wgrep-mode-map [remap evil-delete] #'+evil-delete)
+
+        ;; replace native folding commands
+        :n "zo" #'+evil/fold-open
+        :n "zO" #'+evil/fold-open
+        :n "zc" #'+evil/fold-close
+        :n "za" #'+evil/fold-toggle
+        :n "zr" #'+evil/fold-open-all
+        :n "zm" #'+evil/fold-close-all)
 
 
   ;; --- evil hacks -------------------------

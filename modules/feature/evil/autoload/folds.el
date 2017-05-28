@@ -46,15 +46,21 @@
 
 ;;;###autoload (autoload '+evil/fold-open-all "feature/evil/autoload/folds" nil t)
 (evil-define-command +evil/fold-open-all (&optional level)
+  "Open folds at LEVEL (or all folds if LEVEL is nil)."
   (interactive "<c>")
   (vimish-fold-unfold-all)
-  (if level (hs-hide-level level) (hs-show-all)))
+  (if (integerp level)
+      (hs-hide-level (1- level))
+    (hs-show-all)))
 
-;;;###autoload (autoload '+evil/fold-close-all "feature/evil/autoload/folds" nil nil)
+;;;###autoload (autoload '+evil/fold-close-all "feature/evil/autoload/folds" nil t)
 (evil-define-command +evil/fold-close-all (&optional level)
+  "Close folds at LEVEL (or all folds if LEVEL is nil)."
   (interactive "<c>")
   (vimish-fold-refold-all)
-  (if level (hs-hide-level level) (hs-hide-all)))
+  (if (integerp level)
+      (hs-hide-level (1- level))
+    (hs-hide-all)))
 
 
 ;; --- misc -------------------------------
