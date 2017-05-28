@@ -8,7 +8,7 @@
 (package! org-plus-contrib :recipe (:fetcher git :url "http://orgmode.org/org-mode.git"))
 
 (package! org-download)
-(package! org-bullets)
+(package! org-bullets :recipe (:fetcher github :repo "hlissner/org-bullets"))
 (package! toc-org)
 (package! ob-go)
 (package! ob-mongo)
