@@ -84,7 +84,6 @@
    :desc "Browse files"          :n "."   #'find-file
    :desc "Toggle last popup"     :n "~"   #'doom/popup-toggle
    :desc "Eval expression"       :n "`"   #'eval-expression
-   :desc "Recently opened files" :n "m"   #'recentf
    :desc "Blink cursor line"     :n "DEL" #'+doom/blink-cursor
 
    ;; C-u is used by evil
