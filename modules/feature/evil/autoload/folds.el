@@ -21,7 +21,9 @@
 ;;;###autoload
 (defun +evil-fold-p ()
   (or (+evil--vimish-fold-p)
-      (ignore-errors (hs-already-hidden-p))))
+      (ignore-errors
+        (+evil--ensure-modes)
+        (hs-already-hidden-p))))
 
 ;;;###autoload (autoload '+evil/fold-toggle "feature/evil/autoload/folds" nil t)
 (evil-define-command +evil/fold-toggle ()
@@ -49,6 +51,7 @@
   "Open folds at LEVEL (or all folds if LEVEL is nil)."
   (interactive "<c>")
   (vimish-fold-unfold-all)
+  (+evil--ensure-modes)
   (if (integerp level)
       (hs-hide-level (1- level))
     (hs-show-all)))
@@ -58,6 +61,7 @@
   "Close folds at LEVEL (or all folds if LEVEL is nil)."
   (interactive "<c>")
   (vimish-fold-refold-all)
+  (+evil--ensure-modes)
   (if (integerp level)
       (hs-hide-level (1- level))
     (hs-hide-all)))
