@@ -85,45 +85,11 @@
    :desc "Toggle last popup"     :n "~"   #'doom/popup-toggle
    :desc "Eval expression"       :n "`"   #'eval-expression
    :desc "Blink cursor line"     :n "DEL" #'+doom/blink-cursor
+   :desc "Jump to bookmark"      :n "RET" #'counsel-bookmark
 
    ;; C-u is used by evil
    :desc "Universal argument"    :n "u"  #'universal-argument
    :desc "window"                :n "w"  evil-window-map
-
-   (:desc "buffer" :prefix "b"
-     :desc "New empty buffer"        :n "n"   #'evil-buffer-new
-     :desc "Switch workspace buffer" :n "b"   #'persp-switch-to-buffer
-     :desc "Switch buffer"           :n "B"   #'switch-to-buffer
-     :desc "Kill buffer"             :n "k"   #'doom/kill-this-buffer
-     :desc "Kill other buffers"      :n "o"   #'doom/kill-other-buffers
-     :desc "Save buffer"             :n "s"   #'save-buffer
-     :desc "Pop scratch buffer"      :n "x"   #'+doom:scratch-buffer
-     :desc "Bury buffer"             :n "z"   #'bury-buffer
-     :desc "Next buffer"             :n "]"   #'doom/next-buffer
-     :desc "Previous buffer"         :n "["   #'doom/previous-buffer
-     :desc "Sudo edit this file"     :n "S"   #'doom/sudo-this-file)
-
-   (:desc "quit" :prefix "q"
-     :desc "Quit"                   :n "q"  #'evil-save-and-quit
-     :desc "Quit (forget session)"  :n "Q"  #'+workspace/kill-session-and-quit)
-
-   (:desc "help" :prefix "h"
-     :n "h" help-map
-     :desc "Reload theme"          :n "R" #'+doom/reset-theme
-     :desc "Toggle Emacs log"      :n "m" #'doom/popup-toggle-messages
-     :desc "Find library"          :n "l" #'find-library
-     :desc "Command log"           :n "L" #'global-command-log-mode
-     :desc "Describe function"     :n "f" #'describe-function
-     :desc "Describe key"          :n "k" #'describe-key
-     :desc "Describe char"         :n "c" #'describe-char
-     :desc "Describe mode"         :n "m" #'describe-mode
-     :desc "Describe variable"     :n "v" #'describe-variable
-     :desc "Describe face"         :n "F" #'describe-face
-     :desc "Describe DOOM setting" :n "s" #'doom/describe-setting
-     :desc "Describe DOOM module"  :n "d" #'doom/describe-module
-     :desc "What face"             :n "." #'doom/what-face
-     :desc "What minor modes"      :n "M" #'doom/what-minor-mode
-     :desc "Info"                  :n "i" #'info)
 
    (:desc "previous..." :prefix "["
      :desc "Text size"           :nv "[" #'text-scale-decrease
@@ -147,55 +113,10 @@
      :desc "Spelling error"      :nv "s" #'evil-next-flyspell-error
      :desc "Spelling correction" :n  "S" #'flyspell-correct-word-generic)
 
-   (:desc "git" :prefix "g"
-     :desc "Git status"        :n  "s" #'magit-status
-     :desc "Git blame"         :n  "b" #'magit-blame
-     :desc "Git time machine"  :n  "t" #'git-timemachine-toggle
-     :desc "Git revert hunk"   :n  "r" #'git-gutter:revert-hunk
-     :desc "List gists"        :n  "g" #'+gist:list
-     :desc "Next hunk"         :nv "]" #'git-gutter:next-hunk
-     :desc "Previous hunk"     :nv "[" #'git-gutter:previous-hunk)
-
-   (:desc "file" :prefix "f"
-     :desc "File file"             :n  "."  #'find-file
-     :desc "Sudo find file"        :n  ">"  #'doom/sudo-find-file
-     :desc "Find file in project"  :n  "/"  #'projectile-find-file
-     :desc "Find file from here"   :n  "?"  #'counsel-file-jump
-     :desc "Find other file"       :n  "a"  #'projectile-find-other-file
-     :desc "Jump to bookmark"      :nv "b"  #'bookmark-jump
-     :desc "Delete bookmark"       :nv "B"  #'bookmark-delete
-     :desc "Find file in dotfiles" :n  "d"  #'+hlissner/find-in-dotfiles
-     :desc "Browse dotfiles"       :n  "D"  #'+hlissner/browse-dotfiles
-     :desc "Find file in emacs.d"  :n  "e"  #'+hlissner/find-in-emacsd
-     :desc "Browse emacs.d"        :n  "E"  #'+hlissner/browse-emacsd
-     :desc "Recent files"          :n  "r"  #'recentf
-     :desc "Recent project files"  :n  "R"  #'projectile-recentf
-     :desc "Find snippet for mode" :n  "s"  #'yas-visit-snippet-file
-     :desc "Find snippet"          :n  "S"  #'+hlissner/find-in-snippets
-     :desc "Yank filename"         :n  "y"  #'+hlissner/yank-buffer-filename)
-
-   (:desc "project" :prefix "p"
-     :desc "Browse project"          :n  "." (find-file-in! (doom-project-root))
-     :desc "Find file in project"    :n  "/" #'projectile-find-file
-     :desc "Run cmd in project root" :nv "!" #'projectile-run-shell-command-in-root
-     :desc "Switch project"          :n  "p" #'projectile-switch-project
-     :desc "Recent project files"    :n  "r" #'projectile-recentf
-     :desc "List project tasks"      :n  "t" #'+ivy/tasks
-     :desc "Pop term in project"     :n  "o" #'+term/popup-in-project
-     :desc "Invalidate cache"        :n  "x" #'projectile-invalidate-cache)
-
-   (:desc "search" :prefix "s"
+   (:desc "search" :prefix "/"
      :desc "Swiper"                :nv "/" #'swiper
      :desc "Imenu"                 :nv "i" #'imenu
-     :desc "Imenu across buffers"  :nv "I" #'imenu-anywhere
-     :desc "Kill ring"             :nv "y" #'counsel-yank-pop)
-
-   (:desc "notes" :prefix "n"
-     :desc "Find file in notes"    :n "n" #'+hlissner/find-in-notes
-     :desc "Browse notes"          :n "N" #'+hlissner/browse-notes
-     :desc "Org capture"           :n "x" #'+org/capture
-     :desc "Browse mode notes"     :n "m" #'+org/browse-notes-for-major-mode
-     :desc "Browse project notes"  :n "p" #'+org/browse-notes-for-project)
+     :desc "Imenu across buffers"  :nv "I" #'imenu-anywhere)
 
    (:desc "workspace" :prefix "TAB"
      :desc "Display tab bar"          :n "TAB" #'+workspace/display
@@ -222,23 +143,18 @@
      :desc "Switch to 9th workspace"  :n "9"   (λ! (+workspace/switch-to 8))
      :desc "Switch to last workspace" :n "0"   #'+workspace/switch-to-last)
 
-   (:desc "toggle" :prefix "t"
-     :desc "Flyspell"               :n "s" #'flyspell-mode
-     :desc "Flycheck"               :n "f" #'flycheck-mode
-     :desc "Line numbers"           :n "l" #'doom/toggle-line-numbers
-     :desc "Fullscreen"             :n "f" #'doom/toggle-fullscreen
-     :desc "Indent guides"          :n "i" #'highlight-indentation-mode
-     :desc "Indent guides (column)" :n "I" #'highlight-indentation-current-column-mode
-     :desc "Impatient mode"         :n "h" #'+present/impatient-mode
-     :desc "Big mode"               :n "b" #'+present/big-mode)
-
-   (:desc "remote" :prefix "r"
-     :desc "Upload local"           :n "u" #'+upload/local
-     :desc "Upload local (force)"   :n "U" (λ! (+upload/local t))
-     :desc "Download remote"        :n "d" #'+upload/remote-download
-     :desc "Diff local & remote"    :n "D" #'+upload/diff
-     :desc "Browse remote files"    :n "." #'+upload/browse
-     :desc "Detect remote changes"  :n ">" #'+upload/check-remote)
+   (:desc "buffer" :prefix "b"
+     :desc "New empty buffer"        :n "n" #'evil-buffer-new
+     :desc "Switch workspace buffer" :n "b" #'persp-switch-to-buffer
+     :desc "Switch buffer"           :n "B" #'switch-to-buffer
+     :desc "Kill buffer"             :n "k" #'doom/kill-this-buffer
+     :desc "Kill other buffers"      :n "o" #'doom/kill-other-buffers
+     :desc "Save buffer"             :n "s" #'save-buffer
+     :desc "Pop scratch buffer"      :n "x" #'+doom:scratch-buffer
+     :desc "Bury buffer"             :n "z" #'bury-buffer
+     :desc "Next buffer"             :n "]" #'doom/next-buffer
+     :desc "Previous buffer"         :n "[" #'doom/previous-buffer
+     :desc "Sudo edit this file"     :n "S" #'doom/sudo-this-file)
 
    (:desc "code" :prefix "c"
      :desc "List errors"               :n  "x" #'flycheck-list-errors
@@ -251,8 +167,60 @@
      :desc "Open REPL"                 :n  "r" #'+eval/repl
                                        :v  "r" #'+eval:repl)
 
+   (:desc "file" :prefix "f"
+     :desc "File file"             :n  "."  #'find-file
+     :desc "Sudo find file"        :n  ">"  #'doom/sudo-find-file
+     :desc "Find file in project"  :n  "/"  #'projectile-find-file
+     :desc "Find file from here"   :n  "?"  #'counsel-file-jump
+     :desc "Find other file"       :n  "a"  #'projectile-find-other-file
+     :desc "Find file in dotfiles" :n  "d"  #'+hlissner/find-in-dotfiles
+     :desc "Browse dotfiles"       :n  "D"  #'+hlissner/browse-dotfiles
+     :desc "Find file in emacs.d"  :n  "e"  #'+hlissner/find-in-emacsd
+     :desc "Browse emacs.d"        :n  "E"  #'+hlissner/browse-emacsd
+     :desc "Recent files"          :n  "r"  #'recentf
+     :desc "Recent project files"  :n  "R"  #'projectile-recentf
+     :desc "Yank filename"         :n  "y"  #'+hlissner/yank-buffer-filename)
+
+   (:desc "git" :prefix "g"
+     :desc "Git status"        :n  "s" #'magit-status
+     :desc "Git blame"         :n  "b" #'magit-blame
+     :desc "Git time machine"  :n  "t" #'git-timemachine-toggle
+     :desc "Git revert hunk"   :n  "r" #'git-gutter:revert-hunk
+     :desc "List gists"        :n  "g" #'+gist:list
+     :desc "Next hunk"         :nv "]" #'git-gutter:next-hunk
+     :desc "Previous hunk"     :nv "[" #'git-gutter:previous-hunk)
+
+   (:desc "help" :prefix "h"
+     :n "h" help-map
+     :desc "Reload theme"          :n "R" #'+doom/reset-theme
+     :desc "Toggle Emacs log"      :n "m" #'doom/popup-toggle-messages
+     :desc "Find library"          :n "l" #'find-library
+     :desc "Command log"           :n "L" #'global-command-log-mode
+     :desc "Describe function"     :n "f" #'describe-function
+     :desc "Describe key"          :n "k" #'describe-key
+     :desc "Describe char"         :n "c" #'describe-char
+     :desc "Describe mode"         :n "m" #'describe-mode
+     :desc "Describe variable"     :n "v" #'describe-variable
+     :desc "Describe face"         :n "F" #'describe-face
+     :desc "Describe DOOM setting" :n "s" #'doom/describe-setting
+     :desc "Describe DOOM module"  :n "d" #'doom/describe-module
+     :desc "What face"             :n "." #'doom/what-face
+     :desc "What minor modes"      :n "M" #'doom/what-minor-mode
+     :desc "Info"                  :n "i" #'info)
+
+   (:desc "insert" :prefix "i"
+     :desc "From kill-ring" :nv "y" #'counsel-yank-pop
+     :desc "From snippet"   :nv "s" #'yas-insert-snippet)
+
+   (:desc "notes" :prefix "n"
+     :desc "Find file in notes"    :n "n" #'+hlissner/find-in-notes
+     :desc "Browse notes"          :n "N" #'+hlissner/browse-notes
+     :desc "Org capture"           :n "x" #'+org/capture
+     :desc "Browse mode notes"     :n "m" #'+org/browse-notes-for-major-mode
+     :desc "Browse project notes"  :n "p" #'+org/browse-notes-for-project)
+
    (:desc "open" :prefix "o"
-     :desc "Default browser"     :n  "o" #'browse-url-of-file
+     :desc "Default browser"     :n  "b" #'browse-url-of-file
      :desc "Debugger"            :n  "d" #'+debug/open
      :desc "REPL"                :n  "r" #'+eval/repl
                                  :v  "r" #'+eval:repl
@@ -273,7 +241,45 @@
        :desc "Send to Transmit"          :n "u" #'+macos/send-to-transmit
        :desc "Send project to Transmit"  :n "U" #'+macos/send-project-to-transmit
        :desc "Send to Launchbar"         :n "l" #'+macos/send-to-launchbar
-       :desc "Send project to Launchbar" :n "L" #'+macos/send-project-to-launchbar)))
+       :desc "Send project to Launchbar" :n "L" #'+macos/send-project-to-launchbar))
+
+   (:desc "project" :prefix "p"
+     :desc "Browse project"          :n  "." (find-file-in! (doom-project-root))
+     :desc "Find file in project"    :n  "/" #'projectile-find-file
+     :desc "Run cmd in project root" :nv "!" #'projectile-run-shell-command-in-root
+     :desc "Switch project"          :n  "p" #'projectile-switch-project
+     :desc "Recent project files"    :n  "r" #'projectile-recentf
+     :desc "List project tasks"      :n  "t" #'+ivy/tasks
+     :desc "Pop term in project"     :n  "o" #'+term/popup-in-project
+     :desc "Invalidate cache"        :n  "x" #'projectile-invalidate-cache)
+
+   (:desc "quit" :prefix "q"
+     :desc "Quit"                    :n "q" #'evil-save-and-quit
+     :desc "Quit (forget session)"   :n "Q" #'+workspace/kill-session-and-quit)
+
+   (:desc "remote" :prefix "r"
+     :desc "Upload local"           :n "u" #'+upload/local
+     :desc "Upload local (force)"   :n "U" (λ! (+upload/local t))
+     :desc "Download remote"        :n "d" #'+upload/remote-download
+     :desc "Diff local & remote"    :n "D" #'+upload/diff
+     :desc "Browse remote files"    :n "." #'+upload/browse
+     :desc "Detect remote changes"  :n ">" #'+upload/check-remote)
+
+   (:desc "snippets" :prefix "s"
+     :desc "New snippet"           :n  "n" #'yas-new-snippet
+     :desc "Insert snippet"        :nv "i" #'yas-insert-snippet
+     :desc "Find snippet for mode" :n  "s" #'yas-visit-snippet-file
+     :desc "Find snippet"          :n  "S" #'+hlissner/find-in-snippets)
+
+   (:desc "toggle" :prefix "t"
+     :desc "Flyspell"               :n "s" #'flyspell-mode
+     :desc "Flycheck"               :n "f" #'flycheck-mode
+     :desc "Line numbers"           :n "l" #'doom/toggle-line-numbers
+     :desc "Fullscreen"             :n "f" #'doom/toggle-fullscreen
+     :desc "Indent guides"          :n "i" #'highlight-indentation-mode
+     :desc "Indent guides (column)" :n "I" #'highlight-indentation-current-column-mode
+     :desc "Impatient mode"         :n "h" #'+present/impatient-mode
+     :desc "Big mode"               :n "b" #'+present/big-mode))
 
 
  ;; --- Personal vim-esque bindings ------------------
@@ -368,10 +374,12 @@
 
  ;; counsel
  (:after counsel
-   :map counsel-ag-map
-   [backtab] #'+ivy/wgrep-occur  ; search/replace on results
-   "C-SPC"   #'counsel-git-grep-recenter   ; preview
-   "M-RET"   (+ivy-do-action! #'+ivy-git-grep-other-window-action))
+   (:map ivy-mode-map
+     "C-o"      #'ivy-dispatching-done)
+   (:map counsel-ag-map
+     [backtab]  #'+ivy/wgrep-occur  ; search/replace on results
+     "C-SPC"    #'counsel-git-grep-recenter   ; preview
+     "M-RET"    (+ivy-do-action! #'+ivy-git-grep-other-window-action)))
 
  ;; evil-commentary
  :n  "gc"  #'evil-commentary
@@ -629,7 +637,7 @@
 
 ;; evil-easymotion
 (after! evil-easymotion
-  (let ((prefix (concat doom-leader-key " s")))
+  (let ((prefix (concat doom-leader-key " /")))
     ;; NOTE `evilem-default-keybinds' unsets all other keys on the prefix (in
     ;; motion state)
     (evilem-default-keybindings prefix)
