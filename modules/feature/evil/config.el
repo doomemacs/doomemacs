@@ -171,21 +171,6 @@ across windows."
   :defer 1
   :commands evilem-define
   :config
-  (let ((prefix "g SPC"))
-    (evilem-default-keybindings prefix)
-    (evilem-define (kbd (concat prefix " n")) #'evil-ex-search-next)
-    (evilem-define (kbd (concat prefix " N")) #'evil-ex-search-previous)
-    (evilem-define (kbd (concat prefix " s")) 'evil-snipe-repeat
-                   :pre-hook (save-excursion (call-interactively #'evil-snipe-s))
-                   :bind ((evil-snipe-scope 'buffer)
-                          (evil-snipe-enable-highlight)
-                          (evil-snipe-enable-incremental-highlight)))
-    (evilem-define (kbd (concat prefix " S")) #'evil-snipe-repeat-reverse
-                   :pre-hook (save-excursion (call-interactively #'evil-snipe-s))
-                   :bind ((evil-snipe-scope 'buffer)
-                          (evil-snipe-enable-highlight)
-                          (evil-snipe-enable-incremental-highlight))))
-
   (defvar +evil--snipe-repeat-fn
     (evilem-create #'evil-snipe-repeat
                    :bind ((evil-snipe-scope 'whole-buffer)

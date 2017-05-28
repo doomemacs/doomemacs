@@ -9,11 +9,12 @@ private/hlissner/snippets."
               (expand-file-name "snippets" (doom-module-path :private 'hlissner))))
 
 ;;;###autoload
-(defun +hlissner/C-u-M-x ()
-  "Invokes `execute-extended-command' with the universal argument."
+(defun +hlissner/yank-buffer-filename ()
+  "Copy the current buffer's path to the kill ring."
   (interactive)
-  (let ((current-prefix-arg 4))
-    (call-interactively #'execute-extended-command)))
+  (if-let (filename (or buffer-file-name (bound-and-true-p list-buffers-directory)))
+      (message (kill-new (abbreviate-file-name file-name)))
+    (error "Couldn't find filename in current buffer")))
 
 (defmacro +hlissner-def-finder! (name dir)
   "Define a pair of find-file and browse functions."
