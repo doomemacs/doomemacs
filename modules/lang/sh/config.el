@@ -10,9 +10,7 @@
   (set! :repl 'sh-mode #'+sh/repl)
   (setq sh-indent-after-continuation 'always)
 
-  ;; [pedantry intensifies]
-  (add-hook! sh-mode (setq mode-name "sh"))
-
+  ;; sh-mode has file extensions checks for other shells, but not zsh, so...
   (defun +sh|detect-zsh ()
     (when (and buffer-file-name (string-match-p "\\.zsh\\'" buffer-file-name))
       (sh-set-shell "zsh")))

@@ -21,7 +21,6 @@
   (set! :editorconfig :remove 'emacs-lisp-mode)
 
   (defun +emacs-lisp|hook ()
-    (setq mode-name "Elisp") ; [pedantry intensifies]
     (add-hook 'before-save-hook #'delete-trailing-whitespace nil t)
 
     (eldoc-mode +1)

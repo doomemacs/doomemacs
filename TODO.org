@@ -92,7 +92,7 @@
     + [ ] twitter
     + [ ] present
 
-** 2.0.3 [53/81]
+** 2.0.3 [54/82]
 + [2/3] Finish module :: feature/jump (go-to-definition that just works)
   + [ ] automatic tag generation
   + [X] global tags support
@@ -133,6 +133,7 @@
 + [ ] Fix invisible buffer-info segment in modeline for terminal Emacs
 + [ ] ui/doom-modeline: fix ~0/0~ display in modeline (leftover anzu state)
 + [ ] lang/php: automatic+async rebuild of tags (phpctags)
++ [X] Extract ~mode-name~ setters to ~doom-ui-mode-names~ in core/core-ui
 + [X] nav-flash: blink on focus-in
 + [X] Add ~:textobj~ keyword to ~map!~
 + [X] Make ~doom-refresh-packages~ async

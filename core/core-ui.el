@@ -95,6 +95,19 @@ local value, whether or not it's permanent-local. Therefore, we cycle
       show-paren-when-point-inside-paren t)
 (show-paren-mode +1)
 
+;; like diminish, but for major-modes. [pedantry intensifies]
+(defvar doom-ui-mode-names
+  '((sh-mode . "sh")
+    (emacs-lisp-mode "Elisp"))
+  "An alist mapping major modes to alternative names, which will be set when the
+mode is detected.")
+
+(defun doom|set-mode-name ()
+  "Set the major mode's `mode-name', as dictated by `doom-ui-mode-names'."
+  (let ((name (assq major-mode doom-ui-mode-names)))
+    (if name (setq mode-name (cdr name)))))
+(add-hook 'after-change-major-mode-hook #'doom|set-mode-name)
+
 
 ;;
 ;; Bootstrap
