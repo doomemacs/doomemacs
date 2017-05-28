@@ -126,8 +126,7 @@
      :desc "What minor modes"      :n "M" #'doom/what-minor-mode
      :desc "Info"                  :n "i" #'info)
 
-   (:desc "previous..."
-     :prefix "["
+   (:desc "previous..." :prefix "["
      :desc "Text size"           :nv "[" #'text-scale-decrease
      :desc "Buffer"              :nv "b" #'doom/previous-buffer
      :desc "Diff Hunk"           :nv "d" #'git-gutter:previous-hunk
