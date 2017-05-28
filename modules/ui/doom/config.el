@@ -44,8 +44,7 @@
   (load-theme +doom-theme t)
 
   ;; nlinum line highlighting
-  (when (featurep 'nlinum)
-    (doom-themes-nlinum-config))
+  (doom-themes-nlinum-config)
 
   ;; Add file icons to doom-neotree
   (doom-themes-neotree-config)
@@ -78,7 +77,7 @@
       (doom-buffer-mode -1)))
   (add-hook 'doom-popup-mode-hook #'+doom|buffer-mode-off)
 
-  ;;
+  ;; restore `doom-buffer-mode' when loading a persp-mode session
   (add-hook '+workspaces-load-session-hook #'+doom|restore-bright-buffers)
 
   ;; Extra modes to activate doom-buffer-mode in
@@ -125,6 +124,7 @@
   ;; NOTE In :feature jump `recenter' is hooked to a bunch of jumping commands,
   ;; which will trigger nav-flash.
 
+  (add-hook 'focus-in-hook #'+doom/blink-cursor)
   (advice-add #'windmove-do-window-select :around #'+doom*blink-cursor-maybe)
   (advice-add #'recenter :around #'+doom*blink-cursor-maybe)
 
