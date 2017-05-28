@@ -79,7 +79,7 @@ These can also be invoked from within emacs:
 So you want to grok this madness. Here are a few suggestions:
 
 * **[init.example.el](init.example.el)**: a birds eye view of available modules
-* **[modules/README.md](modules/README.md)**: a primer into module structure
+* **[modules/README.org](modules/README.org)**: a primer into module structure
 * **[modules/private/hlissner/+bindings.el](modules/private/hlissner/+bindings.el)**:
   my custom keybinds.
 * **[modules/private/hlissner/+commands.el](modules/private/hlissner/+commands.el)**:
