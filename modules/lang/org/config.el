@@ -347,7 +347,7 @@
           :m  "gh"  #'outline-up-heading
           :m  "gj"  #'org-forward-heading-same-level
           :m  "gk"  #'org-backward-heading-same-level
-          :m  "gl"  (λ! (call-interactively #'outline-next-visible-heading) (show-children))
+          :m  "gl"  (λ! (call-interactively #'outline-next-visible-heading) (outline-show-children))
 
           :n  "go"  #'org-open-at-point
           :n  "gO"  (λ! (let ((org-link-frame-setup (append '((file . find-file-other-window)) org-link-frame-setup))
