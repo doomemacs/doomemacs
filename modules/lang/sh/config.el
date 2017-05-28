@@ -1,8 +1,8 @@
 ;;; lang/sh/config.el
 
 (def-package! sh-script ; built-in
-  :mode (("\\.zsh$" . sh-mode)
-         ("/bspwmrc$" . sh-mode))
+  :mode ("\\.zsh$"   . sh-mode)
+  :mode ("/bspwmrc$" . sh-mode)
   :init
   (add-hook! sh-mode #'(flycheck-mode highlight-numbers-mode +sh|extra-fontify))
   :config

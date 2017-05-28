@@ -8,7 +8,7 @@
   <img src="https://raw.githubusercontent.com/hlissner/.emacs.d/screenshots/cacochan.png" align="right" />
 </a>
 
-This is an Emacs configuration for a stubborn, melodramatic and shell-dwelling
+This is an Emacs configuration for a stubborn, shell-dwelling and melodramatic
 vimmer disappointed with the text-editor status quo.
 
 Doom tries to: look and act like modern editors (whatever that means to me on
@@ -16,7 +16,7 @@ any given day), espouse vim's modal philosophy as best it can and strive to
 surpass vim in any way possible. It fits my needs as a software developer, indie
 game developer, scientist and doom enthusiast.
 
-It was tailored for **Emacs 25.1+** on **MacOS 10.11+** and **Arch Linux 4.7+**.
+It was written for **Emacs 25.1+** on **MacOS 10.11+** and **Arch Linux 4.7+**.
 I use [vim] everywhere else.
 
 ## Installation
@@ -27,7 +27,7 @@ cd ~/.emacs.d
 cp init.example.el init.el  # maybe edit init.el
 make install
 
-# If you have problems, run this to check for common issues with your setup
+# Have problems? Run this to check for common issues with your setup
 make doctor
 ```
 
@@ -38,7 +38,7 @@ Emacs feel a bit snappier in general.
 ```bash
 make compile       # may take a while
 # or
-make compile-lite  # lighter alternative to compile; only compiles core files
+make compile-lite  # faster alternative; only compiles core files
 
 # If you byte-compile, changes to the config won't take effect until you
 # recompile or delete the byte-compiled files with:
@@ -67,7 +67,7 @@ DEBUG=1 make install
 YES=1 make update
 ```
 
-These can also be invoked from within emacs:
+These commands are also available from within Emacs:
 
 + `doom/packages-install`
 + `doom/packages-update`
@@ -90,21 +90,21 @@ So you want to grok this madness. Here are a few suggestions:
 
 ### Highlights
 
-* A [popup window management system](core/core-popups.el) using **[shackle]** to
+* A [popup management system](core/core-popups.el) using **[shackle]** to
   minimize mental context switching while dealing with temporary or disposable
   buffers.
 * Per-project code-style settings with **[editorconfig]**. Let someone else
-  argue about tabs versus spaces (spaces > tabs, btw).
-* Workspaces & session persistence with **[persp-mode]**. This provides tab
-  emulation that vaguely resembles vim tabs.
-* Project & workspace-aware buffer navigation and functions.
+  argue about tabs versus spaces (spaces, of course).
+* Workspaces & session persistence with **[persp-mode]**. Provides tab emulation
+  that vaguely resembles vim's tabs.
+* Project & workspace-restricted buffer navigation and functions.
 * A vim-centric environment with **[evil-mode]**
   * 2-character motions (ala vim-seek/vim-sneak) with **[evil-snipe]**
   * Sublime Text-esque [multiple cursors][sc-multiedit] with
     **[evil-mc]** and **[evil-multiedit]**
-  * Repeat (most) motions with <kbd>SPC</kbd> and
-    <kbd>shift</kbd>+<kbd>SPC</kbd> (backwards)
   * <kbd>C-x</kbd> omnicompletion in insert mode
+  * A better `:global` with buffer highlighting
+  * A slew of [custom ex commands](modules/private/hlissner/+commands.el)
 * Fast search utilities:
   * Project and buffer navigation with **[ivy]**
   * File browser sidebar with **[neotree]**
@@ -117,10 +117,10 @@ So you want to grok this madness. Here are a few suggestions:
 * [Minimalistic diffs in the fringe][sc-diffs] with **[git-gutter-fringe]**.
 * A do-what-I-mean jump-to-definition implementation that tries its darnest to
   find the definition of what you're looking at. It tries major-mode commands,
-  xref (experimental Emacs library) **[dumb-jump]**, ctags (WIP), then
-  **[ripgrep][rg]** or **[the_silver_server][ag]** (for multiline searches).
-* Snippets and file-templates with **[yasnippet]**.
-* A smarter, perdier, Atom-inspired mode-line that includes:
+  xref (experimental Emacs library), **[dumb-jump]**, ctags (WIP), then
+  **[ripgrep][rg]** or **[the_silver_searcher][ag]**.
+* Snippets and file-templates with **[yasnippet]** & **[auto-yasnippet]**.
+* A smarter, perdier, Atom-inspired mode-line that adds:
   * evil-search/iedit/evil-substitute mode-line integration
   * Macro-recording indicator
   * Python/ruby version in mode-line (for rbenv/pyenv)
@@ -148,10 +148,11 @@ from it.
 
 I welcome contributions of any kind: documentation, bug fixes/reports, extra
 modules, even elisp tips. Really,
-[don't hesitate to tell me my Elisp-fu sucks][new-issue]!
+[don't hesitate to tell me my Elisp-fu sucks][new-issue]! I'm eager to learn.
 
 
 [ag]: https://github.com/ggreer/the_silver_searcher
+[auto-yasnippet]: https://melpa.org/#/auto-yasnippet
 [company-mode]: https://melpa.org/#/company
 [doom-theme]: https://github.com/hlissner/emacs-doom-theme
 [dumb-jump]: https://melpa.org/#/dumb-jump
