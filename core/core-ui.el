@@ -115,9 +115,9 @@ mode is detected.")
 
 (tooltip-mode -1) ; relegate tooltips to echo area only
 (menu-bar-mode -1)
+(tool-bar-mode -1)
 (when (display-graphic-p)
   (scroll-bar-mode -1)
-  (tool-bar-mode -1)
   ;; buffer name  in frame title
   (setq-default frame-title-format '("DOOM Emacs"))
   ;; standardize fringe width
