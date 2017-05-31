@@ -22,7 +22,7 @@
   "If non-nil, all doom functions will be verbose. Set DEBUG=1 in the command
 line or use --debug-init to enable this.")
 
-(defvar doom-emacs-dir user-emacs-directory
+(defvar doom-emacs-dir (expand-file-name user-emacs-directory)
   "The path to this emacs.d directory.")
 
 (defvar doom-core-dir (concat doom-emacs-dir "core/")
