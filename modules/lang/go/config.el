@@ -69,6 +69,7 @@
 
 
 (def-package! company-go
+  :init (setq command-go-gocode-command "gocode")
   :when (featurep! :completion company)
   :after go-mode
   :config
