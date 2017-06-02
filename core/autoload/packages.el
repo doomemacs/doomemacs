@@ -55,7 +55,7 @@ list of the package."
            (new-version
             (pcase (doom-package-backend name)
               ('quelpa
-               (let ((recipe (plist-get (cdr (assq 'rotate-text doom-packages)) :recipe))
+               (let ((recipe (plist-get (cdr (assq name doom-packages)) :recipe))
                      (dir (expand-file-name (symbol-name name) quelpa-build-dir))
                      (inhibit-message (not doom-debug-mode)))
                  (if-let (ver (quelpa-checkout recipe dir))
