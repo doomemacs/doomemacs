@@ -77,7 +77,8 @@ overwrite the destination file if it exists, without confirmation."
   :repeat nil
   (interactive "<f><!>")
   (pcase (catch 'status
-           (let ((old-path (buffer-file-name)))
+           (let ((old-path (buffer-file-name))
+                 (new-path (expand-file-name new-path)))
              (when-let (dest (+evil--copy-file old-path new-path force-p))
                (delete-file old-path)
                (kill-this-buffer)
