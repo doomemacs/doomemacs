@@ -1,4 +1,5 @@
 .local/
+.cask/
 var/
 init.el
 
