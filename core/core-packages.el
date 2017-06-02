@@ -536,11 +536,16 @@ components to feel its effects."
   "Delete all compiled elc files in DOOM emacs, excluding compiled ELPA/QUELPA
 package files."
   (interactive)
-  (when-let (elc-files (cl-remove-if (lambda (file) (file-in-directory-p file doom-local-dir))
-                                     (directory-files-recursively doom-emacs-dir "\\.elc$")))
-    (dolist (file elc-files)
-      (delete-file file)
-      (message "Deleting %s" (file-relative-name file doom-emacs-dir)))))
+  (if-let (elc-files
+           (append
+            (let ((init-elc (expand-file-name "init.elc" doom-emacs-dir)))
+              (if (file-exists-p init-elc) (list init-elc)))
+            (directory-files-recursively doom-core-dir "\\.elc$")
+            (directory-files-recursively doom-modules-dir "\\.elc$")))
+      (dolist (file elc-files)
+        (delete-file file)
+        (message "Deleting %s" (file-relative-name file doom-emacs-dir)))
+    (message "Everything is clean")))
 
 
 ;;
