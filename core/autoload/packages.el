@@ -31,7 +31,7 @@
 (defun doom-package-backend (name)
   "Get which backend the package NAME was installed with. Can either be elpa,
 quelpa or nil (if not installed)."
-  (doom-initialize)
+  (doom-initialize-packages)
   (cond ((let ((plist (cdr (assq name doom-packages))))
            (and (not (plist-get plist :pin))
                 (or (quelpa-setup-p)
@@ -49,7 +49,7 @@ quelpa or nil (if not installed)."
   "Determine whether NAME (a symbol) is outdated or not. If outdated, returns a
 list, whose car is NAME, and cdr the current version list and latest version
 list of the package."
-  (doom-initialize)
+  (doom-initialize-packages)
   (when-let (pkg (assq name package-alist))
     (let* ((old-version (package-desc-version (cadr pkg)))
            (new-version
@@ -220,6 +220,8 @@ appropriate."
     (let ((inhibit-message (not doom-debug-mode)))
       (pcase (doom-package-backend name)
         ('quelpa
+         (or (quelpa-setup-p)
+             (error "Failed to initialize quelpa"))
          (let ((quelpa-upgrade-p t))
            (quelpa (assq name quelpa-cache))))
         ('elpa
