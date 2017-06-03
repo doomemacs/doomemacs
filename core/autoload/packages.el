@@ -184,10 +184,11 @@ Used by `doom/packages-install'."
       (when doom-debug-mode
         (with-temp-buffer
           (insert
-           (cl-loop for i from 2
-                    for frame = (backtrace-frame i)
-                    while frame
-                    collect frame))
+           (pp-to-string
+            (cl-loop for i from 2
+                     for frame = (backtrace-frame i)
+                     while frame
+                     collect frame)))
           (indent-code-rigidly (point-min) (point-max) 4)
           (message! "%s" (buffer-string)))))))
 
@@ -305,6 +306,7 @@ appropriate."
   "Interactive command for updating packages."
   (interactive)
   (doom-refresh-packages doom-debug-mode)
+  (message! "Looking for outdated packages...")
   (let ((packages (sort (doom-get-outdated-packages) #'doom--sort-alpha)))
     (cond ((not packages)
            (message! (green "Everything is up-to-date")))
