@@ -218,7 +218,8 @@ appropriate."
   (unless (package-installed-p name)
     (user-error "%s isn't installed" name))
   (when (doom-package-outdated-p name)
-    (let ((inhibit-message (not doom-debug-mode)))
+    (let ((inhibit-message (not doom-debug-mode))
+          (desc (cadr (assq name package-alist))))
       (pcase (doom-package-backend name)
         ('quelpa
          (or (quelpa-setup-p)
@@ -226,8 +227,7 @@ appropriate."
          (let ((quelpa-upgrade-p t))
            (quelpa (assq name quelpa-cache))))
         ('elpa
-         (let* ((desc    (cadr (assq name package-alist)))
-                (archive (cadr (assq name package-archive-contents)))
+         (let* ((archive (cadr (assq name package-archive-contents)))
                 (packages
                  (if (package-desc-p archive)
                      (package-compute-transaction (list archive) (package-desc-reqs archive))
@@ -235,10 +235,10 @@ appropriate."
            (package-download-transaction packages)
            (when-let (old-dir (package-desc-dir desc))
              (when (file-directory-p old-dir)
-               (delete-directory old-dir t)))))))
-    (version-list-=
-     (package-desc-version (cadr (assq name package-alist)))
-     (package-desc-version (cadr (assq name package-archive-contents))))))
+               (delete-directory old-dir t))))))
+      (version-list-<
+       (package-desc-version desc)
+       (package-desc-version (cadr (assq name package-alist)))))))
 
 (defun doom-delete-package (name &optional force-p)
   "Uninstalls package NAME if it exists, and clears it from `quelpa-cache'."
