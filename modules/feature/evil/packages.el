@@ -11,6 +11,7 @@
 (package! evil-indent-plus)
 (package! evil-matchit)
 (package! evil-mc)
+(package! evil-multiedit)
 (package! evil-numbers)
 (package! evil-textobj-anyblock)
 (package! evil-snipe)

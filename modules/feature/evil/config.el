@@ -287,6 +287,19 @@ the new algorithm is confusing, like in python or ruby."
   (add-hook 'python-mode-hook #'+evil|simple-matchit))
 
 
+(def-package! evil-multiedit
+  :commands (evil-multiedit-match-all
+             evil-multiedit-match-and-next
+             evil-multiedit-match-and-prev
+             evil-multiedit-match-symbol-and-next
+             evil-multiedit-match-symbol-and-prev
+             evil-multiedit-toggle-or-restrict-region
+             evil-multiedit-next
+             evil-multiedit-prev
+             evil-multiedit-abort
+             evil-multiedit-ex-match))
+
+
 (def-package! evil-mc
   :commands (evil-mc-make-cursor-here evil-mc-make-all-cursors
              evil-mc-undo-all-cursors evil-mc-pause-cursors

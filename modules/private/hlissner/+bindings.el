@@ -397,9 +397,6 @@
    :n "C-k" nil)
 
  ;; evil-mc
- :v  "R"   #'evil-mc-make-all-cursors
- :nv "M-d" #'evil-mc-make-and-goto-next-match
- :nv "M-D" #'evil-mc-make-and-goto-prev-match
  (:prefix "gz"
    :nv "m" #'evil-mc-make-all-cursors
    :nv "u" #'evil-mc-undo-all-cursors
@@ -415,6 +412,22 @@
    :nv "C-N" #'evil-mc-make-and-goto-last-cursor
    :nv "C-p" #'evil-mc-make-and-goto-prev-cursor
    :nv "C-P" #'evil-mc-make-and-goto-first-cursor)
+
+ ;; evil-multiedit
+ :v  "R"     #'evil-multiedit-match-all
+ :n  "M-d"   #'evil-multiedit-match-symbol-and-next
+ :n  "M-D"   #'evil-multiedit-match-symbol-and-prev
+ :v  "M-d"   #'evil-multiedit-match-and-next
+ :v  "M-D"   #'evil-multiedit-match-and-prev
+ :nv "C-M-d" #'evil-multiedit-restore
+ (:after evil-multiedit
+   (:map evil-multiedit-state-map
+     "M-d" #'evil-multiedit-match-and-next
+     "M-D" #'evil-multiedit-match-and-prev
+     "RET" #'evil-multiedit-toggle-or-restrict-region)
+   (:map (evil-multiedit-state-map evil-multiedit-insert-state-map)
+     "C-n" #'evil-multiedit-next
+     "C-p" #'evil-multiedit-prev))
 
  ;; evil-snipe
  (:after evil-snipe
