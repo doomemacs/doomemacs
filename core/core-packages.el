@@ -394,20 +394,18 @@ modify/update packages outside of emacs. Automatically called (through the
 server, if necessary) by `doom/packages-install', `doom/packages-update' and
 `doom/packages-autoremove'. "
   (interactive)
-  (if noninteractive
-      (progn
-        (message "Reloading...")
-        (require 'server)
-        (unless (ignore-errors (server-eval-at "server" '(doom/reload t)))
-          (message "Recompiling")
-          (doom/recompile)))
-    (if ignorable-p
-        (message "Ignored a reload request from server")
-      (doom-initialize t)
-      (doom/recompile)
-      (message "Reloaded %d packages" (length doom--package-load-path))
-      (run-with-timer 1 nil #'redraw-frame)
-      (run-hooks 'doom-reload-hook))))
+  (cond (noninteractive
+         (message "Reloading...")
+         (require 'server)
+         (unless (ignore-errors (server-eval-at "server" '(doom/reload t)))
+           (message "Recompiling")
+           (doom/recompile)))
+        (t
+         (doom-initialize t)
+         (doom/recompile)
+         (message "Reloaded %d packages" (length doom--package-load-path))
+         (run-with-timer 1 nil #'redraw-display)
+         (run-hooks 'doom-reload-hook))))
 
 (defun doom/reload-autoloads ()
   "Refreshes the autoloads.el file, which tells Emacs where to find all the
