@@ -57,7 +57,8 @@ list of the package."
               ('quelpa
                (let ((recipe (plist-get (cdr (assq name doom-packages)) :recipe))
                      (dir (expand-file-name (symbol-name name) quelpa-build-dir))
-                     (inhibit-message (not doom-debug-mode)))
+                     (inhibit-message (not doom-debug-mode))
+                     (quelpa-upgrade-p t))
                  (if-let (ver (quelpa-checkout recipe dir))
                      (version-to-list ver)
                    old-version)))
