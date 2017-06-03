@@ -37,6 +37,17 @@ state are passed in.")
                   ("html" "jade" "pug" "jsx" "tsx"))
                 projectile-other-file-alist))
 
+  ;; In core-editor.el I've forced `recentf' to use `abbreviate-file-name', but
+  ;; this messes up projectile-recentf, so let's fix that:
+  (defun doom*projectile-abbreviate-project-root (orig-fn &rest args)
+    "Abbreviate `projectile-project-root'."
+    (cl-letf (((symbol-function 'projectile-project-root)
+               `(lambda ()
+                  (abbreviate-file-name
+                   (,(symbol-function 'projectile-project-root))))))
+      (apply orig-fn args)))
+  (advice-add #'projectile-recentf-files :around #'doom*projectile-abbreviate-project-root)
+
   ;; Projectile root-searching functions cause an endless loop on TRAMP
   ;; connections, so we disable them.
   (defun doom*projectile-locate-dominating-file (orig-fn &rest args)
