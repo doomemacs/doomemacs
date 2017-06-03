@@ -92,7 +92,7 @@
     + [ ] twitter
     + [ ] present
 
-** 2.0.3 [55/83]
+** 2.0.3 [58/87]
 + [2/3] Finish module :: feature/jump (go-to-definition that just works)
   + [ ] automatic tag generation
   + [X] global tags support
@@ -123,6 +123,7 @@
   + [X] Fix M-RET in plain lists not preserving indent level for new items
   + [X] don't move cursor when toggling folds
   + [X] don't move cursor when realigning org tables
++ [ ] Reformat this todo (too messy/busy)
 + [ ] feature/workspaces: don't save session if session is already blank
 + [ ] bin/org-alert: cron script that scans TODOs in org files and dispatches system alerts
 + [ ] tools/upload: add ~+upload/open-remote-file~ command to open current file
@@ -133,6 +134,10 @@
 + [ ] Fix invisible buffer-info segment in modeline for terminal Emacs
 + [ ] ui/doom-modeline: fix ~0/0~ display in modeline (leftover anzu state)
 + [ ] lang/php: automatic+async rebuild of tags (phpctags)
++ [X] Bring back evil-multiedit (works better for some workflows than evil-mc)
++ [X] Make ~doom-update-package~ atomic in case of failure
++ [X] Fix wrong-type-argument error when updating QUELPA packages
++ [X] Fix QUELPA outdated package detection
 + [X] Replace org-bullets source with more up-to-date fork
 + [X] Extract ~mode-name~ setters to ~doom-ui-mode-names~ in core/core-ui
 + [X] nav-flash: blink on focus-in
@@ -145,7 +150,6 @@
 + [X] Write ~describe-setting~ for ~def-setting!~ definitions.
 + [X] evil-mc: add ~:mc~ ex command
 + [X] evil-mc: add visual-block support for making cursors
-+ [X] evil-mc: replace ~evil-multiedit~ with ~evil-mc~ (?)
 + [X] feature/jump: recenter + blink after dumb-jump
 + [X] lang/haskell: add ~company-ghc~ completion support
 + [X] core-popup: stop on first ~+evil-esc-hook~ hook to return non-nil
