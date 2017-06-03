@@ -225,8 +225,16 @@ appropriate."
          (let ((quelpa-upgrade-p t))
            (quelpa (assq name quelpa-cache))))
         ('elpa
-         (doom-delete-package name t)
-         (doom-install-package name))))
+         (let* ((desc    (cadr (assq name package-alist)))
+                (archive (cadr (assq name package-archive-contents)))
+                (packages
+                 (if (package-desc-p archive)
+                     (package-compute-transaction (list archive) (package-desc-reqs archive))
+                   (package-compute-transaction () (list (list archive))))))
+           (package-download-transaction packages)
+           (when-let (old-dir (package-desc-dir desc))
+             (when (file-directory-p old-dir)
+               (delete-directory old-dir t)))))))
     (version-list-=
      (package-desc-version (cadr (assq name package-alist)))
      (package-desc-version (cadr (assq name package-archive-contents))))))
