@@ -58,11 +58,11 @@ renamed.")
   (add-hook! 'after-init-hook
     (if (display-graphic-p)
         (+workspaces|init)
-      (add-hook 'after-make-frame-functions '+workspaces|init)))
+      (add-hook 'after-make-frame-functions #'+workspaces|init)))
 
   (define-key persp-mode-map [remap delete-window] #'+workspace/close-window-or-workspace)
 
-  ;; Per-frame perspectives
+  ;; Spawn a perspective for each new frame
   (setq persp-init-new-frame-behaviour-override nil
         persp-interactive-init-frame-behaviour-override
         (lambda (frame &optional new-frame-p)
@@ -88,23 +88,25 @@ perspective-specific buffer list via `doom-buffer-list'."
   (advice-add #'switch-to-buffer :after #'+workspaces*auto-add-buffer)
   (advice-add #'display-buffer   :after #'+workspaces*auto-add-buffer)
 
-  (defun doom|new-workspace-on-project-change ()
+  (defun +workspaces|workspace-per-project ()
     "Create a new workspace when switching project with projectile."
     (+workspace-switch (projectile-project-name) t))
-  (add-hook 'projectile-before-switch-project-hook #'doom|new-workspace-on-project-change)
+  (add-hook 'projectile-before-switch-project-hook #'+workspaces|workspace-per-project)
 
-  (defun +workspaces*reinit-popups (&rest _)
-    "Runs `+workspaces-load-session-hook'."
-    (run-hook-with-args '+workspaces-load-session-hook (window-list)))
-  (advice-add #'persp-load-state-from-file :after #'+workspaces*reinit-popups)
-
-  (defun +workspaces|restore-popups (windows)
+  (defun +workspaces|restore-popups (&rest _)
     "Restore popup windows when loading a perspective from file."
-    (dolist (window windows)
+    (dolist (window (window-list))
       (when-let (plist (window-parameter window 'popup))
         (with-selected-window window
           (unless doom-popup-mode
             (setq-local doom-popup-rules plist)
             (doom-popup-mode +1))))))
-  (add-hook '+workspaces-load-session-hook #'+workspaces|restore-popups))
+  (advice-add #'persp-load-state-from-file :after #'+workspaces|restore-popups)
+
+  (defun +workspaces*autosave-real-buffers (orig-fn &rest args)
+    "Don't autosave if no real buffers are open."
+    (when (doom-real-buffers-list)
+      (apply orig-fn args))
+    t)
+  (advice-add #'persp-asave-on-exit :around #'+workspaces*autosave-real-buffers))
 
