@@ -1,5 +1,5 @@
-;;; fun/doom-quit/config.el
-;;
+;;; ui/doom-quit/config.el
+
 ;; A silly module that prompts you with messages when you try to quit, like DOOM
 ;; did. Some quotes are taken from Doom's quit-message list, others are random,
 ;; nerdy references that no decent human being has any business recognizing.
@@ -28,7 +28,10 @@ http://doom.wikia.com/wiki/Quit_messages and elsewhere.")
 
 (defun +doom-quit (&rest _)
   (if (doom-real-buffers-list)
-      (y-or-n-p (format "%s  Quit?" (nth (random (length +doom-quit-messages)) +doom-quit-messages)))
+      (y-or-n-p
+       (format "%s  Quit?"
+               (nth (random (length +doom-quit-messages))
+                    +doom-quit-messages)))
     t))
 
 (setq confirm-kill-emacs #'+doom-quit)

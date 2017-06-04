@@ -36,7 +36,7 @@ produces an url. Used by `+jump/online'.")
 (add-hook!
   '(imenu-after-jump-hook evil-jumps-post-jump-hook
     counsel-grep-post-action-hook dumb-jump-after-jump-hook)
-  'recenter)
+  #'recenter)
 
 
 ;;

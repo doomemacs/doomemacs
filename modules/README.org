@@ -40,7 +40,7 @@ These modules are in their ideal load order.
 
 + :feature :: Broad modules that bring essential functionality to Emacs as an editor.
 + :completion :: Swappable completion modules for narrowing down candidate lists quickly.
-+ :ui :: Modules that affect the DOOM user interface or experience.
++ :ui :: Aesthetic modules that affect the Emacs interface or user experience.
 + :tools :: Small modules that add specific, non-essential functionality to Emacs.
 + :lang :: Modules that bring support for a language or group of languages to Emacs.
 + :app :: Opinionated and heavy modules that totally transform Emacs' UI to serve a specific purpose.

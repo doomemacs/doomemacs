@@ -48,7 +48,7 @@
       ;ido             ; the other *other* search engine...
 
        :ui
-       doom            ; doom-one; a look inspired by Atom's Dark One
+       doom            ; what makes DOOM look the way it does
        doom-dashboard  ; a nifty splash screen for Emacs
        doom-modeline   ; a snazzy Atom-inspired mode-line
        doom-quit       ; DOOM quit-message prompts when you quit Emacs
@@ -97,8 +97,8 @@
        typescript      ; javascript, but better
        web             ; the tubes
 
-       ;; Applications are opinionated modules that transform Emacs to fulfill a
-       ;; specific purpose. They should be loaded last.
+       ;; Applications are complex and opinionated modules that transform Emacs
+       ;; toward a specific purpose. They should be loaded last.
        :app
       ;crm             ; TODO org-mode for client relations management
        email           ; Emacs as an email client

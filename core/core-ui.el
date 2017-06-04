@@ -14,20 +14,21 @@
  image-animate-loop t
  indicate-buffer-boundaries nil
  indicate-empty-lines nil
+ max-mini-window-height 0.3
+ mode-line-default-help-echo nil ; disable mode-line mouseovers
+ mouse-yank-at-point t           ; middle-click paste at point, not at click
+ resize-mini-windows 'grow-only  ; Minibuffer resizing
+ show-help-function nil          ; hide :help-echo text
+ split-width-threshold nil       ; favor horizontal splits
+ uniquify-buffer-name-style 'forward
+ use-dialog-box nil              ; always avoid GUI
+ visible-cursor nil
+ x-stretch-cursor nil
+ ;; defer jit font locking slightly to [try to] improve Emacs performance
  jit-lock-defer-time nil
  jit-lock-stealth-nice 0.1
  jit-lock-stealth-time 0.2
  jit-lock-stealth-verbose nil
- max-mini-window-height 0.3
- mode-line-default-help-echo nil  ; disable mode-line mouseovers
- mouse-yank-at-point t          ; middle-click paste at point, not at click
- resize-mini-windows 'grow-only ; Minibuffer resizing
- show-help-function nil         ; hide :help-echo text
- split-width-threshold nil      ; favor horizontal splits
- uniquify-buffer-name-style 'forward
- use-dialog-box nil             ; always avoid GUI
- visible-cursor nil
- x-stretch-cursor nil
  ;; `pos-tip' defaults
  pos-tip-internal-border-width 6
  pos-tip-border-width 1
@@ -197,11 +198,12 @@ file."
   :init
   (add-hook! (linum-mode nlinum-mode) #'hl-line-mode)
   :config
-  ;; stickiness doesn't play nice with emacs 25+
+  ;; I don't need hl-line showing in other windows. This also offers a small
+  ;; speed boost when buffer is displayed in multiple windows.
   (setq hl-line-sticky-flag nil
         global-hl-line-sticky-flag nil)
 
-  ;; acts weird with evil visual mode, so disable it temporarily
+  ;; Acts & looks weird with evil visual mode, so disable it temporarily
   (defun doom|hl-line-off () (hl-line-mode -1))
   (after! evil
     (add-hook! 'hl-line-mode-hook

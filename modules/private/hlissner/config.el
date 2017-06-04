@@ -5,14 +5,12 @@
   (load! +commands)) ; my custom ex commands
 
 (defvar +hlissner-dir
-  (file-name-directory load-file-name))
+  (eval-when-compile (file-name-directory load-file-name)))
 
 (defvar +hlissner-snippets-dir
   (expand-file-name "snippets/" +hlissner-dir))
 
-(setq user-mail-address "henrik@lissner.net"
-      user-full-name "Henrik Lissner"
-      epa-file-encrypt-to user-mail-address
+(setq epa-file-encrypt-to user-mail-address
       auth-sources (list (expand-file-name ".authinfo.gpg" +hlissner-dir)))
 
 (defun +hlissner*no-authinfo-for-tramp (orig-fn &rest args)

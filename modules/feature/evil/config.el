@@ -164,12 +164,6 @@ across windows."
 ;; Plugins
 ;;
 
-(def-package! evil-args
-  :commands (evil-inner-arg evil-outer-arg
-             evil-forward-arg evil-backward-arg
-             evil-jump-out-args))
-
-
 (def-package! evil-commentary
   :commands (evil-commentary evil-commentary-yank evil-commentary-line)
   :config (evil-commentary-mode 1))
@@ -177,7 +171,6 @@ across windows."
 
 (def-package! evil-easymotion
   :defer 1
-  :commands evilem-define
   :config
   (defvar +evil--snipe-repeat-fn
     (evilem-create #'evil-snipe-repeat
@@ -263,15 +256,6 @@ across windows."
   (add-hook '+evil-esc-hook #'+evil|escape-exchange))
 
 
-(def-package! evil-indent-plus
-  :commands (evil-indent-plus-i-indent
-             evil-indent-plus-a-indent
-             evil-indent-plus-i-indent-up
-             evil-indent-plus-a-indent-up
-             evil-indent-plus-i-indent-up-down
-             evil-indent-plus-a-indent-up-down))
-
-
 (def-package! evil-matchit
   :commands (evilmi-jump-items evilmi-text-object global-evil-matchit-mode)
   :config (global-evil-matchit-mode 1)
@@ -341,10 +325,6 @@ the new algorithm is confusing, like in python or ruby."
   (push 'evil-escape-mode evil-mc-incompatible-minor-modes))
 
 
-(def-package! evil-textobj-anyblock
-  :commands (evil-textobj-anyblock-inner-block evil-textobj-anyblock-a-block))
-
-
 (def-package! evil-snipe :demand t
   :init
   (setq evil-snipe-smart-case t
@@ -409,3 +389,24 @@ the new algorithm is confusing, like in python or ruby."
   (global-evil-visualstar-mode 1))
 
 
+;;
+;; Text object plugins
+;;
+
+(def-package! evil-args
+  :commands (evil-inner-arg evil-outer-arg
+             evil-forward-arg evil-backward-arg
+             evil-jump-out-args))
+
+
+(def-package! evil-indent-plus
+  :commands (evil-indent-plus-i-indent
+             evil-indent-plus-a-indent
+             evil-indent-plus-i-indent-up
+             evil-indent-plus-a-indent-up
+             evil-indent-plus-i-indent-up-down
+             evil-indent-plus-a-indent-up-down))
+
+
+(def-package! evil-textobj-anyblock
+  :commands (evil-textobj-anyblock-inner-block evil-textobj-anyblock-a-block))

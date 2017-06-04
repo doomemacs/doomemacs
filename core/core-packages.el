@@ -222,14 +222,14 @@ files."
 (defun doom-module-path (module submodule &optional file)
   "Get the full path to a module: e.g. :lang emacs-lisp maps to
 ~/.emacs.d/modules/lang/emacs-lisp/ and will append FILE if non-nil."
-  (unless (keywordp module)
-    (error "Expected a keyword, got %s" module))
-  (unless (symbolp submodule)
-    (error "Expected a symbol, got %s" submodule))
-  (let ((module-name (substring (symbol-name module) 1))
-        (submodule-name (symbol-name submodule)))
-    (expand-file-name (concat module-name "/" submodule-name "/" file)
-                      doom-modules-dir)))
+  (when (keywordp module)
+    (setq module (substring (symbol-name module) 1)))
+  (when (symbolp submodule)
+    (setq submodule (symbol-name submodule)))
+  (cl-assert (stringp module))
+  (cl-assert (stringp submodule))
+  (expand-file-name (concat module "/" submodule "/" file)
+                    doom-modules-dir))
 
 (defun doom-module-loaded-p (module submodule)
   "Returns t if MODULE->SUBMODULE is present in `doom-modules'."
