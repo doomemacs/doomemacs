@@ -1,0 +1,12 @@
+* :ui evil-goggles
+
+This module uses ~evil goggles~ to displays visual hints when editing with evil.
+
+** Install
+This module requires:
+
++ ~evil~ (inherently tied to evil mode)
+
+** Configure
+By default, ~evil-goggles~ will be enabled by default and requires no additional configuration.
+
