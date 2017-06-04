@@ -1,0 +1,21 @@
+* :ui nav-flash
+
+This module uses ~nav-flash~ to flash the line around the cursor after any motion command that might reasonably send the cursor somewhere the eyes can't follow.
+
+#+begin_quote
+Tremendously helpful on a 30" 2560x1600 display.
+#+end_quote
+
+** Install
+This module has no other dependencies.
+
+** Configure
+By default, ~nav-flash~ will be triggered whenever ~recenter~ is called. =:feature jump= attaches ~recenter~ to various hooks:
+
+#+BEGIN_SRC emacs-lisp
+(add-hook!
+  '(imenu-after-jump-hook evil-jumps-post-jump-hook
+    counsel-grep-post-action-hook dumb-jump-after-jump-hook)
+  #'recenter)
+#+END_SRC
+
