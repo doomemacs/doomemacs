@@ -224,7 +224,7 @@
      :desc "Debugger"            :n  "d" #'+debug/open
      :desc "REPL"                :n  "r" #'+eval/repl
                                  :v  "r" #'+eval:repl
-     :desc "Neotree"             :n  "n" #'+evil/neotree
+     :desc "Neotree"             :n  "n" #'+neotree/open
      :desc "Terminal"            :n  "t" #'+term/popup
      :desc "Terminal in project" :n  "T" #'+term/popup-in-project
 
@@ -519,8 +519,8 @@
    :n "k"         #'neotree-previous-line
    :n "n"         #'neotree-next-line
    :n "p"         #'neotree-previous-line
-   :n "h"         #'+evil/neotree-collapse-or-up
-   :n "l"         #'+evil/neotree-expand-or-open
+   :n "h"         #'+neotree/collapse-or-up
+   :n "l"         #'+neotree/expand-or-open
    :n "J"         #'neotree-select-next-sibling-node
    :n "K"         #'neotree-select-previous-sibling-node
    :n "H"         #'neotree-select-up-node

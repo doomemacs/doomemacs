@@ -1,7 +1,7 @@
-;;; feature/evil/autoload/neotree.el
+;;; tools/neotree/autoload.el
 
 ;;;###autoload
-(defun +evil/neotree ()
+(defun +neotree/toggle ()
   "Toggle the neotree window."
   (interactive)
   (let ((in-neotree (and (neo-global--window-exists-p)
@@ -18,18 +18,18 @@
         (neotree-find path project-root)))))
 
 ;;;###autoload
-(defun +evil/neotree-collapse-or-up ()
+(defun +neotree/collapse-or-up ()
   "Collapse an expanded directory node or go to the parent node."
   (interactive)
   (when-let (node (neo-buffer--get-filename-current-line))
     (if (file-directory-p node)
         (if (neo-buffer--expanded-node-p node)
-            (+evil/neotree-collapse)
+            (+neotree/collapse)
           (neotree-select-up-node))
       (neotree-select-up-node))))
 
 ;;;###autoload
-(defun +evil/neotree-collapse ()
+(defun +neotree/collapse ()
   "Collapse a neotree node."
   (interactive)
   (when-let (node (neo-buffer--get-filename-current-line))
@@ -40,7 +40,7 @@
       (neo-point-auto-indent))))
 
 ;;;###autoload
-(defun +evil/neotree-expand-or-open ()
+(defun +neotree/expand-or-open ()
   "Expand or open a neotree node."
   (interactive)
   (when-let (node (neo-buffer--get-filename-current-line))
