@@ -276,8 +276,7 @@ across windows."
   :commands (evilmi-jump-items evilmi-text-object global-evil-matchit-mode)
   :config (global-evil-matchit-mode 1)
   :init
-  (map! [remap evil-jump-item]    #'+evil/matchit
-        [remap evilmi-jump-items] #'+evil/matchit
+  (map! [remap evil-jump-item]    #'evilmi-jump-items
         :textobj "%" #'evilmi-text-object #'evilmi-text-object)
   :config
   (defun +evil|simple-matchit ()
