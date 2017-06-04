@@ -96,6 +96,14 @@ local value, whether or not it's permanent-local. Therefore, we cycle
       show-paren-when-point-inside-paren t)
 (show-paren-mode +1)
 
+;;; More reliable inter-window border
+;; The native border "consumes" a pixel of the fringe on righter-most splits,
+;; `window-divider' does not. Available since Emacs 25.1.
+(setq-default window-divider-default-places t
+              window-divider-default-bottom-width 1
+              window-divider-default-right-width 1)
+(window-divider-mode +1)
+
 ;; like diminish, but for major-modes. [pedantry intensifies]
 (defvar doom-ui-mode-names
   '((sh-mode . "sh")

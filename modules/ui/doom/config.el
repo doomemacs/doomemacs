@@ -28,15 +28,6 @@
       (set-face-attribute 'variable-pitch nil :font +doom-variable-pitch-font))))
 
 
-;;; More reliable inter-window border
-;; The native border "consumes" a pixel of the fringe on righter-most splits,
-;; `window-divider' does not. Available since Emacs 25.1.
-(setq window-divider-default-places t
-      window-divider-default-bottom-width 1
-      window-divider-default-right-width 1)
-(window-divider-mode +1)
-
-
 ;; doom-one: gives Emacs a look inspired by Dark One in Atom.
 ;; <https://github.com/hlissner/emacs-doom-theme>
 (def-package! doom-themes :demand t
