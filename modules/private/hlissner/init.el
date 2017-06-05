@@ -10,7 +10,7 @@
 (setq user-mail-address "henrik@lissner.net"
       user-full-name    "Henrik Lissner")
 
-(pcase system-name
+(pcase (system-name)
   ("proteus"
    (setq +doom-modeline-height 25
          +doom-font (font-spec :family "Fira Mono" :size 10)

@@ -1,5 +1,8 @@
 ;;; private/hlissner/autoload/hlissner.el
 
+(defvar +file-templates-dir)
+(defvar +hlissner-snippets-dir)
+
 ;;;###autoload
 (defun +hlissner/install-snippets ()
   "Install my snippets from https://github.com/hlissner/emacs-snippets into

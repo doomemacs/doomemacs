@@ -23,12 +23,12 @@
 ;;    byte-compile). Not having to initialize package.el (or check that your
 ;;    packages are installed) every time you start up Emacs affords us precious
 ;;    seconds.
-;; 5. Simplicity: No Cask, no external dependencies (unless you count make).
-;;    Arguably, this means my config is overcomplicated, but shhh, it's alright.
-;;    Everything is fine.
+;; 5. Simplicity: No Cask, no external dependencies (unless you count make),
+;;    just Emacs. Arguably, my config is still over-complicated, but shhh, it's
+;;    fine. Everything is fine.
 ;;
-;; Technically, package.el commands should still work. To be absolutely sure,
-;; use the doom alternatives:
+;; You should be able to use package.el commands without any conflicts, but to
+;; be absolutely certain use the doom alternatives:
 ;;
 ;;    + `package-install':          `doom/install-package'
 ;;    + `package-reinstall':        `doom/reinstall-package'
@@ -91,12 +91,12 @@ base by `doom!' and for calculating how many packages exist.")
 
       use-package-always-defer t
       use-package-always-ensure nil
-      use-package-expand-minimally (not doom-debug-mode)
+      use-package-expand-minimally (eval-when-compile (not doom-debug-mode))
       use-package-debug nil
       use-package-verbose doom-debug-mode
       use-package-minimum-reported-time (if doom-debug-mode 0 0.1)
 
-      ;; Don't use MELPA, we'll use package.el for those
+      ;; Don't track MELPA, we'll use package.el for that
       quelpa-checkout-melpa-p nil
       quelpa-update-melpa-p nil
       quelpa-melpa-recipe-stores nil
@@ -165,10 +165,12 @@ to speed up startup."
     (quiet! (doom/reload-autoloads))))
 
 (defun doom-initialize-packages (&optional force-p load-p)
-  "Crawls across your emacs.d in order to fill `doom-modules' (from init.el) and
-`doom-packages' (from packages.el files), if they aren't set already. If FORCE-P
-is non-nil, do it even if they are. Also aggressively loads all core autoload
-files."
+  "Crawls across your emacs.d to fill `doom-modules' (from init.el) and
+`doom-packages' (from packages.el files), if they aren't set already.
+
+If FORCE-P is non-nil, do it even if they are.
+
+This aggressively reloads core autoload files."
   (doom-initialize force-p)
   (let ((noninteractive t)
         (load-fn
@@ -223,8 +225,6 @@ files."
     (setq module (substring (symbol-name module) 1)))
   (when (symbolp submodule)
     (setq submodule (symbol-name submodule)))
-  (cl-assert (stringp module))
-  (cl-assert (stringp submodule))
   (expand-file-name (concat module "/" submodule "/" file)
                     doom-modules-dir))
 
@@ -264,7 +264,7 @@ Used by `require!' and `depends-on!'."
   (message "Loaded %s packages in %.03fs"
            ;; Certainly imprecise, especially where custom additions to
            ;; load-path are concerned, but I don't mind a [small] margin of
-           ;; error in the plugin count.
+           ;; error in the plugin count in exchange for faster startup.
            (- (length load-path) (length doom--base-load-path))
            (setq doom-init-time (float-time (time-subtract after-init-time before-init-time)))))
 

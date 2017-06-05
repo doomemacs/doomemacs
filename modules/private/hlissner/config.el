@@ -5,7 +5,7 @@
   (load! +commands)) ; my custom ex commands
 
 (defvar +hlissner-dir
-  (eval-when-compile (file-name-directory load-file-name)))
+  (file-name-directory load-file-name))
 
 (defvar +hlissner-snippets-dir
   (expand-file-name "snippets/" +hlissner-dir))
