@@ -286,10 +286,7 @@ byte-compilation."
      (setq doom-modules ',doom-modules)
 
      (unless noninteractive
-       ,(let ((private-init (doom-module-path :private user-login-name "init")))
-          (when (file-exists-p (concat private-init ".el"))
-            `(load ,private-init t t)))
-
+       (load ,(doom-module-path :private user-login-name "init") t t)
        ,@(let (forms)
            (dolist (module (doom--module-pairs))
              (push `(require! ,(car module) ,(cdr module) t) forms))
@@ -351,7 +348,7 @@ throw an error if the file doesn't exist."
       (error "Could not find %s" filesym))
     (let ((file (expand-file-name (concat (symbol-name filesym) ".el") path)))
       (if (file-exists-p file)
-          `(load ,(file-name-sans-extension file) ,noerror (not doom-debug-mode))
+          `(load ,(file-name-sans-extension file) ,noerror ,(not doom-debug-mode))
         (unless noerror
           (error "Could not load! file %s" file))))))
 
