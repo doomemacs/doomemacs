@@ -285,7 +285,7 @@ properties."
     "Force spawned term buffer to share with the eshell popup (if necessary)."
     (when (doom-popup-p)
       (set-window-dedicated-p nil nil)
-      (add-transient-hook! eshell-query-kill-processes :after
+      (add-transient-hook! #'eshell-query-kill-processes :after
         (set-window-dedicated-p nil t)))
     (apply orig-fn args))
   (advice-add #'eshell-exec-visual :around #'doom*eshell-undedicate-popup))

@@ -36,7 +36,7 @@
 (def-package! evil-anzu
   :when (featurep 'evil)
   :init
-  (add-transient-hook! evil-ex-start-search (require 'evil-anzu))
+  (add-transient-hook! #'evil-ex-start-search (require 'evil-anzu))
   :config
   (setq anzu-cons-mode-line-p nil
         anzu-minimum-input-length 1

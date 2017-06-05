@@ -151,7 +151,7 @@ see if NAME should be activated.
        (add-hook! ,name
          (run-hook-with-args 'doom-project-hook ',name))
        ,(when init-form
-          `(add-transient-hook! ',(intern-soft (format "%s-hook" name))
+          `(add-transient-hook! ',(intern (format "%s-hook" name))
              ,init-form)))))
 
 (provide 'core-projects)

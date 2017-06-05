@@ -44,14 +44,14 @@
   ;; `add-transient-hook!'
   (ert-deftest transient-hooks ()
     (let (hooks value)
-      (add-transient-hook! hooks (setq value t))
+      (add-transient-hook! 'hooks (setq value t))
       (run-hooks 'hooks)
       (should (eq value t))
       (should (null hooks))))
 
   (ert-deftest transient-function ()
     (let (value)
-      (add-transient-hook! ignore (setq value (not value)))
+      (add-transient-hook! #'ignore (setq value (not value)))
       (ignore t)
       (should (eq value t))
       ;; repeat to ensure it was only run once

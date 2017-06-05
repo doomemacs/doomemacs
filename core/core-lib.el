@@ -93,20 +93,28 @@ compilation."
                (save-silently t))
        ,@forms)))
 
+(defvar doom--transient-counter 0)
 (defmacro add-transient-hook! (hook &rest forms)
-  "Attaches transient forms to a hook (can also be a function, which will be
-advised instead). These forms will be evaluated only once when that
-function/hook is first invoked, then it detaches itself."
+  "Attaches transient forms to a HOOK.
+
+HOOK can be a quoted hook or a sharp-quoted function (which will be advised).
+
+These forms will be evaluated once when that function/hook is first invoked,
+then it detaches itself."
   (declare (indent 1))
-  (let ((fn (intern (format "doom--transient-hook-%s" hook)))
-        (append (eq (car forms) :after)))
-    `(progn
-       (defun ,fn (&rest _)
-         ,@forms
-         ,(cond ((functionp hook) `(advice-remove #',hook #',fn))
-                ((symbolp hook) `(remove-hook ',hook #',fn))))
-       ,(cond ((functionp hook) `(advice-add #',hook ,(if append :after :before) #',fn))
-              ((symbolp hook) `(add-hook ',hook #',fn ,append))))))
+  (let ((append (eq (car forms) :after))
+        (fn (intern (format "doom-transient-hook-%s" (cl-incf doom--transient-counter)))))
+    `(when ,hook
+       (fset ',fn
+             (lambda (&rest _)
+               ,@forms
+               (cond ((functionp ,hook) (advice-remove ,hook #',fn))
+                     ((symbolp ,hook)   (remove-hook ,hook #',fn)))
+               (unintern ',fn nil)))
+       (cond ((functionp ,hook)
+              (advice-add ,hook ,(if append :after :before) #',fn))
+             ((symbolp ,hook)
+              (add-hook ,hook #',fn ,append))))))
 
 (defmacro add-hook! (&rest args)
   "A convenience macro for `add-hook'. Takes, in order:

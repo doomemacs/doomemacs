@@ -13,7 +13,7 @@
   :init
   ;; Ensure `yas-reload-all' is called as late as possible. Other modules could
   ;; have additional configuration for yasnippet. For example, file-templates.
-  (add-transient-hook! yas-minor-mode-hook (yas-reload-all))
+  (add-transient-hook! 'yas-minor-mode-hook (yas-reload-all))
 
   (add-hook! (text-mode prog-mode snippet-mode)
     #'yas-minor-mode-on)
