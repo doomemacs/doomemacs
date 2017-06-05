@@ -59,6 +59,9 @@ package's name as a symbol, and whose CDR is the plist supplied to its
   "A list of packages that must be installed (and will be auto-installed if
 missing) and shouldn't be deleted.")
 
+(defvar doom-disabled-packages ()
+  "A list of packages that should be ignored by `def-package!'.")
+
 (defvar doom--site-load-path load-path
   "The load path of built in Emacs libraries.")
 
@@ -301,25 +304,36 @@ byte-compilation."
 
        (add-hook 'after-init-hook #'doom--display-benchmark t))))
 
-(defalias 'def-package! 'use-package
-  "An alias for `use-package'. Note that packages are deferred by default.")
+(defmacro def-package! (name &rest plist)
+  "A thin wrapper around `use-package'."
+  (when (and (memq name doom-disabled-packages)
+             (not (memq :disabled plist)))
+    (setq plist (append (list :disabled t) plist)))
+  `(use-package ,name ,@plist))
 
 (defmacro def-package-hook! (package when &rest body)
   "Configure a package using use-package hooks (see `use-package-inject-hooks').
 
 PACKAGE is the package name.
-WHEN should be one of the following: :pre-init :post-init :pre-config :post-config
+WHEN should be one of the following:
+  :pre-init :post-init :pre-config :post-config
 
-Note that if a :pre-init hook returns nil, that block’s original configuration
-is not evaluated."
+WHEN can also be :disable (then BODY is ignored), which will instruct DOOM to
+ignore any `def-package!' blocks for PACKAGE."
   (declare (indent defun))
-  `(progn
-     (setq use-package-inject-hooks t)
-     (add-hook!
-       ',(intern (format "use-package--%s--%s-hook"
-                         package
-                         (substring (symbol-name when) 1)))
-       ,@body)))
+  (cond ((eq when :disable)
+         (push package doom-disabled-packages)
+         nil)
+        ((memq when '(:pre-init :post-init :pre-config :post-config))
+         `(progn
+            (setq use-package-inject-hooks t)
+            (add-hook!
+              ',(intern (format "use-package--%s--%s-hook"
+                                package
+                                (substring (symbol-name when) 1)))
+              ,@body)))
+        (t
+         (error "'%s' isn't a valid hook for def-package-hook!" when))))
 
 (defmacro load! (filesym &optional path noerror)
   "Loads a file relative to the current module (or PATH). FILESYM is a file path
