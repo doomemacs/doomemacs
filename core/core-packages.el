@@ -286,11 +286,16 @@ byte-compilation."
      (setq doom-modules ',doom-modules)
 
      (unless noninteractive
-       (load "~/.emacs.local.el" t t)
+       ,(let ((private-init (doom-module-path :private user-login-name "init")))
+          (when (file-exists-p (concat private-init ".el"))
+            `(load ,private-init t t)))
 
        ,@(let (forms)
-           (dolist (module (doom--module-pairs) (nreverse forms))
-             (push `(require! ,(car module) ,(cdr module) t) forms)))
+           (dolist (module (doom--module-pairs))
+             (push `(require! ,(car module) ,(cdr module) t) forms))
+           (unless (doom-module-loaded-p :private (intern user-login-name))
+             (push `(require! :private ,user-login-name t) forms))
+           (nreverse forms))
 
        (when (display-graphic-p)
          (require 'server)

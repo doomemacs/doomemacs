@@ -110,7 +110,8 @@
        twitter         ; twitter client https://twitter.com/vnought
        write           ; emacs as a word processor (latex + org + markdown)
 
-       ;; Private modules aren't tracked in source control (except for mine).
-       ;; Use it as a reference for your own.
+       ;; Private modules named after your username are loaded automatically.
+       ;; Leaving this here is harmless though. Also, they are omitted from
+       ;; source control (except for mine; use it as a reference).
        :private hlissner)
 
