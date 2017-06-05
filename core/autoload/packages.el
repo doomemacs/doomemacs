@@ -71,6 +71,18 @@ list of the package."
         (list name old-version new-version)))))
 
 ;;;###autoload
+(defun doom-package-ignored-p (name)
+  "Return t if NAME (a package symbol) has an :ignore property."
+  (doom-initialize-packages)
+  (plist-get (cdr (assq name doom-packages)) :ignore))
+
+;;;###autoload
+(defun doom-package-frozen-p (name)
+  "Return t if NAME (a package symbol) has an :frozen property."
+  (doom-initialize-packages)
+  (plist-get (cdr (assq name doom-packages)) :freeze))
+
+;;;###autoload
 (defun doom-get-packages (&optional backend)
   "Retrieves a list of explicitly installed packages (i.e. non-dependencies).
 Each element is a cons cell, whose car is the package symbol and whose cdr is
@@ -103,12 +115,18 @@ Be careful not to use it in a loop."
   (package--get-deps name only))
 
 ;;;###autoload
-(defun doom-get-outdated-packages ()
+(defun doom-get-outdated-packages (&optional include-frozen-p)
   "Return a list of packages that are out of date. Each element is a list,
 containing (PACKAGE-SYMBOL OLD-VERSION-LIST NEW-VERSION-LIST).
 
+If INCLUDE-FROZEN-P is non-nil, check frozen packages as well.
+
 Used by `doom/packages-update'."
-  (delq nil (mapcar #'doom-package-outdated-p (mapcar #'car (doom-get-packages)))))
+  (let ((pkgs (mapcar #'car (doom-get-packages))))
+    (delq nil
+          (mapcar #'doom-package-outdated-p
+                  (if include-frozen-p pkgs
+                    (cl-remove-if #'doom-package-frozen-p pkgs))))))
 
 ;;;###autoload
 (defun doom-get-orphaned-packages ()
@@ -119,21 +137,25 @@ Used by `doom/packages-autoremove'."
   (doom-initialize-packages t)
   (let ((package-selected-packages
          (append (mapcar #'car doom-packages) doom-core-packages)))
-    (cl-set-difference (package--removable-packages)
-                       doom-protected-packages)))
+    (package--removable-packages)))
 
 ;;;###autoload
-(defun doom-get-missing-packages ()
+(defun doom-get-missing-packages (&optional include-ignored-p)
   "Return a list of requested packages that aren't installed or built-in, but
 are enabled (with a `package!' directive). Each element is a list whose CAR is
 the package symbol, and whose CDR is a plist taken from that package's
 `package!' declaration.
 
+If INCLUDE-IGNORED-P is non-nil, includes missing packages that are ignored,
+i.e. they have an :ignore property.
+
 Used by `doom/packages-install'."
   (cl-remove-if (lambda (pkgsym)
-                  (or (assq (car pkgsym) package-alist)
-                      (and (not (plist-get (assq (car pkgsym) doom-packages) :pin))
-                           (assq (car pkgsym) package--builtins))))
+                  (let ((pkg (car pkgsym)))
+                    (or (assq pkg package-alist)
+                        (unless include-ignored-p (doom-package-ignored-p pkg))
+                        (and (not (plist-get (assq pkg doom-packages) :pin))
+                             (assq pkg package--builtins)))))
                 (doom-get-packages)))
 
 ;;;###autoload

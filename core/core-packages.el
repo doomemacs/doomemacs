@@ -56,9 +56,6 @@ package's name as a symbol, and whose CDR is the plist supplied to its
   "A list of packages that must be installed (and will be auto-installed if
 missing) and shouldn't be deleted.")
 
-(defvar doom-protected-packages nil
-  "A list of packages that shouldn't be deleted by `doom/packages-autoremove'.")
-
 (defvar doom-init-time nil
   "The time it took, in seconds, for DOOM Emacs to initialize.")
 
@@ -359,6 +356,8 @@ Accepts the following properties:
                        from external sources.
  :pin ARCHIVE-NAME     Instructs ELPA to only look for this package in
                        ARCHIVE-NAME. e.g. \"org\". Ignored if RECIPE is present.
+ :ignore t             Do not install this package.
+ :freeze t             Do not update this package.
 
 This macro serves a purely declarative purpose, and are used to fill
 `doom-packages', so that functions like `doom/packages-install' can operate on
@@ -380,6 +379,7 @@ them."
                      :test #'eq :key #'car))
        (when ,(and old-plist t)
          (assq-delete-all ',name doom-packages))
+       ;; :ignore and :freeze are handled upstream
        (push ',(cons name plist) doom-packages))))
 
 (defmacro depends-on! (module submodule)
