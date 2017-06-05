@@ -1,0 +1,41 @@
+* :feature evil
+
+This holy module brings vim to Emacs.
+
+** Removing evil-mode
+Some users want vanilla Emacs back. To do so remove =:feature evil= from init.el. Evil-specific configuration and keybindings (defined with ~map!~) will be ignored without evil present (and removed when byte-compiling).
+
+** Differences from vanilla evil
+*** Overview
++ A better ~:g[lobal]~ command with match highlighting
++ ~:al[ign]~: an ex interface to ~align-regexp~ with match highlighting
++ Support for more of vim's filename modifiers in ex commands (like ~:p~, ~:p:h~ or ~:t~) than vanilla evil-mode offers.
++ A list of new text objects:
+  + Blocks: ~B~ (from ~evil-textobj-anyblock~)
+  + Args: ~a~ (from ~evil-args~)
+  + Indentation: ~i~ / ~I~ / ~J~ (from ~evil-indent-plus~)
++ Ported vim plugins:
+  + ~vim-commentary~ => ~evil-commentary~
+  + ~vim-easymotion~ => ~evil-easymotion~
+  + ~vim-multiedit~ => ~evil-multiedit~
+  + ~vim-multiple-cursors~ => ~evil-mc~ & ~evil-multiedit~
+  + ~vim-seek~ or ~vim-sneak~ => ~evil-snipe~
+  + ~vim-surround~ => ~evil-embrace~ & ~evil-surround~
++ =NERDTree= equivalent is available in =:tools neotree=
+
+*** Multiple-cursors
+Two multiple-cursor implementations exist in this module: ~evil-mc~ and ~evil-multiedit~. Together, these provide the functionality of ~vim-multiple-cursors~.
+
+The former lets you place "clone" cursors. The latter lets you interactively edit many regions from one place (like an interactive version of ~:%s~).
+
+*** A saner code-folding system
+This module combines ~evil-vimish-fold~ (allows arbitrary folds) and ~hideshow~ (folds based on markers and indent) to create a more consistent code-folding system. All the vim folding keys should work (=zr=, =zm=, =za=, =zo=, etc).
+
+*** Hacks
++ Automatically moves to new window when splitting
++ If in visual mode, =*= and =#= will search for the current selection instead of the word-at-point.
+
+** Differences from vim
++ Column-wise ranges in ex commands are enabled by default. i.e. the range in =:'<,'>s/a/b= will only affects the visual selection, not full lines (see ~evil-ex-visual-char-range~).
++ =:g= will highlight buffer matches incrementally.
+
