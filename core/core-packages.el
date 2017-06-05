@@ -304,6 +304,23 @@ byte-compilation."
 (defalias 'def-package! 'use-package
   "An alias for `use-package'. Note that packages are deferred by default.")
 
+(defmacro def-package-hook! (package when &rest body)
+  "Configure a package using use-package hooks (see `use-package-inject-hooks').
+
+PACKAGE is the package name.
+WHEN should be one of the following: :pre-init :post-init :pre-config :post-config
+
+Note that if a :pre-init hook returns nil, that block’s original configuration
+is not evaluated."
+  (declare (indent defun))
+  `(progn
+     (setq use-package-inject-hooks t)
+     (add-hook!
+       ',(intern (format "use-package--%s--%s-hook"
+                         package
+                         (substring (symbol-name when) 1)))
+       ,@body)))
+
 (defmacro load! (filesym &optional path noerror)
   "Loads a file relative to the current module (or PATH). FILESYM is a file path
 as a symbol. PATH is a directory to prefix it with. If NOERROR is non-nil, don't
