@@ -100,12 +100,9 @@ sake."
 ;; Handles whitespace (tabs/spaces) settings externally. This way projects can
 ;; specify their own formatting rules.
 (def-package! editorconfig
+  :demand t
   :mode ("\\.?editorconfig$" . editorconfig-conf-mode)
   :init
-  ;; deferred loading, the clumsy way
-  (add-transient-hook! 'find-file-hook (require 'editorconfig))
-  (add-transient-hook! 'after-change-major-mode-hook (require 'editorconfig))
-
   (def-setting! :editorconfig (action value)
     ":add or :remove an entry in `editorconfig-indentation-alist'."
     `(after! editorconfig
