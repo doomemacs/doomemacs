@@ -36,6 +36,8 @@
   :config
   (load-theme +doom-theme t)
 
+  ;; blink mode-line on errors
+  (doom-themes-visual-bell-config)
 
   ;; Add file icons to doom-neotree
   (doom-themes-neotree-config)

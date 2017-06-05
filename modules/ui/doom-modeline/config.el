@@ -55,22 +55,6 @@
     (add-hook 'iedit-mode-end-hook #'anzu--reset-status)))
 
 
-;;; Flash the mode-line on error
-;; TODO More flexible colors (only suits dark themes)
-;; FIXME fast key-repeat can make the mode-line bg get stuck (rare)
-(defvar doom--visual-bell-old-bg nil)
-(defun doom-visual-bell ()
-  "Blink the mode-line red briefly."
-  (unless doom--visual-bell-old-bg
-    (setq doom--visual-bell-old-bg (face-background 'mode-line)))
-  (set-face-background 'mode-line "#54252C")
-  (run-with-timer
-   0.1 nil
-   (lambda () (set-face-background 'mode-line doom--visual-bell-old-bg))))
-(setq ring-bell-function #'doom-visual-bell
-      visible-bell nil)
-
-
 ;; Keep `+doom-modeline-current-window' up-to-date
 (defvar +doom-modeline-current-window (frame-selected-window))
 (defun +doom-modeline|set-selected-window (&rest _)
