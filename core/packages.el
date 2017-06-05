@@ -15,6 +15,7 @@
 (package! highlight-indentation)
 (package! highlight-numbers)
 (package! nlinum)
+(package! nlinum-hl)
 (package! rainbow-delimiters)
 (package! vi-tilde-fringe)
 (package! visual-fill-column)

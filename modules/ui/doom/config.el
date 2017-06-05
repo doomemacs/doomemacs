@@ -30,12 +30,12 @@
 
 ;; doom-one: gives Emacs a look inspired by Dark One in Atom.
 ;; <https://github.com/hlissner/emacs-doom-theme>
-(def-package! doom-themes :demand t
+(def-package! doom-themes
+  :load-path "~/work/plugins/emacs-doom-themes/"
+  :demand t
   :config
   (load-theme +doom-theme t)
 
-  ;; nlinum line highlighting
-  (doom-themes-nlinum-config)
 
   ;; Add file icons to doom-neotree
   (doom-themes-neotree-config)

@@ -234,46 +234,23 @@ file."
   (add-hook! (prog-mode text-mode)
     (unless (eq major-mode 'org-mode)
       (nlinum-mode +1)))
-
   :config
-  (defun doom-nlinum-flush-window (&optional window)
-    (let ((window (or window (selected-window)))
-          (orig-win (selected-window)))
-      (with-selected-window window
-        (when nlinum-mode
-          (if (not (eq window orig-win))
-              (nlinum--flush)
-            ;; done in two steps to leave current line number highlighting alone
-            (nlinum--region (point-min) (max 1 (1- (line-beginning-position))))
-            (nlinum--region (min (point-max) (1+ (line-end-position))) (point-max)))))))
-
-  ;; nlinum has a tendency to lose line numbers over time; a known issue. These
-  ;; hooks/advisors attempt to stave off these glitches.
-  (defun doom*nlinum-flush-all-windows (&rest _)
-    "Fix nlinum margins after major UI changes (like a change of font)."
-    (mapc #'doom-nlinum-flush-window (doom-visible-windows))
-    nil)
-  (advice-add #'set-frame-font :after #'doom*nlinum-flush-all-windows)
-
-  (defun doom*nlinum-flush (&optional _ norecord)
-    ;; norecord check is necessary to prevent infinite recursion in
-    ;; `select-window'
-    (when (not norecord) (doom-nlinum-flush-window)))
-  (advice-add #'select-window :before #'doom*nlinum-flush)
-  (advice-add #'select-window :after  #'doom*nlinum-flush)
-  (add-hook '+evil-esc-hook #'doom*nlinum-flush-all-windows t)
-  (add-hook 'focus-in-hook  #'doom*nlinum-flush-all-windows)
-  (add-hook 'focus-out-hook #'doom*nlinum-flush-all-windows)
-
-  ;;
-  (after! web-mode
-    (advice-add #'web-mode-fold-or-unfold :after #'doom*nlinum-flush))
-
   ;; Optimization: calculate line number column width beforehand
   (add-hook! nlinum-mode
     (setq nlinum--width
           (length (save-excursion (goto-char (point-max))
                                   (format-mode-line "%l"))))))
+
+;; Highlight current line, and other nlinum tweaks/fixes
+(def-package! nlinum-hl
+  :after nlinum
+  :init (add-hook 'nlinum-mode-hook #'nlinum-hl-mode)
+  :config
+  ;; nlinum has a tendency to lose line numbers over time; a known issue. These
+  ;; hooks/advisors attempt to stave off these glitches.
+  (advice-add #'select-window :before #'nlinum-hl-do-flush)
+  (advice-add #'select-window :after  #'nlinum-hl-do-flush)
+  (add-hook '+evil-esc-hook #'nlinum-hl-flush-all-windows t))
 
 ;; Helps us distinguish stacked delimiter pairs. Especially in parentheses-drunk
 ;; languages like Lisp.
