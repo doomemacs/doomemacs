@@ -47,37 +47,12 @@
   (set-face-attribute 'italic nil
                       :weight 'ultra-light
                       :foreground "#ffffff"
-                      :background (face-background 'doom-hl-line))
+                      :background (doom-color 'current-line))
 
   ;; Dark frames by default
   (when (display-graphic-p)
-    (push (cons 'background-color (face-background 'default)) initial-frame-alist)
-    (push (cons 'foreground-color (face-foreground 'default)) initial-frame-alist))
-
-  (defun +doom|buffer-mode-on ()
-    "Enable `doom-buffer-mode' in buffers that are real (see
-`doom-real-buffer-p')."
-    (when (and (not doom-buffer-mode)
-               (doom-real-buffer-p))
-      (doom-buffer-mode +1)))
-  (add-hook 'after-change-major-mode-hook #'+doom|buffer-mode-on)
-
-  (defun +doom|buffer-mode-off ()
-    "Disable `doom-buffer-mode' in popup buffers."
-    (when doom-buffer-mode
-      (doom-buffer-mode -1)))
-  (add-hook 'doom-popup-mode-hook #'+doom|buffer-mode-off)
-
-  ;; restore `doom-buffer-mode' when loading a persp-mode session
-  (add-hook '+workspaces-load-session-hook #'+doom|restore-bright-buffers)
-
-  ;; Extra modes to activate doom-buffer-mode in
-  (add-hook! (gist-mode
-              twittering-mode
-              mu4e-view-mode
-              org-tree-slide-mode
-              +regex-mode)
-    #'doom-buffer-mode)
+    (push (cons 'background-color (doom-color 'bg)) initial-frame-alist)
+    (push (cons 'foreground-color (doom-color 'fg)) initial-frame-alist))
 
   (after! neotree
     (defun +doom|neotree-fix-popup ()
@@ -85,6 +60,23 @@
       (neo-global--when-window
         (doom--neotree-no-fringes)))
     (add-hook 'doom-popup-mode-hook #'+doom|neotree-fix-popup nil t)))
+
+
+(def-package! solaire-mode
+  :commands (solaire-mode turn-on-solaire-mode turn-off-solaire-mode)
+  :init
+  (add-hook 'after-change-major-mode-hook #'turn-on-solaire-mode)
+  (add-hook 'doom-popup-mode-hook #'turn-off-solaire-mode)
+  :config
+  (setq solaire-mode-real-buffer-fn #'doom-real-buffer-p)
+
+  ;; Extra modes to activate doom-buffer-mode in
+  (add-hook! (gist-mode
+              twittering-mode
+              mu4e-view-mode
+              org-tree-slide-mode
+              +regex-mode)
+    #'solaire-mode))
 
 
 (after! hideshow
