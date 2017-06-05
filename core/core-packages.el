@@ -43,10 +43,13 @@
   "Non-nil if doom's package system has been initialized (by `doom-initialize').
 This will be nil if you have byte-compiled your configuration (as intended).")
 
-(defvar doom-modules nil
+(defvar doom-init-time nil
+  "The time it took, in seconds, for DOOM Emacs to initialize.")
+
+(defvar doom-modules ()
   "A hash table of enabled modules. Set by `doom-initialize-modules'.")
 
-(defvar doom-packages nil
+(defvar doom-packages ()
   "A list of enabled packages. Each element is a sublist, whose CAR is the
 package's name as a symbol, and whose CDR is the plist supplied to its
 `package!' declaration. Set by `doom-initialize-packages'.")
@@ -56,13 +59,10 @@ package's name as a symbol, and whose CDR is the plist supplied to its
   "A list of packages that must be installed (and will be auto-installed if
 missing) and shouldn't be deleted.")
 
-(defvar doom-init-time nil
-  "The time it took, in seconds, for DOOM Emacs to initialize.")
-
 (defvar doom--site-load-path load-path
   "The load path of built in Emacs libraries.")
 
-(defvar doom--package-load-path nil
+(defvar doom--package-load-path ()
   "The load path of package libraries installed via ELPA or QUELPA.")
 
 (defvar doom--base-load-path

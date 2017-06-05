@@ -224,7 +224,7 @@ Used by `doom/packages-install'."
 example; the package name can be omitted)."
   (doom-initialize-packages)
   (when (package-installed-p name)
-    (user-error "%s is already installed, skipping" name))
+    (user-error "%s is already installed" name))
   (let ((plist (or plist (cdr (assq name doom-packages))))
         (inhibit-message (not doom-debug-mode))
         (recipe (plist-get plist :recipe)))
