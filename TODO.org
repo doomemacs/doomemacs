@@ -5,7 +5,7 @@
 + [-] Work-in-progress
 + [X] Complete
 
-** Planned [11/76]
+** Planned [16/86]
 + [0/14] Potential plugins
   + [ ] completion/ivy: [[https://github.com/yevgnen/ivy-rich][ivy-rich]], possible replacement for my ivy-buffer modifications (undecided)
   + [ ] app/present: [[https://github.com/larstvei/Focus][focus]], for presenting code
@@ -26,13 +26,14 @@
   + [ ] app/irc
   + [-] app/crm
   + [-] app/write
-+ [11/58] Add README.org's (with working babel blocks?) to modules (see [[modules/lang/go/README.org][lang/go/README.org]]) to replace bootstaps
-  + [0/9] :tools
++ [14/60] Add README.org's (with working babel blocks?) to modules (see [[modules/lang/go/README.org][lang/go/README.org]]) to replace bootstaps
+  + [1/10] :tools
     + [ ] dired
     + [ ] electric-indent
     + [ ] eshell
     + [ ] gist
     + [ ] macos
+    + [X] neotree
     + [ ] rotate-text
     + [ ] term
     + [ ] tmux
@@ -63,10 +64,10 @@
     + [ ] swift
     + [ ] typescript
     + [ ] web
-  + [1/10] :feature
+  + [2/10] :feature
     + [ ] debug
     + [X] eval
-    + [ ] evil
+    + [X] evil
     + [ ] file-templates
     + [ ] jump
     + [ ] snippets
@@ -74,12 +75,13 @@
     + [ ] syntax-checker
     + [ ] version-control
     + [ ] workspaces
-  + [2/5] :ui
+  + [3/6] :ui
     + [X] doom
     + [ ] doom-dashboard
     + [X] doom-modeline
     + [ ] doom-quit
     + [ ] hl-todo
+    + [X] nav-flash
   + [2/4] :completion
     + [X] ivy
     + [X] company
@@ -91,12 +93,17 @@
     + [ ] rss
     + [ ] twitter
     + [ ] present
-
-** 2.0.3 [58/87]
 + [2/3] Finish module :: feature/jump (go-to-definition that just works)
   + [ ] automatic tag generation
   + [X] global tags support
   + [X] Fix fallback chain (xref => dumb-jump => ag/rg (?))
++ [ ] lang/php: automatic+async rebuild of tags (phpctags)
++ [ ] ui/doom-modeline: extend ~media-info~ segment for other media
++ [-] core-ui: replace (or fix) ~winner-mode~ (too unreliable with shackle)
++ [ ] tools/upload: add ~+upload/open-remote-file~ command to open current file on the remote (with TRAMP)
++ [ ] Reformat this todo (too messy/busy)
+
+** 2.0.3 [64/89]
 + [1/13] New module :: tools/regex (PCRE IDE)
   + [X] perl backend
   + [-] replace support
@@ -123,17 +130,21 @@
   + [X] Fix M-RET in plain lists not preserving indent level for new items
   + [X] don't move cursor when toggling folds
   + [X] don't move cursor when realigning org tables
-+ [ ] Reformat this todo (too messy/busy)
-+ [ ] feature/workspaces: don't save session if session is already blank
++ [ ] Fix ui/doom-dashboard not showing when connecting from emacsclient
++ [ ] New plugin: evil-goggles
++ [ ] Fix autosave file appearing in recentf
++ [ ] feature/workspaces: bookmarks-for-wconfs interface
 + [ ] bin/org-alert: cron script that scans TODOs in org files and dispatches system alerts
-+ [ ] tools/upload: add ~+upload/open-remote-file~ command to open current file
-      on the remote (with TRAMP)
-+ [-] core-ui: replace (or fix) ~winner-mode~ (too unreliable with shackle)
-+ [ ] Generalize ~doom-visual-bell~ by basing its background off a face
-+ [ ] ui/doom-modeline: extend ~media-info~ segment for other media
 + [ ] Fix invisible buffer-info segment in modeline for terminal Emacs
 + [ ] ui/doom-modeline: fix ~0/0~ display in modeline (leftover anzu state)
-+ [ ] lang/php: automatic+async rebuild of tags (phpctags)
++ [X] Defer editorconfig, savehist, saveplace, undo-tree & recentf in core-editor
++ [X] Load =private/<user-login-name>/init.el= before modules
++ [X] Fix lingering hl-line overlays
++ [X] =private/<user-login-name>= is now autoloaded
++ [X] ui/doom: replace doom-buffer-mode with solaire-mode
++ [X] ui/doom: replace doom-nlinum with nlinum-hl
++ [X] feature/workspaces: don't save session if session is already blank
++ [X] Fix evil-matchit in visual mode
 + [X] Bring back evil-multiedit (works better for some workflows than evil-mc)
 + [X] Make ~doom-update-package~ atomic in case of failure
 + [X] Fix wrong-type-argument error when updating QUELPA packages
