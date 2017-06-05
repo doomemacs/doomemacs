@@ -153,7 +153,7 @@ enable multiple minor modes for the same regexp.")
 (setq gc-cons-threshold 402653184
       gc-cons-percentage 0.6)
 
-(let (file-name-handler-list)
+(let (file-name-handler-alist)
   (require 'cl-lib)
   (eval-and-compile
     (require 'core-packages (concat doom-core-dir "core-packages")))
