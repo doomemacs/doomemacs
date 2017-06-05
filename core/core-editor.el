@@ -44,34 +44,6 @@ modes are active and the buffer is read-only.")
  word-wrap t
  vc-follow-symlinks t)
 
-;; Save point across sessions
-(require 'saveplace)
-(setq save-place-file (concat doom-cache-dir "saveplace"))
-(save-place-mode +1)
-
-;; Save history across sessions
-(require 'savehist)
-(setq savehist-file (concat doom-cache-dir "savehist")
-      savehist-save-minibuffer-history t
-      savehist-autosave-interval nil ; save on kill only
-      savehist-additional-variables '(kill-ring search-ring regexp-search-ring))
-(savehist-mode 1)
-
-;; Branching & persistent undo
-(require 'undo-tree)
-(setq undo-tree-auto-save-history t
-      undo-tree-history-directory-alist (list (cons "." (concat doom-cache-dir "undo-tree-hist/"))))
-
-;; Keep track of recently opened files
-(require 'recentf)
-(setq recentf-save-file (concat doom-cache-dir "recentf")
-      recentf-exclude (list "/tmp/" "/ssh:" "\\.?ido\\.last$" "\\.revive$" "/TAGS$"
-                            "^/var/folders/.+$" doom-local-dir)
-      recentf-max-menu-items 0
-      recentf-max-saved-items 250
-      recentf-filename-handlers '(abbreviate-file-name))
-(quiet! (recentf-mode 1))
-
 ;; Ediff: use existing frame instead of creating a new one
 (add-hook! ediff-load
   (setq ediff-diff-options           "-w"
@@ -127,10 +99,15 @@ sake."
 
 ;; Handles whitespace (tabs/spaces) settings externally. This way projects can
 ;; specify their own formatting rules.
-(def-package! editorconfig :demand t
+(def-package! editorconfig
   :mode ("\\.?editorconfig$" . editorconfig-conf-mode)
   :init
+  ;; deferred loading, the clumsy way
+  (add-transient-hook! 'find-file-hook (require 'editorconfig))
+  (add-transient-hook! 'after-change-major-mode-hook (require 'editorconfig))
+
   (def-setting! :editorconfig (action value)
+    ":add or :remove an entry in `editorconfig-indentation-alist'."
     `(after! editorconfig
        ,(cond ((eq action :add)
                `(push ',value editorconfig-indentation-alist))
@@ -147,6 +124,35 @@ sake."
   ;; Show whitespace in tabs indentation mode
   (add-hook! 'editorconfig-custom-hooks
     (if indent-tabs-mode (whitespace-mode +1))))
+
+;; NOTE I've extracted some of savehist/saveplace's init code into def-package
+;; blocks so that they can benefit from deferred loading.
+
+;; persistent history
+(def-package! savehist
+  :commands (savehist-minibuffer-hook savehist-autosave)
+  :init
+  (add-hook 'minibuffer-setup-hook #'savehist-minibuffer-hook)
+  (add-hook 'kill-emacs-hook #'savehist-autosave)
+  :config
+  (setq savehist-file (concat doom-cache-dir "savehist")
+        savehist-save-minibuffer-history t
+        savehist-autosave-interval nil ; save on kill only
+        savehist-additional-variables '(kill-ring search-ring regexp-search-ring))
+  (savehist-mode 1))
+
+;; persistent point
+(def-package! saveplace
+  :commands (save-place-find-file-hook save-place-dired-hook save-place-kill-emacs-hook save-place-to-alist)
+  :init
+  (add-hook 'find-file-hook #'save-place-find-file-hook t)
+  (add-hook 'dired-initial-position-hook #'save-place-dired-hook)
+  (add-hook 'kill-buffer-hook #'save-place-to-alist)
+  (unless noninteractive
+    (add-hook 'kill-emacs-hook #'save-place-kill-emacs-hook))
+  :config
+  (setq save-place-file (concat doom-cache-dir "saveplace"))
+  (save-place-mode +1))
 
 ;; Auto-close delimiters and blocks as you type
 (def-package! smartparens :demand t
@@ -179,6 +185,31 @@ sake."
     :unless '(sp-point-before-word-p sp-point-before-same-p))
   (sp-local-pair '(xml-mode nxml-mode php-mode)
                  "<!--" "-->"   :post-handlers '(("| " "SPC"))))
+
+;; Branching & persistent undo
+(def-package! undo-tree
+  :init
+  (add-transient-hook! 'find-file-hook (require 'undo-tree))
+  :config
+  (setq undo-tree-auto-save-history t
+        undo-tree-history-directory-alist (list (cons "." (concat doom-cache-dir "undo-tree-hist/"))))
+
+  (defun doom*silent-undo-tree-load-history-hook (orig-fn &rest args)
+    "Silence undo-tree load errors."
+    (quiet! (apply orig-fn args)))
+  (advice-add #'undo-tree-load-history-hook :around #'doom*silent-undo-tree-load-history-hook))
+
+;; Keep track of recently opened files
+(def-package! recentf
+  :defer 1
+  :config
+  (setq recentf-save-file (concat doom-cache-dir "recentf")
+        recentf-exclude (list "/tmp/" "/ssh:" "\\.?ido\\.last$" "\\.revive$" "/TAGS$"
+                              "^/var/folders/.+$" doom-local-dir)
+        recentf-max-menu-items 0
+        recentf-max-saved-items 250
+        recentf-filename-handlers '(abbreviate-file-name))
+  (quiet! (recentf-mode 1)))
 
 
 ;;
