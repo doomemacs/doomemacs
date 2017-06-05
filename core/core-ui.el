@@ -211,6 +211,10 @@ file."
   (setq hl-line-sticky-flag nil
         global-hl-line-sticky-flag nil)
 
+  ;; Fix lingering hl-line overlays
+  (add-hook! 'hl-line-mode-hook
+    (remove-overlays (point-min) (point-max) 'face 'hl-line))
+
   ;; Acts & looks weird with evil visual mode, so disable it temporarily
   (defun doom|hl-line-off () (hl-line-mode -1))
   (after! evil
