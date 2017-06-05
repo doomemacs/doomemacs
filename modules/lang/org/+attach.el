@@ -13,9 +13,10 @@
 (defun +org|init-attach ()
   (setq org-attach-directory +org-attachment-dir)
 
-  ;; Don't track attachments in recentf or projectile
-  (push (format "/%s.+$" (regexp-quote +org-attachment-dir)) recentf-exclude)
+  ;; Don't track attachments in projectile or recentf
   (push ".attach" projectile-globally-ignored-file-suffixes)
+  (after! recentf
+    (push (format "/%s.+$" (regexp-quote +org-attachment-dir)) recentf-exclude))
 
   ;; FIXME Use all-the-icons
   ;; (doom-fix-unicode '("FontAwesome" 13) ? ? ? ? ? ? ? ?)

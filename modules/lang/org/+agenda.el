@@ -9,12 +9,13 @@
    org-agenda-inhibit-startup t
    org-agenda-skip-unavailable-files nil)
 
-  ;; Don't clobber recentf with agenda files
-  (defun +org-is-agenda-file (filename)
-    (cl-find (file-truename filename) org-agenda-files
-             :key #'file-truename
-             :test #'equal))
-  (add-to-list 'recentf-exclude #'+org-is-agenda-file)
+  (after! recentf
+    ;; Don't clobber recentf with agenda files
+    (defun +org-is-agenda-file (filename)
+      (cl-find (file-truename filename) org-agenda-files
+               :key #'file-truename
+               :test #'equal))
+    (add-to-list 'recentf-exclude #'+org-is-agenda-file))
 
   ;;
   (map! :map org-agenda-mode-map
