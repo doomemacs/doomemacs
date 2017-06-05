@@ -307,12 +307,6 @@ the new algorithm is confusing, like in python or ruby."
                 doom/backward-kill-to-bol-and-indent doom/newline-and-indent))
     (push (cons fn '((:default . evil-mc-execute-default-call))) evil-mc-custom-known-commands))
 
-  ;; if I'm in insert mode, chances are I want cursors to resume
-  (add-hook! 'evil-mc-before-cursors-created
-    (add-hook 'evil-insert-state-entry-hook #'evil-mc-resume-cursors nil t))
-  (add-hook! 'evil-mc-after-cursors-deleted
-    (remove-hook 'evil-insert-state-entry-hook #'evil-mc-resume-cursors t))
-
   (defun +evil|escape-multiple-cursors ()
     "Clear evil-mc cursors and restore state."
     (when (evil-mc-has-cursors-p)
