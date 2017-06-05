@@ -503,6 +503,7 @@ If ONLY-RECOMPILE-P is non-nil, only recompile out-of-date files."
   ;; don't need eval-when-compile and require blocks scattered all over.
   (doom-initialize-packages t t)
   (let ((targets (append (list "init.el" doom-core-dir)
+                         (list (doom-module-path :private user-login-name "init.el"))
                          (unless lite-p (doom--module-paths))))
         (total-success 0)
         (total-fail 0)
