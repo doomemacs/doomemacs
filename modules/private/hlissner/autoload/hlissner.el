@@ -1,8 +1,5 @@
 ;;; private/hlissner/autoload/hlissner.el
 
-(defvar +file-templates-dir)
-(defvar +hlissner-snippets-dir)
-
 ;;;###autoload
 (defun +hlissner/install-snippets ()
   "Install my snippets from https://github.com/hlissner/emacs-snippets into
@@ -23,12 +20,10 @@ private/hlissner/snippets."
   "Define a pair of find-file and browse functions."
   `(progn
      (defun ,(intern (format "+hlissner/find-in-%s" name)) ()
-       ,(format "Find a file in %s" (abbreviate-file-name (eval dir)))
        (interactive)
        (let ((default-directory ,dir))
          (call-interactively (command-remapping #'projectile-find-file))))
      (defun ,(intern (format "+hlissner/browse-%s" name)) ()
-       ,(format "Browse files starting from %s" (abbreviate-file-name (eval dir)))
        (interactive)
        (let ((default-directory ,dir))
          (call-interactively (command-remapping #'find-file))))))
