@@ -2,7 +2,7 @@
 
 [![MIT](https://img.shields.io/badge/license-MIT-green.svg)](./LICENSE)
 [![DOOM v2.0.2](https://img.shields.io/badge/DOOM-v2.0.2-blue.svg)](./init.el)
-[![Build Status](https://travis-ci.org/hlissner/.emacs.d.png?branch=v2)](https://travis-ci.org/hlissner/.emacs.d)
+[![Build Status](https://travis-ci.org/hlissner/.emacs.d.svg?branch=master)](https://travis-ci.org/hlissner/.emacs.d)
 
 <a href="http://ultravioletbat.deviantart.com/art/Yay-Evil-111710573">
   <img src="https://raw.githubusercontent.com/hlissner/.emacs.d/screenshots/cacochan.png" align="right" />
