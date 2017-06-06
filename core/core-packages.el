@@ -184,6 +184,7 @@ This aggressively reloads core autoload files."
     (when (or force-p (not doom-modules))
       (setq doom-modules nil)
       (funcall load-fn (expand-file-name "init.el" doom-emacs-dir))
+      (funcall load-fn (doom-module-path :private user-login-name "init.el"))
       (when load-p
         (mapc (lambda (file) (funcall load-fn file t))
               (append (nreverse (file-expand-wildcards (concat doom-core-dir "core*.el")))
@@ -503,7 +504,6 @@ If ONLY-RECOMPILE-P is non-nil, only recompile out-of-date files."
   ;; don't need eval-when-compile and require blocks scattered all over.
   (doom-initialize-packages t t)
   (let ((targets (append (list "init.el" doom-core-dir)
-                         (list (doom-module-path :private user-login-name "init.el"))
                          (unless lite-p (doom--module-paths))))
         (total-success 0)
         (total-fail 0)
