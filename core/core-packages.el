@@ -74,6 +74,8 @@ missing) and shouldn't be deleted.")
   "A backup of `load-path' before it was altered by `doom-initialize'. Used as a
 base by `doom!' and for calculating how many packages exist.")
 
+(defvar doom--refresh-p nil)
+
 (setq load-prefer-newer noninteractive
       package--init-file-ensured t
       package-user-dir (expand-file-name "elpa" doom-packages-dir)
@@ -148,7 +150,8 @@ to speed up startup."
     ;; Ensure core packages are installed
     (let ((core-packages (cl-remove-if #'package-installed-p doom-core-packages)))
       (when core-packages
-        (package-refresh-contents)
+        (package-refresh-contents t)
+        (setq doom--refresh-p t)
         (dolist (pkg core-packages)
           (let ((inhibit-message t))
             (package-install pkg))
