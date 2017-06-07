@@ -58,5 +58,8 @@ init.el:
 .local/autoloads.el:
 	@$(EMACS) -f doom-initialize-autoloads
 
+%.elc: %.el
+	@$(EMACS) -f doom/compile -- $<
+
 
 .PHONY: all test $(TESTS) $(MODULES)
