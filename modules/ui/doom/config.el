@@ -72,6 +72,11 @@
   :config
   (setq solaire-mode-real-buffer-fn #'doom-real-buffer-p)
 
+  ;; Prevent color glitches when reloading either DOOM or the theme
+  (defun +doom|reset-solaire-mode (&rest _) (solaire-mode-reset))
+  (advice-add #'load-theme :after #'+doom|reset-solaire-mode)
+  (add-hook 'doom-reload-hook #'solaire-mode-reset)
+
   ;; Extra modes to activate doom-buffer-mode in
   (add-hook! (gist-mode
               twittering-mode
