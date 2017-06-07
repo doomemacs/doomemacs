@@ -39,6 +39,9 @@ clean:
 clean-cache:
 	@$(EMACS) -f doom/clean-cache
 
+clean-pcache:
+	@$(EMACS) -l persistent-soft --eval '(delete-directory pcache-directory t)'
+
 test: init.el .local/autoloads.el
 	@$(TEST_EMACS) $(patsubst %,-l %, $(TESTS)) -f ert-run-tests-batch-and-exit
 
