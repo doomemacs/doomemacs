@@ -142,6 +142,9 @@ mode is detected.")
 ;; Plugins
 ;;
 
+(def-package! fringe-helper
+  :commands fringe-helper-define)
+
 (def-package! hideshow ; built-in
   :commands (hs-minor-mode hs-toggle-hiding hs-already-hidden-p)
   :config
