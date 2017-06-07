@@ -89,9 +89,9 @@
 (after! hideshow
   (defface +doom-folded-face
     `((((background dark))
-       (:inherit font-lock-comment-face :background ,(doom-color 'black)))
+       (:inherit font-lock-comment-face :background ,(doom-color 'base0)))
       (((background light))
-       (:inherit font-lock-comment-face :background ,(doom-color 'light-grey))))
+       (:inherit font-lock-comment-face :background ,(doom-color 'base3))))
     "Face to hightlight `hideshow' overlays."
     :group 'doom)
 
