@@ -1,8 +1,8 @@
 ;;; feature/ui/evil-goggles/autoload.el
 
 ;;;###autoload
-(defun +evil-goggles/toggle-evil-goggles ()
-  "Toggle evil goggles mode"
+(defun +evil-goggles/toggle ()
+  "Toggle evil goggles mode."
   (interactive)
   (if evil-goggles-mode
       (evil-goggles-mode -1)

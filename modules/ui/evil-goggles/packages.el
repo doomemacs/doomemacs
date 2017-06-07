@@ -1,4 +1,5 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; ui/evil-goggles/packages.el
 
-(package! evil-goggles)
+(when (featurep! :feature evil)
+  (package! evil-goggles))

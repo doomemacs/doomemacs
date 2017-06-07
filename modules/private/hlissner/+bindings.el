@@ -280,7 +280,7 @@
      :desc "Indent guides (column)" :n "I" #'highlight-indentation-current-column-mode
      :desc "Impatient mode"         :n "h" #'+present/impatient-mode
      :desc "Big mode"               :n "b" #'+present/big-mode
-     :desc "Evil goggles"           :n "g" #'+evil-goggles/toggle-evil-goggles))
+     :desc "Evil goggles"           :n "g" #'+evil-goggles/toggle))
 
 
  ;; --- Personal vim-esque bindings ------------------
