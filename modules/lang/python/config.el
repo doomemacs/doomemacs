@@ -7,9 +7,9 @@
         python-indent-guess-indent-offset-verbose nil
         python-shell-interpreter "python")
 
-  (add-hook 'python-mode-hook #'flycheck-mode)
-
   :config
+  (add-hook! 'python-mode-hook #'(flycheck-mode highlight-numbers-mode))
+
   (set! :repl 'python-mode #'+python/repl)
   (set! :electric 'python-mode :chars '(?:))
   (define-key python-mode-map (kbd "DEL") nil) ; interferes with smartparens
