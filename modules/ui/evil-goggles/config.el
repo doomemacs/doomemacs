@@ -4,7 +4,6 @@
   :when (featurep! :feature evil)
   :commands evil-goggles-mode
   :init
-  (add-hook 'after-init-hook #'evil-goggles-mode)
-  :config
-  (setq evil-goggles-duration 0.1)
-  (evil-goggles-use-diff-faces))
+  (setq evil-goggles-duration 0.1
+        evil-goggles-enable-delete nil)
+  (add-hook 'emacs-startup-hook #'evil-goggles-mode t))
