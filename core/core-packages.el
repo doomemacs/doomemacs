@@ -148,16 +148,16 @@ to speed up startup."
           load-path (append load-path doom--package-load-path))
 
     ;; Ensure core packages are installed
-    (let ((core-packages (cl-remove-if #'package-installed-p doom-core-packages)))
-      (when core-packages
-        (package-refresh-contents t)
-        (setq doom--refresh-p t)
-        (dolist (pkg core-packages)
-          (let ((inhibit-message t))
-            (package-install pkg))
-          (if (package-installed-p pkg)
-              (message "Installed %s" pkg)
-            (error "Couldn't install %s" pkg)))))
+    (dolist (pkg doom-core-packages)
+      (unless (package-installed-p pkg)
+        (unless doom--refresh-p
+          (package-refresh-contents)
+          (setq doom--refresh-p t))
+        (let ((inhibit-message t))
+          (package-install pkg))
+        (if (package-installed-p pkg)
+            (message "Installed %s" pkg)
+          (error "Couldn't install %s" pkg))))
 
     (load "quelpa" nil t)
     (load "use-package" nil t)
