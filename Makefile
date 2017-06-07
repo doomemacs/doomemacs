@@ -3,6 +3,7 @@ EMACS_LIBS=-l core/core.el
 EMACS=emacs --batch --eval '(setq user-emacs-directory default-directory)' $(EMACS_LIBS)
 TEST_EMACS=$(EMACS) --eval '(setq noninteractive nil)' $(EMACS_LIBS)
 TESTS=$(shell find test/ -type f -name 'test-*.el')
+MODULES=$(shell find modules/ -maxdepth 2 -type d)
 
 # Tasks
 all: autoloads autoremove install update
@@ -28,6 +29,10 @@ compile: init.el clean
 core: init.el clean
 	@$(EMACS) -f doom/compile -- init.el core/{,autoload/}*.el
 
+$(MODULES): init.el .local/autoloads.el
+	@rm -fv $(shell find $@ -maxdepth 2 -type f -name '*.elc')
+	@$(EMACS) -f doom/compile -- $(shell find $@ -maxdepth 2 -type f -name '*.el')
+
 clean:
 	@$(EMACS) -f doom/clean-compiled
 
@@ -51,4 +56,4 @@ init.el:
 	@$(EMACS) -f doom-initialize-autoloads
 
 
-.PHONY: all test $(TESTS)
+.PHONY: all test $(TESTS) $(MODULES)
