@@ -22,9 +22,10 @@
 (defun +evil/reselect-paste ()
   "Go back into visual mode and reselect the last pasted region."
   (interactive)
-  (evil-goto-mark ?\[)
-  (evil-visual-state)
-  (evil-goto-mark ?\]))
+  (destructuring-bind (_ _ _ beg end) evil-last-paste
+    (evil-visual-make-selection
+     (save-excursion (goto-char beg) (point-marker))
+     end)))
 
 ;;;###autoload
 (defun +evil*ex-replace-special-filenames (file-name)
