@@ -36,9 +36,9 @@ it. DOOM is designed to benefit from this. It will boost startup times and make
 Emacs feel a bit snappier in general.
 
 ```bash
-make compile       # may take a while
+make compile  # may take a while
 # or
-make compile-lite  # faster alternative; only compiles core files
+make core     # faster alternative; only compiles init.el & core files
 
 # If you byte-compile, changes to the config won't take effect until you
 # recompile or delete the byte-compiled files with:

@@ -25,8 +25,8 @@ recompile: init.el
 compile: init.el clean
 	@$(EMACS) -f doom/compile
 
-compile-lite: init.el clean
-	@$(EMACS) -f doom/compile-lite
+core: init.el clean
+	@$(EMACS) -f doom/compile -- init.el core/{,autoload/}*.el
 
 clean:
 	@$(EMACS) -f doom/clean-compiled
