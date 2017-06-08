@@ -160,7 +160,10 @@ mode is detected.")
   (advice-add #'all-the-icons-alltheicon :around #'doom*disable-all-the-icons-in-tty))
 
 (def-package! fringe-helper
-  :commands fringe-helper-define)
+  :commands (fringe-helper-define fringe-helper-convert)
+  :init
+  (unless (fboundp 'define-fringe-bitmap)
+    (fset 'define-fringe-bitmap (lambda (&rest _)))))
 
 (def-package! hideshow ; built-in
   :commands (hs-minor-mode hs-toggle-hiding hs-already-hidden-p)

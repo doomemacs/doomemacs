@@ -111,32 +111,31 @@
              ov 'display (propertize "  [...]  " 'face '+doom-folded-face))))))
 
 
-(when (and (display-graphic-p) (fboundp 'define-fringe-bitmap))
-  ;; NOTE Adjust these bitmaps if you change `doom-ui-fringe-size'
-  (after! flycheck
-    ;; because git-gutter is in the left fringe
-    (setq flycheck-indication-mode 'right-fringe)
-    ;; A non-descript, left-pointing arrow
-    (fringe-helper-define 'flycheck-fringe-bitmap-double-arrow 'center
-      "...X...."
-      "..XX...."
-      ".XXX...."
-      "XXXX...."
-      ".XXX...."
-      "..XX...."
-      "...X...."))
+;; NOTE Adjust these bitmaps if you change `doom-ui-fringe-size'
+(after! flycheck
+  ;; because git-gutter is in the left fringe
+  (setq flycheck-indication-mode 'right-fringe)
+  ;; A non-descript, left-pointing arrow
+  (fringe-helper-define 'flycheck-fringe-bitmap-double-arrow 'center
+    "...X...."
+    "..XX...."
+    ".XXX...."
+    "XXXX...."
+    ".XXX...."
+    "..XX...."
+    "...X...."))
 
-  ;; subtle diff indicators in the fringe
-  (after! git-gutter-fringe
-    ;; places the git gutter outside the margins.
-    (setq-default fringes-outside-margins t)
-    ;; thin fringe bitmaps
-    (fringe-helper-define 'git-gutter-fr:added '(center repeated)
-      "XXX.....")
-    (fringe-helper-define 'git-gutter-fr:modified '(center repeated)
-      "XXX.....")
-    (fringe-helper-define 'git-gutter-fr:deleted 'bottom
-      "X......."
-      "XX......"
-      "XXX....."
-      "XXXX....")))
+;; subtle diff indicators in the fringe
+(after! git-gutter-fringe
+  ;; places the git gutter outside the margins.
+  (setq-default fringes-outside-margins t)
+  ;; thin fringe bitmaps
+  (fringe-helper-define 'git-gutter-fr:added '(center repeated)
+    "XXX.....")
+  (fringe-helper-define 'git-gutter-fr:modified '(center repeated)
+    "XXX.....")
+  (fringe-helper-define 'git-gutter-fr:deleted 'bottom
+    "X......."
+    "XX......"
+    "XXX....."
+    "XXXX...."))
