@@ -260,6 +260,8 @@ file."
     (unless (eq major-mode 'org-mode)
       (nlinum-mode +1)))
   :config
+  (setq nlinum-highlight-current-line t)
+
   ;; Optimization: calculate line number column width beforehand
   (add-hook! nlinum-mode
     (setq nlinum--width
