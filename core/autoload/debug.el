@@ -1,10 +1,10 @@
 ;;; debug.el
 
 ;;;###autoload
-(defun doom/what-face (pos)
-  "Lists all faces at point. Overlay faces are <>-delimited."
+(defun doom/what-face (&optional pos)
+  "Lists all faces at point. Overlay faces are denoted with an asterix."
   (interactive "d")
-  (let ((pos (point))
+  (let ((pos (or pos (point)))
         faces)
     (when-let (face (get-text-property pos 'face))
       (dolist (f (if (listp face) face (list face)))
