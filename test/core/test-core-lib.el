@@ -41,6 +41,13 @@
       (should (null hooks-b))
       (should (null hooks-c))))
 
+  (ert-deftest remove-hook-forms ()
+    (let (hooks)
+      (add-hook! 'hooks (message "Hello world"))
+      (should hooks)
+      (remove-hook! 'hooks (message "Hello world"))
+      (should (null hooks))))
+
   ;; `add-transient-hook!'
   (ert-deftest transient-hooks ()
     (let (hooks value)
