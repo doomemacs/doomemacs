@@ -43,10 +43,10 @@ clean-pcache:
 	@$(EMACS) -l persistent-soft --eval '(delete-directory pcache-directory t)'
 
 test: init.el .local/autoloads.el
-	@$(TEST_EMACS) $(patsubst %,-l %, $(TESTS)) -f ert-run-tests-batch-and-exit
+	@$(TEST_EMACS) $(patsubst %,-l %, $(TESTS)) -l test/run.el
 
 $(TESTS): init.el .local/autoloads.el
-	@$(TEST_EMACS) $(patsubst %,-l %, $@) -f ert-run-tests-batch-and-exit
+	@$(TEST_EMACS) $(patsubst %,-l %, $@) -l test/run.el
 
 doctor:
 	@./bin/doctor
