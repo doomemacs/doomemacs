@@ -1,4 +1,4 @@
-;;; ui/doom/autoload/evil.el
+;;; ui/doom/autoload/evil.el -*- lexical-binding: t; -*-
 
 ;;;###autoload (autoload '+doom:scratch-buffer "ui/doom/autoload/evil" nil t)
 (evil-define-operator +doom:scratch-buffer (&optional beg end bang)
@@ -6,7 +6,7 @@
 region to it. If BANG, use current window instead of a popup."
   :move-point nil :type inclusive
   (interactive "<r><!>")
-  (let ((text (when (and (evil-visual-state-p) beg end)
+  (let ((text (when (and (not (evil-normal-state-p)) beg end)
                 (buffer-substring beg end)))
         (mode major-mode)
         (old-project (doom-project-root))

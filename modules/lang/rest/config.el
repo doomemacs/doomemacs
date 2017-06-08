@@ -1,4 +1,4 @@
-;;; lang/rest/config.el
+;;; lang/rest/config.el -*- lexical-binding: t; -*-
 
 (def-package! restclient
   :commands restclient-mode

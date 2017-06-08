@@ -1,5 +1,4 @@
-;; -*- no-byte-compile: t; -*-
-;;; packages.el
+;;; core/autoload/packages.el -*- lexical-binding: t; -*-
 
 (defvar doom--last-refresh nil)
 
@@ -15,10 +14,11 @@
         (progn
           (message "Refreshing package archives")
           (package-refresh-contents (not doom-debug-mode))
-          (let ((i 0))
-            (while package--downloads-in-progress
-              (sleep-for 0 250))
-            (persistent-soft-store 'last-pkg-refresh t "emacs" 900)))
+          (cl-loop for i from 0
+                   while (and package--downloads-in-progress
+                              (<= i 10))
+                   do (sleep-for 0 250))
+          (persistent-soft-store 'last-pkg-refresh t "emacs" 900))
     (error
      (doom-refresh-clear-cache)
      (message "Failed to refresh packages: %s" (cadr ex))))))
@@ -85,7 +85,7 @@ list of the package."
   (plist-get (cdr (assq name doom-packages)) :freeze))
 
 ;;;###autoload
-(defun doom-get-packages (&optional backend)
+(defun doom-get-packages ()
   "Retrieves a list of explicitly installed packages (i.e. non-dependencies).
 Each element is a cons cell, whose car is the package symbol and whose cdr is
 the quelpa recipe (if any).
@@ -96,12 +96,12 @@ the packages relevant to that backend.
 Warning: this function is expensive; it re-evaluates all of doom's config files.
 Be careful not to use it in a loop."
   (doom-initialize-packages t)
-  (delq nil
-        (mapcar (lambda (pkgsym)
-                  (or (assq pkgsym doom-packages)
-                      (list (car (assq pkgsym package-alist)))))
-                (cl-delete-duplicates
-                 (append doom-core-packages (mapcar #'car doom-packages))))))
+  (cl-loop with packages = (append doom-core-packages (mapcar #'car doom-packages))
+           for sym in (cl-delete-duplicates packages)
+           if (or (assq sym doom-packages)
+                  (and (assq sym package-alist)
+                       (list sym)))
+           collect it))
 
 ;;;###autoload
 (defun doom-get-depending-on (name)
@@ -124,11 +124,11 @@ containing (PACKAGE-SYMBOL OLD-VERSION-LIST NEW-VERSION-LIST).
 If INCLUDE-FROZEN-P is non-nil, check frozen packages as well.
 
 Used by `doom/packages-update'."
-  (let ((pkgs (mapcar #'car (doom-get-packages))))
-    (delq nil
-          (mapcar #'doom-package-outdated-p
-                  (if include-frozen-p pkgs
-                    (cl-remove-if #'doom-package-frozen-p pkgs))))))
+  (cl-loop for pkg in (doom-get-packages)
+           if (or (and (doom-package-frozen-p (car pkg))
+                       include-frozen-p)
+                  (doom-package-outdated-p (car pkg)))
+           collect it))
 
 ;;;###autoload
 (defun doom-get-orphaned-packages ()
@@ -152,13 +152,14 @@ If INCLUDE-IGNORED-P is non-nil, includes missing packages that are ignored,
 i.e. they have an :ignore property.
 
 Used by `doom/packages-install'."
-  (cl-remove-if (lambda (pkgsym)
-                  (let ((pkg (car pkgsym)))
-                    (or (assq pkg package-alist)
-                        (unless include-ignored-p (doom-package-ignored-p pkg))
-                        (and (not (plist-get (assq pkg doom-packages) :pin))
-                             (assq pkg package--builtins)))))
-                (doom-get-packages)))
+  (cl-loop for pkgsym in (doom-get-packages)
+           unless
+           (let ((pkg (car pkgsym)))
+             (or (assq pkg package-alist)
+                 (unless include-ignored-p (doom-package-ignored-p pkg))
+                 (and (not (plist-get (assq pkg doom-packages) :pin))
+                      (assq pkg package--builtins))))
+           collect pkgsym))
 
 ;;;###autoload
 (defun doom*package-delete (desc &rest _)
@@ -180,16 +181,14 @@ Used by `doom/packages-install'."
 
 (defun doom--packages-choose (prompt)
   (doom-initialize)
-  (let* ((table (mapcar
-                 (lambda (p) (cons (package-desc-full-name p) p))
-                 (delq nil
-                       (mapcar (lambda (p) (unless (package-built-in-p p) p))
-                               (apply #'append (mapcar #'cdr package-alist))))))
-         (name (completing-read
-                prompt
-                (mapcar #'car table)
-                nil t)))
-    (cdr (assoc name table))))
+  (let ((table (cl-loop for pkg in package-alist
+                        unless (package-built-in-p (cdr pkg))
+                        collect (cons (package-desc-full-name (cdr pkg))
+                                      (cdr pkg)))))
+    (cdr (assoc (completing-read prompt
+                                 (mapcar #'car table)
+                                 nil t)
+                table))))
 
 (defmacro doom--condition-case! (&rest body)
   `(condition-case ex
@@ -229,20 +228,21 @@ example; the package name can be omitted)."
     (user-error "%s is already installed" name))
   (let ((plist (or plist (cdr (assq name doom-packages))))
         (inhibit-message (not doom-debug-mode))
-        (recipe (plist-get plist :recipe)))
+        (recipe (plist-get plist :recipe))
+        quelpa-upgrade-p)
     (cond (recipe (quelpa recipe))
-          (t (package-install name))))
-  (when (package-installed-p name)
-    (cl-pushnew (cons name plist) doom-packages :test #'eq :key #'car)
-    t))
+          (t (package-install name)))
+    (when (package-installed-p name)
+      (cl-pushnew (cons name plist) doom-packages :test #'eq :key #'car)
+      t)))
 
-(defun doom-update-package (name)
+(defun doom-update-package (name &optional force-p)
   "Updates package NAME if it is out of date, using quelpa or package.el as
 appropriate."
   (doom-initialize)
   (unless (package-installed-p name)
     (user-error "%s isn't installed" name))
-  (when (doom-package-outdated-p name)
+  (when (or force-p (doom-package-outdated-p name))
     (let ((inhibit-message (not doom-debug-mode))
           (desc (cadr (assq name package-alist))))
       (pcase (doom-package-backend name)
@@ -258,12 +258,11 @@ appropriate."
                      (package-compute-transaction (list archive) (package-desc-reqs archive))
                    (package-compute-transaction () (list (list archive))))))
            (package-download-transaction packages))))
-      (when-let (old-dir (package-desc-dir desc))
-        (when (file-directory-p old-dir)
-          (delete-directory old-dir t)))
-      (version-list-<
-       (package-desc-version desc)
-       (package-desc-version (cadr (assq name package-alist)))))))
+      (unless (doom-package-outdated-p name)
+        (when-let (old-dir (package-desc-dir desc))
+          (when (file-directory-p old-dir)
+            (delete-directory old-dir t)))
+        t))))
 
 (defun doom-delete-package (name &optional force-p)
   "Uninstalls package NAME if it exists, and clears it from `quelpa-cache'."
@@ -358,7 +357,7 @@ appropriate."
              (message! "Updating %s" (car pkg))
              (doom--condition-case!
               (message!
-               (let ((result (doom-update-package (car pkg))))
+               (let ((result (doom-update-package (car pkg) t)))
                  (color (if result 'green 'red)
                         "  %s"
                         (if result "DONE" "FAILED"))))))
@@ -450,7 +449,7 @@ calls."
           (if (y-or-n-p (format "%s will be updated from %s to %s. Update?"
                                 package old-v-str new-v-str))
               (message "%s %s (%s => %s)"
-                       (if (doom-update-package package) "Updated" "Failed to update")
+                       (if (doom-update-package package t) "Updated" "Failed to update")
                        package old-v-str new-v-str)
             (message "Aborted")))
       (message "%s is up-to-date" package))))

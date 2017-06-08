@@ -1,4 +1,4 @@
-;;; app/rss/autoload.el
+;;; app/rss/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defun =rss ()

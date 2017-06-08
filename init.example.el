@@ -1,4 +1,4 @@
-;;; init.el
+;;; init.el -*- lexical-binding: t; -*-
 ;;
 ;; Author:  Henrik Lissner <henrik@lissner.net>
 ;; URL:     https://github.com/hlissner/.emacs.d

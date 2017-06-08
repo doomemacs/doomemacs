@@ -1,4 +1,4 @@
-;;; completion/ivy/autoload/evil.el
+;;; completion/ivy/autoload/evil.el -*- lexical-binding: t; -*-
 
 ;;;###autoload (autoload '+ivy:swiper "completion/ivy/autoload/evil" nil t)
 (evil-define-command +ivy:swiper (&optional search)
@@ -19,7 +19,7 @@
 (defvar +ivy--file-search-recursion-p t)
 (defvar +ivy--file-search-all-files-p nil)
 
-(defun +ivy--file-search (engine beg end query &optional directory prompt)
+(defun +ivy--file-search (engine beg end query &optional directory)
   (let* ((directory (or directory (doom-project-root)))
          (recursion-p +ivy--file-search-recursion-p)
          (all-files-p +ivy--file-search-all-files-p)

@@ -1,4 +1,4 @@
-;;; lang/assembly/config.el
+;;; lang/assembly/config.el -*- lexical-binding: t; -*-
 
 (def-package! mips-mode :mode "\\.mips$")
 

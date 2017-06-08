@@ -1,4 +1,4 @@
-;;; lang/python/config.el
+;;; lang/python/config.el -*- lexical-binding: t; -*-
 
 (def-package! python
   :commands python-mode

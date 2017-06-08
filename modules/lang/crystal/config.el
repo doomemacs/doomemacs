@@ -1,4 +1,4 @@
-;;; module-crystal.el
+;;; lang/crystal/config.el -*- lexical-binding: t; -*-
 
 (def-package! crystal-mode
   :mode "\\.cr$"

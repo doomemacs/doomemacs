@@ -1,5 +1,5 @@
 ;; -*- no-byte-compile: t; -*-
-;;; emacs/ido/packages.el
+;;; completion/ido/packages.el
 
 (package! flx-ido)
 (package! ido-ubiquitous)

@@ -1,4 +1,4 @@
-;;; lang/elm/config.el
+;;; lang/elm/config.el -*- lexical-binding: t; -*-
 
 (def-package! elm-mode
   :mode "\\.elm$"

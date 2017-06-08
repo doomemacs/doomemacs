@@ -1,4 +1,4 @@
-;;; feature/spellcheck/config.el
+;;; feature/spellcheck/config.el -*- lexical-binding: t; -*-
 
 (def-package! flyspell ; built-in
   :commands flyspell-mode

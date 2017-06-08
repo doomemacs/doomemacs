@@ -1,10 +1,9 @@
-;;; lang/emacs-lisp/config.el
+;;; lang/emacs-lisp/config.el -*- lexical-binding: t; -*-
 
 (def-package! elisp-mode ; built-in
   :mode ("/Cask$" . emacs-lisp-mode)
   :init
   (add-hook 'emacs-lisp-mode-hook #'+emacs-lisp|hook)
-
   :config
   (set! :repl 'emacs-lisp-mode #'+emacs-lisp/repl)
   (set! :eval 'emacs-lisp-mode #'+emacs-lisp-eval)

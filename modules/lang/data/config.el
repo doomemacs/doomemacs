@@ -1,4 +1,4 @@
-;;; module-data.el
+;;; lang/data/config.el -*- lexical-binding: t; -*-
 
 (push '("/sxhkdrc" . conf-mode) auto-mode-alist)
 

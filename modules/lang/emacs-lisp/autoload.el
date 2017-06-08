@@ -1,4 +1,4 @@
-;;; lang/emacs-lisp/autoload.el
+;;; lang/emacs-lisp/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defun +emacs-lisp/repl ()
@@ -20,18 +20,16 @@ to a pop up buffer."
         (buf (get-buffer-create "*doom eval*"))
         (inhibit-read-only t)
         lines)
-    (unwind-protect
-        (progn
-          (with-current-buffer buf
-            (read-only-mode +1)
-            (erase-buffer)
-            (setq-local scroll-margin 0)
-            (emacs-lisp-mode)
-            (prin1 result buf)
-            (pp-buffer)
-            (setq lines (count-lines (point-min) (point-max)))
-            (goto-char (point-min))
-            (if (> lines 1)
-                (doom-popup-buffer buf)
-              (message "%s" (buffer-substring (point-min) (point-max)))
-              (kill-buffer buf)))))))
+    (with-current-buffer buf
+      (read-only-mode +1)
+      (erase-buffer)
+      (setq-local scroll-margin 0)
+      (emacs-lisp-mode)
+      (prin1 result buf)
+      (pp-buffer)
+      (setq lines (count-lines (point-min) (point-max)))
+      (goto-char (point-min))
+      (if (> lines 1)
+          (doom-popup-buffer buf)
+        (message "%s" (buffer-substring (point-min) (point-max)))
+        (kill-buffer buf)))))

@@ -1,4 +1,4 @@
-;;; feature/ui/evil-goggles/autoload.el
+;;; feature/ui/evil-goggles/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defun +evil-goggles/toggle ()

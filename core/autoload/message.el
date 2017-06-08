@@ -1,4 +1,4 @@
-;;; message.el
+;;; core/autoload/message.el -*- lexical-binding: t; -*-
 
 (defconst doom-message-fg
   '((reset      . 0)
@@ -40,12 +40,12 @@
   "An alternative to `format' that strips out ANSI codes if used in an
 interactive session."
   `(cl-flet*
-       (,@(mapcar
-           (lambda (rule)
-             `(,(car rule)
-               (lambda (message &rest args)
-                 (apply #'doom-ansi-apply ',(car rule) message args))))
-           (append doom-message-fg doom-message-bg doom-message-fx))
+       (,@(cl-loop for rule
+                   in (append doom-message-fg doom-message-bg doom-message-fx)
+                   collect
+                   `(,(car rule)
+                     (lambda (message &rest args)
+                       (apply #'doom-ansi-apply ',(car rule) message args))))
         (color (symbol-function 'doom-ansi-apply)))
      (format ,message ,@args)))
 

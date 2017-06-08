@@ -1,4 +1,4 @@
-;;; feature/file-templates/config.el
+;;; feature/file-templates/config.el -*- lexical-binding: t; -*-
 
 (require! :feature snippets)
 
@@ -31,12 +31,13 @@
                       (overlay-get yas--active-field-overlay 'yas--field)))
         (evil-initialize-state 'insert))))
 
-  (defun +file-templates|add (regexp trigger mode &optional project-only-p)
-    (define-auto-insert
-      regexp
-      (vector `(lambda () (+file-templates--expand ,trigger ',mode ,project-only-p)))))
+  (defun +file-templates-add (args)
+    (destructuring-bind (regexp trigger mode &optional project-only-p) args
+      (define-auto-insert
+        regexp
+        (vector `(lambda () (+file-templates--expand ,trigger ',mode ,project-only-p))))))
 
-  (mapc (lambda (args) (apply #'+file-templates|add args))
+  (mapc #'+file-templates-add
         ;; General
         '(("/\\.gitignore$"                  "__"               gitignore-mode)
           ("/Dockerfile$"                    "__"               dockerfile-mode)

@@ -1,4 +1,4 @@
-;;; lang/sh/config.el
+;;; lang/sh/config.el -*- lexical-binding: t; -*-
 
 (def-package! sh-script ; built-in
   :mode ("\\.zsh$"   . sh-mode)

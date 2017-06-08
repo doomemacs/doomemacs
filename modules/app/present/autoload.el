@@ -1,4 +1,4 @@
-;;; app/present/autoload.el
+;;; app/present/autoload.el -*- lexical-binding: t; -*-
 
 ;; --- impatient-mode -------------------------------------------------------------
 
@@ -14,8 +14,9 @@
     (+present--cleanup-impatient-mode)))
 
 (defun +present--cleanup-impatient-mode ()
-  (unless (cl-remove-if-not (lambda (buf) (buffer-local-value 'impatient-mode buf))
-                            (doom-buffer-list))
+  (unless (cl-loop for buf in (doom-buffer-list)
+                   if (buffer-local-value 'impatient-mode buf)
+                   return t)
     (httpd-stop)
     (remove-hook 'kill-buffer-hook '+present--cleanup-impatient-mode)))
 
@@ -60,8 +61,9 @@
     (text-scale-set +present-scale)))
 
 (defun +present--cleanup-org-tree-slides-mode ()
-  (unless (cl-remove-if-not (lambda (buf) (buffer-local-value 'org-tree-slide-mode buf))
-                            (doom-buffers-in-mode 'org-mode))
+  (unless (cl-loop for buf in (doom-buffers-in-mode 'org-mode)
+                   if (buffer-local-value 'org-tree-slide-mode buf)
+                   return t)
     (org-tree-slide-mode -1)
     (remove-hook 'kill-buffer-hook #'+present--cleanup-org-tree-slides-mode)))
 

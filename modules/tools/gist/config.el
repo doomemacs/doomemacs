@@ -1,4 +1,4 @@
-;;; tools/gist/config.el
+;;; tools/gist/config.el -*- lexical-binding: t; -*-
 
 ;; NOTE On occasion, the cache gets corrupted, causing wrong-type-argument
 ;; errors. If that happens, try `+gist/kill-cache'. You may have to restart
@@ -12,9 +12,8 @@
   ;; evil-ify gist listing
   (set! :evil-state 'gist-list-mode 'normal)
 
-  (when (bound-and-true-p shackle-mode)
-    (defun +gist*list-render (orig-fn &rest args)
-      (funcall orig-fn (car args) t)
-      (unless (cadr args)
-        (doom-popup-buffer (current-buffer))))
-    (advice-add #'gist-list-render :around #'+gist*list-render)))
+  (defun +gist*list-render (orig-fn &rest args)
+    (funcall orig-fn (car args) t)
+    (unless (cadr args)
+      (doom-popup-buffer (current-buffer))))
+  (advice-add #'gist-list-render :around #'+gist*list-render))

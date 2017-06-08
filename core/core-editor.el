@@ -1,4 +1,4 @@
-;;; core-editor.el --- filling the editor shaped hole in the Emacs OS
+;;; core-editor.el -*- lexical-binding: t; -*-
 
 (defvar doom-large-file-size 1
   "Size (in MB) above which the user will be prompted to open the file literally
@@ -48,10 +48,12 @@ modes are active and the buffer is read-only.")
  vc-follow-symlinks t)
 
 ;; ediff: use existing frame instead of creating a new one
-(add-hook! 'ediff-load-hook
+(defun doom|init-ediff ()
   (setq ediff-diff-options           "-w"
         ediff-split-window-function  #'split-window-horizontally
-        ediff-window-setup-function  #'ediff-setup-windows-plain)) ; no extra frames
+        ;; no extra frames
+        ediff-window-setup-function  #'ediff-setup-windows-plain))
+(add-hook 'ediff-load-hook #'doom|init-ediff)
 
 (defun doom|dont-kill-scratch-buffer ()
   "Don't kill the scratch buffer."
@@ -61,8 +63,7 @@ modes are active and the buffer is read-only.")
 
 (defun doom*delete-trailing-whitespace (orig-fn &rest args)
   "Don't affect trailing whitespace on current line."
-  (let ((spaces (1- (current-column)))
-        (linestr (buffer-substring-no-properties
+  (let ((linestr (buffer-substring-no-properties
                   (line-beginning-position)
                   (line-end-position))))
     (apply orig-fn args)
@@ -106,7 +107,7 @@ fundamental-mode) for performance sake."
       savehist-autosave-interval nil ; save on kill only
       savehist-additional-variables '(kill-ring search-ring regexp-search-ring)
       save-place-file (concat doom-cache-dir "saveplace"))
-(add-hook! 'after-init-hook #'(savehist-mode save-place-mode))
+(add-hook! 'emacs-startup-hook #'(savehist-mode save-place-mode))
 
 ;; Keep track of recently opened files
 (def-package! recentf
@@ -145,10 +146,12 @@ fundamental-mode) for performance sake."
               (t (error "%s is an invalid action for :editorconfig" action)))))
 
   :config
-  (editorconfig-mode +1)
-  ;; Show whitespace in tabs indentation mode
-  (add-hook! 'editorconfig-custom-hooks
-    (if indent-tabs-mode (whitespace-mode +1))))
+  (add-hook 'emacs-startup-hook #'editorconfig-mode)
+
+  (defun doom|editorconfig-whitespace-mode-maybe (&rest _)
+    "Show whitespace-mode when file uses TABS (ew)."
+    (if indent-tabs-mode (whitespace-mode +1)))
+  (add-hook 'editorconfig-custom-hooks #'doom|editorconfig-whitespace-mode-maybe))
 
 ;; Auto-close delimiters and blocks as you type
 (def-package! smartparens
@@ -161,7 +164,7 @@ fundamental-mode) for performance sake."
         sp-max-pair-length 3)
 
   :config
-  (smartparens-global-mode 1)
+  (add-hook 'emacs-startup-hook #'smartparens-global-mode)
   (require 'smartparens-config)
   ;; Smartparens interferes with Replace mode
   (add-hook 'evil-replace-state-entry-hook #'turn-off-smartparens-mode)

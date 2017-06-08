@@ -1,5 +1,4 @@
-;; -*- no-byte-compile: t; -*-
-;;; lang/sh/config.el
+;;; lang/sh/autoload.el -*- lexical-binding: t; -*-
 
 (defvar sh-extra-font-lock--keywords
   `((+sh--match-var-in-double-quoted-string
@@ -13,8 +12,7 @@
 ;;;###autoload
 (defun +sh--in-double-quoted-string-p ()
   "Non-nil if point in inside a double-quoted string."
-  (let ((state (syntax-ppss)))
-    (eq (nth 3 state) ?\")))
+  (eq (nth 3 (syntax-ppss)) ?\"))
 
 ;;;###autoload
 (defun +sh--match-var-in-double-quoted-string (limit)
@@ -39,6 +37,7 @@
       (with-no-warnings
         (font-lock-fontify-buffer)))))
 
+(defvar sh-shell-file)
 ;;;###autoload
 (defun +sh/repl ()
   "Open a shell REPL."

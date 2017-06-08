@@ -1,4 +1,4 @@
-;;; ui.el
+;;; core/autoload/ui.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defun doom/toggle-fullscreen ()
@@ -15,7 +15,7 @@
   (interactive "P")
   (cond ((featurep 'nlinum)
          (nlinum-mode (or arg (if nlinum-mode -1 +1))))
-        ((featurep 'linum-mode)
+        ((featurep 'linum)
          (linum-mode (or arg (if linum-mode -1 +1))))
         (t
          (error "No line number plugin detected"))))
@@ -38,7 +38,6 @@ window changes before then, the undo expires."
     (delete-other-windows)))
 
 (defvar doom--window-enlargened nil)
-
 ;;;###autoload
 (defun doom/window-enlargen ()
   "Enlargen the current window. Activate again to undo."

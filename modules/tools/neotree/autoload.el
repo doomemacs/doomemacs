@@ -1,21 +1,21 @@
-;;; tools/neotree/autoload.el
+;;; tools/neotree/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defun +neotree/toggle ()
   "Toggle the neotree window."
   (interactive)
-  (let ((in-neotree (and (neo-global--window-exists-p)
-                         (window-live-p neo-global--buffer)
-                         (eq (current-buffer) neo-global--buffer)))
-        (path buffer-file-name))
-    (if in-neotree
-        (neotree-hide)
-      (let ((project-root (doom-project-root)))
-        (unless (and (neo-global--window-exists-p)
+  (let ((path buffer-file-name)
+        (project-root (doom-project-root)))
+    (require 'neotree)
+    (cond ((and (neo-global--window-exists-p)
+                (window-live-p neo-global--buffer)
+                (eq (current-buffer) neo-global--buffer))
+           (neotree-hide))
+          ((not (and (neo-global--window-exists-p)
                      (equal (file-truename (neo-global--with-buffer neo-buffer--start-node))
-                            (file-truename project-root)))
-          (neotree-dir project-root))
-        (neotree-find path project-root)))))
+                            (file-truename project-root))))
+           (neotree-dir project-root))
+          (t (neotree-find path project-root)))))
 
 ;;;###autoload
 (defun +neotree/collapse-or-up ()
@@ -44,11 +44,11 @@
   "Expand or open a neotree node."
   (interactive)
   (when-let (node (neo-buffer--get-filename-current-line))
-    (if (file-directory-p node)
-        (progn
-          (neo-buffer--set-expand node t)
-          (neo-buffer--refresh t)
-          (when neo-auto-indent-point
-            (forward-line)
-            (neo-point-auto-indent)))
-      (call-interactively 'neotree-enter))))
+    (cond ((file-directory-p node)
+           (neo-buffer--set-expand node t)
+           (neo-buffer--refresh t)
+           (when neo-auto-indent-point
+             (forward-line)
+             (neo-point-auto-indent)))
+          (t
+           (call-interactively #'neotree-enter)))))

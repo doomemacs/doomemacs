@@ -1,4 +1,4 @@
-;;; lang/java/config.el
+;;; lang/java/config.el -*- lexical-binding: t; -*-
 
 ;; yasnippet defuns
 ;;;###autoload
@@ -9,7 +9,7 @@
 
 ;;;###autoload
 (defun +java-android-mode-in-tags (&rest tags)
-  (-contains? tags (android-mode-tag-name)))
+  (cl-find (android-mode-tag-name) tags))
 
 ;;;###autoload
 (defun +java-android-mode-tag-name ()

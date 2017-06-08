@@ -1,4 +1,4 @@
-;;; app/rss/config.el
+;;; app/rss/config.el -*- lexical-binding: t; -*-
 
 ;; This is an opinionated workflow that turns Emacs into an RSS reader, inspired
 ;; by apps Reeder and Readkit. It can be invoked via `=rss'. Otherwise, if you
@@ -31,8 +31,8 @@
   (make-directory elfeed-db-directory t)
 
   ;; Ensure elfeed buffers are treated as real
-  (push (lambda (buf) (string-match-p "^\\*elfeed" (buffer-name buf)))
-        doom-real-buffer-functions)
+  (cl-pushnew (lambda (buf) (string-match-p "^\\*elfeed" (buffer-name buf)))
+              doom-real-buffer-functions)
 
   ;; Enhance readability of a post
   (add-hook 'elfeed-show-mode-hook #'+rss|elfeed-wrap)

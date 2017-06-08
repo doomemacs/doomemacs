@@ -1,7 +1,8 @@
-;;; completion/ivy/packages.el
+;;; completion/ivy/config.el -*- lexical-binding: t; -*-
 
-(defvar +ivy-task-tags '(("TODO"  . warning)
-                         ("FIXME" . error))
+(defvar +ivy-task-tags
+  '(("TODO"  . warning)
+    ("FIXME" . error))
   "An alist of tags for `+ivy/tasks' to include in its search, whose CDR is the
 face to render it with.")
 
@@ -20,7 +21,8 @@ session)."
 ;; Packages
 ;;
 
-(def-package! ivy :demand t
+(def-package! ivy
+  :demand t
   :config
   (setq ivy-height 12
         ivy-do-completion-in-region nil
@@ -38,7 +40,7 @@ session)."
   (after! magit     (setq magit-completing-read-function #'ivy-completing-read))
   (after! yasnippet (push #'+ivy-yas-prompt yas-prompt-functions))
 
-  (ivy-mode +1)
+  (add-hook 'window-setup-hook #'ivy-mode)
 
   (map! :map ivy-mode-map
         [remap describe-face]             #'counsel-describe-face
@@ -79,12 +81,16 @@ session)."
 
   ;; Configure `counsel-rg', `counsel-ag' & `counsel-pt'
   (set! :popup 'ivy-occur-grep-mode :size (+ 2 ivy-height) :regexp t :autokill t)
-
   (dolist (cmd '(counsel-ag counsel-rg counsel-pt))
     (ivy-add-actions
      cmd
      '(("O" +ivy-git-grep-other-window-action "open in other window"))))
 
+  ;; 1. Remove character limit from `counsel-ag-function'
+  ;; 2. Disable ivy's over-zealous parentheses quoting behavior (if i want
+  ;;    literal parentheses, I'll escape them myself).
+  ;; 3. This may need to be updated frequently, to meet changes upstream
+  ;; 4. counsel-ag, counsel-rg and counsel-pt all use this function
   (advice-add #'counsel-ag-function :override #'+ivy*counsel-ag-function))
 
 

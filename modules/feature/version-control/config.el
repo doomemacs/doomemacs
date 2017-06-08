@@ -1,4 +1,4 @@
-;;; feature/version-control/config.el
+;;; feature/version-control/config.el -*- lexical-binding: t; -*-
 
 (setq vc-make-backup-files nil)
 

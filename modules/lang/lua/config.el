@@ -1,4 +1,4 @@
-;;; lang/lua/config.el --- lua + Love2D
+;;; lang/lua/config.el --- lua + Love2D -*- lexical-binding: t; -*-
 
 (def-package! lua-mode
   :mode "\\.lua$"

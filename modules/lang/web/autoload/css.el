@@ -1,4 +1,4 @@
-;;; lang/web/+css.el
+;;; lang/web/autoload/css.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 ;; TODO (defun +css/scss-build ())
@@ -12,10 +12,9 @@
   (interactive)
   ;; TODO Remove evil dependency
   (save-excursion
-    (let* ((bounds (or (ignore-errors (evil-a-curly))
-                       (user-error "No block found")))
-           (beg (car bounds))
-           (end (cadr bounds)))
+    (destructuring-bind (beg end)
+        (or (ignore-errors (evil-a-curly))
+            (user-error "No block found"))
       (if (= (line-number-at-pos beg) (line-number-at-pos end))
           (save-excursion
             (goto-char (1+ beg)) (insert "\n")

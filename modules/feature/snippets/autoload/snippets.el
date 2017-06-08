@@ -1,4 +1,4 @@
-;;; feature/snippets/autoload/snippets.el
+;;; feature/snippets/autoload/snippets.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defun +snippets/goto-start-of-field ()

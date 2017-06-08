@@ -1,12 +1,11 @@
-;;; completion/company/config.el
+;;; completion/company/config.el -*- lexical-binding: t; -*-
 
 (def-setting! :company-backend (modes backends)
   "Register company BACKENDS to MODES."
   (let* ((modes (if (listp modes) modes (list modes)))
          (backends (if (listp backends) backends (list backends)))
          (def-name (intern (format "doom--init-company-%s"
-                                   (mapconcat #'identity (mapcar #'symbol-name modes) "-"))))
-         (quoted (eq (car-safe backends) 'quote)))
+                                   (mapconcat #'identity (mapcar #'symbol-name modes) "-")))))
     ;; TODO more type checks
     `(prog1
          (defun ,def-name ()

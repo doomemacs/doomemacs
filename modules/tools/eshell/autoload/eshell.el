@@ -1,4 +1,4 @@
-;;; emacs/eshell/autoload/eshell.el
+;;; tools/eshell/autoload/eshell.el -*- lexical-binding: t; -*-
 
 (require 'eshell)
 
@@ -35,7 +35,7 @@ module to be loaded."
     (+eshell/run))
   (doom/workspace-display))
 
-(defun +eshell--outside-prompt-p (&optional offset)
+(defun +eshell--outside-prompt-p ()
   (< (point) eshell-last-output-end))
 
 (defun +eshell--current-git-branch ()

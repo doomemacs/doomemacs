@@ -1,4 +1,4 @@
-;;; lang/go/config.el
+;;; lang/go/config.el -*- lexical-binding: t; -*-
 
 (def-package! go-mode
   :mode "\\.go$"

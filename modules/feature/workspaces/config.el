@@ -1,4 +1,4 @@
-;;; feature/workspaces/config.el
+;;; feature/workspaces/config.el -*- lexical-binding: t; -*-
 
 ;; `persp-mode' gives me workspaces, a workspace-restricted `buffer-list', and
 ;; file-based session persistence. I had used workgroups2 before this, but
@@ -24,7 +24,8 @@ renamed.")
 ;; Plugins
 ;;
 
-(def-package! persp-mode :demand t
+(def-package! persp-mode
+  :demand t
   :config
   (setq persp-autokill-buffer-on-remove 'kill-weak
         persp-nil-name "nil"
@@ -44,35 +45,34 @@ renamed.")
 
   (defun +workspaces|init (&rest _)
     (unless persp-mode
-      (persp-mode +1))
-    ;; The default perspective persp-mode makes (defined by `persp-nil-name') is
-    ;; special and doesn't actually represent a real persp object, so buffers
-    ;; can't really be assigned to it, among other quirks. We create a *real*
-    ;; main workspace to fill this role.
-    (persp-add-new +workspaces-main)
-    ;; Switch to it if we aren't auto-loading the last session
-    (when (or (= persp-auto-resume-time -1)
-              (equal (safe-persp-name (get-current-persp)) persp-nil-name))
-      (persp-frame-switch +workspaces-main)))
+      (persp-mode +1)
+      ;; The default perspective persp-mode makes (defined by `persp-nil-name')
+      ;; is special and doesn't actually represent a real persp object, so
+      ;; buffers can't really be assigned to it, among other quirks. We create a
+      ;; *real* main workspace to fill this role.
+      (persp-add-new +workspaces-main)
+      ;; Switch to it if we aren't auto-loading the last session
+      (when (or (= persp-auto-resume-time -1)
+                (equal (safe-persp-name (get-current-persp)) persp-nil-name))
+        (persp-frame-switch +workspaces-main))))
 
-  (add-hook! 'after-init-hook
-    (if (display-graphic-p)
-        (+workspaces|init)
-      (add-hook 'after-make-frame-functions #'+workspaces|init)))
+  (add-hook 'emacs-startup-hook #'+workspaces|init)
+  (add-hook 'after-make-frame-functions #'+workspaces|init)
 
   (define-key persp-mode-map [remap delete-window] #'+workspace/close-window-or-workspace)
 
   ;; Spawn a perspective for each new frame
   (setq persp-init-new-frame-behaviour-override nil
         persp-interactive-init-frame-behaviour-override
-        (lambda (frame &optional new-frame-p)
+        (lambda (frame &optional _new-frame-p)
           (select-frame frame)
           (+workspace/new)
           (set-frame-parameter frame 'assoc-persp (+workspace-current-name))))
 
   (defun +workspaces*delete-frame-and-persp (frame)
     "Delete workspace associated with current frame IF it has no real buffers."
-    (when (and (string= (or (frame-parameter frame 'assoc-persp) "") (+workspace-current-name))
+    (when (and (string= (or (frame-parameter frame 'assoc-persp) "")
+                        (+workspace-current-name))
                (not (delq (doom-fallback-buffer) (doom-real-buffers-list))))
       (+workspace/delete persp-name)))
   (add-hook 'delete-frame-functions #'+workspaces*delete-frame-and-persp)

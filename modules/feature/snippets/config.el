@@ -1,4 +1,4 @@
-;;; feature/snippets/config.el
+;;; feature/snippets/config.el -*- lexical-binding: t; -*-
 
 ;; Snippets! I've thrown together a few hacks to make `yasnippet' and `evil'
 ;; behave together.

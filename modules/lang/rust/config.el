@@ -1,4 +1,4 @@
-;;; module-rust.el
+;;; lang/rust/config.el -*- lexical-binding: t; -*-
 
 (defvar +rust-ext-dir (concat doom-etc-dir "rust/")
   "TODO")
@@ -16,10 +16,13 @@
   :after rust-mode
   :preface
   :init
-  (add-hook! rust-mode '(racer-mode eldoc-mode flycheck-rust-setup))
+  (add-hook! 'rust-mode-hook #'(racer-mode eldoc-mode flycheck-rust-setup))
   :config
   (setq racer-cmd (expand-file-name "racer/target/release/racer" +rust-ext-dir)
         racer-rust-src-path (expand-file-name "rust/src/" +rust-ext-dir))
+
+  (unless (file-exists-p racer-cmd)
+    (warn "rust-mode: racer binary can't be found; auto-completion is disabled"))
 
   ;; TODO Unit test keybinds
   (map! :map rust-mode-map :m "gd" #'racer-find-definition))

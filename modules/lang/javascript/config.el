@@ -1,4 +1,4 @@
-;; lang/javascript/config.el
+;;; lang/javascript/config.el -*- lexical-binding: t; -*-
 
 (load! +screeps)
 
@@ -17,12 +17,13 @@
   (add-hook! 'js2-mode-hook (setq js-switch-indent-offset js-indent-level))
 
   ;; Favor local eslint over global, if available
-  (add-hook! 'flycheck-mode-hook
+  (defun +javascript|init-flycheck-elint ()
     (when (derived-mode-p 'js-mode 'js2-mode)
       (when-let ((eslint (expand-file-name "node_modules/eslint/bin/eslint.js" (doom-project-root)))
                  (exists-p (file-exists-p eslint))
                  (executable-p (file-executable-p eslint)))
         (setq-local flycheck-javascript-eslint-executable eslint))))
+  (add-hook 'flycheck-mode-hook #'+javascript|init-flycheck-elint)
 
   (set! :repl 'js2-mode '+javascript/repl)
   (set! :electric 'js2-mode :chars '(?\} ?\) ?.))

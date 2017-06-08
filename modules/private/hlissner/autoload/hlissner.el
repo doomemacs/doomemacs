@@ -1,4 +1,4 @@
-;;; private/hlissner/autoload/hlissner.el
+;;; private/hlissner/autoload/hlissner.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defun +hlissner/install-snippets ()

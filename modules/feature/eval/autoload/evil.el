@@ -1,4 +1,4 @@
-;;; feature/eval/autoload/evil.el
+;;; feature/eval/autoload/evil.el -*- lexical-binding: t; -*-
 
 ;;;###autoload (autoload '+eval:region "feature/eval/autoload/evil" nil t)
 (evil-define-operator +eval:region (beg end)

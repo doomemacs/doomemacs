@@ -1,4 +1,4 @@
-;;; completion/ivy/autoload/ivy.el
+;;; completion/ivy/autoload/ivy.el -*- lexical-binding: t; -*-
 
 ;; Show more information in ivy-switch-buffer; and only display
 ;; workgroup-relevant buffers.
@@ -6,33 +6,35 @@
   (let ((min-name 5)
         (min-mode 5)
         (proot (doom-project-root)))
-    (mapcar
-     (lambda (b) (format (format "%%-%ds %%-%ds %%s" min-name min-mode)
-                    (nth 0 b)
-                    (nth 1 b)
-                    (or (nth 2 b) "")))
-     (mapcar (lambda (b)
-               (with-current-buffer b
-                 (let ((buffer-name (buffer-name b))
-                       (mode-name (symbol-name major-mode)))
-                   (when (> (length buffer-name) min-name)
-                     (setq min-name (+ (length buffer-name) 15)))
-                   (when (> (length mode-name) min-mode)
-                     (setq min-mode (+ (length mode-name) 3)))
-                   (list (concat
-                          (propertize buffer-name
-                                      'face (cond ((string-match-p "^ ?\\*" buffer-name)
-                                                   'font-lock-comment-face)
-                                                  ((not (string= proot (doom-project-root)))
-                                                   'font-lock-keyword-face)
-                                                  (buffer-read-only
-                                                   'error)))
-                          (when (and buffer-file-name (buffer-modified-p))
-                            (propertize "[+]" 'face 'doom-modeline-buffer-modified)))
-                         (propertize mode-name 'face 'font-lock-constant-face)
-                         (when buffer-file-name
-                           (abbreviate-file-name (file-name-directory buffer-file-name)))))))
-             (or buffer-list (doom-buffer-list))))))
+    (cl-loop for buf in (or buffer-list (doom-buffer-list))
+             collect
+             (destructuring-bind (type mode path)
+                 (+ivy--get-buffer-attrs buf proot)
+               (format (format "%%-%ds %%-%ds %%s" min-name min-mode)
+                       type mode (or path ""))))))
+
+(defun +ivy--get-buffer-attrs (b &optional project-root)
+  (with-current-buffer b
+    (let ((buffer-name (buffer-name b))
+          (mode-name (symbol-name major-mode)))
+      (when (> (length buffer-name) min-name)
+        (setq min-name (+ (length buffer-name) 15)))
+      (when (> (length mode-name) min-mode)
+        (setq min-mode (+ (length mode-name) 3)))
+      (list (concat
+             (propertize buffer-name
+                         'face (cond ((string-match-p "^ ?\\*" buffer-name)
+                                      'font-lock-comment-face)
+                                     ((and project-root
+                                           (not (string= project-root (doom-project-root))))
+                                      'font-lock-keyword-face)
+                                     (buffer-read-only
+                                      'error)))
+             (when (and buffer-file-name (buffer-modified-p))
+               (propertize "[+]" 'face 'doom-modeline-buffer-modified)))
+            (propertize mode-name 'face 'font-lock-constant-face)
+            (when buffer-file-name
+              (abbreviate-file-name (file-name-directory buffer-file-name)))))))
 
 (defun +ivy--select-buffer-action (buffer)
   (ivy--switch-buffer-action
@@ -66,54 +68,54 @@ limit to buffers in the current workspace."
             :keymap ivy-switch-buffer-map
             :caller '+ivy/switch-workspace-buffer))
 
-;; TODO refactor ivy task candidate functions (messy!)
 (defun +ivy--tasks-candidates (tasks)
   "Generate a list of task tags (specified by `+ivy-task-tags') for
 `+ivy/tasks'."
-  (let* ((max-type-width (seq-max (mapcar #'length (mapcar #'car +ivy-task-tags))))
-         (max-desc-width (seq-max (mapcar #'length (mapcar #'cl-cdadr tasks))))
-         (max-width (max 25 (min (- (frame-width) (+ max-type-width 1))
-                                 max-desc-width)))
-         (fmt (format "%%-%ds %%-%ds%%s%%s:%%s" max-type-width max-desc-width))
-         lines)
-    (dolist (alist tasks (nreverse lines))
-      (let-alist alist
-        (push (format fmt
-                      (propertize .type 'face (cdr (assoc .type +ivy-task-tags)))
-                      (substring .desc 0 (min max-desc-width (length .desc)))
-                      (propertize " | " 'face 'font-lock-comment-face)
-                      (propertize (abbreviate-file-name .file) 'face 'font-lock-keyword-face)
-                      (propertize .line 'face 'font-lock-constant-face))
-              lines)))))
+  (let* ((max-type-width
+          (cl-loop for task in +ivy-task-tags maximize (length (car task))))
+         (max-desc-width
+          (cl-loop for task in tasks maximize (length (cl-cdadr task))))
+         (max-width (max (- (frame-width) (1+ max-type-width) max-desc-width)
+                         25)))
+    (cl-loop
+     with fmt = (format "%%-%ds %%-%ds%%s%%s:%%s" max-type-width max-width)
+     for alist in tasks
+     collect
+     (let-alist alist
+       (format fmt
+               (propertize .type 'face (cdr (assoc .type +ivy-task-tags)))
+               (substring .desc 0 (min max-desc-width (length .desc)))
+               (propertize " | " 'face 'font-lock-comment-face)
+               (propertize (abbreviate-file-name .file) 'face 'font-lock-keyword-face)
+               (propertize .line 'face 'font-lock-constant-face))))))
 
 (defun +ivy--tasks (target)
-  (let (case-fold-search)
-    (delq
-     nil
-     (mapcar (lambda (x)
-               (save-match-data
-                 (when (string-match (concat "^\\([^:]+\\):\\([0-9]+\\):.+\\("
-                                             (string-join (mapcar #'car +ivy-task-tags) "\\|")
-                                             "\\):?\\s-*\\(.+\\)")
-                                     x)
-                   `((type . ,(match-string 3 x))
-                     (desc . ,(match-string 4 x))
-                     (file . ,(match-string 1 x))
-                     (line . ,(match-string 2 x))))))
-             (let ((command (or (let ((bin (executable-find "rg")))
-                                  (and bin (concat bin " --line-number")))
-                                (let ((bin (executable-find "ag")))
-                                  (and bin (concat bin " --numbers")))
-                                (error "Neither ripgrep or the_silver_searcher is available")))
-                   (args (concat " -- "
-                                 (shell-quote-argument
-                                  (concat "\\s("
-                                          (string-join (mapcar #'car +ivy-task-tags) "|")
-                                          ")([\\s:]|\\([^)]+\\):?)")))))
-               (when-let (out (shell-command-to-string
-                               (format "%s -H -S --no-heading %s %s"
-                                       command args target)))
-                 (split-string out "\n" t)))))))
+  (let* (case-fold-search
+         (task-tags (mapcar #'car +ivy-task-tags))
+         (cmd
+          (format "%s -H -S --no-heading -- %s %s"
+                  (or (when-let (bin (executable-find "rg"))
+                        (concat bin " --line-number"))
+                      (when-let (bin (executable-find "ag"))
+                        (concat bin " --numbers"))
+                      (error "ripgrep & the_silver_searcher are unavailable"))
+                  (shell-quote-argument
+                   (concat "\\s("
+                           (string-join task-tags "|")
+                           ")([\\s:]|\\([^)]+\\):?)"))
+                  target)))
+    (save-match-data
+      (cl-loop with out = (shell-command-to-string cmd)
+               for x in (and out (split-string out "\n" t))
+               when (string-match
+                     (concat "^\\([^:]+\\):\\([0-9]+\\):.+\\("
+                             (string-join task-tags "\\|")
+                             "\\):?\\s-*\\(.+\\)")
+                     x)
+               collect `((type . ,(match-string 3 x))
+                         (desc . ,(match-string 4 x))
+                         (file . ,(match-string 1 x))
+                         (line . ,(match-string 2 x)))))))
 
 (defun +ivy--tasks-open-action (x)
   "Jump to the file and line of the current task."
@@ -180,27 +182,27 @@ counsel-rg)."
 (defun +ivy/wgrep-occur ()
   "Invoke the search+replace wgrep buffer on the current ag/rg search results."
   (interactive)
-  (if (not (window-minibuffer-p))
-      (user-error "No completion session is active")
-    (require 'wgrep)
-    (let* ((caller (ivy-state-caller ivy-last))
-           (occur-fn (plist-get ivy--occurs-list caller))
-           (buffer
-            (generate-new-buffer
-             (format "*ivy-occur%s \"%s\"*"
-                     (if caller (concat " " (prin1-to-string caller)) "")
-                     ivy-text))))
-      (with-current-buffer buffer
-        (let ((inhibit-read-only t))
-          (erase-buffer)
-          (funcall occur-fn))
-        (setf (ivy-state-text ivy-last) ivy-text)
-        (setq ivy-occur-last ivy-last)
-        (setq-local ivy--directory ivy--directory))
-      (ivy-exit-with-action
-       `(lambda (_)
-          (pop-to-buffer ,buffer)
-          (ivy-wgrep-change-to-wgrep-mode))))))
+  (unless (window-minibuffer-p)
+    (user-error "No completion session is active"))
+  (require 'wgrep)
+  (let* ((caller (ivy-state-caller ivy-last))
+         (occur-fn (plist-get ivy--occurs-list caller))
+         (buffer
+          (generate-new-buffer
+           (format "*ivy-occur%s \"%s\"*"
+                   (if caller (concat " " (prin1-to-string caller)) "")
+                   ivy-text))))
+    (with-current-buffer buffer
+      (let ((inhibit-read-only t))
+        (erase-buffer)
+        (funcall occur-fn))
+      (setf (ivy-state-text ivy-last) ivy-text)
+      (setq ivy-occur-last ivy-last)
+      (setq-local ivy--directory ivy--directory))
+    (ivy-exit-with-action
+     `(lambda (_)
+        (pop-to-buffer ,buffer)
+        (ivy-wgrep-change-to-wgrep-mode)))))
 
 ;;;###autoload
 (defun +ivy-yas-prompt (prompt choices &optional display-fn)

@@ -1,4 +1,4 @@
-;;; lang/julia/autoload.el
+;;; lang/julia/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defun +julia/repl ()

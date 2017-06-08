@@ -1,4 +1,4 @@
-;;; core-lib.el
+;;; core-lib.el -*- lexical-binding: t; -*-
 
 ;; I don't use use-package for these to save on the `fboundp' lookups it does
 ;; for its :commands property. I use dolists instead of mapc to avoid extra
@@ -35,23 +35,21 @@
                         'default-directory
                       (or root `(doom-project-root))))))
         ((listp paths)
-         (let (forms)
-           (dolist (i paths (nreverse forms))
-             (push (doom--resolve-paths i root) forms))))
+         (cl-loop for i in paths
+                  collect (doom--resolve-paths i root)))
         (t paths)))
 
 (defun doom--resolve-hooks (hooks)
-  (let ((quoted-p (eq (car-safe hooks) 'quote))
-        ret-hooks)
+  (let ((quoted-p (eq (car-safe hooks) 'quote)))
     (when quoted-p
       (setq hooks (cadr hooks)))
-    (dolist (hook (if (listp hooks) hooks (list hooks)) (nreverse ret-hooks))
-      (push (cond ((eq (car-safe hook) 'quote)
-                   (cadr hook))
-                  (quoted-p hook)
-                  (t
-                   (intern (format "%s-hook" (symbol-name hook)))))
-            ret-hooks))))
+    (cl-loop with hooks = (if (listp hooks) hooks (list hooks))
+             for hook in hooks
+             if (eq (car-safe hook) 'quote)
+               collect (cadr hook)
+             else if quoted-p
+               collect hook
+             else collect (intern (format "%s-hook" (symbol-name hook))))))
 
 
 ;;
@@ -67,8 +65,7 @@
   "A smart wrapper around `with-eval-after-load'. Supresses warnings during
 compilation."
   (declare (indent defun) (debug t))
-  `(,(if (or (not (boundp 'byte-compile-current-file))
-             (not byte-compile-current-file)
+  `(,(if (or (not (bound-and-true-p byte-compile-current-file))
              (if (symbolp feature)
                  (require feature nil :no-error)
                (load feature :no-message :no-error)))
@@ -139,12 +136,13 @@ Examples:
 Body forms can access the hook's arguments through the let-bound variable
 `args'."
   (declare (indent defun) (debug t))
-  (let ((hook-fn (if (boundp 'hook-fn) hook-fn))
-        hook append-p local-p)
+  (let ((hook-fn 'add-hook)
+        append-p local-p)
     (while (keywordp (car args))
       (pcase (pop args)
         (:append (setq append-p t))
-        (:local  (setq local-p t))))
+        (:local  (setq local-p t))
+        (:remove (setq hook-fn 'remove-hook))))
     (let ((hooks (doom--resolve-hooks (pop args)))
           (funcs
            (let ((val (car args)))
@@ -157,7 +155,7 @@ Body forms can access the hook's arguments through the let-bound variable
       (dolist (fn funcs)
         (setq fn (if (symbolp fn)
                      `(function ,fn)
-                   `(lambda (&rest args) ,@args)))
+                   `(lambda (&rest _) ,@args)))
         (dolist (hook hooks)
           (push (cond ((eq hook-fn 'remove-hook)
                        `(remove-hook ',hook ,fn ,local-p))
@@ -169,17 +167,16 @@ Body forms can access the hook's arguments through the let-bound variable
 (defmacro remove-hook! (&rest args)
   "Convenience macro for `remove-hook'. Takes the same arguments as
 `add-hook!'."
-  (let ((hook-fn 'remove-hook))
-    (macroexpand `(add-hook! ,@args))))
+  `(add-hook! :remove ,@args))
 
 (defmacro associate! (mode &rest plist)
   "Associate a minor mode to certain patterns and project files."
   (declare (indent 1))
   (unless noninteractive
-    (let* ((modes (plist-get plist :modes))
-           (match (plist-get plist :match))
-           (files (plist-get plist :files))
-           (pred-form (plist-get plist :when)))
+    (let ((modes (plist-get plist :modes))
+          (match (plist-get plist :match))
+          (files (plist-get plist :files))
+          (pred-form (plist-get plist :when)))
       (cond ((or files modes pred-form)
              (when (and files
                         (not (or (listp files)
@@ -196,9 +193,8 @@ Body forms can access the hook's arguments through the let-bound variable
                                ,(or pred-form t))
                       (,mode 1)))
                   ,@(if (and modes (listp modes))
-                        (let (forms)
-                          (dolist (hook (doom--resolve-hooks modes) (nreverse forms))
-                            (push `(add-hook ',hook ',hook-name) forms)))
+                        (cl-loop for hook in (doom--resolve-hooks modes)
+                                 collect `(add-hook ',hook ',hook-name))
                       `((add-hook 'after-change-major-mode-hook ',hook-name))))))
             (match
              `(push (cons ,match ',mode) doom-auto-minor-mode-alist))

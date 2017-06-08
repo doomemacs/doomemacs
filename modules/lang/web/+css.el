@@ -1,4 +1,4 @@
-;;; lang/web/+css.el
+;;; lang/web/+css.el -*- lexical-binding: t; -*-
 
 ;; css-mode hooks apply to scss and less-css modes
 (add-hook 'css-mode-hook #'rainbow-delimiters-mode)
@@ -53,5 +53,5 @@
 
 (def-package! stylus-mode
   :mode "\\.styl$"
-  :init (add-hook! stylus-mode '(yas-minor-mode-on flycheck-mode)))
+  :init (add-hook! stylus-mode #'(yas-minor-mode-on flycheck-mode)))
 

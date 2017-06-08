@@ -1,4 +1,4 @@
-;;; ../core/autoload/test.el
+;;; core/autoload/test.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defmacro def-test-group! (name &rest body)

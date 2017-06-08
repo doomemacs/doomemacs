@@ -1,9 +1,9 @@
-;;; feature/evil/autoload/folds.el
+;;; feature/evil/autoload/folds.el -*- lexical-binding: t; -*-
 
-;; It's frustrating how hideshow is a decent code folding implementation, but it
-;; won't let you create custom folds. Meanwhile, evil-vimish-fold offers custom
-;; folds, but essentially ignores any other type of folding (indent or custom
-;; markers, which hs-minor-mode gives you).
+;; `hideshow' is a decent code folding implementation, but it won't let you
+;; create custom folds. `evil-vimish-fold' offers custom folds, but essentially
+;; ignores any other type of folding (indent or custom markers, which
+;; hs-minor-mode gives you).
 ;;
 ;; So this is my effort to combine them.
 

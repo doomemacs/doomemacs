@@ -1,4 +1,4 @@
-;;; tools/electric-indent/config.el
+;;; tools/electric-indent/config.el -*- lexical-binding: t; -*-
 
 ;; Smarter, keyword-based electric-indent
 
@@ -10,13 +10,13 @@
 
 (setq electric-indent-chars '(?\n ?\^?))
 
-(push (lambda (c)
-        (when (and (eolp) doom-electric-indent-words)
-          (save-excursion
-            (backward-word)
-            (looking-at-p
-             (concat "\\<" (regexp-opt doom-electric-indent-words))))))
-      electric-indent-functions)
+(defun +electric-indent|char (_c)
+  (when (and (eolp) doom-electric-indent-words)
+    (save-excursion
+      (backward-word)
+      (looking-at-p
+       (concat "\\<" (regexp-opt doom-electric-indent-words))))))
+(cl-pushnew #'+electric-indent|char electric-indent-functions :test #'eq)
 
 (def-setting! :electric (modes &rest plist)
   "Declare :words (list of strings) or :chars (lists of chars) in MODES that

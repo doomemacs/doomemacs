@@ -1,4 +1,4 @@
-;;; ui/doom/autoload/doom.el
+;;; ui/doom/autoload/doom.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defun +doom/reset-theme ()

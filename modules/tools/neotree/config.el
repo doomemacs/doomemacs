@@ -1,4 +1,4 @@
-;;; tools/neotree/config.el
+;;; tools/neotree/config.el -*- lexical-binding: t; -*-
 
 (def-package! neotree
   :commands (neotree-show

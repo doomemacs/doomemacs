@@ -1,4 +1,4 @@
-;;; autoload.el
+;;; core/autoload/buffers.el -*- lexical-binding: t; -*-
 
 (defvar-local doom-buffer--narrowed-origin nil)
 
@@ -25,20 +25,19 @@ the buffer (if narrowed).
 
 Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
   (interactive "r")
-  (if (region-active-p)
-      (progn
-        (deactivate-mark)
-        (when clone-p
-          (let ((old-buf (current-buffer)))
-            (switch-to-buffer (clone-indirect-buffer nil nil))
-            (setq doom-buffer--narrowed-origin old-buf)))
-        (narrow-to-region beg end))
-    (if doom-buffer--narrowed-origin
-        (progn
-          (kill-this-buffer)
-          (switch-to-buffer doom-buffer--narrowed-origin)
-          (setq doom-buffer--narrowed-origin nil))
-      (widen))))
+  (cond ((region-active-p)
+         (deactivate-mark)
+         (when clone-p
+           (let ((old-buf (current-buffer)))
+             (switch-to-buffer (clone-indirect-buffer nil nil))
+             (setq doom-buffer--narrowed-origin old-buf)))
+         (narrow-to-region beg end))
+        (doom-buffer--narrowed-origin
+         (kill-this-buffer)
+         (switch-to-buffer doom-buffer--narrowed-origin)
+         (setq doom-buffer--narrowed-origin nil))
+        (t
+         (widen))))
 
 
 ;; Buffer Life and Death ;;;;;;;;;;;;;;;
@@ -52,11 +51,12 @@ the current workspace."
                      (persp-buffer-list-restricted)
                    (buffer-list)))
         (project-root (and project-p (doom-project-root t))))
-    (if project-root
-        (funcall (if (eq project-p 'not) #'cl-remove-if #'cl-remove-if-not)
-                 (lambda (b) (projectile-project-buffer-p b project-root))
-                 buffers)
-      buffers)))
+    (cond (project-root
+           (cl-loop for buf in buffers
+                    if (projectile-project-buffer-p buf project-root)
+                    collect buf))
+          (t
+           buffers))))
 
 ;;;###autoload
 (defun doom-real-buffers-list (&optional buffer-list)
@@ -99,8 +99,9 @@ only the buried buffers in BUFFER-LIST (a list of BUFFER-OR-NAMEs)."
 (defun doom-matching-buffers (pattern &optional buffer-list)
   "Get a list of all buffers (in the current workspace OR in BUFFER-LIST) that
 match the regex PATTERN."
-  (cl-remove-if-not (lambda (buf) (string-match-p pattern (buffer-name buf)))
-                    (or buffer-list (doom-buffer-list))))
+  (cl-loop for buf in (or buffer-list (doom-buffer-list))
+           when (string-match-p pattern (buffer-name buf))
+             collect buf))
 
 (defun doom--cycle-real-buffers (&optional n)
   "Switch to the next buffer N times (previous, if N < 0), skipping over unreal
@@ -119,7 +120,7 @@ buffers. If there's nothing left, switch to `doom-fallback-buffer'. See
              ;; BUFFERS? Because `switch-to-next-buffer' and
              ;; `switch-to-prev-buffer' properly update buffer list order.
              (while (not (memq (current-buffer) buffers))
-               (dotimes (i (abs n))
+               (dotimes (_i (abs n))
                  (funcall move-func))))))
     (when (eq (current-buffer) (doom-fallback-buffer))
       (cd project-dir))
@@ -201,14 +202,15 @@ switched to a real buffer."
 ;;;###autoload
 (defun doom-kill-buffer-and-windows (buffer)
   "Kill the buffer and delete all the windows it's displayed in."
-  (unless (one-window-p t)
-    (mapc (lambda (win) (unless (one-window-p t) (delete-window win)))
-          (get-buffer-window-list buffer)))
+  (dolist (window (get-buffer-window-list buffer))
+    (unless (one-window-p t)
+      (delete-window window)))
   (kill-buffer buffer))
 
 ;;;###autoload
 (defun doom-kill-process-buffers ()
-  "Kill all processes that have no visible associated buffers."
+  "Kill all processes that have no visible associated buffers. Return number of
+processes killed."
   (interactive)
   (let ((n 0))
     (dolist (p (process-list))
@@ -220,7 +222,7 @@ switched to a real buffer."
                             (not (buffer-live-p process-buffer)))))
           (message "Killing %s" (process-name p))
           (delete-process p)
-          (setq n (1+ n)))))
+          (cl-incf n))))
     n))
 
 ;;;###autoload
@@ -253,11 +255,11 @@ belong to the current project in this workspace."
   "Kill all other buffers in this workspace. If PROJECT-P, kill only the other
 buffers that belong to the current project."
   (interactive "P")
-  (let ((buffers (doom-buffer-list project-p)))
-    (mapc (lambda (buf)
-            (unless (eq buf (current-buffer))
-              (doom-kill-buffer-and-windows buf)))
-          buffers)
+  (let ((buffers (doom-buffer-list project-p))
+        (current-buffer (current-buffer)))
+    (dolist (buf buffers)
+      (unless (eq buf current-buffer)
+        (doom-kill-buffer-and-windows buf)))
     (when (called-interactively-p 'interactive)
       (message "Killed %s buffers" (length buffers)))))
 

@@ -1,4 +1,4 @@
-;;; editor.el
+;;; core/autoload/editor.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defun doom/sudo-find-file (file)
@@ -65,7 +65,7 @@ If already there, do nothing."
          (looking-at-p match-str))))
 
 ;;;###autoload
-(defun doom/dumb-indent (&optional smart)
+(defun doom/dumb-indent ()
   "Inserts a tab character (or spaces x tab-width)."
   (interactive)
   (if indent-tabs-mode
@@ -142,11 +142,13 @@ possible, or just one char if that's not possible."
   "Checks if point is surrounded by {} [] () delimiters and adds a
 space on either side of the point if so."
   (interactive)
-  (let ((command (or (command-remapping #'self-insert-command) #'self-insert-command)))
-    (if (doom--surrounded-p)
-        (progn (call-interactively command)
-               (save-excursion (call-interactively command)))
-      (call-interactively command))))
+  (let ((command (or (command-remapping #'self-insert-command)
+                     #'self-insert-command)))
+    (cond ((doom--surrounded-p)
+           (call-interactively command)
+           (save-excursion (call-interactively command)))
+          (t
+           (call-interactively command)))))
 
 ;;;###autoload
 (defun doom/deflate-space-maybe ()
@@ -155,22 +157,24 @@ spaces on either side of the point if so. Resorts to
 `doom/backward-delete-whitespace-to-column' otherwise."
   (interactive)
   (save-match-data
-    (if (doom--surrounded-p)
-        (let ((whitespace-match (match-string 1)))
-          (cond ((not whitespace-match)
-                 (call-interactively #'delete-backward-char))
-                ((string-match "\n" whitespace-match)
-                 (funcall (if (featurep 'evil) #'evil-delete #'delete-region)
-                          (point-at-bol) (point))
-                 (call-interactively #'delete-backward-char)
-                 (save-excursion (call-interactively #'delete-char)))
-                (t (just-one-space 0))))
-      (doom/backward-delete-whitespace-to-column))))
+    (cond ((doom--surrounded-p)
+           (let ((whitespace-match (match-string 1)))
+             (cond ((not whitespace-match)
+                    (call-interactively #'delete-backward-char))
+                   ((string-match "\n" whitespace-match)
+                    (funcall (if (featurep 'evil) #'evil-delete #'delete-region)
+                             (point-at-bol) (point))
+                    (call-interactively #'delete-backward-char)
+                    (save-excursion (call-interactively #'delete-char)))
+                   (t (just-one-space 0)))))
+          (t
+           (doom/backward-delete-whitespace-to-column)))))
 
 ;;;###autoload
 (defun doom/newline-and-indent ()
-  "Inserts a newline and possibly indents it. Also cotinues comments if executed
-from a commented line."
+  "Inserts a newline and possibly indents it. Also continues comments if
+executed from a commented line; handling special cases for certain languages
+with weak native support."
   (interactive)
   (cond ((sp-point-in-string)
          (newline))

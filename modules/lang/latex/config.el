@@ -1,4 +1,4 @@
-;;; lang/latex/config.el
+;;; lang/latex/config.el -*- lexical-binding: t; -*-
 
 (defvar +latex-bibtex-dir "~/work/writing/biblio/"
   "Where bibtex files are kept.")

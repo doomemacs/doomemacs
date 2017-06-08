@@ -1,4 +1,4 @@
-;;; app/twitter/autoload.el
+;;; app/twitter/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defun =twitter ()
@@ -7,7 +7,7 @@
   (delete-other-windows)
   (condition-case ex
       (progn
-        (call-interactively 'twit)
+        (call-interactively #'twit)
         (unless (get-buffer (car twittering-initial-timeline-spec-string))
           (error "Failed to open twitter"))
         (switch-to-buffer (car twittering-initial-timeline-spec-string))

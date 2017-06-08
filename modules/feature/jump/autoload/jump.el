@@ -1,4 +1,4 @@
-;;; feature/jump/autoload.el
+;;; feature/jump/autoload.el -*- lexical-binding: t; -*-
 
 (defvar +jump--rg-installed-p (executable-find "rg"))
 (defvar +jump--ag-installed-p (executable-find "ag"))
@@ -42,12 +42,11 @@ Tries xref and falls back to `dumb-jump', then rg/ag, then
 
           ((and (featurep 'evil)
                 evil-mode
-                (let ((bounds (bounds-of-thing-at-point 'symbol))
-                      (orig-pt (point)))
+                (destructuring-bind (beg end) (bounds-of-thing-at-point 'symbol)
                   (evil-goto-definition)
                   (let ((pt (point)))
-                    (not (and (>= pt (car bounds))
-                              (<  pt (cdr bounds))))))))
+                    (not (and (>= pt beg)
+                              (<  pt end)))))))
 
           (t (user-error "Couldn't find '%s'" sym)))))
 
@@ -58,9 +57,8 @@ Tries xref and falls back to `dumb-jump', then rg/ag, then
 Tries `xref-find-references' and falls back to rg/ag."
   (interactive)
   (let ((sym (thing-at-point 'symbol t)))
-    (cond ((progn
-             (ignore-errors (xref-find-references sym)
-                            t)))
+    (cond ((ignore-errors (xref-find-references sym)
+                          t))
 
           ((and sym
                 (featurep 'counsel)
@@ -87,7 +85,7 @@ Interactively, you are prompted to choose a source from
                               (mapcar #'car +jump-search-url-alist)
                               nil t))
          (thing-at-point 'symbol t)))
-  (condition-case ex
+  (condition-case _ex
       (let ((url (cdr (assoc where +jump-search-url-alist))))
         (unless url
           (error "'%s' is an invalid search engine" where))

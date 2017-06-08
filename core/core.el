@@ -1,16 +1,16 @@
-;;; core.el --- The heart of the beast
+;;; core.el --- the heart of the beast -*- lexical-binding: t; -*-
 
 ;;; Naming conventions:
 ;;
-;;   doom-...   public variables or functions (non-interactive)
+;;   doom-...   public variables or non-interactive functions
 ;;   doom--...  private anything (non-interactive), not safe for direct use
-;;   doom/...   an interactive function
+;;   doom/...   an interactive function; safe for M-x or keybinding
 ;;   doom:...   an evil operator, motion or command
 ;;   doom|...   hook function
 ;;   doom*...   advising functions
 ;;   ...!       a macro or function that configures DOOM
 ;;   %...       functions used for in-snippet logic
-;;   +...       Any of the above, but part of a module, e.g. +emacs-lisp|init-hook
+;;   +...       Any of the above but part of a module, e.g. `+emacs-lisp|init-hook'
 ;;
 ;; Autoloaded functions are in core/autoload/*.el and modules/*/*/autoload.el or
 ;; modules/*/*/autoload/*.el.
@@ -94,7 +94,7 @@ there are problems.")
  ;; History & backup settings (save nothing, that's what git is for)
  auto-save-default nil
  create-lockfiles nil
- history-length 1000
+ history-length 500
  make-backup-files nil
  ;; files
  abbrev-file-name             (concat doom-local-dir "abbrev.el")
@@ -117,6 +117,7 @@ there are problems.")
 (advice-add #'display-startup-echo-area-message :override #'ignore)
 (setq inhibit-startup-message t
       inhibit-startup-echo-area-message user-login-name
+      inhibit-default-init t
       initial-major-mode 'fundamental-mode
       initial-scratch-message nil)
 
@@ -150,34 +151,41 @@ enable multiple minor modes for the same regexp.")
 
 ;;;
 ;; Bootstrap
-(setq gc-cons-threshold 402653184
-      gc-cons-percentage 0.6)
+(eval-and-compile
+  (defvar doom--file-name-handler-alist file-name-handler-alist)
+  (setq gc-cons-threshold 402653184
+        gc-cons-percentage 0.6
+        file-name-handler-alist nil)
 
-(let (file-name-handler-alist)
   (require 'cl-lib)
-  (eval-and-compile
-    (require 'core-packages (concat doom-core-dir "core-packages")))
-  (eval-when-compile
-    (doom-initialize))
-  (setq load-path (eval-when-compile load-path)
-        doom--package-load-path (eval-when-compile doom--package-load-path))
+  (require 'core-packages (concat doom-core-dir "core-packages")))
 
-  ;;; Let 'er rip
-  (require 'core-lib)
-  (require 'core-os) ; consistent behavior across Oses
-  (with-demoted-errors "AUTOLOAD ERROR: %s"
-    (require 'autoloads doom-autoload-file t))
+(eval-when-compile
+  (doom-initialize))
 
-  (unless noninteractive
-    (require 'core-ui)          ; draw me like one of your French editors
-    (require 'core-popups)      ; taming sudden yet inevitable windows
-    (require 'core-editor)      ; baseline configuration for text editing
-    (require 'core-projects)    ; making Emacs project-aware
-    (require 'core-keybinds)))  ; centralized keybind system + which-key
+(setq load-path (eval-when-compile load-path)
+      doom--package-load-path (eval-when-compile doom--package-load-path))
 
-(add-hook! '(after-init-hook doom-reload-hook)
+;;; Let 'er rip
+(require 'core-lib)
+(require 'core-os) ; consistent behavior across Oses
+(with-demoted-errors "AUTOLOAD ERROR: %s"
+  (require 'autoloads doom-autoload-file t))
+
+(unless noninteractive
+  (require 'core-ui)         ; draw me like one of your French editors
+  (require 'core-popups)     ; taming sudden yet inevitable windows
+  (require 'core-editor)     ; baseline configuration for text editing
+  (require 'core-projects)   ; making Emacs project-aware
+  (require 'core-keybinds))  ; centralized keybind system + which-key
+
+(defun doom|init ()
   (setq gc-cons-threshold 16777216
-        gc-cons-percentage 0.1))
+        gc-cons-percentage 0.1
+        file-name-handler-alist doom--file-name-handler-alist))
+
+(add-hook! '(emacs-startup-hook doom-reload-hook)
+  #'doom|init)
 
 (provide 'core)
 ;;; core.el ends here

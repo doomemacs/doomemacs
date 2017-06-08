@@ -1,4 +1,4 @@
-;;; tools/rotate-text/config.el
+;;; tools/rotate-text/config.el -*- lexical-binding: t; -*-
 
 (def-package! rotate-text
   :commands (rotate-text rotate-text-backward)

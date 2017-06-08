@@ -1,4 +1,4 @@
-;;; feature/workspaces/autoload/workspaces.el
+;;; feature/workspaces/autoload/workspaces.el -*- lexical-binding: t; -*-
 
 (defvar +workspace-workspace-file "_workspaces"
   "The file basename in which to store single workspace perspectives.")
@@ -139,12 +139,11 @@ perspective or its hash table."
   (persp-frame-switch name))
 
 (defun +workspace--generate-id ()
-  (let ((numbers (mapcar (lambda (it) (string-to-number (substring it 1)))
-                         (cl-remove-if-not (lambda (it) (string-match-p "^#[0-9]+$" it))
-                                           (+workspace-list)))))
-    (if numbers
-        (1+ (car (sort numbers (lambda (it other) (> it other)))))
-      1)))
+  (or (cl-loop for name in (+workspace-list)
+               when (string-match-p "^#[0-9]+$" name)
+               maximize (string-to-number (substring name 1)) into max
+               finally return (if max (1+ max)))
+      1))
 
 (defun +workspace-protected-p (name)
   (or (equal name persp-nil-name)
@@ -373,17 +372,16 @@ the workspace and move to the next."
 
 (defun +workspace--tabline (&optional names)
   (let ((names (or names (+workspace-list)))
-        (current-name (+workspace-current-name))
-        (i 0))
+        (current-name (+workspace-current-name)))
     (mapconcat
      #'identity
-     (mapcar (lambda (it)
-               (cl-incf i)
-               (propertize (format " [%d] %s " i it)
-                           'face (if (equal current-name it)
-                                     '+workspace-tab-selected-face
-                                   '+workspace-tab-face)))
-             names)
+     (cl-loop for name in names
+              for i to (length names)
+              collect
+              (propertize (format " [%d] %s " i name)
+                          'face (if (equal current-name name)
+                                    '+workspace-tab-selected-face
+                                  '+workspace-tab-face)))
      " ")))
 
 (defun +workspace--message-body (message &optional  type)

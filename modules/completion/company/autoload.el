@@ -1,4 +1,4 @@
-;;; company.el
+;;; completion/company/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defun +company/complete ()
@@ -15,17 +15,18 @@
 C-x C-l."
   (interactive (list 'interactive))
   (require 'company)
-  (unless (bound-and-true-p company-mode) (company-mode))
-  (let ((lines (split-string
-                (replace-regexp-in-string
-                 "^[\t\s]+" ""
-                 (concat (buffer-substring-no-properties (point-min) (line-beginning-position))
-                         (buffer-substring-no-properties (line-end-position) (point-max))))
-                "\\(\r\n\\|[\n\r]\\)" t)))
-    (cl-case command
-      (interactive (company-begin-backend '+company/whole-lines))
-      (prefix (company-grab-line "^[\t\s]*\\(.+\\)" 1))
-      (candidates (all-completions arg lines)))))
+  (pcase command
+    ('interactive (company-begin-backend '+company/whole-lines))
+    ('prefix      (company-grab-line "^[\t\s]*\\(.+\\)" 1))
+    ('candidates
+     (all-completions
+      arg
+      (split-string
+       (replace-regexp-in-string
+        "^[\t\s]+" ""
+        (concat (buffer-substring-no-properties (point-min) (line-beginning-position))
+                (buffer-substring-no-properties (line-end-position) (point-max))))
+       "\\(\r\n\\|[\n\r]\\)" t)))))
 
 ;;;###autoload
 (defun +company/dict-or-keywords ()

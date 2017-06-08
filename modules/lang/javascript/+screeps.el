@@ -1,4 +1,4 @@
-;;; lang/javascript/+screeps.el
+;;; lang/javascript/+screeps.el -*- lexical-binding: t; -*-
 
 ;; TODO Constants may be out-of-date
 
@@ -171,8 +171,9 @@
   :match "/screeps/.+$"
   :modes (+javascript-npm-mode))
 
-(add-hook! '+javascript-screeps-mode-hook
+(defun +javascript|init-screeps-mode ()
   (when (eq major-mode 'js2-mode)
-    (push 'javascript-jshint flycheck-disabled-checkers)
+    (cl-pushnew 'javascript-jshint flycheck-disabled-checkers)
     (setq js2-additional-externs (append '("_") screeps-objects screeps-constants))))
+(add-hook '+javascript-screeps-mode-hook #'+javascript|init-screeps-mode)
 

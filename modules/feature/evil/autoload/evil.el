@@ -1,4 +1,4 @@
-;;; feature/evil/autoload/evil.el
+;;; feature/evil/autoload/evil.el -*- lexical-binding: t; -*-
 
 (eval-when-compile (require 'subr-x))
 
@@ -36,16 +36,13 @@ flags. See http://vimdoc.sourceforge.net/htmldoc/cmdline.html#filename-modifiers
                          "\\([#%]\\)"
                          "\\(\\(?::\\(?:[PphtreS~.]\\|g?s[^:\t\n ]+\\)\\)*\\)"))
          (matches
-          (let ((all-strings ())
-                (i 0))
-            (while (and (< i (length file-name))
-                        (string-match regexp file-name i))
-              (setq i (1+ (match-beginning 0)))
-              (let (strings)
-                (push (dotimes (i (/ (length (match-data)) 2) (nreverse strings))
-                        (push (match-string i file-name) strings))
-                      all-strings)))
-            (nreverse all-strings))))
+          (cl-loop with i = 0
+                   while (and (< i (length file-name))
+                              (string-match regexp file-name i))
+                   do (setq i (1+ (match-beginning 0)))
+                   and collect
+                   (cl-loop for j to (/ (length (match-data)) 2)
+                            collect (match-string j file-name)))))
     (dolist (match matches)
       (let ((flags (split-string (car (cdr (cdr match))) ":" t))
             (path (and buffer-file-name
@@ -113,16 +110,18 @@ evil-window-move-* (e.g. `evil-window-move-far-left')"
               (doom-popup-p that-window))
       (setq that-buffer nil that-window nil))
     (if (not (or that-window (one-window-p t)))
-        (funcall (case direction
-                   ('left 'evil-window-move-far-left)
-                   ('right 'evil-window-move-far-right)
-                   ('up 'evil-window-move-very-top)
-                   ('down 'evil-window-move-very-bottom)))
+        (funcall (pcase direction
+                   ('left  #'evil-window-move-far-left)
+                   ('right #'evil-window-move-far-right)
+                   ('up    #'evil-window-move-very-top)
+                   ('down  #'evil-window-move-very-bottom)))
       (unless that-window
         (setq that-window
-              (split-window this-window nil (cond ((eq direction 'up) 'above)
-                                                  ((eq direction 'down) 'below)
-                                                  (t direction))))
+              (split-window this-window nil
+                            (pcase direction
+                              ('up 'above)
+                              ('down 'below)
+                              (_ direction))))
         (with-selected-window that-window
           (switch-to-buffer doom-buffer))
         (setq that-buffer (window-buffer that-window)))
@@ -172,20 +171,22 @@ evil-window-move-* (e.g. `evil-window-move-far-left')"
 
 ;; --- custom arg handlers ----------------
 
+(defvar +evil--flag nil)
+
 (defun +evil--ex-match-init (name &optional face update-hook)
   (with-current-buffer evil-ex-current-buffer
     (cond
-     ((eq flag 'start)
+     ((eq +evil--flag 'start)
       (evil-ex-make-hl name
         :face (or face 'evil-ex-substitute-matches)
         :update-hook (or update-hook #'evil-ex-pattern-update-ex-info))
-      (setq flag 'update))
+      (setq +evil--flag 'update))
 
-     ((eq flag 'stop)
+     ((eq +evil--flag 'stop)
       (evil-ex-delete-hl name)))))
 
 (defun +evil--ex-buffer-match (arg &optional hl-name flags beg end)
-  (when (and (eq flag 'update)
+  (when (and (eq +evil--flag 'update)
              evil-ex-substitute-highlight-all
              (not (zerop (length arg))))
     (condition-case lossage
@@ -209,21 +210,24 @@ evil-window-move-* (e.g. `evil-window-move-far-left')"
 
 ;;;###autoload
 (defun +evil-ex-buffer-match (flag &optional arg)
-  (let ((hl-name 'evil-ex-buffer-match))
+  (let ((hl-name 'evil-ex-buffer-match)
+        (+evil--flag flag))
     (with-selected-window (minibuffer-selected-window)
       (+evil--ex-match-init hl-name)
       (+evil--ex-buffer-match arg hl-name (list (if evil-ex-substitute-global ?g))))))
 
 ;;;###autoload
 (defun +evil-ex-global-match (flag &optional arg)
-  (let ((hl-name 'evil-ex-global-match))
+  (let ((hl-name 'evil-ex-global-match)
+        (+evil--flag flag))
     (with-selected-window (minibuffer-selected-window)
       (+evil--ex-match-init hl-name)
       (+evil--ex-buffer-match arg hl-name nil (point-min) (point-max)))))
 
 ;;;###autoload
 (defun +evil-ex-global-delim-match (flag &optional arg)
-  (let ((hl-name 'evil-ex-global-delim-match))
+  (let ((hl-name 'evil-ex-global-delim-match)
+        (+evil--flag flag))
     (with-selected-window (minibuffer-selected-window)
       (+evil--ex-match-init hl-name)
       (let ((result (car-safe (evil-delimited-arguments arg 2))))
@@ -249,7 +253,7 @@ evil-window-move-* (e.g. `evil-window-move-far-left')"
   "A wrapper around `evil-delete' for `wgrep' buffers that will invoke
 `wgrep-mark-deletion' on lines you try to delete."
   (interactive "<R><x><y>")
-  (condition-case ex
+  (condition-case _ex
       (evil-delete beg end type register yank-handler)
     ('text-read-only
      (evil-apply-on-block

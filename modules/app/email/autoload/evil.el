@@ -1,4 +1,4 @@
-;;; app/email/autoload/evil.el
+;;; app/email/autoload/evil.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defun +email/mark (&optional beg end)
@@ -8,11 +8,12 @@
   (let* ((beg (or (and (region-active-p) evil-visual-beginning) (line-beginning-position)))
          (end (or (and (region-active-p) evil-visual-end) (line-end-position)))
          (key (this-command-keys))
-         (command (car (cl-find-if (lambda (mark) (equal (car (plist-get (cdr mark) :char)) key))
-                                   mu4e-marks))))
+         (command
+          (car (cl-find-if (lambda (mark) (equal (car (plist-get (cdr mark) :char)) key))
+                           mu4e-marks))))
     (unless command
       (error "Not a valid mark command: %s" key))
-    (when (featurep 'evil)
+    (when (bound-and-true-p evil-mode)
       (evil-normal-state))
     (goto-char beg)
     (dotimes (_ (count-lines beg end))

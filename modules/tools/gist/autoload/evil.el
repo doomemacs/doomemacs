@@ -1,10 +1,10 @@
-;;; tools/gist/autoload/evil.el
+;;; tools/gist/autoload/evil.el -*- lexical-binding: t; -*-
 
 ;;;###autoload (autoload '+gist:send "tools/gist/autoload/evil" nil t)
-(evil-define-operator +gist:send (beg end search bang)
+(evil-define-operator +gist:send (bang)
   "Create a private gist from the buffer. If BANG then make it public."
   :type inclusive :repeat nil
-  (interactive "<r><!>")
+  (interactive "<!>")
   (if bang
       (gist-region-or-buffer)
     (gist-region-or-buffer-private)))

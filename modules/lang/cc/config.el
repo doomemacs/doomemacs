@@ -1,4 +1,4 @@
-;;; lang/cc/config.el --- C, C++, and Objective-C
+;;; lang/cc/config.el --- c, c++, and obj-c -*- lexical-binding: t; -*-
 
 (def-package! cc-mode
   :commands (c-mode c++-mode objc-mode java-mode)
@@ -67,7 +67,7 @@
   (c-set-offset 'arglist-intro '+)
   (c-set-offset 'arglist-close '0)
 
-  (defun +cc--c-lineup-inclass (langelem)
+  (defun +cc--c-lineup-inclass (_langelem)
     (if (memq major-mode '(c-mode c++-mode))
         (let ((inclass (assq 'inclass c-syntactic-context)))
           (save-excursion
@@ -115,12 +115,15 @@
 (def-package! irony
   :after cc-mode
   :commands irony-install-server
-  :init
-  (add-hook! 'c-mode-common-hook
-    (when (memq major-mode '(c-mode c++-mode objc-mode))
-      (irony-mode +1)))
-  :config
+  :preface
   (setq irony-server-install-prefix (concat doom-etc-dir "irony-server/"))
+  :init
+  (defun +cc|init-irony-mode ()
+    (when (memq major-mode '(c-mode c++-mode objc-mode))
+      (when (file-directory-p irony-server-install-prefix)
+        (irony-mode +1))))
+  (add-hook 'c-mode-common-hook #'+cc|init-irony-mode)
+  :config
   (add-hook! 'irony-mode-hook #'(irony-eldoc flycheck-mode))
   (add-hook! 'c++-mode-hook
     (make-local-variable 'irony-additional-clang-options)

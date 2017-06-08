@@ -1,4 +1,4 @@
-;;; feature/eval/autoload/build.el
+;;; feature/eval/autoload/build.el -*- lexical-binding: t; -*-
 
 (defvar-local +eval-last-builder nil
   "The last builder run in the current buffer.")
@@ -22,9 +22,7 @@ functions.")
               :key 'cdr))
     (if (= (length builders) 1)
         (car builders)
-      (when-let (builder (completing-read "Build: "
-                                          (mapcar #'car builders)
-                                          nil t))
+      (when-let (builder (completing-read "Build: " (mapcar #'car builders) nil t))
         (assq (intern builder) builders)))))
 
 ;;;###autoload
@@ -36,9 +34,8 @@ functions.")
              (error "No builder for this buffer"))))
   (unless builder
     (error "Builder not found in registered builders"))
-  (let* ((name  (car builder))
-         (plist (cdr builder))
-         (fn (plist-get plist :fn)))
+  (let ((name  (car builder))
+        (fn (plist-get (cdr builder) :fn)))
     (message "Running %s" name)
     (if (or (functionp fn)
             (and (symbolp fn) (fboundp fn)))

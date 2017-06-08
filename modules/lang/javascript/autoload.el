@@ -1,4 +1,4 @@
-;;; lang/javascript/autoload.el
+;;; lang/javascript/autoload.el -*- lexical-binding: t; -*-
 
 (defvar +javascript-npm-conf (make-hash-table :test 'equal))
 
@@ -17,13 +17,13 @@ ignore the cache."
 ;;;###autoload
 (defun +javascript-npm-dep-p (packages &optional project-root refresh-p)
   (when-let (data (and (bound-and-true-p +javascript-npm-mode)
-                       (+javascript-npm-conf)))
+                       (+javascript-npm-conf project-root refresh-p)))
     (let ((deps (append (cdr (assq 'dependencies data))
                         (cdr (assq 'devDependencies data)))))
       (cond ((listp packages)
              (funcall (if (eq (car packages) 'and)
-                          'cl-every
-                        'cl-some)
+                          #'cl-every
+                        #'cl-some)
                       (lambda (pkg) (assq pkg deps))
                       (if (listp packages) packages (list packages))))
             ((symbolp packages)

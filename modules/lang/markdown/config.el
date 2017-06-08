@@ -1,4 +1,4 @@
-;;; lang/markdown/config.el
+;;; lang/markdown/config.el -*- lexical-binding: t; -*-
 
 (def-package! markdown-mode
   :mode ("\\.m\\(d\\|arkdown\\)$" "/README$"

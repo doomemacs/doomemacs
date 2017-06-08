@@ -1,4 +1,4 @@
-;;; lang/java/config.el
+;;; lang/java/config.el -*- lexical-binding: t; -*-
 
 (def-package! meghanada
   :commands meghanada-mode

@@ -1,4 +1,4 @@
-;;; tools/upload/autoload.el
+;;; tools/upload/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defun +upload/local (&optional force-p)

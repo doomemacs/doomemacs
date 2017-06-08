@@ -1,4 +1,4 @@
-;;; ui/evil-goggles/config.el
+;;; ui/evil-goggles/config.el -*- lexical-binding: t; -*-
 
 (def-package! evil-goggles
   :when (featurep! :feature evil)

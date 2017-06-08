@@ -1,4 +1,4 @@
-;;; ui/doom-modeline/config.el
+;;; ui/doom-modeline/config.el -*- lexical-binding: t; -*-
 
 (eval-when-compile (require 'subr-x))
 
@@ -90,6 +90,8 @@
 (defvar evil-state nil)
 (defvar evil-visual-selection nil)
 (defvar iedit-mode nil)
+(defvar all-the-icons-scale-factor)
+(defvar all-the-icons-default-adjust)
 
 
 ;;
@@ -196,7 +198,6 @@ active."
     (propertize
      " " 'display
      (let ((data (make-list height (make-list width 1)))
-           (i 0)
            (color (or color "None")))
        (create-image
         (concat
@@ -205,30 +206,26 @@ active."
                  (length data)
                  color
                  color)
-         (let ((len (length data))
-               (idx 0))
-           (apply #'concat
-                  (mapcar #'(lambda (dl)
-                              (setq idx (+ idx 1))
-                              (concat
-                               "\""
-                               (concat
-                                (mapcar #'(lambda (d)
-                                            (if (eq d 0)
-                                                (string-to-char " ")
-                                              (string-to-char ".")))
-                                        dl))
-                               (if (eq idx len) "\"};" "\",\n")))
-                          data))))
+         (apply #'concat
+                (cl-loop with idx = 0
+                         with len = (length data)
+                         for dl in data
+                         do (cl-incf idx)
+                         collect
+                         (concat "\""
+                                 (cl-loop for d in dl
+                                          if (= d 0) collect (string-to-char " ")
+                                          else collect (string-to-char "."))
+                                 (if (eq idx len) "\"};" "\",\n")))))
         'xpm t :ascent 'center)))))
 
-(defun +doom-modeline--buffer-file ()
+(defsubst +doom-modeline--buffer-file ()
   "Display the base of the current buffer's filename."
   (if buffer-file-name
       (file-name-nondirectory (or buffer-file-truename (file-truename buffer-file-name)))
     "%b"))
 
-(defun +doom-modeline--buffer-path ()
+(defsubst +doom-modeline--buffer-path ()
   "Displays the buffer's full path relative to the project root (includes the
 project root). Excludes the file basename. See `doom-buffer-name' for that."
   (when buffer-file-name
@@ -373,7 +370,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
               +doom-modeline-vspc))))
 
 ;;
-(def-memoized! +doom-ml-icon (icon &optional text face)
+(defun +doom-ml-icon (icon &optional text face)
   "Displays an octicon ICON with FACE, followed by TEXT. Uses
 `all-the-icons-octicon' to fetch the icon."
   (concat

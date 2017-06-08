@@ -1,4 +1,4 @@
-;;; ../core/autoload/help.el
+;;; core/autoload/help.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defun doom/describe-setting (setting)

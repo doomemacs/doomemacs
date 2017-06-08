@@ -1,5 +1,4 @@
-;;; system.el
-(provide 'core-lib-system)
+;;; core/autoload/system.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defun doom-system-os (&optional os)
@@ -17,9 +16,8 @@ is given, returns t if it matches the current system, and nil otherwise."
                      ((memq system-type '(windows-nt cygwin))
                       'windows)
                      (t (error "Unknown OS: %s" system-type)))))
-    (if os
-        (eq os type)
-      type)))
+    (or (and os (eq os type))
+        type)))
 
 ;;;###autoload
 (defun doom-sh (command &rest args)
@@ -34,6 +32,7 @@ is given, returns t if it matches the current system, and nil otherwise."
           (t
            (princ (shell-command-to-string (apply #'format command args)))))))
 
+(defvar tramp-verbose)
 ;;;###autoload
 (defun doom-sudo (command &rest args)
   "Like `doom-sh', but runs as root (prompts for password)."

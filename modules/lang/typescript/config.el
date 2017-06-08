@@ -1,4 +1,4 @@
-;;; lang/typescript/config.el
+;;; lang/typescript/config.el -*- lexical-binding: t; -*-
 
 (def-package! typescript-mode
   :mode "\\.ts$"

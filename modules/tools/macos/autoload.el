@@ -1,4 +1,4 @@
-;;; tools/macos/autoload.el
+;;; tools/macos/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defun +macos-open-with (&optional app-name path)

@@ -1,4 +1,4 @@
-;;; private/hlissner/init.el
+;;; private/hlissner/init.el -*- lexical-binding: t; -*-
 
 ;; This is a special file, unique to private modules, that is loaded after DOOM
 ;; core but before any module is activated, giving you an opportunity to

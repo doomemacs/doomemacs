@@ -1,4 +1,4 @@
-;;; lang/scala/config.el
+;;; lang/scala/config.el -*- lexical-binding: t; -*-
 
 (def-package! scala-mode
   :mode "\\.s\\(cala\\|bt\\)$"

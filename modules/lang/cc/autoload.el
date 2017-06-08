@@ -1,4 +1,4 @@
-;;; lang/cc/autoload.el
+;;; lang/cc/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defun +cc/autoclose->-maybe ()

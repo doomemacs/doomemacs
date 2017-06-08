@@ -1,4 +1,4 @@
-;;; memoize.el
+;;; core/autoload/memoize.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defvar doom-memoized-table (make-hash-table :test 'equal :size 10)
@@ -23,7 +23,9 @@ and the value is the function's return value.")
   "Create a memoize'd function. NAME, ARGLIST, DOCSTRING and BODY
 have the same meaning as in `defun'."
   (declare (indent defun) (doc-string 3))
-  `(progn
+  `(,(if (bound-and-true-p byte-compile-current-file)
+         'with-no-warnings
+       'progn)
      (defun ,name ,arglist ,@body)
      (doom-memoize ',name)))
 

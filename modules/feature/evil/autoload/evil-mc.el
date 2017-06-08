@@ -1,4 +1,4 @@
-;;; feature/evil/autoload/evil-mc.el
+;;; feature/evil/autoload/evil-mc.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defun +evil/mc-toggle-cursors ()
@@ -21,9 +21,7 @@ cursors."
   (interactive)
   (cond ((memq evil-this-type '(block line))
          (let ((col (evil-column))
-               (line-at-pt (line-number-at-pos))
-               (beg evil-visual-beginning)
-               (end evil-visual-end))
+               (line-at-pt (line-number-at-pos)))
            ;; Fix off-by-one error
            (when (= evil-visual-direction 1)
              (cl-decf col)
@@ -36,7 +34,7 @@ cursors."
                   (move-to-column col)
                   (when (= (current-column) col)
                     (evil-mc-make-cursor-here))))
-              beg
+              evil-visual-beginning
               (if (eq evil-this-type 'line) (1- evil-visual-end) evil-visual-end)
               nil)
              (evil-exit-visual-state))))

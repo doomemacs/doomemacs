@@ -1,4 +1,4 @@
-;;; private/hlissner/config.el
+;;; private/hlissner/config.el -*- lexical-binding: t; -*-
 
 (when (featurep 'evil)
   (load! +bindings)  ; my key bindings

@@ -1,4 +1,4 @@
-;;; private/hlissner/+bindings.el
+;;; private/hlissner/+bindings.el -*- lexical-binding: t; -*-
 
 ;; I've swapped these keys on my keyboard
 (setq x-super-keysym 'alt
@@ -347,9 +347,7 @@
    :i "C-s"   #'company-yasnippet
    :i "C-o"   #'company-capf
    :i "C-n"   #'company-dabbrev-code
-   :i "C-p"   (λ! (let ((company-selection-wrap-around t))
-                    (call-interactively #'company-dabbrev-code)
-                    (company-select-previous-or-abort))))
+   :i "C-p"   #'+company/dabbrev-code-previous)
  (:after company
    (:map company-active-map
      ;; Don't interfere with `evil-delete-backward-word' in insert mode

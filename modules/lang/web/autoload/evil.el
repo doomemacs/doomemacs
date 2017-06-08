@@ -1,4 +1,4 @@
-;;; lang/html/autoload/evil.el
+;;; lang/html/autoload/evil.el -*- lexical-binding: t; -*-
 
 ;;;###autoload (autoload '+web:encode-html-entities "lang/web/autoload/evil" nil t)
 (evil-define-operator +web:encode-html-entities (beg end &optional input)

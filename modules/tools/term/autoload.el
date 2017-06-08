@@ -1,4 +1,4 @@
-;;; tools/term/autoload.el
+;;; tools/term/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defun +term (&optional project-root)
@@ -6,7 +6,7 @@
 non-nil, cd into the current project's root."
   (interactive "P")
   (let ((default-directory (if project-root (doom-project-root) default-directory)))
-    (call-interactively 'multi-term)))
+    (call-interactively #'multi-term)))
 
 ;;;###autoload
 (defun +term/popup (&optional project-root)
@@ -14,10 +14,9 @@ non-nil, cd into the current project's root."
 current project's root."
   (interactive "P")
   (require 'multi-term)
-  (let* ((default-directory (if project-root (doom-project-root) default-directory))
-         (buffer (multi-term-get-buffer current-prefix-arg))
-         (window (doom-popup-buffer buffer)))
-    (select-window window)
+  (let ((default-directory (if project-root (doom-project-root) default-directory))
+        (buffer (multi-term-get-buffer current-prefix-arg)))
+    (select-window (doom-popup-buffer buffer))
     (setq multi-term-buffer-list (nconc multi-term-buffer-list (list buffer)))
     (multi-term-internal)))
 

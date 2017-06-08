@@ -1,4 +1,4 @@
-;;; module-haskell.el
+;;; lang/haskell/config.el -*- lexical-binding: t; -*-
 
 (def-package! haskell-mode
   :mode "\\.hs$"
@@ -10,7 +10,6 @@
   (load "haskell-mode-autoloads" nil t)
 
   (set! :repl 'haskell-mode #'switch-to-haskell)
-
   (push ".hi" completion-ignored-extensions)
 
   (autoload 'switch-to-haskell "inf-haskell" nil t)

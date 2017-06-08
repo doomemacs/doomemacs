@@ -1,4 +1,4 @@
-;;; feature/evil/autoload/files.el
+;;; feature/evil/autoload/files.el -*- lexical-binding: t; -*-
 
 (defun +evil--forget-file (old-path &optional new-path)
   "Ensure `recentf', `projectile' and `save-place' forget OLD-PATH."
@@ -23,11 +23,9 @@ kills the buffer. If FORCE-P, force the deletion (don't ask for confirmation)."
          (buf (current-buffer)))
     (cond ((not (file-exists-p fname))
            (error "File doesn't exist: %s" fname))
-
           ((not (or force-p (y-or-n-p (format "Really delete %s?" fbase))))
            (message "Aborted")
            nil)
-
           (t
            (unwind-protect
                (progn (delete-file fname) t)
@@ -38,8 +36,7 @@ kills the buffer. If FORCE-P, force the deletion (don't ask for confirmation)."
                  ;; to real buffers (`doom-real-buffer-p')
                  (doom-force-kill-buffer buf t)
                  (+evil--forget-file fname)
-                 (message "Successfully deleted %s" short-path)
-                 )))))))
+                 (message "Successfully deleted %s" short-path))))))))
 
 (defun +evil--copy-file (old-path new-path &optional force-p)
   (let* ((new-path (expand-file-name new-path))

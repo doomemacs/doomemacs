@@ -1,4 +1,4 @@
-;;; ui/doom-quit/config.el
+;;; ui/doom-quit/config.el -*- lexical-binding: t; -*-
 
 ;; A silly module that prompts you with messages when you try to quit, like DOOM
 ;; did. Some quotes are taken from Doom's quit-message list, others are random,

@@ -1,14 +1,14 @@
-;;; lang/web/config.el
+;;; lang/web/+html.el -*- lexical-binding: t; -*-
 
 (def-package! web-mode
-  :mode ("\\.p?html?$"
-         "\\.\\(tpl\\|blade\\)\\(\\.php\\)?$"
-         "\\.erb$"
-         "\\.jsp$"
-         "\\.as[cp]x$"
-         "\\.mustache$"
-         "\\.tsx$"
-         "wp-content/themes/.+/.+\\.php$")
+  :mode "\\.p?html?$"
+  :mode "\\.\\(tpl\\|blade\\)\\(\\.php\\)?$"
+  :mode "\\.erb$"
+  :mode "\\.jsp$"
+  :mode "\\.as[cp]x$"
+  :mode "\\.mustache$"
+  :mode "\\.tsx$"
+  :mode "wp-content/themes/.+/.+\\.php$"
   :init
   (add-hook 'web-mode-hook #'turn-off-smartparens-mode)
   :config
@@ -38,7 +38,8 @@
 
 
 (def-package! pug-mode
-  :mode ("\\.jade$" "\\.pug$")
+  :mode "\\.jade$"
+  :mode "\\.pug$"
   :config
   (set! :company-backend 'pug-mode '(company-yasnippet))
   (map! :map pug-mode-map

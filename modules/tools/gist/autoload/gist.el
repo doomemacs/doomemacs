@@ -1,4 +1,4 @@
-;;; tools/gist/autoload/gist.el
+;;; tools/gist/autoload/gist.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defun +gist/open-current ()

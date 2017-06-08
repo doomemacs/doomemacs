@@ -1,4 +1,4 @@
-;;; feature/version-control/autoload.el
+;;; feature/version-control/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defun +vcs-root ()
@@ -15,8 +15,8 @@
   "Open the website for the current version controlled file. Fallback to
 repository root."
   (interactive)
-  (let ((git-link-open-in-browser t))
-    (call-interactively 'git-link)))
+  (destructuring-bind (beg end) (if buffer-file-name (git-link--get-region))
+    (git-link (git-link--select-remote) beg end)))
 
 ;;;###autoload
 (defun +vcs/git-browse-issues ()

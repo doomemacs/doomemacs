@@ -1,4 +1,4 @@
-;;; ui/doom/config.el
+;;; ui/doom/config.el -*- lexical-binding: t; -*-
 
 (defvar +doom-theme 'doom-one
   "The color theme to use.")
@@ -38,10 +38,10 @@
   (load-theme +doom-theme t)
 
   ;; blink mode-line on errors
-  (doom-themes-visual-bell-config)
+  (add-hook 'emacs-startup-hook #'doom-themes-visual-bell-config t)
 
   ;; Add file icons to doom-neotree
-  (doom-themes-neotree-config)
+  (add-hook 'emacs-startup-hook #'doom-themes-neotree-config t)
   (setq doom-neotree-enable-variable-pitch t
         doom-neotree-file-icons 'simple
         doom-neotree-line-spacing 2)

@@ -1,4 +1,4 @@
-;;; lang/php/autoload.el
+;;; lang/php/autoload.el -*- lexical-binding: t; -*-
 
 (defvar +php-composer-conf (make-hash-table :test 'equal))
 

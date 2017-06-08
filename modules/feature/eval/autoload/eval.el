@@ -1,4 +1,4 @@
-;;; feature/eval/autoload/eval.el
+;;; feature/eval/autoload/eval.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defun +eval/buffer ()

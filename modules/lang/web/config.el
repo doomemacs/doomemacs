@@ -1,4 +1,4 @@
-;;; lang/web/config.el
+;;; lang/web/config.el -*- lexical-binding: t; -*-
 
 (load! +html)
 (load! +css)
@@ -39,9 +39,10 @@
   :modes (web-mode js-mode coffee-mode css-mode haml-mode pug-mode)
   :files (and "config.yml" (or "_layouts/" "_posts/"))
   :init
-  (add-hook! '+web-jekyll-mode-hook
+  (defun +web|init-jekyll-mode ()
     (when (eq major-mode 'web-mode)
-      (web-mode-set-engine "django"))))
+      (web-mode-set-engine "django")))
+  (add-hook '+web-jekyll-mode-hook #'+web|init-jekyll-mode))
 
 (def-project-mode! +web-wordpress-mode
   :modes (php-mode web-mode css-mode haml-mode pug-mode)

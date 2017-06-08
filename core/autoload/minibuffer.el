@@ -1,4 +1,4 @@
-;;; ../core/autoload/minibuffer.el
+;;; core/autoload/minibuffer.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defun doom/minibuffer-kill-word ()

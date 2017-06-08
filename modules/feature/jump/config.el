@@ -1,4 +1,4 @@
-;;; feature/jump/config.el
+;;; feature/jump/config.el -*- lexical-binding: t; -*-
 
 ;; "What am I looking at?"
 ;;

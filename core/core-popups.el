@@ -1,15 +1,16 @@
-;;; core-popups.el --- taming sudden yet inevitable windows
+;;; core-popups.el -*- lexical-binding: t; -*-
 
 ;; I want a "real"-buffer-first policy in my Emacsian utpoia; popup buffers
 ;; ought to be second-class citizens to "real" buffers. No need for a wall or
-;; controversial immigration policies -- all we need is `shackle'.
+;; controversial immigration policies -- all we need is `shackle' (and it will
+;; actually work).
 ;;
-;; The gist is: popups should always be displayed on one side of the frame, away
-;; from 'real' buffers; they should be easy to dispose of when we don't want to
-;; see them; and easily brought back in case we change our minds. Also, popups
-;; should typically have no mode-line.
+;; The gist is: popups should be displayed on one side of the frame, away from
+;; 'real' buffers. They should be easy to dispose of when we don't want to see
+;; them and easily brought back in case we change our minds. Also, popups should
+;; typically have no mode-line.
 ;;
-;; Be warned, this requires a lot of hackery and voodoo that could break with an
+;; Be warned, this requires a lot of hackery voodoo that could break with an
 ;; emacs update or an update to any of the packages it tries to tame (like helm
 ;; or org-mode).
 
@@ -43,7 +44,8 @@ is enabled/disabled.'")
 ;; Bootstrap
 ;;
 
-(def-package! shackle :demand t
+(def-package! shackle
+  :demand t
   :init
   (setq shackle-default-alignment 'below
         shackle-default-size 8
@@ -85,10 +87,8 @@ is enabled/disabled.'")
           ("^ \\*" :regexp t :size 12 :noselect t :autokill t :autoclose t)))
 
   :config
-  (if (display-graphic-p)
-      (shackle-mode +1)
-    (add-transient-hook! 'after-make-frame-functions (shackle-mode +1))
-    (add-hook 'after-init-hook 'shackle-mode))
+  (add-transient-hook! 'after-make-frame-functions (shackle-mode +1))
+  (add-hook 'window-setup-hook #'shackle-mode)
 
   (defun doom*shackle-always-align (plist)
     "Ensure popups are always aligned and selected by default. Eliminates the need
@@ -418,7 +418,7 @@ the command buffer."
           (t
            (magit-display-buffer-traditional buffer))))
 
-  (defun doom-magit-quit-window (kill-buffer)
+  (defun doom-magit-quit-window (_kill-buffer)
     "Close the current magit window properly."
     (let ((last (current-buffer)))
       (cond ((when-let (dest (doom-buffers-in-mode
@@ -438,7 +438,7 @@ the command buffer."
 
 
 (after! mu4e
-  (defun doom*mu4e-popup-window (buf height)
+  (defun doom*mu4e-popup-window (buf _height)
     (doom-popup-buffer buf :size 10 :noselect t)
     buf)
   (advice-add #'mu4e~temp-window :override #'doom*mu4e-popup-window))
@@ -501,7 +501,7 @@ you came from."
 
 ;; Ensure these settings are attached to org-load-hook as late as possible,
 ;; giving other modules a chance to add their own hooks.
-(add-hook! 'after-init-hook
+(add-hook! 'emacs-startup-hook
   (add-hook! 'org-load-hook
     (set! :popup
       '("*Calendar*"         :size 0.4 :noselect t)
@@ -532,7 +532,7 @@ you came from."
     ;; `org-edit-src-code' simply clones and narrows the buffer to a src block,
     ;; so we are secretly manipulating the same buffer. Since truely killing it
     ;; would kill the original org buffer we've got to do things differently.
-    (defun doom*org-src-switch-to-buffer (buffer context)
+    (defun doom*org-src-switch-to-buffer (buffer _context)
       (if (eq org-src-window-setup 'switch-invisibly)
           (set-buffer buffer)
         (pop-to-buffer buffer)))

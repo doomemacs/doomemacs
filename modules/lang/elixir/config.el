@@ -1,10 +1,9 @@
-;;; lang/elixir/config.el
+;;; lang/elixir/config.el -*- lexical-binding: t; -*-
 
 (def-package! elixir-mode
-  :mode ("\\.ex$")
+  :mode "\\.ex$"
   :init
-  (add-hook 'elixir-mode-hook #'turn-off-smartparens-mode)
-  (add-hook 'elixir-mode-hook #'alchemist)
+  (add-hook! 'elixir-mode-hook #'(turn-off-smartparens-mode alchemist))
   :config
   (set! :company-backend 'elixir-mode '(alchemist-company company-yasnippet)))
 

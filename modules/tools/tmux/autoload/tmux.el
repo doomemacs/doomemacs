@@ -1,4 +1,4 @@
-;;; tools/tmux/autoload/tmux.el
+;;; tools/tmux/autoload/tmux.el -*- lexical-binding: t; -*-
 
 ;; This library offers:
 ;;   + A way of communicating with a tmux instance
@@ -98,48 +98,46 @@ but do not execute them."
 (defun +tmux-list-sessions ()
   (let ((lines (+tmux "list-sessions -F '#{session_id};#{session_name};#{session_attached}'")))
     (if lines
-        (mapcar (lambda (it)
-                  (let ((sess (split-string it ";")))
-                    (list (nth 0 sess) :name (nth 1 sess) :attached (equal (nth 2 sess) "1"))))
-                (split-string lines "\n" t))
+        (cl-loop for line in (split-string lines "\n" t)
+                 collect
+                 (let ((sess (split-string line ";")))
+                   (list (nth 0 sess)
+                         :name (nth 1 sess)
+                         :attached (equal (nth 2 sess) "1"))))
       (error "There are no sessions"))))
 
 ;;;###autoload
 (defun +tmux-list-windows (&optional session)
-  (let* ((flags
-          (if session
-              (concat "-t " (car session))
-            "-a"))
-         (lines
-          (+tmux (format "list-windows %s -F '#{window_id};#{session_id};#{window_active};#{window_name};#{window_activity_flag}'"
-                         flags))))
-    (if lines
-        (mapcar (lambda (it)
-                  (let ((window (string-split it ";")))
-                    (list (nth 0 window)
-                          :session-id (nth 1 window)
-                          :name (nth 3 window)
-                          :active (equal (nth 2 window) "1")
-                          :activity (equal (nth 4 window) "1"))))
-                (string-split lines "\n" t))
-      (error "There are no windows"))))
+  (if-let (lines
+           (+tmux (format "list-windows %s -F '#{window_id};#{session_id};#{window_active};#{window_name};#{window_activity_flag}'"
+                          (if session
+                              (concat "-t " (car session))
+                            "-a"))))
+      (cl-loop for line in (string-split lines "\n" t)
+               collect (let ((window (string-split line ";")))
+                         (list (nth 0 window)
+                               :session-id (nth 1 window)
+                               :name (nth 3 window)
+                               :active (equal (nth 2 window) "1")
+                               :activity (equal (nth 4 window) "1"))))
+    (error "There are no windows")))
 
 ;;;###autoload
 (defun +tmux-list-panes (&optional sess-or-win)
-  (let* ((flags (if sess-or-win
-                    (concat (if (string-prefix-p "$" (car sess-or-win)) "-s ") "-t " (car sess-or-win))
-                  "-a"))
-         (lines (+tmux (format "list-panes %s -F '#{pane_id};#{window_id};#{session_id};#{pane_active};#{pane_title};#{pane_current_path}'"
-                               flags))))
-    (if lines
-        (mapcar (lambda (it)
-                  (let ((pane (split-string it ";")))
-                    (list (nth 0 pane)
-                          :window-id (nth 1 pane)
-                          :session-id (nth 2 pane)
-                          :name (nth 4 pane)
-                          :active (equal (nth 3 pane) "1")
-                          :pwd (nth 5 pane))))
-                (string-split lines "\n" t))
-      (error "There are no panes"))))
+  (if-let (lines
+           (+tmux (format "list-panes %s -F '#{pane_id};#{window_id};#{session_id};#{pane_active};#{pane_title};#{pane_current_path}'"
+                          (if sess-or-win
+                              (concat (if (string-prefix-p "$" (car sess-or-win)) "-s ")
+                                      "-t "
+                                      (car sess-or-win))
+                            "-a"))))
+      (cl-loop for line in (string-split lines "\n" t)
+               collect (let ((pane (split-string line ";")))
+                         (list (nth 0 pane)
+                               :window-id (nth 1 pane)
+                               :session-id (nth 2 pane)
+                               :name (nth 4 pane)
+                               :active (equal (nth 3 pane) "1")
+                               :pwd (nth 5 pane))))
+    (error "There are no panes")))
 

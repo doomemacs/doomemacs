@@ -1,4 +1,4 @@
-;;; feature/eval/config.el
+;;; feature/eval/config.el -*- lexical-binding: t; -*-
 
 ;;
 ;; Code building

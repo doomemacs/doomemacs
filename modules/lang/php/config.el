@@ -1,4 +1,4 @@
-;;; lang/php/config.el
+;;; lang/php/config.el -*- lexical-binding: t; -*-
 
 ;; (def-package! hack-mode
 ;;   :mode "\\.hh$"
@@ -52,7 +52,8 @@
   ;; company will set up itself
   (advice-add #'php-extras-company-setup :override #'ignore)
   :config
-  (setq php-extras-eldoc-functions-file (concat doom-etc-dir "php-extras-eldoc-functions"))
+  (setq php-extras-eldoc-functions-file
+        (concat doom-etc-dir "php-extras-eldoc-functions"))
 
   ;; Make expensive php-extras generation async
   (unless (file-exists-p (concat php-extras-eldoc-functions-file ".el"))

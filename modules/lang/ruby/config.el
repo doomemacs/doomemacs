@@ -1,4 +1,4 @@
-;;; lang/ruby/config.el
+;;; lang/ruby/config.el -*- lexical-binding: t; -*-
 
 (def-package! ruby-mode
   :mode ("\\.rb$" "\\.rake$" "\\.gemspec$" "\\.?pryrc$"

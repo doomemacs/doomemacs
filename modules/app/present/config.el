@@ -1,4 +1,4 @@
-;;; app/present/config.el
+;;; app/present/config.el -*- lexical-binding: t; -*-
 
 ;; Sometimes you just get that urge to show off. I don't have a fancy car, so
 ;; my code or Emacs will have to do.
@@ -68,7 +68,8 @@
     (add-hook! 'org-tree-slide-mode-after-narrow-hook
       #'(+present|detect-slide +present|add-overlays org-display-inline-images))
 
-    (add-hook! 'org-tree-slide-mode-hook
+    (defun +present|org-tree-present-mode ()
+      "TODO"
       (doom/window-zoom)
       (let ((arg (if org-tree-slide-mode +1 -1)))
         (centered-window-mode arg)
@@ -87,8 +88,10 @@
                (set-face-attribute 'org-level-2 nil :height 1.0)
                (+present|remove-overlays)
                (org-remove-inline-images)))))
+    (add-hook 'org-tree-slide-mode-hook #'+present|org-tree-present-mode)
 
     (defun +present*org-tree-slide-narrow-exclude-header (orig-fn &rest args)
+      "TODO"
       (cl-letf (((symbol-function 'org-narrow-to-subtree)
                  (lambda () (save-excursion
                          (save-match-data

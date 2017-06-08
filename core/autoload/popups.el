@@ -1,4 +1,4 @@
-;;; popups.el
+;;; core/autoload/popups.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defun doom-popup-p (&optional target)
@@ -13,7 +13,8 @@ current window if omitted."
 
 ;;;###autoload
 (defun doom-popup-buffer (buffer &rest plist)
-  "Display BUFFER in a shackle popup. See `shackle-rules' for possible rules."
+  "Display BUFFER in a shackle popup. See `shackle-rules' for possible rules.
+Returns the new popup window."
   (declare (indent defun))
   (unless (bufferp buffer)
     (error "%s is not a valid buffer" buffer))
@@ -106,9 +107,7 @@ only close popups that have an :autoclose property in their rule (see
 `shackle-rules')."
   (interactive)
   (when-let (popups (doom-popup-windows))
-    (let ((orig-win (selected-window))
-          success
-          doom-popup-remember-history)
+    (let (success doom-popup-remember-history)
       (setq doom-popup-history (mapcar #'doom--popup-data popups))
       (dolist (window popups)
         (when (or force-p
@@ -145,6 +144,7 @@ only close popups that have an :autoclose property in their rule (see
 
 ;;;###autoload
 (defun doom-popup-prop (prop &optional window)
+  "Returns a `doom-popup-rules' PROPerty from WINDOW."
   (or (plist-get (or (if window
                          (buffer-local-value 'doom-popup-rules (window-buffer window))
                        doom-popup-rules)
@@ -157,6 +157,7 @@ only close popups that have an :autoclose property in their rule (see
 
 ;;;###autoload
 (defun doom-popup-side (&optional window)
+  "Return what side a popup WINDOW came from ('left 'right 'above or 'below)."
   (let ((align (doom-popup-prop :align window)))
     (when (eq align t)
       (setq align shackle-default-alignment))
@@ -166,6 +167,7 @@ only close popups that have an :autoclose property in their rule (see
 
 ;;;###autoload
 (defun doom-popup-size (&optional window)
+  "Return the size of a popup WINDOW."
   (let ((side (doom-popup-side window)))
     (cond ((memq side '(left right))
            (window-width window))

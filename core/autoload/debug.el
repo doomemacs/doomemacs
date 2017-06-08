@@ -1,4 +1,4 @@
-;;; debug.el
+;;; core/autoload/debug.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defun doom/what-face (&optional pos)
@@ -22,8 +22,9 @@
 ;;;###autoload
 (defun doom-active-minor-modes ()
   "Get a list of active minor-mode symbols."
-  (cl-remove-if (lambda (m) (and (boundp m) (symbol-value m)))
-                minor-mode-list))
+  (cl-loop for mode in minor-mode-list
+           unless (and (boundp mode) (symbol-value mode))
+           collect mode))
 
 ;;;###autoload
 (defun doom/what-minor-mode (mode)
@@ -44,13 +45,13 @@ selection of all minor-modes, active or not."
   (declare (interactive-only t))
   (interactive)
   (if-let (bad-hosts
-           (loop for bad
-                 in `("https://wrong.host.badssl.com/"
-                      "https://self-signed.badssl.com/")
-                 if (condition-case e
-                        (url-retrieve bad (lambda (retrieved) t))
-                      (error nil))
-                 collect bad))
+           (cl-loop for bad
+                    in '("https://wrong.host.badssl.com/"
+                         "https://self-signed.badssl.com/")
+                    if (condition-case _e
+                           (url-retrieve bad (lambda (_retrieved) t))
+                         (error nil))
+                    collect bad))
       (error (format "tls seems to be misconfigured (it got %s)."
                      bad-hosts))
     (url-retrieve "https://badssl.com"

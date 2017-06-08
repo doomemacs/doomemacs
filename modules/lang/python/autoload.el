@@ -1,4 +1,4 @@
-;;; lang/python/autoload.el
+;;; lang/python/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defun +python/repl ()

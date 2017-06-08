@@ -1,4 +1,4 @@
-;;; feature/syntax-checker/config.el
+;;; feature/syntax-checker/config.el -*- lexical-binding: t; -*-
 
 ;; pkg-info doesn't get autoloaded when `flycheck-version' needs it, so we do
 ;; it ourselves:

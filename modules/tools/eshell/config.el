@@ -1,4 +1,4 @@
-;;; emacs/eshell/config.el
+;;; tools/eshell/config.el -*- lexical-binding: t; -*-
 
 ;; This is highly experimental. I don't use eshell often, so this may need work.
 

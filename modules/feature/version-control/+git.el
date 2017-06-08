@@ -1,4 +1,4 @@
-;;; feature/version-control/+git.el
+;;; feature/version-control/+git.el -*- lexical-binding: t; -*-
 
 (def-package! gitconfig-mode
   :mode "/\\.?git/?config$"

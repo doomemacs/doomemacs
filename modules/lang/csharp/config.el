@@ -1,4 +1,4 @@
-;;; module-csharp.el
+;;; lang/csharp/config.el -*- lexical-binding: t; -*-
 
 (def-package! csharp-mode :mode "\\.cs$")
 

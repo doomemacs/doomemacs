@@ -1,3 +1,5 @@
+;;; private/hlissner/+commands.el -*- lexical-binding: t; -*-
+
 (defalias 'ex! 'evil-ex-define-cmd)
 
 ;;; Commands defined elsewhere
