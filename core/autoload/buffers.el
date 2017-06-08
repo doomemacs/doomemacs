@@ -62,7 +62,9 @@ the current workspace."
 (defun doom-real-buffers-list (&optional buffer-list)
   "Get a list of all buffers (in the current workspace OR in BUFFER-LIST) that
 `doom-real-buffer-p' returns non-nil for."
-  (cl-remove-if-not #'doom-real-buffer-p (or buffer-list (doom-buffer-list))))
+  (cl-loop for buf in (or buffer-list (doom-buffer-list))
+           if (doom-real-buffer-p buf)
+           collect buf))
 
 ;;;###autoload
 (defun doom-buffers-in-mode (modes &optional buffer-list derived-p)
@@ -81,19 +83,25 @@ the current workspace."
 (defun doom-visible-windows (&optional window-list)
   "Get a list of the visible windows in the current frame (that aren't popups),
 OR return only the visible windows in WINDOW-LIST."
-  (cl-remove-if #'doom-popup-p (or window-list (window-list))))
+  (cl-loop for win in (or window-list (window-list))
+           unless (doom-popup-p win)
+           collect win))
 
 ;;;###autoload
 (defun doom-visible-buffers (&optional buffer-list)
   "Get a list of unburied buffers in the current project and workspace, OR
 return only the unburied buffers in BUFFER-LIST (a list of BUFFER-OR-NAMEs)."
-  (cl-remove-if-not #'get-buffer-window (or buffer-list (doom-buffer-list))))
+  (cl-loop for buf in (or buffer-list (doom-buffer-list))
+           when (get-buffer-window buf)
+           collect buf))
 
 ;;;###autoload
 (defun doom-buried-buffers (&optional buffer-list)
   "Get a list of buried buffers in the current project and workspace, OR return
 only the buried buffers in BUFFER-LIST (a list of BUFFER-OR-NAMEs)."
-  (cl-remove-if #'get-buffer-window (or buffer-list (doom-buffer-list))))
+  (cl-loop for buf in (or buffer-list (doom-buffer-list))
+           unless (get-buffer-window buf)
+           collect buf))
 
 ;;;###autoload
 (defun doom-matching-buffers (pattern &optional buffer-list)
@@ -101,7 +109,7 @@ only the buried buffers in BUFFER-LIST (a list of BUFFER-OR-NAMEs)."
 match the regex PATTERN."
   (cl-loop for buf in (or buffer-list (doom-buffer-list))
            when (string-match-p pattern (buffer-name buf))
-             collect buf))
+           collect buf))
 
 (defun doom--cycle-real-buffers (&optional n)
   "Switch to the next buffer N times (previous, if N < 0), skipping over unreal
