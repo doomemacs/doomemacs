@@ -13,11 +13,13 @@
       (let ((face (overlay-get ov 'face)))
         (dolist (f (if (listp face) face (list face)))
           (push (propertize (concat (symbol-name f) "*") 'face f) faces))))
+    (if (called-interactively-p 'any)
+        (message "%s %s"
+                 (propertize "Faces:" 'face 'font-lock-comment-face)
+                 (if faces (string-join faces ", ") "n/a"))
+      (mapcar #'substring-no-properties faces))))
 
-    (message "%s %s"
-             (propertize "Faces:" 'face 'font-lock-comment-face)
-             (if faces (string-join faces ", ") "n/a"))))
-
+;;;###autoload
 (defun doom-active-minor-modes ()
   "Get a list of active minor-mode symbols."
   (cl-remove-if (lambda (m) (and (boundp m) (symbol-value m)))
