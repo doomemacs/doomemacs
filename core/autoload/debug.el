@@ -32,7 +32,11 @@ selection of all minor-modes, active or not."
   (interactive
    (list (completing-read "Minor mode: "
                           (doom-active-minor-modes))))
-  (describe-minor-mode-from-symbol (intern mode)))
+  (describe-minor-mode-from-symbol
+   (cl-typecase mode
+     (string (intern mode))
+     (symbol mode)
+     (t (error "Expected a symbol/string, got a %s" (type-of mode))))))
 
 ;;;###autoload
 (defun doom/am-i-secure ()
