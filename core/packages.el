@@ -13,6 +13,7 @@
 (package! osx-clipboard        :ignore (not IS-MAC))
 
 ;; core-ui.el
+(package! all-the-icons)
 (package! fringe-helper)
 (package! highlight-indentation)
 (package! highlight-numbers)
