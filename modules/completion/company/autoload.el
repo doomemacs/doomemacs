@@ -37,3 +37,10 @@ C-x C-l."
   (let ((company-backends '((company-keywords company-dict))))
     (call-interactively 'company-complete)))
 
+;;;###autoload
+(defun +company/dabbrev-code-previous ()
+  (interactive)
+  (require 'company-dabbrev)
+  (let ((company-selection-wrap-around t))
+    (call-interactively #'company-dabbrev-code)
+    (company-select-previous-or-abort)))
