@@ -155,30 +155,35 @@ popup window/buffer and b) isn't a special buffer."
 buffer, but only bury the buffer if it is present in another window.
 
 See `doom-real-buffer-p' for what 'real' means."
-  (let* ((buffer (or buffer (current-buffer)))
-         (buffer-win (get-buffer-window buffer))
-         (only-buffer-window-p (= 1 (length (get-buffer-window-list buffer nil t)))))
-    ;; deal with unsaved buffers
-    (when (and only-buffer-window-p
-               (buffer-file-name buffer)
-               (buffer-modified-p buffer))
-      (with-current-buffer buffer
-        (if (and (not dont-save)
-                 (yes-or-no-p "Buffer is unsaved, save it?"))
-            (save-buffer)
-          (set-buffer-modified-p nil))))
-    ;; deal with dedicated windows
-    (if (window-dedicated-p buffer-win)
-        (unless (window--delete buffer-win t t)
-          (split-window buffer-win)
-          (window--delete buffer-win t t))
-      ;; cycle to a real buffer
-      (doom--cycle-real-buffers -1)
-      (when buffer-win
-        (unrecord-window-buffer buffer-win buffer))
-      (when only-buffer-window-p
-        (kill-buffer buffer)))
-    (eq (current-buffer) buffer)))
+  (setq buffer (or buffer (current-buffer)))
+  (when (and (bufferp buffer) (buffer-live-p buffer))
+    (let ((buffer-win (get-buffer-window buffer))
+          (only-buffer-window-p (= 1 (length (get-buffer-window-list buffer nil t)))))
+      ;; deal with unsaved buffers
+      (when (and only-buffer-window-p
+                 (buffer-file-name buffer)
+                 (buffer-modified-p buffer))
+        (with-current-buffer buffer
+          (if (and (not dont-save)
+                   (yes-or-no-p "Buffer is unsaved, save it?"))
+              (save-buffer)
+            (set-buffer-modified-p nil))))
+      ;; deal with dedicated windows
+      (if buffer-win
+          (if (window-dedicated-p buffer-win)
+              (unless (window--delete buffer-win t t)
+                (split-window buffer-win)
+                (window--delete buffer-win t t))
+            ;; cycle to a real buffer
+            (with-selected-window buffer-win
+              (doom--cycle-real-buffers -1)
+              (when buffer-win
+                (unrecord-window-buffer buffer-win buffer))
+              (when only-buffer-window-p
+                (kill-buffer buffer)))
+            (not (eq (current-buffer) buffer)))
+        (kill-buffer buffer)
+        (not (buffer-live-p buffer))))))
 
 ;;;###autoload
 (defun doom-force-kill-buffer (&optional buffer dont-save)
@@ -187,7 +192,7 @@ switched to a real buffer."
   (interactive)
   (let* ((buffer (or buffer (current-buffer)))
          (windows (get-buffer-window-list buffer nil t)))
-    (kill-buffer buffer)
+    (doom-kill-buffer buffer dont-save)
     (dolist (win windows)
       (with-selected-window win
         (unless (doom-real-buffer-p)
