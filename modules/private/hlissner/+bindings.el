@@ -224,7 +224,7 @@
      :desc "Debugger"            :n  "d" #'+debug/open
      :desc "REPL"                :n  "r" #'+eval/repl
                                  :v  "r" #'+eval:repl
-     :desc "Neotree"             :n  "n" #'+neotree/open
+     :desc "Neotree"             :n  "n" #'+neotree/toggle
      :desc "Terminal"            :n  "t" #'+term/popup
      :desc "Terminal in project" :n  "T" #'+term/popup-in-project
 
@@ -514,6 +514,7 @@
    :n [tab]       #'neotree-quick-look
    :n "RET"       #'neotree-enter
    :n [backspace] #'evil-window-prev
+   :n "c"         #'neotree-create-node
    :n "j"         #'neotree-next-line
    :n "k"         #'neotree-previous-line
    :n "n"         #'neotree-next-line
