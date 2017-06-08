@@ -89,8 +89,7 @@ invokes the repl. Takes the same arguements as `rtog/add-repl'."
              quickrun-compile-only
              quickrun-replace-region)
   :init
-  (add-hook! 'quickrun--mode-hook (linum-mode +1))
-
+  (add-hook 'quickrun--mode-hook #'nlinum-mode)
   :config
   (set! :popup
     '("*quickrun*"       :size 10 :noesc t :autokill t :autoclose t)
