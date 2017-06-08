@@ -13,7 +13,7 @@
 
 (defvar +doom-unicode-font
   (font-spec :family "DejaVu Sans Mono" :size 12)
-  "Fallback font for unicode glyphs.")
+  "Fallback font for unicode glyphs. Is ignored if :feature unicode is active.")
 
 
 ;;; Set fonts
@@ -21,8 +21,9 @@
   (with-demoted-errors "FONT ERROR: %s"
     (set-frame-font +doom-font t t)
     ;; Fallback to `doom-unicode-font' for Unicode characters
-    (when +doom-unicode-font
-      (set-fontset-font t 'unicode +doom-unicode-font))
+    (unless (featurep! :feature unicode)
+      (when +doom-unicode-font
+        (set-fontset-font t 'unicode +doom-unicode-font)))
     ;; ...and for variable-pitch mode
     (when +doom-variable-pitch-font
       (set-face-attribute 'variable-pitch nil :font +doom-variable-pitch-font))))
