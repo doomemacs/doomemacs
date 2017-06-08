@@ -6,8 +6,7 @@
 current window if omitted."
   (when-let (target (or target (selected-window)))
     (cond ((bufferp target)
-           (and (buffer-local-value 'doom-popup-mode target)
-                (get-buffer-window target)))
+           (buffer-local-value 'doom-popup-mode target))
           ((windowp target)
            (and (window-parameter target 'popup)
                 target)))))
