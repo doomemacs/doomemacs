@@ -27,11 +27,11 @@ compile: init.el clean
 	@$(EMACS) -f doom/compile
 
 core: init.el clean
-	@$(EMACS) -f doom/compile -- init.el $(shell find core/ -maxdepth 2 -type f -name '*.el')
+	@$(EMACS) -f doom/compile -- init.el core
 
 $(MODULES): init.el .local/autoloads.el
 	@rm -fv $(shell find $@ -maxdepth 2 -type f -name '*.elc')
-	@$(EMACS) -f doom/compile -- $(shell find $@ -maxdepth 2 -type f -name '*.el')
+	@$(EMACS) -f doom/compile -- $@
 
 clean:
 	@$(EMACS) -f doom/clean-compiled
