@@ -21,7 +21,7 @@
   (with-demoted-errors "FONT ERROR: %s"
     (set-frame-font +doom-font t t)
     ;; Fallback to `doom-unicode-font' for Unicode characters
-    (unless (featurep! :feature unicode)
+    (unless (featurep! :ui unicode)
       (when +doom-unicode-font
         (set-fontset-font t 'unicode +doom-unicode-font)))
     ;; ...and for variable-pitch mode

@@ -40,7 +40,6 @@
        workspaces      ; tab emulation, persistence & separate workspaces
        eval            ; repls, runners 'n builders; run code, run
        debug           ; stepping through code, to help you add bugs
-      ;unicode         ; extended unicode support for various languages
 
        :completion
        company         ; code completion backend
@@ -56,6 +55,7 @@
        hl-todo         ; highlight TODO/FIXME/NOTE tags
        nav-flash       ; blink the current line after jumping
        evil-goggles    ; display visual hints when editing in evil
+      ;unicode         ; extended unicode font support for various languages
 
        :tools
        dired           ; making dired pretty [functional]

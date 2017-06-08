@@ -1,4 +1,4 @@
-;;; feature/unicode/config.el -*- lexical-binding: t; -*-
+;;; ui/unicode/config.el -*- lexical-binding: t; -*-
 
 (setq bidi-display-reordering t)
 
