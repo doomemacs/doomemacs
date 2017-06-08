@@ -1,6 +1,6 @@
 ;;; ui/unicode/config.el -*- lexical-binding: t; -*-
 
-(setq bidi-display-reordering t)
+(setq-default bidi-display-reordering t)
 
 (def-package! unicode-fonts
   :demand t
