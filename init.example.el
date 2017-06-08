@@ -39,7 +39,7 @@
        version-control ; remember, remember that commit in November
        workspaces      ; tab emulation, persistence & separate workspaces
        eval            ; repls, runners 'n builders; run code, run
-       debug           ; stepping through code, to help you add bugs
+      ;debug           ; FIXME stepping through code, to help you add bugs
 
        :completion
        company         ; code completion backend
