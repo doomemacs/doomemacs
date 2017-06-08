@@ -4,17 +4,6 @@
 
 (line-number-mode -1)
 
-;; all-the-icons doesn't work in the terminal, so we "disable" it.
-(unless (display-graphic-p)
-  (defalias 'all-the-icons-octicon    #'ignore)
-  (defalias 'all-the-icons-faicon     #'ignore)
-  (defalias 'all-the-icons-fileicon   #'ignore)
-  (defalias 'all-the-icons-wicon      #'ignore)
-  (defalias 'all-the-icons-alltheicon #'ignore))
-
-(def-package! all-the-icons :demand t
-  :when (display-graphic-p))
-
 (def-package! eldoc-eval :demand t
   :config
   ;; Show eldoc in the mode-line with `eval-expression'

@@ -45,15 +45,6 @@
       (goto-char (previous-button (point))))))
 
 
-(if (display-graphic-p)
-    (require 'all-the-icons)
-  (defalias 'all-the-icons-octicon    #'ignore)
-  (defalias 'all-the-icons-faicon     #'ignore)
-  (defalias 'all-the-icons-fileicon   #'ignore)
-  (defalias 'all-the-icons-wicon      #'ignore)
-  (defalias 'all-the-icons-alltheicon #'ignore))
-
-
 ;;
 (setq doom-fallback-buffer +doom-dashboard-name)
 

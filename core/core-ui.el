@@ -1,4 +1,4 @@
-;; core-ui.el -*- lexical-binding: t; -*-
+;;; core-ui.el -*- lexical-binding: t; -*-
 
 (defvar doom-ui-fringe-size '4 "Default fringe width")
 
@@ -142,6 +142,22 @@ mode is detected.")
 ;;
 ;; Plugins
 ;;
+
+(def-package! all-the-icons
+  :commands (all-the-icons-octicon all-the-icons-faicon all-the-icons-fileicon
+             all-the-icons-wicon all-the-icons-allthe-icon
+             all-the-icons-install-fonts)
+  :init
+  (defun doom*disable-all-the-icons-in-tty (orig-fn &rest args)
+    (when (display-graphic-p)
+      (apply orig-fn args)))
+
+  ;; all-the-icons doesn't work in the terminal, so we "disable" it.
+  (advice-add #'all-the-icons-octicon    :around #'doom*disable-all-the-icons-in-tty)
+  (advice-add #'all-the-icons-faicon     :around #'doom*disable-all-the-icons-in-tty)
+  (advice-add #'all-the-icons-fileicon   :around #'doom*disable-all-the-icons-in-tty)
+  (advice-add #'all-the-icons-wicon      :around #'doom*disable-all-the-icons-in-tty)
+  (advice-add #'all-the-icons-alltheicon :around #'doom*disable-all-the-icons-in-tty))
 
 (def-package! fringe-helper
   :commands fringe-helper-define)
