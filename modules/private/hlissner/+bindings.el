@@ -75,17 +75,18 @@
  (:leader
    :desc "Ex command"  :nv ";"   #'evil-ex
    :desc "M-x"         :nv ":"   #'execute-extended-command
-   :desc "Pop up scratch buffer" :nv "x"  #'+doom:scratch-buffer
-   :desc "Org Capture"           :nv "X"  #'+org/capture
+   :desc "Pop up scratch buffer"   :nv "x"  #'+doom:scratch-buffer
+   :desc "Org Capture"             :nv "X"  #'+org/capture
 
    ;; Most commonly used
-   :desc "Find file in project"  :n "SPC" #'projectile-find-file
-   :desc "Switch buffer"         :n ","   #'persp-switch-to-buffer
-   :desc "Browse files"          :n "."   #'find-file
-   :desc "Toggle last popup"     :n "~"   #'doom/popup-toggle
-   :desc "Eval expression"       :n "`"   #'eval-expression
-   :desc "Blink cursor line"     :n "DEL" #'+doom/blink-cursor
-   :desc "Jump to bookmark"      :n "RET" #'counsel-bookmark
+   :desc "Find file in project"    :n "SPC" #'projectile-find-file
+   :desc "Switch workspace buffer" :n ","   #'persp-switch-to-buffer
+   :desc "Switch buffer"           :n "<"   #'switch-to-buffer
+   :desc "Browse files"            :n "."   #'find-file
+   :desc "Toggle last popup"       :n "~"   #'doom/popup-toggle
+   :desc "Eval expression"         :n "`"   #'eval-expression
+   :desc "Blink cursor line"       :n "DEL" #'+doom/blink-cursor
+   :desc "Jump to bookmark"        :n "RET" #'counsel-bookmark
 
    ;; C-u is used by evil
    :desc "Universal argument"    :n "u"  #'universal-argument
@@ -192,6 +193,7 @@
 
    (:desc "help" :prefix "h"
      :n "h" help-map
+     :desc "Apropos"               :n "a" #'apropos
      :desc "Reload theme"          :n "R" #'+doom/reset-theme
      :desc "Toggle Emacs log"      :n "m" #'doom/popup-toggle-messages
      :desc "Find library"          :n "l" #'find-library
