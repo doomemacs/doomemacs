@@ -38,7 +38,7 @@ is enabled/disabled.'")
 
 (def-setting! :popup (&rest rules)
   "Prepend a new popup rule to `shackle-rules'."
-  (if (cl-every 'listp rules)
+  (if (cl-every #'listp rules)
       `(setq shackle-rules (nconc ',rules shackle-rules))
     `(push ',rules shackle-rules)))
 
@@ -170,14 +170,14 @@ for :align t on every rule."
 
 ;; Major mode changes (and other things) may call `kill-all-local-variables',
 ;; turning off things like `doom-popup-mode'. This prevents that.
-(put 'doom-popup-mode 'permanent-local t)
+(put 'doom-popup-mode  'permanent-local t)
 (put 'doom-popup-rules 'permanent-local t)
 
-;; Don't show modeline in popup windows without a :modeline rule. If
-;; one exists and it's a symbol, use `doom-modeline' to grab the
-;; format. If non-nil, show the mode-line as normal. If nil (or
-;; omitted, by default), then hide the modeline entirely.
-(add-hook! 'doom-popup-mode-hook
+(defun doom|hide-modeline-in-popup ()
+  "Don't show modeline in popup windows without a :modeline rule. If one exists
+and it's a symbol, use `doom-modeline' to grab the format. If non-nil, show the
+mode-line as normal. If nil (or omitted, by default), then hide the modeline
+entirely."
   (if doom-popup-mode
       (let ((modeline (plist-get doom-popup-rules :modeline)))
         (cond ((or (eq modeline 'nil)
@@ -188,9 +188,9 @@ for :align t on every rule."
                (setq-local doom--modeline-format (doom-modeline modeline))
                (when doom--modeline-format
                  (doom-hide-modeline-mode +1)))))
-    ;; show modeline
     (when doom-hide-modeline-mode
       (doom-hide-modeline-mode -1))))
+(add-hook 'doom-popup-mode-hook #'doom|hide-modeline-in-popup)
 
 ;;
 (defun doom*popup-init (orig-fn &rest args)
@@ -461,8 +461,9 @@ the command buffer."
     (let ((last (current-buffer)))
       (cond ((when-let (dest (doom-buffers-in-mode
                               'magit-mode
-                              (cl-remove-if (lambda (buf) (eq buf last))
-                                            (mapcar #'car (window-prev-buffers)))
+                              (cl-loop for buf in (window-prev-buffers)
+                                       unless (eq (car buf) last)
+                                       collect (car buf))
                               t))
                (doom-popup-switch-to-buffer (car dest)))
              (kill-buffer last))
@@ -534,7 +535,7 @@ you came from."
           (window (selected-window)))
       (apply orig-fn args)
       (when popup-p (doom/popup-close window))))
-  (advice-add 'xref-goto-xref :around 'doom*xref-follow-and-close))
+  (advice-add #'xref-goto-xref :around #'doom*xref-follow-and-close))
 
 
 ;; Ensure these settings are attached to org-load-hook as late as possible,
@@ -594,10 +595,9 @@ you came from."
       ;; Don't monopolize frame!
       (advice-add #'org-agenda :around #'doom*suppress-delete-other-windows)
 
-      (after! evil
-        (map! :map* org-agenda-mode-map
-              :m [escape] 'org-agenda-Quit
-              :m "ESC"    'org-agenda-Quit))
+      (map! :map org-agenda-mode-map
+            :m [escape] 'org-agenda-Quit
+            :m "ESC"    'org-agenda-Quit)
       (let ((map org-agenda-mode-map))
         (define-key map "q" 'org-agenda-Quit)
         (define-key map "Q" 'org-agenda-Quit)))))
