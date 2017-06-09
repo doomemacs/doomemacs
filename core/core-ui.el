@@ -262,22 +262,39 @@ file."
   :config
   (setq nlinum-highlight-current-line t)
 
+  ;; fix for disappearing line numbers in nlinum
+  ;; <https://github.com/hlissner/.emacs.d/issues/59#issuecomment-306937318>
+  (defun doom*nlinum--region (start limit)
+    (save-excursion
+      (let ((inhibit-point-motion-hooks t))
+        (goto-char start)
+        (unless (bolp) (forward-line 1))
+        (remove-overlays (point) limit 'nlinum t)
+        (let ((line (nlinum--line-number-at-pos)))
+          (while
+              (and (not (eobp)) (<= (point) limit)
+                   (let* ((ol (make-overlay (point) (1+ (point))))
+                          (str (funcall nlinum-format-function
+                                        line nlinum--width))
+                          (width (string-width str)))
+                     (when (< nlinum--width width)
+                       (setq nlinum--width width)
+                       (nlinum--flush))
+                     (overlay-put ol 'nlinum t)
+                     (overlay-put ol 'evaporate t)
+                     (overlay-put ol 'before-string
+                                  (propertize " " 'display
+                                              `((margin left-margin) ,str)))
+                     (setq line (1+ line))
+                     (zerop (forward-line 1))))))))
+    nil)
+  (advice-add #'nlinum--region :override #'doom*nlinum-region)
+
   ;; Optimization: calculate line number column width beforehand
   (add-hook! nlinum-mode
     (setq nlinum--width
           (length (save-excursion (goto-char (point-max))
                                   (format-mode-line "%l"))))))
-
-;; Highlight current line, and other nlinum tweaks/fixes
-(def-package! nlinum-hl
-  :after nlinum
-  :init (add-hook 'nlinum-mode-hook #'nlinum-hl-mode)
-  :config
-  ;; nlinum has a tendency to lose line numbers over time; a known issue. These
-  ;; hooks/advisors attempt to stave off these glitches.
-  (advice-add #'select-window :before #'nlinum-hl-do-flush)
-  (advice-add #'select-window :after  #'nlinum-hl-do-flush)
-  (add-hook '+evil-esc-hook #'nlinum-hl-flush-all-windows t))
 
 ;; Helps us distinguish stacked delimiter pairs. Especially in parentheses-drunk
 ;; languages like Lisp.
