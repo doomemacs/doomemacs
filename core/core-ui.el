@@ -135,7 +135,7 @@ mode is detected.")
   (push (cons 'left-fringe  doom-ui-fringe-size) default-frame-alist)
   (push (cons 'right-fringe doom-ui-fringe-size) default-frame-alist)
   ;; no fringe in the minibuffer
-  (add-hook! (emacs-startup minibuffer-setup)
+  (add-hook! '(emacs-startup-hook minibuffer-setup-hook)
     (set-window-fringes (minibuffer-window) 0 0 nil)))
 
 
@@ -256,9 +256,10 @@ file."
   (defvar linum-format "%3d ")
   (defvar nlinum-format "%4d ")
   :init
-  (add-hook! (prog-mode text-mode)
+  (defun doom|init-nlinum-mode ()
     (unless (eq major-mode 'org-mode)
       (nlinum-mode +1)))
+  (add-hook! (prog-mode text-mode) #'doom|init-nlinum-mode)
   :config
   (setq nlinum-highlight-current-line t)
 
@@ -291,10 +292,11 @@ file."
   (advice-add #'nlinum--region :override #'doom*nlinum-region)
 
   ;; Optimization: calculate line number column width beforehand
-  (add-hook! nlinum-mode
+  (defun doom|init-nlinum-width ()
     (setq nlinum--width
           (length (save-excursion (goto-char (point-max))
-                                  (format-mode-line "%l"))))))
+                                  (format-mode-line "%l")))))
+  (add-hook 'nlinum-mode-hook #'doom|init-nlinum-width))
 
 ;; Helps us distinguish stacked delimiter pairs. Especially in parentheses-drunk
 ;; languages like Lisp.
