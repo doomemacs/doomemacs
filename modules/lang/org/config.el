@@ -1,4 +1,4 @@
-;;; lang/org/config.el
+;;; lang/org/config.el -*- lexical-binding: t; -*-
 
 ;; A few things you can expect
 ;;   + `org-capture' in a popup frame (can be invoked from outside emacs too)

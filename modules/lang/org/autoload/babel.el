@@ -1,4 +1,4 @@
-;;; lang/org/autoload/babel.el
+;;; lang/org/autoload/babel.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defun +org/edit-special-same-window ()

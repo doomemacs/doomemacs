@@ -1,4 +1,4 @@
-;;; lang/org/+babel.el
+;;; lang/org/+babel.el -*- lexical-binding: t; -*-
 
 (add-hook '+org-init-hook #'+org|init-babel t)
 

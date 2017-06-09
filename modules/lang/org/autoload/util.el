@@ -1,4 +1,4 @@
-;;; lang/org/autoload/util.el
+;;; lang/org/autoload/util.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defun +org-get-property (name &optional file)

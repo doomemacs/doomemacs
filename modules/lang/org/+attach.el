@@ -1,4 +1,4 @@
-;;; lang/org/+attach.el
+;;; lang/org/+attach.el -*- lexical-binding: t; -*-
 
 ;; FIXME Needs to be rewritten
 ;;

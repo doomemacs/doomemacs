@@ -1,4 +1,4 @@
-;;; lang/org/+export.el
+;;; lang/org/+export.el -*- lexical-binding: t; -*-
 
 ;; My own, centralized exporting system as well.
 

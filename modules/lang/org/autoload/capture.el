@@ -1,4 +1,4 @@
-;;; lang/org/autoload/capture.el
+;;; lang/org/autoload/capture.el  -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defun +org/capture (&optional key string)

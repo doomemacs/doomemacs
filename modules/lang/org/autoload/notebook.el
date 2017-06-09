@@ -1,4 +1,4 @@
-;;; lang/org/autoload/notebook.el
+;;; lang/org/autoload/notebook.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defun +org-mode-notes-dir ()

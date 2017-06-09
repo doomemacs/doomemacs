@@ -1,4 +1,4 @@
-;;; lang/org/+agenda.el
+;;; lang/org/+agenda.el -*- lexical-binding: t; -*-
 
 (after! org-agenda
   (setq-default

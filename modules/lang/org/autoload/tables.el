@@ -1,4 +1,4 @@
-;;; lang/org/autoload/tables.el
+;;; lang/org/autoload/tables.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defun +org/table-next-row ()

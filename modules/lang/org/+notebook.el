@@ -1,4 +1,4 @@
-;;; lang/org/+notebook.el
+;;; lang/org/+notebook.el -*- lexical-binding: t; -*-
 
 ;; While I program, write or plan, I want easy access to notes of various kinds,
 ;; such as major-mode/language specific notes, or project-specific notes. They

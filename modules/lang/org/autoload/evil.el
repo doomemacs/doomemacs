@@ -1,4 +1,4 @@
-;;; lang/org/autoload/evil.el
+;;; lang/org/autoload/evil.el -*- lexical-binding: t; -*-
 
 ;;;###autoload (autoload '+org:capture "lang/org/autoload/evil" nil t)
 (evil-define-operator +org:capture (&optional beg end bang)

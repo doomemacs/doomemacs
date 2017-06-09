@@ -1,4 +1,4 @@
-;;; lang/org/autoload/org.el
+;;; lang/org/autoload/org.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defun +org/indent ()
@@ -86,7 +86,7 @@ wrong places)."
              (insert "[ ] ")))
 
           ((memq type '(table table-row))
-           (cl-case direction
+           (pcase direction
              ('below (org-table-insert-row t))
              ('above (+org/table-prepend-row-or-shift-up))))
 
@@ -99,7 +99,7 @@ wrong places)."
                             (if (eq (org-element-type subcontext) 'headline)
                                 subcontext
                               1)))))
-             (cl-case direction
+             (pcase direction
                ('below
                 (let ((at-eol (= (point) (1- (line-end-position)))))
                   (goto-char (line-end-position))

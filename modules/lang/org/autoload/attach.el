@@ -1,4 +1,4 @@
-;;; lang/org/autoload/attach.el
+;;; lang/org/autoload/attach.el -*- lexical-binding: t; -*-
 
 (defun +org--attach-icon (path)
   (char-to-string (pcase (downcase (file-name-extension path))

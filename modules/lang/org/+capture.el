@@ -1,4 +1,4 @@
-;;; lang/org/+capture.el
+;;; lang/org/+capture.el -*- lexical-binding: t; -*-
 
 ;; Sets up two `org-capture' workflows that I like:
 ;;
