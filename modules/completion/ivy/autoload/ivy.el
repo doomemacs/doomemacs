@@ -230,12 +230,3 @@ counsel-rg)."
     (doom/popup-close))
   (ivy-resume))
 
-;;;###autoload
-(defun +ivy/backward-kill-word ()
-  "Kill a word backwards, but only if cursor is after `minibuffer-prompt-end',
-to prevent the 'Text is read-only' warning from monopolizing the minibuffer."
-  (interactive)
-  (call-interactively
-   (if (> (point) (minibuffer-prompt-end))
-       #'backward-kill-word
-     #'ivy-backward-delete-char)))
