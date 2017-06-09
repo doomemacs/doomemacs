@@ -57,18 +57,26 @@
 
 ;; Project navigation
 (ex! "a"           #'projectile-find-other-file)
-(ex! "ag"          #'+ivy:ag)
-(ex! "agc[wd]"     #'+ivy:ag-cwd)
-(ex! "rg"          #'+ivy:rg)
-(ex! "rgc[wd]"     #'+ivy:rg-cwd)
 (ex! "cd"          #'+hlissner:cd)
-(ex! "sw[iper]"    #'+ivy:swiper)     ; in-file search
+(cond ((featurep! :completion ivy)
+       (ex! "ag"       #'+ivy:ag)
+       (ex! "agc[wd]"  #'+ivy:ag-cwd)
+       (ex! "rg"       #'+ivy:rg)
+       (ex! "rgc[wd]"  #'+ivy:rg-cwd)
+       (ex! "sw[iper]" #'+ivy:swiper)
+       (ex! "todo"     #'+ivy:todo))
+      ((featurep! :completion helm)
+       (ex! "ag"       #'+helm:ag)
+       (ex! "agc[wd]"  #'+helm:ag-cwd)
+       (ex! "rg"       #'+helm:rg)
+       (ex! "rgc[wd]"  #'+helm:rg-cwd)
+       (ex! "sw[oop]"  #'+helm:swoop)
+       (ex! "todo"     #'+helm:todo)))
 
 ;; Project tools
 (ex! "build"       #'+eval/build)
 (ex! "debug"       #'+debug/run)
 (ex! "er[rors]"    #'flycheck-list-errors)
-(ex! "todo"        #'+ivy:todo)
 
 ;; File operations
 (ex! "cp"          #'+evil:copy-this-file)
