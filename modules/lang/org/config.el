@@ -28,7 +28,7 @@
 
 ;; Ensure ELPA org is prioritized above built-in org.
 (when-let (path (locate-library "org" nil doom--package-load-path))
-  (push (file-name-directory path) load-path))
+  (cl-pushnew (file-name-directory path) load-path))
 
 (load! +agenda)
 (load! +attach)
@@ -95,16 +95,6 @@
     :keymap (make-sparse-keymap)
     :group 'evil-org)
 
-  (define-minor-mode +org-pretty-mode
-    "TODO"
-    :init-value nil
-    :lighter " *"
-    :group 'evil-org
-    (setq org-hide-emphasis-markers +org-pretty-mode)
-    (org-toggle-pretty-entities)
-    ;; In case the above un-align tables
-    (org-table-map-tables 'org-table-align t))
-
   (setq-default
    org-export-coding-system 'utf-8
    org-todo-keywords
@@ -112,33 +102,6 @@
      (sequence "TODO(T)" "|" "DONE(D)")
      (sequence "IDEA(i)" "NEXT(n)" "ACTIVE(a)" "WAITING(w)" "LATER(l)"
                "|" "CANCELLED(c)"))
-
-   ;; Appearance
-   outline-blank-line t
-   org-indent-mode-turns-on-hiding-stars t
-   org-adapt-indentation nil
-   org-cycle-separator-lines 1
-   org-cycle-include-plain-lists t
-   ;; org-ellipsis "  "
-   org-entities-user '(("flat"  "\\flat" nil "" "" "266D" "♭")
-                       ("sharp" "\\sharp" nil "" "" "266F" "♯"))
-   org-fontify-done-headline t
-   org-fontify-quote-and-verse-blocks t
-   org-fontify-whole-heading-line t
-   org-footnote-auto-label 'plain
-   org-hide-emphasis-markers nil
-   org-hide-leading-stars t
-   org-hide-leading-stars-before-indent-mode t
-   org-hidden-keywords nil
-   org-image-actual-width nil
-   org-indent-indentation-per-level 2
-   org-pretty-entities nil
-   org-pretty-entities-include-sub-superscripts t
-   org-startup-folded t
-   org-startup-indented t
-   org-startup-with-inline-images nil
-   org-tags-column 0
-   org-use-sub-superscripts '{}
 
    ;; Behavior
    org-blank-before-new-entry '((heading . nil) (plain-list-item . auto))
@@ -168,10 +131,69 @@
    ;;   ("" "physics" t) TODO Install this)
    )
 
+  (let ((ext-regexp (regexp-opt '("GIF" "JPG" "JPEG" "SVG" "TIF" "TIFF" "BMP" "XPM"
+                                  "gif" "jpg" "jpeg" "svg" "tif" "tiff" "bmp" "xpm"))))
+    (setq iimage-mode-image-regex-alist
+          `((,(concat "\\(`?file://\\|\\[\\[\\|<\\|`\\)?\\([-+./_0-9a-zA-Z]+\\."
+                      ext-regexp "\\)\\(\\]\\]\\|>\\|'\\)?") . 2)
+            (,(concat "<\\(http://.+\\." ext-regexp "\\)>") . 1))))
+
+  ;; enable gpg support
+  (require 'org-crypt)
+  (org-crypt-use-before-save-magic)
+  (setq org-tags-exclude-from-inheritance '("crypt")
+        org-crypt-key user-mail-address
+        epa-file-encrypt-to user-mail-address)
+
+  ;; smartparens config
+  (sp-with-modes '(org-mode)
+    (sp-local-pair "\\[" "\\]" :post-handlers '(("| " "SPC")))
+    (sp-local-pair "\\(" "\\)" :post-handlers '(("| " "SPC")))
+    (sp-local-pair "$$" "$$"   :post-handlers '((:add " | ")) :unless '(sp-point-at-bol-p))
+    (sp-local-pair "{" nil))
+
+  ;; Initialize everything else
+  (+org|init-ui)
+  (+org|init-keybinds)
+
+  (run-hooks '+org-init-hook)
+  (+org|hacks))
+
+
+(defun +org|init-ui ()
+  "Configures the UI for `org-mode'."
+  (setq-default
+   org-fontify-done-headline t
+   org-fontify-quote-and-verse-blocks t
+   org-fontify-whole-heading-line t
+   org-hide-emphasis-markers nil
+   org-hide-leading-stars t
+   org-hide-leading-stars-before-indent-mode t
+   org-image-actual-width nil
+   org-indent-indentation-per-level 2
+   org-pretty-entities nil
+   org-pretty-entities-include-sub-superscripts t
+   org-startup-folded t
+   org-startup-indented t
+   org-startup-with-inline-images nil
+   org-tags-column 0
+   org-use-sub-superscripts '{}
+
+   ;; Appearance
+   outline-blank-line t
+   org-indent-mode-turns-on-hiding-stars t
+   org-adapt-indentation nil
+   org-cycle-separator-lines 1
+   org-cycle-include-plain-lists t
+   ;; org-ellipsis "  "
+   org-entities-user '(("flat"  "\\flat" nil "" "" "266D" "♭")
+                       ("sharp" "\\sharp" nil "" "" "266F" "♯"))
+   org-footnote-auto-label 'plain
+   org-hidden-keywords nil
+
   ;; LaTeX previews are too small and usually render to light backgrounds, so
   ;; this enlargens them and ensures their background (and foreground) match the
   ;; current theme.
-  (setq-default
    org-format-latex-options
    (plist-put org-format-latex-options :scale 1.5)
    org-format-latex-options
@@ -180,23 +202,24 @@
                                               'default)
                                           :background nil t)))
 
+  (define-minor-mode +org-pretty-mode
+    "TODO"
+    :init-value nil
+    :lighter " *"
+    :group 'evil-org
+    (setq org-hide-emphasis-markers +org-pretty-mode)
+    (org-toggle-pretty-entities)
+    ;; In case the above un-align tables
+    (org-table-map-tables 'org-table-align t))
+
   ;; Use ivy/helm if either is available
   (when (or (featurep! :completion ivy)
             (featurep! :completion helm))
     (setq-default org-completion-use-ido nil
                   org-outline-path-complete-in-steps nil))
 
-  (let ((ext-regexp (regexp-opt '("GIF" "JPG" "JPEG" "SVG" "TIF" "TIFF" "BMP" "XPM"
-                                  "gif" "jpg" "jpeg" "svg" "tif" "tiff" "bmp" "xpm"))))
-    (setq iimage-mode-image-regex-alist
-          `((,(concat "\\(`?file://\\|\\[\\[\\|<\\|`\\)?\\([-+./_0-9a-zA-Z]+\\."
-                      ext-regexp "\\)\\(\\]\\]\\|>\\|'\\)?") . 2)
-            (,(concat "<\\(http://.+\\." ext-regexp "\\)>") . 1))))
-
-
-
-  ;;; Custom fontification
-  (defun +org--tag-face (n)
+  ;; Custom fontification
+  (defsubst +org--tag-face (n)
     (let ((kwd (match-string n)))
       (or (and (equal kwd "#") 'org-tag)
           (and (equal kwd "@") 'org-special-keyword))))
@@ -238,29 +261,16 @@
                  ("\\s-\\(\\([#@]\\)[^ \n]+\\)" 1 (+org--tag-face 2)))))))
   (add-hook 'org-font-lock-set-keywords-hook #'+org|adjust-faces)
 
-  ;; enable gpg support
-  (require 'org-crypt)
-  (org-crypt-use-before-save-magic)
-  (setq org-tags-exclude-from-inheritance '("crypt")
-        org-crypt-key user-mail-address
-        epa-file-encrypt-to user-mail-address)
-
-  ;; smartparens config
-  (sp-with-modes '(org-mode)
-    (sp-local-pair "\\[" "\\]" :post-handlers '(("| " "SPC")))
-    (sp-local-pair "\\(" "\\)" :post-handlers '(("| " "SPC")))
-    (sp-local-pair "$$" "$$"   :post-handlers '((:add " | ")) :unless '(sp-point-at-bol-p))
-    (sp-local-pair "{" nil))
-
   ;; The standard unicode characters are usually misaligned depending on the
   ;; font. This bugs me. Personally, markdown #-marks for headlines are more
   ;; elegant, so we use those.
   (def-package! org-bullets
     :commands org-bullets-mode
     :init (add-hook 'org-mode-hook #'org-bullets-mode)
-    :config (setq org-bullets-bullet-list '("#")))
+    :config (setq org-bullets-bullet-list '("#"))))
 
-  ;; Keybinds
+(defun +org|init-keybinds ()
+  "Initialize my `org-mode' keybindings."
   (map! (:map org-mode-map
           "RET" #'org-return-indent
           "C-j" nil
@@ -363,17 +373,13 @@
           :v  "<"   (λ! (org-metaleft)  (evil-visual-restore))
           :v  ">"   (λ! (org-metaright) (evil-visual-restore))
           :n  "-"   #'org-cycle-list-bullet
-          :m  "<tab>" #'org-cycle))
-
-  ;; Initialize everything else
-  (run-hooks '+org-init-hook)
-  (+org|hacks))
+          :m  "<tab>" #'org-cycle)))
 
 
 (defun +org|hacks ()
   "Getting org to behave."
   ;; Don't open separate windows
-  (push '(file . find-file) org-link-frame-setup)
+  (cl-pushnew '(file . find-file) org-link-frame-setup)
 
   ;; Let OS decide what to do with files when opened
   (setq org-file-apps
