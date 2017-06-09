@@ -33,28 +33,38 @@
 
   :config
   (load "helm-autoloads" nil t)
-  (setq projectile-completion-system 'helm)
-  (set! :popup "\\` ?\\*[hH]elm.*?\\*\\'" :size 14 :regexp t)
-
   (add-hook 'emacs-startup-hook #'helm-mode)
 
+  (defvar helm-projectile-find-file-map (make-sparse-keymap))
+  (require 'helm-projectile)
+  (set-keymap-parent helm-projectile-find-file-map helm-map)
+
+  ;; helm is too heavy for find-file-at-point
+  (after! helm-mode
+    (add-to-list 'helm-completing-read-handlers-alist '(find-file-at-point . nil)))
+
+  (set! :popup "\\` ?\\*[hH]elm.*?\\*\\'" :size 14 :regexp t)
+  (setq projectile-completion-system 'helm)
+
   ;;; Helm hacks
-  ;; A simpler prompt: see `+helm-global-prompt'
   (defun +helm*replace-prompt (plist)
+    "Globally replace helm prompts with `+helm-global-prompt'."
     (if (keywordp (car plist))
         (plist-put plist :prompt +helm-global-prompt)
       (setf (nth 2 plist) +helm-global-prompt)
       plist))
   (advice-add #'helm :filter-args #'+helm*replace-prompt)
 
-  ;; Hide mode-line in helm windows
-  (defun +helm*hide-header (&rest _))
+  (defun +helm*hide-header (&rest _)
+    "Hide header-line & mode-line in helm windows."
+    (setq mode-line-format nil))
   (advice-add #'helm-display-mode-line :override #'+helm*hide-header)
 
-  (map! [remap apropos]                   #'helm-apropos
+  (map! :map global-map
+        [remap apropos]                   #'helm-apropos
         [remap find-file]                 #'helm-find-files
-        [remap projectile-switch-to-buffer] #'helm-projectile-switch-to-buffer
         [remap recentf]                   #'helm-recentf
+        [remap projectile-switch-to-buffer] #'helm-projectile-switch-to-buffer
         [remap projectile-recentf]        #'helm-projectile-recentf
         [remap projectile-find-file]      #'helm-projectile-find-file
         [remap imenu]                     #'helm-semantic-or-imenu
@@ -63,29 +73,7 @@
         [remap projectile-switch-project] #'helm-projectile-switch-project
         [remap projectile-find-file]      #'helm-projectile-find-file
         [remap imenu-anywhere]            #'helm-imenu-anywhere
-        [remap execute-extended-command]  #'helm-M-x
-
-        (:map helm-map
-          "C-S-n"      #'helm-next-source
-          "C-S-p"      #'helm-previous-source
-          "C-u"        #'helm-delete-minibuffer-contents
-          "C-w"        #'backward-kill-word
-          "M-v"        #'clipboard-yank
-          "C-r"        #'evil-paste-from-register ; Evil registers in helm! Glorious!
-          "C-b"        #'backward-word
-          "<left>"     #'backward-char
-          "<right>"    #'forward-char
-          "<escape>"   #'helm-keyboard-quit
-          "ESC"        #'helm-keyboard-quit
-          [escape]     #'helm-keyboard-quit
-          "<tab>"      #'helm-execute-persistent-action)
-
-        (:map* helm-generic-files-map
-          :e "ESC"     #'helm-keyboard-quit))
-
-  (defvar helm-projectile-find-file-map (make-sparse-keymap))
-  (require 'helm-projectile)
-  (set-keymap-parent helm-projectile-find-file-map helm-map))
+        [remap execute-extended-command]  #'helm-M-x))
 
 
 (def-package! helm-locate
@@ -101,20 +89,14 @@
   :config
   (setq helm-boring-file-regexp-list
         (append (list "\\.projects$" "\\.DS_Store$")
-                helm-boring-file-regexp-list))
-
-  (map! :map helm-find-files-map
-        "C-w" #'helm-find-files-up-one-level
-        "TAB" #'helm-execute-persistent-action))
+                helm-boring-file-regexp-list)))
 
 
 (def-package! helm-ag
   :config
-  (map! (:map helm-ag-map
-          "<backtab>"  #'helm-ag-edit)
-        (:map helm-ag-edit-map
-          [remap doom/kill-this-buffer] #'helm-ag--edit-abort
-          [remap quit-window]           #'helm-ag--edit-abort)))
+  (map! :map helm-ag-edit-map
+        [remap doom/kill-this-buffer] #'helm-ag--edit-abort
+        [remap quit-window]           #'helm-ag--edit-abort))
 
 
 (def-package! helm-css-scss ; https://github.com/ShingoFukuyama/helm-css-scss
