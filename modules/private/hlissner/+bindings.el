@@ -1,9 +1,5 @@
 ;;; private/hlissner/+bindings.el -*- lexical-binding: t; -*-
 
-;; I've swapped these keys on my keyboard
-(setq x-super-keysym 'alt
-      x-alt-keysym   'meta)
-
 (defmacro find-file-in! (path &optional project-p)
   "Returns an interactive function for searching files."
   `(lambda () (interactive)

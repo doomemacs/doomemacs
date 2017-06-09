@@ -1,5 +1,9 @@
 ;;; private/hlissner/init.el -*- lexical-binding: t; -*-
 
+;; I've swapped these keys on my keyboard
+(setq x-super-keysym 'alt
+      x-alt-keysym   'meta)
+
 ;; This is a special file, unique to private modules, that is loaded after DOOM
 ;; core but before any module is activated, giving you an opportunity to
 ;; overwrite variables or settings before initialization.
