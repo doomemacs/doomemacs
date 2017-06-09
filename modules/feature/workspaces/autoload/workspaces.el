@@ -6,12 +6,12 @@
 (defvar +workspace--last nil)
 
 (defface +workspace-tab-selected-face
-  '(((t (:inherit highlight))))
+  '((t (:inherit 'highlight)))
   "The face for selected tabs displayed by `+workspace/display'"
   :group 'doom)
 
 (defface +workspace-tab-face
-  '(((t (:inherit default))))
+  '((t (:inherit 'default)))
   "The face for selected tabs displayed by `+workspace/display'"
   :group 'doom)
 
