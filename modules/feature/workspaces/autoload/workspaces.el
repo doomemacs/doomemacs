@@ -6,20 +6,12 @@
 (defvar +workspace--last nil)
 
 (defface +workspace-tab-selected-face
-  '((((class color) (background light))
-     (:background "#333333" :foreground "#000000")) ;; FIXME
-    (((class color) (background dark))
-     (:background "#51afef" :foreground "#181e26")))
+  '(((t (:inherit highlight))))
   "The face for selected tabs displayed by `+workspace/display'"
   :group 'doom)
 
 (defface +workspace-tab-face
-  '((((class color) (background light))
-     (:background "#333333" :foreground "#000000")) ;; FIXME
-    (((type graphic) (class color) (background dark))
-     (:background "#23272e" :foreground "#5B6268"))
-    (((class color) (background dark))
-     (:background "#262626" :foreground "#525252")))
+  '(((t (:inherit default))))
   "The face for selected tabs displayed by `+workspace/display'"
   :group 'doom)
 
