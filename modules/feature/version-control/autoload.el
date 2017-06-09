@@ -15,8 +15,11 @@
   "Open the website for the current version controlled file. Fallback to
 repository root."
   (interactive)
-  (destructuring-bind (beg end) (if buffer-file-name (git-link--get-region))
-    (git-link (git-link--select-remote) beg end)))
+  (require 'git-link)
+  (destructuring-bind (beg end)
+      (if buffer-file-name (git-link--get-region))
+    (let ((git-link-open-in-browser t))
+      (git-link (git-link--select-remote) beg end))))
 
 ;;;###autoload
 (defun +vcs/git-browse-issues ()
