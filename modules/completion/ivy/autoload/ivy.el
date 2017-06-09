@@ -3,38 +3,37 @@
 ;; Show more information in ivy-switch-buffer; and only display
 ;; workgroup-relevant buffers.
 (defun +ivy--get-buffers (&optional buffer-list)
-  (let ((min-name 5)
-        (min-mode 5)
-        (proot (doom-project-root)))
-    (cl-loop for buf in (or buffer-list (doom-buffer-list))
-             collect
-             (destructuring-bind (type mode path)
-                 (+ivy--get-buffer-attrs buf proot)
-               (format (format "%%-%ds %%-%ds %%s" min-name min-mode)
-                       type mode (or path ""))))))
-
-(defun +ivy--get-buffer-attrs (b &optional project-root)
-  (with-current-buffer b
-    (let ((buffer-name (buffer-name b))
-          (mode-name (symbol-name major-mode)))
-      (when (> (length buffer-name) min-name)
-        (setq min-name (+ (length buffer-name) 15)))
-      (when (> (length mode-name) min-mode)
-        (setq min-mode (+ (length mode-name) 3)))
-      (list (concat
-             (propertize buffer-name
-                         'face (cond ((string-match-p "^ ?\\*" buffer-name)
-                                      'font-lock-comment-face)
-                                     ((and project-root
-                                           (not (string= project-root (doom-project-root))))
-                                      'font-lock-keyword-face)
-                                     (buffer-read-only
-                                      'error)))
-             (when (and buffer-file-name (buffer-modified-p))
-               (propertize "[+]" 'face 'doom-modeline-buffer-modified)))
-            (propertize mode-name 'face 'font-lock-constant-face)
-            (when buffer-file-name
-              (abbreviate-file-name (file-name-directory buffer-file-name)))))))
+  (let* ((buffer-list (or buffer-list (doom-buffer-list)))
+         (min-name
+          (+ 5 (cl-loop for buf in buffer-list
+                        maximize (length (buffer-name buf)))))
+         (min-mode
+          (+ 5 (cl-loop for buf in buffer-list
+                        maximize (length (symbol-name (buffer-local-value 'major-mode buf)))))))
+    (cl-loop
+     with project-root = (doom-project-root)
+     for buf in buffer-list
+     collect
+     (destructuring-bind (type mode path)
+         (with-current-buffer buf
+           (list (concat
+                  (let ((buffer-name (buffer-name buf)))
+                    (propertize
+                     buffer-name
+                     'face (cond ((string-match-p "^ ?\\*" buffer-name)
+                                  'font-lock-comment-face)
+                                 ((not (string= project-root (doom-project-root)))
+                                  'warning)
+                                 (buffer-read-only
+                                  'error))))
+                  (when (and buffer-file-name (buffer-modified-p))
+                    (propertize "[+]" 'face 'doom-modeline-buffer-modified)))
+                 (propertize (symbol-name major-mode) 'face 'font-lock-constant-face)
+                 (when buffer-file-name
+                   (abbreviate-file-name
+                    (file-name-directory buffer-file-name)))))
+       (format (format "%%-%ds %%-%ds %%s" min-name min-mode)
+               type mode (or path ""))))))
 
 (defun +ivy--select-buffer-action (buffer)
   (ivy--switch-buffer-action
