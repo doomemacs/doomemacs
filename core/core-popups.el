@@ -25,6 +25,9 @@
 (defvar doom-popup-other-window nil
   "The last window selected before a popup was opened.")
 
+(defvar doom-popup-no-fringes t
+  "If non-nil, disable fringes in popup windows.")
+
 (defvar-local doom-popup-rules nil
   "The shackle rule that caused this buffer to be recognized as a popup.")
 
@@ -145,15 +148,21 @@ for :align t on every rule."
     ;; Makes popup window resist interactively changing its buffer.
     (set-window-dedicated-p window doom-popup-mode)
     (cond (doom-popup-mode
+           (when doom-popup-no-fringes
+             (set-window-fringes window 0 0 fringes-outside-margins))
            ;; Save metadata into window parameters so it can be saved by window
            ;; config persisting plugins like workgroups or persp-mode.
            (set-window-parameter window 'popup (or doom-popup-rules t))
            (when doom-popup-rules
-             (dolist (param doom-popup-window-parameters)
-               (when-let (val (plist-get doom-popup-rules param))
-                 (set-window-parameter window param val)))))
+             (cl-loop for param in doom-popup-window-parameters
+                      when (plist-get doom-popup-rules param)
+                      do (set-window-parameter window param it))))
 
           (t
+           (when doom-popup-no-fringes
+             (set-window-fringes window
+                                 doom-ui-fringe-size doom-ui-fringe-size
+                                 fringes-outside-margins))
            ;; Ensure window parameters are cleaned up
            (set-window-parameter window 'popup nil)
            (dolist (param doom-popup-window-parameters)
