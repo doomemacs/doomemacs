@@ -264,7 +264,7 @@ file."
 
   ;; fix for disappearing line numbers in nlinum
   ;; <https://github.com/hlissner/.emacs.d/issues/59#issuecomment-306937318>
-  (defun doom*nlinum--region (start limit)
+  (defun doom*nlinum-region (start limit)
     (save-excursion
       (let ((inhibit-point-motion-hooks t))
         (goto-char start)
