@@ -40,9 +40,10 @@ session)."
   (after! magit     (setq magit-completing-read-function #'ivy-completing-read))
   (after! yasnippet (push #'+ivy-yas-prompt yas-prompt-functions))
 
-  (add-hook 'window-setup-hook #'ivy-mode)
+  (add-hook 'emacs-startup-hook #'ivy-mode)
 
   (map! :map ivy-mode-map
+        [remap apropos]                   #'counsel-apropos
         [remap describe-face]             #'counsel-describe-face
         [remap find-file]                 #'counsel-find-file
         [remap switch-to-buffer]          #'+ivy/switch-buffer

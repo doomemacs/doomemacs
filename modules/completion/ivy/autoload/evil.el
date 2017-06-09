@@ -26,8 +26,8 @@
          (project-root (doom-project-root))
          (query
           (or query
-              (and (evil-visual-state-p)
-                   beg end
+              (and beg end
+                   (> (abs (- end beg)) 1)
                    (rxt-quote-pcre (buffer-substring-no-properties beg end)))
               +ivy--file-last-search))
          (prompt
