@@ -31,26 +31,32 @@
         (+evil--ensure-modes)
         (hs-already-hidden-p))))
 
+(defmacro +evil-from-eol (&rest body)
+  "Perform action after moving to the end of the line."
+  `(save-excursion
+     (end-of-line)
+     ,@body))
+
 ;;;###autoload (autoload '+evil:fold-toggle "feature/evil/autoload/folds" nil t)
 (evil-define-command +evil:fold-toggle ()
   (interactive)
   (if (+evil--vimish-fold-p)
       (vimish-fold-toggle)
-    (hs-toggle-hiding)))
+    (+evil-from-eol (hs-toggle-hiding))))
 
 ;;;###autoload (autoload '+evil:fold-open "feature/evil/autoload/folds" nil t)
 (evil-define-command +evil:fold-open ()
   (interactive)
   (if (+evil--vimish-fold-p)
       (vimish-fold-unfold)
-    (hs-hide-block)))
+    (+evil-from-eol (hs-hide-block))))
 
 ;;;###autoload (autoload '+evil:fold-close "feature/evil/autoload/folds" nil t)
 (evil-define-command +evil:fold-close ()
   (interactive)
   (if (+evil--vimish-fold-p)
       (vimish-fold-refold)
-    (hs-hide-block)))
+    (+evil-from-eol (hs-hide-block))))
 
 ;;;###autoload (autoload '+evil:fold-open-all "feature/evil/autoload/folds" nil t)
 (evil-define-command +evil:fold-open-all (&optional level)
