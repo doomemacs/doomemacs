@@ -366,6 +366,35 @@ the command buffer."
   (advice-add #'windmove-find-other-window :override #'doom*ignore-window-parameters-in-popups))
 
 
+(after! helm
+  ;; Helm tries to clean up after itself, but shackle has already done this.
+  ;; This fixes that. To reproduce, add a helm rule in `shackle-rules', open two
+  ;; splits side-by-side, move to the buffer on the right and invoke helm. It
+  ;; will close all but the left-most buffer.
+  (setq-default helm-reuse-last-window-split-state t
+                helm-split-window-in-side-p t)
+
+  (after! helm-swoop
+    (setq helm-swoop-split-window-function #'pop-to-buffer))
+
+  (after! helm-ag
+    ;; This prevents helm-ag from switching between windows and buffers.
+    (defun doom*helm-ag-edit-done (orig-fn &rest args)
+      (cl-letf (((symbol-function 'select-window) #'ignore))
+        (apply orig-fn args))
+      (doom/popup-close))
+    (advice-add #'helm-ag--edit-commit :around #'doom*helm-ag-edit-done)
+    (advice-add #'helm-ag--edit-abort  :around #'doom*helm-ag-edit-done)
+
+    (defun doom*helm-ag-edit (orig-fn &rest args)
+      (cl-letf (((symbol-function 'other-window) #'ignore)
+                ((symbol-function 'switch-to-buffer) #'doom-popup-buffer))
+        (apply orig-fn args)
+        (with-current-buffer (get-buffer "*helm-ag-edit*")
+          (use-local-map helm-ag-edit-map))))
+    (advice-add #'helm-ag--edit :around #'doom*helm-ag-edit)))
+
+
 (after! help-mode
   ;; Help buffers use `other-window' to decide where to open followed links,
   ;; which can be unpredictable. It should *only* replace the original buffer we
