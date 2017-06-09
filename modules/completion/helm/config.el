@@ -151,7 +151,7 @@
                 helm-split-window-in-side-p t))
 
 (after! helm-swoop
-  (setq helm-swoop-split-window-function (lambda (b) (doom-popup-buffer b))))
+  (setq helm-swoop-split-window-function #'pop-to-buffer))
 
 
 (after! helm-ag
