@@ -33,7 +33,6 @@
 (package! avy)
 (package! command-log-mode)
 (package! expand-region)
-(package! goto-last-change)
 (package! help-fns+)
 (package! imenu-anywhere)
 (package! imenu-list)

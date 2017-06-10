@@ -227,8 +227,6 @@ fundamental-mode) for performance sake."
 (def-package! expand-region
   :commands (er/expand-region er/contract-region er/mark-symbol er/mark-word))
 
-(def-package! goto-last-change :commands goto-last-change)
-
 (def-package! help-fns+ ; Improved help commands
   :commands (describe-buffer describe-command describe-file
              describe-keymap describe-option describe-option-of-type))
