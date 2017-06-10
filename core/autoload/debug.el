@@ -2,7 +2,10 @@
 
 ;;;###autoload
 (defun doom/what-face (&optional pos)
-  "Lists all faces at point. Overlay faces are denoted with an asterix."
+  "Shows all faces and overlay faces at point.
+
+Interactively prints the list to the echo area. Noninteractively, returns a list
+whose car is the list of faces and cadr is the list of overlay faces."
   (interactive)
   (unless pos
     (setq pos (point)))
@@ -17,7 +20,7 @@
                                           collect f))))
 
     (cond ((called-interactively-p 'any)
-           (message "%s %s; %s"
+           (message "%s %s\n%s %s"
                     (propertize "Faces:" 'face 'font-lock-comment-face)
                     (if faces
                         (cl-loop for face in faces
@@ -26,6 +29,7 @@
                                  else
                                    concat (concat (propertize (symbol-name face) 'face face) " "))
                       "n/a ")
+                    (propertize "Overlays:" 'face 'font-lock-comment-face)
                     (if overlays
                         (cl-loop for ov in overlays
                                  concat (concat (propertize (symbol-name ov) 'face ov) " "))
