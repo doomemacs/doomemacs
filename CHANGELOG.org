@@ -1,0 +1,382 @@
+#+TITLE: Changelog
+
+- [[#todo][Todo]]
+- [[#unreleased-master][Unreleased (master)]]
+- [[#203-jun-11-2017][2.0.3 (Jun 11, 2017)]]
+- [[#202-may-13-2017][2.0.2 (May 13, 2017)]]
+- [[#201-apr-8-2017][2.0.1 (Apr 8, 2017)]]
+- [[#200-jan-17-2017][2.0.0 (Jan 17, 2017)]]
+
+* Todo
++ *Potential plugins:*
+  + =completion/ivy= [[https://github.com/yevgnen/ivy-rich][ivy-rich]], possible replacement for ~+ivy/switch-buffer~
+  + =app/present= [[https://github.com/larstvei/Focus][focus]], for presenting code
+  + [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]], client for MS Language Server Protocol, keep an eye on this
+  + =lang/javascript= [[https://github.com/NicolasPetton/Indium][indium]] (IDE), keep an eye on this
+  + =lang/javascript= [[https://github.com/codesuki/add-node-modules-path][add-node-modules-path]] (adds node_modules to ~exec-path~)
+  + =lang/javascript= [[https://github.com/lbolla/emacs-flycheck-flow][flycheck-flow]] (Flow support for JS)
+  + =lang/org= [[https://github.com/Malabarba/latex-extra][orgit]] (org links to magit buffers)
+  + =lang/org= [[https://github.com/jkitchin/org-ref][org-ref]] (bibtex/citation helper)
+  + =lang/org= [[https://github.com/tashrifsanil/org-easy-img-insert][org-easy-img-insert]]
+  + =lang/latex= [[https://github.com/Malabarba/latex-extra][latex-extra]] (utility commands)
+  + =lang/latex= [[**https://github.com/jsinglet/latex-preview-pane][latex-preview-pane]]
+  + =lang/julia= [[ https://github.com/dennisog/julia-shell-mode][julia-shell]] (unsure if better than inferior-julia in julia-mode)
+  + =lang/python= [[https://github.com/Wilfred/pyimport][pyimport]]
+  + [[https://github.com/mhayashi1120/Emacs-imagex][emacs-imagex]], for manipulating images at point (zooming?)
+  + =tools/term= [[https://github.com/riscy/shx-for-emacs][shx]], an extension for the shell in Emacs
++ *Planned modules:*
+  + =app/finance= -- ledger + org-mode.
+  + =app/irc=
+  + =app/crm= -- Customer Relations Management, in Emacs, using org-mode.
+  + =app/write= -- Make Emacs into a focused word processor, for writing papers or stories.
+  + =app/regex= -- PCRE IDE, with live buffer matching, search/replace support, and an export-to-code feature for various languages.
+    + +Perl backend+
+    + Search and replace support
+    + Highlight replaced segments
+    + Export-to-code feature for:
+      + python (use ~re~ or ~regex~)
+      + php (~preg_(match(_all)?|replace)~)
+      + ruby (~%r[.+]~)
+      + javascript (node) (~/.+/.test(...)~)
+      + C (~regex.h~ + ~regcomp~)
+      + C++ (~regex reg(regexp, ...)~)
+    + Syntax highlighter for ~+regex-mode~ (plus make it a major mode)
+    + Optimize: communicate with perl process (with ~make-process~ instead of ~call-process~)
++ =lang/org=
+  + Drag-drop image attachment (~org-download~) and central storage
+  + Unified export system
+  + Better shackle + org-agenda integration
+  + Fix janky visual line motions (~evil-next-visual-line~, etc)
+  + Fix janky cursor positioning when jumping between org-table cells from insert mode.
+  + Certain characters/keys--when typed in a table--cause the cell
+    to shrink (likely cause: custom self-insert-char behavior -- like smartparens pairs & custom SPC/BKSPC binds)
++ *Bug fixes:*
+  + =core-ui= Replace or fix ~winner-mode~ unreliability (will close windows trying to revive killed buffers). Perhaps make ~doom/kill-this-buffer~ only disassociate buffer from persp-mode or bury buffer if persp-mode is inactive.
+  + =ui/doom-modeline= Fix ~0/0~ leftover panel in modeline (caused by lingering anzu state).
+  + Fix autosave file appearing in recentf.
++ =feature/jump= Automatic etags generation (for dwim go-to-definition and, perhaps, code-completion for some languages; lua maybe?).
++ =lang/php= Automatic and async tags generation using [[https://github.com/xcwen/phpctags][phpctags]].
++ =lang/lua= True, dynamic code-completion? Looks like [[https://github.com/immerrr/lua-mode/pull/119][this PR in lua-mode]] may have the answer. Does it make ~company-lua~ redundant?
++ Make QUELPA outdated-detection async with ~async-start~ and ~async-get~ (in ~doom/packages-update~).
++ =tools/upload= Add ~+upload/open-remote-file~ command to open current file on the remote (with TRAMP).
++ Add =bin/org-alert= script -- a cron script that scans TODOs in org files and dispatches system alerts.
++ =feature/workspaces= Add a bookmarks feature, but for wconfs, that can revive file buffers. Also needs an interface.
++ Add README.org's with working babel blocks to modules.
+
+* Unreleased (master)
++ =core=
+  + =core-packages=
+    + When a quelpa package is deleted, its build repo (in ~quelpa-build-dir~) is now deleted with it.
++ =feature=
+  + =feature/evil=
+    + Remove =goto-last-change=, which conflicts with =goto-chg=, which is a dependency of evil (that does the exact same thing, but is what evil uses).
++ =lang=
+  + =lang/org=
+    + Fix M-RET in plain lists not preserving indent level for new items.
+    + Fix cursor jumping away when toggling folds or realigning org tables (pressing TAB).
+
+* 2.0.3 (Jun 11, 2017)
++ *New modules*
+  + =ui/unicode= -- fixes unicode font-rendering for a variety of languages, using [[https://github.com/rolandwalker/unicode-fonts][unicode-fonts]].
+  + =ui/evil-goggles= -- visual feedback for edit operations in evil-mode, using [[https://github.com/edkolev/evil-goggles][evil-goggles]].
+  + =ui/nav-flash= (extracted from =ui/doom=) -- flashes current line when moving cursor considerable distrances, using [[https://github.com/rolandwalker/nav-flash][nav-flash]].
+  + =tools/neotree= (extracted from =feature/evil=) -- a file explorer sidebar, using [[https://github.com/jaypei/emacs-neotree/][neotree]].
++ =core=
+  + New special file: =private/<user-login-name>/init.el= is now loaded before modules (after core).
+  + =:private <user-login-name>= is now automatically loaded by ~doom!~.
+  + New help command: ~doom/describe-module~ -- for DOOM modules.
+  + New help command: ~doom/describe-setting~ -- for possible ~set!~ targets.
+  + Add =make doctor= to diagnose common issues with your setup & environment.
+  + Removed ~def-bootstrap~ & ~doom-bootstrap~. It was a clumsy system. I'll replace it with README.org files in each module, with working, tangle-able source blocks.
+  + =core-os=
+    + Don't use GTK tooltips on Linux (ugly!).
+  + =core-ui=
+    + New plugin: [[https://github.com/syl20bnr/vi-tilde-fringe][vi-tilde-fringe]] -- subtle, vim-ish empty-line indicator.
+    + New variable: ~doom-ui-mode-names~ (alist) -- for changing ~mode-name~ of major-modes.
+    + Fix left-over hl-line overlays when hl-line-mode is uncleanly killed (e.g. when the major-mode is changed).
+    + Fix disappearing line numbers in nlinum (thanks to [[https://github.com/gilbertw1][gilbertw1]]).
+  + =core-keybinds=
+    + New property for ~map!~: ~:textobj~ -- for binding to evil text objects keymaps.
+    + Fix ~:after~ & ~:map*~ properties in ~map!~ macro (wasn't working at all).
+    + Change keybinding scheme; the leader key is now =SPC= and localleader =SPC m=, inspired by spacemacs.
+    + Enable which-key pops up for all keys.
+  + =core-popups=
+    + Properly persist ~popup~ window parameter between sessions.
+    + Improve magit+shackle integration; ensures that links will be followed within the popup they were opened.
+    + Add ~doom-popup-no-fringe~ option (default = t). When non-nil, fringes will be disabled in popup windows (in ~doom-popup-mode~).
+  + =core-packages=
+    + Fix failure to detect out-of-date QUELPA packages.
+    + Fix ~custom-file~ (and custom settings) not being loaded.
+    + Fix crash in ~doom-update-package~ caused by unreachable, new dependencies.
+    + Make ~doom-update-package~ atomic in case of failure.
+    + Make ~doom-refresh-packages~ async.
+    + Improve the security of package management (via ELPA) by a) forcing Emacs to verify TLS connections and b) use HTTPS sources for MELPA and ELPA.
++ =feature=
+  + =feature/evil=
+    + Add ~+evil:mc~ command [[https://github.com/gabesoft/evil-mc][evil-mc]].
+    + Add ~+evil/mc-make-cursor-here~, with visual-block support for [[https://github.com/gabesoft/evil-mc][evil-mc]].
+    + =d= (operator) now invokes ~wgrep-mark-deletion~ in wgrep buffers.
+    + New code folding system that combines hideshow (built-in; for indent/marker-based folds) and [[https://github.com/alexmurray/evil-vimish-fold][evil-vimish-fold]] (for arbitrary folds).
+    + Fix [[https://github.com/redguardtoo/evil-matchit][evil-matchit]] in visual mode.
+    + Fix [[https://github.com/hlissner/evil-multiedit][evil-multiedit]] M-d bindings.
+    + Fix stringp error caused by unintialized state in hideshow.
+    + Fix evil normal-mode keybindings in help-mode popups.
+    + Change how ~+evil-esc-hook~ hooks are handled: they now short-circuit on the first hook to return non-nil.
+    + Remove ~+evil/matchit~ (thin wrapper around ~evilmi-jump-items~).
+    + Remove [[https://github.com/jaypei/emacs-neotree/][neotree]] plugin (moved to =tools/neotree=).
+  + =feature/jump=
+    + Call ~recenter~ after using [[https://github.com/jacktasia/dumb-jump][dumb-jump]].
+  + =feature/workspaces=
+    + No longer saves session on quit if session was blank.
++ =completion=
+  + =completion/ivy=
+    + Flexible column width for ~+ivy/tasks~.
++ =ui=
+  + =ui/doom=
+    + New plugin: [[https://github.com/hlissner/emacs-solaire-mode][solaire-mode]] -- replaces ~doom-buffer-mode~; brightens source windows and dims transient, temporary, or popup windows.
+  + =ui/doom-modeline=
+    + Reduce excess whitespace on right of flycheck segment.
+    + Buffer-path and file-name segments now use different faces.
+    + The vcs segment now uses a slightly darker color (in clean branches).
+  + =ui/nav-flash=
+    + Fix over-aggressive nav-flash'ing on evil-multiedit or in eshell/term buffers.
++ =tools=
+  + =tools/gist=
+    + Changed new gists to be private by default.
++ =lang=
+  + =lang/haskell=
+    + New plugin: [[https://github.com/iquiw/company-ghc][company-ghc]] -- code-completion support for haskell (requires ~ghc-mod~).
+  + =lang/php=
+    + New plugin: [[https://github.com/xcwen/ac-php][company-php]] -- code-completion support for php (requires a TAGs file created with [[https://github.com/xcwen/phpctags][phpctags]]).
+  + =lang/emacs-lisp=
+    + Omit defuns inside macros from the imenu index.
+    + Don't enable ~flycheck-mode~ in emacs.d files.
+  + =lang/org=
+    + Replace org-bullets source with more up-to-date fork.
++ =private/hlissner=
+  + Add =gzz= binding (~+evil/mc-make-cursor-here~)
+  + Add =:mc= ex command (~+evil:mc~)
+  + Add =:lookup= ex command (~+jump:online~).
+  + Add =:gblame= ex command (~magit-blame~).
+  + Add =:grevert= ex command (~git-gutter:revert-hook~).
+
+* 2.0.2 (May 13, 2017)
++ *New modules*
+  + =tools/gist= -- allows you to manage and create gists, using [[https://github.com/defunkt/gist.el][gist.el]].
+  + =tools/term= -- quickly spawn a terminal (in a popup or buffer) using [[https://github.com/emacsorphanage/multi-term][multi-term]]
+  + =app/twitter= -- Emacs as a twitter client, using [[https://github.com/hayamiz/twittering-mode][twittering-mode]]
++ =core=
+  + Stop "buffer is read-only" messages while in minibuffer, when I accidentally try to edit the prompt. It's correct behavior, but it consumes the minibuffers, hiding what I'm typing.
+  + Fix Emacs daemon compatibility with DOOM, which assumed a frame will always be visible on startup, causing errors when Emacs is launched as a daemon.
+  + Code-style change: use sharp-quote for functions. This makes the byte-compiler output missing-function warnings when they can't be found, which is helpful.
+  + Stop projectile & git-gutter checks when in a TRAMP buffer; it causes tremendous slowdowns, to the point of being unusable.
+  + Add ~message!~ & ~format!~ macros for printing colored output either a) in a popup buffer when in an interactive session or b) with ansi codes when in an noninteractive session.
+  + Changed ~doom/recompile~ to aggresively recompile =core/core.el= to fix load-path inconsistencies when you've byte-compiled your config and run a package management command.
+  + =core-lib=
+    + Add ~:append~ support to ~add-transient-hook!~ macro.
+  + =core-popups=
+    + Fix over-eager ESC binding killing all popups indiscriminantly
+  + =core-ui=
+    + Remove references to ~ace-maximize-window~ (obsolete)
+    + Fix whitespace adjustment in ~highlight-indentation-current-column-mode~
+  + =core-packages=
+    + Package management now produces colored and detailed feedback.
++ =ui=
+  + =ui/doom=
+    + Git-gutter fringe bitmaps no longer appear truncated.
+    + Fix lack of syntax highlighting in scratch buffer
+    + Use comment face as default color for ~+doom-folded-face~
+  + =ui/doom-modeline=
+    + Fix modeline disappearing due to loss of state. ~doom--modeline-format~ was being killed when switching major modes.
++ =feature=
+  + =feature/eval=
+    + Fix ~:repl~ & ~+eval/repl-send-region~.
+    + Fix ~+eval/region~ failing only on first invocation because ~+eval-runners-alist~ wasn't populated until quickrun is loaded.
+    + Add TAB auto-completion in comint-mode and REPL buffers
+  + =feature/evil=
+    + Fix ~:mv~ & ~:rm~.
+    + Fix Neotree forgetting that it's a neotree window when switching perspectives.
+    + New plugin: [[https://github.com/gabesoft/evil-mc][evil-mc]] -- multiple cursors for evil-mode (thanks to [[https://github.com/gilbertw1][gilbertw1]])
+    + Achieve vim parity w/ file modifiers (~+evil*ex-replace-special-filenames~)
+  + =feature/version-control=
+    + New plugin: [[https://github.com/pidu/git-timemachine][git-timemachine]] -- stepping through a file's git history.
+    + New plugin: [[https://github.com/sshaw/git-link][git-link]] -- generates and opens links to "this file"'s remote repo with your default browser.
+    + Add ~:gbrowse~: find this file on github/gitlab/bitbucket in your browser.
+    + Add ~:gissues~: open this project's issues page in your browser.
+    + Fix ~+vcs/git-browse~ and ~+vcs/git-browse-issues~.
+  + =feature/workspaces=
+    + Add BANG modifier to ~:cleanup~ to span all workspaces.
+    + Since persp-mode handles its "nil" perspective differently from others, pretend that it doesn't exist and spawn a new "main" perspective.
++ =completion=
+  + =completion/ivy=
+    + Add ~+ivy-do-action!~ factory macro. Use it for in-ivy keybindings.
+    + Add ripgrep file search support. Ripgrep doesn't support multiline searches, but is faster. Use =ag= for multiline (or more PCRE-compliant) searches.
+    + Reverse ivy's built-in behavior of reversing escaping of parentheses when using the_silver_searcher or ripgrep. If you want literal parentheses, escape them explicitly.
+    + Removed ~def-counsel-action!~
+    + When a selection is used for ~:ag~, the selected text is now regexp-escaped.
++ =tools=
+  + =tools/tmux=
+    + Fix and refactor library (general update).
++ =lang=
+  + =lang/cc=
+    + Integrate counsel-ivy into [[https://github.com/Sarcasm/irony-mode][irony-mode]]
+  + =lang/javascript=
+    + Improve electric indent support for ~js2-mode~ and ~rjsx-mode~
+  + =lang/org=
+    + Fix org-checkbox-statistics not respecting underlying faces
+    + Disable ~show-paren-mode~ in org-mode due to conflicts with org-indent which cause indentation flickering.
+    + Bind ~M-z~ (~undo~), ~C-u~ (~delete-line~) and ~C-w~ (~delete-word~) in ~org-store-link~ and ~org-insert-link~ prompts.
+    + Apply org-headline-done face to checked-checkbox lines, to match how DONE headlines look. Also applies this to items whose subitems are all complete.
+    + Changed default fold behavior when loading an org-file to unfold first level folds.
+    + Add =bin/org-capture= shell script for invoking the org-capture frame from outside Emacs.
+    + Add babel support for: rust, restclient, sql, google translate, haskell and go.
+    + Add ~+org-pretty-mode~ for toggling "pretty" fontification. Prettified entities or hidden regions can make editing difficult.
+  + =lang/python=
+    + Add ipython detection and REPL support
+    + Simplify matchit key (%) in python. The default is to prioritize if-else and other blocks over brackets. I found this frustrating.
+  + =lang/web=
+    + Fix ~+web-encode-entities~, ~+web-decode-entities~, ~+web/encode-entities-region~ and ~+web/decode-entities-region~.
++ =app=
+  + =app/email=
+    + Replace mbsync with offlineimap.
+    + Add support for marking multiple emails when in visual-mode (evil) in a ~mu4e-headers-mode~ buffer.
+    + Fix trash mark causing duplicates upstream.
+    + Make refiling more compatible with archiving in gmail.
++ =private/hlissner=
+  + Add keybinds for [[https://github.com/gabesoft/evil-mc][evil-mc]]: based around ~gz~ (like ~gzz~ to toggle cursor freeze, and ~gzc~ to create a cursor "here").
+  + Add keybinds for [[https://github.com/hlissner/evil-multiedit][evil-multiedit]]: based around ~M-d~ and ~M-D~.
+  + Replace ~:find~ with ~:ag~, ~:agc[wd]~, ~:rg~ and ~:rgc[wd]~.
+  + Fix ~:x~ ex command (open scratch buffer)
+
+* 2.0.1 (Apr 8, 2017)
++ *New modules*
+  + =feature/jump= -- extra code navigation tools, a jump-to-definition implementation that just works ([[https://github.com/jacktasia/dumb-jump][dumb-jump]]), and tools for looking things up online.
+  + =app/rss= -- Emacs as an RSS reader, using [[https://github.com/skeeto/elfeed][elfeed]]
++ =core=
+  + Fix ~doom-kill-process-buffers~ not killing process buffers.
+  + Fix ~hippie-expand~ in ex mode/the minibuffer.
+  + Remove unnecessary ~provide~'s in core autoloaded libraries.
+  + Fix ~doom-buffers-in-mode~ not detecting buffers in major-modes derived from the target mode.
+  + Fix out-of-bounds error in ~doom/backward-delete-whitespace-to-column~.
+  + Remove ~doom/append-semicolon~; use evil append mode instead.
+  + Add module bootstrapping mechanism (for installing external dependencies); see ~doom-bootstrap~, ~make bootstrap~ and ~def-bootstrap!~.
+  + Use ~doom-local-dir~ for TRAMP's temp files.
+  + New variable: ~doom-real-buffer-functions~ -- for customizing how ~doom-real-buffer-p~ determines what a "real" buffer is.
+  + Add ~def-memoize!~ for defining memoized functions and ~doom-memoize~ for memoizing existing ones.
+  + =core-lib=
+    + Fix ~remove-hook!~ macro not expanding correctly.
+    + New macro: ~add-transient-hook!~; attach a hook to a hook or function that will remove itself once it runs.
+  + =core-packages=
+    + Add ~doom/recompile~, for re-byte-compiling DOOM.
+    + Add ~doom/compile-lite~ / ~make compile-lite~, which will only byte-compile DOOM's core files, which is a lighter alternative to ~doom/compile~.
+    + Fix duplicates packages appearing in package-management retrieval library.
+  + =core-os=
+    + Reducing how aggressive ~exec-path~ caching is. A =persistent-soft= /and/ byte-compilation cache is excessive. The latter is good (and flexible) enough.
+  + =core-popups=
+    + Set default ~:align~ and ~:select~ shackle properties (of =8= and =below=).
+  + =core-editor=
+    + Advise ~delete-trailing-whitespace~ to not affect current line. If evil is loaded, then it may affect the current line if we're *not* in insert mode.
+  + =core-projects=
+    + Recognize =package.json= as a project-root file (see ~projectile-project-root-files~).
+    + Fix ~:files~ property in ~def-project-mode!~ not detecting project files.
+  + =core-ui=
+    + Replace [[https://github.com/DarthFennec/highlight-indent-guides][highlight-indent-guides-mode]] with [[https://github.com/antonj/Highlight-Indentation-for-Emacs/][highlight-indentation-mode]]; the former won't display indent guides on blank lines, even with my whitespace injection hook.
++ =feature=
+  + =feature/eval=
+    + Fix build tasks system; now tested and works.
+    + Complete rewrite of the module.
+  + =feature/evil=
+    + Fix error in ~+evil:file-move~ if ~save-place-mode~ is disabled.
+  + =feature/snippets=
+    + Don't hijack TAB in other modes.
+    + Enable ~yas-triggers-in-field~, which adds support for nested snippets.
+    + Fix snippet aliases (~%alias~).
+  + =feature/version-control=
+    + Remove ~evil-magit~ and evil-ified bindings for magit in general. Instead, just use emacs mode. If evil is needed, toggle it with =C-z=.
+  + =feature/workspaces=
+    + Fix ~+workspace/kill-session~ not actually killing the session.
+    + Revert forcing persp-mode to stay quiet when it saves the session to file. It just isn't important enough.
+    + Create a new perspective when switching projects (integrates projectile with persp-mode).
+    + Create a new perspective for new frames.
++ =ui=
+  + =ui/doom=
+    + Improve ~doom-buffer-mode~ heuristics with ~doom-real-buffer-p~, so that only truly real buffers are enlightened.
+    + Replace plugin [[https://github.com/Malabarba/beacon][beacon]] with [[https://github.com/rolandwalker/nav-flash][nav-flash]] -- the former had a habit of causing pauses and pushing my cursor. It also didn't look as nice.
+  + =ui/doom-modeline=
+    + Complete rewrite of the module for code readability and performance.
+  + =ui/doom-dashboard=
+    + Fix a ~max-specpdl-size~ error caused on MacOS, having to do with a ~kill-buffer-query-function~ hook being attached way too soon in the startup process.
++ =lang=
+  + =lang/cc=
+    + Fix empty ~buffer-file-name~ in ~magic-mode-alist~ rule for obj-c.
+    + Fix irony-mode initialization in cc modes.
+  + =lang/emacs-lisp=
+    + Add xref support for elisp.
+  + =lang/go=
+    + Add code-completion support with [[https://github.com/nsf/gocode][gocode and company-go]].
+    + Add code navigation support with [[https://github.com/dominikh/go-mode.el/blob/master/go-guru.el][go-guru]] (built-in to go-mode).
+    + Add REPL support with [[https://github.com/manute/gorepl-mode][gore and gorepl-mode]].
+  + =lang/haskell=
+    + New plugin: [[https://github.com/jyp/dante][dante]] -- offers xref and flycheck integration, as well as code-navigation tools, like finding definitions, references, type info, etc.
+    + Fix errors on haskell-mode (caused by missing dependencies).
+  + =lang/javascript=
+    + New plugin: [[https://github.com/skeeto/skewer-mode][skewer-mode]] -- provides live JS/CSS/HTML evaluation in a browser.
+    + New plugin: [[https://github.com/yasuyk/web-beautify][web-beautify]] -- js reformatting.
+    + New plugin: [[https://github.com/NicolasPetton/xref-js2][xref-js2]] -- xref integration for javascript.
+    + New plugin: [[https://github.com/felipeochoa/rjsx-mode][rjsx-mode]] -- adds jsx support.
+      + Fix ~doom/newline-and-indent~ in rjsx-mode
+      + Remove electric =<= in rjsx-mode
+      + Enable [[https://github.com/smihica/emmet-mode][emmet-mode]] in rjsx-mode
+    + Fix empty ~buffer-file-name~ in ~magic-mode-alist~ rule for ~rjsx-mode~.
+    + Force [[https://github.com/ternjs/tern][tern]] use projectile for project path detection and resolution.
+    + Add gulpfile.js detection (~+javascript-gulp-mode~).
+  + =lang/latex=
+    + Improve integration between auctex, evil and ~reftex-toc-mode~: j/k motion keys have been bound in reftex-toc-mode, the modeline is hidden, and ~reftex-toc-rescan~ is run automatically.
+  + =lang/org=
+    + Add =+notes= submodule, which makes it easy to access org-mode based notes for the current major-mode or the current project. See ~+org/browse-notes-for-major-mode~ and ~+org/browse-notes-for-project~.
+    + Ensure newer org-mode 9.0+ (downloaded from ELPA) is loaded instead of the older, built-in version of org-mode (8.3).
+    + Update ~+org/dwim-at-point~, ~+org/insert-item~ & ~+org/toggle-checkbox~ for org-mode 9.0
+    + Fix shackle popup integration with org-export dispatch window.
+  + =lang/ruby=
+    + Add ={Pod,Puppet,Berks}file= detection for ~ruby-mode~.
+  + =lang/web=
+    + New plugin: [[https://github.com/yasuyk/web-beautify][web-beautify]] -- html/css reformatting
+    + Remove ~+web-bower-mode~. I don't use it anymore; I prefer npm as my sole package manager.
+    + Improve ~+web-angularjs-mode~ detection by searching for angular 1 and 2 dependencies in package.json.
+    + Add ~+web-react-mode~ and detect it by searching for reactjs dependencies in package.json.
++ =app=
+  + =app/rss=
+    + Hide modeline in ~elfeed-search-mode~ buffer.
+  + =app/present=
+    + New plugin: [[https://github.com/yjwen/org-reveal/][ox-reveal]] -- export a presentation to html, js & css from org-mode using [[http://lab.hakim.se/reveal-js/][reveal.js]].
+    + New plugin: [[https://github.com/takaxp/org-tree-slide][org-tree-slides]] -- use ~org-mode~ directly for presentations.
+    + Add ~+present/big-mode~; which will toggle large fonts, controlled by ~+present-big-font~.
+    + New plugin: [[https://github.com/skeeto/impatient-mode][impatient-mode]] -- show off current buffer(s) over HTTP.
+  + =app/email=
+    + Add support for writing emails in org-mode, which renders to HTML on send.
+    + Add support for sending email through SMTP on a secure port.
+    + Add basic mu4e support.
++ =private/hlissner=
+  + Fix TAB hijacking in magit.
+
+* 2.0.0 (Jan 17, 2017)
++ *New modules*
+  + =tools/upload= -- map local files to remotes, allowing you to upload/download files between them.
+  + =feature/jump= -- offers a system for navigating codebases that "just works", powered by xref (new experimental Emacs reference API) & [[https://github.com/jacktasia/dumb-jump][dumb-jump]].
+  + =feature/workspaces= -- offers grouped buffers/windows and persistent sessions. Recently replaced [[https://github.com/pashinin/workgroups2][workgroups2]] with the much-faster [[https://github.com/Bad-ptr/persp-mode.el][persp-mode]].
++ =core=
+  + Add .travis.yml and unit-tests.
+  + Remove mplist library -- it was unused and poorly written.
+  + =core-popups=
+    + Replaced popwin with shackle; which is significantly lighter and more stable.
++ =feature/spellcheck=
+  + Add selection popup for correcting spelling mistakes highlighted by flyspell.
++ =completion/ivy=
+  + Add ~+ivy:todo~ for jumping to TODO/FIXME tags in your project.
++ =lang/org=
+  + Make TAB do-what-I-mean (~+org/dwim-at-point~), which will either: follow a link, realign/recalculate tables, toggle checkboxes, toggle TODO/DONE tags, cycle archived subtrees, toggle latex preview fragments, execute babel blocks, or refresh inline images -- depending on where the cursor is.
++ =lang/web=
+  + Add ~+css/toggle-inline-or-block~ command; it will expand/contract curly-braced blocks.
++ =private/hlissner=
+  + Add ~:todo~ ex command (~+ivy:todo~)
+
