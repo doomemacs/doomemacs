@@ -282,6 +282,8 @@ Used by `require!' and `depends-on!'."
   "DOOM Emacs bootstrap macro. List the modules to load. Benefits from
 byte-compilation."
   (doom-initialize-modules modules)
+  (unless (doom-module-loaded-p :private (intern user-login-name))
+    (doom--enable-module :private user-login-name))
   `(let (file-name-handler-alist)
      (setq doom-modules ',doom-modules)
 
@@ -289,8 +291,6 @@ byte-compilation."
        (load ,(doom-module-path :private user-login-name "init") t t)
        ,@(cl-loop for (module . submodule) in (doom--module-pairs)
                   collect `(require! ,module ,submodule t))
-       ,(unless (doom-module-loaded-p :private (intern user-login-name))
-          `(require! :private ,user-login-name t))
 
        (when (display-graphic-p)
          (require 'server)
