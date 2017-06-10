@@ -52,7 +52,7 @@
   :commands (magit-status magit-blame)
   :config
   (set! :evil-state 'magit-status-mode 'emacs)
-  (after!
+  (after! evil
     ;; Switch to emacs state only while in `magit-blame-mode', then back when
     ;; its done (since it's a minor-mode).
     (add-hook! 'magit-blame-mode-hook
