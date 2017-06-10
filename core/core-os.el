@@ -42,7 +42,6 @@
                                   exec-path-from-shell-arguments (delete "-i" exec-path-from-shell-arguments))
                             (nconc exec-path-from-shell-variables '("GOPATH" "GOROOT" "PYTHONPATH"))
                             (exec-path-from-shell-initialize)
-                            (persistent-soft-store 'exec-path exec-path "emacs")
                             exec-path))
                         exec-path)))
              (t
