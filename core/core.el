@@ -167,17 +167,17 @@ enable multiple minor modes for the same regexp.")
       doom--package-load-path (eval-when-compile doom--package-load-path))
 
 ;;; Let 'er rip
-(require 'core-lib)
-(require 'core-os) ; consistent behavior across Oses
+(load! core-lib)
+(load! core-os) ; consistent behavior across Oses
 (with-demoted-errors "AUTOLOAD ERROR: %s"
   (require 'autoloads doom-autoload-file t))
 
 (unless noninteractive
-  (require 'core-ui)         ; draw me like one of your French editors
-  (require 'core-popups)     ; taming sudden yet inevitable windows
-  (require 'core-editor)     ; baseline configuration for text editing
-  (require 'core-projects)   ; making Emacs project-aware
-  (require 'core-keybinds))  ; centralized keybind system + which-key
+  (load! core-ui)         ; draw me like one of your French editors
+  (load! core-popups)     ; taming sudden yet inevitable windows
+  (load! core-editor)     ; baseline configuration for text editing
+  (load! core-projects)   ; making Emacs project-aware
+  (load! core-keybinds))  ; centralized keybind system + which-key
 
 (defun doom|init ()
   (setq gc-cons-threshold 16777216
