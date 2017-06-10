@@ -15,6 +15,7 @@
   (unless (bound-and-true-p hs-minor-mode)
     (hs-minor-mode +1)))
 
+(require 'hideshow)
 (advice-add #'hs-toggle-hiding :before #'+evil--ensure-modes)
 (advice-add #'hs-hide-block    :before #'+evil--ensure-modes)
 (advice-add #'hs-hide-level    :before #'+evil--ensure-modes)
