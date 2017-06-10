@@ -334,11 +334,10 @@ ignore any `def-package!' blocks for PACKAGE."
   "Loads a file relative to the current module (or PATH). FILESYM is a file path
 as a symbol. PATH is a directory to prefix it with. If NOERROR is non-nil, don't
 throw an error if the file doesn't exist."
-  (let ((path (or (and path
-                       (cond ((symbolp path) (symbol-value path))
-                             ((stringp path) path)
-                             ((listp path) (eval path))))
-                  (and load-file-name   (file-name-directory load-file-name))
+  (let ((path (or (and path (or (and (symbolp path) (symbol-value path))
+                                (and (stringp path) path)
+                                (and (listp path) (eval path))))
+                  (and load-file-name (file-name-directory load-file-name))
                   (and (bound-and-true-p byte-compile-current-file)
                        (file-name-directory byte-compile-current-file))
                   (and buffer-file-name (file-name-directory buffer-file-name)))))

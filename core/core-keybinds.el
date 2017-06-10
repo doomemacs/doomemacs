@@ -232,8 +232,9 @@ Example
                     (doom--keymaps
                      (dolist (keymap doom--keymaps)
                        (push `(define-key ,keymap ,key ,def) forms)))
-                    (t (push `(,(if local 'local-set-key 'global-set-key) ,key ,def)
-                             forms))))
+                    (t
+                     (push `(,(if local 'local-set-key 'global-set-key) ,key ,def)
+                           forms))))
           (setq states '()
                 local nil
                 desc nil)))

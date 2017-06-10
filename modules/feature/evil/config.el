@@ -242,7 +242,7 @@ across windows."
   (add-hook 'emacs-startup-hook #'evil-escape-mode)
   :config
   ;; no `evil-escape' in minibuffer
-  (push #'minibufferp evil-escape-inhibit-functions)
+  (cl-pushnew #'minibufferp evil-escape-inhibit-functions)
   (map! :irvo "C-g" #'evil-escape))
 
 

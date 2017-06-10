@@ -96,15 +96,15 @@
                          ("mime:image/*" "Messages with images" ?p)))
 
   ;; Add a column to display what email account the email belongs to.
-  (cl-pushnew '(:account
-                :name "Account"
-                :shortname "Account"
-                :help "Which account this email belongs to"
-                :function
-                (lambda (msg)
-                  (let ((maildir (mu4e-message-field msg :maildir)))
-                    (format "%s" (substring maildir 1 (string-match-p "/" maildir 1))))))
-              mu4e-header-info-custom)
+  (add-to-list 'mu4e-header-info-custom
+               '(:account
+                 :name "Account"
+                 :shortname "Account"
+                 :help "Which account this email belongs to"
+                 :function
+                 (lambda (msg)
+                   (let ((maildir (mu4e-message-field msg :maildir)))
+                     (format "%s" (substring maildir 1 (string-match-p "/" maildir 1)))))))
 
   ;; In my workflow, emails won't be moved at all. Only their flags/labels are
   ;; changed. Se we redefine the trash and refile marks not to do any moving.
@@ -157,12 +157,12 @@
     (imagemagick-register-types))
 
   (after! evil
-    (mapc (lambda (str) (evil-set-initial-state (car str) (cdr str)))
-          '((mu4e-main-mode . normal)
-            (mu4e-view-mode . normal)
-            (mu4e-headers-mode . normal)
-            (mu4e-compose-mode . normal)
-            (mu4e~update-mail-mode . normal)))
+    (cl-loop for str in '((mu4e-main-mode . normal)
+                          (mu4e-view-mode . normal)
+                          (mu4e-headers-mode . normal)
+                          (mu4e-compose-mode . normal)
+                          (mu4e~update-mail-mode . normal))
+             do (evil-set-initial-state (car str) (cdr str)))
 
     (setq mu4e-view-mode-map (make-sparse-keymap)
           ;; mu4e-compose-mode-map (make-sparse-keymap)

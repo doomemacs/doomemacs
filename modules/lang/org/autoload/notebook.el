@@ -18,6 +18,8 @@
 
 ;;;###autoload
 (defun +org/browse-notes-for-major-mode ()
+  "Browse org notes in `+org-code-notes-dir' in neotree, ido, ivy or helm --
+whichever is available."
   (interactive)
   (let ((dir (+org-mode-notes-dir)))
     (unless (file-in-directory-p dir +org-code-notes-dir)
@@ -28,5 +30,7 @@
 
 ;;;###autoload
 (defun +org/browse-notes-for-project ()
+  "Browse org notes in `+org-project-notes-dir' in neotree, ido, ivy or helm --
+whichever is available."
   (interactive)
   (+org--explore-notes +org-project-notes-dir))
