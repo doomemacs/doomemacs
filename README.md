@@ -1,7 +1,7 @@
 [![Main screenshot](/../screenshots/main.png?raw=true)][sc]
 
 [![MIT](https://img.shields.io/badge/license-MIT-green.svg)](./LICENSE)
-[![DOOM v2.0.2](https://img.shields.io/badge/DOOM-v2.0.2-blue.svg)](./init.el)
+[![DOOM v2.0.3](https://img.shields.io/badge/DOOM-v2.0.3-blue.svg)](./init.el)
 [![Build Status](https://travis-ci.org/hlissner/.emacs.d.svg?branch=master)](https://travis-ci.org/hlissner/.emacs.d)
 
 <a href="http://ultravioletbat.deviantart.com/art/Yay-Evil-111710573">
