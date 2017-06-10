@@ -3,21 +3,36 @@
 ;;;###autoload
 (defun doom/what-face (&optional pos)
   "Lists all faces at point. Overlay faces are denoted with an asterix."
-  (interactive "d")
-  (let ((pos (or pos (point)))
-        faces)
-    (when-let (face (get-text-property pos 'face))
-      (dolist (f (if (listp face) face (list face)))
-        (push (propertize (symbol-name f) 'face f) faces)))
-    (dolist (ov (overlays-at pos (1+ pos)))
-      (let ((face (overlay-get ov 'face)))
-        (dolist (f (if (listp face) face (list face)))
-          (push (propertize (concat (symbol-name f) "*") 'face f) faces))))
-    (if (called-interactively-p 'any)
-        (message "%s %s"
-                 (propertize "Faces:" 'face 'font-lock-comment-face)
-                 (if faces (string-join faces ", ") "n/a"))
-      (mapcar #'substring-no-properties faces))))
+  (interactive)
+  (unless pos
+    (setq pos (point)))
+  (let ((faces (let ((face (get-text-property pos 'face)))
+                 (if (keywordp (car-safe face))
+                     (list face)
+                   (cl-loop for f in (if (listp face) face (list face))
+                            collect f))))
+        (overlays (cl-loop for ov in (overlays-at pos (1+ pos))
+                           nconc (cl-loop with face = (overlay-get ov 'face)
+                                          for f in (if (listp face) face (list face))
+                                          collect f))))
+
+    (cond ((called-interactively-p 'any)
+           (message "%s %s; %s"
+                    (propertize "Faces:" 'face 'font-lock-comment-face)
+                    (if faces
+                        (cl-loop for face in faces
+                                 if (listp face)
+                                   concat (format "'%s " face)
+                                 else
+                                   concat (concat (propertize (symbol-name face) 'face face) " "))
+                      "n/a ")
+                    (if overlays
+                        (cl-loop for ov in overlays
+                                 concat (concat (propertize (symbol-name ov) 'face ov) " "))
+                      "n/a")))
+          (t
+           (and (or faces overlays)
+                (list faces overlays))))))
 
 ;;;###autoload
 (defun doom-active-minor-modes ()
