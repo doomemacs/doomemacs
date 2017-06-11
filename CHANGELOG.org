@@ -68,6 +68,9 @@
   + =tools/password-store= -- Emacs as a password manager, using [[https://www.passwordstore.org/][pass]] as a backend.
   + =app/irc= -- Emacs as an IRC client, using circe (contributed by [[https://github.com/bandresen][brandresen]])
 + =core=
+  + =core-ui=
+    + Add quit confirmation when trying to close a frame that contains real buffers.
+    + Fix quit confirmations for clients connected to ~emacs --daemon~ with ~emacsclient~.
   + =core-packages=
     + When a quelpa package is deleted, its build repo (in ~quelpa-build-dir~) is now deleted with it.
 + =feature=

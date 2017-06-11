@@ -50,3 +50,12 @@ window changes before then, the undo expires."
           (doom-resize-window (truncate (/ (frame-width)  1.2)) t)
           (doom-resize-window (truncate (/ (frame-height) 1.2)))
           t)))
+
+;;;###autoload
+(defun doom/delete-frame ()
+  "Delete the current frame, but ask for confirmation if it isn't empty."
+  (interactive)
+  (if (cdr (frame-list))
+      (when (doom-quit-p "Close frame?")
+        (delete-frame))
+    (save-buffers-kill-emacs)))

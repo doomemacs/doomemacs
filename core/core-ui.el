@@ -34,11 +34,22 @@
  pos-tip-border-width 1
  ;; no beeping or blinking please
  ring-bell-function #'ignore
- visible-bell nil
- ;; Ask for confirmation on quit only if real buffers exist
- confirm-kill-emacs (lambda (_) (if (doom-real-buffers-list) (y-or-n-p "››› Quit?") t)))
+ visible-bell nil)
 
 (fset #'yes-or-no-p #'y-or-n-p) ; y/n instead of yes/no
+
+;; Ask for confirmation when trying to kill emacs or close a frame that has real
+;; buffers open in it.
+(defun doom-quit-p (&optional prompt)
+  "Return t if this session should be killed; prompts the user for
+confirmation."
+  (interactive)
+  (if (ignore-errors (doom-real-buffers-list))
+      (or (yes-or-no-p (format "››› %s" (or prompt "Quit Emacs?")))
+          (ignore (message "Aborted")))
+    t))
+(setq confirm-kill-emacs nil)
+(add-hook 'kill-emacs-query-functions #'doom-quit-p)
 
 ;; show typed keystrokes in minibuffer
 (setq echo-keystrokes 0.02)
@@ -118,6 +129,8 @@ mode is detected.")
 ;;
 ;; Bootstrap
 ;;
+
+(global-set-key [remap delete-frame] #'doom/delete-frame)
 
 ;; auto-enabled in Emacs 25+; I'd rather enable it manually
 (global-eldoc-mode -1)
