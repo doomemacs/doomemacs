@@ -106,7 +106,7 @@
       ;crm             ; TODO org-mode for client relations management
        email           ; Emacs as an email client
       ;finance         ; TODO keeping track of my shekels
-      ;irc             ; TODO how neckbeards socialize
+       irc             ; how neckbeards socialize
        present         ; showing off presentations in emacs
       ;regex           ; TODO emacs as a regexp IDE
        rss             ; emacs as an RSS reader
