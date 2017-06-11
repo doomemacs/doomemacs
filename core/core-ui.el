@@ -52,10 +52,12 @@ confirmation."
 (add-hook 'kill-emacs-query-functions #'doom-quit-p)
 
 ;; show typed keystrokes in minibuffer
-(setq echo-keystrokes 0.02)
+(defun doom|enable-ui-keystrokes ()  (setq echo-keystrokes 0.02))
+(defun doom|disable-ui-keystrokes () (setq echo-keystrokes 0))
+(doom|enable-ui-keystrokes)
 ;; ...but hide them while isearch is active
-(add-hook! isearch-mode     (setq echo-keystrokes 0))
-(add-hook! isearch-mode-end (setq echo-keystrokes 0.02))
+(add-hook 'isearch-mode-hook     #'doom|disable-ui-keystrokes)
+(add-hook 'isearch-mode-end-hook #'doom|enable-ui-keystrokes)
 
 ;; A minor mode for toggling the mode-line
 (defvar-local doom--modeline-format nil
