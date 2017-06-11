@@ -130,7 +130,8 @@ mode is detected.")
 ;; Bootstrap
 ;;
 
-(global-set-key [remap delete-frame] #'doom/delete-frame)
+;; Prompts the user for confirmation when deleting a non-empty frame
+(define-key global-map [remap delete-frame] #'doom/delete-frame)
 
 (global-eldoc-mode -1) ; auto-enabled in Emacs 25+; I'll do it myself
 (blink-cursor-mode +1) ; a good indicator that Emacs isn't frozen
