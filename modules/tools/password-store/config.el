@@ -1,5 +1,13 @@
 ;;; tools/password-store/config.el -*- lexical-binding: t; -*-
 
+(defvar +pass-user-fields '("login" "user" "username" "email")
+  "A list of fields for `+pass/ivy' to search for the username.")
+
+
+;;
+;; Plugins
+;;
+
 (def-package! password-store
   :config
   (setq password-store-password-length 12))
