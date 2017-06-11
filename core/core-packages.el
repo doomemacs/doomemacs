@@ -40,8 +40,13 @@
 ;; See core/autoload/packages.el for more functions.
 
 (defvar doom-init-p nil
-  "Non-nil if doom's package system has been initialized (by `doom-initialize').
-This will be nil if you have byte-compiled your configuration (as intended).")
+  "Non-nil if doom is done initializing (once `doom-post-init-hook' is done). If
+this is nil after Emacs has started something is wrong.")
+
+(defvar doom-package-init-p nil
+  "If non-nil, doom's package system has been initialized (by
+`doom-initialize'). This will be nill if you byte-compile your configuration (as
+intended).")
 
 (defvar doom-init-time nil
   "The time it took, in seconds, for DOOM Emacs to initialize.")
@@ -61,6 +66,9 @@ missing) and shouldn't be deleted.")
 
 (defvar doom-disabled-packages ()
   "A list of packages that should be ignored by `def-package!'.")
+
+(defvar doom-reload-hook nil
+  "A list of hooks to run when `doom/reload' is called.")
 
 (defvar doom--site-load-path load-path
   "The load path of built in Emacs libraries.")
@@ -123,7 +131,7 @@ base by `doom!' and for calculating how many packages exist.")
 are installed. If you byte-compile core/core.el, this function will be avoided
 to speed up startup."
   ;; Called early during initialization; only use native functions!
-  (when (or (not doom-init-p) force-p)
+  (when (or (not doom-package-init-p) force-p)
     (unless noninteractive
       (message "Doom initialized"))
 
@@ -162,7 +170,7 @@ to speed up startup."
     (load "quelpa" nil t)
     (load "use-package" nil t)
 
-    (setq doom-init-p t)))
+    (setq doom-package-init-p t)))
 
 (defun doom-initialize-autoloads ()
   "Ensures that `doom-autoload-file' exists and is loaded. Otherwise run
@@ -297,7 +305,7 @@ byte-compilation."
          (unless (server-running-p)
            (server-start)))
 
-       (add-hook 'emacs-startup-hook #'doom--display-benchmark t))))
+       (add-hook 'doom-post-init-hook #'doom--display-benchmark))))
 
 (defmacro def-package! (name &rest plist)
   "A thin wrapper around `use-package'."

@@ -6,4 +6,4 @@
   :init
   (setq evil-goggles-duration 0.1
         evil-goggles-enable-delete nil)
-  (add-hook 'emacs-startup-hook #'evil-goggles-mode t))
+  (add-hook 'doom-post-init-hook #'evil-goggles-mode t))

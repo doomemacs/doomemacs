@@ -58,7 +58,7 @@
  "M-b"    #'+eval/build
  "M-a"    #'mark-whole-buffer
  "M-c"    #'evil-yank
- "M-q"    #'save-buffers-kill-emacs
+ "M-q"    (if (daemonp) #'delete-frame #'save-buffers-kill-emacs)
  "M-s"    #'save-buffer
  "M-v"    #'clipboard-yank
  "M-f"    #'swiper

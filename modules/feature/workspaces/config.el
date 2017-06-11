@@ -43,21 +43,24 @@ renamed.")
         ;; auto-save on kill
         persp-auto-save-opt 1)
 
-  (defun +workspaces|init (&rest _)
-    (unless persp-mode
-      (persp-mode +1)
+  (add-hook 'doom-init-hook #'+workspaces|init t)
+  (add-hook 'after-make-frame-functions #'+workspaces|init)
+
+  (defun +workspaces|init (&optional frame)
+    (let ((frame (or frame (selected-frame))))
+      (unless persp-mode
+        (persp-mode +1))
       ;; The default perspective persp-mode makes (defined by `persp-nil-name')
       ;; is special and doesn't actually represent a real persp object, so
       ;; buffers can't really be assigned to it, among other quirks. We create a
       ;; *real* main workspace to fill this role.
-      (persp-add-new +workspaces-main)
+      (unless (persp-with-name-exists-p +workspaces-main)
+        (persp-add-new +workspaces-main))
       ;; Switch to it if we aren't auto-loading the last session
-      (when (or (= persp-auto-resume-time -1)
-                (equal (safe-persp-name (get-current-persp)) persp-nil-name))
-        (persp-frame-switch +workspaces-main))))
-
-  (add-hook 'emacs-startup-hook #'+workspaces|init)
-  (add-hook 'after-make-frame-functions #'+workspaces|init)
+      (when (or (equal (safe-persp-name (get-current-persp)) persp-nil-name)
+                (and (one-window-p)
+                     (eq (window-buffer (selected-window)) (doom-fallback-buffer))))
+        (persp-frame-switch +workspaces-main frame))))
 
   (define-key persp-mode-map [remap delete-window] #'+workspace/close-window-or-workspace)
 

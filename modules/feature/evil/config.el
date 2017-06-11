@@ -44,7 +44,7 @@
         shift-select-mode nil)
 
   :config
-  (add-hook 'emacs-startup-hook #'evil-mode)
+  (add-hook 'doom-init-hook #'evil-mode)
   (evil-select-search-module 'evil-search-module 'evil-search)
 
   (set! :popup
@@ -242,7 +242,7 @@ across windows."
         evil-escape-excluded-major-modes '(neotree-mode)
         evil-escape-key-sequence "jk"
         evil-escape-delay 0.25)
-  (add-hook 'emacs-startup-hook #'evil-escape-mode)
+  (add-hook 'doom-post-init-hook #'evil-escape-mode)
   :config
   ;; no `evil-escape' in minibuffer
   (cl-pushnew #'minibufferp evil-escape-inhibit-functions)
@@ -333,7 +333,7 @@ the new algorithm is confusing, like in python or ruby."
                              (?\] "[]})]")
                              (?\; "[;:]")))
   :config
-  (add-hook 'emacs-startup-hook #'evil-snipe-override-mode))
+  (add-hook 'doom-post-init-hook #'evil-snipe-override-mode))
 
 
 (def-package! evil-surround
@@ -349,7 +349,7 @@ the new algorithm is confusing, like in python or ruby."
   :init
   (setq vimish-fold-dir (concat doom-cache-dir "vimish-fold/")
         vimish-fold-indication-mode 'right-fringe)
-  (add-hook 'emacs-startup-hook #'evil-vimish-fold-mode t))
+  (add-hook 'doom-post-init-hook #'evil-vimish-fold-mode t))
 
 
 ;; Without `evil-visualstar', * and # grab the word at point and search, no

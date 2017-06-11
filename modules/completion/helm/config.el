@@ -33,7 +33,7 @@
 
   :config
   (load "helm-autoloads" nil t)
-  (add-hook 'emacs-startup-hook #'helm-mode)
+  (add-hook 'doom-init-hook #'helm-mode)
 
   (defvar helm-projectile-find-file-map (make-sparse-keymap))
   (require 'helm-projectile)

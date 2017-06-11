@@ -90,8 +90,7 @@ is enabled/disabled.'")
           ("^ \\*" :regexp t :size 12 :noselect t :autokill t :autoclose t)))
 
   :config
-  (add-transient-hook! 'after-make-frame-functions (shackle-mode +1))
-  (add-hook 'window-setup-hook #'shackle-mode)
+  (add-hook 'doom-init-hook #'shackle-mode)
 
   (defun doom*shackle-always-align (plist)
     "Ensure popups are always aligned and selected by default. Eliminates the need
@@ -540,7 +539,7 @@ you came from."
 
 ;; Ensure these settings are attached to org-load-hook as late as possible,
 ;; giving other modules a chance to add their own hooks.
-(add-hook! 'emacs-startup-hook
+(defun doom|init-org-popups ()
   (add-hook! 'org-load-hook
     (set! :popup
       '("*Calendar*"         :size 0.4 :noselect t)
@@ -601,6 +600,7 @@ you came from."
       (let ((map org-agenda-mode-map))
         (define-key map "q" 'org-agenda-Quit)
         (define-key map "Q" 'org-agenda-Quit)))))
+(add-hook 'doom-init-hook #'doom|init-org-popups)
 
 (provide 'core-popups)
 ;;; core-popups.el ends here

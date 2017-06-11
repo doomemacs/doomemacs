@@ -16,17 +16,33 @@
   "Fallback font for unicode glyphs. Is ignored if :feature unicode is active.")
 
 
-;;; Set fonts
-(when (display-graphic-p)
+;; Getting themes to remain consistent across GUI Emacs, terminal Emacs and
+;; daemon Emacs is hairy.
+;;
+;; + Running `+doom|init' directly sorts out the initial GUI frame.
+;; + Attaching it to `after-make-frame-functions' sorts out daemon Emacs.
+;; + Terminal Emacs is a bit of a wildcard.
+(defun +doom|init (&optional frame)
+  "Set the theme and load the font, in that order."
+  (load-theme +doom-theme t)
+
   (with-demoted-errors "FONT ERROR: %s"
-    (set-frame-font +doom-font t t)
+    (set-frame-font +doom-font nil (if frame (list frame) t))
     ;; Fallback to `doom-unicode-font' for Unicode characters
     (unless (featurep! :ui unicode)
       (when +doom-unicode-font
-        (set-fontset-font t 'unicode +doom-unicode-font)))
+        (set-fontset-font t 'unicode +doom-unicode-font frame)))
     ;; ...and for variable-pitch mode
     (when +doom-variable-pitch-font
-      (set-face-attribute 'variable-pitch nil :font +doom-variable-pitch-font))))
+      (set-face-attribute 'variable-pitch frame :font +doom-variable-pitch-font))))
+
+(defun +doom|init-daemon (frame)
+  (when (or (daemonp) (not (display-graphic-p)))
+    (with-selected-frame frame
+      (run-with-timer 0 nil #'+doom|init))))
+
+(add-hook 'after-make-frame-functions #'+doom|init)
+(add-hook 'after-make-frame-functions #'+doom|init-daemon)
 
 
 ;; doom-one: gives Emacs a look inspired by Dark One in Atom.
@@ -35,13 +51,11 @@
   :load-path "~/work/plugins/emacs-doom-themes/"
   :demand t
   :config
-  (load-theme +doom-theme t)
-
+  (+doom|init)
   ;; blink mode-line on errors
-  (add-hook 'emacs-startup-hook #'doom-themes-visual-bell-config t)
-
+  (add-hook 'doom-post-init-hook #'doom-themes-visual-bell-config)
   ;; Add file icons to doom-neotree
-  (add-hook 'emacs-startup-hook #'doom-themes-neotree-config t)
+  (add-hook 'doom-post-init-hook #'doom-themes-neotree-config)
   (setq doom-neotree-enable-variable-pitch t
         doom-neotree-file-icons 'simple
         doom-neotree-line-spacing 2)
@@ -51,11 +65,6 @@
                       :weight 'ultra-light
                       :foreground "#ffffff"
                       :background (doom-color 'current-line))
-
-  ;; Dark frames by default
-  (when (display-graphic-p)
-    (push (cons 'background-color (doom-color 'bg)) initial-frame-alist)
-    (push (cons 'foreground-color (doom-color 'fg)) initial-frame-alist))
 
   (after! neotree
     (defun +doom|neotree-fix-popup ()

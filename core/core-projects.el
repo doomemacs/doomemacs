@@ -21,7 +21,7 @@ state are passed in.")
           "build.gradle"))
 
   :config
-  (add-hook 'after-init-hook #'projectile-mode)
+  (add-hook 'doom-init-hook #'projectile-mode)
 
   (setq projectile-other-file-alist
         (append '(("less" "css")

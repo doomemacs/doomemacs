@@ -69,6 +69,7 @@
   + =app/irc= -- Emacs as an IRC client, using circe (contributed by [[https://github.com/bandresen][brandresen]]).
 + =core=
   + New variable: ~doom-host-dir~, as a base path for ~doom-etc-dir~ and ~doom-cache-dir~.
+  + New hooks: ~doom-init-hook~ and ~doom-post-init-hook~, which are run on ~emacs-startup-hook~. This is meant to simplify post-Emacs initialization hooks (~after-init-hook~, ~emacs-startup-hook~ and ~window-setup-hook~) into two unambiguous ones.
   + =core-ui=
     + Add quit confirmation when trying to close a frame that contains real buffers.
     + Fix quit confirmations for clients connected to ~emacs --daemon~ with ~emacsclient~.
@@ -76,6 +77,10 @@
     + Change what files recentf will ignore: everything in ~doom-host-dir~ is now ignored and anything else in ~doom-local-dir~ won't be.
   + =core-packages=
     + When a quelpa package is deleted, its build repo (in ~quelpa-build-dir~) is now deleted with it.
+    + New hook: ~doom-reload-hook~ (sort of). This has been around for a while, but now it is defined and documented. It runs when ~doom/reload~ is called (which gets called remotely if you run package management while an Emacs session is active).
++ =ui=
+  + =ui/doom=
+    + Vastly improve daemon and terminal support for doom-themes by reloading the theme when a new client is attached, or new terminal/daemon frame is created. This prevents incorrect colors from bleeding across face class barriers.
 + =feature=
   + =feature/evil=
     + Remove =goto-last-change=, which conflicts with =goto-chg=, which is a dependency of evil (that does the exact same thing, but is what evil uses).
