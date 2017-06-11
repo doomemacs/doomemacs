@@ -13,7 +13,7 @@
 
 (after! ivy
   (defun +pass-ivy-action--copy-username (item)
-    (if-let (user (cl-loop with data = '((secret . "rack-quadrant-nay") ("login" . "HL2253-GANDI") ("alt-login" . "hlissner") ("url" . "https://www.gandi.net/login"))
+    (if-let (user (cl-loop with data = (auth-pass-parse-entry item)
                            for key in +pass-user-fields
                            when (assoc key data)
                            return (cdr it)))
