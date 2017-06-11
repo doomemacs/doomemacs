@@ -1,0 +1,19 @@
+* :app irc
+
+This module makes Emacs an irc client, using [[https://github.com/jorgenschaefer/circe][~circe~]].
+
+** Dependencies
+
+I use ~pass~ to not have the passwords written in my dotfiles. It's available under ~:tools~ modules.
+If you want to use TLS you also need =openssl= or =gnutls-cli=.
+
+Configure Emacs to use your favorite irc servers:
+#+BEGIN_SRC emacs-lisp :tangle no
+(set! :irc "chat.freenode.net"
+    `(:tls t
+      :nick "benny"
+      :sasl-username ,(password-store-get "irc/freenode")
+      :sasl-password ,(password-store-get "irc/freenode")
+      :channels ("#emacs")))
+#+END_SRC
+
