@@ -3,3 +3,6 @@
 
 (package! password-store)
 (package! pass)
+
+(when (featurep! :completion helm)
+  (package! helm-pass))

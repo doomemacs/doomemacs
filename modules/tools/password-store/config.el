@@ -28,3 +28,7 @@
        (require 'auth-store-pass)
        (auth-source-pass-enable)))
 
+
+(def-package! helm-pass
+  :when (featurep! :completion helm)
+  :commands helm-pass)
