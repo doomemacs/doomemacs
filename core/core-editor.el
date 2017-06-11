@@ -114,11 +114,16 @@ fundamental-mode) for performance sake."
   :defer 1
   :config
   (setq recentf-save-file (concat doom-cache-dir "recentf")
-        recentf-exclude (list "/tmp/" "/ssh:" "\\.?ido\\.last$" "\\.revive$" "/TAGS$"
-                              "^/var/folders/.+$" doom-local-dir)
         recentf-max-menu-items 0
-        recentf-max-saved-items 250
-        recentf-filename-handlers '(abbreviate-file-name))
+        recentf-max-saved-items 300
+        recentf-filename-handlers '(abbreviate-file-name)
+        recentf-exclude
+        (list "^/tmp/" "^/ssh:" "\\.?ido\\.last$" "\\.revive$" "/TAGS$"
+              "^/var/folders/.+$"
+              ;; ignore private DOOM temp files (but not all of them)
+              (concat "^" (replace-regexp-in-string
+                           (concat "@" (regexp-quote (system-name)))
+                           "@" (abbreviate-file-name doom-host-dir)))))
   (quiet! (recentf-mode 1)))
 
 

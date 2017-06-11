@@ -68,9 +68,12 @@
   + =tools/password-store= -- Emacs as a password manager, using [[https://www.passwordstore.org/][pass]] as a backend (contributed by [[https://github.com/bandresen][brandresen]]).
   + =app/irc= -- Emacs as an IRC client, using circe (contributed by [[https://github.com/bandresen][brandresen]]).
 + =core=
+  + New variable: ~doom-host-dir~, as a base path for ~doom-etc-dir~ and ~doom-cache-dir~.
   + =core-ui=
     + Add quit confirmation when trying to close a frame that contains real buffers.
     + Fix quit confirmations for clients connected to ~emacs --daemon~ with ~emacsclient~.
+  + =core-editor=
+    + Change what files recentf will ignore: everything in ~doom-host-dir~ is now ignored and anything else in ~doom-local-dir~ won't be.
   + =core-packages=
     + When a quelpa package is deleted, its build repo (in ~quelpa-build-dir~) is now deleted with it.
 + =feature=

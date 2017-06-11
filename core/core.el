@@ -42,15 +42,17 @@ line or use --debug-init to enable this.")
 that are safe to share across systems (if this config is symlinked across
 several computers).")
 
-(defvar doom-etc-dir
-  (concat doom-local-dir "@" (system-name) "/etc/")
+(defvar doom-host-dir (concat doom-local-dir "@" (system-name))
+  "Directory for hostname-specific file storage. Used by `doom-etc-dir' and
+`doom-cache-dir'.")
+
+(defvar doom-etc-dir (concat doom-host-dir "/etc/")
   "Host-namespaced directory for non-volatile storage. These are not deleted or
 tampored with by DOOM functions. Use this for dependencies like servers or
 config files that are stable (i.e. it should be unlikely that you need to delete
 them if something goes wrong).")
 
-(defvar doom-cache-dir
-  (concat doom-local-dir "@" (system-name) "/cache/")
+(defvar doom-cache-dir (concat doom-host-dir "/cache/")
   "Host-namespaced directory for volatile storage. Deleted when
 `doom/clean-cache' is called. Use this for transient files that are generated on
 the fly like caches and temporary files. Anything that may need to be cleared if
