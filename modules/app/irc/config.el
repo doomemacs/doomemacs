@@ -4,7 +4,20 @@
 ;; Config
 ;;
 
-(defvar +irc--accounts nil)
+(defvar +irc-left-padding 13
+  "TODO")
+
+(defvar +irc-disconnect-hook nil
+  "TODO")
+
+(defvar +irc-bot-list '("fsbot" "rudybot")
+  "TODO")
+
+(defvar +irc-time-stamp-format "%H:%M"
+  "TODO")
+
+(defvar +irc-notifications-watch-strings nil
+  "TODO")
 
 (def-setting! :irc (server letvars)
   "Registers an irc server for circe."
@@ -12,15 +25,8 @@
      (push ',(cons server letvars) +irc--accounts)
      (push ',(cons server letvars) circe-network-options)))
 
-(defvar +irc-left-padding 13)
+(defvar +irc--accounts nil)
 
-(defvar +irc-disconnect-hook nil)
-
-(defvar +irc-bot-list '("fsbot" "rudybot"))
-
-(defvar +irc-time-stamp-format "%H:%M")
-
-(defvar +irc-notifications-watch-strings nil)
 
 ;;
 ;; Plugins
@@ -32,9 +38,10 @@
   :init
   (setq circe-network-defaults nil)
   :config
-  (evil-set-initial-state 'circe-channel-mode 'emacs)
+  (set! :evil-state 'circe-channel-mode 'emacs)
+
   (defun +irc|circe-format-padding (left right)
-    (s-concat (s-pad-left +irc-left-padding " " left) " │ " right))
+    (format (format "%%%ds | %%s" +irc-left-padding) left right))
 
   (setq circe-use-cycle-completion t
         circe-reduce-lurker-spam t
@@ -98,7 +105,8 @@ to determine length."
     (run-hooks '+irc-disconnect-hook))
   (advice-add 'circe--irc-conn-disconnected :after #'+irc*circe-disconnect-hook)
 
-  (add-hook '+irc-disconnect-hook (λ! (run-at-time "5 minute" nil #'circe-reconnect-all)))
+  (add-hook! '+irc-disconnect-hook
+    (run-at-time "5 minute" nil #'circe-reconnect-all))
 
   (defun +irc|circe-message-option-bot (nick &rest ignored)
     (when (member nick +irc-bot-list)
@@ -107,18 +115,19 @@ to determine length."
   (add-hook 'circe-message-option-functions #'+irc|circe-message-option-bot)
 
   (enable-circe-new-day-notifier)
-  (add-hook 'circe-server-connected-hook
-            (λ! (run-at-time "5 minutes" nil #'enable-circe-notifications)))
+  (add-hook! 'circe-server-connected-hook
+    (run-at-time "5 minutes" nil #'enable-circe-notifications))
 
-  (add-hook! 'circe-channel-mode-hook '(enable-circe-color-nicks
-                                        enable-lui-autopaste
-                                        turn-on-visual-line-mode)))
+  (add-hook! 'circe-channel-mode-hook
+    #'(enable-circe-color-nicks enable-lui-autopaste turn-on-visual-line-mode)))
+
 
 (def-package! circe-color-nicks
   :commands enable-circe-color-nicks
   :config
   (setq circe-color-nicks-min-constrast-ratio 4.5
         circe-color-nicks-everywhere t))
+
 
 (def-package! circe-new-day-notifier
   :commands enable-circe-new-day-notifier
@@ -127,16 +136,18 @@ to determine length."
                 "*** Day"
                 "Date changed [{day}]")))
 
+
 (def-package! circe-notifications
   :commands enable-circe-notifications
   :config (setq circe-notifications-watch-strings
                 +irc-notifications-watch-strings))
 
+
 (def-package! lui
   :commands lui-mode
-  :bind ((:lui-mode-map
-          ("C-u" . lui-kill-to-beginning-of-line)))
   :config
+  (map! :map lua-mode-map "C-u" #'lui-kill-to-beginning-of-line)
+
   (enable-lui-logging)
   (defun +irc|lui-setup-margin ()
     (setq lui-time-stamp-position 'right-margin
@@ -151,8 +162,10 @@ to determine length."
     (setq lui-flyspell-p t
           lui-fill-type nil)))
 
+
 (def-package! lui-autopaste
   :commands enable-lui-autopaste)
+
 
 (def-package! lui-logging
   :commands enable-lui-logging)

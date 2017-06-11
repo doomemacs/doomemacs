@@ -12,7 +12,6 @@
   (interactive)
   ;; force a library load for +irc--accounts
   (circe--version)
-  (mapcar (lambda (network)
-            (circe (car network)))
-          +irc--accounts))
+  (cl-loop for network in +irc--accounts
+           collect (circe (car network))))
 
