@@ -24,11 +24,12 @@
   + =lang/python= [[https://github.com/Wilfred/pyimport][pyimport]]
   + [[https://github.com/mhayashi1120/Emacs-imagex][emacs-imagex]], for manipulating images at point (zooming?)
   + =tools/term= [[https://github.com/riscy/shx-for-emacs][shx]], an extension for the shell in Emacs
+  + =app/crm= [[https://github.com/skeeto/emacsql][emacsql]], a sqlite backend; which would be useful for CRM storage.
+  + =core= [[https://github.com/Wilfred/helpful][helpful]], a better help buffer; possible replacement for ~describe-function~.
 + *Planned modules:*
   + =app/finance= -- ledger + org-mode.
-  + =app/irc=
   + =app/crm= -- Customer Relations Management, in Emacs, using org-mode.
-  + =app/write= -- Make Emacs into a focused word processor, for writing papers or stories.
+  + =app/write= -- Make Emacs into a focused plaintext word processor (using markdown, org and rst) for writing papers and stories.
   + =app/regex= -- PCRE IDE, with live buffer matching, search/replace support, and an export-to-code feature for various languages.
     + +Perl backend+
     + Search and replace support
@@ -42,18 +43,17 @@
       + C++ (~regex reg(regexp, ...)~)
     + Syntax highlighter for ~+regex-mode~ (plus make it a major mode)
     + Optimize: communicate with perl process (with ~make-process~ instead of ~call-process~)
+  + =lang/alda= -- Language support for [[https://github.com/alda-lang/alda][Alda]], the music programming language, using [[https://github.com/jgkamat/alda-mode][alda-mode]].
++ *Bug fixes:*
+  + =core-ui= Replace or fix ~winner-mode~ unreliability (will close windows trying to revive killed buffers). Perhaps make ~doom/kill-this-buffer~ only disassociate buffer from persp-mode or bury buffer if persp-mode is inactive.
+  + =ui/doom-modeline= Fix ~0/0~ leftover panel in modeline (caused by lingering anzu state).
 + =lang/org=
   + Drag-drop image attachment (~org-download~) and central storage
   + Unified export system
   + Better shackle + org-agenda integration
   + Fix janky visual line motions (~evil-next-visual-line~, etc)
   + Fix janky cursor positioning when jumping between org-table cells from insert mode.
-  + Certain characters/keys--when typed in a table--cause the cell
-    to shrink (likely cause: custom self-insert-char behavior -- like smartparens pairs & custom SPC/BKSPC binds)
-+ *Bug fixes:*
-  + =core-ui= Replace or fix ~winner-mode~ unreliability (will close windows trying to revive killed buffers). Perhaps make ~doom/kill-this-buffer~ only disassociate buffer from persp-mode or bury buffer if persp-mode is inactive.
-  + =ui/doom-modeline= Fix ~0/0~ leftover panel in modeline (caused by lingering anzu state).
-  + Fix autosave file appearing in recentf.
+  + Certain characters/keys--when typed in a table--cause the cell to shrink (likely cause: custom self-insert-char behavior -- like smartparens pairs & custom SPC/BKSPC binds)
 + =feature/jump= Automatic etags generation (for dwim go-to-definition and, perhaps, code-completion for some languages; lua maybe?).
 + =lang/php= Automatic and async tags generation using [[https://github.com/xcwen/phpctags][phpctags]].
 + =lang/lua= True, dynamic code-completion? Looks like [[https://github.com/immerrr/lua-mode/pull/119][this PR in lua-mode]] may have the answer. Does it make ~company-lua~ redundant?
@@ -62,11 +62,14 @@
 + Add =bin/org-alert= script -- a cron script that scans TODOs in org files and dispatches system alerts.
 + =feature/workspaces= Add a bookmarks feature, but for wconfs, that can revive file buffers. Also needs an interface.
 + Add README.org's with working babel blocks to modules.
++ =ui/doom-modeline= fix hardcoded spacing in between segments.
 
 * Unreleased (master)
 + *New modules:*
   + =tools/password-store= -- Emacs as a password manager, using [[https://www.passwordstore.org/][pass]] as a backend (contributed by [[https://github.com/bandresen][brandresen]]).
   + =app/irc= -- Emacs as an IRC client, using circe (contributed by [[https://github.com/bandresen][brandresen]]).
+    + ~+pass/ivy~ for ivy integration, with edit/copy field/open url actions.
+    + ~helm-pass~ for helm integration.
 + =core=
   + New variable: ~doom-host-dir~, as a base path for ~doom-etc-dir~ and ~doom-cache-dir~.
   + New hooks: ~doom-init-hook~ and ~doom-post-init-hook~, which are run on ~emacs-startup-hook~. This is meant to simplify post-Emacs initialization hooks (~after-init-hook~, ~emacs-startup-hook~ and ~window-setup-hook~) into two unambiguous ones.
@@ -76,14 +79,14 @@
   + =core-editor=
     + Change what files recentf will ignore: everything in ~doom-host-dir~ is now ignored and anything else in ~doom-local-dir~ won't be.
   + =core-packages=
-    + When a quelpa package is deleted, its build repo (in ~quelpa-build-dir~) is now deleted with it.
+    + Fix quelpa temporary files (in ~quelpa-build-dir~) not being removed when a quelpa package is uninstalled.
     + New hook: ~doom-reload-hook~ (sort of). This has been around for a while, but now it is defined and documented. It runs when ~doom/reload~ is called (which gets called remotely if you run package management while an Emacs session is active).
-+ =ui=
-  + =ui/doom=
-    + Vastly improve daemon and terminal support for doom-themes by reloading the theme when a new client is attached, or new terminal/daemon frame is created. This prevents incorrect colors from bleeding across face class barriers.
 + =feature=
   + =feature/evil=
     + Remove =goto-last-change=, which conflicts with =goto-chg=, which is a dependency of evil (that does the exact same thing, but is what evil uses).
++ =ui=
+  + =ui/doom=
+    + Vastly improve daemon and terminal support for doom-themes by reloading the theme when a new client is attached, or new terminal/daemon frame is created. This prevents incorrect colors from bleeding across face class barriers.
 + =lang=
   + =lang/org=
     + Fix M-RET in plain lists not preserving indent level for new items.
