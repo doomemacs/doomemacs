@@ -64,9 +64,9 @@
 + Add README.org's with working babel blocks to modules.
 
 * Unreleased (master)
-+ *New Modules*
-  + =tools/password-store= -- Emacs as a password manager, using [[https://www.passwordstore.org/][pass]] as a backend.
-  + =app/irc= -- Emacs as an IRC client, using circe (contributed by [[https://github.com/bandresen][brandresen]])
++ *New modules:*
+  + =tools/password-store= -- Emacs as a password manager, using [[https://www.passwordstore.org/][pass]] as a backend (contributed by [[https://github.com/bandresen][brandresen]]).
+  + =app/irc= -- Emacs as an IRC client, using circe (contributed by [[https://github.com/bandresen][brandresen]]).
 + =core=
   + =core-ui=
     + Add quit confirmation when trying to close a frame that contains real buffers.
