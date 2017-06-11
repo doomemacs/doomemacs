@@ -146,7 +146,7 @@ to determine length."
 (def-package! lui
   :commands lui-mode
   :config
-  (map! :map lua-mode-map "C-u" #'lui-kill-to-beginning-of-line)
+  (map! :map lui-mode-map "C-u" #'lui-kill-to-beginning-of-line)
 
   (enable-lui-logging)
   (defun +irc|lui-setup-margin ()
