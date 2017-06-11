@@ -161,7 +161,8 @@ enable multiple minor modes for the same regexp.")
         file-name-handler-alist nil)
 
   (require 'cl-lib)
-  (require 'core-packages (concat doom-core-dir "core-packages")))
+  (require 'core-packages (concat doom-core-dir "core-packages"))
+  (load! core-lib))
 
 (eval-when-compile
   (doom-initialize))
@@ -170,7 +171,6 @@ enable multiple minor modes for the same regexp.")
       doom--package-load-path (eval-when-compile doom--package-load-path))
 
 ;;; Let 'er rip
-(load! core-lib)
 (load! core-os) ; consistent behavior across Oses
 (with-demoted-errors "AUTOLOAD ERROR: %s"
   (require 'autoloads doom-autoload-file t))
