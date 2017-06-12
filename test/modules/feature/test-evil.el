@@ -1,4 +1,4 @@
-;;; ../test/modules/feature/test-evil.el
+;;; test/modules/feature/test-evil.el
 
 (require! :feature evil t)
 
