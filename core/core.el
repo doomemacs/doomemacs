@@ -179,8 +179,9 @@ enable multiple minor modes for the same regexp.")
 
 (defun doom|finalize ()
   (unless doom-init-p
-    (run-hooks 'doom-init-hook)
-    (run-hooks 'doom-post-init-hook)
+    (with-demoted-errors "INIT ERROR: %s"
+      (run-hooks 'doom-init-hook)
+      (run-hooks 'doom-post-init-hook))
 
     ;; Don't keep gc-cons-threshold too high. It helps to stave off the GC while
     ;; Emacs starts up, but afterwards it causes stuttering and random freezes.
