@@ -1,17 +1,65 @@
 ;;; app/irc/autoload/email.el -*- lexical-binding: t; -*-
 
-;;;###autoload
-(defun =irc ()
-  "Connect to IRC."
-  (interactive)
-  (call-interactively #'circe))
+(defvar +irc--workspace-name "*IRC*")
+
+(defun +irc-setup-wconf (&optional inhibit-workspace)
+  (unless inhibit-workspace
+    (+workspace-switch +irc--workspace-name t))
+  (let ((buffers (doom-buffers-in-mode 'circe-mode nil t)))
+    (if buffers
+        (ignore (switch-to-buffer (car buffers)))
+      (require 'circe)
+      (delete-other-windows)
+      (switch-to-buffer (doom-fallback-buffer))
+      t)))
 
 ;;;###autoload
-(defun +irc/connect-all ()
-  "Connect to all `:irc' defined servers."
-  (interactive)
-  ;; force a library load for +irc--accounts
-  (circe--version)
-  (cl-loop for network in +irc--accounts
-           collect (circe (car network))))
+(defun =irc (&optional inhibit-workspace)
+  "Connect to IRC and auto-connect to all registered networks."
+  (interactive "P")
+  (and (+irc-setup-wconf inhibit-workspace)
+       (cl-loop for network in +irc-connections
+                collect (circe (car network)))))
 
+;;;###autoload
+(defun +irc/connect ()
+  "Connect to a specific registered server."
+  (interactive)
+  (and (+irc-setup-wconf inhibit-workspace)
+       (call-interactively #'circe)))
+
+;;;###autoload
+(defun +irc/quit ()
+  "Kill current circe session and workgroup."
+  (interactive)
+  (if (y-or-n-p "Really kill IRC session?")
+      (let (circe-channel-killed-confirmation
+            circe-server-killed-confirmation)
+        (mapcar #'kill-buffer (doom-buffers-in-mode 'circe-mode (buffer-list) t))
+        (when (equal (+workspace-current-name) +irc--workspace-name)
+          (+workspace/delete +irc--workspace-name)))
+    (message "Aborted")))
+
+;;;###autoload
+(defun +irc/ivy-jump-to-channel (&optional this-server)
+  "Jump to an open channel or server buffer with ivy. If THIS-SERVER (universal
+argument) is non-nil only show channels in current server."
+  (interactive "P")
+  (if (not (circe-server-buffers))
+      (message "No circe buffers available")
+    (when (and this-server (not circe-server-buffer))
+      (setq this-server nil))
+    (ivy-read (format "Jump to%s: " (if this-server (format " (%s)" (buffer-name circe-server-buffer)) ""))
+              (cl-loop with servers = (if this-server (list circe-server-buffer) (circe-server-buffers))
+                       with current-buffer = (current-buffer)
+                       for server in servers
+                       collect (buffer-name server)
+                       nconc
+                       (with-current-buffer server
+                         (cl-loop for buf in (circe-server-chat-buffers)
+                                  unless (eq buf current-buffer)
+                                  collect (format "  %s" (buffer-name buf)))))
+              :action #'ivy--switch-buffer-action
+              :preselect (buffer-name (current-buffer))
+              :keymap ivy-switch-buffer-map
+              :caller '+irc/ivy-jump-to-channel)))
