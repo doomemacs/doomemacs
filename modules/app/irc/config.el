@@ -28,6 +28,8 @@ playback.")
   `(cl-pushnew (cons ,server ,letvars) +irc-connections
                :test #'equal :key #'car))
 
+(defvar +irc--defer-timer nil)
+
 
 ;;
 ;; Plugins
@@ -141,7 +143,9 @@ playback.")
   :init
   (if +irc-defer-notifications
       (add-hook! 'circe-server-connected-hook
-        (run-at-time +irc-defer-notifications nil #'enable-circe-notifications))
+        (setq +irc--defer-timer
+              (run-at-time +irc-defer-notifications nil
+                           #'enable-circe-notifications)))
     (add-hook 'circe-server-connected-hook #'enable-circe-notifications))
   :config
   (setq circe-notifications-watch-strings +irc-notifications-watch-strings

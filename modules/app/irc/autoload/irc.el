@@ -35,6 +35,9 @@
   (if (y-or-n-p "Really kill IRC session?")
       (let (circe-channel-killed-confirmation
             circe-server-killed-confirmation)
+        (when +irc--defer-timer
+          (cancel-timer +irc--defer-timer))
+        (disable-circe-notifications)
         (mapcar #'kill-buffer (doom-buffers-in-mode 'circe-mode (buffer-list) t))
         (when (equal (+workspace-current-name) +irc--workspace-name)
           (+workspace/delete +irc--workspace-name)))
