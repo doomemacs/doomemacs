@@ -31,9 +31,8 @@
 
 (cond ((version< emacs-version "26")
        ;; included with `pass'
-       (def-package! auth-password-store
-         :demand t
-         :config (auth-pass-enable)))
+       (require 'auth-password-store)
+       (auth-pass-enable))
 
       (t ;; built into Emacs 26
        (require 'auth-store-pass)
