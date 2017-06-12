@@ -3,6 +3,9 @@
 (defvar +pass-user-fields '("login" "user" "username" "email")
   "A list of fields for `+pass/ivy' to search for the username.")
 
+(defvar +pass-url-fields '("url" "site" "location")
+  "A list of fields for `+pass/ivy' to search for the username.")
+
 
 ;;
 ;; Plugins
