@@ -51,6 +51,16 @@
                collect hook
              else collect (intern (format "%s-hook" (symbol-name hook))))))
 
+(defun doom-unquote (exp)
+  "Return EXP unquoted."
+  (while (memq (car-safe exp) '(quote function))
+    (setq exp (cadr exp)))
+  exp)
+
+(defun doom-enlist (exp)
+  "Return EXP wrapped in a list, or as-is if already a list."
+  (if (listp exp) exp (list exp)))
+
 
 ;;
 ;; Library
