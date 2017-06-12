@@ -86,9 +86,12 @@
 
 ;; --- start a'doctorin' --------------------------------------
 
-(msg! "%s\nRunning Emacs v%s"
+(msg! "%s\nRunning Emacs v%s, commit %s"
       (color 1 "DOOM Doctor")
-      (color 1 emacs-version))
+      (color 1 emacs-version)
+      (if (executable-find "git")
+          (shell-command-to-string "git rev-parse HEAD")
+        "n/a"))
 (when (boundp 'system-configuration-features)
   (msg! "Compiled with:\n%s" (indented 2 (autofill system-configuration-features))))
 (msg! "uname -a:\n%s" (indented 2 (autofill (shell-command-to-string "uname -a"))))
@@ -183,11 +186,6 @@
                 (explain! (pp-to-string ex))))))))
       (t
        (error! "Nope!")))
-
-
-;; git
-(check! (not (executable-find "git"))
-  (error! "Important: couldn't find git"))
 
 ;; windows? windows
 (check! (memq system-type '(windows-nt ms-dos cygwin))
