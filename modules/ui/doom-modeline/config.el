@@ -292,6 +292,11 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                 file-path)))))
 
 ;;
+(def-modeline-segment! buffer-info-simple
+  "Return the current buffer name only, but with fontification."
+  (propertize "%b" 'face (if (active) 'doom-modeline-buffer-file)))
+
+;;
 (def-modeline-segment! buffer-encoding
   "Displays the encoding and eol style of the buffer the same way Atom does."
   (concat (let ((eol-type (coding-system-eol-type buffer-file-coding-system)))
@@ -545,7 +550,7 @@ with `evil-ex-substitute', and/or 4. The number of active `iedit' regions."
   (media-info major-mode))
 
 (def-modeline! special
-  (bar matches " %b   %l:%c %p  " selection-info)
+  (bar matches " " buffer-info-simple "  %l:%c %p  " selection-info)
   (buffer-encoding major-mode flycheck))
 
 (def-modeline! project
