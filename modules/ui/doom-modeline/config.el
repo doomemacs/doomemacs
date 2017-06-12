@@ -582,3 +582,4 @@ with `evil-ex-substitute', and/or 4. The number of active `iedit' regions."
 
 (add-hook 'org-src-mode-hook #'+doom-modeline|set-special-modeline)
 (add-hook 'image-mode-hook #'+doom-modeline|set-media-modeline)
+(add-hook 'circe-mode-hook #'+doom-modeline|set-special-modeline)
