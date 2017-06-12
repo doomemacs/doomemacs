@@ -305,7 +305,7 @@ byte-compilation."
          (unless (server-running-p)
            (server-start)))
 
-       (add-hook 'doom-post-init-hook #'doom--display-benchmark))))
+       (add-hook 'doom-init-hook #'doom--display-benchmark t))))
 
 (defmacro def-package! (name &rest plist)
   "A thin wrapper around `use-package'."

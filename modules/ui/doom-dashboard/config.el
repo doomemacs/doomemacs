@@ -61,7 +61,7 @@
   (when (equal (buffer-name) "*scratch*")
     (switch-to-buffer (doom-fallback-buffer))))
 
-(add-hook 'window-setup-hook #'+doom-dashboard|init)
+(add-hook 'doom-post-init-hook #'+doom-dashboard|init)
 
 ;; Compatibility with `midnight-mode' and `clean-buffer-list'
 (after! midnight-mode
