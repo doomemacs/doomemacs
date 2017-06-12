@@ -142,7 +142,8 @@ popup window/buffer and b) isn't a special buffer."
     (or (run-hook-with-args-until-success 'doom-real-buffer-functions buf)
         (not (or (doom-popup-p buf)
                  (minibufferp buf)
-                 (string-match-p "^\\s-*\\*" (buffer-name buf)))))))
+                 (string-match-p "^\\s-*\\*" (buffer-name buf))
+                 (not (buffer-file-name buf)))))))
 
 ;;;###autoload
 (defun doom/next-buffer ()

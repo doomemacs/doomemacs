@@ -36,6 +36,8 @@
 
   (ert-deftest get-real-buffers ()
     (with-temp-buffers! (a b c d)
+      (dolist (buf (list a b))
+        (with-current-buffer buf (setq-local buffer-file-name "x")))
       (with-current-buffer c
         (rename-buffer "*C*"))
       (with-current-buffer d
@@ -56,7 +58,9 @@
       (should-not (buffer-live-p a))))
 
   (ert-deftest kill-buffer-then-show-real-buffer ()
-    (with-temp-buffers! (a b c)
+    (with-temp-buffers! (a b c d)
+      (dolist (buf (list a b d))
+        (with-current-buffer buf (setq-local buffer-file-name "x")))
       (should (cl-every #'buffer-live-p buffer-list))
       (switch-to-buffer a)
       (should (eq (current-buffer) a))
@@ -64,7 +68,7 @@
       (should (doom-kill-buffer a))
       (should (eq (current-buffer) b))
       (should (doom-kill-buffer))
-      (should (eq (current-buffer) c))
+      (should (eq (current-buffer) d))
       (doom/kill-this-buffer)
       (should (eq (current-buffer) (doom-fallback-buffer)))))
 
