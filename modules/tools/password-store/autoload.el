@@ -19,6 +19,14 @@
                return (cdr it))
     (error "Couldn't find entry: %s" entry)))
 
+;;;###autoload
+(defun +pass-get-user (entry)
+  (+pass-get-field entry +pass-user-fields))
+
+;;;###autoload
+(defun +pass-get-secret (entry)
+  (password-store-get entry))
+
 (defun +pass-ivy-action--open-url (entry)
   (if-let (url (+pass-get-field entry +pass-url-fields))
       (and (or (string-prefix-p "http://" url)
