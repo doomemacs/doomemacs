@@ -43,8 +43,12 @@ renamed.")
         ;; auto-save on kill
         persp-auto-save-opt 1)
 
-  (add-hook 'doom-init-hook #'+workspaces|init t)
+  (add-hook 'doom-init-hook #'+workspaces|init)
   (add-hook 'after-make-frame-functions #'+workspaces|init)
+
+  ;; Defer delayed warnings even further, so they appear after persp-mode is
+  ;; started and the main workspace is ready to display them.
+  (remove-hook 'delayed-warnings-hook #'display-delayed-warnings)
 
   (defun +workspaces|init (&optional frame)
     (let ((frame (or frame (selected-frame))))
@@ -60,7 +64,8 @@ renamed.")
       (when (or (equal (safe-persp-name (get-current-persp)) persp-nil-name)
                 (and (one-window-p)
                      (eq (window-buffer (selected-window)) (doom-fallback-buffer))))
-        (persp-frame-switch +workspaces-main frame))))
+        (persp-frame-switch +workspaces-main frame))
+      (add-hook 'delayed-warnings-hook #'display-delayed-warnings t)))
 
   (define-key persp-mode-map [remap delete-window] #'+workspace/close-window-or-workspace)
 
