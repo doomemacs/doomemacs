@@ -282,40 +282,30 @@ file."
   :config
   (setq nlinum-highlight-current-line t)
 
-  ;; fix for disappearing line numbers in nlinum
-  ;; <https://github.com/hlissner/.emacs.d/issues/59#issuecomment-306937318>
-  (defun doom*nlinum-region (start limit)
-    (save-excursion
-      (let ((inhibit-point-motion-hooks t))
-        (goto-char start)
-        (unless (bolp) (forward-line 1))
-        (remove-overlays (point) limit 'nlinum t)
-        (let ((line (nlinum--line-number-at-pos)))
-          (while
-              (and (not (eobp)) (<= (point) limit)
-                   (let* ((ol (make-overlay (point) (1+ (point))))
-                          (str (funcall nlinum-format-function
-                                        line nlinum--width))
-                          (width (string-width str)))
-                     (when (< nlinum--width width)
-                       (setq nlinum--width width)
-                       (nlinum--flush))
-                     (overlay-put ol 'nlinum t)
-                     (overlay-put ol 'evaporate t)
-                     (overlay-put ol 'before-string
-                                  (propertize " " 'display
-                                              `((margin left-margin) ,str)))
-                     (setq line (1+ line))
-                     (zerop (forward-line 1))))))))
-    nil)
-  (advice-add #'nlinum--region :override #'doom*nlinum-region)
-
   ;; Optimization: calculate line number column width beforehand
   (defun doom|init-nlinum-width ()
     (setq nlinum--width
           (length (save-excursion (goto-char (point-max))
                                   (format-mode-line "%l")))))
   (add-hook 'nlinum-mode-hook #'doom|init-nlinum-width))
+
+;; Fixes disappearing line numbers in nlinum and other quirks
+(def-package! nlinum-hl
+  :load-path "~/work/plugins/emacs-nlinum-hl/"
+  :after nlinum
+  :config
+  ;; With `markdown-fontify-code-blocks-natively' enabled in `markdown-mode',
+  ;; line numbers tend to vanish next to code blocks.
+  (advice-add #'markdown-fontify-code-block-natively
+              :after #'nlinum-hl-do-markdown-fontify-region)
+
+  ;; When using `web-mode's code-folding an entire range of line numbers will
+  ;; vanish in the affected area.
+  (advice-add #'web-mode-fold-or-unfold :after #'nlinum-hl-do-generic-flush)
+
+  ;; Changing fonts can leave nlinum line numbers in their original size; this
+  ;; forces them to resize.
+  (advice-add #'set-frame-font :after #'nlinum-hl-flush-all-windows))
 
 ;; Helps us distinguish stacked delimiter pairs. Especially in parentheses-drunk
 ;; languages like Lisp.
