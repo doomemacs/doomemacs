@@ -54,12 +54,13 @@
               (bury-buffer))))
 
 (defun +doom-dashboard|init (&rest _)
-  (add-hook 'after-make-frame-functions #'+doom-dashboard-deferred-reload)
-  (add-hook 'window-configuration-change-hook #'+doom-dashboard-reload)
-  (add-hook 'kill-buffer-query-functions #'+doom-dashboard|kill-buffer-query-fn)
-  (+doom-dashboard-reload)
-  (when (equal (buffer-name) "*scratch*")
-    (switch-to-buffer (doom-fallback-buffer))))
+  (unless noninteractive
+    (add-hook 'after-make-frame-functions #'+doom-dashboard-deferred-reload)
+    (add-hook 'window-configuration-change-hook #'+doom-dashboard-reload)
+    (add-hook 'kill-buffer-query-functions #'+doom-dashboard|kill-buffer-query-fn)
+    (+doom-dashboard-reload)
+    (when (equal (buffer-name) "*scratch*")
+      (switch-to-buffer (doom-fallback-buffer)))))
 
 (add-hook 'doom-post-init-hook #'+doom-dashboard|init)
 
