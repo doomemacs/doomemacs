@@ -5,15 +5,10 @@
   "Open the documentation of SETTING (a keyword defined with `def-setting!')."
   (interactive
    ;; TODO try to read setting from whole line
-   (let ((keyword (thing-at-point 'symbol t)))
-     (list (completing-read
-            (format "Describe setting%s: "
-                    (if (equal (substring keyword 0 1) ":")
-                        (format " (default %s)" keyword)
-                      ""))
-            doom-settings
-            nil t nil nil keyword))))
-  (let ((fn (intern-soft (format "doom-setting--setter%s" setting))))
+   (list (completing-read "Describe setting%s: "
+                          (mapcar #'car doom-settings)
+                          nil t nil nil)))
+  (let ((fn (cdr (assq (intern setting) doom-settings))))
     (unless fn
       (error "'%s' is not a valid DOOM setting" setting))
     (describe-function fn)))
@@ -25,10 +20,11 @@ submodule in the format, e.g. ':feature evil')."
   (interactive
    ;; TODO try to read module from whole line
    (list (completing-read "Describe module: "
-                          (mapcar (lambda (x) (format "%s %s" (car x) (cdr x)))
-                                  (reverse (hash-table-keys doom-modules)))
+                          (cl-loop for (module . sub) in (reverse (hash-table-keys doom-modules))
+                                   collect (format "%s %s" module sub))
                           nil t)))
-  (destructuring-bind (category submodule) (mapcar #'intern (split-string module " "))
+  (destructuring-bind (category submodule)
+      (mapcar #'intern (split-string module " "))
     (unless (member (cons category submodule) (doom--module-pairs))
       (error "'%s' isn't a valid module" module))
     (let ((doc-path (expand-file-name "README.org" (doom-module-path category submodule))))
