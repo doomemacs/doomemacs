@@ -3,7 +3,7 @@
 ;;;###autoload
 (defun =twitter ()
   (interactive)
-  (+workspace-switch "Twitter" t)
+  (+workspace-switch "*Twitter*" t)
   (delete-other-windows)
   (condition-case ex
       (progn
