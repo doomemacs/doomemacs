@@ -183,30 +183,29 @@ active."
 ;; Inspired from `powerline's `pl/make-xpm'.
 (def-memoized! +doom-modeline--make-xpm (color height width)
   "Create an XPM bitmap."
-  (when (display-graphic-p)
-    (propertize
-     " " 'display
-     (let ((data (make-list height (make-list width 1)))
-           (color (or color "None")))
-       (create-image
-        (concat
-         (format "/* XPM */\nstatic char * percent[] = {\n\"%i %i 2 1\",\n\". c %s\",\n\"  c %s\","
-                 (length (car data))
-                 (length data)
-                 color
-                 color)
-         (apply #'concat
-                (cl-loop with idx = 0
-                         with len = (length data)
-                         for dl in data
-                         do (cl-incf idx)
-                         collect
-                         (concat "\""
-                                 (cl-loop for d in dl
-                                          if (= d 0) collect (string-to-char " ")
-                                          else collect (string-to-char "."))
-                                 (if (eq idx len) "\"};" "\",\n")))))
-        'xpm t :ascent 'center)))))
+  (propertize
+   " " 'display
+   (let ((data (make-list height (make-list width 1)))
+         (color (or color "None")))
+     (create-image
+      (concat
+       (format "/* XPM */\nstatic char * percent[] = {\n\"%i %i 2 1\",\n\". c %s\",\n\"  c %s\","
+               (length (car data))
+               (length data)
+               color
+               color)
+       (apply #'concat
+              (cl-loop with idx = 0
+                       with len = (length data)
+                       for dl in data
+                       do (cl-incf idx)
+                       collect
+                       (concat "\""
+                               (cl-loop for d in dl
+                                        if (= d 0) collect (string-to-char " ")
+                                        else collect (string-to-char "."))
+                               (if (eq idx len) "\"};" "\",\n")))))
+      'xpm t :ascent 'center))))
 
 (defsubst +doom-modeline--buffer-file ()
   "Display the base of the current buffer's filename."
@@ -248,7 +247,8 @@ project root). Excludes the file basename. See `doom-buffer-name' for that."
   "Displays `doom-project-root'. This is for special buffers like the scratch
 buffer where knowing the current project directory is important."
   (let ((face (if (active) 'doom-modeline-buffer-path)))
-    (concat (all-the-icons-octicon
+    (concat (if (display-graphic-p) " ")
+            (all-the-icons-octicon
              "file-directory"
              :face face
              :v-adjust -0.05
@@ -264,24 +264,25 @@ directory, the file name, and its state (modified, read-only or non-existent)."
          (modified-p (buffer-modified-p))
          (active (active))
          (faces (if modified-p 'doom-modeline-buffer-modified)))
-    (concat (if buffer-read-only
-                (concat (all-the-icons-octicon
-                         "lock"
-                         :face 'doom-modeline-warning
-                         :v-adjust -0.05)
-                        " ")
-              (when modified-p
-                (concat
-                 (all-the-icons-faicon "floppy-o"
-                                       :face 'doom-modeline-buffer-modified
-                                       :v-adjust -0.1)
-                 " ")))
-            (when (and buffer-file-name (not (file-exists-p buffer-file-name)))
-              (concat (all-the-icons-octicon
-                       "circle-slash"
-                       :face 'doom-modeline-urgent
-                       :v-adjust -0.05)
-                      " "))
+    (concat (cond (buffer-read-only
+                   (concat (all-the-icons-octicon
+                            "lock"
+                            :face 'doom-modeline-warning
+                            :v-adjust -0.05)
+                           " "))
+                  (modified-p
+                   (concat (all-the-icons-faicon
+                            "floppy-o"
+                            :face 'doom-modeline-buffer-modified
+                            :v-adjust -0.1)
+                           " "))
+                  ((and buffer-file-name
+                        (not (file-exists-p buffer-file-name)))
+                   (concat (all-the-icons-octicon
+                            "circle-slash"
+                            :face 'doom-modeline-urgent
+                            :v-adjust -0.05)
+                           " ")))
             (when-let (dir-path (+doom-modeline--buffer-path))
               (if-let (faces (or faces (if active 'doom-modeline-buffer-path)))
                   (propertize dir-path 'face `(:inherit ,faces))
@@ -333,11 +334,11 @@ directory, the file name, and its state (modified, read-only or non-existent)."
           (active  (active))
           (all-the-icons-scale-factor 1.0)
           (all-the-icons-default-adjust -0.1))
-      (concat +doom-modeline-vspc
+      (concat "  "
               (cond ((memq state '(edited added))
                      (if active (setq face 'doom-modeline-info))
                      (all-the-icons-octicon
-                      "git-branch"
+                      "git-compare"
                       :face face
                       :height 1.2
                       :v-adjust -0.05))
@@ -353,28 +354,29 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                     (t
                      (if active (setq face 'font-lock-doc-face))
                      (all-the-icons-octicon
-                      "git-branch"
+                      "git-compare"
                       :face face
                       :height 1.2
                       :v-adjust -0.05)))
               " "
               (propertize (substring vc-mode (+ (if (eq backend 'Hg) 2 3) 2))
                           'face (if active face))
-              "  "
-              +doom-modeline-vspc))))
+              " "))))
 
 ;;
 (defun +doom-ml-icon (icon &optional text face)
   "Displays an octicon ICON with FACE, followed by TEXT. Uses
 `all-the-icons-octicon' to fetch the icon."
   (concat
-   "  "
+   (if vc-mode " " "  ")
    (when icon
      (concat
-      (all-the-icons-octicon icon :face face :height 1.0 :v-adjust 0)
-      (if text " ")))
+      (all-the-icons-material icon :face face :height 1.1 :v-adjust -0.25)
+      ;; (all-the-icons-octicon icon :face face :height 1.0 :v-adjust 0)
+      (if text +doom-modeline-vspc)))
    (when text
-     (propertize text 'face face))))
+     (propertize text 'face face))
+   (if vc-mode "  " " ")))
 
 (def-modeline-segment! flycheck
   "Displays color-coded flycheck error status in the current buffer with pretty
@@ -384,17 +386,20 @@ icons."
       ('finished (if flycheck-current-errors
                      (let-alist (flycheck-count-errors flycheck-current-errors)
                        (let ((sum (+ (or .error 0) (or .warning 0))))
-                         (+doom-ml-icon "circle-slash"
+                         ;; do-not-disturb-alt
+                         (+doom-ml-icon "do_not_disturb_alt" ;; "circle-slash"
                                         (number-to-string sum)
                                         (if .error 'doom-modeline-urgent 'doom-modeline-warning))))
-                   (concat
-                    (+doom-ml-icon "check" nil 'doom-modeline-info) " ")))
-      ('running     (+doom-ml-icon "ellipsis" "Running" 'font-lock-doc-face))
-      ('no-checker  (+doom-ml-icon "alert" "-" 'font-lock-doc-face))
-      ('errored     (+doom-ml-icon "alert" "Error" 'doom-modeline-urgent))
-      ('interrupted (+doom-ml-icon "x" "Interrupted" 'font-lock-doc-face))
-      ;; ('suspicious  "")
-      )))
+                   ;; check
+                   (+doom-ml-icon "check" nil 'doom-modeline-info)))
+      ('running     (+doom-ml-icon "access_time" nil 'font-lock-doc-face))
+      ;; ('running     (+doom-ml-icon "ellipsis" "Running" 'font-lock-doc-face))
+      ('no-checker  (+doom-ml-icon "sim_card_alert" "-" 'font-lock-doc-face))
+      ;; ('no-checker  (+doom-ml-icon "alert" "-" 'font-lock-doc-face))
+      ('errored     (+doom-ml-icon "sim_card_alert" "Error" 'doom-modeline-urgent))
+      ;; ('errored     (+doom-ml-icon "alert" "Error" 'doom-modeline-urgent))
+      ('interrupted (+doom-ml-icon "pause" "Interrupted" 'font-lock-doc-face)))))
+      ;; ('interrupted (+doom-ml-icon "x" "Interrupted" 'font-lock-doc-face)))))
 
 ;;
 (defsubst doom-column (pos)
@@ -517,20 +522,24 @@ with `evil-ex-substitute', and/or 4. The number of active `iedit' regions."
 
 ;; These bars regulate the height of the mode-line in GUI Emacs.
 (def-modeline-segment! bar
-  (+doom-modeline--make-xpm
-   (face-background (if (active)
-                        'doom-modeline-bar
-                      'doom-modeline-inactive-bar)
-                    nil t)
-   +doom-modeline-height
-   +doom-modeline-bar-width))
+  (if (display-graphic-p)
+      (+doom-modeline--make-xpm
+       (face-background (if (active)
+                            'doom-modeline-bar
+                          'doom-modeline-inactive-bar)
+                        nil t)
+       +doom-modeline-height
+       +doom-modeline-bar-width)
+    ""))
 
 (def-modeline-segment! eldoc-bar
   "A differently colored bar, to signify an eldoc display."
-  (+doom-modeline--make-xpm
-   (face-background 'doom-modeline-eldoc-bar nil t)
-   +doom-modeline-height
-   +doom-modeline-bar-width))
+  (if (display-graphic-p)
+      (+doom-modeline--make-xpm
+       (face-background 'doom-modeline-eldoc-bar nil t)
+       +doom-modeline-height
+       +doom-modeline-bar-width)
+    ""))
 
 
 ;;
@@ -539,7 +548,7 @@ with `evil-ex-substitute', and/or 4. The number of active `iedit' regions."
 
 (def-modeline! main
   (bar matches " " buffer-info "  %l:%c %p  " selection-info)
-  (buffer-encoding vcs major-mode flycheck))
+  (buffer-encoding major-mode vcs flycheck))
 
 (def-modeline! eldoc
   (eldoc-bar " " eldoc)
@@ -554,7 +563,7 @@ with `evil-ex-substitute', and/or 4. The number of active `iedit' regions."
   (buffer-encoding major-mode flycheck))
 
 (def-modeline! project
-  (bar " " buffer-project)
+  (bar buffer-project)
   (major-mode))
 
 (def-modeline! media
