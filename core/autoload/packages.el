@@ -76,16 +76,12 @@ list of the package."
         (list name old-version new-version)))))
 
 ;;;###autoload
-(defun doom-package-ignored-p (name)
-  "Return t if NAME (a package symbol) has an :ignore property."
+(defun doom-package-prop (name prop)
+  "Return PROPerty in NAME's plist."
+  (cl-assert (symbolp name) t)
+  (cl-assert (keywordp prop) t)
   (doom-initialize-packages)
-  (plist-get (cdr (assq name doom-packages)) :ignore))
-
-;;;###autoload
-(defun doom-package-frozen-p (name)
-  "Return t if NAME (a package symbol) has an :frozen property."
-  (doom-initialize-packages)
-  (plist-get (cdr (assq name doom-packages)) :freeze))
+  (plist-get (cdr (assq name doom-packages)) prop))
 
 ;;;###autoload
 (defun doom-get-packages ()
@@ -128,7 +124,7 @@ If INCLUDE-FROZEN-P is non-nil, check frozen packages as well.
 
 Used by `doom/packages-update'."
   (cl-loop for pkg in (doom-get-packages)
-           if (or (and (doom-package-frozen-p (car pkg))
+           if (or (and (doom-package-prop (car pkg) :freeze)
                        include-frozen-p)
                   (doom-package-outdated-p (car pkg)))
            collect it))
@@ -159,7 +155,7 @@ Used by `doom/packages-install'."
            unless
            (let ((pkg (car pkgsym)))
              (or (assq pkg package-alist)
-                 (unless include-ignored-p (doom-package-ignored-p pkg))
+                 (unless include-ignored-p (doom-package-prop pkg :ignore))
                  (and (not (plist-get (assq pkg doom-packages) :pin))
                       (assq pkg package--builtins))))
            collect pkgsym))
