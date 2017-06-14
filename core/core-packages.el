@@ -367,20 +367,16 @@ throw an error if the file doesn't exist."
 (defmacro require! (module submodule &optional reload-p)
   "Like `require', but for doom modules. Will load a module's config.el file if
 it hasn't already, and if it exists."
-  (when (or (not noninteractive)
-            (bound-and-true-p byte-compile-current-file)
-            reload-p)
-    (let ((loaded-p (doom-module-loaded-p module submodule)))
-      (when (or reload-p (not loaded-p))
-        (unless loaded-p
-          (doom--enable-module module submodule t))
-        `(condition-case-unless-debug ex
-             (load! config ,(doom-module-path module submodule) t)
-           ('error
-            (lwarn 'doom-modules :error
-                   "%s in '%s %s' -> %s"
-                   (car ex) ,module ',submodule (error-message-string ex))))))))
-
+  (let ((loaded-p (doom-module-loaded-p module submodule)))
+    (when (or reload-p (not loaded-p))
+      (unless loaded-p
+        (doom--enable-module module submodule t))
+      `(condition-case-unless-debug ex
+           (load! config ,(doom-module-path module submodule) t)
+         ('error
+          (lwarn 'doom-modules :error
+                 "%s in '%s %s' -> %s"
+                 (car ex) ,module ',submodule (error-message-string ex)))))))
 
 (defmacro featurep! (module submodule)
   "Convenience macro that wraps `doom-module-loaded-p'."
@@ -532,7 +528,7 @@ If ONLY-RECOMPILE-P is non-nil, only recompile out-of-date files."
   (doom-initialize-packages t t)
   (let ((targets
          (cond ((equal (car command-line-args-left) "--")
-                (cl-loop for file in command-line-args-left
+                (cl-loop for file in (cdr command-line-args-left)
                          if (file-exists-p file)
                          collect (expand-file-name file)
                          finally do (setq command-line-args-left nil)) )
@@ -603,6 +599,65 @@ package files."
                        and do (delete-file path)
                        and do (message "Deleted %s" (file-relative-name path)))
       (message "Everything is clean"))))
+
+(defun doom/run-tests (&optional modules)
+  "Run all loaded tests, specified by MODULES (a list of module cons cells) or
+command line args following a double dash (each arg should be in the
+'module/submodule' format).
+
+If neither is available, run all tests in all enabled modules."
+  (interactive) ;; TODO Add completing-read selection of tests
+  ;; FIXME Refactor this
+  (condition-case-unless-debug ex
+      (let (targets)
+        ;; ensure DOOM is initialized
+        (let (noninteractive)
+          (unload-feature 'core t)
+          (load (expand-file-name "init.el" user-emacs-directory) nil t))
+        (run-hooks 'emacs-startup-hook)
+        ;; collect targets
+        (cond ((and command-line-args-left
+                    (equal (car command-line-args-left) "--"))
+               (cl-loop for arg in (cdr argv)
+                        if (equal arg "core")
+                        do (push (expand-file-name "test/" doom-core-dir) targets)
+                        else
+                        collect
+                        (cl-destructuring-bind (car cdr) (split-string arg "/" t)
+                          (cons (intern (concat ":" car))
+                                (and (cadr consp) (intern cdr))))
+                        into args
+                        finally do (setq modules args
+                                         command-line-args-left nil)))
+
+              (modules
+               (unless (cl-loop for module in modules
+                                unless (and (consp module)
+                                            (keywordp (car module))
+                                            (symbolp (cdr module)))
+                                return t)
+                 (error "Expected a list of cons, got: %s" modules)))
+
+              (t
+               (setq modules (doom--module-pairs)
+                     targets (list (expand-file-name "test/" doom-core-dir)))))
+        ;; resolve targets to a list of test files and load them
+        (cl-loop with targets =
+                 (append targets
+                         (cl-loop for (module . submodule) in modules
+                                  collect (doom-module-path module submodule "test/")))
+                 for dir in targets
+                 if (file-directory-p dir)
+                 nconc (reverse (directory-files-recursively dir "\\.el$"))
+                 into items
+                 finally do (quiet! (mapc #'load-file items)))
+        ;; run all loaded tests
+        (when noninteractive
+          (ert-run-tests-batch-and-exit)))
+    ('error
+     (lwarn 'doom-test :error
+            "%s -> %s"
+            (car ex) (error-message-string ex)))))
 
 
 ;;

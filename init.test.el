@@ -1,4 +1,4 @@
-;;; init.el
+;;; init.test.el -- for automated unit tests -*- lexical-binding: t; -*-
 
 (require 'core (concat user-emacs-directory "core/core"))
 

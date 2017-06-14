@@ -1,9 +1,9 @@
 # Ensure emacs always runs from this makefile's PWD
-EMACS_LIBS=-l core/core.el
-EMACS=emacs --batch --eval '(setq user-emacs-directory default-directory)' $(EMACS_LIBS)
-TEST_EMACS=$(EMACS) --eval '(setq noninteractive nil)' $(EMACS_LIBS)
-TESTS=$(shell find test/ -type f -name 'test-*.el')
-MODULES=$(shell find modules/ -maxdepth 2 -type d)
+EMACS_FLAGS=--eval '(setq user-emacs-directory default-directory)' -l core/core.el
+EMACS=emacs --batch $(EMACS_FLAGS)
+EMACSI=emacs -q $(EMACS_FLAGS)
+
+MODULES=$(patsubst modules/%, %, $(shell find modules/ -maxdepth 2 -type d))
 
 # Tasks
 all: autoloads autoremove install update
@@ -30,8 +30,8 @@ core: init.el clean
 	@$(EMACS) -f doom/compile -- init.el core
 
 $(MODULES): init.el .local/autoloads.el
-	@rm -fv $(shell find $@ -maxdepth 2 -type f -name '*.elc')
-	@$(EMACS) -f doom/compile -- $@
+	@rm -fv $(shell find modules/$@ -type f -name '*.elc')
+	@$(EMACS) -f doom/compile -- modules/$@
 
 clean:
 	@$(EMACS) -f doom/clean-compiled
@@ -43,10 +43,18 @@ clean-pcache:
 	@$(EMACS) -l persistent-soft --eval '(delete-directory pcache-directory t)'
 
 test: init.el .local/autoloads.el
-	@$(TEST_EMACS) $(patsubst %,-l %, $(TESTS)) -l test/run.el
+	@$(EMACS) -f doom/run-tests
 
-$(TESTS): init.el .local/autoloads.el
-	@$(TEST_EMACS) $(patsubst %,-l %, $@) -l test/run.el
+test\:core $(patsubst %, test\:%, $(MODULES)): init.el .local/autoloads.el
+	@$(EMACS) -f doom/run-tests -- $(subst test:, , $@)
+
+# run tests interactively
+testi: init.el .local/autoloads.el
+	@DEBUG=1 $(EMACSI) -f doom/run-tests -f ert
+
+# For running Emacs from a different folder than ~/.emacs.d
+run:
+	@emacs $(EMACS_FLAGS) -l init.el
 
 doctor:
 	@./bin/doctor
@@ -62,4 +70,4 @@ init.el:
 	@$(EMACS) -f doom/compile -- $<
 
 
-.PHONY: all test $(TESTS) $(MODULES)
+.PHONY: all test $(MODULES)
