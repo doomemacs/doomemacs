@@ -51,20 +51,22 @@ renamed.")
   (remove-hook 'delayed-warnings-hook #'display-delayed-warnings)
 
   (defun +workspaces|init (&optional frame)
+    (unless persp-mode
+      (persp-mode +1))
     (let ((frame (or frame (selected-frame))))
-      (unless persp-mode
-        (persp-mode +1))
-      ;; The default perspective persp-mode makes (defined by `persp-nil-name')
-      ;; is special and doesn't actually represent a real persp object, so
-      ;; buffers can't really be assigned to it, among other quirks. We create a
-      ;; *real* main workspace to fill this role.
-      (unless (persp-with-name-exists-p +workspaces-main)
-        (persp-add-new +workspaces-main))
-      ;; Switch to it if we aren't auto-loading the last session
-      (when (or (equal (safe-persp-name (get-current-persp)) persp-nil-name)
-                (and (one-window-p)
-                     (eq (window-buffer (selected-window)) (doom-fallback-buffer))))
-        (persp-frame-switch +workspaces-main frame))
+      (unless noninteractive
+        ;; The default perspective persp-mode makes (defined by
+        ;; `persp-nil-name') is special and doesn't actually represent a real
+        ;; persp object, so buffers can't really be assigned to it, among other
+        ;; quirks. We create a *real* main workspace to fill this role.
+        (unless (persp-with-name-exists-p +workspaces-main)
+          (persp-add-new +workspaces-main))
+        ;; Switch to it if we aren't auto-loading the last session
+        (when (or (equal (safe-persp-name (get-current-persp)) persp-nil-name)
+                  (and (one-window-p)
+                       (eq (window-buffer (selected-window))
+                           (doom-fallback-buffer))))
+          (persp-frame-switch +workspaces-main frame)))
       (add-hook 'delayed-warnings-hook #'display-delayed-warnings t)))
 
   (define-key persp-mode-map [remap delete-window] #'+workspace/close-window-or-workspace)
