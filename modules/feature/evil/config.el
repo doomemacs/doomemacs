@@ -25,7 +25,8 @@
 (autoload 'goto-last-change "goto-chg")
 (autoload 'goto-last-change-reverse "goto-chg")
 
-(def-package! evil :demand t
+(def-package! evil
+  :demand t
   :init
   (setq evil-want-C-u-scroll t
         evil-want-visual-char-semi-exclusive t

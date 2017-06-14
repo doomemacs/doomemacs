@@ -10,7 +10,6 @@
         (t
          (pass))))
 
-
 ;;;###autoload
 (defun +pass-get-field (entry fields)
   (if-let (data (if (listp entry) entry (auth-pass-parse-entry entry)))
@@ -25,12 +24,11 @@
 
 ;;;###autoload
 (defun +pass-get-secret (entry)
-  (password-store-get entry))
+  (+pass-get-field entry 'secret))
 
 (defun +pass-ivy-action--open-url (entry)
   (if-let (url (+pass-get-field entry +pass-url-fields))
-      (and (or (string-prefix-p "http://" url)
-               (string-prefix-p "https://" url)
+      (and (or (string-match-p "https?://" url)
                (error "Field for %s doesn't look like an url" item))
            (browse-url url))
     (error "Username not found.")))

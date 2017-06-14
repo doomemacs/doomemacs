@@ -212,13 +212,12 @@ Body forms can access the hook's arguments through the let-bound variable
                            mode modes match files))))))
 
 
-;; Provides a centralized configuration system that a) won't evaluate its
-;; arguments if it doesn't need to (performance), b) won't complain if the
-;; setting doesn't exist and c) is more elegant than a bunch of `after!' blocks,
-;; which can cause intermittent stuttering in large quantities. I'm a fan of
-;; concise, do-what-I-mean front-facing configuration, believe it or not.
+;; I'm a fan of concise, hassle-free front-facing configuration. Rather than
+;; littering my config with `after!' blocks, these two macros offer a faster and
+;; more robust alternative. The motivation: to facilitate concise cross-module
+;; configuration.
 ;;
-;; Plus, it can benefit from byte-compilation.
+;; It also benefits from byte-compilation.
 (defvar doom-settings nil)
 
 (defmacro def-setting! (keyword arglist &optional docstring &rest forms)

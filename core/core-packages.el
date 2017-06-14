@@ -260,8 +260,8 @@ include all modules, enabled or otherwise."
     (error "doom-modules is uninitialized")))
 
 (defun doom--module-paths (&optional append-file)
-  "Returns a list of absolute file paths to modules, with APPEND-FILE added, if
-the file exists."
+  "Returns a list of absolute file paths to activated modules, with APPEND-FILE
+added, if the file exists."
   (let (paths)
     (dolist (pair (doom--module-pairs) (nreverse paths))
       (let ((path (doom-module-path (car pair) (cdr pair) append-file)))

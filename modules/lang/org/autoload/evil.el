@@ -1,10 +1,10 @@
 ;;; lang/org/autoload/evil.el -*- lexical-binding: t; -*-
 
 ;;;###autoload (autoload '+org:capture "lang/org/autoload/evil" nil t)
-(evil-define-operator +org:capture (&optional beg end bang)
+(evil-define-operator +org:capture (&optional beg end)
   "Send a selection to `doom/org-capture'."
   :move-point nil :type inclusive
-  (interactive "<r><!>")
+  (interactive "<r>")
   (org-capture-string
    (when (and (evil-visual-state-p) beg end)
      (buffer-substring beg end))))

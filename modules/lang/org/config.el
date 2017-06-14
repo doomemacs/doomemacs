@@ -388,7 +388,7 @@
                       (IS-LINUX "xdg-open \"%s\"")))))
 
   ;; Remove highlights on ESC
-  (defun +org|remove-occur-highlights (&rest args)
+  (defun +org|remove-occur-highlights ()
     (when (derived-mode-p 'org-mode)
       (org-remove-occur-highlights)
       t))

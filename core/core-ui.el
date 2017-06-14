@@ -38,11 +38,9 @@
 
 (fset #'yes-or-no-p #'y-or-n-p) ; y/n instead of yes/no
 
-;; Ask for confirmation when trying to kill emacs or close a frame that has real
-;; buffers open in it.
 (defun doom-quit-p (&optional prompt)
-  "Return t if this session should be killed; prompts the user for
-confirmation."
+  "Return t if this session should be killed, but not before it prompts the user
+for confirmation."
   (interactive)
   (if (ignore-errors (doom-real-buffers-list))
       (or (yes-or-no-p (format "››› %s" (or prompt "Quit Emacs?")))
@@ -62,7 +60,7 @@ confirmation."
 ;; A minor mode for toggling the mode-line
 (defvar-local doom--modeline-format nil
   "The modeline format to use when `doom-hide-modeline-mode' is active. Don't
-set this directly. Bind it in `let' instead.")
+set this directly. Let-bind it instead.")
 (defvar-local doom--old-modeline-format nil
   "The old modeline format, so `doom-hide-modeline-mode' can revert when it's
 disabled.")
@@ -141,10 +139,8 @@ mode is detected.")
 ;; draw me like one of your French editors
 (tooltip-mode -1) ; relegate tooltips to echo area only
 (menu-bar-mode -1)
-(when (fboundp 'tool-bar-mode)
-  (tool-bar-mode -1))
-(when (fboundp 'scroll-bar-mode)
-  (scroll-bar-mode -1))
+(if (fboundp 'tool-bar-mode)   (tool-bar-mode -1))
+(if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 
 ;; buffer name in frame title
 (setq-default frame-title-format '("DOOM Emacs"))

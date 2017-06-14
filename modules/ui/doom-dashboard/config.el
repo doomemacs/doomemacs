@@ -103,8 +103,9 @@ whose dimensions may not be fully initialized by the time this is run."
       (with-current-buffer (doom-fallback-buffer)
         (read-only-mode +1)
         (+doom-dashboard-mode)
-        (setq fringe-indicator-alist (cl-loop for (car . _cdr) in fringe-indicator-alist
-                                              collect (cons car nil)))
+        (setq fringe-indicator-alist
+              (cl-loop for (car . _cdr) in fringe-indicator-alist
+                       collect (cons car nil)))
         (erase-buffer)
         (let* ((window (get-buffer-window (doom-fallback-buffer)))
                (+doom-dashboard--width  (window-width  window))

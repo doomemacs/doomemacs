@@ -155,8 +155,7 @@ fragments, opening links, or refreshing images."
   (interactive)
   (let* ((scroll-pt (window-start))
          (context (org-element-context))
-         (type (org-element-type context))
-         (value (org-element-property :value context)))
+         (type (org-element-type context)))
     (cond
      ((memq type '(planning timestamp))
       (org-follow-timestamp-link))

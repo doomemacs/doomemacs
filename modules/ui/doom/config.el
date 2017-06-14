@@ -71,7 +71,7 @@
       "Ensure the fringe settings are maintained on popup restore."
       (neo-global--when-window
         (doom--neotree-no-fringes)))
-    (add-hook 'doom-popup-mode-hook #'+doom|neotree-fix-popup nil t)))
+    (add-hook 'doom-popup-mode-hook #'+doom|neotree-fix-popup)))
 
 
 (def-package! solaire-mode

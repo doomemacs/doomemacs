@@ -165,7 +165,7 @@ enable multiple minor modes for the same regexp.")
                  (string-match-p (regexp-quote remote-id) name))
         (setq name (substring name (match-end 0))))
       (while (and alist (caar alist) (cdar alist))
-        (if (string-match (caar alist) name)
+        (if (string-match-p (caar alist) name)
             (funcall (cdar alist) 1))
         (setq alist (cdr alist))))))
 

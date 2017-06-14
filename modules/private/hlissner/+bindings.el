@@ -631,7 +631,7 @@
    :n "SPC" #'vc-annotate-show-log-revision-at-line
    :n "]]"  #'vc-annotate-next-revision
    :n "[["  #'vc-annotate-prev-revision
-   :n [tab] #'vc-annotate-toggle-annotation-visibility
+   :n "TAB" #'vc-annotate-toggle-annotation-visibility
    :n "RET" #'vc-annotate-find-revision-at-line))
 
 

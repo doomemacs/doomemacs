@@ -26,8 +26,7 @@
     (user-error "Not an org buffer"))
   (org-save-outline-visibility nil
     (let ((attachments '())
-          element
-          file)
+          element)
       (when (and (file-directory-p org-attach-directory)
                  (> (length (file-expand-wildcards (expand-file-name "*" org-attach-directory))) 0))
         (save-excursion
