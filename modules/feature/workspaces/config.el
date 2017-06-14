@@ -41,7 +41,7 @@ renamed.")
         ;; Don't auto-load on startup
         persp-auto-resume-time -1
         ;; auto-save on kill
-        persp-auto-save-opt 1)
+        persp-auto-save-opt (if noninteractive 0 1))
 
   (add-hook 'doom-init-hook #'+workspaces|init)
   (add-hook 'after-make-frame-functions #'+workspaces|init)
