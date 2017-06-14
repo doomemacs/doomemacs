@@ -153,7 +153,7 @@
              (gnutls-verify-error t))
          (dolist (url '("https://elpa.gnu.org/packages/archive-contents"
                         "https://melpa.org/packages/archive-contents"))
-           (condition-case ex
+           (condition-case-unless-debug ex
                (let (result)
                  (let ((inhibit-message t))
                    (url-retrieve url (lambda (status &rest _) (setq result status))))
@@ -169,7 +169,7 @@
                 (explain! (pp-to-string ex))))))
          (dolist (url '("https://self-signed.badssl.com"
                         "https://wrong.host.badssl.com/"))
-           (condition-case ex
+           (condition-case-unless-debug ex
                (let (result)
                  (let ((inhibit-message t))
                    (url-retrieve url (lambda (status &rest _) (setq result status))))

@@ -10,7 +10,7 @@
     (doom-refresh-clear-cache))
   (unless (or (persistent-soft-fetch 'last-pkg-refresh "emacs")
               doom--refresh-p)
-    (condition-case ex
+    (condition-case-unless-debug ex
         (progn
           (message "Refreshing package archives")
           (package-refresh-contents (not doom-debug-mode))
@@ -19,9 +19,10 @@
                               (<= i 10))
                    do (sleep-for 0 250))
           (persistent-soft-store 'last-pkg-refresh t "emacs" 900))
-    (error
+    ('error
      (doom-refresh-clear-cache)
-     (message "Failed to refresh packages: %s" (cadr ex))))))
+     (message "Failed to refresh packages: (%s) %s"
+              (car ex) (error-message-string ex))))))
 
 ;;;###autoload
 (defun doom-refresh-clear-cache ()
@@ -33,6 +34,7 @@
 (defun doom-package-backend (name)
   "Get which backend the package NAME was installed with. Can either be elpa,
 quelpa or nil (if not installed)."
+  (cl-assert (symbolp name) t)
   (doom-initialize-packages)
   (cond ((let ((plist (cdr (assq name doom-packages))))
            (and (not (plist-get plist :pin))
@@ -51,6 +53,7 @@ quelpa or nil (if not installed)."
   "Determine whether NAME (a symbol) is outdated or not. If outdated, returns a
 list, whose car is NAME, and cdr the current version list and latest version
 list of the package."
+  (cl-assert (symbolp name) t)
   (doom-initialize-packages)
   (when-let (pkg (assq name package-alist))
     (let* ((old-version (package-desc-version (cadr pkg)))
@@ -191,29 +194,23 @@ Used by `doom/packages-install'."
                 table))))
 
 (defmacro doom--condition-case! (&rest body)
-  `(condition-case ex
+  `(condition-case-unless-debug ex
        (condition-case ex2
            (progn ,@body)
          ('file-error
-          (message! (bold (red "  FILE ERROR: %s" ex2)))
+          (message! (bold (red "  FILE ERROR: %s" (error-message-string ex2))))
           (message! "  Trying again...")
           (doom-refresh-packages t)
           ,@body))
      ('user-error
-      (message! (bold (red "  ERROR: %s" ex))))
+      (message! (bold (red "  ERROR: (%s) %s"
+                           (upcase (symbol-name (car ex)))
+                           (error-message-string ex)))))
      ('error
       (doom-refresh-clear-cache)
-      (message! (bold (red "  FATAL ERROR: %s" ex)))
-      (when doom-debug-mode
-        (with-temp-buffer
-          (insert
-           (pp-to-string
-            (cl-loop for i from 2
-                     for frame = (backtrace-frame i)
-                     while frame
-                     collect frame)))
-          (indent-code-rigidly (point-min) (point-max) 4)
-          (message! "%s" (buffer-string)))))))
+      (message! (bold (red "  FATAL ERROR: (%s) %s"
+                           (upcase (symbol-name (car ex)))
+                           (error-message-string ex)))))))
 
 
 ;;

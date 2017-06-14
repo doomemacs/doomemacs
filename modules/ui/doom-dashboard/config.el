@@ -151,7 +151,7 @@ whose dimensions may not be fully initialized by the time this is run."
     (s-center +doom-dashboard--width
               (format "Loaded %d packages in %.03fs "
                       (- (length load-path) (length doom--base-load-path))
-                      doom-init-time))
+                      (if (floatp doom-init-time) doom-init-time 0.0)))
     'face 'font-lock-comment-face)
    "\n"))
 

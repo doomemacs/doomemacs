@@ -133,6 +133,19 @@ melodramatic ex-vimmer disappointed with the text-editor status quo."
   "A list of hooks run after DOOM initialization is complete, and after
 `doom-init-hook'.")
 
+(defun doom-try-run-hook (fn hook)
+  "Runs a hook wrapped in a `condition-case-unless-debug' block; its objective
+is to include more information in the error message, without sacrificing your
+ability to invoke the debugger in debug mode."
+  (condition-case-unless-debug ex
+      (funcall fn)
+    ('error
+     (display-warning
+      hook
+      (format "%s in '%s' -> %s" (car ex) fn (error-message-string ex))
+      :error)))
+  nil)
+
 ;; Automatic minor modes
 (defvar doom-auto-minor-mode-alist '()
   "Alist mapping filename patterns to corresponding minor mode functions, like
@@ -179,9 +192,8 @@ enable multiple minor modes for the same regexp.")
 
 (defun doom|finalize ()
   (unless doom-init-p
-    (with-demoted-errors "INIT ERROR: %s"
-      (run-hooks 'doom-init-hook)
-      (run-hooks 'doom-post-init-hook))
+    (dolist (hook '(doom-init-hook doom-post-init-hook))
+      (run-hook-wrapped hook #'doom-try-run-hook hook))
 
     ;; Don't keep gc-cons-threshold too high. It helps to stave off the GC while
     ;; Emacs starts up, but afterwards it causes stuttering and random freezes.
@@ -197,9 +209,13 @@ enable multiple minor modes for the same regexp.")
 
 ;;;
 ;; Bootstrap
-(load! core-os) ; consistent behavior across Oses
-(with-demoted-errors "AUTOLOAD ERROR: %s"
-  (require 'autoloads doom-autoload-file t))
+(load! core-os) ; consistent behavior across OSes
+(condition-case-unless-debug ex
+    (require 'autoloads doom-autoload-file t)
+  ('error
+   (lwarn 'doom-autoloads :warning
+          "%s in autoloads.el -> %s"
+          (car ex) (error-message-string ex))))
 
 (unless noninteractive
   (load! core-ui)         ; draw me like one of your French editors
