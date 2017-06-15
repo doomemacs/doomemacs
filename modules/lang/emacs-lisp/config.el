@@ -16,9 +16,6 @@
                    ("add-hook" "remove-hook")
                    ("add-hook!" "remove-hook!")))
 
-  ;; Don't affect lisp indentation (only `tab-width')
-  (set! :editorconfig :remove 'emacs-lisp-mode)
-
   (defun +emacs-lisp|hook ()
     (add-hook 'before-save-hook #'delete-trailing-whitespace nil t)
 

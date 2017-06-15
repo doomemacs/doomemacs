@@ -152,6 +152,11 @@ fundamental-mode) for performance sake."
   :config
   (add-hook 'doom-init-hook #'editorconfig-mode)
 
+  ;; Editorconfig makes indentation weird in Lisp modes, so we disable it. It
+  ;; still applies other project settings (e.g. tabs vs spaces) though.
+  (set! :editorconfig :remove 'emacs-lisp-mode)
+  (set! :editorconfig :remove 'lisp-mode)
+
   (defun doom|editorconfig-whitespace-mode-maybe (&rest _)
     "Show whitespace-mode when file uses TABS (ew)."
     (if indent-tabs-mode (whitespace-mode +1)))
