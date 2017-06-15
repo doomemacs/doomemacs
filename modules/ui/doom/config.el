@@ -60,12 +60,6 @@
         doom-neotree-file-icons 'simple
         doom-neotree-line-spacing 2)
 
-  ;; Since Fira Mono doesn't have an italicized variant, highlight it instead
-  (set-face-attribute 'italic nil
-                      :weight 'ultra-light
-                      :foreground "#ffffff"
-                      :background (doom-color 'current-line))
-
   (after! neotree
     (defun +doom|neotree-fix-popup ()
       "Ensure the fringe settings are maintained on popup restore."

@@ -20,6 +20,14 @@
 (advice-add #'tramp-read-passwd :around #'+hlissner*no-authinfo-for-tramp)
 
 
+(after! doom-themes
+  ;; Since Fira Mono doesn't have an italicized variant, highlight it instead
+  (set-face-attribute 'italic nil
+                      :weight 'ultra-light
+                      :foreground "#ffffff"
+                      :background (doom-color 'current-line)))
+
+
 (after! evil-mc
   ;; if I'm in insert mode, chances are I want cursors to resume
   (add-hook! 'evil-mc-before-cursors-created
