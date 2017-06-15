@@ -33,14 +33,18 @@ modes are active and the buffer is read-only.")
  tab-always-indent t
  tab-width 4
  tabify-regexp "^\t* [ \t]+"  ; for :retab
- whitespace-line-column fill-column
- whitespace-style
- '(face tabs tab-mark trailing lines-tail)
- whitespace-display-mappings
- '((tab-mark ?\t [?› ?\t]) (newline-mark 10  [36 10]))
  ;; Wrapping
  truncate-lines t
  truncate-partial-width-windows 50
+ ;; whitespace-mode
+ whitespace-line-column fill-column
+ whitespace-style
+ '(face indentation tabs tab-mark spaces space-mark newline newline-mark
+   trailing lines-tail)
+ whitespace-display-mappings
+ '((tab-mark ?\t [?› ?\t])
+   (newline-mark 10 [36 10])
+   (space-mark 32 [183] [46]))
  ;; undo-tree
  undo-tree-auto-save-history t
  undo-tree-history-directory-alist (list (cons "." (concat doom-cache-dir "undo-tree-hist/")))
@@ -159,7 +163,9 @@ fundamental-mode) for performance sake."
 
   (defun doom|editorconfig-whitespace-mode-maybe (&rest _)
     "Show whitespace-mode when file uses TABS (ew)."
-    (if indent-tabs-mode (whitespace-mode +1)))
+    (when indent-tabs-mode
+      (let ((whitespace-style '(face tabs tab-mark trailing-lines tail)))
+        (whitespace-mode +1))))
   (add-hook 'editorconfig-custom-hooks #'doom|editorconfig-whitespace-mode-maybe))
 
 (def-package! editorconfig-conf-mode
