@@ -50,7 +50,7 @@ test\:core $(patsubst %, test\:%, $(MODULES)): init.el .local/autoloads.el
 
 # run tests interactively
 testi: init.el .local/autoloads.el
-	@DEBUG=1 $(EMACSI) -f doom/run-tests -f ert
+	@$(EMACSI) -f doom/run-tests -f ert
 
 # For running Emacs from a different folder than ~/.emacs.d
 run:
