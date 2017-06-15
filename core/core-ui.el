@@ -268,8 +268,9 @@ file."
 (def-package! nlinum
   :commands nlinum-mode
   :preface
-  (defvar linum-format "%3d ")
-  (defvar nlinum-format "%4d ")
+  (defvar doom-ui-nlinum-lpad 4)
+  (defvar doom-ui-nlinum-rpad 1)
+  (defvar doom-ui-nlinum-spacer ?\u2002)
   :init
   (defun doom|init-nlinum-mode ()
     (unless (eq major-mode 'org-mode)
@@ -277,6 +278,24 @@ file."
   (add-hook! (prog-mode text-mode) #'doom|init-nlinum-mode)
   :config
   (setq nlinum-highlight-current-line t)
+
+  (defun doom-nlinum-format-fn (line width)
+    "A more customizable `nlinum-format-function'. See `doom-ui-nlinum-lpad',
+`doom-ui-nlinum-rpad' and `doom-ui-nlinum-spacer'. Allows a fix for
+`whitespace-mode' space-marks appearing inside the line number."
+    (let ((str (number-to-string line)))
+      (setq str (concat (make-string (max 0 (- doom-ui-nlinum-lpad (length str)))
+                                     doom-ui-nlinum-spacer)
+                        str
+                        (make-string doom-ui-nlinum-rpad doom-ui-nlinum-spacer)))
+      (put-text-property 0 (length str) 'face
+                         (if (and nlinum-highlight-current-line
+                                  (= line nlinum--current-line))
+                             'nlinum-current-line
+                           'linum)
+                         str)
+      str))
+  (setq nlinum-format-function #'doom-nlinum-format-fn)
 
   ;; Optimization: calculate line number column width beforehand
   (defun doom|init-nlinum-width ()
