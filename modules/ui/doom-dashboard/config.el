@@ -58,9 +58,8 @@
     (add-hook 'after-make-frame-functions #'+doom-dashboard-deferred-reload)
     (add-hook 'window-configuration-change-hook #'+doom-dashboard-reload)
     (add-hook 'kill-buffer-query-functions #'+doom-dashboard|kill-buffer-query-fn)
-    (+doom-dashboard-reload)
-    (when (equal (buffer-name) "*scratch*")
-      (switch-to-buffer (doom-fallback-buffer)))))
+    (unless (daemonp)
+      (+doom-dashboard/open t))))
 
 (add-hook 'doom-post-init-hook #'+doom-dashboard|init)
 
@@ -69,13 +68,15 @@
   (push +doom-dashboard-name clean-buffer-list-kill-never-buffer-names)
   (push "^\\s-*\\*doom.+" clean-buffer-list-kill-never-regexps))
 
-
 ;;
-(defun +doom-dashboard/open ()
+(defun +doom-dashboard/open (&optional startup)
   "Open the dashboard buffer."
   (interactive)
-  (+doom-dashboard-reload)
-  (switch-to-buffer (doom-fallback-buffer)))
+  (when (or (not startup)
+            (one-window-p t)
+            (eq (buffer-name (window-buffer (car (window-list)))) "*scratch*"))
+    (+doom-dashboard-reload)
+    (switch-to-buffer (doom-fallback-buffer))))
 
 (defun +doom-dashboard-p (&optional buffer)
   "Returns t if BUFFER is the dashboard buffer."
@@ -83,16 +84,20 @@
     (and (buffer-live-p buffer)
          (eq buffer (doom-fallback-buffer)))))
 
-(defun +doom-dashboard-deferred-reload (&rest _)
+(defun +doom-dashboard-deferred-reload (frame)
   "Reload the dashboard after a brief pause. This is necessary for new frames,
 whose dimensions may not be fully initialized by the time this is run."
-  (run-with-timer 0.1 nil #'+doom-dashboard-reload))
+  (run-with-timer 0.05 nil
+                  (lambda (frame)
+                    (with-selected-frame frame
+                      (+doom-dashboard/open t)))
+                  frame))
 
 (defun +doom-dashboard-reload (&optional dir)
   "Update the DOOM scratch buffer (or create it, if it doesn't exist)."
   (when (and (not +doom-dashboard-inhibit-refresh)
              (not (minibuffer-window-active-p (minibuffer-window)))
-             (get-buffer-window-list (doom-fallback-buffer) nil t))
+             (get-buffer-window-list (doom-fallback-buffer)))
     (unless +doom-dashboard-modeline
       (setq +doom-dashboard--old-modeline mode-line-format)
       (setq +doom-dashboard-modeline
