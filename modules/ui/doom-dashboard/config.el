@@ -104,27 +104,26 @@ whose dimensions may not be fully initialized by the time this is run."
             (or (and (featurep! :ui doom-modeline)
                      (doom-modeline 'project))
                 mode-line-format)))
-    (let ((old-pwd (or dir default-directory))
-          (inhibit-read-only t))
+    (let ((old-pwd (or dir default-directory)))
       (with-current-buffer (doom-fallback-buffer)
-        (read-only-mode +1)
-        (+doom-dashboard-mode)
-        (setq fringe-indicator-alist
-              (cl-loop for (car . _cdr) in fringe-indicator-alist
-                       collect (cons car nil)))
-        (erase-buffer)
-        (let* ((window (get-buffer-window (doom-fallback-buffer)))
-               (+doom-dashboard--width  (window-width  window))
-               (+doom-dashboard--height (window-height window)))
-          (insert (make-string (max 0 (- (truncate (/ +doom-dashboard--height 2)) 16)) ?\n))
-          (dolist (widget-name +doom-dashboard-widgets)
-            (funcall (intern (format "doom-dashboard-widget--%s" widget-name)))
-            (insert "\n")))
-        (setq default-directory old-pwd
-              mode-line-format +doom-dashboard-modeline)
-        (unless (button-at (point))
-          (goto-char (point-min))
-          (goto-char (next-button (point)))))))
+        (with-silent-modifications
+          (read-only-mode +1)
+          (+doom-dashboard-mode)
+          (cl-loop for (car . _cdr) in fringe-indicator-alist
+                   collect (cons car nil) into alist
+                   finally do (setq fringe-indicator-alist alist))
+          (erase-buffer)
+          (let ((+doom-dashboard--width  (window-width))
+                (+doom-dashboard--height (window-height)))
+            (insert (make-string (max 0 (- (truncate (/ +doom-dashboard--height 2)) 16)) ?\n))
+            (dolist (widget-name +doom-dashboard-widgets)
+              (funcall (intern (format "doom-dashboard-widget--%s" widget-name)))
+              (insert "\n")))
+          (setq default-directory old-pwd
+                mode-line-format +doom-dashboard-modeline)
+          (unless (button-at (point))
+            (goto-char (point-min))
+            (goto-char (next-button (point))))))))
   t)
 
 (defun doom-dashboard-widget--banner ()
