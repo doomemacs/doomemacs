@@ -160,7 +160,7 @@ mode is detected.")
 
 (def-package! all-the-icons
   :commands (all-the-icons-octicon all-the-icons-faicon all-the-icons-fileicon
-             all-the-icons-wicon all-the-icons-allthe-icon
+             all-the-icons-wicon all-the-icons-material all-the-icons-alltheicon
              all-the-icons-install-fonts)
   :init
   (defun doom*disable-all-the-icons-in-tty (orig-fn &rest args)
@@ -169,6 +169,7 @@ mode is detected.")
 
   ;; all-the-icons doesn't work in the terminal, so we "disable" it.
   (advice-add #'all-the-icons-octicon    :around #'doom*disable-all-the-icons-in-tty)
+  (advice-add #'all-the-icons-material   :around #'doom*disable-all-the-icons-in-tty)
   (advice-add #'all-the-icons-faicon     :around #'doom*disable-all-the-icons-in-tty)
   (advice-add #'all-the-icons-fileicon   :around #'doom*disable-all-the-icons-in-tty)
   (advice-add #'all-the-icons-wicon      :around #'doom*disable-all-the-icons-in-tty)
