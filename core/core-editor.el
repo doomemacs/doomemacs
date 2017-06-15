@@ -135,7 +135,6 @@ fundamental-mode) for performance sake."
 ;; specify their own formatting rules.
 (def-package! editorconfig
   :demand t
-  :mode ("\\.?editorconfig$" . editorconfig-conf-mode)
   :init
   (def-setting! :editorconfig (action value)
     ":add or :remove an entry in `editorconfig-indentation-alist'."
@@ -157,6 +156,9 @@ fundamental-mode) for performance sake."
     "Show whitespace-mode when file uses TABS (ew)."
     (if indent-tabs-mode (whitespace-mode +1)))
   (add-hook 'editorconfig-custom-hooks #'doom|editorconfig-whitespace-mode-maybe))
+
+(def-package! editorconfig-conf-mode
+  :mode "\\.?editorconfig$")
 
 ;; Auto-close delimiters and blocks as you type
 (def-package! smartparens
