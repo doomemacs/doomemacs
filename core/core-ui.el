@@ -198,10 +198,10 @@ mode is detected.")
 buffer so that `highlight-indentation-mode' will display uninterrupted indent
 markers. This whitespace is stripped out on save, as not to affect the resulting
 file."
-    (interactive (progn (barf-if-buffer-read-only)
-                        (if (use-region-p)
-                            (list (region-beginning) (region-end))
-                          (list nil nil))))
+    (interactive (if (use-region-p)
+                     (list (region-beginning) (region-end))
+                   (list nil nil)))
+    (barf-if-buffer-read-only)
     (unless indent-tabs-mode
       (with-silent-modifications
         (save-excursion
@@ -229,15 +229,16 @@ file."
     nil)
 
   (defun doom|init-highlight-indentation ()
-    (if (or highlight-indentation-mode highlight-indentation-current-column-mode)
-        (progn
-          (doom|inject-trailing-whitespace)
-          (add-hook 'before-save-hook #'delete-trailing-whitespace nil t)
-          (add-hook 'after-save-hook #'doom|inject-trailing-whitespace nil t))
-      (remove-hook 'before-save-hook #'delete-trailing-whitespace t)
-      (remove-hook 'after-save-hook #'doom|inject-trailing-whitespace t)
-      (with-silent-modifications
-        (delete-trailing-whitespace))))
+    (unless (or indent-tabs-mode buffer-read-only)
+      (if (or highlight-indentation-mode highlight-indentation-current-column-mode)
+          (progn
+            (doom|inject-trailing-whitespace)
+            (add-hook 'before-save-hook #'delete-trailing-whitespace nil t)
+            (add-hook 'after-save-hook #'doom|inject-trailing-whitespace nil t))
+        (remove-hook 'before-save-hook #'delete-trailing-whitespace t)
+        (remove-hook 'after-save-hook #'doom|inject-trailing-whitespace t)
+        (with-silent-modifications
+          (delete-trailing-whitespace)))))
   (add-hook! (highlight-indentation-mode highlight-indentation-current-column-mode)
     #'doom|init-highlight-indentation))
 
