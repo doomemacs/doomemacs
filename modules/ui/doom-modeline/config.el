@@ -364,14 +364,14 @@ directory, the file name, and its state (modified, read-only or non-existent)."
               " "))))
 
 ;;
-(defun +doom-ml-icon (icon &optional text face)
+(defun +doom-ml-icon (icon &optional text face voffset)
   "Displays an octicon ICON with FACE, followed by TEXT. Uses
 `all-the-icons-octicon' to fetch the icon."
   (concat
    (if vc-mode " " "  ")
    (when icon
      (concat
-      (all-the-icons-material icon :face face :height 1.1 :v-adjust -0.25)
+      (all-the-icons-material icon :face face :height 1.1 :v-adjust (or voffset -0.2))
       ;; (all-the-icons-octicon icon :face face :height 1.0 :v-adjust 0)
       (if text +doom-modeline-vspc)))
    (when text
@@ -386,18 +386,14 @@ icons."
       ('finished (if flycheck-current-errors
                      (let-alist (flycheck-count-errors flycheck-current-errors)
                        (let ((sum (+ (or .error 0) (or .warning 0))))
-                         ;; do-not-disturb-alt
-                         (+doom-ml-icon "do_not_disturb_alt" ;; "circle-slash"
+                         (+doom-ml-icon "do_not_disturb_alt"
                                         (number-to-string sum)
-                                        (if .error 'doom-modeline-urgent 'doom-modeline-warning))))
-                   ;; check
+                                        (if .error 'doom-modeline-urgent 'doom-modeline-warning)
+                                        -0.25)))
                    (+doom-ml-icon "check" nil 'doom-modeline-info)))
-      ('running     (+doom-ml-icon "access_time" nil 'font-lock-doc-face))
-      ;; ('running     (+doom-ml-icon "ellipsis" "Running" 'font-lock-doc-face))
+      ('running     (+doom-ml-icon "access_time" nil 'font-lock-doc-face -0.25))
       ('no-checker  (+doom-ml-icon "sim_card_alert" "-" 'font-lock-doc-face))
-      ;; ('no-checker  (+doom-ml-icon "alert" "-" 'font-lock-doc-face))
       ('errored     (+doom-ml-icon "sim_card_alert" "Error" 'doom-modeline-urgent))
-      ;; ('errored     (+doom-ml-icon "alert" "Error" 'doom-modeline-urgent))
       ('interrupted (+doom-ml-icon "pause" "Interrupted" 'font-lock-doc-face)))))
       ;; ('interrupted (+doom-ml-icon "x" "Interrupted" 'font-lock-doc-face)))))
 
