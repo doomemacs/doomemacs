@@ -18,7 +18,7 @@
 
   ;; Favor local eslint over global, if available
   (defun +javascript|init-flycheck-elint ()
-    (when (derived-mode-p 'js-mode 'js2-mode)
+    (when (derived-mode-p 'js-mode)
       (when-let ((eslint (expand-file-name "node_modules/eslint/bin/eslint.js" (doom-project-root)))
                  (exists-p (file-exists-p eslint))
                  (executable-p (file-executable-p eslint)))

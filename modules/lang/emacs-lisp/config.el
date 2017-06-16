@@ -21,13 +21,13 @@
 
     (eldoc-mode +1)
     (auto-compile-on-save-mode +1)
-    (rainbow-delimiters-mode +1)
 
     (when (and buffer-file-name
                (not (file-in-directory-p buffer-file-name doom-emacs-dir)))
       (flycheck-mode +1))
 
     ;; improve fontification
+    (rainbow-delimiters-mode +1)
     (highlight-quoted-mode +1)
     (highlight-numbers-mode +1)
     (font-lock-add-keywords
