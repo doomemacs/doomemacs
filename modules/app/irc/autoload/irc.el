@@ -62,7 +62,14 @@ argument) is non-nil only show channels in current server."
                          (cl-loop for buf in (circe-server-chat-buffers)
                                   unless (eq buf current-buffer)
                                   collect (format "  %s" (buffer-name buf)))))
-              :action #'ivy--switch-buffer-action
+              :action #'+irc--ivy-switch-to-buffer-action
               :preselect (buffer-name (current-buffer))
               :keymap ivy-switch-buffer-map
               :caller '+irc/ivy-jump-to-channel)))
+
+;;;###autoload
+(defun +irc--ivy-switch-to-buffer-action (buffer)
+  (when (stringp buffer)
+    (if (get-buffer buffer)
+        (ivy--switch-buffer-action buffer)
+      (ivy--switch-buffer-action (s-trim-left buffer)))))
