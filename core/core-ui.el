@@ -130,6 +130,9 @@ mode is detected.")
 ;; Bootstrap
 ;;
 
+;; smoother startup when mode-line is invisible
+(setq mode-line-format nil)
+
 ;; Prompts the user for confirmation when deleting a non-empty frame
 (define-key global-map [remap delete-frame] #'doom/delete-frame)
 
