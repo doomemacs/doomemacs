@@ -114,9 +114,14 @@ playback.")
     ;; Let `+irc/quit' and `circe' handle buffer cleanup
     (map! :map circe-mode-map [remap doom/kill-this-buffer] #'bury-buffer)
 
-    ;; Ensure entering insert mode will put us at the prompt.
+    ;; Ensure entering insert mode will put us at the prompt,
+    ;; unless editing after prompt marker.
+    (defun +irc-evil-insert ()
+      (when (> (marker-position lui-input-marker) (point))
+        (end-of-buffer)))
+
     (add-hook! 'lui-mode-hook
-      (add-hook 'evil-insert-state-entry-hook #'end-of-buffer nil t)))
+      (add-hook 'evil-insert-state-entry-hook #'+irc-evil-insert nil t)))
 
   (after! solaire-mode
     ;; distinguish chat/channel buffers from server buffers.
