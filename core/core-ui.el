@@ -200,12 +200,11 @@ file."
                             (list (region-beginning) (region-end))
                           (list nil nil))))
     (unless indent-tabs-mode
-      (save-match-data
+      (with-silent-modifications
         (save-excursion
-          (let ((end-marker (copy-marker (or end (point-max))))
-                (start (or start (point-min))))
-            (goto-char start)
-            (while (and (re-search-forward "^$" end-marker t) (< (point) end-marker))
+          (goto-char (or start (point-min)))
+          (save-match-data
+            (while (and (re-search-forward "^$" nil t) (< (point) (point-max)))
               (let (line-start line-end next-start next-end)
                 (save-excursion
                   ;; Check previous line indent
@@ -223,8 +222,7 @@ file."
                          (next-indent (- next-end next-start))
                          (indent (min line-indent next-indent)))
                     (insert (make-string (if (zerop indent) 0 (1+ indent)) ? )))))
-              (forward-line 1)))))
-      (set-buffer-modified-p nil))
+              (forward-line 1))))))
     nil)
 
   (defun doom|init-highlight-indentation ()
@@ -235,7 +233,8 @@ file."
           (add-hook 'after-save-hook #'doom|inject-trailing-whitespace nil t))
       (remove-hook 'before-save-hook #'delete-trailing-whitespace t)
       (remove-hook 'after-save-hook #'doom|inject-trailing-whitespace t)
-      (delete-trailing-whitespace)))
+      (with-silent-modifications
+        (delete-trailing-whitespace))))
   (add-hook! (highlight-indentation-mode highlight-indentation-current-column-mode)
     #'doom|init-highlight-indentation))
 
