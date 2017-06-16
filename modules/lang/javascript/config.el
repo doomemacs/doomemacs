@@ -12,7 +12,7 @@
     #'(flycheck-mode highlight-indentation-mode rainbow-delimiters-mode))
 
   ;; Conform switch-case indentation to editorconfig's config
-  (add-hook! 'js2-mode-hook (setq js-switch-indent-offset js-indent-level))
+  (set! :editorconfig :add '(js2-mode js2-basic-offset js-switch-indent-offset))
 
   ;; Favor local eslint over global, if available
   (defun +javascript|init-flycheck-elint ()
