@@ -167,10 +167,6 @@
 
     "REACTIONS" "BODYPARTS_ALL" "RESOURCES_ALL" "COLORS_ALL"))
 
-(def-project-mode! +javascript-screeps-mode
-  :match "/screeps/.+$"
-  :modes (+javascript-npm-mode))
-
 (defun +javascript|init-screeps-mode ()
   (when (eq major-mode 'js2-mode)
     (cl-pushnew 'javascript-jshint flycheck-disabled-checkers)

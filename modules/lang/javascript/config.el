@@ -1,7 +1,5 @@
 ;;; lang/javascript/config.el -*- lexical-binding: t; -*-
 
-(load! +screeps)
-
 (def-package! js2-mode
   :mode "\\.js$"
   :interpreter "node"
@@ -174,6 +172,11 @@
 ;;
 ;; Projects
 ;;
+
+(def-project-mode! +javascript-screeps-mode
+  :match "/screeps/.+$"
+  :modes (+javascript-npm-mode)
+  :init (load! +screeps))
 
 (def-project-mode! +javascript-gulp-mode
   :files "gulpfile.js")
