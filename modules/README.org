@@ -12,20 +12,22 @@
 - [[#appendix][Appendix]]
 
 * Introduction
-DOOM is comprised of its core files and then its modules. These modules loosely take after Spacemacs' layers, utilizing a small list of macros to manage and configure plugins and DOOM Emacs.
+DOOM is comprised of its core files and then its modules. These modules loosely
+take after Spacemacs' layers, but utilizes a small list of macros to manage and
+configure plugins and DOOM Emacs itself.
 
 These macros are:
 
 + Package management
-  + ~(featurep! MODULE SUBMODULE)~: returns =t= if =:module submodule= is activated
-  + ~(load! NAME)~: loads NAME.el, relative to the current file
-  + ~(require! MODULE SUBMODULE &optional RELOAD-P)~: activates a module & loads its config.el
-  + ~(package! NAME &key recipe pin)~: declares a package and where to get it
-  + ~(depends-on! MODULE SUBMODULE)~: loads a module's packages.el
+  + ~(featurep! MODULE SUBMODULE)~: returns =t= if =:module submodule= is activated.
+  + ~(load! NAME)~: loads NAME.el, relative to the current file.
+  + ~(require! MODULE SUBMODULE &optional RELOAD-P)~: activates a module & loads its config.el, if it isn't already loaded.
+  + ~(package! NAME &key recipe pin)~: declares a package to be installed and where to get it.
+  + ~(depends-on! MODULE SUBMODULE)~: loads a module's packages.el.
 + Configuration
-  + ~(set! SETTING &rest ARGS)~: safely cross-configure other modules
-  + ~(def-package! NAME &rest PLIST)~: configure a package (wrapper around ~use-package~)
-  + ~(def-setting! SETTING &rest ARGS)~: defines a setting other modules can ~set!~
+  + ~(set! SETTING &rest ARGS)~: safely cross-configure other modules. Use ~M-x doom/describe-setting~ to see what's available.
+  + ~(def-package! NAME &rest PLIST)~: configure a package (wrapper around ~use-package~).
+  + ~(def-setting! SETTING &rest ARGS)~: defines a setting other modules can ~set!~.
 
 The TL;DR of this document is:
 
@@ -34,6 +36,8 @@ The TL;DR of this document is:
 + =packages.el= files inform DOOM what plugins to install and where from, using the ~package!~ macro. This macro accepts a MELPA-style recipe plist to specify a location other than the ELPA for fetching plugins.
 + Use ~set!~ to safely cross-configure modules; ~doom/describe-setting~ can help you discover what settings are available.
 + Packages are deferred by default; add ~:demand t~ to their ~def-package!~ declaration to load them immediately.
++ The =private/{user-login-name}= module is automatically loaded. It is harmless to keep =:private {user-login-name}= in your init.el however.
++ =private/{user-login-name}/init.el= is a special file that is automatically loaded after DOOM core files, but before modules are loaded. Use it to configure DOOM.
 
 * Overview
 These modules are in their ideal load order.
@@ -57,12 +61,13 @@ until you recompile or delete the \*.elc files.
 #+end_quote
 
 * The structure of a module
-Modules are made up of four *optional* parts:
+Modules are made up of five *optional* parts:
 
 + config.el :: The heart of a module; loaded when the module is activated.
 + packages.el :: Tells DOOM what packages to install and where from. Isn't loaded until package management commands are used.
 + autoload.el (or autoload/*.el) :: Lazily-loaded functions for that module.
 + +*.el :: Additional config files; not automatically loaded.
++ test/*.el :: unit tests for that module, if any.
 
 ** config.el
 *config.el* is loaded immediately. It is the only file proactively loaded by the DOOM module system. Additional files must be explicitly loaded using ~load!~.
@@ -85,7 +90,7 @@ Packages should be configured using ~after!~ or ~def-package!~ (an alias for ~us
 #+END_SRC
 
 + Packages are *deferred* by default: add ~:demand t~ to ~def-package!~ blocks to load them immediately.
-+ Use ~featurep!~ to test DOOM module availability
++ Use ~featurep!~ to test DOOM module availability for conditional packages.
 + Use ~set!~ to cross-configure modules safely, e.g. company backends:
 
   #+BEGIN_SRC emacs-lisp
@@ -140,7 +145,7 @@ Autoload files named ~evil*.el~ will be ignored if =:feature evil= isn't loaded.
 The only convention is to prefix additional elisp files with a =+=, e.g.
 =modules/feature/version-control/+git.el=.
 
-These are /not/ loaded automatically. Use ~load!~ from ~config.el~ to do so.
+These are /not/ loaded automatically. Use ~load!~ to do so.
 
 #+BEGIN_SRC emacs-lisp
 ;; from modules/feature/version-control/config.el
@@ -161,7 +166,6 @@ These are /not/ loaded automatically. Use ~load!~ from ~config.el~ to do so.
   + ~doom/reload-autoloads~
   + ~doom/compile~
   + ~doom/recompile~
-  + ~doom/compile-lite~
   + ~doom/clean-cache~
   + ~doom/clean-compiled~
 
