@@ -99,23 +99,24 @@ unless the path begins with ./ or ../, in which case it's relative to
 (add-hook 'after-change-major-mode-hook #'doom|autoload-project-mode)
 
 (defmacro def-project-mode! (name &rest plist)
-  "Define a project minor-mode named NAME, and declare where and how it is
-activated. Project modes allow for project-specific settings, keymaps, hooks &
-custom configuration without having to litter the project with .dir-locals.el
-files.
+  "Define a project minor-mode named NAME and declare where and how it is
+activated. Project modes allow you to configure 'sub-modes' for major-modes that
+are specific to a specific folder, certain project structure, framework or
+arbitrary context you define. These project modes can have their own settings,
+keymaps, hooks, snippets, etc.
 
 This creates NAME-hook and NAME-map as well.
 
-A project can be enabled through .dir-locals.el however, if `doom-project' is set
-to the name of the project mode(s) to enable.
+A project can be enabled through .dir-locals.el too, if `doom-project' is set to
+the name (symbol) of the project mode(s) to enable.
 
-PLIST should contain any or all of these properties, which each are checked to
-see if NAME should be activated.
+PLIST may contain any of these properties, which are all checked to see if NAME
+should be activated. If they are *all* true, NAME is activated.
 
   :modes MODES -- if buffers are derived from MODES (one or a list of symbols).
 
-  :files FILES -- if project contains FILES; takes a solitary string or a form
-    comprised of (and ...) and/or (or ...) forms. Each path is relative to the
+  :files FILES -- if project contains FILES; takes a string or a form comprised
+    of nested (and ...) and/or (or ...) forms. Each path is relative to the
     project root, however, if prefixed with a '.' or '..', it is relative to the
     current buffer.
 
@@ -124,7 +125,9 @@ see if NAME should be activated.
   :when PREDICATE -- if PREDICATE returns true (can be a form or the symbol of a
     function)
 
-  :init FORM -- FORM will be run the first time this project mode is enabled."
+  :init FORM -- FORM to run the first time this project mode is enabled.
+
+Relevant: `doom-project-hook'."
   (declare (indent 1))
   (let ((modes (plist-get plist :modes))
         (files (plist-get plist :files))
