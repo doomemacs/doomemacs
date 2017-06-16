@@ -23,26 +23,42 @@
 
 
 ;;
-(after! evil
-  (map! :map +doom-dashboard-mode-map
-        "n" #'+doom-dashboard/next-button
-        "p" #'+doom-dashboard/previous-button
-        :em "j" #'+doom-dashboard/next-button
-        :em "k" #'+doom-dashboard/previous-button
-        [remap evil-insert]      #'evil-normal-state
-        [remap evil-change]      #'evil-normal-state
-        [remap evil-delete]      #'evil-normal-state
-        [remap evil-delete-char] #'evil-normal-state)
+(map! :map +doom-dashboard-mode-map
+      "n" #'+doom-dashboard/next-button
+      "p" #'+doom-dashboard/previous-button
+      "N" #'+doom-dashboard/last-button
+      "P" #'+doom-dashboard/first-button
+      :em "j" #'+doom-dashboard/next-button
+      :em "k" #'+doom-dashboard/previous-button
+      :em "gg" #'+doom-dashboard/first-button
+      :em "G"  #'+doom-dashboard/last-button
+      [remap evil-insert]      #'evil-normal-state
+      [remap evil-change]      #'evil-normal-state
+      [remap evil-visual-char] #'evil-normal-state
+      [remap evil-visual-line] #'evil-normal-state
+      [remap evil-delete]      #'evil-normal-state
+      [remap evil-delete-char] #'evil-normal-state)
 
-  (defun +doom-dashboard/next-button ()
-    (interactive)
-    (ignore-errors
-      (goto-char (next-button (point)))))
+(defun +doom-dashboard/next-button ()
+  (interactive)
+  (ignore-errors
+    (goto-char (next-button (point)))))
 
-  (defun +doom-dashboard/previous-button ()
-    (interactive)
-    (ignore-errors
-      (goto-char (previous-button (point))))))
+(defun +doom-dashboard/previous-button ()
+  (interactive)
+  (ignore-errors
+    (goto-char (previous-button (point)))))
+
+(defun +doom-dashboard/first-button ()
+  (interactive)
+  (goto-char (point-min))
+  (+doom-dashboard/next-button))
+
+(defun +doom-dashboard/last-button ()
+  (interactive)
+  (goto-char (point-max))
+  (+doom-dashboard/previous-button)
+  (beginning-of-line-text))
 
 
 ;;
