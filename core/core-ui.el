@@ -385,12 +385,13 @@ Example:
        (defun ,sym ()
          (let ((lhs (list ,@lhs-forms))
                (rhs (list ,@rhs-forms)))
-           (list lhs
-                 (propertize
-                  " " 'display
-                  `((space :align-to (- (+ right right-fringe right-margin)
-                                        ,(+ 1 (string-width (format-mode-line rhs)))))))
-                 rhs)))
+           (let ((rhs-str (format-mode-line rhs)))
+             (list lhs
+                   (propertize
+                    " " 'display
+                    `((space :align-to (- (+ right right-fringe right-margin)
+                                          ,(+ 1 (string-width rhs-str))))))
+                   rhs-str))))
        ,(unless (bound-and-true-p byte-compile-current-file)
           `(let (byte-compile-warnings)
              (byte-compile #',sym))))))
