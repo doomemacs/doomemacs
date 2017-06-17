@@ -15,16 +15,22 @@
 
 ;;;###autoload
 (defun =irc (&optional inhibit-workspace)
-  "Connect to IRC and auto-connect to all registered networks."
+  "Connect to IRC and auto-connect to all registered networks.
+
+If INHIBIT-WORKSPACE (the universal argument) is non-nil, don't spawn a new
+workspace for it."
   (interactive "P")
   (and (+irc-setup-wconf inhibit-workspace)
        (cl-loop for network in +irc-connections
                 collect (circe (car network)))))
 
 ;;;###autoload
-(defun +irc/connect ()
-  "Connect to a specific registered server."
-  (interactive)
+(defun +irc/connect (&optional inhibit-workspace)
+  "Connect to a specific registered server.
+
+If INHIBIT-WORKSPACE (the universal argument) is non-nil, don't spawn a new
+workspace for it."
+  (interactive "P")
   (and (+irc-setup-wconf inhibit-workspace)
        (call-interactively #'circe)))
 
@@ -67,9 +73,6 @@ argument) is non-nil only show channels in current server."
               :keymap ivy-switch-buffer-map
               :caller '+irc/ivy-jump-to-channel)))
 
-;;;###autoload
 (defun +irc--ivy-switch-to-buffer-action (buffer)
   (when (stringp buffer)
-    (if (get-buffer buffer)
-        (ivy--switch-buffer-action buffer)
-      (ivy--switch-buffer-action (s-trim-left buffer)))))
+    (ivy--switch-buffer-action (string-trim-left buffer))))

@@ -81,14 +81,13 @@ playback.")
         circe-format-server-lurker-activity
         (+irc--pad "Lurk" "{nick} joined {joindelta} ago"))
 
-  (enable-circe-new-day-notifier)
+  (add-hook 'circe-channel-mode-hook #'turn-on-visual-line-mode)
 
-  (defun +irc*circe-disconnect-hook (&rest _)
-    (run-hooks '+irc-disconnect-hook))
-  (advice-add 'circe--irc-conn-disconnected :after #'+irc*circe-disconnect-hook)
+  ;; Let `+irc/quit' and `circe' handle buffer cleanup
+  (map! :map circe-mode-map [remap doom/kill-this-buffer] #'bury-buffer)
 
   (defun +irc*circe-truncate-nicks ()
-    "Truncate long nicknames in chat output (non-destructive)."
+    "Truncate long nicknames in chat output non-destructively."
     (when-let (beg (text-property-any (point-min) (point-max) 'lui-format-argument 'nick))
       (goto-char beg)
       (let ((end (next-single-property-change beg 'lui-format-argument))
@@ -99,46 +98,29 @@ playback.")
                           ?…)))))
   (add-hook 'lui-pre-output-hook #'+irc*circe-truncate-nicks)
 
-  (add-hook! '+irc-disconnect-hook
-    (run-at-time "5 minute" nil #'circe-reconnect-all))
-
   (defun +irc|circe-message-option-bot (nick &rest ignored)
+    "Fontify known bots and mark them to not be tracked."
     (when (member nick +irc-bot-list)
       '((text-properties . (face circe-fool-face lui-do-not-track t)))))
   (add-hook 'circe-message-option-functions #'+irc|circe-message-option-bot)
-
-  (add-hook! 'circe-channel-mode-hook
-    #'(enable-circe-color-nicks enable-lui-autopaste turn-on-visual-line-mode))
-
-  (after! evil
-    ;; Let `+irc/quit' and `circe' handle buffer cleanup
-    (map! :map circe-mode-map [remap doom/kill-this-buffer] #'bury-buffer)
-
-    ;; Ensure entering insert mode will put us at the prompt,
-    ;; unless editing after prompt marker.
-    (defun +irc-evil-insert ()
-      (when (> (marker-position lui-input-marker) (point))
-        (end-of-buffer)))
-
-    (add-hook! 'lui-mode-hook
-      (add-hook 'evil-insert-state-entry-hook #'+irc-evil-insert nil t)))
 
   (after! solaire-mode
     ;; distinguish chat/channel buffers from server buffers.
     (add-hook 'circe-chat-mode-hook #'solaire-mode)))
 
 
-
 (def-package! circe-color-nicks
   :commands enable-circe-color-nicks
+  :init (add-hook 'circe-channel-mode-hook 'enable-circe-color-nicks)
   :config
   (setq circe-color-nicks-min-constrast-ratio 4.5
         circe-color-nicks-everywhere t))
 
 
 (def-package! circe-new-day-notifier
-  :commands enable-circe-new-day-notifier
+  :after circe
   :config
+  (enable-circe-new-day-notifier)
   (setq circe-new-day-notifier-format-message
         (+irc--pad "Day" "Date changed [{day}]")))
 
@@ -168,21 +150,34 @@ playback.")
     (setq lui-flyspell-p t
           lui-fill-type nil))
 
-  (enable-lui-logging)
-  (defun +irc|lui-setup-margin ()
+  (after! evil
+    (defun +irc|evil-insert ()
+      "Ensure entering insert mode will put us at the prompt, unless editing
+after prompt marker."
+      (when (> (marker-position lui-input-marker) (point))
+        (end-of-buffer)))
+
+    (add-hook! 'lui-mode-hook
+      (add-hook 'evil-insert-state-entry-hook #'+irc|evil-insert nil t)))
+
+  (defun +irc|init-lui-margins ()
     (setq lui-time-stamp-position 'right-margin
           lui-time-stamp-format +irc-time-stamp-format
           right-margin-width (length (format-time-string lui-time-stamp-format))))
-  (defun +irc|lui-setup-wrap ()
+
+  (defun +irc|init-lui-wrapping ()
     (setq fringes-outside-margins t
           word-wrap t
           wrap-prefix (s-repeat (+ +irc-left-padding 3) " ")))
-  (add-hook! 'lui-mode-hook #'(+irc|lui-setup-margin +irc|lui-setup-wrap)))
 
-
-(def-package! lui-autopaste
-  :commands enable-lui-autopaste)
+  (add-hook! 'lui-mode-hook #'(+irc|init-lui-margins +irc|init-lui-wrapping)))
 
 
 (def-package! lui-logging
-  :commands enable-lui-logging)
+  :after lui
+  :config (enable-lui-logging))
+
+
+(def-package! lui-autopaste
+  :commands enable-lui-autopaste
+  :init (add-hook 'circe-channel-mode-hook 'enable-lui-autopaste))
