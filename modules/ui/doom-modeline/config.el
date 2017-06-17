@@ -274,7 +274,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                    (concat (all-the-icons-faicon
                             "floppy-o"
                             :face 'doom-modeline-buffer-modified
-                            :v-adjust -0.1)
+                            :v-adjust -0.0575)
                            " "))
                   ((and buffer-file-name
                         (not (file-exists-p buffer-file-name)))
