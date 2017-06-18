@@ -19,7 +19,7 @@
   (autoload sym "s"))
 
 (dolist (sym '(when-let if-let string-trim string-join string-blank-p string-lessp))
-  (autoload sym "subr-x"))
+  (autoload sym "subr-x" nil nil 'macro))
 
 
 ;;

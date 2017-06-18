@@ -1,7 +1,5 @@
 ;;; feature/evil/autoload/evil.el -*- lexical-binding: t; -*-
 
-(eval-when-compile (require 'subr-x))
-
 ;;;###autoload
 (defun +evil/visual-indent ()
   "vnoremap < <gv"

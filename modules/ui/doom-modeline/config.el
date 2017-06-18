@@ -1,10 +1,7 @@
 ;;; ui/doom-modeline/config.el -*- lexical-binding: t; -*-
 
-(eval-when-compile (require 'subr-x))
-
-(line-number-mode -1)
-
-(def-package! eldoc-eval :demand t
+(def-package! eldoc-eval
+  :demand t
   :config
   ;; Show eldoc in the mode-line with `eval-expression'
   (defun +doom-modeline--show-eldoc (input)
