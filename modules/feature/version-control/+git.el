@@ -28,7 +28,9 @@
     (defun +version-control|update-git-gutter ()
       "Refresh git-gutter on ESC. Return nil to prevent shadowing other
 `+evil-esc-hook' hooks."
-      (ignore (git-gutter)))
+      (when git-gutter-mode
+        (git-gutter)
+        nil))
     (add-hook '+evil-esc-hook #'+version-control|update-git-gutter t)))
 
 
