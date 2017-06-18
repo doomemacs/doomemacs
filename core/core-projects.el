@@ -77,6 +77,11 @@ state are passed in.")
   (let ((projectile-require-project-root strict-p))
     (ignore-errors (projectile-project-root))))
 
+(defun doom*project-root (&rest _)
+  "An advice function used to replace project-root-detection functions in other
+libraries."
+  (doom-project-root))
+
 (defmacro doom-project-has! (files)
   "Checks if the project has the specified FILES, relative to the project root,
 unless the path begins with ./ or ../, in which case it's relative to

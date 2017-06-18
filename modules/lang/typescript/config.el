@@ -27,8 +27,6 @@
       (eldoc-mode +1)))
   (add-hook! (typescript-mode web-mode) #'+typescript|tide-setup)
 
-  (advice-add #'tide-project-root :override #'doom-project-root)
-
   (map! :map typescript-mode-map
         :m "gd" #'tide-jump-to-definition
         :localleader
@@ -41,5 +39,7 @@
   (set! :company-backend 'typescript-mode '(company-tide))
   (setq tide-format-options
         '(:insertSpaceAfterFunctionKeywordForAnonymousFunctions t
-          :placeOpenBraceOnNewLineForFunctions nil)))
+          :placeOpenBraceOnNewLineForFunctions nil))
+
+  (advice-add #'tide-project-root :override #'doom*project-root))
 
