@@ -22,15 +22,21 @@
   "An alist that maps online resources to their search url or a function that
 produces an url. Used by `+jump/online'.")
 
-(def-setting! :xref-backend (mode function)
-  "TODO"
-  `(add-hook! ,mode
-     (add-hook 'xref-backend-functions #',function nil t)))
+(defvar +jump-function-alist nil
+  "TODO")
 
-(set! :popup "*xref*" :noselect t :autokill t :autoclose t)
+(defvar-local +jump-current-functions nil
+  "TODO")
+
+(def-setting! :jump (modes &rest plist)
+  "TODO"
+  `(dolist (mode (doom-enlist ,modes))
+     (push (cons mode (list ,@plist)) +jump-function-alist)))
 
 ;; Let me control what backends to fall back on
 (setq-default xref-backend-functions '(t))
+
+(set! :popup "*xref*" :noselect t :autokill t :autoclose t)
 
 ;; Recenter after certain jumps
 (add-hook!
@@ -38,13 +44,24 @@ produces an url. Used by `+jump/online'.")
     counsel-grep-post-action-hook dumb-jump-after-jump-hook)
   #'recenter)
 
+(defun +jump|init ()
+  "Initialize `+jump-current-functions', used by `+jump/definition',
+`+jump/references' and `+jump/documentation'."
+  (when-let (plist (cdr (assq major-mode +jump-function-alist)))
+    (when-let (backend (plist-get plist :xref-backend))
+      (make-variable-buffer-local 'xref-backend-functions)
+      (cl-pushnew backend xref-backend-functions :test #'eq))
+    (setq-local +jump-current-functions plist)))
+(add-hook 'after-change-major-mode-hook #'+jump|init)
+
 
 ;;
 ;; Packages
 ;;
 
 (def-package! dumb-jump
-  :commands (dumb-jump-go dumb-jump-quick-look dumb-jump-back)
+  :commands (dumb-jump-go dumb-jump-quick-look
+             dumb-jump-back dumb-jump-result-follow)
   :config
   (setq dumb-jump-default-project doom-emacs-dir
         dumb-jump-aggressive nil

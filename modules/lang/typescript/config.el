@@ -26,10 +26,7 @@
       (flycheck-mode +1)
       (eldoc-mode +1)))
   (add-hook! (typescript-mode web-mode) #'+typescript|tide-setup)
-
-  (map! :map typescript-mode-map
-        :m "gd" #'tide-jump-to-definition
-        :localleader
+  (map! :localleader
         :m "fh" #'tide-documentation-at-point))
 
 
@@ -37,6 +34,11 @@
   :after typescript-mode
   :config
   (set! :company-backend 'typescript-mode '(company-tide))
+  (set! :jump 'typescript-mode
+    :definition #'tide-jump-to-definition
+    :references #'tide-references
+    :documentation #'tide-documentation-at-point)
+
   (setq tide-format-options
         '(:insertSpaceAfterFunctionKeywordForAnonymousFunctions t
           :placeOpenBraceOnNewLineForFunctions nil))

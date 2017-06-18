@@ -11,6 +11,10 @@
   (add-hook! 'js2-mode-hook
     #'(flycheck-mode highlight-indentation-mode rainbow-delimiters-mode))
 
+  (set! :repl 'js2-mode '+javascript/repl)
+  (set! :electric 'js2-mode :chars '(?\} ?\) ?.))
+  (set! :jump 'js2-mode :xref-backend #'xref-js2-xref-backend)
+
   ;; Conform switch-case indentation to editorconfig's config
   (set! :editorconfig :add '(js2-mode js2-basic-offset js-switch-indent-offset))
 
@@ -22,10 +26,6 @@
                  (executable-p (file-executable-p eslint)))
         (setq-local flycheck-javascript-eslint-executable eslint))))
   (add-hook 'flycheck-mode-hook #'+javascript|init-flycheck-elint)
-
-  (set! :repl 'js2-mode '+javascript/repl)
-  (set! :electric 'js2-mode :chars '(?\} ?\) ?.))
-  (set! :xref-backend 'js2-mode 'xref-js2-xref-backend)
 
   (sp-with-modes '(js2-mode rjsx-mode)
     (sp-local-pair "/* " " */" :post-handlers '(("| " "SPC"))))

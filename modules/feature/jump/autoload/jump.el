@@ -3,25 +3,39 @@
 (defvar +jump--rg-installed-p (executable-find "rg"))
 (defvar +jump--ag-installed-p (executable-find "ag"))
 
+(defun +jump-to (prop identifier &optional other-window)
+  (with-selected-window
+      (if other-window
+          (save-excursion (other-window) (selected-window))
+        (selected-window))
+    (let ((fn (plist-get +jump-current-functions prop)))
+      (if (commandp fn)
+          (call-interactively fn)
+        (funcall fn identifier)))))
+
 ;;;###autoload
-(defun +jump/definition (&optional other-window)
+(defun +jump/definition (identifier &optional other-window)
   "Jump to the definition of the symbol at point.
 
 Tries xref and falls back to `dumb-jump', then rg/ag, then
 `evil-goto-definition' (if evil is active)."
-  (interactive "P")
-  (let ((sym (thing-at-point 'symbol t))
-        successful)
-    (cond ((null sym)
-           (user-error "Nothing under point"))
+  (interactive
+   (list (thing-at-point 'symbol t)
+         current-prefix-arg))
+  (cond ((null identifier)
+         (user-error "Nothing under point"))
 
-          ((ignore-errors (if other-window
-                              (xref-find-definitions-other-window sym)
-                            (xref-find-definitions sym))
-                          t))
+        ((plist-member +jump-current-functions :definition)
+         (+jump-to :definition identifier))
 
-          ((and (fboundp 'dumb-jump-go)
-                ;; dumb-jump doesn't tell us if it succeeded or not
+        ((ignore-errors (if other-window
+                            (xref-find-definitions-other-window identifier)
+                          (xref-find-definitions identifier))
+                        t))
+
+        ((and (fboundp 'dumb-jump-go)
+              ;; dumb-jump doesn't tell us if it succeeded or not
+              (let (successful)
                 (cl-letf (((symbol-function 'dumb-jump-result-follow)
                            `(lambda (result &optional use-tooltip proj)
                               (setq successful t)
@@ -30,48 +44,59 @@ Tries xref and falls back to `dumb-jump', then rg/ag, then
                   (if other-window
                       (dumb-jump-go-other-window)
                     (dumb-jump-go))
-                  successful)))
+                  successful))))
 
-          ((and sym
-                (featurep 'counsel)
-                (let ((regex (rxt-quote-pcre sym)))
-                  (or (and +jump--rg-installed-p
-                           (counsel-rg regex (doom-project-root)))
-                      (and +jump--ag-installed-p
-                           (counsel-ag regex (doom-project-root)))))))
+        ((and identifier
+              (featurep 'counsel)
+              (let ((regex (rxt-quote-pcre identifier)))
+                (or (and +jump--rg-installed-p
+                         (counsel-rg regex (doom-project-root)))
+                    (and +jump--ag-installed-p
+                         (counsel-ag regex (doom-project-root)))))))
 
-          ((and (featurep 'evil)
-                evil-mode
-                (destructuring-bind (beg end) (bounds-of-thing-at-point 'symbol)
-                  (evil-goto-definition)
-                  (let ((pt (point)))
-                    (not (and (>= pt beg)
-                              (<  pt end)))))))
+        ((and (featurep 'evil)
+              evil-mode
+              (destructuring-bind (beg end)
+                  (bounds-of-thing-at-point 'symbol)
+                (evil-goto-definition)
+                (let ((pt (point)))
+                  (not (and (>= pt beg)
+                            (<  pt end)))))))
 
-          (t (user-error "Couldn't find '%s'" sym)))))
+        (t (user-error "Couldn't find '%s'" identifier))))
 
 ;;;###autoload
-(defun +jump/references ()
+(defun +jump/references (identifier)
   "Show a list of references to the symbol at point.
 
 Tries `xref-find-references' and falls back to rg/ag."
-  (interactive)
-  (let ((sym (thing-at-point 'symbol t)))
-    (cond ((ignore-errors (xref-find-references sym)
-                          t))
+  (interactive (list (thing-at-point 'symbol t)))
+  (cond ((plist-member +jump-current-functions :references)
+         (+jump-to :references identifier))
 
-          ((and sym
-                (featurep 'counsel)
-                (let ((regex (rxt-quote-pcre sym)))
-                  (or (and (executable-find "rg")
-                           (counsel-rg regex (doom-project-root)))
-                      (and (executable-find "ag")
-                           (counsel-ag regex (doom-project-root)))))))
+        ((ignore-errors (xref-find-references identifier)
+                        t))
 
-          (t (error "Couldn't find '%s'" sym)))))
+        ((and identifier
+              (featurep 'counsel)
+              (let ((regex (rxt-quote-pcre identifier)))
+                (or (and (executable-find "rg")
+                         (counsel-rg regex (doom-project-root)))
+                    (and (executable-find "ag")
+                         (counsel-ag regex (doom-project-root)))))))
+
+        (t (error "Couldn't find '%s'" identifier))))
+
+;;;###autoload
+(defun +jump/documentation (identifier)
+  "Show documentation for the symbol at point, if available."
+  (interactive (list (thing-at-point 'symbol t)))
+  (cond ((plist-member +jump-current-functions :documentation)
+         (+jump-to :documentation identifier))
+        (t
+         (+jump/online (caar +jump-search-url-alist) identifier))))
 
 (defvar +jump--online-last nil)
-
 ;;;###autoload
 (defun +jump/online (where search)
   "Looks up SEARCH online, in you browser, as dictated by WHERE.

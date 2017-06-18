@@ -292,6 +292,7 @@
  :m  "gT" #'+workspace/switch-left
  :m  "gd" #'+jump/definition
  :m  "gD" #'+jump/references
+ :m  "gh" #'+jump/documentation
  :n  "gp" #'+evil/reselect-paste
  :n  "gr" #'+eval:region
  :n  "gR" #'+eval/buffer
