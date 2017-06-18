@@ -79,3 +79,13 @@ selection of all minor-modes, active or not."
                         (warn "Something went wrong.\n\n%s" (pp-to-string status))
                       (message "Your trust roots are set up properly.\n\n%s" (pp-to-string status))
                       t)))))
+
+(defvar doom--profiler nil)
+;;;###autoload
+(defun doom/toggle-profiler ()
+  (interactive)
+  (if (not doom--profiler)
+      (profiler-start 'cpu+mem)
+    (profiler-report)
+    (profiler-stop))
+  (setq doom--profiler (not doom--profiler)))
