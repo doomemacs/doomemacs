@@ -23,7 +23,7 @@
   :init
   (add-hook 'css-mode-hook #'counsel-css-imenu-setup)
   (map! :map* (css-mode-map scss-mode-map less-css-mode-map)
-        :leader :n ";" #'counsel-css))
+        :localleader :n ";" #'counsel-css))
 
 
 (def-package! rainbow-mode

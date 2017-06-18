@@ -147,9 +147,11 @@ mode is detected.")
 
 ;; buffer name in frame title
 (setq-default frame-title-format '("DOOM Emacs"))
+
 ;; standardize fringe width
 (push (cons 'left-fringe  doom-ui-fringe-size) default-frame-alist)
 (push (cons 'right-fringe doom-ui-fringe-size) default-frame-alist)
+
 ;; no fringe in the minibuffer
 (defun doom|no-fringes-in-minibuffer ()
   (set-window-fringes (minibuffer-window) 0 0 nil))

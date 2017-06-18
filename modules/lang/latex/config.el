@@ -54,7 +54,7 @@
 
   :config
   (map! :map reftex-mode-map
-        :leader :n ";" 'reftex-toc)
+        :localleader :n ";" 'reftex-toc)
 
   (add-hook! 'reftex-toc-mode-hook
     (reftex-toc-rescan)

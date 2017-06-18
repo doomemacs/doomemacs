@@ -130,13 +130,13 @@ evil-window-move-* (e.g. `evil-window-move-far-left')"
       (select-window that-window))))
 
 ;;;###autoload
-(defun +evil/window-move-left () "`+evil--window-swap'"  (interactive) (+evil--window-swap 'left))
+(defun +evil/window-move-left () "See `+evil--window-swap'"  (interactive) (+evil--window-swap 'left))
 ;;;###autoload
-(defun +evil/window-move-right () "`+evil--window-swap'" (interactive) (+evil--window-swap 'right))
+(defun +evil/window-move-right () "See `+evil--window-swap'" (interactive) (+evil--window-swap 'right))
 ;;;###autoload
-(defun +evil/window-move-up () "`+evil--window-swap'"    (interactive) (+evil--window-swap 'up))
+(defun +evil/window-move-up () "See `+evil--window-swap'"    (interactive) (+evil--window-swap 'up))
 ;;;###autoload
-(defun +evil/window-move-down () "`+evil--window-swap'"  (interactive) (+evil--window-swap 'down))
+(defun +evil/window-move-down () "See `+evil--window-swap'"  (interactive) (+evil--window-swap 'down))
 
 ;;;###autoload (autoload '+evil:macro-on-all-lines "feature/evil/autoload/evil" nil t)
 (evil-define-operator +evil:macro-on-all-lines (beg end &optional macro)

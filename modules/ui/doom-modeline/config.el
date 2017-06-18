@@ -17,7 +17,7 @@
   (setq eldoc-in-minibuffer-show-fn #'+doom-modeline--show-eldoc)
   (eldoc-in-minibuffer-mode +1))
 
-;; anzu and evil-anzu make it possible to display current/total in the
+;; anzu and evil-anzu expose current/total state that can be displayed in the
 ;; mode-line.
 (def-package! evil-anzu
   :when (featurep 'evil)

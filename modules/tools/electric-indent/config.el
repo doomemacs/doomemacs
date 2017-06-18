@@ -8,7 +8,7 @@
 (defvar-local doom-electric-indent-words '()
   "TODO")
 
-(setq electric-indent-chars '(?\n ?\^?))
+(setq-default electric-indent-chars '(?\n ?\^?))
 
 (defun +electric-indent|char (_c)
   (when (and (eolp) doom-electric-indent-words)

@@ -94,7 +94,7 @@ function that creates and returns the REPL buffer."
   (add-hook 'quickrun--mode-hook #'nlinum-mode)
   :config
   (set! :popup
-    '("*quickrun*"       :size 10 :noesc t :autokill t :autoclose t)
+    '("*quickrun*"       :size 10 :noesc t    :autokill t :autoclose t)
     '("*eval*"           :size 12 :noselect t :autokill t :autoclose t)
     '("*Pp Eval Output*" :size 12 :noselect t :autokill t :autoclose t))
 

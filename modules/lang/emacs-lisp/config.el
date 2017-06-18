@@ -63,6 +63,7 @@
   :config
   (setq auto-compile-display-buffer nil
         auto-compile-use-mode-line nil)
+
   (defun +emacs-lisp*load-after-compile (success)
     "Reload the current emacs-lisp file after it's recompiled, if an older
 version is loaded."
