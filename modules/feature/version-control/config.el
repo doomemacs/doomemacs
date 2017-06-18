@@ -11,6 +11,5 @@
     '("*vc-change-log*" :size 15)
     '(vc-annotate-mode :same t))
 
-  (set! :evil-state
-    '(vc-annotate-mode . normal)
-    '(vc-git-log-view-mode . normal)))
+  (set! :evil-state 'vc-annotate-mode 'normal)
+  (set! :evil-state 'vc-git-log-view-mode 'normal))

@@ -226,20 +226,21 @@ executed when called with `set!'. FORMS are not evaluated until `set!' calls it.
   (declare (indent defun) (doc-string 3))
   (unless (keywordp keyword)
     (error "Not a valid property name: %s" keyword))
-  `(progn
-     (defun ,(intern (format "doom-setting--setter%s" keyword)) ,arglist
-       ,docstring
-       ,@forms)
-     (cl-pushnew ,keyword doom-settings)))
+  (let ((fn (intern (format "doom-setting--setter%s" keyword))))
+    `(progn
+       (defun ,fn ,arglist
+         ,docstring
+         ,@forms)
+       (cl-pushnew ',(cons keyword fn) doom-settings :test #'eq :key #'car))))
 
 (defmacro set! (keyword &rest values)
   "Set an option defined by `def-setting!'. Skip if doesn't exist."
   (declare (indent defun))
   (unless values
     (error "Empty set! for %s" keyword))
-  (let ((fn (intern (format "doom-setting--setter%s" keyword))))
-    (if (functionp fn)
-        (apply fn (eval `(list ,@values)))
+  (let ((fn (cdr (assq keyword doom-settings))))
+    (if fn
+        (apply fn values)
       (when doom-debug-mode
         (message "No setting found for %s" keyword)))))
 

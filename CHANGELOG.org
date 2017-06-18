@@ -64,7 +64,6 @@
 + Add README.org's with working babel blocks to modules.
 + Document best practices for customizing DOOM emacs.
 + =ui/doom-modeline= fix hardcoded spacing in between segments.
-+ Fix ~def-setting!~ to act more like ~defmacro~, and not aggressively evaluate its arguments on expansion (and update all ~set!~ calls).
 + Rewrite main README.md to include more information about setting up, customizing, and troubleshooting DOOM Emacs.
 
 * Unreleased (master)
@@ -79,6 +78,7 @@
   + Fix =private/<user-login-name>/init.el= not being auto-loaded when the user's private module is absent in the root init.el file.
   + Improve error handling across the board. Emacs should now report more helpful errors. Catastrophic errors will be less likely to inhibit later modules from being loaded.
   + Unit-tests have been moved to their respective modules (and =core/test/=).
+  + Fix ~def-setting!~ to act more like ~defmacro~; don't aggressively evaluate its arguments on expansion.
   + =core-ui=
     + Add quit confirmation when trying to close a frame that contains real buffers.
     + Fix quit confirmations for clients connected to ~emacs --daemon~ with ~emacsclient~.
@@ -96,6 +96,13 @@
 + =feature=
   + =feature/evil=
     + Remove =goto-last-change=, which conflicts with =goto-chg=, which is a dependency of evil (that does the exact same thing, but is what evil uses).
+  + =feature/jump=
+    + Remove ~:xref-backend~ setting (replaced with ~:jump~).
+    + Add ~:jump MAJOR-MODE &rest PLIST~ setting, which recognizes four properties (that accept functions/commands):
+      + ~:definition~: jumps to the definition of the symbol under point.
+      + ~:references~: lists all references of the symbol at point and lets you jump to them.
+      + ~:documentation~: shows documentation for the symbol at point.
+      + ~:xref-backend~: a function that serves as an xref backend; this replaces ~:definition~ and ~:references~.
 + =ui=
   + =ui/doom=
     + Vastly improve daemon and terminal support for doom-themes by reloading the theme when a new client is attached, or new terminal/daemon frame is created. This prevents incorrect colors from bleeding across face class barriers.

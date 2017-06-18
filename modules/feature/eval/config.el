@@ -15,11 +15,12 @@ PLIST accepts the following properties:
 
   :when FORM    A predicate to determine if the builder is appropriate for this
                 buffer."
-  `(dolist (mode ',(if (listp modes) modes (list modes)) +eval-builders)
+  `(dolist (mode ',(doom-enlist (doom-unquote modes)) +eval-builders)
      (unless (assq mode +eval-builders)
        (push (list mode) +eval-builders))
-     (push (cons ',name (append (list :fn #',fn) ',plist))
-           (cdr (assq mode +eval-builders)))))
+     (cl-pushnew (cons ,name (append (list :fn ,fn) (list ,@plist)))
+                 (cdr (assq mode +eval-builders))
+                 :test #'eq :key #'car)))
 
 
 ;;
@@ -35,9 +36,9 @@ PLIST accepts the following properties:
   :init-value nil)
 
 (def-setting! :repl (mode command)
-  "Define a REPL for a mode. MODE is a major mode and COMMAND is a function that
-invokes the repl. Takes the same arguements as `rtog/add-repl'."
-  `(push ',(cons mode command) +eval-repls))
+  "Define a REPL for a mode. MODE is a major mode symbol and COMMAND is a
+function that creates and returns the REPL buffer."
+  `(push (cons ,mode ,command) +eval-repls))
 
 (set! :popup
   '(:custom (lambda (b &rest _) (buffer-local-value '+eval-repl-mode b)))
@@ -67,19 +68,20 @@ invokes the repl. Takes the same arguements as `rtog/add-repl'."
    (quickrun-add-command MODE COMMAND :mode MODE).
 4. If MODE is not a string and COMMANd is a symbol, add it to
    `+eval-runners-alist', which is used by `+eval/region'."
-  (cond ((symbolp command)
-         `(push ',(cons mode command) +eval-runners-alist))
-        ((stringp command)
-         `(after! quickrun
-            (push ',(cons mode command)
-                  ,(if (stringp mode)
-                       'quickrun-file-alist
-                     'quickrun--major-mode-alist))))
-        ((listp command)
-         `(after! quickrun
-            (quickrun-add-command
-              ,(symbol-name mode)
-              ',command :mode ',mode)))))
+  (let ((command (doom-unquote command)))
+    (cond ((symbolp command)
+           `(push (cons ,mode ',command) +eval-runners-alist))
+          ((stringp command)
+           `(after! quickrun
+              (push (cons ,mode ',command)
+                    ,(if (stringp mode)
+                         'quickrun-file-alist
+                       'quickrun--major-mode-alist))))
+          ((listp command)
+           `(after! quickrun
+              (quickrun-add-command
+                ,(symbol-name (doom-unquote mode))
+                ',command :mode ,mode))))))
 
 (def-package! quickrun
   :commands (quickrun

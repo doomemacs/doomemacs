@@ -12,20 +12,27 @@
 ;; Config
 ;;
 
-(defvar +email--accounts nil)
+(def-setting! :email (label letvars &optional default-p)
+  "Registers an email address for mu4e. The LABEL is a string. LETVARS are a
+list of cons cells (VARIABLE . VALUE) -- you may want to modify:
 
-(def-setting! :email (label letvars &optional default)
-  "Registers an email address for mu4e."
-  (let ((name (or (cdr (assq 'user-full-name letvars)) user-full-name))
-        (address (cdr (assq 'user-mail-address letvars))))
-    (dolist (var letvars)
-      (let ((val (cdr var)))
-        (when (and (stringp val) (string-match-p "%s" val))
-          (setcdr var (format val label)))))
-    `(progn
-       (push ',(cons label letvars) +email--accounts)
-       ,(when address
-          `(add-to-list 'mu4e-user-mail-address-list ,address))
+ + `user-full-name' (this or the global `user-full-name' is required)
+ + `user-mail-address' (required)
+ + `smtpmail-smtp-user' (required for sending mail from Emacs)
+
+OPTIONAL:
+ + `mu4e-sent-folder'
+ + `mu4e-drafts-folder'
+ + `mu4e-trash-folder'
+ + `mu4e-refile-folder'
+ + `mu4e-compose-signature'
+
+DEFAULT-P is a boolean. If non-nil, it marks that email account as the
+default/fallback account."
+  `(after! mu4e
+     (let ((account-vars ,letvars))
+       (when-let (address (cdr (assq 'user-mail-address account-vars)))
+         (cl-pushnew address mu4e-user-mail-address-list :test #'equal))
        (let ((context (make-mu4e-context
                        :name ,label
                        :enter-func (lambda () (mu4e-message "Switched to %s" ,label))
@@ -33,10 +40,11 @@
                        :match-func
                        (lambda (msg)
                          (when msg
-                           (string-prefix-p (format "/%s" ,label) (mu4e-message-field msg :maildir))))
-                       :vars ',letvars)))
+                           (string-prefix-p (format "/%s" ,label)
+                                            (mu4e-message-field msg :maildir))))
+                       :vars ,letvars)))
          (push context mu4e-contexts)
-         ,(when default
+         ,(when default-p
             `(setq-default mu4e-context-current context))))))
 
 

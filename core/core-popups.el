@@ -38,9 +38,9 @@ is enabled/disabled.'")
 
 (def-setting! :popup (&rest rules)
   "Prepend a new popup rule to `shackle-rules'."
-  (if (cl-every #'listp rules)
-      `(setq shackle-rules (nconc ',rules shackle-rules))
-    `(push ',rules shackle-rules)))
+  (if (cl-every #'listp (mapcar #'doom-unquote rules))
+      `(setq shackle-rules (nconc (list ,@rules) shackle-rules))
+    `(push (list ,@rules) shackle-rules)))
 
 
 ;;

@@ -2,17 +2,15 @@
 
 (def-setting! :company-backend (modes backends)
   "Register company BACKENDS to MODES."
-  (let* ((modes (if (listp modes) modes (list modes)))
-         (backends (if (listp backends) backends (list backends)))
+  (let* ((modes (doom-enlist (doom-unquote modes)))
+         (backends (doom-enlist (doom-unquote backends)))
          (def-name (intern (format "doom--init-company-%s"
-                                   (mapconcat #'identity (mapcar #'symbol-name modes) "-")))))
-    ;; TODO more type checks
+                                   (mapconcat #'symbol-name modes "-")))))
     `(prog1
          (defun ,def-name ()
-           (when (memq major-mode ',modes)
+           (when (memq major-mode ,modes)
              (require 'company)
-             (unless (member ',backends company-backends)
-               (setq-local company-backends (append '((,@backends)) company-backends)))))
+             (cl-pushnew ,backends company-backends :test #'equal)))
        (add-hook! ,modes #',def-name))))
 
 

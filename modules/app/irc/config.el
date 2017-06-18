@@ -15,9 +15,6 @@
 (defvar +irc-notifications-watch-strings nil
   "TODO")
 
-(defvar +irc-connections nil
-  "A list of connections set with :irc. W")
-
 (defvar +irc-defer-notifications nil
   "How long to defer enabling notifications, in seconds (e.g. 5min = 300).
 Useful for ZNC users who want to avoid the deluge of notifications during buffer
@@ -25,8 +22,9 @@ playback.")
 
 (def-setting! :irc (server letvars)
   "Registers an irc server for circe."
-  `(cl-pushnew (cons ,server ,letvars) +irc-connections
-               :test #'equal :key #'car))
+  `(after! circe
+     (cl-pushnew (cons ,server ,letvars) circe-network-options
+                 :test #'equal :key #'car)))
 
 (defvar +irc--defer-timer nil)
 
@@ -39,10 +37,6 @@ playback.")
   :commands (circe circe-server-buffers)
   :init (setq circe-network-defaults nil)
   :config
-  ;; change hands
-  (setq circe-network-options +irc-connections)
-  (defvaralias '+irc-connections 'circe-network-options)
-
   (defsubst +irc--pad (left right)
     (format (format "%%%ds | %%s" +irc-left-padding)
             (concat "*** " left) right))
