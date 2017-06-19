@@ -195,21 +195,21 @@ mode is detected.")
 (def-package! highlight-indentation
   :commands (highlight-indentation-mode highlight-indentation-current-column-mode)
   :config
-  (defun doom|inject-trailing-whitespace (&optional start end)
+  (defun doom|inject-trailing-whitespace (start end)
     "The opposite of `delete-trailing-whitespace'. Injects whitespace into
 buffer so that `highlight-indentation-mode' will display uninterrupted indent
 markers. This whitespace is stripped out on save, as not to affect the resulting
 file."
     (interactive (if (use-region-p)
                      (list (region-beginning) (region-end))
-                   (list nil nil)))
+                   (list (point-min) (point-max))))
     (barf-if-buffer-read-only)
     (unless indent-tabs-mode
       (with-silent-modifications
         (save-excursion
-          (goto-char (or start (point-min)))
+          (goto-char start)
           (save-match-data
-            (while (and (re-search-forward "^$" nil t) (< (point) (point-max)))
+            (while (and (re-search-forward "^$" nil t) (<= (point) end))
               (let (line-start line-end next-start next-end)
                 (save-excursion
                   ;; Check previous line indent
@@ -290,7 +290,7 @@ file."
   :config
   (setq nlinum-highlight-current-line t)
 
-  (defun doom-nlinum-format-fn (line width)
+  (defun doom-nlinum-format-fn (line _width)
     "A more customizable `nlinum-format-function'. See `doom-ui-nlinum-lpad',
 `doom-ui-nlinum-rpad' and `doom-ui-nlinum-spacer'. Allows a fix for
 `whitespace-mode' space-marks appearing inside the line number."
