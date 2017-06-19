@@ -597,6 +597,15 @@
      :v "<tab>" #'+snippets/expand-on-region))
 
 
+ ;; --- Major mode bindings --------------------------
+ (:after markdown-mode
+   (:map markdown-mode-map
+     ;; fix conflicts with private bindings
+     "<backspace>" nil
+     "<M-left>"    nil
+     "<M-right>"   nil))
+
+
  ;; --- Custom evil text-objects ---------------------
  :textobj "a" #'evil-inner-arg                    #'evil-outer-arg
  :textobj "B" #'evil-textobj-anyblock-inner-block #'evil-textobj-anyblock-a-block
