@@ -8,9 +8,9 @@
                                    (mapconcat #'symbol-name modes "-")))))
     `(prog1
          (defun ,def-name ()
-           (when (memq major-mode ,modes)
+           (when (memq major-mode ',modes)
              (require 'company)
-             (cl-pushnew ,backends company-backends :test #'equal)))
+             (cl-pushnew ',backends company-backends :test #'equal)))
        (add-hook! ,modes #',def-name))))
 
 
