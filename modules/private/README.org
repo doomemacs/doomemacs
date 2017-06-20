@@ -1,0 +1,61 @@
+* :private
+Modules here represent all your personal customizations. I suggest you keep them contained here to minimize friction when updating from upstream (if that matters to you).
+
+I include my private module as a reference. I recommend you don't delete/rename it as that could cause merge conflicts.
+
+** Loading your private module
+~:private {user-login-name}~ is loaded automatically after all other modules.
+
+Keeping it in your init.el is unnecessary, but harmless.
+
+~private/{user-login-name}/init.el~ is a special file, unique to the private module named after your username in ~user-login-name~. It is loaded immediately after DOOM core is, but before any module is. This gives you an opportunity to overwrite variables and settings earlier. I will refer to this as your "private init.el".
+
+** Reconfiguring packages
+If your configuration needs are simple, ~add-hook!~ and ~after!~ will be sufficient to reconfigure packages:
+
+#+BEGIN_SRC emacs-lisp
+;; private/hlissner/config.el
+(after! evil
+  (setq evil-magic nil))
+
+;; Takes a major-mode or a quoted hook function
+(add-hook! python-mode
+  (setq python-shell-interpreter "bpython"))
+#+END_SRC
+
+Look into ~def-package-hook!~ if you need more customizability. It lets you disable, add to or overwrite DOOM's ~def-package!~ blocks. These are powered by ~use-package~'s inject-hooks under the hood.
+
+*They must be used from your private init.el to work.*
+
+#+BEGIN_SRC emacs-lisp
+;; private/hlissner/init.el
+
+;; To disable a package
+(def-package-hook! evil-goggles :disable)
+
+;; If a :pre-init / :pre-config hook returns nil, it overwrites that
+;; package's original :init / :config block. Exploit this to overwrite
+;; DOOM's config. Otherwise, make sure they always return non-nil!
+(def-package-hook! doom-themes
+  :post-config
+  (setq doom-neotree-file-icons t)
+  nil)
+
+;; Otherwise, you append to a packages config
+(def-package-hook! evil
+  :post-init
+  (setq evil-magic nil)
+  t)
+#+END_SRC
+
+** Installing your own packages
+Your private module is otherwise like any other module. It may possess a packages.el file, which -- with the advantage of being loaded last -- may be used not only to install your own packages, but overwrite past ~package!~ declarations.
+
+#+BEGIN_SRC emacs-lisp
+;; prevent a certain package from being installed; pair this with something
+;; like (def-package-hook! evil-goggles :disable) in your private init.el
+(package! evil-goggles :ignore t)
+
+;; Tell doom to get evil from somewhere else
+(package! evil :recipe (:fetcher github :repo "hlissner/my-evil-fork"))
+#+END_SRC
