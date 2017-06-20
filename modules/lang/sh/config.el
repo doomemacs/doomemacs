@@ -1,7 +1,9 @@
 ;;; lang/sh/config.el -*- lexical-binding: t; -*-
 
 (defvar +sh-builtin-keywords
-  '("sudo" "echo" "ls" "sleep" "tee" "cd" "cat")
+  '("cat" "cat" "cd" "chmod" "chown" "cp" "curl" "date" "echo" "find" "git"
+    "grep" "head" "kill" "less" "ls" "make" "mkdir" "mv" "pgrep" "pkill" "pwd"
+    "rm" "sleep" "sudo" "tail" "tee" "touch")
   "A list of common shell commands and keywords to be fontified especially in
 `sh-mode'.")
 
@@ -30,8 +32,8 @@
                (2 'font-lock-variable-name-face prepend))
               (+sh--match-command-subst-in-quotes
                (0 'sh-quoted-exec prepend))
-              (,(concat "^\\s-*" (regexp-opt +sh-builtin-keywords 'words))
-               (0 'font-lock-builtin-face t))))
+              (,(regexp-opt +sh-builtin-keywords 'words)
+               (0 'font-lock-builtin-face append))))
 
   ;; sh-mode has file extensions checks for other shells, but not zsh, so...
   (defun +sh|detect-zsh ()
