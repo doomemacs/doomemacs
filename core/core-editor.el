@@ -208,6 +208,7 @@ fundamental-mode) for performance sake."
   (setq undo-tree-auto-save-history t
         undo-tree-history-directory-alist
         (list (cons "." (concat doom-cache-dir "undo-tree-hist/"))))
+
   (defun doom*silence-undo-tree-load (orig-fn &rest args)
     "Silence undo-tree load errors."
     (quiet! (apply orig-fn args)))

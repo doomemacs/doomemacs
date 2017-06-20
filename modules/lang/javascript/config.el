@@ -11,7 +11,7 @@
   (add-hook! 'js2-mode-hook
     #'(flycheck-mode highlight-indentation-mode rainbow-delimiters-mode))
 
-  (set! :repl 'js2-mode '+javascript/repl)
+  (set! :repl 'js2-mode #'+javascript/repl)
   (set! :electric 'js2-mode :chars '(?\} ?\) ?.))
   (set! :jump 'js2-mode :xref-backend #'xref-js2-xref-backend)
 

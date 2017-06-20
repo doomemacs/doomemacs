@@ -241,7 +241,7 @@ across windows."
   (add-hook 'doom-post-init-hook #'evil-escape-mode)
   :config
   ;; no `evil-escape' in minibuffer
-  (cl-pushnew #'minibufferp evil-escape-inhibit-functions)
+  (cl-pushnew #'minibufferp evil-escape-inhibit-functions :test #'eq)
   (map! :irvo "C-g" #'evil-escape))
 
 
@@ -259,7 +259,7 @@ across windows."
   :commands (evilmi-jump-items evilmi-text-object global-evil-matchit-mode)
   :config (global-evil-matchit-mode 1)
   :init
-  (map! [remap evil-jump-item]    #'evilmi-jump-items
+  (map! [remap evil-jump-item] #'evilmi-jump-items
         :textobj "%" #'evilmi-text-object #'evilmi-text-object)
   :config
   (defun +evil|simple-matchit ()
@@ -304,7 +304,8 @@ the new algorithm is confusing, like in python or ruby."
   (dolist (fn '(doom/deflate-space-maybe doom/inflate-space-maybe
                 doom/backward-to-bol-or-indent doom/forward-to-last-non-comment-or-eol
                 doom/backward-kill-to-bol-and-indent doom/newline-and-indent))
-    (push (cons fn '((:default . evil-mc-execute-default-call))) evil-mc-custom-known-commands))
+    (push (cons fn '((:default . evil-mc-execute-default-call)))
+          evil-mc-custom-known-commands))
 
   (defun +evil|escape-multiple-cursors ()
     "Clear evil-mc cursors and restore state."
@@ -318,7 +319,8 @@ the new algorithm is confusing, like in python or ruby."
   (push 'evil-escape-mode evil-mc-incompatible-minor-modes))
 
 
-(def-package! evil-snipe :demand t
+(def-package! evil-snipe
+  :demand t
   :init
   (setq evil-snipe-smart-case t
         evil-snipe-scope 'line
