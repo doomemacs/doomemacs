@@ -525,7 +525,7 @@ If ONLY-RECOMPILE-P is non-nil, only recompile out-of-date files."
   (interactive "P")
   ;; Ensure all relevant config files are loaded and up-to-date. This way we
   ;; don't need eval-when-compile and require blocks scattered all over.
-  (doom-initialize-packages t t)
+  (doom-initialize-packages t noninteractive)
   (let ((targets
          (cond ((equal (car command-line-args-left) "--")
                 (cl-loop for file in (cdr command-line-args-left)
