@@ -82,7 +82,7 @@
    :desc "Toggle last popup"       :n "~"   #'doom/popup-toggle
    :desc "Eval expression"         :n "`"   #'eval-expression
    :desc "Blink cursor line"       :n "DEL" #'+doom/blink-cursor
-   :desc "Jump to bookmark"        :n "RET" #'counsel-bookmark
+   :desc "Jump to bookmark"        :n "RET" #'bookmark-jump
 
    ;; C-u is used by evil
    :desc "Universal argument"    :n "u"  #'universal-argument
@@ -165,18 +165,19 @@
                                        :v  "r" #'+eval:repl)
 
    (:desc "file" :prefix "f"
-     :desc "File file"             :n  "."  #'find-file
-     :desc "Sudo find file"        :n  ">"  #'doom/sudo-find-file
-     :desc "Find file in project"  :n  "/"  #'projectile-find-file
-     :desc "Find file from here"   :n  "?"  #'counsel-file-jump
-     :desc "Find other file"       :n  "a"  #'projectile-find-other-file
-     :desc "Find file in dotfiles" :n  "d"  #'+hlissner/find-in-dotfiles
-     :desc "Browse dotfiles"       :n  "D"  #'+hlissner/browse-dotfiles
-     :desc "Find file in emacs.d"  :n  "e"  #'+hlissner/find-in-emacsd
-     :desc "Browse emacs.d"        :n  "E"  #'+hlissner/browse-emacsd
-     :desc "Recent files"          :n  "r"  #'recentf
-     :desc "Recent project files"  :n  "R"  #'projectile-recentf
-     :desc "Yank filename"         :n  "y"  #'+hlissner/yank-buffer-filename)
+     :desc "File file"                 :n "." #'find-file
+     :desc "Sudo find file"            :n ">" #'doom/sudo-find-file
+     :desc "Find file in project"      :n "/" #'projectile-find-file
+     :desc "Find file from here"       :n "?" #'counsel-file-jump
+     :desc "Find other file"           :n "a" #'projectile-find-other-file
+     :desc "Open project editorconfig" :n "c" #'editorconfig-find-current-editorconfig
+     :desc "Find file in dotfiles"     :n "d" #'+hlissner/find-in-dotfiles
+     :desc "Browse dotfiles"           :n "D" #'+hlissner/browse-dotfiles
+     :desc "Find file in emacs.d"      :n "e" #'+hlissner/find-in-emacsd
+     :desc "Browse emacs.d"            :n "E" #'+hlissner/browse-emacsd
+     :desc "Recent files"              :n "r" #'recentf
+     :desc "Recent project files"      :n "R" #'projectile-recentf
+     :desc "Yank filename"             :n "y" #'+hlissner/yank-buffer-filename)
 
    (:desc "git" :prefix "g"
      :desc "Git status"        :n  "s" #'magit-status
@@ -191,20 +192,24 @@
      :n "h" help-map
      :desc "Apropos"               :n "a" #'apropos
      :desc "Reload theme"          :n "R" #'+doom/reset-theme
-     :desc "Toggle Emacs log"      :n "m" #'doom/popup-toggle-messages
      :desc "Find library"          :n "l" #'find-library
+     :desc "Toggle Emacs log"      :n "m" #'doom/popup-toggle-messages
      :desc "Command log"           :n "L" #'global-command-log-mode
      :desc "Describe function"     :n "f" #'describe-function
      :desc "Describe key"          :n "k" #'describe-key
      :desc "Describe char"         :n "c" #'describe-char
-     :desc "Describe mode"         :n "m" #'describe-mode
+     :desc "Describe mode"         :n "M" #'describe-mode
      :desc "Describe variable"     :n "v" #'describe-variable
      :desc "Describe face"         :n "F" #'describe-face
      :desc "Describe DOOM setting" :n "s" #'doom/describe-setting
      :desc "Describe DOOM module"  :n "d" #'doom/describe-module
-     :desc "What face"             :n "." #'doom/what-face
-     :desc "What minor modes"      :n "M" #'doom/what-minor-mode
-     :desc "Info"                  :n "i" #'info)
+     :desc "Find definition"       :n "." #'+jump/definition
+     :desc "Find references"       :n "/" #'+jump/references
+     :desc "Find documentation"    :n "h" #'+jump/documentation
+     :desc "What face"             :n "'" #'doom/what-face
+     :desc "What minor modes"      :n ";" #'doom/what-minor-mode
+     :desc "Info"                  :n "i" #'info
+     :desc "Toggle profiler"       :n "p" #'doom/toggle-profiler)
 
    (:desc "insert" :prefix "i"
      :desc "From kill-ring" :nv "y" #'counsel-yank-pop
