@@ -35,7 +35,11 @@
 
   ;; sh-mode has file extensions checks for other shells, but not zsh, so...
   (defun +sh|detect-zsh ()
-    (when (and buffer-file-name (string-match-p "\\.zsh\\'" buffer-file-name))
+    (when (or (and buffer-file-name
+                   (string-match-p "\\.zsh\\'" buffer-file-name))
+              (save-excursion
+                (goto-char (point-min))
+                (looking-at-p "^#!.+zsh[$\\s-]")))
       (sh-set-shell "zsh")))
   (add-hook 'sh-mode-hook #'+sh|detect-zsh))
 
