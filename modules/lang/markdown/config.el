@@ -8,6 +8,7 @@
   (setq markdown-enable-wiki-links t
         markdown-enable-math t
         markdown-italic-underscore t
+        markdown-asymmetric-header t
         markdown-make-gfm-checkboxes-buttons t
         markdown-gfm-additional-languages '("sh")
         markdown-fontify-code-blocks-natively t
