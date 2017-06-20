@@ -120,6 +120,8 @@
   + =lang/org=
     + Fix M-RET in plain lists not preserving indent level for new items.
     + Fix cursor jumping away when toggling folds or realigning org tables (pressing TAB).
+  + =lang/sh=
+    + Fix fontification of command substitutions in double-quoted strings to help distinguish them from the rest of the string literal.
 
 * 2.0.3 (Jun 11, 2017)
 + *New modules*

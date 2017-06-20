@@ -1,14 +1,37 @@
 ;;; lang/sh/config.el -*- lexical-binding: t; -*-
 
+(defvar +sh-builtin-keywords
+  '("sudo" "echo" "ls" "sleep" "tee" "cd" "cat")
+  "A list of common shell commands and keywords to be fontified especially in
+`sh-mode'.")
+
+
+;;
+;; Plugins
+;;
+
 (def-package! sh-script ; built-in
   :mode ("\\.zsh$"   . sh-mode)
   :mode ("/bspwmrc$" . sh-mode)
   :init
-  (add-hook! sh-mode #'(flycheck-mode highlight-numbers-mode +sh|extra-fontify))
+  (add-hook! sh-mode #'(flycheck-mode highlight-numbers-mode))
   :config
   (set! :electric 'sh-mode :words '("else" "elif" "fi" "done" "then" "do" "esac" ";;"))
   (set! :repl 'sh-mode #'+sh/repl)
+
   (setq sh-indent-after-continuation 'always)
+
+  ;; 1. Fontifies variables in double quotes
+  ;; 2. Fontify command substitution in double quotes
+  ;; 3. Fontify built-in/common commands (see `+sh-builtin-keywords')
+  (font-lock-add-keywords
+   'sh-mode `((+sh--match-variables-in-quotes
+               (1 'default prepend)
+               (2 'font-lock-variable-name-face prepend))
+              (+sh--match-command-subst-in-quotes
+               (0 'sh-quoted-exec prepend))
+              (,(concat "^\\s-*" (regexp-opt +sh-builtin-keywords 'words))
+               (0 'font-lock-builtin-face t))))
 
   ;; sh-mode has file extensions checks for other shells, but not zsh, so...
   (defun +sh|detect-zsh ()

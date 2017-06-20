@@ -1,41 +1,29 @@
 ;;; lang/sh/autoload.el -*- lexical-binding: t; -*-
 
-(defvar sh-extra-font-lock--keywords
-  `((+sh--match-var-in-double-quoted-string
-     (2 font-lock-variable-name-face prepend))
-    (,(concat
-       "\\<"
-       (regexp-opt '("sudo" "echo" "ls" "sleep" "tee" "cd" "cat" "service"))
-       "\\>")
-     (0 'font-lock-builtin-face))))
-
 ;;;###autoload
-(defun +sh--in-double-quoted-string-p ()
-  "Non-nil if point in inside a double-quoted string."
-  (eq (nth 3 (syntax-ppss)) ?\"))
-
-;;;###autoload
-(defun +sh--match-var-in-double-quoted-string (limit)
+(defun +sh--match-variables-in-quotes (limit)
   "Search for variables in double-quoted strings bounded by LIMIT."
-  (let (res)
-    (while
-        (and (setq res
-                   (re-search-forward
-                    "\\$\\({#?\\)?\\([[:alpha:]_][[:alnum:]_]*\\|[-#?@!]\\)"
-                    limit t))
-             (not (+sh--in-double-quoted-string-p))))
-    res))
+  (with-syntax-table sh-mode-syntax-table
+    (let (res)
+      (while
+          (and (setq res
+                     (re-search-forward
+                      "\\(\\$\\)\\({.+?}\\|\\<.+?\\>\\)"
+                      limit t))
+               (not (eq (nth 3 (syntax-ppss)) ?\"))))
+      res)))
 
 ;;;###autoload
-(defun +sh|extra-fontify ()
-  "Activate sh-extra-font-lock."
-  (interactive)
-  (font-lock-add-keywords nil sh-extra-font-lock--keywords)
-  (if (fboundp 'font-lock-flush)
-      (font-lock-flush)
-    (when font-lock-mode
-      (with-no-warnings
-        (font-lock-fontify-buffer)))))
+(defun +sh--match-command-subst-in-quotes (limit)
+  "Search for variables in double-quoted strings bounded by LIMIT."
+  (with-syntax-table sh-mode-syntax-table
+    (let (res)
+      (while
+          (and (setq res
+                     (re-search-forward "\\(\\$(.+?)\\|`.+?`\\)"
+                                        limit t))
+               (not (eq (nth 3 (syntax-ppss)) ?\"))))
+      res)))
 
 (defvar sh-shell-file)
 ;;;###autoload
