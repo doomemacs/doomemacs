@@ -239,8 +239,8 @@
 
      ;; macos
      (:when IS-MAC
-       :desc "Reveal in Finder"          :n "o" #'+macos/reveal
-       :desc "Reveal project in Finder"  :n "O" #'+macos/reveal-project
+       :desc "Reveal in Finder"          :n "o" #'+macos/reveal-in-finder
+       :desc "Reveal project in Finder"  :n "O" #'+macos/reveal-project-in-finder
        :desc "Send to Transmit"          :n "u" #'+macos/send-to-transmit
        :desc "Send project to Transmit"  :n "U" #'+macos/send-project-to-transmit
        :desc "Send to Launchbar"         :n "l" #'+macos/send-to-launchbar
