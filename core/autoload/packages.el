@@ -123,11 +123,41 @@ containing (PACKAGE-SYMBOL OLD-VERSION-LIST NEW-VERSION-LIST).
 If INCLUDE-FROZEN-P is non-nil, check frozen packages as well.
 
 Used by `doom/packages-update'."
-  (cl-loop for pkg in (doom-get-packages)
-           if (or (and (doom-package-prop (car pkg) :freeze)
+  (let (quelpa-pkgs elpa-pkgs)
+    (dolist (pkg (doom-get-packages))
+      (let ((sym (car pkg)))
+        (when (and (or (not (doom-package-prop sym :freeze))
                        include-frozen-p)
-                  (doom-package-outdated-p (car pkg)))
-           collect it))
+                   (not (doom-package-prop sym :ignore)))
+          (push sym
+                (if (eq (doom-package-backend sym) 'quelpa)
+                    quelpa-pkgs
+                  elpa-pkgs)))))
+    (let* ((max-threads 3) ; TODO Do real CPU core/thread count
+           (min-per-part 2)
+           (per-part (max min-per-part (ceiling (/ (length quelpa-pkgs) (float max-threads)))))
+           (leftover (mod (length quelpa-pkgs) per-part))
+           (packages '(t))
+           parts
+           futures)
+      (while quelpa-pkgs
+        (let (part)
+          (dotimes (i (+ per-part leftover))
+            (when-let (p (pop quelpa-pkgs))
+              (push p part)))
+          (setq leftover 0)
+          (push (nreverse part) parts)))
+      (dolist (part (reverse parts))
+        (debug! "New thread for: %s" part)
+        (push (async-start
+               `(lambda ()
+                  (let ((noninteractive t))
+                    (load ,(expand-file-name "core.el" doom-core-dir)))
+                  (delq nil (mapcar #'doom-package-outdated-p ',part))))
+              futures))
+      (apply #'append
+             (delq nil (mapcar #'doom-package-outdated-p elpa-pkgs))
+             (mapcar #'async-get futures)))))
 
 ;;;###autoload
 (defun doom-get-orphaned-packages ()

@@ -57,7 +57,6 @@
 + =feature/jump= Automatic etags generation (for dwim go-to-definition and, perhaps, code-completion for some languages; lua maybe?).
 + =lang/php= Automatic and async tags generation using [[https://github.com/xcwen/phpctags][phpctags]].
 + =lang/lua= True, dynamic code-completion? Looks like [[https://github.com/immerrr/lua-mode/pull/119][this PR in lua-mode]] may have the answer. Does it make ~company-lua~ redundant?
-+ Make QUELPA outdated-detection async with ~async-start~ and ~async-get~ (in ~doom/packages-update~).
 + =tools/upload= Add ~+upload/open-remote-file~ command to open current file on the remote (with TRAMP).
 + Add =bin/org-alert= script -- a cron script that scans TODOs in org files and dispatches system alerts.
 + =feature/workspaces= Add a bookmarks feature, but for wconfs, that can revive file buffers. Also needs an interface.
@@ -159,6 +158,7 @@
     + Make ~doom-update-package~ atomic in case of failure.
     + Make ~doom-refresh-packages~ async.
     + Improve the security of package management (via ELPA) by a) forcing Emacs to verify TLS connections and b) use HTTPS sources for MELPA and ELPA.
+    + Make ~doom-get-outdated-packages~ asynchronous, producing a substantial speed-up when updating packages from Quelpa sources.
 + =feature=
   + =feature/evil=
     + Add ~+evil:mc~ command [[https://github.com/gabesoft/evil-mc][evil-mc]].
