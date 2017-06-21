@@ -68,6 +68,12 @@ interactive session."
          (goto-char (point-max))))))
 
 ;;;###autoload
+(defmacro debug! (message &rest args)
+  "Out a debug message if `doom-debug-mode' is non-nil. Otherwise, ignore this."
+  (when doom-debug-mode
+    `(message ,message ,@args)))
+
+;;;###autoload
 (defun doom-ansi-apply (code format &rest args)
   (let ((rule (or (assq code doom-message-fg)
                   (assq code doom-message-bg)
