@@ -416,13 +416,15 @@ them."
         (plist-put plist :recipe (cons name pkg-recipe)))
       (when pkg-pin
         (plist-put plist :pin nil)))
+    (dolist (prop '(:ignore :freeze))
+      (when-let (val (plist-get plist prop))
+        (plist-put plist prop (eval val))))
     `(progn
        (when ,(and pkg-pin t)
          (cl-pushnew (cons ',name ,pkg-pin) package-pinned-packages
                      :test #'eq :key #'car))
        (when ,(and old-plist t)
          (assq-delete-all ',name doom-packages))
-       ;; :ignore and :freeze are handled upstream
        (push ',(cons name plist) doom-packages))))
 
 (defmacro depends-on! (module submodule)
