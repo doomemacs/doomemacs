@@ -6,37 +6,29 @@
   :init
   (setq-default c-basic-offset tab-width)
 
-  ;; Auto-detect C++ header files
-  (push (cons (lambda ()
-                (and buffer-file-name
-                     (equal (file-name-extension buffer-file-name) "h")
-                     (or (file-exists-p (expand-file-name
-                                         (concat (file-name-sans-extension buffer-file-name)
-                                                 ".cpp")))
-                         (when-let (file (car-safe (projectile-get-other-files
-                                                    buffer-file-name
-                                                    (projectile-current-project-files))))
-                           (equal (file-name-extension file) "cpp")))))
-              'c++-mode)
-        magic-mode-alist)
+  (defun +cc--c++-header-file-p ()
+    (and buffer-file-name
+         (equal (file-name-extension buffer-file-name) "h")
+         (or (file-exists-p (expand-file-name
+                             (concat (file-name-sans-extension buffer-file-name)
+                                     ".cpp")))
+             (when-let (file (car-safe (projectile-get-other-files
+                                        buffer-file-name
+                                        (projectile-current-project-files))))
+               (equal (file-name-extension file) "cpp")))))
 
-  ;; Auto-detect Obj-C header files
-  (push (cons (lambda ()
-                (and buffer-file-name
-                     (equal (file-name-extension buffer-file-name) "h")
-                     (re-search-forward "@\\<interface\\>" magic-mode-regexp-match-limit t)))
-              'objc-mode)
-        magic-mode-alist)
+  (defun +cc--objc-header-file-p ()
+    (and buffer-file-name
+         (equal (file-name-extension buffer-file-name) "h")
+         (re-search-forward "@\\<interface\\>" magic-mode-regexp-match-limit t)))
+
+  ;; Auto-detect C++/Obj-C header files
+  (push (cons #'+cc--c++-header-file-p  'c++-mode)  magic-mode-alist)
+  (push (cons #'+cc--objc-header-file-p 'objc-mode) magic-mode-alist)
 
   :config
   (setq c-tab-always-indent nil
         c-electric-flag nil)
-
-  (add-hook 'c-mode-common-hook #'rainbow-delimiters-mode)
-  ;; extra highlights for numbers in C (`modern-cpp-font-lock' offers something better for C++)
-  (add-hook 'c-mode-hook #'highlight-numbers-mode)
-  ;; Fontification of C++11 string literals
-  (add-hook 'c++-mode-hook #'+cc|extra-fontify-c++)
 
   (set! :electric '(c-mode c++-mode objc-mode java-mode)
         :chars '(?\n ?\}))
@@ -44,6 +36,10 @@
   (set! :company-backend
         '(c-mode c++-mode objc-mode)
         '(company-irony-c-headers company-irony))
+
+  (add-hook 'c-mode-common-hook #'rainbow-delimiters-mode)
+  (add-hook 'c-mode-hook #'highlight-numbers-mode) ; fontify numbers in C
+  (add-hook 'c++-mode-hook #'+cc|extra-fontify-c++) ; fontify C++11 string literals
 
   (sp-with-modes '(c-mode c++-mode objc-mode java-mode)
     (sp-local-pair "<" ">" :when '(+cc-sp-point-is-template-p +cc-sp-point-after-include-p))
@@ -98,10 +94,9 @@
         :map c++-mode-map
         "}" nil
 
-        ;; Smartparens and cc-mode both try to autoclose
-        ;; angle-brackets intelligently. The result isn't very
-        ;; intelligent (causes redundant characters), so we just do it
-        ;; ourselves.
+        ;; Smartparens and cc-mode both try to autoclose angle-brackets
+        ;; intelligently. The result isn't very intelligent (causes redundant
+        ;; characters), so just do it ourselves.
         "<" nil
         :map (c-mode-base-map c++-mode-map)
         :i ">" #'+cc/autoclose->-maybe))
@@ -119,15 +114,17 @@
   (setq irony-server-install-prefix (concat doom-etc-dir "irony-server/"))
   :init
   (defun +cc|init-irony-mode ()
-    (when (memq major-mode '(c-mode c++-mode objc-mode))
-      (when (file-directory-p irony-server-install-prefix)
-        (irony-mode +1))))
+    (when (and (memq major-mode '(c-mode c++-mode objc-mode))
+               (file-directory-p irony-server-install-prefix))
+      (irony-mode +1)))
   (add-hook 'c-mode-common-hook #'+cc|init-irony-mode)
   :config
   (add-hook! 'irony-mode-hook #'(irony-eldoc flycheck-mode))
-  (add-hook! 'c++-mode-hook
+
+  (defun +cc|init-c++11-clang-options ()
     (make-local-variable 'irony-additional-clang-options)
-    (push "-std=c++11" irony-additional-clang-options))
+    (cl-pushnew "-std=c++11" irony-additional-clang-options :test 'equal))
+  (add-hook 'c++-mode-hook #'+cc|init-c++11-clang-options)
 
   (map! :map irony-mode-map
         [remap completion-at-point] #'counsel-irony
