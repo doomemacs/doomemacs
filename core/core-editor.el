@@ -201,11 +201,13 @@ fundamental-mode) for performance sake."
   (sp-local-pair '(xml-mode nxml-mode php-mode) "<!--" "-->"
                  :post-handlers '(("| " "SPC"))))
 
-;; Branching & persistent undo
+;; Branching undo
 (def-package! undo-tree
   :demand t
   :config
-  (setq undo-tree-auto-save-history t
+  ;; persistent undo history is known to cause undo history corruption, which
+  ;; can be very destructive! So disable it!
+  (setq undo-tree-auto-save-history nil
         undo-tree-history-directory-alist
         (list (cons "." (concat doom-cache-dir "undo-tree-hist/"))))
 
