@@ -193,56 +193,7 @@ mode is detected.")
 
 ;; Show uninterrupted indentation markers with some whitespace voodoo.
 (def-package! highlight-indentation
-  :commands (highlight-indentation-mode highlight-indentation-current-column-mode)
-  :config
-  (defun doom|inject-trailing-whitespace (start end)
-    "The opposite of `delete-trailing-whitespace'. Injects whitespace into
-buffer so that `highlight-indentation-mode' will display uninterrupted indent
-markers. This whitespace is stripped out on save, as not to affect the resulting
-file."
-    (interactive (if (use-region-p)
-                     (list (region-beginning) (region-end))
-                   (list (point-min) (point-max))))
-    (barf-if-buffer-read-only)
-    (unless indent-tabs-mode
-      (with-silent-modifications
-        (save-excursion
-          (goto-char start)
-          (save-match-data
-            (while (and (re-search-forward "^$" nil t) (<= (point) end))
-              (let (line-start line-end next-start next-end)
-                (save-excursion
-                  ;; Check previous line indent
-                  (forward-line -1)
-                  (setq line-start (point)
-                        line-end (save-excursion (back-to-indentation) (point)))
-                  ;; Check next line indent
-                  (forward-line 2)
-                  (setq next-start (point)
-                        next-end (save-excursion (back-to-indentation) (point)))
-                  ;; Back to origin
-                  (forward-line -1)
-                  ;; Adjust indent
-                  (let* ((line-indent (- line-end line-start))
-                         (next-indent (- next-end next-start))
-                         (indent (min line-indent next-indent)))
-                    (insert (make-string (if (zerop indent) 0 (1+ indent)) ? )))))
-              (forward-line 1))))))
-    nil)
-
-  (defun doom|init-highlight-indentation ()
-    (unless (or indent-tabs-mode buffer-read-only)
-      (if (or highlight-indentation-mode highlight-indentation-current-column-mode)
-          (progn
-            (doom|inject-trailing-whitespace)
-            (add-hook 'before-save-hook #'delete-trailing-whitespace nil t)
-            (add-hook 'after-save-hook #'doom|inject-trailing-whitespace nil t))
-        (remove-hook 'before-save-hook #'delete-trailing-whitespace t)
-        (remove-hook 'after-save-hook #'doom|inject-trailing-whitespace t)
-        (with-silent-modifications
-          (delete-trailing-whitespace)))))
-  (add-hook! (highlight-indentation-mode highlight-indentation-current-column-mode)
-    #'doom|init-highlight-indentation))
+  :commands (highlight-indentation-mode highlight-indentation-current-column-mode))
 
 ;; For modes that don't adequately highlight numbers
 (def-package! highlight-numbers :commands highlight-numbers-mode)
