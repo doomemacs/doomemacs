@@ -46,7 +46,9 @@ interactive session."
                    `(,(car rule)
                      (lambda (message &rest args)
                        (apply #'doom-ansi-apply ',(car rule) message args))))
-        (color (symbol-function 'doom-ansi-apply)))
+        (color
+         (lambda (code format &rest args)
+           (apply #'doom-ansi-apply code format args))))
      (format ,message ,@args)))
 
 ;;;###autoload
