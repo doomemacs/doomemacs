@@ -175,8 +175,8 @@ Example
             (let* ((key (pop rest))
                    (inner (pop rest))
                    (outer (pop rest)))
-              (push (macroexpand `(map! (:map evil-outer-text-objects-map ,key ,inner)
-                                        (:map evil-inner-text-objects-map ,key ,outer)))
+              (push (macroexpand `(map! (:map evil-inner-text-objects-map ,key ,inner)
+                                        (:map evil-outer-text-objects-map ,key ,outer)))
                     forms)))
           (:prefix
             (let ((def (pop rest)))
