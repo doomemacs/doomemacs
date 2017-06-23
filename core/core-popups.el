@@ -37,7 +37,25 @@
 is enabled/disabled.'")
 
 (def-setting! :popup (&rest rules)
-  "Prepend a new popup rule to `shackle-rules'."
+  "Prepend a new popup rule to `shackle-rules' (see for format details).
+
+Several custom properties have been added that are not part of shackle, but are
+recognized by DOOM's popup system. They are:
+
+:noesc      If non-nil, pressing ESC *inside* the popup will close it.
+            Used by `doom/popup-close-maybe'.
+
+:modeline   By default, mode-lines are hidden in popups unless this
+            is non-nil. If it is a symbol, it'll use `doom-modeline'
+            to fetch a modeline config (in `doom-popup-mode').
+
+:autokill   If non-nil, the popup's buffer will be killed when the
+            popup is closed. Used by `doom*delete-popup-window'.
+            NOTE `doom/popup-restore' can't restore non-file popups
+            that have an :autokill property.
+
+:autoclose  If non-nil, close popup if ESC is pressed from outside
+            the popup window."
   (if (cl-every #'listp (mapcar #'doom-unquote rules))
       `(setq shackle-rules (nconc (list ,@rules) shackle-rules))
     `(push (list ,@rules) shackle-rules)))
@@ -52,21 +70,6 @@ is enabled/disabled.'")
   :init
   (setq shackle-default-alignment 'below
         shackle-default-size 8
-        ;;; Baseline popup-window rules
-        ;; Several custom properties have been added that are not part of
-        ;; shackle and are used by doom's popup system. They are:
-        ;;
-        ;;  :noesc      If non-nil, pressing ESC *inside* the popup will close it.
-        ;;              Used by `doom/popup-close-maybe'.
-        ;;  :modeline   By default, mode-lines are hidden in popups unless this
-        ;;              is non-nil. If it is a symbol, it'll use `doom-modeline'
-        ;;              to fetch a modeline config (in `doom-popup-mode').
-        ;;  :autokill   If non-nil, the popup's buffer will be killed when the
-        ;;              popup is closed. Used by `doom*delete-popup-window'.
-        ;;              NOTE `doom/popup-restore' can't restore non-file popups
-        ;;              that have an :autokill property.
-        ;;  :autoclose  If non-nil, close popup if ESC is pressed from outside
-        ;;              the popup window.
         shackle-rules
         '(("^\\*ftp " :noselect t :autokill t :noesc t)
           ;; doom
