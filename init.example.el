@@ -81,6 +81,7 @@
        emacs-lisp      ; drown in parentheses
        go              ; the hipster dialect
        haskell         ; a language that's lazier than I am
+       hy              ; readability of scheme w/ speed of python
        java            ; the poster child for carpal tunnel syndrome
        javascript      ; all(hope(abandon(ye(who(enter(here))))))
        julia           ; a better, faster MATLAB
