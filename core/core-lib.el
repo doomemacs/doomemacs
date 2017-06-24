@@ -223,7 +223,7 @@ executed when called with `set!'. FORMS are not evaluated until `set!' calls it.
   (declare (indent defun) (doc-string 3))
   (unless (keywordp keyword)
     (error "Not a valid property name: %s" keyword))
-  (let ((fn (intern (format "doom-setting--setter%s" keyword))))
+  (let ((fn (intern (format "doom--set%s" keyword))))
     `(progn
        (defun ,fn ,arglist
          ,docstring
