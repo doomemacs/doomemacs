@@ -375,9 +375,9 @@ appropriate."
                                         10)))
                                (mapconcat
                                 (lambda (pkg)
-                                  (format "+ %s %s -> %s"
-                                          (s-pad-right (+ max-len 2) " " (symbol-name (car pkg)))
-                                          (s-pad-right 14 " " (package-version-join (cadr pkg)))
+                                  (format (format "+ %%-%ds %%-%ds -> %%s" (+ max-len 2) 14)
+                                          (symbol-name (car pkg))
+                                          (package-version-join (cadr pkg))
                                           (package-version-join (cl-caddr pkg))))
                                 packages
                                 "\n"))))))
