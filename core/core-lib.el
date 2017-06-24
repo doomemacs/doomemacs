@@ -40,16 +40,13 @@
         (t paths)))
 
 (defun doom--resolve-hooks (hooks)
-  (let ((quoted-p (eq (car-safe hooks) 'quote)))
-    (when quoted-p
-      (setq hooks (cadr hooks)))
-    (cl-loop with hooks = (if (listp hooks) hooks (list hooks))
-             for hook in hooks
-             if (eq (car-safe hook) 'quote)
-               collect (cadr hook)
-             else if quoted-p
-               collect hook
-             else collect (intern (format "%s-hook" (symbol-name hook))))))
+  (cl-loop with quoted-p = (eq (car-safe hooks) 'quote)
+           for hook in (doom-enlist (doom-unquote hooks))
+           if (eq (car-safe hook) 'quote)
+            collect (cadr hook)
+           else if quoted-p
+            collect hook
+           else collect (intern (format "%s-hook" (symbol-name hook)))))
 
 (defun doom-unquote (exp)
   "Return EXP unquoted."
