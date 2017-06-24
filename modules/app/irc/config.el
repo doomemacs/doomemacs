@@ -149,7 +149,7 @@ playback.")
       "Ensure entering insert mode will put us at the prompt, unless editing
 after prompt marker."
       (when (> (marker-position lui-input-marker) (point))
-        (end-of-buffer)))
+        (goto-char (point-max))))
 
     (add-hook! 'lui-mode-hook
       (add-hook 'evil-insert-state-entry-hook #'+irc|evil-insert nil t)))
