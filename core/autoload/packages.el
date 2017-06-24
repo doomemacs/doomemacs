@@ -124,6 +124,7 @@ If INCLUDE-FROZEN-P is non-nil, check frozen packages as well.
 
 Used by `doom/packages-update'."
   (let (quelpa-pkgs elpa-pkgs)
+    ;; Separate quelpa from elpa packages
     (dolist (pkg (doom-get-packages))
       (let ((sym (car pkg)))
         (when (and (or (not (doom-package-prop sym :freeze))
@@ -133,16 +134,17 @@ Used by `doom/packages-update'."
                 (if (eq (doom-package-backend sym) 'quelpa)
                     quelpa-pkgs
                   elpa-pkgs)))))
+    ;; The bottleneck in this process is quelpa's version checks, so partition
+    ;; and check them asynchronously.
     (let* ((max-threads 3) ; TODO Do real CPU core/thread count
            (min-per-part 2)
            (per-part (max min-per-part (ceiling (/ (length quelpa-pkgs) (float max-threads)))))
            (leftover (mod (length quelpa-pkgs) per-part))
-           (packages '(t))
            parts
            futures)
       (while quelpa-pkgs
         (let (part)
-          (dotimes (i (+ per-part leftover))
+          (dotimes (_i (+ per-part leftover))
             (when-let (p (pop quelpa-pkgs))
               (push p part)))
           (setq leftover 0)
