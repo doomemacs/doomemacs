@@ -1,6 +1,40 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; core/test/core-lib.el
 
+;; --- Helpers ----------------------------
+
+;; `doom--resolve-paths'
+(def-test! resolve-paths
+  (should
+   (equal (doom--resolve-paths '(and "fileA" "fileB"))
+          '(and (file-exists-p (expand-file-name "fileA" (doom-project-root)))
+                (file-exists-p (expand-file-name "fileB" (doom-project-root)))))))
+
+;; `doom--resolve-hooks'
+(def-test! resolve-hooks
+  (should (equal (doom--resolve-hooks '(js2-mode haskell-mode))
+                 '(js2-mode-hook haskell-mode-hook)))
+  (should (equal (doom--resolve-hooks '(quote (js2-mode-hook haskell-mode-hook)))
+                 '(js2-mode-hook haskell-mode-hook))))
+
+;; `doom-unquote'
+(def-test! unquote
+  (should (equal (doom-unquote '(quote (a b c))) '(a b c)))
+  ;; nested
+  (should (equal (doom-unquote '(quote (quote (a b c)))) '(a b c)))
+  ;; sub-quote
+  (should (equal (doom-unquote '(quote (a (quote b) c))) '(a (quote b) c)))
+  ;; function
+  (should (equal (doom-unquote '(function a)) 'a)))
+
+;; `doom-enlist'
+(def-test! enlist
+  (should (equal (doom-enlist 'a) '(a)))
+  (should (equal (doom-enlist '(a)) '(a))))
+
+
+;; --- Macros -----------------------------
+
 ;; `add-hook!'
 (def-test! add-one-to-one-hook
   (let (hooks)
@@ -65,17 +99,15 @@
     (ignore t)
     (should (eq value t))))
 
-(def-test! unquote
-  (should (equal (doom-unquote '(quote (a b c))) '(a b c)))
-  ;; nested
-  (should (equal (doom-unquote '(quote (quote (a b c)))) '(a b c)))
-  ;; sub-quote
-  (should (equal (doom-unquote '(quote (a (quote b) c))) '(a (quote b) c))))
-
-(def-test! enlist
-  (should (equal (doom-enlist 'a) '(a)))
-  (should (equal (doom-enlist '(a)) '(a))))
-
 
 ;; TODO `associate!'
-;; TODO `def-setting!' & `set!'
+
+
+;; --- Settings ---------------------------
+
+(def-setting! :-test-setting (x) x)
+
+(def-test! set
+  (should (assq :-test-setting doom-settings))
+  (should (set! :-test-setting t))
+  (should-not (set! :non-existant-setting (error "This shouldn't trigger"))))
