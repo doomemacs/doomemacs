@@ -381,7 +381,7 @@ it hasn't already, and if it exists."
 
 (defmacro featurep! (module submodule)
   "Convenience macro that wraps `doom-module-loaded-p'."
-  `(doom-module-loaded-p ,module ',submodule))
+  (doom-module-loaded-p module submodule))
 
 
 ;;
@@ -470,7 +470,7 @@ the commandline."
   ;; This function must not use autoloaded functions or external dependencies.
   ;; It must assume nothing is set up!
   (doom-initialize-packages (not noninteractive))
-  (let ((evil-p (featurep! :feature evil))
+  (let ((evil-p (doom-module-loaded-p :feature 'evil))
         (targets
          (file-expand-wildcards
           (expand-file-name "autoload/*.el" doom-core-dir))))
