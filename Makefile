@@ -43,14 +43,14 @@ clean-pcache:
 	@$(EMACS) -l persistent-soft --eval '(delete-directory pcache-directory t)'
 
 test: init.el .local/autoloads.el
-	@$(EMACS) -f doom/run-tests
+	@$(EMACS) -f doom-run-tests
 
 test\:core $(patsubst %, test\:%, $(MODULES)): init.el .local/autoloads.el
-	@$(EMACS) -f doom/run-tests -- $(subst test:, , $@)
+	@$(EMACS) -f doom-run-tests -- $(subst test:, , $@)
 
 # run tests interactively
 testi: init.el .local/autoloads.el
-	@$(EMACSI) -f doom/run-tests -f ert
+	@$(EMACSI) -f doom-run-tests -f ert
 
 # For running Emacs from a different folder than ~/.emacs.d
 run:
