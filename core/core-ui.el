@@ -266,7 +266,6 @@ mode is detected.")
 
 ;; Fixes disappearing line numbers in nlinum and other quirks
 (def-package! nlinum-hl
-  :load-path "~/work/plugins/emacs-nlinum-hl/"
   :after nlinum
   :config
   ;; With `markdown-fontify-code-blocks-natively' enabled in `markdown-mode',
