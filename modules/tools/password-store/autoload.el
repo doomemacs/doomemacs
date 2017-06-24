@@ -4,7 +4,7 @@
 (defun +pass/open ()
   (interactive)
   (cond ((featurep! :completion ivy)
-         (+pass-ivy))
+         (+pass/ivy))
         ((featurep! :completion helm)
          (helm-pass))
         (t
