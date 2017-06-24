@@ -239,7 +239,8 @@ executed when called with `set!'. FORMS are not evaluated until `set!' calls it.
     (if fn
         (apply fn values)
       (when doom-debug-mode
-        (message "No setting found for %s" keyword)))))
+        (message "No setting found for %s" keyword)
+        nil))))
 
 (provide 'core-lib)
 ;;; core-lib.el ends here
