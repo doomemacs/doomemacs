@@ -231,8 +231,7 @@ This aggressively reloads core autoload files."
                        for path in (directory-files modpath t "^\\w")
                        if (file-directory-p path)
                         collect (intern (file-name-nondirectory path)) into paths
-                       finally return (cons mode paths)
-                       finally do (message "== %s %s" mode paths))))
+                       finally return (cons mode paths))))
             (t
              (doom--enable-module mode m))))))
 
