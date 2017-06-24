@@ -3,14 +3,14 @@
 (def-setting! :company-backend (modes backends)
   "Register company BACKENDS to MODES."
   (let ((backends (doom-enlist (doom-unquote backends))))
-    (dolist (mode (doom-enlist (doom-unquote modes)))
-      (let ((def-name (intern (format "doom--init-company-%s" mode))))
-        `(prog1
-             (defun ,def-name ()
-               (when (eq major-mode ',mode)
-                 (require 'company)
-                 (cl-pushnew ',backends company-backends :test #'equal)))
-           (add-hook! ,mode #',def-name))))))
+    `(progn
+       ,@(cl-loop for mode in (doom-enlist (doom-unquote modes))
+                  for def-name = (intern (format "doom--init-company-%s" mode))
+                  collect `(defun ,def-name ()
+                             (when (eq major-mode ',mode)
+                               (require 'company)
+                               (cl-pushnew ',backends company-backends :test #'equal)))
+                  collect `(add-hook! ,mode #',def-name)))))
 
 
 ;;
