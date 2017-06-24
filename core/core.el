@@ -116,13 +116,14 @@ melodramatic ex-vimmer disappointed with the text-editor status quo."
 (setq custom-file (concat doom-etc-dir "custom.el"))
 (load custom-file t t)
 
-;; be quiet at startup; don't load anything unnecessary
+;; be quiet at startup; don't load or display anything unnecessary
 (advice-add #'display-startup-echo-area-message :override #'ignore)
 (setq inhibit-startup-message t
       inhibit-startup-echo-area-message user-login-name
       inhibit-default-init t
       initial-major-mode 'fundamental-mode
-      initial-scratch-message nil)
+      initial-scratch-message nil
+      mode-line-format nil)
 
 ;; Custom init hooks; clearer than `after-init-hook', `emacs-startup-hook', and
 ;; `window-setup-hook'.
