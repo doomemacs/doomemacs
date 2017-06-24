@@ -21,7 +21,7 @@ If INHIBIT-WORKSPACE (the universal argument) is non-nil, don't spawn a new
 workspace for it."
   (interactive "P")
   (and (+irc-setup-wconf inhibit-workspace)
-       (cl-loop for network in +irc-connections
+       (cl-loop for network in circe-network-options
                 collect (circe (car network)))))
 
 ;;;###autoload
