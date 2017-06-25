@@ -12,9 +12,16 @@
 (defvar +doom-dashboard-widgets '(banner shortmenu loaded)
   "List of widgets to display in a blank scratch buffer.")
 
-(define-derived-mode +doom-dashboard-mode fundamental-mode
+(define-derived-mode +doom-dashboard-mode special-mode
   (concat "v" doom-version)
-  "Major mode for the DOOM dashboard buffer.")
+  "Major mode for the DOOM dashboard buffer."
+  (read-only-mode +1)
+  (setq truncate-lines t
+        mode-line-format +doom-dashboard-modeline)
+  (cl-loop for (car . _cdr) in fringe-indicator-alist
+           collect (cons car nil) into alist
+           finally do (setq fringe-indicator-alist alist)))
+
 
 (defvar +doom-dashboard--width 0)
 (defvar +doom-dashboard--height 0)
@@ -40,28 +47,6 @@
       [remap evil-visual-line] #'evil-normal-state
       [remap evil-delete]      #'evil-normal-state
       [remap evil-delete-char] #'evil-normal-state)
-
-(defun +doom-dashboard/next-button ()
-  (interactive)
-  (ignore-errors
-    (goto-char (next-button (point)))))
-
-(defun +doom-dashboard/previous-button ()
-  (interactive)
-  (ignore-errors
-    (goto-char (previous-button (point)))))
-
-(defun +doom-dashboard/first-button ()
-  (interactive)
-  (goto-char (point-min))
-  (+doom-dashboard/next-button))
-
-(defun +doom-dashboard/last-button ()
-  (interactive)
-  (goto-char (point-max))
-  (+doom-dashboard/previous-button)
-  (beginning-of-line-text))
-
 
 ;;
 (defun +doom-dashboard|init ()
@@ -110,6 +95,10 @@ whose dimensions may not be fully initialized by the time this is run."
     (and (buffer-live-p buffer)
          (eq buffer (doom-fallback-buffer)))))
 
+(defun +doom-dashboard-center (len s)
+  (concat (make-string (ceiling (max 0 (- len (length s))) 2) ? )
+          s))
+
 (defun +doom-dashboard-deferred-reload (frame)
   "Reload the dashboard after a brief pause. This is necessary for new frames,
 whose dimensions may not be fully initialized by the time this is run."
@@ -125,36 +114,31 @@ whose dimensions may not be fully initialized by the time this is run."
              (not (window-minibuffer-p (frame-selected-window)))
              (get-buffer-window (doom-fallback-buffer)))
     (unless +doom-dashboard-modeline
-      (setq +doom-dashboard--old-modeline mode-line-format)
-      (setq +doom-dashboard-modeline
+      (setq +doom-dashboard--old-modeline mode-line-format
+            +doom-dashboard-modeline
             (or (and (featurep! :ui doom-modeline)
                      (doom-modeline 'project))
                 mode-line-format)))
     (let ((old-pwd (or dir default-directory)))
       (with-current-buffer (doom-fallback-buffer)
         (with-silent-modifications
-          (read-only-mode +1)
           (+doom-dashboard-mode)
-          (cl-loop for (car . _cdr) in fringe-indicator-alist
-                   collect (cons car nil) into alist
-                   finally do (setq fringe-indicator-alist alist))
           (erase-buffer)
+          (setq default-directory old-pwd)
           (let ((+doom-dashboard--width  (window-width))
                 (+doom-dashboard--height (window-height)))
             (insert (make-string (max 0 (- (truncate (/ +doom-dashboard--height 2)) 16)) ?\n))
             (dolist (widget-name +doom-dashboard-widgets)
               (funcall (intern (format "doom-dashboard-widget--%s" widget-name)))
               (insert "\n")))
-          (setq default-directory old-pwd
-                mode-line-format +doom-dashboard-modeline)
           (unless (button-at (point))
-            (goto-char (point-min))
-            (goto-char (next-button (point))))))))
+            (goto-char (next-button (point-min))))))))
   t)
 
+;; widgets
 (defun doom-dashboard-widget--banner ()
   (mapc (lambda (line)
-          (insert (propertize (s-center +doom-dashboard--width line)
+          (insert (propertize (+doom-dashboard-center +doom-dashboard--width line)
                               'face 'font-lock-comment-face) " ")
           (insert "\n"))
         '("=================     ===============     ===============   ========  ========"
@@ -180,10 +164,11 @@ whose dimensions may not be fully initialized by the time this is run."
 (defun doom-dashboard-widget--loaded ()
   (insert
    (propertize
-    (s-center +doom-dashboard--width
-              (format "Loaded %d packages in %.03fs "
-                      (- (length load-path) (length doom--base-load-path))
-                      (if (floatp doom-init-time) doom-init-time 0.0)))
+    (+doom-dashboard-center
+     +doom-dashboard--width
+     (format "Loaded %d packages in %.03fs "
+             (- (length load-path) (length doom--base-load-path))
+             (if (floatp doom-init-time) doom-init-time 0.0)))
     'face 'font-lock-comment-face)
    "\n"))
 
@@ -208,7 +193,7 @@ whose dimensions may not be fully initialized by the time this is run."
                             (propertize (concat " " label) 'face 'font-lock-keyword-face))
                     'action fn
                     'follow-link t)
-                   (s-center (1- +doom-dashboard--width) (buffer-string))))
+                   (+doom-dashboard-center (1- +doom-dashboard--width) (buffer-string))))
                 (insert "\n\n"))))
           `(("Homepage" "mark-github"
              (lambda (_) (browse-url "https://github.com/hlissner/.emacs.d")))
