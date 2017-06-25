@@ -11,7 +11,7 @@
   (let ((delim "~~"))
     (if (markdown-use-region-p)
         ;; Active region
-        (destructuring-bind (beg end)
+        (cl-destructuring-bind (beg end)
             (markdown-unwrap-things-in-region
              (region-beginning) (region-end)
              +markdown--regex-del 2 4)

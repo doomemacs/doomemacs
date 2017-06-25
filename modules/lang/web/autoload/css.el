@@ -12,7 +12,7 @@
   (interactive)
   ;; TODO Remove evil dependency
   (save-excursion
-    (destructuring-bind (beg end)
+    (cl-destructuring-bind (beg end)
         (or (ignore-errors (evil-a-curly))
             (user-error "No block found"))
       (if (= (line-number-at-pos beg) (line-number-at-pos end))

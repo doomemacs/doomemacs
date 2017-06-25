@@ -16,7 +16,7 @@
 repository root."
   (interactive)
   (require 'git-link)
-  (destructuring-bind (beg end)
+  (cl-destructuring-bind (beg end)
       (if buffer-file-name (git-link--get-region))
     (let ((git-link-open-in-browser t))
       (git-link (git-link--select-remote) beg end))))

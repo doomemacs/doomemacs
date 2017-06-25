@@ -473,7 +473,7 @@ calls."
                                         nil t)
                      (user-error "All packages are up to date"))))
      (list (cdr (assq (car (assoc package package-alist)) packages)))))
-  (destructuring-bind (package old-version new-version) pkg
+  (cl-destructuring-bind (package old-version new-version) pkg
     (if-let (desc (doom-package-outdated-p package))
         (let ((old-v-str (package-version-join old-version))
               (new-v-str (package-version-join new-version)))

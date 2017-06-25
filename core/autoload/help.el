@@ -23,7 +23,7 @@ submodule in the format, e.g. ':feature evil')."
                           (cl-loop for (module . sub) in (reverse (hash-table-keys doom-modules))
                                    collect (format "%s %s" module sub))
                           nil t)))
-  (destructuring-bind (category submodule)
+  (cl-destructuring-bind (category submodule)
       (mapcar #'intern (split-string module " "))
     (unless (member (cons category submodule) (doom--module-pairs))
       (error "'%s' isn't a valid module" module))

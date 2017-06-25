@@ -32,7 +32,7 @@
         (evil-initialize-state 'insert))))
 
   (defun +file-templates-add (args)
-    (destructuring-bind (regexp trigger mode &optional project-only-p) args
+    (cl-destructuring-bind (regexp trigger mode &optional project-only-p) args
       (define-auto-insert
         regexp
         (vector `(lambda () (+file-templates--expand ,trigger ',mode ,project-only-p))))))

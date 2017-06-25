@@ -56,7 +56,7 @@ Tries xref and falls back to `dumb-jump', then rg/ag, then
 
         ((and (featurep 'evil)
               evil-mode
-              (destructuring-bind (beg end)
+              (cl-destructuring-bind (beg end)
                   (bounds-of-thing-at-point 'symbol)
                 (evil-goto-definition)
                 (let ((pt (point)))

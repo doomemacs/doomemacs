@@ -15,7 +15,7 @@
        with project-root = (doom-project-root)
        for buf in buffer-list
        collect
-       (destructuring-bind (type mode path)
+       (cl-destructuring-bind (type mode path)
            (with-current-buffer buf
              (list (concat
                     (let ((buffer-name (buffer-name buf)))
@@ -121,7 +121,7 @@ limit to buffers in the current workspace."
   "Jump to the file and line of the current task."
   (let ((location (cadr (split-string x " | ")))
         (type (car (split-string x " "))))
-    (destructuring-bind (file line) (split-string location ":")
+    (cl-destructuring-bind (file line) (split-string location ":")
       (with-ivy-window
         (find-file (expand-file-name file (doom-project-root)))
         (goto-char (point-min))
