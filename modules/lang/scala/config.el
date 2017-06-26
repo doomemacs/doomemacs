@@ -5,7 +5,7 @@
   :config
   (add-hook 'scala-mode-hook #'ensime-mode)
   (setq scala-indent:align-parameters t)
-  (set! :company-backend 'scala-mode '(ensime-company company-yasnippet)))
+  (set! :company-backend 'scala-mode '(company-yasnippet)))
 
 
 (def-package! sbt-mode :after scala-mode)
