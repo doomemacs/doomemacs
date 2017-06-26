@@ -83,7 +83,7 @@ renamed.")
     "Delete workspace associated with current frame IF it has no real buffers."
     (when (and (string= (or (frame-parameter frame 'assoc-persp) "")
                         (+workspace-current-name))
-               (not (delq (doom-fallback-buffer) (doom-real-buffers-list))))
+               (not (delq (doom-fallback-buffer) (doom-real-buffer-list))))
       (+workspace/delete persp-name)))
   (add-hook 'delete-frame-functions #'+workspaces*delete-frame-and-persp)
 
@@ -115,7 +115,7 @@ perspective-specific buffer list via `doom-buffer-list'."
 
   (defun +workspaces*autosave-real-buffers (orig-fn &rest args)
     "Don't autosave if no real buffers are open."
-    (when (doom-real-buffers-list)
+    (when (doom-real-buffer-list)
       (apply orig-fn args))
     t)
   (advice-add #'persp-asave-on-exit :around #'+workspaces*autosave-real-buffers))

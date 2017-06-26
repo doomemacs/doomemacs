@@ -42,35 +42,33 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
 
 ;; Buffer Life and Death ;;;;;;;;;;;;;;;
 ;;;###autoload
-(defun doom-buffer-list (&optional project-p)
-  "Get all buffers in the current project, in the current workspace.
-
-If PROJECT-P is non-nil, get all buffers associated with the current project in
-the current workspace."
-  (let ((buffers (if (and (featurep 'persp-mode) persp-mode)
-                     (persp-buffer-list-restricted)
-                   (buffer-list)))
-        (project-root (and project-p (doom-project-root t))))
-    (cond (project-root
-           (cl-loop for buf in buffers
-                    if (projectile-project-buffer-p buf project-root)
-                    collect buf))
-          (t
-           buffers))))
+(defalias 'doom-buffer-list #'buffer-list)
 
 ;;;###autoload
-(defun doom-real-buffers-list (&optional buffer-list)
-  "Get a list of all buffers (in the current workspace OR in BUFFER-LIST) that
-`doom-real-buffer-p' returns non-nil for."
+(defun doom-project-buffer-list ()
+  "Return a list of buffers belonging to the current project.
+
+If no project is active, return all buffers."
+  (let ((buffers (doom-buffer-list)))
+    (if-let (project-root (doom-project-root t))
+        (cl-loop for buf in buffers
+                 if (projectile-project-buffer-p buf project-root)
+                 collect buf)
+      buffers)))
+
+;;;###autoload
+(defun doom-real-buffer-list (&optional buffer-list)
+  "Return a list of buffers that satify `doom-real-buffer-p'."
   (cl-loop for buf in (or buffer-list (doom-buffer-list))
            if (doom-real-buffer-p buf)
            collect buf))
 
 ;;;###autoload
 (defun doom-buffers-in-mode (modes &optional buffer-list derived-p)
-  "Get a list of all buffers (in the current workspace OR in BUFFER-LIST) whose
-`major-mode' is one of MODES."
-  (let ((modes (if (listp modes) modes (list modes))))
+  "Return a list of buffers whose `major-mode' is `eq' to MODE(S).
+
+If DERIVED-P, test with `derived-mode-p', otherwise use `eq'."
+  (let ((modes (doom-enlist modes)))
     (cl-remove-if-not (if derived-p
                           (lambda (buf)
                             (with-current-buffer buf
@@ -81,32 +79,28 @@ the current workspace."
 
 ;;;###autoload
 (defun doom-visible-windows (&optional window-list)
-  "Get a list of the visible windows in the current frame (that aren't popups),
-OR return only the visible windows in WINDOW-LIST."
+  "Return a list of the visible, non-popup windows."
   (cl-loop for win in (or window-list (window-list))
            unless (doom-popup-p win)
            collect win))
 
 ;;;###autoload
 (defun doom-visible-buffers (&optional buffer-list)
-  "Get a list of unburied buffers in the current project and workspace, OR
-return only the unburied buffers in BUFFER-LIST (a list of BUFFER-OR-NAMEs)."
+  "Return a list of visible buffers (i.e. not buried)."
   (cl-loop for buf in (or buffer-list (doom-buffer-list))
            when (get-buffer-window buf)
            collect buf))
 
 ;;;###autoload
 (defun doom-buried-buffers (&optional buffer-list)
-  "Get a list of buried buffers in the current project and workspace, OR return
-only the buried buffers in BUFFER-LIST (a list of BUFFER-OR-NAMEs)."
+  "Get a list of buffers that are buried."
   (cl-loop for buf in (or buffer-list (doom-buffer-list))
            unless (get-buffer-window buf)
            collect buf))
 
 ;;;###autoload
 (defun doom-matching-buffers (pattern &optional buffer-list)
-  "Get a list of all buffers (in the current workspace OR in BUFFER-LIST) that
-match the regex PATTERN."
+  "Get a list of all buffers that match the regex PATTERN."
   (cl-loop for buf in (or buffer-list (doom-buffer-list))
            when (string-match-p pattern (buffer-name buf))
            collect buf))
@@ -115,7 +109,7 @@ match the regex PATTERN."
   "Switch to the next buffer N times (previous, if N < 0), skipping over unreal
 buffers. If there's nothing left, switch to `doom-fallback-buffer'. See
 `doom-real-buffer-p' for what 'real' means."
-  (let ((buffers (delq (current-buffer) (doom-real-buffers-list)))
+  (let ((buffers (delq (current-buffer) (doom-real-buffer-list)))
         (project-dir (doom-project-root)))
     (cond ((or (not buffers)
                (zerop (% n (1+ (length buffers)))))
@@ -123,13 +117,16 @@ buffers. If there's nothing left, switch to `doom-fallback-buffer'. See
           ((= (length buffers) 1)
            (set-window-buffer nil (car buffers)))
           (t
-           (let ((move-func (if (> n 0) #'switch-to-next-buffer #'switch-to-prev-buffer)))
-             ;; Why this instead of switching straight to the Nth buffer in
-             ;; BUFFERS? Because `switch-to-next-buffer' and
-             ;; `switch-to-prev-buffer' properly update buffer list order.
-             (while (not (memq (current-buffer) buffers))
-               (dotimes (_i (abs n))
-                 (funcall move-func))))))
+           ;; Why this instead of switching straight to the Nth buffer in
+           ;; BUFFERS? Because `switch-to-next-buffer' and
+           ;; `switch-to-prev-buffer' properly update buffer list order.
+           (cl-loop with move-func =
+                    (if (> n 0) #'switch-to-next-buffer #'switch-to-prev-buffer)
+                    for _i to 20
+                    while (not (memq (current-buffer) buffers))
+                    do
+                    (dotimes (_i (abs n))
+                      (funcall move-func)))))
     (when (eq (current-buffer) (doom-fallback-buffer))
       (cd project-dir))
     (current-buffer)))
@@ -178,8 +175,8 @@ See `doom-real-buffer-p' for what 'real' means."
                    (yes-or-no-p "Buffer is unsaved, save it?"))
               (save-buffer)
             (set-buffer-modified-p nil))))
-      ;; deal with dedicated windows
       (if buffer-win
+          ;; deal with dedicated windows
           (if (window-dedicated-p buffer-win)
               (unless (window--delete buffer-win t t)
                 (split-window buffer-win)
@@ -192,8 +189,7 @@ See `doom-real-buffer-p' for what 'real' means."
               (when only-buffer-window-p
                 (kill-buffer buffer)))
             (not (eq (current-buffer) buffer)))
-        (kill-buffer buffer)
-        (not (buffer-live-p buffer))))))
+        (kill-buffer buffer)))))
 
 ;;;###autoload
 (defun doom-force-kill-buffer (&optional buffer dont-save)
@@ -229,7 +225,6 @@ processes killed."
                    (or (not process-buffer)
                        (and (bufferp process-buffer)
                             (not (buffer-live-p process-buffer)))))
-          (message "Killing %s" (process-name p))
           (delete-process p)
           (cl-incf n))))
     n))
@@ -239,32 +234,35 @@ processes killed."
   "Kill all buffers (in current workspace OR in BUFFER-LIST) that match the
 regex PATTERN. Returns the number of killed buffers."
   (let ((buffers (doom-matching-buffers pattern buffer-list)))
-    (mapc #'doom-kill-buffer buffers)
-    (length buffers)))
+    (dolist (buf buffers (length buffers))
+      (doom-kill-buffer buf t))))
 
 ;;;###autoload
 (defun doom/kill-this-buffer ()
-  "Uses `doom-kill-buffer' on the current buffer."
+  "Use `doom-kill-buffer' on the current buffer."
   (interactive)
   (when (and (doom-kill-buffer) (called-interactively-p 'interactive))
     (message "Nowhere left to go!")))
 
 ;;;###autoload
 (defun doom/kill-all-buffers (&optional project-p)
-  "Kill all buffers in this workspace. If PROJECT-P, kill all buffers that
-belong to the current project in this workspace."
+  "Kill all buffers.
+
+If PROJECT-P, kill all buffers that belong to the current project."
   (interactive "P")
-  (let ((buffers (doom-buffer-list project-p)))
+  (let ((buffers (if project-p (doom-project-buffer-list) (doom-buffer-list))))
     (mapc #'doom-kill-buffer-and-windows buffers)
     (when (called-interactively-p 'interactive)
       (message "Killed %s buffers" (length buffers)))))
 
 ;;;###autoload
 (defun doom/kill-other-buffers (&optional project-p)
-  "Kill all other buffers in this workspace. If PROJECT-P, kill only the other
-buffers that belong to the current project."
+  "Kill all other buffers.
+
+If PROJECT-P (universal argument), kill only the other buffers that belong to
+the current project."
   (interactive "P")
-  (let ((buffers (doom-buffer-list project-p))
+  (let ((buffers (if project-p (doom-project-buffer-list) (doom-buffer-list)))
         (current-buffer (current-buffer)))
     (dolist (buf buffers)
       (unless (eq buf current-buffer)
@@ -274,10 +272,14 @@ buffers that belong to the current project."
 
 ;;;###autoload
 (defun doom/kill-matching-buffers (pattern &optional project-p)
-  "Kill buffers in current workspace that match regex PATTERN. If BANG, then
-exclude buffers that aren't part of the current project."
-  (interactive "sP")
-  (let* ((buffers (doom-buffer-list project-p))
+  "Kill buffers that match PATTERN in BUFFER-LIST.
+
+If PROJECT-P (universal argument), only kill matching buffers in the current
+project."
+  (interactive
+   (list (read-regexp "Buffer pattern: ")
+         current-prefix-arg))
+  (let* ((buffers (if project-p (doom-project-buffer-list) (doom-buffer-list)))
          (n (doom-kill-matching-buffers pattern buffers)))
     (when (called-interactively-p 'interactive)
       (message "Killed %s buffers" n))))
@@ -286,9 +288,10 @@ exclude buffers that aren't part of the current project."
 (defun doom/cleanup-buffers (&optional all-p)
   "Clean up buried and process buffers in the current workspace."
   (interactive "P")
-  (let ((buffers (doom-buried-buffers (if all-p (buffer-list)))))
+  (let ((buffers (doom-buried-buffers (if all-p (buffer-list))))
+        (n 0))
     (mapc #'kill-buffer buffers)
-    (setq n (+ (doom-kill-process-buffers) (length buffers)))
+    (setq n (+ n (length buffers) (doom-kill-process-buffers)))
     (when (called-interactively-p 'interactive)
       (message "Cleaned up %s buffers" n))))
 

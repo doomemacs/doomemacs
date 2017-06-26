@@ -42,7 +42,7 @@
   "Return t if this session should be killed, but not before it prompts the user
 for confirmation."
   (interactive)
-  (if (ignore-errors (doom-real-buffers-list))
+  (if (ignore-errors (doom-real-buffer-list))
       (or (yes-or-no-p (format "››› %s" (or prompt "Quit Emacs?")))
           (ignore (message "Aborted")))
     t))
