@@ -88,6 +88,7 @@
        latex           ; writing papers in Emacs has never been so fun
        lua             ; one-based indices? one-based indices
        markdown        ; writing docs for people to ignore
+       ocaml           ; an objective camel
        org             ; for organized fearless leader (WIP)
        php             ; make php less awful to work with
        purescript      ; javascript, but functional
