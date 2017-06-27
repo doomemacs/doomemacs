@@ -1,16 +1,18 @@
 ;;; completion/company/config.el -*- lexical-binding: t; -*-
 
-(def-setting! :company-backend (modes backends)
-  "Register company BACKENDS to MODES."
-  (let ((backends (doom-enlist (doom-unquote backends))))
-    `(progn
-       ,@(cl-loop for mode in (doom-enlist (doom-unquote modes))
-                  for def-name = (intern (format "doom--init-company-%s" mode))
-                  collect `(defun ,def-name ()
-                             (when (eq major-mode ',mode)
-                               (require 'company)
-                               (cl-pushnew ',backends company-backends :test #'equal)))
-                  collect `(add-hook! ,mode #',def-name)))))
+(def-setting! :company-backend (modes &rest backends)
+  "Prepends BACKENDS to `company-backends' in major MODES.
+
+MODES should be one major-mode symbol or a list of them."
+  `(progn
+     ,@(cl-loop for mode in (doom-enlist (doom-unquote modes))
+                for def-name = (intern (format "doom--init-company-%s" mode))
+                collect `(defun ,def-name ()
+                           (when (and (eq major-mode ',mode)
+                                      ,(not (eq backends '(nil))))
+                             (require 'company)
+                             (setq company-backends (append (list ,@backends) company-backends))))
+                collect `(add-hook! ,mode #',def-name))))
 
 
 ;;
