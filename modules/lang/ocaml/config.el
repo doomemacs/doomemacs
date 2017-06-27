@@ -1,14 +1,10 @@
-;;; lang/ocaml/config.el
+;;; lang/ocaml/config.el -*- lexical-binding: t; -*-
 
 (def-package! tuareg
-  :mode (("\\.ml$"  . tuareg-mode)
-         ("\\.mll$" . tuareg-mode)
-         ("\\.mly$" . tuareg-mode))
-  :config
-)
+  :mode ("\\.ml[ly]?$" . tuareg-mode))
+
 
 (def-package! merlin
   :after tuareg
   :config
-  (add-hook! 'tuareg-mode-hook #'merlin-mode)
-)
+  (add-hook 'tuareg-mode-hook #'merlin-mode))
