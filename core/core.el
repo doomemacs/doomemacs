@@ -141,10 +141,9 @@ ability to invoke the debugger in debug mode."
   (condition-case-unless-debug ex
       (funcall fn)
     ('error
-     (display-warning
-      hook
-      (format "%s in '%s' -> %s" (car ex) fn (error-message-string ex))
-      :error)))
+     (lwarn hook :error
+          "%s in '%s' -> %s"
+          (car ex) fn (error-message-string ex))))
   nil)
 
 ;; Automatic minor modes
@@ -192,16 +191,17 @@ enable multiple minor modes for the same regexp.")
       doom--package-load-path (eval-when-compile doom--package-load-path))
 
 (defun doom|finalize ()
+  ;; Don't keep gc-cons-threshold too high. It helps to stave off the GC while
+  ;; Emacs starts up, but afterwards it causes stuttering and random freezes. So
+  ;; reset it to a reasonable default.
+  (setq gc-cons-threshold 16777216
+        gc-cons-percentage 0.1)
+
   (unless doom-init-p
     (dolist (hook '(doom-init-hook doom-post-init-hook))
       (run-hook-wrapped hook #'doom-try-run-hook hook))
 
-    ;; Don't keep gc-cons-threshold too high. It helps to stave off the GC while
-    ;; Emacs starts up, but afterwards it causes stuttering and random freezes.
-    ;; So reset it to a reasonable default.
-    (setq gc-cons-threshold 16777216
-          gc-cons-percentage 0.1
-          file-name-handler-alist doom--file-name-handler-alist
+    (setq file-name-handler-alist doom--file-name-handler-alist
           doom-init-p t)))
 
 (add-hook! '(emacs-startup-hook doom-reload-hook)
