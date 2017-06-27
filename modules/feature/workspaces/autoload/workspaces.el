@@ -41,7 +41,9 @@
   "Returns a workspace (perspective hash table) named NAME."
   (unless (equal name persp-nil-name)
     (let ((persp (persp-get-by-name name)))
-      (unless (or persp noerror)
+      (when (and (not noerror)
+                 (or (null persp)
+                     (equal persp persp-not-persp)))
         (error "%s is not an available workspace" name))
       persp)))
 
