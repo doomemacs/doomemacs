@@ -99,20 +99,10 @@ perspective-specific buffer list via `+workspaces-buffer-list'."
   (advice-add #'switch-to-buffer :after #'+workspaces*auto-add-buffer)
   (advice-add #'display-buffer   :after #'+workspaces*auto-add-buffer)
 
-  (defun +workspaces|workspace-per-project ()
+  (defun +workspaces|create-project-workspace ()
     "Create a new workspace when switching project with projectile."
     (+workspace-switch (projectile-project-name) t))
-  (add-hook 'projectile-before-switch-project-hook #'+workspaces|workspace-per-project)
-
-  (defun +workspaces|restore-popups (&rest _)
-    "Restore popup windows when loading a perspective from file."
-    (dolist (window (window-list))
-      (when-let (plist (window-parameter window 'popup))
-        (with-selected-window window
-          (unless doom-popup-mode
-            (setq-local doom-popup-rules plist)
-            (doom-popup-mode +1))))))
-  (advice-add #'persp-load-state-from-file :after #'+workspaces|restore-popups)
+  (add-hook 'projectile-before-switch-project-hook #'+workspaces|create-project-workspace)
 
   (defun +workspaces*autosave-real-buffers (orig-fn &rest args)
     "Don't autosave if no real buffers are open."

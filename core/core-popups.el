@@ -514,6 +514,18 @@ that `doom*popup-save' won't break it."
   (add-hook 'doom-popup-mode-hook #'+evil|neotree-fix-popup))
 
 
+(after! persp-mode
+  (defun doom*persp-mode-restore-popups (&rest _)
+    "Restore popup windows when loading a perspective from file."
+    (dolist (window (window-list))
+      (when-let (plist (window-parameter window 'popup))
+        (with-selected-window window
+          (unless doom-popup-mode
+            (setq-local doom-popup-rules plist)
+            (doom-popup-mode +1))))))
+  (advice-add #'persp-load-state-from-file :after #'doom*persp-mode-restore-popups))
+
+
 (after! quickrun
   ;; don't auto-focus quickrun windows, shackle handles that
   (setq quickrun-focus-p nil))
