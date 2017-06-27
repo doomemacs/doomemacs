@@ -52,7 +52,10 @@ renamed.")
 
   (defun +workspaces|init (&optional frame)
     (unless persp-mode
-      (persp-mode +1))
+      (persp-mode +1)
+      ;; Remap `buffer-list' to current workspace's buffers in
+      ;; `doom-buffer-list'
+      (advice-add #'doom-buffer-list :override #'+workspace-buffer-list))
     (let ((frame (or frame (selected-frame))))
       (unless noninteractive
         ;; The default perspective persp-mode makes (defined by
@@ -87,7 +90,7 @@ renamed.")
 
   (defun +workspaces*auto-add-buffer (buffer &rest _)
     "Auto-associate buffers with perspectives upon opening them. Allows a
-perspective-specific buffer list via `doom-buffer-list'."
+perspective-specific buffer list via `+workspaces-buffer-list'."
     (when (and persp-mode
                (not persp-temporarily-display-buffer)
                (doom-real-buffer-p buffer))
