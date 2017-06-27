@@ -55,14 +55,14 @@
        hl-todo         ; highlight TODO/FIXME/NOTE tags
        nav-flash       ; blink the current line after jumping
        evil-goggles    ; display visual hints when editing in evil
-      ;unicode         ; extended unicode font support for various languages
+      ;unicode         ; extended unicode support for various languages
 
        :tools
        dired           ; making dired pretty [functional]
        electric-indent ; smarter, keyword-based electric-indent
        eshell          ; a consistent, cross-platform shell (WIP)
        gist            ; interacting with github gists
-       macos           ; macos-specific commands
+      ;macos           ; MacOS-specific commands
        neotree         ; a project drawer, like NERDTree for vim
        password-store  ; password manager for nerds
        rotate-text     ; cycle region at point between text candidates
@@ -105,12 +105,9 @@
        ;; Applications are complex and opinionated modules that transform Emacs
        ;; toward a specific purpose. They should be loaded last.
        :app
-      ;crm             ; TODO org-mode for client relations management
        email           ; Emacs as an email client
-      ;finance         ; TODO keeping track of my shekels
        irc             ; how neckbeards socialize
        present         ; showing off presentations in emacs
-      ;regex           ; TODO emacs as a regexp IDE
        rss             ; emacs as an RSS reader
        twitter         ; twitter client https://twitter.com/vnought
        write           ; emacs as a word processor (latex + org + markdown)
