@@ -62,10 +62,8 @@ renamed.")
         (unless (persp-with-name-exists-p +workspaces-main)
           (persp-add-new +workspaces-main))
         ;; Switch to it if we aren't auto-loading the last session
-        (when (or (equal (safe-persp-name (get-current-persp)) persp-nil-name)
-                  (and (one-window-p)
-                       (eq (window-buffer (selected-window))
-                           (doom-fallback-buffer))))
+        (when (and (equal (safe-persp-name (get-current-persp)) persp-nil-name)
+                   (= persp-auto-resume-time -1))
           (persp-frame-switch +workspaces-main frame)))
       (add-hook 'delayed-warnings-hook #'display-delayed-warnings t)))
 
