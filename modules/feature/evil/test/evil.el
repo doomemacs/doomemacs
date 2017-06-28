@@ -1,6 +1,8 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; feature/evil/test/evil.el
 
+(require! :feature evil)
+
 ;; `+evil*ex-replace-special-filenames'
 (def-test! file-modifiers
   (cl-flet ((do-it #'+evil*ex-replace-special-filenames))

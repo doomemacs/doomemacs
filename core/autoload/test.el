@@ -26,10 +26,9 @@ If neither is available, run all tests in all enabled modules."
   (condition-case-unless-debug ex
       (let (targets)
         ;; ensure DOOM is initialized
+        (unload-feature 'core t)
         (let (noninteractive)
-          (unload-feature 'core t)
-          (load (expand-file-name "init.el" user-emacs-directory) nil t))
-        (run-hooks 'emacs-startup-hook)
+          (load (expand-file-name "core/core.el" user-emacs-directory) nil t))
         ;; collect targets
         (cond ((and command-line-args-left
                     (equal (car command-line-args-left) "--"))
