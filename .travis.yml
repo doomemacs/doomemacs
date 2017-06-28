@@ -12,4 +12,4 @@ env:
   - EVM_EMACS=emacs-25.2-travis
 script:
   - emacs --version
-  - DEBUG=1 make test
+  - make test
