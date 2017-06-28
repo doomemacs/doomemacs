@@ -439,3 +439,31 @@ the workspace and move to the next."
   (interactive)
   (message "%s" (+workspace--tabline)))
 
+;;;###autoload
+(defun +workspace-on-new-frame (frame &optional _new-frame-p)
+  "Spawn a perspective for each new frame."
+  (select-frame frame)
+  (+workspace/new)
+  (set-frame-parameter frame 'assoc-persp (+workspace-current-name)))
+
+;;;###autoload
+(defun +workspaces|create-project-workspace ()
+  "Create a new workspace when switching project with `projectile'."
+  (when persp-mode
+    (+workspace-switch (projectile-project-name) t)))
+
+;;;###autoload
+(defun +workspaces|delete-associated-workspace-maybe (frame)
+  "Delete workspace associated with current frame IF it has no real buffers."
+  (when persp-mode
+    (let ((frame-persp (frame-parameter frame 'assoc-persp)))
+      (when (and (equal frame-persp (+workspace-current-name))
+                 (not (equal frame-persp +workspaces-main)))
+        (+workspace/delete frame-persp)))))
+
+;;;###autoload
+(defun +workspaces*autosave-real-buffers (orig-fn &rest args)
+    "Don't autosave if no real buffers are open."
+    (when (doom-real-buffer-list)
+      (apply orig-fn args))
+    t)

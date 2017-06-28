@@ -12,9 +12,6 @@
 ;;
 ;; FYI persp-mode requires `workgroups' for file persistence in Emacs 24.4.
 
-(defvar +workspaces-load-session-hook nil
-  "A hook that runs when persp loads a new session.")
-
 (defvar +workspaces-main "main"
   "The name of the primary and initial workspace, which cannot be deleted or
 renamed.")
@@ -43,13 +40,25 @@ renamed.")
         ;; auto-save on kill
         persp-auto-save-opt (if noninteractive 0 1))
 
+  ;; Bootstrap
   (add-hook 'doom-init-hook #'+workspaces|init)
   (add-hook 'after-make-frame-functions #'+workspaces|init)
 
-  ;; Defer delayed warnings even further, so they appear after persp-mode is
-  ;; started and the main workspace is ready to display them.
-  (remove-hook 'delayed-warnings-hook #'display-delayed-warnings)
+  (define-key persp-mode-map [remap delete-window] #'+workspace/close-window-or-workspace)
 
+  ;; per-frame workspaces
+  (setq persp-init-new-frame-behaviour-override nil
+        persp-interactive-init-frame-behaviour-override #'+workspace-on-new-frame)
+  (add-hook 'projectile-before-switch-project-hook #'+workspaces|create-project-workspace)
+  (add-hook 'delete-frame-functions #'+workspaces|delete-associated-workspace-maybe)
+
+  ;; only auto-save when real buffers are present
+  (advice-add #'persp-asave-on-exit :around #'+workspaces*autosave-real-buffers)
+
+  ;; Defer delayed warnings even further, so they appear after persp-mode is
+  ;; started and the main workspace is ready to display them. Otherwise, warning
+  ;; buffers will be hidden on startup.
+  (remove-hook 'delayed-warnings-hook #'display-delayed-warnings)
   (defun +workspaces|init (&optional frame)
     (unless persp-mode
       (persp-mode +1)
@@ -70,44 +79,15 @@ renamed.")
           (persp-frame-switch +workspaces-main frame)))
       (add-hook 'delayed-warnings-hook #'display-delayed-warnings t)))
 
-  (define-key persp-mode-map [remap delete-window] #'+workspace/close-window-or-workspace)
-
-  ;; Spawn a perspective for each new frame
-  (setq persp-init-new-frame-behaviour-override nil
-        persp-interactive-init-frame-behaviour-override
-        (lambda (frame &optional _new-frame-p)
-          (select-frame frame)
-          (+workspace/new)
-          (set-frame-parameter frame 'assoc-persp (+workspace-current-name))))
-
-  (defun +workspaces*delete-frame-and-persp (frame)
-    "Delete workspace associated with current frame IF it has no real buffers."
-    (when (and (string= (or (frame-parameter frame 'assoc-persp) "")
-                        (+workspace-current-name))
-               (not (delq (doom-fallback-buffer) (doom-real-buffer-list))))
-      (+workspace/delete persp-name)))
-  (add-hook 'delete-frame-functions #'+workspaces*delete-frame-and-persp)
-
   (defun +workspaces*auto-add-buffer (buffer &rest _)
-    "Auto-associate buffers with perspectives upon opening them. Allows a
-perspective-specific buffer list via `+workspaces-buffer-list'."
+    "Auto-associate buffers with perspectives upon opening them.
+
+Allows a perspective-specific buffer list via `+workspaces-buffer-list'."
     (when (and persp-mode
                (not persp-temporarily-display-buffer)
                (doom-real-buffer-p buffer))
       (persp-add-buffer buffer (get-current-persp) nil)
       (redisplay)))
   (advice-add #'switch-to-buffer :after #'+workspaces*auto-add-buffer)
-  (advice-add #'display-buffer   :after #'+workspaces*auto-add-buffer)
-
-  (defun +workspaces|create-project-workspace ()
-    "Create a new workspace when switching project with projectile."
-    (+workspace-switch (projectile-project-name) t))
-  (add-hook 'projectile-before-switch-project-hook #'+workspaces|create-project-workspace)
-
-  (defun +workspaces*autosave-real-buffers (orig-fn &rest args)
-    "Don't autosave if no real buffers are open."
-    (when (doom-real-buffer-list)
-      (apply orig-fn args))
-    t)
-  (advice-add #'persp-asave-on-exit :around #'+workspaces*autosave-real-buffers))
+  (advice-add #'display-buffer   :after #'+workspaces*auto-add-buffer))
 
