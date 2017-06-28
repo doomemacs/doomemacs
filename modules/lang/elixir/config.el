@@ -1,7 +1,7 @@
 ;;; lang/elixir/config.el -*- lexical-binding: t; -*-
 
 (def-package! elixir-mode
-  :mode "\\.ex$"
+  :mode "\\.exs?$"
   :init
   (add-hook! 'elixir-mode-hook #'(turn-off-smartparens-mode alchemist))
   :config
