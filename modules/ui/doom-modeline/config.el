@@ -279,6 +279,12 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                             "circle-slash"
                             :face 'doom-modeline-urgent
                             :v-adjust -0.05)
+                           " "))
+                  ((buffer-narrowed-p)
+                   (concat (all-the-icons-octicon
+                            "fold"
+                            :face 'doom-modeline-warning
+                            :v-adjust -0.05)
                            " ")))
             (when-let (dir-path (+doom-modeline--buffer-path))
               (if-let (faces (or faces (if active 'doom-modeline-buffer-path)))
