@@ -1,6 +1,44 @@
 ;;; core-ui.el -*- lexical-binding: t; -*-
 
-(defvar doom-ui-fringe-size '4 "Default fringe width")
+(defvar doom-fringe-size '4
+  "Default fringe width.")
+
+(defvar doom-theme nil
+  "A symbol representing the color theme to load.")
+
+(defvar doom-font (font-spec :family "Fira Mono" :size 12)
+  "The default font to use. Expects a FONT-SPEC (`font-spec').")
+
+(defvar doom-variable-pitch-font (font-spec :family "Fira Sans" :size 12)
+  "The default font to use for variable-pitch text. Expects a FONT-SPEC (`font-spec').")
+
+(defvar doom-unicode-font (font-spec :family "DejaVu Sans Mono" :size 12)
+  "Fallback font for unicode glyphs. Is ignored if :feature unicode is active.")
+
+(defvar doom-major-mode-names
+  '((sh-mode . "sh")
+    (emacs-lisp-mode . "Elisp"))
+  "An alist mapping major modes symbols to strings (or functions that will
+return a string). This changes the 'long' name of a major-mode, allowing for
+shorter major mode name in the mode-line. See `doom|set-mode-name'.")
+
+;; Line numbers
+(defvar doom-line-number-lpad 4
+  "How much padding to place before line numbers.")
+
+(defvar doom-line-number-rpad 1
+  "How much padding to place after line numbers.")
+
+(defvar doom-line-number-pad-char ?\u2002
+  "Character to use for padding line numbers. We use an exotic 'space-looking'
+character so that `whitespace-mode' won't replace spaces inside the line number
+overlay.")
+
+;; Hook(s)
+(defvar doom-init-ui-hook nil
+  "List of hooks to run when the theme and font is initialized (or reloaded with
+`doom/reload-theme').")
+
 
 (setq-default
  bidi-display-reordering nil ; disable bidirectional text for tiny performance boost
@@ -39,8 +77,8 @@
 (fset #'yes-or-no-p #'y-or-n-p) ; y/n instead of yes/no
 
 (defun doom-quit-p (&optional prompt)
-  "Return t if this session should be killed, but not before it prompts the user
-for confirmation."
+  "Return t if this session should be killed. Prompts the user for
+confirmation."
   (interactive)
   (if (ignore-errors (doom-real-buffer-list))
       (or (yes-or-no-p (format "››› %s" (or prompt "Quit Emacs?")))
@@ -108,52 +146,85 @@ local value, whether or not it's permanent-local. Therefore, we cycle
 ;; The native border "consumes" a pixel of the fringe on righter-most splits,
 ;; `window-divider' does not. Available since Emacs 25.1.
 (setq-default window-divider-default-places t
-              window-divider-default-bottom-width 1
+              window-divider-default-bottom-width 0
               window-divider-default-right-width 1)
 (add-hook 'doom-init-hook #'window-divider-mode)
 
 ;; like diminish, but for major-modes. [pedantry intensifies]
-(defvar doom-ui-mode-names
-  '((sh-mode . "sh")
-    (emacs-lisp-mode "Elisp"))
-  "An alist mapping major modes to alternative names, which will be set when the
-mode is detected.")
-
 (defun doom|set-mode-name ()
-  "Set the major mode's `mode-name', as dictated by `doom-ui-mode-names'."
-  (let ((name (assq major-mode doom-ui-mode-names)))
-    (if name (setq mode-name (cdr name)))))
+  "Set the major mode's `mode-name', as dictated by `doom-major-mode-names'."
+  (when-let (name (cdr (assq major-mode doom-major-mode-names)))
+    (setq mode-name
+          (cond ((functionp name)
+                 (funcall name))
+                ((stringp name)
+                 name)
+                (t
+                 (error "'%s' isn't a valid name for %s" name major-mode))))))
 (add-hook 'after-change-major-mode-hook #'doom|set-mode-name)
+
+
+;;
+;; Themes & fonts
+;;
+
+;; Getting themes to remain consistent across GUI Emacs, terminal Emacs and
+;; daemon Emacs is hairy.
+;;
+;; + Running `+doom|init-ui' directly sorts out the initial GUI frame.
+;; + Attaching it to `after-make-frame-functions' sorts out daemon Emacs.
+;; + Waiting for 0.1s in `doom|reload-ui-in-daemon' fixes daemon Emacs started
+;;   with `server-start' in an interactive session of Emacs AND in tty Emacs.
+(defun doom|init-ui (&optional frame)
+  "Set the theme and load the font, in that order."
+  (when doom-theme
+    (load-theme doom-theme t))
+  (with-demoted-errors "FONT ERROR: %s"
+    (when (fontp doom-font)
+      (set-frame-font doom-font nil (if frame (list frame) t)))
+    ;; Fallback to `doom-unicode-font' for Unicode characters
+    (when (fontp doom-unicode-font)
+      (set-fontset-font t 'unicode doom-unicode-font frame))
+    ;; ...and for variable-pitch-mode:
+    (when (fontp doom-variable-pitch-font)
+      (set-face-attribute 'variable-pitch frame :font doom-variable-pitch-font)))
+  (run-hooks 'doom-init-ui-hook))
+
+(defun doom|reload-ui-in-daemon (frame)
+  "Reload the theme (and font) in an daemon frame."
+  (when (or (daemonp) (not (display-graphic-p)))
+    (with-selected-frame frame
+      (run-with-timer 0.1 nil #'doom|init-ui))))
+
+;; register UI init hooks
+(add-hook 'doom-init-hook #'doom|init-ui)
+(add-hook! 'after-make-frame-functions #'(doom|init-ui doom|reload-ui-in-daemon))
 
 
 ;;
 ;; Bootstrap
 ;;
 
-
-;; Prompts the user for confirmation when deleting a non-empty frame
+;; prompts the user for confirmation when deleting a non-empty frame
 (define-key global-map [remap delete-frame] #'doom/delete-frame)
-
-(global-eldoc-mode -1) ; auto-enabled in Emacs 25+; I'll do it myself
-(blink-cursor-mode +1) ; a good indicator that Emacs isn't frozen
-
+;; buffer name in frame title
+(setq-default frame-title-format '("DOOM Emacs"))
+;; auto-enabled in Emacs 25+; I'll do it myself
+(global-eldoc-mode -1)
+;; a good indicator that Emacs isn't frozen
+(add-hook 'doom-post-init-hook #'blink-cursor-mode)
+;; standardize default fringe width
+(fringe-mode doom-fringe-size)
 ;; draw me like one of your French editors
 (tooltip-mode -1) ; relegate tooltips to echo area only
 (menu-bar-mode -1)
 (if (fboundp 'tool-bar-mode)   (tool-bar-mode -1))
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 
-;; buffer name in frame title
-(setq-default frame-title-format '("DOOM Emacs"))
-
-;; standardize fringe width
-(push (cons 'left-fringe  doom-ui-fringe-size) default-frame-alist)
-(push (cons 'right-fringe doom-ui-fringe-size) default-frame-alist)
-
-;; no fringe in the minibuffer
 (defun doom|no-fringes-in-minibuffer ()
+  "Disable fringes in the minibuffer window."
   (set-window-fringes (minibuffer-window) 0 0 nil))
-(add-hook! '(doom-init-hook minibuffer-setup-hook)
+(add-hook! '(doom-post-init-hook minibuffer-setup-hook)
   #'doom|no-fringes-in-minibuffer)
 
 
@@ -182,7 +253,7 @@ mode is detected.")
   :commands (fringe-helper-define fringe-helper-convert)
   :init
   (unless (fboundp 'define-fringe-bitmap)
-    (fset 'define-fringe-bitmap (lambda (&rest _)))))
+    (defun define-fringe-bitmap (&rest _))))
 
 (def-package! hideshow ; built-in
   :commands (hs-minor-mode hs-toggle-hiding hs-already-hidden-p)
@@ -198,8 +269,7 @@ mode is detected.")
 
 ;; Line highlighting
 (def-package! hl-line ; built-in
-  :init
-  (add-hook! (linum-mode nlinum-mode) #'hl-line-mode)
+  :init (add-hook! (linum-mode nlinum-mode) #'hl-line-mode)
   :config
   ;; I don't need hl-line showing in other windows. This also offers a small
   ;; speed boost when buffer is displayed in multiple windows.
@@ -222,12 +292,9 @@ mode is detected.")
 ;; plugin than the built-in `linum'.
 (def-package! nlinum
   :commands nlinum-mode
-  :preface
-  (defvar doom-ui-nlinum-lpad 4)
-  (defvar doom-ui-nlinum-rpad 1)
-  (defvar doom-ui-nlinum-spacer ?\u2002)
   :init
   (defun doom|init-nlinum-mode ()
+    "Turn on `nlinum-mode', except in org-mode"
     (unless (eq major-mode 'org-mode)
       (nlinum-mode +1)))
   (add-hook! (prog-mode text-mode) #'doom|init-nlinum-mode)
@@ -235,14 +302,14 @@ mode is detected.")
   (setq nlinum-highlight-current-line t)
 
   (defun doom-nlinum-format-fn (line _width)
-    "A more customizable `nlinum-format-function'. See `doom-ui-nlinum-lpad',
-`doom-ui-nlinum-rpad' and `doom-ui-nlinum-spacer'. Allows a fix for
+    "A more customizable `nlinum-format-function'. See `doom-line-number-lpad',
+`doom-line-number-rpad' and `doom-line-number-pad-char'. Allows a fix for
 `whitespace-mode' space-marks appearing inside the line number."
     (let ((str (number-to-string line)))
-      (setq str (concat (make-string (max 0 (- doom-ui-nlinum-lpad (length str)))
-                                     doom-ui-nlinum-spacer)
+      (setq str (concat (make-string (max 0 (- doom-line-number-lpad (length str)))
+                                     doom-line-number-pad-char)
                         str
-                        (make-string doom-ui-nlinum-rpad doom-ui-nlinum-spacer)))
+                        (make-string doom-line-number-rpad doom-line-number-pad-char)))
       (put-text-property 0 (length str) 'face
                          (if (and nlinum-highlight-current-line
                                   (= line nlinum--current-line))
@@ -252,8 +319,8 @@ mode is detected.")
       str))
   (setq nlinum-format-function #'doom-nlinum-format-fn)
 
-  ;; Optimization: calculate line number column width beforehand
   (defun doom|init-nlinum-width ()
+    "Calculate line number column width beforehand (optimization)."
     (setq nlinum--width
           (length (save-excursion (goto-char (point-max))
                                   (format-mode-line "%l")))))

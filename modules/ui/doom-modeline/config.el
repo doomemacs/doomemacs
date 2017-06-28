@@ -563,18 +563,19 @@ with `evil-ex-substitute', and/or 4. The number of active `iedit' regions."
   (bar " %b  ")
   (media-info major-mode))
 
-;;
-(doom-set-modeline 'main t)
-
-;; This scratch buffer is already created, and doesn't get a modeline. For the
-;; love of Emacs, someone give the man a modeline!
-(with-current-buffer "*scratch*"
-  (doom-set-modeline 'main))
-
 
 ;;
 ;; Hooks
 ;;
+
+(defun +doom-modeline|init ()
+  "Set the default modeline."
+  (doom-set-modeline 'main t)
+
+  ;; This scratch buffer is already created and doesn't get a modeline. For the
+  ;; love of Emacs, someone give the man a modeline!
+  (with-current-buffer "*scratch*"
+    (doom-set-modeline 'main)))
 
 (defun +doom-modeline|set-special-modeline ()
   (doom-set-modeline 'special))
@@ -582,6 +583,13 @@ with `evil-ex-substitute', and/or 4. The number of active `iedit' regions."
 (defun +doom-modeline|set-media-modeline ()
   (doom-set-modeline 'media))
 
+
+;;
+;; Bootstrap
+;;
+
+(add-hook 'doom-init-ui-hook #'+doom-modeline|init)
+
 (add-hook 'org-src-mode-hook #'+doom-modeline|set-special-modeline)
-(add-hook 'image-mode-hook #'+doom-modeline|set-media-modeline)
-(add-hook 'circe-mode-hook #'+doom-modeline|set-special-modeline)
+(add-hook 'image-mode-hook   #'+doom-modeline|set-media-modeline)
+(add-hook 'circe-mode-hook   #'+doom-modeline|set-special-modeline)

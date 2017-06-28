@@ -59,3 +59,12 @@ window changes before then, the undo expires."
       (when (doom-quit-p "Close frame?")
         (delete-frame))
     (save-buffers-kill-emacs)))
+
+;;;###autoload
+(defun doom/reload-theme ()
+  "Reset the color theme currently in use."
+  (interactive)
+  (let ((theme (or (car-safe custom-enabled-themes) doom-theme)))
+    (when theme
+      (mapc #'disable-theme custom-enabled-themes))
+    (+doom|init-ui)))

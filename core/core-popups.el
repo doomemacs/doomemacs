@@ -164,7 +164,7 @@ for :align t on every rule."
           (t
            (when doom-popup-no-fringes
              (set-window-fringes window
-                                 doom-ui-fringe-size doom-ui-fringe-size
+                                 doom-fringe-size doom-fringe-size
                                  fringes-outside-margins))
            ;; Ensure window parameters are cleaned up
            (set-window-parameter window 'popup nil)
