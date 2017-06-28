@@ -59,26 +59,21 @@ if in a GUI/non-daemon session."
 
 (defun +doom-dashboard|kill-buffer-query-fn ()
   (or (not (+doom-dashboard-p))
-      (ignore (ignore-errors (+doom-dashboard-reload))
-              (bury-buffer))))
+      (ignore (ignore-errors (+doom-dashboard-reload)))))
 
 (defun +doom-dashboard|make-frame (frame)
   "Reload the dashboard after a brief pause. This is necessary for new frames,
 whose dimensions may not be fully initialized by the time this is run."
   (run-with-timer 0.1 nil #'+doom-dashboard/open frame))
 
-(add-hook 'window-setup-hook #'+doom-dashboard|init)
-(add-hook 'after-make-frame-functions #'+doom-dashboard|make-frame)
-
 (defun +doom-dashboard|server-visit (&rest _)
   "Inhibit dashboard refresh when opening files via emacsclient."
   (setq +doom-dashboard-inhibit-refresh t))
+
+(add-hook 'window-setup-hook #'+doom-dashboard|init)
+(add-hook 'after-make-frame-functions #'+doom-dashboard|make-frame)
 (add-hook 'server-visit-hook #'+doom-dashboard|server-visit)
 
-;; Compatibility with `midnight-mode' and `clean-buffer-list'
-(after! midnight-mode
-  (push +doom-dashboard-name clean-buffer-list-kill-never-buffer-names)
-  (push "^\\s-*\\*doom.+" clean-buffer-list-kill-never-regexps))
 
 ;;
 (defun +doom-dashboard/open (frame)
