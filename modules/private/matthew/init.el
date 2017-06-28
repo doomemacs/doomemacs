@@ -1,5 +1,6 @@
 ;;; private/demifiend/init.el -*- lexical-binding: t; -*-
 
+(setq debug-on-error t)
 (setq user-login-name "demifiend")
 (setq user-full-name "Matthew Graybosch")
 (setq user-email-address "public@matthewgraybosch.com")

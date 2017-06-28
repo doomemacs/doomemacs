@@ -31,6 +31,13 @@
 (defun org-mode-postamble-partial (options)
   (org-babel-with-temp-filebuffer (expand-file-name "postamble.html" org-publish-partials) (buffer-string)))
 
+;; Taken from Xah Lee's ErgoEmacs: http://ergoemacs.org/emacs/elisp_read_file_content.html
+(defun get-string-from-file (filePath)
+  "Return filePath's file content."
+  (with-temp-buffer
+    (insert-file-contents filePath)
+    (buffer-string)))
+
 ;; We need this hook to make sure the config function below loads on startup.
 (add-hook '+org-init-hook #'+org|init-publish t)
 
@@ -73,10 +80,10 @@
            :section-numbers nil
            :with-toc nil
            :recursive t
-           :html-head org-mode-head-partial
-           :html-head-extra org-mode-head-extra-partial
-           :html-preamble org-mode-preamble-partial
-           :html-postamble org-mode-postamble-partial
+           :html-head ,(get-string-from-file (expand-file-name "head.html" org-publish-partials))
+           :html-head-extra ,(get-string-from-file (expand-file-name "head-extra.html" org-publish-partials))
+           :html-preamble ,(get-string-from-file (expand-file-name "preamble.html" org-publish-partials))
+           :html-postamble ,(get-string-from-file (expand-file-name "postamble.html" org-publish-partials))
           ("posts"
            :base-directory ,(concat org-publish-source "posts/")
            :base-extension "org"
@@ -85,10 +92,10 @@
            :section-numbers nil
            :with-toc t
            :recursive t
-           :html-head org-mode-head-partial
-           :html-head-extra org-mode-head-extra-partial
-           :html-preamble org-mode-preamble-partial
-           :html-postamble org-mode-postamble-partial
+           :html-head ,(get-string-from-file (expand-file-name "head.html" org-publish-partials))
+           :html-head-extra ,(get-string-from-file (expand-file-name "head-extra.html" org-publish-partials))
+           :html-preamble ,(get-string-from-file (expand-file-name "preamble.html" org-publish-partials))
+           :html-postamble ,(get-string-from-file (expand-file-name "postamble.html" org-publish-partials))
           ("assets"
            :base-directory ,(concat org-publish-source "assets/")
            :base-extension "txt\\|css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg"
