@@ -325,8 +325,8 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 (def-modeline-segment! vcs
   "Displays the current branch, colored based on its state."
   (when vc-mode
-    (let ((backend (vc-backend buffer-file-name))
-          (state   (vc-state buffer-file-name))
+    (let ((backend (when buffer-file-name (vc-backend buffer-file-name)))
+          (state   (when buffer-file-name (vc-state buffer-file-name)))
           (face    'mode-line-inactive)
           (active  (active))
           (all-the-icons-scale-factor 1.0)
