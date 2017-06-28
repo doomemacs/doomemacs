@@ -7,11 +7,14 @@ MODES should be one major-mode symbol or a list of them."
   `(progn
      ,@(cl-loop for mode in (doom-enlist (doom-unquote modes))
                 for def-name = (intern (format "doom--init-company-%s" mode))
-                collect `(defun ,def-name ()
-                           (when (and (eq major-mode ',mode)
-                                      ,(not (eq backends '(nil))))
-                             (require 'company)
-                             (setq company-backends (append (list ,@backends) company-backends))))
+                collect
+                `(defun ,def-name ()
+                   (when (and (eq major-mode ',mode)
+                              ,(not (eq backends '(nil))))
+                     (require 'company)
+                     (make-variable-buffer-local 'company-backends)
+                     (dolist (backend (list ,@(reverse backends)))
+                       (cl-pushnew backend company-backends :test #'equal))))
                 collect `(add-hook! ,mode #',def-name))))
 
 
