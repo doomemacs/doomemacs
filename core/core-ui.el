@@ -214,7 +214,7 @@ local value, whether or not it's permanent-local. Therefore, we cycle
 ;; a good indicator that Emacs isn't frozen
 (add-hook 'doom-post-init-hook #'blink-cursor-mode)
 ;; standardize default fringe width
-(fringe-mode doom-fringe-size)
+(if (fboundp 'fringe-mode) (fringe-mode doom-fringe-size))
 ;; draw me like one of your French editors
 (tooltip-mode -1) ; relegate tooltips to echo area only
 (menu-bar-mode -1)
