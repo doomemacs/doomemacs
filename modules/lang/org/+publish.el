@@ -20,20 +20,16 @@
 ;; Code to read HTML partials from external files based on code located at
 ;; https://github.com/howardabrams/dot-files/blob/master/emacs-blog.org
 (defun org-mode-head-partial (options)
-  (let ((default-directory "~/work/website/partials"))
-    (org-babel-with-temp-filebuffer (expand-file-name "head.html") (buffer-string))))
+  (org-babel-with-temp-filebuffer (expand-file-name "head.html" org-publish-partials) (buffer-string)))
 
 (defun org-mode-head-extra-partial (options)
-  (let ((default-directory "~/work/website/partials"))
-    (org-babel-with-temp-filebuffer (expand-file-name "head-extra.html") (buffer-string))))
+  (org-babel-with-temp-filebuffer (expand-file-name "head-extra.html" org-publish-partials) (buffer-string)))
 
 (defun org-mode-preamble-partial (options)
-  (let ((default-directory "~/work/website/partials"))
-    (org-babel-with-temp-filebuffer (expand-file-name "preamble.html") (buffer-string))))
+  (org-babel-with-temp-filebuffer (expand-file-name "preamble.html" org-publish-partials) (buffer-string)))
 
 (defun org-mode-postamble-partial (options)
-  (let ((default-directory "~/work/website/partials"))
-    (org-babel-with-temp-filebuffer (expand-file-name "postamble.html") (buffer-string))))
+  (org-babel-with-temp-filebuffer (expand-file-name "postamble.html" org-publish-partials) (buffer-string)))
 
 ;; We need this hook to make sure the config function below loads on startup.
 (add-hook '+org-init-hook #'+org|init-publish t)
