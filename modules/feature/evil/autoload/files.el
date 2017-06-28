@@ -2,11 +2,12 @@
 
 (defun +evil--forget-file (old-path &optional new-path)
   "Ensure `recentf', `projectile' and `save-place' forget OLD-PATH."
-  (when (fboundp 'recentf-add-file)
+  (when (bound-and-true-p recentf-mode)
     (when new-path
       (recentf-add-file new-path))
     (recentf-remove-if-non-kept old-path))
-  (when (and (projectile-project-p)
+  (when (and projectile-mode
+             (projectile-project-p)
              (projectile-file-cached-p old-path (projectile-project-root)))
     (projectile-purge-file-from-cache old-path))
   (when (bound-and-true-p save-place-mode)
