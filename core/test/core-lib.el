@@ -110,4 +110,5 @@
 (def-test! set
   (should (assq :-test-setting doom-settings))
   (should (set! :-test-setting t))
-  (should-not (set! :non-existant-setting (error "This shouldn't trigger"))))
+  (let ((inhibit-message t))
+    (should-not (set! :non-existant-setting (error "This shouldn't trigger")))))
