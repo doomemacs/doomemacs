@@ -17,20 +17,6 @@
 ;; (setq org-publish-partials "~/work/website/partials/")
 ;; (setq org-publish-target "~/public_html/")
 
-;; Code to read HTML partials from external files based on code located at
-;; https://github.com/howardabrams/dot-files/blob/master/emacs-blog.org
-(defun org-mode-head-partial (options)
-  (org-babel-with-temp-filebuffer (expand-file-name "head.html" org-publish-partials) (buffer-string)))
-
-(defun org-mode-head-extra-partial (options)
-  (org-babel-with-temp-filebuffer (expand-file-name "head-extra.html" org-publish-partials) (buffer-string)))
-
-(defun org-mode-preamble-partial (options)
-  (org-babel-with-temp-filebuffer (expand-file-name "preamble.html" org-publish-partials) (buffer-string)))
-
-(defun org-mode-postamble-partial (options)
-  (org-babel-with-temp-filebuffer (expand-file-name "postamble.html" org-publish-partials) (buffer-string)))
-
 ;; Taken from Xah Lee's ErgoEmacs: http://ergoemacs.org/emacs/elisp_read_file_content.html
 (defun get-string-from-file (filePath)
   "Return filePath's file content."
