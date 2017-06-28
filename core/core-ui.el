@@ -211,17 +211,12 @@ mode is detected.")
     (remove-overlays (point-min) (point-max) 'face 'hl-line))
 
   (after! evil
-    ;; Can get in the way of the selection region when in evil visual mode, so
-    ;; disable it temporarily.
+    ;; Disable `hl-line' in evil-visual mode (temporarily). `hl-line' can make
+    ;; the selection region harder to see while in evil visual mode.
     (defun doom|turn-off-hl-line () (hl-line-mode -1))
 
-    (add-hook! 'hl-line-mode-hook
-      (cond (hl-line-mode
-             (add-hook 'evil-visual-state-entry-hook #'doom|turn-off-hl-line nil t)
-             (add-hook 'evil-visual-state-exit-hook #'hl-line-mode nil t))
-            (t
-             (remove-hook 'evil-visual-state-entry-hook #'doom|turn-off-hl-line t)
-             (remove-hook 'evil-visual-state-exit-hook #'hl-line-mode t))))))
+    (add-hook 'evil-visual-state-entry-hook #'doom|turn-off-hl-line)
+    (add-hook 'evil-visual-state-exit-hook #'hl-line-mode)))
 
 ;; Line number column. A faster (or equivalent, in the worst case) line number
 ;; plugin than the built-in `linum'.
