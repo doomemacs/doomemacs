@@ -228,16 +228,16 @@ Used by `doom/packages-install'."
          ('file-error
           (message! (bold (red "  FILE ERROR: %s" (error-message-string ex2))))
           (message! "  Trying again...")
-          (doom-refresh-packages t)
+          (quiet! (doom-refresh-packages t))
           ,@body))
      ('user-error
       (message! (bold (red "  ERROR: (%s) %s"
-                           (upcase (symbol-name (car ex)))
+                           (car ex)
                            (error-message-string ex)))))
      ('error
       (doom-refresh-clear-cache)
       (message! (bold (red "  FATAL ERROR: (%s) %s"
-                           (upcase (symbol-name (car ex)))
+                           (car ex)
                            (error-message-string ex)))))))
 
 
