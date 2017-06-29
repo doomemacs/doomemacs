@@ -67,4 +67,6 @@ window changes before then, the undo expires."
   (let ((theme (or (car-safe custom-enabled-themes) doom-theme)))
     (when theme
       (mapc #'disable-theme custom-enabled-themes))
-    (doom|init-ui)))
+    (run-hooks 'doom-pre-reload-theme-hook)
+    (doom|init-ui)
+    (run-hooks 'doom-post-reload-theme-hook)))

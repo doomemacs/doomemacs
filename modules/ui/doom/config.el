@@ -7,6 +7,11 @@
   (unless doom-theme
     (setq doom-theme 'doom-one))
 
+  ;; Ensure `doom/reload' reloads common faces
+  (defun +doom|reload-theme ()
+    (load "doom-themes-common.el" nil t))
+  (add-hook 'doom-pre-reload-theme-hook #'+doom|reload-theme)
+
   ;; blink mode-line on errors
   (add-hook 'doom-post-init-hook #'doom-themes-visual-bell-config)
 
