@@ -11,9 +11,9 @@
 (pcase (system-name)
   ("proteus"
    (setq +doom-modeline-height 25
-         +doom-font (font-spec :family "Fira Mono" :size 10)
-         +doom-variable-pitch-font (font-spec :family "Fira Sans" :size 10)
-         +doom-unicode-font (font-spec :family "DejaVu Sans Mono" :size 10)
+         doom-font (font-spec :family "Fira Mono" :size 10)
+         doom-variable-pitch-font (font-spec :family "Fira Sans" :size 10)
+         doom-unicode-font (font-spec :family "DejaVu Sans Mono" :size 10)
          doom-line-number-lpad 3))
   ("halimede"
    (setq +doom-modeline-height 27))

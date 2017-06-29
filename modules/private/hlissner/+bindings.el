@@ -191,7 +191,7 @@
    (:desc "help" :prefix "h"
      :n "h" help-map
      :desc "Apropos"               :n "a" #'apropos
-     :desc "Reload theme"          :n "R" #'+doom/reset-theme
+     :desc "Reload theme"          :n "R" #'doom/reload-theme
      :desc "Find library"          :n "l" #'find-library
      :desc "Toggle Emacs log"      :n "m" #'doom/popup-toggle-messages
      :desc "Command log"           :n "L" #'global-command-log-mode
