@@ -6,7 +6,7 @@ EMACSI=emacs -q $(EMACS_FLAGS)
 MODULES=$(patsubst modules/%, %, $(shell find modules/ -maxdepth 2 -type d))
 
 # Tasks
-all: autoloads autoremove install update
+all: autoloads autoremove install
 
 install: init.el .local/autoloads.el
 	@$(EMACS) -f doom/packages-install
