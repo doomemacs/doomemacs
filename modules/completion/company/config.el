@@ -62,10 +62,10 @@ MODES should be one major-mode symbol or a list of them."
 (def-package! company-dict
   :commands company-dict
   :config
-  ;; Project-specific dictionaries
   (defun +company|enable-project-dicts (mode &rest _)
+    "Enable per-project dictionaries."
     (if (symbol-value mode)
-        (push mode company-dict-minor-mode-list)
+        (cl-pushnew mode company-dict-minor-mode-list :test #'eq)
       (setq company-dict-minor-mode-list (delq mode company-dict-minor-mode-list))))
   (add-hook 'doom-project-hook #'+company|enable-project-dicts))
 
