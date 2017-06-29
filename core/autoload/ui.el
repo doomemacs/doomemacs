@@ -67,4 +67,4 @@ window changes before then, the undo expires."
   (let ((theme (or (car-safe custom-enabled-themes) doom-theme)))
     (when theme
       (mapc #'disable-theme custom-enabled-themes))
-    (+doom|init-ui)))
+    (doom|init-ui)))
