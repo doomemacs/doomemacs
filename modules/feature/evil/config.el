@@ -331,6 +331,7 @@ the new algorithm is confusing, like in python or ruby."
                              (?\] "[]})]")
                              (?\; "[;:]")))
   :config
+  (add-hook 'doom-post-init-hook #'evil-snipe-mode)
   (add-hook 'doom-post-init-hook #'evil-snipe-override-mode))
 
 
