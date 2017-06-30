@@ -81,12 +81,12 @@
           :map wgrep-mode-map [remap evil-delete] #'+evil-delete)
 
         ;; replace native folding commands
-        :n "zo" #'+evil:fold-open
-        :n "zO" #'+evil:fold-open
-        :n "zc" #'+evil:fold-close
-        :n "za" #'+evil:fold-toggle
-        :n "zr" #'+evil:fold-open-all
-        :n "zm" #'+evil:fold-close-all)
+        [remap evil-toggle-fold]   #'+evil:fold-toggle
+        [remap evil-close-fold]    #'+evil:fold-close
+        [remap evil-open-fold]     #'+evil:fold-open
+        [remap evil-open-fold-rec] #'+evil:fold-open
+        [remap evil-close-folds]   #'+evil:fold-close-all
+        [remap evil-open-folds]    #'+evil:fold-open-all)
 
 
   ;; --- evil hacks -------------------------
