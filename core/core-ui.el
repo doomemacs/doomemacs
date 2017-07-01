@@ -6,13 +6,13 @@
 (defvar doom-theme nil
   "A symbol representing the color theme to load.")
 
-(defvar doom-font (font-spec :family "Fira Mono" :size 12)
+(defvar doom-font (font-spec :family "Fira Mono" :size 14)
   "The default font to use. Expects a FONT-SPEC (`font-spec').")
 
-(defvar doom-variable-pitch-font (font-spec :family "Fira Sans" :size 12)
+(defvar doom-variable-pitch-font (font-spec :family "Fira Sans" :size 14)
   "The default font to use for variable-pitch text. Expects a FONT-SPEC (`font-spec').")
 
-(defvar doom-unicode-font (font-spec :family "DejaVu Sans Mono" :size 12)
+(defvar doom-unicode-font (font-spec :family "DejaVu Sans Mono" :size 14)
   "Fallback font for unicode glyphs. Is ignored if :feature unicode is active.")
 
 (defvar doom-major-mode-names
@@ -209,7 +209,7 @@ local value, whether or not it's permanent-local. Therefore, we cycle
 ;; prompts the user for confirmation when deleting a non-empty frame
 (define-key global-map [remap delete-frame] #'doom/delete-frame)
 ;; buffer name in frame title
-(setq-default frame-title-format '("DOOM Emacs"))
+(setq-default frame-title-format '("DOOMED Emacs"))
 ;; auto-enabled in Emacs 25+; I'll do it myself
 (global-eldoc-mode -1)
 ;; a good indicator that Emacs isn't frozen
@@ -218,7 +218,9 @@ local value, whether or not it's permanent-local. Therefore, we cycle
 (if (fboundp 'fringe-mode) (fringe-mode doom-fringe-size))
 ;; draw me like one of your French editors
 (tooltip-mode -1) ; relegate tooltips to echo area only
-(menu-bar-mode -1)
+;; The menu bar might be handy if I ever have Catherine working on one of my machines.
+;; (menu-bar-mode -1)
+
 (if (fboundp 'tool-bar-mode)   (tool-bar-mode -1))
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 
