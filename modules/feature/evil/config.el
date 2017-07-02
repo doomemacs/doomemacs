@@ -112,7 +112,7 @@ ignored.")
     "If in anything but normal or motion mode when moving to another window,
 restore normal mode. This prevents insert state from bleeding into other modes
 across windows."
-    (unless (memq evil-state '(normal motion))
+    (unless (memq evil-state '(normal motion emacs))
       (evil-normal-state +1))
     (apply orig-fn args))
   (advice-add #'windmove-do-window-select :around #'+evil*restore-normal-state-on-windmove)
