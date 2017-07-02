@@ -262,8 +262,8 @@ example; the package name can be omitted)."
       t)))
 
 (defun doom-update-package (name &optional force-p)
-  "Updates package NAME if it is out of date, using quelpa or package.el as
-appropriate."
+  "Updates package NAME (a symbol) if it is out of date, using quelpa or
+package.el as appropriate."
   (doom-initialize)
   (unless (package-installed-p name)
     (user-error "%s isn't installed" name))
