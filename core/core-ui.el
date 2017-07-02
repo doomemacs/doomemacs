@@ -57,7 +57,7 @@ overlay.")
  mouse-yank-at-point t           ; middle-click paste at point, not at click
  resize-mini-windows 'grow-only  ; Minibuffer resizing
  show-help-function nil          ; hide :help-echo text
- split-width-threshold nil       ; favor horizontal splits
+ split-width-threshold 160       ; favor horizontal splits
  uniquify-buffer-name-style 'forward
  use-dialog-box nil              ; always avoid GUI
  visible-cursor nil
