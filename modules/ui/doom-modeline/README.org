@@ -23,17 +23,24 @@ This module requires the fonts included with ~all-the-icons~ to be installed.
 Run ~M-x all-the-icons-install-fonts~ to do so.
 
 ** Extracting my modeline
-Some might want my modeline without the DOOM config altogether. I've taken some care to make this as easier for you.
+Some might want my modeline without the DOOM config altogether. I've tried to make this easier for you, but there are a few things you'll need to do:
 
-Here is what you must do:
++ Ensure [[https://github.com/bbatsov/projectile][projectile]] and [[https://github.com/domtronn/all-the-icons.el][all-the-icons]] are installed.
++ Ensure ~projectile-mode~ is enabled.
++ Ensure the fonts included with ~all-the-icons~ are installed (~M-x all-the-icons-install-fonts~).
++ Replace ~def-package!~ calls with ~use-package~.
++ Replace ~doom-project-root~ calls with ~projectile-project-root~.
++ Change the one ~def-memoized!~ function to ~defun~.
++ The ~+doom-modeline--make-xpm~ function is memoized with the ~def-memoized!~ macro. Change ~def-memoized!~ to ~defun~.
++ Copy the ~add-hook!~ macro definition from [[/master/core/core-lib.el][core/core-lib.el]].
++ Copy the following macros and functions from [[/master/core/core-ui.el][core/core-ui.el]]:
+  + ~def-modeline-segment!~
+  + ~def-modeline!~
+  + ~doom--prepare-modeline-segments~
+  + ~doom-modeline~
+  + ~doom-set-modeline~
 
-+ Ensure [[https://github.com/bbatsov/projectile][projectile]] and [[https://github.com/domtronn/all-the-icons.el][all-the-icons]] are installed
-+ Ensure ~projectile-mode~ is enabled
-+ Ensure the fonts included with ~all-the-icons~ are installed (~M-x all-the-icons-install-fonts~)
-+ Replace ~def-package!~ calls with ~use-package~
-+ Replace ~doom-project-root~ calls with ~projectile-project-root~
-
-And you /should/ be good to go. As I have never used this out of my config I can't guarantee immediate success, but I'd be happy to help you out. File an issue.
+That /should/ be everything. As I have never used this out of my config I can't guarantee immediate success, but I'd be happy to help you out. File an issue.
 
 ** Troubleshooting
 *** Where are my minor-modes?
