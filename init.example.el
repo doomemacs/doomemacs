@@ -65,6 +65,7 @@
        macos           ; macos-specific commands
        neotree         ; a project drawer, like NERDTree for vim
        password-store  ; password manager for nerds
+       prodigy         ; manage external services from within emacs
        rotate-text     ; cycle region at point between text candidates
        term            ; terminals in Emacs
        tmux            ; an API for interacting with tmux
