@@ -213,12 +213,13 @@ across windows."
     (cons (format "(%s " (or (read-string "(") "")) ")"))
 
   ;; Add escaped-sequence support to embrace
-  (push (cons ?\\ (make-embrace-pair-struct
-                   :key ?\\
-                   :read-function #'+evil--embrace-escaped
-                   :left-regexp "\\[[{(]"
-                   :right-regexp "\\[]})]"))
-        (default-value 'embrace--pairs-list))
+  (cl-pushnew (cons ?\\ (make-embrace-pair-struct
+                         :key ?\\
+                         :read-function #'+evil--embrace-escaped
+                         :left-regexp "\\[[{(]"
+                         :right-regexp "\\[]})]"))
+              (default-value 'embrace--pairs-list)
+              :key #'car)
 
   ;; Add extra pairs
   (add-hook 'LaTeX-mode-hook #'embrace-LaTeX-mode-hook)
@@ -299,12 +300,16 @@ the new algorithm is confusing, like in python or ruby."
   :config
   (global-evil-mc-mode +1)
 
-  ;; Add custom commands to whitelisted commands
-  (dolist (fn '(doom/deflate-space-maybe doom/inflate-space-maybe
-                doom/backward-to-bol-or-indent doom/forward-to-last-non-comment-or-eol
-                doom/backward-kill-to-bol-and-indent doom/newline-and-indent))
-    (push (cons fn '((:default . evil-mc-execute-default-call)))
-          evil-mc-custom-known-commands))
+  (unless doom-init-p
+    ;; Add custom commands to whitelisted commands
+    (dolist (fn '(doom/deflate-space-maybe doom/inflate-space-maybe
+                                           doom/backward-to-bol-or-indent doom/forward-to-last-non-comment-or-eol
+                                           doom/backward-kill-to-bol-and-indent doom/newline-and-indent))
+      (push (cons fn '((:default . evil-mc-execute-default-call)))
+            evil-mc-custom-known-commands))
+
+    ;; disable evil-escape in evil-mc; causes unwanted text on invocation
+    (push 'evil-escape-mode evil-mc-incompatible-minor-modes))
 
   (defun +evil|escape-multiple-cursors ()
     "Clear evil-mc cursors and restore state."
@@ -312,10 +317,7 @@ the new algorithm is confusing, like in python or ruby."
       (evil-mc-undo-all-cursors)
       (evil-mc-resume-cursors)
       t))
-  (add-hook '+evil-esc-hook #'+evil|escape-multiple-cursors)
-
-  ;; disable evil-escape in evil-mc; causes unwanted text on invocation
-  (push 'evil-escape-mode evil-mc-incompatible-minor-modes))
+  (add-hook '+evil-esc-hook #'+evil|escape-multiple-cursors))
 
 
 (def-package! evil-snipe
