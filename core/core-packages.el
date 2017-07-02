@@ -346,19 +346,28 @@ ignore any `def-package!' blocks for PACKAGE."
          (error "'%s' isn't a valid hook for def-package-hook!" when))))
 
 (defmacro load! (filesym &optional path noerror)
-  "Loads a file relative to the current module (or PATH). FILESYM is a file path
-as a symbol. PATH is a directory to prefix it with. If NOERROR is non-nil, don't
-throw an error if the file doesn't exist."
+  "Load a file relative to the current executing file (`load-file-name').
+
+FILESYM is either a symbol or string representing the file to load. PATH is
+where to look for the file (a string representing a directory path), by default
+it is relative to `load-file-name', `byte-compile-current-file' or
+`buffer-file-name' (in that order).
+
+If NOERROR is non-nil, don't throw an error if the file doesn't exist."
   (let ((path (or (and path (or (and (symbolp path) (symbol-value path))
                                 (and (stringp path) path)
                                 (and (listp path) (eval path))))
                   (and load-file-name (file-name-directory load-file-name))
                   (and (bound-and-true-p byte-compile-current-file)
                        (file-name-directory byte-compile-current-file))
-                  (and buffer-file-name (file-name-directory buffer-file-name)))))
+                  (and buffer-file-name (file-name-directory buffer-file-name))))
+        (filename (cond ((stringp filesym) filesym)
+                        ((symbolp filesym) (symbol-name filesym))
+                        (t (error "load! expected a string or symbol, got %s (a %s)"
+                                  filesym (type-of filesym))))))
     (unless path
-      (error "Could not find %s" filesym))
-    (let ((file (expand-file-name (concat (symbol-name filesym) ".el") path)))
+      (error "Could not find %s" filename))
+    (let ((file (expand-file-name (concat filename ".el") path)))
       (if (file-exists-p file)
           `(load ,(file-name-sans-extension file) ,noerror ,(not doom-debug-mode))
         (unless noerror
