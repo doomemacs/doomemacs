@@ -36,6 +36,8 @@
 (load! +export)
 (load! +notebook)
 (load! +babel)
+;; Basic configuration for building websites with org-publish
+(load! +publish)
 
 
 ;;

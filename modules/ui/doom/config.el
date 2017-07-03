@@ -5,7 +5,7 @@
   :demand t
   :config
   (unless doom-theme
-    (setq doom-theme 'doom-one))
+    (setq doom-theme 'doom-vibrant))
 
   ;; Ensure `doom/reload' reloads common faces
   (defun +doom|reload-theme ()
