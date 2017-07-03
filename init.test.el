@@ -5,4 +5,5 @@
 (doom! :feature evil
        :completion company
        :tools password-store
+       :lang web
        :private hlissner)
