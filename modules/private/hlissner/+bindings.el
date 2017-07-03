@@ -71,7 +71,7 @@
  (:leader
    :desc "Ex command"  :nv ";"   #'evil-ex
    :desc "M-x"         :nv ":"   #'execute-extended-command
-   :desc "Pop up scratch buffer"   :nv "x"  #'+doom:scratch-buffer
+   :desc "Pop up scratch buffer"   :nv "x"  #'doom/scratch-buffer
    :desc "Org Capture"             :nv "X"  #'+org/capture
 
    ;; Most commonly used
@@ -147,7 +147,7 @@
      :desc "Kill buffer"             :n "k" #'doom/kill-this-buffer
      :desc "Kill other buffers"      :n "o" #'doom/kill-other-buffers
      :desc "Save buffer"             :n "s" #'save-buffer
-     :desc "Pop scratch buffer"      :n "x" #'+doom:scratch-buffer
+     :desc "Pop scratch buffer"      :n "x" #'doom/scratch-buffer
      :desc "Bury buffer"             :n "z" #'bury-buffer
      :desc "Next buffer"             :n "]" #'doom/next-buffer
      :desc "Previous buffer"         :n "[" #'doom/previous-buffer
