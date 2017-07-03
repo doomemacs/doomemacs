@@ -16,12 +16,14 @@ character.")
   "HTML encode/decode TEXT. Based on Xah's replace HTML named entities function
 @ http://ergoemacs.org/emacs/elisp_replace_html_entities_command.html"
   (interactive "<!><r>")
-  (dolist (rep +web-entities-list text)
+  (seq-doseq (rep +web-entities-list)
     (let ((from (elt rep (if decode-p 0 1)))
           (to   (elt rep (if decode-p 1 0)))
-          (case-fold-search t))
-      (when (string-match-p (regexp-quote from) text)
-        (setq text (s-replace from to text))))))
+          case-fold-search)
+      (when (and (not (equal from " "))
+                 (string-match-p (regexp-quote from) text))
+        (setq text (s-replace from to text)))))
+  text)
 
 (defun +web--entities-region (beg end &optional decode-p)
   "HTML encode/decode the selected region. Based on Xah's replace HTML named entities
@@ -29,10 +31,13 @@ function @ http://ergoemacs.org/emacs/elisp_replace_html_entities_command.html"
   (save-restriction
     (narrow-to-region beg end)
     (let (case-fold-search)
-      (dolist (rep reps)
-        (goto-char (point-min))
-        (while (search-forward (elt rep (if decode-p 0 1)) nil t)
-          (replace-match (elt rep (if decode-p 1 0)) 'FIXEDCASE 'LITERAL))))))
+      (seq-doseq (rep +web-entities-list)
+        (let ((from (elt rep (if decode-p 0 1)))
+              (to   (elt rep (if decode-p 1 0))))
+          (unless (equal from " ")
+            (goto-char (point-min))
+            (while (search-forward from nil t)
+              (replace-match to 'FIXEDCASE 'LITERAL))))))))
 
 ;;;###autoload
 (defun +web-encode-entities (text)
