@@ -1,11 +1,15 @@
 ;;; ui/doom/config.el -*- lexical-binding: t; -*-
 
+(set! :font "Fira Mono" :size 12)
+(set! :big-font "Fira Mono" :size 18)
+(set! :variable-font "Fira Sans" :size 12)
+(set! :unicode-font "DejaVu Sans Mono" :size 12)
+
 ;; <https://github.com/hlissner/emacs-doom-theme>
 (def-package! doom-themes
   :demand t
   :config
-  (unless doom-theme
-    (setq doom-theme 'doom-one))
+  (set! :theme 'doom-one)
 
   ;; Ensure `doom/reload' reloads common faces
   (defun +doom|reload-theme ()
