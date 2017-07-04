@@ -43,6 +43,28 @@ overlay.")
 `doom/reload-theme').")
 
 
+;; Settings
+(def-setting! :theme (theme)
+  `(unless doom-theme
+     (setq doom-theme ,theme)))
+
+(def-setting! :font (family &rest spec)
+  `(unless doom-font
+     (setq doom-font (font-spec :family ,family ,@spec))))
+
+(def-setting! :variable-pitch-font (family &rest spec)
+  `(unless doom-variable-pitch-font
+     (setq doom-variable-pitch-font (font-spec :family ,family ,@spec))))
+
+(def-setting! :big-font (family &rest spec)
+  `(unless doom-big-font
+     (setq doom-big-font (font-spec :family ,family ,@spec))))
+
+(def-setting! :unicode-font (family &rest spec)
+  `(unless doom-unicode-font
+     (setq doom-unicode-font (font-spec :family ,family ,@spec))))
+
+
 (setq-default
  bidi-display-reordering nil ; disable bidirectional text for tiny performance boost
  blink-matching-paren nil    ; don't blink--too distracting
