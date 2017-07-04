@@ -13,11 +13,7 @@
     (condition-case-unless-debug ex
         (progn
           (message "Refreshing package archives")
-          (package-refresh-contents (not doom-debug-mode))
-          (cl-loop for i from 0
-                   while (and package--downloads-in-progress
-                              (<= i 10))
-                   do (sleep-for 0 250))
+          (package-refresh-contents)
           (persistent-soft-store 'last-pkg-refresh t "emacs" 900))
     ('error
      (doom-refresh-clear-cache)
