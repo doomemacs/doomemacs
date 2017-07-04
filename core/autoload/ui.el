@@ -70,3 +70,16 @@ window changes before then, the undo expires."
     (run-hooks 'doom-pre-reload-theme-hook)
     (doom|init-ui)
     (run-hooks 'doom-post-reload-theme-hook)))
+
+;;;###autoload
+(define-minor-mode doom-big-font-mode
+  "A global mode that resizes the font, for streams, screen-sharing and
+presentations."
+  :init-value nil
+  :lighter " BIG"
+  :global t
+  (unless (fontp doom-big-font)
+    (user-error "`doom-big-font' isn't set to a valid font"))
+  (if doom-big-font-mode
+      (set-frame-font doom-big-font t t)
+    (set-frame-font doom-font t t)))

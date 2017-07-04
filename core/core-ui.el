@@ -9,6 +9,9 @@
 (defvar doom-font (font-spec :family "Fira Mono" :size 12)
   "The default font to use. Expects a FONT-SPEC (`font-spec').")
 
+(defvar doom-big-font nil
+  "The default font to use. Expects a FONT-SPEC (`font-spec').")
+
 (defvar doom-variable-pitch-font (font-spec :family "Fira Sans" :size 12)
   "The default font to use for variable-pitch text. Expects a FONT-SPEC (`font-spec').")
 
