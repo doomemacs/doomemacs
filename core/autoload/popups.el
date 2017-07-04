@@ -180,3 +180,12 @@ only close popups that have an :autoclose property in their rule (see
       :file  ,(buffer-file-name buffer)
       :rules ,(window-parameter window 'popup)
       :size  ,(doom-popup-size window))))
+
+;;;###autoload
+(defmacro with-popup-rules! (rules &rest body)
+  (declare (indent defun))
+  `(let ((old-shackle-rules shackle-rules))
+     ,@(cl-loop for rule in rules
+                collect `(set! :popup ,@rule))
+     ,@body
+     (setq shackle-rules old-shackle-rules)))
