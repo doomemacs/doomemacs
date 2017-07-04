@@ -6,16 +6,16 @@
 (defvar doom-theme nil
   "A symbol representing the color theme to load.")
 
-(defvar doom-font (font-spec :family "Fira Mono" :size 12)
+(defvar doom-font nil
   "The default font to use. Expects a FONT-SPEC (`font-spec').")
 
 (defvar doom-big-font nil
   "The default font to use. Expects a FONT-SPEC (`font-spec').")
 
-(defvar doom-variable-pitch-font (font-spec :family "Fira Sans" :size 12)
+(defvar doom-variable-pitch-font nil
   "The default font to use for variable-pitch text. Expects a FONT-SPEC (`font-spec').")
 
-(defvar doom-unicode-font (font-spec :family "DejaVu Sans Mono" :size 12)
+(defvar doom-unicode-font nil
   "Fallback font for unicode glyphs. Is ignored if :feature unicode is active.")
 
 (defvar doom-major-mode-names
