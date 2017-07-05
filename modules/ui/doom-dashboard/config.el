@@ -59,7 +59,8 @@ if in a GUI/non-daemon session."
 
 (defun +doom-dashboard|kill-buffer-query-fn ()
   (or (not (+doom-dashboard-p))
-      (ignore (ignore-errors (+doom-dashboard-reload)))))
+      (ignore (let (+doom-dashboard-inhibit-refresh)
+                (ignore-errors (+doom-dashboard-reload))))))
 
 (defun +doom-dashboard|make-frame (frame)
   "Reload the dashboard after a brief pause. This is necessary for new frames,
