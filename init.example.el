@@ -118,7 +118,6 @@
        :app
        email           ; Emacs as an email client
        irc             ; how neckbeards socialize
-       present         ; showing off presentations in emacs
        rss             ; emacs as an RSS reader
        twitter         ; twitter client https://twitter.com/vnought
        write           ; emacs as a word processor (latex + org + markdown)
