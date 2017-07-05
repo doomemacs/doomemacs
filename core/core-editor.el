@@ -205,11 +205,31 @@ fundamental-mode) for performance sake."
 (def-package! undo-tree
   :demand t
   :config
+  (global-undo-tree-mode +1)
+
   ;; persistent undo history is known to cause undo history corruption, which
   ;; can be very destructive! So disable it!
-  (setq undo-tree-auto-save-history nil
+  (setq undo-tree-auto-save-history t
         undo-tree-history-directory-alist
         (list (cons "." (concat doom-cache-dir "undo-tree-hist/"))))
+
+  (defun doom|save-undo-history ()
+    (when (and (bound-and-true-p undo-tree-mode)
+               buffer-file-name
+               (file-writable-p buffer-file-name)
+               (not (eq buffer-undo-list t))
+               (not revert-buffer-in-progress-p))
+      (quiet!
+       (undo-tree-save-history nil t))))
+
+  (defun doom|save-all-undo-history ()
+    (dolist (buffer (buffer-list))
+      (with-current-buffer buffer
+        (doom|save-undo-history))))
+
+  (remove-hook 'write-file-functions #'undo-tree-save-history-hook)
+  (add-hook 'kill-emacs-hook #'doom|save-all-undo-history)
+  (add-hook 'kill-buffer-hook #'doom|save-undo-history)
 
   (defun doom*silence-undo-tree-load (orig-fn &rest args)
     "Silence undo-tree load errors."
