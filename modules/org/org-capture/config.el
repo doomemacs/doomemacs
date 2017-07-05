@@ -41,6 +41,9 @@
           ;;  "** %i%?\n")
           ))
 
+  (when (featurep! :feature evil)
+    (add-hook 'org-capture-mode-hook #'evil-insert-state))
+
   ;; Allows the Emacs mini-frame (opened from an external shell script to run
   ;; and clean up properly) if the frame is named "org-capture".
   (require 'org-capture)
