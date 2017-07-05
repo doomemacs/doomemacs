@@ -171,6 +171,20 @@ enable multiple minor modes for the same regexp.")
 
 (add-hook 'find-file-hook #'doom|enable-minor-mode-maybe)
 
+;; ensure indirect buffers have buffer-file-name
+(defun doom*set-indirect-buffer-filename (orig-fn base-buffer name &optional clone)
+  "In indirect buffers, `buffer-file-name' is nil, which can cause problems
+with functions that require it (like modeline segments)."
+  (let ((file-name (buffer-file-name base-buffer))
+        (buffer (funcall orig-fn base-buffer name clone)))
+    (when (and file-name buffer)
+      (with-current-buffer buffer
+        (unless buffer-file-name
+          (setq buffer-file-name file-name
+                buffer-file-truename (file-truename file-name)))))
+    buffer))
+(advice-add #'make-indirect-buffer :around #'doom*set-indirect-buffer-filename)
+
 
 ;;;
 ;; Initialize
