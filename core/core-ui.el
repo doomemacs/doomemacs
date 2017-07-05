@@ -32,10 +32,14 @@ shorter major mode name in the mode-line. See `doom|set-mode-name'.")
 (defvar doom-line-number-rpad 1
   "How much padding to place after line numbers.")
 
-(defvar doom-line-number-pad-char ?\u2002
-  "Character to use for padding line numbers. We use an exotic 'space-looking'
-character so that `whitespace-mode' won't replace spaces inside the line number
-overlay.")
+(defvar doom-line-number-pad-char 32
+  "Character to use for padding line numbers.
+
+By default, this is a space key. If you use `whitespace-mode' with `space-mark',
+the whitespace in line numbers will be affected (this can look ugly). In this
+case, you can change this to ?\u2002, which is a unicode character that looks
+like a space that `whitespace-mode' won't affect.")
+
 
 ;; Hook(s)
 (defvar doom-init-ui-hook nil
