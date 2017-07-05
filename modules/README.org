@@ -1,9 +1,8 @@
-#+TITLE: DOOM Modules
+#+TITLE: DOOM modules
 
 * Table of Contents :TOC:noexport:
-- [[#introduction][Introduction]]
 - [[#overview][Overview]]
-  - [[#enablingdisabling-modules][Enabling/disabling modules]]
+  - [[#module-overview][Module overview]]
 - [[#the-structure-of-a-module][The structure of a module]]
   - [[#configel][config.el]]
   - [[#packagesel][packages.el]]
@@ -11,10 +10,8 @@
   - [[#additional-files][Additional files]]
 - [[#appendix][Appendix]]
 
-* Introduction
-DOOM is comprised of its core files and then its modules. These modules loosely
-take after Spacemacs' layers, but utilizes a small list of macros to manage and
-configure plugins and DOOM Emacs itself.
+* Overview
+DOOM is comprised of its core files and then its modules. A small list of macros are used to manage and configure plugins, other modules and DOOM Emacs itself.
 
 These macros are:
 
@@ -39,7 +36,7 @@ The TL;DR of this document is:
 + The =private/{user-login-name}= module is automatically loaded. It is harmless to keep =:private {user-login-name}= in your init.el however.
 + =private/{user-login-name}/init.el= is a special file that is automatically loaded after DOOM core files, but before modules are loaded. Use it to configure DOOM.
 
-* Overview
+** Module overview
 These modules are in their ideal load order.
 
 + :feature :: Broad modules that bring essential functionality to Emacs as an editor.
@@ -47,10 +44,10 @@ These modules are in their ideal load order.
 + :ui :: Aesthetic modules that affect the Emacs interface or user experience.
 + :tools :: Small modules that add specific, non-essential functionality to Emacs.
 + :lang :: Modules that bring support for a language or group of languages to Emacs.
-+ :app :: Opinionated and heavy modules that totally transform Emacs' UI to serve a specific purpose.
++ :org :: Modules that affect and extend org-mode.
++ :app :: Large, opinionated modules that transform Emacs' UI to serve a specific purpose.
 + :private :: Private configuration modules that are untracked by version control (except for my personal one; use it as a reference).
 
-** Enabling/disabling modules
 Change the ~doom!~ block in your ~init.el~ file to enable/disable modules on startup. You'll need to restart Emacs.
 
 Don't forget to run ~make~ afterwards to ensure that the needed packages are installed (and unneeded ones are uninstalled).
