@@ -1,19 +1,20 @@
-;;; lang/org/autoload/attach.el -*- lexical-binding: t; -*-
+;;; org/org-attach/autoload/org-attach.el -*- lexical-binding: t; -*-
 
-(defun +org--attach-icon (path)
-  (char-to-string (pcase (downcase (file-name-extension path))
-                    ("jpg" ?) ("jpeg" ?) ("png" ?) ("gif" ?)
-                    ("pdf" ?)
-                    ("ppt" ?) ("pptx" ?)
-                    ("xls" ?) ("xlsx" ?)
-                    ("doc" ?) ("docx" ?)
-                    ("ogg" ?) ("mp3" ?) ("wav" ?)
-                    ("mp4" ?) ("mov" ?) ("avi" ?)
-                    ("zip" ?) ("gz" ?) ("tar" ?) ("7z" ?) ("rar" ?)
-                    (_ ?))))
+(defun +org-attach--icon (path)
+  (char-to-string
+   (pcase (downcase (file-name-extension path))
+     ((or "jpg" "jpeg" "png" "gif") ?)
+     ("pdf" ?)
+     ((or "ppt" "pptx") ?)
+     ((or "xls" "xlsx") ?)
+     ((or "doc" "docx") ?)
+     ((or "ogg" "mp3" "wav" "aiff" "flac") ?)
+     ((or "mp4" "mov" "avi") ?)
+     ((or "zip" "gz" "tar" "7z" "rar") ?)
+     (_ ?))))
 
 ;;;###autoload
-(defun +org-cleanup-attachments ()
+(defun +org-attach-cleanup ()
   ;; "Deletes any attachments that are no longer present in the org-mode buffer."
   (let* ((attachments-local (+org-attachments))
          (attachments (directory-files org-attach-directory t "^[^.]" t))
@@ -22,6 +23,7 @@
     to-delete))
 
 (defun +org-attachments ()
+  "List all attachments in the current buffer."
   (unless (eq major-mode 'org-mode)
     (user-error "Not an org buffer"))
   (org-save-outline-visibility nil
@@ -43,10 +45,11 @@
       (cl-remove-duplicates attachments))))
 
 ;;;###autoload
-(defun +org-download-dnd (uri action)
+(defun +org-attach-download-dnd (uri action)
   (if (eq major-mode 'org-mode)
       (doom:org-attach uri) ;; FIXME
     (let ((dnd-protocol-alist
-           (rassq-delete-all '+org-download-dnd (copy-alist dnd-protocol-alist))))
+           (rassq-delete-all '+org-attach-download-dnd
+                             (copy-alist dnd-protocol-alist))))
       (dnd-handle-one-url nil action uri))))
 

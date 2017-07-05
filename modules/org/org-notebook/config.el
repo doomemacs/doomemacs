@@ -1,26 +1,27 @@
-;;; lang/org/+notebook.el -*- lexical-binding: t; -*-
+;;; org/org-notebook/config.el -*- lexical-binding: t; -*-
+
+;; (add-hook 'org-load-hook '+org|init-notebook t)
 
 ;; While I program, write or plan, I want easy access to notes of various kinds,
 ;; such as major-mode/language specific notes, or project-specific notes. They
-;; can be accessed via `+org/browse-notes-for-major-mode' and
-;; `+org/browse-notes-for-project'.
+;; can be accessed via `+org-notebook/find-major-mode-notes' and
+;; `+org-notebook/find-project-notes'.
 
-;; (add-hook '+org-init-hook '+org|init-notebook t)
-
-(defvar +org-notes-dir (concat +org-dir "notes/")
+(defvar +org-notebook-dir (concat +org-dir "notes/")
   "The directory where the notes are kept.")
 
-(defvar +org-code-notes-dir (concat +org-notes-dir "code/")
+(defvar +org-notebook-code-dir (concat +org-notebook-dir "code/")
   "The directory where programming notes and snippets are kept.")
 
-(defvar +org-project-notes-dir (concat +org-notes-dir "projects/")
+(defvar +org-notebook-project-dir (concat +org-notebook-dir "projects/")
   "The directory where project notes are kept.")
 
-(defvar +org-notes-code-alist
+
+(defvar +org-notebook-code-alist
   '((js2-mode . "javascript"))
   "An alist mapping certain modes (symbols) to their org notes directory name.
 If a mode isn't here, it's guessed by stripping out the -mode suffix and
 replacing '+' characters with 'p's.")
 
-;; (defun +org|init-notebook ())
 
+;; (defun +org|init-notebook ())

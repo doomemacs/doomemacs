@@ -1,4 +1,81 @@
-;;; lang/org/autoload/org.el -*- lexical-binding: t; -*-
+;;; org/org/autoload/org.el -*- lexical-binding: t; -*-
+
+;;;###autoload
+(define-minor-mode +org-pretty-mode
+  "TODO"
+  :init-value nil
+  :lighter " *"
+  :group 'evil-org
+  (setq org-hide-emphasis-markers +org-pretty-mode)
+  (org-toggle-pretty-entities)
+  ;; In case the above un-align tables
+  (org-table-map-tables 'org-table-align t))
+
+;;;###autoload
+(defun +org|realign-table-maybe ()
+  "Auto-align table under cursor."
+  (when (org-at-table-p)
+    (save-excursion
+      (org-table-align))))
+
+;;;###autoload
+(defun +org|update-cookies ()
+  "Update counts in headlines (aka \"cookies\")."
+  (when (and buffer-file-name (file-exists-p buffer-file-name))
+    (org-update-statistics-cookies t)))
+
+;;;###autoload
+(defun +org/dwim-at-point ()
+  "Do-what-I-mean at point. This includes following timestamp links, aligning
+tables, toggling checkboxes/todos, executing babel blocks, previewing latex
+fragments, opening links, or refreshing images."
+  (interactive)
+  (let* ((scroll-pt (window-start))
+         (context (org-element-context))
+         (type (org-element-type context)))
+    (cond
+     ((memq type '(planning timestamp))
+      (org-follow-timestamp-link))
+
+     ((memq type '(table table-row))
+      (if (org-element-property :tblfm (org-element-property :parent context))
+          (org-table-recalculate t)
+        (org-table-align)))
+
+     ((org-element-property :checkbox (org-element-lineage context '(item) t))
+      (let ((match (and (org-at-item-checkbox-p) (match-string 1))))
+        (org-toggle-checkbox (if (equal match "[ ]") '(16)))))
+
+     ((and (eq type 'headline)
+           (org-element-property :todo-type context))
+      (org-todo
+       (if (eq (org-element-property :todo-type context) 'done) 'todo 'done)))
+
+     ((and (eq type 'headline)
+           (string= "ARCHIVE" (car-safe (org-get-tags))))
+      (org-force-cycle-archived))
+
+     ((eq type 'headline)
+      (org-remove-latex-fragment-image-overlays)
+      (org-toggle-latex-fragment '(4)))
+
+     ((eq type 'babel-call)
+      (org-babel-lob-execute-maybe))
+
+     ((memq type '(src-block inline-src-block))
+      (org-babel-execute-src-block))
+
+     ((memq type '(latex-fragment latex-environment))
+      (org-toggle-latex-fragment))
+
+     ((eq type 'link)
+      (let ((path (org-element-property :path (org-element-lineage context '(link) t))))
+        (if (and path (image-type-from-file-name path))
+            (+org/refresh-inline-images)
+          (org-open-at-point))))
+
+     (t (+org/refresh-inline-images)))
+    (set-window-start nil scroll-pt)))
 
 ;;;###autoload
 (defun +org/indent ()
@@ -126,79 +203,12 @@ wrong places)."
       (evil-append-line 1))))
 
 ;;;###autoload
-(defun +org/toggle-fold ()
-  "Toggle the local fold at the point (as opposed to cycling through all levels
-with `org-cycle'). Also removes babel result blocks, if run from a code block."
-  (interactive)
+(defun +org-get-property (name &optional _file) ; TODO Add FILE
+  "Get a propery from an org file."
   (save-excursion
-    (org-beginning-of-line)
-    (cond ((org-in-src-block-p)
-           (org-babel-remove-result))
-          ((org-at-heading-p)
-           (outline-toggle-children))
-          ((org-at-item-p)
-           (let ((window-beg (window-start)))
-             (org-cycle)
-             (set-window-start nil window-beg))))))
-
-;;;###autoload
-(defun +org/toggle-checkbox ()
-  "Toggle the presence of a checkbox in the current item."
-  (interactive)
-  (org-toggle-checkbox '(4)))
-
-;;;###autoload
-(defun +org/dwim-at-point ()
-  "Do-what-I-mean at point. This includes following timestamp links, aligning
-tables, toggling checkboxes/todos, executing babel blocks, previewing latex
-fragments, opening links, or refreshing images."
-  (interactive)
-  (let* ((scroll-pt (window-start))
-         (context (org-element-context))
-         (type (org-element-type context)))
-    (cond
-     ((memq type '(planning timestamp))
-      (org-follow-timestamp-link))
-
-     ((memq type '(table table-row))
-      (if (org-element-property :tblfm (org-element-property :parent context))
-          (org-table-recalculate t)
-        (org-table-align)))
-
-     ((org-element-property :checkbox (org-element-lineage context '(item) t))
-      (let ((match (and (org-at-item-checkbox-p) (match-string 1))))
-        (org-toggle-checkbox (if (equal match "[ ]") '(16)))))
-
-     ((and (eq type 'headline)
-           (org-element-property :todo-type context))
-      (org-todo
-       (if (eq (org-element-property :todo-type context) 'done) 'todo 'done)))
-
-     ((and (eq type 'headline)
-           (string= "ARCHIVE" (car-safe (org-get-tags))))
-      (org-force-cycle-archived))
-
-     ((eq type 'headline)
-      (org-remove-latex-fragment-image-overlays)
-      (org-toggle-latex-fragment '(4)))
-
-     ((eq type 'babel-call)
-      (org-babel-lob-execute-maybe))
-
-     ((memq type '(src-block inline-src-block))
-      (org-babel-execute-src-block))
-
-     ((memq type '(latex-fragment latex-environment))
-      (org-toggle-latex-fragment))
-
-     ((eq type 'link)
-      (let ((path (org-element-property :path (org-element-lineage context '(link) t))))
-        (if (and path (image-type-from-file-name path))
-            (+org/refresh-inline-images)
-          (org-open-at-point))))
-
-     (t (+org/refresh-inline-images)))
-    (set-window-start nil scroll-pt)))
+    (goto-char 1)
+    (re-search-forward (format "^#\\+%s:[ \t]*\\([^\n]+\\)" (upcase name)) nil t)
+    (buffer-substring-no-properties (match-beginning 1) (match-end 1))))
 
 ;;;###autoload
 (defun +org/refresh-inline-images ()
@@ -214,3 +224,25 @@ fragments, opening links, or refreshing images."
      (if (org-before-first-heading-p)
          (line-end-position)
        (save-excursion (org-end-of-subtree) (point))))))
+
+;;;###autoload
+(defun +org/toggle-checkbox ()
+  "Toggle the presence of a checkbox in the current item."
+  (interactive)
+  (org-toggle-checkbox '(4)))
+
+;;;###autoload
+(defun +org/toggle-fold ()
+  "Toggle the local fold at the point (as opposed to cycling through all levels
+with `org-cycle'). Also removes babel result blocks, if run from a code block."
+  (interactive)
+  (save-excursion
+    (org-beginning-of-line)
+    (cond ((org-in-src-block-p)
+           (org-babel-remove-result))
+          ((org-at-heading-p)
+           (outline-toggle-children))
+          ((org-at-item-p)
+           (let ((window-beg (window-start)))
+             (org-cycle)
+             (set-window-start nil window-beg))))))

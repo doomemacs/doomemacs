@@ -1,16 +1,8 @@
-;;; lang/org/autoload/evil.el -*- lexical-binding: t; -*-
+;;; org/org-attach/autoload/evil.el -*- lexical-binding: t; -*-
 
-;;;###autoload (autoload '+org:capture "lang/org/autoload/evil" nil t)
-(evil-define-operator +org:capture (&optional beg end)
-  "Send a selection to `doom/org-capture'."
-  :move-point nil :type inclusive
-  (interactive "<r>")
-  (org-capture-string
-   (when (and (evil-visual-state-p) beg end)
-     (buffer-substring beg end))))
-
-;;;###autoload (autoload '+org:attach "lang/org/autoload/evil" nil t)
-(evil-define-command +org:attach (&optional uri)
+;;;###autoload (autoload '+org-attach:dwim "org/org-attach/autoload/evil" nil t)
+(evil-define-command +org-attach:dwim (&optional uri)
+  "An evil ex interface to `+org-attach/dwim'."
   (interactive "<a>")
   (unless (eq major-mode 'org-mode)
     (user-error "Not in an org-mode buffer"))
@@ -26,12 +18,12 @@
         (if (evil-visual-state-p)
             (org-insert-link nil (format "./%s" rel-path)
                              (concat (buffer-substring-no-properties (region-beginning) (region-end))
-                                     " " (doom--org-attach-icon rel-path)))
+                                     " " (org-attach--icon rel-path)))
 
           (insert (if image-p
                       (format "[[./%s]] " rel-path)
                     (format "%s [[./%s][%s]] "
-                            (doom--org-attach-icon rel-path)
+                            (org-attach--icon rel-path)
                             rel-path (file-name-nondirectory (directory-file-name rel-path))))))
         (when (string-match-p (regexp-opt '("jpg" "jpeg" "gif" "png")) (file-name-extension rel-path))
           (org-redisplay-inline-images)))

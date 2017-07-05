@@ -24,5 +24,5 @@ fi
 
 emacsclient -c \
     -F '((name . "org-capture") (width . 70) (height . 25))' \
-    --eval "(+org/capture \"$key\" \"$2\")"
+    --eval "(+org-capture/dwim \"$2\" \"$key\")"
 
