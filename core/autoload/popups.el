@@ -47,7 +47,7 @@ possible rules."
 ;;;###autoload
 (defun doom-popup-windows ()
   "Get a list of open pop up windows."
-  (cl-remove-if-not #'doom-popup-p (window-list)))
+  (cl-remove-if-not #'doom-popup-p doom-popup-windows))
 
 ;;;###autoload
 (defun doom/popup-restore ()

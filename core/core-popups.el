@@ -28,6 +28,9 @@
 (defvar doom-popup-no-fringes t
   "If non-nil, disable fringes in popup windows.")
 
+(defvar doom-popup-windows ()
+  "A list of open popup windows.")
+
 (defvar-local doom-popup-rules nil
   "The shackle rule that caused this buffer to be recognized as a popup.")
 
@@ -215,6 +218,7 @@ and setting `doom-popup-rules' within it. Returns the window."
       (setcar args (clone-indirect-buffer (buffer-name (car args)) nil t)))
     (unless (setq window (apply orig-fn args))
       (error "No popup window was found for %s: %s" (car args) plist))
+    (cl-pushnew window doom-popup-windows :test #'eq)
     (with-selected-window window
       (unless (eq plist t)
         (setq-local doom-popup-rules plist))
@@ -241,6 +245,7 @@ prevent the popup(s) from messing up the UI (or vice versa)."
 properties."
   (let ((window (or window (selected-window))))
     (when (doom-popup-p window)
+      (setq doom-popup-windows (delq window doom-popup-windows))
       (when doom-popup-remember-history
         (setq doom-popup-history (list (doom--popup-data window))))
       (let ((autokill-p (plist-get doom-popup-rules :autokill)))
