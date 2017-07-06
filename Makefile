@@ -54,7 +54,7 @@ testi: init.el .local/autoloads.el
 
 # For running Emacs from a different folder than ~/.emacs.d
 run:
-	@emacs $(EMACS_FLAGS) -l init.el
+	@$(EMACSI) $(EMACS_FLAGS) -l init.el
 
 doctor:
 	@./bin/doctor
