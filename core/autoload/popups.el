@@ -129,7 +129,7 @@ only close popups that have an :autoclose property in their rule (see
     (delete-window)))
 
 ;;;###autoload
-(defun doom/popup ()
+(defun doom/popup-this-buffer ()
   "Display currently selected buffer in a popup window."
   (interactive)
   (doom-popup-buffer (current-buffer) :align t :autokill t))
