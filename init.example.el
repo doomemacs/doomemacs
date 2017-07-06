@@ -91,6 +91,7 @@
        lua             ; one-based indices? one-based indices
        markdown        ; writing docs for people to ignore
        ocaml           ; an objective camel
+       perl            ; write code no one else can comprehend
        php             ; make php less awful to work with
        purescript      ; javascript, but functional
        python          ; beautiful is better than ugly
