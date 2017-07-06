@@ -66,6 +66,9 @@
  :m "A-j" #'+hlissner:multi-next-line
  :m "A-k" #'+hlissner:multi-previous-line
 
+ (:prefix "C-x"
+   "p" #'doom/other-popup)
+
 
  ;; --- <leader> -------------------------------------
  (:leader

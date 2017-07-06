@@ -189,3 +189,19 @@ only close popups that have an :autoclose property in their rule (see
                 collect `(set! :popup ,@rule))
      ,@body
      (setq shackle-rules old-shackle-rules)))
+
+;;;###autoload
+(defun doom/other-popup (count)
+  "Cycle through popup windows. Like `other-window', but for popups."
+  (interactive "p")
+  (if-let (popups (if (doom-popup-p)
+                      (cdr (memq (selected-window) doom-popup-windows))
+                    (setq doom-popup-other-window (selected-window))
+                    doom-popup-windows))
+      (select-window (nth (mod (1- count) (length popups)) popups))
+    (unless (eq (selected-window) doom-popup-other-window)
+      (when doom-popup-other-window
+        (select-window doom-popup-other-window t)
+        (cl-decf count))
+      (when (/= count 0)
+        (other-window count)))))
