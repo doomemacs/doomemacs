@@ -146,18 +146,6 @@
 
 
 ;;
-;; Plugins
-;;
-
-(when (featurep! :completion company)
-  (def-package! company-cmake :after cmake-mode)
-
-  (def-package! company-irony :after irony)
-
-  (def-package! company-irony-c-headers :after company-irony))
-
-
-;;
 ;; Major modes
 ;;
 
@@ -166,8 +154,6 @@
   :config
   (set! :company-backend 'cmake-mode '(company-cmake company-yasnippet)))
 
-(def-package! glsl-mode :mode ("\\.glsl$" "\\.vert$" "\\.frag$" "\\.geom$"))
-
 (def-package! cuda-mode :mode "\\.cuh?$")
 
 (def-package! opencl-mode :mode "\\.cl$")
@@ -175,3 +161,29 @@
 (def-package! demangle-mode
   :commands demangle-mode
   :init (add-hook 'llvm-mode-hook #'demangle-mode))
+
+(def-package! glsl-mode
+  :mode "\\.glsl$"
+  :mode "\\.vert$"
+  :mode "\\.frag$"
+  :mode "\\.geom$")
+
+
+;;
+;; Plugins
+;;
+
+(when (featurep! :completion company)
+  (def-package! company-cmake :after cmake-mode)
+
+  (def-package! company-irony :after irony)
+
+  (def-package! company-irony-c-headers :after company-irony)
+
+  (def-package! company-glsl
+    :when (featurep! :completion company)
+    :after glsl-mode
+    :config
+    (if (executable-find "glslangValidator")
+        (warn "glsl-mode: couldn't find glslangValidator, disabling company-glsl")
+      (set! :company-backend 'glsl-mode '(company-glsl)))))

@@ -15,6 +15,7 @@
   (package! flycheck-irony))
 
 (when (featurep! :completion company)
+  (package! company-glsl :recipe (:fetcher github :repo "Kaali/company-glsl"))
   (package! company-irony)
   (package! company-irony-c-headers))
 
