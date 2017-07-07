@@ -38,13 +38,13 @@
 
 (defun +ivy--select-buffer-action (buffer)
   (ivy--switch-buffer-action
-   (s-chop-suffix
+   (string-remove-suffix
     "[+]"
     (substring buffer 0 (string-match-p (regexp-quote "   ") buffer)))))
 
 (defun +ivy--select-buffer-other-window-action (buffer)
   (ivy--switch-buffer-other-window-action
-   (s-chop-suffix
+   (string-remove-suffix
     "[+]"
     (substring buffer 0 (string-match-p (regexp-quote "   ") buffer)))))
 
