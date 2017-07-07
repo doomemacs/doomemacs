@@ -62,11 +62,11 @@ limit to buffers in the current workspace."
   (ivy-read (format "%s buffers: " (if workspace-only-p "Workspace" "Global"))
             (+ivy--get-buffers (unless workspace-only-p (buffer-list)))
             :action (if other-window-p
-                        '+ivy--select-buffer-other-window-action
-                      '+ivy--select-buffer-action)
-            :matcher 'ivy--switch-buffer-matcher
+                        #'+ivy--select-buffer-other-window-action
+                      #'+ivy--select-buffer-action)
+            :matcher #'ivy--switch-buffer-matcher
             :keymap ivy-switch-buffer-map
-            :caller '+ivy/switch-workspace-buffer))
+            :caller #'+ivy/switch-workspace-buffer))
 
 (defun +ivy--tasks-candidates (tasks)
   "Generate a list of task tags (specified by `+ivy-task-tags') for
