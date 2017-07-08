@@ -49,14 +49,18 @@
 
 ;;;###autoload
 (defun +ivy/switch-workspace-buffer (&optional other-window-p)
-  "Switch to an open buffer in the current workspace."
+  "Switch to an open buffer in the current workspace.
+
+If OTHER-WINDOW-P (universal arg), then open target in other window."
   (interactive "P")
   (+ivy/switch-buffer other-window-p t))
 
 ;;;###autoload
 (defun +ivy/switch-buffer (&optional other-window-p workspace-only-p)
-  "Switch to an open buffer in the global buffer list. If WORKSPACE-ONLY-P,
-limit to buffers in the current workspace."
+  "Switch to an open buffer in the global buffer list.
+
+If OTHER-WINDOW-P (universal arg), then open target in other window.
+If WORKSPACE-ONLY-P (universal arg), limit to buffers in the current workspace."
   (interactive "P")
   (ivy-read (format "%s buffers: " (if workspace-only-p "Workspace" "Global"))
             (+ivy--get-buffers (unless workspace-only-p (buffer-list)))

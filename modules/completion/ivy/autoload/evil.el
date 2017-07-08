@@ -20,10 +20,10 @@
 (defvar +ivy--file-search-all-files-p nil)
 
 (defun +ivy--file-search (engine beg end query &optional directory)
-  (let* ((directory (or directory (doom-project-root)))
+  (let* ((project-root (doom-project-root))
+         (directory (or directory project-root))
          (recursion-p +ivy--file-search-recursion-p)
          (all-files-p +ivy--file-search-all-files-p)
-         (project-root (doom-project-root))
          (query
           (or query
               (and beg end
@@ -40,24 +40,22 @@
                         (t
                          (file-relative-name directory project-root))))))
     (setq +ivy--file-last-search query)
-    (cond ((eq engine 'ag)
-           (let ((args (concat
-                        (if all-files-p " -a")
-                        (unless recursion-p " -n"))))
-             (counsel-ag query directory args (format prompt args))))
-
-          ((eq engine 'rg)
-           ;; smart-case instead of case-insensitive flag
-           (let ((counsel-rg-base-command
-                  (replace-regexp-in-string " -i " " -S " counsel-rg-base-command))
-                 (args (concat
-                        (if all-files-p " -uu")
-                        (unless recursion-p " --maxdepth 0"))))
-             (counsel-rg query directory args (format prompt args))))
-
-          ((eq engine 'pt)) ; TODO pt search engine (necessary?)
-
-          (t (error "No search engine specified")))))
+    (pcase engine
+      ('ag
+       (let ((args (concat
+                    (if all-files-p " -a")
+                    (unless recursion-p " -n"))))
+         (counsel-ag query directory args (format prompt args))))
+      ('rg
+       ;; smart-case instead of case-insensitive flag
+       (let ((counsel-rg-base-command
+              (replace-regexp-in-string " -i " " -S " counsel-rg-base-command))
+             (args (concat
+                    (if all-files-p " -uu")
+                    (unless recursion-p " --maxdepth 0"))))
+         (counsel-rg query directory args (format prompt args))))
+      ('pt) ;; TODO pt search engine (necessary?)
+      (_ (error "No search engine specified")))))
 
 ;;;###autoload (autoload '+ivy:ag "completion/ivy/autoload/evil" nil t)
 (evil-define-operator +ivy:ag (beg end query &optional all-files-p directory)
