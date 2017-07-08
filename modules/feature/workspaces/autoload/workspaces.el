@@ -50,7 +50,7 @@ perspectives."
 (defun +workspace-p (obj)
   "Return t if OBJ is a perspective hash table."
   (and obj
-       (hash-table-p obj)
+       (cl-struct-p obj)
        (perspective-p obj)))
 
 ;;;###autoload
