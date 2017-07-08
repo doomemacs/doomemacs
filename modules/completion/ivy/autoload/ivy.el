@@ -3,9 +3,8 @@
 ;; Show more information in ivy-switch-buffer; and only display
 ;; workgroup-relevant buffers.
 (defun +ivy--get-buffers (&optional buffer-list)
-  (when-let (buffer-list (or buffer-list (doom-buffer-list)))
-    (let* ((buffer-list (or buffer-list (doom-buffer-list)))
-           (min-name
+  (when-let (buffer-list (delq (current-buffer) (or buffer-list (doom-buffer-list))))
+    (let* ((min-name
             (+ 5 (cl-loop for buf in buffer-list
                           maximize (length (buffer-name buf)))))
            (min-mode
