@@ -29,19 +29,22 @@
 (defun +workspace-buffer-list (&optional persp)
   "Return a list of buffers in PERSP (defaults to the current perspective).
 
+The buffer list is ordered by recency (same as `buffer-list').
+
 PERSP can be a string (name of a workspace) or a perspective hash (satisfies
 `+workspace-p').
 
 If PERSP is t, then return a list of orphaned buffers associated with no
 perspectives."
-  (cond ((not persp)
-         (persp-buffer-list-restricted))
-        ((eq persp t)
-         (cl-remove-if #'persp--buffer-in-persps (doom-buffer-list)))
-        ((+workspace-p persp)
-         (safe-persp-buffers persp))
-        ((stringp persp)
-         (safe-persp-buffers (+workspace-get persp t)))))
+  (unless persp
+    (setq persp (get-current-persp)))
+  (if (eq persp t)
+      (cl-remove-if #'persp--buffer-in-persps (buffer-list))
+    (when (stringp persp)
+      (setq persp (+workspace-get persp t)))
+    (cl-loop for buf in (buffer-list)
+             if (persp-contain-buffer-p buf persp)
+             collect buf)))
 
 ;;;###autoload
 (defun +workspace-p (obj)
