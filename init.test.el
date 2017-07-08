@@ -2,8 +2,18 @@
 
 (require 'core (concat user-emacs-directory "core/core"))
 
-(doom! :feature evil
-       :completion company
-       :tools password-store
-       :lang web
-       :private hlissner)
+(doom! :feature
+       evil
+       workspaces
+
+       :completion
+       company
+
+       :tools
+       password-store
+
+       :lang
+       web
+
+       :private
+       hlissner)
