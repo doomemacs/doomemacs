@@ -6,6 +6,9 @@
 (defvar doom-real-buffer-functions '()
   "A list of functions that are run to determine if a buffer is real.")
 
+(defvar-local doom-real-buffer-p nil
+  "If non-nil, this buffer should be considered real no matter what.")
+
 ;;;###autoload
 (defvar doom-fallback-buffer "*scratch*"
   "The name of the buffer to fall back to if no other buffers exist (will create
@@ -136,7 +139,8 @@ buffers. If there's nothing left, switch to `doom-fallback-buffer'. See
   "Returns t if BUFFER-OR-NAME is a 'real' buffer. Real means it a) isn't a
 popup window/buffer and b) isn't a special buffer."
   (let ((buf (window-normalize-buffer buffer-or-name)))
-    (or (run-hook-with-args-until-success 'doom-real-buffer-functions buf)
+    (or (buffer-local-value 'doom-real-buffer-p buf)
+        (run-hook-with-args-until-success 'doom-real-buffer-functions buf)
         (not (or (doom-popup-p buf)
                  (minibufferp buf)
                  (string-match-p "^\\s-*\\*" (buffer-name buf))
@@ -295,3 +299,8 @@ project."
     (when (called-interactively-p 'interactive)
       (message "Cleaned up %s buffers" n))))
 
+;;;###autoload
+(defun doom-set-buffer-real (buffer flag)
+  "Forcibly mark a buffer's real property, no matter what."
+  (with-current-buffer buffer
+    (setq doom-real-buffer-p flag)))
