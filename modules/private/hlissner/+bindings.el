@@ -751,7 +751,9 @@
 
       (:after org-mode
         (:map org-mode-map
-          :i [remap doom/inflate-space-maybe] #'org-self-insert-command))
+          :i [remap doom/inflate-space-maybe] #'org-self-insert-command
+          :i "C-e" #'org-end-of-line
+          :i "C-a" #'org-beginning-of-line))
 
       ;; Make ESC quit all the things
       (:map (minibuffer-local-map
