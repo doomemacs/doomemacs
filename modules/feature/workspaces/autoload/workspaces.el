@@ -74,6 +74,9 @@ perspectives."
       persp)))
 
 ;;;###autoload
+(defalias '+workspace-current #'get-current-persp)
+
+;;;###autoload
 (defun +workspace-current-name ()
   "Get the name of the currently active workspace."
   (safe-persp-name (get-current-persp)))
