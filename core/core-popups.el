@@ -558,6 +558,18 @@ you came from."
   (advice-add #'xref-goto-xref :around #'doom*xref-follow-and-close))
 
 
+;;
+;; Major modes
+;;
+
+(after! plantuml-mode
+  (defun doom*plantuml-preview-in-popup-window (orig-fn &rest args)
+    (save-window-excursion
+      (apply orig-fn args))
+    (pop-to-buffer plantuml-preview-buffer))
+  (advice-add #'plantuml-preview-string
+              :around #'doom*plantuml-preview-in-popup-window))
+
 ;; Ensure these settings are attached to org-load-hook as late as possible,
 ;; giving other modules a chance to add their own hooks.
 (defun doom|init-org-popups ()

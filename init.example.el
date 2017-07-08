@@ -93,6 +93,7 @@
        ocaml           ; an objective camel
        perl            ; write code no one else can comprehend
        php             ; make php less awful to work with
+       plantuml        ; diagrams for confusing people more
        purescript      ; javascript, but functional
        python          ; beautiful is better than ugly
        rest            ; Emacs as a REST client
