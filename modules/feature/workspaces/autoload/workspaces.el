@@ -82,6 +82,13 @@ perspectives."
   (safe-persp-name (get-current-persp)))
 
 ;;;###autoload
+(defun +workspace-contains-buffer-p (&optional buffer workspace)
+  "Return non-nil if buffer is in workspace (defaults to current workspace)."
+  (unless workspace
+    (setq workspace (+workspace-current)))
+  (persp-contain-buffer-p buffer workspace nil))
+
+;;;###autoload
 (defun +workspace-load (name)
   "Loads and inserts a single workspace (named NAME) into the current session.
 Can only retrieve perspectives that were explicitly saved with
