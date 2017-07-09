@@ -36,11 +36,12 @@ $(MODULES): init.el .local/autoloads.el
 clean:
 	@$(EMACS) -f doom/clean-compiled
 
-clean-cache:
-	@$(EMACS) -f doom/clean-cache
 
 clean-pcache:
 	@$(EMACS) -l persistent-soft --eval '(delete-directory pcache-directory t)'
+
+reset:
+	@$(EMACS) -f doom/reset
 
 test: init.el .local/autoloads.el
 	@$(EMACS) -f doom-run-tests

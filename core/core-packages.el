@@ -617,10 +617,11 @@ If ONLY-RECOMPILE-P is non-nil, only recompile out-of-date files."
   ;; In case `load-path' has changed (e.g. after an update)
   (byte-recompile-file (expand-file-name "core.el" doom-core-dir) t))
 
-(defun doom/clean-cache ()
+(defun doom/reset ()
   "Clear the local cache completely (in `doom-cache-dir').
 
-You must restart Emacs for some components to feel its effects."
+This resets Emacs to a blank slate. You must restart Emacs for some components
+to feel its effects."
   (interactive)
   (delete-directory doom-cache-dir t)
   (make-directory doom-cache-dir t))

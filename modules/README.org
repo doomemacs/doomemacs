@@ -163,6 +163,6 @@ These are /not/ loaded automatically. Use ~load!~ to do so.
   + ~doom/reload-autoloads~
   + ~doom/compile~
   + ~doom/recompile~
-  + ~doom/clean-cache~
+  + ~doom/reset~
   + ~doom/clean-compiled~
 

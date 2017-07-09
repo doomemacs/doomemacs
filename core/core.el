@@ -53,10 +53,10 @@ config files that are stable (i.e. it should be unlikely that you need to delete
 them if something goes wrong).")
 
 (defvar doom-cache-dir (concat doom-host-dir "/cache/")
-  "Host-namespaced directory for volatile storage. Deleted when
-`doom/clean-cache' is called. Use this for transient files that are generated on
-the fly like caches and temporary files. Anything that may need to be cleared if
-there are problems.")
+  "Host-namespaced directory for volatile storage. Deleted when `doom/reset' is
+called. Use this for transient files that are generated on the fly like caches
+and temporary files. Anything that may need to be cleared if there are
+problems.")
 
 (defvar doom-packages-dir (concat doom-local-dir "packages/")
   "Where package.el and quelpa plugins (and their caches) are stored.")
