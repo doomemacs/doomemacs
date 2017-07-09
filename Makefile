@@ -48,6 +48,12 @@ clean-pcache:
 reset:
 	@$(EMACS) -f doom/reset
 
+
+## Unit tests
+# test
+# test:core
+# test:module
+# test:module/submodule
 test: init.el .local/autoloads.el
 	@$(EMACS) -f doom-run-tests
 
@@ -58,16 +64,19 @@ test\:core $(patsubst %, test\:%, $(MODULES)): init.el .local/autoloads.el
 testi: init.el .local/autoloads.el
 	@$(EMACSI) -f doom-run-tests -f ert
 
-# For running Emacs from a different folder than ~/.emacs.d
+
+## Utility tasks
+# Runs Emacs from a different folder than ~/.emacs.d
 run:
 	@$(EMACSI) -l init.el
 
+# Diagnoses potential OS/environment issues
 doctor:
 	@./bin/doom-doctor
 
-#
+## Internal tasks
 init.el:
-	@[ -e init.el ] || $(error No init.el file; create one or copy init.example.el)
+	@$(error No init.el file; create one or copy init.example.el)
 
 .local/autoloads.el:
 	@$(EMACS) -f doom-initialize-autoloads
@@ -75,5 +84,4 @@ init.el:
 %.elc: %.el
 	@$(EMACS) -f doom/compile -- $<
 
-
-.PHONY: all test $(MODULES)
+.PHONY: all compile test testi
