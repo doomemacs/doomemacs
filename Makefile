@@ -33,9 +33,9 @@ $(MODULES): init.el .local/autoloads.el
 	@rm -fv $(shell find modules/$@ -type f -name '*.elc')
 	@$(EMACS) -f doom/compile -- modules/$@
 
-clean:
-	@$(EMACS) -f doom/clean-compiled
 
+clean:
+	@$(EMACS) -f doom/clean-compiled-files
 
 clean-pcache:
 	@$(EMACS) -l persistent-soft --eval '(delete-directory pcache-directory t)'

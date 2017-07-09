@@ -626,7 +626,7 @@ to feel its effects."
   (delete-directory doom-cache-dir t)
   (make-directory doom-cache-dir t))
 
-(defun doom/clean-compiled ()
+(defun doom/clean-compiled-files ()
   "Delete all compiled elc files in your Emacs configuration.
 
 This excludes compiled packages in `doom-packages-dir'."
