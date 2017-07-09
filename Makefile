@@ -5,9 +5,9 @@ EMACSI=emacs -q $(EMACS_FLAGS)
 
 MODULES=$(patsubst modules/%, %, $(shell find modules/ -maxdepth 2 -type d))
 
-# Tasks
 all: autoloads autoremove install
 
+## Package management
 install: init.el .local/autoloads.el
 	@$(EMACS) -f doom/packages-install
 
@@ -20,19 +20,24 @@ autoremove: init.el .local/autoloads.el
 autoloads: init.el
 	@$(EMACS) -f doom/reload-autoloads
 
-recompile: init.el
-	@$(EMACS) -f doom/recompile
 
+## Byte compilation
+# compile
+# compile:core
+# compile:module
+# compile:module/submodule
 compile: init.el clean
 	@$(EMACS) -f doom/compile
 
-core: init.el clean
+compile\:core: init.el clean
 	@$(EMACS) -f doom/compile -- init.el core
 
-$(MODULES): init.el .local/autoloads.el
-	@rm -fv $(shell find modules/$@ -type f -name '*.elc')
-	@$(EMACS) -f doom/compile -- modules/$@
+$(patsubst %, compile\:%, $(MODULES)): init.el .local/autoloads.el
+	@rm -fv $(shell find $(patsubst compile:%, modules/%, $@) -type f -name '*.elc')
+	@$(EMACS) -f doom/compile -- $(patsubst compile:%, modules/%, $@)
 
+recompile: init.el
+	@$(EMACS) -f doom/recompile
 
 clean:
 	@$(EMACS) -f doom/clean-compiled-files
