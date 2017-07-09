@@ -183,6 +183,7 @@ only close popups that have an :autoclose property in their rule (see
 
 ;;;###autoload
 (defmacro with-popup-rules! (rules &rest body)
+  "TODO"
   (declare (indent defun))
   `(let ((old-shackle-rules shackle-rules))
      ,@(cl-loop for rule in rules
