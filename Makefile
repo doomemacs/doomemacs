@@ -57,7 +57,7 @@ run:
 	@$(EMACSI) -l init.el
 
 doctor:
-	@./bin/doctor
+	@./bin/doom-doctor
 
 #
 init.el:

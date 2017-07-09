@@ -16,6 +16,7 @@
 (require 'pp)
 
 ;;
+(defvar doom-init-p nil)
 (defvar doom-errors 0)
 (defmacro check! (cond &rest body)
   (declare (indent defun))
@@ -95,8 +96,25 @@
 (when (boundp 'system-configuration-features)
   (msg! "Compiled with:\n%s" (indented 2 (autofill system-configuration-features))))
 (msg! "uname -a:\n%s" (indented 2 (autofill (shell-command-to-string "uname -a"))))
-(msg! "----\n")
 
+(let (doom-core-packages doom-debug-mode)
+  (condition-case ex
+      (progn
+        (let ((inhibit-message t))
+          (load "~/.emacs.d/core/core.el" nil t))
+        (doom-initialize-packages)
+        (doom|finalize)
+        (success! "Attempt to load DOOM: success! Loaded v%s" doom-version)
+        (when (executable-find "git")
+          (msg! "Revision %s"
+                (or (ignore-errors
+                      (let ((default-directory user-emacs-directory))
+                        (shell-command-to-string "git rev-parse HEAD")))
+                    "\n"))))
+    ('error (warn! "Attempt to load DOOM: failed\n  %s\n"
+                   (or (cdr-safe ex) (car ex))))))
+
+(msg! "----\n")
 
 ;; --- is emacs set up properly? ------------------------------
 
@@ -110,6 +128,15 @@
 
 
 ;; --- is the environment set up properly? --------------------
+
+(when (boundp 'doom-font)
+  (cond ((fboundp 'find-font)
+         (unless (find-font doom-font)
+           (warn! "Warning: couldn't find %s font" (font-get doom-font :family))
+           (explain! "If you use a different font, you may ignore this warning.")))
+        (t
+         (warn! "Couldn't detect font!")
+         (explain! "This could indicate the incorrect version of Emacs is being used!"))))
 
 ;; gnutls-cli & openssl
 (cond ((executable-find "gnutls-cli"))
@@ -216,21 +243,6 @@
 
 (when (getenv "DEBUG")
   (msg! "\n====\nHave some debug information:\n")
-
-  (let (doom-core-packages doom-debug-mode)
-    (condition-case ex
-        (progn
-          (let ((inhibit-message t))
-            (load "~/.emacs.d/core/core.el" nil t))
-          (doom-initialize-packages)
-          (success! "  + Attempt to load DOOM: success! Loaded v%s" doom-version)
-          (when (executable-find "git")
-            (msg! "    Revision %s"
-               (or (ignore-errors
-                     (let ((default-directory user-emacs-directory))
-                       (shell-command-to-string "git rev-parse HEAD")))
-                   "\n"))))
-      ('error (warn! "  + Attempt to load DOOM: failed\n    %s\n" (or (cdr-safe ex) (car ex))))))
 
   (when (bound-and-true-p doom-modules)
     (msg! "  + enabled modules:\n%s"
