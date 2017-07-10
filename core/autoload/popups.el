@@ -169,11 +169,9 @@ only close popups that have an :autoclose property in their rule (see
 ;;;###autoload
 (defun doom-popup-size (&optional window)
   "Return the size of a popup WINDOW."
-  (let ((side (doom-popup-side window)))
-    (cond ((memq side '(left right))
-           (window-width window))
-          ((memq side '(above below))
-           (window-height window)))))
+  (pcase (doom-popup-side window)
+    ((or 'left 'right)  (window-width window))
+    ((or 'above 'below) (window-height window))))
 
 (defun doom--popup-data (window)
   (when-let (buffer (window-buffer window))
