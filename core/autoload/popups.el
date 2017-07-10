@@ -152,10 +152,9 @@ only close popups that have an :autoclose property in their rule (see
                        doom-popup-rules)
                      (window-parameter window 'popup))
                  prop)
-      (cond ((eq prop :size)
-             shackle-default-size)
-            ((eq prop :align)
-             shackle-default-alignment))))
+      (pcase prop
+        (:size  shackle-default-size)
+        (:align shackle-default-alignment))))
 
 ;;;###autoload
 (defun doom-popup-side (&optional window)
