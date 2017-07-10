@@ -146,7 +146,9 @@ only close popups that have an :autoclose property in their rule (see
 (defun doom-popup-prop (prop &optional window)
   "Returns a `doom-popup-rules' PROPerty from WINDOW."
   (or (plist-get (or (if window
-                         (buffer-local-value 'doom-popup-rules (window-buffer window))
+                         (ignore-errors
+                           (buffer-local-value 'doom-popup-rules
+                                               (window-buffer window)))
                        doom-popup-rules)
                      (window-parameter window 'popup))
                  prop)
