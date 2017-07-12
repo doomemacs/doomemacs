@@ -412,19 +412,19 @@ the command buffer."
     (advice-add #'helm-ag--edit :around #'doom*helm-ag-edit)))
 
 
+(defsubst doom--switch-from-popup (location)
+  (doom/popup-close)
+  (switch-to-buffer (car location) nil t)
+  (if (not (cdr location))
+      (message "Unable to find location in file")
+    (goto-char (cdr location))
+    (recenter)))
+
 (after! help-mode
   ;; Help buffers use `other-window' to decide where to open followed links,
   ;; which can be unpredictable. It should *only* replace the original buffer we
   ;; opened the popup from. To fix this these three button types need to be
   ;; redefined to set aside the popup before following a link.
-  (defsubst doom--switch-from-popup (location)
-    (doom/popup-close)
-    (switch-to-buffer (car location) nil t)
-    (if (not (cdr location))
-        (message "Unable to find location in file")
-      (goto-char (cdr location))
-      (recenter)))
-
   (define-button-type 'help-function-def
     :supertype 'help-xref
     'help-function

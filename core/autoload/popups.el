@@ -1,5 +1,7 @@
 ;;; core/autoload/popups.el -*- lexical-binding: t; -*-
 
+(defvar doom-popup-remember-history)
+
 ;;;###autoload
 (defun doom-popup-p (&optional target)
   "Return TARGET (a window) if TARGET (a window or buffer) is a popup. Uses

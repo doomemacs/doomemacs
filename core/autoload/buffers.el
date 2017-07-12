@@ -125,7 +125,7 @@ buffers. If there's nothing left, switch to `doom-fallback-buffer'. See
            ;; `switch-to-prev-buffer' properly update buffer list order.
            (cl-loop with move-func =
                     (if (> n 0) #'switch-to-next-buffer #'switch-to-prev-buffer)
-                    for _i to 20
+                    for i to 20
                     while (not (memq (current-buffer) buffers))
                     do
                     (dotimes (_i (abs n))
