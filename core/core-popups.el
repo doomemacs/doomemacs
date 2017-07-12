@@ -97,7 +97,7 @@ recognized by DOOM's popup system. They are:
           ("^ \\*" :regexp t :size 12 :noselect t :autokill t :autoclose t)))
 
   :config
-  (add-hook 'doom-init-hook #'shackle-mode)
+  (add-hook 'doom-post-init-hook #'shackle-mode)
 
   (defun doom*shackle-always-align (plist)
     "Ensure popups are always aligned and selected by default. Eliminates the need
