@@ -631,6 +631,7 @@
    ;; For elisp debugging
    :map debugger-mode-map
    :n "RET" #'debug-help-follow
+   :n "e"   #'debugger-eval-expression
    :n "n"   #'debugger-step-through
    :n "c"   #'debugger-continue)
 
