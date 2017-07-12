@@ -146,44 +146,18 @@ ability to invoke the debugger in debug mode."
           (car ex) fn (error-message-string ex))))
   nil)
 
-;; Automatic minor modes
-(defvar doom-auto-minor-mode-alist '()
-  "Alist mapping filename patterns to corresponding minor mode functions, like
-`auto-mode-alist'. All elements of this alist are checked, meaning you can
-enable multiple minor modes for the same regexp.")
+(defun doom|finalize ()
+  (unless doom-init-p
+    (dolist (hook '(doom-init-hook doom-post-init-hook))
+      (run-hook-wrapped hook #'doom-try-run-hook hook))
+    (setq doom-init-p t))
 
-(defun doom|enable-minor-mode-maybe ()
-  "Check file name against `doom-auto-minor-mode-alist'."
-  (when buffer-file-name
-    (let ((name buffer-file-name)
-          (remote-id (file-remote-p buffer-file-name))
-          (alist doom-auto-minor-mode-alist))
-      ;; Remove backup-suffixes from file name.
-      (setq name (file-name-sans-versions name))
-      ;; Remove remote file name identification.
-      (when (and (stringp remote-id)
-                 (string-match-p (regexp-quote remote-id) name))
-        (setq name (substring name (match-end 0))))
-      (while (and alist (caar alist) (cdar alist))
-        (if (string-match-p (caar alist) name)
-            (funcall (cdar alist) 1))
-        (setq alist (cdr alist))))))
-
-(add-hook 'find-file-hook #'doom|enable-minor-mode-maybe)
-
-;; ensure indirect buffers have buffer-file-name
-(defun doom*set-indirect-buffer-filename (orig-fn base-buffer name &optional clone)
-  "In indirect buffers, `buffer-file-name' is nil, which can cause problems
-with functions that require it (like modeline segments)."
-  (let ((file-name (buffer-file-name base-buffer))
-        (buffer (funcall orig-fn base-buffer name clone)))
-    (when (and file-name buffer)
-      (with-current-buffer buffer
-        (unless buffer-file-name
-          (setq buffer-file-name file-name
-                buffer-file-truename (file-truename file-name)))))
-    buffer))
-(advice-add #'make-indirect-buffer :around #'doom*set-indirect-buffer-filename)
+  ;; Don't keep gc-cons-threshold too high. It helps to stave off the GC while
+  ;; Emacs starts up, but afterwards it causes stuttering and random freezes. So
+  ;; reset it to a reasonable default.
+  (setq gc-cons-threshold 16777216
+        gc-cons-percentage 0.1
+        file-name-handler-alist doom--file-name-handler-alist))
 
 
 ;;;
@@ -204,26 +178,6 @@ with functions that require it (like modeline segments)."
 (setq load-path (eval-when-compile load-path)
       doom--package-load-path (eval-when-compile doom--package-load-path))
 
-(defun doom|finalize ()
-  ;; Don't keep gc-cons-threshold too high. It helps to stave off the GC while
-  ;; Emacs starts up, but afterwards it causes stuttering and random freezes. So
-  ;; reset it to a reasonable default.
-  (setq gc-cons-threshold 16777216
-        gc-cons-percentage 0.1)
-
-  (unless doom-init-p
-    (dolist (hook '(doom-init-hook doom-post-init-hook))
-      (run-hook-wrapped hook #'doom-try-run-hook hook))
-
-    (setq file-name-handler-alist doom--file-name-handler-alist
-          doom-init-p t)))
-
-(add-hook! '(emacs-startup-hook doom-reload-hook)
-  #'doom|finalize)
-
-
-;;;
-;; Bootstrap
 (load! core-os) ; consistent behavior across OSes
 (condition-case-unless-debug ex
     (require 'autoloads doom-autoload-file t)
@@ -232,12 +186,8 @@ with functions that require it (like modeline segments)."
           "%s in autoloads.el -> %s"
           (car ex) (error-message-string ex))))
 
-(unless noninteractive
-  (load! core-ui)         ; draw me like one of your French editors
-  (load! core-popups)     ; taming sudden yet inevitable windows
-  (load! core-editor)     ; baseline configuration for text editing
-  (load! core-projects)   ; making Emacs project-aware
-  (load! core-keybinds))  ; centralized keybind system + which-key
+(add-hook! '(emacs-startup-hook doom-reload-hook)
+  #'doom|finalize)
 
 (provide 'core)
 ;;; core.el ends here

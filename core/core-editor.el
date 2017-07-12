@@ -89,6 +89,45 @@ fundamental-mode) for performance sake."
       (fundamental-mode))))
 (add-hook 'find-file-hook #'doom|check-large-file)
 
+;; Automatic minor modes
+(defvar doom-auto-minor-mode-alist '()
+  "Alist mapping filename patterns to corresponding minor mode functions, like
+`auto-mode-alist'. All elements of this alist are checked, meaning you can
+enable multiple minor modes for the same regexp.")
+
+(defun doom|enable-minor-mode-maybe ()
+  "Check file name against `doom-auto-minor-mode-alist'."
+  (when buffer-file-name
+    (let ((name buffer-file-name)
+          (remote-id (file-remote-p buffer-file-name))
+          (alist doom-auto-minor-mode-alist))
+      ;; Remove backup-suffixes from file name.
+      (setq name (file-name-sans-versions name))
+      ;; Remove remote file name identification.
+      (when (and (stringp remote-id)
+                 (string-match-p (regexp-quote remote-id) name))
+        (setq name (substring name (match-end 0))))
+      (while (and alist (caar alist) (cdar alist))
+        (if (string-match-p (caar alist) name)
+            (funcall (cdar alist) 1))
+        (setq alist (cdr alist))))))
+
+(add-hook 'find-file-hook #'doom|enable-minor-mode-maybe)
+
+;; ensure indirect buffers have buffer-file-name
+(defun doom*set-indirect-buffer-filename (orig-fn base-buffer name &optional clone)
+  "In indirect buffers, `buffer-file-name' is nil, which can cause problems
+with functions that require it (like modeline segments)."
+  (let ((file-name (buffer-file-name base-buffer))
+        (buffer (funcall orig-fn base-buffer name clone)))
+    (when (and file-name buffer)
+      (with-current-buffer buffer
+        (unless buffer-file-name
+          (setq buffer-file-name file-name
+                buffer-file-truename (file-truename file-name)))))
+    buffer))
+(advice-add #'make-indirect-buffer :around #'doom*set-indirect-buffer-filename)
+
 
 ;;
 ;; Built-in plugins

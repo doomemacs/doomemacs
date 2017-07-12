@@ -305,6 +305,12 @@ MODULES is an malformed plist of modules to load."
      (setq doom-modules ',doom-modules)
 
      (unless noninteractive
+       (require 'core-ui)         ; draw me like one of your French editors
+       (require 'core-popups)     ; taming sudden yet inevitable windows
+       (require 'core-editor)     ; baseline configuration for text editing
+       (require 'core-projects)   ; making Emacs project-aware
+       (require 'core-keybinds)   ; centralized keybind system + which-key
+
        (load ,(doom-module-path :private user-login-name "init") t t)
        ,@(cl-loop for (module . submodule) in (doom--module-pairs)
                   collect `(require! ,module ,submodule t))
