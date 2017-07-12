@@ -21,7 +21,7 @@ command line args following a double dash (each arg should be in the
 'module/submodule' format).
 
 If neither is available, run all tests in all enabled modules."
-  (interactive) ;; TODO Add completing-read selection of tests
+  (interactive) ; must be interactive to be run from batch
   ;; FIXME Refactor this
   (condition-case-unless-debug ex
       (let (targets)

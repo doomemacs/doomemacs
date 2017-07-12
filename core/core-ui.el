@@ -108,7 +108,6 @@ like a space that `whitespace-mode' won't affect.")
 (defun doom-quit-p (&optional prompt)
   "Return t if this session should be killed. Prompts the user for
 confirmation."
-  (interactive)
   (if (ignore-errors (doom-real-buffer-list))
       (or (yes-or-no-p (format "››› %s" (or prompt "Quit Emacs?")))
           (ignore (message "Aborted")))
