@@ -245,7 +245,7 @@ regex PATTERN. Returns the number of killed buffers."
 (defun doom/kill-this-buffer ()
   "Use `doom-kill-buffer' on the current buffer."
   (interactive)
-  (when (and (doom-kill-buffer) (called-interactively-p 'interactive))
+  (when (and (not (doom-kill-buffer)) (called-interactively-p 'interactive))
     (message "Nowhere left to go!")))
 
 ;;;###autoload
