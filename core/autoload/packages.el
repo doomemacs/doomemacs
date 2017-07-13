@@ -80,7 +80,7 @@ list of the package."
   (plist-get (cdr (assq name doom-packages)) prop))
 
 ;;;###autoload
-(defun doom-get-packages ()
+(defun doom-get-packages (&optional installed-only-p)
   "Retrieves a list of explicitly installed packages (i.e. non-dependencies).
 Each element is a cons cell, whose car is the package symbol and whose cdr is
 the quelpa recipe (if any).
@@ -89,13 +89,17 @@ BACKEND can be 'quelpa or 'elpa, and will instruct this function to return only
 the packages relevant to that backend.
 
 Warning: this function is expensive; it re-evaluates all of doom's config files.
-Be careful not to use it in a loop."
+Be careful not to use it in a loop.
+
+If INSTALLED-ONLY-P, only return packages that are installed."
   (doom-initialize-packages t)
   (cl-loop with packages = (append doom-core-packages (mapcar #'car doom-packages))
            for sym in (cl-delete-duplicates packages)
-           if (or (assq sym doom-packages)
-                  (and (assq sym package-alist)
-                       (list sym)))
+           if (and (or (not installed-only-p)
+                       (package-installed-p sym))
+                   (or (assq sym doom-packages)
+                       (and (assq sym package-alist)
+                            (list sym))))
            collect it))
 
 ;;;###autoload
@@ -121,7 +125,7 @@ If INCLUDE-FROZEN-P is non-nil, check frozen packages as well.
 Used by `doom/packages-update'."
   (let (quelpa-pkgs elpa-pkgs)
     ;; Separate quelpa from elpa packages
-    (dolist (pkg (doom-get-packages))
+    (dolist (pkg (doom-get-packages t))
       (let ((sym (car pkg)))
         (when (and (or (not (doom-package-prop sym :freeze))
                        include-frozen-p)
