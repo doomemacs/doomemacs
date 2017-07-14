@@ -20,7 +20,7 @@
   ;; TODO Find a more elegant solution
   ;; FIXME Causes realgud:cmd-* to focus popup on every invocation
   (defun +debug*realgud-run-process
-      (debugger-name script-filename cmd-args minibuffer-history &optional no-reset)
+      (debugger-name script-filename cmd-args minibuffer-history-var &optional no-reset)
     (let* ((cmd-buf (apply #'realgud-exec-shell debugger-name script-filename
                            (car cmd-args) no-reset (cdr cmd-args)))
            (process (get-buffer-process cmd-buf)))
@@ -36,8 +36,8 @@
                  (let* ((info realgud-cmdbuf-info)
                         (cmd-args (realgud-cmdbuf-info-cmd-args info))
                         (cmd-str  (mapconcat #'identity cmd-args " ")))
-                   (set minibuffer-history
-                        (list-utils-uniq (cons cmd-str (eval minibuffer-history))))))))
+                   (set minibuffer-history-var
+                        (list-utils-uniq (cons cmd-str (eval minibuffer-history-var))))))))
             (t
              (if cmd-buf (switch-to-buffer cmd-buf))
              (message "Error running command: %s" (mapconcat #'identity cmd-args " "))))

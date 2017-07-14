@@ -170,12 +170,7 @@ across windows."
 
 (def-package! evil-easymotion
   :after evil-snipe
-  :config
-  (defvar +evil--snipe-repeat-fn
-    (evilem-create #'evil-snipe-repeat
-                   :bind ((evil-snipe-scope 'whole-buffer)
-                          (evil-snipe-enable-highlight)
-                          (evil-snipe-enable-incremental-highlight)))))
+  :commands evilem-create)
 
 
 (def-package! evil-embrace

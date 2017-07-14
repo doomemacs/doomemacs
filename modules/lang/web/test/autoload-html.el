@@ -1,4 +1,5 @@
-;;; lang/web/test/autoload-html.el -*- lexical-binding: t; -*-
+;; -*- no-byte-compile: t; -*-
+;;; lang/web/test/autoload-html.el
 
 (def-test! encode-entities
   (should (equal (+web-encode-entities "Hello world")

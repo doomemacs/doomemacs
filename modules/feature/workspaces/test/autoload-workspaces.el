@@ -1,4 +1,5 @@
-;;; feature/workspaces/test/autoload-workspaces.el -*- lexical-binding: t; -*-
+;; -*- no-byte-compile: t; -*-
+;;; feature/workspaces/test/autoload-workspaces.el
 
 (require! :feature workspaces)
 

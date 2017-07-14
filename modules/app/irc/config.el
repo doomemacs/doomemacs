@@ -28,6 +28,10 @@ playback.")
 
 (defvar +irc--defer-timer nil)
 
+(defsubst +irc--pad (left right)
+  (format (format "%%%ds | %%s" +irc-left-padding)
+          (concat "*** " left) right))
+
 
 ;;
 ;; Plugins
@@ -37,10 +41,6 @@ playback.")
   :commands (circe circe-server-buffers)
   :init (setq circe-network-defaults nil)
   :config
-  (defsubst +irc--pad (left right)
-    (format (format "%%%ds | %%s" +irc-left-padding)
-            (concat "*** " left) right))
-
   (setq circe-default-quit-message nil
         circe-default-part-message nil
         circe-use-cycle-completion t

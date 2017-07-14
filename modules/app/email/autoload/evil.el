@@ -5,8 +5,8 @@
   "Mark all messages within the current selection in mu4e's header view. Uses
 `this-command-keys' to see what flag you mean."
   (interactive)
-  (let* ((beg (or (and (region-active-p) evil-visual-beginning) (line-beginning-position)))
-         (end (or (and (region-active-p) evil-visual-end) (line-end-position)))
+  (let* ((beg (or beg (and (region-active-p) evil-visual-beginning) (line-beginning-position)))
+         (end (or end (and (region-active-p) evil-visual-end) (line-end-position)))
          (key (this-command-keys))
          (command
           (car (cl-find-if (lambda (mark) (equal (car (plist-get (cdr mark) :char)) key))

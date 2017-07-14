@@ -5,7 +5,7 @@
   (interactive)
   (+workspace-switch "*Twitter*" t)
   (delete-other-windows)
-  (condition-case ex
+  (condition-case _ex
       (progn
         (call-interactively #'twit)
         (unless (get-buffer (car twittering-initial-timeline-spec-string))

@@ -6,7 +6,7 @@
 (defun +jump-to (prop identifier &optional other-window)
   (with-selected-window
       (if other-window
-          (save-excursion (other-window) (selected-window))
+          (save-excursion (other-window 1) (selected-window))
         (selected-window))
     (let ((fn (plist-get +jump-current-functions prop)))
       (if (commandp fn)

@@ -10,6 +10,7 @@
                 (git-link--remote-dir remote))
       (error  "Remote `%s' is unknown or contains an unsupported URL" remote))))
 
+(defvar git-link-open-in-browser)
 ;;;###autoload
 (defun +vcs/git-browse ()
   "Open the website for the current version controlled file. Fallback to

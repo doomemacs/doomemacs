@@ -52,8 +52,7 @@
           (:prefix "i"
             :nv "t" #'markdown-toc-generate-toc
             :nv "i" #'markdown-insert-image
-            :nv "l" #'markdown-insert-inline-link-dwim
-            :nv "L" #'markdown-insert-reference-link-dwim))))
+            :nv "l" #'markdown-insert-link))))
 
 
 (def-package! markdown-toc
