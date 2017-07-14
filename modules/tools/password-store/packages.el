@@ -4,7 +4,7 @@
 (package! pass)
 (package! password-store)
 
-(when (version< emacs-version "26")
+(unless (package-built-in-p 'auth-store-pass)
   (package! auth-password-store))
 
 (when (featurep! :completion helm)
