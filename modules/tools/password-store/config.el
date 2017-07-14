@@ -29,14 +29,9 @@
         "C-k" #'pass-next-directory))
 
 
-(cond ((package-built-in-p 'auth-store-pass) ; built into Emacs 26
-       (def-package! auth-store-pass
-         :demand t
-         :config (auth-source-pass-enable)))
-      (t
-       (def-package! auth-password-store
-         :demand t
-         :config (auth-pass-enable))))
+(def-package! auth-password-store
+  :demand t
+  :config (auth-pass-enable))
 
 
 (def-package! helm-pass
