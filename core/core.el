@@ -170,21 +170,20 @@ ability to invoke the debugger in debug mode."
 
   (require 'cl-lib)
   (require 'core-packages (concat doom-core-dir "core-packages"))
-  (load! core-lib))
 
-(eval-when-compile
-  (doom-initialize))
+  (eval-when-compile
+    (doom-initialize))
+  (setq load-path (eval-when-compile load-path)
+        doom--package-load-path (eval-when-compile doom--package-load-path))
 
-(setq load-path (eval-when-compile load-path)
-      doom--package-load-path (eval-when-compile doom--package-load-path))
-
-(load! core-os) ; consistent behavior across OSes
-(condition-case-unless-debug ex
-    (require 'autoloads doom-autoload-file t)
-  ('error
-   (lwarn 'doom-autoloads :warning
-          "%s in autoloads.el -> %s"
-          (car ex) (error-message-string ex))))
+  (load! core-lib)
+  (load! core-os) ; consistent behavior across OSes
+  (condition-case-unless-debug ex
+      (require 'autoloads doom-autoload-file t)
+    ('error
+     (lwarn 'doom-autoloads :warning
+            "%s in autoloads.el -> %s"
+            (car ex) (error-message-string ex)))))
 
 (add-hook! '(emacs-startup-hook doom-reload-hook)
   #'doom|finalize)
