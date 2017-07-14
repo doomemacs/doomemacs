@@ -1,8 +1,9 @@
-[![Main screenshot](/../screenshots/main.png?raw=true)][sc]
+![Release tag](https://img.shields.io/github/tag/hlissner/.emacs.d.svg?label=release&style=flat-square)
+[![Master Build Status](https://img.shields.io/travis/hlissner/.emacs.d/master.svg?label=master&style=flat-square)](https://travis-ci.org/hlissner/.emacs.d)
+[![Develop Build Status](https://img.shields.io/travis/hlissner/.emacs.d/develop.svg?label=develop&style=flat-square)](https://travis-ci.org/hlissner/.emacs.d)
+[![MIT](https://img.shields.io/badge/license-MIT-green.svg?style=flat-square)](./LICENSE)
 
-[![MIT](https://img.shields.io/badge/license-MIT-green.svg)](./LICENSE)
-[![DOOM v2.0.3](https://img.shields.io/badge/DOOM-v2.0.3-blue.svg)](./init.el)
-[![Build Status](https://travis-ci.org/hlissner/.emacs.d.svg?branch=master)](https://travis-ci.org/hlissner/.emacs.d)
+[![Main screenshot](/../screenshots/main.png?raw=true)][sc]
 
 <a href="http://ultravioletbat.deviantart.com/art/Yay-Evil-111710573">
   <img src="https://raw.githubusercontent.com/hlissner/.emacs.d/screenshots/cacochan.png" align="right" />

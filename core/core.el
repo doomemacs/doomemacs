@@ -15,7 +15,7 @@
 ;; Autoloaded functions are in core/autoload/*.el and modules/*/*/autoload.el or
 ;; modules/*/*/autoload/*.el.
 
-(defvar doom-version "2.0.3"
+(defvar doom-version "2.0.4"
   "Current version of DOOM emacs.")
 
 (defvar doom-debug-mode (or (getenv "DEBUG") init-file-debug)
