@@ -4,11 +4,18 @@
 ;; together `use-package', `quelpa' and package.el to create my own,
 ;; rolling-release, lazily-loaded package management system for Emacs.
 ;;
-;; The three key commands are `doom/packages-install', `doom/packages-update'
-;; and `doom/packages-autoremove', which can be called via 'make' on the command
-;; line (make {install,update,autoremove}). These read packages.el files in each
-;; activated module in `doom-modules-dir' (and one in `doom-core-dir') which
-;; tell DOOM what plugins to install and where from.
+;; The three key commands are:
+;;
+;; + `make install` or `doom/packages-install': Installs packages that are
+;;   wanted, but not installed.
+;; + `make update` or `doom/packages-update': Updates packages that are
+;;   out-of-date.
+;; + `make autoremove` or `doom/packages-autoremove': Uninstalls packages that
+;;   are no longer needed.
+;;
+;; This system reads packages.el files located in each activated module (and one
+;; in `doom-core-dir'). These contain `package!` blocks that tell DOOM what
+;; plugins to install and where from.
 ;;
 ;; Why all the trouble? Because:
 ;; 1. Scriptability: I live in the command line. I want a programmable
@@ -613,7 +620,7 @@ If ONLY-RECOMPILE-P is non-nil, only recompile out-of-date files."
   "Recompile any out-of-date compiled *.el files in your Emacs configuration."
   (interactive)
   (doom/compile nil :recompile)
-  ;; In case `load-path' has changed (e.g. after an update)
+  ;; Forcibly recompile core.el in case `load-path' has changed
   (byte-recompile-file (expand-file-name "core.el" doom-core-dir) t))
 
 (defun doom/reset ()
