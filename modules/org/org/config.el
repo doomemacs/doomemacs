@@ -190,6 +190,11 @@ between the two."
           :i "C-H" #'+org/table-previous-field
           :i "C-K" #'+org/table-previous-row
           :i "C-J" #'+org/table-next-row
+          ;; Expand tables (or shiftmeta move)
+          :ni "C-S-l" #'+org/table-append-field-or-shift-right
+          :ni "C-S-h" #'+org/table-prepend-field-or-shift-left
+          :ni "C-S-k" #'+org/table-prepend-row-or-shift-up
+          :ni "C-S-j" #'+org/table-append-row-or-shift-down
 
           :n  [tab]     #'+org/toggle-fold
           :i  [tab]     #'+org/indent-or-next-field-or-yas-expand

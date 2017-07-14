@@ -108,7 +108,6 @@ like a space that `whitespace-mode' won't affect.")
 (defun doom-quit-p (&optional prompt)
   "Return t if this session should be killed. Prompts the user for
 confirmation."
-  (interactive)
   (if (ignore-errors (doom-real-buffer-list))
       (or (yes-or-no-p (format "››› %s" (or prompt "Quit Emacs?")))
           (ignore (message "Aborted")))
@@ -257,6 +256,13 @@ local value, whether or not it's permanent-local. Therefore, we cycle
 (add-hook! '(doom-post-init-hook minibuffer-setup-hook)
   #'doom|no-fringes-in-minibuffer)
 
+;; line numbers in newer version of Emacs
+(when (boundp 'display-line-numbers)
+  (defun doom|init-line-numbers ()
+    (unless (eq major-mode 'org-mode)
+      (setq display-line-numbers t)))
+  (add-hook! (prog-mode text-mode) #'doom|init-line-numbers))
+
 
 ;;
 ;; Plugins
@@ -319,8 +325,10 @@ local value, whether or not it's permanent-local. Therefore, we cycle
     (add-hook 'evil-visual-state-exit-hook #'hl-line-mode)))
 
 ;; Line number column. A faster (or equivalent, in the worst case) line number
-;; plugin than the built-in `linum'.
+;; plugin than the built-in `linum'. This will be ignored if you're using Emacs
+;; 26.1+, which has native line number support.
 (def-package! nlinum
+  :unless (boundp 'display-line-numbers)
   :commands nlinum-mode
   :init
   (defun doom|init-nlinum-mode ()
@@ -358,6 +366,7 @@ local value, whether or not it's permanent-local. Therefore, we cycle
 
 ;; Fixes disappearing line numbers in nlinum and other quirks
 (def-package! nlinum-hl
+  :unless (boundp 'display-line-numbers)
   :after nlinum
   :config
   ;; With `markdown-fontify-code-blocks-natively' enabled in `markdown-mode',

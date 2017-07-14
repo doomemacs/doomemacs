@@ -140,7 +140,7 @@ default/fallback account."
         mu4e-marks)
 
   ;; This hook correctly modifies gmail flags on emails when they are marked.
-  ;; Without it refiling (archiving), trashing, and flagging (starring) email
+  ;; Without it, refiling (archiving), trashing, and flagging (starring) email
   ;; won't properly result in the corresponding gmail action, since the marks
   ;; are ineffectual otherwise.
   (defun +email|gmail-fix-flags (mark msg)

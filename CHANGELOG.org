@@ -2,6 +2,7 @@
 
 - [[#todo][Todo]]
 - [[#unreleased-master][Unreleased (master)]]
+- [[#204-jul-14-2017][2.0.4 (Jul 14, 2017)]]
 - [[#203-jun-11-2017][2.0.3 (Jun 11, 2017)]]
 - [[#202-may-13-2017][2.0.2 (May 13, 2017)]]
 - [[#201-apr-8-2017][2.0.1 (Apr 8, 2017)]]
@@ -21,7 +22,7 @@
   + =lang/latex= [[https://github.com/Malabarba/latex-extra][latex-extra]] (utility commands)
   + =lang/latex= [[**https://github.com/jsinglet/latex-preview-pane][latex-preview-pane]]
   + =lang/julia= [[ https://github.com/dennisog/julia-shell-mode][julia-shell]] (unsure if better than inferior-julia in julia-mode)
-  + =lang/python= [[https://github.com/Wilfred/pyimport][pyimport]]
+  + =lang/python= [[https://github.com/Wilfred/pyimport][pyimport]] or [[https://github.com/anachronic/importmagic.el][importmagic]]
   + [[https://github.com/mhayashi1120/Emacs-imagex][emacs-imagex]], for manipulating images at point (zooming?)
   + =tools/term= [[https://github.com/riscy/shx-for-emacs][shx]], an extension for the shell in Emacs
   + =app/crm= [[https://github.com/skeeto/emacsql][emacsql]], a sqlite backend; which would be useful for CRM storage.
@@ -44,12 +45,12 @@
     + Syntax highlighter for ~+regex-mode~ (plus make it a major mode)
     + Optimize: communicate with perl process (with ~make-process~ instead of ~call-process~)
   + =lang/alda= -- Language support for [[https://github.com/alda-lang/alda][Alda]], the music programming language, using [[https://github.com/jgkamat/alda-mode][alda-mode]].
+  + =org/org-publish= -- publishing org files to HTML (thanks to [[https://github.com/matthewgraybosch][matthewgraybosch]])
+  + =org/org-attach= -- my own, simpler attachment system with drag-drop image attachment support and centralized storage.
 + *Bug fixes:*
   + =core-ui= Replace or fix ~winner-mode~ unreliability (will close windows trying to revive killed buffers). Perhaps make ~doom/kill-this-buffer~ only disassociate buffer from persp-mode or bury buffer if persp-mode is inactive.
   + =ui/doom-modeline= Fix ~0/0~ leftover panel in modeline (caused by lingering anzu state).
-+ =lang/org=
-  + Drag-drop image attachment (~org-download~) and central storage
-  + Unified export system
++ =org=
   + Better shackle + org-agenda integration
   + Fix janky visual line motions (~evil-next-visual-line~, etc)
   + Fix janky cursor positioning when jumping between org-table cells from insert mode.
@@ -64,13 +65,30 @@
 + Document best practices for customizing DOOM emacs.
 + =ui/doom-modeline= fix hardcoded spacing in between segments.
 + Rewrite main README.md to include more information about setting up, customizing, and troubleshooting DOOM Emacs.
++ Update =bin/org-capture= to read from stdin in the absence of arguments.
 
 * Unreleased (master)
-+ *New modules:*
-  + =tools/password-store= -- Emacs as a password manager, using [[https://www.passwordstore.org/][pass]] as a backend (contributed by [[https://github.com/bandresen][brandresen]]).
-  + =app/irc= -- Emacs as an IRC client, using circe (contributed by [[https://github.com/bandresen][brandresen]]).
+
+* 2.0.4 (Jul 14, 2017)
++ *Module changes:*
+  + Added =tools/password-store= -- Emacs as a password manager, using [[https://www.passwordstore.org/][pass]] as a backend (contributed by [[https://github.com/bandresen][brandresen]]).
+  + Added =app/irc= -- Emacs as an IRC client, using circe (contributed by [[https://github.com/bandresen][brandresen]]).
     + ~+pass/ivy~ for ivy integration, with edit/copy field/open url actions.
     + ~helm-pass~ for helm integration.
+  + Added =lang/hy= -- support for [[http://hylang.org][hylang]], a combination of Lisp and Python (thanks to [[https://github.com/bandresen][bandresen]]).
+  + Added =lang/ocaml= -- support for [[https://ocaml.org/][OCAML]] (thanks to [[https://github.com/Ptival][Ptival]])
+  + Added =lang/plantuml= -- drawing diagrams in plain text
+  + Added =lang/perl= -- Perl6 support for Emacs
+  + Added =ui/tabbar= -- add tabs to Doom via [[https://github.com/dholm/tabbar][tabbar]] (I don't recommend using it)
+  + Removed =lang/org=
+  + Added =org= -- a new module category for org and org extensions
+  + Removed =app/present= (replaced mostly with =org/org-present=)
+    + =org/org-babel= -- executable code snippets in org-mode, with support for a variety of languages.
+    + =org/org-capture= -- a better org-capture, in or outside of Emacs.
+    + =org/org-export= -- a centralized export system with more export backends.
+    + =org/org-notebook= -- org-mode as a general notebook.
+    + =org/org-present= -- org-mode for presentations.
+  + Added =tools/impatient-mode= -- show off live buffers via HTTP.
 + =core=
   + New variable: ~doom-host-dir~, as a base path for ~doom-etc-dir~ and ~doom-cache-dir~.
   + New hooks: ~doom-init-hook~ and ~doom-post-init-hook~, which are run on ~emacs-startup-hook~. This is meant to simplify post-Emacs initialization hooks (~after-init-hook~, ~emacs-startup-hook~ and ~window-setup-hook~) into two unambiguous ones.
@@ -78,20 +96,29 @@
   + Improve error handling across the board. Emacs should now report more helpful errors. Catastrophic errors will be less likely to inhibit later modules from being loaded.
   + Unit-tests have been moved to their respective modules (and =core/test/=).
   + Fix ~def-setting!~ to act more like ~defmacro~; don't aggressively evaluate its arguments on expansion.
+  + New function: ~doom-set-buffer-real BUFFER FLAG~ -- makes Doom consider BUFFER real, no matter what.
+  + Add ~INSTALLED-ONLY-P~ argument to ~doom-get-packages~ to filter packages that aren't installed.
   + =core-ui=
     + Add quit confirmation when trying to close a frame that contains real buffers.
     + Fix quit confirmations for clients connected to ~emacs --daemon~ with ~emacsclient~.
     + Brought back [[https://github.com/hlissner/emacs-nlinum-hl][nlinum-hl]], which offers some line number fixes for web-mode and markdown-mode.
     + Don't report the buffer modified when injecting (or deleting) trailing whitespace in ~doom|inject-trailing-whitespace~ and ~doom|init-highlight-indentation~.
     + [[https://github.com/domtronn/all-the-icons.el][all-the-icons]] now fails gracefully in the terminal.
+    + New hook: ~doom-init-ui-hook~, run whenever the UI needs to be reloaded (and once at startup). Theme and font loading is also attached to this hook.
+    + New variables for font and theme loading: ~doom-theme~, ~doom-font~, ~doom-variable-pitch-font~, and ~doom-unicode-font~.
+    + New variables for customizing line numbers: ~doom-line-number-lpad~, ~doom-line-number-rpad~, and ~doom-line-number-pad-char~. These were added to facilitate custom whitespace characters in line numbers, e.g. /u2002 (a unicode character that looks like a space). Doing so fixes an issue where ~whitespace-mode~ with ~space-mark~ would replace all space characters indiscriminately, even in line numbers.
+    + Add hooks ~doom-pre-reload-theme-hook~ and ~doom-post-reload-theme-hook~ to ~doom/reload-theme~ command.
   + =core-popups=
     + Fix an issue where more specific popup rules were being overriden by more general rules.
+    + New command: ~doom/other-popup~ -- cycles between open popup windows and the original buffer that you originated from. Discussed in [[https://github.com/hlissner/.emacs.d/issues/141][#141]].
   + =core-editor=
     + Change what files recentf will ignore: everything in ~doom-host-dir~ is now ignored and anything else in ~doom-local-dir~ won't be.
+    + New interactive command: ~doom/scratch-buffer~ (replaces ~+doom:scratch-buffer~ in =:ui doom=).
   + =core-packages=
     + Generalize ~doom-package-*-p~ functions into ~(doom-package-prop NAME PROPERTY)~.
-    + Fix quelpa temporary files (in ~quelpa-build-dir~) not being removed when a quelpa package is uninstalled.
+    + Fix quelpa temporary files (in ~quelpa-build-dir~) not being removed when a quelpa package was uninstalled.
     + New hook: ~doom-reload-hook~ (sort of). This has been around for a while, but now it is defined and documented. It runs when ~doom/reload~ is called (which gets called remotely if you run package management while an Emacs session is active).
+    + ~load!~ can now accept a string as its first argument (the path).
 + =feature=
   + =feature/evil=
     + Remove =goto-last-change=, which conflicts with =goto-chg=, which is a dependency of evil (that does the exact same thing, but is what evil uses).
@@ -102,25 +129,43 @@
       + ~:references~: lists all references of the symbol at point and lets you jump to them.
       + ~:documentation~: shows documentation for the symbol at point.
       + ~:xref-backend~: a function that serves as an xref backend; this replaces ~:definition~ and ~:references~.
+  + =feature/workspaces=
+    + New function: ~+workspace-contains-buffer-p &optional BUFFER PERSP~ -- return non-nil if BUFFER (defaults to current buffer) is in PERSP (defaults to current perspective).
+    + Fix ~+workspace-p~ not detecting a perspective struct.
+    + Fix ~+workspace-buffer-list~ not preserving buffer order (by recency).
++ =completion=
+  + =completion/company=
+    + Add ~company-dabbrev~ and ~company-ispell~ to the default Company backends. This ensures you have some completion available in buffers previously without any. This is especially useful for text-mode buffers. Discussed in [[https://github.com/hlissner/.emacs.d/issues/134][#134]].
 + =ui=
   + =ui/doom=
     + Vastly improve daemon and terminal support for doom-themes by reloading the theme when a new client is attached, or new terminal/daemon frame is created. This prevents incorrect colors from bleeding across face class barriers.
+    + Removed evil command ~+doom:scratch-buffer~ (replaced with ~doom/scratch-buffer~ in =core-ui=).
+    + Decoupled font and theme loading from this module. This has now been delegated to =core-ui=. These variables no longer exist: ~+doom-theme~, ~+doom-font~, ~+doom-variable-pitch-font~, ~+doom-unicode-font~. Discussed in [[https://github.com/hlissner/.emacs.d/issues/117][#117]].
   + =ui/doom-dashboard=
     + Fix dashboard not opening in emacsclient/daemon frames.
     + Add =gg= and =G= keybinds in dashboard for moving to the first and last button (respectively).
   + =ui/doom-modeline=
-    + Reorganize order of modeline segments, placing the vc branch last. This minimizes the non-uniform spacing that all-the-icon icons cause.
+    + Reorganize order of modeline segments, placing the vc branch last. This minimizes the non-uniform spacing caused by all-the-icon icons.
+    + Fix blank mode-line caused by a nil buffer-file-name (used in vcs segment). For example, in org indirect buffers.
 + =tools=
   + =tools/neotree=
     + Fix neotree refusing to open when it was already open in another frame. This is especially frustrating when neotree is open in a (likely buried) terminal emacsclient session, and you're trying to open neotree in another.
 + =lang=
+  + =lang/cc=
+    + Add code completion to glsl-mode (powered by [[https://github.com/Kaali/company-glsl][company-glsl]]).
   + =lang/markdown=
     + Source blocks are now fontified natively, with the fontification of their native major-modes (see ~markdown-fontify-code-blocks-natively~).
-  + =lang/org=
+  + =lang/sh=
+    + Fix fontification of command substitutions in double-quoted strings to help distinguish them from the rest of string literals.
+  + =lang/web=
+    + Fix HTML entity encoding/decoding functions.
++ =org=
+  + =org/org=
     + Fix M-RET in plain lists not preserving indent level for new items.
     + Fix cursor jumping away when toggling folds or realigning org tables (pressing TAB).
-  + =lang/sh=
-    + Fix fontification of command substitutions in double-quoted strings to help distinguish them from the rest of the string literal.
+    + Minimized keybindings into the bare necessities; most custom bindings have been moved to my private module.
+  + =org/org-capture=
+    + Start org-capture-mode in insert-mode (if evil is loaded).
 
 * 2.0.3 (Jun 11, 2017)
 + *New modules*
@@ -142,6 +187,9 @@
     + New variable: ~doom-ui-mode-names~ (alist) -- for changing ~mode-name~ of major-modes.
     + Fix left-over hl-line overlays when hl-line-mode is uncleanly killed (e.g. when the major-mode is changed).
     + Fix disappearing line numbers in nlinum (thanks to [[https://github.com/gilbertw1][gilbertw1]]).
+    + Move theme/font bootstrap to core-ui.
+    + New hook: ~doom-init-ui-hook~
+    + New global minor-mode ~doom-big-font-mode~ and variable ~doom-big-font~.
   + =core-keybinds=
     + New property for ~map!~: ~:textobj~ -- for binding to evil text objects keymaps.
     + Fix ~:after~ & ~:map*~ properties in ~map!~ macro (wasn't working at all).
@@ -176,16 +224,28 @@
     + Call ~recenter~ after using [[https://github.com/jacktasia/dumb-jump][dumb-jump]].
   + =feature/workspaces=
     + No longer saves session on quit if session was blank.
+    + Fix persp-mode switching to main workspace if auto-resume is on.
+    + Fix ~+workspace-get~ returning a non-nil "null perspective" on some occasions where NAME doesn't exist. This is because ~persp-get-by-name~ returns the value of ~persp-not-persp~ to signify null instead of actual nil.
+    + Decouple workspace buffer-list functions from doom buffer library. Now, the workspaces module will explicitly advise ~doom-buffer-list~.
+    + ~+workspace-list~ now returns a list of perspective structs, rather than a list of strings. ~+workspace-list-names~ was introduced for the latter.
 + =completion=
+  + =completion/company=
+    + Change ~:company-backends~ to accept a variadic list of backends to prepend to ~company-backends~. Its signature is now ~(set! :company-backends MODES &rest BACKENDS)~ ([[https://github.com/hlissner/.emacs.d/pull/125][#125]]).
   + =completion/ivy=
     + Flexible column width for ~+ivy/tasks~.
 + =ui=
   + =ui/doom=
     + New plugin: [[https://github.com/hlissner/emacs-solaire-mode][solaire-mode]] -- replaces ~doom-buffer-mode~; brightens source windows and dims transient, temporary, or popup windows.
+    + BREAKING CHANGE: Decoupled theme and font loading from ui/doom. This has been moved to core-ui. The following variables have been renamed:
+      + ~+doom-theme~ => ~doom-theme~
+      + ~+doom-font~ => ~doom-font~
+      + ~+doom-variable-pitch-font~ => ~doom-variable-pitch-font~
+      + ~+doom-unicode-font~ => ~doom-unicode-font~
   + =ui/doom-modeline=
     + Reduce excess whitespace on right of flycheck segment.
     + Buffer-path and file-name segments now use different faces.
     + The vcs segment now uses a slightly darker color (in clean branches).
+    + Fix blank mode-line when buffer-file-name is nil ([[https://github.com/hlissner/.emacs.d/pull/130][#130]])
   + =ui/nav-flash=
     + Fix over-aggressive nav-flash'ing on evil-multiedit or in eshell/term buffers.
 + =tools=
@@ -201,6 +261,8 @@
     + Don't enable ~flycheck-mode~ in emacs.d files.
   + =lang/org=
     + Replace org-bullets source with more up-to-date fork.
+  + =lang/scala=
+    + Fix ~void-variable imenu-auto-rescan~ error caused by ~ensime--setup-imenu~ trying to use imenu variables before loading imenu.
 + =private/hlissner=
   + Add =gzz= binding (~+evil/mc-make-cursor-here~)
   + Add =:mc= ex command (~+evil:mc~)

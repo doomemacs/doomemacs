@@ -21,14 +21,14 @@ command line args following a double dash (each arg should be in the
 'module/submodule' format).
 
 If neither is available, run all tests in all enabled modules."
-  (interactive) ;; TODO Add completing-read selection of tests
+  (interactive) ; must be interactive to be run from batch
   ;; FIXME Refactor this
   (condition-case-unless-debug ex
       (let (targets)
         ;; ensure DOOM is initialized
-        (unload-feature 'core t)
         (let (noninteractive)
-          (load (expand-file-name "core/core.el" user-emacs-directory) nil t))
+          (load (expand-file-name "init.el" user-emacs-directory) nil t))
+        (remove-hook 'doom-init-hook #'doom--display-benchmark)
         ;; collect targets
         (cond ((and command-line-args-left
                     (equal (car command-line-args-left) "--"))

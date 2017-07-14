@@ -13,7 +13,9 @@
 (defun doom/toggle-line-numbers (&optional arg)
   "Toggle `linum-mode'."
   (interactive "P")
-  (cond ((featurep 'nlinum)
+  (cond ((boundp 'display-line-numbers)
+         (setq display-line-numbers (not display-line-numbers)))
+        ((featurep 'nlinum)
          (nlinum-mode (or arg (if nlinum-mode -1 +1))))
         ((featurep 'linum)
          (linum-mode (or arg (if linum-mode -1 +1))))

@@ -66,6 +66,9 @@
  :m "A-j" #'+hlissner:multi-next-line
  :m "A-k" #'+hlissner:multi-previous-line
 
+ (:prefix "C-x"
+   "p" #'doom/other-popup)
+
 
  ;; --- <leader> -------------------------------------
  (:leader
@@ -628,6 +631,7 @@
    ;; For elisp debugging
    :map debugger-mode-map
    :n "RET" #'debug-help-follow
+   :n "e"   #'debugger-eval-expression
    :n "n"   #'debugger-step-through
    :n "c"   #'debugger-continue)
 
@@ -695,7 +699,7 @@
     (evilem-default-keybindings prefix)
     (evilem-define (kbd (concat prefix " n")) #'evil-ex-search-next)
     (evilem-define (kbd (concat prefix " N")) #'evil-ex-search-previous)
-    (evilem-define (kbd (concat prefix " s")) 'evil-snipe-repeat
+    (evilem-define (kbd (concat prefix " s")) #'evil-snipe-repeat
                    :pre-hook (save-excursion (call-interactively #'evil-snipe-s))
                    :bind ((evil-snipe-scope 'buffer)
                           (evil-snipe-enable-highlight)
@@ -748,7 +752,9 @@
 
       (:after org-mode
         (:map org-mode-map
-          :i [remap doom/inflate-space-maybe] #'org-self-insert-command))
+          :i [remap doom/inflate-space-maybe] #'org-self-insert-command
+          :i "C-e" #'org-end-of-line
+          :i "C-a" #'org-beginning-of-line))
 
       ;; Make ESC quit all the things
       (:map (minibuffer-local-map

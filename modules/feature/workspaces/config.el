@@ -55,16 +55,20 @@ renamed.")
   ;; only auto-save when real buffers are present
   (advice-add #'persp-asave-on-exit :around #'+workspaces*autosave-real-buffers)
 
+  (defun +workspaces|on-persp-mode ()
+    ;; Remap `buffer-list' to current workspace's buffers in `doom-buffer-list'
+    (if persp-mode
+        (advice-add #'doom-buffer-list :override #'+workspace-buffer-list)
+      (advice-remove #'doom-buffer-list #'+workspace-buffer-list)))
+  (add-hook 'persp-mode-hook #'+workspaces|on-persp-mode)
+
   ;; Defer delayed warnings even further, so they appear after persp-mode is
   ;; started and the main workspace is ready to display them. Otherwise, warning
   ;; buffers will be hidden on startup.
   (remove-hook 'delayed-warnings-hook #'display-delayed-warnings)
   (defun +workspaces|init (&optional frame)
     (unless persp-mode
-      (persp-mode +1)
-      ;; Remap `buffer-list' to current workspace's buffers in
-      ;; `doom-buffer-list'
-      (advice-add #'doom-buffer-list :override #'+workspace-buffer-list))
+      (persp-mode +1))
     (let ((frame (or frame (selected-frame))))
       (unless noninteractive
         ;; The default perspective persp-mode makes (defined by

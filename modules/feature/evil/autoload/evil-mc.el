@@ -13,8 +13,8 @@
 ;;;###autoload (autoload '+evil/mc-make-cursor-here "feature/evil/autoload/evil-mc" nil t)
 (evil-define-command +evil/mc-make-cursor-here ()
   "Create a cursor at point. If in visual block or line mode, then create
-cursors in column beneath+above the point on each line. Otherwise pauses
-cursors."
+cursors on each line of the selection, on the column of the cursor. Otherwise
+pauses cursors."
   :repeat nil
   :keep-visual nil
   :evil-mc t

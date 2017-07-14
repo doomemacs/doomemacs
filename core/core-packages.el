@@ -4,11 +4,18 @@
 ;; together `use-package', `quelpa' and package.el to create my own,
 ;; rolling-release, lazily-loaded package management system for Emacs.
 ;;
-;; The three key commands are `doom/packages-install', `doom/packages-update'
-;; and `doom/packages-autoremove', which can be called via 'make' on the command
-;; line (make {install,update,autoremove}). These read packages.el files in each
-;; activated module in `doom-modules-dir' (and one in `doom-core-dir') which
-;; tell DOOM what plugins to install and where from.
+;; The three key commands are:
+;;
+;; + `make install` or `doom/packages-install': Installs packages that are
+;;   wanted, but not installed.
+;; + `make update` or `doom/packages-update': Updates packages that are
+;;   out-of-date.
+;; + `make autoremove` or `doom/packages-autoremove': Uninstalls packages that
+;;   are no longer needed.
+;;
+;; This system reads packages.el files located in each activated module (and one
+;; in `doom-core-dir'). These contain `package!` blocks that tell DOOM what
+;; plugins to install and where from.
 ;;
 ;; Why all the trouble? Because:
 ;; 1. Scriptability: I live in the command line. I want a programmable
@@ -178,7 +185,7 @@ to speed up startup."
   (unless (file-exists-p doom-autoload-file)
     (quiet! (doom/reload-autoloads))))
 
-(defun doom-initialize-packages (&optional force-p load-p)
+(defun doom-initialize-packages (&optional force-p)
   "Crawls across your emacs.d to fill `doom-modules' (from init.el) and
 `doom-packages' (from packages.el files), if they aren't set already.
 
@@ -186,33 +193,26 @@ If FORCE-P is non-nil, do it even if they are.
 
 This aggressively reloads core autoload files."
   (doom-initialize force-p)
-  (let ((noninteractive t)
-        (load-fn
-         (lambda (file &optional noerror)
-           (condition-case-unless-debug ex
-               (load file noerror :nomessage :nosuffix)
-             ('error
-              (error (format "(doom-initialize-packages) %s in %s: %s"
-                             (car ex)
-                             (file-relative-name file doom-emacs-dir)
-                             (error-message-string ex))
-                     :error))))))
-    (when (or force-p (not doom-modules))
-      (setq doom-modules nil)
-      (funcall load-fn (expand-file-name "init.el" doom-emacs-dir))
-      (funcall load-fn (doom-module-path :private user-login-name "init.el") t)
-      (when load-p
-        (cl-loop for file
-                 in (append (nreverse (file-expand-wildcards (expand-file-name "core*.el" doom-core-dir)))
-                            (file-expand-wildcards (expand-file-name "autoload/*.el" doom-core-dir))
-                            (doom--module-paths "config.el"))
-                 do (funcall load-fn file t)))
-      (doom|finalize))
-    (when (or force-p (not doom-packages))
-      (setq doom-packages nil)
-      (funcall load-fn (expand-file-name "packages.el" doom-core-dir))
-      (dolist (file (doom--module-paths "packages.el"))
-        (funcall load-fn file t)))))
+  (unwind-protect
+      (let ((noninteractive t)
+            (load-fn
+             (lambda (file &optional noerror)
+               (condition-case-unless-debug ex
+                   (load file noerror :nomessage :nosuffix)
+                 ('error
+                  (error (format "(doom-initialize-packages) %s in %s: %s"
+                                 (car ex)
+                                 (file-relative-name file doom-emacs-dir)
+                                 (error-message-string ex))))))))
+        (when (or force-p (not doom-modules))
+          (setq doom-modules nil)
+          (funcall load-fn (expand-file-name "init.el" doom-emacs-dir)))
+        (when (or force-p (not doom-packages))
+          (setq doom-packages nil)
+          (funcall load-fn (expand-file-name "packages.el" doom-core-dir))
+          (dolist (file (doom--module-paths "packages.el"))
+            (funcall load-fn file t))))
+    (doom|finalize)))
 
 (defun doom-initialize-modules (modules)
   "Adds MODULES to `doom-modules'. MODULES must be in mplist format.
@@ -305,6 +305,12 @@ MODULES is an malformed plist of modules to load."
      (setq doom-modules ',doom-modules)
 
      (unless noninteractive
+       (require 'core-ui)         ; draw me like one of your French editors
+       (require 'core-popups)     ; taming sudden yet inevitable windows
+       (require 'core-editor)     ; baseline configuration for text editing
+       (require 'core-projects)   ; making Emacs project-aware
+       (require 'core-keybinds)   ; centralized keybind system + which-key
+
        (load ,(doom-module-path :private user-login-name "init") t t)
        ,@(cl-loop for (module . submodule) in (doom--module-pairs)
                   collect `(require! ,module ,submodule t))
@@ -563,7 +569,7 @@ If ONLY-RECOMPILE-P is non-nil, only recompile out-of-date files."
   (interactive "P")
   ;; Ensure all relevant config files are loaded and up-to-date. This way we
   ;; don't need eval-when-compile and require blocks scattered all over.
-  (doom-initialize-packages t noninteractive)
+  (doom-initialize-packages t)
   (let ((targets
          (cond ((equal (car command-line-args-left) "--")
                 (cl-loop for file in (cdr command-line-args-left)
@@ -614,18 +620,19 @@ If ONLY-RECOMPILE-P is non-nil, only recompile out-of-date files."
   "Recompile any out-of-date compiled *.el files in your Emacs configuration."
   (interactive)
   (doom/compile nil :recompile)
-  ;; In case `load-path' has changed (e.g. after an update)
+  ;; Forcibly recompile core.el in case `load-path' has changed
   (byte-recompile-file (expand-file-name "core.el" doom-core-dir) t))
 
-(defun doom/clean-cache ()
+(defun doom/reset ()
   "Clear the local cache completely (in `doom-cache-dir').
 
-You must restart Emacs for some components to feel its effects."
+This resets Emacs to a blank slate. You must restart Emacs for some components
+to feel its effects."
   (interactive)
   (delete-directory doom-cache-dir t)
   (make-directory doom-cache-dir t))
 
-(defun doom/clean-compiled ()
+(defun doom/clean-compiled-files ()
   "Delete all compiled elc files in your Emacs configuration.
 
 This excludes compiled packages in `doom-packages-dir'."

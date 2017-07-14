@@ -1,5 +1,7 @@
 ;;; core/autoload/popups.el -*- lexical-binding: t; -*-
 
+(defvar doom-popup-remember-history)
+
 ;;;###autoload
 (defun doom-popup-p (&optional target)
   "Return TARGET (a window) if TARGET (a window or buffer) is a popup. Uses
@@ -47,7 +49,7 @@ possible rules."
 ;;;###autoload
 (defun doom-popup-windows ()
   "Get a list of open pop up windows."
-  (cl-remove-if-not #'doom-popup-p (window-list)))
+  (cl-remove-if-not #'doom-popup-p doom-popup-windows))
 
 ;;;###autoload
 (defun doom/popup-restore ()
@@ -129,7 +131,7 @@ only close popups that have an :autoclose property in their rule (see
     (delete-window)))
 
 ;;;###autoload
-(defun doom/popup ()
+(defun doom/popup-this-buffer ()
   "Display currently selected buffer in a popup window."
   (interactive)
   (doom-popup-buffer (current-buffer) :align t :autokill t))
@@ -146,14 +148,15 @@ only close popups that have an :autoclose property in their rule (see
 (defun doom-popup-prop (prop &optional window)
   "Returns a `doom-popup-rules' PROPerty from WINDOW."
   (or (plist-get (or (if window
-                         (buffer-local-value 'doom-popup-rules (window-buffer window))
+                         (ignore-errors
+                           (buffer-local-value 'doom-popup-rules
+                                               (window-buffer window)))
                        doom-popup-rules)
                      (window-parameter window 'popup))
                  prop)
-      (cond ((eq prop :size)
-             shackle-default-size)
-            ((eq prop :align)
-             shackle-default-alignment))))
+      (pcase prop
+        (:size  shackle-default-size)
+        (:align shackle-default-alignment))))
 
 ;;;###autoload
 (defun doom-popup-side (&optional window)
@@ -168,11 +171,9 @@ only close popups that have an :autoclose property in their rule (see
 ;;;###autoload
 (defun doom-popup-size (&optional window)
   "Return the size of a popup WINDOW."
-  (let ((side (doom-popup-side window)))
-    (cond ((memq side '(left right))
-           (window-width window))
-          ((memq side '(above below))
-           (window-height window)))))
+  (pcase (doom-popup-side window)
+    ((or 'left 'right)  (window-width window))
+    ((or 'above 'below) (window-height window))))
 
 (defun doom--popup-data (window)
   (when-let (buffer (window-buffer window))
@@ -183,9 +184,26 @@ only close popups that have an :autoclose property in their rule (see
 
 ;;;###autoload
 (defmacro with-popup-rules! (rules &rest body)
+  "TODO"
   (declare (indent defun))
   `(let ((old-shackle-rules shackle-rules))
      ,@(cl-loop for rule in rules
                 collect `(set! :popup ,@rule))
      ,@body
      (setq shackle-rules old-shackle-rules)))
+
+;;;###autoload
+(defun doom/other-popup (count)
+  "Cycle through popup windows. Like `other-window', but for popups."
+  (interactive "p")
+  (if-let (popups (if (doom-popup-p)
+                      (cdr (memq (selected-window) doom-popup-windows))
+                    (setq doom-popup-other-window (selected-window))
+                    doom-popup-windows))
+      (select-window (nth (mod (1- count) (length popups)) popups))
+    (unless (eq (selected-window) doom-popup-other-window)
+      (when doom-popup-other-window
+        (select-window doom-popup-other-window t)
+        (cl-decf count))
+      (when (/= count 0)
+        (other-window count)))))

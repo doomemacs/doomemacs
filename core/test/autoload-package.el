@@ -18,6 +18,14 @@ affects your Emacs packages)."
      (package-initialize)
      ,@forms))
 
+(defmacro -with-packages! (packages package-descs &rest body)
+  `(let ((doom-packages ,packages)
+         (package-alist ,package-descs)
+         doom-core-packages)
+     (cl-letf (((symbol-function 'doom-initialize-packages) (lambda (&rest _)))
+               ((symbol-function 'package-installed-p) (lambda (name &rest _) (assq name package-alist))))
+       ,@body)))
+
 
 ;;
 ;; Tests
@@ -31,45 +39,40 @@ affects your Emacs packages)."
     (should (eq (doom-package-backend 'doom-quelpa-dummy) 'quelpa))))
 
 (def-test! elpa-outdated-detection
-  (cl-letf (((symbol-function 'package-refresh-contents) (lambda (&rest _))))
-    (let* ((doom--last-refresh (current-time))
-           (package-alist
-            `((doom-dummy ,(-new-package 'doom-dummy '(20160405 1234)))))
-           (package-archive-contents
-            `((doom-dummy ,(-new-package 'doom-dummy '(20170405 1234)))))
-           (outdated (doom-package-outdated-p 'doom-dummy)))
-      (should outdated)
-      (should (equal outdated '(doom-dummy (20160405 1234) (20170405 1234)))))))
+  (let* ((doom--last-refresh (current-time))
+         (package-alist
+          `((doom-dummy ,(-new-package 'doom-dummy '(20160405 1234)))))
+         (package-archive-contents
+          `((doom-dummy ,(-new-package 'doom-dummy '(20170405 1234))))))
+    (cl-letf (((symbol-function 'package-refresh-contents) (lambda (&rest _))))
+      (should (equal (doom-package-outdated-p 'doom-dummy)
+                     '(doom-dummy (20160405 1234) (20170405 1234)))))))
 
 ;; TODO quelpa-outdated-detection
 
 (def-test! get-packages
-  (let ((quelpa-initialized-p t)
-        (doom-packages '((doom-dummy)))
-        (package-alist
-         `((doom-dummy nil)
-           (doom-dummy-dep nil)))
-        doom-core-packages)
-    (cl-letf (((symbol-function 'doom-initialize-packages) (lambda (&rest _))))
-      (should (equal (doom-get-packages) '((doom-dummy)))))))
+  (let ((quelpa-initialized-p t))
+    (-with-packages!
+     '((doom-dummy))
+     '((doom-dummy          nil)
+       (doom-dummy-unwanted nil)
+       (doom-dummy-dep      nil))
+     (should (equal (doom-get-packages) '((doom-dummy)))))))
 
 (def-test! orphaned-packages
   "Test `doom-get-orphaned-packages', which gets a list of packages that are
 no longer enabled or depended on."
-  (let ((doom-packages '((doom-dummy)))
-        (package-alist
-         `((doom-dummy ,(-new-package 'doom-dummy '(20160405 1234) '((doom-dummy-dep (1 0)))))
-           (doom-dummy-unwanted ,(-new-package 'doom-dummy-unwanted '(20160601 1234)))
-           (doom-dummy-dep ,(-new-package 'doom-dummy-dep '(20160301 1234)))))
-        doom-core-packages)
-    (cl-letf (((symbol-function 'doom-initialize-packages) (lambda (&rest _))))
-      (should (equal (doom-get-orphaned-packages) '(doom-dummy-unwanted))))))
+  (-with-packages!
+   '((doom-dummy))
+   `((doom-dummy          ,(-new-package 'doom-dummy '(20160405 1234) '((doom-dummy-dep (1 0)))))
+     (doom-dummy-unwanted ,(-new-package 'doom-dummy-unwanted '(20160601 1234)))
+     (doom-dummy-dep      ,(-new-package 'doom-dummy-dep '(20160301 1234))))
+   (should (equal (doom-get-orphaned-packages) '(doom-dummy-unwanted)))))
 
 (def-test! missing-packages
   "Test `doom-get-missing-packages, which gets a list of enabled packages that
 aren't installed."
-  (let ((doom-packages '((doom-dummy) (doom-dummy-installed)))
-        (package-alist `((doom-dummy-installed ,(-new-package 'doom-dummy-installed '(20160405 1234)))))
-        doom-core-packages)
-    (cl-letf (((symbol-function 'doom-initialize-packages) (lambda (&rest _))))
-      (should (equal (doom-get-missing-packages) '((doom-dummy)))))))
+  (-with-packages!
+   '((doom-dummy) (doom-dummy-installed))
+   `((doom-dummy-installed ,(-new-package 'doom-dummy-installed '(20160405 1234))))
+   (should (equal (doom-get-missing-packages) '((doom-dummy))))))

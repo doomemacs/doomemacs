@@ -5,9 +5,9 @@ EMACSI=emacs -q $(EMACS_FLAGS)
 
 MODULES=$(patsubst modules/%, %, $(shell find modules/ -maxdepth 2 -type d))
 
-# Tasks
 all: autoloads autoremove install
 
+## Package management
 install: init.el .local/autoloads.el
 	@$(EMACS) -f doom/packages-install
 
@@ -20,28 +20,40 @@ autoremove: init.el .local/autoloads.el
 autoloads: init.el
 	@$(EMACS) -f doom/reload-autoloads
 
-recompile: init.el
-	@$(EMACS) -f doom/recompile
 
+## Byte compilation
+# compile
+# compile:core
+# compile:module
+# compile:module/submodule
 compile: init.el clean
 	@$(EMACS) -f doom/compile
 
-core: init.el clean
+compile\:core: init.el clean
 	@$(EMACS) -f doom/compile -- init.el core
 
-$(MODULES): init.el .local/autoloads.el
-	@rm -fv $(shell find modules/$@ -type f -name '*.elc')
-	@$(EMACS) -f doom/compile -- modules/$@
+$(patsubst %, compile\:%, $(MODULES)): init.el .local/autoloads.el
+	@rm -fv $(shell find $(patsubst compile:%, modules/%, $@) -type f -name '*.elc')
+	@$(EMACS) -f doom/compile -- $(patsubst compile:%, modules/%, $@)
+
+recompile: init.el
+	@$(EMACS) -f doom/recompile
 
 clean:
-	@$(EMACS) -f doom/clean-compiled
-
-clean-cache:
-	@$(EMACS) -f doom/clean-cache
+	@$(EMACS) -f doom/clean-compiled-files
 
 clean-pcache:
 	@$(EMACS) -l persistent-soft --eval '(delete-directory pcache-directory t)'
 
+reset:
+	@$(EMACS) -f doom/reset
+
+
+## Unit tests
+# test
+# test:core
+# test:module
+# test:module/submodule
 test: init.el .local/autoloads.el
 	@$(EMACS) -f doom-run-tests
 
@@ -52,16 +64,19 @@ test\:core $(patsubst %, test\:%, $(MODULES)): init.el .local/autoloads.el
 testi: init.el .local/autoloads.el
 	@$(EMACSI) -f doom-run-tests -f ert
 
-# For running Emacs from a different folder than ~/.emacs.d
+
+## Utility tasks
+# Runs Emacs from a different folder than ~/.emacs.d
 run:
-	@$(EMACSI) $(EMACS_FLAGS) -l init.el
+	@$(EMACSI) -l init.el
 
+# Diagnoses potential OS/environment issues
 doctor:
-	@./bin/doctor
+	@./bin/doom-doctor
 
-#
+## Internal tasks
 init.el:
-	@[ -e init.el ] || $(error No init.el file; create one or copy init.example.el)
+	@$(error No init.el file; create one or copy init.example.el)
 
 .local/autoloads.el:
 	@$(EMACS) -f doom-initialize-autoloads
@@ -69,5 +84,4 @@ init.el:
 %.elc: %.el
 	@$(EMACS) -f doom/compile -- $<
 
-
-.PHONY: all test $(MODULES)
+.PHONY: all compile test testi

@@ -42,7 +42,7 @@
       ;debug           ; FIXME stepping through code, to help you add bugs
 
        :completion
-       company         ; code completion backend
+       company         ; the ultimate code completion backend
        ivy             ; a search engine for love and life
       ;helm            ; the *other* search engine for love and life
       ;ido             ; the other *other* search engine...
@@ -91,7 +91,9 @@
        lua             ; one-based indices? one-based indices
        markdown        ; writing docs for people to ignore
        ocaml           ; an objective camel
+       perl            ; write code no one else can comprehend
        php             ; make php less awful to work with
+       plantuml        ; diagrams for confusing people more
        purescript      ; javascript, but functional
        python          ; beautiful is better than ugly
        rest            ; Emacs as a REST client
@@ -115,9 +117,10 @@
       ;org-publish     ; TODO org + blogs
 
        ;; Applications are complex and opinionated modules that transform Emacs
-       ;; toward a specific purpose. They should be loaded last.
+       ;; toward a specific purpose. They may have additional dependencies and
+       ;; should be loaded last.
        :app
-       email           ; Emacs as an email client
+       email           ; emacs as an email client
        irc             ; how neckbeards socialize
        rss             ; emacs as an RSS reader
        twitter         ; twitter client https://twitter.com/vnought
