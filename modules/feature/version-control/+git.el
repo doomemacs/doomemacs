@@ -62,9 +62,7 @@
       ("p" git-gutter:popup-hunk)
       ("R" git-gutter:set-start-revision)
       ("q" nil :color blue)
-      ("Q" (progn (git-gutter-mode -1)
-                  (git-gutter:clear))
-       :color blue))))
+      ("Q" (git-gutter-mode -1) :color blue))))
 
 
 (def-package! git-timemachine
