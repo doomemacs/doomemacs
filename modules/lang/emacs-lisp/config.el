@@ -74,6 +74,11 @@
   (setq inferior-lisp-program "clisp")
   (require 'slime-fuzzy))
 
+(def-package! overseer
+  :commands overseer-test
+  :init
+  (set! :popup '("*overseer*" :size 12)))
+
 
 ;;
 ;;
