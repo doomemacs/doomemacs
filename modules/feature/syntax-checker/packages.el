@@ -4,3 +4,6 @@
 (package! flycheck)
 (package! flycheck-pos-tip)
 
+(when (featurep! :lang emacs-lisp)
+  (package! flycheck-cask))
+
