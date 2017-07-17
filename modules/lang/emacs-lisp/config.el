@@ -2,8 +2,6 @@
 
 (def-package! elisp-mode ; built-in
   :mode ("/Cask$" . emacs-lisp-mode)
-  :init
-  (add-hook 'emacs-lisp-mode-hook #'+emacs-lisp|hook)
   :config
   (set! :repl 'emacs-lisp-mode #'+emacs-lisp/repl)
   (set! :eval 'emacs-lisp-mode #'+emacs-lisp-eval)
@@ -17,26 +15,25 @@
                    ("add-hook" "remove-hook")
                    ("add-hook!" "remove-hook!")))
 
-  (defun +emacs-lisp|hook ()
-    (add-hook 'before-save-hook #'delete-trailing-whitespace nil t)
+  (add-hook! 'emacs-lisp-mode-hook
+    #'(;; 3rd-party functionality
+       eldoc-mode auto-compile-on-save-mode doom|enable-delete-trailing-whitespace
+       ;; fontification
+       rainbow-delimiters-mode highlight-quoted-mode highlight-numbers-mode +emacs-lisp|extra-fontification
+       ;; initialization
+       +emacs-lisp|init-imenu +emacs-lisp|init-flycheck))
 
-    (eldoc-mode +1)
-    (auto-compile-on-save-mode +1)
-
-    (when (and buffer-file-name
-               (not (file-in-directory-p buffer-file-name doom-emacs-dir)))
-      (flycheck-mode +1))
-
-    ;; improve fontification
-    (rainbow-delimiters-mode +1)
-    (highlight-quoted-mode +1)
-    (highlight-numbers-mode +1)
+  ;;
+  (defun +emacs-lisp|extra-fontification ()
+    "Display lambda as a smybol and fontify doom module functions."
     (font-lock-add-keywords
      nil `(;; Display "lambda" as λ
            ("(\\(lambda\\)" (1 (ignore (compose-region (match-beginning 1) (match-end 1) ?λ #'decompose-region))))
            ;; Highlight doom/module functions
-           ("\\(^\\|\\s-\\|,\\)(\\(\\(doom\\|\\+\\)[^) ]+\\)[) \n]" (2 font-lock-keyword-face))))
+           ("\\(^\\|\\s-\\|,\\)(\\(\\(doom\\|\\+\\)[^) ]+\\)[) \n]" (2 font-lock-keyword-face)))))
 
+  (defun +emacs-lisp|init-imenu ()
+    "Improve imenu support with better expression regexps and Doom-specific forms."
     (setq imenu-generic-expression
           '(("Evil Commands" "^\\s-*(evil-define-\\(?:command\\|operator\\|motion\\) +\\(\\_<[^ ()\n]+\\_>\\)" 1)
             ("Package" "^\\s-*(\\(?:def-\\)?package! +\\(\\_<[^ ()\n]+\\_>\\)" 1)
@@ -50,8 +47,13 @@
             ("Functions" "^\\s-*(\\(?:cl-\\)?def\\(?:un\\|un\\*\\|method\\|generic\\|-memoized!\\) +\\([^ ,)\n]+\\)" 1)
             ("Variables" "^\\s-*(\\(def\\(?:c\\(?:onst\\(?:ant\\)?\\|ustom\\)\\|ine-symbol-macro\\|parameter\\)\\)\\s-+\\(\\(?:\\sw\\|\\s_\\|\\\\.\\)+\\)" 2)
             ("Variables" "^\\s-*(defvar\\(?:-local\\)?\\s-+\\(\\(?:\\sw\\|\\s_\\|\\\\.\\)+\\)[[:space:]\n]+[^)]" 1)
-            ("Types" "^\\s-*(\\(cl-def\\(?:struct\\|type\\)\\|def\\(?:class\\|face\\|group\\|ine-\\(?:condition\\|error\\|widget\\)\\|package\\|struct\\|t\\(?:\\(?:hem\\|yp\\)e\\)\\)\\)\\s-+'?\\(\\(?:\\sw\\|\\s_\\|\\\\.\\)+\\)" 2)
-            ))))
+            ("Types" "^\\s-*(\\(cl-def\\(?:struct\\|type\\)\\|def\\(?:class\\|face\\|group\\|ine-\\(?:condition\\|error\\|widget\\)\\|package\\|struct\\|t\\(?:\\(?:hem\\|yp\\)e\\)\\)\\)\\s-+'?\\(\\(?:\\sw\\|\\s_\\|\\\\.\\)+\\)" 2))))
+
+  (defun +emacs-lisp|init-flycheck ()
+    "Initialize flycheck-mode if not in emacs.d."
+    (when (and buffer-file-name
+               (not (file-in-directory-p buffer-file-name doom-emacs-dir)))
+      (flycheck-mode +1))))
 
 
 ;;
