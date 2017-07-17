@@ -3,8 +3,9 @@
 
 (package! auto-compile)
 (package! highlight-quoted)
-(package! slime)
 (package! macrostep)
+(package! overseer)
+(package! slime)
 
 (when (featurep! :feature syntax-checker)
   (package! flycheck-cask))

@@ -74,6 +74,7 @@
   (setq inferior-lisp-program "clisp")
   (require 'slime-fuzzy))
 
+
 (def-package! macrostep
   :commands macrostep-expand
   :config
@@ -104,6 +105,11 @@
   :init
   (add-hook! 'emacs-lisp-hook
     (add-hook 'flycheck-mode-hook #'flycheck-cask-setup nil t)))
+
+
+(def-package! overseer
+  :commands overseer-test
+  :init (set! :popup "*overseer*" :size 12))
 
 
 ;;
