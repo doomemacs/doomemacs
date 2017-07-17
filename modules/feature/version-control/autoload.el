@@ -39,6 +39,15 @@ repository root."
     (setq-local header-line-format nil)))
 
 ;;;###autoload
+(defun +vcs|enable-smerge-mode-maybe ()
+  "Auto-enable `smerge-mode' when merge conflict is detected."
+  (save-excursion
+    (goto-char (point-min))
+    (when (re-search-forward "^<<<<<<< " nil :noerror)
+      (smerge-mode 1)
+      (when +vcs-auto-hydra-smerge (+hydra-smerge/body)))))
+
+;;;###autoload
 (defun +vcs*update-header-line (&rest _)
   "Show revision details in the header-line, instead of the minibuffer.
 
