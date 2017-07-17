@@ -75,6 +75,14 @@
   (require 'slime-fuzzy))
 
 
+(def-package! flycheck-cask
+  :when (featurep! :feature syntax-checker)
+  :commands flycheck-cask-setup
+  :init
+  (add-hook! 'emacs-lisp-hook
+    (add-hook 'flycheck-mode-hook #'flycheck-cask-setup nil t)))
+
+
 ;;
 ;;
 ;;

@@ -4,3 +4,6 @@
 (package! auto-compile)
 (package! highlight-quoted)
 (package! slime)
+
+(when (featurep! :feature syntax-checker)
+  (package! flycheck-cask))
