@@ -27,7 +27,7 @@
              restclient ; ob-restclient
              ruby
              rust       ; ob-rust
-             sh
+             shell
              sqlite
              sql-mode   ; ob-sql-mode
              translate  ; ob-translate
