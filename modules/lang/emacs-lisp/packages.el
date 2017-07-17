@@ -5,3 +5,6 @@
 (package! highlight-quoted)
 (package! slime)
 (package! macrostep)
+
+(when (featurep! :feature syntax-checker)
+  (package! flycheck-cask))
