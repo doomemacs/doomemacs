@@ -250,3 +250,7 @@ If a region is active, copy it into the scratch buffer."
                  (functionp mode))
         (funcall mode))
       (if text (insert text)))))
+
+;;;###autoload
+(defun doom|enable-delete-trailing-whitespace ()
+  (add-hook 'before-save-hook #'delete-trailing-whitespace nil t))
