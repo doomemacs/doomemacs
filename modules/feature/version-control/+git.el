@@ -35,7 +35,6 @@
 
 
   (when (featurep! :feature hydra)
-    (require 'hydra)
     (defhydra +hydra-git-gutter (:body-pre (git-gutter-mode 1)
                                           :hint nil)
     "
