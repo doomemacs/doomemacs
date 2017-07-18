@@ -307,8 +307,10 @@ local value, whether or not it's permanent-local. Therefore, we cycle
 
 ;; indicators for empty lines past EOF
 (def-package! vi-tilde-fringe
-  :commands global-vi-tilde-fringe-mode
-  :init (add-hook 'doom-init-ui-hook #'global-vi-tilde-fringe-mode))
+  :commands (global-vi-tilde-fringe-mode vi-tilde-fringe-mode)
+  :init
+  (add-hook 'doom-init-ui-hook #'global-vi-tilde-fringe-mode)
+  (defun doom|disable-vi-tilde-fringe () (vi-tilde-fringe-mode -1)))
 
 ;; For a distractions-free-like UI, that dynamically resizes margets and can
 ;; center a buffer.
