@@ -29,7 +29,18 @@ produces an url. Used by `+jump/online'.")
   "TODO")
 
 (def-setting! :jump (modes &rest plist)
-  "TODO"
+  "Definies a jump target for major MODES. PLIST accepts the following
+properties:
+
+  :definition FN
+    Run when jumping to a symbol's definition.
+    Used by `+jump/definition'.
+  :references FN
+    Run when looking for usage references of a symbol in the current project.
+    Used by `+jump/references'.
+  :documentation FN
+    Run when looking up documentation for a symbol.
+    Used by `+jump/documentation'."
   `(dolist (mode (doom-enlist ,modes))
      (push (cons mode (list ,@plist)) +jump-function-alist)))
 
