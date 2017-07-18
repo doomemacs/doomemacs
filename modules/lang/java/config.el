@@ -3,15 +3,24 @@
 (def-package! meghanada
   :commands meghanada-mode
   :config
-  (add-hook! 'java-mode-hook #'(meghanada-mode flycheck-mode))
+  (setq meghanada-server-install-dir (concat doom-etc-dir "meghanada-server/")
+        meghanada-use-company (featurep! :completion company)
+        meghanada-use-flycheck (featurep! :feature syntax-checker)
+        meghanada-use-eldoc t
+        meghanada-use-auto-start t)
+
+  ;; Setup on first use
+  (meghanada-install-server)
+  (if (file-exists-p (meghanada--locate-server-jar))
+      (add-hook! 'java-mode-hook #'(meghanada-mode flycheck-mode))
+    (warn "java-mode: meghanada-server not installed, java-mode will run with reduced functionality"))
+
+  (add-hook 'java-mode-hook #'(rainbow-delimiters-mode eldoc-mode))
 
   (set! :build 'compile-file    'java-mode #'meghanada-compile-file)
   (set! :build 'compile-project 'java-mode #'meghanada-compile-project)
 
-  (setq meghanada-server-install-dir (concat doom-etc-dir "meghanada-server/")
-        meghanada-use-company t
-        meghanada-use-flycheck t
-        meghanada-use-auto-start t)
+  (set! :jump 'java-mode :definition #'meghanada-jump-declaration)
 
   (map! :map meghanada-mode-map :m "gd" #'meghanada-jump-declaration))
 
