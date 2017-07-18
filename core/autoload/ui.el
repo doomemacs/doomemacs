@@ -14,11 +14,14 @@
   "Toggle `linum-mode'."
   (interactive "P")
   (cond ((boundp 'display-line-numbers)
-         (setq display-line-numbers (not display-line-numbers)))
+         (setq display-line-numbers
+               (pcase arg
+                 ('(4) 'relative)
+                 (1 t)
+                 (-1 nil)
+                 (_ (not display-line-numbers)))))
         ((featurep 'nlinum)
          (nlinum-mode (or arg (if nlinum-mode -1 +1))))
-        ((featurep 'linum)
-         (linum-mode (or arg (if linum-mode -1 +1))))
         (t
          (error "No line number plugin detected"))))
 

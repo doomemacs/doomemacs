@@ -45,6 +45,7 @@
 (defun +org|hook ()
   "Run everytime `org-mode' is enabled."
   (setq line-spacing 1)
+  (doom|disable-line-numbers)
 
   ;; show-paren-mode causes problems for org-indent-mode
   (make-local-variable 'show-paren-mode)
