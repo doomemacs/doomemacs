@@ -1,6 +1,6 @@
 ;;; private/hlissner/config.el -*- lexical-binding: t; -*-
 
-(when (featurep 'evil)
+(when (featurep! :feature evil)
   (load! +bindings)  ; my key bindings
   (load! +commands)) ; my custom ex commands
 
@@ -41,8 +41,7 @@
 (after! yasnippet
   (setq yas-snippet-dirs
         (append (list '+hlissner-snippets-dir)
-                (delete 'yas-installed-snippets-dir
-                        yas-snippet-dirs))))
+                (delq 'yas-installed-snippets-dir yas-snippet-dirs))))
 
 
 ;; app/irc

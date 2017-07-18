@@ -17,10 +17,10 @@
   (add-hook 'doom-pre-reload-theme-hook #'+doom|reload-theme)
 
   ;; blink mode-line on errors
-  (add-hook 'doom-post-init-hook #'doom-themes-visual-bell-config)
+  (add-hook 'doom-init-ui-hook #'doom-themes-visual-bell-config)
 
   ;; Add file icons to doom-neotree
-  (add-hook 'doom-post-init-hook #'doom-themes-neotree-config)
+  (add-hook 'doom-init-ui-hook #'doom-themes-neotree-config)
   (setq doom-neotree-enable-variable-pitch t
         doom-neotree-file-icons 'simple
         doom-neotree-line-spacing 2)
@@ -44,8 +44,7 @@
   ;; Prevent color glitches when reloading either DOOM or the theme
   (defun +doom|reset-solaire-mode (&rest _) (solaire-mode-reset))
   (advice-add #'load-theme :after #'+doom|reset-solaire-mode)
-  (add-hook 'doom-reload-hook #'solaire-mode-reset)
-  (add-hook 'doom-init-ui-hook #'solaire-mode-reset)
+  (add-hook! '(doom-init-ui-hook doom-reload-hook) #'solaire-mode-reset)
 
   ;; Extra modes to activate doom-buffer-mode in
   (add-hook! (gist-mode

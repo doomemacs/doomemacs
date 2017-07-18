@@ -118,7 +118,8 @@ whose dimensions may not be fully initialized by the time this is run."
     (let ((old-pwd (or dir default-directory)))
       (with-current-buffer (doom-fallback-buffer)
         (with-silent-modifications
-          (+doom-dashboard-mode)
+          (unless (eq major-mode '+doom-dashboard-mode)
+            (+doom-dashboard-mode))
           (erase-buffer)
           (setq default-directory old-pwd)
           (let ((+doom-dashboard--width  (window-width))
@@ -177,30 +178,26 @@ whose dimensions may not be fully initialized by the time this is run."
                              (file-exists-p (expand-file-name persp-auto-save-fname persp-save-dir)))))
     (mapc (lambda (btn)
             (when btn
-              (let ((label (car btn))
-                    (icon (nth 1 btn))
-                    (fn (nth 2 btn)))
+              (cl-destructuring-bind (label icon fn) btn
                 (insert
                  (with-temp-buffer
                    (insert-text-button
-                    (concat (all-the-icons-octicon
-                             icon
-                             :face 'font-lock-keyword-face)
+                    (concat (all-the-icons-octicon icon :face 'font-lock-keyword-face)
                             (propertize (concat " " label) 'face 'font-lock-keyword-face))
-                    'action fn
+                    'action `(lambda (_) ,fn)
                     'follow-link t)
-                   (+doom-dashboard-center (1- +doom-dashboard--width) (buffer-string))))
-                (insert "\n\n"))))
+                   (+doom-dashboard-center (1- +doom-dashboard--width) (buffer-string)))
+                 "\n\n"))))
           `(("Homepage" "mark-github"
-             (lambda (_) (browse-url "https://github.com/hlissner/.emacs.d")))
+             (browse-url "https://github.com/hlissner/.emacs.d"))
             ,(when last-session-p
                '("Reload last session" "history"
                  (lambda (_) (+workspace/load-session))))
             ("Recently opened files" "file-text"
-             (lambda (_) (call-interactively (command-remapping 'recentf))))
+             (call-interactively (command-remapping 'recentf)))
             ("Recent opened projects" "briefcase"
-             (lambda (_) (call-interactively (command-remapping 'projectile-switch-project))))
+             (call-interactively (command-remapping 'projectile-switch-project)))
             ("Jump to bookmark" "bookmark"
-             (lambda (_) (call-interactively (command-remapping 'bookmark-jump))))
+             (call-interactively (command-remapping 'bookmark-jump)))
             ("Edit emacs.d" "tools"
-             (lambda (_) (find-file (expand-file-name "init.el" doom-emacs-dir))))))))
+             (find-file (expand-file-name "init.el" doom-emacs-dir)))))))

@@ -154,7 +154,7 @@ local value, whether or not it's permanent-local. Therefore, we cycle
 (setq show-paren-delay 0.1
       show-paren-highlight-openparen t
       show-paren-when-point-inside-paren t)
-(add-hook 'doom-init-hook #'show-paren-mode)
+(add-hook 'doom-init-ui-hook #'show-paren-mode)
 
 ;;; More reliable inter-window border
 ;; The native border "consumes" a pixel of the fringe on righter-most splits,
@@ -162,7 +162,7 @@ local value, whether or not it's permanent-local. Therefore, we cycle
 (setq-default window-divider-default-places t
               window-divider-default-bottom-width 0
               window-divider-default-right-width 1)
-(add-hook 'doom-init-hook #'window-divider-mode)
+(add-hook 'doom-init-ui-hook #'window-divider-mode)
 
 ;; like diminish, but for major-modes. [pedantry intensifies]
 (defun doom|set-mode-name ()
@@ -212,7 +212,7 @@ local value, whether or not it's permanent-local. Therefore, we cycle
       (run-with-timer 0.1 nil #'doom|init-ui))))
 
 ;; register UI init hooks
-(add-hook 'doom-init-hook #'doom|init-ui)
+(add-hook 'doom-post-init-hook #'doom|init-ui)
 (add-hook! 'after-make-frame-functions #'(doom|init-ui doom|reload-ui-in-daemon))
 
 
@@ -275,16 +275,15 @@ local value, whether or not it's permanent-local. Therefore, we cycle
   :config
   (setq hs-hide-comments-when-hiding-all nil))
 
-;; Show uninterrupted indentation markers with some whitespace voodoo.
 (def-package! highlight-indentation
   :commands (highlight-indentation-mode highlight-indentation-current-column-mode))
 
-;; For modes that don't adequately highlight numbers
+;; For modes with sub-par number fontification
 (def-package! highlight-numbers :commands highlight-numbers-mode)
 
-;; Line highlighting
+;; Highlights the current line
 (def-package! hl-line ; built-in
-  :init (add-hook! (linum-mode nlinum-mode) #'hl-line-mode)
+  :init (add-hook! (prog-mode text-mode conf-mode) #'hl-line-mode)
   :config
   ;; I don't need hl-line showing in other windows. This also offers a small
   ;; speed boost when buffer is displayed in multiple windows.
@@ -294,9 +293,9 @@ local value, whether or not it's permanent-local. Therefore, we cycle
   (after! evil
     ;; Disable `hl-line' in evil-visual mode (temporarily). `hl-line' can make
     ;; the selection region harder to see while in evil visual mode.
-    (defun doom|turn-off-hl-line () (hl-line-mode -1))
+    (defun doom|disable-hl-line () (hl-line-mode -1))
 
-    (add-hook 'evil-visual-state-entry-hook #'doom|turn-off-hl-line)
+    (add-hook 'evil-visual-state-entry-hook #'doom|disable-hl-line)
     (add-hook 'evil-visual-state-exit-hook #'hl-line-mode)))
 
 ;; Helps us distinguish stacked delimiter pairs. Especially in parentheses-drunk
@@ -309,7 +308,7 @@ local value, whether or not it's permanent-local. Therefore, we cycle
 ;; indicators for empty lines past EOF
 (def-package! vi-tilde-fringe
   :commands global-vi-tilde-fringe-mode
-  :init (add-hook 'doom-init-hook #'global-vi-tilde-fringe-mode))
+  :init (add-hook 'doom-init-ui-hook #'global-vi-tilde-fringe-mode))
 
 ;; For a distractions-free-like UI, that dynamically resizes margets and can
 ;; center a buffer.
@@ -355,8 +354,7 @@ See `doom-line-numbers-style' to control the style of line numbers to display."
   "Disable the display of line numbers."
   (doom|enable-line-numbers -1))
 
-(add-hook! (prog-mode text-mode conf-mode)
-  #'(doom|enable-line-numbers hl-line-mode))
+(add-hook! (prog-mode text-mode conf-mode) #'doom|enable-line-numbers)
 
 ;; Emacs 26+ has native line number support.
 (unless (boundp 'display-line-numbers)
@@ -492,12 +490,11 @@ error if it doesn't exist."
 (defun doom-set-modeline (key &optional default)
   "Set the modeline format. Does nothing if the modeline KEY doesn't exist. If
 DEFAULT is non-nil, set the default mode-line for all buffers."
-  (let ((modeline (doom-modeline key)))
-    (when modeline
-      (setf (if default
-                (default-value 'mode-line-format)
-              (buffer-local-value 'mode-line-format (current-buffer)))
-            modeline))))
+  (when-let (modeline (doom-modeline key))
+    (setf (if default
+              (default-value 'mode-line-format)
+            (buffer-local-value 'mode-line-format (current-buffer)))
+          modeline)))
 
 (provide 'core-ui)
 ;;; core-ui.el ends here
