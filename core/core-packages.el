@@ -632,6 +632,12 @@ If ONLY-RECOMPILE-P is non-nil, only recompile out-of-date files."
   ;; Forcibly recompile core.el in case `load-path' has changed
   (byte-recompile-file (expand-file-name "core.el" doom-core-dir) t))
 
+(defun doom/recompile-packages ()
+  "Recompile all installed elpa packages. If you're getting odd errors after
+upgrading Emacs, this may fix it."
+  (interactive)
+  (byte-recompile-directory package-user-dir 0 t))
+
 (defun doom/reset ()
   "Clear the local cache completely (in `doom-cache-dir').
 
