@@ -3,6 +3,10 @@
 (defvar +irc-left-padding 13
   "TODO")
 
+(defvar +irc-scroll-to-bottom-on-commands
+  '(self-insert-command yank hilit-yank)
+  "If these commands are called pre prompt the buffer will scroll to `point-max'.")
+
 (defvar +irc-disconnect-hook nil
   "TODO")
 
@@ -152,7 +156,30 @@ after prompt marker."
         (goto-char (point-max))))
 
     (add-hook! 'lui-mode-hook
-      (add-hook 'evil-insert-state-entry-hook #'+irc|evil-insert nil t)))
+      (add-hook 'evil-insert-state-entry-hook #'+irc|evil-insert nil t))
+
+    (mapc (lambda (cmd) (cl-pushnew cmd +irc-scroll-to-bottom-on-commands))
+          '(evil-paste-after evil-paste-before evil-open-above evil-open-below)))
+
+
+  (defun +irc|preinput-scroll-to-bottom ()
+    "Go to the end of the buffer in all windows showing it.
+Courtesy of esh-mode.el"
+    (when (memq this-command +irc-scroll-to-bottom-on-commands)
+      (let* ((selected (selected-window))
+             (current (current-buffer)))
+        (when (> (marker-position lui-input-marker) (point))
+          (walk-windows
+           (function
+            (lambda (window)
+              (when (eq (window-buffer window) current)
+                (select-window window)
+                (goto-char (point-max))
+                (select-window selected))))
+           nil t)))))
+
+  (add-hook! 'lui-mode-hook
+    (add-hook 'pre-command-hook #'+irc|preinput-scroll-to-bottom nil t))
 
   (defun +irc|init-lui-margins ()
     (setq lui-time-stamp-position 'right-margin
