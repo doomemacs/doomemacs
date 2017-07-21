@@ -52,6 +52,7 @@ redefines its keys every time `eshell-mode' is enabled."
           :i "C-u"   #'eshell-kill-input
           :i "SPC"   #'self-insert-command
           :i "C-a"    #'eshell-bol
+          :i "C-d"    #'+eshell/quit-or-delete-char
           :m "<return>" #'+eshell/evil-append
           :n [remap evil-window-split]       #'+eshell/split
           :n [remap evil-window-vsplit]      #'+eshell/vsplit
