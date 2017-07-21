@@ -159,7 +159,7 @@ after prompt marker."
       (add-hook 'evil-insert-state-entry-hook #'+irc|evil-insert nil t))
 
     (mapc (lambda (cmd) (cl-pushnew cmd +irc-scroll-to-bottom-on-commands))
-          '(evil-paste-after evil-paste-before)))
+          '(evil-paste-after evil-paste-before evil-open-above evil-open-below)))
 
 
   (defun +irc|preinput-scroll-to-bottom ()
