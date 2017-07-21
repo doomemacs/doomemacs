@@ -38,9 +38,9 @@ module to be loaded."
 ;;;###autoload
 (defun +eshell/quit-or-delete-char (arg)
   (interactive "p")
-  (if (and (eolp) (looking-back eshell-prompt-regexp))
+  (if (and (eolp) (looking-back eshell-prompt-regexp nil))
       (eshell-life-is-too-much)
-    (delete-forward-char arg)))
+    (delete-char arg)))
 
 (defun +eshell--outside-prompt-p ()
   (< (point) eshell-last-output-end))
