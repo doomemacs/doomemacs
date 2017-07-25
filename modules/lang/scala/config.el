@@ -17,7 +17,7 @@
 
   (setq ensime-startup-snapshot-notification nil
         ensime-startup-notification nil
-        ensime-eldoc-hints t
+        ensime-eldoc-hints 'all
         ;; let DOOM handle company setup
         ensime-completion-style nil)
 
