@@ -18,6 +18,7 @@
         eshell-buffer-shorthand t
         eshell-kill-processes-on-exit t
         ;; em-prompt
+        eshell-prompt-regexp "^.* λ "
         eshell-prompt-function #'+eshell/prompt
         ;; em-glob
         eshell-glob-case-insensitive t
@@ -39,17 +40,24 @@
     "Setup eshell keybindings. This must be done in a hook because eshell
 redefines its keys every time `eshell-mode' is enabled."
     (map! :map eshell-mode-map
-          :n "i"     #'+eshell/evil-prepend-maybe
-          :n "I"     #'+eshell/evil-prepend
-          :n "a"     #'+eshell/evil-append-maybe
-          :n "A"     #'+eshell/evil-append
-          :n "r"     #'+eshell/evil-replace-maybe
-          :n "R"     #'+eshell/evil-replace-state-maybe
-          :n "c"     #'+eshell/evil-change
-          :n "C"     #'+eshell/evil-change-line
-          :i "<tab>" #'eshell-pcomplete
-          :i "C-u"   #'eshell-kill-input
-          :i "SPC"   #'self-insert-command
+          :n "i"        #'+eshell/evil-prepend-maybe
+          :n "I"        #'+eshell/evil-prepend
+          :n "a"        #'+eshell/evil-append-maybe
+          :n "A"        #'+eshell/evil-append
+          :n "r"        #'+eshell/evil-replace-maybe
+          :n "R"        #'+eshell/evil-replace-state-maybe
+          :n "c"        #'+eshell/evil-change
+          :n "C"        #'+eshell/evil-change-line
+          :i "<tab>"    #'eshell-pcomplete
+          :i "C-u"      #'eshell-kill-input
+          :i "SPC"      #'self-insert-command
+          :i "C-a"      #'eshell-bol
+          :i "C-d"      #'+eshell/quit-or-delete-char
+          :i "C-k"      #'kill-line
+          :i "C-p"      #'eshell-previous-input
+          :i "<up>"     #'eshell-previous-input
+          :i "C-n"      #'eshell-previous-input
+          :i "<down>"   #'eshell-previous-input
           :m "<return>" #'+eshell/evil-append
           :n [remap evil-window-split]       #'+eshell/split
           :n [remap evil-window-vsplit]      #'+eshell/vsplit

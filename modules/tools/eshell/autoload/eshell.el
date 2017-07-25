@@ -35,6 +35,13 @@ module to be loaded."
     (+eshell/run))
   (doom/workspace-display))
 
+;;;###autoload
+(defun +eshell/quit-or-delete-char (arg)
+  (interactive "p")
+  (if (and (eolp) (looking-back eshell-prompt-regexp nil))
+      (eshell-life-is-too-much)
+    (delete-char arg)))
+
 (defun +eshell--outside-prompt-p ()
   (< (point) eshell-last-output-end))
 
