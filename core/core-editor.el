@@ -150,7 +150,7 @@ with functions that require it (like modeline segments)."
 
 ;; Keep track of recently opened files
 (def-package! recentf
-  :defer 1
+  :init (add-hook 'doom-init-hook #'recentf-mode)
   :config
   (setq recentf-save-file (concat doom-cache-dir "recentf")
         recentf-max-menu-items 0
@@ -162,8 +162,7 @@ with functions that require it (like modeline segments)."
               ;; ignore private DOOM temp files (but not all of them)
               (concat "^" (replace-regexp-in-string
                            (concat "@" (regexp-quote (system-name)))
-                           "@" (abbreviate-file-name doom-host-dir)))))
-  (quiet! (recentf-mode 1)))
+                           "@" (abbreviate-file-name doom-host-dir))))))
 
 
 ;;
@@ -174,6 +173,7 @@ with functions that require it (like modeline segments)."
 ;; specify their own formatting rules.
 (def-package! editorconfig
   :demand t
+  :mode ("\\.?editorconfig$" . editorconfig-conf-mode)
   :init
   (def-setting! :editorconfig (action value)
     ":add or :remove an entry in `editorconfig-indentation-alist'."
@@ -201,25 +201,22 @@ with functions that require it (like modeline segments)."
         (whitespace-mode +1))))
   (add-hook 'editorconfig-custom-hooks #'doom|editorconfig-whitespace-mode-maybe))
 
-(def-package! editorconfig-conf-mode
-  :mode "\\.?editorconfig$")
-
 ;; Auto-close delimiters and blocks as you type
 (def-package! smartparens
   :demand t
-  :init
+  :config
   (setq sp-autowrap-region nil ; let evil-surround handle this
         sp-highlight-pair-overlay nil
         sp-cancel-autoskip-on-backward-movement nil
         sp-show-pair-delay 0
         sp-max-pair-length 3)
 
-  :config
   (add-hook 'doom-init-hook #'smartparens-global-mode)
   (require 'smartparens-config)
   ;; Smartparens interferes with Replace mode
   (add-hook 'evil-replace-state-entry-hook #'turn-off-smartparens-mode)
   (add-hook 'evil-replace-state-exit-hook  #'turn-on-smartparens-mode)
+
   ;; Auto-close more conservatively
   (let ((unless-list '(sp-point-before-word-p
                        sp-point-after-word-p
