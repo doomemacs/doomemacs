@@ -49,17 +49,15 @@
     (which-key-add-key-based-replacements key desc)))
 
 
-(defun doom--keyword-to-states (keyword &optional ignore)
+(defun doom--keyword-to-states (keyword)
   "Convert a KEYWORD into a list of evil state symbols.
-
-IGNORE is a list of keyword letters that should be ignored.
 
 For example, :nvi will map to (list 'normal 'visual 'insert). See
 `doom-evil-state-alist' to customize this."
   (cl-loop for l across (substring (symbol-name keyword) 1)
            if (cdr (assq l doom-evil-state-alist))
              collect it
-           else if (not (or (eq ignore t) (member l ignore)))
+           else
              do (error "not a valid state: %s" l)))
 
 
@@ -73,6 +71,7 @@ For example, :nvi will map to (list 'normal 'visual 'insert). See
 (put ':unless       'lisp-indent-function 'defun)
 (put ':desc         'lisp-indent-function 'defun)
 (put ':leader       'lisp-indent-function 'defun)
+(put ':local        'lisp-indent-function 'defun)
 (put ':localleader  'lisp-indent-function 'defun)
 (put ':textobj      'lisp-indent-function 'defun)
 
@@ -80,6 +79,7 @@ For example, :nvi will map to (list 'normal 'visual 'insert). See
 (defvar doom--keymaps nil)
 (defvar doom--prefix  nil)
 (defvar doom--defer   nil)
+(defvar doom--local   nil)
 
 (defmacro map! (&rest rest)
   "A nightmare of a key-binding macro that will use `evil-define-key*',
@@ -97,7 +97,6 @@ States
     :o  operator
     :m  motion
     :r  replace
-    :L  local
 
     These can be combined (order doesn't matter), e.g. :nvi will apply to
     normal, visual and insert mode. The state resets after the following
@@ -107,17 +106,16 @@ States
 
     This can be customized with `doom-evil-state-alist'.
 
-    :L cannot be in a :map.
-
     :textobj is a special state that takes a key and two commands, one for the
     inner binding, another for the outer.
 
 Flags
-    (:mode [MODE(s)] [...])    ; inner keybinds are applied to major MODE(s)
-    (:map [KEYMAP(s)] [...])   ; inner keybinds are applied to KEYMAP(S)
-    (:map* [KEYMAP(s)] [...])  ; same as :map, but deferred
-    (:prefix [PREFIX] [...])   ; assign prefix to all inner keybindings
-    (:after [FEATURE] [...])   ; apply keybinds when [FEATURE] loads
+    (:mode [MODE(s)] [...])    inner keybinds are applied to major MODE(s)
+    (:map [KEYMAP(s)] [...])   inner keybinds are applied to KEYMAP(S)
+    (:map* [KEYMAP(s)] [...])  same as :map, but deferred
+    (:prefix [PREFIX] [...])   assign prefix to all inner keybindings
+    (:after [FEATURE] [...])   apply keybinds when [FEATURE] loads
+    (:local [...])             make bindings buffer local; incompatible with keymaps!
 
 Conditional keybinds
     (:when [CONDITION] [...])
@@ -135,7 +133,8 @@ Example
   (let ((doom--keymaps doom--keymaps)
         (doom--prefix  doom--prefix)
         (doom--defer   doom--defer)
-        local key def states forms desc modes)
+        (doom--local   doom--local)
+        key def states forms desc modes)
     (while rest
       (setq key (pop rest))
       (cond
@@ -186,15 +185,10 @@ Example
                                                ,desc ',modes)
                       forms)
                 (setq desc nil))))
+          (:local
+           (setq doom--local t))
           (_ ; might be a state doom--prefix
-           (setq states (doom--keyword-to-states key '("L")))
-           (let (case-fold-search)
-             (when (string-match-p "L" (symbol-name key))
-               (setq local t)
-               (cond ((= (length states) 0)
-                      (user-error "local keybinding for %s must accompany another state" key))
-                     ((> (length doom--keymaps) 0)
-                      (user-error "local keybinding for %s cannot accompany a keymap" key))))))))
+           (setq states (doom--keyword-to-states key)))))
 
        ;; It's a key-def pair
        ((or (stringp key)
@@ -216,7 +210,13 @@ Example
                 (push `(doom--keybind-register ,(key-description (eval key))
                                               ,desc ',modes)
                       forms))
-              (cond ((and doom--keymaps states)
+              (cond ((and doom--local doom--keymaps)
+                     (push `(lwarn 'doom-map :warning
+                                   "Can't local bind '%s' key to a keymap; skipped"
+                                   ,key)
+                           forms)
+                     (throw 'skip 'local))
+                    ((and doom--keymaps states)
                      (unless (featurep 'evil) (throw 'skip 'evil))
                      (dolist (keymap doom--keymaps)
                        (push `(,(if doom--defer 'evil-define-key 'evil-define-key*)
@@ -226,17 +226,17 @@ Example
                      (unless (featurep 'evil) (throw 'skip 'evil))
                      (dolist (state states)
                        (push `(define-key
-                                ,(intern (format "evil-%s-state-%smap" state (if local "local-" "")))
+                                ,(intern (format "evil-%s-state-%smap" state (if doom--local "local-" "")))
                                 ,key ,def)
                              forms)))
                     (doom--keymaps
                      (dolist (keymap doom--keymaps)
                        (push `(define-key ,keymap ,key ,def) forms)))
                     (t
-                     (push `(,(if local 'local-set-key 'global-set-key) ,key ,def)
+                     (push `(,(if doom--local 'local-set-key 'global-set-key) ,key ,def)
                            forms))))
           (setq states '()
-                local nil
+                doom--local nil
                 desc nil)))
 
        (t (user-error "Invalid key %s" key))))

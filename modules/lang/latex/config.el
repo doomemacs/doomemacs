@@ -59,10 +59,11 @@
   (add-hook! 'reftex-toc-mode-hook
     (reftex-toc-rescan)
     (doom-hide-modeline-mode +1)
-    (map! :Le "j"   #'next-line
-          :Le "k"   #'previous-line
-          :Le "q"   #'kill-buffer-and-window
-          :Le "ESC" #'kill-buffer-and-window)))
+    (map! :local
+          :e "j"   #'next-line
+          :e "k"   #'previous-line
+          :e "q"   #'kill-buffer-and-window
+          :e "ESC" #'kill-buffer-and-window)))
 
 
 (def-package! bibtex ; built-in
