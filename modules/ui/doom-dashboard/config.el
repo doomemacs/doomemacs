@@ -193,7 +193,7 @@ whose dimensions may not be fully initialized by the time this is run."
              (browse-url "https://github.com/hlissner/.emacs.d"))
             ,(when last-session-p
                '("Reload last session" "history"
-                 (lambda (_) (+workspace/load-session))))
+                 (+workspace/load-session)))
             ("Recently opened files" "file-text"
              (call-interactively (command-remapping 'recentf)))
             ("Recent opened projects" "briefcase"
