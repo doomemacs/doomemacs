@@ -10,7 +10,6 @@ state are passed in.")
   (setq projectile-cache-file (concat doom-cache-dir "projectile.cache")
         projectile-enable-caching (not noninteractive)
         projectile-file-exists-remote-cache-expire nil
-        projectile-globally-ignored-directories `(,doom-local-dir ".sync")
         projectile-globally-ignored-file-suffixes '(".elc" ".pyc" ".o")
         projectile-globally-ignored-files '(".DS_Store" "Icon")
         projectile-indexing-method 'alien
@@ -19,6 +18,10 @@ state are passed in.")
         projectile-project-root-files
         '(".git" ".hg" ".svn" ".project" "package.json" "setup.py" "Gemfile"
           "build.gradle"))
+
+  (after! projectile
+    (mapc (lambda (dir) (cl-pushnew dir projectile-globally-ignored-directories))
+          `(,doom-local-dir ".sync")))
 
   :config
   (add-hook 'doom-init-hook #'projectile-mode)
