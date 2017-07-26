@@ -6,27 +6,18 @@ state are passed in.")
 
 (def-package! projectile
   :demand t
-  :init
+  :init (add-hook 'doom-init-hook #'projectile-mode)
+  :config
   (setq projectile-cache-file (concat doom-cache-dir "projectile.cache")
         projectile-enable-caching (not noninteractive)
         projectile-file-exists-remote-cache-expire nil
-        projectile-globally-ignored-file-suffixes '(".elc" ".pyc" ".o")
-        projectile-globally-ignored-files '(".DS_Store" "Icon")
         projectile-indexing-method 'alien
         projectile-known-projects-file (concat doom-cache-dir "projectile.projects")
         projectile-require-project-root nil
         projectile-project-root-files
         '(".git" ".hg" ".svn" ".project" "package.json" "setup.py" "Gemfile"
-          "build.gradle"))
-
-  (after! projectile
-    (mapc (lambda (dir) (cl-pushnew dir projectile-globally-ignored-directories))
-          `(,doom-local-dir ".sync")))
-
-  :config
-  (add-hook 'doom-init-hook #'projectile-mode)
-
-  (setq projectile-other-file-alist
+          "build.gradle")
+        projectile-other-file-alist
         (append '(("less" "css")
                   ("styl" "css")
                   ("sass" "css")
@@ -35,21 +26,27 @@ state are passed in.")
                   ("jade" "html")
                   ("pug" "html")
                   ("html" "jade" "pug" "jsx" "tsx"))
-                projectile-other-file-alist))
+                projectile-other-file-alist)
+        projectile-globally-ignored-file-suffixes '(".elc" ".pyc" ".o")
+        projectile-globally-ignored-files '(".DS_Store" "Icon")
+        projectile-globally-ignored-directories
+        (append (list doom-local-dir ".sync")
+                projectile-globally-ignored-directories))
 
-  ;; In core-editor.el I've forced `recentf' to use `abbreviate-file-name', but
-  ;; this messes up projectile-recentf, so let's fix that:
+  ;; Add `recentf-filename-handlers' support to `projectile-recentf-files'.
   (defun doom*projectile-abbreviate-project-root (orig-fn &rest args)
     "Abbreviate `projectile-project-root'."
     (cl-letf (((symbol-function 'projectile-project-root)
                `(lambda ()
-                  (abbreviate-file-name
-                   (,(symbol-function 'projectile-project-root))))))
+                  (cl-loop with dir = (,(symbol-function 'projectile-project-root))
+                           for fn in recentf-filename-handlers
+                           do (setq dir (funcall fn dir))
+                           finally return dir))))
       (apply orig-fn args)))
   (advice-add #'projectile-recentf-files :around #'doom*projectile-abbreviate-project-root)
 
-  ;; Projectile root-searching functions cause an endless loop on TRAMP
-  ;; connections, so we disable them.
+  ;; Projectile root-searching functions can cause an infinite loop on TRAMP
+  ;; connections, so disable them.
   (defun doom*projectile-locate-dominating-file (orig-fn &rest args)
     "Don't traverse the file system if a remote connection."
     (unless (file-remote-p default-directory)
