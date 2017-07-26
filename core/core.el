@@ -139,7 +139,9 @@ melodramatic ex-vimmer disappointed with the text-editor status quo."
 is to include more information in the error message, without sacrificing your
 ability to invoke the debugger in debug mode."
   (condition-case-unless-debug ex
-      (funcall fn)
+      (if noninteractive
+          (quiet! (funcall fn))
+        (funcall fn))
     ('error
      (lwarn hook :error
           "%s in '%s' -> %s"
