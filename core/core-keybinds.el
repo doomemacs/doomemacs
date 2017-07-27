@@ -62,18 +62,18 @@ For example, :nvi will map to (list 'normal 'visual 'insert). See
 
 
 ;; Register keywords for proper indentation (see `map!')
-(put ':prefix       'lisp-indent-function 'defun)
-(put ':map          'lisp-indent-function 'defun)
-(put ':map*         'lisp-indent-function 'defun)
-(put ':mode         'lisp-indent-function 'defun)
 (put ':after        'lisp-indent-function 'defun)
-(put ':when         'lisp-indent-function 'defun)
-(put ':unless       'lisp-indent-function 'defun)
 (put ':desc         'lisp-indent-function 'defun)
 (put ':leader       'lisp-indent-function 'defun)
 (put ':local        'lisp-indent-function 'defun)
 (put ':localleader  'lisp-indent-function 'defun)
+(put ':map          'lisp-indent-function 'defun)
+(put ':map*         'lisp-indent-function 'defun)
+(put ':mode         'lisp-indent-function 'defun)
+(put ':prefix       'lisp-indent-function 'defun)
 (put ':textobj      'lisp-indent-function 'defun)
+(put ':unless       'lisp-indent-function 'defun)
+(put ':when         'lisp-indent-function 'defun)
 
 ;; specials
 (defvar doom--keymaps nil)
@@ -159,13 +159,9 @@ Example
           (:desc    (setq desc (pop rest)))
           (:map*    (setq doom--defer t) (push :map rest))
           (:map
-            (setq doom--keymaps
-                  (let ((car (pop rest)))
-                    (if (listp car) car (list car)))))
+            (setq doom--keymaps (doom-enlist (pop rest))))
           (:mode
-            (setq modes
-                  (let ((car (pop rest)))
-                    (if (listp car) car (list car))))
+            (setq modes (doom-enlist (pop rest)))
             (unless doom--keymaps
               (setq doom--keymaps
                     (cl-loop for m in modes
@@ -197,10 +193,10 @@ Example
             (symbolp key))
         (unwind-protect
             (catch 'skip
-              (cond ((symbolp key)
-                     (setq key `(kbd ,key)))
-                    ((stringp key)
-                     (setq key (kbd key))))
+              (when (symbolp key)
+                (setq key `(kbd ,key)))
+              (when (stringp key)
+                (setq key (kbd key)))
               (when doom--prefix
                 (setq key (append doom--prefix (list key))))
               (unless (> (length rest) 0)
