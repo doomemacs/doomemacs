@@ -6,12 +6,5 @@
 reuse it on consecutive uses of this command. If BANG, always prompt for search
 engine."
   (interactive "<a><!>")
-  (let ((query (or query (thing-at-point 'symbol t))))
-    (unless query
-      (user-error "The search query is empty"))
-    (+jump/online
-     (or (and (not bang) (bound-and-true-p +jump--online-last))
-         (completing-read (format "Search on (%s): " query)
-                          (mapcar #'car +jump-search-url-alist)
-                          nil t))
-     query)))
+  (+jump/online (or query (thing-at-point 'symbol t))
+                (+jump--online-get-provider bang)))

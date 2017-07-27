@@ -94,32 +94,41 @@ Tries `xref-find-references' and falls back to rg/ag."
   (cond ((plist-member +jump-current-functions :documentation)
          (+jump-to :documentation identifier))
         (t
-         (+jump/online (caar +jump-search-url-alist) identifier))))
+         (+jump/online (caar +jump-search-provider-alist) identifier))))
+
+(defun +jump--online-get-provider (&optional force-p)
+  (or (and (not force-p)
+           +jump--online-last)
+      (completing-read "Search on: "
+                       (mapcar #'car +jump-search-provider-alist)
+                       nil t)))
 
 (defvar +jump--online-last nil)
 ;;;###autoload
-(defun +jump/online (where search)
-  "Looks up SEARCH online, in you browser, as dictated by WHERE.
+(defun +jump/online (search &optional provider)
+  "Looks up SEARCH (a string) in you browser using PROVIDER.
 
-Interactively, you are prompted to choose a source from
-`+jump-search-url-alist'."
+PROVIDER should be a key of `+jump-search-provider-alist'.
+
+When used interactively, it will prompt for a query and, for the first time, the
+provider from `+jump-search-provider-alist'. On consecutive uses, the last
+provider will be reused. If the universal argument is supplied, always prompt
+for the provider."
   (interactive
-   (list (or (and (not current-prefix-arg)
-                  +jump--online-last)
-             (completing-read (format "Search on (%s): " (thing-at-point 'symbol t))
-                              (mapcar #'car +jump-search-url-alist)
-                              nil t))
-         (thing-at-point 'symbol t)))
+   (list (or (and (region-active-p)
+                  (buffer-substring-no-properties (region-beginning)
+                                                  (region-end)))
+             (read-string "Search for: " (thing-at-point 'symbol t)))
+         (+jump--online-get-provider current-prefix-arg)))
   (condition-case _ex
-      (let ((url (cdr (assoc where +jump-search-url-alist))))
+      (let ((url (cdr (assoc provider +jump-search-provider-alist))))
         (unless url
-          (error "'%s' is an invalid search engine" where))
+          (error "'%s' is an invalid search engine" provider))
         (when (or (functionp url) (symbolp url))
           (setq url (funcall url)))
         (cl-assert (and (stringp url) (not (string-empty-p url))))
         (when (string-empty-p search)
           (user-error "The search query is empty"))
-        (setq +jump--online-last where)
+        (setq +jump--online-last provider)
         (browse-url (format url (url-encode-url search))))
     ('error (setq +jump--online-last nil))))
-

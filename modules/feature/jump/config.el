@@ -14,7 +14,7 @@
 ;; in the future. When xref can't be depended on it will fall back to
 ;; `dumb-jump' to find what you want.
 
-(defvar +jump-search-url-alist
+(defvar +jump-search-provider-alist
   '(("Google"        . "https://google.com/search?q=%s")
     ("DuckDuckGo"    . "https://duckduckgo.com/?q=%s")
     ("DevDocs.io"    . "http://devdocs.io/#q=%s")
