@@ -21,7 +21,9 @@ private/hlissner/snippets."
   `(progn
      (defun ,(intern (format "+hlissner/find-in-%s" name)) ()
        (interactive)
-       (let ((default-directory ,dir))
+       (let ((default-directory ,dir)
+             projectile-require-project-root
+             projectile-cached-buffer-file-name)
          (call-interactively (command-remapping #'projectile-find-file))))
      (defun ,(intern (format "+hlissner/browse-%s" name)) ()
        (interactive)
