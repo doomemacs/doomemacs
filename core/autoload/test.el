@@ -77,7 +77,8 @@ If neither is available, run all tests in all enabled modules."
                  finally do (quiet! (mapc #'load-file items)))
         ;; run all loaded tests
         (when noninteractive
-          (ert-run-tests-batch-and-exit)))
+          (let (noninteractive)
+            (ert-run-tests-batch-and-exit))))
     ('error
      (lwarn 'doom-test :error
             "%s -> %s"
