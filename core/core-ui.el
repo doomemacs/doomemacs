@@ -193,16 +193,21 @@ local value, whether or not it's permanent-local. Therefore, we cycle
   "Set the theme and load the font, in that order."
   (when doom-theme
     (load-theme doom-theme t))
-  (when (display-graphic-p)
-    (with-demoted-errors "FONT ERROR: %s"
-      (when (fontp doom-font)
-        (set-frame-font doom-font nil (if frame (list frame) t)))
-      ;; Fallback to `doom-unicode-font' for Unicode characters
-      (when (fontp doom-unicode-font)
-        (set-fontset-font t 'unicode doom-unicode-font frame))
-      ;; ...and for variable-pitch-mode:
-      (when (fontp doom-variable-pitch-font)
-        (set-face-attribute 'variable-pitch frame :font doom-variable-pitch-font))))
+  (condition-case-unless-debug ex
+      (when (display-graphic-p)
+        (when (fontp doom-font)
+          (set-frame-font doom-font nil (if frame (list frame) t))
+          (set-face-attribute 'fixed-pitch frame :font doom-font))
+        ;; Fallback to `doom-unicode-font' for Unicode characters
+        (when (fontp doom-unicode-font)
+          (set-fontset-font t 'unicode doom-unicode-font frame))
+        ;; ...and for variable-pitch-mode:
+        (when (fontp doom-variable-pitch-font)
+          (set-face-attribute 'variable-pitch frame :font doom-variable-pitch-font)))
+    ('error
+     (lwarn 'doom-ui :error
+            "Failed to set fonts because %s"
+            (error-message-string ex))))
   (run-hooks 'doom-init-ui-hook))
 
 (defun doom|reload-ui-in-daemon (frame)
