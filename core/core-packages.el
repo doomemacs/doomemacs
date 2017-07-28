@@ -234,13 +234,6 @@ This aggressively reloads core autoload files."
              (setq mode m))
             ((not mode)
              (error "No namespace specified on `doom!' for %s" m))
-            ((eq m '*)
-             (doom-initialize-modules
-              (cl-loop with modpath = (expand-file-name (substring (symbol-name mode) 1) doom-modules-dir)
-                       for path in (directory-files modpath t "^\\w")
-                       if (file-directory-p path)
-                        collect (intern (file-name-nondirectory path)) into paths
-                       finally return (cons mode paths))))
             ((listp m)
              (doom-module-enable mode (car m) (cdr m)))
             (t
