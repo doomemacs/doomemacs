@@ -272,19 +272,18 @@ Used by `require!' and `depends-on!'."
   "Returns `doom-modules' as a list of (MODULE . SUBMODULE) cons cells. The list
 is sorted by order of insertion unless ALL-P is non-nil. If ALL-P is non-nil,
 include all modules, enabled or otherwise."
-  (if (hash-table-p doom-modules)
-      (cl-loop for key being the hash-keys of doom-modules
-               collect (cons (car key) (cdr key)))
-    (error "doom-modules is uninitialized")))
+  (unless (hash-table-p doom-modules)
+    (error "doom-modules is uninitialized"))
+  (cl-loop for key being the hash-keys of doom-modules
+           collect key))
 
 (defun doom--module-paths (&optional append-file)
   "Returns a list of absolute file paths to activated modules, with APPEND-FILE
 added, if the file exists."
-  (let (paths)
-    (dolist (pair (doom--module-pairs) (nreverse paths))
-      (let ((path (doom-module-path (car pair) (cdr pair) append-file)))
-        (when (file-exists-p path)
-          (push path paths))))))
+  (cl-loop for (module . submodule) in (doom--module-pairs)
+           for path = (doom-module-path module submodule append-file)
+           if (file-exists-p path)
+           collect path))
 
 
 
@@ -380,7 +379,8 @@ If NOERROR is non-nil, don't throw an error if the file doesn't exist."
                   (and load-file-name (file-name-directory load-file-name))
                   (and (bound-and-true-p byte-compile-current-file)
                        (file-name-directory byte-compile-current-file))
-                  (and buffer-file-name (file-name-directory buffer-file-name))))
+                  (and buffer-file-name
+                       (file-name-directory buffer-file-name))))
         (filename (cond ((stringp filesym) filesym)
                         ((symbolp filesym) (symbol-name filesym))
                         (t (error "load! expected a string or symbol, got %s (a %s)"
