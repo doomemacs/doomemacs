@@ -3,178 +3,134 @@
 [![Develop Build Status](https://img.shields.io/travis/hlissner/.emacs.d/develop.svg?label=develop&style=flat-square)](https://travis-ci.org/hlissner/.emacs.d)
 [![MIT](https://img.shields.io/badge/license-MIT-green.svg?style=flat-square)](./LICENSE)
 
-[![Main screenshot](/../screenshots/main.png?raw=true)][sc]
+[![Main screenshot](/../screenshots/main.png)](/../screenshots)
+
+- - -
+
+<p align="center">
+  <a href="/wiki">Documentation</a> |
+  <a href="/../screenshots">Screenshots</a> |
+  <a href="/wiki/Troubleshooting">Troubleshooting</a> |
+  <a href="/wiki/FAQ">FAQ</a> |
+  <a href="/CHANGELOG.org">Changelog</a>
+</p>
+
+- - -
 
 <a href="http://ultravioletbat.deviantart.com/art/Yay-Evil-111710573">
-  <img src="https://raw.githubusercontent.com/hlissner/.emacs.d/screenshots/cacochan.png" align="right" />
+  <img src="/../screenshots/cacochan.png" align="right" />
 </a>
 
-This is an Emacs configuration for a stubborn, shell-dwelling and melodramatic
-vimmer disappointed with the text-editor status quo.
+It is a story as old as time. A stubborn, shell-dwelling, and melodramatic
+vimmer -- envious of the features of modern text editors -- spirals into despair
+before he finally succumbs to the [dark side][evil-mode]. This is his config.
 
-Doom tries to: look and act like modern editors (whatever that means to me on
-any given day), espouse vim's modal philosophy as best it can and strive to
-surpass vim in any way possible. It fits my needs as a software developer, indie
-game developer, scientist and doom enthusiast.
+DOOM's philosophy is simple: be **fast**, be **pretty**, and be **vim** (or
+better). It is tailored for neckbeards with a blue-belt or better in
+command-line-fu who don't shy away from dabbling with Elisp.
 
-It was written for **Emacs 25.1+** on **MacOS 10.11+** and **Arch Linux 4.7+**.
-I use [vim] everywhere else.
+Rip and tear. Until it is done.
 
-## Installation
+> **Important:** Doom only supports Emacs >= 25.1, and is tailored for Arch
+> Linux 4.7+ and Mac OS 10.11+.
+
+- - -
+
+## Quick start
 
 ```bash
 git clone https://github.com/hlissner/.emacs.d ~/.emacs.d
 cd ~/.emacs.d
 cp init.example.el init.el  # maybe edit init.el
 make install
-
-# Have problems? Run this to check for common issues with your setup
-make doctor
 ```
 
-Once you've tweaked the config to your liking, you may optionally byte-compile
-it. DOOM is designed to benefit from this. It will boost startup times and make
-Emacs feel a bit snappier in general.
+Visit the wiki for [a more detailed guide on installing, customizing and
+grokking Doom][wiki].
 
-```bash
-make compile  # may take a while
-# or
-make core     # faster alternative; only compiles init.el & core files
+## Feature highlights
 
-# If you byte-compile, changes to the config won't take effect until you
-# recompile or delete the byte-compiled files with:
-make clean
-```
-
-## Package Management
-
-Plugins can be managed from the command line with `make`:
-
-```bash
-make install     # install missing plugins
-make update      # update installed plugins
-make autoremove  # remove unused plugins
-# be sure to run install and autoremove after modifying init.el
-
-# run this if you change autoload files
-make autoloads
-
-# this is the equivalent of running all four of the above commands
-make
-
-# you can run any make command with DEBUG=1 for extra logging, and YES=1 to
-# auto-accept confirmation prompts:
-DEBUG=1 make install
-YES=1 make update
-```
-
-These commands are also available from within Emacs:
-
-+ `doom/packages-install`
-+ `doom/packages-update`
-+ `doom/packages-autoremove`
-+ `doom/reload-autoloads`
-
-## Deciphering my emacs.d
-
-So you want to grok this madness. Here are a few suggestions:
-
-* **[init.example.el](init.example.el)**: a birds eye view of available modules
-* **[modules/README.org](modules/README.org)**: a primer into module structure
-* **[modules/private/hlissner/+bindings.el](modules/private/hlissner/+bindings.el)**:
-  my custom keybinds.
-* **[modules/private/hlissner/+commands.el](modules/private/hlissner/+commands.el)**:
-  my custom ex-commands (for [evil-mode]).
-* **[modules/ui](modules/ui)**: the modules that makes my Emacs look the way it
-  does, including [my theme][doom-theme], modeline, dashboard and more.
-* Find screenshots in the [screenshots branch][sc].
-
-### Highlights
-
-* A [popup management system](core/core-popups.el) using **[shackle]** to
-  minimize mental context switching while dealing with temporary or disposable
-  buffers.
-* Per-project code-style settings with **[editorconfig]**. Let someone else
-  argue about tabs versus spaces (spaces, of course).
-* Workspaces & session persistence with **[persp-mode]**. Provides tab emulation
-  that vaguely resembles vim's tabs.
-* Project & workspace-restricted buffer navigation and functions.
-* A vim-centric environment with **[evil-mode]**
-  * 2-character motions (ala vim-seek/vim-sneak) with **[evil-snipe]**
-  * Sublime Text-esque [multiple cursors][sc-multiedit] with
-    **[evil-mc]** and **[evil-multiedit]**
-  * <kbd>C-x</kbd> omnicompletion in insert mode
-  * A better `:global` with buffer highlighting
-  * A slew of [custom ex commands](modules/private/hlissner/+commands.el)
-* Fast search utilities:
-  * Project and buffer navigation with **[ivy]**
-  * File browser sidebar with **[neotree]**
-  * Project text search powered by [the silver searcher][ag] and [ripgrep][rg]
-    (see `:ag` and `:rg`)
-  * Project search & replace with **[wgrep]**
-  * Interactive buffer search with **[swiper]**
-* Inline/live code evaluation (using **[quickrun]**) and REPLs for a variety of
-  languages, including Ruby, Python, PHP, JS, Elisp, Haskell, Lua and more.
-* [Minimalistic diffs in the fringe][sc-diffs] with **[git-gutter-fringe]**.
-* A do-what-I-mean jump-to-definition implementation that tries its darnest to
-  find the definition of what you're looking at. It tries major-mode commands,
-  xref (experimental Emacs library), **[dumb-jump]**, ctags (WIP), then
-  **[ripgrep][rg]** or **[the_silver_searcher][ag]**.
-* Snippets and file-templates with **[yasnippet]** & **[auto-yasnippet]**.
-* A smarter, perdier, Atom-inspired mode-line that adds:
-  * evil-search/iedit/evil-substitute mode-line integration
-  * Macro-recording indicator
-  * Python/ruby version in mode-line (for rbenv/pyenv)
-* Emacs as an:
-  * Email client (using mu4e & offlineimap)
-  * Presentation app (using org-tree-slides, ox-reveal, +present/big-mode
-    & impatient-mode)
-  * RSS feed reader (using elfeed)
-  * Word Processor (using LaTeX, Org and Markdown)
++ A fast, organized and opinionated Emacs configuration with a command line
+  interface.
++ A custom, declarative [package management system][doom-packages] that combines
+  package.el, [use-package] and [quelpa]. This lets you install packages from
+  sources other than ELPA, as well as manage packages from the command line.
++ A [popup management system][doom-popups] (powered by [shackle]) that minimizes
+  the presence and footprint of temporary and/or disposable buffers.
++ A vim-like experience with [evil-mode], including ports for several vim
+  plugins, <kbd>C-x</kbd> omnicompletion and a slew of [custom ex commands][doom-my-commands].
++ Integration with [editorconfig]. Let someone else argue about tabs and spaces
+  (spaces, duh).
++ Code completion for a variety of languages, powered by [company-mode] (there
+  may be other dependencies for certain languages).
++ Project-awareness powered by [projectile], with tools to navigate and manage
+  projects and project files.
++ Fast project search (and replace) utilities, powered by [the_silver_searcher],
+  [ripgrep] and [wgrep], with [ivy] (the default), [helm] and ido integration.
++ Isolated and persistent workspaces powered by [persp-mode]. This can
+  substitute for vim tabs.
++ Inline/live code evaluation (using [quickrun]), including REPLs for a variety
+  of languages.
 
 ## Troubleshooting
 
-My config wasn't intended for public use, but I'm happy to help you use or crib
-from it.
+Found a problem? Here are some things to try:
 
-+ If you have questions, drop me a line at henrik@lissner.net.
-+ If you have issues running or setting up DOOM, use `make doctor` to diagnose
-  any common problems.
-+ If you still can't make sense of it, run `DEBUG=1 make doctor` and include
-  it [with your bug report][new-issue].
++ Make sure all plugins are installed with `make install`.
++ A `void-function` or `void-variable` might signal an out-of-date autoloads
+  file. Update it with `make autoloads`.
++ Diagnose common OS/environment issues that could interfere with Emacs with
+  `make doctor`.
++ If you byte-compiled Doom, run `make clean` or `M-x doom/clean-compiled-files`
+  and restart Emacs. Never debug byte-compiled code, it will interfere with your
+  efforts in subtle (and not-so-subtle) ways.
 
-**And please include steps to reproduce your issue, if possible.**
+If all else fails, [file a bug report][doom-new-issue].
 
-## Contributing
+## Contribute
 
-I welcome contributions of any kind: documentation, bug fixes/reports, extra
-modules, even elisp tips. Really,
-[don't hesitate to tell me my Elisp-fu sucks][new-issue]! I'm eager to learn.
+Doom (and my Emacs work in general) is a labor of love and incurable madness,
+done on my free time. It wasn't intended for public use, but I enjoy making Doom
+a resource for others.
+
+If you'd like to support my efforts, I welcome contributions of any kind:
+
++ I love pull requests and bug reports (read the [contribution
+  guidelines][wiki-contribute] first though!), and elisp pointers are especially
+  welcome. Seriously, don't hesitate to [tell me my Elisp-fu
+  sucks][doom-new-issue]!
++ I'm happy to discuss Emacs workflow, ideas or tooling. If you think I, Doom or
+  other Emacs users could benefit from them (or you just want to chat), drop me
+  a line at henrik@lissner.net. I'm eager to learn.
 
 
-[ag]: https://github.com/ggreer/the_silver_searcher
-[auto-yasnippet]: https://melpa.org/#/auto-yasnippet
-[company-mode]: https://melpa.org/#/company
+[wiki]: /wiki
+[wiki-contribute]: /wiki/Contribute
+[wiki-conventions]: /wiki/Conventions
+[wiki-modules]: /wiki/Modules
+[wiki-customization]: /wiki/Customization
+
+[doom-my-bindings]: modules/private/hlissner/+bindings.el
+[doom-my-commands]: modules/private/hlissner/+commands.el
+[doom-new-issue]: https://github.com/hlissner/.emacs.d/issues/new
+[doom-packages]: core/autoload/packages.el
+[doom-popups]: core/core-popups.el
 [doom-theme]: https://github.com/hlissner/emacs-doom-theme
-[dumb-jump]: https://melpa.org/#/dumb-jump
+
+[company-mode]: https://github.com/company-mode/company-mode
 [editorconfig]: http://editorconfig.org/
-[evil-mc]: https://github.com/gabesoft/evil-mc
-[evil-mode]: https://melpa.org/#/evil
-[evil-multiedit]: https://melpa.org/#/evil-multiedit
-[evil-snipe]: https://melpa.org/#/evil-snipe
-[git-gutter-fringe]: https://melpa.org/#/git-gutter-fringe
-[ivy]: https://melpa.org/#/ivy
-[neotree]: https://melpa.org/#/neotree
-[new-issue]: https://github.com/hlissner/.emacs.d/issues/new
-[persp-mode]: https://melpa.org/#/persp-mode
-[quickrun]: https://melpa.org/#/quickrun
-[rg]: https://github.com/BurntSushi/ripgrep
-[sc-diffs]: https://github.com/hlissner/.emacs.d/blob/screenshots/git-gutter.png?raw=true
-[sc-multiedit]: https://raw.githubusercontent.com/hlissner/evil-multiedit/screenshots/main.gif?raw=true
-[sc]: https://github.com/hlissner/.emacs.d/tree/screenshots
-[shackle]: https://melpa.org/#/shackle
-[swiper]: https://melpa.org/#/swiper
+[evil-mode]: https://github.com/emacs-evil/evil
+[git-gutter-fringe]: https://github.com/syohex/emacs-git-gutter-fringe
+[helm]: https://github.com/emacs-helm/helm
+[ivy]: https://github.com/abo-abo/swiper
+[persp-mode]: https://github.com/Bad-ptr/persp-mode.el
+[projectile]: https://github.com/bbatsov/projectile
+[quelpa]: https://github.com/quelpa/quelpa
+[quickrun]: https://github.com/syohex/emacs-quickrun
+[ripgrep]: https://github.com/BurntSushi/ripgrep
+[shackle]: https://github.com/wasamasa/shackle
+[the_silver_searcher]: https://github.com/ggreer/the_silver_searcher
+[use-package]: https://github.com/jwiegley/use-package
 [vim]: https://github.com/hlissner/.vim
-[wgrep]: https://melpa.org/#/wgrep
-[yasnippet]: https://melpa.org/#/yasnippet
-[yay-evil]: http://ultravioletbat.deviantart.com/art/Yay-Evil-111710573
+[wgrep]: https://github.com/mhayashi1120/Emacs-wgrep
+
