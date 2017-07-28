@@ -1,7 +1,7 @@
 ;;; lang/ocaml/config.el -*- lexical-binding: t; -*-
 
 (def-package! tuareg
-  :mode ("\\.ml[ly]?$" . tuareg-mode))
+  :mode ("\\.ml[4ilpy]?$" . tuareg-mode))
 
 
 (def-package! merlin
