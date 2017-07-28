@@ -365,32 +365,6 @@ to have them return non-nil (or exploit that to overwrite Doom's config)."
         (t
          (error "'%s' isn't a valid hook for def-package-hook!" when))))
 
-(defmacro def-feature! (feature)
-  "Defines (and conditionally loads) FEATURE.
-
-FEATURE is a symbol representing a file in the current module, denoted by a '+'
-prefix. e.g. +git. Flags are set in `doom!'.
-
-For example:
-
-  ;; init.el
-  (doom! :lang (haskell +intero))
-
-  ;; modules/lang/haskell/config.el
-  (def-feature! +intero)  ;;
-  (def-feature! +dante)
-
-lang/haskell/+intero.el will be loaded.
-
-Flags can be detected with `featurep!'. e.g. '(featurep! :lang haskell +intero)'
-Or more concisely (if from inside a module) '(featurep! +intero)'."
-  `(cond ((featurep! ,(car doom--module) ,(cdr doom--module) ,feature)
-          (load! ,feature))
-         (doom-debug-mode
-          (lwarn 'doom-module-feature :warning
-                 "Feature %s in '%s %s' is not enabled"
-                 ',feature ,(car doom--module) ',(cdr doom--module)))))
-
 (defmacro load! (filesym &optional path noerror)
   "Load a file relative to the current executing file (`load-file-name').
 
