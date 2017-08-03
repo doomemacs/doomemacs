@@ -16,6 +16,9 @@
     (load "doom-themes-common.el" nil t))
   (add-hook 'doom-pre-reload-theme-hook #'+doom|reload-theme)
 
+  ;; improve integration with org-mode
+  (add-hook 'doom-init-ui-hook #'doom-themes-org-config)
+
   ;; blink mode-line on errors
   (add-hook 'doom-init-ui-hook #'doom-themes-visual-bell-config)
 
