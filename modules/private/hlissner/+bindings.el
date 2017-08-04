@@ -552,6 +552,8 @@
    :n "RET"       #'neotree-enter
    :n [backspace] #'evil-window-prev
    :n "c"         #'neotree-create-node
+   :n "r"         #'neotree-rename-node
+   :n "d"         #'neotree-delete-node
    :n "j"         #'neotree-next-line
    :n "k"         #'neotree-previous-line
    :n "n"         #'neotree-next-line
