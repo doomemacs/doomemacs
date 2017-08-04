@@ -49,7 +49,7 @@
     (sp-local-pair "/*!" "*/" :post-handlers '(("||\n[i]" "RET") ("[d-1]< | " "SPC"))))
 
   ;; Improve indentation of inline lambdas in C++11
-  (advice-add #'c-lineup-arglist :around #'+c-lineup-arglist)
+  (advice-add #'c-lineup-arglist :around #'+cc*lineup-arglist)
 
   ;; C/C++ style settings
   (c-toggle-electric-state -1)
