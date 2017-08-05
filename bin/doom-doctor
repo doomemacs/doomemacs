@@ -100,8 +100,9 @@
 (let (doom-core-packages doom-debug-mode)
   (condition-case ex
       (progn
-        (let ((inhibit-message t))
-          (load "~/.emacs.d/core/core.el" nil t))
+        (let ((inhibit-message t)
+              noninteractive)
+          (load "~/.emacs.d/init.el" nil t))
         (doom-initialize-packages)
         (doom|finalize)
         (success! "Attempt to load DOOM: success! Loaded v%s" doom-version)
