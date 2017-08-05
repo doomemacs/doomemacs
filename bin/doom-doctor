@@ -130,14 +130,39 @@
 
 ;; --- is the environment set up properly? --------------------
 
-(when (boundp 'doom-font)
-  (cond ((fboundp 'find-font)
-         (unless (find-font doom-font)
-           (warn! "Warning: couldn't find %s font" (font-get doom-font :family))
-           (explain! "If you use a different font, you may ignore this warning.")))
-        (t
-         (warn! "Couldn't detect font!")
-         (explain! "This could indicate the incorrect version of Emacs is being used!"))))
+;; are all default fonts present
+(log! "test-fonts")
+(if (not (fboundp 'find-font))
+    (progn
+      (warn! "Warning: unable to detect font")
+      (explain! "The `find-font' function is missing. This could indicate the incorrect "
+                "version of Emacs is being used!"))
+  (defun -find-font (family)
+    (when (fontp family)
+      (setq family (symbol-name (font-get doom-font :family))))
+    (let ((inhibit-message t))
+     (shell-command (format "fc-list | grep %s" (shell-quote-argument family)))))
+
+  (when (boundp 'doom-font)
+    (if (-find-font doom-font)
+        (success! "Found font %s" (font-get doom-font :family))
+      (warn! "Warning: couldn't find %s font (default) (%s)"
+             (font-get doom-font :family))))
+  ;; all-the-icons fonts
+  (let ((font-dest (pcase system-type
+                     ('gnu/linux (concat (or (getenv "XDG_DATA_HOME")
+                                             (concat (getenv "HOME") "/.local/share"))
+                                         "/fonts/"))
+                     ('darwin (concat (getenv "HOME") "/Library/Fonts/")))))
+    (when (and font-dest (require 'all-the-icons nil t))
+      (dolist (font all-the-icons-font-names)
+        (if (file-exists-p (expand-file-name font font-dest))
+            (success! "Found font %s" font)
+          (warn! "Warning: couldn't find %s font in %s"
+                 font font-dest)
+          (explain! "You can install it by running `M-x all-the-icons-install-fonts' within Emacs.\n\n"
+                    "This could also mean you've installed them in non-standard locations, in which "
+                    "case, ignore this warning."))))))
 
 ;; gnutls-cli & openssl
 (cond ((executable-find "gnutls-cli"))
