@@ -64,7 +64,7 @@
     (switch-to-buffer a)
     (should (eq (current-buffer) a))
     (should (eq (selected-window) (get-buffer-window a)))
-    (split-window)
+    (split-window nil 1)
     (switch-to-buffer b)
     (should (eq (current-buffer) b))
     (should (eq (selected-window) (get-buffer-window b)))

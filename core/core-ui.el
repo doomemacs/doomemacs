@@ -148,7 +148,7 @@ local value, whether or not it's permanent-local. Therefore, we cycle
 ;; undo/redo changes to Emacs' window layout
 (defvar winner-dont-bind-my-keys t) ; I'll bind keys myself
 (autoload 'winner-mode "winner" nil t)
-(add-hook 'doom-init-hook #'winner-mode)
+(add-hook 'doom-init-ui-hook #'winner-mode)
 
 ;; highlight matching delimiters
 (setq show-paren-delay 0.1
@@ -185,7 +185,7 @@ local value, whether or not it's permanent-local. Therefore, we cycle
 ;; Getting themes to remain consistent across GUI Emacs, terminal Emacs and
 ;; daemon Emacs is hairy.
 ;;
-;; + Running `+doom|init-ui' directly sorts out the initial GUI frame.
+;; + Running `doom|init-ui' directly sorts out the initial GUI frame.
 ;; + Attaching it to `after-make-frame-functions' sorts out daemon Emacs.
 ;; + Waiting for 0.1s in `doom|reload-ui-in-daemon' fixes daemon Emacs started
 ;;   with `server-start' in an interactive session of Emacs AND in tty Emacs.

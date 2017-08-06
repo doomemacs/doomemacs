@@ -41,7 +41,7 @@ renamed.")
         persp-auto-save-opt (if noninteractive 0 1))
 
   ;; Bootstrap
-  (add-hook 'doom-init-hook #'+workspaces|init)
+  (add-hook 'doom-post-init-hook #'+workspaces|init)
   (add-hook 'after-make-frame-functions #'+workspaces|init)
 
   (define-key persp-mode-map [remap delete-window] #'+workspace/close-window-or-workspace)
