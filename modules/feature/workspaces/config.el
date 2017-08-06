@@ -46,11 +46,12 @@ renamed.")
 
   (define-key persp-mode-map [remap delete-window] #'+workspace/close-window-or-workspace)
 
-  ;; per-frame workspaces
+  ;; per-frame and per-project workspaces
   (setq persp-init-new-frame-behaviour-override nil
-        persp-interactive-init-frame-behaviour-override #'+workspace-on-new-frame)
-  (add-hook 'projectile-before-switch-project-hook #'+workspaces|create-project-workspace)
+        persp-interactive-init-frame-behaviour-override #'+workspace-on-new-frame
+        projectile-switch-project-action #'projectile-find-file)
   (add-hook 'delete-frame-functions #'+workspaces|delete-associated-workspace-maybe)
+  (advice-add #'projectile-switch-project-by-name :around #'+workspaces*switch-project-by-name)
 
   ;; only auto-save when real buffers are present
   (advice-add #'persp-asave-on-exit :around #'+workspaces*autosave-real-buffers)
