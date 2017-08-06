@@ -137,16 +137,17 @@
 (defun +org-init-keybinds ()
   "Sets up org-mode and evil keybindings. Tries to fix the idiosyncrasies
 between the two."
-  (map! (:map org-mode-map "RET" #'org-return-indent)
+  (map! (:map org-mode-map
+          "RET" #'org-return-indent)
 
         (:map +org-evil-mode-map
-          :n "RET" #'+org/dwim-at-point
+          :n  "RET" #'+org/dwim-at-point
 
           ;; Navigate table cells (from insert-mode)
-          :i "C-L" #'+org/table-next-field
-          :i "C-H" #'+org/table-previous-field
-          :i "C-K" #'+org/table-previous-row
-          :i "C-J" #'+org/table-next-row
+          :i  "C-l"   #'+org/table-next-field
+          :i  "C-h"   #'+org/table-previous-field
+          :i  "C-k"   #'+org/table-previous-row
+          :i  "C-j"   #'+org/table-next-row
           ;; Expand tables (or shiftmeta move)
           :ni "C-S-l" #'+org/table-append-field-or-shift-right
           :ni "C-S-h" #'+org/table-prepend-field-or-shift-left
