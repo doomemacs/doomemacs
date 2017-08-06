@@ -7,16 +7,19 @@
       user-mail-address "henrik@lissner.net"
       user-full-name    "Henrik Lissner")
 
+;; An extra measure to prevent the flash of unstyled mode-line while Emacs is
+;; booting up (when Doom is byte-compiled).
+(setq-default mode-line-format nil)
+
 ;; host-specific settings
 (pcase (system-name)
-  ("proteus"
-   (setq +doom-modeline-height 25
-         doom-font (font-spec :family "Fira Mono" :size 10)
-         doom-variable-pitch-font (font-spec :family "Fira Sans" :size 10)
-         doom-unicode-font (font-spec :family "DejaVu Sans Mono" :size 10)
-         doom-line-number-lpad 3))
-  ("halimede"
-   (setq +doom-modeline-height 27))
+  ;; ("triton")
+  ((or "proteus" "halimede")
+   ;; smaller screen, smaller fonts
+   (set! :font "Fira Mono" :size 10)
+   (set! :variable-font "Fira Sans" :size 10)
+   (set! :unicode-font "DejaVu Sans Mono" :size 10)
+   (setq +doom-modeline-height 25))
   ;; ("nereid")
   ;; ("io")
   ;; ("sao")

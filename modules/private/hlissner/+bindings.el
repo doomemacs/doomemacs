@@ -65,6 +65,7 @@
  "C-M-f"  #'doom/toggle-fullscreen
  :m "A-j" #'+hlissner:multi-next-line
  :m "A-k" #'+hlissner:multi-previous-line
+ :nv "C-SPC" #'+evil:fold-toggle
 
  (:prefix "C-x"
    "p" #'doom/other-popup)
