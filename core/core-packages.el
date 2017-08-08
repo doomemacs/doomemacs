@@ -90,6 +90,7 @@ missing) and shouldn't be deleted.")
   "A backup of `load-path' before it was altered by `doom-initialize'. Used as a
 base by `doom!' and for calculating how many packages exist.")
 
+(defvar doom--module nil)
 (defvar doom--refresh-p nil)
 
 (setq load-prefer-newer (or noninteractive doom-debug-mode)
@@ -206,20 +207,20 @@ This aggressively reloads core autoload files."
                      :error))))))
     (when (or force-p (not doom-modules))
       (setq doom-modules nil)
-      (funcall load-fn (expand-file-name "init.el" doom-emacs-dir))
-      (funcall load-fn (doom-module-path :private user-login-name "init.el") t)
+      (let (noninteractive)
+        (funcall load-fn (expand-file-name "init.el" doom-emacs-dir))
+        (funcall load-fn (doom-module-path :private user-login-name "init.el") t))
       (when load-p
-        (cl-loop for file
-                 in (append (nreverse (file-expand-wildcards (expand-file-name "core*.el" doom-core-dir)))
-                            (file-expand-wildcards (expand-file-name "autoload/*.el" doom-core-dir))
-                            (doom--module-paths "config.el"))
-                 do (funcall load-fn file t)))
+        (mapc load-fn (file-expand-wildcards (expand-file-name "autoload/*.el" doom-core-dir))))
       (doom|finalize))
     (when (or force-p (not doom-packages))
       (setq doom-packages nil)
       (funcall load-fn (expand-file-name "packages.el" doom-core-dir))
-      (dolist (file (doom--module-paths "packages.el"))
-        (funcall load-fn file t)))))
+      (cl-loop for (module . submodule) in (doom--module-pairs)
+               for path = (doom-module-path module submodule "packages.el")
+               do
+               (let ((doom--module (cons module submodule)))
+                 (funcall load-fn path t))))))
 
 (defun doom-initialize-modules (modules)
   "Adds MODULES to `doom-modules'. MODULES must be in mplist format.
@@ -233,15 +234,10 @@ This aggressively reloads core autoload files."
              (setq mode m))
             ((not mode)
              (error "No namespace specified on `doom!' for %s" m))
-            ((eq m '*)
-             (doom-initialize-modules
-              (cl-loop with modpath = (expand-file-name (substring (symbol-name mode) 1) doom-modules-dir)
-                       for path in (directory-files modpath t "^\\w")
-                       if (file-directory-p path)
-                        collect (intern (file-name-nondirectory path)) into paths
-                       finally return (cons mode paths))))
+            ((listp m)
+             (doom-module-enable mode (car m) (cdr m)))
             (t
-             (doom--enable-module mode m))))))
+             (doom-module-enable mode m))))))
 
 (defun doom-module-path (module submodule &optional file)
   "Get the full path to a module: e.g. :lang emacs-lisp maps to
@@ -253,37 +249,43 @@ This aggressively reloads core autoload files."
   (expand-file-name (concat module "/" submodule "/" file)
                     doom-modules-dir))
 
+(defun doom-module-flags (module submodule)
+  "Returns a list of flags provided for MODULE SUBMODULE."
+  (and (hash-table-p doom-modules)
+       (gethash (cons module submodule) doom-modules)))
+
 (defun doom-module-loaded-p (module submodule)
   "Returns t if MODULE->SUBMODULE is present in `doom-modules'."
-  (and doom-modules
-       (gethash (cons module submodule) doom-modules)))
+  (and (doom-module-flags module submodule) t))
+
+(defun doom-module-enable (module submodule &optional flags)
+  "Adds MODULE and SUBMODULE to `doom-modules', overwriting it if it exists.
+
+MODULE is a keyword, SUBMODULE is a symbol. e.g. :lang 'emacs-lisp.
+
+Used by `require!' and `depends-on!'."
+  (puthash (cons module submodule)
+           (doom-enlist (or flags t))
+           doom-modules))
 
 (defun doom--module-pairs ()
   "Returns `doom-modules' as a list of (MODULE . SUBMODULE) cons cells. The list
 is sorted by order of insertion unless ALL-P is non-nil. If ALL-P is non-nil,
 include all modules, enabled or otherwise."
-  (if (hash-table-p doom-modules)
-      (cl-loop for key being the hash-keys of doom-modules
-               collect (cons (car key) (cdr key)))
-    (error "doom-modules is uninitialized")))
+  (unless (hash-table-p doom-modules)
+    (error "doom-modules is uninitialized"))
+  (cl-loop for key being the hash-keys of doom-modules
+           collect key))
 
 (defun doom--module-paths (&optional append-file)
   "Returns a list of absolute file paths to activated modules, with APPEND-FILE
 added, if the file exists."
-  (let (paths)
-    (dolist (pair (doom--module-pairs) (nreverse paths))
-      (let ((path (doom-module-path (car pair) (cdr pair) append-file)))
-        (when (file-exists-p path)
-          (push path paths))))))
+  (cl-loop for (module . submodule) in (doom--module-pairs)
+           for path = (doom-module-path module submodule append-file)
+           if (file-exists-p path)
+           collect path))
 
-(defun doom--enable-module (module submodule &optional force-p)
-  "Adds MODULE and SUBMODULE to `doom-modules', if it isn't already there (or if
-FORCE-P is non-nil). MODULE is a keyword, SUBMODULE is a symbol. e.g. :lang
-'emacs-lisp.
 
-Used by `require!' and `depends-on!'."
-  (unless (or force-p (doom-module-loaded-p module submodule))
-    (puthash (cons module submodule) t doom-modules)))
 
 (defun doom--display-benchmark ()
   (message "Loaded %s packages in %.03fs"
@@ -307,14 +309,14 @@ MODULES is an malformed plist of modules to load."
   (doom-initialize-modules modules)
   (when (and user-login-name
              (not (doom-module-loaded-p :private (intern user-login-name))))
-    (doom--enable-module :private user-login-name))
+    (doom-module-enable :private user-login-name))
   `(let (file-name-handler-alist)
      (setq doom-modules ',doom-modules)
 
      (unless noninteractive
        (load ,(doom-module-path :private user-login-name "init") t t)
        ,@(cl-loop for (module . submodule) in (doom--module-pairs)
-                  collect `(require! ,module ,submodule t))
+                  collect `(require! ,module ,submodule nil t))
 
        (when (display-graphic-p)
          (require 'server)
@@ -377,7 +379,8 @@ If NOERROR is non-nil, don't throw an error if the file doesn't exist."
                   (and load-file-name (file-name-directory load-file-name))
                   (and (bound-and-true-p byte-compile-current-file)
                        (file-name-directory byte-compile-current-file))
-                  (and buffer-file-name (file-name-directory buffer-file-name))))
+                  (and buffer-file-name
+                       (file-name-directory buffer-file-name))))
         (filename (cond ((stringp filesym) filesym)
                         ((symbolp filesym) (symbol-name filesym))
                         (t (error "load! expected a string or symbol, got %s (a %s)"
@@ -386,28 +389,40 @@ If NOERROR is non-nil, don't throw an error if the file doesn't exist."
       (error "Could not find %s" filename))
     (let ((file (expand-file-name (concat filename ".el") path)))
       (if (file-exists-p file)
-          `(load ,(file-name-sans-extension file) ,noerror ,(not doom-debug-mode))
+          `(load ,(file-name-sans-extension file) ,noerror
+                 ,(not doom-debug-mode))
         (unless noerror
           (error "Could not load! file %s" file))))))
 
-(defmacro require! (module submodule &optional reload-p)
+(defmacro require! (module submodule &optional flags reload-p)
   "Loads the module specified by MODULE (a property) and SUBMODULE (a symbol).
 
 The module is only loaded once. If RELOAD-P is non-nil, load it again."
   (let ((loaded-p (doom-module-loaded-p module submodule)))
     (when (or reload-p (not loaded-p))
       (unless loaded-p
-        (doom--enable-module module submodule t))
+        (doom-module-enable module submodule flags))
       `(condition-case-unless-debug ex
-           (load! config ,(doom-module-path module submodule) t)
+           (let ((doom--module ',(cons module submodule)))
+             (load! config ,(doom-module-path module submodule) t))
          ('error
           (lwarn 'doom-modules :error
                  "%s in '%s %s' -> %s"
-                 (car ex) ,module ',submodule (error-message-string ex)))))))
+                 (car ex) ,module ',submodule
+                 (error-message-string ex)))))))
 
-(defmacro featurep! (module submodule)
-  "Convenience macro wrapper for `doom-module-loaded-p'."
-  (doom-module-loaded-p module submodule))
+(defmacro featurep! (module &optional submodule flag)
+  "A convenience macro wrapper for `doom-module-loaded-p'. It is evaluated at
+compile-time/macro-expansion time."
+  (unless submodule
+    (unless doom--module
+      (error "featurep! was used incorrectly (doom--module wasn't unset)"))
+    (setq flag module
+          module (car doom--module)
+          submodule (cdr doom--module)))
+  (if flag
+      (and (memq flag (doom-module-flags module submodule)) t)
+    (doom-module-loaded-p module submodule)))
 
 
 ;;
@@ -461,7 +476,7 @@ Only use this macro in a module's packages.el file.
 
 MODULE is a keyword, and SUBMODULE is a symbol. Under the hood, this simply
 loads MODULE SUBMODULE's packages.el file."
-  (doom--enable-module module submodule)
+  (doom-module-enable module submodule)
   `(load! packages ,(doom-module-path module submodule) t))
 
 
