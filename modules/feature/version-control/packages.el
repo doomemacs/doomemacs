@@ -5,7 +5,7 @@
 ;; n/a
 
 ;;; +git
-(when (featurep! +git)
+(unless (featurep! -git)
   (package! git-gutter-fringe)
   (package! git-link)
   (package! git-timemachine)
