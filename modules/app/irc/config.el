@@ -3,6 +3,9 @@
 (defvar +irc-left-padding 13
   "TODO")
 
+(defvar +irc-truncate-nick-char ?…
+  "Character to displayed when nick > `+irc-left-padding' in length.")
+
 (defvar +irc-scroll-to-bottom-on-commands
   '(self-insert-command yank hilit-yank)
   "If these commands are called pre prompt the buffer will scroll to `point-max'.")
@@ -93,7 +96,7 @@ playback.")
                              :nick)))
         (when (> (length nick) +irc-left-padding)
           (compose-region (+ beg +irc-left-padding -1) end
-                          ?…)))))
+                          +irc-truncate-nick-char)))))
   (add-hook 'lui-pre-output-hook #'+irc*circe-truncate-nicks)
 
   (defun +irc|circe-message-option-bot (nick &rest ignored)
