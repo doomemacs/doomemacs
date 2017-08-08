@@ -185,7 +185,13 @@ ability to invoke the debugger in debug mode."
     ('error
      (lwarn 'doom-autoloads :warning
             "%s in autoloads.el -> %s"
-            (car ex) (error-message-string ex)))))
+            (car ex) (error-message-string ex))))
+
+  (load! core-ui)         ; draw me like one of your French editors
+  (load! core-popups)     ; taming sudden yet inevitable windows
+  (load! core-editor)     ; baseline configuration for text editing
+  (load! core-projects)   ; making Emacs project-aware
+  (load! core-keybinds))  ; centralized keybind system + which-key
 
 (add-hook! '(emacs-startup-hook doom-reload-hook)
   #'doom|finalize)
