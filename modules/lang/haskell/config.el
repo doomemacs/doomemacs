@@ -17,21 +17,21 @@
     (map! :map inf-haskell-mode-map "ESC ESC" #'doom/popup-close)))
 
 
-(def-package! dante
-  :after haskell-mode
-  :config
-  (if (executable-find "cabal")
-    (add-hook! 'haskell-mode-hook
-      #'(flycheck-mode dante-mode interactive-haskell-mode))
-    (warn "haskell-mode: couldn't find cabal")))
-
-
 (def-package! company-ghc
   :when (featurep! :completion company)
   :after haskell-mode
+  :init
+  (add-hook 'haskell-mode-hook #'ghc-comp-init)
   :config
-  (set! :company-backend 'haskell-mode #'company-ghc)
-  (setq company-ghc-show-info 'oneline)
   (if (executable-find "ghc-mod")
-      (add-hook 'haskell-mode-hook #'ghc-comp-init)
-    (warn "haskell-mode: couldn't find ghc-mode")))
+      (set! :company-backend 'haskell-mode #'company-ghc)
+    (warn "haskell-mode: couldn't find ghc-mode")
+    (remove-hook 'haskell-mode-hook #'ghc-comp-init))
+
+  (setq company-ghc-show-info 'oneline))
+
+
+;;
+(if (featurep! +dante)
+    (load! +dante)
+  (load! +intero))
