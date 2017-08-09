@@ -27,7 +27,8 @@ If neither is available, run all tests in all enabled modules."
       (let (targets)
         ;; ensure DOOM is initialized
         (let (noninteractive)
-          (load (expand-file-name "core/core.el" user-emacs-directory) nil t))
+          (load (expand-file-name "core/core.el" user-emacs-directory) nil t)
+          (doom-initialize-modules nil))
         ;; collect targets
         (cond ((and command-line-args-left
                     (equal (car command-line-args-left) "--"))
