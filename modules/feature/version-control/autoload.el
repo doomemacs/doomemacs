@@ -45,7 +45,9 @@ repository root."
     (goto-char (point-min))
     (when (re-search-forward "^<<<<<<< " nil :noerror)
       (smerge-mode 1)
-      (when +vcs-auto-hydra-smerge (+hydra-smerge/body)))))
+      (when (and (featurep 'hydra)
+                 +vcs-auto-hydra-smerge)
+        (+hydra-smerge/body)))))
 
 ;;;###autoload
 (defun +vcs*update-header-line (&rest _)
