@@ -43,6 +43,7 @@
   (add-hook 'doom-popup-mode-hook #'turn-off-solaire-mode)
   :config
   (setq solaire-mode-real-buffer-fn #'doom-real-buffer-p)
+  (add-hook 'doom-init-ui-hook #'solaire-mode-swap-bg t)
 
   ;; Prevent color glitches when reloading either DOOM or the theme
   (defun +doom|reset-solaire-mode (&rest _) (solaire-mode-reset))
