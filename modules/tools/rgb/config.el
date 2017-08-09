@@ -11,7 +11,6 @@
   :after rainbow-mode
   :config
   (when (featurep! :feature hydra)
-    (require 'hydra)
     (defhydra hydra-kurecolor (:color pink
                                       :hint  nil)
       "
