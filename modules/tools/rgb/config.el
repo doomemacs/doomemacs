@@ -4,9 +4,8 @@
 ;; Plugins
 ;;
 
-(def-package! rainbow-mode
-  :init
-  (add-hook 'prog-mode-hook #'rainbow-mode))
+(def-package! rainbow-mode)
+
 
 (def-package! kurecolor
   :after rainbow-mode
