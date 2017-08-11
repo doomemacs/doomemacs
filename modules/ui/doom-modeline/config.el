@@ -522,16 +522,18 @@ with `evil-ex-substitute', and/or 4. The number of active `iedit' regions."
              (image-size (image-get-display-property) :pixels)
            (format "  %dx%d  " width height)))))
 
-;; The bar regulates the height of the mode-line in GUI Emacs.
 (def-modeline-segment! bar
-  (when (display-graphic-p)
-    (+doom-modeline--make-xpm
-     (face-background (if (active)
-                          'doom-modeline-bar
-                        'doom-modeline-inactive-bar)
-                      nil t)
-     +doom-modeline-height
-     +doom-modeline-bar-width)))
+  "The bar regulates the height of the mode-line in GUI Emacs.
+Returns \"\" to not break --no-window-system."
+  (if (display-graphic-p)
+      (+doom-modeline--make-xpm
+       (face-background (if (active)
+                            'doom-modeline-bar
+                          'doom-modeline-inactive-bar)
+                        nil t)
+       +doom-modeline-height
+       +doom-modeline-bar-width)
+    ""))
 
 
 ;;
