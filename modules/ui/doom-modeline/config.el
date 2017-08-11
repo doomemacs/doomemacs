@@ -182,8 +182,8 @@ active."
     (let* ((default-directory (doom-project-root))
            (s (shell-command-to-string +doom-modeline-env-command)))
       (setq +doom-modeline-env-version (if (string-match "[ \t\n\r]+\\'" s)
-                                          (replace-match "" t t s)
-                                        s)))))
+                                           (replace-match "" t t s)
+                                         s)))))
 
 ;; Only support python and ruby for now
 (add-hook! 'python-mode-hook (setq +doom-modeline-env-command "python --version 2>&1 | cut -d' ' -f2"))
@@ -232,7 +232,11 @@ active."
      ('truncate-upto-root (+doom-modeline--buffer-file-name-truncate))
      ('truncate-all (+doom-modeline--buffer-file-name-truncate t))
      ('relative-to-project (+doom-modeline--buffer-file-name-relative))
-     ('file-name "%b"))
+     ('file-name (propertize (file-name-nondirectory buffer-file-name)
+                             'face `(:inherit ,(or (and (buffer-modified-p)
+                                                        'doom-modeline-buffer-modified)
+                                                   (and (active)
+                                                        'doom-modeline-buffer-file))))))
    'help-echo (+doom-modeline--buffer-file-name nil)))
 
 (defun +doom-modeline--buffer-file-name-truncate (&optional truncate-tail)
@@ -264,6 +268,7 @@ If TRUNCATE-TAIL is t also truncate the parent directory of the file."
       (let ((relative-dirs (file-relative-name (file-name-directory buffer-file-name) root))
             (relative-faces `(:inherit ,(or modified-faces (if active 'doom-modeline-buffer-path))))
             (file-faces `(:inherit ,(or modified-faces (if active 'doom-modeline-buffer-file)))))
+        (if (equal "./" relative-dirs) (setq relative-dirs ""))
         (concat (propertize relative-dirs 'face relative-faces)
                 (propertize (file-name-nondirectory buffer-file-name) 'face file-faces))))))
 
