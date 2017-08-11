@@ -61,6 +61,9 @@
 (advice-add #'handle-switch-frame :after #'+doom-modeline|set-selected-window)
 (advice-add #'select-window :after #'+doom-modeline|set-selected-window)
 
+;; fish-style modeline
+(def-package! shrink-path
+  :commands (shrink-path-file-mixed))
 
 
 ;;
@@ -211,38 +214,43 @@ active."
                                (if (eq idx len) "\"};" "\",\n")))))
       'xpm t :ascent 'center))))
 
-(defsubst +doom-modeline--buffer-file ()
-  "Display the base of the current buffer's filename."
-  (if buffer-file-name
-      (file-name-nondirectory (or buffer-file-truename (file-truename buffer-file-name)))
-    "%b"))
+(defun +doom-modeline-buffer-file-name ()
+  "Propertized `buffer-file-name' that truncates less significant parts of path
+but displays abbreviated path in minibuffer on mouse-over."
+  (propertize (+doom-modeline--buffer-file-name 'shrink)
+              'help-echo (+doom-modeline--buffer-file-name nil)))
 
-(defsubst +doom-modeline--buffer-path ()
-  "Displays the buffer's full path relative to the project root (includes the
-project root). Excludes the file basename. See `doom-buffer-name' for that."
-  (when buffer-file-name
-    (let ((buffer-path
-           (file-relative-name (file-name-directory
-                                (or buffer-file-truename (file-truename buffer-file-name)))
-                               (doom-project-root))))
-      (unless (equal buffer-path "./")
-        (let ((max-length (truncate (* (window-body-width) 0.4))))
-          (if (> (length buffer-path) max-length)
-              (let ((path (nreverse (split-string buffer-path "/" t)))
-                    (output ""))
-                (when (and path (equal "" (car path)))
-                  (setq path (cdr path)))
-                (while (and path (<= (length output) (- max-length 4)))
-                  (setq output (concat (car path) "/" output)
-                        path (cdr path)))
-                (when path
-                  (setq output (concat "../" output)))
-                (unless (string-suffix-p "/" output)
-                  (setq output (concat output "/")))
-                output)
-            buffer-path))))))
+(defun +doom-modeline--buffer-file-name (truncate-project-root-parent)
+  "Propertized `buffer-file-name'.
+If TRUNCATE-PROJECT-ROOT-PARENT is t space will be saved by truncating it down
+fish-shell style.
 
-
+Example:
+~/Projects/FOSS/emacs/lisp/comint.el => ~/P/F/emacs/lisp/comint.el"
+  (let* ((modified-faces (if (buffer-modified-p) 'doom-modeline-buffer-modified))
+         (active (active))
+         (project-root (doom-project-root))
+         (file-name-split (shrink-path-file-mixed project-root
+                                                  (file-name-directory
+                                                   (or buffer-file-truename
+                                                       (file-truename buffer-file-name)))
+                                                  (file-truename buffer-file-name)))
+         propertized-file-name)
+    (if (null file-name-split) "%b"
+      (pcase-let ((`(,root-path-parent ,project ,relative-path ,filename) file-name-split))
+        (let ((sp-faces `(:inherit ,(or modified-faces (if active 'font-lock-comment-face))
+                          ,@(if active '(:weight bold))))
+              (project-faces `(:inherit ,(or modified-faces (if active 'font-lock-string-face))
+                               ,@(if active '(:weight bold))))
+              (relative-faces `(:inherit ,(or modified-faces (if active 'doom-modeline-buffer-path))))
+              (file-faces `(:inherit ,(or modified-faces (if active 'doom-modeline-buffer-file)))))
+          (concat (propertize (if truncate-project-root-parent
+                                  root-path-parent
+                                (abbreviate-file-name project-root))
+                              'face sp-faces)
+                  (propertize (concat project "/") 'face project-faces)
+                  (when relative-path (propertize relative-path 'face relative-faces))
+                  (propertize filename 'face file-faces)))))))
 ;;
 ;; Segments
 ;;
@@ -293,14 +301,9 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                             :face 'doom-modeline-warning
                             :v-adjust -0.05)
                            " ")))
-            (when-let (dir-path (+doom-modeline--buffer-path))
-              (if-let (faces (or faces (if active 'doom-modeline-buffer-path)))
-                  (propertize dir-path 'face `(:inherit ,faces))
-                dir-path))
-            (when-let (file-path (+doom-modeline--buffer-file))
-              (if-let (faces (or faces (if active 'doom-modeline-buffer-file)))
-                  (propertize file-path 'face `(:inherit ,faces))
-                file-path)))))
+            (if buffer-file-name
+                (+doom-modeline-buffer-file-name)
+              "%b"))))
 
 ;;
 (def-modeline-segment! buffer-info-simple
