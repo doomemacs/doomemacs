@@ -61,13 +61,29 @@
 + =tools/upload= Add ~+upload/open-remote-file~ command to open current file on the remote (with TRAMP).
 + Add =bin/org-alert= script -- a cron script that scans TODOs in org files and dispatches system alerts.
 + =feature/workspaces= Add a bookmarks feature, but for wconfs, that can revive file buffers. Also needs an interface.
-+ Add README.org's with working babel blocks to modules.
-+ Document best practices for customizing DOOM emacs.
 + =ui/doom-modeline= fix hardcoded spacing in between segments.
-+ Rewrite main README.md to include more information about setting up, customizing, and troubleshooting DOOM Emacs.
 + Update =bin/org-capture= to read from stdin in the absence of arguments.
++ Add README.org's with working babel blocks to modules.
++ Rewrite and expand documentation to include more information about setting up, customizing, and troubleshooting DOOM Emacs, including best practices.
++ =core-popups= Add support for moving popup windows to the ~+evil/window-move-*~ commands #171
 
 * Unreleased (master)
++ =doom=
+  + Added new module: ~lang/ocaml~, offering OCaml support (thanks to ptival)
+  + Added new module: ~tools/rgb~, with tools for dealing with colors (thanks to bandresen)
+  + Added new module: ~tools/prodigy~, with tools for managing external services (thanks to bandresen)
+  + Added new module: ~feature/hydra~, offers an extra and customizable layer of modal keybinds (thanks to bandresen)
+  + Switch to ~doom-fallback-buffer~ after using ~doom/kill-all-buffers~ (or ~:killall!~).
+  + ~make doctor~ now does font detection and will complain when fonts are missing.
+  + When switching to a new project, a new workspace is spawned and a fuzzy find-file prompt is opened. However, a buffer from the previous workspace would linger on screen *and* the scratch buffer would CD to HOME, rather than the project root. This is fixed now.
+  + Added module flags to the ~doom!~ macro in init.el, and modified the ~featurep!~ macro so that it can be used to detect these flags from within modules. It is up to modules how to interpret them. More information in [[https://github.com/hlissner/.emacs.d/commit/0b7b8800a2478588bde408c92fcdfa0e43a5baf0][0b7b880]].
+  + Fix projectile-find-file not respecting ~default-directory~ (caused by changes upstream).
++ =lang=
+  + =C/C++= The advise function ~c-lineup-arglist~ was missing, and has now be reimplemented.
+  + =Haskell= With module flags implemented, Intero support is now available to lang/haskell and is now the default. Dante support is still available with the ~+dante~ flag.
++ =org=
+  + Fix vanilla C-j/C-k bindings overshadowing custom window navigation bindings.
+  + rainbow-mode is no longer activated on ~prog-mode-hook~.
 
 * 2.0.4 (Jul 14, 2017)
 + *Module changes:*
