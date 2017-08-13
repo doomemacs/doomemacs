@@ -1,20 +1,24 @@
-* :private
-Modules here represent all your personal customizations. I suggest you keep them contained here to minimize friction when updating from upstream (if that matters to you).
+#+TITLE: :private modules
 
-I include my private module as a reference. I recommend you don't delete/rename it as that could cause merge conflicts.
+Place your personal customizations here. My private module is there for reference. I recommend you do not delete/rename it, but instead, copy it to your own.
 
-** Loading your private module
-~:private {user-login-name}~ is loaded automatically after all other modules.
+- [[#loading-your-private-module][Loading your private module]]
+- [[#reconfiguring-packages][Reconfiguring packages]]
+- [[#installing-your-own-packages][Installing your own packages]]
 
-Keeping it in your init.el is unnecessary, but harmless.
+* Loading your private module
++ ~:private {user-login-name}~ is loaded automatically after all other modules.
 
-~private/{user-login-name}/init.el~ is a special file, unique to the private module named after your username in ~user-login-name~. It is loaded immediately after DOOM core is, but before any module is. This gives you an opportunity to overwrite variables and settings earlier. I will refer to this as your "private init.el".
+  Keeping it in your init.el is unnecessary, but harmless.
 
-** Reconfiguring packages
++ ~private/{user-login-name}/init.el~ is a special file, unique to the private module named after your username in ~user-login-name~. It is loaded immediately after DOOM core is, but before any module is. This gives you an opportunity to overwrite variables and settings earlier. I will refer to this as your "private init.el".
+
+* Reconfiguring packages
 If your configuration needs are simple, ~add-hook!~ and ~after!~ will be sufficient to reconfigure packages:
 
 #+BEGIN_SRC emacs-lisp
 ;; private/hlissner/config.el
+
 (after! evil
   (setq evil-magic nil))
 
@@ -37,18 +41,20 @@ Look into ~def-package-hook!~ if you need more customizability. It lets you disa
 ;; package's original :init / :config block. Exploit this to overwrite
 ;; DOOM's config. Otherwise, make sure they always return non-nil!
 (def-package-hook! doom-themes
-  :post-config
+  :pre-config
   (setq doom-neotree-file-icons t)
   nil)
 
 ;; Otherwise, you append to a packages config
 (def-package-hook! evil
-  :post-init
+  :pre-init
   (setq evil-magic nil)
   t)
+
+;; `def-package-hook' also has :post-init and :post-config hooks
 #+END_SRC
 
-** Installing your own packages
+* Installing your own packages
 Your private module is otherwise like any other module. It may possess a packages.el file, which -- with the advantage of being loaded last -- may be used not only to install your own packages, but overwrite past ~package!~ declarations.
 
 #+BEGIN_SRC emacs-lisp
