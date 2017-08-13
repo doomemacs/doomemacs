@@ -17,3 +17,4 @@
 (when (featurep! :feature evil)
   (package! evil-anzu))
 
+(package! shrink-path)
