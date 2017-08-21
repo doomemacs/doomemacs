@@ -1,0 +1,46 @@
+#+TITLE: :lang javascript
+
+This module adds Javascript support.
+
++ Code completion (tern)
++ REPL support (nodejs-repl)
++ Refactoring commands (js2-refactor)
++ Syntax checking (flycheck)
++ Browser code injection with skewer-mode
++ Coffeescript & JSX support
++ Jump-to-definitions and references support (xref)
+
+* Table of Contents :TOC:
+- [[#install][Install]]
+  - [[#node--npm][Node & NPM]]
+  - [[#dependencies][Dependencies]]
+- [[#appendix][Appendix]]
+  - [[#commands][Commands]]
+
+* Install
+** Node & NPM
+To get started with Javascript, you'll need node and its package manager, NPM, installed.
+
+*** MacOS
+#+BEGIN_SRC sh :tangle (if (doom-system-os 'macos) "yes")
+brew install node
+#+END_SRC
+
+*** Arch Linux
+#+BEGIN_SRC sh :dir /sudo:: :tangle (if (doom-system-os 'arch) "yes")
+sudo pacman --needed --noconfirm -S nodejs npm
+#+END_SRC
+
+** Dependencies
+This module optionally requires ~tern~ for code completion.
+
+#+BEGIN_SRC sh
+npm -g install tern
+#+END_SRC
+
+* Appendix
+** Commands
+| command                          | key / ex command | description                                                |
+|----------------------------------+------------------+------------------------------------------------------------|
+| ~+javascript/repl~               | =:repl=          | Open the NodeJS REPL (or send the current selection to it) |
+| ~+javascript/skewer-this-buffer~ | =SPC m S=        | Attaches a browser to the current buffer                   |

@@ -1,32 +1,60 @@
-* :ui doom
+#+TITLE: :ui doom
 
 This module modifies Emacs' user interface.
 
-DOOM's look is loosely inspired by Atom's One Dark theme, and is largely contained in the [[https://github.com/hlissner/emacs-doom-theme/][doom-themes]] plugin.
+Doom's look is loosely inspired by Atom's One Dark theme, and is largely contained in the] plugin.
 
-By default, this module uses:
++ A colorscheme inspired by Atom's One Dark theme (now available in a separate plugin: [[https://github.com/hlissner/emacs-doom-theme/][doom-themes]])
++ Uses the [[https://github.com/mozilla/Fira][Fira Mono and Fira Sans]] fonts, and [[https://dejavu-fonts.github.io/][DejaVu Sans Mono]] for unicode symbols.
++ A custom folded-region indicator for ~hideshow~
++ "Thin bar" fringe bitmaps for ~git-gutter-fringe~
++ File-visiting buffers are slightly brighter (powered by solaire-mode)
 
-+ [[https://github.com/mozilla/Fira][Fira Mono and Fira Sans]] (fonts)
-+ [[https://dejavu-fonts.github.io/][DejaVu Sans Mono]] (font, for displaying unicode characters)
-+ ~hideshow~, modified to use a nicer folded-region indicator.
-+ Custom fringe bitmaps for ~git-gutter-fringe~ (thin bars)
+* Table of Contents :TOC:
+- [[#install][Install]]
+  - [[#macos][MacOS]]
+  - [[#arch-linux][Arch Linux]]
+- [[#configuration][Configuration]]
+  - [[#changing-fonts][Changing fonts]]
+- [[#troubleshooting][Troubleshooting]]
+  - [[#strange-font-symbols][Strange font symbols]]
 
-** Install
-[[https://github.com/mozilla/Fira][Fira Mono]] is this module's only dependency (if you want to use it).
+* Install
+This module optionally depends on:
 
-*** MacOS
++ The [[https://github.com/mozilla/Fira][Fira Mono]] family of fonts
++ [[https://dejavu-fonts.github.io/][DejaVu Sans Mono]]
+
+You don't have to install these if you use a different font.
+
+** MacOS
 #+BEGIN_SRC sh :tangle (if (doom-system-os 'macos) "yes")
 brew tap caskroom/fonts
 brew cask install font-fira-{sans,mono} font-dejavu-sans
 #+END_SRC
 
-*** Arch Linux
+** Arch Linux
 #+BEGIN_SRC sh :dir /sudo:: :tangle (if (doom-system-os 'arch) "yes")
 sudo pacman --noconfirm --needed -S ttf-fira-{sans,mono} ttf-dejavu
 #+END_SRC
 
-** Troubleshooting
-*** Strange font symbols
-If you're getting strange unicode symbols, that is likely ~all-the-icons~ doing (caused by other UI modules, specifically [[../doom-modeline][doom-modeline]] and [[../doom-dashboard][doom-dashboard]]).
+* Configuration
+** Changing fonts
+There are four font settings you can change:
 
-You must install the fonts included with ~all-the-icons~ with: ~M-x all-the-icons-install-fonts~.
++ ~:font~ :: the default font.
++ ~:big-font~ :: the font to use when ~doom-big-font-mode~ is enabled.
++ ~:variable-font~ :: the font to use when ~variable-pitch-mode~ is active (or where the ~variable-pitch~ face is used).
++ ~:unicode-font~ :: the font used to display unicode symbols. This is ignored if the =:ui unicode= module is enabled.
+
+#+BEGIN_SRC emacs-lisp
+;; These are the defaults of this module
+(set! :font "Fira Mono" :size 12)
+(set! :big-font "Fira Mono" :size 18)
+(set! :variable-font "Fira Sans" :size 12)
+(set! :unicode-font "DejaVu Sans Mono" :size 12)
+#+END_SRC
+
+* Troubleshooting
+** Strange font symbols
+If you're seeing strange unicode symbols, this is likely because you don't have ~all-the-icons~'s font icon installed. You can install them with ~M-x all-the-icons-install-fonts~.

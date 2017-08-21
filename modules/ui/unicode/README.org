@@ -1,0 +1,10 @@
+#+TITLE: :ui unicode
+
+This unicode extends Doom's ability to display non-English unicode.
+
+This is for non-English Emacs users, for whom Doom's built-in unicode support in insufficient.
+
+When this module is enabled...
+
++ The first time you run Emacs a unicode cache will be generated -- this will take a while!
++ Doom will ignore the ~doom-unicode-font~ variable and the ~:unicode-font~ setting.

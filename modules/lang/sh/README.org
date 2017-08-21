@@ -1,0 +1,22 @@
+#+TITLE: :lang sh
+
+This module adds support for shell scripting languages.
+
++ Code completion (company-shell)
++ Syntax Checking (flycheck)
++ Added command substitution and variable interpolation fontification
++ REPL support
+
+* Table of Contents :TOC:
+- [[#install][Install]]
+- [[#appendix][Appendix]]
+  - [[#commands][Commands]]
+
+* Install
+This module has no dependencies.
+
+* Appendix
+** Commands
+| command    | key / ex command | description                                           |
+|------------+------------------+-------------------------------------------------------|
+| ~+sh/repl~ | =:repl=          | Open a terminal (or send the current selection to it) |
