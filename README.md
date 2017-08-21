@@ -8,10 +8,10 @@
 - - -
 
 <p align="center">
-  <a href="/../wiki">Documentation</a> |
+  <a href="/../../wiki">Documentation</a> |
   <a href="/../screenshots">Screenshots</a> |
-  <a href="/../wiki/Troubleshooting">Troubleshooting</a> |
-  <a href="/../wiki/FAQ">FAQ</a> |
+  <a href="/../../wiki/Troubleshooting">Troubleshooting</a> |
+  <a href="/../../wiki/FAQ">FAQ</a> |
   <a href="/CHANGELOG.org">Changelog</a>
 </p>
 
@@ -104,11 +104,11 @@ If you'd like to support my efforts, I welcome contributions of any kind:
   a line at henrik@lissner.net. I'm eager to learn.
 
 
-[wiki]: /../wiki
-[wiki-contribute]: /../wiki/Contribute
-[wiki-conventions]: /../wiki/Conventions
-[wiki-modules]: /../wiki/Modules
-[wiki-customization]: /../wiki/Customization
+[wiki]: /../../wiki
+[wiki-contribute]: /../../wiki/Contribute
+[wiki-conventions]: /../../wiki/Conventions
+[wiki-modules]: /../../wiki/Modules
+[wiki-customization]: /../../wiki/Customization
 
 [doom-my-bindings]: modules/private/hlissner/+bindings.el
 [doom-my-commands]: modules/private/hlissner/+commands.el
