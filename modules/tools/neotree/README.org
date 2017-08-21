@@ -1,4 +1,4 @@
-* :evil neotree
+#+TITLE: :evil neotree
 
 This module brings a side panel for browsing project files, inspired by vim's NERDTree.
 

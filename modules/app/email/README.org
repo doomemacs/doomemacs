@@ -1,4 +1,4 @@
-* :app email
+#+TITLE: :app email
 
 This module makes Emacs an email client, using ~mu4e~.
 
@@ -10,41 +10,45 @@ It uses ~mu4e~ to read my email, but depends on ~offlineimap~ (to sync my email 
 WARNING: my config is gmail/gsuite oriented, and since Google has its own opinions on the IMAP standard, it is unlikely to translate to other hosts.
 #+end_quote
 
-** Install
+* Table of Contents :TOC:
+- [[#install][Install]]
+  - [[#macos][MacOS]]
+  - [[#arch-linux][Arch Linux]]
+- [[#dependencies][Dependencies]]
+
+* Install
 This module requires:
 
 + ~offlineimap~ (to sync mail with)
 + ~mu~ (to index your downloaded messages)
 
-*** MacOS
+** MacOS
 #+BEGIN_SRC sh :tangle (if (doom-system-os 'macos) "yes")
 brew install mu --with-emacs
 brew install offlineimap
 #+END_SRC
 
-*** Arch Linux
+** Arch Linux
 #+BEGIN_SRC sh :dir /sudo:: :tangle (if (doom-system-os 'arch) "yes")
 sudo pacman --noconfirm --needed -S offlineimap mu
 #+END_SRC
 
-** Dependencies
+* Dependencies
 You need to do the following:
 
-1. Write a ~\~/.offlineimaprc~. Mine can be found [[https://github.com/hlissner/dotfiles/tree/master/shell/+mu][in my dotfiles repository]]. It is configured to download mail to ~\~/.mail~. I use unix pass to securely store my login credentials.
+1. Write a ~\~/.offlineimaprc~. Mine can be found [[https://github.com/hlissner/dotfiles/tree/master/shell/+mu][in my dotfiles repository]]. It is configured to download mail to ~\~/.mail~. I use [[https://www.passwordstore.org/][unix pass]] to securely store my login credentials.
 2. Download your email: ~offlineimap -o~ (may take a while)
 3. Index it with mu: ~mu index --maildir ~/.mail~
 
 Then configure Emacs to use your email address:
 
 #+BEGIN_SRC emacs-lisp :tangle no
-;; + %s is replaced with the label, e.g. /%s/Drafts => /lissner.net/Drafts
-;; + Each path is relative to `+email-mu4e-mail-path', which is ~/.mail by
-;;   default
-(set! :email "lissner.net"
-    '((mu4e-sent-folder       . "/%s/Sent Mail")
-      (mu4e-drafts-folder     . "/%s/Drafts")
-      (mu4e-trash-folder      . "/%s/Trash")
-      (mu4e-refile-folder     . "/%s/All Mail")
+;; Each path is relative to `+email-mu4e-mail-path', which is ~/.mail by default
+(set! :email "Lissner.net"
+    '((mu4e-sent-folder       . "/Lissner.net/Sent Mail")
+      (mu4e-drafts-folder     . "/Lissner.net/Drafts")
+      (mu4e-trash-folder      . "/Lissner.net/Trash")
+      (mu4e-refile-folder     . "/Lissner.net/All Mail")
       (smtpmail-smtp-user     . "henrik@lissner.net")
       (user-mail-address      . "henrik@lissner.net")
       (mu4e-compose-signature . "---\nHenrik Lissner"))
