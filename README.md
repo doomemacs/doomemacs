@@ -25,11 +25,11 @@ It is a story as old as time. A stubborn, shell-dwelling, and melodramatic
 vimmer -- envious of the features of modern text editors -- spirals into despair
 before he finally succumbs to the [dark side][evil-mode]. This is his config.
 
-DOOM's philosophy is simple: be **fast**, be **pretty**, and be **vim** (or
-better). It is tailored for neckbeards with a blue-belt or better in
-command-line-fu who don't shy away from dabbling with Elisp.
+DOOM's philosophy is simple: be **fast**, be **readable**, and be **pretty**. It
+is tailored for neckbeards with a blue-belt or better in command-line-fu who
+don't shy away from dabbling with Elisp.
 
-Rip and tear. Until it is done.
+Rip and tear. Until it compiles.
 
 > **Important:** Doom only supports Emacs >= 25.1, and is tailored for Arch
 > Linux 4.7+ and Mac OS 10.11+.
