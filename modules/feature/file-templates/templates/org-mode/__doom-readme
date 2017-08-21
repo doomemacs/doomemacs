@@ -1,0 +1,48 @@
+# -*- mode: snippet -*-
+# name: Doom module readme
+# --
+#+TITLE: ${1:`(progn (string-match "modules/\\([^/]+\\)/\\([^/]+\\)/.+" buffer-file-name)
+                (format ":%s %s"
+                   (match-string 1 buffer-file-name)
+                   (match-string 2 buffer-file-name)))`}
+                   
+${2:A short summary about what this module does.}
+
+${3:If necessary, include a longer description below it that goes into more detail. This may be as long as you like.
+
++ If possible, include a list of features
++ Include links to major plugins that the module uses, if applicable
++ Use links whenever you can
++ Mention dependencies on other modules here}
+
+* Table of Contents :TOC:
+
+* Install
+** Main dependencies
+*** MacOS
+#+BEGIN_SRC sh :tangle (if (doom-system-os 'macos) "yes")
+brew install x
+#+END_SRC
+
+*** Arch Linux
+#+BEGIN_SRC sh :dir /sudo:: :tangle (if (doom-system-os 'arch) "yes")
+sudo pacman --needed --noconfirm -S X
+#+END_SRC
+
+** Extra Dependencies
++ A
++ B
++ C
+
+#+BEGIN_SRC sh
+Y install A B C
+#+END_SRC
+
+* Configuration
+
+* Usage
+
+* Appendix
+** Commands
+** Hacks
+$0
