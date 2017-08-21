@@ -1,5 +1,8 @@
 ;;; completion/ivy/config.el -*- lexical-binding: t; -*-
 
+(defvar +ivy-buffer-icons nil
+  "If non-nil, show buffer mode icons in `ivy-switch-buffer' and the like.")
+
 (defvar +ivy-task-tags
   '(("TODO"  . warning)
     ("FIXME" . error))
@@ -46,7 +49,7 @@ session)."
         [remap apropos]                   #'counsel-apropos
         [remap describe-face]             #'counsel-describe-face
         [remap find-file]                 #'counsel-find-file
-        [remap switch-to-buffer]          #'+ivy/switch-buffer
+        [remap switch-to-buffer]          #'ivy-switch-buffer
         [remap persp-switch-to-buffer]    #'+ivy/switch-workspace-buffer
         [remap recentf]                   #'counsel-recentf
         [remap imenu]                     #'counsel-imenu
@@ -58,6 +61,12 @@ session)."
         [remap describe-function]         #'counsel-describe-function
         [remap describe-variable]         #'counsel-describe-variable
         [remap describe-face]             #'counsel-describe-face)
+
+  ;; Show more buffer information in switch-buffer commands
+  (ivy-set-display-transformer 'ivy-switch-buffer #'+ivy-buffer-transformer)
+  (ivy-set-display-transformer 'ivy-switch-buffer-other-window #'+ivy-buffer-transformer)
+  (ivy-set-display-transformer '+ivy/switch-workspace-buffer #'+ivy-buffer-transformer)
+  (ivy-set-display-transformer 'counsel-recentf #'abbreviate-file-name)
 
   (when (featurep! :feature workspaces)
     (nconc ivy-sort-functions-alist
