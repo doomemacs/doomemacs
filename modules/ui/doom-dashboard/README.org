@@ -1,0 +1,17 @@
+#+TITLE: :ui doom-dashboard
+
+This module gives Doom Emacs a dashboard buffer.
+
+It is loosely inspired by Atom's dashboard.
+
+* Table of Contents :TOC:
+- [[#install][Install]]
+- [[#keybindings][Keybindings]]
+- [[#customization][Customization]]
+
+* Install
+This module only requires that ~all-the-icons~'s icon fonts are installed. Use ~M-x all-the-icons-install-fonts~ to do so.
+
+* Keybindings
+
+* Customization
