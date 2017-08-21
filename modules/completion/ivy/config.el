@@ -102,3 +102,7 @@ session)."
   (setq smex-save-file (concat doom-cache-dir "/smex-items"))
   (smex-initialize))
 
+(def-package! all-the-icons-ivy
+  :after ivy
+  :config
+  (all-the-icons-ivy-setup))
