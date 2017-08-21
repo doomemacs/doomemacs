@@ -110,11 +110,17 @@ If WORKSPACE-ONLY-P (universal arg), limit to buffers in the current workspace."
     (save-match-data
       (cl-loop with out = (shell-command-to-string cmd)
                for x in (and out (split-string out "\n" t))
-               when (string-match
-                     (concat "^\\([^:]+\\):\\([0-9]+\\):.+\\("
-                             (string-join task-tags "\\|")
-                             "\\):?\\s-*\\(.+\\)")
-                     x)
+               when (condition-case-unless-debug ex
+                      (string-match
+                       (concat "^\\([^:]+\\):\\([0-9]+\\):.+\\("
+                               (string-join task-tags "\\|")
+                               "\\):?\\s-*\\(.+\\)")
+                       x)
+                      (error
+                       (message! (red "Error matching task in file: (%s) %s"
+                                      (error-message-string ex)
+                                      (car (split-string x ":"))))
+                       nil))
                collect `((type . ,(match-string 3 x))
                          (desc . ,(match-string 4 x))
                          (file . ,(match-string 1 x))
