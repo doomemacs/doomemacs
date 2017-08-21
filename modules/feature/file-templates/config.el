@@ -79,6 +79,8 @@
           ("/conf\\.lua$"                    "__conf.lua"       love-mode)
           ;; Markdown
           ("\\.md$"                          "__"               markdown-mode)
+          ;; Org
+          ("\\.org$"                         "__"               org-mode)
           ;; PHP
           ("\\.php$"                         "__"               php-mode)
           ("\\.class\\.php$"                 "__.class.php"     php-mode)
