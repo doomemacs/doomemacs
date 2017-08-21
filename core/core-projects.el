@@ -33,18 +33,6 @@ state are passed in.")
         (append (list doom-local-dir ".sync")
                 projectile-globally-ignored-directories))
 
-  ;; Add `recentf-filename-handlers' support to `projectile-recentf-files'.
-  (defun doom*projectile-abbreviate-project-root (orig-fn &rest args)
-    "Abbreviate `projectile-project-root'."
-    (cl-letf (((symbol-function 'projectile-project-root)
-               `(lambda ()
-                  (cl-loop with dir = (,(symbol-function 'projectile-project-root))
-                           for fn in recentf-filename-handlers
-                           do (setq dir (funcall fn dir))
-                           finally return dir))))
-      (apply orig-fn args)))
-  (advice-add #'projectile-recentf-files :around #'doom*projectile-abbreviate-project-root)
-
   ;; Projectile root-searching functions can cause an infinite loop on TRAMP
   ;; connections, so disable them.
   (defun doom*projectile-locate-dominating-file (orig-fn &rest args)
