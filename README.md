@@ -84,6 +84,9 @@ Found a problem? Here are some things to try:
 + If you byte-compiled Doom, run `make clean` or `M-x doom/clean-compiled-files`
   and restart Emacs. Never debug byte-compiled code, it will interfere with your
   efforts in subtle (and not-so-subtle) ways.
++ Check [the FAQ][wiki-troubleshooting] to see if your issue is mentioned.
++ If your issue is associated with a particular module, like code-completion,
+  check the module's README.org, if any.
 
 If all else fails, [file a bug report][doom-new-issue].
 
@@ -109,6 +112,7 @@ If you'd like to support my efforts, I welcome contributions of any kind:
 [wiki-conventions]: /../../wiki/Conventions
 [wiki-modules]: /../../wiki/Modules
 [wiki-customization]: /../../wiki/Customization
+[wiki-troubleshooting]: /../../wiki/FAQ#troubleshooting
 
 [doom-my-bindings]: modules/private/hlissner/+bindings.el
 [doom-my-commands]: modules/private/hlissner/+commands.el
