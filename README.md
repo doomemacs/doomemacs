@@ -10,7 +10,7 @@
 <p align="center">
   <a href="/../../wiki">Documentation</a> |
   <a href="/../screenshots">Screenshots</a> |
-  <a href="/../../wiki/Troubleshooting">Troubleshooting</a> |
+  <a href="/../../wiki/FAQ#troubleshooting">Troubleshooting</a> |
   <a href="/../../wiki/FAQ">FAQ</a> |
   <a href="/CHANGELOG.org">Changelog</a>
 </p>
