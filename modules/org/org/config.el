@@ -98,6 +98,7 @@
    org-cycle-separator-lines 1
    ;; org-ellipsis "  "
    org-entities-user '(("flat"  "\\flat" nil "" "" "266D" "♭") ("sharp" "\\sharp" nil "" "" "266F" "♯"))
+   org-ellipsis "  "
    org-fontify-done-headline t
    org-fontify-quote-and-verse-blocks t
    org-fontify-whole-heading-line t
