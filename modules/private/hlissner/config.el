@@ -4,11 +4,8 @@
   (load! +bindings)  ; my key bindings
   (load! +commands)) ; my custom ex commands
 
-(defvar +hlissner-dir
-  (file-name-directory load-file-name))
-
-(defvar +hlissner-snippets-dir
-  (expand-file-name "snippets/" +hlissner-dir))
+(defvar +hlissner-dir (file-name-directory load-file-name))
+(defvar +hlissner-snippets-dir (expand-file-name "snippets/" +hlissner-dir))
 
 (setq epa-file-encrypt-to user-mail-address
       auth-sources (list (expand-file-name ".authinfo.gpg" +hlissner-dir)))

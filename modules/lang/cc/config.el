@@ -76,7 +76,7 @@
   (c-set-offset 'inclass #'+cc--c-lineup-inclass)
 
 
-  ;; Certain mappings interfere with smartparens and custom bindings,
+  ;; Certain electric mappings interfere with smartparens and custom bindings,
   ;; so unbind them
   (map! :map c-mode-map
         "DEL" nil

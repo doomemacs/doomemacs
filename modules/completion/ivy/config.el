@@ -25,7 +25,8 @@ session)."
 ;;
 
 (def-package! ivy
-  :demand t
+  :commands ivy-mode
+  :init (add-hook 'doom-init-hook #'ivy-mode)
   :config
   (setq ivy-height 12
         ivy-do-completion-in-region nil
@@ -42,8 +43,6 @@ session)."
 
   (after! magit     (setq magit-completing-read-function #'ivy-completing-read))
   (after! yasnippet (push #'+ivy-yas-prompt yas-prompt-functions))
-
-  (add-hook 'doom-init-hook #'ivy-mode)
 
   (map! :map ivy-mode-map
         [remap apropos]                   #'counsel-apropos

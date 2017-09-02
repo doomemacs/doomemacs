@@ -10,7 +10,7 @@
 ;; load the last autosaved session. You can give sessions a custom name so they
 ;; can be loaded later.
 ;;
-;; FYI persp-mode requires `workgroups' for file persistence in Emacs 24.4.
+;; NOTE persp-mode requires `workgroups' for file persistence in Emacs 24.4.
 
 (defvar +workspaces-main "main"
   "The name of the primary and initial workspace, which cannot be deleted or
