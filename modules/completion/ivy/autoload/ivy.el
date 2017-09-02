@@ -5,6 +5,7 @@
   (let ((icon (all-the-icons-icon-for-mode mode)))
     (unless (symbolp icon) icon)))
 
+;;;###autoload
 (defun +ivy-buffer-transformer (str)
   (let* ((buf (get-buffer str))
          (path (buffer-file-name buf))
