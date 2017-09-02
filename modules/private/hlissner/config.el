@@ -19,6 +19,21 @@
     (apply orig-fn args)))
 (advice-add #'tramp-read-passwd :around #'+hlissner*no-authinfo-for-tramp)
 
+;;
+(after! smartparens
+  ;; Auto-close more conservatively
+  (let ((unless-list '(sp-point-before-word-p
+                       sp-point-after-word-p
+                       sp-point-before-same-p)))
+    (sp-pair "'"  nil :unless unless-list)
+    (sp-pair "\"" nil :unless unless-list))
+  (sp-pair "{" nil :post-handlers '(("||\n[i]" "RET") ("| " " "))
+           :unless '(sp-point-before-word-p sp-point-before-same-p))
+  (sp-pair "(" nil :post-handlers '(("||\n[i]" "RET") ("| " " "))
+           :unless '(sp-point-before-word-p sp-point-before-same-p))
+  (sp-pair "[" nil :post-handlers '(("| " " "))
+           :unless '(sp-point-before-word-p sp-point-before-same-p)))
+
 
 ;;
 (after! doom-themes
