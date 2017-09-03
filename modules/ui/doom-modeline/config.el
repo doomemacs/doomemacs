@@ -233,44 +233,49 @@ active."
      ('truncate-all (+doom-modeline--buffer-file-name-truncate t))
      ('relative-to-project (+doom-modeline--buffer-file-name-relative))
      ('file-name (propertize (file-name-nondirectory buffer-file-name)
-                             'face `(:inherit ,(or (and (buffer-modified-p)
-                                                        'doom-modeline-buffer-modified)
-                                                   (and (active)
-                                                        'doom-modeline-buffer-file))))))
+                             'face
+                             (let ((face (or (and (buffer-modified-p)
+                                                  'doom-modeline-buffer-modified)
+                                             (and (active)
+                                                  'doom-modeline-buffer-file))))
+                               (when face `(:inherit ,face))))))
    'help-echo (+doom-modeline--buffer-file-name nil)))
 
 (defun +doom-modeline--buffer-file-name-truncate (&optional truncate-tail)
   "Propertized `buffer-file-name' that truncates every dir along path.
 If TRUNCATE-TAIL is t also truncate the parent directory of the file."
-  (let* ((modified-faces (if (buffer-modified-p) 'doom-modeline-buffer-modified))
-         (active (active))
-         (dirs (shrink-path-prompt (file-name-directory
-                                    (or buffer-file-truename
-                                        (file-truename buffer-file-name))))))
+  (let ((dirs (shrink-path-prompt (file-name-directory
+                                   (or buffer-file-truename
+                                       (file-truename buffer-file-name))))))
     (if (null dirs)
         "%b"
-      (let ((dirname (car dirs))
-            (basename (cdr dirs))
-            (dir-faces `(:inherit ,(or modified-faces (if active 'doom-modeline-project-root-dir))))
-            (file-faces `(:inherit ,(or modified-faces (if active 'doom-modeline-buffer-file)))))
-        (concat (propertize dirname 'face dir-faces)
-                (propertize (concat (if truncate-tail (substring basename 0 1) basename) "/")
-                            'face dir-faces)
-                (propertize (file-name-nondirectory buffer-file-name) 'face file-faces))))))
+      (let ((modified-faces (if (buffer-modified-p) 'doom-modeline-buffer-modified))
+            (active (active)))
+        (let ((dirname (car dirs))
+              (basename (cdr dirs))
+              (dir-faces (or modified-faces (if active 'doom-modeline-project-root-dir)))
+              (file-faces (or modified-faces (if active 'doom-modeline-buffer-file))))
+          (concat (propertize dirname
+                              'face (if dir-faces `(:inherit ,dir-faces)))
+                  (propertize (concat (if truncate-tail (substring basename 0 1) basename) "/")
+                              'face (if dir-faces `(:inherit ,dir-faces)))
+                  (propertize (file-name-nondirectory buffer-file-name)
+                              'face (if file-faces `(:inherit ,file-faces)))))))))
 
 (defun +doom-modeline--buffer-file-name-relative ()
   "Propertized `buffer-file-name' showing directories relative to project's root only."
-  (let* ((modified-faces (if (buffer-modified-p) 'doom-modeline-buffer-modified))
-         (active (active))
-         (root (doom-project-root)))
+  (let ((root (doom-project-root)))
     (if (null root)
         "%b"
-      (let ((relative-dirs (file-relative-name (file-name-directory buffer-file-name) root))
-            (relative-faces `(:inherit ,(or modified-faces (if active 'doom-modeline-buffer-path))))
-            (file-faces `(:inherit ,(or modified-faces (if active 'doom-modeline-buffer-file)))))
+      (let* ((modified-faces (if (buffer-modified-p) 'doom-modeline-buffer-modified))
+             (active (active))
+             (relative-dirs (file-relative-name (file-name-directory buffer-file-name) root))
+             (relative-faces (or modified-faces (if active 'doom-modeline-buffer-path)))
+             (file-faces (or modified-faces (if active 'doom-modeline-buffer-file))))
         (if (equal "./" relative-dirs) (setq relative-dirs ""))
-        (concat (propertize relative-dirs 'face relative-faces)
-                (propertize (file-name-nondirectory buffer-file-name) 'face file-faces))))))
+        (concat (propertize relative-dirs 'face (if relative-faces `(:inherit ,relative-faces)))
+                (propertize (file-name-nondirectory buffer-file-name)
+                            'face (if file-faces `(:inherit ,file-faces))))))))
 
 (defun +doom-modeline--buffer-file-name (truncate-project-root-parent)
   "Propertized `buffer-file-name'.
@@ -279,9 +284,7 @@ fish-shell style.
 
 Example:
 ~/Projects/FOSS/emacs/lisp/comint.el => ~/P/F/emacs/lisp/comint.el"
-  (let* ((modified-faces (if (buffer-modified-p) 'doom-modeline-buffer-modified))
-         (active (active))
-         (project-root (doom-project-root))
+  (let* ((project-root (doom-project-root))
          (file-name-split (shrink-path-file-mixed project-root
                                                   (file-name-directory
                                                    (or buffer-file-truename
@@ -290,19 +293,25 @@ Example:
     (if (null file-name-split)
         "%b"
       (pcase-let ((`(,root-path-parent ,project ,relative-path ,filename) file-name-split))
-        (let ((sp-faces `(:inherit ,(or modified-faces (if active 'font-lock-comment-face))
-                          ,@(if active '(:weight bold))))
-              (project-faces `(:inherit ,(or modified-faces (if active 'font-lock-string-face))
-                               ,@(if active '(:weight bold))))
-              (relative-faces `(:inherit ,(or modified-faces (if active 'doom-modeline-buffer-path))))
-              (file-faces `(:inherit ,(or modified-faces (if active 'doom-modeline-buffer-file)))))
-          (concat (propertize (if truncate-project-root-parent
-                                  root-path-parent
-                                (abbreviate-file-name project-root))
-                              'face sp-faces)
-                  (propertize (concat project "/") 'face project-faces)
-                  (when relative-path (propertize relative-path 'face relative-faces))
-                  (propertize filename 'face file-faces)))))))
+        (let ((modified-faces (if (buffer-modified-p) 'doom-modeline-buffer-modified))
+              (active (active)))
+          (let ((sp-faces       (or modified-faces (if active 'font-lock-comment-face)))
+                (project-faces  (or modified-faces (if active 'font-lock-string-face)))
+                (relative-faces (or modified-faces (if active 'doom-modeline-buffer-path)))
+                (file-faces     (or modified-faces (if active 'doom-modeline-buffer-file))))
+            (let ((sp-props       `(,@(if sp-faces       `(:inherit ,sp-faces))      ,@(if active '(:weight bold))))
+                  (project-props  `(,@(if project-faces  `(:inherit ,project-faces)) ,@(if active '(:weight bold))))
+                  (relative-props `(,@(if relative-faces `(:inherit ,relative-faces))))
+                  (file-props     `(,@(if file-faces     `(:inherit ,file-faces)))))
+              (concat (propertize (if truncate-project-root-parent
+                                      root-path-parent
+                                    (abbreviate-file-name project-root))
+                                  'face sp-props)
+                      (propertize (concat project "/") 'face project-props)
+                      (when relative-path (propertize relative-path 'face relative-props))
+                      (propertize filename 'face file-props)))))))))
+
+
 ;;
 ;; Segments
 ;;
@@ -324,17 +333,14 @@ buffer where knowing the current project directory is important."
 (def-modeline-segment! buffer-info
   "Combined information about the current buffer, including the current working
 directory, the file name, and its state (modified, read-only or non-existent)."
-  (let* ((all-the-icons-scale-factor 1.2)
-         (modified-p (buffer-modified-p))
-         (active (active))
-         (faces (if modified-p 'doom-modeline-buffer-modified)))
+  (let ((all-the-icons-scale-factor 1.2))
     (concat (cond (buffer-read-only
                    (concat (all-the-icons-octicon
                             "lock"
                             :face 'doom-modeline-warning
                             :v-adjust -0.05)
                            " "))
-                  (modified-p
+                  ((buffer-modified-p)
                    (concat (all-the-icons-faicon
                             "floppy-o"
                             :face 'doom-modeline-buffer-modified
