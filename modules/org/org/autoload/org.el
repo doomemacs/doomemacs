@@ -146,7 +146,7 @@ wrong places)."
                    '(table table-row headline inlinetask item plain-list)
                    t))
          (type (org-element-type context)))
-    (cond ((eq type 'item)
+    (cond ((memq type '(item plain-list))
            (let ((marker (org-element-property :bullet context))
                  (pad (save-excursion
                         (back-to-indentation)
@@ -157,7 +157,7 @@ wrong places)."
                 (insert (concat  "\n" (make-string pad ? ) marker)))
                ('above
                 (goto-char (line-beginning-position))
-                (insert (make-string pad ? ) marker)
+                (insert (make-string pad 32) (or marker ""))
                 (save-excursion (insert "\n")))))
            (when (org-element-property :checkbox context)
              (insert "[ ] ")))
@@ -167,15 +167,13 @@ wrong places)."
              ('below (org-table-insert-row t))
              ('above (+org/table-prepend-row-or-shift-up))))
 
-          ((memq type '(headline inlinetask plain-list))
+          ((memq type '(headline inlinetask))
            (let* ((subcontext (org-element-context))
                   (level (save-excursion
                            (org-back-to-heading)
-                           (org-element-property
-                            :level
-                            (if (eq (org-element-type subcontext) 'headline)
-                                subcontext
-                              1)))))
+                           (if (eq (org-element-type subcontext) 'headline)
+                               (org-element-property :level subcontext)
+                             1))))
              (pcase direction
                ('below
                 (let ((at-eol (= (point) (1- (line-end-position)))))
