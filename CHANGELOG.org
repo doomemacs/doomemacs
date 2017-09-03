@@ -2,6 +2,7 @@
 
 - [[#todo][Todo]]
 - [[#unreleased-master][Unreleased (master)]]
+- [[#205-sep-03-2017][2.0.5 (Sep 03, 2017)]]
 - [[#204-jul-14-2017][2.0.4 (Jul 14, 2017)]]
 - [[#203-jun-11-2017][2.0.3 (Jun 11, 2017)]]
 - [[#202-may-13-2017][2.0.2 (May 13, 2017)]]
@@ -66,8 +67,9 @@
 + =core-popups= Add support for moving popup windows to the ~+evil/window-move-*~ commands #171
 
 * Unreleased (master)
+
+* 2.0.5 (Sep 03, 2017)
 + =doom=
-  + Added new module: ~lang/ocaml~, offering OCaml support (thanks to [[https://github.com/Ptival][ptival]])
   + Added new module: ~tools/rgb~, with tools for dealing with colors (thanks to [[https://github.com/bandresen][bandresen]])
   + Added new module: ~tools/prodigy~, with tools for managing external services (thanks to [[https://github.com/bandresen][bandresen]])
   + Added new module: ~feature/hydra~, offers an extra and customizable layer of modal keybinds (thanks to [[https://github.com/bandresen][bandresen]])
@@ -81,7 +83,6 @@
   + Removed the =:L= flag from =map!= and replaced it with a =:local= property.
   + Added new function: ~doom|disable-vi-tilde-fringe~ for turning off vi-tilde-fringe in select buffers.
   + Added support for relative line numbers (see ~doom-line-numbers-style~), using nlinum-relative on Emacs <26, and display-line-numbers on Emacs 26+.
-+ =modules=
 + =feature=
   + =File Templates= Added a file template for:
     + *.org files
@@ -104,9 +105,9 @@
   + =pass= ~+pass-get-field~ now no-ops if used in a non-interactive session (e.g. during testing or byte compilation).
   + =neotree= Add =r= and =d= bindings for renaming and deleting files, respectively.
 + =lang=
-  + =C/C++= The advise function ~c-lineup-arglist~ was missing, and has now been reimplemented.
-  + =Haskell= With module flags implemented, Intero support is now available to lang/haskell and is now the default. Dante support is still available with the ~+dante~ flag.
-  + =Java= Now auto-installs meghanda-server on first use, and fixed code-completion in java buffers.
+  + =cc= The advise function ~c-lineup-arglist~ was missing, and has now been reimplemented.
+  + =haskell= With module flags implemented, Intero support is now available to lang/haskell and is now the default. Dante support is still available with the ~+dante~ flag.
+  + =java= Now auto-installs meghanda-server on first use, and fixed code-completion in java buffers.
 + =org=
   + Fixed vanilla C-j/C-k bindings overshadowing custom window navigation bindings.
   + Added C-[hjkl] keybindings in insert mode for org table navigation.
