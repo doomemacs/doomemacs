@@ -460,12 +460,6 @@ the workspace and move to the next."
   (set-frame-parameter frame 'assoc-persp (+workspace-current-name)))
 
 ;;;###autoload
-(defun +workspaces|create-project-workspace ()
-  "Create a new workspace when switching project with `projectile'."
-  (when persp-mode
-    (+workspace-switch (projectile-project-name) t)))
-
-;;;###autoload
 (defun +workspaces|delete-associated-workspace-maybe (frame)
   "Delete workspace associated with current frame IF it has no real buffers."
   (when persp-mode
@@ -480,3 +474,15 @@ the workspace and move to the next."
     (when (doom-real-buffer-list)
       (apply orig-fn args))
     t)
+
+;;;###autoload
+(defun +workspaces*switch-project-by-name (orig-fn &rest args)
+  "Switch to a project and prompt for a file to open.
+
+Ensures the scratch (or dashboard) buffers are CDed into the project's root."
+  (when persp-mode
+    (+workspace-switch (car args) t)
+    (with-current-buffer (switch-to-buffer (doom-fallback-buffer))
+      (setq default-directory (car args))))
+  (apply orig-fn args))
+

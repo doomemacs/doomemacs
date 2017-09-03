@@ -1,72 +1,48 @@
 ;;; completion/ivy/autoload/ivy.el -*- lexical-binding: t; -*-
 
-;; Show more information in ivy-switch-buffer; and only display
-;; workgroup-relevant buffers.
-(defun +ivy--get-buffers (&optional buffer-list)
-  (when-let (buffer-list (delq (current-buffer) (or buffer-list (doom-buffer-list))))
-    (let* ((min-name
-            (+ 5 (cl-loop for buf in buffer-list
-                          maximize (length (buffer-name buf)))))
-           (min-mode
-            (+ 5 (cl-loop for buf in buffer-list
-                          maximize (length (symbol-name (buffer-local-value 'major-mode buf)))))))
-      (cl-loop
-       with project-root = (doom-project-root)
-       for buf in buffer-list
-       collect
-       (cl-destructuring-bind (type mode path)
-           (with-current-buffer buf
-             (list (concat
-                    (let ((buffer-name (buffer-name buf)))
-                      (propertize
-                       buffer-name
-                       'face (cond ((string-match-p "^ ?\\*" buffer-name)
-                                    'font-lock-comment-face)
-                                   ((not (string= project-root (doom-project-root)))
-                                    'warning)
-                                   (buffer-read-only
-                                    'error))))
-                    (when (and buffer-file-name (buffer-modified-p))
-                      (propertize "[+]" 'face 'doom-modeline-buffer-modified)))
-                   (propertize (symbol-name major-mode) 'face 'font-lock-constant-face)
-                   (when buffer-file-name
-                     (abbreviate-file-name
-                      (file-name-directory buffer-file-name)))))
-         (format (format "%%-%ds %%-%ds %%s" min-name min-mode)
-                 type mode (or path "")))))))
-
-(defun +ivy--select-buffer-action (buffer)
-  (ivy--switch-buffer-action
-   (string-remove-suffix
-    "[+]"
-    (substring buffer 0 (string-match-p (regexp-quote "   ") buffer)))))
-
-(defun +ivy--select-buffer-other-window-action (buffer)
-  (ivy--switch-buffer-other-window-action
-   (string-remove-suffix
-    "[+]"
-    (substring buffer 0 (string-match-p (regexp-quote "   ") buffer)))))
+(defsubst +ivy--icon-for-mode (mode)
+  "Apply `all-the-icons-for-mode' on MODE but either return an icon or nil."
+  (let ((icon (all-the-icons-icon-for-mode mode)))
+    (unless (symbolp icon) icon)))
 
 ;;;###autoload
-(defun +ivy/switch-workspace-buffer (&optional other-window-p)
-  "Switch to an open buffer in the current workspace.
-
-If OTHER-WINDOW-P (universal arg), then open target in other window."
-  (interactive "P")
-  (+ivy/switch-buffer other-window-p t))
+(defun +ivy-buffer-transformer (str)
+  (let* ((buf (get-buffer str))
+         (path (buffer-file-name buf))
+         (mode (buffer-local-value 'major-mode buf))
+         (faces
+          (with-current-buffer buf
+            (cond ((string-match-p "^ ?\\*" (buffer-name buf))
+                   'font-lock-comment-face)
+                  ((buffer-modified-p buf)
+                   'doom-modeline-buffer-modified)
+                  (buffer-read-only
+                   'error)))))
+    (propertize
+     (format "%-40s %s%-20s %s"
+             str
+             (if +ivy-buffer-icons
+                 (concat (propertize " " 'display
+                                     (or (+ivy--icon-for-mode mode)
+                                         (+ivy--icon-for-mode (get mode 'derived-mode-parent))))
+                         "\t")
+               "")
+             mode
+             (or (and path (abbreviate-file-name (file-name-directory (file-truename path))))
+                 ""))
+     'face faces)))
 
 ;;;###autoload
-(defun +ivy/switch-buffer (&optional other-window-p workspace-only-p)
-  "Switch to an open buffer in the global buffer list.
+(defun +ivy/switch-workspace-buffer (&optional arg)
+  "Switch to another buffer within the current workspace.
 
-If OTHER-WINDOW-P (universal arg), then open target in other window.
-If WORKSPACE-ONLY-P (universal arg), limit to buffers in the current workspace."
+If ARG (universal argument), open selection in other-window."
   (interactive "P")
-  (ivy-read (format "%s buffers: " (if workspace-only-p "Workspace" "Global"))
-            (+ivy--get-buffers (unless workspace-only-p (buffer-list)))
-            :action (if other-window-p
-                        #'+ivy--select-buffer-other-window-action
-                      #'+ivy--select-buffer-action)
+  (ivy-read "Switch to workspace buffer: "
+            (mapcar #'buffer-name (delq (current-buffer) (doom-buffer-list)))
+            :action (if arg
+                        #'ivy--switch-buffer-other-window-action
+                      #'ivy--switch-buffer-action)
             :matcher #'ivy--switch-buffer-matcher
             :keymap ivy-switch-buffer-map
             :caller #'+ivy/switch-workspace-buffer))

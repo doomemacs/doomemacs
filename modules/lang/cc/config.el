@@ -49,7 +49,7 @@
     (sp-local-pair "/*!" "*/" :post-handlers '(("||\n[i]" "RET") ("[d-1]< | " "SPC"))))
 
   ;; Improve indentation of inline lambdas in C++11
-  (advice-add #'c-lineup-arglist :around #'+c-lineup-arglist)
+  (advice-add #'c-lineup-arglist :around #'+cc*lineup-arglist)
 
   ;; C/C++ style settings
   (c-toggle-electric-state -1)
@@ -76,7 +76,7 @@
   (c-set-offset 'inclass #'+cc--c-lineup-inclass)
 
 
-  ;; Certain mappings interfere with smartparens and custom bindings,
+  ;; Certain electric mappings interfere with smartparens and custom bindings,
   ;; so unbind them
   (map! :map c-mode-map
         "DEL" nil

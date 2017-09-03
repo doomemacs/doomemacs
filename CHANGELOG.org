@@ -2,6 +2,7 @@
 
 - [[#todo][Todo]]
 - [[#unreleased-master][Unreleased (master)]]
+- [[#205-sep-03-2017][2.0.5 (Sep 03, 2017)]]
 - [[#204-jul-14-2017][2.0.4 (Jul 14, 2017)]]
 - [[#203-jun-11-2017][2.0.3 (Jun 11, 2017)]]
 - [[#202-may-13-2017][2.0.2 (May 13, 2017)]]
@@ -47,9 +48,7 @@
   + =lang/alda= -- Language support for [[https://github.com/alda-lang/alda][Alda]], the music programming language, using [[https://github.com/jgkamat/alda-mode][alda-mode]].
   + =org/org-publish= -- publishing org files to HTML (thanks to [[https://github.com/matthewgraybosch][matthewgraybosch]])
   + =org/org-attach= -- my own, simpler attachment system with drag-drop image attachment support and centralized storage.
-+ *Bug fixes:*
-  + =core-ui= Replace or fix ~winner-mode~ unreliability (will close windows trying to revive killed buffers). Perhaps make ~doom/kill-this-buffer~ only disassociate buffer from persp-mode or bury buffer if persp-mode is inactive.
-  + =ui/doom-modeline= Fix ~0/0~ leftover panel in modeline (caused by lingering anzu state).
++ =core-ui= Replace or fix ~winner-mode~ unreliability (will close windows trying to revive killed buffers). Perhaps make ~doom/kill-this-buffer~ only disassociate buffer from persp-mode or bury buffer if persp-mode is inactive.
 + =org=
   + Better shackle + org-agenda integration
   + Fix janky visual line motions (~evil-next-visual-line~, etc)
@@ -61,13 +60,58 @@
 + =tools/upload= Add ~+upload/open-remote-file~ command to open current file on the remote (with TRAMP).
 + Add =bin/org-alert= script -- a cron script that scans TODOs in org files and dispatches system alerts.
 + =feature/workspaces= Add a bookmarks feature, but for wconfs, that can revive file buffers. Also needs an interface.
-+ Add README.org's with working babel blocks to modules.
-+ Document best practices for customizing DOOM emacs.
-+ =ui/doom-modeline= fix hardcoded spacing in between segments.
-+ Rewrite main README.md to include more information about setting up, customizing, and troubleshooting DOOM Emacs.
++ =ui/doom-modeline=
+  + Fix hardcoded spacing in between segments.
+  + Fix ~0/0~ leftover panel in modeline (caused by lingering anzu state).
 + Update =bin/org-capture= to read from stdin in the absence of arguments.
++ =core-popups= Add support for moving popup windows to the ~+evil/window-move-*~ commands #171
 
 * Unreleased (master)
+
+* 2.0.5 (Sep 03, 2017)
++ =doom=
+  + Added new module: ~tools/rgb~, with tools for dealing with colors (thanks to [[https://github.com/bandresen][bandresen]])
+  + Added new module: ~tools/prodigy~, with tools for managing external services (thanks to [[https://github.com/bandresen][bandresen]])
+  + Added new module: ~feature/hydra~, offers an extra and customizable layer of modal keybinds (thanks to [[https://github.com/bandresen][bandresen]])
+  + Added two new core-lib helpers for macros: ~doom-enlist~ and ~doom-unquote~.
+  + Switch to ~doom-fallback-buffer~ after using ~doom/kill-all-buffers~ (or ~:killall!~).
+  + ~make doctor~ now does font detection and will complain when fonts are missing.
+  + When switching to a new project, a new workspace is spawned and a fuzzy find-file prompt is opened. However, a buffer from the previous workspace would linger on screen *and* the scratch buffer would CD to HOME, rather than the project root. This is fixed now.
+  + Added module flags to the ~doom!~ macro in init.el, and modified the ~featurep!~ macro so that it can be used to detect these flags from within modules. It is up to modules how to interpret them. More information in [[https://github.com/hlissner/.emacs.d/commit/0b7b8800a2478588bde408c92fcdfa0e43a5baf0][0b7b880]].
+  + Fix projectile-find-file not respecting ~default-directory~ (caused by changes upstream).
+  + Rewrote, revised and expanded module documentation, and created a [[https://github.com/hlissner/.emacs.d/wiki][wiki]] with more information.
+  + Removed the =:L= flag from =map!= and replaced it with a =:local= property.
+  + Added new function: ~doom|disable-vi-tilde-fringe~ for turning off vi-tilde-fringe in select buffers.
+  + Added support for relative line numbers (see ~doom-line-numbers-style~), using nlinum-relative on Emacs <26, and display-line-numbers on Emacs 26+.
++ =feature=
+  + =File Templates= Added a file template for:
+    + *.org files
+    + Module README.org files.
+  + =jump=
+    + Added documentation for ~:jump~ setting, describing the three properties it supports (~:definition~, ~:references~ and ~:documentation~).
+    + Rewrote ~+jump/online~ to:
+      + Use the current selection, if active, or prompt for a query otherwise (with the thing at point as the initial input).
+      + Prompts for the provider (search engine) on first use, and reuses the last provider on consecutive uses. If the universal argument is supplied, force ~+jump/online~ to prompt for the provider anyway.
++ =completion=
+  + Added all-the-icons support to ~ivy-switch-buffer~ and ~+ivy/switch-workspace-buffer~. Enable this with ~(setq +ivy-buffer-icons t)~.
++ =ui=
+  + rainbow-mode is no longer activated on ~prog-mode-hook~.
+  + =doom-modeline=
+    + Modeline now uses shrink-path.el to shrink the buffer name in the case of a small frame (thanks to [[https://github.com/bandresen][bandresen]]). [[https://github.com/hlissner/.emacs.d/pull/176][See #176]]
+    + Fixed mode-line going blank in terminal Emacs (thanks to [[https://github.com/bandresen][bandresen]]).
+  + =doom-dashboard= Fixed "Load last session" button on dashboard.
++ =tools=
+  + =eshell= General improvements made to further integrate eshell with Doom (thanks to [[https://github.com/bandresen][bandresen]]). [[https://github.com/hlissner/.emacs.d/pull/160][See #160]]
+  + =pass= ~+pass-get-field~ now no-ops if used in a non-interactive session (e.g. during testing or byte compilation).
+  + =neotree= Add =r= and =d= bindings for renaming and deleting files, respectively.
++ =lang=
+  + =cc= The advise function ~c-lineup-arglist~ was missing, and has now been reimplemented.
+  + =haskell= With module flags implemented, Intero support is now available to lang/haskell and is now the default. Dante support is still available with the ~+dante~ flag.
+  + =java= Now auto-installs meghanda-server on first use, and fixed code-completion in java buffers.
++ =org=
+  + Fixed vanilla C-j/C-k bindings overshadowing custom window navigation bindings.
+  + Added C-[hjkl] keybindings in insert mode for org table navigation.
+  + Fixed ~+org/insert-item~ throwing =save-excursion: Wrong type argument: listp, 1= error when used from BOL on the first sub-item in a list.
 
 * 2.0.4 (Jul 14, 2017)
 + *Module changes:*

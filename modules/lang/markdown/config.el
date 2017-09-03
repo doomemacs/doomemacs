@@ -1,9 +1,9 @@
 ;;; lang/markdown/config.el -*- lexical-binding: t; -*-
 
 (def-package! markdown-mode
-  :mode ("/README\\.md$" . gfm-mode)
-  :mode "\\.m\\(d\\|arkdown\\)$"
   :mode "/README$"
+  :mode "\\.m\\(d\\|arkdown\\)$"
+  :mode ("/README\\.md$" . gfm-mode)
   :init
   (setq markdown-enable-wiki-links t
         markdown-enable-math t
@@ -20,14 +20,7 @@
     (setq line-spacing 2
           fill-column 80))
 
-  (sp-local-pair
-   '(markdown-mode gfm-mode)
-   "\`\`\`" "\`\`\`" :post-handlers '(("||\n" "RET")))
-
-  (map! (:map gfm-mode-map
-          "`" #'self-insert-command)
-
-        (:map markdown-mode-map
+  (map! (:map markdown-mode-map
           [remap find-file-at-point] #'markdown-follow-thing-at-point
           "M-*"      #'markdown-insert-list-item
           "M-b"      #'markdown-insert-bold

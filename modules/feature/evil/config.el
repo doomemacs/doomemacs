@@ -323,6 +323,7 @@ the new algorithm is confusing, like in python or ruby."
         evil-snipe-scope 'line
         evil-snipe-repeat-scope 'visible
         evil-snipe-char-fold t
+        evil-snipe-disabled-modes '(magit-mode elfeed-show-mode elfeed-search-mode)
         evil-snipe-aliases '((?\[ "[[{(]")
                              (?\] "[]})]")
                              (?\; "[;:]")))

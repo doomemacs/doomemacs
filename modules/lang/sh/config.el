@@ -35,6 +35,9 @@
               (,(regexp-opt +sh-builtin-keywords 'words)
                (0 'font-lock-builtin-face append))))
 
+  ;; autoclose backticks
+  (sp-local-pair 'sh-mode "`" nil :unless '(sp-point-before-word-p sp-point-before-same-p))
+
   ;; sh-mode has file extensions checks for other shells, but not zsh, so...
   (defun +sh|detect-zsh ()
     (when (or (and buffer-file-name

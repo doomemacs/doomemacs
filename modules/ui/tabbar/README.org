@@ -1,0 +1,5 @@
+#+TITLE: :ui tabbar
+
+This module adds a tabbar to the Emacs UI.
+
+I don't recommend you use this module. It is here for reference, is unstable and doesn't integrate with Doom's UI well. I find ivy, helm or even ~buffer-menu~ to be better suited for buffer management.

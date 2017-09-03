@@ -32,6 +32,9 @@ compile: init.el clean
 compile\:core: init.el clean
 	@$(EMACS) -f doom/compile -- init.el core
 
+compile\:elpa: init.el
+	@$(EMACS) -f doom/recompile-packages
+
 $(patsubst %, compile\:%, $(MODULES)): init.el .local/autoloads.el
 	@rm -fv $(shell find $(patsubst compile:%, modules/%, $@) -type f -name '*.elc')
 	@$(EMACS) -f doom/compile -- $(patsubst compile:%, modules/%, $@)

@@ -1,4 +1,4 @@
-* :lang cc
+#+TITLE: :lang cc
 
 This module adds support for the C-family of languages: C, C++, and Objective-C.
 
@@ -8,17 +8,23 @@ This module adds support for the C-family of languages: C, C++, and Objective-C.
 + Code navigation (~irony~)
 + File Templates ([[../../feature/file-templates/templates/c-mode][c-mode]], [[../../feature/file-templates/templates/c++-mode][c++-mode]])
 + Snippets ([[https://github.com/hlissner/emacs-snippets/tree/master/cc-mode][cc-mode]], [[https://github.com/hlissner/emacs-snippets/tree/master/c-mode][c-mode]], [[https://github.com/hlissner/emacs-snippets/tree/master/c++-mode][c++-mode]])
++ Several improvements to C++11 indentation and syntax highlighting.
 
 #+begin_quote
-C contends with Haskell and Ruby for my favorite language. It's hard to beat this combination of simplicity and power. I've used C for my work since 2009, and it (along with C++) is a personal favorite for game development (with SDL, SFML or, more recently, cocos2d).
+C contends with Haskell and Ruby for my favorite language. That said, it's more accurate to say I write C, but with two or three C++ features.
 
 The module provides nominal support for Objective-C, which I really only use to inspect generated glue code for iOS mobile apps. Otherwise, I prefer Swift.
 #+end_quote
 
-** Install
+* Table of Contents :TOC:
+- [[#install][Install]]
+  - [[#macos][MacOS]]
+  - [[#arch-linux][Arch Linux]]
+
+* Install
 This module requires ~irony-server~ for most of its features, which depends on ~cmake~ and ~libclang~.
 
-*** MacOS
+** MacOS
 Due to linking issues, MacOS users must compile irony-server manually:
 
 #+BEGIN_SRC sh :tangle (if (doom-system-os 'macos) "yes")
@@ -43,9 +49,10 @@ popd
 rm -rf irony-mode
 #+END_SRC
 
-*** Arch Linux
+** Arch Linux
 #+BEGIN_SRC sh :tangle (if (doom-system-os 'arch) "yes")
 sudo pacman --needed --noconfirm -S clang cmake
 #+END_SRC
 
 Then run ~M-x irony-install-server~ in Emacs.
+

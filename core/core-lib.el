@@ -21,6 +21,9 @@
 (dolist (sym '(when-let if-let string-trim string-join string-blank-p string-lessp))
   (autoload sym "subr-x" nil nil 'macro))
 
+(dolist (sym '(json-read json-read-file json-read-from-string json-encode))
+  (autoload sym "json"))
+
 
 ;;
 ;; Helpers

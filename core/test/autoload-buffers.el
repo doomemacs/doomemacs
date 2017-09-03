@@ -8,7 +8,9 @@
       (push `(,bsym (get-buffer-create ,(symbol-name bsym)))
             buffers))
     `(save-window-excursion
-       (cl-flet ((buffer-list (lambda () (list ,@(reverse (mapcar #'car buffers))))))
+       (cl-flet ((buffer-list
+                  (lambda ()
+                    (cl-remove-if-not #'buffer-live-p (list ,@(reverse (mapcar #'car buffers)))))))
          (let* (persp-mode
                 ,@buffers)
            ,@body
@@ -64,7 +66,7 @@
     (switch-to-buffer a)
     (should (eq (current-buffer) a))
     (should (eq (selected-window) (get-buffer-window a)))
-    (split-window)
+    (split-window nil 1)
     (switch-to-buffer b)
     (should (eq (current-buffer) b))
     (should (eq (selected-window) (get-buffer-window b)))

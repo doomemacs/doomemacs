@@ -27,8 +27,8 @@ If neither is available, run all tests in all enabled modules."
       (let (targets)
         ;; ensure DOOM is initialized
         (let (noninteractive)
-          (load (expand-file-name "init.el" user-emacs-directory) nil t))
-        (remove-hook 'doom-init-hook #'doom--display-benchmark)
+          (load (expand-file-name "core/core.el" user-emacs-directory) nil t)
+          (doom-initialize-modules nil))
         ;; collect targets
         (cond ((and command-line-args-left
                     (equal (car command-line-args-left) "--"))
@@ -77,7 +77,8 @@ If neither is available, run all tests in all enabled modules."
                  finally do (quiet! (mapc #'load-file items)))
         ;; run all loaded tests
         (when noninteractive
-          (ert-run-tests-batch-and-exit)))
+          (let (noninteractive)
+            (ert-run-tests-batch-and-exit))))
     ('error
      (lwarn 'doom-test :error
             "%s -> %s"

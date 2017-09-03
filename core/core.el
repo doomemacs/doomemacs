@@ -15,7 +15,7 @@
 ;; Autoloaded functions are in core/autoload/*.el and modules/*/*/autoload.el or
 ;; modules/*/*/autoload/*.el.
 
-(defvar doom-version "2.0.4"
+(defvar doom-version "2.0.5"
   "Current version of DOOM emacs.")
 
 (defvar doom-debug-mode (or (getenv "DEBUG") init-file-debug)
@@ -149,7 +149,7 @@ ability to invoke the debugger in debug mode."
   nil)
 
 (defun doom|finalize ()
-  (unless doom-init-p
+  (unless (or doom-init-p noninteractive)
     (dolist (hook '(doom-init-hook doom-post-init-hook))
       (run-hook-wrapped hook #'doom-try-run-hook hook))
     (setq doom-init-p t))
@@ -185,7 +185,14 @@ ability to invoke the debugger in debug mode."
     ('error
      (lwarn 'doom-autoloads :warning
             "%s in autoloads.el -> %s"
-            (car ex) (error-message-string ex)))))
+            (car ex) (error-message-string ex))))
+
+  (unless noninteractive
+    (load! core-ui)         ; draw me like one of your French editors
+    (load! core-popups)     ; taming sudden yet inevitable windows
+    (load! core-editor)     ; baseline configuration for text editing
+    (load! core-projects)   ; making Emacs project-aware
+    (load! core-keybinds))) ; centralized keybind system + which-key
 
 (add-hook! '(emacs-startup-hook doom-reload-hook)
   #'doom|finalize)

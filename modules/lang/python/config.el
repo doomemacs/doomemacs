@@ -12,7 +12,6 @@
 
   (set! :repl 'python-mode #'+python/repl)
   (set! :electric 'python-mode :chars '(?:))
-  (define-key python-mode-map (kbd "DEL") nil) ; interferes with smartparens
 
   (when (executable-find "ipython")
     (setq python-shell-interpreter "ipython"
@@ -25,6 +24,7 @@
           python-shell-completion-string-code
           "';'.join(get_ipython().Completer.all_completions('''%s'''))\n"))
 
+  (define-key python-mode-map (kbd "DEL") nil) ; interferes with smartparens
   (sp-with-modes 'python-mode
     (sp-local-pair "'" nil :unless '(sp-point-before-word-p sp-point-after-word-p sp-point-before-same-p))))
 
@@ -50,9 +50,11 @@
   :after anaconda-mode
   :config
   (set! :company-backend 'python-mode '(company-anaconda))
+  (set! :jump 'python-mode
+    :definition #'anaconda-mode-find-definitions
+    :references #'anaconda-mode-find-referenences
+    :documentation #'anaconda-mode-show-doc)
   (map! :map python-mode-map
-        :m "gd" #'anaconda-mode-find-definitions
-        :m "gD" #'anaconda-mode-find-references
         :localleader
         :prefix "f"
         :nv "d" #'anaconda-mode-find-definitions

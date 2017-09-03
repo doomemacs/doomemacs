@@ -1,6 +1,19 @@
 ;;; lang/cc/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
+(defun +cc*lineup-arglist (orig-fun &rest args)
+  "Improve indentation of continued C++11 lambda function opened as argument."
+  (if (and (eq major-mode 'c++-mode)
+           (ignore-errors
+             (save-excursion
+               (goto-char (c-langelem-pos langelem))
+               ;; Detect "[...](" or "[...]{". preceded by "," or "(",
+               ;;   and with unclosed brace.
+               (looking-at-p ".*[(,][ \t]*\\[[^]]*\\][ \t]*[({][^}]*$"))))
+      0 ; no additional indent
+    (apply orig-fun args)))
+
+;;;###autoload
 (defun +cc/autoclose->-maybe ()
   "For some reason smartparens won't autoskip >'s, this hack does."
   (interactive)

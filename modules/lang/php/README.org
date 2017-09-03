@@ -1,4 +1,4 @@
-* :lang php
+#+TITLE: :lang php
 
 This module adds support for PHP 5.3+ (including PHP7).
 
@@ -12,14 +12,18 @@ This module adds support for PHP 5.3+ (including PHP7).
 + [[https://github.com/hlissner/emacs-snippets/tree/master/php-mode][Snippets]]
 
 #+begin_quote
-PHP was the first programming language I got paid to code in, back in the Cretaceous period (2003). I'm so, so sorry. All those programmers who inherited my earliest PHP work. I know you're out there, writhing in your straitjackets.
-
-I suppose it's hip for programmers to projectile vomit to any mention of PHP, but they have good reason to. Not because it's /necessarily/ a bad language, and not /just/ because of a couple inconsistently ordered parameters, but because it's too easy to make junk with. You've heard the war stories.
+PHP was the first programming language I got paid to code in, back in the Cretaceous period (2003). My sincerest apologies go out to all the programmers who inherited my earliest PHP work. I know you're out there, writhing in your straitjackets.
 
 Save a programmer today. Stop a friend from choosing PHP as their first language.
 #+end_quote
 
-** Install
+* Table of Contents :TOC:
+- [[#install][Install]]
+  - [[#php][PHP]]
+  - [[#dependencies][Dependencies]]
+
+* Install
+** PHP
 To get started with PHP, you'll need ~php~ (5.3+) and ~composer~:
 
 *** MacOS
@@ -37,7 +41,7 @@ sudo pacman --needed --noconfirm -S php composer  # or php53, php54, php55
 #+END_SRC
 
 ** Dependencies
-The features in this module optionally depends on the following php packages:
+The features in this module optionally depend on the following php packages:
 
 + ~boris~ (REPL)
 + ~phpctags~ (better code completion)

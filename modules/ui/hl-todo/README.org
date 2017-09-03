@@ -1,0 +1,13 @@
+#+TITLE: :ui hl-todo
+
+This module adds syntax highlighting for TODO/FIXME/NOTE tags in programming major-modes.
+
+What keywords are highlighted (and their color) can be customized through ~hl-todo-keyword-faces~.
+
+#+BEGIN_SRC emacs-lisp
+;; the default
+(setq hl-todo-keyword-faces
+      `(("TODO"  . ,(face-foreground 'warning))
+        ("FIXME" . ,(face-foreground 'error))
+        ("NOTE"  . ,(face-foreground 'success))))
+#+END_SRC

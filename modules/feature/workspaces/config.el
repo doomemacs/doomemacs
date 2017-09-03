@@ -10,7 +10,7 @@
 ;; load the last autosaved session. You can give sessions a custom name so they
 ;; can be loaded later.
 ;;
-;; FYI persp-mode requires `workgroups' for file persistence in Emacs 24.4.
+;; NOTE persp-mode requires `workgroups' for file persistence in Emacs 24.4.
 
 (defvar +workspaces-main "main"
   "The name of the primary and initial workspace, which cannot be deleted or
@@ -41,16 +41,17 @@ renamed.")
         persp-auto-save-opt (if noninteractive 0 1))
 
   ;; Bootstrap
-  (add-hook 'doom-init-hook #'+workspaces|init)
+  (add-hook 'doom-post-init-hook #'+workspaces|init)
   (add-hook 'after-make-frame-functions #'+workspaces|init)
 
   (define-key persp-mode-map [remap delete-window] #'+workspace/close-window-or-workspace)
 
-  ;; per-frame workspaces
+  ;; per-frame and per-project workspaces
   (setq persp-init-new-frame-behaviour-override nil
-        persp-interactive-init-frame-behaviour-override #'+workspace-on-new-frame)
-  (add-hook 'projectile-before-switch-project-hook #'+workspaces|create-project-workspace)
+        persp-interactive-init-frame-behaviour-override #'+workspace-on-new-frame
+        projectile-switch-project-action #'projectile-find-file)
   (add-hook 'delete-frame-functions #'+workspaces|delete-associated-workspace-maybe)
+  (advice-add #'projectile-switch-project-by-name :around #'+workspaces*switch-project-by-name)
 
   ;; only auto-save when real buffers are present
   (advice-add #'persp-asave-on-exit :around #'+workspaces*autosave-real-buffers)

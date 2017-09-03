@@ -23,7 +23,8 @@ private/hlissner/snippets."
        (interactive)
        (let ((default-directory ,dir)
              projectile-require-project-root
-             projectile-cached-buffer-file-name)
+             projectile-cached-buffer-file-name
+             projectile-cached-project-root)
          (call-interactively (command-remapping #'projectile-find-file))))
      (defun ,(intern (format "+hlissner/browse-%s" name)) ()
        (interactive)

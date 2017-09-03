@@ -1,12 +1,17 @@
 ;;; feature/version-control/config.el -*- lexical-binding: t; -*-
 
+(unless (featurep! -git)
+  (load! +git))
+;; TODO hg support
+;; (unless (featurep! -hg)
+;;   (load! +hg))
+
+;;
 (setq vc-make-backup-files nil)
 
 (defvar +vcs-auto-hydra-smerge t
   "When entering `smerge-mode' automatically open associated hydra.")
 
-(load! +git)
-;; (load! +hg)
 
 (after! vc-annotate
   (set! :popup

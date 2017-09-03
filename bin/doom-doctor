@@ -75,6 +75,7 @@
 (defmacro error!   (&rest args) `(message (color 1 (color 31 ,@args))))
 (defmacro warn!    (&rest args) `(message (color 1 (color 33 ,@args))))
 (defmacro success! (&rest args) `(message (color 1 (color 32 ,@args))))
+(defmacro log!     (&rest args) `(if doom-debug-mode (message (color 34 ,@args))))
 (defmacro explain! (&rest args) `(message (indented 2 (autofill ,@args))))
 
 ;;; Polyfills
@@ -100,8 +101,9 @@
 (let (doom-core-packages doom-debug-mode)
   (condition-case ex
       (progn
-        (let ((inhibit-message t))
-          (load "~/.emacs.d/core/core.el" nil t))
+        (let ((inhibit-message t)
+              noninteractive)
+          (load "~/.emacs.d/init.el" nil t))
         (doom-initialize-packages)
         (doom|finalize)
         (success! "Attempt to load DOOM: success! Loaded v%s" doom-version)
@@ -118,6 +120,7 @@
 
 ;; --- is emacs set up properly? ------------------------------
 
+(log! "test-emacs")
 (check! (version< emacs-version "25.1")
   (error! "Important: Emacs %s detected [%s]" emacs-version (executable-find "emacs"))
   (explain!
@@ -129,16 +132,48 @@
 
 ;; --- is the environment set up properly? --------------------
 
-(when (boundp 'doom-font)
-  (cond ((fboundp 'find-font)
-         (unless (find-font doom-font)
-           (warn! "Warning: couldn't find %s font" (font-get doom-font :family))
-           (explain! "If you use a different font, you may ignore this warning.")))
-        (t
-         (warn! "Couldn't detect font!")
-         (explain! "This could indicate the incorrect version of Emacs is being used!"))))
+;; windows? windows
+(log! "test-windows")
+(check! (memq system-type '(windows-nt ms-dos cygwin))
+  (warn! "Warning: Windows detected")
+  (explain! "DOOM was designed for MacOS and Linux. Expect a bumpy ride!"))
+
+;; are all default fonts present
+(log! "test-fonts")
+(if (not (fboundp 'find-font))
+    (progn
+      (warn! "Warning: unable to detect font")
+      (explain! "The `find-font' function is missing. This could indicate the incorrect "
+                "version of Emacs is being used!"))
+  (defun -find-font (family)
+    (when (fontp family)
+      (setq family (symbol-name (font-get doom-font :family))))
+    (let ((inhibit-message t))
+     (shell-command (format "fc-list | grep %s" (shell-quote-argument family)))))
+
+  (when (boundp 'doom-font)
+    (if (-find-font doom-font)
+        (success! "Found font %s" (font-get doom-font :family))
+      (warn! "Warning: couldn't find %s font (default) (%s)"
+             (font-get doom-font :family))))
+  ;; all-the-icons fonts
+  (let ((font-dest (pcase system-type
+                     ('gnu/linux (concat (or (getenv "XDG_DATA_HOME")
+                                             (concat (getenv "HOME") "/.local/share"))
+                                         "/fonts/"))
+                     ('darwin (concat (getenv "HOME") "/Library/Fonts/")))))
+    (when (and font-dest (require 'all-the-icons nil t))
+      (dolist (font all-the-icons-font-names)
+        (if (file-exists-p (expand-file-name font font-dest))
+            (success! "Found font %s" font)
+          (warn! "Warning: couldn't find %s font in %s"
+                 font font-dest)
+          (explain! "You can install it by running `M-x all-the-icons-install-fonts' within Emacs.\n\n"
+                    "This could also mean you've installed them in non-standard locations, in which "
+                    "case, ignore this warning."))))))
 
 ;; gnutls-cli & openssl
+(log! "test-gnutls")
 (cond ((executable-find "gnutls-cli"))
       ((executable-find "openssl")
        (let* ((output (shell-command-to-string "openssl ciphers -v"))
@@ -174,12 +209,13 @@
           "network, provider, government, neckbearded mother-in-laws, geeky roommates, "
           "or just about anyone who knows more about computers than you do!"))))
 
+(log! "test-tls")
 (cond ((or (executable-find "gnutls-cli")
            (executable-find "openssl"))
        (let ((tls-checktrust t)
              (gnutls-verify-error t))
-         (dolist (url '("https://elpa.gnu.org/packages/archive-contents"
-                        "https://melpa.org/packages/archive-contents"))
+         (dolist (url '("https://elpa.gnu.org"
+                        "https://melpa.org"))
            (condition-case-unless-debug ex
                (let (result)
                  (let ((inhibit-message t))
@@ -214,12 +250,8 @@
       (t
        (error! "Nope!")))
 
-;; windows? windows
-(check! (memq system-type '(windows-nt ms-dos cygwin))
-  (warn! "Warning: Windows detected")
-  (explain! "DOOM was designed for MacOS and Linux. Expect a bumpy ride!"))
-
 ;; bsd vs gnu tar
+(log! "test-tar")
 (let ((tar-bin (or (executable-find "gtar")
                    (executable-find "tar"))))
   (if tar-bin

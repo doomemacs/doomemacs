@@ -47,11 +47,6 @@
  "M-8"    (λ! (+workspace/switch-to 7))
  "M-9"    (λ! (+workspace/switch-to 8))
  "M-0"    #'+workspace/switch-to-last
- ;; Basic escape keys for emacs mode
- "C-h"    #'evil-window-left
- "C-j"    #'evil-window-down
- "C-k"    #'evil-window-up
- "C-l"    #'evil-window-right
  ;; Other sensible, textmate-esque global bindings
  "M-r"    #'+eval/buffer
  "M-R"    #'+eval/region-and-replace
@@ -65,6 +60,12 @@
  "C-M-f"  #'doom/toggle-fullscreen
  :m "A-j" #'+hlissner:multi-next-line
  :m "A-k" #'+hlissner:multi-previous-line
+ :nv "C-SPC" #'+evil:fold-toggle
+ ;; Easier window navigation
+ :en "C-h"    #'evil-window-left
+ :en "C-j"    #'evil-window-down
+ :en "C-k"    #'evil-window-up
+ :en "C-l"    #'evil-window-right
 
  (:prefix "C-x"
    "p" #'doom/other-popup)
@@ -552,6 +553,8 @@
    :n "RET"       #'neotree-enter
    :n [backspace] #'evil-window-prev
    :n "c"         #'neotree-create-node
+   :n "r"         #'neotree-rename-node
+   :n "d"         #'neotree-delete-node
    :n "j"         #'neotree-next-line
    :n "k"         #'neotree-previous-line
    :n "n"         #'neotree-next-line

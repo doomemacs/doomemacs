@@ -98,6 +98,7 @@
    org-cycle-separator-lines 1
    ;; org-ellipsis "  "
    org-entities-user '(("flat"  "\\flat" nil "" "" "266D" "♭") ("sharp" "\\sharp" nil "" "" "266F" "♯"))
+   org-ellipsis "  "
    org-fontify-done-headline t
    org-fontify-quote-and-verse-blocks t
    org-fontify-whole-heading-line t
@@ -132,65 +133,22 @@
   (when (or (featurep! :completion ivy)
             (featurep! :completion helm))
     (setq-default org-completion-use-ido nil
-                  org-outline-path-complete-in-steps nil))
-
-  ;; Custom fontification
-  (defsubst +org--tag-face (n)
-    (let ((kwd (match-string n)))
-      (or (and (equal kwd "#") 'org-tag)
-          (and (equal kwd "@") 'org-special-keyword))))
-
-  (defun +org|init-custom-fontification ()
-    "Correct (and improve) org-mode's font-lock keywords.
-
-  1. Re-set `org-todo' & `org-headline-done' faces, to make them respect
-     underlying faces.
-  2. Fontify item bullets
-  3. Fontify item checkboxes (and when they're marked done)
-  4. Fontify dividers/separators (5+ dashes)
-  5. Fontify #hashtags and @at-tags, for personal convenience"
-    (let ((org-todo (format org-heading-keyword-regexp-format
-                            org-todo-regexp))
-          (org-done (format org-heading-keyword-regexp-format
-                            (concat "\\(?:" (mapconcat #'regexp-quote org-done-keywords "\\|") "\\)"))))
-      (setq
-       org-font-lock-extra-keywords
-       (append (org-delete-all
-                `(("\\[\\([0-9]*%\\)\\]\\|\\[\\([0-9]*\\)/\\([0-9]*\\)\\]"
-                   (0 (org-get-checkbox-statistics-face) t))
-                  (,org-todo (2 (org-get-todo-face 2) t))
-                  (,org-done (2 'org-headline-done t)))
-                org-font-lock-extra-keywords)
-               `((,org-todo (2 (org-get-todo-face 2) prepend))
-                 (,org-done (2 'org-headline-done prepend))
-                 ;; Make checkbox statistic cookies respect underlying faces
-                 ("\\[\\([0-9]*%\\)\\]\\|\\[\\([0-9]*\\)/\\([0-9]*\\)\\]"
-                  (0 (org-get-checkbox-statistics-face) prepend))
-                 ;; I like how org-mode fontifies checked TODOs and want this to extend to
-                 ;; checked checkbox items:
-                 ("^[ \t]*\\(?:[-+*]\\|[0-9]+[).]\\)[ \t]+\\(\\(?:\\[@\\(?:start:\\)?[0-9]+\\][ \t]*\\)?\\[\\(?:X\\|\\([0-9]+\\)/\\2\\)\\][^\n]*\n\\)"
-                  1 'org-headline-done prepend)
-                 ;; make plain list bullets stand out
-                 ("^ *\\([-+]\\|[0-9]+[).]\\) " 1 'org-list-dt append)
-                 ;; and separators/dividers
-                 ("^ *\\(-----+\\)$" 1 'org-meta-line)
-                 ;; custom #hashtags & @at-tags for another level of organization
-                 ("\\s-\\(\\([#@]\\)[^ \n.,]+\\)" 1 (+org--tag-face 2)))))))
-  (add-hook 'org-font-lock-set-keywords-hook #'+org|init-custom-fontification))
+                  org-outline-path-complete-in-steps nil)))
 
 (defun +org-init-keybinds ()
   "Sets up org-mode and evil keybindings. Tries to fix the idiosyncrasies
 between the two."
-  (map! (:map org-mode-map "RET" #'org-return-indent)
+  (map! (:map org-mode-map
+          "RET" #'org-return-indent)
 
         (:map +org-evil-mode-map
-          :n "RET" #'+org/dwim-at-point
+          :n  "RET" #'+org/dwim-at-point
 
           ;; Navigate table cells (from insert-mode)
-          :i "C-L" #'+org/table-next-field
-          :i "C-H" #'+org/table-previous-field
-          :i "C-K" #'+org/table-previous-row
-          :i "C-J" #'+org/table-next-row
+          :i  "C-l"   #'+org/table-next-field
+          :i  "C-h"   #'+org/table-previous-field
+          :i  "C-k"   #'+org/table-previous-row
+          :i  "C-j"   #'+org/table-next-row
           ;; Expand tables (or shiftmeta move)
           :ni "C-S-l" #'+org/table-append-field-or-shift-right
           :ni "C-S-h" #'+org/table-prepend-field-or-shift-left

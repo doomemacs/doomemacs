@@ -9,7 +9,6 @@
     (require 'neotree)
     (cond ((and (neo-global--window-exists-p)
                 (get-buffer-window neo-buffer-name t))
-           (neotree-hide)
            (neotree-find path project-root))
           ((not (and (neo-global--window-exists-p)
                      (equal (file-truename (neo-global--with-buffer neo-buffer--start-node))

@@ -119,8 +119,9 @@
   (set! :electric 'rjsx-mode :chars '(?\} ?\) ?. ?>))
 
   ;; disable electric keys (I use snippets and `emmet-mode' instead)
-  (define-key rjsx-mode-map "<" nil)
-  (define-key rjsx-mode-map (kbd "C-d") nil)
+  (map! :map rjsx-mode-map
+        "<" nil
+        "C-d" nil)
   (add-hook! rjsx-mode
     ;; jshint doesn't really know how to deal with jsx
     (push 'javascript-jshint flycheck-disabled-checkers)))

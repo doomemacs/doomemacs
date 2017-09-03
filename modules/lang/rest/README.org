@@ -1,4 +1,4 @@
-* :lang rest
+#+TITLE: :lang rest
 
 This module adds [[https://en.wikipedia.org/wiki/Representational_state_transfer][REST]] support.
 
@@ -10,10 +10,14 @@ This module adds [[https://en.wikipedia.org/wiki/Representational_state_transfer
 ~restclient-mode~ is tremendously useful for testing REST APIs. My workflow is to open an ~org-mode~ buffer, create a restclient source block and hack away. ~restclient-mode~ and ~company-restclient~ power this arcane wizardry.
 #+end_quote
 
-** Install
+* Table of Contents :TOC:
+- [[#install][Install]]
+- [[#example][Example]]
+
+* Install
 No additional setup required.
 
-** Example
+* Example
 #+BEGIN_SRC restclient
 GET https://jsonplaceholder.typicode.com/posts/1
 #+END_SRC

@@ -12,11 +12,12 @@
 
 ;;;###autoload
 (defun +pass-get-field (entry fields)
-  (if-let (data (if (listp entry) entry (auth-pass-parse-entry entry)))
-      (cl-loop for key in (doom-enlist fields)
-               when (assoc key data)
-               return (cdr it))
-    (error "Couldn't find entry: %s" entry)))
+  (unless noninteractive
+    (if-let (data (if (listp entry) entry (auth-pass-parse-entry entry)))
+        (cl-loop for key in (doom-enlist fields)
+                 when (assoc key data)
+                 return (cdr it))
+      (error "Couldn't find entry: %s" entry))))
 
 ;;;###autoload
 (defun +pass-get-user (entry)

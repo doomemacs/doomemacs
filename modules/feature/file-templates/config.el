@@ -55,6 +55,7 @@
           ("-test\\.el$"                     "__"               emacs-ert-mode)
           ("/.emacs.d/.+\\.el$"              "__doom-module"    emacs-lisp-mode)
           ("/.emacs.d/.+/packages\\.el$"     "__doom-packages"  emacs-lisp-mode)
+          ("/.emacs.d/.+/README\\.org$"      "__doom-readme"    org-mode)
           (snippet-mode "__" snippet-mode)
           ;; Go
           ("\\.go$"                          "__.go"            go-mode)
@@ -78,6 +79,8 @@
           ("/conf\\.lua$"                    "__conf.lua"       love-mode)
           ;; Markdown
           ("\\.md$"                          "__"               markdown-mode)
+          ;; Org
+          ("\\.org$"                         "__"               org-mode)
           ;; PHP
           ("\\.php$"                         "__"               php-mode)
           ("\\.class\\.php$"                 "__.class.php"     php-mode)

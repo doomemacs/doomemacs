@@ -4,15 +4,13 @@
 ;; Plugins
 ;;
 
-(def-package! rainbow-mode
-  :init
-  (add-hook 'prog-mode-hook #'rainbow-mode))
+(def-package! rainbow-mode)
+
 
 (def-package! kurecolor
   :after rainbow-mode
   :config
   (when (featurep! :feature hydra)
-    (require 'hydra)
     (defhydra hydra-kurecolor (:color pink
                                       :hint  nil)
       "
