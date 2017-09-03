@@ -20,7 +20,7 @@
   (add-hook 'doom-init-ui-hook #'doom-themes-org-config)
 
   ;; blink mode-line on errors
-  (add-hook 'doom-init-ui-hook #'doom-themes-visual-bell-config)
+  ;; (add-hook 'doom-init-ui-hook #'doom-themes-visual-bell-config)
 
   ;; Add file icons to doom-neotree
   (add-hook 'doom-init-ui-hook #'doom-themes-neotree-config)
