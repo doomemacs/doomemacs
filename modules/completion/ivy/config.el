@@ -25,8 +25,9 @@ session)."
 ;;
 
 (def-package! ivy
-  :commands ivy-mode
-  :init (add-hook 'doom-init-hook #'ivy-mode)
+  :demand t
+  :init
+  (add-hook 'doom-post-init-hook #'ivy-mode)
   :config
   (setq ivy-height 12
         ivy-do-completion-in-region nil
