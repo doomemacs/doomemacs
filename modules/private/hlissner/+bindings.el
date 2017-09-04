@@ -179,7 +179,7 @@
      :desc "Browse dotfiles"           :n "D" #'+hlissner/browse-dotfiles
      :desc "Find file in emacs.d"      :n "e" #'+hlissner/find-in-emacsd
      :desc "Browse emacs.d"            :n "E" #'+hlissner/browse-emacsd
-     :desc "Recent files"              :n "r" #'recentf
+     :desc "Recent files"              :n "r" #'recentf-open-files
      :desc "Recent project files"      :n "R" #'projectile-recentf
      :desc "Yank filename"             :n "y" #'+hlissner/yank-buffer-filename)
 

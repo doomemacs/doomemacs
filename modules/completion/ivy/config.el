@@ -50,7 +50,7 @@ session)."
         [remap find-file]                 #'counsel-find-file
         [remap switch-to-buffer]          #'ivy-switch-buffer
         [remap persp-switch-to-buffer]    #'+ivy/switch-workspace-buffer
-        [remap recentf]                   #'counsel-recentf
+        [remap recentf-open-files]        #'counsel-recentf
         [remap imenu]                     #'counsel-imenu
         [remap bookmark-jump]             #'counsel-bookmark
         [remap projectile-switch-project] #'counsel-projectile-switch-project
