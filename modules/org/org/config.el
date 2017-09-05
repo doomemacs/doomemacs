@@ -44,16 +44,25 @@
 
 (defun +org|hook ()
   "Run everytime `org-mode' is enabled."
+  (when (featurep! :feature evil)
+    (add-hook 'evil-insert-state-exit-hook #'+org|realign-table-maybe nil t)
+    (add-hook 'evil-insert-state-exit-hook #'+org|update-cookies nil t)
+    (+org-evil-mode +1))
+
+  ;; TODO Add filesize checks (possibly too expensive in big org files)
+  (add-hook 'before-save-hook #'+org|update-cookies nil t)
+
+  ;;
   (setq line-spacing 1)
+  (visual-line-mode +1)
   (doom|disable-line-numbers)
 
-  ;; show-paren-mode causes problems for org-indent-mode
-  (make-local-variable 'show-paren-mode)
-  (setq show-paren-mode nil)
+  ;; show-paren-mode causes problems for org-indent-mode, so disable it
+  (set (make-local-variable 'show-paren-mode) nil)
 
   (unless org-agenda-inhibit-startup
     ;; My version of the 'overview' #+STARTUP option: expand first-level
-    ;; headings.
+    ;; headings. Expands the first level, but no further.
     (when (eq org-startup-folded t)
       (outline-hide-sublevels 2))
 
@@ -72,14 +81,6 @@
     :lighter " !"
     :keymap (make-sparse-keymap)
     :group 'evil-org)
-
-  (add-hook 'org-mode-hook #'visual-line-mode)
-  (when (featurep! :feature evil)
-    (add-hook 'org-mode-hook #'+org-evil-mode))
-
-  (add-hook 'evil-insert-state-exit-hook #'+org|realign-table-maybe nil t)
-  (add-hook 'evil-insert-state-exit-hook #'+org|update-cookies nil t)
-  (add-hook 'before-save-hook #'+org|update-cookies nil t)
 
   (+org-init-ui)
   (+org-init-keybinds)
@@ -207,8 +208,8 @@ between the two."
           (t . ,(cond (IS-MAC "open -R \"%s\"")
                       (IS-LINUX "xdg-open \"%s\"")))))
 
-  ;; Remove highlights on ESC
   (defun +org|remove-occur-highlights ()
+    "Remove org occur highlights on ESC in normal mode."
     (when (derived-mode-p 'org-mode)
       (org-remove-occur-highlights)
       t))
