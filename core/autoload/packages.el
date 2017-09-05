@@ -153,6 +153,7 @@ Used by `doom/packages-update'."
         (debug! "New thread for: %s" part)
         (push (async-start
                `(lambda ()
+                  (setq user-emacs-directory ,user-emacs-directory)
                   (let ((noninteractive t))
                     (load ,(expand-file-name "core.el" doom-core-dir)))
                   (delq nil (mapcar #'doom-package-outdated-p ',part))))
