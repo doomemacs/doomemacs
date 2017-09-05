@@ -21,7 +21,7 @@
           ;; TODO: New vocabulary word
 
           ("c" "Changelog" entry
-           (file+headline (expand-file-name "CHANGELOG.org" (doom/project-root)) "Unreleased")
+           (file+headline (expand-file-name "CHANGELOG.org" (doom-project-root)) "Unreleased")
            "* %?")
 
           ;; ("p" "Project Notes" entry
