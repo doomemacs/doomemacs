@@ -60,7 +60,7 @@ the cursor."
   (condition-case ex
       (cond ((string-match-p "^data:image/png;base64," uri)
              (org-download-dnd-base64 uri nil))
-            ((and (image-type-from-file-name uri) (not arg))
+            ((image-type-from-file-name uri)
              (org-download-image uri))
             (t
              (let ((new-path (expand-file-name (org-download--fullname uri))))
