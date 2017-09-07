@@ -26,55 +26,82 @@
 
 ;;;###autoload
 (defun +org/dwim-at-point ()
-  "Do-what-I-mean at point. This includes following timestamp links, aligning
-tables, toggling checkboxes/todos, executing babel blocks, previewing latex
-fragments, opening links, or refreshing images."
+  "Do-what-I-mean at point.
+
+If on a:
+- checkbox list item or todo heading: toggle it.
+- clock: update its time.
+- headline: toggle latex fragments and inline images underneath.
+- footnote definition: jump to the footnote
+- table-row or a TBLFM: recalculate the table's formulas
+- table-cell: clear it and go into insert mode. If this is a formula cell,
+  recaluclate it instead.
+- babel-call: execute the source block
+- statistics-cookie: update it.
+- latex fragment: toggle it.
+- link: follow it
+- otherwise, refresh all inline images in current tree."
   (interactive)
   (let* ((scroll-pt (window-start))
          (context (org-element-context))
          (type (org-element-type context)))
-    (cond
-     ((memq type '(planning timestamp))
-      (org-follow-timestamp-link))
+    (pcase type
+      ((guard (org-element-property :checkbox (org-element-lineage context '(item) t)))
+       (let ((match (and (org-at-item-checkbox-p) (match-string 1))))
+         (org-toggle-checkbox (if (equal match "[ ]") '(16)))))
 
-     ((memq type '(table table-row))
-      (if (org-element-property :tblfm (org-element-property :parent context))
-          (org-table-recalculate t)
-        (org-table-align)))
+      (`headline
+       (cond ((org-element-property :todo-type context)
+              (org-todo
+               (if (eq (org-element-property :todo-type context) 'done) 'todo 'done)))
+             ((string= "ARCHIVE" (car-safe (org-get-tags)))
+              (org-force-cycle-archived))
+             (t
+              (org-remove-latex-fragment-image-overlays)
+              (org-toggle-latex-fragment '(4)))))
 
-     ((org-element-property :checkbox (org-element-lineage context '(item) t))
-      (let ((match (and (org-at-item-checkbox-p) (match-string 1))))
-        (org-toggle-checkbox (if (equal match "[ ]") '(16)))))
+      (`clock (org-clock-update-time-maybe))
 
-     ((and (eq type 'headline)
-           (org-element-property :todo-type context))
-      (org-todo
-       (if (eq (org-element-property :todo-type context) 'done) 'todo 'done)))
+      (`footnote-definition
+       (goto-char (org-element-property :post-affiliated context))
+       (call-interactively #'org-footnote-action))
 
-     ((and (eq type 'headline)
-           (string= "ARCHIVE" (car-safe (org-get-tags))))
-      (org-force-cycle-archived))
+      ((or `planning `timestamp) (org-follow-timestamp-link))
 
-     ((eq type 'headline)
-      (org-remove-latex-fragment-image-overlays)
-      (org-toggle-latex-fragment '(4)))
+      ((or `table `table-row)
+       (if (org-at-TBLFM-p)
+           (org-table-calc-current-TBLFM)
+         (ignore-errors
+           (save-excursion
+             (goto-char (org-element-property :contents-begin context))
+             (org-call-with-arg 'org-table-recalculate (or arg t))))))
 
-     ((eq type 'babel-call)
-      (org-babel-lob-execute-maybe))
+      (`table-cell
+       (org-table-blank-field)
+       (org-table-recalculate)
+       (when (and (string-empty-p (string-trim (org-table-get-field)))
+                  (bound-and-true-p evil-mode))
+         (evil-change-state 'insert)))
 
-     ((memq type '(src-block inline-src-block))
-      (org-babel-execute-src-block))
+      (`babel-call
+       (org-babel-lob-execute-maybe))
 
-     ((memq type '(latex-fragment latex-environment))
-      (org-toggle-latex-fragment))
+      (`statistics-cookie
+       (save-excursion (org-update-statistics-cookies nil)))
 
-     ((eq type 'link)
-      (let ((path (org-element-property :path (org-element-lineage context '(link) t))))
-        (if (and path (image-type-from-file-name path))
-            (+org/refresh-inline-images)
-          (org-open-at-point))))
+      ((or `src-block `inline-src-block)
+       (org-babel-execute-src-block))
 
-     (t (+org/refresh-inline-images)))
+      ((or `latex-fragment `latex-environment)
+       (org-toggle-latex-fragment))
+
+      (`link
+       (let ((path (org-element-property :path (org-element-lineage context '(link) t))))
+         (if (and path (image-type-from-file-name path))
+             (+org/refresh-inline-images)
+           (org-open-at-point))))
+
+      (_ (+org/refresh-inline-images)))
     (set-window-start nil scroll-pt)))
 
 ;;;###autoload
