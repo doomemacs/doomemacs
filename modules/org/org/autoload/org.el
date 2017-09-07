@@ -13,10 +13,10 @@
 
 ;;;###autoload
 (defun +org|realign-table-maybe ()
-  "Auto-align table under cursor."
+  "Auto-align table under cursor and re-calculate formulas."
   (when (org-at-table-p)
     (save-excursion
-      (org-table-align))))
+      (quiet! (org-table-recalculate)))))
 
 ;;;###autoload
 (defun +org|update-cookies ()
