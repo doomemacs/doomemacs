@@ -259,11 +259,16 @@ wrong places)."
 ;;;###autoload
 (defun +org/toggle-fold ()
   "Toggle the local fold at the point (as opposed to cycling through all levels
-with `org-cycle'). Also removes babel result blocks, if run from a code block."
+with `org-cycle'). Also:
+
+  + If in a babel block, removes result blocks.
+  + If in a table, realign it, if necessary."
   (interactive)
   (save-excursion
     (org-beginning-of-line)
-    (cond ((org-in-src-block-p)
+    (cond ((org-table-p)
+           (org-table-align))
+          ((org-in-src-block-p)
            (org-babel-remove-result))
           ((org-at-heading-p)
            (outline-toggle-children))
