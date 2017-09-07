@@ -110,7 +110,7 @@
        :org
        org             ; organize your plain life in plain text
        org-babel       ; executable code snippets in org-mode
-      ;org-attach      ; FIXME my own, simpler attachment system
+       org-attach      ; a simpler attachment system
        org-capture     ; a better org-capture, in or outside of Emacs
        org-export      ; a custom, centralized export system
        org-notebook    ; org-mode as a notebook
