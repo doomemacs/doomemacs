@@ -14,7 +14,7 @@
 
   (autoload 'switch-to-haskell "inf-haskell" nil t)
   (after! inf-haskell
-    (map! :map inf-haskell-mode-map "ESC ESC" #'doom/popup-close)))
+    (map! :map inferior-haskell-mode-map "ESC ESC" #'doom/popup-close)))
 
 
 (def-package! company-ghc
