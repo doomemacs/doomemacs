@@ -98,8 +98,7 @@ a resource for others.
 
 If you'd like to support my efforts, I welcome contributions of any kind:
 
-+ I love pull requests and bug reports (read the [contribution
-  guidelines][wiki-contribute] first though!), and elisp pointers are especially
++ I love pull requests and bug reports, and elisp pointers are especially
   welcome. Seriously, don't hesitate to [tell me my Elisp-fu
   sucks][doom-new-issue]!
 + I'm happy to discuss Emacs workflow, ideas or tooling. If you think I, Doom or
@@ -108,7 +107,6 @@ If you'd like to support my efforts, I welcome contributions of any kind:
 
 
 [wiki]: /../../wiki
-[wiki-contribute]: /../../wiki/Contribute
 [wiki-conventions]: /../../wiki/Conventions
 [wiki-modules]: /../../wiki/Modules
 [wiki-customization]: /../../wiki/Customization
