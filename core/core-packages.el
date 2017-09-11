@@ -228,7 +228,9 @@ This aggressively reloads core autoload files."
 
   e.g '(:feature evil :lang emacs-lisp javascript java)"
   (unless doom-modules
-    (setq doom-modules (make-hash-table :test #'equal :size (+ 5 (length modules)))))
+    (setq doom-modules (make-hash-table :test #'equal
+                                        :size (+ 5 (length modules))
+                                        :rehash-threshold 1.0)))
   (let (mode)
     (dolist (m modules)
       (cond ((keywordp m)
