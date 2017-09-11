@@ -3,6 +3,8 @@
 (def-package! hydra
   :commands (+hydra-zoom/body +hydra-window/body defhydra)
   :config
+  (setq lv-use-separator t)
+
   (defhydra +hydra-zoom (:hint t :color red)
     "zoom"
     ("j" text-scale-increase "in")
