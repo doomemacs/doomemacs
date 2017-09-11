@@ -3,7 +3,7 @@
 [![Develop Build Status](https://img.shields.io/travis/hlissner/doom-emacs/develop.svg?label=develop&style=flat-square)](https://travis-ci.org/hlissner/doom-emacs)
 [![MIT](https://img.shields.io/badge/license-MIT-green.svg?style=flat-square)](./LICENSE)
 
-[![Main screenshot](/../screenshots/main.png)](/../screenshots)
+[![Main screenshot](/../screenshots/main.png)](/../../tree/screenshots)
 
 - - -
 
