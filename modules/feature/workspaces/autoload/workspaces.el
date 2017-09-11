@@ -116,7 +116,7 @@ Returns t on success, nil otherwise."
     (error "%s is not an available workspace" name))
   (persp-save-to-file-by-names
    +workspace-workspace-file *persp-hash* (list name) t)
-  (memq name (persp-list-persp-names-in-file +workspace-workspace-file)))
+  (memq name (persp-list-persp-names-in-file (concat persp-save-dir +workspace-workspace-file))))
 
 ;;;###autoload
 (defun +workspace-save-session (&optional name)
@@ -194,7 +194,7 @@ current workspace (by name) from session files."
         (+workspace-current-name)
       (completing-read "Workspace to load: "
                        (persp-list-persp-names-in-file
-                        +workspace-workspace-file)))))
+                        (concat persp-save-dir +workspace-workspace-file))))))
   (if (not (+workspace-load name))
       (+workspace-error (format "Couldn't load workspace %s" name))
     (+workspace/switch-to name)
@@ -250,7 +250,7 @@ the session as."
 ;;;###autoload
 (defun +workspace/rename (new-name)
   "Rename the current workspace."
-  (interactive)
+  (interactive (list (read-from-minibuffer "New workspace name: ")))
   (condition-case ex
       (let* ((current-name (+workspace-current-name))
              (old-name (+workspace-rename current-name new-name)))
