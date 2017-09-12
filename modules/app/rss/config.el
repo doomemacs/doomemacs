@@ -4,10 +4,7 @@
 ;; by apps Reeder and Readkit. It can be invoked via `=rss'. Otherwise, if you
 ;; don't care for the UI you can invoke elfeed directly with `elfeed'.
 
-(defvar +rss-org-dir (concat +org-dir "/rss/")
-  "Where RSS org files are located.")
-
-(defvar +rss-elfeed-files (list "elfeed.org")
+(defvar +rss-elfeed-files (list "rss/elfeed.org")
   "The files that configure `elfeed's rss feeds.")
 
 (defvar +rss-split-direction 'below
@@ -62,6 +59,6 @@
   :after elfeed
   :config
   (setq rmh-elfeed-org-files
-        (let ((default-directory +rss-org-dir))
+        (let ((default-directory +org-dir))
           (mapcar #'expand-file-name +rss-elfeed-files)))
   (elfeed-org))
