@@ -255,9 +255,9 @@ If TRUNCATE-TAIL is t also truncate the parent directory of the file."
               (basename (cdr dirs))
               (dir-faces (or modified-faces (if active 'doom-modeline-project-root-dir)))
               (file-faces (or modified-faces (if active 'doom-modeline-buffer-file))))
-          (concat (propertize dirname
-                              'face (if dir-faces `(:inherit ,dir-faces)))
-                  (propertize (concat (if truncate-tail (substring basename 0 1) basename) "/")
+          (concat (propertize (concat dirname
+                                      (if truncate-tail (substring basename 0 1) basename)
+                                      "/")
                               'face (if dir-faces `(:inherit ,dir-faces)))
                   (propertize (file-name-nondirectory buffer-file-name)
                               'face (if file-faces `(:inherit ,file-faces)))))))))
