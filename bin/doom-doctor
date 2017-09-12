@@ -210,7 +210,19 @@
           "or just about anyone who knows more about computers than you do!"))))
 
 (log! "test-tls")
-(cond ((or (executable-find "gnutls-cli")
+(cond ((not (string-match-p "\\_<GNUTLS\\_>" system-configuration-features))
+       (warn! "Warning: You didn't install Emacs with gnutls support")
+       (explain!
+        "This may cause 'pecular error' errors with the Doom doctor, and is likely to "
+        "interfere with package management. Your mileage may vary."
+        (when (eq system-type 'darwin)
+          (concat "\nMacOS users are advised to install Emacs via homebrew with one of the following:\n"
+                  "    brew install emacs --with-gnutls"
+                  "      or"
+                  "    brew tap d12frosted/emacs-plus"
+                  "    brew install emacs-plus"))))
+
+      ((or (executable-find "gnutls-cli")
            (executable-find "openssl"))
        (let ((tls-checktrust t)
              (gnutls-verify-error t))
@@ -247,6 +259,7 @@
               (when (getenv "DEBUG")
                 (success! "Rejected %s (a good thing!)" url)
                 (explain! (pp-to-string ex))))))))
+
       (t
        (error! "Nope!")))
 
