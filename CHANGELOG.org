@@ -11,7 +11,6 @@
 
 * Todo
 + *Potential plugins:*
-  + =completion/ivy= [[https://github.com/yevgnen/ivy-rich][ivy-rich]], possible replacement for ~+ivy/switch-buffer~
   + =app/present= [[https://github.com/larstvei/Focus][focus]], for presenting code
   + [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]], client for MS Language Server Protocol, keep an eye on this
   + =lang/javascript= [[https://github.com/NicolasPetton/Indium][indium]] (IDE), keep an eye on this
@@ -26,10 +25,9 @@
   + =lang/python= [[https://github.com/Wilfred/pyimport][pyimport]] or [[https://github.com/anachronic/importmagic.el][importmagic]]
   + [[https://github.com/mhayashi1120/Emacs-imagex][emacs-imagex]], for manipulating images at point (zooming?)
   + =tools/term= [[https://github.com/riscy/shx-for-emacs][shx]], an extension for the shell in Emacs
-  + =app/crm= [[https://github.com/skeeto/emacsql][emacsql]], a sqlite backend; which would be useful for CRM storage.
-  + =core= [[https://github.com/Wilfred/helpful][helpful]], a better help buffer; possible replacement for ~describe-function~.
+  + =app/crm= [[https://github.com/skeeto/emacsql][emacsql]], a sqlite backend; possibly useful for CRM storage.
+  + =core= [[https://github.com/Wilfred/helpful][helpful]], a better help buffer; replacement for ~describe-function~?
 + *Planned modules:*
-  + =app/finance= -- ledger + org-mode.
   + =app/crm= -- Customer Relations Management, in Emacs, using org-mode.
   + =app/write= -- Make Emacs into a focused plaintext word processor (using markdown, org and rst) for writing papers and stories.
   + =app/regex= -- PCRE IDE, with live buffer matching, search/replace support, and an export-to-code feature for various languages.
@@ -45,9 +43,9 @@
       + C++ (~regex reg(regexp, ...)~)
     + Syntax highlighter for ~+regex-mode~ (plus make it a major mode)
     + Optimize: communicate with perl process (with ~make-process~ instead of ~call-process~)
-  + =lang/alda= -- Language support for [[https://github.com/alda-lang/alda][Alda]], the music programming language, using [[https://github.com/jgkamat/alda-mode][alda-mode]].
   + =org/org-publish= -- publishing org files to HTML (thanks to [[https://github.com/matthewgraybosch][matthewgraybosch]])
   + =org/org-attach= -- my own, simpler attachment system with drag-drop image attachment support and centralized storage.
+  + =app/torrents= -- Emacs as a torrent client (powered by transmission.el)
 + =core-ui= Replace or fix ~winner-mode~ unreliability (will close windows trying to revive killed buffers). Perhaps make ~doom/kill-this-buffer~ only disassociate buffer from persp-mode or bury buffer if persp-mode is inactive.
 + =org=
   + Better shackle + org-agenda integration
@@ -67,6 +65,16 @@
 + =core-popups= Add support for moving popup windows to the ~+evil/window-move-*~ commands #171
 
 * Unreleased (master)
++ =doom=
+  + Added new module: ~lang/ledger~, for editing ledger files.
+  + Fixed ~make update~ to work even if Doom is installed somewhere other than ~\~/.emacs.d~ (see [[https://github.com/hlissner/doom-emacs/issues/190][#190]]).
++ =feature=
+  + =hydra= Display a separator along the bottom of hydra windows for extra contrast.
++ =ui=
+  + =doom-dashboard= Elements are now centered using window-local margins, which fixes discrepancies when multiple dashboards are visible in different sized windows and/or frames (see [[https://github.com/hlissner/doom-emacs/issues/192][#192]]).
++ =org=
+  + If a table is under point when ~+org/toggle-fold~ is invoked, the table is realigned.
+  + =org-capture= Fix a vestigial reference to a long-since-renamed function: ~doom/project-root~.
 
 * 2.0.5 (Sep 03, 2017)
 + =doom=
@@ -84,7 +92,7 @@
   + Added new function: ~doom|disable-vi-tilde-fringe~ for turning off vi-tilde-fringe in select buffers.
   + Added support for relative line numbers (see ~doom-line-numbers-style~), using nlinum-relative on Emacs <26, and display-line-numbers on Emacs 26+.
 + =feature=
-  + =File Templates= Added a file template for:
+  + =file-templates= Added a file template for:
     + *.org files
     + Module README.org files.
   + =jump=
@@ -92,6 +100,7 @@
     + Rewrote ~+jump/online~ to:
       + Use the current selection, if active, or prompt for a query otherwise (with the thing at point as the initial input).
       + Prompts for the provider (search engine) on first use, and reuses the last provider on consecutive uses. If the universal argument is supplied, force ~+jump/online~ to prompt for the provider anyway.
+  + =workspaces= Fix interactive renaming of workspaces, as well as the ability to save and load workspaces from files (see [[https://github.com/hlissner/doom-emacs/pull/200][#200]]).
 + =completion=
   + Added all-the-icons support to ~ivy-switch-buffer~ and ~+ivy/switch-workspace-buffer~. Enable this with ~(setq +ivy-buffer-icons t)~.
 + =ui=
