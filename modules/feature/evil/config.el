@@ -295,16 +295,15 @@ the new algorithm is confusing, like in python or ruby."
   :config
   (global-evil-mc-mode +1)
 
-  (unless doom-init-p
-    ;; Add custom commands to whitelisted commands
-    (dolist (fn '(doom/deflate-space-maybe doom/inflate-space-maybe
-                                           doom/backward-to-bol-or-indent doom/forward-to-last-non-comment-or-eol
-                                           doom/backward-kill-to-bol-and-indent doom/newline-and-indent))
-      (push (cons fn '((:default . evil-mc-execute-default-call)))
-            evil-mc-custom-known-commands))
+  ;; Add custom commands to whitelisted commands
+  (dolist (fn '(doom/deflate-space-maybe doom/inflate-space-maybe
+                doom/backward-to-bol-or-indent doom/forward-to-last-non-comment-or-eol
+                doom/backward-kill-to-bol-and-indent doom/newline-and-indent))
+    (push (cons fn '((:default . evil-mc-execute-default-call)))
+          evil-mc-custom-known-commands))
 
-    ;; disable evil-escape in evil-mc; causes unwanted text on invocation
-    (push 'evil-escape-mode evil-mc-incompatible-minor-modes))
+  ;; disable evil-escape in evil-mc; causes unwanted text on invocation
+  (push 'evil-escape-mode evil-mc-incompatible-minor-modes)
 
   (defun +evil|escape-multiple-cursors ()
     "Clear evil-mc cursors and restore state."
