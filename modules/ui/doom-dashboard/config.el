@@ -1,16 +1,24 @@
 ;;; ui/doom-dashboard/config.el -*- lexical-binding: t; -*-
 
 (defvar +doom-dashboard-name " *doom*"
-  "TODO")
+  "The name to use for the dashboard buffer.")
 
 (defvar +doom-dashboard-modeline nil
-  "TODO")
+  "The modeline format for the doom dashboard buffer.")
 
 (defvar +doom-dashboard-inhibit-refresh nil
   "If non-nil, the doom buffer won't be refreshed.")
 
 (defvar +doom-dashboard-widgets '(banner shortmenu loaded)
   "List of widgets to display in a blank scratch buffer.")
+
+(defvar +doom-dashboard--width 0)
+(defvar +doom-dashboard--height 0)
+(defvar +doom-dashboard--old-fringe-indicator fringe-indicator-alist)
+(defvar +doom-dashboard--old-modeline nil)
+
+(setq doom-fallback-buffer +doom-dashboard-name)
+
 
 (define-derived-mode +doom-dashboard-mode special-mode
   (concat "v" doom-version)
@@ -22,16 +30,6 @@
            collect (cons car nil) into alist
            finally do (setq fringe-indicator-alist alist)))
 
-
-(defvar +doom-dashboard--width 0)
-(defvar +doom-dashboard--height 0)
-(defvar +doom-dashboard--old-fringe-indicator fringe-indicator-alist)
-(defvar +doom-dashboard--old-modeline nil)
-
-(setq doom-fallback-buffer +doom-dashboard-name)
-
-
-;;
 (map! :map +doom-dashboard-mode-map
       "n" #'+doom-dashboard/next-button
       "p" #'+doom-dashboard/previous-button
@@ -95,15 +93,6 @@ whose dimensions may not be fully initialized by the time this is run."
 (defun +doom-dashboard-center (len s)
   (concat (make-string (ceiling (max 0 (- len (length s))) 2) ? )
           s))
-
-(defun +doom-dashboard-deferred-reload (frame)
-  "Reload the dashboard after a brief pause. This is necessary for new frames,
-whose dimensions may not be fully initialized by the time this is run."
-  (run-with-timer 0.05 nil
-                  (lambda (frame)
-                    (with-selected-frame frame
-                      (+doom-dashboard/open t)))
-                  frame))
 
 (defun +doom-dashboard-reload (&optional dir)
   "Update the DOOM scratch buffer (or create it, if it doesn't exist)."
@@ -169,7 +158,7 @@ whose dimensions may not be fully initialized by the time this is run."
    (propertize
     (+doom-dashboard-center
      +doom-dashboard--width
-     (format "Loaded %d packages in %.03fs "
+     (format "Loaded %d packages in %.02fs"
              (- (length load-path) (length doom--base-load-path))
              (if (floatp doom-init-time) doom-init-time 0.0)))
     'face 'font-lock-comment-face)
@@ -179,9 +168,7 @@ whose dimensions may not be fully initialized by the time this is run."
 (defvar all-the-icons-default-adjust)
 (defun doom-dashboard-widget--shortmenu ()
   (let ((all-the-icons-scale-factor 1.3)
-        (all-the-icons-default-adjust -0.05)
-        (last-session-p (and (and (featurep 'persp-mode) persp-mode)
-                             (file-exists-p (expand-file-name persp-auto-save-fname persp-save-dir)))))
+        (all-the-icons-default-adjust -0.05))
     (mapc (lambda (btn)
             (when btn
               (cl-destructuring-bind (label icon fn) btn
@@ -195,8 +182,9 @@ whose dimensions may not be fully initialized by the time this is run."
                    (+doom-dashboard-center (1- +doom-dashboard--width) (buffer-string)))
                  "\n\n"))))
           `(("Homepage" "mark-github"
-             (browse-url "https://github.com/hlissner/.emacs.d"))
-            ,(when last-session-p
+             (browse-url "https://github.com/hlissner/doom-emacs"))
+            ,(when (and (and (featurep 'persp-mode) persp-mode)
+                        (file-exists-p (expand-file-name persp-auto-save-fname persp-save-dir)))
                '("Reload last session" "history"
                  (+workspace/load-session)))
             ("Recently opened files" "file-text"
