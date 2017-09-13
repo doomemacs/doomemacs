@@ -17,8 +17,11 @@
   (setq org-default-notes-file (concat +org-dir "notes.org")
         ;; FIXME This is incomplete!
         org-capture-templates
-        '(;; TODO: New Task (todo)
-          ;; TODO: New vocabulary word
+        '(;; TODO: New vocabulary word
+
+          ("t" "Todo" entry
+           (file+headline (expand-file-name "todo.org" +org-dir) "Inbox")
+           "* [ ] %?")
 
           ("c" "Changelog" entry
            (file+headline (expand-file-name "CHANGELOG.org" (doom-project-root)) "Unreleased")

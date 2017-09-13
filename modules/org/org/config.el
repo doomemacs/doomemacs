@@ -117,6 +117,9 @@
    org-startup-indented t
    org-startup-with-inline-images nil
    org-tags-column 0
+   org-todo-keywords '((sequence "[ ](t)" "[-](p)" "[?](m)" "|" "[X](d)")
+                       (sequence "TODO(T)" "|" "DONE(D)")
+                       (sequence "IDEA(i)" "NEXT(n)" "ACTIVE(a)" "WAITING(w)" "LATER(l)" "|" "CANCELLED(c)"))
    org-use-sub-superscripts '{}
    outline-blank-line t
 

@@ -256,10 +256,9 @@ If PROJECT-P, kill all buffers that belong to the current project."
   (interactive "P")
   (let ((buffers (if project-p (doom-project-buffer-list) (doom-buffer-list))))
     (mapc #'doom-kill-buffer-and-windows buffers)
-    (when (called-interactively-p 'interactive)
-      (unless (doom-real-buffer-p)
-        (switch-to-buffer (doom-fallback-buffer)))
-      (message "Killed %s buffers" (length buffers)))))
+    (unless (doom-real-buffer-p)
+      (switch-to-buffer (doom-fallback-buffer)))
+    (message "Killed %s buffers" (length buffers))))
 
 ;;;###autoload
 (defun doom/kill-other-buffers (&optional project-p)
