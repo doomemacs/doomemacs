@@ -51,6 +51,7 @@
   "Initialize doom-dashboard and set up its hooks; possibly open the dashboard
 if in a GUI/non-daemon session."
   (add-hook 'window-configuration-change-hook #'+doom-dashboard-reload)
+  (add-hook 'focus-in-hook #'+doom-dashboard-reload)
   (add-hook 'kill-buffer-query-functions #'+doom-dashboard|kill-buffer-query-fn)
   (when (and (display-graphic-p) (not (daemonp)))
     (+doom-dashboard/open (selected-frame))))
