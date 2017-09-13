@@ -142,7 +142,7 @@ with functions that require it (like modeline segments)."
 
 ;; savehist / saveplace
 (setq savehist-file (concat doom-cache-dir "savehist")
-      savehist-save-minibuffer-hisstory t
+      savehist-save-minibuffer-history t
       savehist-autosave-interval nil ; save on kill only
       savehist-additional-variables '(kill-ring search-ring regexp-search-ring)
       save-place-file (concat doom-cache-dir "saveplace"))
