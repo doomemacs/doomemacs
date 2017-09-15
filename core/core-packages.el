@@ -90,7 +90,6 @@ missing) and shouldn't be deleted.")
   "A backup of `load-path' before it was altered by `doom-initialize'. Used as a
 base by `doom!' and for calculating how many packages exist.")
 
-(defvar doom--module nil)
 (defvar doom--refresh-p nil)
 
 (setq load-prefer-newer (or noninteractive doom-debug-mode)
@@ -219,9 +218,7 @@ This aggressively reloads core autoload files."
       (funcall load-fn (expand-file-name "packages.el" doom-core-dir))
       (cl-loop for (module . submodule) in (doom--module-pairs)
                for path = (doom-module-path module submodule "packages.el")
-               do
-               (let ((doom--module (cons module submodule)))
-                 (funcall load-fn path t))))))
+               do (funcall load-fn path t)))))
 
 (defun doom-initialize-modules (modules)
   "Adds MODULES to `doom-modules'. MODULES must be in mplist format.
@@ -251,6 +248,12 @@ This aggressively reloads core autoload files."
     (setq submodule (symbol-name submodule)))
   (expand-file-name (concat module "/" submodule "/" file)
                     doom-modules-dir))
+
+(defun doom-module-from-path (path)
+  "Get module cons cell (MODULE . SUBMODULE) for PATH, if possible."
+  (when (string-match (concat doom-modules-dir "\\([^/]+\\)/\\([^/]+\\)/") path)
+    (cons (intern (concat ":" (match-string 1 path)))
+          (intern (match-string 2 path)))))
 
 (defun doom-module-flags (module submodule)
   "Returns a list of flags provided for MODULE SUBMODULE."
@@ -287,8 +290,6 @@ added, if the file exists."
            for path = (doom-module-path module submodule append-file)
            if (file-exists-p path)
            collect path))
-
-
 
 (defun doom--display-benchmark ()
   (message "Loaded %s packages in %.03fs"
@@ -406,8 +407,7 @@ The module is only loaded once. If RELOAD-P is non-nil, load it again."
       (unless loaded-p
         (doom-module-enable module submodule flags))
       `(condition-case-unless-debug ex
-           (let ((doom--module ',(cons module submodule)))
-             (load! config ,(doom-module-path module submodule) t))
+           (load! config ,(doom-module-path module submodule) t)
          ('error
           (lwarn 'doom-modules :error
                  "%s in '%s %s' -> %s"
@@ -418,11 +418,13 @@ The module is only loaded once. If RELOAD-P is non-nil, load it again."
   "A convenience macro wrapper for `doom-module-loaded-p'. It is evaluated at
 compile-time/macro-expansion time."
   (unless submodule
-    (unless doom--module
-      (error "featurep! was used incorrectly (doom--module wasn't unset)"))
-    (setq flag module
-          module (car doom--module)
-          submodule (cdr doom--module)))
+    (let* ((path (or load-file-name byte-compile-current-file))
+           (module-pair (doom-module-from-path path)))
+      (unless module-pair
+        (error "featurep! couldn't detect what module I'm in! (in %s)" path))
+      (setq flag module
+            module (car module-pair)
+            submodule (cdr module-pair))))
   (if flag
       (and (memq flag (doom-module-flags module submodule)) t)
     (doom-module-loaded-p module submodule)))
