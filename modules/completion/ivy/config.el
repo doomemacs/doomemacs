@@ -10,9 +10,8 @@
 face to render it with.")
 
 (defmacro +ivy-do-action! (action)
-  "A factory function that returns an interactive lamba that sets the current
-ivy action and immediately runs it on the current candidate (ending the ivy
-session)."
+  "Returns an interactive lambda that sets the current ivy action and
+immediately runs it on the current candidate (ending the ivy session)."
   `(lambda ()
      (interactive)
      (ivy-set-action ,action)

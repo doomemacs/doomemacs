@@ -273,6 +273,7 @@ local value, whether or not it's permanent-local. Therefore, we cycle
   :commands (fringe-helper-define fringe-helper-convert)
   :init
   (unless (fboundp 'define-fringe-bitmap)
+    ;; doesn't exist in terminal Emacs; define it to prevent errors
     (defun define-fringe-bitmap (&rest _))))
 
 (def-package! hideshow ; built-in

@@ -282,7 +282,7 @@ the new algorithm is confusing, like in python or ruby."
   :commands (evil-mc-make-cursor-here evil-mc-make-all-cursors
              evil-mc-undo-all-cursors evil-mc-pause-cursors
              evil-mc-resume-cursors evil-mc-make-and-goto-first-cursor
-             evil-mc-make-and-goto-last-cursor evil-mc-make-cursor-here
+             evil-mc-make-and-goto-last-cursor
              evil-mc-make-cursor-move-next-line
              evil-mc-make-cursor-move-prev-line evil-mc-make-cursor-at-pos
              evil-mc-has-cursors-p evil-mc-make-and-goto-next-cursor

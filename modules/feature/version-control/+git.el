@@ -33,7 +33,6 @@
         nil))
     (add-hook '+evil-esc-hook #'+version-control|update-git-gutter t))
 
-
   (when (featurep! :feature hydra)
     (defhydra +hydra-git-gutter (:body-pre (git-gutter-mode 1)
                                           :hint nil)
