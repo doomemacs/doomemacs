@@ -58,6 +58,8 @@ selection of all minor-modes, active or not."
   "Test to see if your root certificates are securely configured in emacs."
   (declare (interactive-only t))
   (interactive)
+  (unless (string-match-p "\\_<GNUTLS\\_>" system-configuration-features)
+    (warn "gnutls support isn't built into Emacs, there may be problems"))
   (if-let (bad-hosts
            (cl-loop for bad
                     in '("https://wrong.host.badssl.com/"
