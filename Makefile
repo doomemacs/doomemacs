@@ -7,6 +7,15 @@ MODULES=$(patsubst modules/%, %, $(shell find modules/ -maxdepth 2 -type d))
 
 all: autoloads autoremove install
 
+## Aliases
+a: autoloads
+i: install
+u: update
+r: autoremove
+c: compile
+cc: compile\:core
+ce: compile\:elpa
+
 ## Package management
 install: init.el .local/autoloads.el
 	@$(EMACS) -f doom/packages-install
