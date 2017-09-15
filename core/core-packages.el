@@ -626,6 +626,7 @@ If ONLY-RECOMPILE-P is non-nil, only recompile out-of-date files."
                     total-fail)
                    (t
                     (message! (green "Compiled %s" short-name))
+                    (quiet! (load file t t))
                     total-success))))))
       (message!
        (bold
