@@ -407,12 +407,14 @@
  (:prefix "gz"
    :nv "m" #'evil-mc-make-all-cursors
    :nv "u" #'evil-mc-undo-all-cursors
-   :nv "z" #'+evil/mc-toggle-cursors
-   :nv "c" #'+evil/mc-make-cursor-here
+   :nv "z" #'+evil/mc-make-cursor-here
+   :nv "t" #'+evil/mc-toggle-cursors
    :nv "n" #'evil-mc-make-and-goto-next-cursor
    :nv "p" #'evil-mc-make-and-goto-prev-cursor
    :nv "N" #'evil-mc-make-and-goto-last-cursor
-   :nv "P" #'evil-mc-make-and-goto-first-cursor)
+   :nv "P" #'evil-mc-make-and-goto-first-cursor
+   :nv "d" #'evil-mc-make-and-goto-next-match
+   :nv "D" #'evil-mc-make-and-goto-prev-match)
  (:after evil-mc
    :map evil-mc-key-map
    :nv "C-n" #'evil-mc-make-and-goto-next-cursor
