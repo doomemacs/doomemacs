@@ -1,7 +1,7 @@
 ;;; lang/cc/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
-(defun +cc*lineup-arglist (orig-fun &rest args)
+(defun +cc*align-lambda-arglist (orig-fun &rest args)
   "Improve indentation of continued C++11 lambda function opened as argument."
   (if (and (eq major-mode 'c++-mode)
            (ignore-errors
@@ -21,59 +21,61 @@
         (backward-char)
         (looking-at-p "[^ \t]>"))
       (forward-char)
-    (call-interactively 'self-insert-command)))
-
-(defun +cc--copy-face (new-face face)
-  "Define NEW-FACE from existing FACE."
-  (copy-face face new-face)
-  (eval `(defvar ,new-face nil))
-  (set new-face new-face))
-
-;;;###autoload
-(defun +cc|extra-fontify-c++ ()
-  ;; We could place some regexes into `c-mode-common-hook', but
-  ;; note that their evaluation order matters.
-  ;; NOTE modern-cpp-font-lock will eventually supercede some of these rules
-  (font-lock-add-keywords
-   nil '(;; c++11 string literals
-         ;;       L"wide string"
-         ;;       L"wide string with UNICODE codepoint: \u2018"
-         ;;       u8"UTF-8 string", u"UTF-16 string", U"UTF-32 string"
-         ("\\<\\([LuU8]+\\)\".*?\"" 1 font-lock-keyword-face)
-         ;;       R"(user-defined literal)"
-         ;;       R"( a "quot'd" string )"
-         ;;       R"delimiter(The String Data" )delimiter"
-         ;;       R"delimiter((a-z))delimiter" is equivalent to "(a-z)"
-         ("\\(\\<[uU8]*R\"[^\\s-\\\\()]\\{0,16\\}(\\)" 1 font-lock-keyword-face t) ; start delimiter
-         (   "\\<[uU8]*R\"[^\\s-\\\\()]\\{0,16\\}(\\(.*?\\))[^\\s-\\\\()]\\{0,16\\}\"" 1 font-lock-string-face t)  ; actual string
-         (   "\\<[uU8]*R\"[^\\s-\\\\()]\\{0,16\\}(.*?\\()[^\\s-\\\\()]\\{0,16\\}\"\\)" 1 font-lock-keyword-face t) ; end delimiter
-         ) t))
-
-;;;###autoload
-(defun +cc|extra-fontify-c/c++ ()
-  (font-lock-add-keywords
-   nil '(;; PREPROCESSOR_CONSTANT, PREPROCESSORCONSTANT
-         ("\\<[A-Z]*_[A-Z_]+\\>" . font-lock-constant-face)
-         ("\\<[A-Z]\\{3,\\}\\>"  . font-lock-constant-face)
-         ;; integer/float/scientific numbers
-         ("\\<\\([\\-+]*[0-9\\.]+\\)\\>" 1 font-lock-constant-face t)
-         ("\\<\\([\\-+]*[0-9\\.]+\\)\\(f\\)\\>"
-          (1 font-lock-constant-face t)
-          (2 font-lock-keyword-face t))
-         ("\\<\\([\\-+]*[0-9\\.]+\\)\\([eE]\\)\\([\\-+]?[0-9]+\\)\\>"
-          (1 font-lock-constant-face t)
-          (2 font-lock-keyword-face t)
-          (3 font-lock-constant-face t))
-         ) t))
+    (call-interactively #'self-insert-command)))
 
 ;;;###autoload
 (defun +cc-sp-point-is-template-p (id action context)
+  "Return t if point is in the right place for C++ angle-brackets."
   (and (sp-in-code-p id action context)
        (sp-point-after-word-p id action context)))
 
 ;;;###autoload
 (defun +cc-sp-point-after-include-p (id action context)
+  "Return t if point is in an #include."
   (and (sp-in-code-p id action context)
        (save-excursion
          (goto-char (line-beginning-position))
          (looking-at-p "[ 	]*#include[^<]+"))))
+
+;;;###autoload
+(defun +cc-c-lineup-inclass (_langelem)
+  "Indent privacy keywords at same level as class properties."
+  (if (memq major-mode '(c-mode c++-mode))
+      (let ((inclass (assq 'inclass c-syntactic-context)))
+        (save-excursion
+          (goto-char (c-langelem-pos inclass))
+          (if (or (looking-at "struct")
+                  (looking-at "typedef struct"))
+              '+
+            '++)))
+    '+))
+
+
+;;
+;; Hooks
+;;
+
+;;;###autoload
+(defun +cc|fontify-constants ()
+  "Better fontification for preprocessor constants"
+  (font-lock-add-keywords
+   nil '(("\\<[A-Z]*_[A-Z_]+\\>" . font-lock-constant-face)
+         ("\\<[A-Z]\\{3,\\}\\>"  . font-lock-constant-face))
+   t))
+
+;;;###autoload
+(defun +cc|irony-add-include-paths ()
+  "Seek out and add the nearest include/ folders to clang's options."
+  (when-let (dir (locate-dominating-file buffer-file-name "include/"))
+    (cl-pushnew (concat "-I" (expand-file-name "include/" dir))
+                irony-additional-clang-options :test #'equal)))
+
+;;;###autoload
+(defun +cc|use-c++11 ()
+  "Enable C++11 support with clang (via irony)."
+  (cl-pushnew "-std=c++11" irony-additional-clang-options :test #'equal)
+  (when IS-MAC
+    ;; NOTE beware: you'll get abi-inconsistencies when passing std-objects to
+    ;; libraries linked with libstdc++ (e.g. if you use boost which wasn't
+    ;; compiled with libc++)
+    (cl-pushnew "-stdlib=libc++" irony-additional-clang-options :test #'equal)))

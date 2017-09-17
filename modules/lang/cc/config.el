@@ -27,30 +27,13 @@
   (push (cons #'+cc--objc-header-file-p 'objc-mode) magic-mode-alist)
 
   :config
-  (setq c-tab-always-indent nil
-        c-electric-flag nil)
-
   (set! :electric '(c-mode c++-mode objc-mode java-mode)
         :chars '(?\n ?\}))
-
   (set! :company-backend
         '(c-mode c++-mode objc-mode)
         '(company-irony-c-headers company-irony))
 
-  (add-hook 'c-mode-common-hook #'rainbow-delimiters-mode)
-  (add-hook 'c-mode-hook #'highlight-numbers-mode) ; fontify numbers in C
-  (add-hook 'c++-mode-hook #'+cc|extra-fontify-c++) ; fontify C++11 string literals
-
-  (sp-with-modes '(c-mode c++-mode objc-mode java-mode)
-    (sp-local-pair "<" ">" :when '(+cc-sp-point-is-template-p +cc-sp-point-after-include-p))
-    (sp-local-pair "/*" "*/" :post-handlers '(("||\n[i]" "RET") ("| " "SPC")))
-    ;; Doxygen blocks
-    (sp-local-pair "/**" "*/" :post-handlers '(("||\n[i]" "RET") ("||\n[i]" "SPC")))
-    (sp-local-pair "/*!" "*/" :post-handlers '(("||\n[i]" "RET") ("[d-1]< | " "SPC"))))
-
-  ;; Improve indentation of inline lambdas in C++11
-  (advice-add #'c-lineup-arglist :around #'+cc*lineup-arglist)
-
+  ;;; Style/formatting
   ;; C/C++ style settings
   (c-toggle-electric-state -1)
   (c-toggle-auto-newline -1)
@@ -62,44 +45,38 @@
   (c-set-offset 'access-label '-)
   (c-set-offset 'arglist-intro '+)
   (c-set-offset 'arglist-close '0)
+  ;; Indent privacy keywords at same level as class properties
+  ;; (c-set-offset 'inclass #'+cc-c-lineup-inclass)
 
-  (defun +cc--c-lineup-inclass (_langelem)
-    (if (memq major-mode '(c-mode c++-mode))
-        (let ((inclass (assq 'inclass c-syntactic-context)))
-          (save-excursion
-            (goto-char (c-langelem-pos inclass))
-            (if (or (looking-at "struct")
-                    (looking-at "typedef struct"))
-                '+
-              '++)))
-      '+))
-  (c-set-offset 'inclass #'+cc--c-lineup-inclass)
+  ;;; Better fontification (also see `modern-cpp-font-lock')
+  (add-hook 'c-mode-common-hook #'rainbow-delimiters-mode)
+  (add-hook! (c-mode c++-mode) #'highlight-numbers-mode)
+  (add-hook! (c-mode c++-mode) #'+cc|fontify-constants)
 
+  ;; Improve indentation of inline lambdas in C++11
+  (advice-add #'c-lineup-arglist :around #'+cc*align-lambda-arglist)
 
-  ;; Certain electric mappings interfere with smartparens and custom bindings,
-  ;; so unbind them
-  (map! :map c-mode-map
-        "DEL" nil
-        "#" #'self-insert-command
-        "{" #'self-insert-command
-        "}" #'self-insert-command
-        "/" #'self-insert-command
-        "*" #'self-insert-command
-        ";" #'self-insert-command
-        "," #'self-insert-command
-        ":" #'self-insert-command
-        "(" #'self-insert-command
-        ")" #'self-insert-command
-
-        :map c++-mode-map
-        "}" nil
-
-        ;; Smartparens and cc-mode both try to autoclose angle-brackets
-        ;; intelligently. The result isn't very intelligent (causes redundant
-        ;; characters), so just do it ourselves.
+  ;;; Keybindings
+  ;; Completely disable electric keys because it interferes with smartparens and
+  ;; custom bindings. We'll do this ourselves.
+  (setq c-tab-always-indent nil
+        c-electric-flag nil)
+  (dolist (key '("#" "{" "}" "/" "*" ";" "," ":" "(" ")"))
+    (define-key c-mode-base-map key nil))
+  ;; Smartparens and cc-mode both try to autoclose angle-brackets intelligently.
+  ;; The result isn't very intelligent (causes redundant characters), so just do
+  ;; it ourselves.
+  (map! :map c++-mode-map
         "<" nil
-        :map (c-mode-base-map c++-mode-map)
-        :i ">" #'+cc/autoclose->-maybe))
+        :i ">" #'+cc/autoclose->-maybe)
+
+  ;; ...and leave it to smartparens
+  (sp-with-modes '(c-mode c++-mode objc-mode java-mode)
+    (sp-local-pair "<" ">" :when '(+cc-sp-point-is-template-p +cc-sp-point-after-include-p))
+    (sp-local-pair "/*" "*/" :post-handlers '(("||\n[i]" "RET") ("| " "SPC")))
+    ;; Doxygen blocks
+    (sp-local-pair "/**" "*/" :post-handlers '(("||\n[i]" "RET") ("||\n[i]" "SPC")))
+    (sp-local-pair "/*!" "*/" :post-handlers '(("||\n[i]" "RET") ("[d-1]< | " "SPC")))))
 
 
 (def-package! modern-cpp-font-lock
@@ -114,28 +91,29 @@
   (setq irony-server-install-prefix (concat doom-etc-dir "irony-server/"))
   :init
   (defun +cc|init-irony-mode ()
+    ;; The major-mode check is necessary because some modes derive themselves
+    ;; from a c base mode, like java-mode or php-mode.
     (when (and (memq major-mode '(c-mode c++-mode objc-mode))
                (file-directory-p irony-server-install-prefix))
       (irony-mode +1)))
   (add-hook 'c-mode-common-hook #'+cc|init-irony-mode)
   :config
-  (add-hook! 'irony-mode-hook #'(irony-eldoc flycheck-mode))
+  (make-variable-buffer-local 'irony-additional-clang-options)
+  ;; Add nearest include/ path to compiler options
+  (add-hook! '(c-mode-hook c++-mode-hook) #'+cc|irony-add-include-paths)
+  ;; Use C++11/14 by default
+  (add-hook 'c++-mode-hook #'+cc|use-c++11))
 
-  (defun +cc|init-c++11-clang-options ()
-    (make-local-variable 'irony-additional-clang-options)
-    (cl-pushnew "-std=c++11" irony-additional-clang-options :test 'equal))
-  (add-hook 'c++-mode-hook #'+cc|init-c++11-clang-options)
-
-  (map! :map irony-mode-map
-        [remap completion-at-point] #'counsel-irony
-        [remap complete-symbol] #'counsel-irony))
-
-(def-package! irony-eldoc :after irony)
+(def-package! irony-eldoc
+  :after irony
+  :config (add-hook 'irony-mode-hook #'irony-eldoc))
 
 (def-package! flycheck-irony
   :when (featurep! :feature syntax-checker)
   :after irony
-  :config (flycheck-irony-setup))
+  :config
+  (add-hook 'irony-mode-hook #'flycheck-mode)
+  (flycheck-irony-setup))
 
 
 ;;
