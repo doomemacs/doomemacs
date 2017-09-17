@@ -62,10 +62,10 @@ immediately runs it on the current candidate (ending the ivy session)."
         [remap describe-face]             #'counsel-describe-face)
 
   ;; Show more buffer information in switch-buffer commands
-  (ivy-set-display-transformer 'ivy-switch-buffer #'+ivy-buffer-transformer)
-  (ivy-set-display-transformer 'ivy-switch-buffer-other-window #'+ivy-buffer-transformer)
-  (ivy-set-display-transformer '+ivy/switch-workspace-buffer #'+ivy-buffer-transformer)
-  (ivy-set-display-transformer 'counsel-recentf #'abbreviate-file-name)
+  (ivy-set-display-transformer #'ivy-switch-buffer #'+ivy-buffer-transformer)
+  (ivy-set-display-transformer #'ivy-switch-buffer-other-window #'+ivy-buffer-transformer)
+  (ivy-set-display-transformer #'+ivy/switch-workspace-buffer #'+ivy-buffer-transformer)
+  (ivy-set-display-transformer #'counsel-recentf #'abbreviate-file-name)
 
   (when (featurep! :feature workspaces)
     (nconc ivy-sort-functions-alist
