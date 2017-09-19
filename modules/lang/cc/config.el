@@ -179,7 +179,6 @@ compilation database is present in the project.")
   (def-package! company-irony-c-headers :after company-irony)
 
   (def-package! company-glsl
-    :when (featurep! :completion company)
     :after glsl-mode
     :config
     (if (executable-find "glslangValidator")
