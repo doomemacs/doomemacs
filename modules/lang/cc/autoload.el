@@ -64,18 +64,19 @@
    t))
 
 ;;;###autoload
-(defun +cc|irony-add-include-paths ()
-  "Seek out and add the nearest include/ folders to clang's options."
-  (when-let (dir (locate-dominating-file buffer-file-name "include/"))
-    (cl-pushnew (concat "-I" (expand-file-name "include/" dir))
-                irony-additional-clang-options :test #'equal)))
+(defun +cc|irony-init-compile-options ()
+  "Initialize compiler options for irony-mode. It searches for the nearest
+compilation database and initailizes it. If none was found, it uses
+`+cc-c++-compiler-options'.
 
-;;;###autoload
-(defun +cc|use-c++11 ()
-  "Enable C++11 support with clang (via irony)."
-  (cl-pushnew "-std=c++11" irony-additional-clang-options :test #'equal)
-  (when IS-MAC
-    ;; NOTE beware: you'll get abi-inconsistencies when passing std-objects to
-    ;; libraries linked with libstdc++ (e.g. if you use boost which wasn't
-    ;; compiled with libc++)
-    (cl-pushnew "-stdlib=libc++" irony-additional-clang-options :test #'equal)))
+See https://github.com/Sarcasm/irony-mode#compilation-database for details on
+compilation dbs."
+  (when (memq major-mode '(c-mode c++-mode objc-mode))
+    (require 'irony-cdb)
+    (unless (irony-cdb-autosetup-compile-options)
+      (irony-cdb--update-compile-options
+       (append (delq nil (cdr-safe (assq major-mode +cc-compiler-options)))
+               (cl-loop for path in +cc-include-paths
+                        collect (format "-I %s" (shell-quote-argument path))))
+       (doom-project-root)))))
+

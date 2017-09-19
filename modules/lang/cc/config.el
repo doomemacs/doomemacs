@@ -1,5 +1,30 @@
 ;;; lang/cc/config.el --- c, c++, and obj-c -*- lexical-binding: t; -*-
 
+(defvar +cc-include-paths (list "include/")
+  "A list of paths, relative to a project root, to search for headers in
+C/C++. Paths can be absolute.
+
+The purpose of this variable is to ensure syntax checkers and code-completion
+knows where to look for headers.")
+
+(defvar +cc-compiler-options
+  `((c-mode . nil)
+    (c++-mode
+     . ,(list "-std=c++11" ; use C++11 by default
+              (when IS-MAC
+                ;; NOTE beware: you'll get abi-inconsistencies when passing
+                ;; std-objects to libraries linked with libstdc++ (e.g. if you use
+                ;; boost which wasn't compiled with libc++)
+                (list "-stdlib=libc++"))))
+    (objc-mode . nil))
+  "A list of default compiler options for the C family. These are ignored if a
+compilation database is present in the project.")
+
+
+;;
+;; Plugins
+;;
+
 (def-package! cc-mode
   :commands (c-mode c++-mode objc-mode java-mode)
   :mode ("\\.mm" . objc-mode)
@@ -90,19 +115,14 @@
   :preface
   (setq irony-server-install-prefix (concat doom-etc-dir "irony-server/"))
   :init
-  (defun +cc|init-irony-mode ()
-    ;; The major-mode check is necessary because some modes derive themselves
-    ;; from a c base mode, like java-mode or php-mode.
-    (when (and (memq major-mode '(c-mode c++-mode objc-mode))
-               (file-directory-p irony-server-install-prefix))
-      (irony-mode +1)))
-  (add-hook 'c-mode-common-hook #'+cc|init-irony-mode)
+  (add-hook! (c-mode c++-mode objc-mode) #'irony-mode)
   :config
-  (make-variable-buffer-local 'irony-additional-clang-options)
-  ;; Add nearest include/ path to compiler options
-  (add-hook! '(c-mode-hook c++-mode-hook) #'+cc|irony-add-include-paths)
-  ;; Use C++11/14 by default
-  (add-hook 'c++-mode-hook #'+cc|use-c++11))
+  (unless (file-directory-p irony-server-install-prefix)
+    (warn "irony-mode: server isn't installed; run M-x irony-install-server"))
+
+  ;; Initialize compilation database, if present. Otherwise, fall back on
+  ;; `+cc-compiler-options'.
+  (add-hook 'irony-mode-hook #'+cc|irony-init-compile-options))
 
 (def-package! irony-eldoc
   :after irony
