@@ -7,11 +7,6 @@
 ;;(ex! "g[lobal]"     #'+evil:global)
 
 ;;; Custom commands
-;; Emacs utilities
-(ex! "bc[omp]"      #'+hlissner:byte-compile)
-(ex! "re[load]"     #'doom/reload)
-(ex! "re[load]au"   #'doom/reload-autoloads)
-
 ;; Editing
 (ex! "@"            #'+evil:macro-on-all-lines)   ; TODO Test me
 (ex! "al[ign]"      #'+evil:align)
