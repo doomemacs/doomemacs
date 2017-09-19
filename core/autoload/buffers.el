@@ -53,7 +53,7 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
 
 If no project is active, return all buffers."
   (let ((buffers (doom-buffer-list)))
-    (if-let (project-root (doom-project-root t))
+    (if-let (project-root (if (doom-project-p) (doom-project-root)))
         (cl-loop for buf in buffers
                  if (projectile-project-buffer-p buf project-root)
                  collect buf)

@@ -88,7 +88,7 @@
   :commands tern-mode
   :init (add-hook 'js2-mode-hook #'tern-mode)
   :config
-  (advice-add #'tern-project-dir :override #'doom*project-root))
+  (advice-add #'tern-project-dir :override #'doom-project-root))
 
 
 (def-package! company-tern

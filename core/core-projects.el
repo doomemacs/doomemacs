@@ -63,22 +63,17 @@ state are passed in.")
   (dolist (fn projectile-project-root-files-functions)
     (remhash (format "%s-%s" fn default-directory) projectile-project-root-cache)))
 
-(defun doom-project-p (&optional strict-p)
+(defun doom-project-p ()
   "Whether or not this buffer is currently in a project or not."
-  (let ((projectile-require-project-root strict-p))
+  (let ((projectile-require-project-root t))
     (projectile-project-p)))
 
-(defun doom-project-root (&optional strict-p)
+(defun doom-project-root ()
   "Get the path to the root of your project.
 If STRICT-P, return nil if no project was found, otherwise return
 `default-directory'."
-  (let ((projectile-require-project-root strict-p))
-    (ignore-errors (projectile-project-root))))
-
-(defun doom*project-root (&rest _)
-  "An advice function used to replace project-root-detection functions in other
-libraries."
-  (doom-project-root))
+  (let (projectile-require-project-root)
+    (projectile-project-root)))
 
 (defmacro doom-project-has! (files)
   "Checks if the project has the specified FILES, relative to the project root,
