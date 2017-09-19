@@ -55,13 +55,23 @@ state are passed in.")
 ;; Library
 ;;
 
+(defun doom/reload-project ()
+  "Reload the project root cache."
+  (interactive)
+  (projectile-invalidate-cache nil)
+  (projectile-reset-cached-project-root)
+  (dolist (fn projectile-project-root-files-functions)
+    (remhash (format "%s-%s" fn default-directory) projectile-project-root-cache)))
+
 (defun doom-project-p (&optional strict-p)
   "Whether or not this buffer is currently in a project or not."
   (let ((projectile-require-project-root strict-p))
     (projectile-project-p)))
 
 (defun doom-project-root (&optional strict-p)
-  "Get the path to the root of your project."
+  "Get the path to the root of your project.
+If STRICT-P, return nil if no project was found, otherwise return
+`default-directory'."
   (let ((projectile-require-project-root strict-p))
     (ignore-errors (projectile-project-root))))
 
