@@ -76,7 +76,7 @@ missing) and shouldn't be deleted.")
   "A list of packages that should be ignored by `def-package!'.")
 
 (defvar doom-reload-hook nil
-  "A list of hooks to run when `doom/reload' is called.")
+  "A list of hooks to run when `doom/reload-load-path' is called.")
 
 (defvar doom--site-load-path load-path
   "The load path of built in Emacs libraries.")
@@ -489,7 +489,7 @@ loads MODULE SUBMODULE's packages.el file."
 ;; Commands
 ;;
 
-(defun doom/reload ()
+(defun doom/reload-load-path ()
   "Reload `load-path' and recompile files (if necessary).
 
 Use this when `load-path' is out of sync with your plugins. This should only
@@ -497,12 +497,12 @@ happen if you manually modify/update/install packages from outside Emacs, while
 an Emacs session is running.
 
 This isn't necessary if you use Doom's package management commands because they
-call `doom/reload' remotely (through emacsclient)."
+call `doom/reload-load-path' remotely (through emacsclient)."
   (interactive)
   (cond (noninteractive
          (message "Reloading...")
          (require 'server)
-         (unless (ignore-errors (server-eval-at "server" '(doom/reload)))
+         (unless (ignore-errors (server-eval-at "server" '(doom/reload-load-path)))
            (message "Recompiling")
            (doom/recompile)))
         (t

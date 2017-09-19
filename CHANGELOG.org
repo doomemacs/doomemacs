@@ -170,7 +170,7 @@
   + =core-packages=
     + Generalize ~doom-package-*-p~ functions into ~(doom-package-prop NAME PROPERTY)~.
     + Fix quelpa temporary files (in ~quelpa-build-dir~) not being removed when a quelpa package was uninstalled.
-    + New hook: ~doom-reload-hook~ (sort of). This has been around for a while, but now it is defined and documented. It runs when ~doom/reload~ is called (which gets called remotely if you run package management while an Emacs session is active).
+    + New hook: ~doom-reload-hook~ (sort of). This has been around for a while, but now it is defined and documented. It runs when ~doom/reload-load-path~ is called (which gets called remotely if you run package management while an Emacs session is active).
     + ~load!~ can now accept a string as its first argument (the path).
 + =feature=
   + =feature/evil=
