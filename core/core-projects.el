@@ -14,9 +14,6 @@ state are passed in.")
         projectile-indexing-method 'alien
         projectile-known-projects-file (concat doom-cache-dir "projectile.projects")
         projectile-require-project-root nil
-        projectile-project-root-files
-        '(".git" ".hg" ".svn" ".project" "package.json" "setup.py" "Gemfile"
-          "build.gradle")
         projectile-other-file-alist
         (append '(("less" "css")
                   ("styl" "css")
@@ -32,6 +29,9 @@ state are passed in.")
         projectile-globally-ignored-directories
         (append (list doom-local-dir ".sync")
                 projectile-globally-ignored-directories))
+
+  ;; More generic project root file than .projectile
+  (push ".project" projectile-project-root-files-bottom-up)
 
   ;; Projectile root-searching functions can cause an infinite loop on TRAMP
   ;; connections, so disable them.
