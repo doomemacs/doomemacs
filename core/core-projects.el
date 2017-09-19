@@ -10,43 +10,35 @@ state are passed in.")
   :config
   (setq projectile-cache-file (concat doom-cache-dir "projectile.cache")
         projectile-enable-caching (not noninteractive)
-        projectile-file-exists-remote-cache-expire nil
         projectile-indexing-method 'alien
         projectile-known-projects-file (concat doom-cache-dir "projectile.projects")
         projectile-require-project-root nil
-        projectile-other-file-alist
-        (append '(("less" "css")
-                  ("styl" "css")
-                  ("sass" "css")
-                  ("scss" "css")
-                  ("css" "scss" "sass" "less" "styl")
-                  ("jade" "html")
-                  ("pug" "html")
-                  ("html" "jade" "pug" "jsx" "tsx"))
-                projectile-other-file-alist)
-        projectile-globally-ignored-file-suffixes '(".elc" ".pyc" ".o")
-        projectile-globally-ignored-files '(".DS_Store" "Icon")
-        projectile-globally-ignored-directories
-        (append (list doom-local-dir ".sync")
-                projectile-globally-ignored-directories))
+        projectile-globally-ignored-files '(".DS_Store" "Icon" "TAGS")
+        projectile-globally-ignored-file-suffixes '(".elc" ".pyc" ".o"))
 
-  ;; More generic project root file than .projectile
+  ;; a more generic project root file
   (push ".project" projectile-project-root-files-bottom-up)
+
+  (nconc projectile-globally-ignored-directories (list doom-local-dir ".sync"))
+  (nconc projectile-other-file-alist '(("css"  . ("scss" "sass" "less" "style"))
+                                       ("scss" . ("css"))
+                                       ("sass" . ("css"))
+                                       ("less" . ("css"))
+                                       ("styl" . ("css"))))
 
   ;; Projectile root-searching functions can cause an infinite loop on TRAMP
   ;; connections, so disable them.
   (defun doom*projectile-locate-dominating-file (orig-fn &rest args)
-    "Don't traverse the file system if a remote connection."
+    "Don't traverse the file system if on a remote connection."
     (unless (file-remote-p default-directory)
       (apply orig-fn args)))
   (advice-add #'projectile-locate-dominating-file :around #'doom*projectile-locate-dominating-file)
 
   (defun doom*projectile-cache-current-file (orig-fun &rest args)
     "Don't cache ignored files."
-    (unless (cl-some (lambda (path)
-                       (string-prefix-p buffer-file-name
-                                        (expand-file-name path)))
-                     (projectile-ignored-directories))
+    (unless (cl-loop for path in (projectile-ignored-directories)
+                     if (string-prefix-p buffer-file-name (expand-file-name path))
+                     return t)
       (apply orig-fun args)))
   (advice-add #'projectile-cache-current-file :around #'doom*projectile-cache-current-file))
 
@@ -76,9 +68,10 @@ If STRICT-P, return nil if no project was found, otherwise return
     (projectile-project-root)))
 
 (defmacro doom-project-has! (files)
-  "Checks if the project has the specified FILES, relative to the project root,
-unless the path begins with ./ or ../, in which case it's relative to
-`default-directory'. Recognizes (and ...) and/or (or ...) forms."
+  "Checks if the project has the specified FILES.
+Paths are relative to the project root, unless they start with ./ or ../ (in
+which case they're relative to `default-directory'). If they start with a slash,
+they are absolute."
   (doom--resolve-paths files (doom-project-root)))
 
 
@@ -87,7 +80,7 @@ unless the path begins with ./ or ../, in which case it's relative to
 ;;
 
 (defvar-local doom-project nil
-  "A list of project mode symbols to enable. Used for .dir-locals.el.")
+  "A list of project mode to enable. Used for .dir-locals.el.")
 
 (defun doom|autoload-project-mode ()
   "Auto-enable projects listed in `doom-project', which is meant to be set from
@@ -97,11 +90,11 @@ unless the path begins with ./ or ../, in which case it's relative to
 (add-hook 'after-change-major-mode-hook #'doom|autoload-project-mode)
 
 (defmacro def-project-mode! (name &rest plist)
-  "Define a project minor-mode named NAME and declare where and how it is
-activated. Project modes allow you to configure 'sub-modes' for major-modes that
-are specific to a specific folder, certain project structure, framework or
-arbitrary context you define. These project modes can have their own settings,
-keymaps, hooks, snippets, etc.
+  "Define a project minor-mode named NAME (a symbol) and declare where and how
+it is activated. Project modes allow you to configure 'sub-modes' for
+major-modes that are specific to a specific folder, certain project structure,
+framework or arbitrary context you define. These project modes can have their
+own settings, keymaps, hooks, snippets, etc.
 
 This creates NAME-hook and NAME-map as well.
 
