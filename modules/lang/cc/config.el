@@ -28,10 +28,8 @@ compilation database is present in the project.")
 (def-package! cc-mode
   :commands (c-mode c++-mode objc-mode java-mode)
   :mode ("\\.mm" . objc-mode)
-  :init
-  (setq-default c-basic-offset tab-width)
-
-  (defun +cc--c++-header-file-p ()
+  :preface
+  (defun +cc-c++-header-file-p ()
     (and buffer-file-name
          (equal (file-name-extension buffer-file-name) "h")
          (or (file-exists-p (expand-file-name
@@ -42,14 +40,16 @@ compilation database is present in the project.")
                                         (projectile-current-project-files))))
                (equal (file-name-extension file) "cpp")))))
 
-  (defun +cc--objc-header-file-p ()
+  (defun +cc-objc-header-file-p ()
     (and buffer-file-name
          (equal (file-name-extension buffer-file-name) "h")
          (re-search-forward "@\\<interface\\>" magic-mode-regexp-match-limit t)))
 
-  ;; Auto-detect C++/Obj-C header files
-  (push (cons #'+cc--c++-header-file-p  'c++-mode)  magic-mode-alist)
-  (push (cons #'+cc--objc-header-file-p 'objc-mode) magic-mode-alist)
+  (push (cons #'+cc-c++-header-file-p 'c++-mode)   magic-mode-alist)
+  (push (cons #'+cc-objc-header-file-p 'objc-mode) magic-mode-alist)
+
+  :init
+  (setq-default c-basic-offset tab-width)
 
   :config
   (set! :electric '(c-mode c++-mode objc-mode java-mode)
