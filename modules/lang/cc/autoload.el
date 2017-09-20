@@ -77,6 +77,6 @@ compilation dbs."
       (irony-cdb--update-compile-options
        (append (delq nil (cdr-safe (assq major-mode +cc-compiler-options)))
                (cl-loop for path in +cc-include-paths
-                        collect (format "-I %s" (shell-quote-argument path))))
+                        nconc (list "-I" path)))
        (doom-project-root)))))
 
