@@ -41,7 +41,4 @@
   :mode "\\.jade$"
   :mode "\\.pug$"
   :config
-  (set! :company-backend 'pug-mode '(company-yasnippet))
-  (map! :map pug-mode-map
-        :i [tab]     #'doom/dumb-indent
-        :i [backtab] #'doom/dumb-dedent))
+  (set! :company-backend 'pug-mode '(company-yasnippet)))
