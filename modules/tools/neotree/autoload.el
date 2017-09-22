@@ -13,7 +13,8 @@
           ((not (and (neo-global--window-exists-p)
                      (equal (file-truename (neo-global--with-buffer neo-buffer--start-node))
                             (file-truename project-root))))
-           (neotree-dir project-root))
+           (neotree-dir project-root)
+           (neotree-find path project-root))
           (t (neotree-find path project-root)))))
 
 ;;;###autoload
