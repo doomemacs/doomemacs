@@ -72,12 +72,7 @@
   :config (set! :company-backend 'inf-ruby-mode '(company-inf-ruby)))
 
 
-;;
-;; TODO Frameworks
-;;
+(def-package! rake
+  :commands (rake rake-find-task rake-rerun)
+  :config (setq rake-completion-system 'default))
 
-;; (def-project-mode! +ruby-rake-mode
-;;   :files "Rakefile"
-;;   :init
-;;   (set! :build 'rake '+ruby-rake-mode '+ruby/rake
-;;     :when (lambda () (doom-project-has! "Rakefile"))))

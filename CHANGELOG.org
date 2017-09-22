@@ -73,6 +73,8 @@
   + =hydra= Display a separator along the bottom of hydra windows for extra contrast.
 + =ui=
   + =doom-dashboard= Elements are now centered using window-local margins, which fixes discrepancies when multiple dashboards are visible in different sized windows and/or frames (see [[https://github.com/hlissner/doom-emacs/issues/192][#192]]).
++ =lang=
+  + =ruby= Added rake support. See the ~rake~ command.
 + =org=
   + If a table is under point when ~+org/toggle-fold~ is invoked, the table is realigned.
   + =org-capture= Fix a vestigial reference to a long-since-renamed function: ~doom/project-root~.
