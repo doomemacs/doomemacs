@@ -2,7 +2,8 @@
 
 ;; Ensure ELPA org is prioritized above built-in org.
 (when-let (path (locate-library "org" nil doom--package-load-path))
-  (cl-pushnew (file-name-directory path) load-path :test #'equal))
+  (setq load-path (delete path load-path))
+  (push (file-name-directory path) load-path))
 
 ;; Custom variables
 (defvar +org-dir (expand-file-name "~/work/org/")
