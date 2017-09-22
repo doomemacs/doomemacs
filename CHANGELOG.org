@@ -68,6 +68,7 @@
 + =doom=
   + Added new module: ~lang/ledger~, for editing ledger files.
   + Fixed ~make update~ to work even if Doom is installed somewhere other than ~\~/.emacs.d~ (see [[https://github.com/hlissner/doom-emacs/issues/190][#190]]).
+  + Removed colons from makefile task target names. They broke compatibility with certain versions of make.
 + =feature=
   + =hydra= Display a separator along the bottom of hydra windows for extra contrast.
 + =ui=
