@@ -269,11 +269,6 @@ with functions that require it (like modeline segments)."
   :commands (describe-buffer describe-command describe-file
              describe-keymap describe-option describe-option-of-type))
 
-(def-package! imenu-anywhere
-  :commands (ido-imenu-anywhere ivy-imenu-anywhere helm-imenu-anywhere))
-
-(def-package! imenu-list :commands imenu-list-minor-mode)
-
 (def-package! pcre2el :commands rxt-quote-pcre)
 
 (def-package! smart-forward
