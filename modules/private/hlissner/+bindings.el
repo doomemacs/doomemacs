@@ -381,8 +381,6 @@
 
  ;; counsel
  (:after counsel
-   (:map ivy-mode-map
-     "C-o"      #'ivy-dispatching-done)
    (:map counsel-ag-map
      [backtab]  #'+ivy/wgrep-occur  ; search/replace on results
      "C-SPC"    #'counsel-git-grep-recenter   ; preview

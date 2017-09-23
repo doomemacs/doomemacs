@@ -49,3 +49,4 @@
 
 ;; core-keybinds.el
 (package! which-key)
+(package! hydra)
