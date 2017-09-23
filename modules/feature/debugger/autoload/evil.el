@@ -1,7 +1,7 @@
-;;; feature/debug/autoload/evil.el -*- lexical-binding: t; -*-
+;;; feature/debugger/autoload/evil.el -*- lexical-binding: t; -*-
 
-;;;###autoload (autoload '+debug:run "feature/debug/autoload/evil" nil t)
-(evil-define-command +debug:run (&optional path)
+;;;###autoload (autoload '+debugger:run "feature/debugger/autoload/evil" nil t)
+(evil-define-command +debugger:run (&optional path)
   "Initiate debugger for current major mode"
   (interactive "<f>")
   (let ((default-directory (doom-project-root)))
@@ -25,7 +25,7 @@
            (haskell-debug))
           (t (user-error "No debugger for %s" major-mode)))))
 
-;;;###autoload (autoload '+debug:toggle-breakpoint "feature/debug/autoload/evil" nil t)
-(evil-define-command +debug:toggle-breakpoint (&optional bang)
+;;;###autoload (autoload '+debugger:toggle-breakpoint "feature/debugger/autoload/evil" nil t)
+(evil-define-command +debugger:toggle-breakpoint (&optional bang)
   (interactive "<!>")
-  (call-interactively (if bang 'realgud:cmd-clear 'realgud:cmd-break)))
+  (call-interactively (if bang #'realgud:cmd-clear #'realgud:cmd-break)))

@@ -1,7 +1,7 @@
-;;; feature/debug/autoload/debug.el -*- lexical-binding: t; -*-
+;;; feature/debugger/autoload/debug.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
-(defun +debug/quit ()
+(defun +debugger/quit ()
   (interactive)
   (ignore-errors (call-interactively 'realgud:cmd-quit))
   (doom/popup-close)

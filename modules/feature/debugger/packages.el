@@ -1,4 +1,4 @@
 ;; -*- no-byte-compile: t; -*-
-;;; feature/debug/packages.el
+;;; feature/debugger/packages.el
 
 (package! realgud)
