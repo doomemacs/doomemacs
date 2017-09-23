@@ -2,8 +2,10 @@
 
 ;;;###autoload
 (defun +debugger/quit ()
+  "Quit the active debugger, if any."
   (interactive)
-  (ignore-errors (call-interactively 'realgud:cmd-quit))
+  (ignore-errors (call-interactively #'realgud:cmd-quit))
   (doom/popup-close)
-  (evil-normal-state))
+  (when (featurep 'evil)
+    (evil-normal-state)))
 

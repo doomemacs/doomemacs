@@ -1,29 +1,31 @@
 ;;; feature/debugger/autoload/evil.el -*- lexical-binding: t; -*-
 
-;;;###autoload (autoload '+debugger:run "feature/debugger/autoload/evil" nil t)
-(evil-define-command +debugger:run (&optional path)
+;;;###autoload (autoload '+debugger:start "feature/debugger/autoload/evil" nil t)
+(evil-define-command +debugger:start (&optional path)
   "Initiate debugger for current major mode"
   (interactive "<f>")
+  ;; TODO Add python debugging
   (let ((default-directory (doom-project-root)))
-    (cond ((memq major-mode '(c-mode c++-mode))
-           (realgud:gdb (if path (concat "gdb " path))))
-          ((memq major-mode '(ruby-mode enh-ruby-mode))
-           (doom:repl nil (format "run '%s'" (file-name-nondirectory (or path buffer-file-name)))))
-          ((eq major-mode 'sh-mode)
-           (let ((shell sh-shell))
-             (when (string= shell "sh")
-               (setq shell "bash"))
-             (cond ((string= shell "bash")
-                    (realgud:bashdb (if path (concat "bashdb " path))))
-                   ((string= shell "zsh")
-                    (realgud:zshdb (if path (concat "zshdb " path))))
-                   (t (user-error "No shell debugger for %s" shell)))))
-          ;; TODO Add python debugging
-          ((memq major-mode '(js-mode js2-mode js3-mode))
-           (realgud:trepanjs))
-          ((eq major-mode 'haskell-mode)
-           (haskell-debug))
-          (t (user-error "No debugger for %s" major-mode)))))
+    (pcase major-mode
+      ((or 'c-mode 'c++-mode)
+       (realgud:gdb (if path (concat "gdb " path))))
+      ((or 'ruby-mode 'enh-ruby-mode)
+       ;; FIXME
+       (doom:repl nil (format "run '%s'" (file-name-nondirectory (or path buffer-file-name)))))
+      ('sh-mode
+       (let ((shell sh-shell))
+         (when (string= shell "sh")
+           (setq shell "bash"))
+         (pcase shell
+           ("bash"
+            (realgud:bashdb (if path (concat "bashdb " path))))
+           ("zsh"
+            (realgud:zshdb (if path (concat "zshdb " path))))
+           (_ (user-error "No shell debugger for %s" shell)))))
+      ((or 'js-mode 'js2-mode 'js3-mode)
+       (realgud:trepanjs))
+      ('haskell-mode (haskell-debug))
+      (_ (user-error "No debugger for %s" major-mode)))))
 
 ;;;###autoload (autoload '+debugger:toggle-breakpoint "feature/debugger/autoload/evil" nil t)
 (evil-define-command +debugger:toggle-breakpoint (&optional bang)
