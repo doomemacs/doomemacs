@@ -156,7 +156,7 @@ only close popups that have an :autoclose property in their rule (see
 window parameter."
   (cond ((windowp window-or-buffer)
          (or (doom-popup-properties (window-buffer window-or-buffer))
-             (window-parameter window 'popup)))
+             (window-parameter window-or-buffer 'popup)))
         ((bufferp window-or-buffer)
          (buffer-local-value 'doom-popup-rules window-or-buffer))))
 
