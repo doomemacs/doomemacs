@@ -34,22 +34,32 @@ shorter major mode name in the mode-line. See `doom|set-mode-name'.")
 
 ;; Settings
 (def-setting! :theme (theme)
+  "Sets the current THEME (a symbol)."
   `(unless doom-theme
      (setq doom-theme ,theme)))
 
 (def-setting! :font (family &rest spec)
+  "Sets the default font (if one wasn't already set). FAMILY is the name of the
+font, and SPEC is a `font-spec'."
   `(unless doom-font
      (setq doom-font (font-spec :family ,family ,@spec))))
 
 (def-setting! :variable-pitch-font (family &rest spec)
+  "Sets the default font for the variable-pitch face and minor mode (if one
+wasn't already set). FAMILY is the name of the font, and SPEC is a `font-spec'."
   `(unless doom-variable-pitch-font
      (setq doom-variable-pitch-font (font-spec :family ,family ,@spec))))
 
 (def-setting! :big-font (family &rest spec)
+  "Sets the font to use for `doom-big-font-mode' (if one wasn't already set).
+FAMILY is the name of the font, and SPEC is a `font-spec'."
   `(unless doom-big-font
      (setq doom-big-font (font-spec :family ,family ,@spec))))
 
 (def-setting! :unicode-font (family &rest spec)
+  "Sets the font to use for unicode characters (if one wasn't already set).
+FAMILY is the name of the font, and SPEC is a `font-spec'. This is ignored if
+the ':ui unicode' module is enabled."
   `(unless doom-unicode-font
      (setq doom-unicode-font (font-spec :family ,family ,@spec))))
 
