@@ -212,6 +212,16 @@ window parameter."
       (when (/= count 0)
         (other-window count)))))
 
+;;;###autoload
+(defun doom-popup-move (direction)
+  "Move a popup window to another side of the frame, in DIRECTION, which can be
+one of the following: 'left 'right 'up 'down"
+  (when (doom-popup-p)
+    (let ((buffer (current-buffer))
+          (doom-popup-inhibit-autokill t))
+      (doom/popup-close)
+      (doom-popup-buffer buffer '(:align direction) 'extend))))
+
 (defun doom--popup-data (window)
   (unless (doom-popup-property :fixed window)
     (when-let (buffer (window-buffer window))

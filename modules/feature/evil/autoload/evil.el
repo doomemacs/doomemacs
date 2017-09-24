@@ -101,34 +101,36 @@ flags. See http://vimdoc.sourceforge.net/htmldoc/cmdline.html#filename-modifiers
 there and there is only one window, split in that direction and place this
 window there. If there are no windows and this isn't the only window, use
 evil-window-move-* (e.g. `evil-window-move-far-left')"
-  (let* ((this-window (get-buffer-window))
-         (this-buffer (current-buffer))
-         (that-window (windmove-find-other-window direction nil this-window))
-         (that-buffer (window-buffer that-window)))
-    (when (or (minibufferp that-buffer)
-              (doom-popup-p that-window))
-      (setq that-buffer nil that-window nil))
-    (if (not (or that-window (one-window-p t)))
-        (funcall (pcase direction
-                   ('left  #'evil-window-move-far-left)
-                   ('right #'evil-window-move-far-right)
-                   ('up    #'evil-window-move-very-top)
-                   ('down  #'evil-window-move-very-bottom)))
-      (unless that-window
-        (setq that-window
-              (split-window this-window nil
-                            (pcase direction
-                              ('up 'above)
-                              ('down 'below)
-                              (_ direction))))
+  (if (doom-popup-p)
+      (doom-popup-move direction)
+    (let* ((this-window (get-buffer-window))
+           (this-buffer (current-buffer))
+           (that-window (windmove-find-other-window direction nil this-window))
+           (that-buffer (window-buffer that-window)))
+      (when (or (minibufferp that-buffer)
+                (doom-popup-p that-window))
+        (setq that-buffer nil that-window nil))
+      (if (not (or that-window (one-window-p t)))
+          (funcall (pcase direction
+                     ('left  #'evil-window-move-far-left)
+                     ('right #'evil-window-move-far-right)
+                     ('up    #'evil-window-move-very-top)
+                     ('down  #'evil-window-move-very-bottom)))
+        (unless that-window
+          (setq that-window
+                (split-window this-window nil
+                              (pcase direction
+                                ('up 'above)
+                                ('down 'below)
+                                (_ direction))))
+          (with-selected-window that-window
+            (switch-to-buffer doom-buffer))
+          (setq that-buffer (window-buffer that-window)))
+        (with-selected-window this-window
+          (switch-to-buffer that-buffer))
         (with-selected-window that-window
-          (switch-to-buffer doom-buffer))
-        (setq that-buffer (window-buffer that-window)))
-      (with-selected-window this-window
-        (switch-to-buffer that-buffer))
-      (with-selected-window that-window
-        (switch-to-buffer this-buffer))
-      (select-window that-window))))
+          (switch-to-buffer this-buffer))
+        (select-window that-window)))))
 
 ;;;###autoload
 (defun +evil/window-move-left () "See `+evil--window-swap'"  (interactive) (+evil--window-swap 'left))
