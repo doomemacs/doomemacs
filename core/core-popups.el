@@ -515,7 +515,10 @@ the command buffer."
     "Repair neotree state whenever its popup state is restored. This ensures
 that `doom*popup-save' won't break it."
     (when (equal (buffer-name) neo-buffer-name)
-      (setq neo-global--window (selected-window))))
+      (setq neo-global--window (selected-window))
+      ;; Fix neotree shrinking when closing nearby vertical splits
+      (when neo-window-fixed-size
+        (doom-resize-window neo-global--window neo-window-width t t))))
   (add-hook 'doom-popup-mode-hook #'+evil|neotree-fix-popup))
 
 
