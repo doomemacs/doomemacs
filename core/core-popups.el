@@ -330,7 +330,7 @@ properties."
     "If current window is a popup, close it. If minibuffer is open, close it. If
 not in a popup, close all popups with an :autoclose property."
     (cond ((doom-popup-p)
-           (unless (doom-popup-prop :noesc)
+           (unless (doom-popup-property :noesc)
              (delete-window)))
           (t
            (doom/popup-close-all))))

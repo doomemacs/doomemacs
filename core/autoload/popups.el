@@ -119,7 +119,7 @@ only close popups that have an :autoclose property in their rule (see
       (dolist (window popups)
         (when (or force-p
                   (called-interactively-p 'interactive)
-                  (doom-popup-prop :autoclose window))
+                  (doom-popup-property :autoclose window))
           (delete-window window)
           (setq success t)))
       success)))
@@ -128,7 +128,7 @@ only close popups that have an :autoclose property in their rule (see
 (defun doom/popup-close-maybe ()
   "Close the current popup *if* its window doesn't have a noesc parameter."
   (interactive)
-  (if (doom-popup-prop :noesc)
+  (if (doom-popup-property :noesc)
       (call-interactively
        (if (featurep 'evil)
            #'evil-force-normal-state
@@ -150,14 +150,20 @@ only close popups that have an :autoclose property in their rule (see
     (doom-popup-buffer (get-buffer "*Messages*"))))
 
 ;;;###autoload
-(defun doom-popup-prop (prop &optional window)
+(defun doom-popup-properties (window-or-buffer)
+  "Returns a window's popup property list, if possible. The buffer-local
+`doom-popup-rules' always takes priority, but this will fall back to the popup
+window parameter."
+  (cond ((windowp window-or-buffer)
+         (or (doom-popup-properties (window-buffer window-or-buffer))
+             (window-parameter window 'popup)))
+        ((bufferp window-or-buffer)
+         (buffer-local-value 'doom-popup-rules window-or-buffer))))
+
+;;;###autoload
+(defun doom-popup-property (prop &optional window)
   "Returns a `doom-popup-rules' PROPerty from WINDOW."
-  (or (plist-get (or (if window
-                         (ignore-errors
-                           (buffer-local-value 'doom-popup-rules
-                                               (window-buffer window)))
-                       doom-popup-rules)
-                     (window-parameter window 'popup))
+  (or (plist-get (doom-popup-properties (or window (selected-window)))
                  prop)
       (pcase prop
         (:size  shackle-default-size)
@@ -166,7 +172,7 @@ only close popups that have an :autoclose property in their rule (see
 ;;;###autoload
 (defun doom-popup-side (&optional window)
   "Return what side a popup WINDOW came from ('left 'right 'above or 'below)."
-  (let ((align (doom-popup-prop :align window)))
+  (let ((align (doom-popup-property :align window)))
     (when (eq align t)
       (setq align shackle-default-alignment))
     (when (functionp align)
