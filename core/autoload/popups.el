@@ -115,7 +115,7 @@ only close popups that have an :autoclose property in their rule (see
   (interactive)
   (when-let (popups (doom-popup-windows))
     (let (success doom-popup-remember-history)
-      (setq doom-popup-history (mapcar #'doom--popup-data popups))
+      (setq doom-popup-history (delq nil (mapcar #'doom--popup-data popups)))
       (dolist (window popups)
         (when (or force-p
                   (called-interactively-p 'interactive)
