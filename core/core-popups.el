@@ -592,9 +592,9 @@ you came from."
       '("^\\*Org-Babel"      :regexp t :size 25 :noselect t)
       '("^CAPTURE.*\\.org$"  :regexp t :size 20))
 
-    ;; Org has its own window management system with a scorched earth philosophy
-    ;; I'm not fond of. i.e. it kills all windows and monopolizes the frame. No
-    ;; thanks. We can do better with shackle's help.
+    ;; Org has a scorched-earth window management system I'm not fond of. i.e.
+    ;; it kills all windows and monopolizes the frame. No thanks. We can do
+    ;; better with shackle's help.
     (defun doom*suppress-delete-other-windows (orig-fn &rest args)
       (cl-letf (((symbol-function 'delete-other-windows)
                  (symbol-function 'ignore)))
@@ -603,17 +603,17 @@ you came from."
     (advice-add #'org-capture-place-template :around #'doom*suppress-delete-other-windows)
     (advice-add #'org-export--dispatch-ui :around #'doom*suppress-delete-other-windows)
 
-    ;; `org-edit-src-code' simply clones and narrows the buffer to a src block,
-    ;; so we are secretly manipulating the same buffer. Since truely killing it
-    ;; would kill the original org buffer we've got to do things differently.
-    (defun doom*org-src-switch-to-buffer (buffer _context)
+    ;; Hand off the src-block window to a shackle popup window.
+    (defun doom*org-src-pop-to-buffer (buffer _context)
+      "Open the src-edit in a way that shackle can detect."
       (if (eq org-src-window-setup 'switch-invisibly)
           (set-buffer buffer)
         (pop-to-buffer buffer)))
-    (advice-add #'org-src-switch-to-buffer :override #'doom*org-src-switch-to-buffer)
+    (advice-add #'org-src-switch-to-buffer :override #'doom*org-src-pop-to-buffer)
 
-    ;; Ensure todo, agenda, and other minor popups handed off to shackle.
+    ;; Ensure todo, agenda, and other minor popups are delegated to shackle.
     (defun doom*org-pop-to-buffer (&rest args)
+      "Use `pop-to-buffer' instead of `switch-to-buffer' to open buffer.'"
       (let ((buf (car args)))
         (pop-to-buffer
          (cond ((stringp buf) (get-buffer-create buf))
@@ -629,7 +629,7 @@ you came from."
       (add-hook 'org-agenda-finalize-hook #'doom-hide-modeline-mode)
       ;; Don't monopolize frame!
       (advice-add #'org-agenda :around #'doom*suppress-delete-other-windows)
-
+      ;; ensure quit keybindings work propertly
       (map! :map org-agenda-mode-map
             :m [escape] 'org-agenda-Quit
             :m "ESC"    'org-agenda-Quit)
