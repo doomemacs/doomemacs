@@ -4,16 +4,15 @@
 
 ;;;###autoload
 (defun doom-popup-p (&optional target)
-  "Return TARGET (a window) if TARGET (a window or buffer) is a popup. Uses
-current window if omitted."
+  "Return t if TARGET (a window or buffer) is a popup. Uses current window if
+omitted."
   (when-let (target (or target (selected-window)))
     (cond ((bufferp target)
-           (and (buffer-live-p target)
-                (buffer-local-value 'doom-popup-mode target)))
+           (and (buffer-local-value 'doom-popup-mode target)
+                (not (plist-get (buffer-local-value 'doom-popup-rules target) :fixed))))
           ((windowp target)
-           (and (window-live-p target)
-                (window-parameter target 'popup)
-                target)))))
+           (and (window-parameter target 'popup)
+                (not (doom-popup-property :fixed target)))))))
 
 ;;;###autoload
 (defun doom-popup-buffer (buffer plist &optional extend-p)
@@ -103,8 +102,8 @@ Returns t if popups were restored, nil otherwise."
 `selected-window'. The contained buffer is buried, unless it has an :autokill
 property."
   (interactive)
-  (when-let (window (doom-popup-p window))
-    (delete-window window)))
+  (when (doom-popup-p window)
+    (delete-window (or window (selected-window)))))
 
 ;;;###autoload
 (defun doom/popup-close-all (&optional force-p)
