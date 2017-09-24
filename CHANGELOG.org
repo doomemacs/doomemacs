@@ -76,6 +76,7 @@
   + Fixed ~make update~ to work even if Doom is installed somewhere other than ~\~/.emacs.d~ (see [[https://github.com/hlissner/doom-emacs/issues/190][#190]]).
   + Removed colons from makefile task target names (like =compile:core=); replaced them with dashses, e.g. =compile-core=. Colons broke compatibility with certain versions of make.
   + Changed the signature of ~doom-resize-window~ to accept two more arguments, =WINDOW= and =FORCE-P=: ~doom-resize-window WINDOW NEW-SIZE &optional HORIZONTAL FORCE-P~. If =FORCE-P= is non-nil, this function will resize a window regardless of ~window-size-fixed~.
+  + ~doom-popup-buffer~ and ~doom-popup-file~ no longer take a second variadic argument. Their signature is now ~doom-popup-buffer buffer plist &optional extend-p~ and ~doom-popup-file file plist &optional extend-p~, where =EXTEND-P= will cause =PLIST= to extend from the base rule for that buffer.
 + =feature=
   + =hydra= Display a separator along the bottom of hydra windows for extra contrast.
 + =ui=

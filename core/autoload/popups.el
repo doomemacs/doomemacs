@@ -16,16 +16,19 @@ current window if omitted."
                 target)))))
 
 ;;;###autoload
-(defun doom-popup-buffer (buffer &rest plist)
-  "Display BUFFER in a shackle popup. See `shackle-rules' for possible rules.
-Returns the new popup window."
+(defun doom-popup-buffer (buffer plist &optional extend-p)
+  "Display BUFFER in a shackle popup with PLIST rules. See `shackle-rules' for
+possible rules. If EXTEND-P is non-nil, don't overwrite the original rules for
+this popup, just the specified properties. Returns the new popup window."
   (declare (indent defun))
   (unless (bufferp buffer)
     (error "%s is not a valid buffer" buffer))
-  (setq plist (append plist (shackle-match buffer)))
   (shackle-display-buffer
    buffer
-   nil (or plist (shackle-match buffer))))
+   nil (or (if extend-p
+               (append plist (shackle-match buffer))
+             plist)
+           (shackle-match buffer))))
 
 ;;;###autoload
 (defun doom-popup-switch-to-buffer (buffer)
@@ -41,12 +44,12 @@ Returns the new popup window."
     (set-window-dedicated-p nil t)))
 
 ;;;###autoload
-(defun doom-popup-file (file &rest plist)
+(defun doom-popup-file (file plist &optional extend-p)
   "Display FILE in a shackle popup, with PLIST rules. See `shackle-rules' for
 possible rules."
   (unless (file-exists-p file)
     (user-error "Can't display file in popup, it doesn't exist: %s" file))
-  (doom-popup-buffer (find-file-noselect file t) plist))
+  (doom-popup-buffer (find-file-noselect file t) plist extend-p))
 
 ;;;###autoload
 (defun doom-popup-windows ()
@@ -76,7 +79,7 @@ Returns t if popups were restored, nil otherwise."
                   (find-file-noselect file t))))
         (when size
           (setq rules (plist-put rules :size size)))
-        (when (and buffer (apply #'doom-popup-buffer buffer rules) (not any-p))
+        (when (and buffer (doom-popup-buffer buffer rules) (not any-p))
           (setq any-p t))))
     (when any-p
       (setq doom-popup-history '()))
@@ -136,7 +139,7 @@ only close popups that have an :autoclose property in their rule (see
 (defun doom/popup-this-buffer ()
   "Display currently selected buffer in a popup window."
   (interactive)
-  (doom-popup-buffer (current-buffer) :align t :autokill t))
+  (doom-popup-buffer (current-buffer) '(:align t :autokill t)))
 
 ;;;###autoload
 (defun doom/popup-toggle-messages ()

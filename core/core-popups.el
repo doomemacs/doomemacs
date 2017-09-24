@@ -486,7 +486,7 @@ the command buffer."
 
 (after! mu4e
   (defun doom*mu4e-popup-window (buf _height)
-    (doom-popup-buffer buf :size 10 :noselect t)
+    (doom-popup-buffer buf '(:size 10 :noselect t))
     buf)
   (advice-add #'mu4e~temp-window :override #'doom*mu4e-popup-window))
 
