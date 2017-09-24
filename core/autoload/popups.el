@@ -15,7 +15,7 @@ omitted."
                 (not (doom-popup-property :fixed target)))))))
 
 ;;;###autoload
-(defun doom-popup-buffer (buffer plist &optional extend-p)
+(defun doom-popup-buffer (buffer &optional plist extend-p)
   "Display BUFFER in a shackle popup with PLIST rules. See `shackle-rules' for
 possible rules. If EXTEND-P is non-nil, don't overwrite the original rules for
 this popup, just the specified properties. Returns the new popup window."
@@ -43,7 +43,7 @@ this popup, just the specified properties. Returns the new popup window."
     (set-window-dedicated-p nil t)))
 
 ;;;###autoload
-(defun doom-popup-file (file plist &optional extend-p)
+(defun doom-popup-file (file &optional plist extend-p)
   "Display FILE in a shackle popup, with PLIST rules. See `shackle-rules' for
 possible rules."
   (unless (file-exists-p file)
