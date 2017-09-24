@@ -93,7 +93,8 @@ Returns t if popups were restored, nil otherwise."
         (select-window doom-popup-other-window)
       (other-window 1)))
   (if (doom-popup-windows)
-      (doom/popup-close-all t)
+      (let ((doom-popup-inhibit-autokill t))
+        (doom/popup-close-all t))
     (doom/popup-restore)))
 
 ;;;###autoload

@@ -39,6 +39,11 @@
   "A list of window parameters that are set (and cleared) when `doom-popup-mode
 is enabled/disabled.'")
 
+(defvar doom-popup-inhibit-autokill nil
+  "Don't set this directly. Let-bind it. When it is non-nil, no buffers will be
+killed when their associated popup windows are closed, despite their :autokill
+property.")
+
 (def-setting! :popup (&rest rules)
   "Prepend a new popup rule to `shackle-rules' (see for format details).
 
@@ -230,7 +235,8 @@ and setting `doom-popup-rules' within it. Returns the window."
 prevent the popup(s) from messing up the UI (or vice versa)."
   (let ((in-popup-p (doom-popup-p))
         (popups (doom-popup-windows))
-        (doom-popup-remember-history t))
+        (doom-popup-remember-history t)
+        (doom-popup-inhibit-autokill t))
     (when popups
       (mapc #'doom/popup-close popups))
     (unwind-protect (apply orig-fn args)
@@ -248,7 +254,8 @@ properties."
       (setq doom-popup-windows (delq window doom-popup-windows))
       (when doom-popup-remember-history
         (setq doom-popup-history (list (doom--popup-data window))))
-      (let ((autokill-p (plist-get doom-popup-rules :autokill)))
+      (let ((autokill-p (and (not doom-popup-inhibit-autokill)
+                             (plist-get doom-popup-rules :autokill))))
         (with-selected-window window
           (doom-popup-mode -1)
           (when autokill-p
