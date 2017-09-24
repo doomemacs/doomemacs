@@ -30,18 +30,16 @@
 (require 'core (concat user-emacs-directory "core/core"))
 
 (doom! :feature
+      ;debugger        ; FIXME stepping through code, to help you add bugs
+       eval            ; run code, run (also, repls)
        evil            ; come to the dark side, we have cookies
+       file-templates  ; auto-snippets for empty files
        jump            ; helping you get around
        snippets        ; my elves. They type so I don't have to
-       file-templates  ; auto-snippets for empty files
-       hydra           ; keybindings that stick around
        spellcheck      ; tasing you for misspelling mispelling
        syntax-checker  ; tasing you for every semicolon you forget
        version-control ; remember, remember that commit in November
        workspaces      ; tab emulation, persistence & separate workspaces
-       eval            ; repls, runners 'n builders; run code, run
-      ;refactor        ; perform operations on entire bodies of code
-      ;debug           ; FIXME stepping through code, to help you add bugs
 
        :completion
        company         ; the ultimate code completion backend
@@ -59,17 +57,19 @@
        evil-goggles    ; display visual hints when editing in evil
       ;unicode         ; extended unicode support for various languages
       ;tabbar          ; FIXME an (incomplete) tab bar for Emacs
+       vi-tilde-fringe ; fringe tildes to mark beyond EOB
 
        :tools
        dired           ; making dired pretty [functional]
        electric-indent ; smarter, keyword-based electric-indent
        eshell          ; a consistent, cross-platform shell (WIP)
        gist            ; interacting with github gists
+       imenu           ; an imenu sidebar and searchable code index
        impatient-mode  ; show off code over HTTP
       ;macos           ; MacOS-specific commands
+       make            ; run make tasks from Emacs
        neotree         ; a project drawer, like NERDTree for vim
        password-store  ; password manager for nerds
-       prodigy         ; manage external services from within emacs
        rotate-text     ; cycle region at point between text candidates
        term            ; terminals in Emacs
        tmux            ; an API for interacting with tmux
@@ -131,7 +131,6 @@
        write           ; emacs as a word processor (latex + org + markdown)
 
        ;; Private modules named after your username are loaded automatically.
-       ;; Leaving this here is harmless though. Also, they are omitted from
-       ;; source control (except for mine; use it as a reference).
+       ;; Leaving this here is harmless though.
        :private hlissner)
 
