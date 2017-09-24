@@ -91,7 +91,8 @@ function that creates and returns the REPL buffer."
              quickrun-compile-only
              quickrun-replace-region)
   :init
-  (add-hook 'quickrun--mode-hook #'nlinum-mode)
+  (unless (boundp 'display-line-numbers)
+    (add-hook 'quickrun--mode-hook #'nlinum-mode))
   :config
   (set! :popup
     '("*quickrun*"       :size 10 :noesc t    :autokill t :autoclose t)
