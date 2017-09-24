@@ -35,7 +35,7 @@
   "The shackle rule that caused this buffer to be recognized as a popup.")
 
 (defvar doom-popup-window-parameters
-  '(:noesc :modeline :autokill :autoclose)
+  '(:noesc :modeline :autokill :autoclose :fixed)
   "A list of window parameters that are set (and cleared) when `doom-popup-mode
 is enabled/disabled.'")
 
@@ -63,7 +63,11 @@ recognized by DOOM's popup system. They are:
             that have an :autokill property.
 
 :autoclose  If non-nil, close popup if ESC is pressed from outside
-            the popup window."
+            the popup window.
+
+:fixed      If non-nil, don't treat this window like a popup. This makes it
+            impervious to being automatically closed or tracked in popup
+            history. Excellent for permanent sidebars."
   (if (cl-every #'listp (mapcar #'doom-unquote rules))
       `(setq shackle-rules (nconc (list ,@rules) shackle-rules))
     `(push (list ,@rules) shackle-rules)))
@@ -509,7 +513,7 @@ the command buffer."
   ;;
   ;; By handing neotree over to shackle, which is better integrated into the
   ;; rest of my config (and persp-mode), this is no longer a problem.
-  (set! :popup " *NeoTree*" :align neo-window-position :size neo-window-width)
+  (set! :popup " *NeoTree*" :align neo-window-position :size neo-window-width :fixed t)
 
   (defun +evil-neotree-display-fn (buf _alist)
     "Hand neotree off to shackle."

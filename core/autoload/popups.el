@@ -186,13 +186,6 @@ window parameter."
     ((or 'left 'right)  (window-width window))
     ((or 'above 'below) (window-height window))))
 
-(defun doom--popup-data (window)
-  (when-let (buffer (window-buffer window))
-    `(,(buffer-name buffer)
-      :file  ,(buffer-file-name buffer)
-      :rules ,(window-parameter window 'popup)
-      :size  ,(doom-popup-size window))))
-
 ;;;###autoload
 (defmacro with-popup-rules! (rules &rest body)
   "TODO"
@@ -218,3 +211,11 @@ window parameter."
         (cl-decf count))
       (when (/= count 0)
         (other-window count)))))
+
+(defun doom--popup-data (window)
+  (unless (doom-popup-property :fixed window)
+    (when-let (buffer (window-buffer window))
+      `(,(buffer-name buffer)
+        :file  ,(buffer-file-name buffer)
+        :rules ,(window-parameter window 'popup)
+        :size  ,(doom-popup-size window)))))
