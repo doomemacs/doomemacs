@@ -22,7 +22,6 @@
   (package! nlinum-hl)
   (package! nlinum-relative))
 (package! rainbow-delimiters)
-(package! vi-tilde-fringe)
 (package! visual-fill-column)
 
 ;; core-popups.el
