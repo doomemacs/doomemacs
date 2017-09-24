@@ -67,17 +67,30 @@
 * Unreleased (master)
 + =doom=
   + Added new module: ~lang/ledger~, for editing ledger files.
+  + Added new module: ~ui/vi-tilde-fringe~; indicates beyond EOB, using tildes in the fringe (inspired by vim). This used to be in core-ui.
+  + Added new module: ~feature/services~; used to be ~tools/prodigy~. Adds a way of managing external processes and services.
+  + Added new module: ~tools/make~, for running project Makefile commands from Emacs.
+  + Added new module: ~tools/imenu~, adds a sidebar for imenu (~imenu-list~), and a way of jumping to imenu entries across all open buffers (~imenu-anywhere~).
+  + Moved ~feature/hydra~ into ~core-keybinds~. Added ~def-hydra!~ alias macro.
+  + Renamed ~feature/debug~ to ~feature/debugger~.
   + Fixed ~make update~ to work even if Doom is installed somewhere other than ~\~/.emacs.d~ (see [[https://github.com/hlissner/doom-emacs/issues/190][#190]]).
-  + Removed colons from makefile task target names. They broke compatibility with certain versions of make.
+  + Removed colons from makefile task target names (like =compile:core=); replaced them with dashses, e.g. =compile-core=. Colons broke compatibility with certain versions of make.
+  + Changed the signature of ~doom-resize-window~ to accept two more arguments, =WINDOW= and =FORCE-P=: ~doom-resize-window WINDOW NEW-SIZE &optional HORIZONTAL FORCE-P~. If =FORCE-P= is non-nil, this function will resize a window regardless of ~window-size-fixed~.
 + =feature=
   + =hydra= Display a separator along the bottom of hydra windows for extra contrast.
 + =ui=
   + =doom-dashboard= Elements are now centered using window-local margins, which fixes discrepancies when multiple dashboards are visible in different sized windows and/or frames (see [[https://github.com/hlissner/doom-emacs/issues/192][#192]]).
+  + =hl-todo= Added face-based detection for commented regions, so hl-todo can work in modes with no/poor syntax-table support.
++ =tools=
+  + Fixed neotree shrinking when vertical splits were closed.
+  + Neotree popup rule now takes ~neo-window-width~ and ~neo-window-position~ into account.
 + =lang=
   + =ruby= Added rake support. See the ~rake~ command.
+  + =web= Only install company-web if =:completion company= is enabled.
 + =org=
   + If a table is under point when ~+org/toggle-fold~ is invoked, the table is realigned.
   + =org-capture= Fix a vestigial reference to a long-since-renamed function: ~doom/project-root~.
+  + Fixed the incorrect version of org being loaded (site, instead of ELPA) by pushing it up further in the ~load-path~.
 
 * 2.0.5 (Sep 03, 2017)
 + =doom=
@@ -357,7 +370,7 @@
 + =feature=
   + =feature/eval=
     + Fix ~:repl~ & ~+eval/repl-send-region~.
-    + Fix ~+eval/region~ failing only on first invocation because ~+eval-runners-alist~ wasn't populated until quickrun is loaded.
+    + Fix ~+eval/region~ failing only on first invocation because ~+eval-runners~ wasn't populated until quickrun is loaded.
     + Add TAB auto-completion in comint-mode and REPL buffers
   + =feature/evil=
     + Fix ~:mv~ & ~:rm~.
