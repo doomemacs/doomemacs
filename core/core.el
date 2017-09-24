@@ -8,7 +8,9 @@
 ;;   doom:...   an evil operator, motion or command
 ;;   doom|...   hook function
 ;;   doom*...   advising functions
+;;   doom@...   a hydra command
 ;;   ...!       a macro or function that configures DOOM
+;;   =...       an interactive command that starts an app module
 ;;   %...       functions used for in-snippet logic
 ;;   +...       Any of the above but part of a module, e.g. `+emacs-lisp|init-hook'
 ;;
