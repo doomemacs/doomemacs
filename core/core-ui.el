@@ -179,12 +179,9 @@ local value, whether or not it's permanent-local. Therefore, we cycle
   "Set the major mode's `mode-name', as dictated by `doom-major-mode-names'."
   (when-let (name (cdr (assq major-mode doom-major-mode-names)))
     (setq mode-name
-          (cond ((functionp name)
-                 (funcall name))
-                ((stringp name)
-                 name)
-                (t
-                 (error "'%s' isn't a valid name for %s" name major-mode))))))
+          (cond ((functionp name) (funcall name))
+                ((stringp name) name)
+                (t (error "'%s' isn't a valid name for %s" name major-mode))))))
 (add-hook 'after-change-major-mode-hook #'doom|set-mode-name)
 
 
@@ -237,7 +234,7 @@ local value, whether or not it's permanent-local. Therefore, we cycle
 
 ;; prompts the user for confirmation when deleting a non-empty frame
 (define-key global-map [remap delete-frame] #'doom/delete-frame)
-;; buffer name in frame title
+;; simple name in frame title
 (setq-default frame-title-format '("DOOM Emacs"))
 ;; auto-enabled in Emacs 25+; I'll do it myself
 (global-eldoc-mode -1)

@@ -29,8 +29,7 @@
       "Refresh git-gutter on ESC. Return nil to prevent shadowing other
 `+evil-esc-hook' hooks."
       (when git-gutter-mode
-        (git-gutter)
-        nil))
+        (ignore (git-gutter))))
     (add-hook '+evil-esc-hook #'+version-control|update-git-gutter t))
 
   (def-hydra! +version-control@git-gutter
