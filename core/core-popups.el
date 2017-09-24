@@ -502,7 +502,7 @@ the command buffer."
   ;;
   ;; By handing neotree over to shackle, which is better integrated into the
   ;; rest of my config (and persp-mode), this is no longer a problem.
-  (set! :popup " *NeoTree*" :align 'left :size 25)
+  (set! :popup " *NeoTree*" :align neo-window-position :size neo-window-width)
 
   (defun +evil-neotree-display-fn (buf _alist)
     "Hand neotree off to shackle."
