@@ -197,6 +197,24 @@ window parameter."
      (setq shackle-rules old-shackle-rules)))
 
 ;;;###autoload
+(defmacro save-popups! (&rest body)
+  "Sets aside all popups before executing the original function, usually to
+prevent the popup(s) from messing up the UI (or vice versa)."
+  `(let ((in-popup-p (doom-popup-p))
+         (popups (doom-popup-windows))
+         (doom-popup-remember-history t)
+         (doom-popup-inhibit-autokill t))
+     (when popups
+       (mapc #'doom/popup-close popups))
+     (unwind-protect
+         (progn ,@body)
+       (when popups
+         (let ((origin (selected-window)))
+           (doom/popup-restore)
+           (unless in-popup-p
+             (select-window origin)))))))
+
+;;;###autoload
 (defun doom/other-popup (count)
   "Cycle through popup windows. Like `other-window', but for popups."
   (interactive "p")

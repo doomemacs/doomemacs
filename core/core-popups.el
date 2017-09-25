@@ -237,18 +237,7 @@ and setting `doom-popup-rules' within it. Returns the window."
 (defun doom*popups-save (orig-fn &rest args)
   "Sets aside all popups before executing the original function, usually to
 prevent the popup(s) from messing up the UI (or vice versa)."
-  (let ((in-popup-p (doom-popup-p))
-        (popups (doom-popup-windows))
-        (doom-popup-remember-history t)
-        (doom-popup-inhibit-autokill t))
-    (when popups
-      (mapc #'doom/popup-close popups))
-    (unwind-protect (apply orig-fn args)
-      (when popups
-        (let ((origin (selected-window)))
-          (doom/popup-restore)
-          (unless in-popup-p
-            (select-window origin)))))))
+  (save-popups! (apply orig-fn args)))
 
 (defun doom*delete-popup-window (&optional window)
   "Ensure that popups are deleted properly, and killed if they have :autokill
