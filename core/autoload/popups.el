@@ -231,6 +231,16 @@ prevent the popup(s) from messing up the UI (or vice versa)."
         (other-window count)))))
 
 ;;;###autoload
+(defun doom/popup-raise (&optional window)
+  "Turn a popup window into a normal window."
+  (interactive)
+  (let ((window (or window (selected-window))))
+    (unless (doom-popup-p window)
+      (user-error "Not a valid popup to raise"))
+    (with-selected-window window
+      (doom-popup-mode -1))))
+
+;;;###autoload
 (defun doom-popup-move (direction)
   "Move a popup window to another side of the frame, in DIRECTION, which can be
 one of the following: 'left 'right 'up 'down"
