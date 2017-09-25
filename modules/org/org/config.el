@@ -144,7 +144,9 @@
   "Sets up org-mode and evil keybindings. Tries to fix the idiosyncrasies
 between the two."
   (map! (:map org-mode-map
-          "RET" #'org-return-indent)
+          "RET" #'org-return-indent
+          [remap evil-next-line]     #'evil-next-visual-line
+          [remap evil-previous-line] #'evil-previous-visual-line)
 
         (:map +org-evil-mode-map
           :n  "RET" #'+org/dwim-at-point
