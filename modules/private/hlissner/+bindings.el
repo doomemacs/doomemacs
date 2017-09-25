@@ -23,14 +23,17 @@
  :nvime "M-x" #'execute-extended-command
  :nvime "A-x" #'execute-extended-command
  ;; Emacs debug utilities
- "M-;"    #'eval-expression
- "A-;"    #'eval-expression
+ "M-;"        #'eval-expression
+ :nvime "M-;" #'eval-expression
+ "M-:"        #'doom/open-scratch-buffer
+ :nvime "M-:" #'doom/open-scratch-buffer
  ;; Text-scaling
  "M-+"    (λ! (text-scale-set 0))
  "M-="    #'text-scale-increase
  "M--"    #'text-scale-decrease
  ;; Simple window navigation/manipulation
  "C-`"    #'doom/popup-toggle
+ "C-`"    #'doom/popup-raise
  "M-t"    #'+workspace/new
  "M-T"    #'+workspace/display
  "M-w"    #'delete-window
