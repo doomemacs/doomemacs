@@ -155,7 +155,6 @@ with functions that require it (like modeline segments)."
   (setq recentf-save-file (concat doom-cache-dir "recentf")
         recentf-max-menu-items 0
         recentf-max-saved-items 300
-        recentf-filename-handlers '(abbreviate-file-name)
         recentf-exclude
         (list "^/tmp/" "^/ssh:" "\\.?ido\\.last$" "\\.revive$" "/TAGS$"
               "^/var/folders/.+$"
