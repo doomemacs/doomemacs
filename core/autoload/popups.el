@@ -243,12 +243,21 @@ prevent the popup(s) from messing up the UI (or vice versa)."
 ;;;###autoload
 (defun doom-popup-move (direction)
   "Move a popup window to another side of the frame, in DIRECTION, which can be
-one of the following: 'left 'right 'up 'down"
+one of the following: 'left 'right 'above 'below"
   (when (doom-popup-p)
     (let ((buffer (current-buffer))
           (doom-popup-inhibit-autokill t))
       (doom/popup-close)
-      (doom-popup-buffer buffer '(:align direction) 'extend))))
+      (doom-popup-buffer buffer `(:align ,direction) 'extend))))
+
+;;;###autoload
+(defun doom/popup-move-top () "See `doom-popup-move'." (interactive) (doom-popup-move 'above))
+;;;###autoload
+(defun doom/popup-move-bottom () "See `doom-popup-move'." (interactive) (doom-popup-move 'below))
+;;;###autoload
+(defun doom/popup-move-left () "See `doom-popup-move'." (interactive) (doom-popup-move 'left))
+;;;###autoload
+(defun doom/popup-move-right () "See `doom-popup-move'." (interactive) (doom-popup-move 'right))
 
 (defun doom--popup-data (window)
   (unless (doom-popup-property :fixed window)
