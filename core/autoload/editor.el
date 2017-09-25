@@ -15,21 +15,19 @@
   (interactive)
   (doom/sudo-find-file (file-truename buffer-file-name)))
 
-(defun doom--goto-first-non-blank ()
-  (beginning-of-visual-line)
-  (skip-chars-forward " \t\r"))
-
 ;;;###autoload
 (defun doom/backward-to-bol-or-indent ()
   "Move back to the current line's indentation. If already there, move to the
 beginning of the line instead. If at bol, do nothing."
   (interactive)
-  (let ((boi (save-excursion (back-to-indentation) (point)))
-        (point (point)))
-    (if (= boi point)
-        (beginning-of-visual-line)
-      (unless (= (line-beginning-position) point)
-        (doom--goto-first-non-blank)))))
+  (if (bound-and-true-p visual-line-mode)
+      (beginning-of-visual-line)
+    (let ((ci (current-indentation))
+          (cc (current-column)))
+      (cond ((or (> cc ci) (= cc 0))
+             (back-to-indentation))
+            ((<= cc ci)
+             (beginning-of-visual-line))))))
 
 ;;;###autoload
 (defun doom/forward-to-last-non-comment-or-eol ()
@@ -80,22 +78,28 @@ If already there, do nothing."
   (interactive)
   (if indent-tabs-mode
       (call-interactively #'backward-delete-char)
-    (save-excursion
-      (unless (looking-back "^[\s\t]*" (line-beginning-position))
-        (doom--goto-first-non-blank))
-      (let* ((movement (% (current-column) tab-width))
-             (spaces (if (= 0 movement) tab-width (- tab-width movement))))
-        (delete-char (- spaces))))))
+    (unless (bolp)
+      (save-excursion
+        (when (> (current-column) (current-indentation))
+          (back-to-indentation))
+        (let ((movement (% (current-column) tab-width)))
+          (delete-char
+           (- (if (= 0 movement)
+                  tab-width
+                (- tab-width movement)))))))))
 
 ;;;###autoload
 (defun doom/backward-kill-to-bol-and-indent ()
   "Kill line to the first non-blank character. If invoked again
 afterwards, kill line to column 1."
   (interactive)
-  (let ((empty-line (save-excursion (beginning-of-line) (looking-at-p "[ \t]*$"))))
-    (funcall (if (featurep 'evil) #'evil-delete #'delete-region)
+  (let ((empty-line-p (save-excursion (beginning-of-line)
+                                      (looking-at-p "[ \t]*$"))))
+    (funcall (if (featurep 'evil)
+                 #'evil-delete
+               #'delete-region)
              (point-at-bol) (point))
-    (unless empty-line
+    (unless empty-line-p
       (indent-according-to-mode))))
 
 ;;;###autoload
@@ -131,7 +135,9 @@ possible, or just one char if that's not possible."
              (save-match-data
                (if (string-match "\\w*\\(\\s-+\\)$"
                                  (buffer-substring-no-properties (max (point-min) (- p movement)) p))
-                   (sp-delete-char (- 0 (- (match-end 1) (match-beginning 1))))
+                   (sp-delete-char
+                    (- 0 (- (match-end 1)
+                            (match-beginning 1))))
                  (call-interactively delete-backward-char)))))
 
           ;; Otherwise do a regular delete
@@ -157,18 +163,19 @@ spaces on either side of the point if so. Resorts to
 `doom/backward-delete-whitespace-to-column' otherwise."
   (interactive)
   (save-match-data
-    (cond ((doom--surrounded-p)
-           (let ((whitespace-match (match-string 1)))
-             (cond ((not whitespace-match)
-                    (call-interactively #'delete-backward-char))
-                   ((string-match "\n" whitespace-match)
-                    (funcall (if (featurep 'evil) #'evil-delete #'delete-region)
-                             (point-at-bol) (point))
-                    (call-interactively #'delete-backward-char)
-                    (save-excursion (call-interactively #'delete-char)))
-                   (t (just-one-space 0)))))
-          (t
-           (doom/backward-delete-whitespace-to-column)))))
+    (if (doom--surrounded-p)
+        (let ((whitespace-match (match-string 1)))
+          (cond ((not whitespace-match)
+                 (call-interactively #'delete-backward-char))
+                ((string-match "\n" whitespace-match)
+                 (funcall (if (featurep 'evil)
+                              #'evil-delete
+                            #'delete-region)
+                          (point-at-bol) (point))
+                 (call-interactively #'delete-backward-char)
+                 (save-excursion (call-interactively #'delete-char)))
+                (t (just-one-space 0))))
+      (doom/backward-delete-whitespace-to-column))))
 
 ;;;###autoload
 (defun doom/newline-and-indent ()
@@ -179,21 +186,22 @@ with weak native support."
   (cond ((sp-point-in-string)
          (newline))
         ((sp-point-in-comment)
-         (cond ((memq major-mode '(js2-mode rjsx-mode))
-                (call-interactively #'js2-line-break))
-               ((memq major-mode '(java-mode php-mode))
-                (c-indent-new-comment-line))
-               ((memq major-mode '(c-mode c++-mode objc-mode css-mode scss-mode js2-mode))
-                (newline-and-indent)
-                (insert "* ")
-                (indent-according-to-mode))
-               (t
-                ;; Fix an off-by-one cursor-positioning issue
-                ;; with `indent-new-comment-line'
-                (let ((col (save-excursion (comment-beginning) (current-column))))
-                  (indent-new-comment-line)
-                  (unless (= col (current-column))
-                    (insert " "))))))
+         (pcase major-mode
+           ((or 'js2-mode 'rjsx-mode)
+            (call-interactively #'js2-line-break))
+           ((or 'java-mode 'php-mode)
+            (c-indent-new-comment-line))
+           ((or 'c-mode 'c++-mode 'objc-mode 'css-mode 'scss-mode 'js2-mode)
+            (newline-and-indent)
+            (insert "* ")
+            (indent-according-to-mode))
+           (_
+            ;; Fix an off-by-one cursor-positioning issue
+            ;; with `indent-new-comment-line'
+            (let ((col (save-excursion (comment-beginning) (current-column))))
+              (indent-new-comment-line)
+              (unless (= col (current-column))
+                (insert " "))))))
         (t
          (newline nil t)
          (indent-according-to-mode))))
@@ -211,21 +219,8 @@ consistent throughout a selected region, depending on `indent-tab-mode'."
     (untabify beg end)))
 
 ;;;###autoload
-(defun doom/toggle-sticky (&optional beg end)
-  "Make a selection sticky by placing it in the header line. Possibly helpful
-for function signatures or notes. Run again to clear the header line."
-  (interactive "r")
-  (setq header-line-format
-        (when mark-active
-          (concat (propertize (format linum-format (line-number-at-pos beg))
-                              'face 'font-lock-comment-face)
-                  (let ((content (buffer-substring beg end)))
-                    (setq content (replace-regexp-in-string "\n" " " content t t))
-                    (setq content (replace-regexp-in-string "\\s-+" " " content))
-                    content)))))
-
-;;;###autoload
 (defun doom|enable-delete-trailing-whitespace ()
+  "Attaches `delete-trailing-whitespace' to a buffer-local `before-save-hook'."
   (add-hook 'before-save-hook #'delete-trailing-whitespace nil t))
 
 
@@ -249,9 +244,12 @@ for function signatures or notes. Run again to clear the header line."
       (mkdir doom-scratch-files-dir t))
     (with-current-buffer
         (if project-p
-            (find-file-noselect (expand-file-name (replace-regexp-in-string "\\." "_" (projectile-project-name) t t)
-                                                  doom-scratch-files-dir)
-                                nil t)
+            (find-file-noselect
+             (expand-file-name (replace-regexp-in-string
+                                "\\." "_" (projectile-project-name)
+                                t t)
+                               doom-scratch-files-dir)
+             nil t)
           (get-buffer-create "*doom:scratch*"))
       (when project-p
         (rename-buffer (format "*doom:scratch (%s)*" (projectile-project-name))))
