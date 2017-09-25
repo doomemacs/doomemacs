@@ -170,27 +170,6 @@ active."
 
 
 ;;
-;; Bootstrap
-;;
-
-;; Show version string for multi-version managers like rvm, rbenv, pyenv, etc.
-(defvar-local +doom-modeline-env-version nil)
-(defvar-local +doom-modeline-env-command nil)
-(add-hook! '(focus-in-hook find-file-hook) #'+doom-modeline|update-env)
-(defun +doom-modeline|update-env ()
-  (when +doom-modeline-env-command
-    (let* ((default-directory (doom-project-root))
-           (s (shell-command-to-string +doom-modeline-env-command)))
-      (setq +doom-modeline-env-version (if (string-match "[ \t\n\r]+\\'" s)
-                                           (replace-match "" t t s)
-                                         s)))))
-
-;; Only support python and ruby for now
-(add-hook! 'python-mode-hook (setq +doom-modeline-env-command "python --version 2>&1 | cut -d' ' -f2"))
-(add-hook! 'ruby-mode-hook   (setq +doom-modeline-env-command "ruby   --version 2>&1 | cut -d' ' -f2"))
-
-
-;;
 ;; Modeline helpers
 ;;
 
@@ -388,8 +367,6 @@ directory, the file name, and its state (modified, read-only or non-existent)."
    (concat (format-mode-line mode-name)
            (when (stringp mode-line-process)
              mode-line-process)
-           (when +doom-modeline-env-version
-             (concat " " +doom-modeline-env-version))
            (and (featurep 'face-remap)
                 (/= text-scale-mode-amount 0)
                 (format " (%+d)" text-scale-mode-amount)))
