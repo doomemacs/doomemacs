@@ -647,6 +647,7 @@ Returns \"\" to not break --no-window-system."
 ;;
 
 (add-hook 'doom-init-ui-hook #'+doom-modeline|init)
+(add-hook 'doom-scratch-buffer-hook #'+doom-modeline|set-special-modeline)
 
 (add-hook 'org-src-mode-hook #'+doom-modeline|set-special-modeline)
 (add-hook 'image-mode-hook   #'+doom-modeline|set-media-modeline)
