@@ -18,10 +18,6 @@
   "A list of popups that were last closed. Used by `doom/popup-restore' and
 `doom*popups-save'.")
 
-(defvar doom-popup-remember-history t
-  "If non-nil, DOOM will remember the last popup(s) that were open in
-`doom-popup-history'.")
-
 (defvar doom-popup-other-window nil
   "The last window selected before a popup was opened.")
 
@@ -40,9 +36,14 @@ edit this directly.")
   "A list of window parameters that are set (and cleared) when `doom-popup-mode
 is enabled/disabled.'")
 
+;; let-vars
+(defvar doom-popup-remember-history t
+  "Don't modify this directly. If non-nil, DOOM will remember the last popup(s)
+that were open in `doom-popup-history'.")
+
 (defvar doom-popup-inhibit-autokill nil
-  "Don't set this directly. Let-bind it. When it is non-nil, no buffers will be
-killed when their associated popup windows are closed, despite their :autokill
+  "Don't modify this directly. When it is non-nil, no buffers will be killed
+when their associated popup windows are closed, despite their :autokill
 property.")
 
 (def-setting! :popup (&rest rules)
@@ -51,8 +52,8 @@ property.")
 Several custom properties have been added that are not part of shackle, but are
 recognized by DOOM's popup system. They are:
 
-:noesc      If non-nil, pressing ESC *inside* the popup will close it. Used by
-            `doom/popup-close-maybe'.
+:noesc      If non-nil, the popup won't be closed if you press ESC from *inside*
+            its window. Used by `doom/popup-close-maybe'.
 
 :modeline   By default, mode-lines are hidden in popups unless this is non-nil. If
             it is a symbol, it'll use `doom-modeline' to fetch a modeline config
@@ -139,16 +140,16 @@ for :align t on every rule."
 
 (defvar doom-popup-mode-map
   (let ((map (make-sparse-keymap)))
-    (define-key map [escape]    'doom/popup-close-maybe)
-    (define-key map (kbd "ESC") 'doom/popup-close-maybe)
-    (define-key map [remap doom-kill-buffer] 'kill-this-buffer)
-    (define-key map [remap doom/kill-this-buffer] 'kill-this-buffer)
-    (define-key map [remap split-window-right] 'ignore)
-    (define-key map [remap split-window-below] 'ignore)
-    (define-key map [remap split-window-horizontally] 'ignore)
-    (define-key map [remap split-window-vertically] 'ignore)
-    (define-key map [remap mouse-split-window-horizontally] 'ignore)
-    (define-key map [remap mouse-split-window-vertically] 'ignore)
+    (define-key map [escape]    #'doom/popup-close-maybe)
+    (define-key map (kbd "ESC") #'doom/popup-close-maybe)
+    (define-key map [remap doom-kill-buffer] #'kill-this-buffer)
+    (define-key map [remap doom/kill-this-buffer] #'kill-this-buffer)
+    (define-key map [remap split-window-right] #'ignore)
+    (define-key map [remap split-window-below] #'ignore)
+    (define-key map [remap split-window-horizontally] #'ignore)
+    (define-key map [remap split-window-vertically] #'ignore)
+    (define-key map [remap mouse-split-window-horizontally] #'ignore)
+    (define-key map [remap mouse-split-window-vertically] #'ignore)
     map)
   "Active keymap in popup windows.")
 
@@ -390,10 +391,10 @@ the command buffer."
 
 
 (after! helm
-  ;; Helm tries to clean up after itself, but shackle has already done this.
-  ;; This fixes that. To reproduce, add a helm rule in `shackle-rules', open two
-  ;; splits side-by-side, move to the buffer on the right and invoke helm. It
-  ;; will close all but the left-most buffer.
+  ;; Helm tries to clean up after itself, but shackle has already done this,
+  ;; causing problems. This fixes that. To reproduce, add a helm rule in
+  ;; `shackle-rules', open two splits side-by-side, move to the buffer on the
+  ;; right and invoke helm. It will close all but the left-most buffer.
   (setq-default helm-reuse-last-window-split-state t
                 helm-split-window-in-side-p t)
 

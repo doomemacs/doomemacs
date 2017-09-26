@@ -31,10 +31,9 @@ this popup, just the specified properties. Returns the new popup window."
 (defun doom-popup-switch-to-buffer (buffer)
   "Switch the current (or closest) pop-up window to BUFFER."
   (unless (doom-popup-p)
-    (let ((popups (doom-popup-windows)))
-      (unless popups
-        (error "No popups to switch"))
-      (select-window (car popups))))
+    (if-let (popups (doom-popup-windows))
+        (select-window (car popups))
+      (error "No popups to switch to")))
   (set-window-dedicated-p nil nil)
   (switch-to-buffer buffer nil t)
   (prog1 (selected-window)

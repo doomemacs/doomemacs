@@ -213,11 +213,10 @@ Body forms can access the hook's arguments through the let-bound variable
 
 
 ;; I'm a fan of concise, hassle-free front-facing configuration. Rather than
-;; littering my config with `after!' blocks, these two macros offer a faster and
-;; more robust alternative. The motivation: to facilitate concise cross-module
-;; configuration.
-;;
-;; It also benefits from byte-compilation.
+;; littering my config with `after!' blocks, and checking if features and
+;; modules are loaded before every line of config, I wrote `set!' as a more
+;; robust alternative. If a setting doesn't exist at run-time, the `set!' call
+;; is ignored. It also benefits from byte-compilation.
 (defvar doom-settings nil)
 
 (defmacro def-setting! (keyword arglist &optional docstring &rest forms)
