@@ -344,8 +344,12 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 
 ;;
 (def-modeline-segment! buffer-info-simple
-  "Return the current buffer name only, but with fontification."
-  (propertize "%b" 'face (if (active) 'doom-modeline-buffer-file)))
+  "Display only the current buffer's name, but with fontification."
+  (propertize
+   "%b"
+   'face (cond ((and buffer-file-name (buffer-modified-p))
+                'doom-modeline-buffer-modified)
+               ((active) 'doom-modeline-buffer-file))))
 
 ;;
 (def-modeline-segment! buffer-encoding
