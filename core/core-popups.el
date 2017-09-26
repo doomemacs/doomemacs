@@ -640,10 +640,7 @@ you came from."
       ;; ensure quit keybindings work propertly
       (map! :map org-agenda-mode-map
             :m [escape] 'org-agenda-Quit
-            :m "ESC"    'org-agenda-Quit)
-      (let ((map org-agenda-mode-map))
-        (define-key map "q" 'org-agenda-Quit)
-        (define-key map "Q" 'org-agenda-Quit)))))
+            :m "ESC"    'org-agenda-Quit))))
 (add-hook 'doom-init-hook #'doom|init-org-popups)
 
 (provide 'core-popups)
