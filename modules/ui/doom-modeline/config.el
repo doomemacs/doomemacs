@@ -295,8 +295,8 @@ Example:
 ;; Segments
 ;;
 
-(def-modeline-segment! buffer-project
-  "Displays `doom-project-root'. This is for special buffers like the scratch
+(def-modeline-segment! buffer-default-directory
+  "Displays `default-directory'. This is for special buffers like the scratch
 buffer where knowing the current project directory is important."
   (let ((face (if (active) 'doom-modeline-buffer-path)))
     (concat (if (display-graphic-p) " ")
@@ -305,7 +305,7 @@ buffer where knowing the current project directory is important."
              :face face
              :v-adjust -0.05
              :height 1.25)
-            (propertize (concat " " (abbreviate-file-name (doom-project-root)))
+            (propertize (concat " " (abbreviate-file-name default-directory))
                         'face face))))
 
 ;;
@@ -591,7 +591,7 @@ Returns \"\" to not break --no-window-system."
   (buffer-encoding major-mode flycheck))
 
 (def-modeline! project
-  (bar buffer-project)
+  (bar buffer-default-directory)
   (major-mode))
 
 (def-modeline! media
