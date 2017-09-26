@@ -3,18 +3,18 @@
 
 ;; --- Helpers ----------------------------
 
-;; `doom--resolve-paths'
+;; `doom--resolve-path-forms'
 (def-test! resolve-paths
   (should
-   (equal (doom--resolve-paths '(and "fileA" "fileB"))
+   (equal (doom--resolve-path-forms '(and "fileA" "fileB"))
           '(and (file-exists-p (expand-file-name "fileA" (doom-project-root)))
                 (file-exists-p (expand-file-name "fileB" (doom-project-root)))))))
 
-;; `doom--resolve-hooks'
+;; `doom--resolve-hook-forms'
 (def-test! resolve-hooks
-  (should (equal (doom--resolve-hooks '(js2-mode haskell-mode))
+  (should (equal (doom--resolve-hook-forms '(js2-mode haskell-mode))
                  '(js2-mode-hook haskell-mode-hook)))
-  (should (equal (doom--resolve-hooks '(quote (js2-mode-hook haskell-mode-hook)))
+  (should (equal (doom--resolve-hook-forms '(quote (js2-mode-hook haskell-mode-hook)))
                  '(js2-mode-hook haskell-mode-hook))))
 
 ;; `doom-unquote'
