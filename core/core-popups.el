@@ -32,7 +32,8 @@
   "A list of open popup windows.")
 
 (defvar-local doom-popup-rules nil
-  "The shackle rule that caused this buffer to be recognized as a popup.")
+  "The shackle rule that caused this buffer to be recognized as a popup. Don't
+edit this directly.")
 
 (defvar doom-popup-window-parameters
   '(:noesc :modeline :autokill :autoclose :autofit :static)
@@ -157,9 +158,7 @@ for :align t on every rule."
   :keymap doom-popup-mode-map
   (let ((window (selected-window)))
     ;; If `doom-popup-rules' isn't set for some reason, try to set it
-    (when-let (plist (and (not doom-popup-rules)
-                          (window-parameter window 'popup)))
-      (setq-local doom-popup-rules (window-parameter window 'popup)))
+    (setq-local doom-popup-rules (doom-popup-properties window))
     ;; Ensure that buffer-opening functions/commands (like
     ;; `switch-to-buffer-other-window' won't use this window).
     (set-window-parameter window 'no-other-window doom-popup-mode)
@@ -533,7 +532,7 @@ that `doom*popup-save' won't break it."
   (defun doom*persp-mode-restore-popups (&rest _)
     "Restore popup windows when loading a perspective from file."
     (dolist (window (window-list))
-      (when-let (plist (window-parameter window 'popup))
+      (when-let (plist (doom-popup-properties window))
         (with-selected-window window
           (unless doom-popup-mode
             (setq-local doom-popup-rules plist)

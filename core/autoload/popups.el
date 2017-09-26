@@ -170,8 +170,8 @@ without leaving any trace behind (muahaha)."
 `doom-popup-rules' always takes priority, but this will fall back to the popup
 window parameter."
   (cond ((windowp window-or-buffer)
-         (or (doom-popup-properties (window-buffer window-or-buffer))
-             (window-parameter window-or-buffer 'popup)))
+         (or (window-parameter window-or-buffer 'popup)
+             (doom-popup-properties (window-buffer window-or-buffer))))
         ((bufferp window-or-buffer)
          (buffer-local-value 'doom-popup-rules window-or-buffer))))
 
