@@ -94,10 +94,7 @@ function that creates and returns the REPL buffer."
   (unless (boundp 'display-line-numbers)
     (add-hook 'quickrun--mode-hook #'nlinum-mode))
   :config
-  (set! :popup
-    '("*quickrun*"       :size 10 :noesc t    :autokill t :autoclose t)
-    '("*eval*"           :size 12 :noselect t :autokill t :autoclose t)
-    '("*Pp Eval Output*" :size 12 :noselect t :autokill t :autoclose t))
+  (set! :popup "*quickrun*" :size 3 :autokill t :autoclose t :autofit t)
 
   (defun +eval*quickrun-auto-close (&rest _)
     "Allows us to silently re-run quickrun from within the quickrun buffer."
