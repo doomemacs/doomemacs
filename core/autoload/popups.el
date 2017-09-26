@@ -8,11 +8,9 @@
 omitted."
   (when-let (target (or target (selected-window)))
     (cond ((bufferp target)
-           (and (buffer-local-value 'doom-popup-mode target)
-                (not (plist-get (buffer-local-value 'doom-popup-rules target) :fixed))))
+           (buffer-local-value 'doom-popup-mode target))
           ((windowp target)
-           (and (window-parameter target 'popup)
-                (not (doom-popup-property :fixed target)))))))
+           (window-parameter target 'popup)))))
 
 ;;;###autoload
 (defun doom-popup-buffer (buffer &optional plist extend-p)
@@ -51,9 +49,13 @@ possible rules."
   (doom-popup-buffer (find-file-noselect file t) plist extend-p))
 
 ;;;###autoload
-(defun doom-popup-windows ()
+(defun doom-popup-windows (&optional filter-static-p)
   "Get a list of open pop up windows."
-  (cl-remove-if-not #'doom-popup-p doom-popup-windows))
+  (cl-loop for window in doom-popup-windows
+           if (and (doom-popup-p window)
+                   (not (and filter-static-p
+                             (doom-popup-property :static window))))
+           collect window))
 
 ;;;###autoload
 (defun doom/popup-restore ()
@@ -92,7 +94,7 @@ Returns t if popups were restored, nil otherwise."
     (if doom-popup-other-window
         (select-window doom-popup-other-window)
       (other-window 1)))
-  (if (doom-popup-windows)
+  (if (doom-popup-windows t)
       (let ((doom-popup-inhibit-autokill t))
         (doom/popup-close-all t))
     (doom/popup-restore)))
@@ -108,21 +110,34 @@ property."
 
 ;;;###autoload
 (defun doom/popup-close-all (&optional force-p)
-  "Closes all open popups. If FORCE-P is non-nil, or this function is called
-interactively, it will close all popups without question. Otherwise, it will
-only close popups that have an :autoclose property in their rule (see
-`shackle-rules')."
-  (interactive)
-  (when-let (popups (doom-popup-windows))
+  "Closes most open popups.
+
+Does not close popups that are :static or don't have an :autoclose property (see
+`shackle-rules').
+
+If FORCE-P is non-nil (or this function is called interactively), ignore popups'
+:autoclose property. This command will never close :static popups."
+  (interactive
+   (list (called-interactively-p 'interactive)))
+  (when-let (popups (cl-loop for window in (doom-popup-windows)
+                             unless (doom-popup-property :static window)
+                             collect window))
     (let (success doom-popup-remember-history)
       (setq doom-popup-history (delq nil (mapcar #'doom--popup-data popups)))
-      (dolist (window popups)
-        (when (or force-p
-                  (called-interactively-p 'interactive)
-                  (doom-popup-property :autoclose window))
+      (dolist (window popups success)
+        (when (or force-p (doom-popup-property :autoclose window))
           (delete-window window)
-          (setq success t)))
-      success)))
+          (setq success t))))))
+
+;;;###autoload
+(defun doom/popup-kill-all ()
+  "Like `doom/popup-close-all', but kill *all* popups, including :static ones,
+without leaving any trace behind (muahaha)."
+  (interactive)
+  (when-let (popups (doom-popup-windows))
+    (let (doom-popup-remember-history)
+      (setq doom-popup-history nil)
+      (mapc #'delete-window popups))))
 
 ;;;###autoload
 (defun doom/popup-close-maybe ()
@@ -260,9 +275,8 @@ one of the following: 'left 'right 'above 'below"
 (defun doom/popup-move-right () "See `doom-popup-move'." (interactive) (doom-popup-move 'right))
 
 (defun doom--popup-data (window)
-  (unless (doom-popup-property :fixed window)
-    (when-let (buffer (window-buffer window))
-      `(,(buffer-name buffer)
-        :file  ,(buffer-file-name buffer)
-        :rules ,(window-parameter window 'popup)
-        :size  ,(doom-popup-size window)))))
+  (when-let (buffer (window-buffer window))
+    `(,(buffer-name buffer)
+      :file  ,(buffer-file-name buffer)
+      :rules ,(window-parameter window 'popup)
+      :size  ,(doom-popup-size window))))

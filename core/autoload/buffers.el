@@ -268,7 +268,7 @@ regex PATTERN. Returns the number of killed buffers."
 If PROJECT-P (universal argument), kill only buffers that belong to the current
 project."
   (interactive "P")
-  (doom/popup-close-all t)
+  (doom/popup-kill-all)
   (let ((buffers (if project-p (doom-project-buffer-list) (doom-buffer-list))))
     (mapc #'doom-kill-buffer-and-windows buffers)
     (unless (doom-real-buffer-p)

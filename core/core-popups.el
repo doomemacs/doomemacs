@@ -35,7 +35,7 @@
   "The shackle rule that caused this buffer to be recognized as a popup.")
 
 (defvar doom-popup-window-parameters
-  '(:noesc :modeline :autokill :autoclose :fixed)
+  '(:noesc :modeline :autokill :autoclose :autofit :static)
   "A list of window parameters that are set (and cleared) when `doom-popup-mode
 is enabled/disabled.'")
 
@@ -50,22 +50,25 @@ property.")
 Several custom properties have been added that are not part of shackle, but are
 recognized by DOOM's popup system. They are:
 
-:noesc      If non-nil, pressing ESC *inside* the popup will close it.
-            Used by `doom/popup-close-maybe'.
+:noesc      If non-nil, pressing ESC *inside* the popup will close it. Used by
+            `doom/popup-close-maybe'.
 
-:modeline   By default, mode-lines are hidden in popups unless this
-            is non-nil. If it is a symbol, it'll use `doom-modeline'
-            to fetch a modeline config (in `doom-popup-mode').
+:modeline   By default, mode-lines are hidden in popups unless this is non-nil. If
+            it is a symbol, it'll use `doom-modeline' to fetch a modeline config
+            (in `doom-popup-mode').
 
-:autokill   If non-nil, the popup's buffer will be killed when the
-            popup is closed. Used by `doom*delete-popup-window'.
-            NOTE `doom/popup-restore' can't restore non-file popups
-            that have an :autokill property.
+:autokill   If non-nil, the popup's buffer will be killed when the popup is
+            closed. Used by `doom*delete-popup-window'. NOTE
+            `doom/popup-restore' can't restore non-file popups that have an
+            :autokill property.
 
-:autoclose  If non-nil, close popup if ESC is pressed from outside
-            the popup window.
+:autoclose  If non-nil, close popup if ESC is pressed from outside the popup
+            window.
 
-:fixed      If non-nil, don't treat this window like a popup. This makes it
+:autofit    If non-nil, resize the popup to fit its content. Uses the value of
+            the :size property as the maximum height/width.
+
+:static     If non-nil, don't treat this window like a popup. This makes it
             impervious to being automatically closed or tracked in popup
             history. Excellent for permanent sidebars."
   (if (cl-every #'listp (mapcar #'doom-unquote rules))
@@ -86,7 +89,7 @@ recognized by DOOM's popup system. They are:
         '(("^\\*ftp " :noselect t :autokill t :noesc t)
           ;; doom
           ("^\\*doom:" :regexp t :size 0.35 :noesc t :select t :modeline t)
-          ("^\\*doom " :regexp t :noselect t :autokill t :autoclose t)
+          ("^\\*doom " :regexp t :noselect t :autokill t :autoclose t :autofit t)
           ;; built-in (emacs)
           ("*ert*" :same t :modeline t)
           ("*info*" :size 0.5 :select t :autokill t)
@@ -102,7 +105,7 @@ recognized by DOOM's popup system. They are:
           (profiler-report-mode :size 0.3 :regexp t :autokill t :modeline minimal)
           (tabulated-list-mode :noesc t)
           (special-mode :noselect t :autokill t :autoclose t)
-          ("^\\*"  :regexp t :noselect t :autokill t)
+          ("^\\*"  :regexp t :noselect t :autokill t :autofit t)
           ("^ \\*" :regexp t :size 12 :noselect t :autokill t :autoclose t)))
 
   :config
@@ -231,7 +234,11 @@ and setting `doom-popup-rules' within it. Returns the window."
     (with-selected-window window
       (unless (eq plist t)
         (setq-local doom-popup-rules plist))
-      (doom-popup-mode +1))
+      (doom-popup-mode +1)
+      (when (and (plist-get plist :autofit)
+                 (not (string-empty-p (buffer-string))))
+        (let ((max-size (plist-get plist :size)))
+          (fit-window-to-buffer window max-size nil max-size))))
     window))
 
 (defun doom*popups-save (orig-fn &rest args)
@@ -502,7 +509,7 @@ the command buffer."
   ;;
   ;; By handing neotree over to shackle, which is better integrated into the
   ;; rest of my config (and persp-mode), this is no longer a problem.
-  (set! :popup " *NeoTree*" :align neo-window-position :size neo-window-width :fixed t)
+  (set! :popup " *NeoTree*" :align neo-window-position :size neo-window-width :static t)
 
   (defun +evil-neotree-display-fn (buf _alist)
     "Hand neotree off to shackle."

@@ -268,7 +268,7 @@ consistent throughout a selected region, depending on `indent-tab-mode'."
 is closed. If a region is active, copy it to the scratch buffer."
   (interactive)
   (doom-popup-buffer (doom--create-scratch-buffer)
-    '(:size 12 :autokill t :fixed t) t))
+    '(:size 12 :autokill t :static t) t))
 
 ;;;###autoload
 (defun doom/open-project-scratch-buffer ()
@@ -277,4 +277,4 @@ popup window. Scratch buffers are stored in `doom-scratch-files-dir'. If a
 region is active, copy it to the scratch buffer."
   (interactive)
   (doom-popup-buffer (doom--create-scratch-buffer t)
-    '(:size 12 :autokill t :fixed t) t))
+    '(:size 12 :autokill t :static t) t))
