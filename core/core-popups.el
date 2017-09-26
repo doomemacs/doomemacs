@@ -90,6 +90,7 @@ recognized by DOOM's popup system. They are:
         shackle-rules
         '(("^\\*ftp " :noselect t :autokill t :noesc t)
           ;; doom
+          ("^\\*doom:scratch" :regexp t :size 12 :noesc t :select t :modeline t :autokill t :static t)
           ("^\\*doom:" :regexp t :size 0.35 :noesc t :select t :modeline t)
           ("^\\*doom " :regexp t :noselect t :autokill t :autoclose t :autofit t)
           ;; built-in (emacs)
