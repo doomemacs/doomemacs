@@ -116,9 +116,9 @@ buffers. If there's nothing left, switch to `doom-fallback-buffer'. See
         (project-dir (doom-project-root)))
     (cond ((or (not buffers)
                (zerop (% n (1+ (length buffers)))))
-           (set-window-buffer nil (doom-fallback-buffer)))
+           (switch-to-buffer (doom-fallback-buffer) nil t))
           ((= (length buffers) 1)
-           (set-window-buffer nil (car buffers)))
+           (switch-to-buffer (car buffers) nil t))
           (t
            ;; Why this instead of switching straight to the Nth buffer in
            ;; BUFFERS? Because `switch-to-next-buffer' and
