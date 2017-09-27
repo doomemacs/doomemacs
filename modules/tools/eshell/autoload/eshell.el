@@ -7,26 +7,33 @@
   "The name to use for custom eshell buffers. This only affects `+eshell/open',
 `+eshell/open-popup' and `+eshell/open-workspace'.")
 
+
+;; --- Commands ---------------------------
+
 ;;;###autoload
-(defun +eshell/open ()
+(defun +eshell/open (&optional command)
   "Open eshell in the current buffer."
   (interactive)
   (let ((buf (generate-new-buffer +eshell-buffer-name)))
     (with-current-buffer buf
       (unless (eq major-mode 'eshell-mode) (eshell-mode)))
-    (switch-to-buffer buf)))
+    (switch-to-buffer buf)
+    (when command
+      (+eshell-run-command command))))
 
 ;;;###autoload
-(defun +eshell/open-popup ()
+(defun +eshell/open-popup (&optional command)
   "Open eshell in a popup window."
   (interactive)
   (let ((buf (get-buffer-create +eshell-buffer-name)))
     (with-current-buffer buf
       (unless (eq major-mode 'eshell-mode) (eshell-mode)))
-    (doom-popup-buffer buf '(:autokill t) t)))
+    (doom-popup-buffer buf '(:autokill t) t)
+    (when command
+      (+eshell-run-command command))))
 
 ;;;###autoload
-(defun +eshell/open-workspace ()
+(defun +eshell/open-workspace (&optional command)
   "Open eshell in a separate workspace. Requires the (:feature workspaces)
 module to be loaded."
   (interactive)
@@ -38,7 +45,19 @@ module to be loaded."
                            (doom-visible-windows)))
       (select-window (get-buffer-window buf))
     (+eshell/open))
-  (doom/workspace-display))
+  (doom/workspace-display)
+  (when command
+    (+eshell-run-command command)))
+
+(defun +eshell-run-command (command)
+  (unless (cl-remove-if-not #'buffer-live-p +eshell-buffers)
+    (user-error "No living eshell buffers available"))
+  (with-current-buffer (car +eshell-buffers)
+    (goto-char eshell-last-output-end)
+    (when (bound-and-true-p evil-mode)
+      (call-interactively #'evil-append-line))
+    (insert command)
+    (eshell-send-input nil t)))
 
 
 ;; --- Hooks ------------------------------
