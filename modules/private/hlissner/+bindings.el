@@ -235,8 +235,8 @@
      :desc "REPL"                :n  "r" #'+eval/repl
                                  :v  "r" #'+eval:repl
      :desc "Neotree"             :n  "n" #'+neotree/toggle
-     :desc "Terminal"            :n  "t" #'+term/popup
-     :desc "Terminal in project" :n  "T" #'+term/popup-in-project
+     :desc "Terminal"            :n  "t" #'+term/open-popup
+     :desc "Terminal in project" :n  "T" #'+term/open-popup-in-project
 
      ;; applications
      :desc "APP: elfeed"  :n "E" #'=rss
@@ -260,7 +260,7 @@
      :desc "Switch project"          :n  "p" #'projectile-switch-project
      :desc "Recent project files"    :n  "r" #'projectile-recentf
      :desc "List project tasks"      :n  "t" #'+ivy/tasks
-     :desc "Pop term in project"     :n  "o" #'+term/popup-in-project
+     :desc "Pop term in project"     :n  "o" #'+term/open-popup-in-project
      :desc "Invalidate cache"        :n  "x" #'projectile-invalidate-cache)
 
    (:desc "quit" :prefix "q"
