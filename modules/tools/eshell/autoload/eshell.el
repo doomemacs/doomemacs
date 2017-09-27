@@ -1,27 +1,32 @@
 ;;; tools/eshell/autoload/eshell.el -*- lexical-binding: t; -*-
 
-(require 'eshell)
+(defvar +eshell-buffers ()
+  "List of open eshell buffers.")
+
+(defvar +eshell-buffer-name "*doom:eshell*"
+  "The name to use for custom eshell buffers. This only affects `+eshell/open',
+`+eshell/open-popup' and `+eshell/open-workspace'.")
 
 ;;;###autoload
-(defun +eshell/run ()
+(defun +eshell/open ()
   "Open eshell in the current buffer."
   (interactive)
-  (let ((buf (generate-new-buffer eshell-buffer-name)))
+  (let ((buf (generate-new-buffer +eshell-buffer-name)))
     (with-current-buffer buf
       (unless (eq major-mode 'eshell-mode) (eshell-mode)))
-    (pop-to-buffer-same-window buf)))
+    (switch-to-buffer buf)))
 
 ;;;###autoload
-(defun +eshell/popup ()
+(defun +eshell/open-popup ()
   "Open eshell in a popup window."
   (interactive)
-  (let ((buf (get-buffer-create "*eshell:popup*")))
+  (let ((buf (get-buffer-create +eshell-buffer-name)))
     (with-current-buffer buf
       (unless (eq major-mode 'eshell-mode) (eshell-mode)))
-    (doom-popup-buffer buf)))
+    (doom-popup-buffer buf '(:autokill t) t)))
 
 ;;;###autoload
-(defun +eshell/tab ()
+(defun +eshell/open-workspace ()
   "Open eshell in a separate workspace. Requires the (:feature workspaces)
 module to be loaded."
   (interactive)
@@ -29,11 +34,30 @@ module to be loaded."
     (user-error ":feature workspaces is required, but disabled"))
   (unless (+workspace-get "eshell" t)
     (+workspace/new "eshell"))
-  (if-let (buf (cl-find-if (lambda (it) (string-match-p "^\\*eshell" (buffer-name (window-buffer it))))
+  (if-let (buf (cl-find-if (lambda (it) (string-match-p "^\\*doom:eshell" (buffer-name (window-buffer it))))
                            (doom-visible-windows)))
       (select-window (get-buffer-window buf))
-    (+eshell/run))
+    (+eshell/open))
   (doom/workspace-display))
+
+
+;; --- Hooks ------------------------------
+
+;;;###autoload
+(defun +eshell|init ()
+  "Keep track of eshell buffers."
+  (cl-pushnew (current-buffer) +eshell-buffers :test #'eq))
+
+;;;###autoload
+(defun +eshell|cleanup ()
+  "Close window (or workspace) on quit."
+  (setq +eshell-buffers (delete (current-buffer) +eshell-buffers))
+  (when (and (featurep! :feature workspaces)
+             (string= "eshell" (+workspace-current-name)))
+    (+workspace/delete "eshell")))
+
+
+;; --- Keybindings ------------------------
 
 ;;;###autoload
 (defun +eshell/quit-or-delete-char (arg)
@@ -57,16 +81,16 @@ module to be loaded."
 (defun +eshell/split ()
   (interactive)
   (select-window (split-window-vertically))
-  (+eshell:run))
+  (+eshell/open))
 
 ;;;###autoload
 (defun +eshell/vsplit ()
   (interactive)
   (select-window (split-window-horizontally))
-  (+eshell:run))
+  (+eshell/open))
 
 ;;;###autoload
-(defun +eshell/prompt ()
+(defun +eshell-prompt ()
   (concat (propertize (abbreviate-file-name (eshell/pwd)) 'face 'eshell-prompt)
           (propertize (+eshell--current-git-branch) 'face 'font-lock-function-name-face)
           (propertize " λ " 'face 'font-lock-constant-face)))

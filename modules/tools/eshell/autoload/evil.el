@@ -6,5 +6,5 @@
   (interactive "<fsh><!>")
   (if bang
       (+eshell/run)
-    (+eshell/popup)))
+    (+eshell/open-popup)))
 
