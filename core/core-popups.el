@@ -260,6 +260,8 @@ properties."
         (with-selected-window window
           (doom-popup-mode -1)
           (when autokill-p
+            (when-let (process (get-buffer-process (current-buffer)))
+              (set-process-query-on-exit-flag process nil))
             (kill-buffer (current-buffer))))))))
 
 (advice-add #'shackle-display-buffer :around #'doom*popup-init)
