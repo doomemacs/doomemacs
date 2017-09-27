@@ -33,7 +33,7 @@
  "M--"    #'text-scale-decrease
  ;; Simple window navigation/manipulation
  "C-`"    #'doom/popup-toggle
- "C-`"    #'doom/popup-raise
+ "C-~"    #'doom/popup-raise
  "M-t"    #'+workspace/new
  "M-T"    #'+workspace/display
  "M-w"    #'delete-window
@@ -191,6 +191,7 @@
      :desc "Git blame"         :n  "b" #'magit-blame
      :desc "Git time machine"  :n  "t" #'git-timemachine-toggle
      :desc "Git revert hunk"   :n  "r" #'git-gutter:revert-hunk
+     :desc "Git revert buffer" :n  "R" #'vc-revert
      :desc "List gists"        :n  "g" #'+gist:list
      :desc "Next hunk"         :nv "]" #'git-gutter:next-hunk
      :desc "Previous hunk"     :nv "[" #'git-gutter:previous-hunk)
