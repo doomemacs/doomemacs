@@ -1,10 +1,7 @@
 ;;; feature/version-control/config.el -*- lexical-binding: t; -*-
 
-(unless (featurep! -git)
-  (load! +git))
-;; TODO hg support
-;; (unless (featurep! -hg)
-;;   (load! +hg))
+(or (featurep! -git) (load! +git))
+;; TODO (or (featurep! -hg)  (load! +hg))
 
 ;;
 (setq vc-make-backup-files nil)

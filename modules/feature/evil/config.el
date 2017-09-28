@@ -143,6 +143,8 @@ across windows."
   (evil-define-interactive-code "<//g>"
     :ex-arg global-match (list (when (evil-ex-p) evil-ex-argument)))
 
+  ;; Forward declare these so that ex completion works, even if the autoloaded
+  ;; functions aren't loaded yet.
   (evil-set-command-properties
    '+evil:align :move-point t :ex-arg 'buffer-match :ex-bang t :evil-mc t :keep-visual t :suppress-operator t)
   (evil-set-command-properties

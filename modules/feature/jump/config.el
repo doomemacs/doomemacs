@@ -33,10 +33,12 @@ produces an url. Used by `+jump/online'.")
   "Function to use to open search urls.")
 
 (defvar +jump-function-alist nil
-  "TODO")
+  "An alist mapping major modes to jump function plists, describing what to do
+with `+jump/definition', `+jump/references' and `+jump/documentation' are
+called.")
 
 (defvar-local +jump-current-functions nil
-  "TODO")
+  "The enabled jump functions for the current buffer.")
 
 (def-setting! :jump (modes &rest plist)
   "Definies a jump target for major MODES. PLIST accepts the following

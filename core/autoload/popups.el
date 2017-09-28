@@ -87,7 +87,8 @@ Returns t if popups were restored, nil otherwise."
 
 ;;;###autoload
 (defun doom/popup-toggle ()
-  "Toggle popups."
+  "Toggle popups on and off. If used outside of popups (and popups are
+available), it will select the nearest popup window."
   (interactive)
   (when (doom-popup-p)
     (if doom-popup-other-window

@@ -24,4 +24,4 @@ current project's root."
 (defun +term/open-popup-in-project ()
   "Open a terminal popup window in the root of the current project."
   (interactive)
-  (+term/popup t))
+  (+term/open-popup t))

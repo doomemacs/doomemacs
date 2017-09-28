@@ -8,8 +8,9 @@
   :group 'evil-org
   (setq org-hide-emphasis-markers +org-pretty-mode)
   (org-toggle-pretty-entities)
-  ;; In case the above un-align tables
-  (org-table-map-tables 'org-table-align t))
+  (org-with-silent-modifications
+   ;; In case the above un-align tables
+   (org-table-map-tables 'org-table-align t)))
 
 ;;;###autoload
 (defun +org|realign-table-maybe ()

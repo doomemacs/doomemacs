@@ -55,9 +55,9 @@ recognized by DOOM's popup system. They are:
 :noesc      If non-nil, the popup won't be closed if you press ESC from *inside*
             its window. Used by `doom/popup-close-maybe'.
 
-:modeline   By default, mode-lines are hidden in popups unless this is non-nil. If
-            it is a symbol, it'll use `doom-modeline' to fetch a modeline config
-            (in `doom-popup-mode').
+:modeline   By default, mode-lines are hidden in popups unless this is non-nil.
+            If it is a symbol, it'll use `doom-modeline' to fetch a modeline
+            config (in `doom-popup-mode').
 
 :autokill   If non-nil, the popup's buffer will be killed when the popup is
             closed. Used by `doom*delete-popup-window'. NOTE
@@ -274,20 +274,18 @@ properties."
 ;;
 
 (progn ; hacks for built-in functions
-  (defun doom*buffer-menu (&optional arg)
-    "Open `buffer-menu' in a popup window."
-    (interactive "P")
-    (let ((buf (list-buffers-noselect arg)))
-      (doom-popup-buffer buf)
-      (with-current-buffer buf
-        (setq mode-line-format "Commands: d, s, x, u; f, o, 1, 2, m, v; ~, %; q to quit; ? for help."))))
-  (advice-add #'buffer-menu :override #'doom*buffer-menu)
-
   (defun doom*suppress-pop-to-buffer-same-window (orig-fn &rest args)
     (cl-letf (((symbol-function 'pop-to-buffer-same-window)
                (symbol-function 'pop-to-buffer)))
       (apply orig-fn args)))
-  (advice-add #'info :around #'doom*suppress-pop-to-buffer-same-window))
+  (advice-add #'info :around #'doom*suppress-pop-to-buffer-same-window)
+
+  (defun doom*buffer-menu (&optional arg)
+    "Open `buffer-menu' in a popup window."
+    (interactive "P")
+    (with-selected-window (doom-popup-buffer (list-buffers-noselect arg))
+      (setq mode-line-format "Commands: d, s, x, u; f, o, 1, 2, m, v; ~, %; q to quit; ? for help.")))
+  (advice-add #'buffer-menu :override #'doom*buffer-menu))
 
 
 (after! comint

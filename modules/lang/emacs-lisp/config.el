@@ -7,13 +7,13 @@
   (set! :eval 'emacs-lisp-mode #'+emacs-lisp-eval)
   (set! :jump 'emacs-lisp-mode :documentation #'describe-symbol)
   (set! :rotate 'emacs-lisp-mode
-        :symbols '(("t" "nil")
-                   ("let" "let*")
-                   ("when" "unless")
-                   ("append" "prepend")
-                   ("advice-add" "advice-remove")
-                   ("add-hook" "remove-hook")
-                   ("add-hook!" "remove-hook!")))
+    :symbols '(("t" "nil")
+               ("let" "let*")
+               ("when" "unless")
+               ("append" "prepend")
+               ("advice-add" "advice-remove")
+               ("add-hook" "remove-hook")
+               ("add-hook!" "remove-hook!")))
 
   (add-hook! 'emacs-lisp-mode-hook
     #'(;; 3rd-party functionality
