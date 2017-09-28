@@ -37,7 +37,7 @@
 ;;;###autoload (autoload '+workspace:delete "feature/workspaces/autoload/evil" nil t)
 (evil-define-command +workspace:delete ()
   "Ex wrapper around `+workspace/delete'."
-  (interactive "<a>") (+workspace/delete (+workspace-current-name)))
+  (interactive) (+workspace/delete (+workspace-current-name)))
 
 ;;;###autoload (autoload '+workspace:switch-next "feature/workspaces/autoload/evil" nil t)
 (evil-define-command +workspace:switch-next (&optional count)
