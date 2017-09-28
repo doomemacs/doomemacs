@@ -88,7 +88,8 @@ recognized by DOOM's popup system. They are:
   (setq shackle-default-alignment 'below
         shackle-default-size 8
         shackle-rules
-        '(("^\\*ftp " :noselect t :autokill t :noesc t)
+        '(("^\\*eww" :regexp t :size 0.5 :select t :autokill t :noesc t)
+          ("^\\*ftp " :noselect t :autokill t :noesc t)
           ;; doom
           ("^\\*doom:scratch" :regexp t :size 12 :noesc t :select t :modeline t :autokill t :static t)
           ("^\\*doom:" :regexp t :size 0.35 :noesc t :select t :modeline t)
@@ -279,6 +280,8 @@ properties."
                (symbol-function 'pop-to-buffer)))
       (apply orig-fn args)))
   (advice-add #'info :around #'doom*suppress-pop-to-buffer-same-window)
+  (advice-add #'eww :around #'doom*suppress-pop-to-buffer-same-window)
+  (advice-add #'eww-browse-url :around #'doom*suppress-pop-to-buffer-same-window)
 
   (defun doom*buffer-menu (&optional arg)
     "Open `buffer-menu' in a popup window."
