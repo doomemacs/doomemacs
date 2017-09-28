@@ -767,14 +767,23 @@
           :i "C-e" #'org-end-of-line
           :i "C-a" #'org-beginning-of-line))
 
-      ;; Make ESC quit all the things
+      ;; Restore common editing keys (and ESC) in minibuffer
       (:map (minibuffer-local-map
              minibuffer-local-ns-map
              minibuffer-local-completion-map
              minibuffer-local-must-match-map
-             minibuffer-local-isearch-map)
+             minibuffer-local-isearch-map
+             evil-ex-completion-map
+             evil-ex-search-keymap
+             read-expression-map)
         [escape] #'abort-recursive-edit
-        "C-r" #'evil-paste-from-register)
+        "C-r" #'evil-paste-from-register
+        "C-a" #'move-beginning-of-line
+        "C-w" #'doom/minibuffer-kill-word
+        "C-u" #'doom/minibuffer-kill-line
+        "C-b" #'backward-word
+        "C-f" #'forward-word
+        "M-z" #'doom/minibuffer-undo)
 
       (:map messages-buffer-mode-map
         "M-;" #'eval-expression
@@ -782,14 +791,6 @@
 
       (:map tabulated-list-mode-map
         [remap evil-record-macro] #'doom/popup-close-maybe)
-
-      (:map (evil-ex-completion-map evil-ex-search-keymap read-expression-map)
-        "C-a" #'move-beginning-of-line
-        "C-w" #'doom/minibuffer-kill-word
-        "C-u" #'doom/minibuffer-kill-line
-        "C-b" #'backward-word
-        "C-f" #'forward-word
-        "M-z" #'doom/minibuffer-undo)
 
       (:after view
         (:map view-mode-map "<escape>" #'View-quit-all)))
