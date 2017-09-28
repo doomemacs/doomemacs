@@ -6,7 +6,8 @@
   :config
   (setq js2-skip-preprocessor-directives t
         js2-highlight-external-variables nil
-        js2-mode-show-parse-errors nil)
+        js2-mode-show-parse-errors nil
+        js2-strict-trailing-comma-warning nil)
 
   (add-hook! 'js2-mode-hook
     #'(flycheck-mode highlight-indentation-mode rainbow-delimiters-mode))
@@ -136,6 +137,17 @@
   :init
   (map! :map* (json-mode js2-mode-map) :n "gQ" #'web-beautify-js))
 
+(def-package! eslintd-fix
+  :commands (eslintd-fix-mode eslintd-fix)
+  :init
+  (defun +javascript|init-eslintd-fix ()
+    (when (bound-and-true-p +javascript-eslintd-fix-mode)
+      (eslintd-fix-mode)
+      ;; update flycheck to use eslintd for more consistent results
+      (when-let (eslintd-executable (executable-find "eslint_d"))
+        (setq flycheck-javascript-eslint-executable eslintd-executable))))
+  (add-hook! (js2-mode rjsx-mode) #'+javascript|init-eslintd-fix))
+
 
 ;;
 ;; Skewer-mode
@@ -176,6 +188,9 @@
   :match "/screeps/.+$"
   :modes (+javascript-npm-mode)
   :init (load! +screeps))
+
+(def-project-mode! +javascript-eslintd-fix-mode
+  :modes (+javascript-npm-mode))
 
 (def-project-mode! +javascript-gulp-mode
   :files "gulpfile.js")
