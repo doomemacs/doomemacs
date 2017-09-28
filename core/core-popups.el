@@ -92,13 +92,13 @@ recognized by DOOM's popup system. They are:
           ("^\\*ftp " :noselect t :autokill t :noesc t)
           ;; doom
           ("^\\*doom:scratch" :regexp t :size 12 :noesc t :select t :modeline t :autokill t :static t)
-          ("^\\*doom:" :regexp t :size 0.35 :noesc t :select t :modeline t)
-          ("^\\*doom " :regexp t :noselect t :autokill t :autoclose t :autofit t)
+          ("^\\*doom:" :regexp t :size 0.35 :noesc t :select t)
+          ("^ ?\\*doom " :regexp t :noselect t :autokill t :autoclose t :autofit t)
           ;; built-in (emacs)
           ("*ert*" :same t :modeline t)
           ("*info*" :size 0.5 :select t :autokill t)
           ("*Backtrace*" :size 20 :noselect t)
-          ("*Warnings*"  :size 8  :noselect t)
+          ("*Warnings*"  :size 12 :noselect t :autofit t)
           ("*Messages*"  :size 12 :noselect t)
           ("*Help*" :size 0.3)
           ("^\\*.*Shell Command.*\\*$" :regexp t :size 20 :noselect t :autokill t)
@@ -109,7 +109,7 @@ recognized by DOOM's popup system. They are:
           (profiler-report-mode :size 0.3 :regexp t :autokill t :modeline minimal)
           (tabulated-list-mode :noesc t)
           (special-mode :noselect t :autokill t :autoclose t)
-          ("^\\*"  :regexp t :noselect t :autokill t :autofit t)
+          ("^\\*"  :regexp t :size 12 :noselect t :autokill t :autofit t)
           ("^ \\*" :regexp t :size 12 :noselect t :autokill t :autoclose t)))
 
   :config
@@ -239,6 +239,7 @@ and setting `doom-popup-rules' within it. Returns the window."
       (doom-popup-mode +1)
       (when (and (plist-get plist :autofit)
                  (not (string-empty-p (buffer-string))))
+        ;; TODO calculated window-width/window-height alternative
         (let ((max-size (plist-get plist :size)))
           (fit-window-to-buffer window max-size nil max-size))))
     window))
@@ -596,7 +597,7 @@ you came from."
       '("*Org Links*"        :size 5   :noselect t)
       '("*Org Export Dispatcher*" :noselect t)
       '(" *Agenda Commands*" :noselect t)
-      '("^\\*Org Agenda"     :regexp t :size 30)
+      '("^\\*Org Agenda"     :regexp t :size 20)
       '("*Org Clock*"        :noselect t)
       '("^\\*Org Src"        :regexp t :size 0.35 :noesc t)
       '("*Edit Formulas*"    :size 10)
@@ -638,6 +639,7 @@ you came from."
 
       ;; Hide modeline in org-agenda
       (add-hook 'org-agenda-finalize-hook #'doom-hide-modeline-mode)
+      (add-hook 'org-agenda-finalize-hook #'org-fit-window-to-buffer)
       ;; Don't monopolize frame!
       (advice-add #'org-agenda :around #'doom*suppress-delete-other-windows)
       ;; ensure quit keybindings work propertly
