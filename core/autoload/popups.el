@@ -8,9 +8,11 @@
 omitted."
   (when-let (target (or target (selected-window)))
     (cond ((bufferp target)
-           (buffer-local-value 'doom-popup-mode target))
+           (and (buffer-live-p target)
+                (buffer-local-value 'doom-popup-mode target)))
           ((windowp target)
-           (window-parameter target 'popup)))))
+           (and (window-live-p target)
+                (window-parameter target 'popup))))))
 
 ;;;###autoload
 (defun doom-popup-buffer (buffer &optional plist extend-p)
