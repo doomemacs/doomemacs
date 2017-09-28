@@ -97,4 +97,4 @@
 (ex! "tabsave"     #'+workspace:save)
 
 ;; Org-mode
-(ex! "org"         #'+org:capture)
+(ex! "cap"         #'+org-capture/dwim)

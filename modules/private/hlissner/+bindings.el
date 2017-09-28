@@ -79,7 +79,7 @@
    :desc "Ex command"  :nv ";"   #'evil-ex
    :desc "M-x"         :nv ":"   #'execute-extended-command
    :desc "Pop up scratch buffer"   :nv "x"  #'doom/scratch-buffer
-   :desc "Org Capture"             :nv "X"  #'+org/capture
+   :desc "Org Capture"             :nv "X"  #'+org-capture/dwim
 
    ;; Most commonly used
    :desc "Find file in project"    :n "SPC" #'projectile-find-file
@@ -226,7 +226,7 @@
    (:desc "notes" :prefix "n"
      :desc "Find file in notes"    :n "n" #'+hlissner/find-in-notes
      :desc "Browse notes"          :n "N" #'+hlissner/browse-notes
-     :desc "Org capture"           :n "x" #'+org/capture
+     :desc "Org capture"           :n "x" #'+org-capture/dwim
      :desc "Browse mode notes"     :n "m" #'+org/browse-notes-for-major-mode
      :desc "Browse project notes"  :n "p" #'+org/browse-notes-for-project)
 
