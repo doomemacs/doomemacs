@@ -6,9 +6,10 @@
   (let ((point (save-excursion (goto-char (window-start))
                                (point-marker))))
     (apply orig-fn args)
-    (unless (equal point
-                   (save-excursion (goto-char (window-start))
-                                   (point-marker)))
+    (unless (or (derived-mode-p 'term-mode)
+                (equal point
+                       (save-excursion (goto-char (window-start))
+                                       (point-marker))))
       (+doom/blink-cursor))))
 
 ;;;###autoload
