@@ -166,11 +166,13 @@ whose dimensions may not be fully initialized by the time this is run."
 
 (defun doom-dashboard-widget--loaded ()
   (insert
+   "\n"
    (propertize
     (+doom-dashboard-center
      +doom-dashboard--width
-     (format "Loaded %d packages in %.02fs"
+     (format "Loaded %d packages in %d modules in %.02fs"
              (- (length load-path) (length doom--base-load-path))
+             (hash-table-size doom-modules)
              (if (floatp doom-init-time) doom-init-time 0.0)))
     'face 'font-lock-comment-face)
    "\n"))
@@ -178,8 +180,8 @@ whose dimensions may not be fully initialized by the time this is run."
 (defvar all-the-icons-scale-factor)
 (defvar all-the-icons-default-adjust)
 (defun doom-dashboard-widget--shortmenu ()
-  (let ((all-the-icons-scale-factor 1.3)
-        (all-the-icons-default-adjust -0.05))
+  (let ((all-the-icons-scale-factor 1.45)
+        (all-the-icons-default-adjust -0.02))
     (mapc (lambda (btn)
             (when btn
               (cl-destructuring-bind (label icon fn) btn
@@ -190,17 +192,17 @@ whose dimensions may not be fully initialized by the time this is run."
                             (propertize (concat " " label) 'face 'font-lock-keyword-face))
                     'action `(lambda (_) ,fn)
                     'follow-link t)
-                   (+doom-dashboard-center (1- +doom-dashboard--width) (buffer-string)))
+                   (+doom-dashboard-center (- +doom-dashboard--width 2) (buffer-string)))
                  "\n\n"))))
           `(("Homepage" "mark-github"
              (browse-url "https://github.com/hlissner/doom-emacs"))
-            ,(when (and (and (featurep 'persp-mode) persp-mode)
+            ,(when (and (featurep! :feature workspaces)
                         (file-exists-p (expand-file-name persp-auto-save-fname persp-save-dir)))
                '("Reload last session" "history"
                  (+workspace/load-session)))
             ("Recently opened files" "file-text"
-             (call-interactively (command-remapping 'recentf)))
-            ("Recent opened projects" "briefcase"
+             (call-interactively (command-remapping 'recentf-open-files)))
+            ("Open project" "briefcase"
              (call-interactively (command-remapping 'projectile-switch-project)))
             ("Jump to bookmark" "bookmark"
              (call-interactively (command-remapping 'bookmark-jump)))
