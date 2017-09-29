@@ -200,6 +200,9 @@ whose dimensions may not be fully initialized by the time this is run."
                         (file-exists-p (expand-file-name persp-auto-save-fname persp-save-dir)))
                '("Reload last session" "history"
                  (+workspace/load-session)))
+            ,(when (featurep! :org org)
+               '("See agenda for this week" "calendar"
+                 (call-interactively 'org-agenda-list)))
             ("Recently opened files" "file-text"
              (call-interactively (command-remapping 'recentf-open-files)))
             ("Open project" "briefcase"
