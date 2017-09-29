@@ -21,7 +21,7 @@
 
 
 (define-derived-mode +doom-dashboard-mode special-mode
-  (concat "v" doom-version)
+  (format "DOOM v%s" doom-version)
   "Major mode for the DOOM dashboard buffer."
   (read-only-mode +1)
   (setq truncate-lines t
