@@ -3,9 +3,6 @@
 (defvar +doom-dashboard-name " *doom*"
   "The name to use for the dashboard buffer.")
 
-(defvar +doom-dashboard-modeline nil
-  "The modeline format for the doom dashboard buffer.")
-
 (defvar +doom-dashboard-inhibit-refresh nil
   "If non-nil, the doom buffer won't be refreshed.")
 
@@ -15,7 +12,6 @@
 (defvar +doom-dashboard--width 80)
 (defvar +doom-dashboard--height 0)
 (defvar +doom-dashboard--old-fringe-indicator fringe-indicator-alist)
-(defvar +doom-dashboard--old-modeline nil)
 
 (setq doom-fallback-buffer +doom-dashboard-name)
 
@@ -24,8 +20,7 @@
   (format "DOOM v%s" doom-version)
   "Major mode for the DOOM dashboard buffer."
   (read-only-mode +1)
-  (setq truncate-lines t
-        mode-line-format +doom-dashboard-modeline)
+  (setq truncate-lines t)
   (cl-loop for (car . _cdr) in fringe-indicator-alist
            collect (cons car nil) into alist
            finally do (setq fringe-indicator-alist alist)))
@@ -102,12 +97,6 @@ whose dimensions may not be fully initialized by the time this is run."
   (when (get-buffer-window (doom-fallback-buffer))
     (unless (or +doom-dashboard-inhibit-refresh
                 (window-minibuffer-p (frame-selected-window)))
-      (unless +doom-dashboard-modeline
-        (setq +doom-dashboard--old-modeline mode-line-format
-              +doom-dashboard-modeline
-              (or (and (featurep! :ui doom-modeline)
-                       (doom-modeline 'project))
-                  mode-line-format)))
       (let ((old-pwd (or dir default-directory))
             (fallback-buffer (doom-fallback-buffer)))
         (with-current-buffer fallback-buffer

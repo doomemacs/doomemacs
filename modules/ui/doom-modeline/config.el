@@ -622,6 +622,9 @@ Returns \"\" to not break --no-window-system."
 (defun +doom-modeline|set-media-modeline ()
   (doom-set-modeline 'media))
 
+(defun +doom-modeline|set-project-modeline ()
+  (doom-set-modeline 'project))
+
 
 ;;
 ;; Bootstrap
@@ -629,6 +632,7 @@ Returns \"\" to not break --no-window-system."
 
 (add-hook 'doom-init-ui-hook #'+doom-modeline|init)
 (add-hook 'doom-scratch-buffer-hook #'+doom-modeline|set-special-modeline)
+(add-hook '+doom-dashboard-mode-hook #'+doom-modeline|set-project-modeline)
 
 (add-hook 'org-src-mode-hook #'+doom-modeline|set-special-modeline)
 (add-hook 'image-mode-hook   #'+doom-modeline|set-media-modeline)
