@@ -99,11 +99,6 @@
   :config
   (set! :company-backend 'js2-mode '(company-tern)))
 
-(def-package! company-flow
-  :when (featurep! :completion company)
-  :after company
-  :config
-  (set! :company-backend 'js2-mode '(company-flow)))
 
 (def-package! rjsx-mode
   :commands rjsx-mode
@@ -206,9 +201,6 @@
 (def-project-mode! +javascript-npm-mode
   :modes (html-mode css-mode web-mode js2-mode markdown-mode)
   :files "package.json")
-
-(def-project-mode! +javascript-eslintd-fix-mode
-  :modes (+javascript-npm-mode))
 
 (def-project-mode! +javascript-lb6-mode
   :modes (web-mode js2-mode nxml-mode markdown-mode)
