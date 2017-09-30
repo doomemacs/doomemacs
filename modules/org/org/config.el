@@ -219,9 +219,9 @@ between the two."
 
   (defun +org|remove-occur-highlights ()
     "Remove org occur highlights on ESC in normal mode."
-    (when (derived-mode-p 'org-mode)
-      (org-remove-occur-highlights)
-      t))
+    (when (and (derived-mode-p 'org-mode)
+               org-occur-highlights)
+      (org-remove-occur-highlights)))
   (add-hook '+evil-esc-hook #'+org|remove-occur-highlights)
 
   (after! recentf
