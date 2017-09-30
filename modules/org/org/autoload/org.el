@@ -46,6 +46,10 @@ If on a:
   (let* ((scroll-pt (window-start))
          (context (org-element-context))
          (type (org-element-type context)))
+    ;; skip over unimportant contexts
+    (while (and context (memq type '(verbatim code bold italic underline strike-through)))
+      (setq context (org-element-property :parent context)
+            type (org-element-type context)))
     (pcase type
       ((guard (org-element-property :checkbox (org-element-lineage context '(item) t)))
        (let ((match (and (org-at-item-checkbox-p) (match-string 1))))
