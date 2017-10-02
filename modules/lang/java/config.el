@@ -1,29 +1,14 @@
 ;;; lang/java/config.el -*- lexical-binding: t; -*-
 
-(def-package! meghanada
-  :commands meghanada-mode
-  :config
-  (setq meghanada-server-install-dir (concat doom-etc-dir "meghanada-server/")
-        meghanada-use-company (featurep! :completion company)
-        meghanada-use-flycheck (featurep! :feature syntax-checker)
-        meghanada-use-eldoc t
-        meghanada-use-auto-start t)
+(cond ((featurep! +meghanada) (load! +meghanada))
+      ((featurep! +eclim) ; FIXME lang/java +eclim
+       ;;(load! +eclim)
+       (warn "java-mode: eclim support isn't implemented yet")))
 
-  ;; Setup on first use
-  (meghanada-install-server)
-  (if (file-exists-p (meghanada--locate-server-jar))
-      (add-hook! 'java-mode-hook #'(meghanada-mode flycheck-mode))
-    (warn "java-mode: meghanada-server not installed, java-mode will run with reduced functionality"))
 
-  (add-hook 'java-mode-hook #'(rainbow-delimiters-mode eldoc-mode))
-
-  (set! :build 'compile-file    'java-mode #'meghanada-compile-file)
-  (set! :build 'compile-project 'java-mode #'meghanada-compile-project)
-
-  (set! :jump 'java-mode :definition #'meghanada-jump-declaration)
-
-  (map! :map meghanada-mode-map :m "gd" #'meghanada-jump-declaration))
-
+;;
+;; Common plugins
+;;
 
 (def-package! android-mode
   :commands android-mode
