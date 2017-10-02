@@ -26,8 +26,7 @@ Uses the capture template specified by KEY. Otherwise, prompts you for one."
     (window-system . ,(cond (IS-MAC 'ns)
                             (IS-LINUX 'x)
                             (t 'w32)))
-    ,(when IS-LINUX
-       '(display . ":0")))
+    ,(if IS-LINUX '(display . ":0")))
   "TODO")
 
 ;;;###autoload

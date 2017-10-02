@@ -1,5 +1,7 @@
 ;;; org/org-capture/config.el -*- lexical-binding: t; -*-
 
+(add-hook 'org-load-hook #'+org-capture|init t)
+
 ;; Sets up two `org-capture' workflows that I like:
 ;;
 ;; 1. The traditional way: invoking `org-capture' directly (or through a
@@ -20,9 +22,11 @@
          (file+headline org-default-notes-file "Inbox")
          "* %u %?\n%i" :prepend t :kill-buffer t)))
 
-(add-hook 'org-capture-after-finalize-hook #'+org-capture|cleanup-frame)
-(when (featurep! :feature evil)
-  (add-hook 'org-capture-mode-hook #'evil-insert-state))
+(defun +org-capture|init ()
+  (add-hook 'org-capture-after-finalize-hook #'+org-capture|cleanup-frame)
 
-(when (featurep! :ui doom-dashboard)
-  (add-hook '+doom-dashboard-inhibit-functions #'+org-capture-frame-p))
+  (when (featurep! :feature evil)
+    (add-hook 'org-capture-mode-hook #'evil-insert-state))
+
+  (when (featurep! :ui doom-dashboard)
+    (add-hook '+doom-dashboard-inhibit-functions #'+org-capture-frame-p)))
