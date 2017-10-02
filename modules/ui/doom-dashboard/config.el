@@ -9,6 +9,10 @@
 (defvar +doom-dashboard-widgets '(banner shortmenu loaded)
   "List of widgets to display in a blank scratch buffer.")
 
+(defvar +doom-dashboard-inhibit-functions ()
+  "A list of functions that determine whether to inhibit the dashboard the
+loading.")
+
 (defvar +doom-dashboard--width 80)
 (defvar +doom-dashboard--height 0)
 (defvar +doom-dashboard--old-fringe-indicator fringe-indicator-alist)
@@ -76,11 +80,12 @@ whose dimensions may not be fully initialized by the time this is run."
 ;;
 (defun +doom-dashboard/open (frame)
   (interactive (list (selected-frame)))
-  (unless +doom-dashboard-inhibit-refresh
-    (with-selected-frame frame
-      (switch-to-buffer (doom-fallback-buffer))
-      (+doom-dashboard-reload)))
-  (setq +doom-dashboard-inhibit-refresh nil))
+  (unless (run-hook-with-args-until-success '+doom-dashboard-inhibit-functions)
+    (unless +doom-dashboard-inhibit-refresh
+      (with-selected-frame frame
+        (switch-to-buffer (doom-fallback-buffer))
+        (+doom-dashboard-reload)))
+    (setq +doom-dashboard-inhibit-refresh nil)))
 
 (defun +doom-dashboard-p (&optional buffer)
   "Returns t if BUFFER is the dashboard buffer."
