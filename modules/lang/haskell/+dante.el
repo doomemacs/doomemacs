@@ -9,5 +9,5 @@
     (warn "haskell-mode: couldn't find cabal")
     (remove-hook 'haskell-mode-hook #'dante-mode))
 
-    (add-hook 'dante-mode-hook #'flycheck-mode))
+  (add-hook 'dante-mode-hook #'flycheck-mode))
 
