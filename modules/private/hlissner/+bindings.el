@@ -730,7 +730,6 @@
 ;; properly, more like vim, or how I like it.
 
 (map! (:map input-decode-map
-        [?\C-i] [C-i]
         [S-iso-lefttab] [backtab]
         (:unless window-system "TAB" [tab])) ; Fix TAB in terminal
 
