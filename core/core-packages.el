@@ -139,9 +139,6 @@ are installed. If you byte-compile core/core.el, this function will be avoided
 to speed up startup."
   ;; Called early during initialization; only use native functions!
   (when (or (not doom-package-init-p) force-p)
-    (unless noninteractive
-      (message "Doom initialized"))
-
     (setq load-path doom--base-load-path
           package-activated-list nil)
 
@@ -177,7 +174,10 @@ to speed up startup."
     (load "quelpa" nil t)
     (load "use-package" nil t)
 
-    (setq doom-package-init-p t)))
+    (setq doom-package-init-p t)
+
+    (unless noninteractive
+      (message "Doom initialized"))))
 
 (defun doom-initialize-autoloads ()
   "Ensures that `doom-autoload-file' exists and is loaded. Otherwise run
@@ -292,11 +292,12 @@ added, if the file exists."
            collect path))
 
 (defun doom--display-benchmark ()
-  (message "Loaded %s packages in %.03fs"
+  (message "Doom loaded %s packages across %d modules in %.03fs"
            ;; Certainly imprecise, especially where custom additions to
            ;; load-path are concerned, but I don't mind a [small] margin of
            ;; error in the plugin count in exchange for faster startup.
            (- (length load-path) (length doom--base-load-path))
+           (hash-table-size doom-modules)
            (setq doom-init-time (float-time (time-subtract after-init-time before-init-time)))))
 
 
@@ -327,7 +328,8 @@ MODULES is an malformed plist of modules to load."
          (unless (server-running-p)
            (server-start)))
 
-       (add-hook 'doom-init-hook #'doom--display-benchmark t))))
+       (add-hook 'doom-init-hook #'doom--display-benchmark t)
+       (message "Doom modules initialized"))))
 
 (defmacro def-package! (name &rest plist)
   "A thin wrapper around `use-package'.
