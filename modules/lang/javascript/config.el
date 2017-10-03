@@ -18,6 +18,9 @@
   ;; Conform switch-case indentation to editorconfig's config
   (set! :editorconfig :add '(js2-mode js2-basic-offset js-switch-indent-offset))
 
+  (sp-with-modes '(js2-mode rjsx-mode)
+    (sp-local-pair "/* " " */" :post-handlers '(("| " "SPC"))))
+
   ;; Favor local eslint over global, if available
   (defun +javascript|init-flycheck-elint ()
     (when (derived-mode-p 'js-mode)
@@ -28,40 +31,10 @@
         (setq-local flycheck-javascript-eslint-executable eslint))))
   (add-hook 'flycheck-mode-hook #'+javascript|init-flycheck-elint)
 
-  (sp-with-modes '(js2-mode rjsx-mode)
-    (sp-local-pair "/* " " */" :post-handlers '(("| " "SPC"))))
-
   (map! :map js2-mode-map
         :localleader
-        :n  "S"  #'+javascript/skewer-this-buffer
-
-        :prefix "r"
-        :n  "g"  #'js2r-add-to-globals-annotation
-        :n  "ca" #'js2r-arguments-to-object
-        :n  "Xa" #'js2r-contract-array
-        :n  "Xf" #'js2r-contract-function
-        :n  "Xo" #'js2r-contract-object
-        :nv "d"  #'js2r-debug-this
-        :n  "xa" #'js2r-expand-array
-        :n  "xf" #'js2r-expand-function
-        :n  "xo" #'js2r-expand-object
-        :v  "ef" #'js2r-extract-function
-        :v  "em" #'js2r-extract-method
-        :v  "ev" #'js2r-extract-var
-        :n  "F"  #'js2r-forward-barf
-        :n  "f"  #'js2r-forward-slurp
-        :v  "ii" #'js2r-inject-global-in-iife
-        :v  "iv" #'js2r-inline-var
-        :v  "p"  #'js2r-introduce-parameter
-        :n  "p"  #'js2r-localize-parameter
-        :nv "l"  #'js2r-log-this
-        :n  "r"  #'js2r-rename-var
-        :n  "ss" #'js2r-split-string
-        :n  "sv" #'js2r-split-var-declaration
-        :n  "ct" #'js2r-ternary-to-if
-        :v  "u"  #'js2r-unwrap
-        :n  "t"  #'js2r-var-to-this
-        :n  "ii" #'js2r-wrap-buffer-in-iife))
+        "r" #'+javascript/refactor
+        "S" #'+javascript/skewer-this-buffer))
 
 
 ;; A find-{definition,references} backend for js2-mode. NOTE The xref API is
@@ -81,7 +54,35 @@
    js2r-add-to-globals-annotation js2r-extract-var js2r-inline-var
    js2r-rename-var js2r-var-to-this js2r-arguments-to-object js2r-ternary-to-if
    js2r-split-var-declaration js2r-split-string js2r-unwrap js2r-log-this
-   js2r-debug-this js2r-forward-slurp js2r-forward-barf))
+   js2r-debug-this js2r-forward-slurp js2r-forward-barf)
+  :init
+  (def-menu! +javascript/refactor
+    "Refactoring commands for `js2-mode' buffers."
+    '(("Extract into function"           :exec js2r-extract-function          :region t)
+      ("Extract into method"             :exec js2r-extract-method            :region t)
+      ("Introduce parameter to function" :exec js2r-introduce-parameter       :region t)
+      ("Localize parameter"              :exec js2r-localize-parameter        :region nil)
+      ("Expand object"                   :exec js2r-expand-object             :region nil)
+      ("Expand function"                 :exec js2r-expand-function           :region nil)
+      ("Expand array"                    :exec js2r-expand-array              :region nil)
+      ("Contract object"                 :exec js2r-contract-object           :region nil)
+      ("Contract function"               :exec js2r-contract-function         :region nil)
+      ("Contract array"                  :exec js2r-contract-array            :region nil)
+      ("Wrap buffer in IIFE"             :exec js2r-wrap-buffer-in-iife       :region nil)
+      ("Inject global into IIFE"         :exec js2r-inject-global-in-iife     :region t)
+      ("Add to globals annotation"       :exec js2r-add-to-globals-annotation :region nil)
+      ("Extract variable"                :exec js2r-extract-var               :region t)
+      ("Inline variable"                 :exec js2r-inline-var                :region t)
+      ("Rename variable"                 :exec js2r-rename-var                :region nil)
+      ("Replace var with this"           :exec js2r-var-to-this               :region nil)
+      ("Arguments to object"             :exec js2r-arguments-to-object       :region nil)
+      ("Ternary to if"                   :exec js2r-ternary-to-if             :region nil)
+      ("Split var declaration"           :exec js2r-split-var-declaration     :region nil)
+      ("Split string"                    :exec js2r-split-string              :region nil)
+      ("Unwrap"                          :exec js2r-unwrap                    :region t)
+      ("Log this"                        :exec js2r-log-this)
+      ("Debug this"                      :exec js2r-debug-this))
+    :prompt "Refactor: "))
 
 
 (def-package! tern

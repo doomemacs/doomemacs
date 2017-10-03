@@ -27,11 +27,10 @@
   (setq racer-cmd (expand-file-name "racer/target/release/racer" +rust-src-dir)
         racer-rust-src-path (expand-file-name "rust/src/" +rust-src-dir))
 
-  (unless (file-exists-p racer-cmd)
-    (warn "rust-mode: racer binary can't be found; auto-completion is disabled"))
+  (set! :jump 'rust-mode :definition #'racer-find-definition)
 
-  ;; TODO Unit test keybinds
-  (map! :map rust-mode-map :m "gd" #'racer-find-definition))
+  (unless (file-exists-p racer-cmd)
+    (warn "rust-mode: racer binary can't be found; auto-completion is disabled")))
 
 
 (def-package! company-racer
