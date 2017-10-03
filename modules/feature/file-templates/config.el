@@ -72,8 +72,6 @@
           ("/bower\\.json$"                  "__bower.json"        json-mode)
           ("/gulpfile\\.js$"                 "__gulpfile.js"       js-mode)
           ("/webpack\\.config\\.js$"         "__webpack.config.js" js-mode)
-          ("\\.lbaction/.+/Info.plist$"                       "__Info.plst"  lb6-mode)
-          ("\\.lbaction/.+/\\(default\\|suggestions\\)\\.js$" "__default.js" lb6-mode)
           ;; Lua
           ("/main\\.lua$"                    "__main.lua"       love-mode)
           ("/conf\\.lua$"                    "__conf.lua"       love-mode)
