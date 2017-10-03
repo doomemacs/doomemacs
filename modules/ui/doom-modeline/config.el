@@ -225,11 +225,11 @@ active."
 If TRUNCATE-TAIL is t also truncate the parent directory of the file."
   (let ((dirs (shrink-path-prompt (file-name-directory
                                    (or buffer-file-truename
-                                       (file-truename buffer-file-name))))))
+                                       (file-truename buffer-file-name)))))
+        (active (active)))
     (if (null dirs)
-        "%b"
-      (let ((modified-faces (if (buffer-modified-p) 'doom-modeline-buffer-modified))
-            (active (active)))
+        (propertize "%b" 'face (if active 'doom-modeline-buffer-file))
+      (let ((modified-faces (if (buffer-modified-p) 'doom-modeline-buffer-modified)))
         (let ((dirname (car dirs))
               (basename (cdr dirs))
               (dir-faces (or modified-faces (if active 'doom-modeline-project-root-dir)))
@@ -243,11 +243,11 @@ If TRUNCATE-TAIL is t also truncate the parent directory of the file."
 
 (defun +doom-modeline--buffer-file-name-relative ()
   "Propertized `buffer-file-name' showing directories relative to project's root only."
-  (let ((root (doom-project-root)))
+  (let ((root (doom-project-root))
+        (active (active)))
     (if (null root)
-        "%b"
+        (propertize "%b" 'face (if active 'doom-modeline-buffer-file))
       (let* ((modified-faces (if (buffer-modified-p) 'doom-modeline-buffer-modified))
-             (active (active))
              (relative-dirs (file-relative-name (file-name-directory buffer-file-name) root))
              (relative-faces (or modified-faces (if active 'doom-modeline-buffer-path)))
              (file-faces (or modified-faces (if active 'doom-modeline-buffer-file))))
@@ -268,12 +268,12 @@ Example:
                                                   (file-name-directory
                                                    (or buffer-file-truename
                                                        (file-truename buffer-file-name)))
-                                                  (file-truename buffer-file-name))))
+                                                  (file-truename buffer-file-name)))
+         (active (active)))
     (if (null file-name-split)
-        "%b"
+        (propertize "%b" 'face (if active 'doom-modeline-buffer-file))
       (pcase-let ((`(,root-path-parent ,project ,relative-path ,filename) file-name-split))
-        (let ((modified-faces (if (buffer-modified-p) 'doom-modeline-buffer-modified))
-              (active (active)))
+        (let ((modified-faces (if (buffer-modified-p) 'doom-modeline-buffer-modified)))
           (let ((sp-faces       (or modified-faces (if active 'font-lock-comment-face)))
                 (project-faces  (or modified-faces (if active 'font-lock-string-face)))
                 (relative-faces (or modified-faces (if active 'doom-modeline-buffer-path)))
