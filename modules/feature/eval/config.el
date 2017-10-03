@@ -1,39 +1,15 @@
 ;;; feature/eval/config.el -*- lexical-binding: t; -*-
 
 ;;
-;; Code building
-;;
-
-(defvar +eval-builders nil
-  "A nested alist, mapping major modes to build function plists. Used by
-`+eval/build' and filled with the `:build' setting.")
-
-(def-setting! :build (name modes fn &rest plist)
-  "Define a build function (FN) for MODES (can be major or minor) called NAME.
-
-PLIST accepts the following properties:
-
-  :when FORM    A predicate to determine if the builder is appropriate for this
-                buffer."
-  `(dolist (mode ',(doom-enlist (doom-unquote modes)) +eval-builders)
-     (unless (assq mode +eval-builders)
-       (push (list mode) +eval-builders))
-     (cl-pushnew (cons ,name (append (list :fn ,fn) (list ,@plist)))
-                 (cdr (assq mode +eval-builders))
-                 :test #'eq :key #'car)))
-
-
-;;
 ;; REPLs
 ;;
 
 (defvar +eval-repls nil
   "An alist mapping major modes to plists that describe REPLs. Used by
-`+eval/repl' and filled with the `:repl' setting.")
+`+eval/open-repl' and filled with the `:repl' setting.")
 
 (define-minor-mode +eval-repl-mode
-  "A minor mode for REPL buffers."
-  :init-value nil)
+  "A minor mode for REPL buffers.")
 
 (def-setting! :repl (mode command)
   "Define a REPL for a mode. MODE is a major mode symbol and COMMAND is a
@@ -53,7 +29,7 @@ function that creates and returns the REPL buffer."
 (setq eval-expression-print-length nil
       eval-expression-print-level  nil)
 
-(defvar +eval-runners-alist nil
+(defvar +eval-runners nil
   "Alist mapping major modes to interactive runner functions.")
 
 (def-setting! :eval (mode command)
@@ -67,10 +43,10 @@ function that creates and returns the REPL buffer."
 3. If MODE is not a string and COMMAND is an alist, see `quickrun-add-command':
    (quickrun-add-command MODE COMMAND :mode MODE).
 4. If MODE is not a string and COMMANd is a symbol, add it to
-   `+eval-runners-alist', which is used by `+eval/region'."
+   `+eval-runners', which is used by `+eval/region'."
   (let ((command (doom-unquote command)))
     (cond ((symbolp command)
-           `(push (cons ,mode ',command) +eval-runners-alist))
+           `(push (cons ,mode ',command) +eval-runners))
           ((stringp command)
            `(after! quickrun
               (push (cons ,mode ',command)

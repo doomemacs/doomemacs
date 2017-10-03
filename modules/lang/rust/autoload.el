@@ -2,4 +2,7 @@
 
 ;; TODO (defun +rust/run-cargo () (interactive))
 
-;; TODO (defun +rust-cargo-project-p ())
+;;;###autoload
+(defun +rust-cargo-project-p ()
+  "Return t if this is a cargo project."
+  (doom-project-has! "Cargo.toml"))

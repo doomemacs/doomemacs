@@ -11,8 +11,11 @@
 (def-package! rust-mode
   :mode "\\.rs$"
   :config
-  (set! :build 'run-cargo '(rust-mode toml-mode) #'+rust/run-cargo
-    :when #'+rust-cargo-project-p))
+  (def-menu! +rust/build-menu
+    "TODO"
+    '(("run"   :exec "cargo run"   :cwd t :when (+rust-cargo-project-p))
+      ("build" :exec "cargo build" :cwd t :when (+rust-cargo-project-p)))
+    :prompt "Cargo: "))
 
 
 (def-package! racer

@@ -184,17 +184,3 @@
   :modes (html-mode css-mode web-mode js2-mode markdown-mode)
   :files "package.json")
 
-(def-project-mode! +javascript-lb6-mode
-  :modes (web-mode js2-mode nxml-mode markdown-mode)
-  :match "\\.lb\\(action\\|ext\\)/"
-  :init
-  ;; TODO
-  ;; (when IS-MAC
-  ;;   (set! :build 'launchbar-action '+javascript-lb6-mode
-  ;;     (lambda ()
-  ;;       (when-let (dir (f-traverse-upwards (lambda (f) (f-ext? f "lbaction"))))
-  ;;         (shell-command (format "open '%s'" dir))))
-  ;;     :when
-  ;;     (lambda () (f-traverse-upwards (lambda (f) (f-ext? f "lbaction"))))))
-  )
-

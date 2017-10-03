@@ -168,7 +168,7 @@
      :desc "Build tasks"               :nv "b" #'+eval/build
      :desc "Jump to definition"        :n  "d" #'+jump/definition
      :desc "Jump to references"        :n  "D" #'+jump/references
-     :desc "Open REPL"                 :n  "r" #'+eval/repl
+     :desc "Open REPL"                 :n  "r" #'+eval/open-repl
                                        :v  "r" #'+eval:repl)
 
    (:desc "file" :prefix "f"
@@ -233,7 +233,7 @@
    (:desc "open" :prefix "o"
      :desc "Default browser"     :n  "b" #'browse-url-of-file
      :desc "Debugger"            :n  "d" #'+debug/open
-     :desc "REPL"                :n  "r" #'+eval/repl
+     :desc "REPL"                :n  "r" #'+eval/open-repl
                                  :v  "r" #'+eval:repl
      :desc "Neotree"             :n  "n" #'+neotree/toggle
      :desc "Terminal"            :n  "t" #'+term/open-popup

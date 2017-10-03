@@ -29,12 +29,7 @@
 
 
 (def-package! dockerfile-mode
-  :mode "/Dockerfile$"
-  :config
-  ;; TODO
-  ;; (set! :build 'build-image 'dockerfile-mode '+data/dockerfile-build
-  ;;   :when '+data-dockerfile-p)
-  )
+  :mode "/Dockerfile$")
 
 
 ;; For ROM hacking or debugging

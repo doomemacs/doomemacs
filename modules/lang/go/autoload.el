@@ -1,9 +1,5 @@
 ;;; lang/go/autoload.el -*- lexical-binding: t; -*-
 
-;;;###autoload
-;; TODO (defun +go/build ())
-
-
 ;;
 ;; Tests
 ;;
