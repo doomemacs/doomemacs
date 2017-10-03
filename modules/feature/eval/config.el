@@ -70,7 +70,7 @@ function that creates and returns the REPL buffer."
   (unless (boundp 'display-line-numbers)
     (add-hook 'quickrun--mode-hook #'nlinum-mode))
   :config
-  (set! :popup "*quickrun*" :size 3 :autokill t :autoclose t :autofit t)
+  (set! :popup "*quickrun*" :size 6 :autokill t :autoclose t)
 
   (defun +eval*quickrun-auto-close (&rest _)
     "Allows us to silently re-run quickrun from within the quickrun buffer."
@@ -85,6 +85,7 @@ function that creates and returns the REPL buffer."
   (defun +eval|quickrun-scroll-to-bof ()
     "Ensures window is scrolled to BOF on invocation."
     (with-selected-window (get-buffer-window quickrun--buffer-name)
-      (goto-char (point-min))))
+      (goto-char (point-min))
+      (doom-popup-fit-to-buffer)))
   (add-hook 'quickrun-after-run-hook #'+eval|quickrun-scroll-to-bof))
 
