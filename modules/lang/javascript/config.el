@@ -31,34 +31,6 @@
         (setq-local flycheck-javascript-eslint-executable eslint))))
   (add-hook 'flycheck-mode-hook #'+javascript|init-flycheck-elint)
 
-  (def-menu! +javascript/refactor-menu
-    "Refactoring commands for `js2-mode' buffers."
-    '(("Extract into function"           :exec js2r-extract-function          :region t)
-      ("Extract into method"             :exec js2r-extract-method            :region t)
-      ("Introduce parameter to function" :exec js2r-introduce-parameter       :region t)
-      ("Localize parameter"              :exec js2r-localize-parameter        :region nil)
-      ("Expand object"                   :exec js2r-expand-object             :region nil)
-      ("Expand function"                 :exec js2r-expand-function           :region nil)
-      ("Expand array"                    :exec js2r-expand-array              :region nil)
-      ("Contract object"                 :exec js2r-contract-object           :region nil)
-      ("Contract function"               :exec js2r-contract-function         :region nil)
-      ("Contract array"                  :exec js2r-contract-array            :region nil)
-      ("Wrap buffer in IIFE"             :exec js2r-wrap-buffer-in-iife       :region nil)
-      ("Inject global into IIFE"         :exec js2r-inject-global-in-iife     :region t)
-      ("Add to globals annotation"       :exec js2r-add-to-globals-annotation :region nil)
-      ("Extract variable"                :exec js2r-extract-var               :region t)
-      ("Inline variable"                 :exec js2r-inline-var                :region t)
-      ("Rename variable"                 :exec js2r-rename-var                :region nil)
-      ("Replace var with this"           :exec js2r-var-to-this               :region nil)
-      ("Arguments to object"             :exec js2r-arguments-to-object       :region nil)
-      ("Ternary to if"                   :exec js2r-ternary-to-if             :region nil)
-      ("Split var declaration"           :exec js2r-split-var-declaration     :region nil)
-      ("Split string"                    :exec js2r-split-string              :region nil)
-      ("Unwrap"                          :exec js2r-unwrap                    :region t)
-      ("Log this"                        :exec js2r-log-this)
-      ("Debug this"                      :exec js2r-debug-this))
-    :prompt "Refactor: ")
-
   (map! :map js2-mode-map
         :localleader
         "r" #'+javascript/refactor-menu
@@ -84,7 +56,7 @@
    js2r-split-var-declaration js2r-split-string js2r-unwrap js2r-log-this
    js2r-debug-this js2r-forward-slurp js2r-forward-barf)
   :init
-  (def-menu! +javascript/refactor
+  (def-menu! +javascript/refactor-menu
     "Refactoring commands for `js2-mode' buffers."
     '(("Extract into function"           :exec js2r-extract-function          :region t)
       ("Extract into method"             :exec js2r-extract-method            :region t)
