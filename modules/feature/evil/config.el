@@ -383,3 +383,64 @@ the new algorithm is confusing, like in python or ruby."
 
 (def-package! evil-textobj-anyblock
   :commands (evil-textobj-anyblock-inner-block evil-textobj-anyblock-a-block))
+
+
+;;
+;; Multiple cursors compatibility (for the plugins that use it)
+;;
+
+;; mc doesn't play well with evil, this attempts to assuage some of its problems
+;; so that certain plugins (which I have no control over) can still use it in
+;; relative safety.
+(after! multiple-cursors-core
+  (map! :map mc/keymap :ne "<escape>" #'mc/keyboard-quit)
+
+  (defvar +evil--mc-compat-evil-prev-state nil)
+  (defvar +evil--mc-compat-mark-was-active nil)
+
+  (defsubst +evil--visual-or-normal-p ()
+    "True if evil mode is enabled, and we are in normal or visual mode."
+    (and (bound-and-true-p evil-mode)
+         (not (memq evil-state '(insert emacs)))))
+
+  (defun +evil|mc-compat-switch-to-emacs-state ()
+    (when (+evil--visual-or-normal-p)
+      (setq +evil--mc-compat-evil-prev-state evil-state)
+      (when (region-active-p)
+        (setq +evil--mc-compat-mark-was-active t))
+      (let ((mark-before (mark))
+            (point-before (point)))
+        (evil-emacs-state 1)
+        (when (or +evil--mc-compat-mark-was-active (region-active-p))
+          (goto-char point-before)
+          (set-mark mark-before)))))
+
+  (defun +evil|mc-compat-back-to-previous-state ()
+    (when +evil--mc-compat-evil-prev-state
+      (unwind-protect
+          (case +evil--mc-compat-evil-prev-state
+            ((normal visual) (evil-force-normal-state))
+            (t (message "Don't know how to handle previous state: %S"
+                        +evil--mc-compat-evil-prev-state)))
+        (setq +evil--mc-compat-evil-prev-state nil)
+        (setq +evil--mc-compat-mark-was-active nil))))
+
+  (add-hook 'multiple-cursors-mode-enabled-hook '+evil|mc-compat-switch-to-emacs-state)
+  (add-hook 'multiple-cursors-mode-disabled-hook '+evil|mc-compat-back-to-previous-state)
+
+  (defun +evil|mc-evil-compat-rect-switch-state ()
+    (if rectangular-region-mode
+        (+evil|mc-compat-switch-to-emacs-state)
+      (setq +evil--mc-compat-evil-prev-state nil)))
+
+  ;; When running edit-lines, point will return (position + 1) as a
+  ;; result of how evil deals with regions
+  (defadvice mc/edit-lines (before change-point-by-1 activate)
+    (when (+evil--visual-or-normal-p)
+      (if (> (point) (mark))
+          (goto-char (1- (point)))
+        (push-mark (1- (mark))))))
+
+  (add-hook 'rectangular-region-mode-hook '+evil|mc-evil-compat-rect-switch-state)
+
+  (defvar mc--default-cmds-to-run-once nil))
