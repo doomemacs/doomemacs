@@ -118,6 +118,8 @@ should be activated. If they are *all* true, NAME is activated.
 
   :init FORM -- FORM to run the first time this project mode is enabled.
 
+  :hook FORM -- FORM is run each time the mode is activated.
+
 Relevant: `doom-project-hook'."
   (declare (indent 1))
   (let ((modes (plist-get plist :modes))
@@ -125,6 +127,7 @@ Relevant: `doom-project-hook'."
         (when  (plist-get plist :when))
         (match (plist-get plist :match))
         (init-form (plist-get plist :init))
+        (hook-form (plist-get plist :hook))
         (keymap-sym (intern (format "%s-map" name))))
     `(progn
        (defvar ,keymap-sym (make-sparse-keymap)
@@ -132,7 +135,8 @@ Relevant: `doom-project-hook'."
        (define-minor-mode ,name
          "A project minor mode."
          :init-value nil
-         :keymap ,keymap-sym)
+         :keymap ,keymap-sym
+         ,hook-form)
        ,(when (or modes match files when)
           `(associate! ,name
              :modes ,modes
