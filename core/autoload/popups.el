@@ -40,6 +40,16 @@ this popup, just the specified properties. Returns the new popup window."
     (set-window-dedicated-p nil t)))
 
 ;;;###autoload
+(defun doom-popup-fit-to-buffer (&optional window max-size)
+  "Fit WINDOW to the size of its content."
+  (let ((plist (doom-popup-properties window)))
+    (unless (string-empty-p (buffer-string))
+      (let* ((window-size (doom-popup-size window))
+             (max-size (or max-size (doom-popup-property :size window)))
+             (size (if (floatp max-size) (truncate (* max-size window-size)) window-size)))
+        (fit-window-to-buffer window size nil size)))))
+
+;;;###autoload
 (defun doom-popup-file (file &optional plist extend-p)
   "Display FILE in a shackle popup, with PLIST rules. See `shackle-rules' for
 possible rules."
@@ -386,12 +396,8 @@ and setting `doom-popup-rules' within it. Returns the window."
       (unless (eq plist t)
         (setq-local doom-popup-rules plist))
       (doom-popup-mode +1)
-      (when (and (plist-get plist :autofit)
-                 (not (string-empty-p (buffer-string))))
-        (let* ((window-size (doom-popup-size window))
-               (max-size (or (plist-get plist :size) shackle-default-size))
-               (size (if (floatp max-size) (truncate (* max-size window-size)) window-size)))
-          (fit-window-to-buffer window size nil size))))
+      (when (plist-get plist :autofit)
+        (doom-popup-fit-to-buffer window)))
     window))
 
 ;;;###autoload
