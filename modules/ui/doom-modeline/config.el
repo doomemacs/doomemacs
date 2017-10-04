@@ -220,7 +220,7 @@ active."
                                              (and (active)
                                                   'doom-modeline-buffer-file))))
                                (when face `(:inherit ,face))))))
-   'help-echo (+doom-modeline--buffer-file-name nil)))
+   'help-echo buffer-file-truename))
 
 (defun +doom-modeline--buffer-file-name-truncate (&optional truncate-tail)
   "Propertized `buffer-file-name' that truncates every dir along path.
