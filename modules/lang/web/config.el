@@ -38,11 +38,9 @@
 (def-project-mode! +web-jekyll-mode
   :modes (web-mode js-mode coffee-mode css-mode haml-mode pug-mode)
   :files (and "config.yml" (or "_layouts/" "_posts/"))
-  :init
-  (defun +web|init-jekyll-mode ()
-    (when (eq major-mode 'web-mode)
-      (web-mode-set-engine "django")))
-  (add-hook '+web-jekyll-mode-hook #'+web|init-jekyll-mode))
+  :on-enter
+  (when (eq major-mode 'web-mode)
+    (web-mode-set-engine "django")))
 
 (def-project-mode! +web-wordpress-mode
   :modes (php-mode web-mode css-mode haml-mode pug-mode)
