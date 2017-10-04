@@ -224,7 +224,6 @@ wrong places)."
                 (org-back-to-heading)
                 (org-insert-heading)
                 (when (= level 1)
-                  (save-excursion (evil-open-above 1))
                   (save-excursion (insert "\n")))))
              (when (org-element-property :todo-type context)
                (org-todo 'todo))))
