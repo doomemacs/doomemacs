@@ -87,6 +87,7 @@ Given ~/Projects/FOSS/emacs/lisp/comint.el
 truncate-upto-project => ~/P/F/emacs/lisp/comint.el
 truncate-upto-root => ~/P/F/e/lisp/comint.el
 truncate-all => ~/P/F/e/l/comint.el
+relative-from-project => emacs/lisp/comint.el
 relative-to-project => lisp/comint.el
 file-name => comint.el")
 
@@ -211,6 +212,7 @@ active."
      ('truncate-upto-root (+doom-modeline--buffer-file-name-truncate))
      ('truncate-all (+doom-modeline--buffer-file-name-truncate t))
      ('relative-to-project (+doom-modeline--buffer-file-name-relative))
+     ('relative-from-project (+doom-modeline--buffer-file-name-relative 'include-project))
      ('file-name (propertize (file-name-nondirectory buffer-file-name)
                              'face
                              (let ((face (or (and (buffer-modified-p)
@@ -241,14 +243,15 @@ If TRUNCATE-TAIL is t also truncate the parent directory of the file."
                   (propertize (file-name-nondirectory buffer-file-name)
                               'face (if file-faces `(:inherit ,file-faces)))))))))
 
-(defun +doom-modeline--buffer-file-name-relative ()
+(defun +doom-modeline--buffer-file-name-relative (&optional include-project)
   "Propertized `buffer-file-name' showing directories relative to project's root only."
   (let ((root (doom-project-root))
         (active (active)))
     (if (null root)
         (propertize "%b" 'face (if active 'doom-modeline-buffer-file))
       (let* ((modified-faces (if (buffer-modified-p) 'doom-modeline-buffer-modified))
-             (relative-dirs (file-relative-name (file-name-directory buffer-file-name) root))
+             (relative-dirs (file-relative-name (file-name-directory buffer-file-name)
+                                                (if include-project (concat root "../") root)))
              (relative-faces (or modified-faces (if active 'doom-modeline-buffer-path)))
              (file-faces (or modified-faces (if active 'doom-modeline-buffer-file))))
         (if (equal "./" relative-dirs) (setq relative-dirs ""))
