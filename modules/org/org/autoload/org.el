@@ -185,8 +185,10 @@ wrong places)."
                         (- (point) (line-beginning-position)))))
              (pcase direction
                ('below
-                (goto-char (line-end-position))
-                (insert (concat  "\n" (make-string pad ? ) marker)))
+                (org-end-of-item)
+                (goto-char (line-beginning-position))
+                (insert (make-string pad 32) (or marker ""))
+                (save-excursion (insert "\n")))
                ('above
                 (goto-char (line-beginning-position))
                 (insert (make-string pad 32) (or marker ""))
