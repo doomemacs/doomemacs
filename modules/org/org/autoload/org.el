@@ -47,7 +47,7 @@ If on a:
          (context (org-element-context))
          (type (org-element-type context)))
     ;; skip over unimportant contexts
-    (while (and context (memq type '(verbatim code bold italic underline strike-through)))
+    (while (and context (memq type '(verbatim code bold italic underline strike-through subscript superscript)))
       (setq context (org-element-property :parent context)
             type (org-element-type context)))
     (pcase type
