@@ -22,14 +22,16 @@
     (sp-local-pair "/* " " */" :post-handlers '(("| " "SPC"))))
 
   ;; Favor local eslint over global, if available
-  (defun +javascript|init-flycheck-elint ()
+  (defun +javascript|init-flycheck-eslint ()
     (when (derived-mode-p 'js-mode)
       (when-let ((eslint (expand-file-name "node_modules/eslint/bin/eslint.js"
                                            (doom-project-root)))
                  (exists-p (file-exists-p eslint))
                  (executable-p (file-executable-p eslint)))
-        (setq-local flycheck-javascript-eslint-executable eslint))))
-  (add-hook 'flycheck-mode-hook #'+javascript|init-flycheck-elint)
+        (setq-local flycheck-javascript-eslint-executable eslint)
+        (setq-local js2-strict-trailing-comma-warning nil)
+        (setq-local js2-strict-missing-semi-warning nil))))
+  (add-hook 'flycheck-mode-hook #'+javascript|init-flycheck-eslint)
 
   (map! :map js2-mode-map
         :localleader
@@ -138,6 +140,19 @@
   (map! :map* (json-mode js2-mode-map) :n "gQ" #'web-beautify-js))
 
 
+(def-package! eslintd-fix
+  :commands
+  (eslintd-fix-mode eslintd-fix)
+  :init
+  (defun +javascript|init-eslintd-fix ()
+    (when (bound-and-true-p +javascript-eslintd-fix-mode)
+      (eslintd-fix-mode)
+      ;; update flycheck to use eslintd for more consistent results
+      (when-let (eslintd-executable (executable-find "eslint_d"))
+        (setq flycheck-javascript-eslint-executable eslintd-executable))))
+  (add-hook! (js2-mode rjsx-mode) #'+javascript|init-eslintd-fix))
+
+
 ;;
 ;; Skewer-mode
 ;;
@@ -177,6 +192,9 @@
   :match "/screeps/.+$"
   :modes (+javascript-npm-mode)
   :init (load! +screeps))
+
+(def-project-mode! +javascript-eslintd-fix-mode
+  :modes (+javascript-npm-mode))
 
 (def-project-mode! +javascript-gulp-mode
   :files "gulpfile.js")
