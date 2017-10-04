@@ -67,6 +67,8 @@ If STRICT-P, return nil if no project was found, otherwise return
   (let (projectile-require-project-root)
     (projectile-project-root)))
 
+(defalias 'doom-project-expand #'projectile-expand-root)
+
 (defmacro doom-project-has! (files)
   "Checks if the project has the specified FILES.
 Paths are relative to the project root, unless they start with ./ or ../ (in
@@ -116,38 +118,52 @@ should be activated. If they are *all* true, NAME is activated.
   :when PREDICATE -- if PREDICATE returns true (can be a form or the symbol of a
     function)
 
-  :init FORM -- FORM to run the first time this project mode is enabled.
+  :add-hooks HOOKS -- HOOKS is a list of hooks to add this mode's hook.
 
-  :hook FORM -- FORM is run each time the mode is activated.
+  :on-load FORM -- FORM to run the first time this project mode is enabled.
+
+  :on-enter FORM -- FORM is run each time the mode is activated.
+
+  :on-exit FORM -- FORM is run each time the mode is disabled.
 
 Relevant: `doom-project-hook'."
-  (declare (indent 1))
-  (let ((modes (plist-get plist :modes))
+  (declare (indent 1) (doc-string 2))
+  (let ((doc-string (if (stringp (car plist))
+                        (prog1 (car plist)
+                          (setq plist (cdr plist)))
+                      "A project minor mode."))
+        (modes (plist-get plist :modes))
         (files (plist-get plist :files))
         (when  (plist-get plist :when))
         (match (plist-get plist :match))
-        (init-form (plist-get plist :init))
-        (hook-form (plist-get plist :hook))
-        (keymap-sym (intern (format "%s-map" name))))
+        (hooks (plist-get plist :add-hooks))
+        (load-form  (plist-get plist :on-load))
+        (enter-form (plist-get plist :on-enter))
+        (exit-form  (plist-get plist :on-exit))
+        (init-var (intern (format "%s-init" name))))
     `(progn
-       (defvar ,keymap-sym (make-sparse-keymap)
-         ,(concat "Keymap for `" (symbol-name name) "'"))
+       ,(if load-form `(defvar ,init-var nil))
        (define-minor-mode ,name
-         "A project minor mode."
+         ,doc-string
          :init-value nil
-         :keymap ,keymap-sym
-         ,hook-form)
+         :lighter ""
+         :keymap (make-sparse-keymap)
+         (if (not ,name)
+             ,exit-form
+           (run-hook-with-args 'doom-project-hook ',name)
+           ,(when load-form
+              `(unless ,init-var
+                 ,load-form
+                 (setq ,init-var t)))
+           ,enter-form))
+       ,(when hooks
+          `(setq ,(intern (format "%s-hook" name)) ',hooks))
        ,(when (or modes match files when)
           `(associate! ,name
              :modes ,modes
              :match ,match
              :files ,files
-             :when ,when))
-       (add-hook! ,name
-         (run-hook-with-args 'doom-project-hook ',name))
-       ,(when init-form
-          `(add-transient-hook! ',(intern (format "%s-hook" name))
-             ,init-form)))))
+             :when ,when)))))
 
 (provide 'core-projects)
 ;;; core-projects.el ends here
