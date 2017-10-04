@@ -116,7 +116,6 @@
        org-attach        ; a simpler attachment system
        org-capture       ; a better org-capture, in or outside of Emacs
        org-export        ; a custom, centralized export system
-       org-notebook      ; org-mode as a notebook
        org-present       ; using org-mode for presentations
       ;org-sync          ; TODO sync with mobile
       ;org-publish       ; TODO org + blogs
