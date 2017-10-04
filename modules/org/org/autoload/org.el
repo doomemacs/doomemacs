@@ -282,3 +282,18 @@ with `org-cycle'). Also:
            (let ((window-beg (window-start)))
              (org-cycle)
              (set-window-start nil window-beg))))))
+
+;;;###autoload
+(defun +org/remove-link ()
+  "Unlink the text at point."
+  (interactive)
+  (unless (org-in-regexp org-bracket-link-regexp 1)
+    (user-error "No link at point"))
+  (save-excursion
+    (let ((remove (list (match-beginning 0) (match-end 0)))
+          (description (if (match-end 3)
+                           (org-match-string-no-properties 3)
+                         (org-match-string-no-properties 1))))
+      (apply #'delete-region remove)
+      (insert description))))
+

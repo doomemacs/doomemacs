@@ -148,6 +148,7 @@
 between the two."
   (map! (:map org-mode-map
           "RET" #'org-return-indent
+          "C-c C-S-l" #'+org/remove-link
           :n "j" "gj"
           :n "k" "gk")
 
