@@ -215,8 +215,7 @@ not in a popup, close all popups with an :autoclose property."
     (cond ((doom-popup-p)
            (unless (doom-popup-property :noesc)
              (delete-window)))
-          (t
-           (doom/popup-close-all))))
+          (t (doom/popup-close-all))))
   (add-hook '+evil-esc-hook #'doom|popup-close-maybe t)
 
   ;; Make evil-mode cooperate with popups

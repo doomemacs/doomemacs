@@ -92,7 +92,7 @@
   ;; --- evil hacks -------------------------
   (defvar +evil-esc-hook '(t)
     "A hook run after ESC is pressed in normal mode (invoked by
-`evil-force-normal-state'). If a hook returns non-nil, all hooks after it are
+`evil-force-normal-state'). If any hook returns non-nil, all hooks after it are
 ignored.")
 
   (defun +evil*attach-escape-hook ()

@@ -87,8 +87,9 @@ they are absolute."
 (defun doom|autoload-project-mode ()
   "Auto-enable projects listed in `doom-project', which is meant to be set from
 .dir-locals.el files."
-  (dolist (mode doom-project)
-    (funcall mode)))
+  (cl-loop for mode in doom-project
+           unless (symbol-value mode)
+           do (funcall mode)))
 (add-hook 'after-change-major-mode-hook #'doom|autoload-project-mode)
 
 (defmacro def-project-mode! (name &rest plist)

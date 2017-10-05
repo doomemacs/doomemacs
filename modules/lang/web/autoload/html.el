@@ -1,6 +1,5 @@
 ;;; lang/web/autoload/html.el -*- lexical-binding: t; -*-
 
-;;;###autoload
 (defvar +web-entities-list
   [["&nbsp;" " "] ["&ensp;" " "] ["&emsp;" " "] ["&thinsp;" " "]
    ["&rlm;" "‏"] ["&lrm;" "‎"] ["&zwj;" "‍"] ["&zwnj;" "‌"]

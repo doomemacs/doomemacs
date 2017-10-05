@@ -135,30 +135,27 @@ base by `doom!' and for calculating how many packages exist.")
 
 (defun doom-initialize (&optional force-p)
   "Initialize installed packages (using package.el) and ensure the core packages
-are installed. If you byte-compile core/core.el, this function will be avoided
-to speed up startup."
+are installed.
+
+If you byte-compile core/core.el, this function will be avoided to speed up
+startup."
   ;; Called early during initialization; only use native functions!
   (when (or (not doom-package-init-p) force-p)
     (setq load-path doom--base-load-path
           package-activated-list nil)
-
     ;; Ensure core folders exist
     (dolist (dir (list doom-local-dir doom-etc-dir doom-cache-dir package-user-dir))
       (unless (file-directory-p dir)
         (make-directory dir t)))
-
     (package-initialize t)
-    ;; Sure, we could let `package-initialize' fill `load-path', but package
-    ;; activation costs precious milliseconds and does other stuff I don't
-    ;; really care about (like load autoload files). My premature optimization
-    ;; quota isn't filled yet.
+    ;; We could let `package-initialize' fill `load-path', but it costs precious
+    ;; milliseconds and does other stuff I don't need (like load autoload
+    ;; files). My premature optimization quota isn't filled yet.
     ;;
     ;; Also, in some edge cases involving package initialization during a
     ;; non-interactive session, `package-initialize' fails to fill `load-path'.
-    ;; If we want something done right, do it ourselves!
     (setq doom--package-load-path (directory-files package-user-dir t "^[^.]" t)
           load-path (append load-path doom--package-load-path))
-
     ;; Ensure core packages are installed
     (dolist (pkg doom-core-packages)
       (unless (package-installed-p pkg)
@@ -170,12 +167,9 @@ to speed up startup."
         (if (package-installed-p pkg)
             (message "Installed %s" pkg)
           (error "Couldn't install %s" pkg))))
-
     (load "quelpa" nil t)
     (load "use-package" nil t)
-
     (setq doom-package-init-p t)
-
     (unless noninteractive
       (message "Doom initialized"))))
 
@@ -194,6 +188,7 @@ If FORCE-P is non-nil, do it even if they are.
 This aggressively reloads core autoload files."
   (doom-initialize force-p)
   (let ((noninteractive t)
+        (load-prefer-newer t)
         (load-fn
          (lambda (file &optional noerror)
            (condition-case-unless-debug ex
@@ -230,14 +225,10 @@ This aggressively reloads core autoload files."
                                         :rehash-threshold 1.0)))
   (let (mode)
     (dolist (m modules)
-      (cond ((keywordp m)
-             (setq mode m))
-            ((not mode)
-             (error "No namespace specified on `doom!' for %s" m))
-            ((listp m)
-             (doom-module-enable mode (car m) (cdr m)))
-            (t
-             (doom-module-enable mode m))))))
+      (cond ((keywordp m) (setq mode m))
+            ((not mode)   (error "No namespace specified on `doom!' for %s" m))
+            ((listp m)    (doom-module-enable mode (car m) (cdr m)))
+            (t            (doom-module-enable mode m))))))
 
 (defun doom-module-path (module submodule &optional file)
   "Get the full path to a module: e.g. :lang emacs-lisp maps to
