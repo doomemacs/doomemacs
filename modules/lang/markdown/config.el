@@ -37,15 +37,15 @@
           :m "]p"    #'markdown-demote
           :m "[l"    #'markdown-next-link
           :m "]l"    #'markdown-previous-link
-          :i "M--"   #'markdown-insert-hr)
+          :i "M--"   #'markdown-insert-hr
 
-        (:localleader
-          :nv "o" #'markdown-open
-          :nv "b" #'markdown-preview
-          (:prefix "i"
-            :nv "t" #'markdown-toc-generate-toc
-            :nv "i" #'markdown-insert-image
-            :nv "l" #'markdown-insert-link))))
+          (:localleader
+            :nv "o" #'markdown-open
+            :nv "b" #'markdown-preview
+            (:prefix "i"
+              :nv "t" #'markdown-toc-generate-toc
+              :nv "i" #'markdown-insert-image
+              :nv "l" #'markdown-insert-link)))))
 
 
 (def-package! markdown-toc
