@@ -16,9 +16,7 @@
   ;;       '(tide-jump-to-definition          "jump to definition")
   ;;       '(tide-documentation-at-point      "current type documentation")
   ;;       '(tide-restart-server              "restart tide server"))
-
-  (map! :localleader
-        :m "fh" #'tide-documentation-at-point))
+  )
 
 
 (def-package! tide
