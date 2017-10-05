@@ -206,8 +206,7 @@ This aggressively reloads core autoload files."
                      :error))))))
     (when (or force-p (not doom-modules))
       (setq doom-modules nil)
-      (let (noninteractive)
-        (funcall load-fn (expand-file-name "init.el" doom-emacs-dir)))
+      (funcall load-fn (expand-file-name "init.el" doom-emacs-dir))
       (when load-p
         (let (noninteractive)
           (funcall load-fn (doom-module-path :private user-login-name "init.el") t)
