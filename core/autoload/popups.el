@@ -42,12 +42,21 @@ this popup, just the specified properties. Returns the new popup window."
 ;;;###autoload
 (defun doom-popup-fit-to-buffer (&optional window max-size)
   "Fit WINDOW to the size of its content."
-  (let ((plist (doom-popup-properties window)))
-    (unless (string-empty-p (buffer-string))
-      (let* ((window-size (doom-popup-size window))
-             (max-size (or max-size (doom-popup-property :size window)))
-             (size (if (floatp max-size) (truncate (* max-size window-size)) window-size)))
-        (fit-window-to-buffer window size nil size)))))
+  (unless (string-empty-p (buffer-string))
+    (let* ((window-size (doom-popup-size window))
+           (max-size (or max-size (doom-popup-property :size window)))
+           (size (+ 2 (if (floatp max-size) (truncate (* max-size window-size)) window-size))))
+      (fit-window-to-buffer window size nil size))))
+
+;;;###autoload
+(defun doom-popup-move (direction)
+  "Move a popup window to another side of the frame, in DIRECTION, which can be
+one of the following: 'left 'right 'above 'below"
+  (when (doom-popup-p)
+    (let ((buffer (current-buffer))
+          (doom-popup-inhibit-autokill t))
+      (doom/popup-close)
+      (doom-popup-buffer buffer `(:align ,direction) 'extend))))
 
 ;;;###autoload
 (defun doom-popup-file (file &optional plist extend-p)
@@ -274,16 +283,6 @@ without leaving any trace behind (muahaha)."
       (user-error "Not a valid popup to raise"))
     (with-selected-window window
       (doom-popup-mode -1))))
-
-;;;###autoload
-(defun doom-popup-move (direction)
-  "Move a popup window to another side of the frame, in DIRECTION, which can be
-one of the following: 'left 'right 'above 'below"
-  (when (doom-popup-p)
-    (let ((buffer (current-buffer))
-          (doom-popup-inhibit-autokill t))
-      (doom/popup-close)
-      (doom-popup-buffer buffer `(:align ,direction) 'extend))))
 
 ;;;###autoload
 (defun doom/popup-move-top () "See `doom-popup-move'." (interactive) (doom-popup-move 'above))
