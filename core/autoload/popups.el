@@ -272,7 +272,7 @@ without leaving any trace behind (muahaha)."
         (other-window count)))))
 
 ;;;###autoload
-(defalias #'doom/other-popup 'other-popup)
+(defalias 'other-popup #'doom/other-popup)
 
 ;;;###autoload
 (defun doom/popup-raise (&optional window)
