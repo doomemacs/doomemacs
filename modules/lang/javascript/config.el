@@ -196,9 +196,9 @@
   :modes (html-mode css-mode web-mode js2-mode markdown-mode)
   :files "package.json"
   :on-enter
-  (push (doom-project-expand "node_modules/.bin")
-        (if (make-local-variable 'exec-path)
-            exec-path)))
+  (when (make-local-variable 'exec-path)
+    (push (doom-project-expand "node_modules/.bin")
+          exec-path)))
 
 
 ;;
