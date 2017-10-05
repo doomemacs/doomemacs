@@ -114,9 +114,10 @@
    org-indent-mode-turns-on-hiding-stars t
    org-pretty-entities nil
    org-pretty-entities-include-sub-superscripts t
-   org-priority-faces `((?a . ,(doom-color 'red))
-                        (?b . ,(doom-color 'yellow))
-                        (?c . ,(doom-color 'green)))
+   org-priority-faces
+   `((?a . ,(face-foreground 'error))
+     (?b . ,(face-foreground 'warning))
+     (?c . ,(face-foreground 'success)))
    org-startup-folded t
    org-startup-indented t
    org-startup-with-inline-images nil
