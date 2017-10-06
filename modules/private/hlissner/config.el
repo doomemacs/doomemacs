@@ -8,7 +8,8 @@
 (defvar +hlissner-snippets-dir (expand-file-name "snippets/" +hlissner-dir))
 
 (setq epa-file-encrypt-to user-mail-address
-      auth-sources (list (expand-file-name ".authinfo.gpg" +hlissner-dir)))
+      auth-sources (list (expand-file-name ".authinfo.gpg" +hlissner-dir))
+      +doom-modeline-buffer-file-name-style 'relative-from-project)
 
 (defun +hlissner*no-authinfo-for-tramp (orig-fn &rest args)
   "Don't look into .authinfo for local sudo TRAMP buffers."

@@ -16,9 +16,7 @@
   ;;       '(tide-jump-to-definition          "jump to definition")
   ;;       '(tide-documentation-at-point      "current type documentation")
   ;;       '(tide-restart-server              "restart tide server"))
-
-  (map! :localleader
-        :m "fh" #'tide-documentation-at-point))
+  )
 
 
 (def-package! tide
@@ -41,8 +39,7 @@
                    (equal (file-name-extension buffer-file-name) "tsx")))
       (tide-setup)
       (flycheck-mode +1)
-      (eldoc-mode +1)))
-  (add-hook! (typescript-mode web-mode) #'+typescript|init-tide)
-
-  (advice-add #'tide-project-root :override #'doom*project-root))
+      (eldoc-mode +1)
+      (setq tide-project-root (doom-project-root))))
+  (add-hook! (typescript-mode web-mode) #'+typescript|init-tide))
 

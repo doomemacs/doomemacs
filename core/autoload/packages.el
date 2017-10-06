@@ -354,7 +354,7 @@ package.el as appropriate."
                           "")))))
 
           (message! (bold (green "Finished!")))
-          (doom/reload))))
+          (doom/reload-load-path))))
 
 ;;;###autoload
 (defun doom/packages-update ()
@@ -395,7 +395,7 @@ package.el as appropriate."
                         (if result "DONE" "FAILED"))))))
 
            (message! (bold (green "Finished!")))
-           (doom/reload)))))
+           (doom/reload-load-path)))))
 
 ;;;###autoload
 (defun doom/packages-autoremove ()
@@ -428,7 +428,7 @@ package.el as appropriate."
                         pkg)))))
 
            (message! (bold (green "Finished!")))
-           (doom/reload)))))
+           (doom/reload-load-path)))))
 
 ;;;###autoload
 (defalias 'doom/install-package #'package-install)

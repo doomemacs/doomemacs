@@ -11,7 +11,7 @@
   :config
   (set! :theme 'doom-one)
 
-  ;; Ensure `doom/reload' reloads common faces
+  ;; Ensure `doom/reload-load-path' reloads common faces
   (defun +doom|reload-theme ()
     (load "doom-themes-common.el" nil t))
   (add-hook 'doom-pre-reload-theme-hook #'+doom|reload-theme)

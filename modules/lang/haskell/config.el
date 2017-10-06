@@ -1,5 +1,13 @@
 ;;; lang/haskell/config.el -*- lexical-binding: t; -*-
 
+(cond ((featurep! +intero) (load! +intero))
+      ((featurep! +dante)  (load! +dante)))
+
+
+;;
+;; Common plugins
+;;
+
 (def-package! haskell-mode
   :mode "\\.hs$"
   :mode ("\\.ghci$" . ghci-script-mode)
@@ -30,8 +38,3 @@
 
   (setq company-ghc-show-info 'oneline))
 
-
-;;
-(if (featurep! +dante)
-    (load! +dante)
-  (load! +intero))

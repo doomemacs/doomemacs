@@ -1,7 +1,7 @@
 ;;; tools/term/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
-(defun +term (&optional project-root)
+(defun +term/open (&optional project-root)
   "Open a terminal buffer in the current window. If PROJECT-ROOT (C-u) is
 non-nil, cd into the current project's root."
   (interactive "P")
@@ -9,7 +9,7 @@ non-nil, cd into the current project's root."
     (call-interactively #'multi-term)))
 
 ;;;###autoload
-(defun +term/popup (&optional project-root)
+(defun +term/open-popup (&optional project-root)
   "Open a terminal popup window. If PROJECT-ROOT (C-u) is non-nil, cd into the
 current project's root."
   (interactive "P")
@@ -21,7 +21,7 @@ current project's root."
     (multi-term-internal)))
 
 ;;;###autoload
-(defun +term/popup-in-project ()
+(defun +term/open-popup-in-project ()
   "Open a terminal popup window in the root of the current project."
   (interactive)
-  (+term/popup t))
+  (+term/open-popup t))

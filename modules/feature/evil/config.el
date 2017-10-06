@@ -92,7 +92,7 @@
   ;; --- evil hacks -------------------------
   (defvar +evil-esc-hook '(t)
     "A hook run after ESC is pressed in normal mode (invoked by
-`evil-force-normal-state'). If a hook returns non-nil, all hooks after it are
+`evil-force-normal-state'). If any hook returns non-nil, all hooks after it are
 ignored.")
 
   (defun +evil*attach-escape-hook ()
@@ -124,8 +124,7 @@ across windows."
 
   ;; monkey patch `evil-ex-replace-special-filenames' to add more ex
   ;; substitution flags to evil-mode
-  (advice-add #'evil-ex-replace-special-filenames
-              :override #'+evil*ex-replace-special-filenames)
+  (advice-add #'evil-ex-replace-special-filenames :override #'doom-resolve-vim-path)
 
   ;; These arg types will highlight matches in the current buffer
   (evil-ex-define-argument-type buffer-match :runner +evil-ex-buffer-match)
@@ -144,6 +143,8 @@ across windows."
   (evil-define-interactive-code "<//g>"
     :ex-arg global-match (list (when (evil-ex-p) evil-ex-argument)))
 
+  ;; Forward declare these so that ex completion works, even if the autoloaded
+  ;; functions aren't loaded yet.
   (evil-set-command-properties
    '+evil:align :move-point t :ex-arg 'buffer-match :ex-bang t :evil-mc t :keep-visual t :suppress-operator t)
   (evil-set-command-properties
@@ -282,7 +283,7 @@ the new algorithm is confusing, like in python or ruby."
   :commands (evil-mc-make-cursor-here evil-mc-make-all-cursors
              evil-mc-undo-all-cursors evil-mc-pause-cursors
              evil-mc-resume-cursors evil-mc-make-and-goto-first-cursor
-             evil-mc-make-and-goto-last-cursor evil-mc-make-cursor-here
+             evil-mc-make-and-goto-last-cursor
              evil-mc-make-cursor-move-next-line
              evil-mc-make-cursor-move-prev-line evil-mc-make-cursor-at-pos
              evil-mc-has-cursors-p evil-mc-make-and-goto-next-cursor
@@ -382,3 +383,64 @@ the new algorithm is confusing, like in python or ruby."
 
 (def-package! evil-textobj-anyblock
   :commands (evil-textobj-anyblock-inner-block evil-textobj-anyblock-a-block))
+
+
+;;
+;; Multiple cursors compatibility (for the plugins that use it)
+;;
+
+;; mc doesn't play well with evil, this attempts to assuage some of its problems
+;; so that certain plugins (which I have no control over) can still use it in
+;; relative safety.
+(after! multiple-cursors-core
+  (map! :map mc/keymap :ne "<escape>" #'mc/keyboard-quit)
+
+  (defvar +evil--mc-compat-evil-prev-state nil)
+  (defvar +evil--mc-compat-mark-was-active nil)
+
+  (defsubst +evil--visual-or-normal-p ()
+    "True if evil mode is enabled, and we are in normal or visual mode."
+    (and (bound-and-true-p evil-mode)
+         (not (memq evil-state '(insert emacs)))))
+
+  (defun +evil|mc-compat-switch-to-emacs-state ()
+    (when (+evil--visual-or-normal-p)
+      (setq +evil--mc-compat-evil-prev-state evil-state)
+      (when (region-active-p)
+        (setq +evil--mc-compat-mark-was-active t))
+      (let ((mark-before (mark))
+            (point-before (point)))
+        (evil-emacs-state 1)
+        (when (or +evil--mc-compat-mark-was-active (region-active-p))
+          (goto-char point-before)
+          (set-mark mark-before)))))
+
+  (defun +evil|mc-compat-back-to-previous-state ()
+    (when +evil--mc-compat-evil-prev-state
+      (unwind-protect
+          (case +evil--mc-compat-evil-prev-state
+            ((normal visual) (evil-force-normal-state))
+            (t (message "Don't know how to handle previous state: %S"
+                        +evil--mc-compat-evil-prev-state)))
+        (setq +evil--mc-compat-evil-prev-state nil)
+        (setq +evil--mc-compat-mark-was-active nil))))
+
+  (add-hook 'multiple-cursors-mode-enabled-hook '+evil|mc-compat-switch-to-emacs-state)
+  (add-hook 'multiple-cursors-mode-disabled-hook '+evil|mc-compat-back-to-previous-state)
+
+  (defun +evil|mc-evil-compat-rect-switch-state ()
+    (if rectangular-region-mode
+        (+evil|mc-compat-switch-to-emacs-state)
+      (setq +evil--mc-compat-evil-prev-state nil)))
+
+  ;; When running edit-lines, point will return (position + 1) as a
+  ;; result of how evil deals with regions
+  (defadvice mc/edit-lines (before change-point-by-1 activate)
+    (when (+evil--visual-or-normal-p)
+      (if (> (point) (mark))
+          (goto-char (1- (point)))
+        (push-mark (1- (mark))))))
+
+  (add-hook 'rectangular-region-mode-hook '+evil|mc-evil-compat-rect-switch-state)
+
+  (defvar mc--default-cmds-to-run-once nil))

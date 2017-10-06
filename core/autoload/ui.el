@@ -26,10 +26,13 @@
          (error "No line number plugin detected"))))
 
 ;;;###autoload
-(defun doom-resize-window (new-size &optional horizontal)
-  "Resize a window to NEW-SIZE. If HORIZONTAL, do it width-wise."
-  (enlarge-window (- new-size (if horizontal (window-width) (window-height)))
-                  horizontal))
+(defun doom-resize-window (window new-size &optional horizontal force-p)
+  "Resize a window to NEW-SIZE. If HORIZONTAL, do it width-wise.
+If FORCE-P is omitted when `window-size-fixed' is non-nil, resizing will fail."
+  (with-selected-window (or window (selected-window))
+    (let ((window-size-fixed (unless force-p window-size-fixed)))
+      (enlarge-window (- new-size (if horizontal (window-width) (window-height)))
+                      horizontal))))
 
 ;;;###autoload
 (defun doom/window-zoom ()
@@ -52,8 +55,8 @@ window changes before then, the undo expires."
                  (assoc ?_ register-alist))
             (ignore (jump-to-register ?_))
           (window-configuration-to-register ?_)
-          (doom-resize-window (truncate (/ (frame-width)  1.2)) t)
-          (doom-resize-window (truncate (/ (frame-height) 1.2)))
+          (doom-resize-window nil (truncate (/ (frame-width)  1.2)) t)
+          (doom-resize-window nil (truncate (/ (frame-height) 1.2)))
           t)))
 
 ;;;###autoload

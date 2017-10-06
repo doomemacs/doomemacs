@@ -22,7 +22,6 @@
   (package! nlinum-hl)
   (package! nlinum-relative))
 (package! rainbow-delimiters)
-(package! vi-tilde-fringe)
 (package! visual-fill-column)
 
 ;; core-popups.el
@@ -36,8 +35,6 @@
 (package! editorconfig)
 (package! expand-region)
 (package! help-fns+)
-(package! imenu-anywhere)
-(package! imenu-list)
 (package! pcre2el)
 (package! smart-forward)
 (package! smartparens)
@@ -49,3 +46,4 @@
 
 ;; core-keybinds.el
 (package! which-key)
+(package! hydra)

@@ -3,18 +3,18 @@
 
 ;; --- Helpers ----------------------------
 
-;; `doom--resolve-paths'
-(def-test! resolve-paths
+;; `doom--resolve-path-forms'
+(def-test! resolve-path-forms
   (should
-   (equal (doom--resolve-paths '(and "fileA" "fileB"))
+   (equal (doom--resolve-path-forms '(and "fileA" "fileB"))
           '(and (file-exists-p (expand-file-name "fileA" (doom-project-root)))
                 (file-exists-p (expand-file-name "fileB" (doom-project-root)))))))
 
-;; `doom--resolve-hooks'
-(def-test! resolve-hooks
-  (should (equal (doom--resolve-hooks '(js2-mode haskell-mode))
+;; `doom--resolve-hook-forms'
+(def-test! resolve-hook-forms
+  (should (equal (doom--resolve-hook-forms '(js2-mode haskell-mode))
                  '(js2-mode-hook haskell-mode-hook)))
-  (should (equal (doom--resolve-hooks '(quote (js2-mode-hook haskell-mode-hook)))
+  (should (equal (doom--resolve-hook-forms '(quote (js2-mode-hook haskell-mode-hook)))
                  '(js2-mode-hook haskell-mode-hook))))
 
 ;; `doom-unquote'
@@ -31,6 +31,48 @@
 (def-test! enlist
   (should (equal (doom-enlist 'a) '(a)))
   (should (equal (doom-enlist '(a)) '(a))))
+
+;; `doom-resolve-vim-path'
+(def-test! resolve-vim-path
+  (cl-flet ((do-it #'doom-resolve-vim-path))
+    ;; file modifiers
+    (let ((buffer-file-name  "~/.emacs.d/test/modules/feature/test-evil.el")
+          (default-directory "~/.emacs.d/test/modules/"))
+      (should (equal (do-it "%")   "feature/test-evil.el"))
+      (should (equal (do-it "%:r") "feature/test-evil"))
+      (should (equal (do-it "%:r.elc") "feature/test-evil.elc"))
+      (should (equal (do-it "%:e") "el"))
+      (should (equal (do-it "%:p") (expand-file-name buffer-file-name)))
+      (should (equal (do-it "%:h") "feature"))
+      (should (equal (do-it "%:t") "test-evil.el"))
+      (should (equal (do-it "%:.") "feature/test-evil.el"))
+      (should (equal (do-it "%:~") "~/.emacs.d/test/modules/feature/test-evil.el"))
+      (should (equal (file-truename (do-it "%:p"))
+                     (file-truename buffer-file-name))))
+    ;; nested file modifiers
+    (let ((buffer-file-name  "~/vim/src/version.c")
+          (default-directory "~/vim/"))
+      (should (equal (do-it "%:p")     (expand-file-name "~/vim/src/version.c")))
+      (should (equal (do-it "%:p:.")   "src/version.c"))
+      (should (equal (do-it "%:p:~")   "~/vim/src/version.c"))
+      (should (equal (do-it "%:h")     "src"))
+      (should (equal (do-it "%:p:h")   (expand-file-name "~/vim/src")))
+      (should (equal (do-it "%:p:h:h") (expand-file-name "~/vim")))
+      (should (equal (do-it "%:t")     "version.c"))
+      (should (equal (do-it "%:p:t")   "version.c"))
+      (should (equal (do-it "%:r")     "src/version"))
+      (should (equal (do-it "%:p:r")   (expand-file-name "~/vim/src/version")))
+      (should (equal (do-it "%:t:r")   "version")))
+    ;; empty file modifiers
+    (let (buffer-file-name default-directory)
+      (should (equal (do-it "%")   ""))
+      (should (equal (do-it "%:r") ""))
+      (should (equal (do-it "%:e") ""))
+      (should (equal (do-it "%:h") ""))
+      (should (equal (do-it "%:t") ""))
+      (should (equal (do-it "%:.") ""))
+      (should (equal (do-it "%:~") ""))
+      (should (equal (do-it "%:P") "")))))
 
 
 ;; --- Macros -----------------------------

@@ -4,7 +4,7 @@
 
 (defvar +file-templates-dir
   (expand-file-name "templates/" (file-name-directory load-file-name))
-  "")
+  "The path to a directory of yasnippet folders to use for file templates.")
 
 (def-package! autoinsert ; built-in
   :defer 1
@@ -12,11 +12,11 @@
   (setq auto-insert-query nil  ; Don't prompt before insertion
         auto-insert-alist nil) ; Tabula rasa
 
-  (after! yasnippet
-    (push '+file-templates-dir yas-snippet-dirs))
-
   :config
   (auto-insert-mode 1)
+
+  (after! yasnippet
+    (push '+file-templates-dir yas-snippet-dirs))
 
   (defun +file-templates--expand (key &optional mode project-only)
     "Auto insert a snippet of yasnippet into new file."
@@ -55,6 +55,7 @@
           ("-test\\.el$"                     "__"               emacs-ert-mode)
           ("/.emacs.d/.+\\.el$"              "__doom-module"    emacs-lisp-mode)
           ("/.emacs.d/.+/packages\\.el$"     "__doom-packages"  emacs-lisp-mode)
+          ("/.emacs.d/.+/test\\.el$"         "__doom-test"      emacs-lisp-mode)
           ("/.emacs.d/.+/README\\.org$"      "__doom-readme"    org-mode)
           (snippet-mode "__" snippet-mode)
           ;; Go
@@ -72,8 +73,6 @@
           ("/bower\\.json$"                  "__bower.json"        json-mode)
           ("/gulpfile\\.js$"                 "__gulpfile.js"       js-mode)
           ("/webpack\\.config\\.js$"         "__webpack.config.js" js-mode)
-          ("\\.lbaction/.+/Info.plist$"                       "__Info.plst"  lb6-mode)
-          ("\\.lbaction/.+/\\(default\\|suggestions\\)\\.js$" "__default.js" lb6-mode)
           ;; Lua
           ("/main\\.lua$"                    "__main.lua"       love-mode)
           ("/conf\\.lua$"                    "__conf.lua"       love-mode)
@@ -107,5 +106,6 @@
           ;; Slim
           ("/\\(index\\|main\\)\\.slim$"     "__"               slim-mode)
           ;; Shell scripts
-          ("\\.z?sh$"                        "__"               sh-mode))))
+          ("\\.z?sh$"                        "__"               sh-mode)
+          ("\\.zunit$"                       "__zunit"          sh-mode))))
 

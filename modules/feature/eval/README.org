@@ -1,13 +1,12 @@
 #+TITLE: :feature eval
 
-This modules adds support for REPLs, build tasks and code evaluation.
+This modules adds support for evaluating code from inside Emacs. This includes REPLs and direct access to the interpreters and compilers of many languages.
 
 * Table of Contents :TOC:
 - [[#install][Install]]
 - [[#usage][Usage]]
 - [[#configuration][Configuration]]
   - [[#repls][REPLs]]
-  - [[#build-tasks][Build Tasks]]
   - [[#code-evaluation][Code Evaluation]]
 
 * Install
@@ -20,15 +19,8 @@ Check the README.org in that language's module for details.
   Invoked via:
   + ~:repl~ (evil ex-command)
   + =<leader> o r= in normal mode (or visual mode, which sends the selection to the open REPL)
-  + ~M-x +eval/repl~
-  + ~M-x +eval/repl-send-region~ while a selection (and REPL) is active
-
-+ *Build Tasks*
-  You will be prompted to select a task. Only the ones that meet the predicate will be listed.
-  + ~:build~ (evil ex-command)
-  + =M-b= (by default)
-  + =<leader> o b= in normal mode
-  + ~M-x +eval/build~
+  + ~M-x +eval/open-repl~
+  + ~M-x +eval/send-region-to-repl~ while a selection (and REPL) is active
 
 + *Code Evaluation*
   Quickrun can be invoked via:
@@ -58,35 +50,6 @@ FUNCTION must return the repl buffer. Any window changes are ignored, then hande
                 buf)))))
 
 (set! :repl 'emacs-lisp-mode #'+emacs-lisp/repl)
-#+END_SRC
-
-** Build Tasks
-A build task is little more than a major-mode-local interactive command that performs a task, such as compiling the current project or running unit tests. A predicate function can be supplied to ensure a command is only available when it is appropriate.
-
-#+BEGIN_SRC emacs-lisp
-(defun +lua/run-love ()
-  "Run the current project in love 10.0."
-  (async-shell-command
-   (format "/usr/bin/love %s"
-           (shell-quote-argument (doom-project-root)))))
-
-(defun +lua/build ()
-  "Run a build script in the project root."
-  (let ((default-directory (doom-project-root)))
-    (compile "luajit build.lua")))
-
-(defun +lua/generate-docs ()
-  "Generate project documentation."
-  (let ((default-directory (doom-project-root)))
-    (compile "luadoc *.lua")))
-
-(defun +lua-love-p ()
-  "Returns non-nil if the current project is a love project."
-  (doom-project-has! (and "main.lua" "config.lua")))
-
-(set! :build 'run           'lua-mode #'+lua/run-love :when (+lua-love-p))
-(set! :build 'build-project 'lua-mode #'+lua/build    :when (+lua-love-p))
-(set! :build 'generate-docs 'lua-mode #'+lua/generate-docs)
 #+END_SRC
 
 ** Code Evaluation

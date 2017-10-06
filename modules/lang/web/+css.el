@@ -13,6 +13,7 @@
       (:localleader
         :n  "rb" #'+css/toggle-inline-or-block))
 
+
 ;;
 ;; Packages
 ;;
@@ -36,15 +37,14 @@
   :mode ("\\.scss$" . scss-mode)
   :config
   (set! :company-backend '(css-mode scss-mode) '(company-css company-yasnippet))
-  (set! :build 'compile-to-css 'scss-mode #'+css/scss-build))
+  (map! :map scss-mode-map :localleader "b" #'+css/scss-build))
 
 
 (def-package! sass-mode
   :mode "\\.sass$"
   :config
-  (setq sass-command-options '("--style compressed"))
   (set! :company-backend 'sass-mode '(company-css company-yasnippet))
-  (set! :build 'compile-to-css 'sass-mode #'+css/sass-build))
+  (map! :map scss-mode-map :localleader "b" #'+css/sass-build))
 
 
 (def-package! less-css-mode

@@ -7,6 +7,15 @@ MODULES=$(patsubst modules/%, %, $(shell find modules/ -maxdepth 2 -type d))
 
 all: autoloads autoremove install
 
+## Aliases
+a: autoloads
+i: install
+u: update
+r: autoremove
+c: compile
+cc: compile-core
+ce: compile-elpa
+
 ## Package management
 install: init.el .local/autoloads.el
 	@$(EMACS) -f doom/packages-install
@@ -23,21 +32,21 @@ autoloads: init.el
 
 ## Byte compilation
 # compile
-# compile:core
-# compile:module
-# compile:module/submodule
+# compile-core
+# compile-module
+# compile-module/submodule
 compile: init.el clean
 	@$(EMACS) -f doom/compile
 
-compile\:core: init.el clean
+compile-core: init.el clean
 	@$(EMACS) -f doom/compile -- init.el core
 
-compile\:elpa: init.el
+compile-elpa: init.el
 	@$(EMACS) -f doom/recompile-packages
 
-$(patsubst %, compile\:%, $(MODULES)): init.el .local/autoloads.el
-	@rm -fv $(shell find $(patsubst compile:%, modules/%, $@) -type f -name '*.elc')
-	@$(EMACS) -f doom/compile -- $(patsubst compile:%, modules/%, $@)
+$(patsubst %, compile-%, $(MODULES)): init.el .local/autoloads.el
+	@rm -fv $(shell find $(patsubst compile-%, modules/%, $@) -type f -name '*.elc')
+	@$(EMACS) -f doom/compile -- $(patsubst compile-%, modules/%, $@)
 
 recompile: init.el
 	@$(EMACS) -f doom/recompile
@@ -54,14 +63,14 @@ reset:
 
 ## Unit tests
 # test
-# test:core
-# test:module
-# test:module/submodule
+# test-core
+# test-module
+# test-module/submodule
 test: init.el .local/autoloads.el
 	@$(EMACS) -f doom-run-tests
 
-test\:core $(patsubst %, test\:%, $(MODULES)): init.el .local/autoloads.el
-	@$(EMACS) -f doom-run-tests -- $(subst test:, , $@)
+test-core $(patsubst %, test-%, $(MODULES)): init.el .local/autoloads.el
+	@$(EMACS) -f doom-run-tests -- $(subst test-, , $@)
 
 # run tests interactively
 testi: init.el .local/autoloads.el

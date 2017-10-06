@@ -91,7 +91,7 @@ the cursor."
           (or ext (file-name-extension filename))))
 
 ;;;###autoload
-(defun +org-attach*insert-link (link filename)
+(defun +org-attach*insert-link (_link filename)
   "TODO"
   (if (looking-back "^[ \t]+" (line-beginning-position))
       (delete-region (match-beginning 0) (match-end 0))

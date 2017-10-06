@@ -1,5 +1,20 @@
 ;;; lang/python/config.el -*- lexical-binding: t; -*-
 
+(defvar +python-pyenv-root nil
+  "The path to pyenv's root directory. This is automatically set when `python'
+is loaded.")
+
+(defvar +python-pyenv-versions nil
+  "Available versions of python in pyenv.")
+
+(defvar-local +python-current-version nil
+  "The currently active pyenv version.")
+
+
+;;
+;; Plugins
+;;
+
 (def-package! python
   :commands python-mode
   :init
@@ -23,6 +38,33 @@
           "from IPython.core.completerlib import module_completion"
           python-shell-completion-string-code
           "';'.join(get_ipython().Completer.all_completions('''%s'''))\n"))
+
+  ;; Version management with pyenv
+  (defun +python|add-version-to-modeline ()
+    "Add version string to the major mode in the modeline."
+    (setq mode-name
+          (if +python-current-version
+              (format "Python %s" +python-current-version)
+            "Python")))
+  (add-hook 'python-mode-hook #'+python|add-version-to-modeline)
+
+  (if (not (executable-find "pyenv"))
+      (setq +python-current-version (string-trim (shell-command-to-string "python --version 2>&1 | cut -d' ' -f2")))
+    (setq +python-pyenv-root     (string-trim (shell-command-to-string "pyenv root"))
+          +python-pyenv-versions (split-string (shell-command-to-string "pyenv versions --bare") "\n" t))
+
+    (defun +python|detect-pyenv-version ()
+      "Detect the pyenv version for the current project and set the relevant
+environment variables."
+      (when-let (version-str (shell-command-to-string "python --version 2>&1 | cut -d' ' -f2"))
+        (setq version-str (string-trim version-str)
+              +python-current-version version-str)
+        (let ((pyenv-current-path (concat +python-pyenv-root "/versions/" version-str)))
+          (when (file-directory-p pyenv-current-path)
+            (setq pythonic-environment pyenv-current-path)))
+        (when (member version-str +python-pyenv-versions)
+          (setenv "PYENV_VERSION" version-str))))
+    (add-hook 'python-mode-hook #'+python|detect-pyenv-version))
 
   (define-key python-mode-map (kbd "DEL") nil) ; interferes with smartparens
   (sp-with-modes 'python-mode

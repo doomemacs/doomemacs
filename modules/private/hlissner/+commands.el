@@ -7,17 +7,13 @@
 ;;(ex! "g[lobal]"     #'+evil:global)
 
 ;;; Custom commands
-;; Emacs utilities
-(ex! "bc[omp]"      #'+hlissner:byte-compile)
-(ex! "re[load]"     #'doom/reload)
-(ex! "re[load]au"   #'doom/reload-autoloads)
-
 ;; Editing
 (ex! "@"            #'+evil:macro-on-all-lines)   ; TODO Test me
 (ex! "al[ign]"      #'+evil:align)
 (ex! "enhtml"       #'+web:encode-html-entities)
 (ex! "dehtml"       #'+web:decode-html-entities)
 (ex! "mc"           #'+evil:mc)
+(ex! "iedit"        #'evil-multiedit-ex-match)
 (ex! "na[rrow]"     #'+evil:narrow-buffer)
 (ex! "retab"        #'+evil:retab)
 
@@ -32,9 +28,7 @@
 (ex! "sh[ell]"     #'+eshell:run)
 (ex! "t[mux]"      #'+tmux:run)              ; send to tmux
 (ex! "tcd"         #'+tmux:cd-here)          ; cd to default-directory in tmux
-
-(evil-set-command-properties #'doom/scratch-buffer :ex-bang t)
-(ex! "x" #'doom/scratch-buffer)
+(ex! "x"           #'doom/open-project-scratch-buffer)
 
 ;; GIT
 (ex! "gist"        #'+gist:send)  ; send current buffer/region to gist
@@ -48,9 +42,7 @@
 (ex! "grevert"     #'git-gutter:revert-hunk)
 
 ;; Dealing with buffers
-(evil-set-command-properties #'+workspace/cleanup :ex-bang t)
-
-(ex! "clean[up]"   #'+workspace/cleanup)
+(ex! "clean[up]"   #'doom/cleanup-buffers)
 (ex! "k[ill]"      #'doom/kill-this-buffer)
 (ex! "k[ill]all"   #'+hlissner:kill-all-buffers)
 (ex! "k[ill]m"     #'+hlissner:kill-matching-buffers)
@@ -103,4 +95,4 @@
 (ex! "tabsave"     #'+workspace:save)
 
 ;; Org-mode
-(ex! "org"         #'+org:capture)
+(ex! "cap"         #'+org-capture/dwim)

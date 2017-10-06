@@ -130,5 +130,5 @@ for the provider."
         (when (string-empty-p search)
           (user-error "The search query is empty"))
         (setq +jump--online-last provider)
-        (browse-url (format url (url-encode-url search))))
+        (funcall +jump-search-browser-fn (format url (url-encode-url search))))
     ('error (setq +jump--online-last nil))))

@@ -155,7 +155,6 @@ with functions that require it (like modeline segments)."
   (setq recentf-save-file (concat doom-cache-dir "recentf")
         recentf-max-menu-items 0
         recentf-max-saved-items 300
-        recentf-filename-handlers '(abbreviate-file-name)
         recentf-exclude
         (list "^/tmp/" "^/ssh:" "\\.?ido\\.last$" "\\.revive$" "/TAGS$"
               "^/var/folders/.+$"
@@ -173,7 +172,6 @@ with functions that require it (like modeline segments)."
 ;; specify their own formatting rules.
 (def-package! editorconfig
   :demand t
-  :mode ("\\.?editorconfig$" . editorconfig-conf-mode)
   :init
   (def-setting! :editorconfig (action value)
     ":add or :remove an entry in `editorconfig-indentation-alist'."
@@ -200,6 +198,9 @@ with functions that require it (like modeline segments)."
       (let ((whitespace-style '(face tabs tab-mark trailing-lines tail)))
         (whitespace-mode +1))))
   (add-hook 'editorconfig-custom-hooks #'doom|editorconfig-whitespace-mode-maybe))
+
+(def-package! editorconfig-conf-mode
+  :mode "\\.?editorconfig$")
 
 ;; Auto-close delimiters and blocks as you type
 (def-package! smartparens
@@ -268,11 +269,6 @@ with functions that require it (like modeline segments)."
 (def-package! help-fns+ ; Improved help commands
   :commands (describe-buffer describe-command describe-file
              describe-keymap describe-option describe-option-of-type))
-
-(def-package! imenu-anywhere
-  :commands (ido-imenu-anywhere ivy-imenu-anywhere helm-imenu-anywhere))
-
-(def-package! imenu-list :commands imenu-list-minor-mode)
 
 (def-package! pcre2el :commands rxt-quote-pcre)
 

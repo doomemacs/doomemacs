@@ -18,5 +18,5 @@
   :move-point nil
   (interactive "<r><!>")
   (if (evil-normal-state-p)
-      (+eval/repl)
-    (+eval/repl-send-region beg end bang)))
+      (+eval/open-repl)
+    (+eval/send-region-to-repl beg end bang)))

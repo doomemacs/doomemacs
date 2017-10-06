@@ -1,20 +1,6 @@
 ;;; core/autoload/test.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
-(defmacro def-test! (name &rest body)
-  "Define a namespaced ERT test."
-  (declare (indent defun) (doc-string 2))
-  (unless (plist-get body :disabled)
-    `(ert-deftest
-         ,(cl-loop with path = (file-relative-name (file-name-sans-extension load-file-name)
-                                                   doom-emacs-dir)
-                   for (rep . with) in '(("/test/" . "/") ("/" . ":"))
-                   do (setq path (replace-regexp-in-string rep with path t t))
-                   finally return (intern (format "%s::%s" path name))) ()
-       ()
-       ,@body)))
-
-;;;###autoload
 (defun doom-run-tests (&optional modules)
   "Run all loaded tests, specified by MODULES (a list of module cons cells) or
 command line args following a double dash (each arg should be in the
@@ -83,3 +69,78 @@ If neither is available, run all tests in all enabled modules."
      (lwarn 'doom-test :error
             "%s -> %s"
             (car ex) (error-message-string ex)))))
+
+
+;; --- Test helpers -----------------------
+
+(defmacro def-test! (name &rest body)
+  "Define a namespaced ERT test."
+  (declare (indent defun) (doc-string 2))
+  (unless (plist-get body :disabled)
+    `(ert-deftest
+         ,(cl-loop with path = (file-relative-name (file-name-sans-extension load-file-name)
+                                                   doom-emacs-dir)
+                   for (rep . with) in '(("/test/" . "/") ("/" . ":"))
+                   do (setq path (replace-regexp-in-string rep with path t t))
+                   finally return (intern (format "%s::%s" path name))) ()
+       ()
+       ,@body)))
+
+(defmacro should-buffer! (initial expected &rest body)
+  "Test that a buffer with INITIAL text, run BODY, then test it against EXPECTED.
+
+INITIAL will recognize cursor markers in the form {[0-9]}. A {0} marker marks
+where the cursor should be after setup. Otherwise, the cursor will be placed at
+`point-min'.
+
+EXPECTED will recognize one (optional) cursor marker: {|}, this is the
+'expected' location of the cursor after BODY is finished, and will be tested
+against."
+  (declare (indent 2))
+  `(with-temp-buffer
+     (cl-loop for line in ',initial
+              do (insert line "\n"))
+     (goto-char (point-min))
+     (let (marker-list)
+       (save-excursion
+         (while (re-search-forward "{\\([0-9]\\)}" nil t)
+           (push (cons (match-string 1)
+                       (set-marker (make-marker) (match-beginning 0)))
+                 marker-list)
+           (replace-match "" t t))
+         (if (not marker-list)
+             (goto-char (point-min))
+           (sort marker-list
+                 (lambda (m1 m2) (< (marker-position m1)
+                               (marker-position m2))))
+           (when (equal (caar marker-list) "0")
+             (goto-char! 0)))
+         ,@body
+         (let ((result-text (buffer-substring-no-properties (point-min) (point-max)))
+               (point (point))
+               same-point
+               expected-text)
+           (with-temp-buffer
+             (cl-loop for line in ',expected
+                      do (insert line "\n"))
+             (save-excursion
+               (goto-char 1)
+               (when (re-search-forward "{|}" nil t)
+                 (setq same-point (= point (match-beginning 0)))
+                 (replace-match "" t t)))
+             (setq expected-text (buffer-substring-no-properties (point-min) (point-max)))
+             (should (equal expected-text result-text))
+             (should same-point)))))))
+
+(defmacro goto-char! (index)
+  "Meant to be used with `should-buffer!'. Will move the cursor to one of the
+cursor markers. e.g. Go to marker {2} with (goto-char! 2)."
+  `(goto-char (point! ,index)))
+
+(defmacro point! (index)
+  "Meant to be used with `should-buffer!'. Returns the position of a cursor
+marker. e.g. {2} can be retrieved with (point! 2)."
+  `(cdr (assoc ,(cond ((numberp index) (number-to-string index))
+                      ((symbolp index) (symbol-name index))
+                      ((stringp index) index))
+               marker-list)))

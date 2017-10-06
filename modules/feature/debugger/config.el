@@ -1,4 +1,4 @@
-;;; feature/debug/config.el -*- lexical-binding: t; -*-
+;;; feature/debugger/config.el -*- lexical-binding: t; -*-
 
 (def-package! realgud
   :commands (realgud:gdb realgud:trepanjs realgud:bashdb realgud:zshdb)
@@ -19,7 +19,7 @@
   ;; Monkey-patch `realgud:run-process' to run in a popup.
   ;; TODO Find a more elegant solution
   ;; FIXME Causes realgud:cmd-* to focus popup on every invocation
-  (defun +debug*realgud-run-process
+  (defun +debugger*realgud-run-process
       (debugger-name script-filename cmd-args minibuffer-history-var &optional no-reset)
     (let* ((cmd-buf (apply #'realgud-exec-shell debugger-name script-filename
                            (car cmd-args) no-reset (cdr cmd-args)))
@@ -42,5 +42,5 @@
              (if cmd-buf (switch-to-buffer cmd-buf))
              (message "Error running command: %s" (mapconcat #'identity cmd-args " "))))
       cmd-buf))
-  (advice-add #'realgud:run-process :override #'+debug*realgud-run-process))
+  (advice-add #'realgud:run-process :override #'+debugger*realgud-run-process))
 

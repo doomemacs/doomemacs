@@ -1,39 +1,15 @@
 ;;; feature/eval/config.el -*- lexical-binding: t; -*-
 
 ;;
-;; Code building
-;;
-
-(defvar +eval-builders nil
-  "A nested alist, mapping major modes to build function plists. Used by
-`+eval/build' and filled with the `:build' setting.")
-
-(def-setting! :build (name modes fn &rest plist)
-  "Define a build function (FN) for MODES (can be major or minor) called NAME.
-
-PLIST accepts the following properties:
-
-  :when FORM    A predicate to determine if the builder is appropriate for this
-                buffer."
-  `(dolist (mode ',(doom-enlist (doom-unquote modes)) +eval-builders)
-     (unless (assq mode +eval-builders)
-       (push (list mode) +eval-builders))
-     (cl-pushnew (cons ,name (append (list :fn ,fn) (list ,@plist)))
-                 (cdr (assq mode +eval-builders))
-                 :test #'eq :key #'car)))
-
-
-;;
 ;; REPLs
 ;;
 
 (defvar +eval-repls nil
   "An alist mapping major modes to plists that describe REPLs. Used by
-`+eval/repl' and filled with the `:repl' setting.")
+`+eval/open-repl' and filled with the `:repl' setting.")
 
 (define-minor-mode +eval-repl-mode
-  "A minor mode for REPL buffers."
-  :init-value nil)
+  "A minor mode for REPL buffers.")
 
 (def-setting! :repl (mode command)
   "Define a REPL for a mode. MODE is a major mode symbol and COMMAND is a
@@ -53,7 +29,7 @@ function that creates and returns the REPL buffer."
 (setq eval-expression-print-length nil
       eval-expression-print-level  nil)
 
-(defvar +eval-runners-alist nil
+(defvar +eval-runners nil
   "Alist mapping major modes to interactive runner functions.")
 
 (def-setting! :eval (mode command)
@@ -67,10 +43,10 @@ function that creates and returns the REPL buffer."
 3. If MODE is not a string and COMMAND is an alist, see `quickrun-add-command':
    (quickrun-add-command MODE COMMAND :mode MODE).
 4. If MODE is not a string and COMMANd is a symbol, add it to
-   `+eval-runners-alist', which is used by `+eval/region'."
+   `+eval-runners', which is used by `+eval/region'."
   (let ((command (doom-unquote command)))
     (cond ((symbolp command)
-           `(push (cons ,mode ',command) +eval-runners-alist))
+           `(push (cons ,mode ',command) +eval-runners))
           ((stringp command)
            `(after! quickrun
               (push (cons ,mode ',command)
@@ -91,12 +67,10 @@ function that creates and returns the REPL buffer."
              quickrun-compile-only
              quickrun-replace-region)
   :init
-  (add-hook 'quickrun--mode-hook #'nlinum-mode)
+  (unless (boundp 'display-line-numbers)
+    (add-hook 'quickrun--mode-hook #'nlinum-mode))
   :config
-  (set! :popup
-    '("*quickrun*"       :size 10 :noesc t    :autokill t :autoclose t)
-    '("*eval*"           :size 12 :noselect t :autokill t :autoclose t)
-    '("*Pp Eval Output*" :size 12 :noselect t :autokill t :autoclose t))
+  (set! :popup "*quickrun*" :size 6 :autokill t :autoclose t)
 
   (defun +eval*quickrun-auto-close (&rest _)
     "Allows us to silently re-run quickrun from within the quickrun buffer."
@@ -111,6 +85,7 @@ function that creates and returns the REPL buffer."
   (defun +eval|quickrun-scroll-to-bof ()
     "Ensures window is scrolled to BOF on invocation."
     (with-selected-window (get-buffer-window quickrun--buffer-name)
-      (goto-char (point-min))))
+      (goto-char (point-min))
+      (doom-popup-fit-to-buffer)))
   (add-hook 'quickrun-after-run-hook #'+eval|quickrun-scroll-to-bof))
 

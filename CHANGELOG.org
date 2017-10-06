@@ -1,7 +1,7 @@
 #+TITLE: Changelog
 
-- [[#todo][Todo]]
-- [[#unreleased-master][Unreleased (master)]]
+- [[#unreleased-develop][Unreleased (develop)]]
+- [[#206-oct-05-2017][2.0.6 (Oct 05, 2017)]]
 - [[#205-sep-03-2017][2.0.5 (Sep 03, 2017)]]
 - [[#204-jul-14-2017][2.0.4 (Jul 14, 2017)]]
 - [[#203-jun-11-2017][2.0.3 (Jun 11, 2017)]]
@@ -9,72 +9,116 @@
 - [[#201-apr-8-2017][2.0.1 (Apr 8, 2017)]]
 - [[#200-jan-17-2017][2.0.0 (Jan 17, 2017)]]
 
-* Todo
-+ *Potential plugins:*
-  + =app/present= [[https://github.com/larstvei/Focus][focus]], for presenting code
-  + [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]], client for MS Language Server Protocol, keep an eye on this
-  + =lang/javascript= [[https://github.com/NicolasPetton/Indium][indium]] (IDE), keep an eye on this
-  + =lang/javascript= [[https://github.com/codesuki/add-node-modules-path][add-node-modules-path]] (adds node_modules to ~exec-path~)
-  + =lang/javascript= [[https://github.com/lbolla/emacs-flycheck-flow][flycheck-flow]] (Flow support for JS)
-  + =lang/org= [[https://github.com/Malabarba/latex-extra][orgit]] (org links to magit buffers)
-  + =lang/org= [[https://github.com/jkitchin/org-ref][org-ref]] (bibtex/citation helper)
-  + =lang/org= [[https://github.com/tashrifsanil/org-easy-img-insert][org-easy-img-insert]]
-  + =lang/latex= [[https://github.com/Malabarba/latex-extra][latex-extra]] (utility commands)
-  + =lang/latex= [[**https://github.com/jsinglet/latex-preview-pane][latex-preview-pane]]
-  + =lang/julia= [[ https://github.com/dennisog/julia-shell-mode][julia-shell]] (unsure if better than inferior-julia in julia-mode)
-  + =lang/python= [[https://github.com/Wilfred/pyimport][pyimport]] or [[https://github.com/anachronic/importmagic.el][importmagic]]
-  + [[https://github.com/mhayashi1120/Emacs-imagex][emacs-imagex]], for manipulating images at point (zooming?)
-  + =tools/term= [[https://github.com/riscy/shx-for-emacs][shx]], an extension for the shell in Emacs
-  + =app/crm= [[https://github.com/skeeto/emacsql][emacsql]], a sqlite backend; possibly useful for CRM storage.
-  + =core= [[https://github.com/Wilfred/helpful][helpful]], a better help buffer; replacement for ~describe-function~?
-+ *Planned modules:*
-  + =app/crm= -- Customer Relations Management, in Emacs, using org-mode.
-  + =app/write= -- Make Emacs into a focused plaintext word processor (using markdown, org and rst) for writing papers and stories.
-  + =app/regex= -- PCRE IDE, with live buffer matching, search/replace support, and an export-to-code feature for various languages.
-    + +Perl backend+
-    + Search and replace support
-    + Highlight replaced segments
-    + Export-to-code feature for:
-      + python (use ~re~ or ~regex~)
-      + php (~preg_(match(_all)?|replace)~)
-      + ruby (~%r[.+]~)
-      + javascript (node) (~/.+/.test(...)~)
-      + C (~regex.h~ + ~regcomp~)
-      + C++ (~regex reg(regexp, ...)~)
-    + Syntax highlighter for ~+regex-mode~ (plus make it a major mode)
-    + Optimize: communicate with perl process (with ~make-process~ instead of ~call-process~)
-  + =org/org-publish= -- publishing org files to HTML (thanks to [[https://github.com/matthewgraybosch][matthewgraybosch]])
-  + =org/org-attach= -- my own, simpler attachment system with drag-drop image attachment support and centralized storage.
-  + =app/torrents= -- Emacs as a torrent client (powered by transmission.el)
-+ =core-ui= Replace or fix ~winner-mode~ unreliability (will close windows trying to revive killed buffers). Perhaps make ~doom/kill-this-buffer~ only disassociate buffer from persp-mode or bury buffer if persp-mode is inactive.
-+ =org=
-  + Better shackle + org-agenda integration
-  + Fix janky visual line motions (~evil-next-visual-line~, etc)
-  + Fix janky cursor positioning when jumping between org-table cells from insert mode.
-  + Certain characters/keys--when typed in a table--cause the cell to shrink (likely cause: custom self-insert-char behavior -- like smartparens pairs & custom SPC/BKSPC binds)
-+ =feature/jump= Automatic etags generation (for dwim go-to-definition and, perhaps, code-completion for some languages; lua maybe?).
-+ =lang/php= Automatic and async tags generation using [[https://github.com/xcwen/phpctags][phpctags]].
-+ =lang/lua= True, dynamic code-completion? Looks like [[https://github.com/immerrr/lua-mode/pull/119][this PR in lua-mode]] may have the answer. Does it make ~company-lua~ redundant?
-+ =tools/upload= Add ~+upload/open-remote-file~ command to open current file on the remote (with TRAMP).
-+ Add =bin/org-alert= script -- a cron script that scans TODOs in org files and dispatches system alerts.
-+ =feature/workspaces= Add a bookmarks feature, but for wconfs, that can revive file buffers. Also needs an interface.
-+ =ui/doom-modeline=
-  + Fix hardcoded spacing in between segments.
-  + Fix ~0/0~ leftover panel in modeline (caused by lingering anzu state).
-+ Update =bin/org-capture= to read from stdin in the absence of arguments.
-+ =core-popups= Add support for moving popup windows to the ~+evil/window-move-*~ commands #171
+* Unreleased (develop)
 
-* Unreleased (master)
-+ =doom=
-  + Added new module: ~lang/ledger~, for editing ledger files.
-  + Fixed ~make update~ to work even if Doom is installed somewhere other than ~\~/.emacs.d~ (see [[https://github.com/hlissner/doom-emacs/issues/190][#190]]).
+* 2.0.6 (Oct 05, 2017)
++ *Module changes:*
+  + Add =lang/ledger=
+  + Add =ui/vi-tilde-fringe= -- used to be in =core-ui=; indicates beyond-EOB,
+    using tildes in the fringe (inspired by vim).
+  + Add =feature/services= -- used to be =tools/prodigy=. Adds a way of managing
+    external processes and services.
+  + Add =tools/make= -- for running project Makefile commands from Emacs.
+  + Add =tools/imenu= -- adds a sidebar for imenu (~imenu-list~), and a way of
+    jumping to imenu entries across all open buffers (~imenu-anywhere~).
+  + Move =feature/hydra= into =core-keybinds=.
+  + Rename =feature/debug= to =feature/debugger= (and disabled it by default; it
+    is currently unstable and needs some work).
+  + Remove =org/org-notebook=. It was unused and too small to warrant its own
+    module. Useful tidbits were merged into =org/org=.
++ =general=
+  + =Makefile=
+    + Fix ~make update~ to work even if Doom is installed somewhere other than
+      ~\~/.emacs.d~ (see [[https://github.com/hlissner/doom-emacs/issues/190][#190]]).
+    + Removed colons from makefile task target names (like =compile:core=);
+      replaced them with dashses, e.g. =compile-core=. Colons broke compatibility
+      with certain versions of make.
+  + =autoload=
+    + New library: =menu.el= -- allows context-sensitive and customizable
+      fuzzy-searchable menus; this was written to replace long lists of
+      major-mode-local key bindings, like refactoring and code building
+      commands. This replaces =feature/eval='s build task system.
+    + =editor.el= Fix old scratch buffer commands and renamed them:
+      ~doom/open-scratch-buffer~ and ~doom/open-project-scratch-buffer~. The
+      former opens a temporary, transient scratch buffer, the latter opens a
+      permanent one tied to the current project, kept in
+      ~doom-scratch-files-dir~.
+    + =window.el= Changed ~doom-resize-window~ to accept two more arguments,
+      =WINDOW= and =FORCE-P=: ~doom-resize-window WINDOW NEW-SIZE &optional
+      HORIZONTAL FORCE-P~. If =FORCE-P= is non-nil, this function will resize a
+      window regardless of ~window-size-fixed~.
+  + =core-keybinds= Add new =def-hydra!= alias macro for ~defhydra~ (for
+    consistency, and in case we want to wrap it later).
+  + =core-projects= Redesign ~def-project-mode!~ for efficiency, and:
+    + The =:init FORM= property is now =:on-load FORM=.
+    + Three new properties: =:on-enter FORM=, =:on-exit FORM= and =:add-hooks
+      LIST=.
+  + =core-popups=
+    + Added two new popup properties:
+      + ~:static~ If non-nil, treat this popup like a permanent window, making
+        it impervious to automatic closing and being tracked in popup history.
+        This is excellent for semi-permanent popups, like sidebars (think
+        Neotree or imenu-list).
+      + ~:autofit~ If non-nil, this popup will resize to fit its buffer
+        contents. This only works with popups where the buffer content is
+        immediately available, and not for, say, buffers tied to async
+        processes.
+    + ~doom-popup-buffer~ and ~doom-popup-file~ no longer take a variadic
+      argument. Their signature is now ~doom-popup-buffer buffer plist &optional
+      extend-p~ and ~doom-popup-file file plist &optional extend-p~, where
+      =EXTEND-P= will cause =PLIST= to extend from the base rule for that
+      buffer.
+    + Rename ~doom-popup-prop~ to ~doom-popup-property~.
+    + Add support for moving popup windows. See the ~doom/popup-move-*~
+      commands. There are used by ~+evil/window-move-*~, which provides
+      universal support for moving windows.
+    + Add command: ~doom/popup-raise~, for promoting a popup into a regular
+      window.
+    + Add helper macro: ~save-popup! BODY~ -- hides the popups before running
+      BODY.
+    + Fix ~doom/popup-toggle~ and ~save-popups!~ killing popups with an
+      =:autokill= property.
 + =feature=
-  + =hydra= Display a separator along the bottom of hydra windows for extra contrast.
+  + =hydra= Display a separator on the bottom of hydra windows for contrast.
+  + =eval= Build-task management has been removed from =feature/eval= in favor
+    of ~def-menu!~.
 + =ui=
-  + =doom-dashboard= Elements are now centered using window-local margins, which fixes discrepancies when multiple dashboards are visible in different sized windows and/or frames (see [[https://github.com/hlissner/doom-emacs/issues/192][#192]]).
+  + =doom-dashboard=
+    + Fix /horizontal/ centering discrepancies caused by multiple visible
+      dashboards in windows/frames with different sizes (see [[https://github.com/hlissner/doom-emacs/issues/192][#192]]). Still
+      doesn't address vertical centering.
+    + Fix dashboard's default-directory not changing to the last open project
+      when switched to.
+  + =doom-modeline= Add a new style to ~+doom-modeline-buffer-file-name-style~:
+    ~relative-from-project~, which displays on the buffer's path relative to
+    (and including) the project.
+  + =hl-todo= Add face-based detection for commented regions, so hl-todo can
+    work in modes with no/poor syntax-table support.
++ =tools=
+  + =neotree=
+    + Fix neotree shrinking by 1 when vertical splits were closed.
+    + Fix Neotree popup rule not taking ~neo-window-width~ and
+      ~neo-window-position~ into account.
+  + =term= Renamed commands for consistency (to ~+term/open~, ~+term/open-popup~
+    and ~+term/open-popup-in-project~).
+  + =eshell= Renamed commands for consistency (to ~+eshell/open~,
+    ~+eshell/open-popup~ and ~+eshell/open-workspace~).
++ =lang=
+  + =ruby= Add rake support. See the ~rake~ command.
+  + =web= Only install company-web if =:completion company= is enabled.
+  + =javascript=
+    + Add eslint_d and eslint_d-fix detection and support.
+    + =./node_modules/.bin= is now added to ~exec-path~ in NPM project buffers.
+  + =haskell= There is no longer a 'default' implementation for Haskell. The
+    =+intero= and/or =+dante= module flags must be specified in init.el.
+  + =java= Meghanada is no longer the 'default' implementation for Java. The
+    =+meghanada= and/or =+eclim= module flags must be specified in init.el.
 + =org=
-  + If a table is under point when ~+org/toggle-fold~ is invoked, the table is realigned.
-  + =org-capture= Fix a vestigial reference to a long-since-renamed function: ~doom/project-root~.
+  + If a table is under point when ~+org/toggle-fold~ is invoked, the table is
+    realigned.
+  + Fix the incorrect version of org being loaded (site, instead of ELPA) by
+    pushing it up further in the ~load-path~.
+  + Fix ~+org/insert-item~ not jumping over sublists to append a new list item.
 
 * 2.0.5 (Sep 03, 2017)
 + =doom=
@@ -150,7 +194,7 @@
   + Unit-tests have been moved to their respective modules (and =core/test/=).
   + Fix ~def-setting!~ to act more like ~defmacro~; don't aggressively evaluate its arguments on expansion.
   + New function: ~doom-set-buffer-real BUFFER FLAG~ -- makes Doom consider BUFFER real, no matter what.
-  + Add ~INSTALLED-ONLY-P~ argument to ~doom-get-packages~ to filter packages that aren't installed.
+  + Add INSTALLED-ONLY-P argument to ~doom-get-packages~ to filter packages that aren't installed.
   + =core-ui=
     + Add quit confirmation when trying to close a frame that contains real buffers.
     + Fix quit confirmations for clients connected to ~emacs --daemon~ with ~emacsclient~.
@@ -170,7 +214,7 @@
   + =core-packages=
     + Generalize ~doom-package-*-p~ functions into ~(doom-package-prop NAME PROPERTY)~.
     + Fix quelpa temporary files (in ~quelpa-build-dir~) not being removed when a quelpa package was uninstalled.
-    + New hook: ~doom-reload-hook~ (sort of). This has been around for a while, but now it is defined and documented. It runs when ~doom/reload~ is called (which gets called remotely if you run package management while an Emacs session is active).
+    + New hook: ~doom-reload-hook~ (sort of). This has been around for a while, but now it is defined and documented. It runs when ~doom/reload-load-path~ is called (which gets called remotely if you run package management while an Emacs session is active).
     + ~load!~ can now accept a string as its first argument (the path).
 + =feature=
   + =feature/evil=
@@ -354,7 +398,7 @@
 + =feature=
   + =feature/eval=
     + Fix ~:repl~ & ~+eval/repl-send-region~.
-    + Fix ~+eval/region~ failing only on first invocation because ~+eval-runners-alist~ wasn't populated until quickrun is loaded.
+    + Fix ~+eval/region~ failing only on first invocation because ~+eval-runners~ wasn't populated until quickrun is loaded.
     + Add TAB auto-completion in comint-mode and REPL buffers
   + =feature/evil=
     + Fix ~:mv~ & ~:rm~.

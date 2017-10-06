@@ -4,22 +4,22 @@
 (defun +eval/buffer ()
   "Evaluate the whole buffer."
   (interactive)
-  (cond ((assq major-mode +eval-runners-alist)
+  (cond ((assq major-mode +eval-runners)
          (+eval/region (point-min) (point-max)))
         (t (quickrun))))
 
 ;;;###autoload
 (defun +eval/region (beg end)
-  "Evaluate a region and, if large enough, prints its output to a popup buffer (if an
-elisp buffer). Otherwise forward the region to Quickrun."
+  "Evaluate a region between BEG and END and display the output."
   (interactive "r")
   (let ((load-file-name buffer-file-name))
-    (if-let (runner (cdr (assq major-mode +eval-runners-alist)))
+    (if-let (runner (cdr (assq major-mode +eval-runners)))
         (funcall runner beg end)
       (quickrun-region beg end))))
 
 ;;;###autoload
 (defun +eval/region-and-replace (beg end)
+  "Evaluation a region between BEG and END, and replace it with the result."
   (interactive "r")
   (cond ((eq major-mode 'emacs-lisp-mode)
          (kill-region beg end)

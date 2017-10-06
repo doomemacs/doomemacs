@@ -1,5 +1,16 @@
 ;;; lang/ruby/config.el -*- lexical-binding: t; -*-
 
+(defvar +ruby-rbenv-versions nil
+  "Available versions of ruby in rbenv.")
+
+(defvar-local +ruby-current-version nil
+  "The currently active ruby version.")
+
+
+;;
+;; Plugins
+;;
+
 (def-package! ruby-mode
   :mode ("\\.rb$" "\\.rake$" "\\.gemspec$" "\\.?pryrc$"
          "/\\(Gem\\|Cap\\|Vagrant\\|Rake\\|Pod\\|Puppet\\|Berks\\)file$")
@@ -12,6 +23,29 @@
   (setq ruby-deep-indent-paren t)
   ;; Don't interfere with my custom RET behavior
   (define-key ruby-mode-map [?\n] nil)
+
+  ;; Version management with rbenv
+  (defun +ruby|add-version-to-modeline ()
+    "Add version string to the major mode in the modeline."
+    (setq mode-name
+          (if +python-current-version
+              (format "Ruby %s" +ruby-current-version)
+            "Ruby")))
+  (add-hook 'ruby-mode-hook #'+ruby|add-version-to-modeline)
+
+  (if (not (executable-find "rbenv"))
+      (setq +ruby-current-version (string-trim (shell-command-to-string "ruby --version 2>&1 | cut -d' ' -f2")))
+    (setq +ruby-rbenv-versions (split-string (shell-command-to-string "rbenv versions --bare") "\n" t))
+
+    (defun +ruby|detect-rbenv-version ()
+      "Detect the rbenv version for the current project and set the relevant
+environment variables."
+      (when-let (version-str (shell-command-to-string "ruby --version 2>&1 | cut -d' ' -f2"))
+        (setq version-str (string-trim version-str)
+              +ruby-current-version version-str)
+        (when (member version-str +ruby-rbenv-versions)
+          (setenv "RBENV_VERSION" version-str))))
+    (add-hook 'ruby-mode-hook #'+ruby|detect-rbenv-version))
 
   (map! :map ruby-mode-map
         :localleader
@@ -72,12 +106,7 @@
   :config (set! :company-backend 'inf-ruby-mode '(company-inf-ruby)))
 
 
-;;
-;; TODO Frameworks
-;;
+(def-package! rake
+  :commands (rake rake-find-task rake-rerun)
+  :config (setq rake-completion-system 'default))
 
-;; (def-project-mode! +ruby-rake-mode
-;;   :files "Rakefile"
-;;   :init
-;;   (set! :build 'rake '+ruby-rake-mode '+ruby/rake
-;;     :when (lambda () (doom-project-has! "Rakefile"))))

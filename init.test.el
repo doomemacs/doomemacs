@@ -15,5 +15,8 @@
        :lang
        web
 
+       :org
+       org
+
        :private
        hlissner)

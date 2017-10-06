@@ -6,7 +6,7 @@
   (interactive
    ;; TODO try to read setting from whole line
    (list (completing-read "Describe setting%s: "
-                          (mapcar #'car doom-settings)
+                          (sort (mapcar #'car doom-settings) #'string-lessp)
                           nil t nil nil)))
   (let ((fn (cdr (assq (intern setting) doom-settings))))
     (unless fn

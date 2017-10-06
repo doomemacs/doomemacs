@@ -23,18 +23,21 @@
  :nvime "M-x" #'execute-extended-command
  :nvime "A-x" #'execute-extended-command
  ;; Emacs debug utilities
- "M-;"    #'eval-expression
- "A-;"    #'eval-expression
+ "M-;"        #'eval-expression
+ :nvime "M-;" #'eval-expression
+ "M-:"        #'doom/open-scratch-buffer
+ :nvime "M-:" #'doom/open-scratch-buffer
  ;; Text-scaling
  "M-+"    (λ! (text-scale-set 0))
  "M-="    #'text-scale-increase
  "M--"    #'text-scale-decrease
  ;; Simple window navigation/manipulation
  "C-`"    #'doom/popup-toggle
+ "C-~"    #'doom/popup-raise
  "M-t"    #'+workspace/new
  "M-T"    #'+workspace/display
  "M-w"    #'delete-window
- "M-W"    #'delete-frame
+ "M-W"    #'+workspace/close-workspace-or-frame
  "M-n"    #'evil-buffer-new
  "M-N"    #'make-frame
  "M-1"    (λ! (+workspace/switch-to 0))
@@ -75,8 +78,8 @@
  (:leader
    :desc "Ex command"  :nv ";"   #'evil-ex
    :desc "M-x"         :nv ":"   #'execute-extended-command
-   :desc "Pop up scratch buffer"   :nv "x"  #'doom/scratch-buffer
-   :desc "Org Capture"             :nv "X"  #'+org/capture
+   :desc "Pop up scratch buffer"   :nv "x"  #'doom/open-scratch-buffer
+   :desc "Org Capture"             :nv "X"  #'+org-capture/open
 
    ;; Most commonly used
    :desc "Find file in project"    :n "SPC" #'projectile-find-file
@@ -151,7 +154,7 @@
      :desc "Kill buffer"             :n "k" #'doom/kill-this-buffer
      :desc "Kill other buffers"      :n "o" #'doom/kill-other-buffers
      :desc "Save buffer"             :n "s" #'save-buffer
-     :desc "Pop scratch buffer"      :n "x" #'doom/scratch-buffer
+     :desc "Pop scratch buffer"      :n "x" #'doom/open-scratch-buffer
      :desc "Bury buffer"             :n "z" #'bury-buffer
      :desc "Next buffer"             :n "]" #'doom/next-buffer
      :desc "Previous buffer"         :n "[" #'doom/previous-buffer
@@ -165,7 +168,7 @@
      :desc "Build tasks"               :nv "b" #'+eval/build
      :desc "Jump to definition"        :n  "d" #'+jump/definition
      :desc "Jump to references"        :n  "D" #'+jump/references
-     :desc "Open REPL"                 :n  "r" #'+eval/repl
+     :desc "Open REPL"                 :n  "r" #'+eval/open-repl
                                        :v  "r" #'+eval:repl)
 
    (:desc "file" :prefix "f"
@@ -188,6 +191,7 @@
      :desc "Git blame"         :n  "b" #'magit-blame
      :desc "Git time machine"  :n  "t" #'git-timemachine-toggle
      :desc "Git revert hunk"   :n  "r" #'git-gutter:revert-hunk
+     :desc "Git revert buffer" :n  "R" #'vc-revert
      :desc "List gists"        :n  "g" #'+gist:list
      :desc "Next hunk"         :nv "]" #'git-gutter:next-hunk
      :desc "Previous hunk"     :nv "[" #'git-gutter:previous-hunk)
@@ -222,18 +226,18 @@
    (:desc "notes" :prefix "n"
      :desc "Find file in notes"    :n "n" #'+hlissner/find-in-notes
      :desc "Browse notes"          :n "N" #'+hlissner/browse-notes
-     :desc "Org capture"           :n "x" #'+org/capture
+     :desc "Org capture"           :n "x" #'+org-capture/open
      :desc "Browse mode notes"     :n "m" #'+org/browse-notes-for-major-mode
      :desc "Browse project notes"  :n "p" #'+org/browse-notes-for-project)
 
    (:desc "open" :prefix "o"
      :desc "Default browser"     :n  "b" #'browse-url-of-file
      :desc "Debugger"            :n  "d" #'+debug/open
-     :desc "REPL"                :n  "r" #'+eval/repl
+     :desc "REPL"                :n  "r" #'+eval/open-repl
                                  :v  "r" #'+eval:repl
      :desc "Neotree"             :n  "n" #'+neotree/toggle
-     :desc "Terminal"            :n  "t" #'+term/popup
-     :desc "Terminal in project" :n  "T" #'+term/popup-in-project
+     :desc "Terminal"            :n  "t" #'+term/open-popup
+     :desc "Terminal in project" :n  "T" #'+term/open-popup-in-project
 
      ;; applications
      :desc "APP: elfeed"  :n "E" #'=rss
@@ -257,7 +261,7 @@
      :desc "Switch project"          :n  "p" #'projectile-switch-project
      :desc "Recent project files"    :n  "r" #'projectile-recentf
      :desc "List project tasks"      :n  "t" #'+ivy/tasks
-     :desc "Pop term in project"     :n  "o" #'+term/popup-in-project
+     :desc "Pop term in project"     :n  "o" #'+term/open-popup-in-project
      :desc "Invalidate cache"        :n  "x" #'projectile-invalidate-cache)
 
    (:desc "quit" :prefix "q"
@@ -381,8 +385,6 @@
 
  ;; counsel
  (:after counsel
-   (:map ivy-mode-map
-     "C-o"      #'ivy-dispatching-done)
    (:map counsel-ag-map
      [backtab]  #'+ivy/wgrep-occur  ; search/replace on results
      "C-SPC"    #'counsel-git-grep-recenter   ; preview
@@ -407,12 +409,14 @@
  (:prefix "gz"
    :nv "m" #'evil-mc-make-all-cursors
    :nv "u" #'evil-mc-undo-all-cursors
-   :nv "z" #'+evil/mc-toggle-cursors
-   :nv "c" #'+evil/mc-make-cursor-here
+   :nv "z" #'+evil/mc-make-cursor-here
+   :nv "t" #'+evil/mc-toggle-cursors
    :nv "n" #'evil-mc-make-and-goto-next-cursor
    :nv "p" #'evil-mc-make-and-goto-prev-cursor
    :nv "N" #'evil-mc-make-and-goto-last-cursor
-   :nv "P" #'evil-mc-make-and-goto-first-cursor)
+   :nv "P" #'evil-mc-make-and-goto-first-cursor
+   :nv "d" #'evil-mc-make-and-goto-next-match
+   :nv "D" #'evil-mc-make-and-goto-prev-match)
  (:after evil-mc
    :map evil-mc-key-map
    :nv "C-n" #'evil-mc-make-and-goto-next-cursor
@@ -726,7 +730,6 @@
 ;; properly, more like vim, or how I like it.
 
 (map! (:map input-decode-map
-        [?\C-i] [C-i]
         [S-iso-lefttab] [backtab]
         (:unless window-system "TAB" [tab])) ; Fix TAB in terminal
 
@@ -763,14 +766,23 @@
           :i "C-e" #'org-end-of-line
           :i "C-a" #'org-beginning-of-line))
 
-      ;; Make ESC quit all the things
+      ;; Restore common editing keys (and ESC) in minibuffer
       (:map (minibuffer-local-map
              minibuffer-local-ns-map
              minibuffer-local-completion-map
              minibuffer-local-must-match-map
-             minibuffer-local-isearch-map)
+             minibuffer-local-isearch-map
+             evil-ex-completion-map
+             evil-ex-search-keymap
+             read-expression-map)
         [escape] #'abort-recursive-edit
-        "C-r" #'evil-paste-from-register)
+        "C-r" #'evil-paste-from-register
+        "C-a" #'move-beginning-of-line
+        "C-w" #'doom/minibuffer-kill-word
+        "C-u" #'doom/minibuffer-kill-line
+        "C-b" #'backward-word
+        "C-f" #'forward-word
+        "M-z" #'doom/minibuffer-undo)
 
       (:map messages-buffer-mode-map
         "M-;" #'eval-expression
@@ -778,14 +790,6 @@
 
       (:map tabulated-list-mode-map
         [remap evil-record-macro] #'doom/popup-close-maybe)
-
-      (:map (evil-ex-completion-map evil-ex-search-keymap read-expression-map)
-        "C-a" #'move-beginning-of-line
-        "C-w" #'doom/minibuffer-kill-word
-        "C-u" #'doom/minibuffer-kill-line
-        "C-b" #'backward-word
-        "C-f" #'forward-word
-        "M-z" #'doom/minibuffer-undo)
 
       (:after view
         (:map view-mode-map "<escape>" #'View-quit-all)))

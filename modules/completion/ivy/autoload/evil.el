@@ -26,9 +26,11 @@
          (all-files-p +ivy--file-search-all-files-p)
          (query
           (or query
-              (and beg end
-                   (> (abs (- end beg)) 1)
-                   (rxt-quote-pcre (buffer-substring-no-properties beg end)))
+              (if (evil-visual-state-p)
+                  (and beg end
+                       (> (abs (- end beg)) 1)
+                       (rxt-quote-pcre (buffer-substring-no-properties beg end)))
+                +ivy--file-last-search)
               +ivy--file-last-search))
          (prompt
           (format "%s%%s %s"

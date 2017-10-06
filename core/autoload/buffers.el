@@ -53,7 +53,7 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
 
 If no project is active, return all buffers."
   (let ((buffers (doom-buffer-list)))
-    (if-let (project-root (doom-project-root t))
+    (if-let (project-root (if (doom-project-p) (doom-project-root)))
         (cl-loop for buf in buffers
                  if (projectile-project-buffer-p buf project-root)
                  collect buf)
@@ -116,9 +116,9 @@ buffers. If there's nothing left, switch to `doom-fallback-buffer'. See
         (project-dir (doom-project-root)))
     (cond ((or (not buffers)
                (zerop (% n (1+ (length buffers)))))
-           (set-window-buffer nil (doom-fallback-buffer)))
+           (switch-to-buffer (doom-fallback-buffer) nil t))
           ((= (length buffers) 1)
-           (set-window-buffer nil (car buffers)))
+           (switch-to-buffer (car buffers) nil t))
           (t
            ;; Why this instead of switching straight to the Nth buffer in
            ;; BUFFERS? Because `switch-to-next-buffer' and
@@ -136,9 +136,19 @@ buffers. If there's nothing left, switch to `doom-fallback-buffer'. See
 
 ;;;###autoload
 (defun doom-real-buffer-p (&optional buffer-or-name)
-  "Returns t if BUFFER-OR-NAME is a 'real' buffer. Real means it a) isn't a
-popup window/buffer and b) isn't a special buffer."
-  (let ((buf (window-normalize-buffer buffer-or-name)))
+  "Returns t if BUFFER-OR-NAME is a 'real' buffer. The complete criteria for a
+real buffer is:
+
+  1. The buffer-local value of `doom-real-buffer-p' (variable) is non-nil OR
+  2. Any function in `doom-real-buffer-functions' must return non-nil when
+     passed this buffer OR
+  3. The current buffer:
+     a) has a `buffer-file-name' defined AND
+     b) is not in a popup window (see `doom-popup-p') AND
+     c) is not a special buffer (its name isn't something like *Help*)
+
+If BUFFER-OR-NAME is omitted or nil, the current buffer is tested."
+  (when-let (buf (ignore-errors (window-normalize-buffer buffer-or-name)))
     (or (buffer-local-value 'doom-real-buffer-p buf)
         (run-hook-with-args-until-success 'doom-real-buffer-functions buf)
         (not (or (doom-popup-p buf)
@@ -148,14 +158,14 @@ popup window/buffer and b) isn't a special buffer."
 
 ;;;###autoload
 (defun doom/next-buffer ()
-  "Switch to the next real buffer, skipping special buffers. See
+  "Switch to the next real buffer, skipping non-real buffers. See
 `doom-real-buffer-p' for what 'real' means."
   (interactive)
   (doom--cycle-real-buffers +1))
 
 ;;;###autoload
 (defun doom/previous-buffer ()
-  "Switch to the previous real buffer, skipping special buffers. See
+  "Switch to the previous real buffer, skipping non-real buffers. See
 `doom-real-buffer-p' for what 'real' means."
   (interactive)
   (doom--cycle-real-buffers -1))
@@ -163,7 +173,10 @@ popup window/buffer and b) isn't a special buffer."
 ;;;###autoload
 (defun doom-kill-buffer (&optional buffer dont-save)
   "Kill BUFFER (falls back to current buffer if omitted) then switch to a real
-buffer, but only bury the buffer if it is present in another window.
+buffer. If the buffer is present in another window, only bury it.
+
+Will prompt to save unsaved buffers when attempting to kill them, unless
+DONT-SAVE is non-nil.
 
 See `doom-real-buffer-p' for what 'real' means."
   (setq buffer (or buffer (current-buffer)))
@@ -250,10 +263,12 @@ regex PATTERN. Returns the number of killed buffers."
 
 ;;;###autoload
 (defun doom/kill-all-buffers (&optional project-p)
-  "Kill all buffers.
+  "Kill all buffers and closes their windows.
 
-If PROJECT-P, kill all buffers that belong to the current project."
+If PROJECT-P (universal argument), kill only buffers that belong to the current
+project."
   (interactive "P")
+  (doom/popup-kill-all)
   (let ((buffers (if project-p (doom-project-buffer-list) (doom-buffer-list))))
     (mapc #'doom-kill-buffer-and-windows buffers)
     (unless (doom-real-buffer-p)
@@ -262,10 +277,10 @@ If PROJECT-P, kill all buffers that belong to the current project."
 
 ;;;###autoload
 (defun doom/kill-other-buffers (&optional project-p)
-  "Kill all other buffers.
+  "Kill all other buffers (besides the current one).
 
-If PROJECT-P (universal argument), kill only the other buffers that belong to
-the current project."
+If PROJECT-P (universal argument), kill only buffers that belong to the current
+project."
   (interactive "P")
   (let ((buffers (if project-p (doom-project-buffer-list) (doom-buffer-list)))
         (current-buffer (current-buffer)))
@@ -291,7 +306,7 @@ project."
 
 ;;;###autoload
 (defun doom/cleanup-buffers (&optional all-p)
-  "Clean up buried and process buffers in the current workspace."
+  "Clean up buried and inactive process buffers in the current workspace."
   (interactive "P")
   (let ((buffers (doom-buried-buffers (if all-p (buffer-list))))
         (n 0))

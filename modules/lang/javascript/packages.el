@@ -11,6 +11,7 @@
 (package! tern)
 (package! web-beautify)
 (package! skewer-mode)
+(package! eslintd-fix)
 
 (when (featurep! :completion company)
   (package! company-tern))

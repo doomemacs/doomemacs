@@ -34,22 +34,32 @@ shorter major mode name in the mode-line. See `doom|set-mode-name'.")
 
 ;; Settings
 (def-setting! :theme (theme)
+  "Sets the current THEME (a symbol)."
   `(unless doom-theme
      (setq doom-theme ,theme)))
 
 (def-setting! :font (family &rest spec)
+  "Sets the default font (if one wasn't already set). FAMILY is the name of the
+font, and SPEC is a `font-spec'."
   `(unless doom-font
      (setq doom-font (font-spec :family ,family ,@spec))))
 
 (def-setting! :variable-pitch-font (family &rest spec)
+  "Sets the default font for the variable-pitch face and minor mode (if one
+wasn't already set). FAMILY is the name of the font, and SPEC is a `font-spec'."
   `(unless doom-variable-pitch-font
      (setq doom-variable-pitch-font (font-spec :family ,family ,@spec))))
 
 (def-setting! :big-font (family &rest spec)
+  "Sets the font to use for `doom-big-font-mode' (if one wasn't already set).
+FAMILY is the name of the font, and SPEC is a `font-spec'."
   `(unless doom-big-font
      (setq doom-big-font (font-spec :family ,family ,@spec))))
 
 (def-setting! :unicode-font (family &rest spec)
+  "Sets the font to use for unicode characters (if one wasn't already set).
+FAMILY is the name of the font, and SPEC is a `font-spec'. This is ignored if
+the ':ui unicode' module is enabled."
   `(unless doom-unicode-font
      (setq doom-unicode-font (font-spec :family ,family ,@spec))))
 
@@ -169,12 +179,9 @@ local value, whether or not it's permanent-local. Therefore, we cycle
   "Set the major mode's `mode-name', as dictated by `doom-major-mode-names'."
   (when-let (name (cdr (assq major-mode doom-major-mode-names)))
     (setq mode-name
-          (cond ((functionp name)
-                 (funcall name))
-                ((stringp name)
-                 name)
-                (t
-                 (error "'%s' isn't a valid name for %s" name major-mode))))))
+          (cond ((functionp name) (funcall name))
+                ((stringp name) name)
+                (t (error "'%s' isn't a valid name for %s" name major-mode))))))
 (add-hook 'after-change-major-mode-hook #'doom|set-mode-name)
 
 
@@ -227,7 +234,7 @@ local value, whether or not it's permanent-local. Therefore, we cycle
 
 ;; prompts the user for confirmation when deleting a non-empty frame
 (define-key global-map [remap delete-frame] #'doom/delete-frame)
-;; buffer name in frame title
+;; simple name in frame title
 (setq-default frame-title-format '("DOOM Emacs"))
 ;; auto-enabled in Emacs 25+; I'll do it myself
 (global-eldoc-mode -1)
@@ -273,6 +280,7 @@ local value, whether or not it's permanent-local. Therefore, we cycle
   :commands (fringe-helper-define fringe-helper-convert)
   :init
   (unless (fboundp 'define-fringe-bitmap)
+    ;; doesn't exist in terminal Emacs; define it to prevent errors
     (defun define-fringe-bitmap (&rest _))))
 
 (def-package! hideshow ; built-in
@@ -309,13 +317,6 @@ local value, whether or not it's permanent-local. Therefore, we cycle
   :commands rainbow-delimiters-mode
   :config (setq rainbow-delimiters-max-face-count 3)
   :init (add-hook 'lisp-mode-hook #'rainbow-delimiters-mode))
-
-;; indicators for empty lines past EOF
-(def-package! vi-tilde-fringe
-  :commands (global-vi-tilde-fringe-mode vi-tilde-fringe-mode)
-  :init
-  (add-hook 'doom-init-ui-hook #'global-vi-tilde-fringe-mode)
-  (defun doom|disable-vi-tilde-fringe () (vi-tilde-fringe-mode -1)))
 
 ;; For a distractions-free-like UI, that dynamically resizes margets and can
 ;; center a buffer.

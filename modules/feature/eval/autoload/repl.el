@@ -25,7 +25,7 @@
           t))))
 
 ;;;###autoload
-(defun +eval/repl ()
+(defun +eval/open-repl ()
   "Opens (or reopens) the REPL associated with the current major-mode and place
 the cursor at the prompt."
   (interactive)
@@ -36,7 +36,7 @@ the cursor at the prompt."
       t)))
 
 ;;;###autoload
-(defun +eval/repl-send-region (beg end &optional auto-execute-p)
+(defun +eval/send-region-to-repl (beg end &optional auto-execute-p)
   "REPL must be open! Sends a selected region to it. If AUTO-EXECUTE-P, then
 execute it immediately after."
   (interactive "r")
