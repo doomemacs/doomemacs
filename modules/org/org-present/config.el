@@ -32,18 +32,12 @@
   (add-hook! 'org-tree-slide-mode-after-narrow-hook
     #'(+org-present|detect-slide +org-present|add-overlays org-display-inline-images))
 
-  (add-hook 'org-tree-slide-mode-hook #'+org-present|org-tree-prepare-window)
+  (add-hook 'org-tree-slide-mode-hook #'+org-present|init-org-tree-window)
   (advice-add #'org-tree-slide--display-tree-with-narrow
-              :around #'+doom-present*org-tree-slide-narrow-exclude-header))
+              :around #'+org-present*narrow-to-subtree))
 
 
-(def-package! centered-window-mode
-  :commands centered-window-mode
-  :config
-  (setq cwm-use-vertical-padding t
-        cwm-frame-internal-border 110
-        cwm-left-fringe-ratio -10
-        cwm-centered-window-width 240))
+(def-package! centered-window-mode :commands centered-window-mode)
 
 
 ;;
@@ -52,8 +46,5 @@
 
 (defun +org-present|init ()
   (require 'ox-reveal)
-
-  (map! :map org-mode-map
-        "<f8>" #'+org-present/org-tree-slides
-        "<f7>" #'+org-present/next))
+  (map! :map org-mode-map "<f8>" #'+org-present/start))
 
