@@ -26,8 +26,8 @@
         org-tree-slide-modeline-display nil)
 
   (map! :map org-tree-slide-mode-map
-        [right] #'org-tree-slide-move-next-tree
-        [left]  #'org-tree-slide-move-previous-tree)
+        :n [right] #'org-tree-slide-move-next-tree
+        :n [left]  #'org-tree-slide-move-previous-tree)
 
   (add-hook! 'org-tree-slide-mode-after-narrow-hook
     #'(+org-present|detect-slide +org-present|add-overlays org-display-inline-images))
