@@ -120,7 +120,8 @@
    (:desc "search" :prefix "/"
      :desc "Swiper"                :nv "/" #'swiper
      :desc "Imenu"                 :nv "i" #'imenu
-     :desc "Imenu across buffers"  :nv "I" #'imenu-anywhere)
+     :desc "Imenu across buffers"  :nv "I" #'imenu-anywhere
+     :desc "Online providers"      :nv "o" #'+jump/online-select)
 
    (:desc "workspace" :prefix "TAB"
      :desc "Display tab bar"          :n "TAB" #'+workspace/display

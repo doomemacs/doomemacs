@@ -132,3 +132,10 @@ for the provider."
         (setq +jump--online-last provider)
         (funcall +jump-search-browser-fn (format url (url-encode-url search))))
     ('error (setq +jump--online-last nil))))
+
+;;;###autoload
+(defun +jump/online-select ()
+  "Runs `+jump/online', but always prompts for the provider to use."
+  (interactive)
+  (let ((current-prefix-arg t))
+    (call-interactively #'+jump/online)))
