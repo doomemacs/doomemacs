@@ -428,17 +428,6 @@ the workspace and move to the next."
           (t
            (error "Can't delete last frame.")))))
 
-;;;###autoload
-(defun +workspace/cleanup ()
-  "Clean up orphaned buffers and processes."
-  (interactive)
-  (let ((buffers (cl-remove-if #'persp--buffer-in-persps (buffer-list)))
-        (n (doom-kill-process-buffers)))
-    (mapc #'kill-buffer buffers)
-    (when (called-interactively-p 'any)
-      (message "Cleaned up %d buffers and %d processes"
-               (length buffers) n))))
-
 
 ;;
 ;; Tabs display in minibuffer
