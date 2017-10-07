@@ -33,7 +33,7 @@ MODES should be one major-mode symbol or a list of them."
         company-dabbrev-code-other-buffers t
         company-tooltip-align-annotations t
         company-require-match 'never
-        company-global-modes '(not eshell-mode comint-mode erc-mode message-mode help-mode)
+        company-global-modes '(not eshell-mode comint-mode erc-mode message-mode help-mode gud-mode)
         company-frontends '(company-pseudo-tooltip-frontend company-echo-metadata-frontend)
         company-backends '(company-capf company-dabbrev company-ispell)
         company-transformers '(company-sort-by-occurrence))
