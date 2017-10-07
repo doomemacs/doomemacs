@@ -188,9 +188,10 @@
      :desc "Yank filename"             :n "y" #'+hlissner/yank-buffer-filename)
 
    (:desc "git" :prefix "g"
-     :desc "Git status"        :n  "s" #'magit-status
+     :desc "Git status"        :n  "S" #'magit-status
      :desc "Git blame"         :n  "b" #'magit-blame
      :desc "Git time machine"  :n  "t" #'git-timemachine-toggle
+     :desc "Git stage hunk"    :n  "s" #'git-gutter:stage-hunk
      :desc "Git revert hunk"   :n  "r" #'git-gutter:revert-hunk
      :desc "Git revert buffer" :n  "R" #'vc-revert
      :desc "List gists"        :n  "g" #'+gist:list
