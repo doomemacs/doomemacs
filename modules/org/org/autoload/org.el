@@ -202,12 +202,9 @@ wrong places)."
              ('above (+org/table-prepend-row-or-shift-up))))
 
           ((memq type '(headline inlinetask))
-           (let* ((subcontext (org-element-context))
-                  (level (save-excursion
-                           (org-back-to-heading)
-                           (if (eq (org-element-type subcontext) 'headline)
-                               (org-element-property :level subcontext)
-                             1))))
+           (let ((level (if (eq (org-element-type context) 'headline)
+                            (org-element-property :level context)
+                          1)))
              (pcase direction
                ('below
                 (let ((at-eol (= (point) (1- (line-end-position)))))
