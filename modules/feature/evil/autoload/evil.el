@@ -54,7 +54,7 @@ evil-window-move-* (e.g. `evil-window-move-far-left')"
                               ('down 'below)
                               (_ direction))))
         (with-selected-window that-window
-          (switch-to-buffer doom-buffer))
+          (switch-to-buffer (doom-fallback-buffer)))
         (setq that-buffer (window-buffer that-window)))
       (with-selected-window this-window
         (switch-to-buffer that-buffer))
