@@ -6,8 +6,7 @@ state are passed in.")
 
 (def-package! projectile
   :demand t
-  :init (add-hook 'doom-init-hook #'projectile-mode)
-  :config
+  :init
   (setq projectile-cache-file (concat doom-cache-dir "projectile.cache")
         projectile-enable-caching (not noninteractive)
         projectile-indexing-method 'alien
@@ -16,6 +15,8 @@ state are passed in.")
         projectile-globally-ignored-files '(".DS_Store" "Icon" "TAGS")
         projectile-globally-ignored-file-suffixes '(".elc" ".pyc" ".o"))
 
+  (add-hook 'doom-init-hook #'projectile-mode)
+  :config
   ;; a more generic project root file
   (push ".project" projectile-project-root-files-bottom-up)
 
