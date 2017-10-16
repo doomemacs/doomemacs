@@ -36,11 +36,10 @@ Tries xref and falls back to `dumb-jump', then rg/ag, then
         ((and (fboundp 'dumb-jump-go)
               ;; dumb-jump doesn't tell us if it succeeded or not
               (let (successful)
-                (cl-letf (((symbol-function 'dumb-jump-result-follow)
-                           `(lambda (result &optional use-tooltip proj)
-                              (setq successful t)
-                              (,(symbol-function 'dumb-jump-result-follow)
-                               result use-tooltip proj))))
+                (flet ((old-dumb-jump-result-follow (result &optional use-tooltip proj) (dumb-jump-result-follow result use-tooltip proj))
+                       (dumb-jump-result-follow (result &optional use-tooltip proj)
+                                                (setq successful t)
+                                                (old-dumb-jump-result-follow result use-tooltip proj)))
                   (if other-window
                       (dumb-jump-go-other-window)
                     (dumb-jump-go))
