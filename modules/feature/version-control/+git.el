@@ -85,5 +85,7 @@
 
 
 (def-package! git-link
-  :commands (git-link git-link-commit git-link-homepage))
+  :commands (git-link git-link-commit git-link-homepage
+             git-link--select-remote git-link--remote-host
+             git-link--remote-dir git-link--get-region))
 
