@@ -242,14 +242,6 @@ with functions that require it (like modeline segments)."
 (def-package! ace-link
   :commands (ace-link-help ace-link-org))
 
-(def-package! ace-window
-  :commands (ace-window ace-swap-window ace-delete-window
-             ace-select-window ace-delete-other-windows)
-  :config
-  (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)
-        aw-scope 'frame
-        aw-background t))
-
 (def-package! avy
   :commands (avy-goto-char-2 avy-goto-line)
   :config

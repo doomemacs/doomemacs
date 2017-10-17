@@ -1,0 +1,23 @@
+#+TITLE: :ui window-select
+
+This module provides the user with a visual way to switch windows. By default, the module only kicks in if there are more than two windows open at the same time.
+
+* Keybindings
+The default function to switch windows is automatically changed to work with this module. More specifically, the function ~other-window~ is automatically remapped. This function is bounded by default to ~C-x o~.
+
+* Customization
+There are two packages that accomplish the same but with a different visual queue.
+
+** ace-window
+The first character of the buffers change to a user selectable character.
+ + Pros: The content of the buffers are always visible.
+ + Cons: The displayed characters are small and difficult to see.
+
+This is the module's default if no module flag is specified. To explicitly enable this, write in *init.el*: ~(doom! :ui (window-select +ace-window))~
+
+** switch-window
+The entire buffer is replaced by big letters than enable the user to easily select a desired window.
+ + Pros: The displayed characters are easy to see. They will never be missed.
+ + Cons: The contents of the buffers is entirely replaced by a big character.
+
+To enable this, write in *init.el*: ~(doom! :ui (window-select +switch-window))~
