@@ -238,7 +238,7 @@ without leaving any trace behind (muahaha)."
       (call-interactively
        (if (featurep 'evil)
            #'evil-force-normal-state
-         #'keyboard-escape-quit))
+         #'keyboard-quit))
     (delete-window)))
 
 ;;;###autoload
