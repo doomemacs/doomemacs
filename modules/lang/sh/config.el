@@ -32,7 +32,7 @@
                (1 'default prepend)
                (2 'font-lock-variable-name-face prepend))
               (+sh--match-command-subst-in-quotes
-               (0 'sh-quoted-exec prepend))
+               (1 'sh-quoted-exec prepend))
               (,(regexp-opt +sh-builtin-keywords 'words)
                (0 'font-lock-builtin-face append))))
 
