@@ -186,6 +186,32 @@ with functions that require it (like modeline segments)."
   :config
   (add-hook 'doom-init-hook #'editorconfig-mode)
 
+  ;; editorconfig cannot procure the correct settings for extension-less files.
+  ;; Executable scripts with a shebang line, for example. So why not use Emacs'
+  ;; major mode to drop editorconfig a hint? This is accomplished by temporarily
+  ;; appending an extension to `buffer-file-name' when we talk to editorconfig.
+  (defvar doom-editorconfig-mode-alist
+    '((sh-mode     . "sh")
+      (python-mode . "py")
+      (ruby-mode   . "rb")
+      (perl-mode   . "pl")
+      (php-mode    . "php"))
+    "An alist mapping major modes to extensions. Used by
+`doom*editorconfig-smart-detection' to give editorconfig filetype hints.")
+
+  (defun doom*editorconfig-smart-detection (orig-fn &rest args)
+    "Retrieve the properties for the current file. If it doesn't have an
+extension, try to guess one."
+    (let ((buffer-file-name
+           (if (file-name-extension buffer-file-name)
+               buffer-file-name
+             (format "%s%s" buffer-file-name
+                     (let ((ext (cdr (assq major-mode doom-editorconfig-mode-alist))))
+                       (or (and ext (concat "." ext))
+                           ""))))))
+      (apply orig-fn args)))
+  (advice-add #'editorconfig-call-editorconfig-exec :around #'doom*editorconfig-smart-detection)
+
   ;; Editorconfig makes indentation weird in Lisp modes, so we disable it. It
   ;; still applies other project settings (e.g. tabs vs spaces) though.
   (set! :editorconfig :remove 'emacs-lisp-mode)
