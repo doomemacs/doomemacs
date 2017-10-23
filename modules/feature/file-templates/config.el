@@ -11,12 +11,11 @@
   :init
   (setq auto-insert-query nil  ; Don't prompt before insertion
         auto-insert-alist nil) ; Tabula rasa
+  (after! yasnippet
+    (push '+file-templates-dir yas-snippet-dirs))
 
   :config
   (auto-insert-mode 1)
-
-  (after! yasnippet
-    (push '+file-templates-dir yas-snippet-dirs))
 
   (defun +file-templates--expand (key &optional mode project-only)
     "Auto insert a snippet of yasnippet into new file."

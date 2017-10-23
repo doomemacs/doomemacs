@@ -11,6 +11,8 @@
   (defvar yas-minor-mode-map (make-sparse-keymap))
 
   :init
+  (setq yas-snippet-dirs '(yas-installed-snippets-dir))
+
   ;; Ensure `yas-reload-all' is called as late as possible. Other modules could
   ;; have additional configuration for yasnippet. For example, file-templates.
   (add-transient-hook! 'yas-minor-mode-hook (yas-reload-all))
@@ -23,7 +25,6 @@
         yas-indent-line 'auto
         yas-also-auto-indent-first-line t
         yas-prompt-functions '(yas-completing-prompt yas-ido-prompt yas-no-prompt)
-        yas-snippet-dirs '(yas-installed-snippets-dir)
         yas-use-menu nil
         ;; Allow nested snippets
         yas-triggers-in-field t)
