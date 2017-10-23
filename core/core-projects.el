@@ -20,7 +20,7 @@ state are passed in.")
   ;; a more generic project root file
   (push ".project" projectile-project-root-files-bottom-up)
 
-  (nconc projectile-globally-ignored-directories (list doom-local-dir ".sync"))
+  (nconc projectile-globally-ignored-directories (list (abbreviate-file-name doom-local-dir) ".sync"))
   (nconc projectile-other-file-alist '(("css"  . ("scss" "sass" "less" "style"))
                                        ("scss" . ("css"))
                                        ("sass" . ("css"))
