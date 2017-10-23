@@ -61,17 +61,6 @@ modes are active and the buffer is read-only.")
       (ignore (bury-buffer))))
 (add-hook 'kill-buffer-query-functions #'doom|dont-kill-scratch-buffer)
 
-(defun doom*delete-trailing-whitespace (orig-fn &rest args)
-  "Don't affect trailing whitespace on current line."
-  (let ((linestr (buffer-substring-no-properties
-                  (line-beginning-position)
-                  (line-end-position))))
-    (apply orig-fn args)
-    (when (and (if (featurep 'evil) (evil-insert-state-p) t)
-               (string-match-p "^[\s\t]*$" linestr))
-      (insert linestr))))
-(advice-add #'delete-trailing-whitespace :around #'doom*delete-trailing-whitespace)
-
 (defun doom|check-large-file ()
   "Check if the buffer's file is large (see `doom-large-file-size'). If so, ask
 for confirmation to open it literally (read-only, disabled undo and in
@@ -111,10 +100,8 @@ enable multiple minor modes for the same regexp.")
         (if (string-match-p (caar alist) name)
             (funcall (cdar alist) 1))
         (setq alist (cdr alist))))))
-
 (add-hook 'find-file-hook #'doom|enable-minor-mode-maybe)
 
-;; ensure indirect buffers have buffer-file-name
 (defun doom*set-indirect-buffer-filename (orig-fn base-buffer name &optional clone)
   "In indirect buffers, `buffer-file-name' is nil, which can cause problems
 with functions that require it (like modeline segments)."
@@ -127,6 +114,19 @@ with functions that require it (like modeline segments)."
                 buffer-file-truename (file-truename file-name)))))
     buffer))
 (advice-add #'make-indirect-buffer :around #'doom*set-indirect-buffer-filename)
+
+(defun doom*delete-trailing-whitespace (orig-fn &rest args)
+  "Don't affect trailing whitespace on current line."
+  (let ((linestr (buffer-substring-no-properties
+                  (line-beginning-position)
+                  (line-end-position))))
+    (apply orig-fn args)
+    (when (and (if (featurep 'evil) (evil-insert-state-p) t)
+               (string-match-p "^[\s\t]*$" linestr))
+      (insert linestr))))
+(advice-add #'delete-trailing-whitespace :around #'doom*delete-trailing-whitespace)
+
+(push '("/LICENSE$" . text-mode) auto-mode-alist)
 
 
 ;;
