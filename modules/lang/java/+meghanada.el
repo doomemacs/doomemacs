@@ -2,6 +2,8 @@
 
 (def-package! meghanada
   :commands meghanada-mode
+  :init
+  (add-hook! 'java-mode-hook #'(meghanada-mode rainbow-delimiters-mode))
   :config
   (setq meghanada-server-install-dir (concat doom-etc-dir "meghanada-server/")
         meghanada-use-company (featurep! :completion company)
@@ -9,12 +11,10 @@
         meghanada-use-eldoc t
         meghanada-use-auto-start t)
 
-  (add-hook 'java-mode-hook #'(rainbow-delimiters-mode eldoc-mode))
-
   ;; Setup on first use
   (meghanada-install-server)
   (if (file-exists-p (meghanada--locate-server-jar))
-      (add-hook! 'java-mode-hook #'(meghanada-mode flycheck-mode))
+      (add-hook! 'meghanada-mode-hook #'(flycheck-mode eldoc-mode))
     (warn "java-mode: meghanada-server not installed, java-mode will run with reduced functionality"))
 
   (set! :jump 'java-mode
