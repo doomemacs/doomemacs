@@ -52,6 +52,7 @@
           ("/Makefile$"                      "__"               makefile-gmake-mode)
           ;; Elisp
           ("\\.el$"                          "__initfile"       emacs-lisp-mode)
+          (".dir-locals.el$"                 "__"               emacs-lisp-mode)
           ("-test\\.el$"                     "__"               emacs-ert-mode)
           ("/.emacs.d/.+\\.el$"              "__doom-module"    emacs-lisp-mode)
           ("/.emacs.d/.+/packages\\.el$"     "__doom-packages"  emacs-lisp-mode)
