@@ -31,10 +31,13 @@
         (evil-initialize-state 'insert))))
 
   (defun +file-templates-add (args)
-    (cl-destructuring-bind (regexp trigger mode &optional project-only-p) args
+    (cl-destructuring-bind (regexp trigger &optional mode project-only-p) args
       (define-auto-insert
         regexp
-        (vector `(lambda () (+file-templates--expand ,trigger ',mode ,project-only-p))))))
+        (if trigger
+            (vector
+             `(lambda () (+file-templates--expand ,trigger ',mode ,project-only-p)))
+          #'ignore))))
 
   (mapc #'+file-templates-add
         ;; General
@@ -51,6 +54,7 @@
           ("/Makefile$"                      "__"               makefile-gmake-mode)
           ;; Elisp
           ("\\.el$"                          "__initfile"       emacs-lisp-mode)
+          ("/.dir-locals.el$"                nil)
           ("-test\\.el$"                     "__"               emacs-ert-mode)
           ("/.emacs.d/.+\\.el$"              "__doom-module"    emacs-lisp-mode)
           ("/.emacs.d/.+/packages\\.el$"     "__doom-packages"  emacs-lisp-mode)
