@@ -29,6 +29,18 @@
 ;; Helpers
 ;;
 
+;; stole from https://emacs.stackexchange.com/a/16495/16662
+(defmacro doom-with-advice (args &rest body)
+  (declare (indent 1))
+  (let ((fun-name (car args))
+        (advice   (cadr args))
+        (orig-sym (make-symbol "orig")))
+    `(cl-letf* ((,orig-sym  (symbol-function ',fun-name))
+                ((symbol-function ',fun-name)
+                 (lambda (&rest args)
+                   (apply ,advice ,orig-sym args))))
+       ,@body)))
+
 (defun doom--resolve-path-forms (paths &optional root)
   (cond ((stringp paths)
          `(file-exists-p

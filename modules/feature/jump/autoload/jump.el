@@ -33,17 +33,16 @@ Tries xref and falls back to `dumb-jump', then rg/ag, then
                           (xref-find-definitions identifier))
                         t))
 
-        ((and (fboundp 'dumb-jump-go)
+        ((and (featurep 'dumb-jump)
               ;; dumb-jump doesn't tell us if it succeeded or not
               (let (successful)
-                (flet ((old-dumb-jump-result-follow (result &optional use-tooltip proj) (dumb-jump-result-follow result use-tooltip proj))
-                       (dumb-jump-result-follow (result &optional use-tooltip proj)
-                                                (setq successful t)
-                                                (old-dumb-jump-result-follow result use-tooltip proj)))
-                  (if other-window
-                      (dumb-jump-go-other-window)
-                    (dumb-jump-go))
-                  successful))))
+                (doom-with-advice (dumb-jump-result-follow
+                                   (lambda (origin-fun &rest args)
+                                     (funcall origin-fun args)))
+                                  (if other-window
+                                      (dumb-jump-go-other-window)
+                                    (dumb-jump-go))
+                                  successful))))
 
         ((and identifier
               (featurep 'counsel)
