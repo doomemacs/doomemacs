@@ -31,8 +31,8 @@ don't shy away from dabbling with Elisp.
 
 Rip and tear. Until it compiles.
 
-> **Important:** Doom only supports Emacs >= 25.1, and is tailored for Arch
-> Linux 4.7+ and Mac OS 10.11+.
+> **Important:** Doom **only** supports Emacs >= 25.1, and is tested on Arch
+> Linux 4.7+ and Mac OS 10.11+. YMMV on other OSes and distros.
 
 - - -
 
