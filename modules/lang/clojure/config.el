@@ -9,6 +9,8 @@
         (:localleader
           "'"      #'cider-jack-in
           "\""     #'cider-jack-in-clojurescript
+          "b"      #'cider-switch-to-repl-buffer
+          "n"      #'cider-repl-switch-ns
           "r"      #'cider-eval-region)))
 
 (def-package! cider
