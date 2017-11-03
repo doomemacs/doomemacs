@@ -45,6 +45,8 @@ cp init.example.el init.el  # maybe edit init.el
 make install
 ```
 
+Remember to run `make` every time you modify init.el.
+
 Visit the wiki for [a more detailed guide on installing, customizing and
 grokking Doom][wiki].
 
