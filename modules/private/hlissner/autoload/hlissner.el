@@ -22,6 +22,7 @@ private/hlissner/snippets."
      (defun ,(intern (format "+hlissner/find-in-%s" name)) ()
        (interactive)
        (let ((default-directory ,dir)
+             projectile-project-name
              projectile-require-project-root
              projectile-cached-buffer-file-name
              projectile-cached-project-root)
