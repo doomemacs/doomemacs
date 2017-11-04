@@ -134,33 +134,20 @@ Used by `doom/packages-update'."
                 (if (eq (doom-package-backend sym) 'quelpa)
                     quelpa-pkgs
                   elpa-pkgs)))))
-    ;; The bottleneck in this process is quelpa's version checks, so partition
-    ;; and check them asynchronously.
-    (let* ((max-threads 3) ; TODO Do real CPU core/thread count
-           (min-per-part 2)
-           (per-part (max min-per-part (ceiling (/ (length quelpa-pkgs) (float max-threads)))))
-           (leftover (mod (length quelpa-pkgs) per-part))
-           parts
-           futures)
-      (while quelpa-pkgs
-        (let (part)
-          (dotimes (_i (+ per-part leftover))
-            (when-let (p (pop quelpa-pkgs))
-              (push p part)))
-          (setq leftover 0)
-          (push (nreverse part) parts)))
-      (dolist (part (reverse parts))
-        (debug! "New thread for: %s" part)
+    ;; The bottleneck in this process is quelpa's version checks, so check them
+    ;; asynchronously.
+    (let (futures)
+      (dolist (pkg quelpa-pkgs)
+        (debug! "New thread for: %s" pkg)
         (push (async-start
                `(lambda ()
                   (setq user-emacs-directory ,user-emacs-directory)
                   (let ((noninteractive t))
                     (load ,(expand-file-name "core.el" doom-core-dir)))
-                  (delq nil (mapcar #'doom-package-outdated-p ',part))))
+                  (doom-package-outdated-p ',pkg)))
               futures))
-      (apply #'append
-             (delq nil (mapcar #'doom-package-outdated-p elpa-pkgs))
-             (mapcar #'async-get futures)))))
+      (append (delq nil (mapcar #'doom-package-outdated-p elpa-pkgs))
+              (delq nil (mapcar #'async-get (reverse futures)))))))
 
 ;;;###autoload
 (defun doom-get-orphaned-packages ()
