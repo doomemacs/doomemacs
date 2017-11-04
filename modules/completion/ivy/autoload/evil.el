@@ -25,6 +25,9 @@
          (directory (or directory project-root))
          (recursion-p +ivy--file-search-recursion-p)
          (all-files-p +ivy--file-search-all-files-p)
+         (engine (or engine
+                     (and (executable-find "rg") 'rg)
+                     (and (executable-find "ag") 'ag)))
          (query
           (or query
               (if (evil-visual-state-p)
