@@ -147,7 +147,11 @@ startup."
     (dolist (dir (list doom-local-dir doom-etc-dir doom-cache-dir package-user-dir))
       (unless (file-directory-p dir)
         (make-directory dir t)))
-    (package-initialize t)
+    (condition-case _ (package-initialize t)
+      ('error
+       (package-refresh-contents)
+       (setq doom--refresh-p t)
+       (package-initialize t)))
     ;; We could let `package-initialize' fill `load-path', but it costs precious
     ;; milliseconds and does other stuff I don't need (like load autoload
     ;; files). My premature optimization quota isn't filled yet.
