@@ -1,4 +1,5 @@
-;;; org/org-attach/autoload/evil.el -*- lexical-binding: t; -*-
+;; org/org-attach/autoload/evil.el -*- lexical-binding: t; -*-
+;;;###if (featurep! :feature evil)
 
 ;; TODO +org-attach:find
 

@@ -1,4 +1,5 @@
-;;; feature/evil/autoload/evil.el -*- lexical-binding: t; -*-
+;; feature/evil/autoload/evil.el -*- lexical-binding: t; -*-
+;;;###if (featurep! :feature evil)
 
 ;;;###autoload
 (defun +evil/visual-indent ()
