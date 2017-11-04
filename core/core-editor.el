@@ -15,7 +15,7 @@ modes are active and the buffer is read-only.")
  ;; Save clipboard contents into kill-ring before replacing them
  save-interprogram-paste-before-kill t
  ;; Bookmarks
- bookmark-default-file (concat doom-cache-dir "bookmarks")
+ bookmark-default-file (concat doom-etc-dir "bookmarks")
  bookmark-save-flag t
  ;; Formatting
  delete-trailing-lines nil
@@ -152,7 +152,7 @@ with functions that require it (like modeline segments)."
 (def-package! recentf
   :init (add-hook 'doom-init-hook #'recentf-mode)
   :config
-  (setq recentf-save-file (concat doom-cache-dir "recentf")
+  (setq recentf-save-file (concat doom-etc-dir "recentf")
         recentf-max-menu-items 0
         recentf-max-saved-items 300
         recentf-exclude

@@ -28,7 +28,7 @@ renamed.")
         persp-nil-name "nil"
         persp-nil-hidden t
         persp-auto-save-fname "autosave"
-        persp-save-dir (concat doom-cache-dir "workspaces/")
+        persp-save-dir (concat doom-etc-dir "workspaces/")
         persp-set-last-persp-for-new-frames nil
         persp-switch-to-added-buffer nil
         persp-remove-buffers-from-nil-persp-behaviour nil
