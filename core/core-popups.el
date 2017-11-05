@@ -97,6 +97,7 @@ recognized by DOOM's popup system. They are:
           ("^\\*doom:" :regexp t :size 0.35 :noesc t :select t)
           ("^ ?\\*doom " :regexp t :noselect t :autokill t :autoclose t :autofit t)
           ;; built-in (emacs)
+          ("*compilation*" :size 0.25 :noselect t :autokill t :autoclose t)
           ("*ert*" :same t :modeline t)
           ("*info*" :size 0.5 :select t :autokill t)
           ("*Backtrace*" :size 20 :noselect t)
