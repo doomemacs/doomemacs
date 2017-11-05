@@ -138,11 +138,15 @@
                                               'default)
                                           :background nil t)))
 
-  ;; Use ivy/helm if either is available
-  (when (or (featurep! :completion ivy)
-            (featurep! :completion helm))
-    (setq-default org-completion-use-ido nil
-                  org-outline-path-complete-in-steps nil)))
+  ;; Custom links
+  (org-link-set-parameters
+   "org"
+   :complete (lambda () (+org-link-read-file "org" +org-dir))
+   :follow   (lambda (link) (find-file (expand-file-name link +org-dir)))
+   :face     (lambda (link)
+               (if (file-exists-p (expand-file-name link +org-dir))
+                   'org-link
+                 'error))))
 
 (defun +org-init-keybinds ()
   "Sets up org-mode and evil keybindings. Tries to fix the idiosyncrasies
