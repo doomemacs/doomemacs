@@ -303,7 +303,7 @@ package.el as appropriate."
 ;;
 
 ;;;###autoload
-(defun doom/packages-install ()
+(defun doom//packages-install ()
   "Interactive command for installing missing packages."
   (interactive)
   (let ((packages (doom-get-missing-packages)))
@@ -341,10 +341,10 @@ package.el as appropriate."
                           "")))))
 
           (message! (bold (green "Finished!")))
-          (doom/reload-load-path))))
+          (doom//reload-load-path))))
 
 ;;;###autoload
-(defun doom/packages-update ()
+(defun doom//packages-update ()
   "Interactive command for updating packages."
   (interactive)
   (doom-refresh-packages doom-debug-mode)
@@ -382,10 +382,10 @@ package.el as appropriate."
                         (if result "DONE" "FAILED"))))))
 
            (message! (bold (green "Finished!")))
-           (doom/reload-load-path)))))
+           (doom//reload-load-path)))))
 
 ;;;###autoload
-(defun doom/packages-autoremove ()
+(defun doom//packages-autoremove ()
   "Interactive command for auto-removing orphaned packages."
   (interactive)
   (let ((packages (doom-get-orphaned-packages)))
@@ -415,7 +415,7 @@ package.el as appropriate."
                         pkg)))))
 
            (message! (bold (green "Finished!")))
-           (doom/reload-load-path)))))
+           (doom//reload-load-path)))))
 
 ;;;###autoload
 (defalias 'doom/install-package #'package-install)

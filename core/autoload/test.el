@@ -1,7 +1,7 @@
-;;; core/autoload/test.el -*- lexical-binding: t; -*-
+;;; core/autoload/test.el -*- lexical-binding: t; no-byte-compile: t; -*-
 
 ;;;###autoload
-(defun doom-run-tests (&optional modules)
+(defun doom//run-tests (&optional modules)
   "Run all loaded tests, specified by MODULES (a list of module cons cells) or
 command line args following a double dash (each arg should be in the
 'module/submodule' format).

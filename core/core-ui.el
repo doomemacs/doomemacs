@@ -29,7 +29,7 @@ shorter major mode name in the mode-line. See `doom|set-mode-name'.")
 ;; Hook(s)
 (defvar doom-init-ui-hook nil
   "List of hooks to run when the theme and font is initialized (or reloaded with
-`doom/reload-theme').")
+`doom//reload-theme').")
 
 
 ;; Settings

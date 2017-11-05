@@ -48,7 +48,7 @@ state are passed in.")
 ;; Library
 ;;
 
-(defun doom/reload-project ()
+(defun doom//reload-project ()
   "Reload the project root cache."
   (interactive)
   (projectile-invalidate-cache nil)

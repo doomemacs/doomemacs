@@ -5,6 +5,7 @@
 ;;   doom-...   public variables or non-interactive functions
 ;;   doom--...  private anything (non-interactive), not safe for direct use
 ;;   doom/...   an interactive function; safe for M-x or keybinding
+;;   doom//...  an interactive function for managing/maintaining Doom itself
 ;;   doom:...   an evil operator, motion or command
 ;;   doom|...   hook function
 ;;   doom*...   advising functions
