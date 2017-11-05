@@ -3,6 +3,7 @@
 ;;;###autoload
 (defun +vcs-root ()
   "Get git url root."
+  (require 'git-link)
   (let ((remote (git-link--select-remote)))
     (if (git-link--remote-host remote)
         (format "https://%s/%s"
