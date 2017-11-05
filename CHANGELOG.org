@@ -10,6 +10,53 @@
 - [[#200-jan-17-2017][2.0.0 (Jan 17, 2017)]]
 
 * Unreleased (develop)
++ *Module changes:*
+  + Split =lang/java= into two submodules: one for eclim, and another for
+    meghanada. The latter is still the default, however. Also, the eclim
+    submodule is experimental, since I have few opportunities to test it.
+  + Add =ui/window-select= (and moved ace-window out of ~core-ui~), which offers
+    two submodules for interactive window selection/moving: ace-window and
+    switch-window.
++ =general=
+  + New command naming convention: ~doom//...~ -- denotes that this an
+    interactive command meant for:
+    + Altering or maintaining your Emacs configuration itself.
+    + And can be safely called through a batch session on the command line. E.g.
+      ~emacs --batch -f doom//some-command~.
+  + New macro for defining fuzzy-find menus (powered by whatever completion
+    engine you have active): ~def-menu!~.
+  + Autoload files can now specify a predicate cookie to tell the
+    compiler/autoload reader whether or not to ignore that file. They look like
+    ~;;;###if (featurep! :feature evil)~.
+  + =core-keybinds= Add :g flag to ~map!~ for defining global keybinds along
+    with vim keybinds, so you don't have to repeat yourself, just for a global
+    binding.
+  + =core-packages= Fix an issue where Doom's package management system wouldn't
+    know what to do with a package that was initially installed with one backend
+    (e.g. ELPA), and whose ~package!~ definition was later changed so that it
+    should be handled by another (e.g. QUELPA). This would cause "FAILED" error
+    messages while trying to install or update these packages (see [[https://github.com/hlissner/doom-emacs/issues/222][#222]]).
++ =feature=
+  + =file-templates= Disable file templates for .dir-locals.el files.
+  + =jump= New command ~+jump/online-select~, which is like ~+jump/online~, but
+    will always prompt for which provider to use.
++ =ui=
+  + =doom= This module no longer sets a default font. This is left to the user
+    to set in their own private module. Use ~(set! :font "Font Name" :size N)~
+    to do so.
++ =lang=
+  + =sh=
+    + Improve how variables and subshells in double-quoted strings are
+      fontified.
+    + Fix imenu not recognizing functions with dashes in their names.
+  + =java=
+    + Polished meghanada-mode integration.
+    + New (and optional) +eclim submodule and module flag.
+  + =rust=
+    + Now checks the ~RUST_SRC_PATH~ environment variable before looking for
+      Rust's source in ~+rust-src-dir~.
+    + Now looks for a ~racer~ binary in ~PATH~ before looking in
+      ~+rust-src-dir~.
 
 * 2.0.6 (Oct 05, 2017)
 + *Module changes:*
