@@ -168,8 +168,8 @@ between the two."
           ;; Expand tables (or shiftmeta move)
           :ni "C-S-l" #'+org/table-append-field-or-shift-right
           :ni "C-S-h" #'+org/table-prepend-field-or-shift-left
-          :ni "C-S-k" #'+org/table-prepend-row-or-shift-up
-          :ni "C-S-j" #'+org/table-append-row-or-shift-down
+          :ni "C-S-k" #'org-metaup
+          :ni "C-S-j" #'org-metadown
 
           :n  [tab]     #'+org/toggle-fold
           :i  [tab]     #'+org/indent-or-next-field-or-yas-expand

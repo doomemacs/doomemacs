@@ -199,7 +199,7 @@ wrong places)."
           ((memq type '(table table-row))
            (pcase direction
              ('below (org-table-insert-row t))
-             ('above (+org/table-prepend-row-or-shift-up))))
+             ('above (org-shiftmetadown))))
 
           ((memq type '(headline inlinetask))
            (let ((level (if (eq (org-element-type context) 'headline)

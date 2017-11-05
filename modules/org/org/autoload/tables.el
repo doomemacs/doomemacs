@@ -51,16 +51,3 @@ re-align the table if necessary. (Necessary because org-mode has a
   (interactive)
   (if (org-at-table-p) (org-shiftmetaright) (org-shiftmetaleft)))
 
-;;;###autoload
-(defun +org/table-append-row-or-shift-down ()
-  (interactive)
-  (org-shiftmetadown)
-  (when (org-at-table-p) (org-metadown)))
-
-;;;###autoload
-(defun +org/table-prepend-row-or-shift-up ()
-  (interactive)
-  (if (org-at-table-p)
-      (org-shiftmetadown)
-    (org-shiftmetaup)))
-
