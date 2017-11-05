@@ -2,10 +2,9 @@
 
 (defvar +sh-builtin-keywords
   '("cat" "cat" "cd" "chmod" "chown" "cp" "curl" "date" "echo" "find" "git"
-    "grep" "head" "kill" "less" "ls" "make" "mkdir" "mv" "pgrep" "pkill" "pwd"
-    "rm" "sleep" "sudo" "tail" "tee" "touch")
-  "A list of common shell commands and keywords to be fontified especially in
-`sh-mode'.")
+    "grep" "kill" "less" "ls" "make" "mkdir" "mv" "pgrep" "pkill" "pwd"
+    "rm" "sleep" "sudo" "touch")
+  "A list of common shell commands to be fontified especially in `sh-mode'.")
 
 
 ;;
