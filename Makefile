@@ -7,7 +7,7 @@ MODULES=$(patsubst modules/%, %, $(shell find modules/ -maxdepth 2 -type d))
 
 all: autoloads autoremove install
 
-## Aliases
+## Shortcuts
 a: autoloads
 i: install
 u: update
@@ -77,7 +77,7 @@ run:
 
 # Diagnoses potential OS/environment issues
 doctor:
-	@./bin/doom-doctor
+	@bin/doom-doctor
 
 ## Internal tasks
 init.el:

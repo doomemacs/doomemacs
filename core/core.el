@@ -162,7 +162,8 @@ ability to invoke the debugger in debug mode."
   ;; reset it to a reasonable default.
   (setq gc-cons-threshold 16777216
         gc-cons-percentage 0.1
-        file-name-handler-alist doom--file-name-handler-alist))
+        file-name-handler-alist doom--file-name-handler-alist)
+  t)
 
 
 ;;;

@@ -15,7 +15,7 @@ This module adds [[https://golang.org][Go]] support.
 #+begin_quote
 I have mixed feelings about Go. It's a decent compromise between C and higher-level languages, is pleasantly straight-forward and elegant, but lacks /native/ support for luxuries I miss from other languages, like generics, optional arguments, and function overloading. You've got to learn to love ~interface{}~.
 
-Still, Go has been a remarkably useful (and fast!) companion for a variety of small-to-medium backend web and CLI projects.
+Still, Go is a remarkably useful (and fast!) companion for a variety of small-to-medium backend web and CLI projects.
 #+end_quote
 
 * Table of Contents :TOC:

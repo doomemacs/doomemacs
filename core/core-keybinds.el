@@ -110,10 +110,8 @@
 For example, :nvi will map to (list 'normal 'visual 'insert). See
 `doom-evil-state-alist' to customize this."
   (cl-loop for l across (substring (symbol-name keyword) 1)
-           if (cdr (assq l doom-evil-state-alist))
-             collect it
-           else
-             do (error "not a valid state: %s" l)))
+           if (cdr (assq l doom-evil-state-alist)) collect it
+           else do (error "not a valid state: %s" l)))
 
 
 ;; Register keywords for proper indentation (see `map!')
@@ -259,7 +257,7 @@ Example
               (setq def (pop rest))
               (when desc
                 (push `(doom--keybind-register ,(key-description (eval key))
-                                              ,desc ',modes)
+                                               ,desc ',modes)
                       forms))
               (cond ((and doom--local doom--keymaps)
                      (push `(lwarn 'doom-map :warning

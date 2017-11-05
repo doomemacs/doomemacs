@@ -110,22 +110,22 @@ file-name => comint.el")
   :group 'doom)
 
 (defface doom-modeline-buffer-path
-  '((t (:inherit mode-line-emphasis :bold t)))
+  '((t (:inherit (mode-line-emphasis bold))))
   "Face used for the dirname part of the buffer path."
   :group '+doom-modeline)
 
 (defface doom-modeline-buffer-file
-  '((t (:inherit mode-line-buffer-id)))
+  '((t (:inherit (mode-line-buffer-id bold))))
   "Face used for the filename part of the mode-line buffer path."
   :group '+doom-modeline)
 
 (defface doom-modeline-buffer-modified
-  '((t (:inherit error :background nil :bold t)))
+  '((t (:inherit (error bold) :background nil)))
   "Face used for the 'unsaved' symbol in the mode-line."
   :group '+doom-modeline)
 
 (defface doom-modeline-buffer-major-mode
-  '((t (:inherit mode-line-emphasis :bold t)))
+  '((t (:inherit (mode-line-emphasis bold))))
   "Face used for the major-mode segment in the mode-line."
   :group '+doom-modeline)
 
@@ -141,17 +141,17 @@ file-name => comint.el")
   :group '+doom-modeline)
 
 (defface doom-modeline-info
-  `((t (:inherit success :bold t)))
+  `((t (:inherit (success bold))))
   "Face for info-level messages in the modeline. Used by `*vc'."
   :group '+doom-modeline)
 
 (defface doom-modeline-warning
-  `((t (:inherit warning :bold t)))
+  `((t (:inherit (warning bold))))
   "Face for warnings in the modeline. Used by `*flycheck'"
   :group '+doom-modeline)
 
 (defface doom-modeline-urgent
-  `((t (:inherit error :bold t)))
+  `((t (:inherit (error bold))))
   "Face for errors in the modeline. Used by `*flycheck'"
   :group '+doom-modeline)
 
