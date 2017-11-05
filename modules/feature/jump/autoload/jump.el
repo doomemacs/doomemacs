@@ -33,13 +33,19 @@ Tries xref and falls back to `dumb-jump', then rg/ag, then
                           (xref-find-definitions identifier))
                         t))
 
-        ((and (fboundp 'dumb-jump-go)
+        ((and (require 'dumb-jump nil t)
               ;; dumb-jump doesn't tell us if it succeeded or not
-              (let (successful)
-                (flet ((old-dumb-jump-result-follow (result &optional use-tooltip proj) (dumb-jump-result-follow result use-tooltip proj))
-                       (dumb-jump-result-follow (result &optional use-tooltip proj)
-                                                (setq successful t)
-                                                (old-dumb-jump-result-follow result use-tooltip proj)))
+              (let ((old-fn-sym (make-symbol "old-fn"))
+                    successful)
+                (cl-letf ((old-fn-sym (symbol-function 'dumb-jump-get-results))
+                          ((symbol-function 'dumb-jump-get-results)
+                           (lambda (&optional prompt)
+                             (message "-- %s" old-fn-sym)
+                             (let* ((plist (funcall old-fn-sym prompt))
+                                    (results (plist-get plist :results)))
+                               (when (and results (> (length results) 0))
+                                 (setq successful t))
+                               plist))))
                   (if other-window
                       (dumb-jump-go-other-window)
                     (dumb-jump-go))
@@ -55,7 +61,7 @@ Tries xref and falls back to `dumb-jump', then rg/ag, then
 
         ((and (featurep 'evil)
               evil-mode
-              (cl-destructuring-bind (beg end)
+              (cl-destructuring-bind (beg . end)
                   (bounds-of-thing-at-point 'symbol)
                 (evil-goto-definition)
                 (let ((pt (point)))
