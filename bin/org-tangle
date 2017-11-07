@@ -1,5 +1,6 @@
-#!emacs --script
-;;; bin/org-tangle -*- lexical-binding: t; -*-
+#!/usr/bin/env bash
+":"; exec emacs --quick --script "$0" -- "$@" # -*- mode: emacs-lisp; lexical-binding: t; -*-
+;;; bin/org-tangle
 
 ;; Extracts source blocks from org files and prints them to stdout. Debug/info
 ;; messages are directed to stderr and can be ignored. -l/--lang can be used to
@@ -24,9 +25,20 @@
     (apply orig-fn args)))
 (advice-add #'org-babel-tangle :around #'*org-babel-tangle)
 
-(let ((lang (when (member (car command-line-args-left) '("--lang" "-l"))
-              (pop command-line-args-left)
-              (pop command-line-args-left)))
-      (srcs (cl-remove-if-not 'file-exists-p command-line-args-left)))
+(let (lang srcs)
+  (pop argv)
+  (while argv
+    (let ((arg (pop argv)))
+      (pcase arg
+        ((or "--lang" "-l")
+         (setq lang (pop argv)))
+        ((guard (string-match-p "^--lang=" arg))
+         (setq lang (cadr (split-string arg "=" t t))))
+        ((guard (file-exists-p arg))
+         (push arg srcs))
+        (_
+         (error "Unknown option or file: %s" arg)))))
+
   (dolist (file srcs)
-    (org-babel-tangle-file file nil lang)))
+    (org-babel-tangle-file file nil lang))
+  (kill-emacs 0))
