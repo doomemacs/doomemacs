@@ -45,10 +45,10 @@ compile-elpa: init.el
 	@$(EMACS) -f doom//byte-recompile-plugins
 
 $(patsubst %, compile-%, $(MODULES)): init.el .local/autoloads.el
-	@$(EMACS) -f doom//byte-compile $(patsubst compile-%, %, $@)
+	@$(EMACS) -f doom//byte-compile -- $(patsubst compile-%, %, $@)
 
 recompile: init.el
-	@$(EMACS) -f doom//byte-compile -r
+	@$(EMACS) -f doom//byte-compile -- -r
 
 clean:
 	@$(EMACS) -f doom//clean-byte-compiled-files

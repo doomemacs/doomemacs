@@ -599,7 +599,7 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
    (list nil current-prefix-arg))
   (let ((default-directory doom-emacs-dir)
         (recompile-p (or recompile-p
-                         (and (member "-r" command-line-args) t))))
+                         (and (member "-r" (cdr argv)) t))))
     (if (not noninteractive)
         (let ((compilation-filter-hook
                (list (lambda () (ansi-color-apply-on-region compilation-filter-start (point))))))
@@ -610,7 +610,7 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
       (let ((total-ok   0)
             (total-fail 0)
             (total-noop 0)
-            (modules (or modules command-line-args-left))
+            (modules (or modules (cdr argv)))
             compile-targets)
         (doom-initialize-packages t t)
         (setq compile-targets
@@ -624,7 +624,7 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
                         nconc (nreverse (directory-files-recursively (expand-file-name target doom-modules-dir) "\\.el$"))
                        else if (file-exists-p target)
                         collect target
-                       finally do (setq command-line-args-left nil)))
+                       finally do (setq argv nil)))
         (unless compile-targets
           (error "No targets to compile"))
         (let ((use-package-expand-minimally t))
