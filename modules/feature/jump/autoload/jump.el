@@ -40,7 +40,6 @@ Tries xref and falls back to `dumb-jump', then rg/ag, then
                 (cl-letf ((old-fn-sym (symbol-function 'dumb-jump-get-results))
                           ((symbol-function 'dumb-jump-get-results)
                            (lambda (&optional prompt)
-                             (message "-- %s" old-fn-sym)
                              (let* ((plist (funcall old-fn-sym prompt))
                                     (results (plist-get plist :results)))
                                (when (and results (> (length results) 0))
