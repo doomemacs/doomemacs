@@ -1,6 +1,6 @@
 # Ensure emacs always runs from this makefile's PWD
 EMACS_FLAGS=--eval '(setq user-emacs-directory default-directory)' -l core/core.el
-EMACS=emacs --batch $(EMACS_FLAGS)
+EMACS=emacs --quick --batch $(EMACS_FLAGS)
 EMACSI=emacs -q $(EMACS_FLAGS)
 
 MODULES=$(patsubst modules/%, %, $(shell find modules/ -maxdepth 2 -type d))

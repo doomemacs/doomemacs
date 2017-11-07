@@ -603,7 +603,7 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
     (if (not noninteractive)
         (let ((compilation-filter-hook
                (list (lambda () (ansi-color-apply-on-region compilation-filter-start (point))))))
-          (compile (format "%s --batch -l core/core.el -f doom//byte-compile %s %s"
+          (compile (format "%s --quick --batch -l core/core.el -f doom//byte-compile %s %s"
                            (executable-find "emacs")
                            (if recompile-p "-r" "")
                            (if modules (string-join modules " ") ""))))
