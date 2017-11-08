@@ -255,6 +255,14 @@ This aggressively reloads core autoload files."
     (cons (intern (concat ":" (match-string 1 path)))
           (intern (match-string 2 path)))))
 
+(defun doom-module-paths (&optional append-file)
+  "Returns a list of absolute file paths to activated modules, with APPEND-FILE
+added, if the file exists."
+  (cl-loop for (module . submodule) in (doom-module-pairs)
+           for path = (doom-module-path module submodule append-file)
+           if (file-exists-p path)
+           collect path))
+
 (defun doom-module-flags (module submodule)
   "Returns a list of flags provided for MODULE SUBMODULE."
   (and (hash-table-p doom-modules)
@@ -282,14 +290,6 @@ include all modules, enabled or otherwise."
     (error "doom-modules is uninitialized"))
   (cl-loop for key being the hash-keys of doom-modules
            collect key))
-
-(defun doom--module-paths (&optional append-file)
-  "Returns a list of absolute file paths to activated modules, with APPEND-FILE
-added, if the file exists."
-  (cl-loop for (module . submodule) in (doom--module-pairs)
-           for path = (doom-module-path module submodule append-file)
-           if (file-exists-p path)
-           collect path))
 
 (defun doom--display-benchmark ()
   (message "Doom loaded %s packages across %d modules in %.03fs"
@@ -615,7 +615,7 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
         (doom-initialize-packages t t)
         (setq compile-targets
               (cl-loop for target
-                       in (or modules (append (list doom-core-dir) (doom--module-paths)))
+                       in (or modules (append (list doom-core-dir) (doom-module-paths)))
                        if (equal target "core")
                         nconc (nreverse (directory-files-recursively doom-core-dir "\\.el$"))
                        else if (file-directory-p target)
