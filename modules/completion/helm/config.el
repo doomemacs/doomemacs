@@ -63,7 +63,7 @@
   (map! :map global-map
         [remap apropos]                   #'helm-apropos
         [remap find-file]                 #'helm-find-files
-        [remap recentf]                   #'helm-recentf
+        [remap recentf-open-files]        #'helm-recentf
         [remap projectile-switch-to-buffer] #'helm-projectile-switch-to-buffer
         [remap projectile-recentf]        #'helm-projectile-recentf
         [remap projectile-find-file]      #'helm-projectile-find-file

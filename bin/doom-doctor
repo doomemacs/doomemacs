@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 ":"; command -v emacs >/dev/null || { >&2 echo "Emacs isn't installed"; exit 1; } # -*-emacs-lisp-*-
-":"; [[ $(emacs --version | head -n1) == *\ 2[0-2].[0-1].[0-9] ]] && { echo "You're running $(emacs --version | head -n1)"; echo "That version is too old to run the doctor. Check your PATH"; echo; exit 2; } || exec emacs --no-site-file --batch -l "$0"
+":"; [[ $(emacs --version | head -n1) == *\ 2[0-2].[0-1].[0-9] ]] && { echo "You're running $(emacs --version | head -n1)"; echo "That version is too old to run the doctor. Check your PATH"; echo; exit 2; } || exec emacs --quick --script "$0"
 
 ;; Uses a couple simple heuristics to locate issues with your environment that
 ;; could interfere with running or setting up DOOM Emacs.
@@ -145,17 +145,6 @@
       (warn! "Warning: unable to detect font")
       (explain! "The `find-font' function is missing. This could indicate the incorrect "
                 "version of Emacs is being used!"))
-  (defun -find-font (family)
-    (when (fontp family)
-      (setq family (symbol-name (font-get doom-font :family))))
-    (let ((inhibit-message t))
-     (shell-command (format "fc-list | grep %s" (shell-quote-argument family)))))
-
-  (when (boundp 'doom-font)
-    (if (-find-font doom-font)
-        (success! "Found font %s" (font-get doom-font :family))
-      (warn! "Warning: couldn't find %s font (default) (%s)"
-             (font-get doom-font :family))))
   ;; all-the-icons fonts
   (let ((font-dest (pcase system-type
                      ('gnu/linux (concat (or (getenv "XDG_DATA_HOME")
@@ -294,7 +283,7 @@
        (indented 4
          (columns 3 23
            (mapcar (lambda (x) (format "+%s" x))
-                   (mapcar #'cdr (doom--module-pairs)))))))
+                   (mapcar #'cdr (doom-module-pairs)))))))
 
   (when (and (bound-and-true-p doom-packages)
              (require 'package nil t))

@@ -1,4 +1,5 @@
 ;;; tools/tmux/autoload/evil.el -*- lexical-binding: t; -*-
+;;;###if (featurep! :feature evil)
 
 ;;;###autoload (autoload '+tmux:run "tools/tmux/autoload/evil" nil t)
 (evil-define-command +tmux:run (bang &optional command)

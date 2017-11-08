@@ -1,4 +1,5 @@
 ;;; feature/jump/autoload/evil.el -*- lexical-binding: t; -*-
+;;;###if (featurep! :feature evil)
 
 ;;;###autoload (autoload '+jump:online "feature/jump/autoload/evil" nil t)
 (evil-define-command +jump:online (query &optional bang)

@@ -1,13 +1,13 @@
 # Ensure emacs always runs from this makefile's PWD
 EMACS_FLAGS=--eval '(setq user-emacs-directory default-directory)' -l core/core.el
-EMACS=emacs --batch $(EMACS_FLAGS)
+EMACS=emacs --quick --batch $(EMACS_FLAGS)
 EMACSI=emacs -q $(EMACS_FLAGS)
 
 MODULES=$(patsubst modules/%, %, $(shell find modules/ -maxdepth 2 -type d))
 
 all: autoloads autoremove install
 
-## Aliases
+## Shortcuts
 a: autoloads
 i: install
 u: update
@@ -18,16 +18,16 @@ ce: compile-elpa
 
 ## Package management
 install: init.el .local/autoloads.el
-	@$(EMACS) -f doom/packages-install
+	@$(EMACS) -f doom//packages-install
 
 update: init.el .local/autoloads.el
-	@$(EMACS) -f doom/packages-update
+	@$(EMACS) -f doom//packages-update
 
 autoremove: init.el .local/autoloads.el
-	@$(EMACS) -f doom/packages-autoremove
+	@$(EMACS) -f doom//packages-autoremove
 
 autoloads: init.el
-	@$(EMACS) -f doom/reload-autoloads
+	@$(EMACS) -f doom//reload-autoloads
 
 
 ## Byte compilation
@@ -36,29 +36,22 @@ autoloads: init.el
 # compile-module
 # compile-module/submodule
 compile: init.el clean
-	@$(EMACS) -f doom/compile
+	@$(EMACS) -f doom//byte-compile
 
 compile-core: init.el clean
-	@$(EMACS) -f doom/compile -- init.el core
+	@$(EMACS) -f doom//byte-compile-core
 
 compile-elpa: init.el
-	@$(EMACS) -f doom/recompile-packages
+	@$(EMACS) -f doom//byte-recompile-plugins
 
 $(patsubst %, compile-%, $(MODULES)): init.el .local/autoloads.el
-	@rm -fv $(shell find $(patsubst compile-%, modules/%, $@) -type f -name '*.elc')
-	@$(EMACS) -f doom/compile -- $(patsubst compile-%, modules/%, $@)
+	@$(EMACS) -f doom//byte-compile -- $(patsubst compile-%, %, $@)
 
 recompile: init.el
-	@$(EMACS) -f doom/recompile
+	@$(EMACS) -f doom//byte-compile -- -r
 
 clean:
-	@$(EMACS) -f doom/clean-compiled-files
-
-clean-pcache:
-	@$(EMACS) -l persistent-soft --eval '(delete-directory pcache-directory t)'
-
-reset:
-	@$(EMACS) -f doom/reset
+	@$(EMACS) -f doom//clean-byte-compiled-files
 
 
 ## Unit tests
@@ -67,14 +60,14 @@ reset:
 # test-module
 # test-module/submodule
 test: init.el .local/autoloads.el
-	@$(EMACS) -f doom-run-tests
+	@$(EMACS) -f doom//run-tests
 
 test-core $(patsubst %, test-%, $(MODULES)): init.el .local/autoloads.el
-	@$(EMACS) -f doom-run-tests -- $(subst test-, , $@)
+	@$(EMACS) -f doom//run-tests -- $(subst test-, , $@)
 
 # run tests interactively
 testi: init.el .local/autoloads.el
-	@$(EMACSI) -f doom-run-tests -f ert
+	@$(EMACSI) -f doom//run-tests -f ert
 
 
 ## Utility tasks
@@ -84,7 +77,7 @@ run:
 
 # Diagnoses potential OS/environment issues
 doctor:
-	@./bin/doom-doctor
+	@bin/doom-doctor
 
 ## Internal tasks
 init.el:
@@ -93,7 +86,4 @@ init.el:
 .local/autoloads.el:
 	@$(EMACS) -f doom-initialize-autoloads
 
-%.elc: %.el
-	@$(EMACS) -f doom/compile -- $<
-
-.PHONY: all compile test testi
+.PHONY: all compile test testi clean

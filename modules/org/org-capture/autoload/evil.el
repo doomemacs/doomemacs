@@ -1,4 +1,5 @@
 ;;; org/org-capture/autoload/evil.el -*- lexical-binding: t; -*-
+;;;###if (featurep! :feature evil)
 
 ;;;###autoload (autoload '+org-capture:open "org/org-capture/autoload/evil" nil t)
 (evil-define-operator +org-capture:open (&optional beg end)

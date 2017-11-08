@@ -1,4 +1,5 @@
-;;; feature/debugger/autoload/evil.el -*- lexical-binding: t; -*-
+;; feature/debugger/autoload/evil.el -*- lexical-binding: t; -*-
+;;;###if (featurep! :feature evil)
 
 ;;;###autoload (autoload '+debugger:start "feature/debugger/autoload/evil" nil t)
 (evil-define-command +debugger:start (&optional path)

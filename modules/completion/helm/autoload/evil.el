@@ -1,4 +1,5 @@
 ;;; completion/helm/autoload/evil.el -*- lexical-binding: t; -*-
+;;;###if (featurep! :feature evil)
 
 ;;;###autoload (autoload '+helm:swoop "completion/helm/autoload/evil" nil t)
 (evil-define-command +helm:swoop (&optional search bang)

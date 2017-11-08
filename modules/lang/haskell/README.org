@@ -1,6 +1,6 @@
 #+TITLE: :lang haskell
 
-This module adds [[https://www.haskell.org/][Haskell]] support.
+This module adds [[https://www.haskell.org/][Haskell]] support, powered by either [[https://haskell-lang.org/intero][intero]] (the default) or [[https://github.com/jyp/dante][dante]].
 
 + Code completion (~company-ghc~)
 + Look up documentation (~hoogle~)
@@ -11,29 +11,40 @@ This module adds [[https://www.haskell.org/][Haskell]] support.
 + [[https://github.com/hlissner/emacs-snippets/tree/master/haskell-mode][Snippets]]
 
 #+begin_quote
-Haskell contends with C and Ruby as my favorite language. I don't think my Haskell code will ever save the world, but I'll reach for it for small projects and programming exercises (like projecteuler.com or exercism.io).
+Haskell contends with C and Ruby as my favorite language. My Haskell code will never save the world, but I'll reach for it for small projects and programming exercises (like projecteuler.com or exercism.io).
 
-I'd love to incorporate more of it into my machine learning work, but Python and Julia hold that crown. For now.
+I'd love to incorporate it into my machine learning work, but Python and Julia hold that crown. For now.
 #+end_quote
 
 * Table of Contents :TOC:
 - [[#install][Install]]
-  - [[#haskell][Haskell]]
-  - [[#dependencies][Dependencies]]
+  - [[#intero][Intero]]
+  - [[#dante][Dante]]
 - [[#troubleshooting][Troubleshooting]]
 - [[#resources][Resources]]
 
 * Install
-** Haskell
-To get started with Haskell, you need *stack* installed.
+This module has two submodules: *Intero* or *Dante*. To activate one, specify one or the other in your pubilc ~init.el~, e.g.:
 
-*** MacOS
+#+BEGIN_SRC emacs-lisp
+(doom! :lang (haskell +intero))
+;; or
+(doom! :lang (haskell +dante))
+#+END_SRC
+
+Your dependencies will change slightly, depending on which you choose:
+
+** Intero
+*** Haskell
+To get started you must install *stack*:
+
+**** MacOS
 #+BEGIN_SRC sh :tangle (if (doom-system-os 'macos) "yes")
 brew install haskell-stack
 stack setup
 #+END_SRC
 
-*** Arch Linux
+**** Arch Linux
 #+BEGIN_SRC sh :dir /sudo:: :tangle (if (doom-system-os 'arch) "yes")
 sudo pacman --needed --noconfirm -S stack
 # Replace pacaur with your AUR package manager of choice
@@ -41,8 +52,8 @@ pacaur --needed --noconfirm -S ncurses5-compat-lib
 stack setup
 #+END_SRC
 
-** Dependencies
-This module requires ~ghc-mod~ (as well as ~intero~, but those will be automatically installed).
+*** External dependencies
+This module requires ~ghc-mod~.
 
 #+BEGIN_SRC sh
 stack install ghc-mod
@@ -55,9 +66,41 @@ Also ensure that ~\~/.local/bin~ is in ~PATH~:
 export PATH="~/.local/bin:$PATH"
 #+END_SRC
 
+** Dante
+*** Haskell
+To get started with Dante and Haskell, you must install cabal
+
++ cabal (the haskell package builder)
++ ghc/ghci (the compiler, syntax checker & repl)
+
+**** MacOS
+#+BEGIN_SRC sh
+brew install cabal-install ghc
+#+END_SRC
+
+**** Arch Linux
+#+BEGIN_SRC sh
+sudo pacman --needed --noconfirm -S cabal-install ghc
+#+END_SRC
+
+*** External dependencies
+Dante requires ~ghc-mod~ and ~hoogle~:
+
+#+BEGIN_SRC sh
+cabal update
+cabal install happy haskell-src-exts   # ghc-mod/hoogle dependencies
+cabal ghc-mod hoogle
+#+END_SRC
+
+And add Cabal's bin path to $PATH:
+
+#+BEGIN_SRC sh
+export PATH="$HOME/.cabal/bin:$PATH"
+#+END_SRC
+
 * Troubleshooting
-+ Stack users: if a ~dist/setup-config~ file exists in your project, [[ https://github.com/DanielG/ghc-mod/wiki#known-issues-related-to-stack][ghc-mod may
-  refuse to work]].
++ Stack users: a ~dist/setup-config~ in your project may cause [[ https://github.com/DanielG/ghc-mod/wiki#known-issues-related-to-stack][ghc-mod to not
+  work]].
 
 * Resources
 Here are a few resources I've found indespensible in my Haskell adventures:
@@ -65,3 +108,4 @@ Here are a few resources I've found indespensible in my Haskell adventures:
 + [[http://learnyouahaskell.com/][Learn you a haskell for great good]]
 + [[http://haskellbook.com/][Haskell Programming from first principles]]
 + [[https://github.com/krispo/awesome-haskell][Awesome Haskell]]: an extensive list of haskell resources
++ [[https://docs.haskellstack.org/en/stable/README/][The Haskell Tool Stack docs]]

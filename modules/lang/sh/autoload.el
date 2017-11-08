@@ -8,7 +8,7 @@
       (while
           (and (setq res
                      (re-search-forward
-                      "\\(\\$\\)\\({.+?}\\|\\<.+?\\>\\)"
+                      "[^\\]\\(\\$\\)\\({.+?}\\|\\<[a-zA-Z0-9_]+\\|[@*#!]\\)"
                       limit t))
                (not (eq (nth 3 (syntax-ppss)) ?\"))))
       res)))
@@ -20,7 +20,7 @@
     (let (res)
       (while
           (and (setq res
-                     (re-search-forward "\\(\\$(.+?)\\|`.+?`\\)"
+                     (re-search-forward "[^\\]\\(\\$(.+?)\\|`.+?`\\)"
                                         limit t))
                (not (eq (nth 3 (syntax-ppss)) ?\"))))
       res)))

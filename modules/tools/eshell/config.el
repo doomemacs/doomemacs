@@ -10,7 +10,7 @@
 (def-package! eshell ; built-in
   :commands eshell-mode
   :init
-  (setq eshell-directory-name (concat doom-cache-dir "/eshell")
+  (setq eshell-directory-name (concat doom-etc-dir "/eshell")
         eshell-scroll-to-bottom-on-input 'all
         eshell-scroll-to-bottom-on-output 'all
         eshell-buffer-shorthand t

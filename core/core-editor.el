@@ -15,7 +15,7 @@ modes are active and the buffer is read-only.")
  ;; Save clipboard contents into kill-ring before replacing them
  save-interprogram-paste-before-kill t
  ;; Bookmarks
- bookmark-default-file (concat doom-cache-dir "bookmarks")
+ bookmark-default-file (concat doom-etc-dir "bookmarks")
  bookmark-save-flag t
  ;; Formatting
  delete-trailing-lines nil
@@ -61,17 +61,6 @@ modes are active and the buffer is read-only.")
       (ignore (bury-buffer))))
 (add-hook 'kill-buffer-query-functions #'doom|dont-kill-scratch-buffer)
 
-(defun doom*delete-trailing-whitespace (orig-fn &rest args)
-  "Don't affect trailing whitespace on current line."
-  (let ((linestr (buffer-substring-no-properties
-                  (line-beginning-position)
-                  (line-end-position))))
-    (apply orig-fn args)
-    (when (and (if (featurep 'evil) (evil-insert-state-p) t)
-               (string-match-p "^[\s\t]*$" linestr))
-      (insert linestr))))
-(advice-add #'delete-trailing-whitespace :around #'doom*delete-trailing-whitespace)
-
 (defun doom|check-large-file ()
   "Check if the buffer's file is large (see `doom-large-file-size'). If so, ask
 for confirmation to open it literally (read-only, disabled undo and in
@@ -111,10 +100,8 @@ enable multiple minor modes for the same regexp.")
         (if (string-match-p (caar alist) name)
             (funcall (cdar alist) 1))
         (setq alist (cdr alist))))))
-
 (add-hook 'find-file-hook #'doom|enable-minor-mode-maybe)
 
-;; ensure indirect buffers have buffer-file-name
 (defun doom*set-indirect-buffer-filename (orig-fn base-buffer name &optional clone)
   "In indirect buffers, `buffer-file-name' is nil, which can cause problems
 with functions that require it (like modeline segments)."
@@ -127,6 +114,19 @@ with functions that require it (like modeline segments)."
                 buffer-file-truename (file-truename file-name)))))
     buffer))
 (advice-add #'make-indirect-buffer :around #'doom*set-indirect-buffer-filename)
+
+(defun doom*delete-trailing-whitespace (orig-fn &rest args)
+  "Don't affect trailing whitespace on current line."
+  (let ((linestr (buffer-substring-no-properties
+                  (line-beginning-position)
+                  (line-end-position))))
+    (apply orig-fn args)
+    (when (and (if (featurep 'evil) (evil-insert-state-p) t)
+               (string-match-p "^[\s\t]*$" linestr))
+      (insert linestr))))
+(advice-add #'delete-trailing-whitespace :around #'doom*delete-trailing-whitespace)
+
+(push '("/LICENSE$" . text-mode) auto-mode-alist)
 
 
 ;;
@@ -152,7 +152,7 @@ with functions that require it (like modeline segments)."
 (def-package! recentf
   :init (add-hook 'doom-init-hook #'recentf-mode)
   :config
-  (setq recentf-save-file (concat doom-cache-dir "recentf")
+  (setq recentf-save-file (concat doom-etc-dir "recentf")
         recentf-max-menu-items 0
         recentf-max-saved-items 300
         recentf-exclude
@@ -185,6 +185,32 @@ with functions that require it (like modeline segments)."
 
   :config
   (add-hook 'doom-init-hook #'editorconfig-mode)
+
+  ;; editorconfig cannot procure the correct settings for extension-less files.
+  ;; Executable scripts with a shebang line, for example. So why not use Emacs'
+  ;; major mode to drop editorconfig a hint? This is accomplished by temporarily
+  ;; appending an extension to `buffer-file-name' when we talk to editorconfig.
+  (defvar doom-editorconfig-mode-alist
+    '((sh-mode     . "sh")
+      (python-mode . "py")
+      (ruby-mode   . "rb")
+      (perl-mode   . "pl")
+      (php-mode    . "php"))
+    "An alist mapping major modes to extensions. Used by
+`doom*editorconfig-smart-detection' to give editorconfig filetype hints.")
+
+  (defun doom*editorconfig-smart-detection (orig-fn &rest args)
+    "Retrieve the properties for the current file. If it doesn't have an
+extension, try to guess one."
+    (let ((buffer-file-name
+           (if (file-name-extension buffer-file-name)
+               buffer-file-name
+             (format "%s%s" buffer-file-name
+                     (let ((ext (cdr (assq major-mode doom-editorconfig-mode-alist))))
+                       (or (and ext (concat "." ext))
+                           ""))))))
+      (apply orig-fn args)))
+  (advice-add #'editorconfig-call-editorconfig-exec :around #'doom*editorconfig-smart-detection)
 
   ;; Editorconfig makes indentation weird in Lisp modes, so we disable it. It
   ;; still applies other project settings (e.g. tabs vs spaces) though.

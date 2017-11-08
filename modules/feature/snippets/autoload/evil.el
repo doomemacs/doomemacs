@@ -1,4 +1,5 @@
 ;;; feature/snippets/autoload/evil.el -*- lexical-binding: t; -*-
+;;;###if (featurep! :feature evil)
 
 ;;;###autoload
 (defun +snippets/expand-on-region ()

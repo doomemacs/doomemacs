@@ -46,9 +46,9 @@
 
   (map! :map java-mode-map
         :localleader
-        :nv "r" #'+java/refactor-menu
-        :nv "c" #'+java/compile-menu
-        :nv "p" #'+java/project-menu))
+        "r" #'+java/refactor-menu
+        "c" #'+java/compile-menu
+        "p" #'+java/project-menu))
 
 
 (def-package! company-emacs-eclim

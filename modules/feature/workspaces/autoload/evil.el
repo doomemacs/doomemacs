@@ -1,4 +1,5 @@
 ;;; feature/workspaces/autoload/evil.el -*- lexical-binding: t; -*-
+;;;###if (featurep! :feature evil)
 
 ;;;###autoload (autoload '+workspace:save-session "feature/workspaces/autoload/evil" nil t)
 (evil-define-command +workspace:save-session (&optional bang name)

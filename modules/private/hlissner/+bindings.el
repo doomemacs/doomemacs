@@ -20,64 +20,61 @@
 (map!
  ;; --- Global keybindings ---------------------------
  ;; Make M-x available everywhere
- :nvime "M-x" #'execute-extended-command
- :nvime "A-x" #'execute-extended-command
+ :gnvime "M-x" #'execute-extended-command
+ :gnvime "A-x" #'execute-extended-command
  ;; Emacs debug utilities
- "M-;"        #'eval-expression
- :nvime "M-;" #'eval-expression
- "M-:"        #'doom/open-scratch-buffer
- :nvime "M-:" #'doom/open-scratch-buffer
+ :gnvime "M-;" #'eval-expression
+ :gnvime "M-:" #'doom/open-scratch-buffer
  ;; Text-scaling
- "M-+"    (λ! (text-scale-set 0))
- "M-="    #'text-scale-increase
- "M--"    #'text-scale-decrease
+ "M-+"       (λ! (text-scale-set 0))
+ "M-="       #'text-scale-increase
+ "M--"       #'text-scale-decrease
  ;; Simple window navigation/manipulation
- "C-`"    #'doom/popup-toggle
- "C-~"    #'doom/popup-raise
- "M-t"    #'+workspace/new
- "M-T"    #'+workspace/display
- "M-w"    #'delete-window
- "M-W"    #'+workspace/close-workspace-or-frame
- "M-n"    #'evil-buffer-new
- "M-N"    #'make-frame
- "M-1"    (λ! (+workspace/switch-to 0))
- "M-2"    (λ! (+workspace/switch-to 1))
- "M-3"    (λ! (+workspace/switch-to 2))
- "M-4"    (λ! (+workspace/switch-to 3))
- "M-5"    (λ! (+workspace/switch-to 4))
- "M-6"    (λ! (+workspace/switch-to 5))
- "M-7"    (λ! (+workspace/switch-to 6))
- "M-8"    (λ! (+workspace/switch-to 7))
- "M-9"    (λ! (+workspace/switch-to 8))
- "M-0"    #'+workspace/switch-to-last
+ "C-`"       #'doom/popup-toggle
+ "C-~"       #'doom/popup-raise
+ "M-t"       #'+workspace/new
+ "M-T"       #'+workspace/display
+ "M-w"       #'delete-window
+ "M-W"       #'+workspace/close-workspace-or-frame
+ "M-n"       #'evil-buffer-new
+ "M-N"       #'make-frame
+ "M-1"       (λ! (+workspace/switch-to 0))
+ "M-2"       (λ! (+workspace/switch-to 1))
+ "M-3"       (λ! (+workspace/switch-to 2))
+ "M-4"       (λ! (+workspace/switch-to 3))
+ "M-5"       (λ! (+workspace/switch-to 4))
+ "M-6"       (λ! (+workspace/switch-to 5))
+ "M-7"       (λ! (+workspace/switch-to 6))
+ "M-8"       (λ! (+workspace/switch-to 7))
+ "M-9"       (λ! (+workspace/switch-to 8))
+ "M-0"       #'+workspace/switch-to-last
  ;; Other sensible, textmate-esque global bindings
- "M-r"    #'+eval/buffer
- "M-R"    #'+eval/region-and-replace
- "M-b"    #'+eval/build
- "M-a"    #'mark-whole-buffer
- "M-c"    #'evil-yank
- "M-q"    (if (daemonp) #'delete-frame #'save-buffers-kill-emacs)
- "M-s"    #'save-buffer
- "M-v"    #'clipboard-yank
- "M-f"    #'swiper
- "C-M-f"  #'doom/toggle-fullscreen
- :m "A-j" #'+hlissner:multi-next-line
- :m "A-k" #'+hlissner:multi-previous-line
+ :ne "M-r"   #'+eval/buffer
+ :ne "M-R"   #'+eval/region-and-replace
+ :ne "M-b"   #'+eval/build
+ :ne "M-a"   #'mark-whole-buffer
+ :ne "M-c"   #'evil-yank
+ :ne "M-q"   (if (daemonp) #'delete-frame #'save-buffers-kill-emacs)
+ :ne "M-f"   #'swiper
+ :ne "C-M-f" #'doom/toggle-fullscreen
+ :n  "M-s"   #'save-buffer
+ :m  "A-j"   #'+hlissner:multi-next-line
+ :m  "A-k"   #'+hlissner:multi-previous-line
  :nv "C-SPC" #'+evil:fold-toggle
+ :gnvimer "M-v" #'clipboard-yank
  ;; Easier window navigation
- :en "C-h"    #'evil-window-left
- :en "C-j"    #'evil-window-down
- :en "C-k"    #'evil-window-up
- :en "C-l"    #'evil-window-right
+ :en "C-h"   #'evil-window-left
+ :en "C-j"   #'evil-window-down
+ :en "C-k"   #'evil-window-up
+ :en "C-l"   #'evil-window-right
 
- (:prefix "C-x"
-   "p" #'doom/other-popup)
+ "C-x p"     #'doom/other-popup
 
 
  ;; --- <leader> -------------------------------------
  (:leader
-   :desc "Ex command"  :nv ";"   #'evil-ex
-   :desc "M-x"         :nv ":"   #'execute-extended-command
+   :desc "Ex command"              :nv ";"  #'evil-ex
+   :desc "M-x"                     :nv ":"  #'execute-extended-command
    :desc "Pop up scratch buffer"   :nv "x"  #'doom/open-scratch-buffer
    :desc "Org Capture"             :nv "X"  #'+org-capture/open
 
@@ -92,30 +89,30 @@
    :desc "Jump to bookmark"        :n "RET" #'bookmark-jump
 
    ;; C-u is used by evil
-   :desc "Universal argument"    :n "u"  #'universal-argument
-   :desc "window"                :n "w"  evil-window-map
+   :desc "Universal argument"      :n "u"  #'universal-argument
+   :desc "window"                  :n "w"  evil-window-map
 
    (:desc "previous..." :prefix "["
-     :desc "Text size"           :nv "[" #'text-scale-decrease
-     :desc "Buffer"              :nv "b" #'doom/previous-buffer
-     :desc "Diff Hunk"           :nv "d" #'git-gutter:previous-hunk
-     :desc "Todo"                :nv "t" #'hl-todo-previous
-     :desc "Error"               :nv "e" #'previous-error
-     :desc "Workspace"           :nv "w" #'+workspace/switch-left
-     :desc "Smart jump"          :nv "h" #'smart-backward
-     :desc "Spelling error"      :nv "s" #'evil-prev-flyspell-error
-     :desc "Spelling correction" :n  "S" #'flyspell-correct-previous-word-generic)
+     :desc "Text size"             :nv "[" #'text-scale-decrease
+     :desc "Buffer"                :nv "b" #'doom/previous-buffer
+     :desc "Diff Hunk"             :nv "d" #'git-gutter:previous-hunk
+     :desc "Todo"                  :nv "t" #'hl-todo-previous
+     :desc "Error"                 :nv "e" #'previous-error
+     :desc "Workspace"             :nv "w" #'+workspace/switch-left
+     :desc "Smart jump"            :nv "h" #'smart-backward
+     :desc "Spelling error"        :nv "s" #'evil-prev-flyspell-error
+     :desc "Spelling correction"   :n  "S" #'flyspell-correct-previous-word-generic)
 
    (:desc "next..." :prefix "]"
-     :desc "Text size"           :nv "]" #'text-scale-increase
-     :desc "Buffer"              :nv "b" #'doom/next-buffer
-     :desc "Diff Hunk"           :nv "d" #'git-gutter:next-hunk
-     :desc "Todo"                :nv "t" #'hl-todo-next
-     :desc "Error"               :nv "e" #'next-error
-     :desc "Workspace"           :nv "w" #'+workspace/switch-right
-     :desc "Smart jump"          :nv "l" #'smart-forward
-     :desc "Spelling error"      :nv "s" #'evil-next-flyspell-error
-     :desc "Spelling correction" :n  "S" #'flyspell-correct-word-generic)
+     :desc "Text size"             :nv "]" #'text-scale-increase
+     :desc "Buffer"                :nv "b" #'doom/next-buffer
+     :desc "Diff Hunk"             :nv "d" #'git-gutter:next-hunk
+     :desc "Todo"                  :nv "t" #'hl-todo-next
+     :desc "Error"                 :nv "e" #'next-error
+     :desc "Workspace"             :nv "w" #'+workspace/switch-right
+     :desc "Smart jump"            :nv "l" #'smart-forward
+     :desc "Spelling error"        :nv "s" #'evil-next-flyspell-error
+     :desc "Spelling correction"   :n  "S" #'flyspell-correct-word-generic)
 
    (:desc "search" :prefix "/"
      :desc "Swiper"                :nv "/" #'swiper
@@ -188,63 +185,64 @@
      :desc "Yank filename"             :n "y" #'+hlissner/yank-buffer-filename)
 
    (:desc "git" :prefix "g"
-     :desc "Git status"        :n  "s" #'magit-status
-     :desc "Git blame"         :n  "b" #'magit-blame
-     :desc "Git time machine"  :n  "t" #'git-timemachine-toggle
-     :desc "Git revert hunk"   :n  "r" #'git-gutter:revert-hunk
-     :desc "Git revert buffer" :n  "R" #'vc-revert
-     :desc "List gists"        :n  "g" #'+gist:list
-     :desc "Next hunk"         :nv "]" #'git-gutter:next-hunk
-     :desc "Previous hunk"     :nv "[" #'git-gutter:previous-hunk)
+     :desc "Git status"            :n  "S" #'magit-status
+     :desc "Git blame"             :n  "b" #'magit-blame
+     :desc "Git time machine"      :n  "t" #'git-timemachine-toggle
+     :desc "Git stage hunk"        :n  "s" #'git-gutter:stage-hunk
+     :desc "Git revert hunk"       :n  "r" #'git-gutter:revert-hunk
+     :desc "Git revert buffer"     :n  "R" #'vc-revert
+     :desc "List gists"            :n  "g" #'+gist:list
+     :desc "Next hunk"             :nv "]" #'git-gutter:next-hunk
+     :desc "Previous hunk"         :nv "[" #'git-gutter:previous-hunk)
 
    (:desc "help" :prefix "h"
      :n "h" help-map
-     :desc "Apropos"               :n "a" #'apropos
-     :desc "Reload theme"          :n "R" #'doom/reload-theme
-     :desc "Find library"          :n "l" #'find-library
-     :desc "Toggle Emacs log"      :n "m" #'doom/popup-toggle-messages
-     :desc "Command log"           :n "L" #'global-command-log-mode
-     :desc "Describe function"     :n "f" #'describe-function
-     :desc "Describe key"          :n "k" #'describe-key
-     :desc "Describe char"         :n "c" #'describe-char
-     :desc "Describe mode"         :n "M" #'describe-mode
-     :desc "Describe variable"     :n "v" #'describe-variable
-     :desc "Describe face"         :n "F" #'describe-face
-     :desc "Describe DOOM setting" :n "s" #'doom/describe-setting
-     :desc "Describe DOOM module"  :n "d" #'doom/describe-module
-     :desc "Find definition"       :n "." #'+jump/definition
-     :desc "Find references"       :n "/" #'+jump/references
-     :desc "Find documentation"    :n "h" #'+jump/documentation
-     :desc "What face"             :n "'" #'doom/what-face
-     :desc "What minor modes"      :n ";" #'doom/what-minor-mode
-     :desc "Info"                  :n "i" #'info
-     :desc "Toggle profiler"       :n "p" #'doom/toggle-profiler)
+     :desc "Apropos"               :n  "a" #'apropos
+     :desc "Reload theme"          :n  "R" #'doom/reload-theme
+     :desc "Find library"          :n  "l" #'find-library
+     :desc "Toggle Emacs log"      :n  "m" #'doom/popup-toggle-messages
+     :desc "Command log"           :n  "L" #'global-command-log-mode
+     :desc "Describe function"     :n  "f" #'describe-function
+     :desc "Describe key"          :n  "k" #'describe-key
+     :desc "Describe char"         :n  "c" #'describe-char
+     :desc "Describe mode"         :n  "M" #'describe-mode
+     :desc "Describe variable"     :n  "v" #'describe-variable
+     :desc "Describe face"         :n  "F" #'describe-face
+     :desc "Describe DOOM setting" :n  "s" #'doom/describe-setting
+     :desc "Describe DOOM module"  :n  "d" #'doom/describe-module
+     :desc "Find definition"       :n  "." #'+jump/definition
+     :desc "Find references"       :n  "/" #'+jump/references
+     :desc "Find documentation"    :n  "h" #'+jump/documentation
+     :desc "What face"             :n  "'" #'doom/what-face
+     :desc "What minor modes"      :n  ";" #'doom/what-minor-mode
+     :desc "Info"                  :n  "i" #'info
+     :desc "Toggle profiler"       :n  "p" #'doom/toggle-profiler)
 
    (:desc "insert" :prefix "i"
-     :desc "From kill-ring" :nv "y" #'counsel-yank-pop
-     :desc "From snippet"   :nv "s" #'yas-insert-snippet)
+     :desc "From kill-ring"        :nv "y" #'counsel-yank-pop
+     :desc "From snippet"          :nv "s" #'yas-insert-snippet)
 
    (:desc "notes" :prefix "n"
-     :desc "Find file in notes"    :n "n" #'+hlissner/find-in-notes
-     :desc "Browse notes"          :n "N" #'+hlissner/browse-notes
-     :desc "Org capture"           :n "x" #'+org-capture/open
-     :desc "Browse mode notes"     :n "m" #'+org/browse-notes-for-major-mode
-     :desc "Browse project notes"  :n "p" #'+org/browse-notes-for-project)
+     :desc "Find file in notes"    :n  "n" #'+hlissner/find-in-notes
+     :desc "Browse notes"          :n  "N" #'+hlissner/browse-notes
+     :desc "Org capture"           :n  "x" #'+org-capture/open
+     :desc "Browse mode notes"     :n  "m" #'+org/browse-notes-for-major-mode
+     :desc "Browse project notes"  :n  "p" #'+org/browse-notes-for-project)
 
    (:desc "open" :prefix "o"
-     :desc "Default browser"     :n  "b" #'browse-url-of-file
-     :desc "Debugger"            :n  "d" #'+debug/open
-     :desc "REPL"                :n  "r" #'+eval/open-repl
-                                 :v  "r" #'+eval:repl
-     :desc "Neotree"             :n  "n" #'+neotree/toggle
-     :desc "Terminal"            :n  "t" #'+term/open-popup
-     :desc "Terminal in project" :n  "T" #'+term/open-popup-in-project
+     :desc "Default browser"       :n  "b" #'browse-url-of-file
+     :desc "Debugger"              :n  "d" #'+debug/open
+     :desc "REPL"                  :n  "r" #'+eval/open-repl
+                                   :v  "r" #'+eval:repl
+     :desc "Neotree"               :n  "n" #'+neotree/toggle
+     :desc "Terminal"              :n  "t" #'+term/open-popup
+     :desc "Terminal in project"   :n  "T" #'+term/open-popup-in-project
 
      ;; applications
-     :desc "APP: elfeed"  :n "E" #'=rss
-     :desc "APP: email"   :n "M" #'=email
-     :desc "APP: twitter" :n "T" #'=twitter
-     :desc "APP: regex"   :n "X" #'=regex
+     :desc "APP: elfeed"           :n "E" #'=rss
+     :desc "APP: email"            :n "M" #'=email
+     :desc "APP: twitter"          :n "T" #'=twitter
+     :desc "APP: regex"            :n "X" #'=regex
 
      ;; macos
      (:when IS-MAC
@@ -266,8 +264,8 @@
      :desc "Invalidate cache"        :n  "x" #'projectile-invalidate-cache)
 
    (:desc "quit" :prefix "q"
-     :desc "Quit"                    :n "q" #'evil-save-and-quit
-     :desc "Quit (forget session)"   :n "Q" #'+workspace/kill-session-and-quit)
+     :desc "Quit"                   :n "q" #'evil-save-and-quit
+     :desc "Quit (forget session)"  :n "Q" #'+workspace/kill-session-and-quit)
 
    (:desc "remote" :prefix "r"
      :desc "Upload local"           :n "u" #'+upload/local
@@ -278,10 +276,10 @@
      :desc "Detect remote changes"  :n ">" #'+upload/check-remote)
 
    (:desc "snippets" :prefix "s"
-     :desc "New snippet"           :n  "n" #'yas-new-snippet
-     :desc "Insert snippet"        :nv "i" #'yas-insert-snippet
-     :desc "Find snippet for mode" :n  "s" #'yas-visit-snippet-file
-     :desc "Find snippet"          :n  "S" #'+hlissner/find-in-snippets)
+     :desc "New snippet"            :n  "n" #'yas-new-snippet
+     :desc "Insert snippet"         :nv "i" #'yas-insert-snippet
+     :desc "Find snippet for mode"  :n  "s" #'yas-visit-snippet-file
+     :desc "Find snippet"           :n  "S" #'+hlissner/find-in-snippets)
 
    (:desc "toggle" :prefix "t"
      :desc "Flyspell"               :n "s" #'flyspell-mode
@@ -483,13 +481,12 @@
  ;; git-timemachine
  (:after git-timemachine
    (:map git-timemachine-mode-map
-     :nv "p" #'git-timemachine-show-previous-revision
-     :nv "n" #'git-timemachine-show-next-revision
-     :nv "g" #'git-timemachine-show-nth-revision
-     :nv "q" #'git-timemachine-quit
-     :nv "w" #'git-timemachine-kill-abbreviated-revision
-     :nv "W" #'git-timemachine-kill-revision
-     :nv "b" #'git-timemachine-blame))
+     :n "C-p" #'git-timemachine-show-previous-revision
+     :n "C-n" #'git-timemachine-show-next-revision
+     :n "[["  #'git-timemachine-show-previous-revision
+     :n "]]"  #'git-timemachine-show-next-revision
+     :n "q"   #'git-timemachine-quit
+     :n "gb"  #'git-timemachine-blame))
 
  ;; gist
  (:after gist

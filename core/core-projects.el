@@ -6,8 +6,7 @@ state are passed in.")
 
 (def-package! projectile
   :demand t
-  :init (add-hook 'doom-init-hook #'projectile-mode)
-  :config
+  :init
   (setq projectile-cache-file (concat doom-cache-dir "projectile.cache")
         projectile-enable-caching (not noninteractive)
         projectile-indexing-method 'alien
@@ -16,10 +15,12 @@ state are passed in.")
         projectile-globally-ignored-files '(".DS_Store" "Icon" "TAGS")
         projectile-globally-ignored-file-suffixes '(".elc" ".pyc" ".o"))
 
+  (add-hook 'doom-init-hook #'projectile-mode)
+  :config
   ;; a more generic project root file
   (push ".project" projectile-project-root-files-bottom-up)
 
-  (nconc projectile-globally-ignored-directories (list doom-local-dir ".sync"))
+  (nconc projectile-globally-ignored-directories (list (abbreviate-file-name doom-local-dir) ".sync"))
   (nconc projectile-other-file-alist '(("css"  . ("scss" "sass" "less" "style"))
                                        ("scss" . ("css"))
                                        ("sass" . ("css"))
@@ -47,7 +48,7 @@ state are passed in.")
 ;; Library
 ;;
 
-(defun doom/reload-project ()
+(defun doom//reload-project ()
   "Reload the project root cache."
   (interactive)
   (projectile-invalidate-cache nil)

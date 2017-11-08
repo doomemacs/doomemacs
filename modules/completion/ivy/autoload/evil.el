@@ -1,4 +1,5 @@
-;;; completion/ivy/autoload/evil.el -*- lexical-binding: t; -*-
+;; completion/ivy/autoload/evil.el -*- lexical-binding: t; -*-
+;;;###if (featurep! :feature evil)
 
 ;;;###autoload (autoload '+ivy:swiper "completion/ivy/autoload/evil" nil t)
 (evil-define-command +ivy:swiper (&optional search)
@@ -24,6 +25,9 @@
          (directory (or directory project-root))
          (recursion-p +ivy--file-search-recursion-p)
          (all-files-p +ivy--file-search-all-files-p)
+         (engine (or engine
+                     (and (executable-find "rg") 'rg)
+                     (and (executable-find "ag") 'ag)))
          (query
           (or query
               (if (evil-visual-state-p)

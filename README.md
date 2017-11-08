@@ -23,16 +23,13 @@
 
 It is a story as old as time. A stubborn, shell-dwelling, and melodramatic
 vimmer -- envious of the features of modern text editors -- spirals into despair
-before he finally succumbs to the [dark side][evil-mode]. This is his config.
+before finally succumbing to the [dark side][evil-mode]. This is his config.
 
-DOOM's philosophy is simple: be **fast**, be **readable**, and be **pretty**. It
-is tailored for neckbeards with a blue-belt or better in command-line-fu who
-don't shy away from dabbling with Elisp.
+Doom strives to be fast, fabulous and hacker friendly. It is tailored for
+neckbeards with blue belts or better in command-line-fu, Elisp and git.
 
-Rip and tear. Until it compiles.
-
-> **Important:** Doom only supports Emacs >= 25.1, and is tailored for Arch
-> Linux 4.7+ and Mac OS 10.11+.
+> Doom **only** supports Emacs >= 25.1, and is tested on Arch Linux 4.7+ and
+> MacOS 10.11. YMMV on other platforms.
 
 - - -
 
@@ -45,6 +42,8 @@ cp init.example.el init.el  # maybe edit init.el
 make install
 ```
 
+Don't forget to run `make` every time you modify init.el!
+
 Visit the wiki for [a more detailed guide on installing, customizing and
 grokking Doom][wiki].
 
@@ -53,22 +52,24 @@ grokking Doom][wiki].
 + A fast, organized and opinionated Emacs configuration with a command line
   interface.
 + A custom, declarative [package management system][doom-packages] that combines
-  package.el, [use-package] and [quelpa]. This lets you install packages from
-  sources other than ELPA, as well as manage packages from the command line.
+  package.el, [use-package] and [quelpa], allowing you to manage packages from
+  the command line and install packages from sources other than ELPA.
 + A [popup management system][doom-popups] (powered by [shackle]) that minimizes
   the presence and footprint of temporary and/or disposable buffers.
 + A vim-like experience with [evil-mode], including ports for several vim
-  plugins, <kbd>C-x</kbd> omnicompletion and a slew of [custom ex commands][doom-my-commands].
-+ Integration with [editorconfig]. Let someone else argue about tabs and spaces
+  plugins, <kbd>C-x</kbd> omnicompletion and a slew of [custom ex
+  commands][doom-my-commands].
++ Integration with [editorconfig]. Let someone else argue about tabs and spaces.
   (spaces, duh).
-+ Code completion for a variety of languages, powered by [company-mode] (there
-  may be other dependencies for certain languages).
-+ Project-awareness powered by [projectile], with tools to navigate and manage
-  projects and project files.
++ Code completion for many languages, powered by [company-mode] (some languages
+  may have external dependencies).
++ Project-awareness powered by [projectile], with tools and an API to navigate
+  and manage projects and their files.
 + Fast project search (and replace) utilities, powered by [the_silver_searcher],
-  [ripgrep] and [wgrep], with [ivy] (the default), [helm] and ido integration.
-+ Isolated and persistent workspaces powered by [persp-mode]. This can
-  substitute for vim tabs.
+  [ripgrep] and [wgrep], with integration for [ivy] (the default), [helm] and
+  ido.
++ Isolated and persistent workspaces powered by [persp-mode]. Also substitutes
+  for vim tabs.
 + Inline/live code evaluation (using [quickrun]), including REPLs for a variety
   of languages.
 
@@ -76,34 +77,32 @@ grokking Doom][wiki].
 
 Found a problem? Here are some things to try:
 
-+ Make sure all plugins are installed with `make install`.
-+ A `void-function` or `void-variable` might signal an out-of-date autoloads
-  file. Update it with `make autoloads`.
-+ Diagnose common OS/environment issues that could interfere with Emacs with
-  `make doctor`.
-+ If you byte-compiled Doom, run `make clean` or `M-x doom/clean-compiled-files`
-  and restart Emacs. Never debug byte-compiled code, it will interfere with your
-  efforts in subtle (and not-so-subtle) ways.
++ Run `make install` to ensure all plugins are installed.
++ `void-function` or `void-variable` errors could signal an out-of-date
+  autoloads file. Run `make autoloads` or `M-x doom//reload-autoloads` to update
+  it.
++ Scan for common OS/environment issues with `make doctor`.
++ **Never debug byte-compiled code. It will interfere in subtle ways.** Clean up
+  \*.elc files with `make clean` or `M-x doom//clean-byte-compiled-files`.
 + Check [the FAQ][wiki-troubleshooting] to see if your issue is mentioned.
-+ If your issue is associated with a particular module, like code-completion,
-  check the module's README.org, if any.
++ Check the relevant module's README.org, if one exists. There may be extra
+  steps to getting certain features to work.
 
-If all else fails, [file a bug report][doom-new-issue].
+If all else has failed, [file a bug report][doom-new-issue].
 
 ## Contribute
 
 Doom (and my Emacs work in general) is a labor of love and incurable madness,
-done on my free time. It wasn't intended for public use, but I enjoy making Doom
-a resource for others.
+done on my spare time. It wasn't intended for public use, but I enjoy making
+Doom a resource for others.
 
 If you'd like to support my efforts, I welcome contributions of any kind:
 
-+ I love pull requests and bug reports, and elisp pointers are especially
-  welcome. Seriously, don't hesitate to [tell me my Elisp-fu
-  sucks][doom-new-issue]!
-+ I'm happy to discuss Emacs workflow, ideas or tooling. If you think I, Doom or
-  other Emacs users could benefit from them (or you just want to chat), drop me
-  a line at henrik@lissner.net. I'm eager to learn.
++ I love pull requests and bug reports. Elisp pointers are especially welcome.
+  Seriously, don't hesitate to [tell me my Elisp-fu sucks][doom-new-issue]!
++ Talk to me about Emacs workflow, ideas or tooling. Or talk to me about
+  gamedev, or pixel art, or anime, or programming, or the weather, or band camp.
+  Whatever. I don't mind. Holler at henrik@lissner.net.
 
 
 [wiki]: /../../wiki

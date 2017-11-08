@@ -17,7 +17,8 @@
     (?e . emacs)
     (?o . operator)
     (?m . motion)
-    (?r . replace))
+    (?r . replace)
+    (?g . global))
   "A list of cons cells that map a letter to a evil state symbol.")
 
 
@@ -109,10 +110,8 @@
 For example, :nvi will map to (list 'normal 'visual 'insert). See
 `doom-evil-state-alist' to customize this."
   (cl-loop for l across (substring (symbol-name keyword) 1)
-           if (cdr (assq l doom-evil-state-alist))
-             collect it
-           else
-             do (error "not a valid state: %s" l)))
+           if (cdr (assq l doom-evil-state-alist)) collect it
+           else do (error "not a valid state: %s" l)))
 
 
 ;; Register keywords for proper indentation (see `map!')
@@ -258,7 +257,7 @@ Example
               (setq def (pop rest))
               (when desc
                 (push `(doom--keybind-register ,(key-description (eval key))
-                                              ,desc ',modes)
+                                               ,desc ',modes)
                       forms))
               (cond ((and doom--local doom--keymaps)
                      (push `(lwarn 'doom-map :warning
@@ -267,16 +266,23 @@ Example
                            forms)
                      (throw 'skip 'local))
                     ((and doom--keymaps states)
-                     (unless (featurep 'evil) (throw 'skip 'evil))
+                     (unless (featurep 'evil)
+                       (throw 'skip 'evil))
                      (dolist (keymap doom--keymaps)
-                       (push `(,(if doom--defer 'evil-define-key 'evil-define-key*)
-                               ',states ,keymap ,key ,def)
-                             forms)))
+                       (when (memq 'global states)
+                         (push `(define-key ,keymap ,key ,def) forms))
+                       (when-let (states (delq 'global states))
+                         (push `(,(if doom--defer 'evil-define-key 'evil-define-key*)
+                                 ',states ,keymap ,key ,def)
+                               forms))))
                     (states
-                     (unless (featurep 'evil) (throw 'skip 'evil))
+                     (unless (featurep 'evil)
+                       (throw 'skip 'evil))
                      (dolist (state states)
                        (push `(define-key
-                                ,(intern (format "evil-%s-state-%smap" state (if doom--local "local-" "")))
+                                ,(if (eq state 'global)
+                                     '(current-global-map)
+                                   (intern (format "evil-%s-state-%smap" state (if doom--local "local-" ""))))
                                 ,key ,def)
                              forms)))
                     (doom--keymaps

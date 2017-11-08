@@ -442,7 +442,7 @@ the workspace and move to the next."
      (cl-loop for name in names
               for i to (length names)
               collect
-              (propertize (format " [%d] %s " i name)
+              (propertize (format " [%d] %s " (1+ i) name)
                           'face (if (equal current-name name)
                                     '+workspace-tab-selected-face
                                   '+workspace-tab-face)))

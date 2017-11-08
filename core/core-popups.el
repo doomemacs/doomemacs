@@ -97,6 +97,7 @@ recognized by DOOM's popup system. They are:
           ("^\\*doom:" :regexp t :size 0.35 :noesc t :select t)
           ("^ ?\\*doom " :regexp t :noselect t :autokill t :autoclose t :autofit t)
           ;; built-in (emacs)
+          ("*compilation*" :size 0.25 :noselect t :autokill t :autoclose t)
           ("*ert*" :same t :modeline t)
           ("*info*" :size 0.5 :select t :autokill t)
           ("*Backtrace*" :size 20 :noselect t)
@@ -110,7 +111,7 @@ recognized by DOOM's popup system. They are:
           (grep-mode :size 25 :noselect t :autokill t)
           (profiler-report-mode :size 0.3 :regexp t :autokill t :modeline minimal)
           (tabulated-list-mode :noesc t)
-          ("^ ?\\*" :regexp t :size 0.3 :noselect t :autokill t :autoclose t :autofit t)))
+          ("^ ?\\*" :regexp t :size 15 :noselect t :autokill t :autoclose t)))
 
   :config
   (add-hook 'doom-post-init-hook #'shackle-mode)
@@ -137,7 +138,6 @@ recognized by DOOM's popup system. They are:
       (define-key map [escape]    #'doom/popup-close-maybe)
       (define-key map (kbd "ESC") #'doom/popup-close-maybe)
       (define-key map [remap quit-window] #'doom/popup-close-maybe)
-      (define-key map [remap delete-window] #'doom/popup-close-maybe)
       (define-key map [remap doom/kill-this-buffer] #'delete-window)
       (define-key map [remap split-window-right] #'ignore)
       (define-key map [remap split-window-below] #'ignore)

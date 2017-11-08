@@ -71,7 +71,8 @@ If on a:
        (goto-char (org-element-property :post-affiliated context))
        (call-interactively #'org-footnote-action))
 
-      ((or `planning `timestamp) (org-follow-timestamp-link))
+      ((or `planning `timestamp)
+       (org-follow-timestamp-link))
 
       ((or `table `table-row)
        (if (org-at-TBLFM-p)
@@ -199,15 +200,12 @@ wrong places)."
           ((memq type '(table table-row))
            (pcase direction
              ('below (org-table-insert-row t))
-             ('above (+org/table-prepend-row-or-shift-up))))
+             ('above (org-shiftmetadown))))
 
           ((memq type '(headline inlinetask))
-           (let* ((subcontext (org-element-context))
-                  (level (save-excursion
-                           (org-back-to-heading)
-                           (if (eq (org-element-type subcontext) 'headline)
-                               (org-element-property :level subcontext)
-                             1))))
+           (let ((level (if (eq (org-element-type context) 'headline)
+                            (org-element-property :level context)
+                          1)))
              (pcase direction
                ('below
                 (let ((at-eol (= (point) (1- (line-end-position)))))
@@ -272,7 +270,7 @@ with `org-cycle'). Also:
   (interactive)
   (save-excursion
     (org-beginning-of-line)
-    (cond ((org-table-p)
+    (cond ((org-at-table-p)
            (org-table-align))
           ((org-in-src-block-p)
            (org-babel-remove-result))

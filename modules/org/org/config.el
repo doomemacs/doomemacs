@@ -122,9 +122,10 @@
    org-startup-indented t
    org-startup-with-inline-images nil
    org-tags-column 0
-   org-todo-keywords '((sequence "[ ](t)" "[-](p)" "[?](m)" "|" "[X](d)")
-                       (sequence "TODO(T)" "|" "DONE(D)")
-                       (sequence "IDEA(i)" "NEXT(n)" "ACTIVE(a)" "WAITING(w)" "LATER(l)" "|" "CANCELLED(c)"))
+   org-todo-keywords
+   '((sequence "[ ](t)" "[-](p)" "[?](m)" "|" "[X](d)")
+     (sequence "TODO(T)" "|" "DONE(D)")
+     (sequence "NEXT(n)" "ACTIVE(a)" "WAITING(w)" "LATER(l)" "|" "CANCELLED(c)"))
    org-use-sub-superscripts '{}
    outline-blank-line t
 
@@ -138,11 +139,15 @@
                                               'default)
                                           :background nil t)))
 
-  ;; Use ivy/helm if either is available
-  (when (or (featurep! :completion ivy)
-            (featurep! :completion helm))
-    (setq-default org-completion-use-ido nil
-                  org-outline-path-complete-in-steps nil)))
+  ;; Custom links
+  (org-link-set-parameters
+   "org"
+   :complete (lambda () (+org-link-read-file "org" +org-dir))
+   :follow   (lambda (link) (find-file (expand-file-name link +org-dir)))
+   :face     (lambda (link)
+               (if (file-exists-p (expand-file-name link +org-dir))
+                   'org-link
+                 'error))))
 
 (defun +org-init-keybinds ()
   "Sets up org-mode and evil keybindings. Tries to fix the idiosyncrasies
@@ -164,8 +169,8 @@ between the two."
           ;; Expand tables (or shiftmeta move)
           :ni "C-S-l" #'+org/table-append-field-or-shift-right
           :ni "C-S-h" #'+org/table-prepend-field-or-shift-left
-          :ni "C-S-k" #'+org/table-prepend-row-or-shift-up
-          :ni "C-S-j" #'+org/table-append-row-or-shift-down
+          :ni "C-S-k" #'org-metaup
+          :ni "C-S-j" #'org-metadown
 
           :n  [tab]     #'+org/toggle-fold
           :i  [tab]     #'+org/indent-or-next-field-or-yas-expand

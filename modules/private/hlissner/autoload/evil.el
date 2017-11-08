@@ -1,4 +1,5 @@
 ;;; private/hlissner/autoload/evil.el -*- lexical-binding: t; -*-
+;;;###if (featurep! :feature evil)
 
 ;;;###autoload (autoload '+hlissner:multi-next-line "private/hlissner/autoload/evil" nil t)
 (evil-define-motion +hlissner:multi-next-line (count)

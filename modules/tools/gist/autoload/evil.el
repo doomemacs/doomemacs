@@ -1,4 +1,5 @@
 ;;; tools/gist/autoload/evil.el -*- lexical-binding: t; -*-
+;;;###if (featurep! :feature evil)
 
 ;;;###autoload (autoload '+gist:send "tools/gist/autoload/evil" nil t)
 (evil-define-operator +gist:send (bang)

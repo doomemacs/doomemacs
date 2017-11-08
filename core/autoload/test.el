@@ -1,14 +1,13 @@
-;;; core/autoload/test.el -*- lexical-binding: t; -*-
+;;; core/autoload/test.el -*- lexical-binding: t; no-byte-compile: t; -*-
 
 ;;;###autoload
-(defun doom-run-tests (&optional modules)
+(defun doom//run-tests (&optional modules)
   "Run all loaded tests, specified by MODULES (a list of module cons cells) or
 command line args following a double dash (each arg should be in the
 'module/submodule' format).
 
 If neither is available, run all tests in all enabled modules."
-  (interactive) ; must be interactive to be run from batch
-  ;; FIXME Refactor this
+  (interactive)
   (condition-case-unless-debug ex
       (let (targets)
         ;; ensure DOOM is initialized
@@ -16,19 +15,18 @@ If neither is available, run all tests in all enabled modules."
           (load (expand-file-name "core/core.el" user-emacs-directory) nil t)
           (doom-initialize-modules nil))
         ;; collect targets
-        (cond ((and command-line-args-left
-                    (equal (car command-line-args-left) "--"))
-               (cl-loop for arg in (cdr argv)
+        (cond ((and argv (equal (car argv) "--"))
+               (cl-loop for arg in argv
                         if (equal arg "core")
-                        do (push (expand-file-name "test/" doom-core-dir) targets)
+                         do (push (expand-file-name "test/" doom-core-dir) targets)
                         else
-                        collect
-                        (cl-destructuring-bind (car &optional cdr) (split-string arg "/" t)
-                          (cons (intern (concat ":" car))
-                                (and cdr (intern cdr))))
-                        into args
-                        finally do (setq modules args
-                                         command-line-args-left nil)))
+                         collect
+                         (cl-destructuring-bind (car &optional cdr) (split-string arg "/" t)
+                           (cons (intern (concat ":" car))
+                                 (and cdr (intern cdr))))
+                         into args
+                        finally do
+                        (setq modules args argv nil)))
 
               (modules
                (unless (cl-loop for module in modules
@@ -42,7 +40,7 @@ If neither is available, run all tests in all enabled modules."
                (let ((noninteractive t)
                      doom-modules)
                  (load (expand-file-name "init.test.el" user-emacs-directory) nil t)
-                 (setq modules (doom--module-pairs)
+                 (setq modules (doom-module-pairs)
                        targets (list (expand-file-name "test/" doom-core-dir))))))
         ;; resolve targets to a list of test files and load them
         (cl-loop with targets =
@@ -58,8 +56,8 @@ If neither is available, run all tests in all enabled modules."
                                            collect (expand-file-name "test/" path))))
                  for dir in targets
                  if (file-directory-p dir)
-                 nconc (reverse (directory-files-recursively dir "\\.el$"))
-                 into items
+                  nconc (reverse (directory-files-recursively dir "\\.el$"))
+                  into items
                  finally do (quiet! (mapc #'load-file items)))
         ;; run all loaded tests
         (when noninteractive

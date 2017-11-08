@@ -1,5 +1,6 @@
-#!/bin/sh
-":"; exec emacs --no-site-file --script "$0" -- "$@" # -*-emacs-lisp-*-
+#!/usr/bin/env bash
+":"; exec emacs --quick --script "$0" -- "$@" # -*- mode: emacs-lisp; lexical-binding: t; -*-
+;;; bin/org-tangle
 
 ;; Extracts source blocks from org files and prints them to stdout. Debug/info
 ;; messages are directed to stderr and can be ignored. -l/--lang can be used to
@@ -10,7 +11,7 @@
 ;;   org-tangle modules/ui/doom/README.org > install_fira_mono.sh
 ;;   org-tangle -l sh modules/lang/go/README.org | sh
 
-(load "~/.emacs.d/core/core.el" nil t)
+(load (expand-file-name "../core/core.el" (file-name-directory load-file-name)) nil t)
 
 (require 'org-install)
 (require 'org)
@@ -24,9 +25,20 @@
     (apply orig-fn args)))
 (advice-add #'org-babel-tangle :around #'*org-babel-tangle)
 
-(let ((lang (when (member (car command-line-args-left) '("--lang" "-l"))
-              (pop command-line-args-left)
-              (pop command-line-args-left)))
-      (srcs (cl-remove-if-not 'file-exists-p command-line-args-left)))
+(let (lang srcs)
+  (pop argv)
+  (while argv
+    (let ((arg (pop argv)))
+      (pcase arg
+        ((or "--lang" "-l")
+         (setq lang (pop argv)))
+        ((guard (string-match-p "^--lang=" arg))
+         (setq lang (cadr (split-string arg "=" t t))))
+        ((guard (file-exists-p arg))
+         (push arg srcs))
+        (_
+         (error "Unknown option or file: %s" arg)))))
+
   (dolist (file srcs)
-    (org-babel-tangle-file file nil lang)))
+    (org-babel-tangle-file file nil lang))
+  (kill-emacs 0))
