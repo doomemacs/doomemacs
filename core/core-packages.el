@@ -659,7 +659,13 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
                    (format "(%s ignored)" total-noop)))))))))
 
 (defun doom//byte-compile-core (&optional recompile-p)
-  ""
+  "Byte compile the core Doom files.
+
+This is faster than `doom//byte-compile', still yields considerable performance
+benefits, and is more reliable in an ever-changing Emacs config (since you won't
+likely change core files directly).
+
+If RECOMPILE-P is non-nil, only recompile out-of-date core files."
   (interactive "P")
   (doom//byte-compile (list "core") recompile-p))
 
