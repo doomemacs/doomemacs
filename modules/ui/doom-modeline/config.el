@@ -226,9 +226,7 @@ active."
 (defun +doom-modeline--buffer-file-name-truncate (&optional truncate-tail)
   "Propertized `buffer-file-name' that truncates every dir along path.
 If TRUNCATE-TAIL is t also truncate the parent directory of the file."
-  (let ((dirs (shrink-path-prompt (file-name-directory
-                                   (or buffer-file-truename
-                                       (file-truename buffer-file-name)))))
+  (let ((dirs (shrink-path-prompt (file-name-directory buffer-file-truename)))
         (active (active)))
     (if (null dirs)
         (propertize "%b" 'face (if active 'doom-modeline-buffer-file))
@@ -251,13 +249,13 @@ If TRUNCATE-TAIL is t also truncate the parent directory of the file."
     (if (null root)
         (propertize "%b" 'face (if active 'doom-modeline-buffer-file))
       (let* ((modified-faces (if (buffer-modified-p) 'doom-modeline-buffer-modified))
-             (relative-dirs (file-relative-name (file-name-directory buffer-file-name)
+             (relative-dirs (file-relative-name (file-name-directory buffer-file-truename)
                                                 (if include-project (concat root "../") root)))
              (relative-faces (or modified-faces (if active 'doom-modeline-buffer-path)))
              (file-faces (or modified-faces (if active 'doom-modeline-buffer-file))))
         (if (equal "./" relative-dirs) (setq relative-dirs ""))
         (concat (propertize relative-dirs 'face (if relative-faces `(:inherit ,relative-faces)))
-                (propertize (file-name-nondirectory buffer-file-name)
+                (propertize (file-name-nondirectory buffer-file-truename)
                             'face (if file-faces `(:inherit ,file-faces))))))))
 
 (defun +doom-modeline--buffer-file-name (truncate-project-root-parent)
@@ -269,10 +267,8 @@ Example:
 ~/Projects/FOSS/emacs/lisp/comint.el => ~/P/F/emacs/lisp/comint.el"
   (let* ((project-root (doom-project-root))
          (file-name-split (shrink-path-file-mixed project-root
-                                                  (file-name-directory
-                                                   (or buffer-file-truename
-                                                       (file-truename buffer-file-name)))
-                                                  (file-truename buffer-file-name)))
+                                                  (file-name-directory buffer-file-truename)
+                                                  buffer-file-truename))
          (active (active)))
     (if (null file-name-split)
         (propertize "%b" 'face (if active 'doom-modeline-buffer-file))
@@ -291,7 +287,7 @@ Example:
                                     (abbreviate-file-name project-root))
                                   'face sp-props)
                       (propertize (concat project "/") 'face project-props)
-                      (when relative-path (propertize relative-path 'face relative-props))
+                      (if relative-path (propertize relative-path 'face relative-props))
                       (propertize filename 'face file-props)))))))))
 
 
