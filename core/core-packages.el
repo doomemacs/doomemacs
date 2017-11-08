@@ -213,13 +213,13 @@ This aggressively reloads core autoload files."
           (let (noninteractive)
             (funcall load-fn (doom-module-path :private user-login-name "init.el") t))
           (mapc load-fn (file-expand-wildcards (expand-file-name "autoload/*.el" doom-core-dir)))
-          (cl-loop for (module . submodule) in (doom--module-pairs)
+          (cl-loop for (module . submodule) in (doom-module-pairs)
                    for path = (doom-module-path module submodule "config.el")
                    do (funcall load-fn path t))))
       (when (or force-p (not doom-packages))
         (setq doom-packages nil)
         (funcall load-fn (expand-file-name "packages.el" doom-core-dir))
-        (cl-loop for (module . submodule) in (doom--module-pairs)
+        (cl-loop for (module . submodule) in (doom-module-pairs)
                  for path = (doom-module-path module submodule "packages.el")
                  do (funcall load-fn path t)))))
   (doom|finalize))
@@ -274,7 +274,7 @@ Used by `require!' and `depends-on!'."
            (doom-enlist (or flags t))
            doom-modules))
 
-(defun doom--module-pairs ()
+(defun doom-module-pairs ()
   "Returns `doom-modules' as a list of (MODULE . SUBMODULE) cons cells. The list
 is sorted by order of insertion unless ALL-P is non-nil. If ALL-P is non-nil,
 include all modules, enabled or otherwise."
@@ -320,7 +320,7 @@ MODULES is an malformed plist of modules to load."
 
      (unless noninteractive
        (load ,(doom-module-path :private user-login-name "init") t t)
-       ,@(cl-loop for (module . submodule) in (doom--module-pairs)
+       ,@(cl-loop for (module . submodule) in (doom-module-pairs)
                   collect `(require! ,module ,submodule nil t))
 
        (when (display-graphic-p)

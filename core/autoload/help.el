@@ -25,7 +25,7 @@ submodule in the format, e.g. ':feature evil')."
                           nil t)))
   (cl-destructuring-bind (category submodule)
       (mapcar #'intern (split-string module " "))
-    (unless (member (cons category submodule) (doom--module-pairs))
+    (unless (member (cons category submodule) (doom-module-pairs))
       (error "'%s' isn't a valid module" module))
     (let ((doc-path (expand-file-name "README.org" (doom-module-path category submodule))))
       (unless (file-exists-p doc-path)

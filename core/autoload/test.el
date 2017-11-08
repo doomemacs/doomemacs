@@ -41,7 +41,7 @@ If neither is available, run all tests in all enabled modules."
                (let ((noninteractive t)
                      doom-modules)
                  (load (expand-file-name "init.test.el" user-emacs-directory) nil t)
-                 (setq modules (doom--module-pairs)
+                 (setq modules (doom-module-pairs)
                        targets (list (expand-file-name "test/" doom-core-dir))))))
         ;; resolve targets to a list of test files and load them
         (cl-loop with targets =

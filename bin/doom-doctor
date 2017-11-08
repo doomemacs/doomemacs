@@ -283,7 +283,7 @@
        (indented 4
          (columns 3 23
            (mapcar (lambda (x) (format "+%s" x))
-                   (mapcar #'cdr (doom--module-pairs)))))))
+                   (mapcar #'cdr (doom-module-pairs)))))))
 
   (when (and (bound-and-true-p doom-packages)
              (require 'package nil t))
