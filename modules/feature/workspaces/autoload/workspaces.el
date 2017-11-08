@@ -315,6 +315,7 @@ workspace to delete."
 ;;;###autoload
 (defun +workspace/kill-session-and-quit ()
   "Forgets current session and quits."
+  (interactive)
   (+workspace/kill-session)
   (save-buffers-kill-terminal))
 
