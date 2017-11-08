@@ -1,4 +1,5 @@
-;;; completion/company/test/company.el -*- lexical-binding: t; -*-
+;; -*- lexical-binding: t; no-byte-compile: t; -*-
+;;; completion/company/test/company.el
 
 (require! :completion company)
 (require 'company)
