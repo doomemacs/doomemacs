@@ -90,7 +90,7 @@ missing) and shouldn't be deleted.")
   "A backup of `load-path' before it was altered by `doom-initialize'. Used as a
 base by `doom!' and for calculating how many packages exist.")
 
-(defvar doom--refresh-p nil)
+(defvar doom--refreshed-p nil)
 
 (setq load-prefer-newer (or noninteractive doom-debug-mode)
       package--init-file-ensured t
@@ -150,7 +150,7 @@ startup."
     (condition-case _ (package-initialize t)
       ('error
        (package-refresh-contents)
-       (setq doom--refresh-p t)
+       (setq doom--refreshed-p t)
        (package-initialize t)))
     ;; We could let `package-initialize' fill `load-path', but it costs precious
     ;; milliseconds and does other stuff I don't need (like load autoload
@@ -163,9 +163,9 @@ startup."
     ;; Ensure core packages are installed
     (dolist (pkg doom-core-packages)
       (unless (package-installed-p pkg)
-        (unless doom--refresh-p
+        (unless doom--refreshed-p
           (package-refresh-contents)
-          (setq doom--refresh-p t))
+          (setq doom--refreshed-p t))
         (let ((inhibit-message t))
           (package-install pkg))
         (if (package-installed-p pkg)
@@ -491,13 +491,22 @@ loads MODULE SUBMODULE's packages.el file."
 ;; Commands
 ;;
 
-(defsubst doom--read-cookie-pred (file)
+(defun doom-packages--read-if-cookies (file)
   "Returns the value of the ;;;###if predicate form in FILE."
   (with-temp-buffer
     (insert-file-contents-literally file nil 0 256)
     (if (re-search-forward "^;;;###if " nil t)
         (eval (sexp-at-point))
       t)))
+
+(defun doom-packages--async-run (fn)
+  (let ((compilation-filter-hook
+         (list (lambda () (ansi-color-apply-on-region compilation-filter-start (point))))))
+    (compile (format "%s --quick --batch -l core/core.el -f %s"
+                     (executable-find "emacs")
+                     (symbol-name fn)))
+    (while compilation-in-progress
+      (sit-for 1))))
 
 (defun doom//reload-load-path ()
   "Reload `load-path' and recompile files (if necessary).
@@ -534,51 +543,57 @@ This should be run whenever init.el or an autoload file is modified. Running
   (interactive)
   ;; This function must not use autoloaded functions or external dependencies.
   ;; It must assume nothing is set up!
-  (doom-initialize-packages (not noninteractive))
-  (let ((targets
-         (file-expand-wildcards
-          (expand-file-name "autoload/*.el" doom-core-dir))))
-    (dolist (path (doom--module-paths))
-      (let ((auto-dir  (expand-file-name "autoload" path))
-            (auto-file (expand-file-name "autoload.el" path)))
-        (when (and (file-exists-p auto-file)
-                   (doom--read-cookie-pred auto-file))
-          (push auto-file targets))
-        (when (file-directory-p auto-dir)
-          (dolist (file (file-expand-wildcards (expand-file-name "*.el" auto-dir) t))
-            ;; Make evil*.el autoload files a special case; don't load
-            ;; them unless evil is enabled.
-            (when (doom--read-cookie-pred file)
-              (push file targets))))))
-    (when (file-exists-p doom-autoload-file)
-      (delete-file doom-autoload-file)
-      (message "Deleted old autoloads.el"))
-    (dolist (file (reverse targets))
-      (message (if (update-file-autoloads file nil doom-autoload-file)
-                   "Nothing in %s"
-                 "Scanned %s")
-               (file-relative-name file doom-emacs-dir)))
-    (let ((buf (get-file-buffer doom-autoload-file))
-          current-sexp)
-      (unwind-protect
-          (condition-case-unless-debug ex
-              (with-current-buffer buf
-                (save-buffer)
-                (goto-char (point-min))
-                (while (re-search-forward "^(" nil t)
-                  (save-excursion
-                    (backward-char)
-                    (setq current-sexp (read (thing-at-point 'sexp t)))
-                    (eval current-sexp t))
-                  (forward-char))
-                (message "Finished generating autoloads.el!"))
-            ('error
-             (delete-file doom-autoload-file)
-             (error "Error in autoloads.el: (%s %s ...) %s -- %s"
-                    (nth 0 current-sexp)
-                    (nth 1 current-sexp)
-                    (car ex) (error-message-string ex))))
-        (kill-buffer buf)))))
+  (if (not noninteractive)
+      ;; This is done "asynchroniously" to protect the current session's state.
+      ;; This is because `doom-initialize-packages' rereads your emacs config,
+      ;; which has side effects.
+      (and (doom-packages--async-run 'doom//reload-autoloads)
+           (load doom-autoload-file))
+    (doom-initialize-packages)
+    (let ((targets
+           (file-expand-wildcards
+            (expand-file-name "autoload/*.el" doom-core-dir))))
+      (dolist (path (doom-module-paths))
+        (let ((auto-dir  (expand-file-name "autoload" path))
+              (auto-file (expand-file-name "autoload.el" path)))
+          (when (and (file-exists-p auto-file)
+                     (doom-packages--read-if-cookies auto-file))
+            (push auto-file targets))
+          (when (file-directory-p auto-dir)
+            (dolist (file (file-expand-wildcards (expand-file-name "*.el" auto-dir) t))
+              ;; Make evil*.el autoload files a special case; don't load
+              ;; them unless evil is enabled.
+              (when (doom-packages--read-if-cookies file)
+                (push file targets))))))
+      (when (file-exists-p doom-autoload-file)
+        (delete-file doom-autoload-file)
+        (message "Deleted old autoloads.el"))
+      (dolist (file (reverse targets))
+        (message (if (update-file-autoloads file nil doom-autoload-file)
+                     "Nothing in %s"
+                   "Scanned %s")
+                 (file-relative-name file doom-emacs-dir)))
+      (let ((buf (get-file-buffer doom-autoload-file))
+            current-sexp)
+        (unwind-protect
+            (condition-case-unless-debug ex
+                (with-current-buffer buf
+                  (save-buffer)
+                  (goto-char (point-min))
+                  (while (re-search-forward "^(" nil t)
+                    (save-excursion
+                      (backward-char)
+                      (setq current-sexp (read (thing-at-point 'sexp t)))
+                      (eval current-sexp t))
+                    (forward-char))
+                  (message "Finished generating autoloads.el!"))
+              ('error
+               (delete-file doom-autoload-file)
+               (error "Error in autoloads.el: (%s %s ...) %s -- %s"
+                      (nth 0 current-sexp)
+                      (nth 1 current-sexp)
+                      (car ex) (error-message-string ex))))
+          (kill-buffer buf))))))
 
 (defun doom//byte-compile (&optional modules recompile-p)
   "Byte compiles your emacs configuration.
@@ -601,12 +616,10 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
         (recompile-p (or recompile-p
                          (and (member "-r" (cdr argv)) t))))
     (if (not noninteractive)
-        (let ((compilation-filter-hook
-               (list (lambda () (ansi-color-apply-on-region compilation-filter-start (point))))))
-          (compile (format "%s --quick --batch -l core/core.el -f doom//byte-compile %s %s"
-                           (executable-find "emacs")
-                           (if recompile-p "-r" "")
-                           (if modules (string-join modules " ") ""))))
+        ;; This is done "asynchroniously" to protect the current session's
+        ;; state. This is because `doom-initialize-packages' rereads your emacs
+        ;; config, which has side effects.
+        (doom-packages--async-run 'doom//byte-compile)
       (let ((total-ok   0)
             (total-fail 0)
             (total-noop 0)
@@ -635,7 +648,7 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
                         (and (file-exists-p elc-file)
                              (file-newer-than-file-p file elc-file))))
               (let ((result (if (and (string-match-p "/autoload/.*\\.el$" target)
-                                     (not (doom--read-cookie-pred target)))
+                                     (not (doom-packages--read-if-cookies target)))
                                 'no-byte-compile
                               (byte-compile-file target)))
                     (short-name (file-relative-name target doom-emacs-dir)))

@@ -9,7 +9,7 @@
   (when force-p
     (doom-refresh-clear-cache))
   (unless (or (persistent-soft-fetch 'last-pkg-refresh "emacs")
-              doom--refresh-p)
+              doom--refreshed-p)
     (condition-case-unless-debug ex
         (progn
           (message "Refreshing package archives")
@@ -23,7 +23,7 @@
 ;;;###autoload
 (defun doom-refresh-clear-cache ()
   "Clear the cache for `doom-refresh-packages'."
-  (setq doom--refresh-p nil)
+  (setq doom--refreshed-p nil)
   (persistent-soft-store 'last-pkg-refresh nil "emacs"))
 
 ;;;###autoload
