@@ -111,7 +111,7 @@ recognized by DOOM's popup system. They are:
           (grep-mode :size 25 :noselect t :autokill t)
           (profiler-report-mode :size 0.3 :regexp t :autokill t :modeline minimal)
           (tabulated-list-mode :noesc t)
-          ("^ ?\\*" :regexp t :size 0.3 :noselect t :autokill t :autoclose t :autofit t)))
+          ("^ ?\\*" :regexp t :size 15 :noselect t :autokill t :autoclose t)))
 
   :config
   (add-hook 'doom-post-init-hook #'shackle-mode)
