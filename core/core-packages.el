@@ -291,7 +291,7 @@ include all modules, enabled or otherwise."
   (cl-loop for key being the hash-keys of doom-modules
            collect key))
 
-(defun doom--display-benchmark ()
+(defun doom-packages--display-benchmark ()
   (message "Doom loaded %s packages across %d modules in %.03fs"
            ;; Certainly imprecise, especially where custom additions to
            ;; load-path are concerned, but I don't mind a [small] margin of
@@ -328,7 +328,7 @@ MODULES is an malformed plist of modules to load."
          (unless (server-running-p)
            (server-start)))
 
-       (add-hook 'doom-init-hook #'doom--display-benchmark t)
+       (add-hook 'doom-init-hook #'doom-packages--display-benchmark t)
        (message "Doom modules initialized"))))
 
 (defmacro def-package! (name &rest plist)
