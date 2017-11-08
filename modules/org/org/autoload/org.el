@@ -269,7 +269,7 @@ with `org-cycle'). Also:
   (interactive)
   (save-excursion
     (org-beginning-of-line)
-    (cond ((org-table-p)
+    (cond ((org-at-table-p)
            (org-table-align))
           ((org-in-src-block-p)
            (org-babel-remove-result))
