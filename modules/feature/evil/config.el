@@ -209,13 +209,12 @@ across windows."
     (cons (format "(%s " (or (read-string "(") "")) ")"))
 
   ;; Add escaped-sequence support to embrace
-  (cl-pushnew (cons ?\\ (make-embrace-pair-struct
-                         :key ?\\
-                         :read-function #'+evil--embrace-escaped
-                         :left-regexp "\\[[{(]"
-                         :right-regexp "\\[]})]"))
-              (default-value 'embrace--pairs-list)
-              :key #'car)
+  (push (cons ?\\ (make-embrace-pair-struct
+                   :key ?\\
+                   :read-function #'+evil--embrace-escaped
+                   :left-regexp "\\[[{(]"
+                   :right-regexp "\\[]})]"))
+        (default-value 'embrace--pairs-list))
 
   ;; Add extra pairs
   (add-hook 'LaTeX-mode-hook #'embrace-LaTeX-mode-hook)
@@ -238,7 +237,7 @@ across windows."
   (add-hook 'doom-post-init-hook #'evil-escape-mode)
   :config
   ;; no `evil-escape' in minibuffer
-  (cl-pushnew #'minibufferp evil-escape-inhibit-functions :test #'eq)
+  (push #'minibufferp evil-escape-inhibit-functions)
   (map! :irvo "C-g" #'evil-escape))
 
 

@@ -216,7 +216,7 @@ between the two."
 (defun +org-hacks ()
   "Getting org to behave."
   ;; Don't open separate windows
-  (cl-pushnew '(file . find-file) org-link-frame-setup)
+  (push '(file . find-file) org-link-frame-setup)
 
   ;; Let OS decide what to do with files when opened
   (setq org-file-apps

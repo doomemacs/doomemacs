@@ -16,7 +16,7 @@
       (backward-word)
       (looking-at-p
        (concat "\\<" (regexp-opt doom-electric-indent-words))))))
-(cl-pushnew #'+electric-indent|char electric-indent-functions :test #'eq)
+(push #'+electric-indent|char electric-indent-functions)
 
 (def-setting! :electric (modes &rest plist)
   "Declare :words (list of strings) or :chars (lists of chars) in MODES that
