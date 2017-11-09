@@ -30,8 +30,7 @@ playback.")
 (def-setting! :irc (server letvars)
   "Registers an irc server for circe."
   `(after! circe
-     (cl-pushnew (cons ,server ,letvars) circe-network-options
-                 :test #'equal :key #'car)))
+     (push (cons ,server ,letvars) circe-network-options)))
 
 (defvar +irc--defer-timer nil)
 
