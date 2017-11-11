@@ -235,6 +235,7 @@ default/fallback account."
             :n "q" #'mu4e~view-quit-buffer
             :n "r" #'mu4e-compose-reply
             :n "c" #'mu4e-compose-edit
+            :n "o" #'ace-link-mu4e
 
             :n "<M-Left>"  #'mu4e-view-headers-prev
             :n "<M-Right>" #'mu4e-view-headers-next
