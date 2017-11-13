@@ -6,11 +6,11 @@
 ;;
 ;; The three key commands are:
 ;;
-;; + `make install` or `doom/packages-install': Installs packages that are
+;; + `make install` or `doom//packages-install': Installs packages that are
 ;;   wanted, but not installed.
-;; + `make update` or `doom/packages-update': Updates packages that are
+;; + `make update` or `doom//packages-update': Updates packages that are
 ;;   out-of-date.
-;; + `make autoremove` or `doom/packages-autoremove': Uninstalls packages that
+;; + `make autoremove` or `doom//packages-autoremove': Uninstalls packages that
 ;;   are no longer needed.
 ;;
 ;; This system reads packages.el files located in each activated module (and one
@@ -42,7 +42,7 @@
 ;;    + `package-reinstall':        `doom/reinstall-package'
 ;;    + `package-delete':           `doom/delete-package'
 ;;    + `package-update':           `doom/update-package'
-;;    + `package-autoremove':       `doom/packages-autoremove'
+;;    + `package-autoremove':       `doom//packages-autoremove'
 ;;    + `package-refresh-contents': `doom/refresh-packages'
 ;;
 ;; See core/autoload/packages.el for more functions.
@@ -712,7 +712,7 @@ This excludes compiled packages in `doom-packages-dir'.'"
 (advice-add #'package-delete :after #'doom*package-delete)
 
 ;; It isn't safe to use `package-autoremove', so get rid of it
-(advice-add #'package-autoremove :override #'doom/packages-autoremove)
+(advice-add #'package-autoremove :override #'doom//packages-autoremove)
 
 (provide 'core-packages)
 ;;; core-packages.el ends here

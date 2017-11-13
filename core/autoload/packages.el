@@ -131,7 +131,7 @@ containing (PACKAGE-SYMBOL OLD-VERSION-LIST NEW-VERSION-LIST).
 
 If INCLUDE-FROZEN-P is non-nil, check frozen packages as well.
 
-Used by `doom/packages-update'."
+Used by `doom//packages-update'."
   (let (quelpa-pkgs elpa-pkgs)
     ;; Separate quelpa from elpa packages
     (dolist (pkg (doom-get-packages t))
@@ -164,7 +164,7 @@ Used by `doom/packages-update'."
   "Return a list of symbols representing packages that are no longer needed or
 depended on.
 
-Used by `doom/packages-autoremove'."
+Used by `doom//packages-autoremove'."
   (doom-initialize-packages t)
   (let ((package-selected-packages
          (append (mapcar #'car doom-packages) doom-core-packages)))
@@ -183,7 +183,7 @@ the package symbol, and whose CDR is a plist taken from that package's
 If INCLUDE-IGNORED-P is non-nil, includes missing packages that are ignored,
 i.e. they have an :ignore property.
 
-Used by `doom/packages-install'."
+Used by `doom//packages-install'."
   (cl-loop for desc in (doom-get-packages)
            for (name . plist) = desc
            if (and (or include-ignored-p
