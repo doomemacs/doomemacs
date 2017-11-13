@@ -14,7 +14,7 @@
 ;;   are no longer needed.
 ;;
 ;; This system reads packages.el files located in each activated module (and one
-;; in `doom-core-dir'). These contain `package!` blocks that tell DOOM what
+;; in `doom-core-dir'). These contain `package!' blocks that tell DOOM what
 ;; plugins to install and where from.
 ;;
 ;; Why all the trouble? Because:

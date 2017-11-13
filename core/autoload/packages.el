@@ -39,7 +39,7 @@ quelpa. Throws an error if NOERROR is nil and the package isn't installed."
         ((assq name package-alist)
          'elpa)
         ((not noerror)
-         (error "%s package not installed" name))))
+         (error "%s package is not installed" name))))
 
 ;;;###autoload
 (defun doom-package-outdated-p (name)
