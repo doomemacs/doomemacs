@@ -355,7 +355,8 @@ package.el as appropriate."
              (message! "Installing %s" (car pkg))
              (doom--condition-case!
               (message! "  %s%s"
-                        (cond ((package-installed-p (car pkg))
+                        (cond ((and (package-installed-p (car pkg))
+                                    (not (doom-package-different-backend-p (car pkg))))
                                (dark (white "ALREADY INSTALLED")))
                               ((doom-install-package (car pkg) (cdr pkg))
                                (green "DONE"))
