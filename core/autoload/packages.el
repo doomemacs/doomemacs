@@ -272,6 +272,8 @@ package.el as appropriate."
   (doom-initialize)
   (unless (package-installed-p name)
     (user-error "%s isn't installed" name))
+  (when (doom-package-different-backend-p name)
+    (user-error "%s's backend has changed and must be uninstalled first" name))
   (when (or force-p (doom-package-outdated-p name))
     (let ((inhibit-message (not doom-debug-mode))
           (desc (cadr (assq name package-alist))))
