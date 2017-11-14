@@ -97,6 +97,8 @@ the cursor."
       (delete-region (match-beginning 0) (match-end 0))
     (newline))
   (cond ((image-type-from-file-name filename)
+         (when (file-in-directory-p filename +org-attach-dir)
+           (setq filename (file-relative-name filename +org-dir)))
          (insert
           (concat (if (= org-download-image-html-width 0)
                       ""
@@ -114,3 +116,17 @@ the cursor."
                   (file-relative-name filename buffer-file-name)
                   (file-name-nondirectory (directory-file-name rel-path)))))))
 
+;;;###autoload
+(defun +org-attach*relative-to-attach-dir (orig-fn &rest args)
+  "TODO"
+  (if (file-in-directory-p buffer-file-name +org-dir)
+      (let* ((context (save-match-data (org-element-context)))
+             (file (org-link-unescape (org-element-property :path context)))
+             (default-directory
+               (if (string-prefix-p
+                    (concat "./" (car (last (split-string +org-attach-dir "/" t))))
+                    file)
+                   +org-dir
+                 default-directory)))
+        (apply orig-fn args))
+    (apply orig-fn args)))
