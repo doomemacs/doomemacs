@@ -522,8 +522,8 @@ call `doom/reload-load-path' remotely (through emacsclient)."
   (cond (noninteractive
          (message "Reloading...")
          (require 'server)
-         (when (file-exists-p (if server-use-tcp server-auth-dir server-socket-dir))
-           (server-eval-at "server" '(doom//reload-load-path))))
+         (when (server-running-p)
+           (server-eval-at server-name '(doom//reload-load-path))))
         (t
          (doom-initialize t)
          (message "Reloaded %d packages" (length doom--package-load-path))
