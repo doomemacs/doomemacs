@@ -35,12 +35,11 @@ Tries xref and falls back to `dumb-jump', then rg/ag, then
 
         ((and (require 'dumb-jump nil t)
               ;; dumb-jump doesn't tell us if it succeeded or not
-              (let ((old-fn-sym (make-symbol "old-fn"))
+              (let ((old-fn (symbol-function 'dumb-jump-get-results))
                     successful)
-                (cl-letf ((old-fn-sym (symbol-function 'dumb-jump-get-results))
-                          ((symbol-function 'dumb-jump-get-results)
+                (cl-letf (((symbol-function 'dumb-jump-get-results)
                            (lambda (&optional prompt)
-                             (let* ((plist (funcall old-fn-sym prompt))
+                             (let* ((plist (funcall old-fn prompt))
                                     (results (plist-get plist :results)))
                                (when (and results (> (length results) 0))
                                  (setq successful t))
