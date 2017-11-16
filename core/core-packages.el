@@ -495,8 +495,10 @@ loads MODULE SUBMODULE's packages.el file."
   "Returns the value of the ;;;###if predicate form in FILE."
   (with-temp-buffer
     (insert-file-contents-literally file nil 0 256)
-    (if (re-search-forward "^;;;###if " nil t)
-        (eval (sexp-at-point))
+    (if (and (re-search-forward "^;;;###if " nil t)
+             (<= (line-number-at-pos) 3))
+        (let ((load-file-name file))
+          (eval (sexp-at-point)))
       t)))
 
 (defun doom-packages--async-run (fn)
