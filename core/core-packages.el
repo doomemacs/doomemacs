@@ -408,13 +408,17 @@ The module is only loaded once. If RELOAD-P is non-nil, load it again."
     (when (or reload-p (not loaded-p))
       (unless loaded-p
         (doom-module-enable module submodule flags))
-      `(condition-case-unless-debug ex
-           (load! config ,(doom-module-path module submodule) t)
-         ('error
-          (lwarn 'doom-modules :error
-                 "%s in '%s %s' -> %s"
-                 (car ex) ,module ',submodule
-                 (error-message-string ex)))))))
+      (let ((module-path (doom-module-path module submodule)))
+        (if (file-directory-p module-path)
+            `(condition-case-unless-debug ex
+                 (load! config ,module-path t)
+               ('error
+                (lwarn 'doom-modules :error
+                       "%s in '%s %s' -> %s"
+                       (car ex) ,module ',submodule
+                       (error-message-string ex))))
+          (lwarn 'doom-modules :warning "Couldn't find module '%s %s'"
+                 module submodule))))))
 
 (defmacro featurep! (module &optional submodule flag)
   "A convenience macro wrapper for `doom-module-loaded-p'. It is evaluated at
