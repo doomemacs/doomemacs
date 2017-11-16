@@ -92,8 +92,7 @@ base by `doom!' and for calculating how many packages exist.")
 
 (defvar doom--refreshed-p nil)
 
-(setq load-prefer-newer (or noninteractive doom-debug-mode)
-      package--init-file-ensured t
+(setq package--init-file-ensured t
       package-user-dir (expand-file-name "elpa" doom-packages-dir)
       package-enable-at-startup nil
       package-archives

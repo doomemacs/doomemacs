@@ -94,6 +94,7 @@ melodramatic ex-vimmer disappointed with the text-editor status quo."
  enable-recursive-minibuffers nil
  debug-on-error (and (not noninteractive) doom-debug-mode)
  idle-update-delay 2              ; update ui less often
+ load-prefer-newer (or noninteractive doom-debug-mode)
  ;; keep the point out of the minibuffer
  minibuffer-prompt-properties '(read-only t point-entered minibuffer-avoid-prompt face minibuffer-prompt)
  ;; History & backup settings (save nothing, that's what git is for)
