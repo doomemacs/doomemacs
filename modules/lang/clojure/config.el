@@ -5,13 +5,18 @@
          ("\\.cljs$". clojurescript-mode))
   :commands (clojure-mode clojurescript-mode) ;; this might not be necessary?
   :config
+  (def-package! clj-refactor :demand t) ;; prob a better way to do this
+
   (map! :map clojure-mode-map
         (:localleader
-          "'"      #'cider-jack-in
-          "\""     #'cider-jack-in-clojurescript
-          "b"      #'cider-switch-to-repl-buffer
-          "n"      #'cider-repl-set-ns
-          "r"      #'cider-eval-region)))
+         :n  "'"      #'cider-jack-in
+         :n  "\""     #'cider-jack-in-clojurescript
+         :n  "b"      #'cider-switch-to-repl-buffer
+         :n  "n"      #'cider-repl-set-ns
+         :n  "j"      #'cider-find-var
+         :n  "d"      #'cider-doc
+         :n  "c"      #'cider-repl-clear-buffer
+         :n  "r"      #'cider-eval-region)))
 
 
 (def-package! cider
