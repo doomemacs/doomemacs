@@ -5,7 +5,15 @@
          ("\\.cljs$". clojurescript-mode))
   :commands (clojure-mode clojurescript-mode) ;; this might not be necessary?
   :config
-  (def-package! clj-refactor :demand t) ;; prob a better way to do this
+
+  (def-package! clj-refactor  ;; prob a better place to do this...using hooks?
+    :demand t
+    :config
+    ;; setup some extra namespace auto completion for great awesome
+    (dolist (mapping '(("re-frame" . "re-frame.core")
+                       ("reagent"  . "reagent.core")
+                       ("str"      . "clojure.str")))
+      (add-to-list 'cljr-magic-require-namespaces mapping t)))
 
   (map! :map clojure-mode-map
         (:localleader
