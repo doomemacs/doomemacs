@@ -6,6 +6,8 @@
   :commands (clojure-mode clojurescript-mode) ;; this might not be necessary?
   :config
 
+  (rainbow-delimiters-mode-enable)
+
   (def-package! clj-refactor  ;; prob a better place to do this...using hooks?
     :demand t
     :config
