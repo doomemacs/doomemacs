@@ -3,10 +3,9 @@
 (def-package! clojure-mode
   :mode (("\\.clj$" . clojure-mode)
          ("\\.cljs$". clojurescript-mode))
-  :commands (clojure-mode clojurescript-mode) ;; this might not be necessary?
+  :commands (clojure-mode clojurescript-mode)
   :config
 
-  (rainbow-delimiters-mode-enable)
 
   (def-package! clj-refactor  ;; prob a better place to do this...using hooks?
     :demand t
