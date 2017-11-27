@@ -6,7 +6,7 @@
   (push (file-name-directory path) load-path))
 
 ;; Custom variables
-(defvar +org-dir (expand-file-name "~/Dropbox/notes/")
+(defvar +org-dir (expand-file-name "~/work/org/")
   "The directory where org files are kept.")
 (defvaralias 'org-directory '+org-dir)
 
