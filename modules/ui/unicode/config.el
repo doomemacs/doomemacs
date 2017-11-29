@@ -7,7 +7,7 @@
 
   (defun +unicode|init-fonts (&optional frame)
     "Initialize `unicode-fonts', if in a GUI session."
-    (when (display-graphic-p frame)
+    (when (and frame (display-graphic-p frame))
       (with-selected-frame frame
         (require 'unicode-fonts)
         ;; NOTE will impact startup time on first run
