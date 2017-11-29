@@ -25,6 +25,7 @@
          :n  "j"      #'cider-find-var
          :n  "d"      #'cider-doc
          :n  "c"      #'cider-repl-clear-buffer
+         :n  "p"      #'cider-eval-sexp-at-point
          :n  "r"      #'cider-eval-region)))
 
 
