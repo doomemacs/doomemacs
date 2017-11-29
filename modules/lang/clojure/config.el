@@ -20,7 +20,8 @@
         (:localleader
          :n  "'"      #'cider-jack-in
          :n  "\""     #'cider-jack-in-clojurescript
-         :n  "b"      #'cider-switch-to-repl-buffer
+         :n  "B"      #'cider-switch-to-repl-buffer
+         :n  "b"      #'cider-eval-buffer
          :n  "n"      #'cider-repl-set-ns
          :n  "j"      #'cider-find-var
          :n  "d"      #'cider-doc
