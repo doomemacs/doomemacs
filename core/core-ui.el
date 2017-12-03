@@ -307,9 +307,17 @@ local value, whether or not it's permanent-local. Therefore, we cycle
     ;; Disable `hl-line' in evil-visual mode (temporarily). `hl-line' can make
     ;; the selection region harder to see while in evil visual mode.
     (defun doom|disable-hl-line () (hl-line-mode -1))
+    ;; Enable `hl-line' after exiting evil-visual mode but only when
+    ;; major mode is not term-mode
+    (defun doom|enable-hl-line()
+        (interactive)
+        (if (eq 'term-mode major-mode)
+                (hl-line-mode -1)
+            (hl-line-mode 1)
+        ))
 
     (add-hook 'evil-visual-state-entry-hook #'doom|disable-hl-line)
-    (add-hook 'evil-visual-state-exit-hook #'hl-line-mode)))
+    (add-hook 'evil-visual-state-exit-hook #'doom|enable-hl-line)))
 
 ;; Helps us distinguish stacked delimiter pairs. Especially in parentheses-drunk
 ;; languages like Lisp.
