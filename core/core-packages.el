@@ -158,9 +158,9 @@ startup."
        (package-refresh-contents)
        (setq doom--refreshed-p t)
        (package-initialize t)))
-    ;; We could let `package-initialize' fill `load-path', but it costs precious
-    ;; milliseconds and does other stuff I don't need (like load autoload
-    ;; files). My premature optimization quota isn't filled yet.
+    ;; We could let `package-initialize' fill `load-path', but it does more than
+    ;; that alone (like load autoload files). If you want something prematurely
+    ;; optimizated right, ya gotta do it yourself.
     ;;
     ;; Also, in some edge cases involving package initialization during a
     ;; non-interactive session, `package-initialize' fails to fill `load-path'.
@@ -556,9 +556,8 @@ This should be run whenever init.el or an autoload file is modified. Running
   ;; This function must not use autoloaded functions or external dependencies.
   ;; It must assume nothing is set up!
   (if (not noninteractive)
-      ;; This is done "asynchroniously" to protect the current session's state.
-      ;; This is because `doom-initialize-packages' rereads your emacs config,
-      ;; which has side effects.
+      ;; This is done in another instance to protect the current session's
+      ;; state. `doom-initialize-packages' will have side effects otherwise.
       (and (doom-packages--async-run 'doom//reload-autoloads)
            (load doom-autoload-file))
     (doom-initialize-packages)
@@ -627,9 +626,8 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
         (recompile-p (or recompile-p
                          (and (member "-r" (cdr argv)) t))))
     (if (not noninteractive)
-        ;; This is done "asynchroniously" to protect the current session's
-        ;; state. This is because `doom-initialize-packages' rereads your emacs
-        ;; config, which has side effects.
+        ;; This is done in another instance to protect the current session's
+        ;; state. `doom-initialize-packages' will have side effects otherwise.
         (doom-packages--async-run 'doom//byte-compile)
       (let ((total-ok   0)
             (total-fail 0)
