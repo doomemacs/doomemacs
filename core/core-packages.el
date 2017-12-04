@@ -68,7 +68,7 @@ package's name as a symbol, and whose CDR is the plist supplied to its
 `package!' declaration. Set by `doom-initialize-packages'.")
 
 (defvar doom-core-packages
-  '(persistent-soft quelpa use-package async)
+  '(persistent-soft use-package quelpa)
   "A list of packages that must be installed (and will be auto-installed if
 missing) and shouldn't be deleted.")
 
@@ -96,10 +96,17 @@ base by `doom!' and for calculating how many packages exist.")
       package-user-dir (expand-file-name "elpa" doom-packages-dir)
       package-enable-at-startup nil
       package-archives
-      '(("gnu"   . "https://elpa.gnu.org/packages/")
-        ("melpa" . "https://melpa.org/packages/"))
+      '(("gnu"          . "https://elpa.gnu.org/packages/")
+        ("melpa"        . "https://melpa.org/packages/")
+        ("melpa-stable" . "https://stable.melpa.org/packages/"))
       ;; I omit Marmalade because its packages are manually submitted rather
       ;; than pulled, so packages are often out of date with upstream.
+
+      ;; Don't gamble with these packages. Only retrieve stable versions. Quelpa
+      ;; is omitted because it isn't on melpa-stable.
+      package-pinned-packages
+      '((use-package     . "melpa-stable")
+        (persistent-soft . "melpa-stable"))
 
       ;; security settings
       gnutls-verify-error (not (getenv "INSECURE")) ; you shouldn't use this

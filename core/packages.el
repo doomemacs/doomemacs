@@ -4,6 +4,7 @@
 ;; core packages
 (package! s)
 (package! f)
+(package! async)
 
 ;; core-os.el
 ;; In case this config is shared across multiple computers (like mine is), let's
