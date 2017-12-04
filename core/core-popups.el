@@ -46,6 +46,9 @@ that was/were open in `doom-popup-history'.")
 when their associated popup windows are closed, despite their :autokill
 property.")
 
+(defvar doom-popup-mode-map (make-sparse-keymap)
+  "Active keymap in popup windows.")
+
 
 (def-setting! :popup (&rest rules)
   "Prepend a new popup rule to `shackle-rules' (see for format details).
@@ -133,20 +136,17 @@ recognized by DOOM's popup system. They are:
   (dolist (param `(popup ,@doom-popup-window-parameters))
     (push (cons param 'writable) window-persistent-parameters))
 
-  (defvar doom-popup-mode-map
-    (let ((map (make-sparse-keymap)))
-      (define-key map [escape]    #'doom/popup-close-maybe)
-      (define-key map (kbd "ESC") #'doom/popup-close-maybe)
-      (define-key map [remap quit-window] #'doom/popup-close-maybe)
-      (define-key map [remap doom/kill-this-buffer] #'delete-window)
-      (define-key map [remap split-window-right] #'ignore)
-      (define-key map [remap split-window-below] #'ignore)
-      (define-key map [remap split-window-horizontally] #'ignore)
-      (define-key map [remap split-window-vertically] #'ignore)
-      (define-key map [remap mouse-split-window-horizontally] #'ignore)
-      (define-key map [remap mouse-split-window-vertically] #'ignore)
-      map)
-    "Active keymap in popup windows."))
+  (let ((map doom-popup-mode-map))
+    (define-key map [escape]    #'doom/popup-close-maybe)
+    (define-key map (kbd "ESC") #'doom/popup-close-maybe)
+    (define-key map [remap quit-window] #'doom/popup-close-maybe)
+    (define-key map [remap doom/kill-this-buffer] #'delete-window)
+    (define-key map [remap split-window-right]              #'ignore)
+    (define-key map [remap split-window-below]              #'ignore)
+    (define-key map [remap split-window-horizontally]       #'ignore)
+    (define-key map [remap split-window-vertically]         #'ignore)
+    (define-key map [remap mouse-split-window-horizontally] #'ignore)
+    (define-key map [remap mouse-split-window-vertically]   #'ignore)))
 
 
 ;;
