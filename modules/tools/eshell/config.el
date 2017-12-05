@@ -67,10 +67,6 @@ redefines its keys every time `eshell-mode' is enabled."
           [remap +workspace/close-window-or-workspace] #'eshell-life-is-too-much))
   (add-hook 'eshell-mode-hook #'+eshell|init-keymap)
 
-  (add-hook! eshell-mode
-    (add-hook 'evil-insert-state-exit-hook  #'hl-line-mode nil t)
-    (add-hook 'evil-insert-state-entry-hook (lambda () (hl-line-mode -1)) nil t))
-
   ;; Aliases
   (setq eshell-command-aliases-list
         '(("q"   "exit")
