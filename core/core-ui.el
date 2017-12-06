@@ -304,12 +304,19 @@ local value, whether or not it's permanent-local. Therefore, we cycle
         global-hl-line-sticky-flag nil)
 
   (after! evil
+    (defvar-local doom-buffer-hl-line-mode nil)
+
     ;; Disable `hl-line' in evil-visual mode (temporarily). `hl-line' can make
     ;; the selection region harder to see while in evil visual mode.
-    (defun doom|disable-hl-line () (hl-line-mode -1))
+    (defun doom|disable-hl-line ()
+      (when hl-line-mode
+        (setq doom-buffer-hl-line-mode t)
+        (hl-line-mode -1)))
+    (defun doom|enable-hl-line-maybe ()
+      (if doom-buffer-hl-line-mode (hl-line-mode +1)))
 
     (add-hook 'evil-visual-state-entry-hook #'doom|disable-hl-line)
-    (add-hook 'evil-visual-state-exit-hook #'hl-line-mode)))
+    (add-hook 'evil-visual-state-exit-hook  #'doom|enable-hl-line-maybe)))
 
 ;; Helps us distinguish stacked delimiter pairs. Especially in parentheses-drunk
 ;; languages like Lisp.

@@ -9,6 +9,8 @@
   (advice-add #'recenter :around #'+doom*blink-cursor-maybe)
 
   (after! evil
+    (advice-add #'evil--jumps-jump   :after #'+doom/blink-cursor)
+
     (advice-add #'evil-window-top    :after #'+doom/blink-cursor)
     (advice-add #'evil-window-middle :after #'+doom/blink-cursor)
     (advice-add #'evil-window-bottom :after #'+doom/blink-cursor)))

@@ -170,7 +170,7 @@
                                        :v  "r" #'+eval:repl)
 
    (:desc "file" :prefix "f"
-     :desc "File file"                 :n "." #'find-file
+     :desc "Find file"                 :n "." #'find-file
      :desc "Sudo find file"            :n ">" #'doom/sudo-find-file
      :desc "Find file in project"      :n "/" #'projectile-find-file
      :desc "Find file from here"       :n "?" #'counsel-file-jump
