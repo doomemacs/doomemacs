@@ -45,6 +45,11 @@
     to set in their own private module. Use ~(set! :font "Font Name" :size N)~
     to do so.
 + =lang=
+  + =crystal=
+    + Add flycheck integration for the Crystal language, powered by
+      ~flycheck-crystal~.
+    + Use the ELPA source for ~crystal-mode~. The former QUELPA soruce
+      (dotmilk's fork) is no longer maintained.
   + =sh=
     + Improve how variables and subshells in double-quoted strings are
       fontified.

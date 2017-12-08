@@ -9,3 +9,7 @@
           (:exec        . "%c %s")
           (:description . "Run Crystal script"))))
 
+
+(def-package! flycheck-crystal
+  :after crystal-mode
+  :config (add-hook 'crystal-mode-hook #'flycheck-mode))
