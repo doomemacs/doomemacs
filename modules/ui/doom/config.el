@@ -6,21 +6,21 @@
   (unless doom-theme (setq doom-theme 'doom-one))
 
   ;; Ensure `doom/reload-load-path' reloads common faces
-  (defun +doom|reload-theme ()
-    (load "doom-themes-common.el" nil t))
+  (defun +doom|reload-theme () (load "doom-themes-common.el" nil t))
   (add-hook 'doom-pre-reload-theme-hook #'+doom|reload-theme)
 
-  ;; improve integration with org-mode
+  ;; improve integration w/ org-mode
   (add-hook 'doom-init-ui-hook #'doom-themes-org-config)
 
-  ;; blink mode-line on errors
-  ;; (add-hook 'doom-init-ui-hook #'doom-themes-visual-bell-config)
-
-  ;; Add file icons to doom-neotree
+  ;; more Atom-esque file icons for neotree
   (add-hook 'doom-init-ui-hook #'doom-themes-neotree-config)
   (setq doom-neotree-enable-variable-pitch t
         doom-neotree-file-icons 'simple
         doom-neotree-line-spacing 2)
+
+  ;; blink mode-line on errors
+  ;; FIXME Breaks modeline
+  ;; (add-hook 'doom-init-ui-hook #'doom-themes-visual-bell-config)
 
   (after! neotree
     (defun +doom|neotree-fix-popup ()

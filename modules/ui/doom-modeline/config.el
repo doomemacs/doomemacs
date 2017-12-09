@@ -20,8 +20,8 @@
              mode-line-in-non-selected-windows)
         (force-mode-line-update)
         (sit-for eldoc-show-in-mode-line-delay))))
-
   (setq eldoc-in-minibuffer-show-fn #'+doom-modeline--show-eldoc)
+
   (eldoc-in-minibuffer-mode +1))
 
 ;; anzu and evil-anzu expose current/total state that can be displayed in the
@@ -35,13 +35,11 @@
   (setq anzu-cons-mode-line-p nil
         anzu-minimum-input-length 1
         anzu-search-threshold 250)
-
   ;; Avoid anzu conflicts across buffers
   (mapc #'make-variable-buffer-local
         '(anzu--total-matched anzu--current-position anzu--state
           anzu--cached-count anzu--cached-positions anzu--last-command
           anzu--last-isearch-string anzu--overflow-p))
-
   ;; Ensure anzu state is cleared when searches & iedit are done
   (add-hook 'isearch-mode-end-hook #'anzu--reset-status t)
   (add-hook '+evil-esc-hook #'anzu--reset-status t)
@@ -52,7 +50,7 @@
 (defvar +doom-modeline-current-window (frame-selected-window))
 (defun +doom-modeline|set-selected-window (&rest _)
   "Sets `+doom-modeline-current-window' appropriately"
-  (let ((win (frame-selected-window)))
+  (when-let (win (frame-selected-window))
     (unless (minibuffer-window-active-p win)
       (setq +doom-modeline-current-window win))))
 
@@ -633,6 +631,6 @@ Returns \"\" to not break --no-window-system."
 (add-hook 'doom-scratch-buffer-hook #'+doom-modeline|set-special-modeline)
 (add-hook '+doom-dashboard-mode-hook #'+doom-modeline|set-project-modeline)
 
-(add-hook 'org-src-mode-hook #'+doom-modeline|set-special-modeline)
 (add-hook 'image-mode-hook   #'+doom-modeline|set-media-modeline)
+(add-hook 'org-src-mode-hook #'+doom-modeline|set-special-modeline)
 (add-hook 'circe-mode-hook   #'+doom-modeline|set-special-modeline)

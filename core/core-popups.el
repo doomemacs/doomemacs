@@ -211,10 +211,10 @@ recognized by DOOM's popup system. They are:
   (defun doom|popup-close-maybe ()
     "If current window is a popup, close it. If minibuffer is open, close it. If
 not in a popup, close all popups with an :autoclose property."
-    (cond ((doom-popup-p)
-           (unless (doom-popup-property :noesc)
-             (delete-window)))
-          (t (doom/popup-close-all))))
+    (if (doom-popup-p)
+        (unless (doom-popup-property :noesc)
+          (delete-window))
+      (doom/popup-close-all)))
   (add-hook '+evil-esc-hook #'doom|popup-close-maybe t)
 
   ;; Make evil-mode cooperate with popups

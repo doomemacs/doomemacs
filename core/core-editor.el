@@ -47,13 +47,10 @@ modes are active and the buffer is read-only.")
    (newline-mark ?\n [?¬ ?\n])
    (space-mark ?\  [?·] [?.])))
 
-(defun doom|ediff-use-existing-frame ()
-  "Use existing frame instead of creating a new one."
-  (setq ediff-diff-options           "-w"
-        ediff-split-window-function  #'split-window-horizontally
-        ;; no extra frames
-        ediff-window-setup-function  #'ediff-setup-windows-plain))
-(add-hook 'ediff-load-hook #'doom|ediff-use-existing-frame)
+;; ediff
+(setq ediff-diff-options "-w"
+      ediff-split-window-function #'split-window-horizontally
+      ediff-window-setup-function #'ediff-setup-windows-plain)
 
 (defun doom|dont-kill-scratch-buffer ()
   "Don't kill the scratch buffer."
@@ -275,15 +272,15 @@ extension, try to guess one."
   :commands (describe-buffer describe-command describe-file
              describe-keymap describe-option describe-option-of-type))
 
-(def-package! pcre2el :commands rxt-quote-pcre)
+(def-package! pcre2el
+  :commands rxt-quote-pcre)
 
 (def-package! smart-forward
   :commands (smart-up smart-down smart-backward smart-forward))
 
 (def-package! wgrep
   :commands (wgrep-setup wgrep-change-to-wgrep-mode)
-  :config
-  (setq wgrep-auto-save-buffer t))
+  :config (setq wgrep-auto-save-buffer t))
 
 (provide 'core-editor)
 ;;; core-editor.el ends here
