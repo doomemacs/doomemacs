@@ -385,8 +385,8 @@
  ;; counsel
  (:after counsel
    (:map counsel-ag-map
-     [backtab]  #'+ivy/wgrep-occur  ; search/replace on results
-     "C-SPC"    #'counsel-git-grep-recenter   ; preview
+     [backtab]  #'+ivy/wgrep-occur      ; search/replace on results
+     "C-SPC"    #'ivy-call-and-recenter ; preview
      "M-RET"    (+ivy-do-action! #'+ivy-git-grep-other-window-action)))
 
  ;; evil-commentary
@@ -536,6 +536,8 @@
  (:after ivy
    :map ivy-minibuffer-map
    [escape] #'keyboard-escape-quit
+   "C-SPC" #'ivy-call-and-recenter
+   "TAB" #'ivy-partial
    "M-v" #'yank
    "M-z" #'undo
    "C-r" #'evil-paste-from-register
