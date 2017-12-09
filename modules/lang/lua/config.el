@@ -29,8 +29,7 @@
 
 (def-package! moonscript
   :mode ("\\.moon$" . moonscript-mode)
-  :config
-  (set! :editorconfig :add '(moonscript-mode moonscript-indent-offset)))
+  :config (defvaralias 'moonscript-indent-offset 'tab-width))
 
 
 ;;

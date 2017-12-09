@@ -171,17 +171,6 @@ with functions that require it (like modeline segments)."
 ;; Handles whitespace (tabs/spaces) settings externally. This way projects can
 ;; specify their own formatting rules.
 (def-package! editorconfig
-  :init
-  (def-setting! :editorconfig (action value)
-    ":add or :remove an entry in `editorconfig-indentation-alist'."
-    (cond ((eq action :add)
-           `(push ,value editorconfig-indentation-alist))
-          ((eq action :remove)
-           `(setq editorconfig-indentation-alist
-                  (assq-delete-all ,value editorconfig-indentation-alist)))
-          (t (error "%s is an invalid action for :editorconfig"
-                    action))))
-
   :config
   (add-hook 'doom-init-hook #'editorconfig-mode)
 
@@ -211,10 +200,12 @@ extension, try to guess one."
       (apply orig-fn args)))
   (advice-add #'editorconfig-call-editorconfig-exec :around #'doom*editorconfig-smart-detection)
 
-  ;; Editorconfig makes indentation weird in Lisp modes, so we disable it. It
-  ;; still applies other project settings (e.g. tabs vs spaces) though.
-  (set! :editorconfig :remove 'emacs-lisp-mode)
-  (set! :editorconfig :remove 'lisp-mode)
+  ;; Editorconfig makes indentation too rigid in Lisp modes, so tell
+  ;; editorconfig to ignore indentation. I prefer dynamic indentation support
+  ;; built into Emacs.
+  (dolist (mode '(emacs-lisp-mode lisp-mode))
+    (setq editorconfig-indentation-alist
+      (assq-delete-all mode editorconfig-indentation-alist)))
 
   (defvar whitespace-style)
   (defun doom|editorconfig-whitespace-mode-maybe (&rest _)

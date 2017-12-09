@@ -15,8 +15,8 @@
   (set! :electric 'js2-mode :chars '(?\} ?\) ?.))
   (set! :jump 'js2-mode :xref-backend #'xref-js2-xref-backend)
 
-  ;; Conform switch-case indentation to editorconfig's config
-  (set! :editorconfig :add '(js2-mode js2-basic-offset js-switch-indent-offset))
+  ;; Conform switch-case indentation to js2 normal indent
+  (defvaralias 'js-switch-indent-offset 'js2-basic-offset)
 
   (sp-with-modes '(js2-mode rjsx-mode)
     (sp-local-pair "/* " " */" :post-handlers '(("| " "SPC"))))
