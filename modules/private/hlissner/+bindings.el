@@ -760,10 +760,7 @@
       :i [remap delete-backward-char]   #'doom/deflate-space-maybe
       :i [remap newline]                #'doom/newline-and-indent
 
-      (:map org-mode-map
-        [remap doom/inflate-space-maybe] #'self-insert-command)
-
-      (:after org-mode
+      (:after org
         (:map org-mode-map
           :i [remap doom/inflate-space-maybe] #'org-self-insert-command
           :i "C-e" #'org-end-of-line
