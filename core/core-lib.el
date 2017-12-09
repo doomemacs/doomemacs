@@ -1,23 +1,11 @@
 ;;; core-lib.el -*- lexical-binding: t; -*-
 
-;; I don't use use-package for these to save on the `fboundp' lookups it does
-;; for its :commands property. I use dolists instead of mapc to avoid extra
-;; stackframes allocated for lambdas. This is _definitely_ premature
-;; optimization.
-(dolist (sym '(async-start async-start-process async-byte-recompile-directory
-               async-inject-variables))
-  (autoload sym "async"))
-
-(dolist (sym '(persistent-soft-exists-p persistent-soft-fetch
-               persistent-soft-flush persistent-soft-store))
-  (autoload sym "persistent-soft"))
-
-(dolist (sym '(when-let if-let string-trim string-join string-blank-p string-lessp))
-  (autoload sym "subr-x" nil nil 'macro))
-
+(require 'cl-lib)
+(require 'subr-x)
+(load "async-autoloads" nil t)
+(load "persistent-soft-autoloads" nil t)
 (dolist (sym '(json-read json-read-file json-read-from-string json-encode))
   (autoload sym "json"))
-
 
 ;;
 ;; Helpers
