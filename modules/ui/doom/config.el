@@ -3,7 +3,10 @@
 ;; <https://github.com/hlissner/emacs-doom-theme>
 (def-package! doom-themes
   :config
-  (unless doom-theme (setq doom-theme 'doom-one))
+  (unless doom-theme
+    (setq doom-theme 'doom-one)
+    (after! solaire-mode
+      (add-hook 'doom-init-ui-hook #'solaire-mode-swap-bg t)))
 
   ;; Ensure `doom/reload-load-path' reloads common faces
   (defun +doom|reload-theme () (load "doom-themes-common.el" nil t))
@@ -31,15 +34,17 @@
 
 
 (def-package! solaire-mode
-  :hook (gist-mode twittering-mode mu4e-view-mode org-tree-slide-mode +regex-mode)
   :hook (after-change-major-mode . turn-on-solaire-mode)
   :hook (doom-popup-mode . turn-off-solaire-mode)
-  :hook (doom-init-ui . solaire-mode-swap-bg)
   :config
   (setq solaire-mode-real-buffer-fn #'doom-real-buffer-p)
+
   ;; Prevent color glitches when reloading either DOOM or the theme
-  (advice-add #'load-theme :after #'solaire-mode-reset)
-  (add-hook! '(doom-init-ui-hook doom-reload-hook) #'solaire-mode-reset))
+  (add-hook! '(doom-init-ui-hook doom-reload-hook) #'solaire-mode-reset)
+
+  (add-hook!
+    (gist-mode twittering-mode mu4e-view-mode org-tree-slide-mode +regex-mode)
+    #'solaire-mode))
 
 
 (after! hideshow
