@@ -16,7 +16,7 @@ If neither is available, run all tests in all enabled modules."
           (doom-initialize-modules nil))
         ;; collect targets
         (cond ((and argv (equal (car argv) "--"))
-               (cl-loop for arg in argv
+               (cl-loop for arg in (cdr argv)
                         if (equal arg "core")
                          do (push (expand-file-name "test/" doom-core-dir) targets)
                         else
