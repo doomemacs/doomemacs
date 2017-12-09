@@ -44,8 +44,8 @@
   (if (listp exp) exp (list exp)))
 
 (defun doom-resolve-vim-path (file-name)
-  "Take a path and resolve any vim-like filename modifiers in it. This adds
-support for these special modifiers:
+  "Take a path and resolve any vim-like filename modifiers in it. On top of the
+classical vim modifiers, this adds support for:
 
   %:P   Resolves to `doom-project-root'.
 
@@ -223,10 +223,9 @@ Body forms can access the hook's arguments through the let-bound variable
                      `(function ,fn)
                    `(lambda (&rest _) ,@args)))
         (dolist (hook hooks)
-          (push (cond ((eq hook-fn 'remove-hook)
-                       `(remove-hook ',hook ,fn ,local-p))
-                      (t
-                       `(add-hook ',hook ,fn ,append-p ,local-p)))
+          (push (if (eq hook-fn 'remove-hook)
+                    `(remove-hook ',hook ,fn ,local-p)
+                  `(add-hook ',hook ,fn ,append-p ,local-p))
                 forms)))
       `(progn ,@(nreverse forms)))))
 
@@ -268,16 +267,19 @@ Body forms can access the hook's arguments through the let-bound variable
                            mode modes match files))))))
 
 
-;; I'm a fan of concise, hassle-free front-facing configuration. Rather than
-;; littering my config with `after!' blocks, and checking if features and
-;; modules are loaded before every line of config, I wrote `set!' as a more
-;; robust alternative. If a setting doesn't exist at run-time, the `set!' call
-;; is ignored. It also benefits from byte-compilation.
+;; I needed a way to reliably cross-configure modules without worrying about
+;; whether they were enabled or not, so I wrote `set!'. If a setting doesn't
+;; exist at runtime, the `set!' call is ignored (and omitted when
+;; byte-compiled).
 (defvar doom-settings nil)
 
 (defmacro def-setting! (keyword arglist &optional docstring &rest forms)
-  "Define a setting macro. Like `defmacro', this should return a form to be
-executed when called with `set!'. FORMS are not evaluated until `set!' calls it."
+  "Define a setting. Like `defmacro', this should return a form to be executed
+when called with `set!'. FORMS are not evaluated until `set!' calls it.
+
+See `doom/describe-setting' for a list of available settings.
+
+Do not use this for configuring Doom core."
   (declare (indent defun) (doc-string 3))
   (unless (keywordp keyword)
     (error "Not a valid property name: %s" keyword))
@@ -289,7 +291,8 @@ executed when called with `set!'. FORMS are not evaluated until `set!' calls it.
        (cl-pushnew ',(cons keyword fn) doom-settings :test #'eq :key #'car))))
 
 (defmacro set! (keyword &rest values)
-  "Set an option defined by `def-setting!'. Skip if doesn't exist."
+  "Set an option defined by `def-setting!'. Skip if doesn't exist. See
+`doom/describe-setting' for a list of available settings."
   (declare (indent defun))
   (unless values
     (error "Empty set! for %s" keyword))
