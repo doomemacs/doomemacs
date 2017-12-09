@@ -308,16 +308,15 @@ include all modules, enabled or otherwise."
 
 MODULES is an malformed plist of modules to load."
   (doom-initialize-modules modules)
-  (when (and user-login-name
-             (not (doom-module-loaded-p :private (intern user-login-name))))
-    (doom-module-enable :private user-login-name))
   `(let (file-name-handler-alist)
      (setq doom-modules ',doom-modules)
 
      (unless noninteractive
-       (load ,(doom-module-path :private user-login-name "init") t t)
        ,@(cl-loop for (module . submodule) in (doom-module-pairs)
-                  collect `(require! ,module ,submodule nil t))
+                  for module-path = (doom-module-path module submodule)
+                  collect `(load! init ,module-path t) into inits
+                  collect `(require! ,module ,submodule nil t) into configs
+                  finally return (append inits configs))
 
        (when (display-graphic-p)
          (require 'server)
