@@ -3,7 +3,7 @@
 ;; <https://github.com/hlissner/emacs-doom-theme>
 (def-package! doom-themes
   :config
-  (set! :theme 'doom-one)
+  (unless doom-theme (setq doom-theme 'doom-one))
 
   ;; Ensure `doom/reload-load-path' reloads common faces
   (defun +doom|reload-theme ()

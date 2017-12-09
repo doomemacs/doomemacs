@@ -7,16 +7,18 @@
   "A symbol representing the color theme to load.")
 
 (defvar doom-font nil
-  "The default font to use. Expects a FONT-SPEC (`font-spec').")
+  "The default font to use. Expects a `font-spec'.")
 
 (defvar doom-big-font nil
-  "The default font to use. Expects a FONT-SPEC (`font-spec').")
+  "The default large font to use when `doom-big-font-mode' is enabled. Expects a
+`font-spec'.")
 
 (defvar doom-variable-pitch-font nil
-  "The default font to use for variable-pitch text. Expects a FONT-SPEC (`font-spec').")
+  "The default font to use for variable-pitch text. Expects a `font-spec'.")
 
 (defvar doom-unicode-font nil
-  "Fallback font for unicode glyphs. Is ignored if :feature unicode is active.")
+  "Fallback font for unicode glyphs. Is ignored if :feature unicode is active.
+Expects a `font-spec'.")
 
 (defvar doom-major-mode-names
   '((sh-mode . "sh")
@@ -30,38 +32,6 @@ shorter major mode name in the mode-line. See `doom|set-mode-name'.")
 (defvar doom-init-ui-hook nil
   "List of hooks to run when the theme and font is initialized (or reloaded with
 `doom//reload-theme').")
-
-
-;; Settings
-(def-setting! :theme (theme)
-  "Sets the current THEME (a symbol)."
-  `(unless doom-theme
-     (setq doom-theme ,theme)))
-
-(def-setting! :font (family &rest spec)
-  "Sets the default font (if one wasn't already set). FAMILY is the name of the
-font, and SPEC is a `font-spec'."
-  `(unless doom-font
-     (setq doom-font (font-spec :family ,family ,@spec))))
-
-(def-setting! :variable-pitch-font (family &rest spec)
-  "Sets the default font for the variable-pitch face and minor mode (if one
-wasn't already set). FAMILY is the name of the font, and SPEC is a `font-spec'."
-  `(unless doom-variable-pitch-font
-     (setq doom-variable-pitch-font (font-spec :family ,family ,@spec))))
-
-(def-setting! :big-font (family &rest spec)
-  "Sets the font to use for `doom-big-font-mode' (if one wasn't already set).
-FAMILY is the name of the font, and SPEC is a `font-spec'."
-  `(unless doom-big-font
-     (setq doom-big-font (font-spec :family ,family ,@spec))))
-
-(def-setting! :unicode-font (family &rest spec)
-  "Sets the font to use for unicode characters (if one wasn't already set).
-FAMILY is the name of the font, and SPEC is a `font-spec'. This is ignored if
-the ':ui unicode' module is enabled."
-  `(unless doom-unicode-font
-     (setq doom-unicode-font (font-spec :family ,family ,@spec))))
 
 
 (setq-default
