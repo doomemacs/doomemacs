@@ -79,7 +79,19 @@
       (ignore-errors
         (save-excursion
           (outline-previous-visible-heading 1)
-          (org-show-subtree))))))
+          (org-show-subtree)))))
+
+  (defun +org-sp-point-in-checkbox-p (_id action _context)
+    (when (eq action 'insert)
+      (sp--looking-at-p "\\s-*]")))
+
+  ;; make delimiter auto-closing a little more conservative
+  (sp-with-modes 'org-mode
+    (sp-local-pair "*" nil :unless '(sp-point-after-word-p sp-point-before-word-p sp-point-at-bol-p))
+    (sp-local-pair "_" nil :unless '(sp-point-after-word-p sp-point-before-word-p))
+    (sp-local-pair "/" nil :unless '(sp-point-after-word-p sp-point-before-word-p +org-sp-point-in-checkbox-p))
+    (sp-local-pair "~" nil :unless '(sp-point-after-word-p sp-point-before-word-p))
+    (sp-local-pair "=" nil :unless '(sp-point-after-word-p sp-point-before-word-p))))
 
 ;;
 (defun +org-init-ui ()
