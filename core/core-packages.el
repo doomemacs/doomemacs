@@ -400,21 +400,19 @@ If NOERROR is non-nil, don't throw an error if the file doesn't exist."
   "Loads the module specified by MODULE (a property) and SUBMODULE (a symbol).
 
 The module is only loaded once. If RELOAD-P is non-nil, load it again."
-  (let ((loaded-p (doom-module-loaded-p module submodule)))
-    (when (or reload-p (not loaded-p))
-      (unless loaded-p
-        (doom-module-enable module submodule flags))
-      (let ((module-path (doom-module-path module submodule)))
-        (if (file-directory-p module-path)
-            `(condition-case-unless-debug ex
-                 (load! config ,module-path t)
-               ('error
-                (lwarn 'doom-modules :error
-                       "%s in '%s %s' -> %s"
-                       (car ex) ,module ',submodule
-                       (error-message-string ex))))
+  (when (or reload-p (not (doom-module-loaded-p module submodule)))
+    (let ((module-path (doom-module-path module submodule)))
+      (if (not (file-directory-p module-path))
           (lwarn 'doom-modules :warning "Couldn't find module '%s %s'"
-                 module submodule))))))
+                 module submodule)
+        (doom-module-enable module submodule flags)
+        `(condition-case-unless-debug ex
+             (load! config ,module-path t)
+           ('error
+            (lwarn 'doom-modules :error
+                   "%s in '%s %s' -> %s"
+                   (car ex) ,module ',submodule
+                   (error-message-string ex))))))))
 
 (defmacro featurep! (module &optional submodule flag)
   "A convenience macro wrapper for `doom-module-loaded-p'. It is evaluated at
