@@ -339,7 +339,7 @@ the command buffer."
 
 
 (after! magit
-  (set! :popup "^\\*magit" :regexp t :size 0.5 :noesc t :autokill t)
+  (set! :popup "^\\*magit" :regexp t :size 0.4 :noselect t)
 
   ;; magit doesn't need much coercing. It works with shackle as is, except for
   ;; one problem: following non-file magit links tends to open additional
