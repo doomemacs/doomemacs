@@ -1,11 +1,12 @@
 ;;; private/hlissner/config.el -*- lexical-binding: t; -*-
 
+(defvar +hlissner-dir (file-name-directory load-file-name))
+(defvar +hlissner-snippets-dir (expand-file-name "snippets/" +hlissner-dir))
+
+;;
 (when (featurep! :feature evil)
   (load! +bindings)  ; my key bindings
   (load! +commands)) ; my custom ex commands
-
-(defvar +hlissner-dir (file-name-directory load-file-name))
-(defvar +hlissner-snippets-dir (expand-file-name "snippets/" +hlissner-dir))
 
 (setq epa-file-encrypt-to user-mail-address
       auth-sources (list (expand-file-name ".authinfo.gpg" +hlissner-dir))
@@ -17,7 +18,6 @@
     (apply orig-fn args)))
 (advice-add #'tramp-read-passwd :around #'+hlissner*no-authinfo-for-tramp)
 
-;;
 (after! smartparens
   ;; Auto-close more conservatively
   (let ((unless-list '(sp-point-before-word-p
@@ -32,16 +32,7 @@
   (sp-pair "[" nil :post-handlers '(("| " " "))
            :unless '(sp-point-before-word-p sp-point-before-same-p)))
 
-
-;;
-(after! doom-themes
-  ;; Since Fira Mono doesn't have an italicized variant, highlight it instead
-  (set-face-attribute 'italic nil
-                      :weight 'ultra-light
-                      :foreground "#ffffff"
-                      :background (doom-color 'current-line)))
-
-
+;; feature/evil
 (after! evil-mc
   ;; if I'm in insert mode, chances are I want cursors to resume
   (add-hook! 'evil-mc-before-cursors-created
@@ -49,13 +40,11 @@
   (add-hook! 'evil-mc-after-cursors-deleted
     (remove-hook 'evil-insert-state-entry-hook #'evil-mc-resume-cursors t)))
 
-
 ;; Don't use default snippets, use mine.
 (after! yasnippet
   (setq yas-snippet-dirs
         (append (list '+hlissner-snippets-dir)
                 (delq 'yas-installed-snippets-dir yas-snippet-dirs))))
-
 
 ;; app/irc
 (after! circe
@@ -68,7 +57,6 @@
       :sasl-username ,(+pass-get-user "irc/snoonet.org")
       :sasl-password ,(+pass-get-secret "irc/snoonet.org")
       :channels (:after-auth "#ynought"))))
-
 
 ;; app/email
 (after! mu4e
@@ -95,3 +83,13 @@
       (user-mail-address      . "henrik@lissner.net")
       (mu4e-compose-signature . "---\nHenrik Lissner"))
     t))
+
+;; The standard unicode characters are usually misaligned depending on the font.
+;; This bugs me. Personally, markdown #-marks for headlines are more elegant, so
+;; we use those.
+(after! org-bullets
+  (setq org-bullets-bullet-list '("#")))
+
+;; Hide header lines in helm. I don't like them
+(after! helm
+  (set-face-attribute 'helm-source-header nil :height 0.1))

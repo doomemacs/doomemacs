@@ -31,6 +31,9 @@
          doom-neotree-chevron-size 0.6
          org-ellipsis "  ")
 
+   (custom-set-faces
+    '(doom-modeline-bar ((t (:background nil)))))
+
    (add-hook! doom-big-font-mode
      (setq +doom-modeline-height (if doom-big-font-mode 37 23))))
 
@@ -38,6 +41,13 @@
    (setq doom-font (font-spec :family "Fira Mono" :size 12)
          doom-variable-pitch-font (font-spec :family "Fira Sans")
          doom-unicode-font (font-spec :family "DejaVu Sans Mono"))
+
+   ;; Since Fira Mono doesn't have an italicized variant, highlight it instead
+   (add-hook! doom-post-init
+     (set-face-attribute 'italic nil
+                         :weight 'ultra-light
+                         :foreground "#ffffff"
+                         :background (doom-color 'current-line)))
 
    (add-hook! doom-big-font-mode
      (setq +doom-modeline-height (if doom-big-font-mode 37 29)))))
