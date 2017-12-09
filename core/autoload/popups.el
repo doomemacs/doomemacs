@@ -263,7 +263,7 @@ without leaving any trace behind (muahaha)."
                       (cdr (memq (selected-window) doom-popup-windows))
                     (setq doom-popup-other-window (selected-window))
                     doom-popup-windows))
-      (select-window (nth (mod (1- count) (length popups)) popups))
+      (ignore-errors (select-window (nth (mod (1- count) (length popups)) popups)))
     (unless (eq (selected-window) doom-popup-other-window)
       (when doom-popup-other-window
         (select-window doom-popup-other-window t)
