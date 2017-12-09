@@ -190,7 +190,7 @@ Courtesy of esh-mode.el"
   (defun +irc|init-lui-wrapping ()
     (setq fringes-outside-margins t
           word-wrap t
-          wrap-prefix (s-repeat (+ +irc-left-padding 3) " ")))
+          wrap-prefix (make-string (+ +irc-left-padding 3) ? )))
 
   (add-hook! 'lui-mode-hook #'(+irc|init-lui-margins +irc|init-lui-wrapping)))
 

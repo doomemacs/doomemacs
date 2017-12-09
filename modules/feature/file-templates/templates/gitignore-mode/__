@@ -4,7 +4,7 @@
 tmp/
 
 `(let ((type-ignore (yas-choose-value '("(none)" "python" "ruby" "java" "js"))))
-    (s-join "\n"
+    (string-join
        (cond ((string= type-ignore "python")
               '("*.py[cod]"
                 "*.egg"
@@ -20,5 +20,5 @@ tmp/
              '("*.class"
                "build"))
              ((string= type-ignore "js")
-             '("*.tern-port"))
-             )))`
+             '("*.tern-port")))
+       "\n"))`

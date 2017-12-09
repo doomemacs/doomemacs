@@ -13,7 +13,7 @@ RELEASE_FLAGS = -O2 -D NDEBUG -combile -fwhole-program
 RELEASE_DIR   = ./build/release
 DEBUG_DIR     = ./build/debug
 
-TARGET        = ${1:appname$(s-replace " " "" yas-text)}
+TARGET        = ${1:appname$(replace-regexp-in-string " " "" yas-text nil t)}
 HEADERS       = \$(shell echo include/*.h)
 SOURCES       = \$(shell echo src/*.cpp) \$(shell echo src/**/*.cpp)
 OBJECTS       = \$(SOURCES:.cpp=.o)

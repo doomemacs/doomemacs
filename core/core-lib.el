@@ -12,12 +12,6 @@
                persistent-soft-flush persistent-soft-store))
   (autoload sym "persistent-soft"))
 
-(dolist (sym '(s-center s-pad-left s-pad-right s-truncate s-chop-suffix
-               s-chop-suffixes s-chop-prefix s-chop-prefixes s-join s-replace
-               s-replace-all s-capitalize s-titleize s-split-words
-               s-capitalized-words s-titleized-words))
-  (autoload sym "s"))
-
 (dolist (sym '(when-let if-let string-trim string-join string-blank-p string-lessp))
   (autoload sym "subr-x" nil nil 'macro))
 
