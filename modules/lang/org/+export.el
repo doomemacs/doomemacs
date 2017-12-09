@@ -1,7 +1,5 @@
 ;;; lang/org/+export.el -*- lexical-binding: t; -*-
 
-(add-hook 'org-load-hook #'+org-export|init)
-
 ;; I don't have any beef with org's built-in export system, but I do wish it
 ;; would export to a central directory, rather than `default-directory'. This is
 ;; because all my org files are usually in one place, and I want to be able to
@@ -18,7 +16,7 @@
           (parse-raw . t))))
 
 ;;
-(defun +org-export|init ()
+(after! org
   (setq org-export-directory (expand-file-name ".export" +org-dir)
         org-export-backends '(ascii html latex md pandoc)
         org-export-with-toc t

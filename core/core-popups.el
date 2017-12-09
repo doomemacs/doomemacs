@@ -461,10 +461,10 @@ you came from."
   (advice-add #'plantuml-preview-string
               :around #'doom*plantuml-preview-in-popup-window))
 
-;; Ensure these settings are attached to org-load-hook as late as possible,
-;; giving other modules a chance to add their own hooks.
+;; Ensure these settings are loaded as late as possible, giving other modules a
+;; chance to reconfigure org popup settings before the defaults kick in.
 (defun doom|init-org-popups ()
-  (add-hook! 'org-load-hook
+  (after! org
     (set! :popup
       '("*Calendar*"         :size 0.4 :noselect t)
       '(" *Org todo*"        :size 5   :noselect t)

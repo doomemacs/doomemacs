@@ -16,71 +16,75 @@
 (if (featurep! +present) (load! +present))
 ;; TODO (if (featurep! +publish) (load! +publish))
 
-(after! org (+org|init))
-(add-hook 'org-mode-hook #'+org|hook)
-
 
 ;;
 ;; Plugins
 ;;
 
 (def-package! toc-org
-  :hook (org-mode . toc-org-enable))
+  :commands toc-org-enable)
 
 (def-package! org-crypt ; built-in
-  :hook (org-load . org-crypt-use-before-save-magic)
+  :commands org-crypt-use-before-save-magic
   :config
   (setq org-tags-exclude-from-inheritance '("crypt")
         org-crypt-key user-mail-address
         epa-file-encrypt-to user-mail-address))
 
 (def-package! org-bullets
-  :hook (org-mode . org-bullets-mode))
+  :commands org-bullets-mode)
 
 
 ;;
-;; Hooks & bootstraps
+;; Bootstrap
 ;;
 
-(defun +org|init ()
-  "Run once, when org is first loaded."
-  (defvaralias 'org-directory '+org-dir)
+(after! org
+  ;; Occasionally, Emacs encounters an error loading the built-in org, aborting
+  ;; the load. This results in a broken, partially loaded state. This require
+  ;; tries to set it straight.
   (require 'org)
 
+  (defvaralias 'org-directory '+org-dir)
+
+  (org-crypt-use-before-save-magic)
   (+org-init-ui)
   (+org-init-keybinds)
   (+org-hacks))
 
-(defun +org|hook ()
-  "Run everytime `org-mode' is enabled."
-  (when (featurep! :feature evil)
-    (add-hook 'evil-insert-state-exit-hook #'+org|realign-table-maybe nil t)
-    (add-hook 'evil-insert-state-exit-hook #'+org|update-cookies nil t))
+(add-hook! org-mode
+  #'(doom|disable-line-numbers  ; no line numbers
+     org-bullets-mode           ; "prettier" bullets
+     org-indent-mode            ; margin-based indentation
+     toc-org-enable             ; auto-table of contents
+     visual-line-mode           ; line wrapping
 
-  (add-hook 'before-save-hook #'+org|update-cookies nil t)
+     +org|enable-auto-reformat-tables
+     +org|enable-auto-update-cookies
+     +org|smartparens-compatibility-config
+     +org|unfold-to-2nd-level-or-point
+     ))
 
-  ;;
-  (setq line-spacing 1)
-  (visual-line-mode +1)
-  (org-indent-mode +1)
-  (doom|disable-line-numbers)
 
-  ;; show-paren-mode causes problems for org-indent-mode, so disable it
-  (set (make-local-variable 'show-paren-mode) nil)
+;;
+;; Config hooks
+;;
 
+(defun +org|unfold-to-2nd-level-or-point ()
+  "My version of the 'overview' #+STARTUP option: expand first-level headings.
+Expands the first level, but no further. If point was left somewhere deeper,
+unfold to point on startup."
   (unless org-agenda-inhibit-startup
-    ;; My version of the 'overview' #+STARTUP option: expand first-level
-    ;; headings. Expands the first level, but no further.
     (when (eq org-startup-folded t)
       (outline-hide-sublevels 2))
-
-    ;; If saveplace places the point in a folded position, unfold it on load
     (when (outline-invisible-p)
       (ignore-errors
         (save-excursion
           (outline-previous-visible-heading 1)
-          (org-show-subtree)))))
+          (org-show-subtree))))))
 
+(defun +org|smartparens-compatibility-config ()
+  "Instruct `smartparens' not to impose itself in org-mode."
   (defun +org-sp-point-in-checkbox-p (_id action _context)
     (when (eq action 'insert)
       (sp--looking-at-p "\\s-*]")))
@@ -92,6 +96,18 @@
     (sp-local-pair "/" nil :unless '(sp-point-after-word-p sp-point-before-word-p +org-sp-point-in-checkbox-p))
     (sp-local-pair "~" nil :unless '(sp-point-after-word-p sp-point-before-word-p))
     (sp-local-pair "=" nil :unless '(sp-point-after-word-p sp-point-before-word-p))))
+
+(defun +org|enable-auto-reformat-tables ()
+  "Realign tables exiting insert mode (`evil-mode')."
+  (when (featurep 'evil)
+    (add-hook 'evil-insert-state-exit-hook #'+org|realign-table-maybe nil t)))
+
+(defun +org|enable-auto-update-cookies ()
+  "Update statistics cookies when saving or exiting insert mode (`evil-mode')."
+  (when (featurep 'evil)
+    (add-hook 'evil-insert-state-exit-hook #'+org|update-cookies nil t))
+  (add-hook 'before-save-hook #'+org|update-cookies nil t))
+
 
 ;;
 (defun +org-init-ui ()

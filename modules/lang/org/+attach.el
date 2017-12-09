@@ -1,7 +1,5 @@
 ;;; lang/org/+attach.el -*- lexical-binding: t; -*-
 
-(add-hook 'org-load-hook #'+org-attach|init)
-
 ;; I believe Org's native attachment system is over-complicated and litters
 ;; files with metadata I don't want. So I wrote my own, which:
 ;;
@@ -62,7 +60,7 @@
               :filter-return #'+org-attach*download-fullname))
 
 ;;
-(defun +org-attach|init ()
+(after! org
   (setq org-attach-directory +org-attach-dir)
 
   (push (car (last (split-string +org-attach-dir "/" t)))

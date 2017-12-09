@@ -1,7 +1,5 @@
 ;;; lang/org/+babel.el -*- lexical-binding: t; -*-
 
-(add-hook 'org-load-hook #'+org-babel|init)
-
 (defvar +org-babel-languages
   '(calc
     css
@@ -25,7 +23,7 @@
   "A list of org-babel languages to load.")
 
 
-(defun +org-babel|init ()
+(after! org
   (setq org-src-fontify-natively t      ; make code pretty
         org-src-preserve-indentation t  ; use native major-mode indentation
         org-src-tab-acts-natively t
