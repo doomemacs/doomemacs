@@ -88,7 +88,6 @@ recognized by DOOM's popup system. They are:
 ;;
 
 (def-package! shackle
-  :demand t
   :init
   (setq shackle-default-alignment 'below
         shackle-default-size 8

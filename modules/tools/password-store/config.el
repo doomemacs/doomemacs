@@ -12,6 +12,7 @@
 ;;
 
 (def-package! password-store
+  :defer t
   :config
   (setq password-store-password-length 12))
 
@@ -38,5 +39,4 @@
 (if (require 'auth-store-pass nil t)
     (auth-source-pass-enable)
   (def-package! auth-password-store
-    :demand t
     :config (auth-pass-enable)))

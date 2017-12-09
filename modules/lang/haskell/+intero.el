@@ -1,9 +1,7 @@
 ;;; lang/haskell/+intero.el -*- lexical-binding: t; -*-
 
 (def-package! intero
-  :commands intero-mode
-  :init
-  (add-hook 'haskell-mode-hook #'intero-mode)
+  :hook (haskell-mode . intero-mode)
   :config
   (unless (executable-find "stack")
     (warn "haskell-mode: couldn't find stack, disabling intero")
@@ -16,6 +14,4 @@
 
 
 (def-package! hindent
-  :commands hindent-mode
-  :init
-  (add-hook 'haskell-mode-hook #'hindent-mode))
+  :hook (haskell-mode . hindent-mode))

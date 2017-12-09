@@ -1,15 +1,15 @@
 ;;; lang/java/+meghanada.el -*- lexical-binding: t; -*-
 
 (def-package! meghanada
-  :commands meghanada-mode
-  :init
-  (add-hook! 'java-mode-hook #'(meghanada-mode rainbow-delimiters-mode))
+  :hook (java-mode . meghanada-mode)
   :config
   (setq meghanada-server-install-dir (concat doom-etc-dir "meghanada-server/")
         meghanada-use-company (featurep! :completion company)
         meghanada-use-flycheck (featurep! :feature syntax-checker)
         meghanada-use-eldoc t
         meghanada-use-auto-start t)
+
+  (add-hook 'java-mode-hook #'rainbow-delimiters-mode)
 
   ;; Setup on first use
   (meghanada-install-server)

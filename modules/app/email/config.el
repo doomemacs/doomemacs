@@ -263,8 +263,7 @@ default/fallback account."
 
 
 (def-package! org-mu4e
-  :commands org-mu4e-compose-org-mode
-  :init (add-hook 'mu4e-compose-mode-hook #'org-mu4e-compose-org-mode)
+  :hook (mu4e-compose-mode . org-mu4e-compose-org-mode)
   :config
   (setq org-mu4e-link-query-in-headers-mode nil
         org-mu4e-convert-to-html t)

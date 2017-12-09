@@ -9,9 +9,8 @@
   :mode "\\.mustache$"
   :mode "\\.tsx$"
   :mode "wp-content/themes/.+/.+\\.php$"
-  :init
-  (add-hook 'web-mode-hook #'turn-off-smartparens-mode)
   :config
+  (add-hook 'web-mode-hook #'turn-off-smartparens-mode)
   (set! :company-backend 'web-mode '(company-web-html company-yasnippet))
   (setq web-mode-enable-html-entities-fontification t)
 

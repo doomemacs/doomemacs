@@ -4,9 +4,8 @@
 
 (def-package! swift-mode
   :mode "\\.swift$"
-  :init
-  (add-hook 'swift-mode-hook #'flycheck-mode)
   :config
+  (add-hook 'swift-mode-hook #'flycheck-mode)
   (set! :repl 'swift-mode #'swift-mode-run-repl) ; TODO test this
   (push 'swift flycheck-checkers))
 

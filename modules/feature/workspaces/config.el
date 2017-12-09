@@ -22,7 +22,6 @@ renamed.")
 ;;
 
 (def-package! persp-mode
-  :demand t
   :config
   (setq persp-autokill-buffer-on-remove 'kill-weak
         persp-nil-name "nil"

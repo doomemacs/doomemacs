@@ -65,9 +65,7 @@
 
 
 (def-package! go-eldoc
-  :after go-mode
-  :commands go-eldoc-setup
-  :config (add-hook 'go-mode-hook #'go-eldoc-setup))
+  :hook (go-mode . go-eldoc-setup))
 
 
 (def-package! go-guru

@@ -24,7 +24,6 @@
 
 ;;
 (def-package! which-key
-  :demand t
   :config
   (setq which-key-sort-order #'which-key-prefix-then-key-order
         which-key-sort-uppercase-first nil
@@ -38,7 +37,6 @@
 
 
 (def-package! hydra
-  :demand t
   :init
   ;; In case I later need to wrap defhydra in any special functionality.
   (defalias 'def-hydra! 'defhydra)

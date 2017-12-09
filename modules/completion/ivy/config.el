@@ -24,7 +24,6 @@ immediately runs it on the current candidate (ending the ivy session)."
 ;;
 
 (def-package! ivy
-  :demand t
   :init
   (add-hook 'doom-post-init-hook #'ivy-mode)
   :config
@@ -83,7 +82,7 @@ immediately runs it on the current candidate (ending the ivy session)."
 
 
 (def-package! counsel
-  :after ivy
+  :requires ivy
   :config
   (require 'counsel-projectile)
   (setq counsel-find-file-ignore-regexp "\\(?:^[#.]\\)\\|\\(?:[#~]$\\)\\|\\(?:^Icon?\\)")

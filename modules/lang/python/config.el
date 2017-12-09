@@ -73,17 +73,14 @@ environment variables."
 
 (def-package! anaconda-mode
   :after python
+  :hook python-mode
   :init
-  (add-hook 'python-mode-hook #'anaconda-mode)
-  (add-hook 'anaconda-mode-hook #'anaconda-eldoc-mode)
   (setq anaconda-mode-installation-directory (concat doom-etc-dir "anaconda/")
         anaconda-mode-eldoc-as-single-line t)
-
   :config
+  (add-hook 'anaconda-mode-hook #'anaconda-eldoc-mode)
   (set! :popup "*anaconda-mode*" :size 10 :noselect t :autoclose t :autokill t)
-
   (map! :map anaconda-mode-map :m "gd" #'anaconda-mode-find-definitions)
-
   (advice-add #'anaconda-mode-doc-buffer :after #'doom*anaconda-mode-doc-buffer))
 
 

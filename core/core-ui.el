@@ -296,7 +296,7 @@ local value, whether or not it's permanent-local. Therefore, we cycle
 
 ;; Highlights the current line
 (def-package! hl-line ; built-in
-  :init (add-hook! (prog-mode text-mode conf-mode) #'hl-line-mode)
+  :hook ((prog-mode text-mode conf-mode) . hl-line-mode)
   :config
   ;; I don't need hl-line showing in other windows. This also offers a small
   ;; speed boost when buffer is displayed in multiple windows.

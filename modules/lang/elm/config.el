@@ -9,7 +9,6 @@
 
 
 (def-package! flycheck-elm
-  :after elm-mode
-  :config
-  (add-hook 'flycheck-mode-hook #'flycheck-elm-setup))
+  :after (:all flycheck elm-mode)
+  :hook (flycheck-mode . flycheck-elm-setup))
 

@@ -150,7 +150,7 @@ with functions that require it (like modeline segments)."
 
 ;; Keep track of recently opened files
 (def-package! recentf
-  :init (add-hook 'doom-init-hook #'recentf-mode)
+  :hook (doom-init . recentf-mode)
   :config
   (setq recentf-save-file (concat doom-etc-dir "recentf")
         recentf-max-menu-items 0
@@ -171,7 +171,6 @@ with functions that require it (like modeline segments)."
 ;; Handles whitespace (tabs/spaces) settings externally. This way projects can
 ;; specify their own formatting rules.
 (def-package! editorconfig
-  :demand t
   :init
   (def-setting! :editorconfig (action value)
     ":add or :remove an entry in `editorconfig-indentation-alist'."
@@ -230,16 +229,15 @@ extension, try to guess one."
 
 ;; Auto-close delimiters and blocks as you type
 (def-package! smartparens
-  :demand t
   :config
+  (add-hook 'doom-init-hook #'smartparens-global-mode)
+  (require 'smartparens-config)
+
   (setq sp-autowrap-region nil ; let evil-surround handle this
         sp-highlight-pair-overlay nil
         sp-cancel-autoskip-on-backward-movement nil
         sp-show-pair-delay 0
         sp-max-pair-length 3)
-
-  (add-hook 'doom-init-hook #'smartparens-global-mode)
-  (require 'smartparens-config)
 
   ;; disable smartparens in evil-mode's replace state (they conflict)
   (add-hook 'evil-replace-state-entry-hook #'turn-off-smartparens-mode)
@@ -250,10 +248,8 @@ extension, try to guess one."
 
 ;; Branching undo
 (def-package! undo-tree
-  :demand t
   :config
-  (global-undo-tree-mode +1)
-
+  (add-hook 'doom-init-hook #'global-undo-tree-mode)
   ;; persistent undo history is known to cause undo history corruption, which
   ;; can be very destructive! So disable it!
   (setq undo-tree-auto-save-history nil

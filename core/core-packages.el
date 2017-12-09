@@ -109,8 +109,6 @@ base by `doom!' and for calculating how many packages exist.")
                         "gnutls-cli -p %p %h"
                         "openssl s_client -connect %h:%p -no_ssl2 -no_ssl3 -ign_eof")
 
-      use-package-always-defer t
-      use-package-always-ensure nil
       use-package-verbose doom-debug-mode
       use-package-minimum-reported-time (if doom-debug-mode 0 0.1)
 

@@ -93,8 +93,7 @@
 
 
 (def-package! tern
-  :commands tern-mode
-  :init (add-hook 'js2-mode-hook #'tern-mode)
+  :hook (js2-mode . tern-mode)
   :config
   (advice-add #'tern-project-dir :override #'doom-project-root))
 

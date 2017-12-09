@@ -20,8 +20,7 @@
   (set! :evil-state 'vc-git-log-view-mode 'normal))
 
 (def-package! smerge-mode
-  :init
-  (add-hook 'find-file-hook #'+vcs|enable-smerge-mode-maybe)
+  :hook (find-file . +vcs|enable-smerge-mode-maybe)
   :config
   (when (version< emacs-version "26")
     (defalias #'smerge-keep-upper #'smerge-keep-mine)

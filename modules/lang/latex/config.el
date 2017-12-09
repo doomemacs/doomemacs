@@ -67,6 +67,7 @@
 
 
 (def-package! bibtex ; built-in
+  :defer t
   :config
   (setq bibtex-dialect 'biblatex
         bibtex-align-at-equal-sign t

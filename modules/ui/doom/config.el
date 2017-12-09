@@ -2,7 +2,6 @@
 
 ;; <https://github.com/hlissner/emacs-doom-theme>
 (def-package! doom-themes
-  :demand t
   :config
   (set! :theme 'doom-one)
 
@@ -32,26 +31,15 @@
 
 
 (def-package! solaire-mode
-  :commands (solaire-mode turn-on-solaire-mode turn-off-solaire-mode)
-  :init
-  (add-hook 'after-change-major-mode-hook #'turn-on-solaire-mode)
-  (add-hook 'doom-popup-mode-hook #'turn-off-solaire-mode)
+  :hook (gist-mode twittering-mode mu4e-view-mode org-tree-slide-mode +regex-mode)
+  :hook (after-change-major-mode . turn-on-solaire-mode)
+  :hook (doom-popup-mode . turn-off-solaire-mode)
+  :hook (doom-init-ui . solaire-mode-swap-bg)
   :config
   (setq solaire-mode-real-buffer-fn #'doom-real-buffer-p)
-  (add-hook 'doom-init-ui-hook #'solaire-mode-swap-bg t)
-
   ;; Prevent color glitches when reloading either DOOM or the theme
-  (defun +doom|reset-solaire-mode (&rest _) (solaire-mode-reset))
-  (advice-add #'load-theme :after #'+doom|reset-solaire-mode)
-  (add-hook! '(doom-init-ui-hook doom-reload-hook) #'solaire-mode-reset)
-
-  ;; Extra modes to activate doom-buffer-mode in
-  (add-hook! (gist-mode
-              twittering-mode
-              mu4e-view-mode
-              org-tree-slide-mode
-              +regex-mode)
-    #'solaire-mode))
+  (advice-add #'load-theme :after #'solaire-mode-reset)
+  (add-hook! '(doom-init-ui-hook doom-reload-hook) #'solaire-mode-reset))
 
 
 (after! hideshow

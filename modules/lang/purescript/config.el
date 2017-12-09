@@ -14,7 +14,5 @@
 ;;   (add-hook 'flycheck-mode-hook #'flycheck-purescript-setup))
 
 (def-package! psc-ide
-  :after purescript-mode
-  :config
-  (add-hook 'purescript-mode-hook #'psc-ide-mode))
+  :hook (purescript-mode . psc-ide-mode))
 

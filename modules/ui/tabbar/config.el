@@ -5,7 +5,6 @@
 ;; find ivy (or helm) or even `buffer-menu' is better suited for this purpose.
 
 (def-package! tabbar
-  :demand t
   :config
   (setq tabbar-use-images nil)
   (tabbar-mode)

@@ -1,7 +1,6 @@
 ;;; ui/doom-modeline/config.el -*- lexical-binding: t; -*-
 
 (def-package! eldoc-eval
-  :demand t
   :config
   (defun +doom-modeline-eldoc (text)
     (concat (when (display-graphic-p)
@@ -28,7 +27,7 @@
 ;; anzu and evil-anzu expose current/total state that can be displayed in the
 ;; mode-line.
 (def-package! evil-anzu
-  :when (featurep 'evil)
+  :requires evil
   :init
   (add-transient-hook! #'evil-ex-start-search (require 'evil-anzu))
   (add-transient-hook! #'evil-ex-start-word-search (require 'evil-anzu))

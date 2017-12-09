@@ -110,8 +110,7 @@ playback.")
 
 
 (def-package! circe-color-nicks
-  :commands enable-circe-color-nicks
-  :init (add-hook 'circe-channel-mode-hook 'enable-circe-color-nicks)
+  :hook (circe-channel-mode . enable-circe-color-nicks)
   :config
   (setq circe-color-nicks-min-constrast-ratio 4.5
         circe-color-nicks-everywhere t))
@@ -202,5 +201,4 @@ Courtesy of esh-mode.el"
 
 
 (def-package! lui-autopaste
-  :commands enable-lui-autopaste
-  :init (add-hook 'circe-channel-mode-hook 'enable-lui-autopaste))
+  :hook (circe-channel-mode . enable-lui-autopaste))

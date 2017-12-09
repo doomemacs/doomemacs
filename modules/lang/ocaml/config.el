@@ -6,5 +6,4 @@
 
 (def-package! merlin
   :after tuareg
-  :config
-  (add-hook 'tuareg-mode-hook #'merlin-mode))
+  :hook (tuareg-mode . merlin-mode))
