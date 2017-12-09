@@ -1,4 +1,5 @@
-;;; org/org-present/autoload.el -*- lexical-binding: t; -*-
+;;; lang/org/autoload/org-present.el -*- lexical-binding: t; -*-
+;;;###if (featurep! +present)
 
 (defvar +org-present--overlays nil)
 ;;;###autoload

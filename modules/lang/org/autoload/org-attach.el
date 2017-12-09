@@ -1,4 +1,5 @@
-;;; org/org-attach/autoload/org-attach.el -*- lexical-binding: t; -*-
+;;; lang/org/autoload/org-attach.el -*- lexical-binding: t; -*-
+;;;###if (featurep! +attach)
 
 (defun +org-attach--icon (path)
   (char-to-string

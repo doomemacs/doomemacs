@@ -1,16 +1,22 @@
-;;; org/org/config.el -*- lexical-binding: t; -*-
+;;; lang/org/config.el -*- lexical-binding: t; -*-
+
+(defvar +org-dir (expand-file-name "~/work/org/")
+  "The directory where org files are kept.")
 
 ;; Ensure ELPA org is prioritized above built-in org.
 (when-let (path (locate-library "org" nil doom--package-load-path))
   (setq load-path (delete path load-path))
   (push (file-name-directory path) load-path))
 
-;; Custom variables
-(defvar +org-dir (expand-file-name "~/work/org/")
-  "The directory where org files are kept.")
-(defvaralias 'org-directory '+org-dir)
+;; Sub-modules
+(if (featurep! +attach)  (load! +attach))
+(if (featurep! +babel)   (load! +babel))
+(if (featurep! +capture) (load! +capture))
+(if (featurep! +export)  (load! +export))
+(if (featurep! +present) (load! +present))
+;; TODO (if (featurep! +publish) (load! +publish))
 
-(add-hook 'org-load-hook #'+org|init)
+(after! org (+org|init))
 (add-hook 'org-mode-hook #'+org|hook)
 
 
@@ -19,38 +25,38 @@
 ;;
 
 (def-package! toc-org
-  :commands toc-org-enable
-  :init (add-hook 'org-mode-hook #'toc-org-enable))
+  :hook (org-mode . toc-org-enable))
 
 (def-package! org-crypt ; built-in
-  :commands org-crypt-use-before-save-magic
-  :init (add-hook 'org-load-hook #'org-crypt-use-before-save-magic)
+  :hook (org-load . org-crypt-use-before-save-magic)
   :config
   (setq org-tags-exclude-from-inheritance '("crypt")
         org-crypt-key user-mail-address
         epa-file-encrypt-to user-mail-address))
 
-;; The standard unicode characters are usually misaligned depending on the font.
-;; This bugs me. Personally, markdown #-marks for headlines are more elegant, so
-;; we use those.
 (def-package! org-bullets
-  :commands org-bullets-mode
-  :init (add-hook 'org-mode-hook #'org-bullets-mode)
-  :config (setq org-bullets-bullet-list '("#")))
+  :hook (org-mode . org-bullets-mode))
 
 
 ;;
 ;; Hooks & bootstraps
 ;;
 
+(defun +org|init ()
+  "Run once, when org is first loaded."
+  (defvaralias 'org-directory '+org-dir)
+  (require 'org)
+
+  (+org-init-ui)
+  (+org-init-keybinds)
+  (+org-hacks))
+
 (defun +org|hook ()
   "Run everytime `org-mode' is enabled."
   (when (featurep! :feature evil)
     (add-hook 'evil-insert-state-exit-hook #'+org|realign-table-maybe nil t)
-    (add-hook 'evil-insert-state-exit-hook #'+org|update-cookies nil t)
-    (+org-evil-mode +1))
+    (add-hook 'evil-insert-state-exit-hook #'+org|update-cookies nil t))
 
-  ;; TODO Add filesize checks (possibly too expensive in big org files)
   (add-hook 'before-save-hook #'+org|update-cookies nil t)
 
   ;;
@@ -75,19 +81,6 @@
           (outline-previous-visible-heading 1)
           (org-show-subtree))))))
 
-(defun +org|init ()
-  "Run once, when org is first loaded."
-  (define-minor-mode +org-evil-mode
-    "Evil-mode bindings for org-mode."
-    :init-value nil
-    :lighter " !"
-    :keymap (make-sparse-keymap)
-    :group 'evil-org)
-
-  (+org-init-ui)
-  (+org-init-keybinds)
-  (+org-hacks))
-
 ;;
 (defun +org-init-ui ()
   "Configures the UI for `org-mode'."
@@ -100,7 +93,7 @@
    org-cycle-include-plain-lists t
    org-cycle-separator-lines 1
    org-entities-user '(("flat"  "\\flat" nil "" "" "266D" "♭") ("sharp" "\\sharp" nil "" "" "266F" "♯"))
-   org-ellipsis "  "
+   ;; org-ellipsis " ... "
    org-fontify-done-headline t
    org-fontify-quote-and-verse-blocks t
    org-fontify-whole-heading-line t
@@ -132,6 +125,7 @@
    ;; LaTeX previews are too small and usually render to light backgrounds, so
    ;; this enlargens them and ensures their background (and foreground) match the
    ;; current theme.
+   org-preview-latex-image-directory (concat doom-cache-dir "org-latex/")
    org-format-latex-options (plist-put org-format-latex-options :scale 1.5)
    org-format-latex-options
    (plist-put org-format-latex-options
@@ -152,56 +146,53 @@
 (defun +org-init-keybinds ()
   "Sets up org-mode and evil keybindings. Tries to fix the idiosyncrasies
 between the two."
-  (map! (:map org-mode-map
-          "RET" #'org-return-indent
-          "C-c C-S-l" #'+org/remove-link
-          :n "j" "gj"
-          :n "k" "gk")
+  (map! :map org-mode-map
+        "RET" #'org-return-indent
+        "C-c C-S-l" #'+org/remove-link
+        :n "C-c C-i" #'org-toggle-inline-images
 
-        (:map +org-evil-mode-map
-          :n  "RET" #'+org/dwim-at-point
+        :n  "RET" #'+org/dwim-at-point
 
-          ;; Navigate table cells (from insert-mode)
-          :i  "C-l"   #'+org/table-next-field
-          :i  "C-h"   #'+org/table-previous-field
-          :i  "C-k"   #'+org/table-previous-row
-          :i  "C-j"   #'+org/table-next-row
-          ;; Expand tables (or shiftmeta move)
-          :ni "C-S-l" #'+org/table-append-field-or-shift-right
-          :ni "C-S-h" #'+org/table-prepend-field-or-shift-left
-          :ni "C-S-k" #'org-metaup
-          :ni "C-S-j" #'org-metadown
+        ;; Navigate table cells (from insert-mode)
+        :i  "C-l"   #'+org/table-next-field
+        :i  "C-h"   #'+org/table-previous-field
+        :i  "C-k"   #'+org/table-previous-row
+        :i  "C-j"   #'+org/table-next-row
+        ;; Expand tables (or shiftmeta move)
+        :ni "C-S-l" #'+org/table-append-field-or-shift-right
+        :ni "C-S-h" #'+org/table-prepend-field-or-shift-left
+        :ni "C-S-k" #'org-metaup
+        :ni "C-S-j" #'org-metadown
 
-          :n  [tab]     #'+org/toggle-fold
-          :i  [tab]     #'+org/indent-or-next-field-or-yas-expand
-          :i  [backtab] #'+org/dedent-or-prev-field
+        :n  [tab]     #'+org/toggle-fold
+        :i  [tab]     #'+org/indent-or-next-field-or-yas-expand
+        :i  [backtab] #'+org/dedent-or-prev-field
 
-          :ni [M-return]   (λ! (+org/insert-item 'below))
-          :ni [S-M-return] (λ! (+org/insert-item 'above))
+        :ni [M-return]   (λ! (+org/insert-item 'below))
+        :ni [S-M-return] (λ! (+org/insert-item 'above))
 
-          :m  "]]"  (λ! (org-forward-heading-same-level nil) (org-beginning-of-line))
-          :m  "[["  (λ! (org-backward-heading-same-level nil) (org-beginning-of-line))
-          :m  "]l"  #'org-next-link
-          :m  "[l"  #'org-previous-link
-          :m  "$"   #'org-end-of-line
-          :m  "^"   #'org-beginning-of-line
-          :n  "gQ"  #'org-fill-paragraph
-          :n  "<"   #'org-metaleft
-          :n  ">"   #'org-metaright
-          :v  "<"   (λ! (org-metaleft)  (evil-visual-restore))
-          :v  ">"   (λ! (org-metaright) (evil-visual-restore))
-          :m  "<tab>" #'org-cycle
+        :m  "]]"  (λ! (org-forward-heading-same-level nil) (org-beginning-of-line))
+        :m  "[["  (λ! (org-backward-heading-same-level nil) (org-beginning-of-line))
+        :m  "]l"  #'org-next-link
+        :m  "[l"  #'org-previous-link
+        :m  "$"   #'org-end-of-line
+        :m  "^"   #'org-beginning-of-line
+        :n  "gQ"  #'org-fill-paragraph
+        :n  "<"   #'org-metaleft
+        :n  ">"   #'org-metaright
+        :v  "<"   (λ! (org-metaleft)  (evil-visual-restore))
+        :v  ">"   (λ! (org-metaright) (evil-visual-restore))
 
-          ;; Fix code-folding keybindings
-          :n  "za"  #'+org/toggle-fold
-          :n  "zA"  #'org-shifttab
-          :n  "zc"  #'outline-hide-subtree
-          :n  "zC"  (λ! (outline-hide-sublevels 1))
-          :n  "zd"  (lambda (&optional arg) (interactive "p") (outline-hide-sublevels (or arg 3)))
-          :n  "zm"  (λ! (outline-hide-sublevels 1))
-          :n  "zo"  #'outline-show-subtree
-          :n  "zO"  #'outline-show-all
-          :n  "zr"  #'outline-show-all)
+        ;; Fix code-folding keybindings
+        :n  "za"  #'+org/toggle-fold
+        :n  "zA"  #'org-shifttab
+        :n  "zc"  #'outline-hide-subtree
+        :n  "zC"  (λ! (outline-hide-sublevels 1))
+        :n  "zd"  (lambda (&optional arg) (interactive "p") (outline-hide-sublevels (or arg 3)))
+        :n  "zm"  (λ! (outline-hide-sublevels 1))
+        :n  "zo"  #'outline-show-subtree
+        :n  "zO"  #'outline-show-all
+        :n  "zr"  #'outline-show-all
 
         (:after org-agenda
           (:map org-agenda-mode-map

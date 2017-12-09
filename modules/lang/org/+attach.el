@@ -1,10 +1,6 @@
-;;; org/org-attach/config.el -*- lexical-binding: t; -*-
+;;; lang/org/+attach.el -*- lexical-binding: t; -*-
 
-(defvar +org-attach-dir (expand-file-name ".attach/" +org-dir)
-  "Where to store attachments (relative to current org file).")
-
-
-(add-hook 'org-load-hook #'+org-attach|init t)
+(add-hook 'org-load-hook #'+org-attach|init)
 
 ;; I believe Org's native attachment system is over-complicated and litters
 ;; files with metadata I don't want. So I wrote my own, which:
@@ -20,6 +16,10 @@
 ;; + `+org-attach/file'
 ;; + `+org-attach/url'
 ;; + :org [FILE/URL]
+
+(defvar +org-attach-dir (expand-file-name ".attach/" +org-dir)
+  "Where to store attachments (relative to current org file).")
+
 
 (def-package! org-download
   :commands (org-download-dnd org-download-dnd-base64)
@@ -39,10 +39,8 @@
   (setq org-download-screenshot-method
         (cond (IS-MAC "screencapture -i %s")
               (IS-LINUX
-               (cond ((executable-find "maim")
-                      "maim -s %s")
-                     ((executable-find "scrot")
-                      "scrot -s %s")))))
+               (cond ((executable-find "maim")  "maim -s %s")
+                     ((executable-find "scrot") "scrot -s %s")))))
 
   ;; Ensure that relative inline image paths are relative to the attachment folder.
   (advice-add #'org-display-inline-images :around #'+org-attach*relative-to-attach-dir)
@@ -67,7 +65,8 @@
 (defun +org-attach|init ()
   (setq org-attach-directory +org-attach-dir)
 
-  (push +org-attach-dir projectile-globally-ignored-directories)
+  (push (car (last (split-string +org-attach-dir "/" t)))
+        projectile-globally-ignored-directories)
 
   (after! recentf
     (push (format "%s.+$" (regexp-quote +org-attach-dir))
