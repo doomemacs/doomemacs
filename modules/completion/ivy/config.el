@@ -56,8 +56,6 @@ immediately runs it on the current candidate (ending the ivy session)."
         [remap projectile-find-file]      #'counsel-projectile-find-file
         [remap imenu-anywhere]            #'ivy-imenu-anywhere
         [remap execute-extended-command]  #'counsel-M-x
-        [remap describe-function]         #'counsel-describe-function
-        [remap describe-variable]         #'counsel-describe-variable
         [remap describe-face]             #'counsel-describe-face)
 
   ;; Show more buffer information in switch-buffer commands
