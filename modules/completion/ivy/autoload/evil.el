@@ -58,7 +58,7 @@
               (replace-regexp-in-string " -i " " -S " counsel-rg-base-command))
              (args (concat
                     (if all-files-p " -uu")
-                    (unless recursion-p " --maxdepth 0"))))
+                    (unless recursion-p " --maxdepth 1"))))
          (counsel-rg query directory args (format prompt args))))
       ('pt) ;; TODO pt search engine (necessary?)
       (_ (error "No search engine specified")))))
