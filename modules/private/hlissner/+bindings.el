@@ -202,6 +202,7 @@
      :desc "Find library"          :n  "l" #'find-library
      :desc "Toggle Emacs log"      :n  "m" #'doom/popup-toggle-messages
      :desc "Command log"           :n  "L" #'global-command-log-mode
+     :desc "At point"              :n  "." #'helpful-at-point
      :desc "Describe function"     :n  "f" #'describe-function
      :desc "Describe key"          :n  "k" #'describe-key
      :desc "Describe char"         :n  "c" #'describe-char
