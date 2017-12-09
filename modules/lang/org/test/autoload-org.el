@@ -1,5 +1,5 @@
 ;; -*- no-byte-compile: t; -*-
-;;; org/org/test/autoload-org.el
+;;; lang/org/test/autoload-org.el
 
 (defmacro should-org-buffer! (source expected &rest body)
   `(should-buffer! ,source ,expected
