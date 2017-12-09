@@ -11,12 +11,14 @@
 
 * Unreleased (develop)
 + *Module changes:*
-  + Split =lang/java= into two submodules: one for eclim, and another for
-    meghanada. The latter is still the default, however. Also, the eclim
+  + *BREAKING* Split =lang/java= into two submodules: one for eclim, and another for
+    meghanada. You will need to update your =init.el= to enable one.
     submodule is experimental, since I have few opportunities to test it.
-  + Add =ui/window-select= (and moved ace-window out of ~core-ui~), which offers
-    two submodules for interactive window selection/moving: ace-window and
-    switch-window.
+  + *BREAKING* Ace-window is no longer part of Doom core. It has been moved to
+    =ui/window-select=, which offers two submodules for interactive window
+    selection/moving: ace-window and switch-window.
+  + New module: =lang/nix=, adds support for editing nix configuration files.
+    Contributed by [[https://github.com/ocharles][ocharles]].
 + =general=
   + New command naming convention: ~doom//...~ -- denotes that this an
     interactive command meant for:
@@ -45,6 +47,9 @@
     to set in their own private module. Use ~(set! :font "Font Name" :size N)~
     to do so.
 + =lang=
+  + =clojure=
+    + This module has been rewritten with improved Cider and clojurescript
+      support, as well as new refactoring commands. Thanks to [[https://github.com/teesloane][teesloane]]!
   + =crystal=
     + Add flycheck integration for the Crystal language, powered by
       ~flycheck-crystal~.

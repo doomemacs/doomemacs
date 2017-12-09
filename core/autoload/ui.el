@@ -36,8 +36,10 @@ If FORCE-P is omitted when `window-size-fixed' is non-nil, resizing will fail."
 
 ;;;###autoload
 (defun doom/window-zoom ()
-  "Maximize and isolate the current buffer. Activate again to undo this. If the
-window changes before then, the undo expires."
+  "Close other windows to focus on this one. Activate again to undo this. If the
+window changes before then, the undo expires.
+
+Alternatively, use `doom/window-enlargen'."
   (interactive)
   (if (and (one-window-p)
            (assoc ?_ register-alist))
@@ -48,7 +50,8 @@ window changes before then, the undo expires."
 (defvar doom--window-enlargened nil)
 ;;;###autoload
 (defun doom/window-enlargen ()
-  "Enlargen the current window. Activate again to undo."
+  "Enlargen the current window to focus on this one. Does not close other
+windows (unlike `doom/window-zoom') Activate again to undo."
   (interactive)
   (setq doom--window-enlargened
         (if (and doom--window-enlargened
