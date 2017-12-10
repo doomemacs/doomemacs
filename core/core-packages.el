@@ -328,13 +328,18 @@ MODULES is an malformed plist of modules to load."
        (message "Doom modules initialized"))))
 
 (defmacro def-package! (name &rest plist)
-  "A thin wrapper around `use-package'.
-
-Ignores the package if its NAME is present in `doom-disabled-packages'."
+  "A thin wrapper around `use-package'."
+  ;; Ignore package if NAME is in `doom-disabled-packages'
   (when (and (memq name doom-disabled-packages)
              (not (memq :disabled plist)))
     (setq plist (append (list :disabled t) plist)))
-  `(use-package ,name ,@plist))
+  ;; If byte-compiling, ignore this package if it doesn't meet the condition.
+  ;; This avoids false-positive load errors.
+  (unless (and (bound-and-true-p byte-compile-current-file)
+               (or (and (plist-member plist :if)     (not (eval (plist-get plist :if))))
+                   (and (plist-member plist :when)   (not (eval (plist-get plist :when))))
+                   (and (plist-member plist :unless) (eval (plist-get plist :unless)))))
+    `(use-package ,name ,@plist)))
 
 (defmacro def-package-hook! (package when &rest body)
   "Reconfigures a package's `def-package!' block.
