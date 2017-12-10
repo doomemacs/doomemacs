@@ -260,14 +260,13 @@ added, if the file exists."
            if (file-exists-p path)
            collect path))
 
-(defun doom-module-flags (module submodule)
+(defun doom-module-get (module submodule)
   "Returns a list of flags provided for MODULE SUBMODULE."
-  (and (hash-table-p doom-modules)
-       (gethash (cons module submodule) doom-modules)))
+  (gethash (cons module submodule) doom-modules))
 
-(defun doom-module-loaded-p (module submodule)
+(defun doom-module-enabled-p (module submodule)
   "Returns t if MODULE->SUBMODULE is present in `doom-modules'."
-  (and (doom-module-flags module submodule) t))
+  (and (doom-module-get module submodule) t))
 
 (defun doom-module-enable (module submodule &optional flags)
   "Adds MODULE and SUBMODULE to `doom-modules', overwriting it if it exists.
@@ -275,9 +274,12 @@ added, if the file exists."
 MODULE is a keyword, SUBMODULE is a symbol. e.g. :lang 'emacs-lisp.
 
 Used by `require!' and `depends-on!'."
-  (puthash (cons module submodule)
-           (doom-enlist (or flags t))
-           doom-modules))
+  (let ((key (cons module submodule)))
+    (puthash key
+             (or (doom-enlist flags)
+                 (gethash key doom-modules)
+                 '(t))
+             doom-modules)))
 
 (defun doom-module-pairs ()
   "Returns `doom-modules' as a list of (MODULE . SUBMODULE) cons cells. The list
@@ -316,7 +318,7 @@ MODULES is an malformed plist of modules to load."
        ,@(cl-loop for (module . submodule) in (doom-module-pairs)
                   for module-path = (doom-module-path module submodule)
                   collect `(load! init ,module-path t) into inits
-                  collect `(require! ,module ,submodule nil t) into configs
+                  collect `(load! config ,module-path t) into configs
                   finally return (append inits configs))
 
        (when (display-graphic-p)
@@ -405,7 +407,7 @@ If NOERROR is non-nil, don't throw an error if the file doesn't exist."
   "Loads the module specified by MODULE (a property) and SUBMODULE (a symbol).
 
 The module is only loaded once. If RELOAD-P is non-nil, load it again."
-  (when (or reload-p (not (doom-module-loaded-p module submodule)))
+  (when (or reload-p (not (doom-module-enabled-p module submodule)))
     (let ((module-path (doom-module-path module submodule)))
       (if (not (file-directory-p module-path))
           (lwarn 'doom-modules :warning "Couldn't find module '%s %s'"
@@ -420,7 +422,7 @@ The module is only loaded once. If RELOAD-P is non-nil, load it again."
                    (error-message-string ex))))))))
 
 (defmacro featurep! (module &optional submodule flag)
-  "A convenience macro wrapper for `doom-module-loaded-p'. It is evaluated at
+  "A convenience macro wrapper for `doom-module-enabled-p'. It is evaluated at
 compile-time/macro-expansion time."
   (unless submodule
     (let* ((path (or load-file-name byte-compile-current-file))
@@ -431,8 +433,8 @@ compile-time/macro-expansion time."
             module (car module-pair)
             submodule (cdr module-pair))))
   (if flag
-      (and (memq flag (doom-module-flags module submodule)) t)
-    (doom-module-loaded-p module submodule)))
+      (and (memq flag (doom-module-get module submodule)) t)
+    (doom-module-enabled-p module submodule)))
 
 
 ;;
