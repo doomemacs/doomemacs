@@ -11,13 +11,18 @@
          (pass))))
 
 ;;;###autoload
+(defalias '+pass--get-entry
+  (if (featurep 'auth-store-pass)
+      #'auth-source-pass-parse-entry
+    #'auth-pass-parse-entry))
+
+;;;###autoload
 (defun +pass-get-field (entry fields)
-  (unless noninteractive
-    (if-let* ((data (if (listp entry) entry (auth-pass-parse-entry entry))))
-        (cl-loop for key in (doom-enlist fields)
-                 when (assoc key data)
-                 return (cdr it))
-      (error "Couldn't find entry: %s" entry))))
+  (if-let* ((data (if (listp entry) entry (+pass--get-entry entry))))
+      (cl-loop for key in (doom-enlist fields)
+               when (assoc key data)
+               return (cdr it))
+    (error "Couldn't find entry: %s" entry)))
 
 ;;;###autoload
 (defun +pass-get-user (entry)
@@ -35,7 +40,7 @@
     (error "Username not found.")))
 
 (defun +pass-ivy-action--get-field (item)
-  (let* ((data (auth-pass-parse-entry item))
+  (let* ((data (+pass--get-entry item))
           (field (if data (completing-read "Field: " (mapcar #'car data) nil t))))
     (if data
         (progn
