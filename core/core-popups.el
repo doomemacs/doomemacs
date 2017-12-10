@@ -465,7 +465,7 @@ you came from."
 ;; Ensure these settings are loaded as late as possible, giving other modules a
 ;; chance to reconfigure org popup settings before the defaults kick in.
 (defun doom|init-org-popups ()
-  (after! org
+  (add-hook! org-load
     (set! :popup
       '("*Calendar*"         :size 0.4 :noselect t)
       '(" *Org todo*"        :size 5   :noselect t)
@@ -510,19 +510,18 @@ you came from."
                (t (error "Invalid buffer %s" buf))))))
     (advice-add #'org-switch-to-buffer-other-window :override #'doom*org-pop-to-buffer)
 
-    (after! org-agenda
-      (setq org-agenda-window-setup 'other-window
-            org-agenda-restore-windows-after-quit nil)
-
+    ;; org-agenda
+    (setq org-agenda-window-setup 'other-window
+          org-agenda-restore-windows-after-quit nil)
       ;; Hide modeline in org-agenda
-      (add-hook 'org-agenda-finalize-hook #'doom-hide-modeline-mode)
-      (add-hook 'org-agenda-finalize-hook #'org-fit-window-to-buffer)
-      ;; Don't monopolize frame!
-      (advice-add #'org-agenda :around #'doom*suppress-delete-other-windows)
-      ;; ensure quit keybindings work propertly
-      (map! :map org-agenda-mode-map
-            :m [escape] 'org-agenda-Quit
-            :m "ESC"    'org-agenda-Quit))))
+    (add-hook 'org-agenda-finalize-hook #'doom-hide-modeline-mode)
+    (add-hook 'org-agenda-finalize-hook #'org-fit-window-to-buffer)
+    ;; Don't monopolize frame!
+    (advice-add #'org-agenda :around #'doom*suppress-delete-other-windows)
+    ;; ensure quit keybindings work propertly
+    (map! :map* org-agenda-mode-map
+          :m [escape] 'org-agenda-Quit
+          :m "ESC"    'org-agenda-Quit)))
 (add-hook 'doom-init-hook #'doom|init-org-popups)
 
 (provide 'core-popups)
