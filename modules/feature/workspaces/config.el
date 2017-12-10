@@ -91,7 +91,7 @@ Allows a perspective-specific buffer list via `+workspaces-buffer-list'."
                (not persp-temporarily-display-buffer)
                (doom-real-buffer-p buffer))
       (persp-add-buffer buffer (get-current-persp) nil)
-      (redisplay)))
+      (force-mode-line-update t)))
   (advice-add #'switch-to-buffer :after #'+workspaces*auto-add-buffer)
   (advice-add #'display-buffer   :after #'+workspaces*auto-add-buffer)
 
