@@ -31,7 +31,7 @@ DEFAULT-P is a boolean. If non-nil, it marks that email account as the
 default/fallback account."
   `(after! mu4e
      (let ((account-vars ,letvars))
-       (when-let (address (cdr (assq 'user-mail-address account-vars)))
+       (when-let* ((address (cdr (assq 'user-mail-address account-vars))))
          (cl-pushnew address mu4e-user-mail-address-list :test #'equal))
        (let ((context (make-mu4e-context
                        :name ,label

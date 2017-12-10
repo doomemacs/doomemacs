@@ -55,7 +55,7 @@ is loaded.")
     (defun +python|detect-pyenv-version ()
       "Detect the pyenv version for the current project and set the relevant
 environment variables."
-      (when-let (version-str (shell-command-to-string "python --version 2>&1 | cut -d' ' -f2"))
+      (when-let* ((version-str (shell-command-to-string "python --version 2>&1 | cut -d' ' -f2")))
         (setq version-str (string-trim version-str)
               +python-current-version version-str)
         (let ((pyenv-current-path (concat +python-pyenv-root "/versions/" version-str)))

@@ -50,7 +50,7 @@
 (defvar +doom-modeline-current-window (frame-selected-window))
 (defun +doom-modeline|set-selected-window (&rest _)
   "Sets `+doom-modeline-current-window' appropriately"
-  (when-let (win (frame-selected-window))
+  (when-let* ((win (frame-selected-window)))
     (unless (minibuffer-window-active-p win)
       (setq +doom-modeline-current-window win))))
 

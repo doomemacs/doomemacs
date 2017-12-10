@@ -13,7 +13,7 @@
   "Evaluate a region between BEG and END and display the output."
   (interactive "r")
   (let ((load-file-name buffer-file-name))
-    (if-let (runner (cdr (assq major-mode +eval-runners)))
+    (if-let* ((runner (cdr (assq major-mode +eval-runners))))
         (funcall runner beg end)
       (quickrun-region beg end))))
 

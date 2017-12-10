@@ -414,7 +414,7 @@ that `doom*popup-save' won't break it."
   (defun doom*persp-mode-restore-popups (&rest _)
     "Restore popup windows when loading a perspective from file."
     (dolist (window (window-list))
-      (when-let (plist (doom-popup-properties window))
+      (when-let* ((plist (doom-popup-properties window)))
         (with-selected-window window
           (unless doom-popup-mode
             (setq-local doom-popup-rules plist)

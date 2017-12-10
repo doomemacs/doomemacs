@@ -269,7 +269,7 @@ Example
                      (dolist (keymap doom--keymaps)
                        (when (memq 'global states)
                          (push `(define-key ,keymap ,key ,def) forms))
-                       (when-let (states (delq 'global states))
+                       (when-let* ((states (delq 'global states)))
                          (push `(,(if doom--defer 'evil-define-key 'evil-define-key*)
                                  ',states ,keymap ,key ,def)
                                forms))))

@@ -43,7 +43,7 @@
     (defun +ruby|detect-rbenv-version ()
       "Detect the rbenv version for the current project and set the relevant
 environment variables."
-      (when-let (version-str (shell-command-to-string "ruby --version 2>&1 | cut -d' ' -f2"))
+      (when-let* ((version-str (shell-command-to-string "ruby --version 2>&1 | cut -d' ' -f2")))
         (setq version-str (string-trim version-str)
               +ruby-current-version version-str)
         (when (member version-str +ruby-rbenv-versions)

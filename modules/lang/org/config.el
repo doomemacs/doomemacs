@@ -4,7 +4,7 @@
   "The directory where org files are kept.")
 
 ;; Ensure ELPA org is prioritized above built-in org.
-(when-let (path (locate-library "org" nil doom--package-load-path))
+(when-let* ((path (locate-library "org" nil doom--package-load-path)))
   (setq load-path (delete path load-path))
   (push (file-name-directory path) load-path))
 

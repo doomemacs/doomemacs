@@ -147,7 +147,7 @@ local value, whether or not it's permanent-local. Therefore, we cycle
 ;; like diminish, but for major-modes. [pedantry intensifies]
 (defun doom|set-mode-name ()
   "Set the major mode's `mode-name', as dictated by `doom-major-mode-names'."
-  (when-let (name (cdr (assq major-mode doom-major-mode-names)))
+  (when-let* ((name (cdr (assq major-mode doom-major-mode-names))))
     (setq mode-name
           (cond ((functionp name) (funcall name))
                 ((stringp name) name)
@@ -475,7 +475,7 @@ error if it doesn't exist."
 (defun doom-set-modeline (key &optional default)
   "Set the modeline format. Does nothing if the modeline KEY doesn't exist. If
 DEFAULT is non-nil, set the default mode-line for all buffers."
-  (when-let (modeline (doom-modeline key))
+  (when-let* ((modeline (doom-modeline key)))
     (setf (if default
               (default-value 'mode-line-format)
             (buffer-local-value 'mode-line-format (current-buffer)))

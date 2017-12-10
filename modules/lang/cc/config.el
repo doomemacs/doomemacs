@@ -35,9 +35,9 @@ compilation database is present in the project.")
          (or (file-exists-p (expand-file-name
                              (concat (file-name-sans-extension buffer-file-name)
                                      ".cpp")))
-             (when-let (file (car-safe (projectile-get-other-files
-                                        buffer-file-name
-                                        (projectile-current-project-files))))
+             (when-let* ((file (car-safe (projectile-get-other-files
+                                          buffer-file-name
+                                          (projectile-current-project-files)))))
                (equal (file-name-extension file) "cpp")))))
 
   (defun +cc-objc-header-file-p ()

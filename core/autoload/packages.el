@@ -48,7 +48,7 @@ list, whose car is NAME, and cdr the current version list and latest version
 list of the package."
   (cl-assert (symbolp name) t)
   (doom-initialize-packages)
-  (when-let (desc (cadr (assq name package-alist)))
+  (when-let* ((desc (cadr (assq name package-alist))))
     (let* ((old-version (package-desc-version desc))
            (new-version
             (pcase (doom-package-backend name)
@@ -57,7 +57,7 @@ list of the package."
                      (dir (expand-file-name (symbol-name name) quelpa-build-dir))
                      (inhibit-message (not doom-debug-mode))
                      (quelpa-upgrade-p t))
-                 (if-let (ver (quelpa-checkout recipe dir))
+                 (if-let* ((ver (quelpa-checkout recipe dir)))
                      (version-to-list ver)
                    old-version)))
               ('elpa
@@ -115,7 +115,7 @@ If INSTALLED-ONLY-P, only return packages that are installed."
 (defun doom-get-depending-on (name)
   "Return a list of packages that depend on the package named NAME."
   (doom-initialize)
-  (when-let (desc (cadr (assq name package-alist)))
+  (when-let* ((desc (cadr (assq name package-alist))))
     (mapcar #'package-desc-name (package--used-elsewhere-p desc nil t))))
 
 ;;;###autoload
@@ -291,7 +291,7 @@ package.el as appropriate."
                    (package-compute-transaction () (list (list archive))))))
            (package-download-transaction packages))))
       (unless (doom-package-outdated-p name)
-        (when-let (old-dir (package-desc-dir desc))
+        (when-let* ((old-dir (package-desc-dir desc)))
           (when (file-directory-p old-dir)
             (delete-directory old-dir t)))
         t))))
@@ -498,7 +498,7 @@ calls."
                      (user-error "All packages are up to date"))))
      (list (cdr (assq (car (assoc package package-alist)) packages)))))
   (cl-destructuring-bind (package old-version new-version) pkg
-    (if-let (desc (doom-package-outdated-p package))
+    (if-let* ((desc (doom-package-outdated-p package)))
         (let ((old-v-str (package-version-join old-version))
               (new-v-str (package-version-join new-version)))
           (if (y-or-n-p (format "%s will be updated from %s to %s. Update?"

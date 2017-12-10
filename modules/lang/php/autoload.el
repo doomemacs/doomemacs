@@ -9,6 +9,6 @@ ignore the cache."
   (let ((project-root (or project-root (doom-project-root))))
     (or (and (not refresh-p) (gethash project-root +php-composer-conf))
         (let ((package-file (expand-file-name "composer.json" project-root)))
-          (when-let (data (and (file-exists-p package-file)
-                               (json-read-file package-file)))
+          (when-let* ((data (and (file-exists-p package-file)
+                                 (json-read-file package-file))))
             (puthash project-root data +php-composer-conf))))))

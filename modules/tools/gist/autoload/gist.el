@@ -4,7 +4,7 @@
 (defun +gist/open-current ()
   (interactive)
   (gist-fetch-current)
-  (when-let (win (get-buffer-window "*github:gists*"))
+  (when-let* ((win (get-buffer-window "*github:gists*")))
     (doom/popup-close win)))
 
 ;;;###autoload

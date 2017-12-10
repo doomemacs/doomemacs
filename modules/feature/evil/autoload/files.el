@@ -77,7 +77,7 @@ overwrite the destination file if it exists, without confirmation."
   (pcase (catch 'status
            (let ((old-path (buffer-file-name))
                  (new-path (expand-file-name new-path)))
-             (when-let (dest (+evil--copy-file old-path new-path force-p))
+             (when-let* ((dest (+evil--copy-file old-path new-path force-p)))
                (delete-file old-path)
                (kill-this-buffer)
                (find-file new-path)
@@ -95,7 +95,7 @@ overwrite the destination file if it exists, without confirmation."
   :repeat nil
   (interactive "<f><!>")
   (pcase (catch 'status
-           (when-let (dest (+evil--copy-file (buffer-file-name) new-path force-p))
+           (when-let* ((dest (+evil--copy-file (buffer-file-name) new-path force-p)))
              (message "File successfully copied to %s" dest)))
     ('overwrite-self (error "Cannot overwrite self"))
     ('aborted (message "Aborted"))

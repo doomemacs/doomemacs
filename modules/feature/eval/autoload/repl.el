@@ -7,7 +7,7 @@
   (or (eq (current-buffer) +eval-repl-buffer)
       (progn
         (if (and +eval-repl-buffer (buffer-live-p +eval-repl-buffer))
-            (if-let (win (get-buffer-window +eval-repl-buffer))
+            (if-let* ((win (get-buffer-window +eval-repl-buffer)))
                 (select-window win)
               (doom-popup-buffer +eval-repl-buffer))
           (when command
@@ -29,7 +29,7 @@
   "Opens (or reopens) the REPL associated with the current major-mode and place
 the cursor at the prompt."
   (interactive)
-  (when-let (command (cdr (assq major-mode +eval-repls)))
+  (when-let* ((command (cdr (assq major-mode +eval-repls))))
     (when (+eval--ensure-in-repl-buffer command)
       (when (bound-and-true-p evil-mode)
         (call-interactively #'evil-append-line))

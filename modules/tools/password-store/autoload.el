@@ -13,7 +13,7 @@
 ;;;###autoload
 (defun +pass-get-field (entry fields)
   (unless noninteractive
-    (if-let (data (if (listp entry) entry (auth-pass-parse-entry entry)))
+    (if-let* ((data (if (listp entry) entry (auth-pass-parse-entry entry))))
         (cl-loop for key in (doom-enlist fields)
                  when (assoc key data)
                  return (cdr it))
@@ -28,7 +28,7 @@
   (+pass-get-field entry 'secret))
 
 (defun +pass-ivy-action--open-url (entry)
-  (if-let (url (+pass-get-field entry +pass-url-fields))
+  (if-let* ((url (+pass-get-field entry +pass-url-fields)))
       (and (or (string-match-p "https?://" url)
                (error "Field for %s doesn't look like an url" item))
            (browse-url url))
@@ -48,7 +48,7 @@
       (error "Couldn't find entry: %s" item))))
 
 (defun +pass-ivy-action--copy-username (entry)
-  (if-let (user (+pass-get-field entry +pass-user-fields))
+  (if-let* ((user (+pass-get-field entry +pass-user-fields)))
       (progn (password-store-clear)
              (message "Copied username to the kill ring.")
              (kill-new user))

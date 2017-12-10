@@ -6,6 +6,12 @@
 (load "persistent-soft-autoloads" nil t)
 (dolist (sym '(json-read json-read-file json-read-from-string json-encode))
   (autoload sym "json"))
+(eval-and-compile
+  (when (version< emacs-version "26")
+    (with-no-warnings
+      (defalias 'if-let* #'if-let)
+      (defalias 'when-let* #'when-let))))
+
 
 ;;
 ;; Helpers
@@ -96,7 +102,7 @@ See http://vimdoc.sourceforge.net/htmldoc/cmdline.html#filename-modifiers."
                                (file-relative-name parent)))))
                         ("s"
                          (if (featurep 'evil)
-                             (when-let (args (evil-delimited-arguments (substring flag 1) 2))
+                             (when-let* ((args (evil-delimited-arguments (substring flag 1) 2)))
                                (let ((pattern (evil-transform-vim-style-regexp (car args)))
                                      (replace (cadr args)))
                                  (replace-regexp-in-string

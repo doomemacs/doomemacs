@@ -108,11 +108,11 @@ but do not execute them."
 
 ;;;###autoload
 (defun +tmux-list-windows (&optional session)
-  (if-let (lines
-           (+tmux (format "list-windows %s -F '#{window_id};#{session_id};#{window_active};#{window_name};#{window_activity_flag}'"
-                          (if session
-                              (concat "-t " (car session))
-                            "-a"))))
+  (if-let* ((lines
+             (+tmux (format "list-windows %s -F '#{window_id};#{session_id};#{window_active};#{window_name};#{window_activity_flag}'"
+                            (if session
+                                (concat "-t " (car session))
+                              "-a")))))
       (cl-loop for line in (string-split lines "\n" t)
                collect (let ((window (string-split line ";")))
                          (list (nth 0 window)
@@ -124,13 +124,13 @@ but do not execute them."
 
 ;;;###autoload
 (defun +tmux-list-panes (&optional sess-or-win)
-  (if-let (lines
-           (+tmux (format "list-panes %s -F '#{pane_id};#{window_id};#{session_id};#{pane_active};#{pane_title};#{pane_current_path}'"
-                          (if sess-or-win
-                              (concat (if (string-prefix-p "$" (car sess-or-win)) "-s ")
-                                      "-t "
-                                      (car sess-or-win))
-                            "-a"))))
+  (if-let* ((lines
+             (+tmux (format "list-panes %s -F '#{pane_id};#{window_id};#{session_id};#{pane_active};#{pane_title};#{pane_current_path}'"
+                            (if sess-or-win
+                                (concat (if (string-prefix-p "$" (car sess-or-win)) "-s ")
+                                        "-t "
+                                        (car sess-or-win))
+                              "-a")))))
       (cl-loop for line in (string-split lines "\n" t)
                collect (let ((pane (split-string line ";")))
                          (list (nth 0 pane)

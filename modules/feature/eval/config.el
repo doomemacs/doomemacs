@@ -74,7 +74,7 @@ function that creates and returns the REPL buffer."
 
   (defun +eval*quickrun-auto-close (&rest _)
     "Allows us to silently re-run quickrun from within the quickrun buffer."
-    (when-let (win (get-buffer-window quickrun--buffer-name))
+    (when-let* ((win (get-buffer-window quickrun--buffer-name)))
       (let ((inhibit-message t))
         (quickrun--kill-running-process)
         (message ""))

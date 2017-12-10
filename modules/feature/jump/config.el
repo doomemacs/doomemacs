@@ -70,8 +70,8 @@ properties:
 (defun +jump|init ()
   "Initialize `+jump-current-functions', used by `+jump/definition',
 `+jump/references' and `+jump/documentation'."
-  (when-let (plist (cdr (assq major-mode +jump-function-alist)))
-    (when-let (backend (plist-get plist :xref-backend))
+  (when-let* ((plist (cdr (assq major-mode +jump-function-alist))))
+    (when-let* ((backend (plist-get plist :xref-backend)))
       (make-variable-buffer-local 'xref-backend-functions)
       (cl-pushnew backend xref-backend-functions :test #'eq))
     (setq-local +jump-current-functions plist)))

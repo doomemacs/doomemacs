@@ -180,11 +180,11 @@ across windows."
   (evil-embrace-enable-evil-surround-integration)
 
   (defun +evil--embrace-get-pair (char)
-    (if-let (pair (cdr-safe (assoc (string-to-char char) evil-surround-pairs-alist)))
+    (if-let* ((pair (cdr-safe (assoc (string-to-char char) evil-surround-pairs-alist))))
         pair
-      (if-let (pair (assoc-default char embrace--pairs-list))
-          (if-let (real-pair (and (functionp (embrace-pair-struct-read-function pair))
-                                  (funcall (embrace-pair-struct-read-function pair))))
+      (if-let* ((pair (assoc-default char embrace--pairs-list)))
+          (if-let* ((real-pair (and (functionp (embrace-pair-struct-read-function pair))
+                                    (funcall (embrace-pair-struct-read-function pair)))))
               real-pair
             (cons (embrace-pair-struct-left pair) (embrace-pair-struct-right pair)))
         (cons char char))))
