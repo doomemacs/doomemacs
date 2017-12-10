@@ -60,9 +60,9 @@ If neither is available, run all tests in all enabled modules."
                   into items
                  finally do (quiet! (mapc #'load-file items)))
         ;; run all loaded tests
-        (when noninteractive
-          (let (noninteractive)
-            (ert-run-tests-batch-and-exit))))
+        (if noninteractive
+            (ert-run-tests-batch-and-exit)
+          (call-interactively #'ert-run-tests-interactively)))
     ('error
      (lwarn 'doom-test :error
             "%s -> %s"
