@@ -82,10 +82,8 @@ immediately runs it on the current candidate (ending the ivy session)."
      '(("O" +ivy-git-grep-other-window-action "open in other window"))))
 
   ;; 1. Remove character limit from `counsel-ag-function'
-  ;; 2. Disable ivy's over-zealous parentheses quoting behavior (if i want
-  ;;    literal parentheses, I'll escape them myself).
-  ;; 3. This may need to be updated frequently, to meet changes upstream
-  ;; 4. counsel-ag, counsel-rg and counsel-pt all use this function
+  ;; 2. This may need to be updated frequently, to meet changes upstream
+  ;; 3. counsel-ag, counsel-rg and counsel-pt all use this function
   (advice-add #'counsel-ag-function :override #'+ivy*counsel-ag-function))
 
 

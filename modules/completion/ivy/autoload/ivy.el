@@ -144,8 +144,7 @@ counsel-rg)."
     (let ((default-directory counsel--git-dir)
           (regex (counsel-unquote-regex-parens
                   (setq ivy--old-re
-                        (ivy--regex
-                         (counsel-unquote-regex-parens string)))))) ;; #2
+                        (ivy--regex string)))))
       (let* ((args-end (string-match " -- " extra-ag-args))
              (file (if args-end
                        (substring-no-properties extra-ag-args (+ args-end 3))
