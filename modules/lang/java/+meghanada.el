@@ -1,4 +1,5 @@
 ;;; lang/java/+meghanada.el -*- lexical-binding: t; -*-
+;;;###if (featurep! +meghanada)
 
 (def-package! meghanada
   :hook (java-mode . meghanada-mode)

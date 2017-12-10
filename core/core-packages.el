@@ -649,10 +649,9 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
                       (let ((elc-file (byte-compile-dest-file target)))
                         (and (file-exists-p elc-file)
                              (file-newer-than-file-p file elc-file))))
-              (let ((result (if (and (string-match-p "/autoload/.*\\.el$" target)
-                                     (not (doom-packages--read-if-cookies target)))
-                                'no-byte-compile
-                              (byte-compile-file target)))
+              (let ((result (if (doom-packages--read-if-cookies target)
+                                (byte-compile-file target)
+                              'no-byte-compile))
                     (short-name (file-relative-name target doom-emacs-dir)))
                 (cl-incf
                  (cond ((eq result 'no-byte-compile)

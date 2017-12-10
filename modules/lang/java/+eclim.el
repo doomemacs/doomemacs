@@ -1,4 +1,5 @@
 ;;; lang/java/+eclim.el -*- lexical-binding: t; -*-
+;;;###if (featurep! +eclim)
 
 ;; NOTE This submodule is incomplete
 
