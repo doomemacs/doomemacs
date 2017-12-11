@@ -278,9 +278,14 @@ local value, whether or not it's permanent-local. Therefore, we cycle
   (when (boundp 'display-line-numbers)
     (defun doom--line-range ()
       (cons (line-beginning-position)
-            (if (save-excursion (forward-line) (eobp))
-                (line-end-position)
-              (line-beginning-position 2))))
+            (cond ((save-excursion
+                     (goto-char (line-end-position))
+                     (and (eobp) (not (bolp))))
+                   (1- (line-end-position)))
+                  ((or (eobp) (save-excursion (forward-line) (eobp)))
+                   (line-end-position))
+                  (t
+                   (line-beginning-position 2)))))
     (setq hl-line-range-function #'doom--line-range))
 
   (after! evil
