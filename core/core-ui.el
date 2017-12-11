@@ -273,6 +273,16 @@ local value, whether or not it's permanent-local. Therefore, we cycle
   (setq hl-line-sticky-flag nil
         global-hl-line-sticky-flag nil)
 
+  ;; On Emacs 26+, when point is on the last line, hl-line highlights bleed into
+  ;; the rest of the window after eob. This is the fix.
+  (when (boundp 'display-line-numbers)
+    (defun doom--line-range ()
+      (cons (line-beginning-position)
+            (if (save-excursion (forward-line) (eobp))
+                (line-end-position)
+              (line-beginning-position 2))))
+    (setq hl-line-range-function #'doom--line-range))
+
   (after! evil
     (defvar-local doom-buffer-hl-line-mode nil)
 
