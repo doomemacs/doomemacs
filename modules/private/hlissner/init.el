@@ -13,7 +13,7 @@
 
 (setq doom-big-font (font-spec :family "Fira Mono" :size 19))
 
-(pcase system-name
+(pcase (system-name)
   ((or "halimede" "proteus")
    (setq-default line-spacing 1)
 
