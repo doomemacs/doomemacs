@@ -1,4 +1,5 @@
 ;;; feature/version-control/+git.el -*- lexical-binding: t; -*-
+;;;###if (not (featurep! -git))
 
 (def-package! gitconfig-mode
   :mode "/\\.?git/?config$"
