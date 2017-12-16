@@ -8,7 +8,8 @@
 (def-package! ox-pandoc
   :defer t
   :config
-  (unless (executable-find "pandoc")
+  (if (executable-find "pandoc")
+      (push 'pandoc org-export-backends)
     (warn "org-export: couldn't find pandoc, disabling pandoc export"))
   (setq org-pandoc-options
         '((standalone . t)
@@ -17,8 +18,10 @@
 
 ;;
 (after! org
+  (add-transient-hook! #'org-export-dispatch (require 'ox-pandoc))
+
   (setq org-export-directory (expand-file-name ".export" +org-dir)
-        org-export-backends '(ascii html latex md pandoc)
+        org-export-backends '(ascii html latex md)
         org-export-with-toc t
         org-export-with-author t)
 
