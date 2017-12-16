@@ -63,6 +63,7 @@
      +org|enable-auto-update-cookies
      +org|smartparens-compatibility-config
      +org|unfold-to-2nd-level-or-point
+     +org|show-paren-mode-compatibility
      ))
 
 
@@ -107,6 +108,11 @@ unfold to point on startup."
   (when (featurep 'evil)
     (add-hook 'evil-insert-state-exit-hook #'+org|update-cookies nil t))
   (add-hook 'before-save-hook #'+org|update-cookies nil t))
+
+(defun +org|show-paren-mode-compatibility ()
+  "`show-paren-mode' causes flickering with indentation margins made by
+`org-indent-mode', so we simply turn off show-paren-mode altogether."
+  (set (make-local-variable 'show-paren-mode) nil))
 
 
 ;;
