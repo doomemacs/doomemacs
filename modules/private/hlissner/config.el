@@ -8,6 +8,11 @@
   (load! +bindings)  ; my key bindings
   (load! +commands)) ; my custom ex commands
 
+
+;;
+;; Global config
+;;
+
 (setq epa-file-encrypt-to user-mail-address
       auth-sources (list (expand-file-name ".authinfo.gpg" +hlissner-dir))
       +doom-modeline-buffer-file-name-style 'relative-from-project)
@@ -18,8 +23,13 @@
     (apply orig-fn args)))
 (advice-add #'tramp-read-passwd :around #'+hlissner*no-authinfo-for-tramp)
 
+
+;;
+;; Modules
+;;
+
 (after! smartparens
-  ;; Auto-close more conservatively
+  ;; Auto-close more conservatively and expand braces on RET
   (let ((unless-list '(sp-point-before-word-p
                        sp-point-after-word-p
                        sp-point-before-same-p)))
@@ -34,17 +44,30 @@
 
 ;; feature/evil
 (after! evil-mc
-  ;; if I'm in insert mode, chances are I want cursors to resume
+  ;; Make evil-mc resume its cursors when I switch to insert mode
   (add-hook! 'evil-mc-before-cursors-created
     (add-hook 'evil-insert-state-entry-hook #'evil-mc-resume-cursors nil t))
   (add-hook! 'evil-mc-after-cursors-deleted
     (remove-hook 'evil-insert-state-entry-hook #'evil-mc-resume-cursors t)))
 
-;; Don't use default snippets, use mine.
+;; feature/snippets
 (after! yasnippet
+  ;; Don't use default snippets, use mine.
   (setq yas-snippet-dirs
         (append (list '+hlissner-snippets-dir)
                 (delq 'yas-installed-snippets-dir yas-snippet-dirs))))
+
+;; completion/helm
+(after! helm
+  ;; Hide header lines in helm. I don't like them
+  (set-face-attribute 'helm-source-header nil :height 0.1))
+
+;; lang/org
+(after! org-bullets
+  ;; The standard unicode characters are usually misaligned depending on the
+  ;; font. This bugs me. Personally, markdown #-marks for headlines are more
+  ;; elegant, so we use those.
+  (setq org-bullets-bullet-list '("#")))
 
 ;; app/irc
 (after! circe
@@ -83,13 +106,3 @@
       (user-mail-address      . "henrik@lissner.net")
       (mu4e-compose-signature . "---\nHenrik Lissner"))
     t))
-
-;; The standard unicode characters are usually misaligned depending on the font.
-;; This bugs me. Personally, markdown #-marks for headlines are more elegant, so
-;; we use those.
-(after! org-bullets
-  (setq org-bullets-bullet-list '("#")))
-
-;; Hide header lines in helm. I don't like them
-(after! helm
-  (set-face-attribute 'helm-source-header nil :height 0.1))
