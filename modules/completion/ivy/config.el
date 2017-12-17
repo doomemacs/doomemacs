@@ -24,7 +24,6 @@ immediately runs it on the current candidate (ending the ivy session)."
 ;;
 
 (def-package! ivy
-  :demand t
   :init
   (add-hook 'doom-post-init-hook #'ivy-mode)
   :config
@@ -57,8 +56,6 @@ immediately runs it on the current candidate (ending the ivy session)."
         [remap projectile-find-file]      #'counsel-projectile-find-file
         [remap imenu-anywhere]            #'ivy-imenu-anywhere
         [remap execute-extended-command]  #'counsel-M-x
-        [remap describe-function]         #'counsel-describe-function
-        [remap describe-variable]         #'counsel-describe-variable
         [remap describe-face]             #'counsel-describe-face)
 
   ;; Show more buffer information in switch-buffer commands
@@ -67,23 +64,22 @@ immediately runs it on the current candidate (ending the ivy session)."
   (ivy-set-display-transformer #'+ivy/switch-workspace-buffer #'+ivy-buffer-transformer)
   (ivy-set-display-transformer #'counsel-recentf #'abbreviate-file-name)
 
-  (when (featurep! :feature workspaces)
-    (nconc ivy-sort-functions-alist
-           '((persp-kill-buffer   . nil)
-             (persp-remove-buffer . nil)
-             (persp-add-buffer    . nil)
-             (persp-switch        . nil)
-             (persp-window-switch . nil)
-             (persp-frame-switch  . nil)
-             (+workspace/switch-to . nil)
-             (+workspace/delete . nil)))))
+  (nconc ivy-sort-functions-alist
+         '((persp-kill-buffer   . nil)
+           (persp-remove-buffer . nil)
+           (persp-add-buffer    . nil)
+           (persp-switch        . nil)
+           (persp-window-switch . nil)
+           (persp-frame-switch  . nil)
+           (+workspace/switch-to . nil)
+           (+workspace/delete . nil))))
 
 
 (def-package! swiper :commands (swiper swiper-all))
 
 
 (def-package! counsel
-  :after ivy
+  :requires ivy
   :config
   (require 'counsel-projectile)
   (setq counsel-find-file-ignore-regexp "\\(?:^[#.]\\)\\|\\(?:[#~]$\\)\\|\\(?:^Icon?\\)")
@@ -96,10 +92,8 @@ immediately runs it on the current candidate (ending the ivy session)."
      '(("O" +ivy-git-grep-other-window-action "open in other window"))))
 
   ;; 1. Remove character limit from `counsel-ag-function'
-  ;; 2. Disable ivy's over-zealous parentheses quoting behavior (if i want
-  ;;    literal parentheses, I'll escape them myself).
-  ;; 3. This may need to be updated frequently, to meet changes upstream
-  ;; 4. counsel-ag, counsel-rg and counsel-pt all use this function
+  ;; 2. This may need to be updated frequently, to meet changes upstream
+  ;; 3. counsel-ag, counsel-rg and counsel-pt all use this function
   (advice-add #'counsel-ag-function :override #'+ivy*counsel-ag-function))
 
 
@@ -144,9 +138,9 @@ immediately runs it on the current candidate (ending the ivy session)."
     ("i" nil)
     ("TAB" ivy-alt-done :exit nil)
     ("C-j" ivy-alt-done :exit nil)
-    ;; ("d" ivy-done :exit t)
     ("RET" ivy-done :exit t)
     ("C-m" ivy-done :exit t)
+    ("C-SPC" ivy-call-and-recenter :exit nil)
     ("f" ivy-call)
     ("c" ivy-toggle-calling)
     ("m" ivy-toggle-fuzzy)

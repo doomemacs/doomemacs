@@ -1,6 +1,4 @@
-;;; org/org-export/config.el -*- lexical-binding: t; -*-
-
-(add-hook 'org-load-hook #'+org-export|init t)
+;;; lang/org/+export.el -*- lexical-binding: t; -*-
 
 ;; I don't have any beef with org's built-in export system, but I do wish it
 ;; would export to a central directory, rather than `default-directory'. This is
@@ -8,16 +6,19 @@
 ;; refer back to old exports if needed.
 
 (def-package! ox-pandoc
+  :defer t
   :config
-  (unless (executable-find "pandoc")
-    (warn "org-export: couldn't find pandoc, disabling pandoc export"))
+  (when (executable-find "pandoc")
+    (push 'pandoc org-export-backends))
   (setq org-pandoc-options
         '((standalone . t)
           (mathjax . t)
           (parse-raw . t))))
 
 ;;
-(defun +org-export|init ()
+(after! org
+  (add-transient-hook! #'org-export-dispatch (require 'ox-pandoc))
+
   (setq org-export-directory (expand-file-name ".export" +org-dir)
         org-export-backends '(ascii html latex md)
         org-export-with-toc t

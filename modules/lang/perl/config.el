@@ -5,11 +5,10 @@
   (add-hook 'perl-mode-hook #'flycheck-mode))
 
 
-(def-package! perl6-mode
-  :init (require 'perl6-detect))
+(def-package! perl6-detect)
 
 
 (def-package! flycheck-perl6
-  :after perl6-mode
   :when (featurep! :feature syntax-checker)
+  :after perl6-mode
   :config (add-hook 'perl6-mode-hook #'flycheck-mode))

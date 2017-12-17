@@ -5,54 +5,48 @@ This module modifies Emacs' user interface.
 Doom's look is loosely inspired by Atom's One Dark theme, and is largely contained in the] plugin.
 
 + A colorscheme inspired by Atom's One Dark theme (now available in a separate plugin: [[https://github.com/hlissner/emacs-doom-theme/][doom-themes]])
-+ Uses the [[https://github.com/mozilla/Fira][Fira Mono and Fira Sans]] fonts, and [[https://dejavu-fonts.github.io/][DejaVu Sans Mono]] for unicode symbols.
 + A custom folded-region indicator for ~hideshow~
 + "Thin bar" fringe bitmaps for ~git-gutter-fringe~
 + File-visiting buffers are slightly brighter (powered by solaire-mode)
 
 * Table of Contents :TOC:
-- [[#install][Install]]
-  - [[#macos][MacOS]]
-  - [[#arch-linux][Arch Linux]]
 - [[#configuration][Configuration]]
+  - [[#changing-theme][Changing theme]]
   - [[#changing-fonts][Changing fonts]]
 - [[#troubleshooting][Troubleshooting]]
   - [[#strange-font-symbols][Strange font symbols]]
 
-* Install
-This module optionally depends on:
-
-+ The [[https://github.com/mozilla/Fira][Fira Mono]] family of fonts
-+ [[https://dejavu-fonts.github.io/][DejaVu Sans Mono]]
-
-You don't have to install these if you use a different font.
-
-** MacOS
-#+BEGIN_SRC sh :tangle (if (doom-system-os 'macos) "yes")
-brew tap caskroom/fonts
-brew cask install font-fira-{sans,mono} font-dejavu-sans
-#+END_SRC
-
-** Arch Linux
-#+BEGIN_SRC sh :dir /sudo:: :tangle (if (doom-system-os 'arch) "yes")
-sudo pacman --noconfirm --needed -S ttf-fira-{sans,mono} ttf-dejavu
-#+END_SRC
-
 * Configuration
-** Changing fonts
-There are four font settings you can change:
+** Changing theme
+Although this module uses the ~doom-one~ theme by default, [[https://github.com/hlissner/emacs-doom-theme/][doom-themes]] offers a number of alternatives:
 
-+ ~:font~ :: the default font.
-+ ~:big-font~ :: the font to use when ~doom-big-font-mode~ is enabled.
-+ ~:variable-font~ :: the font to use when ~variable-pitch-mode~ is active (or where the ~variable-pitch~ face is used).
-+ ~:unicode-font~ :: the font used to display unicode symbols. This is ignored if the =:ui unicode= module is enabled.
++ *doom-one:* doom-themes' flagship theme, inspired by [[https://atom.io/][Atom's]] One Dark themes
++ *doom-vibrant:* a more vibrant version of doom-one
++ *doom-molokai:* based on Textmate's monokai
++ *doom-nova:* adapted from [[https://trevordmiller.com/projects/nova][Nova]]
++ *doom-one-light:* light version of doom-one
++ *doom-peacock:* based on Peacock from [[https://daylerees.github.io/][daylerees' themes]]
++ *doom-tomorrow-night:* by [[https://github.com/ChrisKempson/Tomorrow-Theme][Chris Kempson]]
+
+This can be changed by changing the ~doom-theme~ variable, e.g.
 
 #+BEGIN_SRC emacs-lisp
-;; These are the defaults of this module
-(set! :font "Fira Mono" :size 12)
-(set! :big-font "Fira Mono" :size 18)
-(set! :variable-font "Fira Sans" :size 12)
-(set! :unicode-font "DejaVu Sans Mono" :size 12)
+(setq doom-theme 'doom-molokai)
+#+END_SRC
+
+** Changing fonts
+core/core-ui.el has four relevant variables:
+
++ ~doom-font~ :: the default font to use in Doom Emacs.
++ ~doom-big-font~ :: the font to use when ~doom-big-font-mode~ is enabled.
++ ~doom-variable-font~ :: the font to use when ~variable-pitch-mode~ is active (or where the ~variable-pitch~ face is used).
++ ~doom-unicode-font~ :: the font used to display unicode symbols. This is ignored if the =:ui unicode= module is enabled.
+
+#+BEGIN_SRC emacs-lisp
+(setq doom-font (font-spec :family "Fira Mono" :size 12)
+      doom-variable-pitch-font (font-spec :family "Fira Sans")
+      doom-unicode-font (font-spec :family "DejaVu Sans Mono")
+      doom-big-font (font-spec :family "Fira Mono" :size 19))
 #+END_SRC
 
 * Troubleshooting

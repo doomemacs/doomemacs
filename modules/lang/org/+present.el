@@ -1,9 +1,7 @@
-;;; org/org-present/config.el -*- lexical-binding: t; -*-
+;;; lang/org/+present.el -*- lexical-binding: t; -*-
 
 (defvar +org-present-text-scale 7
   "The `text-scale-amount' for `org-tree-slide-mode'.")
-
-(add-hook 'org-load-hook #'+org-present|init t)
 
 
 ;;
@@ -11,6 +9,7 @@
 ;;
 
 (def-package! ox-reveal
+  :defer t
   :config
   (setq org-reveal-root "http://cdn.jsdelivr.net/reveal.js/3.0.0/"
         org-reveal-mathjax t))
@@ -44,7 +43,7 @@
 ;; Bootstrap
 ;;
 
-(defun +org-present|init ()
+(after! org
   (require 'ox-reveal)
   (map! :map org-mode-map "<f8>" #'+org-present/start))
 

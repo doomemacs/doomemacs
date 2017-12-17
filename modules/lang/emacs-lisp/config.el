@@ -72,6 +72,7 @@
 
 
 (def-package! slime
+  :defer t
   :config
   (setq inferior-lisp-program "clisp")
   (require 'slime-fuzzy))

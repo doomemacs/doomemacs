@@ -31,7 +31,7 @@ DEFAULT-P is a boolean. If non-nil, it marks that email account as the
 default/fallback account."
   `(after! mu4e
      (let ((account-vars ,letvars))
-       (when-let (address (cdr (assq 'user-mail-address account-vars)))
+       (when-let* ((address (cdr (assq 'user-mail-address account-vars))))
          (cl-pushnew address mu4e-user-mail-address-list :test #'equal))
        (let ((context (make-mu4e-context
                        :name ,label
@@ -263,8 +263,7 @@ default/fallback account."
 
 
 (def-package! org-mu4e
-  :commands org-mu4e-compose-org-mode
-  :init (add-hook 'mu4e-compose-mode-hook #'org-mu4e-compose-org-mode)
+  :hook (mu4e-compose-mode . org-mu4e-compose-org-mode)
   :config
   (setq org-mu4e-link-query-in-headers-mode nil
         org-mu4e-convert-to-html t)

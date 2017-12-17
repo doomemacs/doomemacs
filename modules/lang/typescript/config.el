@@ -2,9 +2,9 @@
 
 (def-package! typescript-mode
   :mode "\\.ts$"
-  :init
-  (add-hook 'typescript-mode-hook #'rainbow-delimiters-mode)
   :config
+  (add-hook 'typescript-mode-hook #'rainbow-delimiters-mode)
+
   (set! :electric 'typescript-mode :chars '(?\} ?\)) :words '("||" "&&"))
 
   ;; TODO tide-jump-back

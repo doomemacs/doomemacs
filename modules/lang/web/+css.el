@@ -5,8 +5,9 @@
 (add-hook! (css-mode sass-mode)
   #'(yas-minor-mode-on flycheck-mode highlight-numbers-mode))
 
-(sp-with-modes '(css-mode scss-mode less-css-mode stylus-mode)
-  (sp-local-pair "/*" "*/" :post-handlers '(("[d-3]||\n[i]" "RET") ("| " "SPC"))))
+(after! smartparens
+  (sp-with-modes '(css-mode scss-mode less-css-mode stylus-mode)
+    (sp-local-pair "/*" "*/" :post-handlers '(("[d-3]||\n[i]" "RET") ("| " "SPC")))))
 
 (map! :map* (css-mode-map scss-mode-map less-css-mode-map)
       :n "M-R" #'+css/web-refresh-browser
@@ -21,15 +22,14 @@
 (def-package! counsel-css
   :when (featurep! :completion ivy)
   :commands (counsel-css counsel-css-imenu-setup)
+  :hook (css-mode . counsel-css-imenu-setup)
   :init
-  (add-hook 'css-mode-hook #'counsel-css-imenu-setup)
   (map! :map* (css-mode-map scss-mode-map less-css-mode-map)
         :localleader :n ";" #'counsel-css))
 
 
 (def-package! rainbow-mode
-  :commands rainbow-mode
-  :init (add-hook! (css-mode sass-mode) #'rainbow-mode))
+  :hook (css-mode sass-mode))
 
 
 (def-package! css-mode

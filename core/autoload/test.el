@@ -16,7 +16,7 @@ If neither is available, run all tests in all enabled modules."
           (doom-initialize-modules nil))
         ;; collect targets
         (cond ((and argv (equal (car argv) "--"))
-               (cl-loop for arg in argv
+               (cl-loop for arg in (cdr argv)
                         if (equal arg "core")
                          do (push (expand-file-name "test/" doom-core-dir) targets)
                         else
@@ -60,9 +60,9 @@ If neither is available, run all tests in all enabled modules."
                   into items
                  finally do (quiet! (mapc #'load-file items)))
         ;; run all loaded tests
-        (when noninteractive
-          (let (noninteractive)
-            (ert-run-tests-batch-and-exit))))
+        (if noninteractive
+            (ert-run-tests-batch-and-exit)
+          (call-interactively #'ert-run-tests-interactively)))
     ('error
      (lwarn 'doom-test :error
             "%s -> %s"

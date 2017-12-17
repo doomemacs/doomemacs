@@ -261,7 +261,7 @@ __DATA__
           (overlay-put ov 'category '+regex))
         (cl-incf i)
         (dotimes (i 10)
-          (when-let (text (match-string i))
+          (when-let* ((text (match-string i)))
             (save-match-data
               (with-current-buffer +regex--groups-buffer
                 (goto-char (point-max))

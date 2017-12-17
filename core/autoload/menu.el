@@ -12,7 +12,7 @@ PROMPT (a string) and COMMAND (a list of command plists; see `def-menu!').")
   (completing-read prompt (mapcar #'car commands)))
 
 (defun doom--menu-read (prompt commands)
-  (if-let (choice (funcall doom-menu-display-fn prompt commands))
+  (if-let* ((choice (funcall doom-menu-display-fn prompt commands)))
       (cdr (assoc choice commands))
     (user-error "Aborted")))
 

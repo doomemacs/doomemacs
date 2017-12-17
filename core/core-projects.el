@@ -5,7 +5,6 @@
 state are passed in.")
 
 (def-package! projectile
-  :demand t
   :init
   (setq projectile-cache-file (concat doom-cache-dir "projectile.cache")
         projectile-enable-caching (not noninteractive)

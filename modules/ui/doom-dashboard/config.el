@@ -73,8 +73,6 @@ whose dimensions may not be fully initialized by the time this is run."
 (add-hook 'window-setup-hook #'+doom-dashboard|init)
 (add-hook 'after-make-frame-functions #'+doom-dashboard|make-frame)
 (add-hook 'server-visit-hook #'+doom-dashboard|server-visit)
-(when (featurep! :ui vi-tilde-fringe)
-  (add-hook '+doom-dashboard-mode-hook #'+vi-tilde-fringe|disable))
 
 
 ;;

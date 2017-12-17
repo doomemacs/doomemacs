@@ -53,7 +53,7 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
 
 If no project is active, return all buffers."
   (let ((buffers (doom-buffer-list)))
-    (if-let (project-root (if (doom-project-p) (doom-project-root)))
+    (if-let* ((project-root (if (doom-project-p) (doom-project-root))))
         (cl-loop for buf in buffers
                  if (projectile-project-buffer-p buf project-root)
                  collect buf)
@@ -148,7 +148,7 @@ real buffer is:
      c) is not a special buffer (its name isn't something like *Help*)
 
 If BUFFER-OR-NAME is omitted or nil, the current buffer is tested."
-  (when-let (buf (ignore-errors (window-normalize-buffer buffer-or-name)))
+  (when-let* ((buf (ignore-errors (window-normalize-buffer buffer-or-name))))
     (or (buffer-local-value 'doom-real-buffer-p buf)
         (run-hook-with-args-until-success 'doom-real-buffer-functions buf)
         (not (or (doom-popup-p buf)

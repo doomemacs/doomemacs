@@ -20,15 +20,15 @@
   (set! :evil-state 'vc-git-log-view-mode 'normal))
 
 (def-package! smerge-mode
-  :init
-  (add-hook 'find-file-hook #'+vcs|enable-smerge-mode-maybe)
+  :hook (find-file . +vcs|enable-smerge-mode-maybe)
   :config
   (when (version< emacs-version "26")
-    (defalias #'smerge-keep-upper #'smerge-keep-mine)
-    (defalias #'smerge-keep-lower #'smerge-keep-other)
-    (defalias #'smerge-diff-base-upper #'smerge-diff-base-mine)
-    (defalias #'smerge-diff-upper-lower #'smerge-diff-mine-other)
-    (defalias #'smerge-diff-base-lower #'smerge-diff-base-other))
+    (with-no-warnings
+      (defalias #'smerge-keep-upper #'smerge-keep-mine)
+      (defalias #'smerge-keep-lower #'smerge-keep-other)
+      (defalias #'smerge-diff-base-upper #'smerge-diff-base-mine)
+      (defalias #'smerge-diff-upper-lower #'smerge-diff-mine-other)
+      (defalias #'smerge-diff-base-lower #'smerge-diff-base-other)))
 
   (def-hydra! +hydra-smerge (:hint nil
                              :pre (smerge-mode 1)

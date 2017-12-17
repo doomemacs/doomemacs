@@ -35,9 +35,9 @@ compilation database is present in the project.")
          (or (file-exists-p (expand-file-name
                              (concat (file-name-sans-extension buffer-file-name)
                                      ".cpp")))
-             (when-let (file (car-safe (projectile-get-other-files
-                                        buffer-file-name
-                                        (projectile-current-project-files))))
+             (when-let* ((file (car-safe (projectile-get-other-files
+                                          buffer-file-name
+                                          (projectile-current-project-files)))))
                (equal (file-name-extension file) "cpp")))))
 
   (defun +cc-objc-header-file-p ()
@@ -105,28 +105,24 @@ compilation database is present in the project.")
 
 
 (def-package! modern-cpp-font-lock
-  :commands modern-c++-font-lock-mode
-  :init (add-hook 'c++-mode-hook #'modern-c++-font-lock-mode))
+  :hook (c++-mode . modern-c++-font-lock-mode))
 
 
 (def-package! irony
   :after cc-mode
   :commands irony-install-server
-  :preface
-  (setq irony-server-install-prefix (concat doom-etc-dir "irony-server/"))
-  :init
-  (add-hook! (c-mode c++-mode objc-mode) #'irony-mode)
+  :preface (setq irony-server-install-prefix (concat doom-etc-dir "irony-server/"))
+  :hook ((c-mode c++-mode objc-mode) . irony-mode)
   :config
   (unless (file-directory-p irony-server-install-prefix)
     (warn "irony-mode: server isn't installed; run M-x irony-install-server"))
-
   ;; Initialize compilation database, if present. Otherwise, fall back on
   ;; `+cc-compiler-options'.
   (add-hook 'irony-mode-hook #'+cc|irony-init-compile-options))
 
 (def-package! irony-eldoc
   :after irony
-  :config (add-hook 'irony-mode-hook #'irony-eldoc))
+  :hook (irony-mode . irony-eldoc))
 
 (def-package! flycheck-irony
   :when (featurep! :feature syntax-checker)
@@ -157,8 +153,7 @@ compilation database is present in the project.")
 (def-package! opencl-mode :mode "\\.cl$")
 
 (def-package! demangle-mode
-  :commands demangle-mode
-  :init (add-hook 'llvm-mode-hook #'demangle-mode))
+  :hook llvm-mode)
 
 (def-package! glsl-mode
   :mode "\\.glsl$"

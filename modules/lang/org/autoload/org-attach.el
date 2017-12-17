@@ -1,4 +1,5 @@
-;;; org/org-attach/autoload/org-attach.el -*- lexical-binding: t; -*-
+;;; lang/org/autoload/org-attach.el -*- lexical-binding: t; -*-
+;;;###if (featurep! +attach)
 
 (defun +org-attach--icon (path)
   (char-to-string
@@ -34,8 +35,8 @@
 ;;           (goto-char (point-min))
 ;;           (while (progn (org-next-link) (not org-link-search-failed))
 ;;             (setq element (org-element-context))
-;;             (when-let (file (and (eq (org-element-type element) 'link)
-;;                                  (expand-file-name (org-element-property :path element))))
+;;             (when-let* (file (and (eq (org-element-type element) 'link)
+;;                                   (expand-file-name (org-element-property :path element))))
 ;;               (when (and (string= (org-element-property :type element) "file")
 ;;                          (string= (concat (file-name-base (directory-file-name (file-name-directory file))) "/")
 ;;                                   org-attach-directory)
@@ -97,6 +98,8 @@ the cursor."
       (delete-region (match-beginning 0) (match-end 0))
     (newline))
   (cond ((image-type-from-file-name filename)
+         (when (file-in-directory-p filename +org-attach-dir)
+           (setq filename (file-relative-name filename +org-dir)))
          (insert
           (concat (if (= org-download-image-html-width 0)
                       ""
@@ -114,3 +117,17 @@ the cursor."
                   (file-relative-name filename buffer-file-name)
                   (file-name-nondirectory (directory-file-name rel-path)))))))
 
+;;;###autoload
+(defun +org-attach*relative-to-attach-dir (orig-fn &rest args)
+  "TODO"
+  (if (file-in-directory-p buffer-file-name +org-dir)
+      (let* ((context (save-match-data (org-element-context)))
+             (file (org-link-unescape (org-element-property :path context)))
+             (default-directory
+               (if (string-prefix-p
+                    (concat "./" (car (last (split-string +org-attach-dir "/" t))))
+                    file)
+                   +org-dir
+                 default-directory)))
+        (apply orig-fn args))
+    (apply orig-fn args)))

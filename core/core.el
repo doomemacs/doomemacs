@@ -18,7 +18,7 @@
 ;; Autoloaded functions are in core/autoload/*.el and modules/*/*/autoload.el or
 ;; modules/*/*/autoload/*.el.
 
-(defvar doom-version "2.0.7"
+(defvar doom-version "2.0.8"
   "Current version of DOOM emacs.")
 
 (defvar doom-debug-mode (or (getenv "DEBUG") init-file-debug)
@@ -94,6 +94,7 @@ melodramatic ex-vimmer disappointed with the text-editor status quo."
  enable-recursive-minibuffers nil
  debug-on-error (and (not noninteractive) doom-debug-mode)
  idle-update-delay 2              ; update ui less often
+ load-prefer-newer (or noninteractive doom-debug-mode)
  ;; keep the point out of the minibuffer
  minibuffer-prompt-properties '(read-only t point-entered minibuffer-avoid-prompt face minibuffer-prompt)
  ;; History & backup settings (save nothing, that's what git is for)
@@ -174,9 +175,7 @@ ability to invoke the debugger in debug mode."
         gc-cons-percentage 0.6
         file-name-handler-alist nil)
 
-  (require 'cl-lib)
   (require 'core-packages (concat doom-core-dir "core-packages"))
-
   (eval-when-compile
     (doom-initialize))
   (setq load-path (eval-when-compile load-path)

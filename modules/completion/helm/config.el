@@ -11,7 +11,6 @@
 ;;
 
 (def-package! helm
-  :demand t
   :init
   (setq helm-quick-update t
         ;; Speedier without fuzzy matching
@@ -77,15 +76,18 @@
 
 
 (def-package! helm-locate
+  :defer t
   :init (defvar helm-generic-files-map (make-sparse-keymap))
   :config (set-keymap-parent helm-generic-files-map helm-map))
 
 
 (def-package! helm-bookmark
+  :commands helm-bookmark
   :config (setq-default helm-bookmark-show-location t))
 
 
 (def-package! helm-files
+  :defer t
   :config
   (setq helm-boring-file-regexp-list
         (append (list "\\.projects$" "\\.DS_Store$")
@@ -93,6 +95,7 @@
 
 
 (def-package! helm-ag
+  :defer t
   :config
   (map! :map helm-ag-edit-map
         [remap doom/kill-this-buffer] #'helm-ag--edit-abort

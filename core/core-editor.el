@@ -47,13 +47,10 @@ modes are active and the buffer is read-only.")
    (newline-mark ?\n [?¬ ?\n])
    (space-mark ?\  [?·] [?.])))
 
-(defun doom|ediff-use-existing-frame ()
-  "Use existing frame instead of creating a new one."
-  (setq ediff-diff-options           "-w"
-        ediff-split-window-function  #'split-window-horizontally
-        ;; no extra frames
-        ediff-window-setup-function  #'ediff-setup-windows-plain))
-(add-hook 'ediff-load-hook #'doom|ediff-use-existing-frame)
+;; ediff
+(setq ediff-diff-options "-w"
+      ediff-split-window-function #'split-window-horizontally
+      ediff-window-setup-function #'ediff-setup-windows-plain)
 
 (defun doom|dont-kill-scratch-buffer ()
   "Don't kill the scratch buffer."
@@ -115,17 +112,6 @@ with functions that require it (like modeline segments)."
     buffer))
 (advice-add #'make-indirect-buffer :around #'doom*set-indirect-buffer-filename)
 
-(defun doom*delete-trailing-whitespace (orig-fn &rest args)
-  "Don't affect trailing whitespace on current line."
-  (let ((linestr (buffer-substring-no-properties
-                  (line-beginning-position)
-                  (line-end-position))))
-    (apply orig-fn args)
-    (when (and (if (featurep 'evil) (evil-insert-state-p) t)
-               (string-match-p "^[\s\t]*$" linestr))
-      (insert linestr))))
-(advice-add #'delete-trailing-whitespace :around #'doom*delete-trailing-whitespace)
-
 (push '("/LICENSE$" . text-mode) auto-mode-alist)
 
 
@@ -150,7 +136,7 @@ with functions that require it (like modeline segments)."
 
 ;; Keep track of recently opened files
 (def-package! recentf
-  :init (add-hook 'doom-init-hook #'recentf-mode)
+  :hook (doom-init . recentf-mode)
   :config
   (setq recentf-save-file (concat doom-etc-dir "recentf")
         recentf-max-menu-items 0
@@ -171,18 +157,6 @@ with functions that require it (like modeline segments)."
 ;; Handles whitespace (tabs/spaces) settings externally. This way projects can
 ;; specify their own formatting rules.
 (def-package! editorconfig
-  :demand t
-  :init
-  (def-setting! :editorconfig (action value)
-    ":add or :remove an entry in `editorconfig-indentation-alist'."
-    (cond ((eq action :add)
-           `(push ,value editorconfig-indentation-alist))
-          ((eq action :remove)
-           `(setq editorconfig-indentation-alist
-                  (assq-delete-all ,value editorconfig-indentation-alist)))
-          (t (error "%s is an invalid action for :editorconfig"
-                    action))))
-
   :config
   (add-hook 'doom-init-hook #'editorconfig-mode)
 
@@ -212,10 +186,12 @@ extension, try to guess one."
       (apply orig-fn args)))
   (advice-add #'editorconfig-call-editorconfig-exec :around #'doom*editorconfig-smart-detection)
 
-  ;; Editorconfig makes indentation weird in Lisp modes, so we disable it. It
-  ;; still applies other project settings (e.g. tabs vs spaces) though.
-  (set! :editorconfig :remove 'emacs-lisp-mode)
-  (set! :editorconfig :remove 'lisp-mode)
+  ;; Editorconfig makes indentation too rigid in Lisp modes, so tell
+  ;; editorconfig to ignore indentation. I prefer dynamic indentation support
+  ;; built into Emacs.
+  (dolist (mode '(emacs-lisp-mode lisp-mode))
+    (setq editorconfig-indentation-alist
+      (assq-delete-all mode editorconfig-indentation-alist)))
 
   (defvar whitespace-style)
   (defun doom|editorconfig-whitespace-mode-maybe (&rest _)
@@ -230,16 +206,15 @@ extension, try to guess one."
 
 ;; Auto-close delimiters and blocks as you type
 (def-package! smartparens
-  :demand t
   :config
+  (add-hook 'doom-init-hook #'smartparens-global-mode)
+  (require 'smartparens-config)
+
   (setq sp-autowrap-region nil ; let evil-surround handle this
         sp-highlight-pair-overlay nil
         sp-cancel-autoskip-on-backward-movement nil
         sp-show-pair-delay 0
         sp-max-pair-length 3)
-
-  (add-hook 'doom-init-hook #'smartparens-global-mode)
-  (require 'smartparens-config)
 
   ;; disable smartparens in evil-mode's replace state (they conflict)
   (add-hook 'evil-replace-state-entry-hook #'turn-off-smartparens-mode)
@@ -250,10 +225,8 @@ extension, try to guess one."
 
 ;; Branching undo
 (def-package! undo-tree
-  :demand t
   :config
-  (global-undo-tree-mode +1)
-
+  (add-hook 'doom-init-hook #'global-undo-tree-mode)
   ;; persistent undo history is known to cause undo history corruption, which
   ;; can be very destructive! So disable it!
   (setq undo-tree-auto-save-history nil
@@ -288,15 +261,15 @@ extension, try to guess one."
   :commands (describe-buffer describe-command describe-file
              describe-keymap describe-option describe-option-of-type))
 
-(def-package! pcre2el :commands rxt-quote-pcre)
+(def-package! pcre2el
+  :commands rxt-quote-pcre)
 
 (def-package! smart-forward
   :commands (smart-up smart-down smart-backward smart-forward))
 
 (def-package! wgrep
   :commands (wgrep-setup wgrep-change-to-wgrep-mode)
-  :config
-  (setq wgrep-auto-save-buffer t))
+  :config (setq wgrep-auto-save-buffer t))
 
 (provide 'core-editor)
 ;;; core-editor.el ends here

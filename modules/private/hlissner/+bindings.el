@@ -198,7 +198,7 @@
    (:desc "help" :prefix "h"
      :n "h" help-map
      :desc "Apropos"               :n  "a" #'apropos
-     :desc "Reload theme"          :n  "R" #'doom/reload-theme
+     :desc "Reload theme"          :n  "R" #'doom//reload-theme
      :desc "Find library"          :n  "l" #'find-library
      :desc "Toggle Emacs log"      :n  "m" #'doom/popup-toggle-messages
      :desc "Command log"           :n  "L" #'global-command-log-mode
@@ -385,8 +385,8 @@
  ;; counsel
  (:after counsel
    (:map counsel-ag-map
-     [backtab]  #'+ivy/wgrep-occur  ; search/replace on results
-     "C-SPC"    #'counsel-git-grep-recenter   ; preview
+     [backtab]  #'+ivy/wgrep-occur      ; search/replace on results
+     "C-SPC"    #'ivy-call-and-recenter ; preview
      "M-RET"    (+ivy-do-action! #'+ivy-git-grep-other-window-action)))
 
  ;; evil-commentary
@@ -536,6 +536,8 @@
  (:after ivy
    :map ivy-minibuffer-map
    [escape] #'keyboard-escape-quit
+   "C-SPC" #'ivy-call-and-recenter
+   "TAB" #'ivy-partial
    "M-v" #'yank
    "M-z" #'undo
    "C-r" #'evil-paste-from-register
@@ -758,7 +760,7 @@
       :i [remap delete-backward-char]   #'doom/deflate-space-maybe
       :i [remap newline]                #'doom/newline-and-indent
 
-      (:after org-mode
+      (:after org
         (:map org-mode-map
           :i [remap doom/inflate-space-maybe] #'org-self-insert-command
           :i "C-e" #'org-end-of-line

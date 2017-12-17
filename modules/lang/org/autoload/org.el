@@ -290,8 +290,8 @@ with `org-cycle'). Also:
   (save-excursion
     (let ((remove (list (match-beginning 0) (match-end 0)))
           (description (if (match-end 3)
-                           (org-match-string-no-properties 3)
-                         (org-match-string-no-properties 1))))
+                           (match-string-no-properties 3)
+                         (match-string-no-properties 1))))
       (apply #'delete-region remove)
       (insert description))))
 

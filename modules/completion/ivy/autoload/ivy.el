@@ -73,9 +73,9 @@ If ARG (universal argument), open selection in other-window."
          (task-tags (mapcar #'car +ivy-task-tags))
          (cmd
           (format "%s -H -S --no-heading -- %s %s"
-                  (or (when-let (bin (executable-find "rg"))
+                  (or (when-let* ((bin (executable-find "rg")))
                         (concat bin " --line-number"))
-                      (when-let (bin (executable-find "ag"))
+                      (when-let* ((bin (executable-find "ag")))
                         (concat bin " --numbers"))
                       (error "ripgrep & the_silver_searcher are unavailable"))
                   (shell-quote-argument
@@ -144,8 +144,7 @@ counsel-rg)."
     (let ((default-directory counsel--git-dir)
           (regex (counsel-unquote-regex-parens
                   (setq ivy--old-re
-                        (ivy--regex
-                         (counsel-unquote-regex-parens string)))))) ;; #2
+                        (ivy--regex string)))))
       (let* ((args-end (string-match " -- " extra-ag-args))
              (file (if args-end
                        (substring-no-properties extra-ag-args (+ args-end 3))

@@ -12,17 +12,20 @@
 ;;
 
 (def-package! ruby-mode
-  :mode ("\\.rb$" "\\.rake$" "\\.gemspec$" "\\.?pryrc$"
-         "/\\(Gem\\|Cap\\|Vagrant\\|Rake\\|Pod\\|Puppet\\|Berks\\)file$")
+  :mode "\\.rb$"
+  :mode "\\.rake$"
+  :mode "\\.gemspec$"
+  :mode "\\.\\(pry\\|irb\\)rc$"
+  :mode "/\\(Gem\\|Cap\\|Vagrant\\|Rake\\|Pod\\|Puppet\\|Berks\\)file$"
   :interpreter "ruby"
-  :init
-  (add-hook 'ruby-mode-hook #'flycheck-mode)
   :config
   (set! :company-backend 'ruby-mode '(company-dabbrev-code))
   (set! :electric 'ruby-mode :words '("else" "end" "elseif"))
   (setq ruby-deep-indent-paren t)
   ;; Don't interfere with my custom RET behavior
   (define-key ruby-mode-map [?\n] nil)
+
+  (add-hook 'ruby-mode-hook #'flycheck-mode)
 
   ;; Version management with rbenv
   (defun +ruby|add-version-to-modeline ()
@@ -40,7 +43,7 @@
     (defun +ruby|detect-rbenv-version ()
       "Detect the rbenv version for the current project and set the relevant
 environment variables."
-      (when-let (version-str (shell-command-to-string "ruby --version 2>&1 | cut -d' ' -f2"))
+      (when-let* ((version-str (shell-command-to-string "ruby --version 2>&1 | cut -d' ' -f2")))
         (setq version-str (string-trim version-str)
               +ruby-current-version version-str)
         (when (member version-str +ruby-rbenv-versions)
@@ -67,9 +70,7 @@ environment variables."
 
 
 ;; Highlight doc comments
-(def-package! yard-mode
-  :commands yard-mode
-  :init (add-hook 'ruby-mode-hook #'yard-mode))
+(def-package! yard-mode :hook ruby-mode)
 
 
 (def-package! rspec-mode

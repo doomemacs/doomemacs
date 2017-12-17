@@ -4,7 +4,7 @@
 (defun doom-popup-p (&optional target)
   "Return t if TARGET (a window or buffer) is a popup. Uses current window if
 omitted."
-  (when-let (target (or target (selected-window)))
+  (when-let* ((target (or target (selected-window))))
     (cond ((bufferp target)
            (and (buffer-live-p target)
                 (buffer-local-value 'doom-popup-mode target)))
@@ -31,7 +31,7 @@ this popup, just the specified properties. Returns the new popup window."
 (defun doom-popup-switch-to-buffer (buffer)
   "Switch the current (or closest) pop-up window to BUFFER."
   (unless (doom-popup-p)
-    (if-let (popups (doom-popup-windows))
+    (if-let* ((popups (doom-popup-windows)))
         (select-window (car popups))
       (error "No popups to switch to")))
   (set-window-dedicated-p nil nil)
@@ -113,7 +113,7 @@ window parameter."
     ((or 'above 'below) (window-height window))))
 
 (defun doom--popup-data (window)
-  (when-let (buffer (window-buffer window))
+  (when-let* ((buffer (window-buffer window)))
     `(,(buffer-name buffer)
       :file  ,(buffer-file-name buffer)
       :rules ,(window-parameter window 'popup)
@@ -167,7 +167,7 @@ Returns t if popups were restored, nil otherwise."
             (size   (plist-get (cdr spec) :size)))
         (when (and (not buffer) file)
           (setq buffer
-                (if-let (buf (get-file-buffer file))
+                (if-let* ((buf (get-file-buffer file)))
                     (clone-indirect-buffer (buffer-name buf) nil t)
                   (find-file-noselect file t))))
         (when size
@@ -212,7 +212,7 @@ If FORCE-P is non-nil (or this function is called interactively), ignore popups'
 :autoclose property. This command will never close :static popups."
   (interactive
    (list (called-interactively-p 'interactive)))
-  (when-let (popups (doom-popup-windows t))
+  (when-let* ((popups (doom-popup-windows t)))
     (let (success doom-popup-remember-history)
       (setq doom-popup-history (delq nil (mapcar #'doom--popup-data popups)))
       (dolist (window popups success)
@@ -225,7 +225,7 @@ If FORCE-P is non-nil (or this function is called interactively), ignore popups'
   "Like `doom/popup-close-all', but kill *all* popups, including :static ones,
 without leaving any trace behind (muahaha)."
   (interactive)
-  (when-let (popups (doom-popup-windows))
+  (when-let* ((popups (doom-popup-windows)))
     (let (doom-popup-remember-history)
       (setq doom-popup-history nil)
       (mapc #'delete-window popups))))
@@ -251,7 +251,7 @@ without leaving any trace behind (muahaha)."
 (defun doom/popup-toggle-messages ()
   "Toggle *Messages* buffer."
   (interactive)
-  (if-let (win (get-buffer-window "*Messages*"))
+  (if-let* ((win (get-buffer-window "*Messages*")))
       (doom/popup-close win)
     (doom-popup-buffer (get-buffer "*Messages*"))))
 
@@ -259,11 +259,11 @@ without leaving any trace behind (muahaha)."
 (defun doom/other-popup (count)
   "Cycle through popup windows. Like `other-window', but for popups."
   (interactive "p")
-  (if-let (popups (if (doom-popup-p)
-                      (cdr (memq (selected-window) doom-popup-windows))
-                    (setq doom-popup-other-window (selected-window))
-                    doom-popup-windows))
-      (select-window (nth (mod (1- count) (length popups)) popups))
+  (if-let* ((popups (if (doom-popup-p)
+                        (cdr (memq (selected-window) doom-popup-windows))
+                      (setq doom-popup-other-window (selected-window))
+                      doom-popup-windows)))
+      (ignore-errors (select-window (nth (mod (1- count) (length popups)) popups)))
     (unless (eq (selected-window) doom-popup-other-window)
       (when doom-popup-other-window
         (select-window doom-popup-other-window t)
@@ -419,6 +419,6 @@ properties."
       (with-selected-window window
         (doom-popup-mode -1)
         (when autokill-p
-          (when-let (process (get-buffer-process (current-buffer)))
+          (when-let* ((process (get-buffer-process (current-buffer))))
             (set-process-query-on-exit-flag process nil))
           (kill-buffer (current-buffer)))))))

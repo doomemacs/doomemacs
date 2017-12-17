@@ -1,7 +1,6 @@
 ;;; ui/doom-modeline/config.el -*- lexical-binding: t; -*-
 
 (def-package! eldoc-eval
-  :demand t
   :config
   (defun +doom-modeline-eldoc (text)
     (concat (when (display-graphic-p)
@@ -21,14 +20,14 @@
              mode-line-in-non-selected-windows)
         (force-mode-line-update)
         (sit-for eldoc-show-in-mode-line-delay))))
-
   (setq eldoc-in-minibuffer-show-fn #'+doom-modeline--show-eldoc)
+
   (eldoc-in-minibuffer-mode +1))
 
 ;; anzu and evil-anzu expose current/total state that can be displayed in the
 ;; mode-line.
 (def-package! evil-anzu
-  :when (featurep 'evil)
+  :requires evil
   :init
   (add-transient-hook! #'evil-ex-start-search (require 'evil-anzu))
   (add-transient-hook! #'evil-ex-start-word-search (require 'evil-anzu))
@@ -36,13 +35,11 @@
   (setq anzu-cons-mode-line-p nil
         anzu-minimum-input-length 1
         anzu-search-threshold 250)
-
   ;; Avoid anzu conflicts across buffers
   (mapc #'make-variable-buffer-local
         '(anzu--total-matched anzu--current-position anzu--state
           anzu--cached-count anzu--cached-positions anzu--last-command
           anzu--last-isearch-string anzu--overflow-p))
-
   ;; Ensure anzu state is cleared when searches & iedit are done
   (add-hook 'isearch-mode-end-hook #'anzu--reset-status t)
   (add-hook '+evil-esc-hook #'anzu--reset-status t)
@@ -53,7 +50,7 @@
 (defvar +doom-modeline-current-window (frame-selected-window))
 (defun +doom-modeline|set-selected-window (&rest _)
   "Sets `+doom-modeline-current-window' appropriately"
-  (let ((win (frame-selected-window)))
+  (when-let* ((win (frame-selected-window)))
     (unless (minibuffer-window-active-p win)
       (setq +doom-modeline-current-window win))))
 
@@ -312,35 +309,34 @@ buffer where knowing the current project directory is important."
 (def-modeline-segment! buffer-info
   "Combined information about the current buffer, including the current working
 directory, the file name, and its state (modified, read-only or non-existent)."
-  (let ((all-the-icons-scale-factor 1.2))
-    (concat (cond (buffer-read-only
-                   (concat (all-the-icons-octicon
-                            "lock"
-                            :face 'doom-modeline-warning
-                            :v-adjust -0.05)
-                           " "))
-                  ((buffer-modified-p)
-                   (concat (all-the-icons-faicon
-                            "floppy-o"
-                            :face 'doom-modeline-buffer-modified
-                            :v-adjust -0.0575)
-                           " "))
-                  ((and buffer-file-name
-                        (not (file-exists-p buffer-file-name)))
-                   (concat (all-the-icons-octicon
-                            "circle-slash"
-                            :face 'doom-modeline-urgent
-                            :v-adjust -0.05)
-                           " "))
-                  ((buffer-narrowed-p)
-                   (concat (all-the-icons-octicon
-                            "fold"
-                            :face 'doom-modeline-warning
-                            :v-adjust -0.05)
-                           " ")))
-            (if buffer-file-name
-                (+doom-modeline-buffer-file-name)
-              "%b"))))
+  (concat (cond (buffer-read-only
+                 (concat (all-the-icons-octicon
+                          "lock"
+                          :face 'doom-modeline-warning
+                          :v-adjust -0.05)
+                         " "))
+                ((buffer-modified-p)
+                 (concat (all-the-icons-faicon
+                          "floppy-o"
+                          :face 'doom-modeline-buffer-modified
+                          :v-adjust -0.0575)
+                         " "))
+                ((and buffer-file-name
+                      (not (file-exists-p buffer-file-name)))
+                 (concat (all-the-icons-octicon
+                          "circle-slash"
+                          :face 'doom-modeline-urgent
+                          :v-adjust -0.05)
+                         " "))
+                ((buffer-narrowed-p)
+                 (concat (all-the-icons-octicon
+                          "fold"
+                          :face 'doom-modeline-warning
+                          :v-adjust -0.05)
+                         " ")))
+          (if buffer-file-name
+              (+doom-modeline-buffer-file-name)
+            "%b")))
 
 ;;
 (def-modeline-segment! buffer-info-simple
@@ -384,7 +380,6 @@ directory, the file name, and its state (modified, read-only or non-existent)."
            (state   (vc-state buffer-file-name backend)))
       (let ((face    'mode-line-inactive)
             (active  (active))
-            (all-the-icons-scale-factor 1.0)
             (all-the-icons-default-adjust -0.1))
         (concat "  "
                 (cond ((memq state '(edited added))
@@ -392,7 +387,6 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                        (all-the-icons-octicon
                         "git-compare"
                         :face face
-                        :height 1.2
                         :v-adjust -0.05))
                       ((eq state 'needs-merge)
                        (if active (setq face 'doom-modeline-info))
@@ -408,7 +402,6 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                        (all-the-icons-octicon
                         "git-compare"
                         :face face
-                        :height 1.2
                         :v-adjust -0.05)))
                 " "
                 (propertize (substring vc-mode (+ (if (eq backend 'Hg) 2 3) 2))
@@ -634,6 +627,6 @@ Returns \"\" to not break --no-window-system."
 (add-hook 'doom-scratch-buffer-hook #'+doom-modeline|set-special-modeline)
 (add-hook '+doom-dashboard-mode-hook #'+doom-modeline|set-project-modeline)
 
-(add-hook 'org-src-mode-hook #'+doom-modeline|set-special-modeline)
 (add-hook 'image-mode-hook   #'+doom-modeline|set-media-modeline)
+(add-hook 'org-src-mode-hook #'+doom-modeline|set-special-modeline)
 (add-hook 'circe-mode-hook   #'+doom-modeline|set-special-modeline)

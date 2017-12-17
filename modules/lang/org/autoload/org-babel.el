@@ -1,4 +1,5 @@
-;;; org/org-babel/autoload.el -*- lexical-binding: t; -*-
+;;; lang/org/autoload/org-babel.el -*- lexical-binding: t; -*-
+;;;###if (featurep! +babel)
 
 ;;;###autoload
 (defun +org-babel/edit (arg)

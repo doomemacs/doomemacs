@@ -13,10 +13,8 @@
        password-store
 
        :lang
-       web
-
-       :org
        org
+       web
 
        :private
        hlissner)

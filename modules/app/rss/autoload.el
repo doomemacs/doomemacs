@@ -11,7 +11,7 @@
   (interactive)
   (doom-kill-matching-buffers "^\\*elfeed")
   (dolist (file +rss-elfeed-files)
-    (when-let (buf (get-file-buffer (expand-file-name file +rss-org-dir)))
+    (when-let* ((buf (get-file-buffer (expand-file-name file +rss-org-dir))))
       (kill-buffer buf))))
 
 ;;;###autoload
@@ -37,11 +37,11 @@
 (defun +rss-popup-pane (buf)
   "Display BUF in a popup."
   (doom-popup-buffer buf
-    :align +rss-split-direction
-    :size 0.75
-    :select t
-    :autokill t
-    :autoclose t))
+    '(:align +rss-split-direction
+      :size 0.75
+      :select t
+      :autokill t
+      :autoclose t)))
 
 ;;;###autoload
 (defun +rss/open (entry)

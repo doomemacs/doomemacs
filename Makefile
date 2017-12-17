@@ -67,7 +67,7 @@ test-core $(patsubst %, test-%, $(MODULES)): init.el .local/autoloads.el
 
 # run tests interactively
 testi: init.el .local/autoloads.el
-	@$(EMACSI) -f doom//run-tests -f ert
+	@$(EMACSI) -f doom//run-tests
 
 
 ## Utility tasks

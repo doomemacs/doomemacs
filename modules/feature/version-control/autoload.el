@@ -27,7 +27,7 @@ repository root."
 (defun +vcs/git-browse-issues ()
   "Open the github issues page for current repo."
   (interactive)
-  (if-let (root (+vcs-root))
+  (if-let* ((root (+vcs-root)))
       (browse-url (concat root "/issues"))
     (user-error "No git root found!")))
 

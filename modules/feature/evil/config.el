@@ -21,7 +21,6 @@
 (autoload 'goto-last-change-reverse "goto-chg")
 
 (def-package! evil
-  :demand t
   :init
   (setq evil-want-C-u-scroll t
         evil-want-visual-char-semi-exclusive t
@@ -181,11 +180,11 @@ across windows."
   (evil-embrace-enable-evil-surround-integration)
 
   (defun +evil--embrace-get-pair (char)
-    (if-let (pair (cdr-safe (assoc (string-to-char char) evil-surround-pairs-alist)))
+    (if-let* ((pair (cdr-safe (assoc (string-to-char char) evil-surround-pairs-alist))))
         pair
-      (if-let (pair (assoc-default char embrace--pairs-list))
-          (if-let (real-pair (and (functionp (embrace-pair-struct-read-function pair))
-                                  (funcall (embrace-pair-struct-read-function pair))))
+      (if-let* ((pair (assoc-default char embrace--pairs-list)))
+          (if-let* ((real-pair (and (functionp (embrace-pair-struct-read-function pair))
+                                    (funcall (embrace-pair-struct-read-function pair)))))
               real-pair
             (cons (embrace-pair-struct-left pair) (embrace-pair-struct-right pair)))
         (cons char char))))
@@ -209,13 +208,12 @@ across windows."
     (cons (format "(%s " (or (read-string "(") "")) ")"))
 
   ;; Add escaped-sequence support to embrace
-  (cl-pushnew (cons ?\\ (make-embrace-pair-struct
-                         :key ?\\
-                         :read-function #'+evil--embrace-escaped
-                         :left-regexp "\\[[{(]"
-                         :right-regexp "\\[]})]"))
-              (default-value 'embrace--pairs-list)
-              :key #'car)
+  (push (cons ?\\ (make-embrace-pair-struct
+                   :key ?\\
+                   :read-function #'+evil--embrace-escaped
+                   :left-regexp "\\[[{(]"
+                   :right-regexp "\\[]})]"))
+        (default-value 'embrace--pairs-list))
 
   ;; Add extra pairs
   (add-hook 'LaTeX-mode-hook #'embrace-LaTeX-mode-hook)
@@ -238,7 +236,7 @@ across windows."
   (add-hook 'doom-post-init-hook #'evil-escape-mode)
   :config
   ;; no `evil-escape' in minibuffer
-  (cl-pushnew #'minibufferp evil-escape-inhibit-functions :test #'eq)
+  (push #'minibufferp evil-escape-inhibit-functions)
   (map! :irvo "C-g" #'evil-escape))
 
 

@@ -21,7 +21,6 @@ is loaded.")
   (setq python-environment-directory doom-cache-dir
         python-indent-guess-indent-offset-verbose nil
         python-shell-interpreter "python")
-
   :config
   (add-hook! 'python-mode-hook #'(flycheck-mode highlight-numbers-mode))
 
@@ -56,7 +55,7 @@ is loaded.")
     (defun +python|detect-pyenv-version ()
       "Detect the pyenv version for the current project and set the relevant
 environment variables."
-      (when-let (version-str (shell-command-to-string "python --version 2>&1 | cut -d' ' -f2"))
+      (when-let* ((version-str (shell-command-to-string "python --version 2>&1 | cut -d' ' -f2")))
         (setq version-str (string-trim version-str)
               +python-current-version version-str)
         (let ((pyenv-current-path (concat +python-pyenv-root "/versions/" version-str)))
@@ -73,17 +72,14 @@ environment variables."
 
 (def-package! anaconda-mode
   :after python
+  :hook python-mode
   :init
-  (add-hook 'python-mode-hook #'anaconda-mode)
-  (add-hook 'anaconda-mode-hook #'anaconda-eldoc-mode)
   (setq anaconda-mode-installation-directory (concat doom-etc-dir "anaconda/")
         anaconda-mode-eldoc-as-single-line t)
-
   :config
+  (add-hook 'anaconda-mode-hook #'anaconda-eldoc-mode)
   (set! :popup "*anaconda-mode*" :size 10 :noselect t :autoclose t :autokill t)
-
   (map! :map anaconda-mode-map :m "gd" #'anaconda-mode-find-definitions)
-
   (advice-add #'anaconda-mode-doc-buffer :after #'doom*anaconda-mode-doc-buffer))
 
 

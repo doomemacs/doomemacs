@@ -7,11 +7,11 @@
 
 
 (def-package! php-mode
-  :mode ("\\.php[s345]?$" "\\.inc$")
+  :mode "\\.php[s345]?$"
+  :mode "\\.inc$"
   :interpreter "php"
   :config
-  (add-hook! 'php-mode-hook
-    #'(ac-php-core-eldoc-setup flycheck-mode))
+  (add-hook! php-mode #'(ac-php-core-eldoc-setup flycheck-mode))
 
   (setq php-template-compatibility nil)
 
@@ -68,8 +68,7 @@
 
 
 (def-package! php-refactor-mode
-  :commands php-refactor-mode
-  :init (add-hook 'php-mode-hook #'php-refactor-mode))
+  :hook php-mode)
 
 
 (def-package! phpunit

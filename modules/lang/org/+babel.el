@@ -1,6 +1,4 @@
-;;; org/org-babel/config.el -*- lexical-binding: t; -*-
-
-(add-hook 'org-load-hook #'+org-babel|init t)
+;;; lang/org/+babel.el -*- lexical-binding: t; -*-
 
 (defvar +org-babel-languages
   '(calc
@@ -24,7 +22,8 @@
     translate) ; ob-translate
   "A list of org-babel languages to load.")
 
-(defun +org-babel|init ()
+
+(after! org
   (setq org-src-fontify-natively t      ; make code pretty
         org-src-preserve-indentation t  ; use native major-mode indentation
         org-src-tab-acts-natively t
@@ -46,9 +45,4 @@
     (cl-loop with fn = (if others #'not #'identity)
              for p in params
              if (funcall fn (eq (car p) key))
-             collect p))
-
-  (defun +org|src-mode-remove-header ()
-    "Remove header-line with keybinding help; I know the keybinds."
-    (setq header-line-format nil))
-  (add-hook 'org-src-mode-hook #'+org|src-mode-remove-header))
+             collect p)))

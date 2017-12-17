@@ -2,10 +2,10 @@
 
 ;; indicators for empty lines past EOF
 (def-package! vi-tilde-fringe
-  :commands (global-vi-tilde-fringe-mode vi-tilde-fringe-mode)
-  :init
-  (add-hook 'doom-init-ui-hook #'global-vi-tilde-fringe-mode)
+  :commands vi-tilde-fringe-mode
+  :hook (doom-init-ui . global-vi-tilde-fringe-mode)
   :config
-  (defun +vi-tilde-fringe|disable ()
-    (vi-tilde-fringe-mode -1)))
+  (add-hook! +doom-dashboard-mode
+    (when (bound-and-true-p vi-tilde-fringe-mode)
+      (vi-tilde-fringe-mode -1))))
 

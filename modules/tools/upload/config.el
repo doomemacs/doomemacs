@@ -37,7 +37,6 @@
       (when ssh-deploy-automatically-detect-remote-changes
         (ssh-deploy-remote-changes-handler))))
   (add-hook 'find-file-hook #'+upload|init-find-file)
-
   :config
   (setq ssh-deploy-revision-folder (concat doom-cache-dir "ssh-revisions/")
         ssh-deploy-on-explicit-save t

@@ -22,11 +22,18 @@
   (ido-mode 1)
   (ido-everywhere 1)
   (require 'ido-ubiquitous)
+  (ido-ubiquitous-mode 1)
 
   (defun +ido|init ()
     (require 'ido-vertical-mode)
+    (ido-vertical-mode 1)
+
     (require 'flx-ido)
+    (flx-ido-mode +1)
+
     (require 'crm-custom)
+    (crm-custom-mode +1)
+
     (map! :map (ido-common-completion-map ido-completion-map ido-file-completion-map)
           "C-n" #'ido-next-match
           "C-p" #'ido-prev-match
@@ -55,12 +62,3 @@
              (insert "~/")
            (call-interactively #'self-insert-command)))))
   (add-hook 'ido-setup-hook #'+ido|setup-home-keybind))
-
-
-(def-package! ido-ubiquitous :config (ido-ubiquitous-mode 1))
-
-(def-package! ido-vertical-mode :config (ido-vertical-mode 1))
-
-(def-package! flx-ido :config (flx-ido-mode +1))
-
-(def-package! crm-custom :config (crm-custom-mode +1))

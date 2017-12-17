@@ -7,21 +7,19 @@
   (interactive "<a><!>")
   (helm-swoop :$query search :$multiline bang))
 
-(defvar +helm--file-last-search nil)
-;;;###autoload (autoload '+helm:ag "completion/helm/autoload/evil" nil t)
-(evil-define-command +helm:ag (beg end query &optional bang directory)
-  "TODO"
-  (interactive "<r><a><!>")
+(defun +helm--file-search (beg end query &optional directory options)
   (require 'helm-ag)
   (helm-ag--init-state)
   (let ((helm-ag--default-directory (or directory (doom-project-root)))
-        (helm-ag--last-query (or query
-                                 (and beg end
-                                      (> (abs (- end beg)) 1)
-                                      (setq +helm--file-last-search
-                                            (rxt-quote-pcre (buffer-substring-no-properties beg end))))
-                                 +helm--file-last-search))
-        (helm-ag-command-option (concat helm-ag-command-option (if bang " -a "))))
+        (query (or query
+                   (if (evil-visual-state-p)
+                       (and beg end
+                            (> (abs (- end beg)) 1)
+                            (rxt-quote-pcre (buffer-substring-no-properties beg end)))
+                     +helm--file-last-query)
+                   +helm--file-last-query))
+        (helm-ag-command-option (concat helm-ag-command-option " " (string-join options " "))))
+    (setq helm-ag--last-query query)
     (helm-attrset 'search-this-file nil helm-ag-source)
     (helm-attrset 'name (helm-ag--helm-header helm-ag--default-directory) helm-ag-source)
     (helm :sources '(helm-ag-source)
@@ -30,16 +28,33 @@
           :keymap helm-ag-map
           :history 'helm-ag--helm-history)))
 
-;;;###autoload (autoload '+helm:ag-cwd "completion/helm/autoload/evil" nil t)
-(evil-define-command +helm:ag-cwd (beg end query &optional bang directory)
+(defvar +helm--file-last-search nil)
+;;;###autoload (autoload '+helm:ag "completion/helm/autoload/evil" nil t)
+(evil-define-command +helm:ag (beg end query &optional bang)
   "TODO"
   (interactive "<r><a><!>")
-  (let ((helm-ag-command-option (if bang " -n ")))
-    (+helm:ag beg end query t default-directory)))
+  (+helm--file-search beg end query nil
+                      (if bang (list "-a" "--hidden"))))
 
-;;;###autoload
-(defun +helm:rg (&rest _) (interactive) (error "Not implemented yet"))
-;;;###autoload
-(defun +helm:rg-cwd (&rest _) (interactive) (error "Not implemented yet"))
-;;;###autoload
-(defun +helm:todo (&rest _) (interactive) (error "Not implemented yet"))
+;;;###autoload (autoload '+helm:ag-cwd "completion/helm/autoload/evil" nil t)
+(evil-define-command +helm:ag-cwd (beg end query &optional bang)
+  "TODO"
+  (interactive "<r><a><!>")
+  (+helm--file-search beg end query default-directory
+                      (list "-n" (if bang "-a"))))
+
+;;;###autoload (autoload '+helm:rg "completion/helm/autoload/evil" nil t)
+(evil-define-command +helm:rg (beg end query &optional bang)
+  "TODO"
+  (interactive "<r><a><!>")
+  (let ((helm-ag-base-command "rg --no-heading"))
+    (+helm--file-search beg end query nil
+                        (if bang (list "-uu")))))
+
+;;;###autoload (autoload '+helm:rg-cwd "completion/helm/autoload/evil" nil t)
+(evil-define-command +helm:rg-cwd (beg end query &optional bang)
+  "TODO"
+  (interactive "<r><a><!>")
+  (let ((helm-ag-base-command "rg --no-heading --maxdepth 1"))
+    (+helm--file-search beg end query default-directory
+                        (if bang (list "-uu")))))

@@ -20,10 +20,10 @@
 
 (def-package! racer
   :after rust-mode
-  :preface
-  :init
-  (add-hook! 'rust-mode-hook #'(racer-mode eldoc-mode flycheck-rust-setup))
+  :hook (rust-mode . racer-mode)
   :config
+  (add-hook 'rust-mode-hook #'eldoc-mode)
+
   (setq racer-cmd (or (executable-find "racer")
                       (expand-file-name "racer/target/release/racer" +rust-src-dir))
         racer-rust-src-path (or (getenv "RUST_SRC_PATH")
@@ -44,5 +44,6 @@
 (def-package! flycheck-rust
   :when (featurep! :feature syntax-checker)
   :after rust-mode
+  :hook (flycheck-mode . flycheck-rust-setup)
   :config (add-hook 'rust-mode-hook #'flycheck-mode))
 

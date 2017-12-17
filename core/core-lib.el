@@ -1,28 +1,16 @@
 ;;; core-lib.el -*- lexical-binding: t; -*-
 
-;; I don't use use-package for these to save on the `fboundp' lookups it does
-;; for its :commands property. I use dolists instead of mapc to avoid extra
-;; stackframes allocated for lambdas. This is _definitely_ premature
-;; optimization.
-(dolist (sym '(async-start async-start-process async-byte-recompile-directory
-               async-inject-variables))
-  (autoload sym "async"))
-
-(dolist (sym '(persistent-soft-exists-p persistent-soft-fetch
-               persistent-soft-flush persistent-soft-store))
-  (autoload sym "persistent-soft"))
-
-(dolist (sym '(s-center s-pad-left s-pad-right s-truncate s-chop-suffix
-               s-chop-suffixes s-chop-prefix s-chop-prefixes s-join s-replace
-               s-replace-all s-capitalize s-titleize s-split-words
-               s-capitalized-words s-titleized-words))
-  (autoload sym "s"))
-
-(dolist (sym '(when-let if-let string-trim string-join string-blank-p string-lessp))
-  (autoload sym "subr-x" nil nil 'macro))
-
+(require 'cl-lib)
+(require 'subr-x)
+(load "async-autoloads" nil t)
+(load "persistent-soft-autoloads" nil t)
 (dolist (sym '(json-read json-read-file json-read-from-string json-encode))
   (autoload sym "json"))
+(eval-and-compile
+  (when (version< emacs-version "26")
+    (with-no-warnings
+      (defalias 'if-let* #'if-let)
+      (defalias 'when-let* #'when-let))))
 
 
 ;;
@@ -62,8 +50,8 @@
   (if (listp exp) exp (list exp)))
 
 (defun doom-resolve-vim-path (file-name)
-  "Take a path and resolve any vim-like filename modifiers in it. This adds
-support for these special modifiers:
+  "Take a path and resolve any vim-like filename modifiers in it. On top of the
+classical vim modifiers, this adds support for:
 
   %:P   Resolves to `doom-project-root'.
 
@@ -114,7 +102,7 @@ See http://vimdoc.sourceforge.net/htmldoc/cmdline.html#filename-modifiers."
                                (file-relative-name parent)))))
                         ("s"
                          (if (featurep 'evil)
-                             (when-let (args (evil-delimited-arguments (substring flag 1) 2))
+                             (when-let* ((args (evil-delimited-arguments (substring flag 1) 2)))
                                (let ((pattern (evil-transform-vim-style-regexp (car args)))
                                      (replace (cadr args)))
                                  (replace-regexp-in-string
@@ -162,18 +150,17 @@ compilation."
   "Run FORMS without making any noise."
   `(if doom-debug-mode
        (progn ,@forms)
-     (fset 'doom--old-write-region-fn (symbol-function 'write-region))
-     (cl-letf ((standard-output (lambda (&rest _)))
-               ((symbol-function 'load-file) (lambda (file) (load file nil t)))
-               ((symbol-function 'message) (lambda (&rest _)))
-               ((symbol-function 'write-region)
-                (lambda (start end filename &optional append visit lockname mustbenew)
-                  (unless visit (setq visit 'no-message))
-                  (doom--old-write-region-fn
-                   start end filename append visit lockname mustbenew)))
-               (inhibit-message t)
-               (save-silently t))
-       ,@forms)))
+     (let ((old-fn (symbol-function 'write-region)))
+       (cl-letf* ((standard-output (lambda (&rest _)))
+                  ((symbol-function 'load-file) (lambda (file) (load file nil t)))
+                  ((symbol-function 'message) (lambda (&rest _)))
+                  ((symbol-function 'write-region)
+                   (lambda (start end filename &optional append visit lockname mustbenew)
+                     (unless visit (setq visit 'no-message))
+                     (funcall old-fn start end filename append visit lockname mustbenew)))
+                  (inhibit-message t)
+                  (save-silently t))
+         ,@forms))))
 
 (defvar doom--transient-counter 0)
 (defmacro add-transient-hook! (hook &rest forms)
@@ -242,10 +229,9 @@ Body forms can access the hook's arguments through the let-bound variable
                      `(function ,fn)
                    `(lambda (&rest _) ,@args)))
         (dolist (hook hooks)
-          (push (cond ((eq hook-fn 'remove-hook)
-                       `(remove-hook ',hook ,fn ,local-p))
-                      (t
-                       `(add-hook ',hook ,fn ,append-p ,local-p)))
+          (push (if (eq hook-fn 'remove-hook)
+                    `(remove-hook ',hook ,fn ,local-p)
+                  `(add-hook ',hook ,fn ,append-p ,local-p))
                 forms)))
       `(progn ,@(nreverse forms)))))
 
@@ -287,16 +273,19 @@ Body forms can access the hook's arguments through the let-bound variable
                            mode modes match files))))))
 
 
-;; I'm a fan of concise, hassle-free front-facing configuration. Rather than
-;; littering my config with `after!' blocks, and checking if features and
-;; modules are loaded before every line of config, I wrote `set!' as a more
-;; robust alternative. If a setting doesn't exist at run-time, the `set!' call
-;; is ignored. It also benefits from byte-compilation.
+;; I needed a way to reliably cross-configure modules without worrying about
+;; whether they were enabled or not, so I wrote `set!'. If a setting doesn't
+;; exist at runtime, the `set!' call is ignored (and omitted when
+;; byte-compiled).
 (defvar doom-settings nil)
 
 (defmacro def-setting! (keyword arglist &optional docstring &rest forms)
-  "Define a setting macro. Like `defmacro', this should return a form to be
-executed when called with `set!'. FORMS are not evaluated until `set!' calls it."
+  "Define a setting. Like `defmacro', this should return a form to be executed
+when called with `set!'. FORMS are not evaluated until `set!' calls it.
+
+See `doom/describe-setting' for a list of available settings.
+
+Do not use this for configuring Doom core."
   (declare (indent defun) (doc-string 3))
   (unless (keywordp keyword)
     (error "Not a valid property name: %s" keyword))
@@ -308,7 +297,8 @@ executed when called with `set!'. FORMS are not evaluated until `set!' calls it.
        (cl-pushnew ',(cons keyword fn) doom-settings :test #'eq :key #'car))))
 
 (defmacro set! (keyword &rest values)
-  "Set an option defined by `def-setting!'. Skip if doesn't exist."
+  "Set an option defined by `def-setting!'. Skip if doesn't exist. See
+`doom/describe-setting' for a list of available settings."
   (declare (indent defun))
   (unless values
     (error "Empty set! for %s" keyword))

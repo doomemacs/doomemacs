@@ -1,10 +1,10 @@
 ;;; lang/java/+eclim.el -*- lexical-binding: t; -*-
+;;;###if (featurep! +eclim)
 
 ;; NOTE This submodule is incomplete
 
 (def-package! eclim
-  :init
-  (add-hook 'java-mode-hook #'eclim-mode)
+  :hook (java-mode . eclim-mode)
   :config
   (set! :jump 'java-mode
     :definition #'eclim-java-find-declaration
@@ -53,6 +53,6 @@
 
 (def-package! company-emacs-eclim
   :when (featurep! :completion company)
-  :after java
+  :after java-mode
   :config
   (set! :company-backend 'java-mode '(company-emacs-eclim)))

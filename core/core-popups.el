@@ -46,6 +46,9 @@ that was/were open in `doom-popup-history'.")
 when their associated popup windows are closed, despite their :autokill
 property.")
 
+(defvar doom-popup-mode-map (make-sparse-keymap)
+  "Active keymap in popup windows.")
+
 
 (def-setting! :popup (&rest rules)
   "Prepend a new popup rule to `shackle-rules' (see for format details).
@@ -81,11 +84,27 @@ recognized by DOOM's popup system. They are:
 
 
 ;;
+;;
+;;
+
+(defvar doom-popup-parameters
+  '(:esc :modeline :transient :fit :align :size)
+  "TODO")
+
+(defvar doom-popup-whitelist
+  '(("^ ?\\*" :size 15 :noselect t :autokill t :autoclose t))
+  "TODO")
+
+(defvar doom-popup-blacklist
+  '("^\\*magit")
+  "TODO")
+
+
+;;
 ;; Bootstrap
 ;;
 
 (def-package! shackle
-  :demand t
   :init
   (setq shackle-default-alignment 'below
         shackle-default-size 8
@@ -114,7 +133,21 @@ recognized by DOOM's popup system. They are:
           ("^ ?\\*" :regexp t :size 15 :noselect t :autokill t :autoclose t)))
 
   :config
-  (add-hook 'doom-post-init-hook #'shackle-mode)
+  ;; NOTE This is a temporary fix while I rewrite core-popups
+  (defun doom-display-buffer-condition (buffer _action)
+    (and (cl-loop for re in doom-popup-blacklist
+                  when (string-match-p re buffer)
+                  return nil
+                  finally return t)
+         (shackle-match buffer)))
+
+  (defun doom-display-buffer-action (buffer alist)
+    (shackle-display-buffer buffer alist (shackle-match buffer)))
+
+  (add-hook! doom-post-init
+    (setq display-buffer-alist
+          (cons '(doom-display-buffer-condition doom-display-buffer-action)
+                display-buffer-alist)))
 
   ;; no modeline in popups
   (add-hook 'doom-popup-mode-hook #'doom|hide-modeline-in-popup)
@@ -133,20 +166,17 @@ recognized by DOOM's popup system. They are:
   (dolist (param `(popup ,@doom-popup-window-parameters))
     (push (cons param 'writable) window-persistent-parameters))
 
-  (defvar doom-popup-mode-map
-    (let ((map (make-sparse-keymap)))
-      (define-key map [escape]    #'doom/popup-close-maybe)
-      (define-key map (kbd "ESC") #'doom/popup-close-maybe)
-      (define-key map [remap quit-window] #'doom/popup-close-maybe)
-      (define-key map [remap doom/kill-this-buffer] #'delete-window)
-      (define-key map [remap split-window-right] #'ignore)
-      (define-key map [remap split-window-below] #'ignore)
-      (define-key map [remap split-window-horizontally] #'ignore)
-      (define-key map [remap split-window-vertically] #'ignore)
-      (define-key map [remap mouse-split-window-horizontally] #'ignore)
-      (define-key map [remap mouse-split-window-vertically] #'ignore)
-      map)
-    "Active keymap in popup windows."))
+  (let ((map doom-popup-mode-map))
+    (define-key map [escape]    #'doom/popup-close-maybe)
+    (define-key map (kbd "ESC") #'doom/popup-close-maybe)
+    (define-key map [remap quit-window] #'doom/popup-close-maybe)
+    (define-key map [remap doom/kill-this-buffer] #'delete-window)
+    (define-key map [remap split-window-right]              #'ignore)
+    (define-key map [remap split-window-below]              #'ignore)
+    (define-key map [remap split-window-horizontally]       #'ignore)
+    (define-key map [remap split-window-vertically]         #'ignore)
+    (define-key map [remap mouse-split-window-horizontally] #'ignore)
+    (define-key map [remap mouse-split-window-vertically]   #'ignore)))
 
 
 ;;
@@ -212,10 +242,10 @@ recognized by DOOM's popup system. They are:
   (defun doom|popup-close-maybe ()
     "If current window is a popup, close it. If minibuffer is open, close it. If
 not in a popup, close all popups with an :autoclose property."
-    (cond ((doom-popup-p)
-           (unless (doom-popup-property :noesc)
-             (delete-window)))
-          (t (doom/popup-close-all))))
+    (if (doom-popup-p)
+        (unless (doom-popup-property :noesc)
+          (delete-window))
+      (doom/popup-close-all)))
   (add-hook '+evil-esc-hook #'doom|popup-close-maybe t)
 
   ;; Make evil-mode cooperate with popups
@@ -340,37 +370,7 @@ the command buffer."
 
 
 (after! magit
-  (set! :popup "^\\*magit" :regexp t :size 0.5 :noesc t :autokill t)
-
-  ;; magit doesn't need much coercing. It works with shackle as is, except for
-  ;; one problem: following non-file magit links tends to open additional
-  ;; popups. We want all this to be contained within one window, so...
-  (defun doom-magit-popup-buffer (buffer)
-    "Pop up the magit window with shackle."
-    (cond ((doom-popup-p)
-           (prog1 (doom-popup-switch-to-buffer buffer)
-             (doom-hide-modeline-mode +1)))
-          (t
-           (magit-display-buffer-traditional buffer))))
-
-  (defun doom-magit-quit-window (_kill-buffer)
-    "Close the current magit window properly."
-    (let ((last (current-buffer)))
-      (cond ((when-let (dest (doom-buffers-in-mode
-                              'magit-mode
-                              (cl-loop for buf in (window-prev-buffers)
-                                       unless (eq (car buf) last)
-                                       collect (car buf))
-                              t))
-               (doom-popup-switch-to-buffer (car dest)))
-             (kill-buffer last))
-            (t
-             (mapc #'kill-buffer
-                   (doom-buffers-in-mode '(magit-mode magit-process-mode)
-                                         (buffer-list) t))))))
-
-  (setq magit-display-buffer-function #'doom-magit-popup-buffer
-        magit-bury-buffer-function #'doom-magit-quit-window))
+  (add-hook 'magit-mode-hook #'doom-hide-modeline-mode))
 
 
 (after! mu4e
@@ -415,7 +415,7 @@ that `doom*popup-save' won't break it."
   (defun doom*persp-mode-restore-popups (&rest _)
     "Restore popup windows when loading a perspective from file."
     (dolist (window (window-list))
-      (when-let (plist (doom-popup-properties window))
+      (when-let* ((plist (doom-popup-properties window)))
         (with-selected-window window
           (unless doom-popup-mode
             (setq-local doom-popup-rules plist)
@@ -462,10 +462,10 @@ you came from."
   (advice-add #'plantuml-preview-string
               :around #'doom*plantuml-preview-in-popup-window))
 
-;; Ensure these settings are attached to org-load-hook as late as possible,
-;; giving other modules a chance to add their own hooks.
+;; Ensure these settings are loaded as late as possible, giving other modules a
+;; chance to reconfigure org popup settings before the defaults kick in.
 (defun doom|init-org-popups ()
-  (add-hook! 'org-load-hook
+  (add-hook! org-load
     (set! :popup
       '("*Calendar*"         :size 0.4 :noselect t)
       '(" *Org todo*"        :size 5   :noselect t)
@@ -510,19 +510,18 @@ you came from."
                (t (error "Invalid buffer %s" buf))))))
     (advice-add #'org-switch-to-buffer-other-window :override #'doom*org-pop-to-buffer)
 
-    (after! org-agenda
-      (setq org-agenda-window-setup 'other-window
-            org-agenda-restore-windows-after-quit nil)
-
+    ;; org-agenda
+    (setq org-agenda-window-setup 'other-window
+          org-agenda-restore-windows-after-quit nil)
       ;; Hide modeline in org-agenda
-      (add-hook 'org-agenda-finalize-hook #'doom-hide-modeline-mode)
-      (add-hook 'org-agenda-finalize-hook #'org-fit-window-to-buffer)
-      ;; Don't monopolize frame!
-      (advice-add #'org-agenda :around #'doom*suppress-delete-other-windows)
-      ;; ensure quit keybindings work propertly
-      (map! :map org-agenda-mode-map
-            :m [escape] 'org-agenda-Quit
-            :m "ESC"    'org-agenda-Quit))))
+    (add-hook 'org-agenda-finalize-hook #'doom-hide-modeline-mode)
+    (add-hook 'org-agenda-finalize-hook #'org-fit-window-to-buffer)
+    ;; Don't monopolize frame!
+    (advice-add #'org-agenda :around #'doom*suppress-delete-other-windows)
+    ;; ensure quit keybindings work propertly
+    (map! :map* org-agenda-mode-map
+          :m [escape] 'org-agenda-Quit
+          :m "ESC"    'org-agenda-Quit)))
 (add-hook 'doom-init-hook #'doom|init-org-popups)
 
 (provide 'core-popups)

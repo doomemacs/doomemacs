@@ -1,6 +1,4 @@
-;;; org/org-capture/config.el -*- lexical-binding: t; -*-
-
-(add-hook 'org-load-hook #'+org-capture|init t)
+;;; lang/org/+capture.el -*- lexical-binding: t; -*-
 
 ;; Sets up two `org-capture' workflows that I like:
 ;;
@@ -12,17 +10,24 @@
 ;;    anywhere I can call org-capture (whether or not Emacs is open/running),
 ;;    like, say, from qutebrowser, vimperator, dmenu or a global keybinding.
 
-(setq org-default-notes-file (concat +org-dir "notes.org")
-      org-capture-templates
-      '(("t" "Todo" entry
-         (file+headline (expand-file-name "todo.org" +org-dir) "Inbox")
-         "* [ ] %?\n%i" :prepend t :kill-buffer t)
+(defvar +org-default-notes-file "notes.org"
+  "TODO")
 
-        ("n" "Notes" entry
-         (file+headline org-default-notes-file "Inbox")
-         "* %u %?\n%i" :prepend t :kill-buffer t)))
+(defvar org-capture-templates
+  '(("t" "Todo" entry
+     (file+headline (expand-file-name "todo.org" +org-dir) "Inbox")
+     "* [ ] %?\n%i" :prepend t :kill-buffer t)
 
-(defun +org-capture|init ()
+    ("n" "Notes" entry
+     (file+headline org-default-notes-file "Inbox")
+     "* %u %?\n%i" :prepend t :kill-buffer t)))
+
+
+(after! org
+  (defvaralias 'org-default-notes-file '+org-default-notes-file)
+
+  (setq org-default-notes-file (expand-file-name +org-default-notes-file +org-dir))
+
   (add-hook 'org-capture-after-finalize-hook #'+org-capture|cleanup-frame)
 
   (when (featurep! :feature evil)

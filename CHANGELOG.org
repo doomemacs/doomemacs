@@ -11,12 +11,19 @@
 
 * Unreleased (develop)
 + *Module changes:*
-  + Split =lang/java= into two submodules: one for eclim, and another for
-    meghanada. The latter is still the default, however. Also, the eclim
+  + *BREAKING* Split =lang/java= into two submodules: one for eclim, and another for
+    meghanada. You will need to update your =init.el= to enable one.
     submodule is experimental, since I have few opportunities to test it.
-  + Add =ui/window-select= (and moved ace-window out of ~core-ui~), which offers
-    two submodules for interactive window selection/moving: ace-window and
-    switch-window.
+  + *BREAKING* Ace-window is no longer part of Doom core. It has been moved to
+    =ui/window-select=, which offers two submodules for interactive window
+    selection/moving: ace-window and switch-window.
+  + New module: =lang/nix=, adds support for editing nix configuration files.
+    Contributed by [[https://github.com/ocharles][ocharles]].
+  + The =org/*= modules have been moved to =lang/org= and sub-modules therein.
+    With the introduction of module flags in 2.0.5, it was unnecessary that
+    org-mode had its own category.
+  + Any module can now have an =init.el=, which will be loaded before any other
+    modules are loaded.
 + =general=
   + New command naming convention: ~doom//...~ -- denotes that this an
     interactive command meant for:
@@ -28,6 +35,17 @@
   + Autoload files can now specify a predicate cookie to tell the
     compiler/autoload reader whether or not to ignore that file. They look like
     ~;;;###if (featurep! :feature evil)~.
+  + Removed all core def-setting! definitions, because ~set!~ was intended for
+    cross-module configuration, where modules may or may not be enabled. This
+    consideration is unnecessary for Doom core configuration. The following
+    settings have been removed: ~:editorconfig~, ~:theme~, ~:font~,
+    ~:variable-font~, ~:unicode-font~, ~:big-font~.
+  + Address various byte-compiler warnings that crop up in Emacs 26+, including
+    obsolete (if|when)-let macro warnings.
+  + Fix byte-compiler complaining that packages couldn't be found when that
+    package is unwanted (e.g. conditionally installed or disabled packages).
+  + =private/{user-login-name}= is no longer a "magic" module that is
+    automatically loaded.
   + =core-keybinds= Add :g flag to ~map!~ for defining global keybinds along
     with vim keybinds, so you don't have to repeat yourself, just for a global
     binding.
@@ -36,15 +54,50 @@
     (e.g. ELPA), and whose ~package!~ definition was later changed so that it
     should be handled by another (e.g. QUELPA). This would cause "FAILED" error
     messages while trying to install or update these packages (see [[https://github.com/hlissner/doom-emacs/issues/222][#222]]).
+  + =core-packages= *BREAKING* Packages are no longer deferred by default. i.e.
+    ~use-package-always-defer~ is now nil, as per the default.
+  + =core-popup= Fix window-live-p error when using ~doom/other-popup~ (or its
+    alias, ~other-popup~).
+  + =core-ui= Fix hl-line highlighting the rest of the window past end-of-file
+    in Emacs 26+. This is caused by a strange dynamic between hl-line and the
+    new line numbers feature.
 + =feature=
   + =file-templates= Disable file templates for .dir-locals.el files.
   + =jump= New command ~+jump/online-select~, which is like ~+jump/online~, but
     will always prompt for which provider to use.
+  + =version-control= Fix an issue with shackle not managing magit's popups
+    properly. This could cause the pointer to end up in the wrong places (e.g.
+    when you try to commit; the commit message and diff buffers pop up and the
+    pointer gets stuck in the diff window) (see [[https://github.com/hlissner/doom-emacs/issues/282][#282]]).
++ =completion=
+  + =helm= Implement ~:agcwd~, ~:rg~, and ~:rgcwd~ commands for searching with
+    helm.
+  + =ivy=
+    + Add C-SPC binding for "previewing" the selected candidate. Useful for
+      previewing files in ~counsel-find-file~ or ~counsel-projectile-find-file~.
+      This keybinding is defined in =private/hlissner/+bindings.el=.
+    + Disable "very magic" regular expressions in ivy. Specifically, parentheses
+      are now literal, and must be escaped to make them special. This is
+      consistent with evil-search regex.
+    + Fix a bug where ~:rgcwd~ wasn't showing any results, due to an incorrect
+      option argument in the ripgrep command string.
 + =ui=
   + =doom= This module no longer sets a default font. This is left to the user
     to set in their own private module. Use ~(set! :font "Font Name" :size N)~
     to do so.
+  + =doom-modeline= Remove the let-binds for ~all-the-icons-scale-factor~, so
+    that users can customize it themselves (see [[https://github.com/hlissner/doom-emacs/issues/278][#278]]).
++ =tools=
+  + =password-store= Fix compatibility with Emacs 26.
 + =lang=
+  + =clojure=
+    + This module has been rewritten with improved Cider and clojurescript
+      support, as well as new refactoring commands. Thanks to [[https://github.com/teesloane][teesloane]]!
+  + =crystal=
+    + Add flycheck integration for the Crystal language, powered by
+      ~flycheck-crystal~.
+    + Use the ELPA source for ~crystal-mode~. The former QUELPA source
+      (dotmilk's fork) is no longer maintained.
   + =sh=
     + Improve how variables and subshells in double-quoted strings are
       fontified.
@@ -52,6 +105,18 @@
   + =java=
     + Polished meghanada-mode integration.
     + New (and optional) +eclim submodule and module flag.
+  + =org=
+    + Fix scenario where built-in (and incorrect) version of org-mode (8.x) was loaded
+      instead of 9.0+.
+    + This module is incredibly opinionated. More opinionated than I'd like, but
+      org-mode is an ongoing effort. To address this, =lang/org= has been
+      reorganized. Variables are now set with ~defvar~ instead of ~setq~, which
+      makes them more accessible for configuring from private modules.
+    + Use the ELPA source for ~ob-rust~. The former QUELPA source (zweifisch's
+      fork) is no longer maintained.
+    + Fix an over-aggressive smartparens config for org-mode that would cause
+      certain markers and delimiters (like spaces or square brackets) being
+      repeated in places you didn't want them to be, like inside a checkbox.
   + =rust=
     + Now checks the ~RUST_SRC_PATH~ environment variable before looking for
       Rust's source in ~+rust-src-dir~.

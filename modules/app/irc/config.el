@@ -30,8 +30,7 @@ playback.")
 (def-setting! :irc (server letvars)
   "Registers an irc server for circe."
   `(after! circe
-     (cl-pushnew (cons ,server ,letvars) circe-network-options
-                 :test #'equal :key #'car)))
+     (push (cons ,server ,letvars) circe-network-options)))
 
 (defvar +irc--defer-timer nil)
 
@@ -89,7 +88,7 @@ playback.")
 
   (defun +irc*circe-truncate-nicks ()
     "Truncate long nicknames in chat output non-destructively."
-    (when-let (beg (text-property-any (point-min) (point-max) 'lui-format-argument 'nick))
+    (when-let* ((beg (text-property-any (point-min) (point-max) 'lui-format-argument 'nick)))
       (goto-char beg)
       (let ((end (next-single-property-change beg 'lui-format-argument))
             (nick (plist-get (plist-get (text-properties-at beg) 'lui-keywords)
@@ -111,8 +110,7 @@ playback.")
 
 
 (def-package! circe-color-nicks
-  :commands enable-circe-color-nicks
-  :init (add-hook 'circe-channel-mode-hook 'enable-circe-color-nicks)
+  :hook (circe-channel-mode . enable-circe-color-nicks)
   :config
   (setq circe-color-nicks-min-constrast-ratio 4.5
         circe-color-nicks-everywhere t))
@@ -161,7 +159,7 @@ after prompt marker."
     (add-hook! 'lui-mode-hook
       (add-hook 'evil-insert-state-entry-hook #'+irc|evil-insert nil t))
 
-    (mapc (lambda (cmd) (cl-pushnew cmd +irc-scroll-to-bottom-on-commands))
+    (mapc (lambda (cmd) (push cmd +irc-scroll-to-bottom-on-commands))
           '(evil-paste-after evil-paste-before evil-open-above evil-open-below)))
 
 
@@ -192,7 +190,7 @@ Courtesy of esh-mode.el"
   (defun +irc|init-lui-wrapping ()
     (setq fringes-outside-margins t
           word-wrap t
-          wrap-prefix (s-repeat (+ +irc-left-padding 3) " ")))
+          wrap-prefix (make-string (+ +irc-left-padding 3) ? )))
 
   (add-hook! 'lui-mode-hook #'(+irc|init-lui-margins +irc|init-lui-wrapping)))
 
@@ -203,5 +201,4 @@ Courtesy of esh-mode.el"
 
 
 (def-package! lui-autopaste
-  :commands enable-lui-autopaste
-  :init (add-hook 'circe-channel-mode-hook 'enable-lui-autopaste))
+  :hook (circe-channel-mode . enable-lui-autopaste))

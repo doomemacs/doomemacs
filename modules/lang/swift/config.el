@@ -4,11 +4,10 @@
 
 (def-package! swift-mode
   :mode "\\.swift$"
-  :init
-  (add-hook 'swift-mode-hook #'flycheck-mode)
   :config
+  (add-hook 'swift-mode-hook #'flycheck-mode)
   (set! :repl 'swift-mode #'swift-mode-run-repl) ; TODO test this
-  (cl-pushnew 'swift flycheck-checkers))
+  (push 'swift flycheck-checkers))
 
 
 (def-package! company-sourcekit

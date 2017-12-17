@@ -21,7 +21,7 @@
 (defun +neotree/collapse-or-up ()
   "Collapse an expanded directory node or go to the parent node."
   (interactive)
-  (when-let (node (neo-buffer--get-filename-current-line))
+  (when-let* ((node (neo-buffer--get-filename-current-line)))
     (if (file-directory-p node)
         (if (neo-buffer--expanded-node-p node)
             (+neotree/collapse)
@@ -32,7 +32,7 @@
 (defun +neotree/collapse ()
   "Collapse a neotree node."
   (interactive)
-  (when-let (node (neo-buffer--get-filename-current-line))
+  (when-let* ((node (neo-buffer--get-filename-current-line)))
     (when (file-directory-p node)
       (neo-buffer--set-expand node nil)
       (neo-buffer--refresh t))
@@ -43,7 +43,7 @@
 (defun +neotree/expand-or-open ()
   "Expand or open a neotree node."
   (interactive)
-  (when-let (node (neo-buffer--get-filename-current-line))
+  (when-let* ((node (neo-buffer--get-filename-current-line)))
     (cond ((file-directory-p node)
            (neo-buffer--set-expand node t)
            (neo-buffer--refresh t)
