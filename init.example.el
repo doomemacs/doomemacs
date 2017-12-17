@@ -124,11 +124,11 @@
        ;; toward a specific purpose. They may have additional dependencies and
        ;; should be loaded last.
        :app
-       email             ; emacs as an email client
-       irc               ; how neckbeards socialize
-       rss               ; emacs as an RSS reader
-       twitter           ; twitter client https://twitter.com/vnought
-       write             ; emacs as a word processor (latex + org + markdown)
+      ;email             ; emacs as an email client
+      ;irc               ; how neckbeards socialize
+      ;rss               ; emacs as an RSS reader
+      ;twitter           ; twitter client https://twitter.com/vnought
+      ;write             ; emacs as a word processor (latex + org + markdown)
 
        ;; Private modules named after your username are loaded automatically.
        ;; Leaving this here is harmless though.
