@@ -93,17 +93,5 @@ Allows a perspective-specific buffer list via `+workspaces-buffer-list'."
       (persp-add-buffer buffer (get-current-persp) nil)
       (force-mode-line-update t)))
   (advice-add #'switch-to-buffer :after #'+workspaces*auto-add-buffer)
-  (advice-add #'display-buffer   :after #'+workspaces*auto-add-buffer)
-
-  ;;
-  (after! ivy
-    (nconc ivy-sort-functions-alist
-           '((persp-kill-buffer   . nil)
-             (persp-remove-buffer . nil)
-             (persp-add-buffer    . nil)
-             (persp-switch        . nil)
-             (persp-window-switch . nil)
-             (persp-frame-switch  . nil)
-             (+workspace/switch-to . nil)
-             (+workspace/delete . nil)))))
+  (advice-add #'display-buffer   :after #'+workspaces*auto-add-buffer))
 

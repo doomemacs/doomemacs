@@ -62,7 +62,17 @@ immediately runs it on the current candidate (ending the ivy session)."
   (ivy-set-display-transformer #'ivy-switch-buffer #'+ivy-buffer-transformer)
   (ivy-set-display-transformer #'ivy-switch-buffer-other-window #'+ivy-buffer-transformer)
   (ivy-set-display-transformer #'+ivy/switch-workspace-buffer #'+ivy-buffer-transformer)
-  (ivy-set-display-transformer #'counsel-recentf #'abbreviate-file-name))
+  (ivy-set-display-transformer #'counsel-recentf #'abbreviate-file-name)
+
+  (nconc ivy-sort-functions-alist
+         '((persp-kill-buffer   . nil)
+           (persp-remove-buffer . nil)
+           (persp-add-buffer    . nil)
+           (persp-switch        . nil)
+           (persp-window-switch . nil)
+           (persp-frame-switch  . nil)
+           (+workspace/switch-to . nil)
+           (+workspace/delete . nil))))
 
 
 (def-package! swiper :commands (swiper swiper-all))
