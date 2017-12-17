@@ -27,8 +27,8 @@
   (defun +javascript|init-flycheck-eslint ()
     "Favor local eslint over global installs and configure flycheck for eslint."
     (when (derived-mode-p 'js-mode)
-      (when-let* (((exec-path (list (doom-project-expand "node_modules/.bin")))
-                   (eslint (executable-find "eslint"))))
+      (when-let* ((exec-path (list (doom-project-expand "node_modules/.bin")))
+                  (eslint (executable-find "eslint")))
         (setq-local flycheck-javascript-eslint-executable eslint))
       (when (flycheck-find-checker-executable 'javascript-eslint)
         ;; Flycheck has it's own trailing command and semicolon warning that was
