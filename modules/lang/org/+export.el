@@ -8,9 +8,8 @@
 (def-package! ox-pandoc
   :defer t
   :config
-  (if (executable-find "pandoc")
-      (push 'pandoc org-export-backends)
-    (warn "org-export: couldn't find pandoc, disabling pandoc export"))
+  (when (executable-find "pandoc")
+    (push 'pandoc org-export-backends))
   (setq org-pandoc-options
         '((standalone . t)
           (mathjax . t)
