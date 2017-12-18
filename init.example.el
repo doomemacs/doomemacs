@@ -122,7 +122,7 @@
 
        ;; Applications are complex and opinionated modules that transform Emacs
        ;; toward a specific purpose. They may have additional dependencies and
-       ;; should be loaded last.
+       ;; should be loaded late.
        :app
       ;email             ; emacs as an email client
       ;irc               ; how neckbeards socialize
@@ -130,7 +130,7 @@
       ;twitter           ; twitter client https://twitter.com/vnought
       ;write             ; emacs as a word processor (latex + org + markdown)
 
-       ;; Private modules named after your username are loaded automatically.
-       ;; Leaving this here is harmless though.
+       ;; This is the private module of Doom's maintainer; use it as a reference
+       ;; for your own.
        :private hlissner)
 
