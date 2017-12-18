@@ -12,7 +12,7 @@
   <a href="/../../tree/screenshots">Screenshots</a> |
   <a href="/../../wiki/FAQ#troubleshooting">Troubleshooting</a> |
   <a href="/../../wiki/FAQ">FAQ</a> |
-  <a href="/CHANGELOG.org">Changelog</a>
+  <a href="/../develop/CHANGELOG.org">Changelog</a>
 </p>
 
 - - -
