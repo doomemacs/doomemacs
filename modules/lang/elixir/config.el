@@ -26,7 +26,7 @@
 
 (def-package! alchemist-company
   :when (featurep! :completion company)
-  :after (:all company elixir-mode)
+  :after elixir-mode
   :config
   ;; Let Doom handle this
   (let ((fn (byte-compile (lambda () (add-to-list (make-local-variable 'company-backends) 'alchemist-company)))))
