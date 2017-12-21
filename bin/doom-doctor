@@ -75,7 +75,7 @@
 (defmacro error!   (&rest args) `(message (color 1 (color 31 ,@args))))
 (defmacro warn!    (&rest args) `(message (color 1 (color 33 ,@args))))
 (defmacro success! (&rest args) `(message (color 1 (color 32 ,@args))))
-(defmacro log!     (&rest args) `(if doom-debug-mode (message (color 34 ,@args))))
+(defmacro section! (&rest args) `(message (color 34 ,@args)))
 (defmacro explain! (&rest args) `(message (indented 2 (autofill ,@args))))
 
 ;;; Polyfills
@@ -120,7 +120,7 @@
 
 ;; --- is emacs set up properly? ------------------------------
 
-(log! "test-emacs")
+(section! "test-emacs")
 (check! (version< emacs-version "25.1")
   (error! "Important: Emacs %s detected [%s]" emacs-version (executable-find "emacs"))
   (explain!
@@ -133,13 +133,13 @@
 ;; --- is the environment set up properly? --------------------
 
 ;; windows? windows
-(log! "test-windows")
+(section! "test-windows")
 (check! (memq system-type '(windows-nt ms-dos cygwin))
   (warn! "Warning: Windows detected")
   (explain! "DOOM was designed for MacOS and Linux. Expect a bumpy ride!"))
 
 ;; are all default fonts present
-(log! "test-fonts")
+(section! "test-fonts")
 (if (not (fboundp 'find-font))
     (progn
       (warn! "Warning: unable to detect font")
@@ -162,7 +162,7 @@
                     "case, ignore this warning."))))))
 
 ;; gnutls-cli & openssl
-(log! "test-gnutls")
+(section! "test-gnutls")
 (cond ((executable-find "gnutls-cli"))
       ((executable-find "openssl")
        (let* ((output (shell-command-to-string "openssl ciphers -v"))
@@ -198,7 +198,7 @@
           "network, provider, government, neckbearded mother-in-laws, geeky roommates, "
           "or just about anyone who knows more about computers than you do!"))))
 
-(log! "test-tls")
+(section! "test-tls")
 (cond ((not (string-match-p "\\_<GNUTLS\\_>" system-configuration-features))
        (warn! "Warning: You didn't install Emacs with gnutls support")
        (explain!
@@ -253,7 +253,7 @@
        (error! "Nope!")))
 
 ;; bsd vs gnu tar
-(log! "test-tar")
+(section! "test-tar")
 (let ((tar-bin (or (executable-find "gtar")
                    (executable-find "tar"))))
   (if tar-bin
