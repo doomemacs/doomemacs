@@ -20,9 +20,10 @@
 (defvar doom-errors 0)
 (defmacro check! (cond &rest body)
   (declare (indent defun))
-  `(when ,cond
-     ,@body
-     (setq doom-errors (1+ doom-errors))))
+  `(let ((it ,cond))
+     (when it
+       ,@body
+       (setq doom-errors (1+ doom-errors)))))
 
 (defun indented (spc msg)
   (declare (indent defun))
@@ -56,17 +57,6 @@
                            (push (if strings (pop strings) "") args))))
                 "\n")))
     (buffer-string)))
-
-(defmacro wait-for! (var if-body &optional else-body)
-  (declare (indent defun))
-  `(let ((i 0))
-     (while (and (not ,var)
-                 (< i 5))
-       (sleep-for 1)
-       (setq i (1+ i)))
-     (if ,var
-         ,if-body
-       ,else-body)))
 
 (defun color (code msg &rest args)
   (format "\e[%dm%s\e[%dm" code (apply #'format msg args) 0))
@@ -211,43 +201,40 @@
                   "    brew tap d12frosted/emacs-plus"
                   "    brew install emacs-plus"))))
 
+      ((not (fboundp 'url-retrieve-synchronously))
+       (error! "Can't find url-retrieve-synchronously function. Are you running Emacs 24+?"))
+
       ((or (executable-find "gnutls-cli")
            (executable-find "openssl"))
        (let ((tls-checktrust t)
              (gnutls-verify-error t))
-         (dolist (url '("https://elpa.gnu.org"
-                        "https://melpa.org"))
-           (condition-case-unless-debug ex
-               (let (result)
-                 (let ((inhibit-message t))
-                   (url-retrieve url (lambda (status &rest _) (setq result status))))
-                 (wait-for! result
-                   (when (getenv "DEBUG")
-                     (success! "Verified %s" (nth 2 (split-string url "/"))))
-                   (signal 'timed-out url)))
-             ('timed-out
-              (error! "Timed out trying to contact %s" ex))
-             ('error
-              (check! t
-                (error! "Rejected %s" url)
-                (explain! (pp-to-string ex))))))
+         (dolist (url '("https://elpa.gnu.org" "https://melpa.org"))
+           (check! (condition-case-unless-debug e
+                       (if (let ((inhibit-message t)) (url-retrieve-synchronously url))
+                           (ignore (success! "Validated %s" url))
+                         'empty)
+                     ('timed-out 'timeout)
+                     ('error e))
+             (pcase it
+               (`empty (error! "Couldn't reach %s" url))
+               (`timeout (error! "Timed out trying to contact %s" ex))
+               (_
+                (error! "Failed to validate %s" url)
+                (when (getenv "DEBUG")
+                  (explain! (pp-to-string it)))))))
          (dolist (url '("https://self-signed.badssl.com"
                         "https://wrong.host.badssl.com/"))
-           (condition-case-unless-debug ex
-               (let (result)
-                 (let ((inhibit-message t))
-                   (url-retrieve url (lambda (status &rest _) (setq result status))))
-                 (wait-for! result
-                   (check! t
-                     (warn! "Verified %s (this shouldn't happen!)" (nth 2 (split-string url "/")))
-                     (explain! (pp-to-string result)))
-                   (signal 'timed-out url)))
-             ('timed-out
-              (error! "Timed out trying to contact %s" ex))
-             ('error
-              (when (getenv "DEBUG")
-                (success! "Rejected %s (a good thing!)" url)
-                (explain! (pp-to-string ex))))))))
+           (check! (condition-case-unless-debug e
+                       (if (let ((inhibit-message t)) (url-retrieve-synchronously url))
+                           t
+                         'empty)
+                     ('timed-out 'timeout)
+                     ('error (ignore (success! "Successfully rejected %s" url))))
+             (pcase it
+               (`empty (error! "Couldn't reach %s" url))
+               (`timeout (error! "Timed out trying to contact %s" ex))
+               (_
+                (error! "Validated %s (this shouldn't happen!)" url)))))))
 
       (t
        (error! "Nope!")))
