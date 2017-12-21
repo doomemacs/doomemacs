@@ -364,10 +364,10 @@ package.el as appropriate."
                                (red "✕ FAILED")))
                         (if (plist-member (cdr pkg) :pin)
                             (format " [pinned: %s]" (plist-get (cdr pkg) :pin))
-                          "")))))
+                          ""))))
 
-          (message! (bold (green "Finished!")))
-          (doom//reload-load-path))))
+           (message! (bold (green "Finished!")))
+           (doom//reload-load-path)))))
 
 ;;;###autoload
 (defun doom//packages-update ()
