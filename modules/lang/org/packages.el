@@ -5,7 +5,7 @@
 ;; this module requires). orgmode.org offers no secure access to this repo. If
 ;; this bothers you, comment out this `package!' block and download
 ;; org-plus-contrib from orgmode.org.
-(package! org-plus-contrib :recipe (:fetcher git :url "http://orgmode.org/org-mode.git"))
+(package! org-plus-contrib :recipe (:fetcher github :repo "emacsmirror/org" :files (:defaults "contrib/lisp/*.el")))
 
 (package! org-bullets :recipe (:fetcher github :repo "hlissner/org-bullets"))
 (package! toc-org)
