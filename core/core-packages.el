@@ -572,11 +572,11 @@ This should be run whenever init.el or an autoload file is modified. Running
         (message "Deleted old autoloads.el"))
       (dolist (file (reverse targets))
         (message (cond ((not (doom-packages--read-if-cookies file))
-                        "Ignoring %s")
+                        "⚠ Ignoring %s")
                        ((update-file-autoloads file nil doom-autoload-file)
-                        "Nothing in %s")
+                        "✕ Nothing in %s")
                        (t
-                        "Scanned %s"))
+                        "✓ Scanned %s"))
                  (file-relative-name file doom-emacs-dir)))
       (let ((buf (get-file-buffer doom-autoload-file))
             current-sexp)
@@ -657,13 +657,13 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
                     (short-name (file-relative-name target doom-emacs-dir)))
                 (cl-incf
                  (cond ((eq result 'no-byte-compile)
-                        (message! (dark (white "Ignored %s" short-name)))
+                        (message! (dark (white "⚠ Ignored %s" short-name)))
                         total-noop)
                        ((null result)
-                        (message! (red "Failed to compile %s" short-name))
+                        (message! (red "✕ Failed to compile %s" short-name))
                         total-fail)
                        (t
-                        (message! (green "Compiled %s" short-name))
+                        (message! (green "✓ Compiled %s" short-name))
                         (quiet! (load target t t))
                         total-ok))))))
           (message!

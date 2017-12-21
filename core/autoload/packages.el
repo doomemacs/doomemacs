@@ -354,14 +354,14 @@ package.el as appropriate."
            (dolist (pkg packages)
              (message! "Installing %s" (car pkg))
              (doom--condition-case!
-              (message! "  %s%s"
+              (message! "%s%s"
                         (cond ((and (package-installed-p (car pkg))
                                     (not (doom-package-different-backend-p (car pkg))))
-                               (dark (white "ALREADY INSTALLED")))
+                               (dark (white "⚠ ALREADY INSTALLED")))
                               ((doom-install-package (car pkg) (cdr pkg))
-                               (green "DONE"))
+                               (green "✓ DONE"))
                               (t
-                               (red "FAILED")))
+                               (red "✕ FAILED")))
                         (if (plist-member (cdr pkg) :pin)
                             (format " [pinned: %s]" (plist-get (cdr pkg) :pin))
                           "")))))
@@ -404,8 +404,7 @@ package.el as appropriate."
               (message!
                (let ((result (doom-update-package (car pkg) t)))
                  (color (if result 'green 'red)
-                        "  %s"
-                        (if result "DONE" "FAILED"))))))
+                        (if result "✓ DONE" "✕ FAILED"))))))
 
            (message! (bold (green "Finished!")))
            (doom//reload-load-path)))))
@@ -446,7 +445,7 @@ package.el as appropriate."
                (let ((result (doom-delete-package pkg t)))
                  (color (if result 'green 'red)
                         "%s %s"
-                        (if result "Removed" "Failed to remove")
+                        (if result "✓ Removed" "✕ Failed to remove")
                         pkg)))))
 
            (message! (bold (green "Finished!")))
