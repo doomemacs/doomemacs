@@ -65,7 +65,7 @@ selection of all minor-modes, active or not."
                       in '("https://wrong.host.badssl.com/"
                            "https://self-signed.badssl.com/")
                       if (condition-case _e
-                             (url-retrieve bad (lambda (_retrieved) t))
+                             (url-retrieve-synchronously bad)
                            (error nil))
                       collect bad)))
       (error (format "tls seems to be misconfigured (it got %s)."
