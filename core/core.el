@@ -162,9 +162,10 @@ ability to invoke the debugger in debug mode."
 ;; Initialize
 (eval-and-compile
   (defvar doom--file-name-handler-alist file-name-handler-alist)
-  (setq gc-cons-threshold 402653184
-        gc-cons-percentage 0.6
-        file-name-handler-alist nil)
+  (unless (or after-init-time noninteractive)
+    (setq gc-cons-threshold 402653184
+          gc-cons-percentage 0.6
+          file-name-handler-alist nil))
 
   (require 'core-packages (concat doom-core-dir "core-packages"))
   (eval-when-compile
