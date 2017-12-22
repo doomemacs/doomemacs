@@ -163,7 +163,7 @@ whose dimensions may not be fully initialized by the time this is run."
     (+doom-dashboard-center
      +doom-dashboard--width
      (format "Loaded %d packages in %d modules in %.02fs"
-             (- (length load-path) (length doom--base-load-path))
+             (length doom--package-load-path)
              (hash-table-size doom-modules)
              (if (floatp doom-init-time) doom-init-time 0.0)))
     'face 'font-lock-comment-face)
