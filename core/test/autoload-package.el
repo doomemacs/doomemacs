@@ -12,6 +12,7 @@ affects your Emacs packages)."
           (doom-etc-dir (concat doom-local-dir "etc/"))
           (doom-cache-dir (concat doom-local-dir "cache/"))
           (package-user-dir (expand-file-name "elpa" doom-packages-dir))
+          (quelpa-dir (expand-file-name "quelpa" doom-packages-dir))
           package-alist
           package-archive-contents
           package-initialize)
