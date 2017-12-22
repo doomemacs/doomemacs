@@ -182,37 +182,32 @@ If FORCE-P is non-nil, do it even if they are.
 This aggressively reloads core autoload files."
   (doom-initialize-load-path force-p)
   (with-temp-buffer ; prevent buffer-local settings from propagating
-    (let ((noninteractive t)
-          (load-prefer-newer t)
-          (load-fn
-           (lambda (file &optional noerror)
-             (condition-case-unless-debug ex
-                 (load file noerror :nomessage :nosuffix)
-               ('error
-                (error (format "(doom-initialize-packages) %s in %s: %s"
-                               (car ex)
-                               (file-relative-name file doom-emacs-dir)
-                               (error-message-string ex))
-                       :error))))))
+    (cl-flet
+        ((_load
+          (file &optional noerror interactive)
+          (condition-case-unless-debug ex
+              (let ((load-prefer-newer t)
+                    (noninteractive (not interactive)))
+                (load file noerror :nomessage :nosuffix))
+            ('error
+             (error (format "(doom-initialize-packages) %s in %s: %s"
+                            (car ex)
+                            (file-relative-name file doom-emacs-dir)
+                            (error-message-string ex))
+                    :error)))))
       (when (or force-p (not doom-modules))
         (setq doom-modules nil)
-        (let (noninteractive)
-          (load (concat doom-core-dir "core.el") nil t))
-        (funcall load-fn (expand-file-name "init.el" doom-emacs-dir))
+        (_load (concat doom-core-dir "core.el") nil 'interactive)
+        (_load (expand-file-name "init.el" doom-emacs-dir))
         (when load-p
-          (let (noninteractive)
-            (funcall load-fn (doom-module-path :private user-login-name "init.el") t))
-          (mapc load-fn (file-expand-wildcards (expand-file-name "autoload/*.el" doom-core-dir)))
-          (cl-loop for (module . submodule) in (doom-module-pairs)
-                   for path = (doom-module-path module submodule "config.el")
-                   do (funcall load-fn path t))))
+          (mapc #'_load (file-expand-wildcards (expand-file-name "autoload/*.el" doom-core-dir)))
+          (_load (expand-file-name "init.el" doom-emacs-dir) nil 'interactive)))
       (when (or force-p (not doom-packages))
         (setq doom-packages nil)
-        (funcall load-fn (expand-file-name "packages.el" doom-core-dir))
+        (_load (expand-file-name "packages.el" doom-core-dir))
         (cl-loop for (module . submodule) in (doom-module-pairs)
                  for path = (doom-module-path module submodule "packages.el")
-                 do (funcall load-fn path t)))))
-  (doom|finalize))
+                 do (_load path 'noerror))))))
 
 (defun doom-initialize-modules (modules)
   "Adds MODULES to `doom-modules'. MODULES must be in mplist format.
