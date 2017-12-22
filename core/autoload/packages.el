@@ -1,11 +1,13 @@
 ;;; core/autoload/packages.el -*- lexical-binding: t; -*-
 
+(require 'use-package)
+(require 'quelpa)
+
 (defvar doom--last-refresh nil)
 
 ;;;###autoload
 (defun doom-refresh-packages (&optional force-p)
   "Refresh ELPA packages."
-  (doom-initialize)
   (when force-p
     (doom-refresh-clear-cache))
   (unless (or (persistent-soft-fetch 'last-pkg-refresh "emacs")
@@ -31,13 +33,14 @@
   "Get which backend the package NAME was installed with. Can either be elpa or
 quelpa. Throws an error if NOERROR is nil and the package isn't installed."
   (cl-assert (symbolp name) t)
-  (doom-initialize)
   (cond ((and (or (quelpa-setup-p)
                   (error "Could not initialize quelpa"))
               (assq name quelpa-cache))
          'quelpa)
         ((assq name package-alist)
          'elpa)
+        ((package-built-in-p name)
+         'emacs)
         ((not noerror)
          (error "%s package is not installed" name))))
 
@@ -84,7 +87,7 @@ installed with. Returns nil otherwise, or if package isn't installed."
   (doom-initialize-packages)
   (and (package-installed-p name)
        (let* ((plist (cdr (assq name doom-packages)))
-              (old-backend (doom-package-backend name t))
+              (old-backend (doom-package-backend name 'noerror))
               (new-backend (if (plist-get plist :recipe) 'quelpa 'elpa)))
          (not (eq old-backend new-backend)))))
 
@@ -114,14 +117,12 @@ If INSTALLED-ONLY-P, only return packages that are installed."
 ;;;###autoload
 (defun doom-get-depending-on (name)
   "Return a list of packages that depend on the package named NAME."
-  (doom-initialize)
   (when-let* ((desc (cadr (assq name package-alist))))
     (mapcar #'package-desc-name (package--used-elsewhere-p desc nil t))))
 
 ;;;###autoload
 (defun doom-get-dependencies-for (name &optional only)
   "Return a list of dependencies for a package."
-  (doom-initialize)
   (package--get-deps name only))
 
 ;;;###autoload
@@ -156,8 +157,9 @@ Used by `doom//packages-update'."
                     (load ,(expand-file-name "core.el" doom-core-dir)))
                   (doom-package-outdated-p ',pkg)))
               futures))
-      (append (delq nil (mapcar #'doom-package-outdated-p elpa-pkgs))
-              (delq nil (mapcar #'async-get (reverse futures)))))))
+      (delq nil
+            (append (mapcar #'doom-package-outdated-p elpa-pkgs)
+                    (mapcar #'async-get (reverse futures)))))))
 
 ;;;###autoload
 (defun doom-get-orphaned-packages ()
@@ -214,7 +216,6 @@ Used by `doom//packages-install'."
                 (symbol-name (car other))))
 
 (defun doom--packages-choose (prompt)
-  (doom-initialize)
   (let ((table (cl-loop for pkg in package-alist
                         unless (package-built-in-p (cdr pkg))
                         collect (cons (package-desc-full-name (cdr pkg))
@@ -270,7 +271,6 @@ example; the package name can be omitted)."
 (defun doom-update-package (name &optional force-p)
   "Updates package NAME (a symbol) if it is out of date, using quelpa or
 package.el as appropriate."
-  (doom-initialize)
   (unless (package-installed-p name)
     (user-error "%s isn't installed" name))
   (when (doom-package-different-backend-p name)
@@ -299,7 +299,6 @@ package.el as appropriate."
 
 (defun doom-delete-package (name &optional force-p)
   "Uninstalls package NAME if it exists, and clears it from `quelpa-cache'."
-  (doom-initialize)
   (unless (package-installed-p name)
     (user-error "%s isn't installed" name))
   (let ((inhibit-message (not doom-debug-mode))
@@ -319,13 +318,14 @@ package.el as appropriate."
 
 
 ;;
-;; Interactive commands
+;; Batch/interactive commands
 ;;
 
 ;;;###autoload
 (defun doom//packages-install ()
   "Interactive command for installing missing packages."
   (interactive)
+  (message! "Looking for packages to install...")
   (let ((packages (doom-get-missing-packages)))
     (cond ((not packages)
            (message! (green "No packages to install!")))
@@ -414,29 +414,28 @@ package.el as appropriate."
 (defun doom//packages-autoremove ()
   "Interactive command for auto-removing orphaned packages."
   (interactive)
+  (message! "Looking for orphaned packages...")
   (let ((packages (doom-get-orphaned-packages)))
     (cond ((not packages)
            (message! (green "No unused packages to remove")))
 
-          ((not (or (getenv "YES")
-                    (y-or-n-p
-                     (format "%s packages will be deleted:\n\n%s\n\nProceed?"
-                             (length packages)
-                             (mapconcat
-                              (lambda (sym)
-                                (format
-                                 "+ %s (%s)"
-                                 sym
-                                 (let ((backend (doom-package-backend sym)))
-                                   (if (doom-package-different-backend-p sym)
-                                       (if (eq backend 'quelpa)
-                                           "QUELPA->ELPA"
-                                         "ELPA->QUELPA")
-                                     (if (eq backend 'quelpa)
-                                         "QUELPA"
-                                       "ELPA")))))
-                              (sort (cl-copy-list packages) #'string-lessp)
-                              "\n")))))
+          ((not
+            (or (getenv "YES")
+                (y-or-n-p
+                 (format
+                  "%s packages will be deleted:\n\n%s\n\nProceed?"
+                  (length packages)
+                  (mapconcat
+                   (lambda (sym)
+                     (format "+ %s (%s)" sym
+                             (let ((backend (doom-package-backend sym)))
+                               (if (doom-package-different-backend-p sym)
+                                   (if (eq backend 'quelpa)
+                                       "QUELPA->ELPA"
+                                     "ELPA->QUELPA")
+                                 (upcase (symbol-name backend))))))
+                   (sort (cl-copy-list packages) #'string-lessp)
+                   "\n")))))
            (message! (yellow "Aborted!")))
 
           (t
@@ -452,6 +451,10 @@ package.el as appropriate."
            (message! (bold (green "Finished!")))
            (doom//reload-load-path)))))
 
+
+;;
+;; Interactive commands
+;;
 
 ;;;###autoload
 (defalias 'doom/install-package #'package-install)
@@ -478,7 +481,9 @@ Use this interactively. Use `doom-delete-package' for direct calls."
     (if (package-installed-p package)
         (if (y-or-n-p (format "%s will be deleted. Confirm?" package))
             (message "%s %s"
-                     (if (doom-delete-package package t) "Deleted" "Failed to delete")
+                     (if (doom-delete-package package t)
+                         "Deleted"
+                       "Failed to delete")
                      package)
           (message "Aborted"))
       (message "%s isn't installed" package))))
