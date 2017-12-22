@@ -680,13 +680,13 @@ If RECOMPILE-P is non-nil, only recompile out-of-date core files."
   (byte-recompile-directory package-user-dir 0 t))
 
 (defun doom//clean-byte-compiled-files ()
-  "Delete all the compiled elc files in your Emacs configuration.
-
-This excludes compiled packages in `doom-packages-dir'.'"
+  "Delete all the compiled elc files in your Emacs configuration. This excludes
+compiled packages.'"
   (interactive)
   (let ((targets (append (list (expand-file-name "init.elc" doom-emacs-dir))
                          (directory-files-recursively doom-core-dir "\\.elc$")
-                         (directory-files-recursively doom-modules-dir "\\.elc$"))))
+                         (directory-files-recursively doom-modules-dir "\\.elc$")))
+        (default-directory doom-emacs-dir))
     (unless (cl-loop for path in targets
                      if (file-exists-p path)
                      collect path
