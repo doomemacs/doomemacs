@@ -170,7 +170,8 @@ Used by `doom//packages-autoremove'."
          (append (mapcar #'car doom-packages) doom-core-packages)))
     (append (package--removable-packages)
             (cl-loop for pkg in package-selected-packages
-                     if (doom-package-different-backend-p pkg)
+                     if (and (doom-package-different-backend-p pkg)
+                             (not (package-built-in-p pkg)))
                      collect pkg))))
 
 ;;;###autoload
