@@ -140,7 +140,7 @@ startup."
     (setq load-path doom--base-load-path
           package-activated-list nil)
     ;; Ensure core folders exist
-    (dolist (dir (list doom-local-dir doom-etc-dir doom-cache-dir package-user-dir))
+    (dolist (dir (list doom-local-dir doom-etc-dir doom-cache-dir doom-packages-dir))
       (unless (file-directory-p dir)
         (make-directory dir t)))
     (condition-case _ (package-initialize t)
