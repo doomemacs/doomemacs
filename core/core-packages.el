@@ -276,15 +276,14 @@ is sorted by order of insertion unless ALL-P is non-nil. If ALL-P is non-nil,
 include all modules, enabled or otherwise."
   (unless (hash-table-p doom-modules)
     (error "doom-modules is uninitialized"))
-  (cl-loop for key being the hash-keys of doom-modules
-           collect key))
+  (hash-table-keys doom-modules))
 
 (defun doom-packages--display-benchmark ()
   (message "Doom loaded %s packages across %d modules in %.03fs"
            ;; Certainly imprecise, especially where custom additions to
            ;; load-path are concerned, but I don't mind a [small] margin of
            ;; error in the plugin count in exchange for faster startup.
-           (- (length load-path) (length doom--base-load-path))
+           (length doom--package-load-path)
            (hash-table-size doom-modules)
            (setq doom-init-time (float-time (time-subtract after-init-time before-init-time)))))
 
@@ -514,13 +513,13 @@ call `doom/reload-load-path' remotely (through emacsclient)."
   (interactive)
   (byte-recompile-file (expand-file-name "core.el" doom-core-dir) t)
   (cond (noninteractive
-         (message "Reloading...")
          (require 'server)
          (when (server-running-p)
+           (message "Reloading active Emacs session...")
            (server-eval-at server-name '(doom//reload-load-path))))
         (t
          (doom-initialize-load-path t)
-         (message "Reloaded %d packages" (length doom--package-load-path))
+         (message "%d packages reloaded" (length doom--package-load-path))
          (run-with-timer 1 nil #'redraw-display)
          (run-hooks 'doom-reload-hook))))
 
@@ -558,13 +557,14 @@ This should be run whenever init.el or an autoload file is modified. Running
         (delete-file doom-autoload-file)
         (message "Deleted old autoloads.el"))
       (dolist (file (reverse targets))
-        (message (cond ((not (doom-packages--read-if-cookies file))
-                        "⚠ Ignoring %s")
-                       ((update-file-autoloads file nil doom-autoload-file)
-                        "✕ Nothing in %s")
-                       (t
-                        "✓ Scanned %s"))
-                 (file-relative-name file doom-emacs-dir)))
+        (message
+         (cond ((not (doom-packages--read-if-cookies file))
+                "⚠ Ignoring %s")
+               ((update-file-autoloads file nil doom-autoload-file)
+                "✕ Nothing in %s")
+               (t
+                "✓ Scanned %s"))
+         (file-relative-name file doom-emacs-dir)))
       (make-directory (file-name-directory doom-autoload-file) t)
       (let ((buf (get-file-buffer doom-autoload-file))
             current-sexp)
