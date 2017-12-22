@@ -182,9 +182,13 @@ local value, whether or not it's permanent-local. Therefore, we cycle
         (when (fontp doom-variable-pitch-font)
           (set-face-attribute 'variable-pitch frame :font doom-variable-pitch-font)))
     ('error
-     (lwarn 'doom-ui :error
-            "Failed to set fonts because %s"
-            (error-message-string ex))))
+     (if (string-prefix-p "Font not available: " (error-message-string ex))
+         (lwarn 'doom-ui :warning
+                "Could not find the '%s' font on your system, falling back to system font"
+                (font-get (caddr ex) :family))
+       (lwarn 'doom-ui :error
+              "Unexpected error while initializing fonts: %s"
+              (error-message-string ex)))))
   (run-hooks 'doom-init-ui-hook))
 
 (defun doom|reload-ui-in-daemon (frame)
