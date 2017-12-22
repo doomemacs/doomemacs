@@ -51,11 +51,6 @@
   "Non-nil if doom is done initializing (once `doom-post-init-hook' is done). If
 this is nil after Emacs has started something is wrong.")
 
-(defvar doom-package-init-p nil
-  "If non-nil, doom's package system has been initialized (by
-`doom-initialize'). This will be nill if you byte-compile your configuration (as
-intended).")
-
 (defvar doom-init-time nil
   "The time it took, in seconds, for DOOM Emacs to initialize.")
 
@@ -136,18 +131,33 @@ are installed.
 If you byte-compile core/core.el, this function will be avoided to speed up
 startup."
   ;; Called early during initialization; only use native functions!
-  (when (or (not doom-package-init-p) force-p)
+  (when (or force-p (not doom-init-p))
     (setq load-path doom--base-load-path
           package-activated-list nil)
     ;; Ensure core folders exist
     (dolist (dir (list doom-local-dir doom-etc-dir doom-cache-dir doom-packages-dir))
       (unless (file-directory-p dir)
         (make-directory dir t)))
+    ;; Ensure core packages are installed
     (condition-case _ (package-initialize t)
-      ('error
-       (package-refresh-contents)
-       (setq doom--refreshed-p t)
-       (package-initialize t)))
+      ('error (package-refresh-contents)
+              (setq doom--refreshed-p t)
+              (package-initialize t)))
+    (let ((core-packages (cl-remove-if #'package-installed-p doom-core-packages)))
+      (when core-packages
+        (message "Installing core packages")
+        (package-refresh-contents)
+        (dolist (package core-packages)
+          (let ((inhibit-message t))
+            (package-install package))
+          (if (package-installed-p package)
+              (message "✓ Installed %s" package)
+            (error "✕ Couldn't install %s" package)))
+        (message "Installing core packages...done")))
+    (setq doom-init-p t)))
+
+(defun doom-initialize-load-path (&optional force-p)
+  (when (or force-p (not doom--package-load-path))
     ;; We could let `package-initialize' fill `load-path', but it does more than
     ;; that alone (like load autoload files). If you want something prematurely
     ;; optimizated right, ya gotta do it yourself.
@@ -155,23 +165,7 @@ startup."
     ;; Also, in some edge cases involving package initialization during a
     ;; non-interactive session, `package-initialize' fails to fill `load-path'.
     (setq doom--package-load-path (directory-files package-user-dir t "^[^.]" t)
-          load-path (append load-path doom--package-load-path))
-    ;; Ensure core packages are installed
-    (dolist (pkg doom-core-packages)
-      (unless (package-installed-p pkg)
-        (unless doom--refreshed-p
-          (package-refresh-contents)
-          (setq doom--refreshed-p t))
-        (let ((inhibit-message t))
-          (package-install pkg))
-        (if (package-installed-p pkg)
-            (message "Installed %s" pkg)
-          (error "Couldn't install %s" pkg))))
-    (load "quelpa" nil t)
-    (load "use-package" nil t)
-    (setq doom-package-init-p t)
-    (unless noninteractive
-      (message "Doom initialized"))))
+          load-path (append doom--base-load-path doom--package-load-path))))
 
 (defun doom-initialize-autoloads ()
   "Ensures that `doom-autoload-file' exists and is loaded. Otherwise run
@@ -186,7 +180,7 @@ startup."
 If FORCE-P is non-nil, do it even if they are.
 
 This aggressively reloads core autoload files."
-  (doom-initialize force-p)
+  (doom-initialize-load-path force-p)
   (with-temp-buffer ; prevent buffer-local settings from propagating
     (let ((noninteractive t)
           (load-prefer-newer t)
@@ -313,19 +307,17 @@ MODULES is an malformed plist of modules to load."
   (doom-initialize-modules modules)
   `(let (file-name-handler-alist)
      (setq doom-modules ',doom-modules)
-
      (unless noninteractive
+       (message "Doom initialized")
        ,@(cl-loop for (module . submodule) in (doom-module-pairs)
                   for module-path = (doom-module-path module submodule)
                   collect `(load! init ,module-path t) into inits
                   collect `(load! config ,module-path t) into configs
                   finally return (append inits configs))
-
        (when (display-graphic-p)
          (require 'server)
          (unless (server-running-p)
            (server-start)))
-
        (add-hook 'doom-init-hook #'doom-packages--display-benchmark t)
        (message "Doom modules initialized"))))
 
@@ -532,7 +524,7 @@ call `doom/reload-load-path' remotely (through emacsclient)."
          (when (server-running-p)
            (server-eval-at server-name '(doom//reload-load-path))))
         (t
-         (doom-initialize t)
+         (doom-initialize-load-path t)
          (message "Reloaded %d packages" (length doom--package-load-path))
          (run-with-timer 1 nil #'redraw-display)
          (run-hooks 'doom-reload-hook))))
@@ -555,7 +547,7 @@ This should be run whenever init.el or an autoload file is modified. Running
       ;; state. `doom-initialize-packages' will have side effects otherwise.
       (and (doom-packages--async-run 'doom//reload-autoloads)
            (load doom-autoload-file))
-    (doom-initialize-packages)
+    (doom-initialize-packages t)
     (let ((targets
            (file-expand-wildcards
             (expand-file-name "autoload/*.el" doom-core-dir))))

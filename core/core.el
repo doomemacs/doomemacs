@@ -112,13 +112,14 @@ melodramatic ex-vimmer disappointed with the text-editor status quo."
 (load custom-file t t)
 
 ;; be quiet at startup; don't load or display anything unnecessary
-(advice-add #'display-startup-echo-area-message :override #'ignore)
-(setq inhibit-startup-message t
-      inhibit-startup-echo-area-message user-login-name
-      inhibit-default-init t
-      initial-major-mode 'fundamental-mode
-      initial-scratch-message nil
-      mode-line-format nil)
+(unless noninteractive
+  (advice-add #'display-startup-echo-area-message :override #'ignore)
+  (setq inhibit-startup-message t
+        inhibit-startup-echo-area-message user-login-name
+        inhibit-default-init t
+        initial-major-mode 'fundamental-mode
+        initial-scratch-message nil
+        mode-line-format nil))
 
 ;; Custom init hooks; clearer than `after-init-hook', `emacs-startup-hook', and
 ;; `window-setup-hook'.
@@ -144,10 +145,9 @@ ability to invoke the debugger in debug mode."
   nil)
 
 (defun doom|finalize ()
-  (unless (or doom-init-p noninteractive)
+  (unless (or (not after-init-time) noninteractive)
     (dolist (hook '(doom-init-hook doom-post-init-hook))
-      (run-hook-wrapped hook #'doom-try-run-hook hook))
-    (setq doom-init-p t))
+      (run-hook-wrapped hook #'doom-try-run-hook hook)))
 
   ;; Don't keep gc-cons-threshold too high. It helps to stave off the GC while
   ;; Emacs starts up, but afterwards it causes stuttering and random freezes. So
@@ -167,10 +167,10 @@ ability to invoke the debugger in debug mode."
           gc-cons-percentage 0.6
           file-name-handler-alist nil))
 
-  (require 'core-packages (concat doom-core-dir "core-packages"))
-  (eval-when-compile
-    (doom-initialize))
-  (setq load-path (eval-when-compile load-path)
+  (require 'cl-lib)
+  (load (concat doom-core-dir "core-packages") nil t)
+  (setq load-path (eval-when-compile (doom-initialize t)
+                                     (doom-initialize-load-path t))
         doom--package-load-path (eval-when-compile doom--package-load-path))
 
   (load! core-lib)
@@ -187,10 +187,10 @@ ability to invoke the debugger in debug mode."
     (load! core-popups)     ; taming sudden yet inevitable windows
     (load! core-editor)     ; baseline configuration for text editing
     (load! core-projects)   ; making Emacs project-aware
-    (load! core-keybinds))) ; centralized keybind system + which-key
+    (load! core-keybinds))  ; centralized keybind system + which-key
 
-(add-hook! '(emacs-startup-hook doom-reload-hook)
-  #'doom|finalize)
+  (add-hook! '(emacs-startup-hook doom-reload-hook)
+    #'doom|finalize))
 
 (provide 'core)
 ;;; core.el ends here

@@ -1,6 +1,5 @@
 ;;; core-lib.el -*- lexical-binding: t; -*-
 
-(require 'cl-lib)
 (require 'subr-x)
 (load "async-autoloads" nil t)
 (load "persistent-soft-autoloads" nil t)
