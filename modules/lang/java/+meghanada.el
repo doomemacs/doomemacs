@@ -10,18 +10,11 @@
         meghanada-use-eldoc t
         meghanada-use-auto-start t)
 
-  (add-hook 'java-mode-hook #'rainbow-delimiters-mode)
-
-  ;; Setup on first use
-  (unless (bound-and-true-p byte-compile-current-file)
-    (meghanada-install-server)
-    (if (file-exists-p (meghanada--locate-server-jar))
-        (add-hook! 'meghanada-mode-hook #'(flycheck-mode eldoc-mode))
-      (warn "java-mode: meghanada-server not installed, java-mode will run with reduced functionality")))
-
   (set! :jump 'java-mode
     :definition #'meghanada-jump-declaration
     :references #'meghanada-reference)
+
+  (add-hook! 'meghanada-mode-hook #'(flycheck-mode eldoc-mode))
 
   ;;
   (def-menu! +java/refactor-menu
