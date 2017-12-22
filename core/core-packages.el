@@ -634,33 +634,42 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
           (error "No targets to compile"))
         (let ((use-package-expand-minimally t))
           (push (expand-file-name "init.el" doom-emacs-dir) compile-targets)
-          (dolist (target compile-targets)
-            (when (or (not recompile-p)
-                      (let ((elc-file (byte-compile-dest-file target)))
-                        (and (file-exists-p elc-file)
-                             (file-newer-than-file-p file elc-file))))
-              (let ((result (if (doom-packages--read-if-cookies target)
-                                (byte-compile-file target)
-                              'no-byte-compile))
-                    (short-name (file-relative-name target doom-emacs-dir)))
-                (cl-incf
-                 (cond ((eq result 'no-byte-compile)
-                        (message! (dark (white "⚠ Ignored %s" short-name)))
-                        total-noop)
-                       ((null result)
-                        (message! (red "✕ Failed to compile %s" short-name))
-                        total-fail)
-                       (t
-                        (message! (green "✓ Compiled %s" short-name))
-                        (quiet! (load target t t))
-                        total-ok))))))
-          (message!
-           (bold
-            (color (if (= total-fail 0) 'green 'red)
-                   "%s %s file(s) %s"
-                   (if recompile-p "Recompiled" "Compiled")
-                   (format "%d/%d" total-ok (- (length compile-targets) total-noop))
-                   (format "(%s ignored)" total-noop)))))))))
+          (condition-case ex
+              (progn
+                (dolist (target compile-targets)
+                  (when (or (not recompile-p)
+                            (let ((elc-file (byte-compile-dest-file target)))
+                              (and (file-exists-p elc-file)
+                                   (file-newer-than-file-p file elc-file))))
+                    (let ((result (if (doom-packages--read-if-cookies target)
+                                      (byte-compile-file target)
+                                    'no-byte-compile))
+                          (short-name (file-relative-name target doom-emacs-dir)))
+                      (cl-incf
+                       (cond ((eq result 'no-byte-compile)
+                              (message! (dark (white "⚠ Ignored %s" short-name)))
+                              total-noop)
+                             ((null result)
+                              (message! (red "✕ Failed to compile %s" short-name))
+                              total-fail)
+                             (t
+                              (message! (green "✓ Compiled %s" short-name))
+                              (quiet! (load target t t))
+                              total-ok))))))
+                (message!
+                 (bold
+                  (color (if (= total-fail 0) 'green 'red)
+                         "%s %s file(s) %s"
+                         (if recompile-p "Recompiled" "Compiled")
+                         (format "%d/%d" total-ok (- (length compile-targets) total-noop))
+                         (format "(%s ignored)" total-noop)))))
+            (error
+             (message! (red "\n%%s\n\n%%s\n\n%%s")
+                       "There were breaking errors."
+                       (error-message-string ex)
+                       "Reverting changes...")
+             (doom//clean-byte-compiled-files)
+             (message! (green "Finished (nothing was byte-compiled)")))))))))
 
 (defun doom//byte-compile-core (&optional recompile-p)
   "Byte compile the core Doom files.
