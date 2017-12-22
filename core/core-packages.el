@@ -578,6 +578,7 @@ This should be run whenever init.el or an autoload file is modified. Running
                        (t
                         "✓ Scanned %s"))
                  (file-relative-name file doom-emacs-dir)))
+      (make-directory (file-name-directory doom-autoload-file) t)
       (let ((buf (get-file-buffer doom-autoload-file))
             current-sexp)
         (unwind-protect
