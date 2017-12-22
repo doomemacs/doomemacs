@@ -141,13 +141,12 @@ with functions that require it (like modeline segments)."
   (setq recentf-save-file (concat doom-etc-dir "recentf")
         recentf-max-menu-items 0
         recentf-max-saved-items 300
+        recentf-filename-handlers '(file-truename)
         recentf-exclude
         (list "^/tmp/" "^/ssh:" "\\.?ido\\.last$" "\\.revive$" "/TAGS$"
               "^/var/folders/.+$"
               ;; ignore private DOOM temp files (but not all of them)
-              (concat "^" (replace-regexp-in-string
-                           (concat "@" (regexp-quote (system-name)))
-                           "@" (abbreviate-file-name doom-host-dir))))))
+              (concat "^" (abbreviate-file-name (file-truename doom-local-dir))))))
 
 
 ;;
