@@ -48,8 +48,8 @@ is given, returns t if it matches the current system, and nil otherwise."
 Requires the corresponding client, e.g. git for git repos, hg for mercurial,
 etc."
   (let* ((command (pcase fetcher
-                    (:github "git clone --depth 1 --recursive https://github.com/%s.git")
-                    (:git    "git clone --depth 1 --recursive %s")
+                    (:github "git clone --recursive https://github.com/%s.git")
+                    (:git    "git clone --recursive %s")
                     (:gist   "git clone https://gist.github.com/%s.git")
                     ;; TODO Add hg
                     (_ (error "%s is not a valid fetcher" fetcher))))
@@ -61,8 +61,8 @@ etc."
       (error "%s couldn't be found" command))
     (unless (file-directory-p dest)
       (funcall (if noninteractive
-                   (lambda (&rest args) (princ (shell-command-to-string args)))
+                   (lambda (c) (princ (shell-command-to-string c)))
                  #'async-shell-command)
                (format "%s %s %s" bin args (shell-quote-argument dest)))
-      (message! "Cloning %s -> %s" location dest))))
+      (message! "Cloning %s -> %s" location (file-relative-name dest)))))
 
