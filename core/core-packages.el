@@ -276,7 +276,8 @@ is sorted by order of insertion unless ALL-P is non-nil. If ALL-P is non-nil,
 include all modules, enabled or otherwise."
   (unless (hash-table-p doom-modules)
     (error "doom-modules is uninitialized"))
-  (hash-table-keys doom-modules))
+  (cl-loop for key being the hash-keys of doom-modules
+           collect key))
 
 (defun doom-packages--display-benchmark ()
   (message "Doom loaded %s packages across %d modules in %.03fs"
