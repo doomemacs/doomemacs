@@ -84,8 +84,7 @@
   :config
   (unless (executable-find "phpctags")
     (warn "php-mode: phpctags isn't installed, auto-completion will be gimped"))
-
-  (setq ac-php-tags-path (concat doom-etc-dir "ac-php/")))
+  (setq ac-php-tags-path (concat doom-cache-dir "ac-php/")))
 
 
 ;;

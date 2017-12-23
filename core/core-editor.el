@@ -138,7 +138,7 @@ with functions that require it (like modeline segments)."
 (def-package! recentf
   :hook (doom-init . recentf-mode)
   :config
-  (setq recentf-save-file (concat doom-etc-dir "recentf")
+  (setq recentf-save-file (concat doom-cache-dir "recentf")
         recentf-max-menu-items 0
         recentf-max-saved-items 300
         recentf-filename-handlers '(file-truename)
