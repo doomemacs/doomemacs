@@ -190,13 +190,14 @@ This aggressively reloads core autoload files."
                     (noninteractive (not interactive)))
                 (load file noerror :nomessage :nosuffix))
             ('error
-             (error (format "(doom-initialize-packages) %s in %s: %s"
-                            (car ex)
-                            (file-relative-name file doom-emacs-dir)
-                            (error-message-string ex))
-                    :error)))))
+             (lwarn 'doom-initialize-packages :warning
+                    "%s in %s: %s"
+                    (car ex)
+                    (file-relative-name file doom-emacs-dir)
+                    (error-message-string ex))))))
       (when (or force-p (not doom-modules))
-        (setq doom-modules nil)
+        (setq doom-modules nil
+              doom-packages nil)
         (_load (concat doom-core-dir "core.el") nil 'interactive)
         (_load (expand-file-name "init.el" doom-emacs-dir))
         (when load-p
