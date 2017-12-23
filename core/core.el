@@ -40,17 +40,15 @@ that are safe to share across systems (if this config is symlinked across
 several computers).")
 
 (defvar doom-etc-dir (concat doom-local-dir "etc/")
-  "Directory for non-volatile storage. For volatile story, see `doom-cache-dir'.
+  "Directory for non-volatile storage.
 
-Use this for dependencies like servers or config files that are stable (i.e. it
-should be unlikely that you need to delete them if something goes wrong).")
+Use this for files that don't change much, like servers binaries, external
+dependencies or long-term shared data.")
 
 (defvar doom-cache-dir (concat doom-local-dir "cache/")
   "Directory for volatile storage.
 
-Deleted when `doom/reset' is called. Use this for transient files; on-the-fly
-like caches and temporary files. Anything that you don't mind deleting if there
-are problems.")
+Use this for files that change often, like cache files.")
 
 (defvar doom-packages-dir (concat doom-local-dir "packages/")
   "Where package.el and quelpa plugins (and their caches) are stored.")
