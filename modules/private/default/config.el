@@ -536,14 +536,15 @@
 
       ;; evil-snipe
       (:after evil-snipe
-        ;; Binding to switch to evil-easymotion/avy after a snipe
-        :map evil-snipe-parent-transient-map
-        "C-;" (λ! (require 'evil-easymotion)
-                  (call-interactively
-                   (evilem-create #'evil-snipe-repeat
-                                  :bind ((evil-snipe-scope 'whole-buffer)
-                                         (evil-snipe-enable-highlight)
-                                         (evil-snipe-enable-incremental-highlight))))))
+        (:after evil-easymotion
+          ;; Binding to switch to evil-easymotion/avy after a snipe
+          :map evil-snipe-parent-transient-map
+          "C-;" (λ! (require 'evil-easymotion)
+                    (call-interactively
+                     (evilem-create #'evil-snipe-repeat
+                                    :bind ((evil-snipe-scope 'whole-buffer)
+                                           (evil-snipe-enable-highlight)
+                                           (evil-snipe-enable-incremental-highlight)))))))
 
       ;; evil-surround
       :v  "S"  #'evil-surround-region
