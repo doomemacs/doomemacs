@@ -146,7 +146,7 @@ with functions that require it (like modeline segments)."
         (list "^/tmp/" "^/ssh:" "\\.?ido\\.last$" "\\.revive$" "/TAGS$"
               "^/var/folders/.+$"
               ;; ignore private DOOM temp files (but not all of them)
-              (concat "^" (abbreviate-file-name (file-truename doom-local-dir))))))
+              (concat "^" (file-truename doom-local-dir)))))
 
 
 ;;
