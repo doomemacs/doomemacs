@@ -76,6 +76,29 @@ which case they're relative to `default-directory'). If they start with a slash,
 they are absolute."
   (doom--resolve-path-forms files (doom-project-root)))
 
+(defun doom-project-find-file (dir)
+  "Fuzzy-find a file in DIR."
+  (interactive)
+  (let ((default-directory dir)
+        ;; Necessary to isolate this search from the current project
+        projectile-project-name
+        projectile-require-project-root
+        projectile-cached-buffer-file-name
+        projectile-cached-project-root)
+    (call-interactively
+     ;; completion modules may remap this command
+     (or (command-remapping #'projectile-find-file)
+         #'projectile-find-file))))
+
+(defun doom-project-browse (dir)
+  "TODO"
+  (interactive)
+  (let ((default-directory dir))
+    (call-interactively
+     ;; completion modules may remap this command
+     (or (command-remapping #'find-file)
+         #'find-file))))
+
 
 ;;
 ;; Projects
