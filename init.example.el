@@ -130,7 +130,10 @@
       ;twitter           ; twitter client https://twitter.com/vnought
       ;write             ; emacs as a word processor (latex + org + markdown)
 
-       ;; This is the private module of Doom's maintainer; use it as a reference
+       ;; Private modules are where you place your personal configuration files.
+       ;; By default, they are not tracked. There is one module included here,
+       ;; the defaults module. It contains a Spacemacs-inspired keybinding
+       ;; scheme and additional ex commands for evil-mode. Use it as a reference
        ;; for your own.
-       :private hlissner)
+       :private default)
 
