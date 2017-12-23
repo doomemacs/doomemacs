@@ -12,6 +12,41 @@
 - [[#200-jan-17-2017][2.0.0 (Jan 17, 2017)]]
 
 * Unreleased (develop)
++ *Module changes:*
+  + Removed =private/hlissner= and added =private/default=, which is serve as a
+    more generic "starter" module for new users. My private module is now at
+    [[https://github.com/hlissner/doom-emacs-private][hlissner/doom-emacs-private]].
++ =general=
+  + Fix "peculiar error" messages when running =bin/doom-doctor=, caused by
+    poorly thought out error handling (see [[https://github.com/hlissner/doom-emacs/issues/175][#175]]).
+  + Fix ~doom/am-i-secure~ command.
+  + Add unicode symbols to package management commands. Looks a little nicer <3.
+  + Transform =recentf= entries into their absolute paths with symlinks resolved
+    (using ~file-truename~).
+  + Local data and cache files are no longer host-namespaced. Originally, this
+    was meant to facilitate using the same config files (symlinked) across
+    different computers (e.g. via dropbox). Byte-compiled packages on one
+    computer would cause errors on another, so I abandoned this practice, making
+    ~doom-host-dir~ unnecessary.
+  + Fix an issue during live byte-compilation (with auto-compile-on-save-mode)
+    where ~gc-cons-threshold~ would get set to 304mb in the user's active
+    session, causing freezes and stuttering.
+  + Improve error handling when byte compiling Doom. It now cleans up after
+    itself is something goes wrong.
+  + Fix =stringp= error thrown by ~doom-fetch~ in noninteractive sessions.
+  + =core-ui= Fix cryptic missing-font errors (also, they are warnings now).
+  + =core-projects= Add ~doom-project-find-file~ and ~doom-project-browse~ for
+    interactively fuzzy-finding and opening files in a directory/project.
++ =feature=
+  + =version-control= When evil-mode is available, start git commit message
+    buffers in insert mode (see [[https://github.com/hlissner/doom-emacs/issues/300][#300]]).
++ =ui=
+  + =doom-dashboard= Fix whitespace-mode turning the Doom dashboard into a
+    Christmas tree (by highlighting trailing whitespace).
++ =lang=
+  + =org= Change repo source for org-plus-contrib to emacsmirror.
+  + =java= Fix Doom install meghanada server while byte compiling your Emacs
+    configuration.
 
 * 2.0.8 (Dec 09, 2017)
 + *Module changes:*
