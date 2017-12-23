@@ -49,15 +49,15 @@
   ;; Dealing with buffers
   (ex! "clean[up]"   #'doom/cleanup-buffers)
   (ex! "k[ill]"      #'doom/kill-this-buffer)
-  (ex! "k[ill]all"   #'+hlissner:kill-all-buffers)
-  (ex! "k[ill]m"     #'+hlissner:kill-matching-buffers)
+  (ex! "k[ill]all"   #'+default:kill-all-buffers)
+  (ex! "k[ill]m"     #'+default:kill-matching-buffers)
   (ex! "k[ill]o"     #'doom/kill-other-buffers)
   (ex! "l[ast]"      #'doom/popup-restore)
   (ex! "m[sg]"       #'view-echo-area-messages)
   (ex! "pop[up]"     #'doom/popup-this-buffer)
   ;; Project navigation
   (ex! "a"           #'projectile-find-other-file)
-  (ex! "cd"          #'+hlissner:cd)
+  (ex! "cd"          #'+default:cd)
   (cond ((featurep! :completion ivy)
          (ex! "ag"       #'+ivy:ag)
          (ex! "agc[wd]"  #'+ivy:ag-cwd)
@@ -153,8 +153,8 @@
       :ne "M-f"   #'swiper
       :ne "C-M-f" #'doom/toggle-fullscreen
       :n  "M-s"   #'save-buffer
-      :m  "A-j"   #'+hlissner:multi-next-line
-      :m  "A-k"   #'+hlissner:multi-previous-line
+      :m  "A-j"   #'+default:multi-next-line
+      :m  "A-k"   #'+default:multi-previous-line
       :nv "C-SPC" #'+evil:fold-toggle
       :gnvimer "M-v" #'clipboard-yank
       ;; Easier window navigation
