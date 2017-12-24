@@ -77,7 +77,7 @@ missing) and shouldn't be deleted.")
   "The load path of built in Emacs libraries.")
 
 (defvar doom--package-load-path ()
-  "The load path of package libraries installed via ELPA or QUELPA.")
+  "The load path of package libraries installed via ELPA and QUELPA.")
 
 (defvar doom--base-load-path
   (append (list doom-core-dir doom-modules-dir)
@@ -130,31 +130,34 @@ are installed.
 
 If you byte-compile core/core.el, this function will be avoided to speed up
 startup."
-  ;; Called early during initialization; only use native functions!
+  ;; Called early during initialization; only use native (and cl-lib) functions!
   (when (or force-p (not doom-init-p))
-    (setq load-path doom--base-load-path
-          package-activated-list nil)
-    ;; Ensure core folders exist
-    (dolist (dir (list doom-local-dir doom-etc-dir doom-cache-dir doom-packages-dir))
-      (unless (file-directory-p dir)
-        (make-directory dir t)))
-    ;; Ensure core packages are installed
-    (condition-case _ (package-initialize t)
-      ('error (package-refresh-contents)
-              (setq doom--refreshed-p t)
-              (package-initialize t)))
-    (let ((core-packages (cl-remove-if #'package-installed-p doom-core-packages)))
-      (when core-packages
-        (message "Installing core packages")
-        (package-refresh-contents)
-        (dolist (package core-packages)
-          (let ((inhibit-message t))
-            (package-install package))
-          (if (package-installed-p package)
-              (message "✓ Installed %s" package)
-            (error "✕ Couldn't install %s" package)))
-        (message "Installing core packages...done")))
-    (setq doom-init-p t)))
+    ;; Speed things up with a `load-path' for only the bare essentials
+    (let ((load-path doom--base-load-path))
+      ;; Ensure core folders exist, otherwise we get errors
+      (dolist (dir (list doom-local-dir doom-etc-dir doom-cache-dir doom-packages-dir))
+        (unless (file-directory-p dir)
+          (make-directory dir t)))
+      ;; Ensure package.el is initialized; we use its state
+      (setq package-activated-list nil)
+      (condition-case _ (package-initialize t)
+        ('error (package-refresh-contents)
+                (setq doom--refreshed-p t)
+                (package-initialize t)))
+      ;; Ensure core packages are installed
+      (let ((core-packages (cl-remove-if #'package-installed-p doom-core-packages)))
+        (when core-packages
+          (message "Installing core packages")
+          (unless doom--refreshed-p
+            (package-refresh-contents))
+          (dolist (package core-packages)
+            (let ((inhibit-message t))
+              (package-install package))
+            (if (package-installed-p package)
+                (message "✓ Installed %s" package)
+              (error "✕ Couldn't install %s" package)))
+          (message "Installing core packages...done")))
+      (setq doom-init-p t))))
 
 (defun doom-initialize-load-path (&optional force-p)
   (when (or force-p (not doom--package-load-path))

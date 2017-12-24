@@ -259,8 +259,7 @@ local value, whether or not it's permanent-local. Therefore, we cycle
 
 (def-package! hideshow ; built-in
   :commands (hs-minor-mode hs-toggle-hiding hs-already-hidden-p)
-  :config
-  (setq hs-hide-comments-when-hiding-all nil))
+  :config (setq hs-hide-comments-when-hiding-all nil))
 
 (def-package! highlight-indentation
   :commands (highlight-indentation-mode highlight-indentation-current-column-mode))
@@ -310,9 +309,8 @@ local value, whether or not it's permanent-local. Therefore, we cycle
 ;; Helps us distinguish stacked delimiter pairs. Especially in parentheses-drunk
 ;; languages like Lisp.
 (def-package! rainbow-delimiters
-  :commands rainbow-delimiters-mode
-  :config (setq rainbow-delimiters-max-face-count 3)
-  :init (add-hook 'lisp-mode-hook #'rainbow-delimiters-mode))
+  :hook (lisp-mode . rainbow-delimiters-mode)
+  :config (setq rainbow-delimiters-max-face-count 3))
 
 ;; For a distractions-free-like UI, that dynamically resizes margets and can
 ;; center a buffer.
