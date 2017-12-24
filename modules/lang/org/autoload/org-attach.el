@@ -98,7 +98,7 @@ the cursor."
       (delete-region (match-beginning 0) (match-end 0))
     (newline))
   (cond ((image-type-from-file-name filename)
-         (when (file-in-directory-p filename +org-attach-dir)
+         (when (file-in-directory-p filename org-attach-directory)
            (setq filename (file-relative-name filename +org-dir)))
          (insert
           (concat (if (= org-download-image-html-width 0)
@@ -124,9 +124,7 @@ the cursor."
       (let* ((context (save-match-data (org-element-context)))
              (file (org-link-unescape (org-element-property :path context)))
              (default-directory
-               (if (string-prefix-p
-                    (concat "./" (car (last (split-string +org-attach-dir "/" t))))
-                    file)
+               (if (file-in-directory-p file org-attach-directory)
                    +org-dir
                  default-directory)))
         (apply orig-fn args))

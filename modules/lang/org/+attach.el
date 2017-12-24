@@ -15,7 +15,7 @@
 ;; + `+org-attach/url'
 ;; + :org [FILE/URL]
 
-(defvar +org-attach-dir (expand-file-name ".attach/" +org-dir)
+(defvar +org-attach-dir ".attach/"
   "Where to store attachments (relative to current org file).")
 
 
@@ -30,7 +30,7 @@
 
   (advice-add #'org-download-enable :override #'ignore)
   :config
-  (setq-default org-download-image-dir +org-attach-dir
+  (setq-default org-download-image-dir org-attach-directory
                 org-download-heading-lvl nil
                 org-download-timestamp "_%Y%m%d_%H%M%S")
 
@@ -61,12 +61,12 @@
 
 ;;
 (after! org
-  (setq org-attach-directory +org-attach-dir)
+  (setq org-attach-directory (expand-file-name +org-attach-dir +org-dir))
 
   (push (car (last (split-string +org-attach-dir "/" t)))
         projectile-globally-ignored-directories)
 
   (after! recentf
-    (push (format "%s.+$" (regexp-quote +org-attach-dir))
+    (push (format "%s.+$" (regexp-quote org-attach-directory))
           recentf-exclude)))
 
