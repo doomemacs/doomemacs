@@ -135,7 +135,7 @@ whose dimensions may not be fully initialized by the time this is run."
 (defun doom-dashboard-widget--banner ()
   (mapc (lambda (line)
           (insert (propertize (+doom-dashboard-center +doom-dashboard--width line)
-                              'face 'font-lock-comment-face) " ")
+                              'face 'font-lock-comment-face))
           (insert "\n"))
         '("=================     ===============     ===============   ========  ========"
           "\\\\ . . . . . . .\\\\   //. . . . . . .\\\\   //. . . . . . .\\\\  \\\\. . .\\\\// . . //"
