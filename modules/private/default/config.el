@@ -256,13 +256,13 @@
         (:desc "code" :prefix "c"
           :desc "List errors"               :n  "x" #'flycheck-list-errors
           :desc "Evaluate buffer/region"    :n  "e" #'+eval/buffer
-          :v  "e" #'+eval/region
+                                            :v  "e" #'+eval/region
           :desc "Evaluate & replace region" :nv "E" #'+eval:replace-region
           :desc "Build tasks"               :nv "b" #'+eval/build
           :desc "Jump to definition"        :n  "d" #'+jump/definition
           :desc "Jump to references"        :n  "D" #'+jump/references
           :desc "Open REPL"                 :n  "r" #'+eval/open-repl
-          :v  "r" #'+eval:repl)
+                                            :v  "r" #'+eval:repl)
 
         (:desc "file" :prefix "f"
           :desc "Find file"                 :n "." #'find-file
@@ -328,7 +328,7 @@
           :desc "Default browser"       :n  "b" #'browse-url-of-file
           :desc "Debugger"              :n  "d" #'+debug/open
           :desc "REPL"                  :n  "r" #'+eval/open-repl
-          :v  "r" #'+eval:repl
+                                        :v  "r" #'+eval:repl
           :desc "Neotree"               :n  "n" #'+neotree/toggle
           :desc "Terminal"              :n  "t" #'+term/open-popup
           :desc "Terminal in project"   :n  "T" #'+term/open-popup-in-project
