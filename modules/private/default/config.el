@@ -633,7 +633,6 @@
         :map ivy-minibuffer-map
         [escape] #'keyboard-escape-quit
         "C-SPC" #'ivy-call-and-recenter
-        "TAB" #'ivy-partial
         "M-v" #'yank
         "M-z" #'undo
         "C-r" #'evil-paste-from-register
