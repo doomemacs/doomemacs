@@ -37,7 +37,7 @@
       (and (or (string-match-p "https?://" url)
                (error "Field for %s doesn't look like an url" item))
            (browse-url url))
-    (error "Username not found.")))
+    (error "url not found.")))
 
 (defun +pass-ivy-action--get-field (item)
   (let* ((data (+pass--get-entry item))
