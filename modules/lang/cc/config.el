@@ -188,3 +188,48 @@ compilation database is present in the project.")
     (set! :company-backend 'glsl-mode '(company-glsl))))
 
 
+;;
+;; Rtags Support
+;;
+
+(def-package! rtags
+  :after cc-mode
+  :config
+  (if (not (executable-find "rdm"))
+      (warn "cc-mode: couldn't find rdm, disabling rtags support")
+    (add-hook! (c-mode c++-mode) #'rtags-start-process-unless-running)
+    (set! :jump '(c-mode c++-mode)
+      :definition #'rtags-find-symbol-at-point
+      :references #'rtags-find-references-at-point))
+
+  (setq rtags-autostart-diagnostics t
+        rtags-use-bookmarks nil
+        rtags-jump-to-first-match nil
+        rtags-results-buffer-other-window t)
+
+  (defun +cc|cleanup-rdm-maybe ()
+    "Shut down the rtags daemon, if it's running."
+    (when (and (processp rtags-rdm-process)
+               (not (memq (process-status rtags-rdm-process) '(exit signal)))
+               (not (doom-buffers-in-mode '(c-mode c++-mode))))
+      (rtags-cancel-process)))
+  (add-hook 'doom-cleanup-hook #'+cc|cleanup-rdm-maybe)
+  (add-hook 'rtags-jump-hook #'evil-set-jump)
+  (add-hook 'rtags-after-find-file-hook #'recenter))
+
+(def-package! ivy-rtags
+  :when (featurep! :completion ivy)
+  :after rtags
+  :init
+  ;; NOTE Ivy integration breaks when rtags is byte-compiled with Emacs 26 or
+  ;; later, so we un-byte-compile it before we load it.
+  (eval-when-compile
+    (when (>= emacs-major-version 26)
+      (when-let* ((elc-file (locate-library "rtags.elc" t doom--package-load-path)))
+        (delete-file elc-file))))
+  :config (setq rtags-display-result-backend 'ivy))
+
+(def-package! helm-rtags
+  :when (featurep! :completion helm)
+  :after rtags
+  :config (setq rtags-display-result-backend 'helm))
