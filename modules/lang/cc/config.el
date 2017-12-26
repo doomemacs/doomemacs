@@ -144,7 +144,8 @@ compilation database is present in the project.")
 ;;
 
 (def-package! cmake-mode
-  :mode "CMakeLists\\.txt$"
+  :mode "/CMakeLists\\.txt$"
+  :mode "\\.cmake\\$"
   :config
   (set! :company-backend 'cmake-mode '(company-cmake company-yasnippet)))
 
