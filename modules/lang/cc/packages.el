@@ -11,6 +11,9 @@
 (package! modern-cpp-font-lock)
 (package! opencl-mode)
 
+(when (featurep! :feature syntax-checker)
+  (package! flycheck-irony))
+
 (when (featurep! :completion company)
   (package! company-glsl :recipe (:fetcher github :repo "Kaali/company-glsl"))
   (package! company-irony)
