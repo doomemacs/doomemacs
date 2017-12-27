@@ -317,8 +317,12 @@ local value, whether or not it's permanent-local. Therefore, we cycle
 (def-package! visual-fill-column
   :commands visual-fill-column-mode
   :config
-  (setq-default visual-fill-column-center-text nil
-                visual-fill-column-width fill-column))
+  (setq-default
+   visual-fill-column-center-text t
+   visual-fill-column-width
+   ;; take Emacs 26 line numbers into account
+   (+ (if (boundp 'display-line-numbers) 6 0)
+      fill-column)))
 
 
 ;;
