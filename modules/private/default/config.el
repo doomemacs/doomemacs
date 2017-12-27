@@ -1,6 +1,6 @@
 ;;; private/default/config.el -*- lexical-binding: t; -*-
 
-(def-package! emacs-snippets)
+(def-package! emacs-snippets :after yasnippet)
 
 
 ;;

@@ -6,6 +6,11 @@
   (expand-file-name "templates/" (file-name-directory load-file-name))
   "The path to a directory of yasnippet folders to use for file templates.")
 
+
+;;
+;; Plugins
+;;
+
 (def-package! autoinsert ; built-in
   :defer 1
   :init
@@ -18,10 +23,11 @@
   (auto-insert-mode 1)
 
   (defun +file-templates--expand (key &optional mode project-only)
-    "Auto insert a snippet of yasnippet into new file."
+    "Auto insert a yasnippet snippet into the blank file."
     (when (if project-only (doom-project-p) t)
       (require 'yasnippet)
-      (unless yas-minor-mode (yas-minor-mode-on))
+      (unless yas-minor-mode
+        (yas-minor-mode-on))
       (when (and yas-minor-mode
                  (yas-expand-snippet (yas-lookup-snippet key mode t))
                  (and (featurep 'evil) evil-mode)

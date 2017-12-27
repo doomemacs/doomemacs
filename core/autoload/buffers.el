@@ -315,6 +315,6 @@ project."
 
 ;;;###autoload
 (defun doom-set-buffer-real (buffer flag)
-  "Forcibly mark a buffer's real property, no matter what."
+  "Forcibly mark BUFFER as FLAG (non-nil = real)."
   (with-current-buffer buffer
     (setq doom-real-buffer-p flag)))
