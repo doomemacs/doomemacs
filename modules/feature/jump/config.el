@@ -104,28 +104,3 @@ properties:
                                  ((featurep! :completion helm) 'helm)
                                  (t 'popup))))
 
-
-(def-package! gxref
-  :commands (gxref-xref-backend
-             gxref-create-db
-             gxref-update-db
-             gxref-single-update-db
-             gxref-set-project-dir)
-  :init
-  (setq-default xref-backend-functions '(gxref-xref-backend t)))
-
-
-;; (def-package! ggtags
-;;   :commands (ggtags-find-tag-dwim
-;;              ggtags-find-tag-mouse
-;;              ggtags-find-definition
-;;              ggtags-find-reference
-;;              ggtags-find-other-symbol
-;;              ggtags-find-tag-regexp
-;;              ggtags-idutils-query
-;;              ggtags-grep
-;;              ggtags-find-file
-;;              ggtags-query-replace
-;;              ggtags-delete-tags
-;;              ggtags-explain-tags))
-
