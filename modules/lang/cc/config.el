@@ -226,8 +226,7 @@ compilation database is present in the project.")
   (add-hook 'doom-cleanup-hook #'rtags-cancel-process)
 
   ;; Use rtags-imenu instead of imenu/counsel-imenu
-  (map! (:when (featurep 'ivy) :map ivy-mode-map [remap imenu] nil)
-        :map (c-mode-map c++-mode-map) [remap imenu] #'rtags-imenu)
+  (map! :map (c-mode-map c++-mode-map) [remap imenu] #'rtags-imenu)
 
   (add-hook 'rtags-jump-hook #'evil-set-jump)
   (add-hook 'rtags-after-find-file-hook #'recenter))
