@@ -308,6 +308,7 @@ project."
 (defun doom/cleanup-buffers (&optional all-p)
   "Clean up buried and inactive process buffers in the current workspace."
   (interactive "P")
+  (run-hooks 'doom-cleanup-hook)
   (let ((buffers (doom-buried-buffers (if all-p (buffer-list))))
         (n 0))
     (mapc #'kill-buffer buffers)
