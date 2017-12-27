@@ -43,8 +43,7 @@ immediately runs it on the current candidate (ending the ivy session)."
   (after! magit     (setq magit-completing-read-function #'ivy-completing-read))
   (after! yasnippet (push #'+ivy-yas-prompt yas-prompt-functions))
 
-  (map! :map ivy-mode-map
-        [remap apropos]                   #'counsel-apropos
+  (map! [remap apropos]                   #'counsel-apropos
         [remap describe-face]             #'counsel-describe-face
         [remap find-file]                 #'counsel-find-file
         [remap switch-to-buffer]          #'ivy-switch-buffer
