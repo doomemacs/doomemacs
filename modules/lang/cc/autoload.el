@@ -1,8 +1,8 @@
 ;;; lang/cc/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
-(defun +cc/reload-compile-commands (&optional force-p)
-  "Reload the current project's compile_commands.json file."
+(defun +cc/reload-compile-db (&optional force-p)
+  "Reload the current project's JSON compilation database."
   (interactive "P")
   (unless (memq major-mode '(c-mode c++-mode objc-mode))
     (user-error "Not a C/C++/ObjC buffer"))
