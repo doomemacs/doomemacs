@@ -195,25 +195,38 @@ compilation database is present in the project.")
 (def-package! rtags
   :after cc-mode
   :config
-  (if (not (executable-find "rdm"))
-      (warn "cc-mode: couldn't find rdm, disabling rtags support")
-    (add-hook! (c-mode c++-mode) #'rtags-start-process-unless-running)
-    (set! :jump '(c-mode c++-mode)
-      :definition #'rtags-find-symbol-at-point
-      :references #'rtags-find-references-at-point))
-
   (setq rtags-autostart-diagnostics t
         rtags-use-bookmarks nil
-        rtags-jump-to-first-match nil
-        rtags-results-buffer-other-window t)
+        ;; If not using ivy or helm to view results, use a pop-up window rather
+        ;; than displaying it in the current window...
+        rtags-results-buffer-other-window t
+        ;; ...and don't auto-jump to first match before making a selection.
+        rtags-jump-to-first-match nil)
 
-  (defun +cc|cleanup-rdm-maybe ()
-    "Shut down the rtags daemon, if it's running."
-    (when (and (processp rtags-rdm-process)
-               (not (memq (process-status rtags-rdm-process) '(exit signal)))
-               (not (doom-buffers-in-mode '(c-mode c++-mode))))
-      (rtags-cancel-process)))
-  (add-hook 'doom-cleanup-hook #'+cc|cleanup-rdm-maybe)
+  (defun +cc|init-rtags-server-maybe ()
+    "Start the rtags server if it isn't already running."
+    (unless (or (processp rtags-rdm-process)
+                (cl-loop for proc in (list-system-processes)
+                         for cmd = (cdr (assq 'args (process-attributes proc)))
+                         if (string-match-p "/rdm\\_>" cmd)
+                         return t))
+      (message "Starting rtags server")
+      (rtags-start-process-unless-running)))
+
+  (let ((bins (cl-remove-if-not #'executable-find '("rdm" "rc"))))
+    (if (/= (length bins) 2)
+        (warn "cc-mode: couldn't find %s, disabling rtags support" bins)
+      (add-hook! (c-mode c++-mode) #'+cc|init-rtags-server-maybe)
+      (set! :jump '(c-mode c++-mode)
+        :definition #'rtags-find-symbol-at-point
+        :references #'rtags-find-references-at-point)))
+
+  (add-hook 'doom-cleanup-hook #'rtags-cancel-process)
+
+  ;; Use rtags-imenu instead of imenu/counsel-imenu
+  (map! (:when (featurep 'ivy) :map ivy-mode-map [remap imenu] nil)
+        :map (c-mode-map c++-mode-map) [remap imenu] #'rtags-imenu)
+
   (add-hook 'rtags-jump-hook #'evil-set-jump)
   (add-hook 'rtags-after-find-file-hook #'recenter))
 
