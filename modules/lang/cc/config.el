@@ -204,27 +204,16 @@ compilation database is present in the project.")
         ;; ...and don't auto-jump to first match before making a selection.
         rtags-jump-to-first-match nil)
 
-  (defun +cc|init-rtags-server-maybe ()
-    "Start the rtags server if it isn't already running."
-    (unless (or (processp rtags-rdm-process)
-                (cl-loop for proc in (list-system-processes)
-                         for cmd = (cdr (assq 'args (process-attributes proc)))
-                         if (string-match-p "/rdm\\_>" cmd)
-                         return t))
-      (message "Starting rtags server")
-      (rtags-start-process-unless-running)
-      ;; Emacs-spawned rdm should be temporary
-      (add-hook! kill-emacs (ignore-errors (rtags-cancel-process)))))
-
   (let ((bins (cl-remove-if-not #'executable-find '("rdm" "rc"))))
     (if (/= (length bins) 2)
         (warn "cc-mode: couldn't find %s, disabling rtags support" bins)
-      (add-hook! (c-mode c++-mode) #'+cc|init-rtags-server-maybe)
+      (add-hook! (c-mode c++-mode) #'rtags-start-process-unless-running)
       (set! :jump '(c-mode c++-mode)
         :definition #'rtags-find-symbol-at-point
         :references #'rtags-find-references-at-point)))
 
   (add-hook 'doom-cleanup-hook #'rtags-cancel-process)
+  (add-hook! kill-emacs (ignore-errors (rtags-cancel-process)))
 
   ;; Use rtags-imenu instead of imenu/counsel-imenu
   (map! :map (c-mode-map c++-mode-map) [remap imenu] #'rtags-imenu)
