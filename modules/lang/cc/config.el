@@ -211,7 +211,9 @@ compilation database is present in the project.")
                          if (string-match-p "/rdm\\_>" cmd)
                          return t))
       (message "Starting rtags server")
-      (rtags-start-process-unless-running)))
+      (rtags-start-process-unless-running)
+      ;; Emacs-spawned rdm should be temporary
+      (add-hook 'kill-emacs-hook #'rtags-cancel-process)))
 
   (let ((bins (cl-remove-if-not #'executable-find '("rdm" "rc"))))
     (if (/= (length bins) 2)
