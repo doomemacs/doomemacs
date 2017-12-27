@@ -13,10 +13,25 @@
   "A list of functions that determine whether to inhibit the dashboard the
 loading.")
 
+(defvar +doom-dashboard-pwd-policy 'last-project
+  "The policy to use when setting the `default-directory' in the dashboard.
+
+Possible values:
+
+  'last-project  the `doom-project-root' of the last open buffer
+  'last          the `default-directory' of the last open buffer
+  a FUNCTION     a function run with the `default-directory' of the last
+                 open buffer, that returns a directory path
+  a STRING       a fixed path
+  nil            `default-directory' will never change")
+
+;;
+(defvar +doom-dashboard--last-cwd nil)
 (defvar +doom-dashboard--width 80)
 (defvar +doom-dashboard--height 0)
 (defvar +doom-dashboard--old-fringe-indicator fringe-indicator-alist)
 
+;;
 (setq doom-fallback-buffer +doom-dashboard-name)
 
 
@@ -59,7 +74,9 @@ if in a GUI/non-daemon session."
       (+doom-dashboard/open (selected-frame)))))
 
 (defun +doom-dashboard|kill-buffer-query-fn ()
-  (or (not (+doom-dashboard-p))
+  (or (unless (+doom-dashboard-p)
+        (setq +doom-dashboard--last-cwd default-directory)
+        t)
       (ignore (let (+doom-dashboard-inhibit-refresh)
                 (ignore-errors (+doom-dashboard-reload))))))
 
@@ -97,19 +114,34 @@ whose dimensions may not be fully initialized by the time this is run."
   (concat (make-string (ceiling (max 0 (- len (length s))) 2) ? )
           s))
 
+(defun +doom-dashboard--get-pwd (dir)
+  (cond ((null +doom-dashboard-pwd-policy)
+         default-directory)
+        (dir dir)
+        ((null +doom-dashboard--last-cwd)
+         default-directory)
+        (+doom-dashboard--last-cwd
+         (when-let* ((default-directory +doom-dashboard--last-cwd))
+           (pcase +doom-dashboard-pwd-policy
+             (`last-project (doom-project-root))
+             (`last default-directory)
+             ((pred stringp) +doom-dashboard-pwd-policy)
+             ((pred functionp) (funcall +doom-dashboard-pwd-policy default-directory))
+             (_ (warn "`+doom-dashboard-pwd-policy' has an invalid value of '%s'"
+                      +doom-dashboard-pwd-policy)))))))
+
 (defun +doom-dashboard-reload (&optional dir)
   "Update the DOOM scratch buffer (or create it, if it doesn't exist)."
   (when (get-buffer-window (doom-fallback-buffer))
     (unless (or +doom-dashboard-inhibit-refresh
                 (window-minibuffer-p (frame-selected-window)))
-      (let ((old-pwd (or dir default-directory))
-            (fallback-buffer (doom-fallback-buffer)))
+      (let ((fallback-buffer (doom-fallback-buffer)))
         (with-current-buffer fallback-buffer
           (with-silent-modifications
             (unless (eq major-mode '+doom-dashboard-mode)
               (+doom-dashboard-mode))
             (erase-buffer)
-            (setq default-directory old-pwd)
+            (setq default-directory (+doom-dashboard--get-pwd dir))
             (let ((+doom-dashboard--height (window-height (get-buffer-window fallback-buffer)))
                   (lines 1)
                   content)

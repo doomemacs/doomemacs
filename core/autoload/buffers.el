@@ -130,8 +130,6 @@ buffers. If there's nothing left, switch to `doom-fallback-buffer'. See
                     do
                     (dotimes (_i (abs n))
                       (funcall move-func)))))
-    (when (eq (current-buffer) (doom-fallback-buffer))
-      (cd project-dir))
     (current-buffer)))
 
 ;;;###autoload
