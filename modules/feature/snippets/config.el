@@ -21,11 +21,9 @@
     #'yas-minor-mode-on)
 
   :config
-  (setq yas-verbosity 0
-        yas-indent-line 'auto
+  (setq yas-verbosity (if doom-debug-mode 3 0)
         yas-also-auto-indent-first-line t
-        yas-prompt-functions '(yas-completing-prompt yas-ido-prompt yas-no-prompt)
-        yas-use-menu nil
+        yas-prompt-functions (delq 'yas-dropdown-prompt yas-prompt-functions)
         ;; Allow nested snippets
         yas-triggers-in-field t)
 
