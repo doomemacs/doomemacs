@@ -197,6 +197,7 @@ compilation database is present in the project.")
   :config
   (setq rtags-autostart-diagnostics t
         rtags-use-bookmarks nil
+        rtags-completions-enabled nil
         ;; If not using ivy or helm to view results, use a pop-up window rather
         ;; than displaying it in the current window...
         rtags-results-buffer-other-window t
