@@ -112,8 +112,7 @@ If DERIVED-P, test with `derived-mode-p', otherwise use `eq'."
   "Switch to the next buffer N times (previous, if N < 0), skipping over unreal
 buffers. If there's nothing left, switch to `doom-fallback-buffer'. See
 `doom-real-buffer-p' for what 'real' means."
-  (let ((buffers (delq (current-buffer) (doom-real-buffer-list)))
-        (project-dir (doom-project-root)))
+  (let ((buffers (delq (current-buffer) (doom-real-buffer-list))))
     (cond ((or (not buffers)
                (zerop (% n (1+ (length buffers)))))
            (switch-to-buffer (doom-fallback-buffer) nil t))
