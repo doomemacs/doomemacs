@@ -1,6 +1,25 @@
 ;;; lang/cc/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
+(defun +cc/reload-compile-commands (&optional force-p)
+  "Reload the current project's compile_commands.json file."
+  (interactive "P")
+  (unless (memq major-mode '(c-mode c++-mode objc-mode))
+    (user-error "Not a C/C++/ObjC buffer"))
+  (unless (doom-project-has! "compile_commands.json")
+    (user-error "No compile_commands.json file"))
+  ;; first rtag
+  (when (and (featurep 'rtags)
+             rtags-enabled
+             (executable-find "rc"))
+    (with-temp-buffer
+      (message "Reloaded compile commands for rtags daemon")
+      (rtags-call-rc :silent t "-J" (doom-project-root))))
+  ;; then irony
+  (when (and (featurep 'irony) irony-mode)
+    (+cc|irony-init-compile-options)))
+
+;;;###autoload
 (defun +cc*align-lambda-arglist (orig-fun &rest args)
   "Improve indentation of continued C++11 lambda function opened as argument."
   (if (and (eq major-mode 'c++-mode)
