@@ -78,7 +78,7 @@ the cursor."
 (defun +org-attach-download-dnd (uri action)
   "TODO"
   (if (eq major-mode 'org-mode)
-      (+org-attach:url uri)
+      (+org-attach/uri uri)
     (let ((dnd-protocol-alist
            (rassq-delete-all '+org-attach-download-dnd
                              (copy-alist dnd-protocol-alist))))
@@ -113,9 +113,9 @@ the cursor."
         (t
          (insert
           (format "%s [[./%s][%s]] "
-                  (org-attach--icon filename)
+                  (+org-attach--icon filename)
                   (file-relative-name filename buffer-file-name)
-                  (file-name-nondirectory (directory-file-name rel-path)))))))
+                  (file-name-nondirectory (directory-file-name filename)))))))
 
 ;;;###autoload
 (defun +org-attach*relative-to-attach-dir (orig-fn &rest args)
