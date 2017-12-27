@@ -110,5 +110,5 @@
           ("/\\(index\\|main\\)\\.slim$"     "__"               slim-mode)
           ;; Shell scripts
           ("\\.z?sh$"                        "__"               sh-mode)
+          ("\\.fish$"                        "__"               fish-mode)
           ("\\.zunit$"                       "__zunit"          sh-mode))))
-
