@@ -9,3 +9,7 @@
 ;;       ((featurep! :completion helm)
 ;;        (package! helm-gtags)))
 
+(when (featurep! :completion ivy)
+  (package! ivy-xref))
+(when (featurep! :completion helm)
+  (package! helm-xref))
