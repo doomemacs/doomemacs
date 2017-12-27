@@ -81,8 +81,8 @@ rc -J $PROJECT_ROOT  # loads PROJECT_ROOT's compile_commands.json
 * Configure
 ** Compile settings
 By default, a set of default compile settings are defined in
-~+cc-compiler-options~ for C, C++ and Objective C. Irony, rtags and flycheck
-will fall back to these.
+~+cc-default-compiler-options~ for C, C++ and Objective C. Irony, rtags and
+flycheck will fall back to these.
 
 To make these tools aware of project specific build settings, you need a JSON
 [[https://sarcasm.github.io/notes/dev/compilation-database.html#ninja][compilation database]] present (i.e. a ~compile_commands.json~ file).

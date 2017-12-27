@@ -85,8 +85,8 @@
 ;;;###autoload
 (defun +cc|irony-init-compile-options ()
   "Initialize compiler options for irony-mode. It searches for the nearest
-compilation database and initailizes it. If none was found, it uses
-`+cc-c++-compiler-options'.
+compilation database and initailizes it, otherwise falling back on
+`+cc-default-compiler-options' and `+cc-default-include-paths'.
 
 See https://github.com/Sarcasm/irony-mode#compilation-database for details on
 compilation dbs."
@@ -94,8 +94,8 @@ compilation dbs."
     (require 'irony-cdb)
     (unless (irony-cdb-autosetup-compile-options)
       (irony-cdb--update-compile-options
-       (append (delq nil (cdr-safe (assq major-mode +cc-compiler-options)))
-               (cl-loop for path in +cc-include-paths
+       (append (delq nil (cdr-safe (assq major-mode +cc-default-compiler-options)))
+               (cl-loop for path in +cc-default-include-paths
                         nconc (list "-I" path)))
        (doom-project-root)))))
 

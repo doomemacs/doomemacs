@@ -1,13 +1,11 @@
 ;;; lang/cc/config.el --- c, c++, and obj-c -*- lexical-binding: t; -*-
 
-(defvar +cc-include-paths (list "include/")
-  "A list of paths, relative to a project root, to search for headers in C/C++.
-Paths can be absolute.
+(defvar +cc-default-include-paths (list "include/")
+  "A list of default paths, relative to a project root, to search for headers in
+C/C++. Paths can be absolute. This is ignored if your project has a JSON
+compilation database.")
 
-The purpose of this variable is to ensure syntax checkers and code-completion
-knows where to look for headers.")
-
-(defvar +cc-compiler-options
+(defvar +cc-default-compiler-options
   `((c-mode . nil)
     (c++-mode
      . ,(list "-std=c++11" ; use C++11 by default
@@ -117,7 +115,7 @@ compilation database is present in the project.")
   (unless (file-directory-p irony-server-install-prefix)
     (warn "irony-mode: server isn't installed; run M-x irony-install-server"))
   ;; Initialize compilation database, if present. Otherwise, fall back on
-  ;; `+cc-compiler-options'.
+  ;; `+cc-default-compiler-options'.
   (add-hook 'irony-mode-hook #'+cc|irony-init-compile-options))
 
 (def-package! irony-eldoc
