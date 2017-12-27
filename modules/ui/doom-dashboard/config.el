@@ -125,7 +125,7 @@ whose dimensions may not be fully initialized by the time this is run."
            (pcase +doom-dashboard-pwd-policy
              (`last-project (doom-project-root))
              (`last default-directory)
-             ((pred stringp) +doom-dashboard-pwd-policy)
+             ((pred stringp) (expand-file-name +doom-dashboard-pwd-policy))
              ((pred functionp) (funcall +doom-dashboard-pwd-policy default-directory))
              (_ (warn "`+doom-dashboard-pwd-policy' has an invalid value of '%s'"
                       +doom-dashboard-pwd-policy)))))))
