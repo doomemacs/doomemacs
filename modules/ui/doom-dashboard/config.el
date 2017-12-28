@@ -117,20 +117,27 @@ whose dimensions may not be fully initialized by the time this is run."
           s))
 
 (defun +doom-dashboard--get-pwd (dir)
-  (cond ((null +doom-dashboard-pwd-policy)
-         default-directory)
-        (dir dir)
-        ((null +doom-dashboard--last-cwd)
-         default-directory)
-        (+doom-dashboard--last-cwd
-         (when-let* ((default-directory +doom-dashboard--last-cwd))
-           (pcase +doom-dashboard-pwd-policy
-             (`last-project (doom-project-root))
-             (`last default-directory)
-             ((pred stringp) (expand-file-name +doom-dashboard-pwd-policy))
-             ((pred functionp) (funcall +doom-dashboard-pwd-policy default-directory))
-             (_ (warn "`+doom-dashboard-pwd-policy' has an invalid value of '%s'"
-                      +doom-dashboard-pwd-policy)))))))
+  (let ((lastcwd +doom-dashboard--last-cwd)
+        (policy +doom-dashboard-pwd-policy))
+    (cond ((null policy)
+           default-directory)
+          (dir dir)
+          ((null lastcwd)
+           default-directory)
+          ((eq policy 'last-project)
+           (let ((cwd default-directory)
+                 (default-directory lastcwd))
+             (if (doom-project-p)
+                 (doom-project-root)
+               cwd)))
+          ((eq policy 'last))
+          ((stringp policy)
+           (expand-file-name policy lastcwd))
+          ((functionp policy)
+           (funcall policy lastcwd))
+          (t
+           (warn "`+doom-dashboard-pwd-policy' has an invalid value of '%s'"
+                 +doom-dashboard-pwd-policy)))))
 
 (defun +doom-dashboard-reload (&optional dir)
   "Update the DOOM scratch buffer (or create it, if it doesn't exist)."
@@ -143,7 +150,9 @@ whose dimensions may not be fully initialized by the time this is run."
             (unless (eq major-mode '+doom-dashboard-mode)
               (+doom-dashboard-mode))
             (erase-buffer)
-            (setq default-directory (+doom-dashboard--get-pwd dir))
+            (setq default-directory
+                  (or (+doom-dashboard--get-pwd dir)
+                      default-directory))
             (let ((+doom-dashboard--height (window-height (get-buffer-window fallback-buffer)))
                   (lines 1)
                   content)
