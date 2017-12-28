@@ -522,11 +522,10 @@ call `doom/reload-load-path' remotely (through emacsclient)."
          (when (server-running-p)
            (message "Reloading active Emacs session...")
            (server-eval-at server-name '(doom//reload-load-path))))
-        (t
-         (doom-initialize-load-path t)
-         (message "%d packages reloaded" (length doom--package-load-path))
-         (run-with-timer 1 nil #'redraw-display)
-         (run-hooks 'doom-reload-hook))))
+        ((let ((noninteractive t))
+           (doom-initialize-load-path t)
+           (message "%d packages reloaded" (length doom--package-load-path))
+           (run-hooks 'doom-reload-hook)))))
 
 (defun doom//reload-autoloads ()
   "Refreshes the autoloads.el file, specified by `doom-autoload-file'.
