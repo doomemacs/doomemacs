@@ -28,8 +28,7 @@
   :commands org-crypt-use-before-save-magic
   :config
   (setq org-tags-exclude-from-inheritance '("crypt")
-        org-crypt-key user-mail-address
-        epa-file-encrypt-to user-mail-address))
+        org-crypt-key user-mail-address))
 
 (def-package! org-bullets
   :commands org-bullets-mode)

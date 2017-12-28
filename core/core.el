@@ -105,6 +105,17 @@ melodramatic ex-vimmer disappointed with the text-editor status quo."
  url-cache-directory          (concat doom-cache-dir "url/")
  url-configuration-directory  (concat doom-etc-dir "url/"))
 
+(after! epa
+  (setq epa-file-encrypt-to (or epa-file-encrypt-to user-mail-address)
+        ;; With GPG 2.1, this lets Emacs prompt for gpg key passphrases
+        epa-pinentry-mode 'loopback))
+
+(defun doom*no-authinfo-for-tramp (orig-fn &rest args)
+  "Don't look into .authinfo for local sudo TRAMP buffers."
+  (let ((auth-sources (if (equal tramp-current-method "sudo") nil auth-sources)))
+    (apply orig-fn args)))
+(advice-add #'tramp-read-passwd :around #'doom*no-authinfo-for-tramp)
+
 ;; move custom defs out of init.el
 (setq custom-file (concat doom-etc-dir "custom.el"))
 (load custom-file t t)
