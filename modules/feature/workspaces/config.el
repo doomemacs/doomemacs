@@ -68,7 +68,10 @@ renamed.")
   (remove-hook 'delayed-warnings-hook #'display-delayed-warnings)
   (defun +workspaces|init (&optional frame)
     (unless persp-mode
-      (persp-mode +1))
+      (persp-mode +1)
+      ;; Ensure `persp-kill-buffer-query-function' is last in kill-buffer-query-functions
+      (remove-hook 'kill-buffer-query-functions 'persp-kill-buffer-query-function)
+      (add-hook 'kill-buffer-query-functions 'persp-kill-buffer-query-function t))
     (let ((frame (or frame (selected-frame))))
       (unless noninteractive
         ;; The default perspective persp-mode makes (defined by
