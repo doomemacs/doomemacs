@@ -247,14 +247,11 @@ instead)."
   (defun doom*disable-all-the-icons-in-tty (orig-fn &rest args)
     (when (display-graphic-p)
       (apply orig-fn args)))
-
   ;; all-the-icons doesn't work in the terminal, so we "disable" it.
-  (advice-add #'all-the-icons-octicon    :around #'doom*disable-all-the-icons-in-tty)
-  (advice-add #'all-the-icons-material   :around #'doom*disable-all-the-icons-in-tty)
-  (advice-add #'all-the-icons-faicon     :around #'doom*disable-all-the-icons-in-tty)
-  (advice-add #'all-the-icons-fileicon   :around #'doom*disable-all-the-icons-in-tty)
-  (advice-add #'all-the-icons-wicon      :around #'doom*disable-all-the-icons-in-tty)
-  (advice-add #'all-the-icons-alltheicon :around #'doom*disable-all-the-icons-in-tty))
+  (dolist (fn '(all-the-icons-octicon all-the-icons-material
+                all-the-icons-faicon all-the-icons-fileicon
+                all-the-icons-wicon all-the-icons-alltheicon))
+    (advice-add fn :around #'doom*disable-all-the-icons-in-tty)))
 
 (def-package! fringe-helper
   :commands (fringe-helper-define fringe-helper-convert)
