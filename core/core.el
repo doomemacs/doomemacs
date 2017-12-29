@@ -142,25 +142,15 @@ ability to invoke the debugger in debug mode."
           (car ex) fn (error-message-string ex))))
   nil)
 
-(defun doom|finalize ()
-  (unless (or (not after-init-time) noninteractive)
-    (dolist (hook '(doom-init-hook doom-post-init-hook))
-      (run-hook-wrapped hook #'doom-try-run-hook hook)))
-
-  ;; Don't keep gc-cons-threshold too high. It helps to stave off the GC while
-  ;; Emacs starts up, but afterwards it causes stuttering and random freezes. So
-  ;; reset it to a reasonable default.
-  (setq gc-cons-threshold 16777216
-        gc-cons-percentage 0.1
-        file-name-handler-alist doom--file-name-handler-alist)
-  t)
-
 
 ;;;
 ;; Initialize
 (eval-and-compile
   (defvar doom--file-name-handler-alist file-name-handler-alist)
   (unless (or after-init-time noninteractive)
+    ;; One of the contributors to long startup times is the garbage collector,
+    ;; so we up its memory threshold, temporarily. It is reset later in
+    ;; `doom|finalize'.
     (setq gc-cons-threshold 402653184
           gc-cons-percentage 0.6
           file-name-handler-alist nil))
@@ -186,6 +176,19 @@ ability to invoke the debugger in debug mode."
     (load! core-editor)     ; baseline configuration for text editing
     (load! core-projects)   ; making Emacs project-aware
     (load! core-keybinds))  ; centralized keybind system + which-key
+
+  (defun doom|finalize ()
+    "Run `doom-init-hook', `doom-post-init-hook' and reset `gc-cons-threshold',
+`gc-cons-percentage' and `file-name-handler-alist'."
+    (unless (or (not after-init-time) noninteractive)
+      (dolist (hook '(doom-init-hook doom-post-init-hook))
+        (run-hook-wrapped hook #'doom-try-run-hook hook)))
+
+    ;; If you forget to reset this, you'll get stuttering and random freezes!
+    (setq gc-cons-threshold 16777216
+          gc-cons-percentage 0.1
+          file-name-handler-alist doom--file-name-handler-alist)
+    t)
 
   (add-hook! '(emacs-startup-hook doom-reload-hook)
     #'doom|finalize))
