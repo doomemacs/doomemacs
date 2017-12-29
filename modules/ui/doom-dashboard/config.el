@@ -116,12 +116,11 @@ whose dimensions may not be fully initialized by the time this is run."
   (concat (make-string (ceiling (max 0 (- len (length s))) 2) ? )
           s))
 
-(defun +doom-dashboard--get-pwd (dir)
+(defun +doom-dashboard--get-pwd ()
   (let ((lastcwd +doom-dashboard--last-cwd)
         (policy +doom-dashboard-pwd-policy))
     (cond ((null policy)
            default-directory)
-          (dir dir)
           ((null lastcwd)
            default-directory)
           ((eq policy 'last-project)
@@ -140,35 +139,37 @@ whose dimensions may not be fully initialized by the time this is run."
            (warn "`+doom-dashboard-pwd-policy' has an invalid value of '%s'"
                  +doom-dashboard-pwd-policy)))))
 
-(defun +doom-dashboard-reload (&optional dir)
+(defun +doom-dashboard-reload (&optional force)
   "Update the DOOM scratch buffer (or create it, if it doesn't exist)."
-  (when (get-buffer-window (doom-fallback-buffer))
-    (unless (or +doom-dashboard-inhibit-refresh
-                (window-minibuffer-p (frame-selected-window)))
-      (let ((fallback-buffer (doom-fallback-buffer)))
-        (with-current-buffer fallback-buffer
-          (with-silent-modifications
-            (unless (eq major-mode '+doom-dashboard-mode)
-              (+doom-dashboard-mode))
-            (erase-buffer)
-            (setq default-directory
-                  (or (+doom-dashboard--get-pwd dir)
-                      default-directory))
-            (let ((+doom-dashboard--height (window-height (get-buffer-window fallback-buffer)))
-                  (lines 1)
-                  content)
-              (with-temp-buffer
-                (dolist (widget-name +doom-dashboard-widgets)
-                  (funcall (intern (format "doom-dashboard-widget--%s" widget-name)))
-                  (insert "\n"))
-                (setq content (buffer-string)
-                      lines (count-lines (point-min) (point-max))))
-              (insert (make-string (max 0 (- (/ +doom-dashboard--height 2)
-                                             (/ lines 2)))
-                                   ?\n)
-                      content))
-            (unless (button-at (point))
-              (goto-char (next-button (point-min))))))))
+  (let ((fallback-buffer (doom-fallback-buffer)))
+    (when (or force
+              (and (get-buffer-window fallback-buffer)
+                   (not (window-minibuffer-p (frame-selected-window)))))
+      (with-current-buffer fallback-buffer
+        (setq default-directory
+              (or (+doom-dashboard--get-pwd)
+                  default-directory)))
+      (unless +doom-dashboard-inhibit-refresh
+        (with-silent-modifications
+          (unless (eq major-mode '+doom-dashboard-mode)
+            (+doom-dashboard-mode))
+          (erase-buffer)
+
+          (let ((+doom-dashboard--height (window-height (get-buffer-window fallback-buffer)))
+                (lines 1)
+                content)
+            (with-temp-buffer
+              (dolist (widget-name +doom-dashboard-widgets)
+                (funcall (intern (format "doom-dashboard-widget--%s" widget-name)))
+                (insert "\n"))
+              (setq content (buffer-string)
+                    lines (count-lines (point-min) (point-max))))
+            (insert (make-string (max 0 (- (/ +doom-dashboard--height 2)
+                                           (/ lines 2)))
+                                 ?\n)
+                    content))
+          (unless (button-at (point))
+            (goto-char (next-button (point-min)))))))
     ;; Update all dashboard windows
     (dolist (win (get-buffer-window-list (doom-fallback-buffer) nil t))
       (set-window-fringes win 0 0)
