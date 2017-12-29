@@ -10,7 +10,7 @@
   "If non-nil, the doom buffer won't be refreshed.")
 
 (defvar +doom-dashboard-inhibit-functions ()
-  "A list of functions that determine whether to inhibit the dashboard the
+  "A list of functions that determine whether to inhibit the dashboard from
 loading.")
 
 (defvar +doom-dashboard-pwd-policy 'last-project
