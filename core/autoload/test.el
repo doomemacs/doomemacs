@@ -75,6 +75,8 @@ If neither is available, run all tests in all enabled modules."
   "Define a namespaced ERT test."
   (declare (indent defun) (doc-string 2))
   (unless (plist-get body :disabled)
+    (when (plist-get body :skip)
+      (push '(ert-skip nil) body))
     `(ert-deftest
          ,(cl-loop with path = (file-relative-name (file-name-sans-extension load-file-name)
                                                    doom-emacs-dir)
