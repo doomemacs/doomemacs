@@ -16,7 +16,7 @@
   "Evaluate a region and print it to the echo area (if one line long), otherwise
 to a pop up buffer."
   (require 'pp)
-  (let ((result (eval (read (buffer-substring-no-properties beg end))))
+  (let ((result (eval (read (concat "(progn " (buffer-substring-no-properties beg end) "\n)"))))
         (buf (get-buffer-create "*doom eval*"))
         (inhibit-read-only t)
         lines)
