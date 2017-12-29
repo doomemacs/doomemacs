@@ -9,6 +9,9 @@
        :completion
        company
 
+       :ui
+       doom-dashboard
+
        :tools
        password-store
 
