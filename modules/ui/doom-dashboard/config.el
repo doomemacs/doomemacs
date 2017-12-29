@@ -77,7 +77,11 @@ if in a GUI/non-daemon session."
       (+doom-dashboard/open (selected-frame)))))
 
 (defun +doom-dashboard|reload-on-kill ()
-  "TODO"
+  "If this isn't a dashboard buffer, move along, but record its
+`default-directory' if the buffer is real. See `doom-real-buffer-p' for an
+explanation for what 'real' means.
+
+If this is the dashboard buffer, reload the dashboard."
   (or (unless (+doom-dashboard-p)
         (when (doom-real-buffer-p)
           (setq +doom-dashboard--last-cwd default-directory)
