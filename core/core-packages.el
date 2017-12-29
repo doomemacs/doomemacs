@@ -325,7 +325,7 @@ MODULES is an malformed plist of modules to load."
   ;; Ignore package if NAME is in `doom-disabled-packages'
   (when (and (memq name doom-disabled-packages)
              (not (memq :disabled plist)))
-    (setq plist (append (list :disabled t) plist)))
+    (setq plist `(:disabled t ,@plist)))
   ;; If byte-compiling, ignore this package if it doesn't meet the condition.
   ;; This avoids false-positive load errors.
   (unless (and (bound-and-true-p byte-compile-current-file)
@@ -368,31 +368,26 @@ to have them return non-nil (or exploit that to overwrite Doom's config)."
   "Load a file relative to the current executing file (`load-file-name').
 
 FILESYM is either a symbol or string representing the file to load. PATH is
-where to look for the file (a string representing a directory path), by default
-it is relative to `load-file-name', `byte-compile-current-file' or
+where to look for the file (a string representing a directory path). If omitted,
+the lookup is relative to `load-file-name', `byte-compile-current-file' or
 `buffer-file-name' (in that order).
 
 If NOERROR is non-nil, don't throw an error if the file doesn't exist."
-  (let ((path (or (and path (or (and (symbolp path) (symbol-value path))
-                                (and (stringp path) path)
-                                (and (listp path) (eval path))))
+  (cl-assert (symbolp filesym) t)
+  (let ((path (or path
                   (and load-file-name (file-name-directory load-file-name))
                   (and (bound-and-true-p byte-compile-current-file)
                        (file-name-directory byte-compile-current-file))
                   (and buffer-file-name
-                       (file-name-directory buffer-file-name))))
-        (filename (cond ((stringp filesym) filesym)
-                        ((symbolp filesym) (symbol-name filesym))
-                        (t (error "load! expected a string or symbol, got %s (a %s)"
-                                  filesym (type-of filesym))))))
-    (unless path
-      (error "Could not find %s" filename))
+                       (file-name-directory buffer-file-name))
+                  (error "Could not detect path to look for '%s' in" filesym)))
+        (filename (symbol-name filesym)))
     (let ((file (expand-file-name (concat filename ".el") path)))
       (if (file-exists-p file)
           `(load ,(file-name-sans-extension file) ,noerror
                  ,(not doom-debug-mode))
         (unless noerror
-          (error "Could not load! file %s" file))))))
+          (error "Could not load file '%s' from '%s'" file path))))))
 
 (defmacro require! (module submodule &optional flags reload-p)
   "Loads the module specified by MODULE (a property) and SUBMODULE (a symbol).
