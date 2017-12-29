@@ -15,6 +15,11 @@
 
 (require 'pp)
 
+(defsubst string-trim-right (string &optional regexp)
+  (if (string-match (concat "\\(?:" (or regexp "[ \t\n\r]+") "\\)\\'") string)
+      (replace-match "" t t string)
+    string))
+
 ;;
 (defvar doom-init-p nil)
 (defvar doom-errors 0)
@@ -58,6 +63,9 @@
                 "\n")))
     (buffer-string)))
 
+(defun sh (cmd)
+  (string-trim-right (shell-command-to-string cmd)))
+
 (defun color (code msg &rest args)
   (format "\e[%dm%s\e[%dm" code (apply #'format msg args) 0))
 
@@ -78,15 +86,21 @@
 
 ;; --- start a'doctorin' --------------------------------------
 
-(msg! "%s\nRunning Emacs v%s, commit %s"
+(msg! "%s\nRunning Emacs v%s, commit %s\n"
       (color 1 "DOOM Doctor")
       (color 1 emacs-version)
       (if (executable-find "git")
-          (shell-command-to-string "git rev-parse HEAD")
+          (sh "git rev-parse HEAD")
         "n/a"))
+
+(msg! "shell: %s%s"
+      (getenv "SHELL")
+      (if (equal (getenv "SHELL") (sh "echo $SHELL"))
+          ""
+        (color 31 " (mismatch)")))
 (when (boundp 'system-configuration-features)
   (msg! "Compiled with:\n%s" (indented 2 (autofill system-configuration-features))))
-(msg! "uname -a:\n%s" (indented 2 (autofill (shell-command-to-string "uname -a"))))
+(msg! "uname -a:\n%s\n" (indented 2 (autofill (sh "uname -a"))))
 
 (let (doom-core-packages doom-debug-mode)
   (condition-case ex
@@ -98,11 +112,10 @@
         (doom|finalize)
         (success! "Attempt to load DOOM: success! Loaded v%s" doom-version)
         (when (executable-find "git")
-          (msg! "Revision %s"
-                (or (ignore-errors
-                      (let ((default-directory user-emacs-directory))
-                        (shell-command-to-string "git rev-parse HEAD")))
-                    "\n"))))
+          (msg! "Revision %s\n"
+                (ignore-errors
+                  (let ((default-directory user-emacs-directory))
+                    (sh "git rev-parse HEAD"))))))
     ('error (warn! "Attempt to load DOOM: failed\n  %s\n"
                    (or (cdr-safe ex) (car ex))))))
 
@@ -155,16 +168,16 @@
 (section! "test-gnutls")
 (cond ((executable-find "gnutls-cli"))
       ((executable-find "openssl")
-       (let* ((output (shell-command-to-string "openssl ciphers -v"))
+       (let* ((output (sh "openssl ciphers -v"))
               (protocols
                (let (protos)
                  (mapcar (lambda (row)
                            (add-to-list 'protos (cadr (split-string row " " t))))
-                         (split-string (shell-command-to-string "openssl ciphers -v") "\n"))
+                         (split-string (sh "openssl ciphers -v") "\n"))
                  (delq nil protos))))
          (check! (not (or (member "TLSv1.1" protocols)
                           (member "TLSv1.2" protocols)))
-           (let ((version (cadr (split-string (shell-command-to-string "openssl version") " " t))))
+           (let ((version (cadr (split-string (sh "openssl version") " " t))))
              (warn! "Warning: couldn't find gnutls-cli, and OpenSSL is out-of-date (v%s)" version)
              (explain!
               "This may not affect your Emacs experience, but there are security "
@@ -244,7 +257,7 @@
 (let ((tar-bin (or (executable-find "gtar")
                    (executable-find "tar"))))
   (if tar-bin
-      (check! (not (string-match-p "(GNU tar)" (shell-command-to-string (format "%s --version" tar-bin))))
+      (check! (not (string-match-p "(GNU tar)" (sh (format "%s --version" tar-bin))))
         (warn! "Warning: BSD tar detected")
         (explain!
          "QUELPA (through package-build) uses the system tar to build plugins, but it "
