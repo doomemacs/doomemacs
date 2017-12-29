@@ -228,6 +228,12 @@ local value, whether or not it's permanent-local. Therefore, we cycle
 (add-hook! '(doom-post-init-hook minibuffer-setup-hook)
   #'doom|no-fringes-in-minibuffer)
 
+(defun doom|protect-visible-buffers ()
+  "Don't kill the current buffer if it is visible in another window (bury it
+instead)."
+  (not (and after-init-time (get-buffer-window-list nil t))))
+(add-hook 'kill-buffer-query-functions #'doom|protect-visible-buffers)
+
 
 ;;
 ;; Plugins

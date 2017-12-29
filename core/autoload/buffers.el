@@ -179,11 +179,9 @@ DONT-SAVE is non-nil.
 See `doom-real-buffer-p' for what 'real' means."
   (setq buffer (or buffer (current-buffer)))
   (when (and (bufferp buffer) (buffer-live-p buffer))
-    (let ((buffer-win (get-buffer-window buffer))
-          (only-buffer-window-p (= 1 (length (get-buffer-window-list buffer nil t)))))
+    (let ((buffer-win (get-buffer-window buffer)))
       ;; deal with unsaved buffers
-      (when (and only-buffer-window-p
-                 (buffer-file-name buffer)
+      (when (and (buffer-file-name buffer)
                  (buffer-modified-p buffer))
         (with-current-buffer buffer
           (if (and (not dont-save)
@@ -201,10 +199,9 @@ See `doom-real-buffer-p' for what 'real' means."
               (doom--cycle-real-buffers -1)
               (when buffer-win
                 (unrecord-window-buffer buffer-win buffer))
-              (when only-buffer-window-p
-                (kill-buffer buffer)))
-            (not (eq (current-buffer) buffer)))
-        (kill-buffer buffer)))))
+              (kill-buffer buffer)))
+        (kill-buffer buffer)))
+    (not (eq (current-buffer) buffer))))
 
 ;;;###autoload
 (defun doom-force-kill-buffer (&optional buffer dont-save)
