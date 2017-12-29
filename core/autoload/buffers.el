@@ -129,6 +129,7 @@ buffers. If there's nothing left, switch to `doom-fallback-buffer'. See
                     do
                     (dotimes (_i (abs n))
                       (funcall move-func)))))
+    (force-mode-line-update)
     (current-buffer)))
 
 ;;;###autoload
