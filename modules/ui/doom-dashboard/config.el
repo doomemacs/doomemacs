@@ -170,6 +170,10 @@ whose dimensions may not be fully initialized by the time this is run."
         (policy +doom-dashboard-pwd-policy))
     (cond ((null policy)
            default-directory)
+          ((stringp policy)
+           (expand-file-name policy lastcwd))
+          ((functionp policy)
+           (funcall policy lastcwd))
           ((null lastcwd)
            default-directory)
           ((eq policy 'last-project)
@@ -180,13 +184,9 @@ whose dimensions may not be fully initialized by the time this is run."
                cwd)))
           ((eq policy 'last)
            lastcwd)
-          ((stringp policy)
-           (expand-file-name policy lastcwd))
-          ((functionp policy)
-           (funcall policy lastcwd))
           (t
            (warn "`+doom-dashboard-pwd-policy' has an invalid value of '%s'"
-                 +doom-dashboard-pwd-policy)))))
+                 policy)))))
 
 ;; widgets
 (defun doom-dashboard-widget--banner ()
