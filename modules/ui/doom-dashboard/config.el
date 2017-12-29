@@ -148,28 +148,27 @@ whose dimensions may not be fully initialized by the time this is run."
       (with-current-buffer fallback-buffer
         (setq default-directory
               (or (+doom-dashboard--get-pwd)
-                  default-directory)))
-      (unless +doom-dashboard-inhibit-refresh
-        (with-silent-modifications
-          (unless (eq major-mode '+doom-dashboard-mode)
-            (+doom-dashboard-mode))
-          (erase-buffer)
-
-          (let ((+doom-dashboard--height (window-height (get-buffer-window fallback-buffer)))
-                (lines 1)
-                content)
-            (with-temp-buffer
-              (dolist (widget-name +doom-dashboard-widgets)
-                (funcall (intern (format "doom-dashboard-widget--%s" widget-name)))
-                (insert "\n"))
-              (setq content (buffer-string)
-                    lines (count-lines (point-min) (point-max))))
-            (insert (make-string (max 0 (- (/ +doom-dashboard--height 2)
-                                           (/ lines 2)))
-                                 ?\n)
-                    content))
-          (unless (button-at (point))
-            (goto-char (next-button (point-min)))))))
+                  default-directory))
+        (unless +doom-dashboard-inhibit-refresh
+          (with-silent-modifications
+            (unless (eq major-mode '+doom-dashboard-mode)
+              (+doom-dashboard-mode))
+            (erase-buffer)
+            (let ((+doom-dashboard--height (window-height (get-buffer-window fallback-buffer)))
+                  (lines 1)
+                  content)
+              (with-temp-buffer
+                (dolist (widget-name +doom-dashboard-widgets)
+                  (funcall (intern (format "doom-dashboard-widget--%s" widget-name)))
+                  (insert "\n"))
+                (setq content (buffer-string)
+                      lines (count-lines (point-min) (point-max))))
+              (insert (make-string (max 0 (- (/ +doom-dashboard--height 2)
+                                             (/ lines 2)))
+                                   ?\n)
+                      content))
+            (unless (button-at (point))
+              (goto-char (next-button (point-min))))))))
     ;; Update all dashboard windows
     (dolist (win (get-buffer-window-list (doom-fallback-buffer) nil t))
       (set-window-fringes win 0 0)
