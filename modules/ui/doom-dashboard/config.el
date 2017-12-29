@@ -3,11 +3,11 @@
 (defvar +doom-dashboard-name " *doom*"
   "The name to use for the dashboard buffer.")
 
-(defvar +doom-dashboard-inhibit-refresh nil
-  "If non-nil, the doom buffer won't be refreshed.")
-
 (defvar +doom-dashboard-widgets '(banner shortmenu loaded)
   "List of widgets to display in a blank scratch buffer.")
+
+(defvar +doom-dashboard-inhibit-refresh nil
+  "If non-nil, the doom buffer won't be refreshed.")
 
 (defvar +doom-dashboard-inhibit-functions ()
   "A list of functions that determine whether to inhibit the dashboard the
@@ -30,6 +30,9 @@ Possible values:
 (defvar +doom-dashboard--width 80)
 (defvar +doom-dashboard--height 0)
 (defvar +doom-dashboard--old-fringe-indicator fringe-indicator-alist)
+
+(defvar all-the-icons-scale-factor)
+(defvar all-the-icons-default-adjust)
 
 ;;
 (setq doom-fallback-buffer +doom-dashboard-name)
@@ -68,15 +71,17 @@ Possible values:
 if in a GUI/non-daemon session."
   (add-hook 'window-configuration-change-hook #'+doom-dashboard-reload)
   (add-hook 'focus-in-hook #'+doom-dashboard-reload)
-  (add-hook 'kill-buffer-query-functions #'+doom-dashboard|kill-buffer-query-fn)
+  (add-hook 'kill-buffer-query-functions #'+doom-dashboard|reload-on-kill)
   (when (and (display-graphic-p) (not (daemonp)))
     (let ((default-directory doom-emacs-dir))
       (+doom-dashboard/open (selected-frame)))))
 
-(defun +doom-dashboard|kill-buffer-query-fn ()
+(defun +doom-dashboard|reload-on-kill ()
+  "TODO"
   (or (unless (+doom-dashboard-p)
-        (when buffer-file-name
-          (setq +doom-dashboard--last-cwd default-directory))
+        (when (doom-real-buffer-p)
+          (setq +doom-dashboard--last-cwd default-directory)
+          (+doom-dashboard-update-pwd))
         t)
       (ignore
        (let (+doom-dashboard-inhibit-refresh)
@@ -106,13 +111,57 @@ whose dimensions may not be fully initialized by the time this is run."
         (+doom-dashboard-reload)))
     (setq +doom-dashboard-inhibit-refresh nil)))
 
+;
 (defun +doom-dashboard-p (&optional buffer)
   "Returns t if BUFFER is the dashboard buffer."
-  (let ((buffer (or buffer (current-buffer))))
-    (and (buffer-live-p buffer)
-         (eq buffer (doom-fallback-buffer)))))
+  (eq (or buffer (current-buffer))
+      (doom-fallback-buffer)))
 
-(defun +doom-dashboard-center (len s)
+(defun +doom-dashboard-update-pwd ()
+  "TODO"
+  (with-current-buffer (doom-fallback-buffer)
+    (cd (or (+doom-dashboard--get-pwd)
+            default-directory))))
+
+(defun +doom-dashboard-reload (&optional force)
+  "Update the DOOM scratch buffer (or create it, if it doesn't exist)."
+  (let ((fallback-buffer (doom-fallback-buffer)))
+    (when (or (and after-init-time
+                   (not +doom-dashboard-inhibit-refresh)
+                   (get-buffer-window fallback-buffer)
+                   (not (window-minibuffer-p (frame-selected-window))))
+              force)
+      (with-current-buffer fallback-buffer
+        (+doom-dashboard-update-pwd)
+        (with-silent-modifications
+          (unless (eq major-mode '+doom-dashboard-mode)
+            (+doom-dashboard-mode))
+          (erase-buffer)
+          (let ((+doom-dashboard--height
+                 (window-height (get-buffer-window fallback-buffer)))
+                (lines 1)
+                content)
+            (with-temp-buffer
+              (dolist (widget-name +doom-dashboard-widgets)
+                (funcall (intern (format "doom-dashboard-widget--%s" widget-name)))
+                (insert "\n"))
+              (setq content (buffer-string)
+                    lines (count-lines (point-min) (point-max))))
+            (insert (make-string (max 0 (- (/ +doom-dashboard--height 2)
+                                           (/ lines 2)))
+                                 ?\n)
+                    content))
+          (unless (button-at (point))
+            (goto-char (next-button (point-min)))))))
+    ;; Update all dashboard windows
+    (dolist (win (get-buffer-window-list fallback-buffer nil t))
+      (set-window-fringes win 0 0)
+      (set-window-margins
+       win (max 0 (/ (- (window-total-width win) +doom-dashboard--width) 2)))))
+  t)
+
+;; helpers
+(defun +doom-dashboard--center (len s)
   (concat (make-string (ceiling (max 0 (- len (length s))) 2) ? )
           s))
 
@@ -139,47 +188,10 @@ whose dimensions may not be fully initialized by the time this is run."
            (warn "`+doom-dashboard-pwd-policy' has an invalid value of '%s'"
                  +doom-dashboard-pwd-policy)))))
 
-(defun +doom-dashboard-reload (&optional force)
-  "Update the DOOM scratch buffer (or create it, if it doesn't exist)."
-  (let ((fallback-buffer (doom-fallback-buffer)))
-    (when (or force
-              (and (get-buffer-window fallback-buffer)
-                   (not (window-minibuffer-p (frame-selected-window)))))
-      (with-current-buffer fallback-buffer
-        (setq default-directory
-              (or (+doom-dashboard--get-pwd)
-                  default-directory))
-        (unless +doom-dashboard-inhibit-refresh
-          (with-silent-modifications
-            (unless (eq major-mode '+doom-dashboard-mode)
-              (+doom-dashboard-mode))
-            (erase-buffer)
-            (let ((+doom-dashboard--height (window-height (get-buffer-window fallback-buffer)))
-                  (lines 1)
-                  content)
-              (with-temp-buffer
-                (dolist (widget-name +doom-dashboard-widgets)
-                  (funcall (intern (format "doom-dashboard-widget--%s" widget-name)))
-                  (insert "\n"))
-                (setq content (buffer-string)
-                      lines (count-lines (point-min) (point-max))))
-              (insert (make-string (max 0 (- (/ +doom-dashboard--height 2)
-                                             (/ lines 2)))
-                                   ?\n)
-                      content))
-            (unless (button-at (point))
-              (goto-char (next-button (point-min))))))))
-    ;; Update all dashboard windows
-    (dolist (win (get-buffer-window-list (doom-fallback-buffer) nil t))
-      (set-window-fringes win 0 0)
-      (set-window-margins
-       win (max 0 (/ (- (window-total-width win) +doom-dashboard--width) 2)))))
-  t)
-
 ;; widgets
 (defun doom-dashboard-widget--banner ()
   (mapc (lambda (line)
-          (insert (propertize (+doom-dashboard-center +doom-dashboard--width line)
+          (insert (propertize (+doom-dashboard--center +doom-dashboard--width line)
                               'face 'font-lock-comment-face) " ")
           (insert "\n"))
         '("=================     ===============     ===============   ========  ========"
@@ -206,7 +218,7 @@ whose dimensions may not be fully initialized by the time this is run."
   (insert
    "\n"
    (propertize
-    (+doom-dashboard-center
+    (+doom-dashboard--center
      +doom-dashboard--width
      (format "Loaded %d packages in %d modules in %.02fs"
              (length doom--package-load-path)
@@ -215,8 +227,6 @@ whose dimensions may not be fully initialized by the time this is run."
     'face 'font-lock-comment-face)
    "\n"))
 
-(defvar all-the-icons-scale-factor)
-(defvar all-the-icons-default-adjust)
 (defun doom-dashboard-widget--shortmenu ()
   (let ((all-the-icons-scale-factor 1.45)
         (all-the-icons-default-adjust -0.02))
@@ -230,7 +240,7 @@ whose dimensions may not be fully initialized by the time this is run."
                             (propertize (concat " " label) 'face 'font-lock-keyword-face))
                     'action `(lambda (_) ,fn)
                     'follow-link t)
-                   (+doom-dashboard-center (- +doom-dashboard--width 2) (buffer-string)))
+                   (+doom-dashboard--center (- +doom-dashboard--width 2) (buffer-string)))
                  "\n\n"))))
           `(("Homepage" "mark-github"
              (browse-url "https://github.com/hlissner/doom-emacs"))
