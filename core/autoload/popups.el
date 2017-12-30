@@ -413,12 +413,4 @@ properties."
   (when (doom-popup-p window)
     (setq doom-popup-windows (delq window doom-popup-windows))
     (when doom-popup-remember-history
-      (setq doom-popup-history (list (doom--popup-data window))))
-    (let ((autokill-p (and (not doom-popup-inhibit-autokill)
-                           (doom-popup-property :autokill window))))
-      (with-selected-window window
-        (doom-popup-mode -1)
-        (when autokill-p
-          (when-let* ((process (get-buffer-process (current-buffer))))
-            (set-process-query-on-exit-flag process nil))
-          (kill-buffer (current-buffer)))))))
+      (setq doom-popup-history (list (doom--popup-data window))))))

@@ -149,6 +149,16 @@ recognized by DOOM's popup system. They are:
           (cons '(doom-display-buffer-condition doom-display-buffer-action)
                 display-buffer-alist)))
 
+  (defun doom|autokill-popups ()
+    (or (not (doom-popup-p))
+        (prog1 (when (and (not doom-popup-inhibit-autokill)
+                          (plist-get doom-popup-rules :autokill))
+                 (doom-popup-mode -1)
+                 (when-let* ((process (get-buffer-process (current-buffer))))
+                   (set-process-query-on-exit-flag process nil))
+                 t))))
+  (add-hook 'kill-buffer-query-functions #'doom|autokill-popups)
+
   ;; no modeline in popups
   (add-hook 'doom-popup-mode-hook #'doom|hide-modeline-in-popup)
   ;; ensure every rule without an :align, :same or :frame property has an
