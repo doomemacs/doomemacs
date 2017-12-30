@@ -235,6 +235,12 @@ instead)."
              (get-buffer-window-list nil nil t))))
 (add-hook 'kill-buffer-query-functions #'doom|protect-visible-buffers)
 
+;; temporary windows often have q bound to `quit-window', which only buries the
+;; contained buffer. I rarely don't want that buffer killed, so...
+(defun doom*quit-window (orig-fn &optional kill window)
+  (funcall orig-fn (not kill) window))
+(advice-add #'quit-window :around #'doom*quit-window)
+
 
 ;;
 ;; Plugins

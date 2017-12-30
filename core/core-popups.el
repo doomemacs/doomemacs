@@ -180,7 +180,7 @@ recognized by DOOM's popup system. They are:
     (define-key map [escape]    #'doom/popup-close-maybe)
     (define-key map (kbd "ESC") #'doom/popup-close-maybe)
     (define-key map [remap quit-window] #'doom/popup-close-maybe)
-    (define-key map [remap doom/kill-this-buffer] #'delete-window)
+    (define-key map [remap doom/kill-this-buffer] #'doom/popup-close-maybe)
     (define-key map [remap split-window-right]              #'ignore)
     (define-key map [remap split-window-below]              #'ignore)
     (define-key map [remap split-window-horizontally]       #'ignore)

@@ -239,7 +239,7 @@ without leaving any trace behind (muahaha)."
        (if (featurep 'evil)
            #'evil-force-normal-state
          #'keyboard-quit))
-    (delete-window)))
+    (quit-restore-window nil 'kill)))
 
 ;;;###autoload
 (defun doom/popup-this-buffer ()
