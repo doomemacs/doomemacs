@@ -231,7 +231,8 @@ local value, whether or not it's permanent-local. Therefore, we cycle
 (defun doom|protect-visible-buffers ()
   "Don't kill the current buffer if it is visible in another window (bury it
 instead)."
-  (not (and after-init-time (get-buffer-window nil t))))
+  (not (delq (selected-window)
+             (get-buffer-window-list nil nil t))))
 (add-hook 'kill-buffer-query-functions #'doom|protect-visible-buffers)
 
 
