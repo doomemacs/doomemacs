@@ -122,7 +122,7 @@ recognized by DOOM's popup system. They are:
           ("*Backtrace*" :size 20 :noselect t)
           ("*Warnings*"  :size 12 :noselect t :autofit t)
           ("*Messages*"  :size 12 :noselect t)
-          ("*Help*" :size 0.3)
+          ("*Help*" :size 0.3 :autokill t)
           ("^\\*.*Shell Command.*\\*$" :regexp t :size 20 :noselect t :autokill t)
           (apropos-mode :size 0.3 :autokill t :autoclose t)
           (Buffer-menu-mode :size 20 :autokill t)
