@@ -87,13 +87,13 @@ recognized by DOOM's popup system. They are:
 ;;
 ;;
 
-(defvar doom-popup-parameters
-  '(:esc :modeline :transient :fit :align :size)
-  "TODO")
+;; (defvar doom-popup-parameters
+;;   '(:esc :modeline :transient :fit :align :size)
+;;   "TODO")
 
-(defvar doom-popup-whitelist
-  '(("^ ?\\*" :size 15 :noselect t :autokill t :autoclose t))
-  "TODO")
+;; (defvar doom-popup-whitelist
+;;   '(("^ ?\\*" :size 15 :noselect t :autokill t :autoclose t))
+;;   "TODO")
 
 (defvar doom-popup-blacklist
   '("^\\*magit")

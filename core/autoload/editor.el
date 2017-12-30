@@ -2,7 +2,7 @@
 
 ;;;###autoload
 (defun doom/sudo-find-file (file)
-  "Open a file as root."
+  "Open FILE as root."
   (interactive
    (list (read-file-name "Open as root: ")))
   (find-file (if (file-writable-p file)
