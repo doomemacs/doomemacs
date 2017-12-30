@@ -144,11 +144,6 @@ recognized by DOOM's popup system. They are:
   (defun doom-display-buffer-action (buffer alist)
     (shackle-display-buffer buffer alist (shackle-match buffer)))
 
-  (add-hook! doom-post-init
-    (setq display-buffer-alist
-          (cons '(doom-display-buffer-condition doom-display-buffer-action)
-                display-buffer-alist)))
-
   (defun doom|autokill-popups ()
     (or (not (doom-popup-p))
         (prog1 (when (and (not doom-popup-inhibit-autokill)
@@ -157,7 +152,12 @@ recognized by DOOM's popup system. They are:
                  (when-let* ((process (get-buffer-process (current-buffer))))
                    (set-process-query-on-exit-flag process nil))
                  t))))
-  (add-hook 'kill-buffer-query-functions #'doom|autokill-popups)
+
+  (add-hook! doom-post-init
+    (setq display-buffer-alist
+          (cons '(doom-display-buffer-condition doom-display-buffer-action)
+                display-buffer-alist))
+    (add-hook 'kill-buffer-query-functions #'doom|autokill-popups))
 
   ;; no modeline in popups
   (add-hook 'doom-popup-mode-hook #'doom|hide-modeline-in-popup)

@@ -233,7 +233,8 @@ local value, whether or not it's permanent-local. Therefore, we cycle
 instead)."
   (not (delq (selected-window)
              (get-buffer-window-list nil nil t))))
-(add-hook 'kill-buffer-query-functions #'doom|protect-visible-buffers)
+(add-hook! doom-post-init
+  (add-hook 'kill-buffer-query-functions #'doom|protect-visible-buffers))
 
 ;; temporary windows often have q bound to `quit-window', which only buries the
 ;; contained buffer. I rarely don't want that buffer killed, so...
