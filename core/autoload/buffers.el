@@ -187,19 +187,6 @@ See `doom-real-buffer-p' for what 'real' means."
     (not (eq (current-buffer) buffer))))
 
 ;;;###autoload
-(defun doom-force-kill-buffer (&optional buffer dont-save)
-  "Kill BUFFER globally and ensure all windows previously showing BUFFER have
-switched to a real buffer."
-  (interactive)
-  (let* ((buffer (or buffer (current-buffer)))
-         (windows (get-buffer-window-list buffer nil t)))
-    (doom-kill-buffer buffer dont-save)
-    (dolist (win windows)
-      (with-selected-window win
-        (unless (doom-real-buffer-p)
-          (doom/previous-buffer))))))
-
-;;;###autoload
 (defun doom-kill-buffer-and-windows (buffer)
   "Kill the buffer and delete all the windows it's displayed in."
   (dolist (window (get-buffer-window-list buffer))
@@ -238,6 +225,21 @@ regex PATTERN. Returns the number of killed buffers."
   (interactive (list 'interactive))
   (when (and (not (doom-kill-buffer)) interactive-p)
     (message "Nowhere left to go!")))
+
+;;;###autoload
+(defun doom/kill-this-buffer-in-all-windows (buffer &optional dont-save)
+  "Kill BUFFER globally and ensure all windows previously showing this buffer
+have switched to a real buffer.
+
+If DONT-SAVE, don't prompt to save modified buffers (discarding their changes)."
+  (interactive
+   (list (current-buffer) current-prefix-arg))
+  (cl-assert (bufferp buffer) t)
+  (let ((windows (get-buffer-window-list buffer nil t)))
+    (doom-kill-buffer buffer dont-save)
+    (cl-loop for win in windows
+             if (doom-real-buffer-p (window-buffer win))
+             do (with-selected-window win (doom/previous-buffer)))))
 
 ;;;###autoload
 (defun doom/kill-all-buffers (&optional project-p)
