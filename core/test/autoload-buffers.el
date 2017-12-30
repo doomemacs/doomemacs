@@ -131,4 +131,4 @@
 ;; TODO doom/kill-all-buffers
 ;; TODO doom/kill-other-buffers
 ;; TODO doom/kill-matching-buffers
-;; TODO doom/cleanup-buffers
+;; TODO doom/cleanup-session

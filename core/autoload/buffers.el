@@ -186,23 +186,6 @@ See `doom-real-buffer-p' for what 'real' means."
   (kill-buffer buffer))
 
 ;;;###autoload
-(defun doom-kill-process-buffers ()
-  "Kill all processes that have no visible associated buffers. Return number of
-processes killed."
-  (interactive)
-  (let ((n 0))
-    (dolist (p (process-list))
-      (let ((process-buffer (process-buffer p)))
-        (when (and (process-live-p p)
-                   (not (string= (process-name p) "server"))
-                   (or (not process-buffer)
-                       (and (bufferp process-buffer)
-                            (not (buffer-live-p process-buffer)))))
-          (delete-process p)
-          (cl-incf n))))
-    n))
-
-;;;###autoload
 (defun doom-kill-matching-buffers (pattern &optional buffer-list)
   "Kill all buffers (in current workspace OR in BUFFER-LIST) that match the
 regex PATTERN. Returns the number of killed buffers."
@@ -281,16 +264,35 @@ project."
       (message "Killed %s buffers" n))))
 
 ;;;###autoload
-(defun doom/cleanup-buffers (&optional all-p)
-  "Clean up buried and inactive process buffers in the current workspace."
+(defun doom/cleanup-session (&optional all-p)
+  "Clean up buried buries and orphaned processes in the current workspace. If
+ALL-P (universal argument), clean them up globally."
   (interactive "P")
   (run-hooks 'doom-cleanup-hook)
   (let ((buffers (doom-buried-buffers (if all-p (buffer-list))))
-        (n 0))
+        (n 0)
+        kill-buffer-query-functions)
     (mapc #'kill-buffer buffers)
-    (setq n (+ n (length buffers) (doom-kill-process-buffers)))
+    (setq n (+ n (length buffers) (doom/cleanup-processes)))
     (when (called-interactively-p 'interactive)
       (message "Cleaned up %s buffers" n))))
+
+;;;###autoload
+(defun doom/cleanup-processes ()
+  "Kill all processes that have no visible associated buffers. Return number of
+processes killed."
+  (interactive)
+  (let ((n 0))
+    (dolist (p (process-list))
+      (let ((process-buffer (process-buffer p)))
+        (when (and (process-live-p p)
+                   (not (string= (process-name p) "server"))
+                   (or (not process-buffer)
+                       (and (bufferp process-buffer)
+                            (not (buffer-live-p process-buffer)))))
+          (delete-process p)
+          (cl-incf n))))
+    n))
 
 ;;;###autoload
 (defun doom/next-buffer ()
