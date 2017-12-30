@@ -51,7 +51,6 @@ immediately runs it on the current candidate (ending the ivy session)."
         [remap recentf-open-files]        #'counsel-recentf
         [remap imenu]                     #'counsel-imenu
         [remap bookmark-jump]             #'counsel-bookmark
-        [remap projectile-switch-project] #'counsel-projectile-switch-project
         [remap projectile-find-file]      #'counsel-projectile-find-file
         [remap imenu-anywhere]            #'ivy-imenu-anywhere
         [remap execute-extended-command]  #'counsel-M-x
