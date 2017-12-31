@@ -1,10 +1,7 @@
 ;;; core-projects.el -*- lexical-binding: t; -*-
 
-(defvar doom-project-hook nil
-  "Hook run when a project is enabled. The name of the project's mode and its
-state are passed in.")
-
 (def-package! projectile
+  :hook (doom-init . projectile-mode)
   :init
   (setq projectile-cache-file (concat doom-cache-dir "projectile.cache")
         projectile-enable-caching (not noninteractive)
@@ -14,9 +11,9 @@ state are passed in.")
         projectile-globally-ignored-files '(".DS_Store" "Icon" "TAGS")
         projectile-globally-ignored-file-suffixes '(".elc" ".pyc" ".o"))
 
-  (add-hook 'doom-init-hook #'projectile-mode)
   :config
   (add-hook 'dired-before-readin-hook #'projectile-track-known-projects-find-file-hook)
+  (add-hook 'find-file-hook #'doom|autoload-project-mode)
 
   ;; a more generic project root file
   (push ".project" projectile-project-root-files-bottom-up)
@@ -79,7 +76,7 @@ they are absolute."
   (doom--resolve-path-forms files (doom-project-root)))
 
 (defun doom-project-find-file (dir)
-  "Fuzzy-find a file in DIR."
+  "Fuzzy-find a file under DIR."
   (let ((default-directory dir)
         ;; Necessary to isolate this search from the current project
         projectile-project-name
@@ -92,7 +89,7 @@ they are absolute."
          #'projectile-find-file))))
 
 (defun doom-project-browse (dir)
-  "TODO"
+  "Traverse a file structure starting linearly from DIR."
   (let ((default-directory dir))
     (call-interactively
      ;; completion modules may remap this command
@@ -105,15 +102,21 @@ they are absolute."
 ;;
 
 (defvar-local doom-project nil
-  "A list of project mode to enable. Used for .dir-locals.el.")
+  "Either the symbol or a list of project modes you want to enable. Available
+for .dir-locals.el.")
+
+(defvar doom-project-hook nil
+  "Hook run when a project is enabled. The name of the project's mode and its
+state are passed in.")
 
 (defun doom|autoload-project-mode ()
-  "Auto-enable projects listed in `doom-project', which is meant to be set from
-.dir-locals.el files."
-  (cl-loop for mode in doom-project
-           unless (symbol-value mode)
-           do (funcall mode)))
-(add-hook 'after-change-major-mode-hook #'doom|autoload-project-mode)
+  "Auto-enable the project(s) listed in `doom-project'."
+  (when doom-project
+    (if (symbolp doom-project)
+        (funcall doom-project)
+      (cl-loop for mode in doom-project
+               unless (symbol-value mode)
+               do (funcall mode)))))
 
 (defmacro def-project-mode! (name &rest plist)
   "Define a project minor-mode named NAME (a symbol) and declare where and how
@@ -124,8 +127,7 @@ own settings, keymaps, hooks, snippets, etc.
 
 This creates NAME-hook and NAME-map as well.
 
-A project can be enabled through .dir-locals.el too, if `doom-project' is set to
-the name (symbol) of the project mode(s) to enable.
+A project can be enabled through .dir-locals.el too, by setting `doom-project'.
 
 PLIST may contain any of these properties, which are all checked to see if NAME
 should be activated. If they are *all* true, NAME is activated.
@@ -174,7 +176,7 @@ Relevant: `doom-project-hook'."
          :keymap (make-sparse-keymap)
          (if (not ,name)
              ,exit-form
-           (run-hook-with-args 'doom-project-hook ',name)
+           (run-hook-with-args 'doom-project-hook ',name ,name)
            ,(when load-form
               `(unless ,init-var
                  ,load-form
