@@ -86,3 +86,15 @@ selection of all minor-modes, active or not."
     (profiler-report)
     (profiler-stop))
   (setq doom--profiler (not doom--profiler)))
+
+;;;###autoload
+(defun doom/info ()
+  "Collects information about this session of Doom Emacs and copies it to the
+clipboard. Helpful when filing bug reports!"
+  (interactive)
+  (message "Producing information about your system...")
+  (with-temp-buffer
+    (call-process (expand-file-name "bin/doom-doctor" doom-emacs-dir) nil t)
+    (ansi-color-apply-on-region (point-min) (point-max))
+    (kill-new (buffer-string)))
+  (message "Copied to clipboard!"))
