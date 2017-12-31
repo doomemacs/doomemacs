@@ -80,7 +80,6 @@ they are absolute."
 
 (defun doom-project-find-file (dir)
   "Fuzzy-find a file in DIR."
-  (interactive)
   (let ((default-directory dir)
         ;; Necessary to isolate this search from the current project
         projectile-project-name
@@ -94,7 +93,6 @@ they are absolute."
 
 (defun doom-project-browse (dir)
   "TODO"
-  (interactive)
   (let ((default-directory dir))
     (call-interactively
      ;; completion modules may remap this command
