@@ -680,7 +680,11 @@ likely change core files directly).
 
 If RECOMPILE-P is non-nil, only recompile out-of-date core files."
   (interactive "P")
-  (doom//byte-compile (list "core") recompile-p))
+  (if (not noninteractive)
+      ;; This is done in another instance to protect the current session's
+      ;; state. `doom-initialize-packages' will have side effects otherwise.
+      (doom-packages--async-run 'doom//byte-compile-core)
+    (doom//byte-compile (list "core") recompile-p)))
 
 (defun doom//byte-recompile-plugins ()
   "Recompile all installed plugins. If you're getting odd errors after upgrading
