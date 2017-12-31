@@ -3,7 +3,7 @@
 
 (load! ../autoload)
 
-(defmacro -with-passwords! (buffer-args &rest body)
+(defmacro with-passwords!! (buffer-args &rest body)
   (declare (indent defun))
   `(cl-letf
        (((symbol-function '+pass--get-entry)
@@ -18,7 +18,7 @@
 
 ;;
 (def-test! get-field
-  (-with-passwords!
+  (with-passwords!!
    (should (equal (+pass-get-field "fake/source" "login")
                   "HL2532-GANDI"))
    (should (equal (+pass-get-field "fake/source" "email")
@@ -29,14 +29,14 @@
                   "henrik@lissner.net"))))
 
 (def-test! missing-fields-return-nil
-  (-with-passwords!
+  (with-passwords!!
    (should-not (+pass-get-field "fake/source" '("x" "y" "z")))))
 
 (def-test! missing-entries-throw-error
-  (-with-passwords!
+  (with-passwords!!
    (should-error (+pass-get-field "nonexistent/source" "login"))))
 
 (def-test! get-login
-  (-with-passwords!
+  (with-passwords!!
     (should (equal (+pass-get-user   "fake/source") "HL2532-GANDI"))
     (should (equal (+pass-get-secret "fake/source") "defuse-account-gad"))))

@@ -3,7 +3,7 @@
 
 (require! :feature workspaces)
 
-(defmacro -with-workspace! (buffer-args &rest body)
+(defmacro with-workspace!! (buffer-args &rest body)
   (declare (indent defun))
   (let ((buffers
          (cl-loop for bsym in buffer-args
@@ -27,14 +27,19 @@
 
 ;;
 (def-test! init
-  (-with-workspace! ()
+  (with-workspace!! ()
     (should (equal (+workspace-current-name) +workspaces-main))))
 
-(def-test! advice
-  (should (advice-member-p #'+workspaces*auto-add-buffer #'switch-to-buffer)))
+(def-test! auto-add-buffer-to-persp
+  (let ((a (generate-new-buffer "a")))
+    (doom-set-buffer-real a t)
+    (with-workspace!! ()
+      (should-not (+workspace-contains-buffer-p a))
+      (switch-to-buffer a)
+      (should (+workspace-contains-buffer-p a)))))
 
 (def-test! current
-  (-with-workspace! ()
+  (with-workspace!! ()
     (should (equal (+workspace-current-name) +workspaces-main))
     (should (+workspace-exists-p +workspaces-main))
     (let ((workspace (+workspace-get +workspaces-main))
@@ -45,7 +50,7 @@
       (should (equal workspace current-workspace)))))
 
 (def-test! workspace-list
-  (-with-workspace! ()
+  (with-workspace!! ()
     (should (equal (+workspace-list-names)
                    (list (+workspace-current-name))))
     (should (equal (+workspace-list)
@@ -53,7 +58,7 @@
 
 (def-test! workspace-crud
   "Creating, reading, updating and deleting workspaces."
-  (-with-workspace! ()
+  (with-workspace!! ()
     (let ((new-workspace-name "*new-test*")
           (renamed-workspace-name "*old-test*"))
       (should (+workspace-new new-workspace-name))
@@ -67,14 +72,14 @@
       (should (= (length (+workspace-list-names)) 1)))))
 
 (def-test! workspace-switch
-  (-with-workspace! ()
+  (with-workspace!! ()
     (let ((new-workspace-name "*new-test*"))
       (should-error (+workspace-switch new-workspace-name))
       (should (+workspace-switch new-workspace-name t))
       (should (equal (+workspace-current-name) new-workspace-name)))))
 
 (def-test! buffer-list
-  (-with-workspace! (a b)
+  (with-workspace!! (a b)
     (let ((c (get-buffer-create "c"))
           (d (get-buffer-create "d")))
       (should (+workspace-contains-buffer-p a))

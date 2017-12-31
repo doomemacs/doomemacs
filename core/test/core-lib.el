@@ -147,10 +147,13 @@
 
 ;; --- Settings ---------------------------
 
-(def-setting! :-test-setting (x) x)
-
 (def-test! set
-  (should (assq :-test-setting doom-settings))
-  (should (set! :-test-setting t))
-  (let ((inhibit-message t))
-    (should-not (set! :non-existant-setting (error "This shouldn't trigger")))))
+  (eval-and-compile
+    (let (doom-settings)
+      (def-setting! :-test-setting (x) `(setq result ,x))
+      (should (assq :-test-setting doom-settings))
+      (let ((inhibit-message t)
+            result)
+        (set! :-test-setting t)
+        (should result)
+        (set! :non-existant-setting (error "This shouldn't trigger"))))))

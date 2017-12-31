@@ -74,17 +74,30 @@ If neither is available, run all tests in all enabled modules."
 (defmacro def-test! (name &rest body)
   "Define a namespaced ERT test."
   (declare (indent defun) (doc-string 2))
-  (unless (plist-get body :disabled)
-    (when (plist-get body :skip)
-      (push '(ert-skip nil) body))
+  (let (plist)
+    (while (keywordp (car body))
+      (push (pop body) plist))
+    (setq plist (reverse plist))
+    (when (plist-get plist :skip)
+      (setq body `((ert-skip nil) ,@body)))
+    (when-let* ((modes (doom-enlist (plist-get plist :minor-mode))))
+      (dolist (mode modes)
+        (setq body `((with-minor-mode! ,mode ,@body)))))
+    (when-let* ((before (plist-get plist :before)))
+      (setq body `(,@before ,@body)))
+    (when-let* ((after (plist-get plist :after)))
+      (setq body `(,@body @after)))
     `(ert-deftest
          ,(cl-loop with path = (file-relative-name (file-name-sans-extension load-file-name)
                                                    doom-emacs-dir)
                    for (rep . with) in '(("/test/" . "/") ("/" . ":"))
                    do (setq path (replace-regexp-in-string rep with path t t))
-                   finally return (intern (format "%s::%s" path name))) ()
-       ()
-       ,@body)))
+                   finally return (intern (format "%s::%s" path name)))
+         ()
+       (with-temp-buffer
+         (save-mark-and-excursion
+           (save-window-excursion
+             ,@body))))))
 
 (defmacro should-buffer! (initial expected &rest body)
   "Test that a buffer with INITIAL text, run BODY, then test it against EXPECTED.
@@ -144,3 +157,10 @@ marker. e.g. {2} can be retrieved with (point! 2)."
                       ((symbolp index) (symbol-name index))
                       ((stringp index) index))
                marker-list)))
+
+(defmacro with-minor-mode! (mode &rest body)
+  "TODO"
+  (declare (indent defun))
+  `(progn (,mode +1)
+          ,@body
+          (,mode -1)))

@@ -4,20 +4,21 @@
 (require! :completion company)
 (require 'company)
 
+;;
 (def-test! set-company-backend
-  (let ((default-backends (default-value 'company-backends)))
+  :minor-mode company-mode
+  (let ((company-backends '(default)))
     (set! :company-backend 'emacs-lisp-mode '(backend-1))
     (set! :company-backend 'lisp-interaction-mode 'backend-1 'backend-2)
     (set! :company-backend 'text-mode 'backend-1)
     (with-temp-buffer
       (emacs-lisp-mode)
-      (should (equal (car company-backends) '(backend-1))))
+      (should (equal company-backends '((backend-1) default))))
     (with-temp-buffer
       (lisp-interaction-mode)
-      (should (equal company-backends
-                     (append '(backend-1 backend-2) default-backends))))
+      (should (equal company-backends '(backend-1 backend-2 default))))
     (with-temp-buffer
       (text-mode)
-      (should (eq (car company-backends) 'backend-1)))
+      (should (equal company-backends '(backend-1 default))))
     ;; global backends shouldn't be affected
-    (should (equal company-backends default-backends))))
+    (should (equal company-backends '(default)))))

@@ -3,6 +3,7 @@
 
 (require! :feature evil)
 
+;;
 ;; `evil-ex-replace-special-filenames'
 ;; NOTE The majority of this function is tested in core/test/core-lib.el, this
 ;; only tests the evil-mode-specific functionality.

@@ -1,9 +1,9 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; ../core/test/core-ui.el
 
-(defmacro -with-temp-windows! (&rest body)
+(defmacro with-temp-windows!! (&rest body)
   (declare (indent defun))
-  `(save-window-excursion
+  `(progn
      (delete-other-windows)
      (cl-flet ((split-window (symbol-function #'split-window-horizontally)))
        (let ((a (get-buffer-create "a"))
@@ -17,15 +17,14 @@
   (let ((doom-major-mode-names '((text-mode . "abc")
                                  (lisp-mode . (lambda () "xyz"))
                                  (js-mode . t))))
-    (with-temp-buffer
-      (text-mode)
-      (should (equal mode-name "abc"))
-      (lisp-mode)
-      (should (equal mode-name "xyz"))
-      (should-error (js-mode)))))
+    (text-mode)
+    (should (equal mode-name "abc"))
+    (lisp-mode)
+    (should (equal mode-name "xyz"))
+    (should-error (js-mode))))
 
 (def-test! protect-visible-buffers
-  (-with-temp-windows!
+  (with-temp-windows!!
     (let ((kill-buffer-query-functions '(doom|protect-visible-buffers)))
       (switch-to-buffer a) (split-window)
       (switch-to-buffer b) (split-window)
@@ -35,7 +34,7 @@
       (should (kill-buffer)))))
 
 (def-test! *quit-window
-  (-with-temp-windows!
+  (with-temp-windows!!
     (let (kill-buffer-query-functions)
       (switch-to-buffer a) (split-window)
       (switch-to-buffer b)

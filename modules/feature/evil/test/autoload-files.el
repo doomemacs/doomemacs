@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; feature/evil/test/autoload-files.el
 
-(defmacro -with-temp-files! (src dest &rest body)
+(defmacro with-temp-files!! (src dest &rest body)
   "Run FORMS in the context of a temporary package setup (as in, it won't
 affects your Emacs packages)."
   (declare (indent 2) (doc-string 3))
@@ -23,7 +23,7 @@ affects your Emacs packages)."
 ;;
 (def-test! move-this-file
   ":mv"
-  (-with-temp-files! "/tmp/doom-buffer" "/tmp/doom-buffer-new"
+  (with-temp-files!! "/tmp/doom-buffer" "/tmp/doom-buffer-new"
     (should-error (+evil:move-this-file it))
     (should (+evil:move-this-file other t))
     (should (file-exists-p other))
@@ -31,7 +31,7 @@ affects your Emacs packages)."
 
 (def-test! copy-this-file
   ":cp"
-  (-with-temp-files! "/tmp/doom-buffer-2" "/tmp/doom-buffer-2-new"
+  (with-temp-files!! "/tmp/doom-buffer-2" "/tmp/doom-buffer-2-new"
     (should-error (+evil:copy-this-file it))
     (should (+evil:copy-this-file other t))
     (should (file-exists-p other))
@@ -39,7 +39,7 @@ affects your Emacs packages)."
 
 (def-test! delete-this-file
   ":rm"
-  (-with-temp-files! "/tmp/doom-buffer-3" nil
+  (with-temp-files!! "/tmp/doom-buffer-3" nil
     (should-error (+evil:delete-this-file "this-file-does-not-exist"))
     (should (+evil:delete-this-file nil t))
     (should (not (file-exists-p it)))))
