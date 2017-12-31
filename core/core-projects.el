@@ -18,12 +18,16 @@
   ;; a more generic project root file
   (push ".project" projectile-project-root-files-bottom-up)
 
-  (nconc projectile-globally-ignored-directories (list (abbreviate-file-name doom-local-dir) ".sync"))
-  (nconc projectile-other-file-alist '(("css"  . ("scss" "sass" "less" "style"))
-                                       ("scss" . ("css"))
-                                       ("sass" . ("css"))
-                                       ("less" . ("css"))
-                                       ("styl" . ("css"))))
+  (setq projectile-globally-ignored-directories
+        (append projectile-globally-ignored-directories
+                (list (abbreviate-file-name doom-local-dir) ".sync"))
+        projectile-other-file-alist
+        (append projectile-other-file-alist
+                '(("css"  . ("scss" "sass" "less" "styl"))
+                  ("scss" . ("css"))
+                  ("sass" . ("css"))
+                  ("less" . ("css"))
+                  ("styl" . ("css")))))
 
   ;; Projectile root-searching functions can cause an infinite loop on TRAMP
   ;; connections, so disable them.
