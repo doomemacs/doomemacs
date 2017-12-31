@@ -16,6 +16,8 @@ state are passed in.")
 
   (add-hook 'doom-init-hook #'projectile-mode)
   :config
+  (add-hook 'dired-before-readin-hook #'projectile-track-known-projects-find-file-hook)
+
   ;; a more generic project root file
   (push ".project" projectile-project-root-files-bottom-up)
 
