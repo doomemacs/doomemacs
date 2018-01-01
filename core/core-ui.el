@@ -50,6 +50,7 @@ shorter major mode name in the mode-line. See `doom|set-mode-name'.")
  max-mini-window-height 0.3
  mode-line-default-help-echo nil ; disable mode-line mouseovers
  mouse-yank-at-point t           ; middle-click paste at point, not at click
+ ibuffer-use-other-window t
  resize-mini-windows 'grow-only  ; Minibuffer resizing
  show-help-function nil          ; hide :help-echo text
  split-width-threshold 160       ; favor horizontal splits
