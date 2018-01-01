@@ -1,0 +1,53 @@
+#+TITLE: :lang latex
+
+* Module Description
+Provide a helping hand when working with LaTeX documents.
+
+** Feature:
++ Sane defaults
++ Fontification of many popular commands
++ Pretty indentation of wrapped lines using the ~adaptive-wrap~ package
++ Spell checking with ~flyschek~
++ Change PDF viewer to Okular or ~latex-preview-pane~
++ Bibtex editor
++ Autocompletion using ~company-mode~
++ Ivy or Helm for selecting bibliography
++ Compile your .tex code only once using LatexMk
+
+
+* Customization
+
+** Custom Variables
+Two custom variables state where AUCTeX will search for bibliography files and their corresponding PDFs.
+Set these variables in your private configuration with:
+#+BEGIN_SRC emacs_lisp
+(set! :latex-bibtex-file "./your/bib/file.bib")
+(set! :latex-bibtex-pdfs-dir "./dir/with/bib/pdfs/")
+#+END_SRC
+If the variables are not set, they are ignored.
+
+** LatexMk
+Use LatexMk instead of normal LaTeX to compile documents. LatexMk only needs to run once to get all references, bibliography and other things right.
+
+Activate with the flag '+latexmk' of the latex module in init.el.
+#+BEGIN_SRC emacs_lisp
+(latex +latexmk)
+#+END_SRC
+
+** Okular
+Use Okular as default PDF viewer.
+
+Activate with the flag '+okular' of the latex module in init.el.
+#+BEGIN_SRC emacs_lisp
+(latex +okular)
+#+END_SRC
+
+** Preivew-Pane
+Instead of using an external program to display rendered .tex files, use an emacs window to display the rendered file. 
+
+This flag is incompatible with the ~+okular~ flag.
+
+Activate with the flag '+preview-pane' of the latex module in init.el.
+#+BEGIN_SRC emacs_lisp
+(latex +preview-pane)
+#+END_SRC
