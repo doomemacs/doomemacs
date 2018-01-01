@@ -4,7 +4,10 @@
 
 ;;;###autoload
 (defvar doom-real-buffer-functions '()
-  "A list of functions that are run to determine if a buffer is real.")
+  "A list of predicate functions run to determine if a buffer is real. These
+functions are iterated over with one argument, the buffer in question. If any
+function returns non-nil, the procession stops and the buffer is qualified as
+real.")
 
 ;;;###autoload
 (defvar-local doom-real-buffer-p nil
