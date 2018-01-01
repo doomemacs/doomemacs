@@ -68,7 +68,6 @@
           ("/\\(?:.emacs.d\\|doom-emacs\\)?/.+\\.el$"           "__doom-module"    emacs-lisp-mode)
           ("/\\(?:.emacs.d\\|doom-emacs\\)?/.+/packages\\.el$"  "__doom-packages"  emacs-lisp-mode)
           ("/\\(?:.emacs.d\\|doom-emacs\\)?/.+/test/.+\\.el$"   "__doom-test"      emacs-lisp-mode)
-          ("/\\(?:.emacs.d\\|doom-emacs\\)?/.+/README\\.org$"   "__doom-readme"    org-mode)
           (snippet-mode "__" snippet-mode)
           ;; Go
           ("\\.go$"                          "__.go"            go-mode)
@@ -91,7 +90,8 @@
           ;; Markdown
           ("\\.md$"                          "__"               markdown-mode)
           ;; Org
-          ("\\.org$"                         "__"               org-mode)
+          ("\\.org$"                                          "__"            org-mode)
+          ("/\\(?:.emacs.d\\|doom-emacs\\)?/.+/README\\.org$" "__doom-readme" org-mode)
           ;; PHP
           ("\\.php$"                         "__"               php-mode)
           ("\\.class\\.php$"                 "__.class.php"     php-mode)
