@@ -14,20 +14,23 @@ This module adds code-completion support, powered by [[https://github.com/compan
 - [[#troubleshooting][Troubleshooting]]
 
 * Install
-Certain languages may require additional setup, and some languages may have no completion support at all.
+Some languages require additional setup, and some languages may have no
+completion support at all.
 
 Check the README.org in that language's module for details.
 
 * Configure
 ** Auto-completion
-By default, I've disabled auto-completion. This is my preference. I prefer to invoke company when I need it by calling ~company-complete~ manually (typically, bound to =C-SPC= in insert mode). However, some may not share my preference.
+By default, I've disabled auto-completion. This is my preference. I prefer to
+invoke company when I need it by calling ~company-complete~ manually (typically,
+bound to =C-SPC= in insert mode). However, some may not share my preference.
 
 To enable auto-completion you must:
 
 1. Load ~company~,
 2. and change ~company-idle-delay~ to a non-nil float (the default is 0.5)
 
-For example, add the following to your ~modules/private/<username>/config.el~ module:
+For example:
 
 #+BEGIN_SRC emacs-lisp
 (require 'company)
@@ -36,8 +39,10 @@ For example, add the following to your ~modules/private/<username>/config.el~ mo
 #+END_SRC
 
 * Troubleshooting
-If completion isn't working for you, please consider the following before posting a bug report:
+If completion isn't working for you, please consider the following before
+posting a bug report:
 
-+ If what you are expecting is popup-as-you-type completion (which is disabled by default), see the "Customize" section above; it includes instructions on how to enable this.
-+ Certain languages may have extra dependencies in order for auto-completion to work. Please look for that module's README.org for details.
-+ Some languages don't have any auto-completion support.
++ If what you are expecting is popup-as-you-type completion (which is disabled
+  by default), see the "Configure > Auto-completion" section above, which will
+  instruct you on how to enable this.
++ Some languages don't have any auto-completion support at all.

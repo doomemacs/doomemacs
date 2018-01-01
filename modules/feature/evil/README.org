@@ -11,12 +11,14 @@ This holy module brings the vim experience to Emacs.
   - [[#differences-from-vim][Differences from vim]]
 
 * Removing evil-mode
-To get back a more vanilla Emacs experience, remove =:feature evil= from init.el. Evil-specific configuration and keybindings (defined with ~map!~) will be ignored without evil present (and removed when byte-compiling).
+See the [[https://github.com/hlissner/doom-emacs/wiki/FAQ#remove-vimevil-for-a-more-vanilla-emacs-experience][corresponding question in the FAQ]].
 
 * Features
 + A better ~:g[lobal]~ command with incremental highlighting.
-+ Adds the ~:al[ign]~ ex command: offers an ex interface to ~align-regexp~ with incremental highlighting.
-+ Support for more of vim's filename modifiers in ex commands (like ~:p~, ~:p:h~ or ~:t~) than vanilla evil-mode offers.
++ Adds the ~:al[ign]~ ex command: offers an ex interface to ~align-regexp~ with
+  incremental highlighting.
++ Support for more of vim's filename modifiers in ex commands (like ~:p~, ~:p:h~
+  or ~:t~) than vanilla evil-mode offers.
 + A list of new text objects:
   + Blocks: ~B~ (from ~evil-textobj-anyblock~)
   + Args: ~a~ (from ~evil-args~)
@@ -31,20 +33,29 @@ To get back a more vanilla Emacs experience, remove =:feature evil= from init.el
 + =NERDTree= equivalent is available in =:tools neotree=
 
 ** Multiple-cursors
-Two multiple-cursor implementations exist in this module: ~evil-mc~ and ~evil-multiedit~. Together, these provide the functionality of ~vim-multiple-cursors~.
+Two multiple-cursor implementations exist in this module: ~evil-mc~ and
+~evil-multiedit~. Together, these provide the functionality of
+~vim-multiple-cursors~.
 
-The former lets you place "clone" cursors. The latter lets you interactively edit many regions from one place (like an interactive version of ~:%s~).
+The former lets you place "clone" cursors. The latter lets you interactively
+edit many regions at once (like an interactive version of ~:%s~).
 
 ** A hybrid code-folding system
-This module combines ~evil-vimish-fold~ and ~hideshow~. The former allows arbitrary folds and the latter allows folds on markers and indentation. Together, they create a more consistent (and feature-complete) code-folding system.
+This module combines ~evil-vimish-fold~ and ~hideshow~. The former allows
+arbitrary folds and the latter allows folds on markers and indentation.
+Together, they create a more consistent (and feature-complete) code-folding
+system.
 
 Most vim folding keys should work, e.g. =zr=, =zm=, =za=, =zo=, etc.
 
 ** Hacks
 + Automatically moves to new window when splitting
-+ If in visual mode, =*= and =#= will search for the current selection instead of the word-at-point.
++ From visual mode, =*= and =#= will search for the current selection instead of
+  the word-at-point.
 
 ** Differences from vim
-+ Column-wise ranges in ex commands are enabled by default. i.e. the range in =:'<,'>s/a/b= will only affects the visual selection, not full lines (see ~evil-ex-visual-char-range~).
++ Column-wise ranges in ex commands are enabled by default. i.e. the range in
+  =:'<,'>s/a/b= will only affects the visual selection, not full lines (see
+  ~evil-ex-visual-char-range~).
 + =:g= will incrementally highlight buffer matches.
 

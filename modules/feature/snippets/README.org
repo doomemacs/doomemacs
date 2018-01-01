@@ -8,20 +8,5 @@ This module adds snippets to Emacs, powered by yasnippet.
 * Install
 There are no extra dependencies for this module.
 
-By default, this module uses the snippet library included with yasnippet.
-
-For the best experience, I'd suggest installing mine from https://github.com/hlissner/emacs-snippets -- they have been tailored specifically for Doom.
-
-1. Clone the repo to your private module:
-   #+BEGIN_SRC bash
-   git clone https://github.com/hlissner/emacs-snippets ~/.emacs.d/modules/private/$(whoami)/snippets
-   #+END_SRC
-2. Tell yasnippet where to look for them:
-   #+BEGIN_SRC emacs-lisp
-   ;; modules/private/{USERNAME}/config.el
-   (after! yasnippet
-     (setq yas-snippet-dirs
-           (append (list (expand-file-name "snippets/" (file-name-directory load-file-name)))
-                   (delq 'yas-installed-snippets-dir yas-snippet-dirs))))
-   #+END_SRC
-
+By default, =private/default= installs a snippet library tailored exclusively
+for Doom Emacs.

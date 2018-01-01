@@ -3,11 +3,13 @@
 This module adds Ivy, a completion backend.
 
 #+begin_quote
-I prefer ivy over ido for its flexibility. I prefer ivy over helm because it's lighter.
+I prefer ivy over ido for its flexibility. I prefer ivy over helm because it's
+lighter.
 #+end_quote
 
 + Project-wide search & replace powered by ~rg~ or ~ag~
-+ Project jump-to navigation ala Command-T, Sublime Text's Jump-to-anywhere or Vim's CtrlP plugin.
++ Project jump-to navigation ala Command-T, Sublime Text's Jump-to-anywhere or
+  Vim's CtrlP plugin.
 + Ivy integration for ~M-x~, ~imenu~, ~recentf~ and others.
 + A powerful, interactive in-buffer search using ~swiper~.
 + Ivy-powered TODO/FIXME navigation
@@ -28,7 +30,9 @@ I prefer ivy over ido for its flexibility. I prefer ivy over helm because it's l
 * Install
 This module optionally depends on [[https://github.com/BurntSushi/ripgrep][ripgrep]] and [[https://github.com/ggreer/the_silver_searcher][the_silver_searcher]].
 
-~rg~ is faster, but its results aren't deterministic, neither does it support multiline search or full PCRE, that's where ~ag~ is useful.
+~rg~ is faster, but its results aren't deterministic, neither does it support
+multiline search or full PCRE (at the time of writing), that's where ~ag~ is
+useful.
 
 ** MacOS
 #+BEGIN_SRC sh :tangle (if (doom-system-os 'macos) "yes")
@@ -41,37 +45,58 @@ sudo pacman --needed --noconfirm -S ripgrep the_silver_searcher
 #+END_SRC
 
 * Usage
-Here is some insight into how I use this module. Keep in mind that the referenced commands and keybindings are defined [[/modules/private/hlissner][in my private module]].
+Here is some insight into how I use this module.
 
 ** Project search & replace
-Ex interfaces to Ag (the silver searcher) and Rg (ripgrep) are available: ~:ag[!]~ and ~:rg[!]~, or their current-directory counterparts ~:agcwd[!]~ and ~:rgcwd[!]~.
+There are four Ex interfaces for the silver searcher and ripgrep. They are:
+
++ ~:ag[!]~
++ ~:agcwd[!]~
++ ~:rg[!]~
++ ~:rgcwd[!]~
+
+The optional BANG tells ag/rg to include ignored files in the search. And the
+\*cwd variant of each command will only search in the current directory
+(non-recursively).
 
 [[/../screenshots/modules/completion/ivy/ivy-search.gif]]
 
-From this session, you can press =S+Tab= to create a writeable occur-buffer in wgrep mode.
+Now, how do we do text replacements? With the ivy popup open you can press
+=S+Tab= to create an wgrep buffer out of the results.
 
 [[/../screenshots/modules/completion/ivy/ivy-search-replace.gif]]
 
-Make your modifications and press =C-c C-c= to commit them, or =C-c C-k= to abort.
+Make your modifications and press =C-c C-c= to commit them, or =C-c C-k= to
+abort.
 
 ** Jump-to-file project navigation
-Inspired by Sublime Text's jump-to-anywhere, Vim's CtrlP or Unite plugins, and Textmate's Command-T, a marriage of ~projectile~ and ~ivy~ makes this available to you in Emacs. Invoke it with =SPC f /=, =SPC SPC= or ~counsel-projectile-find-file~.
+Inspired by Sublime Text's jump-to-anywhere, Vim's CtrlP/Unite plugins, and
+Textmate's Command-T, a marriage of ~projectile~ and ~ivy~ makes this available
+in Emacs.
+
+Invoke it with =SPC f /=, =SPC SPC= or ~M-x counsel-projectile-find-file~.
 
 [[/../screenshots/modules/completion/ivy/ivy-projectile.gif]]
 
 ** In-buffer searching
-I use ~evil-search~ (invoked by pressing =/= in normal mode) when jumping small/moderate (or predictable) distances. However, there are occasions where I need more feedback, so I turn to ~swiper~ (available directly with =M-x swiper RET=, or via ~:sw[iper]~).
+I use ~evil-search~ (invoked by pressing =/= in normal mode) when jumping
+small/moderate (or predictable) distances. However, there are occasions where I
+need more feedback, so I turn to ~swiper~ (available directly with =M-x swiper
+RET=, or via ~:sw[iper]~).
 
 [[/../screenshots/modules/completion/ivy/ivy-swiper.gif]]
 
 ** Task lookup
-I sprinkle my projects with TODO's & FIXME's. You can navigate to and peruse them via ~M-x +ivy/tasks~ or ~:todo[!]~ (ex command).
+I sprinkle my projects with TODO's & FIXME's. You can navigate to and peruse
+them via ~M-x +ivy/tasks~ or ~:todo[!]~ (ex command).
 
 [[/../screenshots/modules/completion/ivy/ivy-todo.gif]]
 
 * Appendix
 ** Commands
-Here is a list of my commonly used commands, their default keybinds (defined in [[../../private/hlissner/+bindings.el][private/hlissner/+bindings.el]]), and their corresponding ex command (defined in [[../../private/hlissner/+commands.el][private/hlissner/+commands.el]]).
+Here is a list of my commonly used commands, their default keybinds (defined in
+[[../../private/default/+bindings.el][private/default/+bindings.el]]), and their corresponding ex command (defined in
+[[../../private/default/+evil-commands.el][private/default/+evil-commands.el]]).
 
 | command                             | key / ex command       | description                                                      |
 |-------------------------------------+------------------------+------------------------------------------------------------------|
@@ -90,7 +115,8 @@ Here is a list of my commonly used commands, their default keybinds (defined in 
 | ~+ivy:swiper~                       | ~:sw[iper] [QUERY]~    | Search current buffer                                            |
 | ~+ivy:todo~                         | ~:todo[!]~             | List all TODO/FIXMEs in project (or current file if BANG)        |
 
-While in a search (e.g. invoked from ~+ivy:ag~ or ~+ivy:rg~), these new keybindings are available to you:
+While in a search (e.g. invoked from ~+ivy:ag~ or ~+ivy:rg~), these new
+keybindings are available to you:
 
 | key         | description                                                                    |
 |-------------+--------------------------------------------------------------------------------|
@@ -99,10 +125,10 @@ While in a search (e.g. invoked from ~+ivy:ag~ or ~+ivy:rg~), these new keybindi
 | =M-RET=     | Open the selected candidate in other-window                                    |
 
 ** Hacks
-+ Functions with ivy/counsel equivalents have been globally remapped (like ~find-file~ => ~counsel-find-file~). So a keybinding to ~find-file~ will invoke ~counsel-find-file~ instead.
-+ ~counsel-[arp]g~'s 3-character limit was reduced to 1 (mainly for the ex command)
-+ ~counsel-[arp]g~'s parentheses quoting behavior was reversed. Now, if you
-  want literal parentheses, you must escape them: e.g. ~\(match\)~ is literal,
-  ~(match)~ is a regexp group.
++ Functions with ivy/counsel equivalents have been globally remapped (like
+  ~find-file~ => ~counsel-find-file~). So a keybinding to ~find-file~ will
+  invoke ~counsel-find-file~ instead.
++ ~counsel-[arp]g~'s 3-character limit was reduced to 1 (mainly for the ex
+  command)
 
 

@@ -1,9 +1,15 @@
 #+TITLE: :feature workspaces
 
-This module adds support for workspaces, powered by persp_mode, as well as a unified API for manipulating them.
+This module adds support for workspaces, powered by persp_mode, as well as a API
+for manipulating them.
 
 #+begin_quote
-There are many ways to use workspaces. Some use them to group buffers/windows by project or categories (views, models, logic, etc). I use them differently: on a per-task basis, which may traverse multiple projects or aspects, but are tied to an objective. For example: implement a specific feature or fix a certain bug; sometimes unrelated to the project at hand.
+There are many ways to use workspaces. I spawn a workspace per task. Say I'm
+working in the main workspace, when I realize there is a bug in another part of
+my project. I open a new workspace and deal with it in there. In the meantime, I
+need to check my email, so mu4e gets its own workspace.
+
+Once I've completed the task, I close the workspace and return to main.
 #+end_quote
 
 * Table of Contents :TOC:
@@ -22,25 +28,33 @@ This module has no additional dependencies.
 
 * Features
 ** Isolated buffer-list
-When persp-mode is active, ~doom-buffer-list~ becomes workspace-restricted. You can overcome this by using ~buffer-list~.
+When persp-mode is active, ~doom-buffer-list~ becomes workspace-restricted. You
+can overcome this by using ~buffer-list~.
 
 ** Automatic workspaces
 A workspace is automatically created (and switched to) when you:
 
-+ Create a new frame (with =make-frame=; bound to =M-N= by default)
-+ Switch to a project using ~projectile-switch-project~ (or its ivy/helm equivalents)
++ Create a new frame (with =make-frame=; bound to =M-N= by default).
++ Switch to a project using ~projectile-switch-project~.
 
 ** Session persistence
-By default, your session is autosaved when you quit Emacs (or disable ~persp-mode~). You can load a previous session with ~M-x +workspace/load-session~ or ~:sl[oad]~ (ex command).
+By default, your session is autosaved when you quit Emacs (or disable
+~persp-mode~). You can load a previous session with ~M-x
++workspace/load-session~ or ~:sl[oad]~ (ex command).
 
-You can supply either a name to load a specific session to replace your current one.
+You can supply either a name to load a specific session to replace your current
+one.
 
 ** Workspace persistence
-If you'd like to save a specific workspace, use ~M-x +workspace/save~, which can be loaded into the current session (as another workspace) with ~M-x +workspace/load~.
+If you'd like to save a specific workspace, use ~M-x +workspace/save~, which can
+be loaded into the current session (as another workspace) with ~M-x
++workspace/load~.
 
 * Appendix
 ** Commands & Keybindings
-Here is a list of available commands, their default keybindings (defined in private/hlissner/+bindings.el), and corresponding ex commands (if any -- defined in private/hlissner/+commands.el).
+Here is a list of available commands, their default keybindings (defined in
+[[../../private/default/+bindings.el][private/default/+bindings.el]]), and corresponding ex commands (if any -- defined
+in [[../../private/default/+evil-commands.el][private/default/+evil-commands.el]]).
 
 | command                   | key / ex command           | description                                                |
 |---------------------------+----------------------------+------------------------------------------------------------|
