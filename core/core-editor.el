@@ -58,6 +58,12 @@ modes are active and the buffer is read-only.")
       (ignore (bury-buffer))))
 (add-hook 'kill-buffer-query-functions #'doom|dont-kill-scratch-buffer)
 
+;; temporary windows often have q bound to `quit-window', which only buries the
+;; contained buffer. I rarely don't want that buffer killed, so...
+(defun doom*quit-window (orig-fn &optional kill window)
+  (funcall orig-fn (not kill) window))
+(advice-add #'quit-window :around #'doom*quit-window)
+
 (defun doom|check-large-file ()
   "Check if the buffer's file is large (see `doom-large-file-size'). If so, ask
 for confirmation to open it literally (read-only, disabled undo and in
