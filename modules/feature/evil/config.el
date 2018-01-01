@@ -388,8 +388,8 @@ the new algorithm is confusing, like in python or ruby."
 ;;
 
 ;; mc doesn't play well with evil, this attempts to assuage some of its problems
-;; so that certain plugins (which I have no control over) can still use it in
-;; relative safety.
+;; so that any plugins that depend on multiple-cursors (which I have no control
+;; over) can still use it in relative safety.
 (after! multiple-cursors-core
   (map! :map mc/keymap :ne "<escape>" #'mc/keyboard-quit)
 

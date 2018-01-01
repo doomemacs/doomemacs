@@ -704,7 +704,7 @@ compiled packages.'"
                      if (file-exists-p path)
                      collect path
                      and do (delete-file path)
-                     and do (message "Deleted %s" (file-relative-name path)))
+                     and do (message "✓ Deleted %s" (file-relative-name path)))
       (message "Everything is clean"))))
 
 

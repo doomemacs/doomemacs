@@ -29,7 +29,7 @@
   "An alist that maps online resources to their search url or a function that
 produces an url. Used by `+jump/online'.")
 
-(defconst +jump-search-browser-fn #'browse-url
+(defvar +jump-search-browser-fn #'browse-url
   "Function to use to open search urls.")
 
 (defvar +jump-function-alist nil

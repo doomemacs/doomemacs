@@ -168,8 +168,8 @@ extension, try to guess one."
 
 ;; Auto-close delimiters and blocks as you type
 (def-package! smartparens
+  :hook (doom-init . smartparens-global-mode)
   :config
-  (add-hook 'doom-init-hook #'smartparens-global-mode)
   (require 'smartparens-config)
 
   (setq sp-autowrap-region nil ; let evil-surround handle this
