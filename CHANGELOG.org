@@ -41,16 +41,27 @@
     causing load order errors. This is because the ~hash-table-values~ function
     in Emacs 25 and under uses ~maphash~, which reverses the hash-table, while
     newer versions use ~cl-loop~, which doesn't.
+  + =core-packages= Fix ~doom//*~ not running from the correct
+    default-directory, causing errors.
   + =core-ui= Fix cryptic missing-font errors (also, they are warnings now).
   + =core-ui= Account for Emacs 26 line numbers when calculating
     ~visual-fill-column-width~.
+  + =core-editor= the =KILL= argument for ~quit-window &optional KILL WINDOW~
+    has been flipped and now kills the window's buffer by default.
   + =core-projects= Add ~doom-project-find-file~ and ~doom-project-browse~ for
     interactively fuzzy-finding and opening files in a directory/project.
+  + Add ~doom/info~ command for collecting information about your system and
+    session and puts it in the clipboard. This is to make it easier for those
+    reporting bugs to easily include it.
+  + Fix ibuffer windows not being handed off to popup system (see [[https://github.com/hlissner/doom-emacs/issues/309][#309]]).
 + =feature=
-  + =file-templates= Add a file template for fish shell scripts (thanks to
-    [[https://github.com/amosbird][amosbird]]).
+  + =file-templates=
+    + Add a file template for fish shell scripts (thanks to [[https://github.com/amosbird][amosbird]]).
+    + Fix some file templates not being inserted, like module README.org files.
   + =version-control= When evil-mode is available, start git commit message
     buffers in insert mode (see [[https://github.com/hlissner/doom-emacs/issues/300][#300]]).
+  + =jump= Always prompt for provider when no major-mode specific online jumper
+    is defined (for ~+jump/online~ and ~+jump/documentation~).
 + =ui=
   + =doom-dashboard=
     + Fix ~whitespace-mode~ and ~show-trailing-whitespace~ turning the dashboard
@@ -74,6 +85,7 @@
     + The ~+cc-include-paths~ and ~+cc-compiler-options~ options have been
       renamed to ~+cc-default-include-paths~ and ~+cc-default-compiler-options~
       for clarity.
+    + Fix irony-mode complaining when it is enabled in non-C major-modes.
   + =org=
     + Change repo source for org-plus-contrib to emacsmirror.
     + Fix ~+org-dir~ being resolved too soon, robbing the user of the
