@@ -1,6 +1,25 @@
 ;;; lang/cc/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
+(defun +cc/reload-compile-db (&optional force-p)
+  "Reload the current project's JSON compilation database."
+  (interactive "P")
+  (unless (memq major-mode '(c-mode c++-mode objc-mode))
+    (user-error "Not a C/C++/ObjC buffer"))
+  (unless (doom-project-has! "compile_commands.json")
+    (user-error "No compile_commands.json file"))
+  ;; first rtag
+  (when (and (featurep 'rtags)
+             rtags-enabled
+             (executable-find "rc"))
+    (with-temp-buffer
+      (message "Reloaded compile commands for rtags daemon")
+      (rtags-call-rc :silent t "-J" (doom-project-root))))
+  ;; then irony
+  (when (and (featurep 'irony) irony-mode)
+    (+cc|irony-init-compile-options)))
+
+;;;###autoload
 (defun +cc*align-lambda-arglist (orig-fun &rest args)
   "Improve indentation of continued C++11 lambda function opened as argument."
   (if (and (eq major-mode 'c++-mode)
@@ -66,8 +85,8 @@
 ;;;###autoload
 (defun +cc|irony-init-compile-options ()
   "Initialize compiler options for irony-mode. It searches for the nearest
-compilation database and initailizes it. If none was found, it uses
-`+cc-c++-compiler-options'.
+compilation database and initailizes it, otherwise falling back on
+`+cc-default-compiler-options' and `+cc-default-include-paths'.
 
 See https://github.com/Sarcasm/irony-mode#compilation-database for details on
 compilation dbs."
@@ -75,8 +94,8 @@ compilation dbs."
     (require 'irony-cdb)
     (unless (irony-cdb-autosetup-compile-options)
       (irony-cdb--update-compile-options
-       (append (delq nil (cdr-safe (assq major-mode +cc-compiler-options)))
-               (cl-loop for path in +cc-include-paths
+       (append (delq nil (cdr-safe (assq major-mode +cc-default-compiler-options)))
+               (cl-loop for path in +cc-default-include-paths
                         nconc (list "-I" path)))
        (doom-project-root)))))
 

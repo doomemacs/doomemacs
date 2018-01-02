@@ -50,6 +50,7 @@ shorter major mode name in the mode-line. See `doom|set-mode-name'.")
  max-mini-window-height 0.3
  mode-line-default-help-echo nil ; disable mode-line mouseovers
  mouse-yank-at-point t           ; middle-click paste at point, not at click
+ ibuffer-use-other-window t
  resize-mini-windows 'grow-only  ; Minibuffer resizing
  show-help-function nil          ; hide :help-echo text
  split-width-threshold 160       ; favor horizontal splits
@@ -182,9 +183,13 @@ local value, whether or not it's permanent-local. Therefore, we cycle
         (when (fontp doom-variable-pitch-font)
           (set-face-attribute 'variable-pitch frame :font doom-variable-pitch-font)))
     ('error
-     (lwarn 'doom-ui :error
-            "Failed to set fonts because %s"
-            (error-message-string ex))))
+     (if (string-prefix-p "Font not available: " (error-message-string ex))
+         (lwarn 'doom-ui :warning
+                "Could not find the '%s' font on your system, falling back to system font"
+                (font-get (caddr ex) :family))
+       (lwarn 'doom-ui :error
+              "Unexpected error while initializing fonts: %s"
+              (error-message-string ex)))))
   (run-hooks 'doom-init-ui-hook))
 
 (defun doom|reload-ui-in-daemon (frame)
@@ -224,6 +229,14 @@ local value, whether or not it's permanent-local. Therefore, we cycle
 (add-hook! '(doom-post-init-hook minibuffer-setup-hook)
   #'doom|no-fringes-in-minibuffer)
 
+(defun doom|protect-visible-buffers ()
+  "Don't kill the current buffer if it is visible in another window (bury it
+instead)."
+  (not (delq (selected-window)
+             (get-buffer-window-list nil nil t))))
+(add-hook! doom-post-init
+  (add-hook 'kill-buffer-query-functions #'doom|protect-visible-buffers))
+
 
 ;;
 ;; Plugins
@@ -237,14 +250,11 @@ local value, whether or not it's permanent-local. Therefore, we cycle
   (defun doom*disable-all-the-icons-in-tty (orig-fn &rest args)
     (when (display-graphic-p)
       (apply orig-fn args)))
-
   ;; all-the-icons doesn't work in the terminal, so we "disable" it.
-  (advice-add #'all-the-icons-octicon    :around #'doom*disable-all-the-icons-in-tty)
-  (advice-add #'all-the-icons-material   :around #'doom*disable-all-the-icons-in-tty)
-  (advice-add #'all-the-icons-faicon     :around #'doom*disable-all-the-icons-in-tty)
-  (advice-add #'all-the-icons-fileicon   :around #'doom*disable-all-the-icons-in-tty)
-  (advice-add #'all-the-icons-wicon      :around #'doom*disable-all-the-icons-in-tty)
-  (advice-add #'all-the-icons-alltheicon :around #'doom*disable-all-the-icons-in-tty))
+  (dolist (fn '(all-the-icons-octicon all-the-icons-material
+                all-the-icons-faicon all-the-icons-fileicon
+                all-the-icons-wicon all-the-icons-alltheicon))
+    (advice-add fn :around #'doom*disable-all-the-icons-in-tty)))
 
 (def-package! fringe-helper
   :commands (fringe-helper-define fringe-helper-convert)
@@ -255,8 +265,7 @@ local value, whether or not it's permanent-local. Therefore, we cycle
 
 (def-package! hideshow ; built-in
   :commands (hs-minor-mode hs-toggle-hiding hs-already-hidden-p)
-  :config
-  (setq hs-hide-comments-when-hiding-all nil))
+  :config (setq hs-hide-comments-when-hiding-all nil))
 
 (def-package! highlight-indentation
   :commands (highlight-indentation-mode highlight-indentation-current-column-mode))
@@ -306,17 +315,20 @@ local value, whether or not it's permanent-local. Therefore, we cycle
 ;; Helps us distinguish stacked delimiter pairs. Especially in parentheses-drunk
 ;; languages like Lisp.
 (def-package! rainbow-delimiters
-  :commands rainbow-delimiters-mode
-  :config (setq rainbow-delimiters-max-face-count 3)
-  :init (add-hook 'lisp-mode-hook #'rainbow-delimiters-mode))
+  :hook (lisp-mode . rainbow-delimiters-mode)
+  :config (setq rainbow-delimiters-max-face-count 3))
 
 ;; For a distractions-free-like UI, that dynamically resizes margets and can
 ;; center a buffer.
 (def-package! visual-fill-column
   :commands visual-fill-column-mode
   :config
-  (setq-default visual-fill-column-center-text nil
-                visual-fill-column-width fill-column))
+  (setq-default
+   visual-fill-column-center-text t
+   visual-fill-column-width
+   ;; take Emacs 26 line numbers into account
+   (+ (if (boundp 'display-line-numbers) 6 0)
+      fill-column)))
 
 
 ;;

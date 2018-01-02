@@ -47,10 +47,22 @@ renamed.")
 
   ;; per-frame and per-project workspaces
   (setq persp-init-new-frame-behaviour-override nil
-        persp-interactive-init-frame-behaviour-override #'+workspace-on-new-frame
-        projectile-switch-project-action #'projectile-find-file)
+        persp-interactive-init-frame-behaviour-override #'+workspace-on-new-frame)
   (add-hook 'delete-frame-functions #'+workspaces|delete-associated-workspace-maybe)
-  (advice-add #'projectile-switch-project-by-name :around #'+workspaces*switch-project-by-name)
+
+  (defun +workspaces|per-project (&optional root)
+    "Open a new workspace when switching to another project.
+
+Ensures the scratch (or dashboard) buffers are CDed into the project's root."
+    (when persp-mode
+      (let ((cwd default-directory))
+        (+workspace-switch (projectile-project-name) t)
+        (switch-to-buffer (doom-fallback-buffer))
+        (setq default-directory cwd)
+        (+workspace-message
+         (format "Switched to '%s' in new workspace" (+workspace-current-name))
+         'success))))
+  (setq projectile-switch-project-action #'+workspaces|per-project)
 
   ;; only auto-save when real buffers are present
   (advice-add #'persp-asave-on-exit :around #'+workspaces*autosave-real-buffers)
@@ -68,7 +80,10 @@ renamed.")
   (remove-hook 'delayed-warnings-hook #'display-delayed-warnings)
   (defun +workspaces|init (&optional frame)
     (unless persp-mode
-      (persp-mode +1))
+      (persp-mode +1)
+      ;; Ensure `persp-kill-buffer-query-function' is last in kill-buffer-query-functions
+      (remove-hook 'kill-buffer-query-functions 'persp-kill-buffer-query-function)
+      (add-hook 'kill-buffer-query-functions 'persp-kill-buffer-query-function t))
     (let ((frame (or frame (selected-frame))))
       (unless noninteractive
         ;; The default perspective persp-mode makes (defined by

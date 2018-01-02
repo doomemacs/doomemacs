@@ -8,6 +8,7 @@
 ;; In case it isn't defined (in really old versions of Emacs, like the one that
 ;; ships with MacOS).
 (defvar user-emacs-directory (expand-file-name "~/.emacs.d/"))
+(defvar doom-debug-mode (getenv "DEBUG"))
 
 (unless (equal (expand-file-name user-emacs-directory)
                (expand-file-name "~/.emacs.d/"))
@@ -15,14 +16,20 @@
 
 (require 'pp)
 
+(defsubst string-trim-right (string &optional regexp)
+  (if (string-match (concat "\\(?:" (or regexp "[ \t\n\r]+") "\\)\\'") string)
+      (replace-match "" t t string)
+    string))
+
 ;;
 (defvar doom-init-p nil)
 (defvar doom-errors 0)
 (defmacro check! (cond &rest body)
   (declare (indent defun))
-  `(when ,cond
-     ,@body
-     (setq doom-errors (1+ doom-errors))))
+  `(let ((it ,cond))
+     (when it
+       ,@body
+       (setq doom-errors (1+ doom-errors)))))
 
 (defun indented (spc msg)
   (declare (indent defun))
@@ -57,26 +64,18 @@
                 "\n")))
     (buffer-string)))
 
-(defmacro wait-for! (var if-body &optional else-body)
-  (declare (indent defun))
-  `(let ((i 0))
-     (while (and (not ,var)
-                 (< i 5))
-       (sleep-for 1)
-       (setq i (1+ i)))
-     (if ,var
-         ,if-body
-       ,else-body)))
+(defun sh (cmd)
+  (string-trim-right (shell-command-to-string cmd)))
 
 (defun color (code msg &rest args)
   (format "\e[%dm%s\e[%dm" code (apply #'format msg args) 0))
 
 (defalias 'msg! #'message)
-(defmacro error!   (&rest args) `(message (color 1 (color 31 ,@args))))
-(defmacro warn!    (&rest args) `(message (color 1 (color 33 ,@args))))
-(defmacro success! (&rest args) `(message (color 1 (color 32 ,@args))))
-(defmacro log!     (&rest args) `(if doom-debug-mode (message (color 34 ,@args))))
-(defmacro explain! (&rest args) `(message (indented 2 (autofill ,@args))))
+(defmacro error!   (&rest args) `(msg! (color 1 (color 31 ,@args))))
+(defmacro warn!    (&rest args) `(msg! (color 1 (color 33 ,@args))))
+(defmacro success! (&rest args) `(msg! (color 1 (color 32 ,@args))))
+(defmacro section! (&rest args) `(msg! (color 34 ,@args)))
+(defmacro explain! (&rest args) `(msg! (indented 2 (autofill ,@args))))
 
 ;;; Polyfills
 ;; early versions of emacs won't have this
@@ -88,15 +87,21 @@
 
 ;; --- start a'doctorin' --------------------------------------
 
-(msg! "%s\nRunning Emacs v%s, commit %s"
+(msg! "%s\nRunning Emacs v%s, commit %s\n"
       (color 1 "DOOM Doctor")
       (color 1 emacs-version)
       (if (executable-find "git")
-          (shell-command-to-string "git rev-parse HEAD")
+          (sh "git rev-parse HEAD")
         "n/a"))
+
+(msg! "shell: %s%s"
+      (getenv "SHELL")
+      (if (equal (getenv "SHELL") (sh "echo $SHELL"))
+          ""
+        (color 31 " (mismatch)")))
 (when (boundp 'system-configuration-features)
   (msg! "Compiled with:\n%s" (indented 2 (autofill system-configuration-features))))
-(msg! "uname -a:\n%s" (indented 2 (autofill (shell-command-to-string "uname -a"))))
+(msg! "uname -a:\n%s\n" (indented 2 (autofill (sh "uname -a"))))
 
 (let (doom-core-packages doom-debug-mode)
   (condition-case ex
@@ -108,11 +113,10 @@
         (doom|finalize)
         (success! "Attempt to load DOOM: success! Loaded v%s" doom-version)
         (when (executable-find "git")
-          (msg! "Revision %s"
-                (or (ignore-errors
-                      (let ((default-directory user-emacs-directory))
-                        (shell-command-to-string "git rev-parse HEAD")))
-                    "\n"))))
+          (msg! "Revision %s\n"
+                (ignore-errors
+                  (let ((default-directory user-emacs-directory))
+                    (sh "git rev-parse HEAD"))))))
     ('error (warn! "Attempt to load DOOM: failed\n  %s\n"
                    (or (cdr-safe ex) (car ex))))))
 
@@ -120,7 +124,7 @@
 
 ;; --- is emacs set up properly? ------------------------------
 
-(log! "test-emacs")
+(section! "test-emacs")
 (check! (version< emacs-version "25.1")
   (error! "Important: Emacs %s detected [%s]" emacs-version (executable-find "emacs"))
   (explain!
@@ -133,13 +137,13 @@
 ;; --- is the environment set up properly? --------------------
 
 ;; windows? windows
-(log! "test-windows")
+(section! "test-windows")
 (check! (memq system-type '(windows-nt ms-dos cygwin))
   (warn! "Warning: Windows detected")
   (explain! "DOOM was designed for MacOS and Linux. Expect a bumpy ride!"))
 
 ;; are all default fonts present
-(log! "test-fonts")
+(section! "test-fonts")
 (if (not (fboundp 'find-font))
     (progn
       (warn! "Warning: unable to detect font")
@@ -162,19 +166,19 @@
                     "case, ignore this warning."))))))
 
 ;; gnutls-cli & openssl
-(log! "test-gnutls")
+(section! "test-gnutls")
 (cond ((executable-find "gnutls-cli"))
       ((executable-find "openssl")
-       (let* ((output (shell-command-to-string "openssl ciphers -v"))
+       (let* ((output (sh "openssl ciphers -v"))
               (protocols
                (let (protos)
                  (mapcar (lambda (row)
                            (add-to-list 'protos (cadr (split-string row " " t))))
-                         (split-string (shell-command-to-string "openssl ciphers -v") "\n"))
+                         (split-string (sh "openssl ciphers -v") "\n"))
                  (delq nil protos))))
          (check! (not (or (member "TLSv1.1" protocols)
                           (member "TLSv1.2" protocols)))
-           (let ((version (cadr (split-string (shell-command-to-string "openssl version") " " t))))
+           (let ((version (cadr (split-string (sh "openssl version") " " t))))
              (warn! "Warning: couldn't find gnutls-cli, and OpenSSL is out-of-date (v%s)" version)
              (explain!
               "This may not affect your Emacs experience, but there are security "
@@ -198,7 +202,7 @@
           "network, provider, government, neckbearded mother-in-laws, geeky roommates, "
           "or just about anyone who knows more about computers than you do!"))))
 
-(log! "test-tls")
+(section! "test-tls")
 (cond ((not (string-match-p "\\_<GNUTLS\\_>" system-configuration-features))
        (warn! "Warning: You didn't install Emacs with gnutls support")
        (explain!
@@ -211,53 +215,50 @@
                   "    brew tap d12frosted/emacs-plus"
                   "    brew install emacs-plus"))))
 
+      ((not (fboundp 'url-retrieve-synchronously))
+       (error! "Can't find url-retrieve-synchronously function. Are you running Emacs 24+?"))
+
       ((or (executable-find "gnutls-cli")
            (executable-find "openssl"))
        (let ((tls-checktrust t)
              (gnutls-verify-error t))
-         (dolist (url '("https://elpa.gnu.org"
-                        "https://melpa.org"))
-           (condition-case-unless-debug ex
-               (let (result)
-                 (let ((inhibit-message t))
-                   (url-retrieve url (lambda (status &rest _) (setq result status))))
-                 (wait-for! result
-                   (when (getenv "DEBUG")
-                     (success! "Verified %s" (nth 2 (split-string url "/"))))
-                   (signal 'timed-out url)))
-             ('timed-out
-              (error! "Timed out trying to contact %s" ex))
-             ('error
-              (check! t
-                (error! "Rejected %s" url)
-                (explain! (pp-to-string ex))))))
+         (dolist (url '("https://elpa.gnu.org" "https://melpa.org"))
+           (check! (condition-case-unless-debug e
+                       (if (let ((inhibit-message t)) (url-retrieve-synchronously url))
+                           (ignore (success! "Validated %s" url))
+                         'empty)
+                     ('timed-out 'timeout)
+                     ('error e))
+             (pcase it
+               (`empty (error! "Couldn't reach %s" url))
+               (`timeout (error! "Timed out trying to contact %s" ex))
+               (_
+                (error! "Failed to validate %s" url)
+                (when doom-debug-mode
+                  (explain! (pp-to-string it)))))))
          (dolist (url '("https://self-signed.badssl.com"
                         "https://wrong.host.badssl.com/"))
-           (condition-case-unless-debug ex
-               (let (result)
-                 (let ((inhibit-message t))
-                   (url-retrieve url (lambda (status &rest _) (setq result status))))
-                 (wait-for! result
-                   (check! t
-                     (warn! "Verified %s (this shouldn't happen!)" (nth 2 (split-string url "/")))
-                     (explain! (pp-to-string result)))
-                   (signal 'timed-out url)))
-             ('timed-out
-              (error! "Timed out trying to contact %s" ex))
-             ('error
-              (when (getenv "DEBUG")
-                (success! "Rejected %s (a good thing!)" url)
-                (explain! (pp-to-string ex))))))))
+           (check! (condition-case-unless-debug e
+                       (if (let ((inhibit-message t)) (url-retrieve-synchronously url))
+                           t
+                         'empty)
+                     ('timed-out 'timeout)
+                     ('error (ignore (success! "Successfully rejected %s" url))))
+             (pcase it
+               (`empty (error! "Couldn't reach %s" url))
+               (`timeout (error! "Timed out trying to contact %s" ex))
+               (_
+                (error! "Validated %s (this shouldn't happen!)" url)))))))
 
       (t
        (error! "Nope!")))
 
 ;; bsd vs gnu tar
-(log! "test-tar")
+(section! "test-tar")
 (let ((tar-bin (or (executable-find "gtar")
                    (executable-find "tar"))))
   (if tar-bin
-      (check! (not (string-match-p "(GNU tar)" (shell-command-to-string (format "%s --version" tar-bin))))
+      (check! (not (string-match-p "(GNU tar)" (sh (format "%s --version" tar-bin))))
         (warn! "Warning: BSD tar detected")
         (explain!
          "QUELPA (through package-build) uses the system tar to build plugins, but it "
@@ -275,50 +276,51 @@
 
 ;; --- report! ------------------------------------------------
 
-(when (getenv "DEBUG")
+(when doom-debug-mode
   (msg! "\n====\nHave some debug information:\n")
 
   (when (bound-and-true-p doom-modules)
     (msg! "  + enabled modules:\n%s"
-       (indented 4
-         (columns 3 23
-           (mapcar (lambda (x) (format "+%s" x))
-                   (mapcar #'cdr (doom-module-pairs)))))))
+          (indented 4
+            (columns 3 23
+              (mapcar (lambda (x) (format "+%s" x))
+                      (mapcar #'cdr (doom-module-pairs)))))))
 
   (when (and (bound-and-true-p doom-packages)
              (require 'package nil t))
     (msg! "  + enabled packages:\n%s"
-       (indented 4
-         (columns 2 35
-           (mapcar (lambda (pkg)
-                     (let ((desc (cadr (assq pkg package-alist))))
-                       (when desc
-                         (package-desc-full-name desc))))
-                   (sort (mapcar #'car doom-packages) #'string-lessp))))))
+          (indented 4
+            (columns 2 35
+              (delq nil
+                    (mapcar (lambda (pkg)
+                              (let ((desc (cadr (assq pkg package-alist))))
+                                (when desc
+                                  (package-desc-full-name desc))))
+                            (sort (mapcar #'car doom-packages) #'string-lessp)))))))
 
   (msg! "  + byte-compiled files:\n%s"
-     (indented 4
-       (columns 2 39
-         (let ((files (append (directory-files-recursively doom-core-dir ".elc$")
-                              (directory-files-recursively doom-modules-dir ".elc$"))))
-           (or (and files (mapcar (lambda (file) (file-relative-name file doom-emacs-dir))
-                                  (nreverse files)))
-               (list "n/a"))))))
+        (indented 4
+          (columns 2 39
+            (let ((files (append (directory-files-recursively doom-core-dir ".elc$")
+                                 (directory-files-recursively doom-modules-dir ".elc$"))))
+              (or (and files (mapcar (lambda (file) (file-relative-name file doom-emacs-dir))
+                                     (nreverse files)))
+                  (list "n/a"))))))
 
   (msg! "  + exec-path:\n%s"
-     (indented 4
-       (columns 1 79 exec-path)))
+        (indented 4
+          (columns 1 79 exec-path)))
 
   (msg! "  + PATH:\n%s"
-     (indented 4
-       (columns 1 79 (split-string (getenv "PATH") ":")))))
+        (indented 4
+          (columns 1 79 (split-string (getenv "PATH") ":")))))
 
 ;;
 (if (= doom-errors 0)
     (success! "Everything seems fine, happy Emacs'ing!")
   (message "\n----")
   (warn! "There were issues!")
-  (unless (getenv "DEBUG")
+  (unless doom-debug-mode
     (msg! "\nHopefully these can help you find problems. If not, run this doctor again with DEBUG=1:")
     (msg! "\n  DEBUG=1 make doctor\n")
     (msg! "And file a bug report with its output at https://github.com/hlissner/.emacs.d/issues")))

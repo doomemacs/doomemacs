@@ -97,7 +97,9 @@ Tries `xref-find-references' and falls back to rg/ag."
   (cond ((plist-member +jump-current-functions :documentation)
          (+jump-to :documentation identifier))
         (t
-         (+jump/online (caar +jump-search-provider-alist) identifier))))
+         (+jump/online
+          identifier
+          (+jump--online-get-provider (not current-prefix-arg))))))
 
 (defun +jump--online-get-provider (&optional force-p)
   (or (and (not force-p)

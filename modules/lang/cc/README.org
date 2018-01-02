@@ -5,26 +5,36 @@ This module adds support for the C-family of languages: C, C++, and Objective-C.
 + Code completion (~company-irony~)
 + eldoc support (~irony-eldoc~)
 + Syntax-checking (~flycheck-irony~)
-+ Code navigation (~irony~)
++ Code navigation (~rtags~)
 + File Templates ([[../../feature/file-templates/templates/c-mode][c-mode]], [[../../feature/file-templates/templates/c++-mode][c++-mode]])
 + Snippets ([[https://github.com/hlissner/emacs-snippets/tree/master/cc-mode][cc-mode]], [[https://github.com/hlissner/emacs-snippets/tree/master/c-mode][c-mode]], [[https://github.com/hlissner/emacs-snippets/tree/master/c++-mode][c++-mode]])
 + Several improvements to C++11 indentation and syntax highlighting.
 
 #+begin_quote
-C contends with Haskell and Ruby for my favorite language. That said, it's more accurate to say I write C, but with two or three C++ features.
+C contends with Haskell and Ruby for my favorite language. That said, it's more
+accurate to say I write C, but a C++ feature or three.
 
-The module provides nominal support for Objective-C, which I really only use to inspect generated glue code for iOS mobile apps. Otherwise, I prefer Swift.
+The module provides nominal support for Objective-C, which I really only use to
+inspect generated glue code for iOS mobile apps. Otherwise, I prefer Swift.
 #+end_quote
 
 * Table of Contents :TOC:
 - [[#install][Install]]
-  - [[#macos][MacOS]]
-  - [[#arch-linux][Arch Linux]]
+  - [[#irony-server][irony-server]]
+  - [[#rtags][rtags]]
+- [[#configure][Configure]]
+  - [[#compile-settings][Compile settings]]
 
 * Install
-This module requires ~irony-server~ for most of its features, which depends on ~cmake~ and ~libclang~.
+This module requires:
 
-** MacOS
++ irony-server
++ rtags
+
+** irony-server
+Irony powers the code completion, eldoc and syntax checking systems.
+
+*** MacOS
 Due to linking issues, MacOS users must compile irony-server manually:
 
 #+BEGIN_SRC sh :tangle (if (doom-system-os 'macos) "yes")
@@ -49,10 +59,46 @@ popd
 rm -rf irony-mode
 #+END_SRC
 
-** Arch Linux
+*** Arch Linux
 #+BEGIN_SRC sh :tangle (if (doom-system-os 'arch) "yes")
 sudo pacman --needed --noconfirm -S clang cmake
 #+END_SRC
 
 Then run ~M-x irony-install-server~ in Emacs.
 
+** rtags
+Code navigation requires an [[https://github.com/Andersbakken/rtags][rtags]] server (~rdm~) installed and running. This
+should be available through your OS's package manager.
+
+This module will auto-start ~rdm~ when you open C/C++ buffers (so long as one
+isn't already). If you prefer to run it yourself, outside of Emacs:
+
+#+BEGIN_SRC sh
+rdm &
+rc -J $PROJECT_ROOT  # loads PROJECT_ROOT's compile_commands.json
+#+END_SRC
+
+* Configure
+** Compile settings
+By default, a set of default compile settings are defined in
+~+cc-default-compiler-options~ for C, C++ and Objective C. Irony, rtags and
+flycheck will fall back to these.
+
+To make these tools aware of project specific build settings, you need a JSON
+[[https://sarcasm.github.io/notes/dev/compilation-database.html#ninja][compilation database]] present (i.e. a ~compile_commands.json~ file).
+
+There are [[https://sarcasm.github.io/notes/dev/compilation-database.html][many ways to generate one]]. I use [[http://www.cmake.org/][CMake]] and [[https://github.com/rizsotto/Bear][bear]]:
+
+#+BEGIN_SRC sh
+# For CMake projects
+cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON .
+
+# For non-CMake projects
+make clean
+bear make
+#+END_SRC
+
+#+begin_quote
+Use ~M-x +cc/reload-compile-db~ to reload your compile db in an already-open
+C/C++/ObjC buffer.
+#+end_quote

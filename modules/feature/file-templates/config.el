@@ -6,6 +6,11 @@
   (expand-file-name "templates/" (file-name-directory load-file-name))
   "The path to a directory of yasnippet folders to use for file templates.")
 
+
+;;
+;; Plugins
+;;
+
 (def-package! autoinsert ; built-in
   :defer 1
   :init
@@ -18,12 +23,16 @@
   (auto-insert-mode 1)
 
   (defun +file-templates--expand (key &optional mode project-only)
-    "Auto insert a snippet of yasnippet into new file."
+    "Auto insert a yasnippet snippet into the blank file."
     (when (if project-only (doom-project-p) t)
       (require 'yasnippet)
-      (unless yas-minor-mode (yas-minor-mode-on))
+      (unless yas-minor-mode
+        (yas-minor-mode-on))
       (when (and yas-minor-mode
-                 (yas-expand-snippet (yas-lookup-snippet key mode t))
+                 (yas-expand-snippet
+                  (yas--template-content
+                   (cl-find key (yas--all-templates (yas--get-snippet-tables mode))
+                            :key #'yas--template-key :test #'equal)))
                  (and (featurep 'evil) evil-mode)
                  (and yas--active-field-overlay
                       (overlay-buffer yas--active-field-overlay)
@@ -56,10 +65,9 @@
           ("\\.el$"                          "__initfile"       emacs-lisp-mode)
           ("/.dir-locals.el$"                nil)
           ("-test\\.el$"                     "__"               emacs-ert-mode)
-          ("/.emacs.d/.+\\.el$"              "__doom-module"    emacs-lisp-mode)
-          ("/.emacs.d/.+/packages\\.el$"     "__doom-packages"  emacs-lisp-mode)
-          ("/.emacs.d/.+/test\\.el$"         "__doom-test"      emacs-lisp-mode)
-          ("/.emacs.d/.+/README\\.org$"      "__doom-readme"    org-mode)
+          ("/\\(?:.emacs.d\\|doom-emacs\\)?/.+\\.el$"           "__doom-module"    emacs-lisp-mode)
+          ("/\\(?:.emacs.d\\|doom-emacs\\)?/.+/packages\\.el$"  "__doom-packages"  emacs-lisp-mode)
+          ("/\\(?:.emacs.d\\|doom-emacs\\)?/.+/test/.+\\.el$"   "__doom-test"      emacs-lisp-mode)
           (snippet-mode "__" snippet-mode)
           ;; Go
           ("\\.go$"                          "__.go"            go-mode)
@@ -82,7 +90,8 @@
           ;; Markdown
           ("\\.md$"                          "__"               markdown-mode)
           ;; Org
-          ("\\.org$"                         "__"               org-mode)
+          ("\\.org$"                                          "__"            org-mode)
+          ("/\\(?:.emacs.d\\|doom-emacs\\)?/.+/README\\.org$" "__doom-readme" org-mode)
           ;; PHP
           ("\\.php$"                         "__"               php-mode)
           ("\\.class\\.php$"                 "__.class.php"     php-mode)
@@ -110,5 +119,5 @@
           ("/\\(index\\|main\\)\\.slim$"     "__"               slim-mode)
           ;; Shell scripts
           ("\\.z?sh$"                        "__"               sh-mode)
+          ("\\.fish$"                        "__"               fish-mode)
           ("\\.zunit$"                       "__zunit"          sh-mode))))
-

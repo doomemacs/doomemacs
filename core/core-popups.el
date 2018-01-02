@@ -87,13 +87,13 @@ recognized by DOOM's popup system. They are:
 ;;
 ;;
 
-(defvar doom-popup-parameters
-  '(:esc :modeline :transient :fit :align :size)
-  "TODO")
+;; (defvar doom-popup-parameters
+;;   '(:esc :modeline :transient :fit :align :size)
+;;   "TODO")
 
-(defvar doom-popup-whitelist
-  '(("^ ?\\*" :size 15 :noselect t :autokill t :autoclose t))
-  "TODO")
+;; (defvar doom-popup-whitelist
+;;   '(("^ ?\\*" :size 15 :noselect t :autokill t :autoclose t))
+;;   "TODO")
 
 (defvar doom-popup-blacklist
   '("^\\*magit")
@@ -122,7 +122,7 @@ recognized by DOOM's popup system. They are:
           ("*Backtrace*" :size 20 :noselect t)
           ("*Warnings*"  :size 12 :noselect t :autofit t)
           ("*Messages*"  :size 12 :noselect t)
-          ("*Help*" :size 0.3)
+          ("*Help*" :size 0.3 :autokill t)
           ("^\\*.*Shell Command.*\\*$" :regexp t :size 20 :noselect t :autokill t)
           (apropos-mode :size 0.3 :autokill t :autoclose t)
           (Buffer-menu-mode :size 20 :autokill t)
@@ -144,10 +144,20 @@ recognized by DOOM's popup system. They are:
   (defun doom-display-buffer-action (buffer alist)
     (shackle-display-buffer buffer alist (shackle-match buffer)))
 
+  (defun doom|autokill-popups ()
+    (or (not (doom-popup-p))
+        (prog1 (when (and (not doom-popup-inhibit-autokill)
+                          (plist-get doom-popup-rules :autokill))
+                 (doom-popup-mode -1)
+                 (when-let* ((process (get-buffer-process (current-buffer))))
+                   (set-process-query-on-exit-flag process nil))
+                 t))))
+
   (add-hook! doom-post-init
     (setq display-buffer-alist
           (cons '(doom-display-buffer-condition doom-display-buffer-action)
-                display-buffer-alist)))
+                display-buffer-alist))
+    (add-hook 'kill-buffer-query-functions #'doom|autokill-popups))
 
   ;; no modeline in popups
   (add-hook 'doom-popup-mode-hook #'doom|hide-modeline-in-popup)
@@ -170,7 +180,7 @@ recognized by DOOM's popup system. They are:
     (define-key map [escape]    #'doom/popup-close-maybe)
     (define-key map (kbd "ESC") #'doom/popup-close-maybe)
     (define-key map [remap quit-window] #'doom/popup-close-maybe)
-    (define-key map [remap doom/kill-this-buffer] #'delete-window)
+    (define-key map [remap doom/kill-this-buffer] #'doom/popup-close-maybe)
     (define-key map [remap split-window-right]              #'ignore)
     (define-key map [remap split-window-below]              #'ignore)
     (define-key map [remap split-window-horizontally]       #'ignore)

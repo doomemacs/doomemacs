@@ -78,7 +78,7 @@ the cursor."
 (defun +org-attach-download-dnd (uri action)
   "TODO"
   (if (eq major-mode 'org-mode)
-      (+org-attach:url uri)
+      (+org-attach/uri uri)
     (let ((dnd-protocol-alist
            (rassq-delete-all '+org-attach-download-dnd
                              (copy-alist dnd-protocol-alist))))
@@ -98,7 +98,7 @@ the cursor."
       (delete-region (match-beginning 0) (match-end 0))
     (newline))
   (cond ((image-type-from-file-name filename)
-         (when (file-in-directory-p filename +org-attach-dir)
+         (when (file-in-directory-p filename org-attach-directory)
            (setq filename (file-relative-name filename +org-dir)))
          (insert
           (concat (if (= org-download-image-html-width 0)
@@ -113,9 +113,9 @@ the cursor."
         (t
          (insert
           (format "%s [[./%s][%s]] "
-                  (org-attach--icon filename)
+                  (+org-attach--icon filename)
                   (file-relative-name filename buffer-file-name)
-                  (file-name-nondirectory (directory-file-name rel-path)))))))
+                  (file-name-nondirectory (directory-file-name filename)))))))
 
 ;;;###autoload
 (defun +org-attach*relative-to-attach-dir (orig-fn &rest args)
@@ -124,9 +124,7 @@ the cursor."
       (let* ((context (save-match-data (org-element-context)))
              (file (org-link-unescape (org-element-property :path context)))
              (default-directory
-               (if (string-prefix-p
-                    (concat "./" (car (last (split-string +org-attach-dir "/" t))))
-                    file)
+               (if (file-in-directory-p file org-attach-directory)
                    +org-dir
                  default-directory)))
         (apply orig-fn args))

@@ -1,5 +1,7 @@
 ;;; lang/java/config.el -*- lexical-binding: t; -*-
 
+(add-hook 'java-mode-hook #'rainbow-delimiters-mode)
+
 (cond ((featurep! +meghanada) (load! +meghanada))
       ((featurep! +eclim) ; FIXME lang/java +eclim
        ;;(load! +eclim)

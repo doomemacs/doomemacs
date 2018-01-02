@@ -8,8 +8,8 @@
 (package! glsl-mode)
 (package! irony)
 (package! irony-eldoc)
-(package! opencl-mode)
 (package! modern-cpp-font-lock)
+(package! opencl-mode)
 
 (when (featurep! :feature syntax-checker)
   (package! flycheck-irony))
@@ -19,3 +19,8 @@
   (package! company-irony)
   (package! company-irony-c-headers))
 
+(package! rtags)
+(when (featurep! :completion ivy)
+  (package! ivy-rtags))
+(when (featurep! :completion helm)
+  (package! helm-rtags))

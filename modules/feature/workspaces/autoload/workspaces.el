@@ -310,7 +310,7 @@ workspace to delete."
   (doom/kill-all-buffers)
   (let ((fallback-buf (doom-fallback-buffer)))
     (switch-to-buffer fallback-buf)
-    (doom/cleanup-buffers)))
+    (doom/cleanup-session)))
 
 ;;;###autoload
 (defun +workspace/kill-session-and-quit ()

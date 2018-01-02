@@ -11,8 +11,6 @@
   (defvar yas-minor-mode-map (make-sparse-keymap))
 
   :init
-  (setq yas-snippet-dirs '(yas-installed-snippets-dir))
-
   ;; Ensure `yas-reload-all' is called as late as possible. Other modules could
   ;; have additional configuration for yasnippet. For example, file-templates.
   (add-transient-hook! 'yas-minor-mode-hook (yas-reload-all))
@@ -21,11 +19,9 @@
     #'yas-minor-mode-on)
 
   :config
-  (setq yas-verbosity 0
-        yas-indent-line 'auto
+  (setq yas-verbosity (if doom-debug-mode 3 0)
         yas-also-auto-indent-first-line t
-        yas-prompt-functions '(yas-completing-prompt yas-ido-prompt yas-no-prompt)
-        yas-use-menu nil
+        yas-prompt-functions (delq 'yas-dropdown-prompt yas-prompt-functions)
         ;; Allow nested snippets
         yas-triggers-in-field t)
 
@@ -40,27 +36,8 @@
   ;; fix an error caused by smartparens interfering with yasnippet bindings
   (advice-add #'yas-expand :before #'sp-remove-active-pair-overlay)
 
-  (after! evil
-    ;; Exit snippets on ESC in normal mode
-    (add-hook '+evil-esc-hook #'yas-exit-all-snippets)
-    ;; Once you're in normal mode, you're out
-    (add-hook 'evil-normal-state-entry-hook #'yas-abort-snippet)
-    ;; Strip out whitespace before a line selection
-    (defun +snippets|yas-before-expand ()
-      "Strip out the shitespace before a line selection."
-      (when (and (evil-visual-state-p)
-                 (eq (evil-visual-type) 'line))
-        (setq yas-selected-text
-              (replace-regexp-in-string
-               "\\(^\\s-*\\|\n? $\\)" ""
-               (buffer-substring-no-properties evil-visual-beginning
-                                               evil-visual-end)))))
-    (add-hook 'yas-before-expand-snippet-hook #'+snippets|yas-before-expand)
-
-    (defun +snippets|yas-after-expand ()
-      "Fix previous hook persisting yas-selected-text between expansions."
-      (setq yas-selected-text nil))
-    (add-hook 'yas-after-exit-snippet-hook #'+snippets|yas-after-expand)))
+  ;; Exit snippets on ESC from normal mode
+  (add-hook '+evil-esc-hook #'yas-exit-all-snippets))
 
 
 (def-package! auto-yasnippet

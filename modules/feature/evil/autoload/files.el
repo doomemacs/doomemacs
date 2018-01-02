@@ -35,7 +35,7 @@ kills the buffer. If FORCE-P, force the deletion (don't ask for confirmation)."
                    (error "Failed to delete %s" short-path)
                  ;; Ensures that windows displaying this buffer will be switched
                  ;; to real buffers (`doom-real-buffer-p')
-                 (doom-force-kill-buffer buf t)
+                 (doom/kill-this-buffer-in-all-windows buf t)
                  (+evil--forget-file fname)
                  (message "Successfully deleted %s" short-path))))))))
 

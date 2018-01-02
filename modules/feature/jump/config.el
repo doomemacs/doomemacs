@@ -29,7 +29,7 @@
   "An alist that maps online resources to their search url or a function that
 produces an url. Used by `+jump/online'.")
 
-(defconst +jump-search-browser-fn #'browse-url
+(defvar +jump-search-browser-fn #'browse-url
   "Function to use to open search urls.")
 
 (defvar +jump-function-alist nil
@@ -82,6 +82,18 @@ properties:
 ;; Packages
 ;;
 
+(def-package! ivy-xref
+  :when (featurep! :completion ivy)
+  :after xref
+  :config (setq xref-show-xrefs-function #'ivy-xref-show-xrefs))
+
+
+(def-package! helm-xref
+  :when (featurep! :completion helm)
+  :after xref
+  :config (setq xref-show-xrefs-function #'helm-xref-show-xrefs))
+
+
 (def-package! dumb-jump
   :commands (dumb-jump-go dumb-jump-quick-look
              dumb-jump-back dumb-jump-result-follow)
@@ -91,29 +103,4 @@ properties:
         dumb-jump-selector (cond ((featurep! :completion ivy) 'ivy)
                                  ((featurep! :completion helm) 'helm)
                                  (t 'popup))))
-
-
-(def-package! gxref
-  :commands (gxref-xref-backend
-             gxref-create-db
-             gxref-update-db
-             gxref-single-update-db
-             gxref-set-project-dir)
-  :init
-  (setq-default xref-backend-functions '(gxref-xref-backend t)))
-
-
-;; (def-package! ggtags
-;;   :commands (ggtags-find-tag-dwim
-;;              ggtags-find-tag-mouse
-;;              ggtags-find-definition
-;;              ggtags-find-reference
-;;              ggtags-find-other-symbol
-;;              ggtags-find-tag-regexp
-;;              ggtags-idutils-query
-;;              ggtags-grep
-;;              ggtags-find-file
-;;              ggtags-query-replace
-;;              ggtags-delete-tags
-;;              ggtags-explain-tags))
 

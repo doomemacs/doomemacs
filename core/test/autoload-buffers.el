@@ -1,24 +1,23 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; core/test/autoload-buffers.el
 
-(defmacro -with-temp-buffers! (buffer-args &rest body)
+(defmacro with-temp-buffers!! (buffer-args &rest body)
   (declare (indent defun))
   (let (buffers)
     (dolist (bsym buffer-args)
       (push `(,bsym (get-buffer-create ,(symbol-name bsym)))
             buffers))
-    `(save-window-excursion
-       (cl-flet ((buffer-list
-                  (lambda ()
-                    (cl-remove-if-not #'buffer-live-p (list ,@(reverse (mapcar #'car buffers)))))))
-         (let* (persp-mode
-                ,@buffers)
-           ,@body
-           (mapc #'kill-buffer (buffer-list)))))))
+    `(cl-flet ((buffer-list
+                (lambda ()
+                  (cl-remove-if-not #'buffer-live-p (list ,@(reverse (mapcar #'car buffers)))))))
+       (let* (persp-mode
+              ,@buffers)
+         ,@body
+         (mapc #'kill-buffer (buffer-list))))))
 
 ;;
 (def-test! get-buffers
-  (-with-temp-buffers! (a b c)
+  (with-temp-buffers!! (a b c)
     (should (cl-every #'buffer-live-p (buffer-list)))
     (should (equal (buffer-list) (list a b c)))
     (dolist (buf (list (cons a doom-emacs-dir)
@@ -26,6 +25,7 @@
                        (cons c "/tmp/")))
       (with-current-buffer (car buf)
         (setq-local default-directory (cdr buf))))
+    (projectile-mode +1)
     (with-current-buffer a
       ;; should produce all buffers
       (let ((buffers (doom-buffer-list)))
@@ -37,11 +37,12 @@
     ;; If no project is available, just get all buffers
     (with-current-buffer c
       (let ((buffers (doom-project-buffer-list)))
-        (should (cl-every (lambda (x) (memq x buffers)) (list a b c)))))))
+        (should (cl-every (lambda (x) (memq x buffers)) (list a b c)))))
+    (projectile-mode -1)))
 
 (def-test! real-buffers
   (let (doom-real-buffer-functions)
-    (-with-temp-buffers! (a b c d)
+    (with-temp-buffers!! (a b c d)
       (dolist (buf (list a b))
         (with-current-buffer buf
           (setq-local buffer-file-name "x")))
@@ -62,7 +63,7 @@
 ;; `doom-visible-buffers'
 ;; `doom-buried-buffers'
 (def-test! visible-buffers-and-windows
-  (-with-temp-buffers! (a b c d)
+  (with-temp-buffers!! (a b c d)
     (switch-to-buffer a)
     (should (eq (current-buffer) a))
     (should (eq (selected-window) (get-buffer-window a)))
@@ -77,7 +78,7 @@
 
 ;; `doom-matching-buffers'
 (def-test! matching-buffers
-  (-with-temp-buffers! (a b c)
+  (with-temp-buffers!! (a b c)
     (let ((buffers (doom-matching-buffers "^[ac]$")))
       (should (= 2 (length buffers)))
       (should (cl-every #'bufferp buffers))
@@ -86,7 +87,7 @@
 
 ;; `doom-buffers-in-mode'
 (def-test! buffers-in-mode
-  (-with-temp-buffers! (a b c d e)
+  (with-temp-buffers!! (a b c d e)
     (dolist (buf (list a b))
       (with-current-buffer buf
         (emacs-lisp-mode)))
@@ -101,7 +102,7 @@
 
 ;; `doom-kill-buffer'
 (def-test! kill-buffer
-  (-with-temp-buffers! (a b)
+  (with-temp-buffers!! (a b)
     (doom-kill-buffer a)
     (should-not (buffer-live-p a))
     ;; modified buffer
@@ -112,7 +113,7 @@
 
 ;; `doom--cycle-real-buffers'
 (def-test! kill-buffer-then-show-real-buffer
-  (-with-temp-buffers! (a b c d)
+  (with-temp-buffers!! (a b c d)
     (dolist (buf (list a b d))
       (with-current-buffer buf
         (setq-local buffer-file-name "x")))
@@ -131,4 +132,4 @@
 ;; TODO doom/kill-all-buffers
 ;; TODO doom/kill-other-buffers
 ;; TODO doom/kill-matching-buffers
-;; TODO doom/cleanup-buffers
+;; TODO doom/cleanup-session

@@ -58,6 +58,12 @@ modes are active and the buffer is read-only.")
       (ignore (bury-buffer))))
 (add-hook 'kill-buffer-query-functions #'doom|dont-kill-scratch-buffer)
 
+;; temporary windows often have q bound to `quit-window', which only buries the
+;; contained buffer. I rarely don't want that buffer killed, so...
+(defun doom*quit-window (orig-fn &optional kill window)
+  (funcall orig-fn (not kill) window))
+(advice-add #'quit-window :around #'doom*quit-window)
+
 (defun doom|check-large-file ()
   "Check if the buffer's file is large (see `doom-large-file-size'). If so, ask
 for confirmation to open it literally (read-only, disabled undo and in
@@ -74,43 +80,6 @@ fundamental-mode) for performance sake."
       (buffer-disable-undo)
       (fundamental-mode))))
 (add-hook 'find-file-hook #'doom|check-large-file)
-
-;; Automatic minor modes
-(defvar doom-auto-minor-mode-alist '()
-  "Alist mapping filename patterns to corresponding minor mode functions, like
-`auto-mode-alist'. All elements of this alist are checked, meaning you can
-enable multiple minor modes for the same regexp.")
-
-(defun doom|enable-minor-mode-maybe ()
-  "Check file name against `doom-auto-minor-mode-alist'."
-  (when buffer-file-name
-    (let ((name buffer-file-name)
-          (remote-id (file-remote-p buffer-file-name))
-          (alist doom-auto-minor-mode-alist))
-      ;; Remove backup-suffixes from file name.
-      (setq name (file-name-sans-versions name))
-      ;; Remove remote file name identification.
-      (when (and (stringp remote-id)
-                 (string-match-p (regexp-quote remote-id) name))
-        (setq name (substring name (match-end 0))))
-      (while (and alist (caar alist) (cdar alist))
-        (if (string-match-p (caar alist) name)
-            (funcall (cdar alist) 1))
-        (setq alist (cdr alist))))))
-(add-hook 'find-file-hook #'doom|enable-minor-mode-maybe)
-
-(defun doom*set-indirect-buffer-filename (orig-fn base-buffer name &optional clone)
-  "In indirect buffers, `buffer-file-name' is nil, which can cause problems
-with functions that require it (like modeline segments)."
-  (let ((file-name (buffer-file-name base-buffer))
-        (buffer (funcall orig-fn base-buffer name clone)))
-    (when (and file-name buffer)
-      (with-current-buffer buffer
-        (unless buffer-file-name
-          (setq buffer-file-name file-name
-                buffer-file-truename (file-truename file-name)))))
-    buffer))
-(advice-add #'make-indirect-buffer :around #'doom*set-indirect-buffer-filename)
 
 (push '("/LICENSE$" . text-mode) auto-mode-alist)
 
@@ -138,16 +107,15 @@ with functions that require it (like modeline segments)."
 (def-package! recentf
   :hook (doom-init . recentf-mode)
   :config
-  (setq recentf-save-file (concat doom-etc-dir "recentf")
+  (setq recentf-save-file (concat doom-cache-dir "recentf")
         recentf-max-menu-items 0
         recentf-max-saved-items 300
+        recentf-filename-handlers '(file-truename)
         recentf-exclude
         (list "^/tmp/" "^/ssh:" "\\.?ido\\.last$" "\\.revive$" "/TAGS$"
               "^/var/folders/.+$"
               ;; ignore private DOOM temp files (but not all of them)
-              (concat "^" (replace-regexp-in-string
-                           (concat "@" (regexp-quote (system-name)))
-                           "@" (abbreviate-file-name doom-host-dir))))))
+              (concat "^" (file-truename doom-local-dir)))))
 
 
 ;;
@@ -206,8 +174,8 @@ extension, try to guess one."
 
 ;; Auto-close delimiters and blocks as you type
 (def-package! smartparens
+  :hook (doom-init . smartparens-global-mode)
   :config
-  (add-hook 'doom-init-hook #'smartparens-global-mode)
   (require 'smartparens-config)
 
   (setq sp-autowrap-region nil ; let evil-surround handle this

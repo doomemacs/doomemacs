@@ -12,6 +12,91 @@
 - [[#200-jan-17-2017][2.0.0 (Jan 17, 2017)]]
 
 * Unreleased (develop)
++ *Module changes:*
+  + Add =private/default= to replace =private/hlissner=, which is a more generic
+    "starter" module for new users. My private module is now at
+    [[https://github.com/hlissner/doom-emacs-private][hlissner/doom-emacs-private]].
++ =general=
+  + Fix "peculiar error" messages when running =bin/doom-doctor=, caused by
+    poorly thought out error handling (see [[https://github.com/hlissner/doom-emacs/issues/175][#175]]).
+  + Fix ~doom/am-i-secure~ command.
+  + Add unicode symbols to package management commands. Looks a little nicer <3.
+  + Transform =recentf= entries into their absolute paths with symlinks resolved
+    (using ~file-truename~).
+  + Local data and cache files are no longer host-namespaced. Originally, this
+    was meant to facilitate using the same config files (symlinked) across
+    different computers (e.g. via dropbox). Byte-compiled packages on one
+    computer would cause errors on another, so I abandoned this practice, making
+    ~doom-host-dir~ unnecessary.
+  + Fix an issue during live byte-compilation (with auto-compile-on-save-mode)
+    where ~gc-cons-threshold~ would get set to 304mb in the user's active
+    session, causing freezes and stuttering.
+  + Improve error handling when byte compiling Doom. It now cleans up after
+    itself if something goes wrong, with improved error handling overall.
+  + Fix =stringp= error thrown by ~doom-fetch~ in noninteractive sessions.
+  + =core= Improve GPG integration by setting ~epa-file-encrypt-to~ to
+    ~user-mail-address~, and ~epa-pinentry-mode~ to ~'loopback~ (so that Emacs
+    will prompt you for the passphrase in the minibuffer).
+  + =core-packages= Fix ~doom-module-pairs~ returning pairs in arbitrary order,
+    causing load order errors. This is because the ~hash-table-values~ function
+    in Emacs 25 and under uses ~maphash~, which reverses the hash-table, while
+    newer versions use ~cl-loop~, which doesn't.
+  + =core-packages= Fix ~doom//*~ not running from the correct
+    default-directory, causing errors.
+  + =core-ui= Fix cryptic missing-font errors (also, they are warnings now).
+  + =core-ui= Account for Emacs 26 line numbers when calculating
+    ~visual-fill-column-width~.
+  + =core-editor= the =KILL= argument for ~quit-window &optional KILL WINDOW~
+    has been flipped and now kills the window's buffer by default.
+  + =core-projects= Add ~doom-project-find-file~ and ~doom-project-browse~ for
+    interactively fuzzy-finding and opening files in a directory/project.
+  + Add ~doom/info~ command for collecting information about your system and
+    session and puts it in the clipboard. This is to make it easier for those
+    reporting bugs to easily include it.
+  + Fix ibuffer windows not being handed off to popup system (see [[https://github.com/hlissner/doom-emacs/issues/309][#309]]).
++ =feature=
+  + =file-templates=
+    + Add a file template for fish shell scripts (thanks to [[https://github.com/amosbird][amosbird]]).
+    + Fix some file templates not being inserted, like module README.org files.
+  + =version-control= When evil-mode is available, start git commit message
+    buffers in insert mode (see [[https://github.com/hlissner/doom-emacs/issues/300][#300]]).
+  + =jump= Always prompt for provider when no major-mode specific online jumper
+    is defined (for ~+jump/online~ and ~+jump/documentation~).
++ =ui=
+  + =doom-dashboard=
+    + Fix ~whitespace-mode~ and ~show-trailing-whitespace~ turning the dashboard
+      into a Christmas tree.
+    + Add the ~+doom-dashboard-pwd-policy~ option, giving you control over how
+      ~default-directory~ is set in the dashboard. By default this is set to
+      ~'last-project~, meaning the dashboard's cwd will match the project of the
+      last buffer you killed.
++ =completion=
+  + =ivy= Fix TAB only half-triggering auto-completion (see [[https://github.com/hlissner/doom-emacs/issues/303][#303]]).
++ =lang=
+  + =cc=
+    + Add =rtags= support for better code navigation. This replaces gxtag and
+      etag support. Also includes automatic management of the rdm daemon.
+    + Improved support for JSON compilation databases. Irony-mode (and by
+      extension its flycheck and company plugins will now pick them up with more
+      consistency). This ensures all these tools run with the same compile
+      options as your project.
+    + New ~+cc/reload-compile-db~ commands forcibly refreshes the compilation db
+      of your current project, updating irony and running rtags daemon, if any.
+    + The ~+cc-include-paths~ and ~+cc-compiler-options~ options have been
+      renamed to ~+cc-default-include-paths~ and ~+cc-default-compiler-options~
+      for clarity.
+    + Fix irony-mode complaining when it is enabled in non-C major-modes.
+  + =org=
+    + Change repo source for org-plus-contrib to emacsmirror.
+    + Fix ~+org-dir~ being resolved too soon, robbing the user of the
+      opportunity to change it in their private module.
+    + Fix ~invalid file location~ error when capturing to a TODO template.
+    + Prevent =org-plus-contrib= from being installed on Emacs 26+, as 9.1.4 is
+      included with it.
+    + Fix invalid function errors when drag'n'dropping files into org buffers
+      (see [[https://github.com/hlissner/doom-emacs/issues/307][#307]]).
+  + =java= Fix Doom install meghanada server while byte compiling your Emacs
+    configuration.
 
 * 2.0.8 (Dec 09, 2017)
 + *Module changes:*

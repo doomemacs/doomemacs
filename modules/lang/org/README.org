@@ -1,0 +1,59 @@
+#+TITLE: :lang org
+
+This module provides support for org-mode.
+
++ A custom attachment system that keeps files in a centralized location.
++ Drag-and-drop support for images (with inline preview) and media files (drops
+  a file icon and a short link).
++ Executable code blocks with support for a variety of languages and tools,
+  including REST requests, SQL, google translate, plantuml, and matlab.
++ An org-capture workflow that works from outside Emacs (through the
+  =bin/org-capture= shell script).
++ Exported documents are saved to a centralized location.
++ A configuration for using org-mode for slide-show presentations, or exporting
+  org files to reveal.js slideshows.
++ (TODO) A static site generator based in org-mode and Emacs.
+
+#+begin_quote
+org-mode is a beast, and Doom's most difficult module to maintain. And its most
+important. This module is /highly/ opinionated and experimental; my foray into
+learning org is a neverending quest.
+#+end_quote
+
+* Table of Contents :TOC:
+- [[#install][Install]]
+  - [[#macos][MacOS]]
+  - [[#arch-linux][Arch Linux]]
+- [[#configuration][Configuration]]
+- [[#usage][Usage]]
+- [[#appendix][Appendix]]
+
+* Install
+Org has no hard dependencies, but there are some things you'll need to make use of Org's more esoteric features.
+
++ For inline LaTeX previews, you need ~latex~ and ~dvipng~.
++ To run babel code blocks, you need whatever dependencies those languages
+  need. It is recommended you enable the associated module in =lang/= and ensure
+  its dependencies are met.
++ The =+crm= module uses a sqlite database to manage your contacts, invoices,
+  and projects; this needs sqlite installed.
+
+** MacOS
+#+BEGIN_SRC sh
+brew cask install mactex
+brew install sqlite
+#+END_SRC
+
+** Arch Linux
+#+BEGIN_SRC sh
+sudo pacman --needed --noconfirm -S texlive-core texlive-bin texlive-science sqlite
+#+END_SRC
+
+* Configuration
+(Coming soon)
+
+* Usage
+(Coming soon)
+
+* Appendix
+(Coming soon)
