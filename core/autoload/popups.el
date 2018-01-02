@@ -308,7 +308,8 @@ without leaving any trace behind (muahaha)."
     ;; `switch-to-buffer-other-window' won't use this window).
     (set-window-parameter window 'no-other-window doom-popup-mode)
     ;; Makes popup window resist interactively changing its buffer.
-    (set-window-dedicated-p window doom-popup-mode)
+    (unless (plist-get doom-popup-rules :same)
+      (set-window-dedicated-p window doom-popup-mode))
     (cond (doom-popup-mode
            (when doom-popup-no-fringes
              (set-window-fringes window 0 0 fringes-outside-margins))
