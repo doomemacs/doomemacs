@@ -1,4 +1,4 @@
 ;; -*- no-byte-compile: t; -*-
-;;; `(file-relative-name buffer-file-name doom-modules-dir)`
+;;; `(file-relative-name buffer-file-truename doom-modules-dir)`
 
 $0
