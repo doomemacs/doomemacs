@@ -603,7 +603,6 @@
           "<M-right>"     #'+snippets/goto-end-of-field
           "<M-left>"      #'+snippets/goto-start-of-field
           "<M-backspace>" #'+snippets/delete-to-start-of-field
-          [escape]        #'evil-normal-state
           [backspace]     #'+snippets/delete-backward-char
           [delete]        #'+snippets/delete-forward-char-or-field)
         (:map yas-minor-mode-map

@@ -37,7 +37,7 @@
   (advice-add #'yas-expand :before #'sp-remove-active-pair-overlay)
 
   ;; Exit snippets on ESC from normal mode
-  (add-hook '+evil-esc-hook #'yas-exit-all-snippets))
+  (add-hook '+evil-esc-hook #'yas-abort-snippet))
 
 
 (def-package! auto-yasnippet
