@@ -223,7 +223,12 @@ extension, try to guess one."
         command-log-mode-open-log-turns-on-mode t))
 
 (def-package! expand-region
-  :commands (er/expand-region er/contract-region er/mark-symbol er/mark-word))
+  :commands (er/expand-region er/contract-region er/mark-symbol er/mark-word)
+  :config
+  (defun doom*quit-expand-region ()
+    (when (memq last-command '(er/expand-region er/contract-region))
+      (er/contract-region 0)))
+  (advice-add #'evil-escape :before #'doom*quit-expand-region))
 
 (def-package! help-fns+ ; Improved help commands
   :commands (describe-buffer describe-command describe-file
