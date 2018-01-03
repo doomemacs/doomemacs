@@ -6,24 +6,20 @@
   (unless doom-theme
     (setq doom-theme 'doom-one)
     (after! solaire-mode
-      (add-hook 'doom-init-ui-hook #'solaire-mode-swap-bg t)))
+      (add-hook 'doom-init-theme-hook #'solaire-mode-swap-bg t)))
 
   ;; Ensure `doom/reload-load-path' reloads common faces
   (defun +doom|reload-theme () (load "doom-themes-common.el" nil t))
   (add-hook 'doom-pre-reload-theme-hook #'+doom|reload-theme)
 
   ;; improve integration w/ org-mode
-  (add-hook 'doom-init-ui-hook #'doom-themes-org-config)
+  (add-hook 'doom-init-theme-hook #'doom-themes-org-config)
 
   ;; more Atom-esque file icons for neotree
-  (add-hook 'doom-init-ui-hook #'doom-themes-neotree-config)
+  (add-hook 'doom-init-theme-hook #'doom-themes-neotree-config)
   (setq doom-neotree-enable-variable-pitch t
         doom-neotree-file-icons 'simple
         doom-neotree-line-spacing 2)
-
-  ;; blink mode-line on errors
-  ;; FIXME Breaks modeline
-  ;; (add-hook 'doom-init-ui-hook #'doom-themes-visual-bell-config)
 
   (after! neotree
     (defun +doom|neotree-fix-popup ()
@@ -35,16 +31,10 @@
 
 (def-package! solaire-mode
   :hook (after-change-major-mode . turn-on-solaire-mode)
-  :hook (doom-popup-mode . turn-off-solaire-mode)
   :config
   (setq solaire-mode-real-buffer-fn #'doom-real-buffer-p)
-
   ;; Prevent color glitches when reloading either DOOM or the theme
-  (add-hook! '(doom-init-ui-hook doom-reload-hook) #'solaire-mode-reset)
-
-  (add-hook!
-    (gist-mode twittering-mode mu4e-view-mode org-tree-slide-mode +regex-mode)
-    #'solaire-mode))
+  (add-hook! '(doom-init-theme-hook doom-reload-hook) #'solaire-mode-reset))
 
 
 (after! hideshow
@@ -57,18 +47,18 @@
     :group 'doom)
 
   ;; Nicer code-folding overlays (with fringe indicators)
-  (setq hs-set-up-overlay
-        (lambda (ov)
-          (when (eq 'code (overlay-get ov 'hs))
-            (when (featurep 'vimish-fold)
-              (overlay-put
-               ov 'before-string
-               (propertize "…" 'display
-                           (list vimish-fold-indication-mode
-                                 'empty-line
-                                 'vimish-fold-fringe))))
-            (overlay-put
-             ov 'display (propertize "  [...]  " 'face '+doom-folded-face))))))
+  (defun +doom-set-up-overlay (ov)
+    (when (eq 'code (overlay-get ov 'hs))
+      (when (featurep 'vimish-fold)
+        (overlay-put
+         ov 'before-string
+         (propertize "…" 'display
+                     (list vimish-fold-indication-mode
+                           'empty-line
+                           'vimish-fold-fringe))))
+      (overlay-put
+       ov 'display (propertize "  [...]  " 'face '+doom-folded-face))))
+  (setq hs-set-up-overlay #'+doom-set-up-overlay))
 
 
 ;; NOTE Adjust these bitmaps if you change `doom-fringe-size'
