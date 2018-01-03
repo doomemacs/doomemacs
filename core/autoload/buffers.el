@@ -159,41 +159,6 @@ buffers. If there's nothing left, switch to `doom-fallback-buffer'. See
     (setq doom-real-buffer-p flag)))
 
 ;;;###autoload
-(defun doom-kill-buffer (&optional buffer dont-save)
-  "Kill BUFFER (defaults to current buffer), but make sure we land on a real
-buffer. Bury the buffer if the buffer is present in another window.
-
-Will prompt to save unsaved buffers when attempting to kill them, unless
-DONT-SAVE is non-nil.
-
-See `doom-real-buffer-p' for what 'real' means."
-  (unless buffer
-    (setq buffer (current-buffer)))
-  (when (and (bufferp buffer)
-             (buffer-live-p buffer))
-    (let ((buffer-win (get-buffer-window buffer)))
-      ;; deal with modified buffers
-      (when (and (buffer-file-name buffer)
-                 (buffer-modified-p buffer))
-        (with-current-buffer buffer
-          (if (and (not dont-save)
-                   (yes-or-no-p "Buffer is unsaved, save it?"))
-              (save-buffer)
-            (set-buffer-modified-p nil))))
-      ;; kill the buffer (or close dedicated window)
-      (cond ((not buffer-win)
-             (kill-buffer buffer))
-            ((window-dedicated-p buffer-win)
-             (unless (window--delete buffer-win t t)
-               (split-window buffer-win)
-               (window--delete buffer-win t t)))
-            (t ; cycle to a real buffer
-             (with-selected-window buffer-win
-               (doom--cycle-real-buffers -1)
-               (kill-buffer buffer)))))
-    (not (eq (current-buffer) buffer))))
-
-;;;###autoload
 (defun doom-kill-buffer-and-windows (buffer)
   "Kill the buffer and delete all the windows it's displayed in."
   (dolist (window (get-buffer-window-list buffer))
@@ -207,19 +172,12 @@ See `doom-real-buffer-p' for what 'real' means."
 regex PATTERN. Returns the number of killed buffers."
   (let ((buffers (doom-matching-buffers pattern buffer-list)))
     (dolist (buf buffers (length buffers))
-      (doom-kill-buffer buf t))))
+      (kill-buffer buf t))))
 
 
 ;;
 ;; Interactive commands
 ;;
-
-;;;###autoload
-(defun doom/kill-this-buffer (&optional interactive-p)
-  "Use `doom-kill-buffer' on the current buffer."
-  (interactive (list 'interactive))
-  (when (and (not (doom-kill-buffer)) interactive-p)
-    (message "Nowhere left to go!")))
 
 ;;;###autoload
 (defun doom/kill-this-buffer-in-all-windows (buffer &optional dont-save)
@@ -231,7 +189,10 @@ If DONT-SAVE, don't prompt to save modified buffers (discarding their changes)."
    (list (current-buffer) current-prefix-arg))
   (cl-assert (bufferp buffer) t)
   (let ((windows (get-buffer-window-list buffer nil t)))
-    (doom-kill-buffer buffer dont-save)
+    (when (and (buffer-modified-p buffer) dont-save)
+      (with-current-buffer buffer
+        (set-buffer-modified-p nil)))
+    (kill-buffer buffer)
     (cl-loop for win in windows
              if (doom-real-buffer-p (window-buffer win))
              do (with-selected-window win (doom/previous-buffer)))))

@@ -289,7 +289,7 @@
 
 
       ;; --- Personal vim-esque bindings ------------------
-      :n  "zx" #'doom/kill-this-buffer
+      :n  "zx" #'kill-this-buffer
       :n  "ZX" #'bury-buffer
       :n  "]b" #'doom/next-buffer
       :n  "[b" #'doom/previous-buffer

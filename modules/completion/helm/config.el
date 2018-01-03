@@ -97,9 +97,7 @@
 (def-package! helm-ag
   :defer t
   :config
-  (map! :map helm-ag-edit-map
-        [remap doom/kill-this-buffer] #'helm-ag--edit-abort
-        [remap quit-window]           #'helm-ag--edit-abort))
+  (map! :map helm-ag-edit-map [remap quit-window] #'helm-ag--edit-abort))
 
 
 (def-package! helm-css-scss ; https://github.com/ShingoFukuyama/helm-css-scss

@@ -84,7 +84,7 @@ playback.")
   (add-hook 'circe-channel-mode-hook #'turn-on-visual-line-mode)
 
   ;; Let `+irc/quit' and `circe' handle buffer cleanup
-  (map! :map circe-mode-map [remap doom/kill-this-buffer] #'bury-buffer)
+  (map! :map circe-mode-map [remap kill-buffer] #'bury-buffer)
 
   (defun +irc*circe-truncate-nicks ()
     "Truncate long nicknames in chat output non-destructively."
