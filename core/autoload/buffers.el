@@ -105,7 +105,9 @@ If DERIVED-P, test with `derived-mode-p', otherwise use `eq'."
 ;;;###autoload
 (defun doom-visible-windows (&optional window-list)
   "Return a list of the visible, non-popup windows."
-  (cl-remove-if #'window-at-side-p (or window-list (window-list))))
+  (cl-loop for window in (or window-list (window-list))
+           unless (eq (window-dedicated-p window) 'side)
+           collect window))
 
 ;;;###autoload
 (defun doom-visible-buffers (&optional buffer-list)
