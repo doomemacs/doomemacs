@@ -56,4 +56,3 @@ buggy behavior when <delete> is pressed in an empty field."
          (sof (marker-position (yas--field-start field))))
     (when (and field (> (point) sof))
       (delete-region sof (point)))))
-

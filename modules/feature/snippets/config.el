@@ -37,58 +37,7 @@
   (advice-add #'yas-expand :before #'sp-remove-active-pair-overlay)
 
   ;; Exit snippets on ESC from normal mode
-  (add-hook '+evil-esc-hook #'yas-abort-snippet)
-
-  ;; Monkey patch yas-expand-snippet until #883 is resolved. See
-  ;; https://github.com/joaotavora/yasnippet/issues/883
-  (defun +snippets*yas-expand-snippet (content &optional start end expand-env)
-    "Expand snippet CONTENT at current point.
-
-Text between START and END will be deleted before inserting
-template.  EXPAND-ENV is a list of (SYM VALUE) let-style dynamic bindings
-considered when expanding the snippet."
-    (cl-assert (and yas-minor-mode (memq 'yas--post-command-handler post-command-hook))
-               nil "[yas] `yas-expand-snippet' needs properly setup `yas-minor-mode'")
-    (run-hooks 'yas-before-expand-snippet-hook)
-    (let* ((yas-selected-text (or yas-selected-text
-                                  (and (region-active-p)
-                                       (buffer-substring-no-properties (region-beginning)
-                                                                       (region-end)))))
-           (start (or start (and (region-active-p) (region-beginning)) (point)))
-           (end (or end (and (region-active-p) (region-end)) (point)))
-           (to-delete (and start end (buffer-substring-no-properties start end)))
-           snippet)
-      (goto-char start)
-      (setq yas--indent-original-column (current-column))
-      (when (and to-delete (> end start))
-        (delete-region start end))
-      (cond ((listp content) (yas--eval-for-effect content))
-            (t
-             (setq yas--start-column (current-column))
-             (let ((yas--inhibit-overlay-hooks t))
-               (setq snippet
-                     (yas--snippet-create content expand-env start (point))))
-             (let ((existing-field (and yas--active-field-overlay
-                                        (overlay-buffer yas--active-field-overlay)
-                                        (overlay-get yas--active-field-overlay 'yas--field))))
-               (when existing-field
-                 (setf (yas--snippet-previous-active-field snippet) existing-field)
-                 (yas--advance-end-maybe existing-field (overlay-end yas--active-field-overlay))))
-             (unless (yas--snippet-fields snippet)
-               (yas-exit-snippet snippet))
-             (let ((first-field (car (yas--snippet-fields snippet))))
-               (when first-field
-                 (sit-for 0)
-                 (yas--letenv (yas--snippet-expand-env snippet)
-                   (yas--move-to-field snippet first-field))
-                 (when (and (eq (yas--field-number first-field) 0)
-                            (> (length (yas--field-text-for-display
-                                        first-field))
-                               0))
-                   (setq deactivate-mark nil))))
-             (yas--message 4 "snippet %d expanded." (yas--snippet-id snippet))
-             t))))
-  (advice-add #'yas-expand-snippet :override #'+snippets*yas-expand-snippet))
+  (add-hook '+evil-esc-hook #'yas-abort-snippet))
 
 
 (def-package! auto-yasnippet
