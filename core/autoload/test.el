@@ -159,8 +159,21 @@ marker. e.g. {2} can be retrieved with (point!! 2)."
                marker-list)))
 
 (defmacro with-minor-mode!! (mode &rest body)
-  "TODO"
+  "Activate a minor mode while in BODY, deactivating it after."
   (declare (indent defun))
   `(progn (,mode +1)
           ,@body
           (,mode -1)))
+
+(defmacro let-advice!! (binds &rest body)
+  "Temporarily bind advice in BINDS while in BODY.
+
+e.g. (old-fn :before advice-fn)
+     (old-fn :around advice-fn)"
+  (declare (indent defun))
+  `(progn
+     ,@(cl-loop for (target type advice) in binds
+                collect `(advice-add #',target ,type #',advice))
+     ,@body
+     ,@(cl-loop for (target type advice) in binds
+                collect `(advice-remove #',target #',advice))))
