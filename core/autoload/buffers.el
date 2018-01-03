@@ -67,9 +67,7 @@ If no project is active, return all buffers."
 ;;;###autoload
 (defun doom-real-buffer-list (&optional buffer-list)
   "Return a list of buffers that satify `doom-real-buffer-p'."
-  (cl-loop for buf in (or buffer-list (doom-buffer-list))
-           if (doom-real-buffer-p buf)
-           collect buf))
+  (cl-remove-if-not #'doom-real-buffer-p (or buffer-list (doom-buffer-list))))
 
 ;;;###autoload
 (defun doom-real-buffer-p (&optional buffer-or-name)
@@ -119,9 +117,7 @@ If DERIVED-P, test with `derived-mode-p', otherwise use `eq'."
 ;;;###autoload
 (defun doom-buried-buffers (&optional buffer-list)
   "Get a list of buffers that are buried."
-  (cl-loop for buf in (or buffer-list (doom-buffer-list))
-           unless (get-buffer-window buf)
-           collect buf))
+  (cl-remove-if #'get-buffer-window (or buffer-list (doom-buffer-list))))
 
 ;;;###autoload
 (defun doom-matching-buffers (pattern &optional buffer-list)
