@@ -199,7 +199,7 @@ available), it will select the nearest popup window."
 property."
   (interactive)
   (when (doom-popup-p window)
-    (delete-window (or window (selected-window)))))
+    (delete-window window)))
 
 ;;;###autoload
 (defun doom/popup-close-all (&optional force-p)
@@ -217,18 +217,8 @@ If FORCE-P is non-nil (or this function is called interactively), ignore popups'
       (setq doom-popup-history (delq nil (mapcar #'doom--popup-data popups)))
       (dolist (window popups success)
         (when (or force-p (doom-popup-property :autoclose window))
-          (delete-window window)
+          (kill-buffer (window-buffer window))
           (setq success t))))))
-
-;;;###autoload
-(defun doom/popup-kill-all ()
-  "Like `doom/popup-close-all', but kill *all* popups, including :static ones,
-without leaving any trace behind (muahaha)."
-  (interactive)
-  (when-let* ((popups (doom-popup-windows)))
-    (let (doom-popup-remember-history)
-      (setq doom-popup-history nil)
-      (mapc #'delete-window popups))))
 
 ;;;###autoload
 (defun doom/popup-close-maybe ()
@@ -239,7 +229,18 @@ without leaving any trace behind (muahaha)."
        (if (featurep 'evil)
            #'evil-force-normal-state
          #'keyboard-quit))
-    (quit-restore-window nil 'kill)))
+    (kill-this-buffer)))
+
+;;;###autoload
+(defun doom/popup-kill-all ()
+  "Like `doom/popup-close-all', but kill *all* popups, including :static ones,
+without leaving any trace behind (muahaha)."
+  (interactive)
+  (when-let* ((popups (doom-popup-windows)))
+    (let (doom-popup-remember-history)
+      (setq doom-popup-history nil)
+      (dolist (win popups)
+        (kill-buffer (window-buffer win))))))
 
 ;;;###autoload
 (defun doom/popup-this-buffer ()
@@ -408,9 +409,9 @@ prevent the popup(s) from messing up the UI (or vice versa)."
 
 ;;;###autoload
 (defun doom*delete-popup-window (&optional window)
-  "Ensure that popups are deleted properly, and killed if they have :autokill
-properties."
-  (or window (setq window (selected-window)))
+  "Do popup bookkeeping before the popup window is deleted."
+  (unless window
+    (setq window (selected-window)))
   (when (doom-popup-p window)
     (setq doom-popup-windows (delq window doom-popup-windows))
     (when doom-popup-remember-history

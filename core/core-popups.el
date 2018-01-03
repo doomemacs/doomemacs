@@ -133,6 +133,8 @@ recognized by DOOM's popup system. They are:
           ("^ ?\\*" :regexp t :size 15 :noselect t :autokill t :autoclose t)))
 
   :config
+  (add-hook 'doom-unreal-buffer-p #'doom-popup-p)
+
   ;; NOTE This is a temporary fix while I rewrite core-popups
   (defun doom-display-buffer-condition (buffer _action)
     (and (cl-loop for re in doom-popup-blacklist
@@ -145,42 +147,46 @@ recognized by DOOM's popup system. They are:
     (shackle-display-buffer buffer alist (shackle-match buffer)))
 
   (defun doom|autokill-popups ()
+    "TODO"
     (or (not (doom-popup-p))
-        (prog1 (when (and (not doom-popup-inhibit-autokill)
-                          (plist-get doom-popup-rules :autokill))
-                 (doom-popup-mode -1)
-                 (when-let* ((process (get-buffer-process (current-buffer))))
-                   (set-process-query-on-exit-flag process nil))
-                 t))))
+        (if (and (not doom-popup-inhibit-autokill)
+                 (plist-get doom-popup-rules :autokill))
+            (progn
+              (when-let* ((process (get-buffer-process (current-buffer))))
+                (set-process-query-on-exit-flag process nil))
+              t)
+          (doom-popup-mode -1)
+          (delete-window)
+          nil)))
 
-  (add-hook! doom-post-init
+  (defun doom|init-popups ()
+    "TODO"
     (setq display-buffer-alist
           (cons '(doom-display-buffer-condition doom-display-buffer-action)
                 display-buffer-alist))
-    (add-hook 'kill-buffer-query-functions #'doom|autokill-popups))
-
-  ;; no modeline in popups
-  (add-hook 'doom-popup-mode-hook #'doom|hide-modeline-in-popup)
-  ;; ensure every rule without an :align, :same or :frame property has an
-  ;; implicit :align (see `shackle-default-alignment')
-  (advice-add #'shackle--match :filter-return #'doom*shackle-always-align)
-
-  ;; bootstrap popup system
-  (advice-add #'shackle-display-buffer :around #'doom*popup-init)
-  (advice-add #'balance-windows :around #'doom*popups-save)
-  (advice-add #'delete-window :before #'doom*delete-popup-window)
-
-  ;; Tell `window-state-get' and `current-window-configuration' to recognize
-  ;; these custom parameters. Helpful for `persp-mode' and persisting window
-  ;; configs that have popups in them.
-  (dolist (param `(popup ,@doom-popup-window-parameters))
-    (push (cons param 'writable) window-persistent-parameters))
+    ;; bootstrap popup system
+    (advice-add #'shackle-display-buffer :around #'doom*popup-init)
+    (advice-add #'balance-windows :around #'doom*popups-save)
+    (advice-add #'delete-window :before #'doom*delete-popup-window)
+    ;; ensure every rule without an :align, :same or :frame property has an
+    ;; implicit :align (see `shackle-default-alignment')
+    (advice-add #'shackle--match :filter-return #'doom*shackle-always-align)
+    ;; autokill popups with a non-nil :autokill property
+    (add-hook 'kill-buffer-query-functions #'doom|autokill-popups)
+    ;; no modeline in popups
+    (add-hook 'doom-popup-mode-hook #'doom|hide-modeline-in-popup)
+    ;; Tell `window-state-get' and `current-window-configuration' to recognize
+    ;; these custom parameters. Helpful for `persp-mode' and persisting window
+    ;; configs that have popups in them.
+    (dolist (param `(popup ,@doom-popup-window-parameters))
+      (push (cons param 'writable) window-persistent-parameters)))
+  (add-hook 'doom-post-init-hook #'doom|init-popups)
 
   (let ((map doom-popup-mode-map))
     (define-key map [escape]    #'doom/popup-close-maybe)
     (define-key map (kbd "ESC") #'doom/popup-close-maybe)
     (define-key map [remap quit-window] #'doom/popup-close-maybe)
-    (define-key map [remap doom/kill-this-buffer] #'doom/popup-close-maybe)
+    (define-key map [remap kill-buffer] #'doom/popup-close)
     (define-key map [remap split-window-right]              #'ignore)
     (define-key map [remap split-window-below]              #'ignore)
     (define-key map [remap split-window-horizontally]       #'ignore)
