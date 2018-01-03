@@ -1,6 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; feature/workspaces/test/autoload-workspaces.el
 
+(load "persp-mode.el" nil t)
 (require! :feature workspaces)
 
 (defmacro with-workspace!! (buffer-args &rest body)
@@ -8,28 +9,30 @@
   (let ((buffers
          (cl-loop for bsym in buffer-args
                   collect `(,bsym (get-buffer-create ,(symbol-name bsym))))))
-    `(let (noninteractive)
+    `(let ((persp-auto-resume-time -1)
+           (persp-auto-save-opt 0)
+           persp-autokill-buffer-on-remove
+           persp-names-cache
+           noninteractive)
        (+workspaces|init)
-       (save-window-excursion
-         (let* (,@buffers)
-           (cl-loop with persp = (get-current-persp)
-                    for buf in (list ,@(mapcar #'car buffers))
-                    do (persp-add-buffer buf persp)
-                    do (with-current-buffer buf
-                         (setq buffer-file-name (make-temp-file "workspaces-test-"))))
-           ,@body
-           (dolist (buf (list ,@(mapcar #'car buffers)))
-             (persp-remove-buffer buf)
-             (kill-buffer buf))))
-       (persp-mode -1)
-       (setq *persp-hash* nil
-             persp-buffer-props-hash nil))))
+       (let* (,@buffers)
+         (cl-loop with persp = (get-current-persp)
+                  for buf in (list ,@(mapcar #'car buffers))
+                  do (persp-add-buffer buf persp)
+                  do (with-current-buffer buf
+                       (setq buffer-file-name (make-temp-file "workspaces-test-"))))
+         ,@body
+         (+workspace-delete +workspaces-main)
+         (let (kill-buffer-query-functions kill-buffer-hook)
+           (mapc #'kill-buffer (list ,@(mapcar #'car buffers)))))
+       (persp-mode -1))))
 
-;;
+;; `+workspaces|init'
 (def-test! init
   (with-workspace!! ()
     (should (equal (+workspace-current-name) +workspaces-main))))
 
+;; `+workspaces*auto-add-buffer'
 (def-test! auto-add-buffer-to-persp
   (let ((a (generate-new-buffer "a")))
     (doom-set-buffer-real a t)
@@ -38,6 +41,8 @@
       (switch-to-buffer a)
       (should (+workspace-contains-buffer-p a)))))
 
+;; `+workspace-current'
+;; `+workspace-current-name'
 (def-test! current
   (with-workspace!! ()
     (should (equal (+workspace-current-name) +workspaces-main))
@@ -49,6 +54,8 @@
       (should (+workspace-p current-workspace))
       (should (equal workspace current-workspace)))))
 
+;; `+workspace-list'
+;; `+workspace-list-names'
 (def-test! workspace-list
   (with-workspace!! ()
     (should (equal (+workspace-list-names)
@@ -56,6 +63,9 @@
     (should (equal (+workspace-list)
                    (list (+workspace-current))))))
 
+;; `+workspace-new'
+;; `+workspace-rename'
+;; `+workspace-delete'
 (def-test! workspace-crud
   "Creating, reading, updating and deleting workspaces."
   (with-workspace!! ()
@@ -71,6 +81,7 @@
       (+workspace-delete renamed-workspace-name)
       (should (= (length (+workspace-list-names)) 1)))))
 
+;; `+workspace-switch'
 (def-test! workspace-switch
   (with-workspace!! ()
     (let ((new-workspace-name "*new-test*"))
@@ -78,6 +89,8 @@
       (should (+workspace-switch new-workspace-name t))
       (should (equal (+workspace-current-name) new-workspace-name)))))
 
+;; `+workspace-buffer-list'
+;; `+workspace-contains-buffer-p'
 (def-test! buffer-list
   (with-workspace!! (a b)
     (let ((c (get-buffer-create "c"))
@@ -93,3 +106,18 @@
       (switch-to-buffer "d")
       (should-not (+workspace-contains-buffer-p d)))))
 
+;; `+workspace/close-window-or-workspace'
+(def-test! close-window-or-workspace
+  (with-workspace!! (a b)
+    (let ((ws (+workspace-current-name))
+          (inhibit-message t))
+      (+workspace-switch "test" t)
+      (split-window)
+      (should (equal (+workspace-current-name) "test"))
+      (should (= (length (doom-visible-windows)) 2))
+      ;; kill window if more than one
+      (+workspace/close-window-or-workspace)
+      (should (= (length (doom-visible-windows)) 1))
+      ;; kill workspace on last window
+      (+workspace/close-window-or-workspace)
+      (should (equal (+workspace-current-name) "main")))))

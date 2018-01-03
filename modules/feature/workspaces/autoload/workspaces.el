@@ -187,6 +187,13 @@ buffers."
               +workspaces-main)))
   (persp-frame-switch name))
 
+;;;###autoload
+(defun +workspace-on-new-frame (frame &optional _new-frame-p)
+  "Spawn a perspective for each new frame."
+  (select-frame frame)
+  (+workspace/new)
+  (set-frame-parameter frame 'assoc-persp (+workspace-current-name)))
+
 
 ;;
 ;; Interactive commands
@@ -473,12 +480,10 @@ the workspace and move to the next."
   (interactive)
   (message "%s" (+workspace--tabline)))
 
-;;;###autoload
-(defun +workspace-on-new-frame (frame &optional _new-frame-p)
-  "Spawn a perspective for each new frame."
-  (select-frame frame)
-  (+workspace/new)
-  (set-frame-parameter frame 'assoc-persp (+workspace-current-name)))
+
+;;
+;; Hooks
+;;
 
 ;;;###autoload
 (defun +workspaces|delete-associated-workspace-maybe (frame)
@@ -488,6 +493,32 @@ the workspace and move to the next."
       (when (and (equal frame-persp (+workspace-current-name))
                  (not (equal frame-persp +workspaces-main)))
         (+workspace/delete frame-persp)))))
+
+;;;###autoload
+(defun +workspaces|per-project (&optional root)
+  "Open a new workspace when switching to another project.
+
+Ensures the scratch (or dashboard) buffers are CDed into the project's root."
+  (when persp-mode
+    (let ((cwd default-directory))
+      (+workspace-switch (projectile-project-name) t)
+      (switch-to-buffer (doom-fallback-buffer))
+      (setq default-directory cwd)
+      (+workspace-message
+       (format "Switched to '%s' in new workspace" (+workspace-current-name))
+       'success))))
+
+;;;###autoload
+(defun +workspaces|cleanup-unassociated-buffers ()
+  (cl-loop for buf in (buffer-list)
+           unless (persp--buffer-in-persps buf)
+           if (kill-buffer buf)
+           do (cl-incf n)))
+
+
+;;
+;; Advice
+;;
 
 ;;;###autoload
 (defun +workspaces*autosave-real-buffers (orig-fn &rest args)

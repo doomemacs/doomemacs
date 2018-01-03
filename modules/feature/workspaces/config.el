@@ -42,56 +42,51 @@ renamed.")
   ;; Bootstrap
   (add-hook 'doom-post-init-hook #'+workspaces|init)
   (add-hook 'after-make-frame-functions #'+workspaces|init)
-
+  (add-hook 'persp-mode-hook #'+workspaces|init-persp-mode)
+  ;; only auto-save when real buffers are present
+  (advice-add #'persp-asave-on-exit :around #'+workspaces*autosave-real-buffers)
+  ;; Modify `delete-window' to close the workspace if used on the last window
   (define-key persp-mode-map [remap delete-window] #'+workspace/close-window-or-workspace)
+  ;; For `doom/cleanup-session'
+  (add-hook 'doom-cleanup-hook #'+workspaces|cleanup-unassociated-buffers)
 
-  ;; per-frame and per-project workspaces
+  ;; per-frame workspaces
   (setq persp-init-new-frame-behaviour-override nil
         persp-interactive-init-frame-behaviour-override #'+workspace-on-new-frame)
   (add-hook 'delete-frame-functions #'+workspaces|delete-associated-workspace-maybe)
-
-  (defun +workspaces|per-project (&optional root)
-    "Open a new workspace when switching to another project.
-
-Ensures the scratch (or dashboard) buffers are CDed into the project's root."
-    (when persp-mode
-      (let ((cwd default-directory))
-        (+workspace-switch (projectile-project-name) t)
-        (switch-to-buffer (doom-fallback-buffer))
-        (setq default-directory cwd)
-        (+workspace-message
-         (format "Switched to '%s' in new workspace" (+workspace-current-name))
-         'success))))
+  ;; Per-project workspaces
   (setq projectile-switch-project-action #'+workspaces|per-project)
 
-  ;; only auto-save when real buffers are present
-  (advice-add #'persp-asave-on-exit :around #'+workspaces*autosave-real-buffers)
-
-  (defun +workspaces|on-persp-mode ()
-    ;; Remap `buffer-list' to current workspace's buffers in `doom-buffer-list'
-    (if persp-mode
-        (advice-add #'doom-buffer-list :override #'+workspace-buffer-list)
-      (advice-remove #'doom-buffer-list #'+workspace-buffer-list)))
-  (add-hook 'persp-mode-hook #'+workspaces|on-persp-mode)
-
+  ;;
   (defun +workspaces|init (&optional frame)
     (unless persp-mode
-      (persp-mode +1)
-      ;; Ensure `persp-kill-buffer-query-function' is last in kill-buffer-query-functions
-      (remove-hook 'kill-buffer-query-functions 'persp-kill-buffer-query-function)
-      (add-hook 'kill-buffer-query-functions 'persp-kill-buffer-query-function t))
-    (let ((frame (or frame (selected-frame))))
-      (unless noninteractive
-        ;; The default perspective persp-mode makes (defined by
-        ;; `persp-nil-name') is special and doesn't actually represent a real
-        ;; persp object, so buffers can't really be assigned to it, among other
-        ;; quirks. We create a *real* main workspace to fill this role.
-        (unless (persp-with-name-exists-p +workspaces-main)
-          (persp-add-new +workspaces-main))
-        ;; Switch to it if we aren't auto-loading the last session
-        (when (and (equal (safe-persp-name (get-current-persp)) persp-nil-name)
-                   (= persp-auto-resume-time -1))
-          (persp-frame-switch +workspaces-main frame)))))
+      (persp-mode +1))
+    (unless noninteractive
+      ;; The default perspective persp-mode makes (defined by
+      ;; `persp-nil-name') is special and doesn't actually represent a real
+      ;; persp object, so buffers can't really be assigned to it, among other
+      ;; quirks. We create a *real* main workspace to fill this role.
+      (unless (persp-with-name-exists-p +workspaces-main)
+        (persp-add-new +workspaces-main))
+      ;; Switch to it if we aren't auto-loading the last session
+      (when (and (equal (safe-persp-name (get-current-persp)) persp-nil-name)
+                 (= persp-auto-resume-time -1))
+        (persp-frame-switch +workspaces-main (or frame (selected-frame))))))
+
+  (defun +workspaces|init-persp-mode ()
+    ;; Remap `buffer-list' to current workspace's buffers in `doom-buffer-list'
+    (cond (persp-mode
+           ;; Ensure `persp-kill-buffer-query-function' is last in kill-buffer-query-functions
+           (remove-hook 'kill-buffer-query-functions 'persp-kill-buffer-query-function)
+           (add-hook 'kill-buffer-query-functions 'persp-kill-buffer-query-function t)
+
+           (advice-add #'switch-to-buffer :after #'+workspaces*auto-add-buffer)
+           (advice-add #'display-buffer   :after #'+workspaces*auto-add-buffer)
+           (advice-add #'doom-buffer-list :override #'+workspace-buffer-list))
+          (t
+           (advice-remove #'switch-to-buffer #'+workspaces*auto-add-buffer)
+           (advice-remove #'display-buffer   #'+workspaces*auto-add-buffer)
+           (advice-remove #'doom-buffer-list #'+workspace-buffer-list))))
 
   (defun +workspaces*auto-add-buffer (buffer &rest _)
     "Auto-associate buffers with perspectives upon opening them.
@@ -101,7 +96,5 @@ Allows a perspective-specific buffer list via `+workspaces-buffer-list'."
                (not persp-temporarily-display-buffer)
                (doom-real-buffer-p buffer))
       (persp-add-buffer buffer (get-current-persp) nil)
-      (force-mode-line-update t)))
-  (advice-add #'switch-to-buffer :after #'+workspaces*auto-add-buffer)
-  (advice-add #'display-buffer   :after #'+workspaces*auto-add-buffer))
+      (force-mode-line-update t))))
 
