@@ -3,6 +3,9 @@
 (defvar +workspace-data-file "_workspaces"
   "The file basename in which to store single workspace perspectives.")
 
+(defvar +workspace-change-hook ()
+  "Hooks run when workspaces are added, removed, renamed or switched to.")
+
 (defvar +workspace--last nil)
 (defvar +workspace--index 0)
 
@@ -152,7 +155,9 @@ Otherwise return t on success, nil otherwise."
     (error "Can't create a new '%s' workspace" name))
   (when (+workspace-exists-p name)
     (error "A workspace named '%s' already exists" name))
-  (and (persp-add-new name) t))
+  (when (persp-add-new name)
+    (run-hooks '+workspace-change-hook)
+    t))
 
 ;;;###autoload
 (defun +workspace-rename (name new-name)
@@ -160,7 +165,9 @@ Otherwise return t on success, nil otherwise."
 success, nil otherwise."
   (when (+workspace--protected-p name)
     (error "Can't rename '%s' workspace" name))
-  (persp-rename new-name (+workspace-get name)))
+  (when (persp-rename new-name (+workspace-get name))
+    (run-hooks '+workspace-change-hook)
+    name))
 
 ;;;###autoload
 (defun +workspace-delete (name &optional inhibit-kill-p)
@@ -171,7 +178,9 @@ buffers."
     (error "Can't delete '%s' workspace" name))
   (+workspace-get name) ; error checking
   (persp-kill name inhibit-kill-p)
-  (not (+workspace-exists-p name)))
+  (unless (+workspace-exists-p name)
+    (run-hooks '+workspace-change-hook)
+    t))
 
 ;;;###autoload
 (defun +workspace-switch (name &optional auto-create-p)
@@ -185,7 +194,10 @@ buffers."
           (or (and (not (string= old-name persp-nil-name))
                    old-name)
               +workspaces-main)))
-  (persp-frame-switch name))
+  (persp-frame-switch name)
+  (when (equal (+workspace-current-name) name)
+    (run-hooks '+workspace-change-hook)
+    t))
 
 ;;;###autoload
 (defun +workspace-on-new-frame (frame &optional _new-frame-p)
