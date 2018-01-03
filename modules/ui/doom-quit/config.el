@@ -26,12 +26,11 @@
   "A list of quit messages, picked randomly by `+doom-quit'. Taken from
 http://doom.wikia.com/wiki/Quit_messages and elsewhere.")
 
-(defun +doom|quit (&rest _)
+(defun +doom-quit (&rest _)
   (doom-quit-p
    (format "%s  Quit?"
            (nth (random (length +doom-quit-messages))
                 +doom-quit-messages))))
 
 ;;
-(remove-hook 'kill-emacs-query-functions #'doom-quit-p)
-(add-hook 'kill-emacs-query-functions #'+doom|quit)
+(setq confirm-kill-emacs #'+doom-quit)
