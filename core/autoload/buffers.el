@@ -1,7 +1,5 @@
 ;;; core/autoload/buffers.el -*- lexical-binding: t; -*-
 
-(defvar-local doom-buffer--narrowed-origin nil)
-
 ;;;###autoload
 (defvar doom-real-buffer-functions '()
   "A list of predicate functions run to determine if a buffer is real. These

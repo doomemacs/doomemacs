@@ -218,6 +218,7 @@ consistent throughout a selected region, depending on `indent-tab-mode'."
       (tabify beg end)
     (untabify beg end)))
 
+(defvar-local doom--buffer-narrowed-origin nil)
 ;;;###autoload
 (defun doom/narrow-buffer (beg end &optional clone-p)
   "Restrict editing in this buffer to the current region, indirectly. With CLONE-P,
@@ -231,12 +232,12 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
          (when clone-p
            (let ((old-buf (current-buffer)))
              (switch-to-buffer (clone-indirect-buffer nil nil))
-             (setq doom-buffer--narrowed-origin old-buf)))
+             (setq doom--buffer-narrowed-origin old-buf)))
          (narrow-to-region beg end))
-        (doom-buffer--narrowed-origin
+        (doom--buffer-narrowed-origin
          (kill-this-buffer)
-         (switch-to-buffer doom-buffer--narrowed-origin)
-         (setq doom-buffer--narrowed-origin nil))
+         (switch-to-buffer doom--buffer-narrowed-origin)
+         (setq doom--buffer-narrowed-origin nil))
         (t
          (widen))))
 
