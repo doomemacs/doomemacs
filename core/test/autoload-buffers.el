@@ -10,10 +10,13 @@
     `(cl-flet ((buffer-list
                 (lambda ()
                   (cl-remove-if-not #'buffer-live-p (list ,@(reverse (mapcar #'car buffers)))))))
-       (let* (persp-mode
+       (let* ((split-width-threshold 0)
+              (window-min-width 0)
+              persp-mode
               ,@buffers)
          ,@body
-         (mapc #'kill-buffer (buffer-list))))))
+         (let (kill-buffer-query-functions kill-buffer-hook)
+           (mapc #'kill-buffer (buffer-list)))))))
 
 ;;
 (def-test! get-buffers
@@ -100,34 +103,44 @@
       (should (= 2 (length el-buffers)))
       (should (= 3 (length txt-buffers))))))
 
-;; `doom-kill-buffer'
-(def-test! kill-buffer
-  (with-temp-buffers!! (a b)
-    (doom-kill-buffer a)
-    (should-not (buffer-live-p a))
-    ;; modified buffer
-    (with-current-buffer b
-      (set-buffer-modified-p t))
-    (doom-kill-buffer b t)
-    (should-not (buffer-live-p a))))
+;; `doom-fallback-buffer'
+(def-test! fallback-buffer
+  (let ((fallback (doom-fallback-buffer)))
+    (should (buffer-live-p fallback))
+    (should (equal (buffer-name fallback) doom-fallback-buffer))))
 
 ;; `doom--cycle-real-buffers'
 (def-test! kill-buffer-then-show-real-buffer
   (with-temp-buffers!! (a b c d)
-    (dolist (buf (list a b d))
-      (with-current-buffer buf
-        (setq-local buffer-file-name "x")))
-    (should (cl-every #'buffer-live-p (buffer-list)))
+    (let-advice!! ((kill-this-buffer :around doom*switch-to-fallback-buffer-maybe))
+      (dolist (buf (list a b d))
+        (with-current-buffer buf
+          (setq-local buffer-file-name "x")))
+      (should (cl-every #'buffer-live-p (buffer-list)))
+      (switch-to-buffer a)
+      (should (eq (current-buffer) a))
+      (should (eq (selected-window) (get-buffer-window a)))
+      (should (kill-this-buffer))
+      ;; eventually end up in the fallback buffer
+      (let ((fallback (doom-fallback-buffer)))
+        (while (not (eq (current-buffer) fallback))
+          (should (doom-real-buffer-p))
+          (kill-this-buffer))
+        (should (eq (current-buffer) fallback))))))
+
+;; `doom-kill-buffer-and-windows'
+(def-test! kill-buffer-and-windows
+  (with-temp-buffers!! (a b)
+    (switch-to-buffer a) (split-window-horizontally)
+    (switch-to-buffer b) (split-window-horizontally)
     (switch-to-buffer a)
-    (should (eq (current-buffer) a))
-    (should (eq (selected-window) (get-buffer-window a)))
-    (should (doom-kill-buffer a))
-    ;; eventually end up in the fallback buffer
-    (let ((fallback (doom-fallback-buffer)))
-      (while (not (eq (current-buffer) fallback))
-        (should (doom-real-buffer-p))
-        (doom-kill-buffer))
-      (should (eq (current-buffer) fallback)))))
+
+    (should (= (length (doom-visible-windows)) 3))
+    (should (= (length (doom-buffer-list)) 2))
+
+    (doom-kill-buffer-and-windows a)
+    (should-not (buffer-live-p a))
+    (should (= (length (doom-visible-windows)) 1))))
 
 ;; TODO doom/kill-all-buffers
 ;; TODO doom/kill-other-buffers
