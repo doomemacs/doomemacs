@@ -121,7 +121,7 @@ unfold to point on startup."
   (setq-default
    org-adapt-indentation nil
    org-agenda-dim-blocked-tasks nil
-   org-agenda-files (directory-files +org-dir t "\\.org$" t)
+   org-agenda-files (ignore-errors (directory-files +org-dir t "\\.org$" t))
    org-agenda-inhibit-startup t
    org-agenda-skip-unavailable-files nil
    org-cycle-include-plain-lists t
