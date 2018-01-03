@@ -74,10 +74,6 @@ Ensures the scratch (or dashboard) buffers are CDed into the project's root."
       (advice-remove #'doom-buffer-list #'+workspace-buffer-list)))
   (add-hook 'persp-mode-hook #'+workspaces|on-persp-mode)
 
-  ;; Defer delayed warnings even further, so they appear after persp-mode is
-  ;; started and the main workspace is ready to display them. Otherwise, warning
-  ;; buffers will be hidden on startup.
-  (remove-hook 'delayed-warnings-hook #'display-delayed-warnings)
   (defun +workspaces|init (&optional frame)
     (unless persp-mode
       (persp-mode +1)
@@ -95,8 +91,7 @@ Ensures the scratch (or dashboard) buffers are CDed into the project's root."
         ;; Switch to it if we aren't auto-loading the last session
         (when (and (equal (safe-persp-name (get-current-persp)) persp-nil-name)
                    (= persp-auto-resume-time -1))
-          (persp-frame-switch +workspaces-main frame)))
-      (add-hook 'delayed-warnings-hook #'display-delayed-warnings t)))
+          (persp-frame-switch +workspaces-main frame)))))
 
   (defun +workspaces*auto-add-buffer (buffer &rest _)
     "Auto-associate buffers with perspectives upon opening them.
