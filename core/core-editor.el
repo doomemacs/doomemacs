@@ -52,18 +52,6 @@ modes are active and the buffer is read-only.")
       ediff-split-window-function #'split-window-horizontally
       ediff-window-setup-function #'ediff-setup-windows-plain)
 
-(defun doom|dont-kill-scratch-buffer ()
-  "Don't kill the scratch buffer."
-  (or (not (string= (buffer-name) "*scratch*"))
-      (ignore (bury-buffer))))
-(add-hook 'kill-buffer-query-functions #'doom|dont-kill-scratch-buffer)
-
-;; temporary windows often have q bound to `quit-window', which only buries the
-;; contained buffer. I rarely don't want that buffer killed, so...
-(defun doom*quit-window (orig-fn &optional kill window)
-  (funcall orig-fn (not kill) window))
-(advice-add #'quit-window :around #'doom*quit-window)
-
 (defun doom|check-large-file ()
   "Check if the buffer's file is large (see `doom-large-file-size'). If so, ask
 for confirmation to open it literally (read-only, disabled undo and in
@@ -218,7 +206,6 @@ extension, try to guess one."
 (def-package! command-log-mode
   :commands (command-log-mode global-command-log-mode)
   :config
-  (set! :popup "*command-log*" :size 40 :align 'right :noselect t)
   (setq command-log-mode-auto-show t
         command-log-mode-open-log-turns-on-mode t))
 
