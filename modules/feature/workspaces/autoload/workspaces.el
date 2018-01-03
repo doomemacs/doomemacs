@@ -405,16 +405,15 @@ end of the workspace list."
   "Close the selected window. If it's the last window in the workspace, close
 the workspace and move to the next."
   (interactive)
-  (if (doom-popup-p)
-      (doom/popup-close)
-    (let ((current-persp-name (+workspace-current-name)))
-      (cond ((or (+workspace--protected-p current-persp-name)
-                 (> (length (doom-visible-windows)) 1))
-             (if (bound-and-true-p evil-mode)
-                 (evil-window-delete)
-               (delete-window)))
-            ((> (length (+workspace-list-names)) 1)
-             (+workspace/delete current-persp-name))))))
+  (let ((delete-window-fn (if (featurep 'evil) #'evil-window-delete #'delete-window)))
+    (if (window-at-side-p)
+        (funcall delete-window-fn)
+      (let ((current-persp-name (+workspace-current-name)))
+        (cond ((or (+workspace--protected-p current-persp-name)
+                   (cdr (doom-visible-windows)))
+               (funcall delete-window-fn))
+              ((cdr (+workspace-list-names))
+               (+workspace/delete current-persp-name)))))))
 
 ;;;###autoload
 (defun +workspace/close-workspace-or-frame ()

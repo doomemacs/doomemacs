@@ -30,6 +30,6 @@ to a pop up buffer."
       (setq lines (count-lines (point-min) (point-max)))
       (goto-char (point-min))
       (if (> lines 1)
-          (doom-popup-buffer buf)
+          (pop-to-buffer buf t)
         (message "%s" (buffer-substring (point-min) (point-max)))
         (kill-buffer buf)))))
