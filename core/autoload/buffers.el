@@ -2,10 +2,22 @@
 
 ;;;###autoload
 (defvar doom-real-buffer-functions '()
-  "A list of predicate functions run to determine if a buffer is real. These
-functions are iterated over with one argument, the buffer in question. If any
-function returns non-nil, the procession stops and the buffer is qualified as
-real.")
+  "A list of predicate functions run to determine if a buffer is real, unlike
+`doom-unreal-buffer-functions'. They are passed one argument: the buffer to be
+tested.
+
+Should any of its function returns non-nil, the rest of the functions are
+ignored and the buffer is considered real.")
+
+;;;###autoload
+(defvar doom-unreal-buffer-functions
+  '(minibufferp doom-special-buffer-p doom-non-file-visiting-buffer-p)
+  "A list of predicate functions run to determine if a buffer is *not* real,
+unlike `doom-real-buffer-functions'. They are passed one argument: the buffer to
+be tested.
+
+Should any of these functions return non-nil, the rest of the functions are
+ignored and the buffer is considered unreal.")
 
 ;;;###autoload
 (defvar-local doom-real-buffer-p nil
@@ -43,6 +55,16 @@ If no project is active, return all buffers."
       buffers)))
 
 ;;;###autoload
+(defun doom-special-buffer-p (buf)
+  "Returns non-nil if BUF's name starts and ends with an *."
+  (string-match-p "^\\s-*\\*" (buffer-name buf)))
+
+;;;###autoload
+(defun doom-non-file-visiting-buffer-p (buf)
+  "Returns non-nil if BUF does not have a value for `buffer-file-name'."
+  (not (buffer-file-name buf)))
+
+;;;###autoload
 (defun doom-real-buffer-list (&optional buffer-list)
   "Return a list of buffers that satify `doom-real-buffer-p'."
   (cl-loop for buf in (or buffer-list (doom-buffer-list))
@@ -51,25 +73,20 @@ If no project is active, return all buffers."
 
 ;;;###autoload
 (defun doom-real-buffer-p (&optional buffer-or-name)
-  "Returns t if BUFFER-OR-NAME is a 'real' buffer. The complete criteria for a
-real buffer is:
+  "Returns t if BUFFER-OR-NAME is a 'real' buffer. The criteria for a real
+buffer is:
 
-  1. The buffer-local value of `doom-real-buffer-p' (variable) is non-nil OR
-  2. Any function in `doom-real-buffer-functions' must return non-nil when
-     passed this buffer OR
-  3. The current buffer:
-     a) has a `buffer-file-name' defined AND
-     b) is not in a popup window (see `doom-popup-p') AND
-     c) is not a special buffer (its name isn't something like *Help*)
+  1. A non-nil value for the buffer-local value of the `doom-real-buffer-p'
+     variable OR
+  2. Any function in `doom-real-buffer-functions' returns non-nil OR
+  3. None of the functions in `doom-unreal-buffer-functions' must return
+     non-nil.
 
 If BUFFER-OR-NAME is omitted or nil, the current buffer is tested."
   (when-let* ((buf (ignore-errors (window-normalize-buffer buffer-or-name))))
     (or (buffer-local-value 'doom-real-buffer-p buf)
         (run-hook-with-args-until-success 'doom-real-buffer-functions buf)
-        (not (or (doom-popup-p buf)
-                 (minibufferp buf)
-                 (string-match-p "^\\s-*\\*" (buffer-name buf))
-                 (not (buffer-file-name buf)))))))
+        (not (run-hook-with-args-until-success 'doom-unreal-buffer-functions buf)))))
 
 ;;;###autoload
 (defun doom-buffers-in-mode (modes &optional buffer-list derived-p)
