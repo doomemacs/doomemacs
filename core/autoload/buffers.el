@@ -242,18 +242,18 @@ project."
       (message "Killed %s buffers" n))))
 
 ;;;###autoload
-(defun doom/cleanup-session (&optional all-p interactive-p)
+(defun doom/cleanup-session (&optional all-p)
   "Clean up buried buries and orphaned processes in the current workspace. If
 ALL-P (universal argument), clean them up globally."
-  (interactive (list current-prefix-arg 'interactive))
+  (interactive (list current-prefix-arg))
   (let ((buffers (doom-buried-buffers (if all-p (buffer-list))))
         (n 0)
         kill-buffer-query-functions)
     (mapc #'kill-buffer buffers)
     (setq n (+ n (length buffers) (doom/cleanup-processes)))
-    (run-hooks 'doom-cleanup-hook)
-    (when interactive-p
-      (message "Cleaned up %s buffers" n))
+    (dolist (hook doom-cleanup-hook)
+      (setq n (+ n (or (funcall hook) 1))))
+    (message "Cleaned up %s buffers" n)
     n))
 
 ;;;###autoload

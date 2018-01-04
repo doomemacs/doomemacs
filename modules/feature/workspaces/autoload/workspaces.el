@@ -525,7 +525,7 @@ Ensures the scratch (or dashboard) buffers are CDed into the project's root."
   (cl-loop for buf in (buffer-list)
            unless (persp--buffer-in-persps buf)
            if (kill-buffer buf)
-           do (cl-incf n)))
+           sum 1))
 
 
 ;;
