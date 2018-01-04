@@ -90,7 +90,7 @@ environment variables."
   (set! :company-backend 'python-mode '(company-anaconda))
   (set! :jump 'python-mode
     :definition #'anaconda-mode-find-definitions
-    :references #'anaconda-mode-find-referenences
+    :references #'anaconda-mode-find-references
     :documentation #'anaconda-mode-show-doc)
   (map! :map python-mode-map
         :localleader
