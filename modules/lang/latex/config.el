@@ -8,7 +8,7 @@
 
 
 ;;
-;; Plugins
+;; AucTex/LaTeX bootstrap
 ;;
 
 ;; Because tex-mode is built-in and AucTex has conflicting components, we need
@@ -16,6 +16,9 @@
 (load "auctex" nil t)
 (load "auctex-autoloads" nil t)
 (push '("\\.[tT]e[xX]\\'" . TeX-latex-mode) auto-mode-alist)
+
+(add-hook! (latex-mode LaTeX-mode) #'turn-on-auto-fill)
+(add-hook! 'LaTeX-mode-hook #'(LaTeX-math-mode TeX-source-correlate-mode))
 
 (add-transient-hook! 'LaTeX-mode-hook
   (setq TeX-auto-save t
@@ -30,23 +33,13 @@
           LaTeX-section-section
           LaTeX-section-label))
 
-  (add-hook! (latex-mode LaTeX-mode) #'turn-on-auto-fill)
-  (add-hook! 'LaTeX-mode-hook #'(LaTeX-math-mode TeX-source-correlate-mode))
-
   (set! :popup " output\\*$" :regexp t :size 15 :noselect t :autoclose t :autokill t)
+  (map! :map LaTeX-mode-map "C-j" nil))
 
-  (map! :map LaTeX-mode-map "C-j" nil)
 
-  (def-package! company-auctex
-    :when (featurep! :completion company)
-    :init
-    ;; We can't use the (set! :company-backend ...) because Auctex reports its
-    ;; major-mode as `latex-mode', but uses LaTeX-mode-hook for its mode, which
-    ;; is :company-backend doesn't anticipate (and shouldn't have to!)
-    (add-hook! LaTeX-mode
-      (make-variable-buffer-local 'company-backends)
-      (company-auctex-init))))
-
+;;
+;; Plugins
+;;
 
 (def-package! reftex ; built-in
   :commands (turn-on-reftex reftex-mode)
@@ -91,3 +84,14 @@
   :when (featurep! :completion helm)
   :commands helm-bibtex)
 
+
+(def-package! company-auctex
+  :when (featurep! :completion company)
+  :commands company-auctex-init
+  :init
+  ;; We can't use the (set! :company-backend ...) because Auctex reports its
+  ;; major-mode as `latex-mode', but uses LaTeX-mode-hook for its mode, which is
+  ;; :company-backend doesn't anticipate (and shouldn't have to!)
+  (add-hook! LaTeX-mode
+    (make-variable-buffer-local 'company-backends)
+    (company-auctex-init)))
