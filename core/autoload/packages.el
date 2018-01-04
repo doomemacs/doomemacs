@@ -326,7 +326,7 @@ package.el as appropriate."
   "Interactive command for installing missing packages."
   (interactive)
   (message! "Looking for packages to install...")
-  (let ((packages (doom-get-missing-packages)))
+  (let ((packages (reverse (doom-get-missing-packages))))
     (cond ((not packages)
            (message! (green "No packages to install!")))
 
