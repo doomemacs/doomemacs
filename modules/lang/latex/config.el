@@ -40,7 +40,12 @@
   (def-package! company-auctex
     :when (featurep! :completion company)
     :init
-    (set! :company-backend 'LaTeX-mode '(company-auctex))))
+    ;; We can't use the (set! :company-backend ...) because Auctex reports its
+    ;; major-mode as `latex-mode', but uses LaTeX-mode-hook for its mode, which
+    ;; is :company-backend doesn't anticipate (and shouldn't have to!)
+    (add-hook! LaTeX-mode
+      (make-variable-buffer-local 'company-backends)
+      (company-auctex-init))))
 
 
 (def-package! reftex ; built-in
