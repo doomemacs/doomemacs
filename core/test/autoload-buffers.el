@@ -46,13 +46,12 @@
 (def-test! real-buffers
   (let (doom-real-buffer-functions)
     (with-temp-buffers!! (a b c d)
-      (dolist (buf (list a b))
-        (with-current-buffer buf
-          (setq-local buffer-file-name "x")))
+      (with-current-buffer a
+        (setq-local buffer-file-name "x"))
+      (with-current-buffer b
+        (setq-local doom-real-buffer-p t))
       (with-current-buffer c
         (rename-buffer "*C*"))
-      (with-current-buffer d
-        (doom-popup-mode +1))
       (should (doom-real-buffer-p a))
       (should (doom-real-buffer-p b))
       (should-not (doom-real-buffer-p c))
@@ -120,7 +119,9 @@
       (switch-to-buffer a)
       (should (eq (current-buffer) a))
       (should (eq (selected-window) (get-buffer-window a)))
-      (should (kill-this-buffer))
+      (kill-this-buffer)
+      (should-not (eq (current-buffer) a))
+      (should-not (buffer-live-p a))
       ;; eventually end up in the fallback buffer
       (let ((fallback (doom-fallback-buffer)))
         (while (not (eq (current-buffer) fallback))
