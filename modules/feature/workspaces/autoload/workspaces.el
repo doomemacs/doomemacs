@@ -425,7 +425,7 @@ end of the workspace list."
 the workspace and move to the next."
   (interactive)
   (let ((delete-window-fn (if (featurep 'evil) #'evil-window-delete #'delete-window)))
-    (if (window-at-side-p)
+    (if (window-dedicated-p)
         (funcall delete-window-fn)
       (let ((current-persp-name (+workspace-current-name)))
         (cond ((or (+workspace--protected-p current-persp-name)
