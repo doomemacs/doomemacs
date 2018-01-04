@@ -1,7 +1,6 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; feature/workspaces/test/autoload-workspaces.el
 
-(load "persp-mode.el" nil t)
 (require! :feature workspaces)
 
 (defmacro with-workspace!! (buffer-args &rest body)
@@ -10,11 +9,10 @@
          (cl-loop for bsym in buffer-args
                   collect `(,bsym (get-buffer-create ,(symbol-name bsym))))))
     `(let ((persp-auto-resume-time -1)
-           (persp-auto-save-opt 0)
-           persp-autokill-buffer-on-remove
-           persp-names-cache
-           noninteractive)
-       (+workspaces|init)
+           (persp-auto-save-opt 0))
+       (let (noninteractive)
+         (persp-mode +1))
+       (+workspace-switch +workspaces-main t)
        (let* (,@buffers)
          (cl-loop with persp = (get-current-persp)
                   for buf in (list ,@(mapcar #'car buffers))
@@ -22,10 +20,10 @@
                   do (with-current-buffer buf
                        (setq buffer-file-name (make-temp-file "workspaces-test-"))))
          ,@body
-         (+workspace-delete +workspaces-main)
          (let (kill-buffer-query-functions kill-buffer-hook)
            (mapc #'kill-buffer (list ,@(mapcar #'car buffers)))))
-       (persp-mode -1))))
+       (let (noninteractive)
+         (persp-mode -1)))))
 
 ;; `+workspaces|init'
 (def-test! init
