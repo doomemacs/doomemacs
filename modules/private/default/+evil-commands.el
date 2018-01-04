@@ -29,7 +29,9 @@
 ;; TODO (ex! "db"          #'doom:db)
 ;; TODO (ex! "dbu[se]"     #'doom:db-select)
 ;; TODO (ex! "go[ogle]"    #'doom:google-search)
-(ex! "lo[okup]"    #'+jump:online)
+(ex! "lo[okup]"    #'+lookup:online)
+(ex! "dash"        #'+lookup:dash)
+(ex! "dd"          #'+lookup:devdocs)
 (ex! "http"        #'httpd-start)            ; start http server
 (ex! "repl"        #'+eval:repl)             ; invoke or send to repl
 ;; TODO (ex! "rx"          'doom:regex)             ; open re-builder

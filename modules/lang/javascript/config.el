@@ -45,7 +45,9 @@
 
 ;; A find-{definition,references} backend for js2-mode. NOTE The xref API is
 ;; unstable and may break with an Emacs update.
-(def-package! xref-js2 :commands xref-js2-xref-backend)
+(def-package! xref-js2
+  :when (featurep! :feature lookup)
+  :commands xref-js2-xref-backend)
 
 
 (def-package! nodejs-repl :commands nodejs-repl)

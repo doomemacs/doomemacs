@@ -16,6 +16,6 @@
 (when (featurep! :completion company)
   (package! company-tern))
 
-(when (featurep! :feature jump)
+(when (featurep! :feature lookup)
   (package! xref-js2))
 
