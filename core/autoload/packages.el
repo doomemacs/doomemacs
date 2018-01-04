@@ -235,14 +235,10 @@ Used by `doom//packages-install'."
           (quiet! (doom-refresh-packages t))
           ,@body))
      ('user-error
-      (message! (bold (red "  ERROR: (%s) %s"
-                           (car ex)
-                           (error-message-string ex)))))
+      (message! (bold (red "  ERROR: %s" ex))))
      ('error
       (doom-refresh-clear-cache)
-      (message! (bold (red "  FATAL ERROR: (%s) %s"
-                           (car ex)
-                           (error-message-string ex)))))))
+      (message! (bold (red "  FATAL ERROR: %s" ex))))))
 
 
 ;;
