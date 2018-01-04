@@ -249,10 +249,11 @@ Used by `doom//packages-install'."
   "Installs package NAME with optional quelpa RECIPE (see `quelpa-recipe' for an
 example; the package name can be omitted)."
   (doom-initialize-packages)
-  (when (package-installed-p name)
-    (when (doom-package-different-backend-p name)
-      (doom-delete-package name t))
-    (user-error "%s is already installed" name))
+  (when (and (package-installed-p name)
+             (not (package-built-in-p name)))
+    (if (doom-package-different-backend-p name)
+        (doom-delete-package name t)
+      (user-error "%s is already installed" name)))
   (let* ((inhibit-message (not doom-debug-mode))
          (plist (or plist (cdr (assq name doom-packages))))
          (recipe (plist-get plist :recipe))
