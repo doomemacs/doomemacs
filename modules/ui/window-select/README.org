@@ -2,22 +2,44 @@
 
 This module provides the user with a visual way to switch windows. By default, the module only kicks in if there are more than two windows open at the same time.
 
-* Keybindings
-The default function to switch windows is automatically changed to work with this module. More specifically, the function ~other-window~ is automatically remapped. This function is bounded by default to ~C-x o~.
+* Table of Contents :TOC:
+- [[#install][Install]]
+  - [[#module-flags][Module flags]]
+- [[#usage][Usage]]
+- [[#configuration][Configuration]]
+  - [[#ace-window][ace-window]]
+  - [[#switch-window][switch-window]]
 
-* Customization
-There are two packages that accomplish the same but with a different visual queue.
+* Install
+Add =:feature lookup= to your init.el.
+
+** Module flags
+This module provides two flags:
+
++ ~+ace-window~ Use avy (and ace-window) as the backend.
++ ~+switch-window~ Use switch-window as the backend.
+
+If neither flag is specified, ~+ace-window~ will be used.
+
+* Usage
+This module remaps the function ~other-window~ to either ~switch-window~ or
+~ace-window~, depending on which backend you've enabled.
+
+~other-window~ is bound to ~C-x o~ and ~SPC w o~.
+
+* Configuration
+This module provides two backends, both providing the same functionality, but
+with different visual cues. They are =ace-window= and =switch-window=.
 
 ** ace-window
-The first character of the buffers change to a user selectable character.
+The first character of the buffers changes to a highlighted, user-selectable
+character.
+
  + Pros: The content of the buffers are always visible.
  + Cons: The displayed characters are small and difficult to see.
 
-This is the module's default if no module flag is specified. To explicitly enable this, write in *init.el*: ~(doom! :ui (window-select +ace-window))~
-
 ** switch-window
-The entire buffer is replaced by big letters than enable the user to easily select a desired window.
- + Pros: The displayed characters are easy to see. They will never be missed.
- + Cons: The contents of the buffers is entirely replaced by a big character.
+Replaces the entire buffer with large letters.
 
-To enable this, write in *init.el*: ~(doom! :ui (window-select +switch-window))~
+ + Pros: The displayed characters are /really/ easy to see.
+ + Cons: You can't see the contents of the buffers.

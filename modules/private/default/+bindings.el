@@ -320,7 +320,7 @@
         "C-j"     #'evil-window-down
         "C-k"     #'evil-window-up
         "C-l"     #'evil-window-right
-        "C-w"     #'ace-window
+        "C-w"     #'other-window
         ;; Swapping windows
         "H"       #'+evil/window-move-left
         "J"       #'+evil/window-move-down
