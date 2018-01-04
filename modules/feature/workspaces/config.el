@@ -71,7 +71,11 @@ renamed.")
       ;; Switch to it if we aren't auto-loading the last session
       (when (and (equal (safe-persp-name (get-current-persp)) persp-nil-name)
                  (= persp-auto-resume-time -1))
-        (persp-frame-switch +workspaces-main (or frame (selected-frame))))))
+        (persp-frame-switch +workspaces-main (or frame (selected-frame))))
+      ;; Make sure warnings are visible (fix #319)
+      (when-let* ((warnings (get-buffer "*Warnings*")))
+        (display-buffer-in-side-window
+         warnings '((window-height . shrink-window-if-larger-than-buffer))))))
 
   (defun +workspaces|init-persp-mode ()
     ;; Remap `buffer-list' to current workspace's buffers in `doom-buffer-list'

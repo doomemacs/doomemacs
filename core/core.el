@@ -146,10 +146,6 @@ ability to invoke the debugger in debug mode."
 ;;;
 ;; Initialize
 (eval-and-compile
-  ;; Defer warnings during the Doom startup process, giving other modules more
-  ;; time to initialize and make mistakes.
-  (remove-hook 'delayed-warnings-hook #'display-delayed-warnings)
-
   (defvar doom--file-name-handler-alist file-name-handler-alist)
   (unless (or after-init-time noninteractive)
     ;; One of the contributors to long startup times is the garbage collector,
@@ -187,9 +183,6 @@ ability to invoke the debugger in debug mode."
     (unless (or (not after-init-time) noninteractive)
       (dolist (hook '(doom-init-hook doom-post-init-hook))
         (run-hook-wrapped hook #'doom-try-run-hook hook)))
-
-    ;; We're ready to display warnings now.
-    (add-hook 'delayed-warnings-hook #'display-delayed-warnings t)
 
     ;; If you forget to reset this, you'll get stuttering and random freezes!
     (setq gc-cons-threshold 16777216
