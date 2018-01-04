@@ -139,8 +139,8 @@ NOTE This may need to be updated frequently, to meet changes upstream (in
 counsel-rg)."
   (when (null extra-ag-args)
     (setq extra-ag-args ""))
-  (if (< (length string) 1)  ;; #1
-      (counsel-more-chars 1)
+  (if (< (length string) 1)  ; <-- modified the character limit
+      (counsel-more-chars 1) ; <--
     (let ((default-directory (ivy-state-directory ivy-last))
           (regex (counsel-unquote-regex-parens
                   (setq ivy--old-re
@@ -157,10 +157,8 @@ counsel-rg)."
                                      " -- "
                                      (shell-quote-argument regex)
                                      file))))
-        (if (file-remote-p default-directory)
-            (split-string (shell-command-to-string ag-cmd) "\n" t)
-          (counsel--async-command ag-cmd)
-          nil)))))
+        (counsel--async-command ag-cmd)
+        nil))))
 
 ;;;###autoload
 (defun +ivy/wgrep-occur ()
