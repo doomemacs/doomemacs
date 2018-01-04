@@ -76,10 +76,9 @@ If neither is available, run all tests in all enabled modules."
   (declare (indent defun) (doc-string 2))
   (let (plist)
     (while (keywordp (car body))
+      (push (pop body) plist)
       (push (pop body) plist))
     (setq plist (reverse plist))
-    (when (plist-get plist :skip)
-      (setq body `((ert-skip nil) ,@body)))
     (when-let* ((modes (doom-enlist (plist-get plist :minor-mode))))
       (dolist (mode modes)
         (setq body `((with-minor-mode!! ,mode ,@body)))))
@@ -94,10 +93,12 @@ If neither is available, run all tests in all enabled modules."
                    do (setq path (replace-regexp-in-string rep with path t t))
                    finally return (intern (format "%s::%s" path name)))
          ()
-       (with-temp-buffer
-         (save-mark-and-excursion
-           (save-window-excursion
-             ,@body))))))
+       ,(if (plist-get plist :skip)
+            `(ert-skip ,(plist-get plist :skip))
+          `(with-temp-buffer
+             (save-mark-and-excursion
+               (save-window-excursion
+                 ,@body)))))))
 
 (defmacro should-buffer!! (initial expected &rest body)
   "Test that a buffer with INITIAL text, run BODY, then test it against EXPECTED.
