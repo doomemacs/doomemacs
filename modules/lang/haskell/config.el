@@ -33,7 +33,7 @@
   :config
   (if (executable-find "ghc-mod")
       (set! :company-backend 'haskell-mode #'company-ghc)
-    (warn "haskell-mode: couldn't find ghc-mode")
+    (warn "haskell-mode: couldn't find ghc-mod on PATH")
     (remove-hook 'haskell-mode-hook #'ghc-comp-init))
 
   (setq company-ghc-show-info 'oneline))
