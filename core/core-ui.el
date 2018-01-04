@@ -526,7 +526,7 @@ instead)."
   "Advice for `kill-this-buffer'. If there are no real buffers left, switch to
 `doom-fallback-buffer'."
   (let ((buf (current-buffer)))
-    (cond ((window-at-side-p)
+    (cond ((window-dedicated-p)
            (quit-window))
           ((eq buf (doom-fallback-buffer))
            (bury-buffer))
