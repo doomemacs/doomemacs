@@ -9,16 +9,17 @@ affects your Emacs packages)."
          (other ,dest))
      (with-temp-file it
        (insert "Hello world"))
-     (unwind-protect
-         (progn
-           (should (file-exists-p it))
-           (find-file-literally it)
-           (should (equal (buffer-string) "Hello world"))
-           (should (equal (buffer-file-name) it))
-           (let ((inhibit-message (not doom-debug-mode)))
-             ,@body))
-       (ignore-errors (delete-file it))
-       ,(if dest `(ignore-errors (delete-file other))))))
+     (with-minor-mode!! projectile-mode
+       (unwind-protect
+           (progn
+             (should (file-exists-p it))
+             (find-file-literally it)
+             (should (equal (buffer-string) "Hello world"))
+             (should (equal (buffer-file-name) it))
+             (let ((inhibit-message (not doom-debug-mode)))
+               ,@body))
+         (ignore-errors (delete-file it))
+         ,(if dest `(ignore-errors (delete-file other)))))))
 
 ;;
 (def-test! move-this-file
