@@ -124,8 +124,9 @@ whose dimensions may not be fully initialized by the time this is run."
 (defun +doom-dashboard-update-pwd ()
   "TODO"
   (with-current-buffer (doom-fallback-buffer)
-    (cd (or (+doom-dashboard--get-pwd)
-            default-directory))))
+    (let ((new-pwd (+doom-dashboard--get-pwd)))
+      (when (and new-pwd (file-directory-p new-pwd))
+        (setq default-directory new-pwd)))))
 
 (defun +doom-dashboard-reload (&optional force)
   "Update the DOOM scratch buffer (or create it, if it doesn't exist)."
