@@ -61,7 +61,7 @@
       ;unicode           ; extended unicode support for various languages
       ;tabbar            ; FIXME an (incomplete) tab bar for Emacs
        vi-tilde-fringe   ; fringe tildes to mark beyond EOB
-       (window-select +ace-window)  ; visually switch windows
+       window-select     ; visually switch windows
 
        :tools
        dired             ; making dired pretty [functional]
