@@ -28,6 +28,7 @@
       (should (+doom-dashboard-p)))))
 
 (def-test! get-pwd
+  :minor-mode projectile-mode
   (let ((default-directory doom-core-dir)
         (+doom-dashboard--last-cwd doom-core-dir)
         projectile-enable-caching)
@@ -40,6 +41,7 @@
         (should (equal (+doom-dashboard--get-pwd) (cdr spec)))))))
 
 (def-test! pwd-policy
+  :minor-mode projectile-mode
   (dolist (spec (list (cons 'last-project doom-emacs-dir)
                       (cons 'last doom-core-dir)
                       (cons "~" (expand-file-name "~/"))
