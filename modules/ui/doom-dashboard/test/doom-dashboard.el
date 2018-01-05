@@ -2,7 +2,6 @@
 ;;; ui/doom-dashboard/test/doom-dashboard.el
 
 (require! :ui doom-dashboard)
-(+doom-dashboard|init)
 
 (defun -dashboard-test-pwd (spec file)
   (let ((kill-buffer-query-functions '(+doom-dashboard|reload-on-kill))
