@@ -2,5 +2,6 @@
 ;;; feature/syntax-checker/packages.el
 
 (package! flycheck)
-(package! flycheck-pos-tip)
-
+(if IS-MAC
+    (package! flycheck-popup-tip)
+  (package! flycheck-pos-tip))

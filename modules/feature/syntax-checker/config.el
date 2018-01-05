@@ -22,9 +22,16 @@
 
 
 (def-package! flycheck-pos-tip
+  :unless IS-MAC
   :after flycheck
   :config
   (setq flycheck-pos-tip-timeout 10
         flycheck-display-errors-delay 0.5)
   (flycheck-pos-tip-mode +1))
+
+
+(def-package! flycheck-popup-tip
+  :when IS-MAC
+  :after flycheck
+  :hook (flycheck-mode . flycheck-popup-tip-mode))
 
