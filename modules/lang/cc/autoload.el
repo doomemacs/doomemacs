@@ -1,9 +1,9 @@
 ;;; lang/cc/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
-(defun +cc/reload-compile-db (&optional force-p)
+(defun +cc/reload-compile-db ()
   "Reload the current project's JSON compilation database."
-  (interactive "P")
+  (interactive)
   (unless (memq major-mode '(c-mode c++-mode objc-mode))
     (user-error "Not a C/C++/ObjC buffer"))
   (unless (doom-project-has! "compile_commands.json")
