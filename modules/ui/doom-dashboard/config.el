@@ -122,10 +122,13 @@ whose dimensions may not be fully initialized by the time this is run."
       (doom-fallback-buffer)))
 
 (defun +doom-dashboard-update-pwd ()
-  "TODO"
+  "Update `default-directory' in the Doom dashboard buffer. What it is set to is
+controlled by `+doom-dashboard-pwd-policy'."
   (with-current-buffer (doom-fallback-buffer)
     (let ((new-pwd (+doom-dashboard--get-pwd)))
       (when (and new-pwd (file-directory-p new-pwd))
+        (unless (string-suffix-p "/" new-pwd)
+          (setq new-pwd (concat new-pwd "/")))
         (setq default-directory new-pwd)))))
 
 (defun +doom-dashboard-reload (&optional force)
