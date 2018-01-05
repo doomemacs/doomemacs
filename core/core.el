@@ -166,9 +166,9 @@ ability to invoke the debugger in debug mode."
   (condition-case-unless-debug ex
       (require 'autoloads doom-autoload-file t)
     ('error
+     (delete-file doom-autoload-file)
      (lwarn 'doom-autoloads :warning
-            "%s in autoloads.el -> %s"
-            (car ex) (error-message-string ex))))
+            "Error in autoloads.el -> %s" ex)))
 
   (unless noninteractive
     (load! core-ui)         ; draw me like one of your French editors
