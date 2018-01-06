@@ -143,8 +143,10 @@ across windows."
   ;; `evil-vsplit-window-right' to non-nil mimics this, but that doesn't update
   ;; window history. That means when you delete a new split, Emacs leaves you on
   ;; the 2nd to last window on the history stack, which is jarring.
-  (defun +evil*window-follow (&rest _)  (evil-window-down 1))
-  (defun +evil*window-vfollow (&rest _) (evil-window-right 1))
+  ;;
+  ;; Also recenters window on cursor in new split
+  (defun +evil*window-follow (&rest _)  (evil-window-down 1) (recenter))
+  (defun +evil*window-vfollow (&rest _) (evil-window-right 1) (recenter))
   (advice-add #'evil-window-split  :after #'+evil*window-follow)
   (advice-add #'evil-window-vsplit :after #'+evil*window-vfollow))
 
