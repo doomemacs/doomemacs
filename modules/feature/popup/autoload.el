@@ -146,7 +146,7 @@ current buffer."
          (setq +popup--old-display-buffer-alist display-buffer-alist
                display-buffer-alist +popup--display-buffer-alist)
          (dolist (prop +popup-window-parameters)
-           (push (cons prop 'writeable) window-persistent-parameters)))
+           (push (cons prop 'writable) window-persistent-parameters)))
         (t
          (remove-hook 'doom-unreal-buffer-functions #'+popup-p)
          (remove-hook 'doom-escape-hook #'+popup|close-on-escape)
