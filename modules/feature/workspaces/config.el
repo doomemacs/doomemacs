@@ -72,7 +72,8 @@ renamed.")
       (when (and (equal (safe-persp-name (get-current-persp)) persp-nil-name)
                  (= persp-auto-resume-time -1))
         (persp-frame-switch +workspaces-main (or frame (selected-frame))))
-      ;; Make sure warnings are visible (fix #319)
+      ;; The warnings buffer gets swallowed by creating `+workspaces-main', so
+      ;; we display it manually, if it exists (fix #319).
       (when-let* ((warnings (get-buffer "*Warnings*")))
         (display-buffer-in-side-window
          warnings '((window-height . shrink-window-if-larger-than-buffer))))))

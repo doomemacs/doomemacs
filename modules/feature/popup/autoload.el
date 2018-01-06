@@ -226,8 +226,8 @@ disabled."
 (defun +popup/close (&optional window force-p)
   "Close WINDOW, if it's a popup window.
 
-This will do nothing if the popup's `escape-quit' window parameter is either nil
-or 'other. This window parameter is ignored if FORCE-P is non-nil."
+This will do nothing if the popup's `quit' window parameter is either nil or
+'other. This window parameter is ignored if FORCE-P is non-nil."
   (interactive
    (list (selected-window)
          current-prefix-arg))

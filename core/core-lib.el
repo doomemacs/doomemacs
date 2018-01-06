@@ -301,12 +301,11 @@ Do not use this for configuring Doom core."
   (declare (indent defun))
   (unless values
     (error "Empty set! for %s" keyword))
-  (let ((fn (cdr (assq keyword doom-settings))))
-    (if fn
-        (apply fn values)
-      (when doom-debug-mode
-        (message "No setting found for %s" keyword)
-        nil))))
+  (if-let* ((fn (cdr (assq keyword doom-settings))))
+      (apply fn values)
+    (when doom-debug-mode
+      (message "No setting found for %s" keyword)
+      nil)))
 
 (provide 'core-lib)
 ;;; core-lib.el ends here
