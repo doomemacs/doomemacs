@@ -527,7 +527,7 @@ instead)."
 `doom-fallback-buffer'."
   (let ((buf (current-buffer)))
     (cond ((window-dedicated-p)
-           (quit-window))
+           (delete-window))
           ((eq buf (doom-fallback-buffer))
            (bury-buffer))
           (t
