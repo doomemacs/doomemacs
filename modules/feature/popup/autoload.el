@@ -17,15 +17,14 @@
                                (window-parameter w 'alist)
                                (window-state-get w)))))
 
-(defun +popup--kill-buffer (buffer)
+(defun +popup--kill-buffer (buffer ttl)
   "Tries to kill BUFFER, as was requested by a transient timer. If it fails, eg.
 the buffer is visible, then set another timer and try again later."
   (when (buffer-live-p buffer)
     (if (get-buffer-window buffer)
         (with-current-buffer buffer
           (setq +popup--timer
-                (run-at-time (timer--time +popup--timer)
-                             nil #'+popup--kill-buffer buffer)))
+                (run-at-time ttl nil #'+popup--kill-buffer buffer ttl)))
       (with-demoted-errors "Error killing transient buffer: %s"
         (let ((inhibit-message (not doom-debug-mode)))
           (message "Cleaned up transient buffer: %s" buffer))
@@ -71,7 +70,7 @@ and enables `+popup-buffer-mode'."
           (if (= ttl 0)
               (+popup--kill-buffer buffer)
             (setq +popup--timer
-                  (run-at-time ttl nil #'+popup--kill-buffer buffer))))))))
+                  (run-at-time ttl nil #'+popup--kill-buffer buffer ttl))))))))
 
 (defun +popup--normalize-alist (alist)
   "Merge `+popup-default-alist' and `+popup-default-parameters' with ALIST."
