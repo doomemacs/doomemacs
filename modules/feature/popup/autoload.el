@@ -13,7 +13,7 @@
   (cl-assert (cl-every #'windowp windows) t)
   (setq +popup--last
         (cl-loop for w in windows
-                 collect (list (window-buffer w)
+                 collect (cons (window-buffer w)
                                (window-state-get w)))))
 
 (defun +popup--kill-buffer (buffer ttl)
@@ -31,7 +31,7 @@ the buffer is visible, then set another timer and try again later."
           (kill-process process))
         (kill-buffer buffer)))))
 
-(defun +popup--init (window alist)
+(defun +popup--init (window)
   "Initializes a popup window. Run any time a popup is opened. It sets the
 default window parameters for popup windows, clears leftover transient timers
 and enables `+popup-buffer-mode'."
@@ -110,7 +110,7 @@ current buffer."
          (alist (+popup--normalize-alist alist))
          (new-window (or (display-buffer-reuse-window buffer alist)
                          (display-buffer-in-side-window buffer alist))))
-    (+popup--init new-window alist)
+    (+popup--init new-window)
     (select-window
      (if (+popup-parameter 'select new-window)
          new-window
@@ -281,7 +281,7 @@ the message buffer in a popup window."
     (error "No popups to restore"))
   (cl-loop for (buffer . state) in +popup--last
            if (and (buffer-live-p buffer)
-                   (+popup-buffer buffer))
+                   (display-buffer buffer))
            do (window-state-put state it))
   (setq +popup--last nil))
 

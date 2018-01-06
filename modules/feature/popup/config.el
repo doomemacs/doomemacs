@@ -32,9 +32,9 @@ Modifying this has no effect, unless done before feature/popup loads.
   CDR can be t (show the default modeline), a symbol representing the name of a
   modeline defined with `def-modeline!', or nil (show no modeline).
 
-(popup . BOOL)
-  If CDR is non-nil, this window is identified as a popup window. For internal
-  use! Do not change this.
+(popup . t)
+  This is for internal use, do not change this. It simply marks a window as a
+  popup window.
 
 Since I can't find this information anywhere but the Emacs manual, I'll include
 a brief description of some native window parameters that Emacs uses:
