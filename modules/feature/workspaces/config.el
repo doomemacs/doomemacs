@@ -75,8 +75,9 @@ renamed.")
       ;; The warnings buffer gets swallowed by creating `+workspaces-main', so
       ;; we display it manually, if it exists (fix #319).
       (when-let* ((warnings (get-buffer "*Warnings*")))
-        (display-buffer-in-side-window
-         warnings '((window-height . shrink-window-if-larger-than-buffer))))))
+        (save-excursion
+          (display-buffer-in-side-window
+           warnings '((window-height . shrink-window-if-larger-than-buffer)))))))
 
   (defun +workspaces|init-persp-mode ()
     ;; Remap `buffer-list' to current workspace's buffers in `doom-buffer-list'
