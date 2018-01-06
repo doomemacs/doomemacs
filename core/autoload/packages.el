@@ -1,22 +1,22 @@
 ;;; core/autoload/packages.el -*- lexical-binding: t; -*-
 
+(load! cache)
 (require 'use-package)
 (require 'quelpa)
-
-(defvar doom--last-refresh nil)
+(require 'async)
 
 ;;;###autoload
 (defun doom-refresh-packages (&optional force-p)
   "Refresh ELPA packages."
   (when force-p
     (doom-refresh-clear-cache))
-  (unless (or (persistent-soft-fetch 'last-pkg-refresh "emacs")
+  (unless (or (doom-cache-get 'last-pkg-refresh)
               doom--refreshed-p)
     (condition-case-unless-debug ex
         (progn
           (message "Refreshing package archives")
           (package-refresh-contents)
-          (persistent-soft-store 'last-pkg-refresh t "emacs" 900))
+          (doom-cache-set 'last-pkg-refresh t 900))
     ('error
      (doom-refresh-clear-cache)
      (message "Failed to refresh packages: (%s) %s"
@@ -26,7 +26,7 @@
 (defun doom-refresh-clear-cache ()
   "Clear the cache for `doom-refresh-packages'."
   (setq doom--refreshed-p nil)
-  (persistent-soft-store 'last-pkg-refresh nil "emacs"))
+  (doom-cache-set 'last-pkg-refresh nil))
 
 ;;;###autoload
 (defun doom-package-backend (name &optional noerror)

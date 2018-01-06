@@ -2,7 +2,6 @@
 
 (require 'subr-x)
 (load "async-autoloads" nil t)
-(load "persistent-soft-autoloads" nil t)
 (dolist (sym '(json-read json-read-file json-read-from-string json-encode))
   (autoload sym "json"))
 (eval-and-compile

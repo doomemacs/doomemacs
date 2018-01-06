@@ -16,16 +16,8 @@
   (set! :evil-state 'prodigy-mode 'emacs)
 
   ;; Make services, etc persistent between Emacs sessions
-  (setq prodigy-services (persistent-soft-fetch 'prodigy-services "prodigy")
-        prodigy-tags     (persistent-soft-fetch 'prodigy-tags "prodigy")
-        prodigy-filters  (persistent-soft-fetch 'prodigy-filters "prodigy"))
-
-  (defun +services|save ()
-    "Save all services, tags and filters to files."
-    (+services/cleanup)
-    (cl-loop for sym in '(prodigy-services prodigy-tags prodigy-filters)
-             do (persistent-soft-store sym (symbol-value sym) "prodigy")))
-  (add-hook 'kill-emacs-hook #'+services|save)
+  (doom-cache-persist
+   :prodigy '(prodigy-services prodigy-tags prodigy-filters))
 
   (defun +services*prodigy-services (orig-fn &rest args)
     "Adds a new :project property to prodigy services, which hides the service
