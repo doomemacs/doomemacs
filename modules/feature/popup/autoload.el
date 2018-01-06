@@ -3,7 +3,8 @@
 (defun +popup--cancel-buffer-timer ()
   "Cancel the current buffer's transient timer."
   (when (timerp +popup--timer)
-    (message "Cancelled timer")
+    (let ((inhibit-message (not doom-debug-mode)))
+      (message "Cancelled timer in %s" (current-buffer)))
     (cancel-timer +popup--timer)
     (setq +popup--timer nil))
   t)
