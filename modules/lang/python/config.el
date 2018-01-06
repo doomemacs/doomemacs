@@ -88,7 +88,7 @@ environment variables."
   :after anaconda-mode
   :config
   (set! :company-backend 'python-mode '(company-anaconda))
-  (set! :jump 'python-mode
+  (set! :lookup 'python-mode
     :definition #'anaconda-mode-find-definitions
     :references #'anaconda-mode-find-references
     :documentation #'anaconda-mode-show-doc)

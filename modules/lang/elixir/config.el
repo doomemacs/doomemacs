@@ -18,7 +18,7 @@
   :after elixir-mode
   :hook (elixir-mode . alchemist-mode)
   :config
-  (set! :jump 'elixir-mode
+  (set! :lookup 'elixir-mode
     :definition #'alchemist-goto-definition-at-point
     :documentation #'alchemist-help-search-at-point)
   (set! :eval 'elixir-mode #'alchemist-eval-region))

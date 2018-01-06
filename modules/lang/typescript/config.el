@@ -23,7 +23,7 @@
   :after typescript-mode
   :config
   (set! :company-backend 'typescript-mode '(company-tide))
-  (set! :jump 'typescript-mode
+  (set! :lookup 'typescript-mode
     :definition #'tide-jump-to-definition
     :references #'tide-references
     :documentation #'tide-documentation-at-point)

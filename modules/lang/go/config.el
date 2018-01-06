@@ -12,7 +12,7 @@
     (add-hook! go-mode (add-hook 'before-save-hook #'gofmt-before-save nil t)))
 
   (set! :repl 'go-mode #'gorepl-run)
-  (set! :jump 'go-mode
+  (set! :lookup 'go-mode
     :definition #'go-guru-definition
     :references #'go-guru-referrers
     :documentation #'godoc-at-point)

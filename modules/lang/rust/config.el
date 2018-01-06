@@ -32,7 +32,7 @@
   (unless (file-exists-p racer-cmd)
     (warn "rust-mode: racer binary can't be found; auto-completion is disabled"))
 
-  (set! :jump 'rust-mode :definition #'racer-find-definition))
+  (set! :lookup 'rust-mode :definition #'racer-find-definition))
 
 
 (def-package! company-racer

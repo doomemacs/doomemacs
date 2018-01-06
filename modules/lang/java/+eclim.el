@@ -6,7 +6,7 @@
 (def-package! eclim
   :hook (java-mode . eclim-mode)
   :config
-  (set! :jump 'java-mode
+  (set! :lookup 'java-mode
     :definition #'eclim-java-find-declaration
     :references #'eclim-java-find-references
     :documentation #'eclim-java-show-documentation-for-current-element)

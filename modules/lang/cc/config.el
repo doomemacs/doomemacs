@@ -210,7 +210,7 @@ compilation database is present in the project.")
     (if (/= (length bins) 2)
         (warn "cc-mode: couldn't find %s, disabling rtags support" bins)
       (add-hook! (c-mode c++-mode) #'rtags-start-process-unless-running)
-      (set! :jump '(c-mode c++-mode)
+      (set! :lookup '(c-mode c++-mode)
         :definition #'rtags-find-symbol-at-point
         :references #'rtags-find-references-at-point)))
 
