@@ -724,7 +724,7 @@
         "A-;" #'eval-expression)
 
       (:when (featurep! :feature popup)
-        (:map +popup-mode-map
+        (:map +popup-buffer-mode-map
           "M-w" #'delete-window))
 
       (:after tabulated-list
