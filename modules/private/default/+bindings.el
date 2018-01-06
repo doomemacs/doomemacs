@@ -314,28 +314,6 @@
       ;; paste from recent yank register (which isn't overwritten)
       :v  "C-p" "\"0p"
 
-      (:map evil-window-map ; prefix "C-w"
-        ;; Navigation
-        "C-h"     #'evil-window-left
-        "C-j"     #'evil-window-down
-        "C-k"     #'evil-window-up
-        "C-l"     #'evil-window-right
-        "C-w"     #'other-window
-        ;; Swapping windows
-        "H"       #'+evil/window-move-left
-        "J"       #'+evil/window-move-down
-        "K"       #'+evil/window-move-up
-        "L"       #'+evil/window-move-right
-        "C-S-w"   #'ace-swap-window
-        ;; Window undo/redo
-        "u"       #'winner-undo
-        "C-u"     #'winner-undo
-        "C-r"     #'winner-redo
-        "o"       #'doom/window-enlargen
-        ;; Delete window
-        "c"       #'+workspace/close-window-or-workspace
-        "C-C"     #'ace-delete-window)
-
 
       ;; --- Plugin bindings ------------------------------
       ;; auto-yasnippet
@@ -383,6 +361,36 @@
           [backtab]  #'+ivy/wgrep-occur      ; search/replace on results
           "C-SPC"    #'ivy-call-and-recenter ; preview
           "M-RET"    (+ivy-do-action! #'+ivy-git-grep-other-window-action)))
+
+      ;; evil
+      (:after evil
+        :textobj "a" #'evil-inner-arg                    #'evil-outer-arg
+        :textobj "B" #'evil-textobj-anyblock-inner-block #'evil-textobj-anyblock-a-block
+        :textobj "i" #'evil-indent-plus-i-indent         #'evil-indent-plus-a-indent
+        :textobj "I" #'evil-indent-plus-i-indent-up      #'evil-indent-plus-a-indent-up
+        :textobj "J" #'evil-indent-plus-i-indent-up-down #'evil-indent-plus-a-indent-up-down
+
+        (:map evil-window-map ; prefix "C-w"
+          ;; Navigation
+          "C-h"     #'evil-window-left
+          "C-j"     #'evil-window-down
+          "C-k"     #'evil-window-up
+          "C-l"     #'evil-window-right
+          "C-w"     #'other-window
+          ;; Swapping windows
+          "H"       #'+evil/window-move-left
+          "J"       #'+evil/window-move-down
+          "K"       #'+evil/window-move-up
+          "L"       #'+evil/window-move-right
+          "C-S-w"   #'ace-swap-window
+          ;; Window undo/redo
+          "u"       #'winner-undo
+          "C-u"     #'winner-undo
+          "C-r"     #'winner-redo
+          "o"       #'doom/window-enlargen
+          ;; Delete window
+          "c"       #'+workspace/close-window-or-workspace
+          "C-C"     #'ace-delete-window))
 
       ;; evil-commentary
       :n  "gc"  #'evil-commentary
@@ -619,14 +627,6 @@
           "<M-right>"   nil))
 
 
-      ;; --- Custom evil text-objects ---------------------
-      :textobj "a" #'evil-inner-arg                    #'evil-outer-arg
-      :textobj "B" #'evil-textobj-anyblock-inner-block #'evil-textobj-anyblock-a-block
-      :textobj "i" #'evil-indent-plus-i-indent         #'evil-indent-plus-a-indent
-      :textobj "I" #'evil-indent-plus-i-indent-up      #'evil-indent-plus-a-indent-up
-      :textobj "J" #'evil-indent-plus-i-indent-up-down #'evil-indent-plus-a-indent-up-down
-
-
       ;; --- Built-in plugins -----------------------------
       (:after comint
         ;; TAB auto-completion in term buffers
@@ -709,8 +709,6 @@
              minibuffer-local-completion-map
              minibuffer-local-must-match-map
              minibuffer-local-isearch-map
-             evil-ex-completion-map
-             evil-ex-search-keymap
              read-expression-map)
         [escape] #'abort-recursive-edit
         "C-r" #'evil-paste-from-register
@@ -725,8 +723,9 @@
         "M-;" #'eval-expression
         "A-;" #'eval-expression)
 
-      (:map tabulated-list-mode-map
-        [remap evil-record-macro] #'doom/popup-close-maybe)
+      (:after tabulated-list
+        (:map tabulated-list-mode-map
+          [remap evil-record-macro] #'quit-window))
 
       (:after view
         (:map view-mode-map "<escape>" #'View-quit-all)))
