@@ -1,10 +1,13 @@
-language: emacs-lisp
+language: generic
 sudo: false
+branches:
+  only:
+    - master
+    - develop
 before_install:
-  - git clone https://github.com/rejeep/evm.git /home/travis/.evm
-  - export PATH="/home/travis/.evm/bin:$PATH"
+  - if [ ! -z "$EVM_EMACS" ]; then curl -fsSkL https://raw.github.com/rejeep/evm/master/go > x.sh && source ./x.sh; fi
+  - evm install $EVM_EMACS --use --skip
   - evm config path /tmp
-  - evm install $EVM_EMACS --use
   - cp init.test.el init.el
   - INSECURE=1 YES=1 make install
 env:
@@ -13,4 +16,4 @@ env:
   - EVM_EMACS=emacs-25.3-travis
 script:
   - emacs --version
-  - make test
+  - DEBUG=1 make test
