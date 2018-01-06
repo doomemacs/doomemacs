@@ -45,9 +45,6 @@
   (set! :popup "^\\*evil-registers" '((size . 0.3)))
   (set! :popup "^\\*Command Line" '((size . 8)))
 
-  ;; Don't interfere with localleader key
-  (define-key evil-motion-state-map "\\" nil)
-
   ;; Set cursor colors later, once theme is loaded
   (defun +evil*init-cursors (&rest _)
     (setq evil-default-cursor (face-background 'cursor nil t)
@@ -63,19 +60,11 @@
   (dolist (mode '(help-mode debugger-mode))
     (evil-set-initial-state mode 'normal))
 
-  ;; make `try-expand-dabbrev' from `hippie-expand' work in minibuffer
-  ;; @see `he-dabbrev-beg', so we need re-define syntax for '/'
-  (defun minibuffer-inactive-mode-hook-setup ()
-    (set-syntax-table (let* ((table (make-syntax-table)))
-                        (modify-syntax-entry ?/ "." table)
-                        table)))
-  (add-hook 'minibuffer-inactive-mode-hook #'minibuffer-inactive-mode-hook-setup)
-
 
   ;; --- keybind fixes ----------------------
   (map! (:after wgrep
-          ;; a wrapper that invokes `wgrep-mark-deletion' across lines
-          ;; you use `evil-delete' on.
+          ;; A wrapper that invokes `wgrep-mark-deletion' across lines you use
+          ;; `evil-delete' in wgrep buffers.
           :map wgrep-mode-map [remap evil-delete] #'+evil-delete)
 
         ;; replace native folding commands
@@ -86,10 +75,6 @@
         [remap evil-close-folds]   #'+evil:fold-close-all
         [remap evil-open-folds]    #'+evil:fold-open-all)
 
-
-  ;; --- evil hacks -------------------------
-  (advice-add #'evil-force-normal-state :after #'doom/escape)
-
   (defun +evil|disable-highlights ()
     "Disable ex search buffer highlights."
     (when (evil-ex-hl-active-p 'evil-ex-search)
@@ -97,28 +82,40 @@
       t))
   (add-hook 'doom-escape-hook #'+evil|disable-highlights)
 
-  (defun +evil*restore-normal-state-on-windmove (orig-fn &rest args)
-    "If in anything but normal or motion mode when moving to another window,
-restore normal mode. This prevents insert state from bleeding into other modes
-across windows."
-    (unless (memq evil-state '(normal motion emacs))
-      (evil-normal-state +1))
-    (apply orig-fn args))
+
+  ;; --- evil hacks -------------------------
+  ;; Make ESC (from normal mode) the universal escaper. See `doom-escape-hook'.
+  (advice-add #'evil-force-normal-state :after #'doom/escape)
+  ;; Ensure buffer is in normal mode when we leave it and return to it.
   (advice-add #'windmove-do-window-select :around #'+evil*restore-normal-state-on-windmove)
-
-  (defun +evil*static-reindent (orig-fn &rest args)
-    "Don't move cursor on indent."
-    (save-excursion (apply orig-fn args)))
+  ;; Don't move cursor when indenting
   (advice-add #'evil-indent :around #'+evil*static-reindent)
-
   ;; monkey patch `evil-ex-replace-special-filenames' to add more ex
   ;; substitution flags to evil-mode
-  (advice-add #'evil-ex-replace-special-filenames :override #'doom-resolve-vim-path)
+  (advice-add #'evil-ex-replace-special-filenames :override #'+evil*resolve-vim-path)
+
+  ;; make `try-expand-dabbrev' from `hippie-expand' work in minibuffer
+  ;; @see `he-dabbrev-beg', so we need re-define syntax for '/'
+  (defun +evil*fix-dabbrev-in-minibuffer ()
+    (set-syntax-table (let* ((table (make-syntax-table)))
+                        (modify-syntax-entry ?/ "." table)
+                        table)))
+  (add-hook 'minibuffer-inactive-mode-hook #'+evil*fix-dabbrev-in-minibuffer)
+
+  ;; Move to new split -- setting `evil-split-window-below' &
+  ;; `evil-vsplit-window-right' to non-nil mimics this, but that doesn't update
+  ;; window history. That means when you delete a new split, Emacs leaves you on
+  ;; the 2nd to last window on the history stack, which is jarring.
+  ;;
+  ;; Also recenters window on cursor in new split
+  (defun +evil*window-follow (&rest _)  (evil-window-down 1) (recenter))
+  (advice-add #'evil-window-split  :after #'+evil*window-follow)
+  (defun +evil*window-vfollow (&rest _) (evil-window-right 1) (recenter))
+  (advice-add #'evil-window-vsplit :after #'+evil*window-vfollow)
 
   ;; These arg types will highlight matches in the current buffer
   (evil-ex-define-argument-type buffer-match :runner +evil-ex-buffer-match)
   (evil-ex-define-argument-type global-match :runner +evil-ex-global-match)
-
   ;; By default :g[lobal] doesn't highlight matches in the current buffer. I've
   ;; got to write my own argument type and interactive code to get it to do so.
   (evil-ex-define-argument-type global-delim-match :runner +evil-ex-global-delim-match)
@@ -137,18 +134,7 @@ across windows."
   (evil-set-command-properties
    '+evil:align :move-point t :ex-arg 'buffer-match :ex-bang t :evil-mc t :keep-visual t :suppress-operator t)
   (evil-set-command-properties
-   '+evil:mc :move-point nil :ex-arg 'global-match :ex-bang t :evil-mc t)
-
-  ;; Move to new split -- setting `evil-split-window-below' &
-  ;; `evil-vsplit-window-right' to non-nil mimics this, but that doesn't update
-  ;; window history. That means when you delete a new split, Emacs leaves you on
-  ;; the 2nd to last window on the history stack, which is jarring.
-  ;;
-  ;; Also recenters window on cursor in new split
-  (defun +evil*window-follow (&rest _)  (evil-window-down 1) (recenter))
-  (defun +evil*window-vfollow (&rest _) (evil-window-right 1) (recenter))
-  (advice-add #'evil-window-split  :after #'+evil*window-follow)
-  (advice-add #'evil-window-vsplit :after #'+evil*window-vfollow))
+   '+evil:mc :move-point nil :ex-arg 'global-match :ex-bang t :evil-mc t))
 
 
 ;;

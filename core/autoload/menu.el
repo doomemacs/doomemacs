@@ -25,7 +25,6 @@ PROMPT (a string) and COMMAND (a list of command plists; see `def-menu!').")
                   (t default-directory))))
       (cond ((stringp command)
              (with-current-buffer (get-buffer-create "*compilation*")
-               (setq command (doom-resolve-vim-path command))
                (save-window-excursion
                  (compile command))
                (setq header-line-format
