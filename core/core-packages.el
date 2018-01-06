@@ -401,7 +401,9 @@ The module is only loaded once. If RELOAD-P is non-nil, load it again."
                  module submodule)
         (doom-module-enable module submodule flags)
         `(condition-case-unless-debug ex
-             (load! config ,module-path t)
+             (progn
+               (load! init ,module-path t)
+               (load! config ,module-path t))
            ('error
             (lwarn 'doom-modules :error
                    "%s in '%s %s' -> %s"
