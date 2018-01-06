@@ -1,7 +1,7 @@
 ;;; config.el -*- lexical-binding: t; -*-
 
 (defconst +popup-window-parameters
-  '(transient quit select modeline alist)
+  '(transient quit select modeline popup)
   "A list of custom parameters to be added to `window-persistent-parameters'.
 Modifying this has no effect, unless done before feature/popup loads.
 
@@ -32,8 +32,9 @@ Modifying this has no effect, unless done before feature/popup loads.
   CDR can be t (show the default modeline), a symbol representing the name of a
   modeline defined with `def-modeline!', or nil (show no modeline).
 
-(alist . CDR)
-  This is an internal parameter and should not be set or modified.
+(popup . BOOL)
+  If CDR is non-nil, this window is identified as a popup window. For internal
+  use! Do not change this.
 
 Since I can't find this information anywhere but the Emacs manual, I'll include
 a brief description of some native window parameters that Emacs uses:

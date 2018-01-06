@@ -14,7 +14,6 @@
   (setq +popup--last
         (cl-loop for w in windows
                  collect (list (window-buffer w)
-                               (window-parameter w 'alist)
                                (window-state-get w)))))
 
 (defun +popup--kill-buffer (buffer ttl)
@@ -37,9 +36,9 @@ the buffer is visible, then set another timer and try again later."
 default window parameters for popup windows, clears leftover transient timers
 and enables `+popup-buffer-mode'."
   (with-selected-window window
+    (set-window-parameter window 'popup t)
     (set-window-parameter window 'no-other-window t)
     (set-window-parameter window 'delete-window #'+popup--destroy)
-    (set-window-parameter window 'alist alist)
     (window-preserve-size
      window (memq (window-parameter window 'window-side) '(left right)) t)
     (+popup--cancel-buffer-timer)
@@ -277,9 +276,9 @@ the message buffer in a popup window."
   (interactive)
   (unless +popup--last
     (error "No popups to restore"))
-  (cl-loop for (buffer alist state) in +popup--last
+  (cl-loop for (buffer . state) in +popup--last
            if (and (buffer-live-p buffer)
-                   (+popup-buffer buffer alist))
+                   (+popup-buffer buffer))
            do (window-state-put state it))
   (setq +popup--last nil))
 
