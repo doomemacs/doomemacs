@@ -139,14 +139,14 @@ current buffer."
   :keymap +popup-mode-map
   (cond (+popup-mode
          (add-hook 'doom-unreal-buffer-functions #'+popup-p)
-         (add-hook '+evil-esc-hook #'+popup|close-on-escape t)
+         (add-hook 'doom-escape-hook #'+popup|close-on-escape t)
          (setq +popup--old-display-buffer-alist display-buffer-alist
                display-buffer-alist +popup--display-buffer-alist)
          (dolist (prop +popup-window-parameters)
            (push (cons prop 'writeable) window-persistent-parameters)))
         (t
          (remove-hook 'doom-unreal-buffer-functions #'+popup-p)
-         (remove-hook '+evil-esc-hook #'+popup|close-on-escape)
+         (remove-hook 'doom-escape-hook #'+popup|close-on-escape)
          (setq display-buffer-alist +popup--old-display-buffer-alist)
          (dolist (prop +popup-window-parameters)
            (assq-delete-all prop window-persistent-parameters)))))

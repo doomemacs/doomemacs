@@ -88,24 +88,6 @@
 
 
   ;; --- evil hacks -------------------------
-  (defvar +evil-esc-hook '(t)
-    "A hook run after ESC is pressed in normal mode (invoked by
-`evil-force-normal-state'). If any hook returns non-nil, all hooks after it are
-ignored.")
-
-  (defun +evil*attach-escape-hook ()
-    "Run the `+evil-esc-hook'."
-    (cond ((minibuffer-window-active-p (minibuffer-window))
-           ;; quit the minibuffer if open.
-           (abort-recursive-edit))
-          ((evil-ex-hl-active-p 'evil-ex-search)
-           ;; disable ex search buffer highlights.
-           (evil-ex-nohighlight))
-          (t
-           ;; Run all escape hooks. If any returns non-nil, then stop there.
-           (run-hook-with-args-until-success '+evil-esc-hook))))
-  (advice-add #'evil-force-normal-state :after #'+evil*attach-escape-hook)
-
   (defun +evil*restore-normal-state-on-windmove (orig-fn &rest args)
     "If in anything but normal or motion mode when moving to another window,
 restore normal mode. This prevents insert state from bleeding into other modes
@@ -246,7 +228,7 @@ across windows."
     (when evil-exchange--overlays
       (evil-exchange-cancel)
       t))
-  (add-hook '+evil-esc-hook #'+evil|escape-exchange))
+  (add-hook 'doom-escape-hook #'+evil|escape-exchange))
 
 
 (def-package! evil-matchit
@@ -309,7 +291,7 @@ the new algorithm is confusing, like in python or ruby."
       (evil-mc-undo-all-cursors)
       (evil-mc-resume-cursors)
       t))
-  (add-hook '+evil-esc-hook #'+evil|escape-multiple-cursors))
+  (add-hook 'doom-escape-hook #'+evil|escape-multiple-cursors))
 
 
 (def-package! evil-snipe

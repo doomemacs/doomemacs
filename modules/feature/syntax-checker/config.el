@@ -12,7 +12,7 @@
       (when flycheck-mode
         (ignore-errors (flycheck-buffer))
         nil))
-    (add-hook '+evil-esc-hook #'+syntax-checkers|flycheck-buffer t)
+    (add-hook 'doom-escape-hook #'+syntax-checkers|flycheck-buffer t)
 
     ;; With the option of flychecking the buffer on escape, so we don't need
     ;; auto-flychecking on idle-change:

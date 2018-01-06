@@ -256,7 +256,7 @@ between the two."
     (when (and (derived-mode-p 'org-mode)
                org-occur-highlights)
       (org-remove-occur-highlights)))
-  (add-hook '+evil-esc-hook #'+org|remove-occur-highlights)
+  (add-hook 'doom-escape-hook #'+org|remove-occur-highlights)
 
   (after! recentf
     ;; Don't clobber recentf with agenda files

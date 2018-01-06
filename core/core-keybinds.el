@@ -21,6 +21,30 @@
     (?g . global))
   "A list of cons cells that map a letter to a evil state symbol.")
 
+;;
+(defvar doom-escape-hook nil
+  "A hook run after C-g is pressed (or ESC in normal mode, for evil users). Both
+keys trigger `doom/escape'.
+
+If any hook returns non-nil, all hooks after it are ignored.")
+
+(defun doom/escape ()
+  "Run the `doom-escape-hook'."
+  (interactive)
+  (cond ((minibuffer-window-active-p (minibuffer-window))
+         ;; quit the minibuffer if open.
+         (abort-recursive-edit))
+        ((and (featurep 'evil) (evil-ex-hl-active-p 'evil-ex-search))
+         ;; disable ex search buffer highlights.
+         (evil-ex-nohighlight))
+        ;; Run all escape hooks. If any returns non-nil, then stop there.
+        ((run-hook-with-args-until-success 'doom-escape-hook))
+        ;; Back to the default
+        (t (keyboard-quit))))
+
+(global-set-key [remap keyboard-quit] #'doom/escape)
+(advice-add #'evil-force-normal-state :after #'doom/escape)
+
 
 ;;
 (def-package! which-key

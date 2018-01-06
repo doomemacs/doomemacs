@@ -32,10 +32,10 @@
   (after! evil
     (defun +version-control|update-git-gutter ()
       "Refresh git-gutter on ESC. Return nil to prevent shadowing other
-`+evil-esc-hook' hooks."
+`doom-escape-hook' hooks."
       (when git-gutter-mode
         (ignore (git-gutter))))
-    (add-hook '+evil-esc-hook #'+version-control|update-git-gutter t))
+    (add-hook 'doom-escape-hook #'+version-control|update-git-gutter t))
 
   (def-hydra! +version-control@git-gutter
     (:body-pre (git-gutter-mode 1) :hint nil)

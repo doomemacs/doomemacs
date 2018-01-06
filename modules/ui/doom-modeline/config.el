@@ -42,7 +42,7 @@
           anzu--last-isearch-string anzu--overflow-p))
   ;; Ensure anzu state is cleared when searches & iedit are done
   (add-hook 'isearch-mode-end-hook #'anzu--reset-status t)
-  (add-hook '+evil-esc-hook #'anzu--reset-status t)
+  (add-hook 'doom-escape-hook #'anzu--reset-status t)
   (add-hook 'iedit-mode-end-hook #'anzu--reset-status))
 
 
