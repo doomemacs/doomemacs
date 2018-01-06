@@ -88,6 +88,15 @@
 
 
   ;; --- evil hacks -------------------------
+  (advice-add #'evil-force-normal-state :after #'doom/escape)
+
+  (defun +evil|disable-highlights ()
+    "Disable ex search buffer highlights."
+    (when (evil-ex-hl-active-p 'evil-ex-search)
+      (evil-ex-nohighlight)
+      t))
+  (add-hook 'doom-escape-hook #'+evil|disable-highlights)
+
   (defun +evil*restore-normal-state-on-windmove (orig-fn &rest args)
     "If in anything but normal or motion mode when moving to another window,
 restore normal mode. This prevents insert state from bleeding into other modes
