@@ -141,6 +141,8 @@ ALIST supports one custom parameter: `size', which will resolve to
 ;; Hacks
 ;;
 
+(advice-add #'balance-windows :around #'+popup*save)
+
 (defun doom*ignore-window-parameters (orig-fn &rest args)
   "Allow *interactive* window moving commands to traverse popups."
   (cl-letf (((symbol-function #'windmove-find-other-window)
@@ -154,7 +156,7 @@ ALIST supports one custom parameter: `size', which will resolve to
 (advice-add #'windmove-left :around #'doom*ignore-window-parameters)
 (advice-add #'windmove-right :around #'doom*ignore-window-parameters)
 
-
+;; `help-mode'
 (after! help-mode
   (defun doom--switch-from-popup (location)
     (let (origin)
@@ -195,6 +197,56 @@ ALIST supports one custom parameter: `size', which will resolve to
     (lambda (fun file)
       (require 'find-func)
       (doom--switch-from-popup (find-function-search-for-symbol fun 'defface file)))))
+
+;; `wgrep'
+(after! wgrep
+  ;; close the popup after you're done with a wgrep buffer
+  (advice-add #'wgrep-abort-changes :after #'+popup*close)
+  (advice-add #'wgrep-finish-edit :after #'+popup*close))
+
+;; `org'
+(after! org
+  (set! :popup "^ \\*Org todo"  '((size . 5))  '((transient . 0)))
+  (set! :popup "^\\*Org Agenda" '((size . 20)))
+
+  ;; Org has a scorched-earth window management system I'm not fond of. i.e.
+  ;; it kills all windows and monopolizes the frame. No thanks. We can do
+  ;; better with shackle's help.
+  (defun +popup*suppress-delete-other-windows (orig-fn &rest args)
+    (cl-letf (((symbol-function 'delete-other-windows)
+               (symbol-function 'ignore)))
+      (apply orig-fn args)))
+  (advice-add #'org-add-log-note :around #'+popup*suppress-delete-other-windows)
+  (advice-add #'org-capture-place-template :around #'+popup*suppress-delete-other-windows)
+  (advice-add #'org-export--dispatch-ui :around #'+popup*suppress-delete-other-windows)
+
+  (defun +popup*org-pop-to-buffer (&rest args)
+    "Use `pop-to-buffer' instead of `switch-to-buffer' to open buffer.'"
+    (let ((buf (car args)))
+      (pop-to-buffer
+       (cond ((stringp buf) (get-buffer-create buf))
+             ((bufferp buf) buf)
+             (t (error "Invalid buffer %s" buf))))))
+  (advice-add #'org-switch-to-buffer-other-window :override #'+popup*org-pop-to-buffer)
+
+  ;; `org-agenda'
+  (setq org-agenda-window-setup 'other-window
+        org-agenda-restore-windows-after-quit nil)
+  ;; Hide modeline in org-agenda
+  (add-hook 'org-agenda-finalize-hook #'doom-hide-modeline-mode)
+  (add-hook 'org-agenda-finalize-hook #'org-fit-window-to-buffer)
+  ;; Don't monopolize frame!
+  (advice-add #'org-agenda :around #'+popup*suppress-delete-other-windows))
+
+;; `persp-mode'
+(after! persp-mode
+  (defun +popup*persp-mode-restore-popups (&rest _)
+    "Restore popup windows when loading a perspective from file."
+    (dolist (window (window-list))
+      (when (+popup-parameter 'popup window)
+        (with-selected-window window
+          (+popup-buffer-mode +1)))))
+  (advice-add #'persp-load-state-from-file :after #'+popup*persp-mode-restore-popups))
 
 (provide 'config)
 ;;; config.el ends here

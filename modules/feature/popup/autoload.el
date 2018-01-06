@@ -324,3 +324,18 @@ prevent the popup(s) from messing up the UI (or vice versa)."
            (unless in-popup-p
              (select-window origin)))))))
 
+
+;;
+;; Advice
+;;
+
+;;;###autoload
+(defun +popup*close (&rest _)
+  "TODO"
+  (+popup/close))
+
+;;;###autoload
+(defun +popup*save (orig-fn &rest args)
+  "Sets aside all popups before executing the original function, usually to
+prevent the popup(s) from messing up the UI (or vice versa)."
+  (save-popups! (apply orig-fn args)))
