@@ -29,6 +29,8 @@ the buffer is visible, then set another timer and try again later."
       (with-demoted-errors "Error killing transient buffer: %s"
         (let ((inhibit-message (not doom-debug-mode)))
           (message "Cleaned up transient buffer: %s" buffer))
+        (when-let* ((process (get-buffer-process (current-buffer))))
+          (kill-process process))
         (kill-buffer buffer)))))
 
 (defun +popup--init (window alist)
