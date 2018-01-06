@@ -180,6 +180,8 @@ Goes down a list of possible backends:
     (unless (string-empty-p pattern)
       (cl-pushnew pattern devdocs-search-history))))
 
+(defvar counsel-dash-docsets)
+(defvar helm-dash-docsets)
 ;;;###autoload
 (defun +lookup/in-docsets (&optional query docsets)
   "TODO"

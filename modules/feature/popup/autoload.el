@@ -315,9 +315,6 @@ with the :popup setting."
 prevent the popup(s) from messing up the UI (or vice versa)."
   `(let* ((in-popup-p (+popup-p))
           (popups (+popup-windows))
-          (popup-states
-           (cl-loop for p in popups
-                    collect (cons (window-buffer p) (window-state-get p))))
           +popup--last)
      (dolist (p popups)
        (+popup/close p 'force))

@@ -143,7 +143,7 @@ ALIST supports one custom parameter: `size', which will resolve to
 (defun doom*ignore-window-parameters (orig-fn &rest args)
   "Allow *interactive* window moving commands to traverse popups."
   (cl-letf (((symbol-function #'windmove-find-other-window)
-             (lambda (direction &optional window ignore sign wrap mini)
+             (lambda (dir &optional arg window)
                (window-in-direction
                 (pcase dir (`up 'above) (`down 'below) (_ dir))
                 window (bound-and-true-p +popup-mode) arg windmove-wrap-around t))))

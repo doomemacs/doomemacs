@@ -140,9 +140,9 @@ Used by `+lookup/in-docsets' and `+lookup/documentation'."
              collect
              `(defun ,hook-sym ()
                 (make-variable-buffer-local ',var-sym)
-                (cond ((eq (car docsets) :add)
+                (cond ((eq ',(car docsets) :add)
                        `(setq ,var-sym (append ,var-sym (list ,@(cdr docsets)))))
-                      ((eq (car docsets) :remove)
+                      ((eq ',(car docsets) :remove)
                        `(setq ,var-sym
                               (cl-loop with to-delete = (list ,@(cdr docsets))
                                        for docset in ,var-sym

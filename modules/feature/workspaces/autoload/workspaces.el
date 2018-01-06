@@ -507,7 +507,7 @@ the workspace and move to the next."
         (+workspace/delete frame-persp)))))
 
 ;;;###autoload
-(defun +workspaces|per-project (&optional root)
+(defun +workspaces|per-project ()
   "Open a new workspace when switching to another project.
 
 Ensures the scratch (or dashboard) buffers are CDed into the project's root."
