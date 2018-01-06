@@ -268,7 +268,7 @@ This window parameter is ignored if FORCE-P is non-nil."
 the message buffer in a popup window."
   (interactive)
   (cond ((+popup-windows)
-         (+popup/close-all))
+         (+popup/close-all t))
         ((ignore-errors (+popup/restore)))
         ((display-buffer (get-buffer "*Messages*")))))
 
