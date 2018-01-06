@@ -204,12 +204,3 @@ counsel-rg)."
          (re-search-forward (ivy--regex ivy-text t) (line-end-position) t)
          (run-hooks 'counsel-grep-post-action-hook)
          (selected-window))))))
-
-;;;###autoload
-(defun +ivy-quit-and-resume ()
-  "Close the current popup window and resume ivy."
-  (interactive)
-  (when (doom-popup-p)
-    (doom/popup-close))
-  (ivy-resume))
-

@@ -645,7 +645,7 @@
         :n "]]"  #'help-go-forward
         :n "o"   #'ace-link-help
         :n "q"   #'quit-window
-        :n "Q"   #'+ivy-quit-and-resume)
+        :n "Q"   #'ivy-resume)
 
       (:after vc-annotate
         :map vc-annotate-mode-map
