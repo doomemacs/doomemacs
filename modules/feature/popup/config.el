@@ -91,7 +91,10 @@ CONDITION can be a regexp string or a function. See `display-buffer' for a list
 of possible entries for ALIST, which tells the display system how to initialize
 the popup window. PARAMETERS is an alist of window parameters. See
 `+popup-window-parameters' for a list of custom parameters provided by the popup
-module."
+module.
+
+ALIST supports one custom parameter: `size', which will resolve to
+`window-height' or `window-width' depending on `side'."
   `(let ((alist ,alist)
          (parameters ,parameters))
      ,(when alist
@@ -120,10 +123,10 @@ module."
   (set! :popup "^\\*" nil '((select . t)))
   (set! :popup "^\\*\\(?:scratch\\|Messages\\)" nil '((transient)))
   (set! :popup "^\\*Help"
-    '((window-height . 0.2))
+    '((size . 0.2))
     '((select . t)))
   (set! :+popup "^\\*doom:"
-    '((window-height . 0.35))
+    '((size . 0.35))
     '((select . t) (quit) (transient))))
 
 (setq +popup--display-buffer-alist (eval-when-compile +popup--display-buffer-alist))
