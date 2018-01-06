@@ -5,10 +5,10 @@ branches:
     - master
     - develop
 before_install:
-  - curl -fsSkL https://raw.github.com/rejeep/evm/master/go > x.sh && source ./x.sh
-  - export PATH="$EVM_DIR:$PATH"
-  - evm install $EVM_EMACS --use --skip
+  - git clone https://github.com/rejeep/evm.git /home/travis/.evm
+  - export PATH="/home/travis/.evm/bin:$PATH"
   - evm config path /tmp
+  - evm install $EVM_EMACS --use --skip
   - cp init.test.el init.el
   - INSECURE=1 YES=1 make install
 env:
