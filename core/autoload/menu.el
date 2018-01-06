@@ -31,9 +31,8 @@ PROMPT (a string) and COMMAND (a list of command plists; see `def-menu!').")
                (setq header-line-format
                      (concat (propertize "$ " 'face 'font-lock-doc-face)
                              (propertize command 'face 'font-lock-preprocessor-face)))
-               (doom-resize-window
-                (doom-popup-buffer (current-buffer)
-                  '(:autokill t :autoclose t)) 12)))
+               (doom-resize-window (get-buffer-window (pop-to-buffer (current-buffer)))
+                                   12)))
             ((or (symbolp command)
                  (functionp command))
              (call-interactively command))

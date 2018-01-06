@@ -66,8 +66,8 @@ interactive session."
            (insert "\n")
            (setq end (point))
            (ansi-color-apply-on-region beg end)))
-       (with-selected-window (doom-popup-buffer buf)
-         (goto-char (point-max))))))
+       (pop-to-buffer buf)
+       (goto-char (point-max)))))
 
 ;;;###autoload
 (defmacro debug! (message &rest args)

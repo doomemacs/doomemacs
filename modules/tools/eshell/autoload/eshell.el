@@ -28,7 +28,7 @@
   (let ((buf (get-buffer-create +eshell-buffer-name)))
     (with-current-buffer buf
       (unless (eq major-mode 'eshell-mode) (eshell-mode)))
-    (doom-popup-buffer buf '(:autokill t) t)
+    (pop-to-buffer buf)
     (when command
       (+eshell-run-command command))))
 

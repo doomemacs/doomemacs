@@ -64,8 +64,8 @@
             (switch-to-buffer +regex--text-buffer)
             (with-current-buffer +regex--text-buffer
               (insert +regex-dummy-text)))
-          (doom-popup-buffer +regex--groups-buffer)
-          (doom-popup-buffer +regex--expr-buffer)
+          (pop-to-buffer +regex--groups-buffer)
+          (pop-to-buffer +regex--expr-buffer)
           (with-current-buffer +regex--expr-buffer
             (conf-mode)
             (rainbow-delimiters-mode +1)

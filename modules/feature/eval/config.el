@@ -83,6 +83,7 @@ function that creates and returns the REPL buffer."
     "Ensures window is scrolled to BOF on invocation."
     (with-selected-window (get-buffer-window quickrun--buffer-name)
       (goto-char (point-min))
-      (doom-popup-fit-to-buffer)))
+      (let ((ignore-window-parameters t))
+        (shrink-window-if-larger-than-buffer))))
   (add-hook 'quickrun-after-run-hook #'+eval|quickrun-scroll-to-bof))
 

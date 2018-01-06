@@ -16,7 +16,7 @@ current project's root."
   (require 'multi-term)
   (let ((default-directory (if project-root (doom-project-root) default-directory))
         (buffer (multi-term-get-buffer current-prefix-arg)))
-    (select-window (doom-popup-buffer buffer))
+    (pop-to-buffer buffer)
     (setq multi-term-buffer-list (nconc multi-term-buffer-list (list buffer)))
     (multi-term-internal)))
 

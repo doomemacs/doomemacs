@@ -12,5 +12,5 @@
   (defun +gist*list-render (orig-fn &rest args)
     (funcall orig-fn (car args) t)
     (unless (cadr args)
-      (doom-popup-buffer (current-buffer))))
+      (pop-to-buffer (current-buffer))))
   (advice-add #'gist-list-render :around #'+gist*list-render))

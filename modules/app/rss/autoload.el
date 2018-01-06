@@ -34,16 +34,6 @@
     (delete-window window)))
 
 ;;;###autoload
-(defun +rss-popup-pane (buf)
-  "Display BUF in a popup."
-  (doom-popup-buffer buf
-    '(:align +rss-split-direction
-      :size 0.75
-      :select t
-      :autokill t
-      :autoclose t)))
-
-;;;###autoload
 (defun +rss/open (entry)
   "Display the currently selected item in a buffer."
   (interactive (list (elfeed-search-selected :ignore-region)))
