@@ -33,7 +33,7 @@
           LaTeX-section-section
           LaTeX-section-label))
 
-  (set! :popup " output\\*$" :regexp t :size 15 :noselect t :autoclose t :autokill t)
+  (set! :popup " output\\*$" '((size . 15)))
   (map! :map LaTeX-mode-map "C-j" nil))
 
 

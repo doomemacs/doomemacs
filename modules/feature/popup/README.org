@@ -1,0 +1,49 @@
+#+TITLE: :feature popup
+
+A short summary about what this module does.
+
+If necessary, include a longer description below it that goes into more detail. This may be as long as you like.
+
++ If possible, include a list of features
++ Include links to major plugins that the module uses, if applicable
++ Use links whenever you can
++ Mention dependencies on other modules here
+
+* Table of Contents :TOC:
+- [[#install][Install]]
+  - [[#main-dependencies][Main dependencies]]
+  - [[#extra-dependencies][Extra Dependencies]]
+- [[#configuration][Configuration]]
+- [[#usage][Usage]]
+- [[#appendix][Appendix]]
+  - [[#commands][Commands]]
+  - [[#hacks][Hacks]]
+
+* Install
+** Main dependencies
+*** MacOS
+#+BEGIN_SRC sh :tangle (if (doom-system-os 'macos) "yes")
+brew install x
+#+END_SRC
+
+*** Arch Linux
+#+BEGIN_SRC sh :dir /sudo:: :tangle (if (doom-system-os 'arch) "yes")
+sudo pacman --needed --noconfirm -S X
+#+END_SRC
+
+** Extra Dependencies
++ A
++ B
++ C
+
+#+BEGIN_SRC sh
+Y install A B C
+#+END_SRC
+
+* Configuration
+
+* Usage
+
+* Appendix
+** Commands
+** Hacks

@@ -10,7 +10,6 @@
 
   (add-hook! 'intero-mode-hook #'(flycheck-mode eldoc-mode))
 
-  (set! :popup "^intero:backend:" :regex t :size 12)
   (set! :lookup 'haskell-mode :definition #'intero-goto-definition))
 
 

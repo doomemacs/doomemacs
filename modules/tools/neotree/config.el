@@ -33,5 +33,9 @@
           "~$"
           "^#.*#$"))
 
+  (set! :popup "^ ?\\*NeoTree"
+    `((side . ,neo-window-position) (width-width . ,neo-window-width))
+    '((escape-quit . current) (select . t)))
+
   (when (bound-and-true-p winner-mode)
     (push neo-buffer-name winner-boring-buffers)))

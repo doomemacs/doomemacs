@@ -91,8 +91,7 @@ properties:
 (after! xref
   ;; By default, `etags--xref-backend' is the default xref backend. No need.
   ;; We'll set these up ourselves in other modules.
-  (setq-default xref-backend-functions '(t))
-  (set! :popup "*xref*" :noselect t :autokill t :autoclose t))
+  (setq-default xref-backend-functions '(t)))
 
 (defun +lookup|init-xref-backends ()
   "Set `+lookup-current-functions' for the current buffer.

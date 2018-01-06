@@ -16,8 +16,6 @@
         twittering-initial-timeline-spec-string
         '(":home" ":mentions" ":direct_messages"))
 
-  (set! :popup "*twittering-edit*" :size 12 :select t)
-
   (add-hook! twittering-mode
     (setq header-line-format (or (doom-modeline 'twitter) mode-line-format)
           mode-line-format nil))

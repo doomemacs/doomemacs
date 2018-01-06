@@ -19,14 +19,7 @@
   (add-hook 'doom-init-theme-hook #'doom-themes-neotree-config)
   (setq doom-neotree-enable-variable-pitch t
         doom-neotree-file-icons 'simple
-        doom-neotree-line-spacing 2)
-
-  (after! neotree
-    (defun +doom|neotree-fix-popup ()
-      "Ensure the fringe settings are maintained on popup restore."
-      (neo-global--when-window
-       (doom--neotree-no-fringes)))
-    (add-hook 'doom-popup-mode-hook #'+doom|neotree-fix-popup)))
+        doom-neotree-line-spacing 2))
 
 
 (def-package! solaire-mode

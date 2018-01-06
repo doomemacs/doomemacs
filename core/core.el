@@ -172,7 +172,6 @@ ability to invoke the debugger in debug mode."
 
   (unless noninteractive
     (load! core-ui)         ; draw me like one of your French editors
-    (load! core-popups)     ; taming sudden yet inevitable windows
     (load! core-editor)     ; baseline configuration for text editing
     (load! core-projects)   ; making Emacs project-aware
     (load! core-keybinds))  ; centralized keybind system + which-key

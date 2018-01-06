@@ -11,10 +11,8 @@
 
 
 (after! vc-annotate
-  (set! :popup
-    '("*vc-diff*" :size 15 :noselect t)
-    '("*vc-change-log*" :size 15)
-    '(vc-annotate-mode :same t))
+  (set! :popup "^\\vc-d" nil '((select)))     ; *vc-diff*
+  (set! :popup "^\\vc-c" nil '((select . t))) ; *vc-change-log*
 
   (set! :evil-state 'vc-annotate-mode 'normal)
   (set! :evil-state 'vc-git-log-view-mode 'normal))

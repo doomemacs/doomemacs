@@ -24,8 +24,8 @@
       "M--"       #'text-scale-decrease
 
       ;; Simple window navigation/manipulation
-      "C-`"       #'doom/popup-toggle
-      "C-~"       #'doom/popup-raise
+      "C-`"       #'+popup/toggle
+      "C-~"       #'+popup/raise
       "M-t"       #'+workspace/new
       "M-T"       #'+workspace/display
       "M-w"       #'delete-window
@@ -63,7 +63,7 @@
       :en "C-k"   #'evil-window-up
       :en "C-l"   #'evil-window-right
 
-      "C-x p"     #'doom/other-popup
+      "C-x p"     #'+popup/other
 
 
       ;; --- <leader> -------------------------------------
@@ -78,7 +78,7 @@
         :desc "Switch workspace buffer" :n ","   #'persp-switch-to-buffer
         :desc "Switch buffer"           :n "<"   #'switch-to-buffer
         :desc "Browse files"            :n "."   #'find-file
-        :desc "Toggle last popup"       :n "~"   #'doom/popup-toggle
+        :desc "Toggle last popup"       :n "~"   #'+popup/toggle
         :desc "Eval expression"         :n "`"   #'eval-expression
         :desc "Blink cursor line"       :n "DEL" #'+doom/blink-cursor
         :desc "Jump to bookmark"        :n "RET" #'bookmark-jump
@@ -195,7 +195,7 @@
           :desc "Apropos"               :n  "a" #'apropos
           :desc "Reload theme"          :n  "R" #'doom//reload-theme
           :desc "Find library"          :n  "l" #'find-library
-          :desc "Toggle Emacs log"      :n  "m" #'doom/popup-toggle-messages
+          :desc "Toggle Emacs log"      :n  "m" #'view-echo-area-messages
           :desc "Command log"           :n  "L" #'global-command-log-mode
           :desc "Describe function"     :n  "f" #'describe-function
           :desc "Describe key"          :n  "k" #'describe-key
@@ -722,6 +722,10 @@
       (:map messages-buffer-mode-map
         "M-;" #'eval-expression
         "A-;" #'eval-expression)
+
+      (:when (featurep! :feature popup)
+        (:map +popup-mode-map
+          "M-w" #'delete-window))
 
       (:after tabulated-list
         (:map tabulated-list-mode-map

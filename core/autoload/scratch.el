@@ -37,11 +37,11 @@
       (current-buffer))))
 
 ;;;###autoload
-(defun doom/open-scratch-buffer ()
-  "Opens a temporary scratch buffer in a popup window. It is discarded once it
-is closed. If a region is active, copy it to the scratch buffer."
-  (interactive)
-  (doom-popup-buffer (doom--create-scratch-buffer)))
+(defun doom/open-scratch-buffer (&optional in-project-p)
+  "Opens a temporary scratch buffer. It is discarded once it is closed. If a
+region is active, copy it to the scratch buffer."
+  (interactive "P")
+  (pop-to-buffer (doom--create-scratch-buffer in-project-p)))
 
 ;;;###autoload
 (defun doom/open-project-scratch-buffer ()
@@ -49,5 +49,5 @@ is closed. If a region is active, copy it to the scratch buffer."
 popup window. Scratch buffers are stored in `doom-scratch-files-dir'. If a
 region is active, copy it to the scratch buffer."
   (interactive)
-  (doom-popup-buffer (doom--create-scratch-buffer t)))
+  (doom/open-scratch-buffer 'in-project))
 

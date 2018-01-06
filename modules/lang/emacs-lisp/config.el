@@ -115,8 +115,7 @@
 
 
 (def-package! overseer
-  :commands overseer-test
-  :init (set! :popup "*overseer*" :size 12))
+  :commands overseer-test)
 
 
 ;;

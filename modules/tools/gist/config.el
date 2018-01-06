@@ -7,7 +7,6 @@
 (def-package! gist
   :commands (gist-list gist-region-or-buffer-private gist-region-or-buffer)
   :config
-  (set! :popup "*github:gists*" :size 15 :select t :autokill t)
   (set! :evil-state 'gist-list-mode 'normal)
 
   (defun +gist*list-render (orig-fn &rest args)

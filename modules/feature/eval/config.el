@@ -16,10 +16,6 @@
 function that creates and returns the REPL buffer."
   `(push (cons ,mode ,command) +eval-repls))
 
-(set! :popup
-  '(:custom (lambda (b &rest _) (buffer-local-value '+eval-repl-mode b)))
-  :size 16 :noesc t)
-
 
 ;;
 ;; Evaluation
@@ -70,7 +66,8 @@ function that creates and returns the REPL buffer."
   (unless (boundp 'display-line-numbers)
     (add-hook 'quickrun--mode-hook #'nlinum-mode))
   :config
-  (set! :popup "*quickrun*" :size 6 :autokill t :autoclose t)
+  (set! :popup "^\\*\\(?:doom eval\\|Pp Eval Output\\|quickrun\\)"
+    '((window-height . 10)) '((transient . 0)))
 
   (defun +eval*quickrun-auto-close (&rest _)
     "Allows us to silently re-run quickrun from within the quickrun buffer."

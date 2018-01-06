@@ -4,7 +4,7 @@
   :commands restclient-mode
   :mode ("\\.http$" . restclient-mode)
   :config
-  (set! :popup "*HTTP Response*" :size 30 :select t :noesc t :autokill t)
+  (set! :popup "^\\*HTTP Response" '((size . 0.4)) '((escape-quit . other)))
   (map! :mode restclient-mode
         :n [M-return] 'restclient-http-send-current
         :localleader

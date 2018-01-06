@@ -35,7 +35,7 @@
   (setq nrepl-hide-special-buffers t)
 
   ;; settings for cider repl as a popup (prevent it from being closed on escape, especially.)
-  (set! :popup "^\\*cider" :regexp t :noselect t :noesc t)
+  (set! :popup "^\\*cider" nil '((escape-quit) (select)))
 
   ;; Setup cider for clojurescript / figwheel dev.
   (setq cider-cljs-lein-repl

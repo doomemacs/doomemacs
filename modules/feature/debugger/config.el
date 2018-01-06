@@ -3,9 +3,7 @@
 (def-package! realgud
   :commands (realgud:gdb realgud:trepanjs realgud:bashdb realgud:zshdb)
   :config
-  (set! :popup
-     '("^\\*\\(g\\|zsh\\|bash\\)db.*?\\*$" :size 20 :regexp t)
-     '("^\\*trepanjs.*?\\*$"               :size 20 :regexp t))
+  (set! :popup "^\\*\\(?trepanjs:\\(?:g\\|zsh\\|bash\\)db\\)" '((size . 20)))
 
   ;; TODO Temporary Ex commands for the debugger
   ;; (def-tmp-excmd! doom:def-debug-on doom:def-debug-off

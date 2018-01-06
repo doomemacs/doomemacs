@@ -42,9 +42,8 @@
   (add-hook 'doom-init-hook #'evil-mode)
   (evil-select-search-module 'evil-search-module 'evil-search)
 
-  (set! :popup
-    '("*evil-registers*" :size 0.3)
-    '("*Command Line*" :size 8))
+  (set! :popup "^\\*evil-registers" '((size . 0.3)))
+  (set! :popup "^\\*Command Line" '((size . 8)))
 
   ;; Don't interfere with localleader key
   (define-key evil-motion-state-map "\\" nil)

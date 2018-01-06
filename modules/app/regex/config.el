@@ -46,7 +46,6 @@ http://regexr.com/foo.html?q=bar
 https://mediatemple.net"
   "TODO")
 
-(set! :popup
-  '("*doom-regex*" :size 4 :select t :noesc t)
-  '("*doom-regex-groups*" :align left :size 30 :noselect t :noesc t))
+(set! :popup "^\\*doom-regex\\*$" '((size . 4)) '((escape-quit)))
+(set! :popup "^\\*doom-regex-groups" '((side . left)) '((select) (escape-quit)))
 

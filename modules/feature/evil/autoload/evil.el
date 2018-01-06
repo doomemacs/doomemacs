@@ -32,14 +32,14 @@
 there and there is only one window, split in that direction and place this
 window there. If there are no windows and this isn't the only window, use
 evil-window-move-* (e.g. `evil-window-move-far-left')"
-  (when (doom-popup-p)
-    (doom/popup-raise))
-  (let* ((this-window (get-buffer-window))
+  (when (window-dedicated-p)
+    (user-error "Cannot swap a dedicated window"))
+  (let* ((this-window (selected-window))
          (this-buffer (current-buffer))
          (that-window (windmove-find-other-window direction nil this-window))
          (that-buffer (window-buffer that-window)))
     (when (or (minibufferp that-buffer)
-              (doom-popup-p that-window))
+              (window-dedicated-p this-window))
       (setq that-buffer nil that-window nil))
     (if (not (or that-window (one-window-p t)))
         (funcall (pcase direction

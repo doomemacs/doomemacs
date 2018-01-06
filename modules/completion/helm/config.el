@@ -42,7 +42,6 @@
   (after! helm-mode
     (add-to-list 'helm-completing-read-handlers-alist '(find-file-at-point . nil)))
 
-  (set! :popup "\\` ?\\*[hH]elm.*?\\*\\'" :size 14 :regexp t)
   (setq projectile-completion-system 'helm)
 
   ;;; Helm hacks

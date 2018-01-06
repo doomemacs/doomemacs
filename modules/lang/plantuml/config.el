@@ -4,7 +4,7 @@
   :mode "\\.p\\(lant\\)?uml$"
   :config
   (setq plantuml-jar-path (concat doom-etc-dir "plantuml.jar"))
-  (set! :popup "*PLANTUML Preview*" :size 25 :noselect t :autokill t)
+  (set! :popup "^\\*PLANTUML" '((size . 0.4)) '((select) (transient . 0)))
 
   (unless (executable-find "java")
     (warn "plantuml-mode: can't find java, preview disabled."))
