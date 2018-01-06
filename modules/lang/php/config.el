@@ -58,6 +58,7 @@
   ;; Make expensive php-extras generation async
   (unless (file-exists-p (concat php-extras-eldoc-functions-file ".el"))
     (message "Generating PHP eldoc files...")
+    (require 'async)
     (async-start `(lambda ()
                     ,(async-inject-variables "\\`\\(load-path\\|php-extras-eldoc-functions-file\\)$")
                     (require 'php-extras-gen-eldoc)

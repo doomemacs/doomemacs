@@ -133,6 +133,7 @@ containing (PACKAGE-SYMBOL OLD-VERSION-LIST NEW-VERSION-LIST).
 If INCLUDE-FROZEN-P is non-nil, check frozen packages as well.
 
 Used by `doom//packages-update'."
+  (require 'async)
   (let (quelpa-pkgs elpa-pkgs)
     ;; Separate quelpa from elpa packages
     (dolist (pkg (doom-get-packages t))

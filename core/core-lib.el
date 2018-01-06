@@ -1,14 +1,15 @@
 ;;; core-lib.el -*- lexical-binding: t; -*-
 
-(require 'subr-x)
-(load "async-autoloads" nil t)
-(dolist (sym '(json-read json-read-file json-read-from-string json-encode))
-  (autoload sym "json"))
-(eval-and-compile
-  (when (version< emacs-version "26")
-    (with-no-warnings
-      (defalias 'if-let* #'if-let)
-      (defalias 'when-let* #'when-let))))
+(let ((load-path doom--site-load-path))
+  (require 'subr-x)
+  (require 'cl-lib)
+  (require 'map)
+  (eval-when-compile (require 'use-package)))
+
+(when (version< emacs-version "26")
+  (with-no-warnings
+    (defalias 'if-let* #'if-let)
+    (defalias 'when-let* #'when-let)))
 
 
 ;;

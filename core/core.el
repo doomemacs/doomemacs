@@ -155,7 +155,6 @@ ability to invoke the debugger in debug mode."
           gc-cons-percentage 0.6
           file-name-handler-alist nil))
 
-  (require 'cl-lib)
   (load (concat doom-core-dir "core-packages") nil t)
   (setq load-path (eval-when-compile (doom-initialize t)
                                      (doom-initialize-load-path t))

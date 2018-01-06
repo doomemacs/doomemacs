@@ -11,6 +11,7 @@ ignore the cache."
              (gethash project-root +javascript-npm-conf))
         (let ((package-file (expand-file-name "package.json" project-root)))
           (when-let* ((json (and (file-exists-p package-file)
+                                 (require 'json)
                                  (json-read-file package-file))))
             (puthash project-root json +javascript-npm-conf))))))
 
