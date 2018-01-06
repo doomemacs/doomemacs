@@ -158,6 +158,9 @@ current buffer."
   :init-value nil
   :keymap +popup-buffer-mode-map)
 
+(put '+popup-buffer-mode 'permanent-local t)
+(put '+popup-buffer-mode 'permanent-local-hook t)
+
 
 ;;
 ;; Hooks
