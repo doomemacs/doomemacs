@@ -199,6 +199,10 @@ ALIST supports one custom parameter: `size', which will resolve to
       (require 'find-func)
       (doom--switch-from-popup (find-function-search-for-symbol fun 'defface file)))))
 
+;; `neotree'
+(after! neotree
+  (advice-remove #'balance-windows #'ad-Advice-balance-windows))
+
 ;; `wgrep'
 (after! wgrep
   ;; close the popup after you're done with a wgrep buffer
