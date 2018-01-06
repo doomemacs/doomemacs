@@ -5,7 +5,8 @@ branches:
     - master
     - develop
 before_install:
-  - if [ ! -z "$EVM_EMACS" ]; then curl -fsSkL https://raw.github.com/rejeep/evm/master/go > x.sh && source ./x.sh; fi
+  - curl -fsSkL https://raw.github.com/rejeep/evm/master/go > x.sh && source ./x.sh
+  - export PATH="$EVM_DIR:$PATH"
   - evm install $EVM_EMACS --use --skip
   - evm config path /tmp
   - cp init.test.el init.el
