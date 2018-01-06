@@ -10,7 +10,7 @@
   :config
   (set! :popup "^\\*Ilist"
     '((side . right) (size . 35))
-    '((escape-quit . current) (select) (transient . 0)))
+    '((quit . current) (select) (transient . 0)))
 
   (defun +imenu|cleanup-on-popup-close ()
     "Clean up after `imenu-list-minor-mode' when killing the list window."

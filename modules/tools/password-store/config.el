@@ -21,7 +21,7 @@
   :commands pass
   :config
   (set! :evil-state 'pass-mode 'emacs)
-  (set! :popup "^\\*Password-Store" '((side . left)) '((escape-quit)))
+  (set! :popup "^\\*Password-Store" '((side . left)) '((quit)))
   (map! :map pass-mode-map
         "j"   #'pass-next-entry
         "k"   #'pass-prev-entry

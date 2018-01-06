@@ -1,7 +1,7 @@
 ;;; config.el -*- lexical-binding: t; -*-
 
 (defconst +popup-window-parameters
-  '(transient escape-quit select modeline alist)
+  '(transient quit select modeline alist)
   "A list of custom parameters to be added to `window-persistent-parameters'.
 Modifying this has no effect, unless done before feature/popup loads.
 
@@ -13,16 +13,16 @@ Modifying this has no effect, unless done before feature/popup loads.
   If 0, the buffer is immediately killed.
   If nil, the buffer won't be killed.
 
-(escape-quit . CDR)
+(quit . CDR)
   CDR can be t, 'other, 'current or nil. This determines the behavior of the
-  escape key in or outside of popup windows.
+  ESC/C-g keys in or outside of popup windows.
 
-  If t, close the popup if escape is pressed inside or outside of popups.
-  If 'other, close this popup if escape is pressed outside of any popup. This is
-    great for popups you just want to peek at and discard.
-  If 'current, close the current popup if escape is pressed from inside of
-    the popup.
-  If nil, pressing escape will never close this buffer.
+  If t, close the popup if ESC/C-g is pressed inside or outside of popups.
+  If 'other, close this popup if ESC/C-g is pressed outside of any popup. This
+    is great for popups you just want to peek at and discard.
+  If 'current, close the current popup if ESC/C-g is pressed from inside of the
+    popup.
+  If nil, pressing ESC/C-g will never close this buffer.
 
 (select . BOOl)
   CDR is a boolean that determines whether to focus the popup window after it
@@ -61,7 +61,7 @@ a brief description of some native window parameters that Emacs uses:
 
 (defvar +popup-default-parameters
   '((transient . t)
-    (escape-quit . t))
+    (quit . t))
   "The default window parameters to add alists fed to `display-buffer-alist'.")
 
 (defvar +popup-ttl 10
@@ -124,7 +124,7 @@ module."
     '((select . t)))
   (set! :+popup "^\\*doom:"
     '((window-height . 0.35))
-    '((select . t) (escape-quit) (transient))))
+    '((select . t) (quit) (transient))))
 
 (setq +popup--display-buffer-alist (eval-when-compile +popup--display-buffer-alist))
 (add-hook 'doom-init-ui-hook #'+popup-mode)

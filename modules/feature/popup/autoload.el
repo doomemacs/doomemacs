@@ -234,7 +234,7 @@ or 'other. This window parameter is ignored if FORCE-P is non-nil."
     (setq window (selected-window)))
   (when (and (+popup-p window)
              (or force-p
-                 (memq (+popup-parameter 'escape-quit window)
+                 (memq (+popup-parameter 'quit window)
                        '(t current))))
     (when +popup--remember-last
       (+popup--remember (list window)))
@@ -245,13 +245,13 @@ or 'other. This window parameter is ignored if FORCE-P is non-nil."
 (defun +popup/close-all (&optional force-p)
   "Close all open popup windows.
 
-This will ignore popups with an `escape-quit' parameter that is either nil or
-'current. This window parameter is ignored if FORCE-P is non-nil."
+This will ignore popups with an `quit' parameter that is either nil or 'current.
+This window parameter is ignored if FORCE-P is non-nil."
   (interactive "P")
   (let (targets +popup--remember-last)
     (dolist (window (+popup-windows))
       (when (or force-p
-                (memq (+popup-parameter 'escape-quit window)
+                (memq (+popup-parameter 'quit window)
                       '(t other)))
         (push window targets)))
     (when targets
