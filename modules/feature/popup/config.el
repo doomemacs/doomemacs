@@ -77,6 +77,7 @@ deleted.")
   "Active keymap in popup windows. See `+popup-buffer-mode'.")
 
 
+(defvar +popup--inhibit-transient nil)
 (defvar +popup--display-buffer-alist nil)
 (defvar +popup--old-display-buffer-alist nil)
 (defvar +popup--remember-last t)

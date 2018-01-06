@@ -62,12 +62,12 @@ and enables `+popup-buffer-mode'."
         ;; t = default
         ;; integer = ttl
         ;; nil = no timer
-        (when ttl
+        (when (and ttl (not +popup--inhibit-transient))
           (when (eq ttl t)
             (setq ttl +popup-ttl))
           (cl-assert (integerp ttl) t)
           (if (= ttl 0)
-              (+popup--kill-buffer buffer)
+              (+popup--kill-buffer buffer 0)
             (setq +popup--timer
                   (run-at-time ttl nil #'+popup--kill-buffer buffer ttl))))))))
 
@@ -316,6 +316,7 @@ with the :popup setting."
 prevent the popup(s) from messing up the UI (or vice versa)."
   `(let* ((in-popup-p (+popup-p))
           (popups (+popup-windows))
+          (+popup--inhibit-transient t)
           +popup--last)
      (dolist (p popups)
        (+popup/close p 'force))
