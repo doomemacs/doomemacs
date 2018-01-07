@@ -134,7 +134,7 @@ startup."
   ;; Called early during initialization; only use native (and cl-lib) functions!
   (when (or force-p (not doom-init-p))
     ;; Speed things up with a `load-path' for only the bare essentials
-    (let ((load-path doom--base-load-path))
+    (let ((load-path doom--site-load-path))
       ;; Ensure core folders exist, otherwise we get errors
       (dolist (dir (list doom-local-dir doom-etc-dir doom-cache-dir doom-packages-dir))
         (unless (file-directory-p dir)
