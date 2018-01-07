@@ -122,11 +122,12 @@ melodramatic ex-vimmer disappointed with the text-editor status quo."
 ;; Custom init hooks; clearer than `after-init-hook', `emacs-startup-hook', and
 ;; `window-setup-hook'.
 (defvar doom-init-hook nil
-  "A list of hooks run when DOOM is initialized, before `doom-post-init-hook'.")
+  "A list of hooks run when DOOM is initialized, before `doom-post-init-hook'.
+Use this for essential functionality.")
 
 (defvar doom-post-init-hook nil
   "A list of hooks run after DOOM initialization is complete, and after
-`doom-init-hook'.")
+`doom-init-hook'. Use this for extra, non-essential functionality.")
 
 (defun doom-try-run-hook (fn hook)
   "Runs a hook wrapped in a `condition-case-unless-debug' block; its objective

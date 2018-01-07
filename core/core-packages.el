@@ -318,7 +318,7 @@ MODULES is an malformed plist of modules to load."
          (require 'server)
          (unless (server-running-p)
            (server-start)))
-       (add-hook 'doom-init-hook #'doom-packages--display-benchmark t)
+       (add-hook 'doom-post-init-hook #'doom-packages--display-benchmark t)
        (message "Doom modules initialized"))))
 
 (defmacro def-package! (name &rest plist)

@@ -40,7 +40,7 @@ renamed.")
         persp-auto-save-opt (if noninteractive 0 1))
 
   ;; Bootstrap
-  (add-hook 'doom-post-init-hook #'+workspaces|init)
+  (add-hook 'doom-init-hook #'+workspaces|init)
   (add-hook 'after-make-frame-functions #'+workspaces|init)
   (add-hook 'persp-mode-hook #'+workspaces|init-persp-mode)
   ;; only auto-save when real buffers are present

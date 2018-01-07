@@ -25,7 +25,7 @@ immediately runs it on the current candidate (ending the ivy session)."
 
 (def-package! ivy
   :init
-  (add-hook 'doom-post-init-hook #'ivy-mode)
+  (add-hook 'doom-init-hook #'ivy-mode)
   :config
   (setq ivy-height 12
         ivy-do-completion-in-region nil
