@@ -30,12 +30,7 @@ and enables `+popup-buffer-mode'."
   (with-selected-window window
     (set-window-parameter window 'popup t)
     (set-window-parameter window 'no-other-window t)
-    (set-window-parameter
-     window 'delete-window
-     ;; if set, we still want to call `+popup--destroy' afterwards.
-     (if-let* ((fn (window-parameter window 'delete-window)))
-         (lambda (window) (funcall fn window) (+popup--destroy window))
-       #'+popup--destroy))
+    (set-window-parameter window 'delete-window #'+popup--destroy)
     (window-preserve-size
      window (memq (window-parameter window 'window-side)
                   '(left right)) t)
