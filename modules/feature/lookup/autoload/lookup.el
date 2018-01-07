@@ -14,8 +14,7 @@
                       "Search on: "
                       (mapcar #'car +lookup-provider-url-alist)
                       nil t)))
-          (push (cons key provider)
-                (assq-delete-all key +lookup--last-provider))))))
+          (map-put +lookup--last-provider key provider)))))
 
 (defun +lookup--symbol-or-region (&optional initial)
   (cond (initial)
@@ -227,8 +226,7 @@ for the provider."
           (user-error "The search query is empty"))
         (funcall +lookup-open-url-fn (format url (url-encode-url search))))
     ('error
-     (setq +lookup--last-provider
-           (assq-delete-all major-mode +lookup--last-provider)))))
+     (map-delete +lookup--last-provider major-mode))))
 
 ;;;###autoload
 (defun +lookup/online-select ()

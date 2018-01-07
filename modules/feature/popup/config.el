@@ -100,14 +100,13 @@ ALIST supports one custom parameter: `size', which will resolve to
   `(let ((alist ,alist)
          (parameters ,parameters))
      ,(when alist
-        '(when-let* ((size (cdr (assq 'size alist))))
-           (setq alist (assq-delete-all 'size alist))
-           (push (cons (pcase (cdr (or (assq 'side alist)
-                                       (assq 'side +popup-default-alist)))
-                         ((or `left `right) 'window-width)
-                         (_ 'window-height))
-                       size)
-                 alist)))
+        `(when-let* ((size (cdr (assq 'size alist)))
+                     (side (cdr (assq 'side (append alist +popup-default-alist)))))
+           (map-delete alist 'size)
+           (map-put alist (if (memq side '(left right))
+                              'window-width
+                            'window-height)
+                    size)))
      (prog1 (push (append (list ,condition '(+popup-buffer))
                           alist
                           (list (cons 'window-parameters parameters)))

@@ -76,13 +76,11 @@ and enables `+popup-buffer-mode'."
   "Merge `+popup-default-alist' and `+popup-default-parameters' with ALIST."
   (if (not alist)
       (setq alist +popup-default-alist)
-    (require 'map)
     (let* ((alist  (map-merge 'list +popup-default-alist alist))
            (params (map-merge 'list
                               +popup-default-parameters
                               (cdr (assq 'window-parameters alist)))))
-      (setq alist (assq-delete-all 'window-parameters alist))
-      (push (cons 'window-parameters params) alist)
+      (map-put alist 'window-parameters params)
       (nreverse alist))))
 
 
@@ -151,7 +149,7 @@ current buffer."
          (remove-hook 'doom-escape-hook #'+popup|close-on-escape)
          (setq display-buffer-alist +popup--old-display-buffer-alist)
          (dolist (prop +popup-window-parameters)
-           (assq-delete-all prop window-persistent-parameters)))))
+           (map-delete prop window-persistent-parameters)))))
 
 ;;;###autoload
 (define-minor-mode +popup-buffer-mode

@@ -146,8 +146,7 @@ extension, try to guess one."
   ;; editorconfig to ignore indentation. I prefer dynamic indentation support
   ;; built into Emacs.
   (dolist (mode '(emacs-lisp-mode lisp-mode))
-    (setq editorconfig-indentation-alist
-      (assq-delete-all mode editorconfig-indentation-alist)))
+    (map-delete editorconfig-indentation-alist mode))
 
   (defvar whitespace-style)
   (defun doom|editorconfig-whitespace-mode-maybe (&rest _)

@@ -463,12 +463,8 @@ Accepts the following properties:
       (when-let* ((val (plist-get plist prop)))
         (plist-put plist prop (eval val))))
     `(progn
-       (when ,(and pkg-pin t)
-         (cl-pushnew (cons ',name ,pkg-pin) package-pinned-packages
-                     :test #'eq :key #'car))
-       (when ,(and old-plist t)
-         (assq-delete-all ',name doom-packages))
-       (push ',(cons name plist) doom-packages))))
+       ,(if (and pkg-pin t) `(map-put package-pinned-packages ',name ,pkg-pin))
+       (map-put doom-packages ',name ',plist))))
 
 (defmacro depends-on! (module submodule)
   "Declares that this module depends on another.

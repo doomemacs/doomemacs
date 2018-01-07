@@ -119,25 +119,20 @@ default/fallback account."
   ;; However, the real magic happens in `+email|gmail-fix-flags'.
   ;;
   ;; Gmail will handle the rest.
-  (setq mu4e-marks (assq-delete-all 'delete mu4e-marks))
-  (setq mu4e-marks (assq-delete-all 'trash mu4e-marks))
-  (push '(trash :char ("d" . "▼")
-                :prompt "dtrash"
-                :dyn-target (lambda (target msg) (mu4e-get-trash-folder msg))
-                :action
-                (lambda (docid msg target)
-                  (mu4e~proc-move docid (mu4e~mark-check-target target) "+S-u-N")))
-        mu4e-marks)
+  (defun +email--mark-seen (docid msg target)
+    (mu4e~proc-move docid (mu4e~mark-check-target target) "+S-u-N"))
 
+  (map-delete mu4e-marks 'delete)
+  (map-put mu4e-marks 'trash
+           (list :char '("d" . "▼")
+                 :prompt "dtrash"
+                 :dyn-target (lambda (target msg) (mu4e-get-trash-folder msg))
+                 :action #'+email--mark-seen))
   ;; Refile will be my "archive" function.
-  (setq mu4e-marks (assq-delete-all 'refile mu4e-marks))
-  (push '(refile :char ("r" . "▶")
-                 :prompt "refile"
+  (map-put mu4e-marks 'refile
+           (list :char '("r" . "▶") :prompt "refile"
                  :show-target (lambda (target) "archive")
-                 :action
-                 (lambda (docid msg target)
-                   (mu4e~proc-move docid (mu4e~mark-check-target target) "+S-u-N")))
-        mu4e-marks)
+                 :action #'+email--mark-seen))
 
   ;; This hook correctly modifies gmail flags on emails when they are marked.
   ;; Without it, refiling (archiving), trashing, and flagging (starring) email
