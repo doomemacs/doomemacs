@@ -267,10 +267,9 @@ This window parameter is ignored if FORCE-P is non-nil."
   "If popups are open, close them. If they aren't, restore the last one or open
 the message buffer in a popup window."
   (interactive)
-  (cond ((+popup-windows)
-         (+popup/close-all t))
-        ((ignore-errors (+popup/restore)))
-        ((display-buffer (get-buffer "*Messages*")))))
+  (condition-case _
+      (window-toggle-side-windows)
+    ('error (display-buffer (get-buffer "*Messages*")))))
 
 ;;;###autoload
 (defun +popup/restore ()
