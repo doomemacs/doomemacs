@@ -131,15 +131,16 @@ ALIST supports one custom parameter: `size', which will resolve to
 ;;
 
 (eval-when-compile
-  (set! :popup "^ \\*")
+  (set! :popup "^ \\*" '((slot . -1)))
   (set! :popup "^\\*" nil '((select . t)))
+  (set! :popup "^\\*Completions" '((slot . -1)) '((transient . 0)))
   (set! :popup "^\\*\\(?:scratch\\|Messages\\)" nil '((transient)))
   (set! :popup "^\\*Help"
-    '((size . 0.2))
+    '((slot . -1) (size . 0.2))
     '((select . t)))
-  (set! :+popup "^\\*doom:"
+  (set! :popup "^\\*doom:"
     '((size . 0.35))
-    '((select . t) (quit) (transient))))
+    '((select . t) (modeline . t) (quit) (transient))))
 
 (setq +popup--display-buffer-alist (eval-when-compile +popup--display-buffer-alist))
 (add-hook 'doom-init-ui-hook #'+popup-mode)
