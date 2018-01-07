@@ -140,6 +140,7 @@ ALIST supports one custom parameter: `size', which will resolve to
   (set! :popup "^ \\*" '((slot . -1)))
   (set! :popup "^\\*" nil '((select . t)))
   (set! :popup "^\\*Completions" '((slot . -1)) '((transient . 0)))
+  (set! :popup "^\\*Compilation" nil '((transient . 0) (quit . t)))
   (set! :popup "^\\*\\(?:scratch\\|Messages\\)" nil '((transient)))
   (set! :popup "^\\*Help"
     '((slot . -1) (size . 0.2))
