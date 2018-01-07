@@ -58,8 +58,7 @@ windows (unlike `doom/window-zoom') Activate again to undo."
                  (assoc ?_ register-alist))
             (ignore (jump-to-register ?_))
           (window-configuration-to-register ?_)
-          (doom-resize-window nil (truncate (/ (frame-width)  1.2)) t)
-          (doom-resize-window nil (truncate (/ (frame-height) 1.2)))
+          (maximize-window)
           t)))
 
 ;;;###autoload
