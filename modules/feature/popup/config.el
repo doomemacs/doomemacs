@@ -221,8 +221,9 @@ ALIST supports one custom parameter: `size', which will resolve to
 
 ;; `org'
 (after! org
-  (set! :popup "^ \\*Org todo"  '((size . 5))  '((transient . 0)))
-  (set! :popup "^\\*Org Agenda" '((size . 20)))
+  (set! :popup "^ ?\\*Org \\(todo\\|Links\\)"  '((slot . -1) (size . shrink-window-if-larger-than-buffer)))
+  (set! :popup "^\\*Org Agenda" '((slot . -1) (size . 20)))
+  (set! :popup "^\\*Org Src" '((size . 0.3)) '((quit) (select . t)))
 
   ;; Org has a scorched-earth window management system I'm not fond of. i.e. it
   ;; kills all windows and monopolizes the frame. No thanks. We can do better
@@ -235,13 +236,22 @@ ALIST supports one custom parameter: `size', which will resolve to
   (advice-add #'org-capture-place-template :around #'+popup*suppress-delete-other-windows)
   (advice-add #'org-export--dispatch-ui :around #'+popup*suppress-delete-other-windows)
 
-  (defun +popup*org-pop-to-buffer (&rest args)
+  (defun doom*org-src-pop-to-buffer (buffer _context)
+    "Hand off the src-block window to the popup system by using `display-buffer'
+instead of switch-to-buffer-*."
+    (if (eq org-src-window-setup 'switch-invisibly) ; for internal calls
+        (set-buffer buffer)
+      (display-buffer buffer)))
+  (advice-add #'org-src-switch-to-buffer :override #'doom*org-src-pop-to-buffer)
+  (setq org-src-window-setup 'other-window)
+
+  ;; Ensure todo, agenda, and other minor popups are delegated to the popup system.
+  (defun +popup*org-pop-to-buffer (buf &optional _norecord)
     "Use `pop-to-buffer' instead of `switch-to-buffer' to open buffer.'"
-    (let ((buf (car args)))
-      (pop-to-buffer
-       (cond ((stringp buf) (get-buffer-create buf))
-             ((bufferp buf) buf)
-             (t (error "Invalid buffer %s" buf))))))
+    (pop-to-buffer
+     (cond ((stringp buf) (get-buffer-create buf))
+           ((bufferp buf) buf)
+           (t (error "Invalid buffer %s" buf)))))
   (advice-add #'org-switch-to-buffer-other-window :override #'+popup*org-pop-to-buffer)
 
   ;; `org-agenda'
