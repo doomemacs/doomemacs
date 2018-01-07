@@ -237,7 +237,6 @@ ALIST supports one custom parameter: `size', which will resolve to
   (setq org-agenda-window-setup 'other-window
         org-agenda-restore-windows-after-quit nil)
   ;; Hide modeline in org-agenda
-  (add-hook 'org-agenda-finalize-hook #'doom-hide-modeline-mode)
   (add-hook 'org-agenda-finalize-hook #'org-fit-window-to-buffer)
   ;; Don't monopolize frame!
   (advice-add #'org-agenda :around #'+popup*suppress-delete-other-windows))
