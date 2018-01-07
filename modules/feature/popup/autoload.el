@@ -224,8 +224,7 @@ disabled."
                    (not modeline))
                (doom-hide-modeline-mode +1))
               ((symbolp modeline)
-               (setq doom--modeline-format (doom-modeline modeline))
-               (when doom--modeline-format
+               (when-let* ((doom--modeline-format (doom-modeline modeline)))
                  (doom-hide-modeline-mode +1)))))
     (when doom-hide-modeline-mode
       (doom-hide-modeline-mode -1))))
@@ -235,10 +234,9 @@ disabled."
   "If called inside a popup, try to close that popup window (see
 `+popup/close'). If called outside, try to close all popup windows (see
 `+popup/close-all')."
-  (call-interactively
-   (if (+popup-p)
-       #'+popup/close
-     #'+popup/close-all)))
+  (if (+popup-p)
+      (+popup/close)
+    (+popup/close-all)))
 
 ;;;###autoload
 (defun +popup|cleanup-rules ()
@@ -315,10 +313,11 @@ This window parameter is ignored if FORCE-P is non-nil."
   "If popups are open, close them. If they aren't, restore the last one or open
 the message buffer in a popup window."
   (interactive)
-  (cond ((+popup-windows)
-         (+popup/close-all t))
-        ((ignore-errors (+popup/restore)))
-        ((display-buffer (get-buffer "*Messages*")))))
+  (let ((+popup--inhibit-transient t))
+    (cond ((+popup-windows)
+           (+popup/close-all t))
+          ((ignore-errors (+popup/restore)))
+          ((display-buffer (get-buffer "*Messages*"))))))
 
 ;;;###autoload
 (defun +popup/restore ()
