@@ -67,9 +67,7 @@ a brief description of some native window parameters that Emacs uses:
   `pop-to-buffer'. Doom popups sets this. The default is nil.")
 
 (defvar +popup-default-alist
-  '((slot . 1)
-    (window-height . 0.14)
-    (window-width . 26)
+  '((window-height . 0.16)
     (reusable-frames . visible))
   "The default alist for `display-buffer-alist' rules.")
 
@@ -114,7 +112,7 @@ ALIST supports one custom parameter: `size', which will resolve to
          (parameters ,parameters))
      ,(when alist
         `(when-let* ((size (cdr (assq 'size alist)))
-                     (side (cdr (assq 'side (append alist +popup-default-alist)))))
+                     (side (or (cdr (assq 'side (append alist +popup-default-alist))) 'bottom)))
            (map-delete alist 'size)
            (map-put alist (if (memq side '(left right))
                               'window-width

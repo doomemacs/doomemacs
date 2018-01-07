@@ -47,5 +47,7 @@ https://mediatemple.net"
   "TODO")
 
 (set! :popup "^\\*doom-regex\\*$" '((size . 4)) '((quit)))
-(set! :popup "^\\*doom-regex-groups" '((side . left)) '((select) (quit)))
+(set! :popup "^\\*doom-regex-groups"
+  '((side . left) (size . 28))
+  '((select) (quit)))
 
