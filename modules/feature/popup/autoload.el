@@ -121,8 +121,9 @@ current buffer."
   "Open BUFFER in a popup window. ALIST describes its features."
   (let* ((old-window (selected-window))
          (alist (+popup--normalize-alist alist))
-         (new-window (or (display-buffer-reuse-window buffer alist)
-                         (display-buffer-in-side-window buffer alist))))
+         (new-window (let ((window-min-height 3))
+                       (or (display-buffer-reuse-window buffer alist)
+                           (display-buffer-in-side-window buffer alist)))))
     (+popup--init new-window)
     (let ((select (+popup-parameter 'select new-window)))
       (if (functionp select)
