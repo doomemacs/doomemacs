@@ -19,6 +19,7 @@ system should clean up after itself and kill off buffers I mark as transient.
   - [[#disabling-aggressive-mode-line-hiding-in-popups][Disabling aggressive mode-line hiding in popups]]
 - [[#appendix][Appendix]]
   - [[#commands][Commands]]
+  - [[#library][Library]]
   - [[#hacks][Hacks]]
 
 * Configuration
@@ -57,33 +58,20 @@ affected by ~display-buffer-alist~.
 Here are a couple example rules:
 
 #+BEGIN_SRC emacs-lisp
-(set! :popup "^ \\*") ; a fallback for special buffers
+(set! :popup "^ \\*" '((slot . -1))) ; fallback rule for special buffers
 (set! :popup "^\\*" nil '((select . t)))
+(set! :popup "^\\*Completions" '((slot . -1)) '((transient . 0)))
 (set! :popup "^\\*\\(?:scratch\\|Messages\\)" nil '((transient)))
 (set! :popup "^\\*Help"
-  '((size . 0.2))
+  '((slot . -1) (size . 0.2))
   '((select . t)))
-(set! :+popup "^\\*doom:"
+(set! :popup "^\\*doom:"
   '((size . 0.35))
-  '((select . t) (quit) (transient)))
+  '((select . t) (modeline . t) (quit) (transient)))
 #+END_SRC
 
-And here are the default settings for ALIST and PARAMETERS, which will be
-overwritten if specified in your ~:popup~ rules.
-
-#+BEGIN_SRC emacs-lisp
-(defvar +popup-default-alist
-  '((slot . 1)
-    (window-height . 0.14)
-    (window-width . 26)
-    (reusable-frames . visible))
-  "The default alist for `display-buffer-alist' rules.")
-
-(defvar +popup-default-parameters
-  '((transient . t)
-    (quit . t))
-  "The default window parameters.")
-#+END_SRC
+Omitted parameters in a ~:popup~ rule will use the defaults set in
+~+popup-default-alist~ and ~+popup-default-parameters~.
 
 ** Disabling aggressive mode-line hiding in popups
 There are two ways to go about this. You can turn on modelines by changing the
@@ -112,8 +100,24 @@ This will ensure all popups have a modeline /by default/, but allows you to over
 + ~+popup/toggle~
 + ~+popup/restore~
 + ~+popup/raise~
-+ ~without-popups!~
-+ ~save-popups!~
+** Library
++ Functions
+  + ~+popup-p WINDOW~
+  + ~+popup-buffer BUFFER &optional ALIST~
+  + ~+popup-parameter PARAMETER &optional WINDOW~
+  + ~+popup-parameter-fn PARAMETER &optional WINDOW~
+  + ~+popup-windows~
++ Macros
+  + ~without-popups!~
+  + ~save-popups!~
++ Hooks
+  + ~+popup|adjust-fringes~
+  + ~+popup|set-modeline~
+  + ~+popup|close-on-escape~
+  + ~+popup|cleanup-rules~
++ Minor modes
+  + ~+popup-mode~
+  + ~+popup-buffer-mode~
 ** Hacks
 + =help-mode= has been advised to follow file links in the buffer you were in
   before entering the popup, rather than in a new window.
@@ -128,3 +132,8 @@ This will ensure all popups have a modeline /by default/, but allows you to over
   then restores them afterwards.
 + =neotree= advises ~balance-windows~, which causes major slow-downs when paired
   with our ~balance-window~ advice, so we removes neotree's advice.
++ =org-mode= is an ongoing (and huge) effort. It has a scorched-earth window
+  management system I'm not fond of. ie. it kills all windows and monopolizes
+  the frame. On top of that, it /really/ likes to use ~switch-to-buffer~ for
+  most of its buffer management, which completely bypasses
+  ~display-buffer-alist~.
