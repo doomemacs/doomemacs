@@ -723,10 +723,6 @@
         "M-;" #'eval-expression
         "A-;" #'eval-expression)
 
-      (:when (featurep! :feature popup)
-        (:map +popup-buffer-mode-map
-          "M-w" #'delete-window))
-
       (:after tabulated-list
         (:map tabulated-list-mode-map
           [remap evil-record-macro] #'quit-window))
