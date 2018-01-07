@@ -60,6 +60,12 @@ and enables `+popup-buffer-mode'."
 + And finally deletes the window!"
   (let ((buffer (window-buffer window))
         ttl)
+    (when (and (buffer-file-name buffer)
+               (buffer-modified-p buffer))
+      (with-current-buffer buffer
+        (if (y-or-n-p "Popup buffer is modified. Save it?")
+            (save-buffer)
+          (set-buffer-modified-p nil))))
     (let ((ignore-window-parameters t))
       (delete-window window))
     (unless (window-live-p window)
