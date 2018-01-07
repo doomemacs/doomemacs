@@ -1,49 +1,130 @@
 #+TITLE: :feature popup
 
-A short summary about what this module does.
+This module provides a highly customizable popup window management system.
 
-If necessary, include a longer description below it that goes into more detail. This may be as long as you like.
+#+begin_quote
+Not all windows are created equally. Some are less important. Some I want gone
+once they have served their purpose, like code output or a help buffer. Others I
+want to stick around, like a scratch buffer or org-capture popup.
 
-+ If possible, include a list of features
-+ Include links to major plugins that the module uses, if applicable
-+ Use links whenever you can
-+ Mention dependencies on other modules here
+More than that, popups ought to be be the second class citizens of my editor;
+spawned off to the side, discarded with the simple push of a button
+(Escape/C-g), and easily restored if I want to see them again. Of course, this
+system should clean up after itself and kill off buffers I mark as transient.
+#+end_quote
 
 * Table of Contents :TOC:
-- [[#install][Install]]
-  - [[#main-dependencies][Main dependencies]]
-  - [[#extra-dependencies][Extra Dependencies]]
 - [[#configuration][Configuration]]
-- [[#usage][Usage]]
+  - [[#the-popup-setting][The ~:popup~ setting]]
+  - [[#disabling-aggressive-mode-line-hiding-in-popups][Disabling aggressive mode-line hiding in popups]]
 - [[#appendix][Appendix]]
   - [[#commands][Commands]]
   - [[#hacks][Hacks]]
 
-* Install
-** Main dependencies
-*** MacOS
-#+BEGIN_SRC sh :tangle (if (doom-system-os 'macos) "yes")
-brew install x
-#+END_SRC
-
-*** Arch Linux
-#+BEGIN_SRC sh :dir /sudo:: :tangle (if (doom-system-os 'arch) "yes")
-sudo pacman --needed --noconfirm -S X
-#+END_SRC
-
-** Extra Dependencies
-+ A
-+ B
-+ C
-
-#+BEGIN_SRC sh
-Y install A B C
-#+END_SRC
-
 * Configuration
+** The ~:popup~ setting
+This module has one setting for defining your own rules for popups:
 
-* Usage
+#+BEGIN_SRC emacs-lisp
+(set! :popup CONDITION &optional ALIST PARAMETERS)
+#+END_SRC
+
++ ~CONDITION~ can be a function or regexp string. If the function returns
+  non-nil, or the regexp string matches the buffer's name, it will be opened in
+  a popup window.
++ ~ALIST~ dictates the characteristics of the popup, such as what side to spawn
+  it on and what size to make it. See ~display-buffer~'s documentation to see
+  what parameters are supported.
+
+  This supports one custom parameter: ~size~, which will map to ~window-width~
+  or ~window-height~ depending on what ~side~ you (or the defaults) specify.
++ ~PARAMETERS~ dictate what window parameters are set on the popup window. See
+  ~+popup-window-parameters~'s documentation and the [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Window-Parameters.html#Window-Parameters][Window Parameters section
+  of the Emacs manual]] for what parameters are supported.
+
+  This supports four custom parameters: =transient=, =quit=, =select= and
+  =modeline=. For details on these, look at the documentation for
+  ~+popup-window-parameters.~
+
+Rules are added to ~display-buffer-alist~, which instructs ~display-buffer~
+calls on how to set up windows for buffers that meet certain conditions.
+
+#+begin_quote
+The ~switch-to-buffer~ command (and its ~switch-to-buffer-*~ variants) are not
+affected by ~display-buffer-alist~.
+#+end_quote
+
+Here are a couple example rules:
+
+#+BEGIN_SRC emacs-lisp
+(set! :popup "^ \\*") ; a fallback for special buffers
+(set! :popup "^\\*" nil '((select . t)))
+(set! :popup "^\\*\\(?:scratch\\|Messages\\)" nil '((transient)))
+(set! :popup "^\\*Help"
+  '((size . 0.2))
+  '((select . t)))
+(set! :+popup "^\\*doom:"
+  '((size . 0.35))
+  '((select . t) (quit) (transient)))
+#+END_SRC
+
+And here are the default settings for ALIST and PARAMETERS, which will be
+overwritten if specified in your ~:popup~ rules.
+
+#+BEGIN_SRC emacs-lisp
+(defvar +popup-default-alist
+  '((slot . 1)
+    (window-height . 0.14)
+    (window-width . 26)
+    (reusable-frames . visible))
+  "The default alist for `display-buffer-alist' rules.")
+
+(defvar +popup-default-parameters
+  '((transient . t)
+    (quit . t))
+  "The default window parameters.")
+#+END_SRC
+
+** Disabling aggressive mode-line hiding in popups
+There are two ways to go about this. You can turn on modelines by changing the
+default ~'modeline~ window parameter in ~+popup-default-parameters~:
+
+#+BEGIN_SRC emacs-lisp
+;; put in private/$USER/config.el
+(map-put +popup-default-parameters 'modeline t)
+#+END_SRC
+
+This will ensure all popups have a modeline /by default/, but allows you to override this on a per-popup basis.
+
+*Alternatively*, you can disable modeline-hiding entirely:
+
+#+BEGIN_SRC emacs-lisp
+;; put in private/$USER/config.el
+(remove-hook '+popup-buffer-mode-hook '+popup|set-modeline)
+#+END_SRC
 
 * Appendix
 ** Commands
++ ~+popup/other~ (aliased to ~other-popup~, bound to ~C-x p~)
++ ~+popup/toggle~
++ ~+popup/close~
++ ~+popup/close-all~
++ ~+popup/toggle~
++ ~+popup/restore~
++ ~+popup/raise~
++ ~without-popups!~
++ ~save-popups!~
 ** Hacks
++ =help-mode= has been advised to follow file links in the buffer you were in
+  before entering the popup, rather than in a new window.
++ =wgrep= buffers are advised to close themselves when aborting or committing
+  changes.
++ =persp-mode= is advised to restore popup windows when loading a session from
+  file.
++ Interactive calls to ~windmove-*~ commands (used by ~evil-window-*~ commands)
+  will ignore the ~no-other-window~ window parameter, allowing you to switch to
+  popup windows as if they're ordinary windows.
++ ~balance-windows~ has been advised to close popups while it does its business,
+  then restores them afterwards.
++ =neotree= advises ~balance-windows~, which causes major slow-downs when paired
+  with our ~balance-window~ advice, so we removes neotree's advice.
