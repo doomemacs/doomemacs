@@ -604,10 +604,11 @@ Returns \"\" to not break --no-window-system."
   "Set the default modeline."
   (doom-set-modeline 'main t)
 
-  ;; This scratch buffer is already created and doesn't get a modeline. For the
-  ;; love of Emacs, someone give the man a modeline!
-  (with-current-buffer "*scratch*"
-    (doom-set-modeline 'main)))
+  ;; These buffers are already created and don't get modelines. For the love of
+  ;; Emacs, someone give the man a modeline!
+  (dolist (bname '("*scratch*" "*Messages*"))
+    (with-current-buffer bname
+      (doom-set-modeline 'main))))
 
 (defun +doom-modeline|set-special-modeline ()
   (doom-set-modeline 'special))
