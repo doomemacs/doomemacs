@@ -117,12 +117,16 @@ If INSTALLED-ONLY-P, only return packages that are installed."
 ;;;###autoload
 (defun doom-get-depending-on (name)
   "Return a list of packages that depend on the package named NAME."
+  (when (package-built-in-p name)
+    (error "Can't get the dependency tree for built-in packages"))
   (when-let* ((desc (cadr (assq name package-alist))))
     (mapcar #'package-desc-name (package--used-elsewhere-p desc nil t))))
 
 ;;;###autoload
 (defun doom-get-dependencies-for (name &optional only)
   "Return a list of dependencies for a package."
+  (when (package-built-in-p name)
+    (error "Can't get the dependency tree for built-in packages"))
   (package--get-deps name only))
 
 ;;;###autoload
