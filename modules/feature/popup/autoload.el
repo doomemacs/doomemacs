@@ -155,6 +155,7 @@ with ARGS to get its return value."
   (cond (+popup-mode
          (add-hook 'doom-unreal-buffer-functions #'+popup-p)
          (add-hook 'doom-escape-hook #'+popup|close-on-escape t)
+         (add-hook 'doom-cleanup-hook #'+popup|cleanup-rules)
          (setq +popup--old-display-buffer-alist display-buffer-alist
                display-buffer-alist +popup--display-buffer-alist)
          (dolist (prop +popup-window-parameters)
@@ -162,7 +163,9 @@ with ARGS to get its return value."
         (t
          (remove-hook 'doom-unreal-buffer-functions #'+popup-p)
          (remove-hook 'doom-escape-hook #'+popup|close-on-escape)
+         (remove-hook 'doom-cleanup-hook #'+popup|cleanup-rules)
          (setq display-buffer-alist +popup--old-display-buffer-alist)
+         (+popup|cleanup-rules)
          (dolist (prop +popup-window-parameters)
            (map-delete prop window-persistent-parameters)))))
 
@@ -223,6 +226,16 @@ disabled."
    (if (+popup-p)
        #'+popup/close
      #'+popup/close-all)))
+
+;;;###autoload
+(defun +popup|cleanup-rules ()
+  "Cleans up any duplicate popup rules."
+  (interactive)
+  (cl-delete-duplicates
+   +popup--display-buffer-alist
+   :key #'car :test #'equal :from-end t)
+  (when +popup-mode
+    (setq display-buffer-alist +popup--display-buffer-alist)))
 
 
 ;;
