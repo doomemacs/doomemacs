@@ -252,7 +252,9 @@ ALL-P (universal argument), clean them up globally."
     (mapc #'kill-buffer buffers)
     (setq n (+ n (length buffers) (doom/cleanup-processes)))
     (dolist (hook doom-cleanup-hook)
-      (setq n (+ n (or (funcall hook) 1))))
+      (let ((m (funcall hook)))
+        (when (integerp m)
+          (setq n (+ n m)))))
     (message "Cleaned up %s buffers" n)
     n))
 
