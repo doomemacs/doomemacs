@@ -53,8 +53,8 @@ and enables `+popup-buffer-mode'."
 + Either kills the buffer or sets a transient timer, if the window has a
   `transient' window parameter (see `+popup-window-parameters').
 + And finally deletes the window!"
-  (let ((ttl (+popup-parameter 'transient window))
-        (buffer (window-buffer window)))
+  (let ((buffer (window-buffer window))
+        ttl)
     (let ((ignore-window-parameters t))
       (delete-window window))
     (unless (window-live-p window)
@@ -63,14 +63,17 @@ and enables `+popup-buffer-mode'."
         ;; t = default
         ;; integer = ttl
         ;; nil = no timer
-        (when (and ttl (not +popup--inhibit-transient))
-          (when (eq ttl t)
-            (setq ttl +popup-ttl))
-          (cl-assert (integerp ttl) t)
-          (if (= ttl 0)
-              (+popup--kill-buffer buffer 0)
-            (setq +popup--timer
-                  (run-at-time ttl nil #'+popup--kill-buffer buffer ttl))))))))
+        (unless +popup--inhibit-transient
+          (setq ttl (+popup-parameter-fn 'transient window buffer))
+          (when ttl
+            (when (eq ttl t)
+              (setq ttl +popup-ttl))
+            (cl-assert (integerp ttl) t)
+            (if (= ttl 0)
+                (+popup--kill-buffer buffer 0)
+              (setq +popup--timer
+                    (run-at-time ttl nil #'+popup--kill-buffer
+                                 buffer ttl)))))))))
 
 (defun +popup--normalize-alist (alist)
   "Merge `+popup-default-alist' and `+popup-default-parameters' with ALIST."
@@ -110,16 +113,25 @@ current buffer."
          (new-window (or (display-buffer-reuse-window buffer alist)
                          (display-buffer-in-side-window buffer alist))))
     (+popup--init new-window)
-    (select-window
-     (if (+popup-parameter 'select new-window)
-         new-window
-       old-window))
+    (let ((select (+popup-parameter 'select new-window)))
+      (if (functionp select)
+          (funcall select new-window old-window)
+        (select-window (if select new-window old-window))))
     new-window))
 
 ;;;###autoload
 (defun +popup-parameter (parameter &optional window)
   "Fetch the window parameter of WINDOW"
   (window-parameter (or window (selected-window)) parameter))
+
+;;;###autoload
+(defun +popup-parameter-fn (parameter &optional window &rest args)
+  "Fetch the window PARAMETER (symbol) of WINDOW. If it is a function, run it
+with ARGS to get its return value."
+  (let ((val (+popup-parameter parameter window)))
+    (if (functionp val)
+        (apply val args)
+      val)))
 
 ;;;###autoload
 (defun +popup-windows ()
@@ -178,15 +190,17 @@ disabled."
 
 + If one exists and it's a symbol, use `doom-modeline' to grab the format.
 + If non-nil, show the mode-line as normal.
-+ If nil (or omitted), then hide the modeline entirely (the default)."
++ If nil (or omitted), then hide the modeline entirely (the default).
++ If a function, it takes the current buffer as its argument and must return one
+  of the above values."
   (if +popup-buffer-mode
-      (let ((modeline (+popup-parameter 'modeline)))
-        (cond ((or (eq modeline 'nil)
+      (let ((modeline (+popup-parameter-fn 'modeline nil (current-buffer))))
+        (cond ((eq modeline 't))
+              ((or (eq modeline 'nil)
                    (not modeline))
                (doom-hide-modeline-mode +1))
-              ((and (symbolp modeline)
-                    (not (eq modeline 't)))
-               (setq-local doom--modeline-format (doom-modeline modeline))
+              ((symbolp modeline)
+               (setq doom--modeline-format (doom-modeline modeline))
                (when doom--modeline-format
                  (doom-hide-modeline-mode +1)))))
     (when doom-hide-modeline-mode
@@ -237,7 +251,7 @@ This will do nothing if the popup's `quit' window parameter is either nil or
     (setq window (selected-window)))
   (when (and (+popup-p window)
              (or force-p
-                 (memq (+popup-parameter 'quit window)
+                 (memq (+popup-parameter-fn 'quit window window)
                        '(t current))))
     (when +popup--remember-last
       (+popup--remember (list window)))
@@ -254,7 +268,7 @@ This window parameter is ignored if FORCE-P is non-nil."
   (let (targets +popup--remember-last)
     (dolist (window (+popup-windows))
       (when (or force-p
-                (memq (+popup-parameter 'quit window)
+                (memq (+popup-parameter-fn 'quit window window)
                       '(t other)))
         (push window targets)))
     (when targets

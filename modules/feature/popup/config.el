@@ -6,16 +6,20 @@
 Modifying this has no effect, unless done before feature/popup loads.
 
 (transient . CDR)
-  CDR can be t, an integer or nil. It represents the number of seconds before
-  the buffer belonging to a closed popup window is killed.
+  CDR can be t, an integer, nil or a function that returns one of these. It
+  represents the number of seconds before the buffer belonging to a closed popup
+  window is killed.
 
   If t, CDR will default to `+popup-ttl'.
   If 0, the buffer is immediately killed.
   If nil, the buffer won't be killed.
+  If a function, it must return one of the other possible values above. It takes
+    the popup buffer as its sole argument.
 
 (quit . CDR)
-  CDR can be t, 'other, 'current or nil. This determines the behavior of the
-  ESC/C-g keys in or outside of popup windows.
+  CDR can be t, 'other, 'current, nil, or a function that returns one of these.
+  This determines the behavior of the ESC/C-g keys in or outside of popup
+  windows.
 
   If t, close the popup if ESC/C-g is pressed inside or outside of popups.
   If 'other, close this popup if ESC/C-g is pressed outside of any popup. This
@@ -24,14 +28,22 @@ Modifying this has no effect, unless done before feature/popup loads.
   If 'current, close the current popup if ESC/C-g is pressed from inside of the
     popup.
   If nil, pressing ESC/C-g will never close this buffer.
+  If a function, it is checked each time ESC/C-g is pressed to determine the
+    fate of the popup window. This function takes one argument: the popup
+    window and must return one of the other possible values.
 
-(select . BOOl)
-  CDR is a boolean that determines whether to focus the popup window after it
-  opens.
+(select . CDR)
+  CDR can be a boolean or function. The boolean determines whether to focus the
+  popup window after it opens (non-nil) or focus the origin window (nil).
+
+  If a function, it takes two arguments: the popup window and the source window
+  (where you were before the popup was opened). It does nothing else, and
+  ignores its return value.
 
 (modeline . CDR)
   CDR can be t (show the default modeline), a symbol representing the name of a
-  modeline defined with `def-modeline!', or nil (show no modeline).
+  modeline defined with `def-modeline!', nil (show no modeline) or a function
+  that returns one of these. The function takes one argument: the popup buffer.
 
 (popup . t)
   This is for internal use, do not change this. It simply marks a window as a
