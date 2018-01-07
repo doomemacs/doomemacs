@@ -1,14 +1,5 @@
 ;;; feature/popup/autoload.el -*- lexical-binding: t; -*-
 
-(defun +popup--cancel-buffer-timer ()
-  "Cancel the current buffer's transient timer."
-  (when (timerp +popup--timer)
-    (let ((inhibit-message (not doom-debug-mode)))
-      (message "Cancelled timer in %s" (current-buffer)))
-    (cancel-timer +popup--timer)
-    (setq +popup--timer nil))
-  t)
-
 (defun +popup--remember (windows)
   "Remember WINDOWS (a list of windows) for later restoration."
   (cl-assert (cl-every #'windowp windows) t)
@@ -179,7 +170,12 @@ with ARGS to get its return value."
 (define-minor-mode +popup-buffer-mode
   "Minor mode for popup windows."
   :init-value nil
-  :keymap +popup-buffer-mode-map)
+  :keymap +popup-buffer-mode-map
+  (when (and +popup-buffer-mode (timerp +popup--timer))
+    (let ((inhibit-message (not doom-debug-mode)))
+      (message "Cancelled timer in %s" (current-buffer)))
+    (cancel-timer +popup--timer)
+    (setq +popup--timer nil)))
 
 (put '+popup-buffer-mode 'permanent-local t)
 (put '+popup-buffer-mode 'permanent-local-hook t)
