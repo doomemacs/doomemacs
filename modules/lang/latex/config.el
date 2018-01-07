@@ -56,7 +56,6 @@
 
   (add-hook! 'reftex-toc-mode-hook
     (reftex-toc-rescan)
-    (doom-hide-modeline-mode +1)
     (map! :local
           :e "j"   #'next-line
           :e "k"   #'previous-line
