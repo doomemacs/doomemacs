@@ -67,7 +67,7 @@ function that creates and returns the REPL buffer."
     (add-hook 'quickrun--mode-hook #'nlinum-mode))
   :config
   (set! :popup "^\\*\\(?:doom eval\\|Pp Eval Output\\|quickrun\\)"
-    '((window-height . 10)) '((transient . 0)))
+    '((window-height . 0.2)) '((transient . 0)))
 
   (defun +eval*quickrun-auto-close (&rest _)
     "Allows us to silently re-run quickrun from within the quickrun buffer."

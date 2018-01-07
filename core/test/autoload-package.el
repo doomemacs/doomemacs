@@ -31,8 +31,7 @@
     (should (eq (doom-package-backend 'org) 'emacs))))
 
 (def-test! elpa-outdated-detection
-  (let* ((doom--last-refresh (current-time))
-         (package-alist
+  (let* ((package-alist
           `((doom-dummy ,(-pkg 'doom-dummy '(20160405 1234)))))
          (package-archive-contents
           `((doom-dummy ,(-pkg 'doom-dummy '(20170405 1234))))))

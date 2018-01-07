@@ -19,7 +19,8 @@ Modifying this has no effect, unless done before feature/popup loads.
 
   If t, close the popup if ESC/C-g is pressed inside or outside of popups.
   If 'other, close this popup if ESC/C-g is pressed outside of any popup. This
-    is great for popups you just want to peek at and discard.
+    is great for popups you just want to peek at and discard, but might also
+    want to poke around in, without the risk of closing it from the inside.
   If 'current, close the current popup if ESC/C-g is pressed from inside of the
     popup.
   If nil, pressing ESC/C-g will never close this buffer.
@@ -63,7 +64,7 @@ a brief description of some native window parameters that Emacs uses:
 (defvar +popup-default-parameters
   '((transient . t)
     (quit . t))
-  "The default window parameters to add alists fed to `display-buffer-alist'.")
+  "The default window parameters.")
 
 (defvar +popup-ttl 10
   "The default time-to-live for transient buffers whose popup buffers have been
@@ -133,8 +134,7 @@ ALIST supports one custom parameter: `size', which will resolve to
 (setq +popup--display-buffer-alist (eval-when-compile +popup--display-buffer-alist))
 (add-hook 'doom-init-ui-hook #'+popup-mode)
 
-(add-hook '+popup-buffer-mode-hook #'+popup|adjust-fringes)
-(add-hook '+popup-buffer-mode-hook #'+popup|set-modeline)
+(add-hook! '+popup-buffer-mode-hook #'(+popup|adjust-fringes +popup|set-modeline))
 
 
 ;;
@@ -213,9 +213,9 @@ ALIST supports one custom parameter: `size', which will resolve to
   (set! :popup "^ \\*Org todo"  '((size . 5))  '((transient . 0)))
   (set! :popup "^\\*Org Agenda" '((size . 20)))
 
-  ;; Org has a scorched-earth window management system I'm not fond of. i.e.
-  ;; it kills all windows and monopolizes the frame. No thanks. We can do
-  ;; better with shackle's help.
+  ;; Org has a scorched-earth window management system I'm not fond of. i.e. it
+  ;; kills all windows and monopolizes the frame. No thanks. We can do better
+  ;; ourselves.
   (defun +popup*suppress-delete-other-windows (orig-fn &rest args)
     (cl-letf (((symbol-function 'delete-other-windows)
                (symbol-function 'ignore)))
