@@ -137,7 +137,7 @@ ALIST supports one custom parameter: `size', which will resolve to
 ;;
 
 (eval-when-compile
-  (set! :popup "^ \\*" '((slot . -1)))
+  (set! :popup "^ \\*" '((slot . -1) (size . +popup-shrink-to-fit)))
   (set! :popup "^\\*" nil '((select . t)))
   (set! :popup "^\\*Completions" '((slot . -1)) '((transient . 0)))
   (set! :popup "^\\*Compilation" nil '((transient . 0) (quit . t)))

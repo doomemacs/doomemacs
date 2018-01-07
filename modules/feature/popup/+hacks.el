@@ -82,9 +82,11 @@
 
 ;; `org'
 (after! org
-  (set! :popup "^ ?\\*Org \\(todo\\|Links\\)"  '((slot . -1) (size . shrink-window-if-larger-than-buffer)))
+  (set! :popup "^\\*Org \\(?:Links\\|Export Dispatcher\\|Select\\)"
+    '((slot . -1) (size . +popup-shrink-to-fit))
+    '((select)))
   (set! :popup "^\\*Org Agenda" '((slot . -1) (size . 20)))
-  (set! :popup "^\\*Org Src" '((size . 0.3)) '((quit) (select . t)))
+  (set! :popup "^\\*Org Src"    '((size . 0.3)) '((quit) (select . t)))
 
   ;; Org has a scorched-earth window management system I'm not fond of. i.e. it
   ;; kills all windows and monopolizes the frame. No thanks. We can do better

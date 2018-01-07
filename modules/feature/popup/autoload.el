@@ -144,6 +144,16 @@ with ARGS to get its return value."
   "Returns a list of all popup windows."
   (cl-remove-if-not #'+popup-p (window-list)))
 
+;;;###autoload
+(defun +popup-shrink-to-fit (&optional window)
+  "Shrinks WINDOW to fit the buffer contents, if the buffer isn't empty.
+
+Uses `shrink-window-if-larger-than-buffer'."
+  (unless window
+    (setq window (selected-window)))
+  (unless (= (- (point-max) (point-min)) 0)
+    (shrink-window-if-larger-than-buffer window)))
+
 
 ;;
 ;; Minor mode
