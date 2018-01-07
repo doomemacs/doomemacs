@@ -121,7 +121,7 @@ current buffer."
 
 ;;;###autoload
 (defun +popup-parameter (parameter &optional window)
-  "Fetch the window parameter of WINDOW"
+  "Fetch the window PARAMETER (symbol) of WINDOW"
   (window-parameter (or window (selected-window)) parameter))
 
 ;;;###autoload

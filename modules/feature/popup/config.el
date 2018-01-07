@@ -267,9 +267,6 @@ instead of switch-to-buffer-*."
     "Restore popup windows when loading a perspective from file."
     (dolist (window (window-list))
       (when (+popup-parameter 'popup window)
-        (with-selected-window window
-          (+popup-buffer-mode +1)))))
+        (+popup--init window))))
   (advice-add #'persp-load-state-from-file :after #'+popup*persp-mode-restore-popups))
 
-(provide 'config)
-;;; config.el ends here
