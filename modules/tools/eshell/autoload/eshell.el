@@ -3,7 +3,7 @@
 (defvar +eshell-buffers ()
   "List of open eshell buffers.")
 
-(defvar +eshell-buffer-name "*doom:eshell*"
+(defvar +eshell-buffer-name "*doom eshell*"
   "The name to use for custom eshell buffers. This only affects `+eshell/open',
 `+eshell/open-popup' and `+eshell/open-workspace'.")
 
