@@ -1,5 +1,7 @@
 ;;; feature/popup/autoload.el -*- lexical-binding: t; -*-
 
+(defvar +popup--populate-wparams (version< emacs-version "26.1"))
+
 (defun +popup--remember (windows)
   "Remember WINDOWS (a list of windows) for later restoration."
   (cl-assert (cl-every #'windowp windows) t)
@@ -23,18 +25,24 @@ the buffer is visible, then set another timer and try again later."
           (kill-process process))
         (kill-buffer buffer)))))
 
-(defun +popup--init (window)
+(defun +popup--init (window alist)
   "Initializes a popup window. Run any time a popup is opened. It sets the
 default window parameters for popup windows, clears leftover transient timers
 and enables `+popup-buffer-mode'."
   (with-selected-window window
-    (set-window-parameter window 'popup t)
-    (set-window-parameter window 'no-other-window t)
-    (set-window-parameter window 'delete-window #'+popup--destroy)
     (window-preserve-size
      window (memq (window-parameter window 'window-side)
                   '(left right)) t)
-    (+popup-buffer-mode +1)))
+    (when +popup--populate-wparams
+      ;; Emacs 26+ will automatically map the window-parameters alist entry to
+      ;; the popup window, so we need this for Emacs 25.x users
+      (dolist (param (cdr (assq 'window-parameters alist)))
+        (set-window-parameter window (car param) (cdr param))))
+    (set-window-parameter window 'popup t)
+    (set-window-parameter window 'no-other-window t)
+    (set-window-parameter window 'delete-window #'+popup--destroy)
+    (+popup-buffer-mode +1)
+    (run-hooks '+popup-create-window-hook)))
 
 (defun +popup--destroy (window)
   "Do housekeeping before destroying a popup window.
@@ -110,7 +118,7 @@ current buffer."
          (new-window (let ((window-min-height 3))
                        (or (display-buffer-reuse-window buffer alist)
                            (display-buffer-in-side-window buffer alist)))))
-    (+popup--init new-window)
+    (+popup--init new-window alist)
     (let ((select (+popup-parameter 'select new-window)))
       (if (functionp select)
           (funcall select new-window old-window)
