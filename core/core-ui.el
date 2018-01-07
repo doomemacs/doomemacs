@@ -92,12 +92,14 @@ disabled.")
   "Minor mode to hide the mode-line in the current buffer."
   :init-value nil
   :global nil
-  (if (not doom-hide-modeline-mode)
-      (setq mode-line-format doom--old-modeline-format
-            doom--old-modeline-format nil)
-    (setq doom--old-modeline-format mode-line-format
-          mode-line-format doom--modeline-format)
-    (add-hook 'after-change-major-mode-hook #'doom|hide-modeline-mode-reset nil t))
+  (cond (doom-hide-modeline-mode
+         (add-hook 'after-change-major-mode-hook #'doom|hide-modeline-mode-reset nil t)
+         (setq mode-line-format (or doom--old-modeline-format doom--modeline-format)
+               doom--old-modeline-format nil))
+        (t
+         (remove-hook 'after-change-major-mode-hook #'doom|hide-modeline-mode-reset t)
+         (setq mode-line-format doom--old-modeline-format
+               doom--old-modeline-format nil)))
   (force-mode-line-update))
 
 ;; Ensure major-mode or theme changes don't overwrite these variables
@@ -105,6 +107,7 @@ disabled.")
 (put 'doom--old-modeline-format 'permanent-local t)
 (put 'doom-hide-modeline-mode 'permanent-local t)
 (put 'doom-hide-modeline-mode 'permanent-local-hook t)
+(put 'doom|hide-modeline-mode-reset 'permanent-local-hook t)
 
 (defun doom|hide-modeline-mode-reset ()
   "Sometimes, a major-mode is activated after `doom-hide-modeline-mode' is
