@@ -29,7 +29,7 @@
                       (setq buf-name (propertize buf-name 'face 'font-lock-comment-face)))
                      ((and buffer-file-name
                            (not (file-in-directory-p (buffer-file-name buf) project-root)))
-                      (setq buf-name (propertize buf-name 'face 'ivy-remote))))
+                      (setq buf-name (propertize buf-name 'face 'font-lock-doc-face))))
                (ivy-rich-switch-buffer-format (list buf-name size indicator mode project path)))))
           ((and (eq ivy-virtual-abbreviate 'full)
                 ivy-rich-switch-buffer-align-virtual-buffer)
