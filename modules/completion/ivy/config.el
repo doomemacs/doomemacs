@@ -38,7 +38,11 @@ immediately runs it on the current candidate (ending the ivy session)."
         ;; highlight til EOL
         ivy-format-function #'ivy-format-function-line
         ;; disable magic slash on non-match
-        ivy-magic-slash-non-match-action nil)
+        ivy-magic-slash-non-match-action nil
+        ;; don't show recent files in switch-buffer
+        ivy-use-virtual-buffers nil
+        ;; ...but if that ever changes, show their full path
+        ivy-virtual-abbreviate 'full)
 
   (after! magit     (setq magit-completing-read-function #'ivy-completing-read))
   (after! yasnippet (push #'+ivy-yas-prompt yas-prompt-functions))
@@ -57,12 +61,6 @@ immediately runs it on the current candidate (ending the ivy session)."
         [remap describe-function]         #'counsel-describe-function
         [remap describe-variable]         #'counsel-describe-variable)
 
-  ;; Show more buffer information in switch-buffer commands
-  (ivy-set-display-transformer #'ivy-switch-buffer #'+ivy-buffer-transformer)
-  (ivy-set-display-transformer #'ivy-switch-buffer-other-window #'+ivy-buffer-transformer)
-  (ivy-set-display-transformer #'+ivy/switch-workspace-buffer #'+ivy-buffer-transformer)
-  (ivy-set-display-transformer #'counsel-recentf #'abbreviate-file-name)
-
   (nconc ivy-sort-functions-alist
          '((persp-kill-buffer   . nil)
            (persp-remove-buffer . nil)
@@ -74,12 +72,22 @@ immediately runs it on the current candidate (ending the ivy session)."
            (+workspace/delete . nil))))
 
 
+;; Show more buffer information in switch-buffer commands
+(def-package! ivy-rich
+  :after ivy
+  :config
+  (dolist (cmd '(ivy-switch-buffer +ivy/switch-workspace-buffer))
+    (ivy-set-display-transformer cmd '+ivy-buffer-transformer)))
+
+
 (def-package! swiper :commands (swiper swiper-all))
 
 
 (def-package! counsel
   :requires ivy
   :config
+  (ivy-set-display-transformer #'counsel-recentf #'abbreviate-file-name)
+
   (require 'counsel-projectile)
   (setq counsel-find-file-ignore-regexp "\\(?:^[#.]\\)\\|\\(?:[#~]$\\)\\|\\(?:^Icon?\\)")
 

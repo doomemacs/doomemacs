@@ -1,36 +1,42 @@
-;;; completion/ivy/autoload/ivy.el -*- lexical-binding: t; -*-
+;;; completion/ivy/autoload/ivy.el -*- lexical-binding: nil; -*-
 
-(defsubst +ivy--icon-for-mode (mode)
-  "Apply `all-the-icons-for-mode' on MODE but either return an icon or nil."
-  (let ((icon (all-the-icons-icon-for-mode mode)))
-    (unless (symbolp icon) icon)))
+(defun +ivy--is-workspace-or-other-buffer-p (buffer)
+  (let ((buffer (car buffer)))
+    (when (stringp buffer)
+      (setq buffer (get-buffer buffer)))
+    (and (not (eq buffer (current-buffer)))
+         (+workspace-contains-buffer-p buffer))))
+
+
+;;
+;; Library
+;;
 
 ;;;###autoload
 (defun +ivy-buffer-transformer (str)
-  (let* ((buf (get-buffer str))
-         (path (buffer-file-name buf))
-         (mode (buffer-local-value 'major-mode buf))
-         (faces
-          (with-current-buffer buf
-            (cond ((string-match-p "^ ?\\*" (buffer-name buf))
-                   'font-lock-comment-face)
-                  ((buffer-modified-p buf)
-                   'doom-modeline-buffer-modified)
-                  (buffer-read-only
-                   'error)))))
-    (propertize
-     (format "%-40s %s%-20s %s"
-             str
-             (if +ivy-buffer-icons
-                 (concat (propertize " " 'display
-                                     (or (+ivy--icon-for-mode mode)
-                                         (+ivy--icon-for-mode (get mode 'derived-mode-parent))))
-                         "\t")
-               "")
-             mode
-             (or (and path (abbreviate-file-name (file-name-directory (file-truename path))))
-                 ""))
-     'face faces)))
+  (let ((buf (get-buffer str))
+        (project-root (doom-project-root)))
+    (require 'ivy-rich)
+    (cond (buf
+           (with-current-buffer buf
+             (let* ((indicator  (ivy-rich-switch-buffer-indicators))
+                    (size       (ivy-rich-switch-buffer-size))
+                    (buf-name   (ivy-rich-switch-buffer-buffer-name))
+                    (mode       (ivy-rich-switch-buffer-major-mode))
+                    (project    (ivy-rich-switch-buffer-project))
+                    (path       (ivy-rich-switch-buffer-path project)))
+               (cond ((string-match-p "^ ?\\*" (buffer-name buf))
+                      (setq buf-name (propertize buf-name 'face 'font-lock-comment-face)))
+                     ((and buffer-file-name
+                           (not (file-in-directory-p (buffer-file-name buf) project-root)))
+                      (setq buf-name (propertize buf-name 'face 'ivy-remote))))
+               (ivy-rich-switch-buffer-format (list buf-name size indicator mode project path)))))
+          ((and (eq ivy-virtual-abbreviate 'full)
+                ivy-rich-switch-buffer-align-virtual-buffer)
+           (ivy-rich-switch-buffer-virtual-buffer))
+          ((eq ivy-virtual-abbreviate 'full)
+           (propertize (abbreviate-file-name str) 'str 'ivy-virtual))
+          (t (propertize str 'face 'ivy-virtual)))))
 
 ;;;###autoload
 (defun +ivy/switch-workspace-buffer (&optional arg)
