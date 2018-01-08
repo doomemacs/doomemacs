@@ -32,6 +32,69 @@
 ;; External functions
 ;;
 
+(after! eshell
+  (setq eshell-destroy-buffer-when-process-dies t)
+
+  ;; When eshell runs a visual command (see `eshell-visual-commands'), it spawns
+  ;; a term buffer to run it in, but where it spawns it is the problem...
+  (defun +popup*eshell-undedicate-popup (orig-fn &rest args)
+    "Force spawned term buffer to share with the eshell popup (if necessary)."
+    (when (+popup-p)
+      (set-window-dedicated-p nil nil)
+      (add-transient-hook! #'eshell-query-kill-processes :after
+                           (set-window-dedicated-p nil t)))
+    (apply orig-fn args))
+  (advice-add #'eshell-exec-visual :around #'+popup*eshell-undedicate-popup))
+
+
+;; `evil'
+(after! evil
+  (defun +popup*evil-command-window (hist cmd-key execute-fn)
+    "The evil command window has a mind of its own (uses `switch-to-buffer'). We
+monkey patch it to use pop-to-buffer, and to remember the previous window."
+    (when (eq major-mode 'evil-command-window-mode)
+      (user-error "Cannot recursively open command line window"))
+    (dolist (win (window-list))
+      (when (equal (buffer-name (window-buffer win))
+                   "*Command Line*")
+        (kill-buffer (window-buffer win))
+        (delete-window win)))
+    (setq evil-command-window-current-buffer (current-buffer))
+    (ignore-errors (kill-buffer "*Command Line*"))
+    (with-current-buffer (pop-to-buffer "*Command Line*")
+      (setq-local evil-command-window-execute-fn execute-fn)
+      (setq-local evil-command-window-cmd-key cmd-key)
+      (evil-command-window-mode)
+      (evil-command-window-insert-commands hist)))
+
+  (defun +popup*evil-command-window-execute ()
+    "Execute the command under the cursor in the appropriate buffer, rather than
+the command buffer."
+    (interactive)
+    (let ((result (buffer-substring (line-beginning-position)
+                                    (line-end-position)))
+          (execute-fn evil-command-window-execute-fn)
+          (popup (selected-window)))
+      (select-window doom-popup-other-window)
+      (unless (equal evil-command-window-current-buffer (current-buffer))
+        (user-error "Originating buffer is no longer active"))
+      ;; (kill-buffer "*Command Line*")
+      (doom/popup-close popup)
+      (funcall execute-fn result)
+      (setq evil-command-window-current-buffer nil)))
+
+  ;; Make evil-mode cooperate with popups
+  (advice-add #'evil-command-window :override #'+popup*evil-command-window)
+  (advice-add #'evil-command-window-execute :override #'+popup*evil-command-window-execute)
+
+  ;; Don't mess with popups
+  (advice-add #'+evil--window-swap           :around #'+popup*save)
+  (advice-add #'evil-window-move-very-bottom :around #'+popup*save)
+  (advice-add #'evil-window-move-very-top    :around #'+popup*save)
+  (advice-add #'evil-window-move-far-left    :around #'+popup*save)
+  (advice-add #'evil-window-move-far-right   :around #'+popup*save))
+
+
 ;; `help-mode'
 (after! help-mode
   (defun doom--switch-from-popup (location)
@@ -139,6 +202,11 @@ instead of switch-to-buffer-*."
       (when (+popup-parameter 'popup window)
         (+popup--init window))))
   (advice-add #'persp-load-state-from-file :after #'+popup*persp-mode-restore-popups))
+
+
+;; `multi-term'
+(after! multi-term
+  (setq multi-term-buffer-name "doom terminal"))
 
 
 ;; `wgrep'

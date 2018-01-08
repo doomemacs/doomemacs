@@ -145,9 +145,9 @@ ALIST supports one custom parameter: `size', which will resolve to
   (set! :popup "^\\*Help"
     '((slot . -1) (size . 0.2))
     '((select . t)))
-  (set! :popup "^\\*\\(?:term\\|doom eshell\\)"
+  (set! :popup "^\\*doom \\(?:term\\|eshell\\)"
     '((size . 0.25))
-    '((select . t) (quit) (transient . 0)))
+    '((quit) (transient . 0)))
   (set! :popup "^\\*doom:"
     '((size . 0.35))
     '((select . t) (modeline . t) (quit) (transient))))
