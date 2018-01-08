@@ -28,8 +28,11 @@ to a pop up buffer."
       (prin1 result buf)
       (pp-buffer)
       (setq lines (count-lines (point-min) (point-max)))
-      (goto-char (point-min))
-      (if (> lines 1)
-          (pop-to-buffer buf t)
-        (message "%s" (buffer-substring (point-min) (point-max)))
-        (kill-buffer buf)))))
+      (cond ((> lines 1)
+             (save-selected-window
+               (pop-to-buffer buf)
+               (with-current-buffer buf
+                 (goto-char (point-min)))))
+            (t
+             (message "%s" (buffer-substring (point-min) (point-max)))
+             (kill-buffer buf))))))
