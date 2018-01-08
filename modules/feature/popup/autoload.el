@@ -14,16 +14,18 @@
   "Tries to kill BUFFER, as was requested by a transient timer. If it fails, eg.
 the buffer is visible, then set another timer and try again later."
   (when (buffer-live-p buffer)
-    (if (get-buffer-window buffer)
-        (with-current-buffer buffer
-          (setq +popup--timer
-                (run-at-time ttl nil #'+popup--kill-buffer buffer ttl)))
-      (with-demoted-errors "Error killing transient buffer: %s"
-        (let ((inhibit-message (not doom-debug-mode)))
-          (message "Cleaned up transient buffer: %s" buffer))
-        (when-let* ((process (get-buffer-process (current-buffer))))
-          (kill-process process))
-        (kill-buffer buffer)))))
+    (let ((kill-buffer-hook (delq '+popup|kill-buffer-hook kill-buffer-hook)))
+      (cond ((eq ttl 0)
+             (kill-buffer buffer))
+            ((get-buffer-window buffer)
+             (with-current-buffer buffer
+               (setq +popup--timer
+                     (run-at-time ttl nil #'+popup--kill-buffer buffer ttl))))
+            (t
+             (with-demoted-errors "Error killing transient buffer: %s"
+               (when-let* ((process (get-buffer-process (current-buffer))))
+                 (kill-process process))
+               (kill-buffer buffer)))))))
 
 (defun +popup--init (window alist)
   "Initializes a popup window. Run any time a popup is opened. It sets the
@@ -76,6 +78,7 @@ and enables `+popup-buffer-mode'."
             (cl-assert (integerp ttl) t)
             (if (= ttl 0)
                 (+popup--kill-buffer buffer 0)
+              (add-hook 'kill-buffer-hook #'+popup|kill-buffer-hook nil t)
               (setq +popup--timer
                     (run-at-time ttl nil #'+popup--kill-buffer
                                  buffer ttl)))))))))
@@ -194,8 +197,7 @@ Uses `shrink-window-if-larger-than-buffer'."
   :init-value nil
   :keymap +popup-buffer-mode-map
   (when (and +popup-buffer-mode (timerp +popup--timer))
-    (let ((inhibit-message (not doom-debug-mode)))
-      (message "Cancelled timer in %s" (current-buffer)))
+    (remove-hook 'kill-buffer-hook #'+popup|kill-buffer-hook t)
     (cancel-timer +popup--timer)
     (setq +popup--timer nil)))
 
@@ -253,6 +255,16 @@ disabled."
    :key #'car :test #'equal :from-end t)
   (when +popup-mode
     (setq display-buffer-alist +popup--display-buffer-alist)))
+
+;;;###autoload
+(defun +popup|kill-buffer-hook ()
+  "TODO"
+  (let ((buf (current-buffer))
+        (+popup--inhibit-transient t))
+    (when (+popup-buffer-p buf)
+      (when-let* ((window (get-buffer-window buf)))
+        (when (+popup-window-p window)
+          (+popup--destroy window))))))
 
 
 ;;
