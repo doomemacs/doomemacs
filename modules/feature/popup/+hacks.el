@@ -145,11 +145,12 @@ the command buffer."
 
 ;; `org'
 (after! org
-  (set! :popup "^\\*Org \\(?:Links\\|Export Dispatcher\\|Select\\)"
+  (set! :popup "^\\*\\(?:Agenda Com\\|Org \\(?:Links\\|Export Dispatcher\\|Select\\)\\)"
     '((slot . -1) (size . +popup-shrink-to-fit))
-    '((select)))
-  (set! :popup "^\\*Org Agenda" '((slot . -1) (size . 20)))
+    '((transient)))
+  (set! :popup "^\\*Org Agenda" '((size . 20)) '((select . t) (transient)))
   (set! :popup "^\\*Org Src"    '((size . 0.3)) '((quit) (select . t)))
+  (set! :popup "^CAPTURE.*\\.org$" '((size . 0.2)) '((quit) (select . t)))
 
   ;; Org has a scorched-earth window management system I'm not fond of. i.e. it
   ;; kills all windows and monopolizes the frame. No thanks. We can do better
@@ -164,7 +165,7 @@ the command buffer."
   (advice-add #'org-capture-place-template :around #'+popup*suppress-delete-other-windows)
   (advice-add #'org-export--dispatch-ui :around #'+popup*suppress-delete-other-windows)
 
-  (defun +popup*org-src-pop-to-buffer (orig-fn buffer _context)
+  (defun +popup*org-src-pop-to-buffer (orig-fn buffer context)
     "Hand off the src-block window to the popup system by using `display-buffer'
 instead of switch-to-buffer-*."
     (if +popup-mode
@@ -189,7 +190,6 @@ instead of switch-to-buffer-*."
   ;; `org-agenda'
   (setq org-agenda-window-setup 'other-window
         org-agenda-restore-windows-after-quit nil)
-  (add-hook 'org-agenda-finalize-hook #'org-fit-window-to-buffer)
   ;; Don't monopolize frame!
   (advice-add #'org-agenda :around #'+popup*suppress-delete-other-windows))
 
