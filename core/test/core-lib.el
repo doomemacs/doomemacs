@@ -37,14 +37,14 @@
 
 ;; `add-hook!'
 (def-test! add-one-to-one-hook
-  (let (hooks)
+  (let ((hooks '(old-hook)))
     (add-hook! 'hooks 'a-hook)
-    (should (equal hooks '(a-hook)))))
+    (should (equal hooks '(a-hook old-hook)))))
 
 (def-test! add-many-to-one-hook
-  (let (hooks)
+  (let ((hooks '(hook-x)))
     (add-hook! 'hooks '(hook-a hook-b hook-c))
-    (should (equal hooks '(hook-c hook-b hook-a)))))
+    (should (equal hooks '(hook-a hook-b hook-c hook-x)))))
 
 (def-test! add-one-to-many-hooks
   (let (hooks-a hooks-b hooks-c)
@@ -56,9 +56,9 @@
 (def-test! add-many-to-many-hooks
   (let (hooks-a hooks-b hooks-c)
     (add-hook! '(hooks-a hooks-b hooks-c) '(hook-a hook-b hook-c))
-    (should (equal hooks-a '(hook-c hook-b hook-a)))
-    (should (equal hooks-b '(hook-c hook-b hook-a)))
-    (should (equal hooks-c '(hook-c hook-b hook-a)))))
+    (should (equal hooks-a '(hook-a hook-b hook-c)))
+    (should (equal hooks-b '(hook-a hook-b hook-c)))
+    (should (equal hooks-c '(hook-a hook-b hook-c)))))
 
 (def-test! add-non-literal-hooks
   (let (some-mode-hook)
