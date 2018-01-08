@@ -45,7 +45,8 @@
 If ARG (universal argument), open selection in other-window."
   (interactive "P")
   (ivy-read "Switch to workspace buffer: "
-            (mapcar #'buffer-name (delq (current-buffer) (doom-buffer-list)))
+            'internal-complete-buffer
+            :predicate #'+ivy--is-workspace-or-other-buffer-p
             :action (if arg
                         #'ivy--switch-buffer-other-window-action
                       #'ivy--switch-buffer-action)
