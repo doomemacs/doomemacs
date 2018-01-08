@@ -39,7 +39,7 @@
   ;; a term buffer to run it in, but where it spawns it is the problem...
   (defun +popup*eshell-undedicate-popup (orig-fn &rest args)
     "Force spawned term buffer to share with the eshell popup (if necessary)."
-    (when (+popup-p)
+    (when (+popup-window-p)
       (set-window-dedicated-p nil nil)
       (add-transient-hook! #'eshell-query-kill-processes :after
                            (set-window-dedicated-p nil t)))

@@ -102,7 +102,8 @@ This will ensure all popups have a modeline /by default/, but allows you to over
 + ~+popup/raise~
 ** Library
 + Functions
-  + ~+popup-p WINDOW~
+  + ~+popup-window-p WINDOW~
+  + ~+popup-buffer-p BUFFER~
   + ~+popup-buffer BUFFER &optional ALIST~
   + ~+popup-parameter PARAMETER &optional WINDOW~
   + ~+popup-parameter-fn PARAMETER &optional WINDOW~

@@ -97,18 +97,24 @@ and enables `+popup-buffer-mode'."
 ;;
 
 ;;;###autoload
-(defun +popup-p (&optional target)
-  "Return t if TARGET is a popup window or buffer. If TARGET is nil, use the
-current buffer."
-  (unless target
-    (setq target (current-buffer)))
-  (cond ((windowp target)
-         (+popup-p (window-buffer target)))
-        ((bufferp target)
-         (buffer-local-value '+popup-buffer-mode target))
-        (t
-         (error "Expected a window/buffer, got %s (%s)"
-                (type-of target) target))))
+(defun +popup-buffer-p (&optional buffer)
+  "Return t if BUFFER is a popup buffer. Defaults to the current buffer."
+  (unless buffer
+    (setq buffer (current-buffer)))
+  (cl-assert (bufferp buffer) t)
+  (and (buffer-live-p buffer)
+       (buffer-local-value '+popup-buffer-mode buffer)
+       buffer))
+
+;;;###autoload
+(defun +popup-window-p (&optional window)
+  "Return t if WINDOW is a popup window. Defaults to the current window."
+  (unless window
+    (setq window (selected-window)))
+  (cl-assert (windowp window) t)
+  (and (window-live-p window)
+       (window-parameter window 'popup)
+       window))
 
 ;;;###autoload
 (defun +popup-buffer (buffer &optional alist)
@@ -142,7 +148,7 @@ with ARGS to get its return value."
 ;;;###autoload
 (defun +popup-windows ()
   "Returns a list of all popup windows."
-  (cl-remove-if-not #'+popup-p (window-list)))
+  (cl-remove-if-not #'+popup-window-p (window-list)))
 
 ;;;###autoload
 (defun +popup-shrink-to-fit (&optional window)
@@ -166,7 +172,7 @@ Uses `shrink-window-if-larger-than-buffer'."
   :global t
   :keymap +popup-mode-map
   (cond (+popup-mode
-         (add-hook 'doom-unreal-buffer-functions #'+popup-p)
+         (add-hook 'doom-unreal-buffer-functions #'+popup-buffer-p)
          (add-hook 'doom-escape-hook #'+popup|close-on-escape t)
          (add-hook 'doom-cleanup-hook #'+popup|cleanup-rules)
          (setq +popup--old-display-buffer-alist display-buffer-alist
@@ -174,7 +180,7 @@ Uses `shrink-window-if-larger-than-buffer'."
          (dolist (prop +popup-window-parameters)
            (push (cons prop 'writable) window-persistent-parameters)))
         (t
-         (remove-hook 'doom-unreal-buffer-functions #'+popup-p)
+         (remove-hook 'doom-unreal-buffer-functions #'+popup-buffer-p)
          (remove-hook 'doom-escape-hook #'+popup|close-on-escape)
          (remove-hook 'doom-cleanup-hook #'+popup|cleanup-rules)
          (setq display-buffer-alist +popup--old-display-buffer-alist)
@@ -234,7 +240,7 @@ disabled."
   "If called inside a popup, try to close that popup window (see
 `+popup/close'). If called outside, try to close all popup windows (see
 `+popup/close-all')."
-  (if (+popup-p)
+  (if (+popup-window-p)
       (+popup/close)
     (+popup/close-all)))
 
@@ -264,7 +270,7 @@ disabled."
         (window (selected-window)))
     (unless popups
       (user-error "No popups are open"))
-    (select-window (if (+popup-p)
+    (select-window (if (+popup-window-p)
                        (or (car-safe (cdr (memq window popups)))
                            (car (delq window popups))
                            (car popups))
@@ -281,7 +287,7 @@ This will do nothing if the popup's `quit' window parameter is either nil or
          current-prefix-arg))
   (unless window
     (setq window (selected-window)))
-  (when (and (+popup-p window)
+  (when (and (+popup-window-p window)
              (or force-p
                  (memq (+popup-parameter-fn 'quit window window)
                        '(t current))))
@@ -335,7 +341,7 @@ the message buffer in a popup window."
 (defun +popup/raise ()
   "Raise the current popup window into a regular window."
   (interactive)
-  (unless (+popup-p)
+  (unless (+popup-window-p)
     (user-error "Cannot raise a non-popup window"))
   (let ((window (selected-window))
         (buffer (current-buffer))
@@ -360,7 +366,7 @@ with the :popup setting."
 (defmacro save-popups! (&rest body)
   "Sets aside all popups before executing the original function, usually to
 prevent the popup(s) from messing up the UI (or vice versa)."
-  `(let* ((in-popup-p (+popup-p))
+  `(let* ((in-popup-p (+popup-buffer-p))
           (popups (+popup-windows))
           (+popup--inhibit-transient t)
           +popup--last)
