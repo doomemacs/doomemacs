@@ -73,7 +73,8 @@ a brief description of some native window parameters that Emacs uses:
 
 (defvar +popup-default-parameters
   '((transient . t)
-    (quit . t))
+    (quit . t)
+    (select . ignore))
   "The default window parameters.")
 
 (defvar +popup-ttl 10
