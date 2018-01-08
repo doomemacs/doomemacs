@@ -12,7 +12,7 @@
   "Delete service at point. Asks for confirmation."
   (interactive "P")
   (prodigy-with-refresh
-   (-when-let (service (prodigy-service-at-pos))
+   (when-let* ((service (prodigy-service-at-pos)))
      (let ((name (plist-get service :name)))
        (cond ((or arg
                   (y-or-n-p (format "Delete '%s' service?" name)))
