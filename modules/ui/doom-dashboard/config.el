@@ -35,46 +35,70 @@ Possible values:
 (defvar all-the-icons-default-adjust)
 
 ;;
-(setq doom-fallback-buffer +doom-dashboard-name)
+(setq doom-fallback-buffer +doom-dashboard-name
+      initial-buffer-choice #'+doom-dashboard)
 
+
+;;
+;; Commands
+;;
+
+(defun +doom-dashboard/open (frame &optional noswitch)
+  (interactive (list (selected-frame)))
+  (unless (run-hook-with-args-until-success '+doom-dashboard-inhibit-functions)
+    (prog1
+        (unless +doom-dashboard-inhibit-refresh
+          (with-selected-frame frame
+            (unless noswitch
+              (switch-to-buffer (doom-fallback-buffer)))
+            (+doom-dashboard-reload)))
+      (setq +doom-dashboard-inhibit-refresh nil)
+      (current-buffer))))
+
+
+;;
+;; Library
+;;
 
 (define-derived-mode +doom-dashboard-mode special-mode
   (format "DOOM v%s" doom-version)
   "Major mode for the DOOM dashboard buffer."
-  (read-only-mode +1)
   (setq truncate-lines t)
   (setq-local whitespace-style nil)
   (setq-local show-trailing-whitespace nil)
   (cl-loop for (car . _cdr) in fringe-indicator-alist
            collect (cons car nil) into alist
            finally do (setq fringe-indicator-alist alist)))
+(add-hook '+doom-dashboard-mode-hook #'read-only-mode)
 
-(map! :map +doom-dashboard-mode-map
-      "n" #'+doom-dashboard/next-button
-      "p" #'+doom-dashboard/previous-button
-      "N" #'+doom-dashboard/last-button
-      "P" #'+doom-dashboard/first-button
-      :em "j" #'+doom-dashboard/next-button
-      :em "k" #'+doom-dashboard/previous-button
-      :em "gg" #'+doom-dashboard/first-button
-      :em "G"  #'+doom-dashboard/last-button
-      [remap evil-insert]      #'evil-normal-state
-      [remap evil-change]      #'evil-normal-state
-      [remap evil-visual-char] #'evil-normal-state
-      [remap evil-visual-line] #'evil-normal-state
-      [remap evil-delete]      #'evil-normal-state
-      [remap evil-delete-char] #'evil-normal-state)
+(defun +doom-dashboard ()
+  "Initialize doom-dashboard and set up its hooks. Meant to be used with
+`initial-buffer-choice'. Returns the resulting buffer."
+  (map! :map +doom-dashboard-mode-map
+        "n" #'+doom-dashboard/next-button
+        "p" #'+doom-dashboard/previous-button
+        "N" #'+doom-dashboard/last-button
+        "P" #'+doom-dashboard/first-button
+        :em "j" #'+doom-dashboard/next-button
+        :em "k" #'+doom-dashboard/previous-button
+        :em "gg" #'+doom-dashboard/first-button
+        :em "G"  #'+doom-dashboard/last-button
+        [remap evil-insert]      #'evil-normal-state
+        [remap evil-change]      #'evil-normal-state
+        [remap evil-visual-char] #'evil-normal-state
+        [remap evil-visual-line] #'evil-normal-state
+        [remap evil-delete]      #'evil-normal-state
+        [remap evil-delete-char] #'evil-normal-state)
 
-;;
-(defun +doom-dashboard|init ()
-  "Initialize doom-dashboard and set up its hooks; possibly open the dashboard
-if in a GUI/non-daemon session."
   (add-hook 'window-configuration-change-hook #'+doom-dashboard-reload)
   (add-hook 'focus-in-hook #'+doom-dashboard-reload)
   (add-hook 'kill-buffer-query-functions #'+doom-dashboard|reload-on-kill)
-  (when (and (display-graphic-p) (not (daemonp)))
+  (when (daemonp)
+    (add-hook 'after-make-frame-functions #'+doom-dashboard|make-frame))
+  (if (doom-real-buffer-p)
+      (current-buffer)
     (let ((default-directory doom-emacs-dir))
-      (+doom-dashboard/open (selected-frame)))))
+      (+doom-dashboard/open (selected-frame) t))))
 
 (defun +doom-dashboard|reload-on-kill ()
   "If this isn't a dashboard buffer, move along, but record its
@@ -94,28 +118,8 @@ If this is the dashboard buffer, reload the dashboard."
 (defun +doom-dashboard|make-frame (frame)
   "Reload the dashboard after a brief pause. This is necessary for new frames,
 whose dimensions may not be fully initialized by the time this is run."
-  (run-with-timer 0.1 nil #'+doom-dashboard/open frame))
+  (run-with-timer 0.1 nil #'+doom-dashboard frame))
 
-(defun +doom-dashboard|server-visit (&rest _)
-  "Inhibit dashboard refresh when opening files via emacsclient."
-  (setq +doom-dashboard-inhibit-refresh t))
-
-(add-hook 'window-setup-hook #'+doom-dashboard|init)
-(add-hook 'after-make-frame-functions #'+doom-dashboard|make-frame)
-(add-hook 'server-visit-hook #'+doom-dashboard|server-visit)
-
-
-;;
-(defun +doom-dashboard/open (frame)
-  (interactive (list (selected-frame)))
-  (unless (run-hook-with-args-until-success '+doom-dashboard-inhibit-functions)
-    (unless +doom-dashboard-inhibit-refresh
-      (with-selected-frame frame
-        (switch-to-buffer (doom-fallback-buffer))
-        (+doom-dashboard-reload)))
-    (setq +doom-dashboard-inhibit-refresh nil)))
-
-;
 (defun +doom-dashboard-p (&optional buffer)
   "Returns t if BUFFER is the dashboard buffer."
   (eq (or buffer (current-buffer))
@@ -165,8 +169,8 @@ controlled by `+doom-dashboard-pwd-policy'."
     (dolist (win (get-buffer-window-list fallback-buffer nil t))
       (set-window-fringes win 0 0)
       (set-window-margins
-       win (max 0 (/ (- (window-total-width win) +doom-dashboard--width) 2)))))
-  t)
+       win (max 0 (/ (- (window-total-width win) +doom-dashboard--width) 2))))
+    fallback-buffer))
 
 ;; helpers
 (defun +doom-dashboard--center (len s)
@@ -196,7 +200,11 @@ controlled by `+doom-dashboard-pwd-policy'."
            (warn "`+doom-dashboard-pwd-policy' has an invalid value of '%s'"
                  policy)))))
 
-;; widgets
+
+;;
+;; Widgets
+;;
+
 (defun doom-dashboard-widget--banner ()
   (mapc (lambda (line)
           (insert (propertize (+doom-dashboard--center +doom-dashboard--width line)
