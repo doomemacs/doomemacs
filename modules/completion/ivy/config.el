@@ -89,6 +89,8 @@ immediately runs it on the current candidate (ending the ivy session)."
   :config
   ;; Dim recentf entries that are not in the current project.
   (ivy-set-display-transformer 'counsel-recentf '+ivy-recentf-transformer)
+  ;; Highlight entries that have been visited
+  (ivy-set-display-transformer 'counsel-projectile-find-file '+ivy-projectile-find-file-transformer)
 
   (require 'counsel-projectile)
   (setq counsel-find-file-ignore-regexp "\\(?:^[#.]\\)\\|\\(?:[#~]$\\)\\|\\(?:^Icon?\\)")
