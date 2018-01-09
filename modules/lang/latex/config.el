@@ -3,20 +3,20 @@
 (defvar +latex-bibtex-file ""
   "File AUCTeX (specifically RefTeX) uses to search for citations.")
 
-(defvar +latex-bibtex-pdfs-dir ""
+(defvar +latex-bibtex-dir ""
   "Where bibtex files are kept.")
 
 (defvar +latex-indent-level-item-continuation 8
   "Custom indentation level for items in enumeration-type environments")
 
 
-(def-setting! :latex-bibtex-file file
+(def-setting! :latex-bibtex-file (file)
   "Sets the default file RefTeX uses to search for citations."
-  (setq +latex-bibtex-file file))
+  `(setq +latex-bibtex-file ,file))
 
-(def-setting! :latex-bibtex-pdfs dir
-  "Sets the default file AUXTeX uses to search for PDF files associated to citations.."
-  (setq +latex-bibtex-pdfs-dir dir))
+(def-setting! :latex-bibtex-dir (dir)
+  "Sets the directory where AUCTeX will search for PDFs associated to BibTeX references."
+  `(setq +latex-bibtex-dir ,dir))
 
 
 (def-package! tex-site
@@ -115,7 +115,7 @@
   :init
   (setq reftex-plug-into-AUCTeX t
         reftex-toc-split-windows-fraction 0.3)
-  (unless (s-blank? +latex-bibtex-file)
+  (unless (string-empty-p +latex-bibtex-file)
     (setq reftex-default-bibliography (list (expand-file-name +latex-bibtex-file))))
   ; Get ReTeX working with biblatex
   ; http://tex.stackexchange.com/questions/31966/setting-up-reftex-with-biblatex-citation-commands/31992#31992
@@ -183,12 +183,13 @@
   :when (featurep! :completion ivy)
   :commands ivy-bibtex
   :config
-  (unless (s-blank? +latex-bibtex-file)
+  (setq ivy-bibtex-default-action 'ivy-bibtex-insert-key)
+  (unless (string-empty-p +latex-bibtex-file)
     (setq bibtex-completion-bibliography (list (expand-file-name +latex-bibtex-file))))
-  (unless (s-blank? +latex-bibtex-pdfs-dir)
-    (setq bibtex-completion-library-path (list +latex-bibtex-pdfs-dir)
+  (unless (string-empty-p +latex-bibtex-dir)
+    (setq bibtex-completion-library-path (list +latex-bibtex-dir)
           bibtex-completion-pdf-field "file"
-          bibtex-completion-notes-path (f-expand "notes.org" +latex-bibtex-pdfs-dir)
+          bibtex-completion-notes-path (f-expand "notes.org" +latex-bibtex-dir)
           bibtex-completion-pdf-open-function
           (lambda (fpath) (async-start-process "open-pdf" "/usr/bin/xdg-open" nil fpath)))))
 
@@ -196,12 +197,12 @@
   :when (featurep! :completion helm)
   :commands helm-bibtex
   :config
-  (unless (s-blank? +latex-bibtex-file)
+  (unless (string-empty-p +latex-bibtex-file)
     (setq bibtex-completion-bibliography (list (expand-file-name +latex-bibtex-file))))
-  (unless (s-blank? +latex-bibtex-pdfs-dir)
-    (setq bibtex-completion-library-path (list +latex-bibtex-pdfs-dir)
+  (unless (string-empty-p +latex-bibtex-dir)
+    (setq bibtex-completion-library-path (list +latex-bibtex-dir)
           bibtex-completion-pdf-field "file"
-          bibtex-completion-notes-path (f-expand "notes.org" +latex-bibtex-pdfs-dir)
+          bibtex-completion-notes-path (f-expand "notes.org" +latex-bibtex-dir)
           bibtex-completion-pdf-open-function
           (lambda (fpath) (async-start-process "open-pdf" "/usr/bin/xdg-open" nil fpath)))))
 
