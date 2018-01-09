@@ -76,7 +76,8 @@ immediately runs it on the current candidate (ending the ivy session)."
 (def-package! ivy-rich
   :after ivy
   :config
-  (dolist (cmd '(ivy-switch-buffer +ivy/switch-workspace-buffer))
+  (dolist (cmd '(ivy-switch-buffer +ivy/switch-workspace-buffer
+                 counsel-projectile-switch-to-buffer))
     (ivy-set-display-transformer cmd '+ivy-buffer-transformer)))
 
 
