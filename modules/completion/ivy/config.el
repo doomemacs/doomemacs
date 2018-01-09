@@ -86,7 +86,8 @@ immediately runs it on the current candidate (ending the ivy session)."
 (def-package! counsel
   :requires ivy
   :config
-  (ivy-set-display-transformer #'counsel-recentf #'abbreviate-file-name)
+  ;; Dim recentf entries that are not in the current project.
+  (ivy-set-display-transformer 'counsel-recentf '+ivy-recentf-transformer)
 
   (require 'counsel-projectile)
   (setq counsel-find-file-ignore-regexp "\\(?:^[#.]\\)\\|\\(?:[#~]$\\)\\|\\(?:^Icon?\\)")

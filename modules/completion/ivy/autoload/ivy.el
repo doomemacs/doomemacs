@@ -25,6 +25,15 @@
 ;;
 
 ;;;###autoload
+(defun +ivy-recentf-transformer (str)
+  "Dim recentf entries that are not in the current project of the buffer you
+started `counsel-recentf' from. Also uses `abbreviate-file-name'."
+  (let ((str (abbreviate-file-name str)))
+    (if (file-in-directory-p str (doom-project-root))
+        str
+      (propertize str 'face 'ivy-virtual))))
+
+;;;###autoload
 (defun +ivy-buffer-transformer (str)
   "Dim special buffers, buffers whose file aren't in the current buffer, and
 virtual buffers. Uses `ivy-rich' under the hood."
