@@ -40,5 +40,5 @@
 
 (after! flycheck
   (if IS-MAC
-      (flycheck-popup-tip)
+      (flycheck-popup-tip-mode)
     (flycheck-pos-tip-mode)))
