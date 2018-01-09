@@ -247,8 +247,7 @@ project."
 ALL-P (universal argument), clean them up globally."
   (interactive (list current-prefix-arg))
   (let ((buffers (doom-buried-buffers (if all-p (buffer-list))))
-        (n 0)
-        kill-buffer-query-functions)
+        (n 0))
     (mapc #'kill-buffer buffers)
     (setq n (+ n (length buffers) (doom/cleanup-processes)))
     (dolist (hook doom-cleanup-hook)
