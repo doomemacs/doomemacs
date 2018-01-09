@@ -538,8 +538,9 @@ This should be run whenever init.el or an autoload file is modified. Running
   (if (not noninteractive)
       ;; This is done in another instance to protect the current session's
       ;; state. `doom-initialize-packages' will have side effects otherwise.
-      (and (doom-packages--async-run 'doom//reload-autoloads)
-           (load doom-autoload-file))
+      (progn
+        (doom-packages--async-run 'doom//reload-autoloads)
+        (load doom-autoload-file))
     (doom-initialize-packages t)
     (let ((targets
            (file-expand-wildcards
