@@ -81,6 +81,7 @@
 (def-package! magit
   :commands (magit-status magit-blame)
   :config
+  (set! :popup "^\\*magit" :ignore)
   (set! :evil-state 'magit-status-mode 'emacs)
   (after! evil
     ;; Switch to emacs state only while in `magit-blame-mode', then back when
