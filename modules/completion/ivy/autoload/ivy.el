@@ -14,7 +14,8 @@
    (ivy-rich-switch-buffer-pad str ivy-rich-switch-buffer-name-max-length)
    'face (cond ((string-match-p "^ *\\*" str)
                 'font-lock-comment-face)
-               ((not (file-in-directory-p buffer-file-truename doom--project-root))
+               ((and buffer-file-truename
+                     (not (file-in-directory-p buffer-file-truename doom--project-root)))
                 'font-lock-doc-face)
                (t nil))))
 (advice-add 'ivy-rich-switch-buffer-buffer-name :override #'+ivy*rich-switch-buffer-buffer-name)
