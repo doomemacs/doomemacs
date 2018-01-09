@@ -121,20 +121,23 @@ ALIST supports one custom parameter: `size', which will resolve to
 `window-height' or `window-width' depending on `side'."
   `(let ((alist ,alist)
          (parameters ,parameters))
-     ,(when alist
-        `(when-let* ((size (cdr (assq 'size alist)))
-                     (side (or (cdr (assq 'side (append alist +popup-default-alist))) 'bottom)))
-           (map-delete alist 'size)
-           (map-put alist (if (memq side '(left right))
-                              'window-width
-                            'window-height)
-                    size)))
-     (prog1 (push (append (list ,condition '(+popup-buffer))
-                          alist
-                          (list (cons 'window-parameters parameters)))
-                  +popup--display-buffer-alist)
-       (when (bound-and-true-p +popup-mode)
-         (setq display-buffer-alist +popup--display-buffer-alist)))))
+     (if (eq alist :ignore)
+         (push (list ,condition nil) +popup--display-buffer-alist)
+       ,(when alist
+          `(when-let* ((size (cdr (assq 'size alist)))
+                       (side (or (cdr (assq 'side (append alist +popup-default-alist)))
+                                 'bottom)))
+             (map-delete alist 'size)
+             (map-put alist (if (memq side '(left right))
+                                'window-width
+                              'window-height)
+                      size)))
+       (prog1 (push (append (list ,condition '(+popup-buffer))
+                            alist
+                            (list (cons 'window-parameters parameters)))
+                    +popup--display-buffer-alist)))
+     (when (bound-and-true-p +popup-mode)
+       (setq display-buffer-alist +popup--display-buffer-alist))))
 
 
 ;;
