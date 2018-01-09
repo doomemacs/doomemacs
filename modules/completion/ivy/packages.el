@@ -7,4 +7,4 @@
 (package! smex)
 (package! swiper)
 (package! ivy-hydra)
-(package! ivy-rich)
+(package! ivy-rich :recipe (:fetcher github :repo "hlissner/ivy-rich"))

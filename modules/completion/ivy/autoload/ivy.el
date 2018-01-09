@@ -1,4 +1,6 @@
-;;; completion/ivy/autoload/ivy.el -*- lexical-binding: nil; -*-
+;;; completion/ivy/autoload/ivy.el -*- lexical-binding: t; -*-
+
+(defvar doom--project-root nil)
 
 (defun +ivy--is-workspace-or-other-buffer-p (buffer)
   (let ((buffer (car buffer)))
@@ -7,6 +9,16 @@
     (and (not (eq buffer (current-buffer)))
          (+workspace-contains-buffer-p buffer))))
 
+(defun +ivy*rich-switch-buffer-buffer-name (str)
+  (propertize
+   (ivy-rich-switch-buffer-pad str ivy-rich-switch-buffer-name-max-length)
+   'face (cond ((string-match-p "^ *\\*" str)
+                'font-lock-comment-face)
+               ((not (file-in-directory-p buffer-file-truename doom--project-root))
+                'font-lock-doc-face)
+               (t nil))))
+(advice-add 'ivy-rich-switch-buffer-buffer-name :override #'+ivy*rich-switch-buffer-buffer-name)
+
 
 ;;
 ;; Library
@@ -14,26 +26,15 @@
 
 ;;;###autoload
 (defun +ivy-buffer-transformer (str)
+  "Dim special buffers, buffers whose file aren't in the current buffer, and
+virtual buffers. Uses `ivy-rich' under the hood."
   (let ((buf (get-buffer str))
-        (project-root (doom-project-root)))
+        (doom--project-root (doom-project-root)))
     (require 'ivy-rich)
-    (cond (buf
-           (with-current-buffer buf
-             (let* ((indicator  (ivy-rich-switch-buffer-indicators))
-                    (size       (ivy-rich-switch-buffer-size))
-                    (buf-name   (ivy-rich-switch-buffer-buffer-name))
-                    (mode       (ivy-rich-switch-buffer-major-mode))
-                    (project    (ivy-rich-switch-buffer-project))
-                    (path       (ivy-rich-switch-buffer-path project)))
-               (cond ((string-match-p "^ ?\\*" (buffer-name buf))
-                      (setq buf-name (propertize buf-name 'face 'font-lock-comment-face)))
-                     ((and buffer-file-name
-                           (not (file-in-directory-p (buffer-file-name buf) project-root)))
-                      (setq buf-name (propertize buf-name 'face 'font-lock-doc-face))))
-               (ivy-rich-switch-buffer-format (list buf-name size indicator mode project path)))))
+    (cond (buf (ivy-rich-switch-buffer-transformer str))
           ((and (eq ivy-virtual-abbreviate 'full)
                 ivy-rich-switch-buffer-align-virtual-buffer)
-           (ivy-rich-switch-buffer-virtual-buffer))
+           (ivy-rich-switch-buffer-virtual-buffer str))
           ((eq ivy-virtual-abbreviate 'full)
            (propertize (abbreviate-file-name str) 'str 'ivy-virtual))
           (t (propertize str 'face 'ivy-virtual)))))
