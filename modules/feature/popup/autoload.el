@@ -348,7 +348,8 @@ the message buffer in a popup window."
            if (and (buffer-live-p buffer)
                    (display-buffer buffer))
            do (window-state-put state it))
-  (setq +popup--last nil))
+  (setq +popup--last nil)
+  t)
 
 ;;;###autoload
 (defun +popup/raise ()
