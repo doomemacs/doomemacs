@@ -408,3 +408,44 @@ prevent the popup(s) from messing up the UI (or vice versa)."
   "Sets aside all popups before executing the original function, usually to
 prevent the popup(s) from messing up the UI (or vice versa)."
   (save-popups! (apply orig-fn args)))
+
+
+;;
+;; Popup actions
+;;
+
+(defun +popup--dimension (side)
+  (if (memq side '(left right))
+      'window-width
+    'window-height))
+
+(defun +popup--side (side)
+  (pcase side (`bottom 'below) (`top 'above) (_ side)))
+
+(defun +popup--frame-splittable-p (frame)
+  (when (and (window--frame-usable-p frame)
+             (not (frame-parameter frame 'unsplittable)))
+    frame))
+
+(defun +popup--splittable-frame ()
+  (let ((selected-frame (selected-frame))
+        (last-non-minibuffer-frame (last-nonminibuffer-frame)))
+    (or (+popup--frame-splittable-p selected-frame)
+        (+popup--frame-splittable-p last-non-minibuffer-frame))))
+
+;;;###autoload
+(defun +popup-display-buffer (buf alist)
+  "Highly experimental!"
+  (when-let* ((frame (+popup--splittable-frame)))
+    (let* ((-side (or (alist-get 'side alist) 'bottom))
+           (side (+popup--side -side))
+           (size (alist-get (+popup--dimension -side) alist))
+           (old-size (window-size (frame-root-window frame)
+                                  (memq -side '(left right))))
+           (new-size
+            (when (numberp size)
+              (round (if (>= size 1)
+                         (- old-size size)
+                       (* (- 1 size) old-size)))))
+           (window (split-window (frame-root-window frame) new-size side)))
+      (window--display-buffer buf window 'window alist t))))
