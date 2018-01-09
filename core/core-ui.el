@@ -531,17 +531,14 @@ instead)."
   (let ((buf (current-buffer)))
     (cond ((window-dedicated-p)
            (delete-window))
-          ((eq buf (doom-fallback-buffer))
-           (bury-buffer))
+          ((or (eq buf (doom-fallback-buffer))
+               (doom-real-buffer-p buf))
+           (doom--cycle-real-buffers -1)
+           (kill-buffer buf)
+           (when (cdr (get-buffer-window-list (current-buffer) nil t))
+             (doom--cycle-real-buffers nil)))
           (t
-           (let ((real-p (doom-real-buffer-p buf)))
-             (funcall orig-fn)
-             (cond ((eq buf (current-buffer))
-                    (doom--cycle-real-buffers nil))
-                   ((and real-p (not (doom-real-buffer-p)))
-                    (doom--cycle-real-buffers -1))
-                   (t
-                    (message "Nowhere to go!"))))))))
+           (funcall orig-fn)))))
 
 
 (defun doom|init-ui ()
