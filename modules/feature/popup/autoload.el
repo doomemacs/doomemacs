@@ -43,6 +43,7 @@ and enables `+popup-buffer-mode'."
     (set-window-parameter window 'popup t)
     (set-window-parameter window 'no-other-window t)
     (set-window-parameter window 'delete-window #'+popup--destroy)
+    (set-window-dedicated-p window 'popup)
     (+popup-buffer-mode +1)
     (run-hooks '+popup-create-window-hook)))
 
@@ -122,17 +123,17 @@ and enables `+popup-buffer-mode'."
 ;;;###autoload
 (defun +popup-buffer (buffer &optional alist)
   "Open BUFFER in a popup window. ALIST describes its features."
-  (let* ((old-window (selected-window))
-         (alist (+popup--normalize-alist alist))
-         (new-window (let ((window-min-height 3))
-                       (or (display-buffer-reuse-window buffer alist)
-                           (display-buffer-in-side-window buffer alist)))))
-    (+popup--init new-window alist)
-    (let ((select (+popup-parameter 'select new-window)))
-      (if (functionp select)
-          (funcall select new-window old-window)
-        (select-window (if select new-window old-window))))
-    new-window))
+  (let ((old-window (selected-window))
+        (alist (+popup--normalize-alist alist))
+        (window-min-height 3))
+    (when-let* ((new-window (run-hook-with-args-until-success
+                             '+popup-display-buffer-actions buffer alist)))
+      (+popup--init new-window alist)
+      (let ((select (+popup-parameter 'select new-window)))
+        (if (functionp select)
+            (funcall select new-window old-window)
+          (select-window (if select new-window old-window))))
+      new-window)))
 
 ;;;###autoload
 (defun +popup-parameter (parameter &optional window)

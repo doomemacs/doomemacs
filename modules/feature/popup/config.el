@@ -66,6 +66,10 @@ a brief description of some native window parameters that Emacs uses:
   If CDR is non-nil, this window becomes invisible to `other-window' and
   `pop-to-buffer'. Doom popups sets this. The default is nil.")
 
+(defvar +popup-display-buffer-actions
+  '(display-buffer-reuse-window display-buffer-in-side-window)
+  "The functions to use to display the popup buffer.")
+
 (defvar +popup-default-alist
   '((window-height . 0.16)
     (reusable-frames . visible))
