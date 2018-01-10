@@ -80,7 +80,7 @@ the command buffer."
           (select-window execute-window)
         (user-error "Originating buffer is no longer active"))
       ;; (kill-buffer "*Command Line*")
-      (+popup/close popup)
+      (delete-window popup)
       (funcall execute-fn result)
       (setq evil-command-window-current-buffer nil)))
 
