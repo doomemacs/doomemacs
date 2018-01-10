@@ -8,6 +8,7 @@
   :mode "\\.as[cp]x$"
   :mode "\\.mustache$"
   :mode "\\.tsx$"
+  :mode "\\.vue$"
   :mode "wp-content/themes/.+/.+\\.php$"
   :config
   (add-hook 'web-mode-hook #'turn-off-smartparens-mode)
