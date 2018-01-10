@@ -108,7 +108,7 @@ compilation database is present in the project.")
 
 (def-package! irony
   :after cc-mode
-  :commands irony-install-server
+  :commands (irony-install-server irony-mode)
   :preface (setq irony-server-install-prefix (concat doom-etc-dir "irony-server/"))
   :init
   (defun +cc|init-irony-mode ()
