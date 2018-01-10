@@ -74,9 +74,10 @@ the command buffer."
     (let ((result (buffer-substring (line-beginning-position)
                                     (line-end-position)))
           (execute-fn evil-command-window-execute-fn)
+          (execute-window (get-buffer-window evil-command-window-current-buffer))
           (popup (selected-window)))
-      (select-window doom-popup-other-window)
-      (unless (equal evil-command-window-current-buffer (current-buffer))
+      (if execute-window
+          (select-window execute-window)
         (user-error "Originating buffer is no longer active"))
       ;; (kill-buffer "*Command Line*")
       (+popup/close popup)
