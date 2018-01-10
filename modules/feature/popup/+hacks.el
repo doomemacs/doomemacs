@@ -79,7 +79,7 @@ the command buffer."
       (unless (equal evil-command-window-current-buffer (current-buffer))
         (user-error "Originating buffer is no longer active"))
       ;; (kill-buffer "*Command Line*")
-      (doom/popup-close popup)
+      (+popup/close popup)
       (funcall execute-fn result)
       (setq evil-command-window-current-buffer nil)))
 
