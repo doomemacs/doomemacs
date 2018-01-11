@@ -314,6 +314,8 @@
       ;; paste from recent yank register (which isn't overwritten)
       :v  "C-p" "\"0p"
 
+      :nv "C-a" #'evil-numbers/inc-at-pt
+      :nv "C-x" #'evil-numbers/dec-at-pt
 
       ;; --- Plugin bindings ------------------------------
       ;; auto-yasnippet
