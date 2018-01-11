@@ -206,9 +206,9 @@ compilation database is present in the project.")
         ;; ...and don't auto-jump to first match before making a selection.
         rtags-jump-to-first-match nil)
 
-  (let ((bins (cl-remove-if-not #'executable-find '("rdm" "rc"))))
-    (if (/= (length bins) 2)
-        (warn "cc-mode: couldn't find %s, disabling rtags support" bins)
+  (let ((bins (cl-remove-if #'executable-find '("rdm" "rc"))))
+    (if (/= (length bins) 0)
+        (warn "cc-mode: couldn't find the rtag client and/or server programs %s, disabling rtags support" bins)
       (add-hook! (c-mode c++-mode) #'rtags-start-process-unless-running)
       (set! :lookup '(c-mode c++-mode)
         :definition #'rtags-find-symbol-at-point
