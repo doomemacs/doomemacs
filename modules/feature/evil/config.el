@@ -230,11 +230,7 @@
 
 
 (def-package! evil-numbers
-  :commands (evil-numbers/inc-at-pt evil-numbers/dec-at-pt)
-  :init
-  (map!
-   :nv "C-a" #'evil-numbers/inc-at-pt
-   :nv "C-x" #'evil-numbers/dec-at-pt))
+  :commands (evil-numbers/inc-at-pt evil-numbers/dec-at-pt))
 
 
 (def-package! evil-matchit
