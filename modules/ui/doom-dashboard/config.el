@@ -26,6 +26,7 @@ Possible values:
   nil            `default-directory' will never change")
 
 ;;
+(defvar +doom-dashboard--first t)
 (defvar +doom-dashboard--last-cwd nil)
 (defvar +doom-dashboard--width 80)
 (defvar +doom-dashboard--height 0)
@@ -95,10 +96,15 @@ Possible values:
   (add-hook 'kill-buffer-query-functions #'+doom-dashboard|reload-on-kill)
   (when (daemonp)
     (add-hook 'after-make-frame-functions #'+doom-dashboard|make-frame))
-  (if (doom-real-buffer-p)
-      (current-buffer)
-    (let ((default-directory doom-emacs-dir))
-      (+doom-dashboard/open (selected-frame) t))))
+  (cond ((doom-real-buffer-p)
+         (current-buffer))
+        (+doom-dashboard--first
+         (prog1
+             (let ((default-directory doom-emacs-dir))
+               (+doom-dashboard/open (selected-frame) t))
+           (setq +doom-dashboard--first nil)))
+        (t
+         (+doom-dashboard/open (selected-frame) t))))
 
 (defun +doom-dashboard|reload-on-kill ()
   "If this isn't a dashboard buffer, move along, but record its
