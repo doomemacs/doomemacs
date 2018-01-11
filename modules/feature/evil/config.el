@@ -85,6 +85,14 @@
 
 
   ;; --- evil hacks -------------------------
+  (defun +evil|save-buffer ()
+    "Shorter, vim-esque save messages."
+    (message "\"%s\" %dL, %dC written"
+             (file-relative-name buffer-file-truename (doom-project-root))
+             (count-lines (point-min) (point-max))
+             (buffer-size)))
+  (setq save-silently t)
+  (add-hook 'after-save-hook #'+evil|save-buffer)
   ;; Make ESC (from normal mode) the universal escaper. See `doom-escape-hook'.
   (advice-add #'evil-force-normal-state :after #'doom/escape)
   ;; Ensure buffer is in normal mode when we leave it and return to it.
