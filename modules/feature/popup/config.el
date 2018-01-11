@@ -67,7 +67,7 @@ a brief description of some native window parameters that Emacs uses:
   `pop-to-buffer'. Doom popups sets this. The default is nil.")
 
 (defvar +popup-display-buffer-actions
-  '(display-buffer-reuse-window display-buffer-in-side-window)
+  '(display-buffer-reuse-window +popup-display-buffer)
   "The functions to use to display the popup buffer.")
 
 (defvar +popup-default-alist
@@ -145,19 +145,19 @@ ALIST supports one custom parameter: `size', which will resolve to
 ;;
 
 (eval-when-compile
-  (set! :popup "^ \\*" '((slot . -1) (size . +popup-shrink-to-fit)))
-  (set! :popup "^\\*" nil '((select . t)))
-  (set! :popup "^\\*Completions" '((slot . -1)) '((transient . 0)))
+  (set! :popup "^ \\*" '((slot . 1) (vslot . -1) (size . +popup-shrink-to-fit)))
+  (set! :popup "^\\*"  '((slot . 1) (vslot . -1)) '((select . t)))
+  (set! :popup "^\\*Completions" '((slot . -1) (vslot . -2)) '((transient . 0)))
   (set! :popup "^\\*Compilation" nil '((transient . 0) (quit . t)))
   (set! :popup "^\\*\\(?:scratch\\|Messages\\)" nil '((transient)))
   (set! :popup "^\\*Help"
-    '((slot . -1) (size . 0.2))
+    '((slot . 2) (vslot . 2) (size . 0.2))
     '((select . t)))
   (set! :popup "^\\*doom \\(?:term\\|eshell\\)"
     '((size . 0.25))
     '((quit) (transient . 0)))
   (set! :popup "^\\*doom:"
-    '((size . 0.35))
+    '((size . 0.35) (side . top))
     '((select . t) (modeline . t) (quit) (transient))))
 
 (setq +popup--display-buffer-alist (eval-when-compile +popup--display-buffer-alist))

@@ -146,9 +146,9 @@ the command buffer."
 
 ;; `org'
 (after! org
-  (set! :popup "^\\*\\(?:Agenda Com\\|Org \\(?:Links\\|Export Dispatcher\\|Select\\)\\)"
-    '((slot . -1) (size . +popup-shrink-to-fit))
-    '((transient)))
+  (set! :popup "^\\*\\(?:Agenda Com\\|Calendar\\|Org \\(?:Links\\|Export Dispatcher\\|Select\\)\\)"
+    '((slot . -1) (vslot . -1) (size . +popup-shrink-to-fit))
+    '((transient . 0)))
   (set! :popup "^\\*Org Agenda" '((size . 20)) '((select . t) (transient)))
   (set! :popup "^\\*Org Src"    '((size . 0.3)) '((quit) (select . t)))
   (set! :popup "^CAPTURE.*\\.org$" '((size . 0.2)) '((quit) (select . t)))
