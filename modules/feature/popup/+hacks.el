@@ -15,7 +15,9 @@
 ;;   `save-popups!' macro).
 ;;
 ;; Keep in mind, all this black magic may break in future updates, and will need
-;; to be watched carefully for corner cases.
+;; to be watched carefully for corner cases. Also, once this file is loaded, its
+;; changes are irreversible without restarting Emacs! I don't like it either,
+;; but I will address this over time.
 ;;
 ;; Hacks should be kept in alphabetical order, named after the feature they
 ;; modify, and should follow a ;; `package-name' header line.

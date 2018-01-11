@@ -27,7 +27,7 @@ the buffer is visible, then set another timer and try again later."
                  (kill-process process))
                (kill-buffer buffer)))))))
 
-(defun +popup--init (window alist)
+(defun +popup--init (window &optional alist)
   "Initializes a popup window. Run any time a popup is opened. It sets the
 default window parameters for popup windows, clears leftover transient timers
 and enables `+popup-buffer-mode'."
@@ -35,19 +35,20 @@ and enables `+popup-buffer-mode'."
     (window-preserve-size
      window (memq (window-parameter window 'window-side)
                   '(left right)) t)
-    (when +popup--populate-wparams
+    (when (and alist +popup--populate-wparams)
       ;; Emacs 26+ will automatically map the window-parameters alist entry to
       ;; the popup window, so we need this for Emacs 25.x users
       (dolist (param (cdr (assq 'window-parameters alist)))
         (set-window-parameter window (car param) (cdr param))))
     (set-window-parameter window 'popup t)
     (set-window-parameter window 'no-other-window t)
-    (set-window-parameter window 'delete-window #'+popup--destroy)
+    (set-window-parameter window 'delete-window #'+popup--delete-window)
+    (set-window-parameter window 'delete-other-windows #'+popup/close-all)
     (set-window-dedicated-p window 'popup)
     (+popup-buffer-mode +1)
     (run-hooks '+popup-create-window-hook)))
 
-(defun +popup--destroy (window)
+(defun +popup--delete-window (window)
   "Do housekeeping before destroying a popup window.
 
 + Disables `+popup-buffer-mode' so that any hooks attached to it get a chance to
@@ -262,12 +263,10 @@ disabled."
 ;;;###autoload
 (defun +popup|kill-buffer-hook ()
   "TODO"
-  (let ((buf (current-buffer))
-        (+popup--inhibit-transient t))
-    (when (+popup-buffer-p buf)
-      (when-let* ((window (get-buffer-window buf)))
-        (when (+popup-window-p window)
-          (+popup--destroy window))))))
+  (when-let* ((window (get-buffer-window)))
+    (when (+popup-window-p window)
+      (let ((+popup--inhibit-transient t))
+        (+popup--delete-window window)))))
 
 
 ;;
@@ -335,8 +334,7 @@ This window parameter is ignored if FORCE-P is non-nil."
 the message buffer in a popup window."
   (interactive)
   (let ((+popup--inhibit-transient t))
-    (cond ((+popup-windows)
-           (+popup/close-all t))
+    (cond ((+popup-windows) (+popup/close-all t))
           ((ignore-errors (+popup/restore)))
           ((display-buffer (get-buffer "*Messages*"))))))
 
