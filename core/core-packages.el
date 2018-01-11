@@ -169,7 +169,7 @@ startup."
     ;; Also, in some edge cases involving package initialization during a
     ;; non-interactive session, `package-initialize' fails to fill `load-path'.
     (setq doom--package-load-path (directory-files package-user-dir t "^[^.]" t)
-          load-path (append doom--base-load-path doom--package-load-path))))
+          load-path (append doom--package-load-path doom--base-load-path))))
 
 (defun doom-initialize-autoloads ()
   "Ensures that `doom-autoload-file' exists and is loaded. Otherwise run
