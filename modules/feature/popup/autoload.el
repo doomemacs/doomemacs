@@ -472,7 +472,7 @@ and may be called only if no window on SIDE exists yet."
            ;; window and not make a new parent window unless needed.
            (window-combination-resize 'side)
            (window-combination-limit nil)
-           (window (split-window-no-error next-to nil on-side)))
+           (window (ignore-errors (split-window next-to nil on-side))))
       (when window
         ;; Initialize `window-side' parameter of new window to SIDE and
         ;; make that parameter persistent.
@@ -609,14 +609,14 @@ Accepts the same arguments as `display-buffer-in-side-window'. You must set
                                ;; Make new window before `next-window'.
                                (let ((next-side (if left-or-right 'above 'left))
                                      (window-combination-resize 'side))
-                                 (setq window (split-window-no-error
-                                               next-window nil next-side))))
+                                 (setq window
+                                       (ignore-errors (split-window next-window nil next-side)))))
                           (and prev-window
                                ;; Make new window after `prev-window'.
                                (let ((prev-side (if left-or-right 'below 'right))
                                      (window-combination-resize 'side))
-                                 (setq window (split-window-no-error
-                                               prev-window nil prev-side)))))
+                                 (setq window
+                                       (ignore-errors (split-window prev-window nil prev-side))))))
                       (set-window-parameter window 'window-slot slot)
                       (with-current-buffer buffer
                         (setq window--sides-shown t))
