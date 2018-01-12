@@ -218,10 +218,9 @@ This aggressively reloads core autoload files."
   "Adds MODULES to `doom-modules'. MODULES must be in mplist format.
 
   e.g '(:feature evil :lang emacs-lisp javascript java)"
-  (unless doom-modules
-    (setq doom-modules (make-hash-table :test #'equal
-                                        :size (+ 5 (length modules))
-                                        :rehash-threshold 1.0)))
+  (setq doom-modules (make-hash-table :test #'equal
+                                      :size (+ 5 (length modules))
+                                      :rehash-threshold 1.0))
   (let (mode)
     (dolist (m modules)
       (cond ((keywordp m) (setq mode m))
@@ -260,7 +259,9 @@ added, if the file exists."
 
 (defun doom-module-enabled-p (module submodule)
   "Returns t if MODULE->SUBMODULE is present in `doom-modules'."
-  (and (doom-module-get module submodule) t))
+  (and (hash-table-p doom-modules)
+       (doom-module-get module submodule)
+       t))
 
 (defun doom-module-enable (module submodule &optional flags)
   "Adds MODULE and SUBMODULE to `doom-modules', overwriting it if it exists.
@@ -399,7 +400,8 @@ The module is only loaded once. If RELOAD-P is non-nil, load it again."
       (if (not (file-directory-p module-path))
           (lwarn 'doom-modules :warning "Couldn't find module '%s %s'"
                  module submodule)
-        (doom-module-enable module submodule flags)
+        (when (hash-table-p doom-modules)
+          (doom-module-enable module submodule flags))
         `(condition-case-unless-debug ex
              (progn
                (load! init ,module-path t)
