@@ -143,6 +143,7 @@ the command buffer."
 
 ;; `neotree'
 (after! neotree
+  (advice-add #'neo-util--set-window-width :override #'ignore)
   (advice-remove #'balance-windows #'ad-Advice-balance-windows))
 
 
