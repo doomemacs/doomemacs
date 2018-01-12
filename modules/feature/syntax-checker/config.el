@@ -33,7 +33,7 @@
         ;; fallback to flycheck-popup-tip in terminal Emacs
         flycheck-pos-tip-display-errors-tty-function
         #'flycheck-popup-tip-show-popup
-        flycheck-display-errors-delay 0.5))
+        flycheck-display-errors-delay 0.7))
 
 (def-package! flycheck-popup-tip
   :commands (flycheck-popup-tip-mode flycheck-popup-tip-show-popup))
