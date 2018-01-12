@@ -3,8 +3,7 @@
 (let ((load-path doom--site-load-path))
   (require 'subr-x)
   (require 'cl-lib)
-  (require 'map)
-  (eval-when-compile (require 'use-package)))
+  (require 'map))
 
 (when (version< emacs-version "26")
   (with-no-warnings
