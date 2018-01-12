@@ -274,10 +274,13 @@ controlled by `+doom-dashboard-pwd-policy'."
                '("See agenda for this week" "calendar"
                  (call-interactively 'org-agenda-list)))
             ("Recently opened files" "file-text"
-             (call-interactively (command-remapping 'recentf-open-files)))
+             (call-interactively (or (command-remapping #'recentf-open-files)
+                                     #'recentf-open-files)))
             ("Open project" "briefcase"
-             (call-interactively (command-remapping 'projectile-switch-project)))
+             (call-interactively (or (command-remapping #'projectile-switch-project)
+                                     #'projectile-switch-project)))
             ("Jump to bookmark" "bookmark"
-             (call-interactively (command-remapping 'bookmark-jump)))
+             (call-interactively (or (command-remapping #'bookmark-jump)
+                                     #'bookmark-jump)))
             ("Edit emacs.d" "tools"
              (find-file (expand-file-name "init.el" doom-emacs-dir)))))))
