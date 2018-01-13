@@ -416,6 +416,8 @@ prevent the popup(s) from messing up the UI (or vice versa)."
 ;;
 
 (when (version< emacs-version "26")
+  (defvar window-sides-reversed nil)
+
   (defun window--sides-reverse-on-frame-p (frame)
     "Return non-nil when side windows should appear reversed on FRAME.
 This uses some heuristics to guess the user's intentions when the
