@@ -9,6 +9,7 @@
   ;; better frame for calendar
   (setq
    cfw:face-item-separator-color nil
+   cfw:render-line-breaker 'cfw:render-line-breaker-none
    cfw:fchar-junction ?╋
    cfw:fchar-vertical-line ?┃
    cfw:fchar-horizontal-line ?━
@@ -34,7 +35,10 @@
       text))
 
   (add-hook! 'cfw:calendar-mode-hook (solaire-mode +1)
-    (doom-hide-modeline-mode)))
+    (doom-hide-modeline-mode))
+  (map!
+   :map cfw:calendar-mode-map
+   "q" #'+calendar/quit))
 
 (def-package! calfw-org
   :commands (cfw:open-org-calendar
@@ -48,10 +52,9 @@
              org-gcal-post-at-point
              org-gcal-delete-at-point)
   :config
-  (load-file '+calendar-org-gcal-secret-file)
+  (load-file +calendar-org-gcal-secret-file)
   ;; hack to avoid the deferred.el error
   (defun org-gcal--notify (title mes)
     (message "org-gcal::%s - %s" title mes)))
 
 ;; (def-package! alert)
-
