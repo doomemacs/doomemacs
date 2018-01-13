@@ -9,7 +9,7 @@
   (+workspace-switch "Calendar" t)
   (if-let* ((buf (cl-find-if (lambda (it) (string-match-p "^\\*cfw" (buffer-name (window-buffer it))))
                              (doom-visible-windows))))
-      (select-window (get-buffer-window buf)) (call-interactively '+calendar-open-calendar-function))
+      (select-window (get-buffer-window buf)) (call-interactively +calendar-open-calendar-function))
   (+workspace/display))
 
 ;;;###autoload
