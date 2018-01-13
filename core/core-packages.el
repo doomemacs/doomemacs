@@ -292,7 +292,7 @@ include all modules, enabled or otherwise."
            ;; error in the plugin count in exchange for faster startup.
            (length doom--package-load-path)
            (hash-table-size doom-modules)
-           (setq doom-init-time (float-time (time-subtract after-init-time before-init-time)))))
+           (setq doom-init-time (float-time (time-subtract (current-time) before-init-time)))))
 
 
 ;;
@@ -319,7 +319,7 @@ MODULES is an malformed plist of modules to load."
          (require 'server)
          (unless (server-running-p)
            (server-start)))
-       (add-hook 'doom-post-init-hook #'doom-packages--display-benchmark t)
+       (add-hook 'doom-post-init-hook #'doom-packages--display-benchmark)
        (message "Doom modules initialized"))))
 
 (defmacro def-package! (name &rest plist)
