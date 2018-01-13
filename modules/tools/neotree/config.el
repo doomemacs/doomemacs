@@ -34,7 +34,7 @@
           "^#.*#$"))
 
   (set! :popup "^ ?\\*NeoTree"
-    `((side . ,neo-window-position) (width-width . ,neo-window-width))
+    `((side . ,neo-window-position) (size . ,neo-window-width))
     '((quit . current) (select . t)))
 
   (when (bound-and-true-p winner-mode)
