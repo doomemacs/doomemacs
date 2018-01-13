@@ -162,6 +162,17 @@
 
 (def-package! evil-embrace
   :after evil-surround
+  :commands (embrace-add-pair embrace-add-pair-regexp)
+  :init
+  (add-hook 'LaTeX-mode-hook #'embrace-LaTeX-mode-hook)
+  (add-hook 'org-mode-hook   #'embrace-org-mode-hook)
+  ;; Add extra pairs
+  (add-hook! emacs-lisp-mode
+    (embrace-add-pair ?\` "`" "'"))
+  (add-hook! (emacs-lisp-mode lisp-mode)
+    (embrace-add-pair-regexp ?f "([^ ]+ " ")" #'+evil--embrace-elisp-fn))
+  (add-hook! (org-mode LaTeX-mode)
+    (embrace-add-pair-regexp ?l "\\[a-z]+{" "}" #'+evil--embrace-latex))
   :config
   (setq evil-embrace-show-help-p nil)
   (evil-embrace-enable-evil-surround-integration)
@@ -200,17 +211,7 @@
                    :read-function #'+evil--embrace-escaped
                    :left-regexp "\\[[{(]"
                    :right-regexp "\\[]})]"))
-        (default-value 'embrace--pairs-list))
-
-  ;; Add extra pairs
-  (add-hook 'LaTeX-mode-hook #'embrace-LaTeX-mode-hook)
-  (add-hook 'org-mode-hook   #'embrace-org-mode-hook)
-  (add-hook! emacs-lisp-mode
-    (embrace-add-pair ?\` "`" "'"))
-  (add-hook! (emacs-lisp-mode lisp-mode)
-    (embrace-add-pair-regexp ?f "([^ ]+ " ")" #'+evil--embrace-elisp-fn))
-  (add-hook! (org-mode LaTeX-mode)
-    (embrace-add-pair-regexp ?l "\\[a-z]+{" "}" #'+evil--embrace-latex)))
+        (default-value 'embrace--pairs-list)))
 
 
 (def-package! evil-escape
