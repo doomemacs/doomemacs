@@ -9,3 +9,4 @@
 (package! helm-describe-modes :recipe (:fetcher github :repo "emacs-helm/helm-describe-modes"))
 (package! helm-projectile)
 (package! helm-swoop)
+(package! wgrep)

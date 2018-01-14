@@ -34,7 +34,6 @@
 (package! smart-forward)
 (package! smartparens)
 (package! undo-tree)
-(package! wgrep)
 
 ;; core-projects.el
 (package! projectile)

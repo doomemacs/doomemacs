@@ -119,3 +119,7 @@
 
 (def-package! helm-describe-modes :commands helm-describe-modes)
 
+
+(def-package! wgrep
+  :commands (wgrep-setup wgrep-change-to-wgrep-mode)
+  :config (setq wgrep-auto-save-buffer t))

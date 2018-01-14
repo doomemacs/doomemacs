@@ -226,9 +226,5 @@ extension, try to guess one."
 (def-package! smart-forward
   :commands (smart-up smart-down smart-backward smart-forward))
 
-(def-package! wgrep
-  :commands (wgrep-setup wgrep-change-to-wgrep-mode)
-  :config (setq wgrep-auto-save-buffer t))
-
 (provide 'core-editor)
 ;;; core-editor.el ends here

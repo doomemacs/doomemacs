@@ -162,3 +162,8 @@ immediately runs it on the current candidate (ending the ivy session)."
     ("t" (setq truncate-lines (not truncate-lines)))
     ("C" ivy-toggle-case-fold)
     ("o" ivy-occur :exit t)))
+
+
+(def-package! wgrep
+  :commands (wgrep-setup wgrep-change-to-wgrep-mode)
+  :config (setq wgrep-auto-save-buffer t))
