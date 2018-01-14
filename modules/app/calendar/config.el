@@ -34,6 +34,8 @@
       (cfw:tp text 'mouse-face 'highlight)
       text))
 
+  (map! :map cfw:calendar-mode-map
+        "q" #'+calendar/quit)
   (add-hook! 'cfw:calendar-mode-hook (solaire-mode +1)
     (doom-hide-modeline-mode))
   (map!
