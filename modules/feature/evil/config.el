@@ -163,9 +163,9 @@
 (def-package! evil-embrace
   :after evil-surround
   :commands (embrace-add-pair embrace-add-pair-regexp)
+  :hook (LaTeX-mode . embrace-LaTeX-mode-hook)
+  :hook (org-mode . embrace-org-mode-hook)
   :init
-  (add-hook 'LaTeX-mode-hook #'embrace-LaTeX-mode-hook)
-  (add-hook 'org-mode-hook   #'embrace-org-mode-hook)
   ;; Add extra pairs
   (add-hook! emacs-lisp-mode
     (embrace-add-pair ?\` "`" "'"))
