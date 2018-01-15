@@ -32,9 +32,6 @@ the buffer is visible, then set another timer and try again later."
 default window parameters for popup windows, clears leftover transient timers
 and enables `+popup-buffer-mode'."
   (with-selected-window window
-    (window-preserve-size
-     window (memq (window-parameter window 'window-side)
-                  '(left right)) t)
     (when (and alist +popup--populate-wparams)
       ;; Emacs 26+ will automatically map the window-parameters alist entry to
       ;; the popup window, so we need this for Emacs 25.x users
@@ -45,6 +42,10 @@ and enables `+popup-buffer-mode'."
     (set-window-parameter window 'delete-window #'+popup--delete-window)
     (set-window-parameter window 'delete-other-windows #'+popup/close-all)
     (set-window-dedicated-p window 'popup)
+    (window-preserve-size
+     window (memq (window-parameter window 'window-side)
+                  '(left right))
+     t)
     (+popup-buffer-mode +1)
     (run-hooks '+popup-create-window-hook)))
 
