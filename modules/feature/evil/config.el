@@ -156,8 +156,7 @@
 
 
 (def-package! evil-easymotion
-  :after evil-snipe
-  :commands evilem-create)
+  :commands (evilem-create evilem-default-keybindings))
 
 
 (def-package! evil-embrace

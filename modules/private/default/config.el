@@ -61,20 +61,24 @@
     (do-repeat! evil-visualstar/begin-search-backward
                 evil-ex-search-previous evil-ex-search-next))
 
-  (after! evil-easymotion
-    (let ((prefix (concat doom-leader-key " /")))
-      ;; NOTE `evilem-default-keybinds' unsets all other keys on the prefix (in
-      ;; motion state)
+  ;; lazy-load `evil-easymotion'
+  (map! :m "gs" #'+default/easymotion)
+  (defun +default/easymotion ()
+    (interactive)
+    (let ((prefix (this-command-keys)))
       (evilem-default-keybindings prefix)
-      (evilem-define (kbd (concat prefix " n")) #'evil-ex-search-next)
-      (evilem-define (kbd (concat prefix " N")) #'evil-ex-search-previous)
-      (evilem-define (kbd (concat prefix " s")) #'evil-snipe-repeat
-                     :pre-hook (save-excursion (call-interactively #'evil-snipe-s))
-                     :bind ((evil-snipe-scope 'buffer)
-                            (evil-snipe-enable-highlight)
-                            (evil-snipe-enable-incremental-highlight)))
-      (evilem-define (kbd (concat prefix " S")) #'evil-snipe-repeat-reverse
-                     :pre-hook (save-excursion (call-interactively #'evil-snipe-s))
-                     :bind ((evil-snipe-scope 'buffer)
-                            (evil-snipe-enable-highlight)
-                            (evil-snipe-enable-incremental-highlight))))))
+      (map! :map evilem-map
+            "n" (evilem-create #'evil-ex-search-next)
+            "N" (evilem-create #'evil-ex-search-previous)
+            "s" (evilem-create #'evil-snipe-repeat
+                               :pre-hook (save-excursion (call-interactively #'evil-snipe-s))
+                               :bind ((evil-snipe-scope 'buffer)
+                                      (evil-snipe-enable-highlight)
+                                      (evil-snipe-enable-incremental-highlight)))
+            "S" (evilem-create #'evil-snipe-repeat-reverse
+                               :pre-hook (save-excursion (call-interactively #'evil-snipe-s))
+                               :bind ((evil-snipe-scope 'buffer)
+                                      (evil-snipe-enable-highlight)
+                                      (evil-snipe-enable-incremental-highlight))))
+      (set-transient-map evilem-map)
+      (which-key-reload-key-sequence prefix))))
