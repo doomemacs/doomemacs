@@ -5,6 +5,7 @@
 
 (defvar +workspace--last nil)
 (defvar +workspace--index 0)
+(defvar +workspace--current-directory default-directory)
 
 ;;
 (defface +workspace-tab-selected-face '((t (:inherit 'highlight)))
@@ -504,10 +505,20 @@ Ensures the scratch (or dashboard) buffers are CDed into the project's root."
     (let ((cwd default-directory))
       (+workspace-switch (projectile-project-name) t)
       (switch-to-buffer (doom-fallback-buffer))
-      (setq default-directory cwd)
+      (setq +workspace--current-directory cwd)
       (+workspace-message
        (format "Switched to '%s' in new workspace" (+workspace-current-name))
        'success))))
+
+;;;###autoload
+(defun +workspaces|set-default-directory ()
+  "Ensures that scratch (or dashboard) buffers are CDed into the project's root
+  after switching projects."
+  (when persp-mode
+    (setq default-directory +workspace--current-directory)
+    (+workspace-message
+      (format "Switched to project root directory '%s' in new workspace" (+workspace-current-name))
+      'success)))
 
 ;;;###autoload
 (defun +workspaces|cleanup-unassociated-buffers ()

@@ -56,7 +56,7 @@ renamed.")
   (add-hook 'delete-frame-functions #'+workspaces|delete-associated-workspace-maybe)
   ;; Per-project workspaces
   (setq projectile-switch-project-action #'+workspaces|per-project)
-
+  (setq projectile-after-switch-project-hook #'+workspaces|set-default-directory)
   ;;
   (defun +workspaces|init (&optional frame)
     (unless persp-mode
