@@ -624,7 +624,7 @@ Returns \"\" to not break --no-window-system."
 ;; Bootstrap
 ;;
 
-(add-hook 'doom-init-ui-hook #'+doom-modeline|init)
+(add-hook 'doom-init-theme-hook #'+doom-modeline|init)
 (add-hook 'doom-scratch-buffer-hook #'+doom-modeline|set-special-modeline)
 (add-hook '+doom-dashboard-mode-hook #'+doom-modeline|set-project-modeline)
 
