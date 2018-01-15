@@ -52,7 +52,7 @@
 
 ;;;###autoload
 (defun +workspace-get (name &optional noerror)
-  "Returns a workspace (perspective hash table) named NAME."
+  "Returns a workspace (perspective struct) named NAME."
   (when-let* ((persp (persp-get-by-name name)))
     (cond ((+workspace-p persp) persp)
           ((not noerror) (error "'%s' is an invalid workspace" name)))))

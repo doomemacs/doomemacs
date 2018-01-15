@@ -101,9 +101,10 @@ immediately runs it on the current candidate (ending the ivy session)."
      cmd
      '(("O" +ivy-git-grep-other-window-action "open in other window"))))
 
-  ;; 1. Remove character limit from `counsel-ag-function'
-  ;; 2. This may need to be updated frequently, to meet changes upstream
-  ;; 3. counsel-ag, counsel-rg and counsel-pt all use this function
+  ;; Removes character limit from `counsel-ag-function'
+  ;;
+  ;; This may need to be updated frequently, to meet changes upstream
+  ;; counsel-ag, counsel-rg and counsel-pt all use this function
   (advice-add #'counsel-ag-function :override #'+ivy*counsel-ag-function))
 
 

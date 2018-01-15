@@ -113,9 +113,8 @@ fundamental-mode) for performance sake."
 ;; Handles whitespace (tabs/spaces) settings externally. This way projects can
 ;; specify their own formatting rules.
 (def-package! editorconfig
+  :hook (doom-init . editorconfig-mode)
   :config
-  (add-hook 'doom-init-hook #'editorconfig-mode)
-
   ;; editorconfig cannot procure the correct settings for extension-less files.
   ;; Executable scripts with a shebang line, for example. So why not use Emacs'
   ;; major mode to drop editorconfig a hint? This is accomplished by temporarily
@@ -180,8 +179,8 @@ extension, try to guess one."
 
 ;; Branching undo
 (def-package! undo-tree
+  :hook (doom-init . global-undo-tree-mode)
   :config
-  (add-hook 'doom-init-hook #'global-undo-tree-mode)
   ;; persistent undo history is known to cause undo history corruption, which
   ;; can be very destructive! So disable it!
   (setq undo-tree-auto-save-history nil

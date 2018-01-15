@@ -1,7 +1,7 @@
 ;;; feature/syntax-checker/config.el -*- lexical-binding: t; -*-
 
-;; pkg-info doesn't get autoloaded when `flycheck-version' needs it, so we do
-;; it ourselves:
+;; Since Doom doesn't use `package-initialize', pkg-info won't get autoloaded
+;; when `flycheck-version' needs it, so we need this:
 (autoload 'pkg-info-version-info "pkg-info")
 
 (def-package! flycheck

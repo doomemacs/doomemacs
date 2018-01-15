@@ -21,7 +21,7 @@
 (autoload 'goto-last-change-reverse "goto-chg")
 
 (def-package! evil
-  :init
+  :config
   (setq evil-want-C-u-scroll t
         evil-want-visual-char-semi-exclusive t
         evil-want-Y-yank-to-eol t
@@ -39,7 +39,6 @@
         ;; don't activate mark on shift-click
         shift-select-mode nil)
 
-  :config
   (add-hook 'doom-init-hook #'evil-mode)
   (evil-select-search-module 'evil-search-module 'evil-search)
 

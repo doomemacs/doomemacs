@@ -5,7 +5,8 @@
 ;; see:
 ;;   + `+eshell/open': open in current buffer
 ;;   + `+eshell/open-popup': open in a popup
-;;   + `+eshell/open-workspace': open in separate tab (requires :feature workspaces)
+;;   + `+eshell/open-workspace': open in separate tab (requires :feature
+;;     workspaces)
 
 (def-package! eshell ; built-in
   :commands eshell-mode
