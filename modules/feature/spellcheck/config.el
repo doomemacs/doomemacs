@@ -5,7 +5,13 @@
   :config
   (setq ispell-program-name (executable-find "aspell")
         ispell-list-command "--list"
-        ispell-extr-args '("--dont-tex-check-comments")))
+        ispell-extr-args '("--dont-tex-check-comments"))
+
+  (defun +spellcheck|automatically ()
+    "Spellcheck the buffer when `flyspell-mode' is enabled."
+    (when flyspell-mode
+      (flyspell-buffer)))
+  (add-hook 'flyspell-mode-hook #'+spellcheck|automatically))
 
 
 (def-package! flyspell-correct
