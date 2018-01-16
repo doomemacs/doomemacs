@@ -478,6 +478,11 @@
       ;; flyspell
       :m  "]S" #'flyspell-correct-word-generic
       :m  "[S" #'flyspell-correct-previous-word-generic
+      (:after flyspell
+        ;; Press RET on misspelled words to correct them
+        (:map flyspell-mouse-map
+          "RET" #'flyspell-correct-word-generic
+          "<mouse-1>" #'flyspell-correct-word-generic))
 
       ;; git-gutter
       :m  "]d" #'git-gutter:next-hunk
