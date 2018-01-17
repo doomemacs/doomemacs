@@ -81,6 +81,10 @@
                           (TeX-PDF-mode t) (visual-line-mode +1))
     (when (featurep! :feature spellcheck)
       (add-hook! LaTeX-mode (flyspell-mode t)))
+    ;; Set a custom modeline indicating how many words are in a region.
+    (when (featurep! :ui doom-modeline)
+      (load! +modeline)
+      (add-hook! LaTeX-mode (doom-set-modeline 'latex-main)))
     ;; Default language setting.
     (setq ispell-dictionary "english")
     ;; Use chktex to search for errors in a latex file.
