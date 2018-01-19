@@ -532,14 +532,11 @@ instead)."
     (cond ((window-dedicated-p)
            (delete-window))
           ((eq buf (doom-fallback-buffer))
-           (bury-buffer)
-           (when (cdr (get-buffer-window-list))
-             (doom--cycle-real-buffers nil)))
+           (doom--cycle-real-buffers -1))
           ((doom-real-buffer-p buf)
-           (doom--cycle-real-buffers -1)
-           (kill-buffer buf)
-           (when (cdr (get-buffer-window-list))
-             (doom--cycle-real-buffers nil)))
+           (doom--cycle-real-buffers
+            (if (delq buf (doom-real-buffer-list)) -1))
+           (kill-buffer buf))
           (t
            (funcall orig-fn)))))
 
