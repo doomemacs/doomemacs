@@ -22,9 +22,7 @@
 (def-test! dashboard-p
   (let ((fallback-buffer (doom-fallback-buffer)))
     (should (equal (buffer-name fallback-buffer) +doom-dashboard-name))
-    (should (+doom-dashboard-p fallback-buffer))
-    (with-current-buffer fallback-buffer
-      (should (+doom-dashboard-p)))))
+    (should (+doom-dashboard-p fallback-buffer))))
 
 (def-test! get-pwd
   :minor-mode projectile-mode
