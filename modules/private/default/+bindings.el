@@ -29,7 +29,7 @@
       "M-t"       #'+workspace/new
       "M-T"       #'+workspace/display
       "M-w"       #'delete-window
-      "M-W"       #'+workspace/close-workspace-or-frame
+      "M-W"       #'delete-frame
       "M-n"       #'evil-buffer-new
       "M-N"       #'make-frame
       "M-1"       (λ! (+workspace/switch-to 0))

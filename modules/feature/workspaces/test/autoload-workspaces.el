@@ -10,6 +10,7 @@
                   collect `(,bsym (get-buffer-create ,(symbol-name bsym))))))
     `(let ((persp-auto-resume-time -1)
            (persp-auto-save-opt 0))
+       (require 'persp-mode)
        (let (noninteractive)
          (persp-mode +1))
        (+workspace-switch +workspaces-main t)

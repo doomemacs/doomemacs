@@ -34,7 +34,8 @@
 ;; --- Predicates -------------------------
 
 ;;;###autoload
-(defalias #'+workspace-p #'persp-p "Return t if OBJ is a perspective hash table.")
+(defalias #'+workspace-p #'perspective-p
+  "Return t if OBJ is a perspective hash table.")
 
 ;;;###autoload
 (defun +workspace-exists-p (name)
@@ -51,48 +52,52 @@
 ;; --- Getters ----------------------------
 
 ;;;###autoload
-(defun +workspace-get (name &optional noerror)
-  "Returns a workspace (perspective struct) named NAME."
-  (when-let* ((persp (persp-get-by-name name)))
-    (cond ((+workspace-p persp) persp)
-          ((not noerror) (error "'%s' is an invalid workspace" name)))))
+(defalias '+workspace-current #'get-current-persp
+  "Return the currently active workspace.")
 
 ;;;###autoload
-(defalias '+workspace-current #'get-current-persp)
+(defun +workspace-get (name &optional noerror)
+  "Return a workspace named NAME. Unless NOERROR is non-nil, this throws an
+error if NAME doesn't exist."
+  (when-let* ((persp (persp-get-by-name name)))
+    (cond ((+workspace-p persp) persp)
+          ((not noerror)
+           (error "No workspace called '%s' was found" name)))))
 
 ;;;###autoload
 (defun +workspace-current-name ()
   "Get the name of the current workspace."
-  (safe-persp-name (get-current-persp)))
+  (safe-persp-name (+workspace-current)))
 
 ;;;###autoload
 (defun +workspace-list ()
-  "Return a list of workspace structs."
-  (mapcar #'persp-get-by-name (+workspace-list-names)))
+  "Return a list of workspace structs (satisifes `+workspace-p')."
+  (cdr (cl-loop for persp being the hash-values of *persp-hash*
+                collect persp)))
 
 ;;;###autoload
 (defun +workspace-list-names ()
-  "Return a list of workspace names (strings)."
-  (delete persp-nil-name (persp-names-current-frame-fast-ordered)))
+  "Return the list of names of open workspaces."
+  (cdr persp-names-cache))
 
 ;;;###autoload
 (defun +workspace-buffer-list (&optional persp)
-  "Return a list of buffers in PERSP (defaults to the current perspective).
+  "Return a list of buffers in PERSP.
 
 The buffer list is ordered by recency (same as `buffer-list').
 
-PERSP can be a string (name of a workspace) or a perspective hash (satisfies
-`+workspace-p').
-
-If PERSP is t, then return a list of orphaned buffers associated with no
-perspectives."
+PERSP can be a string (name of a workspace) or a workspace (satisfies
+`+workspace-p'). If nil or omitted, it defaults to the current workspace."
   (let ((persp (or persp (+workspace-current))))
-    (if (eq persp t)
-        (cl-remove-if #'persp--buffer-in-persps (buffer-list))
-      (cl-assert (+workspace-p persp) t)
-      (cl-loop for buf in (buffer-list)
-               if (+workspace-contains-buffer-p buf persp)
-               collect buf))))
+    (cl-assert (+workspace-p persp) t)
+    (cl-loop for buf in (buffer-list)
+             if (+workspace-contains-buffer-p buf persp)
+             collect buf)))
+
+;;;###autoload
+(defun +workspace-orphaned-buffer-list ()
+  "Return a list of buffers that aren't associated with any perspective."
+  (cl-remove-if #'persp--buffer-in-persps (buffer-list)))
 
 
 ;; --- Actions ----------------------------
@@ -175,7 +180,10 @@ buffers."
 
 ;;;###autoload
 (defun +workspace-switch (name &optional auto-create-p)
-  "Switch to another workspace."
+  "Switch to another workspace named NAME (a string).
+
+If AUTO-CREATE-P is non-nil, create the workspace if it doesn't exist, otherwise
+throws an error."
   (unless (+workspace-exists-p name)
     (if auto-create-p
         (+workspace-new name)
@@ -188,34 +196,10 @@ buffers."
     (persp-frame-switch name)
     (equal (+workspace-current-name) name)))
 
-;;;###autoload
-(defun +workspace-on-new-frame (frame &optional _new-frame-p)
-  "Spawn a perspective for each new frame."
-  (select-frame frame)
-  (+workspace/new)
-  (set-frame-parameter frame 'assoc-persp (+workspace-current-name)))
-
 
 ;;
 ;; Interactive commands
 ;;
-
-;;;###autoload
-(defun +workspace/load (name)
-  "Load a workspace and switch to it. If called with C-u, try to reload the
-current workspace (by name) from session files."
-  (interactive
-   (list
-    (if current-prefix-arg
-        (+workspace-current-name)
-      (completing-read
-       "Workspace to load: "
-       (persp-list-persp-names-in-file
-        (expand-file-name +workspace-data-file persp-save-dir))))))
-  (if (not (+workspace-load name))
-      (+workspace-error (format "Couldn't load workspace %s" name))
-    (+workspace/switch-to name)
-    (+workspace/display)))
 
 ;;;###autoload
 (defun +workspace/load-session (&optional name)
@@ -235,19 +219,6 @@ session."
     '(error (+workspace-error (cadr ex) t))))
 
 ;;;###autoload
-(defun +workspace/save (name)
-  "Save the current workspace. If called with C-u, autosave the current
-workspace."
-  (interactive
-   (list
-    (if current-prefix-arg
-        (+workspace-current-name)
-      (completing-read "Workspace to save: " (+workspace-list-names)))))
-  (if (+workspace-save name)
-      (+workspace-message (format "'%s' workspace saved" name) 'success)
-    (+workspace-error (format "Couldn't save workspace %s" name))))
-
-;;;###autoload
 (defun +workspace/save-session (&optional name)
   "Save the current session. If called with C-u, prompt you for the name to save
 the session as."
@@ -257,24 +228,24 @@ the session as."
       (completing-read
        "Save session as: "
        (directory-files persp-save-dir nil "^[^_.]")))))
-  (condition-case ex
+  (condition-case-unless-debug ex
       (let ((name (or name persp-auto-save-fname)))
         (if (+workspace-save-session name)
             (+workspace-message (format "Saved session as '%s'" name) 'success)
           (error "Couldn't save session as '%s'" name)))
-    '(error (+workspace-error (cadr ex) t))))
+    ('error (+workspace-error ex t))))
 
 ;;;###autoload
 (defun +workspace/rename (new-name)
   "Rename the current workspace."
   (interactive (list (read-from-minibuffer "New workspace name: ")))
-  (condition-case ex
+  (condition-case-unless-debug ex
       (let* ((current-name (+workspace-current-name))
              (old-name (+workspace-rename current-name new-name)))
         (unless old-name
           (error "Failed to rename %s" current-name))
         (+workspace-message (format "Renamed '%s'->'%s'" old-name new-name) 'success))
-    ('error (+workspace-error (cadr ex) t))))
+    ('error (+workspace-error ex t))))
 
 ;;;###autoload
 (defun +workspace/delete (name)
@@ -288,7 +259,7 @@ workspace to delete."
                            (+workspace-list-names)
                            nil nil current-name)
         current-name))))
-  (condition-case ex
+  (condition-case-unless-debug ex
       (+workspace-message
        (let ((workspaces (length (+workspace-list-names))))
          (cond ((> workspaces 1)
@@ -306,45 +277,37 @@ workspace to delete."
                 (switch-to-buffer (doom-fallback-buffer))
                 (format "No workspaces detected! Auto-creating '%s' workspace" +workspaces-main))))
        'success)
-    ('error (+workspace-error (cadr ex) t))))
+    ('error (+workspace-error ex t))))
 
 ;;;###autoload
 (defun +workspace/kill-session ()
-  "Delete the current session, clears all workspaces, windows and buffers."
+  "Delete the current session, all workspaces, windows and their buffers."
   (interactive)
   (unless (cl-every #'+workspace-delete (+workspace-list-names))
     (+workspace-error "Could not clear session"))
   (+workspace-switch +workspaces-main t)
   (doom/kill-all-buffers)
-  (let ((fallback-buf (doom-fallback-buffer)))
-    (switch-to-buffer fallback-buf)
-    (doom/cleanup-session)))
-
-;;;###autoload
-(defun +workspace/kill-session-and-quit ()
-  "Forgets current session and quits."
-  (interactive)
-  (+workspace/kill-session)
-  (save-buffers-kill-terminal))
+  (switch-to-buffer (doom-fallback-buffer))
+  (doom/cleanup-session))
 
 ;;;###autoload
 (defun +workspace/new (&optional name clone-p)
-  "Create a new workspace named NAME. If OVERWRITE-P is non-nil, clear any
-pre-existing workspace."
+  "Create a new workspace named NAME. If CLONE-P is non-nil, clone the current
+workspace, otherwise the new workspace is blank."
   (interactive "iP")
   (unless name
     (setq name (format "#%s" (+workspace--generate-id))))
-  (condition-case ex
-      (let ((exists-p (+workspace-exists-p name)))
-        (if exists-p
-            (error "%s already exists" name)
-          (+workspace-switch name t)
-          (if clone-p
+  (condition-case-unless-debug ex
+      (if (+workspace-exists-p name)
+          (error "%s already exists" name)
+        (+workspace-switch name t)
+        (if clone-p
+            (let ((persp (+workspace-get name)))
               (dolist (window (window-list))
-                (persp-add-buffer (window-buffer window) persp nil))
-            (delete-other-windows-internal)
-            (switch-to-buffer (doom-fallback-buffer)))
-          (+workspace/display)))
+                (persp-add-buffer (window-buffer window) persp nil)))
+          (delete-other-windows-internal)
+          (switch-to-buffer (doom-fallback-buffer)))
+        (+workspace/display))
     ('error (+workspace-error (cadr ex) t))))
 
 ;;;###autoload
@@ -390,7 +353,7 @@ end of the workspace list."
   (let ((current-name (+workspace-current-name)))
     (if (equal current-name persp-nil-name)
         (+workspace-switch +workspaces-main t)
-      (condition-case ex
+      (condition-case-unless-debug ex
           (let* ((persps (+workspace-list-names))
                  (perspc (length persps))
                  (index (cl-position current-name persps)))
@@ -410,8 +373,9 @@ end of the workspace list."
 
 ;;;###autoload
 (defun +workspace/close-window-or-workspace ()
-  "Close the selected window. If it's the last window in the workspace, close
-the workspace and move to the next."
+  "Close the selected window. If it's the last window in the workspace, either
+close the workspace (as well as its associated frame, if one exists) and move to
+the next."
   (interactive)
   (let ((delete-window-fn (if (featurep 'evil) #'evil-window-delete #'delete-window)))
     (if (window-dedicated-p)
@@ -420,21 +384,14 @@ the workspace and move to the next."
         (cond ((or (+workspace--protected-p current-persp-name)
                    (cdr (doom-visible-windows)))
                (funcall delete-window-fn))
-              ((cdr (+workspace-list-names))
-               (+workspace/delete current-persp-name)))))))
 
-;;;###autoload
-(defun +workspace/close-workspace-or-frame ()
-  "Close the current workspace. If it's the last, delete the frame instead."
-  (interactive)
-  (let ((frames (length (frame-list)))
-        (workspaces (length (+workspace-list-names))))
-    (cond ((> workspaces 1)
-           (call-interactively #'+workspace/delete))
-          ((> frames 1)
-           (call-interactively #'delete-frame))
-          (t
-           (error "Can't delete last frame.")))))
+              ((cdr (+workspace-list-names))
+               (let ((frame-persp (frame-parameter nil 'workspace)))
+                 (if (string= frame-persp (+workspace-current-name))
+                     (delete-frame)
+                   (+workspace/delete current-persp-name))))
+
+              (t (+workspace-error "Can't delete last workspace" t)))))))
 
 
 ;;
@@ -455,7 +412,7 @@ the workspace and move to the next."
                                   '+workspace-tab-face)))
      " ")))
 
-(defun +workspace--message-body (message &optional  type)
+(defun +workspace--message-body (message &optional type)
   (concat (+workspace--tabline)
           (propertize " | " 'face 'font-lock-comment-face)
           (propertize (format "%s" message)
@@ -473,7 +430,8 @@ the workspace and move to the next."
 ;;;###autoload
 (defun +workspace-error (message &optional noerror)
   "Show an 'elegant' error in the echo area next to a listing of workspaces."
-  (funcall (if noerror #'message #'error) "%s" (+workspace--message-body message 'error)))
+  (funcall (if noerror #'message #'error)
+           "%s" (+workspace--message-body message 'error)))
 
 ;;;###autoload
 (defun +workspace/display ()
@@ -487,34 +445,56 @@ the workspace and move to the next."
 ;;
 
 ;;;###autoload
-(defun +workspaces|delete-associated-workspace-maybe (frame)
-  "Delete workspace associated with current frame IF it has no real buffers."
+(defun +workspaces|delete-associated-workspace (frame)
+  "Delete workspace associated with current frame.
+A workspace gets associated with a frame when a new frame is interactively
+created."
   (when persp-mode
-    (let ((frame-persp (frame-parameter frame 'assoc-persp)))
-      (when (and (equal frame-persp (+workspace-current-name))
-                 (not (equal frame-persp +workspaces-main)))
+    (let ((frame-persp (frame-parameter frame 'workspace)))
+      (when (string= frame-persp (+workspace-current-name))
         (+workspace/delete frame-persp)))))
 
 ;;;###autoload
-(defun +workspaces|per-project ()
-  "Open a new workspace when switching to another project.
-
-Ensures the scratch (or dashboard) buffers are CDed into the project's root."
+(defun +workspaces|cleanup-unassociated-buffers ()
+  "Kill leftover buffers that are unassociated with any perspective."
   (when persp-mode
-    (let ((cwd default-directory))
-      (+workspace-switch (projectile-project-name) t)
-      (switch-to-buffer (doom-fallback-buffer))
-      (setq default-directory cwd)
-      (+workspace-message
-       (format "Switched to '%s' in new workspace" (+workspace-current-name))
-       'success))))
+    (cl-loop for buf in (buffer-list)
+             unless (persp--buffer-in-persps buf)
+             if (kill-buffer buf)
+             sum 1)))
 
 ;;;###autoload
-(defun +workspaces|cleanup-unassociated-buffers ()
-  (cl-loop for buf in (buffer-list)
-           unless (persp--buffer-in-persps buf)
-           if (kill-buffer buf)
-           sum 1))
+(defun +workspaces|associate-frame (frame &optional _new-frame-p)
+  "Create a blank, new perspective and associate it with FRAME."
+  (when persp-mode
+    (with-selected-frame frame
+      (+workspace/new)
+      (set-frame-parameter frame 'workspace (+workspace-current-name))
+      (+workspace/display))))
+
+(defvar +workspaces--project-dir nil)
+;;;###autoload
+(defun +workspaces|set-project-action ()
+  "A `projectile-switch-project-action' that sets the project directory for
+`+workspaces|switch-to-project'."
+  (setq +workspaces--project-dir default-directory))
+
+;;;###autoload
+(defun +workspaces|switch-to-project ()
+  "Creates a workspace dedicated to a new project. Should be hooked to
+`projectile-after-switch-project-hook'."
+  (when (and persp-mode +workspaces--project-dir)
+    (unwind-protect
+        (let* ((persp
+                (let ((default-directory +workspaces--project-dir))
+                  (+workspace-new (projectile-project-name))))
+               (new-name (persp-name persp)))
+          (+workspace-switch new-name)
+          (switch-to-buffer (doom-fallback-buffer))
+          (+workspace-message
+           (format "Switched to '%s' in new workspace" new-name)
+           'success))
+      (setq +workspaces--project-dir nil))))
 
 
 ;;
@@ -523,10 +503,10 @@ Ensures the scratch (or dashboard) buffers are CDed into the project's root."
 
 ;;;###autoload
 (defun +workspaces*autosave-real-buffers (orig-fn &rest args)
-    "Don't autosave if no real buffers are open."
-    (when (doom-real-buffer-list)
-      (apply orig-fn args))
-    t)
+  "Don't autosave if no real buffers are open."
+  (when (doom-real-buffer-list)
+    (apply orig-fn args))
+  t)
 
 ;;;###autoload
 (defun +workspaces*switch-project-by-name (orig-fn &rest args)

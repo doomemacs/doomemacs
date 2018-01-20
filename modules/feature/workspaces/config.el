@@ -22,13 +22,39 @@ renamed.")
 ;;
 
 (def-package! persp-mode
+  :defer t
+  :init
+  (defun +workspaces|init (&optional frame)
+    (require 'persp-mode)
+    (unless persp-mode
+      (persp-mode +1))
+    (unless noninteractive
+      (let (persp-before-switch-functions persp-activated-functions)
+        ;; The default perspective persp-mode makes (defined by
+        ;; `persp-nil-name') is special and doesn't actually represent a real
+        ;; persp object, so buffers can't really be assigned to it, among other
+        ;; quirks. We create a *real* main workspace to fill this role.
+        (unless (persp-get-by-name +workspaces-main)
+          (persp-add-new +workspaces-main))
+        ;; Switch to it if we aren't auto-loading the last session
+        (when (and (equal (safe-persp-name (get-current-persp)) persp-nil-name)
+                   (= persp-auto-resume-time -1))
+          (persp-frame-switch +workspaces-main)))
+      ;; The warnings buffer gets swallowed by creating `+workspaces-main', so
+      ;; we display it manually, if it exists (fix #319).
+      (when-let* ((warnings (get-buffer "*Warnings*")))
+        (save-excursion
+          (display-buffer-in-side-window
+           warnings '((window-height . shrink-window-if-larger-than-buffer)))))))
+
+  (add-hook 'doom-init-hook #'+workspaces|init)
+  (add-hook 'after-make-frame-functions #'+workspaces|init)
   :config
   (setq persp-autokill-buffer-on-remove 'kill-weak
-        persp-nil-name "nil"
         persp-nil-hidden t
         persp-auto-save-fname "autosave"
         persp-save-dir (concat doom-etc-dir "workspaces/")
-        persp-set-last-persp-for-new-frames nil
+        persp-set-last-persp-for-new-frames t
         persp-switch-to-added-buffer nil
         persp-remove-buffers-from-nil-persp-behaviour nil
         ;; Don't restore winconf on new frames
@@ -39,53 +65,35 @@ renamed.")
         ;; auto-save on kill
         persp-auto-save-opt (if noninteractive 0 1))
 
-  ;; Bootstrap
-  (add-hook 'doom-init-hook #'+workspaces|init)
-  (add-hook 'after-make-frame-functions #'+workspaces|init)
   (add-hook 'persp-mode-hook #'+workspaces|init-persp-mode)
-  ;; only auto-save when real buffers are present
-  (advice-add #'persp-asave-on-exit :around #'+workspaces*autosave-real-buffers)
   ;; Modify `delete-window' to close the workspace if used on the last window
   (define-key persp-mode-map [remap delete-window] #'+workspace/close-window-or-workspace)
+  (define-key persp-mode-map [remap evil-delete-window] #'+workspace/close-window-or-workspace)
+  ;; only auto-save when real buffers are present
+  (advice-add #'persp-asave-on-exit :around #'+workspaces*autosave-real-buffers)
   ;; For `doom/cleanup-session'
   (add-hook 'doom-cleanup-hook #'+workspaces|cleanup-unassociated-buffers)
 
   ;; per-frame workspaces
   (setq persp-init-new-frame-behaviour-override nil
-        persp-interactive-init-frame-behaviour-override #'+workspace-on-new-frame)
-  (add-hook 'delete-frame-functions #'+workspaces|delete-associated-workspace-maybe)
-  ;; Per-project workspaces
-  (setq projectile-switch-project-action #'+workspaces|per-project)
+        persp-interactive-init-frame-behaviour-override #'+workspaces|associate-frame)
+  ;; delete frame associated with workspace, if it exists
+  (add-hook 'delete-frame-functions #'+workspaces|delete-associated-workspace)
+
+  ;; per-project workspaces
+  (setq projectile-switch-project-action #'+workspaces|set-project-action)
+  (add-hook 'projectile-after-switch-project-hook #'+workspaces|switch-to-project)
 
   ;;
-  (defun +workspaces|init (&optional frame)
-    (unless persp-mode
-      (persp-mode +1))
-    (unless noninteractive
-      ;; The default perspective persp-mode makes (defined by
-      ;; `persp-nil-name') is special and doesn't actually represent a real
-      ;; persp object, so buffers can't really be assigned to it, among other
-      ;; quirks. We create a *real* main workspace to fill this role.
-      (unless (persp-with-name-exists-p +workspaces-main)
-        (persp-add-new +workspaces-main))
-      ;; Switch to it if we aren't auto-loading the last session
-      (when (and (equal (safe-persp-name (get-current-persp)) persp-nil-name)
-                 (= persp-auto-resume-time -1))
-        (persp-frame-switch +workspaces-main (or frame (selected-frame))))
-      ;; The warnings buffer gets swallowed by creating `+workspaces-main', so
-      ;; we display it manually, if it exists (fix #319).
-      (when-let* ((warnings (get-buffer "*Warnings*")))
-        (save-excursion
-          (display-buffer-in-side-window
-           warnings '((window-height . shrink-window-if-larger-than-buffer)))))))
-
   (defun +workspaces|init-persp-mode ()
-    ;; Remap `buffer-list' to current workspace's buffers in `doom-buffer-list'
     (cond (persp-mode
-           ;; Ensure `persp-kill-buffer-query-function' is last in kill-buffer-query-functions
+           ;; Ensure `persp-kill-buffer-query-function' is last in
+           ;; kill-buffer-query-functions
            (remove-hook 'kill-buffer-query-functions 'persp-kill-buffer-query-function)
            (add-hook 'kill-buffer-query-functions 'persp-kill-buffer-query-function t)
 
+           ;; Remap `buffer-list' to current workspace's buffers in
+           ;; `doom-buffer-list'
            (advice-add #'switch-to-buffer :after #'+workspaces*auto-add-buffer)
            (advice-add #'display-buffer   :after #'+workspaces*auto-add-buffer)
            (advice-add #'doom-buffer-list :override #'+workspace-buffer-list))
