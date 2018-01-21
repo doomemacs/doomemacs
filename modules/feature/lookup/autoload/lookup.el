@@ -14,7 +14,8 @@
                       "Search on: "
                       (mapcar #'car +lookup-provider-url-alist)
                       nil t)))
-          (map-put +lookup--last-provider key provider)))))
+          (map-put +lookup--last-provider key provider)
+          provider))))
 
 (defun +lookup--symbol-or-region (&optional initial)
   (cond (initial)
