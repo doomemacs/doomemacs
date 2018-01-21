@@ -88,7 +88,7 @@
   (interactive)
   (ignore-errors
     (call-interactively
-     (cond ((eq major-mode 'magit-status-mode)
+     (cond ((derived-mode-p 'magit-mode)
             #'magit-section-toggle)
            ((+evil-fold-p)
             #'+evil:fold-toggle)
