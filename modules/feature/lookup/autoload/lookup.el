@@ -216,7 +216,7 @@ for the provider."
                                                   (region-end)))
              (read-string "Search for: " (thing-at-point 'symbol t)))
          (+lookup--online-provider current-prefix-arg)))
-  (condition-case _ex
+  (condition-case ex
       (let ((url (cdr (assoc provider +lookup-provider-url-alist))))
         (unless url
           (error "'%s' is an invalid search engine" provider))
@@ -227,7 +227,8 @@ for the provider."
           (user-error "The search query is empty"))
         (funcall +lookup-open-url-fn (format url (url-encode-url search))))
     ('error
-     (map-delete +lookup--last-provider major-mode))))
+     (map-delete +lookup--last-provider major-mode)
+     (message "Failed: %s" ex))))
 
 ;;;###autoload
 (defun +lookup/online-select ()
