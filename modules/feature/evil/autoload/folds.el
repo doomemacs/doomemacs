@@ -88,7 +88,7 @@
   (interactive)
   (ignore-errors
     (call-interactively
-     (cond ((string-prefix-p "magit" (symbol-name major-mode))
+     (cond ((derived-mode-p 'magit-mode)
             #'magit-section-toggle)
            ((+evil-fold-p)
             #'+evil:fold-toggle)
