@@ -109,7 +109,6 @@ the command buffer."
          (goto-char (cdr location))
          (recenter)
          (setq origin (selected-window))))
-      (+popup/close)
       (select-window origin)))
 
   ;; Help buffers use `pop-to-window' to decide where to open followed links,
@@ -139,6 +138,18 @@ the command buffer."
     (lambda (fun file)
       (require 'find-func)
       (doom--switch-from-popup (find-function-search-for-symbol fun 'defface file)))))
+
+
+;; `helpful'
+(after! helpful
+  (defun +popup*helpful--navigate (orig-fn &rest args)
+    (let (origin)
+      (save-popups!
+       (apply orig-fn args)
+       (setq origin (selected-window))
+       (recenter))
+      (select-window origin)))
+  (advice-add #'helpful--navigate :around #'+popup*helpful--navigate))
 
 
 ;; `neotree'
