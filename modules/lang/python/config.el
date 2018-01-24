@@ -24,8 +24,9 @@ is loaded.")
   :config
   (add-hook! 'python-mode-hook #'(flycheck-mode highlight-numbers-mode))
 
-  (set! :repl 'python-mode #'+python/repl)
+  (set! :company-backend 'python-mode '(company-anaconda))
   (set! :electric 'python-mode :chars '(?:))
+  (set! :repl 'python-mode #'+python/repl)
 
   (when (executable-find "ipython")
     (setq python-shell-interpreter "ipython"
@@ -87,7 +88,6 @@ environment variables."
   :when (featurep! :completion company)
   :after anaconda-mode
   :config
-  (set! :company-backend 'python-mode '(company-anaconda))
   (set! :lookup 'python-mode
     :definition #'anaconda-mode-find-definitions
     :references #'anaconda-mode-find-references
