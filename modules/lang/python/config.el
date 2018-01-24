@@ -80,7 +80,10 @@ environment variables."
   :config
   (add-hook 'anaconda-mode-hook #'anaconda-eldoc-mode)
   (set! :popup "^\\*anaconda-mode" nil '((select)))
-  (map! :map anaconda-mode-map :m "gd" #'anaconda-mode-find-definitions)
+  (set! :lookup 'python-mode
+    :definition #'anaconda-mode-find-definitions
+    :references #'anaconda-mode-find-references
+    :documentation #'anaconda-mode-show-doc)
   (advice-add #'anaconda-mode-doc-buffer :after #'doom*anaconda-mode-doc-buffer))
 
 
@@ -88,10 +91,6 @@ environment variables."
   :when (featurep! :completion company)
   :after anaconda-mode
   :config
-  (set! :lookup 'python-mode
-    :definition #'anaconda-mode-find-definitions
-    :references #'anaconda-mode-find-references
-    :documentation #'anaconda-mode-show-doc)
   (map! :map python-mode-map
         :localleader
         :prefix "f"
