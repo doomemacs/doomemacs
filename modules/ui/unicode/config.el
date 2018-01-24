@@ -15,5 +15,5 @@
 
   (add-hook! 'after-init-hook
     (if initial-window-system
-        (+unicode|init-fonts)
+        (+unicode|init-fonts (selected-frame))
       (add-hook 'after-make-frame-functions #'+unicode|init-fonts))))
