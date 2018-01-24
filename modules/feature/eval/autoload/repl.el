@@ -3,37 +3,41 @@
 (defvar +eval-repl-buffer nil
   "The buffer of the last open repl.")
 
-(defun +eval--ensure-in-repl-buffer (&optional command)
-  (or (eq (current-buffer) +eval-repl-buffer)
-      (progn
-        (if (and +eval-repl-buffer (buffer-live-p +eval-repl-buffer))
-            (if-let* ((win (get-buffer-window +eval-repl-buffer)))
-                (select-window win)
-              (pop-to-buffer +eval-repl-buffer))
-          (when command
-            (let ((repl-buffer (save-window-excursion (call-interactively command))))
-              (unless (bufferp repl-buffer)
-                (error "REPL command didn't return a buffer"))
-              (with-current-buffer repl-buffer (+eval-repl-mode +1))
-              (setq +eval-repl-buffer repl-buffer)
-              (pop-to-buffer repl-buffer))))
-        (when (eq (current-buffer) +eval-repl-buffer)
-          (goto-char (if (and (derived-mode-p 'comint-mode)
-                              (cdr comint-last-prompt))
-                         (cdr comint-last-prompt)
-                       (point-max)))
-          t))))
+(defun +eval--ensure-in-repl-buffer (&optional command same-window-p)
+  (cond ((eq (current-buffer) +eval-repl-buffer))
+        ((and +eval-repl-buffer
+              (buffer-live-p +eval-repl-buffer))
+         (when-let* ((win (get-buffer-window +eval-repl-buffer)))
+           (select-window win)))
+        (command
+         (let ((repl-buffer (save-window-excursion (call-interactively command))))
+           (unless (bufferp repl-buffer)
+             (error "REPL command didn't return a buffer"))
+           (with-current-buffer repl-buffer (+eval-repl-mode +1))
+           (setq +eval-repl-buffer repl-buffer))))
+  (unless (eq (current-buffer) +eval-repl-buffer)
+    (funcall (if same-window-p #'switch-to-buffer #'pop-to-buffer)
+             +eval-repl-buffer))
+  (with-current-buffer +eval-repl-buffer
+    (goto-char (if (and (derived-mode-p 'comint-mode)
+                        (cdr comint-last-prompt))
+                   (cdr comint-last-prompt)
+                 (point-max)))
+    t))
 
 ;;;###autoload
-(defun +eval/open-repl ()
+(defun +eval/open-repl (&optional same-window-p)
   "Opens (or reopens) the REPL associated with the current major-mode and place
-the cursor at the prompt."
-  (interactive)
-  (when-let* ((command (cdr (assq major-mode +eval-repls))))
-    (when (+eval--ensure-in-repl-buffer command)
-      (when (bound-and-true-p evil-mode)
-        (call-interactively #'evil-append-line))
-      t)))
+the cursor at the prompt.
+
+If SAME-WINDOW-P is non-nil, open REPL in current window."
+  (interactive "P")
+  (if-let* ((command (cdr (assq major-mode +eval-repls))))
+      (when (+eval--ensure-in-repl-buffer command same-window-p)
+        (when (bound-and-true-p evil-mode)
+          (call-interactively #'evil-append-line))
+        t)
+    (user-error "No REPL is defined for %s" major-mode)))
 
 ;;;###autoload
 (defun +eval/send-region-to-repl (beg end &optional auto-execute-p)
