@@ -114,7 +114,7 @@ the cursor."
          (insert
           (format "%s [[./%s][%s]] "
                   (+org-attach--icon filename)
-                  (file-relative-name filename buffer-file-name)
+                  (file-relative-name filename (file-name-directory buffer-file-name))
                   (file-name-nondirectory (directory-file-name filename)))))))
 
 ;;;###autoload
