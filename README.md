@@ -1,10 +1,10 @@
-![Release tag](https://img.shields.io/github/tag/hlissner/doom-emacs.svg?label=release&style=flat-square)
-[![Master Build Status](https://img.shields.io/travis/hlissner/doom-emacs/master.svg?label=master&style=flat-square)](https://travis-ci.org/hlissner/doom-emacs)
-[![Develop Build Status](https://img.shields.io/travis/hlissner/doom-emacs/develop.svg?label=develop&style=flat-square)](https://travis-ci.org/hlissner/doom-emacs)
-[![MIT](https://img.shields.io/badge/license-MIT-green.svg?style=flat-square)](./LICENSE)
-[![Chat on Discord](https://discordapp.com/api/guilds/406534637242810369/embed.png)](https://discord.gg/bcZ6P3y)
-
-[![Main screenshot](/../screenshots/main.png)](/../../tree/screenshots)
+<p align="center">
+  <img src="https://img.shields.io/github/tag/hlissner/doom-emacs.svg?label=release&style=flat-square" alt="Current release" />
+  <a href="https://travis-ci.org/hlissner/doom-emacs"><img src="https://img.shields.io/travis/hlissner/doom-emacs/master.svg?label=master&style=flat-square" alt="build status (master)" /></a>
+  <a href="https://travis-ci.org/hlissner/doom-emacs"><img src="https://img.shields.io/travis/hlissner/doom-emacs/develop.svg?label=develop&style=flat-square" alt="build status (develop)" /></a>
+  <a href="https://discord.gg/bcZ6P3y"><img src="https://img.shields.io/badge/discord-chat-blue.svg?style=flat-square&logo=discord&colorB=%237289DA" alt="Chat on discord" /></a>
+  <img src="https://github.com/hlissner/doom-emacs/raw/screenshots/main.png" alt="Main screenshot" />
+</p>
 
 - - -
 
