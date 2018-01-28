@@ -76,7 +76,8 @@ renamed.")
 
   ;; per-frame workspaces
   (setq persp-init-new-frame-behaviour-override nil
-        persp-interactive-init-frame-behaviour-override #'+workspaces|associate-frame)
+        persp-interactive-init-frame-behaviour-override #'+workspaces|associate-frame
+        persp-emacsclient-init-frame-behaviour-override #'+workspaces|associate-frame)
   ;; delete frame associated with workspace, if it exists
   (add-hook 'delete-frame-functions #'+workspaces|delete-associated-workspace)
 
