@@ -215,7 +215,7 @@
           :desc "Toggle profiler"       :n  "p" #'doom/toggle-profiler)
 
         (:desc "insert" :prefix "i"
-          :desc "From kill-ring"        :nv "y" #'counsel-yank-pop
+          :desc "From kill-ring"        :nv "y" #'yank-pop
           :desc "From snippet"          :nv "s" #'yas-insert-snippet)
 
         (:desc "notes" :prefix "n"
