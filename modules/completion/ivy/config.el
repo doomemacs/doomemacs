@@ -47,19 +47,9 @@ immediately runs it on the current candidate (ending the ivy session)."
   (after! magit     (setq magit-completing-read-function #'ivy-completing-read))
   (after! yasnippet (push #'+ivy-yas-prompt yas-prompt-functions))
 
-  (map! [remap apropos]                   #'counsel-apropos
-        [remap describe-face]             #'counsel-describe-face
-        [remap find-file]                 #'counsel-find-file
-        [remap switch-to-buffer]          #'ivy-switch-buffer
-        [remap persp-switch-to-buffer]    #'+ivy/switch-workspace-buffer
-        [remap recentf-open-files]        #'counsel-recentf
-        [remap imenu]                     #'counsel-imenu
-        [remap bookmark-jump]             #'counsel-bookmark
-        [remap projectile-find-file]      #'counsel-projectile-find-file
-        [remap imenu-anywhere]            #'ivy-imenu-anywhere
-        [remap execute-extended-command]  #'counsel-M-x
-        [remap describe-function]         #'counsel-describe-function
-        [remap describe-variable]         #'counsel-describe-variable)
+  (map! [remap switch-to-buffer]       #'ivy-switch-buffer
+        [remap persp-switch-to-buffer] #'+ivy/switch-workspace-buffer
+        [remap imenu-anywhere]         #'ivy-imenu-anywhere)
 
   (nconc ivy-sort-functions-alist
          '((persp-kill-buffer   . nil)
@@ -85,15 +75,29 @@ immediately runs it on the current candidate (ending the ivy session)."
 
 
 (def-package! counsel
-  :requires ivy
+  :commands (counsel-ag counsel-rg counsel-pt counsel-apropos counsel-bookmark
+             counsel-describe-function counsel-describe-variable
+             counsel-describe-face counsel-M-x counsel-file-jump
+             counsel-find-file counsel-find-library counsel-info-lookup-symbol
+             counsel-imenu counsel-recentf counsel-yank-pop)
+  :init
+  (map! [remap apropos]                  #'counsel-apropos
+        [remap bookmark-jump]            #'counsel-bookmark
+        [remap describe-face]            #'counsel-describe-face
+        [remap describe-function]        #'counsel-describe-function
+        [remap describe-variable]        #'counsel-describe-variable
+        [remap execute-extended-command] #'counsel-M-x
+        [remap find-file]                #'counsel-find-file
+        [remap find-library]             #'counsel-find-library
+        [remap yank-pop]                 #'counsel-yank-pop
+        [remap info-lookup-symbol]       #'counsel-info-lookup-symbol
+        [remap imenu]                    #'counsel-imenu
+        [remap recentf-open-files]       #'counsel-recentf)
   :config
-  ;; Dim recentf entries that are not in the current project.
-  (ivy-set-display-transformer 'counsel-recentf '+ivy-recentf-transformer)
-  ;; Highlight entries that have been visited
-  (ivy-set-display-transformer 'counsel-projectile-find-file '+ivy-projectile-find-file-transformer)
-
-  (require 'counsel-projectile)
   (setq counsel-find-file-ignore-regexp "\\(?:^[#.]\\)\\|\\(?:[#~]$\\)\\|\\(?:^Icon?\\)")
+
+  ;; Dim recentf entries that are not in the current project.
+  (ivy-set-display-transformer #'counsel-recentf #'+ivy-recentf-transformer)
 
   ;; Configure `counsel-rg', `counsel-ag' & `counsel-pt'
   (dolist (cmd '(counsel-ag counsel-rg counsel-pt))
@@ -106,6 +110,21 @@ immediately runs it on the current candidate (ending the ivy session)."
   ;; This may need to be updated frequently, to meet changes upstream
   ;; counsel-ag, counsel-rg and counsel-pt all use this function
   (advice-add #'counsel-ag-function :override #'+ivy*counsel-ag-function))
+
+
+(def-package! counsel-projectile
+  :commands (counsel-projectile-find-file counsel-projectile-find-dir counsel-projectile-switch-to-buffer
+             counsel-projectile-grep counsel-projectile-ag)
+  :init
+  (map! [remap projectile-find-file]        #'counsel-projectile-find-file
+        [remap projectile-find-dir]         #'counsel-projectile-find-dir
+        [remap projectile-switch-to-buffer] #'counsel-projectile-switch-to-buffer
+        [remap projectile-grep]             #'counsel-projectile-grep
+        [remap projectile-ag]               #'counsel-projectile-ag
+        [remap projectile-switch-project]   #'counsel-projectile-switch-project)
+  :config
+  ;; Highlight entries that have been visited
+  (ivy-set-display-transformer #'counsel-projectile-find-file #'+ivy-projectile-find-file-transformer))
 
 
 ;; Used by `counsel-M-x'
