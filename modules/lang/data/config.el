@@ -18,6 +18,8 @@
 (def-package! json-mode
   :mode "\\.js\\(on\\|[hl]int\\(rc\\)?\\)$"
   :config
+  (when (featurep! :feature syntax-checker)
+    (add-hook 'json-mode-hook #'flycheck-mode))
   (set! :electric 'json-mode :chars '(?\n ?: ?{ ?})))
 
 
