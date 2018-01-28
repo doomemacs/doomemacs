@@ -17,9 +17,6 @@ while they run.")
   "A list of functions which take no arguments. If any of them return non-nil,
 dashboard reloading is inhibited.")
 
-(defvar +doom-dashboard-initial-pwd doom-emacs-dir
-  "The initial `default-directory' for the dashboard at startup.")
-
 (defvar +doom-dashboard-pwd-policy 'last-project
   "The policy to use when setting the `default-directory' in the dashboard.
 
@@ -33,7 +30,6 @@ Possible values:
   nil            `default-directory' will never change")
 
 ;;
-(defvar +doom-dashboard--first t)
 (defvar +doom-dashboard--last-cwd nil)
 (defvar +doom-dashboard--width 80)
 (defvar +doom-dashboard--height 0)
@@ -208,10 +204,7 @@ controlled by `+doom-dashboard-pwd-policy'."
 (defun +doom-dashboard--get-pwd ()
   (let ((lastcwd +doom-dashboard--last-cwd)
         (policy +doom-dashboard-pwd-policy))
-    (cond (+doom-dashboard--first
-           (setq +doom-dashboard--first nil)
-           +doom-dashboard-initial-pwd)
-          ((null policy)
+    (cond ((null policy)
            default-directory)
           ((stringp policy)
            (expand-file-name policy lastcwd))
