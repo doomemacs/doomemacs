@@ -151,7 +151,8 @@ project (which may be different across perspective)."
 
 (defun +doom-dashboard-initial-buffer ()
   "Returns buffer to display on startup. Designed for `initial-buffer-choice'."
-  (if (doom-real-buffer-p)
+  (if (or (doom-real-buffer-p)
+          (derived-mode-p 'dired-mode))
       (current-buffer)
     (doom-fallback-buffer)))
 
