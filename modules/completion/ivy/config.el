@@ -114,13 +114,14 @@ immediately runs it on the current candidate (ending the ivy session)."
 
 (def-package! counsel-projectile
   :commands (counsel-projectile-find-file counsel-projectile-find-dir counsel-projectile-switch-to-buffer
-             counsel-projectile-grep counsel-projectile-ag)
+             counsel-projectile-grep counsel-projectile-ag counsel-projectile-switch-project)
   :init
   (map! [remap projectile-find-file]        #'counsel-projectile-find-file
         [remap projectile-find-dir]         #'counsel-projectile-find-dir
         [remap projectile-switch-to-buffer] #'counsel-projectile-switch-to-buffer
         [remap projectile-grep]             #'counsel-projectile-grep
-        [remap projectile-ag]               #'counsel-projectile-ag)
+        [remap projectile-ag]               #'counsel-projectile-ag
+        [remap projectile-switch-project]   #'counsel-projectile-switch-project)
   :config
   ;; Highlight entries that have been visited
   (ivy-set-display-transformer #'counsel-projectile-find-file #'+ivy-projectile-find-file-transformer))

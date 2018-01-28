@@ -480,6 +480,19 @@ created."
   (setq +workspaces--project-dir default-directory))
 
 ;;;###autoload
+(defun +workspaces|switch-counsel-project-action (project)
+  "A `counsel-projectile-switch-project-action' that creates a dedicated
+workspace for a new project, before prompting to open a file."
+  (when persp-mode
+    (let ((+workspaces--project-dir project)
+          (inhibit-message t))
+      (+workspaces|switch-to-project)))
+  (counsel-projectile-switch-project-action project)
+  (+workspace-message
+   (format "Switched to '%s' in new workspace" new-name)
+   'success))
+
+;;;###autoload
 (defun +workspaces|switch-to-project ()
   "Creates a workspace dedicated to a new project. Should be hooked to
 `projectile-after-switch-project-hook'."
@@ -491,6 +504,9 @@ created."
                (new-name (persp-name persp)))
           (+workspace-switch new-name)
           (switch-to-buffer (doom-fallback-buffer))
+          (call-interactively
+           (or (command-remapping #'projectile-find-file)
+               #'projectile-find-file))
           (+workspace-message
            (format "Switched to '%s' in new workspace" new-name)
            'success))

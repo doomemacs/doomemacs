@@ -81,7 +81,8 @@ renamed.")
   (add-hook 'delete-frame-functions #'+workspaces|delete-associated-workspace)
 
   ;; per-project workspaces
-  (setq projectile-switch-project-action #'+workspaces|set-project-action)
+  (setq projectile-switch-project-action #'+workspaces|set-project-action
+        counsel-projectile-switch-project-action #'+workspaces|switch-counsel-project-action)
   (add-hook 'projectile-after-switch-project-hook #'+workspaces|switch-to-project)
 
   ;;
