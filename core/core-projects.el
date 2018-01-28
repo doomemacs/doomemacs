@@ -1,7 +1,6 @@
 ;;; core-projects.el -*- lexical-binding: t; -*-
 
 (def-package! projectile
-  :hook (doom-init . projectile-mode)
   :init
   (setq projectile-cache-file (concat doom-cache-dir "projectile.cache")
         projectile-enable-caching (not noninteractive)
@@ -12,6 +11,7 @@
         projectile-globally-ignored-file-suffixes '(".elc" ".pyc" ".o"))
 
   :config
+  (projectile-mode +1)
   (add-hook 'dired-before-readin-hook #'projectile-track-known-projects-find-file-hook)
   (add-hook 'find-file-hook #'doom|autoload-project-mode)
 
