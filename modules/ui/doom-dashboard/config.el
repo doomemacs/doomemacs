@@ -94,8 +94,7 @@ Possible values:
   (add-hook 'persp-created-functions #'+doom-dashboard|record-project)
   (add-hook 'persp-activated-functions #'+doom-dashboard|detect-project)
   (add-hook 'persp-before-switch-functions #'+doom-dashboard|record-project)
-  (+doom-dashboard-reload t)
-  (+doom-dashboard|resize))
+  (+doom-dashboard-reload t))
 
 (defun +doom-dashboard|reload-on-kill ()
   "A `kill-buffer-query-functions' hook. If this isn't a dashboard buffer, move
