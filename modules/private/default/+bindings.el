@@ -231,6 +231,7 @@
           :desc "REPL"                  :n  "r" #'+eval/open-repl
                                         :v  "r" #'+eval:repl
           :desc "Neotree"               :n  "n" #'+neotree/toggle
+          :desc "Imenu sidebar"         :nv "i" #'imenu-list-minor-mode
           :desc "Terminal"              :n  "t" #'+term/open-popup
           :desc "Terminal in project"   :n  "T" #'+term/open-popup-in-project
 
