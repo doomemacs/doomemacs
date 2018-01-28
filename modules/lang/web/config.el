@@ -29,10 +29,6 @@
 ;; Frameworks
 ;;
 
-(def-project-mode! +web-angularjs-mode
-  :modes (+javascript-npm-mode)
-  :when (+javascript-npm-dep-p 'angular))
-
 (def-project-mode! +web-jekyll-mode
   :modes (web-mode js-mode coffee-mode css-mode haml-mode pug-mode)
   :files (and "config.yml" (or "_layouts/" "_posts/"))
@@ -44,10 +40,15 @@
   :modes (php-mode web-mode css-mode haml-mode pug-mode)
   :files (or "wp-config.php" "wp-config-sample.php"))
 
-(def-project-mode! +web-react-mode
-  :modes (+javascript-npm-mode)
-  :when (+javascript-npm-dep-p 'react))
+(when (featurep! :lang javascript)
+  (def-project-mode! +web-angularjs-mode
+    :modes (+javascript-npm-mode)
+    :when (+javascript-npm-dep-p 'angular))
 
-(def-project-mode! +web-phaser-mode
-  :modes (+javascript-npm-mode)
-  :when (+javascript-npm-dep-p '(or phaser phaser-ce)))
+  (def-project-mode! +web-react-mode
+    :modes (+javascript-npm-mode)
+    :when (+javascript-npm-dep-p 'react))
+
+  (def-project-mode! +web-phaser-mode
+    :modes (+javascript-npm-mode)
+    :when (+javascript-npm-dep-p '(or phaser phaser-ce))))
