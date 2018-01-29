@@ -12,8 +12,7 @@ If neither is available, run all tests in all enabled modules."
       (let (targets)
         ;; ensure DOOM is initialized
         (let (noninteractive)
-          (load (expand-file-name "core/core.el" user-emacs-directory) nil t)
-          (doom-initialize-modules nil))
+          (load (expand-file-name "core/core.el" user-emacs-directory) nil t))
         ;; collect targets
         (cond ((and argv (equal (car argv) "--"))
                (cl-loop for arg in (cdr argv)
@@ -37,8 +36,8 @@ If neither is available, run all tests in all enabled modules."
                  (error "Expected a list of cons, got: %s" modules)))
 
               (t
-               (let ((noninteractive t)
-                     doom-modules)
+               (let (noninteractive)
+                 (clrhash doom-modules)
                  (load (expand-file-name "init.test.el" user-emacs-directory) nil t)
                  (setq modules (doom-module-pairs)
                        targets (list (expand-file-name "test/" doom-core-dir))))))
