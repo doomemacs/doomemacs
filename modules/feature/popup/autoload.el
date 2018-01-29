@@ -403,7 +403,7 @@ prevent the popup(s) from messing up the UI (or vice versa)."
 ;;;###autoload
 (defun +popup*close (&rest _)
   "TODO"
-  (+popup/close))
+  (+popup/close nil t))
 
 ;;;###autoload
 (defun +popup*save (orig-fn &rest args)
