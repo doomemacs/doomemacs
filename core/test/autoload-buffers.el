@@ -14,6 +14,7 @@
               (window-min-width 0)
               persp-mode
               ,@buffers)
+         (delete-other-windows)
          ,@body
          (let (kill-buffer-query-functions kill-buffer-hook)
            (mapc #'kill-buffer (buffer-list)))))))
