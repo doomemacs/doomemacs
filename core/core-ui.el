@@ -449,7 +449,6 @@ character that looks like a space that `whitespace-mode' won't affect.")
        (lwarn 'doom-ui :error
               "Unexpected error while initializing fonts: %s"
               (error-message-string ex)))))
-
   (run-hooks 'doom-init-theme-hook))
 
 ;; Getting themes to remain consistent across GUI Emacs, terminal Emacs and

@@ -1,4 +1,4 @@
-;;; config.el -*- lexical-binding: t; -*-
+;;; feature/popup/config.el -*- lexical-binding: t; -*-
 
 (defconst +popup-window-parameters
   '(transient quit select modeline popup)
