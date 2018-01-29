@@ -7,19 +7,23 @@
 ;; `doom-project-p'
 (def-test! project-p
   :minor-mode projectile-mode
-  (let ((default-directory doom-emacs-dir))
+  (let ((buffer-file-name (expand-file-name "init.el" doom-emacs-dir))
+        (default-directory doom-emacs-dir))
     (should (doom-project-p)))
-  (let ((default-directory (expand-file-name "~")))
+  (let ((buffer-file-name (expand-file-name "test" "~"))
+        (default-directory (expand-file-name "~")))
     (should-not (doom-project-p))))
 
-;; `doom-project-p'
+;; `doom-project-root'
 (def-test! project-root
   :minor-mode projectile-mode
   ;; Should resolve to project root
-  (let ((default-directory doom-core-dir))
+  (let ((buffer-file-name (expand-file-name "core.el" doom-core-dir))
+        (default-directory doom-core-dir))
     (should (equal (doom-project-root) doom-emacs-dir)))
   ;; Should resolve to `default-directory' if not a project
-  (let ((default-directory (expand-file-name "~")))
+  (let ((buffer-file-name (expand-file-name "test" "~"))
+        (default-directory (expand-file-name "~")))
     (should (equal (doom-project-root) default-directory))))
 
 ;; `doom-project-expand'
