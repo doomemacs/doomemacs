@@ -10,6 +10,7 @@
   :mode "\\.tsx$"
   :mode "\\.vue$"
   :mode "wp-content/themes/.+/.+\\.php$"
+  :mode "templates/.+\\.php$"
   :config
   (add-hook 'web-mode-hook #'turn-off-smartparens-mode)
   (set! :company-backend 'web-mode '(company-web-html company-yasnippet))
