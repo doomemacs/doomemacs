@@ -13,9 +13,12 @@
   :config
   (add-hook! php-mode #'(ac-php-core-eldoc-setup flycheck-mode))
 
+  ;; Disable HTML compatibility in php-mode. `web-mode' has superior support for
+  ;; php+html. Use the .phtml
   (setq php-template-compatibility nil)
 
   (set! :repl 'php-mode #'php-boris)
+  (set! :lookup 'php-mode :documentation #'php-search-documentation)
 
   ;; ac-php provides custom autocompletion, php-extras provides autocompletion
   ;; for built-in libraries
@@ -82,10 +85,7 @@
 (def-package! company-php
   :when (featurep! :completion company)
   :commands (company-ac-php-backend ac-php-remake-tags ac-php-remake-tags-all ac-php-core-eldoc-setup)
-  :config
-  (unless (executable-find "phpctags")
-    (warn "php-mode: phpctags isn't installed, auto-completion will be gimped"))
-  (setq ac-php-tags-path (concat doom-cache-dir "ac-php/")))
+  :config (setq ac-php-tags-path (concat doom-cache-dir "ac-php/")))
 
 
 ;;
