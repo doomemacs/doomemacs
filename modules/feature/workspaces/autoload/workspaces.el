@@ -437,7 +437,7 @@ the next."
 (defun +workspace/display ()
   "Display a list of workspaces (like tabs) in the echo area."
   (interactive)
-  (message "%s" (+workspace--tabline)))
+  (minibuffer-message "%s" (+workspace--tabline)))
 
 
 ;;
