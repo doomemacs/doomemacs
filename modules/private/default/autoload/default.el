@@ -11,7 +11,7 @@
 ;;;###autoload
 (defmacro +default--def-browse-in! (name dir)
   (let ((prefix (cdr (doom-module-from-path (or load-file-name byte-compile-current-file)))))
-    `(defun ,(intern (format "%s/browse-%s" prefix name)) ()
+    `(defun ,(intern (format "+%s/browse-%s" prefix name)) ()
        (interactive)
        (doom-project-browse ,dir))))
 
