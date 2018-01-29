@@ -1,7 +1,8 @@
 ;;; core/autoload/buffers.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
-(defvar doom-real-buffer-functions '()
+(defvar doom-real-buffer-functions
+  '(doom-dired-buffer-p)
   "A list of predicate functions run to determine if a buffer is real, unlike
 `doom-unreal-buffer-functions'. They are passed one argument: the buffer to be
 tested.
@@ -53,6 +54,11 @@ If no project is active, return all buffers."
                  if (projectile-project-buffer-p buf project-root)
                  collect buf)
       buffers)))
+
+;;;###autoload
+(defun doom-dired-buffer-p (buf)
+  "Returns non-nil if BUF is a dired buffer."
+  (with-current-buffer buf (derived-mode-p 'dired-mode)))
 
 ;;;###autoload
 (defun doom-special-buffer-p (buf)
