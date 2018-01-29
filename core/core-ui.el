@@ -309,7 +309,7 @@ DEFAULT is non-nil, set the default mode-line for all buffers."
 ;; The native border "consumes" a pixel of the fringe on righter-most splits,
 ;; `window-divider' does not. Available since Emacs 25.1.
 (setq-default window-divider-default-places t
-              window-divider-default-bottom-width 0
+              window-divider-default-bottom-width 1
               window-divider-default-right-width 1)
 (add-hook 'doom-init-ui-hook #'window-divider-mode)
 
