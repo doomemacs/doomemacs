@@ -55,9 +55,9 @@
   (advice-add #'load-theme :after #'+evil*init-cursors)
 
   ;; default modes
-  (dolist (mode '(tabulated-list-mode view-mode comint-mode term-mode calendar-mode Man-mode grep-mode))
+  (dolist (mode '(tabulated-list-mode view-mode comint-mode term-mode calendar-mode Man-mode))
     (evil-set-initial-state mode 'emacs))
-  (dolist (mode '(help-mode debugger-mode))
+  (dolist (mode '(help-mode debugger-mode grep-mode))
     (evil-set-initial-state mode 'normal))
 
 
