@@ -94,6 +94,8 @@ immediately runs it on the current candidate (ending the ivy session)."
         [remap imenu]                    #'counsel-imenu
         [remap recentf-open-files]       #'counsel-recentf)
   :config
+  (set! :popup "^\\*ivy-occur" '((size . 0.35)) '((transient . 0) (quit)))
+
   (setq counsel-find-file-ignore-regexp "\\(?:^[#.]\\)\\|\\(?:[#~]$\\)\\|\\(?:^Icon?\\)")
 
   ;; Dim recentf entries that are not in the current project.
