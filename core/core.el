@@ -116,8 +116,7 @@ melodramatic ex-vimmer disappointed with the text-editor status quo."
         inhibit-startup-echo-area-message user-login-name
         inhibit-default-init t
         initial-major-mode 'fundamental-mode
-        initial-scratch-message nil
-        mode-line-format nil))
+        initial-scratch-message nil))
 
 ;; Custom init hooks; clearer than `after-init-hook', `emacs-startup-hook', and
 ;; `window-setup-hook'.
