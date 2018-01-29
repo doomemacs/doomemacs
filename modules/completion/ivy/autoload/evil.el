@@ -47,6 +47,7 @@
                          (file-relative-name directory project-root)))))
          (default-directory directory))
     (setq +ivy--file-last-search query)
+    (require 'counsel)
     (pcase engine
       ('ag
        (let ((args (concat
