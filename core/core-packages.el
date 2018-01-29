@@ -292,29 +292,28 @@ include all modules, enabled or otherwise."
   "Bootstrap DOOM Emacs.
 
 MODULES is an malformed plist of modules to load."
-  `(let (file-name-handler-alist)
-     ,@(let (init-forms config-forms mode)
-         (dolist (m modules)
-           (cond ((keywordp m) (setq mode m))
-                 ((not mode)   (error "No namespace specified in `doom!' for %s" m))
-                 (t
-                  (let* ((module    mode)
-                         (submodule (if (listp m) (car m) m))
-                         (flags     (if (listp m) (cdr m)))
-                         (path      (doom-module-path module submodule)))
-                    (doom-module-enable module submodule flags)
-                    (push `(load! init   ,path t) init-forms)
-                    (unless noninteractive
-                      (push `(load! config ,path t) config-forms))))))
-         (nconc (nreverse init-forms)
-                (nreverse config-forms)))
-     (setq doom-modules ',doom-modules)
-     (unless noninteractive
-       (when (display-graphic-p)
-         (require 'server)
-         (unless (server-running-p)
-           (server-start)))
-       (add-hook 'doom-post-init-hook #'doom-packages--display-benchmark))))
+  (let (init-forms config-forms mode)
+    (dolist (m modules)
+      (cond ((keywordp m) (setq mode m))
+            ((not mode)   (error "No namespace specified in `doom!' for %s" m))
+            (t
+             (let* ((module    mode)
+                    (submodule (if (listp m) (car m) m))
+                    (flags     (if (listp m) (cdr m)))
+                    (path      (doom-module-path module submodule)))
+               (doom-module-enable module submodule flags)
+               (push `(load! init   ,path t) init-forms)
+               (unless noninteractive
+                 (push `(load! config ,path t) config-forms))))))
+    `(let (file-name-handler-alist)
+       (setq doom-modules ',doom-modules)
+       ,@(nconc (nreverse init-forms) (nreverse config-forms))
+       (unless noninteractive
+         (when (display-graphic-p)
+           (require 'server)
+           (unless (server-running-p)
+             (server-start)))
+         (add-hook 'doom-post-init-hook #'doom-packages--display-benchmark)))))
 
 (defmacro def-package! (name &rest plist)
   "A thin wrapper around `use-package'."
