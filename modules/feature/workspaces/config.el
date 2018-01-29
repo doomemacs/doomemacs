@@ -24,31 +24,37 @@ renamed.")
 (def-package! persp-mode
   :defer t
   :init
-  (defun +workspaces|init (&optional frame)
+  (defun +workspaces|init ()
     (require 'persp-mode)
-    (unless persp-mode
-      (persp-mode +1))
+    (persp-mode +1)
+    (+workspaces|init-frame (selected-frame))
+    (add-hook 'after-make-frame-functions #'+workspaces|init-frame))
+
+  (defun +workspaces|init-frame (frame)
     (unless noninteractive
       (let (persp-before-switch-functions persp-activated-functions)
-        ;; The default perspective persp-mode makes (defined by
-        ;; `persp-nil-name') is special and doesn't actually represent a real
-        ;; persp object, so buffers can't really be assigned to it, among other
-        ;; quirks. We create a *real* main workspace to fill this role.
-        (unless (persp-get-by-name +workspaces-main)
-          (persp-add-new +workspaces-main))
-        ;; Switch to it if we aren't auto-loading the last session
-        (when (and (equal (safe-persp-name (get-current-persp)) persp-nil-name)
-                   (= persp-auto-resume-time -1))
-          (persp-frame-switch +workspaces-main)))
-      ;; The warnings buffer gets swallowed by creating `+workspaces-main', so
-      ;; we display it manually, if it exists (fix #319).
-      (when-let* ((warnings (get-buffer "*Warnings*")))
-        (save-excursion
-          (display-buffer-in-side-window
-           warnings '((window-height . shrink-window-if-larger-than-buffer)))))))
+        (with-selected-frame frame
+          ;; The default perspective persp-mode makes (defined by
+          ;; `persp-nil-name') is special and doesn't actually represent a real
+          ;; persp object, so buffers can't really be assigned to it, among other
+          ;; quirks. We create a *real* main workspace to fill this role.
+          (unless (persp-get-by-name +workspaces-main)
+            (persp-add-new +workspaces-main))
+          ;; Switch to it if we aren't auto-loading the last session
+          (when (and (string= (safe-persp-name (get-current-persp)) persp-nil-name)
+                     (= persp-auto-resume-time -1))
+            (persp-frame-switch +workspaces-main frame))
+          ;; We want to know where we are in every new daemon frame
+          (when (daemonp)
+            (run-at-time 0.2 nil #'+workspace/display))
+          ;; The warnings buffer gets swallowed by creating `+workspaces-main', so
+          ;; we display it manually, if it exists (fix #319).
+          (when-let* ((warnings (get-buffer "*Warnings*")))
+            (save-excursion
+              (display-buffer-in-side-window
+               warnings '((window-height . shrink-window-if-larger-than-buffer)))))))))
 
   (add-hook 'doom-init-hook #'+workspaces|init)
-  (add-hook 'after-make-frame-functions #'+workspaces|init)
   :config
   (setq persp-autokill-buffer-on-remove 'kill-weak
         persp-nil-hidden t

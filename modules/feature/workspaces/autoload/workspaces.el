@@ -468,8 +468,10 @@ created."
   "Create a blank, new perspective and associate it with FRAME."
   (when persp-mode
     (with-selected-frame frame
-      (+workspace/new)
-      (set-frame-parameter frame 'workspace (+workspace-current-name))
+      (if (not (persp-frame-list-without-daemon))
+          (+workspace-switch +workspaces-main t)
+        (+workspace/new)
+        (set-frame-parameter frame 'workspace (+workspace-current-name)))
       (+workspace/display))))
 
 (defvar +workspaces--project-dir nil)
