@@ -4,10 +4,7 @@
   :config
   (defun +doom-modeline-eldoc (text)
     (concat (when (display-graphic-p)
-              (+doom-modeline--make-xpm
-               (face-background 'doom-modeline-eldoc-bar nil t)
-               +doom-modeline-height
-               +doom-modeline-bar-width))
+              (+doom-modeline--make-xpm 'doom-modeline-eldoc-bar))
             text))
 
   ;; Show eldoc in the mode-line with `eval-expression'
@@ -176,12 +173,13 @@ active."
   (eq (selected-window) +doom-modeline-current-window))
 
 ;; Inspired from `powerline's `pl/make-xpm'.
-(def-memoized! +doom-modeline--make-xpm (color height width)
+(defun +doom-modeline--make-xpm (face &optional height width)
   "Create an XPM bitmap."
   (propertize
    " " 'display
-   (let ((data (make-list height (make-list width 1)))
-         (color (or color "None")))
+   (let ((data (make-list (or height +doom-modeline-height)
+                          (make-list (or width +doom-modeline-bar-width) 1)))
+         (color (or (face-background face nil t) "None")))
      (create-image
       (concat
        (format "/* XPM */\nstatic char * percent[] = {\n\"%i %i 2 1\",\n\". c %s\",\n\"  c %s\","
@@ -557,17 +555,15 @@ with `evil-ex-substitute', and/or 4. The number of active `iedit' regions."
              (image-size (image-get-display-property) :pixels)
            (format "  %dx%d  " width height)))))
 
+(defvar +doom-modeline--bar-active nil)
+(defvar +doom-modeline--bar-inactive nil)
 (def-modeline-segment! bar
   "The bar regulates the height of the mode-line in GUI Emacs.
 Returns \"\" to not break --no-window-system."
-  (if (display-graphic-p)
-      (+doom-modeline--make-xpm
-       (face-background (if (active)
-                            'doom-modeline-bar
-                          'doom-modeline-inactive-bar)
-                        nil t)
-       +doom-modeline-height
-       +doom-modeline-bar-width)
+  (if window-system
+      (if (active)
+          +doom-modeline--bar-active
+        +doom-modeline--bar-inactive)
     ""))
 
 
@@ -601,6 +597,10 @@ Returns \"\" to not break --no-window-system."
 ;;
 
 (defun +doom-modeline|init ()
+  ;; Create bars
+  (setq +doom-modeline--bar-active (+doom-modeline--make-xpm 'doom-modeline-bar)
+        +doom-modeline--bar-inactive (+doom-modeline--make-xpm 'doom-modeline-inactive-bar))
+
   ;; These buffers are already created and don't get modelines. For the love of
   ;; Emacs, someone give the man a modeline!
   (dolist (bname '("*scratch*" "*Messages*"))
