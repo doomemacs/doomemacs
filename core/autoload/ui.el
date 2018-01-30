@@ -32,8 +32,8 @@ Uses `display-line-numbers' in Emacs 26+ and `nlinum-mode' everywhere else."
            (setq display-line-numbers next))
           ((featurep 'nlinum)
            (pcase next
-             (`t (nlinum-relative-mode -1) (nlinum-mode +1))
-             (`relative (nlinum-relative-mode +1))
+             (`t (nlinum-relative-off) (nlinum-mode +1))
+             (`relative (nlinum-relative-on))
              (`nil (nlinum-mode -1))))
           (t
            (error "No line number plugin detected")))))
