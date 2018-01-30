@@ -496,6 +496,11 @@ loads MODULE SUBMODULE's packages.el file."
     (while compilation-in-progress
       (sit-for 1))))
 
+(defun doom-packages--files (dir pattern)
+  "Like `directory-files-recursively', but traverses symlinks."
+  (cl-letf (((symbol-function #'file-symlink-p) #'ignore))
+    (directory-files-recursively dir pattern)))
+
 (defun doom//reload-load-path ()
   "Reload `load-path' and recompile files (if necessary).
 
@@ -546,7 +551,7 @@ This should be run whenever init.el or an autoload file is modified. Running
           (when (file-exists-p auto-file)
             (push auto-file targets))
           (when (file-directory-p auto-dir)
-            (dolist (file (directory-files-recursively auto-dir "\\.el$"))
+            (dolist (file (doom-packages--files auto-dir "\\.el$"))
               (push file targets)))))
       (when (file-exists-p doom-autoload-file)
         (delete-file doom-autoload-file)
@@ -617,11 +622,11 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
               (cl-loop for target
                        in (or modules (append (list doom-core-dir) (doom-module-paths)))
                        if (equal target "core")
-                        nconc (nreverse (directory-files-recursively doom-core-dir "\\.el$"))
+                        nconc (nreverse (doom-packages--files doom-core-dir "\\.el$"))
                        else if (file-directory-p target)
-                        nconc (nreverse (directory-files-recursively target "\\.el$"))
+                        nconc (nreverse (doom-packages--files target "\\.el$"))
                        else if (file-directory-p (expand-file-name target doom-modules-dir))
-                        nconc (nreverse (directory-files-recursively (expand-file-name target doom-modules-dir) "\\.el$"))
+                        nconc (nreverse (doom-packages--files (expand-file-name target doom-modules-dir) "\\.el$"))
                        else if (file-exists-p target)
                         collect target
                        finally do (setq argv nil)))
@@ -691,9 +696,10 @@ If RECOMPILE-P is non-nil, only recompile out-of-date core files."
   "Delete all the compiled elc files in your Emacs configuration. This excludes
 compiled packages.'"
   (interactive)
-  (let ((targets (append (list (expand-file-name "init.elc" doom-emacs-dir))
-                         (directory-files-recursively doom-core-dir "\\.elc$")
-                         (directory-files-recursively doom-modules-dir "\\.elc$")))
+  (let ((targets
+         (append (list (expand-file-name "init.elc" doom-emacs-dir))
+                 (doom-packages--files doom-core-dir "\\.elc$")
+                 (doom-packages--files doom-modules-dir "\\.elc$")))
         (default-directory doom-emacs-dir))
     (unless (cl-loop for path in targets
                      if (file-exists-p path)
