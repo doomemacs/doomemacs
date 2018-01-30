@@ -319,6 +319,7 @@
       :nv "C-a" #'evil-numbers/inc-at-pt
       :nv "C-x" #'evil-numbers/dec-at-pt
 
+
       ;; --- Plugin bindings ------------------------------
       ;; auto-yasnippet
       :i  [C-tab] #'aya-expand
@@ -606,6 +607,11 @@
       :nv "K"  #'smart-up
       :m  "g]" #'smart-forward
       :m  "g[" #'smart-backward
+
+      ;; swiper
+      (:after swiper
+        (:map swiper-map
+          [backtab]  #'+ivy/wgrep-occur))
 
       ;; undo-tree -- undo/redo for visual regions
       :v "C-u" #'undo-tree-undo
