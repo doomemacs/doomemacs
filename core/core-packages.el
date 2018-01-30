@@ -302,13 +302,13 @@ MODULES is an malformed plist of modules to load."
                     (flags     (if (listp m) (cdr m)))
                     (path      (doom-module-path module submodule)))
                (doom-module-enable module submodule flags)
-               (push `(load! init   ,path t) init-forms)
-               (unless noninteractive
-                 (push `(load! config ,path t) config-forms))))))
+               (push `(load! init ,path t) init-forms)
+               (push `(load! config ,path t) config-forms)))))
     `(let (file-name-handler-alist)
        (setq doom-modules ',doom-modules)
-       ,@(nconc (nreverse init-forms) (nreverse config-forms))
+       ,@(nreverse init-forms)
        (unless noninteractive
+         ,@(nreverse config-forms)
          (when (display-graphic-p)
            (require 'server)
            (unless (server-running-p)
