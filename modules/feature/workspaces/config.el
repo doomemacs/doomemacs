@@ -25,12 +25,14 @@ renamed.")
   :defer t
   :init
   (defun +workspaces|init ()
+    (add-hook 'after-make-frame-functions #'+workspaces|init-frame)
     (require 'persp-mode)
-    (persp-mode +1)
-    (+workspaces|init-frame (selected-frame))
-    (add-hook 'after-make-frame-functions #'+workspaces|init-frame))
+    (unless (daemonp)
+      (+workspaces|init-frame (selected-frame))))
 
   (defun +workspaces|init-frame (frame)
+    (unless persp-mode
+      (persp-mode +1))
     (unless noninteractive
       (let (persp-before-switch-functions persp-activated-functions)
         (with-selected-frame frame
