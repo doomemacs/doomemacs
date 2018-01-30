@@ -79,7 +79,8 @@ immediately runs it on the current candidate (ending the ivy session)."
              counsel-describe-function counsel-describe-variable
              counsel-describe-face counsel-M-x counsel-file-jump
              counsel-find-file counsel-find-library counsel-info-lookup-symbol
-             counsel-imenu counsel-recentf counsel-yank-pop)
+             counsel-imenu counsel-recentf counsel-yank-pop
+             counsel-descbinds)
   :init
   (map! [remap apropos]                  #'counsel-apropos
         [remap bookmark-jump]            #'counsel-bookmark
