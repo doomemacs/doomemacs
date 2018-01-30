@@ -319,15 +319,22 @@ DEFAULT is non-nil, set the default mode-line for all buffers."
 ;;
 
 (defvar doom-line-numbers-style t
-  "The default styles to use for the line number display.
-
-Takes the same argument as `display-line-numbers' in Emacs 26, which are:
+  "The default styles to use for the line number display. Accepts one of the
+following:
 
   nil         No line numbers
   t           Ordinary line numbers
   'relative   Relative line numbers
 
 Use `doom/toggle-line-numbers' to cycle between these line number styles.")
+
+(when (boundp 'display-line-numbers)
+  (defvar doom-line-numbers-visual-style nil
+    "If non-nil, relative line numbers will be countered by screen line, rather
+than buffer line. Setting this to non-nil is the equivalent of using 'visual in
+`display-line-numbers'.
+
+It has no effect on nlinum."))
 
 (defun doom|enable-line-numbers (&optional arg)
   "Enables the display of line numbers, using `display-line-numbers' (in Emacs

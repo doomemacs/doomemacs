@@ -19,16 +19,17 @@ Cycles through regular, relative and no line numbers. The order depends on what
 
 Uses `display-line-numbers' in Emacs 26+ and `nlinum-mode' everywhere else."
   (interactive)
-  (let* ((order (pcase doom-line-numbers-style
-                  (`relative '(relative t nil))
-                  (`t        '(t relative nil))
-                  (`nil      '(nil t relative))))
+  (let* ((styles '(t relative nil))
+         (order (cons doom-line-numbers-style (delq doom-line-numbers-style styles)))
          (queue (memq doom--line-number-style order))
          (next (if (= (length queue) 1)
                    (car order)
                  (car (cdr queue)))))
     (setq doom--line-number-style next)
     (cond ((boundp 'display-line-numbers)
+           (when (and (eq next 'relative)
+                      doom-line-numbers-visual-style)
+             (setq next 'visual))
            (setq display-line-numbers next))
           ((featurep 'nlinum)
            (pcase next
@@ -36,7 +37,13 @@ Uses `display-line-numbers' in Emacs 26+ and `nlinum-mode' everywhere else."
              (`relative (nlinum-relative-on))
              (`nil (nlinum-mode -1))))
           (t
-           (error "No line number plugin detected")))))
+           (error "No line number plugin detected")))
+    (message "Switched to %s line numbers"
+             (pcase next
+               (`t "normal")
+               (`relative "relative")
+               (`visual "visual")
+               (`nil "disabled")))))
 
 ;;;###autoload
 (defun doom-resize-window (window new-size &optional horizontal force-p)
