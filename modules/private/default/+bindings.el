@@ -1,5 +1,10 @@
 ;;; private/default/+bindings.el -*- lexical-binding: t; -*-
 
+;; expand-region's prompt can't tell what key contract-region is bound to, so we
+;; tell it explicitly.
+(setq expand-region-contract-fast-key "V")
+
+
 ;; This files defines a Spacemacs-esque keybinding scheme
 
 (map! [remap evil-jump-to-tag] #'projectile-find-tag
