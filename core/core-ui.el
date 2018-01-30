@@ -319,13 +319,15 @@ DEFAULT is non-nil, set the default mode-line for all buffers."
 ;;
 
 (defvar doom-line-numbers-style t
-  "The style to use for the line number display.
+  "The default styles to use for the line number display.
 
-Accepts the same arguments as `display-line-numbers', which are:
+Takes the same argument as `display-line-numbers' in Emacs 26, which are:
 
-nil         No line numbers
-t           Ordinary line numbers
-'relative   Relative line numbers")
+  nil         No line numbers
+  t           Ordinary line numbers
+  'relative   Relative line numbers
+
+Use `doom/toggle-line-numbers' to cycle between these line number styles.")
 
 (defun doom|enable-line-numbers (&optional arg)
   "Enables the display of line numbers, using `display-line-numbers' (in Emacs
@@ -333,13 +335,9 @@ t           Ordinary line numbers
 
 See `doom-line-numbers-style' to control the style of line numbers to display."
   (cond ((boundp 'display-line-numbers)
-         (setq display-line-numbers
-               (pcase arg
-                 (+1 doom-line-numbers-style)
-                 (-1 nil)
-                 (_ doom-line-numbers-style))))
+         (setq display-line-numbers (unless (eq arg -1) doom-line-numbers-style)))
         ((eq doom-line-numbers-style 'relative)
-         (if (= arg -1)
+         (if (eq arg -1)
              (nlinum-relative-off)
            (nlinum-relative-on)))
         ((not (null doom-line-numbers-style))
@@ -418,8 +416,7 @@ character that looks like a space that `whitespace-mode' won't affect.")
 (def-package! nlinum-relative
   :unless (boundp 'display-line-numbers)
   :commands nlinum-relative-mode
-  :config
-  (after! evil (nlinum-relative-setup-evil)))
+  :config (after! evil (nlinum-relative-setup-evil)))
 
 
 ;;

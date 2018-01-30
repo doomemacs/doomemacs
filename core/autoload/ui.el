@@ -9,21 +9,34 @@
    (unless (frame-parameter nil 'fullscreen)
      'fullboth)))
 
+(defvar doom--line-number-style doom-line-numbers-style)
 ;;;###autoload
-(defun doom/toggle-line-numbers (&optional arg)
-  "Toggle `linum-mode'."
-  (interactive "P")
-  (cond ((boundp 'display-line-numbers)
-         (setq display-line-numbers
-               (pcase arg
-                 ('(4) 'relative)
-                 (1 t)
-                 (-1 nil)
-                 (_ (not display-line-numbers)))))
-        ((featurep 'nlinum)
-         (nlinum-mode (or arg (if nlinum-mode -1 +1))))
-        (t
-         (error "No line number plugin detected"))))
+(defun doom/toggle-line-numbers ()
+  "Toggle line numbers.
+
+Cycles through regular, relative and no line numbers. The order depends on what
+`doom-line-numbers-style' is set to.
+
+Uses `display-line-numbers' in Emacs 26+ and `nlinum-mode' everywhere else."
+  (interactive)
+  (let* ((order (pcase doom-line-numbers-style
+                  (`relative '(relative t nil))
+                  (`t        '(t relative nil))
+                  (`nil      '(nil t relative))))
+         (queue (memq doom--line-number-style order))
+         (next (if (= (length queue) 1)
+                   (car order)
+                 (car (cdr queue)))))
+    (setq doom--line-number-style next)
+    (cond ((boundp 'display-line-numbers)
+           (setq display-line-numbers next))
+          ((featurep 'nlinum)
+           (pcase next
+             (`t (nlinum-relative-mode -1) (nlinum-mode +1))
+             (`relative (nlinum-relative-mode +1))
+             (`nil (nlinum-mode -1))))
+          (t
+           (error "No line number plugin detected")))))
 
 ;;;###autoload
 (defun doom-resize-window (window new-size &optional horizontal force-p)
