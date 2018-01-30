@@ -422,7 +422,7 @@ character that looks like a space that `whitespace-mode' won't affect.")
 
 (def-package! nlinum-relative
   :unless (boundp 'display-line-numbers)
-  :commands nlinum-relative-mode
+  :commands (nlinum-relative-mode nlinum-relative-on nlinum-relative-off)
   :config
   (setq nlinum-format " %d ")
   (after! evil (nlinum-relative-setup-evil)))
