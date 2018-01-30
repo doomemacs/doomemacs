@@ -331,6 +331,7 @@
       :nv [C-tab] #'aya-create
 
       ;; company-mode (vim-like omnicompletion)
+      :i "C-@"    #'+company/complete
       :i "C-SPC"  #'+company/complete
       (:prefix "C-x"
         :i "C-l"   #'+company/whole-lines
