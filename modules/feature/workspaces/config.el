@@ -65,9 +65,6 @@ renamed.")
         persp-set-last-persp-for-new-frames t
         persp-switch-to-added-buffer nil
         persp-remove-buffers-from-nil-persp-behaviour nil
-        ;; Don't restore winconf on new frames
-        persp-init-frame-behaviour t
-        persp-init-new-frame-behaviour-override 'auto-temp
         ;; Don't auto-load on startup
         persp-auto-resume-time -1
         ;; auto-save on kill
@@ -83,7 +80,8 @@ renamed.")
   (add-hook 'doom-cleanup-hook #'+workspaces|cleanup-unassociated-buffers)
 
   ;; per-frame workspaces
-  (setq persp-init-new-frame-behaviour-override nil
+  (setq persp-init-frame-behaviour t
+        persp-init-new-frame-behaviour-override nil
         persp-interactive-init-frame-behaviour-override #'+workspaces|associate-frame
         persp-emacsclient-init-frame-behaviour-override #'+workspaces|associate-frame)
   ;; delete frame associated with workspace, if it exists

@@ -445,11 +445,13 @@ the next."
 ;;
 
 ;;;###autoload
-(defun +workspaces|delete-associated-workspace (frame)
+(defun +workspaces|delete-associated-workspace (&optional frame)
   "Delete workspace associated with current frame.
 A workspace gets associated with a frame when a new frame is interactively
 created."
   (when persp-mode
+    (unless frame
+      (setq frame (selected-frame)))
     (let ((frame-persp (frame-parameter frame 'workspace)))
       (when (string= frame-persp (+workspace-current-name))
         (+workspace/delete frame-persp)))))
@@ -470,9 +472,9 @@ created."
     (with-selected-frame frame
       (if (not (persp-frame-list-without-daemon))
           (+workspace-switch +workspaces-main t)
-        (+workspace/new)
+        (+workspace-switch (format "#%s" (+workspace--generate-id)) t)
         (set-frame-parameter frame 'workspace (+workspace-current-name)))
-      (+workspace/display))))
+      (run-at-time 0.1 nil #'+workspace/display))))
 
 (defvar +workspaces--project-dir nil)
 ;;;###autoload
