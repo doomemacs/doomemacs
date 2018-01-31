@@ -34,8 +34,9 @@ from a `featurep!' or `require!' call or c) the module that the current file is
 in."
   (interactive
    (let ((module
-          (cond ((string= (file-truename user-init-file)
-                          (file-truename buffer-file-name))
+          (cond ((and buffer-file-name
+                      (string= (file-truename user-init-file)
+                               (file-truename buffer-file-name)))
                  (let* ((category
                          (save-excursion
                            (goto-char (line-end-position))
@@ -67,7 +68,8 @@ in."
                    (let ((sexp (sexp-at-point)))
                      (when (memq (car-safe sexp) '(featurep! require!))
                        (format "%s %s" (nth 1 sexp) (nth 2 sexp))))))
-                ((file-in-directory-p buffer-file-name doom-modules-dir)
+                ((and buffer-file-name
+                      (file-in-directory-p buffer-file-name doom-modules-dir))
                  (let ((module (doom-module-from-path buffer-file-name)))
                    (format "%s %s" (car module) (cdr module)))))))
      (list (completing-read "Describe module: "
