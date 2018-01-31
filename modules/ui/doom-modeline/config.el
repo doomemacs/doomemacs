@@ -419,24 +419,28 @@ directory, the file name, and its state (modified, read-only or non-existent)."
             (propertize text 'face face))
           (if vc-mode "  " " ")))
 
+(defvar-local +doom-modeline--flycheck nil)
+(add-hook 'flycheck-after-syntax-check-hook #'+doom-modeline|update-flycheck-segment)
+(defun +doom-modeline|update-flycheck-segment ()
+  (setq +doom-modeline--flycheck
+        (pcase flycheck-last-status-change
+          ('finished (if flycheck-current-errors
+                         (let-alist (flycheck-count-errors flycheck-current-errors)
+                           (let ((sum (+ (or .error 0) (or .warning 0))))
+                             (+doom-ml-icon "do_not_disturb_alt"
+                                            (number-to-string sum)
+                                            (if .error 'doom-modeline-urgent 'doom-modeline-warning)
+                                            -0.25)))
+                       (+doom-ml-icon "check" nil 'doom-modeline-info)))
+          ('running     (+doom-ml-icon "access_time" nil 'font-lock-doc-face -0.25))
+          ('no-checker  (+doom-ml-icon "sim_card_alert" "-" 'font-lock-doc-face))
+          ('errored     (+doom-ml-icon "sim_card_alert" "Error" 'doom-modeline-urgent))
+          ('interrupted (+doom-ml-icon "pause" "Interrupted" 'font-lock-doc-face)))))
+
 (def-modeline-segment! flycheck
   "Displays color-coded flycheck error status in the current buffer with pretty
 icons."
-  (when (boundp 'flycheck-last-status-change)
-    (pcase flycheck-last-status-change
-      ('finished (if flycheck-current-errors
-                     (let-alist (flycheck-count-errors flycheck-current-errors)
-                       (let ((sum (+ (or .error 0) (or .warning 0))))
-                         (+doom-ml-icon "do_not_disturb_alt"
-                                        (number-to-string sum)
-                                        (if .error 'doom-modeline-urgent 'doom-modeline-warning)
-                                        -0.25)))
-                   (+doom-ml-icon "check" nil 'doom-modeline-info)))
-      ('running     (+doom-ml-icon "access_time" nil 'font-lock-doc-face -0.25))
-      ('no-checker  (+doom-ml-icon "sim_card_alert" "-" 'font-lock-doc-face))
-      ('errored     (+doom-ml-icon "sim_card_alert" "Error" 'doom-modeline-urgent))
-      ('interrupted (+doom-ml-icon "pause" "Interrupted" 'font-lock-doc-face)))))
-      ;; ('interrupted (+doom-ml-icon "x" "Interrupted" 'font-lock-doc-face)))))
+  +doom-modeline--flycheck)
 
 ;;
 (defsubst doom-column (pos)
