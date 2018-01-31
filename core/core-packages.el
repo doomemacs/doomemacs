@@ -127,8 +127,8 @@ base by `doom!' and for calculating how many packages exist.")
 ;;
 
 (defun doom-initialize (&optional force-p)
-  "Initialize installed packages (using package.el) and ensure the core packages
-are installed.
+  "Initialize package.el, create all the essential directories, and ensure core
+packages are installed.
 
 If you byte-compile core/core.el, this function will be avoided to speed up
 startup."
@@ -162,6 +162,8 @@ startup."
       (setq doom-init-p t))))
 
 (defun doom-initialize-load-path (&optional force-p)
+  "Populates `load-path', if it hasn't already been. If FORCE-P is non-nil, do
+it anyway."
   (when (or force-p (not doom--package-load-path))
     ;; We could let `package-initialize' fill `load-path', but it does more than
     ;; that alone (like load autoload files). If you want something prematurely
@@ -174,7 +176,7 @@ startup."
 
 (defun doom-initialize-autoloads ()
   "Ensures that `doom-autoload-file' exists and is loaded. Otherwise run
-`doom/reload-autoloads' to generate it."
+`doom//reload-autoloads' to generate it. Used from Doom's Makefile."
   (unless (file-exists-p doom-autoload-file)
     (quiet! (doom//reload-autoloads))))
 
@@ -240,20 +242,23 @@ added, if the file exists."
            if (file-exists-p path)
            collect path))
 
-(defun doom-module-get (module submodule)
+(defun doom-module-flags (module submodule)
   "Returns a list of flags provided for MODULE SUBMODULE."
   (gethash (cons module submodule) doom-modules))
 
 (defun doom-module-enabled-p (module submodule)
-  "Returns t if MODULE->SUBMODULE is present in `doom-modules'."
+  "Returns t if MODULE SUBMODULE is enabled (ie. present in `doom-modules')."
   (and (hash-table-p doom-modules)
-       (doom-module-get module submodule)
+       (doom-module-flags module submodule)
        t))
 
 (defun doom-module-enable (module submodule &optional flags)
   "Adds MODULE and SUBMODULE to `doom-modules', overwriting it if it exists.
 
-MODULE is a keyword, SUBMODULE is a symbol. e.g. :lang 'emacs-lisp.
+MODULE is a keyword, SUBMODULE is a symbol, FLAGS is a list of arbitrary
+symbols:
+
+  (doom-module-enable :lang 'haskell '(+intero))
 
 Used by `require!' and `depends-on!'."
   (let ((key (cons module submodule)))
@@ -264,9 +269,7 @@ Used by `require!' and `depends-on!'."
              doom-modules)))
 
 (defun doom-module-pairs ()
-  "Returns `doom-modules' as a list of (MODULE . SUBMODULE) cons cells. The list
-is sorted by order of insertion unless ALL-P is non-nil. If ALL-P is non-nil,
-include all modules, enabled or otherwise."
+  "Returns `doom-modules' as a list of (MODULE . SUBMODULE) cons cells."
   (unless (hash-table-p doom-modules)
     (error "doom-modules is uninitialized"))
   (cl-loop for key being the hash-keys of doom-modules
@@ -289,7 +292,7 @@ include all modules, enabled or otherwise."
 (autoload 'use-package "use-package" nil nil 'macro)
 
 (defmacro doom! (&rest modules)
-  "Bootstrap DOOM Emacs.
+  "Bootstraps DOOM Emacs and its modules.
 
 MODULES is an malformed plist of modules to load."
   (let (init-forms config-forms mode)
@@ -406,8 +409,18 @@ The module is only loaded once. If RELOAD-P is non-nil, load it again."
                    (error-message-string ex))))))))
 
 (defmacro featurep! (module &optional submodule flag)
-  "A convenience macro wrapper for `doom-module-enabled-p'. It is evaluated at
-compile-time/macro-expansion time."
+  "Returns t if MODULE SUBMODULE is enabled. If FLAG is provided, returns t if
+MODULE SUBMODULE has FLAG enabled.
+
+  (featurep! :private default)
+
+Module FLAGs are set in your config's `doom!' block, typically in
+~/.emacs.d/init.el. Like so:
+
+  :private (default +flag1 -flag2)
+
+When this macro is used from inside a module, MODULE and SUBMODULE can be
+omitted. eg. (featurep! +flag1)"
   (unless submodule
     (let* ((path (or load-file-name byte-compile-current-file))
            (module-pair (doom-module-from-path path)))
@@ -417,7 +430,7 @@ compile-time/macro-expansion time."
             module (car module-pair)
             submodule (cdr module-pair))))
   (if flag
-      (and (memq flag (doom-module-get module submodule)) t)
+      (and (memq flag (doom-module-flags module submodule)) t)
     (doom-module-enabled-p module submodule)))
 
 
