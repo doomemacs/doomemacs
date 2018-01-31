@@ -84,7 +84,16 @@ environment variables."
     :definition #'anaconda-mode-find-definitions
     :references #'anaconda-mode-find-references
     :documentation #'anaconda-mode-show-doc)
-  (advice-add #'anaconda-mode-doc-buffer :after #'doom*anaconda-mode-doc-buffer))
+  (advice-add #'anaconda-mode-doc-buffer :after #'doom*anaconda-mode-doc-buffer)
+
+  (defun +python|auto-kill-anaconda-processes ()
+    "Kill anaconda processes if this buffer is the last python buffer."
+    (when (and (eq major-mode 'python-mode)
+               (not (delq (current-buffer)
+                          (doom-buffers-in-mode 'python-mode (buffer-list)))))
+      (anaconda-mode-stop)))
+  (add-hook! 'python-mode-hook
+    (add-hook 'kill-buffer-hook #'+python|auto-kill-anaconda-processes nil t)))
 
 
 (def-package! company-anaconda
