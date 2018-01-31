@@ -180,25 +180,26 @@ active."
    (let ((data (make-list (or height +doom-modeline-height)
                           (make-list (or width +doom-modeline-bar-width) 1)))
          (color (or (face-background face nil t) "None")))
-     (create-image
-      (concat
-       (format "/* XPM */\nstatic char * percent[] = {\n\"%i %i 2 1\",\n\". c %s\",\n\"  c %s\","
-               (length (car data))
-               (length data)
-               color
-               color)
-       (apply #'concat
-              (cl-loop with idx = 0
-                       with len = (length data)
-                       for dl in data
-                       do (cl-incf idx)
-                       collect
-                       (concat "\""
-                               (cl-loop for d in dl
-                                        if (= d 0) collect (string-to-char " ")
-                                        else collect (string-to-char "."))
-                               (if (eq idx len) "\"};" "\",\n")))))
-      'xpm t :ascent 'center))))
+     (ignore-errors
+       (create-image
+        (concat
+         (format "/* XPM */\nstatic char * percent[] = {\n\"%i %i 2 1\",\n\". c %s\",\n\"  c %s\","
+                 (length (car data))
+                 (length data)
+                 color
+                 color)
+         (apply #'concat
+                (cl-loop with idx = 0
+                         with len = (length data)
+                         for dl in data
+                         do (cl-incf idx)
+                         collect
+                         (concat "\""
+                                 (cl-loop for d in dl
+                                          if (= d 0) collect (string-to-char " ")
+                                          else collect (string-to-char "."))
+                                 (if (eq idx len) "\"};" "\",\n")))))
+        'xpm t :ascent 'center)))))
 
 (defun +doom-modeline-buffer-file-name ()
   "Propertized `buffer-file-name' based on `+doom-modeline-buffer-file-name-style'."
