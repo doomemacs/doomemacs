@@ -68,10 +68,7 @@ function that creates and returns the REPL buffer."
   :config
   (setq quickrun-focus-p nil)
 
-  (set! :popup "^\\*quickrun"
-    '((size . 0.3)) '((transient . 0)))
-  (set! :popup "^\\*\\(?:\\(?:Pp E\\|doom e\\)val\\)"
-    '((size . +popup-shrink-to-fit)) '((transient . 0) (select . ignore)))
+  (set! :popup "^\\*quickrun" '((size . 0.3)) '((transient . 0)))
 
   (defun +eval*quickrun-auto-close (&rest _)
     "Allows us to silently re-run quickrun from within the quickrun buffer."
