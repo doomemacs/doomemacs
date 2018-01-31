@@ -1,7 +1,7 @@
 ;;; feature/version-control/config.el -*- lexical-binding: t; -*-
 
-(or (featurep! -git) (load! +git))
-;; TODO (or (featurep! -hg)  (load! +hg))
+(load! +git)
+;; TODO (load! +hg)
 
 ;;
 (setq vc-make-backup-files nil)
