@@ -490,30 +490,32 @@ workspace for a new project, before prompting to open a file."
   (when persp-mode
     (let ((+workspaces--project-dir project)
           (inhibit-message t))
-      (+workspaces|switch-to-project)))
-  (counsel-projectile-switch-project-action project)
-  (+workspace-message
-   (format "Switched to '%s' in new workspace" new-name)
-   'success))
+      (+workspaces|switch-to-project))))
 
 ;;;###autoload
 (defun +workspaces|switch-to-project ()
-  "Creates a workspace dedicated to a new project. Should be hooked to
-`projectile-after-switch-project-hook'."
+  "Creates a workspace dedicated to a new project. If one already exists, switch
+to it. Should be hooked to `projectile-after-switch-project-hook'."
   (when (and persp-mode +workspaces--project-dir)
     (unwind-protect
-        (let* ((persp
-                (let ((default-directory +workspaces--project-dir))
-                  (+workspace-new (projectile-project-name))))
-               (new-name (persp-name persp)))
-          (+workspace-switch new-name)
-          (switch-to-buffer (doom-fallback-buffer))
-          (call-interactively
-           (or (command-remapping #'projectile-find-file)
-               #'projectile-find-file))
-          (+workspace-message
-           (format "Switched to '%s' in new workspace" new-name)
-           'success))
+        (let (persp-p)
+          (let* ((persp
+                  (let* ((default-directory +workspaces--project-dir)
+                         projectile-project-name
+                         projectile-require-project-root
+                         projectile-cached-buffer-file-name
+                         projectile-cached-project-root
+                         (project-name (projectile-project-name)))
+                    (or (setq persp-p (+workspace-get project-name t))
+                        (+workspace-new project-name))))
+                 (new-name (persp-name persp)))
+            (+workspace-switch new-name)
+            (unless persp-p
+              (switch-to-buffer (doom-fallback-buffer)))
+            (doom-project-find-file +workspaces--project-dir)
+            (+workspace-message
+             (format "Switched to '%s' in new workspace" new-name)
+             'success)))
       (setq +workspaces--project-dir nil))))
 
 
