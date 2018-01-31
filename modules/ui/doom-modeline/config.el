@@ -443,6 +443,13 @@ icons."
   (save-excursion (goto-char pos)
                   (current-column)))
 
+(defvar-local +doom-modeline-enable-word-count nil
+  "If non-nil, a word count will be added to the selection-info modeline
+segment.")
+
+(defun +doom-modeline|enable-word-count () (setq +doom-modeline-enable-word-count t))
+(add-hook 'text-mode-hook #'+doom-modeline|enable-word-count)
+
 (def-modeline-segment! selection-info
   "Information about the current selection, such as how many characters and
 lines are selected, or the NxM dimensions of a block selection."
@@ -451,17 +458,19 @@ lines are selected, or the NxM dimensions of a block selection."
           (reg-end (region-end)))
       (propertize
        (let ((lines (count-lines reg-beg (min (1+ reg-end) (point-max)))))
-         (cond ((or (bound-and-true-p rectangle-mark-mode)
-                    (eq 'block evil-visual-selection))
-                (let ((cols (abs (- (doom-column reg-end)
-                                    (doom-column reg-beg)))))
-                  (format "%dx%dB" lines cols)))
-               ((eq 'line evil-visual-selection)
-                (format "%dL" lines))
-               ((> lines 1)
-                (format "%dC %dL" (- (1+ reg-end) reg-beg) lines))
-               (t
-                (format "%dC" (- (1+ reg-end) reg-beg)))))
+         (concat (cond ((or (bound-and-true-p rectangle-mark-mode)
+                            (eq 'block evil-visual-selection))
+                        (let ((cols (abs (- (doom-column reg-end)
+                                            (doom-column reg-beg)))))
+                          (format "%dx%dB" lines cols)))
+                       ((eq 'line evil-visual-selection)
+                        (format "%dL" lines))
+                       ((> lines 1)
+                        (format "%dC %dL" (- (1+ reg-end) reg-beg) lines))
+                       (t
+                        (format "%dC" (- (1+ reg-end) reg-beg))))
+                 (when +doom-modeline-enable-word-count
+                   (format " %dW" (count-words reg-beg reg-end)))))
        'face 'doom-modeline-highlight))))
 
 
