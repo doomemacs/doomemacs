@@ -434,44 +434,47 @@ character that looks like a space that `whitespace-mode' won't affect.")
 
 (defun doom|init-theme (&optional frame)
   "Set the theme and load the font, in that order."
-  (when doom-theme
-    (load-theme doom-theme t))
-  (condition-case-unless-debug ex
-      (when (display-graphic-p)
-        (when (fontp doom-font)
-          (set-frame-font doom-font nil (if frame (list frame) t))
-          (set-face-attribute 'fixed-pitch frame :font doom-font))
-        ;; Fallback to `doom-unicode-font' for Unicode characters
-        (when (fontp doom-unicode-font)
-          (set-fontset-font t 'unicode doom-unicode-font frame))
-        ;; ...and for variable-pitch-mode:
-        (when (fontp doom-variable-pitch-font)
-          (set-face-attribute 'variable-pitch frame :font doom-variable-pitch-font)))
-    ('error
-     (if (string-prefix-p "Font not available: " (error-message-string ex))
-         (lwarn 'doom-ui :warning
-                "Could not find the '%s' font on your system, falling back to system font"
-                (font-get (caddr ex) :family))
-       (lwarn 'doom-ui :error
-              "Unexpected error while initializing fonts: %s"
-              (error-message-string ex)))))
-  (run-hooks 'doom-init-theme-hook))
+  (with-selected-frame (or frame (selected-frame))
+    (when doom-theme
+      (load-theme doom-theme t))
+    (condition-case-unless-debug ex
+        (when (display-graphic-p)
+          (when (fontp doom-font)
+            (set-frame-font doom-font nil (if frame (list frame) t))
+            (set-face-attribute 'fixed-pitch frame :font doom-font))
+          ;; Fallback to `doom-unicode-font' for Unicode characters
+          (when (fontp doom-unicode-font)
+            (set-fontset-font t 'unicode doom-unicode-font frame))
+          ;; ...and for variable-pitch-mode:
+          (when (fontp doom-variable-pitch-font)
+            (set-face-attribute 'variable-pitch frame :font doom-variable-pitch-font)))
+      ('error
+       (if (string-prefix-p "Font not available: " (error-message-string ex))
+           (lwarn 'doom-ui :warning
+                  "Could not find the '%s' font on your system, falling back to system font"
+                  (font-get (caddr ex) :family))
+         (lwarn 'doom-ui :error
+                "Unexpected error while initializing fonts: %s"
+                (error-message-string ex)))))
+    (run-hooks 'doom-init-theme-hook)
+    (when frame
+      (remove-hook 'after-make-frame-functions #'doom|init-theme))))
 
 ;; Getting themes to remain consistent across GUI Emacs, terminal Emacs and
-;; daemon Emacs is hairy.
+;; daemon Emacs is hairy. Running `doom|init-theme' sorts out the initial GUI
+;; frame.
 ;;
-;; + Running `doom|init-theme' directly sorts out the initial GUI frame.
-;; + Attaching it to `after-make-frame-functions' sorts out daemon Emacs.
-;; + Waiting for 0.1s in `doom|reload-ui-in-daemon' fixes daemon Emacs started
-;;   with `server-start' in an interactive session of Emacs AND in tty Emacs.
-(add-hook 'doom-init-ui-hook #'doom|init-theme)
-
+;; `doom|init-theme-in-frame' sorts out daemon and emacsclient frames by
+;; reloading the theme in those frame. However, if you open simultaneous
+;; terminal and gui frames with emacsclient, you will get issues! There's always
+;; `doom//reload-theme' if you need it.
 (defun doom|reload-ui-in-daemon (frame)
-  "Reload the theme (and font) in an daemon frame."
+  "Reloads the theme in new daemon or tty frames."
   (when (or (daemonp) (not (display-graphic-p)))
-    (with-selected-frame frame
-      (run-with-timer 0.1 nil #'doom|init-ui))))
-(add-hook! 'after-make-frame-functions #'(doom|init-theme doom|reload-ui-in-daemon))
+    (doom|init-theme frame)))
+
+(add-hook 'doom-init-ui-hook #'doom|init-theme)
+(add-hook 'after-make-frame-functions #'doom|reload-ui-in-daemon)
 
 
 ;;
