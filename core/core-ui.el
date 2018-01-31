@@ -36,10 +36,6 @@ shorter major mode name in the mode-line. See `doom|set-mode-name'.")
   "List of hooks to run when the theme (and font) is initialized (or reloaded
 with `doom//reload-theme').")
 
-;; Prevents the unstyled mode-line flash at startup
-(set-buffer "*scratch*")
-(setq mode-line-format nil)
-
 (setq-default
  bidi-display-reordering nil ; disable bidirectional text for tiny performance boost
  blink-matching-paren nil    ; don't blink--too distracting
