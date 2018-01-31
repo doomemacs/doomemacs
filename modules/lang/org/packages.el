@@ -20,7 +20,8 @@
   (package! ob-translate))
 
 (when (featurep! +export)
-  (package! ox-pandoc))
+  (package! ox-pandoc)
+  (package! htmlize))
 
 (when (featurep! +present)
   (package! centered-window :recipe (:fetcher github :repo "anler/centered-window-mode"))
