@@ -31,6 +31,10 @@ renamed.")
       (+workspaces|init-frame (selected-frame))))
 
   (defun +workspaces|init-frame (frame)
+    "Make sure a main workspace exists and is switched to, if FRAME isn't in any
+workspace. Also ensures that the *Warnings* buffer will be visible in main.
+
+Uses `+workspaces-main' to determine the name of the main workspace."
     (unless persp-mode
       (persp-mode +1))
     (unless noninteractive
@@ -45,16 +49,17 @@ renamed.")
           ;; Switch to it if we aren't auto-loading the last session
           (when (and (string= (safe-persp-name (get-current-persp)) persp-nil-name)
                      (= persp-auto-resume-time -1))
-            (persp-frame-switch +workspaces-main frame))
-          ;; We want to know where we are in every new daemon frame
-          (when (daemonp)
-            (run-at-time 0.2 nil #'+workspace/display))
-          ;; The warnings buffer gets swallowed by creating `+workspaces-main', so
-          ;; we display it manually, if it exists (fix #319).
-          (when-let* ((warnings (get-buffer "*Warnings*")))
-            (save-excursion
-              (display-buffer-in-side-window
-               warnings '((window-height . shrink-window-if-larger-than-buffer)))))))))
+            (persp-frame-switch +workspaces-main frame)
+            ;; We want to know where we are in every new daemon frame
+            (when (daemonp)
+              (run-at-time 0.1 nil #'+workspace/display))
+            ;; The warnings buffer gets swallowed by creating
+            ;; `+workspaces-main', so we display it manually, if it exists (fix
+            ;; #319).
+            (when-let* ((warnings (get-buffer "*Warnings*")))
+              (save-excursion
+                (display-buffer-in-side-window
+                 warnings '((window-height . shrink-window-if-larger-than-buffer))))))))))
 
   (add-hook 'doom-init-hook #'+workspaces|init)
   :config
