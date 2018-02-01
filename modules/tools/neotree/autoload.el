@@ -5,7 +5,7 @@
   "Toggle the neotree window."
   (interactive)
   (let ((path buffer-file-name)
-        (project-root (doom-project-root)))
+        (project-root (doom-project-root 'nocache)))
     (require 'neotree)
     (cond ((and (neo-global--window-exists-p)
                 (get-buffer-window neo-buffer-name t))
