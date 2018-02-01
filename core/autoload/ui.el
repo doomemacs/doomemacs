@@ -2,12 +2,19 @@
 
 ;;;###autoload
 (defun doom/toggle-fullscreen ()
-  "Toggle fullscreen Emacs (non-native on MacOS)."
+  "Toggle fullscreen for the current frame using non-native fullscreen. If you
+prefer native fullscreen, use `toggle-frame-fullscreen' instead."
   (interactive)
-  (set-frame-parameter
-   nil 'fullscreen
-   (unless (frame-parameter nil 'fullscreen)
-     'fullboth)))
+  (modify-frame-parameters
+   nil
+   `((maximized
+      . ,(unless (memq (frame-parameter nil 'fullscreen) '(fullscreen fullboth))
+           (frame-parameter nil 'fullscreen)))
+     (fullscreen
+      . ,(if (memq (frame-parameter nil 'fullscreen) '(fullscreen fullboth))
+             (when (eq (frame-parameter nil 'maximized) 'maximized)
+               'maximized)
+           'fullboth)))))
 
 (defvar doom--line-number-style doom-line-numbers-style)
 ;;;###autoload
