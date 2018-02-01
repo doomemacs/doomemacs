@@ -161,14 +161,14 @@ project (which may be different across perspective)."
 (defun +doom-dashboard-update-pwd (&optional pwd)
   "Update `default-directory' in the Doom dashboard buffer. What it is set to is
 controlled by `+doom-dashboard-pwd-policy'."
-  (with-current-buffer (doom-fallback-buffer)
-    (if pwd
-        (setq-local default-directory pwd)
-      (let ((new-pwd (+doom-dashboard--get-pwd)))
-        (when (and new-pwd (file-directory-p new-pwd))
-          (unless (string-suffix-p "/" new-pwd)
-            (setq new-pwd (concat new-pwd "/")))
-          (setq-local default-directory new-pwd))))))
+  (if pwd
+      (with-current-buffer (doom-fallback-buffer)
+        (setq-local default-directory pwd))
+    (let ((new-pwd (+doom-dashboard--get-pwd)))
+      (when (and new-pwd (file-directory-p new-pwd))
+        (unless (string-suffix-p "/" new-pwd)
+          (setq new-pwd (concat new-pwd "/")))
+        (+doom-dashboard-update-pwd new-pwd)))))
 
 (defun +doom-dashboard-reload (&optional force)
   "Update the DOOM scratch buffer (or create it, if it doesn't exist)."
