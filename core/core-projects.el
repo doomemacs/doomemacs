@@ -50,6 +50,15 @@
 ;; Library
 ;;
 
+(defmacro without-project-cache! (&rest body)
+  "Run BODY with projectile's project-root cache disabled. This is necessary if
+you want to interactive with a project other than the one you're in."
+  `(let (projectile-project-name
+         projectile-require-project-root
+         projectile-cached-buffer-file-name
+         projectile-cached-project-root)
+     ,@body))
+
 (defun doom//reload-project ()
   "Reload the project root cache."
   (interactive)
@@ -58,17 +67,21 @@
   (dolist (fn projectile-project-root-files-functions)
     (remhash (format "%s-%s" fn default-directory) projectile-project-root-cache)))
 
-(defun doom-project-p ()
+(defun doom-project-p (&optional nocache)
   "Whether or not this buffer is currently in a project or not."
-  (let ((projectile-require-project-root t))
-    (projectile-project-p)))
+  (if nocache
+      (without-project-cache! (doom-project-p nil))
+    (let ((projectile-require-project-root t))
+      (projectile-project-p))))
 
-(defun doom-project-root ()
+(defun doom-project-root (&optional nocache)
   "Get the path to the root of your project.
 If STRICT-P, return nil if no project was found, otherwise return
 `default-directory'."
-  (let (projectile-require-project-root)
-    (projectile-project-root)))
+  (if nocache
+      (without-project-cache! (doom-project-root nil))
+    (let (projectile-require-project-root)
+      (projectile-project-root))))
 
 (defalias 'doom-project-expand #'projectile-expand-root)
 
@@ -81,16 +94,12 @@ they are absolute."
 
 (defun doom-project-find-file (dir)
   "Fuzzy-find a file under DIR."
-  (let ((default-directory dir)
-        ;; Necessary to isolate this search from the current project
-        projectile-project-name
-        projectile-require-project-root
-        projectile-cached-buffer-file-name
-        projectile-cached-project-root)
-    (call-interactively
-     ;; completion modules may remap this command
-     (or (command-remapping #'projectile-find-file)
-         #'projectile-find-file))))
+  (let ((default-directory dir))
+    (without-project-cache!
+     (call-interactively
+      ;; completion modules may remap this command
+      (or (command-remapping #'projectile-find-file)
+          #'projectile-find-file)))))
 
 (defun doom-project-browse (dir)
   "Traverse a file structure starting linearly from DIR."
