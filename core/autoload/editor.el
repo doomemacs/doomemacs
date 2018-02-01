@@ -17,17 +17,19 @@
 
 ;;;###autoload
 (defun doom/backward-to-bol-or-indent ()
-  "Move back to the current line's indentation. If already there, move to the
-beginning of the line instead. If at bol, do nothing."
+  "Jump between the indentation column (first non-whitespace character) and the
+beginning of the line. The opposite of
+`doom/forward-to-last-non-comment-or-eol'."
   (interactive)
-  (if (bound-and-true-p visual-line-mode)
-      (beginning-of-visual-line)
-    (let ((ci (current-indentation))
-          (cc (current-column)))
-      (cond ((or (> cc ci) (= cc 0))
-             (back-to-indentation))
-            ((<= cc ci)
-             (beginning-of-visual-line))))))
+  (let ((pos (point))
+        (indent (save-excursion
+                  (beginning-of-visual-line)
+                  (skip-chars-forward " \t\r")
+                  (point))))
+    (cond ((or (> pos indent) (= pos (line-beginning-position)))
+           (goto-char indent))
+          ((<= pos indent)
+           (beginning-of-visual-line)))))
 
 ;;;###autoload
 (defun doom/forward-to-last-non-comment-or-eol ()
