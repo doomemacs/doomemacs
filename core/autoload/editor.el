@@ -33,30 +33,30 @@ beginning of the line. The opposite of
 
 ;;;###autoload
 (defun doom/forward-to-last-non-comment-or-eol ()
-  "Move forward to the last non-blank character in the line, ignoring comments
-and trailing whitespace. If already there, move to the real end of the line.
-If already there, do nothing."
+  "Jumps between the last non-blank, non-comment character in the line and the
+true end of the line. The opposite of `doom/backward-to-bol-or-indent'."
   (interactive)
-  (let* ((point (point))
-         (eol (save-excursion (end-of-visual-line) (point)))
-         (bol (save-excursion (beginning-of-visual-line) (point)))
-         (eoc (or (if (not comment-use-syntax)
-                      (when (re-search-forward comment-start-skip eol t)
-                        (or (match-end 1) (match-beginning 0)))
-                    (save-excursion
-                      (goto-char eol)
-                      (while (and (sp-point-in-comment)
-                                  (> (point) point))
-                        (backward-char))
-                      (when (> (point) point)
-                        (skip-chars-backward " " bol)
-                        (point))))
-                  eol))
-         (goto-char-fn (if (featurep 'evil) #'evil-goto-char #'goto-char)))
-    (if (= eoc point)
-        (funcall goto-char-fn eol)
-      (unless (= eol point)
-        (funcall goto-char-fn eoc)))))
+  (let ((eol (save-excursion (end-of-visual-line) (point))))
+    (if (and (sp-point-in-comment) (not (= (point) eol)))
+        (goto-char eol)
+      (let* ((bol (save-excursion (beginning-of-visual-line) (point)))
+             (boc (or (save-excursion
+                        (if (not comment-use-syntax)
+                            (progn
+                              (goto-char bol)
+                              (when (re-search-forward comment-start-skip eol t)
+                                (or (match-end 1) (match-beginning 0))))
+                          (goto-char eol)
+                          (while (and (sp-point-in-comment)
+                                      (> (point) bol))
+                            (backward-char))
+                          (skip-chars-backward " " bol)
+                          (point)))
+                      eol)))
+        (cond ((= boc (point))
+               (goto-char eol))
+              ((/= bol boc)
+               (goto-char boc)))))))
 
 (defun doom--surrounded-p ()
   (and (looking-back "[[{(]\\(\s+\\|\n\\)?\\(\s\\|\t\\)*" (line-beginning-position))
