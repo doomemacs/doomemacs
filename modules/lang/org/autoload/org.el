@@ -195,7 +195,7 @@ wrong places)."
                  ('below
                   (org-end-of-item)
                   (backward-char)
-                  (org-end-of-line)
+                  (end-of-line)
                   (if (and marker (string-match "\\([0-9]+\\)\\([).] *\\)" marker))
                       (let ((l (line-number-at-pos)))
                         (org-insert-item)
