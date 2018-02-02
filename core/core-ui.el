@@ -485,7 +485,7 @@ character that looks like a space that `whitespace-mode' won't affect.")
 ;; auto-enabled in Emacs 25+; I'll do it myself
 (global-eldoc-mode -1)
 ;; simple name in frame title
-(setq frame-title-format '((:eval (abbreviate-file-name buffer-file-name)) " – " "Doom Emacs"))
+(setq frame-title-format '("%b – Doom Emacs"))
 ;; make `next-buffer', `other-buffer', etc. ignore unreal buffers
 (push '(buffer-predicate . doom-buffer-frame-predicate) default-frame-alist)
 ;; draw me like one of your French editors
