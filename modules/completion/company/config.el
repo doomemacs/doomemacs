@@ -27,7 +27,7 @@ MODES should be one major-mode symbol or a list of them."
              company-complete-common company-manual-begin company-grab-line)
   :config
   (setq company-idle-delay nil
-        company-tooltip-limit 10
+        company-tooltip-limit 14
         company-dabbrev-downcase nil
         company-dabbrev-ignore-case nil
         company-dabbrev-code-other-buffers t
