@@ -91,6 +91,7 @@
   :when (featurep! :completion company)
   :after go-mode
   :config
+  (setq company-go-show-annotation t)
   (if (executable-find command-go-gocode-command)
       (set! :company-backend 'go-mode '(company-go))
     (warn "go-mode: couldn't find gocode, code completion won't work")))
