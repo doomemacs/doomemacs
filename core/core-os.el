@@ -49,9 +49,8 @@
                 (osx-clipboard-mode +1)))))
 
       (IS-LINUX
-       ;; native tooltips are ugly!
-       (setq x-gtk-use-system-tooltips nil)
-       ))
+       (setq x-gtk-use-system-tooltips nil    ; native tooltips are ugly!
+             x-underline-at-descent-line t))) ; draw underline lower
 
 (provide 'core-os)
 ;;; core-os.el ends here
