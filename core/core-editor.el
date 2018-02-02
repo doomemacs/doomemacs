@@ -213,7 +213,8 @@ extension, try to guess one."
   (defun doom*quit-expand-region ()
     (when (memq last-command '(er/expand-region er/contract-region))
       (er/contract-region 0)))
-  (advice-add #'evil-escape :before #'doom*quit-expand-region))
+  (advice-add #'evil-escape :before #'doom*quit-expand-region)
+  (advice-add #'doom/escape :before #'doom*quit-expand-region))
 
 (def-package! helpful
   :commands (helpful-callable helpful-function helpful-macro helpful-command
