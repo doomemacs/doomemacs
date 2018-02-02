@@ -719,9 +719,7 @@
 
       (:after org
         (:map org-mode-map
-          :i [remap doom/inflate-space-maybe] #'org-self-insert-command
-          :i "C-e" #'org-end-of-line
-          :i "C-a" #'org-beginning-of-line))
+          :i [remap doom/inflate-space-maybe] #'org-self-insert-command))
 
       ;; Restore common editing keys (and ESC) in minibuffer
       (:map (minibuffer-local-map
