@@ -1,6 +1,13 @@
 ;;; completion/company/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
+(defun +company/toggle-auto-completion ()
+  "Toggle as-you-type code completion."
+  (interactive)
+  (require 'company)
+  (setq company-idle-delay (unless company-idle-delay 0.2)))
+
+;;;###autoload
 (defun +company/complete ()
   "Bring up the completion popup. If only one result, complete it."
   (interactive)
