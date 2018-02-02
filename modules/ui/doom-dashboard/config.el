@@ -58,8 +58,6 @@ Possible values:
   (format "DOOM v%s" doom-version)
   "Major mode for the DOOM dashboard buffer."
   (read-only-mode +1)
-  (when (featurep 'evil)
-    (evil-emacs-state))
   (setq truncate-lines t)
   (setq-local whitespace-style nil)
   (setq-local show-trailing-whitespace nil)
@@ -72,6 +70,11 @@ Possible values:
       "p" #'+doom-dashboard/previous-button
       "N" #'+doom-dashboard/last-button
       "P" #'+doom-dashboard/first-button
+      [remap evil-insert]  #'ignore
+      [remap evil-replace] #'ignore
+      [remap evil-change]  #'ignore
+      [remap evil-visual-char]  #'ignore
+      [remap evil-visual-line]  #'ignore
       (:when (featurep! :feature evil)
         :em "j" #'+doom-dashboard/next-button
         :em "k" #'+doom-dashboard/previous-button
