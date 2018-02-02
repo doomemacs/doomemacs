@@ -78,10 +78,11 @@ melodramatic ex-vimmer disappointed with the text-editor status quo."
  apropos-do-all t                 ; make `apropos' more useful
  compilation-always-kill t        ; kill compilation process before starting another
  compilation-ask-about-save nil   ; save all buffers on `compile'
- compilation-scroll-output t
+ compilation-scroll-output 'first-error
  confirm-nonexistent-file-or-buffer t
- enable-recursive-minibuffers nil
  debug-on-error (and (not noninteractive) doom-debug-mode)
+ enable-recursive-minibuffers nil
+ ffap-machine-p-known 'reject     ; don't ping things that look like domain names
  idle-update-delay 2              ; update ui less often
  load-prefer-newer (or noninteractive doom-debug-mode)
  ;; keep the point out of the minibuffer
@@ -90,7 +91,7 @@ melodramatic ex-vimmer disappointed with the text-editor status quo."
  auto-save-default nil
  create-lockfiles nil
  history-length 500
- make-backup-files nil
+ make-backup-files nil  ; don't create backup~ files
  ;; files
  abbrev-file-name             (concat doom-local-dir "abbrev.el")
  auto-save-list-file-name     (concat doom-cache-dir "autosave")
