@@ -94,8 +94,8 @@
   (add-hook 'after-save-hook #'+evil|save-buffer)
   ;; Make ESC (from normal mode) the universal escaper. See `doom-escape-hook'.
   (advice-add #'evil-force-normal-state :after #'doom/escape)
-  ;; Ensure buffer is in normal mode when we leave it and return to it.
-  (advice-add #'windmove-do-window-select :around #'+evil*restore-normal-state-on-windmove)
+  ;; Ensure buffer is in initial mode when we leave it and return to it.
+  (advice-add #'windmove-do-window-select :around #'+evil*restore-initial-state-on-windmove)
   ;; Don't move cursor when indenting
   (advice-add #'evil-indent :around #'+evil*static-reindent)
   ;; monkey patch `evil-ex-replace-special-filenames' to add more ex
