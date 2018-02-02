@@ -109,27 +109,6 @@
     (should (buffer-live-p fallback))
     (should (equal (buffer-name fallback) doom-fallback-buffer-name))))
 
-;; `doom--cycle-real-buffers'
-(def-test! kill-buffer-then-show-real-buffer
-  (with-temp-buffers!! (a b c d)
-    (let-advice!! ((kill-this-buffer :around doom*switch-to-fallback-buffer-maybe))
-      (dolist (buf (list a b d))
-        (with-current-buffer buf
-          (setq-local buffer-file-name "x")))
-      (should (cl-every #'buffer-live-p (buffer-list)))
-      (switch-to-buffer a)
-      (should (eq (current-buffer) a))
-      (should (eq (selected-window) (get-buffer-window a)))
-      (kill-this-buffer)
-      (should-not (eq (current-buffer) a))
-      (should-not (buffer-live-p a))
-      ;; eventually end up in the fallback buffer
-      (let ((fallback (doom-fallback-buffer)))
-        (while (not (eq (current-buffer) fallback))
-          (should (doom-real-buffer-p))
-          (kill-this-buffer))
-        (should (eq (current-buffer) fallback))))))
-
 ;; `doom-kill-buffer-and-windows'
 (def-test! kill-buffer-and-windows
   (with-temp-buffers!! (a b)

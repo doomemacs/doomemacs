@@ -540,16 +540,20 @@ instead)."
   (not (eq (current-buffer) (doom-fallback-buffer))))
 
 (defun doom*switch-to-fallback-buffer-maybe (orig-fn)
-  "Advice for `kill-this-buffer'. If there are no real buffers left, switch to
-`doom-fallback-buffer'."
+  "Advice for `kill-this-buffer'. If in a dedicated window, delete it. If there
+are no real buffers left, switch to `doom-fallback-buffer'. Otherwise, delegate
+to original `kill-this-buffer'."
   (let ((buf (current-buffer)))
     (cond ((window-dedicated-p)
            (delete-window))
           ((doom-real-buffer-p buf)
-           (previous-buffer)
-           (doom--cycle-real-buffers
-            (if (delq buf (doom-real-buffer-list)) -1))
-           (kill-buffer buf))
+           (or (kill-buffer buf)
+               (previous-buffer))
+           ;; if there are no (real) buffers left to switch to, land on the
+           ;; fallback buffer.
+           (unless (cl-set-difference (doom-real-buffer-list)
+                                      (doom-visible-buffers))
+             (switch-to-buffer (doom-fallback-buffer))))
           (t
            (funcall orig-fn)))))
 

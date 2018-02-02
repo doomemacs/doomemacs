@@ -150,32 +150,6 @@ If DERIVED-P, test with `derived-mode-p', otherwise use `eq'."
            when (string-match-p pattern (buffer-name buf))
            collect buf))
 
-(defun doom--cycle-real-buffers (n)
-  "Switch to the next buffer N times (previous, if N < 0), skipping over unreal
-buffers. If there's nothing left, switch to `doom-fallback-buffer'. See
-`doom-real-buffer-p' for what 'real' means."
-  (if (null n)
-      (switch-to-buffer (doom-fallback-buffer) nil t)
-    (let ((buffers (delq (current-buffer) (doom-real-buffer-list))))
-      (cond ((or (not buffers)
-                 (zerop (% n (1+ (length buffers)))))
-             (switch-to-buffer (doom-fallback-buffer) nil t))
-            ((= (length buffers) 1)
-             (switch-to-buffer (car buffers) nil t))
-            (t
-             ;; Why this instead of switching straight to the Nth buffer in
-             ;; BUFFERS? Because `switch-to-next-buffer' and
-             ;; `switch-to-prev-buffer' properly update buffer list order.
-             (cl-loop with move-func =
-                      (if (> n 0) #'switch-to-next-buffer #'switch-to-prev-buffer)
-                      for i to 20
-                      while (not (memq (current-buffer) buffers))
-                      do
-                      (dotimes (_i (abs n))
-                        (funcall move-func)))))))
-  (force-mode-line-update)
-  (current-buffer))
-
 ;;;###autoload
 (defun doom-set-buffer-real (buffer flag)
   "Forcibly mark BUFFER as FLAG (non-nil = real)."
