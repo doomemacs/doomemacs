@@ -214,8 +214,10 @@ wrong places)."
 
           ((memq type '(table table-row))
            (pcase direction
-             ('below (org-table-insert-row t))
-             ('above (org-shiftmetadown))))
+             ('below (save-excursion (org-table-insert-row t))
+                     (org-table-next-row))
+             ('above (save-excursion (org-shiftmetadown))
+                     (+org/table-previous-row))))
 
           ((memq type '(headline inlinetask))
            (let ((level (if (eq (org-element-type context) 'headline)
@@ -244,7 +246,7 @@ wrong places)."
           (t (user-error "Not a valid list, heading or table")))
 
     (when (bound-and-true-p evil-mode)
-      (evil-append-line 1))))
+      (evil-insert 1))))
 
 ;;;###autoload
 (defun +org-get-property (name &optional _file) ; TODO Add FILE
