@@ -37,7 +37,13 @@
         ;; more vim-like behavior
         evil-symbol-word-search t
         ;; don't activate mark on shift-click
-        shift-select-mode nil)
+        shift-select-mode nil
+        ;; cursor appearance
+        evil-default-cursor '+evil-default-cursor
+        evil-normal-state-cursor 'box
+        evil-emacs-state-cursor  '(box +evil-emacs-cursor)
+        evil-insert-state-cursor 'bar
+        evil-visual-state-cursor 'hollow)
 
   (add-hook 'doom-init-hook #'evil-mode)
   (evil-select-search-module 'evil-search-module 'evil-search)
@@ -45,14 +51,14 @@
   (set! :popup "^\\*evil-registers" '((size . 0.3)))
   (set! :popup "^\\*Command Line" '((size . 8)))
 
-  ;; Set cursor colors later, once theme is loaded
-  (defun +evil*init-cursors (&rest _)
-    (setq evil-default-cursor (face-background 'cursor nil t)
-          evil-normal-state-cursor 'box
-          evil-emacs-state-cursor  `(,(face-foreground 'warning) box)
-          evil-insert-state-cursor 'bar
-          evil-visual-state-cursor 'hollow))
-  (advice-add #'load-theme :after #'+evil*init-cursors)
+  ;; Change the cursor color in emacs mode
+  (defvar +evil--default-cursor-color "#ffffff")
+  (defun +evil-default-cursor () (set-cursor-color +evil--default-cursor-color))
+  (defun +evil-emacs-cursor ()   (set-cursor-color (face-foreground 'warning)))
+
+  (defun +evil|update-cursor-color ()
+    (setq +evil--default-cursor-color (face-background 'cursor)))
+  (add-hook 'doom-init-theme-hook #'+evil|update-cursor-color)
 
   ;; default modes
   (dolist (mode '(tabulated-list-mode view-mode comint-mode term-mode calendar-mode Man-mode))
