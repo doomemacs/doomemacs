@@ -162,7 +162,7 @@ ALIST supports one custom parameter: `size', which will resolve to
       '((quit) (transient . 0)))
     (set! :popup "^\\*doom:"
       '((size . 0.35) (side . bottom))
-      '((select . t) (modeline . t) (quit) (transient)))
+      '((select . t) (modeline . t) (quit) (transient . t)))
     (set! :popup "^\\*\\(?:\\(?:Pp E\\|doom e\\)val\\)"
       '((size . +popup-shrink-to-fit)) '((transient . 0) (select . ignore))))
   nil)
