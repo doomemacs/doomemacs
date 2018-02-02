@@ -481,6 +481,8 @@ character that looks like a space that `whitespace-mode' won't affect.")
 (global-eldoc-mode -1)
 ;; simple name in frame title
 (setq-default frame-title-format '("DOOM Emacs"))
+;; make `next-buffer', `other-buffer', etc. ignore unreal buffers
+(push '(buffer-predicate . doom-buffer-frame-predicate) default-frame-alist)
 ;; draw me like one of your French editors
 (tooltip-mode -1) ; relegate tooltips to echo area only
 (menu-bar-mode -1)
@@ -538,9 +540,8 @@ instead)."
   (let ((buf (current-buffer)))
     (cond ((window-dedicated-p)
            (delete-window))
-          ((eq buf (doom-fallback-buffer))
-           (doom--cycle-real-buffers -1))
           ((doom-real-buffer-p buf)
+           (previous-buffer)
            (doom--cycle-real-buffers
             (if (delq buf (doom-real-buffer-list)) -1))
            (kill-buffer buf))

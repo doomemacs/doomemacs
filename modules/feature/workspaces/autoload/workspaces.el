@@ -48,6 +48,12 @@
   "Return non-nil if buffer is in workspace (defaults to current workspace)."
   (persp-contain-buffer-p buffer (or workspace (+workspace-current)) nil))
 
+;;;###autoload
+(defun +workspace-alien-buffer-p (buffer)
+  "Return non-nil if BUFFER isn't a member of the current workspace."
+  (and (get-buffer-window buffer)
+       (not (+workspace-contains-buffer-p buffer))))
+
 
 ;; --- Getters ----------------------------
 

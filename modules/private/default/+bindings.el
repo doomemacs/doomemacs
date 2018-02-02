@@ -94,7 +94,7 @@
 
         (:desc "previous..." :prefix "["
           :desc "Text size"             :nv "[" #'text-scale-decrease
-          :desc "Buffer"                :nv "b" #'doom/previous-buffer
+          :desc "Buffer"                :nv "b" #'previous-buffer
           :desc "Diff Hunk"             :nv "d" #'git-gutter:previous-hunk
           :desc "Todo"                  :nv "t" #'hl-todo-previous
           :desc "Error"                 :nv "e" #'previous-error
@@ -105,7 +105,7 @@
 
         (:desc "next..." :prefix "]"
           :desc "Text size"             :nv "]" #'text-scale-increase
-          :desc "Buffer"                :nv "b" #'doom/next-buffer
+          :desc "Buffer"                :nv "b" #'next-buffer
           :desc "Diff Hunk"             :nv "d" #'git-gutter:next-hunk
           :desc "Todo"                  :nv "t" #'hl-todo-next
           :desc "Error"                 :nv "e" #'next-error
@@ -154,8 +154,8 @@
           :desc "Save buffer"             :n "s" #'save-buffer
           :desc "Pop scratch buffer"      :n "x" #'doom/open-scratch-buffer
           :desc "Bury buffer"             :n "z" #'bury-buffer
-          :desc "Next buffer"             :n "]" #'doom/next-buffer
-          :desc "Previous buffer"         :n "[" #'doom/previous-buffer
+          :desc "Next buffer"             :n "]" #'next-buffer
+          :desc "Previous buffer"         :n "[" #'previous-buffer
           :desc "Sudo edit this file"     :n "S" #'doom/sudo-this-file)
 
         (:desc "code" :prefix "c"
@@ -298,8 +298,8 @@
       ;; --- Personal vim-esque bindings ------------------
       :n  "zx" #'kill-this-buffer
       :n  "ZX" #'bury-buffer
-      :n  "]b" #'doom/next-buffer
-      :n  "[b" #'doom/previous-buffer
+      :n  "]b" #'next-buffer
+      :n  "[b" #'previous-buffer
       :n  "]w" #'+workspace/switch-right
       :n  "[w" #'+workspace/switch-left
       :m  "gt" #'+workspace/switch-right

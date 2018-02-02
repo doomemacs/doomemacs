@@ -35,6 +35,13 @@ it if it doesn't exist).")
 ;;
 
 ;;;###autoload
+(defun doom-buffer-frame-predicate (buf)
+  "To be used as the default frame buffer-predicate parameter. Returns nil if
+BUF should be skipped over by functions like `next-buffer' and `other-buffer'."
+  (or (doom-real-buffer-p buf)
+      (eq buf (doom-fallback-buffer))))
+
+;;;###autoload
 (defun doom-fallback-buffer ()
   "Returns the fallback buffer, creating it if necessary. By default this is the
 scratch buffer."
@@ -279,17 +286,3 @@ processes killed."
           (delete-process p)
           (cl-incf n))))
     n))
-
-;;;###autoload
-(defun doom/next-buffer ()
-  "Switch to the next real buffer, skipping non-real buffers. See
-`doom-real-buffer-p' for what 'real' means."
-  (interactive)
-  (doom--cycle-real-buffers +1))
-
-;;;###autoload
-(defun doom/previous-buffer ()
-  "Switch to the previous real buffer, skipping non-real buffers. See
-`doom-real-buffer-p' for what 'real' means."
-  (interactive)
-  (doom--cycle-real-buffers -1))
