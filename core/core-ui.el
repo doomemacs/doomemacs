@@ -309,6 +309,11 @@ DEFAULT is non-nil, set the default mode-line for all buffers."
               window-divider-default-right-width 1)
 (add-hook 'doom-init-ui-hook #'window-divider-mode)
 
+;; remove prompt if the file is opened in other clients
+(defun server-remove-kill-buffer-hook ()
+  (remove-hook 'kill-buffer-query-functions 'server-kill-buffer-query-function))
+(add-hook 'server-visit-hook 'server-remove-kill-buffer-hook)
+
 
 ;;
 ;; Line numbers
