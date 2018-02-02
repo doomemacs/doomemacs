@@ -174,26 +174,41 @@ I use this instead of `org-insert-item' or `org-insert-heading' which are too
 opinionated and perform this simple task incorrectly (e.g. whitespace in the
 wrong places)."
   (interactive)
-  (let* ((context (org-element-lineage
-                   (org-element-context)
-                   '(table table-row headline inlinetask item plain-list)
-                   t))
+  (let* ((context
+          (save-excursion
+            (when (bolp)
+              (back-to-indentation)
+              (forward-char))
+            (org-element-lineage
+             (org-element-context)
+             '(table table-row headline inlinetask item plain-list)
+             t)))
          (type (org-element-type context)))
     (cond ((memq type '(item plain-list))
            (let ((marker (org-element-property :bullet context))
                  (pad (save-excursion
                         (back-to-indentation)
-                        (- (point) (line-beginning-position)))))
-             (pcase direction
-               ('below
-                (org-end-of-item)
-                (goto-char (line-beginning-position))
-                (insert (make-string pad 32) (or marker ""))
-                (save-excursion (insert "\n")))
-               ('above
-                (goto-char (line-beginning-position))
-                (insert (make-string pad 32) (or marker ""))
-                (save-excursion (insert "\n")))))
+                        (- (point) (line-beginning-position))))
+                 afterp)
+             (save-match-data
+               (pcase direction
+                 ('below
+                  (org-end-of-item)
+                  (backward-char)
+                  (org-end-of-line)
+                  (if (and marker (string-match "\\([0-9]+\\)\\([).] *\\)" marker))
+                      (let ((l (line-number-at-pos)))
+                        (org-insert-item)
+                        (when (= l (line-number-at-pos))
+                          (org-next-item)
+                          (org-end-of-line)))
+                    (insert "\n" (make-string pad 32) (or marker ""))))
+                 ('above
+                  (goto-char (line-beginning-position))
+                  (if (and marker (string-match-p "[0-9]+[).]" marker))
+                      (org-insert-item)
+                    (insert (make-string pad 32) (or marker ""))
+                    (save-excursion (insert "\n")))))))
            (when (org-element-property :checkbox context)
              (insert "[ ] ")))
 
