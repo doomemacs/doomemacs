@@ -90,6 +90,10 @@ fundamental-mode) for performance sake."
       savehist-additional-variables '(kill-ring search-ring regexp-search-ring)
       save-place-file (concat doom-cache-dir "saveplace"))
 (add-hook! 'doom-init-hook #'(savehist-mode save-place-mode))
+(defun doom*recenter-on-load-saveplace (&rest _)
+  "Recenter on cursor when loading a saved place."
+  (if buffer-file-name (ignore-errors (recenter))))
+(advice-add #'save-place-find-file-hook :after-while #'doom*recenter-on-load-saveplace)
 
 ;; Keep track of recently opened files
 (def-package! recentf
