@@ -107,7 +107,7 @@
 (def-test! fallback-buffer
   (let ((fallback (doom-fallback-buffer)))
     (should (buffer-live-p fallback))
-    (should (equal (buffer-name fallback) doom-fallback-buffer))))
+    (should (equal (buffer-name fallback) doom-fallback-buffer-name))))
 
 ;; `doom--cycle-real-buffers'
 (def-test! kill-buffer-then-show-real-buffer

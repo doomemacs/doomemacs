@@ -30,7 +30,7 @@ See `doom-real-buffer-p' for more information.")
 `doom-real-buffer-p' for more information.")
 
 ;;;###autoload
-(defvar doom-fallback-buffer "*scratch*"
+(defvar doom-fallback-buffer-name "*scratch*"
   "The name of the buffer to fall back to if no other buffers exist (will create
 it if it doesn't exist).")
 
@@ -49,8 +49,8 @@ BUF should be skipped over by functions like `next-buffer' and `other-buffer'."
 ;;;###autoload
 (defun doom-fallback-buffer ()
   "Returns the fallback buffer, creating it if necessary. By default this is the
-scratch buffer."
-  (get-buffer-create doom-fallback-buffer))
+scratch buffer. See `doom-fallback-buffer-name' to change this."
+  (get-buffer-create doom-fallback-buffer-name))
 
 ;;;###autoload
 (defalias 'doom-buffer-list #'buffer-list)

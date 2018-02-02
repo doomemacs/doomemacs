@@ -44,7 +44,7 @@ Possible values:
 ;; Bootstrap
 ;;
 
-(setq doom-fallback-buffer +doom-dashboard-name
+(setq doom-fallback-buffer-name +doom-dashboard-name
       initial-buffer-choice #'+doom-dashboard-initial-buffer)
 
 (add-hook 'window-setup-hook #'+doom-dashboard|init)
