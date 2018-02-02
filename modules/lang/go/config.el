@@ -6,7 +6,8 @@
   :config
   (add-hook 'go-mode-hook #'flycheck-mode)
 
-  (setq gofmt-command "goimports")
+  (setq gofmt-command "goimports"
+        gofmt-show-errors nil)
   (if (not (executable-find "goimports"))
       (warn "go-mode: couldn't find goimports; no code formatting/fixed imports on save")
     (add-hook! go-mode (add-hook 'before-save-hook #'gofmt-before-save nil t)))
