@@ -81,15 +81,6 @@ a brief description of some native window parameters that Emacs uses:
     (select . ignore))
   "The default window parameters.")
 
-(defvar +popup-enable-fallback-rules t
-  "If non-nil, feature/popup will declare fallback rules for any special buffer
-that falls through all other rules. A special buffer starts with optional
-whitespace and an asterix.")
-
-(defvar +popup-enable-default-rules t
-  "If non-nil, feature/popup will declare a set of default rules for various
-core Emacs and Doom buffers that should be treated as popups.")
-
 (defvar +popup-ttl 10
   "The default time-to-live for transient buffers whose popup buffers have been
 deleted.")
@@ -154,33 +145,31 @@ ALIST supports one custom parameter: `size', which will resolve to
 ;; Default popup rules & bootstrap
 ;;
 
-(defun +popup|init ()
-  (eval-when-compile
-    (when +popup-enable-fallback-rules
-      (set! :popup "^ \\*" '((slot . 1) (vslot . -1) (size . +popup-shrink-to-fit)))
-      (set! :popup "^\\*"  '((slot . 1) (vslot . -1)) '((select . t))))
+(eval-when-compile
+  (when (featurep! +all)
+    (set! :popup "^ \\*" '((slot . 1) (vslot . -1) (size . +popup-shrink-to-fit)))
+    (set! :popup "^\\*"  '((slot . 1) (vslot . -1)) '((select . t))))
 
-    (when +popup-enable-default-rules
-      (set! :popup "^\\*Completions" '((slot . -1) (vslot . -2)) '((transient . 0)))
-      (set! :popup "^\\*Compil\\(ation\\|e-Log\\)" nil '((transient . 0) (quit . t)))
-      (set! :popup "^\\*\\(?:scratch\\|Messages\\)" nil '((transient)))
-      (set! :popup "^\\*[Hh]elp"
-        '((slot . 2) (vslot . 2) (size . 0.2))
-        '((select . t)))
-      (set! :popup "^\\*doom \\(?:term\\|eshell\\)"
-        '((size . 0.25))
-        '((quit) (transient . 0)))
-      (set! :popup "^\\*doom:"
-        '((size . 0.35) (side . top))
-        '((select . t) (modeline . t) (quit) (transient)))
-      (set! :popup "^\\*\\(?:\\(?:Pp E\\|doom e\\)val\\)"
-        '((size . +popup-shrink-to-fit)) '((transient . 0) (select . ignore))))
-    nil)
+  (when (featurep! +defaults)
+    (set! :popup "^\\*Completions" '((slot . -1) (vslot . -2)) '((transient . 0)))
+    (set! :popup "^\\*Compil\\(ation\\|e-Log\\)" nil '((transient . 0) (quit . t)))
+    (set! :popup "^\\*\\(?:scratch\\|Messages\\)" nil '((transient)))
+    (set! :popup "^\\*[Hh]elp"
+      '((slot . 2) (vslot . 2) (size . 0.2))
+      '((select . t)))
+    (set! :popup "^\\*doom \\(?:term\\|eshell\\)"
+      '((size . 0.25))
+      '((quit) (transient . 0)))
+    (set! :popup "^\\*doom:"
+      '((size . 0.35) (side . bottom))
+      '((select . t) (modeline . t) (quit) (transient)))
+    (set! :popup "^\\*\\(?:\\(?:Pp E\\|doom e\\)val\\)"
+      '((size . +popup-shrink-to-fit)) '((transient . 0) (select . ignore))))
+  nil)
 
-  (setq +popup--display-buffer-alist (eval-when-compile +popup--display-buffer-alist))
-  (+popup-mode +1))
+(setq +popup--display-buffer-alist (eval-when-compile +popup--display-buffer-alist))
 
-(add-hook 'doom-init-ui-hook #'+popup|init)
+(add-hook 'doom-init-ui-hook #'+popup-mode)
 (add-hook! '+popup-buffer-mode-hook #'(+popup|adjust-fringes +popup|set-modeline))
 
 
