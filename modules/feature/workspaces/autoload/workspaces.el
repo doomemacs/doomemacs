@@ -443,7 +443,8 @@ the next."
 (defun +workspace/display ()
   "Display a list of workspaces (like tabs) in the echo area."
   (interactive)
-  (minibuffer-message "%s" (+workspace--tabline)))
+  (let (message-log-max)
+    (minibuffer-message "%s" (+workspace--tabline))))
 
 
 ;;
