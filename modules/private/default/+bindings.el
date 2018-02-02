@@ -737,6 +737,10 @@
         "C-f" #'forward-word
         "M-z" #'doom/minibuffer-undo)
 
+      (:after evil
+        (:map evil-ex-completion-map
+          "C-a" #'move-beginning-of-line))
+
       (:map messages-buffer-mode-map
         "M-;" #'eval-expression
         "A-;" #'eval-expression)
