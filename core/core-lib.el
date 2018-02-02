@@ -57,6 +57,8 @@
   (declare (doc-string 1))
   `(lambda () (interactive) ,@body))
 
+(defalias 'lambda! 'λ!)
+
 (defmacro after! (feature &rest forms)
   "A smart wrapper around `with-eval-after-load'. Supresses warnings during
 compilation."
