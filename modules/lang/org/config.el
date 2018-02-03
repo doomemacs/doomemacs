@@ -17,7 +17,8 @@
 ;;
 
 (def-package! toc-org
-  :commands toc-org-enable)
+  :commands toc-org-enable
+  :config (setq toc-org-hrefify-default "org"))
 
 (def-package! org-crypt ; built-in
   :commands org-crypt-use-before-save-magic
