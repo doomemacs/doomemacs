@@ -8,6 +8,8 @@
   (advice-add #'windmove-do-window-select :around #'+doom*blink-cursor-maybe)
   (advice-add #'recenter :around #'+doom*blink-cursor-maybe)
 
+  (advice-add #'save-place-find-file-hook :after #'+doom/blink-cursor)
+
   (after! evil
     (advice-add #'evil--jumps-jump   :after #'+doom/blink-cursor)
 
