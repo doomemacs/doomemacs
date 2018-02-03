@@ -10,6 +10,13 @@
   (interactive "<!>")
   (doom/open-scratch-buffer bang))
 
+(evil-define-command doom:pwd (bang)
+  (interactive "<!>")
+  (if (not bang)
+      (pwd)
+    (kill-new default-directory)
+    (message "Copied to clipboard")))
+
 
 ;;
 ;; Commands
@@ -65,6 +72,7 @@
 ;; Project navigation
 (ex! "a"           #'projectile-find-other-file)
 (ex! "cd"          #'+default:cd)
+(ex! "pwd"         #'doom:pwd)
 (cond ((featurep! :completion ivy)
        (ex! "ag"       #'+ivy:ag)
        (ex! "agc[wd]"  #'+ivy:ag-cwd)
