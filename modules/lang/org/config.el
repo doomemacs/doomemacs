@@ -128,7 +128,9 @@ unfold to point on startup."
    org-adapt-indentation nil
    org-cycle-include-plain-lists t
    org-cycle-separator-lines 1
-   org-entities-user '(("flat"  "\\flat" nil "" "" "266D" "♭") ("sharp" "\\sharp" nil "" "" "266F" "♯"))
+   org-entities-user
+   '(("flat"  "\\flat" nil "" "" "266D" "♭")
+     ("sharp" "\\sharp" nil "" "" "266F" "♯"))
    org-fontify-done-headline t
    org-fontify-quote-and-verse-blocks t
    org-fontify-whole-heading-line t
@@ -176,7 +178,10 @@ unfold to point on startup."
    :face     (lambda (link)
                (if (file-exists-p (expand-file-name link +org-dir))
                    'org-link
-                 'error))))
+                 'error)))
+
+  ;; Update UI when theme is changed
+  (add-hook 'doom-init-theme-hook #'+org|setup-ui))
 
 (defun +org|setup-keybinds ()
   "Sets up org-mode and evil keybindings. Tries to fix the idiosyncrasies
