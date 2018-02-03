@@ -570,7 +570,7 @@ to original `kill-this-buffer'."
   (advice-add #'kill-this-buffer :around #'doom*switch-to-fallback-buffer-maybe)
   ;; Don't kill the fallback buffer
   (add-hook 'kill-buffer-query-functions #'doom|protect-fallback-buffer)
-  ;; Don't kill buffers that are visible else, only bury them
+  ;; Don't kill buffers that are visible in another window, only bury them
   (add-hook 'kill-buffer-query-functions #'doom|protect-visible-buffers)
   ;; Renames major-modes [pedantry intensifies]
   (add-hook 'after-change-major-mode-hook #'doom|set-mode-name)
