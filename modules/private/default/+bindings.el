@@ -28,13 +28,14 @@
       "M-="       #'text-scale-increase
       "M--"       #'text-scale-decrease
 
-      ;; Simple window navigation/manipulation
+      ;; Simple window/frame navigation/manipulation
       "C-`"       #'+popup/toggle
       "C-~"       #'+popup/raise
       "M-t"       #'+workspace/new
       "M-T"       #'+workspace/display
       "M-w"       #'delete-window
       "M-W"       #'delete-frame
+      "C-M-f"     #'toggle-frame-fullscreen
       "M-n"       #'evil-buffer-new
       "M-N"       #'make-frame
       "M-1"       (λ! (+workspace/switch-to 0))
@@ -56,7 +57,6 @@
       :ne "M-c"   #'evil-yank
       :ne "M-q"   (if (daemonp) #'delete-frame #'save-buffers-kill-emacs)
       :ne "M-f"   #'swiper
-      :ne "C-M-f" #'doom/toggle-fullscreen
       :n  "M-s"   #'save-buffer
       :m  "A-j"   #'+default:multi-next-line
       :m  "A-k"   #'+default:multi-previous-line
@@ -287,7 +287,7 @@
           :desc "Flyspell"               :n "s" #'flyspell-mode
           :desc "Flycheck"               :n "f" #'flycheck-mode
           :desc "Line numbers"           :n "l" #'doom/toggle-line-numbers
-          :desc "Fullscreen"             :n "f" #'doom/toggle-fullscreen
+          :desc "Frame fullscreen"       :n "f" #'toggle-frame-fullscreen
           :desc "Indent guides"          :n "i" #'highlight-indentation-mode
           :desc "Indent guides (column)" :n "I" #'highlight-indentation-current-column-mode
           :desc "Impatient mode"         :n "h" #'+impatient-mode/toggle
