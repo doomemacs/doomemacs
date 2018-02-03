@@ -29,14 +29,9 @@ stored in `persp-save-dir'.")
 (def-package! persp-mode
   :defer t
   :init
-  (defun +workspaces-buffer-predicate (buf)
-    (funcall (if persp-mode
-                 (frame-parameter nil 'persp-buffer-predicate-generated)
-               #'doom-buffer-frame-predicate)
-             buf))
-
   (defun +workspaces|init ()
-    (map-put default-frame-alist 'buffer-predicate #'+workspaces-buffer-predicate)
+    ;; Remove default buffer predicate so persp-mode can put in its own
+    (setq default-frame-alist (map-delete default-frame-alist 'buffer-predicate))
     (add-hook 'after-make-frame-functions #'+workspaces|init-frame)
     (require 'persp-mode)
     (unless (daemonp)

@@ -491,7 +491,7 @@ character that looks like a space that `whitespace-mode' won't affect.")
 ;; simple name in frame title
 (setq frame-title-format '("%b – Doom Emacs"))
 ;; make `next-buffer', `other-buffer', etc. ignore unreal buffers
-(push '(buffer-predicate . doom-buffer-frame-predicate) default-frame-alist)
+(map-put default-frame-alist 'buffer-predicate #'doom-buffer-frame-predicate)
 ;; draw me like one of your French editors
 (tooltip-mode -1) ; relegate tooltips to echo area only
 (menu-bar-mode -1)
