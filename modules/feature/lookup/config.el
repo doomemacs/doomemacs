@@ -91,7 +91,13 @@ properties:
 (after! xref
   ;; By default, `etags--xref-backend' is the default xref backend. No need.
   ;; We'll set these up ourselves in other modules.
-  (setq-default xref-backend-functions '(t)))
+  (setq-default xref-backend-functions '(t))
+
+  ;; ...however, it breaks `projectile-find-tag', unless we put it back.
+  (defun +lookup*projectile-find-tag (orig-fn)
+    (let ((xref-backend-functions '(etags--xref-backend t)))
+      (funcall orig-fn)))
+  (advice-add #'projectile-find-tag :around #'+lookup*projectile-find-tag))
 
 (defun +lookup|init-xref-backends ()
   "Set `+lookup-current-functions' for the current buffer.
