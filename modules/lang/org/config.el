@@ -171,14 +171,35 @@ unfold to point on startup."
                                           :background nil t)))
 
   ;; Custom links
-  (org-link-set-parameters
-   "org"
-   :complete (lambda () (+org-link-read-file "org" +org-dir))
-   :follow   (lambda (link) (find-file (expand-file-name link +org-dir)))
-   :face     (lambda (link)
-               (if (file-exists-p (expand-file-name link +org-dir))
-                   'org-link
-                 'error)))
+  (setq org-link-abbrev-alist
+        '(("github"      . "https://github.com/%s")
+          ("youtube"     . "https://youtube.com/watch?v=%s")
+          ("google"      . "https://google.com/search?q=")
+          ("gimages"     . "https://google.com/images?q=%s")
+          ("gmap"        . "https://maps.google.com/maps?q=%s")
+          ("duckduckgo"  . "https://duckduckgo.com/?q=%s")
+          ("wolfram"     . "https://wolframalpha.com/input/?i=%s")
+          ("doom-repo"   . "https://github.com/hlissner/doom-emacs/%s")))
+
+  (defun +org--relpath (path root)
+    (if (and buffer-file-name (file-in-directory-p buffer-file-name root))
+        (file-relative-name path)
+      path))
+
+  (defmacro def-org-file-link! (key dir)
+    `(org-link-set-parameters
+      ,key
+      :complete (lambda () (+org--relpath (+org-link-read-file ,key ,dir) ,dir))
+      :follow   (lambda (link) (find-file (expand-file-name link ,dir)))
+      :face     (lambda (link)
+                  (if (file-exists-p (expand-file-name link ,dir))
+                      'org-link
+                    '(:inherit (error underline))))))
+
+  (def-org-file-link! "org" +org-dir)
+  (def-org-file-link! "doom" doom-emacs-dir)
+  (def-org-file-link! "doom-module" doom-modules-dir)
+  (def-org-file-link! "doom-docs" doom-docs-dir)
 
   ;; Update UI when theme is changed
   (add-hook 'doom-init-theme-hook #'+org|setup-ui))
