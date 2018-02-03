@@ -257,7 +257,10 @@ between the two."
 
   ;; Let OS decide what to do with files when opened
   (setq org-file-apps
-        `(("\\.org$" . emacs)
+        `(("pdf" . default)
+          ("\\.x?html?\\'" . default)
+          (auto-mode . emacs)
+          (directory . emacs)
           (t . ,(cond (IS-MAC "open -R \"%s\"")
                       (IS-LINUX "xdg-open \"%s\"")))))
 
