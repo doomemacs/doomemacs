@@ -16,6 +16,11 @@
   "The name of the primary and initial workspace, which cannot be deleted or
 renamed.")
 
+;; FIXME actually use this for wconf bookmark system
+(defvar +workspaces-data-file "_workspaces"
+  "The basename of the file to store single workspace perspectives. Will be
+stored in `persp-save-dir'.")
+
 
 ;;
 ;; Plugins

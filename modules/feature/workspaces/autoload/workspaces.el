@@ -1,8 +1,5 @@
 ;;; feature/workspaces/autoload/workspaces.el -*- lexical-binding: t; -*-
 
-(defvar +workspace-data-file "_workspaces"
-  "The file basename in which to store single workspace perspectives.")
-
 (defvar +workspace--last nil)
 (defvar +workspace--index 0)
 
@@ -45,7 +42,7 @@
 
 ;;;###autoload
 (defun +workspace-contains-buffer-p (buffer &optional workspace)
-  "Return non-nil if buffer is in workspace (defaults to current workspace)."
+  "Return non-nil if BUFFER is in WORKSPACE (defaults to current workspace)."
   (persp-contain-buffer-p buffer (or workspace (+workspace-current)) nil))
 
 
@@ -111,7 +108,7 @@ Returns t if successful, nil otherwise."
   (when (+workspace-exists-p name)
     (error "A workspace named '%s' already exists." name))
   (persp-load-from-file-by-names
-   (expand-file-name +workspace-data-file persp-save-dir)
+   (expand-file-name +workspaces-data-file persp-save-dir)
    *persp-hash* (list name))
   (+workspace-exists-p name))
 
@@ -131,7 +128,7 @@ perspective hash table.
 Returns t on success, nil otherwise."
   (unless (+workspace-exists-p name)
     (error "'%s' is an invalid workspace" name))
-  (let ((fname (expand-file-name +workspace-data-file persp-save-dir)))
+  (let ((fname (expand-file-name +workspaces-data-file persp-save-dir)))
     (persp-save-to-file-by-names fname *persp-hash* (list name))
     (and (member name (persp-list-persp-names-in-file fname))
          t)))
