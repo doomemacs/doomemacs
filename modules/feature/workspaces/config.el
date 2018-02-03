@@ -24,7 +24,14 @@ renamed.")
 (def-package! persp-mode
   :defer t
   :init
+  (defun +workspaces-buffer-predicate (buf)
+    (funcall (if persp-mode
+                 (frame-parameter nil 'persp-buffer-predicate-generated)
+               #'doom-buffer-frame-predicate)
+             buf))
+
   (defun +workspaces|init ()
+    (map-put default-frame-alist 'buffer-predicate #'+workspaces-buffer-predicate)
     (add-hook 'after-make-frame-functions #'+workspaces|init-frame)
     (require 'persp-mode)
     (unless (daemonp)
@@ -70,7 +77,6 @@ Uses `+workspaces-main' to determine the name of the main workspace."
         persp-set-last-persp-for-new-frames t
         persp-switch-to-added-buffer nil
         persp-remove-buffers-from-nil-persp-behaviour nil
-        persp-set-frame-buffer-predicate #'doom-buffer-frame-predicate
         persp-auto-resume-time -1 ; Don't auto-load on startup
         persp-auto-save-opt (if noninteractive 0 1)) ; auto-save on kill
 
@@ -99,7 +105,6 @@ Uses `+workspaces-main' to determine the name of the main workspace."
   ;;
   (defun +workspaces|init-persp-mode ()
     (cond (persp-mode
-           (add-hook 'doom-unreal-buffer-functions #'+workspace-alien-buffer-p)
            ;; Ensure `persp-kill-buffer-query-function' is last in
            ;; kill-buffer-query-functions
            (remove-hook 'kill-buffer-query-functions 'persp-kill-buffer-query-function)
@@ -111,7 +116,6 @@ Uses `+workspaces-main' to determine the name of the main workspace."
            (advice-add #'display-buffer   :after #'+workspaces*auto-add-buffer)
            (advice-add #'doom-buffer-list :override #'+workspace-buffer-list))
           (t
-           (remove-hook 'doom-unreal-buffer-functions #'+workspace-alien-buffer-p)
            (advice-remove #'switch-to-buffer #'+workspaces*auto-add-buffer)
            (advice-remove #'display-buffer   #'+workspaces*auto-add-buffer)
            (advice-remove #'doom-buffer-list #'+workspace-buffer-list))))

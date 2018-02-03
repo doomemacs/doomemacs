@@ -48,12 +48,6 @@
   "Return non-nil if buffer is in workspace (defaults to current workspace)."
   (persp-contain-buffer-p buffer (or workspace (+workspace-current)) nil))
 
-;;;###autoload
-(defun +workspace-alien-buffer-p (buffer)
-  "Return non-nil if BUFFER isn't a member of the current workspace."
-  (and (get-buffer-window buffer)
-       (not (+workspace-contains-buffer-p buffer))))
-
 
 ;; --- Getters ----------------------------
 
@@ -274,6 +268,8 @@ workspace to delete."
                  (if (+workspace-exists-p +workspace--last)
                      +workspace--last
                    (car (+workspace-list-names))))
+                (unless (doom-buffer-frame-predicate (current-buffer))
+                  (switch-to-buffer (doom-fallback-buffer)))
                 (format "Deleted '%s' workspace" name))
                ((= workspaces 1)
                 (format "Can't delete the last workspace!"))
