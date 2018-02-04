@@ -91,8 +91,8 @@ the profiling report otherwise."
 
 ;;;###autoload
 (defun doom/info ()
-  "Collects some debug information about your Emacs session, and copies it to
-your clipboard. Use this when you are filing bug reports!"
+  "Collects some debug information about your Emacs session, formats it into
+markdown and copies it to your clipboard, ready to be pasted into bug reports!"
   (declare (interactive-only t))
   (interactive)
   (message "Generating Doom info...")
@@ -100,7 +100,7 @@ your clipboard. Use this when you are filing bug reports!"
          (str (format
                (concat "### System Information\n"
                        "- OS: %s (%s)\n"
-                       "- Emacs: %s\n"
+                       "- Emacs: %s (%s)\n"
                        "- Doom: %s (%s https://github.com/hlissner/doom-emacs/commit/%s)\n"
                        "- Graphic display: %s (daemon: %s)\n"
                        "- System features: %s\n"
@@ -108,10 +108,10 @@ your clipboard. Use this when you are filing bug reports!"
                        "  ```elisp\n"
                        "  modules:   %s\n"
                        "  packages:  %s\n"
-                       "  elc files: %s\n"
+                       "  elc dirs:  %s\n"
                        "  exec-path: %s\n"
                        "  ```\n")
-               system-type
+               system-type system-configuration
                emacs-version (format-time-string "%b %d, %Y" emacs-build-time)
                doom-version
                (vc-git--symbolic-ref "core/core.el") (vc-git-working-revision "core/core.el")
