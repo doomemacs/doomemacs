@@ -102,7 +102,13 @@ your clipboard. Use this when you are filing bug reports!"
                        "- Doom: %s (%s https://github.com/hlissner/doom-emacs/commit/%s)\n"
                        "- Graphic display: %s (daemon: %s)\n"
                        "- System features: %s\n"
-                       "- Details:\n  ```elisp\n  modules:\t%s  packages:\t%s  compiled files:\t%s  exec-path:\t%s  ```\n")
+                       "- Details:\n"
+                       "  ```elisp\n"
+                       "  modules:   %s\n"
+                       "  packages:  %s\n"
+                       "  elc files: %s\n"
+                       "  exec-path: %s\n"
+                       "  ```\n")
                system-type
                emacs-version (format-time-string "%b %d, %Y" emacs-build-time)
                doom-version
@@ -110,37 +116,43 @@ your clipboard. Use this when you are filing bug reports!"
                (display-graphic-p) (daemonp)
                (bound-and-true-p system-configuration-features)
                ;; details
-               (pp-to-string ; modules
-                (or (ignore-errors
-                      (cl-loop with cat = nil
-                               for key being the hash-keys of doom-modules
-                               if (or (not cat) (not (eq cat (car key))))
-                               do (setq cat (car key)) and collect cat
-                               else collect (cdr key)))
-                    "n/a"))
-               (pp-to-string ; packages
-                (or (ignore-errors
-                      (let (packages)
-                        (require 'async)
-                        (async-get
-                         (async-start
-                          `(lambda ()
-                             (setq load-path ',load-path)
-                             (load ,(expand-file-name "core/core.el" doom-emacs-dir))
-                             (load ,(expand-file-name "init.el" doom-emacs-dir))
-                             (load ,(expand-file-name "core/autoload/packages.el" doom-emacs-dir))
-                             (doom-get-packages))
-                          (lambda (p) (setq packages p))))
-                        (cl-sort (mapcar #'car packages) #'string-lessp :key #'symbol-name)))
-                    "n/a"))
-               (pp-to-string ; compiled files
-                (or (ignore-errors
-                      (cl-delete-duplicates
-                       (cl-loop for file in (append (reverse (directory-files-recursively doom-core-dir "\\.elc$"))
-                                                    (reverse (directory-files-recursively doom-modules-dir "\\.elc$")))
-                                collect (file-relative-name (file-name-directory file) doom-emacs-dir))
-                       :test #'equal))
-                    "n/a"))
-               (pp-to-string exec-path))))
+               (or (cl-loop with cat = nil
+                            for key being the hash-keys of doom-modules
+                            if (or (not cat) (not (eq cat (car key))))
+                            do (setq cat (car key)) and collect cat
+                            else collect
+                            (let ((flags (doom-module-flags cat (cdr key))))
+                              (if (equal flags '(t))
+                                  (cdr key)
+                                (list (cdr key) flags))))
+                   "n/a")
+               (or (let (packages)
+                     (ignore-errors
+                       (require 'async)
+                       ;; collect these in another session to protect this
+                       ;; session's state
+                       (async-get
+                        (async-start
+                         `(lambda ()
+                            (setq load-path ',load-path)
+                            (load ,(expand-file-name "core/core.el" doom-emacs-dir))
+                            (load ,(expand-file-name "init.el" doom-emacs-dir))
+                            (load ,(expand-file-name "core/autoload/packages.el" doom-emacs-dir))
+                            (doom-get-packages))
+                         (lambda (p) (setq packages p))))
+                       (mapcar (lambda (x)
+                                 (if (cdr x)
+                                     (format "%s" x)
+                                   (symbol-name (car x))))
+                               (cl-sort packages #'string-lessp :key (lambda (x) (symbol-name (car x)))))))
+                   "n/a")
+               (or (ignore-errors
+                     (cl-delete-duplicates
+                      (cl-loop for file in (append (reverse (directory-files-recursively doom-core-dir "\\.elc$"))
+                                                   (reverse (directory-files-recursively doom-modules-dir "\\.elc$")))
+                               collect (file-relative-name (file-name-directory file) doom-emacs-dir))
+                      :test #'equal))
+                   "n/a")
+               exec-path)))
     (kill-new str)
     (message "Done! Copied to your clipboard")))
