@@ -1,0 +1,28 @@
+#+TITLE: :lang csharp
+
+This module adds C# support to Emacs.
+
+#+begin_quote
+I don't use C# for much else than Unity3D and, seldomly, for Mono game
+development on Linux.
+#+end_quote
+
+* Table of Contents :TOC:
+- [[Install][Install]]
+  - [[MacOS][MacOS]]
+  - [[Arch Linux][Arch Linux]]
+
+* Install
+This module needs:
+
++ omnisharp-roslyn (install with ~M-x omnisharp-install-server~)
++ .NET SDKs (on Windows)
++ Mono (on UNIX platforms)
+
+** MacOS
+=TODO=
+
+** Arch Linux
+#+BEGIN_SRC sh :dir /sudo:: :tangle (if (doom-system-os 'arch) "yes")
+sudo pacman --needed --noconfirm -S mono
+#+END_SRC
