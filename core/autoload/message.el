@@ -70,12 +70,6 @@ interactive session."
        (goto-char (point-max)))))
 
 ;;;###autoload
-(defmacro debug! (message &rest args)
-  "Out a debug message if `doom-debug-mode' is non-nil. Otherwise, ignore this."
-  (when doom-debug-mode
-    `(message ,message ,@args)))
-
-;;;###autoload
 (defun doom-ansi-apply (code format &rest args)
   (let ((rule (or (assq code doom-message-fg)
                   (assq code doom-message-bg)
@@ -85,3 +79,23 @@ interactive session."
             (apply #'format format args)
             0)))
 
+;;;###autoload
+(defmacro warn! (message &rest args)
+  "Output a colored warning for the current module in the *Messages* buffer."
+  (let ((msg (format "WARNING: %s" (format message args))))
+    (if (file-in-directory-p load-file-name doom-modules-dir)
+        `(cl-destructuring-bind (cat . mod) (doom-module-from-path load-file-name)
+           (message
+            "%s"
+            (propertize (format "%s %s" (list cat mod) ,msg)
+                        'face 'warning)))
+      `(message "%s" (propertize ,msg 'face 'warning)))))
+
+;;;###autoload
+(defmacro log! (message &rest args)
+  "Output a debug message if `doom-debug-mode' is non-nil. Otherwise, ignore this."
+  (when doom-debug-mode
+    `(message
+      "LOG: %s"
+      (propertize (format ,message ,@args)
+                  'face 'font-lock-comment-face))))
