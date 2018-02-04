@@ -176,8 +176,6 @@
           :desc "Find file from here"       :n "?" #'counsel-file-jump
           :desc "Find other file"           :n "a" #'projectile-find-other-file
           :desc "Open project editorconfig" :n "c" #'editorconfig-find-current-editorconfig
-          :desc "Find file in dotfiles"     :n "d" #'+default/find-in-dotfiles
-          :desc "Browse dotfiles"           :n "D" #'+default/browse-dotfiles
           :desc "Find file in emacs.d"      :n "e" #'+default/find-in-emacsd
           :desc "Browse emacs.d"            :n "E" #'+default/browse-emacsd
           :desc "Recent files"              :n "r" #'recentf-open-files
