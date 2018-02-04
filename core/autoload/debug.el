@@ -158,3 +158,9 @@ markdown and copies it to your clipboard, ready to be pasted into bug reports!"
                exec-path)))
     (kill-new str)
     (message "Done! Copied to your clipboard")))
+
+;;;###autoload
+(defun doom/toggle-debug-mode ()
+  (interactive)
+  (setq doom-debug-mode (not doom-debug-mode))
+  (toggle-debug-on-error))
