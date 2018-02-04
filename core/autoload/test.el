@@ -1,14 +1,5 @@
 ;;; core/autoload/test.el -*- lexical-binding: t; no-byte-compile: t; -*-
 
-(defvar doom-test-modules
-  '(:feature evil workspaces
-    :completion company
-    :ui doom-dashboard
-    :tools password-store
-    :lang org web
-    :private hlissner)
-  "The `doom!' specs for the Doom unit test session.")
-
 ;;;###autoload
 (defun doom//run-tests (&optional modules)
   "Run all loaded tests, specified by MODULES (a list of module cons cells) or
@@ -47,7 +38,7 @@ If neither is available, run all tests in all enabled modules."
               (t
                (let (noninteractive)
                  (clrhash doom-modules)
-                 (eval `(doom! ,@doom-test-modules))
+                 (load (expand-file-name "init.test.el" user-emacs-directory) nil t)
                  (setq modules (doom-module-pairs)
                        targets (list (expand-file-name "test/" doom-core-dir))))))
         ;; resolve targets to a list of test files and load them
