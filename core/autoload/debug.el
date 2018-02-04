@@ -80,6 +80,8 @@ selection of all minor-modes, active or not."
 (defvar doom--profiler nil)
 ;;;###autoload
 (defun doom/toggle-profiler ()
+  "Toggle the Emacs profiler. Starts it if isn't running. Stops it and pops up
+the profiling report otherwise."
   (interactive)
   (if (not doom--profiler)
       (profiler-start 'cpu+mem)
