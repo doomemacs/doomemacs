@@ -7,10 +7,11 @@
   :after csharp-mode
   :preface
   (setq omnisharp-auto-complete-want-documentation nil
-        omnisharp-server-executable-path (concat doom-local-dir "OmniSharp.exe"))
+        omnisharp-cache-directory (concat doom-cache-dir "omnisharp"))
   :config
-  (if (file-exists-p omnisharp-server-executable-path)
-      (add-hook! csharp-mode #'(eldoc-mode flycheck-mode omnisharp-mode))
+  (add-hook! csharp-mode #'(eldoc-mode flycheck-mode omnisharp-mode))
+
+  (unless (file-exists-p (omnisharp--server-installation-path t))
     (warn "csharp-mode: omnisharp server isn't installed, completion won't work"))
 
   (set! :company-backend 'csharp-mode '(company-omnisharp))
