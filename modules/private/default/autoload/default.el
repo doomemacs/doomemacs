@@ -9,15 +9,15 @@
     (error "Couldn't find filename in current buffer")))
 
 ;;;###autoload
-(defmacro +default--def-browse-in! (name dir)
-  (let ((prefix (cdr (doom-module-from-path (or load-file-name byte-compile-current-file)))))
+(defmacro +default--def-browse-in! (name dir &optional prefix)
+  (let ((prefix (or prefix (cdr (doom-module-from-path (or load-file-name byte-compile-current-file))))))
     `(defun ,(intern (format "+%s/browse-%s" prefix name)) ()
        (interactive)
        (doom-project-browse ,dir))))
 
 ;;;###autoload
-(defmacro +default--def-find-in! (name dir)
-  (let ((prefix (cdr (doom-module-from-path (or load-file-name byte-compile-current-file)))))
+(defmacro +default--def-find-in! (name dir &optional prefix)
+  (let ((prefix (or prefix (cdr (doom-module-from-path (or load-file-name byte-compile-current-file))))))
     `(defun ,(intern (format "+%s/find-in-%s" prefix name)) ()
        (interactive)
        (doom-project-find-file ,dir))))
@@ -25,6 +25,7 @@
 
 ;;;###autoload (autoload '+default/browse-project "private/default/autoload/default" nil t)
 (+default--def-browse-in! project (doom-project-root))
+;; NOTE No need for find-in-project, use `projectile-find-file'
 
 ;;;###autoload (autoload '+default/find-in-templates "private/default/autoload/default" nil t)
 (+default--def-find-in!   templates +file-templates-dir)
