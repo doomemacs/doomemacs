@@ -473,7 +473,11 @@ created."
       (if (not (persp-frame-list-without-daemon))
           (+workspace-switch +workspaces-main t)
         (+workspace-switch (format "#%s" (+workspace--generate-id)) t)
-        (set-frame-parameter frame 'workspace (+workspace-current-name)))
+        (unless (doom-real-buffer-p)
+          (switch-to-buffer (doom-fallback-buffer)))
+        (set-frame-parameter frame 'workspace (+workspace-current-name))
+        ;; ensure every buffer has a buffer-predicate
+        (persp-set-frame-buffer-predicate frame))
       (run-at-time 0.1 nil #'+workspace/display))))
 
 (defvar +workspaces--project-dir nil)
