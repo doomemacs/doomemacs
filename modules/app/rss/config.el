@@ -48,8 +48,6 @@
           :n "q"  #'elfeed-kill-buffer
           :m "j"  #'evil-next-visual-line
           :m "k"  #'evil-previous-visual-line
-          [remap doom/next-buffer]      #'+rss/next
-          [remap doom/previous-buffer]  #'+rss/previous
           [remap next-buffer]           #'+rss/next
           [remap previous-buffer]       #'+rss/previous)))
 

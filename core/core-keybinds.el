@@ -91,8 +91,8 @@ If any hook returns non-nil, all hooks after it are ignored.")
     ("k" windmove-up)
     ("l" windmove-right)
 
-    ("p" doom/previous-buffer)
-    ("n" doom/next-buffer)
+    ("p" previous-buffer)
+    ("n" next-buffer)
     ("b" switch-to-buffer)
     ("f" find-file)
 

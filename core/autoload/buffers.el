@@ -193,7 +193,7 @@ If DONT-SAVE, don't prompt to save modified buffers (discarding their changes)."
     (kill-buffer buffer)
     (cl-loop for win in windows
              if (doom-real-buffer-p (window-buffer win))
-             do (with-selected-window win (doom/previous-buffer)))))
+             do (with-selected-window win (previous-buffer)))))
 
 ;;;###autoload
 (defun doom/kill-all-buffers (&optional project-p)
