@@ -101,6 +101,14 @@
     (add-to-list 'TeX-view-program-selection
                  '(output-pdf "Okular"))))
 
+(after! latex
+  (when (featurep! +skim)
+    (add-to-list 'TeX-view-program-list
+                 '("Skim" "/Applications/Skim.app/Contents/SharedSupport/displayline -b -g %n %o %b"))
+    (add-to-list 'TeX-view-program-selection
+                 '(output-pdf "Skim"))))
+
+
 (def-package! preview
   ;; The preview package is currently broken with the latest AUCTeX version ("11.90.2.2017-07-25)
   ;; ... and Ghostscript 9.22. It's now fixed in AUCTeX master, so we just have to wait.
