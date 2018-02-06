@@ -194,7 +194,7 @@ Uses `shrink-window-if-larger-than-buffer'."
                window--sides-inhibit-check nil)
          (+popup|cleanup-rules)
          (dolist (prop +popup-window-parameters)
-           (map-delete prop window-persistent-parameters)))))
+           (map-delete window-persistent-parameters prop)))))
 
 ;;;###autoload
 (define-minor-mode +popup-buffer-mode
