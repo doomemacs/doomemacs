@@ -75,6 +75,13 @@ If NOCACHE, don't fetch a cached answer."
     (let ((projectile-require-project-root t))
       (projectile-project-p))))
 
+(defun doom-project-name (&optional nocache)
+  "Return the name of the current project.
+If NOCACHE, don't fetch a cached answer."
+  (if nocache
+      (without-project-cache! (doom-project-name nil))
+    (projectile-project-name)))
+
 (defun doom-project-root (&optional nocache)
   "Returns the root of your project, or `default-directory' if none was found.
 If NOCACHE, don't fetch a cached answer."
