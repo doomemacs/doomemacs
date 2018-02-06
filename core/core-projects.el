@@ -73,7 +73,7 @@ If NOCACHE, don't fetch a cached answer."
   (if nocache
       (without-project-cache! (doom-project-p nil))
     (let ((projectile-require-project-root t))
-      (projectile-project-p))))
+      (and (projectile-project-p) t))))
 
 (defun doom-project-name (&optional nocache)
   "Return the name of the current project.
