@@ -13,3 +13,7 @@
 (def-package! flycheck-crystal
   :after crystal-mode
   :config (add-hook 'crystal-mode-hook #'flycheck-mode))
+
+
+(def-package! inf-crystal
+  :commands (inf-crystal crystal-switch-to-inf))
