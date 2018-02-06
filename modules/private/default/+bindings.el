@@ -76,7 +76,7 @@
         :desc "Ex command"              :nv ";"  #'evil-ex
         :desc "M-x"                     :nv ":"  #'execute-extended-command
         :desc "Pop up scratch buffer"   :nv "x"  #'doom/open-scratch-buffer
-        :desc "Org Capture"             :nv "X"  #'+org-capture/open
+        :desc "Org Capture"             :nv "X"  #'org-capture
 
         ;; Most commonly used
         :desc "Find file in project"    :n "SPC" #'projectile-find-file

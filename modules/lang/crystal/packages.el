@@ -3,4 +3,4 @@
 
 (package! crystal-mode)
 (package! flycheck-crystal)
-
+(package! inf-crystal)

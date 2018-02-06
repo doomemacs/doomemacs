@@ -98,8 +98,8 @@ Uses `+workspaces-main' to determine the name of the main workspace."
   (add-hook 'delete-frame-functions #'+workspaces|delete-associated-workspace)
 
   ;; per-project workspaces
-  (setq projectile-switch-project-action #'+workspaces|set-project-action
-        counsel-projectile-switch-project-action #'+workspaces|switch-counsel-project-action)
+  (setq projectile-switch-project-action #'+workspaces|set-project-action)
+  (advice-add #'counsel-projectile-switch-project-by-name :before #'+workspaces*switch-counsel-project-action)
   (add-hook 'projectile-after-switch-project-hook #'+workspaces|switch-to-project)
 
   ;;
