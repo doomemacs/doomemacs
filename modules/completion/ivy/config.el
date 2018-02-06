@@ -93,7 +93,8 @@ immediately runs it on the current candidate (ending the ivy session)."
         [remap yank-pop]                 #'counsel-yank-pop
         [remap info-lookup-symbol]       #'counsel-info-lookup-symbol
         [remap imenu]                    #'counsel-imenu
-        [remap recentf-open-files]       #'counsel-recentf)
+        [remap recentf-open-files]       #'counsel-recentf
+        [remap org-capture]              #'counsel-org-capture)
   :config
   (set! :popup "^\\*ivy-occur" '((size . 0.35)) '((transient . 0) (quit)))
 
