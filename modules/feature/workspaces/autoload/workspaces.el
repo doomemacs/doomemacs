@@ -488,16 +488,7 @@ created."
   (setq +workspaces--project-dir default-directory))
 
 ;;;###autoload
-(defun +workspaces|switch-counsel-project-action (project)
-  "A `counsel-projectile-switch-project-action' that creates a dedicated
-workspace for a new project, before prompting to open a file."
-  (when persp-mode
-    (let ((+workspaces--project-dir project)
-          (inhibit-message t))
-      (+workspaces|switch-to-project))))
-
-;;;###autoload
-(defun +workspaces|switch-to-project ()
+(defun +workspaces|switch-to-project (&optional inhibit-prompt)
   "Creates a workspace dedicated to a new project. If one already exists, switch
 to it. Should be hooked to `projectile-after-switch-project-hook'."
   (when (and persp-mode +workspaces--project-dir)
@@ -516,7 +507,8 @@ to it. Should be hooked to `projectile-after-switch-project-hook'."
             (+workspace-switch new-name)
             (unless persp-p
               (switch-to-buffer (doom-fallback-buffer)))
-            (doom-project-find-file +workspaces--project-dir)
+            (unless inhibit-prompt
+              (doom-project-find-file +workspaces--project-dir))
             (+workspace-message
              (format "Switched to '%s' in new workspace" new-name)
              'success)))
@@ -526,6 +518,14 @@ to it. Should be hooked to `projectile-after-switch-project-hook'."
 ;;
 ;; Advice
 ;;
+
+;;;###autoload
+(defun +workspaces*switch-counsel-project-action (project)
+  "A `counsel-projectile-switch-project-action' that creates a dedicated
+workspace for a new project, before prompting to open a file."
+  (let ((+workspaces--project-dir project)
+        (inhibit-message t))
+    (+workspaces|switch-to-project 'inhibit-prompt)))
 
 ;;;###autoload
 (defun +workspaces*autosave-real-buffers (orig-fn &rest args)
