@@ -34,6 +34,7 @@ Uses the capture template specified by KEY. Otherwise, prompts you for one."
   `((name . "org-capture")
     (width . 70)
     (height . 25)
+    (transient . t)
     (window-system . ,(cond (IS-MAC 'ns)
                             (IS-LINUX 'x)
                             (t 'w32)))
@@ -50,31 +51,46 @@ Uses the capture template specified by KEY. Otherwise, prompts you for one."
 (defun +org-capture-frame-p (&rest _)
   "Return t if the current frame is an org-capture frame opened by
 `+org-capture/open-frame'."
-  (equal "org-capture" (frame-parameter nil 'name)))
+  (and (equal "org-capture" (frame-parameter nil 'name))
+       (frame-parameter nil 'transient)))
 
 ;;;###autoload
 (defun +org-capture/open-frame (&optional string key)
   "Opens the org-capture window in a floating frame that cleans itself up once
 you're done. This can be called from an external shell script."
   (interactive)
-  (require 'org)
-  (let (after-make-frame-functions before-make-frame-hook)
-    (let ((frame (if (+org-capture-frame-p)
-                     (selected-frame)
-                   (make-frame +org-capture-window-params))))
-      (with-selected-frame frame
-        (condition-case ex
-            (cl-letf (((symbol-function #'pop-to-buffer)
-                       (symbol-function #'switch-to-buffer)))
-              (if (and (stringp string)
-                       (not (string-empty-p string)))
-                  (org-capture-string string key)
-                (org-capture nil key))
-              (when (featurep 'solaire-mode)
-                (solaire-mode +1)))
-          ('error
-           (message "org-capture: %s" (error-message-string ex))
-           (delete-frame frame)))))))
+  (when (and string (string-empty-p string))
+    (setq string nil))
+  (when (and key (string-empty-p key))
+    (setq key nil))
+  (require 'org-capture)
+  (let ((frame (if (+org-capture-frame-p)
+                   (selected-frame)
+                 (make-frame +org-capture-window-params))))
+    (with-selected-frame frame
+      (condition-case ex
+          (cl-letf (((symbol-function #'pop-to-buffer)
+                     (symbol-function #'switch-to-buffer)))
+            (switch-to-buffer (doom-fallback-buffer))
+            (let ((org-capture-initial string)
+                  (org-capture-mode-hook org-capture-mode-hook)
+                  org-capture-entry)
+              (when (and key (not (string-empty-p key)))
+                (setq org-capture-entry (org-capture-select-template key)))
+              (if (or org-capture-entry
+                      (not (fboundp 'counsel-org-capture)))
+                  (org-capture)
+                (unwind-protect
+                    (counsel-org-capture)
+                  (if-let* ((buf (cl-loop for buf in (buffer-list)
+                                          if (buffer-local-value 'org-capture-mode buf)
+                                          return buf)))
+                      (with-current-buffer buf
+                        (add-hook 'kill-buffer-hook #'+org-capture|cleanup-frame nil t))
+                    (delete-frame frame))))))
+        ('error
+         (message "org-capture: %s" (error-message-string ex))
+         (delete-frame frame))))))
 
 ;;;###autoload
 (defun +org-capture-available-keys ()
