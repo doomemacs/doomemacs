@@ -55,7 +55,7 @@
       :ne "M-b"   #'+eval/build
       :ne "M-a"   #'mark-whole-buffer
       :ne "M-c"   #'evil-yank
-      :ne "M-q"   (if (daemonp) #'delete-frame #'save-buffers-kill-emacs)
+      :ne "M-q"   (if (daemonp) #'delete-frame #'evil-quit-all)
       :ne "M-f"   #'swiper
       :n  "M-s"   #'save-buffer
       :m  "A-j"   #'+default:multi-next-line
