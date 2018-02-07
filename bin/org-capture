@@ -33,7 +33,7 @@ shift $((OPTIND-1))
 
 if [[ $daemon ]]; then
     emacsclient -a "" \
-        -c -F '((name . "org-capture") (width . 70) (height . 25))' \
+        -c -F '((name . "org-capture") (width . 70) (height . 25) (transient . t))' \
         -e "(+org-capture/open-frame \"$str\" ${key:-nil})"
 else
     # Non-daemon servers flicker a lot if frames are created from terminal, so

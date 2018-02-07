@@ -32,12 +32,20 @@ repository root."
     (user-error "No git root found!")))
 
 ;;;###autoload
-(defun +vcs|init-header-line ()
-  "Toggle the git-timemachine header-line on activate. Use this on
-`git-timemachine-mode-hook'."
-  (if git-timemachine-mode
-      (+vcs*update-header-line)
-    (setq-local header-line-format nil)))
+(defun +vcs*update-header-line (revision)
+  "Show revision details in the header-line, instead of the minibuffer.
+
+Sometimes I forget `git-timemachine' is enabled in a buffer. Putting revision
+info in the `header-line-format' is a good indication."
+  (let* ((date-relative (nth 3 revision))
+         (date-full (nth 4 revision))
+         (author (if git-timemachine-show-author (concat (nth 6 revision) ": ") ""))
+         (sha-or-subject (if (eq git-timemachine-minibuffer-detail 'commit) (car revision) (nth 5 revision))))
+    (setq header-line-format
+          (format "%s%s [%s (%s)]"
+                  (propertize author 'face 'git-timemachine-minibuffer-author-face)
+                  (propertize sha-or-subject 'face 'git-timemachine-minibuffer-detail-face)
+                  date-full date-relative))))
 
 ;;;###autoload
 (defun +vcs|enable-smerge-mode-maybe ()
@@ -49,22 +57,3 @@ repository root."
       (when (and (featurep 'hydra)
                  +vcs-auto-hydra-smerge)
         (+hydra-smerge/body)))))
-
-;;;###autoload
-(defun +vcs*update-header-line (&rest _)
-  "Show revision details in the header-line, instead of the minibuffer.
-
-Sometimes I forget `git-timemachine' is enabled in a buffer. Putting info into,
-putting them in `header-line-format' has better visibility."
-  (when (and git-timemachine-mode git-timemachine-revision)
-    (let* ((revision git-timemachine-revision)
-           (date-relative (nth 3 revision))
-           (date-full (nth 4 revision))
-           (author (if git-timemachine-show-author (concat (nth 6 revision) ": ") ""))
-           (sha-or-subject (if (eq git-timemachine-minibuffer-detail 'commit) (car revision) (nth 5 revision))))
-      (setq-local
-       header-line-format
-       (format "%s%s [%s (%s)]"
-               (propertize author 'face 'git-timemachine-minibuffer-author-face)
-               (propertize sha-or-subject 'face 'git-timemachine-minibuffer-detail-face)
-               date-full date-relative)))))

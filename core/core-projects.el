@@ -68,16 +68,23 @@ you want to interactive with a project other than the one you're in."
     (remhash (format "%s-%s" fn default-directory) projectile-project-root-cache)))
 
 (defun doom-project-p (&optional nocache)
-  "Whether or not this buffer is currently in a project or not."
+  "Return t if this buffer is currently in a project.
+If NOCACHE, don't fetch a cached answer."
   (if nocache
       (without-project-cache! (doom-project-p nil))
     (let ((projectile-require-project-root t))
-      (projectile-project-p))))
+      (and (projectile-project-p) t))))
+
+(defun doom-project-name (&optional nocache)
+  "Return the name of the current project.
+If NOCACHE, don't fetch a cached answer."
+  (if nocache
+      (without-project-cache! (doom-project-name nil))
+    (projectile-project-name)))
 
 (defun doom-project-root (&optional nocache)
-  "Get the path to the root of your project.
-If STRICT-P, return nil if no project was found, otherwise return
-`default-directory'."
+  "Returns the root of your project, or `default-directory' if none was found.
+If NOCACHE, don't fetch a cached answer."
   (if nocache
       (without-project-cache! (doom-project-root nil))
     (let (projectile-require-project-root)

@@ -490,28 +490,33 @@ created."
 ;;;###autoload
 (defun +workspaces|switch-to-project (&optional inhibit-prompt)
   "Creates a workspace dedicated to a new project. If one already exists, switch
-to it. Should be hooked to `projectile-after-switch-project-hook'."
+to it. If in the main workspace and it's empty, recycle that workspace, without
+renaming it.
+
+Should be hooked to `projectile-after-switch-project-hook'."
   (when (and persp-mode +workspaces--project-dir)
     (unwind-protect
-        (let (persp-p)
-          (let* ((persp
-                  (let* ((default-directory +workspaces--project-dir)
-                         projectile-project-name
-                         projectile-require-project-root
-                         projectile-cached-buffer-file-name
-                         projectile-cached-project-root
-                         (project-name (projectile-project-name)))
-                    (or (setq persp-p (+workspace-get project-name t))
-                        (+workspace-new project-name))))
-                 (new-name (persp-name persp)))
-            (+workspace-switch new-name)
-            (unless persp-p
-              (switch-to-buffer (doom-fallback-buffer)))
-            (unless inhibit-prompt
-              (doom-project-find-file +workspaces--project-dir))
-            (+workspace-message
-             (format "Switched to '%s' in new workspace" new-name)
-             'success)))
+        (if (+workspace-buffer-list)
+            (let (persp-p)
+              (let* ((persp
+                      (let* ((default-directory +workspaces--project-dir)
+                             (project-name (doom-project-name 'nocache)))
+                        (or (setq persp-p (+workspace-get project-name t))
+                            (+workspace-new project-name))))
+                     (new-name (persp-name persp)))
+                (+workspace-switch new-name)
+                (unless persp-p
+                  (switch-to-buffer (doom-fallback-buffer)))
+                (unless inhibit-prompt
+                  (doom-project-find-file +workspaces--project-dir))
+                (+workspace-message
+                 (format "Switched to '%s' in new workspace" new-name)
+                 'success)))
+          (with-current-buffer (switch-to-buffer (doom-fallback-buffer))
+            (setq default-directory +workspaces--project-dir)
+            (message "Switched to '%s'" (doom-project-name 'nocache)))
+          (unless inhibit-prompt
+            (doom-project-find-file +workspaces--project-dir)))
       (setq +workspaces--project-dir nil))))
 
 

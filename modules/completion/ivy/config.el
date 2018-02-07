@@ -80,7 +80,7 @@ immediately runs it on the current candidate (ending the ivy session)."
              counsel-describe-face counsel-M-x counsel-file-jump
              counsel-find-file counsel-find-library counsel-info-lookup-symbol
              counsel-imenu counsel-recentf counsel-yank-pop
-             counsel-descbinds)
+             counsel-descbinds counsel-org-capture)
   :init
   (map! [remap apropos]                  #'counsel-apropos
         [remap bookmark-jump]            #'counsel-bookmark

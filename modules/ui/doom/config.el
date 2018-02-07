@@ -27,7 +27,11 @@
   :config
   (setq solaire-mode-real-buffer-fn #'doom-real-buffer-p)
   ;; Prevent color glitches when reloading either DOOM or the theme
-  (add-hook! '(doom-init-theme-hook doom-reload-hook) #'solaire-mode-reset))
+  (add-hook! '(doom-init-theme-hook doom-reload-hook)
+    #'solaire-mode-reset)
+  ;; org-capture takes an org buffer and narrows it. The result is erroneously
+  ;; considered an unreal buffer, so solaire-mode must be restored.
+  (add-hook 'org-capture-mode-hook #'turn-on-solaire-mode))
 
 
 (after! hideshow

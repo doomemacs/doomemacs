@@ -525,7 +525,7 @@ Accepts the same arguments as `display-buffer-in-side-window'. You must set
           ((not (numberp slot))
            (error "Invalid slot %s specified" slot))
           ((not (numberp vslot))
-           (error "Invalid vslot %s specified" slot)))
+           (error "Invalid vslot %s specified" vslot)))
 
     (let* ((major (get-window-with-predicate
                    (lambda (window)
