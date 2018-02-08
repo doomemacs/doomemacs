@@ -290,6 +290,13 @@ workspace to delete."
   (doom/cleanup-session))
 
 ;;;###autoload
+(defun +workspace/kill-session-and-quit ()
+  "Kill emacs without saving anything."
+  (interactive)
+  (let ((persp-auto-save-opt 0))
+    (kill-emacs)))
+
+;;;###autoload
 (defun +workspace/new (&optional name clone-p)
   "Create a new workspace named NAME. If CLONE-P is non-nil, clone the current
 workspace, otherwise the new workspace is blank."
