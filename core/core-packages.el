@@ -522,10 +522,10 @@ happen if you manually modify/update/install packages from outside Emacs, while
 an Emacs session is running.
 
 This isn't necessary if you use Doom's package management commands because they
-call `doom/reload-load-path' remotely (through emacsclient)."
+call `doom//reload-load-path' remotely (through emacsclient)."
   (interactive)
   (byte-recompile-file (expand-file-name "core.el" doom-core-dir) t)
-  (cond (noninteractive
+  (cond ((and noninteractive (not (daemonp)))
          (require 'server)
          (when (server-running-p)
            (message "Reloading active Emacs session...")
