@@ -93,22 +93,25 @@ the cursor."
 
 ;;;###autoload
 (defun +org-attach*insert-link (_link filename)
-  "TODO"
+  "Produces and inserts a link to FILENAME into the document.
+
+If FILENAME is an image, produce an attach:%s path, otherwise use file:%s (with
+an file icon produced by `+org-attach--icon')."
   (if (looking-back "^[ \t]+" (line-beginning-position))
       (delete-region (match-beginning 0) (match-end 0))
     (newline))
   (cond ((image-type-from-file-name filename)
-         (when (file-in-directory-p filename org-attach-directory)
-           (setq filename (file-relative-name filename +org-dir)))
          (insert
-          (concat (if (= org-download-image-html-width 0)
-                      ""
+          (concat (if (= org-download-image-html-width 0) ""
                     (format "#+attr_html: :width %dpx\n" org-download-image-html-width))
-                  (if (= org-download-image-latex-width 0)
-                      ""
+                  (if (= org-download-image-latex-width 0) ""
                     (format "#+attr_latex: :width %dcm\n" org-download-image-latex-width))
-                  (format org-download-link-format
-                          (file-relative-name filename (file-name-directory buffer-file-name)))))
+                  (cond ((file-in-directory-p filename org-attach-directory)
+                         (format "[[attach:%s]]" (file-relative-name filename org-attach-directory)))
+                        ((file-in-directory-p filename +org-dir)
+                         (format org-download-link-format (file-relative-name filename +org-dir)))
+                        (t
+                         (format org-download-link-format filename)))))
          (org-display-inline-images))
         (t
          (insert
@@ -117,15 +120,3 @@ the cursor."
                   (file-relative-name filename (file-name-directory buffer-file-name))
                   (file-name-nondirectory (directory-file-name filename)))))))
 
-;;;###autoload
-(defun +org-attach*relative-to-attach-dir (orig-fn &rest args)
-  "TODO"
-  (if (file-in-directory-p buffer-file-name +org-dir)
-      (let* ((context (save-match-data (org-element-context)))
-             (file (org-link-unescape (org-element-property :path context)))
-             (default-directory
-               (if (file-in-directory-p file org-attach-directory)
-                   +org-dir
-                 default-directory)))
-        (apply orig-fn args))
-    (apply orig-fn args)))

@@ -42,9 +42,6 @@
                (cond ((executable-find "maim")  "maim -s %s")
                      ((executable-find "scrot") "scrot -s %s")))))
 
-  ;; Ensure that relative inline image paths are relative to the attachment folder.
-  (advice-add #'org-display-inline-images :around #'+org-attach*relative-to-attach-dir)
-
   ;; Handle non-image files a little differently. Images should be inserted
   ;; as-is, as image previews. Other files, like pdfs or zips, should be linked
   ;; to, with an icon indicating the type of file.
@@ -64,6 +61,8 @@
 ;;
 (defun +org|init-attach ()
   (setq org-attach-directory (expand-file-name +org-attach-dir +org-dir))
+  ;; A shorter link to attachments
+  (push (cons "attach" (abbreviate-file-name org-attach-directory)) org-link-abbrev-alist)
 
   (push (car (last (split-string +org-attach-dir "/" t)))
         projectile-globally-ignored-directories)
