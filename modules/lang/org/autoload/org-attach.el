@@ -85,13 +85,6 @@ the cursor."
       (dnd-handle-one-url nil action uri))))
 
 ;;;###autoload
-(defun +org-attach*link-format (filename &optional ext)
-  (format "%s%s.%s"
-          (file-name-sans-extension filename)
-          (format-time-string org-download-timestamp)
-          (or ext (file-name-extension filename))))
-
-;;;###autoload
 (defun +org-attach*insert-link (_link filename)
   "Produces and inserts a link to FILENAME into the document.
 
