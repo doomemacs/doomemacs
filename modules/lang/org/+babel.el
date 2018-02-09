@@ -25,7 +25,8 @@ libraries (ob-*.el) that don't match the name of the language.")
                  (require
                   (intern (format "ob-%s"
                                   (or (cdr (assoc (downcase language) +org-babel-mode-alist))
-                                      language)))))
+                                      language)))
+                  nil t))
         (add-to-list 'org-babel-load-languages (cons lang-sym t)))
       (apply orig-fn args)))
   (advice-add #'org-babel-execute-src-block :around #'+org*babel-execute-src-block)
