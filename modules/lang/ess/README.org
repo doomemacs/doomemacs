@@ -1,29 +1,27 @@
-* map!
-:PROPERTIES:
-:ID:       E27AED84-4D2D-4F67-B9D9-6A26026D4C65
-:END:
-** :map ess-doc-map
-:PROPERTIES:
-:ID:       23857C0C-25BC-4DBA-8360-E2CAB2F98135
-:END:
+#+TITLE: :lang ess
+
+This module adds support for various statistics languages, including R, S-Plus,
+SAS, Julia and Stata.
+
+* Table of Contents :TOC:
+- [[Appendix][Appendix]]
+  - [[Keybindings][Keybindings]]
+
+* Appendix
+** Keybindings
+*** :map ess-doc-map
 | key | command                    |
 |-----+----------------------------|
 | "h" | ess-display-help-on-object |
 | "p" | ess-R-dv-pprint            |
 | "t" | ess-R-dv-ctable            |
-** :map ess-mode-map
-:PROPERTIES:
-:ID:       A5EA8086-C7BF-41BB-BFC4-9D8CC9A79163
-:END:
+*** :map ess-mode-map
 | key          | command               |
 |--------------+-----------------------|
 | "<s-return>" | ess-eval-line         |
 | "<up>"       | comint-next-input     |
 | "<down>"     | comint-previous-input |
-*** :localleader
-:PROPERTIES:
-:ID:       7F84D0BD-2F1B-4F1D-92F6-5559A2D0741D
-:END:
+**** :localleader
 | state | key         | command                                           |
 |-------+-------------+---------------------------------------------------|
 | :nv   | ","         | ess-eval-region-or-function-or-paragraph-and-step |
