@@ -53,7 +53,7 @@
 
 
 (def-package! elfeed-org
-  :after (:all org elfeed)
+  :after (elfeed)
   :config
   (setq rmh-elfeed-org-files
         (let ((default-directory +org-dir))

@@ -170,7 +170,7 @@ If DERIVED-P, test with `derived-mode-p', otherwise use `eq'."
 regex PATTERN. Returns the number of killed buffers."
   (let ((buffers (doom-matching-buffers pattern buffer-list)))
     (dolist (buf buffers (length buffers))
-      (kill-buffer buf t))))
+      (kill-buffer buf))))
 
 
 ;;
