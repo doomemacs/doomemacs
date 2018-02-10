@@ -85,11 +85,13 @@ The buffer list is ordered by recency (same as `buffer-list').
 
 PERSP can be a string (name of a workspace) or a workspace (satisfies
 `+workspace-p'). If nil or omitted, it defaults to the current workspace."
-  (let ((persp (or persp (+workspace-current))))
-    (cl-assert (+workspace-p persp) t)
-    (cl-loop for buf in (buffer-list)
-             if (+workspace-contains-buffer-p buf persp)
-             collect buf)))
+  (unless persp
+    (setq persp (+workspace-current)))
+  (unless (+workspace-p persp)
+    (error "You're in the nil perspective"))
+  (cl-loop for buf in (buffer-list)
+           if (+workspace-contains-buffer-p buf persp)
+           collect buf))
 
 ;;;###autoload
 (defun +workspace-orphaned-buffer-list ()
