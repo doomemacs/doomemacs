@@ -90,74 +90,81 @@ the profiling report otherwise."
   (setq doom--profiler (not doom--profiler)))
 
 ;;;###autoload
+(defun doom-info ()
+  "Returns diagnostic information about the current Emacs session in markdown,
+ready to be pasted in a bug report on github."
+  (require 'vc-git)
+  (let ((default-directory doom-emacs-dir))
+    (format
+     (concat "- OS: %s (%s)\n"
+             "- Emacs: %s (%s)\n"
+             "- Doom: %s (%s https://github.com/hlissner/doom-emacs/commit/%s)\n"
+             "- Graphic display: %s (daemon: %s)\n"
+             "- System features: %s\n"
+             "- Details:\n"
+             "  ```elisp\n"
+             "  modules:   %s\n"
+             "  packages:  %s\n"
+             "  elc dirs:  %s\n"
+             "  exec-path: %s\n"
+             "  ```\n")
+     system-type system-configuration
+     emacs-version (format-time-string "%b %d, %Y" emacs-build-time)
+     doom-version
+     (vc-git--symbolic-ref "core/core.el") (vc-git-working-revision "core/core.el")
+     (display-graphic-p) (daemonp)
+     (bound-and-true-p system-configuration-features)
+     ;; details
+     (or (cl-loop with cat = nil
+                  for key being the hash-keys of doom-modules
+                  if (or (not cat) (not (eq cat (car key))))
+                  do (setq cat (car key)) and collect cat
+                  else collect
+                  (let ((flags (doom-module-flags cat (cdr key))))
+                    (if (equal flags '(t))
+                        (cdr key)
+                      (list (cdr key) flags))))
+         "n/a")
+     (or (let (packages)
+           (ignore-errors
+             (require 'async)
+             ;; collect these in another session to protect this
+             ;; session's state
+             (async-get
+              (async-start
+               `(lambda ()
+                  (setq load-path ',load-path)
+                  (load ,(expand-file-name "core/core.el" doom-emacs-dir))
+                  (load ,(expand-file-name "init.el" doom-emacs-dir))
+                  (load ,(expand-file-name "core/autoload/packages.el" doom-emacs-dir))
+                  (doom-get-packages))
+               (lambda (p) (setq packages p))))
+             (mapcar (lambda (x)
+                       (if (cdr x)
+                           (format "%s" x)
+                         (symbol-name (car x))))
+                     (cl-sort packages #'string-lessp :key (lambda (x) (symbol-name (car x)))))))
+         "n/a")
+     (or (ignore-errors
+           (cl-delete-duplicates
+            (cl-loop for file in (append (reverse (directory-files-recursively doom-core-dir "\\.elc$"))
+                                         (reverse (directory-files-recursively doom-modules-dir "\\.elc$")))
+                     collect (file-relative-name (file-name-directory file) doom-emacs-dir))
+            :test #'equal))
+         "n/a")
+     exec-path)))
+
+;;;###autoload
 (defun doom/info ()
   "Collects some debug information about your Emacs session, formats it into
 markdown and copies it to your clipboard, ready to be pasted into bug reports!"
   (declare (interactive-only t))
   (interactive)
-  (message "Generating Doom info...")
-  (let* ((default-directory doom-emacs-dir)
-         (str (format
-               (concat "### System Information\n"
-                       "- OS: %s (%s)\n"
-                       "- Emacs: %s (%s)\n"
-                       "- Doom: %s (%s https://github.com/hlissner/doom-emacs/commit/%s)\n"
-                       "- Graphic display: %s (daemon: %s)\n"
-                       "- System features: %s\n"
-                       "- Details:\n"
-                       "  ```elisp\n"
-                       "  modules:   %s\n"
-                       "  packages:  %s\n"
-                       "  elc dirs:  %s\n"
-                       "  exec-path: %s\n"
-                       "  ```\n")
-               system-type system-configuration
-               emacs-version (format-time-string "%b %d, %Y" emacs-build-time)
-               doom-version
-               (vc-git--symbolic-ref "core/core.el") (vc-git-working-revision "core/core.el")
-               (display-graphic-p) (daemonp)
-               (bound-and-true-p system-configuration-features)
-               ;; details
-               (or (cl-loop with cat = nil
-                            for key being the hash-keys of doom-modules
-                            if (or (not cat) (not (eq cat (car key))))
-                            do (setq cat (car key)) and collect cat
-                            else collect
-                            (let ((flags (doom-module-flags cat (cdr key))))
-                              (if (equal flags '(t))
-                                  (cdr key)
-                                (list (cdr key) flags))))
-                   "n/a")
-               (or (let (packages)
-                     (ignore-errors
-                       (require 'async)
-                       ;; collect these in another session to protect this
-                       ;; session's state
-                       (async-get
-                        (async-start
-                         `(lambda ()
-                            (setq load-path ',load-path)
-                            (load ,(expand-file-name "core/core.el" doom-emacs-dir))
-                            (load ,(expand-file-name "init.el" doom-emacs-dir))
-                            (load ,(expand-file-name "core/autoload/packages.el" doom-emacs-dir))
-                            (doom-get-packages))
-                         (lambda (p) (setq packages p))))
-                       (mapcar (lambda (x)
-                                 (if (cdr x)
-                                     (format "%s" x)
-                                   (symbol-name (car x))))
-                               (cl-sort packages #'string-lessp :key (lambda (x) (symbol-name (car x)))))))
-                   "n/a")
-               (or (ignore-errors
-                     (cl-delete-duplicates
-                      (cl-loop for file in (append (reverse (directory-files-recursively doom-core-dir "\\.elc$"))
-                                                   (reverse (directory-files-recursively doom-modules-dir "\\.elc$")))
-                               collect (file-relative-name (file-name-directory file) doom-emacs-dir))
-                      :test #'equal))
-                   "n/a")
-               exec-path)))
-    (kill-new str)
-    (message "Done! Copied to your clipboard")))
+  (if noninteractive
+      (message "%s" (doom-info))
+    (message "Generating Doom info...")
+    (kill-new (doom-info))
+    (message "Done! Copied to clipboard.")))
 
 ;;;###autoload
 (defun doom/toggle-debug-mode ()
