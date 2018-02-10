@@ -62,6 +62,7 @@ If on a:
              ((string= "ARCHIVE" (car-safe (org-get-tags)))
               (org-force-cycle-archived))
              (t
+              (+org/refresh-inline-images)
               (org-remove-latex-fragment-image-overlays)
               (org-toggle-latex-fragment '(4)))))
 
