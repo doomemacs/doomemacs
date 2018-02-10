@@ -8,7 +8,6 @@
 ;; In case it isn't defined (in really old versions of Emacs, like the one that
 ;; ships with MacOS).
 (defvar user-emacs-directory (expand-file-name "~/.emacs.d/"))
-(defvar doom-debug-mode (getenv "DEBUG"))
 
 (unless (equal (expand-file-name user-emacs-directory)
                (expand-file-name "~/.emacs.d/"))
@@ -234,8 +233,7 @@
                (`timeout (error! "Timed out trying to contact %s" ex))
                (_
                 (error! "Failed to validate %s" url)
-                (when doom-debug-mode
-                  (explain! (pp-to-string it)))))))
+                (explain! (pp-to-string it))))))
          (dolist (url '("https://self-signed.badssl.com"
                         "https://wrong.host.badssl.com/"))
            (check! (condition-case-unless-debug e
@@ -273,54 +271,8 @@
        "This is required by package.el and QUELPA to build packages and will "
        "prevent you from installing & updating packages."))))
 
-
-;; --- report! ------------------------------------------------
-
-(when doom-debug-mode
-  (msg! "\n====\nHave some debug information:\n")
-
-  (when (bound-and-true-p doom-modules)
-    (msg! "  + enabled modules:\n%s"
-          (indented 4
-            (columns 3 23
-              (mapcar (lambda (x) (format "+%s" x))
-                      (mapcar #'cdr (doom-module-pairs)))))))
-
-  (when (and (bound-and-true-p doom-packages)
-             (require 'package nil t))
-    (msg! "  + enabled packages:\n%s"
-          (indented 4
-            (columns 2 35
-              (delq nil
-                    (mapcar (lambda (pkg)
-                              (let ((desc (cadr (assq pkg package-alist))))
-                                (when desc
-                                  (package-desc-full-name desc))))
-                            (sort (mapcar #'car doom-packages) #'string-lessp)))))))
-
-  (msg! "  + byte-compiled files:\n%s"
-        (indented 4
-          (columns 2 39
-            (let ((files (append (directory-files-recursively doom-core-dir ".elc$")
-                                 (directory-files-recursively doom-modules-dir ".elc$"))))
-              (or (and files (mapcar (lambda (file) (file-relative-name file doom-emacs-dir))
-                                     (nreverse files)))
-                  (list "n/a"))))))
-
-  (msg! "  + exec-path:\n%s"
-        (indented 4
-          (columns 1 79 exec-path)))
-
-  (msg! "  + PATH:\n%s"
-        (indented 4
-          (columns 1 79 (split-string (getenv "PATH") ":")))))
-
 ;;
 (if (= doom-errors 0)
     (success! "Everything seems fine, happy Emacs'ing!")
   (message "\n----")
-  (warn! "There were issues!")
-  (unless doom-debug-mode
-    (msg! "\nHopefully these can help you find problems. If not, run this doctor again with DEBUG=1:")
-    (msg! "\n  DEBUG=1 make doctor\n")
-    (msg! "And file a bug report with its output at https://github.com/hlissner/.emacs.d/issues")))
+  (warn! "There were issues!"))
