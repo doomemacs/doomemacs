@@ -79,6 +79,10 @@ run:
 doctor:
 	@bin/doom-doctor
 
+# Prints debug info about your current setup
+info:
+	@$(EMACS) -l core/autoload/debug.el -f doom/info
+
 ## Internal tasks
 init.el:
 	@$(error No init.el file; create one or copy init.example.el)
