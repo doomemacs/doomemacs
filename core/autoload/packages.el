@@ -140,16 +140,15 @@ Used by `doom//packages-update'."
   (require 'async)
   (let (quelpa-pkgs elpa-pkgs)
     ;; Separate quelpa from elpa packages
-    (dolist (pkg (doom-get-packages t))
-      (let ((sym (car pkg)))
-        (when (and (or (not (doom-package-prop sym :freeze))
-                       include-frozen-p)
-                   (not (doom-package-prop sym :ignore))
-                   (not (doom-package-different-backend-p sym)))
-          (push sym
-                (if (eq (doom-package-backend sym) 'quelpa)
-                    quelpa-pkgs
-                  elpa-pkgs)))))
+    (dolist (pkg (mapcar #'car package-alist))
+      (when (and (or (not (doom-package-prop pkg :freeze))
+                     include-frozen-p)
+                 (not (doom-package-prop pkg :ignore))
+                 (not (doom-package-different-backend-p pkg)))
+        (push pkg
+              (if (eq (doom-package-backend pkg) 'quelpa)
+                  quelpa-pkgs
+                elpa-pkgs))))
     ;; The bottleneck in this process is quelpa's version checks, so check them
     ;; asynchronously.
     (let (futures)
