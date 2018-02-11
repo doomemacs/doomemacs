@@ -13,6 +13,7 @@
     (visual-fill-column-mode arg)
     (visual-line-mode arg)
     (when (eq major-mode 'org-mode)
+      (mixed-pitch-mode arg)
       (+org-pretty-mode arg))
     (setq line-spacing (if +write-mode 4))))
 
