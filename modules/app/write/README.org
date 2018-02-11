@@ -1,0 +1,39 @@
+* +langtool
+:PROPERTIES:
+:ID:       AE6DA5B3-6859-47D9-A483-972D42F0E11B
+:END:
+Support for languagetool
+
+For installation of languagetool, please checkout https://languagetool.org/. Noted that you need Java to run languagetool.
+
+MacOS users can install languagetool using ~brew~:
+#+BEGIN_SRC bash
+brew install languagetool
+#+END_SRC
+
+After installation, you need to find out the path of the ~jar~ file and set it as ~+langtool-jar-path~.
+
+* +wordnut
+:PROPERTIES:
+:ID:       005E9DD8-DE23-4A69-B423-8950B5E23059
+:END:
+This use ~wordnut~ package to provide a dictionary in Emacs.
+Commands avaliable:
+- ~wordnut-search~
+- ~wordnut-lookup-curent-word~
+
+* +synosaurus
+:PROPERTIES:
+:ID:       005E9DD8-DE23-4A69-B423-8950B5E23059
+:END:
+This use ~synosaurus~ package to provide a dictionary in Emacs.
+Commands avaliable:
+- ~synosaurus-mode~
+- ~synosaurus-lookup~
+- ~synosaurus-choose-and-replace~
+
+* mixed-pitch
+:PROPERTIES:
+:ID:       417B004D-2E33-4071-894F-0792CB22B3D5
+:END:
+This package enable fixed-width font and variable-pitch font coexist in the same buffer": you can use ~Fira code~ for code blocks in org mode file where use ~Ariel~ for main content (if you want...).
