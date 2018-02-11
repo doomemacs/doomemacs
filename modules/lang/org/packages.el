@@ -16,6 +16,8 @@
   (package! ob-sql-mode)
   (package! ob-translate)
 
+  (when (featurep! :lang crystal)
+    (package! ob-crystal))
   (when (featurep! :lang go)
     (package! ob-go))
   (when (featurep! :lang rust)
