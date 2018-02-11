@@ -3,7 +3,7 @@ EMACS_FLAGS=--eval '(setq user-emacs-directory default-directory)' -l core/core.
 EMACS=emacs --quick --batch $(EMACS_FLAGS)
 EMACSI=emacs -q $(EMACS_FLAGS)
 
-MODULES=$(patsubst modules/%, %, $(shell find -L modules/ -maxdepth 2 -type d))
+MODULES=$(patsubst modules/%/, %, $(sort $(dir $(wildcard modules/*/ modules/*/*/))))
 
 all: autoloads autoremove install
 
