@@ -4,6 +4,9 @@
   :mode "\\.cr$"
   :interpreter "crystal"
   :config
+  (set! :lookup 'crystal-mode
+    :definition #'crystal-def-jump
+    :references #'crystal-tool-imp)
   (set! :eval 'crystal-mode
         '((:command     . "crystal")
           (:exec        . "%c %s")
