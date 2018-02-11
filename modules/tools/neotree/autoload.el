@@ -1,8 +1,23 @@
 ;;; tools/neotree/autoload.el -*- lexical-binding: t; -*-
 
+;; `neotree-show' and `neotree-find' don't respect the current project, and open
+;; neotree in `default-directory'. `+neotree/open' and `neotree/find-this-file'
+;; will ensure the neotree pane is always rooted in the project root.
+
 ;;;###autoload
-(defun +neotree/toggle ()
-  "Toggle the neotree window."
+(defun +neotree/open ()
+  "Open the neotree window in the current project."
+  (interactive)
+  (let ((path buffer-file-name)
+        (project-root (doom-project-root 'nocache)))
+    (require 'neotree)
+    (if (neo-global--window-exists-p)
+        (neotree-hide)
+      (neotree-dir project-root))))
+
+;;;###autoload
+(defun +neotree/find-this-file ()
+  "Open the neotree window in the current project, and find the current file."
   (interactive)
   (let ((path buffer-file-name)
         (project-root (doom-project-root 'nocache)))
