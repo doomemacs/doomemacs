@@ -554,15 +554,18 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
           ((eq buf (doom-fallback-buffer))
            (message "Can't kill the fallback buffer."))
           ((doom-real-buffer-p buf)
-           (when (or ;; if there aren't more real buffers than visible buffers,
-                     ;; then there are no real, non-visible buffers left.
-                     (not (cl-set-difference (doom-real-buffer-list)
-                                             (doom-visible-buffers)))
-                     ;; if we end up back where we start (or previous-buffer
-                     ;; returns nil), we have nowhere left to go
-                     (memq (previous-buffer) (list buf 'nil)))
-             (switch-to-buffer (doom-fallback-buffer)))
-           (kill-buffer buf))
+           (if (and (buffer-modified-p buf)
+                    (not (y-or-n-p "Buffer %s is modified; kill anyway?")))
+               (message "Aborted")
+             (when (or ;; if there aren't more real buffers than visible buffers,
+                       ;; then there are no real, non-visible buffers left.
+                       (not (cl-set-difference (doom-real-buffer-list)
+                                               (doom-visible-buffers)))
+                       ;; if we end up back where we start (or previous-buffer
+                       ;; returns nil), we have nowhere left to go
+                       (memq (previous-buffer) (list buf 'nil)))
+               (switch-to-buffer (doom-fallback-buffer)))
+             (kill-buffer buf)))
           (t
            (funcall orig-fn)))))
 
