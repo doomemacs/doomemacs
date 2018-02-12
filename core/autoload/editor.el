@@ -222,7 +222,7 @@ consistent throughout a selected region, depending on `indent-tab-mode'."
 
 (defvar-local doom--buffer-narrowed-origin nil)
 ;;;###autoload
-(defun doom/narrow-buffer (beg end &optional clone-p)
+(defun doom/clone-and-narrow-buffer (beg end &optional clone-p)
   "Restrict editing in this buffer to the current region, indirectly. With CLONE-P,
 clone the buffer and hard-narrow the selection. If mark isn't active, then widen
 the buffer (if narrowed).
