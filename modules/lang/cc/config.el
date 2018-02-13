@@ -220,7 +220,7 @@ compilation database is present in the project.")
   ;; Use rtags-imenu instead of imenu/counsel-imenu
   (map! :map (c-mode-map c++-mode-map) [remap imenu] #'rtags-imenu)
 
-  (add-hook 'rtags-jump-hook #'evil-set-jump)
+  (when (featurep 'evil) (add-hook 'rtags-jump-hook #'evil-set-jump))
   (add-hook 'rtags-after-find-file-hook #'recenter))
 
 (def-package! ivy-rtags
