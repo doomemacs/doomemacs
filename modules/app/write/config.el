@@ -1,12 +1,25 @@
 ;;; app/write/config.el -*- lexical-binding: t; -*-
 
+(defvar +write-text-scale nil
+  "What to scale the text up to in `+write-mode'. Uses `text-scale-set'.")
+
+(defvar +write-line-spacing nil
+  "What to set `line-spacing' in `+write-mode'.")
+
+(add-hook! '+write-mode-hook
+  #'(flyspell-mode
+     visual-fill-column-mode
+     visual-line-mode
+     mixed-pitch-mode
+     doom|enable-line-numbers
+     +write|init-org-mode))
+
+
+;;
+;; Plugins
+;;
+
 (when (featurep! +langtool)
-  (defvar +langtool-default-lang "en-US"
-    "default language for langtool")
-  (defvar +langtool-mother-tongue nil
-    "mother tongue of user")
-  (defvar +langtool-jar-path "/usr/local/Cellar/languagetool/4.0/libexec/languagetool-commandline.jar"
-    "TODO")
   (def-package! langtool
     :commands (langtool-check
                langtool-check-done
@@ -14,38 +27,50 @@
                langtool-show-message-at-point
                langtool-correct-buffer)
     :init
-    (setq langtool-default-language +langtool-default-lang
-          langtool-mother-tongue +langtool-mother-tongue
-          langtool-language-tool-jar +langtool-jar-path)))
+    (setq langtool-default-language "en-US")
+    :config
+    (unless langtool-language-tool-jar
+      (setq langtool-language-tool-jar
+            (cond (IS-MAC
+                   "/usr/local/Cellar/languagetool/4.0/libexec/languagetool-commandline.jar")
+                  (IS-LINUX
+                   "/usr/share/java/languagetool/languagetool-commandline.jar")))
+      (unless (file-exists-p langtool-language-tool-jar)
+        (warn "langtool: couldn't find languagetool-commandline.jar")))))
+
+
 (when (featurep! +wordnut)
   (def-package! wordnut
-  :commands (wordnut-search
-             wordnut-lookup-current-word)))
-(when (featurep! +synosaurus)
-  (def-package! synosaurus
+    :commands (wordnut-search
+               wordnut-lookup-current-word)))
+
+
+(def-package! synosaurus
   :commands (synosaurus-mode
              synosaurus-lookup
              synosaurus-choose-and-replace)
-  :init
-  (require 'synosaurus-wordnet)
   :config
-  (setq synosaurus-choose-method 'default)))
+  (setq synosaurus-choose-method 'default))
+
+(def-package! synosaurus-wordnet
+  :commands synosaurus-backend-wordnet)
+
 
 (def-package! mixed-pitch
   :config
   (setq mixed-pitch-fixed-pitch-faces
-   (append mixed-pitch-fixed-pitch-faces
-           '(org-todo-keyword-todo
-             org-todo-keyword-habt
-             org-todo-keyword-done
-             org-todo-keyword-wait
-             org-todo-keyword-kill
-             org-todo-keyword-outd
-             org-special-keyword
-             org-date
-             org-property-value
-             org-special-keyword
-             org-property-value
-             org-ref-cite-face
-             org-tag
-             font-lock-comment-face))))
+        (append mixed-pitch-fixed-pitch-faces
+                '(org-todo-keyword-todo
+                  org-todo-keyword-habt
+                  org-todo-keyword-done
+                  org-todo-keyword-wait
+                  org-todo-keyword-kill
+                  org-todo-keyword-outd
+                  org-special-keyword
+                  org-date
+                  org-property-value
+                  org-special-keyword
+                  org-property-value
+                  org-ref-cite-face
+                  org-tag
+                  font-lock-comment-face))))
