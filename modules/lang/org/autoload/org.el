@@ -288,7 +288,10 @@ with `org-cycle'). Also:
   "Indent the current item (header or item), if possible. Made for
 `org-tab-first-hook'."
   (interactive)
-  (cond ((org-at-item-p)
+  (cond ((and (bound-and-true-p evil-mode)
+              (not (eq evil-state 'insert)))
+         nil)
+        ((org-at-item-p)
          (org-indent-item-tree)
          t)
         ((org-at-heading-p)
