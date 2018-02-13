@@ -557,6 +557,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
            (if (and (buffer-modified-p buf)
                     (not (y-or-n-p "Buffer %s is modified; kill anyway?")))
                (message "Aborted")
+             (set-buffer-modified-p nil)
              (when (or ;; if there aren't more real buffers than visible buffers,
                        ;; then there are no real, non-visible buffers left.
                        (not (cl-set-difference (doom-real-buffer-list)
