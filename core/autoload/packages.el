@@ -137,6 +137,7 @@ containing (PACKAGE-SYMBOL OLD-VERSION-LIST NEW-VERSION-LIST).
 If INCLUDE-FROZEN-P is non-nil, check frozen packages as well.
 
 Used by `doom//packages-update'."
+  (doom-initialize-packages t)
   (require 'async)
   (let (quelpa-pkgs elpa-pkgs)
     ;; Separate quelpa from elpa packages
@@ -159,6 +160,8 @@ Used by `doom//packages-update'."
                   (setq user-emacs-directory ,user-emacs-directory)
                   (let ((noninteractive t))
                     (load ,(expand-file-name "core.el" doom-core-dir)))
+                  (setq doom-packages ',doom-packages
+                        doom-modules ',doom-modules)
                   (doom-package-outdated-p ',pkg)))
               futures))
       (delq nil
