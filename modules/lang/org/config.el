@@ -207,12 +207,15 @@ unfold to point on startup."
 (defun +org|setup-keybinds ()
   "Sets up org-mode and evil keybindings. Tries to fix the idiosyncrasies
 between the two."
-  (map! :map org-mode-map
-        "RET" #'org-return-indent
-        "C-c C-S-l" #'+org/remove-link
-        :n "C-c C-i" #'org-toggle-inline-images
+  (add-hook! 'org-tab-first-hook #'(+org|indent-maybe +org|yas-expand-maybe))
 
-        :n  "RET" #'+org/dwim-at-point
+  (map! :map org-mode-map
+        [remap org-shifttab] #'+org/shifttab
+        "C-c C-S-l" #'+org/remove-link
+        "C-c C-i"   #'org-toggle-inline-images
+
+        :i  "RET"   #'org-return-indent
+        :n  "RET"   #'+org/dwim-at-point
 
         ;; Navigate table cells (from insert-mode)
         :i  "C-l"   #'+org/table-next-field
@@ -225,9 +228,7 @@ between the two."
         :ni "C-S-k" #'org-metaup
         :ni "C-S-j" #'org-metadown
 
-        :n  [tab]     #'+org/toggle-fold
-        :i  [tab]     #'+org/indent-or-next-field-or-yas-expand
-        :i  [backtab] #'+org/dedent-or-prev-field
+        :n  [tab]   #'+org/toggle-fold
 
         :ni [M-return]   (λ! (+org/insert-item 'below))
         :ni [S-M-return] (λ! (+org/insert-item 'above))

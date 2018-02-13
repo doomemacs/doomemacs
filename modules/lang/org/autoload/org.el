@@ -112,60 +112,52 @@ If on a:
     (set-window-start nil scroll-pt)))
 
 ;;;###autoload
-(defun +org/indent ()
-  "Indent the current item (header or item). Otherwise, forward to
-`self-insert-command'."
+(defun +org|indent-maybe ()
+  "Indent the current item (header or item), if possible. Made for
+`org-tab-first-hook'."
   (interactive)
   (cond ((org-at-item-p)
-         (org-indent-item-tree))
+         (org-indent-item-tree)
+         t)
         ((org-at-heading-p)
-         (ignore-errors (org-demote)))
+         (ignore-errors (org-demote))
+         t)
         ((org-in-src-block-p t)
-         (doom/dumb-indent))
-        (t
-         (call-interactively #'self-insert-command))))
+         (doom/dumb-indent)
+         t)))
 
 ;;;###autoload
-(defun +org/indent-or-next-field-or-yas-expand ()
-  "Depending on the context either a) indent the current line, b) go the next
-table field or c) run `yas-expand'."
-  (interactive)
-  (or (org-try-structure-completion)
-      (call-interactively
-       (cond ((and (bound-and-true-p yas-minor-mode)
-                   (yas--templates-for-key-at-point))
-              #'yas-expand)
-             ((org-at-table-p)
-              #'org-table-next-field)
-             (t
-              #'+org/indent)))))
+(defun +org|yas-expand-maybe ()
+  "Tries to expand a yasnippet snippet, if one is available. Made for
+`org-tab-first-hook'."
+  (when (and (if (bound-and-true-p evil-mode)
+                 (eq evil-state 'insert)
+               t)
+             (bound-and-true-p yas-minor-mode)
+             (yas--templates-for-key-at-point))
+    (call-interactively #'yas-expand)
+    t))
 
 ;;;###autoload
-(defun +org/dedent ()
-  "Dedent the current item (header or item). Otherwise, forward to
-`self-insert-command'."
+(defun +org/shifttab (&optional arg)
+  "An alternative to `org-shifttab' which performs smart indentation if in
+insert mode (evil). Otherwise, forwards to the original `org-shifttab'."
   (interactive)
-  (cond ((org-at-item-p)
-         (org-list-indent-item-generic
-          -1 nil
-          (save-excursion
-            (when (org-region-active-p)
-              (goto-char (region-beginning)))
-            (org-list-struct))))
-        ((org-at-heading-p)
-         (ignore-errors (org-promote)))
-        (t
-         (call-interactively #'self-insert-command))))
-
-;;;###autoload
-(defun +org/dedent-or-prev-field ()
-  "Depending on the context either dedent the current item or go the previous
-table field."
-  (interactive)
-  (call-interactively
-   (if (org-at-table-p)
-       #'org-table-previous-field
-     #'+org/dedent)))
+  (cond ((org-at-table-p)
+         (call-interactively #'org-table-previous-field))
+        ((and (bound-and-true-p evil-mode)
+              (evil-insert-state-p))
+         (cond ((org-at-item-p)
+                (org-list-indent-item-generic
+                 -1 nil
+                 (save-excursion
+                   (when (org-region-active-p)
+                     (goto-char (region-beginning)))
+                   (org-list-struct))))
+               ((org-at-heading-p)
+                (ignore-errors (org-promote)))
+               (t (call-interactively #'self-insert-command))))
+        (t (org-shifttab arg))))
 
 ;;;###autoload
 (defun +org/insert-item (direction)
