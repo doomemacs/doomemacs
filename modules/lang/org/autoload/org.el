@@ -130,14 +130,15 @@ If on a:
   "Depending on the context either a) indent the current line, b) go the next
 table field or c) run `yas-expand'."
   (interactive)
-  (call-interactively
-   (cond ((and (bound-and-true-p yas-minor-mode)
-               (yas--templates-for-key-at-point))
-          #'yas-expand)
-         ((org-at-table-p)
-          #'org-table-next-field)
-         (t
-          #'+org/indent))))
+  (or (org-try-structure-completion)
+      (call-interactively
+       (cond ((and (bound-and-true-p yas-minor-mode)
+                   (yas--templates-for-key-at-point))
+              #'yas-expand)
+             ((org-at-table-p)
+              #'org-table-next-field)
+             (t
+              #'+org/indent)))))
 
 ;;;###autoload
 (defun +org/dedent ()
