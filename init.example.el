@@ -134,7 +134,7 @@
       ;irc               ; how neckbeards socialize
       ;rss               ; emacs as an RSS reader
       ;twitter           ; twitter client https://twitter.com/vnought
-      ;write             ; emacs as a word processor (latex + org + markdown)
+       ;; (write +synosaurus +wordnut +langtool)             ; emacs as a word processor (latex + org + markdown)
 
        ;; Private modules are where you place your personal configuration files.
        ;; By default, they are not tracked. There is one module included here,
