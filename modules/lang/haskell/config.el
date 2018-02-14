@@ -31,10 +31,9 @@
   :init
   (add-hook 'haskell-mode-hook #'ghc-comp-init)
   :config
-  (if (executable-find "ghc-mod")
-      (set! :company-backend 'haskell-mode #'company-ghc)
-    (warn "haskell-mode: couldn't find ghc-mod on PATH")
-    (remove-hook 'haskell-mode-hook #'ghc-comp-init))
+  (unless (executable-find "ghc-mod")
+    (warn! "Couldn't find ghc-mod on PATH. Code completion is disabled."))
 
-  (setq company-ghc-show-info 'oneline))
+  (setq company-ghc-show-info 'oneline)
+  (set! :company-backend 'haskell-mode #'company-ghc))
 

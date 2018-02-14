@@ -30,7 +30,7 @@
                                 (expand-file-name "rust/src/" +rust-src-dir)))
 
   (unless (file-exists-p racer-cmd)
-    (warn "rust-mode: racer binary can't be found; auto-completion is disabled"))
+    (warn! "Couldn't find racer binary. Code completion won't work"))
 
   (set! :lookup 'rust-mode :definition #'racer-find-definition))
 

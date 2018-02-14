@@ -76,14 +76,14 @@
              go-guru-expand-region)
   :config
   (unless (executable-find "guru")
-    (warn "go-mode: couldn't find guru, refactoring commands won't work")))
+    (warn! "Couldn't find guru. Refactoring commands (go-guru-*) won't work")))
 
 
 (def-package! gorepl-mode
   :commands (gorepl-run gorepl-run-load-current-file)
   :config
   (unless (executable-find "gore")
-    (warn "go-mode: couldn't find gore, REPL support disabled")))
+    (warn! "Couldn't find gore. REPL will not work")))
 
 
 (def-package! company-go
@@ -92,6 +92,6 @@
   :after go-mode
   :config
   (setq company-go-show-annotation t)
-  (if (executable-find command-go-gocode-command)
-      (set! :company-backend 'go-mode '(company-go))
-    (warn "go-mode: couldn't find gocode, code completion won't work")))
+  (set! :company-backend 'go-mode '(company-go))
+  (unless (executable-find command-go-gocode-command)
+    (warn! "Couldn't find gocode. Code completion won't work")))

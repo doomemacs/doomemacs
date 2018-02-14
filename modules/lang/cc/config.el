@@ -119,7 +119,7 @@ compilation database is present in the project.")
   (add-hook! (c-mode c++-mode objc-mode) #'+cc|init-irony-mode)
   :config
   (unless (file-directory-p irony-server-install-prefix)
-    (warn "irony-mode: server isn't installed; run M-x irony-install-server"))
+    (warn! "Irony server isn't installed. Run M-x irony-install-server"))
   ;; Initialize compilation database, if present. Otherwise, fall back on
   ;; `+cc-default-compiler-options'.
   (add-hook 'irony-mode-hook #'+cc|irony-init-compile-options))
@@ -187,9 +187,9 @@ compilation database is present in the project.")
   :when (featurep! :completion company)
   :after glsl-mode
   :config
-  (if (executable-find "glslangValidator")
-      (warn "glsl-mode: couldn't find glslangValidator, disabling company-glsl")
-    (set! :company-backend 'glsl-mode '(company-glsl))))
+  (unless (executable-find "glslangValidator")
+    (warn! "Couldn't find glslangValidator. Code completion is disabled"))
+  (set! :company-backend 'glsl-mode '(company-glsl)))
 
 
 ;;
@@ -210,7 +210,7 @@ compilation database is present in the project.")
 
   (let ((bins (cl-remove-if #'executable-find '("rdm" "rc"))))
     (if (/= (length bins) 0)
-        (warn "cc-mode: couldn't find the rtag client and/or server programs %s, disabling rtags support" bins)
+        (warn! "Couldn't find the rtag client and/or server programs %s. Disabling rtags support" bins)
       (add-hook! (c-mode c++-mode) #'rtags-start-process-unless-running)
       (set! :lookup '(c-mode c++-mode)
         :definition #'rtags-find-symbol-at-point

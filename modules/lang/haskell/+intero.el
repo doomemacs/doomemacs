@@ -5,8 +5,7 @@
   :hook (haskell-mode . intero-mode)
   :config
   (unless (executable-find "stack")
-    (warn "haskell-mode: couldn't find stack, disabling intero")
-    (remove-hook 'haskell-mode-hook #'intero-mode))
+    (warn! "Couldn't find stack. Intero has been disabled."))
 
   (add-hook! 'intero-mode-hook #'(flycheck-mode eldoc-mode))
 

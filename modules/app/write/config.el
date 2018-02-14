@@ -36,7 +36,7 @@
                   (IS-LINUX
                    "/usr/share/java/languagetool/languagetool-commandline.jar")))
       (unless (file-exists-p langtool-language-tool-jar)
-        (warn "langtool: couldn't find languagetool-commandline.jar")))))
+        (warn! "Couldn't find languagetool-commandline.jar")))))
 
 
 (when (featurep! +wordnut)
