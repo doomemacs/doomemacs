@@ -4,19 +4,19 @@
   :mode "\\.go$"
   :interpreter "go"
   :config
-  (add-hook 'go-mode-hook #'flycheck-mode)
-
-  (setq gofmt-command "goimports"
-        gofmt-show-errors nil)
-  (if (not (executable-find "goimports"))
-      (warn "go-mode: couldn't find goimports; no code formatting/fixed imports on save")
-    (add-hook! go-mode (add-hook 'before-save-hook #'gofmt-before-save nil t)))
+  (when (executable-find "goimports")
+    (setq gofmt-command "goimports"))
 
   (set! :repl 'go-mode #'gorepl-run)
   (set! :lookup 'go-mode
     :definition #'go-guru-definition
     :references #'go-guru-referrers
     :documentation #'godoc-at-point)
+
+  (setq gofmt-show-errors nil) ; Leave it to flycheck
+  (add-hook 'go-mode-hook #'flycheck-mode)
+  (add-hook! go-mode
+    (add-hook 'before-save-hook #'gofmt-before-save nil t))
 
   (def-menu! +go/refactor-menu
     "Refactoring commands for `go-mode' buffers."
