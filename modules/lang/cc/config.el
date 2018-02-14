@@ -47,7 +47,8 @@ compilation database is present in the project.")
   (push (cons #'+cc-objc-header-file-p 'objc-mode) magic-mode-alist)
 
   :init
-  (setq-default c-basic-offset tab-width)
+  (setq-default c-basic-offset tab-width
+                c-backspace-function #'delete-backward-char)
 
   :config
   (set! :electric '(c-mode c++-mode objc-mode java-mode)
@@ -84,18 +85,19 @@ compilation database is present in the project.")
   ;; custom bindings. We'll do this ourselves.
   (setq c-tab-always-indent nil
         c-electric-flag nil)
-  (dolist (key '("#" "{" "}" "/" "*" ";" "," ":" "(" ")"))
+  (dolist (key '("#" "{" "}" "/" "*" ";" "," ":" "(" ")" "\177"))
     (define-key c-mode-base-map key nil))
   ;; Smartparens and cc-mode both try to autoclose angle-brackets intelligently.
   ;; The result isn't very intelligent (causes redundant characters), so just do
   ;; it ourselves.
-  (map! :map c++-mode-map
-        "<" nil
-        :i ">" #'+cc/autoclose->-maybe)
+  (map! :map c++-mode-map "<" nil ">" nil)
 
   ;; ...and leave it to smartparens
+  (sp-with-modes '(c++-mode objc-mode)
+    (sp-local-pair "<" ">"
+                   :when '(+cc-sp-point-is-template-p +cc-sp-point-after-include-p)
+                   :post-handlers '(("| " "SPC"))))
   (sp-with-modes '(c-mode c++-mode objc-mode java-mode)
-    (sp-local-pair "<" ">" :when '(+cc-sp-point-is-template-p +cc-sp-point-after-include-p))
     (sp-local-pair "/*" "*/" :post-handlers '(("||\n[i]" "RET") ("| " "SPC")))
     ;; Doxygen blocks
     (sp-local-pair "/**" "*/" :post-handlers '(("||\n[i]" "RET") ("||\n[i]" "SPC")))

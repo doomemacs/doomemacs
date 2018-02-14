@@ -33,20 +33,13 @@
     (apply orig-fun args)))
 
 ;;;###autoload
-(defun +cc/autoclose->-maybe ()
-  "For some reason smartparens won't autoskip >'s, this hack does."
-  (interactive)
-  (if (save-excursion
-        (backward-char)
-        (looking-at-p "[^ \t]>"))
-      (forward-char)
-    (call-interactively #'self-insert-command)))
-
-;;;###autoload
 (defun +cc-sp-point-is-template-p (id action context)
   "Return t if point is in the right place for C++ angle-brackets."
   (and (sp-in-code-p id action context)
-       (sp-point-after-word-p id action context)))
+       (cond ((eq action 'insert)
+              (sp-point-after-word-p id action context))
+             ((eq action 'autoskip)
+              (/= (char-before) 32)))))
 
 ;;;###autoload
 (defun +cc-sp-point-after-include-p (id action context)
