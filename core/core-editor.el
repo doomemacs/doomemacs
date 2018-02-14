@@ -136,12 +136,13 @@ fundamental-mode) for performance sake."
     "Retrieve the properties for the current file. If it doesn't have an
 extension, try to guess one."
     (let ((buffer-file-name
-           (if (file-name-extension buffer-file-name)
+           (if (and (not (bound-and-true-p org-src-mode))
+                    (file-name-extension buffer-file-name))
                buffer-file-name
              (format "%s%s" buffer-file-name
-                     (let ((ext (cdr (assq major-mode doom-editorconfig-mode-alist))))
-                       (or (and ext (concat "." ext))
-                           ""))))))
+                     (if-let* ((ext (cdr (assq major-mode doom-editorconfig-mode-alist))))
+                         (concat "." ext)
+                       "")))))
       (apply orig-fn args)))
   (advice-add #'editorconfig-call-editorconfig-exec :around #'doom*editorconfig-smart-detection)
 
