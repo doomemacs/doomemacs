@@ -1,6 +1,7 @@
 ;;; tools/pdf/config.el -*- lexical-binding: t; -*-
 
 (def-package! pdf-tools
+  :defer t
   :init (load "pdf-tools-autoloads.el" nil t t)
   :config
   (pdf-tools-install)
