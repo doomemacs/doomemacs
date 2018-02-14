@@ -9,6 +9,7 @@
 
 (map! [remap evil-jump-to-tag] #'projectile-find-tag
       [remap find-tag]         #'projectile-find-tag
+      [remap newline]          #'newline-and-indent
 
       ;; Ensure there are no conflicts
       :nmvo doom-leader-key nil
@@ -698,27 +699,13 @@
       :i "C-u" #'doom/backward-kill-to-bol-and-indent
 
       ;; textmate-esque newline insertion
-      :i [M-return]     #'evil-open-below
-      :i [S-M-return]   #'evil-open-above
+      :i  [M-return]    #'evil-open-below
+      :i  [S-M-return]  #'evil-open-above
       ;; textmate-esque deletion
-      [M-backspace]     #'doom/backward-kill-to-bol-and-indent
-      :i [backspace]    #'delete-backward-char
-      :i [M-backspace]  #'doom/backward-kill-to-bol-and-indent
+      :ig [M-backspace] #'doom/backward-kill-to-bol-and-indent
       ;; Emacsien motions for insert mode
-      :i "C-b" #'backward-word
-      :i "C-f" #'forward-word
-
-      ;; Highjacks space/backspace to:
-      ;;   a) balance spaces inside brackets/parentheses ( | ) -> (|)
-      ;;   b) delete space-indented blocks intelligently
-      ;;   c) do none of this when inside a string
-      :i "SPC"                          #'doom/inflate-space-maybe
-      :i [remap delete-backward-char]   #'doom/deflate-space-maybe
-      :i [remap newline]                #'doom/newline-and-indent
-
-      (:after org
-        (:map org-mode-map
-          :i [remap doom/inflate-space-maybe] #'org-self-insert-command))
+      :i  "C-b" #'backward-word
+      :i  "C-f" #'forward-word
 
       ;; Restore common editing keys (and ESC) in minibuffer
       (:map (minibuffer-local-map
