@@ -21,8 +21,8 @@
 
 (def-package! tex-site
   :init
-  ;; Manually load the AUCTEX autoloads. This is normally done by package-initialize,
-  ;; ... which we do not use.
+  ;; Manually load the AUCTEX autoloads. This is normally done by
+  ;; package-initialize, ... which we do not use.
   (load "auctex.el" nil t t)
   (load "auctex-autoloads.el" nil t t)
   :config
@@ -38,7 +38,8 @@
         ;; Use hidden directories for AUCTeX files.
         TeX-auto-local ".auctex-auto"
         TeX-style-local ".auctex-style"
-        ;; When correlating sources to rendered PDFs, don't start the emacs server
+        ;; When correlating sources to rendered PDFs, don't start the emacs
+        ;; server
         TeX-source-correlate-start-server nil
         TeX-source-correlate-mode t
         TeX-source-correlate-method 'synctex
@@ -74,7 +75,8 @@
      LaTeX-item-indent 0)
     :config
     (map! :map LaTeX-mode-map "C-j" nil)
-    ;; Do not prompt for Master files, this allows auto-insert to add templates to .tex files
+    ;; Do not prompt for Master files, this allows auto-insert to add templates
+    ;; to .tex files
     (add-hook! '(LaTeX-mode TeX-mode) '(lambda () (remove-hook 'find-file-hooks (car find-file-hooks) 'local)))
     ;; Adding useful things for latex
     (add-hook! LaTeX-mode (LaTeX-math-mode) (TeX-source-correlate-mode)(TeX-global-PDF-mode t)
@@ -95,7 +97,8 @@
 (after! latex
   ;; Use Okular is the user says so.
   (when (featurep! +okular)
-    ;; Configure Okular as viewer. Including a bug fix (https://bugs.kde.org/show_bug.cgi?id=373855)
+    ;; Configure Okular as viewer. Including a bug fix
+    ;; (https://bugs.kde.org/show_bug.cgi?id=373855)
     (add-to-list 'TeX-view-program-list
                  '("Okular" ("okular --unique file:%o" (mode-io-correlate "#src:%n%a"))))
     (add-to-list 'TeX-view-program-selection
@@ -110,8 +113,9 @@
 
 
 (def-package! preview
-  ;; The preview package is currently broken with the latest AUCTeX version ("11.90.2.2017-07-25)
-  ;; ... and Ghostscript 9.22. It's now fixed in AUCTeX master, so we just have to wait.
+  ;; The preview package is currently broken with the latest AUCTeX version
+  ;; ("11.90.2.2017-07-25) ... and Ghostscript 9.22. It's now fixed in AUCTeX
+  ;; master, so we just have to wait.
   :init
   (progn
     (setq-default preview-scale 1.4
@@ -175,7 +179,8 @@
         "q"   #'delete-window
         "k" (λ! (quit-window) (delete-window))))
 
-;; Enable latexmk only if the user explicitly says so with the module flag '+latexmk'.
+;; Enable latexmk only if the user explicitly says so with the module flag
+;; '+latexmk'.
 (def-package! auctex-latexmk
   :when (featurep! +latexmk)
   :init
@@ -219,8 +224,8 @@
   :commands (company-auctex-init)
   :init
   ;; We can't use the (set! :company-backend ...) because Auctex reports its
-  ;; major-mode as `latex-mode', but uses LaTeX-mode-hook for its mode, which
-  ;; is not anticipated by :company-backend (and shouldn't have to!)
+  ;; major-mode as `latex-mode', but uses LaTeX-mode-hook for its mode, which is
+  ;; not anticipated by :company-backend (and shouldn't have to!)
   (add-hook! LaTeX-mode
     (make-variable-buffer-local 'company-backends)
     (company-auctex-init)))

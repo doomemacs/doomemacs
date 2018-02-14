@@ -34,8 +34,7 @@
   :mode "/Dockerfile$")
 
 
-;; For ROM hacking or debugging
-(def-package! hexl
+(def-package! hexl ; For ROM hacking or debugging
   :mode ("\\.hex$" . hexl-mode)
   :mode ("\\.nes$" . hexl-mode))
 

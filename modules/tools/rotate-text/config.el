@@ -7,7 +7,8 @@
 
 
 (def-setting! :rotate (modes &rest plist)
-  "Declare :symbols, :words or :patterns that `rotate-text' will cycle through."
+  "Declare :symbols, :words or :patterns (all lists of strings) that
+`rotate-text' will cycle through."
   (declare (indent 1))
   (let* ((modes (doom-enlist (doom-unquote modes)))
          (fn-name (intern (format "doom--rotate-%s" (mapconcat #'symbol-name modes "-")))))

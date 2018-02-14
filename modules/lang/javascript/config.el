@@ -20,7 +20,7 @@
   (defvaralias 'js-switch-indent-offset 'js2-basic-offset)
 
   (sp-with-modes '(js2-mode rjsx-mode)
-    (sp-local-pair "/* " " */" :post-handlers '(("| " "SPC"))))
+    (sp-local-pair "/*" "*/" :post-handlers '(("| " "SPC"))))
 
   ;; If it's available globally, use eslint_d
   (setq flycheck-javascript-eslint-executable (executable-find "eslint_d"))

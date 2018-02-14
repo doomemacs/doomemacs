@@ -2,8 +2,8 @@
 
 (def-package! markdown-mode
   :mode "/README$"
-  :mode "\\.m\\(d\\|arkdown\\)$"
   :mode ("/README\\.md$" . gfm-mode)
+  :mode "\\.m\\(d\\|arkdown\\)$"
   :init
   (setq markdown-enable-wiki-links t
         markdown-enable-math t

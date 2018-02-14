@@ -292,9 +292,8 @@ the new algorithm is confusing, like in python or ruby."
   (global-evil-mc-mode +1)
 
   ;; Add custom commands to whitelisted commands
-  (dolist (fn '(doom/deflate-space-maybe doom/inflate-space-maybe
-                doom/backward-to-bol-or-indent doom/forward-to-last-non-comment-or-eol
-                doom/backward-kill-to-bol-and-indent doom/newline-and-indent))
+  (dolist (fn '(doom/backward-to-bol-or-indent doom/forward-to-last-non-comment-or-eol
+                doom/backward-kill-to-bol-and-indent))
     (push (cons fn '((:default . evil-mc-execute-default-call)))
           evil-mc-custom-known-commands))
 

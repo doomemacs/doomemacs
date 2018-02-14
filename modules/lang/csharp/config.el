@@ -2,6 +2,8 @@
 
 (def-package! csharp-mode :mode "\\.cs$")
 
+(def-package! shader-mode :mode "\\.shader$") ; unity shaders
+
 
 (def-package! omnisharp
   :after csharp-mode
@@ -53,7 +55,4 @@
           :n "r" (λ! (omnisharp-unit-test "fixture"))
           :n "s" (λ! (omnisharp-unit-test "single"))
           :n "a" (λ! (omnisharp-unit-test "all")))))
-
-
-(def-package! shader-mode :mode "\\.shader$") ; unity shaders
 

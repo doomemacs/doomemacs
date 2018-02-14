@@ -36,6 +36,7 @@
 
 
 ;; Is built into Emacs 26+
+;; TODO don't add password-store to auth-sources?
 (if (require 'auth-store-pass nil t)
     (auth-source-pass-enable)
   (def-package! auth-password-store
