@@ -13,7 +13,6 @@
 ;;(require 'iedit)
 ;;(require 'evil-multiedit)
 
-(package! eldoc-eval)
 (when (featurep! :feature evil)
   (package! evil-anzu))
 

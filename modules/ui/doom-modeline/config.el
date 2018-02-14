@@ -1,26 +1,5 @@
 ;;; ui/doom-modeline/config.el -*- lexical-binding: t; -*-
 
-(def-package! eldoc-eval
-  :config
-  (defun +doom-modeline-eldoc (text)
-    (concat (when (display-graphic-p)
-              (+doom-modeline--make-xpm 'doom-modeline-eldoc-bar))
-            text))
-
-  ;; Show eldoc in the mode-line with `eval-expression'
-  (defun +doom-modeline--show-eldoc (input)
-    "Display string STR in the mode-line next to minibuffer."
-    (with-current-buffer (eldoc-current-buffer)
-      (let* ((str              (and (stringp input) input))
-             (mode-line-format (or (and str (or (+doom-modeline-eldoc str) str))
-                                   mode-line-format))
-             mode-line-in-non-selected-windows)
-        (force-mode-line-update)
-        (sit-for eldoc-show-in-mode-line-delay))))
-  (setq eldoc-in-minibuffer-show-fn #'+doom-modeline--show-eldoc)
-
-  (eldoc-in-minibuffer-mode +1))
-
 ;; anzu and evil-anzu expose current/total state that can be displayed in the
 ;; mode-line.
 (def-package! evil-anzu
