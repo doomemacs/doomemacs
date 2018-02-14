@@ -298,7 +298,8 @@ with `org-cycle'). Also:
          (ignore-errors (org-demote))
          t)
         ((org-in-src-block-p t)
-         (doom/dumb-indent)
+         (org-babel-do-in-edit-buffer
+          (call-interactively #'indent-for-tab-command))
          t)))
 
 ;;;###autoload
