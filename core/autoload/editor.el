@@ -1,21 +1,6 @@
 ;;; core/autoload/editor.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
-(defun doom/sudo-find-file (file)
-  "Open FILE as root."
-  (interactive
-   (list (read-file-name "Open as root: ")))
-  (find-file (if (file-writable-p file)
-                 file
-               (concat "/sudo:root@localhost:" file))))
-
-;;;###autoload
-(defun doom/sudo-this-file ()
-  "Open the current file as root."
-  (interactive)
-  (doom/sudo-find-file (file-truename buffer-file-name)))
-
-;;;###autoload
 (defun doom/backward-to-bol-or-indent ()
   "Jump between the indentation column (first non-whitespace character) and the
 beginning of the line. The opposite of
