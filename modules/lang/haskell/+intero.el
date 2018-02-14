@@ -2,8 +2,10 @@
 ;;;###if (featurep! +intero)
 
 (def-package! intero
-  :hook (haskell-mode . intero-mode)
+  :after haskell-mode
   :config
+  (add-hook 'haskell-mode-hook #'+haskell|init-intero)
+
   (unless (executable-find "stack")
     (warn! "Couldn't find stack. Intero has been disabled."))
 
