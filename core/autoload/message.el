@@ -36,6 +36,17 @@
   "List of styles.")
 
 ;;;###autoload
+(defun doom-ansi-apply (code message &rest args)
+  "Apply the ansi CODE to formatted MESSAGE with ARGS."
+  (let ((rule (or (assq code doom-message-fg)
+                  (assq code doom-message-bg)
+                  (assq code doom-message-fx))))
+    (format "\e[%dm%s\e[%dm"
+            (cdr rule)
+            (apply #'format message args)
+            0)))
+
+;;;###autoload
 (defmacro format! (message &rest args)
   "An alternative to `format' that strips out ANSI codes if used in an
 interactive session."
@@ -68,16 +79,6 @@ interactive session."
            (ansi-color-apply-on-region beg end)))
        (pop-to-buffer buf)
        (goto-char (point-max)))))
-
-;;;###autoload
-(defun doom-ansi-apply (code format &rest args)
-  (let ((rule (or (assq code doom-message-fg)
-                  (assq code doom-message-bg)
-                  (assq code doom-message-fx))))
-    (format "\e[%dm%s\e[%dm"
-            (cdr rule)
-            (apply #'format format args)
-            0)))
 
 ;;;###autoload
 (defmacro warn! (message &rest args)
