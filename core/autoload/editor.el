@@ -10,18 +10,20 @@ whitespace is balanced on either side of the cursor.
 If INLINE is nil, returns t if the opening and closing braces are on adjacent
 lines, above and below, with only whitespace in between."
   (when-let* ((pair (or pair (sp-get-thing))))
-    (let ((op (plist-get pair :op))
-          (cl (plist-get pair :cl)))
-      (and op cl
-           (not (string-empty-p op))
-           (not (string-empty-p cl))
-           (let ((beg (+ (length op) (plist-get pair :beg)))
-                 (end (- (plist-get pair :end) (length cl)))
-                 (pt (point)))
-             (let ((content (buffer-substring-no-properties beg end)))
-               (and (string-match-p (format "[ %s]*" (if inline "" "\n")) content)
-                    (or (not balanced)
-                        (= (- pt beg) (- end pt))))))))))
+    (let ((beg (plist-get pair :beg))
+          (end (plist-get pair :end))
+          (pt (point)))
+      (when (and (> pt beg) (< pt end))
+        (when-let* ((cl (plist-get pair :cl))
+                    (op (plist-get pair :op)))
+          (and (not (string-empty-p op))
+               (not (string-empty-p cl))
+               (let ((nbeg (+ (length op) beg))
+                     (nend (- end (length cl))))
+                 (let ((content (buffer-substring-no-properties nbeg nend)))
+                   (and (string-match-p (format "[ %s]*" (if inline "" "\n")) content)
+                        (or (not balanced)
+                            (= (- pt nbeg) (- nend pt))))))))))))
 
 
 ;;
@@ -181,13 +183,14 @@ possible, or just one char if that's not possible."
              (insert-char ?\s (- ocol (current-column)) nil))))
         ;;
         ((and (= n 1) (not (minibufferp)))
+         ;; TODO Refactor; abstract with doom-surrounded-p more
          (let* ((pair (sp-get-thing))
                 (op (plist-get pair :op))
                 (cl (plist-get pair :cl))
                 (beg (plist-get pair :beg))
                 (end (plist-get pair :end)))
            (cond ((and end beg (= end (+ beg (length op) (length cl))))
-                  (sp-backward-delete-char 0))
+                  (sp-backward-delete-char 1))
                  ((doom-surrounded-p pair :inline :balanced)
                   (delete-char -1 killflag)
                   (delete-char 1)
