@@ -286,7 +286,7 @@
           :desc "Flyspell"               :n "s" #'flyspell-mode
           :desc "Flycheck"               :n "f" #'flycheck-mode
           :desc "Line numbers"           :n "l" #'doom/toggle-line-numbers
-          :desc "Frame fullscreen"       :n "f" #'toggle-frame-fullscreen
+          :desc "Frame fullscreen"       :n "F" #'toggle-frame-fullscreen
           :desc "Indent guides"          :n "i" #'highlight-indentation-mode
           :desc "Indent guides (column)" :n "I" #'highlight-indentation-current-column-mode
           :desc "Impatient mode"         :n "h" #'+impatient-mode/toggle
