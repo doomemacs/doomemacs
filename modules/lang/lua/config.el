@@ -18,7 +18,7 @@
 
   (map! :map lua-mode-map
         :localleader
-        "b" #'+lua/build-menu))
+        :n "b" #'+lua/build-menu))
 
 
 (def-package! company-lua
