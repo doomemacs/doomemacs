@@ -634,8 +634,8 @@
           [backspace]     #'+snippets/delete-backward-char
           [delete]        #'+snippets/delete-forward-char-or-field)
         (:map yas-minor-mode-map
-          :i "<tab>" yas-maybe-expand
-          :v "<tab>" #'+snippets/expand-on-region))
+          :ig "<tab>" yas-maybe-expand
+          :v  "<tab>" #'+snippets/expand-on-region))
 
 
       ;; --- Major mode bindings --------------------------
