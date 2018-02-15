@@ -143,5 +143,10 @@
        ;; Spacemacs-inspired keybinding scheme, a custom yasnippet library, and
        ;; additional ex commands for evil-mode. Use it as a reference for your
        ;; own modules.
-       (default +bindings +snippets +evil-commands))
+       (default +bindings +snippets +evil-commands)
+
+       ;; This allows you to store your private module at $XDG_CONFIG_HOME/doom.
+       ;; Without +xdg it uses ~/.doom.d/. If your config directory doesn't
+       ;; exist, this module does nothing.
+       (private +xdg))
 

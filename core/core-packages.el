@@ -74,6 +74,11 @@ missing) and shouldn't be deleted.")
 (defvar doom-reload-hook nil
   "A list of hooks to run when `doom/reload-load-path' is called.")
 
+(defvar doom-extra-module-paths ()
+  "Additional paths for modules that are outside of `doom-modules-dir'.
+`doom//reload-autoloads', `doom//byte-compile' and `doom-initialize-packages'
+will include the directories in this list.")
+
 (defvar doom--site-load-path load-path
   "The load path of built in Emacs libraries.")
 
@@ -213,9 +218,7 @@ This aggressively reloads core autoload files."
       (when (or force-p (not doom-packages))
         (setq doom-packages nil)
         (_load (expand-file-name "packages.el" doom-core-dir))
-        (cl-loop for (module . submodule) in (doom-module-pairs)
-                 for path = (doom-module-path module submodule "packages.el")
-                 do (_load path 'noerror))))))
+        (mapc #'_load (doom-module-paths "packages.el"))))))
 
 (defun doom-module-path (module submodule &optional file)
   "Get the full path to a module: e.g. :lang emacs-lisp maps to
@@ -237,10 +240,15 @@ This aggressively reloads core autoload files."
 (defun doom-module-paths (&optional append-file)
   "Returns a list of absolute file paths to activated modules, with APPEND-FILE
 added, if the file exists."
-  (cl-loop for (module . submodule) in (doom-module-pairs)
-           for path = (doom-module-path module submodule append-file)
-           if (file-exists-p path)
-           collect path))
+  (let ((fn (if append-file #'file-exists-p #'file-directory-p)))
+    (append (cl-loop for (module . submodule) in (doom-module-pairs)
+                     for path = (doom-module-path module submodule append-file)
+                     if (funcall fn path)
+                     collect path)
+            (cl-loop for dir in doom-extra-module-paths
+                     for path = (if append-file (expand-file-name append-file dir) dir)
+                     if (funcall fn path)
+                     collect path))))
 
 (defun doom-module-flags (module submodule)
   "Returns a list of flags provided for MODULE SUBMODULE."
@@ -295,18 +303,17 @@ Used by `require!' and `depends-on!'."
   "Bootstraps DOOM Emacs and its modules.
 
 MODULES is an malformed plist of modules to load."
-  (let (init-forms config-forms mode)
+  (let (init-forms config-forms module)
     (dolist (m modules)
-      (cond ((keywordp m) (setq mode m))
-            ((not mode)   (error "No namespace specified in `doom!' for %s" m))
+      (cond ((keywordp m) (setq module m))
+            ((not module) (error "No namespace specified in `doom!' for %s" m))
             (t
-             (let* ((module    mode)
-                    (submodule (if (listp m) (car m) m))
-                    (flags     (if (listp m) (cdr m)))
-                    (path      (doom-module-path module submodule)))
+             (let ((submodule (if (listp m) (car m) m))
+                   (flags     (if (listp m) (cdr m))))
                (doom-module-enable module submodule flags)
-               (push `(load! init ,path t) init-forms)
-               (push `(load! config ,path t) config-forms)))))
+               (let ((path (doom-module-path module submodule)))
+                 (push `(load! init ,path t) init-forms)
+                 (push `(load! config ,path t) config-forms))))))
     `(let (file-name-handler-alist)
        (setq doom-modules ',doom-modules)
        ,@(nreverse init-forms)
@@ -393,20 +400,22 @@ If NOERROR is non-nil, don't throw an error if the file doesn't exist."
 The module is only loaded once. If RELOAD-P is non-nil, load it again."
   (when (or reload-p (not (doom-module-enabled-p module submodule)))
     (let ((module-path (doom-module-path module submodule)))
-      (if (not (file-directory-p module-path))
-          (lwarn 'doom-modules :warning "Couldn't find module '%s %s'"
-                 module submodule)
-        (when (hash-table-p doom-modules)
-          (doom-module-enable module submodule flags))
-        `(condition-case-unless-debug ex
-             (progn
-               (load! init ,module-path t)
-               (load! config ,module-path t))
-           ('error
-            (lwarn 'doom-modules :error
-                   "%s in '%s %s' -> %s"
-                   (car ex) ,module ',submodule
-                   (error-message-string ex))))))))
+      (when (hash-table-p doom-modules)
+        (doom-module-enable module submodule flags))
+      (if (file-directory-p module-path)
+          `(condition-case-unless-debug ex
+               (progn
+                 (load! init ,module-path t)
+                 (if after-init-time
+                     (load! config ,module-path t)
+                   (add-hook! 'doom-init-hook (load! config ,module-path t))))
+             ('error
+              (lwarn 'doom-modules :error
+                     "%s in '%s %s' -> %s"
+                     (car ex) ,module ',submodule
+                     (error-message-string ex))))
+        (warn 'doom-modules :warning "Couldn't find module '%s %s'"
+              module submodule)))))
 
 (defmacro featurep! (module &optional submodule flag)
   "Returns t if MODULE SUBMODULE is enabled. If FLAG is provided, returns t if
@@ -562,10 +571,10 @@ This should be run whenever init.el or an autoload file is modified. Running
         (let ((auto-dir  (expand-file-name "autoload" path))
               (auto-file (expand-file-name "autoload.el" path)))
           (when (file-exists-p auto-file)
-            (push auto-file targets))
+            (push (file-truename auto-file) targets))
           (when (file-directory-p auto-dir)
             (dolist (file (doom-packages--files auto-dir "\\.el$"))
-              (push file targets)))))
+              (push (file-truename file) targets)))))
       (when (file-exists-p doom-autoload-file)
         (delete-file doom-autoload-file)
         (message "Deleted old autoloads.el"))
@@ -577,7 +586,9 @@ This should be run whenever init.el or an autoload file is modified. Running
                 "✕ Nothing in %s")
                (t
                 "✓ Scanned %s"))
-         (file-relative-name file doom-emacs-dir)))
+         (if (file-in-directory-p file doom-emacs-dir)
+             (file-relative-name file doom-emacs-dir)
+           (abbreviate-file-name file))))
       (make-directory (file-name-directory doom-autoload-file) t)
       (let ((buf (find-file-noselect doom-autoload-file t))
             current-sexp)
@@ -709,16 +720,24 @@ If RECOMPILE-P is non-nil, only recompile out-of-date core files."
   "Delete all the compiled elc files in your Emacs configuration. This excludes
 compiled packages.'"
   (interactive)
+  (ignore-errors (doom-initialize-packages))
   (let ((targets
          (append (list (expand-file-name "init.elc" doom-emacs-dir))
                  (doom-packages--files doom-core-dir "\\.elc$")
-                 (doom-packages--files doom-modules-dir "\\.elc$")))
+                 (doom-packages--files doom-modules-dir "\\.elc$")
+                 (cl-loop for dir in doom-extra-module-paths
+                          if (file-directory-p dir)
+                          nconc (doom-packages--files dir "\\.elc$"))))
         (default-directory doom-emacs-dir))
     (unless (cl-loop for path in targets
                      if (file-exists-p path)
                      collect path
                      and do (delete-file path)
-                     and do (message "✓ Deleted %s" (file-relative-name path)))
+                     and do
+                     (message "✓ Deleted %s"
+                              (if (file-in-directory-p path doom-emacs-dir)
+                                  (file-relative-name path)
+                                (abbreviate-file-name path))))
       (message "Everything is clean"))))
 
 

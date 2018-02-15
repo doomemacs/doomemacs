@@ -1,0 +1,23 @@
+#+TITLE: :config private
+
+This module enables support for an external private module and nested
+submodules, either at =~/.doom.d= (or =$XDG_CONFIG_HOME/doom= with the ~+xdg~
+flag).
+
+* Table of Contents :TOC:
+- [[Module Flags][Module Flags]]
+- [[Features][Features]]
+  - [[Private sub-modules][Private sub-modules]]
+
+* Module Flags
++ ~+xdg~ Tells this module to respect XDG conventions and look for your private
+  config in ~$XDG_CONFIG_HOME/doom~ (falls back to =~/.config/doom=).
+
+* Features
+** Private sub-modules
+Modules placed in the =modules/= subdirectory of your external config are
+symlinked to =~/.emacs.d/modules/private=, and can be activated from ~doom!~:
+
+#+BEGIN_SRC emacs-lisp
+(doom! :private private-module1 private-module2 ...)
+#+END_SRC
