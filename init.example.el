@@ -93,6 +93,7 @@
        elixir            ; erlang done right
        elm               ; care for a cup of TEA?
        emacs-lisp        ; drown in parentheses
+       ess               ; emacs speaks statistics
        go                ; the hipster dialect
        (haskell +intero) ; a language that's lazier than I am
        hy                ; readability of scheme w/ speed of python
