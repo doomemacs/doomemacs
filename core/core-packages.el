@@ -232,10 +232,13 @@ This aggressively reloads core autoload files."
 
 (defun doom-module-from-path (path)
   "Get module cons cell (MODULE . SUBMODULE) for PATH, if possible."
-  (when-let* ((path (file-relative-name (file-truename path) (file-truename doom-modules-dir))))
-    (let ((segments (split-string path "/")))
-      (cons (intern (concat ":" (car segments)))
-            (intern (cadr segments))))))
+  (save-match-data
+    (setq path (file-truename path))
+    (when (string-match "/modules/\\([^/]+\\)/\\([^/]+\\)/.*$" path)
+      (when-let* ((module (match-string 1 path))
+                  (submodule (match-string 2 path)))
+        (cons (intern (concat ":" module))
+              (intern submodule))))))
 
 (defun doom-module-paths (&optional append-file)
   "Returns a list of absolute file paths to activated modules, with APPEND-FILE
