@@ -1,4 +1,4 @@
-;;; private/default/config.el -*- lexical-binding: t; -*-
+;;; config/default/config.el -*- lexical-binding: t; -*-
 
 (if (featurep! +bindings) (load! +bindings))
 

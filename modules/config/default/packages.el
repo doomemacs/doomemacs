@@ -1,5 +1,5 @@
 ;; -*- no-byte-compile: t; -*-
-;;; private/default/packages.el
+;;; config/default/packages.el
 
 (package! emacs-snippets
   :recipe (:fetcher github

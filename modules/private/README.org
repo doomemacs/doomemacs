@@ -1,8 +1,0 @@
-#+TITLE: :private modules
-
-Use this directory to store your private configuration modules.
-
-Mine is included as a reference. I recommend you neither delete nor rename it, to avoid merge conflicts upstream.
-
------
-You'll find [[https://github.com/hlissner/doom-emacs/wiki/Customization][more information about customizing Doom]] on the [[https://github.com/hlissner/doom-emacs/wiki][wiki]].

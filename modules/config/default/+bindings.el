@@ -1,12 +1,12 @@
-;;; private/default/+bindings.el -*- lexical-binding: t; -*-
+;;; config/default/+bindings.el -*- lexical-binding: t; -*-
+
+;; This file defines a Spacemacs-esque keybinding scheme
 
 ;; expand-region's prompt can't tell what key contract-region is bound to, so we
 ;; tell it explicitly.
 (setq expand-region-contract-fast-key "V")
 
-
-;; This files defines a Spacemacs-esque keybinding scheme
-
+;;
 (map! [remap evil-jump-to-tag] #'projectile-find-tag
       [remap find-tag]         #'projectile-find-tag
       [remap newline]          #'newline-and-indent
@@ -181,7 +181,10 @@
           :desc "Browse emacs.d"            :n "E" #'+default/browse-emacsd
           :desc "Recent files"              :n "r" #'recentf-open-files
           :desc "Recent project files"      :n "R" #'projectile-recentf
-          :desc "Yank filename"             :n "y" #'+default/yank-buffer-filename)
+          :desc "Yank filename"             :n "y" #'+default/yank-buffer-filename
+          (:when (featurep! :config private)
+            :desc "Find file in private config" :n "p" #'+private/find-in-config
+            :desc "Browse private config"       :n "P" #'+private/browse-config))
 
         (:desc "git" :prefix "g"
           :desc "Git status"            :n  "S" #'magit-status
@@ -209,6 +212,7 @@
           :desc "Describe face"         :n  "F" #'describe-face
           :desc "Describe DOOM setting" :n  "s" #'doom/describe-setting
           :desc "Describe DOOM module"  :n  "d" #'doom/describe-module
+          :desc "Open Doom manual"      :n  "D" #'doom/help
           :desc "Find definition"       :n  "." #'+lookup/definition
           :desc "Find references"       :n  "/" #'+lookup/references
           :desc "Find documentation"    :n  "h" #'+lookup/documentation
@@ -266,7 +270,7 @@
           :desc "Invalidate cache"        :n  "x" #'projectile-invalidate-cache)
 
         (:desc "quit" :prefix "q"
-          :desc "Quit"                   :n "q" #'evil-save-and-quit
+          :desc "Save and quit"          :n "q" #'evil-save-and-quit
           :desc "Quit (forget session)"  :n "Q" #'+workspace/kill-session-and-quit)
 
         (:desc "remote" :prefix "r"

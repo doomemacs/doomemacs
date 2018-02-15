@@ -1,4 +1,4 @@
-;; private/default/autoload/default.el -*- lexical-binding: t; -*-
+;; config/default/autoload/default.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defun +default/yank-buffer-filename ()
@@ -23,26 +23,26 @@
        (doom-project-find-file ,dir))))
 
 
-;;;###autoload (autoload '+default/browse-project "private/default/autoload/default" nil t)
+;;;###autoload (autoload '+default/browse-project "config/default/autoload/default" nil t)
 (+default--def-browse-in! project (doom-project-root))
 ;; NOTE No need for find-in-project, use `projectile-find-file'
 
-;;;###autoload (autoload '+default/find-in-templates "private/default/autoload/default" nil t)
+;;;###autoload (autoload '+default/find-in-templates "config/default/autoload/default" nil t)
 (+default--def-find-in!   templates +file-templates-dir)
-;;;###autoload (autoload '+default/browse-templates "private/default/autoload/default" nil t)
+;;;###autoload (autoload '+default/browse-templates "config/default/autoload/default" nil t)
 (+default--def-browse-in! templates +file-templates-dir)
 
-;;;###autoload (autoload '+default/find-in-emacsd "private/default/autoload/default" nil t)
+;;;###autoload (autoload '+default/find-in-emacsd "config/default/autoload/default" nil t)
 (+default--def-find-in!   emacsd doom-emacs-dir)
-;;;###autoload (autoload '+default/browse-emacsd "private/default/autoload/default" nil t)
+;;;###autoload (autoload '+default/browse-emacsd "config/default/autoload/default" nil t)
 (+default--def-browse-in! emacsd doom-emacs-dir)
 
-;;;###autoload (autoload '+default/find-in-notes "private/default/autoload/default" nil t)
+;;;###autoload (autoload '+default/find-in-notes "config/default/autoload/default" nil t)
 (+default--def-find-in!   notes +org-dir)
-;;;###autoload (autoload '+default/browse-notes "private/default/autoload/default" nil t)
+;;;###autoload (autoload '+default/browse-notes "config/default/autoload/default" nil t)
 (+default--def-browse-in! notes +org-dir)
 
-;;;###autoload (autoload '+default/find-in-snippets "private/default/autoload/default" nil t)
+;;;###autoload (autoload '+default/find-in-snippets "config/default/autoload/default" nil t)
 (+default--def-find-in! snippets +default-snippets-dir)
 ;; NOTE No need for a browse-snippets variant, use `yas-visit-snippet-file'
 

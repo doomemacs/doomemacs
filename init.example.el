@@ -138,11 +138,10 @@
       ; +wordnut         ; wordnet (wn) search
       ; +langtool)       ; a proofreader (grammar/style check) for Emacs
 
-       ;; Private modules are where you place your personal configuration files.
-       ;; By default, they are not tracked. There is one module included here,
-       ;; the defaults module. It contains a Spacemacs-inspired keybinding
-       ;; scheme and additional ex commands for evil-mode. Use it as a reference
-       ;; for your own.
-       :private
+       :config
+       ;; The default module contains a set of reasonable defaults for Emacs, a
+       ;; Spacemacs-inspired keybinding scheme, a custom yasnippet library, and
+       ;; additional ex commands for evil-mode. Use it as a reference for your
+       ;; own modules.
        (default +bindings +snippets +evil-commands))
 

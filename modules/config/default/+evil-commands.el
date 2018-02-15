@@ -1,4 +1,4 @@
-;;; private/default/+evil-commands.el -*- lexical-binding: t; -*-
+;;; config/default/+evil-commands.el -*- lexical-binding: t; -*-
 
 (defalias 'ex! 'evil-ex-define-cmd)
 

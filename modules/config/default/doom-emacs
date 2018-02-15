@@ -1,0 +1,8 @@
+(defun projectile-find-tag ()
+  "Find tag in project."
+  (interactive)
+  (projectile-visit-project-tags-table)
+  ;; Auto-discover the user's preference for tags
+  (let ((xref-backend-functions '(t))) )
+  (let ((find-tag-fn (projectile-determine-find-tag-fn)))
+    (call-interactively find-tag-fn)))
