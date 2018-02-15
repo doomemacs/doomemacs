@@ -5,14 +5,17 @@
 (add-hook! (css-mode sass-mode)
   #'(yas-minor-mode-on flycheck-mode highlight-numbers-mode))
 
+;; An improved newline+continue comment function
+(add-hook! css-mode (setq-local comment-indent-function #'+css/comment-indent-new-line))
+
 (after! smartparens
   (sp-with-modes '(css-mode scss-mode less-css-mode stylus-mode)
-    (sp-local-pair "/*" "*/" :post-handlers '(("[d-3]||\n[i]" "RET") ("| " "SPC")))))
+    (sp-local-pair "/*" "*/" :post-handlers '(("||\n[i]" "RET") ("| " "SPC")))))
 
 (map! :map* (css-mode-map scss-mode-map less-css-mode-map)
       :n "M-R" #'+css/web-refresh-browser
       (:localleader
-        :n  "rb" #'+css/toggle-inline-or-block))
+        :n "rb" #'+css/toggle-inline-or-block))
 
 
 ;;

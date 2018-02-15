@@ -24,3 +24,40 @@
               (indent-region beg end))
           (replace-regexp "\n" " " nil beg end)
           (replace-regexp " +" " " nil beg end))))))
+
+;;;###autoload
+(defun +css/comment-indent-new-line ()
+  "Continues the comment in an indented new line in css-mode and scss-mode.
+Meant for `comment-line-break-function'."
+  (interactive)
+  (when (sp-point-in-comment)
+    (let ((at-end (looking-at-p ".+\\*/"))
+          type pre-indent post-indent)
+      (save-excursion
+        (let ((bol (line-beginning-position))
+              (eol (line-end-position)))
+          (if (not comment-use-syntax)
+              (progn
+                (goto-char bol)
+                (when (re-search-forward comment-start-skip eol t)
+                  (goto-char (or (match-end 1) (match-beginning 0)))))
+            (goto-char (comment-beginning))))
+        (save-match-data
+          (looking-at "\\(//\\|/?\\*\\)")
+          (setq type (match-string 0)
+                pre-indent (- (match-beginning 0) (line-beginning-position))
+                post-indent
+                (progn
+                  (goto-char (match-end 0))
+                  (max 1 (skip-chars-forward " " (line-end-position)))))
+          (if (eolp) (setq post-indent 1))))
+      (insert "\n"
+              (make-string pre-indent 32)
+              (if (string= "/*" type)
+                  " *"
+                type)
+              (make-string post-indent 32))
+      (when at-end
+        (save-excursion
+          (insert "\n" (make-string pre-indent 32))
+          (delete-char -1))))))
