@@ -37,7 +37,7 @@ If neither is available, run all tests in all enabled modules."
 
               (t
                (let (noninteractive)
-                 (clrhash doom-modules)
+                 (setq doom-modules (clrhash doom-modules))
                  (load (expand-file-name "init.test.el" user-emacs-directory) nil t)
                  (setq modules (doom-module-pairs)
                        targets (list (expand-file-name "test/" doom-core-dir))))))
@@ -55,7 +55,7 @@ If neither is available, run all tests in all enabled modules."
                                            collect (expand-file-name "test/" path))))
                  for dir in targets
                  if (file-directory-p dir)
-                  nconc (reverse (directory-files-recursively dir "\\.el$"))
+                  nconc (reverse (doom-packages--files dir "\\.el$"))
                   into items
                  finally do (quiet! (mapc #'load-file items)))
         ;; run all loaded tests
