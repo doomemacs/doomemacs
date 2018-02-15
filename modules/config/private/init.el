@@ -7,13 +7,9 @@
   "The directory that serves as the root of your external private config for
 Doom Emacs.")
 
-(defvar +private-modules-path
-  (expand-file-name "modules/" +private-config-path)
-  "The path to your private, external modules. This will be symlinked to
-external/ in `doom-modules-dir'.")
-
-(defvar +private-module-prefix "private"
-  "TODO")
+(defvar +private-symlink-path
+  (expand-file-name "private" doom-modules-dir)
+  "Where the place the symbolic link to the private modules directory.")
 
 ;; Ensure `doom//reload-autoloads', `doom//byte-compile' and
 ;; `doom-initialize-packages' all include this module in their operations.
