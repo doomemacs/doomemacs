@@ -139,8 +139,7 @@ wrong places)."
            (let ((marker (org-element-property :bullet context))
                  (pad (save-excursion
                         (back-to-indentation)
-                        (- (point) (line-beginning-position))))
-                 afterp)
+                        (- (point) (line-beginning-position)))))
              (save-match-data
                (pcase direction
                  ('below

@@ -247,7 +247,7 @@ Inspired from http://demonastery.org/2013/04/emacs-evil-narrow-region/"
 ;;
 
 ;;;###autoload
-(defun doom*newline-and-indent (orig-fn)
+(defun doom*newline-and-indent (_orig-fn)
   "Inserts a newline and possibly indents it. Also continues comments if
 executed from a commented line; handling special cases for certain languages
 with weak native support."

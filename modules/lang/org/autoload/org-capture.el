@@ -63,17 +63,16 @@ you're done. This can be called from an external shell script."
     (setq string nil))
   (when (and key (string-empty-p key))
     (setq key nil))
-  (require 'org-capture)
   (let ((frame (if (+org-capture-frame-p)
                    (selected-frame)
                  (make-frame +org-capture-window-params))))
     (with-selected-frame frame
+      (require 'org-capture)
       (condition-case ex
           (cl-letf (((symbol-function #'pop-to-buffer)
                      (symbol-function #'switch-to-buffer)))
             (switch-to-buffer (doom-fallback-buffer))
             (let ((org-capture-initial string)
-                  (org-capture-mode-hook org-capture-mode-hook)
                   org-capture-entry)
               (when (and key (not (string-empty-p key)))
                 (setq org-capture-entry (org-capture-select-template key)))

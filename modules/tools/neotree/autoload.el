@@ -8,8 +8,7 @@
 (defun +neotree/open ()
   "Open the neotree window in the current project."
   (interactive)
-  (let ((path buffer-file-name)
-        (project-root (doom-project-root 'nocache)))
+  (let ((project-root (doom-project-root 'nocache)))
     (require 'neotree)
     (if (neo-global--window-exists-p)
         (neotree-hide)
