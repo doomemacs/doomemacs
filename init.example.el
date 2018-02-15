@@ -140,10 +140,10 @@
       ; +langtool)       ; a proofreader (grammar/style check) for Emacs
 
        :config
-       ;; The default module contains a set of reasonable defaults for Emacs, a
-       ;; Spacemacs-inspired keybinding scheme, a custom yasnippet library, and
-       ;; additional ex commands for evil-mode. Use it as a reference for your
-       ;; own modules.
+       ;; The default module set reasonable defaults for Emacs. It also provides
+       ;; a Spacemacs-inspired keybinding scheme, a custom yasnippet library,
+       ;; and additional ex commands for evil-mode. Use it as a reference for
+       ;; your own modules.
        (default +bindings +snippets +evil-commands)
 
        ;; This allows you to store your private module at $XDG_CONFIG_HOME/doom.
