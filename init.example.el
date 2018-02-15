@@ -109,12 +109,11 @@
         +attach          ; custom attachment system
         +babel           ; running code in org
         +capture         ; org-capture in and outside of Emacs
-        +export          ; centralized export system + more backends
+        +export          ; Exporting org to whatever you want
         +present         ; Emacs for presentations
-        ;; TODO +publish
-        )
+        +publish)        ; Emacs+Org as a static site generator
        perl              ; write code no one else can comprehend
-       php               ; make php less awful to work with
+       php               ; perl's insecure younger brother
        plantuml          ; diagrams for confusing people more
        purescript        ; javascript, but functional
        python            ; beautiful is better than ugly

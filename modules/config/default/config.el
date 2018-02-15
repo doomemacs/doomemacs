@@ -9,7 +9,8 @@
 
 (def-package! emacs-snippets
   :if (featurep! +snippets)
-  :after yasnippet)
+  :after yasnippet
+  :config (delete yas--default-user-snippets-dir yas-snippet-dirs))
 
 
 ;;
