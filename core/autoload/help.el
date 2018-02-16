@@ -77,7 +77,7 @@ in."
                             nil t module))))
   (cl-destructuring-bind (category submodule)
       (mapcar #'intern (split-string module " "))
-    (unless (member (cons category submodule) (doom-module-pairs))
+    (unless (doom-module-enabled-p category submodule)
       (error "'%s' isn't a valid module" module))
     (let ((doc-path (expand-file-name "README.org" (doom-module-path category submodule))))
       (unless (file-exists-p doc-path)

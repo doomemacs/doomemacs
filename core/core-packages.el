@@ -281,11 +281,6 @@ Used by `require!' and `depends-on!'."
                  '(t))
              doom-modules)))
 
-(defun doom-module-pairs ()
-  "Returns `doom-modules' as a list of (MODULE . SUBMODULE) cons cells."
-  (cl-loop for key being the hash-keys of doom-modules
-           collect key))
-
 (defun doom-module-load-file (module submodule file &optional path)
   "Load FILE in MODULE/SUBMODULE. If PATH is specified, look for FILE in PATH."
   (unless (or path (file-name-absolute-p file))
