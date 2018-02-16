@@ -305,24 +305,26 @@ Used by `require!' and `depends-on!'."
 
 MODULES is an malformed plist of modules to load."
   (let (init-forms config-forms module file-name-handler-alist)
-    (let ((modules-dir (file-name-directory (or load-file-name byte-compile-current-file))))
-      (add-to-list 'doom-modules-dirs (expand-file-name "modules/" modules-dir))
+    (let ((modules-dir
+           (expand-file-name "modules/" (file-name-directory (or load-file-name byte-compile-current-file)))))
+      (add-to-list 'doom-modules-dirs modules-dir)
       (dolist (m modules)
         (cond ((keywordp m) (setq module m))
               ((not module) (error "No namespace specified in `doom!' for %s" m))
               ((let ((submodule (if (listp m) (car m) m))
                      (flags     (if (listp m) (cdr m))))
                  (doom-module-enable module submodule flags)
-                 (let ((path (doom-module-path module submodule nil modules-dir))
+                 (let ((path (doom-module-path module submodule))
                        (mod `(doom--current-module ',(cons module submodule))))
                    (push `(let (,mod) (load! init ,path t))   init-forms)
-                   (push `(let (,mod) (load! config ,path t)) config-forms)))))))
-    `(let (file-name-handler-alist)
-       (setq doom-modules ',doom-modules
-             doom-modules-dirs ',doom-modules-dirs)
-       ,@(nreverse init-forms)
-       (unless noninteractive
-         ,@(nreverse config-forms)))))
+                   (push `(let (,mod) (load! config ,path t)) config-forms))))))
+      `(let (file-name-handler-alist)
+         (add-to-list 'load-path ,modules-dir)
+         (setq doom-modules ',doom-modules
+               doom-modules-dirs ',doom-modules-dirs)
+         ,@(nreverse init-forms)
+         (unless noninteractive
+           ,@(nreverse config-forms))))))
 
 (defmacro def-package! (name &rest plist)
   "A thin wrapper around `use-package'."
