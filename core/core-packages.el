@@ -327,12 +327,7 @@ MODULES is an malformed plist of modules to load."
        (setq doom-modules ',doom-modules)
        ,@(nreverse init-forms)
        (unless noninteractive
-         ,@(nreverse config-forms)
-         (when (display-graphic-p)
-           (require 'server)
-           (unless (server-running-p)
-             (server-start)))
-         (add-hook 'doom-post-init-hook #'doom-packages--display-benchmark)))))
+         ,@(nreverse config-forms)))))
 
 (defmacro def-package! (name &rest plist)
   "A thin wrapper around `use-package'."

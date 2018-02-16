@@ -184,7 +184,12 @@ ability to invoke the debugger in debug mode."
 `gc-cons-percentage' and `file-name-handler-alist'."
     (unless (or (not after-init-time) noninteractive)
       (dolist (hook '(doom-init-hook doom-post-init-hook))
-        (run-hook-wrapped hook #'doom-try-run-hook hook)))
+        (run-hook-wrapped hook #'doom-try-run-hook hook))
+      (when (display-graphic-p)
+        (require 'server)
+        (unless (server-running-p)
+          (server-start)))
+      (doom-packages--display-benchmark))
 
     ;; If you forget to reset this, you'll get stuttering and random freezes!
     (setq gc-cons-threshold 16777216
