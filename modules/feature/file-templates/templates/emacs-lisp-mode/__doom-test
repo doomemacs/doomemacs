@@ -1,4 +1,4 @@
 ;; -*- no-byte-compile: t; -*-
-;;; `(file-relative-name buffer-file-truename doom-modules-dir)`
+;;; `(+file-templates-get-short-path)`
 
 $0
