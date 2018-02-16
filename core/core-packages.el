@@ -185,7 +185,8 @@ it anyway."
 
 (defun doom-initialize-packages (&optional force-p load-p)
   "Crawls across your emacs.d to fill `doom-modules' (from init.el) and
-`doom-packages' (from packages.el files), if they aren't set already.
+`doom-packages' (from packages.el files), if they aren't set already. Also runs
+every enabled module's init.el.
 
 If FORCE-P is non-nil, do it even if they are.
 
@@ -218,23 +219,25 @@ This aggressively reloads core autoload files."
         (_load (expand-file-name "packages.el" doom-core-dir))
         (cl-loop for key being the hash-keys of doom-modules
                  if (doom-module-path (car key) (cdr key) "packages.el")
-                 do (doom-module-load-file (car key) (cdr key) it))
+                 do (let ((doom--current-module key)) (_load it)))
         (cl-loop for dir in doom-psuedo-module-dirs
                  for path = (expand-file-name "packages.el" dir)
                  if (file-exists-p path)
                  do (_load path))))))
 
-(defun doom-module-path (module submodule &optional file)
+(defun doom-module-path (module submodule &optional file root)
   "Get the full path to a module: e.g. :lang emacs-lisp maps to
 ~/.emacs.d/modules/lang/emacs-lisp/ and will append FILE if non-nil."
   (when (keywordp module)
     (setq module (substring (symbol-name module) 1)))
   (when (symbolp submodule)
     (setq submodule (symbol-name submodule)))
-  (cl-loop for default-directory in doom-modules-dirs
-           for path = (concat module "/" submodule "/" file)
-           if (file-exists-p path)
-           return (expand-file-name path)))
+  (if root
+      (expand-file-name (concat "modules/" module "/" submodule "/" file) root)
+    (cl-loop for default-directory in doom-modules-dirs
+             for path = (concat module "/" submodule "/" file)
+             if (file-exists-p path)
+             return (expand-file-name path))))
 
 (defun doom-module-from-path (&optional path)
   "Get module cons cell (MODULE . SUBMODULE) for PATH, if possible."
@@ -281,13 +284,6 @@ Used by `require!' and `depends-on!'."
                  '(t))
              doom-modules)))
 
-(defun doom-module-load-file (module submodule file &optional path)
-  "Load FILE in MODULE/SUBMODULE. If PATH is specified, look for FILE in PATH."
-  (unless (or path (file-name-absolute-p file))
-    (setq path (doom-module-path module submodule file)))
-  (let ((doom--current-module (cons module submodule)))
-    (load (expand-file-name file path) :noerror (not doom-debug-mode))))
-
 (defun doom-packages--display-benchmark ()
   (message "Doom loaded %s packages across %d modules in %.03fs"
            ;; Certainly imprecise, especially where custom additions to
@@ -309,17 +305,21 @@ Used by `require!' and `depends-on!'."
 
 MODULES is an malformed plist of modules to load."
   (let (init-forms config-forms module file-name-handler-alist)
-    (dolist (m modules)
-      (cond ((keywordp m) (setq module m))
-            ((not module) (error "No namespace specified in `doom!' for %s" m))
-            ((let ((submodule (if (listp m) (car m) m))
-                   (flags     (if (listp m) (cdr m))))
-               (doom-module-enable module submodule flags)
-               (let ((path (doom-module-path module submodule)))
-                 (push `(doom-module-load-file ,module ',submodule "init" ,path) init-forms)
-                 (push `(doom-module-load-file ,module ',submodule "config" ,path) config-forms))))))
+    (let ((modules-dir (file-name-directory (or load-file-name byte-compile-current-file))))
+      (add-to-list 'doom-modules-dirs (expand-file-name "modules/" modules-dir))
+      (dolist (m modules)
+        (cond ((keywordp m) (setq module m))
+              ((not module) (error "No namespace specified in `doom!' for %s" m))
+              ((let ((submodule (if (listp m) (car m) m))
+                     (flags     (if (listp m) (cdr m))))
+                 (doom-module-enable module submodule flags)
+                 (let ((path (doom-module-path module submodule nil modules-dir))
+                       (mod `(doom--current-module ',(cons module submodule))))
+                   (push `(let (,mod) (load! init ,path t))   init-forms)
+                   (push `(let (,mod) (load! config ,path t)) config-forms)))))))
     `(let (file-name-handler-alist)
-       (setq doom-modules ',doom-modules)
+       (setq doom-modules ',doom-modules
+             doom-modules-dirs ',doom-modules-dirs)
        ,@(nreverse init-forms)
        (unless noninteractive
          ,@(nreverse config-forms)))))
@@ -403,9 +403,11 @@ The module is only loaded once. If RELOAD-P is non-nil, load it again."
         (doom-module-enable module submodule flags))
       (if (file-directory-p module-path)
           `(condition-case-unless-debug ex
-               (progn
-                 (doom-module-load-file ,module ',submodule "init" ,module-path)
-                 (doom-module-load-file ,module ',submodule "config" ,module-path))
+               (let ((doom--current-module (cons module submodule)))
+                 (load ,(doom-module-path module submodule "init")
+                       :noerror (not doom-debug-mode))
+                 (load ,(doom-module-path module submodule "config")
+                       :noerror (not doom-debug-mode)))
              ('error
               (lwarn 'doom-modules :error
                      "%s in '%s %s' -> %s"

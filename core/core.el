@@ -34,7 +34,7 @@ line or use --debug-init to enable this.")
 (defvar doom-modules-dir (concat doom-emacs-dir "modules/")
   "The main directory where Doom modules are stored.")
 
-(defvar doom-modules-dirs (list doom-modules-dir)
+(defvar doom-modules-dirs nil
   "A list of module root directories. Order determines priority.")
 
 (defvar doom-local-dir (concat doom-emacs-dir ".local/")
