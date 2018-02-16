@@ -174,7 +174,7 @@ it anyway."
     (setq doom-package-load-path (directory-files package-user-dir t "^[^.]" t)
           load-path (append doom-package-load-path
                             doom-site-load-path
-                            doom-core-dir
+                            (list doom-core-dir)
                             doom-modules-dirs))))
 
 (defun doom-initialize-autoloads ()
