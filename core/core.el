@@ -32,7 +32,10 @@ line or use --debug-init to enable this.")
   "Where essential files are stored.")
 
 (defvar doom-modules-dir (concat doom-emacs-dir "modules/")
-  "Where configuration modules are stored.")
+  "The main directory where Doom modules are stored.")
+
+(defvar doom-modules-dirs (list doom-modules-dir)
+  "A list of module root directories. Order determines priority.")
 
 (defvar doom-local-dir (concat doom-emacs-dir ".local/")
   "Root directory for local Emacs files. Use this as permanent storage for files
@@ -159,7 +162,7 @@ ability to invoke the debugger in debug mode."
   (load (concat doom-core-dir "core-packages") nil t)
   (setq load-path (eval-when-compile (doom-initialize t)
                                      (doom-initialize-load-path t))
-        doom--package-load-path (eval-when-compile doom--package-load-path))
+        doom-package-load-path (eval-when-compile doom-package-load-path))
 
   (load! core-lib)
   (load! core-os) ; consistent behavior across OSes

@@ -68,9 +68,8 @@ in."
                    (let ((sexp (sexp-at-point)))
                      (when (memq (car-safe sexp) '(featurep! require!))
                        (format "%s %s" (nth 1 sexp) (nth 2 sexp))))))
-                ((and buffer-file-name
-                      (file-in-directory-p buffer-file-name doom-modules-dir))
-                 (let ((module (doom-module-from-path buffer-file-name)))
+                (buffer-file-name
+                 (when-let* ((module (doom-module-from-path buffer-file-name)))
                    (format "%s %s" (car module) (cdr module)))))))
      (list (completing-read "Describe module: "
                             (cl-loop for (module . sub) in (reverse (hash-table-keys doom-modules))

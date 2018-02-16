@@ -198,8 +198,8 @@ unfold to point on startup."
 
   (def-org-file-link! "org" +org-dir)
   (def-org-file-link! "doom" doom-emacs-dir)
-  (def-org-file-link! "doom-module" doom-modules-dir)
   (def-org-file-link! "doom-docs" doom-docs-dir)
+  (def-org-file-link! "doom-modules" doom-modules-dir)
 
   ;; Update UI when theme is changed
   (add-hook 'doom-init-theme-hook #'+org|setup-ui))

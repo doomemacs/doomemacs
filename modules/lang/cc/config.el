@@ -233,7 +233,7 @@ compilation database is present in the project.")
   ;; later, so we un-byte-compile it before we load it.
   (eval-when-compile
     (when (>= emacs-major-version 26)
-      (when-let* ((elc-file (locate-library "rtags.elc" t doom--package-load-path)))
+      (when-let* ((elc-file (locate-library "rtags.elc" t doom-package-load-path)))
         (delete-file elc-file))))
   :config (setq rtags-display-result-backend 'ivy))
 

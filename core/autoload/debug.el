@@ -148,7 +148,8 @@ ready to be pasted in a bug report on github."
      (or (ignore-errors
            (cl-delete-duplicates
             (cl-loop for file in (append (reverse (directory-files-recursively doom-core-dir "\\.elc$"))
-                                         (reverse (directory-files-recursively doom-modules-dir "\\.elc$")))
+                                         (cl-loop for dir in doom-modules-dirs
+                                                  nconc (directory-files-recursively dir "\\.elc$")))
                      collect (file-relative-name (file-name-directory file) doom-emacs-dir))
             :test #'equal))
          "n/a")

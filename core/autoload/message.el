@@ -84,9 +84,13 @@ interactive session."
 (defmacro warn! (message &rest args)
   "Output a colored warning for the current module in the *Messages* buffer."
   (let ((load-file-name (or load-file-name byte-compile-current-file)))
-    (if (file-in-directory-p load-file-name doom-modules-dir)
-        `(cl-destructuring-bind (cat . mod) (doom-module-from-path ,load-file-name)
-           (delay-warning (format "%s %s" cat mod) (format ,message ,@args) :warning))
+    (if (cl-loop for dir in doom-modules-dirs
+                 if (file-in-directory-p load-file-name dir)
+                 return t)
+        `(cl-destructuring-bind (cat . mod)
+             (doom-module-from-path ,load-file-name)
+           (delay-warning (format "%s %s" cat mod) (format ,message ,@args)
+                          :warning))
       `(delay-warning (file-relative-name load-file-name doom-emacs-dir)
                       (format ,message ,@args) :warning))))
 
