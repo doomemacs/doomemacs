@@ -17,7 +17,4 @@
 
        :lang
        org
-       web
-
-       :private
-       hlissner)
+       web)
