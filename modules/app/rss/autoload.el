@@ -8,10 +8,12 @@
 
 ;;;###autoload
 (defun +rss/quit ()
+  "TODO"
   (interactive)
+  (elfeed-db-compact)
   (doom-kill-matching-buffers "^\\*elfeed")
   (dolist (file +rss-elfeed-files)
-    (when-let* ((buf (get-file-buffer (expand-file-name file +rss-org-dir))))
+    (when-let* ((buf (get-file-buffer (expand-file-name file +org-dir))))
       (kill-buffer buf))))
 
 ;;;###autoload
