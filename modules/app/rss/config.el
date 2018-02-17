@@ -43,10 +43,11 @@
           [remap kill-buffer]           "q")
 
         (:map elfeed-search-mode-map
-          :n "q"   #'+rss/quit
-          :n "r"   #'elfeed-update
-          :n "s"   #'elfeed-search-live-filter
-          :n "RET" #'elfeed-search-show-entry)
+          :n "q"     #'+rss/quit
+          :n "r"     #'elfeed-update
+          :n "s"     #'elfeed-search-live-filter
+          :n "RET"   #'elfeed-search-show-entry
+          :n "M-RET" #'elfeed-search-browse-url)
 
         (:map elfeed-show-mode-map
           :n "q"  #'elfeed-kill-buffer
