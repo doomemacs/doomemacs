@@ -175,7 +175,8 @@ it anyway."
           load-path (append doom-package-load-path
                             doom-site-load-path
                             (list doom-core-dir)
-                            doom-modules-dirs))))
+                            doom-modules-dirs
+                            doom-psuedo-module-dirs))))
 
 (defun doom-initialize-autoloads ()
   "Ensures that `doom-autoload-file' exists and is loaded. Otherwise run
