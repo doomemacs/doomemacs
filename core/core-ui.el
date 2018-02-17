@@ -79,7 +79,7 @@ with `doom//reload-theme').")
 ;; A minor mode for hiding the mode-line
 ;;
 
-(defvar-local doom--modeline-format nil
+(defvar doom--modeline-format nil
   "The modeline format to use when `doom-hide-modeline-mode' is active. Don't
 set this directly. Let-bind it instead.")
 
@@ -91,18 +91,16 @@ disabled.")
   "Minor mode to hide the mode-line in the current buffer."
   :init-value nil
   :global nil
-  (cond (doom-hide-modeline-mode
-         (add-hook 'after-change-major-mode-hook #'doom|hide-modeline-mode-reset nil t)
-         (setq mode-line-format (or doom--old-modeline-format doom--modeline-format)
-               doom--old-modeline-format nil))
-        (t
-         (remove-hook 'after-change-major-mode-hook #'doom|hide-modeline-mode-reset t)
-         (setq mode-line-format doom--old-modeline-format
-               doom--old-modeline-format nil)))
+  (if doom-hide-modeline-mode
+      (progn
+        (add-hook 'after-change-major-mode-hook #'doom|hide-modeline-mode-reset nil t)
+        (setq doom--old-modeline-format mode-line-format
+              mode-line-format doom--modeline-format))
+    (remove-hook 'after-change-major-mode-hook #'doom|hide-modeline-mode-reset t)
+    (setq mode-line-format doom--old-modeline-format))
   (force-mode-line-update))
 
 ;; Ensure major-mode or theme changes don't overwrite these variables
-(put 'doom--modeline-format 'permanent-local t)
 (put 'doom--old-modeline-format 'permanent-local t)
 (put 'doom-hide-modeline-mode 'permanent-local t)
 (put 'doom-hide-modeline-mode 'permanent-local-hook t)
