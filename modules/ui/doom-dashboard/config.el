@@ -303,5 +303,8 @@ controlled by `+doom-dashboard-pwd-policy'."
             ("Jump to bookmark" "bookmark"
              (call-interactively (or (command-remapping #'bookmark-jump)
                                      #'bookmark-jump)))
-            ("Edit emacs.d" "tools"
+            ,(when (featurep! :config private)
+               '("Open custom init script" "settings"
+                 (find-file (expand-file-name "init.el" +private-config-path))))
+            ("Edit Doom Emacs" "tools"
              (doom-project-find-file doom-emacs-dir))))))
