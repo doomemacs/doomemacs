@@ -211,6 +211,7 @@ between the two."
 
   (map! :map org-mode-map
         [remap org-shifttab] #'+org/shifttab
+        [backspace] #'org-delete-backward-char
         "C-c C-S-l" #'+org/remove-link
         "C-c C-i"   #'org-toggle-inline-images
 
