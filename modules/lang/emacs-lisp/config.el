@@ -56,7 +56,10 @@
   (defun +emacs-lisp|init-flycheck ()
     "Initialize flycheck-mode if not in emacs.d."
     (when (and buffer-file-name
-               (not (file-in-directory-p buffer-file-name doom-emacs-dir)))
+               (and (not (file-in-directory-p buffer-file-name doom-emacs-dir))
+                    (if (featurep! :config private)
+                        (not (file-in-directory-p buffer-file-name +private-config-path))
+                      't)))
       (flycheck-mode +1))))
 
 
