@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: Insert a license
+# uuid: __license
+# type: command
+# --
+(+file-templates/insert-license)
