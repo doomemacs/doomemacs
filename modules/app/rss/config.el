@@ -25,6 +25,10 @@
         elfeed-show-entry-delete #'+rss/delete-pane
         shr-max-image-proportion 0.6)
 
+  (set! :popup "^\\*elfeed-entry"
+    '((size . 0.75) (side . bottom))
+    '((select . t) (quit) (transient . t)))
+
   (make-directory elfeed-db-directory t)
 
   ;; Ensure elfeed buffers are treated as real
