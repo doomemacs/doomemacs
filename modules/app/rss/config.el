@@ -4,7 +4,7 @@
 ;; by apps Reeder and Readkit. It can be invoked via `=rss'. Otherwise, if you
 ;; don't care for the UI you can invoke elfeed directly with `elfeed'.
 
-(defvar +rss-elfeed-files (list "rss/elfeed.org")
+(defvar +rss-elfeed-files (list "elfeed.org")
   "The files that configure `elfeed's rss feeds.")
 
 (defvar +rss-split-direction 'below
