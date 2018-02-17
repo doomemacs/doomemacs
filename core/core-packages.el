@@ -731,7 +731,7 @@ If RECOMPILE-P is non-nil, only recompile out-of-date core files."
   "Delete all the compiled elc files in your Emacs configuration. This excludes
 compiled packages.'"
   (interactive)
-  (ignore-errors (doom-initialize-packages))
+  (ignore-errors (doom-initialize-packages t))
   (let ((targets
          (append (list (expand-file-name "init.elc" doom-emacs-dir))
                  (doom-packages--files doom-core-dir "\\.elc$")
