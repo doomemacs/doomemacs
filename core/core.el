@@ -79,12 +79,7 @@ melodramatic ex-vimmer disappointed with the text-editor status quo."
 (setq-default
  ad-redefinition-action 'accept   ; silence advised function warnings
  apropos-do-all t                 ; make `apropos' more useful
- compilation-always-kill t        ; kill compilation process before starting another
- compilation-ask-about-save nil   ; save all buffers on `compile'
- compilation-scroll-output 'first-error
- confirm-nonexistent-file-or-buffer t
  debug-on-error (and (not noninteractive) doom-debug-mode)
- enable-recursive-minibuffers nil
  ffap-machine-p-known 'reject     ; don't ping things that look like domain names
  idle-update-delay 2              ; update ui less often
  load-prefer-newer (or noninteractive doom-debug-mode)

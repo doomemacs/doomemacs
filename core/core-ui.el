@@ -39,8 +39,13 @@ with `doom//reload-theme').")
 (setq-default
  bidi-display-reordering nil ; disable bidirectional text for tiny performance boost
  blink-matching-paren nil    ; don't blink--too distracting
+ compilation-always-kill t        ; kill compilation process before starting another
+ compilation-ask-about-save nil   ; save all buffers on `compile'
+ compilation-scroll-output 'first-error
+ confirm-nonexistent-file-or-buffer t
  cursor-in-non-selected-windows nil  ; hide cursors in other windows
  display-line-numbers-width 3
+ enable-recursive-minibuffers nil
  frame-inhibit-implied-resize t
  ;; remove continuation arrow on right fringe
  fringe-indicator-alist (delq (assq 'continuation fringe-indicator-alist)
