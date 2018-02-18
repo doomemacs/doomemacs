@@ -41,7 +41,7 @@
       (((background light))
        (:inherit font-lock-comment-face :background ,(doom-color 'base3))))
     "Face to hightlight `hideshow' overlays."
-    :group 'doom)
+    :group 'doom-themes)
 
   ;; Nicer code-folding overlays (with fringe indicators)
   (defun +doom-set-up-overlay (ov)

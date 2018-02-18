@@ -6,11 +6,11 @@
 ;;
 (defface +workspace-tab-selected-face '((t (:inherit 'highlight)))
   "The face for selected tabs displayed by `+workspace/display'"
-  :group 'doom)
+  :group 'persp-mode)
 
 (defface +workspace-tab-face '((t (:inherit 'default)))
   "The face for selected tabs displayed by `+workspace/display'"
-  :group 'doom)
+  :group 'persp-mode)
 
 
 ;;

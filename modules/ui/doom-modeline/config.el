@@ -80,8 +80,8 @@ file-name => comint.el")
 ;;
 
 (defgroup +doom-modeline nil
-  ""
-  :group 'doom)
+  "TODO"
+  :group 'faces)
 
 (defface doom-modeline-buffer-path
   '((t (:inherit (mode-line-emphasis bold))))

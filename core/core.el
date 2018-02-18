@@ -59,11 +59,6 @@ Use this for files that change often, like cache files.")
 (defvar doom-autoload-file (concat doom-local-dir "autoloads.el")
   "Where `doom//reload-autoloads' will generate its autoloads file.")
 
-(defgroup doom nil
-  "DOOM Emacs, an Emacs configuration for a stubborn, shell-dwelling and
-melodramatic ex-vimmer disappointed with the text-editor status quo."
-  :group 'emacs)
-
 
 ;;;
 ;; UTF-8 as the default coding system

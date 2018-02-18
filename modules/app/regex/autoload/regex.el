@@ -11,17 +11,17 @@
 (defface +regex-match-0-face
   `((t (:foreground "Black" :background ,(doom-color 'magenta) :bold t)))
   "TODO"
-  :group 'doom)
+  :group 'faces)
 
 (defface +regex-match-1-face
   `((t (:foreground "Black" :background ,(doom-color 'blue) :bold t)))
   "TODO"
-  :group 'doom)
+  :group 'faces)
 
 (defface +regex-match-2-face
   `((t (:foreground "Black" :background ,(doom-color 'green) :bold t)))
   "TODO"
-  :group 'doom)
+  :group 'faces)
 
 (defvar +regex-faces
   '(+regex-match-0-face +regex-match-1-face +regex-match-2-face)
