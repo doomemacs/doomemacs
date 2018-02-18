@@ -42,7 +42,7 @@
 ;;;###autoload (autoload '+default/browse-notes "config/default/autoload/default" nil t)
 (+default--def-browse-in! notes +org-dir)
 
-;;;###autoload (autoload '+default/find-in-snippets "config/default/autoload/default" nil t)
-(+default--def-find-in! snippets +default-snippets-dir)
+;;;###autoload (autoload '+default/browse-snippets "config/default/autoload/default" nil t)
+(+default--def-browse-in! snippets emacs-snippets-dir)
 ;; NOTE No need for a browse-snippets variant, use `yas-visit-snippet-file'
 
