@@ -15,10 +15,21 @@ If neither is available, run all tests in all enabled modules."
              ;; Convert targets (either from MODULES or `argv') into a list of
              ;; string paths, pointing to the root directory of modules
              (cond ((string= (car argv) "--") ; command line
-                    (cl-loop for arg in (cdr argv)
-                             if (equal arg "core") collect doom-core-dir
-                             else collect (expand-file-name arg)
-                             finally do (setq argv nil)))
+                    (save-match-data
+                      (cl-loop for arg in (cdr argv)
+                               if (equal arg "core") collect doom-core-dir
+                               else if (string-match-p "/" arg)
+                               nconc (cl-loop for dir in doom-modules-dirs
+                                              collect (expand-file-name arg dir))
+                               else
+                               nconc (cl-loop for dir in doom-modules-dirs
+                                              for path = (expand-file-name arg dir)
+                                              if (file-directory-p path)
+                                              nconc
+                                              (cl-remove-if-not
+                                               #'file-directory-p
+                                               (directory-files path t "^[^.]" t)))
+                               finally do (setq argv nil))))
 
                    (modules ; cons-cells given to MODULES
                     (cl-loop for (module . submodule) in modules
@@ -31,9 +42,10 @@ If neither is available, run all tests in all enabled modules."
                       (append (list doom-core-dir) (doom-module-paths)))))))
         ;; Load all the unit test files...
         (dolist (path target-paths)
-          (when (file-directory-p (expand-file-name "test/" path))
-            (dolist (test-file (reverse (doom-packages--files path "\\.el$")))
-              (load test-file nil :nomessage))))
+          (let ((test-path (expand-file-name "test/" path)))
+            (when (file-directory-p test-path)
+              (dolist (test-file (reverse (doom-packages--files test-path "\\.el$")))
+                (load test-file nil :noerror)))))
         ;; ... then run them
         (if noninteractive
             (ert-run-tests-batch-and-exit)
