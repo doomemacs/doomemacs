@@ -407,10 +407,8 @@ The module is only loaded once. If RELOAD-P is non-nil, load it again."
       (if (file-directory-p module-path)
           `(condition-case-unless-debug ex
                (let ((doom--current-module (cons module submodule)))
-                 (load ,(doom-module-path module submodule "init")
-                       :noerror (not doom-debug-mode))
-                 (load ,(doom-module-path module submodule "config")
-                       :noerror (not doom-debug-mode)))
+                 (load! init   ,module-path :noerror)
+                 (load! config ,module-path :noerror))
              ('error
               (lwarn 'doom-modules :error
                      "%s in '%s %s' -> %s"
