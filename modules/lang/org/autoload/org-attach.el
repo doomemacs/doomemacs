@@ -19,7 +19,7 @@
 (defvar +org-attachments nil
   "A list of all indexed attachments in `+org-dir'.")
 
-(defvar +org-attachments-files value
+(defvar +org-attachments-files nil
   "A list of all attachments in `org-attach-directory'.")
 
 (defun +org-attachments--list (&optional beg end)
