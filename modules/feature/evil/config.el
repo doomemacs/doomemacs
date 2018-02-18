@@ -23,8 +23,9 @@
 (def-package! evil
   :init
   (setq evil-want-C-u-scroll t
-        evil-want-visual-char-semi-exclusive t
+        evil-want-C-w-delete t
         evil-want-Y-yank-to-eol t
+        evil-want-visual-char-semi-exclusive t
         evil-magic t
         evil-echo-state t
         evil-indent-convert-tabs t
