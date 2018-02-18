@@ -48,76 +48,77 @@
              `(lambda () (+file-templates--expand ,trigger ',mode ,project-only-p)))
           #'ignore))))
 
-  (mapc #'+file-templates-add
-        ;; General
-        '(("/\\.gitignore$"                  "__"               gitignore-mode)
-          ("/Dockerfile$"                    "__"               dockerfile-mode)
-          ("/docker-compose.yml$"            "__"               yaml-mode)
-          ;; C/C++
-          ("\\.h$"                           "__h"              c-mode)
-          ("\\.c$"                           "__c"              c-mode)
-          ("\\.h\\(h\\|pp|xx\\)$"            "__hpp"            c++-mode)
-          ("\\.\\(cc\\|cpp\\)$"              "__cpp"            c++-mode)
-          ("/main\\.\\(cc\\|cpp\\)$"         "__main.cpp"       c++-mode)
-          ("/win32_\\.\\(cc\\|cpp\\)$"       "__winmain.cpp"    c++-mode)
-          ("/Makefile$"                      "__"               makefile-gmake-mode)
-          ;; Elisp
-          ("\\.el$"                          "__initfile"       emacs-lisp-mode)
-          ("/.dir-locals.el$"                nil)
-          ("-test\\.el$"                     "__"               emacs-ert-mode)
-          ("/\\(?:.emacs.d\\|doom-emacs\\)?/.+\\.el$"           "__doom-module"    emacs-lisp-mode)
-          ("/\\(?:.emacs.d\\|doom-emacs\\)?/.+/packages\\.el$"  "__doom-packages"  emacs-lisp-mode)
-          ("/\\(?:.emacs.d\\|doom-emacs\\)?/.+/test/.+\\.el$"   "__doom-test"      emacs-lisp-mode)
-          (snippet-mode "__" snippet-mode)
-          ;; Go
-          ("\\.go$"                          "__.go"            go-mode)
-          ("/main\\.go$"                     "__main.go"        go-mode t)
-          ;; HTML
-          ("\\.html$"                        "__.html"          web-mode)
-          ;; java
-          ("/src/.+/.+\\.java$"              "__"               java-mode)
-          ("/main\\.java$"                   "__main"           java-mode)
-          ("/build\\.gradle$"                "__build.gradle"   android-mode)
-          ;; Javascript
-          ("\\.\\(json\\|jshintrc\\)$"       "__"                  json-mode)
-          ("/package\\.json$"                "__package.json"      json-mode)
-          ("/bower\\.json$"                  "__bower.json"        json-mode)
-          ("/gulpfile\\.js$"                 "__gulpfile.js"       js-mode)
-          ("/webpack\\.config\\.js$"         "__webpack.config.js" js-mode)
-          ;; Lua
-          ("/main\\.lua$"                    "__main.lua"       love-mode)
-          ("/conf\\.lua$"                    "__conf.lua"       love-mode)
-          ;; Markdown
-          ("\\.md$"                          "__"               markdown-mode)
-          ;; Org
-          ("\\.org$"                                          "__"            org-mode)
-          ("/\\(?:.emacs.d\\|doom-emacs\\)?/.+/README\\.org$" "__doom-readme" org-mode)
-          ;; PHP
-          ("\\.php$"                         "__"               php-mode)
-          ("\\.class\\.php$"                 "__.class.php"     php-mode)
-          ;; Python
-          ;;("tests?/test_.+\\.py$"         "__"                 nose-mode)
-          ;;("/setup\\.py$"                 "__setup.py"         python-mode)
-          ("\\.py$"                          "__"               python-mode)
-          ;; Ruby
-          ("\\.rb$"                          "__"               ruby-mode)
-          ("/Rakefile$"                      "__Rakefile"       ruby-mode t)
-          ("/Gemfile$"                       "__Gemfile"        ruby-mode t)
-          ("/\\.rspec$"                      "__.rspec"         rspec-mode)
-          ("\\.gemspec$"                     "__.gemspec"       ruby-mode t)
-          ("/spec_helper\\.rb$"              "__helper"         rspec-mode t)
-          ("/lib/.+\\.rb$"                   "__module"         ruby-mode t)
-          ("_spec\\.rb$"                     "__"               rspec-mode t)
-          ;; Rust
-          ("/main\\.rs$"                     "__main.rs"        rust-mode)
-          ("/Cargo.toml$"                    "__Cargo.toml"     rust-mode)
-          ;; SCSS
-          ("\\.scss$"                        "__"               scss-mode)
-          ("/master\\.scss$"                 "__master.scss"    scss-mode)
-          ("/normalize\\.scss$"              "__normalize.scss" scss-mode)
-          ;; Slim
-          ("/\\(index\\|main\\)\\.slim$"     "__"               slim-mode)
-          ;; Shell scripts
-          ("\\.z?sh$"                        "__"               sh-mode)
-          ("\\.fish$"                        "__"               fish-mode)
-          ("\\.zunit$"                       "__zunit"          sh-mode))))
+  (let ((doom (concat "/" (regexp-opt '(".emacs.d" ".doom.d" "doom-emacs" "doom")) "/.*")))
+    (mapc #'+file-templates-add
+          ;; General
+          `(("/\\.gitignore$"                  "__"               gitignore-mode)
+            ("/Dockerfile$"                    "__"               dockerfile-mode)
+            ("/docker-compose.yml$"            "__"               yaml-mode)
+            ;; C/C++
+            ("\\.h$"                           "__h"              c-mode)
+            ("\\.c$"                           "__c"              c-mode)
+            ("\\.h\\(h\\|pp|xx\\)$"            "__hpp"            c++-mode)
+            ("\\.\\(cc\\|cpp\\)$"              "__cpp"            c++-mode)
+            ("/main\\.\\(cc\\|cpp\\)$"         "__main.cpp"       c++-mode)
+            ("/win32_\\.\\(cc\\|cpp\\)$"       "__winmain.cpp"    c++-mode)
+            ("/Makefile$"                      "__"               makefile-gmake-mode)
+            ;; Elisp
+            ("\\.el$"                          "__initfile"       emacs-lisp-mode)
+            ("/.dir-locals.el$"                nil)
+            ("-test\\.el$"                     "__"               emacs-ert-mode)
+            (,(concat doom "/.+\\.el$")        "__doom-module"    emacs-lisp-mode)
+            (,(concat doom "/packages\\.el$")  "__doom-packages"  emacs-lisp-mode)
+            (,(concat doom "/test/.+\\.el$")   "__doom-test"      emacs-lisp-mode)
+            (snippet-mode "__" snippet-mode)
+            ;; Go
+            ("\\.go$"                          "__.go"            go-mode)
+            ("/main\\.go$"                     "__main.go"        go-mode t)
+            ;; HTML
+            ("\\.html$"                        "__.html"          web-mode)
+            ;; java
+            ("/src/.+/.+\\.java$"              "__"               java-mode)
+            ("/main\\.java$"                   "__main"           java-mode)
+            ("/build\\.gradle$"                "__build.gradle"   android-mode)
+            ;; Javascript
+            ("\\.\\(json\\|jshintrc\\)$"       "__"                  json-mode)
+            ("/package\\.json$"                "__package.json"      json-mode)
+            ("/bower\\.json$"                  "__bower.json"        json-mode)
+            ("/gulpfile\\.js$"                 "__gulpfile.js"       js-mode)
+            ("/webpack\\.config\\.js$"         "__webpack.config.js" js-mode)
+            ;; Lua
+            ("/main\\.lua$"                    "__main.lua"       love-mode)
+            ("/conf\\.lua$"                    "__conf.lua"       love-mode)
+            ;; Markdown
+            ("\\.md$"                          "__"               markdown-mode)
+            ;; Org
+            ("\\.org$"                                          "__"            org-mode)
+            (,(concat doom "/README\\.org$")   "__doom-readme"    org-mode)
+            ;; PHP
+            ("\\.php$"                         "__"               php-mode)
+            ("\\.class\\.php$"                 "__.class.php"     php-mode)
+            ;; Python
+            ;;("tests?/test_.+\\.py$"         "__"                 nose-mode)
+            ;;("/setup\\.py$"                 "__setup.py"         python-mode)
+            ("\\.py$"                          "__"               python-mode)
+            ;; Ruby
+            ("\\.rb$"                          "__"               ruby-mode)
+            ("/Rakefile$"                      "__Rakefile"       ruby-mode t)
+            ("/Gemfile$"                       "__Gemfile"        ruby-mode t)
+            ("/\\.rspec$"                      "__.rspec"         rspec-mode)
+            ("\\.gemspec$"                     "__.gemspec"       ruby-mode t)
+            ("/spec_helper\\.rb$"              "__helper"         rspec-mode t)
+            ("/lib/.+\\.rb$"                   "__module"         ruby-mode t)
+            ("_spec\\.rb$"                     "__"               rspec-mode t)
+            ;; Rust
+            ("/main\\.rs$"                     "__main.rs"        rust-mode)
+            ("/Cargo.toml$"                    "__Cargo.toml"     rust-mode)
+            ;; SCSS
+            ("\\.scss$"                        "__"               scss-mode)
+            ("/master\\.scss$"                 "__master.scss"    scss-mode)
+            ("/normalize\\.scss$"              "__normalize.scss" scss-mode)
+            ;; Slim
+            ("/\\(index\\|main\\)\\.slim$"     "__"               slim-mode)
+            ;; Shell scripts
+            ("\\.z?sh$"                        "__"               sh-mode)
+            ("\\.fish$"                        "__"               fish-mode)
+            ("\\.zunit$"                       "__zunit"          sh-mode)))))
