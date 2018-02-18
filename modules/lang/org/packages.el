@@ -12,7 +12,6 @@
 
 (when (featurep! +babel)
   (package! ob-mongo)
-  (package! ob-redis)
   (package! ob-sql-mode)
   (package! ob-translate)
 
