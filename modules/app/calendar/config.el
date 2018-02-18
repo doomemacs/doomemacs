@@ -1,4 +1,4 @@
-;;; private/calendar/config.el -*- lexical-binding: t; -*-
+;;; app/calendar/config.el -*- lexical-binding: t; -*-
 
 (defvar +calendar-org-gcal-secret-file "~/.emacs.d/modules/private/org/secret.el")
 (defvar +calendar-open-calendar-function '+calendar/open-calendar)

@@ -1,4 +1,4 @@
-;;; private/calendar/autoload.el -*- lexical-binding: t; -*-
+;;; app/calendar/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defun =calendar ()
