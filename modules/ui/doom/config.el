@@ -26,6 +26,8 @@
   :hook (after-change-major-mode . turn-on-solaire-mode)
   :config
   (setq solaire-mode-real-buffer-fn #'doom-real-buffer-p)
+  ;; fringe can become unstyled when deleting or focusing frames
+  (add-hook 'focus-in-hook #'solaire-mode-reset)
   ;; Prevent color glitches when reloading either DOOM or the theme
   (add-hook! '(doom-init-theme-hook doom-reload-hook)
     #'solaire-mode-reset)
