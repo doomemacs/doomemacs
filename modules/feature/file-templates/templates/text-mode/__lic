@@ -1,5 +1,0 @@
-# -*- mode: snippet -*-
-# name: Insert a license
-# type: command
-# --
-(%alias "__license")
