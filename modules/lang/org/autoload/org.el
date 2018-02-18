@@ -142,7 +142,7 @@ wrong places)."
                         (- (point) (line-beginning-position)))))
              (save-match-data
                (pcase direction
-                 ('below
+                 (`below
                   (org-end-of-item)
                   (backward-char)
                   (end-of-line)
@@ -153,7 +153,7 @@ wrong places)."
                           (org-next-item)
                           (org-end-of-line)))
                     (insert "\n" (make-string pad 32) (or marker ""))))
-                 ('above
+                 (`above
                   (goto-char (line-beginning-position))
                   (if (and marker (string-match-p "[0-9]+[).]" marker))
                       (org-insert-item)
@@ -174,8 +174,9 @@ wrong places)."
                             (org-element-property :level context)
                           1)))
              (pcase direction
-               ('below
-                (let ((at-eol (= (point) (1- (line-end-position)))))
+               (`below
+                (let ((at-eol (>= (point) (1- (line-end-position))))
+                      org-insert-heading-respect-content)
                   (goto-char (line-end-position))
                   (org-end-of-subtree)
                   (insert (concat "\n"
@@ -185,11 +186,12 @@ wrong places)."
                                       "\n"))
                                   (make-string level ?*)
                                   " "))))
-               ('above
+               (`above
                 (org-back-to-heading)
-                (org-insert-heading)
-                (when (= level 1)
-                  (save-excursion (insert "\n")))))
+                (insert (make-string level ?*) " ")
+                (save-excursion
+                  (insert "\n")
+                  (if (= level 1) (insert "\n")))))
              (when (org-element-property :todo-type context)
                (org-todo 'todo))))
 
