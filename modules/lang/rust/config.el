@@ -1,9 +1,5 @@
 ;;; lang/rust/config.el -*- lexical-binding: t; -*-
 
-(defvar +rust-src-dir (concat doom-etc-dir "rust/")
-  "The path to Rust source library. Required by racer.")
-
-
 ;;
 ;; Plugins
 ;;
@@ -20,19 +16,16 @@
 
 (def-package! racer
   :after rust-mode
-  :hook (rust-mode . racer-mode)
   :config
-  (add-hook 'rust-mode-hook #'eldoc-mode)
-
-  (setq racer-cmd (or (executable-find "racer")
-                      (expand-file-name "racer/target/release/racer" +rust-src-dir))
-        racer-rust-src-path (or (getenv "RUST_SRC_PATH")
-                                (expand-file-name "rust/src/" +rust-src-dir)))
-
   (unless (file-exists-p racer-cmd)
     (warn! "Couldn't find racer binary. Code completion won't work"))
+  (unless (file-directory-p racer-rust-src-path)
+    (warn! "Couldn't find rust source. Code completion won't work"))
 
-  (set! :lookup 'rust-mode :definition #'racer-find-definition))
+  (add-hook! 'rust-mode-hook #'(eldoc-mode racer-mode))
+  (set! :lookup 'rust-mode
+    :definition #'racer-find-definition
+    :documentation #'racer-describe))
 
 
 (def-package! company-racer
