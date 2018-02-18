@@ -5,21 +5,28 @@
 ;; I believe Org's native attachment system is over-complicated and litters
 ;; files with metadata I don't want. So I wrote my own, which:
 ;;
-;; + Causes attachments to be placed in a centralized location,
+;; + Places attachments in a centralized location (`+org-attach-dir' in
+;;   `+org-dir'), using an attach:* link abbreviation.
+;; + Use `+org-attach/sync' to index all attachments in `+org-dir' that use the
+;;   attach:* abbreviation and delete orphaned ones that are no longer
+;;   referenced.
 ;; + Adds drag-and-drop support for images (with inline image preview)
 ;; + Adds drag-and-drop support for media files (pdfs, zips, etc) with a
 ;;   filetype icon and short link.
-;; + TODO Offers an attachment management system.
 
 ;; Some commands of interest:
 ;; + `org-download-screenshot'
 ;; + `+org-attach/file'
 ;; + `+org-attach/url'
-;; + :org [FILE/URL]
+;; + `+org-attach/sync'
 
 (defvar +org-attach-dir ".attach/"
-  "Where to store attachments (relative to current org file).")
+  "Where to store attachments relative to `+org-dir'.")
 
+
+;;
+;; Plugins
+;;
 
 (def-package! org-download
   :commands (org-download-dnd org-download-dnd-base64)
@@ -58,7 +65,11 @@
   (advice-add #'org-download--fullname
               :filter-return #'+org-attach*download-fullname))
 
+
 ;;
+;; Bootstrap
+;;
+
 (defun +org|init-attach ()
   (setq org-attach-directory (expand-file-name +org-attach-dir +org-dir))
   ;; A shorter link to attachments
@@ -67,6 +78,7 @@
   (push (car (last (split-string +org-attach-dir "/" t)))
         projectile-globally-ignored-directories)
 
+  ;;
   (after! recentf
     (push (format "%s.+$" (regexp-quote org-attach-directory))
           recentf-exclude)))
