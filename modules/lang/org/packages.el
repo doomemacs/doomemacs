@@ -7,6 +7,9 @@
 (package! org-bullets :recipe (:fetcher github :repo "hlissner/org-bullets"))
 (package! toc-org)
 
+(when (featurep! :feature evil)
+  (package! evil-org))
+
 (when (featurep! +attach)
   (package! org-download))
 

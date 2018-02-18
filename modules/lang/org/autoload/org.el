@@ -203,25 +203,19 @@ wrong places)."
       (evil-insert 1))))
 
 ;;;###autoload
-(defun +org/shifttab (&optional arg)
-  "An alternative to `org-shifttab' which performs smart indentation if in
-insert mode (evil). Otherwise, forwards to the original `org-shifttab'."
+(defun +org/dedent ()
+  "TODO"
   (interactive)
-  (cond ((org-at-table-p)
-         (call-interactively #'org-table-previous-field))
-        ((and (bound-and-true-p evil-mode)
-              (evil-insert-state-p))
-         (cond ((org-at-item-p)
-                (org-list-indent-item-generic
-                 -1 nil
-                 (save-excursion
-                   (when (org-region-active-p)
-                     (goto-char (region-beginning)))
-                   (org-list-struct))))
-               ((org-at-heading-p)
-                (ignore-errors (org-promote)))
-               (t (call-interactively #'self-insert-command))))
-        (t (org-shifttab arg))))
+  (cond ((org-at-item-p)
+         (org-list-indent-item-generic
+          -1 nil
+          (save-excursion
+            (when (org-region-active-p)
+              (goto-char (region-beginning)))
+            (org-list-struct))))
+        ((org-at-heading-p)
+         (ignore-errors (org-promote)))
+        ((call-interactively #'self-insert-command))))
 
 ;;;###autoload
 (defun +org/refresh-inline-images ()

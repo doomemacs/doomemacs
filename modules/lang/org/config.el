@@ -29,6 +29,15 @@
 (def-package! org-bullets
   :commands org-bullets-mode)
 
+(def-package! evil-org
+  :when (featurep! :feature evil)
+  :commands evil-org-mode
+  :config
+  (evil-org-set-key-theme '(navigation insert textobjects))
+  (after! org-agenda
+    (require 'evil-org-agenda)
+    (evil-org-agenda-set-keys)))
+
 
 ;;
 ;; Bootstrap
@@ -47,6 +56,7 @@
      org-indent-mode            ; margin-based indentation
      toc-org-enable             ; auto-table of contents
      visual-line-mode           ; line wrapping
+     evil-org-mode              ; evil-mode integration
 
      +org|enable-auto-reformat-tables
      +org|enable-auto-update-cookies
@@ -207,46 +217,55 @@ unfold to point on startup."
 (defun +org|setup-keybinds ()
   "Sets up org-mode and evil keybindings. Tries to fix the idiosyncrasies
 between the two."
+  (defun +org|remove-occur-highlights ()
+    "Remove org occur highlights on ESC in normal mode."
+    (when (and (derived-mode-p 'org-mode)
+               org-occur-highlights)
+      (org-remove-occur-highlights)))
+  (add-hook 'doom-escape-hook #'+org|remove-occur-highlights)
+
+  ;; C-a & C-e act like `doom/backward-to-bol-or-indent' and
+  ;; `doom/forward-to-last-non-comment-or-eol', but with more org awareness.
+  (setq org-special-ctrl-a/e t)
+
   (add-hook! 'org-tab-first-hook #'(+org|indent-maybe +org|yas-expand-maybe))
 
+  (require 'evil-org)
   (map! :map org-mode-map
-        [remap org-shifttab] #'+org/shifttab
-        [backspace] #'org-delete-backward-char
         "C-c C-S-l" #'+org/remove-link
         "C-c C-i"   #'org-toggle-inline-images
 
-        :i  "RET"   #'org-return-indent
-        :n  "RET"   #'+org/dwim-at-point
-
-        ;; Navigate table cells (from insert-mode)
+        :map evil-org-mode-map
+        :i [backtab]   #'+org/dedent
+        :i [backspace] #'evil-org-delete-backward-char
+        ;; navigate table cells (from insert-mode)
         :i  "C-l"   #'+org/table-next-field
         :i  "C-h"   #'+org/table-previous-field
         :i  "C-k"   #'+org/table-previous-row
         :i  "C-j"   #'+org/table-next-row
-        ;; Expand tables (or shiftmeta move)
+        ;; expand tables (or shiftmeta move)
         :ni "C-S-l" #'+org/table-append-field-or-shift-right
         :ni "C-S-h" #'+org/table-prepend-field-or-shift-left
         :ni "C-S-k" #'org-metaup
         :ni "C-S-j" #'org-metadown
-
+        ;; toggle local fold, instead of all children
         :n  [tab]   #'+org/toggle-fold
-
+        ;; more intuitive RET keybinds
+        :i  "RET"   #'org-return-indent
+        :n  "RET"   #'+org/dwim-at-point
         :ni [M-return]   (λ! (+org/insert-item 'below))
         :ni [S-M-return] (λ! (+org/insert-item 'above))
-
-        ;; Fix vim motion keys
+        ;; more org-ish vim motion keys
         :m  "]]"  (λ! (org-forward-heading-same-level nil) (org-beginning-of-line))
         :m  "[["  (λ! (org-backward-heading-same-level nil) (org-beginning-of-line))
+        :m  "]h"  #'org-next-visible-heading
+        :m  "[h"  #'org-previous-visible-heading
         :m  "]l"  #'org-next-link
         :m  "[l"  #'org-previous-link
-        :m  "$"   #'org-end-of-line
-        :m  "^"   #'org-beginning-of-line
+        :m  "]s"  #'org-babel-next-src-block
+        :m  "[s"  #'org-babel-previous-src-block
         :n  "gQ"  #'org-fill-paragraph
-        :n  "<"   #'org-metaleft
-        :n  ">"   #'org-metaright
-        :v  "<"   (λ! (org-metaleft)  (evil-visual-restore))
-        :v  ">"   (λ! (org-metaright) (evil-visual-restore))
-        ;; Fix code-folding keybindings
+        ;; sensible code-folding vim keybinds
         :n  "za"  #'+org/toggle-fold
         :n  "zA"  #'org-shifttab
         :n  "zc"  #'outline-hide-subtree
@@ -255,15 +274,7 @@ between the two."
         :n  "zm"  (λ! (outline-hide-sublevels 1))
         :n  "zo"  #'outline-show-subtree
         :n  "zO"  #'outline-show-all
-        :n  "zr"  #'outline-show-all
-
-        (:after org-agenda
-          (:map org-agenda-mode-map
-            :e "m"   #'org-agenda-month-view
-            :e "C-j" #'org-agenda-next-item
-            :e "C-k" #'org-agenda-previous-item
-            :e "C-n" #'org-agenda-next-item
-            :e "C-p" #'org-agenda-previous-item))))
+        :n  "zr"  #'outline-show-all))
 
 (defun +org|setup-hacks ()
   "Getting org to behave."
@@ -286,13 +297,6 @@ between the two."
           (directory . emacs)
           (t . ,(cond (IS-MAC "open -R \"%s\"")
                       (IS-LINUX "xdg-open \"%s\"")))))
-
-  (defun +org|remove-occur-highlights ()
-    "Remove org occur highlights on ESC in normal mode."
-    (when (and (derived-mode-p 'org-mode)
-               org-occur-highlights)
-      (org-remove-occur-highlights)))
-  (add-hook 'doom-escape-hook #'+org|remove-occur-highlights)
 
   (after! recentf
     ;; Don't clobber recentf with agenda files
