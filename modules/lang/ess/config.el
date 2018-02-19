@@ -35,8 +35,7 @@
     (push (cons "\\.jl\\'" 'ess-julia-mode) auto-mode-alist))
   :config
   (add-hook 'ess-mode-hook #'doom|enable-line-numbers)
-  (setq ess-first-continued-statement-offset 2
-        ess-continued-statement-offset 0
+  (setq ess-offset-continued 'straight
         ess-expression-offset 2
         ess-nuke-trailing-whitespace-p t
         ess-default-style 'DEFAULT)
