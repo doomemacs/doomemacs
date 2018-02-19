@@ -649,9 +649,7 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
                         nconc (nreverse (doom-packages--files doom-core-dir "\\.el$"))
                        else if (file-directory-p target)
                         nconc (nreverse (doom-packages--files target "\\.el$"))
-                       else if (cl-loop for dir in doom-psuedo-module-dirs
-                                        if (file-in-directory-p target dir)
-                                        return dir)
+                       else if (cl-member target doom-psuedo-module-dirs :test #'file-in-directory-p)
                         nconc (nreverse (doom-packages--files it "\\.el$"))
                        else if (string-match "^\\([^/]+\\)/\\([^/]+\\)$" target)
                         nconc (nreverse (doom-packages--files
