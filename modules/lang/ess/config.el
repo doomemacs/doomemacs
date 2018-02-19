@@ -1,7 +1,7 @@
 ;;; lang/ess/config.el -*- lexical-binding: t; -*-
 
 (def-package! ess-site
-  :init (load "ess-autoloads" nil t)
+  :commands (R stata julia SAS)
   :mode (("\\.sp\\'"           . S-mode)
          ("/R/.*\\.q\\'"       . R-mode)
          ("\\.[qsS]\\'"        . S-mode)
@@ -29,8 +29,8 @@
          ("\\.[Jj][Aa][Gg]\\'" . ess-jags-mode)
          ("\\.[Jj][Oo][Gg]\\'" . ess-jags-mode)
          ("\\.[Jj][Mm][Dd]\\'" . ess-jags-mode))
-  :commands (R stata julia SAS)
   :init
+  (load "ess-autoloads.el" nil t t)
   (unless (featurep! :lang julia)
     (push (cons "\\.jl\\'" 'ess-julia-mode) auto-mode-alist))
   :config
