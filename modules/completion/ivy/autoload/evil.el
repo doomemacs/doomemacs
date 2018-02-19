@@ -49,6 +49,16 @@
     (setq +ivy--file-last-search query)
     (require 'counsel)
     (pcase engine
+      ('grep
+       (let ((args (if recursion-p " -r"))
+             (counsel-projectile-grep-initial-input query))
+         (if all-files-p
+             (cl-letf (((symbol-function #'projectile-ignored-directories-rel)
+                        (symbol-function #'ignore))
+                       ((symbol-function #'projectile-ignored-files-rel)
+                        (symbol-function #'ignore)))
+               (counsel-projectile-grep args))
+           (counsel-projectile-grep args))))
       ('ag
        (let ((args (concat
                     (if all-files-p " -a")
@@ -64,6 +74,17 @@
          (counsel-rg query directory args (format prompt args))))
       ('pt) ;; TODO pt search engine (necessary?)
       (_ (error "No search engine specified")))))
+
+;;;###autoload (autoload '+ivy:grep "completion/ivy/autoload/evil" nil t)
+(evil-define-operator +ivy:grep (beg end query &optional all-files-p directory)
+  "Perform a project file search using grep (or git-grep in git repos). QUERY is
+a grep regexp. If omitted, the current selection is used. If no selection is
+active, the last known search is used.
+
+If ALL-FILES-P, don't respect .gitignore files and search everything."
+  (interactive "<r><a><!>")
+  (let ((+ivy--file-search-all-files-p all-files-p))
+    (+ivy--file-search 'grep beg end query directory)))
 
 ;;;###autoload (autoload '+ivy:ag "completion/ivy/autoload/evil" nil t)
 (evil-define-operator +ivy:ag (beg end query &optional all-files-p directory)
@@ -89,6 +110,14 @@ NOTE: ripgrep doesn't support multiline searches (yet)."
   (let ((+ivy--file-search-all-files-p all-files-p))
     (+ivy--file-search 'rg beg end query directory)))
 
+
+;;;###autoload (autoload '+ivy:ag-cwd "completion/ivy/autoload/evil" nil t)
+(evil-define-operator +ivy:grep-cwd (beg end query &optional bang)
+  "The same as :git, but searches the current directory. If BANG, don't recurse
+into sub-directories."
+  (interactive "<r><a><!>")
+  (let ((+ivy--file-search-recursion-p (not bang)))
+    (+ivy:grep beg end query t default-directory)))
 
 ;;;###autoload (autoload '+ivy:ag-cwd "completion/ivy/autoload/evil" nil t)
 (evil-define-operator +ivy:ag-cwd (beg end query &optional bang)

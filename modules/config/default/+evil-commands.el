@@ -78,6 +78,8 @@
        (ex! "agc[wd]"  #'+ivy:ag-cwd)
        (ex! "rg"       #'+ivy:rg)
        (ex! "rgc[wd]"  #'+ivy:rg-cwd)
+       (ex! "grep"      #'+ivy:grep)
+       (ex! "grepc[wd]" #'+ivy:grep-cwd)
        (ex! "sw[iper]" #'+ivy:swiper)
        (ex! "todo"     #'+ivy:todo))
       ((featurep! :completion helm)
