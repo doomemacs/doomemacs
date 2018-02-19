@@ -12,7 +12,6 @@ Doom Emacs.")
   ;; `doom-initialize-packages' will treat `+private-config-path' as the root of
   ;; this module.
   (add-to-list 'doom-psuedo-module-dirs +private-config-path)
-  (add-to-list 'load-path +private-config-path)
 
   ;;
   (load (expand-file-name "init.el" +private-config-path)

@@ -172,11 +172,7 @@ it anyway."
     ;; Also, in some edge cases involving package initialization during a
     ;; non-interactive session, `package-initialize' fails to fill `load-path'.
     (setq doom-package-load-path (directory-files package-user-dir t "^[^.]" t)
-          load-path (append doom-package-load-path
-                            doom-site-load-path
-                            (list doom-core-dir)
-                            doom-modules-dirs
-                            doom-psuedo-module-dirs))))
+          load-path (append doom-package-load-path doom-site-load-path))))
 
 (defun doom-initialize-autoloads ()
   "Ensures that `doom-autoload-file' exists and is loaded. Otherwise run
@@ -320,7 +316,6 @@ MODULES is an malformed plist of modules to load."
                    (push `(let (,mod) (load! init ,path t))   init-forms)
                    (push `(let (,mod) (load! config ,path t)) config-forms))))))
       `(let (file-name-handler-alist)
-         (add-to-list 'load-path ,modules-dir)
          (setq doom-modules ',doom-modules
                doom-modules-dirs ',doom-modules-dirs)
          ,@(nreverse init-forms)
@@ -562,7 +557,7 @@ This should be run whenever init.el or an autoload file is modified. Running
       ;; state. `doom-initialize-packages' will have side effects otherwise.
       (progn
         (doom-packages--async-run 'doom//reload-autoloads)
-        (load doom-autoload-file))
+        (load doom-autoload-file t))
     (doom-initialize-packages t)
     (let ((targets
            (file-expand-wildcards
@@ -591,18 +586,38 @@ This should be run whenever init.el or an autoload file is modified. Running
            (abbreviate-file-name file))))
       (make-directory (file-name-directory doom-autoload-file) t)
       (let ((buf (find-file-noselect doom-autoload-file t))
+            (load-path (append (list doom-emacs-dir)
+                               doom-psuedo-module-dirs
+                               doom-modules-dirs))
             current-sexp)
         (unwind-protect
             (condition-case-unless-debug ex
                 (with-current-buffer buf
-                  (save-buffer)
                   (goto-char (point-min))
-                  (while (re-search-forward "^(" nil t)
-                    (save-excursion
-                      (backward-char)
-                      (setq current-sexp (read (thing-at-point 'sexp t)))
-                      (eval current-sexp t))
-                    (forward-char))
+                  (while (re-search-forward "^\\s-*(" nil t)
+                    (unless (sp-point-in-string-or-comment)
+                      ;; Replace autoload paths with absolute paths for fastest
+                      ;; resolution during load
+                      (when (eq (sexp-at-point) 'autoload)
+                        (save-excursion
+                          (forward-sexp 2)
+                          (let ((pt (point)))
+                            (forward-sexp 1)
+                            (when-let* ((sexp (thing-at-point 'sexp t))
+                                        (path (eval (read sexp) t)))
+                              (delete-region pt (point))
+                              (if-let* ((lib (locate-library path)))
+                                  (insert " \"" (file-name-sans-extension lib) "\"")
+                                (warn "Couldn't find absolute path for: %s" path))))))
+                      ;; Run each form in autoloads to see if there are any
+                      ;; errors. We do it piecemeal because that will tell us
+                      ;; more about where the issue originated.
+                      (save-excursion
+                        (backward-char)
+                        (setq current-sexp (read (thing-at-point 'sexp t)))
+                        (eval current-sexp t))
+                      (forward-char)))
+                  (save-buffer)
                   (message "Finished generating autoloads.el!"))
               ('error
                (delete-file doom-autoload-file)
