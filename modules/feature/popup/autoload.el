@@ -14,17 +14,17 @@
   "Tries to kill BUFFER, as was requested by a transient timer. If it fails, eg.
 the buffer is visible, then set another timer and try again later."
   (when (buffer-live-p buffer)
-    (let ((kill-buffer-hook (delq '+popup|kill-buffer-hook kill-buffer-hook)))
+    (let ((kill-buffer-hook (remq '+popup|kill-buffer-hook kill-buffer-hook)))
       (cond ((eq ttl 0)
              (kill-buffer buffer))
             ((get-buffer-window buffer)
              (with-current-buffer buffer
                (setq +popup--timer
                      (run-at-time ttl nil #'+popup--kill-buffer buffer ttl))))
-            (t
-             (with-demoted-errors "Error killing transient buffer: %s"
-               (when-let* ((process (get-buffer-process (current-buffer))))
-                 (kill-process process))
+            ((with-demoted-errors "Error killing transient buffer: %s"
+               (let (confirm-kill-processes)
+                 (when-let* ((process (get-buffer-process (current-buffer))))
+                   (kill-process process)))
                (kill-buffer buffer)))))))
 
 (defun +popup--init (window &optional alist)
