@@ -293,7 +293,7 @@ controlled by `+doom-dashboard-pwd-policy'."
                  (+workspace/load-session)))
             ,(when (featurep! :org org)
                '("See agenda for this week" "calendar"
-                 (call-interactively 'org-agenda-list)))
+                 (call-interactively #'org-agenda-list)))
             ("Recently opened files" "file-text"
              (call-interactively (or (command-remapping #'recentf-open-files)
                                      #'recentf-open-files)))
