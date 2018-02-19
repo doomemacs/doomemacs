@@ -595,7 +595,8 @@ This should be run whenever init.el or an autoload file is modified. Running
                 (with-current-buffer buf
                   (goto-char (point-min))
                   (while (re-search-forward "^\\s-*(" nil t)
-                    (unless (sp-point-in-string-or-comment)
+                    (unless (or (nth 4 (syntax-ppss))
+                                (nth 3 (syntax-ppss)))
                       ;; Replace autoload paths with absolute paths for fastest
                       ;; resolution during load
                       (when (eq (sexp-at-point) 'autoload)
