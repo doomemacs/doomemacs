@@ -51,7 +51,8 @@
     (pcase engine
       ('grep
        (let ((args (if recursion-p " -r"))
-             (counsel-projectile-grep-initial-input query))
+             (counsel-projectile-grep-initial-input query)
+             (default-directory directory))
          (if all-files-p
              (cl-letf (((symbol-function #'projectile-ignored-directories-rel)
                         (symbol-function #'ignore))
@@ -60,17 +61,14 @@
                (counsel-projectile-grep args))
            (counsel-projectile-grep args))))
       ('ag
-       (let ((args (concat
-                    (if all-files-p " -a")
-                    (unless recursion-p " -n"))))
+       (let ((args (concat " -S" ; smart-case
+                           (if all-files-p " -a")
+                           (unless recursion-p " --depth 1"))))
          (counsel-ag query directory args (format prompt args))))
       ('rg
-       ;; smart-case instead of case-insensitive flag
-       (let ((counsel-rg-base-command
-              (replace-regexp-in-string " -i " " -S " counsel-rg-base-command))
-             (args (concat
-                    (if all-files-p " -uu")
-                    (unless recursion-p " --maxdepth 1"))))
+       (let ((args (concat " -S" ; smart-case
+                           (if all-files-p " -uu")
+                           (unless recursion-p " --maxdepth 1"))))
          (counsel-rg query directory args (format prompt args))))
       ('pt) ;; TODO pt search engine (necessary?)
       (_ (error "No search engine specified")))))
@@ -88,7 +86,7 @@ If ALL-FILES-P, don't respect .gitignore files and search everything."
 
 ;;;###autoload (autoload '+ivy:ag "completion/ivy/autoload/evil" nil t)
 (evil-define-operator +ivy:ag (beg end query &optional all-files-p directory)
-  "Perform a project file search using the silver search. QUERY is a pcre
+  "Perform a project file search using the silver searcher. QUERY is a pcre
 regexp. If omitted, the current selection is used. If no selection is active,
 the last known search is used.
 
