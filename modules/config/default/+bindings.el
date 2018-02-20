@@ -264,10 +264,11 @@
           :desc "Browse project"          :n  "." #'+default/browse-project
           :desc "Find file in project"    :n  "/" #'projectile-find-file
           :desc "Run cmd in project root" :nv "!" #'projectile-run-shell-command-in-root
+          :desc "Compile project"         :n  "c" #'projectile-compile-project
+          :desc "Find other file"         :n  "o" #'projectile-find-other-file
           :desc "Switch project"          :n  "p" #'projectile-switch-project
           :desc "Recent project files"    :n  "r" #'projectile-recentf
           :desc "List project tasks"      :n  "t" #'+ivy/tasks
-          :desc "Pop term in project"     :n  "o" #'+term/open-popup-in-project
           :desc "Invalidate cache"        :n  "x" #'projectile-invalidate-cache)
 
         (:desc "quit" :prefix "q"
