@@ -4,7 +4,7 @@
   :init
   (setq projectile-cache-file (concat doom-cache-dir "projectile.cache")
         projectile-enable-caching (not noninteractive)
-        projectile-indexing-method 'alien
+        projectile-indexing-method (if IS-WINDOWS 'native 'alien)
         projectile-known-projects-file (concat doom-cache-dir "projectile.projects")
         projectile-require-project-root nil
         projectile-globally-ignored-files '(".DS_Store" "Icon" "TAGS")
