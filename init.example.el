@@ -1,7 +1,7 @@
 ;;; init.el -*- lexical-binding: t; -*-
 ;;
 ;; Author:  Henrik Lissner <henrik@lissner.net>
-;; URL:     https://github.com/hlissner/.emacs.d
+;; URL:     https://github.com/hlissner/doom-emacs
 ;;
 ;;   =================     ===============     ===============   ========  ========
 ;;   \\ . . . . . . .\\   //. . . . . . .\\   //. . . . . . .\\  \\. . .\\// . . //
@@ -132,7 +132,7 @@
        :app
       ;(email +gmail)    ; emacs as an email client
       ;irc               ; how neckbeards socialize
-      ;rss               ; emacs as an RSS reader
+      ;(rss +org)        ; emacs as an RSS reader
       ;twitter           ; twitter client https://twitter.com/vnought
       ;(write            ; emacs as a word processor (latex + org + markdown)
       ; +wordnut         ; wordnet (wn) search
@@ -145,8 +145,8 @@
        ;; your own modules.
        (default +bindings +snippets +evil-commands)
 
-       ;; This allows you to store your private module at $XDG_CONFIG_HOME/doom.
-       ;; Without +xdg it uses ~/.doom.d/. If your config directory doesn't
-       ;; exist, this module does nothing.
+       ;; This allows you to store your private module at
+       ;; $XDG_CONFIG_HOME/doom/. Without +xdg it uses ~/.doom.d/. If your
+       ;; config directory doesn't exist, this module does nothing.
        (private +xdg))
 
