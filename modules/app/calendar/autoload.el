@@ -7,9 +7,11 @@
   (unless (featurep! :feature workspaces)
     (user-error ":feature workspaces is required, but disabled"))
   (+workspace-switch "Calendar" t)
-  (if-let* ((buf (cl-find-if (lambda (it) (string-match-p "^\\*cfw" (buffer-name (window-buffer it))))
-                             (doom-visible-windows))))
-      (select-window (get-buffer-window buf)) (call-interactively +calendar-open-calendar-function))
+  (if-let* ((win (cl-loop for win in (doom-visible-windows)
+                          if (string-match-p "^\\*cfw" (buffer-name (window-buffer it)))
+                          return win)))
+      (select-window win)
+    (call-interactively +calendar-open-function))
   (+workspace/display))
 
 ;;;###autoload

@@ -4,7 +4,7 @@
   (expand-file-name "private/org/secret.el" doom-modules-dir)
   "TODO")
 
-(defvar +calendar-open-calendar-function #'+calendar/open-calendar
+(defvar +calendar-open-function #'+calendar/open-calendar
   "TODO")
 
 
