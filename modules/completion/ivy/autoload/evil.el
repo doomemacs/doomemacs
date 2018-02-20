@@ -70,8 +70,26 @@
                            (if all-files-p " -uu")
                            (unless recursion-p " --maxdepth 1"))))
          (counsel-rg query directory args (format prompt args))))
-      ('pt) ;; TODO pt search engine (necessary?)
+      ('pt
+       (let ((counsel-pt-base-command
+              (concat counsel-pt-base-command
+                      " -S" ; smart-case
+                      (if all-files-p " -U")
+                      (unless recursion-p " --depth=1")))
+             (default-directory directory))
+         (counsel-pt query)))
       (_ (error "No search engine specified")))))
+
+;;;###autoload (autoload '+ivy:pt "completion/ivy/autoload/evil" nil t)
+(evil-define-operator +ivy:pt (beg end query &optional all-files-p directory)
+  "Perform a project file search using the platinum searcher. QUERY is a grep
+regexp. If omitted, the current selection is used. If no selection is active,
+the last known search is used.
+
+If ALL-FILES-P, don't respect .gitignore files and search everything."
+  (interactive "<r><a><!>")
+  (let ((+ivy--file-search-all-files-p all-files-p))
+    (+ivy--file-search 'pt beg end query directory)))
 
 ;;;###autoload (autoload '+ivy:grep "completion/ivy/autoload/evil" nil t)
 (evil-define-operator +ivy:grep (beg end query &optional all-files-p directory)
@@ -109,9 +127,17 @@ NOTE: ripgrep doesn't support multiline searches (yet)."
     (+ivy--file-search 'rg beg end query directory)))
 
 
-;;;###autoload (autoload '+ivy:ag-cwd "completion/ivy/autoload/evil" nil t)
+;;;###autoload (autoload '+ivy:pt-cwd "completion/ivy/autoload/evil" nil t)
+(evil-define-operator +ivy:pt-cwd (beg end query &optional bang)
+  "The same as :grep, but searches the current directory. If BANG, don't recurse
+into sub-directories."
+  (interactive "<r><a><!>")
+  (let ((+ivy--file-search-recursion-p (not bang)))
+    (+ivy:pt beg end query t default-directory)))
+
+;;;###autoload (autoload '+ivy:grep-cwd "completion/ivy/autoload/evil" nil t)
 (evil-define-operator +ivy:grep-cwd (beg end query &optional bang)
-  "The same as :git, but searches the current directory. If BANG, don't recurse
+  "The same as :grep, but searches the current directory. If BANG, don't recurse
 into sub-directories."
   (interactive "<r><a><!>")
   (let ((+ivy--file-search-recursion-p (not bang)))
