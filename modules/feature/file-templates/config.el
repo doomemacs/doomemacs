@@ -12,12 +12,21 @@
 ;;
 
 (def-package! autoinsert ; built-in
-  :defer 1
+  :commands (auto-insert-mode auto-insert)
   :init
   (setq auto-insert-query nil  ; Don't prompt before insertion
         auto-insert-alist nil) ; Tabula rasa
+
   (after! yasnippet
     (push '+file-templates-dir yas-snippet-dirs))
+
+  ;; load autoinsert as late as possible
+  (defun +file-templates|init ()
+    (and (not buffer-read-only)
+         (bobp) (eobp)
+         (remove-hook 'find-file-hook #'+file-templates|init)
+         (auto-insert)))
+  (add-hook 'find-file-hook #'+file-templates|init)
 
   :config
   (auto-insert-mode 1)
@@ -41,19 +50,24 @@
 
   (defun +file-templates-add (args)
     (cl-destructuring-bind (regexp trigger &optional mode project-only-p) args
-      (define-auto-insert
-        regexp
-        (if trigger
-            (vector
-             `(lambda () (+file-templates--expand ,trigger ',mode ,project-only-p)))
-          #'ignore))))
+      (push `(,regexp . (lambda () (+file-templates--expand ,trigger ',mode ,project-only-p)))
+            auto-insert-alist)))
 
-  (let ((doom (concat "/" (regexp-opt '(".emacs.d" ".doom.d" "doom-emacs" "doom")) "/.*")))
-    (mapc #'+file-templates-add
-          ;; General
-          `(("/\\.gitignore$"                  "__"               gitignore-mode)
-            ("/Dockerfile$"                    "__"               dockerfile-mode)
-            ("/docker-compose.yml$"            "__"               yaml-mode)
+  (mapc #'+file-templates-add
+        (let ((doom (concat "/" (regexp-opt '(".emacs.d" ".doom.d" "doom-emacs" "doom")) "/.*")))
+          `(;; General
+            ("/\\.gitignore$"                 "__"               gitignore-mode)
+            ("/Dockerfile$"                   "__"               dockerfile-mode)
+            ("/docker-compose.yml$"           "__"               yaml-mode)
+            ("/Makefile$"                     "__"               makefile-gmake-mode)
+            ;; elisp
+            ("\\.el$"                         "__initfile"       emacs-lisp-mode)
+            ("/.dir-locals.el$"               nil)
+            ("-test\\.el$"                    "__"               emacs-ert-mode)
+            (,(concat doom "/.+\\.el$")       "__doom-module"    emacs-lisp-mode)
+            (,(concat doom "/packages\\.el$") "__doom-packages"  emacs-lisp-mode)
+            (,(concat doom "/test/.+\\.el$")  "__doom-test"      emacs-lisp-mode)
+            (snippet-mode "__" snippet-mode)
             ;; C/C++
             ("\\.h$"                           "__h"              c-mode)
             ("\\.c$"                           "__c"              c-mode)
@@ -61,25 +75,19 @@
             ("\\.\\(cc\\|cpp\\)$"              "__cpp"            c++-mode)
             ("/main\\.\\(cc\\|cpp\\)$"         "__main.cpp"       c++-mode)
             ("/win32_\\.\\(cc\\|cpp\\)$"       "__winmain.cpp"    c++-mode)
-            ("/Makefile$"                      "__"               makefile-gmake-mode)
-            ;; Elisp
-            ("\\.el$"                          "__initfile"       emacs-lisp-mode)
-            ("/.dir-locals.el$"                nil)
-            ("-test\\.el$"                     "__"               emacs-ert-mode)
-            (,(concat doom "/.+\\.el$")        "__doom-module"    emacs-lisp-mode)
-            (,(concat doom "/packages\\.el$")  "__doom-packages"  emacs-lisp-mode)
-            (,(concat doom "/test/.+\\.el$")   "__doom-test"      emacs-lisp-mode)
-            (snippet-mode "__" snippet-mode)
-            ;; Go
+            ;; go
             ("\\.go$"                          "__.go"            go-mode)
             ("/main\\.go$"                     "__main.go"        go-mode t)
-            ;; HTML
+            ;; web-mode
             ("\\.html$"                        "__.html"          web-mode)
+            ("\\.scss$"                        "__"               scss-mode)
+            ("/master\\.scss$"                 "__master.scss"    scss-mode)
+            ("/normalize\\.scss$"              "__normalize.scss" scss-mode)
             ;; java
-            ("/src/.+/.+\\.java$"              "__"               java-mode)
+            ("/src/.+\\.java$"                 "__"               java-mode)
             ("/main\\.java$"                   "__main"           java-mode)
             ("/build\\.gradle$"                "__build.gradle"   android-mode)
-            ;; Javascript
+            ;; javascript
             ("\\.\\(json\\|jshintrc\\)$"       "__"                  json-mode)
             ("/package\\.json$"                "__package.json"      json-mode)
             ("/bower\\.json$"                  "__bower.json"        json-mode)
@@ -112,10 +120,6 @@
             ;; Rust
             ("/main\\.rs$"                     "__main.rs"        rust-mode)
             ("/Cargo.toml$"                    "__Cargo.toml"     rust-mode)
-            ;; SCSS
-            ("\\.scss$"                        "__"               scss-mode)
-            ("/master\\.scss$"                 "__master.scss"    scss-mode)
-            ("/normalize\\.scss$"              "__normalize.scss" scss-mode)
             ;; Slim
             ("/\\(index\\|main\\)\\.slim$"     "__"               slim-mode)
             ;; Shell scripts
