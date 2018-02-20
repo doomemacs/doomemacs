@@ -4,5 +4,6 @@
   :when (featurep! :feature evil)
   :hook (doom-post-init . evil-goggles-mode)
   :init
-  (setq evil-goggles-duration 0.1
+  (setq evil-goggles-duration 0.05
+        evil-goggles-pulse nil ; too slow
         evil-goggles-enable-delete nil))
