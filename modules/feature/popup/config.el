@@ -81,7 +81,7 @@ a brief description of some native window parameters that Emacs uses:
     (select . ignore))
   "The default window parameters.")
 
-(defvar +popup-ttl 10
+(defvar +popup-ttl 5
   "The default time-to-live for transient buffers whose popup buffers have been
 deleted.")
 
