@@ -3,5 +3,8 @@
 
 ;; +elixir.el
 (package! elixir-mode)
-(package! alchemist :recipe (:fetcher github :repo "hlissner/alchemist.el"))
+(package! alchemist :recipe
+  (:fetcher github
+   :repo "hlissner/alchemist.el"
+   :files (:defaults "*.exs" "alchemist-server")))
 (package! ac-alchemist)
