@@ -89,6 +89,18 @@ was installed with. Returns nil otherwise, or if package isn't installed."
          (not (eq old-backend new-backend)))))
 
 ;;;###autoload
+(defun doom-package-different-recipe-p (name)
+  "Return t if a package named NAME (a symbol) has a different recipe than it
+was installed with."
+  (cl-assert (symbolp name) t)
+  (when (package-installed-p name)
+    (let ((quelpa-recipe (assq name quelpa-cache))
+          (doom-recipe (assq name doom-packages)))
+      (and quelpa-recipe doom-recipe
+           (not (equal (cdr quelpa-recipe)
+                       (cdr (plist-get (cdr doom-recipe) :recipe))))))))
+
+;;;###autoload
 (defun doom-get-packages (&optional installed-only-p)
   "Retrieves a list of explicitly installed packages (i.e. non-dependencies).
 Each element is a cons cell, whose car is the package symbol and whose cdr is
@@ -199,7 +211,8 @@ Used by `doom//packages-install'."
                    (or (plist-get plist :pin)
                        (not (assq name package--builtins)))
                    (or (not (assq name package-alist))
-                       (doom-package-different-backend-p name)))
+                       (doom-package-different-backend-p name)
+                       (doom-package-different-recipe-p name)))
            collect desc))
 
 ;;;###autoload
@@ -255,7 +268,8 @@ example; the package name can be omitted)."
   (doom-initialize-packages)
   (when (and (package-installed-p name)
              (not (package-built-in-p name)))
-    (if (doom-package-different-backend-p name)
+    (if (or (doom-package-different-backend-p name)
+            (doom-package-different-recipe-p name))
         (doom-delete-package name t)
       (user-error "%s is already installed" name)))
   (let* ((inhibit-message (not doom-debug-mode))
@@ -335,7 +349,9 @@ package.el as appropriate."
                               (lambda (pkg)
                                 (format "+ %s (%s)"
                                         (car pkg)
-                                        (cond ((doom-package-different-backend-p (car pkg))
+                                        (cond ((doom-package-different-recipe-p (car pkg))
+                                               "new recipe")
+                                              ((doom-package-different-backend-p (car pkg))
                                                (if (plist-get (cdr pkg) :recipe)
                                                    "ELPA -> QUELPA"
                                                  "QUELPA -> ELPA"))
@@ -354,7 +370,8 @@ package.el as appropriate."
              (doom--condition-case!
               (message! "%s%s"
                         (cond ((and (package-installed-p (car pkg))
-                                    (not (doom-package-different-backend-p (car pkg))))
+                                    (not (doom-package-different-backend-p (car pkg)))
+                                    (not (doom-package-different-recipe-p (car pkg))))
                                (dark (white "⚠ ALREADY INSTALLED")))
                               ((doom-install-package (car pkg) (cdr pkg))
                                (green "✓ DONE"))
