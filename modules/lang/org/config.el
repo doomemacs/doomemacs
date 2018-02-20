@@ -234,6 +234,8 @@ between the two."
   (map! :map org-mode-map
         "C-c C-S-l" #'+org/remove-link
         "C-c C-i"   #'org-toggle-inline-images
+        [remap doom/backward-to-bol-or-indent]          #'org-beginning-of-line
+        [remap doom/forward-to-last-non-comment-or-eol] #'org-end-of-line
 
         :map evil-org-mode-map
         :i [backtab]   #'+org/dedent
