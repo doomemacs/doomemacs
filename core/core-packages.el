@@ -181,9 +181,9 @@ it anyway."
     (quiet! (doom//reload-autoloads))))
 
 (defun doom-initialize-packages (&optional force-p load-p)
-  "Crawls across your emacs.d to fill `doom-modules' (from init.el) and
-`doom-packages' (from packages.el files), if they aren't set already. Also runs
-every enabled module's init.el.
+  "Crawls across your emacs.d to fill `doom-modules' (from init.el),
+`doom-packages' (from packages.el files) and `quelpa-cache'. If they aren't set
+already. Also runs every enabled module's init.el.
 
 If FORCE-P is non-nil, do it even if they are.
 
@@ -212,7 +212,10 @@ This aggressively reloads core autoload files."
           (mapc #'_load (file-expand-wildcards (expand-file-name "autoload/*.el" doom-core-dir)))
           (_load (expand-file-name "init.el" doom-emacs-dir) nil 'interactive)))
       (when (or force-p (not doom-packages))
-        (setq doom-packages nil)
+        (require 'quelpa)
+        (setq doom-packages nil
+              quelpa-initialized-p nil)
+        (quelpa-setup-p)
         (_load (expand-file-name "packages.el" doom-core-dir))
         (cl-loop for key being the hash-keys of doom-modules
                  if (doom-module-path (car key) (cdr key) "packages.el")

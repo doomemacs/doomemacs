@@ -5,6 +5,8 @@
 (require 'quelpa)
 (require 'async)
 
+(doom-initialize-packages)
+
 ;;;###autoload
 (defun doom-refresh-packages (&optional force-p)
   "Refresh ELPA packages."
@@ -33,9 +35,7 @@
   "Get which backend the package NAME was installed with. Can either be elpa or
 quelpa. Throws an error if NOERROR is nil and the package isn't installed."
   (cl-assert (symbolp name) t)
-  (cond ((and (or (quelpa-setup-p)
-                  (error "Could not initialize quelpa"))
-              (assq name quelpa-cache))
+  (cond ((assq name quelpa-cache)
          'quelpa)
         ((assq name package-alist)
          'elpa)
@@ -50,7 +50,6 @@ quelpa. Throws an error if NOERROR is nil and the package isn't installed."
 list, whose car is NAME, and cdr the current version list and latest version
 list of the package."
   (cl-assert (symbolp name) t)
-  (doom-initialize-packages)
   (when-let* ((desc (cadr (assq name package-alist))))
     (let* ((old-version (package-desc-version desc))
            (new-version
@@ -76,15 +75,13 @@ list of the package."
   "Return PROPerty in NAME's plist."
   (cl-assert (symbolp name) t)
   (cl-assert (keywordp prop) t)
-  (doom-initialize-packages)
   (plist-get (cdr (assq name doom-packages)) prop))
 
 ;;;###autoload
 (defun doom-package-different-backend-p (name)
-  "Return t if NAME (a package's symbol) has a new backend than what it was
-installed with. Returns nil otherwise, or if package isn't installed."
+  "Return t if a package named NAME (a symbol) has a new backend than what it
+was installed with. Returns nil otherwise, or if package isn't installed."
   (cl-assert (symbolp name) t)
-  (doom-initialize-packages)
   (and (package-installed-p name)
        (let* ((plist (cdr (assq name doom-packages)))
               (old-backend (doom-package-backend name 'noerror))
@@ -194,6 +191,7 @@ If INCLUDE-IGNORED-P is non-nil, includes missing packages that are ignored,
 i.e. they have an :ignore property.
 
 Used by `doom//packages-install'."
+  (doom-initialize-packages t)
   (cl-loop for desc in (doom-get-packages)
            for (name . plist) = desc
            if (and (or include-ignored-p
@@ -209,7 +207,6 @@ Used by `doom//packages-install'."
   "Update `quelpa-cache' upon a successful `package-delete'."
   (let ((name (package-desc-name desc)))
     (when (and (not (package-installed-p name))
-               (quelpa-setup-p)
                (assq name quelpa-cache))
       (map-delete quelpa-cache name)
       (quelpa-save-cache)
@@ -284,8 +281,6 @@ package.el as appropriate."
           (desc (cadr (assq name package-alist))))
       (pcase (doom-package-backend name)
         ('quelpa
-         (or (quelpa-setup-p)
-             (error "Failed to initialize quelpa"))
          (let ((quelpa-upgrade-p t))
            (quelpa (assq name quelpa-cache))))
         ('elpa
@@ -307,8 +302,6 @@ package.el as appropriate."
     (user-error "%s isn't installed" name))
   (let ((inhibit-message (not doom-debug-mode))
         quelpa-p)
-    (unless (quelpa-setup-p)
-      (error "Could not initialize QUELPA"))
     (when (assq name quelpa-cache)
       (map-delete quelpa-cache name)
       (quelpa-save-cache)
