@@ -16,6 +16,11 @@
   "The name of the primary and initial workspace, which cannot be deleted or
 renamed.")
 
+(defvar +workspaces-switch-project-function #'doom-project-find-file
+  "The function to run after `projectile-switch-project' or
+`counsel-projectile-switch-project'. This function must take one argument: the
+new project directory.")
+
 ;; FIXME actually use this for wconf bookmark system
 (defvar +workspaces-data-file "_workspaces"
   "The basename of the file to store single workspace perspectives. Will be
@@ -98,8 +103,8 @@ Uses `+workspaces-main' to determine the name of the main workspace."
   (add-hook 'delete-frame-functions #'+workspaces|delete-associated-workspace)
 
   ;; per-project workspaces
-  (setq projectile-switch-project-action #'+workspaces|set-project-action)
-  (advice-add #'counsel-projectile-switch-project-by-name :before #'+workspaces*switch-counsel-project-action)
+  (setq projectile-switch-project-action #'+workspaces|set-project-action
+        counsel-projectile-switch-project-action #'+workspaces|switch-to-project)
   (add-hook 'projectile-after-switch-project-hook #'+workspaces|switch-to-project)
 
   ;;
