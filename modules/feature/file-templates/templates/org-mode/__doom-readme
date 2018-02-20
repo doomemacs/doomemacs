@@ -1,10 +1,11 @@
 # -*- mode: snippet -*-
 # name: Doom module readme
 # --
-#+TITLE: ${1:`(progn (string-match "modules/\\([^/]+\\)/\\([^/]+\\)/.+" buffer-file-name)
-                (format ":%s %s"
-                   (match-string 1 buffer-file-name)
-                   (match-string 2 buffer-file-name)))`}
+#+TITLE: ${1:`(if (string-match "modules/\\([^/]+\\)/\\([^/]+\\)/.+" buffer-file-name)
+                  (format ":%s %s"
+                          (match-string 1 buffer-file-name)
+                          (match-string 2 buffer-file-name))
+                "")`}
                    
 ${2:A short summary about what this module does.}
 
