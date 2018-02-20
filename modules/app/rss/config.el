@@ -5,7 +5,8 @@
 ;; don't care for the UI you can invoke elfeed directly with `elfeed'.
 
 (defvar +rss-elfeed-files (list "elfeed.org")
-  "The files that configure `elfeed's rss feeds.")
+  "Where to look for elfeed.org files, relative to `+org-dir'. Can be absolute
+paths.")
 
 (defvar +rss-split-direction 'below
   "What direction to pop up the entry buffer in elfeed.")
@@ -39,8 +40,8 @@
   (add-hook 'elfeed-show-mode-hook #'+rss|elfeed-wrap)
 
   (map! (:map (elfeed-search-mode-map elfeed-show-mode-map)
-          [remap kill-this-buffer]      "q"
-          [remap kill-buffer]           "q")
+          [remap kill-this-buffer] #'+rss/quit
+          [remap kill-buffer]      #'+rss/quit)
 
         (:map elfeed-search-mode-map
           :n "q"     #'+rss/quit
@@ -53,12 +54,13 @@
           :n "q"  #'elfeed-kill-buffer
           :m "j"  #'evil-next-visual-line
           :m "k"  #'evil-previous-visual-line
-          [remap next-buffer]           #'+rss/next
-          [remap previous-buffer]       #'+rss/previous)))
+          [remap next-buffer]     #'+rss/next
+          [remap previous-buffer] #'+rss/previous)))
 
 
 (def-package! elfeed-org
-  :after (elfeed)
+  :when (featurep! +org)
+  :after elfeed
   :config
   (setq rmh-elfeed-org-files
         (let ((default-directory +org-dir))
