@@ -11,11 +11,13 @@ PROMPT (a string) and COMMAND (a list of command plists; see `def-menu!').")
   "Default method for displaying a completion-select prompt."
   (completing-read prompt (mapcar #'car commands)))
 
+;;;###autoload
 (defun doom--menu-read (prompt commands)
   (if-let* ((choice (funcall doom-menu-display-fn prompt commands)))
       (cdr (assoc choice commands))
     (user-error "Aborted")))
 
+;;;###autoload
 (defun doom--menu-exec (plist)
   (let ((command (plist-get plist :exec))
         (cwd     (plist-get plist :cwd)))
