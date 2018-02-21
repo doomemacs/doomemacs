@@ -275,13 +275,14 @@
           :desc "Save and quit"          :n "q" #'evil-save-and-quit
           :desc "Quit (forget session)"  :n "Q" #'+workspace/kill-session-and-quit)
 
-        (:desc "remote" :prefix "r"
-          :desc "Upload local"           :n "u" #'+upload/local
-          :desc "Upload local (force)"   :n "U" (λ! (+upload/local t))
-          :desc "Download remote"        :n "d" #'+upload/remote-download
-          :desc "Diff local & remote"    :n "D" #'+upload/diff
-          :desc "Browse remote files"    :n "." #'+upload/browse
-          :desc "Detect remote changes"  :n ">" #'+upload/check-remote)
+        (:when (featurep! :tools upload)
+          (:desc "remote" :prefix "r"
+            :desc "Upload local"           :n "u" #'ssh-deploy-upload-handler
+            :desc "Upload local (force)"   :n "U" #'ssh-deploy-upload-handler-forced
+            :desc "Download remote"        :n "d" #'ssh-deploy-download-handler
+            :desc "Diff local & remote"    :n "D" #'ssh-deploy-diff-handler
+            :desc "Browse remote files"    :n "." #'ssh-deploy-browse-remote-handler
+            :desc "Detect remote changes"  :n ">" #'ssh-deploy-remote-changes-handler))
 
         (:desc "snippets" :prefix "s"
           :desc "New snippet"            :n  "n" #'yas-new-snippet
