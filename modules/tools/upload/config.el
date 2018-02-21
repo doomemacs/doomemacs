@@ -17,7 +17,7 @@
   :commands (ssh-deploy-upload-handler
              ssh-deploy-upload-handler-forced
              ssh-deploy-diff-handler
-             ssh-deploy-browse-remove-handler
+             ssh-deploy-browse-remote-handler
              ssh-deploy-remote-changes-handler)
   :init
   ;; Maybe auto-upload on save
