@@ -170,7 +170,8 @@ Used by `doom//packages-update'."
                   (let ((noninteractive t))
                     (load ,(expand-file-name "core.el" doom-core-dir)))
                   (setq doom-packages ',doom-packages
-                        doom-modules ',doom-modules)
+                        doom-modules ',doom-modules
+                        quelpa-cache ',quelpa-cache)
                   (doom-package-outdated-p ',pkg)))
               futures))
       (delq nil
