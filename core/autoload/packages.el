@@ -278,7 +278,12 @@ example; the package name can be omitted)."
          (recipe (plist-get plist :recipe))
          quelpa-upgrade-p)
     (if recipe
-        (quelpa recipe)
+        (condition-case-unless-debug _
+            (quelpa recipe)
+          ('error
+           (let ((pkg-build-dir (expand-file-name (symbol-name name) quelpa-build-dir)))
+             (when (file-directory-p pkg-build-dir)
+               (delete-directory pkg-build-dir t)))))
       (package-install name))
     (when (package-installed-p name)
       (cl-pushnew (cons name plist) doom-packages :test #'eq :key #'car)
