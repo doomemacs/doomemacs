@@ -4,7 +4,7 @@
 ;; Installs a cutting-edge version of org-mode
 (package! org-plus-contrib)
 
-(package! org-bullets :recipe (:fetcher github :repo "hlissner/org-bullets"))
+(package! org-bullets :recipe (:fetcher github :repo "Kaligule/org-bullets"))
 (package! toc-org)
 
 (when (featurep! :feature evil)
