@@ -48,7 +48,8 @@ compilation database is present in the project.")
 
   :init
   (setq-default c-basic-offset tab-width
-                c-backspace-function #'delete-backward-char)
+                c-backspace-function #'delete-backward-char
+                c-default-style "doom")
 
   :config
   (set! :electric '(c-mode c++-mode objc-mode java-mode)
@@ -61,24 +62,41 @@ compilation database is present in the project.")
   ;; C/C++ style settings
   (c-toggle-electric-state -1)
   (c-toggle-auto-newline -1)
-  (c-set-offset 'substatement-open '0) ; don't indent brackets
-  (c-set-offset 'inline-open       '+)
-  (c-set-offset 'block-open        '+)
-  (c-set-offset 'brace-list-open   '+)
-  (c-set-offset 'case-label        '+)
-  (c-set-offset 'access-label      '-)
-  (c-set-offset 'arglist-intro     '+)
-  (c-set-offset 'arglist-close     '0)
-  ;; Indent privacy keywords at same level as class properties
-  ;; (c-set-offset 'inclass #'+cc-c-lineup-inclass)
 
   ;;; Better fontification (also see `modern-cpp-font-lock')
   (add-hook 'c-mode-common-hook #'rainbow-delimiters-mode)
   (add-hook! (c-mode c++-mode) #'highlight-numbers-mode)
   (add-hook! (c-mode c++-mode) #'+cc|fontify-constants)
 
-  ;; Improve indentation of inline lambdas in C++11
-  (advice-add #'c-lineup-arglist :around #'+cc*align-lambda-arglist)
+  ;; Custom style, based off of linux
+  (map-put c-style-alist "doom"
+           `((c-basic-offset . ,tab-width)
+             (c-comment-only-line-offset . 0)
+             (c-hanging-braces-alist (brace-list-open)
+                                     (brace-entry-open)
+                                     (substatement-open after)
+                                     (block-close . c-snug-do-while)
+                                     (arglist-cont-nonempty))
+             (c-cleanup-list brace-else-brace)
+             (c-offsets-alist
+              (statement-block-intro . +)
+              (knr-argdecl-intro . 0)
+              (substatement-open . 0)
+              (substatement-label . 0)
+              (statement-cont . +)
+              (case-label . +)
+              ;; align args with open brace OR don't indent at all (if open brace
+              ;; is at eolp and close brace is after arg with no trailing comma)
+              (arglist-intro . +)
+              (arglist-close +cc-lineup-arglist-close 0)
+              ;; don't over-indent lambda blocks
+              (inline-open . 0)
+              (inlambda . 0)
+              ;; indent access keywords +1 level, and properties beneath them
+              ;; another level
+              (access-label . -)
+              (inclass +cc-c++-lineup-inclass +)
+              (label . 0))))
 
   ;;; Keybindings
   ;; Completely disable electric keys because it interferes with smartparens and
