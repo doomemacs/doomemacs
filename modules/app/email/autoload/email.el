@@ -9,6 +9,7 @@
 (defun =email ()
   "Start email client."
   (interactive)
+  (require 'mu4e)
   (+workspace-switch +email-workspace-name t)
   (mu4e~start 'mu4e~main-view)
   ;; (save-selected-window
