@@ -197,7 +197,7 @@ possible, or just one char if that's not possible."
                   (when (= (point) (+ (length cl) beg))
                     (sp-backward-delete-char 1)
                     (sp-insert-pair op)))
-                 ((and (bolp) (doom-surrounded-p pair))
+                 ((and (bolp) (doom-surrounded-p pair nil :balanced))
                   (delete-region beg end)
                   (sp-insert-pair op))
                  (t
