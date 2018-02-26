@@ -71,7 +71,8 @@
         [remap projectile-switch-project] #'helm-projectile-switch-project
         [remap projectile-find-file]      #'helm-projectile-find-file
         [remap imenu-anywhere]            #'helm-imenu-anywhere
-        [remap execute-extended-command]  #'helm-M-x))
+        [remap execute-extended-command]  #'helm-M-x)
+  (set! :popup "^\\*?helm" :ignore))
 
 
 (def-package! helm-locate
