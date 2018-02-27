@@ -156,35 +156,22 @@ search current file. See `+ivy-task-tags' to customize what this searches for."
             :caller '+ivy/tasks))
 
 ;;;###autoload
-(defun +ivy*counsel-ag-function (string base-cmd extra-ag-args)
+(defun +ivy*counsel-ag-function (string)
   "Advice to 1) get rid of the character limit from `counsel-ag-function' and 2)
 disable ivy's over-zealous parentheses quoting behavior (if i want literal
 parentheses, I'll escape them myself).
 
 NOTE This may need to be updated frequently, to meet changes upstream (in
 counsel-rg)."
-  (when (null extra-ag-args)
-    (setq extra-ag-args ""))
   (if (< (length string) 1)  ; <-- modified the character limit
       (counsel-more-chars 1) ; <--
     (let ((default-directory (ivy-state-directory ivy-last))
           (regex (counsel-unquote-regex-parens
                   (setq ivy--old-re
                         (ivy--regex string)))))
-      (let* ((args-end (string-match " -- " extra-ag-args))
-             (file (if args-end
-                       (substring-no-properties extra-ag-args (+ args-end 3))
-                     ""))
-             (extra-ag-args (if args-end
-                                (substring-no-properties extra-ag-args 0 args-end)
-                              extra-ag-args))
-             (ag-cmd (format base-cmd
-                             (concat extra-ag-args
-                                     " -- "
-                                     (shell-quote-argument regex)
-                                     file))))
-        (counsel--async-command ag-cmd)
-        nil))))
+      (counsel--async-command (format counsel-ag-command
+                                      (shell-quote-argument regex)))
+      nil)))
 
 ;;;###autoload
 (defun +ivy/wgrep-occur ()
