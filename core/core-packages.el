@@ -741,7 +741,11 @@ If RECOMPILE-P is non-nil, only recompile out-of-date core files."
   "Recompile all installed plugins. If you're getting odd errors after upgrading
 (or downgrading) Emacs, this may fix it."
   (interactive)
-  (byte-recompile-directory package-user-dir 0 t))
+  (if (not noninteractive)
+      ;; This is done in another instance to protect the current session's
+      ;; state. `doom-initialize-packages' will have side effects otherwise.
+      (doom-packages--async-run 'doom//byte-recompile-plugins)
+    (byte-recompile-directory package-user-dir 0 t)))
 
 (defun doom//clean-byte-compiled-files ()
   "Delete all the compiled elc files in your Emacs configuration. This excludes
