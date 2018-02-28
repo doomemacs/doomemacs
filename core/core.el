@@ -98,7 +98,7 @@ Use this for files that change often, like cache files.")
 
 ;; move custom defs out of init.el
 (setq custom-file (concat doom-etc-dir "custom.el"))
-(load custom-file t t)
+(load custom-file t t t)
 
 ;; be quiet at startup; don't load or display anything unnecessary
 (unless noninteractive
