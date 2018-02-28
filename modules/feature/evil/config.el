@@ -336,11 +336,14 @@ the new algorithm is confusing, like in python or ruby."
 
 
 (def-package! evil-vimish-fold
-  :commands evil-vimish-fold-mode
+  :commands (evil-vimish-fold/next-fold evil-vimish-fold/previous-fold
+             evil-vimish-fold/delete evil-vimish-fold/delete-all
+             evil-vimish-fold/create evil-vimish-fold/create-line)
   :init
   (setq vimish-fold-dir (concat doom-cache-dir "vimish-fold/")
         vimish-fold-indication-mode 'right-fringe)
-  (add-hook 'doom-post-init-hook #'evil-vimish-fold-mode t))
+  :config
+  (vimish-fold-global-mode +1))
 
 
 ;; Without `evil-visualstar', * and # grab the word at point and search, no
