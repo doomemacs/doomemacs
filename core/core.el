@@ -166,8 +166,7 @@ ability to invoke the debugger in debug mode."
         (require 'server)
         (unless (server-running-p)
           (server-start)))
-      (doom-packages--display-benchmark))
-
+      (message "%s" (doom-packages--benchmark)))
     ;; If you forget to reset this, you'll get stuttering and random freezes!
     (setq gc-cons-threshold 16777216
           gc-cons-percentage 0.1

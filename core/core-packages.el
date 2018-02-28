@@ -284,14 +284,15 @@ Used by `require!' and `depends-on!'."
                  '(t))
              doom-modules)))
 
-(defun doom-packages--display-benchmark ()
-  (message "Doom loaded %s packages across %d modules in %.03fs"
-           ;; Certainly imprecise, especially where custom additions to
-           ;; load-path are concerned, but I don't mind a [small] margin of
-           ;; error in the plugin count in exchange for faster startup.
-           (length doom-package-load-path)
-           (hash-table-size doom-modules)
-           (setq doom-init-time (float-time (time-subtract (current-time) before-init-time)))))
+(defun doom-packages--benchmark ()
+  (format "Doom loaded %s packages across %d modules in %.03fs"
+          ;; Certainly imprecise, especially where custom additions to
+          ;; load-path are concerned, but I don't mind a [small] margin of
+          ;; error in the plugin count in exchange for faster startup.
+          (- (length load-path) (length doom-site-load-path))
+          (hash-table-size doom-modules)
+          (or doom-init-time
+              (setq doom-init-time (float-time (time-subtract (current-time) before-init-time))))))
 
 
 ;;

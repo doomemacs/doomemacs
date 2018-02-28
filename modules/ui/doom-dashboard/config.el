@@ -262,10 +262,7 @@ controlled by `+doom-dashboard-pwd-policy'."
    (propertize
     (+doom-dashboard--center
      +doom-dashboard--width
-     (format "Loaded %d packages in %d modules in %.02fs"
-             (length doom-package-load-path)
-             (hash-table-size doom-modules)
-             doom-init-time))
+     (doom-packages--benchmark))
     'face 'font-lock-comment-face)
    "\n\n"))
 
