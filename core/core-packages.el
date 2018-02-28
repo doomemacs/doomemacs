@@ -308,7 +308,7 @@ MODULES is an malformed plist of modules to load."
   (let (init-forms config-forms module file-name-handler-alist)
     (let ((modules-dir
            (expand-file-name "modules/" (file-name-directory (or load-file-name byte-compile-current-file)))))
-      (add-to-list 'doom-modules-dirs modules-dir)
+      (cl-pushnew modules-dir doom-modules-dirs :test #'string=)
       (dolist (m modules)
         (cond ((keywordp m) (setq module m))
               ((not module) (error "No namespace specified in `doom!' for %s" m))
@@ -323,8 +323,8 @@ MODULES is an malformed plist of modules to load."
          (setq doom-modules ',doom-modules
                doom-modules-dirs ',doom-modules-dirs)
          ,@(nreverse init-forms)
-         (unless noninteractive
-           ,@(nreverse config-forms))))))
+         (push '(lambda () ,@(nreverse config-forms))
+               doom--delayed-modules)))))
 
 (defmacro def-package! (name &rest plist)
   "A thin wrapper around `use-package'."
