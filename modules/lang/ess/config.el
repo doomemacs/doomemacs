@@ -1,8 +1,5 @@
 ;;; lang/ess/config.el -*- lexical-binding: t; -*-
 
-(eval-and-compile
-  (load "ess-autoloads" nil t))
-
 (def-package! ess-site
   :commands (R stata julia SAS)
   :mode (("\\.sp\\'"           . S-mode)

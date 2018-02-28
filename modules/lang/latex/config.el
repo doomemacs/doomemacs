@@ -20,11 +20,6 @@
 
 
 (def-package! tex-site
-  :init
-  ;; Manually load the AUCTEX autoloads. This is normally done by
-  ;; package-initialize, ... which we do not use.
-  (load "auctex.el" nil t t)
-  (load "auctex-autoloads.el" nil t t)
   :config
   ;; Set some varibles to fontify common LaTeX commands.
   (load! +fontification)

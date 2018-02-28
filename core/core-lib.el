@@ -86,7 +86,7 @@ compilation."
                `(after! (:all ,@features) ,@body)))))
 
 (defmacro quiet! (&rest forms)
-  "Run FORMS without making any noise."
+  "Run FORMS without making any output."
   `(if doom-debug-mode
        (progn ,@forms)
      (let ((old-fn (symbol-function 'write-region)))
@@ -105,10 +105,10 @@ compilation."
 (defmacro add-transient-hook! (hook &rest forms)
   "Attaches transient forms to a HOOK.
 
-HOOK can be a quoted hook or a sharp-quoted function (which will be advised).
+This means FORMS will be evaluated once when that function/hook is first
+invoked, then never again.
 
-These forms will be evaluated once when that function/hook is first invoked,
-then it detaches itself."
+HOOK can be a quoted hook or a sharp-quoted function (which will be advised)."
   (declare (indent 1))
   (let ((append (eq (car forms) :after))
         (fn (intern (format "doom-transient-hook-%s" (cl-incf doom--transient-counter)))))

@@ -2,7 +2,6 @@
 
 (def-package! pdf-tools
   :mode ("\\.pdf$" . pdf-view-mode)
-  :init (load "pdf-tools-autoloads" nil t)
   :config
   (unless noninteractive
     (pdf-tools-install))

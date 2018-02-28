@@ -4,9 +4,7 @@
   :mode "\\.purs$"
   :config
   (add-hook! 'purescript-mode-hook
-    #'(flycheck-mode purescript-indentation-mode rainbow-delimiters-mode))
-
-  (load "purescript-mode-autoloads" nil t))
+    #'(flycheck-mode purescript-indentation-mode rainbow-delimiters-mode)))
 
 ;; (def-package! flycheck-purescript
 ;;   :after purescript-mode
