@@ -283,14 +283,6 @@ between the two."
   ;; Don't open separate windows
   (map-put org-link-frame-setup 'file 'find-file)
 
-  (defun +org|cleanup-agenda-files ()
-    "Close leftover agenda buffers after they've been indexed by org-agenda."
-    (cl-loop for file in org-agenda-files
-             for buf = (get-file-buffer file)
-             if (and file (not (get-buffer-window buf)))
-             do (kill-buffer buf)))
-  (add-hook 'org-agenda-finalize-hook #'+org|cleanup-agenda-files)
-
   ;; Let OS decide what to do with files when opened
   (setq org-file-apps
         `(("pdf" . default)
