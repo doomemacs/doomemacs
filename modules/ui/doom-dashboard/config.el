@@ -291,7 +291,7 @@ controlled by `+doom-dashboard-pwd-policy'."
                         (file-exists-p (expand-file-name persp-auto-save-fname persp-save-dir)))
                '("Reload last session" "history"
                  (+workspace/load-session)))
-            ,(when (featurep! :org org)
+            ,(when (featurep! :lang org)
                '("See agenda for this week" "calendar"
                  (call-interactively #'org-agenda-list)))
             ("Recently opened files" "file-text"
