@@ -14,12 +14,13 @@
 
 
 (def-package! git-gutter-fringe
-  :commands git-gutter-mode
+  :defer t
   :init
   (defun +version-control|git-gutter-maybe ()
     "Enable `git-gutter-mode' in non-remote buffers."
     (when (and (buffer-file-name)
                (not (file-remote-p (buffer-file-name))))
+      (require 'git-gutter-fringe)
       (git-gutter-mode +1)))
   (add-hook! (text-mode prog-mode conf-mode) #'+version-control|git-gutter-maybe)
   :config
