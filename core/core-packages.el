@@ -82,8 +82,11 @@ missing) and shouldn't be deleted.")
 (defvar doom-site-load-path load-path
   "The starting load-path, before it is altered by `doom-initialize'.")
 
-(defvar doom-package-load-path ()
-  "The load path of package libraries installed via ELPA and QUELPA.")
+(defvar doom-autoload-file (concat doom-local-dir "autoloads.el")
+  "Where `doom//reload-autoloads' will generate its autoloads file.")
+
+(defvar doom-packages-file (concat doom-local-dir "packages.el")
+  "Where to cache `load-path' and `Info-directory-list'.")
 
 (defvar doom--refreshed-p nil)
 (defvar doom--current-module nil)
@@ -134,19 +137,23 @@ If you byte-compile core/core.el, this function will be avoided to speed up
 startup."
   ;; Called early during initialization; only use native (and cl-lib) functions!
   (when (or force-p (not doom-init-p))
-    ;; Speed things up with a `load-path' for only the bare essentials
-    (let ((load-path doom-site-load-path))
+    (unless (load doom-autoload-file t t t)
+      (unless noninteractive
+        (error "No autoloads file! Run make autoloads")))
+    (when (or (not (load doom-packages-file t t t))
+              force-p)
       ;; Ensure core folders exist, otherwise we get errors
       (dolist (dir (list doom-local-dir doom-etc-dir doom-cache-dir doom-packages-dir))
         (unless (file-directory-p dir)
           (make-directory dir t)))
-      ;; Ensure package.el is initialized; we use its state
+      ;; Ensure packages have been initialized
+      (require 'package)
       (setq package-activated-list nil)
-      (condition-case _ (package-initialize t)
+      (condition-case _ (package-initialize)
         ('error (package-refresh-contents)
                 (setq doom--refreshed-p t)
-                (package-initialize t)))
-      ;; Ensure core packages are installed
+                (package-initialize)))
+      ;; Ensure core packages are installed.
       (let ((core-packages (cl-remove-if #'package-installed-p doom-core-packages)))
         (when core-packages
           (message "Installing core packages")
@@ -159,20 +166,13 @@ startup."
                 (message "✓ Installed %s" package)
               (error "✕ Couldn't install %s" package)))
           (message "Installing core packages...done")))
-      (setq doom-init-p t))))
-
-(defun doom-initialize-load-path (&optional force-p)
-  "Populates `load-path', if it hasn't already been. If FORCE-P is non-nil, do
-it anyway."
-  (when (or force-p (not doom-package-load-path))
-    ;; We could let `package-initialize' fill `load-path', but it does more than
-    ;; that alone (like load autoload files). If you want something prematurely
-    ;; optimizated right, ya gotta do it yourself.
-    ;;
-    ;; Also, in some edge cases involving package initialization during a
-    ;; non-interactive session, `package-initialize' fails to fill `load-path'.
-    (setq doom-package-load-path (directory-files package-user-dir t "^[^.]" t)
-          load-path (append doom-package-load-path doom-site-load-path))))
+      (with-temp-buffer
+        (cl-pushnew doom-core-dir load-path :test #'string=)
+        (prin1 `(setq load-path ',load-path
+                      Info-directory-list ',Info-directory-list)
+               (current-buffer))
+        (write-file doom-packages-file)))
+    (setq doom-init-p t)))
 
 (defun doom-initialize-autoloads ()
   "Ensures that `doom-autoload-file' exists and is loaded. Otherwise run
@@ -188,7 +188,7 @@ already. Also runs every enabled module's init.el.
 If FORCE-P is non-nil, do it even if they are.
 
 This aggressively reloads core autoload files."
-  (doom-initialize-load-path force-p)
+  (doom-initialize force-p)
   (with-temp-buffer ; prevent buffer-local settings from propagating
     (cl-flet
         ((_load
@@ -378,7 +378,8 @@ the lookup is relative to `load-file-name', `byte-compile-current-file' or
 `buffer-file-name' (in that order).
 
 If NOERROR is non-nil, don't throw an error if the file doesn't exist."
-  (cl-assert (symbolp filesym) t)
+  (or (symbolp filesym)
+      (signal 'wrong-type-argument (list 'symbolp filesym)))
   (let ((path (or path
                   (and load-file-name (file-name-directory load-file-name))
                   (and (bound-and-true-p byte-compile-current-file)
@@ -531,15 +532,14 @@ an Emacs session is running.
 This isn't necessary if you use Doom's package management commands because they
 call `doom//reload-load-path' remotely (through emacsclient)."
   (interactive)
-  (byte-recompile-file (expand-file-name "core.el" doom-core-dir) t)
   (cond ((and noninteractive (not (daemonp)))
          (require 'server)
          (when (server-running-p)
            (message "Reloading active Emacs session...")
            (server-eval-at server-name '(doom//reload-load-path))))
         ((let ((noninteractive t))
-           (doom-initialize-load-path t)
-           (message "%d packages reloaded" (length doom-package-load-path))
+           (doom-initialize t)
+           (message "%d packages reloaded" (length package-alist))
            (run-hooks 'doom-reload-hook)))))
 
 (defun doom//reload-autoloads ()
@@ -560,7 +560,7 @@ This should be run whenever init.el or an autoload file is modified. Running
       ;; state. `doom-initialize-packages' will have side effects otherwise.
       (progn
         (doom-packages--async-run 'doom//reload-autoloads)
-        (load doom-autoload-file t))
+        (load doom-autoload-file t nil t))
     (doom-initialize-packages t)
     (let ((targets
            (file-expand-wildcards
@@ -600,8 +600,8 @@ This should be run whenever init.el or an autoload file is modified. Running
                   (while (re-search-forward "^\\s-*(" nil t)
                     (unless (or (nth 4 (syntax-ppss))
                                 (nth 3 (syntax-ppss)))
-                      ;; Replace autoload paths with absolute paths for fastest
-                      ;; resolution during load
+                      ;; Replace autoload paths with absolute paths for faster
+                      ;; resolution during load and simpler `load-path'
                       (when (eq (sexp-at-point) 'autoload)
                         (save-excursion
                           (forward-sexp 2)

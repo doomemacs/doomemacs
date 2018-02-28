@@ -56,9 +56,6 @@ Use this for files that change often, like cache files.")
 (defvar doom-packages-dir (concat doom-local-dir "packages/")
   "Where package.el and quelpa plugins (and their caches) are stored.")
 
-(defvar doom-autoload-file (concat doom-local-dir "autoloads.el")
-  "Where `doom//reload-autoloads' will generate its autoloads file.")
-
 
 ;;;
 ;; UTF-8 as the default coding system
@@ -149,20 +146,10 @@ ability to invoke the debugger in debug mode."
           gc-cons-percentage 0.6
           file-name-handler-alist nil))
 
-  (load (concat doom-core-dir "core-packages") nil t)
-  (setq load-path (eval-when-compile (doom-initialize t)
-                                     (doom-initialize-load-path t))
-        doom-package-load-path (eval-when-compile doom-package-load-path))
-
+  (require 'core-packages (concat doom-core-dir "core-packages"))
+  (doom-initialize noninteractive)
   (load! core-lib)
   (load! core-os) ; consistent behavior across OSes
-  (condition-case-unless-debug ex
-      (require 'autoloads doom-autoload-file t)
-    ('error
-     (delete-file doom-autoload-file)
-     (lwarn 'doom-autoloads :warning
-            "Error in autoloads.el -> %s" ex)))
-
   (unless noninteractive
     (load! core-ui)         ; draw me like one of your French editors
     (load! core-editor)     ; baseline configuration for text editing
