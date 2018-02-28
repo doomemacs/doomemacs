@@ -38,5 +38,5 @@
   :when (featurep! :feature syntax-checker)
   :after rust-mode
   :hook (flycheck-mode . flycheck-rust-setup)
-  :config (add-hook 'rust-mode-hook #'flycheck-mode))
+  :init (add-hook 'rust-mode-hook #'flycheck-mode))
 
