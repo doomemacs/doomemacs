@@ -215,7 +215,9 @@ compilation database is present in the project.")
 ;;
 
 (def-package! rtags
-  :after cc-mode
+  :commands (rtags-restart-process rtags-start-process-unless-running)
+  :init
+  (add-hook! (c-mode c++-mode) #'+cc|init-rtags)
   :config
   (setq rtags-autostart-diagnostics t
         rtags-use-bookmarks nil
@@ -227,14 +229,14 @@ compilation database is present in the project.")
         rtags-jump-to-first-match nil)
 
   (let ((bins (cl-remove-if #'executable-find '("rdm" "rc"))))
-    (if (/= (length bins) 0)
-        (warn! "Couldn't find the rtag client and/or server programs %s. Disabling rtags support" bins)
-      (add-hook! (c-mode c++-mode) #'rtags-start-process-unless-running)
-      (set! :lookup '(c-mode c++-mode)
-        :definition #'rtags-find-symbol-at-point
-        :references #'rtags-find-references-at-point)))
+    (when (/= (length bins) 0)
+      (warn! "Couldn't find the rtag client and/or server programs %s. Disabling rtags support" bins)))
 
-  (add-hook 'doom-cleanup-hook #'rtags-cancel-process)
+  (set! :lookup '(c-mode c++-mode)
+    :definition #'rtags-find-symbol-at-point
+    :references #'rtags-find-references-at-point)
+
+  (add-hook 'doom-cleanup-hook #'+cc|cleanup-rtags)
   (add-hook! kill-emacs (ignore-errors (rtags-cancel-process)))
 
   ;; Use rtags-imenu instead of imenu/counsel-imenu

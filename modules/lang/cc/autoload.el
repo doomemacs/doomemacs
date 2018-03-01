@@ -88,3 +88,14 @@ compilation dbs."
                         nconc (list "-I" path)))
        (doom-project-root)))))
 
+;;;###autoload
+(defun +cc|init-rtags ()
+  "Start an rtags server in c-mode and c++-mode buffers."
+  (when (memq major-mode '(c-mode c++-mode))
+    (rtags-start-process-unless-running)))
+
+;;;###autoload
+(defun +cc|cleanup-rtags ()
+  "Kill rtags server(s) if there are no C/C++ buffers open."
+  (unless (doom-buffers-in-mode '(c-mode c++-mode) (buffer-list))
+    (rtags-cancel-process)))
