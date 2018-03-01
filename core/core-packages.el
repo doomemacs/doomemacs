@@ -406,7 +406,7 @@ The module is only loaded once. If RELOAD-P is non-nil, load it again."
         (doom-module-enable module submodule flags))
       (if (file-directory-p module-path)
           `(condition-case-unless-debug ex
-               (let ((doom--current-module (cons module submodule)))
+               (let ((doom--current-module ',(cons module submodule)))
                  (load! init   ,module-path :noerror)
                  (load! config ,module-path :noerror))
              ('error
