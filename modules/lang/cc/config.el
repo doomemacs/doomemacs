@@ -246,13 +246,6 @@ compilation database is present in the project.")
 (def-package! ivy-rtags
   :when (featurep! :completion ivy)
   :after rtags
-  :init
-  ;; NOTE Ivy integration breaks when rtags is byte-compiled with Emacs 26 or
-  ;; later, so we un-byte-compile it before we load it.
-  (eval-when-compile
-    (when (>= emacs-major-version 26)
-      (when-let* ((elc-file (locate-library "rtags.elc" t doom-package-load-path)))
-        (delete-file elc-file))))
   :config (setq rtags-display-result-backend 'ivy))
 
 (def-package! helm-rtags
