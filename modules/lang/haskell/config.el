@@ -20,18 +20,5 @@
 
   (autoload 'switch-to-haskell "inf-haskell" nil t)
   (after! inf-haskell
-    (map! :map inferior-haskell-mode-map "ESC ESC" #'doom/popup-close)))
-
-
-(def-package! company-ghc
-  :when (featurep! :completion company)
-  :after haskell-mode
-  :init
-  (add-hook 'haskell-mode-hook #'ghc-comp-init)
-  :config
-  (unless (executable-find "ghc-mod")
-    (warn! "Couldn't find ghc-mod on PATH. Code completion is disabled."))
-
-  (setq company-ghc-show-info 'oneline)
-  (set! :company-backend 'haskell-mode #'company-ghc))
+    (map! :map inferior-haskell-mode-map "ESC ESC" #'+popup/close)))
 
