@@ -34,16 +34,14 @@
        (cond ((display-graphic-p)
               ;; A known problem with GUI Emacs on MacOS: it runs in an isolated
               ;; environment, so envvars will be wrong. That includes the PATH
-              ;; Emacs picks up. `exec-path-from-shell' fixes this. This is slow
-              ;; and benefits greatly from compilation.
+              ;; Emacs picks up. `exec-path-from-shell' fixes this.
               (when (require 'exec-path-from-shell nil t)
                 (setq exec-path-from-shell-check-startup-files nil
                       exec-path-from-shell-arguments (delete "-i" exec-path-from-shell-arguments))
-                (nconc exec-path-from-shell-variables '("GOPATH" "GOROOT" "PYTHONPATH"))
-                (exec-path-from-shell-initialize)))
-             (t
-              (when (require 'osx-clipboard nil t)
-                (osx-clipboard-mode +1)))))
+                (defvaralias 'exec-path-from-shell-debug 'doom-debug-mode)
+                (add-hook 'emacs-startup-hook #'exec-path-from-shell-initialize)))
+             ((require 'osx-clipboard nil t)
+              (osx-clipboard-mode +1))))
 
       (IS-LINUX
        (setq x-gtk-use-system-tooltips nil    ; native tooltips are ugly!
