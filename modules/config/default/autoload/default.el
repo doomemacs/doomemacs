@@ -8,39 +8,33 @@
       (message (kill-new (abbreviate-file-name filename)))
     (error "Couldn't find filename in current buffer")))
 
-(defmacro +default--def-browse-in! (name dir &optional prefix)
-  (let ((prefix (or prefix (cdr (doom-module-from-path (or load-file-name byte-compile-current-file))))))
-    `(defun ,(intern (format "+%s/browse-%s" prefix name)) ()
-       (interactive)
-       (doom-project-browse ,dir))))
-
-(defmacro +default--def-find-in! (name dir &optional prefix)
-  (let ((prefix (or prefix (cdr (doom-module-from-path (or load-file-name byte-compile-current-file))))))
-    `(defun ,(intern (format "+%s/find-in-%s" prefix name)) ()
-       (interactive)
-       (doom-project-find-file ,dir))))
-
-
-;;;###autoload (autoload '+default/browse-project "config/default/autoload/default" nil t)
-(+default--def-browse-in! project (doom-project-root))
+;;;###autoload
+(defun +default/browse-project ()
+  (interactive) (doom-project-browse (doom-project-root)))
 ;; NOTE No need for find-in-project, use `projectile-find-file'
 
-;;;###autoload (autoload '+default/find-in-templates "config/default/autoload/default" nil t)
-(+default--def-find-in!   templates +file-templates-dir)
-;;;###autoload (autoload '+default/browse-templates "config/default/autoload/default" nil t)
-(+default--def-browse-in! templates +file-templates-dir)
+;;;###autoload
+(defun +default/browse-templates ()
+  (interactive) (doom-project-browse +file-templates-dir))
+;;;###autoload
+(defun +default/find-in-templates ()
+  (interactive) (doom-project-find-file +file-templates-dir))
 
-;;;###autoload (autoload '+default/find-in-emacsd "config/default/autoload/default" nil t)
-(+default--def-find-in!   emacsd doom-emacs-dir)
-;;;###autoload (autoload '+default/browse-emacsd "config/default/autoload/default" nil t)
-(+default--def-browse-in! emacsd doom-emacs-dir)
+;;;###autoload
+(defun +default/browse-emacsd ()
+  (interactive) (doom-project-browse doom-emacs-dir))
+;;;###autoload
+(defun +default/find-in-emacsd ()
+  (interactive) (doom-project-find-file doom-emacs-dir))
 
-;;;###autoload (autoload '+default/find-in-notes "config/default/autoload/default" nil t)
-(+default--def-find-in!   notes +org-dir)
-;;;###autoload (autoload '+default/browse-notes "config/default/autoload/default" nil t)
-(+default--def-browse-in! notes +org-dir)
+;;;###autoload
+(defun +default/browse-notes ()
+  (interactive) (doom-project-browse +org-dir))
+;;;###autoload
+(defun +default/find-in-notes ()
+  (interactive) (doom-project-find-file +org-dir))
 
-;;;###autoload (autoload '+default/browse-snippets "config/default/autoload/default" nil t)
-(+default--def-browse-in! snippets emacs-snippets-dir)
+;;;###autoload
+(defun +default/browse-snippets ()
+  (interactive) (doom-project-browse emacs-snippets-dir))
 ;; NOTE No need for a browse-snippets variant, use `yas-visit-snippet-file'
-
