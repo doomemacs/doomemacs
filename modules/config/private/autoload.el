@@ -1,6 +1,13 @@
 ;;; config/private/autoload.el -*- lexical-binding: t; -*-
 
-;;;###autoload (autoload '+private/find-in-config "config/private/autoload" nil t)
-(+default--def-find-in!   config +private-config-path)
-;;;###autoload (autoload '+private/browse-config "config/private/autoload" nil t)
-(+default--def-browse-in! config +private-config-path)
+;;;###autoload
+(defun +private/find-in-config ()
+  "Open a file somewhere in `+private-config-path' via a fuzzy filename search."
+  (interactive)
+  (doom-project-find-file +private-config-path))
+
+;;;###autoload
+(defun +private/browse-config ()
+  "Browse the files in `+private-config-path'."
+  (interactive)
+  (doom-project-browse +private-config-path))
