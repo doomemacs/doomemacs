@@ -8,14 +8,12 @@
       (message (kill-new (abbreviate-file-name filename)))
     (error "Couldn't find filename in current buffer")))
 
-;;;###autoload
 (defmacro +default--def-browse-in! (name dir &optional prefix)
   (let ((prefix (or prefix (cdr (doom-module-from-path (or load-file-name byte-compile-current-file))))))
     `(defun ,(intern (format "+%s/browse-%s" prefix name)) ()
        (interactive)
        (doom-project-browse ,dir))))
 
-;;;###autoload
 (defmacro +default--def-find-in! (name dir &optional prefix)
   (let ((prefix (or prefix (cdr (doom-module-from-path (or load-file-name byte-compile-current-file))))))
     `(defun ,(intern (format "+%s/find-in-%s" prefix name)) ()
