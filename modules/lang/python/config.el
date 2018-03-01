@@ -1,5 +1,7 @@
 ;;; lang/python/config.el -*- lexical-binding: t; -*-
 
+(set! :env "PYTHONPATH" "PYENV_ROOT")
+
 (defvar +python-pyenv-root nil
   "The path to pyenv's root directory. This is automatically set when `python'
 is loaded.")

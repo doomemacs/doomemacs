@@ -36,6 +36,9 @@
               ;; environment, so envvars will be wrong. That includes the PATH
               ;; Emacs picks up. `exec-path-from-shell' fixes this.
               (when (require 'exec-path-from-shell nil t)
+                (def-setting! :env (&rest vars)
+                  "Ensure VARs are grabbed from your shell environment."
+                  `(nconc exec-path-from-shell-variables (list ,@vars)))
                 (setq exec-path-from-shell-check-startup-files nil
                       exec-path-from-shell-arguments (delete "-i" exec-path-from-shell-arguments))
                 (defvaralias 'exec-path-from-shell-debug 'doom-debug-mode)

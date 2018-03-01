@@ -1,5 +1,7 @@
 ;;; lang/go/config.el -*- lexical-binding: t; -*-
 
+(set! :env "GOPATH" "GOROOT")
+
 (def-package! go-mode
   :mode "\\.go$"
   :interpreter "go"
