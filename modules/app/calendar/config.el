@@ -31,7 +31,7 @@
 
   (when (featurep 'solaire-mode)
     (add-hook 'cfw:calendar-mode-hook #'solaire-mode))
-  (add-hook 'cfw:calendar-mode-hook 'doom-hide-modeline-mode)
+  (add-hook 'cfw:calendar-mode-hook 'hide-mode-line-mode)
 
   (advice-add #'cfw:render-button :override #'+calendar*cfw:render-button))
 

@@ -235,12 +235,12 @@ disabled."
         (cond ((eq modeline 't))
               ((or (eq modeline 'nil)
                    (not modeline))
-               (doom-hide-modeline-mode +1))
+               (hide-mode-line-mode +1))
               ((symbolp modeline)
-               (when-let* ((doom--modeline-format (doom-modeline modeline)))
-                 (doom-hide-modeline-mode +1)))))
-    (when doom-hide-modeline-mode
-      (doom-hide-modeline-mode -1))))
+               (when-let* ((hide-mode-line-format (doom-modeline modeline)))
+                 (hide-mode-line-mode +1)))))
+    (when hide-mode-line-mode
+      (hide-mode-line-mode -1))))
 
 ;;;###autoload
 (defun +popup|close-on-escape ()

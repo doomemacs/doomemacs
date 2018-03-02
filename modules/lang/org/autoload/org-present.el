@@ -53,7 +53,7 @@
     (when (fboundp 'centered-window-mode)
       (centered-window-mode arg))
     (window-divider-mode (* arg -1))
-    (doom-hide-modeline-mode arg)
+    (hide-mode-line-mode arg)
     (+org-pretty-mode arg)
     (cond (org-tree-slide-mode
            (org-indent-mode -1)

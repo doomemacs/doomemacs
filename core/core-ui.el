@@ -81,48 +81,6 @@ with `doom//reload-theme').")
 
 
 ;;
-;; A minor mode for hiding the mode-line
-;;
-
-(defvar doom--modeline-format nil
-  "The modeline format to use when `doom-hide-modeline-mode' is active. Don't
-set this directly. Let-bind it instead.")
-
-(defvar-local doom--old-modeline-format nil
-  "The old modeline format, so `doom-hide-modeline-mode' can revert when it's
-disabled.")
-
-(define-minor-mode doom-hide-modeline-mode
-  "Minor mode to hide the mode-line in the current buffer."
-  :init-value nil
-  :global nil
-  (if doom-hide-modeline-mode
-      (progn
-        (add-hook 'after-change-major-mode-hook #'doom|hide-modeline-mode-reset nil t)
-        (setq doom--old-modeline-format mode-line-format
-              mode-line-format doom--modeline-format))
-    (remove-hook 'after-change-major-mode-hook #'doom|hide-modeline-mode-reset t)
-    (setq mode-line-format doom--old-modeline-format))
-  (force-mode-line-update))
-
-;; Ensure major-mode or theme changes don't overwrite these variables
-(put 'doom--old-modeline-format 'permanent-local t)
-(put 'doom-hide-modeline-mode 'permanent-local t)
-(put 'doom-hide-modeline-mode 'permanent-local-hook t)
-(put 'doom|hide-modeline-mode-reset 'permanent-local-hook t)
-
-(defun doom|hide-modeline-mode-reset ()
-  "Sometimes, a major-mode is activated after `doom-hide-modeline-mode' is
-activated, thus disabling it (because changing major modes invokes
-`kill-all-local-variables' and specifically seems to kill `mode-line-format's
-local value, whether or not it's permanent-local. Therefore, we cycle
-`doom-hide-modeline-mode' to fix this."
-  (when doom-hide-modeline-mode
-    (doom-hide-modeline-mode -1)
-    (doom-hide-modeline-mode +1)))
-
-
-;;
 ;; Modeline library
 ;;
 
@@ -216,6 +174,10 @@ DEFAULT is non-nil, set the default mode-line for all buffers."
 (def-package! hideshow ; built-in
   :commands (hs-minor-mode hs-toggle-hiding hs-already-hidden-p)
   :config (setq hs-hide-comments-when-hiding-all nil))
+
+(def-package! hide-mode-line
+  :commands hide-mode-line-mode
+  :init (add-hook 'completion-list-mode-hook #'hide-mode-line-mode))
 
 (def-package! highlight-indentation
   :commands (highlight-indentation-mode highlight-indentation-current-column-mode))
@@ -507,8 +469,6 @@ character that looks like a space that `whitespace-mode' won't affect.")
 
 ;; a good indicator that Emacs isn't frozen
 (add-hook 'doom-init-ui-hook #'blink-cursor-mode)
-;; no modeline in completion popups
-(add-hook 'completion-list-mode-hook #'doom-hide-modeline-mode)
 ;; line numbers in most modes
 (add-hook! (prog-mode text-mode conf-mode) #'doom|enable-line-numbers)
 
