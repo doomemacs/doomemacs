@@ -25,7 +25,7 @@
   "If non-nil, all doom functions will be verbose. Set DEBUG=1 in the command
 line or use --debug-init to enable this.")
 
-(defvar doom-emacs-dir (file-truename user-emacs-directory)
+(defvar doom-emacs-dir (eval-when-compile (file-truename user-emacs-directory))
   "The path to this emacs.d directory.")
 
 (defvar doom-core-dir (concat doom-emacs-dir "core/")
@@ -119,8 +119,6 @@ Use this for essential functionality.")
   "A list of hooks run after DOOM initialization is complete, and after
 `doom-init-hook'. Use this for extra, non-essential functionality.")
 
-(defvar doom--delayed-modules nil)
-
 (defun doom-try-run-hook (fn hook)
   "Runs a hook wrapped in a `condition-case-unless-debug' block; its objective
 is to include more information in the error message, without sacrificing your
@@ -159,35 +157,28 @@ ability to invoke the debugger in debug mode."
     (load! core-keybinds))  ; centralized keybind system + which-key
 
   (defun doom|after-init ()
-    "Load the config.el file of all pending modules that have been enabled by a
-recent `doom!' call. This should be attached to `after-init-hook'."
-    (mapc #'funcall (reverse doom--delayed-modules))
-    (setq doom--delayed-modules nil))
-
-  (defun doom|after-startup ()
     "Run `doom-init-hook' and `doom-post-init-hook', start the Emacs server, and
 display the loading benchmark."
-    (unless (or (not after-init-time) noninteractive)
-      (dolist (hook '(doom-init-hook doom-post-init-hook))
-        (run-hook-wrapped hook #'doom-try-run-hook hook))
-      (when (display-graphic-p)
-        (require 'server)
-        (unless (server-running-p)
-          (server-start)))
-      (message "%s" (doom-packages--benchmark))))
+    (dolist (hook '(doom-init-hook doom-post-init-hook))
+      (run-hook-wrapped hook #'doom-try-run-hook hook))
+    (when (display-graphic-p)
+      (require 'server)
+      (unless (server-running-p)
+        (server-start))))
 
   (defun doom|finalize ()
     "Resets garbage collection settings to reasonable defaults (if you don't do
 this, you'll get stuttering and random freezes), and resets
 `file-name-handler-alist'."
+    (unless noninteractive
+      (message "%s" (doom-packages--benchmark)))
     (setq gc-cons-threshold 16777216
           gc-cons-percentage 0.1
           file-name-handler-alist doom--file-name-handler-alist)
     t)
 
   (add-hook! '(emacs-startup-hook doom-reload-hook) #'doom|finalize)
-  (add-hook 'after-init-hook    #'doom|after-init)
-  (add-hook 'emacs-startup-hook #'doom|after-startup))
+  (add-hook 'emacs-startup-hook #'doom|after-init))
 
 
 ;;

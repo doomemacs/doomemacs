@@ -1,5 +1,5 @@
 # Ensure emacs always runs from this makefile's PWD
-EMACS_FLAGS=--eval '(setq user-emacs-directory default-directory)' -l core/core.el
+EMACS_FLAGS=--eval '(setq user-emacs-directory default-directory)' -l init.el
 EMACS=emacs --quick --batch $(EMACS_FLAGS)
 EMACSI=emacs -q $(EMACS_FLAGS)
 
@@ -71,9 +71,9 @@ testi: init.el .local/autoloads.el
 
 
 ## Utility tasks
-# Runs Emacs from a different folder than ~/.emacs.d
+# Runs Emacs from a different folder than ~/.emacs.d; only use this for testing!
 run:
-	@$(EMACSI) -l init.el
+	@$(EMACSI) --eval "(run-hooks 'after-init-hook 'emacs-startup-hook 'window-setup-hook)"
 
 # Diagnoses potential OS/environment issues
 doctor:

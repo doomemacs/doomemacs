@@ -120,7 +120,7 @@ ready to be pasted in a bug report on github."
                   if (or (not cat) (not (eq cat (car key))))
                   do (setq cat (car key)) and collect cat
                   else collect
-                  (let ((flags (doom-module-flags cat (cdr key))))
+                  (let ((flags (doom-module-get cat (cdr key) :flags)))
                     (if (equal flags '(t))
                         (cdr key)
                       (list (cdr key) flags))))
