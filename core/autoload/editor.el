@@ -51,7 +51,7 @@ beginning of the line. The opposite of
   "Jumps between the last non-blank, non-comment character in the line and the
 true end of the line. The opposite of `doom/backward-to-bol-or-indent'."
   (interactive)
-  (let ((eol (save-excursion (end-of-visual-line) (point))))
+  (let ((eol (save-excursion (end-of-line) (point))))
     (if (and (sp-point-in-comment) (not (= (point) eol)))
         (goto-char eol)
       (let* ((bol (save-excursion (beginning-of-visual-line) (point)))
