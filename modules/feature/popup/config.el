@@ -145,29 +145,25 @@ ALIST supports one custom parameter: `size', which will resolve to
 ;; Default popup rules & bootstrap
 ;;
 
-(eval-when-compile
-  (when (featurep! +all)
-    (set! :popup "^ \\*" '((slot . 1) (vslot . -1) (size . +popup-shrink-to-fit)))
-    (set! :popup "^\\*"  '((slot . 1) (vslot . -1)) '((select . t))))
+(when (featurep! +all)
+  (set! :popup "^ \\*" '((slot . 1) (vslot . -1) (size . +popup-shrink-to-fit)))
+  (set! :popup "^\\*"  '((slot . 1) (vslot . -1)) '((select . t))))
 
-  (when (featurep! +defaults)
-    (set! :popup "^\\*Completions" '((slot . -1) (vslot . -2)) '((transient . 0)))
-    (set! :popup "^\\*Compil\\(ation\\|e-Log\\)" nil '((transient . 0) (quit . t)))
-    (set! :popup "^\\*\\(?:scratch\\|Messages\\)" nil '((transient)))
-    (set! :popup "^\\*[Hh]elp"
-      '((slot . 2) (vslot . 2) (size . 0.2))
-      '((select . t)))
-    (set! :popup "^\\*doom \\(?:term\\|eshell\\)"
-      '((size . 0.25))
-      '((quit) (transient . 0)))
-    (set! :popup "^\\*doom:"
-      '((size . 0.35) (side . bottom))
-      '((select . t) (modeline . t) (quit) (transient . t)))
-    (set! :popup "^\\*\\(?:\\(?:Pp E\\|doom e\\)val\\)"
-      '((size . +popup-shrink-to-fit)) '((transient . 0) (select . ignore))))
-  nil)
-
-(setq +popup--display-buffer-alist (eval-when-compile +popup--display-buffer-alist))
+(when (featurep! +defaults)
+  (set! :popup "^\\*Completions" '((slot . -1) (vslot . -2)) '((transient . 0)))
+  (set! :popup "^\\*Compil\\(ation\\|e-Log\\)" nil '((transient . 0) (quit . t)))
+  (set! :popup "^\\*\\(?:scratch\\|Messages\\)" nil '((transient)))
+  (set! :popup "^\\*[Hh]elp"
+    '((slot . 2) (vslot . 2) (size . 0.2))
+    '((select . t)))
+  (set! :popup "^\\*doom \\(?:term\\|eshell\\)"
+    '((size . 0.25))
+    '((quit) (transient . 0)))
+  (set! :popup "^\\*doom:"
+    '((size . 0.35) (side . bottom))
+    '((select . t) (modeline . t) (quit) (transient . t)))
+  (set! :popup "^\\*\\(?:\\(?:Pp E\\|doom e\\)val\\)"
+    '((size . +popup-shrink-to-fit)) '((transient . 0) (select . ignore))))
 
 (add-hook 'doom-init-ui-hook #'+popup-mode)
 (add-hook! '+popup-buffer-mode-hook #'(+popup|adjust-fringes +popup|set-modeline))
