@@ -5,10 +5,11 @@
   (require 'cl-lib)
   (require 'map))
 
-(when (version< emacs-version "26")
-  (with-no-warnings
-    (defalias 'if-let* #'if-let)
-    (defalias 'when-let* #'when-let)))
+(eval-and-compile
+  (when (version< emacs-version "26")
+    (with-no-warnings
+      (defalias 'if-let* #'if-let)
+      (defalias 'when-let* #'when-let))))
 
 
 ;;
