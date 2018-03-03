@@ -6,6 +6,14 @@
   (expand-file-name "templates/" (file-name-directory load-file-name))
   "The path to a directory of yasnippet folders to use for file templates.")
 
+(def-setting! :file-template (regexp trigger mode &optional project-only-p)
+  "Register a file template (associated with TRIGGER, the uuid of the target
+snippet) for empty files that match REGEXP in MODE (a major mode symbol).
+
+If PROJECT-ONLY-P is non-nil, the template won't be expanded if the buffer isn't
+in a project."
+  `(+file-templates-add (list ,regexp ,trigger ,mode ,project-only-p)))
+
 
 ;;
 ;; Plugins
