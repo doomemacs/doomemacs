@@ -24,7 +24,7 @@ to a pop up buffer."
       (read-only-mode +1)
       (erase-buffer)
       (setq-local scroll-margin 0)
-      (emacs-lisp-mode)
+      (delay-mode-hooks (emacs-lisp-mode))
       (prin1 result buf)
       (pp-buffer)
       (setq lines (count-lines (point-min) (point-max)))
