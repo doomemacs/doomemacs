@@ -95,7 +95,9 @@
   (defun +evil|save-buffer ()
     "Shorter, vim-esque save messages."
     (message "\"%s\" %dL, %dC written"
-             (file-relative-name buffer-file-truename (doom-project-root))
+             (if buffer-file-name
+                 (file-relative-name (file-truename buffer-file-name) (doom-project-root))
+               (buffer-name))
              (count-lines (point-min) (point-max))
              (buffer-size)))
   (setq save-silently t)
