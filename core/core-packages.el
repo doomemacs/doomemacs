@@ -456,20 +456,20 @@ If NOERROR is non-nil, don't throw an error if the file doesn't exist."
         (unless noerror
           (error "Could not load file '%s' from '%s'" file path))))))
 
-(defmacro require! (module submodule &optional flags path reload-p)
+(defmacro require! (module submodule &optional reload-p &rest plist)
   "Loads the module specified by MODULE (a property) and SUBMODULE (a symbol).
 
 The module is only loaded once. If RELOAD-P is non-nil, load it again."
   (let ((enabled-p (doom-module-p module submodule)))
+    (when (or (not enabled-p) plist)
+      (apply #'doom-module-set module submodule
+             (mapcar #'eval plist)))
     (when (or reload-p (not enabled-p))
-      (if (not enabled-p)
-          (doom-module-set module submodule :flags flags :path path)
-        (if flags (doom-module-put module submodule :flags flags))
-        (if path  (doom-module-put module submodule :path path)))
-      (let ((module-path (doom-module-expand-file module submodule)))
+      (let ((module-path (doom-module-find-path module submodule)))
         (if (file-directory-p module-path)
             `(condition-case-unless-debug ex
                  (let ((doom--current-module ',(cons module submodule)))
+                   ;; ,(if plist `(doom-module-set ,module ',submodule ,@plist))
                    (load! init   ,module-path :noerror)
                    (load! config ,module-path :noerror))
                ('error
