@@ -1,19 +1,22 @@
 ;;; lang/go/config.el -*- lexical-binding: t; -*-
 
-(set! :env "GOPATH" "GOROOT")
+;;
+;; Plugins
+;;
 
 (def-package! go-mode
   :mode "\\.go$"
   :interpreter "go"
   :config
-  (when (executable-find "goimports")
-    (setq gofmt-command "goimports"))
-
+  (set! :env "GOPATH" "GOROOT")
   (set! :repl 'go-mode #'gorepl-run)
   (set! :lookup 'go-mode
     :definition #'go-guru-definition
     :references #'go-guru-referrers
     :documentation #'godoc-at-point)
+
+  (when (executable-find "goimports")
+    (setq gofmt-command "goimports"))
 
   (setq gofmt-show-errors nil) ; Leave it to flycheck
   (add-hook 'go-mode-hook #'flycheck-mode)

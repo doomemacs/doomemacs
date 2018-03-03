@@ -37,12 +37,12 @@
               ;; Emacs picks up. `exec-path-from-shell' fixes this.
               (when (require 'exec-path-from-shell nil t)
                 (def-setting! :env (&rest vars)
-                  "Ensure VARs are grabbed from your shell environment."
-                  `(nconc exec-path-from-shell-variables (list ,@vars)))
+                  "Inject VARS from your shell environment into Emacs."
+                  `(exec-path-from-shell-copy-env (list ,@vars)))
                 (setq exec-path-from-shell-check-startup-files nil
                       exec-path-from-shell-arguments (delete "-i" exec-path-from-shell-arguments))
                 (defvaralias 'exec-path-from-shell-debug 'doom-debug-mode)
-                (add-hook 'emacs-startup-hook #'exec-path-from-shell-initialize)))
+                (exec-path-from-shell-initialize)))
              ((require 'osx-clipboard nil t)
               (osx-clipboard-mode +1))))
 

@@ -1,7 +1,5 @@
 ;;; lang/python/config.el -*- lexical-binding: t; -*-
 
-(set! :env "PYTHONPATH" "PYENV_ROOT")
-
 (defvar +python-pyenv-root nil
   "The path to pyenv's root directory. This is automatically set when `python'
 is loaded.")
@@ -26,6 +24,7 @@ is loaded.")
   :config
   (add-hook! 'python-mode-hook #'(flycheck-mode highlight-numbers-mode))
 
+  (set! :env "PYTHONPATH" "PYENV_ROOT")
   (set! :company-backend 'python-mode '(company-anaconda))
   (set! :electric 'python-mode :chars '(?:))
   (set! :repl 'python-mode #'+python/repl)
