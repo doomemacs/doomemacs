@@ -161,17 +161,17 @@ ability to invoke the debugger in debug mode."
 display the loading benchmark."
     (dolist (hook '(doom-init-hook doom-post-init-hook))
       (run-hook-wrapped hook #'doom-try-run-hook hook))
-    (when (display-graphic-p)
-      (require 'server)
-      (unless (server-running-p)
-        (server-start))))
+    (unless noninteractive
+      (when (display-graphic-p)
+        (require 'server)
+        (unless (server-running-p)
+          (server-start)))
+      (message "%s" (doom-packages--benchmark))))
 
   (defun doom|finalize ()
     "Resets garbage collection settings to reasonable defaults (if you don't do
 this, you'll get stuttering and random freezes), and resets
 `file-name-handler-alist'."
-    (unless noninteractive
-      (message "%s" (doom-packages--benchmark)))
     (setq gc-cons-threshold 16777216
           gc-cons-percentage 0.1
           file-name-handler-alist doom--file-name-handler-alist)
