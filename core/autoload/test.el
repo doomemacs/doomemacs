@@ -10,7 +10,10 @@ If neither is available, run all tests in all enabled modules."
   (interactive)
   (let ((doom-modules (make-hash-table :test #'equal)))
     ;; ensure DOOM is initialized
-    (doom-initialize-packages t)
+    (let (noninteractive)
+      ;; Core libraries aren't fully loaded in a noninteractive session, so
+      ;; we reload it with `noninteractive' set to nil to force them to.
+      (load (expand-file-name "core.el" doom-core-dir) nil t t))
     (condition-case-unless-debug ex
         (let ((target-paths
                ;; Convert targets (either from MODULES or `argv') into a list of
@@ -18,7 +21,7 @@ If neither is available, run all tests in all enabled modules."
                (cond ((string= (car argv) "--") ; command line
                       (save-match-data
                         (cl-loop for arg in (cdr argv)
-                                 if (equal arg "core") collect doom-core-dir
+                                 if (string= arg "core") collect doom-core-dir
                                  else if (string-match-p "/" arg)
                                  nconc (cl-loop for dir in doom-modules-dirs
                                                 collect (expand-file-name arg dir))

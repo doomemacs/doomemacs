@@ -1,9 +1,6 @@
 ;; -*- lexical-binding: t; no-byte-compile: t; -*-
 ;;; completion/company/test/company.el
 
-(require! :completion company)
-(require 'company)
-
 ;;
 (def-test! set-company-backend
   :minor-mode company-mode
