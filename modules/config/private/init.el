@@ -15,4 +15,4 @@ Doom Emacs.")
 
   ;;
   (load (expand-file-name "init.el" +private-config-path)
-        :noerror :nomessage))
+        'noerror 'nomessage))
