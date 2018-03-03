@@ -10,7 +10,15 @@
 ;; Packages
 ;;
 
+(def-package! helm-mode
+  :hook (doom-init . helm-mode)
+  :config
+  ;; helm is too heavy for find-file-at-point
+  (add-to-list 'helm-completing-read-handlers-alist '(find-file-at-point . nil)))
+
+
 (def-package! helm
+  :after helm-mode
   :init
   (setq helm-quick-update t
         ;; Speedier without fuzzy matching
@@ -31,17 +39,11 @@
         helm-move-to-line-cycle-in-source t)
 
   :config
-  (add-hook 'doom-init-hook #'helm-mode)
+  (setq projectile-completion-system 'helm)
 
   (defvar helm-projectile-find-file-map (make-sparse-keymap))
   (require 'helm-projectile)
   (set-keymap-parent helm-projectile-find-file-map helm-map)
-
-  ;; helm is too heavy for find-file-at-point
-  (after! helm-mode
-    (add-to-list 'helm-completing-read-handlers-alist '(find-file-at-point . nil)))
-
-  (setq projectile-completion-system 'helm)
 
   ;;; Helm hacks
   (defun +helm*replace-prompt (plist)
@@ -56,6 +58,17 @@
     "Hide header-line & mode-line in helm windows."
     (setq mode-line-format nil))
   (advice-add #'helm-display-mode-line :override #'+helm*hide-header)
+
+  (defun +helm*hide-minibuffer-maybe ()
+    "Hide minibuffer in Helm session if we use the header line as input field."
+    (when (with-helm-buffer helm-echo-input-in-header-line)
+      (let ((ov (make-overlay (point-min) (point-max) nil nil t)))
+        (overlay-put ov 'window (selected-window))
+        (overlay-put ov 'face
+                     (let ((bg-color (face-background 'default nil)))
+                       `(:background ,bg-color :foreground ,bg-color)))
+        (setq-local cursor-type nil))))
+  (add-hook 'helm-minibuffer-set-up-hook #'+helm*hide-minibuffer-maybe)
 
   (map! :map global-map
         [remap apropos]                   #'helm-apropos
@@ -105,6 +118,10 @@
   :config
   (setq helm-css-scss-split-direction #'split-window-vertically
         helm-css-scss-split-with-multiple-windows t))
+
+
+(def-package! helm-for-files
+  :commands (helm-for-files helm-recentf helm-multi-files))
 
 
 (def-package! helm-swoop ; https://github.com/ShingoFukuyama/helm-swoop
