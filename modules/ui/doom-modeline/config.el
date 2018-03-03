@@ -619,11 +619,12 @@ Returns \"\" to not break --no-window-system."
   (setq +doom-modeline--bar-active   (+doom-modeline--make-xpm 'doom-modeline-bar)
         +doom-modeline--bar-inactive (+doom-modeline--make-xpm 'doom-modeline-inactive-bar))
 
-  ;; These buffers are already created and don't get modelines. For the love of
-  ;; Emacs, someone give the man a modeline!
-  (dolist (bname '("*scratch*" "*Messages*"))
-    (with-current-buffer bname
-      (doom-set-modeline 'main))))
+  (unless after-init-time
+    ;; These buffers are already created and don't get modelines. For the love
+    ;; of Emacs, someone give the man a modeline!
+    (dolist (bname '("*scratch*" "*Messages*"))
+      (with-current-buffer bname
+        (doom-set-modeline 'main)))))
 
 (defun +doom-modeline|set-special-modeline ()
   (doom-set-modeline 'special))
@@ -647,3 +648,6 @@ Returns \"\" to not break --no-window-system."
 
 (add-hook 'image-mode-hook #'+doom-modeline|set-media-modeline)
 (add-hook 'circe-mode-hook #'+doom-modeline|set-special-modeline)
+
+;;
+(add-hook 'doom-big-font-mode-hook #'+doom-modeline|resize-for-big-font)
