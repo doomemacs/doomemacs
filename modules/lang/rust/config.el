@@ -7,6 +7,7 @@
 (def-package! rust-mode
   :mode "\\.rs$"
   :config
+  (setq rust-indent-method-chain t)
   (def-menu! +rust/build-menu
     "TODO"
     '(("run"   :exec "cargo run"   :cwd t :when (+rust-cargo-project-p))
