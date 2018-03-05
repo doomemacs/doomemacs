@@ -28,7 +28,7 @@
                               (overlay-buffer yas--active-field-overlay)
                               (overlay-get yas--active-field-overlay 'yas--field)))))
     (cond ((eq (point) (marker-position (yas--field-start field))) nil)
-          (t (delete-char -1)))))
+          (t (call-interactively #'delete-backward-char)))))
 
 ;;;###autoload
 (defun +snippets/delete-forward-char-or-field (&optional field)
