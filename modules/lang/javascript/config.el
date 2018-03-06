@@ -6,8 +6,10 @@
   :config
   (setq js2-skip-preprocessor-directives t
         js2-highlight-external-variables nil
+        js-chain-indent t
+        ;; let flycheck handle this
         js2-mode-show-parse-errors nil
-        js-chain-indent t)
+        js2-mode-show-strict-warnings nil)
 
   (add-hook! 'js2-mode-hook #'(flycheck-mode rainbow-delimiters-mode))
 
