@@ -299,7 +299,8 @@
           :desc "Indent guides (column)" :n "I" #'highlight-indentation-current-column-mode
           :desc "Impatient mode"         :n "h" #'+impatient-mode/toggle
           :desc "Big mode"               :n "b" #'doom-big-font-mode
-          :desc "Evil goggles"           :n "g" #'+evil-goggles/toggle))
+          :desc "Evil goggles"           :n "g" #'+evil-goggles/toggle
+          :desc "org-tree-slide mode"    :n "p" #'+org-present/start))
 
 
       ;; --- Personal vim-esque bindings ------------------
