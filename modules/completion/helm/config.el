@@ -39,6 +39,7 @@
         helm-move-to-line-cycle-in-source t)
 
   :config
+  (load "helm-autoloads" nil t)
   (setq projectile-completion-system 'helm)
 
   (defvar helm-projectile-find-file-map (make-sparse-keymap))

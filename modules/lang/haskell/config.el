@@ -15,6 +15,7 @@
   :interpreter (("runghc" . haskell-mode)
                 ("runhaskell" . haskell-mode))
   :config
+  (load "haskell-mode-autoloads" nil t)
   (set! :repl 'haskell-mode #'switch-to-haskell)
   (push ".hi" completion-ignored-extensions)
 
