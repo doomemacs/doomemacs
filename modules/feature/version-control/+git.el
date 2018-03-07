@@ -78,7 +78,8 @@
 
 
 (def-package! magit
-  :commands (magit-status magit-blame)
+  :defer t
+  :init (load "magit-autoloads" nil t)
   :config
   (set! :popup "^\\*?magit" :ignore)
   (set! :evil-state 'magit-status-mode 'emacs)
