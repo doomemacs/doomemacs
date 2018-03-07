@@ -19,6 +19,13 @@
   `(setq +latex-bibtex-dir ,dir))
 
 
+(after! smartparens-latex
+  (map-delete sp-pairs 'LaTeX-mode)
+  (map-delete sp-pairs 'latex-mode)
+  (map-delete sp-pairs 'tex-mode)
+  (map-delete sp-pairs 'plain-tex-mode))
+
+
 (def-package! tex-site
   :init
   ;; Manually load the AUCTEX autoloads. This is normally done by
