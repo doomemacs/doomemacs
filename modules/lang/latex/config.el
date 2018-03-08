@@ -26,6 +26,10 @@
   (map-delete sp-pairs 'plain-tex-mode))
 
 
+;;
+;; Plugins
+;;
+
 (def-package! tex-site
   :init
   ;; Manually load the AUCTEX autoloads. This is normally done by
@@ -56,39 +60,37 @@
   (set! :popup " output\\*$" '((size . 15)))
 
   ;; TeX Font Styling
-  (def-package! tex-style
-    :defer t)
+  ;; (def-package! tex-style :defer t)
 
   ;; TeX Folding
-  (def-package! tex-fold
-    :defer t
-    :init
-    (add-hook! 'TeX-mode-hook 'TeX-fold-mode))
+  (add-hook 'TeX-mode-hook 'TeX-fold-mode)
 
   (def-package! latex
     :defer t
     :init
-    (setq
-     ;; Add the toc entry to the sectioning hooks.
-     LaTeX-section-hook
-       '(LaTeX-section-heading
-         LaTeX-section-title
-         LaTeX-section-toc
-         LaTeX-section-section
-         LaTeX-section-label)
-     LaTeX-fill-break-at-separators nil
-     ;; Item indentation.
-     LaTeX-item-indent 0)
+    (setq LaTeX-section-hook ; Add the toc entry to the sectioning hooks.
+          '(LaTeX-section-heading
+            LaTeX-section-title
+            LaTeX-section-toc
+            LaTeX-section-section
+            LaTeX-section-label)
+          LaTeX-fill-break-at-separators nil
+          LaTeX-item-indent 0) ; item indentation.
     :config
     (map! :map LaTeX-mode-map "C-j" nil)
     ;; Do not prompt for Master files, this allows auto-insert to add templates
     ;; to .tex files
-    (add-hook! '(LaTeX-mode TeX-mode) '(lambda () (remove-hook 'find-file-hooks (car find-file-hooks) 'local)))
+    (add-hook! '(LaTeX-mode TeX-mode)
+      (remove-hook 'find-file-hook (car find-file-hook) 'local))
     ;; Adding useful things for latex
-    (add-hook! LaTeX-mode (LaTeX-math-mode) (TeX-source-correlate-mode)(TeX-global-PDF-mode t)
-                          (TeX-PDF-mode t) (visual-line-mode +1))
+    (add-hook! LaTeX-mode
+      (LaTeX-math-mode)
+      (TeX-source-correlate-mode)
+      (TeX-global-PDF-mode t)
+      (TeX-PDF-mode t)
+      (visual-line-mode +1))
     (when (featurep! :feature spellcheck)
-      (add-hook! LaTeX-mode (flyspell-mode t)))
+      (add-hook 'LaTeX-mode-hook #'flyspell-mode))
     ;; Default language setting.
     (setq ispell-dictionary "english")
     ;; Use chktex to search for errors in a latex file.
@@ -123,9 +125,8 @@
   ;; ("11.90.2.2017-07-25) ... and Ghostscript 9.22. It's now fixed in AUCTeX
   ;; master, so we just have to wait.
   :init
-  (progn
-    (setq-default preview-scale 1.4
-                  preview-scale-function '(lambda () (* (/ 10.0 (preview-document-pt)) preview-scale))))
+  (setq-default preview-scale 1.4
+                preview-scale-function '(lambda () (* (/ 10.0 (preview-document-pt)) preview-scale)))
   (add-hook! LaTeX-mode #'LaTeX-preview-setup))
 
 (def-package! reftex
@@ -135,8 +136,8 @@
         reftex-toc-split-windows-fraction 0.3)
   (unless (string-empty-p +latex-bibtex-file)
     (setq reftex-default-bibliography (list (expand-file-name +latex-bibtex-file))))
-  ; Get ReTeX working with biblatex
-  ; http://tex.stackexchange.com/questions/31966/setting-up-reftex-with-biblatex-citation-commands/31992#31992
+  ;; Get ReTeX working with biblatex
+  ;; http://tex.stackexchange.com/questions/31966/setting-up-reftex-with-biblatex-citation-commands/31992#31992
   (setq reftex-cite-format
         '((?t . "\\textcite[]{%l}")
           (?a . "\\autocite[]{%l}")
@@ -174,11 +175,8 @@
   :init
   (setq latex-preview-pane-multifile-mode 'auctex)
   (add-hook! (latex-mode LaTeX-mode) #'latex-preview-pane-enable)
-  (add-to-list 'TeX-view-program-list
-                 '("preview-pane"
-                   latex-preview-pane-mode))
-  (add-to-list 'TeX-view-program-selection
-                 '(output-pdf "preview-pane"))
+  (add-to-list 'TeX-view-program-list '("preview-pane" latex-preview-pane-mode))
+  (add-to-list 'TeX-view-program-selection '(output-pdf "preview-pane"))
   :config
   (map! :map doc-view-mode-map
         "ESC" #'delete-window
@@ -193,7 +191,7 @@
   ;; Pass the -pdf flag when TeX-PDF-mode is active
   (setq auctex-latexmk-inherit-TeX-PDF-mode t)
   ;; Set LatexMk as the default
-  (add-hook 'LaTeX-mode-hook '(lambda () (setq TeX-command-default "LatexMk")))
+  (add-hook! LaTeX-mode (setq TeX-command-default "LatexMk"))
   :config
   ;; Add latexmk as a TeX target
   (auctex-latexmk-setup))
@@ -240,5 +238,5 @@
 (def-package! adaptive-wrap
   :commands (adaptive-wrap-prefix-mode)
   :init
-  (add-hook! LaTeX-mode 'adaptive-wrap-prefix-mode)
+  (add-hook 'LaTeX-mode-hook #'adaptive-wrap-prefix-mode)
   (setq-default adaptive-wrap-extra-indent 0))
