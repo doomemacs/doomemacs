@@ -239,7 +239,7 @@ disabled."
               ((symbolp modeline)
                (when-let* ((hide-mode-line-format (doom-modeline modeline)))
                  (hide-mode-line-mode +1)))))
-    (when hide-mode-line-mode
+    (when (bound-and-true-p hide-mode-line-mode)
       (hide-mode-line-mode -1))))
 
 ;;;###autoload
