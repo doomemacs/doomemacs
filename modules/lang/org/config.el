@@ -56,7 +56,6 @@
      org-indent-mode            ; margin-based indentation
      toc-org-enable             ; auto-table of contents
      visual-line-mode           ; line wrapping
-     evil-org-mode              ; evil-mode integration
 
      +org|enable-auto-reformat-tables
      +org|enable-auto-update-cookies
@@ -64,6 +63,10 @@
      +org|unfold-to-2nd-level-or-point
      +org|show-paren-mode-compatibility
      ))
+
+(when (featurep 'evil)
+  ;; evil-mode integration
+  (add-hook 'org-load-hook #'evil-org-mode))
 
 (after! org
   (defvaralias 'org-directory '+org-dir))
@@ -230,53 +233,55 @@ between the two."
 
   (add-hook! 'org-tab-first-hook #'(+org|indent-maybe +org|yas-expand-maybe))
 
-  (require 'evil-org)
   (map! :map org-mode-map
         "C-c C-S-l" #'+org/remove-link
         "C-c C-i"   #'org-toggle-inline-images
         [remap doom/backward-to-bol-or-indent]          #'org-beginning-of-line
         [remap doom/forward-to-last-non-comment-or-eol] #'org-end-of-line
+        [remap move-end-of-line]  #'org-end-of-line)
 
-        :map evil-org-mode-map
-        :i [backtab]   #'+org/dedent
-        :i [backspace] #'evil-org-delete-backward-char
-        ;; navigate table cells (from insert-mode)
-        :i  "C-l"   #'+org/table-next-field
-        :i  "C-h"   #'+org/table-previous-field
-        :i  "C-k"   #'+org/table-previous-row
-        :i  "C-j"   #'+org/table-next-row
-        ;; expand tables (or shiftmeta move)
-        :ni "C-S-l" #'+org/table-append-field-or-shift-right
-        :ni "C-S-h" #'+org/table-prepend-field-or-shift-left
-        :ni "C-S-k" #'org-metaup
-        :ni "C-S-j" #'org-metadown
-        ;; toggle local fold, instead of all children
-        :n  [tab]   #'+org/toggle-fold
-        ;; more intuitive RET keybinds
-        :i  "RET"   #'org-return-indent
-        :n  "RET"   #'+org/dwim-at-point
-        :ni [M-return]   (λ! (+org/insert-item 'below))
-        :ni [S-M-return] (λ! (+org/insert-item 'above))
-        ;; more org-ish vim motion keys
-        :m  "]]"  (λ! (org-forward-heading-same-level nil) (org-beginning-of-line))
-        :m  "[["  (λ! (org-backward-heading-same-level nil) (org-beginning-of-line))
-        :m  "]h"  #'org-next-visible-heading
-        :m  "[h"  #'org-previous-visible-heading
-        :m  "]l"  #'org-next-link
-        :m  "[l"  #'org-previous-link
-        :m  "]s"  #'org-babel-next-src-block
-        :m  "[s"  #'org-babel-previous-src-block
-        :n  "gQ"  #'org-fill-paragraph
-        ;; sensible code-folding vim keybinds
-        :n  "za"  #'+org/toggle-fold
-        :n  "zA"  #'org-shifttab
-        :n  "zc"  #'outline-hide-subtree
-        :n  "zC"  (λ! (outline-hide-sublevels 1))
-        :n  "zd"  (lambda (&optional arg) (interactive "p") (outline-hide-sublevels (or arg 3)))
-        :n  "zm"  (λ! (outline-hide-sublevels 1))
-        :n  "zo"  #'outline-show-subtree
-        :n  "zO"  #'outline-show-all
-        :n  "zr"  #'outline-show-all))
+  (when (featurep 'evil)
+    (require 'evil-org)
+    (map! :map evil-org-mode-map
+          :i [backtab]   #'+org/dedent
+          :i [backspace] #'evil-org-delete-backward-char
+          ;; navigate table cells (from insert-mode)
+          :i  "C-l"   #'+org/table-next-field
+          :i  "C-h"   #'+org/table-previous-field
+          :i  "C-k"   #'+org/table-previous-row
+          :i  "C-j"   #'+org/table-next-row
+          ;; expand tables (or shiftmeta move)
+          :ni "C-S-l" #'+org/table-append-field-or-shift-right
+          :ni "C-S-h" #'+org/table-prepend-field-or-shift-left
+          :ni "C-S-k" #'org-metaup
+          :ni "C-S-j" #'org-metadown
+          ;; toggle local fold, instead of all children
+          :n  [tab]   #'+org/toggle-fold
+          ;; more intuitive RET keybinds
+          :i  "RET"   #'org-return-indent
+          :n  "RET"   #'+org/dwim-at-point
+          :ni [M-return]   (λ! (+org/insert-item 'below))
+          :ni [S-M-return] (λ! (+org/insert-item 'above))
+          ;; more org-ish vim motion keys
+          :m  "]]"  (λ! (org-forward-heading-same-level nil) (org-beginning-of-line))
+          :m  "[["  (λ! (org-backward-heading-same-level nil) (org-beginning-of-line))
+          :m  "]h"  #'org-next-visible-heading
+          :m  "[h"  #'org-previous-visible-heading
+          :m  "]l"  #'org-next-link
+          :m  "[l"  #'org-previous-link
+          :m  "]s"  #'org-babel-next-src-block
+          :m  "[s"  #'org-babel-previous-src-block
+          :n  "gQ"  #'org-fill-paragraph
+          ;; sensible code-folding vim keybinds
+          :n  "za"  #'+org/toggle-fold
+          :n  "zA"  #'org-shifttab
+          :n  "zc"  #'outline-hide-subtree
+          :n  "zC"  (λ! (outline-hide-sublevels 1))
+          :n  "zd"  (lambda (&optional arg) (interactive "p") (outline-hide-sublevels (or arg 3)))
+          :n  "zm"  (λ! (outline-hide-sublevels 1))
+          :n  "zo"  #'outline-show-subtree
+          :n  "zO"  #'outline-show-all
+          :n  "zr"  #'outline-show-all)))
 
 (defun +org|setup-hacks ()
   "Getting org to behave."
