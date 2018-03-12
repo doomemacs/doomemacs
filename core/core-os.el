@@ -38,7 +38,7 @@
               (when (require 'exec-path-from-shell nil t)
                 (def-setting! :env (&rest vars)
                   "Inject VARS from your shell environment into Emacs."
-                  `(exec-path-from-shell-copy-env (list ,@vars)))
+                  `(exec-path-from-shell-copy-envs (list ,@vars)))
                 (setq exec-path-from-shell-check-startup-files nil
                       exec-path-from-shell-arguments (delete "-i" exec-path-from-shell-arguments))
                 (defvaralias 'exec-path-from-shell-debug 'doom-debug-mode)
