@@ -281,6 +281,21 @@ DEFAULT is non-nil, set the default mode-line for all buffers."
 
 
 ;;
+;; Custom hooks
+;;
+
+(defun doom*after-switch-window-hooks (&rest _)
+  (run-hooks 'doom-after-switch-window-hook))
+(defun doom*before-switch-window-hooks (&rest _)
+  (run-hooks 'doom-before-switch-window-hook))
+
+(advice-add #'select-frame :before  #'doom*before-switch-window-hooks)
+(advice-add #'select-frame :after   #'doom*after-switch-window-hooks)
+(advice-add #'select-window :before #'doom*before-switch-window-hooks)
+(advice-add #'select-window :after  #'doom*after-switch-window-hooks)
+
+
+;;
 ;; Line numbers
 ;;
 
