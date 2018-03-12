@@ -141,6 +141,7 @@ wrong places)."
     (cond ((memq type '(item plain-list))
            (let ((marker (org-element-property :bullet context))
                  (pad (save-excursion
+                        (org-beginning-of-item)
                         (back-to-indentation)
                         (- (point) (line-beginning-position)))))
              (save-match-data
