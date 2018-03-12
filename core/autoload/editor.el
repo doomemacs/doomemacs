@@ -207,7 +207,9 @@ possible, or just one char if that's not possible."
                            (sp-insert-pair op)))
                         ((and (bolp) (doom-surrounded-p pair nil 'balanced))
                          (delete-region beg end)
-                         (sp-insert-pair op))
+                         (sp-insert-pair op)
+                         t)
+                        ((run-hook-with-args-until-success 'doom-delete-backward-functions))
                         ((doom/backward-delete-whitespace-to-column)))))))
         ;; Otherwise, do simple deletion.
         (t (delete-char (- n) killflag))))
