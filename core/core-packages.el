@@ -133,7 +133,7 @@ missing) and shouldn't be deleted.")
           ;; load-path are concerned, but I don't mind a [small] margin of
           ;; error in the plugin count in exchange for faster startup.
           (- (length load-path) (length doom-site-load-path))
-          (hash-table-size doom-modules)
+          (hash-table-count doom-modules)
           (or doom-init-time
               (setq doom-init-time (float-time (time-subtract (current-time) before-init-time))))))
 
