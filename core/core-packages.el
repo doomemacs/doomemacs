@@ -364,27 +364,23 @@ added, if the file exists."
 
 MODULES is an malformed plist of modules to load."
   (let (load-forms module file-name-handler-alist)
-    (let ((modules-dir
-           (expand-file-name "modules/" (file-name-directory (or load-file-name byte-compile-current-file)))))
-      (cl-pushnew modules-dir doom-modules-dirs :test #'string=)
-      (dolist (m modules)
-        (cond ((keywordp m) (setq module m))
-              ((not module) (error "No namespace specified in `doom!' for %s" m))
-              ((let ((submodule (if (listp m) (car m) m))
-                     (flags     (if (listp m) (cdr m))))
-                 (let ((path (doom-module-find-path module submodule)))
-                   (doom-module-set module submodule :flags flags :path path)
-                   (push `(let ((doom--current-module ',(cons module submodule)))
-                            (load! init ,path t))
-                         load-forms))))))
-      `(let (file-name-handler-alist)
-         (setq doom-modules ',doom-modules
-               doom-modules-dirs ',doom-modules-dirs)
-         (let ((doom--initializing t))
-           ,@(nreverse load-forms))
-         ,(unless doom--initializing
-            '(unless noninteractive
-               (doom-initialize-modules)))))))
+    (dolist (m modules)
+      (cond ((keywordp m) (setq module m))
+            ((not module) (error "No namespace specified in `doom!' for %s" m))
+            ((let ((submodule (if (listp m) (car m) m))
+                   (flags     (if (listp m) (cdr m))))
+               (let ((path (doom-module-find-path module submodule)))
+                 (doom-module-set module submodule :flags flags :path path)
+                 (push `(let ((doom--current-module ',(cons module submodule)))
+                          (load! init ,path t))
+                       load-forms))))))
+    `(let (file-name-handler-alist)
+       (setq doom-modules ',doom-modules)
+       (let ((doom--initializing t))
+         ,@(nreverse load-forms))
+       ,(unless doom--initializing
+          '(unless noninteractive
+             (doom-initialize-modules))))))
 
 (defmacro def-package! (name &rest plist)
   "A thin wrapper around `use-package'."

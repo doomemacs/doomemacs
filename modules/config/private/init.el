@@ -10,7 +10,9 @@ Doom Emacs.")
 ;; Ensure `doom//reload-autoloads', `doom//byte-compile' and
 ;; `doom-initialize-packages' will treat `+private-config-path' as the root of
 ;; this module.
-(add-to-list 'doom-psuedo-module-dirs +private-config-path)
+(cl-pushnew +private-config-path doom-psuedo-module-dirs)
+(cl-pushnew (expand-file-name "modules/" +private-config-path)
+            doom-modules-dirs :test #'string=)
 
 ;;
 (load (expand-file-name "init.el" +private-config-path)
