@@ -1,11 +1,11 @@
 # Ensure emacs always runs from this makefile's PWD
-EMACS_FLAGS=--eval '(setq user-emacs-directory default-directory)' -l init.el
-EMACS=emacs --quick --batch $(EMACS_FLAGS)
-EMACSI=emacs -q $(EMACS_FLAGS)
+EMACS = emacs -q --eval "(setq user-emacs-directory default-directory)"
+DOOM  = $(EMACS) --batch -l init.el
+DOOMI = $(subst --batch,,$(DOOM))
 
-MODULES=$(patsubst modules/%/, %, $(sort $(dir $(wildcard modules/*/ modules/*/*/))))
+MODULES = $(patsubst modules/%/, %, $(sort $(dir $(wildcard modules/*/ modules/*/*/))))
 
-all: autoloads autoremove install
+all: | autoloads autoremove install
 
 ## Shortcuts
 a: autoloads
@@ -15,19 +15,20 @@ r: autoremove
 c: compile
 cc: compile-core
 ce: compile-elpa
+d: doctor
 
 ## Package management
-install: init.el .local/autoloads.el
-	@$(EMACS) -f doom//packages-install
+install: | init.el .local/autoloads.el
+	@$(DOOM) -f doom//packages-install
 
-update: init.el .local/autoloads.el
-	@$(EMACS) -f doom//packages-update
+update: | init.el .local/autoloads.el
+	@$(DOOM) -f doom//packages-update
 
-autoremove: init.el .local/autoloads.el
-	@$(EMACS) -f doom//packages-autoremove
+autoremove: | init.el .local/autoloads.el
+	@$(DOOM) -f doom//packages-autoremove
 
-autoloads: init.el
-	@$(EMACS) -f doom//reload-autoloads
+autoloads: | init.el
+	@$(DOOM) -f doom//reload-autoloads
 
 
 ## Byte compilation
@@ -35,23 +36,23 @@ autoloads: init.el
 # compile-core
 # compile-module
 # compile-module/submodule
-compile: init.el clean
-	@$(EMACS) -f doom//byte-compile
+compile: | init.el clean
+	@$(DOOM) -f doom//byte-compile
 
-compile-core: init.el clean
-	@$(EMACS) -f doom//byte-compile-core
+compile-core: | init.el clean
+	@$(DOOM) -f doom//byte-compile-core
 
-compile-elpa: init.el
-	@$(EMACS) -f doom//byte-recompile-plugins
+compile-elpa: | init.el
+	@$(DOOM) -f doom//byte-recompile-plugins
 
-$(patsubst %, compile-%, $(MODULES)): init.el .local/autoloads.el
-	@$(EMACS) -f doom//byte-compile -- $(patsubst compile-%, %, $@)
+$(patsubst %, compile-%, $(MODULES)): | init.el .local/autoloads.el
+	@$(DOOM) -f doom//byte-compile -- $(patsubst compile-%, %, $@)
 
-recompile: init.el
-	@$(EMACS) -f doom//byte-compile -- -r
+recompile: | init.el
+	@$(DOOM) -f doom//byte-compile -- -r
 
 clean:
-	@$(EMACS) -f doom//clean-byte-compiled-files
+	@$(DOOM) -f doom//clean-byte-compiled-files
 
 
 ## Unit tests
@@ -59,35 +60,35 @@ clean:
 # test-core
 # test-module
 # test-module/submodule
-test: init.el .local/autoloads.el
-	@$(EMACS) -f doom//run-tests
+test: | init.el .local/autoloads.el
+	@$(DOOM) -f doom//run-tests
 
-test-core $(patsubst %, test-%, $(MODULES)): init.el .local/autoloads.el
-	@$(EMACS) -f doom//run-tests -- $(subst test-, , $@)
+test-core $(patsubst %, test-%, $(MODULES)): | init.el .local/autoloads.el
+	@$(DOOM) -f doom//run-tests -- $(subst test-, , $@)
 
 # run tests interactively
-testi: init.el .local/autoloads.el
-	@$(EMACSI) -f doom//run-tests
+testi: | init.el .local/autoloads.el
+	@$(DOOMI) -f doom//run-tests
 
 
 ## Utility tasks
 # Runs Emacs from a different folder than ~/.emacs.d; only use this for testing!
 run:
-	@$(EMACSI) --eval "(run-hooks 'after-init-hook 'emacs-startup-hook 'window-setup-hook)"
+	@$(DOOMI) --eval "(run-hooks 'after-init-hook 'emacs-startup-hook 'window-setup-hook)"
 
 # Diagnoses potential OS/environment issues
 doctor:
-	@bin/doom-doctor
+	@$(EMACS) --script bin/doom-doctor
 
 # Prints debug info about your current setup
 info:
-	@$(EMACS) -l core/autoload/debug.el -f doom/info
+	@$(EMACS) --batch -l core/autoload/debug.el -f doom/info
 
 ## Internal tasks
 init.el:
 	@$(error No init.el file; create one or copy init.example.el)
 
 .local/autoloads.el:
-	@$(EMACS) -f doom-initialize-autoloads
+	@$(DOOM) -f doom-initialize-autoloads
 
 .PHONY: all compile test testi clean
