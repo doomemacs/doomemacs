@@ -527,22 +527,23 @@ Accepts the following properties:
  :ignore FORM          Do not install this package if FORM is non-nil.
  :freeze FORM          Do not update this package if FORM is non-nil."
   (declare (indent defun))
-  (let* ((old-plist (assq name doom-packages))
-         (pkg-recipe (or (plist-get plist :recipe)
-                         (and old-plist (plist-get old-plist :recipe))))
-         (pkg-pin    (or (plist-get plist :pin)
-                         (and old-plist (plist-get old-plist :pin)))))
-    (when pkg-recipe
-      (when (= 0 (% (length pkg-recipe) 2))
-        (plist-put plist :recipe (cons name pkg-recipe)))
-      (when pkg-pin
-        (plist-put plist :pin nil)))
-    (dolist (prop '(:ignore :freeze))
-      (when-let* ((val (plist-get plist prop)))
-        (plist-put plist prop (eval val))))
-    `(progn
-       ,(if (and pkg-pin t) `(map-put package-pinned-packages ',name ,pkg-pin))
-       (map-put doom-packages ',name ',plist))))
+  (unless (memq name doom-disabled-packages)
+    (let* ((old-plist (assq name doom-packages))
+           (pkg-recipe (or (plist-get plist :recipe)
+                           (and old-plist (plist-get old-plist :recipe))))
+           (pkg-pin    (or (plist-get plist :pin)
+                           (and old-plist (plist-get old-plist :pin)))))
+      (when pkg-recipe
+        (when (= 0 (% (length pkg-recipe) 2))
+          (plist-put plist :recipe (cons name pkg-recipe)))
+        (when pkg-pin
+          (plist-put plist :pin nil)))
+      (dolist (prop '(:ignore :freeze))
+        (when-let* ((val (plist-get plist prop)))
+          (plist-put plist prop (eval val))))
+      `(progn
+         ,(if (and pkg-pin t) `(map-put package-pinned-packages ',name ,pkg-pin))
+         (map-put doom-packages ',name ',plist)))))
 
 (defmacro depends-on! (module submodule &optional flags)
   "Declares that this module depends on another.
