@@ -6,12 +6,7 @@
   (setq plantuml-jar-path (concat doom-etc-dir "plantuml.jar")
         org-plantuml-jar-path plantuml-jar-path)
   :config
-  (set! :popup "^\\*PLANTUML" '((size . 0.4)) '((select) (transient . 0)))
-
-  (unless (executable-find "java")
-    (warn! "Couldn't find java. Disabling plantuml preview."))
-  (unless (file-exists-p plantuml-jar-path)
-    (warn! "Couldn't find plantuml.jar. Install it witInstall it with-x +plantuml/install.")))
+  (set! :popup "^\\*PLANTUML" '((size . 0.4)) '((select) (transient . 0))))
 
 
 (def-package! flycheck-plantuml

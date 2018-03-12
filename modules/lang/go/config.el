@@ -78,25 +78,17 @@
   :commands (go-guru-describe go-guru-freevars go-guru-implements go-guru-peers
              go-guru-referrers go-guru-definition go-guru-pointsto
              go-guru-callstack go-guru-whicherrs go-guru-callers go-guru-callees
-             go-guru-expand-region)
-  :config
-  (unless (executable-find "guru")
-    (warn! "Couldn't find guru. Refactoring commands (go-guru-*) won't work")))
+             go-guru-expand-region))
 
 
 (def-package! gorepl-mode
-  :commands (gorepl-run gorepl-run-load-current-file)
-  :config
-  (unless (executable-find "gore")
-    (warn! "Couldn't find gore. REPL will not work")))
+  :commands (gorepl-run gorepl-run-load-current-file))
 
 
 (def-package! company-go
-  :init (setq command-go-gocode-command "gocode")
   :when (featurep! :completion company)
+  :init (setq command-go-gocode-command "gocode")
   :after go-mode
   :config
   (setq company-go-show-annotation t)
-  (set! :company-backend 'go-mode '(company-go))
-  (unless (executable-find command-go-gocode-command)
-    (warn! "Couldn't find gocode. Code completion won't work")))
+  (set! :company-backend 'go-mode '(company-go)))

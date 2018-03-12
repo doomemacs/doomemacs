@@ -19,7 +19,4 @@
 
 
 (def-package! inf-crystal
-  :commands (inf-crystal crystal-switch-to-inf)
-  :config
-  (unless (executable-find "icr")
-    (warn! "Couldn't find icr. REPL will not work")))
+  :commands (inf-crystal crystal-switch-to-inf))

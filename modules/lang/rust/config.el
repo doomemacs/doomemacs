@@ -19,11 +19,6 @@
 (def-package! racer
   :after rust-mode
   :config
-  (unless (file-exists-p racer-cmd)
-    (warn! "Couldn't find racer binary. Code completion won't work"))
-  (unless (file-directory-p racer-rust-src-path)
-    (warn! "Couldn't find rust source. Code completion won't work"))
-
   (add-hook! 'rust-mode-hook #'(eldoc-mode racer-mode))
   (set! :lookup 'rust-mode
     :definition #'racer-find-definition

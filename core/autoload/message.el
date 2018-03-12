@@ -35,11 +35,6 @@
     (strike     . 9))
   "List of styles.")
 
-(defvar doom-demote-warnings nil
-  "If non-nil, Doom module warnings (the ones that pop up when you're missing a
-dependency) will only log a message in *Messages* instead of opening a
-*Warnings* window.")
-
 ;;;###autoload
 (defun doom-ansi-apply (code message &rest args)
   "Apply the ansi CODE to formatted MESSAGE with ARGS."
@@ -84,26 +79,6 @@ interactive session."
            (ansi-color-apply-on-region beg end)))
        (pop-to-buffer buf)
        (goto-char (point-max)))))
-
-;;;###autoload
-(defmacro warn! (message &rest args)
-  "Output a colored warning for the current module in the *Messages* buffer."
-  (let ((load-file-name (or load-file-name byte-compile-current-file)))
-    (if (cl-loop for dir in doom-modules-dirs
-                 if (file-in-directory-p load-file-name dir)
-                 return t)
-        `(cl-destructuring-bind (cat . mod)
-             (doom-module-from-path ,load-file-name)
-           (if doom-demote-warnings
-               (message "WARNING (%s %s) %s" cat mod (format ,message ,@args))
-             (delay-warning (format "%s %s" cat mod) (format ,message ,@args)
-                            :warning)))
-      `(if doom-demote-warnings
-           (message "WARNING (%s) %s"
-                    (file-relative-name load-file-name doom-emacs-dir)
-                    (format ,message ,@args))
-         (delay-warning (file-relative-name load-file-name doom-emacs-dir)
-                        (format ,message ,@args) :warning)))))
 
 ;;;###autoload
 (defmacro log! (message &rest args)
