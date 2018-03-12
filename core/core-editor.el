@@ -76,6 +76,8 @@ fundamental-mode) for performance sake."
 ;; Built-in plugins
 ;;
 
+(add-hook 'after-save-hook #'executable-make-buffer-file-executable-if-script-p)
+
 ;; revert buffers for changed files
 (global-auto-revert-mode 1)
 (setq auto-revert-verbose nil)
