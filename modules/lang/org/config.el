@@ -32,6 +32,9 @@
 (def-package! evil-org
   :when (featurep! :feature evil)
   :commands evil-org-mode
+  :init
+  (add-hook 'org-load-hook #'+org|setup-evil)
+  (add-hook 'org-mode-hook #'evil-org-mode)
   :config
   (evil-org-set-key-theme '(navigation insert textobjects))
   (after! org-agenda
@@ -56,7 +59,6 @@
      org-indent-mode            ; margin-based indentation
      toc-org-enable             ; auto-table of contents
      visual-line-mode           ; line wrapping
-     evil-org-mode              ; evil-mode integration
 
      +org|enable-auto-reformat-tables
      +org|enable-auto-update-cookies
@@ -230,16 +232,17 @@ between the two."
 
   (add-hook! 'org-tab-first-hook #'(+org|indent-maybe +org|yas-expand-maybe))
 
-  (require 'evil-org)
   (map! :map org-mode-map
         "C-c C-S-l" #'+org/remove-link
         "C-c C-i"   #'org-toggle-inline-images
         [remap doom/backward-to-bol-or-indent]          #'org-beginning-of-line
-        [remap doom/forward-to-last-non-comment-or-eol] #'org-end-of-line
+        [remap doom/forward-to-last-non-comment-or-eol] #'org-end-of-line))
 
-        :map evil-org-mode-map
-        :i [backtab]   #'+org/dedent
-        :i [backspace] #'evil-org-delete-backward-char
+(defun +org|setup-evil ()
+  (require 'evil-org)
+  (add-hook 'doom-delete-backward-functions #'+org|delete-backward-char)
+  (map! :map evil-org-mode-map
+        :i [backtab] #'+org/dedent
         ;; navigate table cells (from insert-mode)
         :i  "C-l"   #'+org/table-next-field
         :i  "C-h"   #'+org/table-previous-field

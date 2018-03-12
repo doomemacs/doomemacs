@@ -282,6 +282,28 @@ with `org-cycle'). Also:
 ;;
 
 ;;;###autoload
+(defun +org|delete-backward-char ()
+  (when (eq major-mode 'org-mode)
+    (org-check-before-invisible-edit 'delete-backward)
+    (save-match-data
+      (when (and (org-at-table-p)
+                 (not (org-region-active-p))
+                 (string-match "|" (buffer-substring (point-at-bol) (point)))
+                 (looking-at ".*?|"))
+        (let ((pos (point))
+              (noalign (looking-at "[^|\n\r]*  |"))
+              (c org-table-may-need-update))
+          (delete-char n)
+          (unless overwrite-mode
+            (skip-chars-forward "^|")
+            (insert " ")
+            (goto-char (1- pos)))
+          ;; noalign: if there were two spaces at the end, this field
+          ;; does not determine the width of the column.
+          (when noalign (setq org-table-may-need-update c)))
+        t))))
+
+;;;###autoload
 (defun +org|indent-maybe ()
   "Indent the current item (header or item), if possible. Made for
 `org-tab-first-hook'."
