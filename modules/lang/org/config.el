@@ -240,6 +240,9 @@ between the two."
 
   (add-hook! 'org-tab-first-hook #'(+org|indent-maybe +org|yas-expand-maybe))
 
+  ;; Tell `doom/delete-backward-char' to respect org tables
+  (add-hook 'doom-delete-backward-functions #'+org|delete-backward-char)
+
   (map! :map org-mode-map
         "C-c C-S-l" #'+org/remove-link
         "C-c C-i"   #'org-toggle-inline-images
@@ -248,7 +251,6 @@ between the two."
 
 (defun +org|setup-evil ()
   (require 'evil-org)
-  (add-hook 'doom-delete-backward-functions #'+org|delete-backward-char)
   (map! :map evil-org-mode-map
         :i [backtab] #'+org/dedent
         ;; navigate table cells (from insert-mode)

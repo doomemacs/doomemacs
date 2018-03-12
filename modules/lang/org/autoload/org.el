@@ -284,6 +284,7 @@ with `org-cycle'). Also:
 
 ;;;###autoload
 (defun +org|delete-backward-char ()
+  "TODO"
   (when (eq major-mode 'org-mode)
     (org-check-before-invisible-edit 'delete-backward)
     (save-match-data
