@@ -199,6 +199,13 @@ unfold to point on startup."
         (file-relative-name path)
       path))
 
+  ;; highlight broken links
+  (org-link-set-parameters
+   "file"
+   :face (lambda (path)
+           (unless (file-remote-p path)
+             (if (file-exists-p path) 'org-link 'error))))
+
   (defmacro def-org-file-link! (key dir)
     `(org-link-set-parameters
       ,key
@@ -207,7 +214,7 @@ unfold to point on startup."
       :face     (lambda (link)
                   (if (file-exists-p (expand-file-name link ,dir))
                       'org-link
-                    '(:inherit (error underline))))))
+                    'error))))
 
   (def-org-file-link! "org" +org-dir)
   (def-org-file-link! "doom" doom-emacs-dir)
