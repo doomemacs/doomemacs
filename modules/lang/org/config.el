@@ -100,11 +100,11 @@ unfold to point on startup."
   ;; make delimiter auto-closing a little more conservative
   (after! smartparens
     (sp-with-modes 'org-mode
-      (sp-local-pair "*" nil :unless '(sp-point-after-word-p sp-point-before-word-p sp-point-at-bol-p))
-      (sp-local-pair "_" nil :unless '(sp-point-after-word-p sp-point-before-word-p))
-      (sp-local-pair "/" nil :unless '(sp-point-after-word-p sp-point-before-word-p +org-sp-point-in-checkbox-p))
-      (sp-local-pair "~" nil :unless '(sp-point-after-word-p sp-point-before-word-p))
-      (sp-local-pair "=" nil :unless '(sp-point-after-word-p sp-point-before-word-p)))))
+      (sp-local-pair "*" nil :unless '(:add sp-point-before-word-p sp-point-at-bol-p))
+      (sp-local-pair "_" nil :unless '(:add sp-point-before-word-p))
+      (sp-local-pair "/" nil :unless '(:add sp-point-before-word-p +org-sp-point-in-checkbox-p))
+      (sp-local-pair "~" nil :unless '(:add sp-point-before-word-p))
+      (sp-local-pair "=" nil :unless '(:add sp-point-before-word-p)))))
 
 (defun +org|enable-auto-reformat-tables ()
   "Realign tables exiting insert mode (`evil-mode')."
