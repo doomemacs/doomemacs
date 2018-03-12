@@ -101,3 +101,15 @@ in, or d) the module associated with the current major mode (see
       (unless (file-exists-p doc-path)
         (error "There is no documentation for this module"))
       (find-file doc-path))))
+
+;;;###autoload
+(defun doom*fix-helpful-prettyprint (value)
+  "TODO"
+  (with-temp-buffer
+    (delay-mode-hooks (emacs-lisp-mode))
+    (pp value (current-buffer))
+    (unless (or (symbolp value) (booleanp value) (keymapp value))
+      (unless (hash-table-p value)
+        (fill-region (point-min) (point-max)))
+      (quiet! (indent-region (point-min) (point-max))))
+    (string-trim (buffer-string))))

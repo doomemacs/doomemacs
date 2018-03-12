@@ -231,7 +231,9 @@ extension, try to guess one."
   (global-set-key [remap describe-function] #'helpful-callable)
   (global-set-key [remap describe-command]  #'helpful-command)
   (global-set-key [remap describe-variable] #'helpful-variable)
-  (global-set-key [remap describe-key]      #'helpful-key))
+  (global-set-key [remap describe-key]      #'helpful-key)
+
+  (advice-add #'helpful--pretty-print :override #'doom*fix-helpful-prettyprint))
 
 (def-package! pcre2el
   :commands rxt-quote-pcre)
