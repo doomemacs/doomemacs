@@ -1,0 +1,55 @@
+;;; ui/posframe/config.el -*- lexical-binding: t; -*-
+
+(when (version< emacs-version "26")
+  (error "The :ui posframe module requires Emacs 26+"))
+
+
+(def-package! posframe
+  :defer t
+  :config
+  (setq posframe-inhibit-double-buffering t))
+
+
+(def-package! company-childframe
+  :when (featurep! :completion company)
+  :after company
+  :config
+  (company-childframe-mode 1)
+  (after! desktop
+    (push '(company-childframe-mode . nil) desktop-minor-mode-table)))
+
+
+(def-package! ivy-posframe
+  :when (featurep! :completion ivy)
+  :after ivy
+  :preface
+  ;; This function searches the entire `obarray' just to populate
+  ;; `ivy-display-functions-props'. There are 15k entries in mine! This is
+  ;; wasteful, so...
+  (advice-add #'ivy-posframe-setup :override #'ignore)
+  :config
+  ;; ... let's do it manually
+  (dolist (fn (list 'ivy-posframe-display-at-frame-bottom-left
+                    'ivy-posframe-display-at-frame-center
+                    'ivy-posframe-display-at-point
+                    'ivy-posframe-display-at-frame-bottom-window-center
+                    'ivy-posframe-display
+                    'ivy-posframe-display-at-window-bottom-left
+                    'ivy-posframe-display-at-window-center
+                    '+posframe-ivy-display-at-frame-center-near-bottom))
+    (push (list fn :cleanup 'ivy-posframe-cleanup) ivy-display-functions-props))
+
+  (push '(t . +posframe-ivy-display-at-frame-center-near-bottom) ivy-display-functions-alist)
+  (push '(swiper . nil) ivy-display-functions-alist)
+  (ivy-posframe-enable)
+
+  (setq ivy-height 16
+        ivy-fixed-height-minibuffer nil
+        ivy-posframe-parameters `((min-width . 90)
+                                  (min-height . ,ivy-height)
+                                  (internal-border-width . 10)))
+  (unless ivy-posframe-font
+    (setq ivy-posframe-font (font-spec :family (font-get doom-font :family) :size 18))))
+
+
+;; TODO helm-posframe?
