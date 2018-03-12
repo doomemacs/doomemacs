@@ -454,6 +454,12 @@ the next."
 ;;
 
 ;;;###autoload
+(defun +workspaces|protect-buffers-in-other-persps ()
+  "Return nil if this buffer is present in other perspectives/workspaces (bury
+it, don't kill it)."
+  (not (persp-other-persps-with-buffer-except-nil (current-buffer))))
+
+;;;###autoload
 (defun +workspaces|delete-associated-workspace (&optional frame)
   "Delete workspace associated with current frame.
 A workspace gets associated with a frame when a new frame is interactively

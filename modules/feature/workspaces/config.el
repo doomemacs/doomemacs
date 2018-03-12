@@ -114,6 +114,7 @@ Uses `+workspaces-main' to determine the name of the main workspace."
            ;; kill-buffer-query-functions
            (remove-hook 'kill-buffer-query-functions 'persp-kill-buffer-query-function)
            (add-hook 'kill-buffer-query-functions 'persp-kill-buffer-query-function t)
+           (add-hook 'kill-buffer-query-functions #'+workspaces|protect-buffers-in-other-persps)
 
            ;; Remap `buffer-list' to current workspace's buffers in
            ;; `doom-buffer-list'
@@ -121,6 +122,7 @@ Uses `+workspaces-main' to determine the name of the main workspace."
            (advice-add #'display-buffer   :after #'+workspaces*auto-add-buffer)
            (advice-add #'doom-buffer-list :override #'+workspace-buffer-list))
           (t
+           (remove-hook 'kill-buffer-query-functions #'+workspaces|protect-buffers-in-other-persps)
            (advice-remove #'switch-to-buffer #'+workspaces*auto-add-buffer)
            (advice-remove #'display-buffer   #'+workspaces*auto-add-buffer)
            (advice-remove #'doom-buffer-list #'+workspace-buffer-list))))
