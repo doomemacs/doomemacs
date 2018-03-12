@@ -55,7 +55,7 @@ this is nil after Emacs has started something is wrong.")
   "The time it took, in seconds, for DOOM Emacs to initialize.")
 
 (defvar doom-modules
-  (make-hash-table :test #'equal :size 90 :rehash-threshold 1.0)
+  (make-hash-table :test #'equal :size 100 :rehash-threshold 1.0)
   "A hash table of enabled modules. Set by `doom-initialize-modules'.")
 
 (defvar doom-psuedo-module-dirs ()
