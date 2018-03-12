@@ -154,6 +154,7 @@ unfold to point on startup."
    org-image-actual-width nil
    org-indent-indentation-per-level 2
    org-indent-mode-turns-on-hiding-stars t
+   org-list-description-max-indent 4
    org-pretty-entities nil
    org-pretty-entities-include-sub-superscripts t
    org-priority-faces
