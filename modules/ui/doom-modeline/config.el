@@ -32,12 +32,17 @@
   "Sets `+doom-modeline-current-window' appropriately"
   (when-let* ((win (frame-selected-window)))
     (unless (minibuffer-window-active-p win)
-      (setq +doom-modeline-current-window win))))
+      (setq +doom-modeline-current-window win)
+      (force-mode-line-update))))
+
+(defun +doom-modeline|unset-selected-window ()
+  (setq +doom-modeline-current-window nil)
+  (force-mode-line-update))
 
 (add-hook 'window-configuration-change-hook #'+doom-modeline|set-selected-window)
 (add-hook 'focus-in-hook #'+doom-modeline|set-selected-window)
-(advice-add #'handle-switch-frame :after #'+doom-modeline|set-selected-window)
-(advice-add #'select-window :after #'+doom-modeline|set-selected-window)
+(add-hook 'focus-out-hook #'+doom-modeline|unset-selected-window)
+(add-hook 'doom-after-switch-window-hook #'+doom-modeline|set-selected-window)
 
 
 ;;
@@ -649,5 +654,19 @@ Returns \"\" to not break --no-window-system."
 (add-hook 'image-mode-hook #'+doom-modeline|set-media-modeline)
 (add-hook 'circe-mode-hook #'+doom-modeline|set-special-modeline)
 
+;; TODO Refactor me
+(defvar +doom-modeline-remap-face-cookie nil)
+(defun +doom-modeline|focus ()
+  (require 'face-remap)
+  (when +doom-modeline-remap-face-cookie
+    (face-remap-remove-relative +doom-modeline-remap-face-cookie)))
+
+(defun +doom-modeline|unfocus ()
+  (require 'face-remap)
+  (setq +doom-modeline-remap-face-cookie (face-remap-add-relative 'mode-line 'mode-line-inactive)))
+
+(add-hook 'focus-in-hook #'+doom-modeline|focus)
+(add-hook 'focus-out-hook #'+doom-modeline|unfocus)
+
 ;;
-(add-hook 'doom-big-font-mode-hook #'+doom-modeline|resize-for-big-font)
+;; (add-hook 'doom-big-font-mode-hook #'+doom-modeline|resize-for-big-font)
