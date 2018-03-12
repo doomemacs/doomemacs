@@ -399,6 +399,8 @@ MODULES is an malformed plist of modules to load."
 (defmacro def-package-hook! (package when &rest body)
   "Reconfigures a package's `def-package!' block.
 
+Only use this macro in a module's init.el file.
+
 Under the hood, this uses use-package's `use-package-inject-hooks'.
 
 PACKAGE is a symbol; the package's name.
