@@ -15,6 +15,7 @@
   :when (featurep! :completion company)
   :after company
   :config
+  (setq company-childframe-notification nil)
   (company-childframe-mode 1)
   (after! desktop
     (push '(company-childframe-mode . nil) desktop-minor-mode-table)))
