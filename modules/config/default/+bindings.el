@@ -736,7 +736,9 @@
 
       (:after evil
         (:map evil-ex-completion-map
-          "C-a" #'move-beginning-of-line))
+          "C-a" #'move-beginning-of-line
+          "C-b" #'backward-word
+          "C-f" #'forward-word))
 
       (:map messages-buffer-mode-map
         "M-;" #'eval-expression
