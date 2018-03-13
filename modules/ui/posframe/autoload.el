@@ -15,8 +15,13 @@
 ;;;###autoload
 (defun +posframe|delete-on-escape ()
   "TODO"
-  (when (cl-loop for frame in (frame-list)
-                 if (and (frame-parameter frame 'posframe-buffer)
-                         (not (frame-visible-p frame)))
-                 return t)
-    (posframe-delete-all)))
+  (unless (frame-parameter (selected-frame) 'posframe-buffer)
+    (cl-loop for frame in (frame-list)
+             if (and (frame-parameter frame 'posframe-buffer)
+                     (not (frame-visible-p frame)))
+             do (delete-frame frame))
+    (dolist (buffer (buffer-list))
+      (let ((frame (buffer-local-value 'posframe--frame buffer)))
+        (when (and frame (or (not (frame-live-p frame))
+                             (not (frame-visible-p frame))))
+          (posframe--kill-buffer buffer))))))
