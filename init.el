@@ -47,6 +47,7 @@
        file-templates    ; auto-snippets for empty files
        snippets          ; my elves. They type so I don't have to
        spellcheck        ; tasing you for misspelling mispelling
+       services          ; TODO managing external services & code builders
        syntax-checker    ; tasing you for every semicolon you forget
        version-control   ; remember, remember that commit in November
        workspaces        ; tab emulation, persistence & separate workspaces
@@ -63,6 +64,7 @@
        evil-goggles      ; display visual hints when editing in evil
        vi-tilde-fringe   ; fringe tildes to mark beyond EOB
        window-select     ; visually switch windows
+       posframe          ; use child frames where possible (Emacs 26+ only)
 
        :tools
        dired             ; making dired pretty [functional]
@@ -98,4 +100,4 @@
        ;; a Spacemacs-inspired keybinding scheme, a custom yasnippet library,
        ;; and additional ex commands for evil-mode. Use it as a reference for
        ;; your own modules.
-       (master +bindings +snippets +evil-commands))
+       (default +bindings +snippets +evil-commands))
