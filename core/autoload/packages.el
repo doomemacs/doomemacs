@@ -393,8 +393,8 @@ package.el as appropriate."
 (defun doom//packages-update ()
   "Interactive command for updating packages."
   (interactive)
-  (doom-refresh-packages doom-debug-mode)
   (message! "Looking for outdated packages...")
+  (doom-refresh-packages doom-debug-mode)
   (let ((packages (sort (doom-get-outdated-packages) #'doom--sort-alpha)))
     (cond ((not packages)
            (message! (green "Everything is up-to-date")))

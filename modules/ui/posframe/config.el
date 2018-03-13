@@ -7,6 +7,7 @@
 (def-package! posframe
   :defer t
   :config
+  (add-hook 'doom-cleanup-hook #'posframe-delete-all)
   (add-hook 'doom-escape-hook #'+posframe|delete-on-escape))
 
 
@@ -14,6 +15,7 @@
   :when (featurep! :completion company)
   :after company
   :config
+  (setq company-childframe-notification nil)
   (company-childframe-mode 1)
   (after! desktop
     (push '(company-childframe-mode . nil) desktop-minor-mode-table)))
@@ -46,6 +48,7 @@
   (setq ivy-height 16
         ivy-fixed-height-minibuffer nil
         ivy-posframe-parameters `((min-width . 90)
+                                  (min-height . ,ivy-height)
                                   (internal-border-width . 10)))
   (unless ivy-posframe-font
     (setq ivy-posframe-font (font-spec :family (font-get doom-font :family) :size 18))))

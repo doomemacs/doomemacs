@@ -326,8 +326,6 @@
       ;; don't leave visual mode after shifting
       :v  "<"  #'+evil/visual-dedent  ; vnoremap < <gv
       :v  ">"  #'+evil/visual-indent  ; vnoremap > >gv
-      ;; paste from recent yank register (which isn't overwritten)
-      :v  "C-p" "\"0p"
 
       :nv "C-a"   #'evil-numbers/inc-at-pt
       :nv "C-S-a" #'evil-numbers/dec-at-pt
