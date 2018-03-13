@@ -11,8 +11,6 @@ and switches to insert mode if there are editable fields."
   (cl-letf (((symbol-function 'region-beginning) (lambda () evil-visual-beginning))
             ((symbol-function 'region-end)       (lambda () evil-visual-end)))
     (yas-insert-snippet))
-  (when-let* ((snippet (car-safe (yas-active-snippets))))
-    (let ((fields (yas--snippet-fields snippet)))
-      (evil-insert-state +1)
-      (unless fields (evil-change-state 'normal)))))
+  (when (yas-active-snippets)
+    (evil-insert-state +1)))
 
