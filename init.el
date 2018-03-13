@@ -33,10 +33,11 @@
 (setq org-directory "~/Documents/org")
 (setq langtool-java-classpath "/usr/share/languagetool:/usr/share/java/languagetool/*")
 
-(setq doom-font (font-spec :family "Fira Mono" :size 50)
-      doom-variable-pitch-font (font-spec :family "Fira Sans" :size 56)
-      doom-unicode-font (font-spec :family "DejaVu Sans Mono" :size 56)
-      doom-big-font (font-spec :family "Anonymous Pro" :size 56))
+(setq doom-font (font-spec :family "Fira Mono" :size 48)
+      doom-variable-pitch-font (font-spec :family "Fira Sans" :size 48)
+      doom-unicode-font (font-spec :family "DejaVu Sans Mono" :size 48)
+      ivy-posframe-font (font-spec :family (font-get doom-font :family) :size 45)
+      doom-big-font (font-spec :family "Anonymous Pro" :size 48))
 
 (doom! :feature
        (popup            ; tame sudden yet inevitable temporary windows
@@ -69,7 +70,6 @@
        :tools
        dired             ; making dired pretty [functional]
        imenu             ; an imenu sidebar and searchable code index
-       impatient-mode    ; show off code over HTTP
        make              ; run make tasks from Emacs
        term              ; terminals in Emacs
 
@@ -85,7 +85,6 @@
         +export)         ; Exporting org to whatever you want
        python             ; beautiful is better than ugly
        sh                 ; she sells (ba|z)sh shells on the C xor
-       web                ; the tubes
 
        ;; Applications are complex and opinionated modules that transform Emacs
        ;; toward a specific purpose. They may have additional dependencies and
