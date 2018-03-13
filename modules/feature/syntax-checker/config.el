@@ -31,18 +31,18 @@
 ;; + tty Emacs (anywhere): popup-tip
 
 (def-package! flycheck-pos-tip
-  :commands (flycheck-pos-tip-mode)
+  :unless IS-MAC
+  :after flycheck
   :config
   (setq flycheck-pos-tip-timeout 10
         ;; fallback to flycheck-popup-tip in terminal Emacs
         flycheck-pos-tip-display-errors-tty-function
         #'flycheck-popup-tip-show-popup
-        flycheck-display-errors-delay 0.7))
+        flycheck-display-errors-delay 0.7)
+  (flycheck-pos-tip-mode))
 
 (def-package! flycheck-popup-tip
-  :commands (flycheck-popup-tip-mode flycheck-popup-tip-show-popup))
+  :commands (flycheck-popup-tip-mode flycheck-popup-tip-show-popup)
+  :after flycheck
+  :config (if IS-MAC (flycheck-popup-tip-mode)))
 
-(after! flycheck
-  (if IS-MAC
-      (flycheck-popup-tip-mode)
-    (flycheck-pos-tip-mode)))
