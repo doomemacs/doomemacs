@@ -7,7 +7,7 @@
 (def-package! posframe
   :defer t
   :config
-  (setq posframe-inhibit-double-buffering t))
+  (add-hook 'doom-escape-hook #'+posframe|delete-on-escape))
 
 
 (def-package! company-childframe
