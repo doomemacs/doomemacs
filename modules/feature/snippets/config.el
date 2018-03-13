@@ -8,7 +8,11 @@
              yas-lookup-snippet yas-insert-snippet yas-new-snippet
              yas-visit-snippet-file snippet-mode)
   :preface
-  (defvar yas-minor-mode-map (make-sparse-keymap))
+  (defvar yas-minor-mode-map
+    (let ((map (make-sparse-keymap)))
+      (when (featurep! :feature evil)
+        (define-key map [remap yas-insert-snippet] #'+snippets/expand-on-region))
+      map))
 
   :init
   ;; Ensure `yas-reload-all' is called as late as possible. Other modules could
