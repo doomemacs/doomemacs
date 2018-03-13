@@ -31,7 +31,7 @@
   (defun +ruby|add-version-to-modeline ()
     "Add version string to the major mode in the modeline."
     (setq mode-name
-          (if +python-current-version
+          (if +ruby-current-version
               (format "Ruby %s" +ruby-current-version)
             "Ruby")))
   (add-hook 'ruby-mode-hook #'+ruby|add-version-to-modeline)
