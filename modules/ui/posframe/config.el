@@ -7,6 +7,7 @@
 (def-package! posframe
   :defer t
   :config
+  (add-hook 'doom-cleanup-hook #'posframe-delete-all)
   (add-hook 'doom-escape-hook #'+posframe|delete-on-escape))
 
 
