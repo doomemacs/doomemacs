@@ -8,9 +8,11 @@
 ;;;###autoload
 (defun +posframe-poshandler-frame-center-near-bottom (info)
   "TODO"
-  (let ((pos (posframe-poshandler-frame-center info)))
-    (cons (car pos)
-          (truncate (* (cdr pos) 1.4)))))
+  (let* ((posframe (plist-get info :posframe))
+         (parent-frame (plist-get info :parent-frame)))
+    (let ((pos (posframe-poshandler-frame-center info)))
+      (cons (car pos)
+            (truncate (/ (frame-pixel-height parent-frame) 1.6))))))
 
 ;;;###autoload
 (defun +posframe|delete-on-escape ()
