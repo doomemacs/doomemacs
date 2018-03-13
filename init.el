@@ -1,0 +1,101 @@
+;;; init.el -*- lexical-binding: t; -*-
+;;
+;; Author:  Henrik Lissner <henrik@lissner.net>
+;; URL:     https://github.com/hlissner/doom-emacs
+;;
+;;   =================     ===============     ===============   ========  ========
+;;   \\ . . . . . . .\\   //. . . . . . .\\   //. . . . . . .\\  \\. . .\\// . . //
+;;   ||. . ._____. . .|| ||. . ._____. . .|| ||. . ._____. . .|| || . . .\/ . . .||
+;;   || . .||   ||. . || || . .||   ||. . || || . .||   ||. . || ||. . . . . . . ||
+;;   ||. . ||   || . .|| ||. . ||   || . .|| ||. . ||   || . .|| || . | . . . . .||
+;;   || . .||   ||. _-|| ||-_ .||   ||. . || || . .||   ||. _-|| ||-_.|\ . . . . ||
+;;   ||. . ||   ||-'  || ||  `-||   || . .|| ||. . ||   ||-'  || ||  `|\_ . .|. .||
+;;   || . _||   ||    || ||    ||   ||_ . || || . _||   ||    || ||   |\ `-_/| . ||
+;;   ||_-' ||  .|/    || ||    \|.  || `-_|| ||_-' ||  .|/    || ||   | \  / |-_.||
+;;   ||    ||_-'      || ||      `-_||    || ||    ||_-'      || ||   | \  / |  `||
+;;   ||    `'         || ||         `'    || ||    `'         || ||   | \  / |   ||
+;;   ||            .===' `===.         .==='.`===.         .===' /==. |  \/  |   ||
+;;   ||         .=='   \_|-_ `===. .==='   _|_   `===. .===' _-|/   `==  \/  |   ||
+;;   ||      .=='    _-'    `-_  `='    _-'   `-_    `='  _-'   `-_  /|  \/  |   ||
+;;   ||   .=='    _-'          '-__\._-'         '-_./__-'         `' |. /|  |   ||
+;;   ||.=='    _-'                                                     `' |  /==.||
+;;   =='    _-'                                                            \/   `==
+;;   \   _-'                                                                `-_   /
+;;    `''                                                                      ``'
+;;
+;; These demons are not part of GNU Emacs.
+;;
+;;; License: MIT
+
+(require 'core (concat user-emacs-directory "core/core"))
+
+(setq expand-file-name "~/Documents/org")
+(setq org-directory "~/Documents/org")
+(setq langtool-java-classpath "/usr/share/languagetool:/usr/share/java/languagetool/*")
+
+(setq doom-font (font-spec :family "Fira Mono" :size 50)
+      doom-variable-pitch-font (font-spec :family "Fira Sans" :size 56)
+      doom-unicode-font (font-spec :family "DejaVu Sans Mono" :size 56)
+      doom-big-font (font-spec :family "Anonymous Pro" :size 56))
+
+(doom! :feature
+       (popup            ; tame sudden yet inevitable temporary windows
+        +all             ; catch all popups that start with an asterix
+        +defaults)       ; default popup rules
+       eval              ; run code, run (also, repls)
+       evil              ; come to the dark side, we have cookies
+       file-templates    ; auto-snippets for empty files
+       snippets          ; my elves. They type so I don't have to
+       spellcheck        ; tasing you for misspelling mispelling
+       syntax-checker    ; tasing you for every semicolon you forget
+       version-control   ; remember, remember that commit in November
+       workspaces        ; tab emulation, persistence & separate workspaces
+
+       :completion
+       company           ; the ultimate code completion backend
+       ivy               ; a search engine for love and life
+
+       :ui
+       doom              ; what makes DOOM look the way it does
+       doom-modeline     ; a snazzy Atom-inspired mode-line
+       hl-todo           ; highlight TODO/FIXME/NOTE tags
+       nav-flash         ; blink the current line after jumping
+       evil-goggles      ; display visual hints when editing in evil
+       vi-tilde-fringe   ; fringe tildes to mark beyond EOB
+       window-select     ; visually switch windows
+
+       :tools
+       dired             ; making dired pretty [functional]
+       imenu             ; an imenu sidebar and searchable code index
+       impatient-mode    ; show off code over HTTP
+       make              ; run make tasks from Emacs
+       term              ; terminals in Emacs
+
+       :lang
+       cc                ; C/C++/Obj-C madness
+       data              ; config/data formats
+       emacs-lisp        ; drown in parentheses
+       markdown          ; writing docs for people to ignore
+       (org              ; organize your plain life in plain text
+        +attach          ; custom attachment system
+        +babel           ; running code in org
+        +capture         ; org-capture in and outside of Emacs
+        +export)         ; Exporting org to whatever you want
+       python             ; beautiful is better than ugly
+       sh                 ; she sells (ba|z)sh shells on the C xor
+       web                ; the tubes
+
+       ;; Applications are complex and opinionated modules that transform Emacs
+       ;; toward a specific purpose. They may have additional dependencies and
+       ;; should be loaded late.
+       :app
+      ; (write            ; emacs as a word processor (latex + org + markdown)
+      ;  +wordnut         ; wordnet (wn) search
+      ;  +langtool)       ; a proofreader (grammar/style check) for Emacs
+
+       :config
+       ;; The default module set reasonable defaults for Emacs. It also provides
+       ;; a Spacemacs-inspired keybinding scheme, a custom yasnippet library,
+       ;; and additional ex commands for evil-mode. Use it as a reference for
+       ;; your own modules.
+       (master +bindings +snippets +evil-commands))
