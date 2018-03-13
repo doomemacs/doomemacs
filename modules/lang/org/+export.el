@@ -73,7 +73,7 @@
            info)))))
   (advice-add #'org-html--format-image :override #'+org*org-html--format-image)
   (when (featurep! +style)
-    (defvar +org-html-export-style-dir "~/.doom.d/modules/lang/org-private/org-html-head"
+    (defvar +org-html-export-style-dir (concat doom-modules-dir "lang/org-private/org-html-head")
       "Directory that contains files to be embeded into org export html.")
     (defvar +org-html-export-style-alist '("include.html"
                                            "bootstrap-toc.js"
