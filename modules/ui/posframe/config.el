@@ -7,7 +7,7 @@
 (def-package! posframe
   :defer t
   :config
-  (setq posframe-inhibit-double-buffering t))
+  (add-hook 'doom-escape-hook #'+posframe|delete-on-escape))
 
 
 (def-package! company-childframe
@@ -46,7 +46,6 @@
   (setq ivy-height 16
         ivy-fixed-height-minibuffer nil
         ivy-posframe-parameters `((min-width . 90)
-                                  (min-height . ,ivy-height)
                                   (internal-border-width . 10)))
   (unless ivy-posframe-font
     (setq ivy-posframe-font (font-spec :family (font-get doom-font :family) :size 18))))

@@ -53,7 +53,7 @@
       ;; Other sensible, textmate-esque global bindings
       :ne "M-r"   #'+eval/buffer
       :ne "M-R"   #'+eval/region-and-replace
-      :ne "M-b"   #'+eval/build
+      :ne "M-b"   #'projectile-compile-project
       :ne "M-a"   #'mark-whole-buffer
       :ne "M-c"   #'evil-yank
       :ne "M-q"   (if (daemonp) #'delete-frame #'evil-quit-all)
@@ -224,7 +224,7 @@
           :desc "Toggle profiler"       :n  "p" #'doom/toggle-profiler)
 
         (:desc "insert" :prefix "i"
-          :desc "From kill-ring"        :nv "y" #'yank-pop
+          :desc "From kill-ring"        :nv "y" #'counsel-yank-pop
           :desc "From snippet"          :nv "s" #'yas-insert-snippet)
 
         (:desc "notes" :prefix "n"
@@ -329,8 +329,8 @@
       ;; paste from recent yank register (which isn't overwritten)
       :v  "C-p" "\"0p"
 
-      :nv "C-a" #'evil-numbers/inc-at-pt
-      :nv "C-x" #'evil-numbers/dec-at-pt
+      :nv "C-a"   #'evil-numbers/inc-at-pt
+      :nv "C-S-a" #'evil-numbers/dec-at-pt
 
 
       ;; --- Plugin bindings ------------------------------
@@ -563,17 +563,20 @@
       (:after ivy
         :map ivy-minibuffer-map
         [escape] #'keyboard-escape-quit
-        "C-SPC" #'ivy-call-and-recenter
-        "M-v" #'yank
-        "M-z" #'undo
-        "C-r" #'evil-paste-from-register
-        "C-k" #'ivy-previous-line
-        "C-j" #'ivy-next-line
-        "C-l" #'ivy-alt-done
-        "C-w" #'ivy-backward-kill-word
-        "C-u" #'ivy-kill-line
-        "C-b" #'backward-word
-        "C-f" #'forward-word)
+        "C-SPC"  #'ivy-call-and-recenter
+        "M-z"    #'undo
+        "M-v"    #'yank
+        "C-v"    #'yank
+        "C-r"    #'evil-paste-from-register
+        "C-k"    #'ivy-previous-line
+        "C-j"    #'ivy-next-line
+        "C-A-k"  #'ivy-scroll-down-command
+        "C-A-j"  #'ivy-scroll-up-command
+        "C-l"    #'ivy-alt-done
+        "C-w"    #'ivy-backward-kill-word
+        "C-u"    #'ivy-kill-line
+        "C-b"    #'backward-word
+        "C-f"    #'forward-word)
 
       ;; neotree
       (:after neotree
@@ -643,7 +646,7 @@
           [delete]        #'+snippets/delete-forward-char-or-field)
         (:map yas-minor-mode-map
           :ig "<tab>" yas-maybe-expand
-          :v  "<tab>" #'+snippets/expand-on-region))
+          :v  "<tab>" #'yas-insert-snippet))
 
 
       ;; --- Major mode bindings --------------------------
@@ -733,7 +736,9 @@
 
       (:after evil
         (:map evil-ex-completion-map
-          "C-a" #'move-beginning-of-line))
+          "C-a" #'move-beginning-of-line
+          "C-b" #'backward-word
+          "C-f" #'forward-word))
 
       (:map messages-buffer-mode-map
         "M-;" #'eval-expression
