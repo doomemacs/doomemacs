@@ -39,6 +39,8 @@
   :mode "\\.css$"
   :mode ("\\.scss$" . scss-mode)
   :config
+  (set! :docset 'css-mode "CSS")
+  (set! :docset 'scss-mode "Sass")
   (set! :company-backend '(css-mode scss-mode) 'company-css)
   (map! :map scss-mode-map :localleader :n "b" #'+css/scss-build))
 
@@ -46,6 +48,7 @@
 (def-package! sass-mode
   :mode "\\.sass$"
   :config
+  (set! :docset 'sass-mode "Sass")
   (set! :company-backend 'sass-mode 'company-css)
   (map! :map scss-mode-map :localleader :n "b" #'+css/sass-build))
 
