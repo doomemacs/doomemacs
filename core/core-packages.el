@@ -35,15 +35,7 @@
 ;;    just Emacs. Arguably, my config is still over-complicated, but shhh, it's
 ;;    fine. Everything is fine.
 ;;
-;; You should be able to use package.el commands without any conflicts, but to
-;; be absolutely certain use the doom alternatives:
-;;
-;;    + `package-install':          `doom/install-package'
-;;    + `package-reinstall':        `doom/reinstall-package'
-;;    + `package-delete':           `doom/delete-package'
-;;    + `package-update':           `doom/update-package'
-;;    + `package-autoremove':       `doom//packages-autoremove'
-;;    + `package-refresh-contents': `doom/refresh-packages'
+;; You should be able to use package.el commands without any conflicts.
 ;;
 ;; See core/autoload/packages.el for more functions.
 
@@ -852,14 +844,20 @@ compiled packages.'"
 
 
 ;;
-;; Package.el modifications
+;; Make package.el cooperate with Doom
 ;;
+
+(advice-add #'package-install          :before #'doom*initialize-packages)
+(advice-add #'package-reinstall        :before #'doom*initialize-packages)
+(advice-add #'package-delete           :before #'doom*initialize-packages)
+(advice-add #'package-refresh-contents :before #'doom*initialize-packages)
 
 ;; Updates QUELPA after deleting a package
 (advice-add #'package-delete :after #'doom*package-delete)
 
-;; It isn't safe to use `package-autoremove', so get rid of it
+;; Replace with Doom variants
 (advice-add #'package-autoremove :override #'doom//packages-autoremove)
+(advice-add #'package-install-selected-packages :override #'doom//packages-install)
 
 (provide 'core-packages)
 ;;; core-packages.el ends here
