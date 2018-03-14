@@ -17,6 +17,11 @@
     (kill-new default-directory)
     (message "Copied to clipboard")))
 
+(evil-define-command doom:compile (command &optional bang)
+  (interactive "<a><!>")
+  (let ((default-directory (if bang (doom-project-root t) default-directory)))
+    (compile command)))
+
 
 ;;
 ;; Commands
@@ -90,7 +95,7 @@
        (ex! "sw[oop]"  #'+helm:swoop)
        (ex! "todo"     #'+helm:todo)))
 ;; Project tools
-(ex! "build"       #'+eval/build)
+(ex! "compile"     #'doom:compile)
 (ex! "debug"       #'+debug/run)
 (ex! "er[rors]"    #'flycheck-list-errors)
 ;; File operations
