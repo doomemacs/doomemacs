@@ -53,7 +53,9 @@
 (defmacro without-project-cache! (&rest body)
   "Run BODY with projectile's project-root cache disabled. This is necessary if
 you want to interactive with a project other than the one you're in."
-  `(let (projectile-project-name
+  `(let ((projectile-project-root-files-functions
+          (remq 'projectile-root-local projectile-project-root-files-functions))
+         projectile-project-name
          projectile-require-project-root
          projectile-cached-buffer-file-name
          projectile-cached-project-root)
