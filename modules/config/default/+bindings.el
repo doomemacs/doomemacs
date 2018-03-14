@@ -53,7 +53,7 @@
       ;; Other sensible, textmate-esque global bindings
       :ne "M-r"   #'+eval/buffer
       :ne "M-R"   #'+eval/region-and-replace
-      :ne "M-b"   #'compile
+      :ne "M-b"   #'+default/compile
       :ne "M-a"   #'mark-whole-buffer
       :ne "M-c"   #'evil-yank
       :ne "M-q"   (if (daemonp) #'delete-frame #'evil-quit-all)
