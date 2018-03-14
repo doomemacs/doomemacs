@@ -417,6 +417,8 @@ character that looks like a space that `whitespace-mode' won't affect.")
 ;; Theme & font
 ;;
 
+(defvar doom-last-frame-type window-system)
+
 (defun doom|init-theme ()
   "Set the theme and load the font, in that order."
   (when doom-theme
@@ -459,7 +461,9 @@ character that looks like a space that `whitespace-mode' won't affect.")
 ;; frames, however. There's always `doom//reload-theme' if you need it!
 (defun doom|init-theme-in-frame (frame)
   "Reloads the theme in new daemon or tty frames."
-  (when (or (daemonp) (not (display-graphic-p)))
+  (when (and (not (eq doom-last-frame-type window-system))
+             (or (daemonp) (not (display-graphic-p))))
+    (setq doom-last-frame-type window-system)
     (with-selected-frame frame
       (doom|init-theme))))
 
