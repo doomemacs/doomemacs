@@ -284,15 +284,19 @@ DEFAULT is non-nil, set the default mode-line for all buffers."
 ;; Custom hooks
 ;;
 
-(defun doom*after-switch-window-hooks (&rest _)
-  (run-hooks 'doom-after-switch-window-hook))
-(defun doom*before-switch-window-hooks (&rest _)
-  (run-hooks 'doom-before-switch-window-hook))
+(defun doom*switch-window-hooks (orig-fn &rest args)
+  (run-hook-with-args 'doom-before-switch-window-hook)
+  (prog1 (apply orig-fn args)
+    (run-hook-with-args 'doom-after-switch-window-hook)))
+(defun doom*switch-buffer-hooks (orig-fn &rest args)
+  (run-hook-with-args 'doom-before-switch-buffer-hook)
+  (prog1 (apply orig-fn args)
+    (run-hook-with-args 'doom-after-switch-buffer-hook)))
 
-(advice-add #'select-frame :before  #'doom*before-switch-window-hooks)
-(advice-add #'select-frame :after   #'doom*after-switch-window-hooks)
-(advice-add #'select-window :before #'doom*before-switch-window-hooks)
-(advice-add #'select-window :after  #'doom*after-switch-window-hooks)
+(advice-add #'select-frame     :around #'doom*switch-window-hooks)
+(advice-add #'select-window    :around #'doom*switch-window-hooks)
+(advice-add #'switch-to-buffer :around #'doom*switch-buffer-hooks)
+(advice-add #'display-buffer   :around #'doom*switch-buffer-hooks)
 
 
 ;;
