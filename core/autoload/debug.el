@@ -37,7 +37,7 @@ whose car is the list of faces and cadr is the list of overlay faces."
 (defun doom-active-minor-modes ()
   "Get a list of active minor-mode symbols."
   (cl-loop for mode in minor-mode-list
-           unless (and (boundp mode) (symbol-value mode))
+           if (and (boundp mode) (symbol-value mode))
            collect mode))
 
 ;;;###autoload
