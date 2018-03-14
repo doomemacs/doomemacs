@@ -29,10 +29,37 @@
 
 (require 'core (concat user-emacs-directory "core/core"))
 
+;;; UI
+;; remove blinking cursor
+(remove-hook 'doom-post-init-hook #'blink-cursor-mode)
+(remove-hook 'doom-init-ui-hook #'blink-cursor-mode)
+(blink-cursor-mode -1)
+
+;; remove mouse
+(define-minor-mode disable-mouse-mode
+  "A minor-mode that disables all mouse keybinds."
+  :global t
+  :lighter ""
+  :keymap (make-sparse-keymap))
+
+(dolist (type '(mouse down-mouse drag-mouse
+                      double-mouse triple-mouse))
+  (dolist (prefix '("" C- M- S- M-S- C-M- C-S- C-M-S-))
+    ;; Yes, I actually HAD to go up to 7 here.
+    (dotimes (n 7)
+      (let ((k (format "%s%s-%s" prefix type n)))
+        (define-key disable-mouse-mode-map
+          (vector (intern k)) #'ignore)))))
+(disable-mouse-mode 1)
+
 (setq expand-file-name "~/Documents/org")
 (setq org-directory "~/Documents/org")
 (setq langtool-java-classpath "/usr/share/languagetool:/usr/share/java/languagetool/*")
 
+(setq +doom-modeline-height 56)
+(setq +doom-modeline-bar-width 4)
+
+(setq doom-theme 'doom-nord)
 (setq doom-font (font-spec :family "Fira Mono" :size 48)
       doom-variable-pitch-font (font-spec :family "Fira Sans" :size 48)
       doom-unicode-font (font-spec :family "DejaVu Sans Mono" :size 48)
@@ -55,6 +82,7 @@
 
        :completion
        company           ; the ultimate code completion backend
+       ;helm
        ivy               ; a search engine for love and life
 
        :ui
@@ -65,7 +93,7 @@
        evil-goggles      ; display visual hints when editing in evil
        vi-tilde-fringe   ; fringe tildes to mark beyond EOB
        window-select     ; visually switch windows
-       posframe          ; use child frames where possible (Emacs 26+ only)
+       ;posframe          ; use child frames where possible (Emacs 26+ only)
 
        :tools
        dired             ; making dired pretty [functional]
