@@ -17,9 +17,10 @@
     (kill-new default-directory)
     (message "Copied to clipboard")))
 
-(evil-define-command doom:compile (command &optional bang)
-  (interactive "<a><!>")
-  (let ((default-directory (if bang (doom-project-root t) default-directory)))
+(evil-define-command doom:make (command &optional from-pwd)
+  (interactive "<sh><!>")
+  (let ((default-directory (if from-pwd default-directory (doom-project-root t)))
+        (command (and command (evil-ex-replace-special-filenames command))))
     (compile command)))
 
 
@@ -95,7 +96,7 @@
        (ex! "sw[oop]"  #'+helm:swoop)
        (ex! "todo"     #'+helm:todo)))
 ;; Project tools
-(ex! "compile"     #'doom:compile)
+(ex! "mak[e]"      #'doom:make)
 (ex! "debug"       #'+debug/run)
 (ex! "er[rors]"    #'flycheck-list-errors)
 ;; File operations
