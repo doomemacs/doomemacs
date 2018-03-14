@@ -106,7 +106,8 @@ fundamental-mode) for performance sake."
         recentf-max-saved-items 300
         recentf-filename-handlers '(file-truename)
         recentf-exclude
-        (list "^/tmp/" "^/ssh:" "\\.?ido\\.last$" "\\.revive$" "/TAGS$"
+        (list #'file-remote-p "\\.\\(gz\\|gif\\|svg\\|png\\|jpe?g\\)$"
+              "^/tmp/" "^/ssh:" "\\.?ido\\.last$" "\\.revive$" "/TAGS$"
               "^/var/folders/.+$"
               ;; ignore private DOOM temp files (but not all of them)
               (concat "^" (file-truename doom-local-dir)))))
