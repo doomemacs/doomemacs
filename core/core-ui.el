@@ -506,6 +506,10 @@ confirmation."
     t))
 (setq confirm-kill-emacs #'doom-quit-p)
 
+(defun doom|ansi-color-apply ()
+  "TODO"
+  (ansi-color-apply-on-region compilation-filter-start (point)))
+
 (defun doom|no-fringes-in-minibuffer ()
   "Disable fringes in the minibuffer window."
   (set-window-fringes (minibuffer-window) 0 0 nil))
@@ -567,6 +571,8 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
   (add-hook 'kill-buffer-query-functions #'doom|protect-visible-buffers)
   ;; Renames major-modes [pedantry intensifies]
   (add-hook 'after-change-major-mode-hook #'doom|set-mode-name)
+  ;; Ensure ansi codes in compilation buffers are replaced
+  (add-hook 'compilation-filter-hook #'doom|ansi-color-apply)
   ;;
   (run-hooks 'doom-init-ui-hook))
 

@@ -566,9 +566,7 @@ loads MODULE SUBMODULE's packages.el file."
       t)))
 
 (defun doom-packages--async-run (fn)
-  (let* ((default-directory doom-emacs-dir)
-         (compilation-filter-hook
-          (list (lambda () (ansi-color-apply-on-region compilation-filter-start (point))))))
+  (let* ((default-directory doom-emacs-dir))
     (compile (format "%s --quick --batch -l core/core.el -f %s"
                      (executable-find "emacs")
                      (symbol-name fn)))
