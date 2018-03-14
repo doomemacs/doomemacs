@@ -8,6 +8,7 @@
   :mode "\\.rs$"
   :config
   (set! :env "RUST_SRC_PATH")
+  (set! :docset 'rust-mode "Rust")
   (setq rust-indent-method-chain t)
   (def-menu! +rust/build-menu
     "TODO"
