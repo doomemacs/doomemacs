@@ -845,6 +845,9 @@ compiled packages.'"
 ;; Make package.el cooperate with Doom
 ;;
 
+(defun doom*initialize-packages (&rest _)
+  (unless doom-init-p (doom-initialize-packages)))
+
 (advice-add #'package-install          :before #'doom*initialize-packages)
 (advice-add #'package-reinstall        :before #'doom*initialize-packages)
 (advice-add #'package-delete           :before #'doom*initialize-packages)

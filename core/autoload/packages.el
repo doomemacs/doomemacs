@@ -511,8 +511,3 @@ calls."
         (when (file-exists-p path)
           (delete-directory path t))))))
 
-;;;###autoload
-(defun doom*initialize-packages (&rest _)
-  "TODO"
-  (unless doom-init-p
-    (doom-initialize-packages)))
