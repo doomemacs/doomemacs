@@ -502,6 +502,7 @@ calls."
 ;;;###autoload
 (defun doom*package-delete (desc &rest _)
   "Update `quelpa-cache' upon a successful `package-delete'."
+  (doom-initialize-packages)
   (let ((name (package-desc-name desc)))
     (when (and (not (package-installed-p name))
                (assq name quelpa-cache))

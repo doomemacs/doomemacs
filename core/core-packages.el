@@ -845,13 +845,12 @@ compiled packages.'"
 ;; Make package.el cooperate with Doom
 ;;
 
-(defun doom*initialize-packages (&rest _)
-  (unless doom-init-p (doom-initialize-packages)))
+(defun doom*initialize-packages (&rest _) (package-initialize))
 
-(advice-add #'package-install          :before #'doom*initialize-packages)
-(advice-add #'package-reinstall        :before #'doom*initialize-packages)
 (advice-add #'package-delete           :before #'doom*initialize-packages)
+(advice-add #'package-install          :before #'doom*initialize-packages)
 (advice-add #'package-refresh-contents :before #'doom*initialize-packages)
+(advice-add #'package-reinstall        :before #'doom*initialize-packages)
 
 ;; Updates QUELPA after deleting a package
 (advice-add #'package-delete :after #'doom*package-delete)
