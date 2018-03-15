@@ -454,6 +454,17 @@ the next."
 ;;
 
 ;;;###autoload
+(defun +workspaces|auto-add-buffer ()
+  "Auto-associate buffers with perspectives upon opening them.
+
+Allows a perspective-specific buffer list via `+workspaces-buffer-list'."
+  (when (and persp-mode
+             (not persp-temporarily-display-buffer)
+             (doom-real-buffer-p))
+    (persp-add-buffer (current-buffer) (get-current-persp) nil)
+    (force-mode-line-update t)))
+
+;;;###autoload
 (defun +workspaces|protect-buffers-in-other-persps ()
   "Return nil if this buffer is present in other perspectives/workspaces (bury
 it, don't kill it)."

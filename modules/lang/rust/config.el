@@ -8,11 +8,17 @@
   :mode "\\.rs$"
   :config
   (set! :env "RUST_SRC_PATH")
+  (set! :docset 'rust-mode "Rust")
   (setq rust-indent-method-chain t)
+
+  (map! :map rust-mode-map
+        :localleader
+        :n "b" #'+rust/build-menu)
   (def-menu! +rust/build-menu
     "TODO"
-    '(("run"   :exec "cargo run"   :cwd t :when (+rust-cargo-project-p))
-      ("build" :exec "cargo build" :cwd t :when (+rust-cargo-project-p)))
+    '(("cargo run"   :exec "cargo run --color always")
+      ("cargo build" :exec "cargo build --color always")
+      ("cargo test"  :exec "cargo test --color always"))
     :prompt "Cargo: "))
 
 

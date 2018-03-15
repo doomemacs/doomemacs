@@ -1,6 +1,6 @@
 ;;; lang/org/config.el -*- lexical-binding: t; -*-
 
-(defvar +org-dir (expand-file-name "~/work/org/")
+(defvar +org-dir (expand-file-name "~/org/")
   "The directory where org files are kept.")
 
 ;; Sub-modules

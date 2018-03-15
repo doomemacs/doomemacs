@@ -114,26 +114,16 @@ Uses `+workspaces-main' to determine the name of the main workspace."
            ;; kill-buffer-query-functions
            (remove-hook 'kill-buffer-query-functions 'persp-kill-buffer-query-function)
            (add-hook 'kill-buffer-query-functions 'persp-kill-buffer-query-function t)
+
+           ;;
            (add-hook 'kill-buffer-query-functions #'+workspaces|protect-buffers-in-other-persps)
+           (add-hook 'doom-after-switch-buffer-hook #'+workspaces|auto-add-buffer)
 
            ;; Remap `buffer-list' to current workspace's buffers in
            ;; `doom-buffer-list'
-           (advice-add #'switch-to-buffer :after #'+workspaces*auto-add-buffer)
-           (advice-add #'display-buffer   :after #'+workspaces*auto-add-buffer)
            (advice-add #'doom-buffer-list :override #'+workspace-buffer-list))
           (t
+           (remove-hook 'doom-after-switch-buffer-hook #'+workspaces|auto-add-buffer)
            (remove-hook 'kill-buffer-query-functions #'+workspaces|protect-buffers-in-other-persps)
-           (advice-remove #'switch-to-buffer #'+workspaces*auto-add-buffer)
-           (advice-remove #'display-buffer   #'+workspaces*auto-add-buffer)
-           (advice-remove #'doom-buffer-list #'+workspace-buffer-list))))
-
-  (defun +workspaces*auto-add-buffer (buffer &rest _)
-    "Auto-associate buffers with perspectives upon opening them.
-
-Allows a perspective-specific buffer list via `+workspaces-buffer-list'."
-    (when (and persp-mode
-               (not persp-temporarily-display-buffer)
-               (doom-real-buffer-p buffer))
-      (persp-add-buffer buffer (get-current-persp) nil)
-      (force-mode-line-update t))))
+           (advice-remove #'doom-buffer-list #'+workspace-buffer-list)))))
 

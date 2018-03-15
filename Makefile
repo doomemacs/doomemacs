@@ -74,7 +74,7 @@ testi: | init.el .local/autoloads.el
 ## Utility tasks
 # Runs Emacs from a different folder than ~/.emacs.d; only use this for testing!
 run:
-	@$(DOOMI) --eval "(run-hooks 'after-init-hook 'emacs-startup-hook 'window-setup-hook)"
+	@$(DOOMI) $(ARGS) --eval "(run-hooks 'after-init-hook 'emacs-startup-hook 'window-setup-hook)"
 
 # Diagnoses potential OS/environment issues
 doctor:

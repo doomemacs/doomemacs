@@ -145,9 +145,11 @@ Goes down a list of possible backends:
               (+lookup--jump-to :documentation identifier)))
 
         ((and (featurep! :feature lookup +docsets)
-              (cl-find-if #'helm-dash-docset-installed-p
-                          (or (bound-and-true-p counsel-dash-docsets)
-                              (bound-and-true-p helm-dash-docsets))))
+              (or (require 'counsel-dash nil t)
+                  (require 'helm-dash nil t))
+              (or (bound-and-true-p counsel-dash-docsets)
+                  (bound-and-true-p helm-dash-docsets))
+              (helm-dash-installed-docsets))
          (+lookup/in-docsets identifier))
 
         ((featurep! :feature lookup +devdocs)

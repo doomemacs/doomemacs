@@ -5,9 +5,7 @@
   :config
   (set! :repl 'emacs-lisp-mode #'+emacs-lisp/repl)
   (set! :eval 'emacs-lisp-mode #'+emacs-lisp-eval)
-
-  ;; An xref backend is set up automatically for emacs-lisp-mode
-  (set! :lookup 'emacs-lisp-mode :documentation #'describe-symbol)
+  (set! :docset '(lisp-mode emacs-lisp-mode) "Emacs Lisp")
 
   (set! :rotate 'emacs-lisp-mode
     :symbols '(("t" "nil")

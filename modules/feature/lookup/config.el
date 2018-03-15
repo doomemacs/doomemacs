@@ -138,34 +138,35 @@ DOCSETS, to instruct it to append (or remove) those from the docsets already set
 by a major-mode, if any.
 
 Used by `+lookup/in-docsets' and `+lookup/documentation'."
-    (cl-loop with ivy-p = (featurep! :completion ivy)
-             for mode in (doom-enlist (doom-unquote modes))
-             for hook-sym = (intern (format "+docs|init-for-%s" mode))
-             for var-sym = (if ivy-p 'counsel-dash-docsets 'helm-dash-docsets)
-             collect hook-sym into hooks
-             collect
-             `(defun ,hook-sym ()
-                (make-variable-buffer-local ',var-sym)
-                (cond ((eq ',(car docsets) :add)
-                       `(setq ,var-sym (append ,var-sym (list ,@(cdr docsets)))))
-                      ((eq ',(car docsets) :remove)
-                       `(setq ,var-sym
-                              (cl-loop with to-delete = (list ,@(cdr docsets))
-                                       for docset in ,var-sym
-                                       unless (member docset to-delete)
-                                       collect docset)))
-                      (`(setq ,var-sym (list ,@docsets)))))
-             into forms
-             finally return `(progn ,@forms (add-hook! ,modes ',hooks))))
+    (let* ((modes (doom-unquote modes))
+           (ivy-p (featurep! :completion ivy))
+           (hook-sym (intern (format "+lookup|%s-docsets--%s"
+                                     (cond ((eq ',(car docsets) :add)    'add)
+                                           ((eq ',(car docsets) :remove) 'remove)
+                                           ('set))
+                                     (string-join docsets "-"))))
+           (var-sym (if ivy-p 'counsel-dash-docsets 'helm-dash-docsets)))
+      `(progn
+         (defun ,hook-sym ()
+           (make-variable-buffer-local ',var-sym)
+           ,(cond ((eq ',(car docsets) :add)
+                   `(setq ,var-sym (append ,var-sym (list ,@(cdr docsets)))))
+                  ((eq ',(car docsets) :remove)
+                   `(setq ,var-sym
+                          (cl-loop with to-delete = (list ,@(cdr docsets))
+                                   for docset in ,var-sym
+                                   unless (member docset to-delete)
+                                   collect docset)))
+                  (`(setq ,var-sym (list ,@docsets)))))
+         (add-hook! ,modes #',hook-sym))))
 
   ;; Both packages depend on helm-dash
   (def-package! helm-dash
     :commands (helm-dash helm-dash-install-docset helm-dash-at-point
-               helm-dash-docset-installed-p)
+               helm-dash-docset-installed-p helm-dash-installed-docsets)
     :config
-    ;; Obey XDG conventions
-    (when-let* ((xdg-data-home (getenv "XDG_DATA_HOME")))
-      (setq helm-dash-docsets-path (expand-file-name "docsets" xdg-data-home)))
+    (unless (file-directory-p helm-dash-docsets-path)
+      (setq helm-dash-docsets-path (concat doom-etc-dir "docsets/")))
     (unless (file-directory-p helm-dash-docsets-path)
       (make-directory helm-dash-docsets-path t))
     (setq helm-dash-enable-debugging doom-debug-mode))
@@ -190,5 +191,14 @@ See `devdocs-alist' for the defaults. "
     `(dolist (mode ',modes)
        (push (cons mode ,docset) devdocs-alist)))
 
-  (def-package! devdocs :defer t))
+  (def-package! devdocs
+    :defer t
+    :config
+    (setq devdocs-alist
+          (append '((rust-mode . "rust")
+                    (scss-mode . "scss")
+                    (gfm-mode . "markdown")
+                    (nim-mode . "nim")
+                    (typescript-mode . "typescript"))
+                  devdocs-alist))))
 

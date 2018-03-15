@@ -53,7 +53,7 @@
       ;; Other sensible, textmate-esque global bindings
       :ne "M-r"   #'+eval/buffer
       :ne "M-R"   #'+eval/region-and-replace
-      :ne "M-b"   #'projectile-compile-project
+      :ne "M-b"   #'+default/compile
       :ne "M-a"   #'mark-whole-buffer
       :ne "M-c"   #'evil-yank
       :ne "M-q"   (if (daemonp) #'delete-frame #'evil-quit-all)
@@ -225,12 +225,13 @@
 
         (:desc "insert" :prefix "i"
           :desc "From kill-ring"        :nv "y" #'counsel-yank-pop
+          :desc "From evil registers"   :nv "r" #'counsel-evil-registers
           :desc "From snippet"          :nv "s" #'yas-insert-snippet)
 
         (:desc "notes" :prefix "n"
           :desc "Find file in notes"    :n  "n" #'+default/find-in-notes
           :desc "Browse notes"          :n  "N" #'+default/browse-notes
-          :desc "Org capture"           :n  "x" #'+org-capture/open
+          :desc "Org capture"           :n  "x" #'org-capture
           :desc "Browse mode notes"     :n  "m" #'+org/browse-notes-for-major-mode
           :desc "Browse project notes"  :n  "p" #'+org/browse-notes-for-project)
 

@@ -35,15 +35,7 @@
 ;;    just Emacs. Arguably, my config is still over-complicated, but shhh, it's
 ;;    fine. Everything is fine.
 ;;
-;; You should be able to use package.el commands without any conflicts, but to
-;; be absolutely certain use the doom alternatives:
-;;
-;;    + `package-install':          `doom/install-package'
-;;    + `package-reinstall':        `doom/reinstall-package'
-;;    + `package-delete':           `doom/delete-package'
-;;    + `package-update':           `doom/update-package'
-;;    + `package-autoremove':       `doom//packages-autoremove'
-;;    + `package-refresh-contents': `doom/refresh-packages'
+;; You should be able to use package.el commands without any conflicts.
 ;;
 ;; See core/autoload/packages.el for more functions.
 
@@ -370,10 +362,11 @@ MODULES is an malformed plist of modules to load."
             ((let ((submodule (if (listp m) (car m) m))
                    (flags     (if (listp m) (cdr m))))
                (let ((path (doom-module-find-path module submodule)))
-                 (doom-module-set module submodule :flags flags :path path)
-                 (push `(let ((doom--current-module ',(cons module submodule)))
-                          (load! init ,path t))
-                       load-forms))))))
+                 (when path
+                   (doom-module-set module submodule :flags flags :path path)
+                   (push `(let ((doom--current-module ',(cons module submodule)))
+                            (load! init ,path t))
+                         load-forms)))))))
     `(let (file-name-handler-alist)
        (setq doom-modules ',doom-modules)
        (let ((doom--initializing t))
@@ -574,9 +567,7 @@ loads MODULE SUBMODULE's packages.el file."
       t)))
 
 (defun doom-packages--async-run (fn)
-  (let* ((default-directory doom-emacs-dir)
-         (compilation-filter-hook
-          (list (lambda () (ansi-color-apply-on-region compilation-filter-start (point))))))
+  (let* ((default-directory doom-emacs-dir))
     (compile (format "%s --quick --batch -l core/core.el -f %s"
                      (executable-find "emacs")
                      (symbol-name fn)))
@@ -852,14 +843,22 @@ compiled packages.'"
 
 
 ;;
-;; Package.el modifications
+;; Make package.el cooperate with Doom
 ;;
+
+(defun doom*initialize-packages (&rest _) (package-initialize))
+
+(advice-add #'package-delete           :before #'doom*initialize-packages)
+(advice-add #'package-install          :before #'doom*initialize-packages)
+(advice-add #'package-refresh-contents :before #'doom*initialize-packages)
+(advice-add #'package-reinstall        :before #'doom*initialize-packages)
 
 ;; Updates QUELPA after deleting a package
 (advice-add #'package-delete :after #'doom*package-delete)
 
-;; It isn't safe to use `package-autoremove', so get rid of it
+;; Replace with Doom variants
 (advice-add #'package-autoremove :override #'doom//packages-autoremove)
+(advice-add #'package-install-selected-packages :override #'doom//packages-install)
 
 (provide 'core-packages)
 ;;; core-packages.el ends here

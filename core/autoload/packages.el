@@ -6,11 +6,51 @@
 (require 'package)
 (require 'async)
 
+;;; Private functions
+(defsubst doom--sort-alpha (it other)
+  (string-lessp (symbol-name (car it))
+                (symbol-name (car other))))
+
+(defun doom--packages-choose (prompt)
+  (let ((table (cl-loop for pkg in package-alist
+                        unless (package-built-in-p (cdr pkg))
+                        collect (cons (package-desc-full-name (cdr pkg))
+                                      (cdr pkg)))))
+    (cdr (assoc (completing-read prompt
+                                 (mapcar #'car table)
+                                 nil t)
+                table))))
+
+(defmacro doom--condition-case! (&rest body)
+  `(condition-case-unless-debug ex
+       (condition-case ex2
+           (progn ,@body)
+         ('file-error
+          (message! (bold (red "  FILE ERROR: %s" (error-message-string ex2))))
+          (message! "  Trying again...")
+          (quiet! (doom-refresh-packages-maybe t))
+          ,@body))
+     ('user-error
+      (message! (bold (red "  ERROR: %s" ex))))
+     ('error
+      (doom--refresh-pkg-cache)
+      (message! (bold (red "  FATAL ERROR: %s" ex))))))
+
+(defun doom--refresh-pkg-cache ()
+  "Clear the cache for `doom-refresh-packages-maybe'."
+  (setq doom--refreshed-p nil)
+  (doom-cache-set 'last-pkg-refresh nil))
+
+
+;;
+;; Library
+;;
+
 ;;;###autoload
-(defun doom-refresh-packages (&optional force-p)
-  "Refresh ELPA packages."
+(defun doom-refresh-packages-maybe (&optional force-p)
+  "Refresh ELPA packages, if it hasn't been refreshed recently."
   (when force-p
-    (doom-refresh-clear-cache))
+    (doom--refresh-pkg-cache))
   (unless (or (doom-cache-get 'last-pkg-refresh)
               doom--refreshed-p)
     (condition-case-unless-debug ex
@@ -19,15 +59,9 @@
           (package-refresh-contents)
           (doom-cache-set 'last-pkg-refresh t 900))
     ('error
-     (doom-refresh-clear-cache)
+     (doom--refresh-pkg-cache)
      (message "Failed to refresh packages: (%s) %s"
               (car ex) (error-message-string ex))))))
-
-;;;###autoload
-(defun doom-refresh-clear-cache ()
-  "Clear the cache for `doom-refresh-packages'."
-  (setq doom--refreshed-p nil)
-  (doom-cache-set 'last-pkg-refresh nil))
 
 ;;;###autoload
 (defun doom-package-backend (name &optional noerror)
@@ -215,48 +249,6 @@ Used by `doom//packages-install'."
                        (doom-package-different-recipe-p name)))
            collect desc))
 
-;;;###autoload
-(defun doom*package-delete (desc &rest _)
-  "Update `quelpa-cache' upon a successful `package-delete'."
-  (let ((name (package-desc-name desc)))
-    (when (and (not (package-installed-p name))
-               (assq name quelpa-cache))
-      (map-delete quelpa-cache name)
-      (quelpa-save-cache)
-      (let ((path (expand-file-name (symbol-name name) quelpa-build-dir)))
-        (when (file-exists-p path)
-          (delete-directory path t))))))
-
-;;; Private functions
-(defsubst doom--sort-alpha (it other)
-  (string-lessp (symbol-name (car it))
-                (symbol-name (car other))))
-
-(defun doom--packages-choose (prompt)
-  (let ((table (cl-loop for pkg in package-alist
-                        unless (package-built-in-p (cdr pkg))
-                        collect (cons (package-desc-full-name (cdr pkg))
-                                      (cdr pkg)))))
-    (cdr (assoc (completing-read prompt
-                                 (mapcar #'car table)
-                                 nil t)
-                table))))
-
-(defmacro doom--condition-case! (&rest body)
-  `(condition-case-unless-debug ex
-       (condition-case ex2
-           (progn ,@body)
-         ('file-error
-          (message! (bold (red "  FILE ERROR: %s" (error-message-string ex2))))
-          (message! "  Trying again...")
-          (quiet! (doom-refresh-packages t))
-          ,@body))
-     ('user-error
-      (message! (bold (red "  ERROR: %s" ex))))
-     ('error
-      (doom-refresh-clear-cache)
-      (message! (bold (red "  FATAL ERROR: %s" ex))))))
-
 
 ;;
 ;; Main functions
@@ -369,7 +361,7 @@ package.el as appropriate."
            (message! (yellow "Aborted!")))
 
           (t
-           (doom-refresh-packages doom-debug-mode)
+           (doom-refresh-packages-maybe doom-debug-mode)
            (dolist (pkg packages)
              (message! "Installing %s" (car pkg))
              (doom--condition-case!
@@ -394,7 +386,7 @@ package.el as appropriate."
   "Interactive command for updating packages."
   (interactive)
   (message! "Looking for outdated packages...")
-  (doom-refresh-packages doom-debug-mode)
+  (doom-refresh-packages-maybe doom-debug-mode)
   (let ((packages (sort (doom-get-outdated-packages) #'doom--sort-alpha)))
     (cond ((not packages)
            (message! (green "Everything is up-to-date")))
@@ -476,38 +468,6 @@ package.el as appropriate."
 ;;
 
 ;;;###autoload
-(defalias 'doom/install-package #'package-install)
-
-;;;###autoload
-(defun doom/reinstall-package (desc)
-  "Reinstalls package package with optional quelpa RECIPE (see `quelpa-recipe' for
-an example; the package package can be omitted)."
-  (declare (interactive-only t))
-  (interactive
-   (list (doom--packages-choose "Reinstall package: ")))
-  (let ((package (package-desc-name desc)))
-    (doom-delete-package package t)
-    (doom-install-package package (cdr (assq package doom-packages)))))
-
-;;;###autoload
-(defun doom/delete-package (desc)
-  "Prompts the user with a list of packages and deletes the selected package.
-Use this interactively. Use `doom-delete-package' for direct calls."
-  (declare (interactive-only t))
-  (interactive
-   (list (doom--packages-choose "Delete package: ")))
-  (let ((package (package-desc-name desc)))
-    (if (package-installed-p package)
-        (if (y-or-n-p (format "%s will be deleted. Confirm?" package))
-            (message "%s %s"
-                     (if (doom-delete-package package t)
-                         "Deleted"
-                       "Failed to delete")
-                     package)
-          (message "Aborted"))
-      (message "%s isn't installed" package))))
-
-;;;###autoload
 (defun doom/update-package (pkg)
   "Prompts the user with a list of outdated packages and updates the selected
 package. Use this interactively. Use `doom-update-package' for direct
@@ -521,6 +481,7 @@ calls."
                                         nil t)
                      (user-error "All packages are up to date"))))
      (list (cdr (assq (car (assoc package package-alist)) packages)))))
+  (doom-initialize-packages)
   (cl-destructuring-bind (package old-version new-version) pkg
     (if-let* ((desc (doom-package-outdated-p package)))
         (let ((old-v-str (package-version-join old-version))
@@ -533,10 +494,21 @@ calls."
             (message "Aborted")))
       (message "%s is up-to-date" package))))
 
+
+;;
+;; Advice
+;;
+
 ;;;###autoload
-(defun doom/refresh-packages (&optional force-p)
-  "Synchronize package metadata with the sources in `package-archives'. If
-FORCE-P (the universal argument) is set, ignore the cache."
-  (declare (interactive-only t))
-  (interactive "P")
-  (doom-refresh-packages force-p))
+(defun doom*package-delete (desc &rest _)
+  "Update `quelpa-cache' upon a successful `package-delete'."
+  (doom-initialize-packages)
+  (let ((name (package-desc-name desc)))
+    (when (and (not (package-installed-p name))
+               (assq name quelpa-cache))
+      (map-delete quelpa-cache name)
+      (quelpa-save-cache)
+      (let ((path (expand-file-name (symbol-name name) quelpa-build-dir)))
+        (when (file-exists-p path)
+          (delete-directory path t))))))
+

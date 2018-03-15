@@ -42,7 +42,11 @@
     (push (list fn :cleanup 'ivy-posframe-cleanup) ivy-display-functions-props))
 
   (push '(t . +posframe-ivy-display-at-frame-center-near-bottom) ivy-display-functions-alist)
-  (push '(swiper . nil) ivy-display-functions-alist)
+
+  ;; posframe doesn't work well with async sources
+  (dolist (fn '(swiper counsel-rg counsel-ag counsel-pt counsel-grep counsel-git-grep))
+    (push (cons fn nil) ivy-display-functions-alist))
+
   (ivy-posframe-enable)
 
   (setq ivy-height 16

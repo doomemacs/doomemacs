@@ -90,7 +90,6 @@ immediately runs it on the current candidate (ending the ivy session)."
         [remap execute-extended-command] #'counsel-M-x
         [remap find-file]                #'counsel-find-file
         [remap find-library]             #'counsel-find-library
-        [remap yank-pop]                 #'counsel-yank-pop
         [remap info-lookup-symbol]       #'counsel-info-lookup-symbol
         [remap imenu]                    #'counsel-imenu
         [remap recentf-open-files]       #'counsel-recentf

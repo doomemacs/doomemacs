@@ -284,15 +284,19 @@ DEFAULT is non-nil, set the default mode-line for all buffers."
 ;; Custom hooks
 ;;
 
-(defun doom*after-switch-window-hooks (&rest _)
-  (run-hooks 'doom-after-switch-window-hook))
-(defun doom*before-switch-window-hooks (&rest _)
-  (run-hooks 'doom-before-switch-window-hook))
+(defun doom*switch-window-hooks (orig-fn &rest args)
+  (run-hook-with-args 'doom-before-switch-window-hook)
+  (prog1 (apply orig-fn args)
+    (run-hook-with-args 'doom-after-switch-window-hook)))
+(defun doom*switch-buffer-hooks (orig-fn &rest args)
+  (run-hook-with-args 'doom-before-switch-buffer-hook)
+  (prog1 (apply orig-fn args)
+    (run-hook-with-args 'doom-after-switch-buffer-hook)))
 
-(advice-add #'select-frame :before  #'doom*before-switch-window-hooks)
-(advice-add #'select-frame :after   #'doom*after-switch-window-hooks)
-(advice-add #'select-window :before #'doom*before-switch-window-hooks)
-(advice-add #'select-window :after  #'doom*after-switch-window-hooks)
+(advice-add #'select-frame     :around #'doom*switch-window-hooks)
+(advice-add #'select-window    :around #'doom*switch-window-hooks)
+(advice-add #'switch-to-buffer :around #'doom*switch-buffer-hooks)
+(advice-add #'display-buffer   :around #'doom*switch-buffer-hooks)
 
 
 ;;
@@ -498,6 +502,10 @@ confirmation."
     t))
 (setq confirm-kill-emacs #'doom-quit-p)
 
+(defun doom|ansi-color-apply ()
+  "TODO"
+  (ansi-color-apply-on-region compilation-filter-start (point)))
+
 (defun doom|no-fringes-in-minibuffer ()
   "Disable fringes in the minibuffer window."
   (set-window-fringes (minibuffer-window) 0 0 nil))
@@ -559,6 +567,8 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
   (add-hook 'kill-buffer-query-functions #'doom|protect-visible-buffers)
   ;; Renames major-modes [pedantry intensifies]
   (add-hook 'after-change-major-mode-hook #'doom|set-mode-name)
+  ;; Ensure ansi codes in compilation buffers are replaced
+  (add-hook 'compilation-filter-hook #'doom|ansi-color-apply)
   ;;
   (run-hooks 'doom-init-ui-hook))
 
