@@ -29,6 +29,12 @@
 
 (require 'core (concat user-emacs-directory "core/core"))
 
+;;; Syntax
+;; Auto-Complete
+(require 'company)
+(setq company-idle-delay 0.2
+      company-minimum-prefix-length 1)
+
 ;;; UI
 ;; remove blinking cursor
 (remove-hook 'doom-post-init-hook #'blink-cursor-mode)
@@ -58,8 +64,8 @@
 
 (setq +doom-modeline-height 56)
 (setq +doom-modeline-bar-width 4)
-
-(setq doom-theme 'doom-nord)
+(setq org-ellipsis " ▼ ")
+(setq doom-theme 'doom-one)
 (setq doom-font (font-spec :family "Fira Mono" :size 48)
       doom-variable-pitch-font (font-spec :family "Fira Sans" :size 48)
       doom-unicode-font (font-spec :family "DejaVu Sans Mono" :size 48)
