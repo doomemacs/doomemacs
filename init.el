@@ -66,7 +66,7 @@
 (setq +doom-modeline-bar-width 4)
 (setq org-ellipsis " ▼ ")
 (setq doom-theme 'doom-one)
-(setq doom-font (font-spec :family "Fira Mono" :size 48)
+(setq doom-font (font-spec :family "Fira Mono" :size 44)
       doom-variable-pitch-font (font-spec :family "Fira Sans" :size 48)
       doom-unicode-font (font-spec :family "DejaVu Sans Mono" :size 48)
       ivy-posframe-font (font-spec :family (font-get doom-font :family) :size 45)
@@ -99,6 +99,7 @@
        evil-goggles      ; display visual hints when editing in evil
        vi-tilde-fringe   ; fringe tildes to mark beyond EOB
        window-select     ; visually switch windows
+       neotree
        ;posframe          ; use child frames where possible (Emacs 26+ only)
 
        :tools
