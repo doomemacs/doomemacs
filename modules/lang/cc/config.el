@@ -129,13 +129,15 @@ compilation database is present in the project.")
 (def-package! irony
   :after cc-mode
   :commands (irony-install-server irony-mode)
-  :preface (setq irony-server-install-prefix (concat doom-etc-dir "irony-server/"))
+  :preface
+  (setq irony-server-install-prefix (concat doom-etc-dir "irony-server/"))
   :init
   (defun +cc|init-irony-mode ()
     (when (memq major-mode '(c-mode c++-mode objc-mode))
       (irony-mode +1)))
   (add-hook! (c-mode c++-mode objc-mode) #'+cc|init-irony-mode)
   :config
+  (setq irony-cdb-search-directory-list '("." "build" "build-conda"))
   ;; Initialize compilation database, if present. Otherwise, fall back on
   ;; `+cc-default-compiler-options'.
   (add-hook 'irony-mode-hook #'+cc|irony-init-compile-options))
