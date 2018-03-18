@@ -69,15 +69,11 @@ Possible values:
   (add-hook 'post-command-hook #'+doom-dashboard|reposition-point nil t))
 
 (map! :map +doom-dashboard-mode-map
-      "n" #'+doom-dashboard/next-button
-      "p" #'+doom-dashboard/previous-button
-      "N" #'+doom-dashboard/last-button
-      "P" #'+doom-dashboard/first-button
+      "n" #'forward-button
+      "p" #'backward-button
       (:when (featurep! :feature evil)
-        :m "j" #'+doom-dashboard/next-button
-        :m "k" #'+doom-dashboard/previous-button
-        :m "gg" #'+doom-dashboard/first-button
-        :m "G"  #'+doom-dashboard/last-button
+        :m "j" #'forward-button
+        :m "k" #'backward-button
 
         [remap evil-delete]        #'ignore
         [remap evil-delete-line]   #'ignore
