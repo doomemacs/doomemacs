@@ -97,9 +97,12 @@ Possible values:
 
 (defun +doom-dashboard|reposition-point ()
   "Trap the point in the buttons."
-  (unless (button-at (point))
-    (or (+doom-dashboard/previous-button)
-        (+doom-dashboard/first-button))))
+  (or (ignore-errors
+        (if (button-at (point))
+            (forward-button 0)
+          (backward-button 1)))
+      (progn (goto-char (point-min))
+             (forward-button 1))))
 
 (defun +doom-dashboard|init ()
   "Initializes Doom's dashboard."
