@@ -1,4 +1,4 @@
-;;; lang/lua/config.el --- lua + Love2D -*- lexical-binding: t; -*-
+;;; lang/lua/config.el -*- lexical-binding: t; -*-
 
 (def-package! lua-mode
   :mode "\\.lua$"
@@ -9,7 +9,7 @@
   (set! :electric 'lua-mode :words '("else" "end"))
   (set! :repl 'lua-mode #'+lua/repl)
   ;; sp's lua-specific rules are obnoxious, so we disable them
-  (setq sp-pairs (delete (assq 'lua-mode sp-pairs) sp-pairs))
+  (map-delete sp-pairs 'lua-mode)
 
   (def-menu! +lua/build-menu
     "Build/compilation commands for `lua-mode' buffers."
