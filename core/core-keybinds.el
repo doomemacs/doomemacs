@@ -310,7 +310,7 @@ Example
                      (dolist (keymap doom--keymaps)
                        (push `(define-key ,keymap ,key ,def) forms)))
                     (t
-                     (push `(,(if doom--local 'local-set-key 'global-set-key) ,key ,def)
+                     (push `(,(if doom--local #'local-set-key #'global-set-key) ,key ,def)
                            forms))))
           (setq states '()
                 doom--local nil

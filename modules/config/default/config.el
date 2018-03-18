@@ -80,8 +80,8 @@
       (let ((fn-sym (intern (format "+evil*repeat-%s" command))))
         `(progn
            (defun ,fn-sym (&rest _)
-             (define-key evil-motion-state-map (kbd ";") ',next-func)
-             (define-key evil-motion-state-map (kbd ",") ',prev-func))
+             (define-key evil-motion-state-map ";" ',next-func)
+             (define-key evil-motion-state-map "," ',prev-func))
            (advice-add #',command :before #',fn-sym))))
 
     ;; n/N
