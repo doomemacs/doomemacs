@@ -180,6 +180,7 @@ Uses `shrink-window-if-larger-than-buffer'."
          (add-hook 'doom-unreal-buffer-functions #'+popup-buffer-p)
          (add-hook 'doom-escape-hook #'+popup|close-on-escape t)
          (add-hook 'doom-cleanup-hook #'+popup|cleanup-rules)
+         (add-hook 'after-change-major-mode-hook #'+popup|set-modeline-on-enable)
          (setq +popup--old-display-buffer-alist display-buffer-alist
                display-buffer-alist +popup--display-buffer-alist
                window--sides-inhibit-check t)
@@ -189,6 +190,7 @@ Uses `shrink-window-if-larger-than-buffer'."
          (remove-hook 'doom-unreal-buffer-functions #'+popup-buffer-p)
          (remove-hook 'doom-escape-hook #'+popup|close-on-escape)
          (remove-hook 'doom-cleanup-hook #'+popup|cleanup-rules)
+         (remove-hook 'after-change-major-mode-hook #'+popup|set-modeline-on-enable)
          (setq display-buffer-alist +popup--old-display-buffer-alist
                window--sides-inhibit-check nil)
          (+popup|cleanup-rules)
@@ -221,7 +223,7 @@ disabled."
     (set-window-fringes nil f f fringes-outside-margins)))
 
 ;;;###autoload
-(defun +popup|set-modeline ()
+(defun +popup|set-modeline-on-enable ()
   "Don't show modeline in popup windows without a `modeline' window-parameter.
 
 + If one exists and it's a symbol, use `doom-modeline' to grab the format.
@@ -229,17 +231,22 @@ disabled."
 + If nil (or omitted), then hide the modeline entirely (the default).
 + If a function, it takes the current buffer as its argument and must return one
   of the above values."
-  (if +popup-buffer-mode
-      (let ((modeline (+popup-parameter-fn 'modeline nil (current-buffer))))
-        (cond ((eq modeline 't))
-              ((or (eq modeline 'nil)
-                   (not modeline))
-               (hide-mode-line-mode +1))
-              ((symbolp modeline)
-               (when-let* ((hide-mode-line-format (doom-modeline modeline)))
-                 (hide-mode-line-mode +1)))))
-    (when (bound-and-true-p hide-mode-line-mode)
-      (hide-mode-line-mode -1))))
+  (when +popup-buffer-mode
+    (let ((modeline (+popup-parameter-fn 'modeline nil (current-buffer))))
+      (cond ((eq modeline 't))
+            ((or (eq modeline 'nil)
+                 (null modeline))
+             (hide-mode-line-mode +1))
+            ((symbolp modeline)
+             (when-let* ((hide-mode-line-format (doom-modeline modeline)))
+               (hide-mode-line-mode +1)))))))
+
+;;;###autoload
+(defun +popup|unset-modeline-on-disable ()
+  "Restore the modeline when `+popup-buffer-mode' is deactivated."
+  (when (and (not +popup-buffer-mode)
+             (bound-and-true-p hide-mode-line-mode))
+    (hide-mode-line-mode -1)))
 
 ;;;###autoload
 (defun +popup|close-on-escape ()

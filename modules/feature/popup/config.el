@@ -166,7 +166,10 @@ ALIST supports one custom parameter: `size', which will resolve to
     '((size . +popup-shrink-to-fit)) '((transient . 0) (select . ignore))))
 
 (add-hook 'doom-init-ui-hook #'+popup-mode)
-(add-hook! '+popup-buffer-mode-hook #'(+popup|adjust-fringes +popup|set-modeline))
+(add-hook! '+popup-buffer-mode-hook
+  #'(+popup|adjust-fringes
+     +popup|set-modeline-on-enable
+     +popup|unset-modeline-on-disable))
 
 
 ;;
