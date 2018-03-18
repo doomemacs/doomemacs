@@ -56,9 +56,11 @@ Possible values:
 
 (define-derived-mode +doom-dashboard-mode special-mode
   (format "DOOM v%s" doom-version)
+  :syntax-table nil
+  :abbrev-table nil
   "Major mode for the DOOM dashboard buffer."
-  (read-only-mode +1)
-  (setq truncate-lines t)
+  (setq truncate-lines t
+        buffer-read-only t)
   (setq-local whitespace-style nil)
   (setq-local show-trailing-whitespace nil)
   (cl-loop for (car . _cdr) in fringe-indicator-alist
@@ -101,7 +103,6 @@ Possible values:
 
 (defun +doom-dashboard|init ()
   "Initializes Doom's dashboard."
-  (add-hook 'focus-in-hook #'+doom-dashboard-reload)
   (add-hook 'window-configuration-change-hook #'+doom-dashboard|resize)
   (add-hook 'kill-buffer-query-functions #'+doom-dashboard|reload-on-kill)
   (add-hook 'doom-after-switch-buffer-hook #'+doom-dashboard|reload-on-kill)
