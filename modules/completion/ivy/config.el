@@ -109,7 +109,8 @@ immediately runs it on the current candidate (ending the ivy session)."
      cmd
      '(("O" +ivy-git-grep-other-window-action "open in other window"))))
 
-  ;; Removes character limit from `counsel-ag-function'
+  ;; Removes character limit from `counsel-ag-function' and sets a jump point
+  ;; for `evil'.
   ;;
   ;; This may need to be updated frequently, to meet changes upstream.
   ;; counsel-ag, counsel-rg and counsel-pt all use this function
