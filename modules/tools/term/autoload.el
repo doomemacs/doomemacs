@@ -5,7 +5,7 @@
   "Open a terminal buffer in the current window. If PROJECT-ROOT (C-u) is
 non-nil, cd into the current project's root."
   (interactive "P")
-  (let ((default-directory (if project-root (doom-project-root) default-directory)))
+  (let ((default-directory (if project-root (doom-project-root 'nocache) default-directory)))
     (call-interactively #'multi-term)))
 
 ;;;###autoload
@@ -14,7 +14,7 @@ non-nil, cd into the current project's root."
 current project's root."
   (interactive "P")
   (require 'multi-term)
-  (let ((default-directory (if project-root (doom-project-root) default-directory))
+  (let ((default-directory (if project-root (doom-project-root 'nocache) default-directory))
         (buffer (multi-term-get-buffer current-prefix-arg)))
     (pop-to-buffer buffer)
     (setq multi-term-buffer-list (nconc multi-term-buffer-list (list buffer)))
