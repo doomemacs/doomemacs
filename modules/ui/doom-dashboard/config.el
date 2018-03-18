@@ -63,28 +63,41 @@ Possible values:
   (setq-local show-trailing-whitespace nil)
   (cl-loop for (car . _cdr) in fringe-indicator-alist
            collect (cons car nil) into alist
-           finally do (setq fringe-indicator-alist alist)))
+           finally do (setq fringe-indicator-alist alist))
+  (add-hook 'post-command-hook #'+doom-dashboard|reposition-point nil t))
 
 (map! :map +doom-dashboard-mode-map
       "n" #'+doom-dashboard/next-button
       "p" #'+doom-dashboard/previous-button
       "N" #'+doom-dashboard/last-button
       "P" #'+doom-dashboard/first-button
-      [remap evil-insert]  #'ignore
-      [remap evil-replace] #'ignore
-      [remap evil-change]  #'ignore
-      [remap evil-visual-char]  #'ignore
-      [remap evil-visual-line]  #'ignore
       (:when (featurep! :feature evil)
-        :em "j" #'+doom-dashboard/next-button
-        :em "k" #'+doom-dashboard/previous-button
-        :em "gg" #'+doom-dashboard/first-button
-        :em "G"  #'+doom-dashboard/last-button))
+        :m "j" #'+doom-dashboard/next-button
+        :m "k" #'+doom-dashboard/previous-button
+        :m "gg" #'+doom-dashboard/first-button
+        :m "G"  #'+doom-dashboard/last-button
+
+        [remap evil-delete]        #'ignore
+        [remap evil-delete-line]   #'ignore
+        [remap evil-insert]        #'ignore
+        [remap evil-append]        #'ignore
+        [remap evil-replace]       #'ignore
+        [remap evil-replace-state] #'ignore
+        [remap evil-change]        #'ignore
+        [remap evil-change-line]   #'ignore
+        [remap evil-visual-char]   #'ignore
+        [remap evil-visual-line]   #'ignore))
 
 
 ;;
 ;; Hooks
 ;;
+
+(defun +doom-dashboard|reposition-point ()
+  "Trap the point in the buttons."
+  (unless (button-at (point))
+    (or (+doom-dashboard/previous-button)
+        (+doom-dashboard/first-button))))
 
 (defun +doom-dashboard|init ()
   "Initializes Doom's dashboard."
