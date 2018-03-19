@@ -23,10 +23,11 @@
 
 (def-package! evil-collection
   :when (featurep! +everywhere)
-  :after evil
+  :after (company evil)
   :preface
   (setq evil-want-integration nil) ; must be set before evil is loaded
   :config
+  (require 'company-tng)
   (evil-collection-init)
   ;; don't interfere with leader key
   (map! :after compile :map compilation-mode-map doom-leader-key nil)
