@@ -20,6 +20,18 @@
 (autoload 'goto-last-change "goto-chg")
 (autoload 'goto-last-change-reverse "goto-chg")
 
+
+(def-package! evil-collection
+  :when (featurep! +everywhere)
+  :after evil
+  :preface
+  (setq evil-want-integration nil) ; must be set before evil is loaded
+  :config
+  (evil-collection-init)
+  ;; don't interfere with leader key
+  (map! :after compile :map compilation-mode-map doom-leader-key nil))
+
+
 (def-package! evil
   :init
   (setq evil-want-C-u-scroll t
@@ -61,12 +73,6 @@
   (defun +evil|update-cursor-color ()
     (setq +evil--default-cursor-color (face-background 'cursor)))
   (add-hook 'doom-init-theme-hook #'+evil|update-cursor-color)
-
-  ;; default modes
-  (dolist (mode '(tabulated-list-mode view-mode comint-mode term-mode calendar-mode Man-mode))
-    (evil-set-initial-state mode 'emacs))
-  (dolist (mode '(help-mode debugger-mode grep-mode))
-    (evil-set-initial-state mode 'normal))
 
 
   ;; --- keybind fixes ----------------------

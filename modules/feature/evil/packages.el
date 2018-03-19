@@ -4,6 +4,7 @@
 (package! evil)
 (package! evil-args)
 (package! evil-commentary)
+(package! evil-collection)
 (package! evil-easymotion)
 (package! evil-embrace)
 (package! evil-escape)
