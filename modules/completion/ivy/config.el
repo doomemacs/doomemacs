@@ -107,14 +107,7 @@ immediately runs it on the current candidate (ending the ivy session)."
   (dolist (cmd '(counsel-ag counsel-rg counsel-pt))
     (ivy-add-actions
      cmd
-     '(("O" +ivy-git-grep-other-window-action "open in other window"))))
-
-  ;; Removes character limit from `counsel-ag-function' and sets a jump point
-  ;; for `evil'.
-  ;;
-  ;; This may need to be updated frequently, to meet changes upstream.
-  ;; counsel-ag, counsel-rg and counsel-pt all use this function
-  (advice-add #'counsel-ag-function :override #'+ivy*counsel-ag-function))
+     '(("O" +ivy-git-grep-other-window-action "open in other window")))))
 
 
 (def-package! counsel-projectile

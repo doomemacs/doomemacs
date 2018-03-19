@@ -48,37 +48,41 @@
          (default-directory directory))
     (setq +ivy--file-last-search query)
     (require 'counsel)
-    (pcase engine
-      ('grep
-       (let ((args (if recursion-p " -r"))
-             (counsel-projectile-grep-initial-input query)
-             (default-directory directory))
-         (if all-files-p
-             (cl-letf (((symbol-function #'projectile-ignored-directories-rel)
-                        (symbol-function #'ignore))
-                       ((symbol-function #'projectile-ignored-files-rel)
-                        (symbol-function #'ignore)))
-               (counsel-projectile-grep args))
-           (counsel-projectile-grep args))))
-      ('ag
-       (let ((args (concat " -S" ; smart-case
-                           (if all-files-p " -a")
-                           (unless recursion-p " --depth 1"))))
-         (counsel-ag query directory args (format prompt args))))
-      ('rg
-       (let ((args (concat " -S" ; smart-case
-                           (if all-files-p " -uu")
-                           (unless recursion-p " --maxdepth 1"))))
-         (counsel-rg query directory args (format prompt args))))
-      ('pt
-       (let ((counsel-pt-base-command
-              (concat counsel-pt-base-command
-                      " -S" ; smart-case
-                      (if all-files-p " -U")
-                      (unless recursion-p " --depth=1")))
-             (default-directory directory))
-         (counsel-pt query)))
-      (_ (error "No search engine specified")))))
+    (cl-letf (((symbol-function 'counsel-ag-function)
+               (symbol-function '+ivy*counsel-ag-function))
+              ((symbol-function 'counsel-git-grep-function)
+               (symbol-function '+ivy*counsel-git-grep-function)))
+      (pcase engine
+        ('grep
+         (let ((args (if recursion-p " -r"))
+               (counsel-projectile-grep-initial-input query)
+               (default-directory directory))
+           (if all-files-p
+               (cl-letf (((symbol-function #'projectile-ignored-directories-rel)
+                          (symbol-function #'ignore))
+                         ((symbol-function #'projectile-ignored-files-rel)
+                          (symbol-function #'ignore)))
+                 (counsel-projectile-grep args))
+             (counsel-projectile-grep args))))
+        ('ag
+         (let ((args (concat " -S" ; smart-case
+                             (if all-files-p " -a")
+                             (unless recursion-p " --depth 1"))))
+           (counsel-ag query directory args (format prompt args))))
+        ('rg
+         (let ((args (concat " -S" ; smart-case
+                             (if all-files-p " -uu")
+                             (unless recursion-p " --maxdepth 1"))))
+           (counsel-rg query directory args (format prompt args))))
+        ('pt
+         (let ((counsel-pt-base-command
+                (concat counsel-pt-base-command
+                        " -S" ; smart-case
+                        (if all-files-p " -U")
+                        (unless recursion-p " --depth=1")))
+               (default-directory directory))
+           (counsel-pt query)))
+        (_ (error "No search engine specified"))))))
 
 ;;;###autoload (autoload '+ivy:pt "completion/ivy/autoload/evil" nil t)
 (evil-define-operator +ivy:pt (beg end query &optional all-files-p directory)
@@ -160,3 +164,41 @@ NOTE: ripgrep doesn't support multiline searches (yet)."
   (interactive "<r><a><!>")
   (let ((+ivy--file-search-recursion-p (not bang)))
     (+ivy:rg beg end query t default-directory)))
+
+
+;;
+;; Advice
+;;
+
+;;;###autoload
+(defun +ivy*counsel-ag-function (string)
+  "Advice to get rid of the character limit from `counsel-ag-function'.
+
+NOTE This may need to be updated frequently, to meet changes upstream (in
+counsel-rg)."
+  (if (< (length string) 1)  ; <-- modified the character limit
+      (counsel-more-chars 1) ; <--
+    (let ((default-directory (ivy-state-directory ivy-last))
+          (regex (counsel-unquote-regex-parens
+                  (setq ivy--old-re
+                        (ivy--regex string)))))
+      (counsel--async-command (format counsel-ag-command
+                                      (shell-quote-argument regex)))
+      nil)))
+
+;;;###autoload
+(defun +ivy*counsel-git-grep-function (string)
+  "Advice to get rid of the character limit from `counsel-git-grep-function'.
+
+NOTE This may need to be updated frequently, to meet changes upstream (in
+counsel-git-grep)."
+  (if (and (> counsel--git-grep-count counsel--git-grep-count-threshold)
+           (< (length string) 1)) ; <-- modified the character limit
+      (counsel-more-chars 1)      ; <--
+    (let* ((default-directory (ivy-state-directory ivy-last))
+           (cmd (format counsel-git-grep-cmd
+                        (setq ivy--old-re (ivy--regex string t)))))
+      (if (<= counsel--git-grep-count counsel--git-grep-count-threshold)
+          (split-string (shell-command-to-string cmd) "\n" t)
+        (counsel--gg-candidates (ivy--regex string))
+        nil))))

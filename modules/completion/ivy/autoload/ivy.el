@@ -156,23 +156,6 @@ search current file. See `+ivy-task-tags' to customize what this searches for."
             :caller '+ivy/tasks))
 
 ;;;###autoload
-(defun +ivy*counsel-ag-function (string)
-  "Advice to get rid of the character limit from `counsel-ag-function' and use
-`evil-set-jump' if evil is active.
-
-NOTE This may need to be updated frequently, to meet changes upstream (in
-counsel-rg)."
-  (if (< (length string) 1)  ; <-- modified the character limit
-      (counsel-more-chars 1) ; <--
-    (let ((default-directory (ivy-state-directory ivy-last))
-          (regex (counsel-unquote-regex-parens
-                  (setq ivy--old-re
-                        (ivy--regex string)))))
-      (counsel--async-command (format counsel-ag-command
-                                      (shell-quote-argument regex)))
-      nil)))
-
-;;;###autoload
 (defun +ivy/wgrep-occur ()
   "Invoke the search+replace wgrep buffer on the current ag/rg search results."
   (interactive)
