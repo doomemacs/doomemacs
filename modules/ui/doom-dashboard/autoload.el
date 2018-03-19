@@ -5,5 +5,4 @@
   "Switch to the dashboard in the current window, of the current FRAME."
   (interactive (list (selected-frame)))
   (with-selected-frame frame
-    (switch-to-buffer (doom-fallback-buffer))
-    (+doom-dashboard-reload)))
+    (switch-to-buffer (doom-fallback-buffer))))
