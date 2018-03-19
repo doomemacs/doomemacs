@@ -14,19 +14,19 @@
   "Tries to kill BUFFER, as was requested by a transient timer. If it fails, eg.
 the buffer is visible, then set another timer and try again later."
   (when (buffer-live-p buffer)
-    (with-temp-buffer
-      (let ((kill-buffer-hook (remq '+popup|kill-buffer-hook kill-buffer-hook)))
-        (cond ((eq ttl 0)
-               (kill-buffer buffer))
-              ((get-buffer-window buffer)
-               (with-current-buffer buffer
-                 (setq +popup--timer
-                       (run-at-time ttl nil #'+popup--kill-buffer buffer ttl))))
-              ((with-demoted-errors "Error killing transient buffer: %s"
-                 (let (confirm-kill-processes)
-                   (when-let* ((process (get-buffer-process (current-buffer))))
-                     (kill-process process)))
-                 (kill-buffer buffer))))))))
+    (let ((inhibit-quit t)
+          (kill-buffer-hook (remq '+popup|kill-buffer-hook kill-buffer-hook)))
+      (cond ((eq ttl 0)
+             (kill-buffer buffer))
+            ((get-buffer-window buffer)
+             (with-current-buffer buffer
+               (setq +popup--timer
+                     (run-at-time ttl nil #'+popup--kill-buffer buffer ttl))))
+            ((with-demoted-errors "Error killing transient buffer: %s"
+               (let (confirm-kill-processes)
+                 (when-let* ((process (get-buffer-process (current-buffer))))
+                   (kill-process process)))
+               (kill-buffer buffer)))))))
 
 (defun +popup--init (window &optional alist)
   "Initializes a popup window. Run any time a popup is opened. It sets the
