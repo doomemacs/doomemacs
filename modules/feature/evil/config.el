@@ -25,7 +25,9 @@
   :when (featurep! +everywhere)
   :after evil
   :preface
-  (setq evil-want-integration nil) ; must be set before evil is loaded
+  ;; must be set before evil/evil-collcetion is loaded
+  (setq evil-want-integration nil
+        evil-collection-company-use-tng nil)
   :config
   (evil-collection-init)
   ;; don't interfere with leader key
