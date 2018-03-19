@@ -353,25 +353,26 @@
       (:after company
         (:map company-active-map
           ;; Don't interfere with `evil-delete-backward-word' in insert mode
-          "C-w"        nil
-          "C-o"        #'company-search-kill-others
-          "C-n"        #'company-select-next
-          "C-p"        #'company-select-previous
-          "C-h"        #'company-quickhelp-manual-begin
-          "C-S-h"      #'company-show-doc-buffer
-          "C-S-s"      #'company-search-candidates
-          "C-s"        #'company-filter-candidates
-          "C-SPC"      #'company-complete-common
-          "C-h"        #'company-quickhelp-manual-begin
-          [tab]        #'company-complete-common-or-cycle
-          [backtab]    #'company-select-previous
-          [escape]     (λ! (company-abort) (evil-normal-state 1)))
+          "C-w"     nil
+          "C-o"     #'company-search-kill-others
+          "C-n"     #'company-select-next
+          "C-p"     #'company-select-previous
+          "C-h"     #'company-quickhelp-manual-begin
+          "C-S-h"   #'company-show-doc-buffer
+          "C-S-s"   #'company-search-candidates
+          "C-s"     #'company-filter-candidates
+          "C-SPC"   #'company-complete-common
+          "C-h"     #'company-quickhelp-manual-begin
+          "TAB"     #'company-complete-common-or-cycle
+          [tab]     #'company-complete-common-or-cycle
+          "S-TAB"   #'company-select-previous
+          [backtab] #'company-select-previous)
         ;; Automatically applies to `company-filter-map'
         (:map company-search-map
-          "C-n"        #'company-search-repeat-forward
-          "C-p"        #'company-search-repeat-backward
-          "C-s"        (λ! (company-search-abort) (company-filter-candidates))
-          [escape]     #'company-search-abort))
+          "C-n"     #'company-select-next-or-abort
+          "C-p"     #'company-select-previous-or-abort
+          "C-s"     (λ! (company-search-abort) (company-filter-candidates))
+          [escape]  #'company-search-abort))
 
       ;; counsel
       (:after counsel
