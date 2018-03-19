@@ -32,7 +32,7 @@
   (evil-collection-init)
   ;; don't interfere with leader key
   (map! :after compile :map compilation-mode-map doom-leader-key nil)
-  (evil-define-key '(normal visual) special-mode-map " " nil))
+  (evil-define-key* '(normal visual) special-mode-map " " nil))
 
 
 (def-package! evil
