@@ -12,12 +12,12 @@ PROMPT (a string) and COMMAND (a list of command plists; see `def-menu!').")
 
 (defun doom-menu-read-default (prompt commands)
   "Default method for displaying a completion-select prompt."
-  (completing-read prompt (mapcar #'car commands)))
+  (completing-read prompt (mapcar #'car commands) nil nil nil nil (car doom-menu-last-command)))
 
 ;;;###autoload
 (defun doom--menu-read (prompt commands)
   (if-let* ((choice (funcall doom-menu-display-fn prompt commands)))
-      (cdr (assoc choice commands))
+      (assoc choice commands)
     (user-error "Aborted")))
 
 ;;;###autoload
@@ -82,37 +82,41 @@ lisp form.
               `(cl-sort ,commands #'string-lessp :key #'car)
             commands)
          ,(format "Menu for %s" name))
-       (defun ,name (arg)
+       (defun ,name (arg command)
          ,(concat
            (if (stringp desc) (concat desc "\n\n"))
            "This is a command dispatcher. It will rerun the last command on\n"
            "consecutive executions. If ARG (universal argument) is non-nil\n"
            "then it always prompt you.")
-         (interactive "P")
-         (unless ,commands-var
-           (user-error "The '%s' menu is empty" ',name))
+         (declare (interactive-only t))
+         (interactive
+          (list current-prefix-arg
+                (progn
+                  (unless ,commands-var
+                    (user-error "The '%s' menu is empty" ',name))
+                  (doom--menu-read
+                   ,prop-prompt
+                   (or (cl-remove-if-not
+                        (let ((project-root (doom-project-root)))
+                          (lambda (cmd)
+                            (let ((plist (cdr cmd)))
+                              (and (cond ((not (plist-member plist :region)) t)
+                                         ((plist-get plist :region) (use-region-p))
+                                         (t (not (use-region-p))))
+                                   (let ((when (plist-get plist :when))
+                                         (unless (plist-get plist :unless))
+                                         (project (plist-get plist :project)))
+                                     (when (functionp project)
+                                       (setq project (funcall project)))
+                                     (or (or (not when) (eval when))
+                                         (or (not unless) (not (eval unless)))
+                                         (and (stringp project)
+                                              (file-in-directory-p (or buffer-file-name default-directory)
+                                                                   project-root))))))))
+                        ,commands-var)
+                       (user-error "No commands available here"))))))
          (doom--menu-exec
-          (or (unless arg doom-menu-last-command)
-              (setq doom-menu-last-command
-                    (doom--menu-read
-                     ,prop-prompt
-                     (or (cl-remove-if-not
-                          (let ((project-root (doom-project-root)))
-                            (lambda (cmd)
-                              (let ((plist (cdr cmd)))
-                                (and (cond ((not (plist-member plist :region)) t)
-                                           ((plist-get plist :region) (use-region-p))
-                                           (t (not (use-region-p))))
-                                     (let ((when (plist-get plist :when))
-                                           (unless (plist-get plist :unless))
-                                           (project (plist-get plist :project)))
-                                       (when (functionp project)
-                                         (setq project (funcall project)))
-                                       (or (or (not when) (eval when))
-                                           (or (not unless) (not (eval unless)))
-                                           (and (stringp project)
-                                                (file-in-directory-p buffer-file-name project-root))))))))
-                          ,commands-var)
-                         (user-error "No commands available here"))))
-              (user-error "No command selected")))))))
+          (cdr (or (when arg doom-menu-last-command)
+                   (setq doom-menu-last-command command)
+                   (user-error "No command selected"))))))))
 
