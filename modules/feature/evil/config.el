@@ -29,10 +29,26 @@
   (setq evil-want-integration nil
         evil-collection-company-use-tng nil)
   :config
+  (delq 'kotlin-mode evil-collection-mode-list) ; doesn't do anything useful
   (evil-collection-init)
+
   ;; don't interfere with leader key
-  (map! :after compile :map compilation-mode-map doom-leader-key nil)
-  (evil-define-key* '(normal visual) special-mode-map " " nil))
+  (evil-define-key* '(normal visual) special-mode-map (kbd doom-leader-key) nil)
+
+  ;; don't remap gd or K; Doom does this already
+  ;; TODO find a better way
+  (after! compile
+    (evil-define-key* '(normal visual) compilation-mode-map "gd" nil "K" nil))
+  (after! racer
+    (evil-define-key* 'normal racer-mode-map "gd" nil "K" nil))
+  (after! anaconda-mode
+    (evil-define-key* 'normal anaconda-mode-map "gd" nil "K" nil))
+  (after! alchemist
+    (evil-define-key* 'normal alchemist-mode-map "gd" nil "K" nil "gz" nil))
+  (after! go-mode
+    (evil-define-key* 'normal go-mode-map "gd" nil "K" nil))
+  (after! lua-mode
+    (evil-define-key* 'normal lua-mode-map "K" nil)))
 
 
 (def-package! evil
