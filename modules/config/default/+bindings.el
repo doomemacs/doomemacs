@@ -315,7 +315,6 @@
       :m  "gT" #'+workspace/switch-left
       :m  "gd" #'+lookup/definition
       :m  "gD" #'+lookup/references
-      :m  "gh" #'+lookup/documentation
       :n  "gp" #'+evil/reselect-paste
       :n  "gr" #'+eval:region
       :n  "gR" #'+eval/buffer
@@ -621,7 +620,7 @@
       :n  "!"  #'rotate-text
 
       ;; smart-forward
-      :nv "K"  #'smart-up
+      :nv "K"  #'+lookup/documentation
       :m  "g]" #'smart-forward
       :m  "g[" #'smart-backward
 
