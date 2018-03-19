@@ -152,7 +152,12 @@
   (evil-set-command-properties
    '+evil:align :move-point t :ex-arg 'buffer-match :ex-bang t :evil-mc t :keep-visual t :suppress-operator t)
   (evil-set-command-properties
-   '+evil:mc :move-point nil :ex-arg 'global-match :ex-bang t :evil-mc t))
+   '+evil:mc :move-point nil :ex-arg 'global-match :ex-bang t :evil-mc t)
+
+  ;; Ensure jump points are created
+  (defun +evil*set-jump (&rest _)
+    (evil-set-jump))
+  (advice-add #'counsel-git-grep-action :before #'+evil*set-jump))
 
 
 ;;

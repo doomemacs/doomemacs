@@ -164,8 +164,6 @@ NOTE This may need to be updated frequently, to meet changes upstream (in
 counsel-rg)."
   (if (< (length string) 1)  ; <-- modified the character limit
       (counsel-more-chars 1) ; <--
-    (when (and (featurep 'evil) evil-mode)
-      (evil-set-jump))
     (let ((default-directory (ivy-state-directory ivy-last))
           (regex (counsel-unquote-regex-parens
                   (setq ivy--old-re
