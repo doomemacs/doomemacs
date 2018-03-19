@@ -9,6 +9,7 @@
   :mode "\\.mustache$"
   :mode "\\.tsx$"
   :mode "\\.vue$"
+  :mode "\\.twig$"
   :mode "wp-content/themes/.+/.+\\.php$"
   :mode "templates/.+\\.php$"
   :config
