@@ -8,7 +8,6 @@
   (set! :popup "^\\*?magit" :ignore)
   (set! :evil-state 'magit-status-mode 'emacs)
 
-  (push 'magit-repolist-mode evil-snipe-disabled-modes)
   (map! :map magit-repolist-mode-map
         :n "j" #'next-line
         :n "k" #'previous-line
