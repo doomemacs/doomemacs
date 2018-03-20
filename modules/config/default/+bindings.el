@@ -319,6 +319,7 @@
       :n  "gr" #'+eval:region
       :n  "gR" #'+eval/buffer
       :v  "gR" #'+eval:replace-region
+      :m  "gs" #'+default/easymotion  ; lazy-load `evil-easymotion'
       :v  "@"  #'+evil:macro-on-all-lines
       :n  "g@" #'+evil:macro-on-all-lines
       ;; repeat in visual mode (FIXME buggy)

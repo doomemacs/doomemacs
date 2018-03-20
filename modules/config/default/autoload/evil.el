@@ -36,3 +36,24 @@ buffers."
   (interactive "<a>")
   (doom/kill-matching-buffers pattern bang))
 
+;;;###autoload
+(defun +default/easymotion ()
+  "TODO"
+  (interactive)
+  (let ((prefix (this-command-keys)))
+    (evilem-default-keybindings prefix)
+    (map! :map evilem-map
+          "n" (evilem-create #'evil-ex-search-next)
+          "N" (evilem-create #'evil-ex-search-previous)
+          "s" (evilem-create #'evil-snipe-repeat
+                             :pre-hook (save-excursion (call-interactively #'evil-snipe-s))
+                             :bind ((evil-snipe-scope 'buffer)
+                                    (evil-snipe-enable-highlight)
+                                    (evil-snipe-enable-incremental-highlight)))
+          "S" (evilem-create #'evil-snipe-repeat-reverse
+                             :pre-hook (save-excursion (call-interactively #'evil-snipe-s))
+                             :bind ((evil-snipe-scope 'buffer)
+                                    (evil-snipe-enable-highlight)
+                                    (evil-snipe-enable-incremental-highlight))))
+    (set-transient-map evilem-map)
+    (which-key-reload-key-sequence prefix)))

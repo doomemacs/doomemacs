@@ -109,26 +109,4 @@
       (do-repeat! evil-visualstar/begin-search-forward
                   evil-ex-search-next evil-ex-search-previous)
       (do-repeat! evil-visualstar/begin-search-backward
-                  evil-ex-search-previous evil-ex-search-next))
-
-    ;; lazy-load `evil-easymotion'
-    (map! :m "gs" #'+default/easymotion)
-    (defun +default/easymotion ()
-      (interactive)
-      (let ((prefix (this-command-keys)))
-        (evilem-default-keybindings prefix)
-        (map! :map evilem-map
-              "n" (evilem-create #'evil-ex-search-next)
-              "N" (evilem-create #'evil-ex-search-previous)
-              "s" (evilem-create #'evil-snipe-repeat
-                                 :pre-hook (save-excursion (call-interactively #'evil-snipe-s))
-                                 :bind ((evil-snipe-scope 'buffer)
-                                        (evil-snipe-enable-highlight)
-                                        (evil-snipe-enable-incremental-highlight)))
-              "S" (evilem-create #'evil-snipe-repeat-reverse
-                                 :pre-hook (save-excursion (call-interactively #'evil-snipe-s))
-                                 :bind ((evil-snipe-scope 'buffer)
-                                        (evil-snipe-enable-highlight)
-                                        (evil-snipe-enable-incremental-highlight))))
-        (set-transient-map evilem-map)
-        (which-key-reload-key-sequence prefix)))))
+                  evil-ex-search-previous evil-ex-search-next))))
