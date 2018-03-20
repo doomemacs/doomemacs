@@ -34,6 +34,8 @@
 
   ;; don't interfere with leader key
   (evil-define-key* '(normal visual) special-mode-map (kbd doom-leader-key) nil)
+  (after! dired
+    (evil-define-key* 'normal dired-mode-map (kbd doom-leader-key) nil))
 
   ;; don't remap gd or K; Doom does this already
   ;; TODO find a better way
