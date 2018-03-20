@@ -43,7 +43,6 @@
 (def-package! dired-k
   :after dired
   :config
-  (setq dired-k-style 'git)
   (add-hook 'dired-initial-position-hook #'dired-k)
   (add-hook 'dired-after-readin-hook #'dired-k-no-revert)
 
