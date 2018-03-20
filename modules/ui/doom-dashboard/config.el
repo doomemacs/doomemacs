@@ -93,6 +93,10 @@ Possible values:
 
 (defun +doom-dashboard|reposition-point ()
   "Trap the point in the buttons."
+  (when (region-active-p)
+    (deactivate-mark t)
+    (when (bound-and-true-p evil-mode)
+      (evil-change-to-previous-state)))
   (or (ignore-errors
         (if (button-at (point))
             (forward-button 0)
