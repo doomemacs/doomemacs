@@ -404,7 +404,10 @@ the new algorithm is confusing, like in python or ruby."
 (def-package! evil-args
   :commands (evil-inner-arg evil-outer-arg
              evil-forward-arg evil-backward-arg
-             evil-jump-out-args))
+             evil-jump-out-args)
+  :config
+  (push "<" evil-args-openers)
+  (push ">" evil-args-closers))
 
 
 (def-package! evil-indent-plus
