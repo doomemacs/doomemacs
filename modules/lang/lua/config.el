@@ -6,6 +6,7 @@
   :config
   (add-hook 'lua-mode-hook #'flycheck-mode)
 
+  (set! :lookup 'lua-mode :documentation 'lua-search-documentation)
   (set! :electric 'lua-mode :words '("else" "end"))
   (set! :repl 'lua-mode #'+lua/repl)
   ;; sp's lua-specific rules are obnoxious, so we disable them
