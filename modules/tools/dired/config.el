@@ -36,8 +36,8 @@
         (make-directory parent-directory t))))
   (push #'+dired|create-non-existent-directory find-file-not-found-functions)
 
-  ;; Don't interfere with leader key
-  (define-key dired-mode-map (kbd doom-leader-key) nil))
+  ;; Kill buffer when quitting dired buffers
+  (define-key dired-mode-map [remap quit-window] (λ! (quit-window t))))
 
 
 (def-package! dired-k
