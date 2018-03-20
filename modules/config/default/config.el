@@ -91,10 +91,9 @@
     (do-repeat! evil-ex-search-backward evil-ex-search-next evil-ex-search-previous)
 
     ;; f/F/t/T/s/S
+    (setq evil-snipe-repeat-keys nil
+          evil-snipe-override-evil-repeat-keys nil) ; causes problems with remapped ;
     (after! evil-snipe
-      (setq evil-snipe-repeat-keys nil
-            evil-snipe-override-evil-repeat-keys nil) ; causes problems with remapped ;
-
       (do-repeat! evil-snipe-f evil-snipe-repeat evil-snipe-repeat-reverse)
       (do-repeat! evil-snipe-F evil-snipe-repeat evil-snipe-repeat-reverse)
       (do-repeat! evil-snipe-t evil-snipe-repeat evil-snipe-repeat-reverse)
