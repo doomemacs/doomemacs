@@ -308,10 +308,10 @@ with `org-cycle'). Also:
 ;;;###autoload
 (defun +org|indent-maybe ()
   "Indent the current item (header or item), if possible. Made for
-`org-tab-first-hook'."
+`org-tab-first-hook' in evil-mode."
   (interactive)
-  (cond ((and (bound-and-true-p evil-mode)
-              (not (eq evil-state 'insert)))
+  (cond ((or (not (bound-and-true-p evil-mode))
+             (not (eq evil-state 'insert)))
          nil)
         ((org-at-item-p)
          (org-indent-item-tree)
