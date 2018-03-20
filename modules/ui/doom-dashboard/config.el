@@ -69,8 +69,16 @@ Possible values:
   (add-hook 'post-command-hook #'+doom-dashboard|reposition-point nil t))
 
 (map! :map +doom-dashboard-mode-map
-      "n" #'forward-button
-      "p" #'backward-button
+      "n"            #'forward-button
+      :gn [down]     #'forward-button
+      :gn "C-n"      #'forward-button
+      :gn [tab]      #'forward-button
+      :gn "TAB"      #'forward-button
+      "p"            #'backward-button
+      :gn [up]       #'backward-button
+      :gn "C-p"      #'backward-button
+      :gn [backtab]  #'backward-button
+      :gn "S-TAB"    #'backward-button
       (:when (featurep! :feature evil)
         :m "j" #'forward-button
         :m "k" #'backward-button
