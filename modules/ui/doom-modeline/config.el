@@ -11,6 +11,15 @@
   (setq anzu-cons-mode-line-p nil
         anzu-minimum-input-length 1
         anzu-search-threshold 250)
+
+  (defun +doom-modeline*fix-anzu-count (positions here)
+    (cl-loop for (start . end) in positions
+             collect t into before
+             when (and (>= here start) (<= here end))
+             return (length before)
+             finally return 0))
+  (advice-add #'anzu--where-is-here :override #'+doom-modeline*fix-anzu-count)
+
   ;; Avoid anzu conflicts across buffers
   (mapc #'make-variable-buffer-local
         '(anzu--total-matched anzu--current-position anzu--state
