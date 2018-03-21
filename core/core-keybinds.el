@@ -37,7 +37,7 @@ If any hook returns non-nil, all hooks after it are ignored.")
         ;; Run all escape hooks. If any returns non-nil, then stop there.
         ((run-hook-with-args-until-success 'doom-escape-hook))
         ;; don't abort macros
-        (defining-kbd-macro nil)
+        ((or defining-kbd-macro executing-kbd-macro) nil)
         ;; Back to the default
         (t (keyboard-quit))))
 
