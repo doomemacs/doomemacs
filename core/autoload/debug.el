@@ -98,11 +98,12 @@ ready to be pasted in a bug report on github."
     (format
      (concat "- OS: %s (%s)\n"
              "- Emacs: %s (%s)\n"
-             "- Doom: %s (%s https://github.com/hlissner/doom-emacs/commit/%s)\n"
+             "- Doom: %s (%s %s)\n"
              "- Graphic display: %s (daemon: %s)\n"
              "- System features: %s\n"
              "- Details:\n"
              "  ```elisp\n"
+             "  uname -a:  %s\n"
              "  modules:   %s\n"
              "  packages:  %s\n"
              "  elc dirs:  %s\n"
@@ -111,10 +112,19 @@ ready to be pasted in a bug report on github."
      system-type system-configuration
      emacs-version (format-time-string "%b %d, %Y" emacs-build-time)
      doom-version
-     (vc-git--symbolic-ref "core/core.el") (vc-git-working-revision "core/core.el")
+     (if-let* ((branch (vc-git--symbolic-ref "core/core.el")))
+         branch
+       "n/a")
+     (if-let* ((rev (vc-git-working-revision "core/core.el")))
+         (format "https://github.com/hlissner/doom-emacs/commit/%s" rev)
+       "n/a")
      (display-graphic-p) (daemonp)
      (bound-and-true-p system-configuration-features)
      ;; details
+     (with-temp-buffer
+       (unless (zerop (call-process "uname" nil t nil "-a"))
+         (insert (format "%s" system-type)))
+       (string-trim (buffer-string)))
      (or (cl-loop with cat = nil
                   for key being the hash-keys of doom-modules
                   if (or (not cat) (not (eq cat (car key))))
