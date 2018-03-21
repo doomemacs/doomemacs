@@ -1,4 +1,5 @@
-;;; lang/haskell/doctor.el -*- lexical-binding: t; -*-
+;; -*- lexical-binding: t; no-byte-compile: t; -*-
+;;; lang/haskell/doctor.el
 
 (when (featurep! +dante)
   (unless (executable-find "cabal")

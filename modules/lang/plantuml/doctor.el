@@ -1,4 +1,5 @@
-;;; lang/plantuml/doctor.el -*- lexical-binding: t; -*-
+;; -*- lexical-binding: t; no-byte-compile: t; -*-
+;;; lang/plantuml/doctor.el
 
 (when (require 'plantuml-mode nil t)
   ;; java

@@ -1,4 +1,5 @@
-;;; lang/cc/doctor.el -*- lexical-binding: t; -*-
+;; -*- lexical-binding: t; no-byte-compile: t; -*-
+;;; lang/cc/doctor.el
 
 ;; rtags
 (let ((bins (cl-remove-if #'executable-find '("rdm" "rc"))))

@@ -1,4 +1,5 @@
-;;; lang/rust/doctor.el -*- lexical-binding: t; -*-
+;; -*- lexical-binding: t; no-byte-compile: t; -*-
+;;; lang/rust/doctor.el
 
 (when (require 'racer nil t)
   ;; racer
