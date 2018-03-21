@@ -123,7 +123,7 @@ evil-window-move-* (e.g. `evil-window-move-far-left')"
              (not (zerop (length arg))))
     (condition-case lossage
         (let ((pattern (evil-ex-make-substitute-pattern
-                        (if evil-ex-bang (regexp-quote arg) arg)
+                        arg
                         (or flags (list))))
               (range (or (evil-copy-range evil-ex-range)
                          (evil-range (or beg (line-beginning-position))
