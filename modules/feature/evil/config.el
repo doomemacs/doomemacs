@@ -170,9 +170,9 @@
 
   ;; Other commands can make use of this
   (evil-define-interactive-code "<//>"
-    :ex-arg buffer-match (list (when (evil-ex-p) evil-ex-argument)))
+    :ex-arg buffer-match (list (if (evil-ex-p) evil-ex-argument)))
   (evil-define-interactive-code "<//g>"
-    :ex-arg global-match (list (when (evil-ex-p) evil-ex-argument)))
+    :ex-arg global-match (list (if (evil-ex-p) evil-ex-argument)))
 
   ;; Forward declare these so that ex completion works, even if the autoloaded
   ;; functions aren't loaded yet.
