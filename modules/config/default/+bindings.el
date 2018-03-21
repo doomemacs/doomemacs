@@ -663,31 +663,13 @@
         ;; TAB auto-completion in term buffers
         :map comint-mode-map [tab] #'company-complete)
 
-      (:after debug
-        ;; For elisp debugging
-        :map debugger-mode-map
-        :n "RET" #'debug-help-follow
-        :n "e"   #'debugger-eval-expression
-        :n "n"   #'debugger-step-through
-        :n "c"   #'debugger-continue)
-
       (:map help-mode-map
-        :n "[["  #'help-go-back
-        :n "]]"  #'help-go-forward
         :n "o"   #'ace-link-help
-        :n "q"   #'quit-window
         :n "Q"   #'ivy-resume)
 
       (:after vc-annotate
         :map vc-annotate-mode-map
-        :n "q"   #'kill-this-buffer
-        :n "d"   #'vc-annotate-show-diff-revision-at-line
-        :n "D"   #'vc-annotate-show-changeset-diff-revision-at-line
-        :n "SPC" #'vc-annotate-show-log-revision-at-line
-        :n "]]"  #'vc-annotate-next-revision
-        :n "[["  #'vc-annotate-prev-revision
-        :n "TAB" #'vc-annotate-toggle-annotation-visibility
-        :n "RET" #'vc-annotate-find-revision-at-line))
+        [remap quit-window] #'kill-this-buffer))
 
 
 ;;
