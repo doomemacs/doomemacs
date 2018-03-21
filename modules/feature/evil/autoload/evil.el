@@ -167,15 +167,14 @@ evil-window-move-* (e.g. `evil-window-move-far-left')"
 
 ;;;###autoload (autoload '+evil:align "feature/evil/autoload/evil" nil t)
 (evil-define-operator +evil:align (beg end pattern &optional bang)
-  "Ex interface to `align-regexp'. Accepts vim-style regexps."
-  (interactive "<r><//><!>")
+  "Ex interface to `align-regexp'. PATTERN is a vim-style regexp. If BANG,
+repeat the alignment for all matches (otherwise just the first match on each
+line)."
+  (interactive "<r><//g><!>")
   (align-regexp
    beg end
-   (concat "\\(\\s-*\\)"
-           (if bang
-               (regexp-quote pattern)
-             (evil-transform-vim-style-regexp pattern)))
-   1 1))
+   (concat "\\(\\s-*\\)" (evil-transform-vim-style-regexp pattern))
+   1 1 bang))
 
 
 ;; --- wgrep ------------------------------
