@@ -1,6 +1,8 @@
 ;;; lang/org/autoload/org-capture.el -*- lexical-binding: t; -*-
 ;;;###if (featurep! +capture)
 
+(defvar org-capture-initial)
+
 ;; --- External frame ---------------------
 
 (defvar +org-capture-window-params
