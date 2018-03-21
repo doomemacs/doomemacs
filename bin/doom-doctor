@@ -11,14 +11,10 @@
 
 (unless (file-directory-p user-emacs-directory)
   (error "Couldn't find a Doom config!"))
+(unless noninteractive
+  (error "This script must not be run from an interactive session."))
 
 (require 'pp)
-
-;; subr-x may not exist in the current version of Emacs
-(defsubst string-trim-right (string &optional regexp)
-  (if (string-match (concat "\\(?:" (or regexp "[ \t\n\r]+") "\\)\\'") string)
-      (replace-match "" t t string)
-    string))
 
 ;;
 (defvar doom-init-p nil)
@@ -31,7 +27,7 @@
 (defun indented (spc msg)
   (declare (indent defun))
   (with-temp-buffer
-    (insert  msg)
+    (insert msg)
     (let ((fill-column 80))
       (fill-region (point-min) (point-max))
       (indent-rigidly (point-min) (point-max) spc))
@@ -52,22 +48,6 @@
       (fill-region (point-min) (point-max))
       (buffer-string))))
 
-(defun columns (cols length strings)
-  (declare (indent defun))
-  (with-temp-buffer
-    (let ((sub-format (format "%%-%ds " (1- length)))
-          col-format)
-      (dotimes (i (1- cols))
-        (setq col-format (concat col-format sub-format)))
-      (setq col-format (concat col-format "%s"))
-      (while strings
-        (insert (apply #'format col-format
-                       (let (args)
-                         (dotimes (i cols (nreverse args))
-                           (push (if strings (pop strings) "") args))))
-                "\n")))
-    (buffer-string)))
-
 (defun sh (cmd)
   (string-trim-right (shell-command-to-string cmd)))
 
@@ -75,8 +55,12 @@
   (format "\e[%dm%s\e[%dm" code (apply #'format msg args) 0))
 
 (defvar indent 0)
+(defvar prefix "")
 (defmacro msg! (msg &rest args)
-  `(message (indented indent (format ,msg ,@args))))
+  `(message
+    (indented indent
+              (format (concat prefix ,msg)
+                      ,@args))))
 (defmacro error!   (&rest args) `(progn (msg! (color 31 ,@args)) (setq doom-errors (+ doom-errors 1))))
 (defmacro warn!    (&rest args) `(progn (msg! (color 33 ,@args)) (setq doom-errors (+ doom-errors 1))))
 (defmacro success! (&rest args) `(msg! (color 32 ,@args)))
@@ -93,12 +77,19 @@
     (save-match-data
       (string-match regexp string &optional start))))
 
+;; subr-x may not exist in the current version of Emacs
+(unless (fboundp 'string-trim-right)
+  (defsubst string-trim-right (string &optional regexp)
+    (if (string-match (concat "\\(?:" (or regexp "[ \t\n\r]+") "\\)\\'") string)
+        (replace-match "" t t string)
+      string)))
+
 
 ;; --- start a'doctorin' --------------------------------------
 
-(msg! "%s" (color 1 "DOOM Doctor"))
+(msg! (color 1 "Doom Doctor"))
 (msg! "Emacs v%s" emacs-version)
-(msg! "Doom v%s"
+(msg! "Doom v%s (%s)"
       (or (and (file-exists-p (expand-file-name "core/core.el" user-emacs-directory))
                (with-temp-buffer
                  (insert-file-contents-literally
@@ -107,21 +98,19 @@
                  (when (re-search-forward "doom-version")
                    (forward-char)
                    (sexp-at-point))))
-          "???"))
-(msg! "Commit %s"
+          "???")
       (if (and (executable-find "git")
                (file-directory-p (expand-file-name ".git" user-emacs-directory)))
-          (sh "git rev-parse HEAD")
+          (substring (sh "git rev-parse HEAD") 0 8)
         "n/a"))
-
 (msg! "shell: %s%s"
       (getenv "SHELL")
       (if (equal (getenv "SHELL") (sh "echo $SHELL"))
           ""
         (color 31 " (mismatch)")))
 (when (boundp 'system-configuration-features)
-  (msg! "Compiled with:\n%s" (indented 2 (autofill system-configuration-features))))
-(msg! "uname -a:\n%s\n" (indented 2 (autofill (sh "uname -a"))))
+  (message "Compiled with:\n%s" (indented 2 system-configuration-features)))
+(message "uname -a:\n%s\n" (indented 2 (sh "uname -a")))
 
 (msg! "----\n")
 
@@ -279,23 +268,26 @@
 (let (doom-core-packages doom-debug-mode)
   (condition-case ex
       (progn
+        (let (noninteractive)
+          (load "~/.emacs.d/core/core.el" nil t))
         (let ((inhibit-message t)
-              noninteractive)
+              (noninteractive t))
           (load "~/.emacs.d/init.el" nil t))
-        (doom-initialize-packages)
+        (doom-initialize-packages t)
+        (quiet! (doom-initialize-modules))
         (doom|finalize)
-        (success! "Attempt to load DOOM: success! Loaded v%s" doom-version)
-        (when (executable-find "git")
-          (msg! "Revision %s\n"
-                (ignore-errors
-                  (let ((default-directory user-emacs-directory))
-                    (sh "git rev-parse HEAD"))))))
-    ('error (warn! "Attempt to load DOOM: failed\n  %s\n"
-                   (or (cdr-safe ex) (car ex))))))
+        (success! "Attempt to load DOOM: success! Loaded v%s" doom-version))
+    ('error
+     (warn! "Attempt to load DOOM: failed\n  %s\n"
+            (or (cdr-safe ex) (car ex)))
+     (setq doom-modules nil))))
 
 (when (bound-and-true-p doom-modules)
   (section! "test-modules")
   (let ((indent 4))
+    (defun --quiet-require (orig-fn &rest args)
+      (quiet! (apply orig-fn args)))
+    (advice-add #'require :around #'--quiet-require)
     (maphash
      (lambda (key plist)
        (condition-case ex
@@ -304,13 +296,11 @@
                  doom-packages)
              (when (or (file-exists-p doctor-file)
                        (file-exists-p packages-file))
-               (let ((indent 2))
-                 (section! "test-module -> %s %s" (car key) (cdr key)))
-               (load packages-file t t)
-               (when (load packages-file t t)
-                 (dolist (package (cl-remove-if #'package-installed-p doom-packages :key #'car))
-                   (error! "%s is not installed" (car package))))
-               (load doctor-file t t)))
+               (let ((prefix (format "%s" (color 1 "(%s %s) " (car key) (cdr key)))))
+                 (when (load packages-file t t)
+                   (dolist (package (cl-remove-if #'package-installed-p doom-packages :key #'car))
+                     (error! "%s is not installed" (car package))))
+                 (load doctor-file t t))))
          ('error
           (error! "Syntax error: %s" ex))))
      doom-modules)))
