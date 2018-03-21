@@ -176,6 +176,17 @@ line)."
    (concat "\\(\\s-*\\)" (evil-transform-vim-style-regexp pattern))
    1 1 bang))
 
+;;;###autoload (autoload '+evil:align-right "feature/evil/autoload/evil" nil t)
+(evil-define-operator +evil:align-right (beg end pattern &optional bang)
+  "Like `+evil:align', except alignments are right-justified. PATTERN is a
+vim-style regexp. If BANG, repeat the alignment for all matches (otherwise just
+the first match on each line)."
+  (interactive "<r><//g><!>")
+  (align-regexp
+   beg end
+   (concat "\\(" (evil-transform-vim-style-regexp pattern) "\\)")
+   -1 1 bang))
+
 
 ;; --- wgrep ------------------------------
 
