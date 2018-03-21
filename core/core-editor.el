@@ -122,6 +122,13 @@ fundamental-mode) for performance sake."
 (def-package! editorconfig
   :hook (doom-init . editorconfig-mode)
   :config
+  ;; Register missing indent variables
+  (setq editorconfig-indentation-alist
+        (append '((mips-mode mips-tab-width)
+                  (haxor-mode haxor-tab-width)
+                  (nasm-mode nasm-basic-offset))
+                editorconfig-indentation-alist))
+
   ;; editorconfig cannot procure the correct settings for extension-less files.
   ;; Executable scripts with a shebang line, for example. So why not use Emacs'
   ;; major mode to drop editorconfig a hint? This is accomplished by temporarily
