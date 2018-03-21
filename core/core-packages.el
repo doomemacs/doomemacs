@@ -155,7 +155,8 @@ FORCE-P is non-nil, do it anyway.
           (make-directory dir t)))
       ;; Ensure packages have been initialized
       (require 'package)
-      (setq package-activated-list nil)
+      (setq package-activated-list nil
+            package--initialized nil)
       (condition-case _ (package-initialize)
         ('error (package-refresh-contents)
                 (setq doom--refreshed-p t)
