@@ -327,9 +327,10 @@ with `org-cycle'). Also:
 ;;;###autoload
 (defun +org|realign-table-maybe ()
   "Auto-align table under cursor and re-calculate formulas."
-  (when (org-at-table-p)
-    (save-excursion
-      (quiet! (org-table-recalculate)))))
+  (when (and (org-at-table-p) org-table-may-need-update)
+    (quiet!
+     (org-table-recalculate)
+     (if org-table-may-need-update (org-table-align)))))
 
 ;;;###autoload
 (defun +org|update-cookies ()
