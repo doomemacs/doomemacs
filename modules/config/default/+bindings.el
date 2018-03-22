@@ -733,32 +733,3 @@
       (:after view
         (:map view-mode-map "<escape>" #'View-quit-all)))
 
-
-;;
-;; Evil-collection mods
-;;
-
-;; TODO find a better way
-(when (featurep 'evil-collection)
-  ;; don't interfere with leader key
-  (evil-define-key* '(normal visual) special-mode-map (kbd doom-leader-key) nil)
-  (after! dired
-    (evil-define-key* 'normal dired-mode-map (kbd doom-leader-key) nil))
-
-  ;; Don't rebind Doom's keybinds
-  (after! alchemist
-    (evil-define-key* 'normal alchemist-mode-map "gd" nil "K" nil "gz" nil))
-  (after! anaconda-mode
-    (evil-define-key* 'normal anaconda-mode-map "gd" nil "K" nil))
-  (after! compile
-    (evil-define-key* '(normal visual) compilation-mode-map "gd" nil "K" nil))
-  (after! cider
-    (evil-define-key* '(normal visual) cider-mode-map "gd" nil "K" nil))
-  (after! go-mode
-    (evil-define-key* 'normal go-mode-map "gd" nil "K" nil))
-  (after! lua-mode
-    (evil-define-key* 'normal lua-mode-map "K" nil))
-  (after! outline
-    (evil-define-key* 'normal outline-mode-map "\C-j" nil "\C-k" nil))
-  (after! racer
-    (evil-define-key* 'normal racer-mode-map "gd" nil "K" nil)))

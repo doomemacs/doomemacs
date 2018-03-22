@@ -63,6 +63,9 @@
   (add-hook 'doom-init-hook #'evil-mode)
   (evil-select-search-module 'evil-search-module 'evil-search)
 
+  ;; ensure `doom-mode-map' has high precedence
+  (evil-make-overriding-map doom-mode-map)
+
   (set! :popup "^\\*evil-registers" '((size . 0.3)))
   (set! :popup "^\\*Command Line" '((size . 8)))
 
