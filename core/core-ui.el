@@ -32,10 +32,6 @@ shorter major mode name in the mode-line. See `doom|set-mode-name'.")
 (defvar doom-init-ui-hook nil
   "List of hooks to run when core-ui is initialized.")
 
-(defvar doom-init-theme-hook nil
-  "List of hooks to run when the theme (and font) is initialized (or reloaded
-with `doom//reload-theme').")
-
 (setq-default
  bidi-display-reordering nil ; disable bidirectional text for tiny performance boost
  blink-matching-paren nil    ; don't blink--too distracting
@@ -284,6 +280,27 @@ DEFAULT is non-nil, set the default mode-line for all buffers."
 ;; Custom hooks
 ;;
 
+(defvar doom-load-theme-hook nil
+  "Hook run when the theme (and font) is initialized (or reloaded
+with `doom//reload-theme').")
+(define-obsolete-variable-alias 'doom-init-theme-hook 'doom-load-theme-hook "2.1.0")
+
+(defvar doom-before-switch-window-hook nil
+  "Hook run before `switch-window' or `switch-frame' are called. See
+`doom-after-switch-window-hook'.")
+
+(defvar doom-after-switch-window-hook nil
+  "Hook run after `switch-window' or `switch-frame' are called. See
+`doom-before-switch-window-hook'.")
+
+(defvar doom-before-switch-buffer-hook nil
+  "Hook run before `switch-to-buffer' and `display-buffer' are called. See
+`doom-after-switch-buffer-hook'.")
+
+(defvar doom-after-switch-buffer-hook nil
+  "Hook run before `switch-to-buffer' and `display-buffer' are called. See
+`doom-before-switch-buffer-hook'.")
+
 (defun doom*switch-window-hooks (orig-fn &rest args)
   (run-hook-with-args 'doom-before-switch-window-hook)
   (prog1 (apply orig-fn args)
@@ -297,6 +314,10 @@ DEFAULT is non-nil, set the default mode-line for all buffers."
 (advice-add #'select-window    :around #'doom*switch-window-hooks)
 (advice-add #'switch-to-buffer :around #'doom*switch-buffer-hooks)
 (advice-add #'display-buffer   :around #'doom*switch-buffer-hooks)
+
+(defun doom*load-theme-hooks (&rest _)
+  (run-hook-with-args 'doom-load-theme-hook))
+(advice-add #'load-theme       :after  #'doom*load-theme-hooks)
 
 
 ;;
@@ -417,13 +438,6 @@ character that looks like a space that `whitespace-mode' won't affect.")
 ;; Theme & font
 ;;
 
-(defun doom|init-theme ()
-  "Set the theme and load the font, in that order."
-  (when doom-theme
-    (load-theme doom-theme t))
-  (add-hook 'after-make-frame-functions #'doom|init-theme-in-frame)
-  (run-hooks 'doom-init-theme-hook))
-
 (defun doom|init-fonts (&optional frame)
   "Initialize fonts."
   (add-hook 'after-make-frame-functions #'doom|init-fonts)
@@ -449,6 +463,12 @@ character that looks like a space that `whitespace-mode' won't affect.")
          (lwarn 'doom-ui :error
                 "Unexpected error while initializing fonts: %s"
                 (error-message-string ex)))))))
+
+(defun doom|init-theme ()
+  "Set the theme and load the font, in that order."
+  (when doom-theme
+    (load-theme doom-theme t))
+  (add-hook 'after-make-frame-functions #'doom|init-theme-in-frame))
 
 ;; Getting themes to remain consistent across GUI Emacs, terminal Emacs and
 ;; daemon Emacs is hairy. `doom|init-theme' sorts out the initial GUI frame.
