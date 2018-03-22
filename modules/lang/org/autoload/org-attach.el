@@ -83,21 +83,22 @@ the cursor."
   (unless (eq major-mode 'org-mode)
     (user-error "Not in an org buffer"))
   (require 'org-download)
-  (condition-case ex
-      (cond ((string-match-p "^data:image/png;base64," uri)
-             (org-download-dnd-base64 uri nil))
-            ((image-type-from-file-name uri)
-             (org-download-image uri))
-            (t
-             (let ((new-path (expand-file-name (org-download--fullname uri))))
-               ;; Download the file
-               (if (string-match-p (concat "^" (regexp-opt '("http" "https" "nfs" "ftp" "file")) ":/") uri)
-                   (url-copy-file uri new-path)
-                 (copy-file uri new-path))
-               ;; insert the link
-               (org-download-insert-link uri new-path))))
-    (error
-     (user-error "Failed to attach file: %s" (error-message-string ex)))))
+  (let ((raw-uri (url-unhex-string uri)))
+    (condition-case ex
+        (cond ((string-match-p "^data:image/png;base64," uri)
+               (org-download-dnd-base64 uri nil))
+              ((image-type-from-file-name raw-uri)
+               (org-download-image raw-uri))
+              (t
+               (let ((new-path (expand-file-name (org-download--fullname raw-uri))))
+                 ;; Download the file
+                 (if (string-match-p (concat "^" (regexp-opt '("http" "https" "nfs" "ftp" "file")) ":/") uri)
+                     (url-copy-file raw-uri new-path)
+                   (copy-file uri new-path))
+                 ;; insert the link
+                 (org-download-insert-link raw-uri new-path))))
+      (error
+       (user-error "Failed to attach file: %s" (error-message-string ex))))))
 
 ;;;###autoload
 (defun +org-attach-download-dnd (uri action)
