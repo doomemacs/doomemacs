@@ -73,7 +73,7 @@ Uses `+workspaces-main' to determine the name of the main workspace."
                 (display-buffer-in-side-window
                  warnings '((window-height . shrink-window-if-larger-than-buffer))))))))))
 
-  (add-hook 'doom-init-hook #'+workspaces|init)
+  (add-hook 'doom-init-hook #'+workspaces|init t)
   :config
   (setq persp-autokill-buffer-on-remove 'kill-weak
         persp-nil-hidden t
@@ -85,13 +85,32 @@ Uses `+workspaces-main' to determine the name of the main workspace."
         persp-auto-resume-time -1 ; Don't auto-load on startup
         persp-auto-save-opt (if noninteractive 0 1)) ; auto-save on kill
 
+  ;; bootstrap
+  (defun +workspaces|init-persp-mode ()
+    (cond (persp-mode
+           ;; Ensure `persp-kill-buffer-query-function' is last in
+           ;; kill-buffer-query-functions
+           (remove-hook 'kill-buffer-query-functions 'persp-kill-buffer-query-function)
+           (add-hook 'kill-buffer-query-functions 'persp-kill-buffer-query-function t)
+
+           ;; Ensure buffers we've opened/switched to are auto-added to the
+           ;; current perspective
+           (add-hook 'doom-after-switch-buffer-hook #'+workspaces|auto-add-buffer)
+
+           ;; Remap `buffer-list' to current workspace's buffers in
+           ;; `doom-buffer-list'
+           (advice-add #'doom-buffer-list :override #'+workspace-buffer-list))
+          (t
+           (remove-hook 'doom-after-switch-buffer-hook #'+workspaces|auto-add-buffer)
+           (advice-remove #'doom-buffer-list #'+workspace-buffer-list))))
   (add-hook 'persp-mode-hook #'+workspaces|init-persp-mode)
+
   ;; Modify `delete-window' to close the workspace if used on the last window
   (define-key persp-mode-map [remap delete-window] #'+workspace/close-window-or-workspace)
   (define-key persp-mode-map [remap evil-delete-window] #'+workspace/close-window-or-workspace)
   ;; only auto-save when real buffers are present
   (advice-add #'persp-asave-on-exit :around #'+workspaces*autosave-real-buffers)
-  ;; For `doom/cleanup-session'
+  ;; On `doom/cleanup-session', delete buffers associated with no perspectives
   (add-hook 'doom-cleanup-hook #'+workspaces|cleanup-unassociated-buffers)
 
   ;; per-frame workspaces
@@ -102,26 +121,8 @@ Uses `+workspaces-main' to determine the name of the main workspace."
   ;; delete frame associated with workspace, if it exists
   (add-hook 'delete-frame-functions #'+workspaces|delete-associated-workspace)
 
-  ;; per-project workspaces
+  ;; per-project workspaces, but reuse current workspace if empty
   (setq projectile-switch-project-action #'+workspaces|set-project-action
         counsel-projectile-switch-project-action #'+workspaces|switch-to-project)
-  (add-hook 'projectile-after-switch-project-hook #'+workspaces|switch-to-project)
-
-  ;;
-  (defun +workspaces|init-persp-mode ()
-    (cond (persp-mode
-           ;; Ensure `persp-kill-buffer-query-function' is last in
-           ;; kill-buffer-query-functions
-           (remove-hook 'kill-buffer-query-functions 'persp-kill-buffer-query-function)
-           (add-hook 'kill-buffer-query-functions 'persp-kill-buffer-query-function t)
-           ;; Ensure buffers we've opened/switched to are auto-added to the
-           ;; current perspective
-           (add-hook 'doom-after-switch-buffer-hook #'+workspaces|auto-add-buffer)
-
-           ;; Remap `buffer-list' to current workspace's buffers in
-           ;; `doom-buffer-list'
-           (advice-add #'doom-buffer-list :override #'+workspace-buffer-list))
-          (t
-           (remove-hook 'doom-after-switch-buffer-hook #'+workspaces|auto-add-buffer)
-           (advice-remove #'doom-buffer-list #'+workspace-buffer-list)))))
+  (add-hook 'projectile-after-switch-project-hook #'+workspaces|switch-to-project))
 
