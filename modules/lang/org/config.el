@@ -222,7 +222,7 @@ unfold to point on startup."
   (def-org-file-link! "doom-modules" doom-modules-dir)
 
   ;; Update UI when theme is changed
-  (add-hook 'doom-init-theme-hook #'+org|setup-ui))
+  (add-hook 'doom-load-theme-hook #'+org|setup-ui))
 
 (defun +org|setup-keybinds ()
   "Sets up org-mode and evil keybindings. Tries to fix the idiosyncrasies
