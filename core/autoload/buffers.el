@@ -202,13 +202,9 @@ If DONT-SAVE, don't prompt to save modified buffers (discarding their changes)."
 If PROJECT-P (universal argument), kill only buffers that belong to the current
 project."
   (interactive "P")
-  (let ((buffers (if project-p (doom-project-buffer-list) (doom-buffer-list)))
-        (ignore-window-parameters t))
-    (delete-other-windows)
-    (switch-to-buffer (doom-fallback-buffer))
-    (let (kill-buffer-query-functions)
-      (message "Killed %s buffers"
-               (length (delq nil (mapcar #'kill-buffer buffers)))))))
+  (delete-other-windows)
+  (switch-to-buffer (doom-fallback-buffer))
+  (doom/cleanup-session))
 
 ;;;###autoload
 (defun doom/kill-other-buffers (&optional project-p)
