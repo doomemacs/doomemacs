@@ -60,7 +60,11 @@
 
   (defun +org-attach*download-fullname (path)
     "Write PATH relative to current file."
-    (file-relative-name path (file-name-directory buffer-file-name)))
+    (let ((dir (or (if buffer-file-name (file-name-directory buffer-file-name))
+                   default-directory)))
+      (if (file-in-directory-p dir +org-dir)
+          (file-relative-name path dir)
+        path)))
   (advice-add #'org-download--dir-2 :override #'ignore)
   (advice-add #'org-download--fullname
               :filter-return #'+org-attach*download-fullname))
