@@ -290,12 +290,12 @@ with `org-cycle'). Also:
     (save-match-data
       (when (and (org-at-table-p)
                  (not (org-region-active-p))
-                 (string-match "|" (buffer-substring (point-at-bol) (point)))
-                 (looking-at ".*?|"))
+                 (string-match-p "|" (buffer-substring (point-at-bol) (point)))
+                 (looking-at-p ".*?|"))
         (let ((pos (point))
-              (noalign (looking-at "[^|\n\r]*  |"))
+              (noalign (looking-at-p "[^|\n\r]*  |"))
               (c org-table-may-need-update))
-          (delete-char n)
+          (delete-char 1)
           (unless overwrite-mode
             (skip-chars-forward "^|")
             (insert " ")
