@@ -41,19 +41,22 @@ buffers."
   "TODO"
   (interactive)
   (let ((prefix (this-command-keys)))
+    (map! :m prefix nil)
     (evilem-default-keybindings prefix)
-    (map! :map evilem-map
-          "n" (evilem-create #'evil-ex-search-next)
-          "N" (evilem-create #'evil-ex-search-previous)
-          "s" (evilem-create #'evil-snipe-repeat
-                             :pre-hook (save-excursion (call-interactively #'evil-snipe-s))
-                             :bind ((evil-snipe-scope 'buffer)
-                                    (evil-snipe-enable-highlight)
-                                    (evil-snipe-enable-incremental-highlight)))
-          "S" (evilem-create #'evil-snipe-repeat-reverse
-                             :pre-hook (save-excursion (call-interactively #'evil-snipe-s))
-                             :bind ((evil-snipe-scope 'buffer)
-                                    (evil-snipe-enable-highlight)
-                                    (evil-snipe-enable-incremental-highlight))))
-    (set-transient-map evilem-map)
-    (which-key-reload-key-sequence prefix)))
+    (let ((map evilem-map))
+      (define-key map "n" (evilem-create #'evil-ex-search-next))
+      (define-key map "N" (evilem-create #'evil-ex-search-previous))
+      (define-key map "s"
+        (evilem-create #'evil-snipe-repeat
+                       :pre-hook (save-excursion (call-interactively #'evil-snipe-s))
+                       :bind ((evil-snipe-scope 'buffer)
+                              (evil-snipe-enable-highlight)
+                              (evil-snipe-enable-incremental-highlight))))
+      (define-key map "S"
+        (evilem-create #'evil-snipe-repeat-reverse
+                       :pre-hook (save-excursion (call-interactively #'evil-snipe-s))
+                       :bind ((evil-snipe-scope 'buffer)
+                              (evil-snipe-enable-highlight)
+                              (evil-snipe-enable-incremental-highlight))))
+      (set-transient-map map)
+      (which-key-reload-key-sequence prefix))))
