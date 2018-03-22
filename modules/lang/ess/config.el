@@ -39,7 +39,7 @@
         ess-nuke-trailing-whitespace-p t
         ess-default-style 'DEFAULT)
   (ess-toggle-underscore t)
-  (set! :repl 'ess-mode #'+r/repl)
+  (set! :repl 'ess-mode #'+ess/r-repl)
   (set! :lookup 'ess-mode :documentation #'ess-display-help-on-object)
   (map! (:map ess-doc-map
           "h"             #'ess-display-help-on-object
