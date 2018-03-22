@@ -1,30 +1,54 @@
 ;;; ui/doom/config.el -*- lexical-binding: t; -*-
 
+(defvar +doom-solaire-themes
+  '(doom-city-lights
+    doom-dracula
+    doom-molokai
+    doom-nord
+    doom-nova
+    doom-one
+    doom-one-light
+    doom-solarized-light
+    doom-spacegrey
+    doom-vibrant)
+  "A list of themes that supports `solaire-mode'; if these themes are detected,
+`solaire-mode' will be enabled.")
+
+
+;;
+;; Plugins
+;;
+
 ;; <https://github.com/hlissner/emacs-doom-theme>
 (def-package! doom-themes
   :config
   (unless doom-theme
-    (setq doom-theme 'doom-one)
-    (after! solaire-mode
-      (add-hook 'doom-init-theme-hook #'solaire-mode-swap-bg t)))
+    (setq doom-theme 'doom-one))
 
   ;; Ensure `doom/reload-load-path' reloads common faces
   (defun +doom|reload-theme () (load "doom-themes-common.el" nil t))
   (add-hook 'doom-pre-reload-theme-hook #'+doom|reload-theme)
 
   ;; improve integration w/ org-mode
-  (add-hook 'doom-init-theme-hook #'doom-themes-org-config)
+  (add-hook 'doom-load-theme-hook #'doom-themes-org-config)
 
   ;; more Atom-esque file icons for neotree
-  (add-hook 'doom-init-theme-hook #'doom-themes-neotree-config)
+  (add-hook 'doom-load-theme-hook #'doom-themes-neotree-config)
   (setq doom-neotree-enable-variable-pitch t
         doom-neotree-file-icons 'simple
         doom-neotree-line-spacing 2))
 
 
 (def-package! solaire-mode
-  :hook (after-change-major-mode . turn-on-solaire-mode)
+  :commands (solaire-mode turn-on-solaire-mode solaire-mode-swap-bg)
+  :init
+  (defun +doom|solaire-mode-swap-bg-maybe ()
+    (when (memq doom-theme +doom-solaire-themes)
+      (require 'solaire-mode)
+      (solaire-mode-swap-bg)))
+  (add-hook 'doom-load-theme-hook #'+doom|solaire-mode-swap-bg-maybe t)
   :config
+  (add-hook 'after-change-major-mode-hook #'turn-on-solaire-mode)
   (setq solaire-mode-real-buffer-fn #'doom-real-buffer-p)
   ;; fringe can become unstyled when deleting or focusing frames
   (add-hook 'focus-in-hook #'solaire-mode-reset)
