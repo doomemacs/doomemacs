@@ -1,0 +1,31 @@
+#+TITLE: Documentation of the +style feature
+
+* Style and scripts
+HTML export style sheets and external scripts are stored in the ~org-html-head~ directory by default, however, you can fully control that using variable ~+org-html-export-style-dir~ (which specify the directory) and ~+org-html-export-style-list~ (which specify the including order).
+
+* DataTables Integration
+[[https://datatables.net/][DataTables]] are integrated in the script file. To export a (potentially large) org-mode table, you can use the following snippet (through YASnippet) before a table:
+#+BEGIN_SRC snippet
+# -*- mode: snippet -*-
+# name: DataTable
+# key: dt_
+# --
+#+HTML_HEAD_EXTRA: <script type="text/javascript">
+#+HTML_HEAD_EXTRA:   $(document).ready(function() {
+#+HTML_HEAD_EXTRA:     $('#$2').DataTable(); } );
+#+HTML_HEAD_EXTRA: </script>
+#+CAPTION: $1
+#+ATTR_HTML: :id $2
+$0
+#+END_SRC
+
+* Bootstrap Table of Contents
+To use the table of contents, you need to add the following sentence before your exporting contents, after the ~#+TITLE~ / ~#+AUTHOR~ metadata (for subtree exporting, add it after the ~:PROPERTIES:~ block)
+#+BEGIN_SRC html
+#+OPTIONS: toc:nil H:2
+#+HTML: <nav id="toc" data-toggle="toc" class="sticky-top"></nav>
+#+END_SRC
+After adding that, the ToC should automatically work.
+
+* Show/hide table / code blocks
+It. Just. Works. Extend it (or apply the effect to other elements) using ~./org-html-head/org.js~.

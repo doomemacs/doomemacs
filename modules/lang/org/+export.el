@@ -75,7 +75,7 @@
   (when (featurep! +style)
     (defvar +org-html-export-style-dir (concat doom-modules-dir "lang/org-private/org-html-head")
       "Directory that contains files to be embeded into org export html.")
-    (defvar +org-html-export-style-alist '("include.html"
+    (defvar +org-html-export-style-list '("include.html"
                                            "bootstrap-toc.js"
                                            "bootstrap-toc.css"
                                            "org.js"
