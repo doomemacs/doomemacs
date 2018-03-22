@@ -75,6 +75,18 @@
   ;; A shorter link to attachments
   (push (cons "attach" (abbreviate-file-name org-attach-directory)) org-link-abbrev-alist)
 
+  ;; Enhance attach links
+  (org-link-set-parameters
+   "attach"
+   :follow   (lambda (link) (find-file (expand-file-name link org-attach-directory)))
+   :complete (lambda (&optional _arg)
+               (+org--relpath (+org-link-read-file "attach" org-attach-directory)
+                              org-attach-directory))
+   :face     (lambda (link)
+               (if (file-exists-p (expand-file-name link org-attach-directory))
+                   'org-link
+                 'error)))
+
   (push (car (last (split-string +org-attach-dir "/" t)))
         projectile-globally-ignored-directories)
 
