@@ -752,6 +752,8 @@
     (evil-define-key* 'normal anaconda-mode-map "gd" nil "K" nil))
   (after! compile
     (evil-define-key* '(normal visual) compilation-mode-map "gd" nil "K" nil))
+  (after! cider
+    (evil-define-key* '(normal visual) cider-mode-map "gd" nil "K" nil))
   (after! go-mode
     (evil-define-key* 'normal go-mode-map "gd" nil "K" nil))
   (after! lua-mode
