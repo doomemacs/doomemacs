@@ -440,29 +440,27 @@ character that looks like a space that `whitespace-mode' won't affect.")
 
 (defun doom|init-fonts (&optional frame)
   "Initialize fonts."
-  (add-hook 'after-make-frame-functions #'doom|init-fonts)
   (when (fontp doom-font)
     (map-put default-frame-alist 'font (font-xlfd-name doom-font)))
-  (when (display-graphic-p)
-    (or frame (setq frame (selected-frame)))
-    (condition-case-unless-debug ex
-        (progn
-          (when (fontp doom-font)
-            (set-face-attribute 'fixed-pitch frame :font doom-font))
-          ;; Fallback to `doom-unicode-font' for Unicode characters
-          (when (fontp doom-unicode-font)
-            (set-fontset-font t 'unicode doom-unicode-font frame))
-          ;; ...and for variable-pitch-mode:
-          (when (fontp doom-variable-pitch-font)
-            (set-face-attribute 'variable-pitch frame :font doom-variable-pitch-font)))
-      ('error
-       (if (string-prefix-p "Font not available: " (error-message-string ex))
-           (lwarn 'doom-ui :warning
-                  "Could not find the '%s' font on your system, falling back to system font"
-                  (font-get (caddr ex) :family))
-         (lwarn 'doom-ui :error
-                "Unexpected error while initializing fonts: %s"
-                (error-message-string ex)))))))
+  (or frame (setq frame (selected-frame)))
+  (condition-case-unless-debug ex
+      (progn
+        (when (fontp doom-font)
+          (set-face-attribute 'fixed-pitch frame :font doom-font))
+        ;; Fallback to `doom-unicode-font' for Unicode characters
+        (when (fontp doom-unicode-font)
+          (set-fontset-font t 'unicode doom-unicode-font frame))
+        ;; ...and for variable-pitch-mode:
+        (when (fontp doom-variable-pitch-font)
+          (set-face-attribute 'variable-pitch frame :font doom-variable-pitch-font)))
+    ('error
+     (if (string-prefix-p "Font not available: " (error-message-string ex))
+         (lwarn 'doom-ui :warning
+                "Could not find the '%s' font on your system, falling back to system font"
+                (font-get (caddr ex) :family))
+       (lwarn 'doom-ui :error
+              "Unexpected error while initializing fonts: %s"
+              (error-message-string ex))))))
 
 (defun doom|init-theme ()
   "Set the theme and load the font, in that order."
