@@ -76,7 +76,7 @@
 
   (defun +evil|update-cursor-color ()
     (setq +evil--default-cursor-color (face-background 'cursor)))
-  (add-hook 'doom-init-theme-hook #'+evil|update-cursor-color)
+  (add-hook 'doom-load-theme-hook #'+evil|update-cursor-color)
 
 
   ;; --- keybind fixes ----------------------
