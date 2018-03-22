@@ -1,0 +1,1524 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2018-03-22 Thu 21:46 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Documentation of the +style feature</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="Alexander Fu Xi" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<!-- Responsive tags -->
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<!-- dataTables css -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" crossorigin="anonymous">
+<!-- bootstrap css -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<!-- jquery for bootstrap -->
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<!-- popper for bootstrap -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<!-- bootstrap js -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<!-- dataTables js -->
+<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
+
+
+<script type="text/javascript">
+<!--/*--><![CDATA[/*><!--*/
+/*!
+ * Bootstrap Table of Contents v<%= version %> (http://afeld.github.io/bootstrap-toc/)
+ * Copyright 2015 Aidan Feldman
+ * Licensed under MIT (https://github.com/afeld/bootstrap-toc/blob/gh-pages/LICENSE.md) */
+(function($) {
+  'use strict';
+
+  window.Toc = {
+    helpers: {
+      // return all matching elements in the set, or their descendants
+      findOrFilter: function($el, selector) {
+        // http://danielnouri.org/notes/2011/03/14/a-jquery-find-that-also-finds-the-root-element/
+        // http://stackoverflow.com/a/12731439/358804
+        var $descendants = $el.find(selector);
+        return $el.filter(selector).add($descendants).filter(':not([data-toc-skip])');
+      },
+
+      generateUniqueIdBase: function(el) {
+        var text = $(el).text();
+        var anchor = text.trim().toLowerCase().replace(/[^A-Za-z0-9]+/g, '-');
+        return anchor || el.tagName.toLowerCase();
+      },
+
+      generateUniqueId: function(el) {
+        var anchorBase = this.generateUniqueIdBase(el);
+        for (var i = 0; ; i++) {
+          var anchor = anchorBase;
+          if (i > 0) {
+            // add suffix
+            anchor += '-' + i;
+          }
+          // check if ID already exists
+          if (!document.getElementById(anchor)) {
+            return anchor;
+          }
+        }
+      },
+
+      generateAnchor: function(el) {
+        if (el.id) {
+          return el.id;
+        } else {
+          var anchor = this.generateUniqueId(el);
+          el.id = anchor;
+          return anchor;
+        }
+      },
+
+      createNavList: function() {
+        return $('<ul class="nav navbar-nav"></ul>');
+      },
+
+      createChildNavList: function($parent) {
+        var $childList = this.createNavList();
+        $parent.append($childList);
+        return $childList;
+      },
+
+      generateNavEl: function(anchor, text) {
+        var $a = $('<a class="nav-link"></a>');
+        $a.attr('href', '#' + anchor);
+        $a.text(text);
+        var $li = $('<li></li>');
+        $li.append($a);
+        return $li;
+      },
+
+      generateNavItem: function(headingEl) {
+        var anchor = this.generateAnchor(headingEl);
+        var $heading = $(headingEl);
+        var text = $heading.data('toc-text') || $heading.text();
+        return this.generateNavEl(anchor, text);
+      },
+
+      // Find the first heading level (`<h1>`, then `<h2>`, etc.) that has more than one element. Defaults to 1 (for `<h1>`).
+      getTopLevel: function($scope) {
+        for (var i = 1; i <= 6; i++) {
+          var $headings = this.findOrFilter($scope, 'h' + i);
+          if ($headings.length > 1) {
+            return i;
+          }
+        }
+
+        return 1;
+      },
+
+      // returns the elements for the top level, and the next below it
+      getHeadings: function($scope, topLevel) {
+        var topSelector = 'h' + topLevel;
+
+        var secondaryLevel = topLevel + 1;
+        var secondarySelector = 'h' + secondaryLevel;
+
+        return this.findOrFilter($scope, topSelector + ',' + secondarySelector);
+      },
+
+      getNavLevel: function(el) {
+        return parseInt(el.tagName.charAt(1), 10);
+      },
+
+      populateNav: function($topContext, topLevel, $headings) {
+        var $context = $topContext;
+        var $prevNav;
+
+        var helpers = this;
+        $headings.each(function(i, el) {
+          var $newNav = helpers.generateNavItem(el);
+          var navLevel = helpers.getNavLevel(el);
+
+          // determine the proper $context
+          if (navLevel === topLevel) {
+            // use top level
+            $context = $topContext;
+          } else if ($prevNav && $context === $topContext) {
+            // create a new level of the tree and switch to it
+            $context = helpers.createChildNavList($prevNav);
+          } // else use the current $context
+
+          $context.append($newNav);
+
+          $prevNav = $newNav;
+        });
+      },
+
+      parseOps: function(arg) {
+        var opts;
+        if (arg.jquery) {
+          opts = {
+            $nav: arg
+          };
+        } else {
+          opts = arg;
+        }
+        opts.$scope = opts.$scope || $(document.body);
+        return opts;
+      }
+    },
+
+    // accepts a jQuery object, or an options object
+    init: function(opts) {
+      opts = this.helpers.parseOps(opts);
+
+      // ensure that the data attribute is in place for styling
+      opts.$nav.attr('data-toggle', 'toc');
+
+      var $topContext = this.helpers.createChildNavList(opts.$nav);
+      var topLevel = this.helpers.getTopLevel(opts.$scope);
+      var $headings = this.helpers.getHeadings(opts.$scope, topLevel);
+      this.helpers.populateNav($topContext, topLevel, $headings);
+    }
+  };
+
+  $(function() {
+    $('nav[data-toggle="toc"]').each(function(i, el) {
+      var $nav = $(el);
+      Toc.init($nav);
+    });
+  });
+})(jQuery);
+/*]]>*/-->
+</script>
+
+<style type="text/css">
+<!--/*--><![CDATA[/*><!--*/
+/*!
+ * Bootstrap Table of Contents v<%= version %> (http://afeld.github.io/bootstrap-toc/)
+ * Copyright 2015 Aidan Feldman
+ * Licensed under MIT (https://github.com/afeld/bootstrap-toc/blob/gh-pages/LICENSE.md) */
+
+/* modified from https://github.com/twbs/bootstrap/blob/94b4076dd2efba9af71f0b18d4ee4b163aa9e0dd/docs/assets/css/src/docs.css#L548-L601 */
+
+/* All levels of nav */
+nav[data-toggle='toc'] .nav > li > a {
+  display: block;
+  padding: 4px 20px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #767676;
+}
+nav[data-toggle='toc'] .nav > li > a:hover,
+nav[data-toggle='toc'] .nav > li > a:focus {
+  padding-left: 19px;
+  color: #563d7c;
+  text-decoration: none;
+  background-color: transparent;
+  border-left: 1px solid #563d7c;
+}
+nav[data-toggle='toc'] .nav-link.active,
+nav[data-toggle='toc'] .nav-link.active:hover,
+nav[data-toggle='toc'] .nav-link.active:focus {
+  padding-left: 18px;
+  font-weight: bold;
+  color: #563d7c;
+  background-color: transparent;
+  border-left: 2px solid #563d7c;
+}
+
+/* Nav: second level (shown on .active) */
+nav[data-toggle='toc'] .nav-link + ul {
+  display: none; /* Hide by default, but at >768px, show it */
+  padding-bottom: 10px;
+}
+
+nav[data-toggle='toc'] .nav .nav > li > a {
+  padding-top: 1px;
+  padding-bottom: 1px;
+  padding-left: 30px;
+  font-size: 12px;
+  font-weight: normal;
+}
+nav[data-toggle='toc'] .nav .nav > li > a:hover,
+nav[data-toggle='toc'] .nav .nav > li > a:focus {
+  padding-left: 29px;
+}
+nav[data-toggle='toc'] .nav .nav > li > .active,
+nav[data-toggle='toc'] .nav .nav > li > .active:hover,
+nav[data-toggle='toc'] .nav .nav > li > .active:focus {
+  padding-left: 28px;
+  font-weight: 500;
+}
+
+nav[data-toggle='toc'] .nav-link.active + ul {
+  display: block;
+}
+/*]]>*/-->
+</style>
+
+<script type="text/javascript">
+<!--/*--><![CDATA[/*><!--*/
+
+function panelDiv (col, type_name) {
+    return "<div class=\"card-header\" id=\"header-" + col.id + "\">"
+        + "<button class=\"btn btn-link\""
+        + "data-toggle=\"collapse\""
+        + "data-target=\"#" + col.id + "\""
+        + "aria-expanded=\"false\""
+        + "aria-controls=\"" + col.id + "\""
+        + "\">Toggle " + type_name + "</button>"
+        + "</div>"
+}
+
+function panelCollapse(col) {
+    return "<div id=\"col-" + col.id + Math.random().toString(36).substring(7)
+        + "\" class=\"collapse\"></div>";
+}
+
+$( document ).ready(function() {
+    $('body').attr("data-spy", "scroll");
+    $('body').attr("data-target", "#toc");
+
+
+    // The content (and postamble) should be in a container.
+    $('#content, #postamble').wrapAll("<div class='container'></div>");
+    $('#toc, .outline-2').wrapAll("<div class='row'></div>");
+    $('#toc').wrap("<div class='col-md-3'></div>");
+    $('.outline-2').wrapAll("<div class='col-md-9'></div>");
+    $('.col-md-9').after( $('.col-md-3') );
+
+    // $('#footnotes').appendTo('.col-sm-9');
+
+    $('#toc').empty();
+    $('#toc').addClass('nav-list');
+
+
+    var navSelector = '#toc';
+    var $myNav = $(navSelector);
+    Toc.init($myNav);
+    $('body').scrollspy({
+        target: navSelector
+    });
+
+    $('.org-src-container').addClass("card-body").wrap('<div class="card"></div>');
+    $('.table').addClass("card-body").wrap('<div class="card"></div>');
+    $('.card-body').each(function() {$(this).wrap(panelCollapse(this))})
+    $('.org-src-container').parent().each(function() {$(this).before(panelDiv(this, 'Code'))})
+    $('.table').parent().each(function() {$(this).before(panelDiv(this, 'Table'))})
+});
+/*]]>*/-->
+</script>
+
+<style type="text/css">
+<!--/*--><![CDATA[/*><!--*/
+#mainNav {
+    background-color: #FFF;
+    border-bottom: 1px solid #e9ecef;
+    font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    position: absolute;
+}
+
+#mainNav .navbar-brand {
+    color: #343a40;
+    font-weight: 800;
+}
+
+#mainNav .navbar-nav>li.nav-item>a {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+#mainNav .navbar-toggler {
+    color: #343a40;
+    font-size: 12px;
+    font-weight: 800;
+    padding: 13px;
+    text-transform: uppercase;
+}
+
+.btn {
+    border-radius: 0;
+    font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.btn-lg {
+    font-size: 16px;
+    padding: 25px 35px;
+}
+
+.btn-primary {
+    background-color: #0085A1;
+    border-color: #0085A1;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+    background-color: #00657b !important;
+    border-color: #00657b !important;
+    color: #fff;
+}
+
+.caption {
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    display: block;
+    font-size: 14px;
+    font-style: italic;
+    margin: 0;
+    padding: 10px;
+    text-align: center;
+}
+
+.card-body,
+.card-header {
+    padding: 0;
+}
+
+.collapse {
+    display: block;
+    height: 50px;
+    overflow: hidden;
+}
+
+.collapse.show {
+    display: block;
+    height: auto;
+}
+
+.collapsing {
+    height: 50px;
+    overflow: hidden;
+    position: relative;
+}
+
+.dataTables_wrapper {
+    clear: both;
+    font-size: smaller;
+    line-height: 1;
+    margin: .8em;
+    overflow: scroll;
+    position: relative;
+    zoom: 1;
+}
+
+.done {
+    background-color: #A2BF8A;
+    border-radius: .3rem;
+    color: #FFF;
+    font-family: 'SF Mono', monospace;
+    font-style: light;
+}
+
+.floating-label-form-group {
+    border-bottom: 1px solid #dee2e6;
+    font-size: 14px;
+    margin-bottom: 0;
+    padding-bottom: .5em;
+    position: relative;
+}
+
+.floating-label-form-group .help-block {
+    margin: 15px 0;
+}
+
+.floating-label-form-group input,
+.floating-label-form-group textarea {
+    background: none;
+    border: none;
+    border-radius: 0;
+    box-shadow: none !important;
+    font-family: Lora, 'Times New Roman', serif;
+    font-size: 1.5em;
+    padding: 0;
+    position: relative;
+    resize: none;
+    z-index: 1;
+}
+
+.floating-label-form-group input::-webkit-input-placeholder,
+.floating-label-form-group textarea::-webkit-input-placeholder {
+    color: #868e96;
+    font-family: Lora, 'Times New Roman', serif;
+}
+
+.floating-label-form-group label {
+    -moz-transition: top .3s ease, opacity .3s ease;
+    -ms-transition: top .3s ease, opacity .3s ease;
+    -webkit-transition: top .3s ease, opacity .3s ease;
+    display: block;
+    font-size: .85em;
+    line-height: 1.764705882em;
+    margin: 0;
+    opacity: 0;
+    position: relative;
+    top: 2em;
+    transition: top .3s ease, opacity .3s ease;
+    vertical-align: baseline;
+    z-index: 0;
+}
+
+.floating-label-form-group-with-value label {
+    opacity: 1;
+    top: 0;
+}
+
+.habt {
+    background-color: #ECCC87;
+    border-radius: .3rem;
+    color: #FFF;
+    font-family: 'SF Mono', monospace;
+    font-style: light;
+}
+
+.kill {
+    background-color: #5D80AE;
+    border-radius: .3rem;
+    color: #FFF;
+    font-family: 'SF Mono', monospace;
+    font-style: light;
+}
+
+.org-Xdoom-folded {
+    background-color: #2E3440;
+    color: #67748F;
+}
+
+.org-ess-XopX,
+.org-ess-operator {
+    color: #B58DAE;
+}
+
+.org-ess-backquoted {
+    background-color: #2E3440;
+    color: #E5E9F0;
+}
+
+.org-ess-bp-fringe-browser {
+    color: #00bfff;
+}
+
+.org-ess-bp-fringe-inactive {
+    color: #d3d3d3;
+}
+
+.org-ess-bp-fringe-logger {
+    color: #ff6347;
+}
+
+.org-ess-bp-fringe-recover {
+    color: #f0f;
+}
+
+.org-ess-debug-blink-ref-not-found {
+    background-color: #8b0000;
+}
+
+.org-ess-debug-blink-same-ref {
+    background-color: #191970;
+}
+
+.org-ess-debug-current-debug-line,
+.org-ess-watch-current-block {
+    background-color: #80A0C2;
+    color: #2E3440;
+}
+
+.org-ess-function-call {
+    color: #8EBCBB;
+}
+
+.org-ess-numbers {
+    color: #ECCC87;
+}
+
+.org-ess-tracebug-last-input-fringe {
+    color: #00bfff;
+    text-decoration: overline;
+}
+
+.org-flymake-error,
+.org-flymake-note,
+.org-flymake-warning,
+a:hover,
+p a {
+    text-decoration: underline;
+}
+
+.org-julia-macro,
+.org-julia-quoted-symbol {
+    color: #80A0C2;
+    font-weight: 700;
+}
+
+.outd {
+    background-color: #D2876D;
+    border-radius: .3rem;
+    color: #FFF;
+    font-family: 'SF Mono', monospace;
+    font-style: light;
+}
+
+.outline-2,
+#footnotes {
+    max-width: 750px;
+}
+
+.panel-heading {
+    cursor: pointer;
+}
+
+.post-preview>.post-meta {
+    color: #868e96;
+    font-size: 18px;
+    font-style: italic;
+    margin-top: 0;
+}
+
+.post-preview>.post-meta>a {
+    color: #212529;
+    text-decoration: none;
+}
+
+.post-preview>.post-meta>a:focus,
+.post-preview>.post-meta>a:hover {
+    color: #0085A1;
+    text-decoration: underline;
+}
+
+.post-preview>a {
+    color: #212529;
+}
+
+.post-preview>a:focus,
+.post-preview>a:hover {
+    color: #0085A1;
+    text-decoration: none;
+}
+
+.post-preview>a>.post-subtitle {
+    font-weight: 300;
+    margin: 0 0 10px;
+}
+
+.post-preview>a>.post-title {
+    font-size: 30px;
+    margin-bottom: 10px;
+    margin-top: 30px;
+}
+
+.section-heading {
+    font-size: 36px;
+    font-weight: 700;
+    margin-top: 60px;
+}
+
+.table {
+    font-size: smaller;
+    line-height: 1;
+    overflow: scroll;
+}
+
+.timestamp,
+.tag,
+code {
+    background-color: #E5E9F0;
+    border-radius: .2rem;
+    color: #2E3440;
+    font-family: SFMono-Regular, monospace;
+}
+
+.tag {
+    font-size: 50%;
+}
+
+.title {
+    font-family: "SF Compact Display", 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 0;
+    margin-bottom: 1.5em;
+    margin-top: 1.5em;
+    text-align: left;
+}
+
+.todo {
+    background-color: #80A0C2;
+    border-radius: .3rem;
+    color: #FFF;
+    font-family: 'SF Mono', monospace;
+    font-style: light;
+}
+
+.wait {
+    background-color: #C16069;
+    border-radius: .3rem;
+    color: #FFF;
+    font-family: 'SF Mono', monospace;
+    font-style: light;
+}
+
+::-moz-selection,
+::selection {
+    background: #0085A1;
+    color: #fff;
+    text-shadow: none;
+}
+
+a {
+    -moz-transition: all .2s;
+    -webkit-transition: all .2s;
+    background-color: inherit;
+    color: #212529;
+    font: inherit;
+    text-decoration: inherit;
+    transition: all .2s;
+}
+
+a:focus,
+a:hover,
+.floating-label-form-group-with-focus label {
+    color: #0085A1;
+}
+
+blockquote {
+    color: #868e96;
+    font-style: italic;
+}
+
+body {
+    color: #212529;
+    font-family: Charter, 'Times New Roman', serif;
+    font-size: 18px;
+    position: relative;
+}
+
+footer {
+    padding: 50px 0 65px;
+}
+
+footer .copyright {
+    font-size: 14px;
+    margin-bottom: 0;
+    text-align: center;
+}
+
+footer .list-inline {
+    margin: 0;
+    padding: 0;
+}
+
+form .form-group:first-child .floating-label-form-group {
+    border-top: 1px solid #dee2e6;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: 'SF Compact Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-weight: 800;
+    margin-bottom: .5em;
+    margin-top: .5em;
+    text-align: left;
+}
+
+header {
+    height: 270px;
+}
+
+header.masthead {
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    -webkit-background-size: cover;
+    background: no-repeat center center;
+    background-attachment: scroll;
+    background-color: #868e96;
+    background-size: cover;
+    margin-bottom: 50px;
+    position: relative;
+}
+
+header.masthead .overlay {
+    background-color: #212529;
+    height: 100%;
+    left: 0;
+    opacity: 0.5;
+    position: absolute;
+    top: 0;
+    width: 100%;
+}
+
+header.masthead .page-heading .subheading,
+header.masthead .site-heading .subheading {
+    display: block;
+    font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 24px;
+    font-weight: 300;
+    line-height: 1.1;
+    margin: 10px 0 0;
+}
+
+header.masthead .page-heading h1,
+header.masthead .site-heading h1 {
+    font-size: 50px;
+    margin-top: 0;
+}
+
+header.masthead .page-heading,
+header.masthead .post-heading,
+header.masthead .site-heading {
+    color: #FFF;
+    padding: 200px 0 150px;
+}
+
+header.masthead .page-heading,
+header.masthead .site-heading {
+    text-align: center;
+}
+
+header.masthead .post-heading .meta {
+    font-family: Lora, 'Times New Roman', serif;
+    font-size: 20px;
+    font-style: italic;
+    font-weight: 300;
+}
+
+header.masthead .post-heading .meta a {
+    color: #fff;
+}
+
+header.masthead .post-heading .meta,
+header.masthead .post-heading .subheading {
+    display: block;
+    line-height: 1.1;
+}
+
+header.masthead .post-heading .subheading {
+    font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 24px;
+    font-weight: 600;
+    margin: 10px 0 30px;
+}
+
+header.masthead .post-heading h1 {
+    font-size: 35px;
+}
+
+img::selection,
+img::-moz-selection {
+    background: transparent;
+    color: #fff;
+}
+
+nav[data-toggle='toc'] {
+    font-family: "SF Compact Display", 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    margin-top: 30px;
+}
+
+p {
+    line-height: 1.5;
+    margin: 30px 0;
+}
+
+pre.src {
+    background-color: #2E3440;
+    color: #E5E9F0;
+    font-family: SFMono-Regular, monospace;
+    margin: 0;
+    overflow: scroll;
+}
+
+pre.src:before {
+    background-color: #2E3440;
+    border: 1px solid #E5E9F0;
+    color: #E5E9F0;
+    display: none;
+    font-family: "SF Compact Display", 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    padding: 3px;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+}
+
+@media max-width 768px {
+    nav[data-toggle='toc'] {
+        position: relative;
+    }
+
+    nav[data-toggle='toc'] .nav .active .nav {
+        display: none;
+    }
+}
+
+@media only screen and min-width 992px {
+    #mainNav {
+        -moz-transform: translate3d(0, 0, 0);
+        -moz-transition: background-color .2s;
+        -ms-transform: translate3d(0, 0, 0);
+        -o-transform: translate3d(0, 0, 0);
+        -webkit-backface-visibility: hidden;
+        -webkit-transform: translate3d(0, 0, 0);
+        -webkit-transition: background-color .2s;
+        background: transparent;
+        border-bottom: 1px solid transparent;
+        transform: translate3d(0, 0, 0);
+        transition: background-color .2s;
+    }
+
+    #mainNav .navbar-brand,
+    #mainNav .navbar-nav>li.nav-item>a {
+        color: #fff;
+        padding: 10px 20px;
+    }
+
+    #mainNav .navbar-brand:focus,
+    #mainNav .navbar-brand:hover,
+    #mainNav .navbar-nav>li.nav-item>a:focus,
+    #mainNav .navbar-nav>li.nav-item>a:hover {
+        color: rgba(255, 255, 255, 0.8);
+    }
+
+    #mainNav.is-fixed {
+        -moz-transition: 0 .2s;
+        -webkit-transition: 0 .2s;
+        background-color: rgba(255, 255, 255, 0.9);
+        border-bottom: 1px solid #FFF;
+        position: fixed;
+        top: -67px;
+        transition: transform .2s;
+    }
+
+    #mainNav.is-fixed .navbar-brand,
+    #mainNav.is-fixed .navbar-nav>li.nav-item>a {
+        color: #212529;
+    }
+
+    #mainNav.is-fixed .navbar-brand:focus,
+    #mainNav.is-fixed .navbar-brand:hover,
+    #mainNav.is-fixed .navbar-nav>li.nav-item>a:focus,
+    #mainNav.is-fixed .navbar-nav>li.nav-item>a:hover {
+        color: #0085A1;
+    }
+
+    #mainNav.is-visible {
+        -moz-transform: translate3d(0, 100%, 0);
+        -ms-transform: translate3d(0, 100%, 0);
+        -o-transform: translate3d(0, 100%, 0);
+        -webkit-transform: translate3d(0, 100%, 0);
+        transform: translate3d(0, 100%, 0);
+    }
+}
+
+@media only screen and min-width 768px {
+    .post-preview>a>.post-title {
+        font-size: 36px;
+    }
+
+    header.masthead .page-heading h1,
+    header.masthead .site-heading h1 {
+        font-size: 80px;
+    }
+
+    header.masthead .page-heading,
+    header.masthead .post-heading,
+    header.masthead .site-heading {
+        padding: 200px 0;
+    }
+
+    header.masthead .post-heading .subheading {
+        font-size: 30px;
+    }
+
+    header.masthead .post-heading h1 {
+        font-size: 55px;
+    }
+}
+/*]]>*/-->
+</style>
+<script type="text/javascript">
+$(document).ready(function() {
+$('#dt').DataTable(); } );
+</script>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2018 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Documentation of the +style feature</h1>
+<nav id="toc" data-toggle="toc" class="sticky-top"></nav>
+
+<div id="outline-container-org0a43067" class="outline-2">
+<h2 id="org0a43067">Style and scripts</h2>
+<div class="outline-text-2" id="text-org0a43067">
+<p>
+HTML export style sheets and external scripts are stored in the <code>org-html-head</code> directory by default, however, you can fully control that using variable <code>+org-html-export-style-dir</code> (which specify the directory) and <code>+org-html-export-style-list</code> (which specify the including order).
+</p>
+</div>
+</div>
+
+<div id="outline-container-org3e5b65d" class="outline-2">
+<h2 id="org3e5b65d">DataTables Integration</h2>
+<div class="outline-text-2" id="text-org3e5b65d">
+<p>
+<a href="https://datatables.net/">DataTables</a> are integrated in the script file. To export a (potentially large) org-mode table, you can use the following snippet (through YASnippet) before a table:
+</p>
+<div class="org-src-container">
+<pre class="src src-snippet"><span style="color: #6f7787;"># -*- mode: snippet -*-</span>
+<span style="color: #6f7787;"># name: DataTable</span>
+<span style="color: #6f7787;"># key: dt_</span>
+<span style="color: #6f7787;"># --</span>
+#+HTML_HEAD_EXTRA: &lt;script type=<span style="color: #A2BF8A;">"text/javascript"</span>&gt;
+<span style="color: #6f7787;">#+HTML_HEAD_EXTRA:   $(document).ready(function() {</span>
+<span style="color: #6f7787;">#+HTML_HEAD_EXTRA:     $('#$</span><span style="color: #A2BF8A;">2</span><span style="color: #6f7787;">').DataTable(); } );</span>
+<span style="color: #6f7787;">#+HTML_HEAD_EXTRA: &lt;/script&gt;</span>
+<span style="color: #6f7787;">#+CAPTION: $</span><span style="color: #A2BF8A;">1</span>
+<span style="color: #6f7787;">#+ATTR_HTML: :id $</span><span style="color: #A2BF8A;">2</span>
+<span style="color: #80A0C2;">$</span><span style="color: #A2BF8A;">0</span>
+</pre>
+</div>
+
+<p>
+Demo:
+</p>
+<table border="2" class="table table-striped table-sm table-bordered" cellspacing="0" cellpadding="6" rules="groups" frame="hsides" id="dt">
+<caption class="t-above"><span class="table-number">Table 1:</span> A demo table</caption>
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">&#xa0;</th>
+<th scope="col" class="org-left">Base pairs</th>
+<th scope="col" class="org-left">Genes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">φX174</td>
+<td class="org-left">5,386</td>
+<td class="org-left">11</td>
+</tr>
+
+<tr>
+<td class="org-left">Human mitochondrion</td>
+<td class="org-left">16,569</td>
+<td class="org-left">37</td>
+</tr>
+
+<tr>
+<td class="org-left">Nasuia deltocephalinicola</td>
+<td class="org-left">112,091</td>
+<td class="org-left">137</td>
+</tr>
+
+<tr>
+<td class="org-left">Epstein-Barr virus (EBV)</td>
+<td class="org-left">172,282</td>
+<td class="org-left">80</td>
+</tr>
+
+<tr>
+<td class="org-left">nucleomorph of Guillardia theta</td>
+<td class="org-left">551,264</td>
+<td class="org-left">511</td>
+</tr>
+
+<tr>
+<td class="org-left">Mycoplasma genitalium</td>
+<td class="org-left">580,073</td>
+<td class="org-left">525</td>
+</tr>
+
+<tr>
+<td class="org-left">Mycoplasma pneumoniae</td>
+<td class="org-left">816,394</td>
+<td class="org-left">679</td>
+</tr>
+
+<tr>
+<td class="org-left">Rickettsia prowazekii</td>
+<td class="org-left">1,111,523</td>
+<td class="org-left">834</td>
+</tr>
+
+<tr>
+<td class="org-left">Treponema pallidum</td>
+<td class="org-left">1,138,011</td>
+<td class="org-left">1,039</td>
+</tr>
+
+<tr>
+<td class="org-left">Pelagibacter ubique</td>
+<td class="org-left">1,308,759</td>
+<td class="org-left">1,354</td>
+</tr>
+
+<tr>
+<td class="org-left">Helicobacter pylori</td>
+<td class="org-left">1,667,867</td>
+<td class="org-left">1,589</td>
+</tr>
+
+<tr>
+<td class="org-left">Methanocaldococcus jannaschii</td>
+<td class="org-left">1,664,970</td>
+<td class="org-left">1,783</td>
+</tr>
+
+<tr>
+<td class="org-left">Aeropyrum pernix</td>
+<td class="org-left">1,669,695</td>
+<td class="org-left">1,885</td>
+</tr>
+
+<tr>
+<td class="org-left">Methanothermobacter thermoautotrophicus</td>
+<td class="org-left">1,751,377</td>
+<td class="org-left">2,008</td>
+</tr>
+
+<tr>
+<td class="org-left">Streptococcus pneumoniae</td>
+<td class="org-left">2,160,837</td>
+<td class="org-left">2,236</td>
+</tr>
+
+<tr>
+<td class="org-left">Pandoravirus</td>
+<td class="org-left">2,473,870</td>
+<td class="org-left">2556</td>
+</tr>
+
+<tr>
+<td class="org-left">Listeria monocytogenes</td>
+<td class="org-left">2,944,528</td>
+<td class="org-left">2,926</td>
+</tr>
+
+<tr>
+<td class="org-left">Synechocystis</td>
+<td class="org-left">3,573,470</td>
+<td class="org-left">4,003</td>
+</tr>
+
+<tr>
+<td class="org-left">E. coli K-12</td>
+<td class="org-left">4,639,221</td>
+<td class="org-left">4,377</td>
+</tr>
+
+<tr>
+<td class="org-left">E. coli O157:H7</td>
+<td class="org-left">5.44 x 106</td>
+<td class="org-left">5,416</td>
+</tr>
+
+<tr>
+<td class="org-left">Schizosaccharomyces pombe</td>
+<td class="org-left">12,462,637</td>
+<td class="org-left">4,929</td>
+</tr>
+
+<tr>
+<td class="org-left">Agrobacterium tumefaciens</td>
+<td class="org-left">4,674,062</td>
+<td class="org-left">5,419</td>
+</tr>
+
+<tr>
+<td class="org-left">Pseudomonas aeruginosa</td>
+<td class="org-left">6.3 x 106</td>
+<td class="org-left">5,570</td>
+</tr>
+
+<tr>
+<td class="org-left">Sinorhizobium meliloti</td>
+<td class="org-left">6,691,694</td>
+<td class="org-left">6,204</td>
+</tr>
+
+<tr>
+<td class="org-left">Saccharomyces cerevisiae</td>
+<td class="org-left">12,495,682</td>
+<td class="org-left">5,770</td>
+</tr>
+
+<tr>
+<td class="org-left">Neurospora crassa</td>
+<td class="org-left">38,639,769</td>
+<td class="org-left">10,082</td>
+</tr>
+
+<tr>
+<td class="org-left">Thalassiosira pseudonana</td>
+<td class="org-left">34.5 x 106</td>
+<td class="org-left">11,242</td>
+</tr>
+
+<tr>
+<td class="org-left">Naegleria gruberi</td>
+<td class="org-left">41 x 106</td>
+<td class="org-left">15,727</td>
+</tr>
+
+<tr>
+<td class="org-left">Drosophila melanogaster</td>
+<td class="org-left">122,653,977</td>
+<td class="org-left">~17,000</td>
+</tr>
+
+<tr>
+<td class="org-left">Caenorhabditis elegans</td>
+<td class="org-left">100,258,171</td>
+<td class="org-left">21,733</td>
+</tr>
+
+<tr>
+<td class="org-left">Humans</td>
+<td class="org-left">3.3 x 109</td>
+<td class="org-left">~21,000</td>
+</tr>
+
+<tr>
+<td class="org-left">Tetraodon nigroviridis (a pufferfish)</td>
+<td class="org-left">3.42 x 108</td>
+<td class="org-left">27,918</td>
+</tr>
+
+<tr>
+<td class="org-left">Mouse</td>
+<td class="org-left">2.8 x 109</td>
+<td class="org-left">~23,000</td>
+</tr>
+
+<tr>
+<td class="org-left">Amphibians</td>
+<td class="org-left">109–1011</td>
+<td class="org-left">?</td>
+</tr>
+
+<tr>
+<td class="org-left">Arabidopsis thaliana</td>
+<td class="org-left">0.135 x 109</td>
+<td class="org-left">27,416</td>
+</tr>
+
+<tr>
+<td class="org-left">Picea abies</td>
+<td class="org-left">19.6 x 109</td>
+<td class="org-left">28,354</td>
+</tr>
+
+<tr>
+<td class="org-left">Psilotum nudum</td>
+<td class="org-left">2.5 x 1011</td>
+<td class="org-left">?</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div id="outline-container-org5a20ed7" class="outline-2">
+<h2 id="org5a20ed7">Bootstrap Table of Contents</h2>
+<div class="outline-text-2" id="text-org5a20ed7">
+<p>
+To use the table of contents, you need to add the following sentence before your exporting contents, after the <code>#+TITLE</code> / <code>#+AUTHOR</code> metadata (for subtree exporting, add it after the <code>:PROPERTIES:</code> block)
+</p>
+<div class="org-src-container">
+<pre class="src src-html">#+OPTIONS: toc:nil H:2
+#+HTML: &lt;<span style="color: #8EBCBB;">nav</span> <span style="color: #dac6d6;">id</span>=<span style="color: #A2BF8A;">"toc"</span> <span style="color: #dac6d6;">data-toggle</span>=<span style="color: #A2BF8A;">"toc"</span> <span style="color: #dac6d6;">class</span>=<span style="color: #A2BF8A;">"sticky-top"</span>&gt;&lt;/<span style="color: #8EBCBB;">nav</span>&gt;
+</pre>
+</div>
+<p>
+After adding that, the ToC should automatically work.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org9a74f51" class="outline-2">
+<h2 id="org9a74f51">Show/hide table / code blocks</h2>
+<div class="outline-text-2" id="text-org9a74f51">
+<p>
+It. Just. Works. Extend it (or apply the effect to other elements) using <code>./org-html-head/org.js</code>.
+</p>
+
+<p>
+Demo:
+</p>
+<div class="org-src-container">
+<pre class="src src-javascript">
+<span style="color: #80A0C2;">function</span> <span style="color: #8EBCBB;">panelCollapse</span>(<span style="color: #dac6d6;">col</span>) {
+    <span style="color: #80A0C2;">return</span> <span style="color: #A2BF8A;">"&lt;div id=\"col-"</span> + col.id + Math.random().toString(36).substring(7)
+        + <span style="color: #A2BF8A;">"\" class=\"collapse\"&gt;&lt;/div&gt;"</span>;
+}
+
+$( document ).ready(<span style="color: #80A0C2;">function</span>() {
+    $(<span style="color: #A2BF8A;">'body'</span>).attr(<span style="color: #A2BF8A;">"data-spy"</span>, <span style="color: #A2BF8A;">"scroll"</span>);
+    $(<span style="color: #A2BF8A;">'body'</span>).attr(<span style="color: #A2BF8A;">"data-target"</span>, <span style="color: #A2BF8A;">"#toc"</span>);
+
+
+    <span style="color: #6f7787;">// </span><span style="color: #6f7787;">The content (and postamble) should be in a container.</span>
+    $(<span style="color: #A2BF8A;">'#content, #postamble'</span>).wrapAll(<span style="color: #A2BF8A;">"&lt;div class='container'&gt;&lt;/div&gt;"</span>);
+    $(<span style="color: #A2BF8A;">'#toc, .outline-2'</span>).wrapAll(<span style="color: #A2BF8A;">"&lt;div class='row'&gt;&lt;/div&gt;"</span>);
+    $(<span style="color: #A2BF8A;">'#toc'</span>).wrap(<span style="color: #A2BF8A;">"&lt;div class='col-md-3'&gt;&lt;/div&gt;"</span>);
+    $(<span style="color: #A2BF8A;">'.outline-2'</span>).wrapAll(<span style="color: #A2BF8A;">"&lt;div class='col-md-9'&gt;&lt;/div&gt;"</span>);
+    $(<span style="color: #A2BF8A;">'.col-md-9'</span>).after( $(<span style="color: #A2BF8A;">'.col-md-3'</span>) );
+
+    <span style="color: #6f7787;">// </span><span style="color: #6f7787;">$('#footnotes').appendTo('.col-sm-9');</span>
+
+    $(<span style="color: #A2BF8A;">'#toc'</span>).empty();
+    $(<span style="color: #A2BF8A;">'#toc'</span>).addClass(<span style="color: #A2BF8A;">'nav-list'</span>);
+
+
+    <span style="color: #80A0C2;">var</span> <span style="color: #dac6d6;">navSelector</span> = <span style="color: #A2BF8A;">'#toc'</span>;
+    <span style="color: #80A0C2;">var</span> <span style="color: #dac6d6;">$myNav</span> = $(navSelector);
+    Toc.init($myNav);
+    $(<span style="color: #A2BF8A;">'body'</span>).scrollspy({
+        target: navSelector
+    });
+
+    $(<span style="color: #A2BF8A;">'.org-src-container'</span>).addClass(<span style="color: #A2BF8A;">"card-body"</span>).wrap(<span style="color: #A2BF8A;">'&lt;div class="card"&gt;&lt;/div&gt;'</span>);
+    $(<span style="color: #A2BF8A;">'.table'</span>).addClass(<span style="color: #A2BF8A;">"card-body"</span>).wrap(<span style="color: #A2BF8A;">'&lt;div class="card"&gt;&lt;/div&gt;'</span>);
+    $(<span style="color: #A2BF8A;">'.card-body'</span>).each(<span style="color: #80A0C2;">function</span>() {$(<span style="color: #B58DAE;">this</span>).wrap(panelCollapse(<span style="color: #B58DAE;">this</span>))})
+    $(<span style="color: #A2BF8A;">'.org-src-container'</span>).parent().each(<span style="color: #80A0C2;">function</span>() {$(<span style="color: #B58DAE;">this</span>).before(panelDiv(<span style="color: #B58DAE;">this</span>, <span style="color: #A2BF8A;">'Code'</span>))})
+    $(<span style="color: #A2BF8A;">'.table'</span>).parent().each(<span style="color: #80A0C2;">function</span>() {$(<span style="color: #B58DAE;">this</span>).before(panelDiv(<span style="color: #B58DAE;">this</span>, <span style="color: #A2BF8A;">'Table'</span>))})
+});
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Alexander Fu Xi</p>
+<p class="date">Created: 2018-03-22 Thu 21:46</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

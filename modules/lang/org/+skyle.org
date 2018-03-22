@@ -1,4 +1,6 @@
 #+TITLE: Documentation of the +style feature
+#+OPTIONS: toc:nil num:nil H:2
+#+HTML: <nav id="toc" data-toggle="toc" class="sticky-top"></nav>
 
 * Style and scripts
 HTML export style sheets and external scripts are stored in the ~org-html-head~ directory by default, however, you can fully control that using variable ~+org-html-export-style-dir~ (which specify the directory) and ~+org-html-export-style-list~ (which specify the including order).
@@ -19,6 +21,53 @@ HTML export style sheets and external scripts are stored in the ~org-html-head~ 
 $0
 #+END_SRC
 
+Demo:
+#+HTML_HEAD_EXTRA: <script type="text/javascript">
+#+HTML_HEAD_EXTRA:   $(document).ready(function() {
+#+HTML_HEAD_EXTRA:     $('#dt').DataTable(); } );
+#+HTML_HEAD_EXTRA: </script>
+#+CAPTION: A demo table
+#+ATTR_HTML: :id dt
+|                                         | Base pairs  | Genes   |
+|-----------------------------------------+-------------+---------|
+| φX174                                   | 5,386       | 11      |
+| Human mitochondrion                     | 16,569      | 37      |
+| Nasuia deltocephalinicola               | 112,091     | 137     |
+| Epstein-Barr virus (EBV)                | 172,282     | 80      |
+| nucleomorph of Guillardia theta         | 551,264     | 511     |
+| Mycoplasma genitalium                   | 580,073     | 525     |
+| Mycoplasma pneumoniae                   | 816,394     | 679     |
+| Rickettsia prowazekii                   | 1,111,523   | 834     |
+| Treponema pallidum                      | 1,138,011   | 1,039   |
+| Pelagibacter ubique                     | 1,308,759   | 1,354   |
+| Helicobacter pylori                     | 1,667,867   | 1,589   |
+| Methanocaldococcus jannaschii           | 1,664,970   | 1,783   |
+| Aeropyrum pernix                        | 1,669,695   | 1,885   |
+| Methanothermobacter thermoautotrophicus | 1,751,377   | 2,008   |
+| Streptococcus pneumoniae                | 2,160,837   | 2,236   |
+| Pandoravirus                            | 2,473,870   | 2556    |
+| Listeria monocytogenes                  | 2,944,528   | 2,926   |
+| Synechocystis                           | 3,573,470   | 4,003   |
+| E. coli K-12                            | 4,639,221   | 4,377   |
+| E. coli O157:H7                         | 5.44 x 106  | 5,416   |
+| Schizosaccharomyces pombe               | 12,462,637  | 4,929   |
+| Agrobacterium tumefaciens               | 4,674,062   | 5,419   |
+| Pseudomonas aeruginosa                  | 6.3 x 106   | 5,570   |
+| Sinorhizobium meliloti                  | 6,691,694   | 6,204   |
+| Saccharomyces cerevisiae                | 12,495,682  | 5,770   |
+| Neurospora crassa                       | 38,639,769  | 10,082  |
+| Thalassiosira pseudonana                | 34.5 x 106  | 11,242  |
+| Naegleria gruberi                       | 41 x 106    | 15,727  |
+| Drosophila melanogaster                 | 122,653,977 | ~17,000 |
+| Caenorhabditis elegans                  | 100,258,171 | 21,733  |
+| Humans                                  | 3.3 x 109   | ~21,000 |
+| Tetraodon nigroviridis (a pufferfish)   | 3.42 x 108  | 27,918  |
+| Mouse                                   | 2.8 x 109   | ~23,000 |
+| Amphibians                              | 109–1011    | ?       |
+| Arabidopsis thaliana                    | 0.135 x 109 | 27,416  |
+| Picea abies                             | 19.6 x 109  | 28,354  |
+| Psilotum nudum                          | 2.5 x 1011  | ?       |
+
 * Bootstrap Table of Contents
 To use the table of contents, you need to add the following sentence before your exporting contents, after the ~#+TITLE~ / ~#+AUTHOR~ metadata (for subtree exporting, add it after the ~:PROPERTIES:~ block)
 #+BEGIN_SRC html
@@ -29,3 +78,45 @@ After adding that, the ToC should automatically work.
 
 * Show/hide table / code blocks
 It. Just. Works. Extend it (or apply the effect to other elements) using ~./org-html-head/org.js~.
+
+Demo:
+#+BEGIN_SRC javascript
+
+function panelCollapse(col) {
+    return "<div id=\"col-" + col.id + Math.random().toString(36).substring(7)
+        + "\" class=\"collapse\"></div>";
+}
+
+$( document ).ready(function() {
+    $('body').attr("data-spy", "scroll");
+    $('body').attr("data-target", "#toc");
+
+
+    // The content (and postamble) should be in a container.
+    $('#content, #postamble').wrapAll("<div class='container'></div>");
+    $('#toc, .outline-2').wrapAll("<div class='row'></div>");
+    $('#toc').wrap("<div class='col-md-3'></div>");
+    $('.outline-2').wrapAll("<div class='col-md-9'></div>");
+    $('.col-md-9').after( $('.col-md-3') );
+
+    // $('#footnotes').appendTo('.col-sm-9');
+
+    $('#toc').empty();
+    $('#toc').addClass('nav-list');
+
+
+    var navSelector = '#toc';
+    var $myNav = $(navSelector);
+    Toc.init($myNav);
+    $('body').scrollspy({
+        target: navSelector
+    });
+
+    $('.org-src-container').addClass("card-body").wrap('<div class="card"></div>');
+    $('.table').addClass("card-body").wrap('<div class="card"></div>');
+    $('.card-body').each(function() {$(this).wrap(panelCollapse(this))})
+    $('.org-src-container').parent().each(function() {$(this).before(panelDiv(this, 'Code'))})
+    $('.table').parent().each(function() {$(this).before(panelDiv(this, 'Table'))})
+});
+
+#+END_SRC
