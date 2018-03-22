@@ -49,7 +49,7 @@
 ;; --- Getters ----------------------------
 
 ;;;###autoload
-(defalias '+workspace-current #'get-current-persp
+(defalias #'+workspace-current #'get-current-persp
   "Return the currently active workspace.")
 
 ;;;###autoload
