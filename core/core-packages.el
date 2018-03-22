@@ -148,7 +148,6 @@ FORCE-P is non-nil, do it anyway.
       (unless noninteractive
         (error "No autoloads file! Run make autoloads")))
     (when (or force-p (not (load doom-packages-file t t t)))
-      (setq load-path doom-site-load-path)
       ;; Ensure core folders exist, otherwise we get errors
       (dolist (dir (list doom-local-dir doom-etc-dir doom-cache-dir doom-packages-dir))
         (unless (file-directory-p dir)
