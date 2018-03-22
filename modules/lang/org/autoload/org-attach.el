@@ -54,12 +54,14 @@ and END (defaults to `point-min' and `point-max')."
       (insert-file-contents-literally org-file))
     (setq +org-attachments (+org-attachments--list)))
   ;; clean up
-  (dolist (file (cl-set-difference +org-attachments-files +org-attachments
-                                   :test #'string=))
-    (message "Deleting orphaned attachment: %s" file)
-    (unless arg
-      (delete-file (expand-file-name file org-attach-directory))))
-  (message "Buffer's attachments synced"))
+  (let ((deleted 0))
+    (dolist (file (cl-set-difference +org-attachments-files +org-attachments
+                                     :test #'string=))
+      (message "Deleting orphaned attachment: %s" file)
+      (cl-incf deleted)
+      (unless arg
+        (delete-file (expand-file-name file org-attach-directory))))
+    (message "Buffer's attachments synced (%d deleted)" deleted)))
 
 ;;;###autoload
 (defun +org-attach/find-file ()
