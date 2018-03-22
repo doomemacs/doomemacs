@@ -58,8 +58,8 @@
     (when (file-in-directory-p buffer-file-name +org-dir)
       (file-relative-name buffer-file-name +org-dir)))
 
-  ;; Write download paths relative to current file
   (defun +org-attach*download-fullname (path)
+    "Write PATH relative to current file."
     (file-relative-name path (file-name-directory buffer-file-name)))
   (advice-add #'org-download--dir-2 :override #'ignore)
   (advice-add #'org-download--fullname
@@ -72,10 +72,9 @@
 
 (defun +org|init-attach ()
   (setq org-attach-directory (expand-file-name +org-attach-dir +org-dir))
+
   ;; A shorter link to attachments
   (push (cons "attach" (abbreviate-file-name org-attach-directory)) org-link-abbrev-alist)
-
-  ;; Enhance attach links
   (org-link-set-parameters
    "attach"
    :follow   (lambda (link) (find-file (expand-file-name link org-attach-directory)))
