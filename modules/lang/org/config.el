@@ -251,7 +251,10 @@ between the two."
 
 (defun +org|setup-evil ()
   (require 'evil-org)
-  (map! :map evil-org-mode-map
+  (map! :map outline-mode-map
+        :n "^" nil
+
+        :map evil-org-mode-map
         :i [backtab] #'+org/dedent
         ;; navigate table cells (from insert-mode)
         :i  "C-l"   #'+org/table-next-field
@@ -279,6 +282,8 @@ between the two."
         :m  "[l"  #'org-previous-link
         :m  "]s"  #'org-babel-next-src-block
         :m  "[s"  #'org-babel-previous-src-block
+        :m  "^"   #'evil-org-beginning-of-line
+        :m  "0"   (λ! (let ((visual-line-mode)) (org-beginning-of-line)))
         :n  "gQ"  #'org-fill-paragraph
         ;; sensible code-folding vim keybinds
         :n  "za"  #'+org/toggle-fold
