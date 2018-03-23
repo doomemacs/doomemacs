@@ -305,6 +305,7 @@
 
 
       ;; --- Personal vim-esque bindings ------------------
+      :nv "K"  #'+lookup/documentation
       :n  "zx" #'kill-this-buffer
       :n  "ZX" #'bury-buffer
       :n  "]b" #'next-buffer
@@ -621,7 +622,6 @@
       :n  "!"  #'rotate-text
 
       ;; smart-forward
-      :nv "K"  #'+lookup/documentation
       :m  "g]" #'smart-forward
       :m  "g[" #'smart-backward
 
@@ -723,13 +723,9 @@
           "C-b" #'backward-word
           "C-f" #'forward-word))
 
-      (:map messages-buffer-mode-map
-        "M-;" #'eval-expression
-        "A-;" #'eval-expression)
-
       (:after tabulated-list
         (:map tabulated-list-mode-map
-          [remap evil-record-macro] #'quit-window))
+          "q" #'quit-window))
 
       (:after view
         (:map view-mode-map "<escape>" #'View-quit-all)))
