@@ -321,6 +321,24 @@ with `doom//reload-theme').")
 
 
 ;;
+;; Silence motion errors in minibuffer
+;;
+
+(defun doom*silence-motion-errors (orig-fn &rest args)
+  (if (and (minibufferp)
+           (<= (point) (minibuffer-prompt-end)))
+      (progn
+        (ignore-errors (apply orig-fn args))
+        (goto-char (minibuffer-prompt-end)))
+    (apply orig-fn args)))
+
+(advice-add #'left-char :around #'doom*silence-motion-errors)
+(advice-add #'right-char :around #'doom*silence-motion-errors)
+(advice-add #'delete-backward-char :around #'doom*silence-motion-errors)
+(advice-add #'backward-kill-sentence :around #'doom*silence-motion-errors)
+
+
+;;
 ;; Line numbers
 ;;
 
