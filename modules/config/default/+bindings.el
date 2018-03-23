@@ -708,13 +708,14 @@
              minibuffer-local-isearch-map
              read-expression-map)
         [escape] #'abort-recursive-edit
-        "C-r" #'evil-paste-from-register
+        (:when (featurep 'evil)
+          "C-r" #'evil-paste-from-register)
         "C-a" #'move-beginning-of-line
-        "C-w" #'doom/minibuffer-kill-word
-        "C-u" #'doom/minibuffer-kill-line
+        "C-w" #'backward-kill-word
+        "C-u" #'backward-kill-sentence
         "C-b" #'backward-word
         "C-f" #'forward-word
-        "M-z" #'doom/minibuffer-undo)
+        "C-z" (λ! (ignore-errors (call-interactively #'undo))))
 
       (:after evil
         (:map evil-ex-completion-map
