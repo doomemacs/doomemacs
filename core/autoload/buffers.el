@@ -244,7 +244,7 @@ ALL-P (universal argument), clean them up globally."
   (let ((buffers (doom-buried-buffers buffer-list))
         (n 0))
     (mapc #'kill-buffer buffers)
-    (setq n (+ n (length buffers) (doom/cleanup-processes)))
+    (setq n (+ n (length buffers) (doom/cleanup-buffer-processes)))
     (dolist (hook doom-cleanup-hook)
       (let ((m (funcall hook)))
         (when (integerp m)
@@ -253,7 +253,7 @@ ALL-P (universal argument), clean them up globally."
     n))
 
 ;;;###autoload
-(defun doom/cleanup-processes ()
+(defun doom/cleanup-buffer-processes ()
   "Kill all processes that have no visible associated buffers. Return number of
 processes killed."
   (interactive)
