@@ -43,8 +43,8 @@ compilation database is present in the project.")
          (equal (file-name-extension buffer-file-name) "h")
          (re-search-forward "@\\<interface\\>" magic-mode-regexp-match-limit t)))
 
-  (push (cons #'+cc-c++-header-file-p  'c++-mode)  magic-mode-alist)
-  (push (cons #'+cc-objc-header-file-p 'objc-mode) magic-mode-alist)
+  (push '(+cc-c++-header-file-p  . c++-mode)  magic-mode-alist)
+  (push '(+cc-objc-header-file-p . objc-mode) magic-mode-alist)
 
   :init
   (setq-default c-basic-offset tab-width
