@@ -25,9 +25,9 @@
   (unless doom-theme
     (setq doom-theme 'doom-one))
 
-  ;; Ensure `doom/reload-load-path' reloads common faces
-  (defun +doom|reload-theme () (load "doom-themes-common.el" nil t))
-  (add-hook 'doom-pre-reload-theme-hook #'+doom|reload-theme)
+  ;; Reload common faces when reloading doom-themes live
+  (defun +doom*reload (&rest _) (load "doom-themes-common.el" nil t))
+  (advice-add #'doom//reload-theme :before #'+doom*reload-common)
 
   ;; improve integration w/ org-mode
   (add-hook 'doom-load-theme-hook #'doom-themes-org-config)
