@@ -531,14 +531,16 @@ Should be hooked to `projectile-after-switch-project-hook'."
                 (switch-to-buffer (doom-fallback-buffer)))
               (with-current-buffer (doom-fallback-buffer)
                 (setq default-directory +workspaces--project-dir))
-              (funcall +workspaces-switch-project-function +workspaces--project-dir)
+              (unless current-prefix-arg
+                (funcall +workspaces-switch-project-function +workspaces--project-dir))
               (+workspace-message
                (format "Switched to '%s' in new workspace" new-name)
                'success))
           (with-current-buffer (switch-to-buffer (doom-fallback-buffer))
             (setq default-directory +workspaces--project-dir)
             (message "Switched to '%s'" (doom-project-name 'nocache)))
-          (funcall +workspaces-switch-project-function +workspaces--project-dir))
+          (unless current-prefix-arg
+            (funcall +workspaces-switch-project-function +workspaces--project-dir)))
       (setq +workspaces--project-dir nil))))
 
 
