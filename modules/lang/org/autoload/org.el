@@ -295,7 +295,7 @@ with `org-cycle'). Also:
         (let ((pos (point))
               (noalign (looking-at-p "[^|\n\r]*  |"))
               (c org-table-may-need-update))
-          (delete-char 1)
+          (delete-char -1)
           (unless overwrite-mode
             (skip-chars-forward "^|")
             (insert " ")
