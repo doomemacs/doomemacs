@@ -62,7 +62,7 @@ in a project."
             auto-insert-alist)))
 
   (mapc #'+file-templates-add
-        (let ((doom (concat "/" (regexp-opt '(".emacs.d" ".doom.d" "doom-emacs" "doom")) "/.*")))
+        (let ((doom (concat "/" (regexp-opt '(".emacs.d" ".doom.d" "doom-emacs" ".config/doom")) "/")))
           `(;; General
             ("/\\.gitignore$"                 "__"               gitignore-mode)
             ("/Dockerfile$"                   "__"               dockerfile-mode)
@@ -72,9 +72,9 @@ in a project."
             ("\\.el$"                         "__initfile"       emacs-lisp-mode)
             ("/.dir-locals.el$"               nil)
             ("-test\\.el$"                    "__"               emacs-ert-mode)
-            (,(concat doom "/.+\\.el$")       "__doom-module"    emacs-lisp-mode)
-            (,(concat doom "/packages\\.el$") "__doom-packages"  emacs-lisp-mode)
-            (,(concat doom "/test/.+\\.el$")  "__doom-test"      emacs-lisp-mode)
+            (,(concat doom ".+\\.el$")          "__doom-module"    emacs-lisp-mode)
+            (,(concat doom ".*/packages\\.el$") "__doom-packages"  emacs-lisp-mode)
+            (,(concat doom ".*/test/.+\\.el$")  "__doom-test"      emacs-lisp-mode)
             (snippet-mode "__" snippet-mode)
             ;; C/C++
             ("\\.h$"                           "__h"              c-mode)
