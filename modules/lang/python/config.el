@@ -101,7 +101,8 @@ environment variables."
   :when (featurep! :completion company)
   :after anaconda-mode
   :config
-  (map! :map python-mode-map
+  (map! :map anaconda-mode-map
+        :n "gf" nil
         :localleader
         :prefix "f"
         :nv "d" #'anaconda-mode-find-definitions
