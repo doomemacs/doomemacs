@@ -192,6 +192,8 @@ States
     inner binding, another for the outer.
 
 Flags
+    (:leader [...])            an alias for (:prefix doom-leader-key ...)
+    (:localleader [...])       an alias for (:prefix doom-localleader-key ...)
     (:mode [MODE(s)] [...])    inner keybinds are applied to major MODE(s)
     (:map [KEYMAP(s)] [...])   inner keybinds are applied to KEYMAP(S)
     (:map* [KEYMAP(s)] [...])  same as :map, but deferred
