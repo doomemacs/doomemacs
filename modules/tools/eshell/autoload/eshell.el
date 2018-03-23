@@ -85,16 +85,13 @@ module to be loaded."
       (eshell-life-is-too-much)
     (delete-char arg)))
 
-(defun +eshell--outside-prompt-p ()
-  (< (point) eshell-last-output-end))
-
 (defun +eshell--current-git-branch ()
-    (let ((branch (car (loop for match in (split-string (shell-command-to-string "git branch") "\n")
-                             when (string-match "^\*" match)
-                             collect match))))
-      (if (not (eq branch nil))
-          (concat " [" (substring branch 2) "]")
-        "")))
+  (let ((branch (car (cl-loop for match in (split-string (shell-command-to-string "git branch") "\n")
+                              if (string-match-p "^\*" match)
+                              collect match))))
+    (if (not (eq branch nil))
+        (concat " [" (substring branch 2) "]")
+      "")))
 
 ;;;###autoload
 (defun +eshell/split ()
@@ -114,56 +111,3 @@ module to be loaded."
           (propertize (+eshell--current-git-branch) 'face 'font-lock-function-name-face)
           (propertize " λ " 'face 'font-lock-constant-face)))
 
-;;;###autoload
-(defun +eshell/evil-append ()
-  (interactive)
-  (goto-char eshell-last-output-end)
-  (call-interactively #'evil-append-line))
-
-;;;###autoload
-(defun +eshell/evil-append-maybe ()
-  (interactive)
-  (if (+eshell--outside-prompt-p)
-      (+eshell/evil-append)
-    (call-interactively #'evil-append)))
-
-;;;###autoload
-(defun +eshell/evil-prepend ()
-  (interactive)
-  (goto-char eshell-last-output-end)
-  (call-interactively #'evil-insert))
-
-;;;###autoload
-(defun +eshell/evil-prepend-maybe ()
-  (interactive)
-  (if (+eshell--outside-prompt-p)
-      (+eshell/evil-prepend)
-    (call-interactively #'evil-insert)))
-
-;;;###autoload
-(defun +eshell/evil-replace-maybe ()
-  (interactive)
-  (if (+eshell--outside-prompt-p)
-      (user-error "Cannot edit read-only region")
-    (call-interactively #'evil-replace)))
-
-;;;###autoload
-(defun +eshell/evil-replace-state-maybe ()
-  (interactive)
-  (if (+eshell--outside-prompt-p)
-      (user-error "Cannot edit read-only region")
-    (call-interactively #'evil-replace-state)))
-
-;;;###autoload
-(defun +eshell/evil-change ()
-  (interactive)
-  (when (+eshell--outside-prompt-p)
-    (goto-char eshell-last-output-end))
-  (call-interactively #'evil-change))
-
-;;;###autoload
-(defun +eshell/evil-change-line ()
-  (interactive)
-  (when (+eshell--outside-prompt-p)
-    (goto-char eshell-last-output-end))
-  (call-interactively #'evil-change-line))
