@@ -199,12 +199,13 @@ If DONT-SAVE, don't prompt to save modified buffers (discarding their changes)."
 (defun doom/kill-all-buffers (&optional project-p)
   "Kill all buffers and closes their windows.
 
-If PROJECT-P (universal argument), kill only buffers that belong to the current
-project."
+If PROJECT-P (universal argument), don't close windows and only kill buffers
+that belong to the current project."
   (interactive "P")
-  (delete-other-windows)
+  (unless project-p
+    (delete-other-windows))
   (switch-to-buffer (doom-fallback-buffer))
-  (doom/cleanup-session))
+  (doom/cleanup-session (if project-p (doom-project-buffer-list))))
 
 ;;;###autoload
 (defun doom/kill-other-buffers (&optional project-p)
@@ -236,11 +237,11 @@ project."
       (message "Killed %s buffers" n))))
 
 ;;;###autoload
-(defun doom/cleanup-session (&optional all-p)
+(defun doom/cleanup-session (&optional buffer-list)
   "Clean up buried buries and orphaned processes in the current workspace. If
 ALL-P (universal argument), clean them up globally."
-  (interactive (list current-prefix-arg))
-  (let ((buffers (doom-buried-buffers (if all-p (buffer-list))))
+  (interactive)
+  (let ((buffers (doom-buried-buffers buffer-list))
         (n 0))
     (mapc #'kill-buffer buffers)
     (setq n (+ n (length buffers) (doom/cleanup-processes)))
