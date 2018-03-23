@@ -96,11 +96,10 @@ presentations."
 
 ;;;###autoload
 (defun doom//reload-theme ()
-  "Reset the color theme currently in use."
+  "Reset the current color theme and fonts."
   (interactive)
   (let ((theme (or (car-safe custom-enabled-themes) doom-theme)))
     (when theme
       (mapc #'disable-theme custom-enabled-themes))
-    (run-hooks 'doom-pre-reload-theme-hook)
-    (doom|init-ui)
-    (run-hooks 'doom-post-reload-theme-hook)))
+    (doom|init-theme)
+    (doom|init-fonts)))
