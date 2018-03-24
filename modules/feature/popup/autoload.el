@@ -94,6 +94,15 @@ and enables `+popup-buffer-mode'."
            (params (map-merge 'list
                               +popup-default-parameters
                               (cdr (assq 'window-parameters alist)))))
+      ;; translate side => window-(width|height)
+      (when-let* ((size (cdr (assq 'size alist)))
+                  (side (or (cdr (assq 'side alist)) 'bottom)))
+        (map-delete alist 'size)
+        (map-put alist (if (memq side '(left right))
+                           'window-width
+                         'window-height)
+                 size))
+      ;;
       (map-put alist 'window-parameters params)
       (nreverse alist))))
 

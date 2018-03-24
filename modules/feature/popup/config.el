@@ -108,6 +108,17 @@ deleted.")
 
 
 ;;
+(defun +popup-define (condition &optional alist parameters)
+  "TODO"
+  (declare (indent 1))
+  (push (if (eq alist :ignore)
+            (list condition nil)
+          `(,condition
+            (+popup-buffer)
+            ,@alist
+            (window-parameters ,@parameters)))
+        +popup--display-buffer-alist))
+
 (def-setting! :popup (condition &optional alist parameters)
   "Register a popup rule.
 
@@ -119,26 +130,14 @@ module.
 
 ALIST supports one custom parameter: `size', which will resolve to
 `window-height' or `window-width' depending on `side'."
-  `(let ((alist ,alist)
-         (parameters ,parameters))
-     (if (eq alist :ignore)
-         (push (list ,condition nil) +popup--display-buffer-alist)
-       ,(when alist
-          `(when-let* ((size (cdr (assq 'size alist)))
-                       (side (or (cdr (assq 'side (append alist +popup-default-alist)))
-                                 'bottom)))
-             (map-delete alist 'size)
-             (map-put alist (if (memq side '(left right))
-                                'window-width
-                              'window-height)
-                      size)))
-       (prog1 (push (append (list ,condition '(+popup-buffer))
-                            alist
-                            (list (cons 'window-parameters parameters)))
-                    +popup--display-buffer-alist)))
+  `(progn
+     (+popup-define ,condition ,alist ,parameters)
      (when (bound-and-true-p +popup-mode)
        (setq display-buffer-alist +popup--display-buffer-alist))
-     nil))
+     +popup--display-buffer-alist))
+     (when (bound-and-true-p +popup-mode)
+       (setq display-buffer-alist +popup--display-buffer-alist))
+     +popup--display-buffer-alist))
 
 
 ;;
@@ -146,24 +145,32 @@ ALIST supports one custom parameter: `size', which will resolve to
 ;;
 
 (when (featurep! +all)
-  (set! :popup "^ \\*" '((slot . 1) (vslot . -1) (size . +popup-shrink-to-fit)))
-  (set! :popup "^\\*"  '((slot . 1) (vslot . -1)) '((select . t))))
+  (+popup-define "^ \\*" '((slot . 1) (vslot . -1) (size . +popup-shrink-to-fit)))
+  (+popup-define "^\\*"  '((slot . 1) (vslot . -1)) '((select . t))))
 
 (when (featurep! +defaults)
-  (set! :popup "^\\*Completions" '((slot . -1) (vslot . -2)) '((transient . 0)))
-  (set! :popup "^\\*Compil\\(ation\\|e-Log\\)" '((size . 0.3)) '((transient . 0) (quit . t)))
-  (set! :popup "^\\*\\(?:scratch\\|Messages\\)" nil '((transient)))
-  (set! :popup "^\\*[Hh]elp"
-    '((slot . 2) (vslot . 2) (size . 0.2))
-    '((select . t)))
-  (set! :popup "^\\*doom \\(?:term\\|eshell\\)"
+  (+popup-define "^\\*Completions"
+    '((slot . -1) (vslot . -2))
+    '((transient . 0)))
+  (+popup-define "^\\*Compil\\(ation\\|e-Log\\)"
+    '((size . 0.3))
+    '((transient . 0) (quit . t)))
+  (+popup-define "^\\*\\(?:scratch\\|Messages\\)"
+    nil
+    '((transient)))
+  (+popup-define "^\\*doom \\(?:term\\|eshell\\)"
     '((size . 0.25))
     '((quit) (transient . 0)))
-  (set! :popup "^\\*doom:"
+  (+popup-define "^\\*doom:"
     '((size . 0.35) (side . bottom))
     '((select . t) (modeline . t) (quit) (transient . t)))
-  (set! :popup "^\\*\\(?:\\(?:Pp E\\|doom e\\)val\\)"
-    '((size . +popup-shrink-to-fit)) '((transient . 0) (select . ignore))))
+  (+popup-define "^\\*\\(?:\\(?:Pp E\\|doom e\\)val\\)"
+    '((size . +popup-shrink-to-fit)) '((transient . 0) (select . ignore)))
+
+  ;; `help-mode', `helpful-mode'
+  (+popup-define "^\\*[Hh]elp"
+    '((slot . 2) (vslot . 2) (size . 0.2))
+    '((select . t))))
 
 (add-hook 'doom-init-ui-hook #'+popup-mode)
 (add-hook! '+popup-buffer-mode-hook
