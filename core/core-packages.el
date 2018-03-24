@@ -362,7 +362,9 @@ MODULES is an malformed plist of modules to load."
             ((let ((submodule (if (listp m) (car m) m))
                    (flags     (if (listp m) (cdr m))))
                (let ((path (doom-module-find-path module submodule)))
-                 (when path
+                 (if (not path)
+                     (when doom-debug-mode
+                       (message "Couldn't find the %s %s module" module submodule))
                    (doom-module-set module submodule :flags flags :path path)
                    (push `(let ((doom--current-module ',(cons module submodule)))
                             (load! init ,path t))

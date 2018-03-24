@@ -196,7 +196,8 @@ Used by `doom//packages-update'."
     ;; asynchronously.
     (let (futures)
       (dolist (pkg quelpa-pkgs)
-        (log! "New thread for: %s" pkg)
+        (when doom-debug-mode
+          (message "New thread for: %s" pkg))
         (push (async-start
                `(lambda ()
                   (setq user-emacs-directory ,user-emacs-directory)

@@ -79,12 +79,3 @@ interactive session."
            (ansi-color-apply-on-region beg end)))
        (pop-to-buffer buf)
        (goto-char (point-max)))))
-
-;;;###autoload
-(defmacro log! (message &rest args)
-  "Output a debug message if `doom-debug-mode' is non-nil. Otherwise, ignore this."
-  (when doom-debug-mode
-    `(message
-      "LOG: %s"
-      (propertize (format ,message ,@args)
-                  'face 'font-lock-comment-face))))
