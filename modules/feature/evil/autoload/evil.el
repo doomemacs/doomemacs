@@ -73,18 +73,29 @@ evil-window-move-* (e.g. `evil-window-move-far-left')"
 (defun +evil/window-move-down () "See `+evil--window-swap'"  (interactive) (+evil--window-swap 'down))
 
 ;;;###autoload (autoload '+evil:macro-on-all-lines "feature/evil/autoload/evil" nil t)
-(evil-define-operator +evil:macro-on-all-lines (beg end &optional macro)
+(evil-define-command +evil:macro-on-all-lines (beg end macro)
   "Apply macro to each line."
-  :motion nil
-  :move-point nil
-  (interactive "<r><a>")
-  (unless (and beg end)
-    (setq beg (region-beginning)
-          end (region-end)))
-  (evil-ex-normal beg end
-                  (concat "@"
-                          (single-key-description
-                           (or macro (read-char "@-"))))))
+  :move-point t
+  :keep-visual t
+  (interactive
+   (let (macro register)
+     (setq register (or evil-this-register (read-char)))
+     (cond
+      ((or (and (eq register ?@) (eq evil-last-register ?:))
+           (eq register ?:))
+       (setq macro (lambda () (evil-ex-repeat nil))
+             evil-last-register ?:))
+      ((eq register ?@)
+       (unless evil-last-register
+         (user-error "No previously executed keyboard macro."))
+       (setq macro (evil-get-register evil-last-register t)))
+      (t
+       (setq macro (evil-get-register register t)
+             evil-last-register register)))
+     (list evil-visual-beginning evil-visual-end macro)))
+  (evil-change-state 'normal)
+  (evil-with-single-undo
+    (apply-macro-to-region-lines beg end macro)))
 
 ;;;###autoload (autoload '+evil:retab "feature/evil/autoload/evil" nil t)
 (evil-define-operator +evil:retab (&optional beg end)
