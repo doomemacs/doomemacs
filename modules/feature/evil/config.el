@@ -340,9 +340,7 @@ the new algorithm is confusing, like in python or ruby."
         '(org-agenda-mode magit-mode git-rebase-mode
           elfeed-show-mode elfeed-search-mode ranger-mode
           magit-repolist-mode)
-        evil-snipe-aliases '((?\[ "[[{(]")
-                             (?\] "[]})]")
-                             (?\; "[;:]")))
+        evil-snipe-aliases '((?\; "[;:]")))
   :config
   (evil-snipe-override-mode +1))
 
