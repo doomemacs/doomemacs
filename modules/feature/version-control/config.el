@@ -20,7 +20,7 @@
 (def-package! smerge-mode
   :hook (find-file . +vcs|enable-smerge-mode-maybe)
   :config
-  (when (version< emacs-version "26")
+  (unless EMACS26+
     (with-no-warnings
       (defalias #'smerge-keep-upper #'smerge-keep-mine)
       (defalias #'smerge-keep-lower #'smerge-keep-other)

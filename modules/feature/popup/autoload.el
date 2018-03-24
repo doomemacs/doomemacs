@@ -1,6 +1,6 @@
 ;;; feature/popup/autoload.el -*- lexical-binding: t; -*-
 
-(defvar +popup--populate-wparams (version< emacs-version "26.1"))
+(defvar +popup--populate-wparams (not EMACS26+))
 
 (defun +popup--remember (windows)
   "Remember WINDOWS (a list of windows) for later restoration."
@@ -423,7 +423,7 @@ prevent the popup(s) from messing up the UI (or vice versa)."
 ;; Popup actions
 ;;
 
-(when (version< emacs-version "26")
+(unless EMACS26+
   (defvar window-sides-reversed nil)
 
   (defun window--sides-reverse-on-frame-p (frame)

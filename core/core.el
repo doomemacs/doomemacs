@@ -56,6 +56,9 @@ Use this for files that change often, like cache files.")
 (defvar doom-packages-dir (concat doom-local-dir "packages/")
   "Where package.el and quelpa plugins (and their caches) are stored.")
 
+(defconst EMACS26+ (not (version< emacs-version "26")))
+(defconst EMACS27+ (not (version< emacs-version "27")))
+
 
 ;;;
 ;; UTF-8 as the default coding system
