@@ -1,9 +1,5 @@
 ;;; ui/posframe/config.el -*- lexical-binding: t; -*-
 
-(when (version< emacs-version "26")
-  (error "The :ui posframe module requires Emacs 26+"))
-
-
 (def-package! posframe
   :defer t
   :config
@@ -13,6 +9,7 @@
 
 (def-package! company-childframe
   :when (featurep! :completion company)
+  :when EMACS26+
   :after company
   :config
   (setq company-childframe-notification nil)
@@ -23,6 +20,7 @@
 
 (def-package! ivy-posframe
   :when (featurep! :completion ivy)
+  :when EMACS26+
   :after ivy
   :preface
   ;; This function searches the entire `obarray' just to populate
