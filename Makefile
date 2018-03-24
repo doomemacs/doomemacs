@@ -1,5 +1,5 @@
 # Ensure emacs always runs from this makefile's PWD
-EMACS = emacs -q --eval "(setq user-emacs-directory default-directory)"
+EMACS = emacs -q --eval "(setq user-emacs-directory default-directory load-prefer-newer t)"
 DOOM  = $(EMACS) --batch -l init.el
 DOOMI = $(subst --batch,,$(DOOM))
 
