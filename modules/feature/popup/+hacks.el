@@ -5,14 +5,14 @@
 ;; down to:
 ;;
 ;; 1. Making plugins that control their own window environment less greedy (e.g.
-;;    org agenda, trying to reconfigure the entire frame to pop up one tiny
-;;    window).
+;;    org agenda, which tries to reconfigure the entire frame (by deleting all
+;;    other windows) just to pop up one tiny window).
 ;; 2. Forcing plugins to use `display-buffer' and `pop-to-buffer' instead of
 ;;    `switch-to-buffer' (which is unaffected by `display-buffer-alist', which
 ;;    this module heavily relies on).
 ;; 3. Closing popups (temporarily) before functions that are highly destructive
 ;;    to the illusion of popup control get run (with the use of the
-;;   `save-popups!' macro).
+;;    `save-popups!' macro).
 ;;
 ;; Keep in mind, all this black magic may break in future updates, and will need
 ;; to be watched carefully for corner cases. Also, once this file is loaded, its
