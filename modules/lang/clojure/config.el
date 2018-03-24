@@ -17,7 +17,7 @@
   (nconc cljr-magic-require-namespaces
          '(("re-frame" . "re-frame.core")
            ("reagent"  . "reagent.core")
-           ("str"      . "clojure.str"))))
+           ("str"      . "clojure.string"))))
 
 
 (def-package! cider
