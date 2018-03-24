@@ -175,7 +175,24 @@ ALIST supports one custom parameter: `size', which will resolve to
   ;; `help-mode', `helpful-mode'
   (+popup-define "^\\*[Hh]elp"
     '((slot . 2) (vslot . 2) (size . 0.2))
-    '((select . t))))
+    '((select . t)))
+
+  ;; `org-mode'
+  ;; Use org-load-hook instead of `after!' because the hook runs sooner,
+  ;; allowing users to override these later.
+  (add-hook! 'org-load-hook
+    (+popup-define "^\\*\\(?:Agenda Com\\|Calendar\\|Org \\(?:Links\\|Export Dispatcher\\|Select\\)\\)"
+      '((slot . -1) (vslot . -1) (size . +popup-shrink-to-fit))
+      '((transient . 0)))
+    (+popup-define "^\\*Org Agenda"
+      '((size . 20))
+      '((select . t) (transient)))
+    (+popup-define "^\\*Org Src"
+      '((size . 0.3))
+      '((quit) (select . t)))
+    (+popup-define "^CAPTURE.*\\.org$"
+      '((size . 0.2))
+      '((quit) (select . t)))))
 
 (add-hook 'doom-init-ui-hook #'+popup-mode)
 (add-hook! '+popup-buffer-mode-hook
