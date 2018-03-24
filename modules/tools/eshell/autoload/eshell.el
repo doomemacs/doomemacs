@@ -25,13 +25,6 @@
 ;; Library
 ;;
 
-(defun +eshell--add-buffer (buf)
-  (ring-remove+insert+extend +eshell-buffers buf))
-
-(defun +eshell--remove-buffer (buf)
-  (when-let* ((idx (ring-member +eshell-buffers buf)))
-    (ring-remove +eshell-buffers idx)))
-
 (defun +eshell--current-git-branch ()
   (let ((branch (car (cl-loop for match in (split-string (shell-command-to-string "git branch") "\n")
                               if (string-match-p "^\*" match)
@@ -40,11 +33,12 @@
         (format " [%s]" (substring branch 2))
       "")))
 
-(defun +eshell-delete-window ()
-  (if (one-window-p)
-      (unless (doom-real-buffer-p (progn (previous-buffer) (current-buffer)))
-        (switch-to-buffer (doom-fallback-buffer)))
-    (delete-window)))
+;;;###autoload
+(defun +eshell-prompt ()
+  "Generate the prompt string for eshell. Use for `eshell-prompt-function'."
+  (concat (propertize (abbreviate-file-name (eshell/pwd)) 'face '+eshell-prompt-pwd)
+          (propertize (+eshell--current-git-branch) 'face '+eshell-prompt-git-branch)
+          (propertize " λ " 'face '+eshell-prompt-char)))
 
 (defun +eshell-get-or-create-buffer ()
   (or (cl-loop for buf in (ring-elements +eshell-buffers)
@@ -52,13 +46,6 @@
                        (not (get-buffer-window buf)))
                return buf)
       (generate-new-buffer +eshell-buffer-name)))
-
-;;;###autoload
-(defun +eshell-prompt ()
-  "Generate the prompt string for eshell. Use for `eshell-prompt-function'."
-  (concat (propertize (abbreviate-file-name (eshell/pwd)) 'face '+eshell-prompt-pwd)
-          (propertize (+eshell--current-git-branch) 'face '+eshell-prompt-git-branch)
-          (propertize " λ " 'face '+eshell-prompt-char)))
 
 
 ;;
@@ -72,7 +59,9 @@
   (let ((buf (+eshell-get-or-create-buffer)))
     (with-current-buffer buf
       (unless (eq major-mode 'eshell-mode) (eshell-mode)))
-    (switch-to-buffer buf)
+    (if (eq major-mode 'eshell-mode)
+        (pop-to-buffer buf)
+      (switch-to-buffer buf))
     (when command
       (+eshell-run-command command))))
 
@@ -120,12 +109,17 @@ module to be loaded."
 ;; Hooks
 ;;
 
+(defun +eshell--add-buffer (buf)
+  (ring-remove+insert+extend +eshell-buffers buf))
+
+(defun +eshell--remove-buffer (buf)
+  (when-let* ((idx (ring-member +eshell-buffers buf)))
+    (ring-remove +eshell-buffers idx)))
+
 ;;;###autoload
 (defun +eshell|init ()
   "Keep track of eshell buffers."
   (let ((buf (current-buffer)))
-    (remove-hook 'kill-buffer-query-functions #'doom|protect-visible-buffers t)
-    (add-hook 'kill-buffer-hook #'+eshell-delete-window nil t)
     (dolist (buf (ring-elements +eshell-buffers))
       (unless (buffer-live-p buf)
         (+eshell--remove-buffer buf)))
@@ -155,15 +149,13 @@ delete."
     (delete-char arg)))
 
 ;;;###autoload
-(defun +eshell/split-below ()
-  "Create a new eshell window below the current one."
+(defun +eshell/split ()
   (interactive)
   (select-window (split-window-vertically))
   (+eshell/open))
 
 ;;;###autoload
-(defun +eshell/split-right ()
-  "Create a new eshell window to the right of the current one."
+(defun +eshell/vsplit ()
   (interactive)
   (select-window (split-window-horizontally))
   (+eshell/open))
