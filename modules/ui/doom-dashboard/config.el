@@ -327,7 +327,15 @@ controlled by `+doom-dashboard-pwd-policy'."
              (call-interactively (or (command-remapping #'bookmark-jump)
                                      #'bookmark-jump)))
             ,(when (featurep! :config private)
-               '("Open custom init script" "settings"
-                 (find-file (expand-file-name "init.el" +private-config-path))))
+               '("Open private configuration" "settings"
+                 (find-file (expand-file-name "config.el" +private-config-path))))
+            ("Edit my modules list" "pencil"
+             (if (featurep! :config private)
+                 (let ((init-file (expand-file-name "init.el" +private-config-path)))
+                   (unless (file-exists-p init-file)
+                     (make-directory (file-name-directory init-file) t)
+                     (copy-file (expand-file-name "init.example.el" doom-emacs-dir) init-file t))
+                   (find-file init-file))
+               (find-file user-init-file)))
             ("Edit Doom Emacs" "tools"
              (doom-project-find-file doom-emacs-dir))))))
