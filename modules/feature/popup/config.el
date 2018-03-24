@@ -150,7 +150,12 @@ ALIST supports one custom parameter: `size', which will resolve to
      +popup--display-buffer-alist))
 
 (def-setting! :popups (&rest rules)
-  "Register multiple popup rules with :popup setting (`doom--set:popup')."
+  "Register multiple popup rules with :popup setting (`doom--set:popup'). For
+example:
+
+ (set! :popups
+   (\"^ \\*\" '((slot . 1) (vslot . -1) (size . +popup-shrink-to-fit)))
+   (\"^\\*\"  '((slot . 1) (vslot . -1)) '((select . t))))"
   `(progn
      ,@(cl-loop for rule in rules collect `(+popup-define ,@rule))
      (when (bound-and-true-p +popup-mode)
