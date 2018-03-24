@@ -1,7 +1,5 @@
 ;;; completion/ivy/autoload/ivy.el -*- lexical-binding: t; -*-
 
-(defvar doom--project-root nil)
-
 (defun +ivy--is-workspace-or-other-buffer-p (buffer)
   (let ((buffer (car buffer)))
     (when (stringp buffer)
@@ -15,7 +13,7 @@
    'face (cond ((string-match-p "^ *\\*" str)
                 'font-lock-comment-face)
                ((and buffer-file-truename
-                     (not (file-in-directory-p buffer-file-truename doom--project-root)))
+                     (not (file-in-directory-p buffer-file-truename (doom-project-root))))
                 'font-lock-doc-face)
                (t nil))))
 (advice-add 'ivy-rich-switch-buffer-buffer-name :override #'+ivy*rich-switch-buffer-buffer-name)
@@ -46,8 +44,7 @@ started `counsel-recentf' from. Also uses `abbreviate-file-name'."
 (defun +ivy-buffer-transformer (str)
   "Dim special buffers, buffers whose file aren't in the current buffer, and
 virtual buffers. Uses `ivy-rich' under the hood."
-  (let ((buf (get-buffer str))
-        (doom--project-root (doom-project-root)))
+  (let ((buf (get-buffer str)))
     (require 'ivy-rich)
     (cond (buf (ivy-rich-switch-buffer-transformer str))
           ((and (eq ivy-virtual-abbreviate 'full)
