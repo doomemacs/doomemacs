@@ -109,7 +109,20 @@ deleted.")
 
 ;;
 (defun +popup-define (condition &optional alist parameters)
-  "TODO"
+  "Define a popup rule.
+
+The buffers of new windows displayed by `pop-to-buffer' and `display-buffer'
+will be tested against CONDITION, which is either a) a regexp string (which is
+matched against the buffer's name) or b) a function that takes no arguments and
+returns a boolean.
+
+If CONDITION is met, the buffer will be displayed in a popup window with ALIST
+and window PARAMETERS. See `display-buffer-alist' for details on what ALIST may
+contain and `+popup-window-parameters' for what window parameters that the popup
+module supports.
+
+If certain attributes/parameters are omitted, the ones from
+`+popup-default-alist' and `+popup-default-parameters' will be used."
   (declare (indent 1))
   (push (if (eq alist :ignore)
             (list condition nil)
