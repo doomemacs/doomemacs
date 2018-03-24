@@ -3,6 +3,7 @@
 (def-package! clojure-mode
   :mode "\\.clj$"
   :mode "\\.edn$"
+  :mode "\\(?:build\\|profile\\)\\.boot$"
   :mode ("\\.cljs$" . clojurescript-mode)
   :mode ("\\.cljc$" . clojurec-mode)
   :config
