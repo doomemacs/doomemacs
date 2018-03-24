@@ -576,7 +576,8 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
           ((eq buf (doom-fallback-buffer))
            (message "Can't kill the fallback buffer."))
           ((doom-real-buffer-p buf)
-           (if (and (buffer-modified-p buf)
+           (if (and buffer-file-name
+                    (buffer-modified-p buf)
                     (not (y-or-n-p "Buffer %s is modified; kill anyway?")))
                (message "Aborted")
              (set-buffer-modified-p nil)
