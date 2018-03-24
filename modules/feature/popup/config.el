@@ -135,6 +135,11 @@ ALIST supports one custom parameter: `size', which will resolve to
      (when (bound-and-true-p +popup-mode)
        (setq display-buffer-alist +popup--display-buffer-alist))
      +popup--display-buffer-alist))
+
+(def-setting! :popups (&rest rules)
+  "Register multiple popup rules with :popup setting (`doom--set:popup')."
+  `(progn
+     ,@(cl-loop for rule in rules collect `(+popup-define ,@rule))
      (when (bound-and-true-p +popup-mode)
        (setq display-buffer-alist +popup--display-buffer-alist))
      +popup--display-buffer-alist))
