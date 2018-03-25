@@ -10,12 +10,11 @@
       select-enable-clipboard t
       select-enable-primary t)
 
-(after! evil
-  ;; stop copying each visual state move to the clipboard:
-  ;; https://bitbucket.org/lyro/evil/issue/336/osx-visual-state-copies-the-region-on
-  ;; Most of this code grokked from:
-  ;; http://stackoverflow.com/questions/15873346/elisp-rename-macro
-  (advice-add #'evil-visual-update-x-selection :override #'ignore))
+;; stop copying each visual state move to the clipboard:
+;; https://bitbucket.org/lyro/evil/issue/336/osx-visual-state-copies-the-region-on
+;; Most of this code grokked from:
+;; http://stackoverflow.com/questions/15873346/elisp-rename-macro
+(advice-add #'evil-visual-update-x-selection :override #'ignore)
 
 (cond (IS-MAC
        (setq mac-command-modifier 'meta
