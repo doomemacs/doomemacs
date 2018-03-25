@@ -40,17 +40,12 @@
         (format " [%s]" (substring branch 2))
       "")))
 
-(defun +eshell-delete-window ()
-  (if (one-window-p)
-      (unless (doom-real-buffer-p (progn (previous-buffer) (current-buffer)))
-        (switch-to-buffer (doom-fallback-buffer)))
-    (delete-window)))
-
-(defun +eshell-get-or-create-buffer ()
-  (or (cl-loop for buf in (ring-elements +eshell-buffers)
-               if (and (buffer-live-p buf)
-                       (not (get-buffer-window buf)))
-               return buf)
+(defun +eshell--buffer (&optional new-p)
+  (or (unless new-p
+        (cl-loop for buf in (ring-elements +eshell-buffers)
+                 if (and (buffer-live-p buf)
+                         (not (get-buffer-window buf)))
+                 return buf))
       (generate-new-buffer +eshell-buffer-name)))
 
 ;;;###autoload
@@ -69,7 +64,7 @@
 (defun +eshell/open (&optional command)
   "Open eshell in the current buffer."
   (interactive)
-  (let ((buf (+eshell-get-or-create-buffer)))
+  (let ((buf (+eshell--buffer (eq major-mode 'eshell-mode))))
     (with-current-buffer buf
       (unless (eq major-mode 'eshell-mode) (eshell-mode)))
     (switch-to-buffer buf)
@@ -80,7 +75,7 @@
 (defun +eshell/open-popup (&optional command)
   "Open eshell in a popup window."
   (interactive)
-  (let ((buf (+eshell-get-or-create-buffer)))
+  (let ((buf (+eshell--buffer)))
     (with-current-buffer buf
       (unless (eq major-mode 'eshell-mode) (eshell-mode)))
     (pop-to-buffer buf)
@@ -121,11 +116,18 @@ module to be loaded."
 ;;
 
 ;;;###autoload
+(defun +eshell|delete-window ()
+  (if (one-window-p)
+      (unless (doom-real-buffer-p (progn (previous-buffer) (current-buffer)))
+        (switch-to-buffer (doom-fallback-buffer)))
+    (delete-window)))
+
+;;;###autoload
 (defun +eshell|init ()
   "Keep track of eshell buffers."
   (let ((buf (current-buffer)))
     (remove-hook 'kill-buffer-query-functions #'doom|protect-visible-buffers t)
-    (add-hook 'kill-buffer-hook #'+eshell-delete-window nil t)
+    (add-hook 'kill-buffer-hook #'+eshell|delete-window nil t)
     (dolist (buf (ring-elements +eshell-buffers))
       (unless (buffer-live-p buf)
         (+eshell--remove-buffer buf)))
