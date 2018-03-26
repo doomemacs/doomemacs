@@ -70,8 +70,7 @@
                              (unless recursion-p " --depth 1"))))
            (counsel-ag query directory args (format prompt args))))
         ('rg
-         (let ((args (concat " -S" ; smart-case
-                             (if all-files-p " -uu")
+         (let ((args (concat (if all-files-p " -uu")
                              (unless recursion-p " --maxdepth 1"))))
            (counsel-rg query directory args (format prompt args))))
         ('pt
