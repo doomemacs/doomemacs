@@ -5,16 +5,16 @@
   :init
   ;; NOTE In :feature jump `recenter' is hooked to a bunch of jumping commands,
   ;; which will trigger nav-flash.
-  (advice-add #'windmove-do-window-select :around #'+doom*blink-cursor-maybe)
-  (advice-add #'recenter :around #'+doom*blink-cursor-maybe)
+  (add-hook 'doom-after-switch-window-hook #'+nav-flash/blink-cursor)
+  (advice-add #'recenter :around #'+nav-flash*blink-cursor-maybe)
 
-  (advice-add #'save-place-find-file-hook :after #'+doom/blink-cursor)
+  (advice-add #'save-place-find-file-hook :after #'+nav-flash/blink-cursor)
 
   (after! evil
-    (advice-add #'evil--jumps-jump   :after #'+doom/blink-cursor)
+    (advice-add #'evil--jumps-jump   :after #'+nav-flash/blink-cursor)
 
-    (advice-add #'evil-window-top    :after #'+doom/blink-cursor)
-    (advice-add #'evil-window-middle :after #'+doom/blink-cursor)
-    (advice-add #'evil-window-bottom :after #'+doom/blink-cursor)))
+    (advice-add #'evil-window-top    :after #'+nav-flash/blink-cursor)
+    (advice-add #'evil-window-middle :after #'+nav-flash/blink-cursor)
+    (advice-add #'evil-window-bottom :after #'+nav-flash/blink-cursor)))
 
 
