@@ -141,7 +141,8 @@ FORCE-P is non-nil, do it anyway.
 1. Ensures all the essential directories exist,
 2. Ensures core packages are installed,
 3. Loads your autoloads file in `doom-autoload-file',
-4. Builds and caches `load-path' and `Info-directory-list' in `doom-packages-file'"
+4. Builds and caches `load-path', `Info-directory-list' and
+   `doom-disabled-packages' in `doom-packages-file'"
   ;; Called early during initialization; only use native (and cl-lib) functions!
   (let ((load-path doom-site-load-path))
     (require 'subr-x)
