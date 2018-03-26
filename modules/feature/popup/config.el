@@ -194,6 +194,10 @@ example:
   (+popup-define "^\\*[Hh]elp"
     '((slot . 2) (vslot . 2) (size . 0.2))
     '((select . t)))
+  ;; `Info-mode'
+  (+popup-define "^\\*info\\*$"
+    '((slot . 2) (vslot . 2) (size . 0.35))
+    '((select . t)))
 
   ;; `org-mode'
   ;; Use org-load-hook instead of `after!' because the hook runs sooner,
