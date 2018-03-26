@@ -38,7 +38,7 @@ modes are active and the buffer is read-only.")
  truncate-lines t
  truncate-partial-width-windows 50
  ;; whitespace-mode
- whitespace-line-column fill-column
+ whitespace-line-column nil
  whitespace-style
  '(face indentation tabs tab-mark spaces space-mark newline newline-mark
    trailing lines-tail)
