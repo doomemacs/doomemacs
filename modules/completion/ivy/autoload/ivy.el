@@ -293,7 +293,7 @@ If ALL-FILES-P, don't respect .gitignore files and search everything.
 NOTE: ripgrep doesn't support multiline searches (yet)."
   (interactive "P")
   (let ((+ivy--file-search-all-files-p all-files-p))
-    (+ivy--file-search 'rg (or query "") directory)))
+    (+ivy--file-search 'rg query directory)))
 
 ;;;###autoload
 (defun +ivy/ag (all-files-p &optional query directory)
@@ -304,7 +304,7 @@ the last known search is used.
 If ALL-FILES-P, don't respect .gitignore files and search everything."
   (interactive)
   (let ((+ivy--file-search-all-files-p all-files-p))
-    (+ivy--file-search 'ag (or query "") directory)))
+    (+ivy--file-search 'ag query directory)))
 
 ;;;###autoload
 (defun +ivy/pt (all-files-p &optional query directory)
@@ -315,7 +315,7 @@ the last known search is used.
 If ALL-FILES-P, don't respect .gitignore files and search everything."
   (interactive)
   (let ((+ivy--file-search-all-files-p all-files-p))
-    (+ivy--file-search 'pt (or query "") directory)))
+    (+ivy--file-search 'pt query directory)))
 
 ;;;###autoload
 (defun +ivy/grep (all-files-p &optional query directory)
@@ -326,7 +326,7 @@ active, the last known search is used.
 If ALL-FILES-P, don't respect .gitignore files and search everything."
   (interactive)
   (let ((+ivy--file-search-all-files-p all-files-p))
-    (+ivy--file-search 'grep (or query "") directory)))
+    (+ivy--file-search 'grep query directory)))
 
 
 ;;;###autoload
