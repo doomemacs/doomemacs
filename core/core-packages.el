@@ -134,6 +134,17 @@ missing) and shouldn't be deleted.")
 ;; Bootstrap API
 ;;
 
+(defun doom--refresh-cache ()
+  "TODO"
+  (doom-initialize-packages 'internal)
+  (unless noninteractive
+    (with-temp-buffer
+      (prin1 `(setq load-path ',load-path
+                    Info-directory-list ',Info-directory-list
+                    doom-disabled-packages ',doom-disabled-packages)
+             (current-buffer))
+      (write-file doom-packages-file))))
+
 (defun doom-initialize (&optional force-p)
   "Bootstrap the bare essentials to get Doom running, if it hasn't already. If
 FORCE-P is non-nil, do it anyway.
@@ -181,14 +192,7 @@ FORCE-P is non-nil, do it anyway.
               (error "✕ Couldn't install %s" package)))
           (message "Installing core packages...done")))
       (cl-pushnew doom-core-dir load-path :test #'string=)
-      (doom-initialize-packages 'internal)
-      (unless noninteractive
-        (with-temp-buffer
-          (prin1 `(setq load-path ',load-path
-                        Info-directory-list ',Info-directory-list
-                        doom-disabled-packages ',doom-disabled-packages)
-                 (current-buffer))
-          (write-file doom-packages-file))))
+      (add-hook 'doom-init-core-hook #'doom--refresh-cache))
     (setq doom-init-p t)))
 
 (defun doom-initialize-autoloads ()
