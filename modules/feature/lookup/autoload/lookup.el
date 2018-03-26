@@ -24,21 +24,18 @@
                                          (region-end)))
         ((xref-backend-identifier-at-point (xref-find-backend)))))
 
-(defun +lookup--jump-to (prop identifier &optional other-window)
-  (with-selected-window
-      (if other-window
-          (save-excursion (other-window 1) (selected-window))
-        (selected-window))
-    (let ((fn (plist-get +lookup-current-functions prop))
-          (origin (point-marker)))
-      (condition-case e
-          (or (if (commandp fn)
-                  (call-interactively fn)
-                (funcall fn identifier))
-              (/= (point-marker) origin))
-        ('error
-         (message "%s" e)
-         nil)))))
+(defun +lookup--jump-to (prop identifier)
+  (let ((fn (plist-get +lookup-current-functions prop))
+        (origin (point-marker)))
+    (setq fn (or (command-remapping fn) fn))
+    (condition-case e
+        (or (if (commandp fn)
+                (call-interactively fn)
+              (funcall fn identifier))
+            (/= (point-marker) origin))
+      ('error
+       (message "%s" e)
+       nil))))
 
 
 ;;
