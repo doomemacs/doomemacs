@@ -151,6 +151,8 @@ FORCE-P is non-nil, do it anyway.
     (unless (load doom-autoload-file t t t)
       (unless noninteractive
         (error "No autoloads file! Run make autoloads")))
+    (when noninteractive
+      (delete-file doom-packages-file))
     (when (or force-p (not (load doom-packages-file t t t)))
       ;; Ensure core folders exist, otherwise we get errors
       (dolist (dir (list doom-local-dir doom-etc-dir doom-cache-dir doom-packages-dir))
@@ -178,9 +180,9 @@ FORCE-P is non-nil, do it anyway.
               (error "✕ Couldn't install %s" package)))
           (message "Installing core packages...done")))
       (cl-pushnew doom-core-dir load-path :test #'string=)
+      (doom-initialize-packages 'internal)
       (unless noninteractive
         (with-temp-buffer
-          (doom-initialize-packages 'internal)
           (prin1 `(setq load-path ',load-path
                         Info-directory-list ',Info-directory-list
                         doom-disabled-packages ',doom-disabled-packages)
