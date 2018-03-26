@@ -158,6 +158,14 @@ the command buffer."
   (advice-add #'helpful--navigate :override #'+popup*helpful--navigate))
 
 
+;; `Info'
+(defun +popup*switch-to-info-window (&rest _)
+  (when-let* ((win (get-buffer-window "*info*")))
+    (when (+popup-window-p win)
+      (select-window win))))
+(advice-add #'info-lookup-symbol :after #'+popup*switch-to-info-window)
+
+
 ;; `neotree'
 (after! neotree
   (advice-add #'neo-util--set-window-width :override #'ignore)
