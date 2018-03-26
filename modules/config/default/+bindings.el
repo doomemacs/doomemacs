@@ -116,10 +116,12 @@
           :desc "Spelling correction"   :n  "S" #'flyspell-correct-word-generic)
 
         (:desc "search" :prefix "/"
-          :desc "Swiper"                :nv "/" #'swiper
-          :desc "Imenu"                 :nv "i" #'imenu
-          :desc "Imenu across buffers"  :nv "I" #'imenu-anywhere
-          :desc "Online providers"      :nv "o" #'+lookup/online-select)
+          :desc "Project"                :nv "p" #'+ivy/project-search
+          :desc "Directory"              :nv "d" (λ! (+ivy/project-search t))
+          :desc "Buffer"                 :nv "b" #'swiper
+          :desc "Symbols"                :nv "i" #'imenu
+          :desc "Symbols across buffers" :nv "I" #'imenu-anywhere
+          :desc "Online providers"       :nv "o" #'+lookup/online-select)
 
         (:desc "workspace" :prefix "TAB"
           :desc "Display tab bar"          :n "TAB" #'+workspace/display

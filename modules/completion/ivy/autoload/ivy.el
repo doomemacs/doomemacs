@@ -196,3 +196,205 @@ search current file. See `+ivy-task-tags' to customize what this searches for."
          (re-search-forward (ivy--regex ivy-text t) (line-end-position) t)
          (run-hooks 'counsel-grep-post-action-hook)
          (selected-window))))))
+
+
+;;
+;; File searching
+;;
+
+(defvar +ivy--file-last-search nil)
+(defvar +ivy--file-search-recursion-p t)
+(defvar +ivy--file-search-all-files-p nil)
+
+(defun +ivy--file-search (engine &optional query directory)
+  (let* ((project-root (doom-project-root))
+         (directory (or directory project-root))
+         (recursion-p +ivy--file-search-recursion-p)
+         (all-files-p +ivy--file-search-all-files-p)
+         (engine (or engine
+                     (and (executable-find "rg") 'rg)
+                     (and (executable-find "ag") 'ag)))
+         (query
+          (or query
+              (when (use-region-p)
+                (let ((beg (or (bound-and-true-p evil-visual-beginning) (region-beginning)))
+                      (end (or (bound-and-true-p evil-visual-end) (region-end))))
+                  (when (> (abs (- end beg)) 1)
+                    (rxt-quote-pcre (buffer-substring-no-properties beg end)))))
+              +ivy--file-last-search))
+         (prompt
+          (format "%s%%s %s"
+                  (symbol-name engine)
+                  (cond ((equal directory default-directory)
+                         "./")
+                        ((equal directory project-root)
+                         (projectile-project-name))
+                        (t
+                         (file-relative-name directory project-root)))))
+         (default-directory directory))
+    (setq +ivy--file-last-search query)
+    (require 'counsel)
+    (cl-letf (((symbol-function 'counsel-ag-function)
+               (symbol-function '+ivy*counsel-ag-function))
+              ((symbol-function 'counsel-git-grep-function)
+               (symbol-function '+ivy*counsel-git-grep-function)))
+      (pcase engine
+        ('grep
+         (let ((args (if recursion-p " -r"))
+               (counsel-projectile-grep-initial-input query)
+               (default-directory directory))
+           (if all-files-p
+               (cl-letf (((symbol-function #'projectile-ignored-directories-rel)
+                          (symbol-function #'ignore))
+                         ((symbol-function #'projectile-ignored-files-rel)
+                          (symbol-function #'ignore)))
+                 (counsel-projectile-grep args))
+             (counsel-projectile-grep args))))
+        ('ag
+         (let ((args (concat " -S" ; smart-case
+                             (if all-files-p " -a")
+                             (unless recursion-p " --depth 1"))))
+           (counsel-ag query directory args (format prompt args))))
+        ('rg
+         (let ((args (concat (if all-files-p " -uu")
+                             (unless recursion-p " --maxdepth 1"))))
+           (counsel-rg query directory args (format prompt args))))
+        ('pt
+         (let ((counsel-pt-base-command
+                (concat counsel-pt-base-command
+                        " -S" ; smart-case
+                        (if all-files-p " -U")
+                        (unless recursion-p " --depth=1")))
+               (default-directory directory))
+           (counsel-pt query)))
+        (_ (error "No search engine specified"))))))
+
+;;;###autoload
+(defun +ivy/project-search (arg)
+  "Performs a project search using the first available search backend from a
+list of: ripgrep, ag, pt, git-grep and grep. If ARG (universal argument),
+preform search from current directory."
+  (interactive "P")
+  (call-interactively
+   (cond ((executable-find "rg") (if arg #'+ivy/rg-from-cwd #'+ivy/rg))
+         ((executable-find "ag") (if arg #'+ivy/ag-from-cwd #'+ivy/ag))
+         ((executable-find "pt") (if arg #'+ivy/pt-from-cwd #'+ivy/pt))
+         (arg #'+ivy/grep-from-cwd)
+         (#'+ivy/grep))))
+
+;;;###autoload
+(defun +ivy/rg (all-files-p &optional query directory)
+  "Perform a project file search using ripgrep. QUERY is a regexp. If omitted,
+the current selection is used. If no selection is active, the last known search
+is used.
+
+If ALL-FILES-P, don't respect .gitignore files and search everything.
+
+NOTE: ripgrep doesn't support multiline searches (yet)."
+  (interactive "P")
+  (let ((+ivy--file-search-all-files-p all-files-p))
+    (+ivy--file-search 'rg (or query "") directory)))
+
+;;;###autoload
+(defun +ivy/ag (all-files-p &optional query directory)
+  "Perform a project file search using the silver searcher. QUERY is a pcre
+regexp. If omitted, the current selection is used. If no selection is active,
+the last known search is used.
+
+If ALL-FILES-P, don't respect .gitignore files and search everything."
+  (interactive)
+  (let ((+ivy--file-search-all-files-p all-files-p))
+    (+ivy--file-search 'ag (or query "") directory)))
+
+;;;###autoload
+(defun +ivy/pt (all-files-p &optional query directory)
+  "Perform a project file search using the platinum searcher. QUERY is a grep
+regexp. If omitted, the current selection is used. If no selection is active,
+the last known search is used.
+
+If ALL-FILES-P, don't respect .gitignore files and search everything."
+  (interactive)
+  (let ((+ivy--file-search-all-files-p all-files-p))
+    (+ivy--file-search 'pt (or query "") directory)))
+
+;;;###autoload
+(defun +ivy/grep (all-files-p &optional query directory)
+  "Perform a project file search using grep (or git-grep in git repos). QUERY is
+a grep regexp. If omitted, the current selection is used. If no selection is
+active, the last known search is used.
+
+If ALL-FILES-P, don't respect .gitignore files and search everything."
+  (interactive)
+  (let ((+ivy--file-search-all-files-p all-files-p))
+    (+ivy--file-search 'grep (or query "") directory)))
+
+
+;;;###autoload
+(defun +ivy/rg-from-cwd (recursive-p &optional query)
+  "Like `+ivy/rg', but from the current directory (recursively if RECURSIVE-P is
+non-nil)."
+  (interactive "P")
+  (let ((+ivy--file-search-recursion-p recursive-p))
+    (+ivy/rg t query default-directory)))
+
+;;;###autoload
+(defun +ivy/ag-from-cwd (recursive-p &optional query)
+  "Like `+ivy/ag', but from the current directory (recursively if RECURSIVE-P is
+non-nil)."
+  (interactive "P")
+  (let ((+ivy--file-search-recursion-p recursive-p))
+    (+ivy/ag t query default-directory)))
+
+;;;###autoload
+(defun +ivy/pt-from-cwd (recursive-p &optional query)
+  "Like `+ivy/pt', but from the current directory (recursively if RECURSIVE-P is
+non-nil)."
+  (interactive "P")
+  (let ((+ivy--file-search-recursion-p recursive-p))
+    (+ivy/pt t query default-directory)))
+
+;;;###autoload
+(defun +ivy/grep-from-cwd (recursive-p &optional query)
+  "Like `+ivy/grep', but from the current directory (recursively if RECURSIVE-P is
+non-nil)."
+  (interactive "P")
+  (let ((+ivy--file-search-recursion-p recursive-p))
+    (+ivy/grep t query default-directory)))
+
+
+;;
+;; Advice
+;;
+
+;;;###autoload
+(defun +ivy*counsel-ag-function (string)
+  "Advice to get rid of the character limit from `counsel-ag-function'.
+
+NOTE This may need to be updated frequently, to meet changes upstream (in
+counsel-rg)."
+  (if (< (length string) 1)  ; <-- modified the character limit
+      (counsel-more-chars 1) ; <--
+    (let ((default-directory (ivy-state-directory ivy-last))
+          (regex (counsel-unquote-regex-parens
+                  (setq ivy--old-re
+                        (ivy--regex string)))))
+      (counsel--async-command (format counsel-ag-command
+                                      (shell-quote-argument regex)))
+      nil)))
+
+;;;###autoload
+(defun +ivy*counsel-git-grep-function (string)
+  "Advice to get rid of the character limit from `counsel-git-grep-function'.
+
+NOTE This may need to be updated frequently, to meet changes upstream (in
+counsel-git-grep)."
+  (if (and (> counsel--git-grep-count counsel--git-grep-count-threshold)
+           (< (length string) 1)) ; <-- modified the character limit
+      (counsel-more-chars 1)      ; <--
+    (let* ((default-directory (ivy-state-directory ivy-last))
+           (cmd (format counsel-git-grep-cmd
+                        (setq ivy--old-re (ivy--regex string t)))))
+      (if (<= counsel--git-grep-count counsel--git-grep-count-threshold)
+          (split-string (shell-command-to-string cmd) "\n" t)
+        (counsel--gg-candidates (ivy--regex string))
+        nil))))
