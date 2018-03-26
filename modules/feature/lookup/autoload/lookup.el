@@ -59,7 +59,7 @@ to find it:
 
 Failing all that, it will give up with an error."
   (interactive
-   (list (thing-at-point 'symbol t)
+   (list (xref-backend-identifier-at-point (xref-find-backend))
          current-prefix-arg))
   (cond ((null identifier)
          (user-error "Nothing under point"))
