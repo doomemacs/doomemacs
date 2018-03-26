@@ -22,7 +22,7 @@
         ((use-region-p)
          (buffer-substring-no-properties (region-beginning)
                                          (region-end)))
-        ((thing-at-point 'symbol t))))
+        ((xref-backend-identifier-at-point (xref-find-backend)))))
 
 (defun +lookup--jump-to (prop identifier &optional other-window)
   (with-selected-window
@@ -59,8 +59,7 @@ to find it:
 
 Failing all that, it will give up with an error."
   (interactive
-   (list (xref-backend-identifier-at-point (xref-find-backend))
-         current-prefix-arg))
+   (list (+lookup--symbol-or-region) current-prefix-arg))
   (cond ((null identifier)
          (user-error "Nothing under point"))
 
@@ -112,7 +111,8 @@ Failing all that, it will give up with an error."
   "Show a list of references to the symbol at point.
 
 Tries `xref-find-references' and falls back to rg/ag."
-  (interactive (list (thing-at-point 'symbol t)))
+  (interactive
+   (list (+lookup--symbol-or-region)))
   (cond ((and (plist-member +lookup-current-functions :references)
               (+lookup--jump-to :references identifier)))
 
