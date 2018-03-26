@@ -543,9 +543,10 @@ Accepts the following properties:
                (plist-put plist :recipe (cons name pkg-recipe)))
              (when pkg-pin
                (plist-put plist :pin nil)))
-           (let ((val (plist-get plist :freeze)))
-             (when val
-               (plist-put plist :freeze (eval val))))
+           (dolist (prop '(:ignore :freeze))
+             (let ((val (plist-get plist prop)))
+               (when val
+                 (plist-put plist prop (eval val)))))
            `(progn
               ,(when (and pkg-pin t)
                  `(map-put package-pinned-packages ',name ,pkg-pin))
