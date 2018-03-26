@@ -548,6 +548,16 @@ Accepts the following properties:
                  `(map-put package-pinned-packages ',name ,pkg-pin))
               (map-put doom-packages ',name ',plist))))))
 
+(defmacro packages! (&rest packages)
+  "A convenience macro like `package!', but allows you to declare multiple
+packages at once."
+  `(progn ,@(cl-loop for desc in packages collect `(package! ,@desc))))
+
+(defmacro disable-packages! (&rest packages)
+  "A convenience macro like `package!', but allows you to disable multiple
+packages at once."
+  `(setq doom-disabled-packages (append ',packages doom-disabled-packages)))
+
 (defmacro depends-on! (module submodule &optional flags)
   "Declares that this module depends on another.
 
