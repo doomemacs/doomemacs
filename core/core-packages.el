@@ -151,7 +151,7 @@ FORCE-P is non-nil, do it anyway.
     (unless (load doom-autoload-file t t t)
       (unless noninteractive
         (error "No autoloads file! Run make autoloads")))
-    (when noninteractive
+    (when (and noninteractive (file-exists-p doom-packages-file))
       (delete-file doom-packages-file))
     (when (or force-p (not (load doom-packages-file t t t)))
       ;; Ensure core folders exist, otherwise we get errors
