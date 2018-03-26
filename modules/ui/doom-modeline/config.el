@@ -49,9 +49,10 @@
   (force-mode-line-update))
 
 (add-hook 'window-configuration-change-hook #'+doom-modeline|set-selected-window)
-(add-hook 'focus-in-hook #'+doom-modeline|set-selected-window)
+(add-hook 'focus-in-hook  #'+doom-modeline|set-selected-window)
 (add-hook 'focus-out-hook #'+doom-modeline|unset-selected-window)
 (add-hook 'doom-after-switch-window-hook #'+doom-modeline|set-selected-window)
+(add-hook 'doom-after-switch-frame-hook  #'+doom-modeline|set-selected-window)
 
 
 ;;
