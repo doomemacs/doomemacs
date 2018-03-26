@@ -227,11 +227,5 @@ with functions that require it (like modeline segments)."
     buffer))
 (advice-add #'make-indirect-buffer :around #'doom*set-indirect-buffer-filename)
 
-(defun doom*no-authinfo-for-tramp (orig-fn &rest args)
-  "Don't look into .authinfo for local sudo TRAMP buffers."
-  (let ((auth-sources (if (equal tramp-current-method "sudo") nil auth-sources)))
-    (apply orig-fn args)))
-(advice-add #'tramp-read-passwd :around #'doom*no-authinfo-for-tramp)
-
 (provide 'core)
 ;;; core.el ends here
