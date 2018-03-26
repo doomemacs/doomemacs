@@ -533,7 +533,7 @@ Accepts the following properties:
    Do not install or update this package AND disable all of its `def-package!'
    blocks.
  :ignore FORM
-   Do not install or update this package.
+   Do not install this package.
  :freeze FORM
    Do not update this package if FORM is non-nil."
   (declare (indent defun))
