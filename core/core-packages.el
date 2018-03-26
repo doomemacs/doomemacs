@@ -277,7 +277,7 @@ them."
       plist)))
 
 (defun doom-module-put (module submodule property value)
-  "TODO"
+  "Set a PROPERTY for MODULE SUBMODULE to VALUE."
   (when-let* ((plist (doom-module-get module submodule)))
     (puthash (cons module submodule)
              (plist-put plist property value)
