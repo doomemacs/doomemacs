@@ -203,27 +203,25 @@
         (:desc "help" :prefix "h"
           :n "h" help-map
           :desc "Apropos"               :n  "a" #'apropos
-          :desc "Reload theme"          :n  "R" #'doom//reload-theme
-          :desc "Find library"          :n  "l" #'find-library
-          :desc "Toggle Emacs log"      :n  "m" #'view-echo-area-messages
-          :desc "Command log"           :n  "L" #'global-command-log-mode
-          :desc "Describe function"     :n  "f" #'describe-function
-          :desc "Describe key"          :n  "k" #'describe-key
           :desc "Describe char"         :n  "c" #'describe-char
-          :desc "Describe mode"         :n  "M" #'describe-mode
-          :desc "Describe variable"     :n  "v" #'describe-variable
-          :desc "Describe face"         :n  "F" #'describe-face
-          :desc "Describe DOOM setting" :n  "s" #'doom/describe-setting
           :desc "Describe DOOM module"  :n  "d" #'doom/describe-module
           :desc "Open Doom manual"      :n  "D" #'doom/help
-          :desc "Find definition"       :n  "." #'+lookup/definition
-          :desc "Find references"       :n  "/" #'+lookup/references
-          :desc "Find documentation"    :n  "h" #'+lookup/documentation
+          :desc "Describe function"     :n  "f" #'describe-function
+          :desc "Describe face"         :n  "F" #'describe-face
+          :desc "Info"                  :n  "i" #'info-lookup-symbol
+          :desc "Describe key"          :n  "k" #'describe-key
+          :desc "Find documentation"    :n  "K" #'+lookup/documentation
+          :desc "Find library"          :n  "l" #'find-library
+          :desc "Command log"           :n  "L" #'global-command-log-mode
+          :desc "Toggle Emacs log"      :n  "m" #'view-echo-area-messages
+          :desc "Describe mode"         :n  "M" #'describe-mode
+          :desc "Toggle profiler"       :n  "p" #'doom/toggle-profiler
+          :desc "Reload theme"          :n  "R" #'doom//reload-theme
+          :desc "Describe DOOM setting" :n  "s" #'doom/describe-setting
+          :desc "Describe variable"     :n  "v" #'describe-variable
           :desc "Describe at point"     :n  "." #'helpful-at-point
           :desc "What face"             :n  "'" #'doom/what-face
-          :desc "What minor modes"      :n  ";" #'doom/what-minor-mode
-          :desc "Info"                  :n  "i" #'info
-          :desc "Toggle profiler"       :n  "p" #'doom/toggle-profiler)
+          :desc "What minor modes"      :n  ";" #'doom/what-minor-mode)
 
         (:desc "insert" :prefix "i"
           :desc "From kill-ring"        :nv "y" #'counsel-yank-pop
