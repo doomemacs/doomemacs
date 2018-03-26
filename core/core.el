@@ -164,6 +164,7 @@ ability to invoke the debugger in debug mode."
 display the loading benchmark."
     (dolist (hook '(doom-init-hook doom-post-init-hook))
       (run-hook-wrapped hook #'doom-try-run-hook hook))
+    (run-hooks 'doom-finalize-hook)
     (unless noninteractive
       (when (display-graphic-p)
         (require 'server)
@@ -180,8 +181,8 @@ this, you'll get stuttering and random freezes), and resets
           file-name-handler-alist doom--file-name-handler-alist)
     t)
 
-  (add-hook! '(emacs-startup-hook doom-reload-hook) #'doom|finalize)
-  (add-hook 'emacs-startup-hook #'doom|after-init))
+  (add-hook 'emacs-startup-hook #'doom|after-init)
+  (add-hook! '(doom-finalize-hook doom-reload-hook) #'doom|finalize))
 
 
 ;;

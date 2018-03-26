@@ -143,6 +143,10 @@ FORCE-P is non-nil, do it anyway.
 3. Loads your autoloads file in `doom-autoload-file',
 4. Builds and caches `load-path' and `Info-directory-list' in `doom-packages-file'"
   ;; Called early during initialization; only use native (and cl-lib) functions!
+  (let ((load-path doom-site-load-path))
+    (require 'subr-x)
+    (require 'cl-lib)
+    (require 'map))
   (when (or force-p (not doom-init-p))
     (unless (load doom-autoload-file t t t)
       (unless noninteractive
@@ -173,11 +177,13 @@ FORCE-P is non-nil, do it anyway.
                 (message "✓ Installed %s" package)
               (error "✕ Couldn't install %s" package)))
           (message "Installing core packages...done")))
+      (cl-pushnew doom-core-dir load-path :test #'string=)
       (unless noninteractive
         (with-temp-buffer
-          (cl-pushnew doom-core-dir load-path :test #'string=)
+          (doom-initialize-packages 'internal)
           (prin1 `(setq load-path ',load-path
-                        Info-directory-list ',Info-directory-list)
+                        Info-directory-list ',Info-directory-list
+                        doom-disabled-packages ',doom-disabled-packages)
                  (current-buffer))
           (write-file doom-packages-file))))
     (setq doom-init-p t)))
@@ -202,7 +208,7 @@ populated.
 
 This reads modules' packages.el files, runs `package-initialize', and
 initializes quelpa, if they haven't already. If FORCE-P is non-nil, do it
-anyway.
+anyway. If FORCE-P is 'internal, only (re)populate `doom-packages'.
 
 Use this before any of package.el, quelpa or Doom's package management's API to
 ensure all the necessary package metadata is initialized and available for
@@ -225,10 +231,6 @@ them."
       ;; the current session, but if you change an packages.el file in a module,
       ;; there's no non-trivial way to detect that, so we give you a way to
       ;; reload only doom-packages.
-      (when (eq force-p 'internal)
-        (setq force-p nil
-              doom-packages nil))
-
       ;; `doom-packages'
       (when (or force-p (not doom-packages))
         (setq doom-packages nil)
@@ -243,14 +245,14 @@ them."
                  do (_load path)))
 
       ;; `package-alist'
-      (when (or force-p (not (bound-and-true-p package-alist)))
+      (when (or (eq force-p t) (not (bound-and-true-p package-alist)))
         (setq load-path doom-site-load-path)
         (require 'package)
         (setq package-activated-list nil)
         (package-initialize))
 
       ;; `quelpa-cache'
-      (when (or force-p (not (bound-and-true-p quelpa-cache)))
+      (when (or (eq force-p t) (not (bound-and-true-p quelpa-cache)))
         (require 'quelpa)
         (setq quelpa-initialized-p nil)
         (or (quelpa-setup-p)
@@ -410,8 +412,8 @@ WARNING: If :pre-init or :pre-config hooks return nil, the original
 to have them return non-nil (or exploit that to overwrite Doom's config)."
   (declare (indent defun))
   (cond ((eq when :disable)
-         (push package doom-disabled-packages)
-         nil)
+         (message "Using :disable with `def-package-hook!' is deprecated. Use :disable in `package!' instead.")
+         (ignore (push package doom-disabled-packages)))
         ((memq when '(:pre-init :post-init :pre-config :post-config))
          `(progn
             (setq use-package-inject-hooks t)
@@ -510,35 +512,41 @@ This macro is declarative and does not load nor install packages. It is used to
 populate `doom-packages' with metadata about the packages Doom needs to keep
 track of.
 
-Only use this macro in a module's packages.el file.
+Only use this macro in a module's init.el or packages.el file.
 
 Accepts the following properties:
 
- :recipe RECIPE        Takes a MELPA-style recipe (see `quelpa-recipe' in
-                       `quelpa' for an example); for packages to be installed
-                       from external sources.
- :pin ARCHIVE-NAME     Instructs ELPA to only look for this package in
-                       ARCHIVE-NAME. e.g. \"org\". Ignored if RECIPE is present.
- :ignore FORM          Do not install this package if FORM is non-nil.
- :freeze FORM          Do not update this package if FORM is non-nil."
+ :recipe RECIPE     Takes a MELPA-style recipe (see `quelpa-recipe' in
+                    `quelpa' for an example); for packages to be installed
+                    from external sources.
+ :pin ARCHIVE-NAME  Instructs ELPA to only look for this package in
+                    ARCHIVE-NAME. e.g. \"org\". Ignored if RECIPE is present.
+ :disable BOOL      Do not install this package AND disable its `def-package!' blocks.
+ :freeze FORM       Do not update this package if FORM is non-nil."
   (declare (indent defun))
-  (unless (memq name doom-disabled-packages)
-    (let* ((old-plist (assq name doom-packages))
-           (pkg-recipe (or (plist-get plist :recipe)
-                           (and old-plist (plist-get old-plist :recipe))))
-           (pkg-pin    (or (plist-get plist :pin)
-                           (and old-plist (plist-get old-plist :pin)))))
-      (when pkg-recipe
-        (when (= 0 (% (length pkg-recipe) 2))
-          (plist-put plist :recipe (cons name pkg-recipe)))
-        (when pkg-pin
-          (plist-put plist :pin nil)))
-      (dolist (prop '(:ignore :freeze))
-        (when-let* ((val (plist-get plist prop)))
-          (plist-put plist prop (eval val))))
-      `(progn
-         ,(if (and pkg-pin t) `(map-put package-pinned-packages ',name ,pkg-pin))
-         (map-put doom-packages ',name ',plist)))))
+  (cond ((memq name doom-disabled-packages) nil)
+        ((let ((disable (plist-get plist :disable)))
+           (and disable (eval disable)))
+         (push name doom-disabled-packages)
+         (setq doom-packages (map-delete doom-packages name))
+         nil)
+        ((let* ((old-plist (assq name doom-packages))
+                (pkg-recipe (or (plist-get plist :recipe)
+                                (and old-plist (plist-get old-plist :recipe))))
+                (pkg-pin    (or (plist-get plist :pin)
+                                (and old-plist (plist-get old-plist :pin)))))
+           (when pkg-recipe
+             (when (= 0 (% (length pkg-recipe) 2))
+               (plist-put plist :recipe (cons name pkg-recipe)))
+             (when pkg-pin
+               (plist-put plist :pin nil)))
+           (let ((val (plist-get plist :freeze)))
+             (when val
+               (plist-put plist :freeze (eval val))))
+           `(progn
+              ,(when (and pkg-pin t)
+                 `(map-put package-pinned-packages ',name ,pkg-pin))
+              (map-put doom-packages ',name ',plist))))))
 
 (defmacro depends-on! (module submodule &optional flags)
   "Declares that this module depends on another.

@@ -1,10 +1,5 @@
 ;;; core-lib.el -*- lexical-binding: t; -*-
 
-(let ((load-path doom-site-load-path))
-  (require 'subr-x)
-  (require 'cl-lib)
-  (require 'map))
-
 (eval-and-compile
   (unless EMACS26+
     (with-no-warnings
