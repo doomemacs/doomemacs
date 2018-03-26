@@ -519,13 +519,19 @@ Only use this macro in a module's init.el or packages.el file.
 
 Accepts the following properties:
 
- :recipe RECIPE     Takes a MELPA-style recipe (see `quelpa-recipe' in
-                    `quelpa' for an example); for packages to be installed
-                    from external sources.
- :pin ARCHIVE-NAME  Instructs ELPA to only look for this package in
-                    ARCHIVE-NAME. e.g. \"org\". Ignored if RECIPE is present.
- :disable BOOL      Do not install this package AND disable its `def-package!' blocks.
- :freeze FORM       Do not update this package if FORM is non-nil."
+ :recipe RECIPE
+   Takes a MELPA-style recipe (see `quelpa-recipe' in `quelpa' for an example);
+   for packages to be installed from external sources.
+ :pin ARCHIVE-NAME
+   Instructs ELPA to only look for this package in ARCHIVE-NAME. e.g. \"org\".
+   Ignored if RECIPE is present.
+ :disable BOOL
+   Do not install or update this package AND disable all of its `def-package!'
+   blocks.
+ :ignore FORM
+   Do not install or update this package.
+ :freeze FORM
+   Do not update this package if FORM is non-nil."
   (declare (indent defun))
   (cond ((memq name doom-disabled-packages) nil)
         ((let ((disable (plist-get plist :disable)))
