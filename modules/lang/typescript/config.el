@@ -4,23 +4,16 @@
   :mode "\\.ts$"
   :config
   (add-hook 'typescript-mode-hook #'rainbow-delimiters-mode)
-
-  (set! :electric 'typescript-mode :chars '(?\} ?\)) :words '("||" "&&"))
-
-  ;; TODO tide-jump-back
-  ;; TODO (tide-jump-to-definition t)
-  ;; TODO convert into keybinds
-  ;; (set! :emr 'typescript-mode
-  ;;       '(tide-find-references             "find usages")
-  ;;       '(tide-rename-symbol               "rename symbol")
-  ;;       '(tide-jump-to-definition          "jump to definition")
-  ;;       '(tide-documentation-at-point      "current type documentation")
-  ;;       '(tide-restart-server              "restart tide server"))
-  )
+  (set! :electric 'typescript-mode :chars '(?\} ?\)) :words '("||" "&&")))
 
 
 (def-package! tide
-  :after typescript-mode
+  :hook (typescript-mode . tide-setup)
+  :init
+  (defun +typescript|init-tide-in-web-mode ()
+    (when (string= (file-name-extension (or buffer-file-name "")) "tsx")
+      (tide-setup)))
+  (add-hook 'web-mode-hook #'+typescript|init-tide-in-web-mode)
   :config
   (set! :company-backend 'typescript-mode '(company-tide))
   (set! :lookup 'typescript-mode
@@ -32,14 +25,14 @@
         '(:insertSpaceAfterFunctionKeywordForAnonymousFunctions t
           :placeOpenBraceOnNewLineForFunctions nil))
 
-  (defun +typescript|init-tide ()
-    (when (or (eq major-mode 'typescript-mode)
-              (and (eq major-mode 'web-mode)
-                   buffer-file-name
-                   (equal (file-name-extension buffer-file-name) "tsx")))
-      (tide-setup)
-      (flycheck-mode +1)
-      (eldoc-mode +1)
-      (setq tide-project-root (doom-project-root))))
-  (add-hook! (typescript-mode web-mode) #'+typescript|init-tide))
+  (def-menu! +typescript/refactor-menu
+    "TODO"
+    '(("rename symbol"              :exec tide-rename-symbol)
+      ("restart tide server"        :exec tide-restart-server)))
+
+  (map! :map tide-mode-map
+        :localleader
+        :n "r" #'+typescript/refactor-menu)
+
+  (add-hook! 'tide-mode-hook #'(flycheck-mode eldoc-mode)))
 
