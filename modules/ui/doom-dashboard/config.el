@@ -216,9 +216,7 @@ controlled by `+doom-dashboard-pwd-policy'."
           (insert
            (make-string (max 0 (- (/ (window-height (get-buffer-window)) 2)
                                   (/ (count-lines (point-min) (point-max)) 2)))
-                        ?\n)))
-        (unless (button-at (point))
-          (goto-char (next-button (point-min)))))
+                        ?\n))))
       (+doom-dashboard|detect-project)
       (+doom-dashboard|resize)
       (+doom-dashboard-update-pwd)
