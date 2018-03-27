@@ -16,7 +16,8 @@
 (defun +nav-flash/blink-cursor (&rest _)
   "Blink current line using `nav-flash'."
   (interactive)
-  (unless (minibufferp)
+  (unless (or (minibufferp)
+              (memq this-command '(mouse-set-point evil-mouse-drag-region)))
     (nav-flash-show)
     ;; only show in the current window
     (overlay-put compilation-highlight-overlay 'window (selected-window))))
