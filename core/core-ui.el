@@ -33,6 +33,7 @@ shorter major mode name in the mode-line. See `doom|set-mode-name'.")
   "List of hooks to run when core-ui is initialized.")
 
 (setq-default
+ ansi-color-for-comint-mode t
  bidi-display-reordering nil ; disable bidirectional text for tiny performance boost
  blink-matching-paren nil    ; don't blink--too distracting
  compilation-always-kill t        ; kill compilation process before starting another
