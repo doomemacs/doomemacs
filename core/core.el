@@ -34,9 +34,6 @@ line or use --debug-init to enable this.")
 (defvar doom-modules-dir (concat doom-emacs-dir "modules/")
   "The main directory where Doom modules are stored.")
 
-(defvar doom-modules-dirs (list doom-modules-dir)
-  "A list of module root directories. Order determines priority.")
-
 (defvar doom-local-dir (concat doom-emacs-dir ".local/")
   "Root directory for local Emacs files. Use this as permanent storage for files
 that are safe to share across systems (if this config is symlinked across

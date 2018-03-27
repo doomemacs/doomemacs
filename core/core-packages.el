@@ -50,6 +50,9 @@ this is nil after Emacs has started something is wrong.")
   (make-hash-table :test #'equal :size 100 :rehash-threshold 1.0)
   "A hash table of enabled modules. Set by `doom-initialize-modules'.")
 
+(defvar doom-modules-dirs (list doom-modules-dir)
+  "A list of module root directories. Order determines priority.")
+
 (defvar doom-psuedo-module-dirs ()
   "Additional paths for modules that are outside of `doom-modules-dirs'.
 `doom//reload-autoloads', `doom//byte-compile' and `doom-initialize-packages'
