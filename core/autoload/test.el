@@ -71,7 +71,7 @@ If neither is available, run all tests in all enabled modules."
     (setq plist (reverse plist))
     (when-let* ((modes (doom-enlist (plist-get plist :minor-mode))))
       (dolist (mode modes)
-        (setq body `((with-minor-mode!! ,mode ,@body)))))
+        (setq body `((with-minor-mode! ,mode ,@body)))))
     (when-let* ((before (plist-get plist :before)))
       (setq body `(,@before ,@body)))
     (when-let* ((after (plist-get plist :after)))
@@ -91,7 +91,7 @@ If neither is available, run all tests in all enabled modules."
                (save-window-excursion
                  ,@body)))))))
 
-(defmacro should-buffer!! (initial expected &rest body)
+(defmacro should-buffer! (initial expected &rest body)
   "Test that a buffer with INITIAL text, run BODY, then test it against EXPECTED.
 
 INITIAL will recognize cursor markers in the form {[0-9]}. A {0} marker marks
@@ -119,7 +119,7 @@ against."
                  (lambda (m1 m2) (< (marker-position m1)
                                (marker-position m2))))
            (when (equal (caar marker-list) "0")
-             (goto-char!! 0)))
+             (goto-char! 0)))
          ,@body
          (let ((result-text (buffer-substring-no-properties (point-min) (point-max)))
                (point (point))
@@ -137,27 +137,27 @@ against."
              (should (equal expected-text result-text))
              (should same-point)))))))
 
-(defmacro goto-char!! (index)
-  "Meant to be used with `should-buffer!!'. Will move the cursor to one of the
-cursor markers. e.g. Go to marker {2} with (goto-char!! 2)."
-  `(goto-char (point!! ,index)))
+(defmacro goto-char! (index)
+  "Meant to be used with `should-buffer!'. Will move the cursor to one of the
+cursor markers. e.g. Go to marker {2} with (goto-char! 2)."
+  `(goto-char (point! ,index)))
 
-(defmacro point!! (index)
-  "Meant to be used with `should-buffer!!'. Returns the position of a cursor
-marker. e.g. {2} can be retrieved with (point!! 2)."
+(defmacro point! (index)
+  "Meant to be used with `should-buffer!'. Returns the position of a cursor
+marker. e.g. {2} can be retrieved with (point! 2)."
   `(cdr (assoc ,(cond ((numberp index) (number-to-string index))
                       ((symbolp index) (symbol-name index))
                       ((stringp index) index))
                marker-list)))
 
-(defmacro with-minor-mode!! (mode &rest body)
+(defmacro with-minor-mode! (mode &rest body)
   "Activate a minor mode while in BODY, deactivating it after."
   (declare (indent defun))
   `(progn (,mode +1)
           ,@body
           (,mode -1)))
 
-(defmacro let-advice!! (binds &rest body)
+(defmacro let-advice! (binds &rest body)
   "Temporarily bind advice in BINDS while in BODY.
 
 e.g. (old-fn :before advice-fn)

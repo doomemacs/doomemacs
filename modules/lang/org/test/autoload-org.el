@@ -4,7 +4,7 @@
 (require! :lang org)
 
 (defmacro should-org-buffer!! (source expected &rest body)
-  `(should-buffer!! ,source ,expected
+  `(should-buffer! ,source ,expected
      (org-mode)
      ,@body))
 

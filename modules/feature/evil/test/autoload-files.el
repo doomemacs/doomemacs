@@ -9,7 +9,7 @@ affects your Emacs packages)."
          (other ,dest))
      (with-temp-file it
        (insert "Hello world"))
-     (with-minor-mode!! projectile-mode
+     (with-minor-mode! projectile-mode
        (unwind-protect
            (progn
              (should (file-exists-p it))
