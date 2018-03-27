@@ -663,9 +663,11 @@
         ;; TAB auto-completion in term buffers
         :map comint-mode-map [tab] #'company-complete)
 
-      (:map help-mode-map
-        :n "o"   #'ace-link-help
-        :n "Q"   #'ivy-resume)
+      (:map* (help-mode-map helpful-mode-map)
+        :n "o"  #'ace-link-help
+        :n "Q"  #'ivy-resume
+        :n "]l" #'forward-button
+        :n "[l" #'backward-button)
 
       (:after vc-annotate
         :map vc-annotate-mode-map
