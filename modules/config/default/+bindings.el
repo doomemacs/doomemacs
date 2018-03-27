@@ -732,3 +732,28 @@
       (:after view
         (:map view-mode-map "<escape>" #'View-quit-all)))
 
+
+;;
+;; Evil-collection fixes
+;;
+
+(when (featurep 'evil-collection)
+  ;; don't interfere with leader key
+  (evil-define-key* '(normal visual) special-mode-map (kbd doom-leader-key) nil)
+  (after! dired
+    (evil-define-key* 'normal dired-mode-map (kbd doom-leader-key) nil))
+
+  ;; don't remap gd or K; Doom does this already
+  ;; TODO find a better way
+  (after! compile
+    (evil-define-key* '(normal visual) compilation-mode-map "gd" nil "K" nil))
+  (after! racer
+    (evil-define-key* 'normal racer-mode-map "gd" nil "K" nil))
+  (after! anaconda-mode
+    (evil-define-key* 'normal anaconda-mode-map "gd" nil "K" nil))
+  (after! alchemist
+    (evil-define-key* 'normal alchemist-mode-map "gd" nil "K" nil "gz" nil))
+  (after! go-mode
+    (evil-define-key* 'normal go-mode-map "gd" nil "K" nil))
+  (after! lua-mode
+    (evil-define-key* 'normal lua-mode-map "K" nil)))

@@ -10,14 +10,6 @@
 (defvar doom-localleader-key "SPC m"
   "The localleader prefix key, for major-mode specific commands.")
 
-(defvar doom-mode-map (make-sparse-keymap)
-  "TODO")
-
-(define-minor-mode doom-mode
-  "TODO"
-  :global t
-  :init-value t)
-
 (defvar doom-evil-state-alist
   '((?n . normal)
     (?v . visual)
@@ -303,7 +295,7 @@ Example
                        (when (memq 'global states)
                          (push `(define-key ,keymap ,key ,def) forms))
                        (when-let* ((states (delq 'global states)))
-                         (push `(,(if doom--defer 'evil-define-key 'evil-define-key*)
+                         (push `(,(if doom--defer #'evil-define-key #'evil-define-key*)
                                  ',states ,keymap ,key ,def)
                                forms))))
                     (states
@@ -311,18 +303,17 @@ Example
                        (throw 'skip 'evil))
                      (dolist (state states)
                        (push (if (eq state 'global)
-                                 `(define-key doom-mode-map ,key ,def)
+                                 `(global-set-key ,key ,def)
                                (if doom--local
                                    `(evil-local-set-key ',state ,key ,def)
-                                 `(evil-define-key* ',state doom-mode-map ,key ,def)))
+                                 `(evil-define-key* ',state 'global ,key ,def)))
                              forms)))
                     (doom--keymaps
                      (dolist (keymap doom--keymaps)
                        (push `(define-key ,keymap ,key ,def) forms)))
                     (t
-                     (push (if doom--local
-                               `(local-set-key ,key ,def)
-                             `(define-key doom-mode-map ,key ,def))
+                     (push `(,(if doom--local #'local-set-key #'global-set-key)
+                             ,key ,def)
                            forms))))
           (setq states '()
                 doom--local nil
