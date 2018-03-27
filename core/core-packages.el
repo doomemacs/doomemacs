@@ -192,7 +192,7 @@ FORCE-P is non-nil, do it anyway.
               (error "✕ Couldn't install %s" package)))
           (message "Installing core packages...done")))
       (cl-pushnew doom-core-dir load-path :test #'string=)
-      (add-hook 'doom-init-core-hook #'doom--refresh-cache))
+      (add-hook 'after-init-hook #'doom--refresh-cache))
     (setq doom-init-p t)))
 
 (defun doom-initialize-autoloads ()

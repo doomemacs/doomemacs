@@ -159,8 +159,6 @@ ability to invoke the debugger in debug mode."
     (load! core-projects)   ; making Emacs project-aware
     (load! core-keybinds))  ; centralized keybind system + which-key
 
-  (run-hooks 'doom-init-core-hook)
-
   (defun doom|after-init ()
     "Run `doom-init-hook' and `doom-post-init-hook', start the Emacs server, and
 display the loading benchmark."
