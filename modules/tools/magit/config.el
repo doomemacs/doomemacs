@@ -33,9 +33,10 @@
 (def-package! magithub
   :commands (magithub-clone magithub-feature-autoinject)
   :after magit
+  :preface
+  (setq magithub-dir (concat doom-etc-dir "magithub/"))
   :init
-  (setq magithub-dir (concat doom-etc-dir "magithub/")
-        magithub-clone-default-directory "~/"
+  (setq magithub-clone-default-directory "~/"
         magithub-preferred-remote-method 'clone_url)
   :config
   (load "magithub-autoloads" nil t)
