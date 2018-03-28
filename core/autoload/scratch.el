@@ -5,7 +5,16 @@
 `doom/open-project-scratch-buffer'.")
 
 (defvar doom-scratch-buffer-display-fn #'display-buffer
-  "TODO")
+  "The function to use to display the scratch buffer. Must accept one argument:
+the buffer to display.")
+
+(defvar doom-scratch-buffer-major-mode nil
+  "What major mode to use in scratch buffers. This can be one of the
+following:
+
+  t           Inherits the major mode of the last buffer you had selected.
+  nil         Uses `fundamental-mode'
+  MAJOR-MODE  Any major mode symbol")
 
 (defvar doom-scratch-buffer-hook ()
   "The hooks to run after a scratch buffer is made.")
@@ -28,8 +37,8 @@ If FILE is a valid path, open it as if it were a persistent scratchpad."
                (current-buffer))
            (get-buffer-create "*doom:scratch*"))))
     (with-current-buffer buffer
-      (when (and (not (eq major-mode mode))
-                 (functionp mode))
+      (when (and (functionp mode)
+                 (not (eq major-mode mode)))
         (funcall mode))
       (when text
         (insert text))
@@ -54,7 +63,14 @@ If a region is active, copy its contents to the scratch pad."
         (if-let* ((file (read-file-name "Open scratch file > " doom-scratch-files-dir "scratch")))
             file
           (user-error "Aborting")))
-      major-mode
+      (cond ((eq doom-scratch-buffer-major-mode t)
+             (unless (or buffer-read-only
+                         (derived-mode-p 'special-mode)
+                         (string-match-p "^ ?\\*" (buffer-name)))
+               major-mode))
+            ((null doom-scratch-buffer-major-mode) nil)
+            ((symbolp doom-scratch-buffer-major-mode)
+             doom-scratch-buffer-major-mode))
       (and (region-active-p)
            (buffer-substring-no-properties
             (region-beginning) (region-end)))))))
