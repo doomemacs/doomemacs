@@ -302,7 +302,7 @@ regexp. If omitted, the current selection is used. If no selection is active,
 the last known search is used.
 
 If ALL-FILES-P, don't respect .gitignore files and search everything."
-  (interactive)
+  (interactive "P")
   (let ((+ivy--file-search-all-files-p all-files-p))
     (+ivy--file-search 'ag query directory)))
 
@@ -313,7 +313,7 @@ regexp. If omitted, the current selection is used. If no selection is active,
 the last known search is used.
 
 If ALL-FILES-P, don't respect .gitignore files and search everything."
-  (interactive)
+  (interactive "P")
   (let ((+ivy--file-search-all-files-p all-files-p))
     (+ivy--file-search 'pt query directory)))
 
@@ -324,7 +324,7 @@ a grep regexp. If omitted, the current selection is used. If no selection is
 active, the last known search is used.
 
 If ALL-FILES-P, don't respect .gitignore files and search everything."
-  (interactive)
+  (interactive "P")
   (let ((+ivy--file-search-all-files-p all-files-p))
     (+ivy--file-search 'grep query directory)))
 
