@@ -185,8 +185,8 @@ example:
     nil
     '((transient)))
   (+popup-define "^\\*doom \\(?:term\\|eshell\\)"
-    '((size . 0.25))
-    '((quit) (transient . 0)))
+    '((size . 0.25) (vslot . -10))
+    '((select . t) (quit) (transient . 0)))
   (+popup-define "^\\*doom:"
     '((size . 0.35) (side . bottom))
     '((select . t) (modeline . t) (quit) (transient . t)))
