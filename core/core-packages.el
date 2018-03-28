@@ -254,19 +254,20 @@ them."
                  if (file-exists-p path)
                  do (_load path)))
 
-      ;; `package-alist'
-      (when (or (eq force-p t) (not (bound-and-true-p package-alist)))
-        (setq load-path doom-site-load-path)
-        (require 'package)
-        (setq package-activated-list nil)
-        (package-initialize))
+      (unless (eq force-p 'internal)
+        ;; `package-alist'
+        (when (or force-p (not (bound-and-true-p package-alist)))
+          (setq load-path doom-site-load-path)
+          (require 'package)
+          (setq package-activated-list nil)
+          (package-initialize))
 
-      ;; `quelpa-cache'
-      (when (or (eq force-p t) (not (bound-and-true-p quelpa-cache)))
-        (require 'quelpa)
-        (setq quelpa-initialized-p nil)
-        (or (quelpa-setup-p)
-            (error "Could not initialize quelpa"))))))
+        ;; `quelpa-cache'
+        (when (or force-p (not (bound-and-true-p quelpa-cache)))
+          (require 'quelpa)
+          (setq quelpa-initialized-p nil)
+          (or (quelpa-setup-p)
+              (error "Could not initialize quelpa")))))))
 
 
 ;;
