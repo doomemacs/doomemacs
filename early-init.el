@@ -7,3 +7,7 @@
 ;; prevent Emacs from doing it early!
 (setq package-enable-at-startup nil)
 
+;; Faster to disable these here (before they've been initialized)
+(setq tool-bar-mode nil
+      menu-bar-mode nil)
+(set-scroll-bar-mode nil)
