@@ -201,13 +201,18 @@ delete."
 (defun +eshell/switch (buffer)
   "Interactively switch to another eshell buffer."
   (interactive
-   (let ((buffers (delete (current-buffer) (ring-elements +eshell-buffers))))
-     (if buffers
+   (let ((buffers (cl-remove-if-not (lambda (buf) (eq (buffer-local-value 'major-mode buf) 'eshell-mode))
+                                    (delete (current-buffer) (ring-elements +eshell-buffers)))))
+     (if (not buffers)
          (user-error "No eshell buffers are available")
        (list (completing-read
               "Eshell buffers"
               (mapcar #'buffer-name buffers)
               #'get-buffer
               'require-match
-              nil nil (buffer-name (current-buffer)))))))
-  (switch-to-buffer buffer))
+              nil nil
+              (when (eq major-mode 'eshell-mode)
+                (buffer-name (current-buffer))))))))
+  (if-let* ((window (get-buffer-window buffer)))
+      (select-window window)
+    (switch-to-buffer buffer)))
