@@ -121,6 +121,9 @@ and window PARAMETERS. See `display-buffer-alist' for details on what ALIST may
 contain and `+popup-window-parameters' for what window parameters that the popup
 module supports.
 
+ALIST also supports the `size' parameter, which will be translated to
+`window-width' or `window-height' depending on `side'.
+
 If certain attributes/parameters are omitted, the ones from
 `+popup-default-alist' and `+popup-default-parameters' will be used."
   (declare (indent 1))
