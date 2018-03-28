@@ -178,7 +178,7 @@ example:
   (+popup-define "^\\*Completions"
     '((slot . -1) (vslot . -2))
     '((transient . 0)))
-  (+popup-define "^\\*Compil\\(ation\\|e-Log\\)"
+  (+popup-define "^\\*Compil\\(?:ation\\|e-Log\\)"
     '((size . 0.3))
     '((transient . 0) (quit . t)))
   (+popup-define "^\\*\\(?:scratch\\|Messages\\)"
@@ -191,7 +191,8 @@ example:
     '((size . 0.35) (side . bottom))
     '((select . t) (modeline . t) (quit) (transient . t)))
   (+popup-define "^\\*\\(?:\\(?:Pp E\\|doom e\\)val\\)"
-    '((size . +popup-shrink-to-fit)) '((transient . 0) (select . ignore)))
+    '((size . +popup-shrink-to-fit))
+    '((transient . 0) (select . ignore)))
 
   ;; `help-mode', `helpful-mode'
   (+popup-define "^\\*[Hh]elp"
