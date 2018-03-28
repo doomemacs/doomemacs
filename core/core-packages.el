@@ -83,9 +83,10 @@ missing) and shouldn't be deleted.")
 (defvar doom-packages-file (concat doom-local-dir "packages.el")
   "Where to cache `load-path' and `Info-directory-list'.")
 
-(defvar doom--refreshed-p nil)
 (defvar doom--current-module nil)
+(defvar doom--init-cache-p nil)
 (defvar doom--initializing nil)
+(defvar doom--refreshed-p nil)
 (defvar generated-autoload-load-name)
 
 (setq autoload-compute-prefixes nil
@@ -139,14 +140,16 @@ missing) and shouldn't be deleted.")
 
 (defun doom--refresh-cache ()
   "TODO"
-  (doom-initialize-packages 'internal)
-  (unless noninteractive
-    (with-temp-buffer
-      (prin1 `(setq load-path ',load-path
-                    Info-directory-list ',Info-directory-list
-                    doom-disabled-packages ',doom-disabled-packages)
-             (current-buffer))
-      (write-file doom-packages-file))))
+  (when doom--init-cache-p
+    (doom-initialize-packages 'internal)
+    (unless noninteractive
+      (with-temp-buffer
+        (prin1 `(setq load-path ',load-path
+                      Info-directory-list ',Info-directory-list
+                      doom-disabled-packages ',doom-disabled-packages)
+               (current-buffer))
+        (write-file doom-packages-file))
+      (setq doom--init-cache-p nil))))
 
 (defun doom-initialize (&optional force-p)
   "Bootstrap the bare essentials to get Doom running, if it hasn't already. If
@@ -195,7 +198,7 @@ FORCE-P is non-nil, do it anyway.
               (error "✕ Couldn't install %s" package)))
           (message "Installing core packages...done")))
       (cl-pushnew doom-core-dir load-path :test #'string=)
-      (add-hook 'after-init-hook #'doom--refresh-cache))
+      (setq doom--init-cache-p t))
     (setq doom-init-p t)))
 
 (defun doom-initialize-autoloads ()
@@ -388,6 +391,7 @@ MODULES is an malformed plist of modules to load."
          ,@(nreverse load-forms))
        ,(unless doom--initializing
           '(unless noninteractive
+             (doom--refresh-cache)
              (doom-initialize-modules))))))
 
 (defmacro def-package! (name &rest plist)
