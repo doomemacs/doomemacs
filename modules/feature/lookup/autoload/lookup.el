@@ -236,3 +236,9 @@ for the provider."
   (let ((current-prefix-arg t))
     (call-interactively #'+lookup/online)))
 
+
+;;
+(after! evil
+  (evil-set-command-property '+lookup/definition :jump t)
+  (evil-set-command-property '+lookup/references :jump t)
+  (evil-set-command-property '+lookup/documentation :jump t))
