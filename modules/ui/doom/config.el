@@ -26,7 +26,7 @@
     (setq doom-theme 'doom-one))
 
   ;; Reload common faces when reloading doom-themes live
-  (defun +doom*reload (&rest _) (load "doom-themes-common.el" nil t))
+  (defun +doom*reload-common (&rest _) (load "doom-themes-common.el" nil t))
   (advice-add #'doom//reload-theme :before #'+doom*reload-common)
 
   ;; improve integration w/ org-mode
