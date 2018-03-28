@@ -116,18 +116,10 @@ module to be loaded."
 ;;
 
 ;;;###autoload
-(defun +eshell|delete-window ()
-  (if (one-window-p)
-      (unless (doom-real-buffer-p (progn (previous-buffer) (current-buffer)))
-        (switch-to-buffer (doom-fallback-buffer)))
-    (delete-window)))
-
-;;;###autoload
 (defun +eshell|init ()
   "Keep track of eshell buffers."
   (let ((buf (current-buffer)))
     (remove-hook 'kill-buffer-query-functions #'doom|protect-visible-buffers t)
-    (add-hook 'kill-buffer-hook #'+eshell|delete-window nil t)
     (dolist (buf (ring-elements +eshell-buffers))
       (unless (buffer-live-p buf)
         (+eshell--remove-buffer buf)))
@@ -138,9 +130,14 @@ module to be loaded."
 (defun +eshell|cleanup ()
   "Close window (or workspace) on quit."
   (+eshell--remove-buffer (current-buffer))
-  (when (and (featurep! :feature workspaces)
-             (string= "eshell" (+workspace-current-name)))
-    (+workspace/delete "eshell")))
+  (cond ((and (featurep! :feature workspaces)
+              (string= "eshell" (+workspace-current-name)))
+         (+workspace/delete "eshell"))
+        ((one-window-p)
+         (unless (doom-real-buffer-p (progn (previous-buffer) (current-buffer)))
+           (switch-to-buffer (doom-fallback-buffer))))
+        ((delete (current-buffer) (get-buffer-window-list))
+         (delete-window))))
 
 
 ;;
