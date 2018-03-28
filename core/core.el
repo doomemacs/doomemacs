@@ -177,8 +177,8 @@ this, you'll get stuttering and random freezes), and resets
           file-name-handler-alist doom--file-name-handler-alist)
     t)
 
-  (add-hook 'emacs-startup-hook #'doom|after-init)
-  (add-hook! '(doom-finalize-hook doom-reload-hook) #'doom|finalize))
+  (add-hook! '(emacs-startup-hook doom-reload-hook) #'doom|finalize)
+  (add-hook 'emacs-startup-hook #'doom|after-init))
 
 
 ;;
