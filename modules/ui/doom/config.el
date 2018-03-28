@@ -1,18 +1,18 @@
 ;;; ui/doom/config.el -*- lexical-binding: t; -*-
 
 (defvar +doom-solaire-themes
-  '(doom-city-lights
-    doom-dracula
-    doom-molokai
-    doom-nord
-    doom-nova
-    doom-one
-    doom-one-light
-    doom-solarized-light
-    doom-spacegrey
-    doom-vibrant)
-  "A list of themes that supports `solaire-mode'; if these themes are detected,
-`solaire-mode' will be enabled.")
+  '((doom-city-lights . t)
+    (doom-dracula . t)
+    (doom-molokai . t)
+    (doom-nord . t)
+    (doom-nova . nil)
+    (doom-one . t)
+    (doom-one-light . t)
+    (doom-solarized-light . nil)
+    (doom-spacegrey . nil)
+    (doom-vibrant . nil))
+  "An alist of themes that support `solaire-mode'. If CDR is t, then use
+`solaire-mode-swap-bg'.")
 
 
 ;;
@@ -43,9 +43,9 @@
   :commands (solaire-mode turn-on-solaire-mode solaire-mode-swap-bg)
   :init
   (defun +doom|solaire-mode-swap-bg-maybe ()
-    (when (memq doom-theme +doom-solaire-themes)
+    (when-let* ((rule (assq doom-theme +doom-solaire-themes)))
       (require 'solaire-mode)
-      (solaire-mode-swap-bg)))
+      (if (cdr rule) (solaire-mode-swap-bg))))
   (add-hook 'doom-load-theme-hook #'+doom|solaire-mode-swap-bg-maybe t)
   :config
   (add-hook 'after-change-major-mode-hook #'turn-on-solaire-mode)
