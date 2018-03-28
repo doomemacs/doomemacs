@@ -8,6 +8,8 @@
 (def-package! imenu-list
   :commands imenu-list-minor-mode
   :config
+  (setq imenu-list-idle-update-delay 0.5)
+
   (set! :popup "^\\*Ilist"
     '((side . right) (size . 35))
     '((quit . current) (select) (transient . 0)))
