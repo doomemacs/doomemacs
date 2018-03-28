@@ -12,9 +12,7 @@
 
 ;;;###autoload
 (defalias '+pass--get-entry
-  (if (featurep 'auth-store-pass)
-      #'auth-source-pass-parse-entry
-    #'auth-pass-parse-entry))
+  #'auth-source-pass-parse-entry)
 
 ;;;###autoload
 (defun +pass-get-field (entry fields)
