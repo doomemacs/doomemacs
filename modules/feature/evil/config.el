@@ -26,7 +26,7 @@
   :after evil
   :preface
   ;; must be set before evil/evil-collcetion is loaded
-  (setq evil-want-integration nil
+  (setq evil-want-integration (not (featurep! +everywhere))
         evil-collection-company-use-tng nil)
   :config
   (delq 'kotlin-mode evil-collection-mode-list) ; doesn't do anything useful
