@@ -47,6 +47,9 @@ Don't forget to run `make` every time you modify init.el!
 Visit the wiki for [a more detailed guide on installing, customizing and
 grokking Doom][wiki].
 
+You can also find other Doom users, including Henrik himself over on
+[Discord](https://discord.gg/bcZ6P3y).
+
 ## Feature highlights
 
 + A fast, organized and opinionated Emacs configuration with a command line
