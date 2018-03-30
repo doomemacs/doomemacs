@@ -5,12 +5,13 @@
   :init
   (load "magit-autoloads" nil t)
   :config
-  (set! :popup "^\\*?magit" :ignore)
+  (setq magit-completing-read-function
+        (if (featurep! :completion ivy)
+            #'ivy-completing-read
+          #'magit-builtin-completing-read)
+        magit-revision-show-gravatars '("^Author:     " . "^Commit:     "))
 
-  (map! :map magit-repolist-mode-map
-        :n "j" #'next-line
-        :n "k" #'previous-line
-        :n "s" #'magit-repolist-status)
+  (set! :popup "^\\*?magit" :ignore)
 
   ;; (add-hook 'magit-popup-mode-hook #'hide-mode-line-mode)
   ;; (set! :popup "^.*magit" '((slot . -1) (side . right) (size . 80)) '((modeline . nil) (select . t)))
