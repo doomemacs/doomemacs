@@ -98,6 +98,10 @@ playback.")
 
   (add-hook 'circe-channel-mode-hook #'turn-on-visual-line-mode)
 
+  (defun +irc*circe-disconnect-hook (&rest _)
+    (run-hooks '+irc-disconnect-hook))
+  (advice-add 'circe--irc-conn-disconnected :after #'+irc*circe-disconnect-hook)
+
   ;; Let `+irc/quit' and `circe' handle buffer cleanup
   (map! :map circe-mode-map [remap kill-buffer] #'bury-buffer)
 
