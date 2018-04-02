@@ -85,56 +85,7 @@ a brief description of some native window parameters that Emacs uses:
   "The default time-to-live for transient buffers whose popup buffers have been
 deleted.")
 
-(defvar +popup-mode-map (make-sparse-keymap)
-  "Active keymap in a session with the popup system enabled. See
-`+popup-mode'.")
-
-(defvar +popup-buffer-mode-map
-  (let ((map (make-sparse-keymap)))
-    (when (featurep! :feature evil)
-      ;; for maximum escape coverage in emacs state buffers
-      (define-key map [escape] #'doom/escape)
-      (define-key map (kbd "ESC") #'doom/escape))
-    map)
-  "Active keymap in popup windows. See `+popup-buffer-mode'.")
-
-
-(defvar +popup--inhibit-transient nil)
-(defvar +popup--display-buffer-alist nil)
-(defvar +popup--old-display-buffer-alist nil)
-(defvar +popup--remember-last t)
-(defvar +popup--last nil)
-(defvar-local +popup--timer nil)
-
-
 ;;
-(defun +popup-define (condition &optional alist parameters)
-  "Define a popup rule.
-
-The buffers of new windows displayed by `pop-to-buffer' and `display-buffer'
-will be tested against CONDITION, which is either a) a regexp string (which is
-matched against the buffer's name) or b) a function that takes no arguments and
-returns a boolean.
-
-If CONDITION is met, the buffer will be displayed in a popup window with ALIST
-and window PARAMETERS. See `display-buffer-alist' for details on what ALIST may
-contain and `+popup-window-parameters' for what window parameters that the popup
-module supports.
-
-ALIST also supports the `size' parameter, which will be translated to
-`window-width' or `window-height' depending on `side'.
-
-If certain attributes/parameters are omitted, the ones from
-`+popup-default-alist' and `+popup-default-parameters' will be used."
-  (declare (indent 1))
-  (push (if (eq alist :ignore)
-            (list condition nil)
-          `(,condition
-            (+popup-buffer)
-            ,@alist
-            (window-parameters ,@parameters)))
-        +popup--display-buffer-alist))
-
 (def-setting! :popup (condition &optional alist parameters)
   "Register a popup rule.
 
@@ -225,6 +176,13 @@ example:
   #'(+popup|adjust-fringes
      +popup|set-modeline-on-enable
      +popup|unset-modeline-on-disable))
+
+(let ((map +popup-buffer-mode-map))
+  (when (featurep! :feature evil)
+    ;; for maximum escape coverage in emacs state buffers
+    (define-key map [escape] #'doom/escape)
+    (define-key map (kbd "ESC") #'doom/escape))
+  map)
 
 
 ;;
