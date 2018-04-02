@@ -129,8 +129,8 @@ ability to invoke the debugger in debug mode."
         (funcall fn))
     ('error
      (lwarn hook :error
-          "%s in '%s' -> %s"
-          (car ex) fn (error-message-string ex))))
+            "%s in '%s' -> %s"
+            (car ex) fn (error-message-string ex))))
   nil)
 
 

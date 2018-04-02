@@ -2,8 +2,8 @@
 
 (defvar +cc-default-include-paths (list "include/")
   "A list of default paths, relative to a project root, to search for headers in
-C/C++. Paths can be absolute. This is ignored if your project has a JSON
-compilation database.")
+C/C++. Paths can be absolute. This is ignored if your project has a compilation
+database.")
 
 (defvar +cc-default-compiler-options
   `((c-mode . nil)
