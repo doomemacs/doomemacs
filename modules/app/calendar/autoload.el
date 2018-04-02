@@ -45,15 +45,15 @@
 
 ;;;###autoload
 (defun +calendar*cfw:render-button (title command &optional state)
-    "render-button
+  "render-button
  TITLE
  COMMAND
  STATE"
-    (let ((text (concat " " title " "))
-          (keymap (make-sparse-keymap)))
-      (cfw:rt text (if state 'cfw:face-toolbar-button-on
-                     'cfw:face-toolbar-button-off))
-      (define-key keymap [mouse-1] command)
-      (cfw:tp text 'keymap keymap)
-      (cfw:tp text 'mouse-face 'highlight)
-      text))
+  (let ((text (concat " " title " "))
+        (keymap (make-sparse-keymap)))
+    (cfw:rt text (if state 'cfw:face-toolbar-button-on
+                   'cfw:face-toolbar-button-off))
+    (define-key keymap [mouse-1] command)
+    (cfw:tp text 'keymap keymap)
+    (cfw:tp text 'mouse-face 'highlight)
+    text))
