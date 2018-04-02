@@ -51,11 +51,6 @@
         ivy-fixed-height-minibuffer nil
         ivy-posframe-parameters `((min-width . 90)
                                   (min-height . ,ivy-height)
-                                  (internal-border-width . 10)))
-  (when (and (not ivy-posframe-font) doom-font)
-    (setq ivy-posframe-font
-          (font-spec :family (font-get doom-font :family)
-                     :size 18))))
-
+                                  (internal-border-width . 10))))
 
 ;; TODO helm-posframe?
