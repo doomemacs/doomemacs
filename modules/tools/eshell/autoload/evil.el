@@ -14,11 +14,7 @@
   "Like `evil-change' but will not delete/copy the prompt."
   (interactive "<R><x><y>")
   (let ((delete-func (or delete-func #'evil-delete))
-        (nlines (1+ (evil-count-lines beg end)))
-        (opoint (save-excursion
-                  (goto-char beg)
-                  (evil-collection-eshell-next-prompt)
-                  (point))))
+        (nlines (1+ (evil-count-lines beg end))))
     (unless (eq evil-want-fine-undo t)
       (evil-start-undo-step))
     (when (get-text-property beg 'read-only)
