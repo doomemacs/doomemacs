@@ -1,7 +1,9 @@
 ;;; app/irc/config.el -*- lexical-binding: t; -*-
 
 (defvar +irc-left-padding 13
-  "TODO")
+  "By how much spaces the left hand side of the line should be padded.
+Below a value of 12 this may result in uneven alignment between the various
+types of messages.")
 
 (defvar +irc-truncate-nick-char ?…
   "Character to displayed when nick > `+irc-left-padding' in length.")
@@ -11,16 +13,23 @@
   "If these commands are called pre prompt the buffer will scroll to `point-max'.")
 
 (defvar +irc-disconnect-hook nil
-  "TODO")
+  "Runs each hook when circe noticies the connection has been disconnected.
+Useful for scenarios where an instant reconnect will not be successful.")
 
 (defvar +irc-bot-list '("fsbot" "rudybot")
-  "TODO")
+  "Nicks listed have `circe-fool-face' applied and will not be tracked.")
 
 (defvar +irc-time-stamp-format "%H:%M"
-  "TODO")
+  "The format of time stamps.
+
+See `format-time-string' for a full description of available
+formatting directives. ")
 
 (defvar +irc-notifications-watch-strings nil
-  "TODO")
+  "A list of strings which can trigger a notification.  You don't need to put
+your nick here.
+
+See `circe-notifications-watch-strings'.")
 
 (defvar +irc-defer-notifications nil
   "How long to defer enabling notifications, in seconds (e.g. 5min = 300).
@@ -56,6 +65,10 @@ playback.")
         circe-format-self-say circe-format-say
         circe-format-action (format "{nick:+%ss} * {body}" +irc-left-padding)
         circe-format-self-action circe-format-action
+        circe-format-server-notice
+        (let ((left "-Server-")) (concat (make-string (- +irc-left-padding (length left)) ? )
+                                         (concat left " _ {body}")))
+        circe-format-notice (format "{nick:%ss} _ {body}" +irc-left-padding)
         circe-format-server-topic
         (+irc--pad "Topic" "{userhost}: {topic-diff}")
         circe-format-server-join-in-channel
@@ -70,6 +83,8 @@ playback.")
         (+irc--pad "Quit" "{nick} ({userhost}) left {channel}: {reason}]")
         circe-format-server-rejoin
         (+irc--pad "Re-join" "{nick} ({userhost}), left {departuredelta} ago")
+        circe-format-server-netmerge
+        (+irc--pad "Netmerge" "{split}, split {ago} ago (Use /WL to see who's still missing)")
         circe-format-server-nick-change
         (+irc--pad "Nick" "{old-nick} ({userhost}) is now known as {new-nick}")
         circe-format-server-nick-change-self
@@ -82,6 +97,10 @@ playback.")
         (+irc--pad "Lurk" "{nick} joined {joindelta} ago"))
 
   (add-hook 'circe-channel-mode-hook #'turn-on-visual-line-mode)
+
+  (defun +irc*circe-disconnect-hook (&rest _)
+    (run-hooks '+irc-disconnect-hook))
+  (advice-add 'circe--irc-conn-disconnected :after #'+irc*circe-disconnect-hook)
 
   ;; Let `+irc/quit' and `circe' handle buffer cleanup
   (map! :map circe-mode-map [remap kill-buffer] #'bury-buffer)
