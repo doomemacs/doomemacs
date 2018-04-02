@@ -56,6 +56,10 @@ playback.")
         circe-format-self-say circe-format-say
         circe-format-action (format "{nick:+%ss} * {body}" +irc-left-padding)
         circe-format-self-action circe-format-action
+        circe-format-server-notice
+        (let ((left "-Server-")) (concat (make-string (- +irc-left-padding (length left)) ? )
+                                         (concat left " _ {body}")))
+        circe-format-notice (format "{nick:%ss} _ {body}" +irc-left-padding)
         circe-format-server-topic
         (+irc--pad "Topic" "{userhost}: {topic-diff}")
         circe-format-server-join-in-channel
@@ -70,6 +74,8 @@ playback.")
         (+irc--pad "Quit" "{nick} ({userhost}) left {channel}: {reason}]")
         circe-format-server-rejoin
         (+irc--pad "Re-join" "{nick} ({userhost}), left {departuredelta} ago")
+        circe-format-server-netmerge
+        (+irc--pad "Netmerge" "{split}, split {ago} ago (Use /WL to see who's still missing)")
         circe-format-server-nick-change
         (+irc--pad "Nick" "{old-nick} ({userhost}) is now known as {new-nick}")
         circe-format-server-nick-change-self
