@@ -90,7 +90,7 @@ will try:
 If there are multiple results, you will be prompted to select one.
 
 ** Look up documentation
-~+lookup/documentation~ (bound to =gh= in normal mode) will open documentation
+~+lookup/documentation~ (bound to =K= in normal mode) will open documentation
 for the symbol at point.
 
 Depending on your configuration, this will try a list of sources:
