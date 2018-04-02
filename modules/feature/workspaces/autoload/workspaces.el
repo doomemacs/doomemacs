@@ -283,9 +283,7 @@ workspace to delete."
   (unless (cl-every #'+workspace-delete (+workspace-list-names))
     (+workspace-error "Could not clear session"))
   (+workspace-switch +workspaces-main t)
-  (doom/kill-all-buffers)
-  (switch-to-buffer (doom-fallback-buffer))
-  (doom/cleanup-session))
+  (doom/kill-all-buffers))
 
 ;;;###autoload
 (defun +workspace/kill-session-and-quit ()
