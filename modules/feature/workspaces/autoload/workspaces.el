@@ -259,25 +259,21 @@ workspace to delete."
                            nil nil current-name)
         current-name))))
   (condition-case-unless-debug ex
-      (+workspace-message
-       (let ((workspaces (length (+workspace-list-names))))
-         (cond ((> workspaces 1)
-                (+workspace-delete name)
-                (+workspace-switch
-                 (if (+workspace-exists-p +workspace--last)
-                     +workspace--last
-                   (car (+workspace-list-names))))
-                (unless (doom-buffer-frame-predicate (current-buffer))
-                  (switch-to-buffer (doom-fallback-buffer)))
-                (format "Deleted '%s' workspace" name))
-               ((= workspaces 1)
-                (format "Can't delete the last workspace!"))
-               (t
-                (+workspace-delete name)
-                (+workspace-switch +workspaces-main t)
-                (switch-to-buffer (doom-fallback-buffer))
-                (format "No workspaces detected! Auto-creating '%s' workspace" +workspaces-main))))
-       'success)
+      (let ((workspaces (length (+workspace-list-names))))
+        (cond ((> workspaces 1)
+               (+workspace-delete name)
+               (+workspace-switch
+                (if (+workspace-exists-p +workspace--last)
+                    +workspace--last
+                  (car (+workspace-list-names))))
+               (unless (doom-buffer-frame-predicate (current-buffer))
+                 (switch-to-buffer (doom-fallback-buffer))))
+              (t
+               (+workspace-switch +workspaces-main t)
+               (unless (string= (car workspaces) +workspaces-main)
+                 (+workspace-delete name))
+               (doom/kill-all-buffers)))
+        (+workspace-message (format "Deleted '%s' workspace" name) 'success))
     ('error (+workspace-error ex t))))
 
 ;;;###autoload
