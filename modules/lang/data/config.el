@@ -39,6 +39,10 @@
   :mode ("\\.nes$" . hexl-mode))
 
 
+(def-package! graphql-mode
+  :mode "\\.graphql$")
+
+
 ;;
 ;; Frameworks
 ;;
