@@ -19,6 +19,8 @@
   :hook (css-mode web-mode html-mode haml-mode nxml-mode rjsx-mode)
   :config
   (setq emmet-move-cursor-between-quotes t)
+  (add-hook! 'rjsx-mode-hook
+    (setq-local emmet-expand-jsx-className? t))
   (map! :map emmet-mode-keymap
         :v "M-e" #'emmet-wrap-with-markup
         :i "M-e" #'emmet-expand-yas
