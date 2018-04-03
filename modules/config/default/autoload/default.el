@@ -39,6 +39,17 @@
   (interactive) (doom-project-browse emacs-snippets-dir))
 ;; NOTE No need for a browse-snippets variant, use `yas-visit-snippet-file'
 
+;;;###autoload
+(defun +default/find-in-config ()
+  "Open a file somewhere in `doom-private-dir' via a fuzzy filename search."
+  (interactive)
+  (doom-project-find-file doom-private-dir))
+
+;;;###autoload
+(defun +default/browse-config ()
+  "Browse the files in `doom-private-dir'."
+  (interactive)
+  (doom-project-browse doom-private-dir))
 
 ;;;###autoload
 (defun +default/compile (arg)

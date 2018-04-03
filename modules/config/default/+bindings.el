@@ -185,9 +185,8 @@
           :desc "Recent files"              :n "r" #'recentf-open-files
           :desc "Recent project files"      :n "R" #'projectile-recentf
           :desc "Yank filename"             :n "y" #'+default/yank-buffer-filename
-          (:when (featurep! :config private)
-            :desc "Find file in private config" :n "p" #'+private/find-in-config
-            :desc "Browse private config"       :n "P" #'+private/browse-config))
+          :desc "Find file in private config" :n "p" #'+default/find-in-config
+          :desc "Browse private config"       :n "P" #'+default/browse-config)
 
         (:desc "git" :prefix "g"
           :desc "Magit blame"           :n  "b" #'magit-blame

@@ -53,6 +53,14 @@ Use this for files that change often, like cache files.")
 (defvar doom-packages-dir (concat doom-local-dir "packages/")
   "Where package.el and quelpa plugins (and their caches) are stored.")
 
+(defvar doom-private-dir
+  (if (file-directory-p "~/.doom.d")
+      "~/.doom.d/"
+    (concat (or (getenv "XDG_CONFIG_HOME")
+                "~/.config")
+            "/doom/"))
+  "TODO")
+
 (defconst EMACS26+ (not (version< emacs-version "26")))
 (defconst EMACS27+ (not (version< emacs-version "27")))
 
@@ -146,6 +154,8 @@ ability to invoke the debugger in debug mode."
           gc-cons-percentage 0.6
           file-name-handler-alist nil))
 
+  (load (expand-file-name "early-init.el" doom-private-dir) t t)
+
   (require 'core-packages (concat doom-core-dir "core-packages"))
   (doom-initialize noninteractive)
   (load! core-lib)
@@ -156,12 +166,15 @@ ability to invoke the debugger in debug mode."
     (load! core-projects)   ; making Emacs project-aware
     (load! core-keybinds))  ; centralized keybind system + which-key
 
+  (load (expand-file-name "init.el" doom-private-dir) t t)
+
   (defun doom|after-init ()
     "Run `doom-init-hook' and `doom-post-init-hook', start the Emacs server, and
 display the loading benchmark."
     (dolist (hook '(doom-init-hook doom-post-init-hook))
       (run-hook-wrapped hook #'doom-try-run-hook hook))
     (unless noninteractive
+      (load (expand-file-name "config.el" doom-private-dir) t t)
       (when (display-graphic-p)
         (require 'server)
         (unless (server-running-p)
