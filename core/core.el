@@ -1,23 +1,5 @@
 ;;; core.el --- the heart of the beast -*- lexical-binding: t; -*-
 
-;;; Naming conventions:
-;;
-;;   doom-...   public variables or non-interactive functions
-;;   doom--...  private anything (non-interactive), not safe for direct use
-;;   doom/...   an interactive function; safe for M-x or keybinding
-;;   doom//...  an interactive function for managing/maintaining Doom itself
-;;   doom:...   an evil operator, motion or command
-;;   doom|...   hook function
-;;   doom*...   advising functions
-;;   doom@...   a hydra command
-;;   ...!       a macro or function that configures DOOM
-;;   =...       an interactive command that starts an app module
-;;   %...       functions used for in-snippet logic
-;;   +...       Any of the above but part of a module, e.g. `+emacs-lisp|init-hook'
-;;
-;; Autoloaded functions are in core/autoload/*.el and modules/*/*/autoload.el or
-;; modules/*/*/autoload/*.el.
-
 (defvar doom-version "2.0.9"
   "Current version of DOOM emacs.")
 
@@ -25,7 +7,11 @@
   "If non-nil, all doom functions will be verbose. Set DEBUG=1 in the command
 line or use --debug-init to enable this.")
 
-(defvar doom-emacs-dir (eval-when-compile (file-truename user-emacs-directory))
+;;
+(defvar doom-emacs-dir
+  (if (eq noninteractive 'doom)
+      default-directory
+    (eval-when-compile (file-truename user-emacs-directory)))
   "The path to this emacs.d directory.")
 
 (defvar doom-core-dir (concat doom-emacs-dir "core/")
@@ -54,16 +40,19 @@ Use this for files that change often, like cache files.")
   "Where package.el and quelpa plugins (and their caches) are stored.")
 
 (defvar doom-private-dir
-  (if (file-directory-p "~/.doom.d")
-      "~/.doom.d/"
-    (concat (or (getenv "XDG_CONFIG_HOME")
-                "~/.config")
-            "/doom/"))
-  "TODO")
+  (eval-when-compile
+    (or (let ((xdg-path (concat (or (getenv "XDG_CONFIG_HOME")
+                                    "~/.config")
+                                "/doom/")))
+          (if (file-directory-p xdg-path) xdg-path))
+        "~/.doom.d/"))
+  "Where your private customizations are placed. Must end in a slash. Respects
+XDG directory conventions if ~/.config/doom exists.")
 
 (defconst EMACS26+ (not (version< emacs-version "26")))
 (defconst EMACS27+ (not (version< emacs-version "27")))
 
+(setq user-emacs-directory doom-emacs-dir)
 
 ;;;
 ;; UTF-8 as the default coding system
@@ -82,7 +71,7 @@ Use this for files that change often, like cache files.")
  debug-on-error (and (not noninteractive) doom-debug-mode)
  ffap-machine-p-known 'reject     ; don't ping things that look like domain names
  idle-update-delay 2              ; update ui less often
- load-prefer-newer (or noninteractive doom-debug-mode)
+ load-prefer-newer (or (eq noninteractive 'doom) doom-debug-mode)
  ;; keep the point out of the minibuffer
  minibuffer-prompt-properties '(read-only t point-entered minibuffer-avoid-prompt face minibuffer-prompt)
  ;; History & backup settings (save nothing, that's what git is for)
