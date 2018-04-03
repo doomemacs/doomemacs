@@ -325,10 +325,8 @@ controlled by `+doom-dashboard-pwd-policy'."
              (call-interactively (or (command-remapping #'bookmark-jump)
                                      #'bookmark-jump)))
             ,(when (file-directory-p doom-private-dir)
-               '("Open private configuration" "settings"
+               '("Open private configuration" "tools"
                  (doom-project-find-file doom-private-dir)))
-            ("Edit my modules list" "pencil"
+            ("Edit my modules list" "settings"
              (progn (make-directory doom-private-dir t)
-                    (find-file (expand-file-name "init.el" doom-private-dir))))
-            ("Edit Doom Emacs" "tools"
-             (doom-project-find-file doom-emacs-dir))))))
+                    (find-file (expand-file-name "init.el" doom-private-dir))))))))
