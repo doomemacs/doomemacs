@@ -51,7 +51,7 @@ this is nil after Emacs has started something is wrong.")
   "A hash table of enabled modules. Set by `doom-initialize-modules'.")
 
 (defvar doom-modules-dirs
-  (list doom-modules-dir (expand-file-name "modules/" doom-private-dir))
+  (list (expand-file-name "modules/" doom-private-dir) doom-modules-dir)
   "A list of module root directories. Order determines priority.")
 
 (defvar doom-psuedo-module-dirs
