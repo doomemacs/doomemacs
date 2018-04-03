@@ -4,7 +4,7 @@
 (package! evil)
 (package! evil-args)
 (package! evil-commentary)
-(package! evil-collection)
+(package! evil-collection :recipe (:fetcher github :repo "emacs-evil/evil-collection"))
 (package! evil-easymotion)
 (package! evil-embrace)
 (package! evil-escape)
