@@ -419,10 +419,7 @@ Under the hood, this uses use-package's `use-package-inject-hooks'.
 
 PACKAGE is a symbol; the package's name.
 WHEN should be one of the following:
-  :pre-init :post-init :pre-config :post-config :disable
-
-If WHEN is :disable then BODY is ignored, and DOOM will be instructed to ignore
-all `def-package!' blocks for PACKAGE.
+  :pre-init :post-init :pre-config :post-config
 
 WARNING: If :pre-init or :pre-config hooks return nil, the original
 `def-package!''s :init/:config block (respectively) is overwritten, so remember
@@ -529,7 +526,7 @@ This macro is declarative and does not load nor install packages. It is used to
 populate `doom-packages' with metadata about the packages Doom needs to keep
 track of.
 
-Only use this macro in a module's init.el or packages.el file.
+Only use this macro in a module's packages.el file.
 
 Accepts the following properties:
 
@@ -574,12 +571,16 @@ Accepts the following properties:
 
 (defmacro packages! (&rest packages)
   "A convenience macro like `package!', but allows you to declare multiple
-packages at once."
+packages at once.
+
+Only use this macro in a module's packages.el file."
   `(progn ,@(cl-loop for desc in packages collect `(package! ,@desc))))
 
 (defmacro disable-packages! (&rest packages)
   "A convenience macro like `package!', but allows you to disable multiple
-packages at once."
+packages at once.
+
+Only use this macro in a module's packages.el file."
   `(setq doom-disabled-packages (append ',packages doom-disabled-packages)))
 
 (defmacro depends-on! (module submodule &optional flags)
