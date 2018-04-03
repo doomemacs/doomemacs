@@ -29,6 +29,8 @@
         ;; Allow nested snippets
         yas-triggers-in-field t)
 
+  (push (expand-file-name "snippets/" doom-private-dir) yas-snippet-dirs)
+
   ;; Allows project-specific snippets
   (defun +snippets|enable-project-modes (mode &rest _)
     "Enable snippets for project modes."
