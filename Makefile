@@ -18,16 +18,16 @@ ce: compile-elpa
 d: doctor
 
 ## Package management
-install: | init.el .local/autoloads.el
+install: | .local/autoloads.el
 	@$(DOOM) -f doom//packages-install
 
-update: | init.el .local/autoloads.el
+update: | .local/autoloads.el
 	@$(DOOM) -f doom//packages-update
 
-autoremove: | init.el .local/autoloads.el
+autoremove: | .local/autoloads.el
 	@$(DOOM) -f doom//packages-autoremove
 
-autoloads: | init.el
+autoloads:
 	@$(DOOM) -f doom//reload-autoloads
 
 
@@ -36,19 +36,19 @@ autoloads: | init.el
 # compile-core
 # compile-module
 # compile-module/submodule
-compile: | init.el clean
+compile: | clean
 	@$(DOOM) -f doom//byte-compile
 
-compile-core: | init.el clean
+compile-core: | clean
 	@$(DOOM) -f doom//byte-compile-core
 
-compile-elpa: | init.el
+compile-elpa:
 	@$(DOOM) -f doom//byte-recompile-plugins
 
-$(patsubst %, compile-%, $(MODULES)): | init.el .local/autoloads.el
+$(patsubst %, compile-%, $(MODULES)): | .local/autoloads.el
 	@$(DOOM) -f doom//byte-compile -- $(patsubst compile-%, %, $@)
 
-recompile: | init.el
+recompile:
 	@$(DOOM) -f doom//byte-compile -- -r
 
 clean:
@@ -60,14 +60,14 @@ clean:
 # test-core
 # test-module
 # test-module/submodule
-test: | init.el .local/autoloads.el
+test: | .local/autoloads.el
 	@$(DOOM) -f doom//run-tests
 
-test-core $(patsubst %, test-%, $(MODULES)): | init.el .local/autoloads.el
+test-core $(patsubst %, test-%, $(MODULES)): | .local/autoloads.el
 	@$(DOOM) -f doom//run-tests -- $(subst test-, , $@)
 
 # run tests interactively
-testi: | init.el .local/autoloads.el
+testi: | .local/autoloads.el
 	@$(DOOMI) -f doom//run-tests
 
 
@@ -85,9 +85,6 @@ info:
 	@$(EMACS) --batch -l core/core.el -l core/autoload/debug.el -f doom/info
 
 ## Internal tasks
-init.el:
-	@$(error No init.el file; create one or copy init.example.el)
-
 .local/autoloads.el:
 	@$(DOOM) -f doom-initialize-autoloads
 
