@@ -162,7 +162,7 @@ example:
       '((slot . -1) (vslot . -1) (size . +popup-shrink-to-fit))
       '((transient . 0)))
     (+popup-define "^\\*Org Agenda"
-      '((size . 20))
+      '((size . 0.35))
       '((select . t) (transient)))
     (+popup-define "^\\*Org Src"
       '((size . 0.3))
