@@ -185,7 +185,7 @@ with functions that require it (like modeline segments)."
           gc-cons-percentage 0.6
           file-name-handler-alist nil))
 
-  (load (expand-file-name "early-init.el" doom-private-dir) t t)
+  (load (concat doom-private-dir "early-init") t t)
 
   (require 'core-packages (concat doom-core-dir "core-packages"))
   (doom-initialize noninteractive)
@@ -197,13 +197,13 @@ with functions that require it (like modeline segments)."
     (load! core-projects)   ; making Emacs project-aware
     (load! core-keybinds))  ; centralized keybind system + which-key
 
-  (load (expand-file-name "init.el" doom-private-dir) t t)
+  (load (concat doom-private-dir "init") t t)
 
   (defun doom|after-init ()
     "Run `doom-init-hook' and `doom-post-init-hook', start the Emacs server, and
 display the loading benchmark."
     (unless noninteractive
-      (load (expand-file-name "config.el" doom-private-dir) t t))
+      (load (concat doom-private-dir "config") t t))
     (dolist (hook '(doom-init-hook doom-post-init-hook))
       (run-hook-wrapped hook #'doom-try-run-hook hook))
     (unless noninteractive
