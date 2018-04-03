@@ -171,10 +171,11 @@ ability to invoke the debugger in debug mode."
   (defun doom|after-init ()
     "Run `doom-init-hook' and `doom-post-init-hook', start the Emacs server, and
 display the loading benchmark."
+    (unless noninteractive
+      (load (expand-file-name "config.el" doom-private-dir) t t))
     (dolist (hook '(doom-init-hook doom-post-init-hook))
       (run-hook-wrapped hook #'doom-try-run-hook hook))
     (unless noninteractive
-      (load (expand-file-name "config.el" doom-private-dir) t t)
       (when (display-graphic-p)
         (require 'server)
         (unless (server-running-p)
