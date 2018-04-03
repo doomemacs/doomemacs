@@ -3,16 +3,17 @@
 (push '("/sxhkdrc" . conf-mode) auto-mode-alist)
 
 
-(def-package! nxml-mode
-  :mode "\\.plist$"
-  :config
-  (set! :company-backend 'nxml-mode '(company-nxml company-yasnippet)))
+(def-package! dockerfile-mode
+  :mode "/Dockerfile$")
 
 
-(def-package! toml-mode :mode "\\.toml$")
+(def-package! graphql-mode
+  :mode "\\.graphql$")
 
 
-(def-package! yaml-mode :mode "\\.ya?ml$")
+(def-package! hexl ; For ROM hacking or debugging
+  :mode ("\\.hex$" . hexl-mode)
+  :mode ("\\.nes$" . hexl-mode))
 
 
 (def-package! json-mode
@@ -23,6 +24,15 @@
   (set! :electric 'json-mode :chars '(?\n ?: ?{ ?})))
 
 
+(def-package! nxml-mode
+  :mode "\\.plist$"
+  :config
+  (set! :company-backend 'nxml-mode '(company-nxml company-yasnippet)))
+
+
+(def-package! toml-mode :mode "\\.toml$")
+
+
 (def-package! vimrc-mode
   :mode "/\\.?g?vimrc$"
   :mode "\\.vim$"
@@ -30,17 +40,7 @@
   :mode "\\.vimp$")
 
 
-(def-package! dockerfile-mode
-  :mode "/Dockerfile$")
-
-
-(def-package! hexl ; For ROM hacking or debugging
-  :mode ("\\.hex$" . hexl-mode)
-  :mode ("\\.nes$" . hexl-mode))
-
-
-(def-package! graphql-mode
-  :mode "\\.graphql$")
+(def-package! yaml-mode :mode "\\.ya?ml$")
 
 
 ;;
