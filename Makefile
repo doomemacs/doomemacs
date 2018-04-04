@@ -11,6 +11,7 @@ all: | autoloads autoremove install
 a: autoloads
 i: install
 u: update
+U: upgrade
 r: autoremove
 c: compile
 cc: compile-core
