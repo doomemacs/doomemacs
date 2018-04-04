@@ -130,6 +130,29 @@ ability to invoke the debugger in debug mode."
             (car ex) fn (error-message-string ex))))
   nil)
 
+(defun doom|after-init ()
+  "Run `doom-init-hook' and `doom-post-init-hook', start the Emacs server, and
+display the loading benchmark."
+  (unless noninteractive
+    (load (concat doom-private-dir "config") t t))
+  (dolist (hook '(doom-init-hook doom-post-init-hook))
+    (run-hook-wrapped hook #'doom-try-run-hook hook))
+  (unless noninteractive
+    (when (display-graphic-p)
+      (require 'server)
+      (unless (server-running-p)
+        (server-start)))
+    (message "%s" (doom-packages--benchmark))))
+
+(defun doom|finalize ()
+  "Resets garbage collection settings to reasonable defaults (if you don't do
+this, you'll get stuttering and random freezes), and resets
+`file-name-handler-alist'."
+  (setq gc-cons-threshold 16777216
+        gc-cons-percentage 0.1
+        file-name-handler-alist doom--file-name-handler-alist)
+  t)
+
 
 ;;
 ;; Emacs fixes/hacks
@@ -185,7 +208,8 @@ with functions that require it (like modeline segments)."
           gc-cons-percentage 0.6
           file-name-handler-alist nil))
 
-  (load (concat doom-private-dir "early-init") t t)
+  (when doom-private-dir
+    (load (concat doom-private-dir "early-init") t t))
 
   (require 'core-packages (concat doom-core-dir "core-packages"))
   (doom-initialize noninteractive)
@@ -197,33 +221,11 @@ with functions that require it (like modeline segments)."
     (load! core-projects)   ; making Emacs project-aware
     (load! core-keybinds))  ; centralized keybind system + which-key
 
-  (load (concat doom-private-dir "init") t t)
-
-  (defun doom|after-init ()
-    "Run `doom-init-hook' and `doom-post-init-hook', start the Emacs server, and
-display the loading benchmark."
-    (unless noninteractive
-      (load (concat doom-private-dir "config") t t))
-    (dolist (hook '(doom-init-hook doom-post-init-hook))
-      (run-hook-wrapped hook #'doom-try-run-hook hook))
-    (unless noninteractive
-      (when (display-graphic-p)
-        (require 'server)
-        (unless (server-running-p)
-          (server-start)))
-      (message "%s" (doom-packages--benchmark))))
-
-  (defun doom|finalize ()
-    "Resets garbage collection settings to reasonable defaults (if you don't do
-this, you'll get stuttering and random freezes), and resets
-`file-name-handler-alist'."
-    (setq gc-cons-threshold 16777216
-          gc-cons-percentage 0.1
-          file-name-handler-alist doom--file-name-handler-alist)
-    t)
-
   (add-hook! '(emacs-startup-hook doom-reload-hook) #'doom|finalize)
-  (add-hook 'emacs-startup-hook #'doom|after-init))
+  (add-hook 'emacs-startup-hook #'doom|after-init)
+
+  (when doom-private-dir
+    (load (concat doom-private-dir "init") t t)))
 
 (provide 'core)
 ;;; core.el ends here
