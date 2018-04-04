@@ -656,7 +656,9 @@
           [delete]        #'+snippets/delete-forward-char-or-field)
         (:map yas-minor-mode-map
           :ig "<tab>" yas-maybe-expand
-          :v  "<tab>" #'yas-insert-snippet))
+          :v  "<tab>" #'yas-insert-snippet
+          :ig "TAB" yas-maybe-expand
+          :v  "TAB" #'yas-insert-snippet))
 
 
       ;; --- Major mode bindings --------------------------
