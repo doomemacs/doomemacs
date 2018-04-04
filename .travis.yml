@@ -9,7 +9,8 @@ before_install:
   - export PATH="/home/travis/.evm/bin:$PATH"
   - evm config path /tmp
   - evm install $EVM_EMACS --use --skip
-  - cp init.test.el init.el
+  - mkdir -p ~/.doom.d
+  - cp init.test.el ~/.doom.d/init.el
   - INSECURE=1 YES=1 make install
 env:
   - EVM_EMACS=emacs-25.1-travis
