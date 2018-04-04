@@ -119,7 +119,7 @@ and enables `+popup-buffer-mode'."
 
 ;;;###autoload
 (defun +popup-buffer-p (&optional buffer)
-  "Return t if BUFFER is a popup buffer. Defaults to the current buffer."
+  "Return non-nil if BUFFER is a popup buffer. Defaults to the current buffer."
   (unless buffer
     (setq buffer (current-buffer)))
   (cl-assert (bufferp buffer) t)
@@ -129,7 +129,7 @@ and enables `+popup-buffer-mode'."
 
 ;;;###autoload
 (defun +popup-window-p (&optional window)
-  "Return t if WINDOW is a popup window. Defaults to the current window."
+  "Return non-nil if WINDOW is a popup window. Defaults to the current window."
   (unless window
     (setq window (selected-window)))
   (cl-assert (windowp window) t)
