@@ -11,19 +11,11 @@
           #'magit-builtin-completing-read)
         magit-revision-show-gravatars '("^Author:     " . "^Commit:     "))
 
-  (set! :popup "^\\*?magit" :ignore)
-
-  ;; (add-hook 'magit-popup-mode-hook #'hide-mode-line-mode)
-  ;; (set! :popup "^.*magit" '((slot . -1) (side . right) (size . 80)) '((modeline . nil) (select . t)))
-  ;; (set! :popup "^\\*magit.*popup\\*" '((slot . 0) (side . right)) '((modeline . nil) (select . t)))
-  ;; (set! :popup "^.*magit-revision:.*" '((slot . 2) (side . right) (window-height . 0.6)) '((modeline . nil) (select . t)))
-  ;; (set! :popup "^.*magit-diff:.*" '((slot . 2) (side . right) (window-height . 0.6)) '((modeline . nil) (select . nil)))
-
-  (after! evil
-    ;; Switch to emacs state only while in `magit-blame-mode', then back when
-    ;; its done (since it's a minor-mode).
-    (add-hook! 'magit-blame-mode-hook
-      (evil-local-mode (if magit-blame-mode -1 +1)))))
+  (add-hook 'magit-popup-mode-hook #'hide-mode-line-mode)
+  (set! :popup "^\\(?:\\*magit\\|magit:\\)" :ignore)
+  ;; Clean up after magit by properly killing buffers
+  (setq magit-bury-buffer-function #'+magit/quit)
+  (map! :map magit-mode-map [remap quit-window] #'+magit/quit))
 
 
 (def-package! magit-blame
@@ -48,4 +40,9 @@
   :when (featurep! :feature evil)
   :after magit
   :config
-  (setq evil-magit-state 'normal))
+  (setq evil-magit-state 'normal)
+
+  ;; Switch to emacs state only while in `magit-blame-mode', then back when
+  ;; its done (since it's a minor-mode).
+  (add-hook! 'magit-blame-mode-hook
+    (evil-local-mode (if magit-blame-mode -1 +1))))
