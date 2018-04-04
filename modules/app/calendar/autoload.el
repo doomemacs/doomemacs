@@ -4,7 +4,7 @@
 
 (defun +calendar--init ()
   (if-let* ((win (cl-loop for win in (doom-visible-windows)
-                          if (string-match-p "^\\*cfw:" (buffer-name (window-buffer it)))
+                          if (string-match-p "^\\*cfw:" (buffer-name (window-buffer win)))
                           return win)))
       (select-window win)
     (call-interactively +calendar-open-function)))
