@@ -13,11 +13,9 @@
   :mode "wp-content/themes/.+/.+\\.php$"
   :mode "templates/.+\\.php$"
   :config
-  (add-hook 'web-mode-hook #'turn-off-smartparens-mode)
   (set! :company-backend 'web-mode '(company-web-html company-yasnippet))
   (setq web-mode-enable-html-entities-fontification t)
 
-  
   (map! :map web-mode-map
         (:localleader
           :desc "Rehighlight buffer" :n "h" #'web-mode-buffer-highlight
