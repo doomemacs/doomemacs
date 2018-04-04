@@ -251,6 +251,9 @@ between the two."
 
 (defun +org|setup-evil ()
   (require 'evil-org)
+
+  (add-hook 'org-tab-first-hook #'+org|toggle-only-current-fold)
+
   (map! :map outline-mode-map
         :n "^" nil
         :n [backtab] nil
@@ -267,8 +270,6 @@ between the two."
         :ni "C-S-h" #'+org/table-prepend-field-or-shift-left
         :ni "C-S-k" #'org-metaup
         :ni "C-S-j" #'org-metadown
-        ;; toggle local fold, instead of all children
-        :n  [tab]   #'+org/toggle-fold
         ;; more intuitive RET keybinds
         :i  "RET"   #'org-return-indent
         :n  "RET"   #'+org/dwim-at-point

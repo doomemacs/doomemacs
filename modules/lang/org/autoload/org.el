@@ -256,27 +256,6 @@ wrong places)."
   (interactive)
   (org-toggle-checkbox '(4)))
 
-;;;###autoload
-(defun +org/toggle-fold ()
-  "Toggle the local fold at the point (as opposed to cycling through all levels
-with `org-cycle'). Also:
-
-  + If in a babel block, removes result blocks.
-  + If in a table, realign it, if necessary."
-  (interactive)
-  (save-excursion
-    (org-beginning-of-line)
-    (cond ((org-at-table-p)
-           (org-table-align))
-          ((org-at-heading-p)
-           (outline-toggle-children))
-          ((org-in-src-block-p)
-           (org-babel-remove-result))
-          ((org-at-item-p)
-           (let ((window-beg (window-start)))
-             (org-cycle)
-             (set-window-start nil window-beg))))))
-
 
 ;;
 ;; Hooks
@@ -349,3 +328,19 @@ with `org-cycle'). Also:
              (yas--templates-for-key-at-point))
     (call-interactively #'yas-expand)
     t))
+
+;;;###autoload
+(defun +org|toggle-only-current-fold ()
+  "Toggle the local fold at the point (as opposed to cycling through all levels
+with `org-cycle')."
+  (interactive)
+  (save-excursion
+    (org-beginning-of-line)
+    (cond ((org-at-heading-p)
+           (outline-toggle-children)
+           (unless (outline-invisible-p (line-end-position))
+             (org-cycle-hide-drawers 'subtree))
+           t)
+          ((org-in-src-block-p)
+           (org-babel-remove-result)
+           t))))
