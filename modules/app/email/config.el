@@ -50,6 +50,7 @@ default/fallback account."
 (def-package! mu4e
   :commands (mu4e mu4e-compose-new)
   :init
+  (provide 'html2text) ; disable obsolete package
   (setq mu4e-maildir "~/.mail"
         mu4e-attachment-dir "~/.mail/.attachments"
         mu4e-user-mail-address-list nil)
