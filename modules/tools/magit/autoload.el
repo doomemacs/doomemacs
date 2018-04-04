@@ -5,4 +5,6 @@
   "TODO"
   (interactive)
   (magit-restore-window-configuration)
-  (mapc #'kill-buffer (doom-buffers-in-mode 'magit-mode (buffer-list) t)))
+  (cl-loop for buf in (doom-buffers-in-mode 'magit-mode (buffer-list) t)
+           unless (eq (buffer-local-value 'major-mode buf) 'magit-process-mode)
+           do (kill-buffer buf)))
