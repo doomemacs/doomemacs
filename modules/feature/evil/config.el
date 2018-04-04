@@ -30,6 +30,7 @@
         evil-collection-company-use-tng nil)
   :config
   (delq 'kotlin-mode evil-collection-mode-list) ; doesn't do anything useful
+  (delq 'simple evil-collection-mode-list) ; breaks too much
   (evil-collection-init))
 
 
