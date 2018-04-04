@@ -9,9 +9,7 @@ line or use --debug-init to enable this.")
 
 ;;
 (defvar doom-emacs-dir
-  (if (eq noninteractive 'doom)
-      default-directory
-    (eval-when-compile (file-truename user-emacs-directory)))
+  (eval-when-compile (file-truename user-emacs-directory))
   "The path to this emacs.d directory.")
 
 (defvar doom-core-dir (concat doom-emacs-dir "core/")
@@ -52,7 +50,6 @@ XDG directory conventions if ~/.config/doom exists.")
 (defconst EMACS26+ (not (version< emacs-version "26")))
 (defconst EMACS27+ (not (version< emacs-version "27")))
 
-(setq user-emacs-directory doom-emacs-dir)
 
 ;;;
 ;; UTF-8 as the default coding system
@@ -71,7 +68,6 @@ XDG directory conventions if ~/.config/doom exists.")
  debug-on-error (and (not noninteractive) doom-debug-mode)
  ffap-machine-p-known 'reject     ; don't ping things that look like domain names
  idle-update-delay 2              ; update ui less often
- load-prefer-newer (or (eq noninteractive 'doom) doom-debug-mode)
  ;; keep the point out of the minibuffer
  minibuffer-prompt-properties '(read-only t point-entered minibuffer-avoid-prompt face minibuffer-prompt)
  ;; History & backup settings (save nothing, that's what git is for)
