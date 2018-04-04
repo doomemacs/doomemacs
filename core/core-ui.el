@@ -467,7 +467,7 @@ character that looks like a space that `whitespace-mode' won't affect.")
 ;; Theme & font
 ;;
 
-(defvar doom-last-window-system window-system
+(defvar doom-last-window-system (if (daemonp) 'daemon window-system)
   "The `window-system' of the last frame. If this doesn't match the current
 frame's window-system, the theme will be reloaded.")
 
@@ -517,8 +517,7 @@ frame's window-system, the theme will be reloaded.")
 (add-hook 'doom-init-ui-hook #'doom|init-fonts)
 ;; themes
 (add-hook 'after-make-frame-functions #'doom|init-theme-in-frame)
-(unless (daemonp)
-  (add-hook 'doom-init-ui-hook #'doom|init-theme))
+(add-hook 'doom-init-ui-hook #'doom|init-theme)
 
 
 ;;
