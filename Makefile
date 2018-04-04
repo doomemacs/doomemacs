@@ -31,7 +31,7 @@ autoremove: | .local/autoloads.el
 autoloads:
 	@$(DOOM) -f doom//reload-autoloads
 
-upgrade: | _upgrade all
+upgrade: | _upgrade recompile all
 _upgrade:
 	@git pull origin $(shell git rev-parse --abbrev-ref HEAD)
 
