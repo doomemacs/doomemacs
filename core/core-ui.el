@@ -113,6 +113,7 @@ Example:
         (rhs-forms (doom--prepare-modeline-segments rhs)))
     `(progn
        (defun ,sym ()
+         ,(concat "Modeline:\n" (format "  %s\n  %s" lhs rhs))
          (let ((lhs (list ,@lhs-forms))
                (rhs (list ,@rhs-forms)))
            (let ((rhs-str (format-mode-line rhs)))
