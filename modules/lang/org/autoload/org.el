@@ -334,13 +334,14 @@ wrong places)."
   "Toggle the local fold at the point (as opposed to cycling through all levels
 with `org-cycle')."
   (interactive)
-  (save-excursion
-    (org-beginning-of-line)
-    (cond ((org-at-heading-p)
-           (outline-toggle-children)
-           (unless (outline-invisible-p (line-end-position))
-             (org-cycle-hide-drawers 'subtree))
-           t)
-          ((org-in-src-block-p)
-           (org-babel-remove-result)
-           t))))
+  (unless (eq this-command 'org-shifttab)
+    (save-excursion
+      (org-beginning-of-line)
+      (cond ((org-at-heading-p)
+             (outline-toggle-children)
+             (unless (outline-invisible-p (line-end-position))
+               (org-cycle-hide-drawers 'subtree))
+             t)
+            ((org-in-src-block-p)
+             (org-babel-remove-result)
+             t)))))
