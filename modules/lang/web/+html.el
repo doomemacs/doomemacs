@@ -40,7 +40,6 @@
             :desc "Previous"  :n "p" #'web-mode-block-previous
             :desc "Select"    :n "s" #'web-mode-block-select)
 
-
           (:desc "dom" :prefix "d"
             :desc "Replace apostrophes" :n "a" #'web-mode-dom-apostrophes-replace
             :desc "Show errors"         :n "d" #'web-mode-dom-errors-show
@@ -78,7 +77,7 @@
             :desc "Next"            :n "n" #'web-mode-tag-next
             :desc "Previous"        :n "p" #'web-mode-tag-previous
             :desc "Select"          :n "s" #'web-mode-tag-select))
-        
+
         "M-/" #'web-mode-comment-or-uncomment
         :i  "SPC" #'self-insert-command
         :n  "M-r" #'doom/web-refresh-browser
