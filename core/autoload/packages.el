@@ -99,8 +99,9 @@ list of the package."
                (let ((desc (cadr (assq name package-archive-contents))))
                  (when (package-desc-p desc)
                    (package-desc-version desc)))))))
-      (when (and (listp old-version) (listp new-version)
-                 (version-list-< old-version new-version))
+      (unless (and (listp old-version) (listp new-version))
+        (error "Couldn't get version for %s" name))
+      (when (version-list-< old-version new-version)
         (list name old-version new-version)))))
 
 ;;;###autoload
