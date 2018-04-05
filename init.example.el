@@ -1,4 +1,5 @@
-;;; init.example.el -*- lexical-binding: t; -*-
+;;; init.el -*- lexical-binding: t; -*-
+;; Copy me to ~/.doom.d/init.el or ~/.config/doom/init.el, then edit me!
 
 (doom! :feature
        (popup            ; tame sudden yet inevitable temporary windows
