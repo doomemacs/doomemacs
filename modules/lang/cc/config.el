@@ -103,7 +103,7 @@ compilation database is present in the project.")
   ;; custom bindings. We'll do this ourselves.
   (setq c-tab-always-indent nil
         c-electric-flag nil)
-  (dolist (key '("#" "{" "}" "/" "*" ";" "," ":" "(" ")" "\177"))
+  (dolist (key '("#" "}" "/" "*" ";" "," ":" "(" ")" "\177"))
     (define-key c-mode-base-map key nil))
   ;; Smartparens and cc-mode both try to autoclose angle-brackets intelligently.
   ;; The result isn't very intelligent (causes redundant characters), so just do
