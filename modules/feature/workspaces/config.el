@@ -113,6 +113,15 @@ Uses `+workspaces-main' to determine the name of the main workspace."
   ;; On `doom/cleanup-session', delete buffers associated with no perspectives
   (add-hook 'doom-cleanup-hook #'+workspaces|cleanup-unassociated-buffers)
 
+  (defun +workspaces|select-non-side-window (&rest _)
+    "Ensure a side window isn't current when switching workspaces."
+    (when (window-parameter nil 'window-side)
+      (select-window
+       (cl-loop for win in (window-list)
+                unless (window-parameter win 'window-side)
+                return win))))
+  (add-hook 'persp-before-deactivate-functions #'+workspaces|select-non-side-window)
+
   ;; per-frame workspaces
   (setq persp-init-frame-behaviour t
         persp-init-new-frame-behaviour-override nil
