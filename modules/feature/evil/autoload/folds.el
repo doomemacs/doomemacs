@@ -52,7 +52,7 @@
   (interactive)
   (if (+evil--vimish-fold-p)
       (vimish-fold-unfold)
-    (+evil-from-eol (hs-hide-block))))
+    (+evil-from-eol (hs-show-block))))
 
 ;;;###autoload (autoload '+evil:fold-close "feature/evil/autoload/folds" nil t)
 (evil-define-command +evil:fold-close ()
