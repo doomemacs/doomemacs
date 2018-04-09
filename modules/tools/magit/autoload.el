@@ -2,9 +2,21 @@
 
 ;;;###autoload
 (defun +magit/quit (&optional _kill-buffer)
-  "TODO"
+  "Clean up magit buffers after quitting `magit-status'."
   (interactive)
-  (magit-restore-window-configuration)
-  (cl-loop for buf in (doom-buffers-in-mode 'magit-mode (buffer-list) t)
-           unless (eq (buffer-local-value 'major-mode buf) 'magit-process-mode)
-           do (kill-buffer buf)))
+  (let ((buffers (magit-mode-get-buffers)))
+    (magit-restore-window-configuration)
+    (mapc #'+magit--kill-buffer buffers)))
+
+(defun +magit--kill-buffer (buf)
+  "TODO"
+  (when (and (bufferp buf) (buffer-live-p buf))
+    (let ((process (get-buffer-process buf)))
+      (if (not (processp process))
+          (kill-buffer buf)
+        (with-current-buffer buf
+          (if (process-live-p process)
+              (run-with-timer 5 nil #'+magit--kill buf)
+            (kill-process process)
+            (kill-buffer buf)))))))
+

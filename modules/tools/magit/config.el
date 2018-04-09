@@ -11,11 +11,11 @@
           #'magit-builtin-completing-read)
         magit-revision-show-gravatars '("^Author:     " . "^Commit:     "))
 
-  (add-hook 'magit-popup-mode-hook #'hide-mode-line-mode)
   (set! :popup "^\\(?:\\*magit\\|magit:\\)" :ignore)
+  ;; no mode-line in magit popups
+  (add-hook 'magit-popup-mode-hook #'hide-mode-line-mode)
   ;; Clean up after magit by properly killing buffers
-  (setq magit-bury-buffer-function #'+magit/quit)
-  (map! :map magit-mode-map [remap quit-window] #'+magit/quit))
+  (map! :map magit-status-mode-map [remap magit-mode-bury-buffer] #'+magit/quit))
 
 
 (def-package! magit-blame

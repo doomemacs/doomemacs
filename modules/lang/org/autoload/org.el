@@ -345,3 +345,6 @@ with `org-cycle')."
             ((org-in-src-block-p)
              (org-babel-remove-result)
              t)))))
+
+;;;###autoload
+(defalias #'+org/toggle-fold #'+org|toggle-only-current-fold)
