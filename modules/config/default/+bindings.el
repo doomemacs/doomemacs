@@ -135,6 +135,7 @@
           :desc "Delete session"           :n "X"   #'+workspace/kill-session
           :desc "Delete this workspace"    :n "d"   #'+workspace/delete
           :desc "Load session"             :n "L"   #'+workspace/load-session
+          :desc "Rename workspace"         :n "r"   #'+workspace/rename
           :desc "Next workspace"           :n "]"   #'+workspace/switch-right
           :desc "Previous workspace"       :n "["   #'+workspace/switch-left
           :desc "Switch to 1st workspace"  :n "1"   (λ! (+workspace/switch-to 0))
