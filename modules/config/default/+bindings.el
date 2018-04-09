@@ -86,7 +86,7 @@
         :desc "Browse files"            :n "."   #'find-file
         :desc "Toggle last popup"       :n "~"   #'+popup/toggle
         :desc "Eval expression"         :n "`"   #'eval-expression
-        :desc "Blink cursor line"       :n "DEL" #'+doom/blink-cursor
+        :desc "Blink cursor line"       :n "DEL" #'+nav-flash/blink-cursor
         :desc "Jump to bookmark"        :n "RET" #'bookmark-jump
 
         ;; C-u is used by evil
