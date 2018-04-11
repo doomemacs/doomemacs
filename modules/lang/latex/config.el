@@ -103,21 +103,31 @@
                  LaTeX-indent-environment-list))))
 
 (after! latex
-  ;; Use Okular is the user says so.
+  ;; Use Okular if the user says so.
   (when (featurep! +okular)
     ;; Configure Okular as viewer. Including a bug fix
     ;; (https://bugs.kde.org/show_bug.cgi?id=373855)
     (add-to-list 'TeX-view-program-list
                  '("Okular" ("okular --unique file:%o" (mode-io-correlate "#src:%n%a"))))
     (add-to-list 'TeX-view-program-selection
-                 '(output-pdf "Okular"))))
+                 '(output-pdf "Okular")))
 
-(after! latex
+  ;; Or Skim
   (when (featurep! +skim)
     (add-to-list 'TeX-view-program-list
                  '("Skim" "/Applications/Skim.app/Contents/SharedSupport/displayline -b -g %n %o %b"))
     (add-to-list 'TeX-view-program-selection
-                 '(output-pdf "Skim"))))
+                 '(output-pdf "Skim")))
+
+  ;; Or PDF-tools, but only if the module is also loaded
+  (when (and (featurep! :tools pdf) (featurep! +pdf-tools))
+    (add-to-list 'TeX-view-program-list
+                 '("PDF Tools" ("TeX-pdf-tools-sync-view")))
+    (add-to-list 'TeX-view-program-selection
+                 '(output-pdf "PDF Tools"))
+    ;; Enable auto reverting the PDF document with PDF Tools
+    (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer)))
+
 
 
 (def-package! preview
@@ -136,6 +146,8 @@
         reftex-toc-split-windows-fraction 0.3)
   (unless (string-empty-p +latex-bibtex-file)
     (setq reftex-default-bibliography (list (expand-file-name +latex-bibtex-file))))
+  (add-hook! (latex-mode LaTeX-mode) #'turn-on-reftex)
+  :config
   ;; Get ReTeX working with biblatex
   ;; http://tex.stackexchange.com/questions/31966/setting-up-reftex-with-biblatex-citation-commands/31992#31992
   (setq reftex-cite-format
@@ -146,8 +158,6 @@
           (?f . "\\footcite[]{%l}")
           (?n . "\\nocite{%l}")
           (?b . "\\blockcquote[]{%l}{}")))
-  (add-hook! (latex-mode LaTeX-mode) #'turn-on-reftex)
-  :config
   (map! :map reftex-mode-map
         :localleader :n ";" 'reftex-toc)
   (add-hook! 'reftex-toc-mode-hook
