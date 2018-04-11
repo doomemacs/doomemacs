@@ -8,6 +8,8 @@
         ("addbibresource" "[{")
         ;; Standard commands
         ("cite" "[{")
+        ("citep" "[{")
+        ("citet" "[{")
         ("Cite" "[{")
         ("parencite" "[{")
         ("Parencite" "[{")
