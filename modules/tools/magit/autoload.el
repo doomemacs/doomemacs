@@ -16,7 +16,7 @@
           (kill-buffer buf)
         (with-current-buffer buf
           (if (process-live-p process)
-              (run-with-timer 5 nil #'+magit--kill buf)
+              (run-with-timer 5 nil #'+magit--kill-buffer buf)
             (kill-process process)
             (kill-buffer buf)))))))
 
