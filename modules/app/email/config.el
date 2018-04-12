@@ -38,7 +38,8 @@ default/fallback account."
                            (string-prefix-p (format "/%s" ,label)
                                             (mu4e-message-field msg :maildir))))
                        :vars ,letvars)))
-         (push context mu4e-contexts)
+         (unless (seq-contains (seq-map #'mu4e-context-name mu4e-contexts) ,label)
+           (push context mu4e-contexts))
          ,(when default-p
             `(setq-default mu4e-context-current context))))))
 
