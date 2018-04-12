@@ -9,6 +9,18 @@
 
   (map! :map pdf-view-mode-map "q" #'kill-this-buffer)
 
+  ;; Fit pages to screen by default
   (setq-default pdf-view-display-size 'fit-page)
-  ;; turn off cua so copy works
-  (add-hook! 'pdf-view-mode-hook (cua-mode 0)))
+  ;; Turn off cua so copy works
+  (add-hook! 'pdf-view-mode-hook (cua-mode 0))
+  ;; Custom modeline that removes useless info and adds page numbers
+  (when (featurep! :ui doom-modeline)
+    (load! +modeline)
+    (add-hook! pdf-tools-enabled (doom-set-modeline 'pdf-tools-modeline)))
+  ;; Handle PDF-tools related popups better
+  (set! :popup "^\\*Outline*" '((side . right) (size . 40)) '((select)))
+  ;; TODO: Add additional important windows that should be handled differently
+  ;; TODO: These two next rules don't work (they should), investigate
+  ;; (set! :popup "\\*Contents\\*" '((side . right) (size . 40)) nil)
+  ;; (set! :popup "* annots\\*$" '((side . left) (size . 40)) '((select)))
+  )
