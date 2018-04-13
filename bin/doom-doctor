@@ -126,13 +126,15 @@
              "  brew install emacs --with-modules --with-imagemagick --with-cocoa"))))
 
 (section! "test-private-config")
-(let ((xdg-dir (concat (or (abbreviate-file-name (getenv "XDG_CONFIG_HOME"))
+(let ((xdg-dir (concat (or (getenv "XDG_CONFIG_HOME")
                            "~/.config")
                        "/doom/"))
       (doom-dir "~/.doom.d/"))
   (when (and (file-directory-p xdg-dir)
              (file-directory-p doom-dir))
-    (warn! "Detected two private configs, in %s and %s" xdg-dir doom-dir)
+    (warn! "Detected two private configs, in %s and %s"
+           (abbreviate-file-name xdg-dir)
+           doom-dir)
     (explain! "The second directory will be ignored, as it has lower precedence.")))
 
 
