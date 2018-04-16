@@ -8,6 +8,7 @@
     (pdf-tools-install))
   
   (map! (:map (pdf-view-mode-map)
+          :n "q" #'kill-this-buffer
           :n doom-leader-key nil))
 
   (setq-default pdf-view-display-size 'fit-page)
