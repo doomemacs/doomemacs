@@ -186,10 +186,11 @@ FORCE-P is non-nil, do it anyway.
       (require 'package)
       (setq package-activated-list nil
             package--initialized nil)
-      (condition-case _ (package-initialize)
-        ('error (package-refresh-contents)
-                (setq doom--refreshed-p t)
-                (package-initialize)))
+      (let (byte-compile-warnings)
+        (condition-case _ (package-initialize)
+          ('error (package-refresh-contents)
+                  (setq doom--refreshed-p t)
+                  (package-initialize))))
       ;; Ensure core packages are installed.
       (let ((core-packages (cl-remove-if #'package-installed-p doom-core-packages)))
         (when core-packages
@@ -269,7 +270,8 @@ them."
           (setq load-path doom-site-load-path)
           (require 'package)
           (setq package-activated-list nil)
-          (package-initialize))
+          (let (byte-compile-warnings)
+            (package-initialize)))
 
         ;; `quelpa-cache'
         (when (or force-p (not (bound-and-true-p quelpa-cache)))
