@@ -307,3 +307,4 @@ more information on modifiers."
                                                 (regexp-quote (string-trim-left (car match))))
                                         path file-name t t 1))))
     (replace-regexp-in-string regexp "\\1" file-name t)))
+
