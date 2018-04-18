@@ -74,3 +74,31 @@ Run this for any buffer you want to skewer."
       (if skewer-css-mode (skewer-css-mode -1))
       (if skewer-html-mode (skewer-html-mode -1)))))
 
+;;;###autoload
+(defun add-node-modules-path ()
+  "Search the current buffer's parent directories for `node_modules/.bin`.
+If it's found, then add it to the `exec-path'."
+(defvar add-node-modules-path-debug nil)
+  (interactive)
+  (let* ((root (locate-dominating-file
+                (or (buffer-file-name) default-directory)
+                "node_modules"))
+         (path (and root
+                    (expand-file-name "node_modules/.bin/" root))))
+    (if root
+        (progn
+          (make-local-variable 'exec-path)
+          (add-to-list 'exec-path path)
+          (when add-node-modules-path-debug
+            (message (concat "added " path  " to exec-path"))))
+      (when add-node-modules-path-debug
+        (message (concat "node_modules not found in " root))))))
+
+;;;###autoload
+(defun set-up-tide-mode ()
+  (interactive)
+  (tide-setup)
+  (if company-mode (push 'company-tide company-backends))
+  (eldoc-mode +1)
+  (tide-hl-identifier-mode +1)
+  )

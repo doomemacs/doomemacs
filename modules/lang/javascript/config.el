@@ -11,7 +11,7 @@
         js2-mode-show-parse-errors nil
         js2-mode-show-strict-warnings nil)
 
-  (add-hook! 'js2-mode-hook #'(flycheck-mode rainbow-delimiters-mode))
+  (add-hook! 'js2-mode-hook #'(flycheck-mode set-up-tide-mode add-node-modules-path rainbow-delimiters-mode))
 
   (set! :repl 'js2-mode #'+javascript/repl)
   (set! :electric 'js2-mode :chars '(?\} ?\) ?.))
@@ -95,20 +95,6 @@
       ("Reformat buffer (eslint_d)"      :exec eslintd-fix :region nil :when (fboundp 'eslintd-fix)))
     :prompt "Refactor: "))
 
-
-(def-package! tern
-  :hook (js2-mode . tern-mode)
-  :config
-  (advice-add #'tern-project-dir :override #'doom-project-root))
-
-
-(def-package! company-tern
-  :when (featurep! :completion company)
-  :after tern
-  :config
-  (set! :company-backend 'js2-mode '(company-tern)))
-
-
 (def-package! rjsx-mode
   :commands rjsx-mode
   :mode "\\.jsx$"
@@ -132,6 +118,8 @@
         "<" nil
         "C-d" nil)
   (add-hook! rjsx-mode
+
+    #'(flycheck-mode set-up-tide-mode add-node-modules-path rainbow-delimiters-mode)
     ;; jshint doesn't really know how to deal with jsx
     (push 'javascript-jshint flycheck-disabled-checkers)))
 

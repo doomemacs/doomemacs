@@ -8,13 +8,13 @@
 (package! js2-refactor)
 (package! rjsx-mode)
 (package! nodejs-repl)
-(package! tern)
 (package! web-beautify)
+(package! tide)
 (package! skewer-mode)
 (package! eslintd-fix)
 
 (when (featurep! :completion company)
-  (package! company-tern))
+  (package! company-tide))
 
 (when (featurep! :feature lookup)
   (package! xref-js2))
