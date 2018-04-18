@@ -464,24 +464,26 @@ segment.")
 (def-modeline-segment! selection-info
   "Information about the current selection, such as how many characters and
 lines are selected, or the NxM dimensions of a block selection."
-  (when (and (active) (or mark-active (eq evil-state 'visual)))
-    (let ((reg-beg (region-beginning))
-          (reg-end (region-end)))
+  (when (and mark-active (active))
+    (cl-destructuring-bind (beg . end)
+        (if (eq evil-state 'visual)
+            (cons evil-visual-beginning evil-visual-end)
+          (cons (region-beginning) (region-end)))
       (propertize
-       (let ((lines (count-lines reg-beg (min (1+ reg-end) (point-max)))))
+       (let ((lines (count-lines beg (min (1+ end) (point-max)))))
          (concat (cond ((or (bound-and-true-p rectangle-mark-mode)
                             (eq 'block evil-visual-selection))
-                        (let ((cols (abs (- (doom-column reg-end)
-                                            (doom-column reg-beg)))))
+                        (let ((cols (abs (- (doom-column end)
+                                            (doom-column beg)))))
                           (format "%dx%dB" lines cols)))
                        ((eq 'line evil-visual-selection)
                         (format "%dL" lines))
                        ((> lines 1)
-                        (format "%dC %dL" (- (1+ reg-end) reg-beg) lines))
+                        (format "%dC %dL" (- (1+ end) beg) lines))
                        (t
-                        (format "%dC" (- (1+ reg-end) reg-beg))))
+                        (format "%dC" (- (1+ end) beg))))
                  (when +doom-modeline-enable-word-count
-                   (format " %dW" (count-words reg-beg reg-end)))))
+                   (format " %dW" (count-words beg end)))))
        'face 'doom-modeline-highlight))))
 
 
