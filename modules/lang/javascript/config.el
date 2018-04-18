@@ -11,7 +11,8 @@
         js2-mode-show-parse-errors nil
         js2-mode-show-strict-warnings nil)
 
-  (add-hook! 'js2-mode-hook #'(flycheck-mode rainbow-delimiters-mode))
+  (add-hook! 'js2-mode-hook
+    #'(flycheck-mode rainbow-delimiters-mode +javascript|add-node-modules-path))
 
   (set! :repl 'js2-mode #'+javascript/repl)
   (set! :electric 'js2-mode :chars '(?\} ?\) ?.))
@@ -43,6 +44,17 @@
         :localleader
         :nr "r" #'+javascript/refactor-menu
         :n  "S" #'+javascript/skewer-this-buffer))
+
+
+(def-package! tide
+  :hook (js2-mode . tide-setup)
+  :config
+  (set! :company 'js2-mode 'company-tide)
+  (set! :lookup 'js2-mode
+    :definition #'tide-jump-to-definition
+    :references #'tide-references
+    :documentation #'tide-documentation-at-point)
+  (add-hook! 'tide-mode-hook #'(eldoc-mode tide-hl-identifier-mode)))
 
 
 ;; A find-{definition,references} backend for js2-mode. NOTE The xref API is
@@ -95,20 +107,6 @@
       ("Reformat buffer (eslint_d)"      :exec eslintd-fix :region nil :when (fboundp 'eslintd-fix)))
     :prompt "Refactor: "))
 
-
-(def-package! tern
-  :hook (js2-mode . tern-mode)
-  :config
-  (advice-add #'tern-project-dir :override #'doom-project-root))
-
-
-(def-package! company-tern
-  :when (featurep! :completion company)
-  :after tern
-  :config
-  (set! :company-backend 'js2-mode '(company-tern)))
-
-
 (def-package! rjsx-mode
   :commands rjsx-mode
   :mode "\\.jsx$"
@@ -132,6 +130,8 @@
         "<" nil
         "C-d" nil)
   (add-hook! rjsx-mode
+
+    #'(flycheck-mode set-up-tide-mode add-node-modules-path rainbow-delimiters-mode)
     ;; jshint doesn't really know how to deal with jsx
     (push 'javascript-jshint flycheck-disabled-checkers)))
 

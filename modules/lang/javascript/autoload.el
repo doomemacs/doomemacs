@@ -74,3 +74,19 @@ Run this for any buffer you want to skewer."
       (if skewer-css-mode (skewer-css-mode -1))
       (if skewer-html-mode (skewer-html-mode -1)))))
 
+;;;###autoload
+(defun +javascript|add-node-modules-path ()
+  "Search the current buffer's parent directories for `node_modules/.bin`.
+If it's found, then add it to the `exec-path'."
+  (interactive)
+  (if-let* ((root (locate-dominating-file
+                   (or (buffer-file-name) default-directory)
+                   "node_modules"))
+            (path (expand-file-name "node_modules/.bin/" root)))
+      (progn
+        (make-local-variable 'exec-path)
+        (cl-pushnew path exec-path :test #'string=)
+        (when doom-debug-mode
+          (message "Added %s to exec-path" path)))
+    (when doom-debug-mode
+      (message "node_modules not found in %s" root))))
