@@ -37,15 +37,37 @@
         :n  "S" #'+javascript/skewer-this-buffer))
 
 
+(def-package! typescript-mode
+  :mode "\\.ts$"
+  :config
+  (add-hook 'typescript-mode-hook #'rainbow-delimiters-mode)
+  (set! :electric 'typescript-mode :chars '(?\} ?\)) :words '("||" "&&")))
+
+
 (def-package! tide
   :hook (js2-mode . tide-setup)
+  :hook (typescript-mode . tide-setup)
+  :init
+  (defun +javascript|init-tide-in-web-mode ()
+    (when (string= (file-name-extension (or buffer-file-name "")) "tsx")
+      (tide-setup)))
+  (add-hook 'web-mode-hook #'+javascript|init-tide-in-web-mode)
   :config
-  (set! :company 'js2-mode 'company-tide)
-  (set! :lookup 'js2-mode
+  (set! :company '(js2-mode typescript-mode) 'company-tide)
+  (set! :lookup '(js2-mode typescript-mode)
     :definition #'tide-jump-to-definition
     :references #'tide-references
     :documentation #'tide-documentation-at-point)
-  (add-hook! 'tide-mode-hook #'(eldoc-mode tide-hl-identifier-mode)))
+  (add-hook! 'tide-mode-hook #'(eldoc-mode tide-hl-identifier-mode))
+
+  (def-menu! +javascript/refactor-menu
+    "TODO"
+    '(("rename symbol"              :exec tide-rename-symbol)
+      ("restart tide server"        :exec tide-restart-server)))
+
+  (map! :map tide-mode-map
+        :localleader
+        :n "r" #'+javascript/refactor-menu))
 
 
 ;; A find-{definition,references} backend for js2-mode. NOTE The xref API is
