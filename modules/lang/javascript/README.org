@@ -2,7 +2,7 @@
 
 This module adds Javascript support.
 
-+ Code completion (tern)
++ Code completion (tide)
 + REPL support (nodejs-repl)
 + Refactoring commands (js2-refactor)
 + Syntax checking (flycheck)
@@ -11,11 +11,10 @@ This module adds Javascript support.
 + Jump-to-definitions and references support (xref)
 
 * Table of Contents :TOC:
-- [[#install][Install]]
-  - [[#node--npm][Node & NPM]]
-  - [[#dependencies][Dependencies]]
-- [[#appendix][Appendix]]
-  - [[#commands][Commands]]
+- [[Install][Install]]
+  - [[Node & NPM][Node & NPM]]
+- [[Appendix][Appendix]]
+  - [[Commands][Commands]]
 
 * Install
 ** Node & NPM
@@ -29,13 +28,6 @@ brew install node
 *** Arch Linux
 #+BEGIN_SRC sh :dir /sudo:: :tangle (if (doom-system-os 'arch) "yes")
 sudo pacman --needed --noconfirm -S nodejs npm
-#+END_SRC
-
-** Dependencies
-This module optionally requires ~tern~ for code completion.
-
-#+BEGIN_SRC sh
-npm -g install tern
 #+END_SRC
 
 * Appendix
