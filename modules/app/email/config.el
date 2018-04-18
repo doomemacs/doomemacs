@@ -28,6 +28,9 @@ default/fallback account."
      (let ((account-vars ,letvars))
        (when-let* ((address (cdr (assq 'user-mail-address account-vars))))
          (cl-pushnew address mu4e-user-mail-address-list :test #'equal))
+       (setq mu4e-contexts
+             (cl-delete-if (lambda (c) (string= (mu4e-context-name c) ,label))
+                           mu4e-contexts))
        (let ((context (make-mu4e-context
                        :name ,label
                        :enter-func (lambda () (mu4e-message "Switched to %s" ,label))
@@ -39,8 +42,8 @@ default/fallback account."
                                             (mu4e-message-field msg :maildir))))
                        :vars ,letvars)))
          (push context mu4e-contexts)
-         ,(when default-p
-            `(setq-default mu4e-context-current context))))))
+         ,(if default-p `(setq-default mu4e-context-current context))
+         context))))
 
 
 ;;
