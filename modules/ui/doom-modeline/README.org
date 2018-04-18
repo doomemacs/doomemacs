@@ -37,8 +37,8 @@ Some might want my modeline without the DOOM config altogether. I've tried to ma
 + Replace ~def-package!~ calls with ~use-package~.
 + Replace ~doom-project-root~ calls with ~projectile-project-root~.
 + The ~+doom-modeline--make-xpm~ function is memoized with the ~def-memoized!~ macro. Change ~def-memoized!~ to ~defun~.
-+ Copy the ~add-hook!~ macro definition from [[/master/core/core-lib.el][core/core-lib.el]].
-+ Copy the following macros and functions from [[/master/core/core-ui.el][core/core-ui.el]]:
++ Copy the ~add-hook!~ macro definition from [[/core/core-lib.el][core/core-lib.el]].
++ Copy the following macros and functions from [[/core/core-ui.el][core/core-ui.el]]:
   + ~def-modeline-segment!~
   + ~def-modeline!~
   + ~doom--prepare-modeline-segments~
