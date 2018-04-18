@@ -361,7 +361,7 @@ end of the workspace list."
                  (index (cl-position current-name persps)))
             (when (= perspc 1)
               (user-error "No other workspaces"))
-            (+workspace/switch-to (% (+ index n) perspc))
+            (+workspace/switch-to (% (+ index n perspc) perspc))
             (unless (called-interactively-p 'interactive)
               (+workspace/display)))
         ('user-error (+workspace-error (cadr ex) t))
