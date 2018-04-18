@@ -23,16 +23,21 @@
   ;; Ein uses request to store http cookies. Store them in the cache dir.
   (setq request-storage-directory (concat doom-cache-dir "/request"))
   ;; Auto complete with company
-  (set! :company-backend '(ein:notebook-multilang-mode ein:notebook-python-mode ein:notebook-plain-mode)
+  (if (featurep 'company)
+      (setq ein:completion-backend 'ein:use-company-backend))
+  (set! :company-backend
+    '(ein:notebook-multilang-mode
+      ein:notebook-python-mode
+      ein:notebook-plain-mode)
     'ein:company-backend)
   :config
   ;; Manually load the autoloads of EIN. This takes time...
   (load "ein-loaddefs.el" nil t t)
   (setq
-   ;; Slide images into rows so that we can navigate buffers with images more easily
+   ;; Slice images into rows so that we can navigate buffers with images more easily
    ein:slice-image t
    ein:jupyter-default-notebook-directory +ein-notebook-dir
-   ein:jupyter-default-server-command "/usr/bin/jupyter"
+   ein:jupyter-default-server-command "jupyter"
    ein:jupyter-server-args '("--no-browser")
    ein:notebook-modes
    '(ein:notebook-multilang-mode ein:notebook-python-mode ein:notebook-plain-mode))
