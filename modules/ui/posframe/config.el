@@ -7,15 +7,19 @@
   (add-hook 'doom-escape-hook #'+posframe|delete-on-escape))
 
 
-(def-package! company-childframe
-  :when (featurep! :completion company)
+(def-package! company-box
   :when EMACS26+
-  :after company
+  :hook (company-mode . company-box-mode)
   :config
-  (setq company-childframe-notification nil)
-  (company-childframe-mode 1)
-  (after! desktop
-    (push '(company-childframe-mode . nil) desktop-minor-mode-table)))
+  (setq company-frontends (delq 'company-pseudo-tooltip-frontend company-frontends)
+        company-box-icons-elisp
+        (list (concat (all-the-icons-material "functions") " ")
+              (concat (all-the-icons-material "check_circle") " ")
+              (concat (all-the-icons-material "stars") " ")
+              (concat (all-the-icons-material "format_paint") " "))
+        company-box-icons-unknown (concat (all-the-icons-material "find_in_page") " ")
+        company-box-backends-colors nil
+        company-box-icons-yasnippet (concat (all-the-icons-material "short_text") " ")))
 
 
 (def-package! ivy-posframe

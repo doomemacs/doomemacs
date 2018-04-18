@@ -3,6 +3,6 @@
 
 (when EMACS26+
   (when (featurep! :completion company)
-    (package! company-childframe))
+    (package! company-box))
   (when (featurep! :completion ivy)
     (package! ivy-posframe)))
