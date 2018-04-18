@@ -1,0 +1,39 @@
+#+TITLE: :tools ein
+
+* EIN -- Emacs IPython Notebook
+
+Tool to work with Jupyter notebooks within emacs.
+
+* Table of Contents :TOC:
+- [[EIN -- Emacs IPython Notebook][EIN -- Emacs IPython Notebook]]
+- [[Install][Install]]
+- [[Usage][Usage]]
+- [[Configuration][Configuration]]
+
+* Install
+Add =:tool ein= to your ~doom!~ call in your private ~init.el~.
+
+* Usage
+Three functions are available to start EIN:
+ 1. ~ein:jupyter-server-start~ --- Start a jupyter server within emacs
+ 2. ~ein:notebooklist-login~ --- Login to an existing jupyter server
+ 3. ~ein:notebooklist-open~ --- Open the list of jupyter notebooks
+
+These functions do not have default key bindings.
+
+When ~ein:jupyter-server-start~ is called, after successfully finishing,
+~ein:notebooklist-login~ and ~ein:notebooklist-open~ will be automatically
+called.
+
+When in the ~Notebook List~ buffer, the key ~o~ calls ~ace-link~ to speed up the
+process of selecting links in the buffer.
+
+If ~company-mode~ is enabled as a module, ~company-ein~ will be used for
+completion purposes.
+
+* Configuration
+Specify the default directory where EIN searches for notebooks using:
+
+~(set! :ein-notebook-dir "~/my-notebooks")~
+
+
