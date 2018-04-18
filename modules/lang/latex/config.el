@@ -18,12 +18,8 @@
   "Sets the directory where AUCTeX will search for PDFs associated to BibTeX references."
   `(setq +latex-bibtex-dir ,dir))
 
-
-(after! smartparens-latex
-  (map-delete sp-pairs 'LaTeX-mode)
-  (map-delete sp-pairs 'latex-mode)
-  (map-delete sp-pairs 'tex-mode)
-  (map-delete sp-pairs 'plain-tex-mode))
+;; sp's default latex rules are obnoxious, so disable them
+(provide 'smartparens-latex)
 
 
 ;;
