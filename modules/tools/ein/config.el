@@ -11,8 +11,11 @@
 (def-package! ein
   :commands (ein:notebooklist-open ein:notebooklist-login ein:jupyter-server-start)
   :init
-  (set! :popup "\\*ein:*" :ignore)
-  (set! :popup "\\*ein:notebooklist *" '((side . left)) '((size . 40) (select)))
+  (push (lambda (buf) (string-match-p "^\\*ein: .*" (buffer-name buf)))
+        doom-real-buffer-functions)
+  (set! :popup "\\*ein: .*" :ignore)
+  (set! :popup "\\*ein:tb .*" '((side . bottom) (size . 0.3)) '((quit . t) (transient) (select)))
+  (set! :popup "\\*ein:notebooklist *" '((side . left) (size . 50)) '((select)))
   ;; Ace-link on notebook list buffers
   (add-hook! 'ein:notebooklist-mode-hook
     (map! :map ein:notebooklist-mode-map
