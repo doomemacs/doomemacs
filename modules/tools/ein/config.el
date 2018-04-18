@@ -23,13 +23,14 @@
   ;; Ein uses request to store http cookies. Store them in the cache dir.
   (setq request-storage-directory (concat doom-cache-dir "/request"))
   ;; Auto complete with company
-  (if (featurep 'company)
-      (setq ein:completion-backend 'ein:use-company-backend))
-  (set! :company-backend
-    '(ein:notebook-multilang-mode
-      ein:notebook-python-mode
-      ein:notebook-plain-mode)
-    'ein:company-backend)
+  (when (featurep! :completion company)
+    (setq ein:completion-backend 'ein:use-company-backend)
+    (set! :company-backend
+      '(ein:notebook-multilang-mode
+        ein:notebook-python-mode
+        ein:notebook-plain-mode)
+      'ein:company-backend))
+
   :config
   ;; Manually load the autoloads of EIN. This takes time...
   (load "ein-loaddefs.el" nil t t)
