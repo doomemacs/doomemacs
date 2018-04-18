@@ -10,6 +10,7 @@
 (package! nodejs-repl)
 (package! web-beautify)
 (package! tide)
+(package! typescript-mode)
 (package! skewer-mode)
 (package! eslintd-fix)
 
