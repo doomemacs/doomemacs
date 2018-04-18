@@ -117,7 +117,7 @@ Possible values:
   (add-hook 'window-configuration-change-hook #'+doom-dashboard|resize)
   (add-hook 'kill-buffer-query-functions #'+doom-dashboard|reload-on-kill)
   (add-hook 'doom-after-switch-buffer-hook #'+doom-dashboard|reload-on-kill)
-  (when (daemonp)
+  (unless (daemonp)
     (add-hook 'after-make-frame-functions #'+doom-dashboard|make-frame))
   ;; `persp-mode' integration: update `default-directory' when switching
   (add-hook 'persp-created-functions #'+doom-dashboard|record-project)
