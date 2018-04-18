@@ -23,9 +23,8 @@
 
 
 (def-package! ivy-posframe
-  :when (featurep! :completion ivy)
   :when EMACS26+
-  :after ivy
+  :hook (ivy-mode . ivy-posframe-enable)
   :preface
   ;; This function searches the entire `obarray' just to populate
   ;; `ivy-display-functions-props'. There are 15k entries in mine! This is
@@ -48,8 +47,6 @@
   ;; posframe doesn't work well with async sources
   (dolist (fn '(swiper counsel-rg counsel-ag counsel-pt counsel-grep counsel-git-grep))
     (push (cons fn nil) ivy-display-functions-alist))
-
-  (ivy-posframe-enable)
 
   (setq ivy-height 16
         ivy-fixed-height-minibuffer nil
