@@ -7,9 +7,10 @@
   (unless noninteractive
     (pdf-tools-install))
 
-  (map! :map pdf-view-mode-map "q" #'kill-this-buffer)
+  (map! :map pdf-view-mode-map
+        "q" #'kill-this-buffer
+        doom-leader-key nil)
 
-  ;; Fit pages to screen by default
   (setq-default pdf-view-display-size 'fit-page)
   ;; Turn off cua so copy works
   (add-hook! 'pdf-view-mode-hook (cua-mode 0))
