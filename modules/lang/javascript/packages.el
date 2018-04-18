@@ -13,9 +13,6 @@
 (package! skewer-mode)
 (package! eslintd-fix)
 
-(when (featurep! :completion company)
-  (package! company-tide))
-
 (when (featurep! :feature lookup)
   (package! xref-js2))
 
