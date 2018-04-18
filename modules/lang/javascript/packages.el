@@ -4,15 +4,15 @@
 ;; requires node npm tern js-beautify eslint eslint-plugin-react
 
 (package! coffee-mode)
+(package! eslintd-fix)
 (package! js2-mode)
 (package! js2-refactor)
-(package! rjsx-mode)
 (package! nodejs-repl)
-(package! web-beautify)
+(package! rjsx-mode)
+(package! skewer-mode)
 (package! tide)
 (package! typescript-mode)
-(package! skewer-mode)
-(package! eslintd-fix)
+(package! web-beautify)
 
 (when (featurep! :feature lookup)
   (package! xref-js2))
