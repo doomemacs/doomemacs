@@ -140,7 +140,7 @@
         "<" nil
         "C-d" nil)
   (add-hook! rjsx-mode
-    #'(flycheck-mode set-up-tide-mode add-node-modules-path rainbow-delimiters-mode)
+    #'(flycheck-mode rainbow-delimiters-mode +javascript|add-node-modules-path)
     ;; jshint doesn't really know how to deal with jsx
     (push 'javascript-jshint flycheck-disabled-checkers)))
 
