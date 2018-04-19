@@ -55,7 +55,7 @@
     :definition #'tide-jump-to-definition
     :references #'tide-references
     :documentation #'tide-documentation-at-point)
-  (add-hook! 'tide-mode-hook #'(eldoc-mode tide-hl-identifier-mode))
+  (add-hook 'tide-mode-hook #'eldoc-mode)
 
   (def-menu! +javascript/refactor-menu
     "TODO"
