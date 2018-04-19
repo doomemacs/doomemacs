@@ -44,14 +44,16 @@
 (def-package! tide
   :hook (js2-mode . tide-setup)
   :hook (typescript-mode . tide-setup)
+  :hook (rjsx-mode . tide-setup)
   :init
   (defun +javascript|init-tide-in-web-mode ()
     (when (string= (file-name-extension (or buffer-file-name "")) "tsx")
       (tide-setup)))
   (add-hook 'web-mode-hook #'+javascript|init-tide-in-web-mode)
   :config
-  (set! :company '(js2-mode typescript-mode) 'company-tide)
-  (set! :lookup '(js2-mode typescript-mode)
+
+  (set! :company '(js2-mode rjsx-mode typescript-mode) 'company-tide)
+  (set! :lookup '(js2-mode rjsx-mode typescript-mode)
     :definition #'tide-jump-to-definition
     :references #'tide-references
     :documentation #'tide-documentation-at-point)
@@ -147,7 +149,8 @@
         "<" nil
         "C-d" nil)
   (add-hook! rjsx-mode
-    #'(flycheck-mode set-up-tide-mode add-node-modules-path rainbow-delimiters-mode)
+    #'(flycheck-mode +javascript|add-node-modules-path rainbow-delimiters-mode)
+
     ;; jshint doesn't really know how to deal with jsx
     (push 'javascript-jshint flycheck-disabled-checkers)))
 
