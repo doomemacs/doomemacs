@@ -78,7 +78,6 @@ Run this for any buffer you want to skewer."
 (defun +javascript|add-node-modules-path ()
   "Search the current buffer's parent directories for `node_modules/.bin`.
 If it's found, then add it to the `exec-path'."
-  (interactive)
   (if-let* ((root (locate-dominating-file
                    (or (buffer-file-name) default-directory)
                    "node_modules"))
@@ -90,3 +89,21 @@ If it's found, then add it to the `exec-path'."
           (message "Added %s to exec-path" path)))
     (when doom-debug-mode
       (message "node_modules not found in %s" root))))
+
+;;;###autoload
+(defun +javascript|cleanup-tide-processes ()
+  "TODO"
+  (when tide-mode
+    (unless (cl-loop with root = (tide-project-root)
+                     for buf in (delq (current-buffer) (buffer-list))
+                     if (buffer-local-value 'tide-mode buf)
+                     collect buf)
+      (kill-process (tide-current-server)))))
+
+;;;###autoload
+(defun +javascript*tide-project-root ()
+  "Resolve to `doom-project-root' if `tide-project-root' fails."
+  (or tide-project-root
+      (or (locate-dominating-file default-directory "tsconfig.json")
+          (locate-dominating-file default-directory "jsconfig.json"))
+      (doom-project-root 'nocache)))
