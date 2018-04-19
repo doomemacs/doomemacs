@@ -9,9 +9,14 @@
         js-chain-indent t
         ;; let flycheck handle this
         js2-mode-show-parse-errors nil
-        js2-mode-show-strict-warnings nil)
+        js2-mode-show-strict-warnings nil
+        ;; Flycheck provides these features, so disable them: conflicting with
+        ;; the eslint settings.
+        js2-strict-trailing-comma-warning nil
+        js2-strict-missing-semi-warning nil)
 
-  (add-hook! 'js2-mode-hook #'(flycheck-mode set-up-tide-mode add-node-modules-path rainbow-delimiters-mode))
+  (add-hook! 'js2-mode-hook
+    #'(flycheck-mode rainbow-delimiters-mode +javascript|add-node-modules-path))
 
   (set! :repl 'js2-mode #'+javascript/repl)
   (set! :electric 'js2-mode :chars '(?\} ?\) ?.))
@@ -23,26 +28,51 @@
   (sp-with-modes '(js2-mode rjsx-mode)
     (sp-local-pair "/*" "*/" :post-handlers '(("| " "SPC"))))
 
-  ;; If it's available globally, use eslint_d
-  (setq flycheck-javascript-eslint-executable (executable-find "eslint_d"))
-
-  (defun +javascript|init-flycheck-eslint ()
-    "Favor local eslint over global installs and configure flycheck for eslint."
-    (when (derived-mode-p 'js-mode)
-      (when-let* ((exec-path (list (doom-project-expand "node_modules/.bin")))
-                  (eslint (executable-find "eslint")))
-        (setq-local flycheck-javascript-eslint-executable eslint))
-      (when (flycheck-find-checker-executable 'javascript-eslint)
-        ;; Flycheck has it's own trailing command and semicolon warning that was
-        ;; conflicting with the eslint settings.
-        (setq-local js2-strict-trailing-comma-warning nil)
-        (setq-local js2-strict-missing-semi-warning nil))))
-  (add-hook 'flycheck-mode-hook #'+javascript|init-flycheck-eslint)
-
   (map! :map js2-mode-map
         :localleader
         :nr "r" #'+javascript/refactor-menu
         :n  "S" #'+javascript/skewer-this-buffer))
+
+
+(def-package! typescript-mode
+  :mode "\\.ts$"
+  :config
+  (add-hook 'typescript-mode-hook #'rainbow-delimiters-mode)
+  (set! :electric 'typescript-mode :chars '(?\} ?\)) :words '("||" "&&")))
+
+
+(def-package! tide
+  :hook (js2-mode . tide-setup)
+  :hook (typescript-mode . tide-setup)
+  :hook (rjsx-mode . tide-setup)
+  :init
+  (defun +javascript|init-tide-in-web-mode ()
+    (when (string= (file-name-extension (or buffer-file-name "")) "tsx")
+      (tide-setup)))
+  (add-hook 'web-mode-hook #'+javascript|init-tide-in-web-mode)
+  :config
+  (set! :company '(js2-mode rjsx-mode typescript-mode) 'company-tide)
+  (set! :lookup '(js2-mode rjsx-mode typescript-mode)
+    :definition #'tide-jump-to-definition
+    :references #'tide-references
+    :documentation #'tide-documentation-at-point)
+  (add-hook 'tide-mode-hook #'eldoc-mode)
+
+  ;; resolve to `doom-project-root' if `tide-project-root' fails
+  (advice-add #'tide-project-root :override #'+javascript*tide-project-root)
+
+  ;; cleanup tsserver when no tide buffers are left
+  (add-hook! 'tide-mode-hook
+    (add-hook 'kill-buffer-hook #'+javascript|cleanup-tide-processes nil t))
+
+  (def-menu! +javascript/refactor-menu
+    "TODO"
+    '(("rename symbol"              :exec tide-rename-symbol)
+      ("restart tide server"        :exec tide-restart-server)))
+
+  (map! :map tide-mode-map
+        :localleader
+        :n "r" #'+javascript/refactor-menu))
 
 
 ;; A find-{definition,references} backend for js2-mode. NOTE The xref API is
@@ -118,8 +148,7 @@
         "<" nil
         "C-d" nil)
   (add-hook! rjsx-mode
-
-    #'(flycheck-mode set-up-tide-mode add-node-modules-path rainbow-delimiters-mode)
+    #'(flycheck-mode +javascript|add-node-modules-path rainbow-delimiters-mode)
     ;; jshint doesn't really know how to deal with jsx
     (push 'javascript-jshint flycheck-disabled-checkers)))
 
