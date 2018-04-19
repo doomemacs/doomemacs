@@ -10,8 +10,8 @@
         ;; let flycheck handle this
         js2-mode-show-parse-errors nil
         js2-mode-show-strict-warnings nil
-        ;; Flycheck provides these features, so disable them:
-        ;; conflicting with the eslint settings.
+        ;; Flycheck provides these features, so disable them: conflicting with
+        ;; the eslint settings.
         js2-strict-trailing-comma-warning nil
         js2-strict-missing-semi-warning nil)
 
@@ -140,7 +140,6 @@
         "<" nil
         "C-d" nil)
   (add-hook! rjsx-mode
-
     #'(flycheck-mode set-up-tide-mode add-node-modules-path rainbow-delimiters-mode)
     ;; jshint doesn't really know how to deal with jsx
     (push 'javascript-jshint flycheck-disabled-checkers)))
