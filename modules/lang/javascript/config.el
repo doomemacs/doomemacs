@@ -57,6 +57,13 @@
     :documentation #'tide-documentation-at-point)
   (add-hook 'tide-mode-hook #'eldoc-mode)
 
+  ;; resolve to `doom-project-root' if `tide-project-root' fails
+  (advice-add #'tide-project-root :override #'+javascript*tide-project-root)
+
+  ;; cleanup tsserver when no tide buffers are left
+  (add-hook! 'tide-mode-hook
+    (add-hook 'kill-buffer-hook #'+javascript|cleanup-tide-processes nil t))
+
   (def-menu! +javascript/refactor-menu
     "TODO"
     '(("rename symbol"              :exec tide-rename-symbol)
