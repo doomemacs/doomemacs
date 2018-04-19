@@ -28,9 +28,6 @@
   (sp-with-modes '(js2-mode rjsx-mode)
     (sp-local-pair "/*" "*/" :post-handlers '(("| " "SPC"))))
 
-  ;; If it's available globally, use eslint_d
-  (setq flycheck-javascript-eslint-executable (executable-find "eslint_d"))
-
   (map! :map js2-mode-map
         :localleader
         :nr "r" #'+javascript/refactor-menu
