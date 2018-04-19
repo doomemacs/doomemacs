@@ -3,14 +3,16 @@
 (def-package! lua-mode
   :mode "\\.lua$"
   :interpreter "lua"
+  :init
+  ;; sp's default lua rules are obnoxious, so disable them. Use snippets
+  ;; instead!
+  (provide 'smartparens-lua)
   :config
   (add-hook 'lua-mode-hook #'flycheck-mode)
 
   (set! :lookup 'lua-mode :documentation 'lua-search-documentation)
   (set! :electric 'lua-mode :words '("else" "end"))
   (set! :repl 'lua-mode #'+lua/repl)
-  ;; sp's lua-specific rules are obnoxious, so we disable them
-  (map-delete sp-pairs 'lua-mode)
 
   (def-menu! +lua/build-menu
     "Build/compilation commands for `lua-mode' buffers."

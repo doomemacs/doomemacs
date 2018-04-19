@@ -51,6 +51,7 @@
       (tide-setup)))
   (add-hook 'web-mode-hook #'+javascript|init-tide-in-web-mode)
   :config
+
   (set! :company '(js2-mode rjsx-mode typescript-mode) 'company-tide)
   (set! :lookup '(js2-mode rjsx-mode typescript-mode)
     :definition #'tide-jump-to-definition
@@ -149,6 +150,7 @@
         "C-d" nil)
   (add-hook! rjsx-mode
     #'(flycheck-mode +javascript|add-node-modules-path rainbow-delimiters-mode)
+
     ;; jshint doesn't really know how to deal with jsx
     (push 'javascript-jshint flycheck-disabled-checkers)))
 

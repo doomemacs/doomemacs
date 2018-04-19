@@ -3,10 +3,11 @@
 (def-package! elixir-mode
   :mode "\\.exs?$"
   :mode "\\.elixir2$"
+  :init
+  ;; sp's default elixir rules are obnoxious, so disable them
+  (provide 'smartparens-elixir)
   :config
-  ;; disable standard config; more disruptive than it needs to be
-  (map-delete sp-pairs 'elixir-mode)
-  ;; only complete the basics
+  ;; ...and only complete the basics
   (sp-with-modes 'elixir-mode
     (sp-local-pair "do" "end"
                    :when '(("RET" "<evil-ret>"))

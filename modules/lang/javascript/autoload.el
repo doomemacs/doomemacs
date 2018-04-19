@@ -75,30 +75,35 @@ Run this for any buffer you want to skewer."
       (if skewer-html-mode (skewer-html-mode -1)))))
 
 ;;;###autoload
-(defun add-node-modules-path ()
+(defun +javascript|add-node-modules-path ()
   "Search the current buffer's parent directories for `node_modules/.bin`.
 If it's found, then add it to the `exec-path'."
-(defvar add-node-modules-path-debug nil)
-  (interactive)
-  (let* ((root (locate-dominating-file
-                (or (buffer-file-name) default-directory)
-                "node_modules"))
-         (path (and root
-                    (expand-file-name "node_modules/.bin/" root))))
-    (if root
-        (progn
-          (make-local-variable 'exec-path)
-          (add-to-list 'exec-path path)
-          (when add-node-modules-path-debug
-            (message (concat "added " path  " to exec-path"))))
-      (when add-node-modules-path-debug
-        (message (concat "node_modules not found in " root))))))
+  (if-let* ((root (locate-dominating-file
+                   (or (buffer-file-name) default-directory)
+                   "node_modules"))
+            (path (expand-file-name "node_modules/.bin/" root)))
+      (progn
+        (make-local-variable 'exec-path)
+        (cl-pushnew path exec-path :test #'string=)
+        (when doom-debug-mode
+          (message "Added %s to exec-path" path)))
+    (when doom-debug-mode
+      (message "node_modules not found in %s" root))))
 
 ;;;###autoload
-(defun set-up-tide-mode ()
-  (interactive)
-  (tide-setup)
-  (if company-mode (push 'company-tide company-backends))
-  (eldoc-mode +1)
-  (tide-hl-identifier-mode +1)
-  )
+(defun +javascript|cleanup-tide-processes ()
+  "TODO"
+  (when tide-mode
+    (unless (cl-loop with root = (tide-project-root)
+                     for buf in (delq (current-buffer) (buffer-list))
+                     if (buffer-local-value 'tide-mode buf)
+                     collect buf)
+      (kill-process (tide-current-server)))))
+
+;;;###autoload
+(defun +javascript*tide-project-root ()
+  "Resolve to `doom-project-root' if `tide-project-root' fails."
+  (or tide-project-root
+      (or (locate-dominating-file default-directory "tsconfig.json")
+          (locate-dominating-file default-directory "jsconfig.json"))
+      (doom-project-root 'nocache)))
