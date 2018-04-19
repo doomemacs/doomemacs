@@ -66,32 +66,12 @@
     (add-hook 'kill-buffer-hook #'+javascript|cleanup-tide-processes nil t))
 
   (def-menu! +javascript/refactor-menu
-    "TODO"
-    '(("rename symbol"              :exec tide-rename-symbol)
-      ("restart tide server"        :exec tide-restart-server)))
-
-  (map! :map tide-mode-map
-        :localleader
-        :n "r" #'+javascript/refactor-menu))
-
-
-(def-package! nodejs-repl :commands nodejs-repl)
-
-
-(def-package! js2-refactor
-  :commands
-  (js2r-extract-function js2r-extract-method js2r-introduce-parameter
-   js2r-localize-parameter js2r-expand-object js2r-contract-object
-   js2r-expand-function js2r-contract-function js2r-expand-array
-   js2r-contract-array js2r-wrap-buffer-in-iife js2r-inject-global-in-iife
-   js2r-add-to-globals-annotation js2r-extract-var js2r-inline-var
-   js2r-rename-var js2r-var-to-this js2r-arguments-to-object js2r-ternary-to-if
-   js2r-split-var-declaration js2r-split-string js2r-unwrap js2r-log-this
-   js2r-debug-this js2r-forward-slurp js2r-forward-barf)
-  :init
-  (def-menu! +javascript/refactor-menu
     "Refactoring commands for `js2-mode' buffers."
-    '(("Extract into function"           :exec js2r-extract-function          :region t)
+    '(("Tide: restart server"            :exec tide-restart-server   :when (bound-and-true-p tide-mode))
+      ("Tide: reformat buffer/region"    :exec tide-reformat         :when (bound-and-true-p tide-mode))
+      ("Rename symbol"                   :exec tide-rename-symbol    :when (bound-and-true-p tide-mode) :region nil)
+      ("Reformat buffer (eslint_d)"      :exec eslintd-fix           :when (bound-and-true-p eslintd-fix-mode) :region nil)
+      ("Extract into function"           :exec js2r-extract-function          :region t)
       ("Extract into method"             :exec js2r-extract-method            :region t)
       ("Introduce parameter to function" :exec js2r-introduce-parameter       :region t)
       ("Localize parameter"              :exec js2r-localize-parameter        :region nil)
@@ -114,9 +94,28 @@
       ("Split string"                    :exec js2r-split-string              :region nil)
       ("Unwrap"                          :exec js2r-unwrap                    :region t)
       ("Log this"                        :exec js2r-log-this)
-      ("Debug this"                      :exec js2r-debug-this)
-      ("Reformat buffer (eslint_d)"      :exec eslintd-fix :region nil :when (fboundp 'eslintd-fix)))
-    :prompt "Refactor: "))
+      ("Debug this"                      :exec js2r-debug-this))
+    :prompt "Refactor: ")
+
+  (map! :map tide-mode-map
+        :localleader
+        :n "r" #'+javascript/refactor-menu))
+
+
+(def-package! nodejs-repl :commands nodejs-repl)
+
+
+(def-package! js2-refactor
+  :commands
+  (js2r-extract-function js2r-extract-method js2r-introduce-parameter
+   js2r-localize-parameter js2r-expand-object js2r-contract-object
+   js2r-expand-function js2r-contract-function js2r-expand-array
+   js2r-contract-array js2r-wrap-buffer-in-iife js2r-inject-global-in-iife
+   js2r-add-to-globals-annotation js2r-extract-var js2r-inline-var
+   js2r-rename-var js2r-var-to-this js2r-arguments-to-object js2r-ternary-to-if
+   js2r-split-var-declaration js2r-split-string js2r-unwrap js2r-log-this
+   js2r-debug-this js2r-forward-slurp js2r-forward-barf))
+
 
 (def-package! rjsx-mode
   :commands rjsx-mode
