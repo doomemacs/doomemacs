@@ -242,9 +242,7 @@
         (:desc "notes" :prefix "n"
           :desc "Find file in notes"    :n  "n" #'+default/find-in-notes
           :desc "Browse notes"          :n  "N" #'+default/browse-notes
-          :desc "Org capture"           :n  "x" #'org-capture
-          :desc "Browse mode notes"     :n  "m" #'+org/browse-notes-for-major-mode
-          :desc "Browse project notes"  :n  "p" #'+org/browse-notes-for-project)
+          :desc "Org capture"           :n  "x" #'org-capture)
 
         (:desc "open" :prefix "o"
           :desc "Default browser"       :n  "b" #'browse-url-of-file
