@@ -1,5 +1,9 @@
 ;;; lang/javascript/config.el -*- lexical-binding: t; -*-
 
+;;
+;; Major modes
+;;
+
 (def-package! js2-mode
   :mode "\\.js$"
   :interpreter "node"
@@ -15,12 +19,9 @@
         js2-strict-trailing-comma-warning nil
         js2-strict-missing-semi-warning nil)
 
-  (add-hook! 'js2-mode-hook
-    #'(flycheck-mode rainbow-delimiters-mode +javascript|add-node-modules-path))
+  (add-hook! 'js2-mode-hook #'(flycheck-mode rainbow-delimiters-mode))
 
-  (set! :repl 'js2-mode #'+javascript/repl)
   (set! :electric 'js2-mode :chars '(?\} ?\) ?.))
-  (set! :lookup 'js2-mode :xref-backend #'xref-js2-xref-backend)
 
   ;; Conform switch-case indentation to js2 normal indent
   (defvaralias 'js-switch-indent-offset 'js2-basic-offset)
@@ -30,7 +31,6 @@
 
   (map! :map js2-mode-map
         :localleader
-        :nr "r" #'+javascript/refactor-menu
         :n  "S" #'+javascript/skewer-this-buffer))
 
 
@@ -41,9 +41,38 @@
   (set! :electric 'typescript-mode :chars '(?\} ?\)) :words '("||" "&&")))
 
 
+(def-package! rjsx-mode
+  :commands rjsx-mode
+  :mode "\\.jsx$"
+  :mode "components/.+\\.js$"
+  :init
+  (defun +javascript-jsx-file-p ()
+    (and buffer-file-name
+         (string= (file-name-extension buffer-file-name) "js")
+         (re-search-forward "\\(^\\s-*import React\\|\\( from \\|require(\\)[\"']react\\)"
+                            magic-mode-regexp-match-limit t)
+         (progn (goto-char (match-beginning 1))
+                (not (sp-point-in-string-or-comment)))))
+
+  (push (cons #'+javascript-jsx-file-p 'rjsx-mode) magic-mode-alist)
+  :config
+  (set! :electric 'rjsx-mode :chars '(?\} ?\) ?. ?>))
+  (add-hook! 'rjsx-mode-hook
+    ;; jshint doesn't know how to deal with jsx
+    (push 'javascript-jshint flycheck-disabled-checkers)))
+
+
+(def-package! coffee-mode
+  :mode "\\.coffee$"
+  :init (setq coffee-indent-like-python-mode t))
+
+
+;;
+;; Tools
+;;
+
 (def-package! tide
   :hook (js2-mode . tide-setup)
-  :hook (rjsx-mode . tide-setup)
   :hook (typescript-mode . tide-setup)
   :init
   (defun +javascript|init-tide-in-web-mode ()
@@ -51,7 +80,7 @@
       (tide-setup)))
   (add-hook 'web-mode-hook #'+javascript|init-tide-in-web-mode)
   :config
-  (set! :company '(js2-mode rjsx-mode typescript-mode) 'company-tide)
+  (set! :company '(js2-mode typescript-mode) 'company-tide)
   (set! :lookup '(js2-mode rjsx-mode typescript-mode)
     :definition #'tide-jump-to-definition
     :references #'tide-references
@@ -102,7 +131,10 @@
         :n "r" #'+javascript/refactor-menu))
 
 
-(def-package! nodejs-repl :commands nodejs-repl)
+(def-package! nodejs-repl
+  :commands nodejs-repl
+  :init
+  (set! :repl 'js2-mode #'+javascript/repl))
 
 
 (def-package! js2-refactor
@@ -117,39 +149,6 @@
    js2r-debug-this js2r-forward-slurp js2r-forward-barf))
 
 
-(def-package! rjsx-mode
-  :commands rjsx-mode
-  :mode "\\.jsx$"
-  :mode "components/.+\\.js$"
-  :init
-  (defun +javascript-jsx-file-p ()
-    (and buffer-file-name
-         (equal (file-name-extension buffer-file-name) "js")
-         (re-search-forward "\\(^\\s-*import React\\|\\( from \\|require(\\)[\"']react\\)"
-                            magic-mode-regexp-match-limit t)
-         (progn (goto-char (match-beginning 1))
-                (not (sp-point-in-string-or-comment)))))
-
-  (push (cons #'+javascript-jsx-file-p 'rjsx-mode) magic-mode-alist)
-
-  :config
-  (set! :electric 'rjsx-mode :chars '(?\} ?\) ?. ?>))
-
-  ;; disable electric keys (I use snippets and `emmet-mode' instead)
-  (map! :map rjsx-mode-map
-        "<" nil
-        "C-d" nil)
-  (add-hook! rjsx-mode
-    #'(flycheck-mode rainbow-delimiters-mode +javascript|add-node-modules-path)
-    ;; jshint doesn't really know how to deal with jsx
-    (push 'javascript-jshint flycheck-disabled-checkers)))
-
-
-(def-package! coffee-mode
-  :mode "\\.coffee$"
-  :init (setq coffee-indent-like-python-mode t))
-
-
 (def-package! web-beautify
   :commands web-beautify-js
   :init
@@ -160,10 +159,6 @@
   :commands (eslintd-fix-mode eslintd-fix))
 
 
-;;
-;; Skewer-mode
-;;
-
 (def-package! skewer-mode
   :commands (skewer-mode run-skewer)
   :config
@@ -172,6 +167,7 @@
         :n "sE" #'skewer-eval-last-expression
         :n "se" #'skewer-eval-defun
         :n "sf" #'skewer-load-buffer))
+
 
 (def-package! skewer-css ; in skewer-mode
   :commands skewer-css-mode
@@ -182,6 +178,7 @@
         :n "sr" #'skewer-css-eval-current-rule
         :n "sb" #'skewer-css-eval-buffer
         :n "sc" #'skewer-css-clear-all))
+
 
 (def-package! skewer-html ; in skewer-mode
   :commands skewer-html-mode
@@ -207,16 +204,5 @@
 (def-project-mode! +javascript-npm-mode
   :modes (html-mode css-mode web-mode js2-mode markdown-mode)
   :files "package.json"
-  :on-enter
-  (when (make-local-variable 'exec-path)
-    (push (doom-project-expand "node_modules/.bin")
-          exec-path)))
-
-
-;;
-;; Tools
-;;
-
-(def-project-mode! +javascript-eslintd-fix-mode
-  :add-hooks (eslintd-fix-mode))
+  :add-hooks (+javascript|add-node-modules-path))
 
