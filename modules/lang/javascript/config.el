@@ -191,6 +191,10 @@
         :n "se" #'skewer-html-eval-tag))
 
 
+(def-package! skewer-repl
+  :commands skewer-repl)
+
+
 ;;
 ;; Projects
 ;;
