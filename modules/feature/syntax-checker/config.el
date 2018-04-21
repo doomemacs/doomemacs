@@ -17,9 +17,11 @@
         (ignore-errors (flycheck-buffer))
         nil))
     (add-hook 'doom-escape-hook #'+syntax-checkers|flycheck-buffer t)
+    (add-hook 'evil-insert-state-exit-hook #'+syntax-checkers|flycheck-buffer)
 
-    ;; With the option of flychecking the buffer on escape, so we don't need
-    ;; auto-flychecking on idle-change:
+    ;; With the option of flychecking the buffer on escape or leaving insert
+    ;; mode, we don't need auto-flychecking on idle-change (which can feel slow,
+    ;; esp on computers without SSDs).
     (delq 'idle-change flycheck-check-syntax-automatically)))
 
 
