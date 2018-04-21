@@ -13,8 +13,7 @@
   (push 'pandoc org-export-backends)
   (setq org-pandoc-options
         '((standalone . t)
-          (mathjax . t)
-          (parse-raw . t))))
+          (mathjax . t))))
 
 ;;
 (defun +org|init-export ()
