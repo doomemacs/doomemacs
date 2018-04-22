@@ -66,10 +66,11 @@ preceded by the opening brace or a comma (disregarding whitespace in between)."
 ;;;###autoload
 (defun +cc|fontify-constants ()
   "Better fontification for preprocessor constants"
-  (font-lock-add-keywords
-   nil '(("\\<[A-Z]*_[A-Z_]+\\>" . font-lock-constant-face)
-         ("\\<[A-Z]\\{3,\\}\\>"  . font-lock-constant-face))
-   t))
+  (when (memq major-mode '(c-mode c++-mode))
+    (font-lock-add-keywords
+     nil '(("\\<[A-Z]*_[A-Z_]+\\>" . font-lock-constant-face)
+           ("\\<[A-Z]\\{3,\\}\\>"  . font-lock-constant-face))
+     t)))
 
 ;;;###autoload
 (defun +cc|irony-init-compile-options ()
