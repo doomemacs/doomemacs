@@ -13,6 +13,7 @@ This module adds Javascript support.
 * Table of Contents :TOC:
 - [[Install][Install]]
   - [[Node & NPM][Node & NPM]]
+  - [[Tide][Tide]]
 - [[Appendix][Appendix]]
   - [[Commands][Commands]]
 
@@ -28,8 +29,9 @@ brew install node
 *** Arch Linux
 #+BEGIN_SRC sh :dir /sudo:: :tangle (if (doom-system-os 'arch) "yes")
 sudo pacman --needed --noconfirm -S nodejs npm
-#+END_SRC
-
+#+END_SR
+** Tide
+In order for Tide to work properly, you need a [[https://code.visualstudio.com/docs/languages/jsconfig][jsconfig.json]] file in your project root.
 * Appendix
 ** Commands
 | command                          | key / ex command | description                                                |
