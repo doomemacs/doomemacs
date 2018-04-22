@@ -140,12 +140,11 @@ Returns t on success, nil otherwise."
   "Save a whole session as NAME. If NAME is nil, use `persp-auto-save-fname'.
 Return t on success, nil otherwise."
   (let ((fname (expand-file-name (or name persp-auto-save-fname)
-                                 persp-save-dir))
-        (persp-auto-save-opt
-         (if (or (not name)
-                 (equal name persp-auto-save-fname))
-             0
-           persp-auto-save-opt)))
+                                 persp-save-dir)))
+    ;; disable auto-saving on kill-emacs if autosaving (i.e. name is nil)
+    (when (or (not name)
+              (string= name persp-auto-save-fname))
+      (setq persp-auto-save-opt 0))
     (and (persp-save-state-to-file fname) t)))
 
 ;;;###autoload
