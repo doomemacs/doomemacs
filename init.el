@@ -28,3 +28,10 @@
 ;;; License: MIT
 
 (require 'core (concat user-emacs-directory "core/core"))
+
+;; To test something in a blank, vanilla Emacs session (Emacs -Q) comment the
+;; require above and load core/debug.el instead:
+;;
+;; (load (concat user-emacs-directory "core/debug.el"))
+;;
+;; <-- place debug code here -->

@@ -1,5 +1,9 @@
 ;;; lang/javascript/config.el -*- lexical-binding: t; -*-
 
+;;
+;; Major modes
+;;
+
 (def-package! js2-mode
   :mode "\\.js$"
   :interpreter "node"
@@ -15,12 +19,9 @@
         js2-strict-trailing-comma-warning nil
         js2-strict-missing-semi-warning nil)
 
-  (add-hook! 'js2-mode-hook
-    #'(flycheck-mode rainbow-delimiters-mode +javascript|add-node-modules-path))
+  (add-hook! 'js2-mode-hook #'(flycheck-mode rainbow-delimiters-mode))
 
-  (set! :repl 'js2-mode #'+javascript/repl)
   (set! :electric 'js2-mode :chars '(?\} ?\) ?.))
-  (set! :lookup 'js2-mode :xref-backend #'xref-js2-xref-backend)
 
   ;; Conform switch-case indentation to js2 normal indent
   (defvaralias 'js-switch-indent-offset 'js2-basic-offset)
@@ -30,7 +31,6 @@
 
   (map! :map js2-mode-map
         :localleader
-        :nr "r" #'+javascript/refactor-menu
         :n  "S" #'+javascript/skewer-this-buffer))
 
 
@@ -40,6 +40,36 @@
   (add-hook 'typescript-mode-hook #'rainbow-delimiters-mode)
   (set! :electric 'typescript-mode :chars '(?\} ?\)) :words '("||" "&&")))
 
+
+(def-package! rjsx-mode
+  :commands rjsx-mode
+  :mode "\\.jsx$"
+  :mode "components/.+\\.js$"
+  :init
+  (defun +javascript-jsx-file-p ()
+    (and buffer-file-name
+         (string= (file-name-extension buffer-file-name) "js")
+         (re-search-forward "\\(^\\s-*import React\\|\\( from \\|require(\\)[\"']react\\)"
+                            magic-mode-regexp-match-limit t)
+         (progn (goto-char (match-beginning 1))
+                (not (sp-point-in-string-or-comment)))))
+
+  (push (cons #'+javascript-jsx-file-p 'rjsx-mode) magic-mode-alist)
+  :config
+  (set! :electric 'rjsx-mode :chars '(?\} ?\) ?. ?>))
+  (add-hook! 'rjsx-mode-hook
+    ;; jshint doesn't know how to deal with jsx
+    (push 'javascript-jshint flycheck-disabled-checkers)))
+
+
+(def-package! coffee-mode
+  :mode "\\.coffee$"
+  :init (setq coffee-indent-like-python-mode t))
+
+
+;;
+;; Tools
+;;
 
 (def-package! tide
   :hook (js2-mode . tide-setup)
@@ -67,39 +97,12 @@
     (add-hook 'kill-buffer-hook #'+javascript|cleanup-tide-processes nil t))
 
   (def-menu! +javascript/refactor-menu
-    "TODO"
-    '(("rename symbol"              :exec tide-rename-symbol)
-      ("restart tide server"        :exec tide-restart-server)))
-
-  (map! :map tide-mode-map
-        :localleader
-        :n "r" #'+javascript/refactor-menu))
-
-
-;; A find-{definition,references} backend for js2-mode. NOTE The xref API is
-;; unstable and may break with an Emacs update.
-(def-package! xref-js2
-  :when (featurep! :feature lookup)
-  :commands xref-js2-xref-backend)
-
-
-(def-package! nodejs-repl :commands nodejs-repl)
-
-
-(def-package! js2-refactor
-  :commands
-  (js2r-extract-function js2r-extract-method js2r-introduce-parameter
-   js2r-localize-parameter js2r-expand-object js2r-contract-object
-   js2r-expand-function js2r-contract-function js2r-expand-array
-   js2r-contract-array js2r-wrap-buffer-in-iife js2r-inject-global-in-iife
-   js2r-add-to-globals-annotation js2r-extract-var js2r-inline-var
-   js2r-rename-var js2r-var-to-this js2r-arguments-to-object js2r-ternary-to-if
-   js2r-split-var-declaration js2r-split-string js2r-unwrap js2r-log-this
-   js2r-debug-this js2r-forward-slurp js2r-forward-barf)
-  :init
-  (def-menu! +javascript/refactor-menu
     "Refactoring commands for `js2-mode' buffers."
-    '(("Extract into function"           :exec js2r-extract-function          :region t)
+    '(("Tide: restart server"            :exec tide-restart-server   :when (bound-and-true-p tide-mode))
+      ("Tide: reformat buffer/region"    :exec tide-reformat         :when (bound-and-true-p tide-mode))
+      ("Rename symbol"                   :exec tide-rename-symbol    :when (bound-and-true-p tide-mode) :region nil)
+      ("Reformat buffer (eslint_d)"      :exec eslintd-fix           :when (bound-and-true-p eslintd-fix-mode) :region nil)
+      ("Extract into function"           :exec js2r-extract-function          :region t)
       ("Extract into method"             :exec js2r-extract-method            :region t)
       ("Introduce parameter to function" :exec js2r-introduce-parameter       :region t)
       ("Localize parameter"              :exec js2r-localize-parameter        :region nil)
@@ -122,42 +125,30 @@
       ("Split string"                    :exec js2r-split-string              :region nil)
       ("Unwrap"                          :exec js2r-unwrap                    :region t)
       ("Log this"                        :exec js2r-log-this)
-      ("Debug this"                      :exec js2r-debug-this)
-      ("Reformat buffer (eslint_d)"      :exec eslintd-fix :region nil :when (fboundp 'eslintd-fix)))
-    :prompt "Refactor: "))
+      ("Debug this"                      :exec js2r-debug-this))
+    :prompt "Refactor: ")
 
-(def-package! rjsx-mode
-  :commands rjsx-mode
-  :mode "\\.jsx$"
-  :mode "components/.+\\.js$"
+  (map! :map tide-mode-map
+        :localleader
+        :n "r" #'+javascript/refactor-menu))
+
+
+(def-package! nodejs-repl
+  :commands nodejs-repl
   :init
-  (defun +javascript-jsx-file-p ()
-    (and buffer-file-name
-         (equal (file-name-extension buffer-file-name) "js")
-         (re-search-forward "\\(^\\s-*import React\\|\\( from \\|require(\\)[\"']react\\)"
-                            magic-mode-regexp-match-limit t)
-         (progn (goto-char (match-beginning 1))
-                (not (sp-point-in-string-or-comment)))))
-
-  (push (cons #'+javascript-jsx-file-p 'rjsx-mode) magic-mode-alist)
-
-  :config
-  (set! :electric 'rjsx-mode :chars '(?\} ?\) ?. ?>))
-
-  ;; disable electric keys (I use snippets and `emmet-mode' instead)
-  (map! :map rjsx-mode-map
-        "<" nil
-        "C-d" nil)
-  (add-hook! rjsx-mode
-    #'(flycheck-mode +javascript|add-node-modules-path rainbow-delimiters-mode)
-
-    ;; jshint doesn't really know how to deal with jsx
-    (push 'javascript-jshint flycheck-disabled-checkers)))
+  (set! :repl 'js2-mode #'+javascript/repl))
 
 
-(def-package! coffee-mode
-  :mode "\\.coffee$"
-  :init (setq coffee-indent-like-python-mode t))
+(def-package! js2-refactor
+  :commands
+  (js2r-extract-function js2r-extract-method js2r-introduce-parameter
+   js2r-localize-parameter js2r-expand-object js2r-contract-object
+   js2r-expand-function js2r-contract-function js2r-expand-array
+   js2r-contract-array js2r-wrap-buffer-in-iife js2r-inject-global-in-iife
+   js2r-add-to-globals-annotation js2r-extract-var js2r-inline-var
+   js2r-rename-var js2r-var-to-this js2r-arguments-to-object js2r-ternary-to-if
+   js2r-split-var-declaration js2r-split-string js2r-unwrap js2r-log-this
+   js2r-debug-this js2r-forward-slurp js2r-forward-barf))
 
 
 (def-package! web-beautify
@@ -167,12 +158,11 @@
 
 
 (def-package! eslintd-fix
-  :commands (eslintd-fix-mode eslintd-fix))
+  :commands (eslintd-fix-mode eslintd-fix)
+  :config
+  (add-hook! 'eslintd-fix-mode-hook
+    (setq flycheck-javascript-eslint-executable eslintd-fix-executable)))
 
-
-;;
-;; Skewer-mode
-;;
 
 (def-package! skewer-mode
   :commands (skewer-mode run-skewer)
@@ -182,6 +172,7 @@
         :n "sE" #'skewer-eval-last-expression
         :n "se" #'skewer-eval-defun
         :n "sf" #'skewer-load-buffer))
+
 
 (def-package! skewer-css ; in skewer-mode
   :commands skewer-css-mode
@@ -193,12 +184,17 @@
         :n "sb" #'skewer-css-eval-buffer
         :n "sc" #'skewer-css-clear-all))
 
+
 (def-package! skewer-html ; in skewer-mode
   :commands skewer-html-mode
   :config
   (map! :map skewer-html-mode-map
         :localleader
         :n "se" #'skewer-html-eval-tag))
+
+
+(def-package! skewer-repl
+  :commands skewer-repl)
 
 
 ;;
@@ -217,16 +213,5 @@
 (def-project-mode! +javascript-npm-mode
   :modes (html-mode css-mode web-mode js2-mode markdown-mode)
   :files "package.json"
-  :on-enter
-  (when (make-local-variable 'exec-path)
-    (push (doom-project-expand "node_modules/.bin")
-          exec-path)))
-
-
-;;
-;; Tools
-;;
-
-(def-project-mode! +javascript-eslintd-fix-mode
-  :add-hooks (eslintd-fix-mode))
+  :add-hooks (+javascript|add-node-modules-path))
 

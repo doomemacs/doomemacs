@@ -133,5 +133,21 @@ Uses `+workspaces-main' to determine the name of the main workspace."
   ;; per-project workspaces, but reuse current workspace if empty
   (setq projectile-switch-project-action #'+workspaces|set-project-action
         counsel-projectile-switch-project-action #'+workspaces|switch-to-project)
-  (add-hook 'projectile-after-switch-project-hook #'+workspaces|switch-to-project))
+  (add-hook 'projectile-after-switch-project-hook #'+workspaces|switch-to-project)
+
+  ;;
+  ;; eshell
+  (persp-def-buffer-save/load
+   :mode 'eshell-mode :tag-symbol 'def-eshell-buffer
+   :save-vars '(major-mode default-directory))
+  ;; compile
+  (persp-def-buffer-save/load
+   :mode 'compilation-mode :tag-symbol 'def-compilation-buffer
+   :save-vars
+   '(major-mode default-directory compilation-directory compilation-environment compilation-arguments))
+  ;; magit-status
+  (persp-def-buffer-save/load
+   :mode 'magit-status-mode :tag-symbol 'def-magit-status-buffer
+   :save-vars '(major-mode default-directory)
+   :after-load-function #'(lambda (b &rest _) (with-current-buffer b (magit-refresh)))))
 

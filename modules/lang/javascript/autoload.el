@@ -31,6 +31,11 @@ ignore the cache."
              (assq packages deps))
             (t (error "Expected a package symbol or list, got %s" packages))))))
 
+
+;;
+;; Commands
+;;
+
 ;;;###autoload
 (defun +javascript/repl ()
   "Open a Javascript REPL. Meaning either `skewer-repl', if any of the
@@ -39,8 +44,8 @@ skewer-*-mode's are enabled, or `nodejs-repl' otherwise."
   (call-interactively
    (if (and (featurep 'skewer-mode)
             (or skewer-mode skewer-css-mode skewer-html-mode))
-       'skewer-repl
-     'nodejs-repl)))
+       #'skewer-repl
+     #'nodejs-repl)))
 
 ;;;###autoload
 (defun +javascript/skewer-this-buffer ()
@@ -74,6 +79,11 @@ Run this for any buffer you want to skewer."
       (if skewer-css-mode (skewer-css-mode -1))
       (if skewer-html-mode (skewer-html-mode -1)))))
 
+
+;;
+;; Hooks
+;;
+
 ;;;###autoload
 (defun +javascript|add-node-modules-path ()
   "Search the current buffer's parent directories for `node_modules/.bin`.
@@ -99,6 +109,11 @@ If it's found, then add it to the `exec-path'."
                      if (buffer-local-value 'tide-mode buf)
                      collect buf)
       (kill-process (tide-current-server)))))
+
+
+;;
+;; Advice
+;;
 
 ;;;###autoload
 (defun +javascript*tide-project-root ()
