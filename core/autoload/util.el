@@ -1,4 +1,4 @@
-;;; core/autoload/debug.el -*- lexical-binding: t; -*-
+;;; core/autoload/util.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defun doom/what-face (&optional pos)
