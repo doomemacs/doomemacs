@@ -80,7 +80,6 @@
       (tide-setup)))
   (add-hook 'web-mode-hook #'+javascript|init-tide-in-web-mode)
   :config
-
   (set! :company '(js2-mode typescript-mode) 'company-tide)
   (set! :lookup '(js2-mode rjsx-mode typescript-mode)
     :definition #'tide-jump-to-definition
