@@ -1,17 +1,16 @@
-;;; debug.el -*- lexical-binding: t; no-byte-compile: t; -*-
+;;; debug.el -*- lexical-binding: t; -*-
 
-;; load me after running Emacs -Q:
+;; To test something in a blank, vanilla Emacs session (Emacs -Q) load me:
 ;;
-;;   (load-file (concat user-emacs-directory "core/debug.el"))
-;;
-;; then you can test packages in isolation.
+;;   emacs -Q -l debug.el
 
-(setq user-emacs-directory (expand-file-name "../" (file-name-directory load-file-name))
+(setq user-emacs-directory (file-name-directory load-file-name)
       package--init-file-ensured t
       package-user-dir (expand-file-name ".local/packages/elpa" user-emacs-directory)
       package-archives
       '(("gnu"   . "https://elpa.gnu.org/packages/")
         ("melpa" . "https://melpa.org/packages/")
         ("org"   . "https://orgmode.org/elpa/")))
-
 (package-initialize)
+
+;; Then you can test packages in isolation here...
