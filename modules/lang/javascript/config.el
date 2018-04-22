@@ -74,7 +74,6 @@
 (def-package! tide
   :hook (js2-mode . tide-setup)
   :hook (typescript-mode . tide-setup)
-  :hook (rjsx-mode . tide-setup)
   :init
   (defun +javascript|init-tide-in-web-mode ()
     (when (string= (file-name-extension (or buffer-file-name "")) "tsx")
@@ -82,7 +81,7 @@
   (add-hook 'web-mode-hook #'+javascript|init-tide-in-web-mode)
   :config
 
-  (set! :company '(js2-mode rjsx-mode typescript-mode) 'company-tide)
+  (set! :company '(js2-mode typescript-mode) 'company-tide)
   (set! :lookup '(js2-mode rjsx-mode typescript-mode)
     :definition #'tide-jump-to-definition
     :references #'tide-references
