@@ -367,11 +367,10 @@
           "C-n"     #'company-select-next
           "C-p"     #'company-select-previous
           "C-h"     #'company-quickhelp-manual-begin
+          "C-s"     #'company-filter-candidates
           "C-S-h"   #'company-show-doc-buffer
           "C-S-s"   #'company-search-candidates
-          "C-s"     #'company-filter-candidates
           "C-SPC"   #'company-complete-common
-          "C-h"     #'company-quickhelp-manual-begin
           "TAB"     #'company-complete-common-or-cycle
           [tab]     #'company-complete-common-or-cycle
           "S-TAB"   #'company-select-previous
