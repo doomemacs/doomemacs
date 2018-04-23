@@ -3,7 +3,6 @@
 
 (package! company)
 (package! company-dict)
-(package! company-quickhelp)
 (package! company-statistics)
 (when (featurep! +childframe)
   (package! company-box))

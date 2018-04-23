@@ -55,12 +55,6 @@ MODES should be one major-mode symbol or a list of them."
   :config (setq company-statistics-file (concat doom-cache-dir "company-stats-cache.el")))
 
 
-(def-package! company-quickhelp
-  :unless (and EMACS26+ (featurep! +childframe))
-  :hook (company-mode . company-quickhelp-mode)
-  :config (setq company-quickhelp-delay nil))
-
-
 (def-package! company-box
   :when (and EMACS26+ (featurep! +childframe))
   :hook (company-mode . company-box-mode)
