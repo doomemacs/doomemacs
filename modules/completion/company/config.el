@@ -70,11 +70,11 @@ when company-box is active, which are incompatible and cause duplicate popups."
   :config
   (setq company-box-backends-colors nil
         company-box-icons-elisp
-        (list (all-the-icons-material "functions" :face 'all-the-icons-red)
+        (list (all-the-icons-material "functions" :face 'all-the-icons-purple)
               (all-the-icons-material "check_circle" :face 'all-the-icons-blue)
-              (all-the-icons-material "stars" :face 'all-the-icons-orange)
+              (all-the-icons-material "stars" :face 'all-the-icons-yellow)
               (all-the-icons-material "format_paint" :face 'all-the-icons-pink))
-        company-box-icons-unknown (all-the-icons-material "find_in_page" :face 'all-the-icons-purple)
+        company-box-icons-unknown (all-the-icons-material "find_in_page" :face 'all-the-icons-silver)
         company-box-icons-yasnippet (all-the-icons-material "short_text" :face 'all-the-icons-green)))
 
 
