@@ -87,7 +87,7 @@
     ;; tide affects the global `company-backends', undo this so doom can handle
     ;; it buffer-locally
     (setq-default company-backends (delq 'company-tide (default-value 'company-backends))))
-  (set! :company-backends 'tide-mode 'company-tide)
+  (set! :company-backend 'tide-mode 'company-tide)
 
   ;; navigation
   (set! :lookup 'tide-mode
