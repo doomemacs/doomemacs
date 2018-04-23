@@ -34,6 +34,15 @@
 ;; External functions
 ;;
 
+;; `company'
+(after! company
+  (defun +popup*dont-select-me (orig-fn &rest args)
+    (let ((+popup--inhibit-select t))
+      (apply orig-fn args)))
+  (advice-add #'company-show-doc-buffer :around #'+popup*dont-select-me))
+
+
+;; `eshell'
 (after! eshell
   (setq eshell-destroy-buffer-when-process-dies t)
 
