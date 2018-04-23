@@ -37,7 +37,7 @@ MODES should be one major-mode symbol or a list of them."
         company-global-modes
         '(not eshell-mode comint-mode erc-mode message-mode help-mode gud-mode)
         company-frontends
-        '(company-pseudo-tooltip-unless-just-one-frontend
+        '(company-pseudo-tooltip-frontend
           company-echo-metadata-frontend)
         company-backends
         '(company-capf company-dabbrev company-ispell company-yasnippet)
@@ -64,6 +64,15 @@ MODES should be one major-mode symbol or a list of them."
 (def-package! company-box
   :when (and EMACS26+ (featurep! +childframe))
   :hook (company-mode . company-box-mode)
+  :init
+  (defun +company|fix-frontends ()
+    "Ensure `company-pseudo-tooltip-frontend' is *not* in `company-frontends'
+when company-box is active, which are incompatible and cause duplicate popups."
+    (make-variable-buffer-local 'company-frontends)
+    (if company-box-mode
+        (setq company-frontends (delq 'company-pseudo-tooltip-frontend company-frontends))
+      (cl-pushnew 'company-pseudo-tooltip-frontend company-frontends :test #'eq)))
+  (add-hook 'company-box-mode-hook #'+company|fix-frontends)
   :config
   (setq company-box-backends-colors nil
         company-box-icons-elisp
