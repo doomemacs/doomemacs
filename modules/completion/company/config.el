@@ -70,12 +70,12 @@ when company-box is active, which are incompatible and cause duplicate popups."
   :config
   (setq company-box-backends-colors nil
         company-box-icons-elisp
-        (list (concat (all-the-icons-material "functions") " ")
-              (concat (all-the-icons-material "check_circle") " ")
-              (concat (all-the-icons-material "stars") " ")
-              (concat (all-the-icons-material "format_paint") " "))
-        company-box-icons-unknown (concat (all-the-icons-material "find_in_page") " ")
-        company-box-icons-yasnippet (concat (all-the-icons-material "short_text") " ")))
+        (list (all-the-icons-material "functions" :face 'all-the-icons-red)
+              (all-the-icons-material "check_circle" :face 'all-the-icons-blue)
+              (all-the-icons-material "stars" :face 'all-the-icons-orange)
+              (all-the-icons-material "format_paint" :face 'all-the-icons-pink))
+        company-box-icons-unknown (all-the-icons-material "find_in_page" :face 'all-the-icons-purple)
+        company-box-icons-yasnippet (all-the-icons-material "short_text" :face 'all-the-icons-green)))
 
 
 (def-package! company-dict
