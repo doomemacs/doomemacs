@@ -2,6 +2,7 @@
 
 (defvar +popup--populate-wparams (not EMACS26+))
 (defvar +popup--inhibit-transient nil)
+(defvar +popup--inhibit-select nil)
 (defvar +popup--display-buffer-alist nil)
 (defvar +popup--old-display-buffer-alist nil)
 (defvar +popup--remember-last t)
@@ -146,10 +147,11 @@ and enables `+popup-buffer-mode'."
     (when-let* ((new-window (run-hook-with-args-until-success
                              '+popup-display-buffer-actions buffer alist)))
       (+popup--init new-window alist)
-      (let ((select (+popup-parameter 'select new-window)))
-        (if (functionp select)
-            (funcall select new-window old-window)
-          (select-window (if select new-window old-window))))
+      (unless +popup--inhibit-select
+        (let ((select (+popup-parameter 'select new-window)))
+          (if (functionp select)
+              (funcall select new-window old-window)
+            (select-window (if select new-window old-window)))))
       new-window)))
 
 ;;;###autoload
