@@ -51,6 +51,7 @@ MODES should be one major-mode symbol or a list of them."
 
 (def-package! company-statistics
   :hook (company-mode . company-statistics-mode)
+  :init (advice-add #'company-statistics-mode :around #'doom*shut-up)
   :config (setq company-statistics-file (concat doom-cache-dir "company-stats-cache.el")))
 
 

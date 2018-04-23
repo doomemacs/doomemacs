@@ -297,9 +297,7 @@
 (when (bound-and-true-p doom-modules)
   (section! "test-modules")
   (let ((indent 4))
-    (defun --quiet-require (orig-fn &rest args)
-      (quiet! (apply orig-fn args)))
-    (advice-add #'require :around #'--quiet-require)
+    (advice-add #'require :around #'doom*shut-up)
     (maphash
      (lambda (key plist)
        (condition-case ex

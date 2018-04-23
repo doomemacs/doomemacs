@@ -28,10 +28,8 @@
                  (nil "^\\s-*\\([[:alpha:]_-][[:alnum:]_-]*\\)\\s-*()" 1))))
         sh-imenu-generic-expression)
 
-  (defun +sh*silence-messages (orig-fn &rest args)
-    "`sh-set-shell' is chatty about it setting up indentation rules. Shut up."
-    (quiet! (apply orig-fn args)))
-  (advice-add #'sh-set-shell :around #'+sh*silence-messages)
+  ;; `sh-set-shell' is chatty about setting up indentation rules
+  (advice-add #'sh-set-shell :around #'doom*shut-up)
 
   ;; 1. Fontifies variables in double quotes
   ;; 2. Fontify command substitution in double quotes

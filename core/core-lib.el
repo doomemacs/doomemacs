@@ -97,6 +97,10 @@ compilation."
                   (save-silently t))
          ,@forms))))
 
+(defun doom*shut-up (orig-fn &rest args)
+  "Generic advisor for silencing noisy functions."
+  (quiet! (apply orig-fn args)))
+
 (defvar doom--transient-counter 0)
 (defmacro add-transient-hook! (hook &rest forms)
   "Attaches transient forms to a HOOK.
