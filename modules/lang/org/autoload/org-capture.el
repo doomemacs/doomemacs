@@ -38,9 +38,11 @@ you're done. This can be called from an external shell script."
     (setq string nil))
   (when (and key (string-empty-p key))
     (setq key nil))
-  (let ((frame (if (+org-capture-frame-p)
-                   (selected-frame)
-                 (make-frame +org-capture-window-params))))
+  (let* ((frame-title-format "")
+         (frame (if (+org-capture-frame-p)
+                    (selected-frame)
+                  (let (before-make-frame-hook after-make-frame-functions)
+                    (make-frame +org-capture-window-params)))))
     (with-selected-frame frame
       (require 'org-capture)
       (condition-case ex
