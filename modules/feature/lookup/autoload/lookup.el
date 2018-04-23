@@ -25,9 +25,10 @@
         ((xref-backend-identifier-at-point (xref-find-backend)))))
 
 (defun +lookup--jump-to (prop identifier)
-  (cl-loop for fn in (plist-get '(:definition +lookup-definition-functions
-                                  :references +lookup-references-functions
-                                  :documentation +lookup-documentation-functions)
+  (cl-loop with origin = (point-marker)
+           for fn in (plist-get (list :definition +lookup-definition-functions
+                                      :references +lookup-references-functions
+                                      :documentation +lookup-documentation-functions)
                                 prop)
            for fn = (or (command-remapping fn) fn)
            if (condition-case e
@@ -37,6 +38,16 @@
                       (/= (point-marker) origin))
                 ('error (ignore (message "%s" e))))
            return it))
+
+;;;###autoload
+(defun +lookup-xref-definitions (identifier)
+  "Non-interactive wrapper for `xref-find-definitions'"
+  (xref-find-definitions identifier))
+
+;;;###autoload
+(defun +lookup-xref-references (identifier)
+  "Non-interactive wrapper for `xref-find-references'"
+  (xref-find-references identifier))
 
 
 ;;

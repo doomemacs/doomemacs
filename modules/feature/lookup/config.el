@@ -33,12 +33,12 @@ produces an url. Used by `+lookup/online'.")
 (defvar +lookup-open-url-fn #'browse-url
   "Function to use to open search urls.")
 
-(defvar +lookup-definition-functions '(xref-find-definitions)
+(defvar +lookup-definition-functions '(+lookup-xref-definitions)
   "Functions for `+lookup/definition' to try, before resorting to `dumb-jump'.
 Stops at the first function to return non-nil or change the current
 window/point.")
 
-(defvar +lookup-references-functions '(xref-find-references)
+(defvar +lookup-references-functions '(+lookup-xref-references)
   "Functions for `+lookup/references' to try, before resorting to `dumb-jump'.
 Stops at the first function to return non-nil or change the current
 window/point.")
