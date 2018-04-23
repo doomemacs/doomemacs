@@ -41,8 +41,5 @@
   :after magit
   :config
   (setq evil-magit-state 'normal)
-
-  ;; Switch to emacs state only while in `magit-blame-mode', then back when
-  ;; its done (since it's a minor-mode).
-  (add-hook! 'magit-blame-mode-hook
-    (evil-local-mode (if magit-blame-mode -1 +1))))
+  (map! :map (magit-mode-map magit-blame-read-only-mode-map)
+        doom-leader-key nil))
