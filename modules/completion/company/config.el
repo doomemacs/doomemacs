@@ -50,18 +50,28 @@ MODES should be one major-mode symbol or a list of them."
 
 
 (def-package! company-statistics
-  :after company
-  :config
-  (setq company-statistics-file (concat doom-cache-dir "company-stats-cache.el"))
-  (quiet! (company-statistics-mode +1)))
+  :hook (company-mode . company-statistics-mode)
+  :config (setq company-statistics-file (concat doom-cache-dir "company-stats-cache.el")))
 
 
-;; Looks ugly on OSX without emacs-mac build
 (def-package! company-quickhelp
-  :after company
+  :unless (and EMACS26+ (featurep! +childframe))
+  :hook (company-mode . company-quickhelp-mode)
+  :config (setq company-quickhelp-delay nil))
+
+
+(def-package! company-box
+  :when (and EMACS26+ (featurep! +childframe))
+  :hook (company-mode . company-box-mode)
   :config
-  (setq company-quickhelp-delay nil)
-  (company-quickhelp-mode +1))
+  (setq company-box-backends-colors nil
+        company-box-icons-elisp
+        (list (concat (all-the-icons-material "functions") " ")
+              (concat (all-the-icons-material "check_circle") " ")
+              (concat (all-the-icons-material "stars") " ")
+              (concat (all-the-icons-material "format_paint") " "))
+        company-box-icons-unknown (concat (all-the-icons-material "find_in_page") " ")
+        company-box-icons-yasnippet (concat (all-the-icons-material "short_text") " ")))
 
 
 (def-package! company-dict
