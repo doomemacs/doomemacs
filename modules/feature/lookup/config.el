@@ -74,7 +74,7 @@ properties:
                      (let ((xref ,(plist-get plist :xref-backend))
                            (def ,(plist-get plist :definition))
                            (ref ,(plist-get plist :references))
-                           (doc ,(plist-get plist :docuemntation)))
+                           (doc ,(plist-get plist :documentation)))
                        (if xref (add-hook 'xref-backend-functions xref nil t))
                        (if def (add-hook '+lookup-definition-functions def nil t))
                        (if ref (add-hook '+lookup-references-functions ref nil t))
