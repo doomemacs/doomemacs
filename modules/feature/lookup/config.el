@@ -33,13 +33,20 @@ produces an url. Used by `+lookup/online'.")
 (defvar +lookup-open-url-fn #'browse-url
   "Function to use to open search urls.")
 
-(defvar +lookup-function-alist nil
-  "An alist mapping major modes to jump function plists, describing what to do
-with `+lookup/definition', `+lookup/references' and `+lookup/documentation' are
-called.")
+(defvar +lookup-definition-functions '(xref-find-definitions)
+  "Functions for `+lookup/definition' to try, before resorting to `dumb-jump'.
+Stops at the first function to return non-nil or change the current
+window/point.")
 
-(defvar-local +lookup-current-functions nil
-  "The enabled jump functions for the current buffer.")
+(defvar +lookup-references-functions '(xref-find-references)
+  "Functions for `+lookup/references' to try, before resorting to `dumb-jump'.
+Stops at the first function to return non-nil or change the current
+window/point.")
+
+(defvar +lookup-documentation-functions ()
+  "Functions for `+lookup/documentation' to try, before resorting to
+`dumb-jump'. Stops at the first function to return non-nil or change the current
+window/point.")
 
 (def-setting! :lookup (modes &rest plist)
   "Defines a jump target for major MODES. PLIST accepts the following
@@ -57,9 +64,22 @@ properties:
   :xref-backend FN
     Defines an xref backend for a major-mode. With this, :definition and
     :references are unnecessary."
-  `(dolist (mode (doom-enlist ,modes))
-     (push (cons mode (list ,@plist))
-           +lookup-function-alist)))
+  `(progn
+     ,@(cl-loop for mode in (doom-enlist (doom-unquote modes))
+                for def-name = (intern (format "doom--init-lookup-%s" mode))
+                collect
+                `(defun ,def-name ()
+                   (when (or (eq major-mode ',mode)
+                             (bound-and-true-p ,mode))
+                     (let ((xref ,(plist-get plist :xref-backend))
+                           (def ,(plist-get plist :definition))
+                           (ref ,(plist-get plist :references))
+                           (doc ,(plist-get plist :docuemntation)))
+                       (if xref (add-hook 'xref-backend-functions xref nil t))
+                       (if def (add-hook '+lookup-definition-functions def nil t))
+                       (if ref (add-hook '+lookup-references-functions ref nil t))
+                       (if doc (add-hook '+lookup-documentation-functions doc nil t)))))
+                collect `(add-hook! ,mode #',def-name))))
 
 ;; Recenter buffer after certain jumps
 (add-hook!
@@ -98,18 +118,6 @@ properties:
     (let ((xref-backend-functions '(etags--xref-backend t)))
       (funcall orig-fn)))
   (advice-add #'projectile-find-tag :around #'+lookup*projectile-find-tag))
-
-(defun +lookup|init-xref-backends ()
-  "Set `+lookup-current-functions' for the current buffer.
-
-This variable is used by `+lookup/definition',`+lookup/references' and
-`+lookup/documentation'."
-  (when-let* ((plist (cdr (assq major-mode +lookup-function-alist))))
-    (when-let* ((backend (plist-get plist :xref-backend)))
-      (make-variable-buffer-local 'xref-backend-functions)
-      (cl-pushnew backend xref-backend-functions :test #'eq))
-    (setq-local +lookup-current-functions plist)))
-(add-hook 'after-change-major-mode-hook #'+lookup|init-xref-backends)
 
 
 (def-package! ivy-xref
