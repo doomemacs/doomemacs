@@ -80,12 +80,20 @@
       (tide-setup)))
   (add-hook 'web-mode-hook #'+javascript|init-tide-in-web-mode)
   :config
-  (set! :company '(js2-mode typescript-mode) 'company-tide)
-  (set! :lookup '(js2-mode rjsx-mode typescript-mode)
+  (add-hook 'tide-mode-hook #'eldoc-mode)
+
+  ;; code completion
+  (after! company
+    ;; tide affects the global `company-backends', undo this so doom can handle
+    ;; it buffer-locally
+    (setq-default company-backends (delq 'company-tide (default-value 'company-backends))))
+  (set! :company-backends 'tide-mode 'company-tide)
+
+  ;; navigation
+  (set! :lookup 'tide-mode
     :definition #'tide-jump-to-definition
     :references #'tide-references
     :documentation #'tide-documentation-at-point)
-  (add-hook 'tide-mode-hook #'eldoc-mode)
 
   ;; resolve to `doom-project-root' if `tide-project-root' fails
   (advice-add #'tide-project-root :override #'+javascript*tide-project-root)
@@ -129,6 +137,12 @@
   (map! :map tide-mode-map
         :localleader
         :n "r" #'+javascript/refactor-menu))
+
+
+(def-package! xref-js2
+  :when (featurep! :feature lookup)
+  :commands xref-js2-xref-backend
+  :init (set! :lookup 'js2-mode :xref-backend #'xref-js2-xref-backend))
 
 
 (def-package! nodejs-repl
