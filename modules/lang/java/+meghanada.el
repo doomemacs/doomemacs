@@ -14,7 +14,7 @@
     :definition #'meghanada-jump-declaration
     :references #'meghanada-reference)
 
-  (add-hook! 'meghanada-mode-hook #'(flycheck-mode eldoc-mode))
+  (add-hook 'meghanada-mode-hook #'flycheck-mode)
 
   ;;
   (def-menu! +java/refactor-menu

@@ -25,7 +25,7 @@
 (def-package! racer
   :after rust-mode
   :config
-  (add-hook! 'rust-mode-hook #'(eldoc-mode racer-mode))
+  (add-hook 'rust-mode-hook #'racer-mode)
   (set! :lookup 'rust-mode
     :definition #'racer-find-definition
     :documentation #'racer-describe))

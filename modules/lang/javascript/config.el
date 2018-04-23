@@ -80,8 +80,6 @@
       (tide-setup)))
   (add-hook 'web-mode-hook #'+javascript|init-tide-in-web-mode)
   :config
-  (add-hook 'tide-mode-hook #'eldoc-mode)
-
   ;; code completion
   (after! company
     ;; tide affects the global `company-backends', undo this so doom can handle

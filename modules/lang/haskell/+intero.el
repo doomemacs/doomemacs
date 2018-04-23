@@ -5,7 +5,7 @@
   :after haskell-mode
   :config
   (add-hook 'haskell-mode-hook #'+haskell|init-intero)
-  (add-hook! 'intero-mode-hook #'(flycheck-mode eldoc-mode))
+  (add-hook 'intero-mode-hook #'flycheck-mode)
   (set! :lookup 'haskell-mode :definition #'intero-goto-definition))
 
 

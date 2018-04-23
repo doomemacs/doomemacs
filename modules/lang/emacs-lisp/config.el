@@ -19,7 +19,7 @@
 
   (add-hook! 'emacs-lisp-mode-hook
     #'(;; 3rd-party functionality
-       eldoc-mode auto-compile-on-save-mode doom|enable-delete-trailing-whitespace
+       auto-compile-on-save-mode doom|enable-delete-trailing-whitespace
        ;; fontification
        rainbow-delimiters-mode highlight-quoted-mode highlight-numbers-mode +emacs-lisp|extra-fontification
        ;; initialization

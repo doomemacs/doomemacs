@@ -525,8 +525,6 @@ frame's window-system, the theme will be reloaded.")
 ;; Bootstrap
 ;;
 
-;; auto-enabled in Emacs 25+; I'll do it myself
-(global-eldoc-mode -1)
 ;; simple name in frame title
 (setq frame-title-format '("%b – Doom Emacs"))
 ;; make `next-buffer', `other-buffer', etc. ignore unreal buffers

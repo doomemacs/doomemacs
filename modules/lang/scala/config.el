@@ -12,8 +12,6 @@
   :commands (ensime ensime-scala-mode-hook)
   :hook (scala-mode . ensime-mode)
   :config
-  (add-hook 'ensime-mode-hook #'eldoc-mode)
-
   (set! :company-backend 'scala-mode '(ensime-company company-yasnippet))
 
   (setq ensime-startup-snapshot-notification nil
