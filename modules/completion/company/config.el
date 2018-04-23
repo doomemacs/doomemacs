@@ -9,7 +9,8 @@ MODES should be one major-mode symbol or a list of them."
                 for def-name = (intern (format "doom--init-company-%s" mode))
                 collect
                 `(defun ,def-name ()
-                   (when (and (eq major-mode ',mode)
+                   (when (and (or (eq major-mode ',mode)
+                                  (bound-and-true-p ,mode))
                               ,(not (eq backends '(nil))))
                      (require 'company)
                      (make-variable-buffer-local 'company-backends)
