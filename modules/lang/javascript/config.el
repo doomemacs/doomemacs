@@ -102,8 +102,9 @@
 
   (def-menu! +javascript/refactor-menu
     "Refactoring commands for `js2-mode' buffers."
-    '(("Tide: restart server"            :exec tide-restart-server   :when (bound-and-true-p tide-mode))
-      ("Tide: reformat buffer/region"    :exec tide-reformat         :when (bound-and-true-p tide-mode))
+    '(("Restart tsserver"                :exec tide-restart-server   :when (bound-and-true-p tide-mode))
+      ("Reformat buffer/region (tide)"   :exec tide-reformat         :when (bound-and-true-p tide-mode))
+      ("Organize imports"                :exec tide-organize-imports :when (bound-and-true-p tide-mode))
       ("Rename symbol"                   :exec tide-rename-symbol    :when (bound-and-true-p tide-mode) :region nil)
       ("Reformat buffer (eslint_d)"      :exec eslintd-fix           :when (bound-and-true-p eslintd-fix-mode) :region nil)
       ("Extract into function"           :exec js2r-extract-function          :region t)
