@@ -21,7 +21,7 @@
 
        :completion
        (company          ; the ultimate code completion backend
-        +auto            ; enabble completion by default
+        +auto            ; enable completion by default
         +childframe)     ; use childframes whenever possible
       ;helm              ; the *other* search engine for love and life
       ;ido               ; the other *other* search engine...
