@@ -473,7 +473,7 @@ lines are selected, or the NxM dimensions of a block selection."
             (cons evil-visual-beginning evil-visual-end)
           (cons (region-beginning) (region-end)))
       (propertize
-       (let ((lines (count-lines beg (min (1+ end) (point-max)))))
+       (let ((lines (count-lines beg (min end (point-max)))))
          (concat (cond ((or (bound-and-true-p rectangle-mark-mode)
                             (eq 'block evil-visual-selection))
                         (let ((cols (abs (- (doom-column end)
@@ -482,9 +482,9 @@ lines are selected, or the NxM dimensions of a block selection."
                        ((eq 'line evil-visual-selection)
                         (format "%dL" lines))
                        ((> lines 1)
-                        (format "%dC %dL" (- (1+ end) beg) lines))
+                        (format "%dC %dL" (- end beg) lines))
                        (t
-                        (format "%dC" (- (1+ end) beg))))
+                        (format "%dC" (- end beg))))
                  (when +doom-modeline-enable-word-count
                    (format " %dW" (count-words beg end)))))
        'face 'doom-modeline-highlight))))
