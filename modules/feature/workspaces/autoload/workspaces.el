@@ -200,6 +200,36 @@ throws an error."
 ;;
 
 ;;;###autoload
+(defun +workspace/load (name)
+  "Load a workspace and switch to it. If called with C-u, try to reload the
+current workspace (by name) from session files."
+  (interactive
+   (list
+    (if current-prefix-arg
+        (+workspace-current-name)
+      (completing-read
+       "Workspace to load: "
+       (persp-list-persp-names-in-file
+        (expand-file-name +workspace-data-file persp-save-dir))))))
+  (if (not (+workspace-load name))
+      (+workspace-error (format "Couldn't load workspace %s" name))
+    (+workspace/switch-to name)
+    (+workspace/display)))
+
+;;;###autoload
+(defun +workspace/save (name)
+  "Save the current workspace. If called with C-u, autosave the current
+workspace."
+  (interactive
+   (list
+    (if current-prefix-arg
+        (+workspace-current-name)
+      (completing-read "Workspace to save: " (+workspace-list-names)))))
+  (if (+workspace-save name)
+      (+workspace-message (format "'%s' workspace saved" name) 'success)
+    (+workspace-error (format "Couldn't save workspace %s" name))))
+
+;;;###autoload
 (defun +workspace/load-session (&optional name)
   "Load a session and switch to it. If called with C-u, try to load the last
 session."
