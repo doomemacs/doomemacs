@@ -426,10 +426,10 @@ directory, the file name, and its state (modified, read-only or non-existent)."
           (if vc-mode "  " " ")))
 
 (defvar-local +doom-modeline--flycheck nil)
-(add-hook 'flycheck-after-syntax-check-hook #'+doom-modeline|update-flycheck-segment)
-(defun +doom-modeline|update-flycheck-segment ()
+(add-hook 'flycheck-status-changed-functions #'+doom-modeline|update-flycheck-segment)
+(defun +doom-modeline|update-flycheck-segment (status)
   (setq +doom-modeline--flycheck
-        (pcase flycheck-last-status-change
+        (pcase status
           ('finished (if flycheck-current-errors
                          (let-alist (flycheck-count-errors flycheck-current-errors)
                            (let ((sum (+ (or .error 0) (or .warning 0))))
@@ -446,7 +446,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 (def-modeline-segment! flycheck
   "Displays color-coded flycheck error status in the current buffer with pretty
 icons."
-  +doom-modeline--flycheck)
+  (if (bound-and-true-p flycheck-mode) +doom-modeline--flycheck))
 
 
 ;;
