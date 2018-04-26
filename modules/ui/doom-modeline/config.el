@@ -427,7 +427,8 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 
 (defvar-local +doom-modeline--flycheck nil)
 (add-hook 'flycheck-status-changed-functions #'+doom-modeline|update-flycheck-segment)
-(defun +doom-modeline|update-flycheck-segment (status)
+(add-hook 'flycheck-mode-hook #'+doom-modeline|update-flycheck-segment)
+(defun +doom-modeline|update-flycheck-segment (&optional status)
   (setq +doom-modeline--flycheck
         (pcase status
           ('finished (if flycheck-current-errors
@@ -446,7 +447,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 (def-modeline-segment! flycheck
   "Displays color-coded flycheck error status in the current buffer with pretty
 icons."
-  (if (bound-and-true-p flycheck-mode) +doom-modeline--flycheck))
+  +doom-modeline--flycheck)
 
 
 ;;
