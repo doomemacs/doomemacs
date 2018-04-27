@@ -50,7 +50,7 @@
     "Detect React or preact imports early in the file."
     (and buffer-file-name
          (string= (file-name-extension buffer-file-name) "js")
-         (re-search-forward "\\(^\\s-*import +\\(?:pr\\|R\\)eact\\|\\( from \\|require(\\)[\"']p?react\\)"
+         (re-search-forward "\\(^\\s-*import +React\\|\\( from \\|require(\\)[\"']p?react\\)"
                             magic-mode-regexp-match-limit t)
          (progn (goto-char (match-beginning 1))
                 (not (sp-point-in-string-or-comment)))))
