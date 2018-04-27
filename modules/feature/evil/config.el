@@ -128,16 +128,9 @@
                         table)))
   (add-hook 'minibuffer-inactive-mode-hook #'+evil*fix-dabbrev-in-minibuffer)
 
-  ;; Move to new split -- setting `evil-split-window-below' &
-  ;; `evil-vsplit-window-right' to non-nil mimics this, but that doesn't update
-  ;; window history. That means when you delete a new split, Emacs leaves you on
-  ;; the 2nd to last window on the history stack, which is jarring.
-  ;;
-  ;; Also recenters window on cursor in new split
-  (defun +evil*window-follow (&rest _)  (evil-window-down 1) (recenter))
-  (advice-add #'evil-window-split  :after #'+evil*window-follow)
-  (defun +evil*window-vfollow (&rest _) (evil-window-right 1) (recenter))
-  (advice-add #'evil-window-vsplit :after #'+evil*window-vfollow)
+  ;; Focus and recenter new splits
+  (advice-add #'evil-window-split  :override #'+evil*window-split)
+  (advice-add #'evil-window-vsplit :override #'+evil*window-vsplit)
 
   ;; These arg types will highlight matches in the current buffer
   (evil-ex-define-argument-type buffer-match :runner +evil-ex-buffer-match)

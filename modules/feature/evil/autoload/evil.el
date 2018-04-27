@@ -308,3 +308,34 @@ more information on modifiers."
                                         path file-name t t 1))))
     (replace-regexp-in-string regexp "\\1" file-name t)))
 
+;;;###autoload (autoload '+evil*window-split "feature/evil/autoload/evil" nil t)
+(evil-define-command +evil*window-split (&optional count file)
+  "Same as `evil-window-split', but focuses (and recenters) the new split."
+  :repeat nil
+  (interactive "P<f>")
+  (split-window (selected-window) count
+                (if evil-split-window-below 'above 'below))
+  (call-interactively
+   (if evil-split-window-below
+       #'evil-window-up
+     #'evil-window-down))
+  (recenter)
+  (when (and (not count) evil-auto-balance-windows)
+    (balance-windows (window-parent)))
+  (if file (evil-edit file)))
+
+;;;###autoload (autoload '+evil*window-vsplit "feature/evil/autoload/evil" nil t)
+(evil-define-command +evil*window-vsplit (&optional count file)
+  "Same as `evil-window-vsplit', but focuses (and recenters) the new split."
+  :repeat nil
+  (interactive "P<f>")
+  (split-window (selected-window) count
+                (if evil-vsplit-window-right 'left 'right))
+  (call-interactively
+   (if evil-vsplit-window-right
+       #'evil-window-left
+     #'evil-window-right))
+  (recenter)
+  (when (and (not count) evil-auto-balance-windows)
+    (balance-windows (window-parent)))
+  (if file (evil-edit file)))
