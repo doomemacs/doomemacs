@@ -11,10 +11,6 @@
   (setq omnisharp-auto-complete-want-documentation nil
         omnisharp-cache-directory (concat doom-cache-dir "omnisharp"))
   :config
-  (let ((omnisharp-bin (or omnisharp-server-executable-path (omnisharp--server-installation-path t))))
-    (unless (file-exists-p omnisharp-bin)
-      (warn! "Omnisharp server isn't installed, completion won't work")))
-
   (add-hook! csharp-mode #'(flycheck-mode omnisharp-mode))
 
   (defun +csharp|cleanup-omnisharp-server ()

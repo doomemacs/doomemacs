@@ -3,9 +3,9 @@
 (add-hook 'java-mode-hook #'rainbow-delimiters-mode)
 
 (cond ((featurep! +meghanada) (load! +meghanada))
-      ((featurep! +eclim) ; FIXME lang/java +eclim
-       ;;(load! +eclim)
-       (warn! "Eclim support isn't implemented yet")))
+      ;; TODO lang/java +eclim
+      ;; ((featurep! +eclim) (load! +eclim))
+      )
 
 
 ;;
