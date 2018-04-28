@@ -60,7 +60,16 @@
   (set! :electric 'rjsx-mode :chars '(?\} ?\) ?. ?>))
   (add-hook! 'rjsx-mode-hook
     ;; jshint doesn't know how to deal with jsx
-    (push 'javascript-jshint flycheck-disabled-checkers)))
+    (push 'javascript-jshint flycheck-disabled-checkers))
+
+  ;; `rjsx-electric-gt' relies on js2's parser to tell it when the cursor is in
+  ;; a self-closing tag, so that it can insert a matching ending tag at point.
+  ;; However, the parser doesn't run immediately, so a fast typist can outrun
+  ;; it, causing issues, so force it to parse.
+  (defun +javascript|reparse (n)
+    ;; if n != 0, then rjsx-maybe-reparse will be run elsewhere
+    (if (= n 0) (rjsx-maybe-reparse)))
+  (advice-add #'rjsx-electric-gt :before #'+javascript|reparse))
 
 
 (def-package! coffee-mode
