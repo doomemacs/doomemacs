@@ -14,7 +14,8 @@
   :mode "templates/.+\\.php$"
   :config
   (set! :company-backend 'web-mode '(company-web-html company-yasnippet))
-  (setq web-mode-enable-html-entities-fontification t)
+  (setq web-mode-enable-html-entities-fontification t
+        web-mode-enable-auto-quoting nil)
 
   (map! :map web-mode-map
         (:localleader
