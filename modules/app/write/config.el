@@ -19,30 +19,28 @@
 ;; Plugins
 ;;
 
-(when (featurep! +langtool)
-  (def-package! langtool
-    :commands (langtool-check
-               langtool-check-done
-               langtool-switch-default-language
-               langtool-show-message-at-point
-               langtool-correct-buffer)
-    :init
-    (setq langtool-default-language "en-US")
-    :config
-    (unless langtool-language-tool-jar
-      (setq langtool-language-tool-jar
-            (cond (IS-MAC
-                   "/usr/local/Cellar/languagetool/4.0/libexec/languagetool-commandline.jar")
-                  (IS-LINUX
-                   "/usr/share/java/languagetool/languagetool-commandline.jar")))
-      (unless (file-exists-p langtool-language-tool-jar)
-        (warn! "Couldn't find languagetool-commandline.jar")))))
+(def-package! langtool
+  :when (featurep! +langtool)
+  :commands (langtool-check
+             langtool-check-done
+             langtool-switch-default-language
+             langtool-show-message-at-point
+             langtool-correct-buffer)
+  :init
+  (setq langtool-default-language "en-US")
+  :config
+  (unless langtool-language-tool-jar
+    (setq langtool-language-tool-jar
+          (cond (IS-MAC
+                 "/usr/local/Cellar/languagetool/4.0/libexec/languagetool-commandline.jar")
+                (IS-LINUX
+                 "/usr/share/java/languagetool/languagetool-commandline.jar")))))
 
 
-(when (featurep! +wordnut)
-  (def-package! wordnut
-    :commands (wordnut-search
-               wordnut-lookup-current-word)))
+(def-package! wordnut
+  :when (featurep! +wordnut)
+  :commands (wordnut-search
+             wordnut-lookup-current-word))
 
 
 (def-package! synosaurus
