@@ -252,7 +252,7 @@ between the two."
 (defun +org|setup-evil ()
   (require 'evil-org)
 
-  (add-hook 'org-tab-first-hook #'+org|toggle-only-current-fold)
+  (add-hook 'org-tab-first-hook #'+org|toggle-only-current-fold t)
 
   (map! :map outline-mode-map
         :n "^" nil
