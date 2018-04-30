@@ -20,7 +20,8 @@
 
   (setq projectile-globally-ignored-directories
         (append projectile-globally-ignored-directories
-                (list (abbreviate-file-name doom-local-dir) ".sync"))
+                (list (abbreviate-file-name doom-local-dir) ".sync"
+                      "node_modules" "flow-typed"))
         projectile-other-file-alist
         (append projectile-other-file-alist
                 '(("css"  . ("scss" "sass" "less" "styl"))
