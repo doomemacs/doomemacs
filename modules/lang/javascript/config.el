@@ -90,6 +90,8 @@
       (tide-setup)))
   (add-hook 'web-mode-hook #'+javascript|init-tide-in-web-mode)
   :config
+  (setq tide-completion-detailed t
+        tide-always-show-documentation t)
   ;; code completion
   (after! company
     ;; tide affects the global `company-backends', undo this so doom can handle
