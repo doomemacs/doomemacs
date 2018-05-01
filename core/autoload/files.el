@@ -7,7 +7,9 @@
    (list (read-file-name "Open as root: ")))
   (find-file (if (file-writable-p file)
                  file
-               (concat "/sudo:root@localhost:" file))))
+               (if (file-remote-p file)
+                   (concat "/" (file-remote-p file 'method) ":" (file-remote-p file 'user) "@" (file-remote-p file 'host)  "|sudo:root@" (file-remote-p file 'host) ":" (file-remote-p file 'localname))
+                 (concat "/sudo:root@localhost:" file)))))
 
 ;;;###autoload
 (defun doom/sudo-this-file ()
