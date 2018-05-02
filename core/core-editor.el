@@ -179,8 +179,7 @@ extension, try to guess one."
   (smartparens-global-mode +1)
   (require 'smartparens-config)
 
-  (setq sp-autowrap-region nil ; let evil-surround handle this
-        sp-highlight-pair-overlay nil
+  (setq sp-highlight-pair-overlay nil
         sp-cancel-autoskip-on-backward-movement nil
         sp-show-pair-delay 0
         sp-max-pair-length 3)
