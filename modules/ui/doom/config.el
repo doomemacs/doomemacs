@@ -5,6 +5,7 @@
     (doom-dracula . t)
     (doom-molokai . t)
     (doom-nord . t)
+    (doom-nord-light . t)
     (doom-nova . nil)
     (doom-one . t)
     (doom-one-light . t)
