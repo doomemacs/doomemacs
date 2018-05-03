@@ -9,9 +9,10 @@
 
 ;; Optional
 ;;(require 'flycheck)
-;;(require 'anzu)
 ;;(require 'iedit)
 ;;(require 'evil-multiedit)
+
+(require 'anzu)
 
 (when (featurep! :feature evil)
   (package! evil-anzu))
