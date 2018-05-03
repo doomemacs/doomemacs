@@ -4,8 +4,11 @@
 ;; mode-line.
 
 (def-package! anzu
-  :defer t
-  :commands 'isearch
+  :commands (anzu-mode global-anzu-mode
+             anzu-query-replace anzu-query-replace-regexp
+             anzu-query-replace-at-cursor anzu-replace-at-cursor-thing)
+  :init
+  (add-transient-hook! #'isearch-mode (require 'anzu))
   :config
   (setq anzu-cons-mode-line-p nil
         anzu-minimum-input-length 1

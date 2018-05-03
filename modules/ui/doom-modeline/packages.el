@@ -12,7 +12,7 @@
 ;;(require 'iedit)
 ;;(require 'evil-multiedit)
 
-(require 'anzu)
+(package! anzu)
 
 (when (featurep! :feature evil)
   (package! evil-anzu))
