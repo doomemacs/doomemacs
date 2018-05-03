@@ -108,7 +108,9 @@ properties:
 ;; xref
 ;;
 
-(after! xref
+(def-package! xref
+  :commands (xref-backend-identifier-at-point xref-find-definitions xref-find-references)
+  :config
   ;; By default, `etags--xref-backend' is the default xref backend. No need.
   ;; We'll set these up ourselves in other modules.
   (setq-default xref-backend-functions '(t))

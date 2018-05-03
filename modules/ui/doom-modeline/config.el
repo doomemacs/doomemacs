@@ -428,6 +428,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 (defvar-local +doom-modeline--flycheck nil)
 (add-hook 'flycheck-status-changed-functions #'+doom-modeline|update-flycheck-segment)
 (add-hook 'flycheck-mode-hook #'+doom-modeline|update-flycheck-segment)
+
 (defun +doom-modeline|update-flycheck-segment (&optional status)
   (setq +doom-modeline--flycheck
         (pcase status
@@ -480,7 +481,7 @@ lines are selected, or the NxM dimensions of a block selection."
                         (let ((cols (abs (- (doom-column end)
                                             (doom-column beg)))))
                           (format "%dx%dB" lines cols)))
-                       ((eq 'line evil-visual-selection)
+                       ((eq evil-visual-selection 'line)
                         (format "%dL" lines))
                        ((> lines 1)
                         (format "%dC %dL" (- end beg) lines))

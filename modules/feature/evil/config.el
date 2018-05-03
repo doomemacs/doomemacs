@@ -121,7 +121,7 @@
   (advice-add #'evil-ex-replace-special-filenames :override #'+evil*resolve-vim-path)
 
   ;; make `try-expand-dabbrev' from `hippie-expand' work in minibuffer
-  ;; @see `he-dabbrev-beg', so we need re-define syntax for '/'
+  ;; @see `he-dabbrev-beg', so we need to redefine syntax for '/'
   (defun +evil*fix-dabbrev-in-minibuffer ()
     (set-syntax-table (let* ((table (make-syntax-table)))
                         (modify-syntax-entry ?/ "." table)
