@@ -178,12 +178,11 @@ active."
   (eq (selected-window) +doom-modeline-current-window))
 
 ;; Inspired from `powerline's `pl/make-xpm'.
-(defun +doom-modeline--make-xpm (face &optional height width)
+(defun +doom-modeline--make-xpm (face width height)
   "Create an XPM bitmap."
   (propertize
    " " 'display
-   (let ((data (make-list (or height +doom-modeline-height)
-                          (make-list (or width +doom-modeline-bar-width) 1)))
+   (let ((data (make-list height (make-list width 1)))
          (color (or (face-background face nil t) "None")))
      (ignore-errors
        (create-image
@@ -617,6 +616,21 @@ Returns \"\" to not break --no-window-system."
         +doom-modeline--bar-inactive)
     ""))
 
+(when EMACS26+
+  (add-variable-watcher
+   '+doom-modeline-height
+   (lambda (_sym val op _where)
+     (when (and (eq op 'set) (integerp val))
+       (+doom-modeline|refresh-bars +doom-modeline-bar-width val))))
+
+  (add-variable-watcher
+   '+doom-modeline-bar-width
+   (lambda (_sym val op _where)
+     (when (and (eq op 'set) (integerp val))
+       (+doom-modeline|refresh-bars val +doom-modeline-height))))
+
+  (add-hook 'doom-big-font-mode-hook #'+doom-modeline|resize-for-big-font))
+
 
 ;;
 ;; Mode lines
@@ -647,11 +661,19 @@ Returns \"\" to not break --no-window-system."
 ;; Hooks
 ;;
 
+(defun +doom-modeline|refresh-bars (&optional width height)
+  (setq +doom-modeline--bar-active
+        (+doom-modeline--make-xpm 'doom-modeline-bar
+                                  (or width +doom-modeline-bar-width)
+                                  (or height +doom-modeline-height))
+        +doom-modeline--bar-inactive
+        (+doom-modeline--make-xpm 'doom-modeline-inactive-bar
+                                  (or width +doom-modeline-bar-width)
+                                  (or height +doom-modeline-height))))
+
 (defun +doom-modeline|init ()
   ;; Create bars
-  (setq +doom-modeline--bar-active   (+doom-modeline--make-xpm 'doom-modeline-bar)
-        +doom-modeline--bar-inactive (+doom-modeline--make-xpm 'doom-modeline-inactive-bar))
-
+  (+doom-modeline|refresh-bars)
   (unless after-init-time
     ;; These buffers are already created and don't get modelines. For the love
     ;; of Emacs, someone give the man a modeline!
@@ -695,6 +717,3 @@ Returns \"\" to not break --no-window-system."
 
 (add-hook 'focus-in-hook #'+doom-modeline|focus)
 (add-hook 'focus-out-hook #'+doom-modeline|unfocus)
-
-;;
-;; (add-hook 'doom-big-font-mode-hook #'+doom-modeline|resize-for-big-font)
