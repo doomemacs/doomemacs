@@ -177,9 +177,8 @@ active."
 (defsubst active ()
   (eq (selected-window) +doom-modeline-current-window))
 
-;; Inspired from `powerline's `pl/make-xpm'.
 (defun +doom-modeline--make-xpm (face width height)
-  "Create an XPM bitmap."
+  "Create an XPM bitmap. Inspired by `powerline''s `pl/make-xpm'."
   (propertize
    " " 'display
    (let ((data (make-list height (make-list width 1)))
@@ -211,12 +210,12 @@ active."
         (buffer-file-truename (or buffer-file-truename "")))
     (propertize
      (pcase +doom-modeline-buffer-file-name-style
-       ('truncate-upto-project (+doom-modeline--buffer-file-name 'shrink))
-       ('truncate-upto-root (+doom-modeline--buffer-file-name-truncate))
-       ('truncate-all (+doom-modeline--buffer-file-name-truncate t))
-       ('relative-to-project (+doom-modeline--buffer-file-name-relative))
-       ('relative-from-project (+doom-modeline--buffer-file-name-relative 'include-project))
-       ('file-name (propertize (file-name-nondirectory buffer-file-name)
+       (`truncate-upto-project (+doom-modeline--buffer-file-name 'shrink))
+       (`truncate-upto-root (+doom-modeline--buffer-file-name-truncate))
+       (`truncate-all (+doom-modeline--buffer-file-name-truncate t))
+       (`relative-to-project (+doom-modeline--buffer-file-name-relative))
+       (`relative-from-project (+doom-modeline--buffer-file-name-relative 'include-project))
+       (`file-name (propertize (file-name-nondirectory buffer-file-name)
                                'face
                                (let ((face (or (and (buffer-modified-p)
                                                     'doom-modeline-buffer-modified)
@@ -695,7 +694,7 @@ Returns \"\" to not break --no-window-system."
 ;; Bootstrap
 ;;
 
-(doom-set-modeline 'main t)
+(doom-set-modeline 'main t) ; set default modeline
 
 (add-hook 'doom-init-theme-hook #'+doom-modeline|init)
 (add-hook 'doom-scratch-buffer-hook #'+doom-modeline|set-special-modeline)
@@ -704,15 +703,13 @@ Returns \"\" to not break --no-window-system."
 (add-hook 'image-mode-hook #'+doom-modeline|set-media-modeline)
 (add-hook 'circe-mode-hook #'+doom-modeline|set-special-modeline)
 
-;; TODO Refactor me
+;; Ensure modeline is inactive when Emacs is unfocused (and active otherwise)
 (defvar +doom-modeline-remap-face-cookie nil)
 (defun +doom-modeline|focus ()
-  (require 'face-remap)
   (when +doom-modeline-remap-face-cookie
+    (require 'face-remap)
     (face-remap-remove-relative +doom-modeline-remap-face-cookie)))
-
 (defun +doom-modeline|unfocus ()
-  (require 'face-remap)
   (setq +doom-modeline-remap-face-cookie (face-remap-add-relative 'mode-line 'mode-line-inactive)))
 
 (add-hook 'focus-in-hook #'+doom-modeline|focus)
