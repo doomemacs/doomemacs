@@ -204,10 +204,10 @@
           :desc "Magit pull popup"      :n  "P" #'magit-pull-popup
           :desc "Git revert hunk"       :n  "r" #'git-gutter:revert-hunk
           :desc "Git revert file"       :n  "R" #'vc-revert
-          :desc "Git status"            :n  "s" #'git-gutter:stage-hunk
-          :desc "Git stage hunk"        :n  "S" #'magit-stage-file
+          :desc "Git stage hunk"        :n  "s" #'git-gutter:stage-hunk
+          :desc "Git stage file"        :n  "S" #'magit-stage-file
           :desc "Git time machine"      :n  "t" #'git-timemachine-toggle
-          :desc "Git stage hunk"        :n  "U" #'magit-unstage-file
+          :desc "Git unstage file"      :n  "U" #'magit-unstage-file
           :desc "Next hunk"             :nv "]" #'git-gutter:next-hunk
           :desc "Previous hunk"         :nv "[" #'git-gutter:previous-hunk)
 
