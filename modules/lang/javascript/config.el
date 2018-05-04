@@ -37,7 +37,7 @@
 (def-package! typescript-mode
   :mode "\\.ts$"
   :config
-  (add-hook 'typescript-mode-hook #'rainbow-delimiters-mode)
+  (add-hook! 'typescript-mode-hook #'(flycheck-mode rainbow-delimiters-mode))
   (set! :electric 'typescript-mode :chars '(?\} ?\)) :words '("||" "&&")))
 
 
