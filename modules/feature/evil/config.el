@@ -434,22 +434,22 @@ the new algorithm is confusing, like in python or ruby."
         (setq +evil--mc-compat-evil-prev-state nil)
         (setq +evil--mc-compat-mark-was-active nil))))
 
-  (add-hook 'multiple-cursors-mode-enabled-hook '+evil|mc-compat-switch-to-emacs-state)
-  (add-hook 'multiple-cursors-mode-disabled-hook '+evil|mc-compat-back-to-previous-state)
+  (add-hook 'multiple-cursors-mode-enabled-hook #'+evil|mc-compat-switch-to-emacs-state)
+  (add-hook 'multiple-cursors-mode-disabled-hook #'+evil|mc-compat-back-to-previous-state)
+
+  ;; When running edit-lines, point will return (position + 1) as a
+  ;; result of how evil deals with regions
+  (defun +evil*mc/edit-lines (&rest _)
+    (when (+evil--visual-or-normal-p)
+      (if (> (point) (mark))
+          (goto-char (1- (point)))
+        (push-mark (1- (mark))))))
+  (advice-add #'mc/edit-lines :before #'+evil*mc/edit-lines)
 
   (defun +evil|mc-evil-compat-rect-switch-state ()
     (if rectangular-region-mode
         (+evil|mc-compat-switch-to-emacs-state)
       (setq +evil--mc-compat-evil-prev-state nil)))
-
-  ;; When running edit-lines, point will return (position + 1) as a
-  ;; result of how evil deals with regions
-  (defadvice mc/edit-lines (before change-point-by-1 activate)
-    (when (+evil--visual-or-normal-p)
-      (if (> (point) (mark))
-          (goto-char (1- (point)))
-        (push-mark (1- (mark))))))
-
   (add-hook 'rectangular-region-mode-hook '+evil|mc-evil-compat-rect-switch-state)
 
   (defvar mc--default-cmds-to-run-once nil))
