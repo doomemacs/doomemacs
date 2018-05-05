@@ -116,12 +116,13 @@
   (advice-add #'windmove-do-window-select :around #'+evil*restore-initial-state-on-windmove)
   ;; Don't move cursor when indenting
   (advice-add #'evil-indent :around #'+evil*static-reindent)
-  ;; monkey patch `evil-ex-replace-special-filenames' to add more ex
-  ;; substitution flags to evil-mode
+  ;; monkey patch `evil-ex-replace-special-filenames' to improve support for
+  ;; file modifiers like %:p:h. This adds support for most of vim's modifiers,
+  ;; and one custom one: %:P (expand to the project root).
   (advice-add #'evil-ex-replace-special-filenames :override #'+evil*resolve-vim-path)
 
-  ;; make `try-expand-dabbrev' from `hippie-expand' work in minibuffer
-  ;; @see `he-dabbrev-beg', so we need to redefine syntax for '/'
+  ;; make `try-expand-dabbrev' from `hippie-expand' work in minibuffer. See
+  ;; `he-dabbrev-beg', so we need to redefine syntax for '/'
   (defun +evil*fix-dabbrev-in-minibuffer ()
     (set-syntax-table (let* ((table (make-syntax-table)))
                         (modify-syntax-entry ?/ "." table)
@@ -132,16 +133,15 @@
   (advice-add #'evil-window-split  :override #'+evil*window-split)
   (advice-add #'evil-window-vsplit :override #'+evil*window-vsplit)
 
-  ;; These arg types will highlight matches in the current buffer
-  (evil-ex-define-argument-type buffer-match :runner +evil-ex-buffer-match)
-  (evil-ex-define-argument-type global-match :runner +evil-ex-global-match)
   ;; By default :g[lobal] doesn't highlight matches in the current buffer. I've
   ;; got to write my own argument type and interactive code to get it to do so.
   (evil-ex-define-argument-type global-delim-match :runner +evil-ex-global-delim-match)
-
   (dolist (sym '(evil-ex-global evil-ex-global-inverted))
     (evil-set-command-property sym :ex-arg 'global-delim-match))
 
+  ;; These arg types will highlight matches in the current buffer
+  (evil-ex-define-argument-type buffer-match :runner +evil-ex-buffer-match)
+  (evil-ex-define-argument-type global-match :runner +evil-ex-global-match)
   ;; Other commands can make use of this
   (evil-define-interactive-code "<//>"
     :ex-arg buffer-match (list (if (evil-ex-p) evil-ex-argument)))
