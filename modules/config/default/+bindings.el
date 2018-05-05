@@ -25,30 +25,30 @@
       :gnvime "M-:" #'doom/open-scratch-buffer
 
       ;; Text-scaling
-      :ne "M-+"       (λ! (text-scale-set 0))
-      :ne "M-="       #'text-scale-increase
-      :ne "M--"       #'text-scale-decrease
+      :ne "M-+"   (λ! (text-scale-set 0))
+      :ne "M-="   #'text-scale-increase
+      :ne "M--"   #'text-scale-decrease
 
       ;; Simple window/frame navigation/manipulation
-      :ne "C-`"       #'+popup/toggle
-      :ne "C-~"       #'+popup/raise
-      :ne "M-t"       #'+workspace/new
-      :ne "M-T"       #'+workspace/display
-      :ne "M-w"       #'delete-window
-      :ne "M-W"       #'delete-frame
-      :ne "C-M-f"     #'toggle-frame-fullscreen
-      :ne "M-n"       #'evil-buffer-new
-      :ne "M-N"       #'make-frame
-      :ne "M-1"       (λ! (+workspace/switch-to 0))
-      :ne "M-2"       (λ! (+workspace/switch-to 1))
-      :ne "M-3"       (λ! (+workspace/switch-to 2))
-      :ne "M-4"       (λ! (+workspace/switch-to 3))
-      :ne "M-5"       (λ! (+workspace/switch-to 4))
-      :ne "M-6"       (λ! (+workspace/switch-to 5))
-      :ne "M-7"       (λ! (+workspace/switch-to 6))
-      :ne "M-8"       (λ! (+workspace/switch-to 7))
-      :ne "M-9"       (λ! (+workspace/switch-to 8))
-      :ne "M-0"       #'+workspace/switch-to-last
+      :ne "C-`"   #'+popup/toggle
+      :ne "C-~"   #'+popup/raise
+      :ne "M-t"   #'+workspace/new
+      :ne "M-T"   #'+workspace/display
+      :ne "M-w"   #'delete-window
+      :ne "M-W"   #'delete-frame
+      :ne "C-M-f" #'toggle-frame-fullscreen
+      :ne "M-n"   #'evil-buffer-new
+      :ne "M-N"   #'make-frame
+      :ne "M-1"   (λ! (+workspace/switch-to 0))
+      :ne "M-2"   (λ! (+workspace/switch-to 1))
+      :ne "M-3"   (λ! (+workspace/switch-to 2))
+      :ne "M-4"   (λ! (+workspace/switch-to 3))
+      :ne "M-5"   (λ! (+workspace/switch-to 4))
+      :ne "M-6"   (λ! (+workspace/switch-to 5))
+      :ne "M-7"   (λ! (+workspace/switch-to 6))
+      :ne "M-8"   (λ! (+workspace/switch-to 7))
+      :ne "M-9"   (λ! (+workspace/switch-to 8))
+      :ne "M-0"   #'+workspace/switch-to-last
 
       ;; Other sensible, textmate-esque global bindings
       :ne "M-r"   #'+eval/buffer
