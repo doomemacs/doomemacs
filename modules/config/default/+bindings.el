@@ -585,6 +585,12 @@
         "C-b"    #'backward-word
         "C-f"    #'forward-word)
 
+      ;; move-text
+      (:after move-text
+        :map move-text-map)
+        :n "M-k" #'move-text-up
+        :n "M-j" #'move-text-down
+
       ;; neotree
       (:after neotree
         :map neotree-mode-map
