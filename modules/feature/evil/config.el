@@ -264,7 +264,9 @@
   (map! [remap evil-jump-item] #'evilmi-jump-items
         :textobj "%" #'evilmi-inner-text-object #'evilmi-outer-text-object)
   :config
+  ;; Fixes #519 where d% wouldn't leave a dangling end-parenthesis
   (evil-set-command-properties 'evilmi-jump-items :type 'inclusive :jump t)
+
   (defun +evil|simple-matchit ()
     "A hook to force evil-matchit to favor simple bracket jumping. Helpful when
 the new algorithm is confusing, like in python or ruby."
