@@ -55,31 +55,31 @@
 
 (defalias 'lambda! 'λ!)
 
-(defmacro after! (features &rest body)
+(defmacro after! (targets &rest body)
   "A smart wrapper around `with-eval-after-load'. Supresses warnings during
 compilation."
   (declare (indent defun) (debug t))
   (list (if (or (not (bound-and-true-p byte-compile-current-file))
-                (dolist (next (doom-enlist features))
+                (dolist (next (doom-enlist targets))
                   (if (symbolp next)
                       (require next nil :no-error)
                     (load next :no-message :no-error))))
             #'progn
           #'with-no-warnings)
-        (cond ((symbolp features)
-               `(eval-after-load ',features '(progn ,@body)))
-              ((and (consp features)
-                    (memq (car features) '(:or :any)))
+        (cond ((symbolp targets)
+               `(eval-after-load ',targets '(progn ,@body)))
+              ((and (consp targets)
+                    (memq (car targets) '(:or :any)))
                `(progn
-                  ,@(cl-loop for next in (cdr features)
+                  ,@(cl-loop for next in (cdr targets)
                              collect `(after! ,next ,@body))))
-              ((and (consp features)
-                    (memq (car features) '(:and :all)))
-               (dolist (next (cdr features))
+              ((and (consp targets)
+                    (memq (car targets) '(:and :all)))
+               (dolist (next (cdr targets))
                  (setq body `(after! ,next ,@body)))
                body)
-              ((listp features)
-               `(after! (:all ,@features) ,@body)))))
+              ((listp targets)
+               `(after! (:all ,@targets) ,@body)))))
 
 (defmacro quiet! (&rest forms)
   "Run FORMS without making any output."
