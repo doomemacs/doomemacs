@@ -555,7 +555,8 @@ confirmation."
 
 (defun doom|ansi-color-apply ()
   "TODO"
-  (ansi-color-apply-on-region compilation-filter-start (point)))
+  (let ((inhibit-read-only t))
+    (ansi-color-apply-on-region compilation-filter-start (point))))
 
 (defun doom|no-fringes-in-minibuffer ()
   "Disable fringes in the minibuffer window."
