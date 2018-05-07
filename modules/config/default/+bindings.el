@@ -230,6 +230,7 @@
           :desc "Reload theme"          :n  "R" #'doom//reload-theme
           :desc "Describe DOOM setting" :n  "s" #'doom/describe-setting
           :desc "Describe variable"     :n  "v" #'describe-variable
+          :desc "Print Doom version"    :n  "V" #'doom/version
           :desc "Describe at point"     :n  "." #'helpful-at-point
           :desc "What face"             :n  "'" #'doom/what-face
           :desc "What minor modes"      :n  ";" #'doom/what-minor-mode)
