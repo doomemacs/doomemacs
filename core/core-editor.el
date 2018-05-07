@@ -102,6 +102,7 @@ fundamental-mode) for performance sake."
   :hook (doom-init . recentf-mode)
   :config
   (setq recentf-save-file (concat doom-cache-dir "recentf")
+        recentf-auto-cleanup 60
         recentf-max-menu-items 0
         recentf-max-saved-items 300
         recentf-filename-handlers '(file-truename)
