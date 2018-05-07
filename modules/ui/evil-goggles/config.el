@@ -6,4 +6,5 @@
   :init
   (setq evil-goggles-duration 0.05
         evil-goggles-pulse nil ; too slow
-        evil-goggles-enable-delete nil))
+        evil-goggles-enable-delete t
+        evil-goggles-enable-change nil))
