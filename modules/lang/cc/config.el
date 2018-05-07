@@ -27,6 +27,8 @@ compilation database is present in the project.")
   :commands (c-mode c++-mode objc-mode java-mode)
   :mode ("\\.mm" . objc-mode)
   :preface
+  (defalias 'cpp-mode 'c++-mode)
+
   (defun +cc-c++-header-file-p ()
     (and buffer-file-name
          (equal (file-name-extension buffer-file-name) "h")
