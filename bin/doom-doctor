@@ -285,6 +285,7 @@
         (let ((inhibit-message t)
               (noninteractive t))
           (load "~/.emacs.d/init.el" nil t))
+        (doom-initialize t)
         (doom-initialize-packages t)
         (quiet! (doom-initialize-modules))
         (doom|finalize)
