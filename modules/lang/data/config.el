@@ -8,7 +8,7 @@
 
 
 (def-package! graphql-mode
-  :mode "\\.graphql$")
+  :mode "\\.g\\(?:raph\\)?ql$")
 
 
 (def-package! hexl ; For ROM hacking or debugging
