@@ -1,8 +1,5 @@
 ;;; feature/snippets/config.el -*- lexical-binding: t; -*-
 
-;; Snippets! I've thrown together a few hacks to make `yasnippet' and `evil'
-;; behave together.
-
 (def-package! yasnippet
   :commands (yas-minor-mode yas-minor-mode-on yas-expand yas-expand-snippet
              yas-lookup-snippet yas-insert-snippet yas-new-snippet
@@ -25,13 +22,13 @@
   :config
   (setq yas-verbosity (if doom-debug-mode 3 0)
         yas-also-auto-indent-first-line t
-        yas-prompt-functions (delq 'yas-dropdown-prompt yas-prompt-functions)
+        yas-prompt-functions (delq #'yas-dropdown-prompt yas-prompt-functions)
         ;; Allow nested snippets
         yas-triggers-in-field t)
 
-  (push (expand-file-name "snippets/" doom-private-dir) yas-snippet-dirs)
+  (cl-pushnew (expand-file-name "snippets/" doom-private-dir) yas-snippet-dirs
+              :test #'string=)
 
-  ;; Allows project-specific snippets
   (defun +snippets|enable-project-modes (mode &rest _)
     "Enable snippets for project modes."
     (if (symbol-value mode)
