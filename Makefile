@@ -18,7 +18,7 @@ cc: compile-core
 ce: compile-elpa
 d: doctor
 
-quickstart: | ~/.doom.d/init.el install
+quickstart: | ~/.doom.d/init.el all
 ~/.doom.d/init.el:
 	mkdir ~/.doom.d && cp init.example.el ~/.doom.d/init.el
 
