@@ -261,6 +261,8 @@ between the two."
   (map! :map outline-mode-map
         :n "^" nil
         :n [backtab] nil
+        :n "C-j" nil
+        :n "C-k" nil
 
         :map evil-org-mode-map
         :i [backtab] #'+org/dedent
