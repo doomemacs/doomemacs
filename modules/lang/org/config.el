@@ -94,13 +94,17 @@ unfold to point on startup."
 (defun +org|smartparens-compatibility-config ()
   "Instruct `smartparens' not to impose itself in org-mode."
   (defun +org-sp-point-in-checkbox-p (_id action _context)
-    (when (eq action 'insert)
-      (sp--looking-at-p "\\s-*]")))
+    (and (eq action 'insert)
+         (sp--looking-at-p "\\s-*]")))
+  (defun +org-sp-point-at-bol-p (_id action _context)
+    (and (eq action 'insert)
+         (eq (char-before) ?*)
+         (sp--looking-back-p "^\\**" (line-beginning-position))))
 
   ;; make delimiter auto-closing a little more conservative
   (after! smartparens
     (sp-with-modes 'org-mode
-      (sp-local-pair "*" nil :unless '(:add sp-point-before-word-p sp-point-at-bol-p))
+      (sp-local-pair "*" nil :unless '(:add sp-point-before-word-p +org-sp-point-at-bol-p))
       (sp-local-pair "_" nil :unless '(:add sp-point-before-word-p))
       (sp-local-pair "/" nil :unless '(:add sp-point-before-word-p +org-sp-point-in-checkbox-p))
       (sp-local-pair "~" nil :unless '(:add sp-point-before-word-p))
