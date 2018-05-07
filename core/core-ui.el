@@ -527,8 +527,6 @@ frame's window-system, the theme will be reloaded.")
 
 ;; simple name in frame title
 (setq frame-title-format '("%b – Doom Emacs"))
-;; make `next-buffer', `other-buffer', etc. ignore unreal buffers
-(map-put default-frame-alist 'buffer-predicate #'doom-buffer-frame-predicate)
 ;; draw me like one of your French editors
 (tooltip-mode -1) ; relegate tooltips to echo area only
 (menu-bar-mode -1)
@@ -614,6 +612,8 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
 
 (defun doom|init-ui ()
   "Initialize Doom's user interface by applying all its advice and hooks."
+  ;; Make `next-buffer', `other-buffer', etc. ignore unreal buffers.
+  (map-put default-frame-alist 'buffer-predicate #'doom-buffer-frame-predicate)
   ;; Switch to `doom-fallback-buffer' if on last real buffer
   (advice-add #'kill-this-buffer :around #'doom*switch-to-fallback-buffer-maybe)
   ;; Don't kill the fallback buffer
