@@ -177,7 +177,25 @@ Body forms can access the hook's arguments through the let-bound variable
 (defmacro remove-hook! (&rest args)
   "Convenience macro for `remove-hook'. Takes the same arguments as
 `add-hook!'."
+  (declare (indent defun) (debug t))
   `(add-hook! :remove ,@args))
+
+(defmacro setq-hook! (hooks &rest rest)
+  "Convenience macro for setting buffer-local variables in a hook.
+
+  (setq-hook! 'markdown-mode-hook
+    line-spacing 2
+    fill-column 80)"
+  (declare (indent 1))
+  (unless (= 0 (% (length rest) 2))
+    (signal 'wrong-number-of-arguments (length rest)))
+  `(add-hook! ,hooks
+     ,@(let (forms)
+         (while rest
+           (let ((var (pop rest))
+                 (val (pop rest)))
+             (push `(setq-local ,var ,val) forms)))
+         (nreverse forms))))
 
 (defmacro associate! (mode &rest plist)
   "Associate a minor mode to certain patterns and project files."
