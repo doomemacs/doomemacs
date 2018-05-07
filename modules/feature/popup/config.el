@@ -153,7 +153,7 @@ example:
 
   ;; `help-mode', `helpful-mode'
   (+popup-define "^\\*[Hh]elp"
-    '((slot . 2) (vslot . 2) (size . 0.2))
+    '((slot . 2) (vslot . 2) (size . 0.25))
     '((select . t)))
   ;; `Info-mode'
   (+popup-define "^\\*info\\*$"
