@@ -326,6 +326,7 @@
       :m  "gd" #'+lookup/definition
       :m  "gD" #'+lookup/references
       :n  "gp" #'+evil/reselect-paste
+      :v  "gp" #'+evil/paste-preserve-register
       :n  "gr" #'+eval:region
       :n  "gR" #'+eval/buffer
       :v  "gR" #'+eval:replace-region
