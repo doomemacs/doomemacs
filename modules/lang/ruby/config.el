@@ -15,8 +15,8 @@
   :mode "\\.rb$"
   :mode "\\.rake$"
   :mode "\\.gemspec$"
-  :mode "\\.\\(pry\\|irb\\)rc$"
-  :mode "/\\(Gem\\|Cap\\|Vagrant\\|Rake\\|Pod\\|Puppet\\|Berks\\)file$"
+  :mode "\\.\\(?:pry\\|irb\\)rc$"
+  :mode "/\\(?:Gem\\|Cap\\|Vagrant\\|Rake\\|Pod\\|Puppet\\|Berks\\)file$"
   :interpreter "ruby"
   :config
   (set! :company-backend 'ruby-mode '(company-dabbrev-code))

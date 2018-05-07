@@ -2,7 +2,7 @@
 
 (def-package! web-mode
   :mode "\\.p?html?$"
-  :mode "\\.\\(tpl\\|blade\\)\\(\\.php\\)?$"
+  :mode "\\.\\(?:tpl\\|blade\\)\\(\\.php\\)?$"
   :mode "\\.erb$"
   :mode "\\.jsp$"
   :mode "\\.as[cp]x$"
