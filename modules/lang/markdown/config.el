@@ -15,10 +15,10 @@
         markdown-hide-urls nil) ; trigger with `markdown-toggle-url-hiding'
 
   :config
-  (add-hook! markdown-mode
-    (auto-fill-mode +1)
-    (setq line-spacing 2
-          fill-column 80))
+  (add-hook 'markdown-mode-hook #'auto-fill-mode)
+  (setq-hook! 'markdown-mode-hook
+    line-spacing 2
+    fill-column 80)
 
   (map! (:map markdown-mode-map
           [remap find-file-at-point] #'markdown-follow-thing-at-point

@@ -6,7 +6,7 @@
   #'(yas-minor-mode-on flycheck-mode highlight-numbers-mode))
 
 ;; An improved newline+continue comment function
-(add-hook! css-mode (setq-local comment-indent-function #'+css/comment-indent-new-line))
+(setq-hook! css-mode comment-indent-function #'+css/comment-indent-new-line)
 
 (after! smartparens
   (sp-with-modes '(css-mode scss-mode less-css-mode stylus-mode)
