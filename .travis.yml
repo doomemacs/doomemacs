@@ -14,8 +14,8 @@ before_install:
   - INSECURE=1 YES=1 make install
 env:
   - EVM_EMACS=emacs-25.1-travis
-  - EVM_EMACS=emacs-25.2-travis
   - EVM_EMACS=emacs-25.3-travis
+  - EVM_EMACS=emacs-26-pretest-travis
 script:
   - emacs --version
   - DEBUG=1 make test
