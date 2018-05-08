@@ -121,21 +121,19 @@ against."
            (when (equal (caar marker-list) "0")
              (goto-char! 0)))
          ,@body
-         (let ((result-text (buffer-substring-no-properties (point-min) (point-max)))
+         (let ((result-text (buffer-string))
                (point (point))
-               same-point
                expected-text)
            (with-temp-buffer
              (cl-loop for line in ',expected
                       do (insert line "\n"))
              (save-excursion
-               (goto-char 1)
+               (goto-char (point-min))
                (when (re-search-forward "{|}" nil t)
-                 (setq same-point (= point (match-beginning 0)))
-                 (replace-match "" t t)))
-             (setq expected-text (buffer-substring-no-properties (point-min) (point-max)))
-             (should (equal expected-text result-text))
-             (should same-point)))))))
+                 (replace-match "" t t)
+                 (should (equal (point) point))))
+             (setq expected-text (buffer-string))
+             (should (equal expected-text result-text))))))))
 
 (defmacro goto-char! (index)
   "Meant to be used with `should-buffer!'. Will move the cursor to one of the
