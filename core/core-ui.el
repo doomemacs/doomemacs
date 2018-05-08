@@ -544,6 +544,23 @@ frame's window-system, the theme will be reloaded.")
 ;; line numbers in most modes
 (add-hook! (prog-mode text-mode conf-mode) #'doom|enable-line-numbers)
 
+;; ensure posframe cleans up after itself
+(after! posframe
+  ;; TODO Find a better place for this
+  (defun doom|delete-posframe-on-escape ()
+    "TODO"
+    (unless (frame-parameter (selected-frame) 'posframe-buffer)
+      (cl-loop for frame in (frame-list)
+               if (and (frame-parameter frame 'posframe-buffer)
+                       (not (frame-visible-p frame)))
+               do (delete-frame frame))
+      (dolist (buffer (buffer-list))
+        (let ((frame (buffer-local-value 'posframe--frame buffer)))
+          (when (and frame (or (not (frame-live-p frame))
+                               (not (frame-visible-p frame))))
+            (posframe--kill-buffer buffer))))))
+  (add-hook 'doom-escape-hook #'doom|delete-posframe-on-escape)
+  (add-hook 'doom-cleanup-hook #'posframe-delete-all))
 
 ;; Customized confirmation prompt for quitting Emacs
 (defun doom-quit-p (&optional prompt)
