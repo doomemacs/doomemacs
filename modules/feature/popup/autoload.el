@@ -227,7 +227,7 @@ If certain attributes/parameters are omitted, the ones from
 
 ;;;###autoload
 (define-minor-mode +popup-mode
-  "Global minor mode for popups."
+  "Global minor mode representing Doom's popup management system."
   :init-value nil
   :global t
   :keymap +popup-mode-map
@@ -254,7 +254,10 @@ If certain attributes/parameters are omitted, the ones from
 
 ;;;###autoload
 (define-minor-mode +popup-buffer-mode
-  "Minor mode for popup windows."
+  "Minor mode for individual popup windows.
+
+It is enabled when a buffer is displayed in a popup window and disabled when
+that window has been changed or closed."
   :init-value nil
   :keymap +popup-buffer-mode-map
   (when (and +popup-buffer-mode (timerp +popup--timer))
