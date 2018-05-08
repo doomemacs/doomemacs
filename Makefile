@@ -16,6 +16,7 @@ r: autoremove
 c: compile
 cc: compile-core
 ce: compile-elpa
+re: recompile
 d: doctor
 
 quickstart: | ~/.doom.d/init.el all
