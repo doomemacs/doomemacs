@@ -35,7 +35,7 @@ MODES should be one major-mode symbol or a list of them."
         company-tooltip-align-annotations t
         company-require-match 'never
         company-global-modes
-        '(not eshell-mode comint-mode erc-mode message-mode help-mode gud-mode)
+        '(not comint-mode erc-mode message-mode help-mode gud-mode)
         company-frontends
         '(company-pseudo-tooltip-frontend
           company-echo-metadata-frontend)
