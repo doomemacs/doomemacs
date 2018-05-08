@@ -111,7 +111,6 @@
           :desc "Todo"                  :nv "t" #'hl-todo-next
           :desc "Error"                 :nv "e" #'next-error
           :desc "Workspace"             :nv "w" #'+workspace/switch-right
-          :desc "Smart jump"            :nv "l" #'smart-forward
           :desc "Spelling error"        :nv "s" #'evil-next-flyspell-error
           :desc "Spelling correction"   :n  "S" #'flyspell-correct-word-generic)
 
@@ -628,10 +627,6 @@
 
       ;; rotate-text
       :n  "!"  #'rotate-text
-
-      ;; smart-forward
-      :m  "g]" #'smart-forward
-      :m  "g[" #'smart-backward
 
       ;; swiper
       (:after swiper

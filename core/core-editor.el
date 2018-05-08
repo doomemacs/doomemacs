@@ -247,8 +247,5 @@ extension, try to guess one."
 (def-package! pcre2el
   :commands rxt-quote-pcre)
 
-(def-package! smart-forward
-  :commands (smart-up smart-down smart-backward smart-forward))
-
 (provide 'core-editor)
 ;;; core-editor.el ends here

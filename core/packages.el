@@ -29,7 +29,6 @@
 (package! expand-region)
 (package! helpful)
 (package! pcre2el)
-(package! smart-forward)
 (package! smartparens)
 (package! undo-tree)
 
