@@ -6,24 +6,39 @@
 ;;;###autoload
 ;; TODO (defun +css/sass-build ())
 
+(defun +css--toggle-inline-or-block (beg end)
+  (skip-chars-forward " \t")
+  (let ((orig (point-marker)))
+    (with-no-warnings
+      (quiet!
+       (if (= (line-number-at-pos beg) (line-number-at-pos end))
+           (progn
+             (goto-char (1+ beg)) (insert "\n")
+             (replace-regexp ";\\s-+" ";\n" nil beg end)
+             (indent-region beg end))
+         (replace-regexp "\n" " " nil beg end)
+         (replace-regexp " +" " " nil beg end))))
+    (if orig (goto-char orig))))
+
 ;;;###autoload
 (defun +css/toggle-inline-or-block ()
   "Toggles between a bracketed block and inline block."
   (interactive)
   (let ((inhibit-modification-hooks t))
     (cl-destructuring-bind (&key beg end op cl &allow-other-keys)
-        (sp-get-thing)
-      (when (or (string-empty-p op) (string-empty-p cl))
-        (user-error "No block found"))
-      (with-no-warnings
-        (if (= (line-number-at-pos beg) (line-number-at-pos end))
-            (progn
-              (goto-char end) (insert "\n")
-              (goto-char (1+ beg)) (insert "\n")
-              (replace-regexp ";\\s-+" ";\n" nil beg end)
-              (indent-region beg end))
-          (replace-regexp "\n" " " nil beg end)
-          (replace-regexp " +" " " nil beg end))))))
+        (save-excursion
+          (when (and (eq (char-after) ?{)
+                     (not (eq (char-before) ?{)))
+            (forward-char))
+          (sp-get-sexp))
+      (when (or (not (and beg end op cl))
+                (string-empty-p op) (string-empty-p cl))
+        (user-error "No block found %s" (list beg end op cl)))
+      (unless (string= op "{")
+        (user-error "Incorrect block found"))
+      (if (featurep 'evil)
+          (evil-with-single-undo (+css--toggle-inline-or-block beg end))
+        (+css--toggle-inline-or-block beg end)))))
 
 ;;;###autoload
 (defun +css/comment-indent-new-line ()
