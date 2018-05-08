@@ -696,7 +696,7 @@ Returns \"\" to not break --no-window-system."
 
 (doom-set-modeline 'main t) ; set default modeline
 
-(add-hook 'doom-init-theme-hook #'+doom-modeline|init)
+(add-hook 'doom-load-theme-hook #'+doom-modeline|init)
 (add-hook 'doom-scratch-buffer-hook #'+doom-modeline|set-special-modeline)
 (add-hook '+doom-dashboard-mode-hook #'+doom-modeline|set-project-modeline)
 

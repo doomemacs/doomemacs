@@ -45,8 +45,7 @@ shorter major mode name in the mode-line. See `doom|set-mode-name'.")
  enable-recursive-minibuffers nil
  frame-inhibit-implied-resize t
  ;; remove continuation arrow on right fringe
- fringe-indicator-alist (delq (assq 'continuation fringe-indicator-alist)
-                              fringe-indicator-alist)
+ fringe-indicator-alist (map-delete fringe-indicator-alist 'continuation)
  highlight-nonselected-windows nil
  image-animate-loop t
  indicate-buffer-boundaries nil
@@ -230,7 +229,7 @@ DEFAULT is non-nil, set the default mode-line for all buffers."
   :hook (lisp-mode . rainbow-delimiters-mode)
   :config (setq rainbow-delimiters-max-face-count 3))
 
-;; For a distractions-free-like UI, that dynamically resizes margets and can
+;; For a distractions-free-like UI, that dynamically resizes margins and can
 ;; center a buffer.
 (def-package! visual-fill-column
   :commands visual-fill-column-mode
@@ -312,7 +311,6 @@ from the default."
 (defvar doom-load-theme-hook nil
   "Hook run when the theme (and font) is initialized (or reloaded
 with `doom//reload-theme').")
-(define-obsolete-variable-alias 'doom-init-theme-hook 'doom-load-theme-hook "2.1.0")
 
 (defvar doom-before-switch-window-hook nil
   "Hook run before `switch-window' or `switch-frame' are called. See
