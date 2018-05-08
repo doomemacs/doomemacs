@@ -258,6 +258,9 @@ between the two."
 
   (add-hook 'org-tab-first-hook #'+org|toggle-only-current-fold t)
 
+  ;; Fix newline-and-indent behavior in src blocks
+  (advice-add #'org-return-indent :after #'+org*return-indent-in-src-blocks)
+
   (map! :map outline-mode-map
         :n "^" nil
         :n [backtab] nil

@@ -348,3 +348,15 @@ with `org-cycle')."
 
 ;;;###autoload
 (defalias #'+org/toggle-fold #'+org|toggle-only-current-fold)
+
+
+;;
+;; Advice
+;;
+
+;;;###autoload
+(defun +org*return-indent-in-src-blocks ()
+  "Try to mimic `newline-and-indent' with correct indentation in src blocks."
+  (when (org-in-src-block-p t)
+    (org-babel-do-in-edit-buffer
+     (call-interactively #'indent-for-tab-command))))
