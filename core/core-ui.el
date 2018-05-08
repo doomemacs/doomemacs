@@ -506,6 +506,7 @@ frame's window-system, the theme will be reloaded.")
           (set-face-attribute 'fixed-pitch nil :font doom-font))
         ;; Fallback to `doom-unicode-font' for Unicode characters
         (when (fontp doom-unicode-font)
+          (setq use-default-font-for-symbols nil)
           (set-fontset-font t 'unicode doom-unicode-font nil))
         ;; ...and for variable-pitch-mode:
         (when (fontp doom-variable-pitch-font)
