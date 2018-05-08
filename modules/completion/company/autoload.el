@@ -23,9 +23,9 @@ C-x C-l."
   (interactive (list 'interactive))
   (require 'company)
   (pcase command
-    ('interactive (company-begin-backend '+company/whole-lines))
-    ('prefix      (company-grab-line "^[\t\s]*\\(.+\\)" 1))
-    ('candidates
+    (`interactive (company-begin-backend '+company/whole-lines))
+    (`prefix      (company-grab-line "^[\t\s]*\\(.+\\)" 1))
+    (`candidates
      (all-completions
       arg
       (split-string
@@ -42,7 +42,7 @@ C-x C-l."
   (require 'company-dict)
   (require 'company-keywords)
   (let ((company-backends '((company-keywords company-dict))))
-    (call-interactively 'company-complete)))
+    (call-interactively #'company-complete)))
 
 ;;;###autoload
 (defun +company/dabbrev-code-previous ()
