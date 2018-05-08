@@ -7,7 +7,6 @@
 
 ;; core-ui.el
 (package! all-the-icons)
-(package! fringe-helper)
 (package! hide-mode-line)
 (package! highlight-indentation)
 (package! highlight-numbers)

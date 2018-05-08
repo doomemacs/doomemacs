@@ -78,6 +78,15 @@ shorter major mode name in the mode-line. See `doom|set-mode-name'.")
 
 
 ;;
+;; Shims
+;;
+
+(unless (fboundp 'define-fringe-bitmap)
+  ;; doesn't exist in terminal Emacs; define it to prevent errors
+  (defun define-fringe-bitmap (&rest _)))
+
+
+;;
 ;; Modeline library
 ;;
 
@@ -161,13 +170,6 @@ DEFAULT is non-nil, set the default mode-line for all buffers."
                 all-the-icons-faicon all-the-icons-fileicon
                 all-the-icons-wicon all-the-icons-alltheicon))
     (advice-add fn :around #'doom*disable-all-the-icons-in-tty)))
-
-(def-package! fringe-helper
-  :commands (fringe-helper-define fringe-helper-convert)
-  :init
-  (unless (fboundp 'define-fringe-bitmap)
-    ;; doesn't exist in terminal Emacs; define it to prevent errors
-    (defun define-fringe-bitmap (&rest _))))
 
 (def-package! hideshow ; built-in
   :commands (hs-minor-mode hs-toggle-hiding hs-already-hidden-p)
