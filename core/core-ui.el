@@ -279,6 +279,31 @@ DEFAULT is non-nil, set the default mode-line for all buffers."
   (remove-hook 'kill-buffer-query-functions 'server-kill-buffer-query-function))
 (add-hook 'server-visit-hook 'server-remove-kill-buffer-hook)
 
+;; whitespace-mode settings
+(setq whitespace-line-column nil
+      whitespace-style
+      '(face indentation tabs tab-mark spaces space-mark newline newline-mark
+             trailing lines-tail)
+      whitespace-display-mappings
+      '((tab-mark ?\t [?› ?\t])
+        (newline-mark ?\n [?¬ ?\n])
+        (space-mark ?\  [?·] [?.])))
+
+(defun doom|show-whitespace-maybe ()
+  "Show whitespace-mode when file has an `indent-tabs-mode' that is different
+from the default."
+  (unless (eq indent-tabs-mode (default-value 'indent-tabs-mode))
+    (require 'whitespace)
+    (set (make-local-variable 'whitespace-style)
+         (if (or (bound-and-true-p whitespace-mode)
+                 (bound-and-true-p whitespace-newline-mode))
+             (cl-union (if indent-tabs-mode '(tabs tab-mark) '(spaces space-mark))
+                       whitespace-style)
+           `(face ,@(if indent-tabs-mode '(tabs tab-mark) '(spaces space-mark))
+             trailing-lines tail)))
+    (whitespace-mode +1)))
+(add-hook 'after-change-major-mode-hook #'doom|show-whitespace-maybe)
+
 
 ;;
 ;; Custom hooks

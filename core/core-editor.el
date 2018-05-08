@@ -36,16 +36,7 @@ modes are active and the buffer is read-only.")
  tabify-regexp "^\t* [ \t]+" ; for :retab
  ;; Wrapping
  truncate-lines t
- truncate-partial-width-windows 50
- ;; whitespace-mode
- whitespace-line-column nil
- whitespace-style
- '(face indentation tabs tab-mark spaces space-mark newline newline-mark
-   trailing lines-tail)
- whitespace-display-mappings
- '((tab-mark ?\t [?› ?\t])
-   (newline-mark ?\n [?¬ ?\n])
-   (space-mark ?\  [?·] [?.])))
+ truncate-partial-width-windows 50)
 
 ;; ediff
 (setq ediff-diff-options "-w"
