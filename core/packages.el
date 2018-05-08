@@ -25,7 +25,6 @@
 (package! ace-window)
 (package! avy)
 (package! command-log-mode)
-(package! editorconfig)
 (package! expand-region)
 (package! helpful)
 (package! pcre2el)
