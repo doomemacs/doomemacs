@@ -202,7 +202,7 @@ wrong places)."
           (t (user-error "Not a valid list, heading or table")))
 
     (when (org-invisible-p)
-      (org-show-subtree))
+      (org-show-hidden-entry))
     (when (bound-and-true-p evil-mode)
       (evil-insert 1))))
 
