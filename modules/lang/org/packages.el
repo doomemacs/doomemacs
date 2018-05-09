@@ -18,6 +18,8 @@
   (package! ob-sql-mode)
   (package! ob-translate)
 
+  (when (featurep! :lang nim)
+    (package! ob-nim))
   (when (featurep! :lang crystal)
     (package! ob-crystal))
   (when (featurep! :lang go)

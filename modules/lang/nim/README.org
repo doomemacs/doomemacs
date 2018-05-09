@@ -1,0 +1,47 @@
+#+TITLE: :lang Nim
+
+#+begin_quote
+This module is a work in progress.
+#+end_quote
+
+This module adds [[https://nim-lang.org][Nim]] support to Emacs.
+
++ Code completion (nimsuggest + company)
++ Syntax checking (nimsuggest + flycheck)
++ Babel support (~ob-nim~)
+
+* Table of Contents :TOC:
+- [[Module Flags][Module Flags]]
+- [[Prerequisites][Prerequisites]]
+  - [[Nim][Nim]]
+- [[Configuration][Configuration]]
+
+* Module Flags
+This module provides no flags.
+
+* Prerequisites
++ ~nim~ (for building & evaluation)
++ ~nimsuggest~ (for code completion, syntax checking & jump-to-definition functionality)
+
+** Nim
+=choosenim= is an installer and version manager for the Nim programming
+language. You can install the latest stable release of Nim by running the
+following in your terminal and following the onscreen instructions:
+
+#+BEGIN_SRC bash
+curl https://nim-lang.org/choosenim/init.sh -sSf | sh
+#+END_SRC
+
+Alternatively, nim is usually available through your OS's package manager:
+
+*** MacOS
+#+BEGIN_SRC sh :tangle (if (doom-system-os 'macos) "yes")
+brew install nim
+#+END_SRC
+
+*** Arch Linux
+#+BEGIN_SRC sh :dir /sudo:: :tangle (if (doom-system-os 'arch) "yes")
+sudo pacman --needed --noconfirm -S nim nimble
+#+END_SRC
+
+* Configuration

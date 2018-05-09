@@ -129,7 +129,6 @@ compilation database is present in the project.")
 
 
 (def-package! irony
-  :after cc-mode
   :commands (irony-install-server irony-mode)
   :preface
   (setq irony-server-install-prefix (concat doom-etc-dir "irony-server/"))
@@ -145,7 +144,6 @@ compilation database is present in the project.")
   (add-hook 'irony-mode-hook #'+cc|irony-init-compile-options))
 
 (def-package! irony-eldoc
-  :after irony
   :hook (irony-mode . irony-eldoc))
 
 (def-package! flycheck-irony
