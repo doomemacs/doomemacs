@@ -213,7 +213,7 @@ compilation database is present in the project.")
 ;;
 
 (def-package! rtags
-  :commands (rtags-restart-process rtags-start-process-unless-running)
+  :commands (rtags-restart-process rtags-start-process-unless-running rtags-executable-find)
   :init
   (add-hook! (c-mode c++-mode) #'+cc|init-rtags)
   :config
