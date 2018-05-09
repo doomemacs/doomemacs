@@ -3,5 +3,5 @@
 
 (package! flycheck)
 (package! flycheck-popup-tip)
-(when EMACS26+
+(when (and EMACS26+ (featurep! +childframe))
   (package! flycheck-posframe))

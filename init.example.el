@@ -15,7 +15,8 @@
        services          ; TODO managing external services & code builders
        snippets          ; my elves. They type so I don't have to
        spellcheck        ; tasing you for misspelling mispelling
-       syntax-checker    ; tasing you for every semicolon you forget
+       (syntax-checker   ; tasing you for every semicolon you forget
+        +childframe)     ; use childframes for error popups (Emacs 26+ only)
        version-control   ; remember, remember that commit in November
        workspaces        ; tab emulation, persistence & separate workspaces
 

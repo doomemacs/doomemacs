@@ -34,4 +34,9 @@
 
 (def-package! flycheck-posframe
   :when EMACS26+
-  :commands flycheck-posframe-show-posframe)
+  :when (featurep! +childframe)
+  :commands flycheck-posframe-show-posframe
+  :config
+  (setq flycheck-posframe-warning-prefix "⚠ "
+        flycheck-posframe-info-prefix "··· "
+        flycheck-posframe-error-prefix "✕ "))

@@ -2,7 +2,9 @@
 
 (defun +syntax-checker-show-popup (errors)
   "TODO"
-  (if (and EMACS26+ (display-graphic-p))
+  (if (and EMACS26+
+           (featurep! +childframe)
+           (display-graphic-p))
       (flycheck-posframe-show-posframe errors)
     (flycheck-popup-tip-show-popup errors)))
 
@@ -16,6 +18,9 @@
   "TODO"
   :lighter nil
   :group 'doom
+  (if (featurep! +childframe)
+      (require 'flycheck-posframe)
+    (require 'flycheck-popup-tip))
   (let ((hooks '(post-command-hook focus-out-hook)))
     (cond
      ;; Use our display function and remember the old one but only if we haven't
