@@ -95,10 +95,10 @@
     (setcar (cdr (assoc "Check" TeX-command-list)) "chktex -v6 %s")
     ;; Set a custom item indentation
     (setq LaTeX-indent-environment-list
-          (nconc '(("itemize" +latex/LaTeX-indent-item)
-                   ("enumerate" +latex/LaTeX-indent-item)
-                   ("description" +latex/LaTeX-indent-item))
-                 LaTeX-indent-environment-list))))
+          (append '(("itemize" +latex/LaTeX-indent-item)
+                    ("enumerate" +latex/LaTeX-indent-item)
+                    ("description" +latex/LaTeX-indent-item))
+                  LaTeX-indent-environment-list))))
 
 (after! latex
   ;; Use Okular if the user says so.
