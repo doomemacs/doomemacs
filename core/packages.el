@@ -17,9 +17,6 @@
 (package! rainbow-delimiters)
 (package! visual-fill-column)
 
-;; core-popups.el
-(package! shackle)
-
 ;; core-editor.el
 (package! ace-link)
 (package! ace-window)
