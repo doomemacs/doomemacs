@@ -90,6 +90,34 @@ the profiling report otherwise."
   (setq doom--profiler (not doom--profiler)))
 
 ;;;###autoload
+(defun doom/profile-emacs ()
+  "Profile the startup time of Emacs in the background.
+If INIT-FILE is non-nil, profile that instead of USER-INIT-FILE."
+  (interactive)
+  (require 'esup)
+  (let ((init-file esup-user-init-file))
+    (message "Starting esup...")
+    (esup-reset)
+    (setq esup-server-process (esup-server-create (esup-select-port)))
+    (setq esup-server-port (process-contact esup-server-process :service))
+    (message "esup process started on port %s" esup-server-port)
+    (let ((process-args `("*esup-child*"
+                          "*esup-child*"
+                          ,esup-emacs-path
+                          "-q"
+                          "-L" ,esup-load-path
+                          "-l" "esup-child"
+                          ,(format "--eval=(esup-child-run \"%s\" \"%s\" %d)"
+                                   init-file
+                                   esup-server-port
+                                   esup-depth)
+                          "--eval=(run-hooks 'after-init-hook 'emacs-startup-hook 'window-setup-hook)")))
+      (when esup-run-as-batch-p
+        (setq process-args (append process-args '("--batch"))))
+      (setq esup-child-process (apply #'start-process process-args)))
+    (set-process-sentinel esup-child-process 'esup-child-process-sentinel)))
+
+;;;###autoload
 (defun doom-info ()
   "Returns diagnostic information about the current Emacs session in markdown,
 ready to be pasted in a bug report on github."
