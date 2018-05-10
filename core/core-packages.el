@@ -762,7 +762,8 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
   (interactive
    (list nil current-prefix-arg))
   (let ((default-directory doom-emacs-dir)
-        (recompile-p (or recompile-p (and (member "-r" (cdr argv)) t))))
+        (recompile-p (or recompile-p (and (member "-r" (cdr argv)) t)))
+        (argv (delete "-r" argv)))
     (if (not noninteractive)
         ;; This is done in another instance to protect the current session's
         ;; state, because this function has side effects.
@@ -812,7 +813,7 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
                   (when (or (not recompile-p)
                             (let ((elc-file (byte-compile-dest-file target)))
                               (and (file-exists-p elc-file)
-                                   (file-newer-than-file-p file elc-file))))
+                                   (file-newer-than-file-p target elc-file))))
                     (let ((result (if (doom-packages--read-if-cookies target)
                                       (byte-compile-file target)
                                     'no-byte-compile))
