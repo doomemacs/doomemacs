@@ -72,7 +72,10 @@ shorter major mode name in the mode-line. See `doom|set-mode-name'.")
  pos-tip-border-width 1
  ;; no beeping or blinking please
  ring-bell-function #'ignore
- visible-bell nil)
+ visible-bell nil
+ ;; don't resize emacs in steps, it looks weird
+ window-resize-pixelwise t
+ frame-resize-pixelwise t)
 
 (fset #'yes-or-no-p #'y-or-n-p) ; y/n instead of yes/no
 
