@@ -21,7 +21,9 @@ d: doctor
 
 quickstart: | ~/.doom.d/init.el all recompile
 ~/.doom.d/init.el:
-	mkdir ~/.doom.d && cp init.example.el ~/.doom.d/init.el
+	@echo "Creating ~/.doom.d directory"
+	@mkdir ~/.doom.d && cp init.example.el ~/.doom.d/init.el
+	@touch ~/.doom.d/config.el
 
 ## Package management
 install: | .local/autoloads.el
