@@ -19,7 +19,7 @@ ce: compile-elpa
 re: recompile
 d: doctor
 
-quickstart: | ~/.doom.d/init.el all
+quickstart: | ~/.doom.d/init.el all recompile
 ~/.doom.d/init.el:
 	mkdir ~/.doom.d && cp init.example.el ~/.doom.d/init.el
 
