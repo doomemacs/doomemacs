@@ -1,8 +1,5 @@
 ;;; core-ui.el -*- lexical-binding: t; -*-
 
-(defvar doom-fringe-size '4
-  "Default fringe width.")
-
 (defvar doom-theme nil
   "A symbol representing the color theme to load.")
 
@@ -562,8 +559,6 @@ frame's window-system, the theme will be reloaded.")
 (menu-bar-mode -1)
 (if (fboundp 'tool-bar-mode)   (tool-bar-mode -1))
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
-;; standardize default fringe width
-(if (fboundp 'fringe-mode) (fringe-mode doom-fringe-size))
 ;; prompts the user for confirmation when deleting a non-empty frame
 (define-key global-map [remap delete-frame] #'doom/delete-frame)
 

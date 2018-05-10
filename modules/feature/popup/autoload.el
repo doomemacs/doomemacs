@@ -277,7 +277,7 @@ that window has been changed or closed."
 (defun +popup|adjust-fringes ()
   "Hides the fringe in popup windows, restoring them if `+popup-buffer-mode' is
 disabled."
-  (let ((f (if +popup-buffer-mode 0 doom-fringe-size)))
+  (let ((f (if +popup-buffer-mode 0)))
     (set-window-fringes nil f f fringes-outside-margins)))
 
 ;;;###autoload

@@ -104,3 +104,6 @@
     nil nil '(center repeated))
   (define-fringe-bitmap 'git-gutter-fr:deleted [128 192 224 240]
     nil nil 'bottom))
+
+;; standardize default fringe width
+(if (fboundp 'fringe-mode) (fringe-mode '4))
