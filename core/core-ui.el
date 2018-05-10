@@ -41,6 +41,7 @@ shorter major mode name in the mode-line. See `doom|set-mode-name'.")
  compilation-scroll-output 'first-error
  confirm-nonexistent-file-or-buffer t
  cursor-in-non-selected-windows nil  ; hide cursors in other windows
+ custom-theme-directory (concat doom-private-dir "themes/")
  display-line-numbers-width 3
  enable-recursive-minibuffers nil
  frame-inhibit-implied-resize t
