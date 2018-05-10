@@ -24,10 +24,29 @@ Expects a `font-spec'.")
 return a string). This changes the 'long' name of a major-mode, allowing for
 shorter major mode name in the mode-line. See `doom|set-mode-name'.")
 
-
-;; Hook(s)
 (defvar doom-init-ui-hook nil
-  "List of hooks to run when core-ui is initialized.")
+  "List of hooks to run when the UI has been initialized.")
+
+(defvar doom-load-theme-hook nil
+  "Hook run when the theme (and font) is initialized (or reloaded
+with `doom//reload-theme').")
+
+(defvar doom-before-switch-window-hook nil
+  "Hook run before `switch-window' or `switch-frame' are called. See
+`doom-after-switch-window-hook'.")
+
+(defvar doom-after-switch-window-hook nil
+  "Hook run after `switch-window' or `switch-frame' are called. See
+`doom-before-switch-window-hook'.")
+
+(defvar doom-before-switch-buffer-hook nil
+  "Hook run before `switch-to-buffer' and `display-buffer' are called. See
+`doom-after-switch-buffer-hook'.")
+
+(defvar doom-after-switch-buffer-hook nil
+  "Hook run before `switch-to-buffer' and `display-buffer' are called. See
+`doom-before-switch-buffer-hook'.")
+
 
 (setq-default
  ansi-color-for-comint-mode t
@@ -309,26 +328,6 @@ from the default."
 ;; Custom hooks
 ;;
 
-(defvar doom-load-theme-hook nil
-  "Hook run when the theme (and font) is initialized (or reloaded
-with `doom//reload-theme').")
-
-(defvar doom-before-switch-window-hook nil
-  "Hook run before `switch-window' or `switch-frame' are called. See
-`doom-after-switch-window-hook'.")
-
-(defvar doom-after-switch-window-hook nil
-  "Hook run after `switch-window' or `switch-frame' are called. See
-`doom-before-switch-window-hook'.")
-
-(defvar doom-before-switch-buffer-hook nil
-  "Hook run before `switch-to-buffer' and `display-buffer' are called. See
-`doom-after-switch-buffer-hook'.")
-
-(defvar doom-after-switch-buffer-hook nil
-  "Hook run before `switch-to-buffer' and `display-buffer' are called. See
-`doom-before-switch-buffer-hook'.")
-
 (defun doom*switch-frame-hooks (orig-fn frame &optional norecord)
   (if (eq frame (selected-frame))
       (funcall orig-fn frame norecord)
@@ -355,7 +354,7 @@ with `doom//reload-theme').")
 
 (defun doom*load-theme-hooks (&rest _)
   (run-hook-with-args 'doom-load-theme-hook))
-(advice-add #'load-theme       :after  #'doom*load-theme-hooks)
+(advice-add #'load-theme :after #'doom*load-theme-hooks)
 
 
 ;;
@@ -487,7 +486,7 @@ character that looks like a space that `whitespace-mode' won't affect.")
   :commands (nlinum-relative-mode nlinum-relative-on nlinum-relative-off)
   :config
   (setq nlinum-format " %d ")
-  (after! evil (nlinum-relative-setup-evil)))
+  (add-hook 'evil-mode #'nlinum-relative-setup-evil))
 
 
 ;;
@@ -571,7 +570,6 @@ frame's window-system, the theme will be reloaded.")
 (after! posframe
   ;; TODO Find a better place for this
   (defun doom|delete-posframe-on-escape ()
-    "TODO"
     (unless (frame-parameter (selected-frame) 'posframe-buffer)
       (cl-loop for frame in (frame-list)
                if (and (frame-parameter frame 'posframe-buffer)
