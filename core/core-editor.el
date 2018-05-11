@@ -119,7 +119,7 @@ fundamental-mode) for performance sake."
         sp-show-pair-delay 0
         sp-max-pair-length 3)
 
-  ;; disable smartparens in evil-mode's replace state (they conflict)
+  ;; smartparens conflicts with evil-mode's replace state
   (add-hook 'evil-replace-state-entry-hook #'turn-off-smartparens-mode)
   (add-hook 'evil-replace-state-exit-hook  #'turn-on-smartparens-mode)
 

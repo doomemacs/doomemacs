@@ -63,7 +63,10 @@ properties:
     Used by `+lookup/documentation'.
   :xref-backend FN
     Defines an xref backend for a major-mode. With this, :definition and
-    :references are unnecessary."
+    :references are unnecessary.
+
+Using this multiple times overwrites previous properties and unsets omitted
+ones."
   `(progn
      ,@(cl-loop for mode in (doom-enlist (doom-unquote modes))
                 for def-name = (intern (format "doom--init-lookup-%s" mode))

@@ -232,8 +232,8 @@ Body forms can access the hook's arguments through the let-bound variable
 
 ;; I needed a way to reliably cross-configure modules without worrying about
 ;; whether they were enabled or not, so I wrote `set!'. If a setting doesn't
-;; exist at runtime, the `set!' call is ignored (and omitted when
-;; byte-compiled).
+;; exist at runtime, the `set!' call is ignored and its arguments are left
+;; unevaluated (and entirely omitted when byte-compiled).
 (defvar doom-settings nil)
 
 (defmacro def-setting! (keyword arglist &optional docstring &rest forms)
@@ -255,7 +255,9 @@ Do not use this for configuring Doom core."
 
 (defmacro set! (keyword &rest values)
   "Set an option defined by `def-setting!'. Skip if doesn't exist. See
-`doom/describe-setting' for a list of available settings."
+`doom/describe-setting' for a list of available settings.
+
+VALUES doesn't get evaluated if the KEYWORD setting doesn't exist."
   (declare (indent defun))
   (unless values
     (error "Empty set! for %s" keyword))

@@ -12,6 +12,7 @@
   (doom/open-scratch-buffer bang))
 
 (evil-define-command doom:pwd (bang)
+  "Display the current working directory. If BANG, copy it to your clipboard."
   (interactive "<!>")
   (if (not bang)
       (pwd)
@@ -19,6 +20,8 @@
     (message "Copied to clipboard")))
 
 (evil-define-command doom:make (command &optional from-pwd)
+  "Run the current project Makefile's COMMAND. If FROM-PWD (bang), run the make
+command from the current directory instead of the project root."
   (interactive "<sh><!>")
   (let ((default-directory (if from-pwd default-directory (doom-project-root t)))
         (command (and command (evil-ex-replace-special-filenames command))))

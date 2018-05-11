@@ -56,17 +56,13 @@
 
 ;;;###autoload
 (defun +lookup/definition (identifier &optional other-window)
-  "Jump to the definition of the symbol at point. It will try several things
-to find it:
+  "Jump to the definition of the symbol at point.
 
-1. It will try whatever function that has been set for the current buffer, in
-   `+lookup-current-functions'.
-2. Then try any available xref backends,
-3. Then `dumb-jump',
-4. Then a plain project-wide text search, using ripgrep or the_silver_searcher.
-5. Then, if `evil-mode' is active, use `evil-goto-definition',
+Each function in `+lookup-definition-functions' is tried until one changes the
+point or current buffer.
 
-Failing all that, it will give up with an error."
+Falls back to dumb-jump, naive ripgrep/the_silver_searcher text search, then
+`evil-goto-definition' if evil-mode is active."
   (interactive
    (list (+lookup--symbol-or-region) current-prefix-arg))
   (cond ((null identifier)
@@ -114,7 +110,10 @@ Failing all that, it will give up with an error."
 (defun +lookup/references (identifier)
   "Show a list of references to the symbol at point.
 
-Tries `xref-find-references' and falls back to rg/ag."
+Tries each function in `+lookup-references-functions' until one changes the
+point and/or current buffer.
+
+Falls back to a naive ripgrep/the_silver_searcher search otherwise."
   (interactive
    (list (+lookup--symbol-or-region)))
   (cond ((and +lookup-references-functions
@@ -145,7 +144,7 @@ Goes down a list of possible backends:
   (cond ((and +lookup-documentation-functions
               (+lookup--jump-to :documentation identifier)))
 
-        ((and (featurep! :feature lookup +docsets)
+        ((and (featurep! +docsets)
               (or (require 'counsel-dash nil t)
                   (require 'helm-dash nil t))
               (or (bound-and-true-p counsel-dash-docsets)
