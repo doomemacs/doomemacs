@@ -43,9 +43,13 @@
   "Return EXP wrapped in a list, or as-is if already a list."
   (if (listp exp) exp (list exp)))
 
+(defun doom*shut-up (orig-fn &rest args)
+  "Generic advisor for silencing noisy functions."
+  (quiet! (apply orig-fn args)))
+
 
 ;;
-;; Library
+;; Macros
 ;;
 
 (defmacro λ! (&rest body)
@@ -96,10 +100,6 @@ compilation."
                   (inhibit-message t)
                   (save-silently t))
          ,@forms))))
-
-(defun doom*shut-up (orig-fn &rest args)
-  "Generic advisor for silencing noisy functions."
-  (quiet! (apply orig-fn args)))
 
 (defvar doom--transient-counter 0)
 (defmacro add-transient-hook! (hook &rest forms)
