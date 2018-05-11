@@ -1,13 +1,19 @@
 ;;; tools/eshell/autoload/eshell.el -*- lexical-binding: t; -*-
 
+;;;###autoload
 (defface +eshell-prompt-pwd '((t :inherit eshell-prompt))
-  "TODO")
+  "TODO"
+  :group 'eshell)
 
+;;;###autoload
 (defface +eshell-prompt-git-branch '((t :inherit font-lock-function-name-face))
-  "TODO")
+  "TODO"
+  :group 'eshell)
 
+;;;###autoload
 (defface +eshell-prompt-char '((t :inherit font-lock-constant-face))
-  "TODO")
+  "TODO"
+  :group 'eshell)
 
 
 (defvar +eshell-buffers (make-ring 25)
