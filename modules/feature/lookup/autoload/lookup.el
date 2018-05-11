@@ -28,7 +28,8 @@
   (cl-loop with origin = (point-marker)
            for fn in (plist-get (list :definition +lookup-definition-functions
                                       :references +lookup-references-functions
-                                      :documentation +lookup-documentation-functions)
+                                      :documentation +lookup-documentation-functions
+                                      :file +lookup-file-functions)
                                 prop)
            for fn = (or (command-remapping fn) fn)
            if (condition-case e
@@ -159,6 +160,51 @@ Goes down a list of possible backends:
           identifier
           (+lookup--online-provider (not current-prefix-arg))))))
 
+;;;###autoload
+(defun +lookup/file (path)
+  "Figure out PATH from whatever is at point and open it.
+
+Each function in `+lookup-file-functions' is tried until one changes the point
+or the current buffer.
+
+Otherwise, falls back on `find-file-at-point'."
+  (interactive
+   (progn
+     (require 'ffap)
+     (list
+      (or (ffap-guesser)
+          (ffap-read-file-or-url
+           (if ffap-url-regexp "Find file or URL: " "Find file: ")
+           (+lookup--symbol-or-region))))))
+  (require 'ffap)
+  (cond ((not path)
+         (call-interactively #'find-file-at-point))
+
+        ((ffap-url-p path)
+         (find-file-at-point path))
+
+        ((not (and +lookup-file-functions
+                   (+lookup--jump-to :file path)))
+         (let ((fullpath (expand-file-name path)))
+           (when (file-equal-p fullpath buffer-file-name)
+             (user-error "Already here"))
+           (let* ((insert-default-directory t)
+                  (project-root (doom-project-root 'nocache))
+                  (ffap-file-finder
+                   (cond ((not (file-directory-p fullpath))
+                          #'find-file)
+                         ((file-in-directory-p fullpath project-root)
+                          (lambda (dir)
+                            (let ((default-directory dir))
+                              (without-project-cache!
+                               (let ((file (projectile-completing-read "Find file: "
+                                                                       (projectile-current-project-files)
+                                                                       :initial-input path)))
+                                 (find-file (expand-file-name file (projectile-project-root)))
+                                 (run-hooks 'projectile-find-file-hook))))))
+                         (#'doom-project-browse))))
+             (find-file-at-point path))))))
+
 
 ;;
 ;; Source-specific commands
@@ -229,4 +275,5 @@ for the provider."
 (after! evil
   (evil-set-command-property '+lookup/definition :jump t)
   (evil-set-command-property '+lookup/references :jump t)
-  (evil-set-command-property '+lookup/documentation :jump t))
+  (evil-set-command-property '+lookup/documentation :jump t)
+  (evil-set-command-property '+lookup/file :jump t))

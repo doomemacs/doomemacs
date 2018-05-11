@@ -36,17 +36,38 @@ produces an url. Used by `+lookup/online'.")
 (defvar +lookup-definition-functions '(+lookup-xref-definitions)
   "Functions for `+lookup/definition' to try, before resorting to `dumb-jump'.
 Stops at the first function to return non-nil or change the current
-window/point.")
+window/point.
+
+If the argument is interactive (satisfies `commandp'), it is called with
+`call-interactively' (with no arguments). Otherwise, it is called with one
+argument: the identifier at point.")
 
 (defvar +lookup-references-functions '(+lookup-xref-references)
   "Functions for `+lookup/references' to try, before resorting to `dumb-jump'.
 Stops at the first function to return non-nil or change the current
-window/point.")
+window/point.
+
+If the argument is interactive (satisfies `commandp'), it is called with
+`call-interactively' (with no arguments). Otherwise, it is called with one
+argument: the identifier at point.")
 
 (defvar +lookup-documentation-functions ()
   "Functions for `+lookup/documentation' to try, before resorting to
 `dumb-jump'. Stops at the first function to return non-nil or change the current
-window/point.")
+window/point.
+
+If the argument is interactive (satisfies `commandp'), it is called with
+`call-interactively' (with no arguments). Otherwise, it is called with one
+argument: the identifier at point.")
+
+(defvar +lookup-file-functions ()
+  "Function for `+lookup/file' to try, before restoring to `find-file-at-point'.
+Stops at the first function to return non-nil or change the current
+window/point.
+
+If the argument is interactive (satisfies `commandp'), it is called with
+`call-interactively' (with no arguments). Otherwise, it is called with one
+argument: the identifier at point.")
 
 (def-setting! :lookup (modes &rest plist)
   "Defines a jump target for major MODES. PLIST accepts the following
@@ -61,6 +82,9 @@ properties:
   :documentation FN
     Run when looking up documentation for a symbol.
     Used by `+lookup/documentation'.
+  :file FN
+    Run when looking up the file for a symbol/string. Typically a file path.
+    Used by `+lookup/file'.
   :xref-backend FN
     Defines an xref backend for a major-mode. With this, :definition and
     :references are unnecessary.
@@ -77,10 +101,12 @@ ones."
                      (let ((xref ,(plist-get plist :xref-backend))
                            (def ,(plist-get plist :definition))
                            (ref ,(plist-get plist :references))
+                           (fil ,(plist-get plist :file))
                            (doc ,(plist-get plist :documentation)))
                        (if xref (add-hook 'xref-backend-functions xref nil t))
                        (if def (add-hook '+lookup-definition-functions def nil t))
                        (if ref (add-hook '+lookup-references-functions ref nil t))
+                       (if fil (add-hook '+lookup-file-functions fil nil t))
                        (if doc (add-hook '+lookup-documentation-functions doc nil t)))))
                 collect `(add-hook! ,mode #',def-name))))
 
