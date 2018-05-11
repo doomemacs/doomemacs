@@ -67,6 +67,7 @@ with `doom//reload-theme').")
  image-animate-loop t
  indicate-buffer-boundaries nil
  indicate-empty-lines nil
+ inhibit-compacting-font-caches t
  max-mini-window-height 0.3
  mode-line-default-help-echo nil ; disable mode-line mouseovers
  mouse-yank-at-point t           ; middle-click paste at point, not at click
