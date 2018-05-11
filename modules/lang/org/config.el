@@ -319,10 +319,14 @@ between the two."
           (t . ,(cond (IS-MAC "open -R \"%s\"")
                       (IS-LINUX "xdg-open \"%s\"")))))
 
-  (after! recentf
-    ;; Don't clobber recentf with agenda files
-    (defun +org-is-agenda-file (filename)
-      (cl-find (file-truename filename) org-agenda-files
-               :key #'file-truename
-               :test #'equal))
-    (push #'+org-is-agenda-file recentf-exclude)))
+  ;; Don't clobber recentf or current workspace with agenda files
+  (defun +org|exclude-agenda-buffers-from-workspace ()
+    (let (persp-autokill-buffer-on-remove)
+      (persp-remove-buffer org-agenda-new-buffers (get-current-persp) nil)))
+  (add-hook 'org-agenda-finalize-hook #'+org|exclude-agenda-buffers-from-workspace)
+
+  (defun +org*exclude-agenda-buffers-from-recentf (orig-fn &rest args)
+    (let ((recentf-exclude (list (lambda (_file) t))))
+      (apply orig-fn args)))
+  (advice-add #'org-get-agenda-file-buffer
+              :around #'+org*exclude-agenda-buffers-from-recentf))
