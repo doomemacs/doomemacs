@@ -1,4 +1,4 @@
-;;; tools/neotree/autoload.el -*- lexical-binding: t; -*-
+;;; ui/neotree/autoload.el -*- lexical-binding: t; -*-
 
 ;; `neotree-show' and `neotree-find' don't respect the current project, and open
 ;; neotree in `default-directory'. `+neotree/open' and `neotree/find-this-file'

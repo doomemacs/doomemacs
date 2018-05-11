@@ -1,4 +1,4 @@
-;;; tools/neotree/config.el -*- lexical-binding: t; -*-
+;;; ui/neotree/config.el -*- lexical-binding: t; -*-
 
 (def-package! neotree
   :commands (neotree-show
@@ -21,6 +21,7 @@
         neo-confirm-create-directory #'off-p
         neo-show-hidden-files nil
         neo-keymap-style 'concise
+        neo-show-hidden-files t
         neo-hidden-regexp-list
         '(;; vcs folders
           "^\\.\\(git\\|hg\\|svn\\)$"
