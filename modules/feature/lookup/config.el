@@ -203,17 +203,18 @@ Used by `+lookup/in-docsets' and `+lookup/documentation'."
   (def-package! helm-dash
     :commands (helm-dash helm-dash-install-docset helm-dash-at-point
                helm-dash-docset-installed-p helm-dash-installed-docsets)
+    :init
+    (setq helm-dash-enable-debugging doom-debug-mode
+          helm-dash-browser-func #'eww)
     :config
     (unless (file-directory-p helm-dash-docsets-path)
       (setq helm-dash-docsets-path (concat doom-etc-dir "docsets/")))
     (unless (file-directory-p helm-dash-docsets-path)
-      (make-directory helm-dash-docsets-path t))
-    (setq helm-dash-enable-debugging doom-debug-mode))
+      (make-directory helm-dash-docsets-path t)))
 
   (def-package! counsel-dash
     :when (featurep! :completion ivy)
     :commands (counsel-dash counsel-dash-install-docset)
-    :after helm-dash
     :config (setq counsel-dash-min-length 2)))
 
 
