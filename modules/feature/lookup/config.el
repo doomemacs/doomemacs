@@ -201,14 +201,12 @@ See `devdocs-alist' for the defaults. "
     `(dolist (mode ',modes)
        (push (cons mode ,docset) devdocs-alist)))
 
-  (def-package! devdocs
-    :defer t
+  (def-package! devdocs-lookup
+    :commands (devdocs-setup devdocs-lookup)
     :config
-    (setq devdocs-alist
-          (append '((rust-mode . "rust")
-                    (scss-mode . "scss")
-                    (gfm-mode . "markdown")
-                    (nim-mode . "nim")
-                    (typescript-mode . "typescript"))
-                  devdocs-alist))))
+    (setq devdocs-subjects
+          (append '(("SCSS" "scss")
+                    ("GFM" "markdown")
+                    ("Typescript" "typescript"))
+                  devdocs-subjects))))
 

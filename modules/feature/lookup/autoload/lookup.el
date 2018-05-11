@@ -153,8 +153,8 @@ Goes down a list of possible backends:
               (helm-dash-installed-docsets))
          (+lookup/in-docsets identifier))
 
-        ((featurep! :feature lookup +devdocs)
-         (+lookup/in-devdocs identifier))
+        ((featurep! +devdocs)
+         (call-interactively #'+lookup/in-devdocs))
 
         ((+lookup/online
           identifier
@@ -166,22 +166,7 @@ Goes down a list of possible backends:
 ;;
 
 ;;;###autoload
-(defun +lookup/in-devdocs (&optional query docs)
-  "TODO"
-  (interactive)
-  (require 'devdocs)
-  (let* ((docs
-          (unless (eq docs 'blank)
-            (or docs (cdr (assq major-mode devdocs-alist)) "")))
-         (query (or query (+lookup--symbol-or-region) ""))
-         (pattern (string-trim-left (format "%s %s" docs query))))
-    (unless (and current-prefix-arg docs)
-      (setq pattern (read-string "Lookup on devdocs.io: " pattern)))
-    (funcall +lookup-open-url-fn
-             (format "%s/#q=%s" devdocs-url
-                     (url-hexify-string pattern)))
-    (unless (string-empty-p pattern)
-      (cl-pushnew pattern devdocs-search-history))))
+(defalias #'+lookup/in-devdocs #'devdocs-lookup)
 
 (defvar counsel-dash-docsets)
 (defvar helm-dash-docsets)
