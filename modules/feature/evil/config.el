@@ -409,13 +409,9 @@ the new algorithm is confusing, like in python or ruby."
   (defvar +evil--mc-compat-evil-prev-state nil)
   (defvar +evil--mc-compat-mark-was-active nil)
 
-  (defsubst +evil--visual-or-normal-p ()
-    "True if evil mode is enabled, and we are in normal or visual mode."
-    (and (bound-and-true-p evil-mode)
-         (not (memq evil-state '(insert emacs)))))
-
   (defun +evil|mc-compat-switch-to-emacs-state ()
-    (when (+evil--visual-or-normal-p)
+    (when (and (bound-and-true-p evil-mode)
+               (not (memq evil-state '(insert emacs))))
       (setq +evil--mc-compat-evil-prev-state evil-state)
       (when (region-active-p)
         (setq +evil--mc-compat-mark-was-active t))
@@ -442,7 +438,8 @@ the new algorithm is confusing, like in python or ruby."
   ;; When running edit-lines, point will return (position + 1) as a
   ;; result of how evil deals with regions
   (defun +evil*mc/edit-lines (&rest _)
-    (when (+evil--visual-or-normal-p)
+    (when (and (bound-and-true-p evil-mode)
+               (not (memq evil-state '(insert emacs))))
       (if (> (point) (mark))
           (goto-char (1- (point)))
         (push-mark (1- (mark))))))
