@@ -51,13 +51,27 @@
           mode-line-format nil))
 
   (map! :map twittering-mode-map
+        "q"   #'+twitter/quit
+        "Q"   #'+twitter/quit-all
         [remap twittering-kill-buffer] #'+twitter/quit
-        "Q" #'+twitter/quit-all
-        "o" #'ace-link-addr
-        "J" #'twittering-goto-next-status
-        "K" #'twittering-goto-previous-status
+        [remap delete-window]          #'+twitter/quit
+        [remap +workspace/close-window-or-workspace] #'+twitter/quit
         (:when (featurep! :feature evil)
-          "j" #'evil-next-visual-line
-          "k" #'evil-previous-visual-line
-          "h" #'evil-window-left
-          "l" #'evil-window-right)))
+          [remap evil-window-delete] #'+twitter/quit
+          "f"   #'twittering-favorite
+          "F"   #'twittering-unfavorite
+          "C-f" #'twittering-follow
+          "C-F" #'twittering-unfollow
+          "d"   #'twittering-delete-status
+          "r"   #'twittering-retweet
+          "R"   #'twittering-toggle-or-retrieve-replied-statuses
+          "o"   #'twittering-update-status-interactive
+          "O"   #'+twitter/ace-link
+          "/"   #'twittering-search
+          "J"   #'twittering-goto-next-status
+          "K"   #'twittering-goto-previous-status
+          "g"   nil
+          "gg"  #'twittering-goto-first-status
+          "G"   #'twittering-goto-last-status
+          "gj"  #'twittering-goto-next-status-of-user
+          "gk"  #'twittering-goto-previous-status-of-user)))
