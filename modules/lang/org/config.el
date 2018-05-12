@@ -266,6 +266,8 @@ between the two."
         :n [backtab] nil
         :n "C-j" nil
         :n "C-k" nil
+        :n "]" nil
+        :n "[" nil
 
         :map evil-org-mode-map
         :i [backtab] #'+org/dedent
