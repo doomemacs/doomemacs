@@ -525,6 +525,16 @@ omitted. eg. (featurep! +flag1)"
 ;; Module package macros
 ;;
 
+(defun doom--assert-file-p (file-name macro)
+  (cl-assert (string= (file-name-nondirectory load-file-name) file-name)
+             nil
+             "Found %s call in non-%s file (%s)"
+             macro
+             file-name
+             (if (file-in-directory-p load-file-name doom-emacs-dir)
+                 (file-relative-name load-file-name doom-emacs-dir)
+               (abbreviate-file-name load-file-name))))
+
 (defmacro package! (name &rest plist)
   "Declares a package and how to install it (if applicable).
 
@@ -550,6 +560,7 @@ Accepts the following properties:
  :freeze FORM
    Do not update this package if FORM is non-nil."
   (declare (indent defun))
+  (doom--assert-file-p "packages.el" #'package!)
   (cond ((memq name doom-disabled-packages) nil)
         ((let ((disable (plist-get plist :disable)))
            (and disable (eval disable)))
@@ -580,6 +591,7 @@ Accepts the following properties:
 packages at once.
 
 Only use this macro in a module's packages.el file."
+  (doom--assert-file-p "packages.el" #'packages!)
   `(progn ,@(cl-loop for desc in packages collect `(package! ,@desc))))
 
 (defmacro disable-packages! (&rest packages)
@@ -587,6 +599,7 @@ Only use this macro in a module's packages.el file."
 packages at once.
 
 Only use this macro in a module's packages.el file."
+  (doom--assert-file-p "packages.el" #'disable-packages!)
   `(setq doom-disabled-packages (append ',packages doom-disabled-packages)))
 
 (defmacro depends-on! (module submodule &optional flags)
@@ -596,6 +609,7 @@ Only use this macro in a module's packages.el file.
 
 MODULE is a keyword, and SUBMODULE is a symbol. Under the hood, this simply
 loads MODULE SUBMODULE's packages.el file."
+  (doom--assert-file-p "packages.el" #'depends-on!)
   `(let ((doom-modules ,doom-modules)
          (flags ,flags))
      (when flags
