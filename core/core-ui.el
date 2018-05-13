@@ -357,7 +357,8 @@ from the default."
 (advice-add #'switch-to-buffer :around #'doom*switch-buffer-hooks)
 (advice-add #'display-buffer   :around #'doom*switch-buffer-hooks)
 
-(defun doom*load-theme-hooks (&rest _)
+(defun doom*load-theme-hooks (theme &rest _)
+  (setq doom-theme theme)
   (run-hook-with-args 'doom-load-theme-hook))
 (advice-add #'load-theme :after #'doom*load-theme-hooks)
 
