@@ -282,7 +282,9 @@
 
         (:desc "quit" :prefix "q"
           :desc "Save and quit"          :n "q" #'evil-save-and-quit
-          :desc "Quit (forget session)"  :n "Q" #'+workspace/kill-session-and-quit)
+          :desc "Quit (forget session)"  :n "Q" #'+workspace/kill-session-and-quit
+          :desc "Reload Doom Emacs"      :n "r" #'doom//reload
+          :desc "Restart Doom Emacs"     :n "R" #'restart-emacs)
 
         (:when (featurep! :tools upload)
           (:desc "remote" :prefix "r"
