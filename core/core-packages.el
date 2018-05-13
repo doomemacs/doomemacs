@@ -932,5 +932,47 @@ compiled packages.'"
 (advice-add #'package-autoremove :override #'doom//packages-autoremove)
 (advice-add #'package-install-selected-packages :override #'doom//packages-install)
 
+
+;;
+;; Cross-module configuration
+;;
+
+;; I needed a way to reliably cross-configure modules without worrying about
+;; whether they were enabled or not, so I wrote `set!'. If a setting doesn't
+;; exist at runtime, the `set!' call is ignored and its arguments are left
+;; unevaluated (and entirely omitted when byte-compiled).
+(defvar doom-settings nil)
+
+(defmacro def-setting! (keyword arglist &optional docstring &rest forms)
+  "Define a setting. Like `defmacro', this should return a form to be executed
+when called with `set!'. FORMS are not evaluated until `set!' calls it.
+
+See `doom/describe-setting' for a list of available settings.
+
+Do not use this for configuring Doom core."
+  (declare (indent defun) (doc-string 3))
+  (unless (keywordp keyword)
+    (error "Not a valid property name: %s" keyword))
+  (let ((fn (intern (format "doom--set%s" keyword))))
+    `(progn
+       (defun ,fn ,arglist
+         ,docstring
+         ,@forms)
+       (cl-pushnew ',(cons keyword fn) doom-settings :test #'eq :key #'car))))
+
+(defmacro set! (keyword &rest values)
+  "Set an option defined by `def-setting!'. Skip if doesn't exist. See
+`doom/describe-setting' for a list of available settings.
+
+VALUES doesn't get evaluated if the KEYWORD setting doesn't exist."
+  (declare (indent defun))
+  (unless values
+    (error "Empty set! for %s" keyword))
+  (if-let* ((fn (cdr (assq keyword doom-settings))))
+      (apply fn values)
+    (when doom-debug-mode
+      (message "No setting found for %s" keyword)
+      nil)))
+
 (provide 'core-packages)
 ;;; core-packages.el ends here
