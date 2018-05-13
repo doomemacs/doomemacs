@@ -1,9 +1,8 @@
-;;; feature/popup/autoload.el -*- lexical-binding: t; -*-
+;;; ui/popup/autoload.el -*- lexical-binding: t; -*-
 
 (defvar +popup--populate-wparams (not EMACS26+))
 (defvar +popup--inhibit-transient nil)
 (defvar +popup--inhibit-select nil)
-(defvar +popup--display-buffer-alist nil)
 (defvar +popup--old-display-buffer-alist nil)
 (defvar +popup--remember-last t)
 (defvar +popup--last nil)
@@ -182,34 +181,6 @@ Uses `shrink-window-if-larger-than-buffer'."
     (setq window (selected-window)))
   (unless (= (- (point-max) (point-min)) 0)
     (shrink-window-if-larger-than-buffer window)))
-
-;;;###autoload
-(defun +popup-define (condition &optional alist parameters)
-  "Define a popup rule.
-
-The buffers of new windows displayed by `pop-to-buffer' and `display-buffer'
-will be tested against CONDITION, which is either a) a regexp string (which is
-matched against the buffer's name) or b) a function that takes no arguments and
-returns a boolean.
-
-If CONDITION is met, the buffer will be displayed in a popup window with ALIST
-and window PARAMETERS. See `display-buffer-alist' for details on what ALIST may
-contain and `+popup-window-parameters' for what window parameters that the popup
-module supports.
-
-ALIST also supports the `size' parameter, which will be translated to
-`window-width' or `window-height' depending on `side'.
-
-If certain attributes/parameters are omitted, the ones from
-`+popup-default-alist' and `+popup-default-parameters' will be used."
-  (declare (indent 1))
-  (push (if (eq alist :ignore)
-            (list condition nil)
-          `(,condition
-            (+popup-buffer)
-            ,@alist
-            (window-parameters ,@parameters)))
-        +popup--display-buffer-alist))
 
 
 ;;
