@@ -250,6 +250,10 @@ DEFAULT is non-nil, set the default mode-line for all buffers."
   :hook (lisp-mode . rainbow-delimiters-mode)
   :config (setq rainbow-delimiters-max-face-count 3))
 
+(def-package! restart-emacs
+  :commands restart-emacs
+  :config (setq restart-emacs--args (list "--restore")))
+
 ;; For a distractions-free-like UI, that dynamically resizes margins and can
 ;; center a buffer.
 (def-package! visual-fill-column

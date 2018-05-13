@@ -26,6 +26,10 @@ new project directory.")
   "The basename of the file to store single workspace perspectives. Will be
 stored in `persp-save-dir'.")
 
+(defun +workspaces-restore-last-session (&rest _)
+  (add-hook 'emacs-startup-hook #'+workspace/load-session 'append))
+(map-put command-switch-alist '"--restore" #'+workspaces-restore-last-session)
+
 
 ;;
 ;; Plugins
@@ -105,7 +109,13 @@ Uses `+workspaces-main' to determine the name of the main workspace."
            (advice-remove #'doom-buffer-list #'+workspace-buffer-list))))
   (add-hook 'persp-mode-hook #'+workspaces|init-persp-mode)
 
+  (defun +workspaces|leave-nil-perspective (&rest _)
+    (when (string= (+workspace-current-name) persp-nil-name)
+      (persp-frame-switch +workspaces-main)))
+  (add-hook 'persp-after-load-state-functions #'+workspaces|leave-nil-perspective)
+
   ;; Modify `delete-window' to close the workspace if used on the last window
+  (define-key persp-mode-map [remap restart-emacs] #'+workspace/restart-emacs-then-restore)
   (define-key persp-mode-map [remap delete-window] #'+workspace/close-window-or-workspace)
   (define-key persp-mode-map [remap evil-delete-window] #'+workspace/close-window-or-workspace)
   ;; only auto-save when real buffers are present

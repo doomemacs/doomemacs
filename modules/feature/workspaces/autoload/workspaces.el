@@ -425,6 +425,12 @@ the next."
 
               (t (+workspace-error "Can't delete last workspace" t)))))))
 
+;;;###autoload
+(defun +workspace/restart-emacs-then-restore ()
+  "Restarts Emacs, then restores the session."
+  (interactive)
+  (restart-emacs (list "--restore")))
+
 
 ;;
 ;; Tabs display in minibuffer

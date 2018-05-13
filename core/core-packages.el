@@ -623,7 +623,7 @@ loads MODULE SUBMODULE's packages.el file."
 ;;
 
 (defun doom//reload ()
-  "Reload your Doom config."
+  "Reload your Doom config. Experimental!"
   (interactive)
   (load (concat doom-emacs-dir "init.el") nil nil 'nosuffix)
   (doom//reload-load-path))

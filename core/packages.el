@@ -16,6 +16,7 @@
   (package! nlinum-relative))
 (package! rainbow-delimiters)
 (package! visual-fill-column)
+(package! restart-emacs)
 
 ;; core-editor.el
 (package! ace-link)
