@@ -607,6 +607,12 @@ loads MODULE SUBMODULE's packages.el file."
 ;; Commands
 ;;
 
+(defun doom//reload ()
+  "Reload your Doom config."
+  (interactive)
+  (load (concat doom-emacs-dir "init.el") nil nil 'nosuffix)
+  (doom//reload-load-path))
+
 (defun doom-packages--read-if-cookies (file)
   "Returns the value of the ;;;###if predicate form in FILE."
   (with-temp-buffer
