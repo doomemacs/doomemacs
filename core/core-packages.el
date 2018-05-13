@@ -82,8 +82,9 @@ missing) and shouldn't be deleted.")
 (defvar doom-autoload-file (concat doom-local-dir "autoloads.el")
   "Where `doom//reload-autoloads' will generate its autoloads file.")
 
-(defvar doom-packages-file (concat doom-local-dir "packages.el")
-  "Where to cache `load-path' and `Info-directory-list'.")
+(defvar doom-packages-file (concat doom-cache-dir "packages.el")
+  "Where to cache `load-path', `Info-directory-list', `doom-disabled-packages'
+and `auto-mode-alist'.")
 
 (defvar doom--current-module nil)
 (defvar doom--init-cache-p nil)
