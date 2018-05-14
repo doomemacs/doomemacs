@@ -33,19 +33,9 @@
   (add-hook 'eshell-mode-hook #'+eshell|init)
   (add-hook 'eshell-exit-hook #'+eshell|cleanup)
 
-  (after! em-alias
-    (setq eshell-command-aliases-list
-          (append eshell-command-aliases-list
-                  '(("q"   "exit")
-                    ("l"   "ls -1")
-                    ("ll"  "ls -l")
-                    ("la"  "ls -la")
-                    ("g"   "hub")
-                    ("gs"  "hub status --short .")))))
-
   (after! em-term
-    ;; Visual commands require a proper terminal. Eshell can't handle that, so it
-    ;; delegates these commands to a term buffer.
+    ;; Visual commands require a proper terminal. Eshell can't handle that, so
+    ;; it delegates these commands to a term buffer.
     (setq eshell-visual-commands
           (append eshell-visual-commands '("tmux" "htop" "bash" "zsh" "fish" "vim" "nvim"))
           eshell-visual-subcommands '(("git" "log" "l" "diff" "show"))))
