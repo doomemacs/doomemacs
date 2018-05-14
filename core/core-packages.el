@@ -92,18 +92,15 @@ and `auto-mode-alist'.")
 (defvar doom--refreshed-p nil)
 (defvar generated-autoload-load-name)
 
+;;
 (setq autoload-compute-prefixes nil
       package--init-file-ensured t
       package-user-dir (expand-file-name "elpa" doom-packages-dir)
       package-enable-at-startup nil
       package-archives
-      (if (getenv "INSECURE")
-          '(("gnu"   . "http://elpa.gnu.org/packages/")
-            ("melpa" . "http://melpa.org/packages/")
-            ("org"   . "http://orgmode.org/elpa/"))
-        '(("gnu"   . "https://elpa.gnu.org/packages/")
-          ("melpa" . "https://melpa.org/packages/")
-          ("org"   . "https://orgmode.org/elpa/")))
+      '(("gnu"   . "https://elpa.gnu.org/packages/")
+        ("melpa" . "https://melpa.org/packages/")
+        ("org"   . "https://orgmode.org/elpa/"))
       ;; I omit Marmalade because its packages are manually submitted rather
       ;; than pulled, so packages are often out of date with upstream.
 
@@ -129,6 +126,16 @@ and `auto-mode-alist'.")
       byte-compile-dynamic nil
       byte-compile-verbose doom-debug-mode
       byte-compile-warnings '(not free-vars unresolved noruntime lexical make-local))
+
+;; accommodate INSECURE setting
+(unless gnutls-verify-error
+  (dolist (archive package-archives)
+    (setcdr archive (replace-regexp-in-string "^https://" "http://" (cdr archive) t nil))))
+
+
+;;
+;; Startup benchmark
+;;
 
 (defun doom-packages--benchmark ()
   (format "Doom loaded %s packages across %d modules in %.03fs"
