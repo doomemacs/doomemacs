@@ -68,6 +68,7 @@ XDG directory conventions if ~/.config/doom exists.")
  ad-redefinition-action 'accept   ; silence advised function warnings
  apropos-do-all t                 ; make `apropos' more useful
  debug-on-error (and (not noninteractive) doom-debug-mode)
+ load-prefer-newer noninteractive
  ffap-machine-p-known 'reject     ; don't ping things that look like domain names
  idle-update-delay 2              ; update ui less often
  ;; keep the point out of the minibuffer
