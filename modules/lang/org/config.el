@@ -64,14 +64,10 @@
      +org|enable-auto-update-cookies
      +org|smartparens-compatibility-config
      +org|unfold-to-2nd-level-or-point
-     +org|show-paren-mode-compatibility
-     ))
+     +org|show-paren-mode-compatibility))
 
 (after! org
   (defvaralias 'org-directory '+org-dir))
-
-(when (featurep 'org)
-  (run-hooks 'org-load-hook))
 
 
 ;;
@@ -332,3 +328,7 @@ between the two."
       (apply orig-fn args)))
   (advice-add #'org-get-agenda-file-buffer
               :around #'+org*exclude-agenda-buffers-from-recentf))
+
+;;
+(when (featurep 'org)
+  (run-hooks 'org-load-hook))
