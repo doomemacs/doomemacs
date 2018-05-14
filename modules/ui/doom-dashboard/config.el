@@ -286,7 +286,7 @@ controlled by `+doom-dashboard-pwd-policy'."
    (propertize
     (+doom-dashboard--center
      +doom-dashboard--width
-     (doom-packages--benchmark))
+     (doom|display-benchmark 'return))
     'face 'font-lock-comment-face)
    "\n\n"))
 
