@@ -7,6 +7,11 @@
   "If non-nil, all doom functions will be verbose. Set DEBUG=1 in the command
 line or use --debug-init to enable this.")
 
+(defconst EMACS26+
+  (eval-when-compile (not (version< emacs-version "26"))))
+(defconst EMACS27+
+  (eval-when-compile (not (version< emacs-version "27"))))
+
 ;;
 (defvar doom-emacs-dir
   (eval-when-compile (file-truename user-emacs-directory))
@@ -46,9 +51,6 @@ Use this for files that change often, like cache files.")
         "~/.doom.d/"))
   "Where your private customizations are placed. Must end in a slash. Respects
 XDG directory conventions if ~/.config/doom exists.")
-
-(defconst EMACS26+ (not (version< emacs-version "26")))
-(defconst EMACS27+ (not (version< emacs-version "27")))
 
 
 ;;;
