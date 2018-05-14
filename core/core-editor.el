@@ -59,37 +59,48 @@ fundamental-mode) for performance sake."
       (fundamental-mode))))
 (add-hook 'find-file-hook #'doom|check-large-file)
 
-(push '("/LICENSE$" . text-mode) auto-mode-alist)
-
 
 ;;
 ;; Built-in plugins
 ;;
 
+(electric-indent-mode -1) ; enabled by default in Emacs 25+. No thanks.
+
 (add-hook 'after-save-hook #'executable-make-buffer-file-executable-if-script-p)
 
 ;; revert buffers for changed files
-(global-auto-revert-mode 1)
-(setq auto-revert-verbose nil)
+(def-package! autorevert
+  :defer buffer
+  :config
+  (setq auto-revert-verbose nil)
+  (global-auto-revert-mode +1))
 
-;; enabled by default in Emacs 25+. No thanks.
-(electric-indent-mode -1)
+;; persist variables across sessions
+(def-package! savehist
+  :defer (input . 1)
+  :config
+  (setq savehist-file (concat doom-cache-dir "savehist")
+        savehist-save-minibuffer-history t
+        savehist-autosave-interval nil ; save on kill only
+        savehist-additional-variables '(kill-ring search-ring regexp-search-ring))
+  (savehist-mode +1))
 
-;; savehist / saveplace
-(setq savehist-file (concat doom-cache-dir "savehist")
-      savehist-save-minibuffer-history t
-      savehist-autosave-interval nil ; save on kill only
-      savehist-additional-variables '(kill-ring search-ring regexp-search-ring)
-      save-place-file (concat doom-cache-dir "saveplace"))
-(add-hook! 'doom-init-hook #'(savehist-mode save-place-mode))
-(defun doom*recenter-on-load-saveplace (&rest _)
-  "Recenter on cursor when loading a saved place."
-  (if buffer-file-name (ignore-errors (recenter))))
-(advice-add #'save-place-find-file-hook :after-while #'doom*recenter-on-load-saveplace)
+;; persistent point location in buffers
+(def-package! saveplace
+  :defer buffer
+  :config
+  (setq save-place-file (concat doom-cache-dir "saveplace"))
+  (defun doom*recenter-on-load-saveplace (&rest _)
+    "Recenter on cursor when loading a saved place."
+    (if buffer-file-name (ignore-errors (recenter))))
+  (advice-add #'save-place-find-file-hook
+              :after-while #'doom*recenter-on-load-saveplace)
+  (save-place-mode +1))
 
 ;; Keep track of recently opened files
 (def-package! recentf
-  :hook (doom-init . recentf-mode)
+  :defer (input . 1)
+  :commands recentf-open-files
   :config
   (setq recentf-save-file (concat doom-cache-dir "recentf")
         recentf-auto-cleanup 60
@@ -101,7 +112,15 @@ fundamental-mode) for performance sake."
               "^/tmp/" "^/ssh:" "\\.?ido\\.last$" "\\.revive$" "/TAGS$"
               "^/var/folders/.+$"
               ;; ignore private DOOM temp files (but not all of them)
-              (concat "^" (file-truename doom-local-dir)))))
+              (concat "^" (file-truename doom-local-dir))))
+  (recentf-mode +1))
+
+(def-package! server
+  :when (display-graphic-p)
+  :defer 2
+  :config
+  (unless (server-running-p)
+    (server-start)))
 
 
 ;;
@@ -110,10 +129,9 @@ fundamental-mode) for performance sake."
 
 ;; Auto-close delimiters and blocks as you type
 (def-package! smartparens
+  :defer (buffer . 2)
   :config
-  (smartparens-global-mode +1)
   (require 'smartparens-config)
-
   (setq sp-highlight-pair-overlay nil
         sp-cancel-autoskip-on-backward-movement nil
         sp-show-pair-delay 0
@@ -124,12 +142,15 @@ fundamental-mode) for performance sake."
   (add-hook 'evil-replace-state-exit-hook  #'turn-on-smartparens-mode)
 
   (sp-local-pair '(xml-mode nxml-mode php-mode) "<!--" "-->"
-                 :post-handlers '(("| " "SPC"))))
+                 :post-handlers '(("| " "SPC")))
+
+  (smartparens-global-mode +1))
 
 ;; Branching undo
 (def-package! undo-tree
-  :hook (doom-init . global-undo-tree-mode)
+  :defer input
   :config
+  (global-undo-tree-mode +1)
   ;; persistent undo history is known to cause undo history corruption, which
   ;; can be very destructive! So disable it!
   (setq undo-tree-auto-save-history nil

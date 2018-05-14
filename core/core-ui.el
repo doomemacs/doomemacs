@@ -280,15 +280,19 @@ DEFAULT is non-nil, set the default mode-line for all buffers."
 (add-hook 'isearch-mode-end-hook #'doom|enable-ui-keystrokes)
 
 ;; undo/redo changes to Emacs' window layout
-(defvar winner-dont-bind-my-keys t) ; I'll bind keys myself
-(autoload 'winner-mode "winner" nil t)
-(add-hook 'doom-init-ui-hook #'winner-mode)
+(def-package! winner
+  :defer buffer
+  :preface (defvar winner-dont-bind-my-keys t) ; I'll bind keys myself
+  :config (winner-mode +1))
 
 ;; highlight matching delimiters
-(setq show-paren-delay 0.1
-      show-paren-highlight-openparen t
-      show-paren-when-point-inside-paren t)
-(add-hook 'doom-init-ui-hook #'show-paren-mode)
+(def-package! paren
+  :defer input
+  :config
+  (setq show-paren-delay 0.1
+        show-paren-highlight-openparen t
+        show-paren-when-point-inside-paren t)
+  (show-paren-mode +1))
 
 ;;; More reliable inter-window border
 ;; The native border "consumes" a pixel of the fringe on righter-most splits,
@@ -352,10 +356,12 @@ from the default."
   (prog1 (apply orig-fn args)
     (run-hooks 'doom-after-switch-buffer-hook)))
 
-(advice-add #'select-frame     :around #'doom*switch-frame-hooks)
-(advice-add #'select-window    :around #'doom*switch-window-hooks)
-(advice-add #'switch-to-buffer :around #'doom*switch-buffer-hooks)
-(advice-add #'display-buffer   :around #'doom*switch-buffer-hooks)
+(defun doom|init-custom-hooks ()
+  (advice-add #'select-frame     :around #'doom*switch-frame-hooks)
+  (advice-add #'select-window    :around #'doom*switch-window-hooks)
+  (advice-add #'switch-to-buffer :around #'doom*switch-buffer-hooks)
+  (advice-add #'display-buffer   :around #'doom*switch-buffer-hooks))
+(add-hook 'doom-init-hook #'doom|init-custom-hooks)
 
 (defun doom*load-theme-hooks (theme &rest _)
   (setq doom-theme theme)

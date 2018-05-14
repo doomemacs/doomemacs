@@ -12,9 +12,9 @@
         projectile-ignored-projects '("~/" "/tmp"))
 
   :config
-  (projectile-mode +1)
   (add-hook 'dired-before-readin-hook #'projectile-track-known-projects-find-file-hook)
   (add-hook 'find-file-hook #'doom|autoload-project-mode)
+  (projectile-mode +1)
 
   ;; a more generic project root file
   (push ".project" projectile-project-root-files-bottom-up)

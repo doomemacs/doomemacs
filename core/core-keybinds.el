@@ -60,6 +60,7 @@ If any hook returns non-nil, all hooks after it are ignored.")
 
 
 (def-package! hydra
+  :commands (defhydra defhydradio)
   :init
   ;; In case I later need to wrap defhydra in any special functionality.
   (defalias 'def-hydra! 'defhydra)
