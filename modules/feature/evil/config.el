@@ -23,10 +23,10 @@
 
 (def-package! evil-collection
   :when (featurep! +everywhere)
-  :after evil
+  :defer input
   :preface
   ;; must be set before evil/evil-collcetion is loaded
-  (setq evil-want-integration (not (featurep! +everywhere))
+  (setq evil-want-integration nil
         evil-collection-company-use-tng nil)
   :config
   (delq 'kotlin-mode evil-collection-mode-list) ; doesn't do anything useful
@@ -229,17 +229,17 @@
 
 
 (def-package! evil-escape
-  :commands evil-escape-mode
+  :commands (evil-escape evil-escape-mode evil-escape-pre-command-hook)
   :init
   (setq evil-escape-excluded-states '(normal visual multiedit emacs motion)
         evil-escape-excluded-major-modes '(neotree-mode)
         evil-escape-key-sequence "jk"
         evil-escape-delay 0.25)
-  (add-hook 'doom-post-init-hook #'evil-escape-mode)
+  (add-hook 'pre-command-hook 'evil-escape-pre-command-hook)
+  (map! :irvo "C-g" #'evil-escape)
   :config
   ;; no `evil-escape' in minibuffer
-  (push #'minibufferp evil-escape-inhibit-functions)
-  (map! :irvo "C-g" #'evil-escape))
+  (add-hook 'evil-escape-inhibit-functions #'minibufferp))
 
 
 (def-package! evil-exchange
@@ -325,7 +325,7 @@ the new algorithm is confusing, like in python or ruby."
 (def-package! evil-snipe
   :commands (evil-snipe-mode evil-snipe-override-mode
              evil-snipe-local-mode evil-snipe-override-local-mode)
-  :hook (doom-post-init . evil-snipe-mode)
+  :defer input
   :init
   (setq evil-snipe-smart-case t
         evil-snipe-scope 'line
@@ -333,6 +333,7 @@ the new algorithm is confusing, like in python or ruby."
         evil-snipe-char-fold t
         evil-snipe-aliases '((?\; "[;:]")))
   :config
+  (evil-snipe-mode +1)
   (evil-snipe-override-mode +1))
 
 

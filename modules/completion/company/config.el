@@ -42,11 +42,14 @@ MODES should be one major-mode symbol or a list of them."
         company-backends
         '(company-capf company-dabbrev company-ispell company-yasnippet)
         company-transformers '(company-sort-by-occurrence))
-  (when (featurep! +auto)
-    (require 'company)
-    (setq company-idle-delay 0.2))
   :config
   (global-company-mode +1))
+
+
+(def-package! company
+  :when (featurep! +auto)
+  :defer input
+  :config (setq company-idle-delay 0.2))
 
 
 (def-package! company-statistics

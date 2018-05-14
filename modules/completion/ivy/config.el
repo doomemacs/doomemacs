@@ -24,8 +24,7 @@ immediately runs it on the current candidate (ending the ivy session)."
 ;;
 
 (def-package! ivy
-  :init
-  (add-hook 'doom-init-hook #'ivy-mode)
+  :defer input
   :config
   (setq ivy-height 12
         ivy-do-completion-in-region nil
@@ -55,15 +54,7 @@ immediately runs it on the current candidate (ending the ivy session)."
         [remap persp-switch-to-buffer] #'+ivy/switch-workspace-buffer
         [remap imenu-anywhere]         #'ivy-imenu-anywhere)
 
-  (nconc ivy-sort-functions-alist
-         '((persp-kill-buffer   . nil)
-           (persp-remove-buffer . nil)
-           (persp-add-buffer    . nil)
-           (persp-switch        . nil)
-           (persp-window-switch . nil)
-           (persp-frame-switch  . nil)
-           (+workspace/switch-to . nil)
-           (+workspace/delete . nil))))
+  (ivy-mode +1))
 
 
 ;; Show more buffer information in switch-buffer commands
@@ -140,7 +131,8 @@ immediately runs it on the current candidate (ending the ivy session)."
 (def-package! ivy-hydra
   :commands (+ivy@coo/body ivy-dispatching-done-hydra)
   :init
-  (map! :map ivy-minibuffer-map
+  (map! :after ivy
+        :map ivy-minibuffer-map
         "C-o" #'+ivy@coo/body
         "M-o" #'ivy-dispatching-done-hydra)
   :config

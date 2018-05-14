@@ -11,8 +11,9 @@
 ;;
 
 (def-package! helm-mode
-  :hook (doom-init . helm-mode)
+  :defer (input . 1)
   :config
+  (helm-mode +1)
   ;; helm is too heavy for find-file-at-point
   (add-to-list 'helm-completing-read-handlers-alist '(find-file-at-point . nil)))
 
