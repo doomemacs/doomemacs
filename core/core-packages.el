@@ -924,7 +924,7 @@ If RECOMPILE-P is non-nil, only recompile out-of-date files."
                        "There were breaking errors."
                        (error-message-string ex)
                        "Reverting changes...")
-             (doom//clean-byte-compiled-files)
+             (quiet! (doom//clean-byte-compiled-files))
              (message! (green "Finished (nothing was byte-compiled)")))))))))
 
 (defun doom//byte-compile-core (&optional recompile-p)
