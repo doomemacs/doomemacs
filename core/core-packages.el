@@ -679,10 +679,14 @@ loads MODULE SUBMODULE's packages.el file."
 ;;
 
 (defun doom//reload ()
-  "Reload your Doom config. Experimental!"
+  "Reload your private Doom config. Experimental!"
   (interactive)
-  (load (concat doom-emacs-dir "init.el") nil nil 'nosuffix)
-  (doom//reload-load-path))
+  (doom//reload-load-path)
+  (let ((doom--stage 'init))
+    (load (concat doom-private-dir "init.el") nil nil 'nosuffix))
+  (let ((doom--stage 'config))
+    (load (concat doom-private-dir "config.el") nil nil 'nosuffix))
+  (message "Private config reloaded"))
 
 (defun doom-packages--read-if-cookies (file)
   "Returns the value of the ;;;###if predicate form in FILE."
