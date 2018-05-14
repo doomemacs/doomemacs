@@ -35,6 +35,3 @@
 ;; core-keybinds.el
 (package! which-key)
 (package! hydra)
-
-;; other
-(package! esup)
