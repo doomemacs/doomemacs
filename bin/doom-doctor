@@ -279,16 +279,11 @@
 (message "\n----")
 (let (doom-core-packages doom-debug-mode)
   (condition-case ex
-      (progn
+      (let ((inhibit-message t))
+        (load "~/.emacs.d/core/core.el" nil t)
         (let (noninteractive)
-          (load "~/.emacs.d/core/core.el" nil t))
-        (let ((inhibit-message t)
-              (noninteractive t))
-          (load "~/.emacs.d/init.el" nil t))
-        (doom-initialize t)
-        (doom-initialize-packages t)
-        (quiet! (doom-initialize-modules))
-        (doom|finalize)
+          (doom-initialize t)
+          (doom|finalize))
         (success! "Attempt to load DOOM: success! Loaded v%s" doom-version))
     ('error
      (warn! "Attempt to load DOOM: failed\n  %s\n"
@@ -307,11 +302,13 @@
                  doom-packages)
              (when (or (file-exists-p doctor-file)
                        (file-exists-p packages-file))
-               (let ((prefix (format "%s" (color 1 "(%s %s) " (car key) (cdr key)))))
+               (let ((prefix (format "%s" (color 1 "(%s %s) " (car key) (cdr key))))
+                     (doom--stage 'packages))
                  (when (load packages-file t t)
                    (dolist (package (cl-remove-if #'package-installed-p doom-packages :key #'car))
                      (error! "%s is not installed" (car package))))
-                 (load doctor-file t t))))
+                 (let ((doom--stage 'doctor))
+                   (load doctor-file t t)))))
          ('error
           (error! "Syntax error: %s" ex))))
      doom-modules)))
