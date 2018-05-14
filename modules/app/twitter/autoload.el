@@ -62,7 +62,7 @@ that works with the feature/popup module."
     (with-current-buffer buf
       (twittering-rerender-timeline-all buf)
       (setq-local line-spacing 0.2)
-      (goto-line 0 buf))))
+      (goto-char (point-min)))))
 
 ;;;###autoload
 (defun +twitter/ace-link ()

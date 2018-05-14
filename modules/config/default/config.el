@@ -76,15 +76,16 @@
     (defvar +default-repeat-forward-key ";")
     (defvar +default-repeat-backward-key ",")
 
-    ;; Makes ; and , the universal repeat-keys in evil-mode
-    (defmacro do-repeat! (command next-func prev-func)
-      "Repeat motions with ;/,"
-      (let ((fn-sym (intern (format "+evil*repeat-%s" command))))
-        `(progn
-           (defun ,fn-sym (&rest _)
-             (define-key evil-motion-state-map +default-repeat-forward-key ',next-func)
-             (define-key evil-motion-state-map +default-repeat-backward-key ',prev-func))
-           (advice-add #',command :before #',fn-sym))))
+    (eval-and-compile
+      ;; Makes ; and , the universal repeat-keys in evil-mode
+      (defmacro do-repeat! (command next-func prev-func)
+        "Repeat motions with ;/,"
+        (let ((fn-sym (intern (format "+evil*repeat-%s" (doom-unquote command)))))
+          `(progn
+             (defun ,fn-sym (&rest _)
+               (define-key evil-motion-state-map +default-repeat-forward-key #',next-func)
+               (define-key evil-motion-state-map +default-repeat-backward-key #',prev-func))
+             (advice-add #',command :before #',fn-sym)))))
 
     ;; n/N
     (do-repeat! evil-ex-search-next evil-ex-search-next evil-ex-search-previous)

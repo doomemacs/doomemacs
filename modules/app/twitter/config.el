@@ -30,7 +30,8 @@
     '((transient) (quit) (select . t)))
 
   (defface twitter-divider
-    `((t (:underline (:color ,(doom-darken 'vertical-bar 0.2)))))
+    '((((background dark))  (:underline (:color "#141519")))
+      (((background light)) (:underline (:color "#d3d3d3"))))
     "The vertical divider between tweets."
     :group 'twittering-mode)
 

@@ -747,7 +747,7 @@
 ;;
 
 (when (featurep 'evil-collection)
-  (defun +config|deal-with-evil-collections-bs (feature keymaps)
+  (defun +config|deal-with-evil-collections-bs (_feature keymaps)
     "Unmap keys that conflict with Doom's defaults."
     (dolist (map keymaps)
       (evil-define-key '(normal visual motion) map
