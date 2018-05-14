@@ -92,7 +92,7 @@ in, or d) the module associated with the current major mode (see
      (list (completing-read "Describe module: "
                             (cl-loop for (module . sub) in (reverse (hash-table-keys doom-modules))
                                      collect (format "%s %s" module sub))
-                            nil t module))))
+                            nil t nil nil module))))
   (cl-destructuring-bind (category submodule)
       (mapcar #'intern (split-string module " "))
     (unless (doom-module-p category submodule)
