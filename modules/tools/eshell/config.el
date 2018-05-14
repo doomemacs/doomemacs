@@ -11,11 +11,11 @@
 (def-package! eshell ; built-in
   :commands eshell-mode
   :init
-  (setq eshell-directory-name (concat doom-etc-dir "/eshell")
-        eshell-rc-script "~/.eshellrc"
-        eshell-aliases-file "~/.eshell_aliases"
-        ;;
-        eshell-scroll-to-bottom-on-input 'all
+  (let ((dir (concat doom-private-dir "eshell")))
+    (when (file-directory-p dir)
+      (setq eshell-directory-name dir)))
+
+  (setq eshell-scroll-to-bottom-on-input 'all
         eshell-scroll-to-bottom-on-output 'all
         eshell-buffer-shorthand t
         eshell-kill-processes-on-exit t
