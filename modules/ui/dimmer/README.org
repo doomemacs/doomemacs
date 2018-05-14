@@ -1,0 +1,13 @@
+#+TITLE: :ui dimmer
+
+This module uses ~Dimmer~ to darken windows that are not focused.
+
+* Table of Contents :TOC:
+- [[Configure][Configure]]
+
+* Configure
+By default, dimmer is activated on startup. If you wish to manually use this functionality you can deactivate dimmer-mode by calling:
+#+BEGIN_SRC emacs-lisp
+(dimmer-mode -1)
+#+END_SRC
+

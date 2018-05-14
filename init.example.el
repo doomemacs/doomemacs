@@ -30,6 +30,7 @@
         +childframe)     ; uses childframes for popups (Emacs 26+ only)
 
        :ui
+       dimmer            ; interactively highlight which buffer is active by dimming the others
        doom              ; what makes DOOM look the way it does
        doom-dashboard    ; a nifty splash screen for Emacs
        doom-modeline     ; a snazzy Atom-inspired mode-line
@@ -41,6 +42,7 @@
       ;unicode           ; extended unicode support for various languages
        vi-tilde-fringe   ; fringe tildes to mark beyond EOB
        window-select     ; visually switch windows
+       window-zoom       ; automatically resize windows
 
        :tools
        dired             ; making dired pretty [functional]
