@@ -44,7 +44,9 @@ immediately runs it on the current candidate (ending the ivy session)."
         ;; ...but if that ever changes, show their full path
         ivy-virtual-abbreviate 'full
         ;; don't quit minibuffer on delete-error
-        ivy-on-del-error-function nil)
+        ivy-on-del-error-function nil
+        ;; enable ability to select prompt (alternative to `ivy-immediate-done')
+        ivy-use-selectable-prompt t)
 
   (after! magit     (setq magit-completing-read-function #'ivy-completing-read))
   (after! yasnippet (push #'+ivy-yas-prompt yas-prompt-functions))

@@ -574,7 +574,6 @@
       (:after ivy
         :map ivy-minibuffer-map
         [escape] #'keyboard-escape-quit
-        [C-return] #'ivy-immediate-done
         "C-SPC"  #'ivy-call-and-recenter
         "M-z"    #'undo
         "M-v"    #'yank
