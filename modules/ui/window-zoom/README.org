@@ -1,0 +1,9 @@
+#+TITLE: :ui window-zoom
+
+This module uses ~zoom~ or ~golden-ratio~ to automatically resize windows.
+
+* Table of Contents :TOC:
+- [[Configure][Configure]]
+
+* Configure
+By default, ~golden-ratio~ will be enabled. If you dislike this package and would prefer ~zoom~, then you can add +zoom. ~Zoom~ appears to me more refined, but there is a bug reported here https://debbugs.gnu.org/cgi/bugreport.cgi?bug=31312 affecting doom-emacs that might persuade you to use golden-ratio if you are not using the latest Emacs build.
