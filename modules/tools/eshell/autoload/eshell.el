@@ -71,9 +71,9 @@
   "Open eshell in the current buffer."
   (interactive)
   (let ((buf (+eshell--buffer (eq major-mode 'eshell-mode))))
+    (switch-to-buffer buf)
     (with-current-buffer buf
       (unless (eq major-mode 'eshell-mode) (eshell-mode)))
-    (switch-to-buffer buf)
     (when command
       (+eshell-run-command command))))
 
@@ -129,12 +129,20 @@ module to be loaded."
     (dolist (buf (ring-elements +eshell-buffers))
       (unless (buffer-live-p buf)
         (+eshell--remove-buffer buf)))
+    (let ((window (selected-window)))
+      (set-window-parameter window 'no-other-window t)
+      (set-window-parameter window 'visible t)
+      (set-window-dedicated-p window t))
     (+eshell--add-buffer buf)
     (setq +eshell-last-buffer buf)))
 
 ;;;###autoload
 (defun +eshell|cleanup ()
   "Close window (or workspace) on quit."
+  (let ((window (selected-window)))
+    (set-window-parameter window 'no-other-window nil)
+    (set-window-parameter window 'visible t)
+    (set-window-dedicated-p window nil))
   (+eshell--remove-buffer (current-buffer))
   (cond ((and (featurep! :feature workspaces)
               (string= "eshell" (+workspace-current-name)))
