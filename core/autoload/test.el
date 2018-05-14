@@ -11,9 +11,10 @@ If neither is available, run all tests in all enabled modules."
   (let ((doom-modules (make-hash-table :test #'equal)))
     ;; ensure DOOM is initialized
     (let (noninteractive)
-      ;; Core libraries aren't fully loaded in a noninteractive session, so
-      ;; we reload it with `noninteractive' set to nil to force them to.
-      (load (expand-file-name "core.el" doom-core-dir) nil t t))
+      ;; Core libraries aren't fully loaded in a noninteractive session, so we
+      ;; reload it with `noninteractive' set to nil to force them to.
+      (doom-initialize t)
+      (run-hooks 'doom-init-hook 'pre-command-hook 'doom-after-switch-buffer-hook))
     (condition-case-unless-debug ex
         (let ((target-paths
                ;; Convert targets (either from MODULES or `argv') into a list of
