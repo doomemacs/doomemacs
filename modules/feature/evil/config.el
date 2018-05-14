@@ -220,12 +220,12 @@
     (cons (format "(%s " (or (read-string "(") "")) ")"))
 
   ;; Add escaped-sequence support to embrace
-  (push (cons ?\\ (make-embrace-pair-struct
-                   :key ?\\
-                   :read-function #'+evil--embrace-escaped
-                   :left-regexp "\\[[{(]"
-                   :right-regexp "\\[]})]"))
-        (default-value 'embrace--pairs-list)))
+  (map-put (default-value 'embrace--pairs-list)
+           ?\\ (make-embrace-pair-struct
+                :key ?\\
+                :read-function #'+evil--embrace-escaped
+                :left-regexp "\\[[{(]"
+                :right-regexp "\\[]})]")))
 
 
 (def-package! evil-escape
@@ -307,11 +307,11 @@ the new algorithm is confusing, like in python or ruby."
   ;; Add custom commands to whitelisted commands
   (dolist (fn '(doom/backward-to-bol-or-indent doom/forward-to-last-non-comment-or-eol
                 doom/backward-kill-to-bol-and-indent))
-    (push (cons fn '((:default . evil-mc-execute-default-call)))
-          evil-mc-custom-known-commands))
+    (map-put evil-mc-custom-known-commands
+             fn '((:default . evil-mc-execute-default-call))))
 
   ;; disable evil-escape in evil-mc; causes unwanted text on invocation
-  (push 'evil-escape-mode evil-mc-incompatible-minor-modes)
+  (cl-pushnew 'evil-escape-mode evil-mc-incompatible-minor-modes :test #'eq)
 
   (defun +evil|escape-multiple-cursors ()
     "Clear evil-mc cursors and restore state."
@@ -380,8 +380,9 @@ the new algorithm is confusing, like in python or ruby."
              evil-forward-arg evil-backward-arg
              evil-jump-out-args)
   :config
-  (push "<" evil-args-openers)
-  (push ">" evil-args-closers))
+  (unless (member "<" evil-args-openers)
+    (push "<" evil-args-openers)
+    (push ">" evil-args-closers)))
 
 
 (def-package! evil-indent-plus

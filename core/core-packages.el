@@ -1020,7 +1020,7 @@ Do not use this for configuring Doom core."
        (defun ,fn ,arglist
          ,docstring
          ,@forms)
-       (cl-pushnew ',(cons keyword fn) doom-settings :test #'eq :key #'car))))
+       (map-put doom-settings ,keyword #',fn))))
 
 (defmacro set! (keyword &rest values)
   "Set an option defined by `def-setting!'. Skip if doesn't exist. See

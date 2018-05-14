@@ -48,7 +48,7 @@ immediately runs it on the current candidate (ending the ivy session)."
         ivy-use-selectable-prompt t)
 
   (after! magit     (setq magit-completing-read-function #'ivy-completing-read))
-  (after! yasnippet (push #'+ivy-yas-prompt yas-prompt-functions))
+  (after! yasnippet (cl-pushnew #'+ivy-yas-prompt yas-prompt-functions :test #'eq))
 
   (map! [remap switch-to-buffer]       #'ivy-switch-buffer
         [remap persp-switch-to-buffer] #'+ivy/switch-workspace-buffer
@@ -202,13 +202,13 @@ immediately runs it on the current candidate (ending the ivy session)."
                     'ivy-posframe-display-at-window-bottom-left
                     'ivy-posframe-display-at-window-center
                     '+ivy-display-at-frame-center-near-bottom))
-    (push (list fn :cleanup 'ivy-posframe-cleanup) ivy-display-functions-props))
+    (map-put ivy-display-functions-props fn '(:cleanup ivy-posframe-cleanup)))
 
-  (push '(t . +ivy-display-at-frame-center-near-bottom) ivy-display-functions-alist)
+  (map-put ivy-display-functions-alist 't '+ivy-display-at-frame-center-near-bottom)
 
   ;; posframe doesn't work well with async sources
   (dolist (fn '(swiper counsel-rg counsel-ag counsel-pt counsel-grep counsel-git-grep))
-    (push (cons fn nil) ivy-display-functions-alist))
+    (map-put ivy-display-functions-alist fn nil))
 
   (setq ivy-height 16
         ivy-fixed-height-minibuffer nil
