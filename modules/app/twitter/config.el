@@ -35,7 +35,7 @@
     :group 'twittering-mode)
 
   (add-hook 'doom-real-buffer-functions #'+twitter-buffer-p)
-  (when (featurep! :feature popup)
+  (when (featurep! :ui popup)
     (setq twittering-pop-to-buffer-function #'+twitter-display-buffer))
 
   (after! solaire-mode
