@@ -183,8 +183,9 @@
 (def-package! eslintd-fix
   :commands (eslintd-fix-mode eslintd-fix)
   :config
-  (add-hook! 'eslintd-fix-mode-hook
-    (setq flycheck-javascript-eslint-executable eslintd-fix-executable)))
+  (defun +javascript|set-flycheck-executable-to-eslint ()
+    (setq flycheck-javascript-eslint-executable eslintd-fix-executable))
+  (add-hook 'eslintd-fix-mode-hook #'+javascript|set-flycheck-executable-to-eslint))
 
 
 (def-package! skewer-mode

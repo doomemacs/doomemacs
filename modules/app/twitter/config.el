@@ -47,9 +47,10 @@
     (bar matches " %b " selection-info)
     ())
 
-  (add-hook! twittering-mode
+  (defun +twitter|switch-mode-and-header-line ()
     (setq header-line-format (or (doom-modeline 'twitter) mode-line-format)
           mode-line-format nil))
+  (add-hook 'twittering-mode-hook #'+twitter|switch-mode-and-header-line)
 
   (map! :map twittering-mode-map
         "q"   #'+twitter/quit

@@ -31,11 +31,11 @@
                                       :documentation +lookup-documentation-functions
                                       :file +lookup-file-functions)
                                 prop)
-           for fn = (or (command-remapping fn) fn)
+           for cmd = (or (command-remapping fn) fn)
            if (condition-case e
-                  (or (if (commandp fn)
-                          (call-interactively fn)
-                        (funcall fn identifier))
+                  (or (if (commandp cmd)
+                          (call-interactively cmd)
+                        (funcall cmd identifier))
                       (/= (point-marker) origin))
                 ('error (ignore (message "%s" e))))
            return it))

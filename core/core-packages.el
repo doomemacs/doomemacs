@@ -551,7 +551,6 @@ The module is only loaded once. If RELOAD-P is non-nil, load it again."
         (if (file-directory-p module-path)
             `(condition-case-unless-debug ex
                  (let ((doom--current-module ',(cons module submodule)))
-                   ;; ,(if plist `(doom-module-set ,module ',submodule ,@plist))
                    (load! init   ,module-path :noerror)
                    (load! config ,module-path :noerror))
                ('error
@@ -566,12 +565,12 @@ The module is only loaded once. If RELOAD-P is non-nil, load it again."
   "Returns t if MODULE SUBMODULE is enabled. If FLAG is provided, returns t if
 MODULE SUBMODULE has FLAG enabled.
 
-  (featurep! :private default)
+  (featurep! :config default)
 
 Module FLAGs are set in your config's `doom!' block, typically in
 ~/.emacs.d/init.el. Like so:
 
-  :private (default +flag1 -flag2)
+  :config (default +flag1 -flag2)
 
 When this macro is used from inside a module, MODULE and SUBMODULE can be
 omitted. eg. (featurep! +flag1)"
@@ -579,7 +578,7 @@ omitted. eg. (featurep! +flag1)"
     (let* ((path (or load-file-name byte-compile-current-file))
            (module-pair (doom-module-from-path path)))
       (unless module-pair
-        (error "featurep! couldn't detect what module I'm in! (in %s)" path))
+        (error "featurep! couldn't detect what module its in! (in %s)" path))
       (setq flag module
             module (car module-pair)
             submodule (cdr module-pair))))
