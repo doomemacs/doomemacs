@@ -1,4 +1,4 @@
-;;; tools/impatient-mode/config.el -*- lexical-binding: t; -*-
+;;; collab/impatient-mode/config.el -*- lexical-binding: t; -*-
 
 ;; Show off code as you write it
 

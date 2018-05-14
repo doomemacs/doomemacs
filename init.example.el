@@ -37,6 +37,7 @@
        evil-goggles      ; display visual hints when editing in evil
        hl-todo           ; highlight TODO/FIXME/NOTE tags
        nav-flash         ; blink the current line after jumping
+       neotree           ; a project drawer, like NERDTree for vim
       ;tabbar            ; FIXME an (incomplete) tab bar for Emacs
       ;unicode           ; extended unicode support for various languages
        vi-tilde-fringe   ; fringe tildes to mark beyond EOB
@@ -50,11 +51,9 @@
        eshell            ; a consistent, cross-platform shell (WIP)
        gist              ; interacting with github gists
        imenu             ; an imenu sidebar and searchable code index
-       impatient-mode    ; show off code over HTTP
       ;macos             ; MacOS-specific commands
        make              ; run make tasks from Emacs
       ;magit             ;
-       neotree           ; a project drawer, like NERDTree for vim
        password-store    ; password manager for nerds
        pdf               ; pdf enhancements
       ;rgb               ; creating color strings
@@ -120,6 +119,9 @@
       ;(write            ; emacs as a word processor (latex + org + markdown)
       ; +wordnut         ; wordnet (wn) search
       ; +langtool)       ; a proofreader (grammar/style check) for Emacs
+
+       :collab
+      ;impatient-mode    ; show off code over HTTP
 
        :config
        ;; The default module set reasonable defaults for Emacs. It also provides
