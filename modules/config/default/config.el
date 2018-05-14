@@ -96,19 +96,17 @@
     ;; f/F/t/T/s/S
     (setq evil-snipe-repeat-keys nil
           evil-snipe-override-evil-repeat-keys nil) ; causes problems with remapped ;
-    (after! evil-snipe
-      (do-repeat! evil-snipe-f evil-snipe-repeat evil-snipe-repeat-reverse)
-      (do-repeat! evil-snipe-F evil-snipe-repeat evil-snipe-repeat-reverse)
-      (do-repeat! evil-snipe-t evil-snipe-repeat evil-snipe-repeat-reverse)
-      (do-repeat! evil-snipe-T evil-snipe-repeat evil-snipe-repeat-reverse)
-      (do-repeat! evil-snipe-s evil-snipe-repeat evil-snipe-repeat-reverse)
-      (do-repeat! evil-snipe-S evil-snipe-repeat evil-snipe-repeat-reverse)
-      (do-repeat! evil-snipe-x evil-snipe-repeat evil-snipe-repeat-reverse)
-      (do-repeat! evil-snipe-X evil-snipe-repeat evil-snipe-repeat-reverse))
+    (do-repeat! evil-snipe-f evil-snipe-repeat evil-snipe-repeat-reverse)
+    (do-repeat! evil-snipe-F evil-snipe-repeat evil-snipe-repeat-reverse)
+    (do-repeat! evil-snipe-t evil-snipe-repeat evil-snipe-repeat-reverse)
+    (do-repeat! evil-snipe-T evil-snipe-repeat evil-snipe-repeat-reverse)
+    (do-repeat! evil-snipe-s evil-snipe-repeat evil-snipe-repeat-reverse)
+    (do-repeat! evil-snipe-S evil-snipe-repeat evil-snipe-repeat-reverse)
+    (do-repeat! evil-snipe-x evil-snipe-repeat evil-snipe-repeat-reverse)
+    (do-repeat! evil-snipe-X evil-snipe-repeat evil-snipe-repeat-reverse)
 
     ;; */#
-    (after! evil-visualstar
-      (do-repeat! evil-visualstar/begin-search-forward
-                  evil-ex-search-next evil-ex-search-previous)
-      (do-repeat! evil-visualstar/begin-search-backward
-                  evil-ex-search-previous evil-ex-search-next))))
+    (do-repeat! evil-visualstar/begin-search-forward
+                evil-ex-search-next evil-ex-search-previous)
+    (do-repeat! evil-visualstar/begin-search-backward
+                evil-ex-search-previous evil-ex-search-next)))
