@@ -2,7 +2,7 @@
 
 ;; css-mode hooks apply to scss and less-css modes
 (add-hook 'css-mode-hook #'rainbow-delimiters-mode)
-(add-hook! (css-mode sass-mode)
+(add-hook! (css-mode sass-mode stylus-mode)
   #'(yas-minor-mode-on flycheck-mode highlight-numbers-mode))
 
 ;; An improved newline+continue comment function
@@ -35,10 +35,7 @@
   :hook (css-mode sass-mode))
 
 
-(def-package! css-mode
-  :mode "\\.css$"
-  :mode ("\\.scss$" . scss-mode)
-  :config
+(after! css-mode ; contains both css-mode & scss-mode
   (set! :docset 'css-mode "CSS")
   (set! :docset 'scss-mode "Sass")
   (set! :company-backend '(css-mode scss-mode) 'company-css)
@@ -46,18 +43,9 @@
 
 
 (def-package! sass-mode
-  :mode "\\.sass$"
+  :commands sass-mode
   :config
   (set! :docset 'sass-mode "Sass")
   (set! :company-backend 'sass-mode 'company-css)
   (map! :map scss-mode-map :localleader :n "b" #'+css/sass-build))
-
-
-(def-package! less-css-mode
-  :mode "\\.less$")
-
-
-(def-package! stylus-mode
-  :mode "\\.styl$"
-  :init (add-hook! stylus-mode #'(yas-minor-mode-on flycheck-mode)))
 

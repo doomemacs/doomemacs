@@ -1,8 +1,8 @@
 ;;; lang/elixir/config.el -*- lexical-binding: t; -*-
 
 (def-package! elixir-mode
-  :mode "\\.exs?$"
-  :mode "\\.elixir2$"
+  :mode "\\.exs?\\'"
+  :mode "\\.elixir2\\'"
   :init
   ;; sp's default elixir rules are obnoxious, so disable them
   (provide 'smartparens-elixir)

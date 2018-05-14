@@ -1,16 +1,12 @@
 ;;; feature/version-control/+git.el -*- lexical-binding: t; -*-
 
+;; These don't need `def-package!' blocks because they've already been set up by
+;; `doom-initialize'.
+(autoload 'gitconfig-mode "gitconfig-mode" nil t)
+(autoload 'gitignore-mode "gitignore-mode" nil t)
+
 (when (featurep! :feature evil)
   (add-hook 'git-commit-mode-hook #'evil-insert-state))
-
-
-(def-package! gitconfig-mode
-  :mode "/\\.?git/?config$"
-  :mode "/\\.gitmodules$")
-
-
-(def-package! gitignore-mode
-  :mode "/\\.gitignore$")
 
 
 (def-package! git-gutter-fringe

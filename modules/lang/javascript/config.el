@@ -5,7 +5,7 @@
 ;;
 
 (def-package! js2-mode
-  :mode "\\.js$"
+  :mode "\\.js\\'"
   :interpreter "node"
   :config
   (setq js2-skip-preprocessor-directives t
@@ -35,15 +35,15 @@
 
 
 (def-package! typescript-mode
-  :mode "\\.ts$"
+  :commands typescript-mode
   :config
   (add-hook! 'typescript-mode-hook #'(flycheck-mode rainbow-delimiters-mode))
-  (set! :electric 'typescript-mode :chars '(?\} ?\)) :words '("||" "&&")))
+  (set! :electric 'typescript-mode
+    :chars '(?\} ?\)) :words '("||" "&&")))
 
 
 (def-package! rjsx-mode
   :commands rjsx-mode
-  :mode "\\.jsx$"
   :mode "components/.+\\.js$"
   :init
   (defun +javascript-jsx-file-p ()
@@ -73,7 +73,7 @@
 
 
 (def-package! coffee-mode
-  :mode "\\.coffee$"
+  :defer t  ; file extensions registered by autoloads file
   :init (setq coffee-indent-like-python-mode t))
 
 

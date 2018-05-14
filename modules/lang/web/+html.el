@@ -96,11 +96,5 @@
   :after web-mode)
 
 
-(def-package! haml-mode :mode "\\.haml$")
-
-
-(def-package! pug-mode
-  :mode "\\.jade$"
-  :mode "\\.pug$"
-  :config
-  (set! :company-backend 'pug-mode '(company-yasnippet)))
+;; `pug-mode'
+(set! :company-backend 'pug-mode '(company-yasnippet))
