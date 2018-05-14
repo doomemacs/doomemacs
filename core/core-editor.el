@@ -122,6 +122,8 @@ fundamental-mode) for performance sake."
   (unless (server-running-p)
     (server-start)))
 
+(push '("/[A-Z]+$" . text-mode) auto-mode-alist)
+
 
 ;;
 ;; Core Plugins
