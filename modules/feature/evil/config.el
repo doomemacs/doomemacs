@@ -23,7 +23,7 @@
 
 (def-package! evil-collection
   :when (featurep! +everywhere)
-  :defer input
+  :defer pre-command-hook
   :preface
   ;; must be set before evil/evil-collcetion is loaded
   (setq evil-want-integration nil
@@ -325,7 +325,7 @@ the new algorithm is confusing, like in python or ruby."
 (def-package! evil-snipe
   :commands (evil-snipe-mode evil-snipe-override-mode
              evil-snipe-local-mode evil-snipe-override-local-mode)
-  :defer input
+  :defer pre-command-hook
   :init
   (setq evil-snipe-smart-case t
         evil-snipe-scope 'line

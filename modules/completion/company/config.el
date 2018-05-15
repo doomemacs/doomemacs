@@ -48,7 +48,7 @@ MODES should be one major-mode symbol or a list of them."
 
 (def-package! company
   :when (featurep! +auto)
-  :defer input
+  :defer pre-command-hook
   :config (setq company-idle-delay 0.2))
 
 

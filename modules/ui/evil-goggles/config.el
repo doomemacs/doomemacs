@@ -2,7 +2,7 @@
 
 (def-package! evil-goggles
   :when (featurep! :feature evil)
-  :defer input
+  :defer pre-command-hook
   :init
   (setq evil-goggles-duration 0.05
         evil-goggles-pulse nil ; too slow

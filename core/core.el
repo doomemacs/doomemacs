@@ -173,8 +173,7 @@ this, you'll get stuttering and random freezes) and resets
 `file-name-handler-alist'."
   (unless noninteractive
     (run-hooks 'doom-init-hook))
-  (setq doom-init-p t
-        file-name-handler-alist doom--file-name-handler-alist
+  (setq file-name-handler-alist doom--file-name-handler-alist
         gc-cons-threshold 16777216
         gc-cons-percentage 0.15))
 

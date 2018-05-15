@@ -24,7 +24,7 @@ immediately runs it on the current candidate (ending the ivy session)."
 ;;
 
 (def-package! ivy
-  :defer input
+  :defer (pre-command-hook . 1)
   :config
   (setq ivy-height 12
         ivy-do-completion-in-region nil

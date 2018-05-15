@@ -247,7 +247,8 @@ FORCE-P is non-nil, do it anyway.
       (cl-pushnew doom-core-dir load-path :test #'string=)
       (add-hook 'doom-internal-init-hook #'doom|refresh-cache))
     (when doom-debug-mode
-      (message "Doom initialized")))
+      (message "Doom initialized"))
+    (setq doom-init-p t))
   ;; initialize Doom core
   (require 'core-lib)
   (require 'core-os)
@@ -255,13 +256,7 @@ FORCE-P is non-nil, do it anyway.
     (require 'core-ui)
     (require 'core-editor)
     (require 'core-projects)
-    (require 'core-keybinds))
-  ;; load input-deferred packages on first `pre-command-hook'
-  (add-transient-hook! 'pre-command-hook
-    (mapc #'require (cdr (assq 'input doom-deferred-packages))))
-  (add-transient-hook! 'doom-after-switch-buffer-hook
-    (when (get-buffer-window)
-      (mapc #'require (cdr (assq 'buffer doom-deferred-packages))))))
+    (require 'core-keybinds)))
 
 (defun doom-initialize-autoloads ()
   "Ensures that `doom-autoload-file' exists and is loaded. Otherwise run
@@ -475,11 +470,11 @@ MODULES is an malformed plist of modules to load."
                    (and (plist-member plist :unless) (eval (plist-get plist :unless) t))))
     `(progn
        ,(when-let* ((defer (plist-get plist :defer))
-                    (type (or (car-safe defer) defer)))
+                    (value (or (car-safe defer) defer)))
           (setq plist (plist-put plist :defer (or (cdr-safe defer) t)))
-          (when (and (not doom-init-p)
-                     (assq type doom-deferred-packages))
-            `(push ',name (cdr (assq ',type doom-deferred-packages)))))
+          (unless (or (memq value '(t nil))
+                      (number-or-marker-p value))
+            `(add-transient-hook! ',value (require ',name))))
        (use-package ,name ,@plist))))
 
 (defmacro def-package-hook! (package when &rest body)
