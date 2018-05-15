@@ -166,7 +166,7 @@ fundamental-mode) for performance sake."
 ;;
 
 (def-package! ace-link
-  :commands (ace-link-help ace-link-org ace-link-addr))
+  :commands (ace-link-help ace-link-org ace-link-addr ace-link-mu4e))
 
 (def-package! avy
   :commands (avy-goto-char-2 avy-goto-line)
