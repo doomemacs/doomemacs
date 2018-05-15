@@ -597,7 +597,10 @@ Accepts the following properties:
  :ignore FORM
    Do not install this package.
  :freeze FORM
-   Do not update this package if FORM is non-nil."
+   Do not update this package if FORM is non-nil.
+
+Returns t if package is successfully registered, and nil if it was disabled
+elsewhere."
   (declare (indent defun))
   (doom--assert-stage-p 'packages #'package!)
   (cond ((memq name doom-disabled-packages) nil)
@@ -623,7 +626,8 @@ Accepts the following properties:
            `(progn
               ,(when (and pkg-pin t)
                  `(map-put package-pinned-packages ',name ,pkg-pin))
-              (map-put doom-packages ',name ',plist))))))
+              (map-put doom-packages ',name ',plist)
+              t)))))
 
 (defmacro packages! (&rest packages)
   "A convenience macro like `package!', but allows you to declare multiple
