@@ -110,9 +110,12 @@ invoked, then never again.
 
 HOOK can be a quoted hook or a sharp-quoted function (which will be advised)."
   (declare (indent 1))
-  (let ((append (eq (car forms) :after))
-        (fn (intern (format "doom-transient-hook-%s" (cl-incf doom--transient-counter)))))
-    `(when ,hook
+  (let ((append (if (eq (car forms) :after) (pop forms)))
+        (fn (intern (format "doom|transient-hook-%s"
+                            (if (not (symbolp (car forms)))
+                                (cl-incf doom--transient-counter)
+                              (pop forms))))))
+    `(progn
        (fset ',fn
              (lambda (&rest _)
                ,@forms
