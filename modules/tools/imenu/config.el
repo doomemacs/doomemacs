@@ -6,7 +6,7 @@
 
 
 (def-package! imenu-list
-  :commands imenu-list-minor-mode
+  :commands (imenu-list-minor-mode imenu-list-smart-toggle)
   :config
   (setq imenu-list-idle-update-delay 0.5)
 
