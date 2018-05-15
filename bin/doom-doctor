@@ -310,7 +310,7 @@
                  (let ((doom--stage 'doctor))
                    (load doctor-file t t)))))
          ('error
-          (error! "Syntax error: %s" ex))))
+          (error! "(%s %s) Syntax error: %s" (car key) (cdr key) ex))))
      doom-modules)))
 
 ;;
