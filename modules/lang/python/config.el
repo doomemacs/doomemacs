@@ -112,10 +112,6 @@ environment variables."
         :nv "u" #'anaconda-mode-find-references))
 
 
-(def-package! pip-requirements
-  :mode ("/requirements.txt$" . pip-requirements-mode))
-
-
 (def-package! nose
   :commands nose-mode
   :preface
