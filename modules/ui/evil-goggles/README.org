@@ -12,5 +12,5 @@ This module requires:
 + ~evil~ (inherently tied to evil mode)
 
 * Configure
-By default, ~evil-goggles~ will be enabled by default and requires no additional configuration.
+By default, ~evil-goggles~ will be enabled and requires no additional configuration.
 
