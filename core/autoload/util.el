@@ -159,9 +159,9 @@ ready to be pasted in a bug report on github."
                   do (setq cat (car key)) and collect cat
                   else collect
                   (let ((flags (doom-module-get cat (cdr key) :flags)))
-                    (if (equal flags '(t))
-                        (cdr key)
-                      (list (cdr key) flags))))
+                    (if flags
+                        `(,(cdr key) ,@flags)
+                      (cdr key))))
          "n/a")
      (or (let (packages)
            (ignore-errors
