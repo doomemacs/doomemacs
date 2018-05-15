@@ -99,7 +99,7 @@ and `auto-mode-alist'.")
 
 (defvar doom--current-module nil)
 (defvar doom--refreshed-p nil)
-(defvar doom--stage nil)
+(defvar doom--stage 'init)
 
 ;;
 (setq autoload-compute-prefixes nil
@@ -447,8 +447,7 @@ MODULES is an malformed plist of modules to load."
                            config-forms))))))))
     `(let (file-name-handler-alist)
        (setq doom-modules ',doom-modules)
-       (let ((doom--stage 'init))
-         ,@(nreverse init-forms))
+       ,@(nreverse init-forms)
        (unless noninteractive
          (run-hooks 'doom-internal-init-hook)
          (let ((doom--stage 'config))
@@ -546,8 +545,9 @@ The module is only loaded once. If RELOAD-P is non-nil, load it again."
         (if (file-directory-p module-path)
             `(condition-case-unless-debug ex
                  (let ((doom--current-module ',(cons module submodule)))
-                   (load! init   ,module-path :noerror)
-                   (load! config ,module-path :noerror))
+                   (load! init ,module-path :noerror)
+                   (let ((doom--stage 'config))
+                     (load! config ,module-path :noerror)))
                ('error
                 (lwarn 'doom-modules :error
                        "%s in '%s %s' -> %s"
@@ -676,8 +676,7 @@ loads MODULE SUBMODULE's packages.el file."
   "Reload your private Doom config. Experimental!"
   (interactive)
   (doom//reload-load-path)
-  (let ((doom--stage 'init))
-    (load (concat doom-private-dir "init.el") nil nil 'nosuffix))
+  (load (concat doom-private-dir "init.el") nil nil 'nosuffix)
   (let ((doom--stage 'config))
     (load (concat doom-private-dir "config.el") nil nil 'nosuffix))
   (message "Private config reloaded"))
