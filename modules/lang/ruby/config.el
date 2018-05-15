@@ -75,6 +75,7 @@ environment variables."
 
 (def-package! rspec-mode
   :mode ("/\\.rspec$" . text-mode)
+  :hook ruby-mode
   :init
   (associate! rspec-mode :match "/\\.rspec$")
   (associate! rspec-mode :modes (ruby-mode yaml-mode) :files ("/spec/"))
