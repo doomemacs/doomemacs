@@ -133,6 +133,7 @@ fundamental-mode) for performance sake."
 ;; Auto-close delimiters and blocks as you type
 (def-package! smartparens
   :defer pre-command-hook
+  :commands (sp-pair sp-local-pair sp-with-modes)
   :config
   (require 'smartparens-config)
   (setq sp-highlight-pair-overlay nil
