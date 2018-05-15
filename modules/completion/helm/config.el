@@ -15,7 +15,7 @@
   :config
   (helm-mode +1)
   ;; helm is too heavy for find-file-at-point
-  (map-put helm-completing-read-handlers-alist 'find-file-at-point nilk))
+  (map-put helm-completing-read-handlers-alist 'find-file-at-point nil))
 
 
 (def-package! helm
