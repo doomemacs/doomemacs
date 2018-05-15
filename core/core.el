@@ -107,10 +107,6 @@ XDG directory conventions if ~/.config/doom exists.")
 (defvar doom-init-hook nil
   "A list of hooks run when DOOM is initialized.")
 
-(defvar doom-internal-init-hook nil
-  "Hooks run after Doom has loaded all init.el files, and is ready to load
-modules.")
-
 
 ;;
 ;; Emacs fixes/hacks
