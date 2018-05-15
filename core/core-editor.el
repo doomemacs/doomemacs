@@ -27,6 +27,7 @@ modes are active and the buffer is read-only.")
  hscroll-step 1
  scroll-conservatively 1001
  scroll-margin 0
+ hscroll-margin 2
  scroll-preserve-screen-position t
  ;; Whitespace (see `editorconfig')
  indent-tabs-mode nil
