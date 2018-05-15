@@ -89,6 +89,7 @@ and `auto-mode-alist'.")
 (defvar doom--current-module nil)
 (defvar doom--refreshed-p nil)
 (defvar doom--stage 'init)
+(defvar doom--inhibit-reload nil)
 
 ;;
 (setq autoload-compute-prefixes nil
@@ -667,11 +668,12 @@ loads MODULE SUBMODULE's packages.el file."
 (defun doom//reload ()
   "Reload your private Doom config. Experimental!"
   (interactive)
-  (doom//reload-load-path)
+  (message "Reloading your private config...")
   (load (concat doom-private-dir "init.el") nil nil 'nosuffix)
+  (doom-packages--async-run #'doom//refresh-packages)
   (let ((doom--stage 'config))
     (load (concat doom-private-dir "config.el") nil nil 'nosuffix))
-  (message "Private config reloaded"))
+  (message "✓ Done!"))
 
 (defun doom-packages--read-if-cookies (file)
   "Returns the value of the ;;;###if predicate form in FILE."
@@ -706,17 +708,18 @@ an Emacs session is running.
 This isn't necessary if you use Doom's package management commands because they
 call `doom//reload-load-path' remotely (through emacsclient)."
   (interactive)
-  (when (file-exists-p doom-packages-file)
-    (delete-file doom-packages-file))
-  (cond ((and noninteractive (not (daemonp)))
-         (require 'server)
-         (when (server-running-p)
-           (message "Reloading active Emacs session...")
-           (server-eval-at server-name '(doom//reload-load-path))))
-        (t
-         (doom-initialize t)
-         (message "%d packages reloaded" (length package-alist))
-         (run-hooks 'doom-reload-hook))))
+  (unless doom--inhibit-reload
+    (when (file-exists-p doom-packages-file)
+      (delete-file doom-packages-file))
+    (cond ((and noninteractive (not (daemonp)))
+           (require 'server)
+           (when (server-running-p)
+             (message "Reloading active Emacs session...")
+             (server-eval-at server-name '(doom//reload-load-path))))
+          (t
+           (doom-initialize t)
+           (message "%d packages reloaded" (length package-alist))
+           (run-hooks 'doom-reload-hook)))))
 
 (defvar generated-autoload-load-name)
 (defun doom//reload-autoloads ()
@@ -956,6 +959,16 @@ compiled packages.'"
                             (file-relative-name truepath)
                           (abbreviate-file-name path))))
     (message "Everything is clean")))
+
+(defun doom//refresh-packages ()
+  "Runs `doom//reload-autoloads', `doom//packages-autoremove' and
+`doom//packages-install' before reloading your Emacs session."
+  (interactive)
+  (let ((doom--inhibit-reload t))
+    (doom//reload-autoloads)
+    (doom//packages-autoremove)
+    (doom//packages-install))
+  (doom//reload-load-path))
 
 
 ;;
