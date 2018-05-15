@@ -132,7 +132,7 @@ fundamental-mode) for performance sake."
 
 ;; Auto-close delimiters and blocks as you type
 (def-package! smartparens
-  :defer doom-before-switch-buffer-hook
+  :defer pre-command-hook
   :config
   (require 'smartparens-config)
   (setq sp-highlight-pair-overlay nil
