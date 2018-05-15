@@ -76,10 +76,11 @@
     (defvar +default-repeat-forward-key ";")
     (defvar +default-repeat-backward-key ",")
 
-    (eval-and-compile
-      ;; Makes ; and , the universal repeat-keys in evil-mode
+    (eval-when-compile
       (defmacro do-repeat! (command next-func prev-func)
-        "Repeat motions with ;/,"
+        "Makes ; and , the universal repeat-keys in evil-mode. These keys can be
+customized by changing `+default-repeat-forward-key' and
+`+default-repeat-backward-key'."
         (let ((fn-sym (intern (format "+evil*repeat-%s" (doom-unquote command)))))
           `(progn
              (defun ,fn-sym (&rest _)

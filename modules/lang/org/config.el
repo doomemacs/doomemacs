@@ -206,15 +206,16 @@ unfold to point on startup."
            (unless (file-remote-p path)
              (if (file-exists-p path) 'org-link 'error))))
 
-  (defmacro def-org-file-link! (key dir)
-    `(org-link-set-parameters
-      ,key
-      :complete (lambda () (+org--relpath (+org-link-read-file ,key ,dir) ,dir))
-      :follow   (lambda (link) (find-file (expand-file-name link ,dir)))
-      :face     (lambda (link)
-                  (if (file-exists-p (expand-file-name link ,dir))
-                      'org-link
-                    'error))))
+  (eval-when-compile
+    (defmacro def-org-file-link! (key dir)
+      `(org-link-set-parameters
+        ,key
+        :complete (lambda () (+org--relpath (+org-link-read-file ,key ,dir) ,dir))
+        :follow   (lambda (link) (find-file (expand-file-name link ,dir)))
+        :face     (lambda (link)
+                    (if (file-exists-p (expand-file-name link ,dir))
+                        'org-link
+                      'error)))))
 
   (def-org-file-link! "org" +org-dir)
   (def-org-file-link! "doom" doom-emacs-dir)
