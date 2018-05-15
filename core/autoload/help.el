@@ -103,18 +103,6 @@ in, or d) the module associated with the current major mode (see
       (find-file doc-path))))
 
 ;;;###autoload
-(defun doom*fix-helpful-prettyprint (value)
-  "TODO"
-  (with-temp-buffer
-    (delay-mode-hooks (emacs-lisp-mode))
-    (pp value (current-buffer))
-    (unless (or (symbolp value) (booleanp value) (keymapp value))
-      (unless (hash-table-p value)
-        (fill-region (point-min) (point-max)))
-      (quiet! (indent-region (point-min) (point-max))))
-    (string-trim (buffer-string))))
-
-;;;###autoload
 (defun doom/version ()
   "Display the current version of Doom & Emacs, including the current Doom
 branch and commit."

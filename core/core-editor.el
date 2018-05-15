@@ -199,9 +199,7 @@ fundamental-mode) for performance sake."
   (global-set-key [remap describe-function] #'helpful-callable)
   (global-set-key [remap describe-command]  #'helpful-command)
   (global-set-key [remap describe-variable] #'helpful-variable)
-  (global-set-key [remap describe-key]      #'helpful-key)
-
-  (advice-add #'helpful--pretty-print :override #'doom*fix-helpful-prettyprint))
+  (global-set-key [remap describe-key]      #'helpful-key))
 
 (def-package! pcre2el
   :commands rxt-quote-pcre)
