@@ -226,7 +226,8 @@
           :desc "Toggle Emacs log"      :n  "m" #'view-echo-area-messages
           :desc "Describe mode"         :n  "M" #'describe-mode
           :desc "Toggle profiler"       :n  "p" #'doom/toggle-profiler
-          :desc "Reload theme"          :n  "R" #'doom//reload-theme
+          :desc "Reload theme"          :n  "r" #'doom//reload-theme
+          :desc "Reload private config" :n  "R" #'doom//reload
           :desc "Describe DOOM setting" :n  "s" #'doom/describe-setting
           :desc "Describe variable"     :n  "v" #'describe-variable
           :desc "Print Doom version"    :n  "V" #'doom/version
@@ -283,8 +284,7 @@
         (:desc "quit" :prefix "q"
           :desc "Save and quit"          :n "q" #'evil-save-and-quit
           :desc "Quit (forget session)"  :n "Q" #'+workspace/kill-session-and-quit
-          :desc "Reload Doom Emacs"      :n "r" #'doom//reload
-          :desc "Restart Doom Emacs"     :n "R" #'restart-emacs)
+          :desc "Restart Doom Emacs"     :n "r" #'restart-emacs)
 
         (:when (featurep! :tools upload)
           (:desc "remote" :prefix "r"
