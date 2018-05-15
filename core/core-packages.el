@@ -462,7 +462,9 @@ MODULES is an malformed plist of modules to load."
           (setq plist (plist-put plist :defer (or (cdr-safe defer) t)))
           (unless (or (memq value '(t nil))
                       (number-or-marker-p value))
-            `(add-transient-hook! ',value (require ',name))))
+            `(add-transient-hook! ',value
+               ,(intern (format "load-%s" name))
+               (require ',name))))
        (use-package ,name ,@plist))))
 
 (defmacro def-package-hook! (package when &rest body)
