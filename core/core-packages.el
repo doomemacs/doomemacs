@@ -73,17 +73,6 @@ missing) and shouldn't be deleted.")
 (defvar doom-disabled-packages ()
   "A list of packages that should be ignored by `def-package!'.")
 
-(defvar doom-deferred-packages
-  '((input)
-    (buffer))
-  "A alist of packages that have been deferred. The CAR is the type of deferral
-for the package, the CDR is the list of packages.
-
-  input       will be loaded on the first action the user invokes
-              after startup.
-  buffer      will be loaded on the first new buffer to be opened
-              interactively.")
-
 (defvar doom-reload-hook nil
   "A list of hooks to run when `doom/reload-load-path' is called.")
 
