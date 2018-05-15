@@ -151,7 +151,7 @@ fundamental-mode) for performance sake."
 
 ;; Branching undo
 (def-package! undo-tree
-  :defer doom-after-switch-buffer-hook
+  :defer doom-before-switch-buffer-hook
   :config
   ;; persistent undo history is known to cause undo history corruption, which
   ;; can be very destructive! So disable it!
