@@ -635,7 +635,7 @@ packages at once.
 
 Only use this macro in a module's packages.el file."
   (doom--assert-stage-p 'packages #'packages!)
-  `(progn ,@(cl-loop for desc in packages collect `(package! ,@desc))))
+  `(progn ,@(cl-loop for desc in packages collect `(package! ,@(doom-enlist desc)))))
 
 (defmacro disable-packages! (&rest packages)
   "A convenience macro like `package!', but allows you to disable multiple
