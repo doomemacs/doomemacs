@@ -152,12 +152,12 @@ fundamental-mode) for performance sake."
 (def-package! undo-tree
   :defer pre-command-hook
   :config
-  (global-undo-tree-mode +1)
   ;; persistent undo history is known to cause undo history corruption, which
   ;; can be very destructive! So disable it!
   (setq undo-tree-auto-save-history nil
         undo-tree-history-directory-alist
-        (list (cons "." (concat doom-cache-dir "undo-tree-hist/")))))
+        (list (cons "." (concat doom-cache-dir "undo-tree-hist/"))))
+  (global-undo-tree-mode +1))
 
 
 ;;
