@@ -148,6 +148,7 @@ and `auto-mode-alist'.")
   "Refresh `doom-packages-file', which caches `load-path',
 `Info-directory-list', `doom-disabled-packages', `auto-mode-alist' and
 `package-activated-list'."
+  (doom-initialize-packages 'internal)
   (let ((coding-system-for-write 'emacs-internal))
     (with-temp-file doom-packages-file
       (insert ";;; -*- lexical-binding:t -*-\n"
@@ -230,19 +231,19 @@ FORCE-P is non-nil, do it anyway.
             (if (package-installed-p package)
                 (message "✓ Installed %s" package)
               (error "✕ Couldn't install %s" package)))
-          (message "Installing core packages...done")))
-      ;; Cache important packages.el state
-      (doom|refresh-cache)
-      (message "Doom initialized"))
-    (setq doom-init-p t))
+          (message "Installing core packages...done")))))
   ;; initialize Doom core
   (require 'core-lib)
   (require 'core-os)
+  (unless doom-init-p
+    ;; Cache important packages.el state
+    (doom|refresh-cache))
   (unless noninteractive
     (require 'core-ui)
     (require 'core-editor)
     (require 'core-projects)
-    (require 'core-keybinds)))
+    (require 'core-keybinds))
+  (setq doom-init-p t))
 
 (defun doom-initialize-autoloads ()
   "Ensures that `doom-autoload-file' exists and is loaded. Otherwise run
