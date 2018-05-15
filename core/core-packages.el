@@ -156,6 +156,7 @@ and `auto-mode-alist'.")
       (prin1 `(setq load-path ',load-path
                     Info-directory-list ',Info-directory-list
                     auto-mode-alist ',auto-mode-alist
+                    interpreter-mode-alist ',interpreter-mode-alist
                     doom-disabled-packages ',doom-disabled-packages
                     package-activated-list ',package-activated-list)
              (current-buffer)))))
