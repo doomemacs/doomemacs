@@ -676,7 +676,7 @@ loads MODULE SUBMODULE's packages.el file."
   (interactive)
   (message "Reloading your private config...")
   (load (concat doom-private-dir "init.el") nil nil 'nosuffix)
-  (doom-packages--async-run #'doom//refresh-packages)
+  (doom-packages--async-run #'doom//reload-packages)
   (let ((doom--stage 'config))
     (load (concat doom-private-dir "config.el") nil nil 'nosuffix))
   (message "✓ Done!"))
@@ -988,7 +988,7 @@ compiled packages.'"
                           (abbreviate-file-name path))))
     (message "Everything is clean")))
 
-(defun doom//refresh-packages ()
+(defun doom//reload-packages ()
   "Runs `doom//reload-autoloads', `doom//packages-autoremove' and
 `doom//packages-install' before reloading your Emacs session."
   (interactive)

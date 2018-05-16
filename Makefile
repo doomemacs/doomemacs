@@ -6,7 +6,7 @@ DOOMI = $(subst --batch,,$(DOOM))
 MODULES = $(patsubst modules/%/, %, $(sort $(dir $(wildcard modules/*/ modules/*/*/))))
 
 all:
-	@$(DOOM) -f doom//refresh-packages
+	@$(DOOM) -f doom//reload-packages
 
 ## Shortcuts
 a: autoloads
