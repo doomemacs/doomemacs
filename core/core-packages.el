@@ -198,8 +198,6 @@ FORCE-P is non-nil, do it anyway.
     (require 'subr-x)
     (require 'cl-lib)
     (require 'map))
-  (cl-pushnew doom-core-dir load-path :test #'string=)
-  (require 'core-lib)
   (when (or force-p (not doom-init-p))
     ;; packages.el cache
     (when (and force-p (file-exists-p doom-packages-file))
@@ -234,15 +232,20 @@ FORCE-P is non-nil, do it anyway.
               (error "✕ Couldn't install %s" package)))
           (message "Installing core packages...done"))))
     ;; autoloads file
-    (unless (quiet! (load doom-autoload-file 'noerror 'nomessage 'nosuffix))
+    (unless
+        (with-demoted-errors "Autoload error: %s"
+          (let (byte-compile-warnings)
+            (load doom-autoload-file 'noerror 'nomessage 'nosuffix)))
       (unless noninteractive
-        (error "No autoloads file! Run make autoloads"))))
+        (error "No autoloads file! Run make autoloads")))
+    (cl-pushnew doom-core-dir load-path :test #'string=))
   ;; initialize Doom core
   (require 'core-os)
-  (unless (or doom-init-p noninteractive)
-    ;; Cache important packages.el state
-    (doom|refresh-cache))
+  (require 'core-lib)
   (unless noninteractive
+    (unless doom-init-p
+      ;; Cache important packages.el state
+      (doom|refresh-cache))
     (require 'core-ui)
     (require 'core-editor)
     (require 'core-projects)
