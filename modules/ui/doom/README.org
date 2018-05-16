@@ -2,7 +2,7 @@
 
 This module modifies Emacs' user interface.
 
-Doom's look is loosely inspired by Atom's One Dark theme, and is largely contained in the] plugin.
+Doom's look is loosely inspired by Atom's One Dark theme, and is largely contained in the plugin.
 
 + A colorscheme inspired by Atom's One Dark theme (now available in a separate plugin: [[https://github.com/hlissner/emacs-doom-theme/][doom-themes]])
 + A custom folded-region indicator for ~hideshow~
@@ -10,11 +10,12 @@ Doom's look is loosely inspired by Atom's One Dark theme, and is largely contain
 + File-visiting buffers are slightly brighter (powered by solaire-mode)
 
 * Table of Contents :TOC:
-- [[#configuration][Configuration]]
-  - [[#changing-theme][Changing theme]]
-  - [[#changing-fonts][Changing fonts]]
-- [[#troubleshooting][Troubleshooting]]
-  - [[#strange-font-symbols][Strange font symbols]]
+- [[Configuration][Configuration]]
+  - [[Changing theme][Changing theme]]
+  - [[Custom themes][Custom themes]]
+  - [[Changing fonts][Changing fonts]]
+- [[Troubleshooting][Troubleshooting]]
+  - [[Strange font symbols][Strange font symbols]]
 
 * Configuration
 ** Changing theme
@@ -33,6 +34,9 @@ This can be changed by changing the ~doom-theme~ variable, e.g.
 #+BEGIN_SRC emacs-lisp
 (setq doom-theme 'doom-molokai)
 #+END_SRC
+
+** Custom themes
+To set a custom theme for Doom Emacs, you may either [[https://github.com/hlissner/doom-emacs/issues/117][load]] an external theme package or use the ~custom-theme-directory~ variable.
 
 ** Changing fonts
 core/core-ui.el has four relevant variables:
