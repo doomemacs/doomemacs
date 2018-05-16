@@ -334,7 +334,6 @@
       :n  "gr" #'+eval:region
       :n  "gR" #'+eval/buffer
       :v  "gR" #'+eval:replace-region
-      :m  "gs" #'+default/easymotion  ; lazy-load `evil-easymotion'
       :v  "@"  #'+evil:apply-macro
       :n  "g@" #'+evil:apply-macro
       ;; repeat in visual mode (FIXME buggy)
@@ -393,6 +392,25 @@
           [backtab]  #'+ivy/wgrep-occur      ; search/replace on results
           "C-SPC"    #'ivy-call-and-recenter ; preview
           "M-RET"    (+ivy-do-action! #'+ivy-git-grep-other-window-action)))
+
+      ;; easymotion
+      :m "gs" #'+default/easymotion  ; lazy-load `evil-easymotion'
+      (:after evil-easymotion
+        :map evilem-map
+        "a" (evilem-create #'evil-forward-arg)
+        "A" (evilem-create #'evil-backward-arg)
+        "n" (evilem-create #'evil-ex-search-next)
+        "N" (evilem-create #'evil-ex-search-previous)
+        "s" (evilem-create #'evil-snipe-repeat
+                           :pre-hook (save-excursion (call-interactively #'evil-snipe-s))
+                           :bind ((evil-snipe-scope 'buffer)
+                                  (evil-snipe-enable-highlight)
+                                  (evil-snipe-enable-incremental-highlight)))
+        "S" (evilem-create #'evil-snipe-repeat-reverse
+                           :pre-hook (save-excursion (call-interactively #'evil-snipe-s))
+                           :bind ((evil-snipe-scope 'buffer)
+                                  (evil-snipe-enable-highlight)
+                                  (evil-snipe-enable-incremental-highlight))))
 
       ;; evil
       (:after evil
