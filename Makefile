@@ -94,7 +94,7 @@ doctor:
 
 # Prints debug info about your current setup
 info:
-	@$(EMACS) --batch -l core/core.el -l core/autoload/debug.el -f doom/info
+	@$(EMACS) --batch -l core/core.el -l core/autoload/util.el -f doom/info
 
 ## Internal tasks
 .local/autoloads.el:
