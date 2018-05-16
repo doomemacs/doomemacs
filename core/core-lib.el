@@ -216,7 +216,7 @@ Body forms can access the hook's arguments through the let-bound variable
              (let ((hook-name (intern (format "doom--init-mode-%s" mode))))
                `(progn
                   (defun ,hook-name ()
-                    (when (and (boundp ',mode)
+                    (when (and (fboundp ',mode)
                                (not ,mode)
                                (and buffer-file-name (not (file-remote-p buffer-file-name)))
                                ,(if match `(if buffer-file-name (string-match-p ,match buffer-file-name)) t)
