@@ -318,6 +318,8 @@
       :nv "K"  #'+lookup/documentation
       :n  "zx" #'kill-this-buffer
       :n  "ZX" #'bury-buffer
+      :m  "]a" #'evil-forward-arg
+      :m  "[a" #'evil-backward-arg
       :n  "]b" #'next-buffer
       :n  "[b" #'previous-buffer
       :n  "]w" #'+workspace/switch-right
