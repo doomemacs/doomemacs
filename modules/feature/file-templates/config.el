@@ -26,7 +26,7 @@ in a project."
         auto-insert-alist nil) ; Tabula rasa
 
   (after! yasnippet
-    (push '+file-templates-dir yas-snippet-dirs))
+    (cl-pushnew '+file-templates-dir yas-snippet-dirs :test #'eq))
 
   ;; load autoinsert as late as possible
   (defun +file-templates|init ()
