@@ -7,4 +7,4 @@
 (package! toml-mode)
 (package! vimrc-mode)
 (package! yaml-mode)
-
+(package! csv-mode)
