@@ -228,7 +228,7 @@ Body forms can access the hook's arguments through the let-bound variable
                                  collect `(add-hook ',hook ',hook-name))
                       `((add-hook 'after-change-major-mode-hook ',hook-name))))))
             (match
-             `(push (cons ,match ',mode) doom-auto-minor-mode-alist))
+             `(map-put doom-auto-minor-mode-alist ,match ',mode))
             (t (user-error "associate! invalid rules for mode [%s] (modes %s) (match %s) (files %s)"
                            mode modes match files))))))
 
