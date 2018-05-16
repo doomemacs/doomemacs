@@ -365,8 +365,8 @@ the new algorithm is confusing, like in python or ruby."
              evil-visualstar/begin-search-forward
              evil-visualstar/begin-search-backward)
   :init
-  (map! :m [remap evil-ex-search-word-forward]  #'evil-visualstar/begin-search-forward
-        :m [remap evil-ex-search-word-backward] #'evil-visualstar/begin-search-backward)
+  (map! :v "*" #'evil-visualstar/begin-search-forward
+        :v "#" #'evil-visualstar/begin-search-backward)
   :config
   (global-evil-visualstar-mode 1))
 
