@@ -417,8 +417,8 @@
         :textobj "a" #'evil-inner-arg                    #'evil-outer-arg
         :textobj "B" #'evil-textobj-anyblock-inner-block #'evil-textobj-anyblock-a-block
         :textobj "i" #'evil-indent-plus-i-indent         #'evil-indent-plus-a-indent
-        :textobj "I" #'evil-indent-plus-i-indent-up      #'evil-indent-plus-a-indent-up
-        :textobj "J" #'evil-indent-plus-i-indent-up-down #'evil-indent-plus-a-indent-up-down
+        :textobj "k" #'evil-indent-plus-i-indent-up      #'evil-indent-plus-a-indent-up
+        :textobj "j" #'evil-indent-plus-i-indent-up-down #'evil-indent-plus-a-indent-up-down
 
         (:map evil-window-map ; prefix "C-w"
           ;; Navigation
