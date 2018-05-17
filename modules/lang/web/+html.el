@@ -82,7 +82,6 @@
 
         "M-/" #'web-mode-comment-or-uncomment
         :i  "SPC" #'self-insert-command
-        :n  "M-r" #'doom/web-refresh-browser
         :n  "za"  #'web-mode-fold-or-unfold
         :nv "]a"  #'web-mode-attribute-next
         :nv "[a"  #'web-mode-attribute-previous

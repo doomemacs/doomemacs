@@ -225,7 +225,7 @@ Body forms can access the hook's arguments through the let-bound variable
                       (,mode 1)))
                   ,@(if (and modes (listp modes))
                         (cl-loop for hook in (doom--resolve-hook-forms modes)
-                                 collect `(add-hook ',hook ',hook-name))
+                                 collect `(add-hook ',hook #',hook-name))
                       `((add-hook 'after-change-major-mode-hook ',hook-name))))))
             (match
              `(map-put doom-auto-minor-mode-alist ,match ',mode))

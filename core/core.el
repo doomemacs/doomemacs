@@ -67,8 +67,7 @@ XDG directory conventions if ~/.config/doom exists.")
 (setq-default
  ad-redefinition-action 'accept   ; silence advised function warnings
  apropos-do-all t                 ; make `apropos' more useful
- debug-on-error (and (not noninteractive) doom-debug-mode)
- load-prefer-newer noninteractive
+ debug-on-error doom-debug-mode
  ffap-machine-p-known 'reject     ; don't ping things that look like domain names
  idle-update-delay 2              ; update ui less often
  ;; keep the point out of the minibuffer
@@ -83,8 +82,9 @@ XDG directory conventions if ~/.config/doom exists.")
  auto-save-list-file-name     (concat doom-cache-dir "autosave")
  backup-directory-alist       (list (cons "." (concat doom-cache-dir "backup/")))
  custom-file                  (concat doom-etc-dir "custom.el")
- pcache-directory             (concat doom-cache-dir "pcache/")
  mc/list-file                 (concat doom-etc-dir "mc-lists.el")
+ pcache-directory             (concat doom-cache-dir "pcache/")
+ request-storage-directory    (concat doom-cache-dir "request")
  server-auth-dir              (concat doom-cache-dir "server/")
  shared-game-score-directory  (concat doom-etc-dir "shared-game-score/")
  tramp-auto-save-directory    (concat doom-cache-dir "tramp-auto-save/")

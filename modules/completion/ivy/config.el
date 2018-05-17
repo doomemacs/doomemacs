@@ -48,7 +48,7 @@ immediately runs it on the current candidate (ending the ivy session)."
         ivy-use-selectable-prompt t)
 
   (after! magit     (setq magit-completing-read-function #'ivy-completing-read))
-  (after! yasnippet (cl-pushnew #'+ivy-yas-prompt yas-prompt-functions :test #'eq))
+  (after! yasnippet (add-to-list 'yas-prompt-functions #'+ivy-yas-prompt #'eq))
 
   (map! [remap switch-to-buffer]       #'ivy-switch-buffer
         [remap persp-switch-to-buffer] #'+ivy/switch-workspace-buffer
@@ -94,6 +94,8 @@ immediately runs it on the current candidate (ending the ivy session)."
   (set! :popup "^\\*ivy-occur" '((size . 0.35)) '((transient . 0) (quit)))
 
   (setq counsel-find-file-ignore-regexp "\\(?:^[#.]\\)\\|\\(?:[#~]$\\)\\|\\(?:^Icon?\\)"
+        ;; Add smart-casing and compressed archive searching (-zS) to default
+        ;; command arguments:
         counsel-rg-base-command "rg -zS --no-heading --line-number --color never %s ."
         counsel-ag-base-command "ag -zS --nocolor --nogroup %s"
         counsel-pt-base-command "pt -zS --nocolor --nogroup -e %s")
@@ -187,8 +189,7 @@ immediately runs it on the current candidate (ending the ivy session)."
 
 
 (def-package! ivy-posframe
-  :when EMACS26+
-  :when (featurep! +childframe)
+  :when (and EMACS26+ (featurep! +childframe))
   :hook (ivy-mode . ivy-posframe-enable)
   :preface
   ;; This function searches the entire `obarray' just to populate
@@ -196,6 +197,12 @@ immediately runs it on the current candidate (ending the ivy session)."
   ;; wasteful, so...
   (advice-add #'ivy-posframe-setup :override #'ignore)
   :config
+  (setq ivy-height 16
+        ivy-fixed-height-minibuffer nil
+        ivy-posframe-parameters `((min-width . 90)
+                                  (min-height . ,ivy-height)
+                                  (internal-border-width . 10)))
+
   ;; ... let's do it manually
   (dolist (fn (list 'ivy-posframe-display-at-frame-bottom-left
                     'ivy-posframe-display-at-frame-center
@@ -211,10 +218,4 @@ immediately runs it on the current candidate (ending the ivy session)."
 
   ;; posframe doesn't work well with async sources
   (dolist (fn '(swiper counsel-rg counsel-ag counsel-pt counsel-grep counsel-git-grep))
-    (map-put ivy-display-functions-alist fn nil))
-
-  (setq ivy-height 16
-        ivy-fixed-height-minibuffer nil
-        ivy-posframe-parameters `((min-width . 90)
-                                  (min-height . ,ivy-height)
-                                  (internal-border-width . 10))))
+    (map-put ivy-display-functions-alist fn nil)))

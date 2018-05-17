@@ -419,10 +419,16 @@ added, if the file exists."
 
 
 ;;
-;; Module config macros
+;; Use-package modifications
 ;;
 
 (autoload 'use-package "use-package" nil nil 'macro)
+
+
+
+;;
+;; Module config macros
+;;
 
 (defmacro doom! (&rest modules)
   "Bootstraps DOOM Emacs and its modules.

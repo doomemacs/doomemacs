@@ -102,7 +102,6 @@ environment variables."
   :after anaconda-mode
   :config
   (map! :map anaconda-mode-map
-        :n "gf" nil
         :localleader
         :prefix "f"
         :nv "d" #'anaconda-mode-find-definitions
