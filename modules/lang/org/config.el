@@ -20,12 +20,6 @@
   :commands toc-org-enable
   :config (setq toc-org-hrefify-default "org"))
 
-(def-package! org-crypt ; built-in
-  :commands org-crypt-use-before-save-magic
-  :config
-  (setq org-tags-exclude-from-inheritance '("crypt")
-        org-crypt-key user-mail-address))
-
 (def-package! org-bullets
   :commands org-bullets-mode)
 
@@ -89,16 +83,16 @@ unfold to point on startup."
 
 (defun +org|smartparens-compatibility-config ()
   "Instruct `smartparens' not to impose itself in org-mode."
-  (defun +org-sp-point-in-checkbox-p (_id action _context)
-    (and (eq action 'insert)
-         (sp--looking-at-p "\\s-*]")))
-  (defun +org-sp-point-at-bol-p (_id action _context)
-    (and (eq action 'insert)
-         (eq (char-before) ?*)
-         (sp--looking-back-p "^\\**" (line-beginning-position))))
-
-  ;; make delimiter auto-closing a little more conservative
   (after! smartparens
+    (defun +org-sp-point-in-checkbox-p (_id action _context)
+      (and (eq action 'insert)
+           (sp--looking-at-p "\\s-*]")))
+    (defun +org-sp-point-at-bol-p (_id action _context)
+      (and (eq action 'insert)
+           (eq (char-before) ?*)
+           (sp--looking-back-p "^\\**" (line-beginning-position))))
+
+    ;; make delimiter auto-closing a little more conservative
     (sp-with-modes 'org-mode
       (sp-local-pair "*" nil :unless '(:add sp-point-before-word-p +org-sp-point-at-bol-p))
       (sp-local-pair "_" nil :unless '(:add sp-point-before-word-p))
@@ -302,7 +296,17 @@ between the two."
         :n  "zm"  (λ! (outline-hide-sublevels 1))
         :n  "zo"  #'outline-show-subtree
         :n  "zO"  #'outline-show-all
-        :n  "zr"  #'outline-show-all))
+        :n  "zr"  #'outline-show-all
+
+        :localleader
+        :n "d" #'org-deadline
+        :n "t" #'org-todo
+        (:desc "clock" :prefix "c"
+          :n "c" #'org-clock-in
+          :n "C" #'org-clock-out
+          :n "g" #'org-clock-goto
+          :n "G" (λ! (org-clock-goto 'select))
+          :n "x" #'org-clock-cancel)))
 
 (defun +org|setup-hacks ()
   "Getting org to behave."
@@ -329,6 +333,25 @@ between the two."
       (apply orig-fn args)))
   (advice-add #'org-get-agenda-file-buffer
               :around #'+org*exclude-agenda-buffers-from-recentf))
+
+
+;;
+;; Built-in libraries
+;;
+
+(def-package! org-crypt ; built-in
+  :commands org-crypt-use-before-save-magic
+  :config
+  (setq org-tags-exclude-from-inheritance '("crypt")
+        org-crypt-key user-mail-address))
+
+(def-package! org-clock
+  :commands org-clock-save
+  :hook (org-mode . org-clock-load)
+  :config
+  (setq org-clock-persist 'history
+        org-clock-persist-file (concat doom-etc-dir "org-clock-save.el"))
+  (add-hook 'kill-emacs-hook 'org-clock-save))
 
 ;;
 (when (featurep 'org)
