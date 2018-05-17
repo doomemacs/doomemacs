@@ -30,6 +30,11 @@
         eshell-error-if-no-glob t)
 
   :config
+  ;; Consider eshell buffers real
+  (defun +eshell-p (buf)
+    (eq (buffer-local-value 'major-mode buf) 'eshell-mode))
+  (add-to-list 'doom-real-buffer-functions #'+eshell-p #'eq)
+
   ;; Keep track of open eshell buffers
   (add-hook 'eshell-mode-hook #'+eshell|init)
   (add-hook 'eshell-exit-hook #'+eshell|cleanup)
