@@ -200,6 +200,8 @@ FORCE-P is non-nil, do it anyway.
     (require 'subr-x)
     (require 'cl-lib)
     (require 'map))
+  (when (eq doom-init-p 'internal)
+    (setq force-p nil))
   (when (or force-p (not doom-init-p))
     ;; packages.el cache
     (when (and force-p (file-exists-p doom-packages-file))
@@ -316,12 +318,9 @@ them."
             (_load (expand-file-name "packages.el" doom-core-dir))
             (cl-loop for key being the hash-keys of doom-modules
                      for path = (doom-module-expand-file (car key) (cdr key) "packages.el")
-                     if (file-exists-p path)
-                     do (let ((doom--current-module key)) (_load path)))
+                     do (let ((doom--current-module key)) (_load path t)))
             (cl-loop for dir in doom-psuedo-module-dirs
-                     for path = (expand-file-name "packages.el" dir)
-                     if (file-exists-p path)
-                     do (_load path))))))))
+                     do (_load (expand-file-name "packages.el" dir) t))))))))
 
 
 ;;
