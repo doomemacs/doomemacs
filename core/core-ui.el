@@ -360,7 +360,8 @@ from the default."
   (advice-add #'select-frame     :around #'doom*switch-frame-hooks)
   (advice-add #'select-window    :around #'doom*switch-window-hooks)
   (advice-add #'switch-to-buffer :around #'doom*switch-buffer-hooks)
-  (advice-add #'display-buffer   :around #'doom*switch-buffer-hooks))
+  (advice-add #'display-buffer   :around #'doom*switch-buffer-hooks)
+  (advice-add #'pop-to-buffer    :around #'doom*switch-buffer-hooks))
 (add-hook 'doom-init-hook #'doom|init-custom-hooks)
 
 (defun doom*load-theme-hooks (theme &rest _)
