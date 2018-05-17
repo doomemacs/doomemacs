@@ -374,12 +374,11 @@ from the default."
 ;;
 
 (defun doom*silence-motion-errors (orig-fn &rest args)
-  (if (and (minibufferp)
-           (<= (point) (minibuffer-prompt-end)))
-      (progn
-        (ignore-errors (apply orig-fn args))
-        (goto-char (minibuffer-prompt-end)))
-    (apply orig-fn args)))
+  (if (not (minibufferp))
+      (apply orig-fn args)
+    (ignore-errors (apply orig-fn args))
+    (when (<= (point) (minibuffer-prompt-end))
+      (goto-char (minibuffer-prompt-end)))))
 
 (advice-add #'left-char :around #'doom*silence-motion-errors)
 (advice-add #'right-char :around #'doom*silence-motion-errors)
