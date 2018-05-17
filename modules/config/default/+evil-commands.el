@@ -27,6 +27,11 @@ command from the current directory instead of the project root."
         (command (and command (evil-ex-replace-special-filenames command))))
     (compile command)))
 
+(evil-define-command doom:reverse-lines (beg end)
+  "Reverse lines between BEG and END."
+  (interactive "<r>")
+  (reverse-region beg end))
+
 
 ;;
 ;; Commands
@@ -47,6 +52,7 @@ command from the current directory instead of the project root."
 (ex! "iedit"        #'evil-multiedit-ex-match)
 (ex! "na[rrow]"     #'+evil:narrow-buffer)
 (ex! "retab"        #'+evil:retab)
+(ex! "rev[erse]"    #'doom:reverse-lines)
 ;; External resources
 ;; TODO (ex! "db"          #'doom:db)
 ;; TODO (ex! "dbu[se]"     #'doom:db-select)
