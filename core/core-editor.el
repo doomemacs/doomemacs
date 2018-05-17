@@ -65,7 +65,14 @@ fundamental-mode) for performance sake."
 ;; Built-in plugins
 ;;
 
+(push '("/[A-Z]+$" . text-mode) auto-mode-alist)
+
 (electric-indent-mode -1) ; enabled by default in Emacs 25+. No thanks.
+
+(when (and (display-graphic-p)
+           (require 'server nil t)
+           (not (server-running-p)))
+  (server-start))
 
 (add-hook 'after-save-hook #'executable-make-buffer-file-executable-if-script-p)
 
@@ -115,15 +122,6 @@ fundamental-mode) for performance sake."
               ;; ignore private DOOM temp files (but not all of them)
               (concat "^" (file-truename doom-local-dir))))
   (recentf-mode +1))
-
-(def-package! server
-  :when (display-graphic-p)
-  :defer 2
-  :config
-  (unless (server-running-p)
-    (server-start)))
-
-(push '("/[A-Z]+$" . text-mode) auto-mode-alist)
 
 
 ;;
