@@ -622,9 +622,10 @@ confirmation."
     t))
 (setq confirm-kill-emacs #'doom-quit-p)
 
-(defun doom|ansi-color-apply ()
-  "TODO"
-  (let ((inhibit-read-only t))
+(defun doom|compilation-ansi-color-apply ()
+  "Applies ansi codes to the compilation buffers. Meant for
+`compilation-filter-hook'."
+  (with-silent-modifications
     (ansi-color-apply-on-region compilation-filter-start (point))))
 
 (defun doom|no-fringes-in-minibuffer (&rest _)
@@ -699,7 +700,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
   ;; Renames major-modes [pedantry intensifies]
   (add-hook 'after-change-major-mode-hook #'doom|set-mode-name)
   ;; Ensure ansi codes in compilation buffers are replaced
-  (add-hook 'compilation-filter-hook #'doom|ansi-color-apply)
+  (add-hook 'compilation-filter-hook #'doom|compilation-ansi-color-apply)
   ;;
   (run-hooks 'doom-init-ui-hook))
 
