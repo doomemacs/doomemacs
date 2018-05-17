@@ -10,6 +10,7 @@
   :mode "\\.tsx$"
   :mode "\\.vue$"
   :mode "\\.twig$"
+  :mode "\\.jinja$"
   :mode "wp-content/themes/.+/.+\\.php$"
   :mode "templates/.+\\.php$"
   :config
