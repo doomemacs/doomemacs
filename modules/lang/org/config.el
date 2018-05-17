@@ -31,15 +31,15 @@
 
 (def-package! evil-org
   :when (featurep! :feature evil)
-  :commands evil-org-mode
+  :hook (org-mode . evil-org-mode)
+  :hook (org-load . evil-org-set-key-theme)
   :init
-  (add-hook 'org-load-hook #'+org|setup-evil)
-  (add-hook 'org-mode-hook #'evil-org-mode)
-  :config
-  (evil-org-set-key-theme '(navigation insert textobjects))
-  (after! org-agenda
-    (require 'evil-org-agenda)
-    (evil-org-agenda-set-keys)))
+  (setq evil-org-key-theme '(navigation insert textobjects))
+  (add-hook 'org-load-hook #'+org|setup-evil))
+
+(def-package! evil-org-agenda
+  :after org-agenda
+  :config (evil-org-agenda-set-keys))
 
 
 ;;
