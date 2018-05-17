@@ -1013,9 +1013,9 @@ compiled packages.'"
 `doom//packages-install' before reloading your Emacs session."
   (interactive)
   (let ((doom--inhibit-reload t))
-    (doom//reload-autoloads)
     (doom//packages-autoremove)
-    (doom//packages-install))
+    (doom//packages-install)
+    (doom//reload-autoloads))
   (doom//reload-load-path))
 
 
