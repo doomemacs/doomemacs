@@ -166,15 +166,6 @@ fundamental-mode) for performance sake."
 ;; Autoloaded Plugins
 ;;
 
-(def-package! ace-link
-  :commands (ace-link-help ace-link-org ace-link-addr ace-link-mu4e))
-
-(def-package! avy
-  :commands (avy-goto-char-2 avy-goto-line)
-  :config
-  (setq avy-all-windows nil
-        avy-background t))
-
 (def-package! command-log-mode
   :commands (command-log-mode global-command-log-mode)
   :config

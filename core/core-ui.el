@@ -177,6 +177,15 @@ DEFAULT is non-nil, set the default mode-line for all buffers."
 ;; Plugins
 ;;
 
+(def-package! ace-link
+  :commands (ace-link-help ace-link-org ace-link-addr ace-link-mu4e))
+
+(def-package! avy
+  :commands (avy-goto-char-2 avy-goto-line)
+  :config
+  (setq avy-all-windows nil
+        avy-background t))
+
 (def-package! all-the-icons
   :commands (all-the-icons-octicon all-the-icons-faicon all-the-icons-fileicon
              all-the-icons-wicon all-the-icons-material all-the-icons-alltheicon
