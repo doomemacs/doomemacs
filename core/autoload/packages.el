@@ -271,20 +271,17 @@ example; the package name can be omitted)."
         (doom-delete-package name t)
       (user-error "%s is already installed" name)))
   (let* ((inhibit-message (not doom-debug-mode))
-         (plist (or plist (cdr (assq name doom-packages))))
-         (recipe (plist-get plist :recipe))
-         quelpa-upgrade-p)
-    (if recipe
-        (condition-case-unless-debug _
-            (quelpa recipe)
-          ('error
-           (let ((pkg-build-dir (expand-file-name (symbol-name name) quelpa-build-dir)))
-             (when (file-directory-p pkg-build-dir)
-               (delete-directory pkg-build-dir t)))))
+         (plist (or plist (cdr (assq name doom-packages)))))
+    (if-let* ((recipe (plist-get plist :recipe)))
+        (let (quelpa-upgrade-p)
+          (quelpa recipe))
       (package-install name))
-    (when (package-installed-p name)
-      (cl-pushnew (cons name plist) doom-packages :test #'eq :key #'car)
-      t)))
+    (if (not (package-installed-p name))
+        (let ((pkg-build-dir (expand-file-name (symbol-name name) quelpa-build-dir)))
+          (when (file-directory-p pkg-build-dir)
+            (delete-directory pkg-build-dir t)))
+      (map-put doom-packages name plist #'eq)
+      name)))
 
 (defun doom-update-package (name &optional force-p)
   "Updates package NAME (a symbol) if it is out of date, using quelpa or
@@ -344,7 +341,8 @@ package.el as appropriate."
     (message! "Looking for packages to install...")
     (let ((packages (reverse (doom-get-missing-packages))))
       (cond ((not packages)
-             (message! (green "No packages to install!")))
+             (message! (green "No packages to install!"))
+             nil)
 
             ((not (or (getenv "YES")
                       (y-or-n-p
@@ -366,7 +364,8 @@ package.el as appropriate."
                                                  "ELPA"))))
                                 (sort (cl-copy-list packages) #'doom--sort-alpha)
                                 "\n")))))
-             (message! (yellow "Aborted!")))
+             (message! (yellow "Aborted!"))
+             nil)
 
             (t
              (doom-refresh-packages-maybe doom-debug-mode)
@@ -374,20 +373,23 @@ package.el as appropriate."
                (message! "Installing %s" (car pkg))
                (doom--condition-case!
                 (message! "%s%s"
-                          (cond ((and (package-installed-p (car pkg))
-                                      (not (doom-package-different-backend-p (car pkg)))
-                                      (not (doom-package-different-recipe-p (car pkg))))
-                                 (dark (white "⚠ ALREADY INSTALLED")))
-                                ((doom-install-package (car pkg) (cdr pkg))
-                                 (green "✓ DONE"))
-                                (t
-                                 (red "✕ FAILED")))
+                          (if (and (package-installed-p (car pkg))
+                                   (not (doom-package-different-backend-p (car pkg)))
+                                   (not (doom-package-different-recipe-p (car pkg))))
+                              (dark (white "⚠ ALREADY INSTALLED"))
+                            (condition-case e
+                                (if (doom-install-package (car pkg) (cdr pkg))
+                                    (green "✓ DONE")
+                                  (red "✕ FAILED"))
+                              (error
+                               (red "✕ ERROR (%s)" e))))
                           (if (plist-member (cdr pkg) :pin)
                               (format " [pinned: %s]" (plist-get (cdr pkg) :pin))
                             ""))))
 
              (message! (bold (green "Finished!")))
-             (doom//reload-load-path))))))
+             (doom//reload-load-path)
+             t)))))
 
 ;;;###autoload
 (defun doom//packages-update ()
@@ -399,7 +401,8 @@ package.el as appropriate."
     (doom-refresh-packages-maybe doom-debug-mode)
     (let ((packages (sort (doom-get-outdated-packages) #'doom--sort-alpha)))
       (cond ((not packages)
-             (message! (green "Everything is up-to-date")))
+             (message! (green "Everything is up-to-date"))
+             nil)
 
             ((not (or (getenv "YES")
                       (y-or-n-p
@@ -417,7 +420,8 @@ package.el as appropriate."
                                             (package-version-join (cl-caddr pkg))))
                                   packages
                                   "\n"))))))
-             (message! (yellow "Aborted!")))
+             (message! (yellow "Aborted!"))
+             nil)
 
             (t
              (dolist (pkg packages)
@@ -429,7 +433,8 @@ package.el as appropriate."
                           (if result "✓ DONE" "✕ FAILED"))))))
 
              (message! (bold (green "Finished!")))
-             (doom//reload-load-path))))))
+             (doom//reload-load-path)
+             t)))))
 
 ;;;###autoload
 (defun doom//packages-autoremove ()
@@ -440,7 +445,8 @@ package.el as appropriate."
     (message! "Looking for orphaned packages...")
     (let ((packages (doom-get-orphaned-packages)))
       (cond ((not packages)
-             (message! (green "No unused packages to remove")))
+             (message! (green "No unused packages to remove"))
+             nil)
 
             ((not
               (or (getenv "YES")
@@ -453,13 +459,15 @@ package.el as appropriate."
                        (format "+ %s (%s)" sym
                                (let ((backend (doom-package-backend sym)))
                                  (if (doom-package-different-backend-p sym)
-                                     (if (eq backend 'quelpa)
-                                         "QUELPA->ELPA"
-                                       "ELPA->QUELPA")
+                                     (pcase backend
+                                       (`quelpa "QUELPA->ELPA")
+                                       (`elpa "ELPA->QUELPA")
+                                       (_ "removed"))
                                    (upcase (symbol-name backend))))))
                      (sort (cl-copy-list packages) #'string-lessp)
                      "\n")))))
-             (message! (yellow "Aborted!")))
+             (message! (yellow "Aborted!"))
+             nil)
 
             (t
              (dolist (pkg packages)
@@ -472,7 +480,8 @@ package.el as appropriate."
                           pkg)))))
 
              (message! (bold (green "Finished!")))
-             (doom//reload-load-path))))))
+             (doom//reload-load-path)
+             t)))))
 
 
 ;;
