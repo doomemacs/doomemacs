@@ -38,7 +38,9 @@
 (after! css-mode ; contains both css-mode & scss-mode
   (set! :docset 'css-mode "CSS")
   (set! :docset 'scss-mode "Sass")
-  (set! :company-backend '(css-mode scss-mode) 'company-css)
+  (unless EMACS26+
+    ;; css-mode's built in completion is superior
+    (set! :company-backend '(css-mode scss-mode) 'company-css))
   (map! :map scss-mode-map :localleader :n "b" #'+css/scss-build))
 
 
