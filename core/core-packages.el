@@ -1,5 +1,7 @@
 ;;; core-packages.el --- package management system -*- lexical-binding: t; -*-
 
+(require 'core-lib (concat doom-core-dir "core-lib"))
+
 ;; Emacs package management is opinionated. Unfortunately, so am I. I've bound
 ;; together `use-package', `quelpa' and package.el to create my own,
 ;; rolling-release, lazily-loaded package management system for Emacs.
@@ -241,7 +243,6 @@ FORCE-P is non-nil, do it anyway.
     (cl-pushnew doom-core-dir load-path :test #'string=))
   ;; initialize Doom core
   (require 'core-os)
-  (require 'core-lib)
   (unless noninteractive
     (unless doom-init-p
       ;; Cache important packages.el state
