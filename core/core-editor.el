@@ -10,6 +10,11 @@ modes are active and the buffer is read-only.")
     doc-view-mode doc-view-mode-maybe ebrowse-tree-mode pdf-view-mode)
   "Major modes that `doom|check-large-file' will ignore.")
 
+(defvar-local doom-inhibit-indent-detection nil
+  "A buffer-local flag that indicates whether `dtrt-indent' should try to detect
+indentation settings or not. This should be set by editorconfig if it
+successfully sets indent_style/indent_size.")
+
 (setq-default
  vc-follow-symlinks t
  ;; Save clipboard contents into kill-ring before replacing them
@@ -169,6 +174,15 @@ fundamental-mode) for performance sake."
   :config
   (setq command-log-mode-auto-show t
         command-log-mode-open-log-turns-on-mode t))
+
+(def-package! dtrt-indent
+  :config
+  (setq dtrt-indent-verbosity (if doom-debug-mode 2 0))
+
+  (defun doom|detect-indentation ()
+    (unless (or doom-inhibit-indent-detection (eq major-mode 'fundamental-mode))
+      (dtrt-indent-mode +1)))
+  (add-hook 'after-change-major-mode-hook #'doom|detect-indentation))
 
 (def-package! expand-region
   :commands (er/expand-region er/contract-region er/mark-symbol er/mark-word)
