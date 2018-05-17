@@ -619,11 +619,16 @@ confirmation."
   (let ((inhibit-read-only t))
     (ansi-color-apply-on-region compilation-filter-start (point))))
 
-(defun doom|no-fringes-in-minibuffer ()
+(defun doom|no-fringes-in-minibuffer (&rest _)
   "Disable fringes in the minibuffer window."
   (set-window-fringes (minibuffer-window) 0 0 nil))
-(add-hook! '(doom-init-ui-hook minibuffer-setup-hook)
+(add-hook! '(doom-init-ui-hook minibuffer-setup-hook window-configuration-change-hook)
   #'doom|no-fringes-in-minibuffer)
+
+(defun doom|no-fringes-in-which-key-buffer (&rest _)
+  (doom|no-fringes-in-minibuffer)
+  (set-window-fringes (get-buffer-window which-key--buffer) 0 0 nil))
+(advice-add 'which-key--show-buffer-side-window :after #'doom|no-fringes-in-which-key-buffer)
 
 (defun doom|set-mode-name ()
   "Set the major mode's `mode-name', as dictated by `doom-major-mode-names'."
