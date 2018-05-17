@@ -93,7 +93,10 @@ immediately runs it on the current candidate (ending the ivy session)."
   :config
   (set! :popup "^\\*ivy-occur" '((size . 0.35)) '((transient . 0) (quit)))
 
-  (setq counsel-find-file-ignore-regexp "\\(?:^[#.]\\)\\|\\(?:[#~]$\\)\\|\\(?:^Icon?\\)")
+  (setq counsel-find-file-ignore-regexp "\\(?:^[#.]\\)\\|\\(?:[#~]$\\)\\|\\(?:^Icon?\\)"
+        counsel-rg-base-command "rg -zS --no-heading --line-number --color never %s ."
+        counsel-ag-base-command "ag -zS --nocolor --nogroup %s"
+        counsel-pt-base-command "pt -zS --nocolor --nogroup -e %s")
 
   ;; Dim recentf entries that are not in the current project.
   (ivy-set-display-transformer #'counsel-recentf #'+ivy-recentf-transformer)

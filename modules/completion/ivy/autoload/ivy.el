@@ -251,8 +251,7 @@ search current file. See `+ivy-task-tags' to customize what this searches for."
                  (counsel-projectile-grep args))
              (counsel-projectile-grep args))))
         ('ag
-         (let ((args (concat " -S" ; smart-case
-                             (if all-files-p " -a")
+         (let ((args (concat (if all-files-p " -a")
                              (unless recursion-p " --depth 1"))))
            (counsel-ag query directory args (format prompt args))))
         ('rg
@@ -262,7 +261,6 @@ search current file. See `+ivy-task-tags' to customize what this searches for."
         ('pt
          (let ((counsel-pt-base-command
                 (concat counsel-pt-base-command
-                        " -S" ; smart-case
                         (if all-files-p " -U")
                         (unless recursion-p " --depth=1")))
                (default-directory directory))
