@@ -7,8 +7,8 @@
 (def-package! solidity-mode
   :mode "\\.sol$"
   :init
-    (setq solidity-solc-path "$HOME/.node_modules/bin/solcjs")
-    (setq solidity-solium-path "$HOME/.node_modules/bin/solium")
+    (setq solidity-solc-path "~/.node_modules/lib/node_modules/solc/solcjs")
+    (setq solidity-solium-path "~/.node_modules/lib/node_modules/solium/bin/solium.js")
 
     (setq solidity-flycheck-solc-checker-active t)
     (setq solidity-flycheck-solium-checker-active t)
