@@ -2,5 +2,3 @@
 ;;; lang/solidity/packages.el
 
 (package! solidity-mode)
-(when (featurep! :completion company)
-  (package! company-solidity))
