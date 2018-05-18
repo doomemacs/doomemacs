@@ -104,6 +104,7 @@
        rust              ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
        scala             ; java, but good
        sh                ; she sells (ba|z)sh shells on the C xor
+       solidity          ; do you need a blockchain? No.
        swift             ; who asked for emoji variables?
        typescript        ; javascript, but better
        web               ; the tubes
