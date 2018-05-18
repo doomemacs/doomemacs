@@ -280,7 +280,7 @@ example; the package name can be omitted)."
         (let ((pkg-build-dir (expand-file-name (symbol-name name) quelpa-build-dir)))
           (when (file-directory-p pkg-build-dir)
             (delete-directory pkg-build-dir t)))
-      (map-put doom-packages name plist #'eq)
+      (map-put doom-packages name plist)
       name)))
 
 (defun doom-update-package (name &optional force-p)
