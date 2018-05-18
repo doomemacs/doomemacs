@@ -29,7 +29,10 @@
   :hook (org-load . evil-org-set-key-theme)
   :init
   (setq evil-org-key-theme '(navigation insert textobjects))
-  (add-hook 'org-load-hook #'+org|setup-evil))
+  (add-hook 'org-load-hook #'+org|setup-evil)
+  :config
+  (if (featurep! +evil-org-todo)
+      (evil-org--populate-todo-bindings)))
 
 (def-package! evil-org-agenda
   :after org-agenda
