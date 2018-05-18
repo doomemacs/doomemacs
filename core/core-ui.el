@@ -587,13 +587,13 @@ frame's window-system, the theme will be reloaded.")
 ;; line numbers in most modes
 (add-hook! (prog-mode text-mode conf-mode) #'doom|enable-line-numbers)
 
-(after! whitespace
-  (defun doom*fix-whitespace-mode-in-childframes (orig-fn &rest args)
-    (with-selected-frame (apply orig-fn args)
+(defun doom*fix-whitespace-mode-in-childframes (orig-fn &rest args)
+  (let ((frame (apply orig-fn args)))
+    (with-selected-frame frame
       (setq-local whitespace-style nil)
-      (selected-window)))
-  (advice-add #'company-box--make-frame :around #'doom*fix-whitespace-mode-in-childframes)
-  (advice-add #'posframe--create-posframe :around #'doom*fix-whitespace-mode-in-childframes))
+      frame)))
+(advice-add #'company-box--make-frame :around #'doom*fix-whitespace-mode-in-childframes)
+(advice-add #'posframe--create-posframe :around #'doom*fix-whitespace-mode-in-childframes)
 
 ;; ensure posframe cleans up after itself
 (after! posframe
