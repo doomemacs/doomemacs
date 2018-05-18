@@ -102,12 +102,15 @@ If it's found, then add it to the `exec-path'."
 
 ;;;###autoload
 (defun +javascript|cleanup-tide-processes ()
-  "TODO"
+  "Clean up dangling tsserver processes if there are no more buffers with
+`tide-mode' active that belong to that server's project."
   (when tide-mode
-    (unless (cl-loop with root = (tide-project-root)
+    (unless (cl-loop with project-name = (tide-project-name)
                      for buf in (delq (current-buffer) (buffer-list))
-                     if (buffer-local-value 'tide-mode buf)
-                     collect buf)
+                     if (and (buffer-local-value 'tide-mode buf)
+                             (with-current-buffer buf
+                               (string= (tide-project-name) project-name)))
+                     return buf)
       (kill-process (tide-current-server)))))
 
 

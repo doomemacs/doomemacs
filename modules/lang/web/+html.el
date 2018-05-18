@@ -10,6 +10,7 @@
   :mode "\\.tsx$"
   :mode "\\.vue$"
   :mode "\\.twig$"
+  :mode "\\.jinja$"
   :mode "wp-content/themes/.+/.+\\.php$"
   :mode "templates/.+\\.php$"
   :config
@@ -81,7 +82,6 @@
 
         "M-/" #'web-mode-comment-or-uncomment
         :i  "SPC" #'self-insert-command
-        :n  "M-r" #'doom/web-refresh-browser
         :n  "za"  #'web-mode-fold-or-unfold
         :nv "]a"  #'web-mode-attribute-next
         :nv "[a"  #'web-mode-attribute-previous
@@ -96,11 +96,5 @@
   :after web-mode)
 
 
-(def-package! haml-mode :mode "\\.haml$")
-
-
-(def-package! pug-mode
-  :mode "\\.jade$"
-  :mode "\\.pug$"
-  :config
-  (set! :company-backend 'pug-mode '(company-yasnippet)))
+;; `pug-mode'
+(set! :company-backend 'pug-mode '(company-yasnippet))

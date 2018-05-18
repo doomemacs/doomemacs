@@ -3,6 +3,9 @@
 (defvar +eval-repl-buffer nil
   "The buffer of the last open repl.")
 
+(define-minor-mode +eval-repl-mode
+  "A minor mode for REPL buffers.")
+
 (defun +eval--ensure-in-repl-buffer (&optional command same-window-p)
   (cond ((eq (current-buffer) +eval-repl-buffer))
         ((and +eval-repl-buffer

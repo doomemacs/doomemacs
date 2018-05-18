@@ -5,7 +5,8 @@ DOOMI = $(subst --batch,,$(DOOM))
 
 MODULES = $(patsubst modules/%/, %, $(sort $(dir $(wildcard modules/*/ modules/*/*/))))
 
-all: | autoloads autoremove install
+all:
+	@$(DOOM) -f doom//reload-packages
 
 ## Shortcuts
 a: autoloads
@@ -19,9 +20,11 @@ ce: compile-elpa
 re: recompile
 d: doctor
 
-quickstart: | ~/.doom.d/init.el all
+quickstart: | ~/.doom.d/init.el all recompile
 ~/.doom.d/init.el:
-	mkdir ~/.doom.d && cp init.example.el ~/.doom.d/init.el
+	@echo "Creating ~/.doom.d directory"
+	@mkdir ~/.doom.d && cp init.example.el ~/.doom.d/init.el
+	@touch ~/.doom.d/config.el
 
 ## Package management
 install: | .local/autoloads.el
@@ -91,7 +94,7 @@ doctor:
 
 # Prints debug info about your current setup
 info:
-	@$(EMACS) --batch -l core/core.el -l core/autoload/debug.el -f doom/info
+	@$(EMACS) --batch -l core/core.el -l core/autoload/util.el -f doom/info
 
 ## Internal tasks
 .local/autoloads.el:

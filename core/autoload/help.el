@@ -92,7 +92,7 @@ in, or d) the module associated with the current major mode (see
      (list (completing-read "Describe module: "
                             (cl-loop for (module . sub) in (reverse (hash-table-keys doom-modules))
                                      collect (format "%s %s" module sub))
-                            nil t module))))
+                            nil t nil nil module))))
   (cl-destructuring-bind (category submodule)
       (mapcar #'intern (split-string module " "))
     (unless (doom-module-p category submodule)
@@ -101,18 +101,6 @@ in, or d) the module associated with the current major mode (see
       (unless (file-exists-p doc-path)
         (error "There is no documentation for this module"))
       (find-file doc-path))))
-
-;;;###autoload
-(defun doom*fix-helpful-prettyprint (value)
-  "TODO"
-  (with-temp-buffer
-    (delay-mode-hooks (emacs-lisp-mode))
-    (pp value (current-buffer))
-    (unless (or (symbolp value) (booleanp value) (keymapp value))
-      (unless (hash-table-p value)
-        (fill-region (point-min) (point-max)))
-      (quiet! (indent-region (point-min) (point-max))))
-    (string-trim (buffer-string))))
 
 ;;;###autoload
 (defun doom/version ()

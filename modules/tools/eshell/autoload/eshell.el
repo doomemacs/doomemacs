@@ -1,13 +1,19 @@
 ;;; tools/eshell/autoload/eshell.el -*- lexical-binding: t; -*-
 
+;;;###autoload
 (defface +eshell-prompt-pwd '((t :inherit eshell-prompt))
-  "TODO")
+  "TODO"
+  :group 'eshell)
 
+;;;###autoload
 (defface +eshell-prompt-git-branch '((t :inherit font-lock-function-name-face))
-  "TODO")
+  "TODO"
+  :group 'eshell)
 
+;;;###autoload
 (defface +eshell-prompt-char '((t :inherit font-lock-constant-face))
-  "TODO")
+  "TODO"
+  :group 'eshell)
 
 
 (defvar +eshell-buffers (make-ring 25)
@@ -30,7 +36,8 @@
 
 (defun +eshell--remove-buffer (buf)
   (when-let* ((idx (ring-member +eshell-buffers buf)))
-    (ring-remove +eshell-buffers idx)))
+    (ring-remove +eshell-buffers idx)
+    t))
 
 (defun +eshell--current-git-branch ()
   (let ((branch (car (cl-loop for match in (split-string (shell-command-to-string "git branch") "\n")
@@ -47,6 +54,11 @@
                          (not (get-buffer-window buf)))
                  return buf))
       (generate-new-buffer +eshell-buffer-name)))
+
+(defun +eshell--set-window (window &optional flag)
+  (when window
+    (set-window-parameter window 'no-other-window flag)
+    (set-window-parameter window 'visible flag)))
 
 ;;;###autoload
 (defun +eshell-prompt ()
@@ -65,9 +77,10 @@
   "Open eshell in the current buffer."
   (interactive)
   (let ((buf (+eshell--buffer (eq major-mode 'eshell-mode))))
+    (switch-to-buffer buf)
+    (+eshell--set-window (get-buffer-window buf) t)
     (with-current-buffer buf
       (unless (eq major-mode 'eshell-mode) (eshell-mode)))
-    (switch-to-buffer buf)
     (when command
       (+eshell-run-command command))))
 
@@ -79,6 +92,7 @@
     (with-current-buffer buf
       (unless (eq major-mode 'eshell-mode) (eshell-mode)))
     (pop-to-buffer buf)
+    (+eshell--set-window (get-buffer-window buf) t)
     (when command
       (+eshell-run-command command))))
 
@@ -98,6 +112,7 @@ module to be loaded."
     (+eshell/open))
   (when command
     (+eshell-run-command command))
+  (+eshell--set-window (selected-window) t)
   (doom/workspace-display))
 
 (defun +eshell-run-command (command)
@@ -129,15 +144,17 @@ module to be loaded."
 ;;;###autoload
 (defun +eshell|cleanup ()
   "Close window (or workspace) on quit."
-  (+eshell--remove-buffer (current-buffer))
-  (cond ((and (featurep! :feature workspaces)
-              (string= "eshell" (+workspace-current-name)))
-         (+workspace/delete "eshell"))
-        ((one-window-p)
-         (unless (doom-real-buffer-p (progn (previous-buffer) (current-buffer)))
-           (switch-to-buffer (doom-fallback-buffer))))
-        ((delete (current-buffer) (get-buffer-window-list))
-         (delete-window))))
+  (let ((buf (current-buffer)))
+    (when (+eshell--remove-buffer buf)
+      (+eshell--set-window (get-buffer-window buf) nil)
+      (cond ((and (featurep! :feature workspaces)
+                  (string= "eshell" (+workspace-current-name)))
+             (+workspace/delete "eshell"))
+            ((one-window-p)
+             (unless (doom-real-buffer-p (progn (previous-buffer) (current-buffer)))
+               (switch-to-buffer (doom-fallback-buffer))))
+            ((and (fboundp '+popup-window-p) (+popup-window-p))
+             (delete-window))))))
 
 
 ;;

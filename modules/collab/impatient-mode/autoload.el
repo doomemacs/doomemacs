@@ -1,4 +1,4 @@
-;;; tools/impatient-mode/autoload.el -*- lexical-binding: t; -*-
+;;; collab/impatient-mode/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defun +impatient-mode/toggle ()

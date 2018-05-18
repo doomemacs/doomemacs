@@ -1,4 +1,4 @@
 ;; -*- no-byte-compile: t; -*-
-;;; feature/services/packages.el
+;;; tools/prodigy/packages.el
 
 (package! prodigy)

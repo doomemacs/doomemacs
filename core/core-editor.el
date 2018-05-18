@@ -10,6 +10,11 @@ modes are active and the buffer is read-only.")
     doc-view-mode doc-view-mode-maybe ebrowse-tree-mode pdf-view-mode)
   "Major modes that `doom|check-large-file' will ignore.")
 
+(defvar-local doom-inhibit-indent-detection nil
+  "A buffer-local flag that indicates whether `dtrt-indent' should try to detect
+indentation settings or not. This should be set by editorconfig if it
+successfully sets indent_style/indent_size.")
+
 (setq-default
  vc-follow-symlinks t
  ;; Save clipboard contents into kill-ring before replacing them
@@ -27,6 +32,7 @@ modes are active and the buffer is read-only.")
  hscroll-step 1
  scroll-conservatively 1001
  scroll-margin 0
+ hscroll-margin 2
  scroll-preserve-screen-position t
  ;; Whitespace (see `editorconfig')
  indent-tabs-mode nil
@@ -59,37 +65,55 @@ fundamental-mode) for performance sake."
       (fundamental-mode))))
 (add-hook 'find-file-hook #'doom|check-large-file)
 
-(push '("/LICENSE$" . text-mode) auto-mode-alist)
-
 
 ;;
 ;; Built-in plugins
 ;;
 
+(push '("/[A-Z]+$" . text-mode) auto-mode-alist)
+
+(electric-indent-mode -1) ; enabled by default in Emacs 25+. No thanks.
+
+(when (and (display-graphic-p)
+           (require 'server nil t)
+           (not (server-running-p)))
+  (server-start))
+
 (add-hook 'after-save-hook #'executable-make-buffer-file-executable-if-script-p)
 
 ;; revert buffers for changed files
-(global-auto-revert-mode 1)
-(setq auto-revert-verbose nil)
+(def-package! autorevert
+  :defer doom-before-switch-buffer-hook
+  :config
+  (setq auto-revert-verbose nil)
+  (global-auto-revert-mode +1))
 
-;; enabled by default in Emacs 25+. No thanks.
-(electric-indent-mode -1)
+;; persist variables across sessions
+(def-package! savehist
+  :defer (pre-command-hook . 1)
+  :config
+  (setq savehist-file (concat doom-cache-dir "savehist")
+        savehist-save-minibuffer-history t
+        savehist-autosave-interval nil ; save on kill only
+        savehist-additional-variables '(kill-ring search-ring regexp-search-ring))
+  (savehist-mode +1))
 
-;; savehist / saveplace
-(setq savehist-file (concat doom-cache-dir "savehist")
-      savehist-save-minibuffer-history t
-      savehist-autosave-interval nil ; save on kill only
-      savehist-additional-variables '(kill-ring search-ring regexp-search-ring)
-      save-place-file (concat doom-cache-dir "saveplace"))
-(add-hook! 'doom-init-hook #'(savehist-mode save-place-mode))
-(defun doom*recenter-on-load-saveplace (&rest _)
-  "Recenter on cursor when loading a saved place."
-  (if buffer-file-name (ignore-errors (recenter))))
-(advice-add #'save-place-find-file-hook :after-while #'doom*recenter-on-load-saveplace)
+;; persistent point location in buffers
+(def-package! saveplace
+  :defer doom-before-switch-buffer-hook
+  :config
+  (setq save-place-file (concat doom-cache-dir "saveplace"))
+  (defun doom*recenter-on-load-saveplace (&rest _)
+    "Recenter on cursor when loading a saved place."
+    (if buffer-file-name (ignore-errors (recenter))))
+  (advice-add #'save-place-find-file-hook
+              :after-while #'doom*recenter-on-load-saveplace)
+  (save-place-mode +1))
 
 ;; Keep track of recently opened files
 (def-package! recentf
-  :hook (doom-init . recentf-mode)
+  :defer (pre-command-hook . 1)
+  :commands recentf-open-files
   :config
   (setq recentf-save-file (concat doom-cache-dir "recentf")
         recentf-auto-cleanup 60
@@ -101,7 +125,8 @@ fundamental-mode) for performance sake."
               "^/tmp/" "^/ssh:" "\\.?ido\\.last$" "\\.revive$" "/TAGS$"
               "^/var/folders/.+$"
               ;; ignore private DOOM temp files (but not all of them)
-              (concat "^" (file-truename doom-local-dir)))))
+              (concat "^" (file-truename doom-local-dir))))
+  (recentf-mode +1))
 
 
 ;;
@@ -110,51 +135,54 @@ fundamental-mode) for performance sake."
 
 ;; Auto-close delimiters and blocks as you type
 (def-package! smartparens
+  :defer doom-before-switch-buffer-hook
+  :commands (sp-pair sp-local-pair sp-with-modes)
   :config
-  (smartparens-global-mode +1)
   (require 'smartparens-config)
-
   (setq sp-highlight-pair-overlay nil
         sp-cancel-autoskip-on-backward-movement nil
         sp-show-pair-delay 0
         sp-max-pair-length 3)
 
-  ;; disable smartparens in evil-mode's replace state (they conflict)
+  ;; smartparens conflicts with evil-mode's replace state
   (add-hook 'evil-replace-state-entry-hook #'turn-off-smartparens-mode)
   (add-hook 'evil-replace-state-exit-hook  #'turn-on-smartparens-mode)
 
   (sp-local-pair '(xml-mode nxml-mode php-mode) "<!--" "-->"
-                 :post-handlers '(("| " "SPC"))))
+                 :post-handlers '(("| " "SPC")))
+
+  (smartparens-global-mode +1))
 
 ;; Branching undo
 (def-package! undo-tree
-  :hook (doom-init . global-undo-tree-mode)
+  :defer doom-before-switch-buffer-hook
   :config
   ;; persistent undo history is known to cause undo history corruption, which
   ;; can be very destructive! So disable it!
   (setq undo-tree-auto-save-history nil
         undo-tree-history-directory-alist
-        (list (cons "." (concat doom-cache-dir "undo-tree-hist/")))))
+        (list (cons "." (concat doom-cache-dir "undo-tree-hist/"))))
+  (global-undo-tree-mode +1))
 
 
 ;;
 ;; Autoloaded Plugins
 ;;
 
-(def-package! ace-link
-  :commands (ace-link-help ace-link-org))
-
-(def-package! avy
-  :commands (avy-goto-char-2 avy-goto-line)
-  :config
-  (setq avy-all-windows nil
-        avy-background t))
-
 (def-package! command-log-mode
   :commands (command-log-mode global-command-log-mode)
   :config
   (setq command-log-mode-auto-show t
         command-log-mode-open-log-turns-on-mode t))
+
+(def-package! dtrt-indent
+  :config
+  (setq dtrt-indent-verbosity (if doom-debug-mode 2 0))
+
+  (defun doom|detect-indentation ()
+    (unless (or doom-inhibit-indent-detection (eq major-mode 'fundamental-mode))
+      (dtrt-indent-mode +1)))
+  (add-hook 'after-change-major-mode-hook #'doom|detect-indentation))
 
 (def-package! expand-region
   :commands (er/expand-region er/contract-region er/mark-symbol er/mark-word)
@@ -175,9 +203,7 @@ fundamental-mode) for performance sake."
   (global-set-key [remap describe-function] #'helpful-callable)
   (global-set-key [remap describe-command]  #'helpful-command)
   (global-set-key [remap describe-variable] #'helpful-variable)
-  (global-set-key [remap describe-key]      #'helpful-key)
-
-  (advice-add #'helpful--pretty-print :override #'doom*fix-helpful-prettyprint))
+  (global-set-key [remap describe-key]      #'helpful-key))
 
 (def-package! pcre2el
   :commands rxt-quote-pcre)

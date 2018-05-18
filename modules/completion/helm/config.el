@@ -11,10 +11,11 @@
 ;;
 
 (def-package! helm-mode
-  :hook (doom-init . helm-mode)
+  :defer (pre-command-hook . 1)
   :config
+  (helm-mode +1)
   ;; helm is too heavy for find-file-at-point
-  (add-to-list 'helm-completing-read-handlers-alist '(find-file-at-point . nil)))
+  (map-put helm-completing-read-handlers-alist 'find-file-at-point nil))
 
 
 (def-package! helm
@@ -62,7 +63,7 @@
 
   (defun +helm*hide-minibuffer-maybe ()
     "Hide minibuffer in Helm session if we use the header line as input field."
-    (when (with-helm-buffer helm-echo-input-in-header-line)
+    (when (with-current-buffer (helm-buffer-get) helm-echo-input-in-header-line)
       (let ((ov (make-overlay (point-min) (point-max) nil nil t)))
         (overlay-put ov 'window (selected-window))
         (overlay-put ov 'face

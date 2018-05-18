@@ -20,13 +20,13 @@
 (evil-define-command +ivy:pt (all-files-p query)
   "Ex interface for `+ivy/pt'"
   (interactive "<!><a>")
-  (+ivy/pt all-files-p query directory))
+  (+ivy/pt all-files-p query))
 
 ;;;###autoload (autoload '+ivy:grep "completion/ivy/autoload/evil" nil t)
 (evil-define-command +ivy:grep (all-files-p query)
   "Ex interface for `+ivy/grep'"
   (interactive "<!><a>")
-  (+ivy/grep all-files-p query directory))
+  (+ivy/grep all-files-p query))
 
 ;;;###autoload (autoload '+ivy:ag "completion/ivy/autoload/evil" nil t)
 (evil-define-command +ivy:ag (all-files-p query)

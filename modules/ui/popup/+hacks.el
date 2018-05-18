@@ -1,4 +1,4 @@
-;;; feature/popup/+hacks.el -*- lexical-binding: t; -*-
+;;; ui/popup/+hacks.el -*- lexical-binding: t; -*-
 
 ;; What follows are all the hacks needed to get various parts of Emacs and other
 ;; plugins to cooperate with the popup management system. Essentially, it comes

@@ -5,7 +5,7 @@
 ;;
 
 (def-package! js2-mode
-  :mode "\\.js$"
+  :mode "\\.js\\'"
   :interpreter "node"
   :config
   (setq js2-skip-preprocessor-directives t
@@ -21,7 +21,7 @@
 
   (add-hook! 'js2-mode-hook #'(flycheck-mode rainbow-delimiters-mode))
 
-  (set! :electric 'js2-mode :chars '(?\} ?\) ?.))
+  (set! :electric 'js2-mode :chars '(?\} ?\) ?. ?:))
 
   ;; Conform switch-case indentation to js2 normal indent
   (defvaralias 'js-switch-indent-offset 'js2-basic-offset)
@@ -35,15 +35,15 @@
 
 
 (def-package! typescript-mode
-  :mode "\\.ts$"
+  :commands typescript-mode
   :config
   (add-hook! 'typescript-mode-hook #'(flycheck-mode rainbow-delimiters-mode))
-  (set! :electric 'typescript-mode :chars '(?\} ?\)) :words '("||" "&&")))
+  (set! :electric 'typescript-mode
+    :chars '(?\} ?\)) :words '("||" "&&")))
 
 
 (def-package! rjsx-mode
   :commands rjsx-mode
-  :mode "\\.jsx$"
   :mode "components/.+\\.js$"
   :init
   (defun +javascript-jsx-file-p ()
@@ -73,7 +73,7 @@
 
 
 (def-package! coffee-mode
-  :mode "\\.coffee$"
+  :defer t  ; file extensions registered by autoloads file
   :init (setq coffee-indent-like-python-mode t))
 
 
@@ -183,8 +183,9 @@
 (def-package! eslintd-fix
   :commands (eslintd-fix-mode eslintd-fix)
   :config
-  (add-hook! 'eslintd-fix-mode-hook
-    (setq flycheck-javascript-eslint-executable eslintd-fix-executable)))
+  (defun +javascript|set-flycheck-executable-to-eslint ()
+    (setq flycheck-javascript-eslint-executable eslintd-fix-executable))
+  (add-hook 'eslintd-fix-mode-hook #'+javascript|set-flycheck-executable-to-eslint))
 
 
 (def-package! skewer-mode

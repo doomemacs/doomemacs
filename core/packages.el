@@ -16,15 +16,14 @@
   (package! nlinum-relative))
 (package! rainbow-delimiters)
 (package! visual-fill-column)
-
-;; core-popups.el
-(package! shackle)
+(package! restart-emacs)
 
 ;; core-editor.el
 (package! ace-link)
 (package! ace-window)
 (package! avy)
 (package! command-log-mode)
+(package! dtrt-indent)
 (package! expand-region)
 (package! helpful)
 (package! pcre2el)

@@ -39,6 +39,12 @@ extension, try to guess one."
       (apply orig-fn args)))
   (advice-add #'editorconfig-call-editorconfig-exec :around #'doom*editorconfig-smart-detection)
 
+  (defun +editorconfig|disable-indent-detection (props)
+    (when (or (gethash 'indent_style props)
+              (gethash 'indent_size props))
+      (setq doom-inhibit-indent-detection t)))
+  (add-hook 'editorconfig-custom-hooks #'+editorconfig|disable-indent-detection)
+
   ;; Editorconfig makes indentation too rigid in Lisp modes, so tell
   ;; editorconfig to ignore indentation there. I prefer dynamic indentation
   ;; support built into Emacs.

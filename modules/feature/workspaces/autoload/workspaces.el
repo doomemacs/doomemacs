@@ -3,11 +3,12 @@
 (defvar +workspace--last nil)
 (defvar +workspace--index 0)
 
-;;
+;;;###autoload
 (defface +workspace-tab-selected-face '((t (:inherit 'highlight)))
   "The face for selected tabs displayed by `+workspace/display'"
   :group 'persp-mode)
 
+;;;###autoload
 (defface +workspace-tab-face '((t (:inherit 'default)))
   "The face for selected tabs displayed by `+workspace/display'"
   :group 'persp-mode)
@@ -423,6 +424,12 @@ the next."
                    (+workspace/delete current-persp-name))))
 
               (t (+workspace-error "Can't delete last workspace" t)))))))
+
+;;;###autoload
+(defun +workspace/restart-emacs-then-restore ()
+  "Restarts Emacs, then restores the session."
+  (interactive)
+  (restart-emacs (list "--restore")))
 
 
 ;;

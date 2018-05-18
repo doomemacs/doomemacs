@@ -1,8 +1,5 @@
 ;;; core-ui.el -*- lexical-binding: t; -*-
 
-(defvar doom-fringe-size '4
-  "Default fringe width.")
-
 (defvar doom-theme nil
   "A symbol representing the color theme to load.")
 
@@ -27,10 +24,29 @@ Expects a `font-spec'.")
 return a string). This changes the 'long' name of a major-mode, allowing for
 shorter major mode name in the mode-line. See `doom|set-mode-name'.")
 
-
-;; Hook(s)
 (defvar doom-init-ui-hook nil
-  "List of hooks to run when core-ui is initialized.")
+  "List of hooks to run when the UI has been initialized.")
+
+(defvar doom-load-theme-hook nil
+  "Hook run when the theme (and font) is initialized (or reloaded
+with `doom//reload-theme').")
+
+(defvar doom-before-switch-window-hook nil
+  "Hook run before `switch-window' or `switch-frame' are called. See
+`doom-after-switch-window-hook'.")
+
+(defvar doom-after-switch-window-hook nil
+  "Hook run after `switch-window' or `switch-frame' are called. See
+`doom-before-switch-window-hook'.")
+
+(defvar doom-before-switch-buffer-hook nil
+  "Hook run before `switch-to-buffer' and `display-buffer' are called. See
+`doom-after-switch-buffer-hook'.")
+
+(defvar doom-after-switch-buffer-hook nil
+  "Hook run before `switch-to-buffer' and `display-buffer' are called. See
+`doom-before-switch-buffer-hook'.")
+
 
 (setq-default
  ansi-color-for-comint-mode t
@@ -41,6 +57,7 @@ shorter major mode name in the mode-line. See `doom|set-mode-name'.")
  compilation-scroll-output 'first-error
  confirm-nonexistent-file-or-buffer t
  cursor-in-non-selected-windows nil  ; hide cursors in other windows
+ custom-theme-directory (concat doom-private-dir "themes/")
  display-line-numbers-width 3
  enable-recursive-minibuffers nil
  frame-inhibit-implied-resize t
@@ -50,6 +67,7 @@ shorter major mode name in the mode-line. See `doom|set-mode-name'.")
  image-animate-loop t
  indicate-buffer-boundaries nil
  indicate-empty-lines nil
+ inhibit-compacting-font-caches t
  max-mini-window-height 0.3
  mode-line-default-help-echo nil ; disable mode-line mouseovers
  mouse-yank-at-point t           ; middle-click paste at point, not at click
@@ -71,7 +89,10 @@ shorter major mode name in the mode-line. See `doom|set-mode-name'.")
  pos-tip-border-width 1
  ;; no beeping or blinking please
  ring-bell-function #'ignore
- visible-bell nil)
+ visible-bell nil
+ ;; don't resize emacs in steps, it looks weird
+ window-resize-pixelwise t
+ frame-resize-pixelwise t)
 
 (fset #'yes-or-no-p #'y-or-n-p) ; y/n instead of yes/no
 
@@ -156,6 +177,15 @@ DEFAULT is non-nil, set the default mode-line for all buffers."
 ;; Plugins
 ;;
 
+(def-package! ace-link
+  :commands (ace-link-help ace-link-org ace-link-addr ace-link-mu4e))
+
+(def-package! avy
+  :commands (avy-goto-char-2 avy-goto-line)
+  :config
+  (setq avy-all-windows nil
+        avy-background t))
+
 (def-package! all-the-icons
   :commands (all-the-icons-octicon all-the-icons-faicon all-the-icons-fileicon
              all-the-icons-wicon all-the-icons-material all-the-icons-alltheicon
@@ -229,6 +259,10 @@ DEFAULT is non-nil, set the default mode-line for all buffers."
   :hook (lisp-mode . rainbow-delimiters-mode)
   :config (setq rainbow-delimiters-max-face-count 3))
 
+(def-package! restart-emacs
+  :commands restart-emacs
+  :config (setq restart-emacs--args (list "--restore")))
+
 ;; For a distractions-free-like UI, that dynamically resizes margins and can
 ;; center a buffer.
 (def-package! visual-fill-column
@@ -255,15 +289,19 @@ DEFAULT is non-nil, set the default mode-line for all buffers."
 (add-hook 'isearch-mode-end-hook #'doom|enable-ui-keystrokes)
 
 ;; undo/redo changes to Emacs' window layout
-(defvar winner-dont-bind-my-keys t) ; I'll bind keys myself
-(autoload 'winner-mode "winner" nil t)
-(add-hook 'doom-init-ui-hook #'winner-mode)
+(def-package! winner
+  :defer doom-before-switch-window-hook
+  :preface (defvar winner-dont-bind-my-keys t) ; I'll bind keys myself
+  :config (winner-mode +1))
 
 ;; highlight matching delimiters
-(setq show-paren-delay 0.1
-      show-paren-highlight-openparen t
-      show-paren-when-point-inside-paren t)
-(add-hook 'doom-init-ui-hook #'show-paren-mode)
+(def-package! paren
+  :defer doom-before-switch-buffer-hook
+  :config
+  (setq show-paren-delay 0.1
+        show-paren-highlight-openparen t
+        show-paren-when-point-inside-paren t)
+  (show-paren-mode +1))
 
 ;;; More reliable inter-window border
 ;; The native border "consumes" a pixel of the fringe on righter-most splits,
@@ -275,8 +313,8 @@ DEFAULT is non-nil, set the default mode-line for all buffers."
 
 ;; remove prompt if the file is opened in other clients
 (defun server-remove-kill-buffer-hook ()
-  (remove-hook 'kill-buffer-query-functions 'server-kill-buffer-query-function))
-(add-hook 'server-visit-hook 'server-remove-kill-buffer-hook)
+  (remove-hook 'kill-buffer-query-functions #'server-kill-buffer-query-function))
+(add-hook 'server-visit-hook #'server-remove-kill-buffer-hook)
 
 ;; whitespace-mode settings
 (setq whitespace-line-column nil
@@ -308,53 +346,37 @@ from the default."
 ;; Custom hooks
 ;;
 
-(defvar doom-load-theme-hook nil
-  "Hook run when the theme (and font) is initialized (or reloaded
-with `doom//reload-theme').")
-
-(defvar doom-before-switch-window-hook nil
-  "Hook run before `switch-window' or `switch-frame' are called. See
-`doom-after-switch-window-hook'.")
-
-(defvar doom-after-switch-window-hook nil
-  "Hook run after `switch-window' or `switch-frame' are called. See
-`doom-before-switch-window-hook'.")
-
-(defvar doom-before-switch-buffer-hook nil
-  "Hook run before `switch-to-buffer' and `display-buffer' are called. See
-`doom-after-switch-buffer-hook'.")
-
-(defvar doom-after-switch-buffer-hook nil
-  "Hook run before `switch-to-buffer' and `display-buffer' are called. See
-`doom-before-switch-buffer-hook'.")
-
 (defun doom*switch-frame-hooks (orig-fn frame &optional norecord)
   (if (eq frame (selected-frame))
       (funcall orig-fn frame norecord)
-    (run-hook-with-args 'doom-before-switch-frame-hook)
+    (run-hooks 'doom-before-switch-frame-hook)
     (prog1 (funcall orig-fn frame norecord)
-      (run-hook-with-args 'doom-after-switch-frame-hook))))
+      (run-hooks 'doom-after-switch-frame-hook))))
 (defun doom*switch-window-hooks (orig-fn window &optional norecord)
   (if (or (eq window (selected-window))
           (window-minibuffer-p)
           (window-minibuffer-p window))
       (funcall orig-fn window norecord)
-    (run-hook-with-args 'doom-before-switch-window-hook)
+    (run-hooks 'doom-before-switch-window-hook)
     (prog1 (funcall orig-fn window norecord)
-      (run-hook-with-args 'doom-after-switch-window-hook))))
+      (run-hooks 'doom-after-switch-window-hook))))
 (defun doom*switch-buffer-hooks (orig-fn &rest args)
-  (run-hook-with-args 'doom-before-switch-buffer-hook)
+  (run-hooks 'doom-before-switch-buffer-hook)
   (prog1 (apply orig-fn args)
-    (run-hook-with-args 'doom-after-switch-buffer-hook)))
+    (run-hooks 'doom-after-switch-buffer-hook)))
 
-(advice-add #'select-frame     :around #'doom*switch-frame-hooks)
-(advice-add #'select-window    :around #'doom*switch-window-hooks)
-(advice-add #'switch-to-buffer :around #'doom*switch-buffer-hooks)
-(advice-add #'display-buffer   :around #'doom*switch-buffer-hooks)
+(defun doom|init-custom-hooks ()
+  (advice-add #'select-frame     :around #'doom*switch-frame-hooks)
+  (advice-add #'select-window    :around #'doom*switch-window-hooks)
+  (advice-add #'switch-to-buffer :around #'doom*switch-buffer-hooks)
+  (advice-add #'display-buffer   :around #'doom*switch-buffer-hooks)
+  (advice-add #'pop-to-buffer    :around #'doom*switch-buffer-hooks))
+(add-hook 'doom-init-hook #'doom|init-custom-hooks)
 
-(defun doom*load-theme-hooks (&rest _)
-  (run-hook-with-args 'doom-load-theme-hook))
-(advice-add #'load-theme       :after  #'doom*load-theme-hooks)
+(defun doom*load-theme-hooks (theme &rest _)
+  (setq doom-theme theme)
+  (run-hooks 'doom-load-theme-hook))
+(advice-add #'load-theme :after #'doom*load-theme-hooks)
 
 
 ;;
@@ -362,12 +384,11 @@ with `doom//reload-theme').")
 ;;
 
 (defun doom*silence-motion-errors (orig-fn &rest args)
-  (if (and (minibufferp)
-           (<= (point) (minibuffer-prompt-end)))
-      (progn
-        (ignore-errors (apply orig-fn args))
-        (goto-char (minibuffer-prompt-end)))
-    (apply orig-fn args)))
+  (if (not (minibufferp))
+      (apply orig-fn args)
+    (ignore-errors (apply orig-fn args))
+    (when (<= (point) (minibuffer-prompt-end))
+      (goto-char (minibuffer-prompt-end)))))
 
 (advice-add #'left-char :around #'doom*silence-motion-errors)
 (advice-add #'right-char :around #'doom*silence-motion-errors)
@@ -486,7 +507,7 @@ character that looks like a space that `whitespace-mode' won't affect.")
   :commands (nlinum-relative-mode nlinum-relative-on nlinum-relative-off)
   :config
   (setq nlinum-format " %d ")
-  (after! evil (nlinum-relative-setup-evil)))
+  (add-hook 'evil-mode #'nlinum-relative-setup-evil))
 
 
 ;;
@@ -558,8 +579,6 @@ frame's window-system, the theme will be reloaded.")
 (menu-bar-mode -1)
 (if (fboundp 'tool-bar-mode)   (tool-bar-mode -1))
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
-;; standardize default fringe width
-(if (fboundp 'fringe-mode) (fringe-mode doom-fringe-size))
 ;; prompts the user for confirmation when deleting a non-empty frame
 (define-key global-map [remap delete-frame] #'doom/delete-frame)
 
@@ -568,11 +587,18 @@ frame's window-system, the theme will be reloaded.")
 ;; line numbers in most modes
 (add-hook! (prog-mode text-mode conf-mode) #'doom|enable-line-numbers)
 
+(after! whitespace
+  (defun doom*fix-whitespace-mode-in-childframes (orig-fn &rest args)
+    (with-selected-frame (apply orig-fn args)
+      (setq-local whitespace-style nil)
+      (selected-window)))
+  (advice-add #'company-box--make-frame :around #'doom*fix-whitespace-mode-in-childframes)
+  (advice-add #'posframe--create-posframe :around #'doom*fix-whitespace-mode-in-childframes))
+
 ;; ensure posframe cleans up after itself
 (after! posframe
   ;; TODO Find a better place for this
   (defun doom|delete-posframe-on-escape ()
-    "TODO"
     (unless (frame-parameter (selected-frame) 'posframe-buffer)
       (cl-loop for frame in (frame-list)
                if (and (frame-parameter frame 'posframe-buffer)
@@ -596,16 +622,22 @@ confirmation."
     t))
 (setq confirm-kill-emacs #'doom-quit-p)
 
-(defun doom|ansi-color-apply ()
-  "TODO"
-  (let ((inhibit-read-only t))
+(defun doom|compilation-ansi-color-apply ()
+  "Applies ansi codes to the compilation buffers. Meant for
+`compilation-filter-hook'."
+  (with-silent-modifications
     (ansi-color-apply-on-region compilation-filter-start (point))))
 
-(defun doom|no-fringes-in-minibuffer ()
+(defun doom|no-fringes-in-minibuffer (&rest _)
   "Disable fringes in the minibuffer window."
   (set-window-fringes (minibuffer-window) 0 0 nil))
-(add-hook! '(doom-init-ui-hook minibuffer-setup-hook)
+(add-hook! '(doom-init-ui-hook minibuffer-setup-hook window-configuration-change-hook)
   #'doom|no-fringes-in-minibuffer)
+
+(defun doom|no-fringes-in-which-key-buffer (&rest _)
+  (doom|no-fringes-in-minibuffer)
+  (set-window-fringes (get-buffer-window which-key--buffer) 0 0 nil))
+(advice-add 'which-key--show-buffer-side-window :after #'doom|no-fringes-in-which-key-buffer)
 
 (defun doom|set-mode-name ()
   "Set the major mode's `mode-name', as dictated by `doom-major-mode-names'."
@@ -618,7 +650,8 @@ confirmation."
 (defun doom|protect-visible-buffers ()
   "Don't kill the current buffer if it is visible in another window (bury it
 instead)."
-  (not (delq (selected-window) (get-buffer-window-list nil nil t))))
+  (not (and (delq (selected-window) (get-buffer-window-list nil nil t))
+            (not (equal (substring (buffer-name) 0 1) " ")))))
 
 (defun doom|protect-fallback-buffer ()
   "Don't kill the scratch buffer."
@@ -667,7 +700,7 @@ windows, switch to `doom-fallback-buffer'. Otherwise, delegate to original
   ;; Renames major-modes [pedantry intensifies]
   (add-hook 'after-change-major-mode-hook #'doom|set-mode-name)
   ;; Ensure ansi codes in compilation buffers are replaced
-  (add-hook 'compilation-filter-hook #'doom|ansi-color-apply)
+  (add-hook 'compilation-filter-hook #'doom|compilation-ansi-color-apply)
   ;;
   (run-hooks 'doom-init-ui-hook))
 

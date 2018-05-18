@@ -43,9 +43,13 @@
   "Return EXP wrapped in a list, or as-is if already a list."
   (if (listp exp) exp (list exp)))
 
+(defun doom*shut-up (orig-fn &rest args)
+  "Generic advisor for silencing noisy functions."
+  (quiet! (apply orig-fn args)))
+
 
 ;;
-;; Library
+;; Macros
 ;;
 
 (defmacro λ! (&rest body)
@@ -97,10 +101,6 @@ compilation."
                   (save-silently t))
          ,@forms))))
 
-(defun doom*shut-up (orig-fn &rest args)
-  "Generic advisor for silencing noisy functions."
-  (quiet! (apply orig-fn args)))
-
 (defvar doom--transient-counter 0)
 (defmacro add-transient-hook! (hook &rest forms)
   "Attaches transient forms to a HOOK.
@@ -110,9 +110,12 @@ invoked, then never again.
 
 HOOK can be a quoted hook or a sharp-quoted function (which will be advised)."
   (declare (indent 1))
-  (let ((append (eq (car forms) :after))
-        (fn (intern (format "doom-transient-hook-%s" (cl-incf doom--transient-counter)))))
-    `(when ,hook
+  (let ((append (if (eq (car forms) :after) (pop forms)))
+        (fn (intern (format "doom|transient-hook-%s"
+                            (if (not (symbolp (car forms)))
+                                (cl-incf doom--transient-counter)
+                              (pop forms))))))
+    `(progn
        (fset ',fn
              (lambda (&rest _)
                ,@forms
@@ -213,7 +216,7 @@ Body forms can access the hook's arguments through the let-bound variable
              (let ((hook-name (intern (format "doom--init-mode-%s" mode))))
                `(progn
                   (defun ,hook-name ()
-                    (when (and (boundp ',mode)
+                    (when (and (fboundp ',mode)
                                (not ,mode)
                                (and buffer-file-name (not (file-remote-p buffer-file-name)))
                                ,(if match `(if buffer-file-name (string-match-p ,match buffer-file-name)) t)
@@ -222,48 +225,12 @@ Body forms can access the hook's arguments through the let-bound variable
                       (,mode 1)))
                   ,@(if (and modes (listp modes))
                         (cl-loop for hook in (doom--resolve-hook-forms modes)
-                                 collect `(add-hook ',hook ',hook-name))
+                                 collect `(add-hook ',hook #',hook-name))
                       `((add-hook 'after-change-major-mode-hook ',hook-name))))))
             (match
-             `(push (cons ,match ',mode) doom-auto-minor-mode-alist))
+             `(map-put doom-auto-minor-mode-alist ,match ',mode))
             (t (user-error "associate! invalid rules for mode [%s] (modes %s) (match %s) (files %s)"
                            mode modes match files))))))
-
-
-;; I needed a way to reliably cross-configure modules without worrying about
-;; whether they were enabled or not, so I wrote `set!'. If a setting doesn't
-;; exist at runtime, the `set!' call is ignored (and omitted when
-;; byte-compiled).
-(defvar doom-settings nil)
-
-(defmacro def-setting! (keyword arglist &optional docstring &rest forms)
-  "Define a setting. Like `defmacro', this should return a form to be executed
-when called with `set!'. FORMS are not evaluated until `set!' calls it.
-
-See `doom/describe-setting' for a list of available settings.
-
-Do not use this for configuring Doom core."
-  (declare (indent defun) (doc-string 3))
-  (unless (keywordp keyword)
-    (error "Not a valid property name: %s" keyword))
-  (let ((fn (intern (format "doom--set%s" keyword))))
-    `(progn
-       (defun ,fn ,arglist
-         ,docstring
-         ,@forms)
-       (cl-pushnew ',(cons keyword fn) doom-settings :test #'eq :key #'car))))
-
-(defmacro set! (keyword &rest values)
-  "Set an option defined by `def-setting!'. Skip if doesn't exist. See
-`doom/describe-setting' for a list of available settings."
-  (declare (indent defun))
-  (unless values
-    (error "Empty set! for %s" keyword))
-  (if-let* ((fn (cdr (assq keyword doom-settings))))
-      (apply fn values)
-    (when doom-debug-mode
-      (message "No setting found for %s" keyword)
-      nil)))
 
 (provide 'core-lib)
 ;;; core-lib.el ends here

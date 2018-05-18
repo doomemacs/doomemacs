@@ -25,15 +25,18 @@
         twittering-initial-timeline-spec-string
         '(":home" ":mentions" ":direct_messages"))
 
-  (set! :popup "^\\*twittering-edit" nil '((transient) (quit) (select . t) (modeline . minimal)))
+  (set! :popup "^\\*twittering-edit"
+    '((size . 15))
+    '((transient) (quit) (select . t)))
 
   (defface twitter-divider
-    `((t (:underline (:color ,(doom-darken 'vertical-bar 0.2)))))
+    '((((background dark))  (:underline (:color "#141519")))
+      (((background light)) (:underline (:color "#d3d3d3"))))
     "The vertical divider between tweets."
     :group 'twittering-mode)
 
   (add-hook 'doom-real-buffer-functions #'+twitter-buffer-p)
-  (when (featurep! :feature popup)
+  (when (featurep! :ui popup)
     (setq twittering-pop-to-buffer-function #'+twitter-display-buffer))
 
   (after! solaire-mode
@@ -44,18 +47,33 @@
     (bar matches " %b " selection-info)
     ())
 
-  (add-hook! twittering-mode
+  (defun +twitter|switch-mode-and-header-line ()
     (setq header-line-format (or (doom-modeline 'twitter) mode-line-format)
           mode-line-format nil))
+  (add-hook 'twittering-mode-hook #'+twitter|switch-mode-and-header-line)
 
   (map! :map twittering-mode-map
+        "q"   #'+twitter/quit
+        "Q"   #'+twitter/quit-all
         [remap twittering-kill-buffer] #'+twitter/quit
-        "Q" #'+twitter/quit-all
-        "o" #'ace-link-addr
-        "J" #'twittering-goto-next-status
-        "K" #'twittering-goto-previous-status
+        [remap delete-window]          #'+twitter/quit
+        [remap +workspace/close-window-or-workspace] #'+twitter/quit
         (:when (featurep! :feature evil)
-          "j" #'evil-next-visual-line
-          "k" #'evil-previous-visual-line
-          "h" #'evil-window-left
-          "l" #'evil-window-right)))
+          [remap evil-window-delete] #'+twitter/quit
+          "f"   #'twittering-favorite
+          "F"   #'twittering-unfavorite
+          "C-f" #'twittering-follow
+          "C-F" #'twittering-unfollow
+          "d"   #'twittering-delete-status
+          "r"   #'twittering-retweet
+          "R"   #'twittering-toggle-or-retrieve-replied-statuses
+          "o"   #'twittering-update-status-interactive
+          "O"   #'+twitter/ace-link
+          "/"   #'twittering-search
+          "J"   #'twittering-goto-next-status
+          "K"   #'twittering-goto-previous-status
+          "g"   nil
+          "gg"  #'twittering-goto-first-status
+          "G"   #'twittering-goto-last-status
+          "gj"  #'twittering-goto-next-status-of-user
+          "gk"  #'twittering-goto-previous-status-of-user)))

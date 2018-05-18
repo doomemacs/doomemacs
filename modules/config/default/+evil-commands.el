@@ -12,6 +12,7 @@
   (doom/open-scratch-buffer bang))
 
 (evil-define-command doom:pwd (bang)
+  "Display the current working directory. If BANG, copy it to your clipboard."
   (interactive "<!>")
   (if (not bang)
       (pwd)
@@ -19,10 +20,17 @@
     (message "Copied to clipboard")))
 
 (evil-define-command doom:make (command &optional from-pwd)
+  "Run the current project Makefile's COMMAND. If FROM-PWD (bang), run the make
+command from the current directory instead of the project root."
   (interactive "<sh><!>")
   (let ((default-directory (if from-pwd default-directory (doom-project-root t)))
         (command (and command (evil-ex-replace-special-filenames command))))
     (compile command)))
+
+(evil-define-command doom:reverse-lines (beg end)
+  "Reverse lines between BEG and END."
+  (interactive "<r>")
+  (reverse-region beg end))
 
 
 ;;
@@ -44,6 +52,7 @@
 (ex! "iedit"        #'evil-multiedit-ex-match)
 (ex! "na[rrow]"     #'+evil:narrow-buffer)
 (ex! "retab"        #'+evil:retab)
+(ex! "rev[erse]"    #'doom:reverse-lines)
 ;; External resources
 ;; TODO (ex! "db"          #'doom:db)
 ;; TODO (ex! "dbu[se]"     #'doom:db-select)
@@ -57,7 +66,7 @@
 (ex! "sh[ell]"     #'+eshell:run)
 (ex! "t[mux]"      #'+tmux:run)              ; send to tmux
 (ex! "tcd"         #'+tmux:cd-here)          ; cd to default-directory in tmux
-(ex! "x"           #'doom:open-scratch-buffer)
+(ex! "pad"         #'doom:open-scratch-buffer)
 ;; GIT
 (ex! "gist"        #'+gist:send)  ; send current buffer/region to gist
 (ex! "gistl"       #'+gist:list)  ; list gists by user

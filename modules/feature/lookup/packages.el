@@ -14,4 +14,4 @@
     (package! counsel-dash)))
 
 (when (featurep! +devdocs)
-  (package! devdocs))
+  (package! devdocs-lookup :recipe (:fetcher github :repo "skeeto/devdocs-lookup")))
